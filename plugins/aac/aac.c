@@ -136,7 +136,7 @@ parse_aac_stream(DB_FILE *fp, int *psamplerate, int *pchannels, float *pduration
     int firstframepos = -1;
     int fsize = -1;
     int offs = 0;
-    if (!fp->vfs->streaming) {
+    if (!fp->vfs->is_streaming ()) {
         int skip = deadbeef->junk_get_leading_size (fp);
         if (skip >= 0) {
             deadbeef->fseek (fp, skip, SEEK_SET);
@@ -160,7 +160,7 @@ parse_aac_stream(DB_FILE *fp, int *psamplerate, int *pchannels, float *pduration
 
     int frame = 0;
     int scanframes = 1000;
-    if (fp->vfs->streaming) {
+    if (fp->vfs->is_streaming ()) {
         scanframes = 1;
     }
 
@@ -382,7 +382,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     int totalsamples = -1;
 
     int offs = -1;
-    if (!info->file->vfs->streaming) {
+    if (!info->file->vfs->is_streaming ()) {
         int skip = deadbeef->junk_get_leading_size (info->file);
         if (skip >= 0) {
             deadbeef->fseek (info->file, skip, SEEK_SET);
@@ -408,7 +408,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->mp4reader.close = aac_fs_close;
 #endif
 
-    if (!info->file->vfs->streaming) {
+    if (!info->file->vfs->is_streaming ()) {
 #ifdef USE_MP4FF
         trace ("aac_init: mp4ff_open_read %s\n", it->fname);
         info->mp4file = mp4ff_open_read (&info->mp4reader);
@@ -611,7 +611,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         _info->fmt.channels = ch;
     }
 
-    if (!info->file->vfs->streaming) {
+    if (!info->file->vfs->is_streaming ()) {
         if (it->endsample > 0) {
             info->startsample = it->startsample;
             info->endsample = it->endsample;
@@ -658,7 +658,7 @@ static int
 aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
     aac_info_t *info = (aac_info_t *)_info;
     int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
-    if (!info->file->vfs->streaming) {
+    if (!info->file->vfs->is_streaming ()) {
         if (info->currentsample + size / samplesize > info->endsample) {
             size = (info->endsample - info->currentsample + 1) * samplesize;
             if (size <= 0) {
@@ -1011,7 +1011,7 @@ aac_read_metadata (DB_playItem_t *it) {
         return -1;
     }
 
-    if (fp->vfs->streaming) {
+    if (fp->vfs->is_streaming ()) {
         deadbeef->fclose (fp);
         return -1;
     }
@@ -1058,7 +1058,7 @@ aac_insert (DB_playItem_t *after, const char *fname) {
     int mp4track = -1;
     MP4FILE mp4 = NULL;
 
-    if (fp->vfs->streaming) {
+    if (fp->vfs->is_streaming ()) {
         trace ("streaming aac (%s)\n", fname);
         ftype = plugin.filetypes[0];
     }

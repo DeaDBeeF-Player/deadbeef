@@ -184,7 +184,7 @@ cvorbis_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
     int ln = deadbeef->fgetlength (info->info.file);
-    if (info->info.file->vfs->streaming && ln == -1) {
+    if (info->info.file->vfs->is_streaming () && ln == -1) {
         ov_callbacks ovcb = {
             .read_func = cvorbis_fread,
             .seek_func = NULL,
@@ -238,7 +238,7 @@ cvorbis_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     _info->readpos = 0;
     info->currentsample = 0;
-    if (!info->info.file->vfs->streaming) {
+    if (!info->info.file->vfs->is_streaming ()) {
         if (it->endsample > 0) {
             info->startsample = it->startsample;
             info->endsample = it->endsample;
@@ -285,7 +285,7 @@ cvorbis_read (DB_fileinfo_t *_info, char *bytes, int size) {
 
     int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
 
-    if (!info->info.file->vfs->streaming) {
+    if (!info->info.file->vfs->is_streaming ()) {
         if (info->currentsample + size / samplesize > info->endsample) {
             size = (info->endsample - info->currentsample + 1) * samplesize;
             trace ("size truncated to %d bytes, cursample=%d, info->endsample=%d, totalsamples=%d\n", size, info->currentsample, info->endsample, ov_pcm_total (&info->vorbis_file, -1));
@@ -427,7 +427,7 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
         trace ("vorbis: failed to fopen %s\n", fname);
         return NULL;
     }
-    if (fp->vfs->streaming) {
+    if (fp->vfs->is_streaming ()) {
         DB_playItem_t *it = deadbeef->pl_item_alloc ();
         it->fname = strdup (fname);
         it->filetype = "OggVorbis";
@@ -535,7 +535,7 @@ cvorbis_read_metadata (DB_playItem_t *it) {
         trace ("cvorbis_read_metadata: failed to fopen %s\n", it->fname);
         return -1;
     }
-    if (fp->vfs->streaming) {
+    if (fp->vfs->is_streaming ()) {
         trace ("cvorbis_read_metadata: failed to fopen %s\n", it->fname);
         goto error;
     }

@@ -108,6 +108,16 @@ mms_get_content_type (DB_FILE *stream) {
 
 static const char *scheme_names[] = { "mms://", "mmsh://", NULL };
 
+const char **
+mms_get_schemes (void) {
+    return scheme_names;
+}
+
+int
+mms_is_streaming (void) {
+    return 1;
+}
+
 static DB_vfs_t plugin = {
     DB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
@@ -126,8 +136,8 @@ static DB_vfs_t plugin = {
     .rewind = mms_rewind,
     .getlength = mms_getlength,
     .get_content_type = mms_get_content_type,
-    .scheme_names = scheme_names,
-    .streaming = 1
+    .get_schemes = mms_get_schemes,
+    .is_streaming = mms_is_streaming,
 };
 
 DB_plugin_t *

@@ -30,6 +30,7 @@
 #include <stdint.h>
 #include <time.h>
 #include <stdio.h>
+#include <dirent.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -524,6 +525,7 @@ typedef struct {
     int (*conf_save) (void);
     // plugin communication
     struct DB_decoder_s **(*plug_get_decoder_list) (void);
+    struct DB_vfs_s **(*plug_get_vfs_list) (void);
     struct DB_output_s **(*plug_get_output_list) (void);
     struct DB_dsp_s **(*plug_get_dsp_list) (void);
     struct DB_playlist_s **(*plug_get_playlist_list) (void);
@@ -818,18 +820,38 @@ typedef struct {
 // api is based on stdio
 typedef struct DB_vfs_s {
     DB_plugin_t plugin;
+
+// capabilities
+    const char **(*get_schemes) (void); // NULL-terminated list of supported schemes, e.g. {"http", "ftp", NULL}; can be NULL
+
+    const char **(*get_container_extensions) (void); // NULL-terminated list of supported container files, e.g. { "zip", NULL }; can be NULL
+
+    int (*is_streaming) (void); // return 1 if the plugin streaming data over slow connection, e.g. http; plugins will avoid scanning entire files if this is the case
+
+    const char * (*is_container) (const char *fname); // should return scheme name, if the file is supported container format. "zip" is an example
+
+// this is an evil hack to interrupt frozen vfs_curl streams
+// FIXME: pass it through command API
+    void (*abort) (DB_FILE *stream);
+
+// file access, follows stdio API with few extension
     DB_FILE* (*open) (const char *fname);
-    void (*set_track) (DB_FILE *f, DB_playItem_t *it);
     void (*close) (DB_FILE *f);
     size_t (*read) (void *ptr, size_t size, size_t nmemb, DB_FILE *stream);
     int (*seek) (DB_FILE *stream, int64_t offset, int whence);
     int64_t (*tell) (DB_FILE *stream);
     void (*rewind) (DB_FILE *stream);
     int64_t (*getlength)(DB_FILE *stream);
+
+    // should return mime-type of a stream, if known; can be NULL
     const char * (*get_content_type) (DB_FILE *stream);
-    void (*abort) (DB_FILE *stream);
-    const char **scheme_names; // NULL-terminated list of supported schemes, e.g. {"http", "ftp", NULL}
-    unsigned streaming : 1;
+
+    // associates stream with a track, to allow dynamic metadata updating, like
+    // in icy protocol
+    void (*set_track) (DB_FILE *f, DB_playItem_t *it);
+
+// folder access, follows dirent API, and uses dirent data structures
+    int (*scandir) (const char *dir, struct dirent ***namelist, int (*selector) (const struct dirent *), int (*cmp) (const struct dirent **, const struct dirent **));
 } DB_vfs_t;
 
 // gui plugin

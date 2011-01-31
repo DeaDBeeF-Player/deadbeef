@@ -908,6 +908,16 @@ vfs_curl_stop (void) {
 
 static const char *scheme_names[] = { "http://", "ftp://", NULL };
 
+const char **
+http_get_schemes (void) {
+    return scheme_names;
+}
+
+int
+http_is_streaming (void) {
+    return 1;
+}
+
 // standard stdio vfs
 static DB_vfs_t plugin = {
     DB_PLUGIN_SET_API_VERSION
@@ -932,8 +942,8 @@ static DB_vfs_t plugin = {
     .rewind = http_rewind,
     .getlength = http_getlength,
     .get_content_type = http_get_content_type,
-    .scheme_names = scheme_names,
-    .streaming = 1
+    .get_schemes = http_get_schemes,
+    .is_streaming = http_is_streaming,
 };
 
 DB_plugin_t *

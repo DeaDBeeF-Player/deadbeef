@@ -112,7 +112,6 @@ static DB_vfs_t plugin = {
     .rewind = stdio_rewind,
     .getlength = stdio_getlength,
     .get_content_type = stdio_get_content_type,
-    .scheme_names = NULL // this is NULL because that's a fallback vfs, used when no other matching vfs plugin found
 };
 
 DB_plugin_t *

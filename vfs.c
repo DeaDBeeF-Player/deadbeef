@@ -32,14 +32,15 @@ vfs_fopen (const char *fname) {
     int i;
     for (i = 0; plugs[i]; i++) {
         DB_vfs_t *p = plugs[i];
-        if (!p->scheme_names) {
+        if (!p->get_schemes) {
             fallback = p;
             continue;
         }
         int n;
-        for (n = 0; p->scheme_names[n]; n++) {
-            size_t l = strlen (p->scheme_names[n]);
-            if (!strncasecmp (p->scheme_names[n], fname, l)) {
+        const char **scheme_names = p->get_schemes ();
+        for (n = 0; scheme_names[n]; n++) {
+            size_t l = strlen (scheme_names[n]);
+            if (!strncasecmp (scheme_names[n], fname, l)) {
                 return p->open (fname);
             }
         }

@@ -577,7 +577,7 @@ ffmpeg_vfs_open(URLContext *h, const char *filename, int flags)
     if (f == NULL)
         return -ENOENT;
 
-    if (f->vfs->streaming) {
+    if (f->vfs->is_streaming ()) {
         deadbeef->fset_track (f, current_track);
         if (current_info) {
             current_info->file = f;
@@ -609,9 +609,9 @@ ffmpeg_vfs_seek(URLContext *h, int64_t pos, int whence)
     DB_FILE *f = h->priv_data;
 
     if (whence == AVSEEK_SIZE) {
-        return f->vfs->streaming ? -1 : deadbeef->fgetlength (h->priv_data);
+        return f->vfs->is_streaming () ? -1 : deadbeef->fgetlength (h->priv_data);
     }
-    else if (f->vfs->streaming) {
+    else if (f->vfs->is_streaming ()) {
         return -1;
     }
     else {

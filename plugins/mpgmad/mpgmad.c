@@ -379,7 +379,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         if (sample <= 0 && !buffer->have_xing_header)
         {
             size_t framepos = deadbeef->ftell (buffer->file);
-            if (!buffer->file->vfs->streaming) {
+            if (!buffer->file->vfs->is_streaming ()) {
                 //            trace ("trying to read xing header at pos %d\n", framepos);
                 if (ver == 1) {
                     deadbeef->fseek (buffer->file, 32, SEEK_CUR);
@@ -489,7 +489,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                 // xing header failed, calculate based on file size
 //                trace ("xing header failed\n");
                 buffer->samplerate = samplerate;
-                if (buffer->file->vfs->streaming) {
+                if (buffer->file->vfs->is_streaming ()) {
                     // only suitable for cbr files, used if streaming
                     int sz = deadbeef->fgetlength (buffer->file) - buffer->startoffset - buffer->endoffset;
                     if (sz < 0) {
@@ -621,7 +621,7 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     deadbeef->pl_item_ref (it);
     info->buffer.it = it;
     info->info.readpos = 0;
-    if (!info->buffer.file->vfs->streaming) {
+    if (!info->buffer.file->vfs->is_streaming ()) {
         int skip = deadbeef->junk_get_leading_size (info->buffer.file);
         if (skip > 0) {
             trace ("mpgmad: skipping %d(%xH) bytes of junk\n", skip, skip);
@@ -1057,7 +1057,7 @@ cmp3_seek_sample (DB_fileinfo_t *_info, int sample) {
         return -1;
     }
 
-    if (info->buffer.file->vfs->streaming) {
+    if (info->buffer.file->vfs->is_streaming ()) {
         if (info->buffer.totalsamples > 0 && info->buffer.avg_samples_per_frame && info->buffer.avg_packetlength) { // that means seekable remote stream, like podcast
             trace ("seeking is possible!\n");
             // get length excluding id3v2
@@ -1156,7 +1156,7 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
         trace ("failed to open file %s\n", fname);
         return NULL;
     }
-    if (fp->vfs->streaming) {
+    if (fp->vfs->is_streaming ()) {
         DB_playItem_t *it = deadbeef->pl_item_alloc ();
         it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
         it->fname = strdup (fname);

@@ -249,6 +249,7 @@ static DB_functions_t deadbeef_api = {
     .conf_save = conf_save,
     // plugin communication
     .plug_get_decoder_list = plug_get_decoder_list,
+    .plug_get_vfs_list = plug_get_vfs_list,
     .plug_get_output_list = plug_get_output_list,
     .plug_get_dsp_list = plug_get_dsp_list,
     .plug_get_playlist_list = plug_get_playlist_list,
@@ -952,14 +953,14 @@ plug_get_decoder_list (void) {
     return g_decoder_plugins;
 }
 
-struct DB_output_s **
-plug_get_output_list (void) {
-    return g_output_plugins;
-}
-
 struct DB_vfs_s **
 plug_get_vfs_list (void) {
     return g_vfs_plugins;
+}
+
+struct DB_output_s **
+plug_get_output_list (void) {
+    return g_output_plugins;
 }
 
 struct DB_dsp_s **
