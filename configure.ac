@@ -101,6 +101,7 @@ AC_ARG_ENABLE(staticlink, [AS_HELP_STRING([--enable-staticlink], [link everythin
 AC_ARG_ENABLE(portable, [AS_HELP_STRING([--enable-portable ], [make portable build (default: disabled, opts: yes,no,full)])], [enable_portable=$enableval], [enable_portable=no])
 AC_ARG_ENABLE(src,      [AS_HELP_STRING([--enable-src      ], [build libsamplerate (SRC) plugin (default: auto)])], [enable_src=$enableval], [enable_src=yes])
 AC_ARG_ENABLE(m3u,      [AS_HELP_STRING([--enable-m3u      ], [build m3u plugin (default: auto)])], [enable_m3u=$enableval], [enable_m3u=yes])
+AC_ARG_ENABLE(vfs-zip,      [AS_HELP_STRING([--enable-vfs-zip      ], [build vfs_zip plugin (default: auto)])], [enable_vfs_zip=$enableval], [enable_vfs_zip=yes])
 
 if test "x$enable_staticlink" != "xno" ; then
     AC_DEFINE_UNQUOTED([STATICLINK], [1], [Define if building static version])
@@ -133,6 +134,15 @@ else
     ZLIB_LIBS="-lz"
 fi
 AC_SUBST(ZLIB_LIBS)
+
+if test "x$enable_staticlink" != "xno" ; then
+    HAVE_ZIP=yes
+    ZIP_LIBS="../../$LIB/libzip.a"
+else
+    AC_CHECK_LIB([zip], [main], [HAVE_ZIP=yes])
+    ZIP_LIBS="-lzip"
+fi
+AC_SUBST(ZIP_LIBS)
 
 if test "x$enable_gtkui" != "xno" ; then
     if test "x$enable_gtk3" == "xyes" ; then
@@ -490,7 +500,13 @@ if test "x$enable_m3u" != "xno" ; then
     HAVE_M3U=yes
 fi
 
-PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/dsp_libsrc plugins/m3u"
+if test "x$enable_vfs_zip" != "xno" ; then
+    if test "x$HAVE_ZLIB" = "xyes" && test "x$HAVE_ZIP" = "xyes" ; then
+        HAVE_VFS_ZIP=yes
+    fi
+fi
+
+PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/dsp_libsrc plugins/m3u plugins/vfs_zip"
 
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_FLAC, test "x$HAVE_FLACPLUGIN" = "xyes")
@@ -527,6 +543,7 @@ AM_CONDITIONAL(PORTABLE, test "x$PORTABLE" = "xyes")
 AM_CONDITIONAL(PORTABLE_FULL, test "x$PORTABLE_FULL" = "xyes")
 AM_CONDITIONAL(HAVE_DSP_SRC, test "x$HAVE_DSP_SRC" = "xyes")
 AM_CONDITIONAL(HAVE_M3U, test "x$HAVE_M3U" = "xyes")
+AM_CONDITIONAL(HAVE_VFS_ZIP, test "x$HAVE_VFS_ZIP" = "xyes")
 
 AC_SUBST(PLUGINS_DIRS)
 
@@ -586,6 +603,7 @@ PRINT_PLUGIN_INFO([aac],[AAC player (m4a, aac, mp4) based on FAAD2],[test "x$HAV
 PRINT_PLUGIN_INFO([mms],[mms streaming support],[test "x$HAVE_MMS" = "xyes"])
 PRINT_PLUGIN_INFO([dsp_src],[High quality samplerate conversion using libsamplerate],[test "x$HAVE_DSP_SRC" = "xyes"])
 PRINT_PLUGIN_INFO([m3u],[M3U and PLS playlist support],[test "x$HAVE_M3U" = "xyes"])
+PRINT_PLUGIN_INFO([vfs_zip],[zip archive support],[test "x$HAVE_VFS_ZIP" = "xyes"])
 
 echo
 
@@ -625,6 +643,7 @@ plugins/aac/Makefile
 plugins/mms/Makefile
 plugins/dsp_libsrc/Makefile
 plugins/m3u/Makefile
+plugins/vfs_zip/Makefile
 intl/Makefile
 po/Makefile.in
 deadbeef.desktop
