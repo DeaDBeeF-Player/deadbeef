@@ -99,6 +99,18 @@ file_filter_func (const GtkFileFilterInfo *filter_info, gpointer data) {
     if (!strcasecmp (p, "m3u")) {
         return TRUE;
     }
+
+    // test container (vfs) formats
+    DB_vfs_t **vfsplugs = deadbeef->plug_get_vfs_list ();
+    for (int i = 0; vfsplugs[i]; i++) {
+        if (vfsplugs[i]->is_container) {
+            if (vfsplugs[i]->is_container (filter_info->filename)) {
+                return TRUE;
+            }
+        }
+    }
+
+
     return FALSE;
 }
 

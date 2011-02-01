@@ -41,7 +41,6 @@ typedef struct {
 } zip_file_t;
 
 static const char *scheme_names[] = { "zip://", NULL };
-static const char *exts[] = { "zip", NULL };
 
 const char **
 vfs_zip_get_schemes (void) {
@@ -52,12 +51,6 @@ int
 vfs_zip_is_streaming (void) {
     return 0;
 }
-
-const char **
-vfs_zip_get_container_extensions (void) {
-    return exts;
-}
-
 
 // fname must have form of zip://full_filepath.zip:full_filepath_in_zip
 DB_FILE*
@@ -236,7 +229,6 @@ static DB_vfs_t plugin = {
     .getlength = vfs_zip_getlength,
     .get_schemes = vfs_zip_get_schemes,
     .is_streaming = vfs_zip_is_streaming,
-    .get_container_extensions = vfs_zip_get_container_extensions,
     .is_container = vfs_zip_is_container,
     .scandir = vfs_zip_scandir,
 };

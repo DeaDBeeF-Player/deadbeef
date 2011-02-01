@@ -824,8 +824,6 @@ typedef struct DB_vfs_s {
 // capabilities
     const char **(*get_schemes) (void); // NULL-terminated list of supported schemes, e.g. {"http://", "ftp://", NULL}; can be NULL
 
-    const char **(*get_container_extensions) (void); // NULL-terminated list of supported container files, e.g. { "zip", NULL }; can be NULL
-
     int (*is_streaming) (void); // return 1 if the plugin streaming data over slow connection, e.g. http; plugins will avoid scanning entire files if this is the case
 
     int (*is_container) (const char *fname); // should return 1 if this plugin can parse specified file
