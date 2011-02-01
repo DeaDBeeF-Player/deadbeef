@@ -566,7 +566,6 @@ streamer_set_current (playItem_t *it) {
     }
     trace ("\033[0;35mstreamer_set_current from %p to %p\033[37;0m\n", from, it);
     if (!playing_track || output->state () == OUTPUT_STATE_STOPPED) {
-        trace ("buffering = on\n");
         streamer_buffering = 1;
         trace ("\033[0;35mstreamer_start_playback[1] from %p to %p\033[37;0m\n", from, it);
         streamer_start_playback (from, it);
@@ -869,6 +868,17 @@ streamer_start_new_song (void) {
 }
 
 void
+streamer_next (void) {
+    bytes_until_next_song = streamer_ringbuf.remaining;
+    if (conf_get_int ("playlist.stop_after_current", 0)) {
+        streamer_set_nextsong (-2, 1);
+    }
+    else {
+        streamer_move_to_nextsong (0);
+    }
+}
+
+void
 streamer_thread (void *ctx) {
 #ifdef __linux__
     prctl (PR_SET_NAME, "deadbeef-stream", 0, 0, 0, 0);
@@ -1059,6 +1069,11 @@ streamer_thread (void *ctx) {
                 plug_trigger_event_trackinfochanged (streaming_track);
             }
             if (fileinfo && playing_track && playing_track->_duration > 0) {
+                if (pos >= playing_track->_duration) {
+                    output->stop ();
+                    streamer_move_to_nextsong (1);
+                    continue;
+                }
                 streamer_lock ();
                 streamer_reset (1);
                 if (fileinfo->plugin->seek (fileinfo, pos) >= 0) {
@@ -1083,8 +1098,16 @@ streamer_thread (void *ctx) {
         int alloc_time = 1000 / (bytes_in_one_second / blocksize);
         alloc_time /= 1.2;
 
+        int skip = 0;
+        if (bytes_until_next_song >= 0) {
+            // check if streaming format differs from output
+            if (memcmp(&fileinfo->fmt, &output_format, sizeof (ddb_waveformat_t))) {
+                skip = 1;
+                streamer_buffering = 0;
+            }
+        }
         streamer_lock ();
-        if (streamer_ringbuf.remaining < (STREAM_BUFFER_SIZE-blocksize * MAX_DSP_RATIO)) {
+        if (!skip && streamer_ringbuf.remaining < (STREAM_BUFFER_SIZE-blocksize * MAX_DSP_RATIO)) {
             int sz = STREAM_BUFFER_SIZE - streamer_ringbuf.remaining;
             int minsize = blocksize;
 
@@ -1525,6 +1548,7 @@ streamer_set_output_format (void) {
 
     fprintf (stderr, "streamer_set_output_format %dbit %s %dch %dHz channelmask=%X\n", output_format.bps, output_format.is_float ? "float" : "int", output_format.channels, output_format.samplerate, output_format.channelmask);
     output->setformat (&output_format);
+    streamer_buffering = 1;
     if (playing && output->state () != OUTPUT_STATE_PLAYING) {
         if (0 != output->play ()) {
             memset (&output_format, 0, sizeof (output_format));
@@ -1660,13 +1684,7 @@ streamer_read_async (char *bytes, int size) {
         // in case of decoder error, or EOF while buffering - switch to next song instantly
         if (bytesread < 0 || (bytes_until_next_song >= 0 && streamer_buffering && bytesread == 0) || bytes_until_next_song < 0) {
             trace ("finished streaming song, queueing next\n");
-            bytes_until_next_song = streamer_ringbuf.remaining;
-            if (conf_get_int ("playlist.stop_after_current", 0)) {
-                streamer_set_nextsong (-2, 1);
-            }
-            else {
-                streamer_move_to_nextsong (0);
-            }
+            streamer_next ();
         }
     }
     return bytesread;

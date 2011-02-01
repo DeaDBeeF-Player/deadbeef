@@ -59,8 +59,9 @@ ringbuf_write (ringbuf_t *p, char *bytes, size_t size) {
 int
 ringbuf_read (ringbuf_t *p, char *bytes, size_t size) {
     if (p->remaining < size) {
-        return -1;
+        size = p->remaining;
     }
+    int rb = size;
 
     if (p->size - p->cursor >= size) {
         memcpy (bytes, p->bytes + p->cursor, size);
@@ -80,4 +81,5 @@ ringbuf_read (ringbuf_t *p, char *bytes, size_t size) {
         p->cursor = size;
         p->remaining -= size;
     }
+    return rb;
 }
