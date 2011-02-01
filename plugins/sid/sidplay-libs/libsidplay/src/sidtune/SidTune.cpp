@@ -25,12 +25,15 @@
 #include "sidendian.h"
 #include "PP20.h"
 #include <stdio.h>
+#include "../../../../../../../deadbeef.h"
 
 #ifdef HAVE_EXCEPTIONS
 #   include <new>
 #endif
 #include <string.h>
 #include <limits.h>
+
+extern DB_functions_t *deadbeef;
 
 #if defined(HAVE_IOS_OPENMODE)
     typedef std::ios::openmode openmode;
@@ -252,7 +255,7 @@ bool SidTune::loadFile(const char* fileName, Buffer_sidtt<const uint_least8_t>& 
     Buffer_sidtt<uint_least8_t> fileBuf;
     uint_least32_t fileLen = 0;
 
-    FILE *fp = fopen (fileName, "rb");
+    DB_FILE *fp = deadbeef->fopen (fileName);
 
     if (!fp)
     {
@@ -261,9 +264,7 @@ bool SidTune::loadFile(const char* fileName, Buffer_sidtt<const uint_least8_t>& 
     }
     else
     {
-        fseek (fp, 0, SEEK_END);
-        fileLen = ftell (fp);
-        rewind (fp);
+        fileLen = deadbeef->fgetlength(fp);
 #ifdef HAVE_EXCEPTIONS
         if ( !fileBuf.assign(new(std::nothrow) uint_least8_t[fileLen],fileLen) )
 #else
@@ -274,7 +275,7 @@ bool SidTune::loadFile(const char* fileName, Buffer_sidtt<const uint_least8_t>& 
             return false;
         }
         uint_least32_t restFileLen = fileLen;
-        int res = fread((char*)fileBuf.get()+(fileLen-restFileLen),1,restFileLen,fp);
+        int res = deadbeef->fread((char*)fileBuf.get()+(fileLen-restFileLen),1,restFileLen,fp);
         if ( res != restFileLen )
         {
             info.statusString = SidTune::txt_cantLoadFile;
@@ -285,7 +286,7 @@ bool SidTune::loadFile(const char* fileName, Buffer_sidtt<const uint_least8_t>& 
             info.statusString = SidTune::txt_noErrors;
         }
     }
-    fclose(fp);
+    deadbeef->fclose(fp);
     if ( fileLen==0 )
     {
         info.statusString = SidTune::txt_empty;
