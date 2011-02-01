@@ -93,6 +93,11 @@ stdio_get_content_type (DB_FILE *stream) {
     return NULL;
 }
 
+int
+stdio_is_streaming (void) {
+    return 0;
+}
+
 // standard stdio vfs
 static DB_vfs_t plugin = {
     DB_PLUGIN_SET_API_VERSION
@@ -112,6 +117,7 @@ static DB_vfs_t plugin = {
     .rewind = stdio_rewind,
     .getlength = stdio_getlength,
     .get_content_type = stdio_get_content_type,
+    .is_streaming = stdio_is_streaming
 };
 
 DB_plugin_t *
