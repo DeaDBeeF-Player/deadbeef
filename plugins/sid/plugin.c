@@ -22,8 +22,8 @@ static const char *exts[] = { "sid",NULL };
 const char *filetypes[] = { "SID", NULL };
 
 static const char settings_dlg[] =
-    "property \"Enable HVSC\" checkbox hvsc_enable 0;\n"
-    "property \"Songlenghts.txt (from HVSC)\" file hvsc_path \"\";\n"
+    "property \"Enable HVSC Songlengh DB\" checkbox hvsc_enable 0;\n"
+    "property \"Songlengths.txt (from HVSC)\" file hvsc_path \"\";\n"
     "property \"Samplerate\" entry sid.samplerate 44100;\n"
     "property \"Bits per sample (8 or 16)\" entry sid.bps 16;\n"
     "property \"Default song length (sec)\" entry sid.defaultlength 180;\n"
