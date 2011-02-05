@@ -206,7 +206,14 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
 
     int64_t layout = info->ctx->channel_layout;
-    _info->fmt.channelmask = layout;
+    if (layout != 0) {
+        _info->fmt.channelmask = layout;
+    }
+    else {
+        for (int i = 0; i < _info->fmt.channels; i++) {
+            _info->fmt.channelmask |= 1 << i;
+        }
+    }
 
     // subtrack info
     info->currentsample = 0;
