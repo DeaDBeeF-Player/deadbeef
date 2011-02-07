@@ -590,14 +590,13 @@ int u8_valid (const char  *str,
     /* See that we covered the entire length if a length was
      * passed in, or that we ended on a nul if not
      */
-    if (max_len >= 0 &&
-            p != (str + max_len))
+    if (max_len >= 0 && p != (str + max_len) && *p != 0) {
         return 0;
-    else if (max_len < 0 &&
-            *p != '\0')
+    }
+    else if (max_len < 0 && *p != '\0') {
         return 0;
-    else
-        return 1;
+    }
+    return 1;
 }
 
 #if 0

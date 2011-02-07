@@ -320,10 +320,10 @@ int ddb_iconv (const char *cs_out, const char *cs_in, char *out, int outlen, con
     // to utf8 branch
     if (!strcmp (cs_out, UTF8_STR)) {
         if (!strcmp (cs_in, UTF8_STR)) {
-            int valid = u8_valid (in, inlen, NULL);
+            memcpy (out, in, inlen);
+            out[inlen] = 0;
+            int valid = u8_valid (out, inlen, NULL);
             if (valid) {
-                memcpy (out, in, inlen);
-                out[inlen] = 0;
                 len = inlen;
             }
         }
