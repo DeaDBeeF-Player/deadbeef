@@ -2650,31 +2650,3 @@ void dstsub(int n, REAL *a, int nc, REAL *c)
     a[m] *= c[0];
 }
 
-void rfft(int n,int isign,REAL x[])
-{
-  static int ipsize = 0,wsize=0;
-  static int *ip = NULL;
-  static REAL *w = NULL;
-  int newipsize,newwsize;
-
-  if (n == 0) {
-    free(ip); ip = NULL; ipsize = 0;
-    free(w);  w  = NULL; wsize  = 0;
-    return;
-  }
-
-  newipsize = 2+sqrt(n/2);
-  if (newipsize > ipsize) {
-    ipsize = newipsize;
-    ip = (int *)realloc(ip,sizeof(int)*ipsize);
-    ip[0] = 0;
-  }
-
-  newwsize = n/2;
-  if (newwsize > wsize) {
-    wsize = newwsize;
-    w = (REAL *)realloc(w,sizeof(REAL)*wsize);
-  }
-
-  rdft(n,isign,x,ip,w);
-}

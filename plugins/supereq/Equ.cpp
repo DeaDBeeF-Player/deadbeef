@@ -24,6 +24,8 @@
 #include "paramlist.hpp"
 #include "Equ.h"
 
+#define USE_FFMPEG
+
 int _Unwind_Resume_or_Rethrow;
 int _Unwind_RaiseException;
 int _Unwind_GetLanguageSpecificData;
@@ -36,7 +38,40 @@ int _Unwind_GetRegionStart;
 int _Unwind_SetGR;
 int _Unwind_GetIPInfo;
 
-void rfft(int n,int isign,REAL x[]);
+#ifdef USE_OOURA
+void rdft(int, int, REAL *, int *, REAL *);
+void rfft(int n,int isign,REAL x[])
+{
+    n = 1 << n;
+  static int ipsize = 0,wsize=0;
+  static int *ip = NULL;
+  static REAL *w = NULL;
+  int newipsize,newwsize;
+
+  if (n == 0) {
+    free(ip); ip = NULL; ipsize = 0;
+    free(w);  w  = NULL; wsize  = 0;
+    return;
+  }
+
+  newipsize = 2+sqrt(n/2);
+  if (newipsize > ipsize) {
+    ipsize = newipsize;
+    ip = (int *)realloc(ip,sizeof(int)*ipsize);
+    ip[0] = 0;
+  }
+
+  newwsize = n/2;
+  if (newwsize > wsize) {
+    wsize = newwsize;
+    w = (REAL *)realloc(w,sizeof(REAL)*wsize);
+  }
+
+  rdft(n,isign,x,ip,w);
+}
+#elif defined(USE_FFMPEG)
+extern "C" void rfft(int n,int isign,REAL x[]);
+#endif
 
 #define PI 3.1415926535897932384626433832795
 
@@ -96,6 +131,7 @@ extern "C" void equ_init(SuperEqState *state, int wb, int channels)
   state->winlen = (1 << (wb-1))-1;
   state->winlenbit = wb;
   state->tabsize  = 1 << wb;
+  state->fft_bits = wb;
 
   state->lires1   = (REAL *)malloc(sizeof(REAL)*state->tabsize * state->channels);
   state->lires2   = (REAL *)malloc(sizeof(REAL)*state->tabsize * state->channels);
@@ -272,7 +308,7 @@ extern "C" void equ_makeTable(SuperEqState *state, REAL *lbc,void *_param,REAL f
       for(;i<state->tabsize;i++)
           state->irest[i] = 0;
 
-      rfft(state->tabsize,1,state->irest);
+      rfft(state->fft_bits,1,state->irest);
 
       nires = cires == 1 ? state->lires2 : state->lires1;
       nires += ch * state->tabsize;
@@ -357,7 +393,7 @@ extern "C" int equ_modifySamples_float (SuperEqState *state, char *buf,int nsamp
 				state->fsamples[i] = 0;
 
 			if (state->enable) {
-				rfft(state->tabsize,1,state->fsamples);
+				rfft(state->fft_bits,1,state->fsamples);
 
 				state->fsamples[0] = ires[0]*state->fsamples[0];
 				state->fsamples[1] = ires[1]*state->fsamples[1]; 
@@ -373,7 +409,7 @@ extern "C" int equ_modifySamples_float (SuperEqState *state, char *buf,int nsamp
 						state->fsamples[i*2+1] = im;
 					}
 
-				rfft(state->tabsize,-1,state->fsamples);
+				rfft(state->fft_bits,-1,state->fsamples);
 			} else {
 				for(i=state->winlen-1+state->winlen/2;i>=state->winlen/2;i--) state->fsamples[i] = state->fsamples[i-state->winlen/2]*state->tabsize/2;
 				for(;i>=0;i--) state->fsamples[i] = 0;

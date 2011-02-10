@@ -37,6 +37,7 @@ typedef struct {
     int dither;
     int channels;
     int enable;
+    int fft_bits;
 } SuperEqState;
 
 void *paramlist_alloc (void);

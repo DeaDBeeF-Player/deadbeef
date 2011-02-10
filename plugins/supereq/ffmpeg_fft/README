@@ -1,0 +1,9 @@
+purpose:
+
+* compare fftw and ffmpeg fourier transforms using benchfft and / or libbench
+* note: this is very specifically for neon. if you want to use ffmpeg_fft with
+  some other arch / fpu, then you will need to do some reorganization
+
+todo: 
+
+1) fix benchees/ffmpeg/doitr.c 
