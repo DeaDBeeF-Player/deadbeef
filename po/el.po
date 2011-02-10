@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-10 15:02+0200\n"
-"PO-Revision-Date: 2011-02-09 11:55+0200\n"
-"Last-Translator: George <forfolias@linuxteam.cs.teilar.gr>\n"
+"PO-Revision-Date: 2011-02-10 03:17+0200\n"
+"Last-Translator: George <forfolias@gmail.com>\n"
 "Language-Team: Greek\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
@@ -259,7 +259,7 @@ msgstr "Αναστροφή επιλογής"
 
 #: ../plugins/gtkui/interface.c:254 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Selection"
-msgstr "Επιλογμένο"
+msgstr "Επιλεγμένο"
 
 #: ../plugins/gtkui/interface.c:261 ../plugins/gtkui/plcommon.c:425
 #: ../plugins/gtkui/prefwin.c:317 ../plugins/gtkui/deadbeef.glade.h:107
@@ -545,7 +545,7 @@ msgstr "_Εντάξει"
 
 #: ../plugins/gtkui/interface.c:1725 ../plugins/gtkui/deadbeef.glade.h:88
 msgid "Output plugin:"
-msgstr "Plugin εξόδου:"
+msgstr "Πρόσθετο εξόδου:"
 
 #: ../plugins/gtkui/interface.c:1738 ../plugins/gtkui/deadbeef.glade.h:87
 msgid "Output device:"
@@ -557,7 +557,7 @@ msgstr "Ήχος"
 
 #: ../plugins/gtkui/interface.c:1756 ../plugins/gtkui/deadbeef.glade.h:12
 msgid "Allow dynamic samplerate switching"
-msgstr "Να επιτρέπεται η δυναμική ρύθμιση samplerate"
+msgstr "Να επιτρέπεται η δυναμική ρύθμιση της δειγματοληψίας"
 
 #: ../plugins/gtkui/interface.c:1764 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "Samplerate conversion quality:"
@@ -591,7 +591,7 @@ msgstr "Αναπαραγωγή"
 
 #: ../plugins/gtkui/interface.c:1826 ../plugins/gtkui/deadbeef.glade.h:16
 msgid "Close minimizes to tray"
-msgstr "Το κλείσιμο να ελαχιστοποιεί στο tray"
+msgstr "Ελαχιστοποίηση στο πλαίσιο συστήματος στο κλείσιμο"
 
 #: ../plugins/gtkui/interface.c:1830 ../plugins/gtkui/deadbeef.glade.h:81
 msgid "Middle mouse button closes playlist"
@@ -797,7 +797,7 @@ msgstr "Ρύθμιση"
 
 #: ../plugins/gtkui/interface.c:2471 ../plugins/gtkui/deadbeef.glade.h:96
 msgid "Plugins"
-msgstr "Plugins"
+msgstr "Πρόσθετα"
 
 #: ../plugins/gtkui/interface.c:2853 ../plugins/gtkui/deadbeef.glade.h:162
 msgid "editplaylistdlg"
@@ -855,7 +855,7 @@ msgid ""
 "(This dialog can be turned off in GTKUI plugin settings)"
 msgstr ""
 "τα αρχεία θα χαθούν. Να προχωρήσω; \\ n (Αυτό το παράθυρο μπορεί να "
-"απενεργοποιηθεί από τις ρυθμίσεις του GTKUI plugin)"
+"απενεργοποιηθεί από τις ρυθμίσεις του πρόσθετου GTKUI)"
 
 #: ../plugins/gtkui/plcommon.c:325 ../plugins/gtkui/trkproperties.c:56
 msgid "Warning"
@@ -934,7 +934,7 @@ msgstr "Συνδυασμός πλήκτρων"
 #: ../plugins/gtkui/prefwin.c:464 ../plugins/gtkui/prefwin.c:676
 #: ../plugins.c:872
 msgid "ALSA output plugin"
-msgstr "Plugin εξόδου ALSA"
+msgstr "Πρόσθετο εξόδου ALSA"
 
 #: ../plugins/gtkui/progress.c:64
 msgid "Initializing..."
