@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-10 15:02+0200\n"
-"PO-Revision-Date: 2011-02-12 22:58+0200\n"
+"PO-Revision-Date: 2011-02-13 00:00+0200\n"
 "Last-Translator: Klemen <klemen.kosir@gmx.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: sl\n"
@@ -444,73 +444,73 @@ msgstr "Naslov:"
 
 #: ../plugins/gtkui/interface.c:1386 ../plugins/gtkui/deadbeef.glade.h:32
 msgid "Enter new column title here"
-msgstr ""
+msgstr "Vnesite novo ime stolpca"
 
 #: ../plugins/gtkui/interface.c:1394 ../plugins/gtkui/deadbeef.glade.h:137
 msgid "Type:"
-msgstr ""
+msgstr "Vrsta:"
 
 #: ../plugins/gtkui/interface.c:1402
 msgid "File number"
-msgstr ""
+msgstr "Številka datoteke"
 
 #. create default set of columns
 #: ../plugins/gtkui/interface.c:1403 ../plugins/gtkui/mainplaylist.c:300
 msgid "Playing"
-msgstr ""
+msgstr "Predvajanje"
 
 #: ../plugins/gtkui/interface.c:1404
 msgid "Album Art"
-msgstr ""
+msgstr "Naslovnica albuma"
 
 #: ../plugins/gtkui/interface.c:1405
 msgid "Artist - Album"
-msgstr ""
+msgstr "Izvajalec - Album"
 
 #: ../plugins/gtkui/interface.c:1406 ../plugins/gtkui/plcommon.c:877
 msgid "Artist"
-msgstr ""
+msgstr "Izvajalec"
 
 #: ../plugins/gtkui/interface.c:1407 ../plugins/gtkui/interface.c:1794
 msgid "Album"
-msgstr ""
+msgstr "Album"
 
 #: ../plugins/gtkui/interface.c:1408 ../plugins/gtkui/prefwin.c:595
 msgid "Title"
-msgstr ""
+msgstr "Naslov"
 
 #: ../plugins/gtkui/interface.c:1409
 msgid "Length"
-msgstr ""
+msgstr "Trajanje"
 
 #: ../plugins/gtkui/interface.c:1410 ../plugins/gtkui/interface.c:1793
 msgid "Track"
-msgstr ""
+msgstr "Skladba"
 
 #: ../plugins/gtkui/interface.c:1411
 msgid "Band / Album Artist"
-msgstr ""
+msgstr "Skupina / Izvajalec albuma"
 
 #: ../plugins/gtkui/interface.c:1412 ../plugins/gtkui/plcommon.c:881
 msgid "Custom"
-msgstr ""
+msgstr "Po meri"
 
 #: ../plugins/gtkui/interface.c:1418 ../plugins/gtkui/interface.c:3096
 #: ../plugins/gtkui/deadbeef.glade.h:62
 msgid "Format:"
-msgstr ""
+msgstr "Oblika:"
 
 #: ../plugins/gtkui/interface.c:1433 ../plugins/gtkui/deadbeef.glade.h:11
 msgid "Alignment:"
-msgstr ""
+msgstr "Poravnava:"
 
 #: ../plugins/gtkui/interface.c:1441
 msgid "Left"
-msgstr ""
+msgstr "Levo"
 
 #: ../plugins/gtkui/interface.c:1442
 msgid "Right"
-msgstr ""
+msgstr "Desno"
 
 #: ../plugins/gtkui/interface.c:1444 ../plugins/gtkui/deadbeef.glade.h:48
 #, no-c-format
@@ -523,284 +523,291 @@ msgid ""
 "  [d]irectory, [D]irectoryWithPath\n"
 "Example: %a - %t [%l]"
 msgstr ""
+"Oblika (začnite z %):\n"
+"  izv[a]jalec, [t] - naslov, al[b]um, [B] - skupina, [C] - skladatelj\n"
+"  [n] - št. skladbe, skup[N]o število skladb,\n"
+"  [l] - trajanje, [y] - leto, [g] - zvrst, [c] - opomba,\n"
+"  avto[r]ske pravice, [f] - ime datoteke, [F] - polna pot do datoteke,\n"
+"  [T] - oznake, [d] - mapa, polna pot [D]o mape\n"
+"Primer: %a - %t [%l]"
 
 #: ../plugins/gtkui/interface.c:1473 ../plugins/gtkui/interface.c:2900
 #: ../plugins/gtkui/interface.c:3012 ../plugins/gtkui/interface.c:3135
 #: ../plugins/gtkui/deadbeef.glade.h:148
 msgid "_Cancel"
-msgstr ""
+msgstr "_Prekliči"
 
 #: ../plugins/gtkui/interface.c:1494 ../plugins/gtkui/interface.c:2921
 #: ../plugins/gtkui/interface.c:3033 ../plugins/gtkui/interface.c:3156
 #: ../plugins/gtkui/deadbeef.glade.h:156
 msgid "_OK"
-msgstr ""
+msgstr "_V redu"
 
 #: ../plugins/gtkui/interface.c:1725 ../plugins/gtkui/deadbeef.glade.h:88
 msgid "Output plugin:"
-msgstr ""
+msgstr "Izhodni vstavek:"
 
 #: ../plugins/gtkui/interface.c:1738 ../plugins/gtkui/deadbeef.glade.h:87
 msgid "Output device:"
-msgstr ""
+msgstr "Izhodna naprava:"
 
 #: ../plugins/gtkui/interface.c:1747 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Sound"
-msgstr ""
+msgstr "Zvok"
 
 #: ../plugins/gtkui/interface.c:1756 ../plugins/gtkui/deadbeef.glade.h:12
 msgid "Allow dynamic samplerate switching"
-msgstr ""
+msgstr "Dovoli dinamično preklapljanje hitrosti vzorčenja"
 
 #: ../plugins/gtkui/interface.c:1764 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "Samplerate conversion quality:"
-msgstr ""
+msgstr "Kvaliteta pretvarjanja hitrosti vzorčenja:"
 
 #: ../plugins/gtkui/interface.c:1783 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Replaygain mode:"
-msgstr ""
+msgstr "Način ojačanja predvajanja:"
 
 #: ../plugins/gtkui/interface.c:1792
 msgid "Disable"
-msgstr ""
+msgstr "Onemogočeno"
 
 #: ../plugins/gtkui/interface.c:1796 ../plugins/gtkui/deadbeef.glade.h:109
 msgid "Replaygain peak scale"
-msgstr ""
+msgstr "Vrh ojačanja predvajanja"
 
 #: ../plugins/gtkui/interface.c:1804 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
-msgstr ""
+msgstr "Dodaj datoteke iz ukazne vrstice v ta predvajalnik:"
 
 #: ../plugins/gtkui/interface.c:1813 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "Resume previous session on startup"
-msgstr ""
+msgstr "Ob zagonu nadaljuj prejšnjo sejo"
 
 #: ../plugins/gtkui/interface.c:1817 ../plugins/gtkui/deadbeef.glade.h:94
 msgid "Playback"
-msgstr ""
+msgstr "Predvajanje"
 
 #: ../plugins/gtkui/interface.c:1826 ../plugins/gtkui/deadbeef.glade.h:16
 msgid "Close minimizes to tray"
-msgstr ""
+msgstr "Ob zaprtju skrči v sistemsko vrstico"
 
 #: ../plugins/gtkui/interface.c:1830 ../plugins/gtkui/deadbeef.glade.h:81
 msgid "Middle mouse button closes playlist"
-msgstr ""
+msgstr "Srednji gumb zapre seznam predvajanja"
 
 #: ../plugins/gtkui/interface.c:1834 ../plugins/gtkui/deadbeef.glade.h:67
 msgid "Hide system tray icon"
-msgstr ""
+msgstr "Skrij ikono sistemske vrstice"
 
 #: ../plugins/gtkui/interface.c:1838 ../plugins/gtkui/deadbeef.glade.h:139
 msgid "Use bold font for currently playing track"
-msgstr ""
+msgstr "Uporabi krepko pisavo za trenutno predvajano skladbo"
 
 #: ../plugins/gtkui/interface.c:1842 ../plugins/gtkui/deadbeef.glade.h:66
 msgid "Hide \"Delete from disk\" context menu item"
-msgstr ""
+msgstr "Skrij možnost \"Izbriši z diska\" iz vsebinskega menija"
 
 #: ../plugins/gtkui/interface.c:1850 ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Titlebar text while playing:"
-msgstr ""
+msgstr "Besedilo nazivne vrstice med predvajanjem:"
 
 #: ../plugins/gtkui/interface.c:1864 ../plugins/gtkui/deadbeef.glade.h:135
 msgid "Titlebar text while stopped:"
-msgstr ""
+msgstr "Besedilo nazivne vrstice, ko je predvajanje zaustavljeno:"
 
 #: ../plugins/gtkui/interface.c:1874 ../plugins/gtkui/deadbeef.glade.h:63
 msgid "GUI"
-msgstr ""
+msgstr "Vmesnik"
 
 #: ../plugins/gtkui/interface.c:1888 ../plugins/gtkui/interface.c:1932
 #: ../plugins/gtkui/deadbeef.glade.h:89
 msgid "Override"
-msgstr ""
+msgstr "Prepiši"
 
 #: ../plugins/gtkui/interface.c:1897 ../plugins/gtkui/deadbeef.glade.h:46
 msgid "Foreground"
-msgstr ""
+msgstr "Ospredje"
 
 #: ../plugins/gtkui/interface.c:1904 ../plugins/gtkui/deadbeef.glade.h:14
 msgid "Background"
-msgstr ""
+msgstr "Ozadje"
 
 #: ../plugins/gtkui/interface.c:1923 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Seekbar/Volumebar colors"
-msgstr ""
+msgstr "Barva vrstice iskanja/nadzora glasnosti"
 
 #: ../plugins/gtkui/interface.c:1941 ../plugins/gtkui/deadbeef.glade.h:80
 msgid "Middle"
-msgstr ""
+msgstr "Sredina"
 
 #: ../plugins/gtkui/interface.c:1948 ../plugins/gtkui/deadbeef.glade.h:73
 msgid "Light"
-msgstr ""
+msgstr "Svetlo"
 
 #: ../plugins/gtkui/interface.c:1955 ../plugins/gtkui/deadbeef.glade.h:23
 msgid "Dark"
-msgstr ""
+msgstr "Temno"
 
 #: ../plugins/gtkui/interface.c:1986 ../plugins/gtkui/deadbeef.glade.h:15
 msgid "Base"
-msgstr ""
+msgstr "Osnovno"
 
 #: ../plugins/gtkui/interface.c:1993 ../plugins/gtkui/deadbeef.glade.h:129
 msgid "Tab strip colors"
-msgstr ""
+msgstr "Barva zavihkov"
 
 #: ../plugins/gtkui/interface.c:2002 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
-msgstr ""
+msgstr "Prepiši (izgubi temo GTK, vendar pospeši izrisovanje)"
 
 #: ../plugins/gtkui/interface.c:2011 ../plugins/gtkui/deadbeef.glade.h:34
 msgid "Even row"
-msgstr ""
+msgstr "Soda vrstica"
 
 #: ../plugins/gtkui/interface.c:2018 ../plugins/gtkui/deadbeef.glade.h:85
 msgid "Odd row"
-msgstr ""
+msgstr "Liha vrstica"
 
 #: ../plugins/gtkui/interface.c:2037 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Text"
-msgstr ""
+msgstr "Besedilo"
 
 #: ../plugins/gtkui/interface.c:2044 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Selected row"
-msgstr ""
+msgstr "Izbrana vrstica"
 
 #: ../plugins/gtkui/interface.c:2063 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Selected text"
-msgstr ""
+msgstr "Izbrano besedilo"
 
 #: ../plugins/gtkui/interface.c:2076 ../plugins/gtkui/deadbeef.glade.h:21
 msgid "Cursor"
-msgstr ""
+msgstr "Kazalec"
 
 #: ../plugins/gtkui/interface.c:2089 ../plugins/gtkui/deadbeef.glade.h:95
 msgid "Playlist colors"
-msgstr ""
+msgstr "Barva seznama predvajanja"
 
 #: ../plugins/gtkui/interface.c:2093 ../plugins/gtkui/deadbeef.glade.h:17
 msgid "Colors"
-msgstr ""
+msgstr "Barve"
 
 #: ../plugins/gtkui/interface.c:2102 ../plugins/gtkui/deadbeef.glade.h:31
 msgid "Enable Proxy Server"
-msgstr ""
+msgstr "Omogoči posredniški strežnik"
 
 #: ../plugins/gtkui/interface.c:2110 ../plugins/gtkui/deadbeef.glade.h:101
 msgid "Proxy Server Address:"
-msgstr ""
+msgstr "Naslov posredniškega strežnika:"
 
 #: ../plugins/gtkui/interface.c:2124 ../plugins/gtkui/deadbeef.glade.h:102
 msgid "Proxy Server Port:"
-msgstr ""
+msgstr "Vrata posredniškega strežnika:"
 
 #: ../plugins/gtkui/interface.c:2138 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Proxy Type:"
-msgstr ""
+msgstr "Vrsta posredniškega strežnika:"
 
 #: ../plugins/gtkui/interface.c:2157 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Proxy Username:"
-msgstr ""
+msgstr "Uporabniško ime:"
 
 #: ../plugins/gtkui/interface.c:2170 ../plugins/gtkui/deadbeef.glade.h:100
 msgid "Proxy Password:"
-msgstr ""
+msgstr "Geslo:"
 
 #: ../plugins/gtkui/interface.c:2180 ../plugins/gtkui/deadbeef.glade.h:82
 msgid "Network"
-msgstr ""
+msgstr "Omrežje"
 
 #: ../plugins/gtkui/interface.c:2208 ../plugins/gtkui/deadbeef.glade.h:143
 msgid "Write ID3v2"
-msgstr ""
+msgstr "Zapiši ID3v2"
 
 #: ../plugins/gtkui/interface.c:2212 ../plugins/gtkui/interface.c:2339
 #: ../plugins/gtkui/deadbeef.glade.h:142
 msgid "Write ID3v1"
-msgstr ""
+msgstr "Zapiši ID3v1"
 
 #: ../plugins/gtkui/interface.c:2216 ../plugins/gtkui/interface.c:2295
 #: ../plugins/gtkui/interface.c:2335 ../plugins/gtkui/deadbeef.glade.h:141
 msgid "Write APEv2"
-msgstr ""
+msgstr "Zapiši APEv2"
 
 #: ../plugins/gtkui/interface.c:2224 ../plugins/gtkui/interface.c:2303
 #: ../plugins/gtkui/deadbeef.glade.h:128
 msgid "Strip ID3v2"
-msgstr ""
+msgstr "Odstrani ID3v2"
 
 #: ../plugins/gtkui/interface.c:2228 ../plugins/gtkui/interface.c:2351
 #: ../plugins/gtkui/deadbeef.glade.h:127
 msgid "Strip ID3v1"
-msgstr ""
+msgstr "Odstrani ID3v1"
 
 #: ../plugins/gtkui/interface.c:2232 ../plugins/gtkui/interface.c:2307
 #: ../plugins/gtkui/interface.c:2347 ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Strip APEv2"
-msgstr ""
+msgstr "Odstrani APEv2"
 
 #: ../plugins/gtkui/interface.c:2240 ../plugins/gtkui/deadbeef.glade.h:69
 msgid "ID3v2 version"
-msgstr ""
+msgstr "Različica ID3v2"
 
 #: ../plugins/gtkui/interface.c:2247
 msgid "2.3 (Recommended)"
-msgstr ""
+msgstr "2.3 (priporočeno)"
 
 #: ../plugins/gtkui/interface.c:2248
 msgid "2.4"
-msgstr ""
+msgstr "2.4"
 
 #: ../plugins/gtkui/interface.c:2254 ../plugins/gtkui/deadbeef.glade.h:68
 msgid "ID3v1 character encoding (default is iso8859-1)"
-msgstr ""
+msgstr "Kodiranje znakov ID3v1 (privzeto je iso8859-1)"
 
 #: ../plugins/gtkui/interface.c:2291 ../plugins/gtkui/deadbeef.glade.h:144
 msgid "Write ID3v2.4"
-msgstr ""
+msgstr "Zapiši ID3v2.4"
 
 #: ../plugins/gtkui/interface.c:2360 ../plugins/gtkui/deadbeef.glade.h:131
 msgid "Tag writer"
-msgstr ""
+msgstr "Označevanje"
 
 #: ../plugins/gtkui/interface.c:2391 ../plugins/gtkui/deadbeef.glade.h:24
 msgid "Description:"
-msgstr ""
+msgstr "Opis:"
 
 #: ../plugins/gtkui/interface.c:2406 ../plugins/gtkui/deadbeef.glade.h:13
 msgid "Author(s):"
-msgstr ""
+msgstr "Avtor(ji):"
 
 #: ../plugins/gtkui/interface.c:2421 ../plugins/gtkui/deadbeef.glade.h:30
 msgid "Email:"
-msgstr ""
+msgstr "Email:"
 
 #: ../plugins/gtkui/interface.c:2436 ../plugins/gtkui/deadbeef.glade.h:140
 msgid "Website:"
-msgstr ""
+msgstr "Splet. stran:"
 
 #: ../plugins/gtkui/interface.c:2467 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Configure"
-msgstr ""
+msgstr "Nastavi"
 
 #: ../plugins/gtkui/interface.c:2471 ../plugins/gtkui/deadbeef.glade.h:96
 msgid "Plugins"
-msgstr ""
+msgstr "Vstavki"
 
 #: ../plugins/gtkui/interface.c:2853 ../plugins/gtkui/deadbeef.glade.h:162
 msgid "editplaylistdlg"
-msgstr ""
+msgstr "editplaylistdlg"
 
 #: ../plugins/gtkui/interface.c:2980 ../plugins/gtkui/deadbeef.glade.h:138
 msgid "URL:"
-msgstr ""
+msgstr "URL:"
 
 #: ../plugins/gtkui/interface.c:3081 ../plugins/gtkui/deadbeef.glade.h:64
 msgid "Group By"
-msgstr ""
+msgstr "Združi po"
 
 #: ../plugins/gtkui/interface.c:3106 ../plugins/gtkui/deadbeef.glade.h:56
 #, no-c-format
@@ -812,221 +819,229 @@ msgid ""
 "  copy[r]ight, [f]ilename, [T]ags\n"
 "Example: %a - %t [%l]"
 msgstr ""
+"Oblika (začnite z %):\n"
+"  izv[a]jalec, [t] - naslov, al[b]um, [B] - skupina, [C] - skladatelj\n"
+"  [n] - št. skladbe, skup[N]o število skladb,\n"
+"  [l] - trajanje, [y] - leto, [g] - zvrst, [c] - opomba,\n"
+"  avto[r]ske pravice, [f] - ime datoteke, [T] - oznake\n"
+"Primer: %a - %t [%l]"
 
 #: ../plugins/gtkui/mainplaylist.c:301 ../plugins/gtkui/search.c:434
 msgid "Artist / Album"
-msgstr ""
+msgstr "Izvajalec / Album"
 
 #: ../plugins/gtkui/mainplaylist.c:302 ../plugins/gtkui/search.c:435
 msgid "Track No"
-msgstr ""
+msgstr "Skladba št."
 
 #: ../plugins/gtkui/mainplaylist.c:303 ../plugins/gtkui/search.c:436
 msgid "Title / Track Artist"
-msgstr ""
+msgstr "Naslov / Izvajalec skladbe"
 
 #: ../plugins/gtkui/mainplaylist.c:304 ../plugins/gtkui/search.c:437
 #: ../plugins/gtkui/trkproperties.c:175
 msgid "Duration"
-msgstr ""
+msgstr "Trajanje"
 
 #: ../plugins/gtkui/plcommon.c:323
 msgid "Delete files from disk"
-msgstr ""
+msgstr "Izbriši datoteke z diska"
 
 #: ../plugins/gtkui/plcommon.c:324
 msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
 msgstr ""
+"Datoteke bodo izgubljene. Ali nadaljujem?\n"
+"(To pogovorno okno lahko izključite v nastavitvah vstavka GTKUI)"
 
 #: ../plugins/gtkui/plcommon.c:325 ../plugins/gtkui/trkproperties.c:56
 msgid "Warning"
-msgstr ""
+msgstr "Opozorilo"
 
 #: ../plugins/gtkui/plcommon.c:401
 msgid "Add to playback queue"
-msgstr ""
+msgstr "Dodaj na seznam predvajanja"
 
 #: ../plugins/gtkui/plcommon.c:406
 msgid "Remove from playback queue"
-msgstr ""
+msgstr "Odstrani s seznama predvajanja"
 
 #: ../plugins/gtkui/plcommon.c:414
 msgid "Reload metadata"
-msgstr ""
+msgstr "Ponovno naloži metapodatke"
 
 #: ../plugins/gtkui/plcommon.c:433
 msgid "Remove from disk"
-msgstr ""
+msgstr "Odstrani z diska"
 
 #: ../plugins/gtkui/plcommon.c:719 ../plugins/gtkui/plcommon.c:844
 msgid "Add column"
-msgstr ""
+msgstr "Dodaj stolpec"
 
 #: ../plugins/gtkui/plcommon.c:749 ../plugins/gtkui/plcommon.c:848
 msgid "Edit column"
-msgstr ""
+msgstr "Uredi stolpec"
 
 #: ../plugins/gtkui/plcommon.c:852
 msgid "Remove column"
-msgstr ""
+msgstr "Odstrani stolpec"
 
 #: ../plugins/gtkui/plcommon.c:862
 msgid "Group by"
-msgstr ""
+msgstr "Združi po"
 
 #: ../plugins/gtkui/plcommon.c:869
 msgid "None"
-msgstr ""
+msgstr "Brez"
 
 #: ../plugins/gtkui/plcommon.c:873
 msgid "Artist/Date/Album"
-msgstr ""
+msgstr "Izvajalec/datum/album"
 
 #: ../plugins/gtkui/pluginconf.c:41
 msgid "Open file..."
-msgstr ""
+msgstr "Odpri datoteko ..."
 
 #: ../plugins/gtkui/pluginconf.c:142
 #, c-format
 msgid "Setup %s"
-msgstr ""
+msgstr "Nastavi %s"
 
 #: ../plugins/gtkui/prefwin.c:98
 msgid "Default Audio Device"
-msgstr ""
+msgstr "Privzeta avdio naprava"
 
 #: ../plugins/gtkui/prefwin.c:312
 msgid "Add"
-msgstr ""
+msgstr "Dodaj"
 
 #: ../plugins/gtkui/prefwin.c:322
 msgid "Global Hotkeys"
-msgstr ""
+msgstr "Splošne bližnjice"
 
 #: ../plugins/gtkui/prefwin.c:384
 msgid "Slot"
-msgstr ""
+msgstr "Dejanje"
 
 #: ../plugins/gtkui/prefwin.c:385
 msgid "Key combination"
-msgstr ""
+msgstr "Bližnjica"
 
 #. output plugin selection
 #: ../plugins/gtkui/prefwin.c:464 ../plugins/gtkui/prefwin.c:676
 #: ../plugins.c:872
 msgid "ALSA output plugin"
-msgstr ""
+msgstr "Izhodni vstavek ALSA"
 
 #: ../plugins/gtkui/progress.c:64
 msgid "Initializing..."
-msgstr ""
+msgstr "Začenjanje ..."
 
 #: ../plugins/gtkui/trkproperties.c:53
 msgid "You've modified data for this track."
-msgstr ""
+msgstr "Spremenili ste podatke te skladbe."
 
 #: ../plugins/gtkui/trkproperties.c:55
 msgid "Really close the window?"
-msgstr ""
+msgstr "Ali res želite zapreti to okno?"
 
 #: ../plugins/gtkui/trkproperties.c:178
 msgid "Tag Type(s)"
-msgstr ""
+msgstr "Vrsta oznake"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Embedded Cuesheet"
-msgstr ""
+msgstr "Vstavljen Cuesheet"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Yes"
-msgstr ""
+msgstr "Da"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "No"
-msgstr ""
+msgstr "Ne"
 
 #: ../plugins/gtkui/trkproperties.c:182
 msgid "Codec"
-msgstr ""
+msgstr "Kodek"
 
 #: ../plugins/gtkui/trkproperties.c:250 ../plugins/gtkui/trkproperties.c:262
 msgid "Key"
-msgstr ""
+msgstr "Ključ"
 
 #: ../plugins/gtkui/trkproperties.c:251 ../plugins/gtkui/trkproperties.c:263
 msgid "Value"
-msgstr ""
+msgstr "Vrednost"
 
 #: ../plugins/notify/notify.c:138
 msgid "DeaDBeeF now playing"
-msgstr ""
+msgstr "DeaDBeeF predvaja skladbo"
 
 #: ../main.c:89
 #, c-format
 msgid "Usage: deadbeef [options] [file(s)]\n"
-msgstr ""
+msgstr "Uporaba: deadbeef [možnosti] [datoteka]\n"
 
 #: ../main.c:90
 #, c-format
 msgid "Options:\n"
-msgstr ""
+msgstr "Možnosti:\n"
 
 #: ../main.c:91
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr ""
+msgstr "   --help  ali  -h     Prikaže pomoč (to sporočilo)\n"
 
 #: ../main.c:92
 #, c-format
 msgid "   --quit             Quit player\n"
-msgstr ""
+msgstr "   --quit             Konča predvajalnik\n"
 
 #: ../main.c:93
 #, c-format
 msgid "   --version          Print version info and exit\n"
-msgstr ""
+msgstr "   --version          Prikaže podatke o različici\n"
 
 #: ../main.c:94
 #, c-format
 msgid "   --play             Start playback\n"
-msgstr ""
+msgstr "   --play             Začne predvajanje\n"
 
 #: ../main.c:95
 #, c-format
 msgid "   --stop             Stop playback\n"
-msgstr ""
+msgstr "   --stop             Zaustavi predvajanje\n"
 
 #: ../main.c:96
 #, c-format
 msgid "   --pause            Pause playback\n"
-msgstr ""
+msgstr "   --pause            Prekini predvajanje\n"
 
 #: ../main.c:97
 #, c-format
 msgid "   --next             Next song in playlist\n"
-msgstr ""
+msgstr "   --next             Naslednja skladba s seznama predvajanja\n"
 
 #: ../main.c:98
 #, c-format
 msgid "   --prev             Previous song in playlist\n"
-msgstr ""
+msgstr "   --prev             Prejšnja skladba s seznama predvajanja\n"
 
 #: ../main.c:99
 #, c-format
 msgid "   --random           Random song in playlist\n"
-msgstr ""
+msgstr "   --random           Naključna skladba s seznama predvajanja\n"
 
 #: ../main.c:100
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
-msgstr ""
+msgstr "   --queue            Pripne datoteko na seznam predvajanja\n"
 
 #: ../main.c:101
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr ""
+msgstr "   --nowplaying OBLIKA   Prikaže oblikovano ime skladbe\n"
 
 #: ../main.c:102
 #, c-format
@@ -1035,23 +1050,31 @@ msgid ""
 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
 "                      copy[r]ight, [e]lapsed\n"
 msgstr ""
+"                      OBLIKA (začnite z %%): izv[a]jalec, [t] - naslov, "
+"al[b]um,\n"
+"                      [l] - trajanje, [n] - št. skladbe, [y] - leto, [c] - "
+"opomba,\n"
+"                      avto[r]ske pravice, pr[e]tečen čas\n"
 
 #: ../main.c:105
 #, c-format
 msgid ""
 "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
 "- title\"\n"
-msgstr ""
+msgstr "                      npr.: --nowplaying \"%%a - %%t\" izpiše \"izvajalec - "
+"naslov\"\n"
 
 #: ../playlist.c:377 ../playlist.c:2289
 msgid "Default"
-msgstr ""
+msgstr "Privzeto"
 
 #: ../plugins/gtkui/deadbeef.glade.h:1
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
 msgstr ""
+"2.3 (priporočeno)\n"
+"2.4"
 
 #: ../plugins/gtkui/deadbeef.glade.h:26
 msgid ""
@@ -1059,6 +1082,9 @@ msgid ""
 "Track\n"
 "Album"
 msgstr ""
+"Onemogoči\n"
+"Skladba\n"
+"Album"
 
 #: ../plugins/gtkui/deadbeef.glade.h:35
 msgid ""
@@ -1074,70 +1100,85 @@ msgid ""
 "Band / Album Artist\n"
 "Custom"
 msgstr ""
+"Številka datoteke\n"
+"Predvajanje\n"
+"Naslovnica albuma\n"
+"Izvajalec - Album\n"
+"Izvajalec\n"
+"Album\n"
+"Naslov\n"
+"Trajanje\n"
+"Skladba\n"
+"Skupina / Izvajalec albuma\n"
+"Po meri"
 
 #: ../plugins/gtkui/deadbeef.glade.h:71
 msgid ""
 "Left\n"
 "Right"
 msgstr ""
+"Levo\n"
+"Desno"
 
 #: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
 #, c-format
 msgid "Couldn't find pixmap file: %s"
-msgstr ""
+msgstr "Večbitne sličice ni mogoče najti: %s"
 
 #: ../plugins/vorbis/vcedit.c:129 ../plugins/vorbis/vcedit.c:155
 msgid "Couldn't get enough memory for input buffering."
-msgstr ""
+msgstr "Ni dovolj pomnilnika za medpomnenje vhoda."
 
 #: ../plugins/vorbis/vcedit.c:179 ../plugins/vorbis/vcedit.c:550
 msgid "Error reading first page of Ogg bitstream."
-msgstr ""
+msgstr "Napaka med branjem prve strani bitnega pretoka Ogg."
 
 #: ../plugins/vorbis/vcedit.c:185 ../plugins/vorbis/vcedit.c:557
 msgid "Error reading initial header packet."
-msgstr ""
+msgstr "Napaka med branjem začetnega paketa glave."
 
 #: ../plugins/vorbis/vcedit.c:237
 msgid "Couldn't get enough memory to register new stream serial number."
-msgstr ""
+msgstr "Ni dovolj pomnilnika za vpis serijske številke novega pretoka."
 
 #: ../plugins/vorbis/vcedit.c:505
 msgid "Input truncated or empty."
-msgstr ""
+msgstr "Vhod prirezan ali prazen."
 
 #: ../plugins/vorbis/vcedit.c:507
 msgid "Input is not an Ogg bitstream."
-msgstr ""
+msgstr "Vhod ni bitni pretok Ogg."
 
 #: ../plugins/vorbis/vcedit.c:565
 msgid "Ogg bitstream does not contain Vorbis data."
-msgstr ""
+msgstr "Bitni pretok Ogg ne vsebuje podatkov Vorbis."
 
 #: ../plugins/vorbis/vcedit.c:578
 msgid "EOF before recognised stream."
-msgstr ""
+msgstr "Konec datoteke pred prepoznanim pretokom."
 
 #: ../plugins/vorbis/vcedit.c:594
 msgid "Ogg bitstream does not contain a supported data-type."
-msgstr ""
+msgstr "Bitni pretok Ogg ne vsebuje podprte vrste podatkov."
 
 #: ../plugins/vorbis/vcedit.c:638
 msgid "Corrupt secondary header."
-msgstr ""
+msgstr "Drugotna glava je pokvarjena."
 
 #: ../plugins/vorbis/vcedit.c:659
 msgid "EOF before end of Vorbis headers."
-msgstr ""
+msgstr "Konec datoteke pred glavami Vorbis."
 
 #: ../plugins/vorbis/vcedit.c:834
 msgid "Corrupt or missing data, continuing..."
-msgstr ""
+msgstr "Pokvarjeni ali manjkajoči podatki, nadaljevanje ..."
 
 #: ../plugins/vorbis/vcedit.c:874
 msgid ""
 "Error writing stream to output. Output stream may be corrupted or truncated."
 msgstr ""
+"Napaka med zapisovanjem pretoka v izhod. Izhodni pretok je pokvarjen ali "
+"prirezan."
 
 #: ../plugins/wildmidi/wildmidiplug.c:162
 #, c-format
@@ -1145,3 +1186,6 @@ msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings."
 msgstr ""
+"wildmidi: nastavitvene datoteke freepats ni mogoče najti. Prosimo, namestite "
+"paket timidity-freepats ali pa navedite pot to datoteke freepats.cfg v "
+"nastavitvah vstavkov."
