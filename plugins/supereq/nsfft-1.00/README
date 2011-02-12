@@ -1,0 +1,15 @@
+
+NSFFT (Nonrestrictive SIMD FFT) is yet another FFT library for
+performing 1-dimensional fast Fourier transforms. NSDFT is a simple,
+small and portable library, and it is efficient since it can utilize
+SIMD instruction sets in modern processors. It performs multiple
+transforms simultaneously, and thus it is especially suitable for
+digital signal processing. It does not need so much computation to
+make a good execution plan. This library is in public domain, so that
+you can incorporate this library into your product without any
+obligation.
+
+Visit http://shibatch.sourceforge.net/ to get the latest version of
+this library.
+
+Contact : Naoki Shibata shibatch@users.sourceforge.net

@@ -1,0 +1,131 @@
+--- pi_fft.c	2010-07-30 13:04:25.000000000 +0900
++++ pi_fft_mod.c	2010-07-31 20:50:11.000000000 +0900
+@@ -25,7 +25,75 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <time.h>
++#include <sys/time.h>
++#include <unistd.h>
+ 
++/****/
++
++#include <stdint.h>
++#include "SIMDBase.h"
++#include "DFT.h"
++
++DFT* dft[64];
++
++void initdft(int n) {
++  int i, logn = 31 - __builtin_clz(n), writeflag = 0;
++  char buf[20], fn[256];
++  gethostname(buf, 19);
++  sprintf(fn, "nsfftplan.%s.txt", buf);
++  FILE *fp = fopen(fn, "r");
++  if (fp != NULL) {
++    for(i=1;i<=logn;i++) {
++      int err;
++      dft[i] = DFT_fread(fp, &err);
++      if (err != DFT_ERROR_NOERROR) {
++	printf("error when reading plan %d : %d\n", i, err);
++	break;
++      }
++      if (DFT_getPlanParamInt(DFT_PARAMID_MODE, dft[i]) != SIMDBase_MODE_PUREC_DOUBLE ||
++	  DFT_getPlanParamInt(DFT_PARAMID_FFT_LENGTH, dft[i]) != (1 << i) ||
++	  DFT_getPlanParamInt(DFT_PARAMID_IS_ALT_REAL_TRANSFORM, dft[i]) != 1) {
++	fprintf(stderr, "plan not compatible : %d\n", i);
++	break;
++      }
++    }
++  }
++  if (fp != NULL) fclose(fp);
++
++  for(i=1;i<=logn;i++) {
++    if (dft[i] == NULL) {
++      dft[i] = DFT_init(SIMDBase_MODE_PUREC_DOUBLE, 1 << i, DFT_FLAG_ALT_REAL | DFT_FLAG_LIGHT_TEST_RUN | DFT_FLAG_VERBOSE);
++      if (dft[i] == NULL) {
++	printf("dft[%d] == NULL\n", i);
++	exit(-1);
++      }
++      writeflag = 1;
++    }
++  }
++
++  if (writeflag) {
++    fp = fopen(fn, "w");
++    if (fp != NULL) {
++      for(i=1;i<=logn;i++) {
++	DFT_fwrite(dft[i], fp);
++      }
++      fclose(fp);
++    }
++  }
++}
++
++void rdft(int n, int isgn, double *a, int *ip, double *w) {
++  int logn = 31 - __builtin_clz(n);
++  DFT_execute(dft[logn], SIMDBase_MODE_PUREC_DOUBLE, a, isgn);
++}
++
++double timeofday(void) {
++  struct timeval tp;
++  gettimeofday(&tp, NULL);
++  return (double)tp.tv_sec+(1e-6)*tp.tv_usec;
++}
++
++/****/
+ 
+ void mp_load_0(int n, int radix, int out[]);
+ void mp_load_1(int n, int radix, int out[]);
+@@ -67,7 +135,7 @@
+     double err, d_time, n_op;
+     int *a, *b, *c, *e, *i1, *i2, *ip;
+     double *d1, *d2, *d3, *w;
+-    time_t t_1, t_2;
++    double t_1, t_2;
+     FILE *f_log, *f_out;
+     
+     f_log = fopen("pi.log", "w");
+@@ -96,6 +164,8 @@
+         exit(1);
+     }
+     ip[0] = 0;
++
++    initdft(nfft);
+     /* ---- radix test ---- */
+     log10_radix = 1;
+     radix = 10;
+@@ -111,7 +181,7 @@
+     printf("calculating %d digits of PI...\n", log10_radix * (n - 2));
+     fprintf(f_log, "calculating %d digits of PI...\n", log10_radix * (n - 2));
+     /* ---- time check ---- */
+-    time(&t_1);
++    t_1 = timeofday();
+     /*
+      * ---- a formula based on the AGM (Arithmetic-Geometric Mean) ----
+      *   c = sqrt(0.125);
+@@ -216,10 +286,10 @@
+     mp_mul(n, radix, a, b, a, i1, nfft, d1, d2, d3, ip, w);
+     mp_idiv(n, radix, a, npow, a);
+     /* ---- time check ---- */
+-    time(&t_2);
++    t_2 = timeofday();
+     /* ---- output ---- */
+     f_out = fopen("pi_mod.dat", "w");
+-    printf("writing pi.dat...\n");
++    printf("writing pi_mod.dat...\n");
+     mp_fprintf(n - 1, log10_radix, a, f_out);
+     fclose(f_out);
+     free(d3);
+@@ -238,9 +308,9 @@
+     printf("floating point operation: %g op.\n", n_op);
+     fprintf(f_log, "floating point operation: %g op.\n", n_op);
+     /* ---- difftime ---- */
+-    d_time = difftime(t_2, t_1);
+-    printf("execution time: %g sec. (real time)\n", d_time);
+-    fprintf(f_log, "execution time: %g sec. (real time)\n", d_time);
++    d_time = t_2 - t_1;
++    printf("execution time: %.5g sec. (real time)\n", d_time);
++    fprintf(f_log, "execution time: %.5g sec. (real time)\n", d_time);
+     fclose(f_log);
+     return 0;
+ }

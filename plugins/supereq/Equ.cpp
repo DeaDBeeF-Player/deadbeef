@@ -42,36 +42,44 @@ int _Unwind_GetIPInfo;
 void rdft(int, int, REAL *, int *, REAL *);
 void rfft(int n,int isign,REAL x[])
 {
+    static int ipsize = 0,wsize=0;
+    static int *ip = NULL;
+    static REAL *w = NULL;
+    int newipsize,newwsize;
+    if (n == 0) {
+        free(ip); ip = NULL; ipsize = 0;
+        free(w);  w  = NULL; wsize  = 0;
+        return;
+    }
+
     n = 1 << n;
-  static int ipsize = 0,wsize=0;
-  static int *ip = NULL;
-  static REAL *w = NULL;
-  int newipsize,newwsize;
 
-  if (n == 0) {
-    free(ip); ip = NULL; ipsize = 0;
-    free(w);  w  = NULL; wsize  = 0;
-    return;
-  }
 
-  newipsize = 2+sqrt(n/2);
-  if (newipsize > ipsize) {
-    ipsize = newipsize;
-    ip = (int *)realloc(ip,sizeof(int)*ipsize);
-    ip[0] = 0;
-  }
+    newipsize = 2+sqrt(n/2);
+    if (newipsize > ipsize) {
+        ipsize = newipsize;
+        ip = (int *)realloc(ip,sizeof(int)*ipsize);
+        ip[0] = 0;
+    }
 
-  newwsize = n/2;
-  if (newwsize > wsize) {
-    wsize = newwsize;
-    w = (REAL *)realloc(w,sizeof(REAL)*wsize);
-  }
+    newwsize = n/2;
+    if (newwsize > wsize) {
+        wsize = newwsize;
+        w = (REAL *)realloc(w,sizeof(REAL)*wsize);
+    }
 
-  rdft(n,isign,x,ip,w);
+    rdft(n,isign,x,ip,w);
 }
-#elif defined(USE_FFMPEG)
+#elif defined(USE_FFMPEG) || defined(USE_SHIBATCH)
 extern "C" void rfft(int n,int isign,REAL x[]);
 #endif
+
+#if defined(USE_SHIBATCH)
+extern "C" {
+#include "SIMDBase.h"
+}
+#endif
+
 
 #define PI 3.1415926535897932384626433832795
 
@@ -111,6 +119,22 @@ static REAL izero(REAL x)
   return ret;
 }
 
+void *equ_malloc (int size) {
+#ifdef USE_SHIBATCH
+    return SIMDBase_alignedMalloc (size);
+#else
+    return malloc (size);
+#endif
+}
+
+void equ_free (void *mem) {
+#ifdef USE_SHIBATCH
+    SIMDBase_alignedFree (mem);
+#else
+    free (mem);
+#endif
+}
+
 extern "C" void equ_init(SuperEqState *state, int wb, int channels)
 {
   int i,j;
@@ -133,13 +157,13 @@ extern "C" void equ_init(SuperEqState *state, int wb, int channels)
   state->tabsize  = 1 << wb;
   state->fft_bits = wb;
 
-  state->lires1   = (REAL *)malloc(sizeof(REAL)*state->tabsize * state->channels);
-  state->lires2   = (REAL *)malloc(sizeof(REAL)*state->tabsize * state->channels);
-  state->irest    = (REAL *)malloc(sizeof(REAL)*state->tabsize);
-  state->fsamples = (REAL *)malloc(sizeof(REAL)*state->tabsize);
-  state->finbuf    = (REAL *)calloc(state->winlen*state->channels,sizeof(REAL));
-  state->outbuf   = (REAL *)calloc(state->tabsize*state->channels,sizeof(REAL));
-  state->ditherbuf = (REAL *)malloc(sizeof(REAL)*DITHERLEN);
+  state->lires1   = (REAL *)equ_malloc(sizeof(REAL)*state->tabsize * state->channels);
+  state->lires2   = (REAL *)equ_malloc(sizeof(REAL)*state->tabsize * state->channels);
+  state->irest    = (REAL *)equ_malloc(sizeof(REAL)*state->tabsize);
+  state->fsamples = (REAL *)equ_malloc(sizeof(REAL)*state->tabsize);
+  state->finbuf    = (REAL *)equ_malloc(state->winlen*state->channels*sizeof(REAL));
+  state->outbuf   = (REAL *)equ_malloc(state->tabsize*state->channels*sizeof(REAL));
+  state->ditherbuf = (REAL *)equ_malloc(sizeof(REAL)*DITHERLEN);
 
   memset (state->lires1, 0, sizeof(REAL)*state->tabsize * state->channels);
   memset (state->lires2, 0, sizeof(REAL)*state->tabsize * state->channels);
@@ -321,13 +345,13 @@ extern "C" void equ_makeTable(SuperEqState *state, REAL *lbc,void *_param,REAL f
 
 extern "C" void equ_quit(SuperEqState *state)
 {
-  free(state->lires1);
-  free(state->lires2);
-  free(state->irest);
-  free(state->fsamples);
-  free(state->finbuf);
-  free(state->outbuf);
-  free(state->ditherbuf);
+  equ_free(state->lires1);
+  equ_free(state->lires2);
+  equ_free(state->irest);
+  equ_free(state->fsamples);
+  equ_free(state->finbuf);
+  equ_free(state->outbuf);
+  equ_free(state->ditherbuf);
 
   state->lires1   = NULL;
   state->lires2   = NULL;

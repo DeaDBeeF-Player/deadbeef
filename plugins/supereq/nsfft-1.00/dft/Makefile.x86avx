@@ -1,0 +1,35 @@
+CC=gcc
+BASEOPT=-Wall -I ../simd
+OPT=$(BASEOPT) -O3
+
+all : libDFT.a
+
+DFTpurecfloat.o : DFTUndiff.c DFT.h ../simd/SIMDBase.h ../simd/SIMDBaseUndiff.h
+	$(CC) $(OPT) -DENABLE_PUREC_FLOAT DFTUndiff.c -c -o DFTpurecfloat.o
+
+DFTpurecdouble.o : DFTUndiff.c DFT.h ../simd/SIMDBase.h ../simd/SIMDBaseUndiff.h
+	$(CC) $(OPT) -DENABLE_PUREC_DOUBLE DFTUndiff.c -c -o DFTpurecdouble.o
+
+DFTpureclongdouble.o : DFTUndiff.c DFT.h ../simd/SIMDBase.h ../simd/SIMDBaseUndiff.h
+	$(CC) $(OPT) -DENABLE_PUREC_LONGDOUBLE DFTUndiff.c -c -o DFTpureclongdouble.o
+
+DFTssefloat.o : DFTUndiff.c DFT.h ../simd/SIMDBase.h ../simd/SIMDBaseUndiff.h
+	$(CC) $(OPT) -msse -DENABLE_SSE_FLOAT DFTUndiff.c -c -o DFTssefloat.o
+
+DFTsse2double.o : DFTUndiff.c DFT.h ../simd/SIMDBase.h ../simd/SIMDBaseUndiff.h
+	$(CC) $(OPT) -msse2 -DENABLE_SSE2_DOUBLE DFTUndiff.c -c -o DFTsse2double.o
+
+DFTavxfloat.o : DFTUndiff.c DFT.h ../simd/SIMDBase.h ../simd/SIMDBaseUndiff.h
+	$(CC) $(OPT) -mavx -DENABLE_AVX_FLOAT DFTUndiff.c -c -o DFTavxfloat.o
+
+DFTavxdouble.o : DFTUndiff.c DFT.h ../simd/SIMDBase.h ../simd/SIMDBaseUndiff.h
+	$(CC) $(OPT) -mavx -DENABLE_AVX_DOUBLE DFTUndiff.c -c -o DFTavxdouble.o
+
+DFT.o : DFT.c DFT.h
+	$(CC) $(OPT) -DENABLE_PUREC_FLOAT -DENABLE_PUREC_DOUBLE -DENABLE_PUREC_LONGDOUBLE -DENABLE_SSE_FLOAT -DENABLE_SSE2_DOUBLE -DENABLE_AVX_FLOAT -DENABLE_AVX_DOUBLE DFT.c -c -o DFT.o
+
+libDFT.a : DFTpurecfloat.o DFTpurecdouble.o DFTpureclongdouble.o DFTssefloat.o DFTsse2double.o DFTavxfloat.o DFTavxdouble.o DFT.o
+	rm -f libDFT.a; ar -cvq libDFT.a DFTpurecfloat.o DFTpurecdouble.o DFTpureclongdouble.o DFTssefloat.o DFTsse2double.o DFTavxfloat.o DFTavxdouble.o DFT.o
+
+clean :
+	rm -f *~ *.o *.s *.a a.out

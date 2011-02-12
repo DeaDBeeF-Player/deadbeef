@@ -1,0 +1,2016 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN" "http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link rel="stylesheet" type="text/css" href="default.css"/>
+<title>NSFFT Reference Manual</title>
+</head>
+<body>
+<h1>NSFFT Reference Manual</h1>
+
+<h3>Introduction</h3>
+
+<p>
+This is a library for performing 1-dimensional discrete Fourier
+transforms. NSDFT is a simple, small and portable library, and it is
+efficient since it can utilize SIMD instruction sets in modern
+processors. It performs multiple transforms simultaneously, and thus
+it is especially suitable for digital signal processing. It does not
+need so much computation to make a good execution plan. This library
+is in public domain, so that you can incorporate this library into
+your product without any obligation.
+</p>
+
+<h3>API Reference</h3>
+
+<p>
+In this section, the API functions are explained.
+</p>
+
+<h4>Include files</h4>
+
+<p>
+You have to include two include files in dft directory.
+</p>
+
+<pre class="code">
+#include &lt;stdint.h&gt;
+#include "SIMDBase.h"
+#include "DFT.h"
+</pre>
+
+<h4>Data types</h4>
+
+<p>
+First, you have to choose a data type to represent an element in the
+input and output sequence of numbers. You can choose from the
+following three types.
+</p>
+
+<table class="figure">
+  <tr align="center">
+    <td>
+      <table class="lt">
+        <tr>
+          <td class="lt-hl"></td>
+          <td class="lt-hl"></td>
+        </tr>
+	<tr>
+	  <td class="lt-br" align="center">Symbol</td>
+	  <td class="lt-b" align="center">Data Type</td>
+	</tr>
+	<tr>
+	  <td class="lt-hl"></td>
+	  <td class="lt-hl"></td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">SIMDBase_TYPE_FLOAT</td>
+	  <td class="lt-" align="left">float type in C language</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">SIMDBase_TYPE_DOUBLE</td>
+	  <td class="lt-" align="left">double type in C language</td>
+	</tr>
+	<tr>
+	  <td class="lt-br" align="left">SIMDBase_TYPE_LONGDOUBLE</td>
+	  <td class="lt-b" align="left">long double type in C language</td>
+	</tr>
+      </table>
+    </td>
+  </tr>
+  <tr align="center">
+    <td class="caption">Table 1 Data types</td>
+  </tr>
+</table>
+
+
+<h4>Computation modes</h4>
+
+<p>
+Next, a compuation mode have to be chosen. You can choose from the
+following modes.
+</p>
+
+<table class="figure">
+  <tr align="center">
+    <td>
+      <table class="lt">
+        <tr>
+          <td class="lt-hl"></td>
+          <td class="lt-hl"></td>
+          <td class="lt-hl"></td>
+          <td class="lt-hl"></td>
+        </tr>
+	<tr>
+	  <td class="lt-br" align="center">Symbol</td>
+	  <td class="lt-br" align="center">Type</td>
+	  <td class="lt-br" align="center">Vector Length</td>
+	  <td class="lt-b" align="center">Computation Mode</td>
+	</tr>
+	<tr>
+	  <td class="lt-hl"></td>
+	  <td class="lt-hl"></td>
+	  <td class="lt-hl"></td>
+	  <td class="lt-hl"></td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">SIMDBase_MODE_PUREC_FLOAT</td>
+	  <td class="lt-r" align="center">float</td>
+	  <td class="lt-r" align="center">1</td>
+	  <td class="lt-" align="center">Scalar float</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">SIMDBase_MODE_PUREC_DOUBLE</td>
+	  <td class="lt-r" align="center">double</td>
+	  <td class="lt-r" align="center">1</td>
+	  <td class="lt-" align="center">Scalar double</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">SIMDBase_MODE_PUREC_LONGDOUBLE</td>
+	  <td class="lt-r" align="center">long double</td>
+	  <td class="lt-r" align="center">1</td>
+	  <td class="lt-" align="center">Scalar long double</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">SIMDBase_MODE_SSE_FLOAT</td>
+	  <td class="lt-r" align="center">float</td>
+	  <td class="lt-r" align="center">4</td>
+	  <td class="lt-" align="center">x86 SSE</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">SIMDBase_MODE_SSE2_DOUBLE</td>
+	  <td class="lt-r" align="center">double</td>
+	  <td class="lt-r" align="center">2</td>
+	  <td class="lt-" align="center">x86 SSE2</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">SIMDBase_MODE_NEON_FLOAT</td>
+	  <td class="lt-r" align="center">float</td>
+	  <td class="lt-r" align="center">4</td>
+	  <td class="lt-" align="center">ARM NEON</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">SIMDBase_MODE_AVX_FLOAT</td>
+	  <td class="lt-r" align="center">float</td>
+	  <td class="lt-r" align="center">8</td>
+	  <td class="lt-" align="center">x86 AVX (float)</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">SIMDBase_MODE_AVX_DOUBLE</td>
+	  <td class="lt-r" align="center">double</td>
+	  <td class="lt-r" align="center">4</td>
+	  <td class="lt-" align="center">x86 AVX (double)</td>
+	</tr>
+	<tr>
+	  <td class="lt-br" align="left">SIMDBase_MODE_ALTIVEC_FLOAT</td>
+	  <td class="lt-br" align="center">float</td>
+	  <td class="lt-br" align="center">4</td>
+	  <td class="lt-b" align="center">PowerPC Altivec</td>
+	</tr>
+      </table>
+    </td>
+  </tr>
+  <tr align="center">
+    <td class="caption">Table 2 Computation modes</td>
+  </tr>
+</table>
+
+<p>
+The following function automatically checks the availability of each
+instruction set on your computer, and chooses the best computation
+mode.
+</p>
+
+<pre class="code">
+int32_t SIMDBase_chooseBestMode(int32_t type);
+</pre>
+
+<p>
+The return value is the best mode chosen by this routine.
+<i>type</i> is the data type you chose.
+</p>
+
+
+<h4>Retrieving parameters</h4>
+
+<p>
+You can make queries for any mode using the following function.
+</p>
+
+<pre class="code">
+int32_t SIMDBase_getModeParamInt(int32_t paramId, int32_t mode);
+</pre>
+
+<p>
+<i>mode</i> is the computation mode you chose. <i>paramId</i> is one
+of the following.
+</p>
+
+<table class="figure">
+  <tr align="center">
+    <td>
+      <table class="lt">
+        <tr>
+          <td class="lt-hl"></td>
+          <td class="lt-hl"></td>
+        </tr>
+	<tr>
+	  <td class="lt-br" align="center">Symbol</td>
+	  <td class="lt-b" align="center">Meaning</td>
+	</tr>
+	<tr>
+	  <td class="lt-hl"></td>
+	  <td class="lt-hl"></td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">SIMDBase_PARAMID_SIZE_OF_REAL</td>
+	  <td class="lt-" align="left">Size of an element in a vector in byte</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">SIMDBase_PARAMID_SIZE_OF_VECT</td>
+	  <td class="lt-" align="left">Size of the vector in byte</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">SIMDBase_PARAMID_VECTOR_LEN</td>
+	  <td class="lt-" align="left">Number of elements in a vector</td>
+	</tr>
+	<tr>
+	  <td class="lt-br" align="left">SIMDBase_PARAMID_MODE_AVAILABILITY</td>
+	  <td class="lt-b" align="left">Whether the given mode is available or not</td>
+	</tr>
+      </table>
+    </td>
+  </tr>
+  <tr align="center">
+    <td class="caption">Table 3 Querying parameter for computation mode</td>
+  </tr>
+</table>
+
+<p>
+Here, a vector is a set of multiple primitive data element (single or
+double precision FP number) which can be stored in one SIMD register,
+and can be processed by one SIMD instruction at the same time.
+</p>
+
+<p>
+You can get the mode name in string data type. In this
+case, <i>paramId</i> must be SIMDBase_PARAMID_MODE_NAME.
+</p>
+
+<pre class="code">
+char *SIMDBase_getModeParamString(int32_t paramId, int32_t mode);
+</pre>
+
+<p>
+You should not modify the data returned by the above function.
+</p>
+
+
+<h4>Making and destroying execution plan</h4>
+
+<p>
+An execution plan can be made by the following function.
+</p>
+
+<pre class="code">
+DFT *DFT_init(int32_t mode, int32_t n, int32_t flags);
+</pre>
+
+<p>
+The return value is a pointer to a newly made plan.
+<i>mode</i> is the mode you chose above. <i>n</i> is the length of a
+transform. You can specify a bitwise OR of the following symbols
+as <i>flags</i>. You should not specify more than one flags regarding
+to test run. You should not specify DFT_FLAG_FORCE_RECURSIVE and
+DFT_FLAG_FORCE_COBRA at the same time. If neither DFT_FLAG_REAL nor
+DFT_FLAG_ALT_REAL is specified, an execution plan for complex
+transforms are made.
+</p>
+
+<table class="figure">
+  <tr align="center">
+    <td>
+      <table class="lt">
+        <tr>
+          <td class="lt-hl"></td>
+          <td class="lt-hl"></td>
+        </tr>
+	<tr>
+	  <td class="lt-br" align="center">Symbol</td>
+	  <td class="lt-b" align="center">Meaning</td>
+	</tr>
+	<tr>
+	  <td class="lt-hl"></td>
+	  <td class="lt-hl"></td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">DFT_FLAG_NO_TEST_RUN</td>
+	  <td class="lt-" align="left">Make execution plan without performing a test run</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">DFT_FLAG_LIGHT_TEST_RUN</td>
+	  <td class="lt-" align="left">Perform small amount of test run to make an execution plan</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">DFT_FLAG_HEAVY_TEST_RUN</td>
+	  <td class="lt-" align="left">Perform large amount of test run to make an execution plan</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">DFT_FLAG_EXHAUSTIVE_TEST_RUN</td>
+	  <td class="lt-" align="left">Perform exhaustive search of parameters and find the optimal execution plan</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">DFT_FLAG_REAL</td>
+	  <td class="lt-" align="left">Make an execution plan for a real transform</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">DFT_FLAG_ALT_REAL</td>
+	  <td class="lt-" align="left">Make an execution plan for an alternative real transform</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">DFT_FLAG_VERBOSE</td>
+	  <td class="lt-" align="left">Make some noise during making an execution plan</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">DFT_FLAG_NOBITREVERSAL</td>
+	  <td class="lt-" align="left">Does not perforam bitreversal operation during a transform</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">DFT_FLAG_FORCE_RECURSIVE</td>
+	  <td class="lt-" align="left">Force using the recursive bit-reveral routine. This routine is suited for small transforms.</td>
+	</tr>
+	<tr>
+	  <td class="lt-br" align="left">DFT_FLAG_FORCE_COBRA</td>
+	  <td class="lt-b" align="left">Force using the Cobra bit-reveral routine. This routine is suited for large transforms.</td>
+	</tr>
+      </table>
+    </td>
+  </tr>
+  <tr align="center">
+    <td class="caption">Table 4 Options for making execution plan</td>
+  </tr>
+</table>
+
+<p>
+You can destroy the plan you made by the following function.
+</p>
+
+<pre class="code">
+void DFT_dispose(DFT *p, int32_t mode);
+</pre>
+
+<p>
+<i>p</i> is a pointer to the execution plan. <i>mode</i> is the
+corresponding execution mode.
+</p>
+
+<p>
+You can retrieve parameters of a plan using the following function.
+</p>
+
+<pre class="code">
+int32_t DFT_getPlanParamInt(int32_t paramId, void *p);
+</pre>
+
+<p>
+<i>p</i> is a pointer to an execution plan. <i>paramId</i> is one
+of the following.
+</p>
+
+<table class="figure">
+  <tr align="center">
+    <td>
+      <table class="lt">
+        <tr>
+          <td class="lt-hl"></td>
+          <td class="lt-hl"></td>
+        </tr>
+	<tr>
+	  <td class="lt-br" align="center">Symbol</td>
+	  <td class="lt-b" align="center">Meaning</td>
+	</tr>
+	<tr>
+	  <td class="lt-hl"></td>
+	  <td class="lt-hl"></td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">DFT_PARAMID_TYPE</td>
+	  <td class="lt-" align="left">Data type</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">DFT_PARAMID_MODE</td>
+	  <td class="lt-" align="left">Computation mode</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">DFT_PARAMID_FFT_LENGTH</td>
+	  <td class="lt-" align="left">Length of the transform</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">DFT_PARAMID_IS_REAL_TRANSFORM</td>
+	  <td class="lt-" align="left">Whether the plan is for real transforms</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">DFT_PARAMID_NO_BIT_REVERSAL</td>
+	  <td class="lt-" align="left">Whether the plan does not perform bit reversal operation</td>
+	</tr>
+	<tr>
+	  <td class="lt-br" align="left">DFT_PARAMID_TEST_RUN</td>
+	  <td class="lt-b" align="left">How much test run is performed when making this plan</td>
+	</tr>
+      </table>
+    </td>
+  </tr>
+  <tr align="center">
+    <td class="caption">Table 5 Querying parameter for execution plan</td>
+  </tr>
+</table>
+
+<h4>Writing and reading execution plan to/from file</h4>
+
+<p>
+You can write or read an execution plan to/from a file using the following functions.
+</p>
+
+<pre class="code">
+int32_t DFT_fwrite(DFT *p, FILE *fp);
+DFT *DFT_fread(FILE *fp, int32_t *errcode);
+</pre>
+
+<p>
+<i>p</i> is a pointer to a plan. <i>fp</i> is a file
+pointer. DFT_fwrite returns 1 if the plan is successfully written, and
+0 if an error occurs. DFT_fread returns the pointer to the read plan
+if the plan is successfully read, and NULL if an error occurs. If an
+error occurs, an error code is returned to a variable whose pointer is
+specified by <i>errcode</i>. The interpretation of error codes is
+given below.
+</p>
+
+<table class="figure">
+  <tr align="center">
+    <td>
+      <table class="lt">
+        <tr>
+          <td class="lt-hl"></td>
+          <td class="lt-hl"></td>
+        </tr>
+	<tr>
+	  <td class="lt-br" align="center">Symbol</td>
+	  <td class="lt-b" align="center">Meaning</td>
+	</tr>
+	<tr>
+	  <td class="lt-hl"></td>
+	  <td class="lt-hl"></td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">DFT_ERROR_NOERROR</td>
+	  <td class="lt-" align="left">No error</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">DFT_ERROR_FILE_VERSION</td>
+	  <td class="lt-" align="left">File format version mismatch</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">DFT_ERROR_FILE_IO</td>
+	  <td class="lt-" align="left">I/O error</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">DFT_ERROR_UNEXPECTED_EOF</td>
+	  <td class="lt-" align="left">Unexpected EOF</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">DFT_ERROR_MODE_NOT_COMPILED_IN</td>
+	  <td class="lt-" align="left">Tried to read a plan with mode that is not compiled in</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">DFT_ERROR_MODE_NOT_AVAILABLE</td>
+	  <td class="lt-" align="left">Tried to read a plan with mode that is not supported by hardware</td>
+	</tr>
+	<tr>
+	  <td class="lt-br" align="left">DFT_ERROR_UNKNOWN_MODE</td>
+	  <td class="lt-b" align="left">Tried to read a plan with mode that is unknown by library</td>
+	</tr>
+      </table>
+    </td>
+  </tr>
+  <tr align="center">
+    <td class="caption">Table 6 Errors that may happen during file I/O</td>
+  </tr>
+</table>
+
+
+<h4>Allocating and freeing buffers for transforms</h4>
+
+<p>
+In order to allocate word-aligned buffers for storing data which is
+fed to the FFT routine, you have to use the following function.
+</p>
+
+<pre class="code">
+void *DFT_alignedMalloc(uint64_t size);
+</pre>
+
+<p>
+This function allocates <i>size</i> bytes of word-aligned memory and
+returns the pointer. In order to free this memory, you have to use the
+following function.
+</p>
+
+<pre class="code">
+void DFT_alignedFree(void *ptr);
+</pre>
+
+<p>
+<i>ptr</i> is the pointer returned from DFT_alignedMalloc function.
+</p>
+
+<h4>Executing transform</h4>
+
+<p>
+By the following function, the planned transform can be executed.
+</p>
+
+<pre class="code">
+void DFT_execute(DFT *p, int32_t mode, void *s, int32_t dir);
+</pre>
+
+<p>
+<i>p</i> is a pointer to the plan. <i>mode</i> is the computation
+mode. <i>s</i> is the pointer to the buffer in which the sequence of
+input values is stored. This pointer must be a pointer returned from
+DFT_alignedMalloc function.
+<i>dir</i> specifies the direction of transform.
+</p>
+
+<p>
+The forward and backward discrete Fourier transforms are defined by
+the following formula (1) and (2), respectively.
+</p>
+
+<table border="0" style="margin-right:1.0cm; margin-left:1.0cm; margin-top:0.5cm; margin-bottom:0.5cm;">
+  <tr>
+    <td align="center" style="width:100%;">
+      <math mode="display" style="font-size:1.2em;" xmlns="http://www.w3.org/1998/Math/MathML">
+	<mrow>
+	  <msub><mi>X</mi><mi>k</mi></msub>
+	  <mo>=</mo>
+	  <munderover>
+	    <mo style="font-size:140%;">&Sum;</mo>
+	    <mrow><mi>n</mi><mo>=</mo><mn>0</mn></mrow>
+	    <mrow><mi>N</mi><mo>-</mo><mn>1</mn></mrow>
+	  </munderover>
+	  <msub><mi>x</mi><mi>n</mi></msub>
+	  <msup>
+	    <mi>e</mi>
+	    <mrow>
+	      <mo>-</mo>
+	      <mfrac>
+		<mrow><mn>2</mn><mi>&pi;</mi><mi>i</mi></mrow>
+		<mi>N</mi>
+	      </mfrac>
+	      <mi>k</mi><mi>n</mi>
+	    </mrow>
+	  </msup>
+
+	  <mo>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</mo>
+
+	  <mi>k</mi>
+	  <mo>=</mo>
+	  <mn>0</mn>
+	  <mo>,</mo>
+	  <mo>&middot;</mo>
+	  <mo>&middot;</mo>
+	  <mo>&middot;</mo>
+	  <mo>,</mo>
+	  <mi>N</mi>
+	  <mo>-</mo>
+	  <mn>1</mn>
+	</mrow>
+      </math>
+    </td>
+    <td>
+      <p>(1)</p>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" style="width:100%;">
+      <math mode="display" style="font-size:1.2em;" xmlns="http://www.w3.org/1998/Math/MathML">
+	<mrow>
+	  <msub><mi>x</mi><mi>n</mi></msub>
+	  <mo>=</mo>
+	  <mfrac>
+	    <mn>1</mn>
+	    <mi>N</mi>
+	  </mfrac>
+	  <munderover>
+	    <mo style="font-size:140%;">&Sum;</mo>
+	    <mrow><mi>k</mi><mo>=</mo><mn>0</mn></mrow>
+	    <mrow><mi>N</mi><mo>-</mo><mn>1</mn></mrow>
+	  </munderover>
+	  <msub><mi>X</mi><mi>k</mi></msub>
+	  <msup>
+	    <mi>e</mi>
+	    <mrow>
+	      <mfrac>
+		<mrow><mn>2</mn><mi>&pi;</mi><mi>i</mi></mrow>
+		<mi>N</mi>
+	      </mfrac>
+	      <mi>k</mi><mi>n</mi>
+	    </mrow>
+	  </msup>
+
+	  <mo>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</mo>
+
+	  <mi>n</mi>
+	  <mo>=</mo>
+	  <mn>0</mn>
+	  <mo>,</mo>
+	  <mo>&middot;</mo>
+	  <mo>&middot;</mo>
+	  <mo>&middot;</mo>
+	  <mo>,</mo>
+	  <mi>N</mi>
+	  <mo>-</mo>
+	  <mn>1</mn>
+
+	</mrow>
+      </math>
+    </td>
+    <td>
+      <p>(2)</p>
+    </td>
+  </tr>
+</table>
+
+<p>
+The complex forward and backward transforms perform the transforms
+defined by the following formula (3) and (4), respectively. <i>V</i>
+is the vector length mentioned above. Again, calling DFT_execute once
+performs <i>V</i> forward or backward transforms at a time. Please
+note that (4) gives values multiplied by <i>N</i> compared to
+(2). Specifying -1 as the direction of transform performs the
+transform defined by (3). In this case, the input should be given as
+in (5) , and the output is given as in (6).  Specifying 1 as the
+direction of transform performs the transform defined by (4), and in
+this case, the input should be given as in (6) , and the output is
+given as in (5).
+</p>
+
+<table border="0" style="margin-right:1.0cm; margin-left:1.0cm; margin-top:0.5cm; margin-bottom:0.5cm;">
+  <tr>
+    <td align="center" style="width:100%;">
+      <math mode="display" style="font-size:1.2em;" xmlns="http://www.w3.org/1998/Math/MathML">
+	<mrow>
+	  <msub><mi>X</mi><mrow><mi>k</mi><mo>,</mo><mi>v</mi></mrow></msub>
+	  <mo>=</mo>
+	  <munderover>
+	    <mo style="font-size:140%;">&Sum;</mo>
+	    <mrow><mi>n</mi><mo>=</mo><mn>0</mn></mrow>
+	    <mrow><mi>N</mi><mo>-</mo><mn>1</mn></mrow>
+	  </munderover>
+	  <msub><mi>x</mi><mrow><mi>n</mi><mo>,</mo><mi>v</mi></mrow></msub>
+	  <msup>
+	    <mi>e</mi>
+	    <mrow>
+	      <mo>-</mo>
+	      <mfrac>
+		<mrow><mn>2</mn><mi>&pi;</mi><mi>i</mi></mrow>
+		<mi>N</mi>
+	      </mfrac>
+	      <mi>k</mi><mi>n</mi>
+	    </mrow>
+	  </msup>
+
+	  <mo>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</mo>
+
+	  <mrow style="font-size:100%;">
+	    <mi>k</mi>
+	    <mo>=</mo>
+	    <mn>0</mn>
+	    <mo>,</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>,</mo>
+	    <mi>N</mi>
+	    <mo>-</mo>
+	    <mn>1</mn>
+
+	    <mo>&nbsp;&nbsp;</mo>
+	    <mo>,</mo>
+	    <mo>&nbsp;&nbsp;</mo>
+
+	    <mi>v</mi>
+	    <mo>=</mo>
+	    <mn>0</mn>
+	    <mo>,</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>,</mo>
+	    <mi>V</mi>
+	    <mo>-</mo>
+	    <mn>1</mn>
+	  </mrow>
+	</mrow>
+      </math>
+    </td>
+    <td>
+      <p>(3)</p>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" style="width:100%;">
+      <math mode="display" style="font-size:1.2em;" xmlns="http://www.w3.org/1998/Math/MathML">
+	<mrow>
+	  <msub><mi>x</mi><mrow><mi>n</mi><mo>,</mo><mi>v</mi></mrow></msub>
+	  <mo>=</mo>
+	  <munderover>
+	    <mo style="font-size:140%;">&Sum;</mo>
+	    <mrow><mi>k</mi><mo>=</mo><mn>0</mn></mrow>
+	    <mrow><mi>N</mi><mo>-</mo><mn>1</mn></mrow>
+	  </munderover>
+	  <msub><mi>X</mi><mrow><mi>k</mi><mo>,</mo><mi>v</mi></mrow></msub>
+	  <msup>
+	    <mi>e</mi>
+	    <mrow>
+	      <mfrac>
+		<mrow><mn>2</mn><mi>&pi;</mi><mi>i</mi></mrow>
+		<mi>N</mi>
+	      </mfrac>
+	      <mi>k</mi><mi>n</mi>
+	    </mrow>
+	  </msup>
+
+	  <mo>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</mo>
+
+	  <mrow style="font-size:100%;">
+	    <mi>n</mi>
+	    <mo>=</mo>
+	    <mn>0</mn>
+	    <mo>,</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>,</mo>
+	    <mi>N</mi>
+	    <mo>-</mo>
+	    <mn>1</mn>
+
+	    <mo>&nbsp;&nbsp;</mo>
+	    <mo>,</mo>
+	    <mo>&nbsp;&nbsp;</mo>
+
+	    <mi>v</mi>
+	    <mo>=</mo>
+	    <mn>0</mn>
+	    <mo>,</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>,</mo>
+	    <mi>V</mi>
+	    <mo>-</mo>
+	    <mn>1</mn>
+	  </mrow>
+	</mrow>
+      </math>
+    </td>
+    <td>
+      <p>(4)</p>
+    </td>
+  </tr>
+</table>
+
+<table border="0" style="margin-right:1.0cm; margin-left:1.0cm; margin-top:0.5cm; margin-bottom:0.5cm;">
+  <tr>
+    <td align="center" style="width:100%;">
+      <math mode="display" style="font-size:1.2em;" xmlns="http://www.w3.org/1998/Math/MathML">
+	<mrow>
+	  <mfenced open="{" close="">
+	    <mtable>
+	      <mtr>
+		<mtd>
+		  <mrow>
+		    <mi>s</mi>
+		    <mo>[</mo>
+		    <mo>(</mo>
+		    <mn>2</mn>
+		    <mi>n</mi>
+		    <mo>+</mo>
+		    <mn>0</mn>
+		    <mo>)</mo>
+		    <mi>V</mi>
+		    <mo>+</mo>
+		    <mi>v</mi>
+		    <mo>]</mo>
+
+		    <mo>=</mo>
+
+		    <mi>Re</mi>
+		    <mo>(</mo>
+		    <msub><mi>x</mi><mrow><mi>n</mi><mo>,</mo><mi>v</mi></mrow></msub>
+		    <mo>)</mo>
+		  </mrow>
+		</mtd>
+	      </mtr>
+
+	      <mtr>
+		<mtd>
+		  <mrow>
+		    <mi>s</mi>
+		    <mo>[</mo>
+		    <mo>(</mo>
+		    <mn>2</mn>
+		    <mi>n</mi>
+		    <mo>+</mo>
+		    <mn>1</mn>
+		    <mo>)</mo>
+		    <mi>V</mi>
+		    <mo>+</mo>
+		    <mi>v</mi>
+		    <mo>]</mo>
+
+		    <mo>=</mo>
+
+		    <mi>Im</mi>
+		    <mo>(</mo>
+		    <msub><mi>x</mi><mrow><mi>n</mi><mo>,</mo><mi>v</mi></mrow></msub>
+		    <mo>)</mo>
+		  </mrow>
+		</mtd>
+	      </mtr>
+
+	    </mtable>
+	  </mfenced>
+
+	  <mo>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</mo>
+
+	  <mrow style="font-size:100%;">
+	    <mi>n</mi>
+	    <mo>=</mo>
+	    <mn>0</mn>
+	    <mo>,</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>,</mo>
+	    <mi>N</mi>
+	    <mo>-</mo>
+	    <mn>1</mn>
+
+	    <mo>&nbsp;&nbsp;</mo>
+	    <mo>,</mo>
+	    <mo>&nbsp;&nbsp;</mo>
+
+	    <mi>v</mi>
+	    <mo>=</mo>
+	    <mn>0</mn>
+	    <mo>,</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>,</mo>
+	    <mi>V</mi>
+	    <mo>-</mo>
+	    <mn>1</mn>
+	  </mrow>
+	</mrow>
+      </math>
+    </td>
+    <td>
+      <p>(5)</p>
+    </td>
+  </tr>
+</table>
+
+<table border="0" style="margin-right:1.0cm; margin-left:1.0cm; margin-top:0.5cm; margin-bottom:0.5cm;">
+  <tr>
+    <td align="center" style="width:100%;">
+      <math mode="display" style="font-size:1.2em;" xmlns="http://www.w3.org/1998/Math/MathML">
+	<mrow>
+	  <mfenced open="{" close="">
+	    <mtable>
+	      <mtr>
+		<mtd>
+		  <mrow>
+		    <mi>s</mi>
+		    <mo>[</mo>
+		    <mo>(</mo>
+		    <mn>2</mn>
+		    <mi>k</mi>
+		    <mo>+</mo>
+		    <mn>0</mn>
+		    <mo>)</mo>
+		    <mi>V</mi>
+		    <mo>+</mo>
+		    <mi>v</mi>
+		    <mo>]</mo>
+
+		    <mo>=</mo>
+
+		    <mi>Re</mi>
+		    <mo>(</mo>
+		    <msub><mi>X</mi><mrow><mi>k</mi><mo>,</mo><mi>v</mi></mrow></msub>
+		    <mo>)</mo>
+		  </mrow>
+		</mtd>
+	      </mtr>
+
+	      <mtr>
+		<mtd>
+		  <mrow>
+		    <mi>s</mi>
+		    <mo>[</mo>
+		    <mo>(</mo>
+		    <mn>2</mn>
+		    <mi>k</mi>
+		    <mo>+</mo>
+		    <mn>1</mn>
+		    <mo>)</mo>
+		    <mi>V</mi>
+		    <mo>+</mo>
+		    <mi>v</mi>
+		    <mo>]</mo>
+
+		    <mo>=</mo>
+
+		    <mi>Im</mi>
+		    <mo>(</mo>
+		    <msub><mi>X</mi><mrow><mi>k</mi><mo>,</mo><mi>v</mi></mrow></msub>
+		    <mo>)</mo>
+		  </mrow>
+		</mtd>
+	      </mtr>
+
+	    </mtable>
+	  </mfenced>
+
+	  <mo>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</mo>
+
+	  <mrow style="font-size:100%;">
+	    <mi>k</mi>
+	    <mo>=</mo>
+	    <mn>0</mn>
+	    <mo>,</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>,</mo>
+	    <mi>N</mi>
+	    <mo>-</mo>
+	    <mn>1</mn>
+
+	    <mo>&nbsp;&nbsp;</mo>
+	    <mo>,</mo>
+	    <mo>&nbsp;&nbsp;</mo>
+
+	    <mi>v</mi>
+	    <mo>=</mo>
+	    <mn>0</mn>
+	    <mo>,</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>,</mo>
+	    <mi>V</mi>
+	    <mo>-</mo>
+	    <mn>1</mn>
+	  </mrow>
+	</mrow>
+      </math>
+    </td>
+    <td>
+      <p>(6)</p>
+    </td>
+  </tr>
+</table>
+
+<p>
+The real forward transform performs the transform defined by (3) when
+the condition (7) is satisfied. In this case, the output satisfies
+(8). You should specify -1 as the direction of transform, and the
+input should be given as in (9), and the output is given as in (10).
+The real backward transform is the opposite of the real forward
+transform. The input should satisfy (8) and the output satisfies (7).
+You should specify 1 as the direction of transform, and the input
+should be given as in (10), and the output is given as in (11).
+</p>
+
+<table border="0" style="margin-right:1.0cm; margin-left:1.0cm; margin-top:0.5cm; margin-bottom:0.5cm;">
+  <tr>
+    <td align="center" style="width:100%;">
+      <math mode="display" style="font-size:1.2em;" xmlns="http://www.w3.org/1998/Math/MathML">
+	<mrow>
+	  <mi>Im</mi>
+	  <mo>(</mo>
+	  <msub><mi>x</mi><mrow><mi>n</mi><mo>,</mo><mi>v</mi></mrow></msub>
+	  <mo>)</mo>
+	  <mo>=</mo>
+	  <mn>0</mn>
+
+	  <mo>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</mo>
+
+	  <mrow style="font-size:100%;">
+	    <mi>n</mi>
+	    <mo>=</mo>
+	    <mn>0</mn>
+	    <mo>,</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>,</mo>
+	    <mi>N</mi>
+	    <mo>-</mo>
+	    <mn>1</mn>
+
+	    <mo>&nbsp;&nbsp;</mo>
+	    <mo>,</mo>
+	    <mo>&nbsp;&nbsp;</mo>
+
+	    <mi>v</mi>
+	    <mo>=</mo>
+	    <mn>0</mn>
+	    <mo>,</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>,</mo>
+	    <mi>V</mi>
+	    <mo>-</mo>
+	    <mn>1</mn>
+	  </mrow>
+
+	</mrow>
+      </math>
+    </td>
+    <td>
+      <p>(7)</p>
+    </td>
+  </tr>
+</table>
+
+<table border="0" style="margin-right:1.0cm; margin-left:1.0cm; margin-top:0.5cm; margin-bottom:0.5cm;">
+  <tr>
+    <td align="center" style="width:100%;">
+      <math mode="display" style="font-size:1.2em;" xmlns="http://www.w3.org/1998/Math/MathML">
+	<mrow>
+	  <mfenced open="{" close="">
+	    <mtable>
+	      <mtr>
+		<mtd>
+		  <mrow>
+		    <msub><mi>X</mi><mrow><mi>k</mi><mo>,</mo><mi>v</mi></mrow></msub>
+		    <mo>=</mo>
+		    <msubsup>
+		      <mi>X</mi>
+		      <mrow><mi>N</mi><mo>-</mo><mi>k</mi><mo>,</mo><mi>v</mi></mrow>
+		      <mo>*</mo>
+		    </msubsup>
+		  </mrow>
+		</mtd>
+
+		<mtd>
+		  <mo>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</mo>
+		</mtd>
+
+		<mtd>
+		  <mrow style="font-size:100%;">
+		    <mi>k</mi>
+		    <mo>=</mo>
+		    <mn>1</mn>
+		    <mo>,</mo>
+		    <mo>&middot;</mo>
+		    <mo>&middot;</mo>
+		    <mo>&middot;</mo>
+		    <mo>,</mo>
+		    <mfrac>
+		      <mi>N</mi>
+		      <mn>2</mn>
+		    </mfrac>
+		    <mo>-</mo>
+		    <mn>1</mn>
+		  </mrow>
+		</mtd>
+	      </mtr>
+
+	      <mtr>
+		<mtd>
+		  <mrow>
+		    <mi>Im</mi>
+		    <mo>(</mo>
+		    <msub><mi>X</mi><mrow><mi>k</mi><mo>,</mo><mi>v</mi></mrow></msub>
+		    <mo>)</mo>
+		    <mo>=</mo>
+		    <mn>0</mn>
+		  </mrow>
+		</mtd>
+
+		<mtd>
+		  <mo>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</mo>
+		</mtd>
+
+		<mtd>
+		  <mrow style="font-size:100%;">
+		    <mi>k</mi>
+		    <mo>=</mo>
+		    <mn>0</mn>
+		    <mo>,</mo>
+		    <mfrac>
+		      <mi>N</mi>
+		      <mn>2</mn>
+		    </mfrac>
+		  </mrow>
+		</mtd>
+	      </mtr>
+
+	    </mtable>
+	  </mfenced>
+
+	  <mo>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</mo>
+
+	  <mrow style="font-size:100%;">
+	    <mi>v</mi>
+	    <mo>=</mo>
+	    <mn>0</mn>
+	    <mo>,</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>,</mo>
+	    <mi>V</mi>
+	    <mo>-</mo>
+	    <mn>1</mn>
+	  </mrow>
+	</mrow>
+      </math>
+    </td>
+    <td>
+      <p>(8)</p>
+    </td>
+  </tr>
+</table>
+
+<table border="0" style="margin-right:1.0cm; margin-left:1.0cm; margin-top:0.5cm; margin-bottom:0.5cm;">
+  <tr>
+    <td align="center" style="width:100%;">
+      <math mode="display" style="font-size:1.2em;" xmlns="http://www.w3.org/1998/Math/MathML">
+	<mrow>
+	  <mrow>
+	    <mi>s</mi>
+	    <mo>[</mo>
+	    <mi>n</mi>
+	    <mi>V</mi>
+	    <mo>+</mo>
+	    <mi>v</mi>
+	    <mo>]</mo>
+
+	    <mo>=</mo>
+
+	    <mi>Re</mi>
+	    <mo>(</mo>
+	    <msub><mi>x</mi><mrow><mi>n</mi><mo>,</mo><mi>v</mi></mrow></msub>
+	    <mo>)</mo>
+	  </mrow>
+
+	  <mo>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</mo>
+
+	  <mrow style="font-size:100%;">
+	    <mi>n</mi>
+	    <mo>=</mo>
+	    <mn>0</mn>
+	    <mo>,</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>,</mo>
+	    <mi>N</mi>
+	    <mo>-</mo>
+	    <mn>1</mn>
+
+	    <mo>&nbsp;&nbsp;</mo>
+	    <mo>,</mo>
+	    <mo>&nbsp;&nbsp;</mo>
+
+	    <mi>v</mi>
+	    <mo>=</mo>
+	    <mn>0</mn>
+	    <mo>,</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>,</mo>
+	    <mi>V</mi>
+	    <mo>-</mo>
+	    <mn>1</mn>
+	  </mrow>
+	</mrow>
+      </math>
+    </td>
+    <td>
+      <p>(9)</p>
+    </td>
+  </tr>
+</table>
+
+<table border="0" style="margin-right:1.0cm; margin-left:1.0cm; margin-top:0.5cm; margin-bottom:0.5cm;">
+  <tr>
+    <td align="center" style="width:100%;">
+      <math mode="display" style="font-size:1.2em;" xmlns="http://www.w3.org/1998/Math/MathML">
+	<mrow>
+	  <mfenced open="{" close="">
+	    <mtable>
+	      <mtr>
+		<mtd>
+		  <mrow>
+		    <mi>s</mi>
+		    <mo>[</mo>
+		    <mo>(</mo>
+		    <mn>2</mn>
+		    <mi>k</mi>
+		    <mo>+</mo>
+		    <mn>0</mn>
+		    <mo>)</mo>
+		    <mi>V</mi>
+		    <mo>+</mo>
+		    <mi>v</mi>
+		    <mo>]</mo>
+		  </mrow>
+		</mtd>
+
+		<mtd>
+		  <mo>=</mo>
+		</mtd>
+
+		<mtd>
+		  <mrow>
+		    <mi>Re</mi>
+		    <mo>(</mo>
+		    <msub><mi>X</mi><mrow><mi>k</mi><mo>,</mo><mi>v</mi></mrow></msub>
+		    <mo>)</mo>
+		  </mrow>
+		</mtd>
+
+		<mtd>
+		  <mrow style="font-size:100%;">
+		    <mi>k</mi>
+		    <mo>=</mo>
+		    <mn>0</mn>
+		    <mo>,</mo>
+		    <mo>&middot;</mo>
+		    <mo>&middot;</mo>
+		    <mo>&middot;</mo>
+		    <mo>,</mo>
+		    <mfrac>
+		      <mi>N</mi>
+		      <mn>2</mn>
+		    </mfrac>
+		    <mo>-</mo>
+		    <mn>1</mn>
+		  </mrow>
+		</mtd>
+	      </mtr>
+
+	      <mtr>
+		<mtd>
+		  <mrow>
+		    <mi>s</mi>
+		    <mo>[</mo>
+		    <mi>V</mi>
+		    <mo>+</mo>
+		    <mi>v</mi>
+		    <mo>]</mo>
+		  </mrow>
+		</mtd>
+
+		<mtd>
+		  <mo>=</mo>
+		</mtd>
+
+		<mtd>
+		  <mrow>
+		    <mi>Re</mi>
+		    <mo>(</mo>
+		    <msub><mi>X</mi><mrow><mi>N</mi><mo>/</mo><mn>2</mn><mo>,</mo><mi>v</mi></mrow></msub>
+		    <mo>)</mo>
+		  </mrow>
+		</mtd>
+
+		<mtd>
+		</mtd>
+	      </mtr>
+
+	      <mtr>
+		<mtd>
+		  <mrow>
+		    <mi>s</mi>
+		    <mo>[</mo>
+		    <mo>(</mo>
+		    <mn>2</mn>
+		    <mi>k</mi>
+		    <mo>+</mo>
+		    <mn>1</mn>
+		    <mo>)</mo>
+		    <mi>V</mi>
+		    <mo>+</mo>
+		    <mi>v</mi>
+		    <mo>]</mo>
+		  </mrow>
+		</mtd>
+
+		<mtd>
+		  <mo>=</mo>
+		</mtd>
+
+		<mtd>
+		  <mrow>
+		    <mi>Im</mi>
+		    <mo>(</mo>
+		    <msub><mi>X</mi><mrow><mi>k</mi><mo>,</mo><mi>v</mi></mrow></msub>
+		    <mo>)</mo>
+		  </mrow>
+		</mtd>
+
+		<mtd>
+		  <mrow style="font-size:100%;">
+		    <mi>k</mi>
+		    <mo>=</mo>
+		    <mn>1</mn>
+		    <mo>,</mo>
+		    <mo>&middot;</mo>
+		    <mo>&middot;</mo>
+		    <mo>&middot;</mo>
+		    <mo>,</mo>
+		    <mfrac>
+		      <mi>N</mi>
+		      <mn>2</mn>
+		    </mfrac>
+		    <mo>-</mo>
+		    <mn>1</mn>
+		  </mrow>
+		</mtd>
+	      </mtr>
+
+	    </mtable>
+	  </mfenced>
+
+	  <mo>&nbsp;&nbsp;&nbsp;&nbsp;</mo>
+
+	  <mrow style="font-size:100%;">
+	    <mi>v</mi>
+	    <mo>=</mo>
+	    <mn>0</mn>
+	    <mo>,</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>,</mo>
+	    <mi>V</mi>
+	    <mo>-</mo>
+	    <mn>1</mn>
+	  </mrow>
+	</mrow>
+      </math>
+    </td>
+    <td>
+      <p>(10)</p>
+    </td>
+  </tr>
+</table>
+
+<table border="0" style="margin-right:1.0cm; margin-left:1.0cm; margin-top:0.5cm; margin-bottom:0.5cm;">
+  <tr>
+    <td align="center" style="width:100%;">
+      <math mode="display" style="font-size:1.2em;" xmlns="http://www.w3.org/1998/Math/MathML">
+	<mrow>
+	  <mrow>
+	    <mn>2</mn>
+	    <mo> &nbsp; </mo>
+	    <mi>s</mi>
+	    <mo>[</mo>
+	    <mi>n</mi>
+	    <mi>V</mi>
+	    <mo>+</mo>
+	    <mi>v</mi>
+	    <mo>]</mo>
+
+	    <mo>=</mo>
+
+	    <mi>Re</mi>
+	    <mo>(</mo>
+	    <msub><mi>x</mi><mrow><mi>n</mi><mo>,</mo><mi>v</mi></mrow></msub>
+	    <mo>)</mo>
+	  </mrow>
+
+	  <mo>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</mo>
+
+	  <mrow style="font-size:100%;">
+	    <mi>n</mi>
+	    <mo>=</mo>
+	    <mn>0</mn>
+	    <mo>,</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>,</mo>
+	    <mi>N</mi>
+	    <mo>-</mo>
+	    <mn>1</mn>
+
+	    <mo>&nbsp;&nbsp;</mo>
+	    <mo>,</mo>
+	    <mo>&nbsp;&nbsp;</mo>
+
+	    <mi>v</mi>
+	    <mo>=</mo>
+	    <mn>0</mn>
+	    <mo>,</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>,</mo>
+	    <mi>V</mi>
+	    <mo>-</mo>
+	    <mn>1</mn>
+	  </mrow>
+	</mrow>
+      </math>
+    </td>
+    <td>
+      <p>(11)</p>
+    </td>
+  </tr>
+</table>
+
+<p>
+The alternative real transforms are defined by (12) to (16), similarly
+to the real transforms. The alternative transforms are handy if you
+are migrating from the FFT library made by Prof. Takuya Ooura.  You
+should specify 1 as the direction in order to perform a forward
+transform, and -1 when you perform a backward transform.
+</p>
+
+<table border="0" style="margin-right:1.0cm; margin-left:1.0cm; margin-top:0.5cm; margin-bottom:0.5cm;">
+  <tr>
+    <td align="center" style="width:100%;">
+      <math mode="display" style="font-size:1.2em;" xmlns="http://www.w3.org/1998/Math/MathML">
+	<mrow>
+	  <mi>Im</mi>
+	  <mo>(</mo>
+	  <msub><mi>X</mi><mrow><mi>k</mi><mo>,</mo><mi>v</mi></mrow></msub>
+	  <mo>)</mo>
+	  <mo>=</mo>
+	  <mn>0</mn>
+
+	  <mo>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</mo>
+
+	  <mrow style="font-size:100%;">
+	    <mi>k</mi>
+	    <mo>=</mo>
+	    <mn>0</mn>
+	    <mo>,</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>,</mo>
+	    <mi>N</mi>
+	    <mo>-</mo>
+	    <mn>1</mn>
+
+	    <mo>&nbsp;&nbsp;</mo>
+	    <mo>,</mo>
+	    <mo>&nbsp;&nbsp;</mo>
+
+	    <mi>v</mi>
+	    <mo>=</mo>
+	    <mn>0</mn>
+	    <mo>,</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>,</mo>
+	    <mi>V</mi>
+	    <mo>-</mo>
+	    <mn>1</mn>
+	  </mrow>
+
+	</mrow>
+      </math>
+    </td>
+    <td>
+      <p>(12)</p>
+    </td>
+  </tr>
+</table>
+
+<table border="0" style="margin-right:1.0cm; margin-left:1.0cm; margin-top:0.5cm; margin-bottom:0.5cm;">
+  <tr>
+    <td align="center" style="width:100%;">
+      <math mode="display" style="font-size:1.2em;" xmlns="http://www.w3.org/1998/Math/MathML">
+	<mrow>
+	  <mfenced open="{" close="">
+	    <mtable>
+	      <mtr>
+		<mtd>
+		  <mrow>
+		    <msub><mi>x</mi><mrow><mi>n</mi><mo>,</mo><mi>v</mi></mrow></msub>
+		    <mo>=</mo>
+		    <msubsup>
+		      <mi>x</mi>
+		      <mrow><mi>N</mi><mo>-</mo><mi>n</mi><mo>,</mo><mi>v</mi></mrow>
+		      <mo>*</mo>
+		    </msubsup>
+		  </mrow>
+		</mtd>
+
+		<mtd>
+		  <mo>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</mo>
+		</mtd>
+
+		<mtd>
+		  <mrow style="font-size:100%;">
+		    <mi>n</mi>
+		    <mo>=</mo>
+		    <mn>1</mn>
+		    <mo>,</mo>
+		    <mo>&middot;</mo>
+		    <mo>&middot;</mo>
+		    <mo>&middot;</mo>
+		    <mo>,</mo>
+		    <mfrac>
+		      <mi>N</mi>
+		      <mn>2</mn>
+		    </mfrac>
+		    <mo>-</mo>
+		    <mn>1</mn>
+		  </mrow>
+		</mtd>
+	      </mtr>
+
+	      <mtr>
+		<mtd>
+		  <mrow>
+		    <mi>Im</mi>
+		    <mo>(</mo>
+		    <msub><mi>x</mi><mrow><mi>n</mi><mo>,</mo><mi>v</mi></mrow></msub>
+		    <mo>)</mo>
+		    <mo>=</mo>
+		    <mn>0</mn>
+		  </mrow>
+		</mtd>
+
+		<mtd>
+		  <mo>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</mo>
+		</mtd>
+
+		<mtd>
+		  <mrow style="font-size:100%;">
+		    <mi>n</mi>
+		    <mo>=</mo>
+		    <mn>0</mn>
+		    <mo>,</mo>
+		    <mfrac>
+		      <mi>N</mi>
+		      <mn>2</mn>
+		    </mfrac>
+		  </mrow>
+		</mtd>
+	      </mtr>
+
+	    </mtable>
+	  </mfenced>
+
+	  <mo>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</mo>
+
+	  <mrow style="font-size:100%;">
+	    <mi>v</mi>
+	    <mo>=</mo>
+	    <mn>0</mn>
+	    <mo>,</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>,</mo>
+	    <mi>V</mi>
+	    <mo>-</mo>
+	    <mn>1</mn>
+	  </mrow>
+	</mrow>
+      </math>
+    </td>
+    <td>
+      <p>(13)</p>
+    </td>
+  </tr>
+</table>
+
+<table border="0" style="margin-right:1.0cm; margin-left:1.0cm; margin-top:0.5cm; margin-bottom:0.5cm;">
+  <tr>
+    <td align="center" style="width:100%;">
+      <math mode="display" style="font-size:1.2em;" xmlns="http://www.w3.org/1998/Math/MathML">
+	<mrow>
+	  <mrow>
+	    <mi>s</mi>
+	    <mo>[</mo>
+	    <mi>n</mi>
+	    <mi>V</mi>
+	    <mo>+</mo>
+	    <mi>v</mi>
+	    <mo>]</mo>
+
+	    <mo>=</mo>
+
+	    <mi>Re</mi>
+	    <mo>(</mo>
+	    <msub><mi>X</mi><mrow><mi>k</mi><mo>,</mo><mi>v</mi></mrow></msub>
+	    <mo>)</mo>
+	  </mrow>
+
+	  <mo>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</mo>
+
+	  <mrow style="font-size:100%;">
+	    <mi>k</mi>
+	    <mo>=</mo>
+	    <mn>0</mn>
+	    <mo>,</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>,</mo>
+	    <mi>N</mi>
+	    <mo>-</mo>
+	    <mn>1</mn>
+
+	    <mo>&nbsp;&nbsp;</mo>
+	    <mo>,</mo>
+	    <mo>&nbsp;&nbsp;</mo>
+
+	    <mi>v</mi>
+	    <mo>=</mo>
+	    <mn>0</mn>
+	    <mo>,</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>,</mo>
+	    <mi>V</mi>
+	    <mo>-</mo>
+	    <mn>1</mn>
+	  </mrow>
+	</mrow>
+      </math>
+    </td>
+    <td>
+      <p>(14)</p>
+    </td>
+  </tr>
+</table>
+
+<table border="0" style="margin-right:1.0cm; margin-left:1.0cm; margin-top:0.5cm; margin-bottom:0.5cm;">
+  <tr>
+    <td align="center" style="width:100%;">
+      <math mode="display" style="font-size:1.2em;" xmlns="http://www.w3.org/1998/Math/MathML">
+	<mrow>
+	  <mfenced open="{" close="">
+	    <mtable>
+	      <mtr>
+		<mtd>
+		  <mrow>
+		    <mi>s</mi>
+		    <mo>[</mo>
+		    <mo>(</mo>
+		    <mn>2</mn>
+		    <mi>n</mi>
+		    <mo>+</mo>
+		    <mn>0</mn>
+		    <mo>)</mo>
+		    <mi>V</mi>
+		    <mo>+</mo>
+		    <mi>v</mi>
+		    <mo>]</mo>
+		  </mrow>
+		</mtd>
+
+		<mtd>
+		  <mo>=</mo>
+		</mtd>
+
+		<mtd>
+		  <mrow>
+		    <mi>Re</mi>
+		    <mo>(</mo>
+		    <msub><mi>x</mi><mrow><mi>n</mi><mo>,</mo><mi>v</mi></mrow></msub>
+		    <mo>)</mo>
+		  </mrow>
+		</mtd>
+
+		<mtd>
+		  <mrow style="font-size:100%;">
+		    <mi>n</mi>
+		    <mo>=</mo>
+		    <mn>0</mn>
+		    <mo>,</mo>
+		    <mo>&middot;</mo>
+		    <mo>&middot;</mo>
+		    <mo>&middot;</mo>
+		    <mo>,</mo>
+		    <mfrac>
+		      <mi>N</mi>
+		      <mn>2</mn>
+		    </mfrac>
+		    <mo>-</mo>
+		    <mn>1</mn>
+		  </mrow>
+		</mtd>
+	      </mtr>
+
+	      <mtr>
+		<mtd>
+		  <mrow>
+		    <mi>s</mi>
+		    <mo>[</mo>
+		    <mi>V</mi>
+		    <mo>+</mo>
+		    <mi>v</mi>
+		    <mo>]</mo>
+		  </mrow>
+		</mtd>
+
+		<mtd>
+		  <mo>=</mo>
+		</mtd>
+
+		<mtd>
+		  <mrow>
+		    <mi>Re</mi>
+		    <mo>(</mo>
+		    <msub><mi>x</mi><mrow><mi>N</mi><mo>/</mo><mn>2</mn><mo>,</mo><mi>v</mi></mrow></msub>
+		    <mo>)</mo>
+		  </mrow>
+		</mtd>
+
+		<mtd>
+		</mtd>
+	      </mtr>
+
+	      <mtr>
+		<mtd>
+		  <mrow>
+		    <mi>s</mi>
+		    <mo>[</mo>
+		    <mo>(</mo>
+		    <mn>2</mn>
+		    <mi>n</mi>
+		    <mo>+</mo>
+		    <mn>1</mn>
+		    <mo>)</mo>
+		    <mi>V</mi>
+		    <mo>+</mo>
+		    <mi>v</mi>
+		    <mo>]</mo>
+		  </mrow>
+		</mtd>
+
+		<mtd>
+		  <mo>=</mo>
+		</mtd>
+
+		<mtd>
+		  <mrow>
+		    <mi>Im</mi>
+		    <mo>(</mo>
+		    <msub><mi>x</mi><mrow><mi>n</mi><mo>,</mo><mi>v</mi></mrow></msub>
+		    <mo>)</mo>
+		  </mrow>
+		</mtd>
+
+		<mtd>
+		  <mrow style="font-size:100%;">
+		    <mi>n</mi>
+		    <mo>=</mo>
+		    <mn>1</mn>
+		    <mo>,</mo>
+		    <mo>&middot;</mo>
+		    <mo>&middot;</mo>
+		    <mo>&middot;</mo>
+		    <mo>,</mo>
+		    <mfrac>
+		      <mi>N</mi>
+		      <mn>2</mn>
+		    </mfrac>
+		    <mo>-</mo>
+		    <mn>1</mn>
+		  </mrow>
+		</mtd>
+	      </mtr>
+
+	    </mtable>
+	  </mfenced>
+
+	  <mo>&nbsp;&nbsp;&nbsp;&nbsp;</mo>
+
+	  <mrow style="font-size:100%;">
+	    <mi>v</mi>
+	    <mo>=</mo>
+	    <mn>0</mn>
+	    <mo>,</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>,</mo>
+	    <mi>V</mi>
+	    <mo>-</mo>
+	    <mn>1</mn>
+	  </mrow>
+	</mrow>
+      </math>
+    </td>
+    <td>
+      <p>(15)</p>
+    </td>
+  </tr>
+</table>
+
+<table border="0" style="margin-right:1.0cm; margin-left:1.0cm; margin-top:0.5cm; margin-bottom:0.5cm;">
+  <tr>
+    <td align="center" style="width:100%;">
+      <math mode="display" style="font-size:1.2em;" xmlns="http://www.w3.org/1998/Math/MathML">
+	<mrow>
+	  <mrow>
+	    <mn>2</mn>
+	    <mo> &nbsp; </mo>
+	    <mi>s</mi>
+	    <mo>[</mo>
+	    <mi>n</mi>
+	    <mi>V</mi>
+	    <mo>+</mo>
+	    <mi>v</mi>
+	    <mo>]</mo>
+
+	    <mo>=</mo>
+
+	    <mi>Re</mi>
+	    <mo>(</mo>
+	    <msub><mi>X</mi><mrow><mi>k</mi><mo>,</mo><mi>v</mi></mrow></msub>
+	    <mo>)</mo>
+	  </mrow>
+
+	  <mo>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</mo>
+
+	  <mrow style="font-size:100%;">
+	    <mi>k</mi>
+	    <mo>=</mo>
+	    <mn>0</mn>
+	    <mo>,</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>,</mo>
+	    <mi>N</mi>
+	    <mo>-</mo>
+	    <mn>1</mn>
+
+	    <mo>&nbsp;&nbsp;</mo>
+	    <mo>,</mo>
+	    <mo>&nbsp;&nbsp;</mo>
+
+	    <mi>v</mi>
+	    <mo>=</mo>
+	    <mn>0</mn>
+	    <mo>,</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>&middot;</mo>
+	    <mo>,</mo>
+	    <mi>V</mi>
+	    <mo>-</mo>
+	    <mn>1</mn>
+	  </mrow>
+	</mrow>
+      </math>
+    </td>
+    <td>
+      <p>(16)</p>
+    </td>
+  </tr>
+</table>
+
+
+<h3>Examples</h3>
+
+<p>
+Below is an example code using nsfft library.
+</p>
+
+<pre class="code">
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;math.h&gt;
+#include &lt;stdint.h&gt;
+#include &lt;complex.h&gt;
+
+#include "SIMDBase.h"
+#include "DFT.h"
+
+typedef float REAL;
+#define TYPE SIMDBase_TYPE_FLOAT
+
+#define THRES 1e-3
+
+double complex omega(double n, double kn) {
+  return cexp((-2 * M_PI * _Complex_I / n) * kn);
+}
+
+void forward(double complex *ts, double complex *fs, int len) {
+  int k, n;
+
+  for(k=0;k&lt;len;k++) {
+    fs[k] = 0;
+
+    for(n=0;n&lt;len;n++) {
+      fs[k] += ts[n] * omega(len, n*k);
+    }
+  }
+}
+
+int main(int argc, char **argv) {
+  const int n = 256;
+
+  int mode = SIMDBase_chooseBestMode(TYPE);
+  printf("mode : %d, %s\n", mode, SIMDBase_getModeParamString(SIMDBase_PARAMID_MODE_NAME, mode));
+
+  int veclen = SIMDBase_getModeParamInt(SIMDBase_PARAMID_VECTOR_LEN, mode);
+  int sizeOfVect = SIMDBase_getModeParamInt(SIMDBase_PARAMID_SIZE_OF_VECT, mode);
+
+  //
+
+  int i, j;
+
+  DFT *p = DFT_init(mode, n, 0);
+  REAL *sx = SIMDBase_alignedMalloc(sizeOfVect*n*2);
+
+  //
+
+  double complex ts[veclen][n], fs[veclen][n];
+
+  for(j=0;j&lt;veclen;j++) {
+    for(i=0;i&lt;n;i++) {
+      ts[j][i] = (random() / (double)RAND_MAX) + (random() / (double)RAND_MAX) * _Complex_I;
+      sx[(i*2+0)*veclen+j] = creal(ts[j][i]);
+      sx[(i*2+1)*veclen+j] = cimag(ts[j][i]);
+    }
+  }
+
+  //
+
+  DFT_execute(p, mode, sx, -1);
+
+  for(j=0;j&lt;veclen;j++) {
+    forward(ts[j], fs[j], n);
+  }
+
+  //
+
+  int success = 1;
+
+  for(j=0;j&lt;veclen;j++) {
+    for(i=0;i&lt;n;i++) {
+      if ((fabs(sx[(i*2+0)*veclen+j] - creal(fs[j][i])) &gt; THRES) ||
+	  (fabs(sx[(i*2+1)*veclen+j] - cimag(fs[j][i])) &gt; THRES)) {
+	success = 0;
+      }
+    }
+  }
+
+  printf("%s\n", success ? "OK" : "NG");
+
+  //
+
+  SIMDBase_alignedFree(sx);
+  DFT_dispose(p, mode);
+
+  exit(0);
+}
+</pre>
+
+<p>
+You should put this code under a directory in the root directory of
+the library, and then you can compile this code with the following
+command.
+</p>
+
+<pre class="code">
+gcc -Wall -g -I ../simd -I ../dft -L../simd -L../dft -O DFTExample.c -lDFT -lSIMD -lm -o DFTExample
+</pre>
+
+<h3>Compilation</h3>
+
+<p>
+The nsfft source package include a few makefiles for various
+architectures.  You should make symbolic links to makefiles suited for
+your computer under <i>dft</i> and <i>simd</i> directories.
+</p>
+
+</body>
+</html>

@@ -1,0 +1,34 @@
+body {margin-left: 1.5cm; padding-left: 0.1cm; margin-right: 1.5cm; padding-right: 0.1cm; margin-top: 2.5cm; padding-top: 0.5cm; margin-bottom: 1cm; padding-bottom: 1.0cm; border-top-style:solid; border-bottom-style:solid; }
+h1 {font-family: arial, sansserif; font-weight: bold; font-style: italic; margin-top: 0.8cm; }
+h2 {font-family: arial, sansserif; font-weight: bold; font-style: italic; margin-top: 0.8cm; }
+h3 {font-family: arial, sansserif; font-weight: bold; margin-top: 1.2cm; margin-bottom: 0.8cm; }
+h4 {font-family: arial, sansserif; font-weight: bold; margin-top: 1.2cm; margin-bottom: 0.8cm; }
+p {font-family: Georgia, "Times New Roman", times, serif; margin-top: 0.3cm; margin-left: 0.5cm; margin-bottom: 0.3cm;}
+p.dir {font-family: arial, sansserif; margin-top: 0cm; margin-bottom: 0cm;}
+dl { margin-left: 0.5cm; }
+dt { font-weight: bold; }
+a:link {color: black;}
+a:visited {color: black;}
+ul.disc {list-style-type: disc; font-family: times, serif;}
+ul.circle {list-style-type: circle; font-family: times, serif;}
+ul.square {list-style-type: square; font-family: times, serif;}
+ul.none {list-style-type: none; font-family: times, serif;}
+pre.code { margin-top: 1.0cm; margin-bottom: 1.0cm; margin-left: 1.0cm; margin-right: 1.0cm; border:3px solid #c0c0c0; padding: 0.5cm; font-family: tahoma, sansserif; font-weight: normal; background-color:#f8f8f8; }
+pre.command { margin-top: 1.0cm; margin-bottom: 1.0cm; margin-left: 1.5cm; margin-right: 0.0cm; border:0px; padding:0.0cm; font-family: tahoma, sansserif; font-weight: bold; background-color:#f8fffc; }
+ol.level1 { font-family: arial, sansserif; font-weight: bold;  font-style: italic; font-size:1.5em; }
+ol.level2 { font-family: "Times New Roman", serif; font-weight: normal; font-style: normal; font-size:0.85em; margin-top: 0.2cm; margin-bottom: 0.5cm; }
+table.figure { margin-left:auto; margin-right:auto; margin-top:1.0cm; margin-bottom:1.0cm; }
+
+td.caption { font-family: arial, sansserif; font-size: 75%; color: black; }
+td { font-family: times, serif; }
+
+table.lt { border-collapse: collapse; border-style: none; }
+td.lt- { margin: 0px; padding: 4px; padding-left:0.3cm; padding-right:0.3cm; border-width: 1px; border-style: none; padding-left=0.2cm; padding-right=0.2cm; }
+td.lt-r { margin: 0px; padding: 4px; padding-left:0.3cm; padding-right:0.3cm; border-style: none; border-right-style: solid; border-width: 1px; border-color: black; }
+td.lt-l { margin: 0px; padding: 4px; padding-left:0.3cm; padding-right:0.3cm; border-style: none; border-left-style: solid; border-width: 1px; border-color: black; }
+td.lt-lr { margin: 0px; padding: 4px; padding-left:0.3cm; padding-right:0.3cm; border-style: none; border-right-style: solid; border-left-style: solid; border-width: 1px; border-color: black; }
+td.lt-b { margin: 0px; padding: 4px; padding-left:0.3cm; padding-right:0.3cm; border-style: none; border-bottom-style: solid; border-width: 1px; border-color: black; }
+td.lt-hl { margin: 0px; border-style: none; border-bottom-style: solid; border-width: 1px; border-color: black; height: 2px; }
+td.lt-bl { margin: 0px; padding: 4px; padding-left:0.3cm; padding-right:0.3cm; border-style: none; border-bottom-style: solid; border-left-style: solid; border-width: 1px; border-color: black; }
+td.lt-br { margin: 0px; padding: 4px; padding-left:0.3cm; padding-right:0.3cm; border-style: none; border-bottom-style: solid; border-right-style: solid; border-width: 1px; border-color: black; }
+td.lt-blr { margin: 0px; padding: 4px; padding-left:0.3cm; padding-right:0.3cm; border-style: none; border-bottom-style: solid; border-left-style: solid; border-right-style: solid; border-width: 1px; border-color: black; }

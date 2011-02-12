@@ -1,0 +1,35 @@
+CC=gcc
+BASEOPT=-Wall
+OPT=$(BASEOPT) -O3
+
+all : libSIMD.a
+
+SIMDBaseUndiff_purecfloat.o : SIMDBaseUndiff.c SIMDBase.h SIMDBaseUndiff.h
+	$(CC) $(OPT) -DENABLE_PUREC_FLOAT SIMDBaseUndiff.c -c -o SIMDBaseUndiff_purecfloat.o
+
+SIMDBaseUndiff_purecdouble.o : SIMDBaseUndiff.c SIMDBase.h SIMDBaseUndiff.h
+	$(CC) $(OPT) -DENABLE_PUREC_DOUBLE SIMDBaseUndiff.c -c -o SIMDBaseUndiff_purecdouble.o
+
+SIMDBaseUndiff_pureclongdouble.o : SIMDBaseUndiff.c SIMDBase.h SIMDBaseUndiff.h
+	$(CC) $(OPT) -DENABLE_PUREC_LONGDOUBLE SIMDBaseUndiff.c -c -o SIMDBaseUndiff_pureclongdouble.o
+
+SIMDBaseUndiff_ssefloat.o : SIMDBaseUndiff.c SIMDBase.h SIMDBaseUndiff.h
+	$(CC) $(OPT) -msse -DENABLE_SSE_FLOAT SIMDBaseUndiff.c -c -o SIMDBaseUndiff_ssefloat.o
+
+SIMDBaseUndiff_sse2double.o : SIMDBaseUndiff.c SIMDBase.h SIMDBaseUndiff.h
+	$(CC) $(OPT) -msse2 -DENABLE_SSE2_DOUBLE SIMDBaseUndiff.c -c -o SIMDBaseUndiff_sse2double.o
+
+SIMDBaseUndiff_avxfloat.o : SIMDBaseUndiff.c SIMDBase.h SIMDBaseUndiff.h
+	$(CC) $(OPT) -mavx -DENABLE_AVX_FLOAT SIMDBaseUndiff.c -c -o SIMDBaseUndiff_avxfloat.o
+
+SIMDBaseUndiff_avxdouble.o : SIMDBaseUndiff.c SIMDBase.h SIMDBaseUndiff.h
+	$(CC) $(OPT) -mavx -DENABLE_AVX_DOUBLE SIMDBaseUndiff.c -c -o SIMDBaseUndiff_avxdouble.o
+
+SIMDBase.o : SIMDBase.c SIMDBase.h
+	$(CC) $(BASEOPT) -O -DENABLE_PUREC_FLOAT -DENABLE_PUREC_DOUBLE -DENABLE_PUREC_LONGDOUBLE -DENABLE_SSE_FLOAT -DENABLE_SSE2_DOUBLE -DENABLE_AVX_FLOAT -DENABLE_AVX_DOUBLE SIMDBase.c -c -o SIMDBase.o
+
+libSIMD.a : SIMDBase.o SIMDBaseUndiff_purecfloat.o SIMDBaseUndiff_purecdouble.o SIMDBaseUndiff_pureclongdouble.o SIMDBaseUndiff_ssefloat.o SIMDBaseUndiff_sse2double.o SIMDBaseUndiff_avxfloat.o SIMDBaseUndiff_avxdouble.o
+	rm -f libSIMD.a; ar -cvq libSIMD.a SIMDBase.o SIMDBaseUndiff_purecfloat.o SIMDBaseUndiff_purecdouble.o SIMDBaseUndiff_pureclongdouble.o SIMDBaseUndiff_ssefloat.o SIMDBaseUndiff_sse2double.o SIMDBaseUndiff_avxfloat.o SIMDBaseUndiff_avxdouble.o
+
+clean :
+	rm -f *~ *.o *.s *.a a.out
