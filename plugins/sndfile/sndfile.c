@@ -21,6 +21,7 @@
 #endif
 #include <string.h>
 #include <sndfile.h>
+#include <math.h>
 #include "../../deadbeef.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
@@ -180,8 +181,9 @@ sndfile_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     case SF_FORMAT_PCM_24:
         _info->fmt.bps = 24;
         break;
-    case SF_FORMAT_PCM_32:
     case SF_FORMAT_FLOAT:
+        _info->fmt.is_float = 1;
+    case SF_FORMAT_PCM_32:
         _info->fmt.bps = 32;
         break;
     case SF_FORMAT_DOUBLE:
@@ -223,7 +225,9 @@ sndfile_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         info->endsample = inf.frames-1;
     }
     // hack bitrate
-    float sec = (float)(info->endsample-info->startsample) / inf.samplerate;
+
+    int totalsamples = inf.frames;
+    float sec = (float)totalsamples / inf.samplerate;
     if (sec > 0) {
         info->bitrate = fsize / sec * 8 / 1000;
     }
@@ -298,6 +302,7 @@ sndfile_insert (DB_playItem_t *after, const char *fname) {
         trace ("sndfile: failed to open %s\n", fname);
         return NULL;
     }
+    int64_t fsize = deadbeef->fgetlength (info.file);
     info.ctx = sf_open_virtual (&vfs, SFM_READ, &inf, &info);
     if (!info.ctx) {
         trace ("sndfile: sf_open failed");
@@ -317,6 +322,39 @@ sndfile_insert (DB_playItem_t *after, const char *fname) {
     deadbeef->pl_set_item_duration (it, duration);
 
     trace ("sndfile: totalsamples=%d, samplerate=%d, duration=%f\n", totalsamples, samplerate, duration);
+
+    char s[100];
+    snprintf (s, sizeof (s), "%lld", fsize);
+    deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
+
+    int bps = -1;
+    switch (inf.format&0x000f) {
+    case SF_FORMAT_PCM_S8:
+    case SF_FORMAT_PCM_U8:
+        bps = 8;
+        break;
+    case SF_FORMAT_PCM_16:
+        bps = 16;
+        break;
+    case SF_FORMAT_PCM_24:
+        bps = 24;
+        break;
+    case SF_FORMAT_FLOAT:
+    case SF_FORMAT_PCM_32:
+        bps = 32;
+        break;
+    }
+
+    snprintf (s, sizeof (s), "%d", bps);
+    deadbeef->pl_add_meta (it, ":BPS", s);
+    snprintf (s, sizeof (s), "%d", inf.channels);
+    deadbeef->pl_add_meta (it, ":CHANNELS", s);
+    snprintf (s, sizeof (s), "%d", samplerate);
+    deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
+    int br = (int)roundf(fsize / duration * 8 / 1000);
+    snprintf (s, sizeof (s), "%d", br);
+    deadbeef->pl_add_meta (it, ":BITRATE", s);
+
 
     DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, it, totalsamples, samplerate);
     if (cue_after) {
