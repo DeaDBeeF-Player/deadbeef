@@ -552,6 +552,32 @@ ffmpeg_insert (DB_playItem_t *after, const char *fname) {
 
     // add metainfo
     ffmpeg_read_metadata_internal (it, fctx);
+    
+    int64_t fsize = -1;
+
+    DB_FILE *fp = deadbeef->fopen (it->fname);
+    if (fp) {
+        if (!fp->vfs->is_streaming ()) {
+            fsize = deadbeef->fgetlength (fp);
+        }
+        deadbeef->fclose (fp);
+    }
+
+    if (fsize >= 0 && duration > 0) {
+        char s[100];
+        snprintf (s, sizeof (s), "%lld", fsize);
+        deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
+        snprintf (s, sizeof (s), "%d", av_get_bits_per_sample_format (ctx->sample_fmt));
+        deadbeef->pl_add_meta (it, ":BPS", s);
+        snprintf (s, sizeof (s), "%d", ctx->channels);
+        deadbeef->pl_add_meta (it, ":CHANNELS", s);
+        snprintf (s, sizeof (s), "%d", samplerate);
+        deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
+        int br = (int)roundf(fsize / duration * 8 / 1000);
+        snprintf (s, sizeof (s), "%d", br);
+        deadbeef->pl_add_meta (it, ":BITRATE", s);
+    }
+
     // free decoder
     avcodec_close (ctx);
     av_close_input_file(fctx);
