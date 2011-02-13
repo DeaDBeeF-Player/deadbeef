@@ -126,7 +126,9 @@ musepack_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->fmt.bps = 32;
     _info->fmt.channels = info->si.channels;
     _info->fmt.samplerate = info->si.sample_freq;
-    _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
+    for (int i = 0; i < _info->fmt.channels; i++) {
+        _info->fmt.channelmask |= 1 << i;
+    }
     _info->readpos = 0;
     _info->plugin = &plugin;
 
@@ -292,6 +294,20 @@ musepack_seek (DB_fileinfo_t *_info, float time) {
     return musepack_seek_sample (_info, time * _info->fmt.samplerate);
 }
 
+void
+mpc_set_trk_properties (DB_playItem_t *it, mpc_streaminfo *si, int64_t fsize) {
+    char s[100];
+    snprintf (s, sizeof (s), "%lld", fsize);
+    deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
+    deadbeef->pl_add_meta (it, ":BPS", "32");
+    snprintf (s, sizeof (s), "%d", si->channels);
+    deadbeef->pl_add_meta (it, ":CHANNELS", s);
+    snprintf (s, sizeof (s), "%d", si->sample_freq);
+    deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
+    snprintf (s, sizeof (s), "%d", si->bitrate);
+    deadbeef->pl_add_meta (it, ":BITRATE", s);
+}
+
 static DB_playItem_t *
 musepack_insert (DB_playItem_t *after, const char *fname) {
     trace ("mpc: inserting %s\n", fname);
@@ -308,6 +324,7 @@ musepack_insert (DB_playItem_t *after, const char *fname) {
         trace ("mpc: insert failed to open %s\n", fname);
         return NULL;
     }
+    int64_t fsize = deadbeef->fgetlength (fp);
     reader.data = fp;
 
     mpc_demux *demux = mpc_demux_init (&reader);
@@ -389,6 +406,9 @@ musepack_insert (DB_playItem_t *after, const char *fname) {
                     deadbeef->pl_items_copy_junk (meta, it, it);
                 }
             }
+
+            mpc_set_trk_properties (it, &si, fsize);
+
             after = deadbeef->pl_insert_item (after, it);
             prev = it;
             deadbeef->pl_item_unref (it);
@@ -434,6 +454,7 @@ musepack_insert (DB_playItem_t *after, const char *fname) {
     }
     deadbeef->pl_unlock ();
 
+    mpc_set_trk_properties (it, &si, fsize);
     cue  = deadbeef->pl_insert_cue (after, it, totalsamples, si.sample_freq);
     if (cue) {
         deadbeef->pl_item_unref (it);
