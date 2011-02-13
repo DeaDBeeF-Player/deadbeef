@@ -267,9 +267,7 @@ int open_tta_file (const char *filename, tta_info *info, unsigned int data_offse
 	info->HANDLE = infile;
 
 	// get file size
-	deadbeef->fseek (infile, 0, SEEK_END);
-	info->FILESIZE = deadbeef->ftell (infile);
-	deadbeef->fseek (infile, 0, SEEK_SET);
+	info->FILESIZE = deadbeef->fgetlength (infile);
 
 	// read id3 tags
 	if (!data_offset) {

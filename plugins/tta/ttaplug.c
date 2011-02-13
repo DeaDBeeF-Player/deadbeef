@@ -20,6 +20,7 @@
 #include <assert.h>
 #include <limits.h>
 #include <unistd.h>
+#include <math.h>
 #include "ttadec.h"
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
@@ -150,6 +151,7 @@ tta_read (DB_fileinfo_t *_info, char *bytes, int size) {
         }
     }
     info->currentsample += (initsize-size) / samplesize;
+    deadbeef->streamer_set_bitrate (info->tta.BITRATE);
     return initsize-size;
 }
 
@@ -199,7 +201,10 @@ tta_insert (DB_playItem_t *after, const char *fname) {
 
     close_tta_file (&tta);
     DB_FILE *fp = deadbeef->fopen (fname);
+
+    int64_t fsize = -1;
     if (fp) {
+        fsize = deadbeef->fgetlength (fp);
         /*int v2err = */deadbeef->junk_id3v2_read (it, fp);
         /*int v1err = */deadbeef->junk_id3v1_read (it, fp);
         deadbeef->fclose (fp);
@@ -219,6 +224,18 @@ tta_insert (DB_playItem_t *after, const char *fname) {
         }
     }
     deadbeef->pl_unlock ();
+
+    char s[100];
+    snprintf (s, sizeof (s), "%lld", fsize);
+    deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
+    snprintf (s, sizeof (s), "%d", tta.BPS);
+    deadbeef->pl_add_meta (it, ":BPS", s);
+    snprintf (s, sizeof (s), "%d", tta.NCH);
+    deadbeef->pl_add_meta (it, ":CHANNELS", s);
+    snprintf (s, sizeof (s), "%d", tta.SAMPLERATE);
+    deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
+    snprintf (s, sizeof (s), "%d", tta.BITRATE);
+    deadbeef->pl_add_meta (it, ":BITRATE", s);
 
     cue  = deadbeef->pl_insert_cue (after, it, totalsamples, tta.SAMPLERATE);
     if (cue) {
