@@ -22,6 +22,7 @@
 #include <assert.h>
 #include <limits.h>
 #include <unistd.h>
+#include <math.h>
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
@@ -427,6 +428,7 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
         trace ("vorbis: failed to fopen %s\n", fname);
         return NULL;
     }
+    int64_t fsize = deadbeef->fgetlength (fp);
     if (fp->vfs->is_streaming ()) {
         DB_playItem_t *it = deadbeef->pl_item_alloc ();
         it->fname = strdup (fname);
@@ -481,6 +483,19 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
         vorbis_comment *vc = ov_comment (&vorbis_file, stream);
         update_vorbis_comments (it, vc, 0);
         int samplerate = vi->rate;
+
+        char s[100];
+        snprintf (s, sizeof (s), "%lld", fsize);
+        deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
+        deadbeef->pl_add_meta (it, ":BPS", "16");
+        snprintf (s, sizeof (s), "%d", vi->channels);
+        deadbeef->pl_add_meta (it, ":CHANNELS", s);
+        snprintf (s, sizeof (s), "%d", samplerate);
+        deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
+        int br = (int)roundf(fsize / duration * 8 / 1000);
+        snprintf (s, sizeof (s), "%d", br);
+        deadbeef->pl_add_meta (it, ":BITRATE", s);
+
 
         if (nstreams == 1) {
             DB_playItem_t *cue = deadbeef->pl_insert_cue (after, it, totalsamples, samplerate);
