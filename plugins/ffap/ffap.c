@@ -36,6 +36,7 @@
 #include <stdlib.h>
 //#include <alloca.h>
 #include <assert.h>
+#include <math.h>
 #include "../../deadbeef.h"
 
 #ifdef TARGET_ANDROID
@@ -1741,6 +1742,9 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
     if (!fp) {
         return NULL;
     }
+
+    int64_t fsize = deadbeef->fgetlength (fp);
+
     int skip = deadbeef->junk_get_leading_size (fp);
     if (skip > 0) {
         deadbeef->fseek (fp, skip, SEEK_SET);
@@ -1794,6 +1798,19 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
     }
     deadbeef->pl_unlock ();
 
+    char s[100];
+    snprintf (s, sizeof (s), "%lld", fsize);
+    deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
+    snprintf (s, sizeof (s), "%d", ape_ctx.bps);
+    deadbeef->pl_add_meta (it, ":BPS", s);
+    snprintf (s, sizeof (s), "%d", ape_ctx.channels);
+    deadbeef->pl_add_meta (it, ":CHANNELS", s);
+    snprintf (s, sizeof (s), "%d", ape_ctx.samplerate);
+    deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
+    int br = (int)roundf(fsize / duration * 8 / 1000);
+    snprintf (s, sizeof (s), "%d", br);
+    deadbeef->pl_add_meta (it, ":BITRATE", s);
+
     cue  = deadbeef->pl_insert_cue (after, it, ape_ctx.totalsamples, ape_ctx.samplerate);
     if (cue) {
         deadbeef->pl_item_unref (it);
@@ -1802,6 +1819,7 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
     }
 
     deadbeef->pl_add_meta (it, "title", NULL);
+
     after = deadbeef->pl_insert_item (after, it);
     deadbeef->pl_item_unref (it);
 

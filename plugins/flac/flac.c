@@ -695,7 +695,7 @@ cflac_insert (DB_playItem_t *after, const char *fname) {
     char s[100];
     printf ("tagsize: %d\n", info.tagsize);
     int64_t fsize = deadbeef->fgetlength (info.file);
-    snprintf (s, sizeof (s), "%llu", fsize);
+    snprintf (s, sizeof (s), "%lld", fsize);
     deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
     snprintf (s, sizeof (s), "%d", info.info.fmt.channels);
     deadbeef->pl_add_meta (it, ":CHANNELS", s);
