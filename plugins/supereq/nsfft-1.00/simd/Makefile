@@ -1,1 +1,1 @@
-Makefile.x86avx
+Makefile.x86

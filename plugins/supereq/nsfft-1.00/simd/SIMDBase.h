@@ -1,6 +1,8 @@
 #ifndef _SIMDBase_H_
 #define _SIMDBase_H_
 
+#include <stdint.h>
+
 #define SIMDBase_TYPE_FLOAT ( 1 | ( 1 << 24 ))
 #define SIMDBase_TYPE_DOUBLE ( 2 | ( 1 << 24 ))
 #define SIMDBase_TYPE_LONGDOUBLE ( 3 | ( 1 << 24 ))

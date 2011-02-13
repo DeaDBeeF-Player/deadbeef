@@ -285,6 +285,7 @@ Appendix :
     w[] and ip[] are compatible with all routines.
 */
 
+extern "C" {
 
 void cdft(int n, int isgn, REAL *a, int *ip, REAL *w)
 {
@@ -2649,4 +2650,4 @@ void dstsub(int n, REAL *a, int nc, REAL *c)
     }
     a[m] *= c[0];
 }
-
+}

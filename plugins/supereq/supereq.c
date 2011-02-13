@@ -97,7 +97,7 @@ supereq_process (ddb_dsp_context_t *ctx, float *samples, int frames, int maxfram
         deadbeef->mutex_lock (supereq->mutex);
 		supereq->last_srate = fmt->samplerate;
 		supereq->last_nch = fmt->channels;
-        equ_init (&supereq->state, 14, fmt->channels);
+        equ_init (&supereq->state, 10, fmt->channels);
         recalc_table (supereq);
 		equ_clearbuf(&supereq->state);
         deadbeef->mutex_unlock (supereq->mutex);
@@ -222,7 +222,7 @@ supereq_open (void) {
     ddb_supereq_ctx_t *supereq = malloc (sizeof (ddb_supereq_ctx_t));
     DDB_INIT_DSP_CONTEXT (supereq,ddb_supereq_ctx_t,&plugin);
 
-    equ_init (&supereq->state, 14, 2);
+    equ_init (&supereq->state, 10, 2);
     supereq->paramsroot = paramlist_alloc ();
     supereq->last_srate = 44100;
     supereq->last_nch = 2;
