@@ -33,11 +33,6 @@ static DB_decoder_t plugin;
 DB_functions_t *deadbeef;
 
 shn_file *load_shn(const char *filename);
-static void shn_play(char *);
-static void shn_stop(void);
-static int  shn_get_time(void);
-static void shn_get_file_info(char *,char **,int *);
-static void shn_display_file_info(char *);
 
 typedef struct {
     DB_fileinfo_t info;
@@ -764,7 +759,7 @@ shn_read (DB_fileinfo_t *_info, char *bytes, int size) {
                 }
             }
             n = min (nsamples, n);
-            char *src = info->shnfile->vars.buffer;
+            char *src = (char *)info->shnfile->vars.buffer;
             memcpy (bytes, src, samplesize * n);
             src += samplesize * n;
             bytes += samplesize * n;
@@ -873,6 +868,7 @@ shn_insert (DB_playItem_t *after, const char *fname) {
     if (!f) {
         return NULL;
     }
+    int64_t fsize = deadbeef->fgetlength (f);
 
     int id3v2_tag_size = deadbeef->junk_get_leading_size (f);
     if (id3v2_tag_size > 0) {
@@ -909,6 +905,18 @@ shn_insert (DB_playItem_t *after, const char *fname) {
 
 	shn_unload(tmp_file);
 
+    char s[100];
+    snprintf (s, sizeof (s), "%lld", fsize);
+    deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
+    snprintf (s, sizeof (s), "%d", tmp_file->wave_header.bits_per_sample);
+    deadbeef->pl_add_meta (it, ":BPS", s);
+    snprintf (s, sizeof (s), "%d", tmp_file->wave_header.channels);
+    deadbeef->pl_add_meta (it, ":CHANNELS", s);
+    snprintf (s, sizeof (s), "%d", tmp_file->wave_header.samples_per_sec);
+    deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
+    int br = (int)roundf(fsize / (float)tmp_file->wave_header.length * 8 / 1000);
+    snprintf (s, sizeof (s), "%d", br);
+    deadbeef->pl_add_meta (it, ":BITRATE", s);
     deadbeef->pl_add_meta (it, "title", NULL);
 
     after = deadbeef->pl_insert_item (after, it);
