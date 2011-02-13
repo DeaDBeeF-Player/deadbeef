@@ -24,6 +24,7 @@
 #include "../../config.h"
 #endif
 #include <stdlib.h>
+#include <math.h>
 #include "../../deadbeef.h"
 #include "aac_parser.h"
 
@@ -1054,6 +1055,7 @@ aac_insert (DB_playItem_t *after, const char *fname) {
     float duration = -1;
     int totalsamples = 0;
     int samplerate = 0;
+    int channels = 0;
 
     int mp4track = -1;
     MP4FILE mp4 = NULL;
@@ -1067,8 +1069,6 @@ aac_insert (DB_playItem_t *after, const char *fname) {
         if (skip >= 0) {
             deadbeef->fseek (fp, skip, SEEK_SET);
         }
-
-        int channels;
 
         // slowwww!
         MP4FILE_CB cb = {
@@ -1151,9 +1151,22 @@ aac_insert (DB_playItem_t *after, const char *fname) {
         deadbeef->pl_add_meta (it, "title", NULL);
     }
 
+    int64_t fsize = deadbeef->fgetlength (fp);
+
     deadbeef->fclose (fp);
 
     if (duration > 0) {
+        char s[100];
+        snprintf (s, sizeof (s), "%lld", fsize);
+        deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
+        deadbeef->pl_add_meta (it, ":BPS", "16");
+        snprintf (s, sizeof (s), "%d", channels);
+        deadbeef->pl_add_meta (it, ":CHANNELS", s);
+        snprintf (s, sizeof (s), "%d", samplerate);
+        deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
+        int br = (int)roundf(fsize / duration * 8 / 1000);
+        snprintf (s, sizeof (s), "%d", br);
+        deadbeef->pl_add_meta (it, ":BITRATE", s);
         // embedded cue
         deadbeef->pl_lock ();
         const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
