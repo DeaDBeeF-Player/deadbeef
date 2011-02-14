@@ -626,10 +626,12 @@ http_thread_func (void *ctx) {
             continue;
         }
         if (fp->status != STATUS_SEEK) {
+            trace ("vfs_curl: break loop\n");
             deadbeef->mutex_unlock (fp->mutex);
             break;
         }
         else {
+            trace ("vfs_curl: restart loop\n");
             fp->skipbytes = 0;
             fp->status = STATUS_INITIAL;
             trace ("seeking to %d\n", fp->pos);
@@ -657,12 +659,13 @@ http_thread_func (void *ctx) {
     deadbeef->mutex_lock (fp->mutex);
 
     if (fp->status == STATUS_ABORTED) {
-//        http_destroy (fp);
-        return;
+        trace ("vfs_curl: thread ended due to abort signal\n");
+    }
+    else {
+        trace ("vfs_curl: thread ended normally\n");
     }
     fp->status = STATUS_FINISHED;
     deadbeef->mutex_unlock (fp->mutex);
- //   fp->tid = 0;
 }
 
 static void
@@ -729,7 +732,7 @@ http_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
     {
         // wait until data is available
         while ((fp->remaining == 0 || fp->skipbytes > 0) && fp->status != STATUS_FINISHED) {
-//            trace ("vfs_curl: readwait..\n");
+            trace ("vfs_curl: readwait, status: %d..\n", fp->status);
             deadbeef->mutex_lock (fp->mutex);
             if (fp->status == STATUS_READING) {
                 struct timeval tm;
