@@ -122,7 +122,8 @@ http_curl_write_wrapper (HTTP_FILE *fp, void *ptr, size_t size) {
             deadbeef->mutex_unlock (fp->mutex);
             return 0;
         }
-        if (fp->status == STATUS_ABORTED) {
+        if (http_need_abort ((DB_FILE*)fp)) {
+            fp->status = STATUS_ABORTED;
             trace ("vfs_curl STATUS_ABORTED in the middle of packet\n");
             deadbeef->mutex_unlock (fp->mutex);
             break;
