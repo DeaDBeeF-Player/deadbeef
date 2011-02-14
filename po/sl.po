@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-10 15:02+0200\n"
-"PO-Revision-Date: 2011-02-13 00:00+0200\n"
+"PO-Revision-Date: 2011-02-14 14:57+0200\n"
 "Last-Translator: Klemen <klemen.kosir@gmx.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: sl\n"
@@ -137,12 +137,12 @@ msgstr "Uvozi prednastavljene Foobar2000"
 #: ../plugins/gtkui/gtkui.c:133
 #, c-format
 msgid "1 day %d:%02d:%02d"
-msgstr "1 dan %d.%02d.%02d"
+msgstr "1 dan %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:136
 #, c-format
 msgid "%d days %d:%02d:%02d"
-msgstr " %d dni %d.%02d.%02d"
+msgstr "%d dni %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:145
 #, c-format
@@ -160,7 +160,7 @@ msgstr "Stereo"
 #: ../plugins/gtkui/gtkui.c:183
 #, c-format
 msgid "| %4d kbps "
-msgstr "| %4d kbps"
+msgstr "| %4d kbps "
 
 #: ../plugins/gtkui/gtkui.c:189
 msgid "Paused | "
@@ -524,7 +524,7 @@ msgid ""
 "Example: %a - %t [%l]"
 msgstr ""
 "Oblika (začnite z %):\n"
-"  izv[a]jalec, [t] - naslov, al[b]um, [B] - skupina, [C] - skladatelj\n"
+"  izv[a]jalec, [t] - naslov, al[b]um, [B] - skupina, [C] - skladatelj,\n"
 "  [n] - št. skladbe, skup[N]o število skladb,\n"
 "  [l] - trajanje, [y] - leto, [g] - zvrst, [c] - opomba,\n"
 "  avto[r]ske pravice, [f] - ime datoteke, [F] - polna pot do datoteke,\n"
@@ -577,7 +577,9 @@ msgstr "Vrh ojačanja predvajanja"
 
 #: ../plugins/gtkui/interface.c:1804 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
-msgstr "Dodaj datoteke iz ukazne vrstice v ta predvajalnik:"
+msgstr ""
+"Dodaj datoteke iz ukazne vrstice (ali upravljalnika datotek) v ta "
+"predvajalnik:"
 
 #: ../plugins/gtkui/interface.c:1813 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "Resume previous session on startup"
@@ -820,7 +822,7 @@ msgid ""
 "Example: %a - %t [%l]"
 msgstr ""
 "Oblika (začnite z %):\n"
-"  izv[a]jalec, [t] - naslov, al[b]um, [B] - skupina, [C] - skladatelj\n"
+"  izv[a]jalec, [t] - naslov, al[b]um, [B] - skupina, [C] - skladatelj,\n"
 "  [n] - št. skladbe, skup[N]o število skladb,\n"
 "  [l] - trajanje, [y] - leto, [g] - zvrst, [c] - opomba,\n"
 "  avto[r]ske pravice, [f] - ime datoteke, [T] - oznake\n"
