@@ -192,10 +192,18 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
     int avg_bitrate = 0;
     int valid_frames = 0;
     int prev_bitrate = -1;
+    buffer->samplerate = 0;
 
     if (sample <= 0) {
         buffer->totalsamples = 0;
-        fsize = deadbeef->fgetlength (buffer->file) - initpos;
+        fsize = deadbeef->fgetlength (buffer->file);
+        if (fsize > 0) {
+            fsize -= initpos;
+            if (fsize < 0) {
+                trace ("cmp3_scan_stream: invalid file: bad header\n");
+                return -1;
+            }
+        }
     }
     if (sample <= 0 && buffer->avg_packetlength == 0) {
         buffer->avg_packetlength = 0;
@@ -209,12 +217,12 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
     for (;;) {
         uint32_t hdr;
         uint8_t sync;
-        //size_t pos = deadbeef->ftell (buffer->file);
         if (deadbeef->fread (&sync, 1, 1, buffer->file) != 1) {
             break; // eof
         }
         if (sync != 0xff) {
 //            trace ("[1]frame %d didn't seek to frame end\n", nframe);
+            buffer->samplerate = 0;
             continue; // not an mpeg frame
         }
         else {
@@ -224,6 +232,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             }
             if ((sync >> 5) != 7) {
 //                trace ("[2]frame %d didn't seek to frame end\n", nframe);
+                buffer->samplerate = 0;
                 continue;
             }
         }
@@ -253,6 +262,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         ver = vertbl[ver];
         if (ver < 0) {
             trace ("frame %d bad mpeg version %d\n", nframe, (hdr & (3<<19)) >> 19);
+            buffer->samplerate = 0;
             continue; // invalid frame
         }
 
@@ -262,6 +272,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         layer = ltbl[layer];
         if (layer < 0) {
             trace ("frame %d bad layer %d\n", nframe, (hdr & (3<<17)) >> 17);
+            buffer->samplerate = 0;
             continue; // invalid frame
         }
 
@@ -284,6 +295,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         bitrate = brtable[idx][bitrate];
         if (bitrate <= 0) {
             trace ("frame %d bad bitrate %d\n", nframe, (hdr & (0x0f<<12)) >> 12);
+            buffer->samplerate = 0;
             continue; // invalid frame
         }
 
@@ -297,6 +309,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         samplerate = srtable[ver-1][samplerate];
         if (samplerate < 0) {
             trace ("frame %d bad samplerate %d\n", nframe, (hdr & (0x03<<10))>>10);
+            buffer->samplerate = 0;
             continue; // invalid frame
         }
 
@@ -311,10 +324,12 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         if (layer == 2) {
             if ((bitrate <= 56 || bitrate == 80) && nchannels != 1) {
                 trace ("mpgmad: bad frame %d: layer %d, channels %d, bitrate %d\n", nframe, layer, nchannels, bitrate);
+                buffer->samplerate = 0;
                 continue; // bad frame
             }
             if (bitrate >= 224 && nchannels == 1) {
                 trace ("mpgmad: bad frame %d: layer %d, channels %d, bitrate %d\n", nframe, layer, nchannels, bitrate);
+                buffer->samplerate = 0;
                 continue; // bad frame
             }
         }
@@ -347,6 +362,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         }
         else {
             trace ("frame %d samplerate or bitrate is invalid\n", nframe);
+            buffer->samplerate = 0;
             continue;
         }
 
@@ -363,6 +379,9 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
 #endif
         if (sample != 0 || nframe == 0)
         {
+            if (buffer->samplerate) {
+                return 0;
+            }
             buffer->version = ver;
             buffer->layer = layer;
             buffer->bitrate = bitrate;
@@ -373,7 +392,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                 buffer->channels = nchannels;
             }
             buffer->bitspersample = 16;
-            //trace ("frame %d mpeg v%d layer %d bitrate %d samplerate %d packetlength %d framedur %f channels %d\n", nframe, ver, layer, bitrate, samplerate, packetlength, dur, nchannels);
+            trace ("frame %d mpeg v%d layer %d bitrate %d samplerate %d packetlength %d framedur %f channels %d\n", nframe, ver, layer, bitrate, samplerate, packetlength, dur, nchannels);
         }
         // try to read xing/info tag (only on initial scans)
         if (sample <= 0 && !buffer->have_xing_header)
@@ -488,17 +507,28 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             if (sample == 0) {
                 // xing header failed, calculate based on file size
 //                trace ("xing header failed\n");
+                trace ("cmp3_scan_stream: trying to figure out duration from file size\n");
                 buffer->samplerate = samplerate;
                 if (buffer->file->vfs->is_streaming ()) {
                     // only suitable for cbr files, used if streaming
-                    int sz = deadbeef->fgetlength (buffer->file) - buffer->startoffset - buffer->endoffset;
+                    int sz = deadbeef->fgetlength (buffer->file);
+                    if (sz > 0) {
+                        sz -= buffer->startoffset + buffer->endoffset;
+                        if (sz < 0) {
+                            trace ("cmp3_scan_stream: bad file headers\n");
+                            return -1;
+                        }
+                    }
                     if (sz < 0) {
                         // unable to determine duration
                         buffer->duration = -1;
                         buffer->totalsamples = -1;
                         if (sample == 0) {
-                            deadbeef->fseek (buffer->file, framepos/*+packetlength-4*/, SEEK_SET);
+                            trace ("check validity of the next frame...\n");
+                            deadbeef->fseek (buffer->file, framepos+packetlength-4, SEEK_SET);
+                            continue;
                         }
+                        trace ("cmp3_scan_stream: unable to determine duration");
                         return 0;
                     }
                     buffer->nframes = sz / packetlength;
@@ -647,7 +677,7 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     else {
         deadbeef->fset_track (info->buffer.file, it);
         info->buffer.it->filetype = NULL;
-        int len = deadbeef->fgetlength (info->buffer.file);
+        int64_t len = deadbeef->fgetlength (info->buffer.file);
         if (len > 0) {
             deadbeef->pl_delete_all_meta (it);
             int v2err = deadbeef->junk_id3v2_read (it, info->buffer.file);
@@ -661,6 +691,7 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             trace ("mpgmad: cmp3_init: initial cmp3_scan_stream failed\n");
             return -1;
         }
+        deadbeef->fseek (info->buffer.file, 0, SEEK_SET);
 
         cmp3_set_extra_properties (&info->buffer);
 
@@ -692,6 +723,7 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->fmt.samplerate = info->buffer.samplerate;
     _info->fmt.channels = info->buffer.channels;
     _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
+    trace ("mp3 format: bps:%d sr:%d channels:%d\n", _info->fmt.bps, _info->fmt.samplerate, _info->fmt.channels);
 
 	mad_stream_init(&info->stream);
 	mad_stream_options (&info->stream, MAD_OPTION_IGNORECRC);
@@ -756,7 +788,7 @@ cmp3_decode_cut (mpgmad_info_t *info, int framesize) {
         }
         if (info->buffer.currentsample + info->buffer.readsize / (framesize * info->buffer.channels) > info->buffer.endsample) {
             int sz = (info->buffer.endsample - info->buffer.currentsample + 1) * framesize * info->buffer.channels;
-            trace ("size truncated to %d bytes, cursample=%d, endsample=%d, totalsamples=%d\n", info->buffer.readsize, info->buffer.currentsample, info->buffer.endsample, info->buffer.totalsamples);
+//            trace ("size truncated to %d bytes, cursample=%d, endsample=%d, totalsamples=%d\n", info->buffer.readsize, info->buffer.currentsample, info->buffer.endsample, info->buffer.totalsamples);
             if (sz <= 0) {
                 return 1;
             }
@@ -898,18 +930,18 @@ cmp3_stream_frame (mpgmad_info_t *info) {
             if(MAD_RECOVERABLE(info->stream.error))
             {
                 if(info->stream.error!=MAD_ERROR_LOSTSYNC) {
-                    trace ("mpgmad: recoverable frame level error (%s)\n", MadErrorString(&info->stream));
+                    //trace ("mpgmad: recoverable frame level error (%s)\n", MadErrorString(&info->stream));
                 }
                 continue;
             }
             else {
                 if(info->stream.error==MAD_ERROR_BUFLEN) {
-                    trace ("mpgmad: recoverable frame level error (%s)\n", MadErrorString(&info->stream));
+                    //trace ("mpgmad: recoverable frame level error (%s)\n", MadErrorString(&info->stream));
                     continue;
                 }
                 else
                 {
-                    trace ("mpgmad: unrecoverable frame level error (%s).\n", MadErrorString(&info->stream));
+                    //trace ("mpgmad: unrecoverable frame level error (%s).\n", MadErrorString(&info->stream));
                     return -1; // fatal error
                 }
             }
