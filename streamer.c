@@ -130,12 +130,10 @@ streamer_abort_files (void) {
         deadbeef->fabort (fileinfo->file);
         trace ("\033[0;31maborting current song done\033[37;0m\n");
     }
-    mutex_lock (decodemutex);
     if (streamer_file) {
         trace ("\033[0;31maborting streamer_file\033[37;0m\n");
         deadbeef->fabort (streamer_file);
     }
-    mutex_unlock (decodemutex);
 }
 
 void
@@ -732,8 +730,8 @@ void
 streamer_set_nextsong (int song, int pstate) {
     DB_output_t *output = plug_get_output ();
     trace ("streamer_set_nextsong %d %d\n", song, pstate);
-    streamer_lock ();
     streamer_abort_files ();
+    streamer_lock ();
     nextsong = song;
     nextsong_pstate = pstate;
     if (output->state () == OUTPUT_STATE_STOPPED) {
