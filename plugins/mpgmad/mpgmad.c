@@ -214,6 +214,8 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         buffer->startoffset = initpos;
     }
 
+    int lastframe_valid = 0;
+
     for (;;) {
         uint32_t hdr;
         uint8_t sync;
@@ -222,7 +224,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         }
         if (sync != 0xff) {
 //            trace ("[1]frame %d didn't seek to frame end\n", nframe);
-            buffer->samplerate = 0;
+            lastframe_valid = 0;
             continue; // not an mpeg frame
         }
         else {
@@ -232,7 +234,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             }
             if ((sync >> 5) != 7) {
 //                trace ("[2]frame %d didn't seek to frame end\n", nframe);
-                buffer->samplerate = 0;
+                lastframe_valid = 0;
                 continue;
             }
         }
@@ -262,7 +264,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         ver = vertbl[ver];
         if (ver < 0) {
             trace ("frame %d bad mpeg version %d\n", nframe, (hdr & (3<<19)) >> 19);
-            buffer->samplerate = 0;
+            lastframe_valid = 0;
             continue; // invalid frame
         }
 
@@ -272,7 +274,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         layer = ltbl[layer];
         if (layer < 0) {
             trace ("frame %d bad layer %d\n", nframe, (hdr & (3<<17)) >> 17);
-            buffer->samplerate = 0;
+            lastframe_valid = 0;
             continue; // invalid frame
         }
 
@@ -295,7 +297,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         bitrate = brtable[idx][bitrate];
         if (bitrate <= 0) {
             trace ("frame %d bad bitrate %d\n", nframe, (hdr & (0x0f<<12)) >> 12);
-            buffer->samplerate = 0;
+            lastframe_valid = 0;
             continue; // invalid frame
         }
 
@@ -309,7 +311,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         samplerate = srtable[ver-1][samplerate];
         if (samplerate < 0) {
             trace ("frame %d bad samplerate %d\n", nframe, (hdr & (0x03<<10))>>10);
-            buffer->samplerate = 0;
+            lastframe_valid = 0;
             continue; // invalid frame
         }
 
@@ -324,12 +326,12 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         if (layer == 2) {
             if ((bitrate <= 56 || bitrate == 80) && nchannels != 1) {
                 trace ("mpgmad: bad frame %d: layer %d, channels %d, bitrate %d\n", nframe, layer, nchannels, bitrate);
-                buffer->samplerate = 0;
+                lastframe_valid = 0;
                 continue; // bad frame
             }
             if (bitrate >= 224 && nchannels == 1) {
                 trace ("mpgmad: bad frame %d: layer %d, channels %d, bitrate %d\n", nframe, layer, nchannels, bitrate);
-                buffer->samplerate = 0;
+                lastframe_valid = 0;
                 continue; // bad frame
             }
         }
@@ -362,7 +364,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         }
         else {
             trace ("frame %d samplerate or bitrate is invalid\n", nframe);
-            buffer->samplerate = 0;
+            lastframe_valid = 0;
             continue;
         }
 
@@ -379,7 +381,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
 #endif
         if (sample != 0 || nframe == 0)
         {
-            if (buffer->samplerate) {
+            if (sample == 0 && lastframe_valid) {
                 return 0;
             }
             buffer->version = ver;
@@ -394,6 +396,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             buffer->bitspersample = 16;
             trace ("frame %d mpeg v%d layer %d bitrate %d samplerate %d packetlength %d framedur %f channels %d\n", nframe, ver, layer, bitrate, samplerate, packetlength, dur, nchannels);
         }
+        lastframe_valid = 1;
         // try to read xing/info tag (only on initial scans)
         if (sample <= 0 && !buffer->have_xing_header)
         {
