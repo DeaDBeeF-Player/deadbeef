@@ -20,7 +20,6 @@
 #include <stdio.h>
 #include <assert.h>
 #include <unistd.h>
-#include <samplerate.h>
 #ifdef __linux__
 #include <sys/prctl.h>
 #endif
