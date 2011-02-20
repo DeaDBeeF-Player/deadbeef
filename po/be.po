@@ -1,0 +1,1457 @@
+# Deadbeef Audio Player
+# Copyright (C) 2009-2010 Alexey Yakovenko <waker@users.sourceforge.net>
+# This file is distributed under the same license as the Deadbeef package.
+# Максім Томкавіч <quendimax@tut.by>, 2011.
+# Максім Тамковіч <quendimax@tut.by>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.4.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-10-01 22:33+0300\n"
+"PO-Revision-Date: 2011-02-15 00:37+0200\n"
+"Last-Translator: Максім Тамковіч <quendimax@tut.by>\n"
+"Language-Team: Belarusian <>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: \n"
+"Language: be\n"
+"Plural-Forms: \n"
+"X-Generator: Pootle 2.0.5\n"
+
+#: ../plugins/gtkui/callbacks.c:97
+msgid "Supported sound formats"
+msgstr "Падтрымліваемыя фарматы"
+
+#: ../plugins/gtkui/callbacks.c:108
+msgid "Other files (*)"
+msgstr "Іншыя файлы (*)"
+
+#: ../plugins/gtkui/callbacks.c:118
+msgid "Open file(s)..."
+msgstr "Адкрыць файл(ы)..."
+
+#: ../plugins/gtkui/callbacks.c:151
+msgid "Add file(s) to playlist..."
+msgstr "Дадаць файл(ы) у плэйліст..."
+
+#: ../plugins/gtkui/callbacks.c:190
+msgid "Add folder(s) to playlist..."
+msgstr "Дадаць каталог(і) у плэйліст..."
+
+#: ../plugins/gtkui/callbacks.c:192
+msgid "Follow symlinks"
+msgstr "Ісці па сімвалічных спасылках"
+
+#: ../plugins/gtkui/callbacks.c:667
+msgid "Failed while reading help file"
+msgstr "Не атрымалася прачытаць файл даведкі"
+
+#: ../plugins/gtkui/callbacks.c:677
+msgid "Failed to load help file"
+msgstr "Не атрымалася загрузіць файл даведкі"
+
+#: ../plugins/gtkui/callbacks.c:692
+msgid "help.txt"
+msgstr "help.ru.txt"
+
+#: ../plugins/gtkui/callbacks.c:693 ../plugins/gtkui/interface.c:1125
+#: ../plugins/gtkui/deadbeef.glade.h:52
+msgid "Help"
+msgstr "Даведка"
+
+#: ../plugins/gtkui/callbacks.c:703
+#, c-format
+msgid "About DeaDBeeF %s"
+msgstr "Аб праграме DeaDBeeF %s"
+
+#: ../plugins/gtkui/callbacks.c:705
+msgid "about.txt"
+msgstr "about.txt"
+
+#: ../plugins/gtkui/callbacks.c:716
+#, c-format
+msgid "DeaDBeeF %s ChangeLog"
+msgstr "Змены ў DeaDBeeF %s"
+
+#: ../plugins/gtkui/callbacks.c:718
+msgid "ChangeLog"
+msgstr "Змены"
+
+#: ../plugins/gtkui/callbacks.c:729
+msgid "COPYING.GPLv2"
+msgstr "COPYING.GPLv2"
+
+#: ../plugins/gtkui/callbacks.c:740
+msgid "COPYING.LGPLv2.1"
+msgstr "COPYING.LGPLv2.1"
+
+#: ../plugins/gtkui/callbacks.c:1080
+#, c-format
+msgid "DeaDBeeF Translators"
+msgstr "Перакладчыкі DeaDBeeF "
+
+#: ../plugins/gtkui/callbacks.c:1082
+msgid "translators.txt"
+msgstr "translators.txt"
+
+#: ../plugins/gtkui/ddbtabstrip.c:626
+msgid "Edit playlist"
+msgstr "Рэдагаваць плэйліст"
+
+#: ../plugins/gtkui/ddbtabstrip.c:701
+msgid "Rename Playlist"
+msgstr "Перайменаваць плэйліст"
+
+#: ../plugins/gtkui/ddbtabstrip.c:705
+msgid "Remove Playlist"
+msgstr "Выдаліць плэйліст"
+
+#: ../plugins/gtkui/ddbtabstrip.c:709
+msgid "Add New Playlist"
+msgstr "Дадаць новы плэйліст"
+
+#: ../plugins/gtkui/eq.c:113
+msgid "Save DeaDBeeF EQ Preset"
+msgstr "Захаваць перадусталёўкі эквалайзера DeaDBeeF"
+
+#: ../plugins/gtkui/eq.c:120
+msgid "DeaDBeeF EQ preset files (*.ddbeq)"
+msgstr "Файлы перадусталёвак DeaDBeeF (*.ddbeq)"
+
+#: ../plugins/gtkui/eq.c:151
+msgid "Load DeaDBeeF EQ Preset..."
+msgstr "Загрузіць перадусталёўкі эквалайзера DeaDBeeF..."
+
+#: ../plugins/gtkui/eq.c:155
+msgid "DeaDBeeF EQ presets (*.ddbeq)"
+msgstr "Перадусталёўкі эквалайзера DeaDBeeF (*.ddbeq)"
+
+#: ../plugins/gtkui/eq.c:214
+msgid "Import Foobar2000 EQ Preset..."
+msgstr "Імпартаваць перадусталёўку эквалайзера Foobar2000..."
+
+#: ../plugins/gtkui/eq.c:218
+msgid "Foobar2000 EQ presets (*.feq)"
+msgstr "Перадусталёўкі эквалайзера Foobar2000 (*.feq)"
+
+#: ../plugins/gtkui/eq.c:292
+msgid "Enable"
+msgstr "Уключыць"
+
+#: ../plugins/gtkui/eq.c:300
+msgid "Zero All"
+msgstr "Абнуліць усё"
+
+#: ../plugins/gtkui/eq.c:307
+msgid "Zero Preamp"
+msgstr "Абнуліць перадузмацненне"
+
+#: ../plugins/gtkui/eq.c:314
+msgid "Zero Bands"
+msgstr "Абнуліць частоты"
+
+#: ../plugins/gtkui/eq.c:321
+msgid "Save Preset"
+msgstr "Захаваць"
+
+#: ../plugins/gtkui/eq.c:328
+msgid "Load Preset"
+msgstr "Загрузіць"
+
+#: ../plugins/gtkui/eq.c:335
+msgid "Import Foobar2000 Preset"
+msgstr "Імпартаваць перадусталёўку Foobar2000"
+
+#: ../plugins/gtkui/gtkui.c:133
+#, c-format
+msgid "1 day %d:%02d:%02d"
+msgstr "1 дзень %d:%02d:%02d"
+
+#: ../plugins/gtkui/gtkui.c:136
+#, c-format
+msgid "%d days %d:%02d:%02d"
+msgstr "%d дзён %d:%02d:%02d"
+
+#: ../plugins/gtkui/gtkui.c:145
+#, c-format
+msgid "Stopped | %d tracks | %s total playtime"
+msgstr "Стоп | %d трэкаў | %s агульны час"
+
+#: ../plugins/gtkui/gtkui.c:158
+msgid "Mono"
+msgstr "Мона"
+
+#: ../plugins/gtkui/gtkui.c:158
+msgid "Stereo"
+msgstr "Стэрэа"
+
+#: ../plugins/gtkui/gtkui.c:183
+#, c-format
+msgid "| %4d kbps "
+msgstr "| %4d кбіт/с "
+
+#: ../plugins/gtkui/gtkui.c:189
+msgid "Paused | "
+msgstr "Паўза | "
+
+#: ../plugins/gtkui/gtkui.c:190
+#, c-format
+msgid ""
+"%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
+msgstr ""
+"%s%s %s| %dГц | %d біт | %s | %d:%02d / %s | %d трэкаў | %s агульны час"
+
+#: ../plugins/gtkui/gtkui.c:661
+msgid "Save Playlist As"
+msgstr "Захаваць плэйліст як"
+
+#: ../plugins/gtkui/gtkui.c:670 ../plugins/gtkui/gtkui.c:731
+msgid "DeaDBeeF playlist files (*.dbpl)"
+msgstr "Файлы плэйлістоў DeaDBeeF (*.dbpl)"
+
+#: ../plugins/gtkui/gtkui.c:724
+msgid "Load Playlist"
+msgstr "Загрузіць плэйліст"
+
+#: ../plugins/gtkui/gtkui.c:864
+msgid "New Playlist"
+msgstr "Новы плэйліст"
+
+#: ../plugins/gtkui/gtkui.c:867
+#, c-format
+msgid "New Playlist (%d)"
+msgstr "Новы плэйліст (%d)"
+
+#: ../plugins/gtkui/interface.c:142 ../plugins/gtkui/deadbeef.glade.h:152
+msgid "_File"
+msgstr "_Файл"
+
+#: ../plugins/gtkui/interface.c:149 ../plugins/gtkui/deadbeef.glade.h:158
+msgid "_Open file(s)"
+msgstr "_Адкрыць файл(ы)"
+
+#: ../plugins/gtkui/interface.c:165 ../plugins/gtkui/deadbeef.glade.h:4
+msgid "Add file(s)"
+msgstr "Дадаць файл(ы)"
+
+#: ../plugins/gtkui/interface.c:173 ../plugins/gtkui/deadbeef.glade.h:6
+msgid "Add folder(s)"
+msgstr "Дадаць каталог(і)"
+
+#: ../plugins/gtkui/interface.c:181 ../plugins/gtkui/interface.c:2997
+#: ../plugins/gtkui/deadbeef.glade.h:7
+msgid "Add location"
+msgstr "Дадаць месцазнаходжанне"
+
+#: ../plugins/gtkui/interface.c:190 ../plugins/gtkui/deadbeef.glade.h:82
+msgid "New playlist"
+msgstr "Новы плэйліст"
+
+#: ../plugins/gtkui/interface.c:197 ../plugins/gtkui/deadbeef.glade.h:74
+msgid "Load playlist"
+msgstr "Загрузіць плэйліст"
+
+#: ../plugins/gtkui/interface.c:201 ../plugins/gtkui/deadbeef.glade.h:111
+msgid "Save playlist"
+msgstr "Захаваць плэйліст"
+
+#: ../plugins/gtkui/interface.c:205 ../plugins/gtkui/deadbeef.glade.h:112
+msgid "Save playlist as"
+msgstr "Захаваць плэйліст як"
+
+#: ../plugins/gtkui/interface.c:214 ../plugins/gtkui/deadbeef.glade.h:160
+msgid "_Quit"
+msgstr "_Выйсцi"
+
+#: ../plugins/gtkui/interface.c:225 ../plugins/gtkui/deadbeef.glade.h:151
+msgid "_Edit"
+msgstr "_Праўка"
+
+#: ../plugins/gtkui/interface.c:232 ../plugins/gtkui/deadbeef.glade.h:149
+msgid "_Clear"
+msgstr "_Ачысціць"
+
+#: ../plugins/gtkui/interface.c:240 ../plugins/gtkui/deadbeef.glade.h:116
+msgid "Select all"
+msgstr "Вылучыць усё"
+
+#: ../plugins/gtkui/interface.c:247 ../plugins/gtkui/deadbeef.glade.h:23
+msgid "Deselect all"
+msgstr "Зняць вылучэнне"
+
+#: ../plugins/gtkui/interface.c:254 ../plugins/gtkui/deadbeef.glade.h:57
+msgid "Invert selection"
+msgstr "Звярнуць вылучэнне"
+
+#: ../plugins/gtkui/interface.c:258 ../plugins/gtkui/deadbeef.glade.h:119
+msgid "Selection"
+msgstr "Вылучанае"
+
+#: ../plugins/gtkui/interface.c:265 ../plugins/gtkui/plcommon.c:426
+#: ../plugins/gtkui/prefwin.c:334 ../plugins/gtkui/deadbeef.glade.h:106
+msgid "Remove"
+msgstr "Выдаліць"
+
+#: ../plugins/gtkui/interface.c:273 ../plugins/gtkui/deadbeef.glade.h:18
+msgid "Crop"
+msgstr "Пакінуць вылучанае"
+
+#: ../plugins/gtkui/interface.c:277 ../plugins/gtkui/deadbeef.glade.h:153
+msgid "_Find"
+msgstr "_Знайсці"
+
+#: ../plugins/gtkui/interface.c:289 ../plugins/gtkui/interface.c:1733
+#: ../plugins/gtkui/deadbeef.glade.h:96
+msgid "Preferences"
+msgstr "Наладкі"
+
+#: ../plugins/gtkui/interface.c:293 ../plugins/gtkui/deadbeef.glade.h:162
+msgid "_View"
+msgstr "_Выгляд"
+
+#: ../plugins/gtkui/interface.c:300 ../plugins/gtkui/deadbeef.glade.h:122
+msgid "Status bar"
+msgstr "Радок стану"
+
+#: ../plugins/gtkui/interface.c:304 ../plugins/gtkui/deadbeef.glade.h:16
+msgid "Column headers"
+msgstr "Загалоўкі слупкоў"
+
+#: ../plugins/gtkui/interface.c:308 ../plugins/gtkui/deadbeef.glade.h:129
+msgid "Tabs"
+msgstr "Устаўкі"
+
+#: ../plugins/gtkui/interface.c:312 ../plugins/gtkui/deadbeef.glade.h:31
+msgid "Equalizer"
+msgstr "Эквалайзер"
+
+#: ../plugins/gtkui/interface.c:316 ../plugins/gtkui/deadbeef.glade.h:159
+msgid "_Playback"
+msgstr "Прай_граванне"
+
+#: ../plugins/gtkui/interface.c:323 ../plugins/gtkui/deadbeef.glade.h:85
+msgid "Order"
+msgstr "Чарга"
+
+#: ../plugins/gtkui/interface.c:330 ../plugins/gtkui/deadbeef.glade.h:73
+msgid "Linear"
+msgstr "Па чарзе"
+
+#: ../plugins/gtkui/interface.c:336 ../plugins/gtkui/deadbeef.glade.h:120
+msgid "Shuffle"
+msgstr "Уперамешку"
+
+#: ../plugins/gtkui/interface.c:342 ../plugins/gtkui/deadbeef.glade.h:105
+msgid "Random"
+msgstr "Выпадкова"
+
+#: ../plugins/gtkui/interface.c:348 ../plugins/gtkui/deadbeef.glade.h:77
+msgid "Looping"
+msgstr "Паўтараць"
+
+#: ../plugins/gtkui/interface.c:355 ../plugins/gtkui/deadbeef.glade.h:75
+msgid "Loop All"
+msgstr "Паўтараць усё"
+
+#: ../plugins/gtkui/interface.c:361 ../plugins/gtkui/deadbeef.glade.h:76
+msgid "Loop Single Song"
+msgstr "Паўтараць адзін трэк"
+
+#: ../plugins/gtkui/interface.c:367 ../plugins/gtkui/deadbeef.glade.h:27
+msgid "Don't Loop"
+msgstr "Не паўтараць"
+
+#: ../plugins/gtkui/interface.c:373 ../plugins/gtkui/deadbeef.glade.h:113
+msgid "Scroll follows playback"
+msgstr "Пракручваць плэйліст аўтаматычна"
+
+#: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:20
+msgid "Cursor follows playback"
+msgstr "Вылучаць бягучы трэк"
+
+#: ../plugins/gtkui/interface.c:382 ../plugins/gtkui/deadbeef.glade.h:124
+msgid "Stop after current"
+msgstr "Спыніць пасля бягучага"
+
+#: ../plugins/gtkui/interface.c:394 ../plugins/gtkui/deadbeef.glade.h:69
+msgid "Jump to current track"
+msgstr "Перайсці на бягучы трэк"
+
+#: ../plugins/gtkui/interface.c:401 ../plugins/gtkui/interface.c:408
+#: ../plugins/gtkui/deadbeef.glade.h:155
+msgid "_Help"
+msgstr "_Даведка"
+
+#: ../plugins/gtkui/interface.c:416 ../plugins/gtkui/deadbeef.glade.h:148
+msgid "_ChangeLog"
+msgstr "_Змены"
+
+#: ../plugins/gtkui/interface.c:425 ../plugins/gtkui/deadbeef.glade.h:154
+msgid "_GPLv2"
+msgstr "_GPLv2"
+
+#: ../plugins/gtkui/interface.c:429 ../plugins/gtkui/deadbeef.glade.h:156
+msgid "_LGPLv2.1"
+msgstr "_LGPLv2.1"
+
+#: ../plugins/gtkui/interface.c:438 ../plugins/gtkui/deadbeef.glade.h:145
+msgid "_About"
+msgstr "_Аб праграме"
+
+#: ../plugins/gtkui/interface.c:446 ../plugins/gtkui/deadbeef.glade.h:161
+msgid "_Translators"
+msgstr "_Перакладчыкі"
+
+#: ../plugins/gtkui/interface.c:836 ../plugins/gtkui/deadbeef.glade.h:114
+msgid "Search"
+msgstr "Пошук"
+
+#: ../plugins/gtkui/interface.c:911 ../plugins/gtkui/deadbeef.glade.h:123
+msgid "Stop"
+msgstr "Стоп"
+
+#: ../plugins/gtkui/interface.c:919 ../plugins/gtkui/deadbeef.glade.h:91
+msgid "Play"
+msgstr "Прайграць"
+
+#: ../plugins/gtkui/interface.c:927 ../plugins/gtkui/deadbeef.glade.h:90
+msgid "Pause"
+msgstr "Паўза"
+
+#: ../plugins/gtkui/interface.c:935 ../plugins/gtkui/deadbeef.glade.h:97
+msgid "Previous"
+msgstr "Папярэдняя"
+
+#: ../plugins/gtkui/interface.c:943 ../plugins/gtkui/deadbeef.glade.h:83
+msgid "Next"
+msgstr "Наступная"
+
+#: ../plugins/gtkui/interface.c:951 ../plugins/gtkui/deadbeef.glade.h:92
+msgid "Play Random"
+msgstr "Граць выпадкова"
+
+#: ../plugins/gtkui/interface.c:960 ../plugins/gtkui/deadbeef.glade.h:3
+msgid "About"
+msgstr "Аб праграме"
+
+#: ../plugins/gtkui/interface.c:973 ../plugins/gtkui/deadbeef.glade.h:104
+msgid "Quit"
+msgstr "Выйсце"
+
+#: ../plugins/gtkui/interface.c:1045 ../plugins/gtkui/deadbeef.glade.h:8
+msgid "Adding files..."
+msgstr "Даданне файлаў..."
+
+#: ../plugins/gtkui/interface.c:1089 ../plugins/gtkui/deadbeef.glade.h:144
+msgid "_Abort"
+msgstr "_Скасаваць"
+
+#: ../plugins/gtkui/interface.c:1189 ../plugins/gtkui/deadbeef.glade.h:135
+msgid "Track Properties"
+msgstr "Уласцівасці трэка"
+
+#: ../plugins/gtkui/interface.c:1235 ../plugins/gtkui/deadbeef.glade.h:146
+msgid "_Apply"
+msgstr "_Ужыць"
+
+#: ../plugins/gtkui/interface.c:1256 ../plugins/gtkui/interface.c:1302
+#: ../plugins/gtkui/interface.c:2525 ../plugins/gtkui/deadbeef.glade.h:150
+msgid "_Close"
+msgstr "_Зачыніць"
+
+#: ../plugins/gtkui/interface.c:1260 ../plugins/gtkui/deadbeef.glade.h:78
+msgid "Metadata"
+msgstr "Метададзеныя"
+
+#: ../plugins/gtkui/interface.c:1306 ../plugins/gtkui/plcommon.c:504
+#: ../plugins/gtkui/deadbeef.glade.h:98
+msgid "Properties"
+msgstr "Уласцівасці"
+
+#: ../plugins/gtkui/interface.c:1391 ../plugins/gtkui/deadbeef.glade.h:163
+msgid "editcolumndlg"
+msgstr "Рэдагаваць слупок"
+
+#: ../plugins/gtkui/interface.c:1406 ../plugins/gtkui/interface.c:2897
+#: ../plugins/gtkui/deadbeef.glade.h:132
+msgid "Title:"
+msgstr "Назва:"
+
+#: ../plugins/gtkui/interface.c:1414 ../plugins/gtkui/deadbeef.glade.h:30
+msgid "Enter new column title here"
+msgstr "Увядзіце назву новага слупка"
+
+#: ../plugins/gtkui/interface.c:1422 ../plugins/gtkui/deadbeef.glade.h:136
+msgid "Type:"
+msgstr "Тып:"
+
+#: ../plugins/gtkui/interface.c:1430
+msgid "Item Index"
+msgstr "Нумар"
+
+#. create default set of columns
+#: ../plugins/gtkui/interface.c:1431 ../plugins/gtkui/mainplaylist.c:305
+msgid "Playing"
+msgstr "Прайграецца"
+
+#: ../plugins/gtkui/interface.c:1432
+msgid "Album Art"
+msgstr "Вокладка альбому"
+
+#: ../plugins/gtkui/interface.c:1433
+msgid "Artist - Album"
+msgstr "Выканаўца - Альбом"
+
+#. Track properties dialog
+#: ../plugins/gtkui/interface.c:1434 ../plugins/gtkui/plcommon.c:878
+#: ../translation/extra.c:55
+msgid "Artist"
+msgstr "Выканаўца"
+
+#: ../plugins/gtkui/interface.c:1435 ../plugins/gtkui/interface.c:1822
+#: ../translation/extra.c:59
+msgid "Album"
+msgstr "Альбом"
+
+#: ../plugins/gtkui/interface.c:1436 ../plugins/gtkui/prefwin.c:612
+msgid "Title"
+msgstr "Назва"
+
+#: ../plugins/gtkui/interface.c:1437
+msgid "Length"
+msgstr "Даўжыня"
+
+#: ../plugins/gtkui/interface.c:1438 ../plugins/gtkui/interface.c:1821
+msgid "Track"
+msgstr "Трэк"
+
+#: ../plugins/gtkui/interface.c:1439 ../translation/extra.c:58
+msgid "Band / Album Artist"
+msgstr "Гурт / Выканаўца альбому"
+
+#: ../plugins/gtkui/interface.c:1440 ../plugins/gtkui/plcommon.c:882
+msgid "Custom"
+msgstr "Карыстальніцкі"
+
+#: ../plugins/gtkui/interface.c:1446 ../plugins/gtkui/interface.c:3124
+#: ../plugins/gtkui/deadbeef.glade.h:49
+msgid "Format:"
+msgstr "Фармат:"
+
+#: ../plugins/gtkui/interface.c:1461 ../plugins/gtkui/deadbeef.glade.h:9
+msgid "Alignment:"
+msgstr "Выраўніванне:"
+
+#: ../plugins/gtkui/interface.c:1469
+msgid "Left"
+msgstr "Па леваму краю"
+
+#: ../plugins/gtkui/interface.c:1470
+msgid "Right"
+msgstr "Па праваму краю"
+
+#: ../plugins/gtkui/interface.c:1472 ../plugins/gtkui/deadbeef.glade.h:35
+#, no-c-format
+msgid ""
+"Format conversions (start with %):\n"
+"  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
+"  track[n]umber, [N]totaltracks,\n"
+"  [l]ength, [y]ear, [g]enre, [c]omment,\n"
+"  copy[r]ight, [f]ilename, [F]ullPathname, [T]ags,\n"
+"  [d]irectory, [D]irectoryWithPath\n"
+"Example: %a - %t [%l]"
+msgstr ""
+"Пераўтварэнне фармата (пачынаецца з %):\n"
+"  %a-выканаўца, %t-назва, %b-альбом, %B-гурт,\n"
+"  %C-кампазітар, %n-нумар трэка, %N-усяго трэкаў,\n"
+"  %l-даўжыня, %y-год, %g-жанр, %c-каментар,\n"
+"  %r-аўтарскія правы, %f-імя файла, %F-шлях да файла\n"
+"  %T-тэгі, %d-дырэкторыя, %D-поўны шлях да дырэкторыі\n"
+"Прыклад: %a - %t [%l]"
+
+#: ../plugins/gtkui/interface.c:1501 ../plugins/gtkui/interface.c:2928
+#: ../plugins/gtkui/interface.c:3040 ../plugins/gtkui/interface.c:3163
+#: ../plugins/gtkui/deadbeef.glade.h:147
+msgid "_Cancel"
+msgstr "_Скасаваць"
+
+#: ../plugins/gtkui/interface.c:1522 ../plugins/gtkui/interface.c:2949
+#: ../plugins/gtkui/interface.c:3061 ../plugins/gtkui/interface.c:3184
+#: ../plugins/gtkui/deadbeef.glade.h:157
+msgid "_OK"
+msgstr "_ОК"
+
+#: ../plugins/gtkui/interface.c:1753 ../plugins/gtkui/deadbeef.glade.h:87
+msgid "Output plugin:"
+msgstr "Модуль вывада:"
+
+#: ../plugins/gtkui/interface.c:1766 ../plugins/gtkui/deadbeef.glade.h:86
+msgid "Output device:"
+msgstr "Прылада вывада:"
+
+#: ../plugins/gtkui/interface.c:1775 ../plugins/gtkui/deadbeef.glade.h:121
+msgid "Sound"
+msgstr "Гук"
+
+#: ../plugins/gtkui/interface.c:1784 ../plugins/gtkui/deadbeef.glade.h:10
+msgid "Allow dynamic samplerate switching"
+msgstr "Дазволіць дынамічную змену частаты дыскрэтызацыі"
+
+#: ../plugins/gtkui/interface.c:1792 ../plugins/gtkui/deadbeef.glade.h:110
+msgid "Samplerate conversion quality:"
+msgstr "Алгарытм інтэрпаляцыі:"
+
+#: ../plugins/gtkui/interface.c:1811 ../plugins/gtkui/deadbeef.glade.h:107
+msgid "Replaygain mode:"
+msgstr "Рэжым аўтаўстаноўкі гучнасці:"
+
+#: ../plugins/gtkui/interface.c:1820
+msgid "Disable"
+msgstr "Адключаны"
+
+#: ../plugins/gtkui/interface.c:1824 ../plugins/gtkui/deadbeef.glade.h:108
+msgid "Replaygain peak scale"
+msgstr "Выкарыстоўваць пікавае значэнне"
+
+#: ../plugins/gtkui/interface.c:1832 ../plugins/gtkui/deadbeef.glade.h:5
+msgid "Add files from command line (or file manager) to this playlist:"
+msgstr ""
+"Дадаваць файлы з каманднага радка\n"
+"(ці файлавага кіраўніка) у гэты плэйліст:"
+
+#: ../plugins/gtkui/interface.c:1841 ../plugins/gtkui/deadbeef.glade.h:109
+msgid "Resume previous session on startup"
+msgstr "Аднаўляць папярэднюю сесію пры запуску"
+
+#: ../plugins/gtkui/interface.c:1845 ../plugins/gtkui/deadbeef.glade.h:93
+msgid "Playback"
+msgstr "Прайграванне"
+
+#: ../plugins/gtkui/interface.c:1854 ../plugins/gtkui/deadbeef.glade.h:14
+msgid "Close minimizes to tray"
+msgstr "Згортваць у трэй паводле зачынення"
+
+#: ../plugins/gtkui/interface.c:1858 ../plugins/gtkui/deadbeef.glade.h:80
+msgid "Middle mouse button closes playlist"
+msgstr "Сярэдняя кнопка мышы зачыняе плэйліст"
+
+#: ../plugins/gtkui/interface.c:1862 ../plugins/gtkui/deadbeef.glade.h:54
+msgid "Hide system tray icon"
+msgstr "Не адлюстроўваць іконку у трэі"
+
+#: ../plugins/gtkui/interface.c:1866 ../plugins/gtkui/deadbeef.glade.h:138
+msgid "Use bold font for currently playing track"
+msgstr "Выкарыстоўваць тлусты шрыфт для бягучага трэка"
+
+#: ../plugins/gtkui/interface.c:1870 ../plugins/gtkui/deadbeef.glade.h:53
+msgid "Hide \"Delete from disk\" context menu item"
+msgstr "Прыбраць пункт \"Выдаліць з дыска\" з кантэкстнага меню"
+
+#: ../plugins/gtkui/interface.c:1878 ../plugins/gtkui/deadbeef.glade.h:133
+msgid "Titlebar text while playing:"
+msgstr "Тэкст загалоўка пры прайграванні:"
+
+#: ../plugins/gtkui/interface.c:1892 ../plugins/gtkui/deadbeef.glade.h:134
+msgid "Titlebar text while stopped:"
+msgstr "Тэкст загалоўка пры спыненні:"
+
+#: ../plugins/gtkui/interface.c:1902 ../plugins/gtkui/deadbeef.glade.h:50
+msgid "GUI"
+msgstr "Інтэрфейс"
+
+#: ../plugins/gtkui/interface.c:1916 ../plugins/gtkui/interface.c:1960
+#: ../plugins/gtkui/deadbeef.glade.h:88
+msgid "Override"
+msgstr "Замяніць"
+
+#: ../plugins/gtkui/interface.c:1925 ../plugins/gtkui/deadbeef.glade.h:33
+msgid "Foreground"
+msgstr "Пярэдні план"
+
+#: ../plugins/gtkui/interface.c:1932 ../plugins/gtkui/deadbeef.glade.h:12
+msgid "Background"
+msgstr "Фон"
+
+#: ../plugins/gtkui/interface.c:1951 ../plugins/gtkui/deadbeef.glade.h:115
+msgid "Seekbar/Volumebar colors"
+msgstr "Асноўныя колеры"
+
+#: ../plugins/gtkui/interface.c:1969 ../plugins/gtkui/deadbeef.glade.h:79
+msgid "Middle"
+msgstr "Сярэдні"
+
+#: ../plugins/gtkui/interface.c:1976 ../plugins/gtkui/deadbeef.glade.h:72
+msgid "Light"
+msgstr "Светлы"
+
+#: ../plugins/gtkui/interface.c:1983 ../plugins/gtkui/deadbeef.glade.h:21
+msgid "Dark"
+msgstr "Цёмны"
+
+#: ../plugins/gtkui/interface.c:2014 ../plugins/gtkui/deadbeef.glade.h:13
+msgid "Base"
+msgstr "Грунтоўны"
+
+#: ../plugins/gtkui/interface.c:2021 ../plugins/gtkui/deadbeef.glade.h:128
+msgid "Tab strip colors"
+msgstr "Колеры ўставак"
+
+#: ../plugins/gtkui/interface.c:2030 ../plugins/gtkui/deadbeef.glade.h:89
+msgid "Override (looses GTK treeview theming, but speeds up rendering)"
+msgstr ""
+"Замяніць (губляюцца наладкі тэмы GTK, але павялічваецца\n"
+"хуткасць адлюстроўвання"
+
+#: ../plugins/gtkui/interface.c:2039 ../plugins/gtkui/deadbeef.glade.h:32
+msgid "Even row"
+msgstr ""
+"Цотны\n"
+"радок"
+
+#: ../plugins/gtkui/interface.c:2046 ../plugins/gtkui/deadbeef.glade.h:84
+msgid "Odd row"
+msgstr ""
+"Няцотны\n"
+"радок"
+
+#: ../plugins/gtkui/interface.c:2065 ../plugins/gtkui/deadbeef.glade.h:131
+msgid "Text"
+msgstr "Тэкст"
+
+#: ../plugins/gtkui/interface.c:2072 ../plugins/gtkui/deadbeef.glade.h:117
+msgid "Selected row"
+msgstr ""
+"Вылучаны\n"
+"радок"
+
+#: ../plugins/gtkui/interface.c:2091 ../plugins/gtkui/deadbeef.glade.h:118
+msgid "Selected text"
+msgstr "Вылучаны радок"
+
+#: ../plugins/gtkui/interface.c:2104 ../plugins/gtkui/deadbeef.glade.h:19
+msgid "Cursor"
+msgstr "Курсор"
+
+#: ../plugins/gtkui/interface.c:2117 ../plugins/gtkui/deadbeef.glade.h:94
+msgid "Playlist colors"
+msgstr "Колеры плэйліста"
+
+#: ../plugins/gtkui/interface.c:2121 ../plugins/gtkui/deadbeef.glade.h:15
+msgid "Colors"
+msgstr "Колеры"
+
+#: ../plugins/gtkui/interface.c:2130 ../plugins/gtkui/deadbeef.glade.h:29
+msgid "Enable Proxy Server"
+msgstr "Уключыць проксі-сервер"
+
+#: ../plugins/gtkui/interface.c:2138 ../plugins/gtkui/deadbeef.glade.h:100
+msgid "Proxy Server Address:"
+msgstr "Адрас:"
+
+#: ../plugins/gtkui/interface.c:2152 ../plugins/gtkui/deadbeef.glade.h:101
+msgid "Proxy Server Port:"
+msgstr "Порт:"
+
+#: ../plugins/gtkui/interface.c:2166 ../plugins/gtkui/deadbeef.glade.h:102
+msgid "Proxy Type:"
+msgstr "Тып проксі:"
+
+#: ../plugins/gtkui/interface.c:2185 ../plugins/gtkui/deadbeef.glade.h:103
+msgid "Proxy Username:"
+msgstr "Імя карыстальніка:"
+
+#: ../plugins/gtkui/interface.c:2198 ../plugins/gtkui/deadbeef.glade.h:99
+msgid "Proxy Password:"
+msgstr "Пароль:"
+
+#: ../plugins/gtkui/interface.c:2208 ../plugins/gtkui/deadbeef.glade.h:81
+msgid "Network"
+msgstr "Сетка"
+
+#: ../plugins/gtkui/interface.c:2236 ../plugins/gtkui/deadbeef.glade.h:142
+msgid "Write ID3v2"
+msgstr "Пісаць ID3v2"
+
+#: ../plugins/gtkui/interface.c:2240 ../plugins/gtkui/interface.c:2367
+#: ../plugins/gtkui/deadbeef.glade.h:141
+msgid "Write ID3v1"
+msgstr "Пісаць ID3v1"
+
+#: ../plugins/gtkui/interface.c:2244 ../plugins/gtkui/interface.c:2323
+#: ../plugins/gtkui/interface.c:2363 ../plugins/gtkui/deadbeef.glade.h:140
+msgid "Write APEv2"
+msgstr "Пісаць APEv2"
+
+#: ../plugins/gtkui/interface.c:2252 ../plugins/gtkui/interface.c:2331
+#: ../plugins/gtkui/deadbeef.glade.h:127
+msgid "Strip ID3v2"
+msgstr "Выразаць ID3v2"
+
+#: ../plugins/gtkui/interface.c:2256 ../plugins/gtkui/interface.c:2379
+#: ../plugins/gtkui/deadbeef.glade.h:126
+msgid "Strip ID3v1"
+msgstr "Выразаць ID3v1"
+
+#: ../plugins/gtkui/interface.c:2260 ../plugins/gtkui/interface.c:2335
+#: ../plugins/gtkui/interface.c:2375 ../plugins/gtkui/deadbeef.glade.h:125
+msgid "Strip APEv2"
+msgstr "Выразаць APEv2"
+
+#: ../plugins/gtkui/interface.c:2268 ../plugins/gtkui/deadbeef.glade.h:56
+msgid "ID3v2 version"
+msgstr "Версія ID3v2"
+
+#: ../plugins/gtkui/interface.c:2275
+msgid "2.3 (Recommended)"
+msgstr "2.3 (Параіная)"
+
+#: ../plugins/gtkui/interface.c:2276
+msgid "2.4"
+msgstr "2.4"
+
+#: ../plugins/gtkui/interface.c:2282 ../plugins/gtkui/deadbeef.glade.h:55
+msgid "ID3v1 character encoding (default is iso8859-1)"
+msgstr "Кадыроўка ID3v1 (па змаўчанні iso8859-1)"
+
+#: ../plugins/gtkui/interface.c:2319 ../plugins/gtkui/deadbeef.glade.h:143
+msgid "Write ID3v2.4"
+msgstr "Пісать ID3v2.4"
+
+#: ../plugins/gtkui/interface.c:2388 ../plugins/gtkui/deadbeef.glade.h:130
+msgid "Tag writer"
+msgstr "Рэдактар тэгаў"
+
+#: ../plugins/gtkui/interface.c:2419 ../plugins/gtkui/deadbeef.glade.h:22
+msgid "Description:"
+msgstr "Апісанне:"
+
+#: ../plugins/gtkui/interface.c:2434 ../plugins/gtkui/deadbeef.glade.h:11
+msgid "Author(s):"
+msgstr "Аўтар(ы):"
+
+#: ../plugins/gtkui/interface.c:2449 ../plugins/gtkui/deadbeef.glade.h:28
+msgid "Email:"
+msgstr "Электронны адрас:"
+
+#: ../plugins/gtkui/interface.c:2464 ../plugins/gtkui/deadbeef.glade.h:139
+msgid "Website:"
+msgstr "Вэб-сайт:"
+
+#: ../plugins/gtkui/interface.c:2495 ../plugins/gtkui/deadbeef.glade.h:17
+msgid "Configure"
+msgstr "Наладзіць"
+
+#: ../plugins/gtkui/interface.c:2499 ../plugins/gtkui/deadbeef.glade.h:95
+msgid "Plugins"
+msgstr "Дадаткі"
+
+#: ../plugins/gtkui/interface.c:2881 ../plugins/gtkui/deadbeef.glade.h:164
+msgid "editplaylistdlg"
+msgstr "Рэдактаваць плэйліст"
+
+#: ../plugins/gtkui/interface.c:3008 ../plugins/gtkui/deadbeef.glade.h:137
+msgid "URL:"
+msgstr "URL:"
+
+#: ../plugins/gtkui/interface.c:3109 ../plugins/gtkui/deadbeef.glade.h:51
+msgid "Group By"
+msgstr "Гуртаваць па"
+
+#: ../plugins/gtkui/interface.c:3134 ../plugins/gtkui/deadbeef.glade.h:43
+#, no-c-format
+msgid ""
+"Format conversions (start with %):\n"
+"  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
+"  track[n]umber, [N]totaltracks,\n"
+"  [l]ength, [y]ear, [g]enre, [c]omment,\n"
+"  copy[r]ight, [f]ilename, [T]ags\n"
+"Example: %a - %t [%l]"
+msgstr ""
+"Пераўтварэнне фармату (пачыная з %):\n"
+"  %a-выканаўца, %t-назва, %b-альбом, %B-гурт,\n"
+"  %C-кампазітар, %n-нумар трэка, %N-усяго трэкаў,\n"
+"  %l-даўжыня, %y-год, %g-жанр, %c-каментар,\n"
+"  %r-аўтарскія правы, %f-імя файла, %T-тэгі\n"
+"Прыклад: %a - %t [%l]"
+
+#: ../plugins/gtkui/mainplaylist.c:306 ../plugins/gtkui/search.c:439
+msgid "Artist / Album"
+msgstr "Выканаўца / Альбом"
+
+#: ../plugins/gtkui/mainplaylist.c:307 ../plugins/gtkui/search.c:440
+msgid "Track No"
+msgstr "Трэк №"
+
+#: ../plugins/gtkui/mainplaylist.c:308 ../plugins/gtkui/search.c:441
+msgid "Title / Track Artist"
+msgstr "Загаловак / Выканаўца"
+
+#: ../plugins/gtkui/mainplaylist.c:309 ../plugins/gtkui/search.c:442
+#: ../plugins/gtkui/trkproperties.c:175
+msgid "Duration"
+msgstr "Працягласць"
+
+#: ../plugins/gtkui/plcommon.c:324
+msgid "Delete files from disk"
+msgstr "Выдаліць файлы з жорсткага дыска"
+
+#: ../plugins/gtkui/plcommon.c:325
+msgid ""
+"Files will be lost. Proceed?\n"
+"(This dialog can be turned off in GTKUI plugin settings)"
+msgstr ""
+"Файлы будуць выдалены. Працягваць?\n"
+"(Гэты дыялог можы быць адключаны ў наладках GTKUI)"
+
+#: ../plugins/gtkui/plcommon.c:326 ../plugins/gtkui/trkproperties.c:56
+msgid "Warning"
+msgstr "Увага"
+
+#: ../plugins/gtkui/plcommon.c:402
+msgid "Add to playback queue"
+msgstr "Дадаць у чаргу"
+
+#: ../plugins/gtkui/plcommon.c:407
+msgid "Remove from playback queue"
+msgstr "Выдаліць з чаргі"
+
+#: ../plugins/gtkui/plcommon.c:415
+msgid "Reload metadata"
+msgstr "Аднавіць метададзеныя"
+
+#: ../plugins/gtkui/plcommon.c:434
+msgid "Remove from disk"
+msgstr "Выдаліць з жорсткага дыска"
+
+#: ../plugins/gtkui/plcommon.c:720 ../plugins/gtkui/plcommon.c:845
+msgid "Add column"
+msgstr "Дадаць слупок"
+
+#: ../plugins/gtkui/plcommon.c:750 ../plugins/gtkui/plcommon.c:849
+msgid "Edit column"
+msgstr "Рэдактаваць слупок"
+
+#: ../plugins/gtkui/plcommon.c:853
+msgid "Remove column"
+msgstr "Выдаліць слупок"
+
+#: ../plugins/gtkui/plcommon.c:863
+msgid "Group by"
+msgstr "Гуртаваць па"
+
+#: ../plugins/gtkui/plcommon.c:870
+msgid "None"
+msgstr "Адсутнічае"
+
+#: ../plugins/gtkui/plcommon.c:874
+msgid "Artist/Date/Album"
+msgstr "Выканаўца/Дата/Альбом"
+
+#: ../plugins/gtkui/pluginconf.c:41
+msgid "Open file..."
+msgstr "Адкрыць файл..."
+
+#: ../plugins/gtkui/pluginconf.c:142
+#, c-format
+msgid "Setup %s"
+msgstr "Усталёўкі %s"
+
+#: ../plugins/gtkui/prefwin.c:99
+msgid "Default Audio Device"
+msgstr "Аўдыё прыстасаванне па змаўчанні"
+
+#: ../plugins/gtkui/prefwin.c:329
+msgid "Add"
+msgstr "Дадаць"
+
+#: ../plugins/gtkui/prefwin.c:339
+msgid "Global Hotkeys"
+msgstr "Гарачыя клавішы"
+
+#: ../plugins/gtkui/prefwin.c:401
+msgid "Slot"
+msgstr "Слот"
+
+#: ../plugins/gtkui/prefwin.c:402
+msgid "Key combination"
+msgstr "Камбінацыя клавіш"
+
+#. output plugin selection
+#: ../plugins/gtkui/prefwin.c:481 ../plugins/gtkui/prefwin.c:693
+#: ../plugins.c:873
+msgid "ALSA output plugin"
+msgstr "Модуль вывада ALSA"
+
+#: ../plugins/gtkui/progress.c:64
+msgid "Initializing..."
+msgstr "Ініцыялізацыя..."
+
+#: ../plugins/gtkui/trkproperties.c:53
+msgid "You've modified data for this track."
+msgstr "Дадзеныя для гэтага трэка былі зменены."
+
+#: ../plugins/gtkui/trkproperties.c:55
+msgid "Really close the window?"
+msgstr "Зачыніць вакно?"
+
+#: ../plugins/gtkui/trkproperties.c:169
+msgid "Location"
+msgstr "Месцазнаходжанне"
+
+#: ../plugins/gtkui/trkproperties.c:172
+msgid "Subtrack Index"
+msgstr "Нумар укладзенага трэка"
+
+#: ../plugins/gtkui/trkproperties.c:178
+msgid "Tag Type(s)"
+msgstr "Тып(ы) тэгаў"
+
+#: ../plugins/gtkui/trkproperties.c:180
+msgid "Embedded Cuesheet"
+msgstr "Укладзены файл cue"
+
+#: ../plugins/gtkui/trkproperties.c:180
+msgid "Yes"
+msgstr "Да"
+
+#: ../plugins/gtkui/trkproperties.c:180
+msgid "No"
+msgstr "Не"
+
+#: ../plugins/gtkui/trkproperties.c:182
+msgid "Codec"
+msgstr "Кодек"
+
+#: ../plugins/gtkui/trkproperties.c:250 ../plugins/gtkui/trkproperties.c:262
+msgid "Key"
+msgstr "Ключ"
+
+#: ../plugins/gtkui/trkproperties.c:251 ../plugins/gtkui/trkproperties.c:263
+msgid "Value"
+msgstr "Значэнне"
+
+#: ../plugins/notify/notify.c:138
+msgid "DeaDBeeF now playing"
+msgstr "DeaDBeeF зараз грае"
+
+#: ../main.c:89
+#, c-format
+msgid "Usage: deadbeef [options] [file(s)]\n"
+msgstr "Выкарыстоўванне: deadbeef [опцыі] [файл(ы)]\n"
+
+#: ../main.c:90
+#, c-format
+msgid "Options:\n"
+msgstr "Опцыі:\n"
+
+#: ../main.c:91
+#, c-format
+msgid "   --help  or  -h     Print help (this message) and exit\n"
+msgstr "   --help  ці  -h     Адлюстраваць даведку (гэты тэкст) і выйсці\n"
+
+#: ../main.c:92
+#, c-format
+msgid "   --quit             Quit player\n"
+msgstr "   --quit              Выйсці з плэера\n"
+
+#: ../main.c:93
+#, c-format
+msgid "   --version          Print version info and exit\n"
+msgstr ""
+"   --version           Адлюстраваць інфармацыю аб версіі праграмы і выйсці\n"
+
+#: ../main.c:94
+#, c-format
+msgid "   --play             Start playback\n"
+msgstr "   --play              Пачаць граць\n"
+
+#: ../main.c:95
+#, c-format
+msgid "   --stop             Stop playback\n"
+msgstr "   --stop              Спыніць прайграванне\n"
+
+#: ../main.c:96
+#, c-format
+msgid "   --pause            Pause playback\n"
+msgstr "   --pause             Прыпыніць прайграванне\n"
+
+#: ../main.c:97
+#, c-format
+msgid "   --next             Next song in playlist\n"
+msgstr "   --next              Настуная песня ў плэйлісце\n"
+
+#: ../main.c:98
+#, c-format
+msgid "   --prev             Previous song in playlist\n"
+msgstr "   --prev              Папярэдняя песня ў плэйлісце\n"
+
+#: ../main.c:99
+#, c-format
+msgid "   --random           Random song in playlist\n"
+msgstr "   --random            Выпадковая песня ў плэлісце\n"
+
+#: ../main.c:100
+#, c-format
+msgid "   --queue            Append file(s) to existing playlist\n"
+msgstr "   --queue             Дадаць файл(ы) у існуючы плэйліст\n"
+
+#: ../main.c:101
+#, c-format
+msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
+msgstr "   --nowplaying FMT    Адлюстраваць адфарматыраваную назву трэка\n"
+
+#: ../main.c:102
+#, c-format
+msgid ""
+"                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
+"                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
+"                      copy[r]ight, [e]lapsed\n"
+msgstr ""
+"                       FMT %%-сінтаксіс: %%a-выканаўца, %%t-назва, %%b-"
+"альбом,\n"
+"                       %%l-даўжыня, %%n-нумар трэка, %%y-год, %%c-каментар,\n"
+"                       %%r-аўтарскія правы, %%e-пройдзены час \n"
+
+#: ../main.c:105
+#, c-format
+msgid ""
+"                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
+"- title\"\n"
+msgstr ""
+"                       Напрыклад: --nowplaying \"%%a - %%t\" павінна вывесці "
+"на экран \"artist - title\"\n"
+
+#: ../playlist.c:377 ../playlist.c:2289
+msgid "Default"
+msgstr "Плэйліст"
+
+#: ../plugins/gtkui/deadbeef.glade.h:1
+msgid ""
+"2.3 (Recommended)\n"
+"2.4"
+msgstr ""
+"2.3 (Параіная)\n"
+"2.4"
+
+#: ../plugins/gtkui/deadbeef.glade.h:24
+msgid ""
+"Disable\n"
+"Track\n"
+"Album"
+msgstr ""
+"Адключыць\n"
+"Трэк\n"
+"Альбом"
+
+#: ../plugins/gtkui/deadbeef.glade.h:58
+msgid ""
+"Item Index\n"
+"Playing\n"
+"Album Art\n"
+"Artist - Album\n"
+"Artist\n"
+"Album\n"
+"Title\n"
+"Length\n"
+"Track\n"
+"Band / Album Artist\n"
+"Custom"
+msgstr ""
+"Нумар\n"
+"Прайграваецца\n"
+"Вокладка альбома\n"
+"Выканаўца - Альбом\n"
+"Выканаўца\n"
+"Альбом\n"
+"Назва\n"
+"Даўжыня\n"
+"Трэк\n"
+"Гурт / Выканаўца альбому\n"
+"Рознае"
+
+#: ../plugins/gtkui/deadbeef.glade.h:70
+msgid ""
+"Left\n"
+"Right"
+msgstr ""
+"Левы\n"
+"Правы"
+
+#: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
+#, c-format
+msgid "Couldn't find pixmap file: %s"
+msgstr "Не атрымалася знайсці файл выявы: %s"
+
+#: ../plugins/wildmidi/wildmidiplug.c:162
+#, c-format
+msgid ""
+"wildmidi: freepats config file not found. Please install timidity-freepats "
+"package, or specify path to freepats.cfg in the plugin settings."
+msgstr ""
+"wildmidi: канфігурацыйны файл freepats не знойдзены. Усталюйце пакетtimidity-"
+"freepats, ці вызначце шлях да файла freepats.cfg у наладкахпашырэння."
+
+#. this file should list extra translatable strings that are not referenced
+#. directly in source code, e.g. scripted plugin configuration strings
+#: ../translation/extra.c:3
+msgid "Add Audio CD"
+msgstr "Дадаць аўдыё CD"
+
+#: ../translation/extra.c:4
+msgid "Lookup on Last.fm"
+msgstr "Паказаць на Last.fm"
+
+#. ALSA output plugin
+#: ../translation/extra.c:6
+msgid "Use ALSA resampling"
+msgstr "Выкарыстоўваць перадыскрэтызацыю з дапамогай ALSA"
+
+#: ../translation/extra.c:7
+msgid "Release device while stopped"
+msgstr "Вызваляць прыстасаванне ў час спынення"
+
+#: ../translation/extra.c:8 ../translation/extra.c:43
+msgid "Preferred buffer size"
+msgstr "Упадабаны памер буферу"
+
+#: ../translation/extra.c:9
+msgid "Preferred period size"
+msgstr "Упадабаны памер перыяду"
+
+#. Last.fm plugin
+#: ../translation/extra.c:11
+msgid "Enable scrobbler"
+msgstr "Уключыць скроблер"
+
+#: ../translation/extra.c:12
+msgid "Disable nowplaying"
+msgstr "Не выкарыстоўваць інфармацыю аб бягучым трэку"
+
+#: ../translation/extra.c:13
+msgid "Username"
+msgstr "Імя карыстальніка"
+
+#: ../translation/extra.c:14
+msgid "Password"
+msgstr "Пароль"
+
+#: ../translation/extra.c:15
+msgid "Scrobble URL"
+msgstr "Адрас для скроблінга"
+
+#. Album Artwork plugin
+#: ../translation/extra.c:17
+msgid "Cache update period (hr)"
+msgstr "Перыяд аднаўлення кэша (гадзіны)"
+
+#: ../translation/extra.c:18
+msgid "Fetch from embedded tags"
+msgstr "Атрымліваць з унутраных тэгаў"
+
+#: ../translation/extra.c:19
+msgid "Fetch from local folder"
+msgstr "Атрымліваць з лакальнай тэчкі"
+
+#: ../translation/extra.c:20
+msgid "Local cover file mask"
+msgstr "Файлавая маска для лакальных вокладак"
+
+#: ../translation/extra.c:21
+msgid "Fetch from last.fm"
+msgstr "Атрымліваць з last.fm"
+
+#: ../translation/extra.c:22
+msgid "Fetch from albumart.org"
+msgstr "Атрымліваць з albumart.org"
+
+#. Audio CD player
+#: ../translation/extra.c:24
+msgid "Use CDDB/FreeDB"
+msgstr "Выкарыстоўваць CDDB/FreeDB"
+
+#: ../translation/extra.c:25
+msgid "Prefer CD-Text over CDDB"
+msgstr "Выкарытоўваць CD-Text замест CDDB"
+
+#: ../translation/extra.c:26
+msgid "CDDB url (e.g. 'freedb.org')"
+msgstr "CDDB url (напрыклад, 'freedb.org')"
+
+#: ../translation/extra.c:27
+msgid "CDDB port number (e.g. '888')"
+msgstr "Нумар парта CDDB (напрыклад, '888')"
+
+#: ../translation/extra.c:28
+msgid "Prefer CDDB protocol over HTTP"
+msgstr "Выкарыстоўваць пратакол CDDB замест HTTP"
+
+#: ../translation/extra.c:29
+msgid "Enable NRG image support"
+msgstr "Уключыць падтрымку NRG вобразаў"
+
+#. DUMB module player plugin
+#: ../translation/extra.c:31
+msgid "Resampling quality (0..2, higher is better)"
+msgstr "Якасць перадысрэтызацыі (0..2, вышэй - лепш)"
+
+#. Game_Music_Emu decoder plugin
+#: ../translation/extra.c:33
+msgid "Max song length (in minutes)"
+msgstr "Максімальная даўжыня трэка (у хвілінах)"
+
+#. Standard GTK2 user interface plugin
+#: ../translation/extra.c:35
+msgid "Ask confirmation to delete files from disk"
+msgstr "Запытваць пацверджанне на выдаленне файлаў з жорсткага дыска"
+
+#: ../translation/extra.c:36
+msgid "Status icon volume control sensitivity"
+msgstr "Адчувальнасць рэгулятара гучнасці ў значку статусу"
+
+#: ../translation/extra.c:37
+msgid "Custom status icon"
+msgstr "Карстальніцкі значок статусу"
+
+#: ../translation/extra.c:38
+msgid "Run gtk_init with --sync (debug mode)"
+msgstr "Запускаць gtk_init з ключом --sync (рэжым адладкі)"
+
+#. OSD Notify plugin
+#: ../translation/extra.c:40
+msgid "Notification format"
+msgstr "Фармат паведамлення"
+
+#. PulseAudio output plugin
+#: ../translation/extra.c:42
+msgid "PulseAudio server"
+msgstr "Сервер PulseAudio"
+
+#: ../translation/extra.c:44
+msgid "Samplerate"
+msgstr "Частата дыскрэтызацыі"
+
+#. SHN player plugin
+#: ../translation/extra.c:46
+msgid "Relative seek table path"
+msgstr "Адносны шлях табліцы пошуку"
+
+#: ../translation/extra.c:47
+msgid "Absolute seek table path"
+msgstr "Абсолютный путь таблицы поиска"
+
+#: ../translation/extra.c:48
+msgid "Swap audio bytes (toggle if all you hear is static)"
+msgstr "Пераставіць месцамі аўдыё байты"
+
+#. SID decoder plugin
+#: ../translation/extra.c:50
+msgid "Enable HVSC"
+msgstr "Уключыць падтрымку HVSC"
+
+#: ../translation/extra.c:51
+msgid "HVSC path"
+msgstr "Шлях да HVSC"
+
+#. WildMidi player plugin
+#: ../translation/extra.c:53
+msgid "Timidity++ bank configuration file"
+msgstr "Файл канфігурацыі для банка Timidity++"
+
+#: ../translation/extra.c:56
+msgid "Track Title"
+msgstr "Назва трэка"
+
+#: ../translation/extra.c:57
+msgid "Performer"
+msgstr "Выканаўца"
+
+#: ../translation/extra.c:60
+msgid "Date"
+msgstr "Дата"
+
+#: ../translation/extra.c:61
+msgid "Track Number"
+msgstr "Нумар трэка"
+
+#: ../translation/extra.c:62
+msgid "Total Tracks"
+msgstr "Усяго трэкаў"
+
+#: ../translation/extra.c:63
+msgid "Genre"
+msgstr "Жанр"
+
+#: ../translation/extra.c:64
+msgid "Composer"
+msgstr "Кампазітар"
+
+#: ../translation/extra.c:65
+msgid "Disc Number"
+msgstr "Нумар дыска"
+
+#: ../translation/extra.c:66
+msgid "Comment"
+msgstr "Каментар"
+
+#: ../translation/extra.c:67
+msgid "Encoder / Vendor"
+msgstr "Кодер / Продавец"
+
+#: ../translation/extra.c:68
+msgid "Copyright"
+msgstr "Аўтарскія правы"
+
+#~ msgid "Couldn't get enough memory for input buffering."
+#~ msgstr ""
+#~ "Не атрымалася вылучыць дастатковую колькасць памяці для ўваходнага буфера."
+
+#~ msgid "Error reading first page of Ogg bitstream."
+#~ msgstr "Памылка чытання загалоўка патока Ogg."
+
+#~ msgid "Couldn't get enough memory to register new stream serial number."
+#~ msgstr ""
+#~ "Не атрымалася вылучыць дастатковую колькасць памяці для рэгістрацыі "
+#~ "новага серыйнага нумару патоку."
+
+#~ msgid "Input truncated or empty."
+#~ msgstr "Уваходны паток абрэзаны ці пусты."
+
+#~ msgid "Input is not an Ogg bitstream."
+#~ msgstr "Увод не з'яўляецца патокам Ogg."
+
+#~ msgid "Ogg bitstream does not contain Vorbis data."
+#~ msgstr "Паток Ogg не ўтрымлівае Vorbis."
+
+#~ msgid "Ogg bitstream does not contain a supported data-type."
+#~ msgstr "Паток Ogg не ўтрымлівае падтрымліваемы тып дадзеных."
+
+#~ msgid "Corrupt secondary header."
+#~ msgstr "Пашкоджаны другасны загаловак."
+
+#~ msgid "EOF before end of Vorbis headers."
+#~ msgstr "Паток перапынені да заканчэння перадачы загалоўкаў Vorbis."
+
+#~ msgid "Corrupt or missing data, continuing..."
+#~ msgstr "Пашкоджанныя ці адсутныя дадзеныя, працягваем..."
+
+#~ msgid ""
+#~ "Error writing stream to output. Output stream may be corrupted or "
+#~ "truncated."
+#~ msgstr ""
+#~ "Памылка запісу выхаднога патоку. Выхадны паток можа быць пашкоджаны ці "
+#~ "абрэзаны."
+
+#~ msgid "Apply"
+#~ msgstr "Ужыць"
+
+#~ msgid ""
+#~ "<b>WARNING</b>: tag writing feature is still in development.\n"
+#~ "<b>Make backup copies</b> before using."
+#~ msgstr ""
+#~ "<b>Увага</b>: магчымасць рэдагавання тэгаў знаходзіцца\n"
+#~ "ў распрацоўцы.\n"
+#~ "<b>Стварайце рэзэрвовые копіі</b> перад выкарстаннем."
+
+#~ msgid "Sound (adv.)"
+#~ msgstr "Гук"

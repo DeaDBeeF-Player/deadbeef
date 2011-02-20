@@ -1,3 +1,6 @@
+Belarusian
+ Максім Тамковіч <quendimax@tut.by>
+
 Bengali
  Ummey Salma Snigdha <snighda@ankur.org.bd>
  Israt Jahan <israt@ankur.org.bd>
