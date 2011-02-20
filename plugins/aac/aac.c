@@ -55,6 +55,19 @@ static DB_functions_t *deadbeef;
 #define MP4FILE_CB MP4FileProvider
 #endif
 
+
+// aac channel mapping
+// 0: Defined in AOT Specifc Config
+// 1: 1 channel: front-center
+// 2: 2 channels: front-left, front-right
+// 3: 3 channels: front-center, front-left, front-right
+// 4: 4 channels: front-center, front-left, front-right, back-center
+// 5: 5 channels: front-center, front-left, front-right, back-left, back-right
+// 6: 6 channels: front-center, front-left, front-right, back-left, back-right, LFE-channel
+// 7: 8 channels: front-center, front-left, front-right, side-left, side-right, back-left, back-right, LFE-channel
+// 8-15: Reserved
+
+
 typedef struct {
     DB_fileinfo_t info;
     NeAACDecHandle dec;
