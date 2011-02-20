@@ -77,7 +77,7 @@ aac_sync(const uint8_t *buf, int *channels, int *sample_rate, int *bit_rate, int
         //trace ("invalid channels\n");
         return 0;
     }
-    trace ("channels %d\n", aac_channels[channel_conf]);
+    trace ("channels %d (#%d)\n", aac_channels[channel_conf], channel_conf);
     int orig_copy = (buf[3] & 0x20) >> 5;
     int home = (buf[3] & 0x10) >> 4;
     int copyright_ident_bit = (buf[3] & 0x08) >> 3;

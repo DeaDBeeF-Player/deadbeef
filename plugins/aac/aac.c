@@ -186,7 +186,7 @@ parse_aac_stream(DB_FILE *fp, int *psamplerate, int *pchannels, float *pduration
             continue;
         }
         else {
-            trace ("aac: frame #%d sync: %d %d %d %d %d\n", frame, channels, samplerate, bitrate, samples, size);
+            trace ("aac: frame #%d sync: %dch %d %d %d %d\n", frame, channels, samplerate, bitrate, samples, size);
             frame++;
             nsamples += samples;
             if (!stream_sr) {
@@ -563,8 +563,6 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             trace ("aac: parse_aac_stream failed\n");
             return -1;
         }
-        _info->fmt.channels = channels;
-        _info->fmt.samplerate = samplerate*2;
         trace("parse_aac_stream returned %x\n", offs);
     }
 
@@ -587,7 +585,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         info->remaining = deadbeef->fread (info->buffer, 1, AAC_BUFFER_SIZE, info->file);
 
         NeAACDecConfigurationPtr conf = NeAACDecGetCurrentConfiguration (info->dec);
-        conf->dontUpSampleImplicitSBR = 1;
+//        conf->dontUpSampleImplicitSBR = 1;
         NeAACDecSetConfiguration (info->dec, conf);
         unsigned long srate;
         unsigned char ch;
@@ -610,6 +608,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             info->remaining -= consumed;
         }
         _info->fmt.channels = ch;
+        _info->fmt.samplerate = srate;
     }
 
     if (!info->file->vfs->is_streaming ()) {
@@ -822,8 +821,8 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
             samples = NeAACDecDecode (info->dec, &info->frame_info, info->buffer, info->remaining);
             if (!samples) {
                 trace ("NeAACDecDecode failed, consumed=%d\n", info->frame_info.bytesconsumed);
-                if (info->num_errors > 10) {
-                    trace ("NeAACDecDecode failed 10 times, interrupting\n");
+                if (info->num_errors > 10 || info->frame_info.bytesconsumed == 0) {
+                    trace ("NeAACDecDecode failed 3 times, interrupting\n");
                     break;
                 }
                 info->num_errors++;
