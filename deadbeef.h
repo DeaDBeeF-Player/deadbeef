@@ -626,6 +626,10 @@ typedef struct DB_plugin_s {
     // it is called after all plugin's start method was executed
     // can be NULL
     int (*connect) (void);
+
+    // opposite of connect, will be called before stop, while all plugins are still
+    // in "started" state
+    int (*disconnect) (void);
     
     // exec_cmdline may be called at any moment when user sends commandline to player
     // can be NULL if plugin doesn't support commandline processing

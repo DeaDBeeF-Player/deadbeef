@@ -834,6 +834,7 @@ main (int argc, char *argv[]) {
     // plugins might still hood references to playitems,
     // and query configuration in background
     // so unload everything 1st before final cleanup
+    plug_disconnect_all ();
     plug_unload_all ();
 
     // at this point we can simply do exit(0), but let's clean up for debugging

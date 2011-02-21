@@ -28,10 +28,13 @@ int
 plug_load_all (void);
 
 void
+plug_unload_all (void);
+
+void
 plug_connect_all (void);
 
 void
-plug_unload_all (void);
+plug_disconnect_all (void);
 
 void
 plug_cleanup (void);

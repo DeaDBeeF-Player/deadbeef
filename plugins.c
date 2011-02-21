@@ -887,6 +887,9 @@ plug_connect_all (void) {
             if (plug->plugin->connect () < 0) {
                 fprintf (stderr, "plugin %s failed to connect to dependencies, deactivated.\n", plug->plugin->name);
 
+                if (plug->plugin->disconnect) {
+                    plug->plugin->disconnect ();
+                }
                 if (plug->plugin->stop) {
                     plug->plugin->stop ();
                 }
@@ -911,6 +914,22 @@ plug_connect_all (void) {
         plug = plug->next;
     }
 
+}
+
+void
+plug_disconnect_all (void) {
+    trace ("plug_disconnect_all\n");
+    plugin_t *plug;
+    plugin_t *prev = NULL;
+    for (plug = plugins; plug;) {
+        if (plug->plugin->disconnect) {
+            if (plug->plugin->disconnect () < 0) {
+                trace ("plugin %s failed to disconnect\n", plug->plugin->name);
+            }
+        }
+        prev = plug;
+        plug = plug->next;
+    }
 }
 
 void
