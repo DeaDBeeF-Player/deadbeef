@@ -461,7 +461,7 @@ hotkeys_event_loop (void *unused) {
 }
 
 static int
-hotkeys_start (void) {
+hotkeys_connect (void) {
     finished = 0;
     loop_tid = 0;
     disp = XOpenDisplay (NULL);
@@ -475,12 +475,11 @@ hotkeys_start (void) {
     read_config (disp);
     XSync (disp, 0);
     loop_tid = deadbeef->thread_start (hotkeys_event_loop, 0);
-
     return 0;
 }
 
 static int
-hotkeys_stop (void) {
+hotkeys_disconnect (void) {
     if (loop_tid) {
         finished = 1;
         deadbeef->thread_join (loop_tid);
@@ -702,9 +701,9 @@ static DB_hotkeys_plugin_t plugin = {
     .misc.plugin.author = "Viktor Semykin",
     .misc.plugin.email = "thesame.ml@gmail.com",
     .misc.plugin.website = "http://deadbeef.sf.net",
-    .misc.plugin.start = hotkeys_start,
-    .misc.plugin.stop = hotkeys_stop,
     .misc.plugin.get_actions = hotkeys_get_actions,
+    .misc.plugin.connect = hotkeys_connect,
+    .misc.plugin.disconnect = hotkeys_disconnect,
     .get_name_for_keycode = hotkeys_get_name_for_keycode,
     .reset = hotkeys_reset,
 };
