@@ -796,7 +796,7 @@ pl_cue_parse_time (const char *p) {
 }
 
 static playItem_t *
-pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, char *track, char *index00, char *index01, char *pregap, char *title, char *performer, char *albumtitle, char *genre, char *date, char *replaygain_album_gain, char *replaygain_album_peak, char *replaygain_track_gain, char *replaygain_track_peak, const char *decoder_id, const char *ftype, int samplerate) {
+pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, char *track, char *index00, char *index01, char *pregap, char *title, char *albumperformer, char *performer, char *albumtitle, char *genre, char *date, char *replaygain_album_gain, char *replaygain_album_peak, char *replaygain_track_gain, char *replaygain_track_peak, const char *decoder_id, const char *ftype, int samplerate) {
     if (!track[0]) {
         trace ("pl_process_cue_track: invalid track (file=%s, title=%s)\n", fname, title);
         return after;
@@ -873,6 +873,9 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
     if (performer[0]) {
         pl_add_meta (it, "artist", performer);
     }
+    if (albumperformer) {
+        pl_add_meta (it, "albumartist", albumperformer);
+    }
     if (albumtitle[0]) {
         pl_add_meta (it, "album", albumtitle);
     }
@@ -912,6 +915,7 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
     LOCK;
     playItem_t *ins = after;
     trace ("pl_insert_cue_from_buffer numsamples=%d, samplerate=%d\n", numsamples, samplerate);
+    char albumperformer[256] = "";
     char performer[256] = "";
     char albumtitle[256] = "";
     char genre[256] = "";
@@ -949,7 +953,12 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
         p = pl_cue_skipspaces (str);
 //        trace ("cue line: %s\n", p);
         if (!strncmp (p, "PERFORMER ", 10)) {
-            pl_get_qvalue_from_cue (p + 10, sizeof (performer), performer);
+            if (!track[0]) {
+                pl_get_qvalue_from_cue (p + 10, sizeof (albumperformer), albumperformer);
+            }
+            else {
+                pl_get_qvalue_from_cue (p + 10, sizeof (performer), performer);
+            }
             trace ("cue: got performer: %s\n", performer);
         }
         else if (!strncmp (p, "TITLE ", 6)) {
@@ -972,7 +981,7 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
             trace ("cue: adding track: %s %s %s\n", origin->fname, title, track);
             if (title[0]) {
                 // add previous track
-                after = pl_process_cue_track (after, origin->fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, origin->decoder_id, origin->filetype, samplerate);
+                after = pl_process_cue_track (after, origin->fname, &prev, track, index00, index01, pregap, title, albumperformer, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, origin->decoder_id, origin->filetype, samplerate);
                 trace ("cue: added %p (%p)\n", after);
             }
 
@@ -983,6 +992,7 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
             index01[0] = 0;
             replaygain_track_gain[0] = 0;
             replaygain_track_peak[0] = 0;
+            performer[0] = 0;
             pl_get_value_from_cue (p + 6, sizeof (track), track);
             trace ("cue: got track: %s\n", track);
         }
@@ -1015,7 +1025,7 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
         UNLOCK;
         return NULL;
     }
-    after = pl_process_cue_track (after, origin->fname, &prev, track, index00, index01, pregap, title, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, origin->decoder_id, origin->filetype, samplerate);
+    after = pl_process_cue_track (after, origin->fname, &prev, track, index00, index01, pregap, title, albumperformer, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, origin->decoder_id, origin->filetype, samplerate);
     if (after) {
         trace ("last track endsample: %d\n", numsamples-1);
         after->endsample = numsamples-1;
