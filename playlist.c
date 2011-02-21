@@ -94,6 +94,8 @@ static playlist_t dummy_playlist; // used at startup to prevent crashes
 
 static int pl_order; // mirrors "playback.order" config variable
 
+static int no_remove_notify;
+
 void
 pl_set_order (int order) {
     if (pl_order != order && (pl_order == PLAYBACK_ORDER_SHUFFLE_TRACKS || PLAYBACK_ORDER_SHUFFLE_ALBUMS)) {
@@ -365,7 +367,6 @@ plt_remove (int plt) {
         p = p->next;
     }
     streamer_notify_playlist_deleted (p);
-
     if (!plt_loading) {
         // move files (will decrease number of files by 1)
         for (int i = plt+1; i < playlists_count; i++) {
@@ -1578,7 +1579,11 @@ int
 plt_remove_item (playlist_t *playlist, playItem_t *it) {
     if (!it)
         return -1;
-    streamer_song_removed_notify (it);
+
+    if (!no_remove_notify) {
+        streamer_song_removed_notify (it);
+    }
+
     pl_playqueue_remove (it);
 
     // remove from both lists
@@ -3206,6 +3211,7 @@ pl_set_cursor (int iter, int cursor) {
 void
 pl_move_items (int iter, int plt_from, playItem_t *drop_before, uint32_t *indexes, int count) {
     GLOBAL_LOCK;
+
     playlist_t *playlist = playlists_head;
     playlist_t *to = plt_get_curr_ptr ();
 
@@ -3218,6 +3224,9 @@ pl_move_items (int iter, int plt_from, playItem_t *drop_before, uint32_t *indexe
         GLOBAL_UNLOCK;
         return;
     }
+
+    // don't let streamer think that current song was removed
+    no_remove_notify = 1;
 
     // unlink items from playlist, and link together
     playItem_t *head = NULL;
@@ -3249,6 +3258,7 @@ pl_move_items (int iter, int plt_from, playItem_t *drop_before, uint32_t *indexe
             processed++;
         }
     }
+    no_remove_notify = 0;
     GLOBAL_UNLOCK;
 }
 
