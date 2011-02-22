@@ -688,6 +688,34 @@ utfcasestr (const char *s1, const char *s2) {
     return NULL;
 }
 
+int
+u8_strcasecmp (const char *a, const char *b) {
+    const char *p1 = a, *p2 = b;
+    while (*p1 && *p2) {
+        int32_t i1 = 0;
+        int32_t i2 = 0;
+        char s1[10], s2[10];
+        const char *next;
+        u8_nextchar (p1, &i1);
+        u8_nextchar (p2, &i2);
+        int l1 = u8_tolower (p1, i1, s1);
+        int l2 = u8_tolower (p2, i2, s2);
+        int res = 0;
+        if (l1 != l2) {
+            res = l1-l2;
+        }
+        else {
+            res = memcmp (s1, s2, l1);
+        }
+        if (res) {
+            return res;
+        }
+        p1 += i1;
+        p2 += i2;
+    }
+    return 0;
+}
+
 void
 u8_lc_map_test (void) {
     struct u8_case_map_t *lc;

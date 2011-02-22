@@ -3058,7 +3058,11 @@ pl_sort_compare_str (playItem_t *a, playItem_t *b) {
         char tmp2[1024];
         pl_format_title (a, -1, tmp1, sizeof (tmp1), pl_sort_id, pl_sort_format);
         pl_format_title (b, -1, tmp2, sizeof (tmp2), pl_sort_id, pl_sort_format);
-        return !pl_sort_ascending ? strcmp (tmp2, tmp1) : strcmp (tmp1, tmp2);
+        int res = u8_strcasecmp (tmp1, tmp2);
+        if (!pl_sort_ascending) {
+            res = -res;
+        }
+        return res;
     }
 }
 
