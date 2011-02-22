@@ -3118,6 +3118,9 @@ pl_sort (int iter, int id, const char *format, int ascending) {
         }
         prev = it;
     }
+
+    playlist->tail[iter] = array[playlist->count[iter]-1];
+
     free (array);
 
     struct timeval tm2;
