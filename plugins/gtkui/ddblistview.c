@@ -282,8 +282,9 @@ static void
 ddb_listview_init(DdbListview *listview)
 {
     // init instance - create all subwidgets, and insert into table
+    draw_init_font (GTK_WIDGET(listview)->style);
 
-    listview->rowheight = draw_get_font_size () + 12;
+    listview->rowheight = draw_get_listview_rowheight ();
 
     listview->col_movepos = -1;
     listview->drag_motion_y = -1;
@@ -534,7 +535,7 @@ ddb_listview_list_configure_event            (GtkWidget       *widget,
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
 
     draw_init_font (widget->style);
-    int height = draw_get_font_size () + 12;
+    int height = draw_get_listview_rowheight ();
     if (height != ps->rowheight) {
         ps->rowheight = height;
         ddb_listview_build_groups (ps);

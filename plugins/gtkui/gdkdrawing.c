@@ -368,3 +368,16 @@ void
 gtkui_get_listview_cursor_color (GdkColor *clr) {
     memcpy (clr, &gtkui_listview_cursor_color, sizeof (GdkColor));
 }
+
+int
+draw_get_listview_rowheight (void) {
+    PangoFontDescription *font_desc = font_style->font_desc;
+    PangoFontMetrics *metrics = pango_context_get_metrics (pangoctx,
+            font_desc,
+            pango_context_get_language (pangoctx));
+    int row_height = (pango_font_metrics_get_ascent (metrics) +
+            pango_font_metrics_get_descent (metrics));
+    pango_font_metrics_unref (metrics);
+    return PANGO_PIXELS(row_height)+6;
+}
+

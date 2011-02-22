@@ -126,4 +126,7 @@ gtkui_override_bar_colors (void);
 int
 gtkui_override_tabstrip_colors (void);
 
+int
+draw_get_listview_rowheight (void);
+
 #endif // __DRAWING_H
