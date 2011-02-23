@@ -864,7 +864,6 @@ junk_id3v1_read (playItem_t *it, DB_FILE *fp) {
         pl_add_meta (it, "comment", convstr_id3v1 (comment, strlen (comment)));
     }
     if (*genre) {
-        printf ("id3v1 genre: %s (%s)\n", genre, convstr_id3v1 (genre, strlen (genre)));
         pl_add_meta (it, "genre", convstr_id3v1 (genre, strlen (genre)));
     }
     if (tracknum != 0) {
