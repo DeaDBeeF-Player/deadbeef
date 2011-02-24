@@ -36,6 +36,7 @@
 #include "vfs.h"
 #include "premix.h"
 #include "ringbuf.h"
+#include "replaygain.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -61,9 +62,6 @@ static DB_dsp_t *eqplug;
 static ddb_dsp_context_t *eq;
 
 static int dsp_on = 0;
-
-static int conf_replaygain_mode = 0;
-static int conf_replaygain_scale = 1;
 
 static int streaming_terminate;
 
@@ -1377,8 +1375,7 @@ streamer_init (void) {
 
     streamer_dsp_init ();
     
-    conf_replaygain_mode = conf_get_int ("replaygain_mode", 0);
-    conf_replaygain_scale = conf_get_int ("replaygain_scale", 1);
+    replaygain_set (conf_get_int ("replaygain_mode", 0), conf_get_int ("replaygain_scale", 1));
     streamer_tid = thread_start (streamer_thread, NULL);
     return 0;
 }
@@ -1439,93 +1436,6 @@ streamer_reset (int full) { // must be called when current song changes by exter
             dsp->plugin->reset (dsp);
         }
         dsp = dsp->next;
-    }
-}
-
-int replaygain = 1;
-int replaygain_scale = 1;
-
-static void
-apply_replay_gain_int16 (playItem_t *it, char *bytes, int size) {
-    if (!replaygain || !conf_replaygain_mode) {
-        return;
-    }
-    int vol = 1000;
-    if (conf_replaygain_mode == 1) {
-        if (it->replaygain_track_gain == 0) {
-            return;
-        }
-        vol = db_to_amp (streaming_track->replaygain_track_gain) * 1000;
-        if (conf_replaygain_scale && replaygain_scale) {
-            if (vol * streaming_track->replaygain_track_peak > 1000) {
-                vol = 1000 / streaming_track->replaygain_track_peak;
-            }
-        }
-    }
-    else if (conf_replaygain_mode == 2) {
-        if (it->replaygain_album_gain == 0) {
-            return;
-        }
-        vol = db_to_amp (streaming_track->replaygain_album_gain) * 1000;
-        if (conf_replaygain_scale && replaygain_scale) {
-            if (vol * streaming_track->replaygain_album_peak > 1000) {
-                vol = 1000 / streaming_track->replaygain_album_peak;
-            }
-        }
-    }
-    int16_t *s = (int16_t*)bytes;
-    for (int j = 0; j < size/2; j++) {
-        int32_t sample = ((int32_t)(*s)) * vol / 1000;
-        if (sample > 0x7fff) {
-            sample = 0x7fff;
-        }
-        else if (sample < -0x8000) {
-            sample = -0x8000;
-        }
-        *s = (int16_t)sample;
-        s++;
-    }
-}
-
-static void
-apply_replay_gain_float32 (playItem_t *it, char *bytes, int size) {
-    if (!replaygain || !conf_replaygain_mode) {
-        return;
-    }
-    float vol = 1.f;
-    if (conf_replaygain_mode == 1) {
-        if (it->replaygain_track_gain == 0) {
-            return;
-        }
-        vol = db_to_amp (it->replaygain_track_gain);
-        if (conf_replaygain_scale && replaygain_scale) {
-            if (vol * it->replaygain_track_peak > 1.f) {
-                vol = 1.f / it->replaygain_track_peak;
-            }
-        }
-    }
-    else if (conf_replaygain_mode == 2) {
-        if (it->replaygain_album_gain == 0) {
-            return;
-        }
-        vol = db_to_amp (it->replaygain_album_gain);
-        if (conf_replaygain_scale && replaygain_scale) {
-            if (vol * it->replaygain_album_peak > 1.f) {
-                vol = 1.f / it->replaygain_album_peak;
-            }
-        }
-    }
-    float *s = (float*)bytes;
-    for (int j = 0; j < size/4; j++) {
-        float sample = ((float)*s) * vol;
-        if (sample > 1.f) {
-            sample = 1.f;
-        }
-        else if (sample < -1.f) {
-            sample = -1.f;
-        }
-        *s = sample;
-        s++;
     }
 }
 
@@ -1653,13 +1563,7 @@ streamer_read_async (char *bytes, int size) {
         }
 #endif
 
-        // FIXME: separate replaygain DSP plugin?
-        if (output->fmt.bps == 16) {
-            apply_replay_gain_int16 (streaming_track, bytes, bytesread);
-        }
-        else if (output->fmt.bps == 32 && output->fmt.is_float) {
-            apply_replay_gain_float32 (streaming_track, bytes, bytesread);
-        }
+        replaygain_apply (&output->fmt, streaming_track, bytes, bytesread);
     }
     mutex_unlock (decodemutex);
     if (!is_eof) {
@@ -1814,8 +1718,7 @@ streamer_ok_to_read (int len) {
 
 void
 streamer_configchanged (void) {
-    conf_replaygain_mode = conf_get_int ("replaygain_mode", 0);
-    conf_replaygain_scale = conf_get_int ("replaygain_scale", 1);
+    replaygain_set (conf_get_int ("replaygain_mode", 0), conf_get_int ("replaygain_scale", 1));
     pl_set_order (conf_get_int ("playback.order", 0));
     if (playing_track) {
         playing_track->played = 1;
