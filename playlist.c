@@ -2383,15 +2383,13 @@ pl_load (const char *fname) {
             goto load_fail;
         }
         for (int i = 0; i < nm; i++) {
-            char key[1024];
-            char value[1024];
-
             if (fread (&l, 1, 2, fp) != 2) {
                 goto load_fail;
             }
-            if (!l || l >= 1024) {
+            if (l < 0 || l >= 20000) {
                 goto load_fail;
             }
+            char key[l+1];
             if (fread (key, 1, l, fp) != l) {
                 goto load_fail;
             }
@@ -2399,12 +2397,15 @@ pl_load (const char *fname) {
             if (fread (&l, 1, 2, fp) != 2) {
                 goto load_fail;
             }
-            if (!l || l >= 1024) {
+            if (l<0 || l >= 20000) {
                 // skip
                 fseek (fp, l, SEEK_CUR);
             }
             else {
-                if (fread (value, 1, l, fp) != l) {
+                char value[l+1];
+                int res = fread (value, 1, l, fp);
+                if (res != l) {
+                    trace ("read error: requested %d, got %d\n", l, res);
                     goto load_fail;
                 }
                 value[l] = 0;
