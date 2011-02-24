@@ -48,6 +48,8 @@ static int state;
 static int fd;
 static uintptr_t mutex;
 
+static char oss_device[100];
+
 #define BLOCKSIZE 8192
 
 static void
@@ -130,7 +132,7 @@ oss_init (void) {
     mutex = 0;
 
     // prepare oss for playback
-    const char *name = deadbeef->conf_get_str ("oss.device", "/dev/dsp");
+    const char *name = oss_device;
     fd = open (name, O_WRONLY);
     if (fd == -1) {
         fprintf (stderr, "oss: failed to open file %s\n", name);
@@ -306,12 +308,27 @@ oss_get_state (void) {
 }
 
 static int
+oss_configchanged (DB_event_t *ev, uintptr_t data) {
+    const char *dev = deadbeef->conf_get_str ("oss.device", "/dev/oss");
+    if (strcmp (dev, oss_device)) {
+        strncpy (oss_device, dev, sizeof (oss_device)-1);
+        trace ("oss: config option changed, restarting\n");
+        deadbeef->sendmessage (M_REINIT_SOUND, 0, 0, 0);
+    }
+    return 0;
+}
+
+static int
 oss_plugin_start (void) {
+    const char *dev = deadbeef->conf_get_str ("oss.device", "/dev/oss");
+    strncpy (oss_device, dev, sizeof (oss_device)-1);
+    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (oss_configchanged), 0);
     return 0;
 }
 
 static int
 oss_plugin_stop (void) {
+    deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (oss_configchanged), 0);
     return 0;
 }
 
@@ -320,6 +337,9 @@ oss_load (DB_functions_t *api) {
     deadbeef = api;
     return DB_PLUGIN (&plugin);
 }
+
+static const char settings_dlg[] =
+    "property \"Device file\" entry oss.device /dev/dsp;\n";
 
 // define plugin interface
 static DB_output_t plugin = {
@@ -335,6 +355,7 @@ static DB_output_t plugin = {
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.start = oss_plugin_start,
     .plugin.stop = oss_plugin_stop,
+    .plugin.configdialog = settings_dlg,
     .init = oss_init,
     .free = oss_free,
     .setformat = oss_setformat,
