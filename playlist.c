@@ -3031,6 +3031,31 @@ static int pl_sort_ascending;
 static int pl_sort_id;
 static const char *pl_sort_format;
 
+int
+strcasecmp_numeric (const char *a, const char *b) {
+    if (isdigit (*a) && isdigit (*b)) {
+        int anum = *a-'0';
+        const char *ae = a+1;
+        while (*ae && isdigit (*ae)) {
+            anum *= 10;
+            anum += *ae-'0';
+            ae++;
+        }
+        int bnum = *b-'0';
+        const char *be = b+1;
+        while (*be && isdigit (*be)) {
+            bnum *= 10;
+            bnum += *be-'0';
+            be++;
+        }
+        if (anum == bnum) {
+            return u8_strcasecmp (ae, be);
+        }
+        return anum - bnum;
+    }
+    return u8_strcasecmp (a,b);
+}
+
 static int
 pl_sort_compare_str (playItem_t *a, playItem_t *b) {
     if (pl_sort_is_duration) {
@@ -3061,7 +3086,7 @@ pl_sort_compare_str (playItem_t *a, playItem_t *b) {
         char tmp2[1024];
         pl_format_title (a, -1, tmp1, sizeof (tmp1), pl_sort_id, pl_sort_format);
         pl_format_title (b, -1, tmp2, sizeof (tmp2), pl_sort_id, pl_sort_format);
-        int res = u8_strcasecmp (tmp1, tmp2);
+        int res = strcasecmp_numeric (tmp1, tmp2);
         if (!pl_sort_ascending) {
             res = -res;
         }
