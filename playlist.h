@@ -148,7 +148,7 @@ int
 pl_add_file (const char *fname, int (*cb)(playItem_t *it, void *data), void *user_data);
 
 void
-pl_add_files_begin (void);
+pl_add_files_begin (int plt);
 
 void
 pl_add_files_end (void);
@@ -161,6 +161,9 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
 
 playItem_t *
 pl_insert_item (playItem_t *after, playItem_t *it);
+
+playItem_t *
+plt_insert_item (playlist_t *playlist, playItem_t *after, playItem_t *it);
 
 int
 pl_remove_item (playItem_t *i);

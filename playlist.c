@@ -96,6 +96,8 @@ static int pl_order; // mirrors "playback.order" config variable
 
 static int no_remove_notify;
 
+static playlist_t *addfiles_playlist; // current playlist for adding files/folders; set in pl_add_files_begin
+
 void
 pl_set_order (int order) {
     if (pl_order != order && (pl_order == PLAYBACK_ORDER_SHUFFLE_TRACKS || PLAYBACK_ORDER_SHUFFLE_ALBUMS)) {
@@ -706,14 +708,19 @@ plt_move (int from, int to) {
 }
 
 void
-pl_clear (void) {
+plt_clear (playlist_t *plt) {
     LOCK;
-    while (playlist->head[PL_MAIN]) {
-        pl_remove_item (playlist->head[PL_MAIN]);
+    while (plt->head[PL_MAIN]) {
+        pl_remove_item (plt->head[PL_MAIN]);
     }
-    playlist->current_row[PL_MAIN] = -1;
-    playlist->current_row[PL_SEARCH] = -1;
+    plt->current_row[PL_MAIN] = -1;
+    plt->current_row[PL_SEARCH] = -1;
     UNLOCK;
+}
+
+void
+pl_clear (void) {
+    plt_clear (playlist);
 }
 
 static const uint8_t *
@@ -1429,7 +1436,7 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
             it->filetype = "content";
             it->_duration = -1;
             pl_add_meta (it, "title", NULL);
-            after = pl_insert_item (after, it);
+            after = plt_insert_item (addfiles_playlist, after, it);
             pl_item_unref (it);
             return after;
         }
@@ -1551,7 +1558,7 @@ pl_insert_dir (playItem_t *after, const char *dirname, int *pabort, int (*cb)(pl
 int
 pl_add_file (const char *fname, int (*cb)(playItem_t *it, void *data), void *user_data) {
     int abort = 0;
-    playItem_t *it = pl_insert_file (playlist->tail[PL_MAIN], fname, &abort, cb, user_data);
+    playItem_t *it = pl_insert_file (addfiles_playlist->tail[PL_MAIN], fname, &abort, cb, user_data);
     if (it) {
         // pl_insert_file doesn't hold reference, don't unref here
         return 0;
@@ -1562,7 +1569,7 @@ pl_add_file (const char *fname, int (*cb)(playItem_t *it, void *data), void *use
 int
 pl_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *user_data) {
     int abort = 0;
-    playItem_t *it = pl_insert_dir (playlist->tail[PL_MAIN], dirname, &abort, cb, user_data);
+    playItem_t *it = pl_insert_dir (addfiles_playlist->tail[PL_MAIN], dirname, &abort, cb, user_data);
     if (it) {
         // pl_insert_file doesn't hold reference, don't unref here
         return 0;
@@ -1571,11 +1578,14 @@ pl_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *us
 }
 
 void
-pl_add_files_begin (void) {
+pl_add_files_begin (int plt) {
+    addfiles_playlist = plt_get (plt);
+    printf ("adding to playlist %d (%s)\n", plt, addfiles_playlist->title);
 }
 
 void
 pl_add_files_end (void) {
+    addfiles_playlist = NULL;
 }
 
 int
@@ -1744,7 +1754,7 @@ plt_insert_item (playlist_t *playlist, playItem_t *after, playItem_t *it) {
 
 playItem_t *
 pl_insert_item (playItem_t *after, playItem_t *it) {
-    return plt_insert_item (playlist, after, it);
+    return plt_insert_item (addfiles_playlist ? addfiles_playlist : playlist, after, it);
 }
 
 void
@@ -2219,7 +2229,9 @@ pl_load (const char *fname) {
         return -1;
     }
     GLOBAL_LOCK;
-    pl_clear ();
+    playlist_t *plt = playlist;
+
+    plt_clear (plt);
 
     // try plugins 1st
     const char *ext = strrchr (fname, '.');
@@ -2412,7 +2424,7 @@ pl_load (const char *fname) {
                 pl_add_meta (it, key, value);
             }
         }
-        pl_insert_item (playlist->tail[PL_MAIN], it);
+        plt_insert_item (plt, plt->tail[PL_MAIN], it);
         pl_item_unref (it);
         it = NULL;
     }

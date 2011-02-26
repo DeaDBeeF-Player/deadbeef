@@ -231,12 +231,13 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             }
         }
         // add files
-        if (!queue && plt_get_curr () != -1) {
+        int curr_plt = plt_get_curr ();
+        if (!queue) {
             pl_clear ();
             pl_reset_cursor ();
         }
         if (parg < pend) {
-            deadbeef->pl_add_files_begin ();
+            deadbeef->pl_add_files_begin (curr_plt);
         }
         while (parg < pend) {
             char resolved[PATH_MAX];

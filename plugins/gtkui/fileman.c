@@ -10,10 +10,8 @@
 
 void
 gtkpl_add_dir (DdbListview *ps, char *folder) {
-    g_idle_add (gtkui_progress_show_idle, NULL);
     gtkui_original_pl_add_dir (folder, gtkui_add_file_info_cb, NULL);
     g_free (folder);
-    g_idle_add (gtkui_progress_hide_idle, NULL);
 }
 
 static void
@@ -24,9 +22,10 @@ gtkpl_adddir_cb (gpointer data, gpointer userdata) {
 
 void
 gtkpl_add_dirs (GSList *lst) {
+    deadbeef->plt_lock ();
+    deadbeef->pl_add_files_begin (deadbeef->plt_get_curr ());
     if (g_slist_length (lst) == 1
             && deadbeef->conf_get_int ("gtkui.name_playlist_from_folder", 0)) {
-        deadbeef->plt_lock ();
         int plt = deadbeef->plt_get_curr ();
         if (plt != -1) {
             char t[1000];
@@ -41,12 +40,11 @@ gtkpl_add_dirs (GSList *lst) {
                 }
             }
         }
-        deadbeef->plt_unlock ();
     }
-    g_idle_add (gtkui_progress_show_idle, NULL);
+    deadbeef->plt_unlock ();
     g_slist_foreach(lst, gtkpl_adddir_cb, NULL);
     g_slist_free (lst);
-    g_idle_add (gtkui_progress_hide_idle, NULL);
+    deadbeef->pl_add_files_end ();
 }
 
 static void
@@ -57,10 +55,10 @@ gtkpl_addfile_cb (gpointer data, gpointer userdata) {
 
 void
 gtkpl_add_files (GSList *lst) {
-    g_idle_add (gtkui_progress_show_idle, NULL);
+    deadbeef->pl_add_files_begin (deadbeef->plt_get_curr ());
     g_slist_foreach(lst, gtkpl_addfile_cb, NULL);
     g_slist_free (lst);
-    g_idle_add (gtkui_progress_hide_idle, NULL);
+    deadbeef->pl_add_files_end ();
 }
 
 static void
@@ -83,6 +81,7 @@ add_files_worker (void *data) {
 
 void
 gtkui_add_files (struct _GSList *lst) {
+    deadbeef->pl_add_files_begin (deadbeef->plt_get_curr ());
     intptr_t tid = deadbeef->thread_start (add_files_worker, lst);
     deadbeef->thread_detach (tid);
 }
@@ -164,7 +163,7 @@ set_dnd_cursor_idle (gpointer data) {
 void
 gtkpl_add_fm_dropped_files (DB_playItem_t *drop_before, char *ptr, int length) {
     DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-    g_idle_add (gtkui_progress_show_idle, NULL);
+    deadbeef->pl_add_files_begin (deadbeef->plt_get_curr ());
 
     DdbListviewIter first = NULL;
     DdbListviewIter after = NULL;
@@ -212,7 +211,7 @@ gtkpl_add_fm_dropped_files (DB_playItem_t *drop_before, char *ptr, int length) {
     }
     free (ptr);
 
-    g_idle_add (gtkui_progress_hide_idle, NULL);
+    deadbeef->pl_add_files_end ();
     g_idle_add (set_dnd_cursor_idle, first);
 }
 

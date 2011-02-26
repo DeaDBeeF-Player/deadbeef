@@ -376,7 +376,7 @@ typedef struct {
     void (*pl_item_copy) (DB_playItem_t *out, DB_playItem_t *in);
     int (*pl_add_file) (const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
     int (*pl_add_dir) (const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
-    void (*pl_add_files_begin) (void);
+    void (*pl_add_files_begin) (int playlist);
     void (*pl_add_files_end) (void);
     DB_playItem_t *(*pl_insert_item) (DB_playItem_t *after, DB_playItem_t *it);
     DB_playItem_t *(*pl_insert_dir) (DB_playItem_t *after, const char *dirname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);

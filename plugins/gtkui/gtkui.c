@@ -1085,7 +1085,7 @@ gtkui_add_file_info_cb (DB_playItem_t *it, void *data) {
 
 int (*gtkui_original_pl_add_dir) (const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 int (*gtkui_original_pl_add_file) (const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
-void (*gtkui_original_pl_add_files_begin) (void);
+void (*gtkui_original_pl_add_files_begin) (int plt);
 void (*gtkui_original_pl_add_files_end) (void);
 
 int
@@ -1101,9 +1101,9 @@ gtkui_pl_add_file (const char *filename, int (*cb)(DB_playItem_t *it, void *data
 }
 
 void
-gtkui_pl_add_files_begin (void) {
+gtkui_pl_add_files_begin (int plt) {
     g_idle_add (gtkui_progress_show_idle, NULL);
-    gtkui_original_pl_add_files_begin ();
+    gtkui_original_pl_add_files_begin (plt);
 }
 
 void
