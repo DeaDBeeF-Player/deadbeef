@@ -112,12 +112,6 @@ musepack_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
     mpc_demux_get_info (info->demux, &info->si);
 
-//    info->mpcdec = mpc_decoder_init (&info->si);
-//    if (!info->mpcdec) {
-//        deadbeef->fclose ((DB_FILE *)info->reader.data);
-//        info->reader.data = NULL;
-//        return -1;
-//    }
     info->vbr_update_acc = 0;
     info->vbr_update_bits = 0;
     info->remaining = 0;
@@ -304,8 +298,24 @@ mpc_set_trk_properties (DB_playItem_t *it, mpc_streaminfo *si, int64_t fsize) {
     deadbeef->pl_add_meta (it, ":CHANNELS", s);
     snprintf (s, sizeof (s), "%d", si->sample_freq);
     deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
-    snprintf (s, sizeof (s), "%d", si->bitrate);
+    snprintf (s, sizeof (s), "%d", (int)(si->average_bitrate/1000));
     deadbeef->pl_add_meta (it, ":BITRATE", s);
+    snprintf (s, sizeof (s), "%f", si->profile);
+    deadbeef->pl_add_meta (it, ":MPC_QUALITY_PROFILE", s);
+    deadbeef->pl_add_meta (it, ":MPC_PROFILE_NAME", si->profile_name);
+    deadbeef->pl_add_meta (it, ":MPC_ENCODER", si->encoder);
+    snprintf (s, sizeof (s), "%d.%d", (si->encoder_version&0xff000000)>>24, (si->encoder_version&0x00ff0000)>>16);
+    deadbeef->pl_add_meta (it, ":MPC_ENCODER_VERSION", s);
+    deadbeef->pl_add_meta (it, ":MPC_PNS_USED", si->pns ? "1" : "0");
+    deadbeef->pl_add_meta (it, ":MPC_TRUE_GAPLESS", si->is_true_gapless ? "1" : "0");
+    snprintf (s, sizeof (s), "%d", si->beg_silence);
+    deadbeef->pl_add_meta (it, ":MPC_BEG_SILENCE", s);
+    snprintf (s, sizeof (s), "%d", si->stream_version);
+    deadbeef->pl_add_meta (it, ":MPC_STREAM_VERSION", s);
+    snprintf (s, sizeof (s), "%d", si->max_band);
+    deadbeef->pl_add_meta (it, ":MPC_MAX_BAND", s);
+    deadbeef->pl_add_meta (it, ":MPC_MS", si->ms ? "1" : "0");
+    deadbeef->pl_add_meta (it, ":MPC_FAST_SEEK", si->fast_seek ? "1" : "0");
 }
 
 static DB_playItem_t *
