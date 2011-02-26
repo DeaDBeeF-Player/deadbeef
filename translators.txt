@@ -93,6 +93,9 @@ Serbian (latin)
 Swedish
  Martin <brother@bsnet.se>
 
+Turkish
+ bahadiroglu <bahadiroglu33@gmail.com>
+
 Ukrainian
  Yarema aka Knedlyk <yupadmin@gmail.com>
 
