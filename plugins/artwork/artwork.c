@@ -204,6 +204,7 @@ copy_file (const char *in, const char *out, int img_size) {
         imlib_image_set_format ("jpg");
         imlib_save_image_with_error_return (out, &err);
         if (err != 0) {
+            trace ("imlib save %s returned %d\n", out, err);
             imlib_free_image ();
             imlib_context_set_image(img);
             imlib_free_image ();
@@ -339,15 +340,27 @@ fetcher_thread (void *none)
             struct dirent **files;
             int files_count;
 
-            make_cache_dir_path (path, sizeof (path), param->artist, param->size);
+            make_cache_dir_path (path, sizeof (path), param->artist, -1);
             trace ("cache folder: %s\n", path);
             if (!check_dir (path, 0755)) {
                 queue_pop ();
                 trace ("failed to create folder for %s %s\n", param->album, param->artist);
                 continue;
             }
+            if (param->size != -1) {
+                make_cache_dir_path (path, sizeof (path), param->artist, param->size);
+                trace ("cache folder: %s\n", path);
+                if (!check_dir (path, 0755)) {
+                    queue_pop ();
+                    trace ("failed to create folder for %s %s\n", param->album, param->artist);
+                    continue;
+                }
+            }
 
             trace ("fetching cover for %s %s\n", param->album, param->artist);
+            char cache_path[1024];
+            make_cache_path (cache_path, sizeof (cache_path), param->album, param->artist, -1);
+            int got_pic = 0;
 
             // try to load embedded from id3v2
             if (deadbeef->is_local_file (param->fname)) {
@@ -357,7 +370,6 @@ fetcher_thread (void *none)
                     memset (&tag, 0, sizeof (tag));
                     DB_FILE *fp = deadbeef->fopen (param->fname);
                     current_file = fp;
-                    int got_id3v2_pic = 0;
                     if (fp) {
                         int res = deadbeef->junk_id3v2_read_full (NULL, &tag, fp);
                         if (!res) {
@@ -397,8 +409,6 @@ fetcher_thread (void *none)
                                     int sz = f->size - (data - f->data);
 
                                     char tmp_path[1024];
-                                    char cache_path[1024];
-                                    make_cache_path (cache_path, sizeof (cache_path), param->album, param->artist, param->size);
                                     trace ("will write id3v2 APIC into %s\n", cache_path);
                                     snprintf (tmp_path, sizeof (tmp_path), "%s.part", cache_path);
                                     FILE *out = fopen (tmp_path, "w+b");
@@ -420,107 +430,90 @@ fetcher_thread (void *none)
                                         break;
                                     }
                                     unlink (tmp_path);
-                                    got_id3v2_pic = 1;
+                                    got_pic = 1;
                                     break;
                                 }
                             }
                         }
 
-                        if (got_id3v2_pic) {
-                            if (param->callback) {
-                                param->callback (param->fname, param->artist, param->album, param->user_data);
-                            }
-                            queue_pop ();
-                            continue;
-                        }
                         deadbeef->junk_id3v2_free (&tag);
                         current_file = NULL;
                         deadbeef->fclose (fp);
                     }
-                }
-            }
 
-            // try to load embedded from apev2
-            if (deadbeef->is_local_file (param->fname)) {
-                if (artwork_enable_embedded) {
-                    trace ("trying to load artwork from apev2 tag for %s\n", param->fname);
-                    DB_apev2_tag_t tag;
-                    memset (&tag, 0, sizeof (tag));
-                    DB_FILE *fp = deadbeef->fopen (param->fname);
-                    current_file = fp;
-                    int got_apev2_pic = 0;
-                    if (fp) {
-                        int res = deadbeef->junk_apev2_read_full (NULL, &tag, fp);
-                        if (!res) {
-                            for (DB_apev2_frame_t *f = tag.frames; f; f = f->next) {
-                                if (!strcasecmp (f->key, "cover art (front)")) {
-                                    uint8_t *name = f->data, *ext = f->data, *data = f->data;
-                                    uint8_t *end = f->data + f->size;
-                                    while (data < end && *data)
-                                        data++;
-                                    if (data == end) {
-                                        trace ("artwork: apev2 cover art frame has no name\n");
-                                        continue;
-                                    }
-                                    int sz = end - ++data;
-                                    if (sz < 20) {
-                                        trace ("artwork: apev2 cover art frame is too small\n");
-                                        continue;
-                                    }
-                                    ext = strrchr (name, '.');
-                                    if (!ext || !*++ext) {
-                                        trace ("artwork: apev2 cover art name has no extension\n");
-                                        continue;
-                                    }
-                                    if (strcasecmp (ext, "jpeg") && strcasecmp (ext, "jpg") && strcasecmp (ext, "png")) {
-                                        trace ("artwork: unsupported file type: %s\n", ext);
-                                        continue;
-                                    }
-                                    trace ("found apev2 cover art of %d bytes (%s)\n", sz, ext);
-                                    char tmp_path[1024];
-                                    char cache_path[1024];
-                                    make_cache_path (cache_path, sizeof (cache_path), param->album, param->artist, param->size);
-                                    trace ("will write apev2 cover art into %s\n", cache_path);
-                                    snprintf (tmp_path, sizeof (tmp_path), "%s.part", cache_path);
-                                    FILE *out = fopen (tmp_path, "w+b");
-                                    if (!out) {
-                                        trace ("artwork: failed to open %s for writing\n", tmp_path);
-                                        break;
-                                    }
-                                    if (fwrite (data, 1, sz, out) != sz) {
-                                        trace ("artwork: failed to write apev2 picture into %s\n", tmp_path);
+                    // try to load embedded from apev2
+                    {
+                        trace ("trying to load artwork from apev2 tag for %s\n", param->fname);
+                        DB_apev2_tag_t tag;
+                        memset (&tag, 0, sizeof (tag));
+                        DB_FILE *fp = deadbeef->fopen (param->fname);
+                        current_file = fp;
+                        if (fp) {
+                            int res = deadbeef->junk_apev2_read_full (NULL, &tag, fp);
+                            if (!res) {
+                                for (DB_apev2_frame_t *f = tag.frames; f; f = f->next) {
+                                    if (!strcasecmp (f->key, "cover art (front)")) {
+                                        uint8_t *name = f->data, *ext = f->data, *data = f->data;
+                                        uint8_t *end = f->data + f->size;
+                                        while (data < end && *data)
+                                            data++;
+                                        if (data == end) {
+                                            trace ("artwork: apev2 cover art frame has no name\n");
+                                            continue;
+                                        }
+                                        int sz = end - ++data;
+                                        if (sz < 20) {
+                                            trace ("artwork: apev2 cover art frame is too small\n");
+                                            continue;
+                                        }
+                                        ext = strrchr (name, '.');
+                                        if (!ext || !*++ext) {
+                                            trace ("artwork: apev2 cover art name has no extension\n");
+                                            continue;
+                                        }
+                                        if (strcasecmp (ext, "jpeg") && strcasecmp (ext, "jpg") && strcasecmp (ext, "png")) {
+                                            trace ("artwork: unsupported file type: %s\n", ext);
+                                            continue;
+                                        }
+                                        trace ("found apev2 cover art of %d bytes (%s)\n", sz, ext);
+                                        char tmp_path[1024];
+                                        char cache_path[1024];
+                                        make_cache_path (cache_path, sizeof (cache_path), param->album, param->artist, -1);
+                                        trace ("will write apev2 cover art into %s\n", cache_path);
+                                        snprintf (tmp_path, sizeof (tmp_path), "%s.part", cache_path);
+                                        FILE *out = fopen (tmp_path, "w+b");
+                                        if (!out) {
+                                            trace ("artwork: failed to open %s for writing\n", tmp_path);
+                                            break;
+                                        }
+                                        if (fwrite (data, 1, sz, out) != sz) {
+                                            trace ("artwork: failed to write apev2 picture into %s\n", tmp_path);
+                                            fclose (out);
+                                            unlink (tmp_path);
+                                            break;
+                                        }
                                         fclose (out);
+                                        int err = rename (tmp_path, cache_path);
+                                        if (err != 0) {
+                                            trace ("Failed not move %s to %s: %s\n", tmp_path, cache_path, strerror (err));
+                                            unlink (tmp_path);
+                                            break;
+                                        }
                                         unlink (tmp_path);
+                                        got_pic = 1;
                                         break;
                                     }
-                                    fclose (out);
-                                    int err = rename (tmp_path, cache_path);
-                                    if (err != 0) {
-                                        trace ("Failed not move %s to %s: %s\n", tmp_path, cache_path, strerror (err));
-                                        unlink (tmp_path);
-                                        break;
-                                    }
-                                    unlink (tmp_path);
-                                    got_apev2_pic = 1;
-                                    break;
                                 }
                             }
-                        }
 
-                        if (got_apev2_pic) {
-                            if (param->callback) {
-                                param->callback (param->fname, param->artist, param->album, param->user_data);
-                            }
-                            queue_pop ();
-                            continue;
+                            deadbeef->junk_apev2_free (&tag);
+                            current_file = NULL;
+                            deadbeef->fclose (fp);
                         }
-                        deadbeef->junk_apev2_free (&tag);
-                        current_file = NULL;
-                        deadbeef->fclose (fp);
                     }
                 }
 
-                if (artwork_enable_local) {
+                if (!got_pic && artwork_enable_local) {
                     /* Searching in track directory */
                     strncpy (path, param->fname, sizeof (path));
                     char *slash = strrchr (path, '/');
@@ -540,48 +533,50 @@ fetcher_thread (void *none)
                             strcat (path, files[0]->d_name);
                             char cache_path[1024];
                             char tmp_path[1024];
-                            make_cache_path (cache_path, sizeof (cache_path), param->album, param->artist, param->size);
+                            make_cache_path (cache_path, sizeof (cache_path), param->album, param->artist, -1);
                             snprintf (tmp_path, sizeof (tmp_path), "%s.part", cache_path);
-                            copy_file (path, tmp_path, param->size);
+                            copy_file (path, tmp_path, -1);
                             int err = rename (tmp_path, cache_path);
                             if (err != 0) {
-                                trace ("Failed not move %s to %s: %s\n", tmp_path, cache_path, strerror (err));
+                                trace ("Failed to move %s to %s: %s\n", tmp_path, cache_path, strerror (err));
                                 unlink (tmp_path);
                             }
                             int i;
                             for (i = 0; i < files_count; i++) {
                                 free (files [i]);
                             }
-                            if (param->callback) {
-                                param->callback (param->fname, param->artist, param->album, param->user_data);
-                            }
-                            queue_pop ();
-                            continue;
+                            got_pic = 1;
                         }
                     }
                 }
             }
 
-            make_cache_path (path, sizeof (path), param->album, param->artist, param->size);
-
-            if (artwork_enable_lfm && !fetch_from_lastfm (param->artist, param->album, path)) {
-                trace ("art found on last.fm for %s %s\n", param->album, param->artist);
-            }
-            else if (artwork_enable_aao && !fetch_from_albumart_org (param->artist, param->album, path)) {
-                trace ("art found on albumart.org for %s %s\n", param->album, param->artist);
-            }
-            else {
-                trace ("art not found for %s %s\n", param->album, param->artist);
-//                if (param->callback) {
-//                    param->callback (DEFAULT_COVER_PATH, param->artist, param->album, param->user_data);
-//                }
-                queue_pop ();
-                continue;
+            if (!got_pic) {
+                if (artwork_enable_lfm && !fetch_from_lastfm (param->artist, param->album, cache_path)) {
+                    got_pic = 1;
+                }
+                else if (artwork_enable_aao && !fetch_from_albumart_org (param->artist, param->album, cache_path)) {
+                    got_pic = 1;
+                }
             }
 
-            trace ("downloaded art for %s %s\n", param->album, param->artist);
-            if (param->callback) {
-                param->callback (param->fname, param->artist, param->album, param->user_data);
+            if (got_pic) {
+                trace ("downloaded art for %s %s\n", param->album, param->artist);
+                if (param->size != -1) {
+                    make_cache_dir_path (path, sizeof (path), param->artist, param->size);
+                    trace ("cache folder: %s\n", path);
+                    if (!check_dir (path, 0755)) {
+                        trace ("failed to create folder %s\n", path);
+                        queue_pop ();
+                        continue;
+                    }
+                    char scaled_path[1024];
+                    make_cache_path (scaled_path, sizeof (scaled_path), param->album, param->artist, param->size);
+                    copy_file (cache_path, scaled_path, param->size);
+                }
+                if (param->callback) {
+                    param->callback (param->fname, param->artist, param->album, param->user_data);
+                }
             }
             queue_pop ();
         }
@@ -598,6 +593,25 @@ fetcher_thread (void *none)
             break;
         }
     }
+}
+
+static char *
+find_image (const char *path) {
+    struct stat stat_buf;
+    if (0 == stat (path, &stat_buf)) {
+        int cache_period = deadbeef->conf_get_int ("artwork.cache.period", 48);
+        time_t tm = time (NULL);
+        // invalidate cache every 2 days
+        if ((cache_period > 0 && (tm - stat_buf.st_mtime > cache_period * 60 * 60))
+                || artwork_reset_time > stat_buf.st_mtime) {
+            trace ("reloading cached file %s\n", path);
+            unlink (path);
+            return NULL;
+        }
+
+        return strdup (path);
+    }
+    return NULL;
 }
 
 char*
@@ -624,21 +638,30 @@ get_album_art (const char *fname, const char *artist, const char *album, int siz
     }
 
     make_cache_path (path, sizeof (path), album, artist, size);
-    struct stat stat_buf;
-    if (0 == stat (path, &stat_buf)) {
-        int cache_period = deadbeef->conf_get_int ("artwork.cache.period", 48);
-        time_t tm = time (NULL);
-        // invalidate cache every 2 days
-        if ((cache_period > 0 && (tm - stat_buf.st_mtime > cache_period * 60 * 60))
-                || artwork_reset_time > stat_buf.st_mtime) {
-            trace ("reloading cached file %s\n", path);
-            unlink (path);
-            queue_add (fname, artist, album, size, callback, user_data);
-            return size == -1 ? strdup (get_default_cover ()) : NULL;
-        }
+    char *p = find_image (path);
+    if (p) {
+        return p;
+    }
 
-//        trace ("found %s in cache, resettime %" PRId64 ", filetime %" PRId64 ", time %" PRId64 "\n", path, artwork_reset_time, stat_buf.st_mtime, tm);
-        return strdup (path);
+    if (size != -1) {
+        // check if we have unscaled image
+        char unscaled_path[1024];
+        make_cache_path (unscaled_path, sizeof (unscaled_path), album, artist, -1);
+        p = find_image (unscaled_path);
+        if (p) {
+            free (p);
+            char dir[1024];
+            make_cache_dir_path (dir, sizeof (dir), artist, size);
+            if (!check_dir (dir, 0755)) {
+                trace ("failed to create folder for %s\n", dir);
+            }
+            else {
+                int res = copy_file (unscaled_path, path, size);
+                if (!res) {
+                    return strdup (path);
+                }
+            }
+        }
     }
 
     queue_add (fname, artist, album, size, callback, user_data);

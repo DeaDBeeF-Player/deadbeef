@@ -1193,6 +1193,7 @@ gtkui_connect_cb (void *none) {
             break;
         }
     }
+    gtkui_playlist_changed ();
     return FALSE;
 }
 
