@@ -272,8 +272,12 @@ cvorbis_free (DB_fileinfo_t *_info) {
             deadbeef->pl_item_unref (info->ptrack);
         }
         if (info->info.file) {
-            ov_clear (&info->vorbis_file);
-            //fclose (file); //-- ov_clear closes it
+            if (info->vorbis_file.datasource) {
+                ov_clear (&info->vorbis_file);
+            }
+            else {
+                deadbeef->fclose (info->info.file);
+            }
         }
         free (info);
     }
