@@ -119,12 +119,12 @@ load_m3u (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
 }
 
 static DB_playItem_t *
-pls_insert_file (DB_playItem_t *after, const char *fname, const char *uri, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data) {
+pls_insert_file (DB_playItem_t *after, const char *fname, const char *uri, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data, const char *title, const char *length) {
+    trace ("pls_insert_file uri: %s\n", uri);
     DB_playItem_t *it = NULL;
     const char *slash = NULL;
 
     if (strrchr (uri, '/')) {
-        trace ("pls: adding file %s\n", uri);
         it = deadbeef->pl_insert_file (after, uri, pabort, cb, user_data);
     }
     else if (slash = strrchr (fname, '/')) {
@@ -132,8 +132,14 @@ pls_insert_file (DB_playItem_t *after, const char *fname, const char *uri, int *
         char fullpath[slash - fname + l + 2];
         memcpy (fullpath, fname, slash - fname + 1);
         strcpy (fullpath + (slash - fname + 1), uri);
-        trace ("pl_insert_m3u: adding file %s\n", fullpath);
+        trace ("pls_insert_file: adding file %s\n", fullpath);
         it = deadbeef->pl_insert_file (after, fullpath, pabort, cb, user_data);
+    }
+    if (length[0]) {
+        deadbeef->pl_set_item_duration (it, atoi (length));
+    }
+    if (title[0]) {
+        deadbeef->pl_replace_meta (it, "title", title);
     }
     return it;
 }
@@ -174,20 +180,11 @@ load_pls (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
         trace ("file %s finished before numberofentries had been read\n", fname);
         return NULL;
     }
-    if (strncasecmp (p, "numberofentries=", 16)) {
-        trace ("can't get number of entries from %s\n", fname);
-        return NULL;
-    }
-    p += 15;
-    // ignore numentries - no real need for it here
-    while (p < end && *p > 0x20) {
-        p++;
-    }
-    p = skipspaces (p, end);
     // fetch all tracks
     char uri[1024] = "";
     char title[1024] = "";
     char length[20] = "";
+    int lastidx = -1;
     deadbeef->pl_lock ();
     while (p < end) {
         p = skipspaces (p, end);
@@ -199,15 +196,19 @@ load_pls (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
         }
         const uint8_t *e;
         int n;
-        if (!strncasecmp (p, "file", 4)) {
-            if (uri[0]) {
-                DB_playItem_t *it = pls_insert_file (after, fname, uri, pabort, cb, user_data);
+        if (!strncasecmp (p, "numberofentries=", 16) || !strncasecmp (p, "version=", 8)) {
+            while (p < end && *p >= 0x20) {
+                p++;
+            }
+            continue;
+        }
+        else if (!strncasecmp (p, "file", 4)) {
+            int idx = atoi (p + 4);
+            if (uri[0] && idx != lastidx && lastidx != -1) {
+                trace ("uri%d\n", idx);
+                DB_playItem_t *it = pls_insert_file (after, fname, uri, pabort, cb, user_data, title, length);
                 if (it) {
                     after = it;
-                    deadbeef->pl_set_item_duration (it, atoi (length));
-                    if (title[0]) {
-                        deadbeef->pl_add_meta (it, "title", title);
-                    }
                 }
                 if (pabort && *pabort) {
                     deadbeef->pl_unlock ();
@@ -217,6 +218,7 @@ load_pls (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
                 title[0] = 0;
                 length[0] = 0;
             }
+            lastidx = idx;
             p += 4;
             while (p < end && *p != '=') {
                 p++;
@@ -234,9 +236,26 @@ load_pls (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
             memcpy (uri, p, n);
             uri[n] = 0;
             trace ("uri: %s\n", uri);
+            trace ("uri%d=%s\n", idx, uri);
             p = ++e;
         }
         else if (!strncasecmp (p, "title", 5)) {
+            int idx = atoi (p + 5);
+            if (uri[0] && idx != lastidx && lastidx != -1) {
+                trace ("title%d\n", idx);
+                DB_playItem_t *it = pls_insert_file (after, fname, uri, pabort, cb, user_data, title, length);
+                if (it) {
+                    after = it;
+                }
+                if (pabort && *pabort) {
+                    deadbeef->pl_unlock ();
+                    return after;
+                }
+                uri[0] = 0;
+                title[0] = 0;
+                length[0] = 0;
+            }
+            lastidx = idx;
             p += 5;
             while (p < end && *p != '=') {
                 p++;
@@ -253,10 +272,26 @@ load_pls (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
             n = min (n, sizeof (title)-1);
             memcpy (title, p, n);
             title[n] = 0;
-            trace ("title: %s\n", title);
+            trace ("title%d=%s\n", idx, title);
             p = ++e;
         }
         else if (!strncasecmp (p, "length", 6)) {
+            int idx = atoi (p + 6);
+            if (uri[0] && idx != lastidx && lastidx != -1) {
+                trace ("length%d\n", idx);
+                DB_playItem_t *it = pls_insert_file (after, fname, uri, pabort, cb, user_data, title, length);
+                if (it) {
+                    after = it;
+                }
+                if (pabort && *pabort) {
+                    deadbeef->pl_unlock ();
+                    return after;
+                }
+                uri[0] = 0;
+                title[0] = 0;
+                length[0] = 0;
+            }
+            lastidx = idx;
             p += 6;
             // skip =
             while (p < end && *p != '=') {
@@ -273,6 +308,7 @@ load_pls (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
             n = e-p;
             n = min (n, sizeof (length)-1);
             memcpy (length, p, n);
+            trace ("length%d=%s\n", idx, length);
         }
         else {
             trace ("invalid entry in pls file: %s\n", p);
@@ -284,13 +320,9 @@ load_pls (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
         p = e;
     }
     if (uri[0]) {
-        DB_playItem_t *it = pls_insert_file (after, fname, uri, pabort, cb, user_data);
+        DB_playItem_t *it = pls_insert_file (after, fname, uri, pabort, cb, user_data, title, length);
         if (it) {
             after = it;
-            deadbeef->pl_set_item_duration (it, atoi (length));
-            if (title[0]) {
-                deadbeef->pl_add_meta (it, "title", title);
-            }
         }
     }
     deadbeef->pl_unlock ();

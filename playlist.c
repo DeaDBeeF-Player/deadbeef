@@ -60,8 +60,8 @@
 #define PLAYLIST_MAJOR_VER 1
 #define PLAYLIST_MINOR_VER 2
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define SKIP_BLANK_CUE_TRACKS 0
 
@@ -1199,20 +1199,11 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
         trace ("file %s finished before numberofentries had been read\n", fname);
         return NULL;
     }
-    if (strncasecmp (p, "numberofentries=", 16)) {
-        trace ("can't get number of entries from %s\n", fname);
-        return NULL;
-    }
-    p += 15;
-    // ignore numentries - no real need for it here
-    while (p < end && *p > 0x20) {
-        p++;
-    }
-    p = pl_str_skipspaces (p, end);
     // fetch all tracks
     char url[1024] = "";
     char title[1024] = "";
     char length[20] = "";
+    int lastidx = -1;
     LOCK;
     while (p < end) {
         p = pl_str_skipspaces (p, end);
@@ -1224,8 +1215,15 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
         }
         const uint8_t *e;
         int n;
-        if (!strncasecmp (p, "file", 4)) {
-            if (url[0]) {
+        if (!strncasecmp (p, "numberofentries=", 16) || !strncasecmp (p, "version=", 8)) {
+            while (p < end && *p >= 0x20) {
+                p++;
+            }
+            continue;
+        }
+        else if (!strncasecmp (p, "file", 4)) {
+            int idx = atoi (p + 4);
+            if (url[0] && idx != lastidx && lastidx != -1) {
                 // add track
                 playItem_t *it = pl_insert_file (after, url, pabort, cb, user_data);
                 if (it) {
@@ -1244,6 +1242,7 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
                 title[0] = 0;
                 length[0] = 0;
             }
+            lastidx = idx;
             p += 4;
             while (p < end && *p != '=') {
                 p++;
@@ -1264,6 +1263,27 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
             p = ++e;
         }
         else if (!strncasecmp (p, "title", 5)) {
+            int idx = atoi (p + 5);
+            if (url[0] && idx != lastidx && lastidx != -1) {
+                // add track
+                playItem_t *it = pl_insert_file (after, url, pabort, cb, user_data);
+                if (it) {
+                    after = it;
+                    pl_set_item_duration (it, atoi (length));
+                    if (title[0]) {
+                        pl_delete_all_meta (it);
+                        pl_add_meta (it, "title", title);
+                    }
+                }
+                if (pabort && *pabort) {
+                    UNLOCK;
+                    return after;
+                }
+                url[0] = 0;
+                title[0] = 0;
+                length[0] = 0;
+            }
+            lastidx = idx;
             p += 5;
             while (p < end && *p != '=') {
                 p++;
@@ -1284,6 +1304,27 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
             p = ++e;
         }
         else if (!strncasecmp (p, "length", 6)) {
+            int idx = atoi (p + 6);
+            if (url[0] && idx != lastidx && lastidx != -1) {
+                // add track
+                playItem_t *it = pl_insert_file (after, url, pabort, cb, user_data);
+                if (it) {
+                    after = it;
+                    pl_set_item_duration (it, atoi (length));
+                    if (title[0]) {
+                        pl_delete_all_meta (it);
+                        pl_add_meta (it, "title", title);
+                    }
+                }
+                if (pabort && *pabort) {
+                    UNLOCK;
+                    return after;
+                }
+                url[0] = 0;
+                title[0] = 0;
+                length[0] = 0;
+            }
+            lastidx = idx;
             p += 6;
             // skip =
             while (p < end && *p != '=') {
@@ -1436,7 +1477,7 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
             it->filetype = "content";
             it->_duration = -1;
             pl_add_meta (it, "title", NULL);
-            after = plt_insert_item (addfiles_playlist, after, it);
+            after = plt_insert_item (addfiles_playlist ? addfiles_playlist : playlist, after, it);
             pl_item_unref (it);
             return after;
         }
@@ -2243,10 +2284,8 @@ pl_load (const char *fname) {
             for (e = 0; plug[p]->extensions[e]; e++) {
                 if (plug[p]->load && !strcasecmp (ext, plug[p]->extensions[e])) {
                     DB_playItem_t *it = plug[p]->load (it, fname, NULL, NULL, NULL);
-                    if (it) {
-                        GLOBAL_UNLOCK;
-                        return 0;
-                    }
+                    GLOBAL_UNLOCK;
+                    return 0;
                 }
             }
         }
