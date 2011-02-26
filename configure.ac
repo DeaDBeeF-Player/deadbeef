@@ -405,7 +405,8 @@ if test "x$enable_shellexec" != "xno" ; then
 fi
 
 if test "x$enable_artwork" != "xno" ; then
-    if test "x$HAVE_CURL" = "xyes" && test "x$HAVE_VFS_CURL" = "xyes" ; then
+    PKG_CHECK_MODULES(IMLIB2_DEPS, imlib2, HAVE_IMLIB2=yes, HAVE_IMLIB2=no)
+    if test "x$HAVE_CURL" = "xyes" && test "x$HAVE_VFS_CURL" = "xyes" && test "x$HAVE_IMLIB2" == "xyes" ; then
         HAVE_ARTWORK=yes
     fi
 fi

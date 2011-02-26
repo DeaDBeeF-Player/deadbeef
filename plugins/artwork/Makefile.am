@@ -5,6 +5,6 @@ artwork_la_SOURCES = artwork.c artwork.h albumartorg.c albumartorg.h lastfm.c la
 
 artwork_la_LDFLAGS = -module
 
-artwork_la_LIBADD = $(LDADD) $(ARTWORK_DEPS_LIBS) -lImlib2
-AM_CFLAGS = -std=c99 $(ARTWORK_DEPS_CFLAGS)
+artwork_la_LIBADD = $(LDADD) $(ARTWORK_DEPS_LIBS) $(IMLIB2_DEPS_LIBS)
+AM_CFLAGS = -std=c99 $(ARTWORK_DEPS_CFLAGS) $(IMLIB2_DEPS_CFLAGS)
 endif
