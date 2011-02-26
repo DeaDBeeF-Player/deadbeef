@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <fnmatch.h>
 #include <inttypes.h>
+#include <Imlib2.h>
 #include "../../deadbeef.h"
 #include "artwork.h"
 #include "lastfm.h"
@@ -29,6 +30,7 @@ typedef struct cover_query_s {
     char *fname;
     char *artist;
     char *album;
+    int size;
     artwork_callback callback;
     void *user_data;
     struct cover_query_s *next;
@@ -54,10 +56,17 @@ static const char *get_default_cover (void) {
 }
 
 int
-make_cache_dir_path (char *path, int size, const char *artist) {
+make_cache_dir_path (char *path, int size, const char *artist, int img_size) {
     const char *cache = getenv ("XDG_CACHE_HOME");
 
-    int sz = snprintf (path, size, "%s/deadbeef/", cache ? cache : getenv ("HOME"));
+    int sz;
+    
+    if (img_size == -1) {
+        sz = snprintf (path, size, "%s/deadbeef/covers/", cache ? cache : getenv ("HOME"));
+    }
+    else {
+        sz = snprintf (path, size, "%s/deadbeef/covers-%d/", cache ? cache : getenv ("HOME"), img_size);
+    }
     path += sz;
 
     sz += snprintf (path, size-sz, "%s", artist);
@@ -70,9 +79,9 @@ make_cache_dir_path (char *path, int size, const char *artist) {
 }
 
 void
-make_cache_path (char *path, int size, const char *album, const char *artist) {
+make_cache_path (char *path, int size, const char *album, const char *artist, int img_size) {
     char *p = path;
-    int sz = make_cache_dir_path (path, size, artist);
+    int sz = make_cache_dir_path (path, size, artist, img_size);
     size -= sz;
     path += sz;
     sz = snprintf (path, size, "/%s.jpg", album);
@@ -84,7 +93,7 @@ make_cache_path (char *path, int size, const char *album, const char *artist) {
 }
 
 void
-queue_add (const char *fname, const char *artist, const char *album, artwork_callback callback, void *user_data) {
+queue_add (const char *fname, const char *artist, const char *album, int img_size, artwork_callback callback, void *user_data) {
     if (!artist) {
         artist = "";
     }
@@ -105,6 +114,7 @@ queue_add (const char *fname, const char *artist, const char *album, artwork_cal
     q->fname = strdup (fname);
     q->artist = strdup (artist);
     q->album = strdup (album);
+    q->size = img_size;
     q->callback = callback;
     q->user_data = user_data;
     if (queue_tail) {
@@ -165,8 +175,47 @@ check_dir (const char *dir, mode_t mode)
 #define BUFFER_SIZE 4096
 
 static int
-copy_file (const char *in, const char *out) {
+copy_file (const char *in, const char *out, int img_size) {
     trace ("copying %s to %s\n", in, out);
+
+    if (img_size != -1) {
+        // need to scale, use imlib2
+        Imlib_Image img = imlib_load_image_immediately (in);
+        if (!img) {
+            trace ("file %s not found, or imlib2 can't load it\n", in);
+            return -1;
+        }
+        imlib_context_set_image(img);
+        int w = imlib_image_get_width ();
+        int h = imlib_image_get_height ();
+        int sw, sh;
+        if (w < h) {
+            sh = img_size;
+            sw = img_size * w / h;
+        }
+        else {
+            sw = img_size;
+            sh = img_size * h / w;
+        }
+        Imlib_Image scaled = imlib_create_image (sw, sh);
+        imlib_context_set_image (scaled);
+        imlib_blend_image_onto_image (img, 1, 0, 0, w, h, 0, 0, sw, sh);
+        Imlib_Load_Error err = 0;
+        imlib_image_set_format ("jpg");
+        imlib_save_image_with_error_return (out, &err);
+        if (err != 0) {
+            imlib_free_image ();
+            imlib_context_set_image(img);
+            imlib_free_image ();
+            return -1;
+        }
+        imlib_free_image ();
+        imlib_context_set_image(img);
+        imlib_free_image ();
+
+        return 0;
+    }
+
     FILE *fin = fopen (in, "rb");
     if (!fin) {
         trace ("artwork: failed to open file %s for reading\n", in);
@@ -290,7 +339,7 @@ fetcher_thread (void *none)
             struct dirent **files;
             int files_count;
 
-            make_cache_dir_path (path, sizeof (path), param->artist);
+            make_cache_dir_path (path, sizeof (path), param->artist, param->size);
             trace ("cache folder: %s\n", path);
             if (!check_dir (path, 0755)) {
                 queue_pop ();
@@ -349,7 +398,7 @@ fetcher_thread (void *none)
 
                                     char tmp_path[1024];
                                     char cache_path[1024];
-                                    make_cache_path (cache_path, sizeof (cache_path), param->album, param->artist);
+                                    make_cache_path (cache_path, sizeof (cache_path), param->album, param->artist, param->size);
                                     trace ("will write id3v2 APIC into %s\n", cache_path);
                                     snprintf (tmp_path, sizeof (tmp_path), "%s.part", cache_path);
                                     FILE *out = fopen (tmp_path, "w+b");
@@ -430,7 +479,7 @@ fetcher_thread (void *none)
                                     trace ("found apev2 cover art of %d bytes (%s)\n", sz, ext);
                                     char tmp_path[1024];
                                     char cache_path[1024];
-                                    make_cache_path (cache_path, sizeof (cache_path), param->album, param->artist);
+                                    make_cache_path (cache_path, sizeof (cache_path), param->album, param->artist, param->size);
                                     trace ("will write apev2 cover art into %s\n", cache_path);
                                     snprintf (tmp_path, sizeof (tmp_path), "%s.part", cache_path);
                                     FILE *out = fopen (tmp_path, "w+b");
@@ -491,9 +540,9 @@ fetcher_thread (void *none)
                             strcat (path, files[0]->d_name);
                             char cache_path[1024];
                             char tmp_path[1024];
-                            make_cache_path (cache_path, sizeof (cache_path), param->album, param->artist);
+                            make_cache_path (cache_path, sizeof (cache_path), param->album, param->artist, param->size);
                             snprintf (tmp_path, sizeof (tmp_path), "%s.part", cache_path);
-                            copy_file (path, tmp_path);
+                            copy_file (path, tmp_path, param->size);
                             int err = rename (tmp_path, cache_path);
                             if (err != 0) {
                                 trace ("Failed not move %s to %s: %s\n", tmp_path, cache_path, strerror (err));
@@ -513,7 +562,7 @@ fetcher_thread (void *none)
                 }
             }
 
-            make_cache_path (path, sizeof (path), param->album, param->artist);
+            make_cache_path (path, sizeof (path), param->album, param->artist, param->size);
 
             if (artwork_enable_lfm && !fetch_from_lastfm (param->artist, param->album, path)) {
                 trace ("art found on last.fm for %s %s\n", param->album, param->artist);
@@ -552,7 +601,7 @@ fetcher_thread (void *none)
 }
 
 char*
-get_album_art (const char *fname, const char *artist, const char *album, artwork_callback callback, void *user_data)
+get_album_art (const char *fname, const char *artist, const char *album, int size, artwork_callback callback, void *user_data)
 {
 //    trace ("get_album_art: %s (%s - %s)\n", fname, artist, album);
     char path [1024];
@@ -567,14 +616,14 @@ get_album_art (const char *fname, const char *artist, const char *album, artwork
     if (!*artist || !*album)
     {
         //give up
-        return strdup (get_default_cover ());
+        return size == -1 ? strdup (get_default_cover ()) : NULL;
     }
 
     if (!deadbeef->is_local_file (fname)) {
-        return strdup (get_default_cover ());
+        return size == -1 ? strdup (get_default_cover ()) : NULL;
     }
 
-    make_cache_path (path, sizeof (path), album, artist);
+    make_cache_path (path, sizeof (path), album, artist, size);
     struct stat stat_buf;
     if (0 == stat (path, &stat_buf)) {
         int cache_period = deadbeef->conf_get_int ("artwork.cache.period", 48);
@@ -584,16 +633,16 @@ get_album_art (const char *fname, const char *artist, const char *album, artwork
                 || artwork_reset_time > stat_buf.st_mtime) {
             trace ("reloading cached file %s\n", path);
             unlink (path);
-            queue_add (fname, artist, album, callback, user_data);
-            return strdup (get_default_cover ());
+            queue_add (fname, artist, album, size, callback, user_data);
+            return size == -1 ? strdup (get_default_cover ()) : NULL;
         }
 
 //        trace ("found %s in cache, resettime %" PRId64 ", filetime %" PRId64 ", time %" PRId64 "\n", path, artwork_reset_time, stat_buf.st_mtime, tm);
         return strdup (path);
     }
 
-    queue_add (fname, artist, album, callback, user_data);
-    return strdup (get_default_cover ());
+    queue_add (fname, artist, album, size, callback, user_data);
+    return size == -1 ? strdup (get_default_cover ()) : NULL;
 }
 
 DB_plugin_t *
@@ -647,7 +696,7 @@ artwork_on_configchanged (DB_event_t *ev, uintptr_t data) {
             || new_artwork_enable_lfm != artwork_enable_lfm
             || new_artwork_enable_aao != artwork_enable_aao
             || strcmp (new_artwork_filemask, artwork_filemask)) {
-        printf ("artwork config changed, invalidating cache...\n");
+        trace ("artwork config changed, invalidating cache...\n");
         artwork_enable_embedded = new_artwork_enable_embedded;
         artwork_enable_local = new_artwork_enable_local;
         artwork_enable_lfm = new_artwork_enable_lfm;
@@ -736,7 +785,7 @@ static DB_artwork_plugin_t plugin = {
     .plugin.plugin.version_major = 1,
     .plugin.plugin.version_minor = 0,
     .plugin.plugin.type = DB_PLUGIN_MISC,
-    .plugin.plugin.id = "cover_loader",
+    .plugin.plugin.id = "artwork",
     .plugin.plugin.name = "Album Artwork",
     .plugin.plugin.descr = "Loads album artwork either from local directories or from internet",
     .plugin.plugin.author = "Viktor Semykin, Alexey Yakovenko",

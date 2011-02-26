@@ -241,7 +241,7 @@ get_cover_art (const char *fname, const char *artist, const char *album, int wid
     if (!coverart_plugin) {
         return NULL;
     }
-    char *image_fname = coverart_plugin->get_album_art (fname, artist, album, cover_avail_callback, (void *)(intptr_t)width);
+    char *image_fname = coverart_plugin->get_album_art (fname, artist, album, -1, cover_avail_callback, (void *)(intptr_t)width);
     if (image_fname) {
         GdkPixbuf *pb = get_pixbuf (image_fname, width);
         free (image_fname);
