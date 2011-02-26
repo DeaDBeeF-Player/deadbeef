@@ -189,13 +189,25 @@ copy_file (const char *in, const char *out, int img_size) {
         int w = imlib_image_get_width ();
         int h = imlib_image_get_height ();
         int sw, sh;
-        if (w < h) {
-            sh = img_size;
-            sw = img_size * w / h;
+        if (deadbeef->conf_get_int ("artwork.scale_towards_longer", 1)) {
+            if (w > h) {
+                sh = img_size;
+                sw = img_size * w / h;
+            }
+            else {
+                sw = img_size;
+                sh = img_size * h / w;
+            }
         }
         else {
-            sw = img_size;
-            sh = img_size * h / w;
+            if (w < h) {
+                sh = img_size;
+                sw = img_size * w / h;
+            }
+            else {
+                sw = img_size;
+                sh = img_size * h / w;
+            }
         }
         Imlib_Image scaled = imlib_create_image (sw, sh);
         imlib_context_set_image (scaled);
@@ -799,6 +811,7 @@ static const char settings_dlg[] =
     "property \"Local cover file mask\" entry artwork.filemask \"" DEFAULT_FILEMASK "\";\n"
     "property \"Fetch from last.fm\" checkbox artwork.enable_lastfm 0;\n"
     "property \"Fetch from albumart.org\" checkbox artwork.enable_albumartorg 0;\n"
+    "property \"Scale artwork towards longer side\" checkbox artwork.scale_towards_longer 1;\n"
 ;
 
 // define plugin interface
