@@ -373,6 +373,7 @@ streamer_move_to_nextsong (int reason) {
                 it = plt->head[PL_MAIN];
             }
             else {
+                badsong = -1;
                 streamer_set_nextsong (-2, 1);
                 pl_global_unlock ();
                 return 0;
@@ -640,7 +641,7 @@ streamer_set_current (playItem_t *it) {
         DB_decoder_t *dec = NULL;
         dec = plug_get_decoder_for_id (it->decoder_id);
         if (dec) {
-            trace ("\033[0;33minit decoder for %s\033[37;0m\n", it->fname);
+            trace ("\033[0;33minit decoder for %s (%s)\033[37;0m\n", it->fname, it->decoder_id);
             fileinfo = dec->open (0);
             if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (it)) != 0) {
                 trace ("\033[0;31mfailed to init decoder\033[37;0m\n")
