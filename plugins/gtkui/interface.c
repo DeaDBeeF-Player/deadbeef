@@ -1345,6 +1345,9 @@ create_trackproperties (void)
   g_signal_connect ((gpointer) trackproperties, "delete_event",
                     G_CALLBACK (on_trackproperties_delete_event),
                     NULL);
+  g_signal_connect ((gpointer) metalist, "button_press_event",
+                    G_CALLBACK (on_metalist_button_press_event),
+                    NULL);
   g_signal_connect ((gpointer) write_tags, "clicked",
                     G_CALLBACK (on_write_tags_clicked),
                     NULL);
@@ -2947,13 +2950,13 @@ create_prefwin (void)
 }
 
 GtkWidget*
-create_editplaylistdlg (void)
+create_entrydialog (void)
 {
-  GtkWidget *editplaylistdlg;
+  GtkWidget *entrydialog;
   GtkWidget *dialog_vbox3;
   GtkWidget *vbox15;
   GtkWidget *hbox33;
-  GtkWidget *label40;
+  GtkWidget *title_label;
   GtkWidget *title;
   GtkWidget *dialog_action_area3;
   GtkWidget *cancelbutton2;
@@ -2967,13 +2970,13 @@ create_editplaylistdlg (void)
   GtkWidget *image395;
   GtkWidget *label93;
 
-  editplaylistdlg = gtk_dialog_new ();
-  gtk_container_set_border_width (GTK_CONTAINER (editplaylistdlg), 8);
-  gtk_window_set_title (GTK_WINDOW (editplaylistdlg), _("editplaylistdlg"));
-  gtk_window_set_destroy_with_parent (GTK_WINDOW (editplaylistdlg), TRUE);
-  gtk_window_set_type_hint (GTK_WINDOW (editplaylistdlg), GDK_WINDOW_TYPE_HINT_DIALOG);
+  entrydialog = gtk_dialog_new ();
+  gtk_container_set_border_width (GTK_CONTAINER (entrydialog), 8);
+  gtk_window_set_title (GTK_WINDOW (entrydialog), _("EntryDialog"));
+  gtk_window_set_destroy_with_parent (GTK_WINDOW (entrydialog), TRUE);
+  gtk_window_set_type_hint (GTK_WINDOW (entrydialog), GDK_WINDOW_TYPE_HINT_DIALOG);
 
-  dialog_vbox3 = GTK_DIALOG (editplaylistdlg)->vbox;
+  dialog_vbox3 = GTK_DIALOG (entrydialog)->vbox;
   gtk_widget_show (dialog_vbox3);
 
   vbox15 = gtk_vbox_new (FALSE, 0);
@@ -2985,9 +2988,9 @@ create_editplaylistdlg (void)
   gtk_widget_show (hbox33);
   gtk_box_pack_start (GTK_BOX (vbox15), hbox33, TRUE, TRUE, 0);
 
-  label40 = gtk_label_new (_("Title:"));
-  gtk_widget_show (label40);
-  gtk_box_pack_start (GTK_BOX (hbox33), label40, FALSE, FALSE, 0);
+  title_label = gtk_label_new (_("Title:"));
+  gtk_widget_show (title_label);
+  gtk_box_pack_start (GTK_BOX (hbox33), title_label, FALSE, FALSE, 0);
 
   title = gtk_entry_new ();
   gtk_widget_show (title);
@@ -2995,13 +2998,13 @@ create_editplaylistdlg (void)
   gtk_entry_set_invisible_char (GTK_ENTRY (title), 8226);
   gtk_entry_set_activates_default (GTK_ENTRY (title), TRUE);
 
-  dialog_action_area3 = GTK_DIALOG (editplaylistdlg)->action_area;
+  dialog_action_area3 = GTK_DIALOG (entrydialog)->action_area;
   gtk_widget_show (dialog_action_area3);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area3), GTK_BUTTONBOX_END);
 
   cancelbutton2 = gtk_button_new ();
   gtk_widget_show (cancelbutton2);
-  gtk_dialog_add_action_widget (GTK_DIALOG (editplaylistdlg), cancelbutton2, GTK_RESPONSE_CANCEL);
+  gtk_dialog_add_action_widget (GTK_DIALOG (entrydialog), cancelbutton2, GTK_RESPONSE_CANCEL);
   GTK_WIDGET_SET_FLAGS (cancelbutton2, GTK_CAN_DEFAULT);
 
   alignment17 = gtk_alignment_new (0.5, 0.5, 0, 0);
@@ -3022,7 +3025,7 @@ create_editplaylistdlg (void)
 
   okbutton2 = gtk_button_new ();
   gtk_widget_show (okbutton2);
-  gtk_dialog_add_action_widget (GTK_DIALOG (editplaylistdlg), okbutton2, GTK_RESPONSE_OK);
+  gtk_dialog_add_action_widget (GTK_DIALOG (entrydialog), okbutton2, GTK_RESPONSE_OK);
   GTK_WIDGET_SET_FLAGS (okbutton2, GTK_CAN_DEFAULT);
 
   alignment16 = gtk_alignment_new (0.5, 0.5, 0, 0);
@@ -3042,25 +3045,25 @@ create_editplaylistdlg (void)
   gtk_box_pack_start (GTK_BOX (hbox57), label93, FALSE, FALSE, 0);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
-  GLADE_HOOKUP_OBJECT_NO_REF (editplaylistdlg, editplaylistdlg, "editplaylistdlg");
-  GLADE_HOOKUP_OBJECT_NO_REF (editplaylistdlg, dialog_vbox3, "dialog_vbox3");
-  GLADE_HOOKUP_OBJECT (editplaylistdlg, vbox15, "vbox15");
-  GLADE_HOOKUP_OBJECT (editplaylistdlg, hbox33, "hbox33");
-  GLADE_HOOKUP_OBJECT (editplaylistdlg, label40, "label40");
-  GLADE_HOOKUP_OBJECT (editplaylistdlg, title, "title");
-  GLADE_HOOKUP_OBJECT_NO_REF (editplaylistdlg, dialog_action_area3, "dialog_action_area3");
-  GLADE_HOOKUP_OBJECT (editplaylistdlg, cancelbutton2, "cancelbutton2");
-  GLADE_HOOKUP_OBJECT (editplaylistdlg, alignment17, "alignment17");
-  GLADE_HOOKUP_OBJECT (editplaylistdlg, hbox58, "hbox58");
-  GLADE_HOOKUP_OBJECT (editplaylistdlg, image396, "image396");
-  GLADE_HOOKUP_OBJECT (editplaylistdlg, label94, "label94");
-  GLADE_HOOKUP_OBJECT (editplaylistdlg, okbutton2, "okbutton2");
-  GLADE_HOOKUP_OBJECT (editplaylistdlg, alignment16, "alignment16");
-  GLADE_HOOKUP_OBJECT (editplaylistdlg, hbox57, "hbox57");
-  GLADE_HOOKUP_OBJECT (editplaylistdlg, image395, "image395");
-  GLADE_HOOKUP_OBJECT (editplaylistdlg, label93, "label93");
+  GLADE_HOOKUP_OBJECT_NO_REF (entrydialog, entrydialog, "entrydialog");
+  GLADE_HOOKUP_OBJECT_NO_REF (entrydialog, dialog_vbox3, "dialog_vbox3");
+  GLADE_HOOKUP_OBJECT (entrydialog, vbox15, "vbox15");
+  GLADE_HOOKUP_OBJECT (entrydialog, hbox33, "hbox33");
+  GLADE_HOOKUP_OBJECT (entrydialog, title_label, "title_label");
+  GLADE_HOOKUP_OBJECT (entrydialog, title, "title");
+  GLADE_HOOKUP_OBJECT_NO_REF (entrydialog, dialog_action_area3, "dialog_action_area3");
+  GLADE_HOOKUP_OBJECT (entrydialog, cancelbutton2, "cancelbutton2");
+  GLADE_HOOKUP_OBJECT (entrydialog, alignment17, "alignment17");
+  GLADE_HOOKUP_OBJECT (entrydialog, hbox58, "hbox58");
+  GLADE_HOOKUP_OBJECT (entrydialog, image396, "image396");
+  GLADE_HOOKUP_OBJECT (entrydialog, label94, "label94");
+  GLADE_HOOKUP_OBJECT (entrydialog, okbutton2, "okbutton2");
+  GLADE_HOOKUP_OBJECT (entrydialog, alignment16, "alignment16");
+  GLADE_HOOKUP_OBJECT (entrydialog, hbox57, "hbox57");
+  GLADE_HOOKUP_OBJECT (entrydialog, image395, "image395");
+  GLADE_HOOKUP_OBJECT (entrydialog, label93, "label93");
 
-  return editplaylistdlg;
+  return entrydialog;
 }
 
 GtkWidget*

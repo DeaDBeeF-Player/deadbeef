@@ -1066,3 +1066,8 @@ on_plug_copyright_clicked              (GtkButton       *button,
 GtkWidget*
 create_plugin_weblink (gchar *widget_name, gchar *string1, gchar *string2,
                 gint int1, gint int2);
+
+gboolean
+on_metalist_button_press_event         (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data);

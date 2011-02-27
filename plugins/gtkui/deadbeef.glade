@@ -1447,6 +1447,7 @@
 		  <property name="fixed_height_mode">False</property>
 		  <property name="hover_selection">False</property>
 		  <property name="hover_expand">False</property>
+		  <signal name="button_press_event" handler="on_metalist_button_press_event" last_modification_time="Sun, 27 Feb 2011 18:14:41 GMT"/>
 		</widget>
 	      </child>
 	    </widget>
@@ -5370,10 +5371,10 @@ SOCKS5_HOSTNAME</property>
   </child>
 </widget>
 
-<widget class="GtkDialog" id="editplaylistdlg">
+<widget class="GtkDialog" id="entrydialog">
   <property name="border_width">8</property>
   <property name="visible">True</property>
-  <property name="title" translatable="yes">editplaylistdlg</property>
+  <property name="title" translatable="yes">EntryDialog</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
@@ -5571,7 +5572,7 @@ SOCKS5_HOSTNAME</property>
 	      <property name="spacing">8</property>
 
 	      <child>
-		<widget class="GtkLabel" id="label40">
+		<widget class="GtkLabel" id="title_label">
 		  <property name="visible">True</property>
 		  <property name="label" translatable="yes">Title:</property>
 		  <property name="use_underline">False</property>

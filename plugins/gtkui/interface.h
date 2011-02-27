@@ -10,7 +10,7 @@ GtkWidget* create_helpwindow (void);
 GtkWidget* create_trackproperties (void);
 GtkWidget* create_editcolumndlg (void);
 GtkWidget* create_prefwin (void);
-GtkWidget* create_editplaylistdlg (void);
+GtkWidget* create_entrydialog (void);
 GtkWidget* create_addlocationdlg (void);
 GtkWidget* create_groupbydlg (void);
 GtkWidget* create_sortbydlg (void);
