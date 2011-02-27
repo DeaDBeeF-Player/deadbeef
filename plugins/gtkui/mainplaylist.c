@@ -149,7 +149,7 @@ void main_handle_doubleclick (DdbListview *listview, DdbListviewIter iter, int i
 void main_selection_changed (DdbListviewIter it, int idx) {
     DdbListview *search = DDB_LISTVIEW (lookup_widget (searchwin, "searchlist"));
     if (idx == -1) {
-        ddb_listview_refresh (search, DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
+        ddb_listview_refresh (search, DDB_REFRESH_LIST);
     }
     else {
         ddb_listview_draw_row (search, search_get_idx ((DB_playItem_t *)it), it);
@@ -337,7 +337,7 @@ void
 main_refresh (void) {
     if (mainwin && gtk_widget_get_visible (mainwin)) {
         DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-        ddb_listview_refresh (pl, DDB_REFRESH_VSCROLL | DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
+        ddb_listview_refresh (pl, DDB_REFRESH_VSCROLL | DDB_REFRESH_LIST);
     }
 }
 

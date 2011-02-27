@@ -98,14 +98,14 @@ on_searchentry_changed                 (GtkEditable     *editable,
     search_refresh ();
 
     // redraw main playlist to be in sync selection-wise
-    ddb_listview_refresh (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
+    ddb_listview_refresh (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), DDB_REFRESH_LIST);
 }
 
 void
 search_refresh (void) {
     if (searchwin && gtk_widget_get_visible (searchwin)) {
         GtkWidget *pl = lookup_widget (searchwin, "searchlist");
-        ddb_listview_refresh (DDB_LISTVIEW (pl), DDB_REFRESH_VSCROLL | DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
+        ddb_listview_refresh (DDB_LISTVIEW (pl), DDB_REFRESH_VSCROLL | DDB_REFRESH_LIST);
     }
 }
 
@@ -370,7 +370,7 @@ void search_handle_doubleclick (DdbListview *listview, DdbListviewIter iter, int
 void search_selection_changed (DdbListviewIter it, int idx) {
     DdbListview *main = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
     if (idx == -1) {
-        ddb_listview_refresh (main, DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
+        ddb_listview_refresh (main, DDB_REFRESH_LIST);
     }
     else {
         ddb_listview_draw_row (main, main_get_idx ((DB_playItem_t *)it), it);

@@ -828,10 +828,10 @@ redraw_headers (void) {
     DdbListview *playlist = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
     DdbListview *search = DDB_LISTVIEW (lookup_widget (searchwin, "searchlist"));
     if (playlist) {
-        ddb_listview_refresh (playlist, DDB_REFRESH_COLUMNS | DDB_EXPOSE_COLUMNS);
+        ddb_listview_refresh (playlist, DDB_REFRESH_COLUMNS);
     }
     if (search) {
-        ddb_listview_refresh (search, DDB_REFRESH_COLUMNS | DDB_EXPOSE_COLUMNS);
+        ddb_listview_refresh (search, DDB_REFRESH_COLUMNS);
     }
 }
 

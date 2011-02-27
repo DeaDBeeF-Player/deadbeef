@@ -271,10 +271,10 @@ on_select_all1_activate                (GtkMenuItem     *menuitem,
 {
     deadbeef->pl_select_all ();
     DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-    ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
+    ddb_listview_refresh (pl, DDB_REFRESH_LIST);
     pl = DDB_LISTVIEW (lookup_widget (searchwin, "searchlist"));
     if (pl) {
-        ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
+        ddb_listview_refresh (pl, DDB_REFRESH_LIST);
     }
 }
 
@@ -968,10 +968,10 @@ on_deselect_all1_activate              (GtkMenuItem     *menuitem,
     }
     deadbeef->pl_unlock ();
     DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-    ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
+    ddb_listview_refresh (pl, DDB_REFRESH_LIST);
     pl = DDB_LISTVIEW (lookup_widget (searchwin, "searchlist"));
     if (pl) {
-        ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
+        ddb_listview_refresh (pl, DDB_REFRESH_LIST);
     }
 }
 
@@ -995,7 +995,7 @@ on_invert_selection1_activate          (GtkMenuItem     *menuitem,
     }
     deadbeef->pl_unlock ();
     DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-    ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
+    ddb_listview_refresh (pl, DDB_REFRESH_LIST);
 }
 
 
@@ -1177,7 +1177,7 @@ on_custom2_activate                    (GtkMenuItem     *menuitem,
 
         DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
         ddb_listview_clear_sort (pl);
-        ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_EXPOSE_LIST);
+        ddb_listview_refresh (pl, DDB_REFRESH_LIST);
     }
 
     gtk_widget_destroy (dlg);

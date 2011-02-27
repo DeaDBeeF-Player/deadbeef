@@ -480,7 +480,7 @@ gtkui_on_paused (DB_event_state_t *ev, uintptr_t data) {
 void
 playlist_refresh (void) {
     DdbListview *ps = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-    ddb_listview_refresh (ps, DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL | DDB_EXPOSE_LIST);
+    ddb_listview_refresh (ps, DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL);
     search_refresh ();
 }
 
