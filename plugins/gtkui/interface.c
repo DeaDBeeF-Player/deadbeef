@@ -1751,24 +1751,20 @@ create_prefwin (void)
   GtkWidget *scrolledwindow2;
   GtkWidget *pref_pluginlist;
   GtkWidget *vbox12;
-  GtkWidget *hbox16;
-  GtkWidget *label11;
-  GtkWidget *pref_plugin_descr;
-  GtkWidget *hbox17;
-  GtkWidget *label12;
-  GtkWidget *pref_plugin_author;
-  GtkWidget *hbox18;
-  GtkWidget *label13;
-  GtkWidget *pref_plugin_email;
-  GtkWidget *hbox19;
-  GtkWidget *label14;
-  GtkWidget *pref_plugin_website;
+  GtkWidget *scrolledwindow8;
+  GtkWidget *plug_description;
   GtkWidget *hbox20;
   GtkWidget *configure_plugin;
   GtkWidget *alignment15;
   GtkWidget *hbox56;
   GtkWidget *image394;
   GtkWidget *label92;
+  GtkWidget *plug_copyright;
+  GtkWidget *alignment20;
+  GtkWidget *hbox88;
+  GtkWidget *image521;
+  GtkWidget *label117;
+  GtkWidget *weblink;
   GtkWidget *label3;
   GtkWidget *dialog_action_area2;
   GtkWidget *closebutton1;
@@ -2513,65 +2509,17 @@ create_prefwin (void)
   gtk_paned_pack2 (GTK_PANED (hpaned1), vbox12, TRUE, TRUE);
   gtk_container_set_border_width (GTK_CONTAINER (vbox12), 12);
 
-  hbox16 = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox16);
-  gtk_box_pack_start (GTK_BOX (vbox12), hbox16, FALSE, FALSE, 0);
+  scrolledwindow8 = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow8);
+  gtk_box_pack_start (GTK_BOX (vbox12), scrolledwindow8, TRUE, TRUE, 0);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow8), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow8), GTK_SHADOW_IN);
 
-  label11 = gtk_label_new (_("Description:"));
-  gtk_widget_show (label11);
-  gtk_box_pack_start (GTK_BOX (hbox16), label11, FALSE, FALSE, 0);
-  gtk_misc_set_alignment (GTK_MISC (label11), 0, 0.5);
-
-  pref_plugin_descr = gtk_entry_new ();
-  gtk_widget_show (pref_plugin_descr);
-  gtk_box_pack_start (GTK_BOX (hbox16), pref_plugin_descr, TRUE, TRUE, 0);
-  gtk_editable_set_editable (GTK_EDITABLE (pref_plugin_descr), FALSE);
-  gtk_entry_set_invisible_char (GTK_ENTRY (pref_plugin_descr), 9679);
-
-  hbox17 = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox17);
-  gtk_box_pack_start (GTK_BOX (vbox12), hbox17, FALSE, FALSE, 0);
-
-  label12 = gtk_label_new (_("Author(s):"));
-  gtk_widget_show (label12);
-  gtk_box_pack_start (GTK_BOX (hbox17), label12, FALSE, FALSE, 0);
-  gtk_misc_set_alignment (GTK_MISC (label12), 0, 0.5);
-
-  pref_plugin_author = gtk_entry_new ();
-  gtk_widget_show (pref_plugin_author);
-  gtk_box_pack_start (GTK_BOX (hbox17), pref_plugin_author, TRUE, TRUE, 0);
-  gtk_editable_set_editable (GTK_EDITABLE (pref_plugin_author), FALSE);
-  gtk_entry_set_invisible_char (GTK_ENTRY (pref_plugin_author), 9679);
-
-  hbox18 = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox18);
-  gtk_box_pack_start (GTK_BOX (vbox12), hbox18, FALSE, FALSE, 0);
-
-  label13 = gtk_label_new (_("Email:"));
-  gtk_widget_show (label13);
-  gtk_box_pack_start (GTK_BOX (hbox18), label13, FALSE, FALSE, 0);
-  gtk_misc_set_alignment (GTK_MISC (label13), 0, 0.5);
-
-  pref_plugin_email = gtk_entry_new ();
-  gtk_widget_show (pref_plugin_email);
-  gtk_box_pack_start (GTK_BOX (hbox18), pref_plugin_email, TRUE, TRUE, 0);
-  gtk_editable_set_editable (GTK_EDITABLE (pref_plugin_email), FALSE);
-  gtk_entry_set_invisible_char (GTK_ENTRY (pref_plugin_email), 9679);
-
-  hbox19 = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox19);
-  gtk_box_pack_start (GTK_BOX (vbox12), hbox19, FALSE, FALSE, 0);
-
-  label14 = gtk_label_new (_("Website:"));
-  gtk_widget_show (label14);
-  gtk_box_pack_start (GTK_BOX (hbox19), label14, FALSE, FALSE, 0);
-  gtk_misc_set_alignment (GTK_MISC (label14), 0, 0.5);
-
-  pref_plugin_website = gtk_entry_new ();
-  gtk_widget_show (pref_plugin_website);
-  gtk_box_pack_start (GTK_BOX (hbox19), pref_plugin_website, TRUE, TRUE, 0);
-  gtk_editable_set_editable (GTK_EDITABLE (pref_plugin_website), FALSE);
-  gtk_entry_set_invisible_char (GTK_ENTRY (pref_plugin_website), 9679);
+  plug_description = gtk_text_view_new ();
+  gtk_widget_show (plug_description);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow8), plug_description);
+  gtk_text_view_set_editable (GTK_TEXT_VIEW (plug_description), FALSE);
+  gtk_text_view_set_cursor_visible (GTK_TEXT_VIEW (plug_description), FALSE);
 
   hbox20 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox20);
@@ -2580,6 +2528,7 @@ create_prefwin (void)
   configure_plugin = gtk_button_new ();
   gtk_widget_show (configure_plugin);
   gtk_box_pack_start (GTK_BOX (hbox20), configure_plugin, TRUE, FALSE, 0);
+  gtk_widget_set_sensitive (configure_plugin, FALSE);
 
   alignment15 = gtk_alignment_new (0.5, 0.5, 0, 0);
   gtk_widget_show (alignment15);
@@ -2596,6 +2545,33 @@ create_prefwin (void)
   label92 = gtk_label_new_with_mnemonic (_("Configure"));
   gtk_widget_show (label92);
   gtk_box_pack_start (GTK_BOX (hbox56), label92, FALSE, FALSE, 0);
+
+  plug_copyright = gtk_button_new ();
+  gtk_widget_show (plug_copyright);
+  gtk_box_pack_start (GTK_BOX (hbox20), plug_copyright, TRUE, FALSE, 0);
+  gtk_widget_set_sensitive (plug_copyright, FALSE);
+
+  alignment20 = gtk_alignment_new (0.5, 0.5, 0, 0);
+  gtk_widget_show (alignment20);
+  gtk_container_add (GTK_CONTAINER (plug_copyright), alignment20);
+
+  hbox88 = gtk_hbox_new (FALSE, 2);
+  gtk_widget_show (hbox88);
+  gtk_container_add (GTK_CONTAINER (alignment20), hbox88);
+
+  image521 = gtk_image_new_from_stock ("gtk-about", GTK_ICON_SIZE_BUTTON);
+  gtk_widget_show (image521);
+  gtk_box_pack_start (GTK_BOX (hbox88), image521, FALSE, FALSE, 0);
+
+  label117 = gtk_label_new_with_mnemonic (_("Copyright"));
+  gtk_widget_show (label117);
+  gtk_box_pack_start (GTK_BOX (hbox88), label117, FALSE, FALSE, 0);
+
+  weblink = create_plugin_weblink ("weblink", "", "", 0, 0);
+  gtk_widget_show (weblink);
+  gtk_box_pack_start (GTK_BOX (hbox20), weblink, TRUE, FALSE, 0);
+  GTK_WIDGET_UNSET_FLAGS (weblink, GTK_CAN_FOCUS);
+  GTK_WIDGET_UNSET_FLAGS (weblink, GTK_CAN_DEFAULT);
 
   label3 = gtk_label_new (_("Plugins"));
   gtk_widget_show (label3);
@@ -2791,6 +2767,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) configure_plugin, "clicked",
                     G_CALLBACK (on_configure_plugin_clicked),
                     NULL);
+  g_signal_connect ((gpointer) plug_copyright, "clicked",
+                    G_CALLBACK (on_plug_copyright_clicked),
+                    NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (prefwin, prefwin, "prefwin");
@@ -2946,24 +2925,20 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, scrolledwindow2, "scrolledwindow2");
   GLADE_HOOKUP_OBJECT (prefwin, pref_pluginlist, "pref_pluginlist");
   GLADE_HOOKUP_OBJECT (prefwin, vbox12, "vbox12");
-  GLADE_HOOKUP_OBJECT (prefwin, hbox16, "hbox16");
-  GLADE_HOOKUP_OBJECT (prefwin, label11, "label11");
-  GLADE_HOOKUP_OBJECT (prefwin, pref_plugin_descr, "pref_plugin_descr");
-  GLADE_HOOKUP_OBJECT (prefwin, hbox17, "hbox17");
-  GLADE_HOOKUP_OBJECT (prefwin, label12, "label12");
-  GLADE_HOOKUP_OBJECT (prefwin, pref_plugin_author, "pref_plugin_author");
-  GLADE_HOOKUP_OBJECT (prefwin, hbox18, "hbox18");
-  GLADE_HOOKUP_OBJECT (prefwin, label13, "label13");
-  GLADE_HOOKUP_OBJECT (prefwin, pref_plugin_email, "pref_plugin_email");
-  GLADE_HOOKUP_OBJECT (prefwin, hbox19, "hbox19");
-  GLADE_HOOKUP_OBJECT (prefwin, label14, "label14");
-  GLADE_HOOKUP_OBJECT (prefwin, pref_plugin_website, "pref_plugin_website");
+  GLADE_HOOKUP_OBJECT (prefwin, scrolledwindow8, "scrolledwindow8");
+  GLADE_HOOKUP_OBJECT (prefwin, plug_description, "plug_description");
   GLADE_HOOKUP_OBJECT (prefwin, hbox20, "hbox20");
   GLADE_HOOKUP_OBJECT (prefwin, configure_plugin, "configure_plugin");
   GLADE_HOOKUP_OBJECT (prefwin, alignment15, "alignment15");
   GLADE_HOOKUP_OBJECT (prefwin, hbox56, "hbox56");
   GLADE_HOOKUP_OBJECT (prefwin, image394, "image394");
   GLADE_HOOKUP_OBJECT (prefwin, label92, "label92");
+  GLADE_HOOKUP_OBJECT (prefwin, plug_copyright, "plug_copyright");
+  GLADE_HOOKUP_OBJECT (prefwin, alignment20, "alignment20");
+  GLADE_HOOKUP_OBJECT (prefwin, hbox88, "hbox88");
+  GLADE_HOOKUP_OBJECT (prefwin, image521, "image521");
+  GLADE_HOOKUP_OBJECT (prefwin, label117, "label117");
+  GLADE_HOOKUP_OBJECT (prefwin, weblink, "weblink");
   GLADE_HOOKUP_OBJECT (prefwin, label3, "label3");
   GLADE_HOOKUP_OBJECT_NO_REF (prefwin, dialog_action_area2, "dialog_action_area2");
   GLADE_HOOKUP_OBJECT (prefwin, closebutton1, "closebutton1");

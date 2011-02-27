@@ -608,10 +608,9 @@ typedef struct DB_plugin_s {
     // though it's much better to fill them with something useful
     const char *id; // id used for serialization and runtime binding
     const char *name; // short name
-    const char *descr; // short description
-    const char *author; // author's name
-    const char *email; // author's email
-    const char *website; // author's website
+    const char *descr; // short description (what the plugin is doing)
+    const char *copyright; // copyright notice(s), list of developers, links to original works, etc
+    const char *website; // plugin website
 
     // plugin-specific command interface; can be NULL
     int (*command) (int cmd, ...);

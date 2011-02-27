@@ -1194,3 +1194,13 @@ on_sortfmt_activate                    (GtkEntry        *entry,
 }
 
 
+
+GtkWidget*
+create_plugin_weblink (gchar *widget_name, gchar *string1, gchar *string2,
+                gint int1, gint int2)
+{
+    GtkWidget *link = gtk_link_button_new_with_label ("", "WWW");
+    gtk_widget_set_sensitive (link, FALSE);
+    return link;
+}
+

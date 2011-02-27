@@ -758,23 +758,41 @@ on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
     DB_plugin_t *p = plugins[*indices];
     g_free (indices);
     assert (p);
-    GtkWidget *w = prefwin;//GTK_WIDGET (gtk_widget_get_parent_window (GTK_WIDGET (treeview)));
+    GtkWidget *w = prefwin;
     assert (w);
-    GtkEntry *e = GTK_ENTRY (lookup_widget (w, "pref_plugin_descr"));
-    gtk_entry_set_text (e, p->descr ? p->descr : "");
-    e = GTK_ENTRY (lookup_widget (w, "pref_plugin_author"));
-    gtk_entry_set_text (e, p->author ? p->author : "");
-    e = GTK_ENTRY (lookup_widget (w, "pref_plugin_email"));
-    gtk_entry_set_text (e, p->email ? p->email : "");
-    e = GTK_ENTRY (lookup_widget (w, "pref_plugin_website"));
-    gtk_entry_set_text (e, p->website ? p->website : "");
+    if (p->descr) {
+        GtkTextView *tv = GTK_TEXT_VIEW (lookup_widget (w, "plug_description"));
+
+        GtkTextBuffer *buffer = gtk_text_buffer_new (NULL);
+
+        gtk_text_buffer_set_text (buffer, p->descr, strlen(p->descr));
+        gtk_text_view_set_buffer (GTK_TEXT_VIEW (tv), buffer);
+        g_object_unref (buffer);
+    }
+
+    GtkWidget *link = lookup_widget (w, "weblink");
+    if (p->website) {
+        gtk_link_button_set_uri (GTK_LINK_BUTTON(link), p->website);
+        gtk_widget_set_sensitive (link, TRUE);
+    }
+    else {
+        gtk_link_button_set_uri (GTK_LINK_BUTTON(link), "");
+        gtk_widget_set_sensitive (link, FALSE);
+    }
+
+    GtkWidget *cpr = lookup_widget (w, "plug_copyright");
+    if (p->copyright) {
+        gtk_widget_set_sensitive (cpr, TRUE);
+    }
+    else {
+        gtk_widget_set_sensitive (cpr, FALSE);
+    }
 
     gtk_widget_set_sensitive (lookup_widget (prefwin, "configure_plugin"), p->configdialog ? TRUE : FALSE);
 }
 
 void
 gtkui_conf_get_str (const char *key, char *value, int len, const char *def) {
-    // FIXME: conf_get_str must be changed
     strcpy (value, deadbeef->conf_get_str (key, def));
 }
 
@@ -1325,5 +1343,52 @@ on_auto_name_playlist_from_folder_toggled
 {
     int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
     deadbeef->conf_set_int ("gtkui.name_playlist_from_folder", active);
+}
+
+void
+on_info_window_delete (GtkWidget *widget, GtkTextDirection previous_direction, GtkWidget **pwindow);
+
+static void
+show_copyright_window (const char *text, const char *title, GtkWidget **pwindow) {
+    if (*pwindow) {
+        return;
+    }
+    GtkWidget *widget = *pwindow = create_helpwindow ();
+    g_object_set_data (G_OBJECT (widget), "pointer", pwindow);
+    g_signal_connect (widget, "delete_event", G_CALLBACK (on_info_window_delete), pwindow);
+    gtk_window_set_title (GTK_WINDOW (widget), title);
+    gtk_window_set_transient_for (GTK_WINDOW (widget), GTK_WINDOW (prefwin));
+    GtkWidget *txt = lookup_widget (widget, "helptext");
+    GtkTextBuffer *buffer = gtk_text_buffer_new (NULL);
+
+    gtk_text_buffer_set_text (buffer, text, strlen(text));
+    gtk_text_view_set_buffer (GTK_TEXT_VIEW (txt), buffer);
+    g_object_unref (buffer);
+    gtk_widget_show (widget);
+}
+
+static GtkWidget *copyright_window;
+
+void
+on_plug_copyright_clicked              (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    GtkTreeView *treeview = GTK_TREE_VIEW(lookup_widget (prefwin, "pref_pluginlist"));
+    GtkTreePath *path;
+    GtkTreeViewColumn *col;
+    gtk_tree_view_get_cursor (treeview, &path, &col);
+    if (!path || !col) {
+        // reset
+        return;
+    }
+    int *indices = gtk_tree_path_get_indices (path);
+    DB_plugin_t **plugins = deadbeef->plug_get_list ();
+    DB_plugin_t *p = plugins[*indices];
+    g_free (indices);
+    assert (p);
+
+    if (p->copyright) {
+        show_copyright_window (p->copyright, "Copyright", &copyright_window);
+    }
 }
 

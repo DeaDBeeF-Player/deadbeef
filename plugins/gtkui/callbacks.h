@@ -1058,3 +1058,11 @@ on_dsp_preset_save_clicked             (GtkButton       *button,
 void
 on_dsp_preset_load_clicked             (GtkButton       *button,
                                         gpointer         user_data);
+
+void
+on_plug_copyright_clicked              (GtkButton       *button,
+                                        gpointer         user_data);
+
+GtkWidget*
+create_plugin_weblink (gchar *widget_name, gchar *string1, gchar *string2,
+                gint int1, gint int2);
