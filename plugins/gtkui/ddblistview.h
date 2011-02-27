@@ -104,7 +104,6 @@ struct _DdbListview {
 
     int totalwidth; // width of listview, including invisible (scrollable) part
     GdkPixmap *backbuf;
-    GdkPixmap *backbuf_header;
     const char *title; // unique id, used for config writing, etc
     int lastpos[2]; // last mouse position (for list widget)
     // current state
