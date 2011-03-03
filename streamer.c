@@ -751,7 +751,7 @@ streamer_set_seek (float pos) {
 
 static void
 streamer_start_new_song (void) {
-    trace ("nextsong=%d\n", nextsong);
+    trace ("nextsong=%d (badsong=%d)\n", nextsong, badsong);
     streamer_lock ();
     DB_output_t *output = plug_get_output ();
     int sng = nextsong;
@@ -761,7 +761,7 @@ streamer_start_new_song (void) {
     streamer_unlock ();
     if (badsong == sng) {
         trace ("looped to bad file. stopping...\n");
-        streamer_set_nextsong (-2, 1);
+        streamer_set_nextsong (-2, 0);
         badsong = -1;
         return;
     }
@@ -1011,6 +1011,7 @@ streamer_thread (void *ctx) {
                 mutex_lock (decodemutex);
                 if(fileinfo) {
                     fileinfo->plugin->free (fileinfo);
+                    fileinfo = NULL;
                     pl_item_unref (streaming_track);
                     streaming_track = NULL;
                 }
@@ -1037,6 +1038,7 @@ streamer_thread (void *ctx) {
                     }
                 }
                 mutex_unlock (decodemutex);
+                printf ("fileinfo after init: %p\n", fileinfo);
 
                 if (!dec || !fileinfo) {
                     if (streaming_track) {

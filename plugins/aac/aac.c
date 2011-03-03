@@ -834,8 +834,8 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
             samples = NeAACDecDecode (info->dec, &info->frame_info, info->buffer, info->remaining);
             if (!samples) {
                 trace ("NeAACDecDecode failed, consumed=%d\n", info->frame_info.bytesconsumed);
-                if (info->num_errors > 10 || info->frame_info.bytesconsumed == 0) {
-                    trace ("NeAACDecDecode failed 3 times, interrupting\n");
+                if (info->num_errors > 10) {
+                    trace ("NeAACDecDecode failed %d times, interrupting\n", info->num_errors);
                     break;
                 }
                 info->num_errors++;
@@ -1117,7 +1117,7 @@ aac_insert (DB_playItem_t *after, const char *fname) {
     it->fname = strdup (fname);
     it->filetype = ftype;
     deadbeef->pl_set_item_duration (it, duration);
-//    trace ("duration: %f sec\n", duration);
+    trace ("duration: %f sec\n", duration);
 
     // read tags
     if (mp4) {
