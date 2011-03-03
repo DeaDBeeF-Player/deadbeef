@@ -49,8 +49,46 @@ static int trkproperties_modified;
 static DB_playItem_t **tracks;
 static int numtracks;
 
-static void
-build_key_list () {
+static int
+build_key_list (const char ***pkeys) {
+    int sz = 20;
+    const char **keys = malloc (sizeof (const char *) * sz);
+    if (!keys) {
+        fprintf (stderr, "fatal: out of memory allocating key list\n");
+        assert (0);
+        return 0;
+    }
+
+    int n = 0;
+
+    for (int i = 0; i < numtracks; i++) {
+        DB_metaInfo_t *meta = deadbeef->pl_get_metadata (tracks[i]);
+        while (meta) {
+            if (meta->key[0] != ':') {
+                int k = 0;
+                for (; k < n; k++) {
+                    if (meta->key == keys[k]) {
+                        break;
+                    }
+                }
+                if (k == n) {
+                    if (n >= sz) {
+                        sz *= 2;
+                        keys = realloc (keys, sizeof (const char *) * sz);
+                        if (!keys) {
+                            fprintf (stderr, "fatal: out of memory reallocating key list (%d keys)\n", sz);
+                            assert (0);
+                        }
+                    }
+                    keys[n++] = meta->key;
+                }
+            }
+            meta = meta->next;
+        }
+    }
+
+    *pkeys = keys;
+    return n;
 }
 
 static int
@@ -61,7 +99,6 @@ get_field_value (char *out, int size, const char *key) {
         return 0;
     }
     char *p = out;
-    deadbeef->pl_lock ();
     const char **prev = malloc (sizeof (const char *) * numtracks);
     memset (prev, 0, sizeof (const char *) * numtracks);
     for (int i = 0; i < numtracks; i++) {
@@ -77,15 +114,16 @@ get_field_value (char *out, int size, const char *key) {
                 }
             }
             if (n == i) {
-                size_t l;
-                l = snprintf (out, size, "; %s", val ? val : "");
                 multiple = 1;
-                l = min (l, size);
-                out += l;
-                size -= l;
+                if (val) {
+                    size_t l = snprintf (out, size, out == p ? "%s" : "; %s", val ? val : "");
+                    l = min (l, size);
+                    out += l;
+                    size -= l;
+                }
             }
         }
-        else {
+        else if (val) {
             size_t l = snprintf (out, size, "%s", val ? val : "");
             l = min (l, size);
             out += l;
@@ -100,7 +138,6 @@ get_field_value (char *out, int size, const char *key) {
         strcpy (out-2, "…");
     }
     free (prev);
-    deadbeef->pl_unlock ();
     return multiple;
 }
 
@@ -203,6 +240,20 @@ amp_to_db (float amp) {
 }
 
 void
+add_field (GtkListStore *store, const char *key, const char *title) {
+    // get value to edit
+    const char mult[] = _("[Multiple values] ");
+    char val[1000];
+    size_t ml = strlen (mult);
+    memcpy (val, mult, ml+1);
+    int n = get_field_value (val + ml, sizeof (val) - ml, key);
+
+    GtkTreeIter iter;
+    gtk_list_store_append (store, &iter);
+    gtk_list_store_set (store, &iter, 0, title, 1, n ? val : val + ml, 2, key, -1);
+}
+
+void
 trkproperties_fill_metadata (void) {
     if (!trackproperties) {
         return;
@@ -213,23 +264,54 @@ trkproperties_fill_metadata (void) {
 
     struct timeval tm1;
     gettimeofday (&tm1, NULL);
-    // add "standard" fields
-    int i = 0;
-    while (types[i]) {
-        const char *value = deadbeef->pl_find_meta (track, types[i]);
-        if (!value) {
-            value = "";
-        }
-        const char mult[] = _("[Multiple values] ");
-        char val[1000];
-        size_t ml = strlen (mult);
-        memcpy (val, mult, ml+1);
-        int n = get_field_value (val + ml, sizeof (val) - ml, types[i]);
 
-        GtkTreeIter iter;
-        gtk_list_store_append (store, &iter);
-        gtk_list_store_set (store, &iter, 0, _(types[i+1]), 1, n ? val : val + ml, 2, types[i], -1);
-        i += 2;
+    const char **keys = NULL;
+    int nkeys = build_key_list (&keys);
+
+    int k;
+
+    // add "standard" fields
+    for (int i = 0; types[i]; i += 2) {
+        add_field (store, types[i], _(types[i+1]));
+    }
+
+    // add all other fields
+    for (int k = 0; k < nkeys; k++) {
+        int i;
+        for (i = 0; types[i]; i += 2) {
+            if (!strcmp (keys[k], types[i])) {
+                break;
+            }
+        }
+        if (types[i]) {
+            continue;
+        }
+
+        char title[1000];
+        if (!types[i]) {
+            snprintf (title, sizeof (title), "<%s>", keys[k]);
+        }
+        add_field (store, keys[k], title);
+    }
+    free (keys);
+
+    // unknown fields and properties
+    DB_metaInfo_t *meta = deadbeef->pl_get_metadata (track);
+    while (meta) {
+        if (meta->key[0] == ':') {
+            int l = strlen (meta->key)-1;
+            char title[l+3];
+            snprintf (title, sizeof (title), "<%s>", meta->key+1);
+            const char *value = meta->value;
+
+            GtkTreeIter iter;
+            gtk_list_store_append (propstore, &iter);
+            gtk_list_store_set (propstore, &iter, 0, title, 1, value, -1);
+            meta = meta->next;
+            continue;
+        }
+        meta = meta->next;
+
     }
 
     // properties
@@ -266,55 +348,6 @@ trkproperties_fill_metadata (void) {
     snprintf (temp, sizeof (temp), "%0.6f", track->replaygain_track_peak);
     gtk_list_store_set (propstore, &iter, 0, "ReplayGain Track Peak", 1, temp, -1);
 
-    // unknown fields
-    DB_metaInfo_t *meta = deadbeef->pl_get_metadata (track);
-    while (meta) {
-        if (meta->key[0] == ':') {
-            int l = strlen (meta->key)-1;
-            char title[l+3];
-            snprintf (title, sizeof (title), "<%s>", meta->key+1);
-            const char *value = meta->value;
-
-            GtkTreeIter iter;
-            gtk_list_store_append (propstore, &iter);
-            gtk_list_store_set (propstore, &iter, 0, title, 1, value, -1);
-            meta = meta->next;
-            continue;
-        }
-        int i = 0;
-        while (types[i]) {
-            if (!strcmp (types[i], meta->key)) {
-                break;
-            }
-            i += 2;
-        }
-        if (types[i]) {
-            meta = meta->next;
-            continue;
-        }
-
-        int l = strlen (meta->key);
-        char title[l+3];
-        snprintf (title, sizeof (title), "<%s>", meta->key);
-        const char *value = meta->value;
-        const char *key = meta->key;
-
-        const char mult[] = _("[Multiple values] ");
-        char val[1000];
-        size_t ml = strlen (mult);
-        memcpy (val, mult, ml+1);
-        int n = get_field_value (val + ml, sizeof (val) - ml, meta->key);
-
-        meta = meta->next;
-
-        if (!value) {
-            value = "";
-        }
-
-        GtkTreeIter iter;
-        gtk_list_store_append (store, &iter);
-        gtk_list_store_set (store, &iter, 0, _(title), 1, n ? val : val + ml, 2, key, -1);
-    }
     struct timeval tm2;
     gettimeofday (&tm2, NULL);
     int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
