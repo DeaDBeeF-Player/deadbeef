@@ -52,6 +52,7 @@ typedef struct _DdbCellRendererTextMultiline DdbCellRendererTextMultiline;
 typedef struct _DdbCellRendererTextMultilineClass DdbCellRendererTextMultilineClass;
 typedef struct _DdbCellRendererTextMultilinePrivate DdbCellRendererTextMultilinePrivate;
 #define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
+#define _gtk_tree_path_free0(var) ((var == NULL) ? NULL : (var = (gtk_tree_path_free (var), NULL)))
 
 struct _DdbCellEditableTextView {
 	GtkTextView parent_instance;
@@ -236,12 +237,20 @@ static GtkCellEditable* ddb_cell_renderer_text_multiline_real_start_editing (Gtk
 	DdbCellRendererTextMultiline * self;
 	GtkCellEditable* result = NULL;
 	gboolean _tmp0_;
-	DdbCellEditableTextView* _tmp1_;
-	char* _tmp2_;
-	GtkTextBuffer* buf;
-	char* _tmp3_ = NULL;
+	GtkTreePath* p;
+	GtkTreeView* tv;
+	GtkListStore* store;
+	GtkTreeIter iter = {0};
+	GValue v = {0};
+	GValue _tmp1_ = {0};
+	GValue _tmp2_;
+	gint mult;
+	DdbCellEditableTextView* _tmp3_;
 	char* _tmp4_;
-	gboolean _tmp5_;
+	GtkTextBuffer* buf;
+	char* _tmp5_ = NULL;
+	char* _tmp6_;
+	gboolean _tmp7_;
 	self = (DdbCellRendererTextMultiline*) base;
 	g_return_val_if_fail (event != NULL, NULL);
 	g_return_val_if_fail (widget != NULL, NULL);
@@ -250,14 +259,24 @@ static GtkCellEditable* ddb_cell_renderer_text_multiline_real_start_editing (Gtk
 		result = GTK_CELL_EDITABLE (NULL);
 		return result;
 	}
-	self->priv->entry = (_tmp1_ = g_object_ref_sink (ddb_cell_editable_text_view_new ()), _g_object_unref0 (self->priv->entry), _tmp1_);
-	self->priv->entry->tree_path = (_tmp2_ = g_strdup (path), _g_free0 (self->priv->entry->tree_path), _tmp2_);
+	p = gtk_tree_path_new_from_string (path);
+	tv = _g_object_ref0 (GTK_TREE_VIEW (widget));
+	store = _g_object_ref0 (GTK_LIST_STORE (gtk_tree_view_get_model (tv)));
+	gtk_tree_model_get_iter ((GtkTreeModel*) store, &iter, p);
+	gtk_tree_model_get_value ((GtkTreeModel*) store, &iter, 3, &_tmp1_);
+	v = (_tmp2_ = _tmp1_, G_IS_VALUE (&v) ? (g_value_unset (&v), NULL) : NULL, _tmp2_);
+	mult = g_value_get_int (&v);
+	self->priv->entry = (_tmp3_ = g_object_ref_sink (ddb_cell_editable_text_view_new ()), _g_object_unref0 (self->priv->entry), _tmp3_);
+	if (mult != 0) {
+		g_object_set ((GtkCellRendererText*) self, "text", "", NULL);
+	}
+	self->priv->entry->tree_path = (_tmp4_ = g_strdup (path), _g_free0 (self->priv->entry->tree_path), _tmp4_);
 	buf = gtk_text_buffer_new (NULL);
-	if ((_tmp5_ = (_tmp4_ = (g_object_get ((GtkCellRendererText*) self, "text", &_tmp3_, NULL), _tmp3_)) != NULL, _g_free0 (_tmp4_), _tmp5_)) {
-		char* _tmp6_ = NULL;
-		char* _tmp7_;
-		gtk_text_buffer_set_text (buf, _tmp7_ = (g_object_get ((GtkCellRendererText*) self, "text", &_tmp6_, NULL), _tmp6_), -1);
-		_g_free0 (_tmp7_);
+	if ((_tmp7_ = (_tmp6_ = (g_object_get ((GtkCellRendererText*) self, "text", &_tmp5_, NULL), _tmp5_)) != NULL, _g_free0 (_tmp6_), _tmp7_)) {
+		char* _tmp8_ = NULL;
+		char* _tmp9_;
+		gtk_text_buffer_set_text (buf, _tmp9_ = (g_object_get ((GtkCellRendererText*) self, "text", &_tmp8_, NULL), _tmp8_), -1);
+		_g_free0 (_tmp9_);
 	}
 	gtk_text_view_set_buffer ((GtkTextView*) self->priv->entry, buf);
 	g_signal_connect (self->priv->entry, "editing-done", (GCallback) ddb_cell_renderer_text_multiline_gtk_cell_renderer_text_editing_done, self);
@@ -266,6 +285,10 @@ static GtkCellEditable* ddb_cell_renderer_text_multiline_real_start_editing (Gtk
 	gtk_widget_show ((GtkWidget*) self->priv->entry);
 	result = GTK_CELL_EDITABLE (self->priv->entry);
 	_g_object_unref0 (buf);
+	G_IS_VALUE (&v) ? (g_value_unset (&v), NULL) : NULL;
+	_g_object_unref0 (store);
+	_g_object_unref0 (tv);
+	_gtk_tree_path_free0 (p);
 	return result;
 }
 

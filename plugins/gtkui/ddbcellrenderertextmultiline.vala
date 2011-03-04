@@ -79,7 +79,21 @@ namespace Ddb {
             if (!editable) {
                 return (Gtk.CellEditable)null;
             }
+
+            Gtk.TreePath p = new Gtk.TreePath.from_string (path);
+            Gtk.TreeView tv = (Gtk.TreeView)widget;
+            Gtk.ListStore store = (Gtk.ListStore)tv.get_model();
+            Gtk.TreeIter iter;
+            store.get_iter (out iter, p);
+            GLib.Value v;
+            store.get_value (iter, 3, out v);
+            int mult = v.get_int ();
+
             entry = new CellEditableTextView ();
+            if (mult != 0) {
+                text = "";
+            }
+
             entry.tree_path = path;
             Gtk.TextBuffer buf = new Gtk.TextBuffer (null);
             if (text != null) {
