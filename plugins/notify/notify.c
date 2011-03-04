@@ -183,9 +183,9 @@ static void show_notification (DB_playItem_t *track) {
     deadbeef->pl_format_title (track, -1, content, sizeof (content), -1, deadbeef->conf_get_str ("notify.format_content", NOTIFY_DEFAULT_CONTENT));
 
     // escape &
-    char esc_title[1024];
+//    char esc_title[1024];
     char esc_content[1024];
-    esc_xml (title, esc_title, sizeof (esc_title));
+//    esc_xml (title, esc_title, sizeof (esc_title));
     esc_xml (content, esc_content, sizeof (esc_content));
     DBusMessage *msg = dbus_message_new_method_call (E_NOTIFICATION_BUS_NAME, E_NOTIFICATION_PATH, E_NOTIFICATION_INTERFACE, "Notify");
 
@@ -200,7 +200,7 @@ static void show_notification (DB_playItem_t *track) {
     if (!v_iconname) {
         v_iconname = strdup ("deadbeef");
     }
-    const char *v_summary = esc_title;
+    const char *v_summary = title;
     const char *v_body = esc_content;
     dbus_int32_t v_timeout = -1;
 
