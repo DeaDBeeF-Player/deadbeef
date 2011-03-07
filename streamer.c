@@ -550,6 +550,7 @@ static int
 streamer_set_current (playItem_t *it) {
     DB_output_t *output = plug_get_output ();
     int err = 0;
+    DB_fileinfo_t *new_fileinfo = NULL;
     playItem_t *from, *to;
     // need to add refs here, because streamer_start_playback can destroy items
     from = playing_track;
@@ -568,16 +569,11 @@ streamer_set_current (playItem_t *it) {
         bytes_until_next_song = -1;
     }
 
-// code below breaks seekbar drawing during transition between tracks
     trace ("streamer_set_current %p, buns=%d\n", it, bytes_until_next_song);
     mutex_lock (decodemutex);
-    if (fileinfo) {
-        fileinfo->plugin->free (fileinfo);
-        fileinfo = NULL;
-        if (streaming_track) {
-            pl_item_unref (streaming_track);
-            streaming_track = NULL;
-        }
+    if (streaming_track) {
+        pl_item_unref (streaming_track);
+        streaming_track = NULL;
     }
     mutex_unlock (decodemutex);
     if (!it) {
@@ -637,22 +633,23 @@ streamer_set_current (playItem_t *it) {
             trace ("\033[0;34mclosed file %s (bad or interrupted)\033[37;0m\n", it->fname);
         }
     }
+    playlist_track = it;
     if (it->decoder_id) {
         DB_decoder_t *dec = NULL;
         dec = plug_get_decoder_for_id (it->decoder_id);
         if (dec) {
             trace ("\033[0;33minit decoder for %s (%s)\033[37;0m\n", it->fname, it->decoder_id);
-            fileinfo = dec->open (0);
-            if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (it)) != 0) {
+            new_fileinfo = dec->open (0);
+            if (new_fileinfo && dec->init (new_fileinfo, DB_PLAYITEM (it)) != 0) {
                 trace ("\033[0;31mfailed to init decoder\033[37;0m\n")
-                dec->free (fileinfo);
-                fileinfo = NULL;
+                dec->free (new_fileinfo);
+                new_fileinfo = NULL;
             }
         }
 
-        if (!dec || !fileinfo) {
+        if (!dec || !new_fileinfo) {
             it->played = 1;
-            trace ("decoder->init returned %p\n", fileinfo);
+            trace ("decoder->init returned %p\n", new_fileinfo);
             streamer_buffering = 0;
             if (playlist_track == it) {
                 trace ("redraw track %d; playing_track=%p; playlist_track=%p\n", to, playing_track, playlist_track);
@@ -669,7 +666,7 @@ streamer_set_current (playItem_t *it) {
             streaming_track = it;
             pl_item_ref (streaming_track);
             mutex_unlock (decodemutex);
-            trace ("bps=%d, channels=%d, samplerate=%d\n", fileinfo->fmt.bps, fileinfo->fmt.channels, fileinfo->fmt.samplerate);
+            trace ("bps=%d, channels=%d, samplerate=%d\n", new_fileinfo->fmt.bps, new_fileinfo->fmt.channels, new_fileinfo->fmt.samplerate);
         }
     }
     else {
@@ -688,6 +685,15 @@ streamer_set_current (playItem_t *it) {
         return -1;
     }
 success:
+    mutex_lock (decodemutex);
+    if (new_fileinfo) {
+        if (fileinfo) {
+            fileinfo->plugin->free (fileinfo);
+            fileinfo = NULL;
+        }
+        fileinfo = new_fileinfo;
+    }
+    mutex_unlock (decodemutex);
     plug_trigger_event_trackinfochanged (to);
 
     trace ("\033[0;32mstr: %p (%s), ply: %p (%s)\033[37;0m\n", streaming_track, streaming_track ? streaming_track->fname : "null", playing_track, playing_track ? playing_track->fname : "null");
@@ -761,7 +767,7 @@ streamer_start_new_song (void) {
     streamer_unlock ();
     if (badsong == sng) {
         trace ("looped to bad file. stopping...\n");
-        streamer_set_nextsong (-2, 0);
+        streamer_set_nextsong (-2, -2);
         badsong = -1;
         return;
     }
