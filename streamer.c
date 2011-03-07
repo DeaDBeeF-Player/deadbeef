@@ -151,6 +151,7 @@ streamer_start_playback (playItem_t *from, playItem_t *it) {
     playing_track = it;
     if (playing_track) {
         pl_item_ref (playing_track);
+        printf ("played=1 [1]\n");
         playing_track->played = 1;
         playing_track->started_timestamp = time (NULL);
         trace ("sending songstarted to plugins [2] current playtrack: %s\n", playing_track->fname);
@@ -350,9 +351,11 @@ streamer_move_to_nextsong (int reason) {
                 }
             }
             if (!it) {
+                streamer_buffering = 0;
+                plug_trigger_event_trackinfochanged (streaming_track);
                 playItem_t *temp;
                 plt_reshuffle (streamer_playlist, &temp, NULL);
-                streamer_set_nextsong (-2, 1);
+                streamer_set_nextsong (-2, -2);
                 pl_global_unlock ();
                 return -1;
             }
@@ -373,8 +376,10 @@ streamer_move_to_nextsong (int reason) {
                 it = plt->head[PL_MAIN];
             }
             else {
+                streamer_buffering = 0;
+                plug_trigger_event_trackinfochanged (streaming_track);
                 badsong = -1;
-                streamer_set_nextsong (-2, 1);
+                streamer_set_nextsong (-2, -2);
                 pl_global_unlock ();
                 return 0;
             }
@@ -1044,7 +1049,6 @@ streamer_thread (void *ctx) {
                     }
                 }
                 mutex_unlock (decodemutex);
-                printf ("fileinfo after init: %p\n", fileinfo);
 
                 if (!dec || !fileinfo) {
                     if (streaming_track) {
@@ -1584,7 +1588,7 @@ streamer_read_async (char *bytes, int size) {
 
         // in case of decoder error, or EOF while buffering - switch to next song instantly
         if (bytesread < 0 || (bytes_until_next_song >= 0 && streamer_buffering && bytesread == 0) || bytes_until_next_song < 0) {
-            trace ("finished streaming song, queueing next\n");
+            trace ("finished streaming song, queueing next (%d %d %d %d)\n", bytesread, bytes_until_next_song, streamer_buffering, nextsong_pstate);
             streamer_next ();
         }
     }
