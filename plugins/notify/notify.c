@@ -163,6 +163,11 @@ esc_xml (const char *cmd, char *esc, int size) {
             dst += 6;
             src++;
         }
+        else if (*src == '\\' && *(src+1) == 'n') {
+            strcpy (dst, "\n");
+            dst++;
+            src+=2;
+        }
         else {
             *dst++ = *src++;
         }
