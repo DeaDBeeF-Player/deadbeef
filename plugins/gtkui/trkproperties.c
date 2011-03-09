@@ -61,7 +61,7 @@ build_key_list (const char ***pkeys, int props) {
     int n = 0;
 
     for (int i = 0; i < numtracks; i++) {
-        DB_metaInfo_t *meta = deadbeef->pl_get_metadata (tracks[i]);
+        DB_metaInfo_t *meta = deadbeef->pl_get_metadata_head (tracks[i]);
         while (meta) {
             if ((props && meta->key[0] == ':') || (!props && meta->key[0] != ':')) {
                 int k = 0;
@@ -471,34 +471,51 @@ show_track_properties_dlg (DB_playItem_t *it) {
     gtk_window_present (GTK_WINDOW (widget));
 }
 
-static gboolean
-set_metadata_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data) {
-    GValue mult = {0,};
-    gtk_tree_model_get_value (model, iter, 3, &mult);
-    int smult = g_value_get_int (&mult);
-    if (!smult) {
-        GValue key = {0,}, value = {0,};
-        gtk_tree_model_get_value (model, iter, 2, &key);
-        gtk_tree_model_get_value (model, iter, 1, &value);
-        const char *skey = g_value_get_string (&key);
-        const char *svalue = g_value_get_string (&value);
-
-        for (int i = 0; i < numtracks; i++) {
-            deadbeef->pl_replace_meta (tracks[i], skey, svalue);
-        }
-    }
-
-    return FALSE;
-}
-
 void
 on_write_tags_clicked                  (GtkButton       *button,
                                         gpointer         user_data)
 {
+    deadbeef->pl_lock ();
     // put all metainfo into track
     GtkTreeView *tree = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
     GtkTreeModel *model = GTK_TREE_MODEL (gtk_tree_view_get_model (tree));
-    gtk_tree_model_foreach (model, set_metadata_cb, NULL);
+    for (int i = 0; i < numtracks; i++) {
+        DB_metaInfo_t *meta = deadbeef->pl_get_metadata_head (tracks[i]);
+        while (meta) {
+            DB_metaInfo_t *next = meta->next;
+            if (meta->key[0] != ':') {
+                GtkTreeIter iter;
+                gboolean res = gtk_tree_model_get_iter_first (model, &iter);
+                int mult = 0;
+                while (res) {
+                    GValue key = {0,};
+                    gtk_tree_model_get_value (model, &iter, 2, &key);
+                    const char *skey = g_value_get_string (&key);
+
+                    if (!strcmp (skey, meta->key)) {
+                        GValue multvalue = {0,};
+                        gtk_tree_model_get_value (model, &iter, 3, &multvalue);
+                        mult = g_value_get_int (&multvalue);
+                        // keep field if multiple values are set, replace otherwise
+                        if (!mult) {
+                            GValue value = {0,};
+                            gtk_tree_model_get_value (model, &iter, 1, &value);
+                            const char *svalue = g_value_get_string (&value);
+                            deadbeef->pl_replace_meta (tracks[i], meta->key, svalue);
+                        }
+                        break;
+                    }
+                    res = gtk_tree_model_iter_next (GTK_TREE_MODEL (store), &iter);
+                }
+                if (!res) {
+                    // delete this field (not in list)
+                    deadbeef->pl_delete_metadata (tracks[i], meta);
+                }
+            }
+            meta = next;
+        }
+    }
+
     for (int t = 0; t < numtracks; t++) {
         DB_playItem_t *track = tracks[t];
         const char *decoder_id = deadbeef->pl_find_meta (track, ":DECODER");
@@ -517,6 +534,7 @@ on_write_tags_clicked                  (GtkButton       *button,
             }
         }
     }
+    deadbeef->pl_unlock ();
     main_refresh ();
     search_refresh ();
     trkproperties_modified = 0;
@@ -531,22 +549,50 @@ on_add_field_activate                 (GtkMenuItem     *menuitem,
     GtkWidget *e;
     e = lookup_widget (dlg, "title_label");
     gtk_label_set_text (GTK_LABEL(e), _("Name:"));
-    int res = gtk_dialog_run (GTK_DIALOG (dlg));
-    if (res == GTK_RESPONSE_OK) {
-        e = lookup_widget (dlg, "title");
-        const char *text = gtk_entry_get_text (GTK_ENTRY(e));
+    for (;;) {
+        int res = gtk_dialog_run (GTK_DIALOG (dlg));
+        if (res == GTK_RESPONSE_OK) {
+            e = lookup_widget (dlg, "title");
+            
+            const char *text = gtk_entry_get_text (GTK_ENTRY(e));
+            
+            GtkTreeIter iter;
 
-        int l = strlen (text);
-        char title[l+3];
-        snprintf (title, sizeof (title), "<%s>", text);
-        const char *value = "";
-        const char *key = text;
+            // check if a field with the same name already exists
+            int dup = 0;
+            gboolean res = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (store), &iter);
+            while (res) {
+                GValue value = {0,};
+                gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 2, &value);
+                const char *svalue = g_value_get_string (&value);
+                if (!strcmp (svalue, text)) {
+                    dup = 1;
+                    break;
+                }
+                res = gtk_tree_model_iter_next (GTK_TREE_MODEL (store), &iter);
+            }
 
-        GtkTreeIter iter;
-        gtk_list_store_append (store, &iter);
-        gtk_list_store_set (store, &iter, 0, title, 1, value, 2, key, -1);
-        trkproperties_modified = 1;
+            if (!dup) {
+                int l = strlen (text);
+                char title[l+3];
+                snprintf (title, sizeof (title), "<%s>", text);
+                const char *value = "";
+                const char *key = text;
 
+                gtk_list_store_append (store, &iter);
+                gtk_list_store_set (store, &iter, 0, title, 1, value, 2, key, -1);
+                trkproperties_modified = 1;
+            }
+            else {
+                GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (trackproperties), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Field with such name already exists, please try different name."));
+                gtk_window_set_title (GTK_WINDOW (dlg), _("Cannot add field"));
+
+                gtk_dialog_run (GTK_DIALOG (dlg));
+                gtk_widget_destroy (dlg);
+                continue;
+            }
+        }
+        break;
     }
     gtk_widget_destroy (dlg);
 }
@@ -563,7 +609,7 @@ on_remove_field_activate                 (GtkMenuItem     *menuitem,
         return;
     }
 
-    GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("Really remove selected field?"));
+    GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (trackproperties), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("Really remove selected field?"));
     gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
 
     int response = gtk_dialog_run (GTK_DIALOG (dlg));

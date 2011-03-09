@@ -233,6 +233,9 @@ void
 pl_set_meta_float (playItem_t *it, const char *key, float value);
 
 void
+pl_delete_meta (playItem_t *it, const char *key);
+
+void
 pl_delete_all_meta (playItem_t *it);
 
 // returns index of 1st deleted item
@@ -370,7 +373,10 @@ void
 pl_items_copy_junk (struct playItem_s *from, struct playItem_s *first, struct playItem_s *last);
 
 struct DB_metaInfo_s *
-pl_get_metadata (playItem_t *it);
+pl_get_metadata_head (playItem_t *it);
+
+void
+pl_delete_metadata (playItem_t *it, struct DB_metaInfo_s *meta);
 
 void
 pl_set_order (int order);

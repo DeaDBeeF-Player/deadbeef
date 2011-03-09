@@ -1627,6 +1627,28 @@ junk_id3v2_remove_txxx_frame (DB_id3v2_tag_t *tag, const char *key) {
     return 0;
 }
 
+int
+junk_id3v2_remove_all_txxx_frames (DB_id3v2_tag_t *tag) {
+    DB_id3v2_frame_t *prev = NULL;
+    for (DB_id3v2_frame_t *f = tag->frames; f; ) {
+        DB_id3v2_frame_t *next = f->next;
+        if (!strcmp (f->id, "TXXX")) {
+            if (prev) {
+                prev->next = f->next;
+            }
+            else {
+                tag->frames = f->next;
+            }
+            free (f);
+        }
+        else {
+            prev = f;
+        }
+        f = next;
+    }
+    return 0;
+}
+
 DB_id3v2_frame_t *
 junk_id3v2_add_txxx_frame (DB_id3v2_tag_t *tag, const char *key, const char *value) {
     int keylen = strlen (key);
@@ -3348,7 +3370,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
     int write_apev2 = junk_flags & JUNK_WRITE_APEV2;
 
     // find the beginning and the end of audio data
-    fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    fp = deadbeef->fopen (pl_find_meta (it, ":URI"));
     if (!fp) {
         return -1;
     }
@@ -3398,7 +3420,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
     // open output file
     out = NULL;
     char tmppath[PATH_MAX];
-    snprintf (tmppath, sizeof (tmppath), "%s.temp", deadbeef->pl_find_meta (it, ":URI"));
+    snprintf (tmppath, sizeof (tmppath), "%s.temp", pl_find_meta (it, ":URI"));
 
     out = fopen (tmppath, "w+b");
     trace ("will write tags into %s\n", tmppath);
@@ -3471,11 +3493,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             }
         }
 
-        // remove all known txxx frames
-        for (int txx = 0; txx_mapping[txx]; txx += 2) {
-            trace ("removing txxx %s\n", txx_mapping[txx])
-            junk_id3v2_remove_txxx_frame (&id3v2, txx_mapping[txx]);
-        }
+        junk_id3v2_remove_all_txxx_frames (&id3v2);
 
         // COMM
         junk_id3v2_remove_frames (&id3v2, "COMM");
@@ -3485,7 +3503,16 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             junk_id3v2_add_comment_frame (&id3v2, "eng", "", val);
         }
 
-        DB_metaInfo_t *meta = pl_get_metadata (it);
+        // remove all known normal frames (they will be refilled from track metadata)
+        int idx = id3v2.version[0] == 3 ? MAP_ID3V23 : MAP_ID3V24;
+        for (int i = 0; frame_mapping[i]; i += FRAME_MAPPINGS) {
+            if (frame_mapping[i+idx]) {
+                junk_id3v2_remove_frames (&id3v2, frame_mapping[i+idx]);
+                trace ("removed frame %s\n", frame_mapping[i+idx]);
+            }
+        }
+
+        DB_metaInfo_t *meta = pl_get_metadata_head (it);
         while (meta) {
             if (meta->value && *meta->value) {
                 int i;
@@ -3494,10 +3521,8 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
                         const char *frm_name = id3v2_version == 3 ? frame_mapping[i+MAP_ID3V23] : frame_mapping[i+MAP_ID3V24];
                         if (frm_name) {
                             // field is known and supported for this tag version
-                            junk_id3v2_remove_frames (&id3v2, frm_name);
                             trace ("add_frame %s %s\n", frm_name, meta->value);
                             junk_id3v2_add_text_frame (&id3v2, frm_name, meta->value);
-                            //junk_id3v2_add_text_frame (&id3v2, frm_name, "test line 1\nтестовая строка №2");
                         }
                         break;
                     }
@@ -3508,7 +3533,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
                         && strcasecmp (meta->key, "track")
                         && strcasecmp (meta->key, "numtracks")) {
                     // add as txxx
-                    trace ("adding TXX %s=%s\n", meta->key, meta->value);
+                    trace ("adding unknown frame as TXX %s=%s\n", meta->key, meta->value);
                     junk_id3v2_remove_txxx_frame (&id3v2, meta->key);
                     junk_id3v2_add_txxx_frame (&id3v2, meta->key, meta->value);
                 }
@@ -3594,7 +3619,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             memset (&apev2, 0, sizeof (apev2));
         }
         // add all basic frames
-        DB_metaInfo_t *meta = pl_get_metadata (it);
+        DB_metaInfo_t *meta = pl_get_metadata_head (it);
         while (meta) {
             if (meta->value && *meta->value) {
                 int i;
@@ -3675,7 +3700,7 @@ error:
         free (buffer);
     }
     if (!err) {
-        rename (tmppath, deadbeef->pl_find_meta (it, ":URI"));
+        rename (tmppath, pl_find_meta (it, ":URI"));
     }
     else {
         unlink (tmppath);

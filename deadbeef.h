@@ -440,18 +440,21 @@ typedef struct {
     void (*pl_copy_items) (int iter, int plt_from, DB_playItem_t *before, uint32_t *indices, int cnt);
     void (*pl_search_reset) (void);
     void (*pl_search_process) (const char *text);
-    // metainfo
+    // direct access to metadata structures
+    DB_metaInfo_t * (*pl_get_metadata_head) (DB_playItem_t *it); // returns head of metadata linked list
+    void (*pl_delete_metadata) (DB_playItem_t *it, DB_metaInfo_t *meta);
+
+    // high-level access to metadata
     void (*pl_add_meta) (DB_playItem_t *it, const char *key, const char *value);
     void (*pl_append_meta) (DB_playItem_t *it, const char *key, const char *value);
     void (*pl_set_meta_int) (DB_playItem_t *it, const char *key, int value);
     void (*pl_set_meta_float) (DB_playItem_t *it, const char *key, float value);
-    // must be used from within explicit pl_lock/unlock block
+    void (*pl_delete_meta) (DB_playItem_t *it, const char *key);
     const char *(*pl_find_meta) (DB_playItem_t *it, const char *key);
     int (*pl_find_meta_int) (DB_playItem_t *it, const char *key, int def);
     float (*pl_find_meta_float) (DB_playItem_t *it, const char *key, float def);
     void (*pl_replace_meta) (DB_playItem_t *it, const char *key, const char *value);
     void (*pl_delete_all_meta) (DB_playItem_t *it);
-    DB_metaInfo_t * (*pl_get_metadata) (DB_playItem_t *it);
     void (*pl_set_item_duration) (DB_playItem_t *it, float duration);
     float (*pl_get_item_duration) (DB_playItem_t *it);
     uint32_t (*pl_get_item_flags) (DB_playItem_t *it);

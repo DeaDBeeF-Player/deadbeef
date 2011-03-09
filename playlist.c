@@ -1987,8 +1987,8 @@ pl_replace_meta (playItem_t *it, const char *key, const char *value) {
         m = m->next;
     }
     if (m) {
-        metacache_remove_string (m->value);//free (m->value);
-        m->value = metacache_add_string (value);//strdup (value);
+        metacache_remove_string (m->value);
+        m->value = metacache_add_string (value);
         UNLOCK;
         return;
     }
@@ -2010,6 +2010,28 @@ pl_set_meta_float (playItem_t *it, const char *key, float value) {
     char s[20];
     snprintf (s, sizeof (s), "%f", value);
     pl_replace_meta (it, key, s);
+}
+
+void
+pl_delete_meta (playItem_t *it, const char *key) {
+    DB_metaInfo_t *prev = NULL;
+    DB_metaInfo_t *m = it->meta;
+    while (m) {
+        if (!strcasecmp (key, m->key)) {
+            if (prev) {
+                prev->next = m->next;
+            }
+            else {
+                it->meta = m->next;
+            }
+            metacache_remove_string (m->key);
+            metacache_remove_string (m->value);
+            free (m);
+            break;
+        }
+        prev = m;
+        m = m->next;
+    }
 }
 
 const char *
@@ -2037,8 +2059,30 @@ pl_find_meta_float (playItem_t *it, const char *key, float def) {
 }
 
 DB_metaInfo_t *
-pl_get_metadata (playItem_t *it) {
+pl_get_metadata_head (playItem_t *it) {
     return it->meta;
+}
+
+void
+pl_delete_metadata (playItem_t *it, DB_metaInfo_t *meta) {
+    DB_metaInfo_t *prev = NULL;
+    DB_metaInfo_t *m = it->meta;
+    while (m) {
+        if (m == meta) {
+            if (prev) {
+                prev->next = m->next;
+            }
+            else {
+                it->meta = m->next;
+            }
+            metacache_remove_string (m->key);
+            metacache_remove_string (m->value);
+            free (m);
+            break;
+        }
+        prev = m;
+        m = m->next;
+    }
 }
 
 int
