@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 0.4.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-10 15:02+0200\n"
-"PO-Revision-Date: 2010-12-03 00:23+0200\n"
+"PO-Revision-Date: 2011-03-09 15:50+0200\n"
 "Last-Translator: kizito <kbirabwa@yahoo.co.uk>\n"
 "Language-Team: LANGUAGE <kbirabwa@yahoo.co.uk>\n"
 "Language: lg\n"
@@ -819,7 +819,7 @@ msgstr "URL:"
 
 #: ../plugins/gtkui/interface.c:3081 ../plugins/gtkui/deadbeef.glade.h:64
 msgid "Group By"
-msgstr ""
+msgstr "Lengera ku:"
 
 #: ../plugins/gtkui/interface.c:3106 ../plugins/gtkui/deadbeef.glade.h:56
 #, no-c-format
@@ -966,7 +966,7 @@ msgstr "Bika by'okunnyonyola"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Embedded Cuesheet"
-msgstr ""
+msgstr "Endagiriro y'entegeka y'enyimba ey'omunda"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Yes"
@@ -986,11 +986,11 @@ msgstr "Ppeesa"
 
 #: ../plugins/gtkui/trkproperties.c:251 ../plugins/gtkui/trkproperties.c:263
 msgid "Value"
-msgstr ""
+msgstr "Ekikongojje"
 
 #: ../plugins/notify/notify.c:138
 msgid "DeaDBeeF now playing"
-msgstr ""
+msgstr "DeaDBeefF kati etaddeko"
 
 #: ../main.c:89
 #, c-format
@@ -1092,6 +1092,8 @@ msgid ""
 "2.3 (Recommended)\n"
 "2.4"
 msgstr ""
+"2.3 (Tukuwa magezi kukozesa luno)\n"
+"2.4"
 
 #: ../plugins/gtkui/deadbeef.glade.h:26
 msgid ""
@@ -1099,6 +1101,9 @@ msgid ""
 "Track\n"
 "Album"
 msgstr ""
+"Gyako\n"
+"Lutambi\n"
+"Alubamu"
 
 #: ../plugins/gtkui/deadbeef.glade.h:35
 msgid ""
@@ -1131,6 +1136,8 @@ msgid ""
 "Left\n"
 "Right"
 msgstr ""
+"Kkono\n"
+"Dyo"
 
 #: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
 #, c-format
@@ -1156,43 +1163,47 @@ msgstr "Wazzewo kiremya mu kusoma ekitole kya data ekikulembera."
 #: ../plugins/vorbis/vcedit.c:237
 msgid "Couldn't get enough memory to register new stream serial number."
 msgstr ""
+"Tekisobose kufuna kifo mu ggwanika ekimala okwongera ennamba y'obumanyiso "
+"ey'omusulo omupya ku lukalala."
 
 #: ../plugins/vorbis/vcedit.c:505
 msgid "Input truncated or empty."
-msgstr ""
+msgstr "Ebiyingizibwa bitemdwamu oba tebirimu data."
 
 #: ../plugins/vorbis/vcedit.c:507
 msgid "Input is not an Ogg bitstream."
-msgstr ""
+msgstr "Ebiyingizibwa ssi musulo ogw'ekika kya Ogg."
 
 #: ../plugins/vorbis/vcedit.c:565
 msgid "Ogg bitstream does not contain Vorbis data."
-msgstr ""
+msgstr "Omusulo gwa Ogg gubulamu ebikwata ku bya Vorbis."
 
 #: ../plugins/vorbis/vcedit.c:578
 msgid "EOF before recognised stream."
-msgstr ""
+msgstr "Fayiro ekomye tennayogera ku musulo gwa bbiti ogutegeerebwa."
 
 #: ../plugins/vorbis/vcedit.c:594
 msgid "Ogg bitstream does not contain a supported data-type."
-msgstr ""
+msgstr "Omusulo gwa Ogg tegulimu data ey'ekika sisitemu gy'etegeera."
 
 #: ../plugins/vorbis/vcedit.c:638
 msgid "Corrupt secondary header."
-msgstr ""
+msgstr "Ebikulembera ebizibizi eby'ekitole kya data biriko kiremya."
 
 #: ../plugins/vorbis/vcedit.c:659
 msgid "EOF before end of Vorbis headers."
-msgstr ""
+msgstr "Fayiro ekomye tennatuuka ku bikulembera eby'ebya Vorbis."
 
 #: ../plugins/vorbis/vcedit.c:834
 msgid "Corrupt or missing data, continuing..."
-msgstr ""
+msgstr "Nsanze mu ebiriko kiremya oba ebitawera, omulimu gweyongera mu maaso..."
 
 #: ../plugins/vorbis/vcedit.c:874
 msgid ""
 "Error writing stream to output. Output stream may be corrupted or truncated."
 msgstr ""
+"Wazzewo kiremya mu kutegeka ebigenda mu musulo ogw'ebivaamu. Omusulo "
+"ogw'ebivaamu guyinz'okubaamu ebitali bituufu oba okutemwamu."
 
 #: ../plugins/wildmidi/wildmidiplug.c:162
 #, c-format
