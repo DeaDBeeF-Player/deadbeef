@@ -27,9 +27,7 @@
 #  define dgettext(Domain,Message) (Message)
 #  define dcgettext(Domain,Message,Type) (Message)
 #  define bindtextdomain(Domain,Directory) (Domain)
-#ifndef _
 #  define _(String) (String)
-#endif
 #  define Q_(String) g_strip_context ((String), (String))
 #  define N_(String) (String)
 #endif

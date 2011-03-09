@@ -1417,7 +1417,7 @@ create_editcolumndlg (void)
 
   editcolumndlg = gtk_dialog_new ();
   gtk_container_set_border_width (GTK_CONTAINER (editcolumndlg), 12);
-  gtk_window_set_title (GTK_WINDOW (editcolumndlg), _("editcolumndlg"));
+  gtk_window_set_title (GTK_WINDOW (editcolumndlg), "editcolumndlg");
   gtk_window_set_modal (GTK_WINDOW (editcolumndlg), TRUE);
   gtk_window_set_type_hint (GTK_WINDOW (editcolumndlg), GDK_WINDOW_TYPE_HINT_DIALOG);
 
@@ -2965,7 +2965,7 @@ create_entrydialog (void)
 
   entrydialog = gtk_dialog_new ();
   gtk_container_set_border_width (GTK_CONTAINER (entrydialog), 8);
-  gtk_window_set_title (GTK_WINDOW (entrydialog), _("EntryDialog"));
+  gtk_window_set_title (GTK_WINDOW (entrydialog), "EntryDialog");
   gtk_window_set_destroy_with_parent (GTK_WINDOW (entrydialog), TRUE);
   gtk_window_set_type_hint (GTK_WINDOW (entrydialog), GDK_WINDOW_TYPE_HINT_DIALOG);
 
