@@ -47,6 +47,8 @@ static GtkListStore *propstore;
 static int trkproperties_modified;
 static DB_playItem_t **tracks;
 static int numtracks;
+static GtkWidget *progressdlg;
+static int progress_aborted;
 
 static int
 build_key_list (const char ***pkeys, int props) {
@@ -492,6 +494,69 @@ set_metadata_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpoi
     return FALSE;
 }
 
+static gboolean
+write_finished_cb (void *ctx) {
+    gtk_widget_destroy (progressdlg);
+    progressdlg = NULL;
+    main_refresh ();
+    search_refresh ();
+    trkproperties_modified = 0;
+    return FALSE;
+}
+
+static gboolean
+set_progress_cb (void *ctx) {
+    DB_playItem_t *track = ctx;
+    GtkWidget *progressitem = lookup_widget (progressdlg, "progresstitle");
+    const char *fname = deadbeef->pl_find_meta (track, ":URI");
+    gtk_entry_set_text (GTK_ENTRY (progressitem), fname);
+    deadbeef->pl_item_unref (track);
+}
+
+static void
+write_meta_worker (void *ctx) {
+    for (int t = 0; t < numtracks; t++) {
+        if (progress_aborted) {
+            break;
+        }
+        DB_playItem_t *track = tracks[t];
+        const char *decoder_id = deadbeef->pl_find_meta (track, ":DECODER");
+        if (track && decoder_id) {
+            deadbeef->pl_item_ref (track);
+            g_idle_add (set_progress_cb, track);
+            // find decoder
+            DB_decoder_t *dec = NULL;
+            DB_decoder_t **decoders = deadbeef->plug_get_decoder_list ();
+            for (int i = 0; decoders[i]; i++) {
+                if (!strcmp (decoders[i]->plugin.id, decoder_id)) {
+                    dec = decoders[i];
+                    if (dec->write_metadata) {
+                        dec->write_metadata (track);
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    g_idle_add (write_finished_cb, ctx);
+}
+
+static gboolean
+on_progress_delete_event            (GtkWidget       *widget,
+                                        GdkEvent        *event,
+                                        gpointer         user_data)
+{
+    progress_aborted = 1;
+    return gtk_widget_hide_on_delete (widget);
+}
+
+static void
+on_progress_abort                      (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    progress_aborted = 1;
+}
+
 void
 on_write_tags_clicked                  (GtkButton       *button,
                                         gpointer         user_data)
@@ -528,31 +593,29 @@ on_write_tags_clicked                  (GtkButton       *button,
             meta = next;
         }
     }
-
     // put all metainfo into track
     gtk_tree_model_foreach (model, set_metadata_cb, NULL);
-    for (int t = 0; t < numtracks; t++) {
-        DB_playItem_t *track = tracks[t];
-        const char *decoder_id = deadbeef->pl_find_meta (track, ":DECODER");
-        if (track && decoder_id) {
-            // find decoder
-            DB_decoder_t *dec = NULL;
-            DB_decoder_t **decoders = deadbeef->plug_get_decoder_list ();
-            for (int i = 0; decoders[i]; i++) {
-                if (!strcmp (decoders[i]->plugin.id, decoder_id)) {
-                    dec = decoders[i];
-                    if (dec->write_metadata) {
-                        dec->write_metadata (track);
-                    }
-                    break;
-                }
-            }
-        }
-    }
     deadbeef->pl_unlock ();
-    main_refresh ();
-    search_refresh ();
-    trkproperties_modified = 0;
+
+    progress_aborted = 0;
+    progressdlg = create_progressdlg ();
+    gtk_window_set_title (GTK_WINDOW (progressdlg), _("Writing tags..."));
+
+    g_signal_connect ((gpointer) progressdlg, "delete_event",
+            G_CALLBACK (on_progress_delete_event),
+            NULL);
+    GtkWidget *cancelbtn = lookup_widget (progressdlg, "cancelbtn");
+    g_signal_connect ((gpointer) cancelbtn, "clicked",
+            G_CALLBACK (on_progress_abort),
+            NULL);
+
+    gtk_widget_show_all (progressdlg);
+    gtk_window_present (GTK_WINDOW (progressdlg));
+    gtk_window_set_transient_for (GTK_WINDOW (progressdlg), GTK_WINDOW (trackproperties));
+
+    // start new thread for writing metadata
+    intptr_t tid = deadbeef->thread_start (write_meta_worker, NULL);
+    deadbeef->thread_detach (tid);
 }
 
 void

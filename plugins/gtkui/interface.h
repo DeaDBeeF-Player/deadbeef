@@ -5,7 +5,7 @@
 GtkWidget* create_mainwin (void);
 GtkWidget* create_searchwin (void);
 GtkWidget* create_traymenu (void);
-GtkWidget* create_addprogress (void);
+GtkWidget* create_progressdlg (void);
 GtkWidget* create_helpwindow (void);
 GtkWidget* create_trackproperties (void);
 GtkWidget* create_editcolumndlg (void);

@@ -1085,26 +1085,26 @@ create_traymenu (void)
 }
 
 GtkWidget*
-create_addprogress (void)
+create_progressdlg (void)
 {
-  GtkWidget *addprogress;
+  GtkWidget *progressdlg;
   GtkWidget *vbox6;
   GtkWidget *progresstitle;
   GtkWidget *hbox7;
   GtkWidget *label22;
-  GtkWidget *button3;
+  GtkWidget *cancelbtn;
 
-  addprogress = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_container_set_border_width (GTK_CONTAINER (addprogress), 12);
-  gtk_window_set_title (GTK_WINDOW (addprogress), _("Adding files..."));
-  gtk_window_set_position (GTK_WINDOW (addprogress), GTK_WIN_POS_CENTER_ON_PARENT);
-  gtk_window_set_modal (GTK_WINDOW (addprogress), TRUE);
-  gtk_window_set_skip_taskbar_hint (GTK_WINDOW (addprogress), TRUE);
-  gtk_window_set_skip_pager_hint (GTK_WINDOW (addprogress), TRUE);
+  progressdlg = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  gtk_container_set_border_width (GTK_CONTAINER (progressdlg), 12);
+  gtk_window_set_title (GTK_WINDOW (progressdlg), "progressdlg");
+  gtk_window_set_position (GTK_WINDOW (progressdlg), GTK_WIN_POS_CENTER_ON_PARENT);
+  gtk_window_set_modal (GTK_WINDOW (progressdlg), TRUE);
+  gtk_window_set_skip_taskbar_hint (GTK_WINDOW (progressdlg), TRUE);
+  gtk_window_set_skip_pager_hint (GTK_WINDOW (progressdlg), TRUE);
 
   vbox6 = gtk_vbox_new (FALSE, 8);
   gtk_widget_show (vbox6);
-  gtk_container_add (GTK_CONTAINER (addprogress), vbox6);
+  gtk_container_add (GTK_CONTAINER (progressdlg), vbox6);
 
   progresstitle = gtk_entry_new ();
   gtk_widget_show (progresstitle);
@@ -1122,26 +1122,19 @@ create_addprogress (void)
   gtk_widget_show (label22);
   gtk_box_pack_start (GTK_BOX (hbox7), label22, TRUE, FALSE, 0);
 
-  button3 = gtk_button_new_from_stock ("gtk-cancel");
-  gtk_widget_show (button3);
-  gtk_box_pack_start (GTK_BOX (hbox7), button3, FALSE, FALSE, 0);
-
-  g_signal_connect ((gpointer) addprogress, "delete_event",
-                    G_CALLBACK (on_addprogress_delete_event),
-                    NULL);
-  g_signal_connect ((gpointer) button3, "clicked",
-                    G_CALLBACK (on_progress_abort),
-                    NULL);
+  cancelbtn = gtk_button_new_from_stock ("gtk-cancel");
+  gtk_widget_show (cancelbtn);
+  gtk_box_pack_start (GTK_BOX (hbox7), cancelbtn, FALSE, FALSE, 0);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
-  GLADE_HOOKUP_OBJECT_NO_REF (addprogress, addprogress, "addprogress");
-  GLADE_HOOKUP_OBJECT (addprogress, vbox6, "vbox6");
-  GLADE_HOOKUP_OBJECT (addprogress, progresstitle, "progresstitle");
-  GLADE_HOOKUP_OBJECT (addprogress, hbox7, "hbox7");
-  GLADE_HOOKUP_OBJECT (addprogress, label22, "label22");
-  GLADE_HOOKUP_OBJECT (addprogress, button3, "button3");
+  GLADE_HOOKUP_OBJECT_NO_REF (progressdlg, progressdlg, "progressdlg");
+  GLADE_HOOKUP_OBJECT (progressdlg, vbox6, "vbox6");
+  GLADE_HOOKUP_OBJECT (progressdlg, progresstitle, "progresstitle");
+  GLADE_HOOKUP_OBJECT (progressdlg, hbox7, "hbox7");
+  GLADE_HOOKUP_OBJECT (progressdlg, label22, "label22");
+  GLADE_HOOKUP_OBJECT (progressdlg, cancelbtn, "cancelbtn");
 
-  return addprogress;
+  return progressdlg;
 }
 
 GtkWidget*

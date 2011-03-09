@@ -34,9 +34,36 @@ static GtkWidget *progressdlg;
 static GtkWidget *progressitem;
 static int progress_aborted;
 
+static void
+on_progress_abort                      (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    progress_aborted = 1;
+}
+
+static gboolean
+on_addprogress_delete_event            (GtkWidget       *widget,
+                                        GdkEvent        *event,
+                                        gpointer         user_data)
+{
+    progress_aborted = 1;
+    return gtk_widget_hide_on_delete (widget);
+}
 void
 progress_init (void) {
-    progressdlg = create_addprogress ();
+    progressdlg = create_progressdlg ();
+
+    gtk_window_set_title (GTK_WINDOW (progressdlg), _("Adding files..."));
+
+    g_signal_connect ((gpointer) progressdlg, "delete_event",
+            G_CALLBACK (on_addprogress_delete_event),
+            NULL);
+
+    GtkWidget *cancelbtn = lookup_widget (progressdlg, "cancelbtn");
+    g_signal_connect ((gpointer) cancelbtn, "clicked",
+            G_CALLBACK (on_progress_abort),
+            NULL);
+
     gtk_window_set_transient_for (GTK_WINDOW (progressdlg), GTK_WINDOW (mainwin));
     progressitem = lookup_widget (progressdlg, "progresstitle");
 }
@@ -81,24 +108,9 @@ progress_abort (void) {
     progress_aborted = 1;
 }
 
-void
-on_progress_abort                      (GtkButton       *button,
-                                        gpointer         user_data)
-{
-    progress_aborted = 1;
-}
-
 int
 progress_is_aborted (void) {
     return progress_aborted;
 }
 
 
-gboolean
-on_addprogress_delete_event            (GtkWidget       *widget,
-                                        GdkEvent        *event,
-                                        gpointer         user_data)
-{
-    progress_aborted = 1;
-    return gtk_widget_hide_on_delete (widget);
-}
