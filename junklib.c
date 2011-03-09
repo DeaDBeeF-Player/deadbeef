@@ -837,13 +837,10 @@ junk_id3v1_read (playItem_t *it, DB_FILE *fp) {
 //    "RX" = "Remix" (id3v2)
 
     if (genreid == 0xff) {
-        genre = "None";
+        //genre = "None";
     }
     else if (genreid <= 147) {
         genre = junk_genretbl[genreid];
-    }
-    else {
-        genre = "";
     }
 
     // add meta
@@ -863,7 +860,7 @@ junk_id3v1_read (playItem_t *it, DB_FILE *fp) {
     if (*comment) {
         pl_add_meta (it, "comment", convstr_id3v1 (comment, strlen (comment)));
     }
-    if (*genre) {
+    if (genre && *genre) {
         pl_add_meta (it, "genre", convstr_id3v1 (genre, strlen (genre)));
     }
     if (tracknum != 0) {
@@ -2349,6 +2346,28 @@ junk_apev2_remove_frames (DB_apev2_tag_t *tag, const char *frame_id) {
     return 0;
 }
 
+int
+junk_apev2_remove_all_text_frames (DB_apev2_tag_t *tag) {
+    DB_apev2_frame_t *prev = NULL;
+    for (DB_apev2_frame_t *f = tag->frames; f; ) {
+        DB_apev2_frame_t *next = f->next;
+        int valuetype = ((f->flags >> 1) & 3);
+        if (valuetype == 0) {
+            if (prev) {
+                prev->next = f->next;
+            }
+            else {
+                tag->frames = f->next;
+            }
+            free (f);
+        }
+        else {
+            prev = f;
+        }
+        f = next;
+    }
+    return 0;
+}
 DB_apev2_frame_t *
 junk_apev2_add_text_frame (DB_apev2_tag_t *tag, const char *frame_id, const char *value) {
     trace ("adding apev2 frame %s %s\n", frame_id, value);
@@ -2885,7 +2904,7 @@ junk_id3v2_add_genre (playItem_t *it, char *genre) {
                 genre_str = junk_genretbl[genre_id];
             }
             else if (genre_id == 0xff) {
-                genre_str = "None";
+                // genre_str = "None";
             }
             if (genre_str) {
                 pl_add_meta (it, "genre", genre_str);
@@ -3618,6 +3637,10 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             deadbeef->junk_apev2_free (&apev2);
             memset (&apev2, 0, sizeof (apev2));
         }
+
+        // remove all text frames
+        junk_apev2_remove_all_text_frames (&apev2);
+
         // add all basic frames
         DB_metaInfo_t *meta = pl_get_metadata_head (it);
         while (meta) {
@@ -3626,7 +3649,6 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
                 for (i = 0; frame_mapping[i]; i += FRAME_MAPPINGS) {
                     if (!strcasecmp (meta->key, frame_mapping[i+MAP_DDB]) && frame_mapping[i+MAP_APEV2]) {
                         trace ("apev2 writing known field: %s=%s\n", meta->key, meta->value);
-                        junk_apev2_remove_frames (&apev2, frame_mapping[i+MAP_APEV2]);
                         junk_apev2_add_text_frame (&apev2, frame_mapping[i+MAP_APEV2], meta->value);
                         break;
                     }
@@ -3636,7 +3658,6 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
                         && strcasecmp (meta->key, "track")
                         && strcasecmp (meta->key, "numtracks")) {
                     trace ("apev2 writing unknown field: %s=%s\n", meta->key, meta->value);
-                    junk_apev2_remove_frames (&apev2, meta->key);
                     junk_apev2_add_text_frame (&apev2, meta->key, meta->value);
                 }
             }

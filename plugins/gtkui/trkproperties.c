@@ -250,11 +250,6 @@ static const char *hc_props[] = {
     NULL
 };
 
-static inline float
-amp_to_db (float amp) {
-    return 20*log10 (amp);
-}
-
 void
 add_field (GtkListStore *store, const char *key, const char *title, int is_prop) {
     // get value to edit
@@ -471,14 +466,41 @@ show_track_properties_dlg (DB_playItem_t *it) {
     gtk_window_present (GTK_WINDOW (widget));
 }
 
+static gboolean
+set_metadata_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data) {
+    GValue mult = {0,};
+    gtk_tree_model_get_value (model, iter, 3, &mult);
+    int smult = g_value_get_int (&mult);
+    if (!smult) {
+        GValue key = {0,}, value = {0,};
+        gtk_tree_model_get_value (model, iter, 2, &key);
+        gtk_tree_model_get_value (model, iter, 1, &value);
+        const char *skey = g_value_get_string (&key);
+        const char *svalue = g_value_get_string (&value);
+        if (*svalue) {
+            for (int i = 0; i < numtracks; i++) {
+                deadbeef->pl_replace_meta (tracks[i], skey, svalue);
+            }
+        }
+        else {
+            for (int i = 0; i < numtracks; i++) {
+                deadbeef->pl_delete_meta (tracks[i], skey);
+            }
+        }
+    }
+
+    return FALSE;
+}
+
 void
 on_write_tags_clicked                  (GtkButton       *button,
                                         gpointer         user_data)
 {
     deadbeef->pl_lock ();
-    // put all metainfo into track
     GtkTreeView *tree = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
     GtkTreeModel *model = GTK_TREE_MODEL (gtk_tree_view_get_model (tree));
+
+    // delete all metadata properties that are not in the listview
     for (int i = 0; i < numtracks; i++) {
         DB_metaInfo_t *meta = deadbeef->pl_get_metadata_head (tracks[i]);
         while (meta) {
@@ -493,22 +515,13 @@ on_write_tags_clicked                  (GtkButton       *button,
                     const char *skey = g_value_get_string (&key);
 
                     if (!strcmp (skey, meta->key)) {
-                        GValue multvalue = {0,};
-                        gtk_tree_model_get_value (model, &iter, 3, &multvalue);
-                        mult = g_value_get_int (&multvalue);
-                        // keep field if multiple values are set, replace otherwise
-                        if (!mult) {
-                            GValue value = {0,};
-                            gtk_tree_model_get_value (model, &iter, 1, &value);
-                            const char *svalue = g_value_get_string (&value);
-                            deadbeef->pl_replace_meta (tracks[i], meta->key, svalue);
-                        }
+                        // field found, don't delete
                         break;
                     }
                     res = gtk_tree_model_iter_next (GTK_TREE_MODEL (store), &iter);
                 }
                 if (!res) {
-                    // delete this field (not in list)
+                    // field not found, delete
                     deadbeef->pl_delete_metadata (tracks[i], meta);
                 }
             }
@@ -516,6 +529,8 @@ on_write_tags_clicked                  (GtkButton       *button,
         }
     }
 
+    // put all metainfo into track
+    gtk_tree_model_foreach (model, set_metadata_cb, NULL);
     for (int t = 0; t < numtracks; t++) {
         DB_playItem_t *track = tracks[t];
         const char *decoder_id = deadbeef->pl_find_meta (track, ":DECODER");
