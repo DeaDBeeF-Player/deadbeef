@@ -302,7 +302,7 @@ csid_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     
     // libsidplay crashes if file doesn't exist
     // so i have to check it here
-    DB_FILE *fp = deadbeef->fopen (it->fname);
+    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
     if (!fp ){
         return -1;
     }
@@ -321,9 +321,9 @@ csid_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     info->resid->sampling (samplerate);
     info->duration = deadbeef->pl_get_item_duration (it);
-    info->tune = new SidTune (it->fname);
+    info->tune = new SidTune (deadbeef->pl_find_meta (it, ":URI"));
 
-    info->tune->selectSong (it->tracknum+1);
+    info->tune->selectSong (deadbeef->pl_find_meta_int (it, ":TRACKNUM", 0)+1);
     sid2_config_t conf;
     conf = info->sidplay->config ();
     conf.frequency = samplerate;
@@ -514,10 +514,8 @@ csid_insert (DB_playItem_t *after, const char *fname) {
     for (int s = 0; s < tunes; s++) {
         trace ("select %d...\n", s);
         if (tune->selectSong (s+1)) {
-            DB_playItem_t *it = deadbeef->pl_item_alloc ();
-            it->decoder_id = deadbeef->plug_get_decoder_id (sid_plugin.plugin.id);
-            it->fname = strdup (fname);
-            it->tracknum = s;
+            DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, sid_plugin.plugin.id);
+            deadbeef->pl_set_meta_int (it, ":TRACKNUM", s);
             SidTuneInfo sidinfo;
             tune->getInfo (sidinfo);
             int i = sidinfo.numberOfInfoStrings;

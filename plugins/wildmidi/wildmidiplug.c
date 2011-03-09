@@ -52,9 +52,9 @@ int
 wmidi_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     wmidi_info_t *info = (wmidi_info_t *)_info;
 
-    info->m = WildMidi_Open (it->fname);
+    info->m = WildMidi_Open (deadbeef->pl_find_meta (it, ":URI"));
     if (!info->m) {
-        trace ("wmidi: failed to open %s\n", it->fname);
+        trace ("wmidi: failed to open %s\n", deadbeef->pl_find_meta (it, ":URI"));
         return -1;
     }
 
@@ -117,9 +117,7 @@ wmidi_insert (DB_playItem_t *after, const char *fname) {
     }
 
     struct _WM_Info *inf = WildMidi_GetInfo (m);
-    it = deadbeef->pl_item_alloc ();
-    it->decoder_id = deadbeef->plug_get_decoder_id (wmidi_plugin.plugin.id);
-    it->fname = strdup (fname);
+    it = deadbeef->pl_item_alloc_init (fname, wmidi_plugin.plugin.id);
     deadbeef->pl_add_meta (it, "title", NULL);
     deadbeef->pl_set_item_duration (it, inf->approx_total_samples / 44100.f);
     it->filetype = "MID";

@@ -200,7 +200,7 @@ static void show_notification (DB_playItem_t *track) {
     if (deadbeef->conf_get_int("notify.albumart", 0) && artwork_plugin) {
         const char *album = deadbeef->pl_find_meta (track, "album");
         const char *artist = deadbeef->pl_find_meta (track, "artist");
-        v_iconname = artwork_plugin->get_album_art (track->fname, artist, album, deadbeef->conf_get_int ("notify.albumart_size", 64), cover_avail_callback, NULL);
+        v_iconname = artwork_plugin->get_album_art (deadbeef->pl_find_meta (track, ":URI"), artist, album, deadbeef->conf_get_int ("notify.albumart_size", 64), cover_avail_callback, NULL);
     }
     if (!v_iconname) {
         v_iconname = strdup ("deadbeef");

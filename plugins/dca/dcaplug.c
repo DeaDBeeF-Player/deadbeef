@@ -356,9 +356,9 @@ static int
 dts_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     ddb_dca_state_t *info = (ddb_dca_state_t *)_info;
 
-    info->file = deadbeef->fopen (it->fname);
+    info->file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
     if (!info->file) {
-        trace ("dca: failed to open %s\n", it->fname);
+        trace ("dca: failed to open %s\n", deadbeef->pl_find_meta (it, ":URI"));
         return -1;
     }
 
@@ -606,9 +606,7 @@ dts_insert (DB_playItem_t *after, const char *fname) {
         dur = (float)totalsamples / state.sample_rate;
     }
 
-    DB_playItem_t *it = deadbeef->pl_item_alloc ();
-    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
-    it->fname = strdup (fname);
+    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
     it->filetype = filetype;
     deadbeef->pl_set_item_duration (it, dur);
 

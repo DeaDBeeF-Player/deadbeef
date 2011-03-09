@@ -690,7 +690,7 @@ ffap_init (DB_fileinfo_t *_info, DB_playItem_t *it)
 {
     ape_info_t *info = (ape_info_t*)_info;
 
-    info->fp = deadbeef->fopen (it->fname);
+    info->fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
     if (!info->fp) {
         return -1;
     }
@@ -1764,9 +1764,7 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
 
     float duration = ape_ctx.totalsamples / (float)ape_ctx.samplerate;
     DB_playItem_t *it = NULL;
-    it = deadbeef->pl_item_alloc ();
-    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
-    it->fname = strdup (fname);
+    it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
     it->filetype = "APE";
     deadbeef->pl_set_item_duration (it, duration);
  
@@ -1912,7 +1910,7 @@ ffap_seek (DB_fileinfo_t *_info, float seconds) {
 
 
 static int ffap_read_metadata (DB_playItem_t *it) {
-    DB_FILE *fp = deadbeef->fopen (it->fname);
+    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
     if (!fp) {
         return -1;
     }

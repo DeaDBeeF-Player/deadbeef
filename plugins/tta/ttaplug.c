@@ -61,14 +61,14 @@ static int
 tta_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     tta_info_t *info = (tta_info_t *)_info;
 
-    trace ("open_tta_file %s\n", it->fname);
-    if (open_tta_file (it->fname, &info->tta, 0) != 0) {
-        fprintf (stderr, "tta: failed to open %s\n", it->fname);
+    trace ("open_tta_file %s\n", deadbeef->pl_find_meta (it, ":URI"));
+    if (open_tta_file (deadbeef->pl_find_meta (it, ":URI"), &info->tta, 0) != 0) {
+        fprintf (stderr, "tta: failed to open %s\n", deadbeef->pl_find_meta (it, ":URI"));
         return -1;
     }
 
     if (player_init (&info->tta) != 0) {
-        fprintf (stderr, "tta: failed to init player for %s\n", it->fname);
+        fprintf (stderr, "tta: failed to init player for %s\n", deadbeef->pl_find_meta (it, ":URI"));
         return -1;
     }
 
@@ -90,7 +90,7 @@ tta_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         info->startsample = 0;
         info->endsample = (info->tta.DATALENGTH)-1;
     }
-    trace ("open_tta_file %s success!\n", it->fname);
+    trace ("open_tta_file %s success!\n", deadbeef->pl_find_meta (it, ":URI"));
     return 0;
 }
 
@@ -193,9 +193,7 @@ tta_insert (DB_playItem_t *after, const char *fname) {
     int totalsamples = tta.DATALENGTH;
     double dur = tta.LENGTH;
 
-    DB_playItem_t *it = deadbeef->pl_item_alloc ();
-    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
-    it->fname = strdup (fname);
+    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
     it->filetype = "TTA";
     deadbeef->pl_set_item_duration (it, dur);
 
@@ -252,7 +250,7 @@ tta_insert (DB_playItem_t *after, const char *fname) {
 }
 
 static int tta_read_metadata (DB_playItem_t *it) {
-    DB_FILE *fp = deadbeef->fopen (it->fname);
+    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
     if (!fp) {
         return -1;
     }

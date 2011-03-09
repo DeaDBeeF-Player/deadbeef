@@ -62,9 +62,9 @@ vtx_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     size_t sz = 0;
     char *buf = NULL;
 
-    DB_FILE *fp = deadbeef->fopen (it->fname);
+    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
     if (!fp) {
-        trace ("vtx: failed to open file %s\n", it->fname);
+        trace ("vtx: failed to open file %s\n", deadbeef->pl_find_meta (it, ":URI"));
         return -1;
     }
 
@@ -258,10 +258,7 @@ vtx_insert (DB_playItem_t *after, const char *fname) {
     }
     trace ("vtx: datasize: %d\n", hdr->regdata_size);
 
-    DB_playItem_t *it = deadbeef->pl_item_alloc ();
-
-    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
-    it->fname = strdup (fname);
+    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
     it->filetype = filetypes[0];
 
     int numframes = hdr->regdata_size / AY_FRAME_SIZE;

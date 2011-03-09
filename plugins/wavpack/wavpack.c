@@ -125,15 +125,15 @@ wv_open (uint32_t hints) {
 static int
 wv_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     wvctx_t *info = (wvctx_t *)_info;
-    info->file = deadbeef->fopen (it->fname);
+    info->file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
     if (!info->file) {
         return -1;
     }
 
 #ifndef TINYWV
-    char *c_fname = alloca (strlen (it->fname) + 2);
+    char *c_fname = alloca (strlen (deadbeef->pl_find_meta (it, ":URI")) + 2);
     if (c_fname) {
-        strcpy (c_fname, it->fname);
+        strcpy (c_fname, deadbeef->pl_find_meta (it, ":URI"));
         strcat (c_fname, "c");
         info->c_file = deadbeef->fopen (c_fname);
     }
@@ -295,9 +295,7 @@ wv_insert (DB_playItem_t *after, const char *fname) {
     int samplerate = WavpackGetSampleRate (ctx);
     float duration = (float)totalsamples / samplerate;
 
-    DB_playItem_t *it = deadbeef->pl_item_alloc ();
-    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
-    it->fname = strdup (fname);
+    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
     it->filetype = "wv";
     deadbeef->pl_set_item_duration (it, duration);
     trace ("wv: totalsamples=%d, samplerate=%d, duration=%f\n", totalsamples, samplerate, duration);
@@ -370,7 +368,7 @@ wv_insert (DB_playItem_t *after, const char *fname) {
 
 int
 wv_read_metadata (DB_playItem_t *it) {
-    DB_FILE *fp = deadbeef->fopen (it->fname);
+    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
     if (!fp) {
         return -1;
     }

@@ -151,12 +151,20 @@ streamer_start_playback (playItem_t *from, playItem_t *it) {
     playing_track = it;
     if (playing_track) {
         pl_item_ref (playing_track);
+
+        // setup replaygain
+        float albumgain = pl_get_item_replaygain (playing_track, DDB_REPLAYGAIN_ALBUMGAIN);
+        float albumpeak = pl_get_item_replaygain (playing_track, DDB_REPLAYGAIN_ALBUMPEAK);
+        float trackgain = pl_get_item_replaygain (playing_track, DDB_REPLAYGAIN_TRACKGAIN);
+        float trackpeak = pl_get_item_replaygain (playing_track, DDB_REPLAYGAIN_TRACKPEAK);
+        replaygain_set_values (albumgain, albumpeak, trackgain, trackpeak);
+
         printf ("played=1 [1]\n");
         playing_track->played = 1;
         playing_track->started_timestamp = time (NULL);
         trace ("sending songstarted to plugins [2] current playtrack: %s\n", playing_track->fname);
         plug_trigger_event (DB_EV_SONGSTARTED, 0);
-        trace ("from=%p (%s), to=%p (%s) [2]\n", from, from ? from->fname : "null", it, it ? it->fname : "null");
+        trace ("from=%p (%s), to=%p (%s) [2]\n", from, from ? from->fname : "null", it, it ? pl_find_meta (it, ":URI") : "null");
         plug_trigger_event_trackchange (from, it);
     }
     if (from) {
@@ -246,16 +254,16 @@ streamer_move_to_nextsong (int reason) {
                 return 0;
             }
             else {
-                trace ("%s not found in current streaming playlist\n", it->fname);
+                trace ("%s not found in current streaming playlist\n", pl_find_meta (it, ":URI"));
                 // find playlist
                 playlist_t *old = streamer_playlist;
                 streamer_playlist = plt_get_list ();
                 int i = 0;
                 while (streamer_playlist) {
-                    trace ("searching for %s in playlist %d\n", it->fname, i);
+                    trace ("searching for %s in playlist %d\n", pl_find_meta (it, ":URI"), i);
                     int r = str_get_idx_of (it);
                     if (r >= 0) {
-                        trace ("%s found in playlist %d\n", it->fname, i);
+                        trace ("%s found in playlist %d\n", pl_find_meta (it, ":URI"), i);
                         pl_item_unref (it);
                         streamer_set_nextsong (r, 3);
                         pl_global_unlock ();
@@ -264,7 +272,7 @@ streamer_move_to_nextsong (int reason) {
                     i++;
                     streamer_playlist = streamer_playlist->next;
                 }
-                trace ("%s not found in any playlists\n", it->fname);
+                trace ("%s not found in any playlists\n", pl_find_meta (it, ":URI"));
                 streamer_playlist = old;
                 pl_item_unref (it);
             }
@@ -591,11 +599,12 @@ streamer_set_current (playItem_t *it) {
     if (from) {
         plug_trigger_event_trackinfochanged (from);
     }
-    if (!it->decoder_id && it->filetype && !strcmp (it->filetype, "content")) {
+    const char *decoder_id = pl_find_meta (it, ":DECODER");
+    if (!decoder_id && it->filetype && !strcmp (it->filetype, "content")) {
         // try to get content-type
         mutex_lock (decodemutex);
-        trace ("\033[0;34mopening file %s\033[37;0m\n", it->fname);
-        DB_FILE *fp = streamer_file = vfs_fopen (it->fname);
+        trace ("\033[0;34mopening file %s\033[37;0m\n", pl_find_meta (it, ":URI"));
+        DB_FILE *fp = streamer_file = vfs_fopen (pl_find_meta (it, ":URI"));
         mutex_unlock (decodemutex);
         const char *plug = NULL;
         if (fp && vfs_get_content_type) {
@@ -628,22 +637,23 @@ streamer_set_current (playItem_t *it) {
             // match by decoder
             for (int i = 0; decoders[i]; i++) {
                 if (!strcmp (decoders[i]->plugin.id, plug)) {
-                    it->decoder_id = decoders[i]->plugin.id;
+                    pl_replace_meta (it, ":DECODER", decoders[i]->plugin.id);
+                    decoder_id = decoders[i]->plugin.id;
                     it->filetype = decoders[i]->filetypes[0];
                     trace ("\033[0;34mfound plugin %s\033[37;0m\n", plug);
                 }
             }
         }
         else {
-            trace ("\033[0;34mclosed file %s (bad or interrupted)\033[37;0m\n", it->fname);
+            trace ("\033[0;34mclosed file %s (bad or interrupted)\033[37;0m\n", pl_find_meta (it, ":URI"));
         }
     }
     playlist_track = it;
-    if (it->decoder_id) {
+    if (decoder_id) {
         DB_decoder_t *dec = NULL;
-        dec = plug_get_decoder_for_id (it->decoder_id);
+        dec = plug_get_decoder_for_id (decoder_id);
         if (dec) {
-            trace ("\033[0;33minit decoder for %s (%s)\033[37;0m\n", it->fname, it->decoder_id);
+            trace ("\033[0;33minit decoder for %s (%s)\033[37;0m\n", pl_find_meta (it, ":URI"), decoder_id);
             new_fileinfo = dec->open (0);
             if (new_fileinfo && dec->init (new_fileinfo, DB_PLAYITEM (it)) != 0) {
                 trace ("\033[0;31mfailed to init decoder\033[37;0m\n")
@@ -1040,7 +1050,8 @@ streamer_thread (void *ctx) {
 
                 mutex_lock (decodemutex);
                 DB_decoder_t *dec = NULL;
-                dec = plug_get_decoder_for_id (streaming_track->decoder_id);
+                const char *decoder_id = pl_find_meta (streaming_track, ":DECODER");
+                dec = plug_get_decoder_for_id (decoder_id);
                 if (dec) {
                     fileinfo = dec->open (0);
                     if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (streaming_track)) != 0) {
@@ -1067,8 +1078,9 @@ streamer_thread (void *ctx) {
             if (streaming_track) {
                 plug_trigger_event_trackinfochanged (streaming_track);
             }
-            if (fileinfo && playing_track && playing_track->_duration > 0) {
-                if (pos >= playing_track->_duration) {
+            float dur = pl_get_item_duration (playing_track);
+            if (fileinfo && playing_track && dur > 0) {
+                if (pos >= dur) {
                     output->stop ();
                     streamer_move_to_nextsong (1);
                     continue;

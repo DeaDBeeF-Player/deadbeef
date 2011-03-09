@@ -79,18 +79,18 @@ static int
 cda_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     cdda_info_t *info = (cdda_info_t *)_info;
 
-    trace ("cdda: init %s\n", it->fname);
+    trace ("cdda: init %s\n", deadbeef->pl_find_meta (it, ":URI"));
 
-    size_t l = strlen (it->fname);
+    size_t l = strlen (deadbeef->pl_find_meta (it, ":URI"));
     char location[l+1];
-    memcpy (location, it->fname, l+1);
+    memcpy (location, deadbeef->pl_find_meta (it, ":URI"), l+1);
 
     char *nr = strchr (location, '#');
     if (nr) {
         *nr = 0; nr++;
     }
     else {
-        trace ("cdda: bad name: %s\n", it->fname);
+        trace ("cdda: bad name: %s\n", deadbeef->pl_find_meta (it, ":URI"));
         return -1;
     }
     int track_nr = atoi (nr);
@@ -285,9 +285,7 @@ insert_single_track (CdIo_t* cdio, DB_playItem_t *after, const char* file, int t
 
     int sector_count = cdio_get_track_sec_count (cdio, track_nr);
 
-    DB_playItem_t *it = deadbeef->pl_item_alloc ();
-    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
-    it->fname = strdup (tmp);
+    DB_playItem_t *it = deadbeef->pl_item_alloc_init (tmp, plugin.plugin.id);
     it->filetype = "cdda";
     deadbeef->pl_set_item_duration (it, (float)sector_count / 75.0);
 

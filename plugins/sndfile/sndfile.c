@@ -155,9 +155,9 @@ sndfile_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     sndfile_info_t *info = (sndfile_info_t*)_info;
 
     SF_INFO inf;
-    DB_FILE *fp = deadbeef->fopen (it->fname);
+    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
     if (!fp) {
-        trace ("sndfile: failed to open %s\n", it->fname);
+        trace ("sndfile: failed to open %s\n", deadbeef->pl_find_meta (it, ":URI"));
         return -1;
     }
     int fsize = deadbeef->fgetlength (fp);
@@ -315,9 +315,7 @@ sndfile_insert (DB_playItem_t *after, const char *fname) {
     deadbeef->fclose (info.file);
 
     float duration = (float)totalsamples / samplerate;
-    DB_playItem_t *it = deadbeef->pl_item_alloc ();
-    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
-    it->fname = strdup (fname);
+    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
     it->filetype = "wav";
     deadbeef->pl_set_item_duration (it, duration);
 

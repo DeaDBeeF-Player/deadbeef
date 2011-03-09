@@ -28,6 +28,9 @@ void
 replaygain_set (int mode, int scale);
 
 void
+replaygain_set_values (float albumgain, float albumpeak, float trackgain, float trackpeak);
+
+void
 apply_replay_gain_int8 (playItem_t *it, char *bytes, int size);
 
 void

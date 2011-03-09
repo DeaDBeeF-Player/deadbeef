@@ -384,7 +384,7 @@ static int
 aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     aac_info_t *info = (aac_info_t *)_info;
 
-    info->file = deadbeef->fopen (it->fname);
+    info->file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
     if (!info->file) {
         return -1;
     }
@@ -424,7 +424,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     if (!info->file->vfs->is_streaming ()) {
 #ifdef USE_MP4FF
-        trace ("aac_init: mp4ff_open_read %s\n", it->fname);
+        trace ("aac_init: mp4ff_open_read %s\n", deadbeef->pl_find_meta (it, ":URI"));
         info->mp4file = mp4ff_open_read (&info->mp4reader);
         if (info->mp4file) {
             int ntracks = mp4ff_total_tracks (info->mp4file);
@@ -493,8 +493,8 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             }
         }
 #else
-        trace ("aac_init: MP4ReadProvider %s\n", it->fname);
-        info->mp4file = MP4ReadProvider (it->fname, 0, &info->mp4reader);
+        trace ("aac_init: MP4ReadProvider %s\n", deadbeef->pl_find_meta (it, ":URI"));
+        info->mp4file = MP4ReadProvider (deadbeef->pl_find_meta (it, ":URI"), 0, &info->mp4reader);
         info->mp4track = MP4FindTrackId(info->mp4file, 0, "audio", 0);
         trace ("aac_init: MP4FindTrackId returned %d\n", info->mp4track);
         if (info->mp4track >= 0) {
@@ -991,24 +991,20 @@ aac_load_tags (DB_playItem_t *it, mp4ff_t *mp4) {
             free (s);
         }
     }
-    it->replaygain_track_gain = 0;
-    it->replaygain_track_peak = 1;
-    it->replaygain_album_gain = 0;
-    it->replaygain_album_peak = 1;
     if (mp4ff_meta_find_by_name(mp4, "replaygain_track_gain", &s)) {
-        it->replaygain_track_gain = atof (s);
+        deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, atof (s));
         free (s);
     }
     if (mp4ff_meta_find_by_name(mp4, "replaygain_track_peak", &s)) {
-        it->replaygain_track_peak = atof (s);
+        deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, atof (s));
         free (s);
     }
     if (mp4ff_meta_find_by_name(mp4, "replaygain_album_gain", &s)) {
-        it->replaygain_album_gain = atof (s);
+        deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, atof (s));
         free (s);
     }
     if (mp4ff_meta_find_by_name(mp4, "replaygain_album_peak", &s)) {
-        it->replaygain_album_peak = atof (s);
+        deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, atof (s));
         free (s);
     }
     deadbeef->pl_add_meta (it, "title", NULL);
@@ -1019,7 +1015,7 @@ aac_load_tags (DB_playItem_t *it, mp4ff_t *mp4) {
 int
 aac_read_metadata (DB_playItem_t *it) {
 #ifdef USE_MP4FF
-    DB_FILE *fp = deadbeef->fopen (it->fname);
+    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
     if (!fp) {
         return -1;
     }
@@ -1112,9 +1108,7 @@ aac_insert (DB_playItem_t *after, const char *fname) {
         }
     }
 
-    DB_playItem_t *it = deadbeef->pl_item_alloc ();
-    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
-    it->fname = strdup (fname);
+    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
     it->filetype = ftype;
     deadbeef->pl_set_item_duration (it, duration);
     trace ("duration: %f sec\n", duration);

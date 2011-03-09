@@ -103,19 +103,19 @@ ffmpeg_open (uint32_t hints) {
 static int
 ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     ffmpeg_info_t *info = (ffmpeg_info_t *)_info;
-    trace ("ffmpeg init %s\n", it->fname);
+    trace ("ffmpeg init %s\n", deadbeef->pl_find_meta (it, ":URI"));
     // prepare to decode the track
     // return -1 on failure
 
     int ret;
-    int l = strlen (it->fname);
+    int l = strlen (deadbeef->pl_find_meta (it, ":URI"));
     char *uri = alloca (l + sizeof (FF_PROTOCOL_NAME) + 1);
     int i;
 
     // construct uri
     memcpy (uri, FF_PROTOCOL_NAME, sizeof (FF_PROTOCOL_NAME)-1);
     memcpy (uri + sizeof (FF_PROTOCOL_NAME)-1, ":", 1);
-    memcpy (uri + sizeof (FF_PROTOCOL_NAME), it->fname, l);
+    memcpy (uri + sizeof (FF_PROTOCOL_NAME), deadbeef->pl_find_meta (it, ":URI"), l);
     uri[sizeof (FF_PROTOCOL_NAME) + l] = 0;
     trace ("ffmpeg: uri: %s\n", uri);
 
@@ -150,10 +150,10 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     if (info->codec == NULL)
     {
-        trace ("ffmpeg can't decode %s\n", it->fname);
+        trace ("ffmpeg can't decode %s\n", deadbeef->pl_find_meta (it, ":URI"));
         return -1;
     }
-    trace ("ffmpeg can decode %s\n", it->fname);
+    trace ("ffmpeg can decode %s\n", deadbeef->pl_find_meta (it, ":URI"));
     trace ("ffmpeg: codec=%s, stream=%d\n", info->codec->name, i);
 
     if (avcodec_open (info->ctx, info->codec) < 0) {
@@ -537,13 +537,11 @@ ffmpeg_insert (DB_playItem_t *after, const char *fname) {
 
     int totalsamples = fctx->duration * samplerate / AV_TIME_BASE;
 
-    DB_playItem_t *it = deadbeef->pl_item_alloc ();
-    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
-    it->fname = strdup (fname);
+    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
     // FIXME: get proper codec
     it->filetype = filetypes[FT_UNKNOWN];
 
-    if (!deadbeef->is_local_file (it->fname)) {
+    if (!deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI"))) {
         deadbeef->pl_set_item_duration (it, -1);
     }
     else {
@@ -555,7 +553,7 @@ ffmpeg_insert (DB_playItem_t *after, const char *fname) {
     
     int64_t fsize = -1;
 
-    DB_FILE *fp = deadbeef->fopen (it->fname);
+    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
     if (fp) {
         if (!fp->vfs->is_streaming ()) {
             fsize = deadbeef->fgetlength (fp);
@@ -693,19 +691,19 @@ ffmpeg_stop (void) {
 
 int
 ffmpeg_read_metadata (DB_playItem_t *it) {
-    trace ("ffmpeg_read_metadata: fname %s\n", it->fname);
+    trace ("ffmpeg_read_metadata: fname %s\n", deadbeef->pl_find_meta (it, ":URI"));
     AVCodec *codec = NULL;
     AVCodecContext *ctx = NULL;
     AVFormatContext *fctx = NULL;
     int ret;
-    int l = strlen (it->fname);
+    int l = strlen (deadbeef->pl_find_meta (it, ":URI"));
     char *uri = alloca (l + sizeof (FF_PROTOCOL_NAME) + 1);
     int i;
 
     // construct uri
     memcpy (uri, FF_PROTOCOL_NAME, sizeof (FF_PROTOCOL_NAME)-1);
     memcpy (uri + sizeof (FF_PROTOCOL_NAME)-1, ":", 1);
-    memcpy (uri + sizeof (FF_PROTOCOL_NAME), it->fname, l);
+    memcpy (uri + sizeof (FF_PROTOCOL_NAME), deadbeef->pl_find_meta (it, ":URI"), l);
     uri[sizeof (FF_PROTOCOL_NAME) + l] = 0;
     trace ("ffmpeg: uri: %s\n", uri);
 
@@ -728,7 +726,7 @@ ffmpeg_read_metadata (DB_playItem_t *it) {
     }
     if (codec == NULL)
     {
-        trace ("ffmpeg can't decode %s\n", it->fname);
+        trace ("ffmpeg can't decode %s\n", deadbeef->pl_find_meta (it, ":URI"));
         av_close_input_file(fctx);
         return -1;
     }

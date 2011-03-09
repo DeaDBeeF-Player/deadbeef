@@ -120,7 +120,7 @@ void draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListview
                 if (!album || !*album) {
                     album = deadbeef->pl_find_meta (group_it, "title");
                 }
-                GdkPixbuf *pixbuf = get_cover_art (((DB_playItem_t *)group_it)->fname, artist, album, art_width);
+                GdkPixbuf *pixbuf = get_cover_art (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, art_width);
                 if (pixbuf) {
                     int pw = gdk_pixbuf_get_width (pixbuf);
                     int ph = gdk_pixbuf_get_height (pixbuf);
@@ -238,14 +238,15 @@ main_reload_metadata_activate
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (menuitem), "ps"));
     DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
     while (it) {
-        if (deadbeef->pl_is_selected (it) && deadbeef->is_local_file (it->fname) && it->decoder_id) {
+        const char *decoder_id = deadbeef->pl_find_meta (it, ":DECODER");
+        if (deadbeef->pl_is_selected (it) && deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI")) && decoder_id) {
             uint32_t f = deadbeef->pl_get_item_flags (it);
             if (!(f & DDB_IS_SUBTRACK)) {
                 f &= ~DDB_TAG_MASK;
                 deadbeef->pl_set_item_flags (it, f);
                 DB_decoder_t **decoders = deadbeef->plug_get_decoder_list ();
                 for (int i = 0; decoders[i]; i++) {
-                    if (!strcmp (decoders[i]->plugin.id, it->decoder_id)) {
+                    if (!strcmp (decoders[i]->plugin.id, decoder_id)) {
                         if (decoders[i]->read_metadata) {
                             decoders[i]->read_metadata (it);
                         }
@@ -337,8 +338,8 @@ on_remove_from_disk_activate                    (GtkMenuItem     *menuitem,
 
     DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
     while (it) {
-        if (deadbeef->pl_is_selected (it) && deadbeef->is_local_file (it->fname)) {
-            unlink (it->fname);
+        if (deadbeef->pl_is_selected (it) && deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI"))) {
+            unlink (deadbeef->pl_find_meta (it, ":URI"));
         }
         DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
         deadbeef->pl_item_unref (it);

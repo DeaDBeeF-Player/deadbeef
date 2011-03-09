@@ -97,7 +97,7 @@ musepack_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->reader.get_size = musepack_vfs_get_size;
     info->reader.canseek = musepack_vfs_canseek;
 
-    DB_FILE *fp = deadbeef->fopen (it->fname);
+    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
     if (!fp) {
         return -1;
     }
@@ -377,11 +377,9 @@ musepack_insert (DB_playItem_t *after, const char *fname) {
         int i;
         for (i = 0; i < nchapters; i++) {
             const mpc_chap_info *ch = mpc_demux_chap (demux, i);
-            DB_playItem_t *it = deadbeef->pl_item_alloc ();
-            it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
-            it->fname = strdup (fname);
+            DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
             it->filetype = "MusePack";
-            it->tracknum = i;
+            deadbeef->pl_set_meta_int (it, ":TRACKNUM", i);
             it->startsample = ch->sample;
             it->endsample = totalsamples-1;
             float gain = gain_title, peak = peak_title;
@@ -391,10 +389,10 @@ musepack_insert (DB_playItem_t *after, const char *fname) {
             if (ch->peak != 0) {
                 peak = pow (10, ch->peak / (20.0 * 256.0)) / (1<<15);
             }
-            it->replaygain_album_gain = gain_album;
-            it->replaygain_album_peak = peak_album;
-            it->replaygain_track_gain = gain_title;
-            it->replaygain_track_peak = peak_title;
+            deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, gain_album);
+            deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, peak_album);
+            deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, gain_title);
+            deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, peak_title);
             deadbeef->pl_set_item_flags (it, DDB_IS_SUBTRACK);
             if (!prev) {
                 meta = deadbeef->pl_item_alloc ();
@@ -432,17 +430,15 @@ musepack_insert (DB_playItem_t *after, const char *fname) {
         return after;
     }
 
-    DB_playItem_t *it = deadbeef->pl_item_alloc ();
-    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
-    it->fname = strdup (fname);
+    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
     it->filetype = "MusePack";
     deadbeef->pl_set_item_duration (it, dur);
 
     /*int apeerr = */deadbeef->junk_apev2_read (it, fp);
-    it->replaygain_album_gain = gain_album;
-    it->replaygain_album_peak = peak_album;
-    it->replaygain_track_gain = gain_title;
-    it->replaygain_track_peak = peak_title;
+    deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, gain_album);
+    deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, peak_album);
+    deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, gain_title);
+    deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, peak_title);
 
     deadbeef->fclose (fp);
 
@@ -486,7 +482,7 @@ musepack_insert (DB_playItem_t *after, const char *fname) {
 }
 
 static int musepack_read_metadata (DB_playItem_t *it) {
-    DB_FILE *fp = deadbeef->fopen (it->fname);
+    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
     if (!fp) {
         return -1;
     }

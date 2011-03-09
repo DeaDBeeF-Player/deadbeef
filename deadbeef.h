@@ -104,19 +104,12 @@ enum {
 // playlist item
 // these are "public" fields, available to plugins
 typedef struct DB_playItem_s {
-    char *fname; // full pathname
-    const char *decoder_id;
-    int tracknum; // used for stuff like sid, nsf, cue (will be ignored by most codecs)
     int startsample; // start sample of track, or -1 for auto
     int endsample; // end sample of track, or -1 for auto
     int shufflerating; // sort order for shuffle mode
     float playtime; // actual playback time of this track in seconds
     time_t started_timestamp; // result of calling time(NULL)
     const char *filetype; // e.g. MP3 or OGG
-    float replaygain_album_gain;
-    float replaygain_album_peak;
-    float replaygain_track_gain;
-    float replaygain_track_peak;
 } DB_playItem_t;
 
 typedef struct DB_metaInfo_s {
@@ -250,6 +243,14 @@ enum pl_column_t {
     DB_COLUMN_ID_MAX
 };
 
+// replaygain constants
+enum {
+    DDB_REPLAYGAIN_ALBUMGAIN,
+    DDB_REPLAYGAIN_ALBUMPEAK,
+    DDB_REPLAYGAIN_TRACKGAIN,
+    DDB_REPLAYGAIN_TRACKPEAK,
+};
+
 // message ids for communicating with player
 enum {
     M_SONGFINISHED,
@@ -371,6 +372,7 @@ typedef struct {
     void (*plt_unlock) (void);
     // playlist tracks access
     DB_playItem_t * (*pl_item_alloc) (void);
+    DB_playItem_t * (*pl_item_alloc_init) (const char *fname, const char *decoder_id);
     void (*pl_item_ref) (DB_playItem_t *it);
     void (*pl_item_unref) (DB_playItem_t *it);
     void (*pl_item_copy) (DB_playItem_t *out, DB_playItem_t *in);
@@ -441,8 +443,12 @@ typedef struct {
     // metainfo
     void (*pl_add_meta) (DB_playItem_t *it, const char *key, const char *value);
     void (*pl_append_meta) (DB_playItem_t *it, const char *key, const char *value);
+    void (*pl_set_meta_int) (DB_playItem_t *it, const char *key, int value);
+    void (*pl_set_meta_float) (DB_playItem_t *it, const char *key, float value);
     // must be used from within explicit pl_lock/unlock block
     const char *(*pl_find_meta) (DB_playItem_t *it, const char *key);
+    int (*pl_find_meta_int) (DB_playItem_t *it, const char *key, int def);
+    float (*pl_find_meta_float) (DB_playItem_t *it, const char *key, float def);
     void (*pl_replace_meta) (DB_playItem_t *it, const char *key, const char *value);
     void (*pl_delete_all_meta) (DB_playItem_t *it);
     DB_metaInfo_t * (*pl_get_metadata) (DB_playItem_t *it);
@@ -452,6 +458,9 @@ typedef struct {
     void (*pl_set_item_flags) (DB_playItem_t *it, uint32_t flags);
     void (*pl_sort) (int iter, int id, const char *format, int ascending);
     void (*pl_items_copy_junk)(DB_playItem_t *from, DB_playItem_t *first, DB_playItem_t *last);
+    // idx is one of DDB_REPLAYGAIN_* constants
+    void (*pl_set_item_replaygain) (DB_playItem_t *it, int idx, float value);
+    float (*pl_get_item_replaygain) (DB_playItem_t *it, int idx);
 
     // playqueue support
     int (*pl_playqueue_push) (DB_playItem_t *it);

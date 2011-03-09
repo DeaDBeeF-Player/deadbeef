@@ -113,18 +113,18 @@ cgme_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     int samplerate = deadbeef->conf_get_int ("synth.samplerate", 44100);
 
     gme_err_t res;
-    const char *ext = strrchr (it->fname, '.');
+    const char *ext = strrchr (deadbeef->pl_find_meta (it, ":URI"), '.');
     if (ext && !strcasecmp (ext, ".vgz")) {
         trace ("opening gzipped vgm...\n");
         char *buffer;
         int sz;
-        if (!read_gzfile (it->fname, &buffer, &sz)) {
+        if (!read_gzfile (deadbeef->pl_find_meta (it, ":URI"), &buffer, &sz)) {
             res = gme_open_data (buffer, sz, &info->emu, samplerate);
             free (buffer);
         }
     }
     else {
-        DB_FILE *f = deadbeef->fopen (it->fname);
+        DB_FILE *f = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
         int64_t sz = deadbeef->fgetlength (f);
         if (sz <= 0) {
             deadbeef->fclose (f);
@@ -151,14 +151,14 @@ cgme_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
     gme_mute_voices (info->emu, info->cgme_voicemask);
-    gme_start_track (info->emu, it->tracknum);
+    gme_start_track (info->emu, deadbeef->pl_find_meta_int (it, ":TRACKNUM", 0));
 
 #ifdef GME_VERSION_055
     gme_info_t *inf;
-    gme_track_info (info->emu, &inf, it->tracknum);
+    gme_track_info (info->emu, &inf, deadbeef->pl_find_meta_int (it, ":TRACKNUM", 0));
 #else
     track_info_t _inf;
-    gme_track_info (info->emu, &inf, it->tracknum);
+    gme_track_info (info->emu, &inf, deadbeef->pl_find_meta_int (it, ":TRACKNUM", 0));
     track_info_t *inf = &_inf;
 #endif
 
@@ -298,9 +298,7 @@ cgme_insert (DB_playItem_t *after, const char *fname) {
             track_info_t *inf = &_inf;
 #endif
             if (!ret) {
-                DB_playItem_t *it = deadbeef->pl_item_alloc ();
-                it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
-                it->fname = strdup (fname);
+                DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
                 char str[1024];
                 if (inf->song[0]) {
                     snprintf (str, 1024, "%d %s - %s", i, inf->game, inf->song);
@@ -309,7 +307,7 @@ cgme_insert (DB_playItem_t *after, const char *fname) {
                     snprintf (str, 1024, "%d %s - ?", i, inf->game);
                 }
                 trace ("track subtune %d %s, length=%d\n", i, str, inf->length);
-                it->tracknum = i;
+                deadbeef->pl_set_meta_int (it, ":TRACKNUM", i);
 
                 // add metadata
                 cgme_add_meta (it, "system", inf->system);

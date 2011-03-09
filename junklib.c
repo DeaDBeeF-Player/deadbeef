@@ -1110,19 +1110,19 @@ junk_apev2_add_frame (playItem_t *it, DB_apev2_tag_t *tag_store, DB_apev2_frame_
 
             if (!frame_mapping[m]) {
                 if (!strncasecmp (key, "replaygain_album_gain", 21)) {
-                    it->replaygain_album_gain = atof (value);
+                    pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, atof (value));
                     trace ("album_gain=%s\n", value);
                 }
                 else if (!strncasecmp (key, "replaygain_album_peak", 21)) {
-                    it->replaygain_album_peak = atof (value);
+                    pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, atof (value));
                     trace ("album_peak=%s\n", value);
                 }
                 else if (!strncasecmp (key, "replaygain_track_gain", 21)) {
-                    it->replaygain_track_gain = atof (value);
+                    pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, atof (value));
                     trace ("track_gain=%s\n", value);
                 }
                 else if (!strncasecmp (key, "replaygain_track_peak", 21)) {
-                    it->replaygain_track_peak = atof (value);
+                    pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, atof (value));
                     trace ("track_peak=%s\n", value);
                 }
                 else {
@@ -2802,16 +2802,16 @@ junk_id3v2_load_txx (int version_major, playItem_t *it, uint8_t *readptr, int sy
         }
 
         if (!strcasecmp (txx, "replaygain_album_gain")) {
-            it->replaygain_album_gain = atof (val);
+            pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, atof (val));
         }
         else if (!strcasecmp (txx, "replaygain_album_peak")) {
-            it->replaygain_album_peak = atof (val);
+            pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, atof (val));
         }
         else if (!strcasecmp (txx, "replaygain_track_gain")) {
-            it->replaygain_track_gain = atof (val);
+            pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, atof (val));
         }
         else if (!strcasecmp (txx, "replaygain_track_peak")) {
-            it->replaygain_track_peak = atof (val);
+            pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, atof (val));
         }
         else {
             pl_append_meta (it, txx, val);
@@ -3348,7 +3348,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
     int write_apev2 = junk_flags & JUNK_WRITE_APEV2;
 
     // find the beginning and the end of audio data
-    fp = deadbeef->fopen (it->fname);
+    fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
     if (!fp) {
         return -1;
     }
@@ -3398,7 +3398,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
     // open output file
     out = NULL;
     char tmppath[PATH_MAX];
-    snprintf (tmppath, sizeof (tmppath), "%s.temp", it->fname);
+    snprintf (tmppath, sizeof (tmppath), "%s.temp", deadbeef->pl_find_meta (it, ":URI"));
 
     out = fopen (tmppath, "w+b");
     trace ("will write tags into %s\n", tmppath);
@@ -3415,7 +3415,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
 
     if (!strip_id3v2 && !write_id3v2 && id3v2_size > 0) {
         if (deadbeef->fseek (fp, id3v2_start, SEEK_SET) == -1) {
-            trace ("cmp3_write_metadata: failed to seek to original id3v2 tag position in %s\n", it->fname);
+            trace ("cmp3_write_metadata: failed to seek to original id3v2 tag position in %s\n", deadbeef->pl_find_meta (it, ":URI"));
             goto error;
         }
         uint8_t *buf = malloc (id3v2_size);
@@ -3424,12 +3424,12 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             goto error;
         }
         if (deadbeef->fread (buf, 1, id3v2_size, fp) != id3v2_size) {
-            trace ("cmp3_write_metadata: failed to read original id3v2 tag from %s\n", it->fname);
+            trace ("cmp3_write_metadata: failed to read original id3v2 tag from %s\n", deadbeef->pl_find_meta (it, ":URI"));
             free (buf);
             goto error;
         }
         if (fwrite (buf, 1, id3v2_size, out) != id3v2_size) {
-            trace ("cmp3_write_metadata: failed to copy original id3v2 tag from %s to temp file\n", it->fname);
+            trace ("cmp3_write_metadata: failed to copy original id3v2 tag from %s to temp file\n", deadbeef->pl_find_meta (it, ":URI"));
             free (buf);
             goto error;
         }
@@ -3532,7 +3532,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
 
         // write tag
         if (junk_id3v2_write (out, &id3v2) != 0) {
-            trace ("cmp3_write_metadata: failed to write id3v2 tag to %s\n", it->fname)
+            trace ("cmp3_write_metadata: failed to write id3v2 tag to %s\n", deadbeef->pl_find_meta (it, ":URI"))
             goto error;
         }
     }
@@ -3567,7 +3567,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
     if (!write_apev2 && !strip_apev2 && apev2_start != 0) {
         trace ("copying original apev2 tag\n");
         if (deadbeef->fseek (fp, apev2_start, SEEK_SET) == -1) {
-            trace ("cmp3_write_metadata: failed to seek to original apev2 tag position in %s\n", it->fname);
+            trace ("cmp3_write_metadata: failed to seek to original apev2 tag position in %s\n", deadbeef->pl_find_meta (it, ":URI"));
             goto error;
         }
         uint8_t *buf = malloc (apev2_size);
@@ -3576,12 +3576,12 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             goto error;
         }
         if (deadbeef->fread (buf, 1, apev2_size, fp) != apev2_size) {
-            trace ("cmp3_write_metadata: failed to read original apev2 tag from %s\n", it->fname);
+            trace ("cmp3_write_metadata: failed to read original apev2 tag from %s\n", deadbeef->pl_find_meta (it, ":URI"));
             free (buf);
             goto error;
         }
         if (fwrite (buf, 1, apev2_size, out) != apev2_size) {
-            trace ("cmp3_write_metadata: failed to copy original apev2 tag from %s to temp file\n", it->fname);
+            trace ("cmp3_write_metadata: failed to copy original apev2 tag from %s to temp file\n", deadbeef->pl_find_meta (it, ":URI"));
             free (buf);
             goto error;
         }
@@ -3634,7 +3634,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
 
         // write tag
         if (deadbeef->junk_apev2_write (out, &apev2, 0, 1) != 0) {
-            trace ("cmp3_write_metadata: failed to write apev2 tag to %s\n", it->fname)
+            trace ("cmp3_write_metadata: failed to write apev2 tag to %s\n", deadbeef->pl_find_meta (it, ":URI"))
             goto error;
         }
     }
@@ -3642,23 +3642,23 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
     if (!write_id3v1 && !strip_id3v1 && id3v1_start != 0) {
         trace ("copying original id3v1 tag %d %d %d\n", write_id3v1, strip_id3v1, id3v1_start);
         if (deadbeef->fseek (fp, id3v1_start, SEEK_SET) == -1) {
-            trace ("cmp3_write_metadata: failed to seek to original id3v1 tag position in %s\n", it->fname);
+            trace ("cmp3_write_metadata: failed to seek to original id3v1 tag position in %s\n", deadbeef->pl_find_meta (it, ":URI"));
             goto error;
         }
         char buf[128];
         if (deadbeef->fread (buf, 1, 128, fp) != 128) {
-            trace ("cmp3_write_metadata: failed to read original id3v1 tag from %s\n", it->fname);
+            trace ("cmp3_write_metadata: failed to read original id3v1 tag from %s\n", deadbeef->pl_find_meta (it, ":URI"));
             goto error;
         }
         if (fwrite (buf, 1, 128, out) != 128) {
-            trace ("cmp3_write_metadata: failed to copy id3v1 tag from %s to temp file\n", it->fname);
+            trace ("cmp3_write_metadata: failed to copy id3v1 tag from %s to temp file\n", deadbeef->pl_find_meta (it, ":URI"));
             goto error;
         }
     }
     else if (write_id3v1) {
         trace ("writing new id3v1 tag\n");
         if (junk_id3v1_write (out, it) != 0) {
-            trace ("cmp3_write_metadata: failed to write id3v1 tag to %s\n", it->fname)
+            trace ("cmp3_write_metadata: failed to write id3v1 tag to %s\n", deadbeef->pl_find_meta (it, ":URI"))
             goto error;
         }
     }
@@ -3675,7 +3675,7 @@ error:
         free (buffer);
     }
     if (!err) {
-        rename (tmppath, it->fname);
+        rename (tmppath, deadbeef->pl_find_meta (it, ":URI"));
     }
     else {
         unlink (tmppath);

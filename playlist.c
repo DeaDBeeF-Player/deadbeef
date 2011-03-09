@@ -556,7 +556,7 @@ plt_free (void) {
 
         for (playItem_t *it = playlists_head->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
             if (it->_refc > 1) {
-                fprintf (stderr, "\033[0;31mWARNING: playitem %p %s has refc=%d at delete time\033[37;0m\n", it, it->fname, it->_refc);
+                fprintf (stderr, "\033[0;31mWARNING: playitem %p %s has refc=%d at delete time\033[37;0m\n", it, pl_find_meta (it, ":URI"), it->_refc);
             }
         }
 
@@ -849,14 +849,15 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
         }
         (*prev)->endsample = (prevtime * samplerate) - 1;
         pl_set_item_duration (*prev, (float)((*prev)->endsample - (*prev)->startsample + 1) / samplerate);
-        if ((*prev)->_duration < 0) {
+        if (pl_get_item_duration (*prev) < 0) {
             // might be bad cuesheet file, try to fix
             trace ("cuesheet seems to be corrupted, trying workaround\n");
             //trace ("[bad:] calc endsample=%d, prevtime=%f, samplerate=%d, prev track duration=%f\n", (*prev)->endsample,  prevtime, samplerate, (*prev)->duration);
             prevtime = f_index01;
             (*prev)->endsample = (prevtime * samplerate) - 1;
-            pl_set_item_duration (*prev, (float)((*prev)->endsample - (*prev)->startsample + 1) / samplerate);
-            if ((*prev)->_duration > 0) {
+            float dur = (float)((*prev)->endsample - (*prev)->startsample + 1) / samplerate;
+            pl_set_item_duration (*prev, dur);
+            if (dur > 0) {
                 trace ("success :-D\n");
             }
             else {
@@ -871,10 +872,8 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
         trace ("pl_process_cue_track: invalid index01 (pregap=%s, index01=%s)\n", pregap, index01);
         return after;
     }
-    playItem_t *it = pl_item_alloc ();
-    it->decoder_id = plug_get_decoder_id (decoder_id);
-    it->fname = strdup (fname);
-    it->tracknum = atoi (track);
+    playItem_t *it = pl_item_alloc_init (fname, decoder_id);
+    pl_set_meta_int (it, ":TRACKNUM", atoi (track));
     it->startsample = index01[0] ? f_index01 * samplerate : 0;
     it->endsample = -1; // will be filled by next read, or by decoder
     it->filetype = ftype;
@@ -903,16 +902,16 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
         pl_add_meta (it, "year", date);
     }
     if (replaygain_album_gain[0]) {
-        it->replaygain_album_gain = atof (replaygain_album_gain);
+        pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, atof (replaygain_album_gain));
     }
     if (replaygain_album_peak[0]) {
-        it->replaygain_album_peak = atof (replaygain_album_peak);
+        pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, atof (replaygain_album_peak));
     }
     if (replaygain_track_gain[0]) {
-        it->replaygain_track_gain = atof (replaygain_track_gain);
+        pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, atof (replaygain_track_gain));
     }
     if (replaygain_track_peak[0]) {
-        it->replaygain_track_peak = atof (replaygain_track_peak);
+        pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, atof (replaygain_track_peak));
     }
     it->_flags |= DDB_IS_SUBTRACK | DDB_TAG_CUESHEET;
     after = pl_insert_item (after, it);
@@ -992,7 +991,7 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
             trace ("cue: adding track: %s %s %s\n", origin->fname, title, track);
             if (title[0]) {
                 // add previous track
-                after = pl_process_cue_track (after, origin->fname, &prev, track, index00, index01, pregap, title, albumperformer, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, origin->decoder_id, origin->filetype, samplerate);
+                after = pl_process_cue_track (after, pl_find_meta (origin, ":URI"), &prev, track, index00, index01, pregap, title, albumperformer, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, pl_find_meta (origin, ":DECODER"), origin->filetype, samplerate);
                 trace ("cue: added %p (%p)\n", after);
             }
 
@@ -1036,7 +1035,7 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
         UNLOCK;
         return NULL;
     }
-    after = pl_process_cue_track (after, origin->fname, &prev, track, index00, index01, pregap, title, albumperformer, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, origin->decoder_id, origin->filetype, samplerate);
+    after = pl_process_cue_track (after, pl_find_meta (origin, ":URI"), &prev, track, index00, index01, pregap, title, albumperformer, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, pl_find_meta (origin, ":DECODER"), origin->filetype, samplerate);
     if (after) {
         trace ("last track endsample: %d\n", numsamples-1);
         after->endsample = numsamples-1;
@@ -1062,9 +1061,10 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
 playItem_t *
 pl_insert_cue (playItem_t *after, playItem_t *origin, int numsamples, int samplerate) {
     trace ("pl_insert_cue numsamples=%d, samplerate=%d\n", numsamples, samplerate);
-    int len = strlen (origin->fname);
+    const char *fname = pl_find_meta (origin, ":URI");
+    int len = strlen (fname);
     char cuename[len+5];
-    strcpy (cuename, origin->fname);
+    strcpy (cuename, fname);
     strcpy (cuename+len, ".cue");
     FILE *fp = fopen (cuename, "rb");
     if (!fp) {
@@ -1471,11 +1471,8 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
                 }
             }
             
-            playItem_t *it = pl_item_alloc ();
-            it->decoder_id = NULL;
-            it->fname = strdup (fname);
+            playItem_t *it = pl_item_alloc_init (fname, NULL);
             it->filetype = "content";
-            it->_duration = -1;
             pl_add_meta (it, "title", NULL);
             after = plt_insert_item (addfiles_playlist ? addfiles_playlist : playlist, after, it);
             pl_item_unref (it);
@@ -1661,8 +1658,9 @@ plt_remove_item (playlist_t *playlist, playItem_t *it) {
     }
 
     // totaltime
-    if (it->_duration > 0) {
-        playlist->totaltime -= it->_duration;
+    float dur = pl_get_item_duration (it);
+    if (dur > 0) {
+        playlist->totaltime -= dur;
         if (playlist->totaltime < 0) {
             playlist->totaltime = 0;
         }
@@ -1785,8 +1783,9 @@ plt_insert_item (playlist_t *playlist, playItem_t *after, playItem_t *it) {
     it->played = 0;
 
     // totaltime
-    if (it->_duration > 0) {
-        playlist->totaltime += it->_duration;
+    float dur = pl_get_item_duration (it);
+    if (dur > 0) {
+        playlist->totaltime += dur;
     }
 
     GLOBAL_UNLOCK;
@@ -1801,18 +1800,10 @@ pl_insert_item (playItem_t *after, playItem_t *it) {
 void
 pl_item_copy (playItem_t *out, playItem_t *it) {
     LOCK;
-    out->fname = strdup (it->fname);
-    out->decoder_id = it->decoder_id;
-    out->tracknum = it->tracknum;
     out->startsample = it->startsample;
     out->endsample = it->endsample;
-    pl_set_item_duration (out, it->_duration);
     out->shufflerating = it->shufflerating;
     out->filetype = it->filetype;
-    out->replaygain_album_gain = it->replaygain_album_gain;
-    out->replaygain_album_peak = it->replaygain_album_peak;
-    out->replaygain_track_gain = it->replaygain_track_gain;
-    out->replaygain_track_peak = it->replaygain_track_peak;
     out->started_timestamp = it->started_timestamp;
     out->next[PL_MAIN] = it->next[PL_MAIN];
     out->prev[PL_MAIN] = it->prev[PL_MAIN];
@@ -1844,9 +1835,15 @@ playItem_t *
 pl_item_alloc (void) {
     playItem_t *it = malloc (sizeof (playItem_t));
     memset (it, 0, sizeof (playItem_t));
-    it->replaygain_album_peak = 1;
-    it->replaygain_track_peak = 1;
     it->_refc = 1;
+    return it;
+}
+
+playItem_t *
+pl_item_alloc_init (const char *fname, const char *decoder_id) {
+    playItem_t *it = pl_item_alloc ();
+    pl_add_meta (it, ":URI", fname);
+    pl_add_meta (it, ":DECODER", decoder_id);
     return it;
 }
 
@@ -1854,7 +1851,7 @@ void
 pl_item_ref (playItem_t *it) {
     LOCK;
     it->_refc++;
-    //trace ("\033[0;34m+it %p: refc=%d: %s\033[37;0m\n", it, it->_refc, it->fname);
+    //trace ("\033[0;34m+it %p: refc=%d: %s\033[37;0m\n", it, it->_refc, pl_find_meta (it, ":URI"));
     UNLOCK;
 }
 
@@ -1862,9 +1859,6 @@ static void
 pl_item_free (playItem_t *it) {
     LOCK;
     if (it) {
-        if (it->fname) {
-            free (it->fname);
-        }
         while (it->meta) {
             DB_metaInfo_t *m = it->meta;
             it->meta = m->next;
@@ -1881,12 +1875,12 @@ void
 pl_item_unref (playItem_t *it) {
     LOCK;
     it->_refc--;
-    //trace ("\033[0;31m-it %p: refc=%d: %s\033[37;0m\n", it, it->_refc, it->fname);
+    //trace ("\033[0;31m-it %p: refc=%d: %s\033[37;0m\n", it, it->_refc, pl_find_meta (it, ":URI"));
     if (it->_refc < 0) {
         trace ("\033[0;31mplaylist: bad refcount on item %p\033[37;0m\n", it);
     }
     if (it->_refc <= 0) {
-        //printf ("\033[0;31mdeleted %s\033[37;0m\n", it->fname);
+        //printf ("\033[0;31mdeleted %s\033[37;0m\n", pl_find_meta (it, ":URI"));
         pl_item_free (it);
     }
     UNLOCK;
@@ -1912,12 +1906,12 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
     if (!value || !*value) {
         if (!strcasecmp (key, "title")) {
             // cut filename without path and extension
-            const char *pext = it->fname + strlen (it->fname) - 1;
-            while (pext >= it->fname && *pext != '.') {
+            const char *pext = pl_find_meta (it, ":URI") + strlen (pl_find_meta (it, ":URI")) - 1;
+            while (pext >= pl_find_meta (it, ":URI") && *pext != '.') {
                 pext--;
             }
             const char *pname = pext;
-            while (pname >= it->fname && *pname != '/') {
+            while (pname >= pl_find_meta (it, ":URI") && *pname != '/') {
                 pname--;
             }
             if (*pname == '/') {
@@ -2004,6 +1998,20 @@ pl_replace_meta (playItem_t *it, const char *key, const char *value) {
     UNLOCK;
 }
 
+void
+pl_set_meta_int (playItem_t *it, const char *key, int value) {
+    char s[20];
+    snprintf (s, sizeof (s), "%d", value);
+    pl_replace_meta (it, key, s);
+}
+
+void
+pl_set_meta_float (playItem_t *it, const char *key, float value) {
+    char s[20];
+    snprintf (s, sizeof (s), "%f", value);
+    pl_replace_meta (it, key, s);
+}
+
 const char *
 pl_find_meta (playItem_t *it, const char *key) {
     DB_metaInfo_t *m = it->meta;
@@ -2014,6 +2022,18 @@ pl_find_meta (playItem_t *it, const char *key) {
         m = m->next;
     }
     return NULL;
+}
+
+int
+pl_find_meta_int (playItem_t *it, const char *key, int def) {
+    const char *val = pl_find_meta (it, key);
+    return val ? atoi (val) : def;
+}
+
+float
+pl_find_meta_float (playItem_t *it, const char *key, float def) {
+    const char *val = pl_find_meta (it, key);
+    return val ? atof (val) : def;
 }
 
 DB_metaInfo_t *
@@ -2085,29 +2105,32 @@ pl_save (const char *fname) {
     for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
         uint16_t l;
         uint8_t ll;
-        l = strlen (it->fname);
+        const char *fname = pl_find_meta (it, ":URI");
+        l = strlen (fname);
         if (fwrite (&l, 1, 2, fp) != 2) {
             goto save_fail;
         }
-        if (fwrite (it->fname, 1, l, fp) != l) {
+        if (fwrite (fname, 1, l, fp) != l) {
             goto save_fail;
         }
-        if (it->decoder_id) {
-            ll = strlen (it->decoder_id);
+        const char *decoder_id = pl_find_meta (it, ":DECODER");
+        if (decoder_id) {
+            ll = strlen (decoder_id);
             if (fwrite (&ll, 1, 1, fp) != 1) {
                 goto save_fail;
             }
-            if (fwrite (it->decoder_id, 1, ll, fp) != ll) {
+            if (fwrite (decoder_id, 1, ll, fp) != ll) {
                 goto save_fail;
             }
         }
-        else {
+        else
+        {
             ll = 0;
             if (fwrite (&ll, 1, 1, fp) != 1) {
                 goto save_fail;
             }
         }
-        l = it->tracknum;
+        l = pl_find_meta_int (it, ":TRACKNUM", 0);
         if (fwrite (&l, 1, 2, fp) != 2) {
             goto save_fail;
         }
@@ -2129,16 +2152,20 @@ pl_save (const char *fname) {
                 goto save_fail;
             }
         }
-        if (fwrite (&it->replaygain_album_gain, 1, 4, fp) != 4) {
+        float rg_albumgain = pl_get_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN);
+        float rg_albumpeak = pl_get_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK);
+        float rg_trackgain = pl_get_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN);
+        float rg_trackpeak = pl_get_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK);
+        if (fwrite (&rg_albumgain, 1, 4, fp) != 4) {
             goto save_fail;
         }
-        if (fwrite (&it->replaygain_album_peak, 1, 4, fp) != 4) {
+        if (fwrite (&rg_albumpeak, 1, 4, fp) != 4) {
             goto save_fail;
         }
-        if (fwrite (&it->replaygain_track_gain, 1, 4, fp) != 4) {
+        if (fwrite (&rg_trackgain, 1, 4, fp) != 4) {
             goto save_fail;
         }
-        if (fwrite (&it->replaygain_track_peak, 1, 4, fp) != 4) {
+        if (fwrite (&rg_trackpeak, 1, 4, fp) != 4) {
             goto save_fail;
         }
         if (fwrite (&it->_flags, 1, 4, fp) != 4) {
@@ -2331,11 +2358,12 @@ pl_load (const char *fname) {
         if (fread (&l, 1, 2, fp) != 2) {
             goto load_fail;
         }
-        it->fname = malloc (l+1);
-        if (fread (it->fname, 1, l, fp) != l) {
+        char fname[l+1];
+        if (fread (fname, 1, l, fp) != l) {
             goto load_fail;
         }
-        it->fname[l] = 0;
+        fname[l] = 0;
+        pl_add_meta (it, ":URI", fname);
         // decoder
         uint8_t ll;
         if (fread (&ll, 1, 1, fp) != 1) {
@@ -2344,22 +2372,20 @@ pl_load (const char *fname) {
         if (ll >= 20) {
             goto load_fail;
         }
+        char decoder_id[20] = "";
         if (ll) {
-            char decoder[20];
-            if (fread (decoder, 1, ll, fp) != ll) {
+            if (fread (decoder_id, 1, ll, fp) != ll) {
                 goto load_fail;
             }
-            decoder[ll] = 0;
-            it->decoder_id = plug_get_decoder_id (decoder);
-        }
-        else {
-            it->decoder_id = NULL;
+            decoder_id[ll] = 0;
+            pl_add_meta (it, ":DECODER", decoder_id);
         }
         // tracknum
-        if (fread (&l, 1, 2, fp) != 2) {
+        int16_t tracknum;
+        if (fread (&tracknum, 1, 2, fp) != 2) {
             goto load_fail;
         }
-        it->tracknum = l;
+        pl_set_meta_int (it, ":TRACKNUM", tracknum);
         // startsample
         if (fread (&it->startsample, 1, 4, fp) != 4) {
             goto load_fail;
@@ -2369,11 +2395,12 @@ pl_load (const char *fname) {
             goto load_fail;
         }
         // duration
-        float d;
-        if (fread (&d, 1, 4, fp) != 4) {
+        if (fread (&it->_duration, 1, 4, fp) != 4) {
             goto load_fail;
         }
-        it->_duration = d;
+        char s[100];
+        pl_format_time (it->_duration, s, sizeof(s));
+        pl_replace_meta (it, ":DURATION", s);
         // get const filetype string from decoder
         uint8_t ft;
         if (fread (&ft, 1, 1, fp) != 1) {
@@ -2388,8 +2415,8 @@ pl_load (const char *fname) {
             if (!strcmp (ftype, "content")) {
                 it->filetype = "content";
             }
-            else if (it->decoder_id) {
-                DB_decoder_t *dec = plug_get_decoder_for_id (it->decoder_id);
+            else if (decoder_id[0]) {
+                DB_decoder_t *dec = plug_get_decoder_for_id (decoder_id);
                 if (dec && dec->filetypes) {
                     for (int i = 0; dec->filetypes[i]; i++) {
                         if (!strcasecmp (dec->filetypes[i], ftype)) {
@@ -2400,34 +2427,55 @@ pl_load (const char *fname) {
                 }
             }
         }
-        if (fread (&it->replaygain_album_gain, 1, 4, fp) != 4) {
+        
+        float f;
+
+        if (fread (&f, 1, 4, fp) != 4) {
             goto load_fail;
         }
-        if (fread (&it->replaygain_album_peak, 1, 4, fp) != 4) {
+        if (f != 0) {
+            pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, f);
+        }
+
+        if (fread (&f, 1, 4, fp) != 4) {
             goto load_fail;
         }
-        if (it->replaygain_album_peak == 0) {
-            it->replaygain_album_peak = 1;
+        if (f == 0) {
+            f = 1;
         }
-        if (fread (&it->replaygain_track_gain, 1, 4, fp) != 4) {
+        if (f != 1) {
+            pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, f);
+        }
+
+        if (fread (&f, 1, 4, fp) != 4) {
             goto load_fail;
         }
-        if (fread (&it->replaygain_track_peak, 1, 4, fp) != 4) {
+        if (f != 0) {
+            pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, f);
+        }
+
+        if (fread (&f, 1, 4, fp) != 4) {
             goto load_fail;
         }
-        if (it->replaygain_track_peak == 0) {
-            it->replaygain_track_peak = 1;
+        if (f == 0) {
+            f = 1;
         }
+        if (f != 1) {
+            pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, f);
+        }
+
+        uint32_t flg = 0;
         if (minorver >= 2) {
-            if (fread (&it->_flags, 1, 4, fp) != 4) {
+            if (fread (&flg, 1, 4, fp) != 4) {
                 goto load_fail;
             }
         }
         else {
-            if (it->startsample > 0 || it->endsample > 0 || it->tracknum > 0) {
-                it->_flags |= DDB_IS_SUBTRACK;
+            if (it->startsample > 0 || it->endsample > 0 || tracknum > 0) {
+                flg |= DDB_IS_SUBTRACK;
             }
         }
+        pl_set_item_flags (it, flg);
 
         int16_t nm = 0;
         if (fread (&nm, 1, 2, fp) != 2) {
@@ -2627,15 +2675,56 @@ pl_set_item_duration (playItem_t *it, float duration) {
         }
     }
     it->_duration = duration;
+    char s[100];
+    pl_format_time (it->_duration, s, sizeof(s));
+    pl_replace_meta (it, ":DURATION", s);
     GLOBAL_UNLOCK;
 }
 
 float
 pl_get_item_duration (playItem_t *it) {
-    LOCK;
-    float d = it->_duration;
-    UNLOCK;
-    return d;
+    return it->_duration;
+}
+
+static const char *rg_keys[] = {
+    ":REPLAYGAIN_ALBUMGAIN",
+    ":REPLAYGAIN_ALBUMPEAK",
+    ":REPLAYGAIN_TRACKGAIN",
+    ":REPLAYGAIN_TRACKPEAK"
+};
+
+void
+pl_set_item_replaygain (playItem_t *it, int idx, float value) {
+    char s[100];
+    switch (idx) {
+    case DDB_REPLAYGAIN_ALBUMGAIN:
+    case DDB_REPLAYGAIN_TRACKGAIN:
+        snprintf (s, sizeof (s), "%0.2f dB", value);
+        break;
+    case DDB_REPLAYGAIN_ALBUMPEAK:
+    case DDB_REPLAYGAIN_TRACKPEAK:
+        snprintf (s, sizeof (s), "%0.6f", value);
+        break;
+    default:
+        return;
+    }
+    pl_replace_meta (it, rg_keys[idx], s);
+}
+
+float
+pl_get_item_replaygain (playItem_t *it, int idx) {
+    if (idx < 0 || idx > DDB_REPLAYGAIN_TRACKPEAK) {
+        return 0;
+    }
+    
+    switch (idx) {
+    case DDB_REPLAYGAIN_ALBUMGAIN:
+    case DDB_REPLAYGAIN_TRACKGAIN:
+        return pl_find_meta_float (it, rg_keys[idx], 0);
+    case DDB_REPLAYGAIN_ALBUMPEAK:
+    case DDB_REPLAYGAIN_TRACKPEAK:
+        return pl_find_meta_float (it, rg_keys[idx], 1);
+    }
 }
 
 int
@@ -2746,7 +2835,7 @@ pl_format_duration (playItem_t *it, const char *ret, char *dur, int size) {
     if (ret) {
         return ret;
     }
-    pl_format_time (it->_duration, dur, size);
+    pl_format_time (pl_get_item_duration (it), dur, size);
     return dur;
 }
 
@@ -2897,8 +2986,8 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                 }
             }
             else if (*fmt == 'f') {
-                meta = it->fname + strlen (it->fname) - 1;
-                while (meta > it->fname && (*meta) != '/') {
+                meta = pl_find_meta (it, ":URI") + strlen (pl_find_meta (it, ":URI")) - 1;
+                while (meta > pl_find_meta (it, ":URI") && (*meta) != '/') {
                     meta--;
                 }
                 if (*meta == '/') {
@@ -2906,7 +2995,7 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                 }
             }
             else if (*fmt == 'F') {
-                meta = it->fname;
+                meta = pl_find_meta (it, ":URI");
             }
             else if (*fmt == 'T') {
                 char *t = tags;
@@ -2953,8 +3042,8 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
             }
             else if (*fmt == 'd') {
                 // directory
-                const char *end = it->fname + strlen (it->fname) - 1;
-                while (end > it->fname && (*end) != '/') {
+                const char *end = pl_find_meta (it, ":URI") + strlen (pl_find_meta (it, ":URI")) - 1;
+                while (end > pl_find_meta (it, ":URI") && (*end) != '/') {
                     end--;
                 }
                 if (*end != '/') {
@@ -2963,7 +3052,7 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                 else {
                     const char *start = end;
                     start--;
-                    while (start > it->fname && (*start != '/')) {
+                    while (start > pl_find_meta (it, ":URI") && (*start != '/')) {
                         start--;
                     }
 
@@ -2981,8 +3070,8 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
             }
             else if (*fmt == 'D') {
                 // directory with path
-                const char *end = it->fname + strlen (it->fname) - 1;
-                while (end > it->fname && (*end) != '/') {
+                const char *end = pl_find_meta (it, ":URI") + strlen (pl_find_meta (it, ":URI")) - 1;
+                while (end > pl_find_meta (it, ":URI") && (*end) != '/') {
                     end--;
                 }
                 if (*end != '/') {
@@ -2990,9 +3079,9 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                 }
                 else {
                     // copy
-                    int len = end - it->fname;
+                    int len = end - pl_find_meta (it, ":URI");
                     len = min (len, sizeof (dirname)-1);
-                    strncpy (dirname, it->fname, len);
+                    strncpy (dirname, pl_find_meta (it, ":URI"), len);
                     dirname[len] = 0;
                     meta = dirname;
                 }
@@ -3111,7 +3200,9 @@ strcasecmp_numeric (const char *a, const char *b) {
 static int
 pl_sort_compare_str (playItem_t *a, playItem_t *b) {
     if (pl_sort_is_duration) {
-        return !pl_sort_ascending ? b->_duration * 100000 - a->_duration * 100000 : a->_duration * 100000  - b->_duration * 100000;
+        float dur_a = a->_duration * 100000;
+        float dur_b = b->_duration * 100000;
+        return !pl_sort_ascending ? dur_b - dur_a : dur_a - dur_b;
     }
     else if (pl_sort_is_track) {
         int t1;
@@ -3411,7 +3502,7 @@ pl_search_process (const char *text) {
         if (*text) {
             for (DB_metaInfo_t *m = it->meta; m; m = m->next) {
                 if (strcasecmp (m->key, "cuesheet") && utfcasestr (m->value, text)) {
-                    //fprintf (stderr, "%s -> %s match (%s.%s)\n", text, m->value, it->fname, m->key);
+                    //fprintf (stderr, "%s -> %s match (%s.%s)\n", text, m->value, pl_find_meta (it, ":URI"), m->key);
                     // add to list
                     it->next[PL_SEARCH] = NULL;
                     if (playlist->tail[PL_SEARCH]) {
@@ -3558,24 +3649,6 @@ pl_items_copy_junk (playItem_t *from, playItem_t *first, playItem_t *last) {
         }
         meta = meta->next;
     }
-#if 0
-    const char *metainfo[] = {
-        "year", "genre", "copyright", "vendor", "comment", "tags", "numtracks", "band", "performer", "composer", "disc", "title", "artist", "album", NULL
-    };
-    for (int m = 0; metainfo[m]; m++) {
-        const char *data = pl_find_meta (from, metainfo[m]);
-        if (data) {
-            playItem_t *i;
-            for (i = first; ; i = i->next[PL_MAIN]) {
-                i->_flags = from->_flags; // stupid
-                pl_add_meta (i, metainfo[m], data);
-                if (i == last) {
-                    break;
-                }
-            }
-        }
-    }
-#endif
     UNLOCK;
 }
 
@@ -3591,5 +3664,10 @@ void
 pl_set_item_flags (playItem_t *it, uint32_t flags) {
     LOCK;
     it->_flags = flags;
+
+    char s[200];
+    pl_format_title (it, -1, s, sizeof (s), -1, "%T");
+    pl_replace_meta (it, ":TAGS", s);
+    pl_replace_meta (it, ":HAS_EMBEDDED_CUESHEET", (flags & DDB_HAS_EMBEDDED_CUESHEET) ? _("Yes") : _("No"));
     UNLOCK;
 }

@@ -646,7 +646,7 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     mpgmad_info_t *info = (mpgmad_info_t *)_info;
     _info->plugin = &plugin;
     memset (&info->buffer, 0, sizeof (info->buffer));
-    info->buffer.file = deadbeef->fopen (it->fname);
+    info->buffer.file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
     if (!info->buffer.file) {
         return -1;
     }
@@ -719,7 +719,7 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         trace ("duration=%f, endsample=%d, totalsamples=%d\n", info->buffer.duration, info->buffer.endsample, info->buffer.totalsamples);
     }
     if (info->buffer.samplerate == 0) {
-        trace ("bad mpeg file: %f\n", it->fname);
+        trace ("bad mpeg file: %f\n", deadbeef->pl_find_meta (it, ":URI"));
         return -1;
     }
     _info->fmt.bps = info->buffer.bitspersample;
@@ -1192,13 +1192,11 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
         return NULL;
     }
     if (fp->vfs->is_streaming ()) {
-        DB_playItem_t *it = deadbeef->pl_item_alloc ();
-        it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
-        it->fname = strdup (fname);
+        DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
         deadbeef->fclose (fp);
         deadbeef->pl_add_meta (it, "title", NULL);
         deadbeef->pl_set_item_duration (it, -1);
-        it->filetype = NULL;//filetypes[0];
+        it->filetype = NULL;
         after = deadbeef->pl_insert_item (after, it);
         deadbeef->pl_item_unref (it);
         return after;
@@ -1259,9 +1257,7 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
             break;
         }
     }
-    DB_playItem_t *it = deadbeef->pl_item_alloc ();
-    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
-    it->fname = strdup (fname);
+    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
 
     deadbeef->rewind (fp);
     // reset tags
@@ -1295,7 +1291,7 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
 
 int
 cmp3_read_metadata (DB_playItem_t *it) {
-    DB_FILE *fp = deadbeef->fopen (it->fname);
+    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
     if (!fp) {
         return -1;
     }

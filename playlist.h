@@ -23,22 +23,21 @@
 
 #define PL_MAX_ITERATORS 2
 
+// predefined properties stored in metadata for storage unification:
+// :URI - full pathname
+// :DECODER - decoder id
+// :TRACKNUM - subsong index (sid, nsf, cue, etc)
+// :DURATION - length in seconds
+
 typedef struct playItem_s {
-    char *fname; // full pathname
-    const char *decoder_id;
-    int tracknum; // used for stuff like sid, nsf, cue (will be ignored by most codecs)
     int startsample;
     int endsample;
     int shufflerating; // sort order for shuffle mode
     float playtime; // total playtime
     time_t started_timestamp; // result of calling time(NULL)
     const char *filetype; // e.g. MP3 or OGG
-    float replaygain_album_gain;
-    float replaygain_album_peak;
-    float replaygain_track_gain;
-    float replaygain_track_peak;
     // private area, must not be visible to plugins
-    float _duration; // in seconds
+    float _duration;
     uint32_t _flags;
     int _refc;
     struct playItem_s *next[PL_MAX_ITERATORS]; // next item in linked list
@@ -171,6 +170,9 @@ pl_remove_item (playItem_t *i);
 playItem_t *
 pl_item_alloc (void);
 
+playItem_t *
+pl_item_alloc_init (const char *fname, const char *decoder_id);
+
 void
 pl_item_ref (playItem_t *it);
 
@@ -215,8 +217,20 @@ pl_append_meta (playItem_t *it, const char *key, const char *value);
 const char *
 pl_find_meta (playItem_t *it, const char *key);
 
+int
+pl_find_meta_int (playItem_t *it, const char *key, int def);
+
+float
+pl_find_meta_float (playItem_t *it, const char *key, float def);
+
 void
 pl_replace_meta (playItem_t *it, const char *key, const char *value);
+
+void
+pl_set_meta_int (playItem_t *it, const char *key, int value);
+
+void
+pl_set_meta_float (playItem_t *it, const char *key, float value);
 
 void
 pl_delete_all_meta (playItem_t *it);
@@ -261,6 +275,12 @@ pl_set_item_duration (playItem_t *it, float duration);
 
 float
 pl_get_item_duration (playItem_t *it);
+
+void
+pl_set_item_replaygain (playItem_t *it, int idx, float value);
+
+float
+pl_get_item_replaygain (playItem_t *it, int idx);
 
 uint32_t
 pl_get_item_flags (playItem_t *it);

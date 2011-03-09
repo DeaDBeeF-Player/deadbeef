@@ -1081,7 +1081,7 @@ gtkui_add_file_info_cb (DB_playItem_t *it, void *data) {
     if (progress_is_aborted ()) {
         return -1;
     }
-    g_idle_add (gtkui_set_progress_text_idle, it->fname);
+    g_idle_add (gtkui_set_progress_text_idle, (gpointer)deadbeef->pl_find_meta (it, ":URI"));
     return 0;
 }
 

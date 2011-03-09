@@ -82,13 +82,13 @@ adplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     int channels = 2;
     info->opl = new CEmuopl (samplerate, bps == 16 ? true : false, channels == 2);
 //    opl->settype (Copl::TYPE_OPL2);
-    info->decoder = CAdPlug::factory (it->fname, info->opl, CAdPlug::players);
+    info->decoder = CAdPlug::factory (deadbeef->pl_find_meta (it, ":URI"), info->opl, CAdPlug::players);
     if (!info->decoder) {
-        trace ("adplug: failed to open %s\n", it->fname);
+        trace ("adplug: failed to open %s\n", deadbeef->pl_find_meta (it, ":URI"));
         return -1;
     }
 
-    info->subsong = it->tracknum;
+    info->subsong = deadbeef->pl_find_meta_int (it, ":TRACKNUM", 0);
     info->decoder->rewind (info->subsong);
     float dur = deadbeef->pl_get_item_duration (it);
     info->totalsamples = dur * samplerate;
@@ -264,11 +264,9 @@ adplug_insert (DB_playItem_t *after, const char *fname) {
         if (dur < 0.1) {
             continue;
         }
-        DB_playItem_t *it = deadbeef->pl_item_alloc ();
-        it->decoder_id = deadbeef->plug_get_decoder_id (adplug_plugin.plugin.id);
-        it->fname = strdup (fname);
+        DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, adplug_plugin.plugin.id);
         it->filetype = adplug_get_extension (fname);
-        it->tracknum = i;
+        deadbeef->pl_set_meta_int (it, ":TRACKNUM", i);
         deadbeef->pl_set_item_duration (it, dur);
 #if 0
         // add metainfo

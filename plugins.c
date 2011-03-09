@@ -125,6 +125,7 @@ static DB_functions_t deadbeef_api = {
     .plt_lock = plt_lock,
     .plt_unlock = plt_unlock,
     .pl_item_alloc = (DB_playItem_t* (*)(void))pl_item_alloc,
+    .pl_item_alloc_init = (DB_playItem_t* (*)(const char *fname, const char *decoder_id))pl_item_alloc_init,
     .pl_item_ref = (void (*)(DB_playItem_t *))pl_item_ref,
     .pl_item_unref = (void (*)(DB_playItem_t *))pl_item_unref,
     .pl_item_copy = (void (*)(DB_playItem_t *, DB_playItem_t *))pl_item_copy,
@@ -145,6 +146,8 @@ static DB_functions_t deadbeef_api = {
     .pl_set_item_flags = (void (*) (DB_playItem_t *it, uint32_t flags))pl_set_item_flags,
     .pl_sort = pl_sort,
     .pl_items_copy_junk = (void (*)(DB_playItem_t *from, DB_playItem_t *first, DB_playItem_t *last))pl_items_copy_junk,
+    .pl_set_item_replaygain = (void (*)(DB_playItem_t *it, int idx, float value))pl_set_item_replaygain,
+    .pl_get_item_replaygain = (float (*)(DB_playItem_t *it, int idx))pl_get_item_replaygain,
     .pl_get_totaltime = pl_get_totaltime,
     .pl_getcount = pl_getcount,
     .pl_delete_selected = pl_delete_selected,
@@ -174,7 +177,11 @@ static DB_functions_t deadbeef_api = {
     // metainfo
     .pl_add_meta = (void (*) (DB_playItem_t *, const char *, const char *))pl_add_meta,
     .pl_append_meta = (void (*) (DB_playItem_t *, const char *, const char *))pl_append_meta,
+    .pl_set_meta_int = (void (*) (DB_playItem_t *it, const char *key, int value))pl_set_meta_int,
+    .pl_set_meta_float = (void (*) (DB_playItem_t *it, const char *key, float value))pl_set_meta_float,
     .pl_find_meta = (const char *(*) (DB_playItem_t *, const char *))pl_find_meta,
+    .pl_find_meta_int = (int (*) (DB_playItem_t *it, const char *key, int def))pl_find_meta_int,
+    .pl_find_meta_float = (float (*) (DB_playItem_t *it, const char *key, float def))pl_find_meta_float,
     .pl_replace_meta = (void (*) (DB_playItem_t *, const char *, const char *))pl_replace_meta,
     .pl_delete_all_meta = (void (*) (DB_playItem_t *it))pl_delete_all_meta,
     .pl_get_metadata = (DB_metaInfo_t *(*)(DB_playItem_t *it))pl_get_metadata,
@@ -403,7 +410,8 @@ plug_ev_unsubscribe (DB_plugin_t *plugin, int ev, DB_callback_t callback, uintpt
 float
 plug_playback_get_pos (void) {
     playItem_t *trk = streamer_get_playing_track ();
-    if (!trk || trk->_duration <= 0) {
+    float dur = pl_get_item_duration (trk);
+    if (!trk || dur <= 0) {
         if (trk) {
             pl_item_unref (trk);
         }
@@ -412,19 +420,20 @@ plug_playback_get_pos (void) {
     if (trk) {
         pl_item_unref (trk);
     }
-    return streamer_get_playpos () * 100 / trk->_duration;
+    return streamer_get_playpos () * 100 / dur;
 }
 
 void
 plug_playback_set_pos (float pos) {
     playItem_t *trk = streamer_get_playing_track ();
-    if (!trk || trk->_duration <= 0) {
+    float dur = pl_get_item_duration (trk);
+    if (!trk || dur <= 0) {
         if (trk) {
             pl_item_unref (trk);
         }
         return;
     }
-    float t = pos * trk->_duration / 100.f;
+    float t = pos * dur / 100.f;
     if (trk) {
         pl_item_unref (trk);
     }

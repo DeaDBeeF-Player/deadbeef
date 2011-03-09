@@ -102,7 +102,7 @@ shx_callback (Shx_action_t *action, DB_playItem_t *it)
 static DB_plugin_action_t *
 shx_get_actions (DB_playItem_t *it)
 {
-    int is_local = it ? deadbeef->is_local_file (it->fname) : 1;
+    int is_local = it ? deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI")) : 1;
 
     Shx_action_t *action;
     for (action = actions; action; action = (Shx_action_t *)action->parent.next)

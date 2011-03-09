@@ -127,9 +127,9 @@ gboolean
 playlist_tooltip_handler (GtkWidget *widget, gint x, gint y, gboolean keyboard_mode, GtkTooltip *tooltip, gpointer unused)
 {
     GtkWidget *pl = lookup_widget (mainwin, "playlist");
-    DB_playItem_t *item = (DB_playItem_t *)ddb_listview_get_iter_from_coord (DDB_LISTVIEW (pl), 0, y);
-    if (item && item->fname) {
-        gtk_tooltip_set_text (tooltip, item->fname);
+    DB_playItem_t *it = (DB_playItem_t *)ddb_listview_get_iter_from_coord (DDB_LISTVIEW (pl), 0, y);
+    if (it) {
+        gtk_tooltip_set_text (tooltip, deadbeef->pl_find_meta (it, ":URI"));
         return TRUE;
     }
     return FALSE;

@@ -49,7 +49,7 @@ static DB_playItem_t **tracks;
 static int numtracks;
 
 static int
-build_key_list (const char ***pkeys) {
+build_key_list (const char ***pkeys, int props) {
     int sz = 20;
     const char **keys = malloc (sizeof (const char *) * sz);
     if (!keys) {
@@ -63,7 +63,7 @@ build_key_list (const char ***pkeys) {
     for (int i = 0; i < numtracks; i++) {
         DB_metaInfo_t *meta = deadbeef->pl_get_metadata (tracks[i]);
         while (meta) {
-            if (meta->key[0] != ':') {
+            if ((props && meta->key[0] == ':') || (!props && meta->key[0] != ':')) {
                 int k = 0;
                 for (; k < n; k++) {
                     if (meta->key == keys[k]) {
@@ -91,7 +91,17 @@ build_key_list (const char ***pkeys) {
 }
 
 static int
-get_field_value (char *out, int size, const char *key) {
+equals_ptr (const char *a, const char *b) {
+    return a == b;
+}
+
+static int
+equals_value (const char *a, const char *b) {
+    return !strcmp (a, b);
+}
+
+static int
+get_field_value (char *out, int size, const char *key, const char *(*getter)(DB_playItem_t *it, const char *key), int (*equals)(const char *a, const char *b)) {
     int multiple = 0;
     *out = 0;
     if (numtracks == 0) {
@@ -101,14 +111,14 @@ get_field_value (char *out, int size, const char *key) {
     const char **prev = malloc (sizeof (const char *) * numtracks);
     memset (prev, 0, sizeof (const char *) * numtracks);
     for (int i = 0; i < numtracks; i++) {
-        const char *val = deadbeef->pl_find_meta (tracks[i], key);
+        const char *val = getter (tracks[i], key);
         if (val && val[0] == 0) {
             val = NULL;
         }
         if (i > 0) {
             int n = 0;
             for (; n < i; n++) {
-                if (prev[n] == val) {
+                if (equals (prev[n], val)) {
                     break;
                 }
             }
@@ -134,7 +144,8 @@ get_field_value (char *out, int size, const char *key) {
         }
     }
     if (size <= 1) {
-        strcpy (out-2, "…");
+        gchar *prev = g_utf8_prev_char (out-4);
+        strcpy (prev, "...");
     }
     free (prev);
     return multiple;
@@ -229,23 +240,38 @@ static const char *types[] = {
     NULL
 };
 
+static const char *hc_props[] = {
+    ":URI", "Location",
+    ":TRACKNUM", "Subtrack Index",
+    ":DURATION", "Duration",
+    ":TAGS", "Tag Type(s)",
+    ":HAS_EMBEDDED_CUESHEET", "Embedded Cuesheet",
+    ":DECODER", "Codec",
+    NULL
+};
+
 static inline float
 amp_to_db (float amp) {
     return 20*log10 (amp);
 }
 
 void
-add_field (GtkListStore *store, const char *key, const char *title) {
+add_field (GtkListStore *store, const char *key, const char *title, int is_prop) {
     // get value to edit
     const char mult[] = _("[Multiple values] ");
     char val[1000];
     size_t ml = strlen (mult);
     memcpy (val, mult, ml+1);
-    int n = get_field_value (val + ml, sizeof (val) - ml, key);
+    int n = get_field_value (val + ml, sizeof (val) - ml, key, deadbeef->pl_find_meta, equals_ptr);
 
     GtkTreeIter iter;
     gtk_list_store_append (store, &iter);
-    gtk_list_store_set (store, &iter, 0, title, 1, n ? val : val + ml, 2, key, 3, n ? 1 : 0, -1);
+    if (!is_prop) {
+        gtk_list_store_set (store, &iter, 0, title, 1, n ? val : val + ml, 2, key, 3, n ? 1 : 0, -1);
+    }
+    else {
+        gtk_list_store_set (store, &iter, 0, title, 1, n ? val : val + ml, -1);
+    }
 }
 
 void
@@ -257,17 +283,14 @@ trkproperties_fill_metadata (void) {
     gtk_list_store_clear (store);
     deadbeef->pl_lock ();
 
-    struct timeval tm1;
-    gettimeofday (&tm1, NULL);
-
     const char **keys = NULL;
-    int nkeys = build_key_list (&keys);
+    int nkeys = build_key_list (&keys, 0);
 
     int k;
 
     // add "standard" fields
     for (int i = 0; types[i]; i += 2) {
-        add_field (store, types[i], _(types[i+1]));
+        add_field (store, types[i], _(types[i+1]), 0);
     }
 
     // add all other fields
@@ -286,70 +309,35 @@ trkproperties_fill_metadata (void) {
         if (!types[i]) {
             snprintf (title, sizeof (title), "<%s>", keys[k]);
         }
-        add_field (store, keys[k], title);
+        add_field (store, keys[k], title, 0);
     }
     if (keys) {
         free (keys);
     }
 
-    // unknown fields and properties
-    if (numtracks == 1) {
-        DB_playItem_t *track = tracks[0];
-
-        DB_metaInfo_t *meta = deadbeef->pl_get_metadata (track);
-        while (meta) {
-            if (meta->key[0] == ':') {
-                int l = strlen (meta->key)-1;
-                char title[l+3];
-                snprintf (title, sizeof (title), "<%s>", meta->key+1);
-                const char *value = meta->value;
-
-                GtkTreeIter iter;
-                gtk_list_store_append (propstore, &iter);
-                gtk_list_store_set (propstore, &iter, 0, title, 1, value, -1);
-                meta = meta->next;
-                continue;
+    // hardcoded properties
+    for (int i = 0; hc_props[i]; i += 2) {
+        add_field (propstore, hc_props[i], _(hc_props[i+1]), 1);
+    }
+    // properties
+    keys = NULL;
+    nkeys = build_key_list (&keys, 1);
+    for (int k = 0; k < nkeys; k++) {
+        int i;
+        for (i = 0; hc_props[i]; i += 2) {
+            if (!strcmp (keys[k], hc_props[i])) {
+                break;
             }
-            meta = meta->next;
         }
-
-        // properties
-        char temp[200];
-        GtkTreeIter iter;
-        gtk_list_store_clear (propstore);
-        gtk_list_store_append (propstore, &iter);
-        gtk_list_store_set (propstore, &iter, 0, _("Location"), 1, track->fname, -1);
-        gtk_list_store_append (propstore, &iter);
-        snprintf (temp, sizeof (temp), "%d", track->tracknum);
-        gtk_list_store_set (propstore, &iter, 0, _("Subtrack Index"), 1, temp, -1);
-        gtk_list_store_append (propstore, &iter);
-        deadbeef->pl_format_time (deadbeef->pl_get_item_duration (track), temp, sizeof (temp));
-        gtk_list_store_set (propstore, &iter, 0, _("Duration"), 1, temp, -1);
-        gtk_list_store_append (propstore, &iter);
-        deadbeef->pl_format_title (track, -1, temp, sizeof (temp), -1, "%T");
-        gtk_list_store_set (propstore, &iter, 0, _("Tag Type(s)"), 1, temp, -1);
-        gtk_list_store_append (propstore, &iter);
-        gtk_list_store_set (propstore, &iter, 0, _("Embedded Cuesheet"), 1, (deadbeef->pl_get_item_flags (track) & DDB_HAS_EMBEDDED_CUESHEET) ? _("Yes") : _("No"), -1);
-        gtk_list_store_append (propstore, &iter);
-        gtk_list_store_set (propstore, &iter, 0, _("Codec"), 1, track->decoder_id, -1);
-
-        gtk_list_store_append (propstore, &iter);
-        snprintf (temp, sizeof (temp), "%0.2f dB", track->replaygain_album_gain);
-        gtk_list_store_set (propstore, &iter, 0, "ReplayGain Album Gain", 1, temp, -1);
-        gtk_list_store_append (propstore, &iter);
-        snprintf (temp, sizeof (temp), "%0.6f", track->replaygain_album_peak);
-        gtk_list_store_set (propstore, &iter, 0, "ReplayGain Album Peak", 1, temp, -1);
-
-        gtk_list_store_append (propstore, &iter);
-        snprintf (temp, sizeof (temp), "%0.2f dB", track->replaygain_track_gain);
-        gtk_list_store_set (propstore, &iter, 0, "ReplayGain Track Gain", 1, temp, -1);
-        gtk_list_store_append (propstore, &iter);
-        snprintf (temp, sizeof (temp), "%0.6f", track->replaygain_track_peak);
-        gtk_list_store_set (propstore, &iter, 0, "ReplayGain Track Peak", 1, temp, -1);
-
-        struct timeval tm2;
-        gettimeofday (&tm2, NULL);
-        int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
+        if (hc_props[i]) {
+            continue;
+        }
+        char title[1000];
+        snprintf (title, sizeof (title), "<%s>", keys[k]+1);
+        add_field (propstore, keys[k], title, 1);
+    }
+    if (keys) {
+        free (keys);
     }
 
     deadbeef->pl_unlock ();
@@ -402,13 +390,14 @@ show_track_properties_dlg (DB_playItem_t *it) {
 
     int is_subtrack = deadbeef->pl_get_item_flags (it) & DDB_IS_SUBTRACK;
 
-    if (!is_subtrack && deadbeef->is_local_file (it->fname)) {
+    if (!is_subtrack && deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI"))) {
         // get decoder plugin by id
         DB_decoder_t *dec = NULL;
-        if (it->decoder_id) {
+        const char *decoder_id = deadbeef->pl_find_meta (it, ":DECODER");
+        if (decoder_id) {
             DB_decoder_t **decoders = deadbeef->plug_get_decoder_list ();
             for (int i = 0; decoders[i]; i++) {
-                if (!strcmp (decoders[i]->plugin.id, it->decoder_id)) {
+                if (!strcmp (decoders[i]->plugin.id, decoder_id)) {
                     dec = decoders[i];
                     break;
                 }
@@ -512,12 +501,13 @@ on_write_tags_clicked                  (GtkButton       *button,
     gtk_tree_model_foreach (model, set_metadata_cb, NULL);
     for (int t = 0; t < numtracks; t++) {
         DB_playItem_t *track = tracks[t];
-        if (track && track->decoder_id) {
+        const char *decoder_id = deadbeef->pl_find_meta (track, ":DECODER");
+        if (track && decoder_id) {
             // find decoder
             DB_decoder_t *dec = NULL;
             DB_decoder_t **decoders = deadbeef->plug_get_decoder_list ();
             for (int i = 0; decoders[i]; i++) {
-                if (!strcmp (decoders[i]->plugin.id, track->decoder_id)) {
+                if (!strcmp (decoders[i]->plugin.id, decoder_id)) {
                     dec = decoders[i];
                     if (dec->write_metadata) {
                         dec->write_metadata (track);
