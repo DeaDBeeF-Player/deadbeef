@@ -693,8 +693,8 @@ static DUH * open_module(const char *fname, const char *ext, int *start_order, i
 	return duh;
 }
 
-static const char *convstr (const char* str, int sz) {
-    static char out[2048];
+static const char *
+convstr (const char* str, int sz, char *out, int out_sz) {
     int i;
     for (i = 0; i < sz; i++) {
         if (str[i] != ' ') {
@@ -707,11 +707,11 @@ static const char *convstr (const char* str, int sz) {
     }
 
     // check for utf8 (hack)
-    if (deadbeef->junk_iconv (str, sz, out, sizeof (out), "utf-8", "utf-8") >= 0) {
+    if (deadbeef->junk_iconv (str, sz, out, out_sz, "utf-8", "utf-8") >= 0) {
         return out;
     }
 
-    if (deadbeef->junk_iconv (str, sz, out, sizeof (out), "iso8859-1", "utf-8") >= 0) {
+    if (deadbeef->junk_iconv (str, sz, out, out_sz, "iso8859-1", "utf-8") >= 0) {
         return out;
     }
 
@@ -736,6 +736,8 @@ cdumb_insert (DB_playItem_t *after, const char *fname) {
     }
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
     DUMB_IT_SIGDATA * itsd = duh_get_it_sigdata(duh);
+    char temp[2048];
+
     if (itsd->name[0])     {
         int tl = sizeof(itsd->name);
         int i;
@@ -744,7 +746,7 @@ cdumb_insert (DB_playItem_t *after, const char *fname) {
             deadbeef->pl_add_meta (it, "title", NULL);
         }
         else {
-            deadbeef->pl_add_meta (it, "title", convstr ((char*)&itsd->name, sizeof(itsd->name)));
+            deadbeef->pl_add_meta (it, "title", convstr ((char*)&itsd->name, sizeof(itsd->name), temp, sizeof (temp)));
         }
     }
     else {
@@ -754,12 +756,12 @@ cdumb_insert (DB_playItem_t *after, const char *fname) {
     for (i = 0; i < itsd->n_instruments; i++) {
         char key[100];
         snprintf (key, sizeof (key), "INST%03d", i);
-        deadbeef->pl_add_meta (it, key, (const char *)itsd->instrument[i].name);
+        deadbeef->pl_add_meta (it, key, convstr ((char *)&itsd->instrument[i].name, sizeof (itsd->instrument[i].name), temp, sizeof (temp)));
     }
     for (i = 0; i < itsd->n_samples; i++) {
         char key[100];
         snprintf (key, sizeof (key), "SAMP%03d", i);
-        deadbeef->pl_add_meta (it, key, (const char *)itsd->sample[i].name);
+        deadbeef->pl_add_meta (it, key, convstr ((char *)&itsd->sample[i].name, sizeof (itsd->sample[i].name), temp, sizeof (temp)));
     }
 
     char s[100];
