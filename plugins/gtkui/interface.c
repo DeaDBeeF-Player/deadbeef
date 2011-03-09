@@ -1186,6 +1186,12 @@ create_trackproperties (void)
   GtkWidget *vbox16;
   GtkWidget *scrolledwindow5;
   GtkWidget *metalist;
+  GtkWidget *hbox98;
+  GtkWidget *settings;
+  GtkWidget *alignment24;
+  GtkWidget *hbox99;
+  GtkWidget *image522;
+  GtkWidget *label123;
   GtkWidget *hbuttonbox1;
   GtkWidget *write_tags;
   GtkWidget *alignment11;
@@ -1235,9 +1241,33 @@ create_trackproperties (void)
   gtk_container_add (GTK_CONTAINER (scrolledwindow5), metalist);
   gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (metalist), TRUE);
 
+  hbox98 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox98);
+  gtk_box_pack_start (GTK_BOX (vbox16), hbox98, FALSE, FALSE, 0);
+
+  settings = gtk_button_new ();
+  gtk_widget_show (settings);
+  gtk_box_pack_start (GTK_BOX (hbox98), settings, FALSE, FALSE, 0);
+
+  alignment24 = gtk_alignment_new (0.5, 0.5, 0, 0);
+  gtk_widget_show (alignment24);
+  gtk_container_add (GTK_CONTAINER (settings), alignment24);
+
+  hbox99 = gtk_hbox_new (FALSE, 2);
+  gtk_widget_show (hbox99);
+  gtk_container_add (GTK_CONTAINER (alignment24), hbox99);
+
+  image522 = gtk_image_new_from_stock ("gtk-preferences", GTK_ICON_SIZE_BUTTON);
+  gtk_widget_show (image522);
+  gtk_box_pack_start (GTK_BOX (hbox99), image522, FALSE, FALSE, 0);
+
+  label123 = gtk_label_new_with_mnemonic (_("Settings"));
+  gtk_widget_show (label123);
+  gtk_box_pack_start (GTK_BOX (hbox99), label123, FALSE, FALSE, 0);
+
   hbuttonbox1 = gtk_hbutton_box_new ();
   gtk_widget_show (hbuttonbox1);
-  gtk_box_pack_start (GTK_BOX (vbox16), hbuttonbox1, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox98), hbuttonbox1, TRUE, TRUE, 0);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox1), GTK_BUTTONBOX_END);
 
   write_tags = gtk_button_new ();
@@ -1341,6 +1371,9 @@ create_trackproperties (void)
   g_signal_connect ((gpointer) metalist, "button_press_event",
                     G_CALLBACK (on_metalist_button_press_event),
                     NULL);
+  g_signal_connect ((gpointer) settings, "clicked",
+                    G_CALLBACK (on_tagwriter_settings_clicked),
+                    NULL);
   g_signal_connect ((gpointer) write_tags, "clicked",
                     G_CALLBACK (on_write_tags_clicked),
                     NULL);
@@ -1357,6 +1390,12 @@ create_trackproperties (void)
   GLADE_HOOKUP_OBJECT (trackproperties, vbox16, "vbox16");
   GLADE_HOOKUP_OBJECT (trackproperties, scrolledwindow5, "scrolledwindow5");
   GLADE_HOOKUP_OBJECT (trackproperties, metalist, "metalist");
+  GLADE_HOOKUP_OBJECT (trackproperties, hbox98, "hbox98");
+  GLADE_HOOKUP_OBJECT (trackproperties, settings, "settings");
+  GLADE_HOOKUP_OBJECT (trackproperties, alignment24, "alignment24");
+  GLADE_HOOKUP_OBJECT (trackproperties, hbox99, "hbox99");
+  GLADE_HOOKUP_OBJECT (trackproperties, image522, "image522");
+  GLADE_HOOKUP_OBJECT (trackproperties, label123, "label123");
   GLADE_HOOKUP_OBJECT (trackproperties, hbuttonbox1, "hbuttonbox1");
   GLADE_HOOKUP_OBJECT (trackproperties, write_tags, "write_tags");
   GLADE_HOOKUP_OBJECT (trackproperties, alignment11, "alignment11");
@@ -1702,47 +1741,6 @@ create_prefwin (void)
   GtkWidget *label98;
   GtkWidget *proxypassword;
   GtkWidget *label16;
-  GtkWidget *vbox18;
-  GtkWidget *frame5;
-  GtkWidget *alignment3;
-  GtkWidget *vbox19;
-  GtkWidget *hbox38;
-  GtkWidget *write_id3v2;
-  GtkWidget *write_id3v1;
-  GtkWidget *write_apev2;
-  GtkWidget *hbox40;
-  GtkWidget *strip_id3v2;
-  GtkWidget *strip_id3v1;
-  GtkWidget *strip_apev2;
-  GtkWidget *hbox36;
-  GtkWidget *label69;
-  GtkWidget *id3v2_version;
-  GtkWidget *hbox39;
-  GtkWidget *label71;
-  GtkWidget *id3v1_encoding;
-  GtkWidget *label68;
-  GtkWidget *hbox41;
-  GtkWidget *frame6;
-  GtkWidget *alignment4;
-  GtkWidget *vbox20;
-  GtkWidget *hbox37;
-  GtkWidget *ape_write_id3v2;
-  GtkWidget *ape_write_apev2;
-  GtkWidget *hbox45;
-  GtkWidget *ape_strip_id3v2;
-  GtkWidget *ape_strip_apev2;
-  GtkWidget *label70;
-  GtkWidget *frame7;
-  GtkWidget *alignment5;
-  GtkWidget *vbox_wv;
-  GtkWidget *hbox44;
-  GtkWidget *wv_write_apev2;
-  GtkWidget *wv_write_id3v1;
-  GtkWidget *hbox43;
-  GtkWidget *wv_strip_apev2;
-  GtkWidget *wv_strip_id3v1;
-  GtkWidget *label79;
-  GtkWidget *label67;
   GtkWidget *hpaned1;
   GtkWidget *scrolledwindow2;
   GtkWidget *pref_pluginlist;
@@ -2302,186 +2300,6 @@ create_prefwin (void)
   gtk_widget_show (label16);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 5), label16);
 
-  vbox18 = gtk_vbox_new (FALSE, 0);
-  gtk_widget_show (vbox18);
-  gtk_container_add (GTK_CONTAINER (notebook), vbox18);
-  gtk_container_set_border_width (GTK_CONTAINER (vbox18), 12);
-
-  frame5 = gtk_frame_new (NULL);
-  gtk_widget_show (frame5);
-  gtk_box_pack_start (GTK_BOX (vbox18), frame5, FALSE, TRUE, 0);
-  gtk_frame_set_shadow_type (GTK_FRAME (frame5), GTK_SHADOW_NONE);
-
-  alignment3 = gtk_alignment_new (0.5, 0.5, 1, 1);
-  gtk_widget_show (alignment3);
-  gtk_container_add (GTK_CONTAINER (frame5), alignment3);
-  gtk_alignment_set_padding (GTK_ALIGNMENT (alignment3), 0, 0, 12, 0);
-
-  vbox19 = gtk_vbox_new (FALSE, 8);
-  gtk_widget_show (vbox19);
-  gtk_container_add (GTK_CONTAINER (alignment3), vbox19);
-  gtk_container_set_border_width (GTK_CONTAINER (vbox19), 12);
-
-  hbox38 = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox38);
-  gtk_box_pack_start (GTK_BOX (vbox19), hbox38, FALSE, FALSE, 0);
-
-  write_id3v2 = gtk_check_button_new_with_mnemonic (_("Write ID3v2"));
-  gtk_widget_show (write_id3v2);
-  gtk_box_pack_start (GTK_BOX (hbox38), write_id3v2, FALSE, FALSE, 0);
-
-  write_id3v1 = gtk_check_button_new_with_mnemonic (_("Write ID3v1"));
-  gtk_widget_show (write_id3v1);
-  gtk_box_pack_start (GTK_BOX (hbox38), write_id3v1, FALSE, FALSE, 0);
-
-  write_apev2 = gtk_check_button_new_with_mnemonic (_("Write APEv2"));
-  gtk_widget_show (write_apev2);
-  gtk_box_pack_start (GTK_BOX (hbox38), write_apev2, FALSE, FALSE, 0);
-
-  hbox40 = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox40);
-  gtk_box_pack_start (GTK_BOX (vbox19), hbox40, FALSE, FALSE, 0);
-
-  strip_id3v2 = gtk_check_button_new_with_mnemonic (_("Strip ID3v2"));
-  gtk_widget_show (strip_id3v2);
-  gtk_box_pack_start (GTK_BOX (hbox40), strip_id3v2, FALSE, FALSE, 0);
-
-  strip_id3v1 = gtk_check_button_new_with_mnemonic (_("Strip ID3v1"));
-  gtk_widget_show (strip_id3v1);
-  gtk_box_pack_start (GTK_BOX (hbox40), strip_id3v1, FALSE, FALSE, 0);
-
-  strip_apev2 = gtk_check_button_new_with_mnemonic (_("Strip APEv2"));
-  gtk_widget_show (strip_apev2);
-  gtk_box_pack_start (GTK_BOX (hbox40), strip_apev2, FALSE, FALSE, 0);
-
-  hbox36 = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox36);
-  gtk_box_pack_start (GTK_BOX (vbox19), hbox36, TRUE, TRUE, 0);
-
-  label69 = gtk_label_new (_("ID3v2 version"));
-  gtk_widget_show (label69);
-  gtk_box_pack_start (GTK_BOX (hbox36), label69, FALSE, FALSE, 0);
-
-  id3v2_version = gtk_combo_box_new_text ();
-  gtk_widget_show (id3v2_version);
-  gtk_box_pack_start (GTK_BOX (hbox36), id3v2_version, TRUE, TRUE, 0);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (id3v2_version), _("2.3 (Recommended)"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (id3v2_version), _("2.4"));
-
-  hbox39 = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox39);
-  gtk_box_pack_start (GTK_BOX (vbox19), hbox39, TRUE, TRUE, 0);
-
-  label71 = gtk_label_new (_("ID3v1 character encoding (default is iso8859-1)"));
-  gtk_widget_show (label71);
-  gtk_box_pack_start (GTK_BOX (hbox39), label71, FALSE, FALSE, 0);
-
-  id3v1_encoding = gtk_entry_new ();
-  gtk_widget_show (id3v1_encoding);
-  gtk_box_pack_start (GTK_BOX (hbox39), id3v1_encoding, TRUE, TRUE, 0);
-  gtk_entry_set_invisible_char (GTK_ENTRY (id3v1_encoding), 9679);
-
-  label68 = gtk_label_new ("<b>MP3</b>");
-  gtk_widget_show (label68);
-  gtk_frame_set_label_widget (GTK_FRAME (frame5), label68);
-  gtk_label_set_use_markup (GTK_LABEL (label68), TRUE);
-
-  hbox41 = gtk_hbox_new (TRUE, 0);
-  gtk_widget_show (hbox41);
-  gtk_box_pack_start (GTK_BOX (vbox18), hbox41, FALSE, TRUE, 0);
-
-  frame6 = gtk_frame_new (NULL);
-  gtk_widget_show (frame6);
-  gtk_box_pack_start (GTK_BOX (hbox41), frame6, TRUE, TRUE, 0);
-  gtk_frame_set_shadow_type (GTK_FRAME (frame6), GTK_SHADOW_NONE);
-
-  alignment4 = gtk_alignment_new (0.5, 0.5, 1, 1);
-  gtk_widget_show (alignment4);
-  gtk_container_add (GTK_CONTAINER (frame6), alignment4);
-  gtk_alignment_set_padding (GTK_ALIGNMENT (alignment4), 0, 0, 12, 0);
-
-  vbox20 = gtk_vbox_new (FALSE, 8);
-  gtk_widget_show (vbox20);
-  gtk_container_add (GTK_CONTAINER (alignment4), vbox20);
-  gtk_container_set_border_width (GTK_CONTAINER (vbox20), 12);
-
-  hbox37 = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox37);
-  gtk_box_pack_start (GTK_BOX (vbox20), hbox37, TRUE, TRUE, 0);
-
-  ape_write_id3v2 = gtk_check_button_new_with_mnemonic (_("Write ID3v2.4"));
-  gtk_widget_show (ape_write_id3v2);
-  gtk_box_pack_start (GTK_BOX (hbox37), ape_write_id3v2, FALSE, FALSE, 0);
-
-  ape_write_apev2 = gtk_check_button_new_with_mnemonic (_("Write APEv2"));
-  gtk_widget_show (ape_write_apev2);
-  gtk_box_pack_start (GTK_BOX (hbox37), ape_write_apev2, FALSE, FALSE, 0);
-
-  hbox45 = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox45);
-  gtk_box_pack_start (GTK_BOX (vbox20), hbox45, TRUE, TRUE, 0);
-
-  ape_strip_id3v2 = gtk_check_button_new_with_mnemonic (_("Strip ID3v2"));
-  gtk_widget_show (ape_strip_id3v2);
-  gtk_box_pack_start (GTK_BOX (hbox45), ape_strip_id3v2, FALSE, FALSE, 0);
-
-  ape_strip_apev2 = gtk_check_button_new_with_mnemonic (_("Strip APEv2"));
-  gtk_widget_show (ape_strip_apev2);
-  gtk_box_pack_start (GTK_BOX (hbox45), ape_strip_apev2, FALSE, FALSE, 0);
-
-  label70 = gtk_label_new ("<b>APE</b>");
-  gtk_widget_show (label70);
-  gtk_frame_set_label_widget (GTK_FRAME (frame6), label70);
-  gtk_label_set_use_markup (GTK_LABEL (label70), TRUE);
-
-  frame7 = gtk_frame_new (NULL);
-  gtk_widget_show (frame7);
-  gtk_box_pack_start (GTK_BOX (hbox41), frame7, TRUE, TRUE, 0);
-  gtk_frame_set_shadow_type (GTK_FRAME (frame7), GTK_SHADOW_NONE);
-
-  alignment5 = gtk_alignment_new (0.5, 0.5, 1, 1);
-  gtk_widget_show (alignment5);
-  gtk_container_add (GTK_CONTAINER (frame7), alignment5);
-  gtk_alignment_set_padding (GTK_ALIGNMENT (alignment5), 0, 0, 12, 0);
-
-  vbox_wv = gtk_vbox_new (FALSE, 8);
-  gtk_widget_show (vbox_wv);
-  gtk_container_add (GTK_CONTAINER (alignment5), vbox_wv);
-  gtk_container_set_border_width (GTK_CONTAINER (vbox_wv), 12);
-
-  hbox44 = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox44);
-  gtk_box_pack_start (GTK_BOX (vbox_wv), hbox44, FALSE, FALSE, 0);
-
-  wv_write_apev2 = gtk_check_button_new_with_mnemonic (_("Write APEv2"));
-  gtk_widget_show (wv_write_apev2);
-  gtk_box_pack_start (GTK_BOX (hbox44), wv_write_apev2, FALSE, FALSE, 0);
-
-  wv_write_id3v1 = gtk_check_button_new_with_mnemonic (_("Write ID3v1"));
-  gtk_widget_show (wv_write_id3v1);
-  gtk_box_pack_start (GTK_BOX (hbox44), wv_write_id3v1, FALSE, FALSE, 0);
-
-  hbox43 = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox43);
-  gtk_box_pack_start (GTK_BOX (vbox_wv), hbox43, FALSE, FALSE, 0);
-
-  wv_strip_apev2 = gtk_check_button_new_with_mnemonic (_("Strip APEv2"));
-  gtk_widget_show (wv_strip_apev2);
-  gtk_box_pack_start (GTK_BOX (hbox43), wv_strip_apev2, FALSE, FALSE, 0);
-
-  wv_strip_id3v1 = gtk_check_button_new_with_mnemonic (_("Strip ID3v1"));
-  gtk_widget_show (wv_strip_id3v1);
-  gtk_box_pack_start (GTK_BOX (hbox43), wv_strip_id3v1, FALSE, FALSE, 0);
-
-  label79 = gtk_label_new ("<b>WavPack</b>");
-  gtk_widget_show (label79);
-  gtk_frame_set_label_widget (GTK_FRAME (frame7), label79);
-  gtk_label_set_use_markup (GTK_LABEL (label79), TRUE);
-
-  label67 = gtk_label_new (_("Tag writer"));
-  gtk_widget_show (label67);
-  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 6), label67);
-
   hpaned1 = gtk_hpaned_new ();
   gtk_widget_show (hpaned1);
   gtk_container_add (GTK_CONTAINER (notebook), hpaned1);
@@ -2571,7 +2389,7 @@ create_prefwin (void)
 
   label3 = gtk_label_new (_("Plugins"));
   gtk_widget_show (label3);
-  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 7), label3);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 6), label3);
   gtk_misc_set_alignment (GTK_MISC (label3), 0.48, 0.5);
 
   dialog_action_area2 = GTK_DIALOG (prefwin)->action_area;
@@ -2709,54 +2527,6 @@ create_prefwin (void)
   g_signal_connect ((gpointer) proxypassword, "changed",
                     G_CALLBACK (on_proxypassword_changed),
                     NULL);
-  g_signal_connect ((gpointer) write_id3v2, "toggled",
-                    G_CALLBACK (on_write_id3v2_toggled),
-                    NULL);
-  g_signal_connect ((gpointer) write_id3v1, "toggled",
-                    G_CALLBACK (on_write_id3v1_toggled),
-                    NULL);
-  g_signal_connect ((gpointer) write_apev2, "toggled",
-                    G_CALLBACK (on_write_apev2_toggled),
-                    NULL);
-  g_signal_connect ((gpointer) strip_id3v2, "toggled",
-                    G_CALLBACK (on_strip_id3v2_toggled),
-                    NULL);
-  g_signal_connect ((gpointer) strip_id3v1, "toggled",
-                    G_CALLBACK (on_strip_id3v1_toggled),
-                    NULL);
-  g_signal_connect ((gpointer) strip_apev2, "toggled",
-                    G_CALLBACK (on_strip_apev2_toggled),
-                    NULL);
-  g_signal_connect ((gpointer) id3v2_version, "changed",
-                    G_CALLBACK (on_id3v2_version_changed),
-                    NULL);
-  g_signal_connect ((gpointer) id3v1_encoding, "changed",
-                    G_CALLBACK (on_id3v1_encoding_changed),
-                    NULL);
-  g_signal_connect ((gpointer) ape_write_id3v2, "toggled",
-                    G_CALLBACK (on_ape_write_id3v2_toggled),
-                    NULL);
-  g_signal_connect ((gpointer) ape_write_apev2, "toggled",
-                    G_CALLBACK (on_ape_write_apev2_toggled),
-                    NULL);
-  g_signal_connect ((gpointer) ape_strip_id3v2, "toggled",
-                    G_CALLBACK (on_ape_strip_id3v2_toggled),
-                    NULL);
-  g_signal_connect ((gpointer) ape_strip_apev2, "toggled",
-                    G_CALLBACK (on_ape_strip_apev2_toggled),
-                    NULL);
-  g_signal_connect ((gpointer) wv_write_apev2, "toggled",
-                    G_CALLBACK (on_wv_write_apev2_toggled),
-                    NULL);
-  g_signal_connect ((gpointer) wv_write_id3v1, "toggled",
-                    G_CALLBACK (on_wv_write_id3v1_toggled),
-                    NULL);
-  g_signal_connect ((gpointer) wv_strip_apev2, "toggled",
-                    G_CALLBACK (on_wv_strip_apev2_toggled),
-                    NULL);
-  g_signal_connect ((gpointer) wv_strip_id3v1, "toggled",
-                    G_CALLBACK (on_wv_strip_id3v1_toggled),
-                    NULL);
   g_signal_connect ((gpointer) pref_pluginlist, "cursor_changed",
                     G_CALLBACK (on_pref_pluginlist_cursor_changed),
                     NULL);
@@ -2876,47 +2646,6 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, label98, "label98");
   GLADE_HOOKUP_OBJECT (prefwin, proxypassword, "proxypassword");
   GLADE_HOOKUP_OBJECT (prefwin, label16, "label16");
-  GLADE_HOOKUP_OBJECT (prefwin, vbox18, "vbox18");
-  GLADE_HOOKUP_OBJECT (prefwin, frame5, "frame5");
-  GLADE_HOOKUP_OBJECT (prefwin, alignment3, "alignment3");
-  GLADE_HOOKUP_OBJECT (prefwin, vbox19, "vbox19");
-  GLADE_HOOKUP_OBJECT (prefwin, hbox38, "hbox38");
-  GLADE_HOOKUP_OBJECT (prefwin, write_id3v2, "write_id3v2");
-  GLADE_HOOKUP_OBJECT (prefwin, write_id3v1, "write_id3v1");
-  GLADE_HOOKUP_OBJECT (prefwin, write_apev2, "write_apev2");
-  GLADE_HOOKUP_OBJECT (prefwin, hbox40, "hbox40");
-  GLADE_HOOKUP_OBJECT (prefwin, strip_id3v2, "strip_id3v2");
-  GLADE_HOOKUP_OBJECT (prefwin, strip_id3v1, "strip_id3v1");
-  GLADE_HOOKUP_OBJECT (prefwin, strip_apev2, "strip_apev2");
-  GLADE_HOOKUP_OBJECT (prefwin, hbox36, "hbox36");
-  GLADE_HOOKUP_OBJECT (prefwin, label69, "label69");
-  GLADE_HOOKUP_OBJECT (prefwin, id3v2_version, "id3v2_version");
-  GLADE_HOOKUP_OBJECT (prefwin, hbox39, "hbox39");
-  GLADE_HOOKUP_OBJECT (prefwin, label71, "label71");
-  GLADE_HOOKUP_OBJECT (prefwin, id3v1_encoding, "id3v1_encoding");
-  GLADE_HOOKUP_OBJECT (prefwin, label68, "label68");
-  GLADE_HOOKUP_OBJECT (prefwin, hbox41, "hbox41");
-  GLADE_HOOKUP_OBJECT (prefwin, frame6, "frame6");
-  GLADE_HOOKUP_OBJECT (prefwin, alignment4, "alignment4");
-  GLADE_HOOKUP_OBJECT (prefwin, vbox20, "vbox20");
-  GLADE_HOOKUP_OBJECT (prefwin, hbox37, "hbox37");
-  GLADE_HOOKUP_OBJECT (prefwin, ape_write_id3v2, "ape_write_id3v2");
-  GLADE_HOOKUP_OBJECT (prefwin, ape_write_apev2, "ape_write_apev2");
-  GLADE_HOOKUP_OBJECT (prefwin, hbox45, "hbox45");
-  GLADE_HOOKUP_OBJECT (prefwin, ape_strip_id3v2, "ape_strip_id3v2");
-  GLADE_HOOKUP_OBJECT (prefwin, ape_strip_apev2, "ape_strip_apev2");
-  GLADE_HOOKUP_OBJECT (prefwin, label70, "label70");
-  GLADE_HOOKUP_OBJECT (prefwin, frame7, "frame7");
-  GLADE_HOOKUP_OBJECT (prefwin, alignment5, "alignment5");
-  GLADE_HOOKUP_OBJECT (prefwin, vbox_wv, "vbox_wv");
-  GLADE_HOOKUP_OBJECT (prefwin, hbox44, "hbox44");
-  GLADE_HOOKUP_OBJECT (prefwin, wv_write_apev2, "wv_write_apev2");
-  GLADE_HOOKUP_OBJECT (prefwin, wv_write_id3v1, "wv_write_id3v1");
-  GLADE_HOOKUP_OBJECT (prefwin, hbox43, "hbox43");
-  GLADE_HOOKUP_OBJECT (prefwin, wv_strip_apev2, "wv_strip_apev2");
-  GLADE_HOOKUP_OBJECT (prefwin, wv_strip_id3v1, "wv_strip_id3v1");
-  GLADE_HOOKUP_OBJECT (prefwin, label79, "label79");
-  GLADE_HOOKUP_OBJECT (prefwin, label67, "label67");
   GLADE_HOOKUP_OBJECT (prefwin, hpaned1, "hpaned1");
   GLADE_HOOKUP_OBJECT (prefwin, scrolledwindow2, "scrolledwindow2");
   GLADE_HOOKUP_OBJECT (prefwin, pref_pluginlist, "pref_pluginlist");
@@ -3468,5 +3197,345 @@ create_select_dsp_plugin (void)
   GLADE_HOOKUP_OBJECT (select_dsp_plugin, okbutton7, "okbutton7");
 
   return select_dsp_plugin;
+}
+
+GtkWidget*
+create_tagwritersettings (void)
+{
+  GtkWidget *tagwritersettings;
+  GtkWidget *dialog_vbox11;
+  GtkWidget *vbox32;
+  GtkWidget *frame8;
+  GtkWidget *alignment21;
+  GtkWidget *vbox33;
+  GtkWidget *hbox89;
+  GtkWidget *write_id3v2;
+  GtkWidget *write_id3v1;
+  GtkWidget *write_apev2;
+  GtkWidget *hbox90;
+  GtkWidget *strip_id3v2;
+  GtkWidget *strip_id3v1;
+  GtkWidget *strip_apev2;
+  GtkWidget *hbox91;
+  GtkWidget *label118;
+  GtkWidget *id3v2_version;
+  GtkWidget *hbox92;
+  GtkWidget *label119;
+  GtkWidget *id3v1_encoding;
+  GtkWidget *label120;
+  GtkWidget *hbox93;
+  GtkWidget *frame9;
+  GtkWidget *alignment22;
+  GtkWidget *vbox34;
+  GtkWidget *hbox94;
+  GtkWidget *ape_write_id3v2;
+  GtkWidget *ape_write_apev2;
+  GtkWidget *hbox95;
+  GtkWidget *ape_strip_id3v2;
+  GtkWidget *ape_strip_apev2;
+  GtkWidget *label121;
+  GtkWidget *frame10;
+  GtkWidget *alignment23;
+  GtkWidget *vbox35;
+  GtkWidget *hbox96;
+  GtkWidget *wv_write_apev2;
+  GtkWidget *wv_write_id3v1;
+  GtkWidget *hbox97;
+  GtkWidget *wv_strip_apev2;
+  GtkWidget *wv_strip_id3v1;
+  GtkWidget *label122;
+  GtkWidget *dialog_action_area10;
+  GtkWidget *closebutton2;
+
+  tagwritersettings = gtk_dialog_new ();
+  gtk_container_set_border_width (GTK_CONTAINER (tagwritersettings), 12);
+  gtk_window_set_title (GTK_WINDOW (tagwritersettings), _("Tag Writer Settings"));
+  gtk_window_set_modal (GTK_WINDOW (tagwritersettings), TRUE);
+  gtk_window_set_type_hint (GTK_WINDOW (tagwritersettings), GDK_WINDOW_TYPE_HINT_DIALOG);
+  gtk_dialog_set_has_separator (GTK_DIALOG (tagwritersettings), FALSE);
+
+  dialog_vbox11 = GTK_DIALOG (tagwritersettings)->vbox;
+  gtk_widget_show (dialog_vbox11);
+
+  vbox32 = gtk_vbox_new (FALSE, 0);
+  gtk_widget_show (vbox32);
+  gtk_box_pack_start (GTK_BOX (dialog_vbox11), vbox32, TRUE, TRUE, 0);
+
+  frame8 = gtk_frame_new (NULL);
+  gtk_widget_show (frame8);
+  gtk_box_pack_start (GTK_BOX (vbox32), frame8, FALSE, TRUE, 0);
+  gtk_frame_set_shadow_type (GTK_FRAME (frame8), GTK_SHADOW_NONE);
+
+  alignment21 = gtk_alignment_new (0.5, 0.5, 1, 1);
+  gtk_widget_show (alignment21);
+  gtk_container_add (GTK_CONTAINER (frame8), alignment21);
+  gtk_alignment_set_padding (GTK_ALIGNMENT (alignment21), 0, 0, 12, 0);
+
+  vbox33 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox33);
+  gtk_container_add (GTK_CONTAINER (alignment21), vbox33);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox33), 12);
+
+  hbox89 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox89);
+  gtk_box_pack_start (GTK_BOX (vbox33), hbox89, FALSE, FALSE, 0);
+
+  write_id3v2 = gtk_check_button_new_with_mnemonic (_("Write ID3v2"));
+  gtk_widget_show (write_id3v2);
+  gtk_box_pack_start (GTK_BOX (hbox89), write_id3v2, FALSE, FALSE, 0);
+
+  write_id3v1 = gtk_check_button_new_with_mnemonic (_("Write ID3v1"));
+  gtk_widget_show (write_id3v1);
+  gtk_box_pack_start (GTK_BOX (hbox89), write_id3v1, FALSE, FALSE, 0);
+
+  write_apev2 = gtk_check_button_new_with_mnemonic (_("Write APEv2"));
+  gtk_widget_show (write_apev2);
+  gtk_box_pack_start (GTK_BOX (hbox89), write_apev2, FALSE, FALSE, 0);
+
+  hbox90 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox90);
+  gtk_box_pack_start (GTK_BOX (vbox33), hbox90, FALSE, FALSE, 0);
+
+  strip_id3v2 = gtk_check_button_new_with_mnemonic (_("Strip ID3v2"));
+  gtk_widget_show (strip_id3v2);
+  gtk_box_pack_start (GTK_BOX (hbox90), strip_id3v2, FALSE, FALSE, 0);
+
+  strip_id3v1 = gtk_check_button_new_with_mnemonic (_("Strip ID3v1"));
+  gtk_widget_show (strip_id3v1);
+  gtk_box_pack_start (GTK_BOX (hbox90), strip_id3v1, FALSE, FALSE, 0);
+
+  strip_apev2 = gtk_check_button_new_with_mnemonic (_("Strip APEv2"));
+  gtk_widget_show (strip_apev2);
+  gtk_box_pack_start (GTK_BOX (hbox90), strip_apev2, FALSE, FALSE, 0);
+
+  hbox91 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox91);
+  gtk_box_pack_start (GTK_BOX (vbox33), hbox91, TRUE, TRUE, 0);
+
+  label118 = gtk_label_new (_("ID3v2 version"));
+  gtk_widget_show (label118);
+  gtk_box_pack_start (GTK_BOX (hbox91), label118, FALSE, FALSE, 0);
+
+  id3v2_version = gtk_combo_box_new_text ();
+  gtk_widget_show (id3v2_version);
+  gtk_box_pack_start (GTK_BOX (hbox91), id3v2_version, TRUE, TRUE, 0);
+  gtk_combo_box_append_text (GTK_COMBO_BOX (id3v2_version), _("2.3 (Recommended)"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (id3v2_version), _("2.4"));
+
+  hbox92 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox92);
+  gtk_box_pack_start (GTK_BOX (vbox33), hbox92, TRUE, TRUE, 0);
+
+  label119 = gtk_label_new (_("ID3v1 character encoding (default is iso8859-1)"));
+  gtk_widget_show (label119);
+  gtk_box_pack_start (GTK_BOX (hbox92), label119, FALSE, FALSE, 0);
+
+  id3v1_encoding = gtk_entry_new ();
+  gtk_widget_show (id3v1_encoding);
+  gtk_box_pack_start (GTK_BOX (hbox92), id3v1_encoding, TRUE, TRUE, 0);
+  gtk_entry_set_invisible_char (GTK_ENTRY (id3v1_encoding), 9679);
+
+  label120 = gtk_label_new ("<b>MP3</b>");
+  gtk_widget_show (label120);
+  gtk_frame_set_label_widget (GTK_FRAME (frame8), label120);
+  gtk_label_set_use_markup (GTK_LABEL (label120), TRUE);
+
+  hbox93 = gtk_hbox_new (TRUE, 0);
+  gtk_widget_show (hbox93);
+  gtk_box_pack_start (GTK_BOX (vbox32), hbox93, FALSE, TRUE, 0);
+
+  frame9 = gtk_frame_new (NULL);
+  gtk_widget_show (frame9);
+  gtk_box_pack_start (GTK_BOX (hbox93), frame9, TRUE, TRUE, 0);
+  gtk_frame_set_shadow_type (GTK_FRAME (frame9), GTK_SHADOW_NONE);
+
+  alignment22 = gtk_alignment_new (0.5, 0.5, 1, 1);
+  gtk_widget_show (alignment22);
+  gtk_container_add (GTK_CONTAINER (frame9), alignment22);
+  gtk_alignment_set_padding (GTK_ALIGNMENT (alignment22), 0, 0, 12, 0);
+
+  vbox34 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox34);
+  gtk_container_add (GTK_CONTAINER (alignment22), vbox34);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox34), 12);
+
+  hbox94 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox94);
+  gtk_box_pack_start (GTK_BOX (vbox34), hbox94, TRUE, TRUE, 0);
+
+  ape_write_id3v2 = gtk_check_button_new_with_mnemonic (_("Write ID3v2.4"));
+  gtk_widget_show (ape_write_id3v2);
+  gtk_box_pack_start (GTK_BOX (hbox94), ape_write_id3v2, FALSE, FALSE, 0);
+
+  ape_write_apev2 = gtk_check_button_new_with_mnemonic (_("Write APEv2"));
+  gtk_widget_show (ape_write_apev2);
+  gtk_box_pack_start (GTK_BOX (hbox94), ape_write_apev2, FALSE, FALSE, 0);
+
+  hbox95 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox95);
+  gtk_box_pack_start (GTK_BOX (vbox34), hbox95, TRUE, TRUE, 0);
+
+  ape_strip_id3v2 = gtk_check_button_new_with_mnemonic (_("Strip ID3v2"));
+  gtk_widget_show (ape_strip_id3v2);
+  gtk_box_pack_start (GTK_BOX (hbox95), ape_strip_id3v2, FALSE, FALSE, 0);
+
+  ape_strip_apev2 = gtk_check_button_new_with_mnemonic (_("Strip APEv2"));
+  gtk_widget_show (ape_strip_apev2);
+  gtk_box_pack_start (GTK_BOX (hbox95), ape_strip_apev2, FALSE, FALSE, 0);
+
+  label121 = gtk_label_new ("<b>APE</b>");
+  gtk_widget_show (label121);
+  gtk_frame_set_label_widget (GTK_FRAME (frame9), label121);
+  gtk_label_set_use_markup (GTK_LABEL (label121), TRUE);
+
+  frame10 = gtk_frame_new (NULL);
+  gtk_widget_show (frame10);
+  gtk_box_pack_start (GTK_BOX (hbox93), frame10, TRUE, TRUE, 0);
+  gtk_frame_set_shadow_type (GTK_FRAME (frame10), GTK_SHADOW_NONE);
+
+  alignment23 = gtk_alignment_new (0.5, 0.5, 1, 1);
+  gtk_widget_show (alignment23);
+  gtk_container_add (GTK_CONTAINER (frame10), alignment23);
+  gtk_alignment_set_padding (GTK_ALIGNMENT (alignment23), 0, 0, 12, 0);
+
+  vbox35 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox35);
+  gtk_container_add (GTK_CONTAINER (alignment23), vbox35);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox35), 12);
+
+  hbox96 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox96);
+  gtk_box_pack_start (GTK_BOX (vbox35), hbox96, FALSE, FALSE, 0);
+
+  wv_write_apev2 = gtk_check_button_new_with_mnemonic (_("Write APEv2"));
+  gtk_widget_show (wv_write_apev2);
+  gtk_box_pack_start (GTK_BOX (hbox96), wv_write_apev2, FALSE, FALSE, 0);
+
+  wv_write_id3v1 = gtk_check_button_new_with_mnemonic (_("Write ID3v1"));
+  gtk_widget_show (wv_write_id3v1);
+  gtk_box_pack_start (GTK_BOX (hbox96), wv_write_id3v1, FALSE, FALSE, 0);
+
+  hbox97 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox97);
+  gtk_box_pack_start (GTK_BOX (vbox35), hbox97, FALSE, FALSE, 0);
+
+  wv_strip_apev2 = gtk_check_button_new_with_mnemonic (_("Strip APEv2"));
+  gtk_widget_show (wv_strip_apev2);
+  gtk_box_pack_start (GTK_BOX (hbox97), wv_strip_apev2, FALSE, FALSE, 0);
+
+  wv_strip_id3v1 = gtk_check_button_new_with_mnemonic (_("Strip ID3v1"));
+  gtk_widget_show (wv_strip_id3v1);
+  gtk_box_pack_start (GTK_BOX (hbox97), wv_strip_id3v1, FALSE, FALSE, 0);
+
+  label122 = gtk_label_new ("<b>WavPack</b>");
+  gtk_widget_show (label122);
+  gtk_frame_set_label_widget (GTK_FRAME (frame10), label122);
+  gtk_label_set_use_markup (GTK_LABEL (label122), TRUE);
+
+  dialog_action_area10 = GTK_DIALOG (tagwritersettings)->action_area;
+  gtk_widget_show (dialog_action_area10);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area10), GTK_BUTTONBOX_END);
+
+  closebutton2 = gtk_button_new_from_stock ("gtk-close");
+  gtk_widget_show (closebutton2);
+  gtk_dialog_add_action_widget (GTK_DIALOG (tagwritersettings), closebutton2, GTK_RESPONSE_CLOSE);
+  GTK_WIDGET_SET_FLAGS (closebutton2, GTK_CAN_DEFAULT);
+
+  g_signal_connect ((gpointer) write_id3v2, "toggled",
+                    G_CALLBACK (on_write_id3v2_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) write_id3v1, "toggled",
+                    G_CALLBACK (on_write_id3v1_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) write_apev2, "toggled",
+                    G_CALLBACK (on_write_apev2_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) strip_id3v2, "toggled",
+                    G_CALLBACK (on_strip_id3v2_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) strip_id3v1, "toggled",
+                    G_CALLBACK (on_strip_id3v1_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) strip_apev2, "toggled",
+                    G_CALLBACK (on_strip_apev2_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) id3v2_version, "changed",
+                    G_CALLBACK (on_id3v2_version_changed),
+                    NULL);
+  g_signal_connect ((gpointer) id3v1_encoding, "changed",
+                    G_CALLBACK (on_id3v1_encoding_changed),
+                    NULL);
+  g_signal_connect ((gpointer) ape_write_id3v2, "toggled",
+                    G_CALLBACK (on_ape_write_id3v2_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) ape_write_apev2, "toggled",
+                    G_CALLBACK (on_ape_write_apev2_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) ape_strip_id3v2, "toggled",
+                    G_CALLBACK (on_ape_strip_id3v2_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) ape_strip_apev2, "toggled",
+                    G_CALLBACK (on_ape_strip_apev2_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) wv_write_apev2, "toggled",
+                    G_CALLBACK (on_wv_write_apev2_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) wv_write_id3v1, "toggled",
+                    G_CALLBACK (on_wv_write_id3v1_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) wv_strip_apev2, "toggled",
+                    G_CALLBACK (on_wv_strip_apev2_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) wv_strip_id3v1, "toggled",
+                    G_CALLBACK (on_wv_strip_id3v1_toggled),
+                    NULL);
+
+  /* Store pointers to all widgets, for use by lookup_widget(). */
+  GLADE_HOOKUP_OBJECT_NO_REF (tagwritersettings, tagwritersettings, "tagwritersettings");
+  GLADE_HOOKUP_OBJECT_NO_REF (tagwritersettings, dialog_vbox11, "dialog_vbox11");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, vbox32, "vbox32");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, frame8, "frame8");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, alignment21, "alignment21");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, vbox33, "vbox33");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, hbox89, "hbox89");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, write_id3v2, "write_id3v2");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, write_id3v1, "write_id3v1");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, write_apev2, "write_apev2");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, hbox90, "hbox90");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, strip_id3v2, "strip_id3v2");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, strip_id3v1, "strip_id3v1");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, strip_apev2, "strip_apev2");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, hbox91, "hbox91");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, label118, "label118");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, id3v2_version, "id3v2_version");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, hbox92, "hbox92");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, label119, "label119");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, id3v1_encoding, "id3v1_encoding");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, label120, "label120");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, hbox93, "hbox93");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, frame9, "frame9");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, alignment22, "alignment22");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, vbox34, "vbox34");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, hbox94, "hbox94");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, ape_write_id3v2, "ape_write_id3v2");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, ape_write_apev2, "ape_write_apev2");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, hbox95, "hbox95");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, ape_strip_id3v2, "ape_strip_id3v2");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, ape_strip_apev2, "ape_strip_apev2");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, label121, "label121");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, frame10, "frame10");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, alignment23, "alignment23");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, vbox35, "vbox35");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, hbox96, "hbox96");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, wv_write_apev2, "wv_write_apev2");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, wv_write_id3v1, "wv_write_id3v1");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, hbox97, "hbox97");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, wv_strip_apev2, "wv_strip_apev2");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, wv_strip_id3v1, "wv_strip_id3v1");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, label122, "label122");
+  GLADE_HOOKUP_OBJECT_NO_REF (tagwritersettings, dialog_action_area10, "dialog_action_area10");
+  GLADE_HOOKUP_OBJECT (tagwritersettings, closebutton2, "closebutton2");
+
+  return tagwritersettings;
 }
 

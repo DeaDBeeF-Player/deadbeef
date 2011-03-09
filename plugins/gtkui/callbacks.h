@@ -1061,3 +1061,7 @@ gboolean
 on_metalist_button_press_event         (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data);
+
+void
+on_tagwriter_settings_clicked          (GtkButton       *button,
+                                        gpointer         user_data);

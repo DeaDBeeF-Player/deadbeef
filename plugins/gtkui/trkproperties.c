@@ -34,6 +34,7 @@
 #include "mainplaylist.h"
 #include "search.h"
 #include "ddbcellrenderertextmultiline.h"
+#include "tagwritersettings.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -747,5 +748,12 @@ on_metalist_button_press_event         (GtkWidget       *widget,
         gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, event->button, gtk_get_current_event_time());
     }
   return FALSE;
+}
+
+void
+on_tagwriter_settings_clicked          (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    run_tagwriter_settings (trackproperties);
 }
 

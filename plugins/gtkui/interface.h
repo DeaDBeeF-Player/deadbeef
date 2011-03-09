@@ -15,3 +15,4 @@ GtkWidget* create_addlocationdlg (void);
 GtkWidget* create_groupbydlg (void);
 GtkWidget* create_sortbydlg (void);
 GtkWidget* create_select_dsp_plugin (void);
+GtkWidget* create_tagwritersettings (void);
