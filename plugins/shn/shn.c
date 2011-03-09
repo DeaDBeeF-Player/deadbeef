@@ -321,9 +321,9 @@ shn_init(DB_fileinfo_t *_info, DB_playItem_t *it) {
 	char data[4];
     DB_FILE *f;
 
-	f = deadbeef->fopen (it->fname);
+	f = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
     if (!f) {
-        trace ("shn: failed to open %s\n", it->fname);
+        trace ("shn: failed to open %s\n", deadbeef->pl_find_meta (it, ":URI"));
         return -1;
     }
 
@@ -335,7 +335,7 @@ shn_init(DB_fileinfo_t *_info, DB_playItem_t *it) {
 	if (deadbeef->fread((void *)data,1,4,f) != 4)
 	{
 		deadbeef->fclose(f);
-        trace ("shn: failed to read magic from %s\n", it->fname);
+        trace ("shn: failed to read magic from %s\n", deadbeef->pl_find_meta (it, ":URI"));
 		return -1;
 	}
 	deadbeef->fclose(f);
@@ -345,7 +345,7 @@ shn_init(DB_fileinfo_t *_info, DB_playItem_t *it) {
 		return -1;
     }
 
-	if (!(info->shnfile = load_shn(it->fname))) {
+	if (!(info->shnfile = load_shn(deadbeef->pl_find_meta (it, ":URI")))) {
         trace ("shn: load_shn failed\n");
 		return -1;
     }
@@ -893,9 +893,7 @@ shn_insert (DB_playItem_t *after, const char *fname) {
 		return NULL;
     }
 
-	DB_playItem_t *it = deadbeef->pl_item_alloc ();
-    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
-    it->fname = strdup (fname);
+	DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
     it->filetype = "Shorten";
     deadbeef->pl_set_item_duration (it, tmp_file->wave_header.length);
 

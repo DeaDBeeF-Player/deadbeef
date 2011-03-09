@@ -552,7 +552,7 @@ convert (DB_playItem_t *it, const char *outfolder, int selected_format, ddb_enco
     DB_fileinfo_t *fileinfo = NULL;
     char out[PATH_MAX] = ""; // full path to output file
     char input_file_name[PATH_MAX] = "";
-    dec = (DB_decoder_t *)deadbeef->plug_get_for_id (it->decoder_id);
+    dec = (DB_decoder_t *)deadbeef->plug_get_for_id (deadbeef->pl_find_meta (it, ":DECODER"));
     if (dec) {
         fileinfo = dec->open (0);
         if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (it)) != 0) {

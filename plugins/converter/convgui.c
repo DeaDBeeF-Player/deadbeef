@@ -96,7 +96,7 @@ converter_worker (void *ctx) {
         update_progress_info_t *info = malloc (sizeof (update_progress_info_t));
         info->entry = conv->progress_entry;
         g_object_ref (info->entry);
-        info->text = strdup (conv->convert_items[n]->fname);
+        info->text = strdup (deadbeef->pl_find_meta (conv->convert_items[n], ":URI"));
         g_idle_add (update_progress_cb, info);
 
         converter_plugin->convert (conv->convert_items[n], conv->outfolder, conv->selected_format, conv->encoder_preset, conv->dsp_preset, &conv->cancelled);

@@ -67,9 +67,9 @@ aoplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->plugin = &plugin;
     info->duration = deadbeef->pl_get_item_duration (it);
 
-    DB_FILE *file = deadbeef->fopen (it->fname);
+    DB_FILE *file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
     if (!file) {
-        trace ("psf: failed to fopen %s\n", it->fname);
+        trace ("psf: failed to fopen %s\n", deadbeef->pl_find_meta (it, ":URI"));
         return -1;
     }
 
@@ -82,7 +82,7 @@ aoplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
 
 	if (deadbeef->fread(info->filebuffer, 1, info->filesize, file) != info->filesize) {
-		fprintf(stderr, "psf: file read error: %s\n", it->fname);
+		fprintf(stderr, "psf: file read error: %s\n", deadbeef->pl_find_meta (it, ":URI"));
 		deadbeef->fclose (file);
         return -1;
     }
@@ -94,7 +94,7 @@ aoplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
 
-    info->decoder = ao_start (info->type, it->fname, (uint8 *)info->filebuffer, info->filesize);
+    info->decoder = ao_start (info->type, deadbeef->pl_find_meta (it, ":URI"), (uint8 *)info->filebuffer, info->filesize);
     if (!info->decoder) {
         fprintf (stderr, "psf: ao_start failed\n");
         return -1;
@@ -251,9 +251,7 @@ aoplug_insert (DB_playItem_t *after, const char *fname) {
 
 	free (buffer);
 	
-    DB_playItem_t *it = deadbeef->pl_item_alloc ();
-    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
-    it->fname = strdup (fname);
+    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
     const char *ext = fname + strlen (fname);
     while (*ext != '.' && ext > fname) {
         ext--;

@@ -59,18 +59,18 @@ cdumb_open (uint32_t hints) {
 
 static int
 cdumb_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
-    trace ("cdumb_init %s\n", it->fname);
+    trace ("cdumb_init %s\n", deadbeef->pl_find_meta (it, ":URI"));
     dumb_info_t *info = (dumb_info_t *)_info;
 
     int start_order = 0;
 	int is_dos, is_it;
-    const char *ext = it->fname + strlen (it->fname) - 1;
-    while (*ext != '.' && ext > it->fname) {
+    const char *ext = deadbeef->pl_find_meta (it, ":URI") + strlen (deadbeef->pl_find_meta (it, ":URI")) - 1;
+    while (*ext != '.' && ext > deadbeef->pl_find_meta (it, ":URI")) {
         ext--;
     }
     ext++;
     const char *ftype;
-    info->duh = open_module(it->fname, ext, &start_order, &is_it, &is_dos, &ftype);
+    info->duh = open_module(deadbeef->pl_find_meta (it, ":URI"), ext, &start_order, &is_it, &is_dos, &ftype);
 
     dumb_it_do_initial_runthrough (info->duh);
 
@@ -734,9 +734,7 @@ cdumb_insert (DB_playItem_t *after, const char *fname) {
     if (!duh) {
         return NULL;
     }
-    DB_playItem_t *it = deadbeef->pl_item_alloc ();
-    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
-    it->fname = strdup (fname);
+    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
     DUMB_IT_SIGDATA * itsd = duh_get_it_sigdata(duh);
     if (itsd->name[0])     {
         int tl = sizeof(itsd->name);
