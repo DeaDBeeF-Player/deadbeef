@@ -38,6 +38,8 @@
 
 #include "gtkui.h"
 
+#include "wingeom.h"
+
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
@@ -49,27 +51,8 @@ extern GtkWidget *searchwin;
 extern GtkWidget *mainwin;
 
 void
-search_restore_attrs (void) {
-    int x = deadbeef->conf_get_int ("searchwin.geometry.x", -1);
-    int y = deadbeef->conf_get_int ("searchwin.geometry.y", -1);
-    int w = deadbeef->conf_get_int ("searchwin.geometry.w", 450);
-    int h = deadbeef->conf_get_int ("searchwin.geometry.h", 150);
-    gtk_widget_show (searchwin);
-    if (x != -1 && y != -1) {
-        gtk_window_move (GTK_WINDOW (searchwin), x, y);
-        gtk_window_resize (GTK_WINDOW (searchwin), w, h);
-        if (deadbeef->conf_get_int ("searchwin.geometry.maximized", 0)) {
-            gtk_window_maximize (GTK_WINDOW (searchwin));
-        }
-        gtk_window_present (GTK_WINDOW (searchwin));
-    }
-    else {
-        gtk_window_resize (GTK_WINDOW (searchwin), w, h);
-    }
-}
-
-void
 search_start (void) {
+    wingeom_restore (searchwin, "searchwin", -1, -1, 450, 150, 0);
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (searchwin, "searchentry")), "");
     gtk_widget_show (searchwin);
     gtk_window_present (GTK_WINDOW (searchwin));
@@ -198,21 +181,7 @@ on_searchwin_configure_event           (GtkWidget       *widget,
                                         GdkEventConfigure *event,
                                         gpointer         user_data)
 {
-#if GTK_CHECK_VERSION(2,2,0)
-	GdkWindowState window_state = gdk_window_get_state (GDK_WINDOW (widget->window));
-#else
-	GdkWindowState window_state = gdk_window_get_state (G_OBJECT (widget));
-#endif
-    if (!(window_state & GDK_WINDOW_STATE_MAXIMIZED) && gtk_widget_get_visible (widget)) {
-        int x, y;
-        int w, h;
-        gtk_window_get_position (GTK_WINDOW (widget), &x, &y);
-        gtk_window_get_size (GTK_WINDOW (widget), &w, &h);
-        deadbeef->conf_set_int ("searchwin.geometry.x", x);
-        deadbeef->conf_set_int ("searchwin.geometry.y", y);
-        deadbeef->conf_set_int ("searchwin.geometry.w", w);
-        deadbeef->conf_set_int ("searchwin.geometry.h", h);
-    }
+    wingeom_save (widget, "searchwin");
     return FALSE;
 }
 
@@ -221,30 +190,7 @@ on_searchwin_window_state_event        (GtkWidget       *widget,
                                         GdkEventWindowState *event,
                                         gpointer         user_data)
 {
-    if (!gtk_widget_get_visible (widget)) {
-        return FALSE;
-    }
-    // based on pidgin maximization handler
-#if GTK_CHECK_VERSION(2,2,0)
-    if (event->changed_mask & GDK_WINDOW_STATE_MAXIMIZED) {
-        if (event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED) {
-            deadbeef->conf_set_int ("searchwin.geometry.maximized", 1);
-        }
-        else {
-            deadbeef->conf_set_int ("searchwin.geometry.maximized", 0);
-        }
-    }
-#else
-	GdkWindowState new_window_state = gdk_window_get_state(G_OBJECT(widget));
-
-    if ()
-	if (new_window_state & GDK_WINDOW_STATE_MAXIMIZED) {
-        deadbeef->conf_set_int ("searchwin.geometry.maximized", 1);
-    }
-	else {
-        deadbeef->conf_set_int ("searchwin.geometry.maximized", 0);
-    }
-#endif
+    wingeom_save_max (event, widget, "searchwin");
     return FALSE;
 }
 

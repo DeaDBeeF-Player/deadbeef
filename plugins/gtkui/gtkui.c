@@ -46,6 +46,7 @@
 #include "actions.h"
 #include "pluginconf.h"
 #include "gtkui_api.h"
+#include "wingeom.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -276,15 +277,7 @@ mainwin_toggle_visible (void) {
         gtk_widget_hide (mainwin);
     }
     else {
-        int x = deadbeef->conf_get_int ("mainwin.geometry.x", 40);
-        int y = deadbeef->conf_get_int ("mainwin.geometry.y", 40);
-        int w = deadbeef->conf_get_int ("mainwin.geometry.w", 500);
-        int h = deadbeef->conf_get_int ("mainwin.geometry.h", 300);
-        gtk_window_move (GTK_WINDOW (mainwin), x, y);
-        gtk_window_resize (GTK_WINDOW (mainwin), w, h);
-        if (deadbeef->conf_get_int ("mainwin.geometry.maximized", 0)) {
-            gtk_window_maximize (GTK_WINDOW (mainwin));
-        }
+        wingeom_restore (mainwin, "mainwin", 40, 40, 500, 300, 0);
         if (iconified) {
             gtk_window_deiconify (GTK_WINDOW(mainwin));
         }
@@ -967,17 +960,7 @@ gtkui_thread (void *ctx) {
     gtk_window_set_icon_name (GTK_WINDOW (mainwin), "deadbeef");
 #endif
 
-    {
-        int x = deadbeef->conf_get_int ("mainwin.geometry.x", 40);
-        int y = deadbeef->conf_get_int ("mainwin.geometry.y", 40);
-        int w = deadbeef->conf_get_int ("mainwin.geometry.w", 500);
-        int h = deadbeef->conf_get_int ("mainwin.geometry.h", 300);
-        gtk_window_move (GTK_WINDOW (mainwin), x, y);
-        gtk_window_resize (GTK_WINDOW (mainwin), w, h);
-        if (deadbeef->conf_get_int ("mainwin.geometry.maximized", 0)) {
-            gtk_window_maximize (GTK_WINDOW (mainwin));
-        }
-    }
+    wingeom_restore (mainwin, "mainwin", 40, 40, 500, 300, 0);
 
     gtkui_on_configchanged (NULL, 0);
     gtkui_init_theme_colors ();

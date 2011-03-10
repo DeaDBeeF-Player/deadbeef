@@ -43,6 +43,7 @@
 #include "parser.h"
 #include "drawing.h"
 #include "eq.h"
+#include "wingeom.h"
 
 //#define trace(...) { fprintf (stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -634,21 +635,7 @@ on_mainwin_configure_event             (GtkWidget       *widget,
                                         GdkEventConfigure *event,
                                         gpointer         user_data)
 {
-#if GTK_CHECK_VERSION(2,2,0)
-	GdkWindowState window_state = gdk_window_get_state (GDK_WINDOW (widget->window));
-#else
-	GdkWindowState window_state = gdk_window_get_state (G_OBJECT (widget));
-#endif
-    if (!(window_state & GDK_WINDOW_STATE_MAXIMIZED) && gtk_widget_get_visible (widget)) {
-        int x, y;
-        int w, h;
-        gtk_window_get_position (GTK_WINDOW (widget), &x, &y);
-        gtk_window_get_size (GTK_WINDOW (widget), &w, &h);
-        deadbeef->conf_set_int ("mainwin.geometry.x", x);
-        deadbeef->conf_set_int ("mainwin.geometry.y", y);
-        deadbeef->conf_set_int ("mainwin.geometry.w", w);
-        deadbeef->conf_set_int ("mainwin.geometry.h", h);
-    }
+    wingeom_save (widget, "mainwin");
     return FALSE;
 }
 
@@ -666,7 +653,6 @@ on_find_activate                       (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     search_start ();       
-    search_restore_attrs ();
 }
 
 void
@@ -814,26 +800,7 @@ on_mainwin_window_state_event          (GtkWidget       *widget,
                                         GdkEventWindowState *event,
                                         gpointer         user_data)
 {
-    // based on pidgin maximization handler
-#if GTK_CHECK_VERSION(2,2,0)
-    if (event->changed_mask & GDK_WINDOW_STATE_MAXIMIZED) {
-        if (event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED) {
-            deadbeef->conf_set_int ("mainwin.geometry.maximized", 1);
-        }
-        else {
-            deadbeef->conf_set_int ("mainwin.geometry.maximized", 0);
-        }
-    }
-#else
-	GdkWindowState new_window_state = gdk_window_get_state(G_OBJECT(widget));
-
-	if (new_window_state & GDK_WINDOW_STATE_MAXIMIZED) {
-        deadbeef->conf_set_int ("mainwin.geometry.maximized", 1);
-    }
-	else {
-        deadbeef->conf_set_int ("mainwin.geometry.maximized", 0);
-    }
-#endif
+    wingeom_save_max (event, widget, "mainwin");
     return FALSE;
 }
 
