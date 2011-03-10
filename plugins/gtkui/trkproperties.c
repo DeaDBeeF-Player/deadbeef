@@ -493,6 +493,10 @@ write_meta_worker (void *ctx) {
         DB_playItem_t *track = tracks[t];
         const char *decoder_id = deadbeef->pl_find_meta (track, ":DECODER");
         if (track && decoder_id) {
+            int is_subtrack = deadbeef->pl_get_item_flags (track) & DDB_IS_SUBTRACK;
+            if (is_subtrack) {
+                continue;
+            }
             deadbeef->pl_item_ref (track);
             g_idle_add (set_progress_cb, track);
             // find decoder
