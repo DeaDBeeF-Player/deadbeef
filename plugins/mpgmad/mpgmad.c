@@ -45,13 +45,15 @@ static DB_functions_t *deadbeef;
 #define READBUFFER 0x2800 // 10k is enough for single frame
 
 // vbrmethod constants
-#define LAME_CBR  1 
-#define LAME_CBR2 8
-#define LAME_ABR  2
-#define LAME_VBR1 3
-#define LAME_VBR2 4
-#define LAME_VBR3 5
-#define LAME_VBR4 6
+#define XING_CBR  1 
+#define XING_ABR  2
+#define XING_VBR1 3
+#define XING_VBR2 4
+#define XING_VBR3 5
+#define XING_VBR4 6
+#define XING_CBR2 8
+#define XING_ABR2 9
+#define DETECTED_VBR 100
 
 // xing header flags
 #define FRAMES_FLAG     0x0001
@@ -369,7 +371,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         }
 
         if (prev_bitrate != -1 && prev_bitrate != bitrate) {
-            buffer->vbr = 1;
+            buffer->vbr = DETECTED_VBR;
         }
         prev_bitrate = bitrate;
 
@@ -461,9 +463,20 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                         return -1; // EOF
                     }
                     //                trace ("tell=%x, %c%c%c%c\n", deadbeef->ftell(buffer->file), buf[0], buf[1], buf[2], buf[3]);
+
+                    deadbeef->fseek (buffer->file, 5, SEEK_CUR);
+                    uint8_t rev = 0;
+                    if (deadbeef->fread (&rev, 1, 1, buffer->file) != 1) {
+                        trace ("cmp3_scan_stream: EOF while reading info tag revision / vbr method\n");
+                    }
+                    switch (rev & 0x0f) {
+                    case XING_ABR ... XING_VBR4:
+                    case XING_ABR2:
+                        buffer->vbr = rev & 0x0f;
+                        break;
+                    }
                     if (!memcmp (buf, "LAME", 4)) {
                         trace ("lame header found\n");
-                        deadbeef->fseek (buffer->file, 6, SEEK_CUR);
 
                         // FIXME: that can be optimized by single read
                         uint8_t lpf;
@@ -501,6 +514,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                         trace ("lame totalsamples: %d\n", buffer->totalsamples);
                     }
                     if (sample <= 0 && (flags&FRAMES_FLAG)) {
+                        buffer->have_xing_header = 1;
                         buffer->totalsamples -= buffer->enddelay;
                         deadbeef->fseek (buffer->file, framepos+packetlength-4, SEEK_SET);
                         return 0;
@@ -634,7 +648,38 @@ cmp3_set_extra_properties (buffer_t *buffer) {
     deadbeef->pl_replace_meta (buffer->it, ":CHANNELS", s);
     snprintf (s, sizeof (s), "%d", buffer->samplerate);
     deadbeef->pl_replace_meta (buffer->it, ":SAMPLERATE", s);
-    deadbeef->pl_replace_meta (buffer->it, ":CODEC_PROFILE", buffer->vbr ? "VBR" : "CBR");
+    switch (buffer->vbr) {
+//    case XING_CBR:
+//        deadbeef->pl_replace_meta (buffer->it, ":VBR_METHOD", "CBR");
+//        break;
+    case XING_ABR:
+        deadbeef->pl_replace_meta (buffer->it, ":VBR_METHOD", "ABR");
+        break;
+    case XING_VBR1:
+        deadbeef->pl_replace_meta (buffer->it, ":VBR_METHOD", "full VBR method 1");
+        break;
+    case XING_VBR2:
+        deadbeef->pl_replace_meta (buffer->it, ":VBR_METHOD", "full VBR method 2");
+        break;
+    case XING_VBR3:
+        deadbeef->pl_replace_meta (buffer->it, ":VBR_METHOD", "full VBR method 3");
+        break;
+    case XING_VBR4:
+        deadbeef->pl_replace_meta (buffer->it, ":VBR_METHOD", "full VBR method 4");
+        break;
+    case XING_CBR2:
+        deadbeef->pl_replace_meta (buffer->it, ":VBR_METHOD", "CBR 2 pass");
+        break;
+    case XING_ABR2:
+        deadbeef->pl_replace_meta (buffer->it, ":VBR_METHOD", "ABR 2 pass");
+        break;
+    case DETECTED_VBR:
+        deadbeef->pl_replace_meta (buffer->it, ":VBR_METHOD", "VBR autodetected");
+        break;
+    default:
+        deadbeef->pl_replace_meta (buffer->it, ":VBR_METHOD", "CBR");
+        break;
+    }
     const char *versions[] = {"1", "2", "2.5"};
     snprintf (s, sizeof (s), "MPEG%s layer%d", versions[buffer->version-1], buffer->layer);
     deadbeef->pl_replace_meta (buffer->it, ":MPEG_VERSION", s);
