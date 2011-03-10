@@ -267,13 +267,7 @@ void
 main_properties_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (clicked_idx, PL_MAIN);
-    if (!it) {
-        fprintf (stderr, "attempt to view properties of non-existing item\n");
-        return;
-    }
-    show_track_properties_dlg (it);
-    deadbeef->pl_item_unref (it);
+    show_track_properties_dlg ();
 }
 
 void

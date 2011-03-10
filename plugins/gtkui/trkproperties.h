@@ -22,7 +22,7 @@
 struct DB_playItem_s;
 
 void
-show_track_properties_dlg (struct DB_playItem_s *it);
+show_track_properties_dlg (void);
 
 void
 trkproperties_destroy (void);

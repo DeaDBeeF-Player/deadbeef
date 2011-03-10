@@ -342,7 +342,7 @@ trkproperties_fill_metadata (void) {
 }
 
 void
-show_track_properties_dlg (DB_playItem_t *it) {
+show_track_properties_dlg (void) {
 
     deadbeef->plt_lock ();
     deadbeef->pl_lock ();
@@ -384,29 +384,6 @@ show_track_properties_dlg (DB_playItem_t *it) {
     deadbeef->pl_unlock ();
     deadbeef->plt_unlock ();
 
-    int allow_editing = 0;
-
-    int is_subtrack = deadbeef->pl_get_item_flags (it) & DDB_IS_SUBTRACK;
-
-    if (!is_subtrack && deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI"))) {
-        // get decoder plugin by id
-        DB_decoder_t *dec = NULL;
-        const char *decoder_id = deadbeef->pl_find_meta (it, ":DECODER");
-        if (decoder_id) {
-            DB_decoder_t **decoders = deadbeef->plug_get_decoder_list ();
-            for (int i = 0; decoders[i]; i++) {
-                if (!strcmp (decoders[i]->plugin.id, decoder_id)) {
-                    dec = decoders[i];
-                    break;
-                }
-            }
-        }
-
-        if (dec && dec->write_metadata) {
-            allow_editing = 1;
-        }
-    }
-
     GtkTreeView *tree;
     GtkTreeView *proptree;
     if (!trackproperties) {
@@ -419,11 +396,9 @@ show_track_properties_dlg (DB_playItem_t *it) {
         gtk_tree_view_set_model (tree, GTK_TREE_MODEL (store));
         GtkCellRenderer *rend_text = gtk_cell_renderer_text_new ();
         rend_text2 = GTK_CELL_RENDERER (ddb_cell_renderer_text_multiline_new ());
-        if (allow_editing) {
-            g_signal_connect ((gpointer)rend_text2, "edited",
-                    G_CALLBACK (on_metadata_edited),
-                    store);
-        }
+        g_signal_connect ((gpointer)rend_text2, "edited",
+                G_CALLBACK (on_metadata_edited),
+                store);
         GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes (_("Key"), rend_text, "text", 0, NULL);
         GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes (_("Value"), rend_text2, "text", 1, NULL);
         gtk_tree_view_append_column (tree, col1);
@@ -458,12 +433,7 @@ show_track_properties_dlg (DB_playItem_t *it) {
 
     trkproperties_fill_metadata ();
 
-    if (allow_editing) {
-        gtk_widget_set_sensitive (lookup_widget (widget, "write_tags"), TRUE);
-    }
-    else {
-        gtk_widget_set_sensitive (lookup_widget (widget, "write_tags"), FALSE);
-    }
+    gtk_widget_set_sensitive (lookup_widget (widget, "write_tags"), TRUE);
 
     gtk_widget_show (widget);
     gtk_window_present (GTK_WINDOW (widget));
