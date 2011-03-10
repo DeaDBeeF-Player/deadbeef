@@ -1394,7 +1394,7 @@
   <property name="visible">True</property>
   <property name="title" translatable="yes">Track Properties</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
-  <property name="window_position">GTK_WIN_POS_NONE</property>
+  <property name="window_position">GTK_WIN_POS_MOUSE</property>
   <property name="modal">False</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
@@ -1407,6 +1407,8 @@
   <property name="urgency_hint">False</property>
   <signal name="key_press_event" handler="on_trackproperties_key_press_event" last_modification_time="Thu, 31 Dec 2009 13:46:40 GMT"/>
   <signal name="delete_event" handler="on_trackproperties_delete_event" last_modification_time="Sat, 02 Jan 2010 21:38:32 GMT"/>
+  <signal name="configure_event" handler="on_trackproperties_configure_event" last_modification_time="Thu, 10 Mar 2011 11:06:48 GMT"/>
+  <signal name="window_state_event" handler="on_trackproperties_window_state_event" last_modification_time="Thu, 10 Mar 2011 11:08:02 GMT"/>
 
   <child>
     <widget class="GtkNotebook" id="notebook3">

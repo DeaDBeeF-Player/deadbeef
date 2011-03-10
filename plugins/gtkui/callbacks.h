@@ -1065,3 +1065,18 @@ on_metalist_button_press_event         (GtkWidget       *widget,
 void
 on_tagwriter_settings_clicked          (GtkButton       *button,
                                         gpointer         user_data);
+
+gboolean
+on_trackproperties_configure_event     (GtkWidget       *widget,
+                                        GdkEventConfigure *event,
+                                        gpointer         user_data);
+
+void
+on_trackproperties_state_changed       (GtkWidget       *widget,
+                                        GtkStateType     state,
+                                        gpointer         user_data);
+
+gboolean
+on_trackproperties_window_state_event  (GtkWidget       *widget,
+                                        GdkEvent        *event,
+                                        gpointer         user_data);

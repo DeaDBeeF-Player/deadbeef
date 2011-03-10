@@ -1218,6 +1218,7 @@ create_trackproperties (void)
   trackproperties = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_widget_set_size_request (trackproperties, 400, 400);
   gtk_window_set_title (GTK_WINDOW (trackproperties), _("Track Properties"));
+  gtk_window_set_position (GTK_WINDOW (trackproperties), GTK_WIN_POS_MOUSE);
   gtk_window_set_skip_taskbar_hint (GTK_WINDOW (trackproperties), TRUE);
   gtk_window_set_skip_pager_hint (GTK_WINDOW (trackproperties), TRUE);
 
@@ -1367,6 +1368,12 @@ create_trackproperties (void)
                     NULL);
   g_signal_connect ((gpointer) trackproperties, "delete_event",
                     G_CALLBACK (on_trackproperties_delete_event),
+                    NULL);
+  g_signal_connect ((gpointer) trackproperties, "configure_event",
+                    G_CALLBACK (on_trackproperties_configure_event),
+                    NULL);
+  g_signal_connect ((gpointer) trackproperties, "window_state_event",
+                    G_CALLBACK (on_trackproperties_window_state_event),
                     NULL);
   g_signal_connect ((gpointer) metalist, "button_press_event",
                     G_CALLBACK (on_metalist_button_press_event),

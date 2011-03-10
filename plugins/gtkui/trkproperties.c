@@ -35,6 +35,7 @@
 #include "search.h"
 #include "ddbcellrenderertextmultiline.h"
 #include "tagwritersettings.h"
+#include "wingeom.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -389,6 +390,7 @@ show_track_properties_dlg (void) {
     if (!trackproperties) {
         trackproperties = create_trackproperties ();
         gtk_window_set_transient_for (GTK_WINDOW (trackproperties), GTK_WINDOW (mainwin));
+        wingeom_restore (trackproperties, "trkproperties", -1, -1, 300, 400, 0);
 
         // metadata tree
         tree = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
@@ -729,5 +731,24 @@ on_tagwriter_settings_clicked          (GtkButton       *button,
                                         gpointer         user_data)
 {
     run_tagwriter_settings (trackproperties);
+}
+
+gboolean
+on_trackproperties_configure_event     (GtkWidget       *widget,
+                                        GdkEventConfigure *event,
+                                        gpointer         user_data)
+{
+    wingeom_save (widget, "trkproperties");
+    return FALSE;
+}
+
+
+gboolean
+on_trackproperties_window_state_event  (GtkWidget       *widget,
+                                        GdkEventWindowState *event,
+                                        gpointer         user_data)
+{
+    wingeom_save_max (event, widget, "trkproperties");
+    return FALSE;
 }
 
