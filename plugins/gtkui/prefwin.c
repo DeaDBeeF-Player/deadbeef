@@ -36,6 +36,7 @@
 #include "ddblistview.h"
 #include "pluginconf.h"
 #include "dspconfig.h"
+#include "wingeom.h"
 
 #define GLADE_HOOKUP_OBJECT(component,widget,name) \
   g_object_set_data_full (G_OBJECT (component), name, \
@@ -602,7 +603,6 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     gtk_tree_view_set_model (tree, GTK_TREE_MODEL (store));
 
     gtk_widget_set_sensitive (lookup_widget (prefwin, "configure_plugin"), FALSE);
-//    gtk_widget_show (w);
 
     // hotkeys
     DB_plugin_t *hotkeys = deadbeef->plug_get_for_id ("hotkeys");
@@ -1224,5 +1224,32 @@ on_plug_copyright_clicked              (GtkButton       *button,
     if (p->copyright) {
         show_copyright_window (p->copyright, "Copyright", &copyright_window);
     }
+}
+
+gboolean
+on_prefwin_configure_event             (GtkWidget       *widget,
+                                        GdkEventConfigure *event,
+                                        gpointer         user_data)
+{
+    wingeom_save (widget, "prefwin");
+    return FALSE;
+}
+
+
+gboolean
+on_prefwin_window_state_event          (GtkWidget       *widget,
+                                        GdkEventWindowState *event,
+                                        gpointer         user_data)
+{
+    wingeom_save_max (event, widget, "prefwin");
+    return FALSE;
+}
+
+
+void
+on_prefwin_realize                     (GtkWidget       *widget,
+                                        gpointer         user_data)
+{
+    wingeom_restore (widget, "prefwin", -1, -1, -1, -1, 0);
 }
 

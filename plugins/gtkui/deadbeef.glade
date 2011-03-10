@@ -2367,10 +2367,8 @@ Right</property>
   <property name="visible">True</property>
   <property name="title" translatable="yes">Preferences</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
-  <property name="window_position">GTK_WIN_POS_NONE</property>
+  <property name="window_position">GTK_WIN_POS_CENTER</property>
   <property name="modal">False</property>
-  <property name="default_width">630</property>
-  <property name="default_height">400</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
   <property name="decorated">True</property>
@@ -2381,6 +2379,9 @@ Right</property>
   <property name="focus_on_map">True</property>
   <property name="urgency_hint">False</property>
   <property name="has_separator">True</property>
+  <signal name="configure_event" handler="on_prefwin_configure_event" last_modification_time="Thu, 10 Mar 2011 11:14:37 GMT"/>
+  <signal name="window_state_event" handler="on_prefwin_window_state_event" last_modification_time="Thu, 10 Mar 2011 11:14:42 GMT"/>
+  <signal name="realize" handler="on_prefwin_realize" last_modification_time="Thu, 10 Mar 2011 11:20:24 GMT"/>
 
   <child internal-child="vbox">
     <widget class="GtkVBox" id="dialog-vbox2">

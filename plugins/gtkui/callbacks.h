@@ -1078,5 +1078,24 @@ on_trackproperties_state_changed       (GtkWidget       *widget,
 
 gboolean
 on_trackproperties_window_state_event  (GtkWidget       *widget,
+                                        GdkEventWindowState *event,
+                                        gpointer         user_data);
+
+gboolean
+on_prefwin_configure_event             (GtkWidget       *widget,
+                                        GdkEventConfigure *event,
+                                        gpointer         user_data);
+
+gboolean
+on_prefwin_window_state_event          (GtkWidget       *widget,
+                                        GdkEventWindowState *event,
+                                        gpointer         user_data);
+
+void
+on_prefwin_realize                     (GtkWidget       *widget,
+                                        gpointer         user_data);
+
+gboolean
+on_prefwin_map_event                   (GtkWidget       *widget,
                                         GdkEvent        *event,
                                         gpointer         user_data);

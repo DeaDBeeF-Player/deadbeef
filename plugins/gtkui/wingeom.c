@@ -91,7 +91,9 @@ wingeom_restore (GtkWidget *win, const char *name, int dx, int dy, int dw, int d
     if (x != -1 && y != -1) {
         gtk_window_move (GTK_WINDOW (win), x, y);
     }
-    gtk_window_resize (GTK_WINDOW (win), w, h);
+    if (w != -1 && h != -1) {
+        gtk_window_resize (GTK_WINDOW (win), w, h);
+    }
     snprintf (key, sizeof (key), "%s.geometry.maximized", name);
     if (deadbeef->conf_get_int (key, dmax)) {
         gtk_window_maximize (GTK_WINDOW (win));

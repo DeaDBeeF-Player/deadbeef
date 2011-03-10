@@ -1774,7 +1774,7 @@ create_prefwin (void)
   gtk_widget_set_size_request (prefwin, 630, 400);
   gtk_container_set_border_width (GTK_CONTAINER (prefwin), 12);
   gtk_window_set_title (GTK_WINDOW (prefwin), _("Preferences"));
-  gtk_window_set_default_size (GTK_WINDOW (prefwin), 630, 400);
+  gtk_window_set_position (GTK_WINDOW (prefwin), GTK_WIN_POS_CENTER);
   gtk_window_set_type_hint (GTK_WINDOW (prefwin), GDK_WINDOW_TYPE_HINT_DIALOG);
 
   dialog_vbox2 = GTK_DIALOG (prefwin)->vbox;
@@ -2408,6 +2408,15 @@ create_prefwin (void)
   gtk_dialog_add_action_widget (GTK_DIALOG (prefwin), closebutton1, GTK_RESPONSE_CLOSE);
   GTK_WIDGET_SET_FLAGS (closebutton1, GTK_CAN_DEFAULT);
 
+  g_signal_connect ((gpointer) prefwin, "configure_event",
+                    G_CALLBACK (on_prefwin_configure_event),
+                    NULL);
+  g_signal_connect ((gpointer) prefwin, "window_state_event",
+                    G_CALLBACK (on_prefwin_window_state_event),
+                    NULL);
+  g_signal_connect ((gpointer) prefwin, "realize",
+                    G_CALLBACK (on_prefwin_realize),
+                    NULL);
   g_signal_connect ((gpointer) pref_replaygain_mode, "changed",
                     G_CALLBACK (on_pref_replaygain_mode_changed),
                     NULL);
