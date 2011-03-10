@@ -159,7 +159,6 @@ streamer_start_playback (playItem_t *from, playItem_t *it) {
         float trackpeak = pl_get_item_replaygain (playing_track, DDB_REPLAYGAIN_TRACKPEAK);
         replaygain_set_values (albumgain, albumpeak, trackgain, trackpeak);
 
-        printf ("played=1 [1]\n");
         playing_track->played = 1;
         playing_track->started_timestamp = time (NULL);
         trace ("sending songstarted to plugins [2] current playtrack: %s\n", playing_track->fname);
