@@ -51,6 +51,8 @@ static int pulse_terminate;
 
 static pa_simple *s;
 static pa_sample_spec ss;
+static pa_channel_map channel_map;
+static ddb_waveformat_t requested_fmt;
 static int state;
 static uintptr_t mutex;
 
@@ -59,6 +61,84 @@ static int buffer_size;
 static void pulse_thread(void *context);
 
 static void pulse_callback(char *stream, int len);
+
+static int pulse_init();
+
+static int pulse_free();
+
+static int pulse_setformat(ddb_waveformat_t *fmt);
+
+static int pulse_play();
+
+static int pulse_stop();
+
+static int pulse_pause();
+
+static int pulse_unpause();
+
+static int pulse_set_spec(ddb_waveformat_t *fmt)
+{
+    memcpy (&plugin.fmt, fmt, sizeof (ddb_waveformat_t));
+    if (!plugin.fmt.channels) {
+        // generic format
+        plugin.fmt.bps = 16;
+        plugin.fmt.is_float = 0;
+        plugin.fmt.channels = 2;
+        plugin.fmt.samplerate = 44100;
+        //plugin.fmt.channelmask = 3;
+    }
+
+    trace ("format %dbit %s %dch %dHz channelmask=%X\n", plugin.fmt.bps, plugin.fmt.is_float ? "float" : "int", plugin.fmt.channels, plugin.fmt.samplerate, plugin.fmt.channelmask);
+
+    ss.channels = plugin.fmt.channels;
+    // Try to auto-configure the channel map, see <pulse/channelmap.h> for details
+    pa_channel_map_init_extend(&channel_map, ss.channels, PA_CHANNEL_MAP_DEFAULT);
+    //pa_channel_map_init(&channel_map);
+    trace ("pulse: channels: %d\n", ss.channels);
+
+    // Read samplerate from config
+    //ss.rate = deadbeef->conf_get_int(CONFSTR_PULSE_SAMPLERATE, 44100);
+    ss.rate = plugin.fmt.samplerate;
+    trace ("pulse: samplerate: %d\n", ss.rate);
+
+    switch (plugin.fmt.bps) {
+    case 8:
+        ss.format = PA_SAMPLE_U8;
+        break;
+    case 16:
+#if WORDS_BIGENDIAN
+        ss.format = PA_SAMPLE_S16BE;
+#else
+        ss.format = PA_SAMPLE_S16LE;
+#endif
+        break;
+    case 24:
+#if WORDS_BIGENDIAN
+        ss.format = PA_SAMPLE_S24BE;
+#else
+        ss.format = PA_SAMPLE_S24LE;
+#endif
+        break;
+    case 32:
+        if (plugin.fmt.is_float) {
+#if WORDS_BIGENDIAN
+            ss.format = PA_SAMPLE_FLOAT32BE;
+#else
+            ss.format = PA_SAMPLE_FLOAT32LE;
+#endif
+        }
+        else {
+#if WORDS_BIGENDIAN
+            ss.format = PA_SAMPLE_S32BE;
+#else
+            ss.format = PA_SAMPLE_S32LE;
+#endif
+        }
+        break;
+    };
+
+    return 0;
+}
 
 static int pulse_init(void)
 {
@@ -69,17 +149,13 @@ static int pulse_init(void)
     // Read serveraddr from config
     const char * server = deadbeef->conf_get_str(CONFSTR_PULSE_SERVERADDR, NULL);
 
+    if (requested_fmt.samplerate != 0) {
+        memcpy (&plugin.fmt, &requested_fmt, sizeof (ddb_waveformat_t));
+    }
+    pulse_set_spec(&plugin.fmt);
+
     if (server)
         server = strcmp(server, "default") ? server : NULL;
-
-    // Read samplerate from config
-    ss.rate = deadbeef->conf_get_int(CONFSTR_PULSE_SAMPLERATE, 44100);
-    trace ("pulse: samplerate: %d\n", ss.rate);
-
-    // TODO: add config for this
-    pa_channel_map * map = NULL;//pa_channel_map_init_stereo(NULL);
-    ss.channels = 2;
-    ss.format = PA_SAMPLE_S16NE;
 
     // TODO: where list of all available devices? add this option to config too..
     char * dev = NULL;
@@ -94,15 +170,55 @@ static int pulse_init(void)
     buffer_size = deadbeef->conf_get_int(CONFSTR_PULSE_BUFFERSIZE, 4096);
 
     int error;
-    s = pa_simple_new(server, "Deadbeef", PA_STREAM_PLAYBACK, dev, "Music", &ss, map, attr, &error);
+    s = pa_simple_new(server, "Deadbeef", PA_STREAM_PLAYBACK, dev, "Music", &ss, &channel_map, attr, &error);
+    //s = pa_simple_new(server, "Deadbeef", PA_STREAM_PLAYBACK, dev, "Music", &ss, NULL, attr, &error);
 
     if (!s)
     {
+        trace ("pulse_init failed (%d)\n", error);
         return -1;
     }
 
     pulse_tid = deadbeef->thread_start(pulse_thread, NULL);
 
+    return 0;
+}
+
+static int pulse_setformat (ddb_waveformat_t *fmt)
+{
+    memcpy (&requested_fmt, fmt, sizeof (ddb_waveformat_t));
+    trace ("pulse_setformat %dbit %s %dch %dHz channelmask=%X\n", fmt->bps, fmt->is_float ? "float" : "int", fmt->channels, fmt->samplerate, fmt->channelmask);
+    if (!s) {
+        return -1;
+    }
+    if (!memcmp (fmt, &plugin.fmt, sizeof (ddb_waveformat_t))) {
+        trace ("pulse_setformat ignored\n");
+        return 0;
+    }
+
+    deadbeef->mutex_lock(mutex);
+    int s = state;
+    state = OUTPUT_STATE_STOPPED;
+    // we need to restart pulseaudio for now, since the format is only set upon initialization
+    pulse_free();
+    pulse_init();
+    deadbeef->mutex_unlock(mutex);
+    trace ("new format %dbit %s %dch %dHz channelmask=%X\n", plugin.fmt.bps, plugin.fmt.is_float ? "float" : "int", plugin.fmt.channels, plugin.fmt.samplerate, plugin.fmt.channelmask);
+
+    switch (s) {
+    case OUTPUT_STATE_STOPPED:
+        return pulse_stop ();
+    case OUTPUT_STATE_PLAYING:
+        return pulse_play ();
+    case OUTPUT_STATE_PAUSED:
+        if (0 != pulse_play ()) {
+            return -1;
+        }
+        if (0 != pulse_pause ()) {
+            return -1;
+        }
+        break;
+    }
     return 0;
 }
 
@@ -168,41 +284,6 @@ static int pulse_unpause(void)
     }
 
     return 0;
-}
-
-static int pulse_change_rate(int rate)
-{
-    pulse_free();
-    ss.rate = rate;
-
-    if (!pulse_init())
-        return -1;
-
-    return ss.rate;
-}
-
-static int pulse_get_rate(void)
-{
-    return ss.rate;
-}
-
-static int pulse_get_bps(void)
-{
-    return 16;
-}
-
-static int pulse_get_channels(void)
-{
-    return ss.channels;
-}
-
-static int pulse_get_endianness(void)
-{
-#if WORDS_BIGENDIAN
-    return 1;
-#else
-    return 0;
-#endif
 }
 
 static void pulse_thread(void *context)
@@ -288,26 +369,35 @@ static DB_output_t plugin =
     DB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 0,
     .plugin.version_minor = 1,
-    .plugin.nostop = 0,
     .plugin.type = DB_PLUGIN_OUTPUT,
     .plugin.name = "PulseAudio output plugin",
     .plugin.descr = "plays sound via pulse API",
-    .plugin.author = "Anton Novikov",
-    .plugin.email = "tonn.post@gmail.com",
+    .plugin.copyright =
+        "Copyright (C) 2010-2011 Anton Novikov <tonn.post@gmail.com>\n"
+        "\n"
+        "This program is free software; you can redistribute it and/or\n"
+        "modify it under the terms of the GNU General Public License\n"
+        "as published by the Free Software Foundation; either version 2\n"
+        "of the License, or (at your option) any later version.\n"
+        "\n"
+        "This program is distributed in the hope that it will be useful,\n"
+        "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+        "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+        "GNU General Public License for more details.\n"
+        "\n"
+        "You should have received a copy of the GNU General Public License\n"
+        "along with this program; if not, write to the Free Software\n"
+        "Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.\n",
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.start = pulse_plugin_start,
     .plugin.stop = pulse_plugin_stop,
     .plugin.configdialog = settings_dlg,
     .init = pulse_init,
     .free = pulse_free,
-    .change_rate = pulse_change_rate,
+    .setformat = pulse_setformat,
     .play = pulse_play,
     .stop = pulse_stop,
     .pause = pulse_pause,
     .unpause = pulse_unpause,
     .state = pulse_get_state,
-    .samplerate = pulse_get_rate,
-    .bitspersample = pulse_get_bps,
-    .channels = pulse_get_channels,
-    .endianness = pulse_get_endianness,
 };
