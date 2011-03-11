@@ -55,7 +55,11 @@
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
-static const char * exts[] = { "m4a", "wma", "aa3", "oma", "ac3", "vqf", "amr", NULL };
+#define DEFAULT_EXTS "m4a;wma;aa3;oma;ac3;vqf;amr"
+
+#define EXT_MAX 100
+
+static char * exts[EXT_MAX] = {NULL};
 
 enum {
     FT_ALAC = 0,
@@ -668,12 +672,48 @@ static URLProtocol vfswrapper = {
     .url_close = ffmpeg_vfs_close,
 };
 
+static void
+ffmpeg_init_exts (void) {
+    const char *new_exts = deadbeef->conf_get_str ("ffmpeg.extensions", DEFAULT_EXTS);
+    for (int i = 0; exts[i]; i++) {
+        free (exts[i]);
+    }
+    exts[0] = NULL;
+
+    int n = 0;
+    while (*new_exts) {
+        if (n >= EXT_MAX) {
+            fprintf (stderr, "ffmpeg: too many extensions, max is %d\n", EXT_MAX);
+            break;
+        }
+        const char *e = new_exts;
+        while (*e && *e != ';') {
+            e++;
+        }
+        if (e != new_exts) {
+            char *ext = malloc (e-new_exts+1);
+            memcpy (ext, new_exts, e-new_exts);
+            ext[e-new_exts] = 0;
+            exts[n++] = ext;
+        }
+        if (*e == 0) {
+            break;
+        }
+        new_exts = e+1;
+    }
+    exts[n] = NULL;
+}
+
+static int
+ffmpeg_on_configchanged (DB_event_t *ev, uintptr_t data) {
+    ffmpeg_init_exts ();
+    return 0;
+}
+
 static int
 ffmpeg_start (void) {
-    // do one-time plugin initialization here
-    // e.g. starting threads for background processing, subscribing to events, etc
-    // return 0 on success
-    // return -1 on failure
+    ffmpeg_init_exts ();
+    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (ffmpeg_on_configchanged), 0);
     avcodec_init ();
     av_register_all ();
     av_register_protocol (&vfswrapper);
@@ -682,10 +722,11 @@ ffmpeg_start (void) {
 
 static int
 ffmpeg_stop (void) {
-    // undo everything done in _start here
-    // return 0 on success
-    // return -1 on failure
-    trace ("ffmpeg stop\n");
+    deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (ffmpeg_on_configchanged), 0);
+    for (int i = 0; exts[i]; i++) {
+        free (exts[i]);
+    }
+    exts[0] = NULL;
     return 0;
 }
 
@@ -743,6 +784,10 @@ ffmpeg_read_metadata (DB_playItem_t *it) {
     return 0;
 }
 
+static const char settings_dlg[] =
+    "property \"File Extensions (separate with ';')\" entry ffmpeg.extensions \"" DEFAULT_EXTS "\";\n"
+;
+
 // define plugin interface
 static DB_decoder_t plugin = {
     DB_PLUGIN_SET_API_VERSION
@@ -772,6 +817,7 @@ static DB_decoder_t plugin = {
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.start = ffmpeg_start,
     .plugin.stop = ffmpeg_stop,
+    .plugin.configdialog = settings_dlg,
     .open = ffmpeg_open,
     .init = ffmpeg_init,
     .free = ffmpeg_free,
@@ -780,7 +826,7 @@ static DB_decoder_t plugin = {
     .seek_sample = ffmpeg_seek_sample,
     .insert = ffmpeg_insert,
     .read_metadata = ffmpeg_read_metadata,
-    .exts = exts,
+    .exts = (const char **)exts,
     .filetypes = filetypes
 };
 
