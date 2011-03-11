@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-10 15:02+0200\n"
-"PO-Revision-Date: 2011-03-11 16:06+0200\n"
+"PO-Revision-Date: 2011-03-11 17:32+0200\n"
 "Last-Translator: enginmanap <enginmanap@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: tr\n"
@@ -434,7 +434,7 @@ msgstr "Özellikler"
 
 #: ../plugins/gtkui/interface.c:1363 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "editcolumndlg"
-msgstr "diyalogsütunlarınıdüzenle"
+msgstr "Diyalog sutunlarını düzenle"
 
 #: ../plugins/gtkui/interface.c:1378 ../plugins/gtkui/interface.c:2869
 #: ../plugins/gtkui/deadbeef.glade.h:133
@@ -488,7 +488,7 @@ msgstr "Parça"
 
 #: ../plugins/gtkui/interface.c:1411
 msgid "Band / Album Artist"
-msgstr "Grup / Albüm Sanatçısı"
+msgstr "Grup / Sanatçı"
 
 #: ../plugins/gtkui/interface.c:1412 ../plugins/gtkui/plcommon.c:881
 msgid "Custom"
@@ -778,7 +778,7 @@ msgstr "Etiket yazıcı"
 
 #: ../plugins/gtkui/interface.c:2391 ../plugins/gtkui/deadbeef.glade.h:24
 msgid "Description:"
-msgstr "Tanımlama:"
+msgstr "Açıklama:"
 
 #: ../plugins/gtkui/interface.c:2406 ../plugins/gtkui/deadbeef.glade.h:13
 msgid "Author(s):"
@@ -921,7 +921,7 @@ msgstr "Ekle"
 
 #: ../plugins/gtkui/prefwin.c:322
 msgid "Global Hotkeys"
-msgstr "Global Kısayol Tuşları"
+msgstr "Genel Kısayol Tuşları"
 
 #: ../plugins/gtkui/prefwin.c:384
 msgid "Slot"
@@ -979,7 +979,7 @@ msgstr "Değer"
 
 #: ../plugins/notify/notify.c:138
 msgid "DeaDBeeF now playing"
-msgstr "DeaDBeeF'de şimdi çalınıyor"
+msgstr "DeaDBeeF şimdi çalıyor"
 
 #: ../main.c:89
 #, c-format
@@ -1062,9 +1062,9 @@ msgid ""
 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
 "                      copy[r]ight, [e]lapsed\n"
 msgstr ""
-"FMT %%-sözdizimi: [a]rtist, [t]başlık, al[b]üm,\n"
-"uzun[l]uk, parça[n]umarası, [y]ıl, [c]yorum,\n"
-"copy[r]ight, g[e]çen\n"
+"                       FMT %%-sözdizimi: [a]rtist, [t]başlık, al[b]üm, "
+"                      uzun[l]uk, parça[n]umarası, [y]ıl, [c]yorum, "
+"                      copy[r]ight, g[e]çen"
 
 #: ../main.c:105
 #, c-format
@@ -1138,7 +1138,7 @@ msgstr "Pixmap dosyası bulunamadı: %s"
 
 #: ../plugins/vorbis/vcedit.c:129 ../plugins/vorbis/vcedit.c:155
 msgid "Couldn't get enough memory for input buffering."
-msgstr "Giriş tamponlama için yeterli hafıza alınamadı."
+msgstr "Giriş tamponlaması için yeterli hafıza alınamadı."
 
 #: ../plugins/vorbis/vcedit.c:179 ../plugins/vorbis/vcedit.c:550
 msgid "Error reading first page of Ogg bitstream."
