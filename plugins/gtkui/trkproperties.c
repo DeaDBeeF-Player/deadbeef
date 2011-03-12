@@ -161,7 +161,7 @@ on_trackproperties_delete_event        (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     if (trkproperties_modified) {
-        GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("You've modified data for this track."));
+        GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (trackproperties), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("You've modified data for this track."));
         gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (trackproperties));
         gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), _("Really close the window?"));
         gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
