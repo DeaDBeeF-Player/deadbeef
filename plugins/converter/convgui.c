@@ -237,7 +237,6 @@ converter_show (DB_plugin_action_t *act, DB_playItem_t *it) {
 
     for (;;) {
         int response = gtk_dialog_run (GTK_DIALOG (conv->converter));
-        current_ctx = NULL;
         if (response == GTK_RESPONSE_OK) {
             int err = converter_process (conv);
             if (err != 0) {
@@ -256,6 +255,7 @@ converter_show (DB_plugin_action_t *act, DB_playItem_t *it) {
             }
             free (conv);
         }
+        current_ctx = NULL;
         break;
     }
     return 0;
@@ -899,10 +899,6 @@ on_dsp_preset_remove                     (GtkButton       *button,
     int *indices = gtk_tree_path_get_indices (path);
     int idx = *indices;
     g_free (indices);
-
-    if (idx == 0) {
-        return;
-    }
 
     ddb_dsp_preset_t *p = converter_plugin->dsp_preset_get_for_idx (idx);
     if (!p) {
