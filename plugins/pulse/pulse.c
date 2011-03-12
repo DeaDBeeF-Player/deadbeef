@@ -106,33 +106,17 @@ static int pulse_set_spec(ddb_waveformat_t *fmt)
         ss.format = PA_SAMPLE_U8;
         break;
     case 16:
-#if WORDS_BIGENDIAN
-        ss.format = PA_SAMPLE_S16BE;
-#else
         ss.format = PA_SAMPLE_S16LE;
-#endif
         break;
     case 24:
-#if WORDS_BIGENDIAN
-        ss.format = PA_SAMPLE_S24BE;
-#else
         ss.format = PA_SAMPLE_S24LE;
-#endif
         break;
     case 32:
         if (plugin.fmt.is_float) {
-#if WORDS_BIGENDIAN
-            ss.format = PA_SAMPLE_FLOAT32BE;
-#else
             ss.format = PA_SAMPLE_FLOAT32LE;
-#endif
         }
         else {
-#if WORDS_BIGENDIAN
-            ss.format = PA_SAMPLE_S32BE;
-#else
             ss.format = PA_SAMPLE_S32LE;
-#endif
         }
         break;
     };
@@ -300,7 +284,14 @@ static void pulse_thread(void *context)
             continue;
         }
 
-        char buf[buffer_size];
+        int sample_size = plugin.fmt.channels * (plugin.fmt.bps / 8);
+        int bs = buffer_size;
+        int mod = bs % sample_size;
+        if (mod > 0) {
+            bs -= mod;
+        }
+
+        char buf[bs];
         pulse_callback (buf, sizeof (buf));
         int error;
 
@@ -321,13 +312,6 @@ static void pulse_thread(void *context)
 static void pulse_callback(char *stream, int len)
 {
     int bytesread = deadbeef->streamer_read(stream, len);
-    int16_t ivolume = deadbeef->volume_get_amp() * 1000;
-
-    for (int i = 0; i < bytesread/2; i++)
-    {
-        ((int16_t*)stream)[i] = (int16_t)(((int32_t)(((int16_t*)stream)[i])) * ivolume / 1000);
-    }
-
     if (bytesread < len)
     {
         memset (stream + bytesread, 0, len-bytesread);
@@ -373,7 +357,9 @@ static DB_output_t plugin =
     .plugin.name = "PulseAudio output plugin",
     .plugin.descr = "plays sound via pulse API",
     .plugin.copyright =
-        "Copyright (C) 2010-2011 Anton Novikov <tonn.post@gmail.com>\n"
+        "Copyright (C) 2011 Jan D. Behrens <zykure@web.de>\n"
+        "Copyright (C) 2010-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2010 Anton Novikov <tonn.post@gmail.com>\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
         "modify it under the terms of the GNU General Public License\n"
