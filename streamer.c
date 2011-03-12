@@ -1399,7 +1399,7 @@ streamer_init (void) {
 
     streamer_dsp_init ();
     
-    replaygain_set (conf_get_int ("replaygain_mode", 0), conf_get_int ("replaygain_scale", 1));
+    replaygain_set (conf_get_int ("replaygain_mode", 0), conf_get_int ("replaygain_scale", 1), conf_get_float ("replaygain_preamp", 0));
     streamer_tid = thread_start (streamer_thread, NULL);
     return 0;
 }
@@ -1742,7 +1742,7 @@ streamer_ok_to_read (int len) {
 
 void
 streamer_configchanged (void) {
-    replaygain_set (conf_get_int ("replaygain_mode", 0), conf_get_int ("replaygain_scale", 1));
+    replaygain_set (conf_get_int ("replaygain_mode", 0), conf_get_int ("replaygain_scale", 1), conf_get_float ("replaygain_preamp", 0));
     pl_set_order (conf_get_int ("playback.order", 0));
     if (playing_track) {
         playing_track->played = 1;

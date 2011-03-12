@@ -1656,6 +1656,11 @@ create_prefwin (void)
   GtkWidget *label8;
   GtkWidget *pref_replaygain_mode;
   GtkWidget *pref_replaygain_scale;
+  GtkWidget *hbox100;
+  GtkWidget *label124;
+  GtkWidget *label125;
+  GtkWidget *replaygain_preamp;
+  GtkWidget *label126;
   GtkWidget *hbox66;
   GtkWidget *cli_add_to_playlist;
   GtkWidget *cli_playlist_name;
@@ -1845,6 +1850,28 @@ create_prefwin (void)
   pref_replaygain_scale = gtk_check_button_new_with_mnemonic (_("Replaygain peak scale"));
   gtk_widget_show (pref_replaygain_scale);
   gtk_box_pack_start (GTK_BOX (vbox8), pref_replaygain_scale, FALSE, FALSE, 0);
+
+  hbox100 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox100);
+  gtk_box_pack_start (GTK_BOX (vbox8), hbox100, FALSE, FALSE, 0);
+
+  label124 = gtk_label_new (_("Replaygain preamp:"));
+  gtk_widget_show (label124);
+  gtk_box_pack_start (GTK_BOX (hbox100), label124, FALSE, FALSE, 0);
+
+  label125 = gtk_label_new (_("-12 dB"));
+  gtk_widget_show (label125);
+  gtk_box_pack_start (GTK_BOX (hbox100), label125, FALSE, FALSE, 0);
+
+  replaygain_preamp = gtk_hscale_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, -12, 12, 0, 0, 0)));
+  gtk_widget_show (replaygain_preamp);
+  gtk_box_pack_start (GTK_BOX (hbox100), replaygain_preamp, TRUE, TRUE, 0);
+  gtk_scale_set_value_pos (GTK_SCALE (replaygain_preamp), GTK_POS_BOTTOM);
+  gtk_scale_set_digits (GTK_SCALE (replaygain_preamp), 0);
+
+  label126 = gtk_label_new (_("+12 dB"));
+  gtk_widget_show (label126);
+  gtk_box_pack_start (GTK_BOX (hbox100), label126, FALSE, FALSE, 0);
 
   hbox66 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox66);
@@ -2423,6 +2450,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) pref_replaygain_scale, "clicked",
                     G_CALLBACK (on_pref_replaygain_scale_clicked),
                     NULL);
+  g_signal_connect ((gpointer) replaygain_preamp, "value_changed",
+                    G_CALLBACK (on_replaygain_preamp_value_changed),
+                    NULL);
   g_signal_connect ((gpointer) cli_add_to_playlist, "toggled",
                     G_CALLBACK (on_cli_add_to_playlist_toggled),
                     NULL);
@@ -2570,6 +2600,11 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, label8, "label8");
   GLADE_HOOKUP_OBJECT (prefwin, pref_replaygain_mode, "pref_replaygain_mode");
   GLADE_HOOKUP_OBJECT (prefwin, pref_replaygain_scale, "pref_replaygain_scale");
+  GLADE_HOOKUP_OBJECT (prefwin, hbox100, "hbox100");
+  GLADE_HOOKUP_OBJECT (prefwin, label124, "label124");
+  GLADE_HOOKUP_OBJECT (prefwin, label125, "label125");
+  GLADE_HOOKUP_OBJECT (prefwin, replaygain_preamp, "replaygain_preamp");
+  GLADE_HOOKUP_OBJECT (prefwin, label126, "label126");
   GLADE_HOOKUP_OBJECT (prefwin, hbox66, "hbox66");
   GLADE_HOOKUP_OBJECT (prefwin, cli_add_to_playlist, "cli_add_to_playlist");
   GLADE_HOOKUP_OBJECT (prefwin, cli_playlist_name, "cli_playlist_name");

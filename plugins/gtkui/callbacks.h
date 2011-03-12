@@ -1099,3 +1099,7 @@ gboolean
 on_prefwin_map_event                   (GtkWidget       *widget,
                                         GdkEvent        *event,
                                         gpointer         user_data);
+
+void
+on_replaygain_preamp_value_changed     (GtkRange        *range,
+                                        gpointer         user_data);

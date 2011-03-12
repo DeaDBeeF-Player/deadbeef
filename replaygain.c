@@ -23,11 +23,14 @@
 
 static int conf_replaygain_mode = 0;
 static int conf_replaygain_scale = 1;
+static float conf_replaygain_preamp = 0;
 
 static float rg_albumgain = 1;
 static float rg_albumpeak = 1;
 static float rg_trackgain = 1;
 static float rg_trackpeak = 1;
+static float rg_albumgain_preamp = 1;
+static float rg_trackgain_preamp = 1;
 
 void
 replaygain_apply (ddb_waveformat_t *fmt, playItem_t *it, char *bytes, int bytesread) {
@@ -50,15 +53,20 @@ replaygain_apply (ddb_waveformat_t *fmt, playItem_t *it, char *bytes, int bytesr
 }
 
 void
-replaygain_set (int mode, int scale) {
+replaygain_set (int mode, int scale, float preamp) {
     conf_replaygain_mode = mode;
     conf_replaygain_scale = scale;
+    conf_replaygain_preamp = db_to_amp (preamp);
+    rg_albumgain_preamp = rg_albumgain * conf_replaygain_preamp;
+    rg_trackgain_preamp = rg_trackgain * conf_replaygain_preamp;
 }
 
 void
 replaygain_set_values (float albumgain, float albumpeak, float trackgain, float trackpeak) {
     rg_albumgain = db_to_amp (albumgain);
     rg_trackgain = db_to_amp (trackgain);
+    rg_albumgain_preamp = rg_albumgain * conf_replaygain_preamp;
+    rg_trackgain_preamp = rg_trackgain * conf_replaygain_preamp;
     rg_albumpeak = albumpeak;
     rg_trackpeak = trackpeak;
 }
@@ -70,7 +78,7 @@ get_int_volume (void) {
         if (rg_trackgain == 1) {
             return -1;
         }
-        vol = rg_trackgain * 1000;
+        vol = rg_trackgain_preamp * 1000;
         if (conf_replaygain_scale) {
             if (vol * rg_trackpeak > 1000) {
                 vol = 1000 / rg_trackpeak;
@@ -81,7 +89,7 @@ get_int_volume (void) {
         if (rg_albumgain == 1) {
             return -1;
         }
-        vol = rg_albumgain * 1000;
+        vol = rg_albumgain_preamp * 1000;
         if (conf_replaygain_scale) {
             if (vol * rg_albumpeak > 1000) {
                 vol = 1000 / rg_albumpeak;
@@ -196,7 +204,7 @@ apply_replay_gain_float32 (playItem_t *it, char *bytes, int size) {
         if (rg_trackgain == 1) {
             return;
         }
-        vol = rg_trackgain;
+        vol = rg_trackgain_preamp;
         if (conf_replaygain_scale) {
             if (vol * rg_trackpeak > 1.f) {
                 vol = 1.f / rg_trackpeak;
@@ -207,7 +215,7 @@ apply_replay_gain_float32 (playItem_t *it, char *bytes, int size) {
         if (rg_albumgain == 1) {
             return;
         }
-        vol = rg_albumgain;
+        vol = rg_albumgain_preamp;
         if (conf_replaygain_scale) {
             if (vol * rg_albumpeak > 1.f) {
                 vol = 1.f / rg_albumpeak;

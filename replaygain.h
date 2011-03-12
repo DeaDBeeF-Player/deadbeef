@@ -25,7 +25,7 @@ void
 replaygain_apply (ddb_waveformat_t *fmt, playItem_t *it, char *bytes, int bytesread);
 
 void
-replaygain_set (int mode, int scale);
+replaygain_set (int mode, int scale, float preamp);
 
 void
 replaygain_set_values (float albumgain, float albumpeak, float trackgain, float trackpeak);

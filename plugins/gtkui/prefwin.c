@@ -489,6 +489,9 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     // replaygain_scale
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_replaygain_scale")), deadbeef->conf_get_int ("replaygain_scale", 1));
 
+    // replaygain_preamp
+    gtk_range_set_value (GTK_RANGE (lookup_widget (w, "replaygain_preamp")), deadbeef->conf_get_int ("replaygain_preamp", 0));
+
     // dsp
     dsp_setup_init (prefwin);
 
@@ -678,6 +681,15 @@ on_pref_replaygain_scale_clicked       (GtkButton       *button,
 {
     int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button));
     deadbeef->conf_set_int ("replaygain_scale", active);
+    deadbeef->sendmessage (M_CONFIG_CHANGED, 0, 0, 0);
+}
+
+void
+on_replaygain_preamp_value_changed     (GtkRange        *range,
+                                        gpointer         user_data)
+{
+    float val = gtk_range_get_value (range);
+    deadbeef->conf_set_float ("replaygain_preamp", val);
     deadbeef->sendmessage (M_CONFIG_CHANGED, 0, 0, 0);
 }
 
