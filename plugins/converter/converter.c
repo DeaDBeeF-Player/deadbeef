@@ -240,11 +240,7 @@ dsp_preset_free (ddb_dsp_preset_t *p) {
         if (p->title) {
             free (p->title);
         }
-        while (p->chain) {
-            ddb_dsp_context_t *next = p->chain->next;
-            p->chain->plugin->close (p->chain);
-            p->chain = next;
-        }
+        deadbeef->dsp_preset_free (p->chain);
         free (p);
     }
 }
@@ -282,86 +278,30 @@ dsp_preset_get_list (void) {
 
 ddb_dsp_preset_t *
 dsp_preset_load (const char *fname) {
-    int err = 1;
-    FILE *fp = fopen (fname, "rt");
-    if (!fp) {
-        return NULL;
-    }
     ddb_dsp_preset_t *p = dsp_preset_alloc ();
     if (!p) {
-        goto error;
+        return NULL;
+    }
+    memset (p, 0, sizeof (ddb_dsp_preset_t));
+    const char *end = strrchr (fname, '.');
+    if (!end) {
+        end = fname + strlen (fname);
+    }
+    const char *start = strrchr (fname, '/');
+    if (!start) {
+        start = fname;
+    }
+    else {
+        start++;
     }
 
-    // title
-    char temp[100];
-    if (1 != fscanf (fp, "title %100[^\n]\n", temp)) {
-        goto error;
-    }
-    p->title = strdup (temp);
-    ddb_dsp_context_t *tail = NULL;
-
-    for (;;) {
-        // plugin {
-        int err = fscanf (fp, "%100s {\n", temp);
-        if (err == EOF) {
-            break;
-        }
-        else if (1 != err) {
-            fprintf (stderr, "error plugin name\n");
-            goto error;
-        }
-
-        DB_dsp_t *plug = (DB_dsp_t *)deadbeef->plug_get_for_id (temp);
-        if (!plug) {
-            fprintf (stderr, "ddb_dsp_preset_load: plugin %s not found. preset will not be loaded\n", temp);
-            goto error;
-        }
-        ddb_dsp_context_t *ctx = plug->open ();
-        if (!ctx) {
-            fprintf (stderr, "ddb_dsp_preset_load: failed to open ctxance of plugin %s\n", temp);
-            goto error;
-        }
-
-        if (tail) {
-            tail->next = ctx;
-            tail = ctx;
-        }
-        else {
-            tail = p->chain = ctx;
-        }
-
-        int n = 0;
-        for (;;) {
-            char value[1000];
-            if (!fgets (temp, sizeof (temp), fp)) {
-                fprintf (stderr, "unexpected eof while reading plugin params\n");
-                goto error;
-            }
-            if (!strcmp (temp, "}\n")) {
-                break;
-            }
-            else if (1 != sscanf (temp, "\t%1000[^\n]\n", value)) {
-                fprintf (stderr, "error loading param %d\n", n);
-                goto error;
-            }
-            if (plug->num_params) {
-                plug->set_param (ctx, n, value);
-            }
-            n++;
-        }
-    }
-
-    err = 0;
-error:
-    if (err) {
-        fprintf (stderr, "error loading %s\n", fname);
-    }
-    if (fp) {
-        fclose (fp);
-    }
-    if (err && p) {
+    p->title = malloc (end-start+1);
+    memcpy (p->title, start, end-start);
+    p->title[end-start] = 0;
+    int err = deadbeef->dsp_preset_load (fname, &p->chain);
+    if (err != 0) {
         dsp_preset_free (p);
-        p = NULL;
+        return NULL;
     }
     return p;
 }
@@ -390,31 +330,7 @@ dsp_preset_save (ddb_dsp_preset_t *p, int overwrite) {
         }
     }
 
-    FILE *fp = fopen (path, "w+t");
-    if (!fp) {
-        return -1;
-    }
-
-    fprintf (fp, "title %s\n", p->title);
-
-    ddb_dsp_context_t *ctx = p->chain;
-    while (ctx) {
-        fprintf (fp, "%s {\n", ctx->plugin->plugin.id);
-        if (ctx->plugin->num_params) {
-            int n = ctx->plugin->num_params ();
-            int i;
-            for (i = 0; i < n; i++) {
-                char v[1000];
-                ctx->plugin->get_param (ctx, i, v, sizeof (v));
-                fprintf (fp, "\t%s\n", v);
-            }
-        }
-        fprintf (fp, "}\n");
-        ctx = ctx->next;
-    }
-
-    fclose (fp);
-    return 0;
+    return deadbeef->dsp_preset_save (path, p->chain);
 }
 
 static int dirent_alphasort (const struct dirent **a, const struct dirent **b) {

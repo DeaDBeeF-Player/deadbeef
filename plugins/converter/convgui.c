@@ -819,14 +819,18 @@ refresh_dsp_lists (GtkComboBox *combo, GtkTreeView *list) {
 
     GtkTreePath *path;
     GtkTreeViewColumn *col;
+    int idx = -1;
+
     gtk_tree_view_get_cursor (GTK_TREE_VIEW (list), &path, &col);
     if (path && col) {
         int *indices = gtk_tree_path_get_indices (path);
-        int idx = *indices;
+        idx = *indices;
         g_free (indices);
+    }
 
-        gtk_list_store_clear (mdl);
-        fill_presets (mdl, (ddb_preset_t *)converter_plugin->dsp_preset_get_list ());
+    gtk_list_store_clear (mdl);
+    fill_presets (mdl, (ddb_preset_t *)converter_plugin->dsp_preset_get_list ());
+    if (idx != -1) {
         path = gtk_tree_path_new_from_indices (idx, -1);
         gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, col, FALSE);
         gtk_tree_path_free (path);
