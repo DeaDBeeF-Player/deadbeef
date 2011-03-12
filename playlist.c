@@ -1804,6 +1804,7 @@ pl_item_copy (playItem_t *out, playItem_t *it) {
     out->endsample = it->endsample;
     out->shufflerating = it->shufflerating;
     out->filetype = it->filetype;
+    out->_duration = it->_duration;
     out->started_timestamp = it->started_timestamp;
     out->next[PL_MAIN] = it->next[PL_MAIN];
     out->prev[PL_MAIN] = it->prev[PL_MAIN];
