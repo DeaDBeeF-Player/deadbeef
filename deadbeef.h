@@ -286,10 +286,11 @@ typedef struct DB_md5_s {
 
 typedef struct {
     int bps;
-    int is_float; // bps must be 32 if this is true
     int channels;
     int samplerate;
     uint32_t channelmask;
+    unsigned is_float : 1; // bps must be 32 if this is true
+    unsigned is_bigendian : 1;
 } ddb_waveformat_t;
 
 // forward decl for plugin struct
