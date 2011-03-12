@@ -118,7 +118,7 @@ converter_worker (void *ctx) {
     free (conv);
 }
 
-void
+int
 converter_process (converter_ctx_t *conv)
 {
     conv->outfolder = strdup (gtk_entry_get_text (GTK_ENTRY (lookup_widget (conv->converter, "output_folder"))));
@@ -127,15 +127,21 @@ converter_process (converter_ctx_t *conv)
 
     GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (conv->converter, "encoder"));
     int enc_preset = gtk_combo_box_get_active (combo);
-    if (enc_preset < 0) {
-        fprintf (stderr, "Encoder preset not selected\n");
-        return;
+    ddb_encoder_preset_t *encoder_preset = NULL;
+
+    if (enc_preset >= 0) {
+        encoder_preset = converter_plugin->encoder_preset_get_for_idx (enc_preset);
+    }
+    if (!encoder_preset) {
+        GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (conv->converter), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Please select encoder"));
+        gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (conv->converter));
+        gtk_window_set_title (GTK_WINDOW (dlg), _("Converter error"));
+
+        gtk_dialog_run (GTK_DIALOG (dlg));
+        gtk_widget_destroy (dlg);
+        return -1;
     }
 
-    ddb_encoder_preset_t *encoder_preset = converter_plugin->encoder_preset_get_for_idx (enc_preset);
-    if (!encoder_preset) {
-        return;
-    }
     combo = GTK_COMBO_BOX (lookup_widget (conv->converter, "dsp_preset"));
     int dsp_idx = gtk_combo_box_get_active (combo) - 1;
 
@@ -172,6 +178,7 @@ converter_process (converter_ctx_t *conv)
     conv->progress_entry = entry;
     intptr_t tid = deadbeef->thread_start (converter_worker, conv);
     deadbeef->thread_detach (tid);
+    return 0;
 }
 
 static int
@@ -228,22 +235,28 @@ converter_show (DB_plugin_action_t *act, DB_playItem_t *it) {
     gtk_combo_box_set_active (combo, deadbeef->conf_get_int ("converter.output_format", 0));
 
 
-    int response = gtk_dialog_run (GTK_DIALOG (conv->converter));
-    current_ctx = NULL;
-    if (response == GTK_RESPONSE_OK) {
-        converter_process (conv);
-        gtk_widget_destroy (conv->converter);
-    }
-    else {
-        // FIXME: clean up properly
-        gtk_widget_destroy (conv->converter);
-        if (conv->convert_items) {
-            for (int n = 0; n < conv->convert_items_count; n++) {
-                deadbeef->pl_item_unref (conv->convert_items[n]);
+    for (;;) {
+        int response = gtk_dialog_run (GTK_DIALOG (conv->converter));
+        current_ctx = NULL;
+        if (response == GTK_RESPONSE_OK) {
+            int err = converter_process (conv);
+            if (err != 0) {
+                continue;
             }
-            free (conv->convert_items);
+            gtk_widget_destroy (conv->converter);
         }
-        free (conv);
+        else {
+            // FIXME: clean up properly
+            gtk_widget_destroy (conv->converter);
+            if (conv->convert_items) {
+                for (int n = 0; n < conv->convert_items_count; n++) {
+                    deadbeef->pl_item_unref (conv->convert_items[n]);
+                }
+                free (conv->convert_items);
+            }
+            free (conv);
+        }
+        break;
     }
     return 0;
 }
