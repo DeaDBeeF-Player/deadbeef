@@ -39,6 +39,9 @@ typedef struct {
     DB_playItem_t **convert_items;
     int convert_items_count;
     char *outfolder;
+    char *outfile;
+    int preserve_folder_structure;
+    char *preserve_root_folder;
     int selected_format;
     ddb_encoder_preset_t *encoder_preset;
     ddb_dsp_preset_t *dsp_preset;
@@ -99,7 +102,7 @@ converter_worker (void *ctx) {
         info->text = strdup (deadbeef->pl_find_meta (conv->convert_items[n], ":URI"));
         g_idle_add (update_progress_cb, info);
 
-        converter_plugin->convert (conv->convert_items[n], conv->outfolder, conv->selected_format, conv->encoder_preset, conv->dsp_preset, &conv->cancelled);
+        converter_plugin->convert (conv->convert_items[n], conv->outfolder, conv->outfile, conv->selected_format, conv->preserve_folder_structure, conv->preserve_root_folder, conv->encoder_preset, conv->dsp_preset, &conv->cancelled);
         if (conv->cancelled) {
             for (; n < conv->convert_items_count; n++) {
                 deadbeef->pl_item_unref (conv->convert_items[n]);
@@ -122,8 +125,9 @@ int
 converter_process (converter_ctx_t *conv)
 {
     conv->outfolder = strdup (gtk_entry_get_text (GTK_ENTRY (lookup_widget (conv->converter, "output_folder"))));
-    deadbeef->conf_set_str ("converter.output_folder", conv->outfolder);
-    deadbeef->conf_save ();
+    conv->outfile = strdup (gtk_entry_get_text (GTK_ENTRY (lookup_widget (conv->converter, "output_file"))));
+    conv->preserve_folder_structure = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "preserve_folders")));
+    conv->preserve_root_folder = strdup (gtk_entry_get_text (GTK_ENTRY (lookup_widget (conv->converter, "preserve_root_folder"))));
 
     GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (conv->converter, "encoder"));
     int enc_preset = gtk_combo_box_get_active (combo);
@@ -212,6 +216,10 @@ converter_show (DB_plugin_action_t *act, DB_playItem_t *it) {
 
     conv->converter = create_converterdlg ();
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (conv->converter, "output_folder")), deadbeef->conf_get_str ("converter.output_folder", ""));
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (conv->converter, "output_file")), deadbeef->conf_get_str ("converter.output_file", ""));
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (conv->converter, "preserve_folder_root")), deadbeef->conf_get_str ("converter.preserve_root_folder", ""));
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "preserve_folders")), deadbeef->conf_get_int ("converter.preserve_folder_structure", 0));
+    gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (conv->converter, "overwrite_action")), deadbeef->conf_get_int ("converter.overwrite_action", 0));
 
     GtkComboBox *combo;
     // fill encoder presets
@@ -234,6 +242,9 @@ converter_show (DB_plugin_action_t *act, DB_playItem_t *it) {
     combo = GTK_COMBO_BOX (lookup_widget (conv->converter, "output_format"));
     gtk_combo_box_set_active (combo, deadbeef->conf_get_int ("converter.output_format", 0));
 
+    // overwrite action
+    combo = GTK_COMBO_BOX (lookup_widget (conv->converter, "overwrite_action"));
+    gtk_combo_box_set_active (combo, deadbeef->conf_get_int ("converter.overwrite_action", 0));
 
     for (;;) {
         int response = gtk_dialog_run (GTK_DIALOG (conv->converter));
@@ -311,6 +322,131 @@ on_converter_output_browse_clicked     (GtkButton       *button,
     }
 }
 
+
+void
+on_output_folder_changed               (GtkEntry     *entry,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_str ("converter.output_folder", gtk_entry_get_text (entry));
+    deadbeef->conf_save ();
+}
+
+
+void
+on_numthreads_changed                  (GtkEditable     *editable,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("converter.threads", gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (editable)));
+    deadbeef->conf_save ();
+}
+
+void
+on_overwrite_action_changed            (GtkComboBox     *combobox,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("converter.overwrite_action", gtk_combo_box_get_active (combobox));
+    deadbeef->conf_save ();
+}
+
+void
+on_encoder_changed                     (GtkEditable     *editable,
+                                        gpointer         user_data)
+{
+     gtk_widget_set_has_tooltip (GTK_WIDGET (editable), TRUE);
+
+     char enc[2000];
+     const char *e = gtk_entry_get_text (GTK_ENTRY (editable));
+     char *o = enc;
+     *o = 0;
+     int len = sizeof (enc);
+     while (e && *e) {
+         if (len <= 0) {
+             break;
+         }
+         if (e[0] == '%' && e[1]) {
+             if (e[1] == 'o') {
+                 int l = snprintf (o, len, "\"OUTPUT_FILE_NAME\"");
+                 o += l;
+                 len -= l;
+             }
+             else if (e[1] == 'i') {
+                 int l = snprintf (o, len, "\"TEMP_FILE_NAME\"");
+                 o += l;
+                 len -= l;
+             }
+             else {
+                 strncpy (o, e, 2);
+                 o += 2;
+                 len -= 2;
+             }
+             e += 2;
+         }
+         else {
+             *o++ = *e++;
+             *o = 0;
+             len--;
+         }
+     }
+
+     gtk_widget_set_tooltip_text (GTK_WIDGET (editable), enc);
+}
+
+void
+on_preserve_folder_browse_clicked      (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Select folder..."), GTK_WINDOW (current_ctx->converter), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+    gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (current_ctx->converter));
+
+    gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dlg), FALSE);
+    // restore folder
+    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), deadbeef->conf_get_str ("filechooser.lastdir", ""));
+    int response = gtk_dialog_run (GTK_DIALOG (dlg));
+    // store folder
+    gchar *folder = gtk_file_chooser_get_current_folder_uri (GTK_FILE_CHOOSER (dlg));
+    if (folder) {
+        deadbeef->conf_set_str ("filechooser.lastdir", folder);
+        g_free (folder);
+        deadbeef->sendmessage (M_CONFIG_CHANGED, 0, 0, 0);
+    }
+    if (response == GTK_RESPONSE_OK) {
+        folder = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
+        gtk_widget_destroy (dlg);
+        if (folder) {
+            GtkWidget *entry = lookup_widget (current_ctx->converter, "preserve_folder_root");
+            gtk_entry_set_text (GTK_ENTRY (entry), folder);
+            g_free (folder);
+        }
+    }
+    else {
+        gtk_widget_destroy (dlg);
+    }
+}
+
+void
+on_output_file_changed                 (GtkEntry        *entry,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_str ("converter.output_file", gtk_entry_get_text (entry));
+    deadbeef->conf_save ();
+}
+
+void
+on_preserve_folders_toggled            (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("converter.preserve_folder_structure", gtk_toggle_button_get_active (togglebutton));
+    deadbeef->conf_save ();
+}
+
+void
+on_preserve_folder_root_changed        (GtkEntry        *entry,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_str ("converter.preserve_root_folder", gtk_entry_get_text (entry));
+    deadbeef->conf_save ();
+}
+
 DB_decoder_t *
 plug_get_decoder_for_id (const char *id) {
     DB_decoder_t **plugins = deadbeef->plug_get_decoder_list ();
@@ -325,7 +461,7 @@ plug_get_decoder_for_id (const char *id) {
 void
 init_encoder_preset_from_dlg (GtkWidget *dlg, ddb_encoder_preset_t *p) {
     p->title = strdup (gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "title"))));
-    p->fname = strdup (gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "fname"))));
+    p->ext = strdup (gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "ext"))));
     p->encoder = strdup (gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "encoder"))));
     int method_idx = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "method")));
     switch (method_idx) {
@@ -367,8 +503,8 @@ edit_encoder_preset (char *title, GtkWidget *toplevel, int overwrite) {
     if (p->title) {
         gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "title")), p->title);
     }
-    if (p->fname) {
-        gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "fname")), p->fname);
+    if (p->ext) {
+        gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "ext")), p->ext);
     }
     if (p->encoder) {
         gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "encoder")), p->encoder);
@@ -407,10 +543,10 @@ edit_encoder_preset (char *title, GtkWidget *toplevel, int overwrite) {
                         }
                     }
                     free (old->title);
-                    free (old->fname);
+                    free (old->ext);
                     free (old->encoder);
                     old->title = p->title;
-                    old->fname = p->fname;
+                    old->ext = p->ext;
                     old->encoder = p->encoder;
                     old->method = p->method;
                     old->formats = p->formats;

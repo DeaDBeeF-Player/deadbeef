@@ -50,8 +50,8 @@ encoder_preset_free (ddb_encoder_preset_t *p) {
         if (p->title) {
             free (p->title);
         }
-        if (p->fname) {
-            free (p->fname);
+        if (p->ext) {
+            free (p->ext);
         }
         if (p->encoder) {
             free (p->encoder);
@@ -90,8 +90,8 @@ encoder_preset_load (const char *fname) {
         if (!strcmp (str, "title")) {
             p->title = strdup (item);
         }
-        else if (!strcmp (str, "fname")) {
-            p->fname = strdup (item);
+        else if (!strcmp (str, "ext")) {
+            p->ext = strdup (item);
         }
         else if (!strcmp (str, "encoder")) {
             p->encoder = strdup (item);
@@ -147,7 +147,7 @@ encoder_preset_save (ddb_encoder_preset_t *p, int overwrite) {
     }
 
     fprintf (fp, "title %s\n", p->title);
-    fprintf (fp, "fname %s\n", p->fname);
+    fprintf (fp, "ext %s\n", p->ext);
     fprintf (fp, "encoder %s\n", p->encoder);
     fprintf (fp, "method %d\n", p->method);
     fprintf (fp, "formats %08X\n", p->formats);
@@ -159,7 +159,7 @@ encoder_preset_save (ddb_encoder_preset_t *p, int overwrite) {
 void
 encoder_preset_copy (ddb_encoder_preset_t *to, ddb_encoder_preset_t *from) {
     to->title = strdup (from->title);
-    to->fname = strdup (from->fname);
+    to->ext = strdup (from->ext);
     to->encoder = strdup (from->encoder);
     to->method = from->method;
     to->formats = from->formats;
@@ -460,7 +460,7 @@ dsp_preset_replace (ddb_dsp_preset_t *from, ddb_dsp_preset_t *to) {
 }
 
 int
-convert (DB_playItem_t *it, const char *outfolder, int selected_format, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort) {
+convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int selected_format, int preserve_folder_structure, const char *root_folder, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort) {
     int err = -1;
     FILE *enc_pipe = NULL;
     FILE *temp_file = NULL;
@@ -478,8 +478,8 @@ convert (DB_playItem_t *it, const char *outfolder, int selected_format, ddb_enco
         if (fileinfo) {
             char fname[PATH_MAX];
             int idx = deadbeef->pl_get_idx_of (it);
-            deadbeef->pl_format_title (it, idx, fname, sizeof (fname), -1, encoder_preset->fname);
-            snprintf (out, sizeof (out), "%s/%s", outfolder, fname);
+            deadbeef->pl_format_title (it, idx, fname, sizeof (fname), -1, outfile);
+            snprintf (out, sizeof (out), "%s/%s.%s", outfolder, fname, encoder_preset->ext);
             if (encoder_preset->method == DDB_ENCODER_METHOD_FILE) {
                 const char *tmp = getenv ("TMPDIR");
                 if (!tmp) {

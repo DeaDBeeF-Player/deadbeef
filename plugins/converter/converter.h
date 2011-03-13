@@ -43,7 +43,7 @@ typedef struct ddb_preset_s {
 typedef struct ddb_encoder_preset_s {
     char *title;
     struct ddb_encoder_preset_s *next;
-    char *fname;
+    char *ext;
     char *encoder;
     int method; // pipe or file
     uint32_t formats; // combination of supported flags (FMT_*)
@@ -133,7 +133,7 @@ typedef struct {
     /////////////////////////////
 
     int
-    (*convert) (DB_playItem_t *it, const char *outfolder, int selected_format, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort);
+    (*convert) (DB_playItem_t *it, const char *outfolder, const char *outfile, int selected_format, int preserve_folder_structure, const char *root_folder, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort);
 
 } ddb_converter_t;
 

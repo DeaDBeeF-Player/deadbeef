@@ -78,3 +78,43 @@ on_converterdlg_delete_event           (GtkWidget       *widget,
 GtkWidget*
 title_formatting_help_link_create (gchar *widget_name, gchar *string1, gchar *string2,
                 gint int1, gint int2);
+
+void
+on_output_folder_changed               (GtkEditable     *editable,
+                                        gpointer         user_data);
+
+void
+on_numthreads_changed                  (GtkEditable     *editable,
+                                        gpointer         user_data);
+
+void
+on_overwrite_action_changed            (GtkComboBox     *combobox,
+                                        gpointer         user_data);
+
+void
+on_encoder_changed                     (GtkEditable     *editable,
+                                        gpointer         user_data);
+
+void
+on_preserve_folder_browse_clicked      (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_fname_changed                       (GtkEditable     *editable,
+                                        gpointer         user_data);
+
+void
+on_checkbutton1_toggled                (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_preserve_folders_toggled            (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_output_file_changed                 (GtkEditable     *editable,
+                                        gpointer         user_data);
+
+void
+on_preserve_folder_root_changed        (GtkEditable     *editable,
+                                        gpointer         user_data);
