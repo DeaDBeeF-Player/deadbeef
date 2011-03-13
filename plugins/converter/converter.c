@@ -731,7 +731,8 @@ static ddb_converter_t plugin = {
     .misc.plugin.type = DB_PLUGIN_MISC,
     .misc.plugin.name = "Converter",
     .misc.plugin.id = "converter",
-    .misc.plugin.descr = "Converts any supported formats to other formats",
+    .misc.plugin.descr = "Converts any supported formats to other formats.\n"
+        "Requires separate GUI plugin, e.g. Converter GTK UI\n",
     .misc.plugin.copyright = 
         "Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"

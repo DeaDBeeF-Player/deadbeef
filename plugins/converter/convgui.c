@@ -1192,7 +1192,11 @@ DB_misc_t plugin = {
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_MISC,
     .plugin.name = "Converter GTK UI",
-    .plugin.descr = "GTK2 User interface for the Converter plugin",
+    .plugin.descr = "GTK2 User interface for the Converter plugin\n"
+        "Usage:\n"
+        "· select some tracks in playlist\n"
+        "· right click\n"
+        "· select «Convert»",
     .plugin.copyright = 
         "Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
