@@ -42,7 +42,6 @@
 static DB_output_t plugin;
 DB_functions_t * deadbeef;
 
-#define CONFSTR_PULSE_SAMPLERATE "pulse.samplerate"
 #define CONFSTR_PULSE_SERVERADDR "pulse.serveraddr"
 #define CONFSTR_PULSE_BUFFERSIZE "pulse.buffersize"
 
@@ -345,8 +344,7 @@ DB_plugin_t * pulse_load(DB_functions_t *api)
 
 static const char settings_dlg[] =
     "property \"PulseAudio server\" entry " CONFSTR_PULSE_SERVERADDR " default;\n"
-    "property \"Preferred buffer size\" entry " CONFSTR_PULSE_BUFFERSIZE " 4096;\n"
-    "property \"Samplerate\" entry " CONFSTR_PULSE_SAMPLERATE " 44100;\n";
+    "property \"Preferred buffer size\" entry " CONFSTR_PULSE_BUFFERSIZE " 4096;\n";
 
 static DB_output_t plugin =
 {
