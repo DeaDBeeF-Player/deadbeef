@@ -135,6 +135,11 @@ ddb_tabstrip_size_allocate (GtkWidget     *widget,
     }
 }
 
+
+gboolean
+on_tabstrip_scroll_event                 (GtkWidget      *widget,
+                                        GdkEventScroll *event);
+
 gboolean
 on_tabstrip_button_press_event           (GtkWidget       *widget,
                                         GdkEventButton  *event);
@@ -213,6 +218,7 @@ ddb_tabstrip_class_init(DdbTabStripClass *class)
   widget_class->button_release_event = on_tabstrip_button_release_event;
   widget_class->configure_event = on_tabstrip_configure_event;
   widget_class->motion_notify_event = on_tabstrip_motion_notify_event;
+  widget_class->scroll_event= on_tabstrip_scroll_event;
   widget_class->drag_motion = on_tabstrip_drag_motion_event;
   widget_class->drag_drop = on_tabstrip_drag_drop;
   widget_class->drag_end = on_tabstrip_drag_end;
@@ -742,8 +748,26 @@ tabstrip_scroll_cb (gpointer data) {
 }
 
 gboolean
-on_tabstrip_button_press_event           (GtkWidget       *widget,
-                                        GdkEventButton  *event)
+on_tabstrip_scroll_event(GtkWidget       *widget,
+                         GdkEventScroll  *event)
+{
+    DdbTabStrip *ts = DDB_TABSTRIP (widget);
+
+    if(event->direction == GDK_SCROLL_UP)
+    {
+        tabstrip_scroll_left(ts);
+    }
+    else if (event->direction == GDK_SCROLL_DOWN)
+    {
+        tabstrip_scroll_right(ts);
+    }
+
+    return TRUE;
+}
+
+gboolean
+on_tabstrip_button_press_event(GtkWidget      *widget,
+                               GdkEventButton *event)
 {
     DdbTabStrip *ts = DDB_TABSTRIP (widget);
     tab_clicked = get_tab_under_cursor (ts, event->x);
