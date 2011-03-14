@@ -8,13 +8,15 @@ msgstr ""
 "Project-Id-Version: deadbeef master\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-10 15:02+0200\n"
-"PO-Revision-Date: 2010-09-08 17:47+0700\n"
-"Last-Translator: Andika Triwidada <andika@gmail.com>\n"
+"PO-Revision-Date: 2011-03-14 10:53+0200\n"
+"Last-Translator: Rahman Yusri Aftian <aftian@yahoo.com>\n"
 "Language-Team: Indonesian Translation Team <id@li.org>\n"
-"Language: \n"
+"Language: id\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Pootle 2.0.5\n"
 
 #: ../plugins/gtkui/callbacks.c:97
 msgid "Supported sound formats"
@@ -38,7 +40,7 @@ msgstr "Tambahkan folder ke daftar putar..."
 
 #: ../plugins/gtkui/callbacks.c:192
 msgid "Follow symlinks"
-msgstr ""
+msgstr "Ikuti symlink"
 
 #: ../plugins/gtkui/callbacks.c:677
 msgid "Failed while reading help file"
@@ -85,23 +87,23 @@ msgstr "Simpan Preset EQ DeaDBeeF"
 
 #: ../plugins/gtkui/eq.c:120
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
-msgstr ""
+msgstr "DeaDBeeF EQ preset files (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:151
 msgid "Load DeaDBeeF EQ Preset..."
-msgstr ""
+msgstr "Memuat DeaDBeeF EQ Preset..."
 
 #: ../plugins/gtkui/eq.c:155
 msgid "DeaDBeeF EQ presets (*.ddbeq)"
-msgstr ""
+msgstr "DeaDBeeF EQ presets (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:214
 msgid "Import Foobar2000 EQ Preset..."
-msgstr ""
+msgstr "Impor Foobar2000 EQ Preset..."
 
 #: ../plugins/gtkui/eq.c:218
 msgid "Foobar2000 EQ presets (*.feq)"
-msgstr ""
+msgstr "Foobar2000 EQ presets (*.feq)"
 
 #: ../plugins/gtkui/eq.c:292
 msgid "Enable"
@@ -117,19 +119,19 @@ msgstr "Nolkan Preamp"
 
 #: ../plugins/gtkui/eq.c:314
 msgid "Zero Bands"
-msgstr ""
+msgstr "Zero Bands"
 
 #: ../plugins/gtkui/eq.c:321
 msgid "Save Preset"
-msgstr ""
+msgstr "Simpan Preset"
 
 #: ../plugins/gtkui/eq.c:328
 msgid "Load Preset"
-msgstr ""
+msgstr "Memuat Preset"
 
 #: ../plugins/gtkui/eq.c:335
 msgid "Import Foobar2000 Preset"
-msgstr ""
+msgstr "Impor Foobar2000 Preset"
 
 #: ../plugins/gtkui/gtkui.c:133
 #, c-format
@@ -176,7 +178,7 @@ msgstr "Simpan Daftar Putar Sebagai"
 
 #: ../plugins/gtkui/gtkui.c:669 ../plugins/gtkui/gtkui.c:730
 msgid "DeaDBeeF playlist files (*.dbpl)"
-msgstr ""
+msgstr "DeaDBeeF playlist files (*.dbpl)"
 
 #: ../plugins/gtkui/gtkui.c:723
 msgid "Load Playlist"
@@ -263,7 +265,7 @@ msgstr "Buang"
 
 #: ../plugins/gtkui/interface.c:269 ../plugins/gtkui/deadbeef.glade.h:20
 msgid "Crop"
-msgstr ""
+msgstr "Crop"
 
 #: ../plugins/gtkui/interface.c:273 ../plugins/gtkui/deadbeef.glade.h:154
 msgid "_Find"
@@ -316,23 +318,23 @@ msgstr "Acak"
 
 #: ../plugins/gtkui/interface.c:344 ../plugins/gtkui/deadbeef.glade.h:78
 msgid "Looping"
-msgstr ""
+msgstr "Perulangan"
 
 #: ../plugins/gtkui/interface.c:351 ../plugins/gtkui/deadbeef.glade.h:76
 msgid "Loop All"
-msgstr ""
+msgstr "Ulang Semua"
 
 #: ../plugins/gtkui/interface.c:357 ../plugins/gtkui/deadbeef.glade.h:77
 msgid "Loop Single Song"
-msgstr ""
+msgstr "Ulang Satu Lagu"
 
 #: ../plugins/gtkui/interface.c:363 ../plugins/gtkui/deadbeef.glade.h:29
 msgid "Don't Loop"
-msgstr ""
+msgstr "Tidak ulang"
 
 #: ../plugins/gtkui/interface.c:369 ../plugins/gtkui/deadbeef.glade.h:114
 msgid "Scroll follows playback"
-msgstr ""
+msgstr "Gulir berikut pemutaran"
 
 #: ../plugins/gtkui/interface.c:374 ../plugins/gtkui/deadbeef.glade.h:22
 msgid "Cursor follows playback"
