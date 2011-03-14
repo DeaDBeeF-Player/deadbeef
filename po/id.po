@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: deadbeef master\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-10 15:02+0200\n"
-"PO-Revision-Date: 2011-03-14 10:53+0200\n"
+"PO-Revision-Date: 2011-03-14 10:56+0200\n"
 "Last-Translator: Rahman Yusri Aftian <aftian@yahoo.com>\n"
 "Language-Team: Indonesian Translation Team <id@li.org>\n"
 "Language: id\n"
@@ -338,11 +338,11 @@ msgstr "Gulir berikut pemutaran"
 
 #: ../plugins/gtkui/interface.c:374 ../plugins/gtkui/deadbeef.glade.h:22
 msgid "Cursor follows playback"
-msgstr ""
+msgstr "Kursor berikut pemutaran"
 
 #: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:125
 msgid "Stop after current"
-msgstr ""
+msgstr "Berhenti setelah ini"
 
 #: ../plugins/gtkui/interface.c:385 ../plugins/gtkui/interface.c:392
 #: ../plugins/gtkui/deadbeef.glade.h:155
@@ -410,6 +410,8 @@ msgid ""
 "<b>WARNING</b>: tag writing feature is still in development.\n"
 "<b>Make backup copies</b> before using."
 msgstr ""
+"<b>WARNING</b>: tag writing feature is still in development.\n"
+"<b>Make backup copies</b> before using."
 
 #: ../plugins/gtkui/interface.c:1206 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "_Apply"
@@ -457,7 +459,7 @@ msgstr "Memutar"
 
 #: ../plugins/gtkui/interface.c:1404
 msgid "Album Art"
-msgstr ""
+msgstr "Album Seni"
 
 #: ../plugins/gtkui/interface.c:1405
 msgid "Artist - Album"
@@ -485,7 +487,7 @@ msgstr "Trek"
 
 #: ../plugins/gtkui/interface.c:1411
 msgid "Band / Album Artist"
-msgstr ""
+msgstr "Band / Artis Album"
 
 #: ../plugins/gtkui/interface.c:1412 ../plugins/gtkui/plcommon.c:881
 msgid "Custom"
@@ -519,6 +521,11 @@ msgid ""
 "  [d]irectory, [D]irectoryWithPath\n"
 "Example: %a - %t [%l]"
 msgstr ""
+"Format conversions (start with %):\n"
+"  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer  track[n]umber, "
+"[N]totaltracks,  [l]ength, [y]ear, [g]enre, [c]omment,  copy[r]ight, "
+"[f]ilename, [F]ullPathname, [T]ags,  [d]irectory, "
+"[D]irectoryWithPathExample: %a - %t [%l]"
 
 #: ../plugins/gtkui/interface.c:1473 ../plugins/gtkui/interface.c:2900
 #: ../plugins/gtkui/interface.c:3012 ../plugins/gtkui/interface.c:3135
@@ -534,7 +541,7 @@ msgstr "_OK"
 
 #: ../plugins/gtkui/interface.c:1725 ../plugins/gtkui/deadbeef.glade.h:88
 msgid "Output plugin:"
-msgstr ""
+msgstr "Keluaran plugin:"
 
 #: ../plugins/gtkui/interface.c:1738 ../plugins/gtkui/deadbeef.glade.h:87
 msgid "Output device:"
