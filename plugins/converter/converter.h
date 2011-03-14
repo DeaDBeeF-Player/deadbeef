@@ -47,6 +47,7 @@ typedef struct ddb_encoder_preset_s {
     char *encoder;
     int method; // pipe or file
     uint32_t formats; // combination of supported flags (FMT_*)
+    uint32_t default_format;
 } ddb_encoder_preset_t;
 
 typedef struct ddb_dsp_preset_s {
@@ -132,8 +133,12 @@ typedef struct {
     // converter
     /////////////////////////////
 
+
+    void
+    (*get_output_path) (DB_playItem_t *it, const char *outfolder, const char *outfile, ddb_encoder_preset_t *encoder_preset, char *out, int sz);
+
     int
-    (*convert) (DB_playItem_t *it, const char *outfolder, const char *outfile, int selected_format, int preserve_folder_structure, const char *root_folder, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort);
+    (*convert) (DB_playItem_t *it, const char *outfolder, const char *outfile, int output_bps, int output_is_float, int preserve_folder_structure, const char *root_folder, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort);
 
 } ddb_converter_t;
 

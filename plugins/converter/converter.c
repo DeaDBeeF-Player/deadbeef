@@ -102,6 +102,19 @@ encoder_preset_load (const char *fname) {
         else if (!strcmp (str, "formats")) {
             sscanf (item, "%X", &p->formats);
         }
+        else if (!strcmp (str, "defaultfmt")) {
+            sscanf (item, "%X", &p->default_format);
+        }
+    }
+
+    if (!p->title) {
+        p->title = strdup ("Untitled");
+    }
+    if (!p->ext) {
+        p->ext = strdup ("");
+    }
+    if (!p->encoder) {
+        p->encoder = strdup ("");
     }
 
     err = 0;
@@ -151,6 +164,7 @@ encoder_preset_save (ddb_encoder_preset_t *p, int overwrite) {
     fprintf (fp, "encoder %s\n", p->encoder);
     fprintf (fp, "method %d\n", p->method);
     fprintf (fp, "formats %08X\n", p->formats);
+    fprintf (fp, "defaultfmt %08X\n", p->default_format);
 
     fclose (fp);
     return 0;
@@ -163,6 +177,7 @@ encoder_preset_copy (ddb_encoder_preset_t *to, ddb_encoder_preset_t *from) {
     to->encoder = strdup (from->encoder);
     to->method = from->method;
     to->formats = from->formats;
+    to->default_format = from->default_format;
 }
 
 ddb_encoder_preset_t *
@@ -459,8 +474,17 @@ dsp_preset_replace (ddb_dsp_preset_t *from, ddb_dsp_preset_t *to) {
     to->next = from->next;
 }
 
+static void
+get_output_path (DB_playItem_t *it, const char *outfolder, const char *outfile, ddb_encoder_preset_t *encoder_preset, char *out, int sz) {
+    char fname[PATH_MAX];
+    int idx = deadbeef->pl_get_idx_of (it);
+    deadbeef->pl_format_title (it, idx, fname, sizeof (fname), -1, outfile);
+    snprintf (out, sz, "%s/%s.%s", outfolder, fname, encoder_preset->ext);
+
+}
+
 int
-convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int selected_format, int preserve_folder_structure, const char *root_folder, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort) {
+convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int output_bps, int output_is_float, int preserve_folder_structure, const char *root_folder, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort) {
     int err = -1;
     FILE *enc_pipe = NULL;
     FILE *temp_file = NULL;
@@ -476,10 +500,7 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int sele
             goto error;
         }
         if (fileinfo) {
-            char fname[PATH_MAX];
-            int idx = deadbeef->pl_get_idx_of (it);
-            deadbeef->pl_format_title (it, idx, fname, sizeof (fname), -1, outfile);
-            snprintf (out, sizeof (out), "%s/%s.%s", outfolder, fname, encoder_preset->ext);
+            get_output_path (it, outfolder, outfile, encoder_preset, out, sizeof (out));
             if (encoder_preset->method == DDB_ENCODER_METHOD_FILE) {
                 const char *tmp = getenv ("TMPDIR");
                 if (!tmp) {
@@ -567,16 +588,51 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int sele
             uint32_t outsize = 0;
             uint32_t outsr = fileinfo->fmt.samplerate;
             uint16_t outch = fileinfo->fmt.channels;
-            uint16_t outbps = fileinfo->fmt.bps;
-            if (selected_format != 0) {
-                switch (selected_format) {
-                case 1 ... 4:
-                    outbps = selected_format * 8;
-                    break;
-                case 5:
-                    outbps = 32;
-                    break;
-                }
+
+            if (!(encoder_preset->formats & encoder_preset->default_format)) {
+                fprintf (stderr, "converter: invalid default format in the encoder preset '%s', formats: %X, def: %X\n", encoder_preset->title, encoder_preset->formats, encoder_preset->default_format);
+                goto error;
+            }
+
+            // check if encoder supports it
+            int outfmt = -1;
+            switch (output_bps) {
+            case 8:
+                outfmt = DDB_ENCODER_FMT_8BIT;
+                break;
+            case 16:
+                outfmt = DDB_ENCODER_FMT_16BIT;
+                break;
+            case 24:
+                outfmt = DDB_ENCODER_FMT_24BIT;
+                break;
+            case 32:
+                outfmt = output_is_float ? DDB_ENCODER_FMT_32BITFLOAT : DDB_ENCODER_FMT_24BIT;
+                break;
+            }
+            if (outfmt == -1 || !(encoder_preset->formats & outfmt)) {
+                // pick default format
+                outfmt = encoder_preset->default_format;
+            }
+
+            output_is_float = 0;
+            switch (outfmt) {
+            case DDB_ENCODER_FMT_8BIT:
+                output_bps = 8;
+                break;
+            case DDB_ENCODER_FMT_16BIT:
+                output_bps = 16;
+                break;
+            case DDB_ENCODER_FMT_24BIT:
+                output_bps = 24;
+                break;
+            case DDB_ENCODER_FMT_32BIT:
+                output_bps = 32;
+                break;
+            case DDB_ENCODER_FMT_32BITFLOAT:
+                output_bps = 32;
+                output_is_float = 1;
+                break;
             }
 
             int samplesize = fileinfo->fmt.channels * fileinfo->fmt.bps / 8;
@@ -616,17 +672,19 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int sele
                     outsr = fmt.samplerate;
                     outch = fmt.channels;
 
-                    outfmt.bps = outbps;
+                    outfmt.bps = output_bps;
+                    outfmt.is_float = output_is_float;
                     outfmt.channels = outch;
                     outfmt.samplerate = outsr;
 
                     int n = deadbeef->pcm_convert (&fmt, dspbuffer, &outfmt, buffer, frames * sizeof (float) * fmt.channels);
                     sz = n;
                 }
-                else if (fileinfo->fmt.bps != outbps) {
+                else if (fileinfo->fmt.bps != output_bps || fileinfo->fmt.is_float != output_is_float) {
                     ddb_waveformat_t outfmt;
                     memcpy (&outfmt, &fileinfo->fmt, sizeof (outfmt));
-                    outfmt.bps = outbps;
+                    outfmt.bps = output_bps;
+                    outfmt.is_float = output_is_float;
                     outfmt.channels = outch;
                     outfmt.samplerate = outsr;
 
@@ -638,9 +696,9 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int sele
                 outsize += sz;
 
                 if (!header_written) {
-                    uint32_t size = (it->endsample-it->startsample) * outch * outbps / 8;
+                    uint32_t size = (it->endsample-it->startsample) * outch * output_bps / 8;
                     if (!size) {
-                        size = deadbeef->pl_get_item_duration (it) * fileinfo->fmt.samplerate * outch * outbps / 8;
+                        size = deadbeef->pl_get_item_duration (it) * fileinfo->fmt.samplerate * outch * output_bps / 8;
 
                     }
 
@@ -653,9 +711,9 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int sele
 
                     memcpy (&wavehdr[22], &outch, 2);
                     memcpy (&wavehdr[24], &outsr, 4);
-                    uint16_t blockalign = outch * outbps / 8;
+                    uint16_t blockalign = outch * output_bps / 8;
                     memcpy (&wavehdr[32], &blockalign, 2);
-                    memcpy (&wavehdr[34], &outbps, 2);
+                    memcpy (&wavehdr[34], &output_bps, 2);
 
                     fwrite (wavehdr, 1, sizeof (wavehdr), temp_file);
                     fwrite (&size, 1, sizeof (size), temp_file);
@@ -774,6 +832,7 @@ static ddb_converter_t plugin = {
     .dsp_preset_append = dsp_preset_append,
     .dsp_preset_remove = dsp_preset_remove,
     .dsp_preset_replace = dsp_preset_replace,
+    .get_output_path = get_output_path,
     .convert = convert,
 };
 

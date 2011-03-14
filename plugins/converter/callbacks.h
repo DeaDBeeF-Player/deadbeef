@@ -118,3 +118,7 @@ on_output_file_changed                 (GtkEditable     *editable,
 void
 on_preserve_folder_root_changed        (GtkEditable     *editable,
                                         gpointer         user_data);
+
+void
+on_preserve_root_folder_changed        (GtkEditable     *editable,
+                                        gpointer         user_data);

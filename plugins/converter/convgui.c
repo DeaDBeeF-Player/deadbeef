@@ -42,7 +42,9 @@ typedef struct {
     char *outfile;
     int preserve_folder_structure;
     char *preserve_root_folder;
-    int selected_format;
+    int output_bps;
+    int output_is_float;
+    int overwrite_action;
     ddb_encoder_preset_t *encoder_preset;
     ddb_dsp_preset_t *dsp_preset;
     GtkWidget *progress;
@@ -91,6 +93,29 @@ destroy_progress_cb (gpointer ctx) {
     return FALSE;
 }
 
+struct overwrite_prompt_ctx {
+    char *fname;
+    uintptr_t mutex;
+    uintptr_t cond;
+    int result;
+};
+
+static gboolean
+overwrite_prompt_cb (void *ctx) {
+    struct overwrite_prompt_ctx *ctl = ctx;
+    GtkWidget *mainwin = gtkui_plugin->get_mainwin ();
+    GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("The file already exists. Overwrite?"));
+    gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (mainwin));
+    gtk_window_set_title (GTK_WINDOW (dlg), _("Converter warning"));
+    gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), ctl->fname);
+
+    int response = gtk_dialog_run (GTK_DIALOG (dlg));
+    gtk_widget_destroy (dlg);
+    ctl->result = response == GTK_RESPONSE_YES ? 1 : 0;
+    deadbeef->cond_signal (ctl->cond);
+    return FALSE;
+}
+
 static void
 converter_worker (void *ctx) {
     converter_ctx_t *conv = ctx;
@@ -102,7 +127,29 @@ converter_worker (void *ctx) {
         info->text = strdup (deadbeef->pl_find_meta (conv->convert_items[n], ":URI"));
         g_idle_add (update_progress_cb, info);
 
-        converter_plugin->convert (conv->convert_items[n], conv->outfolder, conv->outfile, conv->selected_format, conv->preserve_folder_structure, conv->preserve_root_folder, conv->encoder_preset, conv->dsp_preset, &conv->cancelled);
+        char outpath[2000];
+        converter_plugin->get_output_path (conv->convert_items[n], conv->outfolder, conv->outfile, conv->encoder_preset, outpath, sizeof (outpath));
+
+        if (conv->overwrite_action == 0) {
+            // prompt if file exists
+            struct stat st;
+            int res = stat(outpath, &st);
+            if (res == 0) {
+                struct overwrite_prompt_ctx ctl;
+                ctl.mutex = deadbeef->mutex_create ();
+                ctl.cond = deadbeef->cond_create ();
+                ctl.fname = outpath;
+                ctl.result = 0;
+                gdk_threads_add_idle (overwrite_prompt_cb, &ctl);
+                deadbeef->cond_wait (ctl.cond, ctl.mutex);
+                deadbeef->cond_free (ctl.cond);
+                deadbeef->mutex_free (ctl.mutex);
+            }
+        }
+
+        printf ("outpath: %s\n", outpath);
+
+        converter_plugin->convert (conv->convert_items[n], conv->outfolder, conv->outfile, conv->output_bps, conv->output_is_float, conv->preserve_folder_structure, conv->preserve_root_folder, conv->encoder_preset, conv->dsp_preset, &conv->cancelled);
         if (conv->cancelled) {
             for (; n < conv->convert_items_count; n++) {
                 deadbeef->pl_item_unref (conv->convert_items[n]);
@@ -125,11 +172,32 @@ int
 converter_process (converter_ctx_t *conv)
 {
     conv->outfolder = strdup (gtk_entry_get_text (GTK_ENTRY (lookup_widget (conv->converter, "output_folder"))));
-    conv->outfile = strdup (gtk_entry_get_text (GTK_ENTRY (lookup_widget (conv->converter, "output_file"))));
+    const char *outfile = gtk_entry_get_text (GTK_ENTRY (lookup_widget (conv->converter, "output_file")));
+    if (outfile[0] == 0) {
+        outfile = "%a - %t";
+    }
+    conv->outfile = strdup (outfile);
     conv->preserve_folder_structure = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "preserve_folders")));
     conv->preserve_root_folder = strdup (gtk_entry_get_text (GTK_ENTRY (lookup_widget (conv->converter, "preserve_root_folder"))));
+    conv->overwrite_action = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (conv->converter, "overwrite_action")));
 
-    GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (conv->converter, "encoder"));
+    GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (conv->converter, "output_format"));
+    int selected_format = gtk_combo_box_get_active (combo);
+    switch (selected_format) {
+    case 1 ... 4:
+        conv->output_bps = selected_format * 8;
+        conv->output_is_float = 0;
+        break;
+    case 5:
+        conv->output_bps = 32;
+        conv->output_is_float = 1;
+        break;
+    default:
+        conv->output_bps = -1; // same as input, or encoder default
+        break;
+    }
+
+    combo = GTK_COMBO_BOX (lookup_widget (conv->converter, "encoder"));
     int enc_preset = gtk_combo_box_get_active (combo);
     ddb_encoder_preset_t *encoder_preset = NULL;
 
@@ -148,9 +216,6 @@ converter_process (converter_ctx_t *conv)
 
     combo = GTK_COMBO_BOX (lookup_widget (conv->converter, "dsp_preset"));
     int dsp_idx = gtk_combo_box_get_active (combo) - 1;
-
-    combo = GTK_COMBO_BOX (lookup_widget (conv->converter, "output_format"));
-//    int selected_format = gtk_combo_box_get_active (combo);
 
     ddb_dsp_preset_t *dsp_preset = NULL;
     if (dsp_idx >= 0) {
@@ -217,7 +282,7 @@ converter_show (DB_plugin_action_t *act, DB_playItem_t *it) {
     conv->converter = create_converterdlg ();
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (conv->converter, "output_folder")), deadbeef->conf_get_str ("converter.output_folder", ""));
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (conv->converter, "output_file")), deadbeef->conf_get_str ("converter.output_file", ""));
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (conv->converter, "preserve_folder_root")), deadbeef->conf_get_str ("converter.preserve_root_folder", ""));
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (conv->converter, "preserve_root_folder")), deadbeef->conf_get_str ("converter.preserve_root_folder", ""));
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "preserve_folders")), deadbeef->conf_get_int ("converter.preserve_folder_structure", 0));
     gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (conv->converter, "overwrite_action")), deadbeef->conf_get_int ("converter.overwrite_action", 0));
 
@@ -413,7 +478,7 @@ on_preserve_folder_browse_clicked      (GtkButton       *button,
         folder = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
         gtk_widget_destroy (dlg);
         if (folder) {
-            GtkWidget *entry = lookup_widget (current_ctx->converter, "preserve_folder_root");
+            GtkWidget *entry = lookup_widget (current_ctx->converter, "preserve_root_folder");
             gtk_entry_set_text (GTK_ENTRY (entry), folder);
             g_free (folder);
         }
@@ -440,7 +505,7 @@ on_preserve_folders_toggled            (GtkToggleButton *togglebutton,
 }
 
 void
-on_preserve_folder_root_changed        (GtkEntry        *entry,
+on_preserve_root_folder_changed        (GtkEntry        *entry,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_str ("converter.preserve_root_folder", gtk_entry_get_text (entry));
@@ -488,6 +553,25 @@ init_encoder_preset_from_dlg (GtkWidget *dlg, ddb_encoder_preset_t *p) {
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "_32bitfloat")))) {
         p->formats |= DDB_ENCODER_FMT_32BITFLOAT;
     }
+
+    int default_fmt = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "defaultfmt")));
+    switch (default_fmt) {
+    case 0:
+        p->default_format = DDB_ENCODER_FMT_8BIT;
+        break;
+    case 1:
+        p->default_format = DDB_ENCODER_FMT_16BIT;
+        break;
+    case 2:
+        p->default_format = DDB_ENCODER_FMT_24BIT;
+        break;
+    case 3:
+        p->default_format = DDB_ENCODER_FMT_32BIT;
+        break;
+    case 4:
+        p->default_format = DDB_ENCODER_FMT_32BITFLOAT;
+        break;
+    }
 }
 
 int
@@ -524,6 +608,27 @@ edit_encoder_preset (char *title, GtkWidget *toplevel, int overwrite) {
     }
     if (p->formats & DDB_ENCODER_FMT_32BITFLOAT) {
         gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "_32bitfloat")), 1);
+    }
+    int default_fmt = -1;
+    switch (p->default_format) {
+    case DDB_ENCODER_FMT_8BIT:
+        default_fmt = 0;
+        break;
+    case DDB_ENCODER_FMT_16BIT:
+        default_fmt = 1;
+        break;
+    case DDB_ENCODER_FMT_24BIT:
+        default_fmt = 2;
+        break;
+    case DDB_ENCODER_FMT_32BIT:
+        default_fmt = 3;
+        break;
+    case DDB_ENCODER_FMT_32BITFLOAT:
+        default_fmt = 4;
+        break;
+    }
+    if (default_fmt != -1) {
+        gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "defaultfmt")), default_fmt);
     }
 
     ddb_encoder_preset_t *old = p;
