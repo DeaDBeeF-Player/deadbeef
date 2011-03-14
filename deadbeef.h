@@ -289,8 +289,8 @@ typedef struct {
     int channels;
     int samplerate;
     uint32_t channelmask;
-    unsigned is_float : 1; // bps must be 32 if this is true
-    unsigned is_bigendian : 1;
+    int is_float; // bps must be 32 if this is true
+    int is_bigendian;
 } ddb_waveformat_t;
 
 // forward decl for plugin struct
