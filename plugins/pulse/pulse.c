@@ -84,7 +84,7 @@ static int pulse_set_spec(ddb_waveformat_t *fmt)
         plugin.fmt.is_float = 0;
         plugin.fmt.channels = 2;
         plugin.fmt.samplerate = 44100;
-        //plugin.fmt.channelmask = 3;
+        plugin.fmt.channelmask = 3;
     }
 
     trace ("format %dbit %s %dch %dHz channelmask=%X\n", plugin.fmt.bps, plugin.fmt.is_float ? "float" : "int", plugin.fmt.channels, plugin.fmt.samplerate, plugin.fmt.channelmask);
@@ -118,30 +118,20 @@ static int pulse_set_spec(ddb_waveformat_t *fmt)
             ss.format = PA_SAMPLE_S32LE;
         }
         break;
+    default:
+        return -1;
     };
 
-    return 0;
-}
-
-static int pulse_init(void)
-{
-    trace ("pulse_init\n");
-    state = OUTPUT_STATE_STOPPED;
-    pulse_terminate = 0;
+    if (s) {
+        pa_simple_free(s);
+    }
 
     // Read serveraddr from config
     const char * server = deadbeef->conf_get_str(CONFSTR_PULSE_SERVERADDR, NULL);
 
-    if (requested_fmt.samplerate != 0) {
-        memcpy (&plugin.fmt, &requested_fmt, sizeof (ddb_waveformat_t));
-    }
-    pulse_set_spec(&plugin.fmt);
-
-    if (server)
+    if (server) {
         server = strcmp(server, "default") ? server : NULL;
-
-    // TODO: where list of all available devices? add this option to config too..
-    char * dev = NULL;
+    }
 
     pa_buffer_attr * attr = NULL;
     //attr->maxlength = Maximum length of the buffer.
@@ -152,13 +142,33 @@ static int pulse_init(void)
 
     buffer_size = deadbeef->conf_get_int(CONFSTR_PULSE_BUFFERSIZE, 4096);
 
-    int error;
-    s = pa_simple_new(server, "Deadbeef", PA_STREAM_PLAYBACK, dev, "Music", &ss, &channel_map, attr, &error);
-    //s = pa_simple_new(server, "Deadbeef", PA_STREAM_PLAYBACK, dev, "Music", &ss, NULL, attr, &error);
+    // TODO: where list of all available devices? add this option to config too..
+    char * dev = NULL;
 
+    int error;
+
+    s = pa_simple_new(server, "Deadbeef", PA_STREAM_PLAYBACK, dev, "Music", &ss, &channel_map, attr, &error);
     if (!s)
     {
         trace ("pulse_init failed (%d)\n", error);
+        return -1;
+    }
+
+
+    return 0;
+}
+
+static int pulse_init(void)
+{
+    trace ("pulse_init\n");
+    state = OUTPUT_STATE_STOPPED;
+    pulse_terminate = 0;
+
+    if (requested_fmt.samplerate != 0) {
+        memcpy (&plugin.fmt, &requested_fmt, sizeof (ddb_waveformat_t));
+    }
+
+    if (0 != pulse_set_spec(&plugin.fmt)) {
         return -1;
     }
 
@@ -170,7 +180,6 @@ static int pulse_init(void)
 static int pulse_setformat (ddb_waveformat_t *fmt)
 {
     memcpy (&requested_fmt, fmt, sizeof (ddb_waveformat_t));
-    trace ("pulse_setformat %dbit %s %dch %dHz channelmask=%X\n", fmt->bps, fmt->is_float ? "float" : "int", fmt->channels, fmt->samplerate, fmt->channelmask);
     if (!s) {
         return -1;
     }
@@ -178,17 +187,16 @@ static int pulse_setformat (ddb_waveformat_t *fmt)
         trace ("pulse_setformat ignored\n");
         return 0;
     }
-
     deadbeef->mutex_lock(mutex);
-    int s = state;
-    state = OUTPUT_STATE_STOPPED;
-    // we need to restart pulseaudio for now, since the format is only set upon initialization
-    pulse_free();
-    pulse_init();
+    trace ("pulse_setformat %dbit %s %dch %dHz channelmask=%X\n", fmt->bps, fmt->is_float ? "float" : "int", fmt->channels, fmt->samplerate, fmt->channelmask);
+
+    int prev_state = state;
+    pulse_stop ();
+    pulse_set_spec(fmt);
     deadbeef->mutex_unlock(mutex);
     trace ("new format %dbit %s %dch %dHz channelmask=%X\n", plugin.fmt.bps, plugin.fmt.is_float ? "float" : "int", plugin.fmt.channels, plugin.fmt.samplerate, plugin.fmt.channelmask);
 
-    switch (s) {
+    switch (prev_state) {
     case OUTPUT_STATE_STOPPED:
         return pulse_stop ();
     case OUTPUT_STATE_PLAYING:
@@ -217,7 +225,7 @@ static int pulse_free(void)
 
     pulse_tid = 0;
     state = OUTPUT_STATE_STOPPED;
-    if (s != NULL)
+    if (s)
     {
         pa_simple_free(s);
         s = NULL;
