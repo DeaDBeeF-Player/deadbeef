@@ -655,6 +655,7 @@ edit_encoder_preset (char *title, GtkWidget *toplevel, int overwrite) {
                     old->encoder = p->encoder;
                     old->method = p->method;
                     old->formats = p->formats;
+                    old->default_format = p->default_format;
                     free (p);
                 }
                 else {
