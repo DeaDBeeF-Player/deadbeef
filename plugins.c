@@ -1048,8 +1048,11 @@ plug_reinit_sound (void) {
     DB_output_t *prev = plug_get_output ();
     int state = OUTPUT_STATE_STOPPED;
 
+    ddb_waveformat_t fmt = {0};
+
     if (prev) {
         state = prev->state ();
+        memcpy (&fmt, &prev->fmt, sizeof (fmt));
         prev->free ();
     }
 
@@ -1059,6 +1062,9 @@ plug_reinit_sound (void) {
         output_plugin = prev;
     }
     DB_output_t *output = plug_get_output ();
+    if (fmt.channels) {
+        output->setformat (&fmt);
+    }
     if (output->init () < 0) {
         streamer_reset (1);
         streamer_set_nextsong (-2, 0);
