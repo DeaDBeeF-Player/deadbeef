@@ -361,7 +361,7 @@ static DB_output_t plugin =
     .plugin.version_minor = 1,
     .plugin.type = DB_PLUGIN_OUTPUT,
     .plugin.name = "PulseAudio output plugin",
-    .plugin.descr = "plays sound via pulse API",
+    .plugin.descr = "At the moment of this writing, PulseAudio seems to be very unstable in many (or most) GNU/Linux distributions.\nIf you experience problems - please try switching to ALSA or OSS output.\nIf that doesn't help - please uninstall PulseAudio from your system, and try ALSA or OSS again.\nThanks for understanding",
     .plugin.copyright =
         "Copyright (C) 2011 Jan D. Behrens <zykure@web.de>\n"
         "Copyright (C) 2010-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"
