@@ -78,6 +78,7 @@ on_enable_toggled         (GtkToggleButton *togglebutton,
     if (eq) {
         int enabled = gtk_toggle_button_get_active (togglebutton) ? 1 : 0;
         eq->enabled =  enabled;
+        deadbeef->streamer_dsp_refresh ();
     }
 }
 

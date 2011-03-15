@@ -1362,6 +1362,13 @@ streamer_dsp_postinit (void) {
 }
 
 void
+streamer_dsp_refresh (void) {
+    mutex_lock (decodemutex);
+    streamer_dsp_postinit ();
+    mutex_unlock (decodemutex);
+}
+
+void
 streamer_dsp_init (void) {
     // load dsp chain from file
     char fname[PATH_MAX];
