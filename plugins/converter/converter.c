@@ -729,6 +729,9 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
                 goto error;
             }
             if (temp_file && temp_file != enc_pipe) {
+                fseek (temp_file, sizeof (wavehdr), SEEK_SET);
+                fwrite (&outsize, 1, 4, temp_file);
+
                 fclose (temp_file);
                 temp_file = NULL;
             }
