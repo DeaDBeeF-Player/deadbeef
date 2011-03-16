@@ -712,6 +712,8 @@ on_encoder_preset_add                     (GtkButton       *button,
     GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (button));
 
     current_ctx->current_encoder_preset = converter_plugin->encoder_preset_alloc ();
+    current_ctx->current_encoder_preset->formats = DDB_ENCODER_FMT_16BIT;
+    current_ctx->current_encoder_preset->default_format = DDB_ENCODER_FMT_16BIT;
     if (GTK_RESPONSE_OK == edit_encoder_preset (_("Add new encoder"), toplevel, 0)) {
         converter_plugin->encoder_preset_append (current_ctx->current_encoder_preset);
         GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (current_ctx->converter, "encoder"));
