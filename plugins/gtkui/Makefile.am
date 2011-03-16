@@ -37,6 +37,9 @@ GTKUI_SOURCES =    gtkui.c gtkui.h\
 				   tagwritersettings.c tagwritersettings.h\
 				   wingeom.c wingeom.h
 
+sdkdir = $(pkgincludedir)
+sdk_HEADERS = gtkui_api.h
+
 EXTRA_DIST = $(gtkui_VALASOURCES) deadbeef.glade
 
 if STATICLINK
