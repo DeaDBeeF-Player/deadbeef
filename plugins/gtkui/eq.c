@@ -131,7 +131,7 @@ on_zero_bands_clicked                  (GtkButton       *button,
 }
 
 void
-on_save_preset_clicked                  (GtkButton       *button,
+on_save_preset_clicked                  (GtkMenuItem       *menuitem,
         gpointer         user_data) {
     GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Save DeaDBeeF EQ Preset"), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_OK, NULL);
 
@@ -177,7 +177,7 @@ on_save_preset_clicked                  (GtkButton       *button,
 }
 
 void
-on_load_preset_clicked                  (GtkButton       *button,
+on_load_preset_clicked                  (GtkMenuItem       *menuitem,
         gpointer         user_data) {
     GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Load DeaDBeeF EQ Preset..."), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
 
@@ -303,6 +303,39 @@ on_import_fb2k_preset_clicked                  (GtkButton       *button,
 }
 
 void
+on_presets_clicked                  (GtkButton       *button,
+        gpointer         user_data) {
+    GtkWidget *menu = gtk_menu_new ();
+    GtkWidget *menuitem;
+
+    menuitem = gtk_menu_item_new_with_mnemonic (_("Save Preset"));
+    gtk_widget_show (menuitem);
+    gtk_container_add (GTK_CONTAINER (menu), menuitem);
+
+    g_signal_connect ((gpointer) menuitem, "activate",
+            G_CALLBACK (on_save_preset_clicked),
+            NULL);
+
+    menuitem = gtk_menu_item_new_with_mnemonic (_("Load Preset"));
+    gtk_widget_show (menuitem);
+    gtk_container_add (GTK_CONTAINER (menu), menuitem);
+
+    g_signal_connect ((gpointer) menuitem, "activate",
+            G_CALLBACK (on_load_preset_clicked),
+            NULL);
+
+    menuitem = gtk_menu_item_new_with_mnemonic (_("Import Foobar2000 Preset"));
+    gtk_widget_show (menuitem);
+    gtk_container_add (GTK_CONTAINER (menu), menuitem);
+
+    g_signal_connect ((gpointer) menuitem, "activate",
+            G_CALLBACK (on_import_fb2k_preset_clicked),
+            NULL);
+
+    gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time());
+}
+
+void
 eq_window_show (void) {
     if (!eqcont) {
         eqcont = gtk_vbox_new (FALSE, 8);
@@ -346,25 +379,11 @@ eq_window_show (void) {
                 G_CALLBACK (on_zero_bands_clicked),
                 NULL);
 
-        button = gtk_button_new_with_label (_("Save Preset"));
+        button = gtk_button_new_with_label (_("Presets"));
         gtk_widget_show (button);
         gtk_box_pack_start (GTK_BOX (buttons), button, FALSE, FALSE, 0);
         g_signal_connect ((gpointer) button, "clicked",
-                G_CALLBACK (on_save_preset_clicked),
-                NULL);
-
-        button = gtk_button_new_with_label (_("Load Preset"));
-        gtk_widget_show (button);
-        gtk_box_pack_start (GTK_BOX (buttons), button, FALSE, FALSE, 0);
-        g_signal_connect ((gpointer) button, "clicked",
-                G_CALLBACK (on_load_preset_clicked),
-                NULL);
-
-        button = gtk_button_new_with_label (_("Import Foobar2000 Preset"));
-        gtk_widget_show (button);
-        gtk_box_pack_start (GTK_BOX (buttons), button, FALSE, FALSE, 0);
-        g_signal_connect ((gpointer) button, "clicked",
-                G_CALLBACK (on_import_fb2k_preset_clicked),
+                G_CALLBACK (on_presets_clicked),
                 NULL);
 
         eqwin = GTK_WIDGET (ddb_equalizer_new());
