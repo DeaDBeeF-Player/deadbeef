@@ -190,15 +190,14 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
     int scansamples = 0;
     buffer->currentsample = 0;
     buffer->skipsamples = 0;
-    int fsize = 0;
     int avg_bitrate = 0;
     int valid_frames = 0;
     int prev_bitrate = -1;
     buffer->samplerate = 0;
+    int64_t fsize = deadbeef->fgetlength (buffer->file);
 
     if (sample <= 0) {
         buffer->totalsamples = 0;
-        fsize = deadbeef->fgetlength (buffer->file);
         if (fsize > 0) {
             fsize -= initpos;
             if (fsize < 0) {
@@ -370,7 +369,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             continue;
         }
 
-        if (prev_bitrate != -1 && prev_bitrate != bitrate) {
+        if (!buffer->have_xing_header && prev_bitrate != -1 && prev_bitrate != bitrate) {
             buffer->vbr = DETECTED_VBR;
         }
         prev_bitrate = bitrate;
@@ -474,6 +473,9 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                     case XING_ABR2:
                         buffer->vbr = rev & 0x0f;
                         break;
+                    default:
+                        buffer->vbr = DETECTED_VBR;
+                        break;
                     }
                     if (!memcmp (buf, "LAME", 4)) {
                         trace ("lame header found\n");
@@ -517,6 +519,9 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                         buffer->have_xing_header = 1;
                         buffer->totalsamples -= buffer->enddelay;
                         deadbeef->fseek (buffer->file, framepos+packetlength-4, SEEK_SET);
+                        if (fsize >= 0) {
+                            buffer->bitrate = (fsize - deadbeef->ftell (buffer->file))/ buffer->samplerate * 1000;
+                        }
                         return 0;
                     }
                 }
@@ -587,6 +592,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                 buffer->avg_samples_per_frame /= valid_frames;
                 avg_bitrate /= valid_frames;
                 trace ("valid_frames=%d, avg_bitrate=%d, avg_packetlength=%d, avg_samplerate=%d, avg_samples_per_frame=%d\n", valid_frames, avg_bitrate, buffer->avg_packetlength, buffer->avg_samplerate, buffer->avg_samples_per_frame);
+                buffer->bitrate = avg_bitrate;
 
                 buffer->nframes = fsize / buffer->avg_packetlength;
                 buffer->duration = buffer->nframes * buffer->avg_samples_per_frame / buffer->avg_samplerate;
@@ -648,36 +654,43 @@ cmp3_set_extra_properties (buffer_t *buffer) {
     deadbeef->pl_replace_meta (buffer->it, ":CHANNELS", s);
     snprintf (s, sizeof (s), "%d", buffer->samplerate);
     deadbeef->pl_replace_meta (buffer->it, ":SAMPLERATE", s);
+
+    // set codec profile (cbr or vbr) and mp3 vbr method (guessed, or from Xing/Info header)
+
     switch (buffer->vbr) {
-//    case XING_CBR:
-//        deadbeef->pl_replace_meta (buffer->it, ":VBR_METHOD", "CBR");
-//        break;
     case XING_ABR:
-        deadbeef->pl_replace_meta (buffer->it, ":VBR_METHOD", "ABR");
+        deadbeef->pl_replace_meta (buffer->it, ":CODEC_PROFILE", "VBR");
+        deadbeef->pl_replace_meta (buffer->it, ":MP3_VBR_METHOD", "ABR");
         break;
     case XING_VBR1:
-        deadbeef->pl_replace_meta (buffer->it, ":VBR_METHOD", "full VBR method 1");
+        deadbeef->pl_replace_meta (buffer->it, ":CODEC_PROFILE", "VBR");
+        deadbeef->pl_replace_meta (buffer->it, ":MP3_VBR_METHOD", "full VBR method 1");
         break;
     case XING_VBR2:
-        deadbeef->pl_replace_meta (buffer->it, ":VBR_METHOD", "full VBR method 2");
+        deadbeef->pl_replace_meta (buffer->it, ":CODEC_PROFILE", "VBR");
+        deadbeef->pl_replace_meta (buffer->it, ":MP3_VBR_METHOD", "full VBR method 2");
         break;
     case XING_VBR3:
-        deadbeef->pl_replace_meta (buffer->it, ":VBR_METHOD", "full VBR method 3");
+        deadbeef->pl_replace_meta (buffer->it, ":CODEC_PROFILE", "VBR");
+        deadbeef->pl_replace_meta (buffer->it, ":MP3_VBR_METHOD", "full VBR method 3");
         break;
     case XING_VBR4:
-        deadbeef->pl_replace_meta (buffer->it, ":VBR_METHOD", "full VBR method 4");
+        deadbeef->pl_replace_meta (buffer->it, ":CODEC_PROFILE", "VBR");
+        deadbeef->pl_replace_meta (buffer->it, ":MP3_VBR_METHOD", "full VBR method 4");
         break;
     case XING_CBR2:
-        deadbeef->pl_replace_meta (buffer->it, ":VBR_METHOD", "CBR 2 pass");
+        deadbeef->pl_replace_meta (buffer->it, ":CODEC_PROFILE", "CBR");
         break;
     case XING_ABR2:
-        deadbeef->pl_replace_meta (buffer->it, ":VBR_METHOD", "ABR 2 pass");
+        deadbeef->pl_replace_meta (buffer->it, ":CODEC_PROFILE", "VBR");
+        deadbeef->pl_replace_meta (buffer->it, ":MP3_VBR_METHOD", "ABR 2 pass");
         break;
     case DETECTED_VBR:
-        deadbeef->pl_replace_meta (buffer->it, ":VBR_METHOD", "VBR autodetected");
+        deadbeef->pl_replace_meta (buffer->it, ":CODEC_PROFILE", "VBR");
+        deadbeef->pl_replace_meta (buffer->it, ":MP3_VBR_METHOD", "unspecified");
         break;
     default:
-        deadbeef->pl_replace_meta (buffer->it, ":VBR_METHOD", "CBR");
+        deadbeef->pl_replace_meta (buffer->it, ":CODEC_PROFILE", "CBR");
         break;
     }
     const char *versions[] = {"1", "2", "2.5"};
