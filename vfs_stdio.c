@@ -21,11 +21,16 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 static DB_functions_t *deadbeef;
 typedef struct {
     DB_vfs_t *vfs;
-    FILE *stream;
+    int stream;
+    int64_t offs;
 } STDIO_FILE;
 
 static DB_vfs_t plugin;
@@ -35,20 +40,21 @@ stdio_open (const char *fname) {
     if (!memcmp (fname, "file://", 7)) {
         fname += 7;
     }
-    FILE *file = fopen (fname, "rb");
-    if (!file) {
+    int file = open (fname, O_LARGEFILE);
+    if (file == -1) {
         return NULL;
     }
     STDIO_FILE *fp = malloc (sizeof (STDIO_FILE));
     fp->vfs = &plugin;
     fp->stream = file;
+    fp->offs = 0;
     return (DB_FILE*)fp;
 }
 
 static void
 stdio_close (DB_FILE *stream) {
     assert (stream);
-    fclose (((STDIO_FILE *)stream)->stream);
+    close (((STDIO_FILE *)stream)->stream);
     free (stream);
 }
 
@@ -56,36 +62,44 @@ static size_t
 stdio_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
     assert (stream);
     assert (ptr);
-    return fread (ptr, size, nmemb, ((STDIO_FILE *)stream)->stream);
+    int res = read (((STDIO_FILE*)stream)->stream, ptr, size*nmemb);
+    if (res == -1) {
+        return 0;
+    }
+    ((STDIO_FILE*)stream)->offs += res;
+    return res / size;
 }
 
 static int
 stdio_seek (DB_FILE *stream, int64_t offset, int whence) {
     assert (stream);
-    return fseek (((STDIO_FILE *)stream)->stream, offset, whence);
+    off64_t res = lseek64 (((STDIO_FILE *)stream)->stream, offset, whence);
+    if (res == -1) {
+        return -1;
+    }
+    ((STDIO_FILE*)stream)->offs = res; 
+    return 0;
 }
 
 static int64_t
 stdio_tell (DB_FILE *stream) {
     assert (stream);
-    return ftell (((STDIO_FILE *)stream)->stream);
+    return ((STDIO_FILE*)stream)->offs;
 }
 
 static void
 stdio_rewind (DB_FILE *stream) {
     assert (stream);
-    rewind (((STDIO_FILE *)stream)->stream);
+    stdio_seek (stream, 0, SEEK_SET);
 }
 
 static int64_t
 stdio_getlength (DB_FILE *stream) {
     assert (stream);
     STDIO_FILE *f = (STDIO_FILE *)stream;
-    size_t pos = ftell (f->stream);
-    fseek (f->stream, 0, SEEK_END);
-    size_t sz = ftell (f->stream);
-    fseek (f->stream, pos, SEEK_SET);
-    return sz;
+    int64_t size = lseek64 (f->stream, 0, SEEK_END);
+    lseek64 (f->stream, f->offs, SEEK_SET);
+    return size;
 }
 
 const char *
