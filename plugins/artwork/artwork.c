@@ -62,10 +62,10 @@ make_cache_dir_path (char *path, int size, const char *artist, int img_size) {
     int sz;
     
     if (img_size == -1) {
-        sz = snprintf (path, size, "%s/deadbeef/covers/", cache ? cache : getenv ("HOME"));
+        sz = snprintf (path, size, cache ? "%s/deadbeef/covers/" : "%s/.cache/deadbeef/covers/", cache ? cache : getenv ("HOME"));
     }
     else {
-        sz = snprintf (path, size, "%s/deadbeef/covers-%d/", cache ? cache : getenv ("HOME"), img_size);
+        sz = snprintf (path, size, cache ? "%s/deadbeef/covers-%d/" : "%s/.cache/deadbeef/covers-%d/", cache ? cache : getenv ("HOME"), img_size);
     }
     path += sz;
 
