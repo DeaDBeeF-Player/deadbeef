@@ -726,7 +726,8 @@ plug_load_all (void) {
     char xdg_plugin_dir[1024];
 
     if (xdg_local_home) {
-        strcpy (xdg_plugin_dir, xdg_local_home);
+        strncpy (xdg_plugin_dir, xdg_local_home, sizeof (xdg_plugin_dir));
+        xdg_plugin_dir[sizeof(xdg_plugin_dir)-1] = 0;
     } else {
         char *homedir = getenv ("HOME");
 
