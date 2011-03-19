@@ -105,6 +105,24 @@ encoder_preset_load (const char *fname) {
         else if (!strcmp (str, "defaultfmt")) {
             sscanf (item, "%X", &p->default_format);
         }
+        else if (!strcmp (str, "id3v2_version")) {
+            p->id3v2_version = atoi (item);
+        }
+        else if (!strcmp (str, "tag_id3v2")) {
+            p->tag_id3v2 = atoi (item);
+        }
+        else if (!strcmp (str, "tag_id3v1")) {
+            p->tag_id3v1 = atoi (item);
+        }
+        else if (!strcmp (str, "tag_apev2")) {
+            p->tag_apev2 = atoi (item);
+        }
+        else if (!strcmp (str, "tag_flac")) {
+            p->tag_flac = atoi (item);
+        }
+        else if (!strcmp (str, "tag_oggvorbis")) {
+            p->tag_oggvorbis = atoi (item);
+        }
     }
 
     if (!p->title) {
@@ -165,6 +183,12 @@ encoder_preset_save (ddb_encoder_preset_t *p, int overwrite) {
     fprintf (fp, "method %d\n", p->method);
     fprintf (fp, "formats %08X\n", p->formats);
     fprintf (fp, "defaultfmt %08X\n", p->default_format);
+    fprintf (fp, "id3v2_version %d\n", p->id3v2_version);
+    fprintf (fp, "tag_id3v2 %d\n", p->tag_id3v2);
+    fprintf (fp, "tag_id3v1 %d\n", p->tag_id3v1);
+    fprintf (fp, "tag_apev2 %d\n", p->tag_apev2);
+    fprintf (fp, "tag_flac %d\n", p->tag_flac);
+    fprintf (fp, "tag_oggvorbis %d\n", p->tag_oggvorbis);
 
     fclose (fp);
     return 0;
@@ -178,6 +202,13 @@ encoder_preset_copy (ddb_encoder_preset_t *to, ddb_encoder_preset_t *from) {
     to->method = from->method;
     to->formats = from->formats;
     to->default_format = from->default_format;
+    to->tag_id3v2 = from->tag_id3v2;
+    to->tag_id3v1 = from->tag_id3v1;
+    to->tag_apev2 = from->tag_apev2;
+    to->tag_flac = from->tag_flac;
+    to->tag_oggvorbis = from->tag_oggvorbis;
+    to->tag_mp3xing = from->tag_mp3xing;
+    to->id3v2_version = from->id3v2_version;
 }
 
 ddb_encoder_preset_t *
@@ -761,6 +792,25 @@ error:
     if (input_file_name[0] && strcmp (input_file_name, "-")) {
         unlink (input_file_name);
     }
+
+    // write tags
+    uint32_t tagflags = JUNK_STRIP_ID3V2 | JUNK_STRIP_APEV2 | JUNK_STRIP_ID3V1;
+    if (encoder_preset->tag_id3v2) {
+        tagflags |= JUNK_WRITE_ID3V2;
+    }
+    if (encoder_preset->tag_id3v1) {
+        tagflags |= JUNK_WRITE_ID3V1;
+    }
+    if (encoder_preset->tag_apev2) {
+        tagflags |= JUNK_WRITE_APEV2;
+    }
+    DB_playItem_t *out_it = deadbeef->pl_item_alloc ();
+    deadbeef->pl_item_copy (out_it, it);
+    deadbeef->pl_replace_meta (out_it, ":URI", out);
+
+    deadbeef->junk_rewrite_tags (out_it, tagflags, encoder_preset->id3v2_version + 3, "iso8859-1");
+
+    deadbeef->pl_item_unref (out_it);
 
     return err;
 }

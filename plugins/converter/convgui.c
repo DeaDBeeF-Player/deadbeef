@@ -147,8 +147,6 @@ converter_worker (void *ctx) {
             }
         }
 
-        printf ("outpath: %s\n", outpath);
-
         converter_plugin->convert (conv->convert_items[n], conv->outfolder, conv->outfile, conv->output_bps, conv->output_is_float, conv->preserve_folder_structure, conv->preserve_root_folder, conv->encoder_preset, conv->dsp_preset, &conv->cancelled);
         if (conv->cancelled) {
             for (; n < conv->convert_items_count; n++) {
@@ -572,6 +570,13 @@ init_encoder_preset_from_dlg (GtkWidget *dlg, ddb_encoder_preset_t *p) {
         p->default_format = DDB_ENCODER_FMT_32BITFLOAT;
         break;
     }
+
+    p->id3v2_version = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "id3v2_version")));
+    p->tag_id3v2 = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "id3v2")));
+    p->tag_id3v1 = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "id3v1")));
+    p->tag_apev2 = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "apev2")));
+    p->tag_flac = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "flac")));
+    p->tag_oggvorbis = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "oggvorbis")));
 }
 
 int
@@ -631,6 +636,13 @@ edit_encoder_preset (char *title, GtkWidget *toplevel, int overwrite) {
         gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "defaultfmt")), default_fmt);
     }
 
+    gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "id3v2_version")), p->id3v2_version);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "id3v2")), p->tag_id3v2);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "id3v1")), p->tag_id3v1);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "apev2")), p->tag_apev2);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "flac")), p->tag_flac);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "oggvorbis")), p->tag_oggvorbis);
+
     ddb_encoder_preset_t *old = p;
     int r = GTK_RESPONSE_CANCEL;
     for (;;) {
@@ -650,13 +662,9 @@ edit_encoder_preset (char *title, GtkWidget *toplevel, int overwrite) {
                     free (old->title);
                     free (old->ext);
                     free (old->encoder);
-                    old->title = p->title;
-                    old->ext = p->ext;
-                    old->encoder = p->encoder;
-                    old->method = p->method;
-                    old->formats = p->formats;
-                    old->default_format = p->default_format;
-                    free (p);
+
+                    converter_plugin->encoder_preset_copy (old, p);
+                    converter_plugin->encoder_preset_free (p);
                 }
                 else {
                     GtkWidget *warndlg = gtk_message_dialog_new (GTK_WINDOW (gtkui_plugin->get_mainwin ()), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Failed to save encoder preset"));
@@ -714,6 +722,7 @@ on_encoder_preset_add                     (GtkButton       *button,
     current_ctx->current_encoder_preset = converter_plugin->encoder_preset_alloc ();
     current_ctx->current_encoder_preset->formats = DDB_ENCODER_FMT_16BIT;
     current_ctx->current_encoder_preset->default_format = DDB_ENCODER_FMT_16BIT;
+
     if (GTK_RESPONSE_OK == edit_encoder_preset (_("Add new encoder"), toplevel, 0)) {
         converter_plugin->encoder_preset_append (current_ctx->current_encoder_preset);
         GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (current_ctx->converter, "encoder"));

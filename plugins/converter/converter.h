@@ -48,6 +48,13 @@ typedef struct ddb_encoder_preset_s {
     int method; // pipe or file
     uint32_t formats; // combination of supported flags (FMT_*)
     uint32_t default_format;
+    int tag_id3v2;
+    int tag_id3v1;
+    int tag_apev2;
+    int tag_flac;
+    int tag_oggvorbis;
+    int tag_mp3xing;
+    int id3v2_version;
 } ddb_encoder_preset_t;
 
 typedef struct ddb_dsp_preset_s {

@@ -360,6 +360,7 @@ create_convpreset_editor (void)
   GtkWidget *hbox93;
   GtkWidget *encoder;
   GtkWidget *custom4;
+  GtkWidget *label124;
   GtkWidget *hbox73;
   GtkWidget *label107;
   GtkWidget *method;
@@ -376,6 +377,17 @@ create_convpreset_editor (void)
   GtkWidget *label123;
   GtkWidget *defaultfmt;
   GtkWidget *label118;
+  GtkWidget *frame9;
+  GtkWidget *alignment21;
+  GtkWidget *table2;
+  GtkWidget *apev2;
+  GtkWidget *id3v1;
+  GtkWidget *oggvorbis;
+  GtkWidget *flac;
+  GtkWidget *hbox104;
+  GtkWidget *id3v2;
+  GtkWidget *id3v2_version;
+  GtkWidget *label125;
   GtkWidget *dialog_action_area6;
   GtkWidget *convpreset_cancel;
   GtkWidget *convpreset_ok;
@@ -413,7 +425,7 @@ create_convpreset_editor (void)
 
   hbox96 = gtk_hbox_new (FALSE, 9);
   gtk_widget_show (hbox96);
-  gtk_box_pack_start (GTK_BOX (vbox27), hbox96, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox27), hbox96, FALSE, TRUE, 0);
 
   label120 = gtk_label_new (_("Output file extension:"));
   gtk_widget_show (label120);
@@ -451,6 +463,11 @@ create_convpreset_editor (void)
   GTK_WIDGET_UNSET_FLAGS (custom4, GTK_CAN_FOCUS);
   GTK_WIDGET_UNSET_FLAGS (custom4, GTK_CAN_DEFAULT);
 
+  label124 = gtk_label_new (_("<small>%o - output file name\n%i - temporary input file name</small>"));
+  gtk_widget_show (label124);
+  gtk_box_pack_start (GTK_BOX (vbox27), label124, FALSE, FALSE, 0);
+  gtk_label_set_use_markup (GTK_LABEL (label124), TRUE);
+
   hbox73 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox73);
   gtk_box_pack_start (GTK_BOX (vbox27), hbox73, FALSE, TRUE, 0);
@@ -477,11 +494,11 @@ create_convpreset_editor (void)
   vbox35 = gtk_vbox_new (FALSE, 8);
   gtk_widget_show (vbox35);
   gtk_container_add (GTK_CONTAINER (alignment20), vbox35);
-  gtk_container_set_border_width (GTK_CONTAINER (vbox35), 12);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox35), 8);
 
   table1 = gtk_table_new (3, 2, FALSE);
   gtk_widget_show (table1);
-  gtk_box_pack_start (GTK_BOX (vbox35), table1, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox35), table1, FALSE, TRUE, 0);
   gtk_table_set_row_spacings (GTK_TABLE (table1), 8);
   gtk_table_set_col_spacings (GTK_TABLE (table1), 8);
 
@@ -517,7 +534,7 @@ create_convpreset_editor (void)
 
   hbox103 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox103);
-  gtk_box_pack_start (GTK_BOX (vbox35), hbox103, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox35), hbox103, FALSE, TRUE, 0);
 
   label123 = gtk_label_new (_("Default format:"));
   gtk_widget_show (label123);
@@ -536,6 +553,64 @@ create_convpreset_editor (void)
   gtk_widget_show (label118);
   gtk_frame_set_label_widget (GTK_FRAME (frame8), label118);
   gtk_label_set_use_markup (GTK_LABEL (label118), TRUE);
+
+  frame9 = gtk_frame_new (NULL);
+  gtk_widget_show (frame9);
+  gtk_box_pack_start (GTK_BOX (vbox27), frame9, TRUE, TRUE, 0);
+
+  alignment21 = gtk_alignment_new (0.5, 0.5, 1, 1);
+  gtk_widget_show (alignment21);
+  gtk_container_add (GTK_CONTAINER (frame9), alignment21);
+  gtk_alignment_set_padding (GTK_ALIGNMENT (alignment21), 0, 0, 12, 0);
+
+  table2 = gtk_table_new (2, 3, FALSE);
+  gtk_widget_show (table2);
+  gtk_container_add (GTK_CONTAINER (alignment21), table2);
+  gtk_container_set_border_width (GTK_CONTAINER (table2), 8);
+  gtk_table_set_col_spacings (GTK_TABLE (table2), 8);
+
+  apev2 = gtk_check_button_new_with_mnemonic (_("APEv2"));
+  gtk_widget_show (apev2);
+  gtk_table_attach (GTK_TABLE (table2), apev2, 1, 2, 0, 1,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+
+  id3v1 = gtk_check_button_new_with_mnemonic (_("ID3v1"));
+  gtk_widget_show (id3v1);
+  gtk_table_attach (GTK_TABLE (table2), id3v1, 2, 3, 0, 1,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+
+  oggvorbis = gtk_check_button_new_with_mnemonic (_("OggVorbis"));
+  gtk_table_attach (GTK_TABLE (table2), oggvorbis, 2, 3, 1, 2,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+
+  flac = gtk_check_button_new_with_mnemonic (_("FLAC"));
+  gtk_table_attach (GTK_TABLE (table2), flac, 1, 2, 1, 2,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+
+  hbox104 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox104);
+  gtk_table_attach (GTK_TABLE (table2), hbox104, 0, 1, 0, 1,
+                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+
+  id3v2 = gtk_check_button_new_with_mnemonic (_("ID3v2"));
+  gtk_widget_show (id3v2);
+  gtk_box_pack_start (GTK_BOX (hbox104), id3v2, FALSE, FALSE, 0);
+
+  id3v2_version = gtk_combo_box_new_text ();
+  gtk_widget_show (id3v2_version);
+  gtk_box_pack_start (GTK_BOX (hbox104), id3v2_version, TRUE, TRUE, 0);
+  gtk_combo_box_append_text (GTK_COMBO_BOX (id3v2_version), _("2.3"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (id3v2_version), _("2.4"));
+
+  label125 = gtk_label_new (_("<b>Tag writer</b>"));
+  gtk_widget_show (label125);
+  gtk_frame_set_label_widget (GTK_FRAME (frame9), label125);
+  gtk_label_set_use_markup (GTK_LABEL (label125), TRUE);
 
   dialog_action_area6 = GTK_DIALOG (convpreset_editor)->action_area;
   gtk_widget_show (dialog_action_area6);
@@ -570,6 +645,7 @@ create_convpreset_editor (void)
   GLADE_HOOKUP_OBJECT (convpreset_editor, hbox93, "hbox93");
   GLADE_HOOKUP_OBJECT (convpreset_editor, encoder, "encoder");
   GLADE_HOOKUP_OBJECT (convpreset_editor, custom4, "custom4");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, label124, "label124");
   GLADE_HOOKUP_OBJECT (convpreset_editor, hbox73, "hbox73");
   GLADE_HOOKUP_OBJECT (convpreset_editor, label107, "label107");
   GLADE_HOOKUP_OBJECT (convpreset_editor, method, "method");
@@ -586,6 +662,17 @@ create_convpreset_editor (void)
   GLADE_HOOKUP_OBJECT (convpreset_editor, label123, "label123");
   GLADE_HOOKUP_OBJECT (convpreset_editor, defaultfmt, "defaultfmt");
   GLADE_HOOKUP_OBJECT (convpreset_editor, label118, "label118");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, frame9, "frame9");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, alignment21, "alignment21");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, table2, "table2");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, apev2, "apev2");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, id3v1, "id3v1");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, oggvorbis, "oggvorbis");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, flac, "flac");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, hbox104, "hbox104");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, id3v2, "id3v2");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, id3v2_version, "id3v2_version");
+  GLADE_HOOKUP_OBJECT (convpreset_editor, label125, "label125");
   GLADE_HOOKUP_OBJECT_NO_REF (convpreset_editor, dialog_action_area6, "dialog_action_area6");
   GLADE_HOOKUP_OBJECT (convpreset_editor, convpreset_cancel, "convpreset_cancel");
   GLADE_HOOKUP_OBJECT (convpreset_editor, convpreset_ok, "convpreset_ok");
