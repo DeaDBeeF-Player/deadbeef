@@ -875,8 +875,10 @@ streamer_start_new_song (void) {
 }
 
 void
-streamer_next (void) {
-    bytes_until_next_song = streamer_ringbuf.remaining;
+streamer_next (int bytesread) {
+    streamer_lock ();
+    bytes_until_next_song = streamer_ringbuf.remaining + bytesread;
+    streamer_unlock ();
     if (conf_get_int ("playlist.stop_after_current", 0)) {
         streamer_set_nextsong (-2, 1);
     }
@@ -1117,7 +1119,7 @@ streamer_thread (void *ctx) {
             }
         }
         streamer_lock ();
-        if (!skip && streamer_ringbuf.remaining < (STREAM_BUFFER_SIZE-blocksize * MAX_DSP_RATIO)) {
+        if (!formatchanged && !skip && streamer_ringbuf.remaining < (STREAM_BUFFER_SIZE-blocksize * MAX_DSP_RATIO)) {
             int sz = STREAM_BUFFER_SIZE - streamer_ringbuf.remaining;
             int minsize = blocksize;
 
@@ -1140,12 +1142,16 @@ streamer_thread (void *ctx) {
 
             int bytesread = 0;
             do {
+                int prev_buns = bytes_until_next_song;
                 int nb = streamer_read_async (readbuffer+bytesread,sz-bytesread);
                 bytesread += nb;
                 struct timeval tm2;
                 gettimeofday (&tm2, NULL);
                 int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
                 if (ms >= alloc_time) {
+                    break;
+                }
+                if (prev_buns != bytes_until_next_song) {
                     break;
                 }
             } while (bytesread < sz-100);
@@ -1475,7 +1481,7 @@ streamer_set_output_format (void) {
     DB_output_t *output = plug_get_output ();
     int playing = (output->state () == OUTPUT_STATE_PLAYING);
 
-    fprintf (stderr, "streamer_set_output_format %dbit %s %dch %dHz channelmask=%X\n", output_format.bps, output_format.is_float ? "float" : "int", output_format.channels, output_format.samplerate, output_format.channelmask);
+    fprintf (stderr, "streamer_set_output_format %dbit %s %dch %dHz channelmask=%X, bufferfill: %d\n", output_format.bps, output_format.is_float ? "float" : "int", output_format.channels, output_format.samplerate, output_format.channelmask, streamer_ringbuf.remaining);
     output->setformat (&output_format);
     streamer_buffering = 1;
     if (playing && output->state () != OUTPUT_STATE_PLAYING) {
@@ -1607,7 +1613,7 @@ streamer_read_async (char *bytes, int size) {
         // in case of decoder error, or EOF while buffering - switch to next song instantly
         if (bytesread < 0 || (bytes_until_next_song >= 0 && streamer_buffering && bytesread == 0) || bytes_until_next_song < 0) {
             trace ("finished streaming song, queueing next (%d %d %d %d)\n", bytesread, bytes_until_next_song, streamer_buffering, nextsong_pstate);
-            streamer_next ();
+            streamer_next (bytesread);
         }
     }
     return bytesread;
@@ -1624,8 +1630,8 @@ streamer_read (char *bytes, int size) {
     }
     DB_output_t *output = plug_get_output ();
     if (formatchanged && bytes_until_next_song <= 0) {
-        formatchanged = 0;
         streamer_set_output_format ();
+        formatchanged = 0;
     }
     streamer_lock ();
     int sz = min (size, streamer_ringbuf.remaining);
