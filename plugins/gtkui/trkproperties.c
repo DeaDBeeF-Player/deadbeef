@@ -687,7 +687,7 @@ on_remove_field_activate                 (GtkMenuItem     *menuitem,
         }
     }
     if (types[i]) { // known val, clear
-        gtk_list_store_set (store, &iter, 1, "", -1);
+        gtk_list_store_set (store, &iter, 1, "", 3, 0, -1);
     }
     else {
         gtk_list_store_remove (store, &iter);
