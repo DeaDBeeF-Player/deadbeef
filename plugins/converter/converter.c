@@ -612,9 +612,14 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
             }
 
             // write wave header
-            char wavehdr[] = {
+            char wavehdr_int[] = {
                 0x52, 0x49, 0x46, 0x46, 0x24, 0x70, 0x0d, 0x00, 0x57, 0x41, 0x56, 0x45, 0x66, 0x6d, 0x74, 0x20, 0x10, 0x00, 0x00, 0x00, 0x01, 0x00, 0x02, 0x00, 0x44, 0xac, 0x00, 0x00, 0x10, 0xb1, 0x02, 0x00, 0x04, 0x00, 0x10, 0x00, 0x64, 0x61, 0x74, 0x61
             };
+            char wavehdr_float[] = {
+                0x52, 0x49, 0x46, 0x46, 0x2a, 0xdf, 0x02, 0x00, 0x57, 0x41, 0x56, 0x45, 0x66, 0x6d, 0x74, 0x20, 0x28, 0x00, 0x00, 0x00, 0xfe, 0xff, 0x02, 0x00, 0x40, 0x1f, 0x00, 0x00, 0x00, 0xfa, 0x00, 0x00, 0x08, 0x00, 0x20, 0x00, 0x16, 0x00, 0x20, 0x00, 0x03, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71, 0x66, 0x61, 0x63, 0x74, 0x04, 0x00, 0x00, 0x00, 0xc5, 0x5b, 0x00, 0x00, 0x64, 0x61, 0x74, 0x61
+            };
+            char *wavehdr = output_is_float ? wavehdr_float : wavehdr_int;
+            int wavehdr_size = output_is_float ? sizeof (wavehdr_float) : sizeof (wavehdr_int);
             int header_written = 0;
             uint32_t outsize = 0;
             uint32_t outsr = fileinfo->fmt.samplerate;
@@ -638,7 +643,7 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
                 outfmt = DDB_ENCODER_FMT_24BIT;
                 break;
             case 32:
-                outfmt = output_is_float ? DDB_ENCODER_FMT_32BITFLOAT : DDB_ENCODER_FMT_24BIT;
+                outfmt = output_is_float ? DDB_ENCODER_FMT_32BITFLOAT : DDB_ENCODER_FMT_32BIT;
                 break;
             }
             if (outfmt == -1 || !(encoder_preset->formats & outfmt)) {
@@ -746,7 +751,7 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
                     memcpy (&wavehdr[32], &blockalign, 2);
                     memcpy (&wavehdr[34], &output_bps, 2);
 
-                    fwrite (wavehdr, 1, sizeof (wavehdr), temp_file);
+                    fwrite (wavehdr, 1, wavehdr_size, temp_file);
                     fwrite (&size, 1, sizeof (size), temp_file);
                     header_written = 1;
                 }
@@ -760,7 +765,7 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
                 goto error;
             }
             if (temp_file && temp_file != enc_pipe) {
-                fseek (temp_file, sizeof (wavehdr), SEEK_SET);
+                fseek (temp_file, wavehdr_size, SEEK_SET);
                 fwrite (&outsize, 1, 4, temp_file);
 
                 fclose (temp_file);
