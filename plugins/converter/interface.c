@@ -582,11 +582,13 @@ create_convpreset_editor (void)
                     (GtkAttachOptions) (0), 0, 0);
 
   oggvorbis = gtk_check_button_new_with_mnemonic (_("OggVorbis"));
+  gtk_widget_show (oggvorbis);
   gtk_table_attach (GTK_TABLE (table2), oggvorbis, 2, 3, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
 
   flac = gtk_check_button_new_with_mnemonic (_("FLAC"));
+  gtk_widget_show (flac);
   gtk_table_attach (GTK_TABLE (table2), flac, 1, 2, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);

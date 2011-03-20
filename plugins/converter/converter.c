@@ -793,7 +793,7 @@ error:
         unlink (input_file_name);
     }
 
-    // write tags
+    // write junklib tags
     uint32_t tagflags = JUNK_STRIP_ID3V2 | JUNK_STRIP_APEV2 | JUNK_STRIP_ID3V1;
     if (encoder_preset->tag_id3v2) {
         tagflags |= JUNK_WRITE_ID3V2;
@@ -810,7 +810,50 @@ error:
 
     deadbeef->junk_rewrite_tags (out_it, tagflags, encoder_preset->id3v2_version + 3, "iso8859-1");
 
+    // write flac tags
+    if (encoder_preset->tag_flac) {
+        // find flac decoder plugin
+        DB_decoder_t **plugs = deadbeef->plug_get_decoder_list ();
+        DB_decoder_t *flac = NULL;
+        for (int i = 0; plugs[i]; i++) {
+            if (!strcmp (plugs[i]->plugin.id, "stdflac")) {
+                flac = plugs[i];
+                break;
+            }
+        }
+        if (!flac) {
+            fprintf (stderr, "converter: flac plugin not found, cannot write flac metadata\n");
+        }
+        else {
+            if (0 != flac->write_metadata (out_it)) {
+                fprintf (stderr, "converter: failed to write flac metadata, not a flac file?\n");
+            }
+        }
+    }
+
+    // write vorbis tags
+    if (encoder_preset->tag_oggvorbis) {
+        // find flac decoder plugin
+        DB_decoder_t **plugs = deadbeef->plug_get_decoder_list ();
+        DB_decoder_t *ogg = NULL;
+        for (int i = 0; plugs[i]; i++) {
+            if (!strcmp (plugs[i]->plugin.id, "stdogg")) {
+                ogg = plugs[i];
+                break;
+            }
+        }
+        if (!ogg) {
+            fprintf (stderr, "converter: ogg plugin not found, cannot write ogg metadata\n");
+        }
+        else {
+            if (0 != ogg->write_metadata (out_it)) {
+                fprintf (stderr, "converter: failed to write ogg metadata, not an ogg file?\n");
+            }
+        }
+    }
+
     deadbeef->pl_item_unref (out_it);
+
 
     return err;
 }

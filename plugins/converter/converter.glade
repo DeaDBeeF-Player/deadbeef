@@ -1348,6 +1348,7 @@ Temporary file</property>
 
 		      <child>
 			<widget class="GtkCheckButton" id="oggvorbis">
+			  <property name="visible">True</property>
 			  <property name="can_focus">True</property>
 			  <property name="label" translatable="yes">OggVorbis</property>
 			  <property name="use_underline">True</property>
@@ -1369,6 +1370,7 @@ Temporary file</property>
 
 		      <child>
 			<widget class="GtkCheckButton" id="flac">
+			  <property name="visible">True</property>
 			  <property name="can_focus">True</property>
 			  <property name="label" translatable="yes">FLAC</property>
 			  <property name="use_underline">True</property>
