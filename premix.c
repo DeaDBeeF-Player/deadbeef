@@ -181,6 +181,21 @@ pcm_write_samples_24_to_24 (const ddb_waveformat_t * restrict inputfmt, const ch
 }
 
 static inline void
+pcm_write_samples_24_to_32 (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int nsamples, int * restrict channelmap, int outputsamplesize) {
+    for (int s = 0; s < nsamples; s++) {
+        for (int c = 0; c < inputfmt->channels; c++) {
+            char *out = output + 4 * channelmap[c];
+            out[0] = 0;
+            out[1] = input[0];
+            out[2] = input[1];
+            out[3] = input[2];
+            input += 3;
+        }
+        output += outputsamplesize;
+    }
+}
+
+static inline void
 pcm_write_samples_24_to_16 (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int nsamples, int * restrict channelmap, int outputsamplesize) {
     for (int s = 0; s < nsamples; s++) {
         for (int c = 0; c < inputfmt->channels; c++) {
@@ -317,7 +332,7 @@ remap_fn_t remappers[8][8] = {
         pcm_write_samples_24_to_8,
         pcm_write_samples_24_to_16,
         pcm_write_samples_24_to_24,
-        NULL, // FIXME: add 24_to_32
+        pcm_write_samples_24_to_32,
         NULL,
         NULL,
         NULL,
