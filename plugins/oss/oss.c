@@ -309,7 +309,7 @@ oss_get_state (void) {
 
 static int
 oss_configchanged (DB_event_t *ev, uintptr_t data) {
-    const char *dev = deadbeef->conf_get_str ("oss.device", "/dev/oss");
+    const char *dev = deadbeef->conf_get_str ("oss.device", "/dev/dsp");
     if (strcmp (dev, oss_device)) {
         strncpy (oss_device, dev, sizeof (oss_device)-1);
         trace ("oss: config option changed, restarting\n");
@@ -320,7 +320,7 @@ oss_configchanged (DB_event_t *ev, uintptr_t data) {
 
 static int
 oss_plugin_start (void) {
-    const char *dev = deadbeef->conf_get_str ("oss.device", "/dev/oss");
+    const char *dev = deadbeef->conf_get_str ("oss.device", "/dev/dsp");
     strncpy (oss_device, dev, sizeof (oss_device)-1);
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (oss_configchanged), 0);
     return 0;
