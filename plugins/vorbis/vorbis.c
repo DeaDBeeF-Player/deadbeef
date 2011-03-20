@@ -89,6 +89,7 @@ static const char *metainfo[] = {
     "DISCNUMBER", "disc",
     "COPYRIGHT", "copyright",
     "TOTALTRACKS", "numtracks",
+    "TRACKTOTAL", "numtracks",
     "ALBUM ARTIST", "band",
     NULL
 };
@@ -113,7 +114,6 @@ update_vorbis_comments (DB_playItem_t *it, vorbis_comment *vc, int refresh_playl
             for (m = 0; metainfo[m]; m += 2) {
                 int l = strlen (metainfo[m]);
                 if (vc->comment_lengths[i] > l && !strncasecmp (metainfo[m], s, l) && s[l] == '=') {
-                    trace ("ogg adding %s\n", s);
                     if (refresh_playlist == 2) {
                         const char *val = deadbeef->pl_find_meta (it, metainfo[m+1]);
                         if (!val || strcmp (val, s+l+1)) {
@@ -122,6 +122,7 @@ update_vorbis_comments (DB_playItem_t *it, vorbis_comment *vc, int refresh_playl
                     }
                     else {
                         deadbeef->pl_append_meta (it, metainfo[m+1], s + l + 1);
+                        break;
                     }
                 }
             }
@@ -141,6 +142,18 @@ update_vorbis_comments (DB_playItem_t *it, vorbis_comment *vc, int refresh_playl
                 else if (!strncasecmp (s, "replaygain_track_peak=", 22)) {
                     deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, atof (s+22));
                 }
+                else {
+                    const char *p = s;
+                    while (*p && *p != '=') {
+                        p++;
+                    }
+                    if (*p == '=') {
+                        char key[p-s+1];
+                        memcpy (key, s, p-s);
+                        key[p-s] = 0;
+                        deadbeef->pl_add_meta (it, key, p+1);
+                    }
+                }
             }
         }
     }
@@ -155,6 +168,7 @@ update_vorbis_comments (DB_playItem_t *it, vorbis_comment *vc, int refresh_playl
     if (refresh_playlist) {
         deadbeef->plug_trigger_event_playlistchanged ();
     }
+    return 0;
 }
 
 static DB_fileinfo_t *
@@ -627,6 +641,7 @@ cvorbis_write_metadata (DB_playItem_t *it) {
         goto error;
     }
 
+#if 0
     // copy all unknown fields to separate buffer
     for (int i = 0; i < vc->comments; i++) {
         int m;
@@ -647,35 +662,48 @@ cvorbis_write_metadata (DB_playItem_t *it) {
             preserved_fields = f;
         }
     }
+#endif
 
     vorbis_comment_clear(vc);
     vorbis_comment_init(vc);
 
-    // add known fields
-    for (int m = 0; metainfo[m]; m += 2) {
-        const char *val = deadbeef->pl_find_meta (it, metainfo[m+1]);
-        if (val && *val) {
-            while (val) {
-                const char *next = strchr (val, '\n');
-                int l;
-                if (next) {
-                    l = next - val;
-                    next++;
+    // add unknown/custom fields
+    deadbeef->pl_lock ();
+    DB_metaInfo_t *m = deadbeef->pl_get_metadata_head (it);
+    while (m) {
+        if (m->key[0] != ':') {
+            int i;
+            for (i = 0; metainfo[i]; i += 2) {
+                if (!strcasecmp (metainfo[i+1], m->key)) {
+                    break;
                 }
-                else {
-                    l = strlen (val);
+            }
+            const char *val = m->value;
+            if (val && *val) {
+                while (val) {
+                    const char *next = strchr (val, '\n');
+                    int l;
+                    if (next) {
+                        l = next - val;
+                        next++;
+                    }
+                    else {
+                        l = strlen (val);
+                    }
+                    if (l > 0) {
+                        char s[100+l+1];
+                        int n = snprintf (s, sizeof (s), "%s=", metainfo[i] ? metainfo[i] : m->key);
+                        strncpy (s+n, val, l);
+                        *(s+n+l) = 0;
+                        vorbis_comment_add (vc, s);
+                    }
+                    val = next;
                 }
-                if (l > 0) {
-                    char s[100+l+1];
-                    int n = snprintf (s, sizeof (s), "%s=", metainfo[m]);
-                    strncpy (s+n, val, l);
-                    *(s+n+l) = 0;
-                    vorbis_comment_add (vc, s);
-                }
-                val = next;
             }
         }
+        m = m->next;
     }
+    deadbeef->pl_unlock ();
 
     // add preserved fields
     for (struct field *f = preserved_fields; f; f = f->next) {
