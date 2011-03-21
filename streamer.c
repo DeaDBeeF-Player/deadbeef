@@ -1119,6 +1119,7 @@ streamer_thread (void *ctx) {
             }
         }
         streamer_lock ();
+
         if (!formatchanged && !skip && streamer_ringbuf.remaining < (STREAM_BUFFER_SIZE-blocksize * MAX_DSP_RATIO)) {
             int sz = STREAM_BUFFER_SIZE - streamer_ringbuf.remaining;
             int minsize = blocksize;
@@ -1744,6 +1745,11 @@ streamer_get_fill (void) {
 
 int
 streamer_ok_to_read (int len) {
+    DB_output_t *output = plug_get_output ();
+    if (formatchanged && bytes_until_next_song <= 0) {
+        streamer_set_output_format ();
+        formatchanged = 0;
+    }
     if (len >= 0 && (bytes_until_next_song > 0 || streamer_ringbuf.remaining >= (len*2))) {
         return 1;
     }
