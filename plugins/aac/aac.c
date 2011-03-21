@@ -229,6 +229,7 @@ parse_aac_stream(DB_FILE *fp, int *psamplerate, int *pchannels, float *pduration
     }
 
     *psamplerate = stream_sr;
+
     *pchannels = stream_ch;
 
     if (ptotalsamples) {
@@ -243,6 +244,10 @@ parse_aac_stream(DB_FILE *fp, int *psamplerate, int *pchannels, float *pduration
         trace ("aac: duration=%f (%d samples @ %d Hz), fsize=%d\n", *pduration, totalsamples, stream_sr, fsize);
     }
 
+    if (*psamplerate <= 24000) {
+        *psamplerate *= 2;
+        *ptotalsamples *= 2;
+    }
     return firstframepos;
 }
 
@@ -675,6 +680,7 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
         if (info->currentsample + size / samplesize > info->endsample) {
             size = (info->endsample - info->currentsample + 1) * samplesize;
             if (size <= 0) {
+                trace ("aac_read: eof");
                 return 0;
             }
         }
@@ -870,13 +876,6 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
 // returns -1 on error, 0 on success
 int
 seek_raw_aac (aac_info_t *info, int sample) {
-    deadbeef->rewind (info->file);
-    int skip = deadbeef->junk_get_leading_size (info->file);
-    if (skip >= 0) {
-        deadbeef->fseek (info->file, skip, SEEK_SET);
-    }
-
-    int offs = deadbeef->ftell (info->file);
     uint8_t buf[ADTS_HEADER_SIZE*8];
 
     int nsamples = 0;
@@ -909,13 +908,16 @@ seek_raw_aac (aac_info_t *info, int sample) {
             continue;
         }
         else {
-            //trace ("aac: frame #%d sync: %d %d %d %d %d\n", frame, channels, samplerate, bitrate, samples, size);
+            //trace ("aac: frame #%d(%d/%d) sync: %d %d %d %d %d\n", frame, curr_sample, sample, channels, samplerate, bitrate, frame_samples, size);
             frame++;
             if (deadbeef->fseek (info->file, size-sizeof(buf), SEEK_CUR) == -1) {
                 trace ("seek_raw_aac: invalid seek %d\n", size-sizeof(buf));
                 break;
             }
             bufsize = 0;
+        }
+        if (samplerate <= 24000) {
+            frame_samples *= 2;
         }
     } while (curr_sample + frame_samples < sample);
 
@@ -936,6 +938,16 @@ aac_seek_sample (DB_fileinfo_t *_info, int sample) {
         info->skipsamples = sample - info->mp4sample * (info->mp4framesize-1);
     }
     else {
+        if (sample < info->currentsample, 1) {
+            int skip = deadbeef->junk_get_leading_size (info->file);
+            if (skip >= 0) {
+                deadbeef->fseek (info->file, skip, SEEK_SET);
+            }
+            else {
+                deadbeef->fseek (info->file, 0, SEEK_SET);
+            }
+        }
+
         int res = seek_raw_aac (info, sample);
         if (res < 0) {
             return -1;
