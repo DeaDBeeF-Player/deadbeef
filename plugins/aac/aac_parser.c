@@ -93,6 +93,9 @@ aac_sync(const uint8_t *buf, int *channels, int *sample_rate, int *bit_rate, int
 
     *channels = aac_channels[channel_conf];
     *sample_rate = aac_sample_rates[sample_freq_index];
+    if (*sample_rate <= 24000) {
+        *sample_rate *= 2;
+    }
     *samples = rdb * 1024;
     if (*channels <= 0 || *sample_rate <= 0 || *samples <= 0) {
         return 0;
