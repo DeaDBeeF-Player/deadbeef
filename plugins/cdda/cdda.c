@@ -522,7 +522,9 @@ cda_insert (DB_playItem_t *after, const char *fname) {
 static int
 cda_action_add_cd (DB_plugin_action_t *act, DB_playItem_t *it)
 {
+    deadbeef->pl_add_files_begin (deadbeef->plt_get_curr ());
     deadbeef->pl_add_file ("all.cda", NULL, NULL);
+    deadbeef->pl_add_files_end ();
     deadbeef->plug_trigger_event_playlistchanged ();
 }
 
