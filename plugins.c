@@ -264,6 +264,7 @@ static DB_functions_t deadbeef_api = {
     .plug_get_dsp_list = plug_get_dsp_list,
     .plug_get_playlist_list = plug_get_playlist_list,
     .plug_get_list = plug_get_list,
+    .plug_get_gui_names = plug_get_gui_names,
     .plug_get_decoder_id = plug_get_decoder_id,
     .plug_remove_decoder_id = plug_remove_decoder_id,
     .plug_get_for_id = plug_get_for_id,
@@ -322,6 +323,10 @@ plug_volume_set_amp (float amp) {
 
 #define MAX_PLUGINS 100
 DB_plugin_t *g_plugins[MAX_PLUGINS+1];
+
+#define MAX_GUI_PLUGINS 10
+char *g_gui_names[MAX_GUI_PLUGINS+1];
+int g_num_gui_names;
 
 DB_decoder_t *g_decoder_plugins[MAX_DECODER_PLUGINS+1];
 
@@ -601,6 +606,92 @@ plug_remove_plugin (void *p) {
     }
 }
 
+// d_name must be writable w/o sideeffects; contain valid .so name
+// l must be strlen(d_name)
+static int
+load_plugin (const char *plugdir, char *d_name, int l) {
+    char fullname[PATH_MAX];
+    snprintf (fullname, PATH_MAX, "%s/%s", plugdir, d_name);
+    trace ("loading plugin %s/%s\n", plugdir, d_name);
+    void *handle = dlopen (fullname, RTLD_NOW);
+    if (!handle) {
+        trace ("dlopen error: %s\n", dlerror ());
+#ifdef ANDROID
+        break;
+#else
+        strcpy (fullname + strlen(fullname) - 3, ".fallback.so");
+        trace ("trying %s...\n", fullname);
+        handle = dlopen (fullname, RTLD_NOW);
+        if (!handle) {
+            trace ("dlopen error: %s\n", dlerror ());
+            return -1;
+        }
+        else {
+            fprintf (stderr, "successfully started fallback plugin %s\n", fullname);
+        }
+#endif
+    }
+    d_name[l-3] = 0;
+    strcat (d_name, "_load");
+#ifndef ANDROID
+    DB_plugin_t *(*plug_load)(DB_functions_t *api) = dlsym (handle, d_name);
+#else
+    DB_plugin_t *(*plug_load)(DB_functions_t *api) = dlsym (handle, d_name+3);
+#endif
+    if (!plug_load) {
+        trace ("dlsym error: %s\n", dlerror ());
+        dlclose (handle);
+        return -1;
+    }
+    if (plug_init_plugin (plug_load, handle) < 0) {
+        d_name[l-3] = 0;
+        trace ("plugin %s is incompatible with current version of deadbeef, please upgrade the plugin\n", d_name);
+        dlclose (handle);
+        return -1;
+    }
+    return 0;
+}
+
+static int
+load_gui_plugin (const char **plugdirs) {
+    const char *conf_gui_plug = conf_get_str ("gui_plugin", "GTK2");
+    char name[100];
+
+    // try to load selected plugin
+    for (int i = 0; g_gui_names[i]; i++) {
+        trace ("checking GUI plugin: %s\n", g_gui_names[i]);
+        if (!strcmp (g_gui_names[i], conf_gui_plug)) {
+            trace ("found selected GUI plugin: %s\n", g_gui_names[i]);
+            for (int n = 0; plugdirs[n]; n++) {
+                snprintf (name, sizeof (name), "ddb_gui_%s.so", conf_gui_plug);
+                if (!load_plugin (plugdirs[n], name, strlen (name))) {
+                    return 0;
+                }
+                snprintf (name, sizeof (name), "ddb_gui_%s.fallback.so", conf_gui_plug);
+                if (!load_plugin (plugdirs[n], name, strlen (name))) {
+                    return 0;
+                }
+            }
+            break;
+        }
+    }
+
+    // try any plugin
+    for (int i = 0; g_gui_names[i]; i++) {
+        for (int n = 0; plugdirs[n]; n++) {
+            snprintf (name, sizeof (name), "ddb_gui_%s.so", g_gui_names[i]);
+            if (!load_plugin (plugdirs[n], name, strlen (name))) {
+                return 0;
+            }
+            snprintf (name, sizeof (name), "ddb_gui_%s.fallback.so", g_gui_names[i]);
+            if (!load_plugin (plugdirs[n], name, strlen (name))) {
+                return 0;
+            }
+        }
+    }
+    return -1;
+}
+
 int
 load_plugin_dir (const char *plugdir) {
     int n = 0;
@@ -663,45 +754,38 @@ load_plugin_dir (const char *plugdir) {
                     break;
                 }
 #endif
-                char fullname[PATH_MAX];
-                snprintf (fullname, PATH_MAX, "%s/%s", plugdir, d_name);
-                trace ("loading plugin %s\n", d_name);
-                void *handle = dlopen (fullname, RTLD_NOW);
-                if (!handle) {
-                    trace ("dlopen error: %s\n", dlerror ());
-#ifdef ANDROID
-                    break;
-#else
-                    strcpy (fullname + strlen(fullname) - 3, ".fallback.so");
-                    trace ("trying %s...\n", fullname);
-                    handle = dlopen (fullname, RTLD_NOW);
-                    if (!handle) {
-                        trace ("dlopen error: %s\n", dlerror ());
+
+                // FIXME: don't load duplicates (by names)
+
+                // add gui plugin names
+                if (!strncmp (d_name, "ddb_gui_", 8)) {
+                    trace ("found gui plugin %s\n", d_name);
+                    if (g_num_gui_names >= MAX_GUI_PLUGINS) {
+                        fprintf (stderr, "too many gui plugins\n");
+                        break; // no more gui plugins allowed
+                    }
+                    char *nm = d_name + 8;
+                    char *e = strrchr (nm, '.');
+                    if (!e) {
                         break;
                     }
-                    else {
-                        fprintf (stderr, "successfully started fallback plugin %s\n", fullname);
+                    if (strcmp (e, ".so")) {
+                        break;
                     }
-#endif
-                }
-                d_name[l-3] = 0;
-                strcat (d_name, "_load");
-#ifndef ANDROID
-                DB_plugin_t *(*plug_load)(DB_functions_t *api) = dlsym (handle, d_name);
-#else
-                DB_plugin_t *(*plug_load)(DB_functions_t *api) = dlsym (handle, d_name+3);
-#endif
-                if (!plug_load) {
-                    trace ("dlsym error: %s\n", dlerror ());
-                    dlclose (handle);
+                    *e = 0;
+                    // ignore fallbacks
+                    e = strrchr (nm, '.');
+                    if (e && !strcasecmp (e, ".fallback")) {
+                        break;
+                    }
+                    // add to list
+                    g_gui_names[g_num_gui_names++] = strdup (nm);
+                    g_gui_names[g_num_gui_names] = NULL;
+                    trace ("added %s gui plugin\n", nm);
                     break;
                 }
-                if (plug_init_plugin (plug_load, handle) < 0) {
-                    d_name[l-3] = 0;
-                    trace ("plugin %s is incompatible with current version of deadbeef, please upgrade the plugin\n", d_name);
-                    dlclose (handle);
-                    break;
-                }
+
+                load_plugin (plugdir, d_name, l);
                 break;
             }
             free (namelist[i]);
@@ -785,6 +869,10 @@ plug_load_all (void) {
         p = e+1;
     }
 #endif
+
+
+    // load gui plugin
+    load_gui_plugin (plugins_dirs);
 
 // load all compiled-in modules
 #define PLUG(n) extern DB_plugin_t * n##_load (DB_functions_t *api);
@@ -967,6 +1055,10 @@ plug_unload_all (void) {
         free (plugins);
         plugins = next;
     }
+    for (int i = 0; g_gui_names[i]; i++) {
+        free (g_gui_names[i]);
+        g_gui_names[i] = NULL;
+    }
     plugins_tail = NULL;
     trace ("all plugins had been unloaded\n");
 }
@@ -1008,6 +1100,11 @@ plug_get_playlist_list (void) {
 struct DB_plugin_s **
 plug_get_list (void) {
     return g_plugins;
+}
+
+const char **
+plug_get_gui_names (void) {
+    return (const char **)g_gui_names;
 }
 
 DB_output_t *

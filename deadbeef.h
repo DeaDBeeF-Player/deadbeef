@@ -544,6 +544,7 @@ typedef struct {
     struct DB_dsp_s **(*plug_get_dsp_list) (void);
     struct DB_playlist_s **(*plug_get_playlist_list) (void);
     struct DB_plugin_s **(*plug_get_list) (void);
+    const char **(*plug_get_gui_names) (void);
     const char * (*plug_get_decoder_id) (const char *id);
     void (*plug_remove_decoder_id) (const char *id);
     struct DB_plugin_s *(*plug_get_for_id) (const char *id);

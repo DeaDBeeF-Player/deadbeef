@@ -43,27 +43,27 @@ sdk_HEADERS = gtkui_api.h
 EXTRA_DIST = $(gtkui_VALASOURCES) deadbeef.glade
 
 if STATICLINK
-pkglib_LTLIBRARIES = gtkui.la gtkui.fallback.la
+pkglib_LTLIBRARIES = ddb_gui_GTK2.la ddb_gui_GTK2.fallback.la
 else
-pkglib_LTLIBRARIES = gtkui.la
+pkglib_LTLIBRARIES = ddb_gui_GTK2.la
 endif
 
 # normal lib
-gtkui_la_SOURCES = $(gtkui_VALABUILTSOURCES) $(GTKUI_SOURCES)
-gtkui_la_LDFLAGS = -module
-gtkui_la_LIBADD = $(LDADD) $(GTKUI_DEPS_LIBS)
-gtkui_la_CFLAGS = -std=c99 $(GTKUI_DEPS_CFLAGS)
+ddb_gui_GTK2_la_SOURCES = $(gtkui_VALABUILTSOURCES) $(GTKUI_SOURCES)
+ddb_gui_GTK2_la_LDFLAGS = -module
+ddb_gui_GTK2_la_LIBADD = $(LDADD) $(GTKUI_DEPS_LIBS)
+ddb_gui_GTK2_la_CFLAGS = -std=c99 $(GTKUI_DEPS_CFLAGS)
 
 # fallback lib
 if STATICLINK
 GTK_ROOT=../../../deadbeef-deps/gtk-debian/usr
 
-gtkui_fallback_la_SOURCES = $(gtkui_VALABUILTSOURCES) $(GTKUI_SOURCES)
-gtkui_fallback_la_LDFLAGS = -module
+ddb_gui_GTK2_fallback_la_SOURCES = $(gtkui_VALABUILTSOURCES) $(GTKUI_SOURCES)
+ddb_gui_GTK2_fallback_la_LDFLAGS = -module
 
-gtkui_fallback_la_LIBADD = $(LDADD) -L$(GTK_ROOT)/lib $(GTK_ROOT)/lib/libgtk-x11-2.0.la $(GTK_ROOT)/lib/libgdk-x11-2.0.la $(GTK_ROOT)/lib/libpangoft2-1.0.la $(GTK_ROOT)/lib/libpangocairo-1.0.la $(GTK_ROOT)/lib/libgdk_pixbuf-2.0.la -lm $(GTK_ROOT)/lib/libcairo.la $(GTK_ROOT)/lib/libpango-1.0.la $(GTK_ROOT)/lib/libgobject-2.0.la $(GTK_ROOT)/lib/libgmodule-2.0.la $(GTK_ROOT)/lib/libgthread-2.0.la -lrt $(GTK_ROOT)/lib/libglib-2.0.la
+ddb_gui_GTK2_fallback_la_LIBADD = $(LDADD) -L$(GTK_ROOT)/lib $(GTK_ROOT)/lib/libgtk-x11-2.0.la $(GTK_ROOT)/lib/libgdk-x11-2.0.la $(GTK_ROOT)/lib/libpangoft2-1.0.la $(GTK_ROOT)/lib/libpangocairo-1.0.la $(GTK_ROOT)/lib/libgdk_pixbuf-2.0.la -lm $(GTK_ROOT)/lib/libcairo.la $(GTK_ROOT)/lib/libpango-1.0.la $(GTK_ROOT)/lib/libgobject-2.0.la $(GTK_ROOT)/lib/libgmodule-2.0.la $(GTK_ROOT)/lib/libgthread-2.0.la -lrt $(GTK_ROOT)/lib/libglib-2.0.la
 
-gtkui_fallback_la_CFLAGS = -std=c99 -I $(GTK_ROOT)/include -I $(GTK_ROOT)/lib/gtk-2.0/include -I $(GTK_ROOT)/include/glib-2.0 -I $(GTK_ROOT)/include/gtk-2.0 -I $(GTK_ROOT)/include/cairo -I $(GTK_ROOT)/lib/glib-2.0/include/ -I $(GTK_ROOT)/include/pango-1.0 -I $(GTK_ROOT)/include/atk-1.0 -DULTRA_COMPATIBLE=1
+ddb_gui_GTK2_fallback_la_CFLAGS = -std=c99 -I $(GTK_ROOT)/include -I $(GTK_ROOT)/lib/gtk-2.0/include -I $(GTK_ROOT)/include/glib-2.0 -I $(GTK_ROOT)/include/gtk-2.0 -I $(GTK_ROOT)/include/cairo -I $(GTK_ROOT)/lib/glib-2.0/include/ -I $(GTK_ROOT)/include/pango-1.0 -I $(GTK_ROOT)/include/atk-1.0 -DULTRA_COMPATIBLE=1
 
 endif
 

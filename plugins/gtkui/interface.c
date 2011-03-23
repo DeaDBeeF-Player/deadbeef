@@ -1696,6 +1696,9 @@ create_prefwin (void)
   GtkWidget *hbox65;
   GtkWidget *label102;
   GtkWidget *titlebar_format_stopped;
+  GtkWidget *hbox101;
+  GtkWidget *label128;
+  GtkWidget *gui_plugin;
   GtkWidget *label2;
   GtkWidget *notebook4;
   GtkWidget *vbox21;
@@ -2024,6 +2027,18 @@ create_prefwin (void)
   gtk_widget_show (titlebar_format_stopped);
   gtk_box_pack_start (GTK_BOX (hbox65), titlebar_format_stopped, TRUE, TRUE, 0);
   gtk_entry_set_invisible_char (GTK_ENTRY (titlebar_format_stopped), 8226);
+
+  hbox101 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox101);
+  gtk_box_pack_start (GTK_BOX (vbox9), hbox101, FALSE, FALSE, 0);
+
+  label128 = gtk_label_new (_("GUI Plugin (changing requires restart):"));
+  gtk_widget_show (label128);
+  gtk_box_pack_start (GTK_BOX (hbox101), label128, FALSE, FALSE, 0);
+
+  gui_plugin = gtk_combo_box_new_text ();
+  gtk_widget_show (gui_plugin);
+  gtk_box_pack_start (GTK_BOX (hbox101), gui_plugin, TRUE, TRUE, 0);
 
   label2 = gtk_label_new (_("GUI"));
   gtk_widget_show (label2);
@@ -2525,6 +2540,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) titlebar_format_stopped, "changed",
                     G_CALLBACK (on_titlebar_format_stopped_changed),
                     NULL);
+  g_signal_connect ((gpointer) gui_plugin, "changed",
+                    G_CALLBACK (on_gui_plugin_changed),
+                    NULL);
   g_signal_connect ((gpointer) override_bar_colors, "toggled",
                     G_CALLBACK (on_override_bar_colors_toggled),
                     NULL);
@@ -2658,6 +2676,9 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, hbox65, "hbox65");
   GLADE_HOOKUP_OBJECT (prefwin, label102, "label102");
   GLADE_HOOKUP_OBJECT (prefwin, titlebar_format_stopped, "titlebar_format_stopped");
+  GLADE_HOOKUP_OBJECT (prefwin, hbox101, "hbox101");
+  GLADE_HOOKUP_OBJECT (prefwin, label128, "label128");
+  GLADE_HOOKUP_OBJECT (prefwin, gui_plugin, "gui_plugin");
   GLADE_HOOKUP_OBJECT (prefwin, label2, "label2");
   GLADE_HOOKUP_OBJECT (prefwin, notebook4, "notebook4");
   GLADE_HOOKUP_OBJECT (prefwin, vbox21, "vbox21");

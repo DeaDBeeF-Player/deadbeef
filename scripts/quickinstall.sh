@@ -17,7 +17,7 @@ cp ./plugins/ffmpeg/.libs/ffmpeg.so /usr/local/lib/deadbeef/
 cp ./plugins/lastfm/.libs/lastfm.so /usr/local/lib/deadbeef/
 cp ./plugins/sid/.libs/sid.so /usr/local/lib/deadbeef/
 cp ./plugins/adplug/.libs/adplug.so /usr/local/lib/deadbeef/
-cp ./plugins/gtkui/.libs/gtkui.so /usr/local/lib/deadbeef/
+cp ./plugins/gtkui/.libs/ddb_gui_GTK2.so /usr/local/lib/deadbeef/
 cp ./plugins/sndfile/.libs/sndfile.so /usr/local/lib/deadbeef/
 cp ./plugins/pulse/.libs/pulse.so /usr/local/lib/deadbeef/
 cp ./plugins/artwork/.libs/artwork.so /usr/local/lib/deadbeef/

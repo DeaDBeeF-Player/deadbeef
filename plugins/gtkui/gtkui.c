@@ -1232,7 +1232,7 @@ gtkui_get_mainwin (void) {
 }
 
 DB_plugin_t *
-gtkui_load (DB_functions_t *api) {
+ddb_gui_GTK2_load (DB_functions_t *api) {
     deadbeef = api;
     return DB_PLUGIN (&plugin);
 }

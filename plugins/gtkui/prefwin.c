@@ -527,6 +527,16 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     // resume last session
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "resume_last_session")), deadbeef->conf_get_int ("resume_last_session", 0));
 
+    // fill gui plugin list
+    combobox = GTK_COMBO_BOX (lookup_widget (w, "gui_plugin"));
+    const char **names = deadbeef->plug_get_gui_names ();
+    for (int i = 0; names[i]; i++) {
+        gtk_combo_box_append_text (combobox, names[i]);
+        if (!strcmp (names[i], deadbeef->conf_get_str ("gui_plugin", "GTK2"))) {
+            gtk_combo_box_set_active (combobox, i);
+        }
+    }
+
     // override bar colors
     int override = deadbeef->conf_get_int ("gtkui.override_bar_colors", 0);
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "override_bar_colors")), override);
@@ -1278,5 +1288,16 @@ on_prefwin_realize                     (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     wingeom_restore (widget, "prefwin", -1, -1, -1, -1, 0);
+}
+
+void
+on_gui_plugin_changed                  (GtkComboBox     *combobox,
+                                        gpointer         user_data)
+{
+    gchar *txt = gtk_combo_box_get_active_text (combobox);
+    if (txt) {
+        deadbeef->conf_set_str ("gui_plugin", txt);
+        g_free (txt);
+    }
 }
 

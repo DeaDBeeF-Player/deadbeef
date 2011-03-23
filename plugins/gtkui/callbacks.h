@@ -1107,3 +1107,7 @@ on_replaygain_preamp_value_changed     (GtkRange        *range,
 void
 on_tabstrip_text_color_set             (GtkColorButton  *colorbutton,
                                         gpointer         user_data);
+
+void
+on_gui_plugin_changed                  (GtkComboBox     *combobox,
+                                        gpointer         user_data);
