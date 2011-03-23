@@ -302,7 +302,7 @@ static DB_dsp_t plugin = {
 };
 
 DB_plugin_t *
-ddb_dsp_soundtouch_load (DB_functions_t *f) {
+ddb_soundtouch_load (DB_functions_t *f) {
     deadbeef = f;
     return &plugin.plugin;
 }

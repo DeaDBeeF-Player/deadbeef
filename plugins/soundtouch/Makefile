@@ -1,7 +1,7 @@
 CC=gcc
 CXX=g++
 
-OUT=ddb_dsp_soundtouch.so
+OUT=ddb_soundtouch.so
 
 soundtouch_path=soundtouch
 

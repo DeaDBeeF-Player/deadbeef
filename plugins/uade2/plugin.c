@@ -686,7 +686,7 @@ static DB_decoder_t plugin = {
 };
 
 DB_plugin_t *
-ddb_input_uade2_load (DB_functions_t *api) {
+ddb_uade2_load (DB_functions_t *api) {
     deadbeef = api;
     return DB_PLUGIN (&plugin);
 }
