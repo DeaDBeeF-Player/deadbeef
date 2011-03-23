@@ -1905,6 +1905,9 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
     // add
     char str[256];
     if (!value || !*value) {
+        UNLOCK;
+        return;
+#if 0
         if (!strcasecmp (key, "title")) {
             // cut filename without path and extension
             const char *pext = pl_find_meta (it, ":URI") + strlen (pl_find_meta (it, ":URI")) - 1;
@@ -1926,6 +1929,7 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
             UNLOCK;
             return;
         }
+#endif
     }
     m = malloc (sizeof (DB_metaInfo_t));
     memset (m, 0, sizeof (DB_metaInfo_t));
