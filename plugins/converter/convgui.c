@@ -130,11 +130,15 @@ converter_worker (void *ctx) {
         char outpath[2000];
         converter_plugin->get_output_path (conv->convert_items[n], conv->outfolder, conv->outfile, conv->encoder_preset, outpath, sizeof (outpath));
 
-        if (conv->overwrite_action == 0) {
-            // prompt if file exists
-            struct stat st;
-            int res = stat(outpath, &st);
-            if (res == 0) {
+        int skip = 0;
+        struct stat st;
+        int res = stat(outpath, &st);
+        if (res == 0) {
+            if (conv->overwrite_action > 1 || conv->overwrite_action < 0) {
+                conv->overwrite_action = 0;
+            }
+            if (conv->overwrite_action == 0) {
+                // prompt if file exists
                 struct overwrite_prompt_ctx ctl;
                 ctl.mutex = deadbeef->mutex_create ();
                 ctl.cond = deadbeef->cond_create ();
@@ -144,10 +148,21 @@ converter_worker (void *ctx) {
                 deadbeef->cond_wait (ctl.cond, ctl.mutex);
                 deadbeef->cond_free (ctl.cond);
                 deadbeef->mutex_free (ctl.mutex);
+                if (ctl.result) {
+                    unlink (outpath);
+                }
+                else {
+                    skip = 1;
+                }
+            }
+            else if (conv->overwrite_action == 1) {
+                unlink (outpath);
             }
         }
 
-        converter_plugin->convert (conv->convert_items[n], conv->outfolder, conv->outfile, conv->output_bps, conv->output_is_float, conv->preserve_folder_structure, conv->preserve_root_folder, conv->encoder_preset, conv->dsp_preset, &conv->cancelled);
+        if (!skip) {
+            converter_plugin->convert (conv->convert_items[n], conv->outfolder, conv->outfile, conv->output_bps, conv->output_is_float, conv->preserve_folder_structure, conv->preserve_root_folder, conv->encoder_preset, conv->dsp_preset, &conv->cancelled);
+        }
         if (conv->cancelled) {
             for (; n < conv->convert_items_count; n++) {
                 deadbeef->pl_item_unref (conv->convert_items[n]);
