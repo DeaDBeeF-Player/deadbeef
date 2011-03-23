@@ -71,7 +71,7 @@ AC_ARG_ENABLE(alsa,     [AS_HELP_STRING([--disable-alsa    ], [disable ALSA outp
 AC_ARG_ENABLE(oss,      [AS_HELP_STRING([--disable-oss     ], [disable Open Sound System output plugin (default: enabled)])], [enable_oss=$enableval], [enable_oss=yes])
 AC_ARG_ENABLE(pulse,    [AS_HELP_STRING([--disable-pulse   ], [disable PulseAudio output plugin (default: enabled)])], [enable_pulse=$enableval], [enable_pulse=yes])
 AC_ARG_ENABLE(gtkui,    [AS_HELP_STRING([--disable-gtkui   ], [disable standard GTK2 user interface plugin (default: enabled)])], [enable_gtkui=$enableval], [enable_gtkui=yes])
-AC_ARG_ENABLE(gtk3,     [AS_HELP_STRING([--enable-gtk3     ], [use GTK3 library (default: disabled)])], [enable_gtk3=$enableval], [enable_gtk3=no])
+dnl AC_ARG_ENABLE(gtk3,     [AS_HELP_STRING([--enable-gtk3     ], [use GTK3 library (default: disabled)])], [enable_gtk3=$enableval], [enable_gtk3=no])
 AC_ARG_ENABLE(vfs_curl, [AS_HELP_STRING([--disable-vfs-curl], [disable HTTP streaming vfs plugin (default: enabled)])], [enable_vfs_curl=$enableval], [enable_vfs_curl=yes])
 AC_ARG_ENABLE(lfm,      [AS_HELP_STRING([--disable-lfm     ], [disable last.fm/libre.fm scrobbler plugin (default: enabled)])], [enable_lfm=$enableval], [enable_lfm=yes])
 AC_ARG_ENABLE(artwork,  [AS_HELP_STRING([--disable-artwork ], [disable album art loader plugin (default: enabled)])], [enable_artwork=$enableval], [enable_artwork=yes])
@@ -145,11 +145,11 @@ fi
 AC_SUBST(ZIP_LIBS)
 
 if test "x$enable_gtkui" != "xno" ; then
-    if test "x$enable_gtk3" == "xyes" ; then
-        PKG_CHECK_MODULES(GTKUI_DEPS, gtk+-3.0 >= 2.90 gthread-2.0 glib-2.0, HAVE_GTK=yes, HAVE_GTK=no)
-    else
+dnl    if test "x$enable_gtk3" == "xyes" ; then
+dnl        PKG_CHECK_MODULES(GTKUI_DEPS, gtk+-3.0 >= 2.90 gthread-2.0 glib-2.0, HAVE_GTK=yes, HAVE_GTK=no)
+dnl    else
         PKG_CHECK_MODULES(GTKUI_DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0, HAVE_GTK=yes, HAVE_GTK=no)
-    fi
+dnl    fi
 else
     HAVE_GTK=no
 fi
