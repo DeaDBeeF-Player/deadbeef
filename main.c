@@ -762,6 +762,9 @@ main (int argc, char *argv[]) {
 
     pl_init ();
     conf_load (); // required by some plugins at startup
+
+    conf_set_str ("deadbeef_version", VERSION);
+
     volume_set_db (conf_get_float ("playback.volume", 0)); // volume need to be initialized before plugins start
     messagepump_init (); // required to push messages while handling commandline
     if (plug_load_all ()) { // required to add files to playlist from commandline
