@@ -1103,3 +1103,7 @@ on_prefwin_map_event                   (GtkWidget       *widget,
 void
 on_replaygain_preamp_value_changed     (GtkRange        *range,
                                         gpointer         user_data);
+
+void
+on_tabstrip_text_color_set             (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);

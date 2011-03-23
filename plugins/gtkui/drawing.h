@@ -97,6 +97,9 @@ void
 gtkui_get_tabstrip_base_color (GdkColor *clr);
 
 void
+gtkui_get_tabstrip_text_color (GdkColor *clr);
+
+void
 gtkui_get_listview_even_row_color (GdkColor *clr);
 
 void

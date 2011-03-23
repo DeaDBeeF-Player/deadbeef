@@ -3610,7 +3610,7 @@ Album</property>
 		    <widget class="GtkTable" id="tabstrip_colors_group">
 		      <property name="visible">True</property>
 		      <property name="n_rows">2</property>
-		      <property name="n_columns">4</property>
+		      <property name="n_columns">5</property>
 		      <property name="homogeneous">True</property>
 		      <property name="row_spacing">0</property>
 		      <property name="column_spacing">8</property>
@@ -3794,6 +3794,52 @@ Album</property>
 			  <property name="right_attach">4</property>
 			  <property name="top_attach">0</property>
 			  <property name="bottom_attach">1</property>
+			  <property name="x_options">expand</property>
+			  <property name="y_options"></property>
+			</packing>
+		      </child>
+
+		      <child>
+			<widget class="GtkLabel" id="label127">
+			  <property name="visible">True</property>
+			  <property name="label" translatable="yes">Text</property>
+			  <property name="use_underline">False</property>
+			  <property name="use_markup">False</property>
+			  <property name="justify">GTK_JUSTIFY_LEFT</property>
+			  <property name="wrap">False</property>
+			  <property name="selectable">False</property>
+			  <property name="xalign">0</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			  <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
+			  <property name="width_chars">-1</property>
+			  <property name="single_line_mode">False</property>
+			  <property name="angle">0</property>
+			</widget>
+			<packing>
+			  <property name="left_attach">4</property>
+			  <property name="right_attach">5</property>
+			  <property name="top_attach">0</property>
+			  <property name="bottom_attach">1</property>
+			  <property name="x_options">expand</property>
+			  <property name="y_options"></property>
+			</packing>
+		      </child>
+
+		      <child>
+			<widget class="GtkColorButton" id="tabstrip_text">
+			  <property name="visible">True</property>
+			  <property name="can_focus">True</property>
+			  <property name="use_alpha">False</property>
+			  <property name="focus_on_click">True</property>
+			  <signal name="color_set" handler="on_tabstrip_text_color_set" last_modification_time="Wed, 23 Mar 2011 20:09:34 GMT"/>
+			</widget>
+			<packing>
+			  <property name="left_attach">4</property>
+			  <property name="right_attach">5</property>
+			  <property name="top_attach">1</property>
+			  <property name="bottom_attach">2</property>
 			  <property name="x_options">expand</property>
 			  <property name="y_options"></property>
 			</packing>

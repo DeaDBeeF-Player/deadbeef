@@ -197,6 +197,7 @@ static GdkColor gtkui_tabstrip_dark_color;
 static GdkColor gtkui_tabstrip_mid_color;
 static GdkColor gtkui_tabstrip_light_color;
 static GdkColor gtkui_tabstrip_base_color;
+static GdkColor gtkui_tabstrip_text_color;
 
 static GdkColor gtkui_listview_even_row_color;
 static GdkColor gtkui_listview_odd_row_color;
@@ -255,6 +256,7 @@ gtkui_init_theme_colors (void) {
         memcpy (&gtkui_tabstrip_mid_color, &style->mid[GTK_STATE_NORMAL], sizeof (GdkColor));
         memcpy (&gtkui_tabstrip_light_color, &style->light[GTK_STATE_NORMAL], sizeof (GdkColor));
         memcpy (&gtkui_tabstrip_base_color, &style->bg[GTK_STATE_NORMAL], sizeof (GdkColor));
+        memcpy (&gtkui_tabstrip_text_color, &style->text[GTK_STATE_NORMAL], sizeof (GdkColor));
     }
     else {
         snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->dark[GTK_STATE_NORMAL].red, style->dark[GTK_STATE_NORMAL].green, style->dark[GTK_STATE_NORMAL].blue);
@@ -272,6 +274,10 @@ gtkui_init_theme_colors (void) {
         snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->bg[GTK_STATE_NORMAL].red, style->bg[GTK_STATE_NORMAL].green, style->bg[GTK_STATE_NORMAL].blue);
         clr = deadbeef->conf_get_str ("gtkui.color.tabstrip_base", color_text);
         sscanf (clr, "%hd %hd %hd", &gtkui_tabstrip_base_color.red, &gtkui_tabstrip_base_color.green, &gtkui_tabstrip_base_color.blue);
+
+        snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->text[GTK_STATE_NORMAL].red, style->text[GTK_STATE_NORMAL].green, style->text[GTK_STATE_NORMAL].blue);
+        clr = deadbeef->conf_get_str ("gtkui.color.tabstrip_text", color_text);
+        sscanf (clr, "%hd %hd %hd", &gtkui_tabstrip_text_color.red, &gtkui_tabstrip_text_color.green, &gtkui_tabstrip_text_color.blue);
     }
 
     if (!override_listview_colors) {
@@ -337,6 +343,11 @@ gtkui_get_tabstrip_light_color (GdkColor *clr) {
 void
 gtkui_get_tabstrip_base_color (GdkColor *clr) {
     memcpy (clr, &gtkui_tabstrip_base_color, sizeof (GdkColor));
+}
+
+void
+gtkui_get_tabstrip_text_color (GdkColor *clr) {
+    memcpy (clr, &gtkui_tabstrip_text_color, sizeof (GdkColor));
 }
 
 void

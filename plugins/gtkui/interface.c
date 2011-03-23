@@ -1717,6 +1717,8 @@ create_prefwin (void)
   GtkWidget *tabstrip_dark;
   GtkWidget *tabstrip_base;
   GtkWidget *label76;
+  GtkWidget *label127;
+  GtkWidget *tabstrip_text;
   GtkWidget *label74;
   GtkWidget *vbox23;
   GtkWidget *override_listview_colors;
@@ -2086,7 +2088,7 @@ create_prefwin (void)
   gtk_widget_show (override_tabstrip_colors);
   gtk_box_pack_start (GTK_BOX (vbox22), override_tabstrip_colors, FALSE, FALSE, 0);
 
-  tabstrip_colors_group = gtk_table_new (2, 4, TRUE);
+  tabstrip_colors_group = gtk_table_new (2, 5, TRUE);
   gtk_widget_show (tabstrip_colors_group);
   gtk_box_pack_start (GTK_BOX (vbox22), tabstrip_colors_group, TRUE, TRUE, 0);
   gtk_table_set_col_spacings (GTK_TABLE (tabstrip_colors_group), 8);
@@ -2142,6 +2144,19 @@ create_prefwin (void)
                     (GtkAttachOptions) (GTK_EXPAND),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label76), 0, 0.5);
+
+  label127 = gtk_label_new (_("Text"));
+  gtk_widget_show (label127);
+  gtk_table_attach (GTK_TABLE (tabstrip_colors_group), label127, 4, 5, 0, 1,
+                    (GtkAttachOptions) (GTK_EXPAND),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label127), 0, 0.5);
+
+  tabstrip_text = gtk_color_button_new ();
+  gtk_widget_show (tabstrip_text);
+  gtk_table_attach (GTK_TABLE (tabstrip_colors_group), tabstrip_text, 4, 5, 1, 2,
+                    (GtkAttachOptions) (GTK_EXPAND),
+                    (GtkAttachOptions) (0), 0, 0);
 
   label74 = gtk_label_new (_("Tab strip colors"));
   gtk_widget_show (label74);
@@ -2534,6 +2549,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) tabstrip_base, "color_set",
                     G_CALLBACK (on_tabstrip_base_color_set),
                     NULL);
+  g_signal_connect ((gpointer) tabstrip_text, "color_set",
+                    G_CALLBACK (on_tabstrip_text_color_set),
+                    NULL);
   g_signal_connect ((gpointer) override_listview_colors, "toggled",
                     G_CALLBACK (on_override_listview_colors_toggled),
                     NULL);
@@ -2661,6 +2679,8 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, tabstrip_dark, "tabstrip_dark");
   GLADE_HOOKUP_OBJECT (prefwin, tabstrip_base, "tabstrip_base");
   GLADE_HOOKUP_OBJECT (prefwin, label76, "label76");
+  GLADE_HOOKUP_OBJECT (prefwin, label127, "label127");
+  GLADE_HOOKUP_OBJECT (prefwin, tabstrip_text, "tabstrip_text");
   GLADE_HOOKUP_OBJECT (prefwin, label74, "label74");
   GLADE_HOOKUP_OBJECT (prefwin, vbox23, "vbox23");
   GLADE_HOOKUP_OBJECT (prefwin, override_listview_colors, "override_listview_colors");

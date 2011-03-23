@@ -520,8 +520,9 @@ tabstrip_render (DdbTabStrip *ts) {
             ddb_tabstrip_draw_tab (widget, backbuf, idx == tab_selected, x, y, w, h);
             char tab_title[100];
             plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
-            GdkColor *color = &widget->style->text[GTK_STATE_NORMAL];
-            float fg[3] = {(float)color->red/0xffff, (float)color->green/0xffff, (float)color->blue/0xffff};
+            GdkColor color;
+            gtkui_get_tabstrip_text_color (&color);
+            float fg[3] = {(float)color.red/0xffff, (float)color.green/0xffff, (float)color.blue/0xffff};
             draw_set_fg_color (fg);
             draw_text (x + text_left_padding, y + h/2 - draw_get_font_size()/2 + text_vert_offset, w, 0, tab_title);
         }
@@ -547,8 +548,9 @@ tabstrip_render (DdbTabStrip *ts) {
         ddb_tabstrip_draw_tab (widget, backbuf, 1, x, y, w, h);
         char tab_title[100];
         plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
-        GdkColor *color = &widget->style->text[GTK_STATE_NORMAL];
-        float fg[3] = {(float)color->red/0xffff, (float)color->green/0xffff, (float)color->blue/0xffff};
+        GdkColor color;
+        gtkui_get_tabstrip_text_color (&color);
+        float fg[3] = {(float)color.red/0xffff, (float)color.green/0xffff, (float)color.blue/0xffff};
         draw_set_fg_color (fg);
         draw_text (x + text_left_padding, y + h/2 - draw_get_font_size()/2 + text_vert_offset, w, 0, tab_title);
     }
@@ -568,8 +570,9 @@ tabstrip_render (DdbTabStrip *ts) {
                     ddb_tabstrip_draw_tab (widget, backbuf, 1, x, y, w, h);
                     char tab_title[100];
                     plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
-                    GdkColor *color = &widget->style->text[GTK_STATE_NORMAL];
-                    float fg[3] = {(float)color->red/0xffff, (float)color->green/0xffff, (float)color->blue/0xffff};
+                    GdkColor color;
+                    gtkui_get_tabstrip_text_color (&color);
+                    float fg[3] = {(float)color.red/0xffff, (float)color.green/0xffff, (float)color.blue/0xffff};
                     draw_set_fg_color (fg);
                     draw_text (x + text_left_padding, y + h/2 - draw_get_font_size()/2 + text_vert_offset, w, 0, tab_title);
                 }

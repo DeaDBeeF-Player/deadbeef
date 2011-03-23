@@ -1170,4 +1170,3 @@ create_plugin_weblink (gchar *widget_name, gchar *string1, gchar *string2,
     gtk_widget_set_sensitive (link, FALSE);
     return link;
 }
-

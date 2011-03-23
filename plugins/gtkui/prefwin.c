@@ -251,6 +251,7 @@ prefwin_init_theme_colors (void) {
     gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "tabstrip_mid")), (gtkui_get_tabstrip_mid_color (&clr), &clr));
     gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "tabstrip_light")), (gtkui_get_tabstrip_light_color (&clr), &clr));
     gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "tabstrip_base")), (gtkui_get_tabstrip_base_color (&clr), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "tabstrip_text")), (gtkui_get_tabstrip_text_color (&clr), &clr));
     gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_even_row")), (gtkui_get_listview_even_row_color (&clr), &clr));
     gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_odd_row")), (gtkui_get_listview_odd_row_color (&clr), &clr));
     gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_selected_row")), (gtkui_get_listview_selection_color (&clr), &clr));
@@ -874,6 +875,20 @@ on_tabstrip_base_color_set             (GtkColorButton  *colorbutton,
     tabstrip_redraw ();
 }
 
+void
+on_tabstrip_text_color_set             (GtkColorButton  *colorbutton,
+                                        gpointer         user_data)
+{
+    GdkColor clr;
+    gtk_color_button_get_color (colorbutton, &clr);
+    char str[100];
+    snprintf (str, sizeof (str), "%d %d %d", clr.red, clr.green, clr.blue);
+    deadbeef->conf_set_str ("gtkui.color.tabstrip_text", str);
+    deadbeef->sendmessage (M_CONFIG_CHANGED, 0, 0, 0);
+    gtkui_init_theme_colors ();
+    redraw_headers ();
+    tabstrip_redraw ();
+}
 
 void
 on_bar_foreground_color_set            (GtkColorButton  *colorbutton,
