@@ -711,7 +711,7 @@ convstr (const char* str, int sz, char *out, int out_sz) {
         return out;
     }
 
-    if (deadbeef->junk_iconv (str, sz, out, out_sz, "iso8859-1", "utf-8") >= 0) {
+    if (deadbeef->junk_iconv (str, sz, out, out_sz, "cp1252", "utf-8") >= 0) {
         return out;
     }
 
