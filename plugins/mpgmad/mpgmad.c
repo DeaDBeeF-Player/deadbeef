@@ -737,7 +737,7 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
     else {
         deadbeef->fset_track (info->buffer.file, it);
-        info->buffer.it->filetype = NULL;
+        deadbeef->pl_delete_meta (info->buffer.it, ":FILETYPE");
         int64_t len = deadbeef->fgetlength (info->buffer.file);
         if (len > 0) {
             deadbeef->pl_delete_all_meta (it);
@@ -1008,10 +1008,11 @@ cmp3_stream_frame (mpgmad_info_t *info) {
             }
         }
 
-        if (!info->buffer.it->filetype) {
+        const char *filetype = deadbeef->pl_find_meta (info->buffer.it, ":FILETYPE");
+        if (!filetype) {
             int layer = info->frame.header.layer;
             if (layer >= 1 && layer <= 3) {
-                info->buffer.it->filetype = plugin.filetypes[layer-1];
+                deadbeef->pl_replace_meta (info->buffer.it, ":FILETYPE", plugin.filetypes[layer-1]);
             }
         }
 
@@ -1254,7 +1255,6 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
         deadbeef->fclose (fp);
         deadbeef->pl_add_meta (it, "title", NULL);
         deadbeef->pl_set_item_duration (it, -1);
-        it->filetype = NULL;
         after = deadbeef->pl_insert_item (after, it);
         deadbeef->pl_item_unref (it);
         return after;
@@ -1331,7 +1331,7 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
     cmp3_set_extra_properties (&buffer);
 
     deadbeef->pl_set_item_duration (it, buffer.duration);
-    it->filetype = ftype;
+    deadbeef->pl_replace_meta (it, ":FILETYPE", ftype);
     deadbeef->fclose (fp);
 
     // FIXME! bad numsamples passed to cue

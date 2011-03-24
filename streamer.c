@@ -599,7 +599,8 @@ streamer_set_current (playItem_t *it) {
         plug_trigger_event_trackinfochanged (from);
     }
     const char *decoder_id = pl_find_meta (it, ":DECODER");
-    if (!decoder_id && it->filetype && !strcmp (it->filetype, "content")) {
+    const char *filetype = pl_find_meta (it, ":FILETYPE");
+    if (!decoder_id && filetype && !strcmp (filetype, "content")) {
         // try to get content-type
         mutex_lock (decodemutex);
         trace ("\033[0;34mopening file %s\033[37;0m\n", pl_find_meta (it, ":URI"));
@@ -638,7 +639,7 @@ streamer_set_current (playItem_t *it) {
                 if (!strcmp (decoders[i]->plugin.id, plug)) {
                     pl_replace_meta (it, ":DECODER", decoders[i]->plugin.id);
                     decoder_id = decoders[i]->plugin.id;
-                    it->filetype = decoders[i]->filetypes[0];
+                    pl_replace_meta (it, ":FILETYPE", decoders[i]->filetypes[0]);
                     trace ("\033[0;34mfound plugin %s\033[37;0m\n", plug);
                 }
             }
@@ -1640,9 +1641,6 @@ streamer_read (char *bytes, int size) {
         ringbuf_read (&streamer_ringbuf, bytes, sz);
         playpos += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels) * dsp_ratio;
         playing_track->playtime += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels);
-        if (playlist_track) {
-            playing_track->filetype = playlist_track->filetype;
-        }
         if (playlist_track) {
             playlist_track->playtime = playing_track->playtime;
         }

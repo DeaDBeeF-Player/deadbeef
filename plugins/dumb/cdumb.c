@@ -814,7 +814,7 @@ cdumb_insert (DB_playItem_t *after, const char *fname) {
 
     dumb_it_do_initial_runthrough (duh);
     deadbeef->pl_set_item_duration (it, duh_get_length (duh)/65536.0f);
-    it->filetype = ftype;
+    deadbeef->pl_add_meta (it, ":FILETYPE", ftype);
 //    printf ("duration: %f\n", _info->duration);
     after = deadbeef->pl_insert_item (after, it);
     deadbeef->pl_item_unref (it);

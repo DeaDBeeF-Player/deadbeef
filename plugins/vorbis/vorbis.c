@@ -450,7 +450,7 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
     int64_t fsize = deadbeef->fgetlength (fp);
     if (fp->vfs->is_streaming ()) {
         DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
-        it->filetype = "OggVorbis";
+        deadbeef->pl_add_meta (it, ":FILETYPE", "OggVorbis");
         deadbeef->pl_set_item_duration (it, -1);
         deadbeef->pl_add_meta (it, "title", NULL);
         after = deadbeef->pl_insert_item (after, it);
@@ -486,7 +486,7 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
         int totalsamples = ov_pcm_total (&vorbis_file, stream);
 
         DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
-        it->filetype = "OggVorbis";
+        deadbeef->pl_add_meta (it, ":FILETYPE", "OggVorbis");
         deadbeef->pl_set_meta_int (it, ":TRACKNUM", stream);
         deadbeef->pl_set_item_duration (it, duration);
         if (nstreams > 1) {

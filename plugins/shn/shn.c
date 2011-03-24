@@ -894,7 +894,7 @@ shn_insert (DB_playItem_t *after, const char *fname) {
     }
 
 	DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
-    it->filetype = "Shorten";
+    deadbeef->pl_add_meta (it, ":FILETYPE", "Shorten");
     deadbeef->pl_set_item_duration (it, tmp_file->wave_header.length);
 
     int apeerr = deadbeef->junk_apev2_read (it, tmp_file->vars.fd);

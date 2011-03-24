@@ -259,26 +259,26 @@ aoplug_insert (DB_playItem_t *after, const char *fname) {
     if (*ext == '.') {
         ext++;
         if (!strcasecmp (ext, "psf") || !strcasecmp (ext, "minipsf")) {
-            it->filetype = filetypes[0];
+            deadbeef->pl_add_meta (it, ":FILETYPE", filetypes[0]);
         }
         else if (!strcasecmp (ext, "psf2") || !strcasecmp (ext, "minipsf2")) {
-            it->filetype = filetypes[1];
+            deadbeef->pl_add_meta (it, ":FILETYPE", filetypes[1]);
         }
         else if (!strcasecmp (ext, "spu")) {
-            it->filetype = filetypes[2];
+            deadbeef->pl_add_meta (it, ":FILETYPE", filetypes[2]);
         }
         else if (!strcasecmp (ext, "ssf") || !strcasecmp (ext, "minissf")) {
-            it->filetype = filetypes[3];
-        }
-        else if (!strcasecmp (ext, "dsf") || !strcasecmp (ext, "minidsf")) {
-            it->filetype = filetypes[5];
+            deadbeef->pl_add_meta (it, ":FILETYPE", filetypes[3]);
         }
         else if (!strcasecmp (ext, "qsf") || !strcasecmp (ext, "miniqsf")) {
-            it->filetype = filetypes[4];
+            deadbeef->pl_add_meta (it, ":FILETYPE", filetypes[4]);
+        }
+        else if (!strcasecmp (ext, "dsf") || !strcasecmp (ext, "minidsf")) {
+            deadbeef->pl_add_meta (it, ":FILETYPE", filetypes[5]);
         }
     }
     else {
-        it->filetype = filetypes[0];
+        deadbeef->pl_add_meta (it, ":FILETYPE", filetypes[0]);
     }
 
     float duration = 120;

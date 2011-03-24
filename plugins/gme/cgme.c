@@ -339,12 +339,12 @@ cgme_insert (DB_playItem_t *after, const char *fname) {
                 while (ext >= fname && *ext != '.') {
                     ext--;
                 }
-                it->filetype = NULL;
                 if (*ext == '.') {
                     ext++;
                     for (int i = 0; plugin.exts[i]; i++) {
                         if (!strcasecmp (ext, plugin.exts[i])) {
-                            it->filetype = plugin.exts[i];
+                            deadbeef->pl_add_meta (it, ":FILETYPE", plugin.exts[i]);
+                            break;
                         }
                     }
                 }

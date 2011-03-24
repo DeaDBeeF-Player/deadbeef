@@ -286,7 +286,7 @@ insert_single_track (CdIo_t* cdio, DB_playItem_t *after, const char* file, int t
     int sector_count = cdio_get_track_sec_count (cdio, track_nr);
 
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (tmp, plugin.plugin.id);
-    it->filetype = "cdda";
+    deadbeef->pl_add_meta (it, ":FILETYPE", "cdda");
     deadbeef->pl_set_item_duration (it, (float)sector_count / 75.0);
 
     snprintf (tmp, sizeof (tmp), "CD Track %02d", track_nr);

@@ -1121,7 +1121,7 @@ aac_insert (DB_playItem_t *after, const char *fname) {
     }
 
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
-    it->filetype = ftype;
+    deadbeef->pl_add_meta (it, ":FILETYPE", ftype);
     deadbeef->pl_set_item_duration (it, duration);
     trace ("duration: %f sec\n", duration);
 

@@ -259,7 +259,7 @@ vtx_insert (DB_playItem_t *after, const char *fname) {
     trace ("vtx: datasize: %d\n", hdr->regdata_size);
 
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
-    it->filetype = filetypes[0];
+    deadbeef->pl_add_meta (it, ":FILETYPE", filetypes[0]);
 
     int numframes = hdr->regdata_size / AY_FRAME_SIZE;
 //    int totalsamples = numframes * hdr->playerFreq;

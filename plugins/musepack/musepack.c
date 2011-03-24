@@ -378,7 +378,7 @@ musepack_insert (DB_playItem_t *after, const char *fname) {
         for (i = 0; i < nchapters; i++) {
             const mpc_chap_info *ch = mpc_demux_chap (demux, i);
             DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
-            it->filetype = "MusePack";
+            deadbeef->pl_add_meta (it, ":FILETYPE", "MusePack");
             deadbeef->pl_set_meta_int (it, ":TRACKNUM", i);
             it->startsample = ch->sample;
             it->endsample = totalsamples-1;
@@ -431,7 +431,7 @@ musepack_insert (DB_playItem_t *after, const char *fname) {
     }
 
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
-    it->filetype = "MusePack";
+    deadbeef->pl_add_meta (it, ":FILETYPE", "MusePack");
     deadbeef->pl_set_item_duration (it, dur);
 
     /*int apeerr = */deadbeef->junk_apev2_read (it, fp);

@@ -265,7 +265,7 @@ adplug_insert (DB_playItem_t *after, const char *fname) {
             continue;
         }
         DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, adplug_plugin.plugin.id);
-        it->filetype = adplug_get_extension (fname);
+        deadbeef->pl_add_meta (it, ":FILETYPE", adplug_get_extension (fname));
         deadbeef->pl_set_meta_int (it, ":TRACKNUM", i);
         deadbeef->pl_set_item_duration (it, dur);
 #if 0

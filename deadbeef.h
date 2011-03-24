@@ -109,7 +109,6 @@ typedef struct DB_playItem_s {
     int shufflerating; // sort order for shuffle mode
     float playtime; // actual playback time of this track in seconds
     time_t started_timestamp; // result of calling time(NULL)
-    const char *filetype; // e.g. MP3 or OGG
 } DB_playItem_t;
 
 typedef struct DB_metaInfo_s {

@@ -120,7 +120,7 @@ wmidi_insert (DB_playItem_t *after, const char *fname) {
     it = deadbeef->pl_item_alloc_init (fname, wmidi_plugin.plugin.id);
     deadbeef->pl_add_meta (it, "title", NULL);
     deadbeef->pl_set_item_duration (it, inf->approx_total_samples / 44100.f);
-    it->filetype = "MID";
+    deadbeef->pl_add_meta (it, ":FILETYPE", "MID");
     after = deadbeef->pl_insert_item (after, it);
     deadbeef->pl_item_unref (it);
     WildMidi_Close (m);

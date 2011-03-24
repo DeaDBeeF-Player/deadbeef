@@ -688,7 +688,7 @@ cflac_insert (DB_playItem_t *after, const char *fname) {
     }
     FLAC__stream_decoder_delete(decoder);
     decoder = NULL;
-    it->filetype = isogg ? "OggFLAC" : "FLAC";
+    deadbeef->pl_add_meta (it, ":FILETYPE", isogg ? "OggFLAC" : "FLAC");
 
     char s[100];
     int64_t fsize = deadbeef->fgetlength (info.file);

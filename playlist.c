@@ -876,7 +876,7 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
     pl_set_meta_int (it, ":TRACKNUM", atoi (track));
     it->startsample = index01[0] ? f_index01 * samplerate : 0;
     it->endsample = -1; // will be filled by next read, or by decoder
-    it->filetype = ftype;
+    pl_replace_meta (it, ":FILETYPE", ftype);
     if (performer[0]) {
         pl_add_meta (it, "artist", performer);
         if (albumperformer[0]) {
@@ -991,7 +991,8 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
             trace ("cue: adding track: %s %s %s\n", origin->fname, title, track);
             if (title[0]) {
                 // add previous track
-                after = pl_process_cue_track (after, pl_find_meta (origin, ":URI"), &prev, track, index00, index01, pregap, title, albumperformer, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, pl_find_meta (origin, ":DECODER"), origin->filetype, samplerate);
+                const char *filetype = pl_find_meta (origin, ":FILETYPE");
+                after = pl_process_cue_track (after, pl_find_meta (origin, ":URI"), &prev, track, index00, index01, pregap, title, albumperformer, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, pl_find_meta (origin, ":DECODER"), filetype, samplerate);
                 trace ("cue: added %p (%p)\n", after);
             }
 
@@ -1035,7 +1036,8 @@ pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t 
         UNLOCK;
         return NULL;
     }
-    after = pl_process_cue_track (after, pl_find_meta (origin, ":URI"), &prev, track, index00, index01, pregap, title, albumperformer, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, pl_find_meta (origin, ":DECODER"), origin->filetype, samplerate);
+    const char *filetype = pl_find_meta (origin, ":FILETYPE");
+    after = pl_process_cue_track (after, pl_find_meta (origin, ":URI"), &prev, track, index00, index01, pregap, title, albumperformer, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, pl_find_meta (origin, ":DECODER"), filetype, samplerate);
     if (after) {
         trace ("last track endsample: %d\n", numsamples-1);
         after->endsample = numsamples-1;
@@ -1472,7 +1474,7 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
             }
             
             playItem_t *it = pl_item_alloc_init (fname, NULL);
-            it->filetype = "content";
+            pl_replace_meta (it, ":FILETYPE", "content");
             pl_add_meta (it, "title", NULL);
             after = plt_insert_item (addfiles_playlist ? addfiles_playlist : playlist, after, it);
             pl_item_unref (it);
@@ -1803,7 +1805,6 @@ pl_item_copy (playItem_t *out, playItem_t *it) {
     out->startsample = it->startsample;
     out->endsample = it->endsample;
     out->shufflerating = it->shufflerating;
-    out->filetype = it->filetype;
     out->_duration = it->_duration;
     out->started_timestamp = it->started_timestamp;
     out->next[PL_MAIN] = it->next[PL_MAIN];
@@ -2192,12 +2193,16 @@ pl_save (const char *fname) {
         if (fwrite (&it->_duration, 1, 4, fp) != 4) {
             goto save_fail;
         }
-        uint8_t ft = it->filetype ? strlen (it->filetype) : 0;
+        const char *filetype = pl_find_meta (it, ":FILETYPE");
+        if (!filetype) {
+            filetype = "";
+        }
+        uint8_t ft = strlen (filetype);
         if (fwrite (&ft, 1, 1, fp) != 1) {
             goto save_fail;
         }
         if (ft) {
-            if (fwrite (it->filetype, 1, ft, fp) != ft) {
+            if (fwrite (filetype, 1, ft, fp) != ft) {
                 goto save_fail;
             }
         }
@@ -2450,7 +2455,8 @@ pl_load (const char *fname) {
         char s[100];
         pl_format_time (it->_duration, s, sizeof(s));
         pl_replace_meta (it, ":DURATION", s);
-        // get const filetype string from decoder
+
+        // legacy filetype support
         uint8_t ft;
         if (fread (&ft, 1, 1, fp) != 1) {
             goto load_fail;
@@ -2461,20 +2467,7 @@ pl_load (const char *fname) {
                 goto load_fail;
             }
             ftype[ft] = 0;
-            if (!strcmp (ftype, "content")) {
-                it->filetype = "content";
-            }
-            else if (decoder_id[0]) {
-                DB_decoder_t *dec = plug_get_decoder_for_id (decoder_id);
-                if (dec && dec->filetypes) {
-                    for (int i = 0; dec->filetypes[i]; i++) {
-                        if (!strcasecmp (dec->filetypes[i], ftype)) {
-                            it->filetype = dec->filetypes[i];
-                            break;
-                        }
-                    }
-                }
-            }
+            pl_replace_meta (it, ":FILETYPE", ftype);
         }
         
         float f;
@@ -2557,7 +2550,13 @@ pl_load (const char *fname) {
                     goto load_fail;
                 }
                 value[l] = 0;
-                pl_add_meta (it, key, value);
+                if (key[0] == ':') {
+                    // to avoid storage conflicts -- give more priority to metadata
+                    pl_replace_meta (it, key, value);
+                }
+                else {
+                    pl_add_meta (it, key, value);
+                }
             }
         }
         plt_insert_item (plt, plt->tail[PL_MAIN], it);

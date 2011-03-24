@@ -166,19 +166,19 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
 
     if (!strcasecmp (info->codec->name, "alac")) {
-        it->filetype = filetypes[FT_ALAC];
+        deadbeef->pl_add_meta (it, ":FILETYPE", filetypes[FT_ALAC]);
     }
     else if (strcasestr (info->codec->name, "wma")) {
-        it->filetype = filetypes[FT_WMA];
+        deadbeef->pl_add_meta (it, ":FILETYPE", filetypes[FT_WMA]);
     }
     else if (strcasestr (info->codec->name, "ac3")) {
-        it->filetype = filetypes[FT_AC3];
+        deadbeef->pl_add_meta (it, ":FILETYPE", filetypes[FT_AC3]);
     }
     else if (strcasestr (info->codec->name, "amr")) {
-        it->filetype = filetypes[FT_AMR];
+        deadbeef->pl_add_meta (it, ":FILETYPE", filetypes[FT_AMR]);
     }
     else {
-        it->filetype = filetypes[FT_UNKNOWN];
+        deadbeef->pl_add_meta (it, ":FILETYPE", filetypes[FT_UNKNOWN]);
     }
 
     int bps = av_get_bits_per_sample_format (info->ctx->sample_fmt);
@@ -543,7 +543,7 @@ ffmpeg_insert (DB_playItem_t *after, const char *fname) {
 
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
     // FIXME: get proper codec
-    it->filetype = filetypes[FT_UNKNOWN];
+    deadbeef->pl_add_meta (it, ":FILETYPE", filetypes[FT_UNKNOWN]);
 
     if (!deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI"))) {
         deadbeef->pl_set_item_duration (it, -1);

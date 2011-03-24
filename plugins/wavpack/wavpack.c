@@ -296,7 +296,7 @@ wv_insert (DB_playItem_t *after, const char *fname) {
     float duration = (float)totalsamples / samplerate;
 
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
-    it->filetype = "wv";
+    deadbeef->pl_add_meta (it, ":FILETYPE", "wv");
     deadbeef->pl_set_item_duration (it, duration);
     trace ("wv: totalsamples=%d, samplerate=%d, duration=%f\n", totalsamples, samplerate, duration);
 

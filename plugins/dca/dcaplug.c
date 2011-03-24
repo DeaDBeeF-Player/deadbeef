@@ -607,7 +607,7 @@ dts_insert (DB_playItem_t *after, const char *fname) {
     }
 
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
-    it->filetype = filetype;
+    deadbeef->pl_add_meta (it, ":FILETYPE", filetype);
     deadbeef->pl_set_item_duration (it, dur);
 
     deadbeef->fclose (fp);
