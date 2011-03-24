@@ -719,23 +719,8 @@ convstr (const char* str, int sz, char *out, int out_sz) {
     return NULL;
 }
 
-static DB_playItem_t *
-cdumb_insert (DB_playItem_t *after, const char *fname) {
-    const char *ext = fname + strlen (fname) - 1;
-    while (*ext != '.' && ext > fname) {
-        ext--;
-    }
-    ext++;
-    int start_order = 0;
-    int is_it;
-    int is_dos;
-    const char *ftype;
-    DUH* duh = open_module(fname, ext, &start_order, &is_it, &is_dos, &ftype);
-    if (!duh) {
-        return NULL;
-    }
-    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
-    DUMB_IT_SIGDATA * itsd = duh_get_it_sigdata(duh);
+static void
+read_metadata_internal (DB_playItem_t *it, DUMB_IT_SIGDATA *itsd) {
     char temp[2048];
 
     if (itsd->name[0])     {
@@ -776,6 +761,57 @@ cdumb_insert (DB_playItem_t *after, const char *fname) {
     deadbeef->pl_add_meta (it, ":MOD_PATTERNS", s);
     snprintf (s, sizeof (s), "%d", itsd->n_pchannels);
     deadbeef->pl_add_meta (it, ":MOD_CHANNELS", s);
+}
+
+static int
+cdumb_read_metadata (DB_playItem_t *it) {
+    const char *fname = deadbeef->pl_find_meta (it, ":URI");
+    const char *ext = strrchr (fname, '.');
+    if (ext) {
+        ext++;
+    }
+    else {
+        ext = "";
+    }
+    int start_order = 0;
+    int is_it;
+    int is_dos;
+    const char *ftype;
+    DUH* duh = open_module(fname, ext, &start_order, &is_it, &is_dos, &ftype);
+    if (!duh) {
+        unload_duh (duh);
+        return -1;
+    }
+    DUMB_IT_SIGDATA * itsd = duh_get_it_sigdata(duh);
+
+    deadbeef->pl_delete_all_meta (it);
+    read_metadata_internal (it, itsd);
+    unload_duh (duh);
+    return 0;
+}
+
+static DB_playItem_t *
+cdumb_insert (DB_playItem_t *after, const char *fname) {
+    const char *ext = strrchr (fname, '.');
+    if (ext) {
+        ext++;
+    }
+    else {
+        ext = "";
+    }
+    int start_order = 0;
+    int is_it;
+    int is_dos;
+    const char *ftype;
+    DUH* duh = open_module(fname, ext, &start_order, &is_it, &is_dos, &ftype);
+    if (!duh) {
+        return NULL;
+    }
+    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
+    DUMB_IT_SIGDATA * itsd = duh_get_it_sigdata(duh);
+
+    read_metadata_internal (it, itsd);
+
     dumb_it_do_initial_runthrough (duh);
     deadbeef->pl_set_item_duration (it, duh_get_length (duh)/65536.0f);
     it->filetype = ftype;
@@ -880,6 +916,7 @@ static DB_decoder_t plugin = {
     .read = cdumb_read,
     .seek = cdumb_seek,
     .insert = cdumb_insert,
+    .read_metadata = cdumb_read_metadata,
     .exts = exts,
     .filetypes = filetypes
 };
