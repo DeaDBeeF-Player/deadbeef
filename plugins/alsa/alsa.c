@@ -184,11 +184,26 @@ retry:
         break;
     };
 
-    //sample_fmt = SND_PCM_FORMAT_S16_LE;
     if ((err = snd_pcm_hw_params_set_format (audio, hw_params, sample_fmt)) < 0) {
-        fprintf (stderr, "cannot set sample format (%s)\n",
-                snd_strerror (err));
-        goto error;
+        fprintf (stderr, "cannot set sample format (%s), trying all supported formats\n", snd_strerror (err));
+
+#if WORDS_BIGENDIAN
+        int fmt[] = { SND_PCM_FORMAT_S16_BE, SND_PCM_FORMAT_S24_3BE, SND_PCM_FORMAT_S32_BE, SND_PCM_FORMAT_FLOAT_BE, SND_PCM_FORMAT_S8, -1 };
+#else
+        int fmt[] = { SND_PCM_FORMAT_S16_LE, SND_PCM_FORMAT_S24_3LE, SND_PCM_FORMAT_S32_LE, SND_PCM_FORMAT_FLOAT_LE, SND_PCM_FORMAT_S8, -1 };
+#endif
+        int i = 0;
+        for (i = 0; fmt[i] != -1; i++) {
+            if (fmt[i] != sample_fmt) {
+                if (snd_pcm_hw_params_set_format (audio, hw_params, fmt[i]) >= 0) {
+                    break;
+                }
+            }
+        }
+
+        if (fmt[i] == -1) {
+            goto error;
+        }
     }
 
     snd_pcm_hw_params_get_format (hw_params, &sample_fmt);
