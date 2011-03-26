@@ -19,6 +19,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <neaacdec.h>
 #ifdef HAVE_CONFIG_H
 #include "../../config.h"
@@ -117,6 +118,7 @@ aac_fs_seek (void *user_data, uint64_t position) {
     DB_FILE *fp = (DB_FILE *)user_data;
     return deadbeef->fseek (fp, position, SEEK_SET);
 }
+
 #else
 static void *
 aac_fs_open (const char *fname, MP4FileMode mode) {
@@ -1060,7 +1062,90 @@ aac_read_metadata (DB_playItem_t *it) {
     }
     deadbeef->fclose (fp);
 #endif
+    return 0;
 }
+
+#ifdef USE_MP4FF
+#if 0
+static uint32_t
+mp4ff_read_cb (void *user_data, void *buffer, uint32_t length) {
+//    trace ("aac_fs_read %d\n", length);
+    FILE *fp = (FILE *)user_data;
+    return fread (buffer, 1, length, fp);
+}
+static uint32_t
+mp4ff_seek_cb (void *user_data, uint64_t position) {
+//    trace ("aac_fs_seek\n");
+    FILE *fp = (FILE *)user_data;
+    return fseek (fp, position, SEEK_SET);
+}
+static uint32_t
+mp4ff_write_cb(void *user_data, void *buffer, uint32_t length) {
+    FILE *fp = (FILE *)user_data;
+    return fwrite (buffer, 1, length, fp);
+}
+
+static uint32_t
+mp4ff_truncate_cb(void *user_data) 
+{
+    FILE *fp = (FILE *)user_data;
+    ftruncate(fileno(fp), ftello(fp));
+    return 0;
+}
+#endif
+#endif
+
+#ifdef USE_MP4FF
+#if 0
+static int
+aac_write_metadata (DB_playItem_t *it) {
+    mp4ff_metadata_t md;
+    memset (&md, 0, sizeof (md));
+    deadbeef->pl_lock ();
+    DB_metaInfo_t *meta = deadbeef->pl_get_metadata_head (it);
+
+    // find numtags 1st
+    while (meta) {
+        if (meta->key[0] != ':') {
+            md.count++;
+        }
+        meta = meta->next;
+    }
+
+    // fill tags
+    if (md.count) {
+        md.tags = malloc (sizeof (mp4ff_tag_t) * md.count);
+        int n = 0;
+        meta = deadbeef->pl_get_metadata_head (it);
+        while (meta) {
+            if (meta->key[0] != ':') {
+                md.tags[n].item = "";//(char *)meta->key;
+                md.tags[n].value = (char *)meta->value;
+                n++;
+            }
+            meta = meta->next;
+        }
+    }
+
+    mp4ff_callback_t f = {
+        .read = mp4ff_read_cb,
+        .write = mp4ff_write_cb,
+        .seek = mp4ff_seek_cb,
+        .truncate = mp4ff_truncate_cb,
+    };
+
+    FILE *fp = fopen (deadbeef->pl_find_meta (it, ":URI"), "w");
+    f.user_data = fp;
+
+    mp4ff_meta_update (&f, &md);
+    if (md.tags) {
+        free (md.tags);
+    }
+    deadbeef->pl_unlock ();
+    return 0;
+}
+#endif
+#endif
 
 static DB_playItem_t *
 aac_insert (DB_playItem_t *after, const char *fname) {
@@ -1256,6 +1341,11 @@ static DB_decoder_t plugin = {
     .seek_sample = aac_seek_sample,
     .insert = aac_insert,
     .read_metadata = aac_read_metadata,
+#ifdef USE_MP4FF
+    // mp4ff metadata writer doesn't work
+    // .write_metadata = aac_write_metadata,
+#else
+#endif
     .exts = exts,
     .filetypes = filetypes
 };
