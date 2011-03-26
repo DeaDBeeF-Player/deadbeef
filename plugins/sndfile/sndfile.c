@@ -22,6 +22,7 @@
 #include <string.h>
 #include <sndfile.h>
 #include <math.h>
+#include <stdlib.h>
 #include "../../deadbeef.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
@@ -368,8 +369,74 @@ sndfile_insert (DB_playItem_t *after, const char *fname) {
     return after;
 }
 
-static const char * exts[] = { "wav", "aif", "aiff", "snd", "au", "paf", "svx", "nist", "voc", "ircam", "w64", "mat4", "mat5", "pvf", "xi", "htk", "sds", "avr", "wavex", "sd2", "caf", "wve", NULL };
+#define DEFAULT_EXTS "wav;aif;aiff;snd;au;paf;svx;nist;voc;ircam;w64;mat4;mat5;pvf;xi;htk;sds;avr;wavex;sd2;caf;wve"
+
+#define EXT_MAX 100
+
+static char *exts[EXT_MAX] = {NULL};
 static const char *filetypes[] = { "WAV", NULL };
+
+
+static void
+sndfile_init_exts (void) {
+    const char *new_exts = deadbeef->conf_get_str ("sndfile.extensions", DEFAULT_EXTS);
+    for (int i = 0; exts[i]; i++) {
+        free (exts[i]);
+    }
+    exts[0] = NULL;
+
+    int n = 0;
+    while (*new_exts) {
+        if (n >= EXT_MAX) {
+            fprintf (stderr, "sndfile: too many extensions, max is %d\n", EXT_MAX);
+            break;
+        }
+        const char *e = new_exts;
+        while (*e && *e != ';') {
+            e++;
+        }
+        if (e != new_exts) {
+            char *ext = malloc (e-new_exts+1);
+            memcpy (ext, new_exts, e-new_exts);
+            ext[e-new_exts] = 0;
+            exts[n++] = ext;
+        }
+        if (*e == 0) {
+            break;
+        }
+        new_exts = e+1;
+    }
+    exts[n] = NULL;
+}
+
+
+static int
+sndfile_on_configchanged (DB_event_t *ev, uintptr_t data) {
+    sndfile_init_exts ();
+    return 0;
+}
+
+static int
+sndfile_start (void) {
+    sndfile_init_exts ();
+    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (sndfile_on_configchanged), 0);
+    return 0;
+}
+
+static int
+sndfile_stop (void) {
+    deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (sndfile_on_configchanged), 0);
+    for (int i = 0; exts[i]; i++) {
+        free (exts[i]);
+    }
+    exts[0] = NULL;
+    return 0;
+}
+
+static const char settings_dlg[] =
+    "property \"File Extensions (separate with ';')\" entry sndfile.extensions \"" DEFAULT_EXTS "\";\n"
+;
+
 
 // define plugin interface
 static DB_decoder_t plugin = {
@@ -378,7 +445,7 @@ static DB_decoder_t plugin = {
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.id = "sndfile",
-    .plugin.name = "pcm player",
+    .plugin.name = "WAV/PCM player",
     .plugin.descr = "wav/aiff player using libsndfile",
     .plugin.copyright = 
         "Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"
@@ -405,8 +472,11 @@ static DB_decoder_t plugin = {
     .seek = sndfile_seek,
     .seek_sample = sndfile_seek_sample,
     .insert = sndfile_insert,
-    .exts = exts,
-    .filetypes = filetypes
+    .exts = (const char **)exts,
+    .filetypes = filetypes,
+    .plugin.start = sndfile_start,
+    .plugin.stop = sndfile_stop,
+    .plugin.configdialog = settings_dlg,
 };
 
 DB_plugin_t *
