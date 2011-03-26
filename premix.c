@@ -304,6 +304,19 @@ pcm_write_samples_float_to_24 (const ddb_waveformat_t * restrict inputfmt, const
     fpu_restore (ctl);
 }
 
+
+static inline void
+pcm_write_samples_float_to_32 (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int nsamples, int * restrict channelmap, int outputsamplesize) {
+    for (int s = 0; s < nsamples; s++) {
+        for (int c = 0; c < inputfmt->channels; c++) {
+            int sample = (*((float*)input)) * (float)0x7fffffff;
+            *((int32_t *)(output + 4 * channelmap[c])) = sample;
+            input += 4;
+        }
+        output += outputsamplesize;
+    }
+}
+
 typedef void (*remap_fn_t) (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int nsamples, int * restrict channelmap, int outputsamplesize);
 
 
@@ -358,7 +371,7 @@ remap_fn_t remappers[8][8] = {
         pcm_write_samples_float_to_8,
         pcm_write_samples_float_to_16,
         pcm_write_samples_float_to_24,
-        NULL, // FIXME: add float_to_32
+        pcm_write_samples_float_to_32,
         NULL,
         NULL,
         NULL,
