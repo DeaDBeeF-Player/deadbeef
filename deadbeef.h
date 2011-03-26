@@ -451,7 +451,11 @@ typedef struct {
     void (*pl_set_meta_int) (DB_playItem_t *it, const char *key, int value);
     void (*pl_set_meta_float) (DB_playItem_t *it, const char *key, float value);
     void (*pl_delete_meta) (DB_playItem_t *it, const char *key);
+
+    // this function is not thread-safe
+    // make sure you put it into pl_lock/unlock block
     const char *(*pl_find_meta) (DB_playItem_t *it, const char *key);
+
     int (*pl_find_meta_int) (DB_playItem_t *it, const char *key, int def);
     float (*pl_find_meta_float) (DB_playItem_t *it, const char *key, float def);
     void (*pl_replace_meta) (DB_playItem_t *it, const char *key, const char *value);
