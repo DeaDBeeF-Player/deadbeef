@@ -953,7 +953,7 @@ http_cancel_abort (DB_FILE *fp) {
     for (int i = 0; i < num_abort_files; i++) {
         if (abort_files[i] == fp) {
             if (i != num_abort_files-1) {
-                memmove (abort_files+i, abort_files+i+1, sizeof (DB_FILE *) * (num_abort_files-i-1));
+                abort_files[i] = abort_files[num_abort_files-1];
             }
             num_abort_files--;
             break;
@@ -987,7 +987,7 @@ http_unreg_open_file (DB_FILE *fp) {
     for (i = 0; i < num_open_files; i++) {
         if (open_files[i] == fp) {
             if (i != num_open_files-1) {
-                memmove (open_files+i, open_files+i+1, sizeof (DB_FILE *) * (num_open_files-i-1));
+                open_files[i] = open_files[num_open_files-1];
             }
             num_open_files--;
             trace ("remove from open list: %p\n", fp);
@@ -997,7 +997,7 @@ http_unreg_open_file (DB_FILE *fp) {
 
     // gc abort_files
     int j = 0;
-    while (j < num_open_files) {
+    while (j < num_abort_files) {
         for (i = 0; i < num_open_files; i++) {
             if (abort_files[j] == open_files[i]) {
                 break;
