@@ -165,7 +165,6 @@ static void
 cflac_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMetadata *metadata, void *client_data) {
     DB_fileinfo_t *_info = (DB_fileinfo_t *)client_data;
     flac_info_t *info = (flac_info_t *)_info;
-    info->totalsamples = metadata->data.stream_info.total_samples;
     _info->fmt.samplerate = metadata->data.stream_info.sample_rate;
     _info->fmt.channels = metadata->data.stream_info.channels;
     _info->fmt.bps = metadata->data.stream_info.bits_per_sample;
@@ -291,8 +290,12 @@ cflac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     if (res) {
         fsize -= position;
     }
-    FLAC__uint64 flac_totalsamples = FLAC__stream_decoder_get_total_samples (info->decoder);
-    float sec = flac_totalsamples / _info->fmt.samplerate;
+    info->totalsamples = FLAC__stream_decoder_get_total_samples (info->decoder);
+    if (info->totalsamples <= 0) {
+        return -1;
+    }
+    float sec = info->totalsamples / (float)_info->fmt.samplerate;
+    deadbeef->pl_set_item_duration (it, sec);
     if (sec > 0) {
         info->bitrate = fsize / sec * 8 / 1000;
     }
@@ -342,6 +345,9 @@ cflac_free (DB_fileinfo_t *_info) {
         }
         if (info->buffer) {
             free (info->buffer);
+        }
+        if (info->file) {
+            deadbeef->fclose (info->file);
         }
         free (_info);
     }
@@ -572,7 +578,7 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
     DB_playItem_t *it = info->it;
     //it->tracknum = 0;
     if (metadata->type == FLAC__METADATA_TYPE_STREAMINFO) {
-        trace ("flac: samplerate=%d, channels=%d\n", metadata->data.stream_info.sample_rate, metadata->data.stream_info.channels);
+        trace ("flac: samplerate=%d, channels=%d, totalsamples=%d\n", metadata->data.stream_info.sample_rate, metadata->data.stream_info.channels, metadata->data.stream_info.total_samples);
         _info->fmt.samplerate = metadata->data.stream_info.sample_rate;
         _info->fmt.channels = metadata->data.stream_info.channels;
         _info->fmt.bps = metadata->data.stream_info.bits_per_sample;
