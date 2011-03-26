@@ -320,7 +320,7 @@ dts_open_wav (DB_FILE *fp, wavfmt_t *fmt, int64_t *totalsamples) {
         return -1;
     }
 
-    deadbeef->fseek (fp, fmtsize - sizeof (wavfmt_t), SEEK_CUR);
+    deadbeef->fseek (fp, (int)fmtsize - (int)sizeof (wavfmt_t), SEEK_CUR);
 
     // data subchunk
 
@@ -453,7 +453,7 @@ dts_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         info->endsample = totalsamples-1;
     }
 
-    trace ("dca_init: nchannels: %d, samplerate: %d\n", _info->channels, _info->samplerate);
+    trace ("dca_init: nchannels: %d, samplerate: %d\n", _info->fmt.channels, _info->fmt.samplerate);
     return 0;
 }
 
@@ -580,6 +580,7 @@ dts_insert (DB_playItem_t *after, const char *fname) {
     // it's dts
     uint8_t buffer[BUFFER_SIZE];
     size_t size = deadbeef->fread (buffer, 1, sizeof (buffer), fp);
+    trace ("got size: %d (requested %d)\n", size, sizeof (buffer));
     ddb_dca_state_t state;
     memset (&state, 0, sizeof (state));
     state.state = dca_init (0);
