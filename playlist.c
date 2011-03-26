@@ -3002,6 +3002,20 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
             }
             else if (*fmt == 'n') {
                 meta = pl_find_meta (it, "track");
+                if (meta) {
+                    // check if it's numbers only
+                    const char *p = meta;
+                    while (*p) {
+                        if (!isdigit (*p)) {
+                            break;
+                        }
+                        p++;
+                    }
+                    if (!(*p)) {
+                        snprintf (fno, sizeof (fno), "%02d", atoi (meta));
+                        meta = fno;
+                    }
+                }
             }
             else if (*fmt == 'N') {
                 meta = pl_find_meta (it, "numtracks");
