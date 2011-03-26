@@ -28,15 +28,16 @@ gtkpl_add_dirs (GSList *lst) {
             && deadbeef->conf_get_int ("gtkui.name_playlist_from_folder", 0)) {
         int plt = deadbeef->plt_get_curr ();
         if (plt != -1) {
+            void *p = deadbeef->plt_get_handle (plt);
             char t[1000];
-            if (!deadbeef->plt_get_title (plt, t, sizeof (t))) {
+            if (!deadbeef->plt_get_title (p, t, sizeof (t))) {
                 char *def = _("New Playlist");
                 if (!strncmp (t, def, strlen (def))) {
                     const char *folder = strrchr ((char*)lst->data, '/');
                     if (!folder) {
                         folder = lst->data;
                     }
-                    deadbeef->plt_set_title (plt, folder+1);
+                    deadbeef->plt_set_title (p, folder+1);
                 }
             }
         }

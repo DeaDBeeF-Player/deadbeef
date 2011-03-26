@@ -904,13 +904,16 @@ gtkui_add_new_playlist (void) {
         else {
             snprintf (name, sizeof (name), _("New Playlist (%d)"), idx);
         }
+        deadbeef->plt_lock ();
         for (i = 0; i < cnt; i++) {
             char t[100];
-            deadbeef->plt_get_title (i, t, sizeof (t));
+            void *plt = deadbeef->plt_get_handle (i);
+            deadbeef->plt_get_title (plt, t, sizeof (t));
             if (!strcasecmp (t, name)) {
                 break;
             }
         }
+        deadbeef->plt_unlock ();
         if (i == cnt) {
             return deadbeef->plt_add (cnt, name);
         }

@@ -44,6 +44,7 @@
 #include "vfs.h"
 #include "premix.h"
 #include "dsppreset.h"
+#include "pltmeta.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -114,12 +115,22 @@ static DB_functions_t deadbeef_api = {
     .plt_get_sel_count = plt_get_sel_count,
     .plt_add = plt_add,
     .plt_remove = plt_remove,
-    .plt_free = plt_free,
     .plt_set_curr = plt_set_curr,
     .plt_get_curr = plt_get_curr,
-    .plt_get_title = plt_get_title,
-    .plt_set_title = plt_set_title,
     .plt_move = plt_move,
+    .plt_get_handle = (void *(*)(int idx))plt_get,
+    .plt_get_title = (int (*)(void *handle, char *buffer, int sz))plt_get_title,
+    .plt_set_title = (int (*)(void *handle, const char *buffer))plt_set_title,
+
+    // playlist metadata
+    .plt_add_meta = (void (*) (void *handle, const char *key, const char *value))plt_add_meta,
+    .plt_replace_meta = (void (*) (void *handle, const char *key, const char *value))plt_replace_meta,
+    .plt_append_meta = (void (*) (void *handle, const char *key, const char *value))plt_append_meta,
+    .plt_set_meta_int = (void (*) (void *handle, const char *key, int value))plt_set_meta_int,
+    .plt_set_meta_float = (void (*) (void *handle, const char *key, float value))plt_set_meta_float,
+    .plt_find_meta = (const char *(*) (void *handle, const char *key))plt_find_meta,
+    .plt_get_metadata_head = (DB_metaInfo_t * (*) (void *handle))plt_get_metadata_head,
+
     // playlist access
     .pl_lock = pl_lock,
     .pl_unlock = pl_unlock,

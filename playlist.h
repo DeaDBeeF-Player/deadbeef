@@ -49,12 +49,13 @@ typedef struct playItem_s {
 
 typedef struct playlist_s {
     char *title;
+    struct playlist_s *next;
     int count[2];
     float totaltime;
     playItem_t *head[PL_MAX_ITERATORS]; // head of linked list
     playItem_t *tail[PL_MAX_ITERATORS]; // tail of linked list
     int current_row[PL_MAX_ITERATORS]; // current row (cursor)
-    struct playlist_s *next;
+    struct DB_metaInfo_s *meta; // linked list storing metainfo
 } playlist_t;
 
 // global playlist control functions
@@ -126,10 +127,10 @@ int
 plt_get_idx_of (playlist_t *plt);
 
 int
-plt_get_title (int plt, char *buffer, int bufsize);
+plt_get_title (playlist_t *plt, char *buffer, int bufsize);
 
 int
-plt_set_title (int plt, const char *title);
+plt_set_title (playlist_t *plt, const char *title);
 
 // moves playlist #from to position #to
 void

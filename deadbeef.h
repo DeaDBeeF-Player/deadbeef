@@ -360,12 +360,27 @@ typedef struct {
     int (*plt_get_sel_count) (int plt);
     int (*plt_add) (int before, const char *title);
     void (*plt_remove) (int plt);
-    void (*plt_free) (void);
     void (*plt_set_curr) (int plt);
     int (*plt_get_curr) (void);
-    int (*plt_get_title) (int plt, char *buffer, int bufsize);
-    int (*plt_set_title) (int plt, const char *title);
     void (*plt_move) (int from, int before);
+
+    // getting and working with a handle must be guarded using plt_lock/unlock
+    void *(*plt_get_handle) (int idx);
+    int (*plt_get_title) (void *handle, char *buffer, int bufsize);
+    int (*plt_set_title) (void *handle, const char *title);
+    // playlist metadata
+    // this kind of metadata is stored in playlist (dbpl) files
+    void (*plt_add_meta) (void *handle, const char *key, const char *value);
+    void (*plt_replace_meta) (void *handle, const char *key, const char *value);
+    void (*plt_append_meta) (void *handle, const char *key, const char *value);
+    void (*plt_set_meta_int) (void *handle, const char *key, int value);
+    void (*plt_set_meta_float) (void *handle, const char *key, float value);
+    const char *(*plt_find_meta) (void *handle, const char *key);
+    DB_metaInfo_t * (*plt_get_metadata_head) (void *handle); // returns head of metadata linked list
+    void (*plt_delete_metadata) (void *handle, DB_metaInfo_t *meta);
+    int (*plt_find_meta_int) (void *handle, const char *key, int def);
+    float (*plt_find_meta_float) (void *handle, const char *key, float def);
+    void (*plt_delete_all_meta) (void *handle);
     // playlist control
     void (*pl_lock) (void);
     void (*pl_unlock) (void);

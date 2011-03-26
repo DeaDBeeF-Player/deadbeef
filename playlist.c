@@ -48,6 +48,7 @@
 #include "threading.h"
 #include "metacache.h"
 #include "volume.h"
+#include "pltmeta.h"
 
 #define DISABLE_LOCKING 0
 #define DEBUG_LOCKING 0
@@ -501,49 +502,33 @@ plt_get_idx_of (playlist_t *plt) {
 }
 
 int
-plt_get_title (int plt, char *buffer, int bufsize) {
+plt_get_title (playlist_t *p, char *buffer, int bufsize) {
     int i;
     PLT_LOCK;
-    playlist_t *p = playlists_head;
-    for (i = 0; p && i <= plt; i++) {
-        if (i == plt) {
-            if (!buffer) {
-                int l = strlen (p->title);
-                PLT_UNLOCK;
-                return l;
-            }
-            strncpy (buffer, p->title, bufsize);
-            buffer[bufsize-1] = 0;
-            PLT_UNLOCK;
-            return 0;
-        }
-        p = p->next;
+    if (!buffer) {
+        int l = strlen (p->title);
+        PLT_UNLOCK;
+        return l;
     }
+    strncpy (buffer, p->title, bufsize);
+    buffer[bufsize-1] = 0;
     PLT_UNLOCK;
-    buffer[0] = 0;
-    return -1;
+    return 0;
 }
 
 int
-plt_set_title (int plt, const char *title) {
+plt_set_title (playlist_t *p, const char *title) {
     int i;
     PLT_LOCK;
-    playlist_t *p = playlists_head;
-    for (i = 0; p && i <= plt; i++) {
-        if (i == plt) {
-            free (p->title);
-            p->title = strdup (title);
-            break;
-        }
-        p = p->next;
-    }
-    PLT_UNLOCK;
+    free (p->title);
+    p->title = strdup (title);
     plt_gen_conf ();
+    PLT_UNLOCK;
     conf_save ();
     if (!plt_loading) {
         plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
     }
-    return i == plt ? 0 : -1;
+    return 0;
 }
 
 void
@@ -1886,209 +1871,6 @@ pl_item_unref (playItem_t *it) {
         pl_item_free (it);
     }
     UNLOCK;
-}
-
-void
-pl_add_meta (playItem_t *it, const char *key, const char *value) {
-    LOCK;
-    // check if it's already set
-    DB_metaInfo_t *tail = NULL;
-    DB_metaInfo_t *m = it->meta;
-    while (m) {
-        if (!strcasecmp (key, m->key)) {
-            // duplicate key
-            UNLOCK;
-            return;
-        }
-        tail = m;
-        m = m->next;
-    }
-    // add
-    char str[256];
-    if (!value || !*value) {
-        UNLOCK;
-        return;
-#if 0
-        if (!strcasecmp (key, "title")) {
-            // cut filename without path and extension
-            const char *pext = pl_find_meta (it, ":URI") + strlen (pl_find_meta (it, ":URI")) - 1;
-            while (pext >= pl_find_meta (it, ":URI") && *pext != '.') {
-                pext--;
-            }
-            const char *pname = pext;
-            while (pname >= pl_find_meta (it, ":URI") && *pname != '/') {
-                pname--;
-            }
-            if (*pname == '/') {
-                pname++;
-            }
-            strncpy (str, pname, pext-pname);
-            str[pext-pname] = 0;
-            value = str;
-        }
-        else {
-            UNLOCK;
-            return;
-        }
-#endif
-    }
-    m = malloc (sizeof (DB_metaInfo_t));
-    memset (m, 0, sizeof (DB_metaInfo_t));
-    m->key = metacache_add_string (key); //key;
-    m->value = metacache_add_string (value); //strdup (value);
-
-    if (tail) {
-        tail->next = m;
-    }
-    else {
-        it->meta = m;
-    }
-    UNLOCK;
-}
-
-void
-pl_append_meta (playItem_t *it, const char *key, const char *value) {
-    const char *old = pl_find_meta (it, key);
-    size_t newlen = strlen (value);
-    if (!old) {
-        pl_add_meta (it, key, value);
-    }
-    else {
-        // check for duplicate data
-        const char *str = old;
-        int len;
-        while (str) {
-            char *next = strchr (str, '\n');
-
-            if (next) {
-                len = next - str;
-                next++;
-            }
-            else {
-                len = strlen (str);
-            }
-
-            if (len == newlen && !memcmp (str, value, len)) {
-                return;
-            }
-
-            str = next;
-        }
-        int sz = strlen (old) + newlen + 2;
-        char out[sz];
-        snprintf (out, sz, "%s\n%s", old, value);
-        pl_replace_meta (it, key, out);
-    }
-}
-
-void
-pl_replace_meta (playItem_t *it, const char *key, const char *value) {
-    LOCK;
-    // check if it's already set
-    DB_metaInfo_t *m = it->meta;
-    while (m) {
-        if (!strcasecmp (key, m->key)) {
-            break;
-        }
-        m = m->next;
-    }
-    if (m) {
-        metacache_remove_string (m->value);
-        m->value = metacache_add_string (value);
-        UNLOCK;
-        return;
-    }
-    else {
-        pl_add_meta (it, key, value);
-    }
-    UNLOCK;
-}
-
-void
-pl_set_meta_int (playItem_t *it, const char *key, int value) {
-    char s[20];
-    snprintf (s, sizeof (s), "%d", value);
-    pl_replace_meta (it, key, s);
-}
-
-void
-pl_set_meta_float (playItem_t *it, const char *key, float value) {
-    char s[20];
-    snprintf (s, sizeof (s), "%f", value);
-    pl_replace_meta (it, key, s);
-}
-
-void
-pl_delete_meta (playItem_t *it, const char *key) {
-    DB_metaInfo_t *prev = NULL;
-    DB_metaInfo_t *m = it->meta;
-    while (m) {
-        if (!strcasecmp (key, m->key)) {
-            if (prev) {
-                prev->next = m->next;
-            }
-            else {
-                it->meta = m->next;
-            }
-            metacache_remove_string (m->key);
-            metacache_remove_string (m->value);
-            free (m);
-            break;
-        }
-        prev = m;
-        m = m->next;
-    }
-}
-
-const char *
-pl_find_meta (playItem_t *it, const char *key) {
-    DB_metaInfo_t *m = it->meta;
-    while (m) {
-        if (!strcasecmp (key, m->key)) {
-            return m->value;
-        }
-        m = m->next;
-    }
-    return NULL;
-}
-
-int
-pl_find_meta_int (playItem_t *it, const char *key, int def) {
-    const char *val = pl_find_meta (it, key);
-    return val ? atoi (val) : def;
-}
-
-float
-pl_find_meta_float (playItem_t *it, const char *key, float def) {
-    const char *val = pl_find_meta (it, key);
-    return val ? atof (val) : def;
-}
-
-DB_metaInfo_t *
-pl_get_metadata_head (playItem_t *it) {
-    return it->meta;
-}
-
-void
-pl_delete_metadata (playItem_t *it, DB_metaInfo_t *meta) {
-    DB_metaInfo_t *prev = NULL;
-    DB_metaInfo_t *m = it->meta;
-    while (m) {
-        if (m == meta) {
-            if (prev) {
-                prev->next = m->next;
-            }
-            else {
-                it->meta = m->next;
-            }
-            metacache_remove_string (m->key);
-            metacache_remove_string (m->value);
-            free (m);
-            break;
-        }
-        prev = m;
-        m = m->next;
-    }
 }
 
 int

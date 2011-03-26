@@ -43,7 +43,14 @@ extern GtkWidget *theme_button;
 
 void
 plt_get_title_wrapper (int plt, char *buffer, int len) {
-    deadbeef->plt_get_title (plt, buffer, len);
+    if (plt == -1) {
+        strcpy (buffer, "");
+        return;
+    }
+    deadbeef->plt_lock ();
+    void *p = deadbeef->plt_get_handle (plt);
+    deadbeef->plt_get_title (p, buffer, len);
+    deadbeef->plt_unlock ();
     char *end;
     if (!g_utf8_validate (buffer, -1, (const gchar **)&end)) {
         *end = 0;
@@ -458,6 +465,32 @@ tabstrip_adjust_hscroll (DdbTabStrip *ts) {
 }
 
 void
+set_tab_text_color (int idx) {
+    if (idx == -1) {
+        return;
+    }
+    deadbeef->plt_lock ();
+    void *plt = deadbeef->plt_get_handle (idx);
+    const char *clr = deadbeef->plt_find_meta (plt, "gui.color");
+    int fallback = 1;
+    if (clr) {
+        int r, g, b;
+        if (3 == sscanf (clr, "%02x%02x%02x", &r, &g, &b)) {
+            fallback = 0;
+            float fg[3] = {(float)r/0xff, (float)g/0xff, (float)b/0xff};
+            draw_set_fg_color (fg);
+        }
+    }
+    if (fallback) {
+        GdkColor color;
+        gtkui_get_tabstrip_text_color (&color);
+        float fg[3] = {(float)color.red/0xffff, (float)color.green/0xffff, (float)color.blue/0xffff};
+        draw_set_fg_color (fg);
+    }
+    deadbeef->plt_unlock ();
+}
+
+void
 tabstrip_render (DdbTabStrip *ts) {
     GtkWidget *widget = GTK_WIDGET (ts);
     GdkDrawable *backbuf = gtk_widget_get_window (widget);
@@ -520,10 +553,8 @@ tabstrip_render (DdbTabStrip *ts) {
             ddb_tabstrip_draw_tab (widget, backbuf, idx == tab_selected, x, y, w, h);
             char tab_title[100];
             plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
-            GdkColor color;
-            gtkui_get_tabstrip_text_color (&color);
-            float fg[3] = {(float)color.red/0xffff, (float)color.green/0xffff, (float)color.blue/0xffff};
-            draw_set_fg_color (fg);
+
+            set_tab_text_color (idx);
             draw_text (x + text_left_padding, y + h/2 - draw_get_font_size()/2 + text_vert_offset, w, 0, tab_title);
         }
         x += w - tab_overlap_size;
@@ -548,10 +579,7 @@ tabstrip_render (DdbTabStrip *ts) {
         ddb_tabstrip_draw_tab (widget, backbuf, 1, x, y, w, h);
         char tab_title[100];
         plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
-        GdkColor color;
-        gtkui_get_tabstrip_text_color (&color);
-        float fg[3] = {(float)color.red/0xffff, (float)color.green/0xffff, (float)color.blue/0xffff};
-        draw_set_fg_color (fg);
+        set_tab_text_color (idx);
         draw_text (x + text_left_padding, y + h/2 - draw_get_font_size()/2 + text_vert_offset, w, 0, tab_title);
     }
     else {
@@ -570,10 +598,7 @@ tabstrip_render (DdbTabStrip *ts) {
                     ddb_tabstrip_draw_tab (widget, backbuf, 1, x, y, w, h);
                     char tab_title[100];
                     plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
-                    GdkColor color;
-                    gtkui_get_tabstrip_text_color (&color);
-                    float fg[3] = {(float)color.red/0xffff, (float)color.green/0xffff, (float)color.blue/0xffff};
-                    draw_set_fg_color (fg);
+                    set_tab_text_color (idx);
                     draw_text (x + text_left_padding, y + h/2 - draw_get_font_size()/2 + text_vert_offset, w, 0, tab_title);
                 }
                 break;
@@ -643,7 +668,10 @@ on_rename_playlist1_activate           (GtkMenuItem     *menuitem,
     int res = gtk_dialog_run (GTK_DIALOG (dlg));
     if (res == GTK_RESPONSE_OK) {
         const char *text = gtk_entry_get_text (GTK_ENTRY (e));
-        deadbeef->plt_set_title (tab_clicked, text);
+        deadbeef->plt_lock ();
+        void *p = deadbeef->plt_get_handle (tab_clicked);
+        deadbeef->plt_set_title (p, text);
+        deadbeef->plt_unlock ();
     }
     gtk_widget_destroy (dlg);
 }
