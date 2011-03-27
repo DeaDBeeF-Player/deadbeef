@@ -427,6 +427,15 @@ plt_remove (int plt) {
         }
     }
     free (p->title);
+
+    while (p->meta) {
+        DB_metaInfo_t *m = p->meta;
+        p->meta = m->next;
+        metacache_remove_string (m->key);
+        metacache_remove_string (m->value);
+        free (m);
+    }
+
     free (p);
     playlists_count--;
     PLT_UNLOCK;
@@ -2044,6 +2053,39 @@ pl_save (const char *fname) {
             }
         }
     }
+
+    // write playlist metadata
+    int16_t nm = 0;
+    DB_metaInfo_t *m;
+    for (m = playlist->meta; m; m = m->next) {
+        nm++;
+    }
+    if (fwrite (&nm, 1, 2, fp) != 2) {
+        goto save_fail;
+    }
+
+    for (m = playlist->meta; m; m = m->next) {
+        uint16_t l;
+        l = strlen (m->key);
+        if (fwrite (&l, 1, 2, fp) != 2) {
+            goto save_fail;
+        }
+        if (l) {
+            if (fwrite (m->key, 1, l, fp) != l) {
+                goto save_fail;
+            }
+        }
+        l = strlen (m->value);
+        if (fwrite (&l, 1, 2, fp) != 2) {
+            goto save_fail;
+        }
+        if (l) {
+            if (fwrite (m->value, 1, l, fp) != l) {
+                goto save_fail;
+            }
+        }
+    }
+
     GLOBAL_UNLOCK;
     fclose (fp);
     return 0;
@@ -2345,6 +2387,44 @@ pl_load (const char *fname) {
         pl_item_unref (it);
         it = NULL;
     }
+
+    // load playlist metadata
+    int16_t nm = 0;
+    // for backwards format compatibility, don't fail if metadata is not found
+    if (fread (&nm, 1, 2, fp) == 2) {
+        for (int i = 0; i < nm; i++) {
+            int16_t l;
+            if (fread (&l, 1, 2, fp) != 2) {
+                goto load_fail;
+            }
+            if (l < 0 || l >= 20000) {
+                goto load_fail;
+            }
+            char key[l+1];
+            if (fread (key, 1, l, fp) != l) {
+                goto load_fail;
+            }
+            key[l] = 0;
+            if (fread (&l, 1, 2, fp) != 2) {
+                goto load_fail;
+            }
+            if (l<0 || l >= 20000) {
+                // skip
+                fseek (fp, l, SEEK_CUR);
+            }
+            else {
+                char value[l+1];
+                int res = fread (value, 1, l, fp);
+                if (res != l) {
+                    trace ("read error: requested %d, got %d\n", l, res);
+                    goto load_fail;
+                }
+                value[l] = 0;
+                plt_add_meta (playlist, key, value);
+            }
+        }
+    }
+
     GLOBAL_UNLOCK;
     if (fp) {
         fclose (fp);
