@@ -248,7 +248,9 @@ parse_aac_stream(DB_FILE *fp, int *psamplerate, int *pchannels, float *pduration
 
     if (*psamplerate <= 24000) {
         *psamplerate *= 2;
-        *ptotalsamples *= 2;
+        if (ptotalsamples) {
+            *ptotalsamples *= 2;
+        }
     }
     return firstframepos;
 }
