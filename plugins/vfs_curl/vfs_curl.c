@@ -247,9 +247,9 @@ http_curl_write (void *ptr, size_t size, size_t nmemb, void *stream) {
         trace ("vfs_curl STATUS_ABORTED at start of packet\n");
         return 0;
     }
-    if (fp->gotsomeheader) {
-        fp->gotheader = 1;
-    }
+//    if (fp->gotsomeheader) {
+//        fp->gotheader = 1;
+//    }
     if (!fp->gotheader) {
         // check if that's ICY
         if (!fp->icyheader && avail >= 10 && !memcmp (ptr, "ICY 200 OK", 10)) {
