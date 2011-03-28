@@ -173,8 +173,8 @@ void main_draw_group_title (DdbListview *listview, GdkDrawable *drawable, DdbLis
             draw_set_fg_color (rgb);
         }
         int ew, eh;
-        draw_text (x + 5, y + height/2 - draw_get_font_size ()/2 - 2, width-10, 0, str);
         draw_get_text_extents (str, -1, &ew, &eh);
+        draw_text (x + 5, y + height/2 - draw_get_font_size ()/2 - 2, ew+5, 0, str);
         draw_line (x + 5 + ew + 3, y+height/2, x + width, y+height/2);
     }
 }
