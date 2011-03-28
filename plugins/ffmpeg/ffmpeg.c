@@ -166,19 +166,19 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
 
     if (!strcasecmp (info->codec->name, "alac")) {
-        deadbeef->pl_add_meta (it, ":FILETYPE", filetypes[FT_ALAC]);
+        deadbeef->pl_replace_meta (it, ":FILETYPE", filetypes[FT_ALAC]);
     }
     else if (strcasestr (info->codec->name, "wma")) {
-        deadbeef->pl_add_meta (it, ":FILETYPE", filetypes[FT_WMA]);
+        deadbeef->pl_replace_meta (it, ":FILETYPE", filetypes[FT_WMA]);
     }
     else if (strcasestr (info->codec->name, "ac3")) {
-        deadbeef->pl_add_meta (it, ":FILETYPE", filetypes[FT_AC3]);
+        deadbeef->pl_replace_meta (it, ":FILETYPE", filetypes[FT_AC3]);
     }
     else if (strcasestr (info->codec->name, "amr")) {
-        deadbeef->pl_add_meta (it, ":FILETYPE", filetypes[FT_AMR]);
+        deadbeef->pl_replace_meta (it, ":FILETYPE", filetypes[FT_AMR]);
     }
     else {
-        deadbeef->pl_add_meta (it, ":FILETYPE", filetypes[FT_UNKNOWN]);
+        deadbeef->pl_replace_meta (it, ":FILETYPE", filetypes[FT_UNKNOWN]);
     }
 
     int bps = av_get_bits_per_sample_format (info->ctx->sample_fmt);
