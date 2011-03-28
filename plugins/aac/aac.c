@@ -914,7 +914,7 @@ seek_raw_aac (aac_info_t *info, int sample) {
         else {
             //trace ("aac: frame #%d(%d/%d) sync: %d %d %d %d %d\n", frame, curr_sample, sample, channels, samplerate, bitrate, frame_samples, size);
             frame++;
-            if (deadbeef->fseek (info->file, size-sizeof(buf), SEEK_CUR) == -1) {
+            if (deadbeef->fseek (info->file, size-(int)sizeof(buf), SEEK_CUR) == -1) {
                 trace ("seek_raw_aac: invalid seek %d\n", size-sizeof(buf));
                 break;
             }
