@@ -2639,6 +2639,7 @@ pl_get_item_replaygain (playItem_t *it, int idx) {
 
 int
 pl_format_item_queue (playItem_t *it, char *s, int size) {
+    LOCK;
     *s = 0;
     int initsize = size;
     const char *val = pl_find_meta (it, "_playing");
@@ -2686,9 +2687,9 @@ pl_format_item_queue (playItem_t *it, char *s, int size) {
     }
 
     if (!playqueue_count) {
+        UNLOCK;
         return 0;
     }
-    LOCK;
 
     int qinitsize = size;
     int init = 1;
