@@ -154,7 +154,6 @@ static int pulse_set_spec(ddb_waveformat_t *fmt)
         return -1;
     }
 
-
     return 0;
 }
 
@@ -187,11 +186,11 @@ static int pulse_setformat (ddb_waveformat_t *fmt)
         trace ("pulse_setformat ignored\n");
         return 0;
     }
-    deadbeef->mutex_lock(mutex);
     trace ("pulse_setformat %dbit %s %dch %dHz channelmask=%X\n", fmt->bps, fmt->is_float ? "float" : "int", fmt->channels, fmt->samplerate, fmt->channelmask);
 
     int prev_state = state;
     pulse_stop ();
+    deadbeef->mutex_lock(mutex);
     pulse_set_spec(fmt);
     deadbeef->mutex_unlock(mutex);
     trace ("new format %dbit %s %dch %dHz channelmask=%X\n", plugin.fmt.bps, plugin.fmt.is_float ? "float" : "int", plugin.fmt.channels, plugin.fmt.samplerate, plugin.fmt.channelmask);
