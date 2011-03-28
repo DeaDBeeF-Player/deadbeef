@@ -218,7 +218,7 @@ parse_aac_stream(DB_FILE *fp, int *psamplerate, int *pchannels, float *pduration
 //                *pchannels = stream_ch;
 //            }
             framepos += size;
-            if (deadbeef->fseek (fp, size-sizeof(buf), SEEK_CUR) == -1) {
+            if (deadbeef->fseek (fp, size-(int)sizeof(buf), SEEK_CUR) == -1) {
                 trace ("parse_aac_stream: invalid seek %d\n", size-sizeof(buf));
                 break;
             }
