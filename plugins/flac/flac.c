@@ -290,12 +290,11 @@ cflac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     if (res) {
         fsize -= position;
     }
-    info->totalsamples = FLAC__stream_decoder_get_total_samples (info->decoder);
-    if (info->totalsamples <= 0) {
+    int64_t totalsamples = FLAC__stream_decoder_get_total_samples (info->decoder);
+    if (totalsamples <= 0) {
         return -1;
     }
-    float sec = info->totalsamples / (float)_info->fmt.samplerate;
-    deadbeef->pl_set_item_duration (it, sec);
+    float sec = totalsamples / (float)_info->fmt.samplerate;
     if (sec > 0) {
         info->bitrate = fsize / sec * 8 / 1000;
     }
