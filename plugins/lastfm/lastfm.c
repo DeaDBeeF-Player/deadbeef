@@ -846,7 +846,6 @@ lfm_action_lookup (DB_plugin_action_t *action, DB_playItem_t *it)
     char *command = NULL;
     if (-1 == asprintf (&command, "xdg-open 'http://www.last.fm/music/%s/_/%s' &", eartist, etitle))
         return 0;
-    printf ("executing %s\n", command);
     system (command);
     free (command);
 }
