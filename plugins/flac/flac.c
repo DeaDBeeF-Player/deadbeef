@@ -39,10 +39,10 @@ typedef struct {
     FLAC__StreamDecoder *decoder;
     char *buffer; // this buffer always has float samples
     int remaining; // bytes remaining in buffer from last read
-    int startsample;
-    int endsample;
-    int currentsample;
-    int totalsamples;
+    int64_t startsample;
+    int64_t endsample;
+    int64_t currentsample;
+    int64_t totalsamples;
     int flac_critical_error;
     int init_stop_decoding;
     int tagsize;
@@ -165,6 +165,7 @@ static void
 cflac_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMetadata *metadata, void *client_data) {
     DB_fileinfo_t *_info = (DB_fileinfo_t *)client_data;
     flac_info_t *info = (flac_info_t *)_info;
+    info->totalsamples = metadata->data.stream_info.total_samples;
     _info->fmt.samplerate = metadata->data.stream_info.sample_rate;
     _info->fmt.channels = metadata->data.stream_info.channels;
     _info->fmt.bps = metadata->data.stream_info.bits_per_sample;
