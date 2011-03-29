@@ -1335,6 +1335,7 @@ streamer_dsp_postinit (void) {
         }
         else {
             eq = eqplug->open ();
+            eq->enabled = 0;
             eq->next = dsp_chain;
             dsp_chain = eq;
         }
