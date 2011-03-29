@@ -1922,14 +1922,34 @@ pl_crop_selected (void) {
 
 int
 pl_save (const char *fname) {
+    GLOBAL_LOCK;
+    const char *ext = strrchr (fname, '.');
+    if (ext) {
+        DB_playlist_t **plug = deadbeef->plug_get_playlist_list ();
+        for (int i = 0; plug[i]; i++) {
+            if (plug[i]->extensions && plug[i]->load) {
+                const char **exts = plug[i]->extensions;
+                if (exts && plug[i]->save) {
+                    for (int e = 0; exts[e]; e++) {
+                        if (!strcasecmp (exts[e], ext+1)) {
+                            int res = plug[i]->save (fname, (DB_playItem_t *)playlist->head[PL_MAIN], NULL);
+                            GLOBAL_UNLOCK;
+                            return res;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     const char magic[] = "DBPL";
     uint8_t majorver = PLAYLIST_MAJOR_VER;
     uint8_t minorver = PLAYLIST_MINOR_VER;
     FILE *fp = fopen (fname, "w+b");
     if (!fp) {
+        GLOBAL_UNLOCK;
         return -1;
     }
-    GLOBAL_LOCK;
     if (fwrite (magic, 1, 4, fp) != 4) {
         goto save_fail;
     }
