@@ -676,6 +676,22 @@ save_playlist_as (void) {
     gtk_file_filter_set_name (flt, _("DeaDBeeF playlist files (*.dbpl)"));
     gtk_file_filter_add_pattern (flt, "*.dbpl");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
+    DB_playlist_t **plug = deadbeef->plug_get_playlist_list ();
+    for (int i = 0; plug[i]; i++) {
+        if (plug[i]->extensions && plug[i]->load) {
+            const char **exts = plug[i]->extensions;
+            if (exts && plug[i]->save) {
+                for (int e = 0; exts[e]; e++) {
+                    char s[100];
+                    flt = gtk_file_filter_new ();
+                    gtk_file_filter_set_name (flt, exts[e]);
+                    snprintf (s, sizeof (s), "*.%s", exts[e]);
+                    gtk_file_filter_add_pattern (flt, s);
+                    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
+                }
+            }
+        }
+    }
 
     int res = gtk_dialog_run (GTK_DIALOG (dlg));
     // store folder
