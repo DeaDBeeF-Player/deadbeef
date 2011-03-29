@@ -926,7 +926,10 @@ typedef struct DB_playlist_s {
 
     DB_playItem_t * (*load) (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 
-    DB_playItem_t * (*save) (DB_playItem_t *first, DB_playItem_t *last, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+    // will save items from first to last (inclusive)
+    // format is determined by extension
+    // playlist is protected from changes during the call
+    int (*save) (const char *fname, DB_playItem_t *first, DB_playItem_t *last);
 
     const char **extensions; // NULL-terminated list of supported file extensions, e.g. {"m3u", "pls", NULL}
 } DB_playlist_t;
