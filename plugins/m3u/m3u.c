@@ -19,6 +19,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 #include "../../deadbeef.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -347,6 +348,90 @@ m3uplug_load (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB
     return NULL;
 }
 
+int
+m3uplug_save_m3u (const char *fname, DB_playItem_t *first, DB_playItem_t *last) {
+    FILE *fp = fopen (fname, "w+t");
+    if (!fp) {
+        return -1;
+    }
+    DB_playItem_t *it = first;
+    deadbeef->pl_item_ref (it);
+    while (it) {
+        int dur = (int)ceil(deadbeef->pl_get_item_duration (it));
+        char s[1000];
+        deadbeef->pl_format_title (it, -1, s, sizeof (s), -1, "%a - %t");
+        const char *fname = deadbeef->pl_find_meta (it, ":URI");
+        fprintf (fp, "#EXTINF:%d,%s\n", dur, s);
+        fprintf (fp, "%s\n", fname);
+
+        if (it == last) {
+            break;
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+    fclose (fp);
+    return 0;
+}
+
+int
+m3uplug_save_pls (const char *fname, DB_playItem_t *first, DB_playItem_t *last) {
+    FILE *fp = fopen (fname, "w+t");
+    if (!fp) {
+        return -1;
+    }
+
+    int n = 0;
+    DB_playItem_t *it = first;
+    deadbeef->pl_item_ref (it);
+    while (it) {
+        n++;
+        if (it == last) {
+            break;
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+
+    fprintf (fp, "[playlist]\n");
+    fprintf (fp, "NumberOfEntries=%d\n", n);
+
+    it = first;
+    deadbeef->pl_item_ref (it);
+    int i = 1;
+    while (it) {
+        const char *fname = deadbeef->pl_find_meta (it, ":URI");
+        fprintf (fp, "File%d=%s\n", i, fname);
+
+        if (it == last) {
+            break;
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        deadbeef->pl_item_unref (it);
+        it = next;
+        i++;
+    }
+    fclose (fp);
+    return 0;
+}
+
+int
+m3uplug_save (const char *fname, DB_playItem_t *first, DB_playItem_t *last) {
+    const char *e = strrchr (fname, '.');
+    if (!e) {
+        return -1;
+    }
+    if (!strcasecmp (e, ".m3u")) {
+        return m3uplug_save_m3u (fname, first, last);
+    }
+    else if (!strcasecmp (e, ".pls")) {
+        return m3uplug_save_pls (fname, first, last);
+    }
+    return -1;
+}
+
 static const char * exts[] = { "m3u", "pls", NULL };
 DB_playlist_t plugin = {
     DB_PLUGIN_SET_API_VERSION
@@ -375,6 +460,7 @@ DB_playlist_t plugin = {
     ,
     .plugin.website = "http://deadbeef.sf.net",
     .load = m3uplug_load,
+    .save = m3uplug_save,
     .extensions = exts,
 };
 
