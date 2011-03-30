@@ -63,9 +63,8 @@
 #define USE_ABSTRACT_NAME 0
 #endif
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
-
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 // some common global variables
 char sys_install_path[PATH_MAX]; // see deadbeef->get_prefix
@@ -358,16 +357,34 @@ server_update (void) {
     return 0;
 }
 
+static uintptr_t server_tid;
+static int server_terminate;
+
 void
-player_mainloop (void) {
-    for (;;) {
-        static int srvupd_count = 0;
-        if (--srvupd_count <= 0) {
-            srvupd_count = 10;
+server_loop (void *ctx) {
+    fd_set rds;
+    int ret;
+    struct timeval timeout = {0, 0};
+
+    FD_ZERO(&rds);
+    while (!server_terminate) {
+        FD_SET(srv_socket, &rds);
+        timeout.tv_usec = 50000;
+        if ((ret = select(srv_socket + 1, &rds, NULL, NULL, &timeout)) < 0 && errno != EINTR) {
+            perror("select");
+            exit (-1);
+        }
+        if (ret > 0) {
             if (server_update () < 0) {
                 messagepump_push (M_TERMINATE, 0, 0, 0);
             }
         }
+    }
+}
+
+void
+player_mainloop (void) {
+    for (;;) {
         uint32_t msg;
         uintptr_t ctx;
         uint32_t p1;
@@ -809,8 +826,15 @@ main (int argc, char *argv[]) {
         restore_resume_state ();
     }
 
+    server_tid = thread_start (server_loop, NULL);
     // this runs in main thread (blocks right here)
     player_mainloop ();
+    // terminate server and wait for completion
+    if (server_tid) {
+        server_terminate = 1;
+        thread_join (server_tid);
+        server_tid = 0;
+    }
 
     save_resume_state ();
 
