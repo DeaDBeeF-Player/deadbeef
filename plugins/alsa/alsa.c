@@ -192,11 +192,24 @@ retry:
 #else
         int fmt[] = { SND_PCM_FORMAT_S16_LE, SND_PCM_FORMAT_S24_3LE, SND_PCM_FORMAT_S32_LE, SND_PCM_FORMAT_FLOAT_LE, SND_PCM_FORMAT_S8, -1 };
 #endif
+
+        // 1st try formats with higher bps
         int i = 0;
         for (i = 0; fmt[i] != -1; i++) {
-            if (fmt[i] != sample_fmt) {
+            if (fmt[i] != sample_fmt && fmt[i] > sample_fmt) {
                 if (snd_pcm_hw_params_set_format (audio, hw_params, fmt[i]) >= 0) {
                     break;
+                }
+            }
+        }
+        if (fmt[i] == -1) {
+            // next try formats with lower bps
+            i = 0;
+            for (i = 0; fmt[i] != -1; i++) {
+                if (fmt[i] != sample_fmt && fmt[i] < sample_fmt) {
+                    if (snd_pcm_hw_params_set_format (audio, hw_params, fmt[i]) >= 0) {
+                        break;
+                    }
                 }
             }
         }
