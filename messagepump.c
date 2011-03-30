@@ -34,6 +34,7 @@ static message_t *mfree;
 static message_t *mqueue;
 static message_t *mqtail;
 static uintptr_t mutex;
+static uintptr_t cond;
 
 static void
 messagepump_reset (void);
@@ -42,6 +43,7 @@ int
 messagepump_init (void) {
     messagepump_reset ();
     mutex = mutex_create ();
+    cond = cond_create ();
     return 0;
 }
 
@@ -51,6 +53,7 @@ messagepump_free () {
     messagepump_reset ();
     mutex_unlock (mutex);
     mutex_free (mutex);
+    cond_free (cond);
 }
 
 static void
@@ -88,7 +91,14 @@ messagepump_push (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     msg->p1 = p1;
     msg->p2 = p2;
     mutex_unlock (mutex);
+    cond_signal (cond);
     return 0;
+}
+
+void
+messagepump_wait (void) {
+    cond_wait (cond, mutex);
+    mutex_unlock (mutex);
 }
 
 int

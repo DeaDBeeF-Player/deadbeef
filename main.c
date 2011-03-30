@@ -389,6 +389,7 @@ player_mainloop (void) {
         uintptr_t ctx;
         uint32_t p1;
         uint32_t p2;
+        messagepump_wait ();
         while (messagepump_pop(&msg, &ctx, &p1, &p2) != -1) {
             DB_output_t *output = plug_get_output ();
             switch (msg) {
@@ -455,8 +456,8 @@ player_mainloop (void) {
                 break;
             }
         }
-        usleep(50000);
-        plug_trigger_event (DB_EV_FRAMEUPDATE, 0);
+        //usleep(50000);
+        //plug_trigger_event (DB_EV_FRAMEUPDATE, 0);
     }
 }
 

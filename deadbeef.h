@@ -218,7 +218,6 @@ typedef int (*DB_callback_t)(DB_event_t *, uintptr_t data);
 
 // events
 enum {
-    DB_EV_FRAMEUPDATE = 0, // ticks around 20 times per second, but ticker may stop sometimes
     DB_EV_SONGCHANGED = 1, // triggers when song was just changed
     DB_EV_SONGSTARTED = 2, // triggers when song started playing (for scrobblers and such)
     DB_EV_SONGFINISHED = 3, // triggers when song finished playing (for scrobblers and such)
