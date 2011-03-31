@@ -39,7 +39,8 @@ run_tagwriter_settings (GtkWidget *parentwindow) {
     int write_id3v1 = deadbeef->conf_get_int ("mp3.write_id3v1", 1);
     int write_apev2 = deadbeef->conf_get_int ("mp3.write_apev2", 0);
     int id3v2_version = deadbeef->conf_get_int ("mp3.id3v2_version", 3);
-    const char *id3v1_encoding = deadbeef->conf_get_str ("mp3.id3v1_encoding", "iso8859-1");
+    char id3v1_encoding[50];
+    deadbeef->conf_get_str ("mp3.id3v1_encoding", "iso8859-1", id3v1_encoding, sizeof (id3v1_encoding));
     int ape_strip_id3v2 = deadbeef->conf_get_int ("ape.strip_id3v2", 0);
     int ape_strip_apev2 = deadbeef->conf_get_int ("ape.strip_apev2", 0);
     int ape_write_id3v2 = deadbeef->conf_get_int ("ape.write_id3v2", 0);

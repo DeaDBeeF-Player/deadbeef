@@ -722,9 +722,9 @@ artwork_on_configchanged (DB_event_t *ev, uintptr_t data) {
     int new_artwork_enable_local = deadbeef->conf_get_int ("artwork.enable_localfolder", 1);
     int new_artwork_enable_lfm = deadbeef->conf_get_int ("artwork.enable_lastfm", 0);
     int new_artwork_enable_aao = deadbeef->conf_get_int ("artwork.enable_albumartorg", 0);
+
     char new_artwork_filemask[200];
-    strncpy (new_artwork_filemask, deadbeef->conf_get_str ("artwork.filemask", DEFAULT_FILEMASK), sizeof (new_artwork_filemask));
-    new_artwork_filemask[sizeof(new_artwork_filemask)-1] = 0;
+    deadbeef->conf_get_str ("artwork.filemask", DEFAULT_FILEMASK, new_artwork_filemask, sizeof (new_artwork_filemask));
 
     if (new_artwork_enable_embedded != artwork_enable_embedded
             || new_artwork_enable_local != artwork_enable_local
@@ -749,7 +749,9 @@ artwork_on_configchanged (DB_event_t *ev, uintptr_t data) {
 static int
 artwork_plugin_start (void)
 {
-    const char *def_art = deadbeef->conf_get_str ("gtkui.nocover_pixmap", NULL);
+    deadbeef->conf_lock ();
+
+    const char *def_art = deadbeef->conf_get_str_fast ("gtkui.nocover_pixmap", NULL);
     if (!def_art) {
         snprintf (default_cover, sizeof (default_cover), "%s/noartwork.jpg", deadbeef->get_pixmap_dir ());
     }
@@ -764,7 +766,10 @@ artwork_plugin_start (void)
     artwork_enable_aao = deadbeef->conf_get_int ("artwork.enable_albumartorg", 0);
     artwork_reset_time = deadbeef->conf_get_int64 ("artwork.cache_reset_time", 0);
 
-    strncpy (artwork_filemask, deadbeef->conf_get_str ("artwork.filemask", DEFAULT_FILEMASK), sizeof (artwork_filemask));
+    deadbeef->conf_get_str ("artwork.filemask", DEFAULT_FILEMASK, artwork_filemask, sizeof (artwork_filemask));
+
+    deadbeef->conf_unlock ();
+
     artwork_filemask[sizeof(artwork_filemask)-1] = 0;
 
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (artwork_on_configchanged), 0);

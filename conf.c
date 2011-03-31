@@ -21,9 +21,39 @@
 #include <stdlib.h>
 #include <inttypes.h>
 #include "conf.h"
+#include "threading.h"
+
+#define min(x,y) ((x)<(y)?(x):(y))
 
 static DB_conf_item_t *conf_items;
 static int changed = 0;
+static uintptr_t mutex;
+
+void
+conf_init (void) {
+    mutex = mutex_create ();
+}
+
+void
+conf_lock (void) {
+    mutex_lock (mutex);
+}
+
+void
+conf_unlock (void) {
+    mutex_unlock (mutex);
+}
+
+void
+conf_free (void) {
+    mutex_lock (mutex);
+    DB_conf_item_t *next = NULL;
+    for (DB_conf_item_t *it = conf_items; it; it = next) {
+        next = it->next;
+        conf_item_free (it);
+    }
+    mutex_free (mutex);
+}
 
 int
 conf_load (void) {
@@ -35,6 +65,7 @@ conf_load (void) {
         fprintf (stderr, "failed to load config file\n");
         return -1;
     }
+    conf_lock ();
     int line = 0;
     while (fgets (str, 1024, fp) != NULL) {
         line++;
@@ -70,6 +101,7 @@ conf_load (void) {
     }
     fclose (fp);
     changed = 0;
+    conf_unlock ();
     return 0;
 }
 
@@ -83,24 +115,18 @@ conf_save (void) {
         fprintf (stderr, "failed to open config file for writing\n");
         return -1;
     }
+    conf_lock ();
     for (DB_conf_item_t *it = conf_items; it; it = it->next) {
         fprintf (fp, "%s %s\n", it->key, it->value);
     }
     fclose (fp);
+    conf_unlock ();
     return 0;
 }
 
 void
-conf_free (void) {
-    DB_conf_item_t *next = NULL;
-    for (DB_conf_item_t *it = conf_items; it; it = next) {
-        next = it->next;
-        conf_item_free (it);
-    }
-}
-
-void
 conf_item_free (DB_conf_item_t *it) {
+    conf_lock ();
     if (it) {
         if (it->key) {
             free (it->key);
@@ -110,10 +136,11 @@ conf_item_free (DB_conf_item_t *it) {
         }
         free (it);
     }
+    conf_unlock ();
 }
 
 const char *
-conf_get_str (const char *key, const char *def) {
+conf_get_str_fast (const char *key, const char *def) {
     for (DB_conf_item_t *it = conf_items; it; it = it->next) {
         if (!strcasecmp (key, it->key)) {
             return it->value;
@@ -122,21 +149,43 @@ conf_get_str (const char *key, const char *def) {
     return def;
 }
 
+void
+conf_get_str (const char *key, const char *def, char *buffer, int buffer_size) {
+    conf_lock ();
+    const char *out = conf_get_str_fast (key, def);
+    if (out) {
+        int n = strlen (out)+1;
+        n = min (n, buffer_size);
+        memcpy (buffer, out, n);
+        buffer[buffer_size-1] = 0;
+    }
+    else {
+        *buffer = 0;
+    }
+    conf_unlock ();
+}
+
 float
 conf_get_float (const char *key, float def) {
-    const char *v = conf_get_str (key, NULL);
+    conf_lock ();
+    const char *v = conf_get_str_fast (key, NULL);
+    conf_unlock ();
     return v ? atof (v) : def;
 }
 
 int
 conf_get_int (const char *key, int def) {
-    const char *v = conf_get_str (key, NULL);
+    conf_lock ();
+    const char *v = conf_get_str_fast (key, NULL);
+    conf_unlock ();
     return v ? atoi (v) : def;
 }
 
 int64_t
 conf_get_int64 (const char *key, int64_t def) {
-    const char *v = conf_get_str (key, NULL);
+    conf_lock ();
+    const char *v = conf_get_str_fast (key, NULL);
+    conf_unlock ();
     return v ? atoll (v) : def;
 }
 
@@ -153,6 +202,7 @@ conf_find (const char *group, DB_conf_item_t *prev) {
 
 void
 conf_set_str (const char *key, const char *val) {
+    conf_lock ();
     changed = 1;
     DB_conf_item_t *prev = NULL;
     for (DB_conf_item_t *it = conf_items; it; it = it->next) {
@@ -160,6 +210,7 @@ conf_set_str (const char *key, const char *val) {
         if (!cmp) {
             free (it->value);
             it->value = strdup (val);
+            conf_unlock ();
             return;
         }
         else if (cmp < 0) {
@@ -168,6 +219,7 @@ conf_set_str (const char *key, const char *val) {
         prev = it;
     }
     if (!val) {
+        conf_unlock ();
         return;
     }
     DB_conf_item_t *it = malloc (sizeof (DB_conf_item_t));
@@ -183,6 +235,7 @@ conf_set_str (const char *key, const char *val) {
         it->next = conf_items;
         conf_items = it;
     }
+    conf_unlock ();
 }
 
 void
@@ -219,6 +272,7 @@ conf_setchanged (int c) {
 void
 conf_remove_items (const char *key) {
     int l = strlen (key);
+    conf_lock ();
     DB_conf_item_t *prev = NULL;
     DB_conf_item_t *it;
     for (it = conf_items; it; prev = it, it = it->next) {
@@ -241,4 +295,5 @@ conf_remove_items (const char *key) {
     else {
         conf_items = next;
     }
+    conf_unlock ();
 }

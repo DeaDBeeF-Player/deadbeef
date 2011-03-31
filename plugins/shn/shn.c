@@ -306,8 +306,9 @@ shn_init_decoder (shn_fileinfo_t *info) {
 static void
 shn_init_config (void) {
 	shn_cfg.error_output_method = ERROR_OUTPUT_DEVNULL;
-	strncpy (shn_cfg.seek_tables_path, deadbeef->conf_get_str ("shn.seektable_path", ""), sizeof (shn_cfg.seek_tables_path));
-	strncpy (shn_cfg.relative_seek_tables_path, deadbeef->conf_get_str ("shn.relative_seektable_path", "seektables"), sizeof (shn_cfg.relative_seek_tables_path));
+
+	deadbeef->conf_get_str ("shn.seektable_path", "", shn_cfg.seek_tables_path, sizeof (shn_cfg.seek_tables_path));
+	deadbeef->conf_get_str ("shn.relative_seektable_path", "seektables", shn_cfg.relative_seek_tables_path, sizeof (shn_cfg.relative_seek_tables_path));
 	shn_cfg.verbose = 0;
 	shn_cfg.swap_bytes = deadbeef->conf_get_int ("shn.swap_bytes", 0);
 }

@@ -227,6 +227,7 @@ gtkui_override_tabstrip_colors (void) {
 
 void
 gtkui_init_theme_colors (void) {
+    deadbeef->conf_lock ();
     override_listview_colors= deadbeef->conf_get_int ("gtkui.override_listview_colors", 0);
     override_bar_colors = deadbeef->conf_get_int ("gtkui.override_bar_colors", 0);
     override_tabstrip_colors = deadbeef->conf_get_int ("gtkui.override_tabstrip_colors", 0);
@@ -242,11 +243,11 @@ gtkui_init_theme_colors (void) {
     }
     else {
         snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->base[GTK_STATE_SELECTED].red, style->base[GTK_STATE_SELECTED].green, style->base[GTK_STATE_SELECTED].blue);
-        clr = deadbeef->conf_get_str ("gtkui.color.bar_foreground", color_text);
+        clr = deadbeef->conf_get_str_fast ("gtkui.color.bar_foreground", color_text);
         sscanf (clr, "%hd %hd %hd", &gtkui_bar_foreground_color.red, &gtkui_bar_foreground_color.green, &gtkui_bar_foreground_color.blue);
 
         snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->fg[GTK_STATE_NORMAL].red, style->fg[GTK_STATE_NORMAL].green, style->fg[GTK_STATE_NORMAL].blue);
-        clr = deadbeef->conf_get_str ("gtkui.color.bar_background", color_text);
+        clr = deadbeef->conf_get_str_fast ("gtkui.color.bar_background", color_text);
         sscanf (clr, "%hd %hd %hd", &gtkui_bar_background_color.red, &gtkui_bar_background_color.green, &gtkui_bar_background_color.blue);
 
     }
@@ -260,23 +261,23 @@ gtkui_init_theme_colors (void) {
     }
     else {
         snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->dark[GTK_STATE_NORMAL].red, style->dark[GTK_STATE_NORMAL].green, style->dark[GTK_STATE_NORMAL].blue);
-        clr = deadbeef->conf_get_str ("gtkui.color.tabstrip_dark", color_text);
+        clr = deadbeef->conf_get_str_fast ("gtkui.color.tabstrip_dark", color_text);
         sscanf (clr, "%hd %hd %hd", &gtkui_tabstrip_dark_color.red, &gtkui_tabstrip_dark_color.green, &gtkui_tabstrip_dark_color.blue);
 
         snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->mid[GTK_STATE_NORMAL].red, style->mid[GTK_STATE_NORMAL].green, style->mid[GTK_STATE_NORMAL].blue);
-        clr = deadbeef->conf_get_str ("gtkui.color.tabstrip_mid", color_text);
+        clr = deadbeef->conf_get_str_fast ("gtkui.color.tabstrip_mid", color_text);
         sscanf (clr, "%hd %hd %hd", &gtkui_tabstrip_mid_color.red, &gtkui_tabstrip_mid_color.green, &gtkui_tabstrip_mid_color.blue);
 
         snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->light[GTK_STATE_NORMAL].red, style->light[GTK_STATE_NORMAL].green, style->light[GTK_STATE_NORMAL].blue);
-        clr = deadbeef->conf_get_str ("gtkui.color.tabstrip_light", color_text);
+        clr = deadbeef->conf_get_str_fast ("gtkui.color.tabstrip_light", color_text);
         sscanf (clr, "%hd %hd %hd", &gtkui_tabstrip_light_color.red, &gtkui_tabstrip_light_color.green, &gtkui_tabstrip_light_color.blue);
 
         snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->bg[GTK_STATE_NORMAL].red, style->bg[GTK_STATE_NORMAL].green, style->bg[GTK_STATE_NORMAL].blue);
-        clr = deadbeef->conf_get_str ("gtkui.color.tabstrip_base", color_text);
+        clr = deadbeef->conf_get_str_fast ("gtkui.color.tabstrip_base", color_text);
         sscanf (clr, "%hd %hd %hd", &gtkui_tabstrip_base_color.red, &gtkui_tabstrip_base_color.green, &gtkui_tabstrip_base_color.blue);
 
         snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->text[GTK_STATE_NORMAL].red, style->text[GTK_STATE_NORMAL].green, style->text[GTK_STATE_NORMAL].blue);
-        clr = deadbeef->conf_get_str ("gtkui.color.tabstrip_text", color_text);
+        clr = deadbeef->conf_get_str_fast ("gtkui.color.tabstrip_text", color_text);
         sscanf (clr, "%hd %hd %hd", &gtkui_tabstrip_text_color.red, &gtkui_tabstrip_text_color.green, &gtkui_tabstrip_text_color.blue);
     }
 
@@ -290,29 +291,30 @@ gtkui_init_theme_colors (void) {
     }
     else {
         snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->light[GTK_STATE_NORMAL].red, style->light[GTK_STATE_NORMAL].green, style->light[GTK_STATE_NORMAL].blue);
-        clr = deadbeef->conf_get_str ("gtkui.color.listview_even_row", color_text);
+        clr = deadbeef->conf_get_str_fast ("gtkui.color.listview_even_row", color_text);
         sscanf (clr, "%hd %hd %hd", &gtkui_listview_even_row_color.red, &gtkui_listview_even_row_color.green, &gtkui_listview_even_row_color.blue);
 
         snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->mid[GTK_STATE_NORMAL].red, style->mid[GTK_STATE_NORMAL].green, style->mid[GTK_STATE_NORMAL].blue);
-        clr = deadbeef->conf_get_str ("gtkui.color.listview_odd_row", color_text);
+        clr = deadbeef->conf_get_str_fast ("gtkui.color.listview_odd_row", color_text);
         sscanf (clr, "%hd %hd %hd", &gtkui_listview_odd_row_color.red, &gtkui_listview_odd_row_color.green, &gtkui_listview_odd_row_color.blue);
 
         snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->mid[GTK_STATE_NORMAL].red, style->mid[GTK_STATE_NORMAL].green, style->mid[GTK_STATE_NORMAL].blue);
-        clr = deadbeef->conf_get_str ("gtkui.color.listview_selection", color_text);
+        clr = deadbeef->conf_get_str_fast ("gtkui.color.listview_selection", color_text);
         sscanf (clr, "%hd %hd %hd", &gtkui_listview_selection_color.red, &gtkui_listview_selection_color.green, &gtkui_listview_selection_color.blue);
 
         snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->fg[GTK_STATE_NORMAL].red, style->fg[GTK_STATE_NORMAL].green, style->fg[GTK_STATE_NORMAL].blue);
-        clr = deadbeef->conf_get_str ("gtkui.color.listview_text", color_text);
+        clr = deadbeef->conf_get_str_fast ("gtkui.color.listview_text", color_text);
         sscanf (clr, "%hd %hd %hd", &gtkui_listview_text_color.red, &gtkui_listview_text_color.green, &gtkui_listview_text_color.blue);
 
         snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->fg[GTK_STATE_SELECTED].red, style->fg[GTK_STATE_SELECTED].green, style->fg[GTK_STATE_SELECTED].blue);
-        clr = deadbeef->conf_get_str ("gtkui.color.listview_selected_text", color_text);
+        clr = deadbeef->conf_get_str_fast ("gtkui.color.listview_selected_text", color_text);
         sscanf (clr, "%hd %hd %hd", &gtkui_listview_selected_text_color.red, &gtkui_listview_selected_text_color.green, &gtkui_listview_selected_text_color.blue);
 
         snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->fg[GTK_STATE_SELECTED].red, style->fg[GTK_STATE_SELECTED].green, style->fg[GTK_STATE_SELECTED].blue);
-        clr = deadbeef->conf_get_str ("gtkui.color.listview_cursor", color_text);
+        clr = deadbeef->conf_get_str_fast ("gtkui.color.listview_cursor", color_text);
         sscanf (clr, "%hd %hd %hd", &gtkui_listview_cursor_color.red, &gtkui_listview_cursor_color.green, &gtkui_listview_cursor_color.blue);
     }
+    deadbeef->conf_unlock ();
 }
 
 void

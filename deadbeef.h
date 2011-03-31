@@ -299,19 +299,23 @@ typedef struct {
     // versioning
     int vmajor;
     int vminor;
+
     // event subscribing
     void (*ev_subscribe) (struct DB_plugin_s *plugin, int ev, DB_callback_t callback, uintptr_t data);
     void (*ev_unsubscribe) (struct DB_plugin_s *plugin, int ev, DB_callback_t callback, uintptr_t data);
+
     // md5sum calc
     void (*md5) (uint8_t sig[16], const char *in, int len);
     void (*md5_to_str) (char *str, const uint8_t sig[16]);
     void (*md5_init)(DB_md5_t *s);
     void (*md5_append)(DB_md5_t *s, const uint8_t *data, int nbytes);
     void (*md5_finish)(DB_md5_t *s, uint8_t digest[16]);
+
     // playback control
     struct DB_output_s* (*get_output) (void);
     float (*playback_get_pos) (void); // [0..100]
     void (*playback_set_pos) (float pos); // [0..100]
+
     // streamer access
     DB_playItem_t *(*streamer_get_playing_track) (void);
     DB_playItem_t *(*streamer_get_streaming_track) (void);
@@ -327,6 +331,7 @@ typedef struct {
     struct ddb_dsp_context_s * (*streamer_get_dsp_chain) (void);
     void (*streamer_set_dsp_chain) (struct ddb_dsp_context_s *chain);
     void (*streamer_dsp_refresh) (void); // call after changing parameters
+
     // system folders
     // normally functions will return standard folders derived from --prefix
     // portable version will return pathes specified in comments below
@@ -335,8 +340,10 @@ typedef struct {
     const char *(*get_doc_dir) (void); // installdir/doc | DOCDIR
     const char *(*get_plugin_dir) (void); // installdir/plugins | LIBDIR/deadbeef
     const char *(*get_pixmap_dir) (void); // installdir/pixmaps | PREFIX "/share/deadbeef/pixmaps"
+
     // process control
     void (*quit) (void);
+
     // threading
     intptr_t (*thread_start) (void (*fn)(void *ctx), void *ctx);
     intptr_t (*thread_start_low_priority) (void (*fn)(void *ctx), void *ctx);
@@ -353,6 +360,7 @@ typedef struct {
     int (*cond_wait) (uintptr_t cond, uintptr_t mutex);
     int (*cond_signal) (uintptr_t cond);
     int (*cond_broadcast) (uintptr_t cond);
+
     // playlist management
     int (*plt_get_count) (void);
     DB_playItem_t * (*plt_get_head) (int plt);
@@ -367,6 +375,7 @@ typedef struct {
     void *(*plt_get_handle) (int idx);
     int (*plt_get_title) (void *handle, char *buffer, int bufsize);
     int (*plt_set_title) (void *handle, const char *title);
+
     // playlist metadata
     // this kind of metadata is stored in playlist (dbpl) files
     void (*plt_add_meta) (void *handle, const char *key, const char *value);
@@ -380,11 +389,13 @@ typedef struct {
     int (*plt_find_meta_int) (void *handle, const char *key, int def);
     float (*plt_find_meta_float) (void *handle, const char *key, float def);
     void (*plt_delete_all_meta) (void *handle);
-    // playlist control
+
+    // playlist locking
     void (*pl_lock) (void);
     void (*pl_unlock) (void);
     void (*plt_lock) (void);
     void (*plt_unlock) (void);
+
     // playlist tracks access
     DB_playItem_t * (*pl_item_alloc) (void);
     DB_playItem_t * (*pl_item_alloc_init) (const char *fname, const char *decoder_id);
@@ -455,7 +466,9 @@ typedef struct {
     void (*pl_copy_items) (int iter, int plt_from, DB_playItem_t *before, uint32_t *indices, int cnt);
     void (*pl_search_reset) (void);
     void (*pl_search_process) (const char *text);
+
     // direct access to metadata structures
+    // not thread-safe, make sure to wrap with pl_lock/pl_unlock
     DB_metaInfo_t * (*pl_get_metadata_head) (DB_playItem_t *it); // returns head of metadata linked list
     void (*pl_delete_metadata) (DB_playItem_t *it, DB_metaInfo_t *meta);
 
@@ -467,9 +480,10 @@ typedef struct {
     void (*pl_delete_meta) (DB_playItem_t *it, const char *key);
 
     // this function is not thread-safe
-    // make sure you put it into pl_lock/unlock block
+    // make sure to wrap it with pl_lock/pl_unlock block
     const char *(*pl_find_meta) (DB_playItem_t *it, const char *key);
 
+    // following functions are thread-safe
     int (*pl_find_meta_int) (DB_playItem_t *it, const char *key, int def);
     float (*pl_find_meta_float) (DB_playItem_t *it, const char *key, float def);
     void (*pl_replace_meta) (DB_playItem_t *it, const char *key, const char *value);
@@ -490,15 +504,18 @@ typedef struct {
     void (*pl_playqueue_pop) (void);
     void (*pl_playqueue_remove) (DB_playItem_t *it);
     int (*pl_playqueue_test) (DB_playItem_t *it);
+
     // cuesheet support
     DB_playItem_t *(*pl_insert_cue_from_buffer) (DB_playItem_t *after, DB_playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate);
     DB_playItem_t * (*pl_insert_cue) (DB_playItem_t *after, DB_playItem_t *origin, int numsamples, int samplerate);
+
     // volume control
     void (*volume_set_db) (float dB);
     float (*volume_get_db) (void);
     void (*volume_set_amp) (float amp);
     float (*volume_get_amp) (void);
     float (*volume_get_min_db) (void);
+
     // junk reading/writing
     int (*junk_id3v1_read) (DB_playItem_t *it, DB_FILE *fp);
     int (*junk_id3v1_find) (DB_FILE *fp);
@@ -529,6 +546,7 @@ typedef struct {
     int (*junk_recode) (const char *in, int inlen, char *out, int outlen, const char *cs);
     int (*junk_iconv) (const char *in, int inlen, char *out, int outlen, const char *cs_in, const char *cs_out);
     int (*junk_rewrite_tags) (DB_playItem_t *it, uint32_t flags, int id3v2_version, const char *id3v1_encoding);
+
     // vfs
     DB_FILE* (*fopen) (const char *fname);
     void (*fclose) (DB_FILE *f);
@@ -540,10 +558,21 @@ typedef struct {
     const char *(*fget_content_type) (DB_FILE *stream);
     void (*fset_track) (DB_FILE *stream, DB_playItem_t *it);
     void (*fabort) (DB_FILE *stream);
+
     // message passing
     int (*sendmessage) (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
+
     // configuration access
-    const char * (*conf_get_str) (const char *key, const char *def);
+    //
+    // conf_get_str_fast is not thread-safe, and
+    // must only be used from within conf_lock/conf_unlock block
+    // it should be preferred for fast non-blocking lookups
+    //
+    // all the other config access functions are thread safe
+    void (*conf_lock) (void);
+    void (*conf_unlock) (void);
+    const char * (*conf_get_str_fast) (const char *key, const char *def);
+    void (*conf_get_str) (const char *key, const char *def, char *buffer, int buffer_size);
     float (*conf_get_float) (const char *key, float def);
     int (*conf_get_int) (const char *key, int def);
     int64_t (*conf_get_int64) (const char *key, int64_t def);
@@ -554,6 +583,7 @@ typedef struct {
     DB_conf_item_t * (*conf_find) (const char *group, DB_conf_item_t *prev);
     void (*conf_remove_items) (const char *key);
     int (*conf_save) (void);
+
     // plugin communication
     struct DB_decoder_s **(*plug_get_decoder_list) (void);
     struct DB_vfs_s **(*plug_get_vfs_list) (void);
@@ -565,10 +595,12 @@ typedef struct {
     const char * (*plug_get_decoder_id) (const char *id);
     void (*plug_remove_decoder_id) (const char *id);
     struct DB_plugin_s *(*plug_get_for_id) (const char *id);
+
     // plugin events
     void (*plug_trigger_event_trackchange) (DB_playItem_t *from, DB_playItem_t *to);
     void (*plug_trigger_event_trackinfochanged) (DB_playItem_t *track);
     void (*plug_trigger_event_playlistchanged) (void);
+
     // misc utilities
     int (*is_local_file) (const char *fname); // returns 1 for local filename, 0 otherwise
 

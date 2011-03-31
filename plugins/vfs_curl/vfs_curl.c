@@ -558,9 +558,10 @@ http_thread_func (void *ctx) {
             curl_easy_setopt (curl, CURLOPT_RESUME_FROM, fp->pos);
         }
         if (deadbeef->conf_get_int ("network.proxy", 0)) {
-            curl_easy_setopt (curl, CURLOPT_PROXY, deadbeef->conf_get_str ("network.proxy.address", ""));
+            deadbeef->conf_lock ();
+            curl_easy_setopt (curl, CURLOPT_PROXY, deadbeef->conf_get_str_fast ("network.proxy.address", ""));
             curl_easy_setopt (curl, CURLOPT_PROXYPORT, deadbeef->conf_get_int ("network.proxy.port", 8080));
-            const char *type = deadbeef->conf_get_str ("network.proxy.type", "HTTP");
+            const char *type = deadbeef->conf_get_str_fast ("network.proxy.type", "HTTP");
             int curlproxytype = CURLPROXY_HTTP;
             if (!strcasecmp (type, "HTTP")) {
                 curlproxytype = CURLPROXY_HTTP;
@@ -588,8 +589,8 @@ http_thread_func (void *ctx) {
 #endif
             curl_easy_setopt (curl, CURLOPT_PROXYTYPE, curlproxytype);
 
-            const char *proxyuser = deadbeef->conf_get_str ("network.proxy.username", "");
-            const char *proxypass = deadbeef->conf_get_str ("network.proxy.password", "");
+            const char *proxyuser = deadbeef->conf_get_str_fast ("network.proxy.username", "");
+            const char *proxypass = deadbeef->conf_get_str_fast ("network.proxy.password", "");
             if (*proxyuser || *proxypass) {
 #if LIBCURL_VERSION_MINOR >= 19 && LIBCURL_VERSION_PATCH >= 1
                 curl_easy_setopt (curl, CURLOPT_PROXYUSERNAME, proxyuser);
@@ -600,6 +601,7 @@ http_thread_func (void *ctx) {
                 curl_easy_setopt (curl, CURLOPT_PROXYUSERPWD, pwd);
 #endif
             }
+            deadbeef->conf_unlock ();
         }
 //        fp->status = STATUS_INITIAL;
         trace ("vfs_curl: calling curl_easy_perform (status=%d)...\n", fp->status);

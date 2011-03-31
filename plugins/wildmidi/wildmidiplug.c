@@ -131,7 +131,8 @@ wmidi_insert (DB_playItem_t *after, const char *fname) {
 
 int
 wmidi_start (void) {
-    const char *config_files = deadbeef->conf_get_str ("wildmidi.config", DEFAULT_TIMIDITY_CONFIG);
+    char config_files[1000];
+    deadbeef->conf_get_str ("wildmidi.config", DEFAULT_TIMIDITY_CONFIG, config_files, sizeof (config_files));
     char config[1024] = "";
     const char *p = config_files;
     while (p) {

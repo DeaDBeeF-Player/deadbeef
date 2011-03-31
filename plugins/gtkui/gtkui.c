@@ -119,6 +119,7 @@ update_songinfo (gpointer ctx) {
     if (!gtk_widget_get_visible (mainwin) || iconified) {
         return FALSE;
     }
+    DB_output_t *output = deadbeef->get_output ();
     char sbtext_new[512] = "-";
     float songpos = last_songpos;
 
@@ -144,7 +145,7 @@ update_songinfo (gpointer ctx) {
 
     float duration = track ? deadbeef->pl_get_item_duration (track) : -1;
 
-    if (deadbeef->get_output ()->state () == OUTPUT_STATE_STOPPED || !track || !c) {
+    if (!output || (output->state () == OUTPUT_STATE_STOPPED || !track || !c)) {
         snprintf (sbtext_new, sizeof (sbtext_new), _("Stopped | %d tracks | %s total playtime"), deadbeef->pl_getcount (PL_MAIN), totaltime_str);
         songpos = 0;
     }
@@ -397,13 +398,13 @@ gtkui_set_titlebar (DB_playItem_t *it) {
     else {
         deadbeef->pl_item_ref (it);
     }
+    char fmt[500];
     char str[600];
-    const char *fmt;
     if (it) {
-        fmt = deadbeef->conf_get_str ("gtkui.titlebar_playing", "%a - %t - DeaDBeeF-%V");
+        deadbeef->conf_get_str ("gtkui.titlebar_playing", "%a - %t - DeaDBeeF-%V", fmt, sizeof (fmt));
     }
     else {
-        fmt = deadbeef->conf_get_str ("gtkui.titlebar_stopped", "DeaDBeeF-%V");
+        deadbeef->conf_get_str ("gtkui.titlebar_stopped", "DeaDBeeF-%V", fmt, sizeof (fmt));
     }
     deadbeef->pl_format_title (it, -1, str, sizeof (str), -1, fmt);
     gtk_window_set_title (GTK_WINDOW (mainwin), str);
@@ -532,7 +533,7 @@ gtkui_on_playlistswitch (DB_event_t *ev, uintptr_t data) {
 }
 
 static gboolean
-gtkui_on_frameupdate (uintptr_t data) {
+gtkui_on_frameupdate (gpointer data) {
     update_songinfo (NULL);
 
     return TRUE;
@@ -570,7 +571,9 @@ gtkui_update_status_icon (gpointer unused) {
     // system tray icon
     traymenu = create_traymenu ();
 
-    const char *icon_name = deadbeef->conf_get_str ("gtkui.custom_tray_icon", TRAY_ICON);
+    char tmp[1000];
+    const char *icon_name = tmp;
+    deadbeef->conf_get_str ("gtkui.custom_tray_icon", TRAY_ICON, tmp, sizeof (tmp));
     GtkIconTheme *theme = gtk_icon_theme_get_default();
 
     if (!gtk_icon_theme_has_icon(theme, icon_name))
@@ -669,7 +672,9 @@ save_playlist_as (void) {
     gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (dlg), TRUE);
     gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dlg), "untitled.dbpl");
     // restore folder
-    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), deadbeef->conf_get_str ("filechooser.playlist.lastdir", ""));
+    deadbeef->conf_lock ();
+    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), deadbeef->conf_get_str_fast ("filechooser.playlist.lastdir", ""));
+    deadbeef->conf_unlock ();
 
     GtkFileFilter* flt;
     flt = gtk_file_filter_new ();
@@ -769,7 +774,9 @@ on_playlist_load_activate              (GtkMenuItem     *menuitem,
     GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Load Playlist"), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
 
     // restore folder
-    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), deadbeef->conf_get_str ("filechooser.playlist.lastdir", ""));
+    deadbeef->conf_lock ();
+    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), deadbeef->conf_get_str_fast ("filechooser.playlist.lastdir", ""));
+    deadbeef->conf_unlock ();
 
     GtkFileFilter* flt;
     flt = gtk_file_filter_new ();
@@ -1044,8 +1051,10 @@ gtkui_thread (void *ctx) {
 
     g_timeout_add (100, gtkui_on_frameupdate, NULL);
 
+    char fmt[500];
     char str[600];
-    deadbeef->pl_format_title (NULL, -1, str, sizeof (str), -1, deadbeef->conf_get_str ("gtkui.titlebar_stopped", "DeaDBeeF-%V"));
+    deadbeef->conf_get_str ("gtkui.titlebar_stopped", "DeaDBeeF-%V", fmt, sizeof (fmt));
+    deadbeef->pl_format_title (NULL, -1, str, sizeof (str), -1, fmt);
     gtk_window_set_title (GTK_WINDOW (mainwin), str);
     gtk_initialized = 1;
 

@@ -341,7 +341,7 @@ palsa_init (void) {
     mutex = 0;
 
     // get and cache conf variables
-    strcpy (conf_alsa_soundcard, deadbeef->conf_get_str ("alsa_soundcard", "default"));
+    deadbeef->conf_get_str ("alsa_soundcard", "default", conf_alsa_soundcard, sizeof (conf_alsa_soundcard));
     trace ("alsa_soundcard: %s\n", conf_alsa_soundcard);
 
     snd_pcm_sw_params_t *sw_params = NULL;
@@ -682,7 +682,8 @@ palsa_callback (char *stream, int len) {
 
 static int
 palsa_configchanged (DB_event_t *ev, uintptr_t data) {
-    const char *alsa_soundcard = deadbeef->conf_get_str ("alsa_soundcard", "default");
+    deadbeef->conf_lock ();
+    const char *alsa_soundcard = deadbeef->conf_get_str_fast ("alsa_soundcard", "default");
     int buffer = deadbeef->conf_get_int ("alsa.buffer", DEFAULT_BUFFER_SIZE);
     int period = deadbeef->conf_get_int ("alsa.period", DEFAULT_PERIOD_SIZE);
     if (audio &&
@@ -692,6 +693,7 @@ palsa_configchanged (DB_event_t *ev, uintptr_t data) {
         trace ("alsa: config option changed, restarting\n");
         deadbeef->sendmessage (M_REINIT_SOUND, 0, 0, 0);
     }
+    deadbeef->conf_unlock ();
     return 0;
 }
 

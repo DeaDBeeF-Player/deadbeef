@@ -243,7 +243,8 @@ resolve_disc (CdIo_t *cdio)
 
     conn = cddb_new();
 
-    cddb_set_server_name (conn, deadbeef->conf_get_str ("cdda.freedb.host", DEFAULT_SERVER));
+    deadbeef->conf_lock ();
+    cddb_set_server_name (conn, deadbeef->conf_get_str_fast ("cdda.freedb.host", DEFAULT_SERVER));
     cddb_set_server_port (conn, deadbeef->conf_get_int ("cdda.freedb.port", DEFAULT_PORT));
 
     if (!deadbeef->conf_get_int ("cdda.protocol", DEFAULT_PROTOCOL))
@@ -252,9 +253,10 @@ resolve_disc (CdIo_t *cdio)
         if (deadbeef->conf_get_int ("network.proxy", 0))
         {
             cddb_set_server_port(conn, deadbeef->conf_get_int ("network.proxy.port", 8080));
-            cddb_set_server_name(conn, deadbeef->conf_get_str ("network.proxy.address", ""));
+            cddb_set_server_name(conn, deadbeef->conf_get_str_fast ("network.proxy.address", ""));
         }
     }
+    deadbeef->conf_unlock ();
 
     int matches = cddb_query (conn, disc);
     if (matches == -1)

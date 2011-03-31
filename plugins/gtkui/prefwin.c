@@ -59,9 +59,11 @@ gtk_enum_sound_callback (const char *name, const char *desc, void *userdata) {
     GtkComboBox *combobox = GTK_COMBO_BOX (userdata);
     gtk_combo_box_append_text (combobox, desc);
 
-    if (!strcmp (deadbeef->conf_get_str ("alsa_soundcard", "default"), name)) {
+    deadbeef->conf_lock ();
+    if (!strcmp (deadbeef->conf_get_str_fast ("alsa_soundcard", "default"), name)) {
         gtk_combo_box_set_active (combobox, num_alsa_devices);
     }
+    deadbeef->conf_unlock ();
 
     strncpy (alsa_device_names[num_alsa_devices], name, 63);
     alsa_device_names[num_alsa_devices][63] = 0;
@@ -73,15 +75,19 @@ preferences_fill_soundcards (void) {
     if (!prefwin) {
         return;
     }
-    const char *s = deadbeef->conf_get_str ("alsa_soundcard", "default");
     GtkComboBox *combobox = GTK_COMBO_BOX (lookup_widget (prefwin, "pref_soundcard"));
     GtkTreeModel *mdl = gtk_combo_box_get_model (combobox);
     gtk_list_store_clear (GTK_LIST_STORE (mdl));
 
     gtk_combo_box_append_text (combobox, _("Default Audio Device"));
+
+    deadbeef->conf_lock ();
+    const char *s = deadbeef->conf_get_str_fast ("alsa_soundcard", "default");
     if (!strcmp (s, "default")) {
         gtk_combo_box_set_active (combobox, 0);
     }
+    deadbeef->conf_unlock ();
+
     num_alsa_devices = 1;
     strcpy (alsa_device_names[0], "default");
     if (deadbeef->get_output ()->enum_soundcards) {
@@ -455,15 +461,16 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     if (prefwin) {
         return;
     }
+    deadbeef->conf_lock ();
     GtkWidget *w = prefwin = create_prefwin ();
     gtk_window_set_transient_for (GTK_WINDOW (w), GTK_WINDOW (mainwin));
 
     GtkComboBox *combobox = NULL;
 
     // output plugin selection
-    const char *outplugname = deadbeef->conf_get_str ("output_plugin", _("ALSA output plugin"));
     combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_output_plugin"));
 
+    const char *outplugname = deadbeef->conf_get_str_fast ("output_plugin", _("ALSA output plugin"));
     DB_output_t **out_plugs = deadbeef->plug_get_output_list ();
     for (int i = 0; out_plugs[i]; i++) {
         gtk_combo_box_append_text (combobox, out_plugs[i]->plugin.name);
@@ -515,14 +522,14 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "auto_name_playlist_from_folder")), deadbeef->conf_get_int ("gtkui.name_playlist_from_folder", 0));
 
     // titlebar text
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "titlebar_format_playing")), deadbeef->conf_get_str ("gtkui.titlebar_playing", "%a - %t - DeaDBeeF-%V"));
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "titlebar_format_stopped")), deadbeef->conf_get_str ("gtkui.titlebar_stopped", "DeaDBeeF-%V"));
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "titlebar_format_playing")), deadbeef->conf_get_str_fast ("gtkui.titlebar_playing", "%a - %t - DeaDBeeF-%V"));
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "titlebar_format_stopped")), deadbeef->conf_get_str_fast ("gtkui.titlebar_stopped", "DeaDBeeF-%V"));
 
     // cli playlist
     int active = deadbeef->conf_get_int ("cli_add_to_specific_playlist", 1);
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "cli_add_to_playlist")), active);
     gtk_widget_set_sensitive (lookup_widget (prefwin, "cli_playlist_name"), active);
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (prefwin, "cli_playlist_name")), deadbeef->conf_get_str ("cli_add_playlist_name", "Default"));
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (prefwin, "cli_playlist_name")), deadbeef->conf_get_str_fast ("cli_add_playlist_name", "Default"));
 
     // resume last session
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "resume_last_session")), deadbeef->conf_get_int ("resume_last_session", 0));
@@ -532,7 +539,7 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     const char **names = deadbeef->plug_get_gui_names ();
     for (int i = 0; names[i]; i++) {
         gtk_combo_box_append_text (combobox, names[i]);
-        if (!strcmp (names[i], deadbeef->conf_get_str ("gui_plugin", "GTK2"))) {
+        if (!strcmp (names[i], deadbeef->conf_get_str_fast ("gui_plugin", "GTK2"))) {
             gtk_combo_box_set_active (combobox, i);
         }
     }
@@ -557,10 +564,10 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
 
     // network
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "pref_network_enableproxy")), deadbeef->conf_get_int ("network.proxy", 0));
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "pref_network_proxyaddress")), deadbeef->conf_get_str ("network.proxy.address", ""));
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "pref_network_proxyport")), deadbeef->conf_get_str ("network.proxy.port", "8080"));
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "pref_network_proxyaddress")), deadbeef->conf_get_str_fast ("network.proxy.address", ""));
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "pref_network_proxyport")), deadbeef->conf_get_str_fast ("network.proxy.port", "8080"));
     combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_network_proxytype"));
-    const char *type = deadbeef->conf_get_str ("network.proxy.type", "HTTP");
+    const char *type = deadbeef->conf_get_str_fast ("network.proxy.type", "HTTP");
     if (!strcasecmp (type, "HTTP")) {
         gtk_combo_box_set_active (combobox, 0);
     }
@@ -579,8 +586,8 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     else if (!strcasecmp (type, "SOCKS5_HOSTNAME")) {
         gtk_combo_box_set_active (combobox, 5);
     }
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "proxyuser")), deadbeef->conf_get_str ("network.proxy.username", ""));
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "proxypassword")), deadbeef->conf_get_str ("network.proxy.password", ""));
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "proxyuser")), deadbeef->conf_get_str_fast ("network.proxy.username", ""));
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "proxypassword")), deadbeef->conf_get_str_fast ("network.proxy.password", ""));
 
     // list of plugins
     GtkTreeView *tree = GTK_TREE_VIEW (lookup_widget (w, "pref_pluginlist"));
@@ -624,6 +631,7 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
         prefwin_add_hotkeys_tab (prefwin);
     }
 
+    deadbeef->conf_unlock ();
     gtk_dialog_run (GTK_DIALOG (prefwin));
     dsp_setup_free ();
     gtk_widget_destroy (prefwin);
@@ -638,11 +646,13 @@ on_pref_soundcard_changed              (GtkComboBox     *combobox,
 {
     int active = gtk_combo_box_get_active (combobox);
     if (active >= 0 && active < num_alsa_devices) {
-        const char *soundcard = deadbeef->conf_get_str ("alsa_soundcard", "default");
+        deadbeef->conf_lock ();
+        const char *soundcard = deadbeef->conf_get_str_fast ("alsa_soundcard", "default");
         if (strcmp (soundcard, alsa_device_names[active])) {
             deadbeef->conf_set_str ("alsa_soundcard", alsa_device_names[active]);
             deadbeef->sendmessage (M_CONFIG_CHANGED, 0, 0, 0);
         }
+        deadbeef->conf_unlock ();
     }
 }
 
@@ -650,13 +660,14 @@ void
 on_pref_output_plugin_changed          (GtkComboBox     *combobox,
                                         gpointer         user_data)
 {
-    const char *outplugname = deadbeef->conf_get_str ("output_plugin", _("ALSA output plugin"));
     int active = gtk_combo_box_get_active (combobox);
 
     DB_output_t **out_plugs = deadbeef->plug_get_output_list ();
     DB_output_t *prev = NULL;
     DB_output_t *new = NULL;
 
+    deadbeef->conf_lock ();
+    const char *outplugname = deadbeef->conf_get_str_fast ("output_plugin", _("ALSA output plugin"));
     for (int i = 0; out_plugs[i]; i++) {
         if (!strcmp (out_plugs[i]->plugin.name, outplugname)) {
             prev = out_plugs[i];
@@ -665,6 +676,7 @@ on_pref_output_plugin_changed          (GtkComboBox     *combobox,
             new = out_plugs[i];
         }
     }
+    deadbeef->conf_unlock ();
 
     if (!new) {
         fprintf (stderr, "failed to find output plugin selected in preferences window\n");
@@ -781,7 +793,7 @@ on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
 
 void
 gtkui_conf_get_str (const char *key, char *value, int len, const char *def) {
-    strcpy (value, deadbeef->conf_get_str (key, def));
+    deadbeef->conf_get_str (key, def, value, len);
 }
 
 void

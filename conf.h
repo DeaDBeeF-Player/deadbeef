@@ -27,7 +27,16 @@ int
 conf_save (void);
 
 void
+conf_init (void);
+
+void
 conf_free (void);
+
+void
+conf_lock (void);
+
+void
+conf_unlock (void);
 
 int
 conf_ischanged (void);
@@ -35,8 +44,11 @@ conf_ischanged (void);
 void
 conf_setchanged (int c);
 
+void
+conf_get_str (const char *key, const char *def, char *buffer, int buffer_size);
+
 const char *
-conf_get_str (const char *key, const char *def);
+conf_get_str_fast (const char *key, const char *def);
 
 float
 conf_get_float (const char *key, float def);

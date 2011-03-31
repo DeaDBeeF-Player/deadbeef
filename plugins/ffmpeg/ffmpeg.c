@@ -674,7 +674,8 @@ static URLProtocol vfswrapper = {
 
 static void
 ffmpeg_init_exts (void) {
-    const char *new_exts = deadbeef->conf_get_str ("ffmpeg.extensions", DEFAULT_EXTS);
+    deadbeef->conf_lock ();
+    const char *new_exts = deadbeef->conf_get_str_fast ("ffmpeg.extensions", DEFAULT_EXTS);
     for (int i = 0; exts[i]; i++) {
         free (exts[i]);
     }
@@ -702,6 +703,7 @@ ffmpeg_init_exts (void) {
         new_exts = e+1;
     }
     exts[n] = NULL;
+    deadbeef->conf_unlock ();
 }
 
 static int

@@ -145,7 +145,9 @@ on_open_activate                       (GtkMenuItem     *menuitem,
 
     gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dlg), TRUE);
     // restore folder
-    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), deadbeef->conf_get_str ("filechooser.lastdir", ""));
+    deadbeef->conf_lock ();
+    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), deadbeef->conf_get_str_fast ("filechooser.lastdir", ""));
+    deadbeef->conf_unlock ();
     int response = gtk_dialog_run (GTK_DIALOG (dlg));
     // store folder
     gchar *folder = gtk_file_chooser_get_current_folder_uri (GTK_FILE_CHOOSER (dlg));
@@ -179,7 +181,9 @@ on_add_files_activate                  (GtkMenuItem     *menuitem,
     gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dlg), TRUE);
 
     // restore folder
-    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), deadbeef->conf_get_str ("filechooser.lastdir", ""));
+    deadbeef->conf_lock ();
+    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), deadbeef->conf_get_str_fast ("filechooser.lastdir", ""));
+    deadbeef->conf_unlock ();
     int response = gtk_dialog_run (GTK_DIALOG (dlg));
     // store folder
     gchar *folder = gtk_file_chooser_get_current_folder_uri (GTK_FILE_CHOOSER (dlg));
@@ -225,7 +229,9 @@ on_add_folders_activate                (GtkMenuItem     *menuitem,
 
     gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dlg), TRUE);
     // restore folder
-    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), deadbeef->conf_get_str ("filechooser.lastdir", ""));
+    deadbeef->conf_lock ();
+    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), deadbeef->conf_get_str_fast ("filechooser.lastdir", ""));
+    deadbeef->conf_unlock ();
     int response = gtk_dialog_run (GTK_DIALOG (dlg));
     // store folder
     gchar *folder = gtk_file_chooser_get_current_folder_uri (GTK_FILE_CHOOSER (dlg));
@@ -1127,7 +1133,9 @@ on_custom2_activate                    (GtkMenuItem     *menuitem,
     GtkEntry *entry = GTK_ENTRY (lookup_widget (dlg, "sortfmt"));
     
     gtk_combo_box_set_active (combo, deadbeef->conf_get_int ("gtkui.sortby_order", 0));
-    gtk_entry_set_text (entry, deadbeef->conf_get_str ("gtkui.sortby_fmt", ""));
+    deadbeef->conf_lock ();
+    gtk_entry_set_text (entry, deadbeef->conf_get_str_fast ("gtkui.sortby_fmt", ""));
+    deadbeef->conf_unlock ();
 
     int r = gtk_dialog_run (GTK_DIALOG (dlg));
 

@@ -257,6 +257,9 @@ static DB_functions_t deadbeef_api = {
     // message passing
     .sendmessage = messagepump_push,
     // configuration access
+    .conf_lock = conf_lock,
+    .conf_unlock = conf_unlock,
+    .conf_get_str_fast = conf_get_str_fast,
     .conf_get_str = conf_get_str,
     .conf_get_float = conf_get_float,
     .conf_get_int = conf_get_int,
@@ -665,7 +668,8 @@ load_plugin (const char *plugdir, char *d_name, int l) {
 
 static int
 load_gui_plugin (const char **plugdirs) {
-    const char *conf_gui_plug = conf_get_str ("gui_plugin", "GTK2");
+    char conf_gui_plug[100];
+    conf_get_str ("gui_plugin", "GTK2", conf_gui_plug, sizeof (conf_gui_plug));
     char name[100];
 
     // try to load selected plugin
@@ -706,7 +710,8 @@ load_gui_plugin (const char **plugdirs) {
 int
 load_plugin_dir (const char *plugdir) {
     int n = 0;
-    const char *conf_blacklist_plugins = conf_get_str ("blacklist_plugins", "");
+    char conf_blacklist_plugins[1000];
+    conf_get_str ("blacklist_plugins", "", conf_blacklist_plugins, sizeof (conf_blacklist_plugins));
     trace ("loading plugins from %s\n", plugdir);
     struct dirent **namelist = NULL;
     n = scandir (plugdir, &namelist, NULL, dirent_alphasort);
@@ -1128,7 +1133,8 @@ plug_select_output (void) {
 #ifdef ANDROID
     return 0;
 #else
-    const char *outplugname = conf_get_str ("output_plugin", _("ALSA output plugin"));
+    char outplugname[100];
+    conf_get_str ("output_plugin", "ALSA output plugin", outplugname, sizeof (outplugname));
     for (int i = 0; g_output_plugins[i]; i++) {
         DB_output_t *p = g_output_plugins[i];
         if (!strcmp (p->plugin.name, outplugname)) {
@@ -1166,7 +1172,8 @@ plug_reinit_sound (void) {
     }
 
     if (plug_select_output () < 0) {
-        const char *outplugname = conf_get_str ("output_plugin", "ALSA output plugin");
+        char outplugname[100];
+        conf_get_str ("output_plugin", "ALSA output plugin", outplugname, sizeof (outplugname));
         trace ("failed to select output plugin %s\nreverted to %s\n", outplugname, prev->plugin.name);
         output_plugin = prev;
     }

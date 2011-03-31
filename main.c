@@ -220,7 +220,8 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
     }
     if (parg < pend) {
         if (conf_get_int ("cli_add_to_specific_playlist", 1)) {
-            const char *str = conf_get_str ("cli_add_playlist_name", "Default");
+            char str[200];
+            conf_get_str ("cli_add_playlist_name", "Default", str, sizeof (str));
             int idx = plt_find (str);
             if (idx < 0) {
                 idx = plt_add (plt_get_count (), str);
@@ -779,6 +780,7 @@ main (int argc, char *argv[]) {
 
 
     pl_init ();
+    conf_init ();
     conf_load (); // required by some plugins at startup
 
     conf_set_str ("deadbeef_version", VERSION);

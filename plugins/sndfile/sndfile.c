@@ -379,13 +379,14 @@ static const char *filetypes[] = { "WAV", NULL };
 
 static void
 sndfile_init_exts (void) {
-    const char *new_exts = deadbeef->conf_get_str ("sndfile.extensions", DEFAULT_EXTS);
     for (int i = 0; exts[i]; i++) {
         free (exts[i]);
     }
     exts[0] = NULL;
 
     int n = 0;
+    deadbeef->conf_lock ();
+    const char *new_exts = deadbeef->conf_get_str_fast ("sndfile.extensions", DEFAULT_EXTS);
     while (*new_exts) {
         if (n >= EXT_MAX) {
             fprintf (stderr, "sndfile: too many extensions, max is %d\n", EXT_MAX);
@@ -406,6 +407,7 @@ sndfile_init_exts (void) {
         }
         new_exts = e+1;
     }
+    deadbeef->conf_unlock ();
     exts[n] = NULL;
 }
 

@@ -67,13 +67,15 @@ static DB_playItem_t *lfm_subm_queue[LFM_SUBMISSION_QUEUE_SIZE];
 
 static void
 lfm_update_auth (void) {
-    const char *user = deadbeef->conf_get_str ("lastfm.login", "");
-    const char *pass = deadbeef->conf_get_str ("lastfm.password", "");
+    deadbeef->conf_lock ();
+    const char *user = deadbeef->conf_get_str_fast ("lastfm.login", "");
+    const char *pass = deadbeef->conf_get_str_fast ("lastfm.password", "");
     if (strcmp (user, lfm_user) || strcmp (pass, lfm_pass)) {
         strcpy (lfm_user, user);
         strcpy (lfm_pass, pass);
         lfm_sess[0] = 0;
     }
+    deadbeef->conf_unlock ();
 }
 
 static size_t
@@ -128,9 +130,10 @@ curl_req_send (const char *req, const char *post) {
         curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, strlen(post));
     }
     if (deadbeef->conf_get_int ("network.proxy", 0)) {
-        curl_easy_setopt (curl, CURLOPT_PROXY, deadbeef->conf_get_str ("network.proxy.address", ""));
+        deadbeef->conf_lock ();
+        curl_easy_setopt (curl, CURLOPT_PROXY, deadbeef->conf_get_str_fast ("network.proxy.address", ""));
         curl_easy_setopt (curl, CURLOPT_PROXYPORT, deadbeef->conf_get_int ("network.proxy.port", 8080));
-        const char *type = deadbeef->conf_get_str ("network.proxy.type", "HTTP");
+        const char *type = deadbeef->conf_get_str_fast ("network.proxy.type", "HTTP");
         int curlproxytype = CURLPROXY_HTTP;
         if (!strcasecmp (type, "HTTP")) {
             curlproxytype = CURLPROXY_HTTP;
@@ -158,8 +161,8 @@ curl_req_send (const char *req, const char *post) {
 #endif
         curl_easy_setopt (curl, CURLOPT_PROXYTYPE, curlproxytype);
 
-        const char *proxyuser = deadbeef->conf_get_str ("network.proxy.username", "");
-        const char *proxypass = deadbeef->conf_get_str ("network.proxy.password", "");
+        const char *proxyuser = deadbeef->conf_get_str_fast ("network.proxy.username", "");
+        const char *proxypass = deadbeef->conf_get_str_fast ("network.proxy.password", "");
         if (*proxyuser || *proxypass) {
 #if LIBCURL_VERSION_MINOR >= 19 && LIBCURL_VERSION_PATCH >= 1
             curl_easy_setopt (curl, CURLOPT_PROXYUSERNAME, proxyuser);
@@ -170,6 +173,7 @@ curl_req_send (const char *req, const char *post) {
             curl_easy_setopt (curl, CURLOPT_PROXYUSERPWD, pwd);
 #endif
         }
+        deadbeef->conf_unlock ();
     }
     int status = curl_easy_perform(curl);
     curl_easy_cleanup (curl);
@@ -207,12 +211,14 @@ auth (void) {
     deadbeef->md5 (sig, token, strlen (token));
     deadbeef->md5_to_str (token, sig);
 
-    const char *scrobbler_url = deadbeef->conf_get_str ("lastfm.scrobbler_url", SCROBBLER_URL_LFM);
+    deadbeef->conf_lock ();
+    const char *scrobbler_url = deadbeef->conf_get_str_fast ("lastfm.scrobbler_url", SCROBBLER_URL_LFM);
 #if LFM_TESTMODE
     snprintf (req, sizeof (req), "%s/?hs=true&p=1.2.1&c=tst&v=1.0&u=%s&t=%d&a=%s", scrobbler_url, lfm_user, (int)timestamp, token);
 #else
     snprintf (req, sizeof (req), "%s/?hs=true&p=1.2.1&c=%s&v=%d.%d&u=%s&t=%d&a=%s", scrobbler_url, LFM_CLIENTID, plugin.plugin.version_major, plugin.plugin.version_minor, lfm_user, (int)timestamp, token);
 #endif
+    deadbeef->conf_unlock ();
     // handshake
     int status = curl_req_send (req, NULL);
     if (!status) {

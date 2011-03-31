@@ -112,7 +112,9 @@ dsp_setup_init (GtkWidget *_prefwin) {
     GtkWidget *combobox = lookup_widget (prefwin, "dsp_preset");
     GtkWidget *entry = gtk_bin_get_child (GTK_BIN (combobox));
     if (entry) {
-        gtk_entry_set_text (GTK_ENTRY (entry), deadbeef->conf_get_str ("gtkui.conf_dsp_preset", ""));
+        deadbeef->conf_lock ();
+        gtk_entry_set_text (GTK_ENTRY (entry), deadbeef->conf_get_str_fast ("gtkui.conf_dsp_preset", ""));
+        deadbeef->conf_unlock ();
     }
 
     // fill list of presets

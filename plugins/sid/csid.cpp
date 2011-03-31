@@ -108,8 +108,9 @@ sldb_load()
         sldb_disable = 1;
         return;
     }
-    const char *conf_hvsc_path = deadbeef->conf_get_str ("hvsc_path", NULL);
-    if (!conf_hvsc_path) {
+    char conf_hvsc_path[1000];
+    deadbeef->conf_get_str ("hvsc_path", "", conf_hvsc_path, sizeof (conf_hvsc_path));
+    if (!conf_hvsc_path[0]) {
         sldb_disable = 1;
         return;
     }

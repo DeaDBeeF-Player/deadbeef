@@ -1390,11 +1390,12 @@ streamer_dsp_init (void) {
     // load legacy eq settings from pre-0.5
     if (conf_find ("eq.", NULL)) {
         eq->enabled = deadbeef->conf_get_int ("eq.enable", 0);
-        eqplug->set_param (eq, 0, conf_get_str ("eq.preamp", "0"));
+        char s[50];
+        eqplug->set_param (eq, 0, (conf_get_str ("eq.preamp", "0", s, sizeof (s)), s));
         for (int i = 0; i < 18; i++) {
             char key[100];
             snprintf (key, sizeof (key), "eq.band%d", i);
-            eqplug->set_param (eq, 1+i, conf_get_str (key, "0"));
+            eqplug->set_param (eq, 1+i, (conf_get_str (key, "0", s, sizeof (s)), s));
         }
         // delete obsolete settings
         conf_remove_items ("eq.");
