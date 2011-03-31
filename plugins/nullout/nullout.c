@@ -194,6 +194,7 @@ static DB_output_t plugin = {
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_OUTPUT,
+    .plugin.id = "nullout",
     .plugin.name = "null output plugin",
     .plugin.descr = "doesn't play anything",
     .plugin.copyright = 
