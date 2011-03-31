@@ -39,6 +39,7 @@ typedef struct cover_query_s {
 static cover_query_t *queue;
 static cover_query_t *queue_tail;
 static uintptr_t mutex;
+static uintptr_t imlib_mutex;
 static uintptr_t cond;
 static volatile int terminate;
 static volatile int clear_queue;
@@ -179,10 +180,12 @@ copy_file (const char *in, const char *out, int img_size) {
     trace ("copying %s to %s\n", in, out);
 
     if (img_size != -1) {
+        deadbeef->mutex_lock (imlib_mutex);
         // need to scale, use imlib2
         Imlib_Image img = imlib_load_image_immediately (in);
         if (!img) {
             trace ("file %s not found, or imlib2 can't load it\n", in);
+            deadbeef->mutex_unlock (imlib_mutex);
             return -1;
         }
         imlib_context_set_image(img);
@@ -220,11 +223,13 @@ copy_file (const char *in, const char *out, int img_size) {
             imlib_free_image ();
             imlib_context_set_image(img);
             imlib_free_image ();
+            deadbeef->mutex_unlock (imlib_mutex);
             return -1;
         }
         imlib_free_image ();
         imlib_context_set_image(img);
         imlib_free_image ();
+        deadbeef->mutex_unlock (imlib_mutex);
 
         return 0;
     }
@@ -775,6 +780,7 @@ artwork_plugin_start (void)
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (artwork_on_configchanged), 0);
 
     mutex = deadbeef->mutex_create_nonrecursive ();
+    imlib_mutex = deadbeef->mutex_create_nonrecursive ();
     cond = deadbeef->cond_create ();
     tid = deadbeef->thread_start_low_priority (fetcher_thread, NULL);
 
@@ -800,6 +806,10 @@ artwork_plugin_stop (void)
     if (mutex) {
         deadbeef->mutex_free (mutex);
         mutex = 0;
+    }
+    if (imlib_mutex) {
+        deadbeef->mutex_free (imlib_mutex);
+        imlib_mutex = 0;
     }
     if (cond) {
         deadbeef->cond_free (cond);
