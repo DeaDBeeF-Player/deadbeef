@@ -126,13 +126,6 @@ static int pulse_set_spec(ddb_waveformat_t *fmt)
         pa_simple_free(s);
     }
 
-    // Read serveraddr from config
-    const char * server = deadbeef->conf_get_str(CONFSTR_PULSE_SERVERADDR, NULL);
-
-    if (server) {
-        server = strcmp(server, "default") ? server : NULL;
-    }
-
     pa_buffer_attr * attr = NULL;
     //attr->maxlength = Maximum length of the buffer.
     //attr->tlength = Playback only: target length of the buffer.
@@ -147,7 +140,17 @@ static int pulse_set_spec(ddb_waveformat_t *fmt)
 
     int error;
 
+    // Read serveraddr from config
+    deadbeef->conf_lock ();
+    const char * server = deadbeef->conf_get_str_fast (CONFSTR_PULSE_SERVERADDR, NULL);
+
+    if (server) {
+        server = strcmp(server, "default") ? server : NULL;
+    }
+
     s = pa_simple_new(server, "Deadbeef", PA_STREAM_PLAYBACK, dev, "Music", &ss, &channel_map, attr, &error);
+    deadbeef->conf_unlock ();
+
     if (!s)
     {
         trace ("pulse_init failed (%d)\n", error);
