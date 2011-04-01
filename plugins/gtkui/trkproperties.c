@@ -257,7 +257,7 @@ static const char *hc_props[] = {
 void
 add_field (GtkListStore *store, const char *key, const char *title, int is_prop) {
     // get value to edit
-    const char *mult = _("[Multiple values] ");
+    const char *mult = is_prop ? "" : _("[Multiple values] ");
     char val[1000];
     size_t ml = strlen (mult);
     memcpy (val, mult, ml+1);
