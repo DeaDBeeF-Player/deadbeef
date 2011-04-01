@@ -522,7 +522,10 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                         if (fsize >= 0) {
                             buffer->bitrate = (fsize - deadbeef->ftell (buffer->file))/ buffer->samplerate * 1000;
                         }
-                        return 0;
+                        if (buffer->vbr != DETECTED_VBR && buffer->vbr != XING_CBR) {
+                            // let's don't trust xing header on constant bitrate value, and calculate it ourselves
+                            return 0;
+                        }
                     }
                 }
             }
