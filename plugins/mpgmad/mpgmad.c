@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <unistd.h>
+#include <sys/time.h>
 #include "../../deadbeef.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -80,7 +81,6 @@ typedef struct {
     int bitrate;
     int samplerate;
     int packetlength;
-    float frameduration;
     int bitspersample;
     int channels;
     float duration;
@@ -215,13 +215,20 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
     }
 
     int lastframe_valid = 0;
+    int64_t offs = -1;
 
     for (;;) {
-        uint32_t hdr;
-        uint8_t sync;
-        if (deadbeef->fread (&sync, 1, 1, buffer->file) != 1) {
+        if (!lastframe_valid && offs >= 0) {
+            deadbeef->fseek (buffer->file, offs+1, SEEK_SET);
+        }
+        offs = deadbeef->ftell (buffer->file);
+        uint8_t fb[4];
+        if (deadbeef->fread (fb, 1, 4, buffer->file) != 4) {
             break; // eof
         }
+
+        uint32_t hdr;
+        uint8_t sync = fb[0];
         if (sync != 0xff) {
 //            trace ("[1]frame %d didn't seek to frame end\n", nframe);
             lastframe_valid = 0;
@@ -229,9 +236,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         }
         else {
             // 2nd sync byte
-            if (deadbeef->fread (&sync, 1, 1, buffer->file) != 1) {
-                break; // eof
-            }
+            sync = fb[1];
             if ((sync >> 5) != 7) {
 //                trace ("[2]frame %d didn't seek to frame end\n", nframe);
                 lastframe_valid = 0;
@@ -240,14 +245,9 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         }
         // found frame
         hdr = (0xff<<24) | (sync << 16);
-        // read 2 bytes more
-        if (deadbeef->fread (&sync, 1, 1, buffer->file) != 1) {
-            break; // eof
-        }
+        sync = fb[2];
         hdr |= sync << 8;
-        if (deadbeef->fread (&sync, 1, 1, buffer->file) != 1) {
-            break; // eof
-        }
+        sync = fb[3];
         hdr |= sync;
 
         // parse header
@@ -259,7 +259,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         }
 
         // mpeg version
-        static int vertbl[] = {3, -1, 2, 1}; // 3 is 2.5
+        static const int vertbl[] = {3, -1, 2, 1}; // 3 is 2.5
         int ver = (hdr & (3<<19)) >> 19;
         ver = vertbl[ver];
         if (ver < 0) {
@@ -269,7 +269,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         }
 
         // layer info
-        static int ltbl[] = { -1, 3, 2, 1 };
+        static const int ltbl[] = { -1, 3, 2, 1 };
         int layer = (hdr & (3<<17)) >> 17;
         layer = ltbl[layer];
         if (layer < 0) {
@@ -318,7 +318,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         // padding
         int padding = (hdr & (0x1 << 9)) >> 9;
 
-        static int chantbl[4] = { 2, 2, 2, 1 };
+        static const int chantbl[4] = { 2, 2, 2, 1 };
         int nchannels = (hdr & (0x3 << 6)) >> 6;
         nchannels = chantbl[nchannels];
 
@@ -339,25 +339,20 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         // packetlength
         packetlength = 0;
         bitrate *= 1000;
-        float dur = 0;
         int samples_per_frame = 0;
         if (samplerate > 0 && bitrate > 0) {
             if (layer == 1) {
                 samples_per_frame = 384;
-                dur = (float)384 / samplerate;
             }
             else if (layer == 2) {
                 samples_per_frame = 1152;
-                dur = (float)1152 / samplerate;
             }
             else if (layer == 3) {
                 if (ver == 1) {
                     samples_per_frame = 1152;
-                    dur = (float)1152 / samplerate;
                 }
                 else {
                     samples_per_frame = 576;
-                    dur = (float)576 / samplerate;
                 }
             }
             packetlength = samples_per_frame / 8 * bitrate / samplerate + padding;
@@ -389,12 +384,11 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             buffer->bitrate = bitrate;
             buffer->samplerate = samplerate;
             buffer->packetlength = packetlength;
-            buffer->frameduration = dur;
             if (nchannels > buffer->channels) {
                 buffer->channels = nchannels;
             }
             buffer->bitspersample = 16;
-            trace ("frame %d mpeg v%d layer %d bitrate %d samplerate %d packetlength %d framedur %f channels %d\n", nframe, ver, layer, bitrate, samplerate, packetlength, dur, nchannels);
+            trace ("frame %d mpeg v%d layer %d bitrate %d samplerate %d packetlength %d channels %d\n", nframe, ver, layer, bitrate, samplerate, packetlength, nchannels);
         }
         lastframe_valid = 1;
         // try to read xing/info tag (only on initial scans)
@@ -874,6 +868,7 @@ static inline void
 cmp3_skip (mpgmad_info_t *info) {
     if (info->buffer.skipsamples > 0) {
         int skip = min (info->buffer.skipsamples, info->buffer.decode_remaining);
+//        printf ("skip %d / %d\n", skip, info->buffer.skipsamples);
         info->buffer.skipsamples -= skip;
         info->buffer.decode_remaining -= skip;
     }
@@ -996,6 +991,7 @@ cmp3_stream_frame (mpgmad_info_t *info) {
             }
         }
         info->stream.error=0;
+
         // decode next frame
         if(mad_frame_decode(&info->frame,&info->stream))
         {
@@ -1019,13 +1015,13 @@ cmp3_stream_frame (mpgmad_info_t *info) {
             }
         }
 
-        const char *filetype = deadbeef->pl_find_meta (info->buffer.it, ":FILETYPE");
-        if (!filetype) {
-            int layer = info->frame.header.layer;
-            if (layer >= 1 && layer <= 3) {
-                deadbeef->pl_replace_meta (info->buffer.it, ":FILETYPE", plugin.filetypes[layer-1]);
-            }
-        }
+//        const char *filetype = deadbeef->pl_find_meta (info->buffer.it, ":FILETYPE");
+//        if (!filetype) {
+//            int layer = info->frame.header.layer;
+//            if (layer >= 1 && layer <= 3) {
+//                deadbeef->pl_replace_meta (info->buffer.it, ":FILETYPE", plugin.filetypes[layer-1]);
+//            }
+//        }
 
         info->info.fmt.samplerate = info->frame.header.samplerate;
 #if 0
@@ -1210,11 +1206,13 @@ cmp3_seek_sample (DB_fileinfo_t *_info, int sample) {
         return -1; // eof
     }
     // restart file, and load until we hit required pos
-    deadbeef->fseek (info->buffer.file, 0, SEEK_SET);
+    deadbeef->fseek (info->buffer.file, info->buffer.startoffset, SEEK_SET);
+#if 0
     int skip = deadbeef->junk_get_leading_size (info->buffer.file);
     if (skip > 0) {
         deadbeef->fseek (info->buffer.file, skip, SEEK_SET);
     }
+#endif
     mad_synth_finish (&info->synth);
     mad_frame_finish (&info->frame);
     mad_stream_finish (&info->stream);
@@ -1229,11 +1227,17 @@ cmp3_seek_sample (DB_fileinfo_t *_info, int sample) {
         return 0;
     }
 
+//    struct timeval tm1;
+//    gettimeofday (&tm1, NULL);
     if (cmp3_scan_stream (&info->buffer, sample) == -1) {
         trace ("failed to seek to sample %d\n", sample);
         _info->readpos = 0;
         return -1;
     }
+//    struct timeval tm2;
+//    gettimeofday (&tm2, NULL);
+//    int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
+//    printf ("cmp3_scan_stream took %d ms\n", ms);
 	mad_stream_init(&info->stream);
 	mad_stream_options (&info->stream, MAD_OPTION_IGNORECRC);
 	mad_frame_init(&info->frame);
