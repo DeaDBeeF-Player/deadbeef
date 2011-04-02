@@ -93,7 +93,7 @@ typedef struct {
     int endsample;
     int startdelay;
     int enddelay;
-    int avg_packetlength;
+    float avg_packetlength;
     int avg_samplerate;
     int avg_samples_per_frame;
     int nframes;
@@ -186,7 +186,6 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
 //    }
     int packetlength = 0;
     int nframe = 0;
-    buffer->duration = 0;
     int scansamples = 0;
     buffer->currentsample = 0;
     buffer->skipsamples = 0;
@@ -438,7 +437,9 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                             return -1; // EOF
                         }
                         uint32_t nframes = extract_i32 (buf);
-                        buffer->duration = (float)nframes * (float)samples_per_frame / (float)samplerate;
+                        if (sample == 0) {
+                            buffer->duration = (uint64_t)nframes * (uint64_t)samples_per_frame / (uint64_t)samplerate;
+                        }
                         trace ("xing totalsamples: %d, nframes: %d, samples_per_frame: %d\n", nframes*samples_per_frame, nframes, samples_per_frame);
                         if (nframes <= 0 || samples_per_frame <= 0) {
                             trace ("bad xing header\n");
@@ -495,8 +496,8 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                         // skip
                         deadbeef->fseek (buffer->file, 2, SEEK_CUR);
                         deadbeef->fread (buf, 1, 3, buffer->file);
-                        uint32_t startdelay = (((uint32_t)buf[0]) << 4) | ((((uint32_t)buf[1]) & 0xf0)>>4);
-                        uint32_t enddelay = ((((uint32_t)buf[1])&0x0f)<<8) | ((uint32_t)buf[2]);
+                        buffer->startdelay = (((uint32_t)buf[0]) << 4) | ((((uint32_t)buf[1]) & 0xf0)>>4);
+                        buffer->enddelay = ((((uint32_t)buf[1])&0x0f)<<8) | ((uint32_t)buf[2]);
                         // skip
                         deadbeef->fseek (buffer->file, 1, SEEK_CUR);
                         // mp3gain
@@ -511,21 +512,20 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                         //trace ("lpf: %d, peaksignalamp: %f, radiogain: %d, audiophile: %d, startdelay: %d, enddelay: %d, mp3gain: %d, musiclen: %d\n", lpf, rg_peaksignalamp, rg_radio, rg_audiophile, startdelay, enddelay, mp3gain, musiclen);
                         // skip crc
                         //deadbeef->fseek (buffer->file, 4, SEEK_CUR);
-                        buffer->startdelay = startdelay;
-                        buffer->enddelay = enddelay;
                         trace ("lame totalsamples: %d\n", buffer->totalsamples);
                     }
                     if (sample <= 0 && (flags&FRAMES_FLAG)) {
                         buffer->have_xing_header = 1;
-                        buffer->totalsamples -= buffer->enddelay;
+                        buffer->totalsamples -= buffer->enddelay + buffer->startdelay;
                         deadbeef->fseek (buffer->file, framepos+packetlength-4, SEEK_SET);
                         if (fsize >= 0) {
                             buffer->bitrate = (fsize - deadbeef->ftell (buffer->file))/ buffer->samplerate * 1000;
                         }
-                        if (buffer->vbr != DETECTED_VBR && buffer->vbr != XING_CBR) {
-                            // let's don't trust xing header on constant bitrate value, and calculate it ourselves
-                            return 0;
-                        }
+                        buffer->startoffset = deadbeef->ftell (buffer->file);
+//                        if (buffer->vbr != DETECTED_VBR && buffer->vbr != XING_CBR) {
+//                            // let's don't trust xing header on constant bitrate value, and calculate it ourselves
+//                            return 0;
+//                        }
                     }
                 }
             }
@@ -562,6 +562,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                     buffer->avg_samples_per_frame = samples_per_frame;
                     buffer->duration = buffer->nframes * samples_per_frame / samplerate;
                     buffer->totalsamples = buffer->nframes * samples_per_frame;
+                    trace ("totalsamples: %d, samplesperframe: %d, fsize=%lld\n", buffer->totalsamples, samples_per_frame, fsize);
 //                    trace ("bitrate=%d, layer=%d, packetlength=%d, fsize=%d, nframes=%d, samples_per_frame=%d, samplerate=%d, duration=%f, totalsamples=%d\n", bitrate, layer, packetlength, sz, nframes, samples_per_frame, samplerate, buffer->duration, buffer->totalsamples);
 
                     if (sample == 0) {
@@ -589,17 +590,21 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             buffer->avg_samplerate += samplerate;
             buffer->avg_samples_per_frame += samples_per_frame;
             avg_bitrate += bitrate;
-            if (nframe >= 100) {
-                buffer->avg_packetlength /= valid_frames;
+            if (nframe >= 3000) {
+                buffer->avg_packetlength /= (float)valid_frames;
                 buffer->avg_samplerate /= valid_frames;
                 buffer->avg_samples_per_frame /= valid_frames;
                 avg_bitrate /= valid_frames;
-                trace ("valid_frames=%d, avg_bitrate=%d, avg_packetlength=%d, avg_samplerate=%d, avg_samples_per_frame=%d\n", valid_frames, avg_bitrate, buffer->avg_packetlength, buffer->avg_samplerate, buffer->avg_samples_per_frame);
+                trace ("valid_frames=%d, avg_bitrate=%d, avg_packetlength=%f, avg_samplerate=%d, avg_samples_per_frame=%d\n", valid_frames, avg_bitrate, buffer->avg_packetlength, buffer->avg_samplerate, buffer->avg_samples_per_frame);
                 buffer->bitrate = avg_bitrate;
+                trace ("startoffs: %d, endoffs: %d\n",  buffer->startoffset, buffer->endoffset);
 
-                buffer->nframes = fsize / buffer->avg_packetlength;
-                buffer->duration = buffer->nframes * buffer->avg_samples_per_frame / buffer->avg_samplerate;
-                buffer->totalsamples = buffer->nframes * buffer->avg_samples_per_frame;
+                buffer->nframes = (fsize - buffer->startoffset - buffer->endoffset) / buffer->avg_packetlength;
+                if (!buffer->have_xing_header) {
+                    buffer->totalsamples = buffer->nframes * buffer->avg_samples_per_frame - buffer->startdelay - buffer->enddelay;
+                    buffer->duration = buffer->totalsamples / buffer->avg_samplerate;
+                }
+                trace ("nframes: %d, fsize: %lld, spf: %d, smp: %d, totalsamples: %d\n", buffer->nframes, fsize, buffer->avg_samples_per_frame, buffer->avg_samplerate, buffer->totalsamples);
                 return 0;
             }
         }
@@ -612,7 +617,6 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             }
         }
         scansamples += samples_per_frame;
-        buffer->duration += dur;
         nframe++;
         if (packetlength > 0) {
             deadbeef->fseek (buffer->file, packetlength-4, SEEK_CUR);
@@ -623,7 +627,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         return -1;
     }
     buffer->totalsamples = scansamples;
-//    buffer->duration = buffer->totalsamples / buffer->samplerate;
+    buffer->duration = buffer->totalsamples / buffer->samplerate;
     trace ("nframes=%d, totalsamples=%d, samplerate=%d, dur=%f\n", nframe, scansamples, buffer->samplerate, buffer->duration);
     return 0;
 }
@@ -721,7 +725,11 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             trace ("mpgmad: skipping %d(%xH) bytes of junk\n", skip, skip);
             deadbeef->fseek (info->buffer.file, skip, SEEK_SET);
         }
-        cmp3_scan_stream (&info->buffer, -1); // scan entire stream, calc duration
+        int res = cmp3_scan_stream (&info->buffer, -1);
+        if (res < 0) {
+            trace ("mpgmad: cmp3_init: initial cmp3_scan_stream failed\n");
+            return -1;
+        }
         if (it->endsample > 0) {
             info->buffer.startsample = it->startsample;
             info->buffer.endsample = it->endsample;
@@ -1155,16 +1163,16 @@ cmp3_seek_sample (DB_fileinfo_t *_info, int sample) {
     }
 
     if (info->buffer.file->vfs->is_streaming ()) {
-        if (info->buffer.totalsamples > 0 && info->buffer.avg_samples_per_frame && info->buffer.avg_packetlength) { // that means seekable remote stream, like podcast
+        if (info->buffer.totalsamples > 0 && info->buffer.avg_samples_per_frame > 0 && info->buffer.avg_packetlength > 0) { // that means seekable remote stream, like podcast
             trace ("seeking is possible!\n");
             // get length excluding id3v2
-            int64_t l = deadbeef->fgetlength (info->buffer.file) - info->buffer.startoffset;
+            int64_t l = deadbeef->fgetlength (info->buffer.file) - info->buffer.startoffset - info->buffer.endoffset;
             
             int r;
 
             // seek to beginning of the frame
-            int frm = sample / info->buffer.avg_samples_per_frame;
-            r = deadbeef->fseek (info->buffer.file, frm * info->buffer.avg_packetlength, SEEK_SET);
+            int64_t frm = sample / info->buffer.avg_samples_per_frame;
+            r = deadbeef->fseek (info->buffer.file, frm * info->buffer.avg_packetlength + info->buffer.startoffset, SEEK_SET);
 
 //            l = l * sample / buffer.totalsamples;
 //            r = deadbeef->fseek (buffer.file, l, SEEK_SET);
