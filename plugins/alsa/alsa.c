@@ -187,6 +187,7 @@ retry:
     if ((err = snd_pcm_hw_params_set_format (audio, hw_params, sample_fmt)) < 0) {
         fprintf (stderr, "cannot set sample format (%s), trying all supported formats\n", snd_strerror (err));
 
+        int fmt_cnt[] = { 16, 24, 32, 32, 8 };
 #if WORDS_BIGENDIAN
         int fmt[] = { SND_PCM_FORMAT_S16_BE, SND_PCM_FORMAT_S24_3BE, SND_PCM_FORMAT_S32_BE, SND_PCM_FORMAT_FLOAT_BE, SND_PCM_FORMAT_S8, -1 };
 #else
@@ -196,7 +197,7 @@ retry:
         // 1st try formats with higher bps
         int i = 0;
         for (i = 0; fmt[i] != -1; i++) {
-            if (fmt[i] != sample_fmt && fmt[i] > sample_fmt) {
+            if (fmt[i] != sample_fmt && fmt_cnt[i] > plugin.fmt.bps) {
                 if (snd_pcm_hw_params_set_format (audio, hw_params, fmt[i]) >= 0) {
                     break;
                 }
@@ -206,7 +207,7 @@ retry:
             // next try formats with lower bps
             i = 0;
             for (i = 0; fmt[i] != -1; i++) {
-                if (fmt[i] != sample_fmt && fmt[i] < sample_fmt) {
+                if (fmt[i] != sample_fmt && fmt_cnt[i] < plugin.fmt.bps) {
                     if (snd_pcm_hw_params_set_format (audio, hw_params, fmt[i]) >= 0) {
                         break;
                     }
