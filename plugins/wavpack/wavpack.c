@@ -198,16 +198,16 @@ wv_free (DB_fileinfo_t *_info) {
 static int
 wv_read (DB_fileinfo_t *_info, char *bytes, int size) {
     wvctx_t *info = (wvctx_t *)_info;
-    int initsize = size;
     int currentsample = WavpackGetSampleIndex (info->ctx);
     int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
     if (size / samplesize + currentsample > info->endsample) {
         size = (info->endsample - currentsample + 1) * samplesize;
-        trace ("wv: size truncated to %d bytes, cursample=%d, endsample=%d\n", size, currentsample, info->endsample);
+        trace ("wv: size truncated to %d bytes (%d samples), cursample=%d, endsample=%d\n", size, info->endsample - currentsample + 1, currentsample, info->endsample);
         if (size <= 0) {
             return 0;
         }
     }
+    int initsize = size;
     int n;
     if (WavpackGetMode (info->ctx) & MODE_FLOAT) {
         _info->fmt.is_float = 1;
