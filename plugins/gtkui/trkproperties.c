@@ -100,11 +100,6 @@ equals_ptr (const char *a, const char *b) {
 }
 
 static int
-equals_value (const char *a, const char *b) {
-    return !strcmp (a, b);
-}
-
-static int
 get_field_value (char *out, int size, const char *key, const char *(*getter)(DB_playItem_t *it, const char *key), int (*equals)(const char *a, const char *b)) {
     int multiple = 0;
     *out = 0;
@@ -296,7 +291,7 @@ trkproperties_fill_metadata (void) {
     for (int k = 0; k < nkeys; k++) {
         int i;
         for (i = 0; types[i]; i += 2) {
-            if (!strcmp (keys[k], types[i])) {
+            if (!strcasecmp (keys[k], types[i])) {
                 break;
             }
         }
@@ -324,7 +319,7 @@ trkproperties_fill_metadata (void) {
     for (int k = 0; k < nkeys; k++) {
         int i;
         for (i = 0; hc_props[i]; i += 2) {
-            if (!strcmp (keys[k], hc_props[i])) {
+            if (!strcasecmp (keys[k], hc_props[i])) {
                 break;
             }
         }
@@ -556,7 +551,7 @@ on_write_tags_clicked                  (GtkButton       *button,
                     gtk_tree_model_get_value (model, &iter, 2, &key);
                     const char *skey = g_value_get_string (&key);
 
-                    if (!strcmp (skey, meta->key)) {
+                    if (!strcasecmp (skey, meta->key)) {
                         // field found, don't delete
                         break;
                     }
@@ -620,7 +615,7 @@ on_add_field_activate                 (GtkMenuItem     *menuitem,
                 GValue value = {0,};
                 gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 2, &value);
                 const char *svalue = g_value_get_string (&value);
-                if (!strcmp (svalue, text)) {
+                if (!strcasecmp (svalue, text)) {
                     dup = 1;
                     break;
                 }
@@ -682,7 +677,7 @@ on_remove_field_activate                 (GtkMenuItem     *menuitem,
     // delete unknown fields completely; otherwise just clear
     int i = 0;
     for (; types[i]; i += 2) {
-        if (!strcmp (svalue, types[i])) {
+        if (!strcasecmp (svalue, types[i])) {
             break;
         }
     }
