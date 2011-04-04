@@ -874,7 +874,7 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
     if (performer[0]) {
         pl_add_meta (it, "artist", performer);
         if (albumperformer[0]) {
-            pl_add_meta (it, "albumartist", albumperformer);
+            pl_add_meta (it, "album artist", albumperformer);
         }
     }
     else if (albumperformer[0]) {
