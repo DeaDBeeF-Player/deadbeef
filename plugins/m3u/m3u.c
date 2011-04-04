@@ -49,18 +49,13 @@ load_m3u (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
         return NULL;
     }
     int sz = deadbeef->fgetlength (fp);
-    if (sz > 1024*1024) {
-        deadbeef->fclose (fp);
-        trace ("file %s is too large to be a playlist\n", fname);
-        return NULL;
-    }
-    if (sz < 30) {
-        deadbeef->fclose (fp);
-        trace ("file %s is too small to be a playlist (%d)\n", fname, sz);
-        return NULL;
-    }
     trace ("loading m3u...\n");
-    uint8_t buffer[sz];
+    uint8_t *buffer = malloc (sz);
+    if (!buffer) {
+        deadbeef->fclose (fp);
+        trace ("failed to allocate %d bytes to read the file %s\n", sz, fname);
+        return NULL;
+    }
     deadbeef->fread (buffer, 1, sz, fp);
     deadbeef->fclose (fp);
     const uint8_t *p = buffer;
@@ -107,6 +102,7 @@ load_m3u (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
         }
         if (pabort && *pabort) {
             deadbeef->pl_unlock ();
+            free (buffer);
             return after;
         }
         p = e;
@@ -116,6 +112,7 @@ load_m3u (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
     }
     deadbeef->pl_unlock ();
     trace ("leave pl_insert_m3u\n");
+    free (buffer);
     return after;
 }
 
@@ -154,18 +151,13 @@ load_pls (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
         return NULL;
     }
     int sz = deadbeef->fgetlength (fp);
-    if (sz > 1024*1024) {
-        deadbeef->fclose (fp);
-        trace ("file %s is too large to be a playlist\n", fname);
-        return NULL;
-    }
-    if (sz < 30) {
-        deadbeef->fclose (fp);
-        trace ("file %s is too small to be a playlist (%d)\n", fname, sz);
-        return NULL;
-    }
     deadbeef->rewind (fp);
-    uint8_t buffer[sz];
+    uint8_t *buffer = malloc (sz);
+    if (!buffer) {
+        deadbeef->fclose (fp);
+        trace ("failed to allocate %d bytes to read the file %s\n", sz, fname);
+        return NULL;
+    }
     deadbeef->fread (buffer, 1, sz, fp);
     deadbeef->fclose (fp);
     // 1st line must be "[playlist]"
@@ -173,12 +165,14 @@ load_pls (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
     const uint8_t *end = buffer+sz;
     if (strncasecmp (p, "[playlist]", 10)) {
         trace ("file %s doesn't begin with [playlist]\n", fname);
+        free (buffer);
         return NULL;
     }
     p += 10;
     p = skipspaces (p, end);
     if (p >= end) {
         trace ("file %s finished before numberofentries had been read\n", fname);
+        free (buffer);
         return NULL;
     }
     // fetch all tracks
@@ -213,6 +207,7 @@ load_pls (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
                 }
                 if (pabort && *pabort) {
                     deadbeef->pl_unlock ();
+                    free (buffer);
                     return after;
                 }
                 uri[0] = 0;
@@ -250,6 +245,7 @@ load_pls (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
                 }
                 if (pabort && *pabort) {
                     deadbeef->pl_unlock ();
+                    free (buffer);
                     return after;
                 }
                 uri[0] = 0;
@@ -286,6 +282,7 @@ load_pls (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
                 }
                 if (pabort && *pabort) {
                     deadbeef->pl_unlock ();
+                    free (buffer);
                     return after;
                 }
                 uri[0] = 0;
@@ -327,6 +324,7 @@ load_pls (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
         }
     }
     deadbeef->pl_unlock ();
+    free (buffer);
     return after;
 }
 

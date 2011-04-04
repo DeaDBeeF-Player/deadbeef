@@ -1105,11 +1105,6 @@ pl_insert_m3u (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
         trace ("file %s is too large to be a playlist\n", fname);
         return NULL;
     }
-    if (sz < 30) {
-        vfs_fclose (fp);
-        trace ("file %s is too small to be a playlist (%d)\n", fname, sz);
-        return NULL;
-    }
     trace ("loading m3u...\n");
     uint8_t buffer[sz];
     vfs_fread (buffer, 1, sz, fp);
@@ -1173,7 +1168,7 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
         trace ("file %s is too large to be a playlist\n", fname);
         return NULL;
     }
-    if (sz < 30) {
+    if (sz < 10) {
         vfs_fclose (fp);
         trace ("file %s is too small to be a playlist (%d)\n", fname, sz);
         return NULL;
