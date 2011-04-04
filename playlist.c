@@ -1402,10 +1402,10 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
     // they must be handled before checking for http://,
     // so that remote playlist files referenced from other playlist files could
     // be loaded correctly
-    if (!memcmp (eol, "m3u", 3)) {
+    if (!strcmp (eol, "m3u") || !strcmp (eol, "m3u8")) {
         return pl_insert_m3u (after, fname, pabort, cb, user_data);
     }
-    else if (!memcmp (eol, "pls", 3)) {
+    else if (!strcmp (eol, "pls")) {
 
         return pl_insert_pls (after, fname, pabort, cb, user_data);
     }
@@ -1519,7 +1519,7 @@ static int follow_symlinks = 0;
 
 playItem_t *
 pl_insert_dir_int (DB_vfs_t *vfs, playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
-    if (!memcmp (dirname, "file://", 7)) {
+    if (!strncmp (dirname, "file://", 7)) {
         dirname += 7;
     }
     if (!follow_symlinks && !vfs) {
