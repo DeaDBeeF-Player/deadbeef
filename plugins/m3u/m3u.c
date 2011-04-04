@@ -336,7 +336,7 @@ m3uplug_load (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB
     }
     ext++;
 
-    if (!strcasecmp (ext, "m3u")) {
+    if (!strcasecmp (ext, "m3u") || !strcasecmp (ext, "m3u8")) {
         return load_m3u (after, fname, pabort, cb, user_data);
     }
     else if (!strcasecmp (ext, "pls")) {
@@ -421,7 +421,7 @@ m3uplug_save (const char *fname, DB_playItem_t *first, DB_playItem_t *last) {
     if (!e) {
         return -1;
     }
-    if (!strcasecmp (e, ".m3u")) {
+    if (!strcasecmp (e, ".m3u") || !strcasecmp (e, ".m3u8")) {
         return m3uplug_save_m3u (fname, first, last);
     }
     else if (!strcasecmp (e, ".pls")) {
@@ -430,7 +430,7 @@ m3uplug_save (const char *fname, DB_playItem_t *first, DB_playItem_t *last) {
     return -1;
 }
 
-static const char * exts[] = { "m3u", "pls", NULL };
+static const char * exts[] = { "m3u", "m3u8", "pls", NULL };
 DB_playlist_t plugin = {
     DB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
