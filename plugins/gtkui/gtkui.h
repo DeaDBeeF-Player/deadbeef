@@ -163,4 +163,7 @@ gtkui_focus_on_playing_track (void);
 void
 gtkui_playlist_set_curr (int playlist);
 
+void
+gtkui_setup_gui_refresh ();
+
 #endif

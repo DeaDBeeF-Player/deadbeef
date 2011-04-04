@@ -958,6 +958,27 @@ tabstrip_redraw (void) {
 }
 
 static int gtk_initialized = 0;
+static gint refresh_timeout = 0;
+
+void
+gtkui_setup_gui_refresh (void) {
+    int fps = deadbeef->conf_get_int ("gtkui.refresh_rate", 10);
+    if (fps < 1) {
+        fps = 1;
+    }
+    else if (fps > 30) {
+        fps = 30;
+    }
+
+    int tm = 1000/fps;
+
+    if (refresh_timeout) {
+        g_source_remove (refresh_timeout);
+        refresh_timeout = 0;
+    }
+
+    refresh_timeout = g_timeout_add (tm, gtkui_on_frameupdate, NULL);
+}
 
 void
 gtkui_thread (void *ctx) {
@@ -1049,7 +1070,7 @@ gtkui_thread (void *ctx) {
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_OUTPUTCHANGED, DB_CALLBACK (gtkui_on_outputchanged), 0);
     deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_PLAYLISTSWITCH, DB_CALLBACK (gtkui_on_playlistswitch), 0);
 
-    g_timeout_add (100, gtkui_on_frameupdate, NULL);
+    gtkui_setup_gui_refresh ();
 
     char fmt[500];
     char str[600];

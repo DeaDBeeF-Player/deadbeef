@@ -1690,6 +1690,9 @@ create_prefwin (void)
   GtkWidget *embolden_current;
   GtkWidget *hide_delete_from_disk;
   GtkWidget *auto_name_playlist_from_folder;
+  GtkWidget *hbox102;
+  GtkWidget *label129;
+  GtkWidget *gui_fps;
   GtkWidget *hbox64;
   GtkWidget *label101;
   GtkWidget *titlebar_format_playing;
@@ -1781,7 +1784,6 @@ create_prefwin (void)
   GtkWidget *closebutton1;
 
   prefwin = gtk_dialog_new ();
-  gtk_widget_set_size_request (prefwin, 630, 400);
   gtk_container_set_border_width (GTK_CONTAINER (prefwin), 12);
   gtk_window_set_title (GTK_WINDOW (prefwin), _("Preferences"));
   gtk_window_set_position (GTK_WINDOW (prefwin), GTK_WIN_POS_CENTER);
@@ -1999,6 +2001,20 @@ create_prefwin (void)
   auto_name_playlist_from_folder = gtk_check_button_new_with_mnemonic (_("Auto-name playlists when adding a single folder"));
   gtk_widget_show (auto_name_playlist_from_folder);
   gtk_box_pack_start (GTK_BOX (vbox9), auto_name_playlist_from_folder, FALSE, FALSE, 0);
+
+  hbox102 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox102);
+  gtk_box_pack_start (GTK_BOX (vbox9), hbox102, TRUE, TRUE, 0);
+
+  label129 = gtk_label_new (_("Interface refresh rate (times per second):"));
+  gtk_widget_show (label129);
+  gtk_box_pack_start (GTK_BOX (hbox102), label129, FALSE, FALSE, 0);
+
+  gui_fps = gtk_hscale_new (GTK_ADJUSTMENT (gtk_adjustment_new (10, 1, 30, 0, 0, 0)));
+  gtk_widget_show (gui_fps);
+  gtk_box_pack_start (GTK_BOX (hbox102), gui_fps, TRUE, TRUE, 0);
+  gtk_scale_set_value_pos (GTK_SCALE (gui_fps), GTK_POS_RIGHT);
+  gtk_scale_set_digits (GTK_SCALE (gui_fps), 0);
 
   hbox64 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox64);
@@ -2534,6 +2550,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) auto_name_playlist_from_folder, "toggled",
                     G_CALLBACK (on_auto_name_playlist_from_folder_toggled),
                     NULL);
+  g_signal_connect ((gpointer) gui_fps, "value_changed",
+                    G_CALLBACK (on_gui_fps_value_changed),
+                    NULL);
   g_signal_connect ((gpointer) titlebar_format_playing, "changed",
                     G_CALLBACK (on_titlebar_format_playing_changed),
                     NULL);
@@ -2670,6 +2689,9 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, embolden_current, "embolden_current");
   GLADE_HOOKUP_OBJECT (prefwin, hide_delete_from_disk, "hide_delete_from_disk");
   GLADE_HOOKUP_OBJECT (prefwin, auto_name_playlist_from_folder, "auto_name_playlist_from_folder");
+  GLADE_HOOKUP_OBJECT (prefwin, hbox102, "hbox102");
+  GLADE_HOOKUP_OBJECT (prefwin, label129, "label129");
+  GLADE_HOOKUP_OBJECT (prefwin, gui_fps, "gui_fps");
   GLADE_HOOKUP_OBJECT (prefwin, hbox64, "hbox64");
   GLADE_HOOKUP_OBJECT (prefwin, label101, "label101");
   GLADE_HOOKUP_OBJECT (prefwin, titlebar_format_playing, "titlebar_format_playing");

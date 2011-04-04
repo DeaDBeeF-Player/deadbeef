@@ -1111,3 +1111,11 @@ on_tabstrip_text_color_set             (GtkColorButton  *colorbutton,
 void
 on_gui_plugin_changed                  (GtkComboBox     *combobox,
                                         gpointer         user_data);
+
+void
+on_seekbar_fps_value_changed           (GtkRange        *range,
+                                        gpointer         user_data);
+
+void
+on_gui_fps_value_changed               (GtkRange        *range,
+                                        gpointer         user_data);
