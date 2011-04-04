@@ -25,8 +25,8 @@
 #include <sys/time.h>
 #include "../../deadbeef.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 //#define WRITE_DUMP 1
 
@@ -1113,13 +1113,15 @@ cmp3_read (DB_fileinfo_t *_info, char *bytes, int size) {
     }
 #endif
     mpgmad_info_t *info = (mpgmad_info_t *)_info;
-    int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
-    int curr = info->buffer.currentsample - info->buffer.delay;
-    if (size / samplesize + curr > info->buffer.endsample) {
-        size = (info->buffer.endsample - curr + 1) * samplesize;
-        trace ("mp3: size truncated to %d bytes (%d samples), cursample=%d, endsample=%d\n", size, info->buffer.endsample - curr + 1, curr, info->buffer.endsample);
-        if (size <= 0) {
-            return 0;
+    if (info->buffer.duration >= 0) {
+        int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
+        int curr = info->buffer.currentsample - info->buffer.delay;
+        if (size / samplesize + curr > info->buffer.endsample) {
+            size = (info->buffer.endsample - curr + 1) * samplesize;
+            trace ("mp3: size truncated to %d bytes (%d samples), cursample=%d, endsample=%d\n", size, info->buffer.endsample - curr + 1, curr, info->buffer.endsample);
+            if (size <= 0) {
+                return 0;
+            }
         }
     }
     int initsize = size;
