@@ -714,13 +714,16 @@ refresh_encoder_lists (GtkComboBox *combo, GtkTreeView *list) {
     GtkTreePath *path;
     GtkTreeViewColumn *col;
     gtk_tree_view_get_cursor (GTK_TREE_VIEW (list), &path, &col);
+    int idx = -1;
     if (path && col) {
         int *indices = gtk_tree_path_get_indices (path);
-        int idx = *indices;
+        idx = *indices;
         g_free (indices);
+    }
 
-        gtk_list_store_clear (mdl);
-        fill_presets (mdl, (ddb_preset_t *)converter_plugin->encoder_preset_get_list ());
+    gtk_list_store_clear (mdl);
+    fill_presets (mdl, (ddb_preset_t *)converter_plugin->encoder_preset_get_list ());
+    if (idx != -1) {
         path = gtk_tree_path_new_from_indices (idx, -1);
         gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, col, FALSE);
         gtk_tree_path_free (path);
@@ -745,9 +748,11 @@ on_encoder_preset_add                     (GtkButton       *button,
     current_ctx->current_encoder_preset->default_format = DDB_ENCODER_FMT_16BIT;
 
     if (GTK_RESPONSE_OK == edit_encoder_preset (_("Add new encoder"), toplevel, 0)) {
+        printf ("added new enc preset\n");
         converter_plugin->encoder_preset_append (current_ctx->current_encoder_preset);
         GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (current_ctx->converter, "encoder"));
         GtkWidget *list = lookup_widget (toplevel, "presets");
+        printf ("refresh list\n");
         refresh_encoder_lists (combo, GTK_TREE_VIEW (list));
     }
 
@@ -845,10 +850,14 @@ on_edit_encoder_presets_clicked        (GtkButton       *button,
     GtkListStore *mdl = gtk_list_store_new (1, G_TYPE_STRING);
     gtk_tree_view_set_model (GTK_TREE_VIEW (list), GTK_TREE_MODEL (mdl));
     fill_presets (mdl, (ddb_preset_t *)converter_plugin->encoder_preset_get_list ());
-    int curr = deadbeef->conf_get_int ("converter.encoder_preset", 0);
-    GtkTreePath *path = gtk_tree_path_new_from_indices (curr, -1);
-    gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, col, FALSE);
-    gtk_tree_path_free (path);
+    int curr = deadbeef->conf_get_int ("converter.encoder_preset", -1);
+    if (curr != -1) {
+        GtkTreePath *path = gtk_tree_path_new_from_indices (curr, -1);
+        if (path && gtk_tree_path_get_depth (path) > 0) {
+            gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, col, FALSE);
+            gtk_tree_path_free (path);
+        }
+    }
     gtk_dialog_run (GTK_DIALOG (dlg));
     gtk_widget_destroy (dlg);
 }

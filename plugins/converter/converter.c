@@ -527,7 +527,9 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
     if (dec) {
         fileinfo = dec->open (0);
         if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (it)) != 0) {
-            fprintf (stderr, "converter: decoder->init failed\n");
+            deadbeef->pl_lock ();
+            fprintf (stderr, "converter: failed to decode file %s\n", deadbeef->pl_find_meta (it, ":URI"));
+            deadbeef->pl_unlock ();
             goto error;
         }
         if (fileinfo) {
