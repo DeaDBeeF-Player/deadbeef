@@ -575,7 +575,6 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         }
 
         if (sample == 0) {
-            trace ("parsing 1st 3000 frames\n");
             if (fsize <= 0) {
                 trace ("cmp3_scan_stream: negative file size\n");
                 return -1;
@@ -585,7 +584,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             buffer->avg_samplerate += samplerate;
             buffer->avg_samples_per_frame += samples_per_frame;
             avg_bitrate += bitrate;
-            if (nframe >= 3000) {
+            if (nframe >= 100) {
                 goto end_scan;
             }
         }
