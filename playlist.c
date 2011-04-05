@@ -1357,6 +1357,9 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
     return after;
 }
 
+static int follow_symlinks = 0;
+static int ignore_archives = 0;
+
 playItem_t *
 pl_insert_dir_int (DB_vfs_t *vfs, playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data);
 
@@ -1369,19 +1372,21 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
     }
 
     // check if that is supported container format
-    DB_vfs_t **vfsplugs = plug_get_vfs_list ();
-    for (int i = 0; vfsplugs[i]; i++) {
-        if (vfsplugs[i]->is_container) {
-            trace ("%s cont test\n", fname);
-            if (vfsplugs[i]->is_container (fname)) {
-                playItem_t *it = pl_insert_dir_int (vfsplugs[i], after, fname, pabort, cb, user_data);
-                if (it) {
-                    return it;
+    if (!ignore_archives) {
+        DB_vfs_t **vfsplugs = plug_get_vfs_list ();
+        for (int i = 0; vfsplugs[i]; i++) {
+            if (vfsplugs[i]->is_container) {
+                trace ("%s cont test\n", fname);
+                if (vfsplugs[i]->is_container (fname)) {
+                    trace ("inserting %s via vfs %s\n", fname, vfsplugs[i]->plugin.id);
+                    playItem_t *it = pl_insert_dir_int (vfsplugs[i], after, fname, pabort, cb, user_data);
+                    if (it) {
+                        return it;
+                    }
                 }
             }
         }
     }
-
 
     // detect decoder
     const char *eol = strrchr (fname, '.');
@@ -1515,8 +1520,6 @@ static int dirent_alphasort (const struct dirent **a, const struct dirent **b) {
     return strcmp ((*a)->d_name, (*b)->d_name);
 }
 
-static int follow_symlinks = 0;
-
 playItem_t *
 pl_insert_dir_int (DB_vfs_t *vfs, playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     if (!strncmp (dirname, "file://", 7)) {
@@ -1581,7 +1584,13 @@ pl_insert_dir_int (DB_vfs_t *vfs, playItem_t *after, const char *dirname, int *p
 playItem_t *
 pl_insert_dir (playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     follow_symlinks = conf_get_int ("add_folders_follow_symlinks", 0);
-    return pl_insert_dir_int (NULL, after, dirname, pabort, cb, user_data);
+    ignore_archives = conf_get_int ("ignore_archives", 1);
+
+    playItem_t *ret = pl_insert_dir_int (NULL, after, dirname, pabort, cb, user_data);
+
+    ignore_archives = 0;
+
+    return ret;
 }
 
 int

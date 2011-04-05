@@ -521,9 +521,12 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     // auto-rename playlist from folder name
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "auto_name_playlist_from_folder")), deadbeef->conf_get_int ("gtkui.name_playlist_from_folder", 0));
 
+    // refresh rate
     int val = deadbeef->conf_get_int ("gtkui.refresh_rate", 10);
     gtk_range_set_value (GTK_RANGE (lookup_widget (w, "gui_fps")), val);
 
+    // add from archives
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "ignore_archives")), deadbeef->conf_get_int ("ignore_archives", 1));
     // titlebar text
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "titlebar_format_playing")), deadbeef->conf_get_str_fast ("gtkui.titlebar_playing", "%a - %t - DeaDBeeF-%V"));
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "titlebar_format_stopped")), deadbeef->conf_get_str_fast ("gtkui.titlebar_stopped", "DeaDBeeF-%V"));
@@ -1323,5 +1326,13 @@ on_gui_fps_value_changed           (GtkRange        *range,
     int val = gtk_range_get_value (range);
     deadbeef->conf_set_int ("gtkui.refresh_rate", val);
     gtkui_setup_gui_refresh ();
+}
+
+void
+on_ignore_archives_toggled             (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+
+    deadbeef->conf_set_int ("ignore_archives", gtk_toggle_button_get_active (togglebutton));
 }
 

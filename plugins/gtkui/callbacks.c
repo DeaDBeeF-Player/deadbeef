@@ -217,13 +217,18 @@ on_add_folders_activate                (GtkMenuItem     *menuitem,
 {
     GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Add folder(s) to playlist..."), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
 
+    GtkWidget *box = gtk_hbox_new (FALSE, 8);
+    gtk_widget_show (box);
+
     GtkWidget *check = gtk_check_button_new_with_mnemonic (_("Follow symlinks"));
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (check), deadbeef->conf_get_int ("add_folders_follow_symlinks", 0));
     g_signal_connect ((gpointer) check, "toggled",
             G_CALLBACK (on_follow_symlinks_toggled),
             NULL);
     gtk_widget_show (check);
-    gtk_file_chooser_set_extra_widget (GTK_FILE_CHOOSER (dlg), check);
+    gtk_box_pack_start (GTK_BOX (box), check, FALSE, FALSE, 0);
+
+    gtk_file_chooser_set_extra_widget (GTK_FILE_CHOOSER (dlg), box);
 
     set_file_filter (dlg, NULL);
 
@@ -1178,4 +1183,3 @@ create_plugin_weblink (gchar *widget_name, gchar *string1, gchar *string2,
     gtk_widget_set_sensitive (link, FALSE);
     return link;
 }
-

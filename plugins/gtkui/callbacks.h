@@ -1119,3 +1119,11 @@ on_seekbar_fps_value_changed           (GtkRange        *range,
 void
 on_gui_fps_value_changed               (GtkRange        *range,
                                         gpointer         user_data);
+
+void
+on_add_from_archives_toggled           (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_ignore_archives_toggled             (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);

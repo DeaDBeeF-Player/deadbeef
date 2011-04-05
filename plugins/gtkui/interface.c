@@ -1665,6 +1665,7 @@ create_prefwin (void)
   GtkWidget *cli_add_to_playlist;
   GtkWidget *cli_playlist_name;
   GtkWidget *resume_last_session;
+  GtkWidget *ignore_archives;
   GtkWidget *label39;
   GtkWidget *vbox29;
   GtkWidget *hbox80;
@@ -1897,6 +1898,10 @@ create_prefwin (void)
   gtk_widget_show (resume_last_session);
   gtk_box_pack_start (GTK_BOX (vbox8), resume_last_session, FALSE, FALSE, 0);
 
+  ignore_archives = gtk_check_button_new_with_mnemonic (_("Don't add from archives when adding folders"));
+  gtk_widget_show (ignore_archives);
+  gtk_box_pack_start (GTK_BOX (vbox8), ignore_archives, FALSE, FALSE, 0);
+
   label39 = gtk_label_new (_("Playback"));
   gtk_widget_show (label39);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 1), label39);
@@ -2004,7 +2009,7 @@ create_prefwin (void)
 
   hbox102 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox102);
-  gtk_box_pack_start (GTK_BOX (vbox9), hbox102, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox9), hbox102, FALSE, FALSE, 0);
 
   label129 = gtk_label_new (_("Interface refresh rate (times per second):"));
   gtk_widget_show (label129);
@@ -2508,6 +2513,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) resume_last_session, "toggled",
                     G_CALLBACK (on_resume_last_session_toggled),
                     NULL);
+  g_signal_connect ((gpointer) ignore_archives, "toggled",
+                    G_CALLBACK (on_ignore_archives_toggled),
+                    NULL);
   g_signal_connect ((gpointer) dsp_add, "clicked",
                     G_CALLBACK (on_dsp_add_clicked),
                     NULL);
@@ -2664,6 +2672,7 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, cli_add_to_playlist, "cli_add_to_playlist");
   GLADE_HOOKUP_OBJECT (prefwin, cli_playlist_name, "cli_playlist_name");
   GLADE_HOOKUP_OBJECT (prefwin, resume_last_session, "resume_last_session");
+  GLADE_HOOKUP_OBJECT (prefwin, ignore_archives, "ignore_archives");
   GLADE_HOOKUP_OBJECT (prefwin, label39, "label39");
   GLADE_HOOKUP_OBJECT (prefwin, vbox29, "vbox29");
   GLADE_HOOKUP_OBJECT (prefwin, hbox80, "hbox80");
