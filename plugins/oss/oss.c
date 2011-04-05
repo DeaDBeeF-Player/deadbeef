@@ -282,7 +282,14 @@ oss_thread (void *context) {
 
         int res = 0;
         
-        char buf[BLOCKSIZE];
+        int sample_size = plugin.fmt.channels * (plugin.fmt.bps / 8);
+        int bs = BLOCKSIZE;
+        int mod = bs % sample_size;
+        if (mod > 0) {
+            bs -= mod;
+        }
+        char buf[bs];
+
         int write_size = oss_callback (buf, sizeof (buf));
         deadbeef->mutex_lock (mutex);
         if ( write_size > 0 )
