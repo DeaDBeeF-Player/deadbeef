@@ -812,6 +812,7 @@ error:
     DB_playItem_t *out_it = deadbeef->pl_item_alloc ();
     deadbeef->pl_item_copy (out_it, it);
     deadbeef->pl_replace_meta (out_it, ":URI", out);
+    deadbeef->pl_delete_meta (out_it, "cuesheet");
 
     deadbeef->junk_rewrite_tags (out_it, tagflags, encoder_preset->id3v2_version + 3, "iso8859-1");
 
