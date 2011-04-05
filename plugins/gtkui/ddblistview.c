@@ -1078,7 +1078,7 @@ ddb_listview_list_setup_vscroll (DdbListview *ps) {
     if (ps->fullheight <= ps->list->allocation.height) {
         gtk_widget_hide (scroll);
         ps->scrollpos = 0;
-        gtk_widget_queue_draw_area (ps->list, 0, 0, list->allocation.width, list->allocation.height);
+        gtk_widget_queue_draw (ps->list);
     }
     else {
         gtk_widget_show (scroll);
@@ -2272,7 +2272,7 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
 //            colhdr_anim_swap (ps, c1, c2, x1, x2);
             // force redraw of everything
 //            ddb_listview_list_setup_hscroll (ps);
-            gtk_widget_queue_draw_area (ps->list, 0, 0, ps->list->allocation.width, ps->list->allocation.height);
+            gtk_widget_queue_draw (ps->list);
         }
         else {
             // only redraw that if not animating
@@ -2301,7 +2301,7 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
         ddb_listview_list_setup_hscroll (ps);
         ps->block_redraw_on_scroll = 0;
         gtk_widget_queue_draw (ps->header);
-        gtk_widget_queue_draw_area (ps->list, 0, 0, ps->list->allocation.width, ps->list->allocation.height);
+        gtk_widget_queue_draw (ps->list);
         ps->binding->column_size_changed (ps, ps->header_sizing);
     }
     else {
