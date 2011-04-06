@@ -196,7 +196,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
     int scansamples = 0;
     buffer->currentsample = 0;
     buffer->skipsamples = 0;
-    int avg_bitrate = 0;
+//    int avg_bitrate = 0;
     int valid_frames = 0;
     int prev_bitrate = -1;
     buffer->samplerate = 0;
@@ -557,7 +557,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                     buffer->duration = (buffer->nframes * samples_per_frame - buffer->delay - buffer->padding) / samplerate;
                     buffer->totalsamples = buffer->nframes * samples_per_frame;
                     trace ("totalsamples: %d, samplesperframe: %d, fsize=%lld\n", buffer->totalsamples, samples_per_frame, fsize);
-//                    trace ("bitrate=%d, layer=%d, packetlength=%d, fsize=%d, nframes=%d, samples_per_frame=%d, samplerate=%d, duration=%f, totalsamples=%d\n", bitrate, layer, packetlength, sz, nframes, samples_per_frame, samplerate, buffer->duration, buffer->totalsamples);
+//                    trace ("bitrate=%d, layer=%d, packetlength=%d, fsize=%d, nframes=%d, samples_per_frame=%d, samplerate=%d, duration=%f, totalsamples=%d\n", bitrate, layer, packetlength, sz, nframe, samples_per_frame, samplerate, buffer->duration, buffer->totalsamples);
 
                     if (sample == 0) {
                         deadbeef->fseek (buffer->file, framepos/*+packetlength-4*/, SEEK_SET);
@@ -583,7 +583,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             buffer->avg_packetlength += packetlength;
             buffer->avg_samplerate += samplerate;
             buffer->avg_samples_per_frame += samples_per_frame;
-            avg_bitrate += bitrate;
+            //avg_bitrate += bitrate;
             if (nframe >= 100) {
                 goto end_scan;
             }
@@ -611,9 +611,8 @@ end_scan:
         buffer->avg_packetlength /= (float)valid_frames;
         buffer->avg_samplerate /= valid_frames;
         buffer->avg_samples_per_frame /= valid_frames;
-        avg_bitrate /= valid_frames;
-        trace ("valid_frames=%d, avg_bitrate=%d, avg_packetlength=%f, avg_samplerate=%d, avg_samples_per_frame=%d\n", valid_frames, avg_bitrate, buffer->avg_packetlength, buffer->avg_samplerate, buffer->avg_samples_per_frame);
-        buffer->bitrate = avg_bitrate;
+//        avg_bitrate /= valid_frames;
+        //trace ("valid_frames=%d, avg_bitrate=%d, avg_packetlength=%f, avg_samplerate=%d, avg_samples_per_frame=%d\n", valid_frames, avg_bitrate, buffer->avg_packetlength, buffer->avg_samplerate, buffer->avg_samples_per_frame);
         trace ("startoffs: %d, endoffs: %d\n",  buffer->startoffset, buffer->endoffset);
 
         buffer->nframes = (fsize - buffer->startoffset - buffer->endoffset) / buffer->avg_packetlength;
@@ -621,6 +620,7 @@ end_scan:
             buffer->totalsamples = buffer->nframes * buffer->avg_samples_per_frame;
             buffer->duration = (buffer->totalsamples - buffer->delay - buffer->padding) / buffer->avg_samplerate;
         }
+        buffer->bitrate = (fsize-buffer->startoffset-buffer->endoffset) / buffer->duration * 8;
         trace ("nframes: %d, fsize: %lld, spf: %d, smp: %d, totalsamples: %d\n", buffer->nframes, fsize, buffer->avg_samples_per_frame, buffer->avg_samplerate, buffer->totalsamples);
         return 0;
     }
