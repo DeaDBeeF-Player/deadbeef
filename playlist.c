@@ -2901,6 +2901,12 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
             }
             else if (*fmt == 'B') {
                 meta = pl_find_meta (it, "band");
+                if (!meta) {
+                    meta = pl_find_meta (it, "album artist");
+                    if (!meta) {
+                        meta = pl_find_meta (it, "artist");
+                    }
+                }
             }
             else if (*fmt == 'C') {
                 meta = pl_find_meta (it, "composer");
