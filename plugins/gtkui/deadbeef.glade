@@ -2190,8 +2190,8 @@ Artist - Album
 Artist
 Album
 Title
-Length
-Track
+Duration
+Track No
 Band / Album Artist
 Custom</property>
 		  <property name="add_tearoffs">False</property>

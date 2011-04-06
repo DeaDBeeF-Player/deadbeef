@@ -1509,8 +1509,8 @@ create_editcolumndlg (void)
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), _("Artist"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), _("Album"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), _("Title"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (id), _("Length"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (id), _("Track"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (id), _("Duration"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (id), _("Track No"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), _("Band / Album Artist"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (id), _("Custom"));
 
