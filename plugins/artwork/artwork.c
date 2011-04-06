@@ -19,7 +19,7 @@
 #define trace(...)
 
 static char default_cover[PATH_MAX];
-#define DEFAULT_FILEMASK "*cover*.jpg;*front*.jpg"
+#define DEFAULT_FILEMASK "*cover*.jpg;*front*.jpg;*folder*.jpg"
 
 static DB_artwork_plugin_t plugin;
 DB_functions_t *deadbeef;
