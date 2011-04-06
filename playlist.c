@@ -2872,7 +2872,25 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
             else if (*fmt == 't') {
                 meta = pl_find_meta (it, "title");
                 if (!meta) {
-                    meta = "?";
+                    const char *f = pl_find_meta (it, ":URI");
+                    const char *start = strrchr (f, '/');
+                    if (start) {
+                        start++;
+                    }
+                    else {
+                        start = f;
+                    }
+                    const char *end = strrchr (start, '.');
+                    if (end) {
+                        int n = end-start;
+                        n = min (end-start, sizeof (dirname)-1);
+                        strncpy (dirname, start, n);
+                        dirname[n] = 0;
+                        meta = dirname;
+                    }
+                    else {
+                        meta = "?";
+                    }
                 }
             }
             else if (*fmt == 'b') {
@@ -2935,13 +2953,15 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                 }
             }
             else if (*fmt == 'f') {
-                meta = pl_find_meta (it, ":URI") + strlen (pl_find_meta (it, ":URI")) - 1;
-                while (meta > pl_find_meta (it, ":URI") && (*meta) != '/') {
-                    meta--;
-                }
-                if (*meta == '/') {
+                const char *f = pl_find_meta (it, ":URI");
+                meta = strrchr (f, '/');
+                if (meta) {
                     meta++;
                 }
+                else {
+                    meta = f;
+                }
+                printf ("meta: %s\n", meta);
             }
             else if (*fmt == 'F') {
                 meta = pl_find_meta (it, ":URI");
@@ -2991,17 +3011,15 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
             }
             else if (*fmt == 'd') {
                 // directory
-                const char *end = pl_find_meta (it, ":URI") + strlen (pl_find_meta (it, ":URI")) - 1;
-                while (end > pl_find_meta (it, ":URI") && (*end) != '/') {
-                    end--;
-                }
-                if (*end != '/') {
+                const char *f = pl_find_meta (it, ":URI");
+                const char *end = strrchr (f, '/');
+                if (!end) {
                     meta = ""; // got relative path without folder (should not happen)
                 }
                 else {
                     const char *start = end;
                     start--;
-                    while (start > pl_find_meta (it, ":URI") && (*start != '/')) {
+                    while (start > f && (*start != '/')) {
                         start--;
                     }
 
@@ -3018,19 +3036,17 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                 }
             }
             else if (*fmt == 'D') {
+                const char *f = pl_find_meta (it, ":URI");
                 // directory with path
-                const char *end = pl_find_meta (it, ":URI") + strlen (pl_find_meta (it, ":URI")) - 1;
-                while (end > pl_find_meta (it, ":URI") && (*end) != '/') {
-                    end--;
-                }
-                if (*end != '/') {
+                const char *end = strrchr (f, '/');
+                if (!end) {
                     meta = ""; // got relative path without folder (should not happen)
                 }
                 else {
                     // copy
-                    int len = end - pl_find_meta (it, ":URI");
+                    int len = end - f;
                     len = min (len, sizeof (dirname)-1);
-                    strncpy (dirname, pl_find_meta (it, ":URI"), len);
+                    strncpy (dirname, f, len);
                     dirname[len] = 0;
                     meta = dirname;
                 }
