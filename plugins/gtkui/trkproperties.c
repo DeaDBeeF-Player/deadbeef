@@ -227,7 +227,6 @@ on_metadata_edited (GtkCellRendererText *renderer, gchar *path, gchar *new_text,
 static const char *types[] = {
     "artist", "Artist",
     "title", "Track Title",
-    "performer", "Performer",
     "album", "Album",
     "year", "Date",
     "track", "Track Number",
