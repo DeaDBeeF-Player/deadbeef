@@ -510,6 +510,15 @@ get_output_path (DB_playItem_t *it, const char *outfolder, const char *outfile, 
     char fname[PATH_MAX];
     int idx = deadbeef->pl_get_idx_of (it);
     deadbeef->pl_format_title (it, idx, fname, sizeof (fname), -1, outfile);
+    // replace invalid chars
+    char *p = fname;
+    char invalid[] = "/\\?%*:|\"<>";
+    while (*p) {
+        if (strchr (invalid, *p)) {
+            *p = '_';
+        }
+        p++;
+    }
     snprintf (out, sz, "%s/%s.%s", outfolder, fname, encoder_preset->ext);
 
 }
