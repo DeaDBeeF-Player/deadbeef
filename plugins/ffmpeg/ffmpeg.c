@@ -210,7 +210,7 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
 
     int64_t layout = info->ctx->channel_layout;
-    if (layout != 0) {
+    if (layout != 0, 0) {
         _info->fmt.channelmask = layout;
     }
     else {
