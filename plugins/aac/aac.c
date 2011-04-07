@@ -312,7 +312,9 @@ aac_probe (DB_FILE *fp, const char *fname, MP4FILE_CB *cb, float *duration, int 
             }
             *channels = mp4ff_get_channel_count (mp4, i);
             int samples = mp4ff_num_samples(mp4, i) * 1024;
-            trace ("mp4 nsamples=%d, samplerate=%d\n", samples, *samplerate);
+            samples = (int64_t)samples * (*samplerate) / mp4ff_time_scale (mp4, i);
+
+            trace ("mp4 nsamples=%d, samplerate=%d, timescale=%d, duration=%lld\n", samples, *samplerate, mp4ff_time_scale(mp4, i), mp4ff_get_track_duration(mp4, i));
             *duration = (float)samples / (*samplerate);
 
             if (totalsamples) {
