@@ -598,6 +598,7 @@ streamer_set_current (playItem_t *it) {
     if (from) {
         plug_trigger_event_trackinfochanged (from);
     }
+    pl_lock ();
     const char *decoder_id = pl_find_meta (it, ":DECODER");
     const char *filetype = pl_find_meta (it, ":FILETYPE");
     if (!decoder_id && filetype && !strcmp (filetype, "content")) {
@@ -652,6 +653,29 @@ streamer_set_current (playItem_t *it) {
     if (decoder_id) {
         DB_decoder_t *dec = NULL;
         dec = plug_get_decoder_for_id (decoder_id);
+        if (!dec) {
+            // find new decoder by file extension
+            const char *fname = pl_find_meta (it, ":URI");
+            const char *ext = strrchr (fname, '.');
+            if (ext) {
+                ext++;
+                DB_decoder_t **decs = plug_get_decoder_list ();
+                for (int i = 0; decs[i]; i++) {
+                    const char **exts = decs[i]->exts;
+                    if (exts) {
+                        for (int j = 0; exts[j]; j++) {
+                            if (!strcasecmp (exts[j], ext)) {
+                                fprintf (stderr, "streamer: %s : changed decoder plugin to %s\n", fname, decs[i]->plugin.id);
+                                pl_replace_meta (it, ":DECODER", decs[i]->plugin.id);
+                                pl_replace_meta (it, ":FILETYPE", ext);
+                                dec = decs[i];
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
         if (dec) {
             trace ("\033[0;33minit decoder for %s (%s)\033[37;0m\n", pl_find_meta (it, ":URI"), decoder_id);
             new_fileinfo = dec->open (0);
@@ -685,6 +709,7 @@ streamer_set_current (playItem_t *it) {
         }
     }
     else {
+        pl_unlock ();
         trace ("no decoder in playitem!\n");
         it->played = 1;
         streamer_buffering = 0;
@@ -699,6 +724,7 @@ streamer_set_current (playItem_t *it) {
         }
         return -1;
     }
+    pl_unlock ();
 success:
     mutex_lock (decodemutex);
     if (new_fileinfo) {
@@ -1052,8 +1078,10 @@ streamer_thread (void *ctx) {
 
                 mutex_lock (decodemutex);
                 DB_decoder_t *dec = NULL;
+                pl_lock ();
                 const char *decoder_id = pl_find_meta (streaming_track, ":DECODER");
                 dec = plug_get_decoder_for_id (decoder_id);
+                pl_unlock ();
                 if (dec) {
                     fileinfo = dec->open (0);
                     if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (streaming_track)) != 0) {
