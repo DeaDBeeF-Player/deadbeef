@@ -8,13 +8,15 @@ msgstr ""
 "Project-Id-Version: DeadBeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-16 04:27+0000\n"
-"PO-Revision-Date: \n"
-"Last-Translator: paolo stivanin <paolostivanin@gmail.com>\n"
+"PO-Revision-Date: 2011-03-09 17:43+0200\n"
+"Last-Translator: Alessandro <alex@amiran.it>\n"
 "Language-Team: Italian\n"
+"Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Pootle 2.0.5\n"
 "X-Poedit-Language: Italian\n"
 "X-Poedit-Country: Italy\n"
 
@@ -28,15 +30,15 @@ msgstr "Altri files (*)"
 
 #: ../plugins/gtkui/callbacks.c:118
 msgid "Open file(s)..."
-msgstr "Apri file(s)..."
+msgstr "Apri file..."
 
 #: ../plugins/gtkui/callbacks.c:151
 msgid "Add file(s) to playlist..."
-msgstr "Aggiungi file(s) alla playlist..."
+msgstr "Aggiungi file alla playlist..."
 
 #: ../plugins/gtkui/callbacks.c:190
 msgid "Add folder(s) to playlist..."
-msgstr "Aggiungi cartella(e) alla playlist"
+msgstr "Aggiungi cartella/e alla playlist"
 
 #: ../plugins/gtkui/interface.c:179 ../plugins/gtkui/deadbeef.glade.h:6
 msgid "Add Audio CD"
@@ -205,17 +207,17 @@ msgstr "_File"
 #: ../plugins/gtkui/interface.c:145
 #: ../plugins/gtkui/deadbeef.glade.h:157
 msgid "_Open file(s)"
-msgstr "_Apri file(s)"
+msgstr "_Apri file"
 
 #: ../plugins/gtkui/interface.c:161
 #: ../plugins/gtkui/deadbeef.glade.h:6
 msgid "Add file(s)"
-msgstr "Aggiungi file(s)"
+msgstr "Aggiungi file"
 
 #: ../plugins/gtkui/interface.c:169
 #: ../plugins/gtkui/deadbeef.glade.h:8
 msgid "Add folder(s)"
-msgstr "Aggiungi cartella(e)"
+msgstr "Aggiungi cartella/e"
 
 #: ../plugins/gtkui/interface.c:177
 #: ../plugins/gtkui/interface.c:2969
@@ -611,7 +613,7 @@ msgstr ""
 #: ../plugins/gtkui/interface.c:3135
 #: ../plugins/gtkui/deadbeef.glade.h:148
 msgid "_Cancel"
-msgstr "_Cancella"
+msgstr "A_nnulla"
 
 #: ../plugins/gtkui/interface.c:1494
 #: ../plugins/gtkui/interface.c:2921
@@ -1017,7 +1019,7 @@ msgstr "Rimuovi dalla coda di riproduzione"
 
 #: ../plugins/gtkui/plcommon.c:414
 msgid "Reload metadata"
-msgstr "Ricarica metadata"
+msgstr "Ricarica metadati"
 
 #: ../plugins/gtkui/plcommon.c:433
 msgid "Remove from disk"
@@ -1107,7 +1109,7 @@ msgstr "Cuesheet incorporato"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Yes"
-msgstr "Si"
+msgstr "Sì"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "No"
@@ -1334,4 +1336,3 @@ msgstr "Errore di scrittura del file di uscita. Il flusso di uscita potrebbe ess
 #, c-format
 msgid "wildmidi: freepats config file not found. Please install timidity-freepats package, or specify path to freepats.cfg in the plugin settings."
 msgstr "wildmidi: file di configurazione freepats non trovato. Per favore install timidy-freepats o specifica un percorso a freepats.cfg nella sezione Impostazione Plugins."
-

@@ -8,15 +8,16 @@ msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-10 15:02+0200\n"
-"PO-Revision-Date: 2010-05-31 00:12+0200\n"
-"Last-Translator:  Ivica Kolić<ikoli@yahoo.com> <>\n"
+"PO-Revision-Date: 2011-02-23 01:22+0200\n"
+"Last-Translator: zvacet <ikoli@yahoo.com>\n"
 "Language-Team: Croatian <>\n"
 "Language: hr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
+"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Pootle 2.0.5\n"
 
 #: ../plugins/gtkui/callbacks.c:97
 msgid "Supported sound formats"
@@ -28,23 +29,23 @@ msgstr "Ostale datoteke (*)"
 
 #: ../plugins/gtkui/callbacks.c:118
 msgid "Open file(s)..."
-msgstr "Otvori datoteku(e)"
+msgstr "Otvori datoteku(e)..."
 
 #: ../plugins/gtkui/callbacks.c:151
 msgid "Add file(s) to playlist..."
-msgstr "Dodaj datoteku(e) na listu izvođenja"
+msgstr "Dodaj datoteku(e) na listu izvođenja..."
 
 #: ../plugins/gtkui/callbacks.c:190
 msgid "Add folder(s) to playlist..."
-msgstr "Dodaj mapu(e) na listu izvođenja"
+msgstr "Dodaj mapu(e) na listu izvođenja..."
 
 #: ../plugins/gtkui/callbacks.c:192
 msgid "Follow symlinks"
-msgstr ""
+msgstr "Slijedi simboličke poveznice"
 
 #: ../plugins/gtkui/callbacks.c:677
 msgid "Failed while reading help file"
-msgstr ""
+msgstr "Neuspjeh tijekom čitanja datoteke pomoći"
 
 #: ../plugins/gtkui/callbacks.c:687
 msgid "Failed to load help file"
@@ -123,11 +124,11 @@ msgstr ""
 
 #: ../plugins/gtkui/eq.c:321
 msgid "Save Preset"
-msgstr ""
+msgstr "Spremi unaprijed postavljeno"
 
 #: ../plugins/gtkui/eq.c:328
 msgid "Load Preset"
-msgstr ""
+msgstr "Učitaj unaprijed postavljeno"
 
 #: ../plugins/gtkui/eq.c:335
 msgid "Import Foobar2000 Preset"
@@ -179,7 +180,7 @@ msgstr "Spremi listu izvođenja kao"
 
 #: ../plugins/gtkui/gtkui.c:669 ../plugins/gtkui/gtkui.c:730
 msgid "DeaDBeeF playlist files (*.dbpl)"
-msgstr "DeaDBeeF datoteke liste izvođenja"
+msgstr "DeaDBeeF datoteke liste izvođenja (*.dbpl)"
 
 #: ../plugins/gtkui/gtkui.c:723
 msgid "Load Playlist"
@@ -287,7 +288,7 @@ msgstr "Statusna traka"
 
 #: ../plugins/gtkui/interface.c:300 ../plugins/gtkui/deadbeef.glade.h:18
 msgid "Column headers"
-msgstr ""
+msgstr "Zaglavlja stupaca"
 
 #: ../plugins/gtkui/interface.c:304 ../plugins/gtkui/deadbeef.glade.h:130
 msgid "Tabs"
@@ -396,7 +397,7 @@ msgstr "Isključi"
 
 #: ../plugins/gtkui/interface.c:1010 ../plugins/gtkui/deadbeef.glade.h:10
 msgid "Adding files..."
-msgstr "Dodavanje datoteka"
+msgstr "Dodavanje datoteka..."
 
 #: ../plugins/gtkui/interface.c:1054 ../plugins/gtkui/deadbeef.glade.h:145
 msgid "_Abort"
@@ -499,7 +500,7 @@ msgstr "Format:"
 
 #: ../plugins/gtkui/interface.c:1433 ../plugins/gtkui/deadbeef.glade.h:11
 msgid "Alignment:"
-msgstr "Poravnanje"
+msgstr "Poravnanje:"
 
 #: ../plugins/gtkui/interface.c:1441
 msgid "Left"
@@ -535,11 +536,11 @@ msgstr "_OK"
 
 #: ../plugins/gtkui/interface.c:1725 ../plugins/gtkui/deadbeef.glade.h:88
 msgid "Output plugin:"
-msgstr "Izlazni priključak"
+msgstr "Izlazni priključak:"
 
 #: ../plugins/gtkui/interface.c:1738 ../plugins/gtkui/deadbeef.glade.h:87
 msgid "Output device:"
-msgstr "Izlazni uređaj"
+msgstr "Izlazni uređaj:"
 
 #: ../plugins/gtkui/interface.c:1747 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Sound"
@@ -568,15 +569,16 @@ msgstr ""
 #: ../plugins/gtkui/interface.c:1804 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
 msgstr ""
+"Dodaj datoteke iz naredbanog retka (ili upravljača datotekama) na uvu listu "
+"izvođenja:"
 
 #: ../plugins/gtkui/interface.c:1813 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "Resume previous session on startup"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:1817 ../plugins/gtkui/deadbeef.glade.h:94
-#, fuzzy
 msgid "Playback"
-msgstr "_Reprodukcija"
+msgstr "Reprodukcija"
 
 #: ../plugins/gtkui/interface.c:1826 ../plugins/gtkui/deadbeef.glade.h:16
 msgid "Close minimizes to tray"
@@ -584,7 +586,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1830 ../plugins/gtkui/deadbeef.glade.h:81
 msgid "Middle mouse button closes playlist"
-msgstr ""
+msgstr "Srednje dugme miša zatvara listu izvođenja"
 
 #: ../plugins/gtkui/interface.c:1834 ../plugins/gtkui/deadbeef.glade.h:67
 msgid "Hide system tray icon"
@@ -600,11 +602,11 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1850 ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Titlebar text while playing:"
-msgstr ""
+msgstr "Tekst naslovne trake dok svira:"
 
 #: ../plugins/gtkui/interface.c:1864 ../plugins/gtkui/deadbeef.glade.h:135
 msgid "Titlebar text while stopped:"
-msgstr ""
+msgstr "Tekst naslovne trake kad je zaustavljeno:"
 
 #: ../plugins/gtkui/interface.c:1874 ../plugins/gtkui/deadbeef.glade.h:63
 msgid "GUI"
@@ -665,7 +667,7 @@ msgstr "Tekst"
 
 #: ../plugins/gtkui/interface.c:2044 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Selected row"
-msgstr ""
+msgstr "Odabrani red"
 
 #: ../plugins/gtkui/interface.c:2063 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Selected text"
@@ -681,7 +683,7 @@ msgstr "Boje liste izvođenja"
 
 #: ../plugins/gtkui/interface.c:2093 ../plugins/gtkui/deadbeef.glade.h:17
 msgid "Colors"
-msgstr ""
+msgstr "Boje"
 
 #: ../plugins/gtkui/interface.c:2102 ../plugins/gtkui/deadbeef.glade.h:31
 msgid "Enable Proxy Server"
@@ -689,7 +691,7 @@ msgstr "Omogući proxy poslužitelj"
 
 #: ../plugins/gtkui/interface.c:2110 ../plugins/gtkui/deadbeef.glade.h:101
 msgid "Proxy Server Address:"
-msgstr "Adresa proxy poslužitelja"
+msgstr "Adresa proxy poslužitelja:"
 
 #: ../plugins/gtkui/interface.c:2124 ../plugins/gtkui/deadbeef.glade.h:102
 msgid "Proxy Server Port:"
@@ -701,11 +703,11 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2157 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Proxy Username:"
-msgstr "Proxy korisničko ime"
+msgstr "Proxy korisničko ime:"
 
 #: ../plugins/gtkui/interface.c:2170 ../plugins/gtkui/deadbeef.glade.h:100
 msgid "Proxy Password:"
-msgstr "Proxy lozinka"
+msgstr "Proxy lozinka:"
 
 #: ../plugins/gtkui/interface.c:2180 ../plugins/gtkui/deadbeef.glade.h:82
 msgid "Network"
@@ -718,7 +720,7 @@ msgstr "Piši ID3v2"
 #: ../plugins/gtkui/interface.c:2212 ../plugins/gtkui/interface.c:2339
 #: ../plugins/gtkui/deadbeef.glade.h:142
 msgid "Write ID3v1"
-msgstr "Piši  ID3v1"
+msgstr "Piši ID3v1"
 
 #: ../plugins/gtkui/interface.c:2216 ../plugins/gtkui/interface.c:2295
 #: ../plugins/gtkui/interface.c:2335 ../plugins/gtkui/deadbeef.glade.h:141
@@ -778,11 +780,11 @@ msgstr "Email:"
 
 #: ../plugins/gtkui/interface.c:2436 ../plugins/gtkui/deadbeef.glade.h:140
 msgid "Website:"
-msgstr ""
+msgstr "Web stranica:"
 
 #: ../plugins/gtkui/interface.c:2467 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Configure"
-msgstr ""
+msgstr "Konfiguriraj"
 
 #: ../plugins/gtkui/interface.c:2471 ../plugins/gtkui/deadbeef.glade.h:96
 msgid "Plugins"
@@ -813,7 +815,7 @@ msgstr ""
 
 #: ../plugins/gtkui/mainplaylist.c:301 ../plugins/gtkui/search.c:434
 msgid "Artist / Album"
-msgstr "Umjetnik /album"
+msgstr "Umjetnik / album"
 
 #: ../plugins/gtkui/mainplaylist.c:302 ../plugins/gtkui/search.c:435
 msgid "Track No"
@@ -837,7 +839,7 @@ msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
 msgstr ""
-"Datoteke će biti izgubljene.Nastavi?\n"
+"Datoteke će biti izgubljene. Nastavi?\n"
 "(Ovaj dijalog može biti iskjlučen u GTKUI postavkama prikjlučaka)"
 
 #: ../plugins/gtkui/plcommon.c:325 ../plugins/gtkui/trkproperties.c:56
@@ -886,7 +888,7 @@ msgstr "Umjetnik/datum/album"
 
 #: ../plugins/gtkui/pluginconf.c:41
 msgid "Open file..."
-msgstr "Otvori datoteku"
+msgstr "Otvori datoteku..."
 
 #: ../plugins/gtkui/pluginconf.c:142
 #, c-format
@@ -976,7 +978,7 @@ msgstr "Opcije:\n"
 #: ../main.c:91
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr "   --help  or  -h     Ispisuje pomoć (ova poruka) i izlazi\n"
+msgstr "   --help  or  -h    Ispisuje pomoć (ova poruka) i izlazi\n"
 
 #: ../main.c:92
 #, c-format
@@ -1041,20 +1043,20 @@ msgstr ""
 msgid ""
 "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
 "- title\"\n"
-msgstr ""
-"                      e.g.: sadasvira \"%%a - %%t\" treba ispisati "
-"\"umjetnik - naslov\"\n"
+msgstr "                      e.g.: sada svira \"%%a - %%t\" treba ispisati \"umjetnik "
+"- naslov\"\n"
 
 #: ../playlist.c:377 ../playlist.c:2289
 msgid "Default"
 msgstr "Zadano"
 
 #: ../plugins/gtkui/deadbeef.glade.h:1
-#, fuzzy
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
-msgstr "2.3 (preporučeno)"
+msgstr ""
+"2.3 (preporučeno)\n"
+"2.4"
 
 #: ../plugins/gtkui/deadbeef.glade.h:26
 msgid ""
@@ -1079,11 +1081,12 @@ msgid ""
 msgstr ""
 
 #: ../plugins/gtkui/deadbeef.glade.h:71
-#, fuzzy
 msgid ""
 "Left\n"
 "Right"
-msgstr "Desno"
+msgstr ""
+"LIjevo\n"
+"Desno"
 
 #: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
 #, c-format

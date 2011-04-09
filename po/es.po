@@ -9,14 +9,15 @@ msgstr ""
 "Project-Id-Version: DeaDBeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-10-24 04:36+0000\n"
-"PO-Revision-Date: 2010-10-24 11:55-0500\n"
-"Last-Translator: Hugo Florentino <sysadmin@cips.cu>\n"
+"PO-Revision-Date: 2011-02-15 12:59+0200\n"
+"Last-Translator: Hugo <sysadmin@cips.cu>\n"
 "Language-Team: Spanish\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Pootle 2.0.5\n"
 "X-Poedit-Language: Spanish\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
@@ -38,7 +39,7 @@ msgstr "Añadir archivo(s) a la lista de reproducción..."
 
 #: ../plugins/gtkui/callbacks.c:190
 msgid "Add folder(s) to playlist..."
-msgstr "Añadir carpeta(s) a la lista de reproducción"
+msgstr "Añadir carpeta(s) a la lista de reproducción..."
 
 #: ../plugins/gtkui/callbacks.c:192
 msgid "Follow symlinks"
@@ -158,7 +159,7 @@ msgstr "%d días y %d:%02d:%02d"
 #: ../plugins/gtkui/gtkui.c:145
 #, c-format
 msgid "Stopped | %d tracks | %s total playtime"
-msgstr "Detenido | %d pistas | Tiempo total: %s "
+msgstr "Detenido | %d pistas | Tiempo total: %s"
 
 #: ../plugins/gtkui/gtkui.c:158
 msgid "Mono"
@@ -660,7 +661,7 @@ msgstr "Audio"
 #: ../plugins/gtkui/interface.c:1784
 #: ../plugins/gtkui/deadbeef.glade.h:10
 msgid "Allow dynamic samplerate switching"
-msgstr "Permitir  cambio dinámico de frecuencia"
+msgstr "Permitir cambio dinámico de frecuencia"
 
 #: ../plugins/gtkui/interface.c:1792
 #: ../plugins/gtkui/deadbeef.glade.h:110
@@ -670,7 +671,7 @@ msgstr "Calidad de conversión de frecuencia:"
 #: ../plugins/gtkui/interface.c:1811
 #: ../plugins/gtkui/deadbeef.glade.h:107
 msgid "Replaygain mode:"
-msgstr "Modo replaygain"
+msgstr "Modo replaygain (ajuste de volumen):"
 
 #: ../plugins/gtkui/interface.c:1820
 msgid "Disable"
@@ -684,7 +685,9 @@ msgstr "Normalizar con replaygain"
 #: ../plugins/gtkui/interface.c:1832
 #: ../plugins/gtkui/deadbeef.glade.h:5
 msgid "Add files from command line (or file manager) to this playlist:"
-msgstr "Agregar archivos desde la línea de comandos (o administrador de archivos) a la lista de reproducción:"
+msgstr ""
+"Agregar archivos desde la línea de comandos (o gestor de archivos) a la "
+"lista de reproducción:"
 
 #: ../plugins/gtkui/interface.c:1841
 #: ../plugins/gtkui/deadbeef.glade.h:109
@@ -694,7 +697,7 @@ msgstr "Reanudar la sesión anterior al inicio"
 #: ../plugins/gtkui/interface.c:1845
 #: ../plugins/gtkui/deadbeef.glade.h:93
 msgid "Playback"
-msgstr "_Reproducción"
+msgstr "Reproducción"
 
 #: ../plugins/gtkui/interface.c:1854
 #: ../plugins/gtkui/deadbeef.glade.h:14
@@ -704,7 +707,7 @@ msgstr "Cerrar minimiza a la bandeja"
 #: ../plugins/gtkui/interface.c:1858
 #: ../plugins/gtkui/deadbeef.glade.h:80
 msgid "Middle mouse button closes playlist"
-msgstr "Botón central del ratón cierra la lista de reproducción."
+msgstr "Botón central del ratón cierra la lista de reproducción"
 
 #: ../plugins/gtkui/interface.c:1862
 #: ../plugins/gtkui/deadbeef.glade.h:54
@@ -719,7 +722,7 @@ msgstr "Usar negrita para la pista en reproducción"
 #: ../plugins/gtkui/interface.c:1870
 #: ../plugins/gtkui/deadbeef.glade.h:53
 msgid "Hide \"Delete from disk\" context menu item"
-msgstr "Esconder \"Borrar desde el disco\" del menú contextual"
+msgstr "Esconder \"Borrar del disco\" del menú contextual"
 
 #: ../plugins/gtkui/interface.c:1878
 #: ../plugins/gtkui/deadbeef.glade.h:133
@@ -825,7 +828,7 @@ msgstr "Colores de lista de reproducción"
 #: ../plugins/gtkui/interface.c:2121
 #: ../plugins/gtkui/deadbeef.glade.h:15
 msgid "Colors"
-msgstr "Colores:"
+msgstr "Colores"
 
 #: ../plugins/gtkui/interface.c:2130
 #: ../plugins/gtkui/deadbeef.glade.h:29
@@ -1013,7 +1016,7 @@ msgstr "Duración"
 
 #: ../plugins/gtkui/plcommon.c:324
 msgid "Delete files from disk"
-msgstr "Eliminar archivos del disco duro"
+msgstr "Eliminar archivos del disco"
 
 #: ../plugins/gtkui/plcommon.c:325
 msgid ""
@@ -1042,7 +1045,7 @@ msgstr "Recargar metadatos"
 
 #: ../plugins/gtkui/plcommon.c:434
 msgid "Remove from disk"
-msgstr "Eliminar archivo del disco duro"
+msgstr "Eliminar archivo del disco"
 
 #: ../plugins/gtkui/plcommon.c:720
 #: ../plugins/gtkui/plcommon.c:845
@@ -1089,7 +1092,7 @@ msgstr "Añadir"
 
 #: ../plugins/gtkui/prefwin.c:339
 msgid "Global Hotkeys"
-msgstr "Teclas Rápidas Globales"
+msgstr "Teclas rápidas globales"
 
 #: ../plugins/gtkui/prefwin.c:401
 msgid "Slot"
@@ -1104,7 +1107,7 @@ msgstr "Combinación de teclas"
 #: ../plugins/gtkui/prefwin.c:693
 #: ../plugins.c:873
 msgid "ALSA output plugin"
-msgstr "Plugin de salida ALSA"
+msgstr "Complemento de salida ALSA"
 
 #: ../plugins/gtkui/progress.c:64
 msgid "Initializing..."
@@ -1112,11 +1115,11 @@ msgstr "Inicializando..."
 
 #: ../plugins/gtkui/trkproperties.c:53
 msgid "You've modified data for this track."
-msgstr "Has modificado los datos de ésta pista."
+msgstr "Ha modificado los datos de esta pista."
 
 #: ../plugins/gtkui/trkproperties.c:55
 msgid "Really close the window?"
-msgstr "¿Deseas cerrar la ventana?"
+msgstr "¿Realmente desea cerrar la ventana?"
 
 #: ../plugins/gtkui/trkproperties.c:169
 msgid "Location"
@@ -1136,7 +1139,7 @@ msgstr "Hoja Cue incrustada"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Yes"
-msgstr "Si"
+msgstr "Sí"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "No"
@@ -1158,7 +1161,7 @@ msgstr "Valor"
 
 #: ../plugins/notify/notify.c:138
 msgid "DeaDBeeF now playing"
-msgstr "DeaDBeeF reproduciendo:"
+msgstr "DeaDBeeF reproduciendo"
 
 #: ../main.c:89
 #, c-format
@@ -1526,38 +1529,51 @@ msgstr "Copyright"
 #~ msgstr ""
 #~ "<b>AVISO</b>: la edición de etiquetas está aún en desarrollo.\n"
 #~ "<b>Haz copias de seguridad</b> antes de intentarlo."
+
 #~ msgid "Couldn't get enough memory for input buffering."
 #~ msgstr "Imposible obtener suficiente memoria para el búfer de entrada."
+
 #~ msgid "Error reading first page of Ogg bitstream."
 #~ msgstr "Error al leer la primera página del flujo de bits Ogg."
+
 #~ msgid "Error reading initial header packet."
 #~ msgstr "Error al leer el paquete de encabezado inicial."
+
 #~ msgid "Couldn't get enough memory to register new stream serial number."
 #~ msgstr ""
 #~ "Imposible obtener suficiente memoria para registrar el número de serie de "
 #~ "un nuevo flujo."
+
 #~ msgid "Input truncated or empty."
 #~ msgstr "Entrada truncada o vacía."
+
 #~ msgid "Input is not an Ogg bitstream."
 #~ msgstr "La entrada no es un flujo de bits Ogg."
+
 #~ msgid "Ogg bitstream does not contain Vorbis data."
 #~ msgstr "El flijo de bits Ogg no contiene datos Vorbis."
+
 #~ msgid "EOF before recognised stream."
 #~ msgstr "Fin de archivo antes de un flujo reconocido."
+
 #~ msgid "Ogg bitstream does not contain a supported data-type."
 #~ msgstr "El flujo de bits Ogg no contiene un tipo de datos admitido."
+
 #~ msgid "Corrupt secondary header."
 #~ msgstr "Encabezado secundario corrupto."
+
 #~ msgid "EOF before end of Vorbis headers."
 #~ msgstr "Fin de archivo antes del fin de los encabezados Vorbis."
+
 #~ msgid "Corrupt or missing data, continuing..."
 #~ msgstr "Datos corruptos o incompletos, continuando..."
+
 #~ msgid ""
 #~ "Error writing stream to output. Output stream may be corrupted or "
 #~ "truncated."
 #~ msgstr ""
 #~ "Error al escribir el flujo a la salida. El flujo de salida puede estar "
 #~ "corrupto o truncado."
+
 #~ msgid "Sound (adv.)"
 #~ msgstr "Audio (avanzado)"
-

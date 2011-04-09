@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-10 15:02+0200\n"
-"PO-Revision-Date: 2010-06-05 12:33+0200\n"
+"PO-Revision-Date: 2011-03-08 14:22+0200\n"
 "Last-Translator: Yaron <sh.yaron@gmail.com>\n"
 "Language-Team: Gezer <sh.yaron@gmail.com>\n"
 "Language: he\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Pootle 2.0.1\n"
+"X-Generator: Pootle 2.0.5\n"
 "X-Poedit-Language: Hebrew\n"
 "X-Poedit-Country: ISRAEL\n"
 "X-Poedit-SourceCharset: UTF-8\n"
@@ -43,15 +43,15 @@ msgstr "הוספת תיקייה/ות לרשימת ההשמעה..."
 
 #: ../plugins/gtkui/callbacks.c:192
 msgid "Follow symlinks"
-msgstr ""
+msgstr "מעקב אחר קישורים סימבוליים"
 
 #: ../plugins/gtkui/callbacks.c:677
 msgid "Failed while reading help file"
-msgstr "ארע כשל במהלך קריאת קובץ העזרה"
+msgstr "אירע כשל במהלך קריאת קובץ העזרה"
 
 #: ../plugins/gtkui/callbacks.c:687
 msgid "Failed to load help file"
-msgstr "ארע כשל בטעינת קובץ העזרה"
+msgstr "אירע כשל בטעינת קובץ העזרה"
 
 #: ../plugins/gtkui/callbacks.c:701 ../plugins/gtkui/interface.c:1090
 #: ../plugins/gtkui/deadbeef.glade.h:65
@@ -515,7 +515,7 @@ msgid "Right"
 msgstr "ימין"
 
 #: ../plugins/gtkui/interface.c:1444 ../plugins/gtkui/deadbeef.glade.h:48
-#, fuzzy, no-c-format
+#, no-c-format
 msgid ""
 "Format conversions (start with %):\n"
 "  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
@@ -526,9 +526,12 @@ msgid ""
 "Example: %a - %t [%l]"
 msgstr ""
 "המרות בעיצוב (מתחילות ב־%):\n"
-"  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer  track[n]umber, [N]"
-"totaltracks,  [l]ength, [y]ear, [g]enre, [c]omment,  copy[r]ight, [f]"
-"ilename, [T]agsדוגמה: %a‏ - %t‏ [%l]"
+"  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
+"  track[n]umber, [N]totaltracks\n"
+"  [l]ength, [y]ear, [g]enre, [c]omment\n"
+"  copy[r]ight, [f]ilename, [T]ags,\n"
+"  [d]irectory, [D]irectoryWithPath\n"
+"דוגמה: %a‏ - %t‏ [%l]"
 
 #: ../plugins/gtkui/interface.c:1473 ../plugins/gtkui/interface.c:2900
 #: ../plugins/gtkui/interface.c:3012 ../plugins/gtkui/interface.c:3135
@@ -576,16 +579,15 @@ msgstr "מידת הגברת הנגינה החוזרת"
 
 #: ../plugins/gtkui/interface.c:1804 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
-msgstr ""
+msgstr "הוספת קבצים משורת הפקודה (או ממנהל הקבצים) לרשימת ההשמעה:"
 
 #: ../plugins/gtkui/interface.c:1813 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "Resume previous session on startup"
-msgstr ""
+msgstr "המשך ההפעלה הקודמת עם התחלת התכנית"
 
 #: ../plugins/gtkui/interface.c:1817 ../plugins/gtkui/deadbeef.glade.h:94
-#, fuzzy
 msgid "Playback"
-msgstr "ה_שמעה"
+msgstr "השמעה"
 
 #: ../plugins/gtkui/interface.c:1826 ../plugins/gtkui/deadbeef.glade.h:16
 msgid "Close minimizes to tray"
@@ -597,23 +599,23 @@ msgstr "לחצן אמצעי סוגר את רשימת ההשמעה"
 
 #: ../plugins/gtkui/interface.c:1834 ../plugins/gtkui/deadbeef.glade.h:67
 msgid "Hide system tray icon"
-msgstr ""
+msgstr "הסתרת הסמל באזור הדיווחים"
 
 #: ../plugins/gtkui/interface.c:1838 ../plugins/gtkui/deadbeef.glade.h:139
 msgid "Use bold font for currently playing track"
-msgstr ""
+msgstr "שימוש בגופן מודגש עבור הרצועה המתנגנת כעת"
 
 #: ../plugins/gtkui/interface.c:1842 ../plugins/gtkui/deadbeef.glade.h:66
 msgid "Hide \"Delete from disk\" context menu item"
-msgstr ""
+msgstr "הסתרת פריט ההקשר \"מחיקה מהכונן\""
 
 #: ../plugins/gtkui/interface.c:1850 ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Titlebar text while playing:"
-msgstr ""
+msgstr "טקסט הכותרת בעת ההשמעה:"
 
 #: ../plugins/gtkui/interface.c:1864 ../plugins/gtkui/deadbeef.glade.h:135
 msgid "Titlebar text while stopped:"
-msgstr ""
+msgstr "טקסט הכותרת בעת עצירה:"
 
 #: ../plugins/gtkui/interface.c:1874 ../plugins/gtkui/deadbeef.glade.h:63
 msgid "GUI"
@@ -690,7 +692,7 @@ msgstr "צבעי רשימת ההשמעה"
 
 #: ../plugins/gtkui/interface.c:2093 ../plugins/gtkui/deadbeef.glade.h:17
 msgid "Colors"
-msgstr ""
+msgstr "צבעים"
 
 #: ../plugins/gtkui/interface.c:2102 ../plugins/gtkui/deadbeef.glade.h:31
 msgid "Enable Proxy Server"
@@ -962,7 +964,7 @@ msgstr "לא"
 
 #: ../plugins/gtkui/trkproperties.c:182
 msgid "Codec"
-msgstr ""
+msgstr "קודק"
 
 #: ../plugins/gtkui/trkproperties.c:250 ../plugins/gtkui/trkproperties.c:262
 msgid "Key"
@@ -1171,6 +1173,8 @@ msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings."
 msgstr ""
+"wildmidi: קובץ התצורה של freepats. נא להתקין את החבילהtimidity-freepats, או "
+"לציין את הנתיב אל freepats.cfg בהגדרות התוסף."
 
 #~ msgid "Add Audio CD"
 #~ msgstr "הוספת תקליטור שמע"
