@@ -151,10 +151,10 @@ shx_start ()
             continue;
         }
 
-        const char *command = args[0];
-        const char *title = args[1];
-        const char *name = args[2];
-        const char *flags = args[3];
+        const char *command = trim (args[0]);
+        const char *title = trim (args[1]);
+        const char *name = trim (args[2]);
+        const char *flags = trim (args[3]);
         if (!name) {
             name = "noname";
         }
