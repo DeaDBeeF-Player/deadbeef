@@ -2904,7 +2904,10 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                 if (!meta) {
                     meta = pl_find_meta (it, "album artist");
                     if (!meta) {
-                        meta = pl_find_meta (it, "artist");
+                        meta = pl_find_meta (it, "albumartist");
+                        if (!meta) {
+                            meta = pl_find_meta (it, "artist");
+                        }
                     }
                 }
             }
