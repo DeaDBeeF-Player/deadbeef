@@ -292,7 +292,7 @@ DB_misc_t plugin = {
     .plugin.version_minor = 0,
     .plugin.id = "notify",
     .plugin.name = "OSD Notify",
-    .plugin.descr = "Displays notifications when new track starts, using system notification daemon",
+    .plugin.descr = "Displays notifications when new track starts.\nRequires dbus and notification daemon to be running.\nNotification daemon should be provided by your desktop environment.\n",
     .plugin.copyright = 
         "Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
