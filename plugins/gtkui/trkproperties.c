@@ -607,6 +607,16 @@ on_add_field_activate                 (GtkMenuItem     *menuitem,
             
             GtkTreeIter iter;
 
+            // check for _ and :
+            if (text[0] == '_' || text[0] == ':') {
+                GtkWidget *d = gtk_message_dialog_new (GTK_WINDOW (dlg), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Field names must not start with : or _"));
+                gtk_window_set_title (GTK_WINDOW (d), _("Cannot add field"));
+
+                gtk_dialog_run (GTK_DIALOG (d));
+                gtk_widget_destroy (d);
+                continue;
+            }
+
             // check if a field with the same name already exists
             int dup = 0;
             gboolean res = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (store), &iter);
@@ -633,11 +643,11 @@ on_add_field_activate                 (GtkMenuItem     *menuitem,
                 trkproperties_modified = 1;
             }
             else {
-                GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (trackproperties), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Field with such name already exists, please try different name."));
-                gtk_window_set_title (GTK_WINDOW (dlg), _("Cannot add field"));
+                GtkWidget *d = gtk_message_dialog_new (GTK_WINDOW (dlg), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Field with such name already exists, please try different name."));
+                gtk_window_set_title (GTK_WINDOW (d), _("Cannot add field"));
 
-                gtk_dialog_run (GTK_DIALOG (dlg));
-                gtk_widget_destroy (dlg);
+                gtk_dialog_run (GTK_DIALOG (d));
+                gtk_widget_destroy (d);
                 continue;
             }
         }
