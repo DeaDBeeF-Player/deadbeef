@@ -4,6 +4,7 @@ CC=gcc
 
 ZLIB_LIBS=-lz
 
+CFLAGS?=-O2 -fomit-frame-pointer
 CFLAGS+=-Wall -fPIC -DPATH_MAX=1024 -DHAS_PSXCPU=1 -I../.. -I./ -Ieng_ssf -Ieng_qsf -Ieng_dsf
 
 LDFLAGS+=-module -shared $(ZLIB_LIBS) -lm

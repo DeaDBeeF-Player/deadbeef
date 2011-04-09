@@ -154,6 +154,7 @@ aoplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
         }
     }
     info->currentsample += (initsize-size) / (_info->fmt.channels * _info->fmt.bps/8);
+    _info->readpos = (float)info->currentsample / _info->fmt.samplerate;
     return initsize-size;
 }
 
@@ -282,14 +283,20 @@ aoplug_insert (DB_playItem_t *after, const char *fname) {
     }
 
     float duration = 120;
+    float fade = 0;
 
     if (have_info) {
         int i;
         for (i = 1; i < 9; i++) {
             if (!strncasecmp (info.title[i], "Length: ", 8)) {
-                int min, sec;
-                if (sscanf (info.info[i], "%d:%d", &min, &sec) == 2) {
+                printf ("len: %s\n", info.info[i]);
+                int min;
+                float sec;
+                if (sscanf (info.info[i], "%d:%f", &min, &sec) == 2) {
                     duration = min * 60 + sec;
+                }
+                else if (sscanf (info.info[i], "%f", &sec) == 1) {
+                    duration = sec;
                 }
                 aoplug_add_meta (it, NULL, info.info[i], info.title[i]);
             }
@@ -311,12 +318,16 @@ aoplug_insert (DB_playItem_t *after, const char *fname) {
             else if (!strncasecmp (info.title[i], "Ripper: ", 8)) {
                 aoplug_add_meta (it, "vendor", info.info[i], info.title[i]);
             }
+            else if (!strncasecmp (info.title[i], "Fade: ", 6)) {
+                fade = atof (info.info[i]);
+                aoplug_add_meta (it, NULL, info.info[i], info.title[i]);
+            }
             else {
                 aoplug_add_meta (it, NULL, info.info[i], info.title[i]);
             }
         }
     }
-    deadbeef->pl_set_item_duration (it, duration);
+    deadbeef->pl_set_item_duration (it, duration+fade);
     deadbeef->pl_add_meta (it, "title", NULL);
     after = deadbeef->pl_insert_item (after, it);
     deadbeef->pl_item_unref (it);
