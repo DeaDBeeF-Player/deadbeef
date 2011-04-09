@@ -437,8 +437,8 @@ DB_playlist_t plugin = {
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_PLAYLIST,
     .plugin.id = "m3u",
-    .plugin.name = "M3U and PLS playlist loader",
-    .plugin.descr = "Imports playlists from M3U and PLS formats",
+    .plugin.name = "M3U and PLS support",
+    .plugin.descr = "Importing and exporting M3U and PLS formats\nRecognizes .pls, .m3u and .m3u8 file types\n\nNOTE: only utf8 file names are currently supported",
     .plugin.copyright = 
         "Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
