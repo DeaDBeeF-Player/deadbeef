@@ -1,7 +1,7 @@
 /*
 WavPack plugin for DeaDBeeF Player
 Copyright (C) 2009-2011, Alexey Yakovenko <waker@users.sourceforge.net>
-With contributions from David Bryant <david@wavpack.com>
+Copyright (C) 2010-2011, David Bryant <david@wavpack.com>
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -423,7 +423,7 @@ static DB_decoder_t plugin = {
     .plugin.copyright = 
         "WavPack plugin for DeaDBeeF Player\n"
         "Copyright (C) 2009-2011, Alexey Yakovenko <waker@users.sourceforge.net>\n"
-        "With contributions from David Bryant <david@wavpack.com>\n"
+        "Copyright (C) 2010-2011, David Bryant <david@wavpack.com>\n"
         "All rights reserved.\n"
         "\n"
         "Redistribution and use in source and binary forms, with or without\n"
