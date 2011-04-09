@@ -207,6 +207,12 @@ typedef struct {
     int state;
 } DB_event_state_t;
 
+typedef struct {
+    DB_event_t ev;
+    DB_playItem_t *track;
+    float playpos;
+} ddb_event_playpos_t;
+
 typedef struct DB_conf_item_s {
     char *key;
     char *value;
@@ -218,7 +224,7 @@ typedef int (*DB_callback_t)(DB_event_t *, uintptr_t data);
 
 // events
 enum {
-    DB_EV_SONGCHANGED = 1, // triggers when song was just changed
+    DB_EV_SONGCHANGED = 1, // triggers when current song changed from one to another, see  DB_event_trackchange_t, both pointers can be NULL
     DB_EV_SONGSTARTED = 2, // triggers when song started playing (for scrobblers and such)
     DB_EV_SONGFINISHED = 3, // triggers when song finished playing (for scrobblers and such)
     DB_EV_CONFIGCHANGED = 5, // configuration option changed
@@ -229,6 +235,7 @@ enum {
     DB_EV_VOLUMECHANGED = 10, // volume was changed
     DB_EV_OUTPUTCHANGED = 11, // sound output plugin changed
     DB_EV_PLAYLISTSWITCH = 13, // playlist switch occured
+    DB_EV_SEEKED = 14, // seek happened, see ddb_event_playpos_t
     DB_EV_MAX
 };
 

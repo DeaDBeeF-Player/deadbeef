@@ -1124,6 +1124,12 @@ streamer_thread (void *ctx) {
                 avg_bitrate = -1;
                 streamer_unlock();
             }
+            ddb_event_playpos_t tp;
+            tp.ev.event = DB_EV_SEEKED;
+            tp.ev.time = time (NULL);
+            tp.track = playing_track;
+            tp.playpos = playpos;
+            plug_event_call (DB_EVENT (&tp));
         }
 
         // read ahead at 2x speed of output samplerate, in 4k blocks
