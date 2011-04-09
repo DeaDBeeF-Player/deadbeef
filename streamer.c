@@ -1381,6 +1381,7 @@ streamer_dsp_postinit (void) {
             memcpy (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
             formatchanged = 1;
         }
+        dsp_on = 0;
     }
     else if (ctx) {
         dsp_on = 1;
