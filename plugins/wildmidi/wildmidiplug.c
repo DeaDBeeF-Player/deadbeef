@@ -189,11 +189,12 @@ DB_decoder_t wmidi_plugin = {
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.name = "WildMidi player",
-    .plugin.descr = "MIDI player based on WildMidi library",
+    .plugin.descr = "MIDI player based on WildMidi library\n\nRequires freepats package to be installed\nSee http://freepats.zenvoid.org/\nMake sure to set correct freepats.cfg path in plugin settings.",
     .plugin.copyright = 
         "Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
-        "Uses WildMidi v0.2.2, (C) 2001-2004 Chris Ison"
+        "Uses modified WildMidi v0.2.2\n"
+        "(C) 2001-2004 Chris Ison\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
         "modify it under the terms of the GNU General Public License\n"
