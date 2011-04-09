@@ -206,7 +206,22 @@ static DB_misc_t plugin = {
     .plugin.type = DB_PLUGIN_MISC,
     .plugin.id = "shellexec",
     .plugin.name = "Shell commands",
-    .plugin.descr = "Executes configurable shell commands for tracks",
+    .plugin.descr = "Executes configurable shell commands for tracks\n"
+    "This plugin doesn't have GUI configuration yet. Please setup manually in config file\n"
+    "Syntax:\n"
+    "shellexec.NN shcmd:title:name:flags\n\n"
+    "NN is any (unique) number, e.g. 01, 02, 03, etc\n\n"
+    "shcmd is the command to execute, supports title formatting\n\n"
+    "title is the name of command displayed in UI (context menu)\n\n"
+    "name used for referencing commands from other plugins, e.g hotkeys\n\n"
+    "flags comma-separated of command flags, allowed flags are:\n"
+    "    single - command allowed only for single track\n"
+    "    local - command allowed only for local files\n"
+    "    remote - command allowed only for non-local files\n"
+    "    disabled - ignore command\n\n"
+    "EXAMPLE: shellexec.00 notify-send \"%a - %t\":Show selected track:notify:singe\n"
+    "this would show the name of selected track in notification popup"
+    ,
     .plugin.copyright = 
         "Copyright (C) 2010-2011 Alexey Yakovenko <waker@users.sf.net>\n"
         "Copyright (C) 2010 Viktor Semykin <thesame.ml@gmail.com>\n"
