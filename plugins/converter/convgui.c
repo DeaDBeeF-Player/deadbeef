@@ -557,41 +557,6 @@ init_encoder_preset_from_dlg (GtkWidget *dlg, ddb_encoder_preset_t *p) {
         break;
     }
 
-    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "_8bit")))) {
-        p->formats |= DDB_ENCODER_FMT_8BIT;
-    }
-    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "_16bit")))) {
-        p->formats |= DDB_ENCODER_FMT_16BIT;
-    }
-    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "_24bit")))) {
-        p->formats |= DDB_ENCODER_FMT_24BIT;
-    }
-    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "_32bit")))) {
-        p->formats |= DDB_ENCODER_FMT_32BIT;
-    }
-    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "_32bitfloat")))) {
-        p->formats |= DDB_ENCODER_FMT_32BITFLOAT;
-    }
-
-    int default_fmt = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "defaultfmt")));
-    switch (default_fmt) {
-    case 0:
-        p->default_format = DDB_ENCODER_FMT_8BIT;
-        break;
-    case 1:
-        p->default_format = DDB_ENCODER_FMT_16BIT;
-        break;
-    case 2:
-        p->default_format = DDB_ENCODER_FMT_24BIT;
-        break;
-    case 3:
-        p->default_format = DDB_ENCODER_FMT_32BIT;
-        break;
-    case 4:
-        p->default_format = DDB_ENCODER_FMT_32BITFLOAT;
-        break;
-    }
-
     p->id3v2_version = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "id3v2_version")));
     p->tag_id3v2 = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "id3v2")));
     p->tag_id3v1 = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "id3v1")));
@@ -620,42 +585,6 @@ edit_encoder_preset (char *title, GtkWidget *toplevel, int overwrite) {
         gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "encoder")), p->encoder);
     }
     gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "method")), p->method);
-    if (p->formats & DDB_ENCODER_FMT_8BIT) {
-        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "_8bit")), 1);
-    }
-    if (p->formats & DDB_ENCODER_FMT_16BIT) {
-        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "_16bit")), 1);
-    }
-    if (p->formats & DDB_ENCODER_FMT_24BIT) {
-        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "_24bit")), 1);
-    }
-    if (p->formats & DDB_ENCODER_FMT_32BIT) {
-        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "_32bit")), 1);
-    }
-    if (p->formats & DDB_ENCODER_FMT_32BITFLOAT) {
-        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "_32bitfloat")), 1);
-    }
-    int default_fmt = -1;
-    switch (p->default_format) {
-    case DDB_ENCODER_FMT_8BIT:
-        default_fmt = 0;
-        break;
-    case DDB_ENCODER_FMT_16BIT:
-        default_fmt = 1;
-        break;
-    case DDB_ENCODER_FMT_24BIT:
-        default_fmt = 2;
-        break;
-    case DDB_ENCODER_FMT_32BIT:
-        default_fmt = 3;
-        break;
-    case DDB_ENCODER_FMT_32BITFLOAT:
-        default_fmt = 4;
-        break;
-    }
-    if (default_fmt != -1) {
-        gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "defaultfmt")), default_fmt);
-    }
 
     gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "id3v2_version")), p->id3v2_version);
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (dlg, "id3v2")), p->tag_id3v2);
@@ -744,8 +673,6 @@ on_encoder_preset_add                     (GtkButton       *button,
     GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (button));
 
     current_ctx->current_encoder_preset = converter_plugin->encoder_preset_alloc ();
-    current_ctx->current_encoder_preset->formats = DDB_ENCODER_FMT_16BIT;
-    current_ctx->current_encoder_preset->default_format = DDB_ENCODER_FMT_16BIT;
 
     if (GTK_RESPONSE_OK == edit_encoder_preset (_("Add new encoder"), toplevel, 0)) {
         printf ("added new enc preset\n");

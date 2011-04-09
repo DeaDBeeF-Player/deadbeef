@@ -99,12 +99,6 @@ encoder_preset_load (const char *fname) {
         else if (!strcmp (str, "method")) {
             p->method = atoi (item);
         }
-        else if (!strcmp (str, "formats")) {
-            sscanf (item, "%X", &p->formats);
-        }
-        else if (!strcmp (str, "defaultfmt")) {
-            sscanf (item, "%X", &p->default_format);
-        }
         else if (!strcmp (str, "id3v2_version")) {
             p->id3v2_version = atoi (item);
         }
@@ -181,8 +175,6 @@ encoder_preset_save (ddb_encoder_preset_t *p, int overwrite) {
     fprintf (fp, "ext %s\n", p->ext);
     fprintf (fp, "encoder %s\n", p->encoder);
     fprintf (fp, "method %d\n", p->method);
-    fprintf (fp, "formats %08X\n", p->formats);
-    fprintf (fp, "defaultfmt %08X\n", p->default_format);
     fprintf (fp, "id3v2_version %d\n", p->id3v2_version);
     fprintf (fp, "tag_id3v2 %d\n", p->tag_id3v2);
     fprintf (fp, "tag_id3v1 %d\n", p->tag_id3v1);
@@ -200,8 +192,6 @@ encoder_preset_copy (ddb_encoder_preset_t *to, ddb_encoder_preset_t *from) {
     to->ext = strdup (from->ext);
     to->encoder = strdup (from->encoder);
     to->method = from->method;
-    to->formats = from->formats;
-    to->default_format = from->default_format;
     to->tag_id3v2 = from->tag_id3v2;
     to->tag_id3v1 = from->tag_id3v1;
     to->tag_apev2 = from->tag_apev2;
@@ -533,6 +523,7 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
     char out[PATH_MAX] = ""; // full path to output file
     char input_file_name[PATH_MAX] = "";
     dec = (DB_decoder_t *)deadbeef->plug_get_for_id (deadbeef->pl_find_meta (it, ":DECODER"));
+
     if (dec) {
         fileinfo = dec->open (0);
         if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (it)) != 0) {
@@ -542,6 +533,11 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
             goto error;
         }
         if (fileinfo) {
+            if (output_bps == -1) {
+                output_bps = fileinfo->fmt.bps;
+                output_is_float = fileinfo->fmt.is_float;
+            }
+
             get_output_path (it, outfolder, outfile, encoder_preset, out, sizeof (out));
             if (encoder_preset->method == DDB_ENCODER_METHOD_FILE) {
                 const char *tmp = getenv ("TMPDIR");
@@ -635,52 +631,6 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
             uint32_t outsize = 0;
             uint32_t outsr = fileinfo->fmt.samplerate;
             uint16_t outch = fileinfo->fmt.channels;
-
-            if (!(encoder_preset->formats & encoder_preset->default_format)) {
-                fprintf (stderr, "converter: invalid default format in the encoder preset '%s', formats: %X, def: %X\n", encoder_preset->title, encoder_preset->formats, encoder_preset->default_format);
-                goto error;
-            }
-
-            // check if encoder supports it
-            int outfmt = -1;
-            switch (output_bps) {
-            case 8:
-                outfmt = DDB_ENCODER_FMT_8BIT;
-                break;
-            case 16:
-                outfmt = DDB_ENCODER_FMT_16BIT;
-                break;
-            case 24:
-                outfmt = DDB_ENCODER_FMT_24BIT;
-                break;
-            case 32:
-                outfmt = output_is_float ? DDB_ENCODER_FMT_32BITFLOAT : DDB_ENCODER_FMT_32BIT;
-                break;
-            }
-            if (outfmt == -1 || !(encoder_preset->formats & outfmt)) {
-                // pick default format
-                outfmt = encoder_preset->default_format;
-            }
-
-            output_is_float = 0;
-            switch (outfmt) {
-            case DDB_ENCODER_FMT_8BIT:
-                output_bps = 8;
-                break;
-            case DDB_ENCODER_FMT_16BIT:
-                output_bps = 16;
-                break;
-            case DDB_ENCODER_FMT_24BIT:
-                output_bps = 24;
-                break;
-            case DDB_ENCODER_FMT_32BIT:
-                output_bps = 32;
-                break;
-            case DDB_ENCODER_FMT_32BITFLOAT:
-                output_bps = 32;
-                output_is_float = 1;
-                break;
-            }
 
             int samplesize = fileinfo->fmt.channels * fileinfo->fmt.bps / 8;
             int bs = 10250 * samplesize;

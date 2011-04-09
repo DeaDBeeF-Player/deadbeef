@@ -206,7 +206,7 @@ create_converterdlg (void)
   output_format = gtk_combo_box_new_text ();
   gtk_widget_show (output_format);
   gtk_box_pack_start (GTK_BOX (hbox89), output_format, TRUE, TRUE, 0);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (output_format), _("Auto"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (output_format), _("Keep source format"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (output_format), _("8 bit signed int"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (output_format), _("16 bit signed int"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (output_format), _("24 bit signed int"));
@@ -364,19 +364,6 @@ create_convpreset_editor (void)
   GtkWidget *hbox73;
   GtkWidget *label107;
   GtkWidget *method;
-  GtkWidget *frame8;
-  GtkWidget *alignment20;
-  GtkWidget *vbox35;
-  GtkWidget *table1;
-  GtkWidget *_8bit;
-  GtkWidget *_16bit;
-  GtkWidget *_24bit;
-  GtkWidget *_32bit;
-  GtkWidget *_32bitfloat;
-  GtkWidget *hbox103;
-  GtkWidget *label123;
-  GtkWidget *defaultfmt;
-  GtkWidget *label118;
   GtkWidget *frame9;
   GtkWidget *alignment21;
   GtkWidget *table2;
@@ -482,81 +469,9 @@ create_convpreset_editor (void)
   gtk_combo_box_append_text (GTK_COMBO_BOX (method), _("Pipe"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (method), _("Temporary file"));
 
-  frame8 = gtk_frame_new (NULL);
-  gtk_widget_show (frame8);
-  gtk_box_pack_start (GTK_BOX (vbox27), frame8, TRUE, TRUE, 0);
-
-  alignment20 = gtk_alignment_new (0.5, 0.5, 1, 1);
-  gtk_widget_show (alignment20);
-  gtk_container_add (GTK_CONTAINER (frame8), alignment20);
-  gtk_alignment_set_padding (GTK_ALIGNMENT (alignment20), 0, 0, 12, 0);
-
-  vbox35 = gtk_vbox_new (FALSE, 8);
-  gtk_widget_show (vbox35);
-  gtk_container_add (GTK_CONTAINER (alignment20), vbox35);
-  gtk_container_set_border_width (GTK_CONTAINER (vbox35), 8);
-
-  table1 = gtk_table_new (3, 2, FALSE);
-  gtk_widget_show (table1);
-  gtk_box_pack_start (GTK_BOX (vbox35), table1, FALSE, TRUE, 0);
-  gtk_table_set_row_spacings (GTK_TABLE (table1), 8);
-  gtk_table_set_col_spacings (GTK_TABLE (table1), 8);
-
-  _8bit = gtk_check_button_new_with_mnemonic (_("8 bit signed int"));
-  gtk_widget_show (_8bit);
-  gtk_table_attach (GTK_TABLE (table1), _8bit, 0, 1, 0, 1,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-
-  _16bit = gtk_check_button_new_with_mnemonic (_("16 bit signed int"));
-  gtk_widget_show (_16bit);
-  gtk_table_attach (GTK_TABLE (table1), _16bit, 1, 2, 0, 1,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-
-  _24bit = gtk_check_button_new_with_mnemonic (_("24 bit signed int"));
-  gtk_widget_show (_24bit);
-  gtk_table_attach (GTK_TABLE (table1), _24bit, 0, 1, 1, 2,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-
-  _32bit = gtk_check_button_new_with_mnemonic (_("32 bit signed int"));
-  gtk_widget_show (_32bit);
-  gtk_table_attach (GTK_TABLE (table1), _32bit, 1, 2, 1, 2,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-
-  _32bitfloat = gtk_check_button_new_with_mnemonic (_("32 bit float"));
-  gtk_widget_show (_32bitfloat);
-  gtk_table_attach (GTK_TABLE (table1), _32bitfloat, 0, 1, 2, 3,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-
-  hbox103 = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox103);
-  gtk_box_pack_start (GTK_BOX (vbox35), hbox103, FALSE, TRUE, 0);
-
-  label123 = gtk_label_new (_("Default format:"));
-  gtk_widget_show (label123);
-  gtk_box_pack_start (GTK_BOX (hbox103), label123, FALSE, FALSE, 0);
-
-  defaultfmt = gtk_combo_box_new_text ();
-  gtk_widget_show (defaultfmt);
-  gtk_box_pack_start (GTK_BOX (hbox103), defaultfmt, TRUE, TRUE, 0);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (defaultfmt), _("8 bit signed int"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (defaultfmt), _("16 bit signed int"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (defaultfmt), _("24 bit signed int"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (defaultfmt), _("32 bit signed int"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (defaultfmt), _("32 bit float"));
-
-  label118 = gtk_label_new (_("<b>Sample formats supported by the encoder</b>"));
-  gtk_widget_show (label118);
-  gtk_frame_set_label_widget (GTK_FRAME (frame8), label118);
-  gtk_label_set_use_markup (GTK_LABEL (label118), TRUE);
-
   frame9 = gtk_frame_new (NULL);
   gtk_widget_show (frame9);
-  gtk_box_pack_start (GTK_BOX (vbox27), frame9, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox27), frame9, FALSE, FALSE, 0);
 
   alignment21 = gtk_alignment_new (0.5, 0.5, 1, 1);
   gtk_widget_show (alignment21);
@@ -651,19 +566,6 @@ create_convpreset_editor (void)
   GLADE_HOOKUP_OBJECT (convpreset_editor, hbox73, "hbox73");
   GLADE_HOOKUP_OBJECT (convpreset_editor, label107, "label107");
   GLADE_HOOKUP_OBJECT (convpreset_editor, method, "method");
-  GLADE_HOOKUP_OBJECT (convpreset_editor, frame8, "frame8");
-  GLADE_HOOKUP_OBJECT (convpreset_editor, alignment20, "alignment20");
-  GLADE_HOOKUP_OBJECT (convpreset_editor, vbox35, "vbox35");
-  GLADE_HOOKUP_OBJECT (convpreset_editor, table1, "table1");
-  GLADE_HOOKUP_OBJECT (convpreset_editor, _8bit, "_8bit");
-  GLADE_HOOKUP_OBJECT (convpreset_editor, _16bit, "_16bit");
-  GLADE_HOOKUP_OBJECT (convpreset_editor, _24bit, "_24bit");
-  GLADE_HOOKUP_OBJECT (convpreset_editor, _32bit, "_32bit");
-  GLADE_HOOKUP_OBJECT (convpreset_editor, _32bitfloat, "_32bitfloat");
-  GLADE_HOOKUP_OBJECT (convpreset_editor, hbox103, "hbox103");
-  GLADE_HOOKUP_OBJECT (convpreset_editor, label123, "label123");
-  GLADE_HOOKUP_OBJECT (convpreset_editor, defaultfmt, "defaultfmt");
-  GLADE_HOOKUP_OBJECT (convpreset_editor, label118, "label118");
   GLADE_HOOKUP_OBJECT (convpreset_editor, frame9, "frame9");
   GLADE_HOOKUP_OBJECT (convpreset_editor, alignment21, "alignment21");
   GLADE_HOOKUP_OBJECT (convpreset_editor, table2, "table2");
