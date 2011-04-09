@@ -22,7 +22,7 @@ static const char *exts[] = { "sid",NULL };
 const char *filetypes[] = { "SID", NULL };
 
 static const char settings_dlg[] =
-    "property \"Enable HVSC Songlengh DB\" checkbox hvsc_enable 0;\n"
+    "property \"Enable HVSC Songlength DB\" checkbox hvsc_enable 0;\n"
     "property \"Songlengths.txt (from HVSC)\" file hvsc_path \"\";\n"
     "property \"Samplerate\" entry sid.samplerate 44100;\n"
     "property \"Bits per sample (8 or 16)\" entry sid.bps 16;\n"
@@ -40,7 +40,8 @@ DB_decoder_t sid_plugin = {
     .plugin.copyright = 
         "Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
-        "uses libsidplay2 - commodore 64 SID emulation library,\n"
+        "Uses modified libsidplay2-2.1.0\n"
+        "Commodore 64 SID emulation library\n"
         "Copyright (C) Simon White and other authors\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
