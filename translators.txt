@@ -19,6 +19,7 @@ Danish
 
 German
  Lutz Thuns <lOtz1009@opensuse.org>.
+ Jan D. Behrens <zykure@web.de>
 
 Greek
  Giorgos Koutsikos <ragecryx@yahoo.gr>, 2010
