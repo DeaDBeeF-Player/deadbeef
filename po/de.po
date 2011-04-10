@@ -809,7 +809,7 @@ msgstr "URL:"
 
 #: ../plugins/gtkui/interface.c:3081 ../plugins/gtkui/deadbeef.glade.h:64
 msgid "Group By"
-msgstr "Adresse des Proxyservers"
+msgstr "Tracks gruppieren"
 
 #: ../plugins/gtkui/interface.c:3106 ../plugins/gtkui/deadbeef.glade.h:56
 #, no-c-format
@@ -883,7 +883,7 @@ msgstr "Spalte entfernen"
 
 #: ../plugins/gtkui/plcommon.c:862
 msgid "Group by"
-msgstr "Adresse des Proxyservers"
+msgstr "Tracks gruppieren"
 
 #: ../plugins/gtkui/plcommon.c:869
 msgid "None"
