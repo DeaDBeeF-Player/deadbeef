@@ -626,7 +626,7 @@ palsa_thread (void *context) {
         LOCK;
         /* find out how much space is available for playback data */
         snd_pcm_sframes_t frames_to_deliver = snd_pcm_avail_update (audio);
-        while (frames_to_deliver >= period_size) {
+        while (frames_to_deliver >= period_size, 1) {
             if (alsa_terminate) {
                 break;
             }
@@ -635,7 +635,12 @@ palsa_thread (void *context) {
             int bytes_to_write = palsa_callback (buf, period_size * (plugin.fmt.bps>>3) * plugin.fmt.channels);
 
             if (bytes_to_write >= (plugin.fmt.bps>>3) * plugin.fmt.channels) {
-               err = snd_pcm_writei (audio, buf, snd_pcm_bytes_to_frames(audio, bytes_to_write));
+                UNLOCK;
+                err = snd_pcm_writei (audio, buf, snd_pcm_bytes_to_frames(audio, bytes_to_write));
+                LOCK;
+                if (alsa_terminate) {
+                    break;
+                }
             }
             else {
                 UNLOCK;
@@ -672,7 +677,7 @@ palsa_thread (void *context) {
             frames_to_deliver = snd_pcm_avail_update (audio);
         }
         UNLOCK;
-        usleep (period_size * 1000000 / plugin.fmt.samplerate / 2);
+        //usleep (period_size * 1000000 / plugin.fmt.samplerate / 2);
     }
 }
 
