@@ -294,7 +294,7 @@ vtx_stop (void) {
 }
 
 static const char settings_dlg[] =
-    "property \"Bits Per Sample (8 or 16)\" entry vtx.bps 16;\n"
+    "property \"Bits per sample (8 or 16)\" entry vtx.bps 16;\n"
 ;
 
 // define plugin interface
