@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-10 15:02+0200\n"
-"PO-Revision-Date: 2011-03-10 21:04+0200\n"
+"PO-Revision-Date: 2011-04-10 13:25+0200\n"
 "Last-Translator: Jesse <jesse.jaara@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: fi\n"
@@ -52,7 +52,6 @@ msgstr "Ohjetiedoston avaaminen epäonnistui"
 
 #: ../plugins/gtkui/callbacks.c:701 ../plugins/gtkui/interface.c:1090
 #: ../plugins/gtkui/deadbeef.glade.h:65
-#, fuzzy
 msgid "Help"
 msgstr "Ohje"
 
@@ -120,7 +119,6 @@ msgstr "Nollaa esivahvistin"
 
 # Tällä viitataan selvästikkin niihin muihin liukusäätimiin, jotka muuttavat eri taajuus asteiden vahvistusta
 #: ../plugins/gtkui/eq.c:314
-#, fuzzy
 msgid "Zero Bands"
 msgstr "Nollaa kanavat"
 
@@ -181,15 +179,15 @@ msgstr "Tallenna soittolista nimellä"
 
 #: ../plugins/gtkui/gtkui.c:669 ../plugins/gtkui/gtkui.c:730
 msgid "DeaDBeeF playlist files (*.dbpl)"
-msgstr ""
+msgstr "DeadBeef toistolista tiedosto (*.dbpl)"
 
 #: ../plugins/gtkui/gtkui.c:723
 msgid "Load Playlist"
-msgstr ""
+msgstr "Lataa soittolista"
 
 #: ../plugins/gtkui/gtkui.c:863
 msgid "New Playlist"
-msgstr ""
+msgstr "Uusi soittolista"
 
 #: ../plugins/gtkui/gtkui.c:866
 #, c-format
