@@ -2970,7 +2970,6 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                 else {
                     meta = f;
                 }
-                printf ("meta: %s\n", meta);
             }
             else if (*fmt == 'F') {
                 meta = pl_find_meta (it, ":URI");
