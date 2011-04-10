@@ -50,7 +50,6 @@ static int pulse_terminate;
 
 static pa_simple *s;
 static pa_sample_spec ss;
-static pa_channel_map channel_map;
 static ddb_waveformat_t requested_fmt;
 static int state;
 static uintptr_t mutex;
@@ -91,8 +90,8 @@ static int pulse_set_spec(ddb_waveformat_t *fmt)
 
     ss.channels = plugin.fmt.channels;
     // Try to auto-configure the channel map, see <pulse/channelmap.h> for details
-    pa_channel_map_init_extend(&channel_map, ss.channels, PA_CHANNEL_MAP_DEFAULT);
-    //pa_channel_map_init(&channel_map);
+    pa_channel_map channel_map;
+    pa_channel_map_init_extend(&channel_map, ss.channels, PA_CHANNEL_MAP_WAVEEX);
     trace ("pulse: channels: %d\n", ss.channels);
 
     // Read samplerate from config
