@@ -123,12 +123,9 @@ streamer_unlock (void) {
 static void
 streamer_abort_files (void) {
     if (fileinfo && fileinfo->file) {
-        trace ("\033[0;31maborting current song: %s (fileinfo %p, file %p)\033[37;0m\n", streaming_track ? streaming_track->fname : NULL, fileinfo, fileinfo ? fileinfo->file : NULL);
         deadbeef->fabort (fileinfo->file);
-        trace ("\033[0;31maborting current song done\033[37;0m\n");
     }
     if (streamer_file) {
-        trace ("\033[0;31maborting streamer_file\033[37;0m\n");
         deadbeef->fabort (streamer_file);
     }
 }
@@ -161,9 +158,9 @@ streamer_start_playback (playItem_t *from, playItem_t *it) {
 
         playing_track->played = 1;
         playing_track->started_timestamp = time (NULL);
-        trace ("sending songstarted to plugins [2] current playtrack: %s\n", playing_track->fname);
+        trace ("sending songstarted to plugins [2] current playtrack: %s\n", pl_find_meta (playing_track, ":URI"));
         plug_trigger_event (DB_EV_SONGSTARTED, 0);
-        trace ("from=%p (%s), to=%p (%s) [2]\n", from, from ? from->fname : "null", it, it ? pl_find_meta (it, ":URI") : "null");
+        trace ("from=%p (%s), to=%p (%s) [2]\n", from, from ? pl_find_meta (from, ":URI") : "null", it, it ? pl_find_meta (it, ":URI") : "null");
         plug_trigger_event_trackchange (from, it);
     }
     if (from) {
@@ -277,6 +274,7 @@ streamer_move_to_nextsong (int reason) {
             }
         }
     }
+
     playItem_t *curr = playlist_track;
     if (reason == 1) {
         streamer_playlist = plt_get_curr_ptr ();
@@ -376,6 +374,9 @@ streamer_move_to_nextsong (int reason) {
         playItem_t *it = NULL;
         if (curr) {
             it = curr->next[PL_MAIN];
+        }
+        else {
+            it = streamer_playlist->head[PL_MAIN];
         }
         if (!it) {
             trace ("streamer_move_nextsong: was last track\n");
@@ -547,7 +548,7 @@ streamer_song_removed_notify (playItem_t *it) {
     }
     streamer_lock ();
     if (it == playlist_track) {
-        playlist_track = playlist_track->next[PL_MAIN];
+        playlist_track = playlist_track->prev[PL_MAIN];
         // queue new next song for streaming
         if (bytes_until_next_song > 0) {
             streamer_ringbuf.remaining = bytes_until_next_song;
@@ -737,7 +738,7 @@ success:
     mutex_unlock (decodemutex);
     plug_trigger_event_trackinfochanged (to);
 
-    trace ("\033[0;32mstr: %p (%s), ply: %p (%s)\033[37;0m\n", streaming_track, streaming_track ? streaming_track->fname : "null", playing_track, playing_track ? playing_track->fname : "null");
+    trace ("\033[0;32mstr: %p (%s), ply: %p (%s)\033[37;0m\n", streaming_track, streaming_track ? pl_find_meta (streaming_track, ":URI") : "null", playing_track, playing_track ? pl_find_meta (playing_track, ":URI") : "null");
 
 error:
     if (from) {
@@ -834,7 +835,7 @@ streamer_start_new_song (void) {
     int ret = streamer_set_current (try);
 
     if (ret < 0) {
-        trace ("\033[0;31mfailed to play track %s, skipping (current=%p/%p)...\033[37;0m\n", try->fname, streaming_track, playlist_track);
+        trace ("\033[0;31mfailed to play track %s, skipping (current=%p/%p)...\033[37;0m\n", pl_find_meta (try, ":URI"), streaming_track, playlist_track);
         pl_item_unref (try);
         try = NULL;
         // remember bad song number in case of looping
@@ -1127,7 +1128,7 @@ streamer_thread (void *ctx) {
             ddb_event_playpos_t tp;
             tp.ev.event = DB_EV_SEEKED;
             tp.ev.time = time (NULL);
-            tp.track = playing_track;
+            tp.track = (DB_playItem_t *)playing_track;
             tp.playpos = playpos;
             plug_event_call (DB_EVENT (&tp));
         }
@@ -1648,7 +1649,7 @@ streamer_read_async (char *bytes, int size) {
     }
     else  {
         // that means EOF
-        trace ("streamer: EOF! buns: %d, bytesread: %d, buffering: %d, bufferfill: %d\n", bytes_until_next_song, bytesread, streamer_buffering, streamer_ringbuf.remaining);
+//        trace ("streamer: EOF! buns: %d, bytesread: %d, buffering: %d, bufferfill: %d\n", bytes_until_next_song, bytesread, streamer_buffering, streamer_ringbuf.remaining);
 
         // in case of decoder error, or EOF while buffering - switch to next song instantly
         if (bytesread < 0 || (bytes_until_next_song >= 0 && streamer_buffering && bytesread == 0) || bytes_until_next_song < 0) {
