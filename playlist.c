@@ -3469,8 +3469,8 @@ pl_search_reset (void) {
 
 void
 pl_search_process (const char *text) {
-    pl_search_reset ();
     GLOBAL_LOCK;
+    pl_search_reset ();
     for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
         it->selected = 0;
         if (*text) {

@@ -1289,40 +1289,46 @@ ddb_listview_header_expose (DdbListview *ps, int x, int y, int w, int h) {
 void
 ddb_listview_select_single (DdbListview *ps, int sel) {
     int nchanged = 0;
-    int idx=0;
-    DdbListviewIter it = ps->binding->head ();
-    for (; it; idx++) {
-        if (idx == sel) {
-            if (!ps->binding->is_selected (it)) {
-                ps->binding->select (it, 1);
-                if (nchanged < NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
-                    ddb_listview_draw_row (ps, idx, it);
-                    ps->binding->selection_changed (it, idx);
-                }
-                nchanged++;
-            }
-            else if (ps->binding->cursor () == idx) {
-                if (nchanged < NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
-                    ddb_listview_draw_row (ps, idx, it);
-                }
+    deadbeef->plt_lock ();
+
+    DB_playItem_t *sel_it = ps->binding->get_for_idx (sel);
+    if (!sel_it) {
+        deadbeef->plt_unlock ();
+        return;
+    }
+
+    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+    while (it) {
+        int selected = deadbeef->pl_is_selected (it);
+        if (it == sel_it) {
+            if (!selected) {
+                deadbeef->pl_set_selected (it, 1);
+//                if (nchanged < NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
+//                    ddb_listview_draw_row (ps, idx, it);
+//                    ps->binding->selection_changed (it, idx);
+//                }
+//                nchanged++;
             }
         }
-        else if (ps->binding->is_selected (it)) {
-            ps->binding->select (it, 0);
-            if (nchanged < NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
-                ddb_listview_draw_row (ps, idx, it);
-                ps->binding->selection_changed (it, idx);
-            }
-            nchanged++;
+        else if (selected) {
+            deadbeef->pl_set_selected (it, 0);
+//            if (nchanged < NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
+//                ddb_listview_draw_row (ps, idx, it);
+//                ps->binding->selection_changed (it, idx);
+//            }
+//            nchanged++;
         }
-        DdbListviewIter next = PL_NEXT (it);
+        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
         UNREF (it);
         it = next;
     }
     UNREF (it);
-    if (nchanged >= NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
+    UNREF (sel_it);
+    deadbeef->plt_unlock ();
+
+    if (nchanged >= NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW, 1) {
         ddb_listview_refresh (ps, DDB_REFRESH_LIST);
-        ps->binding->selection_changed (it, -1); // that means "selection changed a lot, redraw everything"
+        ps->binding->selection_changed (NULL, -1); // that means "selection changed a lot, redraw everything"
     }
     ps->area_selection_start = sel;
     ps->area_selection_end = sel;
