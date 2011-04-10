@@ -370,7 +370,7 @@ server_loop (void *ctx) {
     FD_ZERO(&rds);
     while (!server_terminate) {
         FD_SET(srv_socket, &rds);
-        timeout.tv_usec = 50000;
+        timeout.tv_usec = 500000;
         if ((ret = select(srv_socket + 1, &rds, NULL, NULL, &timeout)) < 0 && errno != EINTR) {
             perror("select");
             exit (-1);
