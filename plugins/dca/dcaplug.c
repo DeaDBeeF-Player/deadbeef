@@ -228,8 +228,6 @@ dca_decode_data (ddb_dca_state_t *ddb_state, uint8_t * start, int size, int prob
 
                 int i;
 
-                ddb_state->flags = DCA_STEREO;
-
                 if (!ddb_state->disable_adjust)
                     ddb_state->flags |= DCA_ADJUST_LEVEL;
                 level = (level_t) (level * ddb_state->gain);
