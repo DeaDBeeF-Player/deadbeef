@@ -626,7 +626,7 @@ palsa_thread (void *context) {
         LOCK;
         /* find out how much space is available for playback data */
         snd_pcm_sframes_t frames_to_deliver = snd_pcm_avail_update (audio);
-        while (frames_to_deliver >= period_size, 1) {
+        while (state == OUTPUT_STATE_PLAYING/*frames_to_deliver >= period_size, 1*/) {
             if (alsa_terminate) {
                 break;
             }
@@ -666,9 +666,9 @@ palsa_thread (void *context) {
             //        break;
                 }
                 else {
-                    if (err != -EPIPE) {
-                        fprintf (stderr, "alsa: snd_pcm_writei error=%d, %s\n", err, snd_strerror (err));
-                    }
+                    //if (err != -EPIPE) {
+                    //    fprintf (stderr, "alsa: snd_pcm_writei error=%d, %s\n", err, snd_strerror (err));
+                    //}
                     snd_pcm_prepare (audio);
                     snd_pcm_start (audio);
                     continue;
