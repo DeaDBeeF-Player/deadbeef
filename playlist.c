@@ -3475,7 +3475,7 @@ pl_search_process (const char *text) {
         it->selected = 0;
         if (*text) {
             for (DB_metaInfo_t *m = it->meta; m; m = m->next) {
-                if (strcasecmp (m->key, "cuesheet") && utfcasestr (m->value, text)) {
+                if (m->key[0] != ':' && m->key[0] != '_' && strcasecmp (m->key, "cuesheet") && utfcasestr (m->value, text)) {
                     //fprintf (stderr, "%s -> %s match (%s.%s)\n", text, m->value, pl_find_meta (it, ":URI"), m->key);
                     // add to list
                     it->next[PL_SEARCH] = NULL;
