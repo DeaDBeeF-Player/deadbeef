@@ -696,6 +696,7 @@ streamer_set_current (playItem_t *it) {
                 plug_trigger_event_trackinfochanged (to);
             }
             err = -1;
+            pl_unlock ();
             goto error;
         }
         else {
