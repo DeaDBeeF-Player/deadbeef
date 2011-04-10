@@ -243,9 +243,9 @@ static void show_notification (DB_playItem_t *track) {
 }
 
 static int
-on_songchanged (DB_event_trackchange_t *ev, uintptr_t data) {
-    if (ev->to && deadbeef->conf_get_int ("notify.enable", 0)) {
-        DB_playItem_t *track = ev->to;
+on_songstarted (DB_event_track_t *ev, uintptr_t data) {
+    if (ev->track && deadbeef->conf_get_int ("notify.enable", 0)) {
+        DB_playItem_t *track = ev->track;
         if (track) {
             show_notification (track);
         }
@@ -255,13 +255,13 @@ on_songchanged (DB_event_trackchange_t *ev, uintptr_t data) {
 
 int
 notify_start (void) {
-    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_SONGCHANGED, DB_CALLBACK (on_songchanged), 0);
+    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_SONGSTARTED, DB_CALLBACK (on_songstarted), 0);
     return 0;
 }
 
 int
 notify_stop (void) {
-    deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_SONGCHANGED, DB_CALLBACK (on_songchanged), 0);
+    deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_SONGSTARTED, DB_CALLBACK (on_songstarted), 0);
     return 0;
 }
 
