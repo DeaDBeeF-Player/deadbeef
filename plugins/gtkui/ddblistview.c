@@ -345,7 +345,7 @@ ddb_listview_init(DdbListview *listview)
     listview->header = gtk_drawing_area_new ();
     gtk_widget_show (listview->header);
     gtk_box_pack_start (GTK_BOX (vbox), listview->header, FALSE, TRUE, 0);
-    gtk_widget_set_size_request (listview->header, -1, 24);
+    gtk_widget_set_size_request (listview->header, -1, draw_get_listview_rowheight ());
     gtk_widget_set_events (listview->header, GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
 
     listview->list = gtk_drawing_area_new ();
@@ -2125,7 +2125,7 @@ ddb_listview_header_render (DdbListview *ps) {
                         ww = 0;
                     }
                 }
-                draw_text (xx + 5, h/2-draw_get_font_size()/2, ww, 0, c->title);
+                draw_text (xx + 5, 3, ww, 0, c->title);
             }
             if (sort) {
                 int dir = sort == 1 ? GTK_ARROW_DOWN : GTK_ARROW_UP;
@@ -2166,7 +2166,7 @@ ddb_listview_header_render (DdbListview *ps) {
                     GdkColor *gdkfg = &theme_button->style->fg[GTK_STATE_SELECTED];
                     float fg[3] = {(float)gdkfg->red/0xffff, (float)gdkfg->green/0xffff, (float)gdkfg->blue/0xffff};
                     draw_set_fg_color (fg);
-                    draw_text (x + 5, h/2-draw_get_font_size()/2, c->width-10, 0, c->title);
+                    draw_text (x + 5, 3, c->width-10, 0, c->title);
                 }
                 break;
             }
@@ -2198,7 +2198,7 @@ ddb_listview_header_configure_event              (GtkWidget       *widget,
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     draw_init_font (widget->style);
-    int height = draw_get_font_size () + 12;
+    int height = draw_get_listview_rowheight ();
     if (height != widget->allocation.height) {
         gtk_widget_set_size_request (widget, -1, height);
     }

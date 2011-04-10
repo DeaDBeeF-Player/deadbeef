@@ -181,10 +181,10 @@ void draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListview
             draw_init_font_bold ();
         }
         if (calign_right) {
-            draw_text (x+5, y + (height-1)/2 - draw_get_font_size ()/2, cwidth-10, 1, text);
+            draw_text (x+5, y + 3, cwidth-10, 1, text);
         }
         else {
-            draw_text (x + 5, y + (height-1)/2 - draw_get_font_size ()/2, cwidth-10, 0, text);
+            draw_text (x + 5, y + 3, cwidth-10, 0, text);
         }
         if (gtkui_embolden_current_track && it && it == playing_track) {
             draw_init_font_normal ();

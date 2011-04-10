@@ -555,7 +555,7 @@ tabstrip_render (DdbTabStrip *ts) {
             plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
 
             set_tab_text_color (idx);
-            draw_text (x + text_left_padding, y + h/2 - draw_get_font_size()/2 + text_vert_offset, w, 0, tab_title);
+            draw_text (x + text_left_padding, y - text_vert_offset, w, 0, tab_title);
         }
         x += w - tab_overlap_size;
     }
@@ -580,7 +580,7 @@ tabstrip_render (DdbTabStrip *ts) {
         char tab_title[100];
         plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
         set_tab_text_color (idx);
-        draw_text (x + text_left_padding, y + h/2 - draw_get_font_size()/2 + text_vert_offset, w, 0, tab_title);
+        draw_text (x + text_left_padding, y - text_vert_offset, w, 0, tab_title);
     }
     else {
         need_draw_moving = 1;
@@ -599,7 +599,7 @@ tabstrip_render (DdbTabStrip *ts) {
                     char tab_title[100];
                     plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
                     set_tab_text_color (idx);
-                    draw_text (x + text_left_padding, y + h/2 - draw_get_font_size()/2 + text_vert_offset, w, 0, tab_title);
+                    draw_text (x + text_left_padding, y - text_vert_offset, w, 0, tab_title);
                 }
                 break;
             }
@@ -913,7 +913,7 @@ on_tabstrip_configure_event              (GtkWidget       *widget,
     draw_init_font (widget->style);
     DdbTabStrip *ts = DDB_TABSTRIP (widget);
     tabstrip_adjust_hscroll (ts);
-    int height = draw_get_font_size () + 13;
+    int height = draw_get_listview_rowheight () + 4;
     if (height != widget->allocation.height) {
         gtk_widget_set_size_request (widget, -1, height);
     }
