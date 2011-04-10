@@ -158,8 +158,6 @@ streamer_start_playback (playItem_t *from, playItem_t *it) {
 
         playing_track->played = 1;
         playing_track->started_timestamp = time (NULL);
-        trace ("sending songstarted to plugins [2] current playtrack: %s\n", pl_find_meta (playing_track, ":URI"));
-        plug_trigger_event (DB_EV_SONGSTARTED, 0);
         trace ("from=%p (%s), to=%p (%s) [2]\n", from, from ? pl_find_meta (from, ":URI") : "null", it, it ? pl_find_meta (it, ":URI") : "null");
         plug_trigger_event_trackchange (from, it);
     }
@@ -737,6 +735,8 @@ success:
         fileinfo = new_fileinfo;
     }
     mutex_unlock (decodemutex);
+    trace ("sending songstarted to plugins [2] current playtrack: %s\n", pl_find_meta (playing_track, ":URI"));
+    plug_trigger_event (DB_EV_SONGSTARTED, 0);
     plug_trigger_event_trackinfochanged (to);
 
     trace ("\033[0;32mstr: %p (%s), ply: %p (%s)\033[37;0m\n", streaming_track, streaming_track ? pl_find_meta (streaming_track, ":URI") : "null", playing_track, playing_track ? pl_find_meta (playing_track, ":URI") : "null");
