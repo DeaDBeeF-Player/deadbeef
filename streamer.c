@@ -908,7 +908,8 @@ streamer_next (int bytesread) {
     bytes_until_next_song = streamer_ringbuf.remaining + bytesread;
     streamer_unlock ();
     if (conf_get_int ("playlist.stop_after_current", 0)) {
-        streamer_set_nextsong (-2, 1);
+        streamer_buffering = 0;
+        streamer_set_nextsong (-2, -2);
     }
     else {
         streamer_move_to_nextsong (0);
