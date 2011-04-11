@@ -167,6 +167,7 @@ streamer_start_playback (playItem_t *from, playItem_t *it) {
     if (it) {
         pl_item_unref (it);
     }
+    trace ("streamer_start_playback %s\n", playing_track ? pl_find_meta (playing_track, ":URI") : "null");
 }
 
 playItem_t *
@@ -559,8 +560,10 @@ streamer_song_removed_notify (playItem_t *it) {
 // that must be called after last sample from str_playing_song was done reading
 static int
 streamer_set_current (playItem_t *it) {
+    trace ("streamer_set_current %s\n", playing_track ? pl_find_meta (playing_track, ":URI") : "null");
     DB_output_t *output = plug_get_output ();
     int err = 0;
+    int send_songstarted = 0;
     DB_fileinfo_t *new_fileinfo = NULL;
     playItem_t *from, *to;
     // need to add refs here, because streamer_start_playback can destroy items
@@ -576,6 +579,7 @@ streamer_set_current (playItem_t *it) {
     if (!playing_track || output->state () == OUTPUT_STATE_STOPPED) {
         streamer_buffering = 1;
         trace ("\033[0;35mstreamer_start_playback[1] from %p to %p\033[37;0m\n", from, it);
+        send_songstarted = 1;
         streamer_start_playback (from, it);
         bytes_until_next_song = -1;
     }
@@ -735,8 +739,10 @@ success:
         fileinfo = new_fileinfo;
     }
     mutex_unlock (decodemutex);
-    trace ("sending songstarted to plugins [2] current playtrack: %s\n", pl_find_meta (playing_track, ":URI"));
-    plug_trigger_event (DB_EV_SONGSTARTED, 0);
+    if (send_songstarted) {
+        trace ("songstarted %s\n", playing_track ? pl_find_meta (playing_track, ":URI") : "null");
+        plug_trigger_event (DB_EV_SONGSTARTED, 0);
+    }
     plug_trigger_event_trackinfochanged (to);
 
     trace ("\033[0;32mstr: %p (%s), ply: %p (%s)\033[37;0m\n", streaming_track, streaming_track ? pl_find_meta (streaming_track, ":URI") : "null", playing_track, playing_track ? pl_find_meta (playing_track, ":URI") : "null");
@@ -993,6 +999,8 @@ streamer_thread (void *ctx) {
             // copy streaming into playing
             trace ("\033[0;35mstreamer_start_playback[2] from %p to %p\033[37;0m\n", playing_track, streaming_track);
             streamer_start_playback (playing_track, streaming_track);
+            trace ("songstarted %s\n", playing_track ? pl_find_meta (playing_track, ":URI") : "null");
+            plug_trigger_event (DB_EV_SONGSTARTED, 0);
             last_bitrate = -1;
             avg_bitrate = -1;
             playlist_track = playing_track;
