@@ -234,29 +234,31 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
         int curr_plt = plt_get_curr ();
         if (!queue) {
             pl_clear ();
+            plug_trigger_event_playlistchanged ();
             pl_reset_cursor ();
         }
         if (parg < pend) {
+            printf ("query to add files\n");
             deadbeef->pl_add_files_begin (curr_plt);
-        }
-        while (parg < pend) {
-            char resolved[PATH_MAX];
-            const char *pname;
-            if (realpath (parg, resolved)) {
-                pname = resolved;
-            }
-            else {
-                pname = parg;
-            }
-            if (deadbeef->pl_add_dir (pname, NULL, NULL) < 0) {
-                if (deadbeef->pl_add_file (pname, NULL, NULL) < 0) {
-                    fprintf (stderr, "failed to add file or folder %s\n", pname);
+            while (parg < pend) {
+                char resolved[PATH_MAX];
+                const char *pname;
+                if (realpath (parg, resolved)) {
+                    pname = resolved;
                 }
+                else {
+                    pname = parg;
+                }
+                if (deadbeef->pl_add_dir (pname, NULL, NULL) < 0) {
+                    if (deadbeef->pl_add_file (pname, NULL, NULL) < 0) {
+                        fprintf (stderr, "failed to add file or folder %s\n", pname);
+                    }
+                }
+                parg += strlen (parg);
+                parg++;
             }
-            parg += strlen (parg);
-            parg++;
+            deadbeef->pl_add_files_end ();
         }
-        deadbeef->pl_add_files_end ();
         messagepump_push (M_PLAYLIST_REFRESH, 0, 0, 0);
         if (!queue) {
             messagepump_push (M_PLAY_CURRENT, 0, 1, 0);

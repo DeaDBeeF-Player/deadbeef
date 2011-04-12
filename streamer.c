@@ -112,12 +112,14 @@ static DB_FILE *streamer_file;
 
 void
 streamer_lock (void) {
-    mutex_lock (mutex);
+//    mutex_lock (mutex);
+    pl_lock ();
 }
 
 void
 streamer_unlock (void) {
-    mutex_unlock (mutex);
+//    mutex_unlock (mutex);
+    pl_unlock ();
 }
 
 static void

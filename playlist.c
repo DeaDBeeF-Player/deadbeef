@@ -141,10 +141,14 @@ pl_free (void) {
 #if DEBUG_LOCKING
 int plt_lock_cnt = 0;
 #endif
+pthread_t plt_lock_tid = 0;
 void
 plt_lock (void) {
+    pl_lock ();
+    return;
 #if !DISABLE_LOCKING
     mutex_lock (mutex_plt);
+    plt_lock_tid = pthread_self();
 #if DEBUG_LOCKING
     plt_lock_cnt++;
     printf ("cnt: %d\n", plt_lock_cnt);
@@ -154,6 +158,8 @@ plt_lock (void) {
 
 void
 plt_unlock (void) {
+    pl_unlock ();
+    return;
 #if !DISABLE_LOCKING
     mutex_unlock (mutex_plt);
 #if DEBUG_LOCKING
@@ -166,10 +172,13 @@ plt_unlock (void) {
 #if DEBUG_LOCKING
 int pl_lock_cnt = 0;
 #endif
+pthread_t pl_lock_tid = 0;
 void
 pl_lock (void) {
 #if !DISABLE_LOCKING
     mutex_lock (mutex);
+    pl_lock_tid = pthread_self();
+
 #if DEBUG_LOCKING
     pl_lock_cnt++;
     printf ("pcnt: %d\n", pl_lock_cnt);
@@ -1469,7 +1478,6 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
             
             playItem_t *it = pl_item_alloc_init (fname, NULL);
             pl_replace_meta (it, ":FILETYPE", "content");
-            pl_add_meta (it, "title", NULL);
             after = plt_insert_item (addfiles_playlist ? addfiles_playlist : playlist, after, it);
             pl_item_unref (it);
             return after;
@@ -1489,6 +1497,7 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
                 if (!strcasecmp (exts[e], eol)) {
                     playItem_t *inserted = (playItem_t *)decoders[i]->insert (DB_PLAYITEM (after), fname);
                     if (inserted != NULL) {
+                        printf ("inserted %s\n", fname);
                         if (cb && cb (inserted, user_data) < 0) {
                             *pabort = 1;
                         }
@@ -1623,6 +1632,7 @@ pl_add_files_begin (int plt) {
 
 void
 pl_add_files_end (void) {
+    printf ("end adding to playlist %s\n", addfiles_playlist->title);
     addfiles_playlist = NULL;
 }
 
@@ -2569,32 +2579,6 @@ pl_reshuffle (playItem_t **ppmin, playItem_t **ppmax) {
 }
 
 void
-pl_delete_all_meta (playItem_t *it) {
-    LOCK;
-    DB_metaInfo_t *m = it->meta;
-    DB_metaInfo_t *prev = NULL;
-    while (m) {
-        DB_metaInfo_t *next = m->next;
-        if (m->key[0] == ':') {
-            prev = m;
-        }
-        else {
-            if (prev) {
-                prev->next = next;
-            }
-            else {
-                it->meta = next;
-            }
-            metacache_remove_string (m->key);
-            metacache_remove_string (m->value);
-            free (m);
-        }
-        m = next;
-    }
-    UNLOCK;
-}
-
-void
 pl_set_item_duration (playItem_t *it, float duration) {
     GLOBAL_LOCK;
     if (it->in_playlist) {
@@ -2873,20 +2857,25 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                 meta = pl_find_meta (it, "title");
                 if (!meta) {
                     const char *f = pl_find_meta (it, ":URI");
-                    const char *start = strrchr (f, '/');
-                    if (start) {
-                        start++;
-                    }
-                    else {
-                        start = f;
-                    }
-                    const char *end = strrchr (start, '.');
-                    if (end) {
-                        int n = end-start;
-                        n = min (end-start, sizeof (dirname)-1);
-                        strncpy (dirname, start, n);
-                        dirname[n] = 0;
-                        meta = dirname;
+                    if (f) {
+                        const char *start = strrchr (f, '/');
+                        if (start) {
+                            start++;
+                        }
+                        else {
+                            start = f;
+                        }
+                        const char *end = strrchr (start, '.');
+                        if (end) {
+                            int n = end-start;
+                            n = min (end-start, sizeof (dirname)-1);
+                            strncpy (dirname, start, n);
+                            dirname[n] = 0;
+                            meta = dirname;
+                        }
+                        else {
+                            meta = "?";
+                        }
                     }
                     else {
                         meta = "?";
@@ -3416,6 +3405,7 @@ pl_move_items (int iter, int plt_from, playItem_t *drop_before, uint32_t *indexe
 void
 pl_copy_items (int iter, int plt_from, playItem_t *before, uint32_t *indices, int cnt) {
     pl_lock ();
+
     playlist_t *from = playlists_head;
     playlist_t *to = plt_get_curr_ptr ();
 

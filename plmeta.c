@@ -86,6 +86,7 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
 
 void
 pl_append_meta (playItem_t *it, const char *key, const char *value) {
+    pl_lock ();
     const char *old = pl_find_meta (it, key);
     size_t newlen = strlen (value);
     if (!old) {
@@ -107,6 +108,7 @@ pl_append_meta (playItem_t *it, const char *key, const char *value) {
             }
 
             if (len == newlen && !memcmp (str, value, len)) {
+                pl_unlock ();
                 return;
             }
 
@@ -117,6 +119,7 @@ pl_append_meta (playItem_t *it, const char *key, const char *value) {
         snprintf (out, sz, "%s\n%s", old, value);
         pl_replace_meta (it, key, out);
     }
+    pl_unlock ();
 }
 
 void
@@ -158,6 +161,7 @@ pl_set_meta_float (playItem_t *it, const char *key, float value) {
 
 void
 pl_delete_meta (playItem_t *it, const char *key) {
+    pl_lock ();
     DB_metaInfo_t *prev = NULL;
     DB_metaInfo_t *m = it->meta;
     while (m) {
@@ -176,30 +180,40 @@ pl_delete_meta (playItem_t *it, const char *key) {
         prev = m;
         m = m->next;
     }
+    pl_unlock ();
 }
 
 const char *
 pl_find_meta (playItem_t *it, const char *key) {
+    pl_lock ();
     DB_metaInfo_t *m = it->meta;
     while (m) {
         if (!strcasecmp (key, m->key)) {
+            pl_unlock ();
             return m->value;
         }
         m = m->next;
     }
+    pl_unlock ();
     return NULL;
 }
 
 int
 pl_find_meta_int (playItem_t *it, const char *key, int def) {
+    pl_lock ();
     const char *val = pl_find_meta (it, key);
-    return val ? atoi (val) : def;
+    int res = val ? atoi (val) : def;
+    pl_unlock ();
+    return res;
 }
 
 float
 pl_find_meta_float (playItem_t *it, const char *key, float def) {
+    pl_lock ();
     const char *val = pl_find_meta (it, key);
-    return val ? atof (val) : def;
+    float res = val ? atof (val) : def;
+    pl_unlock ();
+    return res;
 }
 
 DB_metaInfo_t *
@@ -209,6 +223,7 @@ pl_get_metadata_head (playItem_t *it) {
 
 void
 pl_delete_metadata (playItem_t *it, DB_metaInfo_t *meta) {
+    pl_lock ();
     DB_metaInfo_t *prev = NULL;
     DB_metaInfo_t *m = it->meta;
     while (m) {
@@ -227,6 +242,31 @@ pl_delete_metadata (playItem_t *it, DB_metaInfo_t *meta) {
         prev = m;
         m = m->next;
     }
+    pl_unlock ();
 }
 
-
+void
+pl_delete_all_meta (playItem_t *it) {
+    LOCK;
+    DB_metaInfo_t *m = it->meta;
+    DB_metaInfo_t *prev = NULL;
+    while (m) {
+        DB_metaInfo_t *next = m->next;
+        if (m->key[0] == ':') {
+            prev = m;
+        }
+        else {
+            if (prev) {
+                prev->next = next;
+            }
+            else {
+                it->meta = next;
+            }
+            metacache_remove_string (m->key);
+            metacache_remove_string (m->value);
+            free (m);
+        }
+        m = next;
+    }
+    UNLOCK;
+}

@@ -396,10 +396,22 @@ plugin_t *plugins;
 plugin_t *plugins_tail;
 
 void
+plug_lock (void) {
+//    mutex_lock (mutex);
+    pl_lock ();
+}
+
+void
+plug_unlock (void) {
+//    mutex_unlock (mutex);
+    pl_unlock ();
+}
+
+void
 plug_ev_subscribe (DB_plugin_t *plugin, int ev, DB_callback_t callback, uintptr_t data) {
     assert (ev < DB_EV_MAX && ev >= 0);
     int i;
-    mutex_lock (mutex);
+    plug_lock ();
     for (i = 0; i < MAX_HANDLERS; i++) {
         if (!handlers[ev][i].plugin) {
             handlers[ev][i].plugin = plugin;
@@ -408,7 +420,7 @@ plug_ev_subscribe (DB_plugin_t *plugin, int ev, DB_callback_t callback, uintptr_
             break;
         }
     }
-    mutex_unlock (mutex);
+    plug_unlock ();
     if (i == MAX_HANDLERS) {
         trace ("failed to subscribe plugin %s to event %d (too many event handlers)\n", plugin->name, ev);
     }
@@ -417,7 +429,7 @@ plug_ev_subscribe (DB_plugin_t *plugin, int ev, DB_callback_t callback, uintptr_
 void
 plug_ev_unsubscribe (DB_plugin_t *plugin, int ev, DB_callback_t callback, uintptr_t data) {
     assert (ev < DB_EV_MAX && ev >= 0);
-    mutex_lock (mutex);
+    plug_lock ();
     for (int i = 0; i < MAX_HANDLERS; i++) {
         if (handlers[ev][i].plugin == plugin) {
             handlers[ev][i].plugin = NULL;
@@ -426,7 +438,7 @@ plug_ev_unsubscribe (DB_plugin_t *plugin, int ev, DB_callback_t callback, uintpt
             break;
         }
     }
-    mutex_unlock (mutex);
+    plug_unlock ();
 }
 
 float
@@ -470,7 +482,7 @@ plug_event_call (DB_event_t *ev) {
     }
     ev->time = time (NULL);
 //    printf ("plug_event_call enter %d\n", ev->event);
-    mutex_lock (mutex);
+    plug_lock ();
 
     for (int i = 0; i < MAX_HANDLERS; i++) {
         if (handlers[ev->event][i].plugin) {
@@ -482,7 +494,7 @@ plug_event_call (DB_event_t *ev) {
 //        pl_save_current ();
 //    }
 
-    mutex_unlock (mutex);
+    plug_unlock ();
 //    printf ("plug_event_call leave %d\n", ev->event);
 }
 

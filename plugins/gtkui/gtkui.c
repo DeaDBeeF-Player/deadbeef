@@ -347,6 +347,7 @@ void
 redraw_queued_tracks (DdbListview *pl, int list) {
     DB_playItem_t *it;
     int idx = 0;
+    deadbeef->pl_lock ();
     for (it = deadbeef->pl_get_first (PL_MAIN); it; idx++) {
         if (deadbeef->pl_playqueue_test (it) != -1) {
             ddb_listview_draw_row (pl, idx, (DdbListviewIter)it);
@@ -355,6 +356,7 @@ redraw_queued_tracks (DdbListview *pl, int list) {
         deadbeef->pl_item_unref (it);
         it = next;
     }
+    deadbeef->pl_unlock ();
 }
 
 static gboolean
@@ -490,11 +492,16 @@ playlistchanged_cb (gpointer none) {
 
 void
 gtkui_playlist_changed (void) {
+    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+    ddb_listview_build_groups (pl);
+    search_rebuild_groups ();
+
     g_idle_add (playlistchanged_cb, NULL);
 }
 
 static int
 gtkui_on_playlistchanged (DB_event_t *ev, uintptr_t data) {
+    printf ("gtkui_on_playlistchanged\n");
     gtkui_playlist_changed ();
     return 0;
 }
@@ -528,6 +535,10 @@ playlistswitch_cb (gpointer none) {
 
 static int
 gtkui_on_playlistswitch (DB_event_t *ev, uintptr_t data) {
+    printf ("gtkui_on_playlistchanged\n");
+    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+    ddb_listview_build_groups (pl);
+    search_rebuild_groups ();
     g_idle_add (playlistswitch_cb, NULL);
     return 0;
 }
@@ -1108,8 +1119,7 @@ gtkui_set_progress_text_idle (gpointer data) {
 gboolean
 gtkui_progress_hide_idle (gpointer data) {
     progress_hide ();
-    deadbeef->sendmessage (M_PLAYLIST_REFRESH, 0, 0, 0);
-    //playlist_refresh ();
+    //deadbeef->sendmessage (M_PLAYLIST_REFRESH, 0, 0, 0);
     return FALSE;
 }
 

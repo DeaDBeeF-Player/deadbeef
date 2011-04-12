@@ -36,4 +36,7 @@ search_get_idx (DdbListviewIter it);
 void
 search_playlist_init (GtkWidget *widget);
 
+void
+search_rebuild_groups (void);
+
 #endif // __SEARCH_H

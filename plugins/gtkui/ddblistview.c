@@ -591,6 +591,7 @@ ddb_listview_list_render (DdbListview *listview, int x, int y, int w, int h) {
     deadbeef->pl_lock ();
     // find 1st group
     DdbListviewGroup *grp = listview->groups;
+    printf ("starting to render listview, groups=%p, num_items=%d\n", grp, grp?grp->num_items : 0);
     int grp_y = 0;
     while (grp && grp_y + grp->height < y + listview->scrollpos) {
         grp_y += grp->height;
@@ -724,7 +725,7 @@ ddb_listview_vscroll_event               (GtkWidget       *widget,
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
 	GdkEventScroll *ev = (GdkEventScroll*)event;
-    GtkWidget *range = ps->scrollbar;;
+    GtkWidget *range = ps->scrollbar;
     GtkWidget *list = ps->list;
     // pass event to scrollbar
     int newscroll = gtk_range_get_value (GTK_RANGE (range));
@@ -2871,6 +2872,7 @@ ddb_listview_build_groups (DdbListview *listview) {
             memset (grp, 0, sizeof (DdbListviewGroup));
             grp->head = it;
             grp->num_items = listview->binding->count ();
+            printf ("numitems: %d\n", grp->num_items);
             listview->grouptitle_height = 0;
             grp->height = listview->grouptitle_height + grp->num_items * listview->rowheight;
 //            if (grp->height < min_height) {
@@ -2913,8 +2915,15 @@ ddb_listview_build_groups (DdbListview *listview) {
         }
         listview->fullheight += grp->height;
     }
+    if (!listview->groups) {
+        printf ("empty!\n");
+    }
+    else {
+        printf ("groupsize: %d!\n", listview->groups->num_items);
+    }
     deadbeef->pl_unlock ();
 }
+
 void
 ddb_listview_set_vscroll (DdbListview *listview, gboolean scroll) {
     gtk_range_set_value (GTK_RANGE (listview->scrollbar), scroll);

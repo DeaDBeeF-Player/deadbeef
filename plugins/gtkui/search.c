@@ -92,6 +92,14 @@ search_refresh (void) {
     }
 }
 
+void
+search_rebuild_groups (void) {
+    if (searchwin) {
+        GtkWidget *pl = lookup_widget (searchwin, "searchlist");
+        ddb_listview_build_groups (DDB_LISTVIEW (pl));
+    }
+}
+
 ///////// searchwin header handlers
 
 gboolean
