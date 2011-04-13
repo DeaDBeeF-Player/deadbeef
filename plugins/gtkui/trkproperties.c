@@ -339,7 +339,6 @@ trkproperties_fill_metadata (void) {
 void
 show_track_properties_dlg (void) {
 
-    deadbeef->plt_lock ();
     deadbeef->pl_lock ();
 
     if (tracks) {
@@ -371,13 +370,11 @@ show_track_properties_dlg (void) {
         }
         else {
             deadbeef->pl_unlock ();
-            deadbeef->plt_unlock ();
             return;
         }
     }
 
     deadbeef->pl_unlock ();
-    deadbeef->plt_unlock ();
 
     GtkTreeView *tree;
     GtkTreeView *proptree;

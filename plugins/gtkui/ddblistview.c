@@ -85,6 +85,9 @@ static void ddb_listview_init(DdbListview *listview);
 //static void ddb_listview_paint(GtkWidget *widget);
 static void ddb_listview_destroy(GtkObject *object);
 
+static void
+ddb_listview_build_groups (DdbListview *listview);
+
 // fwd decls
 void
 ddb_listview_free_groups (DdbListview *listview);
@@ -473,11 +476,6 @@ ddb_listview_destroy(GtkObject *object)
 void
 ddb_listview_refresh (DdbListview *listview, uint32_t flags) {
     if (flags & DDB_REFRESH_LIST) {
-        int height = listview->fullheight;
-        ddb_listview_build_groups (listview);
-        if (height != listview->fullheight) {
-            flags |= DDB_REFRESH_VSCROLL;
-        }
         gtk_widget_queue_draw (listview->list);
     }
     if (flags & DDB_REFRESH_VSCROLL) {
@@ -527,20 +525,33 @@ ddb_listview_list_configure_event            (GtkWidget       *widget,
     return FALSE;
 }
 
+static void
+ddb_listview_groupcheck (DdbListview *listview) {
+    time_t tm = listview->binding->modification_time ();
+    if (tm != listview->groups_build_time) {
+        ddb_listview_build_groups (listview);
+    }
+}
+
 // returns Y coordinate of an item by its index
 int
 ddb_listview_get_row_pos (DdbListview *listview, int row_idx) {
     int y = 0;
     int idx = 0;
+    deadbeef->pl_lock ();
+    ddb_listview_groupcheck (listview);
     DdbListviewGroup *grp = listview->groups;
     while (grp) {
         if (idx + grp->num_items > row_idx) {
-            return y + listview->grouptitle_height + (row_idx - idx) * listview->rowheight;
+            int i = y + listview->grouptitle_height + (row_idx - idx) * listview->rowheight;
+            deadbeef->pl_unlock ();
+            return i;
         }
         y += grp->height;
         idx += grp->num_items;
         grp = grp->next;
     }
+    deadbeef->pl_unlock ();
     return y;
 }
 
@@ -552,6 +563,8 @@ ddb_listview_list_pickpoint_y (DdbListview *listview, int y, DdbListviewGroup **
     int idx = 0;
     int grp_y = 0;
     int gidx = 0;
+    deadbeef->pl_lock ();
+    ddb_listview_groupcheck (listview);
     DdbListviewGroup *grp = listview->groups;
     while (grp) {
         int h = grp->height;
@@ -570,6 +583,7 @@ ddb_listview_list_pickpoint_y (DdbListview *listview, int y, DdbListviewGroup **
                 *group_idx = (y - listview->grouptitle_height) / listview->rowheight;
                 *global_idx = idx + *group_idx;
             }
+            deadbeef->pl_unlock ();
             return 0;
         }
         grp_y += grp->height;
@@ -577,6 +591,7 @@ ddb_listview_list_pickpoint_y (DdbListview *listview, int y, DdbListviewGroup **
         grp = grp->next;
         gidx++;
     }
+    deadbeef->pl_unlock ();
     return -1;
 }
 
@@ -589,6 +604,7 @@ ddb_listview_list_render (DdbListview *listview, int x, int y, int w, int h) {
     int idx = 0;
     int abs_idx = 0;
     deadbeef->pl_lock ();
+    ddb_listview_groupcheck (listview);
     // find 1st group
     DdbListviewGroup *grp = listview->groups;
     printf ("starting to render listview, groups=%p, num_items=%d\n", grp, grp?grp->num_items : 0);
@@ -1128,6 +1144,8 @@ ddb_listview_list_setup_hscroll (DdbListview *ps) {
 // returns -1 if row not found
 int
 ddb_listview_list_get_drawinfo (DdbListview *listview, int row, DdbListviewGroup **pgrp, int *even, int *cursor, int *group_y, int *x, int *y, int *w, int *h) {
+    deadbeef->pl_lock ();
+    ddb_listview_groupcheck (listview);
     DdbListviewGroup *grp = listview->groups;
     int idx = 0;
     int idx2 = 0;
@@ -1145,6 +1163,7 @@ ddb_listview_list_get_drawinfo (DdbListview *listview, int row, DdbListviewGroup
             *y += listview->grouptitle_height + (row - idx) * listview->rowheight;
             *w = listview->totalwidth;
             *h = listview->rowheight;
+            deadbeef->pl_unlock ();
             return 0;
         }
         *y += grpheight;
@@ -1152,6 +1171,7 @@ ddb_listview_list_get_drawinfo (DdbListview *listview, int row, DdbListviewGroup
         idx2 += grp->num_items + 1;
         grp = grp->next;
     }
+    deadbeef->pl_unlock ();
     return -1;
 }
 
@@ -1290,11 +1310,11 @@ ddb_listview_header_expose (DdbListview *ps, int x, int y, int w, int h) {
 void
 ddb_listview_select_single (DdbListview *ps, int sel) {
     int nchanged = 0;
-    deadbeef->plt_lock ();
+    deadbeef->pl_lock ();
 
     DB_playItem_t *sel_it = ps->binding->get_for_idx (sel);
     if (!sel_it) {
-        deadbeef->plt_unlock ();
+        deadbeef->pl_unlock ();
         return;
     }
 
@@ -1325,7 +1345,7 @@ ddb_listview_select_single (DdbListview *ps, int sel) {
     }
     UNREF (it);
     UNREF (sel_it);
-    deadbeef->plt_unlock ();
+    deadbeef->pl_unlock ();
 
     if (nchanged >= NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW, 1) {
         ddb_listview_refresh (ps, DDB_REFRESH_LIST);
@@ -1337,6 +1357,8 @@ ddb_listview_select_single (DdbListview *ps, int sel) {
 
 void
 ddb_listview_click_selection (DdbListview *ps, int ex, int ey, DdbListviewGroup *grp, int grp_index, int sel, int dnd) {
+    deadbeef->pl_lock ();
+    ddb_listview_groupcheck (ps);
     if (sel == -1 && (!grp || grp_index >= grp->num_items)) {
         // clicked empty space, deselect everything
         DdbListviewIter it;
@@ -1398,6 +1420,7 @@ ddb_listview_click_selection (DdbListview *ps, int ex, int ey, DdbListviewGroup 
         }
         UNREF (it);
     }
+    deadbeef->pl_unlock ();
 }
 
 // {{{ expected behaviour for mouse1 without modifiers:
@@ -1421,8 +1444,11 @@ ddb_listview_click_selection (DdbListview *ps, int ex, int ey, DdbListviewGroup 
 void
 ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, GdkEventType type) {
     // cursor must be set here, but selection must be handled in keyrelease
+    deadbeef->pl_lock ();
+    ddb_listview_groupcheck (ps);
     int cnt = ps->binding->count ();
     if (cnt == 0) {
+        deadbeef->pl_unlock ();
         return;
     }
     // remember mouse coords for doubleclick detection
@@ -1433,6 +1459,7 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, Gd
     int grp_index;
     int sel;
     if (ddb_listview_list_pickpoint_y (ps, ey + ps->scrollpos, &grp, &grp_index, &sel) == -1) {
+        deadbeef->pl_unlock ();
         return;
     }
 
@@ -1450,6 +1477,7 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, Gd
             if (it) {
                 ps->binding->unref (it);
             }
+            deadbeef->pl_unlock ();
             return;
         }
     }
@@ -1486,6 +1514,7 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, Gd
         int cursor = sel;//ps->binding->cursor ();
         if (cursor == -1) {
             // find group
+            ddb_listview_groupcheck (ps);
             DdbListviewGroup *g = ps->groups;
             int idx = 0;
             while (g) {
@@ -1531,6 +1560,7 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, Gd
         ddb_listview_draw_row (ps, prev, it);
         UNREF (it);
     }
+    deadbeef->pl_unlock ();
 }
 
 void
@@ -1650,6 +1680,7 @@ ddb_listview_list_scroll_cb (gpointer data) {
 
 void
 ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey) {
+    deadbeef->pl_lock ();
     if (ps->dragwait) {
         GtkWidget *widget = ps->list;
         if (gtk_drag_check_threshold (widget, ps->lastpos[0], ex, ps->lastpos[1], ey)) {
@@ -1712,6 +1743,7 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
             int idx = 0;
             if (y == -1) {
                 // find group
+                ddb_listview_groupcheck (ps);
                 DdbListviewGroup *g = ps->groups;
                 while (g) {
                     if (g == grp) {
@@ -1809,6 +1841,7 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
         // debug only
         // ddb_listview_list_dbg_draw_areasel (widget, event->x, event->y);
     }
+    deadbeef->pl_unlock ();
 }
 
 void
@@ -2847,6 +2880,8 @@ ddb_listview_free_groups (DdbListview *listview) {
 void
 ddb_listview_build_groups (DdbListview *listview) {
     deadbeef->pl_lock ();
+    int old_height = listview->fullheight;
+    listview->groups_build_time = listview->binding->modification_time ();
     ddb_listview_free_groups (listview);
     listview->fullheight = 0;
 
@@ -2881,6 +2916,9 @@ ddb_listview_build_groups (DdbListview *listview) {
             listview->fullheight = grp->height;
             listview->fullheight += listview->grouptitle_height;
             deadbeef->pl_unlock ();
+            if (old_height != listview->fullheight) {
+                ddb_listview_refresh (listview, DDB_REFRESH_VSCROLL);
+            }
             return;
         }
         if (!grp || strcmp (str, curr)) {
@@ -2922,6 +2960,9 @@ ddb_listview_build_groups (DdbListview *listview) {
         printf ("groupsize: %d!\n", listview->groups->num_items);
     }
     deadbeef->pl_unlock ();
+    if (old_height != listview->fullheight) {
+        ddb_listview_refresh (listview, DDB_REFRESH_VSCROLL);
+    }
 }
 
 void

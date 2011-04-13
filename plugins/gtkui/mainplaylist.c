@@ -108,7 +108,7 @@ int main_get_idx (DdbListviewIter it) {
 
 void
 main_drag_n_drop (DdbListviewIter before, int from_playlist, uint32_t *indices, int length, int copy) {
-    deadbeef->plt_lock ();
+    deadbeef->pl_lock ();
     int curr = deadbeef->plt_get_curr ();
     if (copy) {
         deadbeef->pl_copy_items (PL_MAIN, from_playlist, (DB_playItem_t *)before, indices, length);
@@ -116,7 +116,7 @@ main_drag_n_drop (DdbListviewIter before, int from_playlist, uint32_t *indices, 
     else {
         deadbeef->pl_move_items (PL_MAIN, from_playlist, (DB_playItem_t *)before, indices, length);
     }
-    deadbeef->plt_unlock ();
+    deadbeef->pl_unlock ();
 }
 
 void main_external_drag_n_drop (DdbListviewIter before, char *mem, int length) {
@@ -284,6 +284,7 @@ DdbListviewBinding main_binding = {
     .list_context_menu = list_context_menu,
     .delete_selected = main_delete_selected,
     .vscroll_changed = main_vscroll_changed,
+    .modification_time = gtkui_get_curr_playlist_modtime,
 };
 
 void

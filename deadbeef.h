@@ -383,6 +383,12 @@ typedef struct {
     int (*plt_get_title) (void *handle, char *buffer, int bufsize);
     int (*plt_set_title) (void *handle, const char *title);
 
+    // sets the modification time using time(NULL) call
+    void (*plt_modified) (void *handle);
+
+    // returns the time of last modification
+    time_t (*plt_get_modification_time) (void *handle);
+
     // playlist metadata
     // this kind of metadata is stored in playlist (dbpl) files
     void (*plt_add_meta) (void *handle, const char *key, const char *value);
@@ -400,8 +406,6 @@ typedef struct {
     // playlist locking
     void (*pl_lock) (void);
     void (*pl_unlock) (void);
-    void (*plt_lock) (void);
-    void (*plt_unlock) (void);
 
     // playlist tracks access
     DB_playItem_t * (*pl_item_alloc) (void);

@@ -166,4 +166,7 @@ gtkui_playlist_set_curr (int playlist);
 void
 gtkui_setup_gui_refresh ();
 
+time_t
+gtkui_get_curr_playlist_modtime (void);
+
 #endif

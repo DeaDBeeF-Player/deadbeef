@@ -47,10 +47,10 @@ plt_get_title_wrapper (int plt, char *buffer, int len) {
         strcpy (buffer, "");
         return;
     }
-    deadbeef->plt_lock ();
+    deadbeef->pl_lock ();
     void *p = deadbeef->plt_get_handle (plt);
     deadbeef->plt_get_title (p, buffer, len);
-    deadbeef->plt_unlock ();
+    deadbeef->pl_unlock ();
     char *end;
     if (!g_utf8_validate (buffer, -1, (const gchar **)&end)) {
         *end = 0;
@@ -469,7 +469,7 @@ set_tab_text_color (int idx) {
     if (idx == -1) {
         return;
     }
-    deadbeef->plt_lock ();
+    deadbeef->pl_lock ();
     void *plt = deadbeef->plt_get_handle (idx);
     const char *clr = deadbeef->plt_find_meta (plt, "gui.color");
     int fallback = 1;
@@ -487,7 +487,7 @@ set_tab_text_color (int idx) {
         float fg[3] = {(float)color.red/0xffff, (float)color.green/0xffff, (float)color.blue/0xffff};
         draw_set_fg_color (fg);
     }
-    deadbeef->plt_unlock ();
+    deadbeef->pl_unlock ();
 }
 
 void
@@ -668,10 +668,10 @@ on_rename_playlist1_activate           (GtkMenuItem     *menuitem,
     int res = gtk_dialog_run (GTK_DIALOG (dlg));
     if (res == GTK_RESPONSE_OK) {
         const char *text = gtk_entry_get_text (GTK_ENTRY (e));
-        deadbeef->plt_lock ();
+        deadbeef->pl_lock ();
         void *p = deadbeef->plt_get_handle (tab_clicked);
         deadbeef->plt_set_title (p, text);
-        deadbeef->plt_unlock ();
+        deadbeef->pl_unlock ();
     }
     gtk_widget_destroy (dlg);
 }

@@ -85,6 +85,7 @@ typedef struct {
     void (*col_free_user_data) (void *user_data);
     void (*vscroll_changed) (int pos);
     void (*cursor_changed) (int pos);
+    time_t (*modification_time) (void);
 } DdbListviewBinding;
 
 struct _DdbListviewColumn;
@@ -139,6 +140,7 @@ struct _DdbListview {
 
     struct _DdbListviewColumn *columns;
     struct _DdbListviewGroup *groups;
+    time_t groups_build_time;
     int fullheight;
     int block_redraw_on_scroll;
     int grouptitle_height;
@@ -193,8 +195,7 @@ int
 ddb_listview_column_get_info (DdbListview *listview, int col, const char **title, int *width, int *align_right, int *minheight, void **user_data);
 int
 ddb_listview_column_set_info (DdbListview *listview, int col, const char *title, int width, int align_right, int minheight, void *user_data);
-void
-ddb_listview_build_groups (DdbListview *listview);
+
 void
 ddb_listview_show_header (DdbListview *listview, int show);
 

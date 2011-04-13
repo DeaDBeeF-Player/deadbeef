@@ -121,6 +121,8 @@ static DB_functions_t deadbeef_api = {
     .plt_get_handle = (void *(*)(int idx))plt_get,
     .plt_get_title = (int (*)(void *handle, char *buffer, int sz))plt_get_title,
     .plt_set_title = (int (*)(void *handle, const char *buffer))plt_set_title,
+    .plt_modified = (void (*) (void *handle))plt_modified,
+    .plt_get_modification_time = (time_t (*) (void *handle))plt_get_modification_time,
 
     // playlist metadata
     .plt_add_meta = (void (*) (void *handle, const char *key, const char *value))plt_add_meta,
@@ -134,8 +136,8 @@ static DB_functions_t deadbeef_api = {
     // playlist access
     .pl_lock = pl_lock,
     .pl_unlock = pl_unlock,
-    .plt_lock = plt_lock,
-    .plt_unlock = plt_unlock,
+    //.plt_lock = plt_lock,
+    //.plt_unlock = plt_unlock,
     .pl_item_alloc = (DB_playItem_t* (*)(void))pl_item_alloc,
     .pl_item_alloc_init = (DB_playItem_t* (*)(const char *fname, const char *decoder_id))pl_item_alloc_init,
     .pl_item_ref = (void (*)(DB_playItem_t *))pl_item_ref,

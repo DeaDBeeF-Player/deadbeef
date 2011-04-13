@@ -22,7 +22,7 @@ gtkpl_adddir_cb (gpointer data, gpointer userdata) {
 
 void
 gtkpl_add_dirs (GSList *lst) {
-    deadbeef->plt_lock ();
+    deadbeef->pl_lock ();
     deadbeef->pl_add_files_begin (deadbeef->plt_get_curr ());
     if (g_slist_length (lst) == 1
             && deadbeef->conf_get_int ("gtkui.name_playlist_from_folder", 0)) {
@@ -42,7 +42,7 @@ gtkpl_add_dirs (GSList *lst) {
             }
         }
     }
-    deadbeef->plt_unlock ();
+    deadbeef->pl_unlock ();
     g_slist_foreach(lst, gtkpl_adddir_cb, NULL);
     g_slist_free (lst);
     deadbeef->pl_add_files_end ();

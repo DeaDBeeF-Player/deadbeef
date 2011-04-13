@@ -328,7 +328,6 @@ on_remove_from_disk_activate                    (GtkMenuItem     *menuitem,
     }
 
     deadbeef->pl_lock ();
-    deadbeef->plt_lock ();
 
     DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
     while (it) {
@@ -341,7 +340,6 @@ on_remove_from_disk_activate                    (GtkMenuItem     *menuitem,
     }
 
     int cursor = deadbeef->pl_delete_selected ();
-    deadbeef->plt_unlock ();
     deadbeef->pl_unlock ();
 
     main_refresh ();

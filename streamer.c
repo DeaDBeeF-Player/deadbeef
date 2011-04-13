@@ -191,7 +191,7 @@ streamer_get_playing_track (void) {
 
 int
 str_get_idx_of (playItem_t *it) {
-    plt_lock ();
+    pl_lock ();
     if (!streamer_playlist) {
         streamer_playlist = plt_get_curr_ptr ();
     }
@@ -202,23 +202,23 @@ str_get_idx_of (playItem_t *it) {
         idx++;
     }
     if (!c) {
-        plt_unlock ();
+        pl_unlock ();
         return -1;
     }
-    plt_unlock ();
+    pl_unlock ();
     return idx;
 }
 
 playItem_t *
 str_get_for_idx (int idx) {
-    plt_lock ();
+    pl_lock ();
     if (!streamer_playlist) {
         streamer_playlist = plt_get_curr_ptr ();
     }
     playItem_t *it = streamer_playlist->head[PL_MAIN];
     while (idx--) {
         if (!it) {
-            plt_unlock ();
+            pl_unlock ();
             return NULL;
         }
         it = it->next[PL_MAIN];
@@ -226,7 +226,7 @@ str_get_for_idx (int idx) {
     if (it) {
         pl_item_ref (it);
     }
-    plt_unlock ();
+    pl_unlock ();
     return it;
 }
 
@@ -234,7 +234,7 @@ str_get_for_idx (int idx) {
 int
 streamer_move_to_nextsong (int reason) {
     trace ("streamer_move_to_nextsong (%d)\n", reason);
-    pl_global_lock ();
+    pl_lock ();
     if (!streamer_playlist) {
         streamer_playlist = plt_get_curr_ptr ();
     }
@@ -247,7 +247,7 @@ streamer_move_to_nextsong (int reason) {
             if (r >= 0) {
                 pl_item_unref (it);
                 streamer_set_nextsong (r, 1);
-                pl_global_unlock ();
+                pl_unlock ();
                 return 0;
             }
             else {
@@ -263,7 +263,7 @@ streamer_move_to_nextsong (int reason) {
                         trace ("%s found in playlist %d\n", pl_find_meta (it, ":URI"), i);
                         pl_item_unref (it);
                         streamer_set_nextsong (r, 3);
-                        pl_global_unlock ();
+                        pl_unlock ();
                         return 0;
                     }
                     i++;
@@ -288,7 +288,7 @@ streamer_move_to_nextsong (int reason) {
     playlist_t *plt = streamer_playlist;
     if (!plt->head[PL_MAIN]) {
         streamer_set_nextsong (-2, 1);
-        pl_global_unlock ();
+        pl_unlock ();
         return 0;
     }
     int pl_order = pl_get_order ();
@@ -303,7 +303,7 @@ streamer_move_to_nextsong (int reason) {
         else {
             streamer_set_nextsong (r, 1);
         }
-        pl_global_unlock ();
+        pl_unlock ();
         return 0;
     }
 
@@ -327,12 +327,12 @@ streamer_move_to_nextsong (int reason) {
                 }
             }
             if (!it) {
-                pl_global_unlock ();
+                pl_unlock ();
                 return -1;
             }
             int r = str_get_idx_of (it);
             streamer_set_nextsong (r, 1);
-            pl_global_unlock ();
+            pl_unlock ();
             return 0;
         }
         else {
@@ -362,12 +362,12 @@ streamer_move_to_nextsong (int reason) {
                 playItem_t *temp;
                 plt_reshuffle (streamer_playlist, &temp, NULL);
                 streamer_set_nextsong (-2, -2);
-                pl_global_unlock ();
+                pl_unlock ();
                 return -1;
             }
             int r = str_get_idx_of (it);
             streamer_set_nextsong (r, 1);
-            pl_global_unlock ();
+            pl_unlock ();
             return 0;
         }
     }
@@ -389,35 +389,35 @@ streamer_move_to_nextsong (int reason) {
                 plug_trigger_event_trackinfochanged (streaming_track);
                 badsong = -1;
                 streamer_set_nextsong (-2, -2);
-                pl_global_unlock ();
+                pl_unlock ();
                 return 0;
             }
         }
         if (!it) {
-            pl_global_unlock ();
+            pl_unlock ();
             return -1;
         }
         int r = str_get_idx_of (it);
         streamer_set_nextsong (r, 1);
-        pl_global_unlock ();
+        pl_unlock ();
         return 0;
     }
     else if (pl_order == PLAYBACK_ORDER_RANDOM) { // random
         int res = streamer_move_to_randomsong ();
         if (res == -1) {
             trace ("streamer_move_to_randomsong error\n");
-            pl_global_unlock ();
+            pl_unlock ();
             streamer_set_nextsong (-2, 1);
             return -1;
         }
     }
-    pl_global_unlock ();
+    pl_unlock ();
     return -1;
 }
 
 int
 streamer_move_to_prevsong (void) {
-    plt_lock ();
+    pl_lock ();
     if (!streamer_playlist) {
         streamer_playlist = plt_get_curr_ptr ();
     }
@@ -431,14 +431,14 @@ streamer_move_to_prevsong (void) {
     pl_playqueue_clear ();
     if (!plt->head[PL_MAIN]) {
         streamer_set_nextsong (-2, 1);
-        plt_unlock ();
+        pl_unlock ();
         return 0;
     }
     int pl_order = conf_get_int ("playback.order", 0);
     int pl_loop_mode = conf_get_int ("playback.loop", 0);
     if (pl_order == PLAYBACK_ORDER_SHUFFLE_TRACKS || pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS) { // shuffle
         if (!playlist_track) {
-            plt_unlock ();
+            pl_unlock ();
             return streamer_move_to_nextsong (1);
         }
         else {
@@ -477,12 +477,12 @@ streamer_move_to_prevsong (void) {
             }
 
             if (!it) {
-                plt_unlock ();
+                pl_unlock ();
                 return -1;
             }
             int r = str_get_idx_of (it);
             streamer_set_nextsong (r, 1);
-            plt_unlock ();
+            pl_unlock ();
             return 0;
         }
     }
@@ -497,24 +497,24 @@ streamer_move_to_prevsong (void) {
             }
         }
         if (!it) {
-            plt_unlock ();
+            pl_unlock ();
             return -1;
         }
         int r = str_get_idx_of (it);
         streamer_set_nextsong (r, 1);
-        plt_unlock ();
+        pl_unlock ();
         return 0;
     }
     else if (pl_order == PLAYBACK_ORDER_RANDOM) { // random
         int res = streamer_move_to_randomsong ();
         if (res == -1) {
-            plt_unlock ();
+            pl_unlock ();
             streamer_set_nextsong (-2, 1);
             trace ("streamer_move_to_randomsong error\n");
             return -1;
         }
     }
-    plt_unlock ();
+    pl_unlock ();
     return -1;
 }
 

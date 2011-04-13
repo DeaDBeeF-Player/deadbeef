@@ -492,10 +492,6 @@ playlistchanged_cb (gpointer none) {
 
 void
 gtkui_playlist_changed (void) {
-    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-    ddb_listview_build_groups (pl);
-    search_rebuild_groups ();
-
     g_idle_add (playlistchanged_cb, NULL);
 }
 
@@ -535,10 +531,6 @@ playlistswitch_cb (gpointer none) {
 
 static int
 gtkui_on_playlistswitch (DB_event_t *ev, uintptr_t data) {
-    printf ("gtkui_on_playlistchanged\n");
-    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-    ddb_listview_build_groups (pl);
-    search_rebuild_groups ();
     g_idle_add (playlistswitch_cb, NULL);
     return 0;
 }
@@ -626,6 +618,15 @@ gtkui_hide_status_icon () {
     if (trayicon) {
         g_object_set (trayicon, "visible", FALSE, NULL);
     }
+}
+
+time_t
+gtkui_get_curr_playlist_modtime (void) {
+    deadbeef->pl_lock ();
+    void *plt = deadbeef->plt_get_handle (deadbeef->plt_get_curr ());
+    time_t res = plt ? deadbeef->plt_get_modification_time (plt) : 0;
+    deadbeef->pl_unlock ();
+    return res;
 }
 
 static int
@@ -938,7 +939,7 @@ gtkui_add_new_playlist (void) {
         else {
             snprintf (name, sizeof (name), _("New Playlist (%d)"), idx);
         }
-        deadbeef->plt_lock ();
+        deadbeef->pl_lock ();
         for (i = 0; i < cnt; i++) {
             char t[100];
             void *plt = deadbeef->plt_get_handle (i);
@@ -947,7 +948,7 @@ gtkui_add_new_playlist (void) {
                 break;
             }
         }
-        deadbeef->plt_unlock ();
+        deadbeef->pl_unlock ();
         if (i == cnt) {
             return deadbeef->plt_add (cnt, name);
         }

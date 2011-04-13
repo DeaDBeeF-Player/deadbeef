@@ -85,12 +85,6 @@ static uintptr_t mutex_plt;
 #define LOCK {pl_lock();}
 #define UNLOCK {pl_unlock();}
 
-#define PLT_LOCK {plt_lock();}
-#define PLT_UNLOCK {plt_unlock();}
-
-#define GLOBAL_LOCK {pl_global_lock();}
-#define GLOBAL_UNLOCK {pl_global_unlock();}
-
 static playlist_t dummy_playlist; // used at startup to prevent crashes
 
 static int pl_order; // mirrors "playback.order" config variable
@@ -139,45 +133,14 @@ pl_free (void) {
 }
 
 #if DEBUG_LOCKING
-int plt_lock_cnt = 0;
-#endif
-pthread_t plt_lock_tid = 0;
-void
-plt_lock (void) {
-    pl_lock ();
-    return;
-#if !DISABLE_LOCKING
-    mutex_lock (mutex_plt);
-    plt_lock_tid = pthread_self();
-#if DEBUG_LOCKING
-    plt_lock_cnt++;
-    printf ("cnt: %d\n", plt_lock_cnt);
-#endif
-#endif
-}
-
-void
-plt_unlock (void) {
-    pl_unlock ();
-    return;
-#if !DISABLE_LOCKING
-    mutex_unlock (mutex_plt);
-#if DEBUG_LOCKING
-    plt_lock_cnt--;
-    printf ("cnt: %d\n", plt_lock_cnt);
-#endif
-#endif
-}
-
-#if DEBUG_LOCKING
 int pl_lock_cnt = 0;
 #endif
-pthread_t pl_lock_tid = 0;
+//pthread_t pl_lock_tid = 0;
 void
 pl_lock (void) {
 #if !DISABLE_LOCKING
     mutex_lock (mutex);
-    pl_lock_tid = pthread_self();
+    //pl_lock_tid = pthread_self();
 
 #if DEBUG_LOCKING
     pl_lock_cnt++;
@@ -197,18 +160,6 @@ pl_unlock (void) {
 #endif
 }
 
-void
-pl_global_lock (void) {
-    PLT_LOCK;
-    LOCK;
-}
-
-void
-pl_global_unlock (void) {
-    UNLOCK;
-    PLT_UNLOCK;
-}
-
 static void
 pl_item_free (playItem_t *it);
 
@@ -217,7 +168,7 @@ plt_gen_conf (void) {
     if (plt_loading) {
         return;
     }
-    PLT_LOCK;
+    LOCK;
     int cnt = plt_get_count ();
     int i;
     conf_remove_items ("playlist.tab.");
@@ -228,7 +179,7 @@ plt_gen_conf (void) {
         snprintf (s, sizeof (s), "playlist.tab.%02d", i);
         conf_set_str (s, p->title);
     }
-    PLT_UNLOCK;
+    UNLOCK;
 }
 
 playlist_t *
@@ -301,9 +252,10 @@ plt_add (int before, const char *title) {
     playlist_t *plt = malloc (sizeof (playlist_t));
     memset (plt, 0, sizeof (playlist_t));
     plt->title = strdup (title);
+    plt_modified (plt);
 
     trace ("locking\n");
-    PLT_LOCK;
+    LOCK;
     trace ("locked\n");
     playlist_t *p_before = NULL;
     playlist_t *p_after = playlists_head;
@@ -353,7 +305,7 @@ plt_add (int before, const char *title) {
             }
         }
     }
-    PLT_UNLOCK;
+    UNLOCK;
 
     plt_gen_conf ();
     if (!plt_loading) {
@@ -369,7 +321,7 @@ void
 plt_remove (int plt) {
     int i;
     assert (plt >= 0 && plt < playlists_count);
-    PLT_LOCK;
+    LOCK;
 
     // find playlist and notify streamer
     playlist_t *p = playlists_head;
@@ -404,7 +356,7 @@ plt_remove (int plt) {
         pl_clear ();
         free (playlist->title);
         playlist->title = strdup (_("Default"));
-        PLT_UNLOCK;
+        UNLOCK;
         plt_gen_conf ();
         conf_save ();
         pl_save_n (0);
@@ -447,7 +399,7 @@ plt_remove (int plt) {
 
     free (p);
     playlists_count--;
-    PLT_UNLOCK;
+    UNLOCK;
 
     plt_gen_conf ();
     conf_save ();
@@ -471,7 +423,7 @@ plt_find (const char *name) {
 void
 plt_set_curr (int plt) {
     int i;
-    PLT_LOCK;
+    LOCK;
     playlist_t *p = playlists_head;
     for (i = 0; p && p->next && i < plt; i++) {
         p = p->next;
@@ -484,64 +436,64 @@ plt_set_curr (int plt) {
             conf_save ();
         }
     }
-    PLT_UNLOCK;
+    UNLOCK;
 }
 
 int
 plt_get_curr (void) {
     int i;
-    PLT_LOCK;
+    LOCK;
     playlist_t *p = playlists_head;
     for (i = 0; p && i < playlists_count; i++) {
         if (p == playlist) {
-            PLT_UNLOCK;
+            UNLOCK;
             return i;
         }
         p = p->next;
     }
-    PLT_UNLOCK;
+    UNLOCK;
     return -1;
 }
 
 int
 plt_get_idx_of (playlist_t *plt) {
     int i;
-    PLT_LOCK;
+    LOCK;
     playlist_t *p = playlists_head;
     for (i = 0; p && i < playlists_count; i++) {
         if (p == plt) {
-            PLT_UNLOCK;
+            UNLOCK;
             return i;
         }
         p = p->next;
     }
-    PLT_UNLOCK;
+    UNLOCK;
     return -1;
 }
 
 int
 plt_get_title (playlist_t *p, char *buffer, int bufsize) {
     int i;
-    PLT_LOCK;
+    LOCK;
     if (!buffer) {
         int l = strlen (p->title);
-        PLT_UNLOCK;
+        UNLOCK;
         return l;
     }
     strncpy (buffer, p->title, bufsize);
     buffer[bufsize-1] = 0;
-    PLT_UNLOCK;
+    UNLOCK;
     return 0;
 }
 
 int
 plt_set_title (playlist_t *p, const char *title) {
     int i;
-    PLT_LOCK;
+    LOCK;
     free (p->title);
     p->title = strdup (title);
     plt_gen_conf ();
-    PLT_UNLOCK;
+    UNLOCK;
     conf_save ();
     if (!plt_loading) {
         plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
@@ -550,9 +502,28 @@ plt_set_title (playlist_t *p, const char *title) {
 }
 
 void
+plt_modified (playlist_t *plt) {
+    pl_lock ();
+    time_t modtime = time (NULL);
+    if (modtime <= plt->modification_time) {
+        modtime = plt->modification_time+1;
+    }
+    plt->modification_time = modtime;
+    pl_unlock ();
+}
+
+time_t
+plt_get_modification_time (playlist_t *plt) {
+    pl_lock ();
+    time_t res = plt->modification_time;
+    pl_unlock ();
+    return res;
+}
+
+void
 plt_free (void) {
     trace ("plt_free\n");
-    PLT_LOCK;
+    LOCK;
     pl_playqueue_clear ();
     plt_loading = 1;
     while (playlists_head) {
@@ -566,7 +537,7 @@ plt_free (void) {
         plt_remove (0);
     }
     plt_loading = 0;
-    PLT_UNLOCK;
+    UNLOCK;
 }
 
 void
@@ -576,7 +547,7 @@ plt_move (int from, int to) {
     }
     trace ("plt_move %d -> %d\n", from, to);
     int i;
-    PLT_LOCK;
+    LOCK;
     playlist_t *p = playlists_head;
 
     playlist_t *pfrom = NULL;
@@ -588,12 +559,12 @@ plt_move (int from, int to) {
     char temp[PATH_MAX];
     if (snprintf (path1, sizeof (path1), "%s/playlists/%d.dbpl", dbconfdir, from) > sizeof (path1)) {
         fprintf (stderr, "error: failed to make path string for playlist file\n");
-        PLT_UNLOCK;
+        UNLOCK;
         return;
     }
     if (snprintf (temp, sizeof (temp), "%s/playlists/temp.dbpl", dbconfdir) > sizeof (temp)) {
         fprintf (stderr, "error: failed to make path string for playlist file\n");
-        PLT_UNLOCK;
+        UNLOCK;
         return;
     }
 
@@ -606,7 +577,7 @@ plt_move (int from, int to) {
         int err = rename (path1, temp);
         if (err != 0) {
             fprintf (stderr, "playlist rename %s->%s failed: %s\n", path1, temp, strerror (errno));
-            PLT_UNLOCK;
+            UNLOCK;
             return;
         }
     }
@@ -705,7 +676,7 @@ plt_move (int from, int to) {
         }
     }
 
-    PLT_UNLOCK;
+    UNLOCK;
     plt_gen_conf ();
     conf_save ();
 }
@@ -718,6 +689,7 @@ plt_clear (playlist_t *plt) {
     }
     plt->current_row[PL_MAIN] = -1;
     plt->current_row[PL_SEARCH] = -1;
+    plt_modified (plt);
     UNLOCK;
 }
 
@@ -1675,8 +1647,9 @@ plt_remove_item (playlist_t *playlist, playItem_t *it) {
             playlist->totaltime = 0;
         }
     }
-    UNLOCK;
+    plt_modified (playlist);
     pl_item_unref (it);
+    UNLOCK;
     return 0;
 }
 
@@ -1754,7 +1727,7 @@ pl_get_idx_of_iter (playItem_t *it, int iter) {
 
 playItem_t *
 plt_insert_item (playlist_t *playlist, playItem_t *after, playItem_t *it) {
-    GLOBAL_LOCK;
+    LOCK;
     pl_item_ref (it);
     if (!after) {
         it->next[PL_MAIN] = playlist->head[PL_MAIN];
@@ -1797,8 +1770,10 @@ plt_insert_item (playlist_t *playlist, playItem_t *after, playItem_t *it) {
     if (dur > 0) {
         playlist->totaltime += dur;
     }
-
-    GLOBAL_UNLOCK;
+    
+    plt_modified (playlist);
+    
+    UNLOCK;
     return it;
 }
 
@@ -1898,7 +1873,7 @@ pl_item_unref (playItem_t *it) {
 
 int
 pl_delete_selected (void) {
-    GLOBAL_LOCK;
+    LOCK;
     int i = 0;
     int ret = -1;
     playItem_t *next = NULL;
@@ -1917,13 +1892,13 @@ pl_delete_selected (void) {
     if (playlist->current_row[PL_SEARCH] >= playlist->count[PL_SEARCH]) {
         playlist->current_row[PL_SEARCH] = playlist->count[PL_SEARCH] - 1;
     }
-    GLOBAL_UNLOCK;
+    UNLOCK;
     return ret;
 }
 
 void
 pl_crop_selected (void) {
-    GLOBAL_LOCK;
+    LOCK;
     playItem_t *next = NULL;
     for (playItem_t *it = playlist->head[PL_MAIN]; it; it = next) {
         next = it->next[PL_MAIN];
@@ -1931,12 +1906,12 @@ pl_crop_selected (void) {
             pl_remove_item (it);
         }
     }
-    GLOBAL_UNLOCK;
+    UNLOCK;
 }
 
 int
 pl_save (const char *fname) {
-    GLOBAL_LOCK;
+    LOCK;
     const char *ext = strrchr (fname, '.');
     if (ext) {
         DB_playlist_t **plug = deadbeef->plug_get_playlist_list ();
@@ -1947,7 +1922,7 @@ pl_save (const char *fname) {
                     for (int e = 0; exts[e]; e++) {
                         if (!strcasecmp (exts[e], ext+1)) {
                             int res = plug[i]->save (fname, (DB_playItem_t *)playlist->head[PL_MAIN], NULL);
-                            GLOBAL_UNLOCK;
+                            UNLOCK;
                             return res;
                         }
                     }
@@ -1961,7 +1936,7 @@ pl_save (const char *fname) {
     uint8_t minorver = PLAYLIST_MINOR_VER;
     FILE *fp = fopen (fname, "w+b");
     if (!fp) {
-        GLOBAL_UNLOCK;
+        UNLOCK;
         return -1;
     }
     if (fwrite (magic, 1, 4, fp) != 4) {
@@ -2120,11 +2095,11 @@ pl_save (const char *fname) {
         }
     }
 
-    GLOBAL_UNLOCK;
+    UNLOCK;
     fclose (fp);
     return 0;
 save_fail:
-    GLOBAL_UNLOCK;
+    UNLOCK;
     fclose (fp);
     unlink (fname);
     return -1;
@@ -2140,13 +2115,13 @@ pl_save_n (int n) {
     // make folder
     mkdir (path, 0755);
 
-    PLT_LOCK;
+    LOCK;
     int err = 0;
 
     plt_loading = 1;
     if (snprintf (path, sizeof (path), "%s/playlists/%d.dbpl", dbconfdir, n) > sizeof (path)) {
         fprintf (stderr, "error: failed to make path string for playlist file\n");
-        PLT_UNLOCK;
+        UNLOCK;
         return -1;
     }
 
@@ -2156,7 +2131,7 @@ pl_save_n (int n) {
     err = pl_save (path);
     playlist = orig;
     plt_loading = 0;
-    PLT_UNLOCK;
+    UNLOCK;
     return err;
 }
 
@@ -2176,7 +2151,7 @@ pl_save_all (void) {
     // make folder
     mkdir (path, 0755);
 
-    PLT_LOCK;
+    LOCK;
     playlist_t *p = playlists_head;
     int i;
     int cnt = plt_get_count ();
@@ -2198,7 +2173,7 @@ pl_save_all (void) {
     }
     plt_set_curr (curr);
     plt_loading = 0;
-    PLT_UNLOCK;
+    UNLOCK;
     return err;
 }
 
@@ -2208,7 +2183,7 @@ pl_load (const char *fname) {
     if (!fp) {
         return -1;
     }
-    GLOBAL_LOCK;
+    LOCK;
     playlist_t *plt = playlist;
 
     plt_clear (plt);
@@ -2223,7 +2198,7 @@ pl_load (const char *fname) {
             for (e = 0; plug[p]->extensions[e]; e++) {
                 if (plug[p]->load && !strcasecmp (ext, plug[p]->extensions[e])) {
                     DB_playItem_t *it = plug[p]->load (it, fname, NULL, NULL, NULL);
-                    GLOBAL_UNLOCK;
+                    UNLOCK;
                     return 0;
                 }
             }
@@ -2459,7 +2434,7 @@ pl_load (const char *fname) {
         }
     }
 
-    GLOBAL_UNLOCK;
+    UNLOCK;
     if (fp) {
         fclose (fp);
     }
@@ -2470,7 +2445,7 @@ load_fail:
         pl_item_unref (it);
     }
     pl_clear ();
-    GLOBAL_UNLOCK;
+    UNLOCK;
     if (fp) {
         fclose (fp);
     }
@@ -2497,7 +2472,7 @@ pl_load_all (void) {
         return pl_load (defpl);
     }
     trace ("pl_load_all started\n");
-    GLOBAL_LOCK;
+    LOCK;
     trace ("locked\n");
     plt_loading = 1;
     while (it) {
@@ -2528,23 +2503,23 @@ pl_load_all (void) {
     plt_loading = 0;
     plt_gen_conf ();
     plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
-    GLOBAL_UNLOCK;
+    UNLOCK;
     trace ("pl_load_all finished\n");
     return err;
 }
 
 void
 pl_select_all (void) {
-    GLOBAL_LOCK;
+    LOCK;
     for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
         it->selected = 1;
     }
-    GLOBAL_UNLOCK;
+    UNLOCK;
 }
 
 void
 plt_reshuffle (playlist_t *playlist, playItem_t **ppmin, playItem_t **ppmax) {
-    GLOBAL_LOCK;
+    LOCK;
     playItem_t *pmin = NULL;
     playItem_t *pmax = NULL;
     playItem_t *prev = NULL;
@@ -2570,7 +2545,7 @@ plt_reshuffle (playlist_t *playlist, playItem_t **ppmin, playItem_t **ppmax) {
     if (ppmax) {
         *ppmax = pmax;
     }
-    GLOBAL_UNLOCK;
+    UNLOCK;
 }
 
 void
@@ -2580,7 +2555,7 @@ pl_reshuffle (playItem_t **ppmin, playItem_t **ppmax) {
 
 void
 pl_set_item_duration (playItem_t *it, float duration) {
-    GLOBAL_LOCK;
+    LOCK;
     if (it->in_playlist) {
         if (it->_duration > 0) {
             playlist->totaltime -= it->_duration;
@@ -2596,7 +2571,7 @@ pl_set_item_duration (playItem_t *it, float duration) {
     char s[100];
     pl_format_time (it->_duration, s, sizeof(s));
     pl_replace_meta (it, ":DURATION", s);
-    GLOBAL_UNLOCK;
+    UNLOCK;
 }
 
 float
@@ -3211,7 +3186,7 @@ pl_sort (int iter, int id, const char *format, int ascending) {
     if (id == DB_COLUMN_FILENUMBER || !playlist->head[iter] || !playlist->head[iter]->next[iter]) {
         return;
     }
-    GLOBAL_LOCK;
+    LOCK;
     struct timeval tm1;
     gettimeofday (&tm1, NULL);
     pl_sort_ascending = ascending;
@@ -3261,17 +3236,19 @@ pl_sort (int iter, int id, const char *format, int ascending) {
     int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
     trace ("sort time: %f seconds\n", ms / 1000.f);
 
-    GLOBAL_UNLOCK;
+    plt_modified (playlist);
+
+    UNLOCK;
 }
 
 void
 pl_reset_cursor (void) {
     int i;
-    PLT_LOCK;
+    LOCK;
     for (i = 0; i < PL_MAX_ITERATORS; i++) {
         playlist->current_row[i] = -1;
     }
-    PLT_UNLOCK;
+    UNLOCK;
 }
 
 float
@@ -3340,9 +3317,9 @@ pl_get_cursor (int iter) {
 
 void
 pl_set_cursor (int iter, int cursor) {
-    PLT_LOCK;
+    LOCK;
     playlist->current_row[iter] = cursor;
-    PLT_UNLOCK;
+    UNLOCK;
 }
 
 // this function must move items in playlist
@@ -3350,7 +3327,7 @@ pl_set_cursor (int iter, int cursor) {
 // drop_before is insertion point
 void
 pl_move_items (int iter, int plt_from, playItem_t *drop_before, uint32_t *indexes, int count) {
-    GLOBAL_LOCK;
+    LOCK;
 
     playlist_t *playlist = playlists_head;
     playlist_t *to = plt_get_curr_ptr ();
@@ -3361,7 +3338,7 @@ pl_move_items (int iter, int plt_from, playItem_t *drop_before, uint32_t *indexe
     }
 
     if (!playlist || !to) {
-        GLOBAL_UNLOCK;
+        UNLOCK;
         return;
     }
 
@@ -3399,7 +3376,7 @@ pl_move_items (int iter, int plt_from, playItem_t *drop_before, uint32_t *indexe
         }
     }
     no_remove_notify = 0;
-    GLOBAL_UNLOCK;
+    UNLOCK;
 }
 
 void
@@ -3443,7 +3420,7 @@ pl_copy_items (int iter, int plt_from, playItem_t *before, uint32_t *indices, in
 
 void
 pl_search_reset (void) {
-    GLOBAL_LOCK;
+    LOCK;
     while (playlist->head[PL_SEARCH]) {
         playItem_t *next = playlist->head[PL_SEARCH]->next[PL_SEARCH];
         playlist->head[PL_SEARCH]->selected = 0;
@@ -3453,12 +3430,12 @@ pl_search_reset (void) {
     }
     playlist->tail[PL_SEARCH] = NULL;
     playlist->count[PL_SEARCH] = 0;
-    GLOBAL_UNLOCK;
+    UNLOCK;
 }
 
 void
 pl_search_process (const char *text) {
-    GLOBAL_LOCK;
+    LOCK;
     pl_search_reset ();
     for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
         it->selected = 0;
@@ -3482,7 +3459,7 @@ pl_search_process (const char *text) {
             }
         }
     }
-    GLOBAL_UNLOCK;
+    UNLOCK;
 }
 
 int
