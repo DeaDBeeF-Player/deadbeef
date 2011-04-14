@@ -17,8 +17,11 @@
 */
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
+#include <stdlib.h>
 #include "messagepump.h"
 #include "threading.h"
+#include "playlist.h"
 
 typedef struct message_s {
     uint32_t id;
@@ -71,7 +74,7 @@ messagepump_reset (void) {
 int
 messagepump_push (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     if (!mfree) {
-        printf ("WARNING: message queue is full! message ignored (%d %p %d %d)\n", id, (void*)ctx, p1, p2);
+        fprintf (stderr, "WARNING: message queue is full! message ignored (%d %p %d %d)\n", id, (void*)ctx, p1, p2);
         return -1;
     }
     mutex_lock (mutex);
@@ -126,3 +129,70 @@ int
 messagepump_hasmessages (void) {
     return mqueue ? 1 : 0;
 }
+
+ddb_event_t *
+messagepump_event_alloc (uint32_t id) {
+    int sz = 0;
+    ddb_event_t *ev;
+    switch (id) {
+    case DB_EV_SONGCHANGED:
+        sz = sizeof (ddb_event_trackchange_t);
+        break;
+    case DB_EV_SONGSTARTED:
+    case DB_EV_SONGFINISHED:
+    case DB_EV_TRACKINFOCHANGED:
+        sz = sizeof (ddb_event_track_t);
+        break;
+    case DB_EV_SEEKED:
+        sz = sizeof (ddb_event_playpos_t);
+        break;
+    }
+    assert (("Invalid event %d to use with messagepump_event_alloc, use sendmessage instead\n", id));
+    ev = malloc (sz);
+    memset (ev, 0, sz);
+    ev->event = id;
+    ev->size = sz;
+    return ev;
+}
+
+void
+messagepump_event_free (ddb_event_t *ev) {
+    switch (ev->event) {
+    case DB_EV_SONGCHANGED:
+        {
+            ddb_event_trackchange_t *tc = (ddb_event_trackchange_t*)ev;
+            if (tc->from) {
+                pl_item_unref ((playItem_t *)tc->from);
+            }
+            if (tc->to) {
+                pl_item_unref ((playItem_t *)tc->to);
+            }
+        }
+        break;
+    case DB_EV_SONGSTARTED:
+    case DB_EV_SONGFINISHED:
+    case DB_EV_TRACKINFOCHANGED:
+        {
+            ddb_event_track_t *tc = (ddb_event_track_t*)ev;
+            if (tc->track) {
+                pl_item_unref ((playItem_t *)tc->track);
+            }
+        }
+        break;
+    case DB_EV_SEEKED:
+        {
+            ddb_event_playpos_t *tc = (ddb_event_playpos_t*)ev;
+            if (tc->track) {
+                pl_item_unref ((playItem_t *)tc->track);
+            }
+        }
+        break;
+    }
+    free (ev);
+}
+
+int
+messagepump_push_event (ddb_event_t *ev, uint32_t p1, uint32_t p2) {
+    return messagepump_push (ev->event, (uintptr_t)ev, p1, p2);
+}
+

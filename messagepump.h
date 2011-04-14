@@ -19,11 +19,16 @@
 #define __MESSAGEPUMP_H
 
 #include <stdint.h>
+#include <deadbeef.h>
 
 int messagepump_init (void);
 void messagepump_free (void);
 int messagepump_push (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
 int messagepump_pop (uint32_t *id, uintptr_t *ctx, uint32_t *p1, uint32_t *p2);
 void messagepump_wait (void);
+
+ddb_event_t *messagepump_event_alloc (uint32_t id);
+void messagepump_event_free (ddb_event_t *ev);
+int messagepump_push_event (ddb_event_t *ev, uint32_t p1, uint32_t p2);
 
 #endif // __MESSAGEPUMP_H

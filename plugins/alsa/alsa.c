@@ -687,7 +687,7 @@ palsa_callback (char *stream, int len) {
 }
 
 static int
-palsa_configchanged (DB_event_t *ev, uintptr_t data) {
+alsa_configchanged (void) {
     deadbeef->conf_lock ();
     const char *alsa_soundcard = deadbeef->conf_get_str_fast ("alsa_soundcard", "default");
     int buffer = deadbeef->conf_get_int ("alsa.buffer", DEFAULT_BUFFER_SIZE);
@@ -738,14 +738,22 @@ palsa_get_state (void) {
 }
 
 static int
+alsa_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    switch (id) {
+    case DB_EV_CONFIGCHANGED:
+        alsa_configchanged ();
+        break;
+    }
+    return 0;
+}
+
+static int
 alsa_start (void) {
-    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (palsa_configchanged), 0);
     return 0;
 }
 
 static int
 alsa_stop (void) {
-    deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (palsa_configchanged), 0);
     return 0;
 }
 
@@ -791,6 +799,7 @@ static DB_output_t plugin = {
     .plugin.start = alsa_start,
     .plugin.stop = alsa_stop,
     .plugin.configdialog = settings_dlg,
+    .plugin.message = alsa_message,
     .init = palsa_init,
     .free = palsa_free,
     .setformat = palsa_setformat,

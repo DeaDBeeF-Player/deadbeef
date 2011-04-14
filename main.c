@@ -238,7 +238,6 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             pl_reset_cursor ();
         }
         if (parg < pend) {
-            printf ("query to add files\n");
             deadbeef->pl_add_files_begin (curr_plt);
             while (parg < pend) {
                 char resolved[PATH_MAX];
@@ -393,7 +392,15 @@ player_mainloop (void) {
         uint32_t p1;
         uint32_t p2;
         messagepump_wait ();
+        int term = 0;
         while (messagepump_pop(&msg, &ctx, &p1, &p2) != -1) {
+            // broadcast to all plugins
+            DB_plugin_t **plugs = plug_get_list ();
+            for (int n = 0; plugs[n]; n++) {
+                if (plugs[n]->message) {
+                    plugs[n]->message (msg, ctx, p1, p2);
+                }
+            }
             DB_output_t *output = plug_get_output ();
             switch (msg) {
             case M_REINIT_SOUND:
@@ -401,7 +408,8 @@ player_mainloop (void) {
                 conf_save ();
                 break;
             case M_TERMINATE:
-                return;
+                term = 1;
+                break;
             case M_PLAY_CURRENT:
                 if (p1) {
                     output->stop ();
@@ -458,6 +466,12 @@ player_mainloop (void) {
                 plug_trigger_event (DB_EV_CONFIGCHANGED, 0);
                 break;
             }
+            if (msg >= DB_EV_FIRST && ctx) {
+                messagepump_event_free ((ddb_event_t *)ctx);
+            }
+        }
+        if (term) {
+            return;
         }
         //usleep(50000);
         //plug_trigger_event (DB_EV_FRAMEUPDATE, 0);

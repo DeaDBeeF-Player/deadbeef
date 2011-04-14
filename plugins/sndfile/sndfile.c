@@ -411,23 +411,24 @@ sndfile_init_exts (void) {
     exts[n] = NULL;
 }
 
-
 static int
-sndfile_on_configchanged (DB_event_t *ev, uintptr_t data) {
-    sndfile_init_exts ();
+sndfile_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    switch (id) {
+    case DB_EV_CONFIGCHANGED:
+        sndfile_init_exts ();
+        break;
+    }
     return 0;
 }
 
 static int
 sndfile_start (void) {
     sndfile_init_exts ();
-    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (sndfile_on_configchanged), 0);
     return 0;
 }
 
 static int
 sndfile_stop (void) {
-    deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (sndfile_on_configchanged), 0);
     for (int i = 0; exts[i]; i++) {
         free (exts[i]);
     }
@@ -479,6 +480,7 @@ static DB_decoder_t plugin = {
     .plugin.start = sndfile_start,
     .plugin.stop = sndfile_stop,
     .plugin.configdialog = settings_dlg,
+    .plugin.message = sndfile_message,
 };
 
 DB_plugin_t *

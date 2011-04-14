@@ -188,27 +188,27 @@ enum playback_mode_t {
 
 typedef struct {
     int event;
-    time_t time;
-} DB_event_t;
+    int size;
+} ddb_event_t;
 
 typedef struct {
-    DB_event_t ev;
+    ddb_event_t ev;
     DB_playItem_t *track;
-} DB_event_track_t;
+} ddb_event_track_t;
 
 typedef struct {
-    DB_event_t ev;
+    ddb_event_t ev;
     DB_playItem_t *from;
     DB_playItem_t *to;
-} DB_event_trackchange_t;
+} ddb_event_trackchange_t;
 
 typedef struct {
-    DB_event_t ev;
+    ddb_event_t ev;
     int state;
-} DB_event_state_t;
+} ddb_event_state_t;
 
 typedef struct {
-    DB_event_t ev;
+    ddb_event_t ev;
     DB_playItem_t *track;
     float playpos;
 } ddb_event_playpos_t;
@@ -220,22 +220,40 @@ typedef struct DB_conf_item_s {
 } DB_conf_item_t;
 
 // event callback type
-typedef int (*DB_callback_t)(DB_event_t *, uintptr_t data);
+typedef int (*DB_callback_t)(ddb_event_t *, uintptr_t data);
+
+// message ids for communicating with player
+enum {
+    M_SONGFINISHED,
+    M_NEXT,
+    M_PREV,
+    M_PLAY_CURRENT,
+    M_PLAY_NUM,
+    M_STOP,
+    M_PAUSE,
+    M_PLAY_RANDOM,
+    M_TERMINATE, // must be sent to player thread to terminate
+    M_PLAYLIST_REFRESH, // means
+    M_REINIT_SOUND,
+    M_CONFIG_CHANGED, // no arguments
+    M_TOGGLE_PAUSE,
+};
 
 // events
 enum {
-    DB_EV_SONGCHANGED = 1, // triggers when current song changed from one to another, see  DB_event_trackchange_t, both pointers can be NULL
-    DB_EV_SONGSTARTED = 2, // triggers when song started playing (for scrobblers and such)
-    DB_EV_SONGFINISHED = 3, // triggers when song finished playing (for scrobblers and such)
-    DB_EV_CONFIGCHANGED = 5, // configuration option changed
-    DB_EV_ACTIVATE = 6, // will be fired every time player is activated
-    DB_EV_TRACKINFOCHANGED = 7, // notify plugins that trackinfo was changed
-    DB_EV_PAUSED = 8, // player was paused or unpaused
-    DB_EV_PLAYLISTCHANGED = 9, // playlist contents were changed
-    DB_EV_VOLUMECHANGED = 10, // volume was changed
-    DB_EV_OUTPUTCHANGED = 11, // sound output plugin changed
-    DB_EV_PLAYLISTSWITCH = 13, // playlist switch occured
-    DB_EV_SEEKED = 14, // seek happened, see ddb_event_playpos_t
+    DB_EV_FIRST = 1000,
+    DB_EV_SONGCHANGED = 1000, // triggers when current song changed from one to another, see  ddb_event_trackchange_t, both pointers can be NULL
+    DB_EV_SONGSTARTED = 1001, // triggers when song started playing (for scrobblers and such)
+    DB_EV_SONGFINISHED = 1002, // triggers when song finished playing (for scrobblers and such)
+    DB_EV_CONFIGCHANGED = 1003, // configuration option changed
+    DB_EV_ACTIVATE = 1004, // will be fired every time player is activated
+    DB_EV_TRACKINFOCHANGED = 1005, // notify plugins that trackinfo was changed
+    DB_EV_PAUSED = 1006, // player was paused or unpaused
+    DB_EV_PLAYLISTCHANGED = 1007, // playlist contents were changed
+    DB_EV_VOLUMECHANGED = 1008, // volume was changed
+    DB_EV_OUTPUTCHANGED = 1009, // sound output plugin changed
+    DB_EV_PLAYLISTSWITCH = 1010, // playlist switch occured
+    DB_EV_SEEKED = 1011, // seek happened, see ddb_event_playpos_t
     DB_EV_MAX
 };
 
@@ -256,27 +274,10 @@ enum {
     DDB_REPLAYGAIN_TRACKPEAK,
 };
 
-// message ids for communicating with player
-enum {
-    M_SONGFINISHED,
-    M_NEXT,
-    M_PREV,
-    M_PLAY_CURRENT,
-    M_PLAY_NUM,
-    M_STOP,
-    M_PAUSE,
-    M_PLAY_RANDOM,
-    M_TERMINATE, // must be sent to player thread to terminate
-    M_PLAYLIST_REFRESH, // means
-    M_REINIT_SOUND,
-    M_CONFIG_CHANGED, // no arguments
-    M_TOGGLE_PAUSE,
-};
-
 // typecasting macros
 #define DB_PLUGIN(x) ((DB_plugin_t *)(x))
 #define DB_CALLBACK(x) ((DB_callback_t)(x))
-#define DB_EVENT(x) ((DB_event_t *)(x))
+#define DB_EVENT(x) ((ddb_event_t *)(x))
 #define DB_PLAYITEM(x) ((DB_playItem_t *)(x))
 
 // FILE object wrapper for vfs access
@@ -306,10 +307,6 @@ typedef struct {
     // versioning
     int vmajor;
     int vminor;
-
-    // event subscribing
-    void (*ev_subscribe) (struct DB_plugin_s *plugin, int ev, DB_callback_t callback, uintptr_t data);
-    void (*ev_unsubscribe) (struct DB_plugin_s *plugin, int ev, DB_callback_t callback, uintptr_t data);
 
     // md5sum calc
     void (*md5) (uint8_t sig[16], const char *in, int len);
@@ -573,6 +570,11 @@ typedef struct {
     // message passing
     int (*sendmessage) (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
 
+    // convenience functions to send events, uses sendmessage internally
+    ddb_event_t *(*event_alloc) (uint32_t id);
+    void (*event_free) (ddb_event_t *ev);
+    int (*event_send) (ddb_event_t *ev, uint32_t p1, uint32_t p2);
+
     // configuration access
     //
     // conf_get_str_fast is not thread-safe, and
@@ -713,6 +715,11 @@ typedef struct DB_plugin_s {
     
     // @returns linked list of actions
     DB_plugin_action_t* (*get_actions) (DB_playItem_t *it);
+
+    // mainloop will call this function for every plugin
+    // so that plugins may handle all events;
+    // can be NULL
+    int (*message) (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
 
     // plugin configuration dialog is constructed from this data
     // can be NULL

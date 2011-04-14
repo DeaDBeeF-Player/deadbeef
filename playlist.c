@@ -311,7 +311,7 @@ plt_add (int before, const char *title) {
     if (!plt_loading) {
         pl_save_n (before);
         conf_save ();
-        plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
+        messagepump_push (DB_EV_PLAYLISTSWITCH, 0, 0, 0);
     }
     return playlists_count-1;
 }
@@ -360,7 +360,7 @@ plt_remove (int plt) {
         plt_gen_conf ();
         conf_save ();
         pl_save_n (0);
-        plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
+        messagepump_push (DB_EV_PLAYLISTSWITCH, 0, 0, 0);
         return;
     }
     if (i != plt) {
@@ -404,7 +404,7 @@ plt_remove (int plt) {
     plt_gen_conf ();
     conf_save ();
     if (!plt_loading) {
-        plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
+        messagepump_push (DB_EV_PLAYLISTSWITCH, 0, 0, 0);
     }
 }
 
@@ -431,7 +431,7 @@ plt_set_curr (int plt) {
     if (p != playlist) {
         playlist = p;
         if (!plt_loading) {
-            plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
+            messagepump_push (DB_EV_PLAYLISTSWITCH, 0, 0, 0);
             conf_set_int ("playlist.current", plt_get_curr ());
             conf_save ();
         }
@@ -496,7 +496,7 @@ plt_set_title (playlist_t *p, const char *title) {
     UNLOCK;
     conf_save ();
     if (!plt_loading) {
-        plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
+        messagepump_push (DB_EV_PLAYLISTSWITCH, 0, 0, 0);
     }
     return 0;
 }
@@ -1469,7 +1469,6 @@ pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(pla
                 if (!strcasecmp (exts[e], eol)) {
                     playItem_t *inserted = (playItem_t *)decoders[i]->insert (DB_PLAYITEM (after), fname);
                     if (inserted != NULL) {
-                        printf ("inserted %s\n", fname);
                         if (cb && cb (inserted, user_data) < 0) {
                             *pabort = 1;
                         }
@@ -1599,12 +1598,12 @@ pl_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *us
 void
 pl_add_files_begin (int plt) {
     addfiles_playlist = plt_get (plt);
-    printf ("adding to playlist %d (%s)\n", plt, addfiles_playlist->title);
+    trace ("adding to playlist %d (%s)\n", plt, addfiles_playlist->title);
 }
 
 void
 pl_add_files_end (void) {
-    printf ("end adding to playlist %s\n", addfiles_playlist->title);
+    trace ("end adding to playlist %s\n", addfiles_playlist->title);
     addfiles_playlist = NULL;
 }
 
@@ -2197,7 +2196,7 @@ pl_load (const char *fname) {
         for (p = 0; plug[p]; p++) {
             for (e = 0; plug[p]->extensions[e]; e++) {
                 if (plug[p]->load && !strcasecmp (ext, plug[p]->extensions[e])) {
-                    DB_playItem_t *it = plug[p]->load (it, fname, NULL, NULL, NULL);
+                    /*DB_playItem_t *it = */plug[p]->load (NULL, fname, NULL, NULL, NULL);
                     UNLOCK;
                     return 0;
                 }
@@ -2360,7 +2359,7 @@ pl_load (const char *fname) {
             if (fread (&l, 1, 2, fp) != 2) {
                 goto load_fail;
             }
-            if (l < 0 || l >= 20000) {
+            if (l >= 20000) {
                 goto load_fail;
             }
             char key[l+1];
@@ -2371,7 +2370,7 @@ pl_load (const char *fname) {
             if (fread (&l, 1, 2, fp) != 2) {
                 goto load_fail;
             }
-            if (l<0 || l >= 20000) {
+            if (l >= 20000) {
                 // skip
                 fseek (fp, l, SEEK_CUR);
             }
@@ -2502,7 +2501,7 @@ pl_load_all (void) {
     plt_set_curr (0);
     plt_loading = 0;
     plt_gen_conf ();
-    plug_trigger_event (DB_EV_PLAYLISTSWITCH, 0);
+    messagepump_push (DB_EV_PLAYLISTSWITCH, 0, 0, 0);
     UNLOCK;
     trace ("pl_load_all finished\n");
     return err;

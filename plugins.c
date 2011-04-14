@@ -62,8 +62,6 @@ static DB_functions_t deadbeef_api = {
     // FIXME: set to 1.0 after api freeze
     .vmajor = 0,
     .vminor = 0,
-    .ev_subscribe = plug_ev_subscribe,
-    .ev_unsubscribe = plug_ev_unsubscribe,
     .md5 = plug_md5,
     .md5_to_str = plug_md5_to_str,
     .md5_init = (void (*)(DB_md5_t *s))md5_init,
@@ -258,6 +256,9 @@ static DB_functions_t deadbeef_api = {
     .fabort = vfs_fabort,
     // message passing
     .sendmessage = messagepump_push,
+    .event_alloc = messagepump_event_alloc,
+    .event_free = messagepump_event_free,
+    .event_send = messagepump_push_event,
     // configuration access
     .conf_lock = conf_lock,
     .conf_unlock = conf_unlock,
@@ -378,15 +379,6 @@ plug_md5_to_str (char *str, const uint8_t sig[16]) {
     *str = 0;
 }
 
-// event handlers
-typedef struct {
-    DB_plugin_t *plugin;
-    DB_callback_t callback;
-    uintptr_t data;
-} evhandler_t;
-#define MAX_HANDLERS 100
-static evhandler_t handlers[DB_EV_MAX][MAX_HANDLERS];
-
 // plugin control structures
 typedef struct plugin_s {
     void *handle;
@@ -407,40 +399,6 @@ void
 plug_unlock (void) {
 //    mutex_unlock (mutex);
     pl_unlock ();
-}
-
-void
-plug_ev_subscribe (DB_plugin_t *plugin, int ev, DB_callback_t callback, uintptr_t data) {
-    assert (ev < DB_EV_MAX && ev >= 0);
-    int i;
-    plug_lock ();
-    for (i = 0; i < MAX_HANDLERS; i++) {
-        if (!handlers[ev][i].plugin) {
-            handlers[ev][i].plugin = plugin;
-            handlers[ev][i].callback = callback;
-            handlers[ev][i].data = data;
-            break;
-        }
-    }
-    plug_unlock ();
-    if (i == MAX_HANDLERS) {
-        trace ("failed to subscribe plugin %s to event %d (too many event handlers)\n", plugin->name, ev);
-    }
-}
-
-void
-plug_ev_unsubscribe (DB_plugin_t *plugin, int ev, DB_callback_t callback, uintptr_t data) {
-    assert (ev < DB_EV_MAX && ev >= 0);
-    plug_lock ();
-    for (int i = 0; i < MAX_HANDLERS; i++) {
-        if (handlers[ev][i].plugin == plugin) {
-            handlers[ev][i].plugin = NULL;
-            handlers[ev][i].callback = NULL;
-            handlers[ev][i].data = 0;
-            break;
-        }
-    }
-    plug_unlock ();
 }
 
 float
@@ -477,12 +435,12 @@ plug_playback_set_pos (float pos) {
 }
 
 /////// non-api functions (plugin support)
+#if 0
 void
-plug_event_call (DB_event_t *ev) {
+plug_event_call (ddb_event_t *ev) {
     if (!mutex) {
         trace ("plug: event passed before plugin initialization\n");
     }
-    ev->time = time (NULL);
 //    printf ("plug_event_call enter %d\n", ev->event);
     plug_lock ();
 
@@ -499,68 +457,68 @@ plug_event_call (DB_event_t *ev) {
     plug_unlock ();
 //    printf ("plug_event_call leave %d\n", ev->event);
 }
+#endif
 
+// FIXME: this is backward-compatibility layer, should be killed
 void
 plug_trigger_event (int ev, uintptr_t param) {
-    DB_event_t *event;
+    ddb_event_t *event = NULL;
     switch (ev) {
     case DB_EV_SONGSTARTED:
     case DB_EV_SONGFINISHED:
         {
-        DB_event_track_t *pev = alloca (sizeof (DB_event_track_t));
+        ddb_event_track_t *pev = (ddb_event_track_t *)messagepump_event_alloc (ev);
         playItem_t *pltrack = streamer_get_playing_track ();
         pev->track = DB_PLAYITEM (pltrack);
-        if (pltrack) {
-            pl_item_unref (pltrack);
-        }
         event = DB_EVENT (pev);
         }
         break;
-    default:
-        event = alloca (sizeof (DB_event_t));
     }
-    event->event = ev;
-    plug_event_call (event);
+    if (event) {
+        messagepump_push_event (event, 0, 0);
+    }
+    else {
+        messagepump_push (ev, param, 0, 0);
+    }
 }
 
 void
 plug_trigger_event_trackchange (playItem_t *from, playItem_t *to) {
-    DB_event_trackchange_t event;
-    event.ev.event = DB_EV_SONGCHANGED;
-    //printf ("plug_trigger_event_trackchange %p %d %p %d\n", from, from ? from->_refc : -1, to, to ? to->_refc : -1);
-    event.from = (DB_playItem_t *)from;
-    event.to = (DB_playItem_t *)to;
-    plug_event_call (DB_EVENT (&event));
+    ddb_event_trackchange_t *event = (ddb_event_trackchange_t *)messagepump_event_alloc (DB_EV_SONGCHANGED);
+    if (from) {
+        pl_item_ref (from);
+    }
+    if (to) {
+        pl_item_ref (to);
+    }
+    event->from = (DB_playItem_t *)from;
+    event->to = (DB_playItem_t *)to;
+    messagepump_push_event ((ddb_event_t *)event, 0, 0);
 }
+
 void
 plug_trigger_event_trackinfochanged (playItem_t *track) {
-    DB_event_track_t event;
-    event.ev.event = DB_EV_TRACKINFOCHANGED;
-    event.track = DB_PLAYITEM (track);
-    //printf ("\033[0;31mtrackinfochanged %p(%s), playing: %p, streaming: %p\033[37;0m\n", track, track->fname, streamer_get_playing_track (), streamer_get_streaming_track ());
-    plug_event_call (DB_EVENT (&event));
+    ddb_event_track_t *ev = (ddb_event_track_t *)messagepump_event_alloc (DB_EV_TRACKINFOCHANGED);
+    ev->track = DB_PLAYITEM (track);
+    if (track) {
+        pl_item_ref (track);
+    }
+    messagepump_push_event ((ddb_event_t*)ev, 0, 0);
 }
 
 void
 plug_trigger_event_paused (int paused) {
-    DB_event_state_t event;
-    event.ev.event = DB_EV_PAUSED;
-    event.state = paused;
-    plug_event_call (DB_EVENT (&event));
+    messagepump_push (DB_EV_PAUSED, 0, paused, 0);
 }
 
 void
 plug_trigger_event_playlistchanged (void) {
-    DB_event_t event;
-    event.event = DB_EV_PLAYLISTCHANGED;
-    plug_event_call (DB_EVENT (&event));
+    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
 void
 plug_trigger_event_volumechanged (void) {
-    DB_event_t event;
-    event.event = DB_EV_VOLUMECHANGED;
-    plug_event_call (DB_EVENT (&event));
+    messagepump_push (DB_EV_VOLUMECHANGED, 0, 0, 0);
 }
 
 int

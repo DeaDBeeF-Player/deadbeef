@@ -144,6 +144,6 @@ const char **
 plug_get_gui_names (void);
 
 void
-plug_event_call (DB_event_t *ev);
+plug_event_call (ddb_event_t *ev);
 
 #endif // __PLUGINS_H

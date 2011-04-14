@@ -315,7 +315,7 @@ oss_get_state (void) {
 }
 
 static int
-oss_configchanged (DB_event_t *ev, uintptr_t data) {
+oss_configchanged (void) {
     deadbeef->conf_lock ();
     const char *dev = deadbeef->conf_get_str_fast ("oss.device", "/dev/dsp");
     if (strcmp (dev, oss_device)) {
@@ -328,15 +328,23 @@ oss_configchanged (DB_event_t *ev, uintptr_t data) {
 }
 
 static int
+oss_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    switch (id) {
+    case DB_EV_CONFIGCHANGED:
+        oss_configchanged ();
+        break;
+    }
+    return 0;
+}
+
+static int
 oss_plugin_start (void) {
     deadbeef->conf_get_str ("oss.device", "/dev/dsp", oss_device, sizeof (oss_device));
-    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (oss_configchanged), 0);
     return 0;
 }
 
 static int
 oss_plugin_stop (void) {
-    deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (oss_configchanged), 0);
     return 0;
 }
 
@@ -379,6 +387,7 @@ static DB_output_t plugin = {
     .plugin.start = oss_plugin_start,
     .plugin.stop = oss_plugin_stop,
     .plugin.configdialog = settings_dlg,
+    .plugin.message = oss_message,
     .init = oss_init,
     .free = oss_free,
     .setformat = oss_setformat,

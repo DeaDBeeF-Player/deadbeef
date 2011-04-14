@@ -488,7 +488,7 @@ lfm_format_uri (int subm, DB_playItem_t *song, char *out, int outl) {
 }
 
 static int
-lastfm_songstarted (DB_event_track_t *ev, uintptr_t data) {
+lastfm_songstarted (ddb_event_track_t *ev, uintptr_t data) {
     trace ("lfm songstarted %s\n", ev->track->fname);
     if (!deadbeef->conf_get_int ("lastfm.enable", 0)) {
         return 0;
@@ -507,7 +507,7 @@ lastfm_songstarted (DB_event_track_t *ev, uintptr_t data) {
 }
 
 static int
-lastfm_songfinished (DB_event_track_t *ev, uintptr_t data) {
+lastfm_songfinished (ddb_event_track_t *ev, uintptr_t data) {
     trace ("lfm songfinished %s\n", ev->track->fname);
     if (!deadbeef->conf_get_int ("lastfm.enable", 0)) {
         return 0;
@@ -798,6 +798,19 @@ auth_v2 (void) {
 #endif
 // }}}
 
+static int
+lfm_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    switch (id) {
+    // subscribe to frameupdate event
+    case DB_EV_SONGSTARTED:
+        lastfm_songstarted ((ddb_event_track_t *)ctx, 0);
+        break;
+    case DB_EV_SONGCHANGED:
+        lastfm_songfinished ((ddb_event_track_t *)ctx, 0);
+        break;
+    }
+    return 0;
+}
 
 static int
 lastfm_start (void) {
@@ -809,9 +822,6 @@ lastfm_start (void) {
     lfm_mutex = deadbeef->mutex_create_nonrecursive ();
     lfm_cond = deadbeef->cond_create ();
     lfm_tid = deadbeef->thread_start (lfm_thread, NULL);
-    // subscribe to frameupdate event
-    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_SONGSTARTED, DB_CALLBACK (lastfm_songstarted), 0);
-    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_SONGCHANGED, DB_CALLBACK (lastfm_songfinished), 0);
 
     return 0;
 }
@@ -821,8 +831,6 @@ lastfm_stop (void) {
     trace ("lastfm_stop\n");
     if (lfm_mutex) {
         lfm_stopthread = 1;
-        deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_SONGSTARTED, DB_CALLBACK (lastfm_songstarted), 0);
-        deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_SONGCHANGED, DB_CALLBACK (lastfm_songfinished), 0);
 
         trace ("lfm_stop signalling cond\n");
         deadbeef->cond_signal (lfm_cond);
@@ -937,5 +945,6 @@ static DB_misc_t plugin = {
     .plugin.start = lastfm_start,
     .plugin.stop = lastfm_stop,
     .plugin.configdialog = settings_dlg,
-    .plugin.get_actions = lfm_get_actions
+    .plugin.get_actions = lfm_get_actions,
+    .plugin.message = lfm_message,
 };

@@ -605,7 +605,7 @@ csid_mutevoice (DB_fileinfo_t *_info, int voice, int mute) {
 #endif
 
 static int
-csid_on_configchanged (DB_event_t *ev, uintptr_t data) {
+sid_configchanged (void) {
     int conf_hvsc_enable = deadbeef->conf_get_int ("hvsc_enable", 0);
     int disable = !conf_hvsc_enable;
     if (disable != sldb_disable) {
@@ -623,14 +623,22 @@ csid_on_configchanged (DB_event_t *ev, uintptr_t data) {
 }
 
 int
+sid_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    switch (id) {
+    case DB_EV_CONFIGCHANGED:
+        sid_configchanged ();
+        break;
+    }
+    return 0;
+}
+
+int
 csid_start (void) {
-    deadbeef->ev_subscribe (DB_PLUGIN (&sid_plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (csid_on_configchanged), 0);
     return 0;
 }
 
 int
 csid_stop (void) {
-    deadbeef->ev_unsubscribe (DB_PLUGIN (&sid_plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (csid_on_configchanged), 0);
     if (sldb) {
         free (sldb);
         sldb = NULL;

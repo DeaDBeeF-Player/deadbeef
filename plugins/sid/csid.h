@@ -33,6 +33,7 @@ int csid_numvoices (DB_fileinfo_t *);
 void csid_mutevoice (DB_fileinfo_t *, int voice, int mute);
 int csid_start (void);
 int csid_stop (void);
+int sid_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
 
 #ifdef __cplusplus
 }

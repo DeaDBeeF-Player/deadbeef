@@ -1137,12 +1137,13 @@ streamer_thread (void *ctx) {
                 avg_bitrate = -1;
                 streamer_unlock();
             }
-            ddb_event_playpos_t tp;
-            tp.ev.event = DB_EV_SEEKED;
-            tp.ev.time = time (NULL);
-            tp.track = (DB_playItem_t *)playing_track;
-            tp.playpos = playpos;
-            plug_event_call (DB_EVENT (&tp));
+            ddb_event_playpos_t *ev = (ddb_event_playpos_t *)messagepump_event_alloc (DB_EV_SEEKED);
+            ev->track = DB_PLAYITEM (playing_track);
+            if (playing_track) {
+                pl_item_ref (playing_track);
+            }
+            ev->playpos = playpos;
+            messagepump_push_event ((ddb_event_t*)ev, 0, 0);
         }
 
         // read ahead at 2x speed of output samplerate, in 4k blocks

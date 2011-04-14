@@ -693,15 +693,18 @@ ffmpeg_init_exts (void) {
 }
 
 static int
-ffmpeg_on_configchanged (DB_event_t *ev, uintptr_t data) {
-    ffmpeg_init_exts ();
+ffmpeg_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    switch (id) {
+    case DB_EV_CONFIGCHANGED:
+        ffmpeg_init_exts ();
+        break;
+    }
     return 0;
 }
 
 static int
 ffmpeg_start (void) {
     ffmpeg_init_exts ();
-    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (ffmpeg_on_configchanged), 0);
     avcodec_init ();
     av_register_all ();
     av_register_protocol (&vfswrapper);
@@ -710,7 +713,6 @@ ffmpeg_start (void) {
 
 static int
 ffmpeg_stop (void) {
-    deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (ffmpeg_on_configchanged), 0);
     for (int i = 0; exts[i]; i++) {
         free (exts[i]);
     }
@@ -806,6 +808,7 @@ static DB_decoder_t plugin = {
     .plugin.start = ffmpeg_start,
     .plugin.stop = ffmpeg_stop,
     .plugin.configdialog = settings_dlg,
+    .plugin.message = ffmpeg_message,
     .open = ffmpeg_open,
     .init = ffmpeg_init,
     .free = ffmpeg_free,

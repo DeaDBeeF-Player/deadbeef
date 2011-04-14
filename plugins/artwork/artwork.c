@@ -722,7 +722,7 @@ artwork_reset (int fast) {
 }
 
 static int
-artwork_on_configchanged (DB_event_t *ev, uintptr_t data) {
+artwork_configchanged (void) {
     int new_artwork_enable_embedded = deadbeef->conf_get_int ("artwork.enable_embedded", 1);
     int new_artwork_enable_local = deadbeef->conf_get_int ("artwork.enable_localfolder", 1);
     int new_artwork_enable_lfm = deadbeef->conf_get_int ("artwork.enable_lastfm", 0);
@@ -752,6 +752,16 @@ artwork_on_configchanged (DB_event_t *ev, uintptr_t data) {
 }
 
 static int
+artwork_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    switch (id) {
+    case DB_EV_CONFIGCHANGED:
+        artwork_configchanged ();
+        break;
+    }
+    return 0;
+}
+
+static int
 artwork_plugin_start (void)
 {
     deadbeef->conf_lock ();
@@ -777,8 +787,6 @@ artwork_plugin_start (void)
 
     artwork_filemask[sizeof(artwork_filemask)-1] = 0;
 
-    deadbeef->ev_subscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (artwork_on_configchanged), 0);
-
     mutex = deadbeef->mutex_create_nonrecursive ();
     imlib_mutex = deadbeef->mutex_create_nonrecursive ();
     cond = deadbeef->cond_create ();
@@ -790,7 +798,6 @@ artwork_plugin_start (void)
 static int
 artwork_plugin_stop (void)
 {
-    deadbeef->ev_unsubscribe (DB_PLUGIN (&plugin), DB_EV_CONFIGCHANGED, DB_CALLBACK (artwork_on_configchanged), 0);
     if (current_file) {
         deadbeef->fabort (current_file);
     }
@@ -861,6 +868,7 @@ static DB_artwork_plugin_t plugin = {
     .plugin.plugin.start = artwork_plugin_start,
     .plugin.plugin.stop = artwork_plugin_stop,
     .plugin.plugin.configdialog = settings_dlg,
+    .plugin.plugin.message = artwork_message,
     .get_album_art = get_album_art,
     .reset = artwork_reset,
     .get_default_cover = get_default_cover,
