@@ -221,10 +221,14 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         buffer->startoffset = initpos;
     }
 
+    int had_invalid_frames = 0;
     int lastframe_valid = 0;
     int64_t offs = -1;
 
     for (;;) {
+        if (!lastframe_valid && valid_frames > 0) {
+            had_invalid_frames = 1;
+        }
         if (!lastframe_valid && offs >= 0) {
             deadbeef->fseek (buffer->file, offs+1, SEEK_SET);
         }
@@ -386,16 +390,19 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             if (sample == 0 && lastframe_valid) {
                 return 0;
             }
-            buffer->version = ver;
-            buffer->layer = layer;
-            buffer->bitrate = bitrate;
-            buffer->samplerate = samplerate;
-            buffer->packetlength = packetlength;
-            if (nchannels > buffer->channels) {
-                buffer->channels = nchannels;
+            // don't get parameters from frames coming after any bad frame
+            if (!had_invalid_frames) {
+                buffer->version = ver;
+                buffer->layer = layer;
+                buffer->bitrate = bitrate;
+                buffer->samplerate = samplerate;
+                buffer->packetlength = packetlength;
+                if (nchannels > buffer->channels) {
+                    buffer->channels = nchannels;
+                }
+                buffer->bitspersample = 16;
+                trace ("frame %d mpeg v%d layer %d bitrate %d samplerate %d packetlength %d channels %d\n", nframe, ver, layer, bitrate, samplerate, packetlength, nchannels);
             }
-            buffer->bitspersample = 16;
-            trace ("frame %d mpeg v%d layer %d bitrate %d samplerate %d packetlength %d channels %d\n", nframe, ver, layer, bitrate, samplerate, packetlength, nchannels);
         }
         lastframe_valid = 1;
         // try to read xing/info tag (only on initial scans)
