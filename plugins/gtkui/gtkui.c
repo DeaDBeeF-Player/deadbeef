@@ -1092,8 +1092,11 @@ gtkui_progress_show_idle (gpointer data) {
 
 gboolean
 gtkui_set_progress_text_idle (gpointer data) {
-    const char *text = (const char *)data;
-    progress_settext (text);
+    char *text = (char *)data;
+    if (text) {
+        progress_settext (text);
+        free (text);
+    }
     return FALSE;
 }
 
@@ -1109,7 +1112,10 @@ gtkui_add_file_info_cb (DB_playItem_t *it, void *data) {
     if (progress_is_aborted ()) {
         return -1;
     }
-    g_idle_add (gtkui_set_progress_text_idle, (gpointer)deadbeef->pl_find_meta (it, ":URI"));
+    deadbeef->pl_lock ();
+    const char *fname = deadbeef->pl_find_meta (it, ":URI");
+    g_idle_add (gtkui_set_progress_text_idle, (gpointer)strdup(fname)); // slowwwww
+    deadbeef->pl_unlock ();
     return 0;
 }
 
