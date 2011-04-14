@@ -662,7 +662,7 @@ palsa_thread (void *context) {
                             exit (-1);
                         }
                     }
-            //        deadbeef->sendmessage (M_REINIT_SOUND, 0, 0, 0);
+            //        deadbeef->sendmessage (DB_EV_REINIT_SOUND, 0, 0, 0);
             //        break;
                 }
                 else {
@@ -697,7 +697,7 @@ alsa_configchanged (void) {
             || buffer != req_buffer_size
             || period != req_period_size)) {
         trace ("alsa: config option changed, restarting\n");
-        deadbeef->sendmessage (M_REINIT_SOUND, 0, 0, 0);
+        deadbeef->sendmessage (DB_EV_REINIT_SOUND, 0, 0, 0);
     }
     deadbeef->conf_unlock ();
     return 0;

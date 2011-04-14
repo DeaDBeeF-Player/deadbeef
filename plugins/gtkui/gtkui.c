@@ -314,7 +314,7 @@ on_trayicon_button_press_event (GtkWidget       *widget,
         mainwin_toggle_visible ();
     }
     else if (event->button == 2) {
-        deadbeef->sendmessage (M_TOGGLE_PAUSE, 0, 0, 0);
+        deadbeef->sendmessage (DB_EV_TOGGLE_PAUSE, 0, 0, 0);
     }
     return FALSE;
 }
@@ -942,7 +942,7 @@ gtkui_setup_gui_refresh (void) {
 int
 gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     switch (id) {
-    case DB_EV_ACTIVATE:
+    case DB_EV_ACTIVATED:
         g_idle_add (activate_cb, NULL);
         break;
     case DB_EV_SONGCHANGED:
@@ -975,7 +975,7 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     case DB_EV_OUTPUTCHANGED:
         g_idle_add (outputchanged_cb, NULL);
         break;
-    case DB_EV_PLAYLISTSWITCH:
+    case DB_EV_PLAYLISTSWITCHED:
         g_idle_add (playlistswitch_cb, NULL);
         break;
     }
@@ -1100,7 +1100,7 @@ gtkui_set_progress_text_idle (gpointer data) {
 gboolean
 gtkui_progress_hide_idle (gpointer data) {
     progress_hide ();
-    //deadbeef->sendmessage (M_PLAYLIST_REFRESH, 0, 0, 0);
+    //deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
     return FALSE;
 }
 

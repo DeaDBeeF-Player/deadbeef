@@ -321,7 +321,7 @@ oss_configchanged (void) {
     if (strcmp (dev, oss_device)) {
         strncpy (oss_device, dev, sizeof (oss_device)-1);
         trace ("oss: config option changed, restarting\n");
-        deadbeef->sendmessage (M_REINIT_SOUND, 0, 0, 0);
+        deadbeef->sendmessage (DB_EV_REINIT_SOUND, 0, 0, 0);
     }
     deadbeef->conf_unlock ();
     return 0;

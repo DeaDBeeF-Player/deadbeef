@@ -159,7 +159,7 @@ on_searchwin_key_press_event           (GtkWidget       *widget,
             int row = deadbeef->pl_get_cursor (PL_SEARCH);
             DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (max (row, 0), PL_SEARCH);
             if (it) {
-                deadbeef->sendmessage (M_PLAY_NUM, 0, deadbeef->pl_get_idx_of (it), 0);
+                deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, deadbeef->pl_get_idx_of (it), 0);
                 deadbeef->pl_item_unref (it);
             }
         }
@@ -310,7 +310,7 @@ void search_col_free_user_data (void *data) {
 }
 
 void search_handle_doubleclick (DdbListview *listview, DdbListviewIter iter, int idx) {
-    deadbeef->sendmessage (M_PLAY_NUM, 0, deadbeef->pl_get_idx_of ((DB_playItem_t *)iter), 0);
+    deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, deadbeef->pl_get_idx_of ((DB_playItem_t *)iter), 0);
 }
 
 void search_selection_changed (DdbListviewIter it, int idx) {

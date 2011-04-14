@@ -111,7 +111,7 @@ cmd_stop_after_current (void *unused) {
     int var = deadbeef->conf_get_int ("playlist.stop_after_current", 0);
     var = 1 - var;
     deadbeef->conf_set_int ("playlist.stop_after_current", var);
-    deadbeef->sendmessage (M_CONFIG_CHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 /*
@@ -507,31 +507,31 @@ hotkeys_reset (void) {
 
 int
 action_play_cb (struct DB_plugin_action_s *action, DB_playItem_t *it) {
-    deadbeef->sendmessage (M_PLAY_CURRENT, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAY_CURRENT, 0, 0, 0);
     return 0;
 }
 
 int
 action_prev_cb (struct DB_plugin_action_s *action, DB_playItem_t *it) {
-    deadbeef->sendmessage (M_PREV, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PREV, 0, 0, 0);
     return 0;
 }
 
 int
 action_next_cb (struct DB_plugin_action_s *action, DB_playItem_t *it) {
-    deadbeef->sendmessage (M_NEXT, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_NEXT, 0, 0, 0);
     return 0;
 }
 
 int
 action_stop_cb (struct DB_plugin_action_s *action, DB_playItem_t *it) {
-    deadbeef->sendmessage (M_STOP, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_STOP, 0, 0, 0);
     return 0;
 }
 
 int
 action_toggle_pause_cb (struct DB_plugin_action_s *action, DB_playItem_t *it) {
-    deadbeef->sendmessage (M_TOGGLE_PAUSE, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_TOGGLE_PAUSE, 0, 0, 0);
     return 0;
 }
 
@@ -539,17 +539,17 @@ int
 action_play_pause_cb (struct DB_plugin_action_s *action, DB_playItem_t *it) {
     int state = deadbeef->get_output ()->state ();
     if (state == OUTPUT_STATE_PLAYING) {
-        deadbeef->sendmessage (M_PAUSE, 0, 0, 0);
+        deadbeef->sendmessage (DB_EV_PAUSE, 0, 0, 0);
     }
     else {
-        deadbeef->sendmessage (M_PLAY_CURRENT, 0, 0, 0);
+        deadbeef->sendmessage (DB_EV_PLAY_CURRENT, 0, 0, 0);
     }
     return 0;
 }
 
 int
 action_play_random_cb (struct DB_plugin_action_s *action, DB_playItem_t *it) {
-    deadbeef->sendmessage (M_PLAY_RANDOM, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_PLAY_RANDOM, 0, 0, 0);
     return 0;
 }
 
@@ -582,7 +582,7 @@ action_toggle_stop_after_current_cb (struct DB_plugin_action_s *action, DB_playI
     int var = deadbeef->conf_get_int ("playlist.stop_after_current", 0);
     var = 1 - var;
     deadbeef->conf_set_int ("playlist.stop_after_current", var);
-    deadbeef->sendmessage (M_CONFIG_CHANGED, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     return 0;
 }
 

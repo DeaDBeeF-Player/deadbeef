@@ -179,38 +179,38 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             }
         }
         else if (!strcmp (parg, "--next")) {
-            messagepump_push (M_NEXT, 0, 0, 0);
+            messagepump_push (DB_EV_NEXT, 0, 0, 0);
             return 0;
         }
         else if (!strcmp (parg, "--prev")) {
-            messagepump_push (M_PREV, 0, 0, 0);
+            messagepump_push (DB_EV_PREV, 0, 0, 0);
             return 0;
         }
         else if (!strcmp (parg, "--play")) {
-            messagepump_push (M_PLAY_CURRENT, 0, 0, 0);
+            messagepump_push (DB_EV_PLAY_CURRENT, 0, 0, 0);
             return 0;
         }
         else if (!strcmp (parg, "--stop")) {
-            messagepump_push (M_STOP, 0, 0, 0);
+            messagepump_push (DB_EV_STOP, 0, 0, 0);
             return 0;
         }
         else if (!strcmp (parg, "--pause")) {
-            messagepump_push (M_PAUSE, 0, 0, 0);
+            messagepump_push (DB_EV_PAUSE, 0, 0, 0);
             return 0;
         }
         else if (!strcmp (parg, "--toggle-pause")) {
-            messagepump_push (M_TOGGLE_PAUSE, 0, 0, 0);
+            messagepump_push (DB_EV_TOGGLE_PAUSE, 0, 0, 0);
             return 0;
         }
         else if (!strcmp (parg, "--random")) {
-            messagepump_push (M_PLAY_RANDOM, 0, 0, 0);
+            messagepump_push (DB_EV_PLAY_RANDOM, 0, 0, 0);
             return 0;
         }
         else if (!strcmp (parg, "--queue")) {
             queue = 1;
         }
         else if (!strcmp (parg, "--quit")) {
-            messagepump_push (M_TERMINATE, 0, 0, 0);
+            messagepump_push (DB_EV_TERMINATE, 0, 0, 0);
         }
         else if (parg[0] != '-') {
             break; // unknown option is filename
@@ -258,9 +258,9 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             }
             deadbeef->pl_add_files_end ();
         }
-        messagepump_push (M_PLAYLIST_REFRESH, 0, 0, 0);
+        messagepump_push (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
         if (!queue) {
-            messagepump_push (M_PLAY_CURRENT, 0, 1, 0);
+            messagepump_push (DB_EV_PLAY_CURRENT, 0, 1, 0);
             return 2; // don't reload playlist at startup
         }
     }
@@ -341,7 +341,7 @@ server_update (void) {
         if ((size = recv (s2, str, 2048, 0)) >= 0) {
             if (size == 1 && str[0] == 0) {
                 // FIXME: that should be called right after activation of gui plugin
-                plug_trigger_event (DB_EV_ACTIVATE, 0);
+                plug_trigger_event (DB_EV_ACTIVATED, 0);
             }
             else {
                 server_exec_command_line (str, size, sendback, sizeof (sendback));
@@ -378,7 +378,7 @@ server_loop (void *ctx) {
         }
         if (ret > 0) {
             if (server_update () < 0) {
-                messagepump_push (M_TERMINATE, 0, 0, 0);
+                messagepump_push (DB_EV_TERMINATE, 0, 0, 0);
             }
         }
     }
@@ -403,14 +403,15 @@ player_mainloop (void) {
             }
             DB_output_t *output = plug_get_output ();
             switch (msg) {
-            case M_REINIT_SOUND:
+            case DB_EV_REINIT_SOUND:
                 plug_reinit_sound ();
                 conf_save ();
                 break;
-            case M_TERMINATE:
+            case DB_EV_TERMINATE:
+                printf ("terminate received\n");
                 term = 1;
                 break;
-            case M_PLAY_CURRENT:
+            case DB_EV_PLAY_CURRENT:
                 if (p1) {
                     output->stop ();
                     pl_playqueue_clear ();
@@ -420,29 +421,29 @@ player_mainloop (void) {
                     streamer_play_current_track ();
                 }
                 break;
-            case M_PLAY_NUM:
+            case DB_EV_PLAY_NUM:
                 output->stop ();
                 pl_playqueue_clear ();
                 streamer_set_nextsong (p1, 1);
                 break;
-            case M_STOP:
+            case DB_EV_STOP:
                 streamer_set_nextsong (-2, 0);
                 break;
-            case M_NEXT:
+            case DB_EV_NEXT:
                 output->stop ();
                 streamer_move_to_nextsong (1);
                 break;
-            case M_PREV:
+            case DB_EV_PREV:
                 output->stop ();
                 streamer_move_to_prevsong ();
                 break;
-            case M_PAUSE:
+            case DB_EV_PAUSE:
                 if (output->state () != OUTPUT_STATE_PAUSED) {
                     output->pause ();
                     plug_trigger_event_paused (1);
                 }
                 break;
-            case M_TOGGLE_PAUSE:
+            case DB_EV_TOGGLE_PAUSE:
                 if (output->state () == OUTPUT_STATE_PAUSED) {
                     output->unpause ();
                     plug_trigger_event_paused (0);
@@ -452,18 +453,20 @@ player_mainloop (void) {
                     plug_trigger_event_paused (1);
                 }
                 break;
-            case M_PLAY_RANDOM:
+            case DB_EV_PLAY_RANDOM:
                 output->stop ();
                 streamer_move_to_randomsong ();
                 break;
-            case M_PLAYLIST_REFRESH:
+            case DB_EV_PLAYLIST_REFRESH:
                 pl_save_current ();
                 plug_trigger_event_playlistchanged ();
                 break;
-            case M_CONFIG_CHANGED:
+            case DB_EV_CONFIGCHANGED:
                 conf_save ();
                 streamer_configchanged ();
-                plug_trigger_event (DB_EV_CONFIGCHANGED, 0);
+                break;
+            case DB_EV_SEEK:
+                streamer_set_seek (p1 / 1000.f);
                 break;
             }
             if (msg >= DB_EV_FIRST && ctx) {

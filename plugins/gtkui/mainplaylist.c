@@ -143,7 +143,7 @@ main_col_sort (int col, int sort_order, void *user_data) {
     deadbeef->pl_sort (PL_MAIN, c->id, c->format, sort_order-1);
 }
 void main_handle_doubleclick (DdbListview *listview, DdbListviewIter iter, int idx) {
-    deadbeef->sendmessage (M_PLAY_NUM, 0, idx, 0);
+    deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, idx, 0);
 }
 
 void main_selection_changed (DdbListviewIter it, int idx) {

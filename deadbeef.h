@@ -222,38 +222,34 @@ typedef struct DB_conf_item_s {
 // event callback type
 typedef int (*DB_callback_t)(ddb_event_t *, uintptr_t data);
 
-// message ids for communicating with player
-enum {
-    M_SONGFINISHED,
-    M_NEXT,
-    M_PREV,
-    M_PLAY_CURRENT,
-    M_PLAY_NUM,
-    M_STOP,
-    M_PAUSE,
-    M_PLAY_RANDOM,
-    M_TERMINATE, // must be sent to player thread to terminate
-    M_PLAYLIST_REFRESH, // means
-    M_REINIT_SOUND,
-    M_CONFIG_CHANGED, // no arguments
-    M_TOGGLE_PAUSE,
-};
-
 // events
 enum {
+    DB_EV_NEXT = 1, // switch to next track
+    DB_EV_PREV = 2, // switch to prev track
+    DB_EV_PLAY_CURRENT = 3, // play current track (will start/unpause if stopped or paused)
+    DB_EV_PLAY_NUM = 4, // play track nr. p1
+    DB_EV_STOP = 5, // stop current track
+    DB_EV_PAUSE = 6, // pause playback
+    DB_EV_PLAY_RANDOM = 7, // play random track
+    DB_EV_TERMINATE = 8, // must be sent to player thread to terminate
+    DB_EV_PLAYLIST_REFRESH = 9, // save and redraw current playlist 
+    DB_EV_REINIT_SOUND = 10, // reinitialize sound output with current output_plugin config value
+    DB_EV_CONFIGCHANGED = 11, // one or more config options were changed
+    DB_EV_TOGGLE_PAUSE = 12,
+    DB_EV_ACTIVATED = 13, // will be fired every time player is activated
+    DB_EV_PAUSED = 14, // player was paused or unpaused
+    DB_EV_PLAYLISTCHANGED = 15, // playlist contents were changed
+    DB_EV_VOLUMECHANGED = 16, // volume was changed
+    DB_EV_OUTPUTCHANGED = 17, // sound output plugin changed
+    DB_EV_PLAYLISTSWITCHED = 18, // playlist switch occured
+    DB_EV_SEEK = 19, // seek current track to position p1 (ms)
+
     DB_EV_FIRST = 1000,
-    DB_EV_SONGCHANGED = 1000, // triggers when current song changed from one to another, see  ddb_event_trackchange_t, both pointers can be NULL
-    DB_EV_SONGSTARTED = 1001, // triggers when song started playing (for scrobblers and such)
-    DB_EV_SONGFINISHED = 1002, // triggers when song finished playing (for scrobblers and such)
-    DB_EV_CONFIGCHANGED = 1003, // configuration option changed
-    DB_EV_ACTIVATE = 1004, // will be fired every time player is activated
-    DB_EV_TRACKINFOCHANGED = 1005, // notify plugins that trackinfo was changed
-    DB_EV_PAUSED = 1006, // player was paused or unpaused
-    DB_EV_PLAYLISTCHANGED = 1007, // playlist contents were changed
-    DB_EV_VOLUMECHANGED = 1008, // volume was changed
-    DB_EV_OUTPUTCHANGED = 1009, // sound output plugin changed
-    DB_EV_PLAYLISTSWITCH = 1010, // playlist switch occured
-    DB_EV_SEEKED = 1011, // seek happened, see ddb_event_playpos_t
+    DB_EV_SONGCHANGED = 1000, // current song changed from one to another, ctx=ddb_event_trackchange_t
+    DB_EV_SONGSTARTED = 1001, // song started playing, ctx=ddb_event_track_t
+    DB_EV_SONGFINISHED = 1002, // song finished playing, ctx=ddb_event_track_t
+    DB_EV_TRACKINFOCHANGED = 1004, // trackinfo was changed (included medatata and playback status), ctx=ddb_event_track_t
+    DB_EV_SEEKED = 1005, // seek happened, ctx=ddb_event_playpos_t
     DB_EV_MAX
 };
 
@@ -324,7 +320,6 @@ typedef struct {
     DB_playItem_t *(*streamer_get_playing_track) (void);
     DB_playItem_t *(*streamer_get_streaming_track) (void);
     float (*streamer_get_playpos) (void);
-    void (*streamer_seek) (float time);
     int (*streamer_ok_to_read) (int len);
     void (*streamer_reset) (int full);
     int (*streamer_read) (char *bytes, int size);

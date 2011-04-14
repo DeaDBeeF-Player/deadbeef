@@ -311,7 +311,7 @@ plt_add (int before, const char *title) {
     if (!plt_loading) {
         pl_save_n (before);
         conf_save ();
-        messagepump_push (DB_EV_PLAYLISTSWITCH, 0, 0, 0);
+        messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
     }
     return playlists_count-1;
 }
@@ -360,7 +360,7 @@ plt_remove (int plt) {
         plt_gen_conf ();
         conf_save ();
         pl_save_n (0);
-        messagepump_push (DB_EV_PLAYLISTSWITCH, 0, 0, 0);
+        messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
         return;
     }
     if (i != plt) {
@@ -404,7 +404,7 @@ plt_remove (int plt) {
     plt_gen_conf ();
     conf_save ();
     if (!plt_loading) {
-        messagepump_push (DB_EV_PLAYLISTSWITCH, 0, 0, 0);
+        messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
     }
 }
 
@@ -431,7 +431,7 @@ plt_set_curr (int plt) {
     if (p != playlist) {
         playlist = p;
         if (!plt_loading) {
-            messagepump_push (DB_EV_PLAYLISTSWITCH, 0, 0, 0);
+            messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
             conf_set_int ("playlist.current", plt_get_curr ());
             conf_save ();
         }
@@ -496,7 +496,7 @@ plt_set_title (playlist_t *p, const char *title) {
     UNLOCK;
     conf_save ();
     if (!plt_loading) {
-        messagepump_push (DB_EV_PLAYLISTSWITCH, 0, 0, 0);
+        messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
     }
     return 0;
 }
@@ -2501,7 +2501,7 @@ pl_load_all (void) {
     plt_set_curr (0);
     plt_loading = 0;
     plt_gen_conf ();
-    messagepump_push (DB_EV_PLAYLISTSWITCH, 0, 0, 0);
+    messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
     UNLOCK;
     trace ("pl_load_all finished\n");
     return err;

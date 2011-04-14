@@ -106,10 +106,11 @@ messagepump_wait (void) {
 
 int
 messagepump_pop (uint32_t *id, uintptr_t *ctx, uint32_t *p1, uint32_t *p2) {
+    mutex_lock (mutex);
     if (!mqueue) {
+        mutex_unlock (mutex);
         return -1;
     }
-    mutex_lock (mutex);
     *id = mqueue->id;
     *ctx = mqueue->ctx;
     *p1 = mqueue->p1;

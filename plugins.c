@@ -74,7 +74,6 @@ static DB_functions_t deadbeef_api = {
     .streamer_get_playing_track = (DB_playItem_t *(*) (void))streamer_get_playing_track,
     .streamer_get_streaming_track = (DB_playItem_t *(*) (void))streamer_get_streaming_track,
     .streamer_get_playpos = streamer_get_playpos,
-    .streamer_seek = streamer_set_seek,
     .streamer_ok_to_read = streamer_ok_to_read,
     .streamer_reset = streamer_reset,
     .streamer_read = streamer_read,

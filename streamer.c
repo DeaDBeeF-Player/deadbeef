@@ -1928,6 +1928,6 @@ streamer_set_dsp_chain (ddb_dsp_context_t *chain) {
     mutex_unlock (decodemutex);
     DB_output_t *output = plug_get_output ();
     if (playing_track && output->state () != OUTPUT_STATE_STOPPED) {
-        deadbeef->streamer_seek (playpos);
+        streamer_set_seek (playpos);
     }
 }
