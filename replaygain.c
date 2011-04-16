@@ -63,6 +63,17 @@ replaygain_set (int mode, int scale, float preamp) {
 
 void
 replaygain_set_values (float albumgain, float albumpeak, float trackgain, float trackpeak) {
+    if (albumgain > 100 && trackgain <= 100) {
+        albumgain = trackgain;
+        albumpeak = trackpeak;
+    }
+    else if (albumgain <= 100 && trackgain > 100) {
+        trackgain = albumgain;
+        trackpeak = albumpeak;
+    }
+    else if (albumgain > 100 && trackgain > 100) {
+        trackgain = albumgain = 0;
+    }
     rg_albumgain = db_to_amp (albumgain);
     rg_trackgain = db_to_amp (trackgain);
     rg_albumgain_preamp = rg_albumgain * conf_replaygain_preamp;
