@@ -504,20 +504,16 @@ plt_set_title (playlist_t *p, const char *title) {
 void
 plt_modified (playlist_t *plt) {
     pl_lock ();
-    time_t modtime = time (NULL);
-    if (modtime <= plt->modification_time) {
-        modtime = plt->modification_time+1;
-    }
-    plt->modification_time = modtime;
+    plt->modification_idx++;
     pl_unlock ();
 }
 
-time_t
-plt_get_modification_time (playlist_t *plt) {
+int
+plt_get_modification_idx (playlist_t *plt) {
     pl_lock ();
-    time_t res = plt->modification_time;
+    int idx = plt->modification_idx;
     pl_unlock ();
-    return res;
+    return idx;
 }
 
 void

@@ -52,7 +52,7 @@ typedef struct playlist_s {
     struct playlist_s *next;
     int count[2];
     float totaltime;
-    time_t modification_time;
+    int modification_idx;
     playItem_t *head[PL_MAX_ITERATORS]; // head of linked list
     playItem_t *tail[PL_MAX_ITERATORS]; // tail of linked list
     int current_row[PL_MAX_ITERATORS]; // current row (cursor)
@@ -129,8 +129,8 @@ plt_set_title (playlist_t *plt, const char *title);
 void
 plt_modified (playlist_t *plt);
 
-time_t
-plt_get_modification_time (playlist_t *plt);
+int
+plt_get_modification_idx (playlist_t *plt);
 
 // moves playlist #from to position #to
 void

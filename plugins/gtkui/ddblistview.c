@@ -530,8 +530,8 @@ ddb_listview_list_configure_event            (GtkWidget       *widget,
 
 static void
 ddb_listview_groupcheck (DdbListview *listview) {
-    time_t tm = listview->binding->modification_time ();
-    if (tm != listview->groups_build_time) {
+    int idx = listview->binding->modification_idx ();
+    if (idx != listview->groups_build_idx) {
         ddb_listview_build_groups (listview);
     }
 }
@@ -2882,7 +2882,7 @@ void
 ddb_listview_build_groups (DdbListview *listview) {
     deadbeef->pl_lock ();
     int old_height = listview->fullheight;
-    listview->groups_build_time = listview->binding->modification_time ();
+    listview->groups_build_idx = listview->binding->modification_idx ();
     ddb_listview_free_groups (listview);
     listview->fullheight = 0;
 

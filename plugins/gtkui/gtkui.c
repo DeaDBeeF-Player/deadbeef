@@ -573,11 +573,11 @@ gtkui_hide_status_icon () {
     }
 }
 
-time_t
-gtkui_get_curr_playlist_modtime (void) {
+int
+gtkui_get_curr_playlist_mod (void) {
     deadbeef->pl_lock ();
     void *plt = deadbeef->plt_get_handle (deadbeef->plt_get_curr ());
-    time_t res = plt ? deadbeef->plt_get_modification_time (plt) : 0;
+    int res = plt ? deadbeef->plt_get_modification_idx (plt) : 0;
     deadbeef->pl_unlock ();
     return res;
 }

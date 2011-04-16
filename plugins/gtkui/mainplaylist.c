@@ -284,7 +284,7 @@ DdbListviewBinding main_binding = {
     .list_context_menu = list_context_menu,
     .delete_selected = main_delete_selected,
     .vscroll_changed = main_vscroll_changed,
-    .modification_time = gtkui_get_curr_playlist_modtime,
+    .modification_idx = gtkui_get_curr_playlist_mod,
 };
 
 void

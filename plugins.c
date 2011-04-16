@@ -117,7 +117,7 @@ static DB_functions_t deadbeef_api = {
     .plt_get_title = (int (*)(void *handle, char *buffer, int sz))plt_get_title,
     .plt_set_title = (int (*)(void *handle, const char *buffer))plt_set_title,
     .plt_modified = (void (*) (void *handle))plt_modified,
-    .plt_get_modification_time = (time_t (*) (void *handle))plt_get_modification_time,
+    .plt_get_modification_idx = (int (*) (void *handle))plt_get_modification_idx,
 
     // playlist metadata
     .plt_add_meta = (void (*) (void *handle, const char *key, const char *value))plt_add_meta,
@@ -282,10 +282,6 @@ static DB_functions_t deadbeef_api = {
     .plug_get_decoder_id = plug_get_decoder_id,
     .plug_remove_decoder_id = plug_remove_decoder_id,
     .plug_get_for_id = plug_get_for_id,
-    // plugin events
-    .plug_trigger_event_trackchange = (void (*) (DB_playItem_t *from, DB_playItem_t *to))plug_trigger_event_trackchange,
-    .plug_trigger_event_trackinfochanged = (void (*) (DB_playItem_t *track))plug_trigger_event_trackinfochanged,
-    .plug_trigger_event_playlistchanged = plug_trigger_event_playlistchanged,
     // misc utilities
     .is_local_file = plug_is_local_file,
     // pcm utilities

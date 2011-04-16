@@ -94,7 +94,7 @@ static const char *metainfo[] = {
     NULL
 };
 
-// refresh_playlist == 1 means "call plug_trigger_event_playlistchanged if metadata had been changed"
+// refresh_playlist == 1 means "send playlistchanged event if metadata had been changed"
 // refresh_playlist == 2 means "don't change memory, just check for changes"
 static int
 update_vorbis_comments (DB_playItem_t *it, vorbis_comment *vc, int refresh_playlist) {
@@ -165,8 +165,9 @@ update_vorbis_comments (DB_playItem_t *it, vorbis_comment *vc, int refresh_playl
     f &= ~DDB_TAG_MASK;
     f |= DDB_TAG_VORBISCOMMENTS;
     deadbeef->pl_set_item_flags (it, f);
+    deadbeef->plt_modified (deadbeef->plt_get_handle (deadbeef->plt_get_curr ()));
     if (refresh_playlist) {
-        deadbeef->plug_trigger_event_playlistchanged ();
+        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
     }
     return 0;
 }
@@ -320,7 +321,12 @@ cvorbis_read (DB_fileinfo_t *_info, char *bytes, int size) {
                 info->last_comment_update = info->currentsample;
                 vorbis_comment *vc = ov_comment (&info->vorbis_file, -1);
                 update_vorbis_comments (info->ptrack, vc, 1);
-                deadbeef->plug_trigger_event_trackinfochanged (info->ptrack);
+                ddb_event_track_t *ev = (ddb_event_track_t *)deadbeef->event_alloc (DB_EV_TRACKINFOCHANGED);
+                ev->track = info->ptrack;
+                if (ev->track) {
+                    deadbeef->pl_item_ref (ev->track);
+                }
+                deadbeef->event_send ((ddb_event_t *)ev, 0, 0);
             }
             else {
                 info->ptrack = NULL;

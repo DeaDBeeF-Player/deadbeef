@@ -375,11 +375,12 @@ typedef struct {
     int (*plt_get_title) (void *handle, char *buffer, int bufsize);
     int (*plt_set_title) (void *handle, const char *title);
 
-    // sets the modification time using time(NULL) call
+    // increments modification index
     void (*plt_modified) (void *handle);
 
-    // returns the time of last modification
-    time_t (*plt_get_modification_time) (void *handle);
+    // returns modication index
+    // the index is incremented by 1 every time playlist changes
+    int (*plt_get_modification_idx) (void *handle);
 
     // playlist metadata
     // this kind of metadata is stored in playlist (dbpl) files
@@ -603,11 +604,6 @@ typedef struct {
     const char * (*plug_get_decoder_id) (const char *id);
     void (*plug_remove_decoder_id) (const char *id);
     struct DB_plugin_s *(*plug_get_for_id) (const char *id);
-
-    // plugin events
-    void (*plug_trigger_event_trackchange) (DB_playItem_t *from, DB_playItem_t *to);
-    void (*plug_trigger_event_trackinfochanged) (DB_playItem_t *track);
-    void (*plug_trigger_event_playlistchanged) (void);
 
     // misc utilities
     int (*is_local_file) (const char *fname); // returns 1 for local filename, 0 otherwise

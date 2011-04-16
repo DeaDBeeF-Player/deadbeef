@@ -170,7 +170,12 @@ vfs_curl_set_meta (DB_playItem_t *it, const char *meta, const char *value) {
     uint32_t f = deadbeef->pl_get_item_flags (it);
     f |= DDB_TAG_ICY;
     deadbeef->pl_set_item_flags (it, f);
-    deadbeef->plug_trigger_event_trackinfochanged (it);
+    ddb_event_track_t *ev = (ddb_event_track_t *)deadbeef->event_alloc (DB_EV_TRACKINFOCHANGED);
+    ev->track = it;
+    if (ev->track) {
+        deadbeef->pl_item_ref (ev->track);
+    }
+    deadbeef->event_send ((ddb_event_t *)ev, 0, 0);
 }
 
 int
@@ -207,7 +212,8 @@ http_parse_shoutcast_meta (HTTP_FILE *fp, const char *meta, int size) {
                 else {
                     vfs_curl_set_meta (fp->track, "title", title);
                 }
-                deadbeef->plug_trigger_event_playlistchanged ();
+                deadbeef->plt_modified (deadbeef->plt_get_handle (deadbeef->plt_get_curr ()));
+                deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
             }
             return 0;
         }
@@ -462,8 +468,9 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
             fp->wait_meta = fp->icy_metaint; 
         }
     }
+    deadbeef->plt_modified (deadbeef->plt_get_handle (deadbeef->plt_get_curr ()));
     if (refresh_playlist) {
-        deadbeef->plug_trigger_event_playlistchanged ();
+        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
     }
     if (!fp->icyheader) {
         fp->gotsomeheader = 1;

@@ -462,6 +462,7 @@ static gboolean
 write_finished_cb (void *ctx) {
     gtk_widget_destroy (progressdlg);
     progressdlg = NULL;
+    deadbeef->plt_modified (deadbeef->plt_get_handle (deadbeef->plt_get_curr ()));
     main_refresh ();
     search_refresh ();
     trkproperties_modified = 0;

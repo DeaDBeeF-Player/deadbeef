@@ -85,7 +85,7 @@ typedef struct {
     void (*col_free_user_data) (void *user_data);
     void (*vscroll_changed) (int pos);
     void (*cursor_changed) (int pos);
-    time_t (*modification_time) (void);
+    int (*modification_idx) (void);
 } DdbListviewBinding;
 
 struct _DdbListviewColumn;
@@ -140,7 +140,7 @@ struct _DdbListview {
 
     struct _DdbListviewColumn *columns;
     struct _DdbListviewGroup *groups;
-    time_t groups_build_time;
+    int groups_build_idx; // must be the same as playlist modification idx
     int fullheight;
     int block_redraw_on_scroll;
     int grouptitle_height;

@@ -369,7 +369,7 @@ DdbListviewBinding search_binding = {
     .header_context_menu = header_context_menu,
     .list_context_menu = list_context_menu,
     .delete_selected = search_delete_selected,
-    .modification_time = gtkui_get_curr_playlist_modtime,
+    .modification_idx = gtkui_get_curr_playlist_mod,
 };
 
 void
