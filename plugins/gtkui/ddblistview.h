@@ -204,6 +204,7 @@ enum {
     DDB_REFRESH_HSCROLL = 2,
     DDB_REFRESH_VSCROLL = 4,
     DDB_REFRESH_LIST    = 8,
+    DDB_LIST_CHANGED    = 16,
 };
 
 void ddb_listview_refresh (DdbListview *listview, uint32_t flags);

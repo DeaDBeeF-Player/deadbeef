@@ -582,8 +582,8 @@ gtkui_get_curr_playlist_modtime (void) {
     return res;
 }
 
-static int
-gtkui_on_configchanged (ddb_event_t *ev, uintptr_t data) {
+static gboolean
+gtkui_on_configchanged (void *data) {
     // order and looping
     const char *w;
 
@@ -613,7 +613,7 @@ gtkui_on_configchanged (ddb_event_t *ev, uintptr_t data) {
     // tray icon
     gtkui_update_status_icon (NULL);
 
-    return 0;
+    return FALSE;
 }
 
 static gboolean
@@ -1015,7 +1015,7 @@ gtkui_thread (void *ctx) {
 
     wingeom_restore (mainwin, "mainwin", 40, 40, 500, 300, 0);
 
-    gtkui_on_configchanged (NULL, 0);
+    gtkui_on_configchanged (NULL);
     gtkui_init_theme_colors ();
 
     // visibility of statusbar and headers

@@ -475,6 +475,9 @@ ddb_listview_destroy(GtkObject *object)
 
 void
 ddb_listview_refresh (DdbListview *listview, uint32_t flags) {
+    if (flags & DDB_LIST_CHANGED) {
+        ddb_listview_build_groups (listview);
+    }
     if (flags & DDB_REFRESH_LIST) {
         gtk_widget_queue_draw (listview->list);
     }

@@ -88,7 +88,7 @@ void
 search_refresh (void) {
     if (searchwin && gtk_widget_get_visible (searchwin)) {
         GtkWidget *pl = lookup_widget (searchwin, "searchlist");
-        ddb_listview_refresh (DDB_LISTVIEW (pl), DDB_REFRESH_VSCROLL | DDB_REFRESH_LIST);
+        ddb_listview_refresh (DDB_LISTVIEW (pl), DDB_REFRESH_VSCROLL | DDB_REFRESH_LIST | DDB_LIST_CHANGED);
     }
 }
 
