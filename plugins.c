@@ -55,8 +55,6 @@
 
 //#define DISABLE_VERSIONCHECK 1
 
-static uintptr_t mutex;
-
 // deadbeef api
 static DB_functions_t deadbeef_api = {
     // FIXME: set to 1.0 after api freeze
@@ -388,18 +386,6 @@ typedef struct plugin_s {
 plugin_t *plugins;
 plugin_t *plugins_tail;
 
-void
-plug_lock (void) {
-//    mutex_lock (mutex);
-    pl_lock ();
-}
-
-void
-plug_unlock (void) {
-//    mutex_unlock (mutex);
-    pl_unlock ();
-}
-
 float
 plug_playback_get_pos (void) {
     playItem_t *trk = streamer_get_playing_track ();
@@ -432,31 +418,6 @@ plug_playback_set_pos (float pos) {
     }
     streamer_set_seek (t);
 }
-
-/////// non-api functions (plugin support)
-#if 0
-void
-plug_event_call (ddb_event_t *ev) {
-    if (!mutex) {
-        trace ("plug: event passed before plugin initialization\n");
-    }
-//    printf ("plug_event_call enter %d\n", ev->event);
-    plug_lock ();
-
-    for (int i = 0; i < MAX_HANDLERS; i++) {
-        if (handlers[ev->event][i].plugin) {
-            handlers[ev->event][i].callback (ev, handlers[ev->event][i].data);
-        }
-    }
-//    if (ev->event == DB_EV_PLAYLISTSWITCH) {
-//        printf ("DB_EV_PLAYLISTSWITCH %d %d\n", plt_get_curr (), conf_get_int ("playlist.current", 0));
-//        pl_save_current ();
-//    }
-
-    plug_unlock ();
-//    printf ("plug_event_call leave %d\n", ev->event);
-}
-#endif
 
 // FIXME: this is backward-compatibility layer, should be killed
 void
@@ -788,8 +749,6 @@ plug_load_all (void) {
     trace ("\033[0;31mDISABLE_VERSIONCHECK=1! do not distribute!\033[0;m\n");
 #endif
 
-    trace ("plug: mutex_create\n");
-    mutex = mutex_create ();
 #ifndef ANDROID
     const char *dirname = deadbeef->get_plugin_dir ();
 
@@ -1052,10 +1011,6 @@ plug_unload_all (void) {
 
 void
 plug_cleanup (void) {
-    if (mutex) {
-        mutex_free (mutex);
-        mutex = 0;
-    }
     plug_free_decoder_ids ();
 }
 
