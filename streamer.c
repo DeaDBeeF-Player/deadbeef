@@ -143,7 +143,9 @@ streamer_start_playback (playItem_t *from, playItem_t *it) {
         pl_item_unref (playing_track);
         playing_track = NULL;
     }
+    pl_lock ();
     playlist_track = it;
+    pl_unlock ();
     // assign new
     playing_track = it;
     if (playing_track) {
@@ -545,16 +547,9 @@ streamer_song_removed_notify (playItem_t *it) {
     if (!mutex) {
         return; // streamer is not running
     }
-    streamer_lock ();
     if (it == playlist_track) {
         playlist_track = playlist_track->prev[PL_MAIN];
-        // queue new next song for streaming
-        if (bytes_until_next_song > 0) {
-            streamer_ringbuf.remaining = bytes_until_next_song;
-            streamer_move_to_nextsong (0);
-        }
     }
-    streamer_unlock ();
 }
 
 // that must be called after last sample from str_playing_song was done reading
