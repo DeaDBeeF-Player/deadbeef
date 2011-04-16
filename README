@@ -31,6 +31,7 @@ full list of dependencies:
     alsa-lib: ALSA support
     libvorbis and libogg: for ogg vorbis plugin
     libcurl >= 7.10: for last.fm, vfs_curl (shoutcast/icecast), artwork plugins
+    imlib2: for artwork plugin
     libmad: for mp3 plugin (mpeg1,2 layers1,2,3)
     libFLAC: for flac plugin
     wavpack: for wavpack plugin
