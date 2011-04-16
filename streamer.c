@@ -38,8 +38,8 @@
 #include "ringbuf.h"
 #include "replaygain.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 //#define WRITE_DUMP 1
 
@@ -112,14 +112,12 @@ static DB_FILE *streamer_file;
 
 void
 streamer_lock (void) {
-//    mutex_lock (mutex);
-    pl_lock ();
+    mutex_lock (mutex);
 }
 
 void
 streamer_unlock (void) {
-//    mutex_unlock (mutex);
-    pl_unlock ();
+    mutex_unlock (mutex);
 }
 
 static void
@@ -603,10 +601,19 @@ streamer_set_current (playItem_t *it) {
     if (from) {
         plug_trigger_event_trackinfochanged (from);
     }
+    char decoder_id[100] = "";
+    char filetype[100] = "";
     pl_lock ();
-    const char *decoder_id = pl_find_meta (it, ":DECODER");
-    const char *filetype = pl_find_meta (it, ":FILETYPE");
-    if (!decoder_id && filetype && !strcmp (filetype, "content")) {
+    const char *dec = pl_find_meta (it, ":DECODER");
+    if (dec) {
+        strncpy (decoder_id, dec, sizeof (decoder_id));
+    }
+    const char *ft = pl_find_meta (it, ":FILETYPE");
+    if (ft) {
+        strncpy (filetype, ft, sizeof (filetype));
+    }
+    pl_unlock ();
+    if (!decoder_id[0] && filetype && !strcmp (filetype, "content")) {
         // try to get content-type
         mutex_lock (decodemutex);
         trace ("\033[0;34mopening file %s\033[37;0m\n", pl_find_meta (it, ":URI"));
@@ -644,7 +651,7 @@ streamer_set_current (playItem_t *it) {
             for (int i = 0; decoders[i]; i++) {
                 if (!strcmp (decoders[i]->plugin.id, plug)) {
                     pl_replace_meta (it, ":DECODER", decoders[i]->plugin.id);
-                    decoder_id = decoders[i]->plugin.id;
+                    strncpy (decoder_id, decoders[i]->plugin.id, sizeof (decoder_id));
                     pl_replace_meta (it, ":FILETYPE", decoders[i]->filetypes[0]);
                     trace ("\033[0;34mfound plugin %s\033[37;0m\n", plug);
                 }
@@ -655,7 +662,7 @@ streamer_set_current (playItem_t *it) {
         }
     }
     playlist_track = it;
-    if (decoder_id) {
+    if (decoder_id[0]) {
         DB_decoder_t *dec = NULL;
         dec = plug_get_decoder_for_id (decoder_id);
         if (!dec) {
@@ -700,7 +707,6 @@ streamer_set_current (playItem_t *it) {
                 plug_trigger_event_trackinfochanged (to);
             }
             err = -1;
-            pl_unlock ();
             goto error;
         }
         else {
@@ -715,7 +721,6 @@ streamer_set_current (playItem_t *it) {
         }
     }
     else {
-        pl_unlock ();
         trace ("no decoder in playitem!\n");
         it->played = 1;
         streamer_buffering = 0;
@@ -730,7 +735,6 @@ streamer_set_current (playItem_t *it) {
         }
         return -1;
     }
-    pl_unlock ();
 success:
     mutex_lock (decodemutex);
     if (new_fileinfo) {
