@@ -103,6 +103,36 @@ cda_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
 
+    track_t first_track = cdio_get_first_track_num (info->cdio);
+    if (first_track == 0xff) {
+        trace ("cdda: no medium found\n");
+        return -1;
+    }
+    track_t tracks = cdio_get_num_tracks (info->cdio);
+    track_t i;
+    cddb_track_t *track;
+
+    cddb_disc_t *disc = cddb_disc_new();
+
+    cddb_disc_set_length (disc, cdio_get_track_lba (info->cdio, CDIO_CDROM_LEADOUT_TRACK) / CDIO_CD_FRAMES_PER_SEC);
+
+    for (i = 0; i < tracks; i++)
+    {
+        lsn_t offset = cdio_get_track_lba (info->cdio, i+first_track);
+        track = cddb_track_new();
+        cddb_track_set_frame_offset (track, offset);
+        cddb_disc_add_track (disc, track);
+    }
+    cddb_disc_calc_discid (disc);
+    int discid = cddb_disc_get_discid (disc);
+
+    int trk_discid = deadbeef->pl_find_meta_int (it, ":CDIO_DISCID", 0);
+    if (trk_discid != discid) {
+        trace ("cdda: the track belongs to another disc, skipped\n");
+        return -1;
+    }
+
+
     if (TRACK_FORMAT_AUDIO != cdio_get_track_format (info->cdio, track_nr))
     {
         trace ("cdda: Not an audio track (%d)\n", track_nr);
@@ -271,7 +301,7 @@ resolve_disc (CdIo_t *cdio)
 }
 
 static DB_playItem_t *
-insert_single_track (CdIo_t* cdio, DB_playItem_t *after, const char* file, int track_nr)
+insert_single_track (CdIo_t* cdio, DB_playItem_t *after, const char* file, int track_nr, int discid)
 {
     char tmp[file ? strlen (file) + 20 : 20];
     if (file)
@@ -295,6 +325,8 @@ insert_single_track (CdIo_t* cdio, DB_playItem_t *after, const char* file, int t
     deadbeef->pl_add_meta (it, "title", tmp);
     snprintf (tmp, sizeof (tmp), "%02d", track_nr);
     deadbeef->pl_add_meta (it, "track", tmp);
+
+    deadbeef->pl_set_meta_int (it, ":CDIO_DISCID", discid);
 
     after = deadbeef->pl_insert_item (after, it);
 
@@ -352,11 +384,17 @@ cddb_thread (void *items_i)
         char tmp[5];
         snprintf (tmp, sizeof (tmp), "%02d", trk);
         deadbeef->pl_add_meta (items[i], "track", tmp);
-        deadbeef->plug_trigger_event_trackinfochanged (items[i]);
+        ddb_event_track_t *ev = (ddb_event_track_t *)deadbeef->event_alloc (DB_EV_TRACKINFOCHANGED);
+        ev->track = items[i];
+        if (ev->track) {
+            deadbeef->pl_item_ref (ev->track);
+        }
+        deadbeef->event_send ((ddb_event_t *)ev, 0, 0);
     }
     cddb_disc_destroy (disc);
     cleanup_thread_params (params);
-    deadbeef->plug_trigger_event_playlistchanged ();
+    deadbeef->plt_modified (deadbeef->plt_get_handle (deadbeef->plt_get_curr ()));
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
 static void
@@ -470,15 +508,34 @@ cda_insert (DB_playItem_t *after, const char *fname) {
         return NULL;
     }
 
+
+    // calculate discid
+    track_t first_track = cdio_get_first_track_num (cdio);
+    if (first_track == 0xff) {
+        trace ("cdda: no medium found\n");
+        cdio_destroy (cdio);
+        return NULL;
+    }
+    track_t tracks = cdio_get_num_tracks (cdio);
+    track_t i;
+    cddb_track_t *track;
+
+    cddb_disc_t *disc = cddb_disc_new();
+
+    cddb_disc_set_length (disc, cdio_get_track_lba (cdio, CDIO_CDROM_LEADOUT_TRACK) / CDIO_CD_FRAMES_PER_SEC);
+
+    for (i = 0; i < tracks; i++)
+    {
+        lsn_t offset = cdio_get_track_lba (cdio, i+first_track);
+        track = cddb_track_new();
+        cddb_track_set_frame_offset (track, offset);
+        cddb_disc_add_track (disc, track);
+    }
+    cddb_disc_calc_discid (disc);
+    int discid = cddb_disc_get_discid (disc);
+
     if (0 == strcasecmp (shortname, "all.cda") || is_image)
     {
-        track_t first_track = cdio_get_first_track_num (cdio);
-        if (first_track == 0xff) {
-            trace ("cdda: no medium found\n");
-            cdio_destroy (cdio);
-            return NULL;
-        }
-        track_t tracks = cdio_get_num_tracks (cdio);
         track_t i;
         res = after;
         struct cddb_thread_params *p = malloc (sizeof (struct cddb_thread_params));
@@ -490,7 +547,7 @@ cda_insert (DB_playItem_t *after, const char *fname) {
         for (i = 0; i < tracks; i++)
         {
             trace ("inserting track %d\n", i);
-            res = insert_single_track (cdio, res, is_image ? fname : NULL, i+first_track);
+            res = insert_single_track (cdio, res, is_image ? fname : NULL, i+first_track, discid);
             if (res) {
                 p->items[i] = res;
             }
@@ -511,13 +568,14 @@ cda_insert (DB_playItem_t *after, const char *fname) {
     else
     {
         track_nr = atoi (shortname);
-        res = insert_single_track (cdio, after, NULL, track_nr);
+        res = insert_single_track (cdio, after, NULL, track_nr, discid);
         if (res) {
             read_track_cdtext (cdio, track_nr, res);
             deadbeef->pl_item_unref (res);
         }
         cdio_destroy (cdio);
     }
+    cddb_disc_destroy (disc);
     return res;
 }
 
@@ -527,7 +585,8 @@ cda_action_add_cd (DB_plugin_action_t *act, DB_playItem_t *it)
     deadbeef->pl_add_files_begin (deadbeef->plt_get_curr ());
     deadbeef->pl_add_file ("all.cda", NULL, NULL);
     deadbeef->pl_add_files_end ();
-    deadbeef->plug_trigger_event_playlistchanged ();
+    deadbeef->plt_modified (deadbeef->plt_get_handle (deadbeef->plt_get_curr ()));
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
 static DB_plugin_action_t add_cd_action = {
