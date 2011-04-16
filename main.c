@@ -408,7 +408,6 @@ player_mainloop (void) {
                 conf_save ();
                 break;
             case DB_EV_TERMINATE:
-                printf ("terminate received\n");
                 term = 1;
                 break;
             case DB_EV_PLAY_CURRENT:
