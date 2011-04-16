@@ -128,9 +128,11 @@ cda_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     int trk_discid = deadbeef->pl_find_meta_int (it, ":CDIO_DISCID", 0);
     if (trk_discid != discid) {
+        cddb_disc_destroy (disc);
         trace ("cdda: the track belongs to another disc, skipped\n");
         return -1;
     }
+    cddb_disc_destroy (disc);
 
 
     if (TRACK_FORMAT_AUDIO != cdio_get_track_format (info->cdio, track_nr))
