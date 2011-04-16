@@ -489,7 +489,7 @@ lfm_format_uri (int subm, DB_playItem_t *song, char *out, int outl) {
 
 static int
 lastfm_songstarted (ddb_event_track_t *ev, uintptr_t data) {
-    trace ("lfm songstarted %s\n", ev->track->fname);
+    trace ("lfm songstarted %p\n", ev->track);
     if (!deadbeef->conf_get_int ("lastfm.enable", 0)) {
         return 0;
     }
@@ -801,7 +801,6 @@ auth_v2 (void) {
 static int
 lfm_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     switch (id) {
-    // subscribe to frameupdate event
     case DB_EV_SONGSTARTED:
         lastfm_songstarted ((ddb_event_track_t *)ctx, 0);
         break;
