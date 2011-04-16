@@ -790,7 +790,9 @@ streamer_set_nextsong (int song, int pstate) {
     nextsong_pstate = pstate;
     if (output->state () == OUTPUT_STATE_STOPPED) {
         if (pstate == 1) { // means user initiated this
+            pl_lock ();
             streamer_playlist = plt_get_curr_ptr ();
+            pl_unlock ();
         }
         // no sense to wait until end of previous song, reset buffer
         bytes_until_next_song = 0;
@@ -1842,7 +1844,9 @@ streamer_play_current_track (void) {
         }
 
         streamer_set_nextsong (idx, 1);
+        pl_lock ();
         streamer_playlist = plt;
+        pl_unlock ();
     }
     else {
         // restart currently playing track
@@ -1858,19 +1862,25 @@ streamer_get_current_fileinfo (void) {
 
 void
 streamer_set_current_playlist (int plt) {
+    pl_lock ();
     streamer_playlist = plt_get (plt);
+    pl_unlock ();
 }
 
 int
 streamer_get_current_playlist (void) {
+    pl_lock ();
     if (!streamer_playlist) {
         streamer_playlist = plt_get_curr_ptr ();
     }
-    return plt_get_idx_of (streamer_playlist);
+    int idx = plt_get_idx_of (streamer_playlist);
+    pl_unlock ();
+    return idx;
 }
 
 void
 streamer_notify_playlist_deleted (playlist_t *plt) {
+    // this is only called from playlist code, no lock required
     if (plt == streamer_playlist) {
         streamer_playlist = NULL;
     }
