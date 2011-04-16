@@ -226,7 +226,9 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
     int64_t offs = -1;
 
     for (;;) {
-        if (!lastframe_valid && valid_frames > 0) {
+        // mp3 files often have some garbage in the beginning
+        // try to skip it if this is the case
+        if (!lastframe_valid && valid_frames > 5) {
             had_invalid_frames = 1;
         }
         if (!lastframe_valid && offs >= 0) {
@@ -933,6 +935,16 @@ cmp3_decode_requested_int16 (mpgmad_info_t *info) {
             idx++;
         }
     }
+    else if (MAD_NCHANNELS(&info->frame.header) == 2 && info->info.fmt.channels == 1) {
+        while (info->buffer.decode_remaining > 0 && info->buffer.readsize > 0) {
+            int16_t sample = MadFixedToSshort (info->synth.pcm.samples[0][idx]);
+            *((int16_t*)info->buffer.out) = sample;
+            info->buffer.readsize -= 2;
+            info->buffer.out += 2;
+            info->buffer.decode_remaining--;
+            idx++;
+        }
+    }
     assert (info->buffer.readsize >= 0);
 }
 
@@ -1065,12 +1077,18 @@ cmp3_decode_int16 (mpgmad_info_t *info) {
     while (!eof) {
         eof = cmp3_stream_frame (info);
         if (info->buffer.decode_remaining > 0) {
+            int readsize = info->buffer.readsize;
             cmp3_decode_requested_int16 (info);
             if (info->buffer.readsize == 0) {
                 return 0;
             }
+            else if (readsize == info->buffer.readsize) {
+                printf ("cmp3_decode_requested_int16 failed\n");
+                return 0;
+            }
         }
     }
+    printf ("cmp3_decode_requested_int16 got %d bytes\n", info->buffer.readsize);
     return 0;
 }
 
