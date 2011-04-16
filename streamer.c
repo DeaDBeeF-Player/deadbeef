@@ -741,7 +741,7 @@ success:
         fileinfo = new_fileinfo;
     }
     mutex_unlock (decodemutex);
-    if (send_songstarted) {
+    if (send_songstarted && playing_track) {
         trace ("songstarted %s\n", playing_track ? pl_find_meta (playing_track, ":URI") : "null");
         plug_trigger_event (DB_EV_SONGSTARTED, 0);
     }
