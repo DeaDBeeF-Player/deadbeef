@@ -391,7 +391,6 @@ player_mainloop (void) {
         uintptr_t ctx;
         uint32_t p1;
         uint32_t p2;
-        messagepump_wait ();
         int term = 0;
         while (messagepump_pop(&msg, &ctx, &p1, &p2) != -1) {
             // broadcast to all plugins
@@ -475,6 +474,7 @@ player_mainloop (void) {
         if (term) {
             return;
         }
+        messagepump_wait ();
         //usleep(50000);
         //plug_trigger_event (DB_EV_FRAMEUPDATE, 0);
     }
