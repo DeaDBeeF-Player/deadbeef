@@ -101,6 +101,7 @@ typedef struct {
 
 typedef sample_t convert_t;
 
+#if 0
 #define SPEAKER_FRONT_LEFT             0x1
 #define SPEAKER_FRONT_RIGHT            0x2
 #define SPEAKER_FRONT_CENTER           0x4
@@ -155,6 +156,57 @@ static int wav_channels (int flags, uint32_t * speaker_flags)
 
     return chans;
 }
+#endif
+
+static int channel_remap[][7] = {
+// DCA_MONO
+    {0},
+// DCA_CHANNEL
+// DCA_STEREO
+// DCA_STEREO_SUMDIFF
+// DCA_STEREO_TOTAL
+    {0,1},
+    {0,1},
+    {0,1},
+    {0,1},
+//DCA_3F
+    {0,1,2},
+//DCA_2F1R
+    {0,1,2},
+//DCA_3F1R
+    {0,1,2,3},
+//DCA_2F2R
+    {0,1,2,3},
+//DCA_3F2R
+    {0,1,2,3,4},
+//DCA_4F2R
+    {0,1,2,3,4,5},
+
+/// same with LFE
+
+// DCA_MONO
+    {1,0},
+// DCA_CHANNEL
+// DCA_STEREO
+// DCA_STEREO_SUMDIFF
+// DCA_STEREO_TOTAL
+    {1,2,0},
+    {1,2,0},
+    {1,2,0},
+    {1,2,0},
+//DCA_3F
+    {1,2,3,0},
+//DCA_2F1R
+    {1,2,0,3},
+//DCA_3F1R
+    {1,2,3,0,4},
+//DCA_2F2R
+    {1,2,0,3,4},
+//DCA_3F2R
+    {1,2,3,0,4,5},
+//DCA_4F2R
+    {1,2,0,4,5,6}
+};
 
 static inline int16_t convert (int32_t i)
 {
@@ -398,6 +450,7 @@ dts_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     int flags = info->flags &~ (DCA_LFE | DCA_ADJUST_LEVEL);
     switch (flags) {
     case DCA_MONO:
+        trace ("dts: mono\n");
         _info->fmt.channels = 1;
         _info->fmt.channelmask = DDB_SPEAKER_FRONT_LEFT;
         break;
@@ -406,30 +459,36 @@ dts_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     case DCA_DOLBY:
     case DCA_STEREO_SUMDIFF:
     case DCA_STEREO_TOTAL:
+        trace ("dts: stereo\n");
         _info->fmt.channels = 2;
         _info->fmt.channelmask = (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
         break;
     case DCA_3F:
     case DCA_2F1R:
+        trace ("dts: 3F or 2F1R\n");
         _info->fmt.channels = 3;
         _info->fmt.channelmask = (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT | DDB_SPEAKER_FRONT_CENTER);
         break;
     case DCA_2F2R:
     case DCA_3F1R:
+        trace ("dts: 2F2R or 3F1R\n");
         _info->fmt.channels = 4;
         _info->fmt.channelmask = (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT | DDB_SPEAKER_BACK_LEFT | DDB_SPEAKER_BACK_RIGHT);
         break;
     case DCA_3F2R:
+        trace ("dts: 3F2R\n");
         _info->fmt.channels = 5;
         _info->fmt.channelmask = (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT | DDB_SPEAKER_BACK_LEFT | DDB_SPEAKER_BACK_RIGHT | DDB_SPEAKER_FRONT_CENTER);
         break;
     case DCA_4F2R:
+        trace ("dts: 4F2R\n");
         _info->fmt.channels = 6;
         _info->fmt.channelmask = (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT | DDB_SPEAKER_BACK_LEFT | DDB_SPEAKER_BACK_RIGHT | DDB_SPEAKER_SIDE_LEFT | DDB_SPEAKER_SIDE_RIGHT);
         break;
     }
 
     if (info->flags & DCA_LFE) {
+        trace ("dts: LFE\n");
         _info->fmt.channelmask |= DDB_SPEAKER_LOW_FREQUENCY;
         _info->fmt.channels++;
     }
@@ -495,12 +554,31 @@ dts_read (DB_fileinfo_t *_info, char *bytes, int size) {
         if (info->remaining > 0) {
             int n = size / samplesize;
             n = min (n, info->remaining);
-            memcpy (bytes, info->output_buffer, n * samplesize);
+
+            if (!(info->flags & DCA_LFE)) {
+                memcpy (bytes, info->output_buffer, n * samplesize);
+                bytes += n * samplesize;
+            }
+            else {
+                int chmap = (info->flags & DCA_CHANNEL_MASK) &~ DCA_LFE;
+                if (info->flags & DCA_LFE) {
+                    chmap += 11;
+                }
+
+                // remap channels
+                char *in = (char *)info->output_buffer;
+                for (int s = 0; s < n; s++) {
+                    for (int i = 0; i < _info->fmt.channels; i++) {
+                        ((int16_t *)bytes)[i] = ((int16_t*)in)[channel_remap[chmap][i]];
+                    }
+                    in += samplesize;
+                    bytes += samplesize;
+                }
+            }
 
             if (info->remaining > n) {
                 memmove (info->output_buffer, info->output_buffer + n * _info->fmt.channels, (info->remaining - n) * samplesize);
             }
-            bytes += n * samplesize;
             size -= n * samplesize;
             info->remaining -= n;
 //            trace ("dca: write %d samples\n", n);
