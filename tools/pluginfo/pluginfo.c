@@ -68,8 +68,6 @@ main (int argc, char *argv[]) {
     printf ("id=\"%s\"\n", plug->id);
     printf ("name=\"%s\"\n", plug->name);
     printf ("descr=\"%s\"\n", plug->descr);
-    printf ("author=\"%s\"\n", plug->author);
-    printf ("email=\"%s\"\n", plug->email);
     printf ("website=\"%s\"\n", plug->website);
 
     dlclose (handle);

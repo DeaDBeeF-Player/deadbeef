@@ -137,7 +137,7 @@ AC_SUBST(ZLIB_LIBS)
 
 if test "x$enable_staticlink" != "xno" ; then
     HAVE_ZIP=yes
-    ZIP_LIBS="../../$LIB/libzip.a"
+    ZIP_LIBS="../../$LIB/libzip.a ../../$LIB/libz.a"
 else
     AC_CHECK_LIB([zip], [main], [HAVE_ZIP=yes])
     ZIP_LIBS="-lzip"
@@ -168,8 +168,26 @@ else
 fi
 fi
 
+if test "x$enable_staticlink" != "xno" ; then
+    HAVE_DBUS=yes
+    DBUS_DEPS_LIBS="../../$LIB/libdbus-1.a ../../$LIB/libexpat.a -lrt"
+    DBUS_DEPS_CFLAGS="-I../../$LIB/include/dbus-1"
+    AC_SUBST(DBUS_DEPS_LIBS)
+else
+    PKG_CHECK_MODULES(DBUS_DEPS, dbus-1, HAVE_DBUS=yes, HAVE_DBUS=no)
+fi
+
 if test "x$enable_pulse" != "xno" ; then
-    PKG_CHECK_MODULES(PULSE_DEPS, libpulse-simple, HAVE_PULSE=yes, HAVE_PULSE=no)
+    if test "x$enable_staticlink" != "xno" ; then
+dnl ../../$LIB/libpulsecore-0.9.22.a ../../$LIB/libpulsecommon-0.9.22.a 
+dnl ../../$LIB/libpulsedsp.a 
+
+        PULSE_DEPS_LIBS="../../$LIB/libpulse-simple.a ../../$LIB/libpulse.a $DBUS_DEPS_LIBS"
+        AC_SUBST(PULSE_DEPS_LIBS)
+        HAVE_PULSE=yes
+    else
+        PKG_CHECK_MODULES(PULSE_DEPS, libpulse-simple, HAVE_PULSE=yes, HAVE_PULSE=no)
+    fi
 fi
 
 AC_CHECK_HEADER([iconv.h],[],[iconv.h not found.])
@@ -195,15 +213,6 @@ else
     AC_CHECK_LIB([curl], [main], [HAVE_CURL=yes])
     CURL_LIBS="-lcurl"
     AC_SUBST(CURL_LIBS)
-fi
-
-if test "x$enable_staticlink" != "xno" ; then
-    HAVE_DBUS=yes
-    DBUS_DEPS_LIBS="../../$LIB/libdbus-1.a ../../$LIB/libexpat.a -lrt"
-    DBUS_DEPS_CFLAGS="-I../../$LIB/include/dbus-1"
-    AC_SUBST(DBUS_DEPS_LIBS)
-else
-    PKG_CHECK_MODULES(DBUS_DEPS, dbus-1, HAVE_DBUS=yes, HAVE_DBUS=no)
 fi
 
 dnl mpgmad plugin
@@ -405,8 +414,15 @@ if test "x$enable_shellexec" != "xno" ; then
 fi
 
 if test "x$enable_artwork" != "xno" ; then
-    PKG_CHECK_MODULES(IMLIB2_DEPS, imlib2, HAVE_IMLIB2=yes, HAVE_IMLIB2=no)
-    if test "x$HAVE_CURL" = "xyes" && test "x$HAVE_VFS_CURL" = "xyes" && test "x$HAVE_IMLIB2" == "xyes" ; then
+    if test "x$enable_staticlink" != "xno" ; then
+        HAVE_IMLIB2=yes
+        IMLIB2_DEPS_LIBS="../../$LIB/libImlib2.a ../../$LIB/ft2.o"
+        AC_SUBST(IMLIB2_DEPS_LIBS)
+    else
+        PKG_CHECK_MODULES(IMLIB2_DEPS, imlib2, HAVE_IMLIB2=yes, HAVE_IMLIB2=no)
+    fi
+
+    if test "x$HAVE_VFS_CURL" = "xyes" && test "x$HAVE_IMLIB2" == "xyes" ; then
         HAVE_ARTWORK=yes
     fi
 fi
