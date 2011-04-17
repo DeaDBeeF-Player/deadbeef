@@ -1,3 +1,42 @@
+version 0.5.0
+	added support for multichannel output
+	added support for output in 8,24,32,float32 bits per sample formats
+	improved replaygain support, with new options
+	new DSP plugin API, allowing format conversions, time stretching and multiple instances
+	added VGZ support to GME plugin
+	moved libsamplerate resampler to separate DSP plugin
+	added new playlist plugin API
+	added new plugin for importing and exporting M3U and PLS formats
+	added Edit->Sort By menu entry, with flexible sort options
+	DUMB, AOSDK, SHN plugins are not distributed in deadbeef tarball anymore
+	added "Shuffle albums" mode
+	improved metadata editing, allowing modification of any text fields, including custom
+	added support for editing metadata for multiple selected tracks
+	improved Album Artist support
+	added album covers to notifications
+	title formatting now gives access to any track properties
+	new option to auto-rename playlist when adding folders
+	multiple mp3 plugin improvements, both speed and stability
+	extended VFS plugin API to allow archive/container plugins
+	added new ZIP plugin, to add/play files from zip files without unpacking
+	numerous stability fixes in CURL plugin
+	numerous stability fixes in AAC plugin
+	fixed "hotkeys stop working after reboot" problem
+	multiple improvements in playlist sorting and grouping
+	multiple fixes in gtk widget rendering (playlist, tab bar, etc)
+	few improvements in cue parser
+	added OSS device selection to gui configuration
+	reworked plugin list UI, to make bigger description field, and per-plugin license terms
+	added saving/restoring window geometry to track properties and preferences
+	new plugin Converter: convert from any supported format using customizable encoder presets)
+	new plugin Soundtouch: resample, change pitch/tempo, timestretch, etc
+	added support for files larger than 2Gb in size
+	fixed CD Audio plugin freeze after switching CDs
+	added support for switching GUI plugins to preferences window
+	customizable lists of supported file extensions in SNDFILE and FFMPEG plugins
+	fixed rendering of right-to-left text in playlist group titles
+	added description with example to shellexec plugin
+
 version 0.4.4
 	fixed race condition in streamer interaction with output plugins
 	atexit and sigterm handlers are not used anymore to prevent playlist corruption when X session is being killed
