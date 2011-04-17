@@ -1083,12 +1083,10 @@ cmp3_decode_int16 (mpgmad_info_t *info) {
                 return 0;
             }
             else if (readsize == info->buffer.readsize) {
-                printf ("cmp3_decode_requested_int16 failed\n");
                 return 0;
             }
         }
     }
-    printf ("cmp3_decode_requested_int16 got %d bytes\n", info->buffer.readsize);
     return 0;
 }
 
