@@ -388,7 +388,6 @@ on_converter_output_browse_clicked     (GtkButton       *button,
     if (folder) {
         deadbeef->conf_set_str ("filechooser.lastdir", folder);
         g_free (folder);
-        deadbeef->sendmessage (M_CONFIG_CHANGED, 0, 0, 0);
     }
     if (response == GTK_RESPONSE_OK) {
         folder = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
@@ -491,7 +490,6 @@ on_preserve_folder_browse_clicked      (GtkButton       *button,
     if (folder) {
         deadbeef->conf_set_str ("filechooser.lastdir", folder);
         g_free (folder);
-        deadbeef->sendmessage (M_CONFIG_CHANGED, 0, 0, 0);
     }
     if (response == GTK_RESPONSE_OK) {
         folder = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
