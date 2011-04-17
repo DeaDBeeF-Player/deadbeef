@@ -763,6 +763,10 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
                             break;
                         }
                     }
+                    for (i = 0; i < _info->fmt.channels; i++) {
+                        trace ("%d ", info->remap[i]);
+                    }
+                    trace ("\n");
                     if (info->remap[0] == -1) {
                         info->remap[0] = 0;
                     }
@@ -774,7 +778,7 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
 
                 for (i = 0; i < n; i++) {
                     for (j = 0; j < _info->fmt.channels; j++) {
-                        ((int16_t *)bytes)[info->remap[j]] = ((int16_t *)src)[j];
+                        ((int16_t *)bytes)[j] = ((int16_t *)src)[info->remap[j]];
                     }
                     src += samplesize;
                     bytes += samplesize;
