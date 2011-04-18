@@ -152,10 +152,16 @@ streamer_start_playback (playItem_t *from, playItem_t *it) {
         pl_item_ref (playing_track);
 
         // setup replaygain
-        float albumgain = pl_get_item_replaygain (playing_track, DDB_REPLAYGAIN_ALBUMGAIN);
+        pl_lock ();
+        const char *gain;
+        gain = pl_find_meta (playing_track, "REPLAYGAIN_ALBUMGAIN");
+        float albumgain = gain ? atof (gain) : 1000;
         float albumpeak = pl_get_item_replaygain (playing_track, DDB_REPLAYGAIN_ALBUMPEAK);
-        float trackgain = pl_get_item_replaygain (playing_track, DDB_REPLAYGAIN_TRACKGAIN);
+
+        gain = pl_find_meta (playing_track, "REPLAYGAIN_TRACKGAIN");
+        float trackgain = gain ? atof (gain) : 1000;
         float trackpeak = pl_get_item_replaygain (playing_track, DDB_REPLAYGAIN_TRACKPEAK);
+        pl_unlock ();
         replaygain_set_values (albumgain, albumpeak, trackgain, trackpeak);
 
         playing_track->played = 1;

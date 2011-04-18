@@ -2608,7 +2608,7 @@ pl_get_item_replaygain (playItem_t *it, int idx) {
     switch (idx) {
     case DDB_REPLAYGAIN_ALBUMGAIN:
     case DDB_REPLAYGAIN_TRACKGAIN:
-        return pl_find_meta_float (it, rg_keys[idx], 1000);
+        return pl_find_meta_float (it, rg_keys[idx], 0);
     case DDB_REPLAYGAIN_ALBUMPEAK:
     case DDB_REPLAYGAIN_TRACKPEAK:
         return pl_find_meta_float (it, rg_keys[idx], 1);
