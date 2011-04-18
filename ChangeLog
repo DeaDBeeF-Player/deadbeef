@@ -3,6 +3,7 @@ version 0.5.0
 	added support for output in 8,24,32,float32 bits per sample formats
 	improved replaygain support, with new options
 	new DSP plugin API, allowing format conversions, time stretching and multiple instances
+	configurable DSP chains
 	added VGZ support to GME plugin
 	moved libsamplerate resampler to separate DSP plugin
 	added new playlist plugin API
@@ -10,7 +11,7 @@ version 0.5.0
 	added Edit->Sort By menu entry, with flexible sort options
 	DUMB, AOSDK, SHN plugins are not distributed in deadbeef tarball anymore
 	added "Shuffle albums" mode
-	improved metadata editing, allowing modification of any text fields, including custom
+	improved metadata editing, allowing modification of any text fields, including custom fields
 	added support for editing metadata for multiple selected tracks
 	improved Album Artist support
 	added album covers to notifications
