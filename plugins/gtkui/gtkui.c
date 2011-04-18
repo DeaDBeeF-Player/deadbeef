@@ -299,7 +299,9 @@ on_trayicon_activate (GtkWidget       *widget,
                                         GdkEvent  *event,
                                         gpointer         user_data)
 {
-    mainwin_toggle_visible ();
+    if (event->type == GDK_BUTTON_PRESS) {
+        mainwin_toggle_visible ();
+    }
     return FALSE;
 }
 
@@ -310,7 +312,7 @@ on_trayicon_button_press_event (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
-    if (event->button == 1) {
+    if (event->button == 1 && event->type == GDK_BUTTON_PRESS) {
         mainwin_toggle_visible ();
     }
     else if (event->button == 2) {
