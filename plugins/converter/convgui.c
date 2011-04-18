@@ -359,6 +359,7 @@ on_converter_encoder_changed           (GtkComboBox     *combobox,
     GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (current_ctx->converter, "encoder"));
     int act = gtk_combo_box_get_active (combo);
     deadbeef->conf_set_int ("converter.encoder_preset", act);
+    deadbeef->conf_save ();
 }
 
 void
@@ -368,6 +369,7 @@ on_converter_dsp_preset_changed        (GtkComboBox     *combobox,
     GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (current_ctx->converter, "dsp_preset"));
     int act = gtk_combo_box_get_active (combo);
     deadbeef->conf_set_int ("converter.dsp_preset", act-1);
+    deadbeef->conf_save ();
 }
 
 void
@@ -1213,6 +1215,7 @@ on_converter_output_format_changed     (GtkComboBox     *combobox,
 {
     int idx = gtk_combo_box_get_active (combobox);
     deadbeef->conf_set_int ("converter.output_format", idx);
+    deadbeef->conf_save ();
 }
 
 GtkWidget*
