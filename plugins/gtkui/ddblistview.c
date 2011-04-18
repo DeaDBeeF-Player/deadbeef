@@ -1090,6 +1090,7 @@ colhdr_anim_swap (DdbListview *pl, int c1, int c2, int x1, int x2) {
 
 void
 ddb_listview_list_setup_vscroll (DdbListview *ps) {
+    ddb_listview_groupcheck (ps);
     GtkWidget *list = ps->list;
     GtkWidget *scroll = ps->scrollbar;
     int vheight = ps->fullheight;
@@ -2960,7 +2961,8 @@ ddb_listview_build_groups (DdbListview *listview) {
 }
 
 void
-ddb_listview_set_vscroll (DdbListview *listview, gboolean scroll) {
+ddb_listview_set_vscroll (DdbListview *listview, int scroll) {
+    GtkAdjustment *adj = gtk_range_get_adjustment (GTK_RANGE (listview->scrollbar));
     gtk_range_set_value (GTK_RANGE (listview->scrollbar), scroll);
 }
 

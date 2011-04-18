@@ -180,7 +180,7 @@ ddb_listview_set_cursor_noscroll (DdbListview *pl, int cursor);
 void
 ddb_listview_scroll_to (DdbListview *listview, int rowpos);
 void
-ddb_listview_set_vscroll (DdbListview *listview, gboolean scroll);
+ddb_listview_set_vscroll (DdbListview *listview, int scroll);
 int
 ddb_listview_is_scrolling (DdbListview *listview);
 int
