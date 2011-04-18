@@ -1154,9 +1154,6 @@ on_dsp_preset_edit                     (GtkButton       *button,
     if (idx == -1) {
         return;
     }
-    if (idx == 0) {
-        return;
-    }
 
     ddb_dsp_preset_t *p = converter_plugin->dsp_preset_get_for_idx (idx);
     if (!p) {
