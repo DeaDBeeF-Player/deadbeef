@@ -185,27 +185,27 @@ static int channel_remap[][7] = {
 /// same with LFE
 
 // DCA_MONO
-    {1,0},
+    {0,1},
 // DCA_CHANNEL
 // DCA_STEREO
 // DCA_STEREO_SUMDIFF
 // DCA_STEREO_TOTAL
-    {1,2,0},
-    {1,2,0},
-    {1,2,0},
-    {1,2,0},
+    {0,1,2},
+    {0,1,2},
+    {0,1,2},
+    {0,1,2},
 //DCA_3F
-    {1,2,3,0},
-//DCA_2F1R
     {1,2,0,3},
+//DCA_2F1R
+    {0,1,3,2},
 //DCA_3F1R
-    {1,2,3,0,4},
+    {1,2,0,4,3},
 //DCA_2F2R
-    {1,2,0,3,4},
+    {0,1,4,2,3},
 //DCA_3F2R
-    {1,2,3,0,4,5},
+    {1,2,0,5,3,4},
 //DCA_4F2R
-    {1,2,0,4,5,6}
+    {1,2,5,3,4,6,7} // FL|FR|LFE|FLC|FRC|RL|RR
 };
 
 static inline int16_t convert (int32_t i)
