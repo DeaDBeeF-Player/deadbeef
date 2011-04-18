@@ -5,6 +5,9 @@ OUTDIR=portable/deadbeef-$VERSION
 PLUGDIR=$OUTDIR/plugins
 DOCDIR=$OUTDIR/doc
 PIXMAPDIR=$OUTDIR/pixmaps
+
+rm -rf $OUTDIR
+
 mkdir -p $PLUGDIR
 mkdir -p $DOCDIR
 mkdir -p $PIXMAPDIR
