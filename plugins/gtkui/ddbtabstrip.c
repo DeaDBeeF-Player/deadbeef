@@ -683,7 +683,9 @@ on_remove_playlist1_activate           (GtkMenuItem     *menuitem,
 {
     if (tab_clicked != -1) {
         deadbeef->plt_remove (tab_clicked);
-        playlist_refresh ();
+        DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+        ddb_listview_refresh (pl, DDB_LIST_CHANGED | DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL);
+        search_refresh ();
         int playlist = deadbeef->plt_get_curr ();
         deadbeef->conf_set_int ("playlist.current", playlist);
     }
@@ -877,7 +879,10 @@ on_tabstrip_button_press_event(GtkWidget      *widget,
         else if (deadbeef->conf_get_int ("gtkui.mmb_delete_playlist", 1)) {
             if (tab_clicked != -1) {
                 deadbeef->plt_remove (tab_clicked);
-                playlist_refresh ();
+                // force invalidation of playlist cache
+                DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+                ddb_listview_refresh (pl, DDB_LIST_CHANGED | DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL);
+                search_refresh ();
                 int playlist = deadbeef->plt_get_curr ();
                 deadbeef->conf_set_int ("playlist.current", playlist);
             }
