@@ -506,8 +506,8 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                         // skip
                         deadbeef->fseek (buffer->file, 2, SEEK_CUR);
                         deadbeef->fread (buf, 1, 3, buffer->file);
-//                        buffer->delay = (((uint32_t)buf[0]) << 4) | ((((uint32_t)buf[1]) & 0xf0)>>4);
-//                        buffer->padding = ((((uint32_t)buf[1])&0x0f)<<8) | ((uint32_t)buf[2]);
+                        buffer->delay = (((uint32_t)buf[0]) << 4) | ((((uint32_t)buf[1]) & 0xf0)>>4);
+                        buffer->padding = ((((uint32_t)buf[1])&0x0f)<<8) | ((uint32_t)buf[2]);
                         // skip
                         deadbeef->fseek (buffer->file, 1, SEEK_CUR);
                         // mp3gain
@@ -752,13 +752,13 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             return -1;
         }
         if (it->endsample > 0) {
-            info->buffer.startsample = it->startsample;
-            info->buffer.endsample = it->endsample;
+            info->buffer.startsample = it->startsample + info->buffer.delay;
+            info->buffer.endsample = it->endsample + info->buffer.delay;
             // that comes from cue, don't calc duration, just seek and play
         }
         else {
             deadbeef->pl_set_item_duration (it, info->buffer.duration);
-            info->buffer.startsample = 0;
+            info->buffer.startsample = info->buffer.delay;
             info->buffer.endsample = info->buffer.totalsamples-info->buffer.delay-info->buffer.padding;
             trace ("mpgmad: seeking to %d(%xH) start offset\n", info->buffer.startoffset, info->buffer.startoffset);
             deadbeef->fseek (info->buffer.file, info->buffer.startoffset, SEEK_SET);
@@ -1182,7 +1182,7 @@ cmp3_seek_sample (DB_fileinfo_t *_info, int sample) {
                 info->buffer.skipsamples = sample - frm * info->buffer.avg_samples_per_frame;
 
                 info->buffer.currentsample = sample;
-                _info->readpos = (float)(info->buffer.currentsample - info->buffer.startsample) / info->buffer.samplerate;
+                _info->readpos = (float)(info->buffer.currentsample - info->buffer.delay - info->buffer.startsample) / info->buffer.samplerate;
 
                 // reset mad
                 mad_synth_finish (&info->synth);
