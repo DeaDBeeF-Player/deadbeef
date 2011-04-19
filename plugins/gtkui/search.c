@@ -60,6 +60,16 @@ search_start (void) {
 }
 
 void
+search_process (const char *text) {
+    deadbeef->pl_search_process (text);
+
+    int row = deadbeef->pl_get_cursor (PL_SEARCH);
+    if (row >= deadbeef->pl_getcount (PL_SEARCH)) {
+        deadbeef->pl_set_cursor (PL_SEARCH, deadbeef->pl_getcount (PL_SEARCH) - 1);
+    }
+}
+
+void
 on_searchentry_changed                 (GtkEditable     *editable,
                                         gpointer         user_data)
 {
@@ -69,24 +79,15 @@ on_searchentry_changed                 (GtkEditable     *editable,
     
     // walk playlist starting with playlist_head, and populate list starting
     // with search_head
-
-    const gchar *text = gtk_entry_get_text (GTK_ENTRY (editable));
-    deadbeef->pl_search_process (text);
-
-    int row = deadbeef->pl_get_cursor (PL_SEARCH);
-    if (row >= deadbeef->pl_getcount (PL_SEARCH)) {
-        deadbeef->pl_set_cursor (PL_SEARCH, deadbeef->pl_getcount (PL_SEARCH) - 1);
-    }
-
     search_refresh ();
-
-    // redraw main playlist to be in sync selection-wise
-    ddb_listview_refresh (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), DDB_REFRESH_LIST);
 }
 
 void
 search_refresh (void) {
     if (searchwin && gtk_widget_get_visible (searchwin)) {
+        GtkEntry *entry = lookup_widget (searchwin, "searchentry");
+        const gchar *text = gtk_entry_get_text (entry);
+        search_process (text);
         GtkWidget *pl = lookup_widget (searchwin, "searchlist");
         ddb_listview_refresh (DDB_LISTVIEW (pl), DDB_REFRESH_VSCROLL | DDB_REFRESH_LIST | DDB_LIST_CHANGED);
     }

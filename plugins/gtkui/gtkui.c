@@ -490,7 +490,7 @@ playlistswitch_cb (gpointer none) {
             deadbeef->pl_item_unref (it);
         }
     }
-    ddb_listview_clear_sort (listview);
+
     playlist_refresh ();
     ddb_listview_set_vscroll (listview, scroll);
     search_refresh ();
