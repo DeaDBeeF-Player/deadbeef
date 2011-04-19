@@ -403,7 +403,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                     buffer->channels = nchannels;
                 }
                 buffer->bitspersample = 16;
-                trace ("frame %d mpeg v%d layer %d bitrate %d samplerate %d packetlength %d channels %d\n", nframe, ver, layer, bitrate, samplerate, packetlength, nchannels);
+//                trace ("frame %d mpeg v%d layer %d bitrate %d samplerate %d packetlength %d channels %d\n", nframe, ver, layer, bitrate, samplerate, packetlength, nchannels);
             }
         }
         lastframe_valid = 1;
@@ -1080,9 +1080,6 @@ cmp3_decode_int16 (mpgmad_info_t *info) {
             int readsize = info->buffer.readsize;
             cmp3_decode_requested_int16 (info);
             if (info->buffer.readsize == 0) {
-                return 0;
-            }
-            else if (readsize == info->buffer.readsize) {
                 return 0;
             }
         }
