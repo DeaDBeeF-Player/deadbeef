@@ -23,8 +23,8 @@
 #include "../../deadbeef.h"
 #include "../../config.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
@@ -389,7 +389,7 @@ palsa_init (void) {
                 snd_strerror (err));
         goto open_error;
     }
-    fprintf (stderr, "alsa avail_min: %d frames\n", (int)av);
+    trace ("alsa avail_min: %d frames\n", (int)av);
 
 
 //    if ((err = snd_pcm_sw_params_set_start_threshold (audio, sw_params, 0U)) < 0) {
