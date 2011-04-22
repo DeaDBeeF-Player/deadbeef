@@ -81,12 +81,13 @@ on_searchentry_changed                 (GtkEditable     *editable,
     // walk playlist starting with playlist_head, and populate list starting
     // with search_head
     search_refresh ();
+    main_refresh ();
 }
 
 void
 search_refresh (void) {
     if (searchwin && gtk_widget_get_visible (searchwin)) {
-        GtkEntry *entry = lookup_widget (searchwin, "searchentry");
+        GtkEntry *entry = GTK_ENTRY (lookup_widget (searchwin, "searchentry"));
         const gchar *text = gtk_entry_get_text (entry);
         search_process (text);
         GtkWidget *pl = lookup_widget (searchwin, "searchlist");
