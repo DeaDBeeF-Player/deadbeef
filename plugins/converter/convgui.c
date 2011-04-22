@@ -382,13 +382,13 @@ on_converter_output_browse_clicked     (GtkButton       *button,
     gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dlg), FALSE);
     // restore folder
     deadbeef->conf_lock ();
-    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), deadbeef->conf_get_str_fast ("filechooser.lastdir", ""));
+    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), deadbeef->conf_get_str_fast ("converter.lastdir", ""));
     deadbeef->conf_unlock ();
     int response = gtk_dialog_run (GTK_DIALOG (dlg));
     // store folder
     gchar *folder = gtk_file_chooser_get_current_folder_uri (GTK_FILE_CHOOSER (dlg));
     if (folder) {
-        deadbeef->conf_set_str ("filechooser.lastdir", folder);
+        deadbeef->conf_set_str ("converter.lastdir", folder);
         g_free (folder);
     }
     if (response == GTK_RESPONSE_OK) {
