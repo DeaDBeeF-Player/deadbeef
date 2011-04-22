@@ -551,11 +551,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                         deadbeef->fseek (buffer->file, 2, SEEK_CUR);
                         deadbeef->fread (buf, 1, 3, buffer->file);
                         buffer->delay = (((uint32_t)buf[0]) << 4) | ((((uint32_t)buf[1]) & 0xf0)>>4);
-                        buffer->delay += 529;
                         buffer->padding = ((((uint32_t)buf[1])&0x0f)<<8) | ((uint32_t)buf[2]);
-                        if (buffer->padding >= 529) {
-                            buffer->padding -= 529;
-                        }
                         // skip
                         deadbeef->fseek (buffer->file, 1, SEEK_CUR);
                         // mp3gain
@@ -814,6 +810,10 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         if (res < 0) {
             trace ("mpgmad: cmp3_init: initial cmp3_scan_stream failed\n");
             return -1;
+        }
+        info->buffer.delay += 529;
+        if (info->buffer.padding >= 529) {
+            info->buffer.padding -= 529;
         }
         if (it->endsample > 0) {
             info->buffer.startsample = it->startsample + info->buffer.delay;
