@@ -175,10 +175,21 @@ esc_xml (const char *cmd, char *esc, int size) {
     *dst = 0;
 }
 
+static void show_notification (DB_playItem_t *track);
+static DB_playItem_t *last_track = NULL;
+static time_t request_timer = 0;
 
 static void
 cover_avail_callback (const char *fname, const char *artist, const char *album, void *user_data) {
-//    show_notification (track);
+    deadbeef->pl_lock ();
+    if (last_track && (time (NULL) - request_timer < 4)) {
+        show_notification (last_track);
+    }
+    if (last_track) {
+        deadbeef->pl_item_unref (last_track);
+        last_track = NULL;
+    }
+    deadbeef->pl_unlock ();
 }
 
 static void show_notification (DB_playItem_t *track) {
@@ -195,6 +206,16 @@ static void show_notification (DB_playItem_t *track) {
 //    esc_xml (title, esc_title, sizeof (esc_title));
     esc_xml (content, esc_content, sizeof (esc_content));
     DBusMessage *msg = dbus_message_new_method_call (E_NOTIFICATION_BUS_NAME, E_NOTIFICATION_PATH, E_NOTIFICATION_INTERFACE, "Notify");
+
+    deadbeef->pl_lock ();
+    if (last_track) {
+        deadbeef->pl_item_unref (last_track);
+        last_track = 0;
+    }
+    last_track = track;
+    deadbeef->pl_item_ref (last_track);
+    request_timer = time (NULL);
+    deadbeef->pl_unlock ();
 
     const char *v_appname = "DeaDBeeF";
     dbus_uint32_t v_id = 0;
@@ -270,6 +291,12 @@ notify_start (void) {
 
 int
 notify_stop (void) {
+    deadbeef->pl_lock ();
+    if (last_track) {
+        deadbeef->pl_item_unref (last_track);
+        last_track = NULL;
+    }
+    deadbeef->pl_unlock ();
     return 0;
 }
 
