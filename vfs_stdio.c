@@ -26,11 +26,17 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+//#define USE_STDIO
+
 static DB_functions_t *deadbeef;
 typedef struct {
     DB_vfs_t *vfs;
+#ifdef USE_STDIO
+    FILE *stream;
+#else
     int stream;
     int64_t offs;
+#endif
 } STDIO_FILE;
 
 static DB_vfs_t plugin;
@@ -40,21 +46,34 @@ stdio_open (const char *fname) {
     if (!memcmp (fname, "file://", 7)) {
         fname += 7;
     }
+#ifdef USE_STDIO
+    FILE *file = fopen (fname, "rb");
+    if (!file) {
+        return NULL;
+    }
+#else
     int file = open (fname, O_LARGEFILE);
     if (file == -1) {
         return NULL;
     }
+#endif
     STDIO_FILE *fp = malloc (sizeof (STDIO_FILE));
     fp->vfs = &plugin;
     fp->stream = file;
+#ifndef USE_STDIO
     fp->offs = 0;
+#endif
     return (DB_FILE*)fp;
 }
 
 static void
 stdio_close (DB_FILE *stream) {
     assert (stream);
+#ifdef USE_STDIO
+    fclose (((STDIO_FILE *)stream)->stream);
+#else
     close (((STDIO_FILE *)stream)->stream);
+#endif
     free (stream);
 }
 
@@ -62,44 +81,69 @@ static size_t
 stdio_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
     assert (stream);
     assert (ptr);
+#ifdef USE_STDIO
+    return fread (ptr, size, nmemb, ((STDIO_FILE*)stream)->stream);
+#else
     int res = read (((STDIO_FILE*)stream)->stream, ptr, size*nmemb);
     if (res == -1) {
         return 0;
     }
     ((STDIO_FILE*)stream)->offs += res;
     return res / size;
+#endif
 }
 
 static int
 stdio_seek (DB_FILE *stream, int64_t offset, int whence) {
     assert (stream);
+#ifdef USE_STDIO
+    return fseek (((STDIO_FILE *)stream)->stream, offset, whence);
+#else
     off64_t res = lseek64 (((STDIO_FILE *)stream)->stream, offset, whence);
     if (res == -1) {
         return -1;
     }
+//    printf ("lseek res: %lld (%lld, %d, prev=%lld)\n", res, offset, whence,  ((STDIO_FILE*)stream)->offs);
     ((STDIO_FILE*)stream)->offs = res; 
+#endif
     return 0;
 }
 
 static int64_t
 stdio_tell (DB_FILE *stream) {
     assert (stream);
+#ifdef USE_STDIO
+    return ftell (((STDIO_FILE*)stream)->stream);
+#else
     return ((STDIO_FILE*)stream)->offs;
+#endif
 }
 
 static void
 stdio_rewind (DB_FILE *stream) {
     assert (stream);
+#ifdef USE_STDIO
+    rewind (((STDIO_FILE*)stream)->stream);
+#else
     stdio_seek (stream, 0, SEEK_SET);
+#endif
 }
 
 static int64_t
 stdio_getlength (DB_FILE *stream) {
     assert (stream);
     STDIO_FILE *f = (STDIO_FILE *)stream;
+#ifdef USE_STDIO
+    size_t offs = ftell (f->stream);
+    fseek (f->stream, 0, SEEK_END);
+    size_t l = ftell (f->stream);
+    fseek (f->stream, offs, SEEK_SET);
+    return l;
+#else
     int64_t size = lseek64 (f->stream, 0, SEEK_END);
     lseek64 (f->stream, f->offs, SEEK_SET);
     return size;
+#endif
 }
 
 const char *
