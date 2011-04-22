@@ -57,6 +57,7 @@ search_start (void) {
     gtk_widget_show (searchwin);
     gtk_window_present (GTK_WINDOW (searchwin));
     search_refresh ();
+    main_refresh ();
 }
 
 void
