@@ -104,6 +104,7 @@ oss_set_hwparams (ddb_waveformat_t *fmt) {
 
     plugin.fmt.samplerate = rate;
     plugin.fmt.channels = channels;
+    plugin.fmt.is_float = 0;
     switch (samplefmt) {
     case AFMT_S8:
         plugin.fmt.bps = 8;
@@ -296,10 +297,10 @@ oss_thread (void *context) {
            res = write (fd, buf, write_size);
 
         deadbeef->mutex_unlock (mutex);
-        if (res != write_size) {
-            perror ("oss write");
-            fprintf (stderr, "oss: failed to write buffer\n");
-        }
+//        if (res != write_size) {
+//            perror ("oss write");
+//            fprintf (stderr, "oss: failed to write buffer\n");
+//        }
         usleep (1000); // this must be here to prevent mutex deadlock
     }
 }
