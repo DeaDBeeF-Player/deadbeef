@@ -58,8 +58,18 @@
 //    added flags field
 // 1.0->1.1 changelog:
 //    added sample-accurate seek positions for sub-tracks
+// 1.1->1.2 changelog:
+//    added flags field
+// 1.2->1.3 changelog:
+//    removed legacy data used for compat with 0.4.4
+//    note: ddb-0.5.0 should keep using 1.1 playlist format
+//    1.3 support is designed for transition to ddb-0.6.0
 #define PLAYLIST_MAJOR_VER 1
 #define PLAYLIST_MINOR_VER 2
+
+#if (PLAYLIST_MINOR_VER<2)
+#error writing playlists in format <1.2 is not supported
+#endif
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -1950,6 +1960,7 @@ pl_save (const char *fname) {
     for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
         uint16_t l;
         uint8_t ll;
+#if (PLAYLIST_MINOR_VER==2)
         const char *fname = pl_find_meta (it, ":URI");
         l = strlen (fname);
         if (fwrite (&l, 1, 2, fp) != 2) {
@@ -1979,6 +1990,7 @@ pl_save (const char *fname) {
         if (fwrite (&l, 1, 2, fp) != 2) {
             goto save_fail;
         }
+#endif
         if (fwrite (&it->startsample, 1, 4, fp) != 4) {
             goto save_fail;
         }
@@ -1988,6 +2000,7 @@ pl_save (const char *fname) {
         if (fwrite (&it->_duration, 1, 4, fp) != 4) {
             goto save_fail;
         }
+#if (PLAYLIST_MINOR_VER==2)
         const char *filetype = pl_find_meta (it, ":FILETYPE");
         if (!filetype) {
             filetype = "";
@@ -2017,6 +2030,7 @@ pl_save (const char *fname) {
         if (fwrite (&rg_trackpeak, 1, 4, fp) != 4) {
             goto save_fail;
         }
+#endif
         if (fwrite (&it->_flags, 1, 4, fp) != 4) {
             goto save_fail;
         }
@@ -2221,7 +2235,7 @@ pl_load (const char *fname) {
     if (fread (&minorver, 1, 1, fp) != 1) {
         goto load_fail;
     }
-    if (minorver < 1/*PLAYLIST_MINOR_VER*/) {
+    if (minorver < 1) {
         trace ("bad minorver=%d\n", minorver);
         goto load_fail;
     }
@@ -2236,38 +2250,40 @@ pl_load (const char *fname) {
             goto load_fail;
         }
         uint16_t l;
-        // fname
-        if (fread (&l, 1, 2, fp) != 2) {
-            goto load_fail;
-        }
-        char fname[l+1];
-        if (fread (fname, 1, l, fp) != l) {
-            goto load_fail;
-        }
-        fname[l] = 0;
-        pl_add_meta (it, ":URI", fname);
-        // decoder
-        uint8_t ll;
-        if (fread (&ll, 1, 1, fp) != 1) {
-            goto load_fail;
-        }
-        if (ll >= 20) {
-            goto load_fail;
-        }
-        char decoder_id[20] = "";
-        if (ll) {
-            if (fread (decoder_id, 1, ll, fp) != ll) {
+        int16_t tracknum = 0;
+        if (minorver <= 2) {
+            // fname
+            if (fread (&l, 1, 2, fp) != 2) {
                 goto load_fail;
             }
-            decoder_id[ll] = 0;
-            pl_add_meta (it, ":DECODER", decoder_id);
+            char fname[l+1];
+            if (fread (fname, 1, l, fp) != l) {
+                goto load_fail;
+            }
+            fname[l] = 0;
+            pl_add_meta (it, ":URI", fname);
+            // decoder
+            uint8_t ll;
+            if (fread (&ll, 1, 1, fp) != 1) {
+                goto load_fail;
+            }
+            if (ll >= 20) {
+                goto load_fail;
+            }
+            char decoder_id[20] = "";
+            if (ll) {
+                if (fread (decoder_id, 1, ll, fp) != ll) {
+                    goto load_fail;
+                }
+                decoder_id[ll] = 0;
+                pl_add_meta (it, ":DECODER", decoder_id);
+            }
+            // tracknum
+            if (fread (&tracknum, 1, 2, fp) != 2) {
+                goto load_fail;
+            }
+            pl_set_meta_int (it, ":TRACKNUM", tracknum);
         }
-        // tracknum
-        int16_t tracknum;
-        if (fread (&tracknum, 1, 2, fp) != 2) {
-            goto load_fail;
-        }
-        pl_set_meta_int (it, ":TRACKNUM", tracknum);
         // startsample
         if (fread (&it->startsample, 1, 4, fp) != 4) {
             goto load_fail;
@@ -2284,54 +2300,56 @@ pl_load (const char *fname) {
         pl_format_time (it->_duration, s, sizeof(s));
         pl_replace_meta (it, ":DURATION", s);
 
-        // legacy filetype support
-        uint8_t ft;
-        if (fread (&ft, 1, 1, fp) != 1) {
-            goto load_fail;
-        }
-        if (ft) {
-            char ftype[ft+1];
-            if (fread (ftype, 1, ft, fp) != ft) {
+        if (minorver <= 2) {
+            // legacy filetype support
+            uint8_t ft;
+            if (fread (&ft, 1, 1, fp) != 1) {
                 goto load_fail;
             }
-            ftype[ft] = 0;
-            pl_replace_meta (it, ":FILETYPE", ftype);
-        }
+            if (ft) {
+                char ftype[ft+1];
+                if (fread (ftype, 1, ft, fp) != ft) {
+                    goto load_fail;
+                }
+                ftype[ft] = 0;
+                pl_replace_meta (it, ":FILETYPE", ftype);
+            }
         
-        float f;
+            float f;
 
-        if (fread (&f, 1, 4, fp) != 4) {
-            goto load_fail;
-        }
-        if (f != 0) {
-            pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, f);
-        }
+            if (fread (&f, 1, 4, fp) != 4) {
+                goto load_fail;
+            }
+            if (f != 0) {
+                pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, f);
+            }
 
-        if (fread (&f, 1, 4, fp) != 4) {
-            goto load_fail;
-        }
-        if (f == 0) {
-            f = 1;
-        }
-        if (f != 1) {
-            pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, f);
-        }
+            if (fread (&f, 1, 4, fp) != 4) {
+                goto load_fail;
+            }
+            if (f == 0) {
+                f = 1;
+            }
+            if (f != 1) {
+                pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, f);
+            }
 
-        if (fread (&f, 1, 4, fp) != 4) {
-            goto load_fail;
-        }
-        if (f != 0) {
-            pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, f);
-        }
+            if (fread (&f, 1, 4, fp) != 4) {
+                goto load_fail;
+            }
+            if (f != 0) {
+                pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, f);
+            }
 
-        if (fread (&f, 1, 4, fp) != 4) {
-            goto load_fail;
-        }
-        if (f == 0) {
-            f = 1;
-        }
-        if (f != 1) {
-            pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, f);
+            if (fread (&f, 1, 4, fp) != 4) {
+                goto load_fail;
+            }
+            if (f == 0) {
+                f = 1;
+            }
+            if (f != 1) {
+                pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, f);
+            }
         }
 
         uint32_t flg = 0;
