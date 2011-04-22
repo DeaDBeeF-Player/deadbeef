@@ -1075,6 +1075,10 @@ gtkui_thread (void *ctx) {
 
     gtk_main ();
 
+    if (refresh_timeout) {
+        g_source_remove (refresh_timeout);
+        refresh_timeout = 0;
+    }
     cover_art_free ();
     eq_window_destroy ();
     trkproperties_destroy ();
