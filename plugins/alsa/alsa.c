@@ -199,6 +199,7 @@ retry:
         for (i = 0; fmt[i] != -1; i++) {
             if (fmt[i] != sample_fmt && fmt_cnt[i] > plugin.fmt.bps) {
                 if (snd_pcm_hw_params_set_format (audio, hw_params, fmt[i]) >= 0) {
+                    fprintf (stderr, "cannot set sample format (%s), trying all supported formats\n", snd_strerror (err));
                     break;
                 }
             }
@@ -209,6 +210,7 @@ retry:
             for (i = 0; fmt[i] != -1; i++) {
                 if (fmt[i] != sample_fmt && fmt_cnt[i] < plugin.fmt.bps) {
                     if (snd_pcm_hw_params_set_format (audio, hw_params, fmt[i]) >= 0) {
+                        fprintf (stderr, "cannot set sample format (%s), trying all supported formats\n", snd_strerror (err));
                         break;
                     }
                 }
