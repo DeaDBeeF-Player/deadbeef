@@ -319,7 +319,7 @@ static int min_tab_size = 80;
 static int tab_moved = 0;
 
 void
-ddb_tabstrip_draw_tab (GtkWidget *widget, GdkDrawable *drawable, int selected, int x, int y, int w, int h) {
+ddb_tabstrip_draw_tab (GtkWidget *widget, GdkDrawable *drawable, int idx, int selected, int x, int y, int w, int h) {
     GdkPoint points_filled[] = {
         { x+2, y + h },
         { x+2, y + 2 },
@@ -351,13 +351,34 @@ ddb_tabstrip_draw_tab (GtkWidget *widget, GdkDrawable *drawable, int selected, i
     GdkGC *outer_frame = gdk_gc_new (drawable);
     GdkGC *inner_frame = gdk_gc_new (drawable);
     GdkColor clr;
+    deadbeef->pl_lock ();
+    void *plt = deadbeef->plt_get_handle (idx);
+    const char *bgclr = deadbeef->plt_find_meta (plt, "gui.bgcolor");
+    int fallback = 1;
+    if (bgclr) {
+        int r, g, b;
+        if (3 == sscanf (bgclr, "%02x%02x%02x", &r, &g, &b)) {
+            fallback = 0;
+            clr.red = r * 0x101;
+            clr.green = g * 0x101;
+            clr.blue = b * 0x101;
+        }
+    }
+    deadbeef->pl_unlock ();
     if (selected) {
-        gdk_gc_set_rgb_fg_color (bg, (gtkui_get_tabstrip_base_color (&clr), &clr));//&widget->style->bg[GTK_STATE_NORMAL]); // FIXME: need base color
+        if (fallback) {
+            gtkui_get_tabstrip_base_color (&clr);
+        }
+        gdk_gc_set_rgb_fg_color (bg, &clr);
         gdk_gc_set_rgb_fg_color (outer_frame, (gtkui_get_tabstrip_dark_color (&clr), &clr));
         gdk_gc_set_rgb_fg_color (inner_frame, (gtkui_get_tabstrip_light_color (&clr), &clr));
     }
     else {
-        gdk_gc_set_rgb_fg_color (bg, (gtkui_get_tabstrip_mid_color (&clr), &clr));
+        if (fallback) {
+            gtkui_get_tabstrip_mid_color (&clr);
+        }
+        gdk_gc_set_rgb_fg_color (bg, &clr);
+
         gdk_gc_set_rgb_fg_color (outer_frame, (gtkui_get_tabstrip_dark_color (&clr), &clr));
         gdk_gc_set_rgb_fg_color (inner_frame, (gtkui_get_tabstrip_mid_color (&clr), &clr));
     }
@@ -465,20 +486,22 @@ tabstrip_adjust_hscroll (DdbTabStrip *ts) {
 }
 
 void
-set_tab_text_color (int idx) {
+set_tab_text_color (int idx, int selected) {
     if (idx == -1) {
         return;
     }
     deadbeef->pl_lock ();
     void *plt = deadbeef->plt_get_handle (idx);
-    const char *clr = deadbeef->plt_find_meta (plt, "gui.color");
     int fallback = 1;
-    if (clr) {
-        int r, g, b;
-        if (3 == sscanf (clr, "%02x%02x%02x", &r, &g, &b)) {
-            fallback = 0;
-            float fg[3] = {(float)r/0xff, (float)g/0xff, (float)b/0xff};
-            draw_set_fg_color (fg);
+    if (idx != selected, 1) {
+        const char *clr = deadbeef->plt_find_meta (plt, "gui.color");
+        if (clr) {
+            int r, g, b;
+            if (3 == sscanf (clr, "%02x%02x%02x", &r, &g, &b)) {
+                fallback = 0;
+                float fg[3] = {(float)r/0xff, (float)g/0xff, (float)b/0xff};
+                draw_set_fg_color (fg);
+            }
         }
     }
     if (fallback) {
@@ -550,11 +573,11 @@ tabstrip_render (DdbTabStrip *ts) {
         area.width = w;
         area.height = 24;
         if (idx != tab_selected) {
-            ddb_tabstrip_draw_tab (widget, backbuf, idx == tab_selected, x, y, w, h);
+            ddb_tabstrip_draw_tab (widget, backbuf, idx, idx == tab_selected, x, y, w, h);
             char tab_title[100];
             plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
 
-            set_tab_text_color (idx);
+            set_tab_text_color (idx, tab_selected);
             draw_text (x + text_left_padding, y - text_vert_offset, w, 0, tab_title);
         }
         x += w - tab_overlap_size;
@@ -576,10 +599,10 @@ tabstrip_render (DdbTabStrip *ts) {
         area.y = 0;
         area.width = w;
         area.height = 24;
-        ddb_tabstrip_draw_tab (widget, backbuf, 1, x, y, w, h);
+        ddb_tabstrip_draw_tab (widget, backbuf, idx, 1, x, y, w, h);
         char tab_title[100];
         plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
-        set_tab_text_color (idx);
+        set_tab_text_color (idx, tab_selected);
         draw_text (x + text_left_padding, y - text_vert_offset, w, 0, tab_title);
     }
     else {
@@ -595,10 +618,10 @@ tabstrip_render (DdbTabStrip *ts) {
                     break;
                 }
                 if (w > 0) {
-                    ddb_tabstrip_draw_tab (widget, backbuf, 1, x, y, w, h);
+                    ddb_tabstrip_draw_tab (widget, backbuf, idx, 1, x, y, w, h);
                     char tab_title[100];
                     plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
-                    set_tab_text_color (idx);
+                    set_tab_text_color (idx, tab_selected);
                     draw_text (x + text_left_padding, y - text_vert_offset, w, 0, tab_title);
                 }
                 break;
