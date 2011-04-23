@@ -419,7 +419,7 @@ if test "x$enable_artwork" != "xno" ; then
         JPEG_DEPS_LIBS="../../$LIB/libjpeg.a"
         AC_SUBST(JPEG_DEPS_LIBS)
     else
-        PKG_CHECK_MODULES(JPEG_DEPS, jpeg, HAVE_JPEG=yes, HAVE_JPEG=no)
+        AC_CHECK_LIB([jpeg], [main], [HAVE_JPEG=yes;JPEG_DEPS_LIBS="-ljpeg";AC_SUBST(JPEG_DEPS_LIBS)])
     fi
 
     if test "x$HAVE_VFS_CURL" = "xyes" && test "x$HAVE_JPEG" == "xyes" ; then
