@@ -415,14 +415,14 @@ fi
 
 if test "x$enable_artwork" != "xno" ; then
     if test "x$enable_staticlink" != "xno" ; then
-        HAVE_IMLIB2=yes
-        IMLIB2_DEPS_LIBS="../../$LIB/libImlib2.a ../../$LIB/ft2.o"
-        AC_SUBST(IMLIB2_DEPS_LIBS)
+        HAVE_JPEG=yes
+        JPEG_DEPS_LIBS="../../$LIB/libjpeg.a"
+        AC_SUBST(JPEG_DEPS_LIBS)
     else
-        PKG_CHECK_MODULES(IMLIB2_DEPS, imlib2, HAVE_IMLIB2=yes, HAVE_IMLIB2=no)
+        PKG_CHECK_MODULES(JPEG_DEPS, jpeg, HAVE_JPEG=yes, HAVE_JPEG=no)
     fi
 
-    if test "x$HAVE_VFS_CURL" = "xyes" && test "x$HAVE_IMLIB2" == "xyes" ; then
+    if test "x$HAVE_VFS_CURL" = "xyes" && test "x$HAVE_JPEG" == "xyes" ; then
         HAVE_ARTWORK=yes
     fi
 fi

@@ -7,11 +7,19 @@
 #include <unistd.h>
 #include <fnmatch.h>
 #include <inttypes.h>
-#include <Imlib2.h>
 #include "../../deadbeef.h"
 #include "artwork.h"
 #include "lastfm.h"
 #include "albumartorg.h"
+
+#ifdef USE_IMLIB2
+#include <Imlib2.h>
+static uintptr_t imlib_mutex;
+#else
+#include <jpeglib.h>
+#include <jerror.h>
+#include <setjmp.h>
+#endif
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
@@ -39,7 +47,6 @@ typedef struct cover_query_s {
 static cover_query_t *queue;
 static cover_query_t *queue_tail;
 static uintptr_t mutex;
-static uintptr_t imlib_mutex;
 static uintptr_t cond;
 static volatile int terminate;
 static volatile int clear_queue;
@@ -173,6 +180,158 @@ check_dir (const char *dir, mode_t mode)
     return 1;
 }
 
+struct my_error_mgr {
+  struct jpeg_error_mgr pub;	/* "public" fields */
+
+  jmp_buf setjmp_buffer;	/* for return to caller */
+};
+
+typedef struct my_error_mgr * my_error_ptr;
+
+METHODDEF(void)
+my_error_exit (j_common_ptr cinfo)
+{
+  /* cinfo->err really points to a my_error_mgr struct, so coerce pointer */
+  my_error_ptr myerr = (my_error_ptr) cinfo->err;
+
+  /* Always display the message. */
+  /* We could postpone this until after returning, if we chose. */
+  (*cinfo->err->output_message) (cinfo);
+
+  /* Return control to the setjmp point */
+  longjmp(myerr->setjmp_buffer, 1);
+}
+
+
+static int
+jpeg_resize (const char *fname, const char *outname, int scaled_size) {
+    trace ("resizing %s into %s\n", fname, outname);
+    struct jpeg_decompress_struct cinfo;
+    struct jpeg_compress_struct cinfo_out;
+
+    memset (&cinfo, 0, sizeof (cinfo));
+    memset (&cinfo_out, 0, sizeof (cinfo_out));
+
+    struct my_error_mgr jerr;
+
+    uint8_t *c;
+    FILE *fp = NULL, *out = NULL;
+
+
+    cinfo.err = jpeg_std_error (&jerr.pub);
+
+    jerr.pub.error_exit = my_error_exit;
+    /* Establish the setjmp return context for my_error_exit to use. */
+    if (setjmp(jerr.setjmp_buffer)) {
+        /* If we get here, the JPEG code has signaled an error.
+         * We need to clean up the JPEG object, close the input file, and return.
+         */
+        jpeg_destroy_decompress(&cinfo);
+        jpeg_destroy_compress(&cinfo_out);
+        if (fp) {
+            fclose(fp);
+        }
+        if (out) {
+            fclose (out);
+        }
+        return -1;
+    }
+
+    jpeg_create_decompress (&cinfo);
+
+    fp = fopen (fname, "rb");
+    if (!fp) {
+        return -1;
+    }
+    out = fopen (outname, "w+b");
+    if (!out) {
+        fclose (fp);
+        return -1;
+    }
+
+    jpeg_stdio_src (&cinfo, fp);
+
+    jpeg_read_header (&cinfo, TRUE);
+    jpeg_start_decompress (&cinfo);
+
+    int i;
+    
+    cinfo_out.err = cinfo.err;
+
+    jpeg_create_compress(&cinfo_out);
+
+    jpeg_stdio_dest(&cinfo_out, out);
+
+    int sw, sh;
+    if (deadbeef->conf_get_int ("artwork.scale_towards_longer", 1)) {
+        if (cinfo.image_width > cinfo.image_height) {
+            sh = scaled_size;
+            sw = scaled_size * cinfo.image_width / cinfo.image_height;
+        }
+        else {
+            sw = scaled_size;
+            sh = scaled_size * cinfo.image_height / cinfo.image_width;
+        }
+    }
+    else {
+        if (cinfo.image_width < cinfo.image_height) {
+            sh = scaled_size;
+            sw = scaled_size * cinfo.image_width / cinfo.image_height;
+        }
+        else {
+            sw = scaled_size;
+            sh = scaled_size * cinfo.image_height / cinfo.image_width;
+        }
+    }
+
+
+    cinfo_out.image_width      = sw;
+    cinfo_out.image_height     = sh;
+    cinfo_out.input_components = cinfo.output_components;
+    cinfo_out.in_color_space   = cinfo.out_color_space;
+
+    jpeg_set_defaults(&cinfo_out);
+
+    jpeg_set_quality(&cinfo_out, 100, TRUE);
+    jpeg_start_compress(&cinfo_out, TRUE);
+
+    float sy = 0;
+    float dy = (float)cinfo.output_height / (float)sh;
+
+    while (cinfo.output_scanline < cinfo.output_height)
+    {
+        uint8_t buf[cinfo.output_width * cinfo.output_components];
+        uint8_t *ptr = buf;
+        jpeg_read_scanlines (&cinfo, &ptr, 1);
+
+        // scale row
+        uint8_t out_buf[sw * cinfo.output_components];
+        float sx = 0;
+        float dx = (float)cinfo.output_width/(float)sw;
+        for (int i = 0; i < sw; i++) {
+            memcpy (&out_buf[i * cinfo.output_components], &buf[(int)sx * cinfo.output_components], cinfo.output_components);
+            sx += dx;
+        }
+
+        while ((int)sy == cinfo.output_scanline-1) {
+            uint8_t *ptr = out_buf;
+            jpeg_write_scanlines(&cinfo_out, &ptr, 1);
+            sy += dy;
+        }
+    }
+
+    jpeg_finish_compress(&cinfo_out); //Always finish
+    jpeg_destroy_compress(&cinfo_out); //Free resources
+
+    jpeg_finish_decompress (&cinfo);
+    jpeg_destroy_decompress (&cinfo);
+
+    fclose(fp);
+    fclose(out);
+
+    return 0;
+}
+
 #define BUFFER_SIZE 4096
 
 static int
@@ -180,6 +339,7 @@ copy_file (const char *in, const char *out, int img_size) {
     trace ("copying %s to %s\n", in, out);
 
     if (img_size != -1) {
+#ifdef USE_IMLIB2
         deadbeef->mutex_lock (imlib_mutex);
         // need to scale, use imlib2
         Imlib_Image img = imlib_load_image_immediately (in);
@@ -230,7 +390,12 @@ copy_file (const char *in, const char *out, int img_size) {
         imlib_context_set_image(img);
         imlib_free_image ();
         deadbeef->mutex_unlock (imlib_mutex);
-
+#else
+        int res = jpeg_resize (in, out, img_size);
+        if (res != 0) {
+            unlink (out);
+        }
+#endif
         return 0;
     }
 
@@ -788,7 +953,9 @@ artwork_plugin_start (void)
     artwork_filemask[sizeof(artwork_filemask)-1] = 0;
 
     mutex = deadbeef->mutex_create_nonrecursive ();
+#ifdef USE_IMLIB2
     imlib_mutex = deadbeef->mutex_create_nonrecursive ();
+#endif
     cond = deadbeef->cond_create ();
     tid = deadbeef->thread_start_low_priority (fetcher_thread, NULL);
 
@@ -814,10 +981,12 @@ artwork_plugin_stop (void)
         deadbeef->mutex_free (mutex);
         mutex = 0;
     }
+#ifdef USE_IMLIB2
     if (imlib_mutex) {
         deadbeef->mutex_free (imlib_mutex);
         imlib_mutex = 0;
     }
+#endif
     if (cond) {
         deadbeef->cond_free (cond);
         cond = 0;
