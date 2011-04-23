@@ -79,8 +79,9 @@ extern "C" {
 ////////////////////////////
 // playlist structures
 
-// iterators
 // that's a good candidate for redesign
+// short explanation: PL_MAIN and PL_SEARCH are used as "iter" argument in
+// playlist functions, to reference main or search playlist, respectively
 #define PL_MAIN 0
 #define PL_SEARCH 1
 
