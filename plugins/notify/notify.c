@@ -195,10 +195,13 @@ cover_avail_callback (const char *fname, const char *artist, const char *album, 
 static void show_notification (DB_playItem_t *track) {
     char title[1024];
     char content[1024];
-    deadbeef->conf_lock ();
-    deadbeef->pl_format_title (track, -1, title, sizeof (title), -1, deadbeef->conf_get_str_fast ("notify.format", NOTIFY_DEFAULT_TITLE));
-    deadbeef->pl_format_title (track, -1, content, sizeof (content), -1, deadbeef->conf_get_str_fast ("notify.format_content", NOTIFY_DEFAULT_CONTENT));
-    deadbeef->conf_unlock ();
+
+    char format[200];
+    char format_content[200];
+    deadbeef->conf_get_str ("notify.format", NOTIFY_DEFAULT_TITLE, format, sizeof (format));
+    deadbeef->conf_get_str ("notify.format_content", NOTIFY_DEFAULT_CONTENT, format_content, sizeof (format_content));
+    deadbeef->pl_format_title (track, -1, title, sizeof (title), -1, format);
+    deadbeef->pl_format_title (track, -1, content, sizeof (content), -1, format_content);
 
     // escape &
 //    char esc_title[1024];
