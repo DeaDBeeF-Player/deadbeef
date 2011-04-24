@@ -462,6 +462,7 @@ hotkeys_event_loop (void *unused) {
 
 static int
 hotkeys_connect (void) {
+    printf ("hotkeys_connect\n");
     finished = 0;
     loop_tid = 0;
     disp = XOpenDisplay (NULL);
@@ -474,6 +475,7 @@ hotkeys_connect (void) {
 
     read_config (disp);
     XSync (disp, 0);
+    printf ("hotkeys_connect done\n");
     loop_tid = deadbeef->thread_start (hotkeys_event_loop, 0);
     return 0;
 }
@@ -718,8 +720,8 @@ static DB_hotkeys_plugin_t plugin = {
     ,
     .misc.plugin.website = "http://deadbeef.sf.net",
     .misc.plugin.get_actions = hotkeys_get_actions,
-    .misc.plugin.connect = hotkeys_connect,
-    .misc.plugin.disconnect = hotkeys_disconnect,
+    .misc.plugin.start = hotkeys_connect,
+    .misc.plugin.stop = hotkeys_disconnect,
     .get_name_for_keycode = hotkeys_get_name_for_keycode,
     .reset = hotkeys_reset,
 };
