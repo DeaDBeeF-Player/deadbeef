@@ -628,7 +628,11 @@ palsa_thread (void *context) {
         LOCK;
         /* find out how much space is available for playback data */
         snd_pcm_sframes_t frames_to_deliver = snd_pcm_avail_update (audio);
-        while (state == OUTPUT_STATE_PLAYING/*frames_to_deliver >= period_size, 1*/) {
+
+        // FIXME: pushing data without waiting for next buffer will drain entire
+        // streamer buffer, and might lead to stuttering
+        // however, waiting for buffer does a lot of cpu wakeups
+        while (/*state == OUTPUT_STATE_PLAYING*/frames_to_deliver >= period_size) {
             if (alsa_terminate) {
                 break;
             }
@@ -679,7 +683,7 @@ palsa_thread (void *context) {
             frames_to_deliver = snd_pcm_avail_update (audio);
         }
         UNLOCK;
-        //usleep (period_size * 1000000 / plugin.fmt.samplerate / 2);
+        usleep ((period_size-frames_to_deliver) * 1000000 / plugin.fmt.samplerate / plugin.fmt.channels);
     }
 }
 
