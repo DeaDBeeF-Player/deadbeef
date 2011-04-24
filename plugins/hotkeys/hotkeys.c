@@ -462,7 +462,6 @@ hotkeys_event_loop (void *unused) {
 
 static int
 hotkeys_connect (void) {
-    printf ("hotkeys_connect\n");
     finished = 0;
     loop_tid = 0;
     disp = XOpenDisplay (NULL);
@@ -475,7 +474,6 @@ hotkeys_connect (void) {
 
     read_config (disp);
     XSync (disp, 0);
-    printf ("hotkeys_connect done\n");
     loop_tid = deadbeef->thread_start (hotkeys_event_loop, 0);
     return 0;
 }
