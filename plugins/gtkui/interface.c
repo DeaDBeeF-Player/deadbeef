@@ -1101,6 +1101,7 @@ create_progressdlg (void)
   gtk_window_set_modal (GTK_WINDOW (progressdlg), TRUE);
   gtk_window_set_skip_taskbar_hint (GTK_WINDOW (progressdlg), TRUE);
   gtk_window_set_skip_pager_hint (GTK_WINDOW (progressdlg), TRUE);
+  gtk_window_set_type_hint (GTK_WINDOW (progressdlg), GDK_WINDOW_TYPE_HINT_DIALOG);
 
   vbox6 = gtk_vbox_new (FALSE, 8);
   gtk_widget_show (vbox6);
