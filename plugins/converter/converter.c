@@ -515,6 +515,14 @@ get_output_path (DB_playItem_t *it, const char *outfolder, const char *outfile, 
 
 int
 convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int output_bps, int output_is_float, int preserve_folder_structure, const char *root_folder, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort) {
+    if (deadbeef->pl_get_item_duration (it) <= 0) {
+        deadbeef->pl_lock ();
+        const char *fname = deadbeef->pl_find_meta (it, ":URI");
+        fprintf (stderr, "converter: stream %s doesn't have finite length, skipped\n", fname);
+        deadbeef->pl_unlock ();
+        return -1;
+    }
+
     int err = -1;
     FILE *enc_pipe = NULL;
     FILE *temp_file = NULL;
