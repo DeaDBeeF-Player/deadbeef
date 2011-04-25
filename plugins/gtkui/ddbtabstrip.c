@@ -351,10 +351,10 @@ ddb_tabstrip_draw_tab (GtkWidget *widget, GdkDrawable *drawable, int idx, int se
     GdkGC *outer_frame = gdk_gc_new (drawable);
     GdkGC *inner_frame = gdk_gc_new (drawable);
     GdkColor clr;
+    int fallback = 1;
     deadbeef->pl_lock ();
     void *plt = deadbeef->plt_get_handle (idx);
     const char *bgclr = deadbeef->plt_find_meta (plt, "gui.bgcolor");
-    int fallback = 1;
     if (bgclr) {
         int r, g, b;
         if (3 == sscanf (bgclr, "%02x%02x%02x", &r, &g, &b)) {
@@ -493,15 +493,13 @@ set_tab_text_color (int idx, int selected) {
     deadbeef->pl_lock ();
     void *plt = deadbeef->plt_get_handle (idx);
     int fallback = 1;
-    if (idx != selected, 1) {
-        const char *clr = deadbeef->plt_find_meta (plt, "gui.color");
-        if (clr) {
-            int r, g, b;
-            if (3 == sscanf (clr, "%02x%02x%02x", &r, &g, &b)) {
-                fallback = 0;
-                float fg[3] = {(float)r/0xff, (float)g/0xff, (float)b/0xff};
-                draw_set_fg_color (fg);
-            }
+    const char *clr = deadbeef->plt_find_meta (plt, "gui.color");
+    if (clr) {
+        int r, g, b;
+        if (3 == sscanf (clr, "%02x%02x%02x", &r, &g, &b)) {
+            fallback = 0;
+            float fg[3] = {(float)r/0xff, (float)g/0xff, (float)b/0xff};
+            draw_set_fg_color (fg);
         }
     }
     if (fallback) {
@@ -537,6 +535,9 @@ tabstrip_render (DdbTabStrip *ts) {
 
     const char *detail = "button";
     int tab_selected = deadbeef->plt_get_curr ();
+    if (tab_selected == -1) {
+        return;
+    }
 
     GdkGC *gc = gdk_gc_new (backbuf);
 
