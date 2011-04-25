@@ -263,8 +263,8 @@ converter_process (converter_ctx_t *conv)
     return 0;
 }
 
-static int
-converter_show (DB_plugin_action_t *act, DB_playItem_t *it) {
+static gboolean
+converter_show_cb (void *ctx) {
     converter_ctx_t *conv = malloc (sizeof (converter_ctx_t));
     current_ctx = conv;
     memset (conv, 0, sizeof (converter_ctx_t));
@@ -349,6 +349,13 @@ converter_show (DB_plugin_action_t *act, DB_playItem_t *it) {
         current_ctx = NULL;
         break;
     }
+    return FALSE;
+}
+
+static int
+converter_show (DB_plugin_action_t *act, DB_playItem_t *it) {
+    // this can be called from non-gtk thread
+    gdk_threads_add_idle (converter_show_cb, NULL);
     return 0;
 }
 
