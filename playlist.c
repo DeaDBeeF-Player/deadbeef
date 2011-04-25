@@ -726,21 +726,28 @@ pl_get_qvalue_from_cue (const uint8_t *p, int sz, char *out) {
         *out = 0;
         return;
     }
-    // seek "
-    while (*p && *p != '"') {
-        p++;
-    }
+    p = pl_cue_skipspaces (p);
     if (*p == 0) {
         *out = 0;
         return;
     }
-    p++;
-    p = pl_cue_skipspaces (p);
-    while (*p && *p != '"' && sz > 1) {
-        sz--;
-        *out++ = *p++;
+
+    if (*p == '"') {
+        p++;
+        p = pl_cue_skipspaces (p);
+        while (*p && *p != '"' && sz > 1) {
+            sz--;
+            *out++ = *p++;
+        }
+        *out = 0;
     }
-    *out = 0;
+    else {
+        while (*p && *p > 0x20) {
+            sz--;
+            *out++ = *p++;
+        }
+        *out = 0;
+    }
     const char *charset = junk_detect_charset (str);
     if (!charset) {
         return;
