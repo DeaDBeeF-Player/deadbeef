@@ -101,6 +101,9 @@ load_m3u (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
             after = it;
         }
         if (pabort && *pabort) {
+            if (after) {
+                deadbeef->pl_item_ref (after);
+            }
             deadbeef->pl_unlock ();
             free (buffer);
             return after;
@@ -109,6 +112,9 @@ load_m3u (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
         if (p >= end) {
             break;
         }
+    }
+    if (after) {
+        deadbeef->pl_item_ref (after);
     }
     deadbeef->pl_unlock ();
     trace ("leave pl_insert_m3u\n");
@@ -206,6 +212,9 @@ load_pls (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
                     after = it;
                 }
                 if (pabort && *pabort) {
+                    if (after) {
+                        deadbeef->pl_item_ref (after);
+                    }
                     deadbeef->pl_unlock ();
                     free (buffer);
                     return after;
@@ -244,6 +253,9 @@ load_pls (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
                     after = it;
                 }
                 if (pabort && *pabort) {
+                    if (after) {
+                        deadbeef->pl_item_ref (after);
+                    }
                     deadbeef->pl_unlock ();
                     free (buffer);
                     return after;
@@ -281,6 +293,9 @@ load_pls (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
                     after = it;
                 }
                 if (pabort && *pabort) {
+                    if (after) {
+                        deadbeef->pl_item_ref (after);
+                    }
                     deadbeef->pl_unlock ();
                     free (buffer);
                     return after;
@@ -322,6 +337,9 @@ load_pls (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
         if (it) {
             after = it;
         }
+    }
+    if (after) {
+        deadbeef->pl_item_ref (after);
     }
     deadbeef->pl_unlock ();
     free (buffer);
