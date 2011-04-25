@@ -1601,16 +1601,25 @@ pl_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *us
     return -1;
 }
 
-void
+int
 pl_add_files_begin (int plt) {
+    pl_lock ();
+    if (addfiles_playlist) {
+        pl_unlock ();
+        return -1;
+    }
     addfiles_playlist = plt_get (plt);
+    pl_unlock ();
     trace ("adding to playlist %d (%s)\n", plt, addfiles_playlist->title);
+    return 0;
 }
 
 void
 pl_add_files_end (void) {
     trace ("end adding to playlist %s\n", addfiles_playlist->title);
+    pl_lock ();
     addfiles_playlist = NULL;
+    pl_unlock ();
 }
 
 int

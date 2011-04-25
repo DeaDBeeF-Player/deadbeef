@@ -43,20 +43,25 @@ extern "C" {
 // this function should return pointer to DB_plugin_t structure
 // that is enough for both static and dynamic modules
 
-// add DB_PLUGIN_SET_API_VERSION macro when you define plugin structure
+// add DDB_REQUIRE_API_VERSION(x,y) macro when you define plugin structure
 // like this:
 // static DB_decoder_t plugin = {
-//   DB_PLUGIN_SET_API_VERSION
+//   DDB_REQUIRE_API_VERSION(1,0)
 //  ............
 // }
 // this is required for versioning
 // if you don't do it -- no version checking will be done (useful for
 // debugging/development)
-// DON'T release plugins without DB_PLUGIN_SET_API_VERSION
+// your plugin will be accepted in all releases with API major version 'x',
+// and minor version 'y' and up.
+// increments in major version number mean that there are API breaks, and
+// plugins must be recompiled to be compatible
+//
+// please DON'T release plugins without version requirement
 
 // api version history:
 // 9.9 -- devel
-// 0.10 -- deadbeef-0.4.4-portable-r1
+// 0.10 -- deadbeef-0.4.4-portable-r1 (note: 0.4.4 uses api v0.9)
 // 0.9 -- deadbeef-0.4.3-portable-build3
 // 0.8 -- deadbeef-0.4.2
 // 0.7 -- deabdeef-0.4.0
@@ -70,9 +75,16 @@ extern "C" {
 #define DB_API_VERSION_MAJOR 9
 #define DB_API_VERSION_MINOR 9
 
-#define DB_PLUGIN_SET_API_VERSION\
+#define DDB_PLUGIN_SET_API_VERSION\
     .plugin.api_vmajor = DB_API_VERSION_MAJOR,\
     .plugin.api_vminor = DB_API_VERSION_MINOR,
+
+// backwards compat macro
+#define DB_PLUGIN_SET_API_VERSION DDB_PLUGIN_SET_API_VERSION
+
+#define DDB_REQUIRE_API_VERSION(x,y)\
+    .plugin.api_vmajor = x,\
+    .plugin.api_vminor = y,
 
 #define MAX_DECODER_PLUGINS 50
 
@@ -409,7 +421,11 @@ typedef struct {
     void (*pl_item_copy) (DB_playItem_t *out, DB_playItem_t *in);
     int (*pl_add_file) (const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
     int (*pl_add_dir) (const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
-    void (*pl_add_files_begin) (int playlist);
+
+    // this function may return -1 if it is not possible to add files right now.
+    // caller must cancel operation in this case, or wait until previous add
+    // finishes
+    int (*pl_add_files_begin) (int playlist);
     void (*pl_add_files_end) (void);
     DB_playItem_t *(*pl_insert_item) (DB_playItem_t *after, DB_playItem_t *it);
     DB_playItem_t *(*pl_insert_dir) (DB_playItem_t *after, const char *dirname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);

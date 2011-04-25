@@ -238,7 +238,10 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             pl_reset_cursor ();
         }
         if (parg < pend) {
-            deadbeef->pl_add_files_begin (curr_plt);
+            if (deadbeef->pl_add_files_begin (curr_plt) != 0) {
+                snprintf (sendback, sbsize, "it's not allowed to add files to playlist right now, because another file adding operation is in progress. please try again later.");
+                return 0;
+            }
             while (parg < pend) {
                 char resolved[PATH_MAX];
                 const char *pname;
@@ -778,7 +781,7 @@ main (int argc, char *argv[]) {
                 fwrite (prn, 1, strlen (prn), stderr);
             }
             else if (sz > 0 && out[0]) {
-                fprintf (stderr, "got unknown response:\nlength=%d\n%s\n", (int)sz, out);
+                fprintf (stderr, "%s\n", out);
             }
         }
         close (s);
