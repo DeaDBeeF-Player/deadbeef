@@ -165,7 +165,12 @@ update_vorbis_comments (DB_playItem_t *it, vorbis_comment *vc, int refresh_playl
     f &= ~DDB_TAG_MASK;
     f |= DDB_TAG_VORBISCOMMENTS;
     deadbeef->pl_set_item_flags (it, f);
-    deadbeef->plt_modified (deadbeef->plt_get_handle (deadbeef->plt_get_curr ()));
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_modified (plt);
+        deadbeef->plt_unref (plt);
+    }
+
     if (refresh_playlist) {
         deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
     }

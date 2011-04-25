@@ -1687,7 +1687,7 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
         GtkWidget *widget = ps->list;
         if (gtk_drag_check_threshold (widget, ps->lastpos[0], ex, ps->lastpos[1], ey)) {
             ps->dragwait = 0;
-            ps->drag_source_playlist = deadbeef->plt_get_curr ();
+            ps->drag_source_playlist = deadbeef->plt_get_curr_idx ();
             GtkTargetEntry entry = {
                 .target = "DDB_URI_LIST",
                 .flags = GTK_TARGET_SAME_WIDGET,

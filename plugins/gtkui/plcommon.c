@@ -538,9 +538,11 @@ on_group_by_none_activate              (GtkMenuItem     *menuitem,
     strcpy (group_by_str, "");
     deadbeef->conf_set_str ("playlist.group_by", group_by_str);
 
-    deadbeef->pl_lock ();
-    deadbeef->plt_modified (deadbeef->plt_get_handle (deadbeef->plt_get_curr ()));
-    deadbeef->pl_unlock ();
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_modified (plt);
+        deadbeef->plt_unref (plt);
+    }
     main_refresh ();
 }
 
@@ -550,9 +552,11 @@ on_group_by_artist_date_album_activate (GtkMenuItem     *menuitem,
 {
     strcpy (group_by_str, "%a - [%y] %b");
     deadbeef->conf_set_str ("playlist.group_by", group_by_str);
-    deadbeef->pl_lock ();
-    deadbeef->plt_modified (deadbeef->plt_get_handle (deadbeef->plt_get_curr ()));
-    deadbeef->pl_unlock ();
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_modified (plt);
+        deadbeef->plt_unref (plt);
+    }
     main_refresh ();
 }
 
@@ -562,9 +566,11 @@ on_group_by_artist_activate            (GtkMenuItem     *menuitem,
 {
     strcpy (group_by_str, "%a");
     deadbeef->conf_set_str ("playlist.group_by", group_by_str);
-    deadbeef->pl_lock ();
-    deadbeef->plt_modified (deadbeef->plt_get_handle (deadbeef->plt_get_curr ()));
-    deadbeef->pl_unlock ();
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_modified (plt);
+        deadbeef->plt_unref (plt);
+    }
     main_refresh ();
 }
 
@@ -585,9 +591,11 @@ on_group_by_custom_activate            (GtkMenuItem     *menuitem,
         strncpy (group_by_str, text, sizeof (group_by_str));
         group_by_str[sizeof (group_by_str)-1] = 0;
         deadbeef->conf_set_str ("playlist.group_by", group_by_str);
-        deadbeef->pl_lock ();
-        deadbeef->plt_modified (deadbeef->plt_get_handle (deadbeef->plt_get_curr ()));
-        deadbeef->pl_unlock ();
+        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+        if (plt) {
+            deadbeef->plt_modified (plt);
+            deadbeef->plt_unref (plt);
+        }
         main_refresh ();
     }
     gtk_widget_destroy (dlg);

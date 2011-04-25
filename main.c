@@ -227,18 +227,19 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
                 idx = plt_add (plt_get_count (), str);
             }
             if (idx >= 0) {
-                plt_set_curr (idx);
+                plt_set_curr_idx (idx);
             }
         }
         // add files
-        int curr_plt = plt_get_curr ();
+        playlist_t *curr_plt = plt_get_curr ();
         if (!queue) {
             pl_clear ();
             plug_trigger_event_playlistchanged ();
             pl_reset_cursor ();
         }
         if (parg < pend) {
-            if (deadbeef->pl_add_files_begin (curr_plt) != 0) {
+            if (deadbeef->pl_add_files_begin ((ddb_playlist_t *)curr_plt) != 0) {
+                plt_unref (curr_plt);
                 snprintf (sendback, sbsize, "it's not allowed to add files to playlist right now, because another file adding operation is in progress. please try again later.");
                 return 0;
             }
@@ -812,7 +813,7 @@ main (int argc, char *argv[]) {
         exit (-1);
     }
     pl_load_all ();
-    plt_set_curr (conf_get_int ("playlist.current", 0));
+    plt_set_curr_idx (conf_get_int ("playlist.current", 0));
 
     // execute server commands in local context
     int noloadpl = 0;
@@ -890,8 +891,7 @@ main (int argc, char *argv[]) {
     plug_unload_all ();
 
     // at this point we can simply do exit(0), but let's clean up for debugging
-    plt_free (); // plt_free may access conf_*
-    pl_free ();
+    pl_free (); // may access conf_*
     conf_free ();
     messagepump_free ();
     plug_cleanup ();

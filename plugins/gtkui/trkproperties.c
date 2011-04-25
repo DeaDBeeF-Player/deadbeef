@@ -462,7 +462,11 @@ static gboolean
 write_finished_cb (void *ctx) {
     gtk_widget_destroy (progressdlg);
     progressdlg = NULL;
-    deadbeef->plt_modified (deadbeef->plt_get_handle (deadbeef->plt_get_curr ()));
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_modified (plt);
+        deadbeef->plt_unref (plt);
+    }
     main_refresh ();
     search_refresh ();
     trkproperties_modified = 0;

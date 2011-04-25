@@ -395,7 +395,11 @@ cddb_thread (void *items_i)
     }
     cddb_disc_destroy (disc);
     cleanup_thread_params (params);
-    deadbeef->plt_modified (deadbeef->plt_get_handle (deadbeef->plt_get_curr ()));
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_modified (plt);
+        deadbeef->plt_unref (plt);
+    }
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
@@ -584,10 +588,14 @@ cda_insert (DB_playItem_t *after, const char *fname) {
 static int
 cda_action_add_cd (DB_plugin_action_t *act, DB_playItem_t *it)
 {
-    deadbeef->pl_add_files_begin (deadbeef->plt_get_curr ());
-    deadbeef->pl_add_file ("all.cda", NULL, NULL);
-    deadbeef->pl_add_files_end ();
-    deadbeef->plt_modified (deadbeef->plt_get_handle (deadbeef->plt_get_curr ()));
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->pl_add_files_begin (plt);
+        deadbeef->pl_add_file ("all.cda", NULL, NULL);
+        deadbeef->pl_add_files_end ();
+        deadbeef->plt_modified (plt);
+        deadbeef->plt_unref (plt);
+    }
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 

@@ -48,7 +48,7 @@ plt_get_title_wrapper (int plt, char *buffer, int len) {
         return;
     }
     deadbeef->pl_lock ();
-    void *p = deadbeef->plt_get_handle (plt);
+    void *p = deadbeef->plt_get_for_idx (plt);
     deadbeef->plt_get_title (p, buffer, len);
     deadbeef->pl_unlock ();
     char *end;
@@ -353,7 +353,7 @@ ddb_tabstrip_draw_tab (GtkWidget *widget, GdkDrawable *drawable, int idx, int se
     GdkColor clr;
     int fallback = 1;
     deadbeef->pl_lock ();
-    void *plt = deadbeef->plt_get_handle (idx);
+    void *plt = deadbeef->plt_get_for_idx (idx);
     const char *bgclr = deadbeef->plt_find_meta (plt, "gui.bgcolor");
     if (bgclr) {
         int r, g, b;
@@ -476,7 +476,7 @@ tabstrip_adjust_hscroll (DdbTabStrip *ts) {
                 ts->hscrollpos = w - (widget->allocation.width - arrow_widget_width*2);
                 deadbeef->conf_set_int ("gtkui.tabscroll", ts->hscrollpos);
             }
-            tabstrip_scroll_to_tab_int (ts, deadbeef->plt_get_curr (), 0);
+            tabstrip_scroll_to_tab_int (ts, deadbeef->plt_get_curr_idx (), 0);
         }
         else {
             ts->hscrollpos = 0;
@@ -491,7 +491,7 @@ set_tab_text_color (int idx, int selected) {
         return;
     }
     deadbeef->pl_lock ();
-    void *plt = deadbeef->plt_get_handle (idx);
+    void *plt = deadbeef->plt_get_for_idx (idx);
     int fallback = 1;
     const char *clr = deadbeef->plt_find_meta (plt, "gui.color");
     if (clr) {
@@ -534,7 +534,7 @@ tabstrip_render (DdbTabStrip *ts) {
     text_right_padding = h - 3;
 
     const char *detail = "button";
-    int tab_selected = deadbeef->plt_get_curr ();
+    int tab_selected = deadbeef->plt_get_curr_idx ();
     if (tab_selected == -1) {
         return;
     }
@@ -655,7 +655,7 @@ get_tab_under_cursor (DdbTabStrip *ts, int x) {
     int idx;
     int cnt = deadbeef->plt_get_count ();
     int fw = tabs_left_margin - hscroll;
-    int tab_selected = deadbeef->plt_get_curr ();
+    int tab_selected = deadbeef->plt_get_curr_idx ();
     for (idx = 0; idx < cnt; idx++) {
         char title[100];
         plt_get_title_wrapper (idx, title, sizeof (title));
@@ -693,7 +693,7 @@ on_rename_playlist1_activate           (GtkMenuItem     *menuitem,
     if (res == GTK_RESPONSE_OK) {
         const char *text = gtk_entry_get_text (GTK_ENTRY (e));
         deadbeef->pl_lock ();
-        void *p = deadbeef->plt_get_handle (tab_clicked);
+        void *p = deadbeef->plt_get_for_idx (tab_clicked);
         deadbeef->plt_set_title (p, text);
         deadbeef->pl_unlock ();
     }
@@ -710,7 +710,7 @@ on_remove_playlist1_activate           (GtkMenuItem     *menuitem,
         DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
         ddb_listview_refresh (pl, DDB_LIST_CHANGED | DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL);
         search_refresh ();
-        int playlist = deadbeef->plt_get_curr ();
+        int playlist = deadbeef->plt_get_curr_idx ();
         deadbeef->conf_set_int ("playlist.current", playlist);
     }
 }
@@ -772,7 +772,7 @@ create_plmenu (void)
 
 static void
 tabstrip_scroll_left (DdbTabStrip *ts) {
-    int tab = deadbeef->plt_get_curr ();
+    int tab = deadbeef->plt_get_curr_idx ();
     if (tab > 0) {
         tab--;
         gtkui_playlist_set_curr (tab);
@@ -782,7 +782,7 @@ tabstrip_scroll_left (DdbTabStrip *ts) {
 
 static void
 tabstrip_scroll_right (DdbTabStrip *ts) {
-    int tab = deadbeef->plt_get_curr ();
+    int tab = deadbeef->plt_get_curr_idx ();
     if (tab < deadbeef->plt_get_count ()-1) {
         tab++;
         gtkui_playlist_set_curr (tab);
@@ -907,7 +907,7 @@ on_tabstrip_button_press_event(GtkWidget      *widget,
                 DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
                 ddb_listview_refresh (pl, DDB_LIST_CHANGED | DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL);
                 search_refresh ();
-                int playlist = deadbeef->plt_get_curr ();
+                int playlist = deadbeef->plt_get_curr_idx ();
                 deadbeef->conf_set_int ("playlist.current", playlist);
             }
         }
@@ -1039,7 +1039,7 @@ on_tabstrip_drag_motion_event          (GtkWidget       *widget,
                                         guint            time)
 {
     int tab = get_tab_under_cursor (DDB_TABSTRIP (widget), x);
-    int prev = deadbeef->plt_get_curr ();
+    int prev = deadbeef->plt_get_curr_idx ();
     if (tab != -1 && tab != prev) {
         gtkui_playlist_set_curr (tab);
     }

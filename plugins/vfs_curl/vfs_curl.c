@@ -212,7 +212,11 @@ http_parse_shoutcast_meta (HTTP_FILE *fp, const char *meta, int size) {
                 else {
                     vfs_curl_set_meta (fp->track, "title", title);
                 }
-                deadbeef->plt_modified (deadbeef->plt_get_handle (deadbeef->plt_get_curr ()));
+                ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+                if (plt) {
+                    deadbeef->plt_modified (plt);
+                    deadbeef->plt_unref (plt);
+                }
                 deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
             }
             return 0;
@@ -468,7 +472,11 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
             fp->wait_meta = fp->icy_metaint; 
         }
     }
-    deadbeef->plt_modified (deadbeef->plt_get_handle (deadbeef->plt_get_curr ()));
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_modified (plt);
+        deadbeef->plt_unref (plt);
+    }
     if (refresh_playlist) {
         deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
     }

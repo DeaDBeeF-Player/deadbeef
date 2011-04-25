@@ -109,7 +109,7 @@ int main_get_idx (DdbListviewIter it) {
 void
 main_drag_n_drop (DdbListviewIter before, int from_playlist, uint32_t *indices, int length, int copy) {
     deadbeef->pl_lock ();
-    int curr = deadbeef->plt_get_curr ();
+//    int curr = deadbeef->plt_get_curr_idx ();
     if (copy) {
         deadbeef->pl_copy_items (PL_MAIN, from_playlist, (DB_playItem_t *)before, indices, length);
     }
@@ -238,7 +238,7 @@ void main_col_free_user_data (void *data) {
 void
 main_vscroll_changed (int pos) {
     coverart_reset_queue ();
-    int curr = deadbeef->plt_get_curr ();
+    int curr = deadbeef->plt_get_curr_idx ();
     char conf[100];
     snprintf (conf, sizeof (conf), "playlist.scroll.%d", curr);
     deadbeef->conf_set_int (conf, pos);

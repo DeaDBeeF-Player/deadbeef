@@ -57,6 +57,7 @@ typedef struct playlist_s {
     playItem_t *tail[PL_MAX_ITERATORS]; // tail of linked list
     int current_row[PL_MAX_ITERATORS]; // current row (cursor)
     struct DB_metaInfo_s *meta; // linked list storing metainfo
+    int refc;
 } playlist_t;
 
 // global playlist control functions
@@ -85,7 +86,16 @@ playlist_t *
 plt_get_curr_ptr (void);
 
 playlist_t *
-plt_get (int idx);
+plt_get_for_idx (int idx);
+
+void
+plt_ref (playlist_t *plt);
+
+void
+plt_unref (playlist_t *plt);
+
+void
+plt_free (playlist_t *plt);
 
 int
 plt_get_count (void);
@@ -109,12 +119,15 @@ int
 plt_find (const char *name);
 
 void
-plt_free (void);
-
-void
-plt_set_curr (int plt);
+plt_set_curr_idx (int plt);
 
 int
+plt_get_curr_idx (void);
+
+void
+plt_set_curr (playlist_t *plt);
+
+playlist_t *
 plt_get_curr (void);
 
 int
@@ -140,6 +153,9 @@ plt_move (int from, int to);
 void
 pl_clear (void);
 
+void
+plt_clear (playlist_t *plt);
+
 int
 pl_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *user_data);
 
@@ -147,7 +163,7 @@ int
 pl_add_file (const char *fname, int (*cb)(playItem_t *it, void *data), void *user_data);
 
 int
-pl_add_files_begin (int plt);
+pl_add_files_begin (playlist_t *plt);
 
 void
 pl_add_files_end (void);
@@ -246,7 +262,7 @@ void
 pl_crop_selected (void);
 
 int
-pl_save (const char *fname);
+plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data);
 
 int
 pl_save_n (int n);
@@ -257,8 +273,8 @@ pl_save_current (void);
 int
 pl_save_all (void);
 
-int
-pl_load (const char *fname);
+playItem_t *
+plt_load (playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data);
 
 int
 pl_load_all (void);

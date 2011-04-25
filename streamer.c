@@ -199,7 +199,7 @@ int
 str_get_idx_of (playItem_t *it) {
     pl_lock ();
     if (!streamer_playlist) {
-        streamer_playlist = plt_get_curr_ptr ();
+        streamer_playlist = plt_get_curr ();
     }
     playItem_t *c = streamer_playlist->head[PL_MAIN];
     int idx = 0;
@@ -219,7 +219,7 @@ playItem_t *
 str_get_for_idx (int idx) {
     pl_lock ();
     if (!streamer_playlist) {
-        streamer_playlist = plt_get_curr_ptr ();
+        streamer_playlist = plt_get_curr ();
     }
     playItem_t *it = streamer_playlist->head[PL_MAIN];
     while (idx--) {
@@ -242,7 +242,7 @@ streamer_move_to_nextsong (int reason) {
     trace ("streamer_move_to_nextsong (%d)\n", reason);
     pl_lock ();
     if (!streamer_playlist) {
-        streamer_playlist = plt_get_curr_ptr ();
+        streamer_playlist = plt_get_curr ();
     }
     while (pl_playqueue_getcount ()) {
         trace ("pl_playqueue_getnext\n");
@@ -284,7 +284,11 @@ streamer_move_to_nextsong (int reason) {
 
     playItem_t *curr = playlist_track;
     if (reason == 1) {
-        streamer_playlist = plt_get_curr_ptr ();
+        if (streamer_playlist) {
+            plt_unref (streamer_playlist);
+            streamer_playlist = NULL;
+        }
+        streamer_playlist = plt_get_curr ();
         // check if prev song is in this playlist
         if (-1 == str_get_idx_of (curr)) {
             curr = NULL;
@@ -424,10 +428,11 @@ streamer_move_to_nextsong (int reason) {
 int
 streamer_move_to_prevsong (void) {
     pl_lock ();
-    if (!streamer_playlist) {
-        streamer_playlist = plt_get_curr_ptr ();
+    if (streamer_playlist) {
+        plt_unref (streamer_playlist);
+        streamer_playlist = NULL;
     }
-    streamer_playlist = plt_get_curr_ptr ();
+    streamer_playlist = plt_get_curr ();
     // check if prev song is in this playlist
     if (-1 == str_get_idx_of (playlist_track)) {
         playlist_track = NULL;
@@ -527,7 +532,7 @@ streamer_move_to_prevsong (void) {
 int
 streamer_move_to_randomsong (void) {
     if (!streamer_playlist) {
-        streamer_playlist = plt_get_curr_ptr ();
+        streamer_playlist = plt_get_curr ();
     }
     playlist_t *plt = streamer_playlist;
     int cnt = plt->count[PL_MAIN];
@@ -797,7 +802,11 @@ streamer_set_nextsong (int song, int pstate) {
     if (output->state () == OUTPUT_STATE_STOPPED) {
         if (pstate == 1) { // means user initiated this
             pl_lock ();
-            streamer_playlist = plt_get_curr_ptr ();
+            if (streamer_playlist) {
+                plt_unref (streamer_playlist);
+                streamer_playlist = NULL;
+            }
+            streamer_playlist = plt_get_curr ();
             pl_unlock ();
         }
         // no sense to wait until end of previous song, reset buffer
@@ -1498,6 +1507,10 @@ streamer_free (void) {
     if (playlist_track) {
         playlist_track = NULL;
     }
+    if (streamer_playlist) {
+        plt_unref (streamer_playlist);
+        streamer_playlist = NULL;
+    }
 
     decodemutex = 0;
     mutex_free (mutex);
@@ -1827,7 +1840,7 @@ streamer_configchanged (void) {
 
 void
 streamer_play_current_track (void) {
-    playlist_t *plt = plt_get_curr_ptr ();
+    playlist_t *plt = plt_get_curr ();
     DB_output_t *output = plug_get_output ();
     if (output->state () == OUTPUT_STATE_PAUSED && playing_track) {
         // unpause currently paused track
@@ -1852,12 +1865,16 @@ streamer_play_current_track (void) {
         streamer_set_nextsong (idx, 1);
         pl_lock ();
         streamer_playlist = plt;
+        plt_ref (plt);
         pl_unlock ();
     }
     else {
         // restart currently playing track
         output->stop ();
         streamer_set_nextsong (0, 1);
+    }
+    if (plt) {
+        plt_unref (plt);
     }
 }
 
@@ -1869,7 +1886,11 @@ streamer_get_current_fileinfo (void) {
 void
 streamer_set_current_playlist (int plt) {
     pl_lock ();
-    streamer_playlist = plt_get (plt);
+    if (streamer_playlist) {
+        plt_unref (streamer_playlist);
+        streamer_playlist = NULL;
+    }
+    streamer_playlist = plt_get_for_idx (plt);
     pl_unlock ();
 }
 
@@ -1877,7 +1898,7 @@ int
 streamer_get_current_playlist (void) {
     pl_lock ();
     if (!streamer_playlist) {
-        streamer_playlist = plt_get_curr_ptr ();
+        streamer_playlist = plt_get_curr ();
     }
     int idx = plt_get_idx_of (streamer_playlist);
     pl_unlock ();
@@ -1888,6 +1909,7 @@ void
 streamer_notify_playlist_deleted (playlist_t *plt) {
     // this is only called from playlist code, no lock required
     if (plt == streamer_playlist) {
+        plt_unref (streamer_playlist);
         streamer_playlist = NULL;
     }
 }

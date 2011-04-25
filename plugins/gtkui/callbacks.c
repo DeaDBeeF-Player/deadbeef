@@ -354,7 +354,7 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
     else if ((maskedstate == GDK_MOD1_MASK || maskedstate == 0) && event->keyval >= GDK_1 && event->keyval <= GDK_9) {
         int pl = event->keyval - GDK_1;
         if (pl >= 0 && pl < deadbeef->plt_get_count ()) {
-            deadbeef->plt_set_curr (pl);
+            deadbeef->plt_set_curr_idx (pl);
             deadbeef->conf_set_int ("playlist.current", pl);
         }
     }
@@ -983,7 +983,7 @@ on_new_playlist1_activate              (GtkMenuItem     *menuitem,
 {
     int pl = gtkui_add_new_playlist ();
     if (pl != -1) {
-        deadbeef->plt_set_curr (pl);
+        deadbeef->plt_set_curr_idx (pl);
         deadbeef->conf_set_int ("playlist.current", pl);
     }
 }

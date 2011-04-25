@@ -473,7 +473,7 @@ gtkui_playlist_changed (void) {
 static gboolean
 playlistswitch_cb (gpointer none) {
     GtkWidget *tabstrip = lookup_widget (mainwin, "tabstrip");
-    int curr = deadbeef->plt_get_curr ();
+    int curr = deadbeef->plt_get_curr_idx ();
     char conf[100];
     snprintf (conf, sizeof (conf), "playlist.scroll.%d", curr);
     int scroll = deadbeef->conf_get_int (conf, 0);
@@ -577,10 +577,11 @@ gtkui_hide_status_icon () {
 
 int
 gtkui_get_curr_playlist_mod (void) {
-    deadbeef->pl_lock ();
-    void *plt = deadbeef->plt_get_handle (deadbeef->plt_get_curr ());
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     int res = plt ? deadbeef->plt_get_modification_idx (plt) : 0;
-    deadbeef->pl_unlock ();
+    if (plt) {
+        deadbeef->plt_unref (plt);
+    }
     return res;
 }
 
@@ -672,9 +673,13 @@ save_playlist_as (void) {
         gtk_widget_destroy (dlg);
 
         if (fname) {
-            int res = deadbeef->pl_save (fname);
-            if (res >= 0 && strlen (fname) < 1024) {
-                strcpy (last_playlist_save_name, fname);
+            ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+            if (plt) {
+                int res = deadbeef->plt_save (plt, NULL, NULL, fname, NULL, NULL, NULL);
+                if (res >= 0 && strlen (fname) < 1024) {
+                    strcpy (last_playlist_save_name, fname);
+                }
+                deadbeef->plt_unref (plt);
             }
             g_free (fname);
         }
@@ -692,7 +697,11 @@ on_playlist_save_activate              (GtkMenuItem     *menuitem,
         save_playlist_as ();
     }
     else {
-        /*int res = */deadbeef->pl_save (last_playlist_save_name);
+        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+        if (plt) {
+            deadbeef->plt_save (plt, NULL, NULL, last_playlist_save_name, NULL, NULL, NULL);
+            deadbeef->plt_unref (plt);
+        }
     }
 }
 
@@ -763,7 +772,15 @@ on_playlist_load_activate              (GtkMenuItem     *menuitem,
         gchar *fname = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
         gtk_widget_destroy (dlg);
         if (fname) {
-            /*int res = */deadbeef->pl_load (fname);
+            ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+            if (plt) {
+                deadbeef->plt_clear (plt);
+                DB_playItem_t *it = deadbeef->plt_load (plt, NULL, fname, NULL, NULL, NULL);
+                if (it) {
+                    deadbeef->pl_item_unref (it);
+                }
+                deadbeef->plt_unref (plt);
+            }
             g_free (fname);
             main_refresh ();
             search_refresh ();
@@ -798,22 +815,21 @@ on_add_location_activate               (GtkMenuItem     *menuitem,
 
 static void
 songchanged (DdbListview *ps, DB_playItem_t *from, DB_playItem_t *to) {
-    int plt = deadbeef->plt_get_curr ();
     int to_idx = -1;
     if (!ddb_listview_is_scrolling (ps) && to) {
         int cursor_follows_playback = deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 0);
         int scroll_follows_playback = deadbeef->conf_get_int ("playlist.scroll.followplayback", 0);
         int plt = deadbeef->streamer_get_current_playlist ();
         if (plt != -1) {
-            if (cursor_follows_playback && plt != deadbeef->plt_get_curr ()) {
-                deadbeef->plt_set_curr (plt);
+            if (cursor_follows_playback && plt != deadbeef->plt_get_curr_idx ()) {
+                deadbeef->plt_set_curr_idx (plt);
             }
             to_idx = deadbeef->pl_get_idx_of (to);
             if (to_idx != -1) {
                 if (cursor_follows_playback) {
                     ddb_listview_set_cursor_noscroll (ps, to_idx);
                 }
-                if (scroll_follows_playback && plt == deadbeef->plt_get_curr ()) {
+                if (scroll_follows_playback && plt == deadbeef->plt_get_curr_idx ()) {
                     ddb_listview_scroll_to (ps, to_idx);
                 }
             }
@@ -891,7 +907,7 @@ gtkui_add_new_playlist (void) {
         deadbeef->pl_lock ();
         for (i = 0; i < cnt; i++) {
             char t[100];
-            void *plt = deadbeef->plt_get_handle (i);
+            void *plt = deadbeef->plt_get_for_idx (i);
             deadbeef->plt_get_title (plt, t, sizeof (t));
             if (!strcasecmp (t, name)) {
                 break;
@@ -1127,7 +1143,7 @@ gtkui_add_file_info_cb (DB_playItem_t *it, void *data) {
 
 int (*gtkui_original_pl_add_dir) (const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 int (*gtkui_original_pl_add_file) (const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
-void (*gtkui_original_pl_add_files_begin) (int plt);
+int (*gtkui_original_pl_add_files_begin) (ddb_playlist_t *plt);
 void (*gtkui_original_pl_add_files_end) (void);
 
 int
@@ -1142,10 +1158,10 @@ gtkui_pl_add_file (const char *filename, int (*cb)(DB_playItem_t *it, void *data
     return res;
 }
 
-void
-gtkui_pl_add_files_begin (int plt) {
+int
+gtkui_pl_add_files_begin (ddb_playlist_t *plt) {
     g_idle_add (gtkui_progress_show_idle, NULL);
-    gtkui_original_pl_add_files_begin (plt);
+    return gtkui_original_pl_add_files_begin (plt);
 }
 
 void
@@ -1159,8 +1175,8 @@ gtkui_focus_on_playing_track (void) {
     DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
     if (it) {
         int plt = deadbeef->streamer_get_current_playlist ();
-        if (plt != deadbeef->plt_get_curr ()) {
-            deadbeef->plt_set_curr (plt);
+        if (plt != deadbeef->plt_get_curr_idx ()) {
+            deadbeef->plt_set_curr_idx (plt);
         }
         int idx = deadbeef->pl_get_idx_of (it);
         if (idx != -1) {
@@ -1174,7 +1190,7 @@ gtkui_focus_on_playing_track (void) {
 
 void
 gtkui_playlist_set_curr (int playlist) {
-    deadbeef->plt_set_curr (playlist);
+    deadbeef->plt_set_curr_idx (playlist);
     deadbeef->conf_set_int ("playlist.current", playlist);
 }
 

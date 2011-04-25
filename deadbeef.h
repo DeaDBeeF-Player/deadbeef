@@ -122,7 +122,12 @@ typedef struct DB_playItem_s {
     int shufflerating; // sort order for shuffle mode
     float playtime; // actual playback time of this track in seconds
     time_t started_timestamp; // result of calling time(NULL)
-} DB_playItem_t;
+} ddb_playItem_t;
+
+typedef ddb_playItem_t DB_playItem_t;
+
+typedef struct {
+} ddb_playlist_t;
 
 typedef struct DB_metaInfo_s {
     struct DB_metaInfo_s *next;
@@ -373,41 +378,72 @@ typedef struct {
     int (*cond_signal) (uintptr_t cond);
     int (*cond_broadcast) (uintptr_t cond);
 
-    // playlist management
+    /////// playlist management //////
+    void (*plt_ref) (ddb_playlist_t *plt);
+    void (*plt_unref) (ddb_playlist_t *plt);
+
+    // total number of playlists
     int (*plt_get_count) (void);
+
+    // 1st item in playlist nr. 'plt'
     DB_playItem_t * (*plt_get_head) (int plt);
+
+    // nr. of selected items in playlist nr. 'plt'
     int (*plt_get_sel_count) (int plt);
+
+    // add new playlist into position before nr. 'before', with title='title'
+    // returns index of new playlist
     int (*plt_add) (int before, const char *title);
+
+    // remove playlist nr. plt
     void (*plt_remove) (int plt);
-    void (*plt_set_curr) (int plt);
-    int (*plt_get_curr) (void);
+
+    // clear playlist
+    void (*plt_clear) (ddb_playlist_t *plt);
+
+    // set current playlist
+    void (*plt_set_curr) (ddb_playlist_t *plt);
+    void (*plt_set_curr_idx) (int plt);
+
+    // get current playlist
+    // note: caller is responsible to call plt_unref after using pointer
+    // returned by plt_get_curr
+    ddb_playlist_t *(*plt_get_curr) (void);
+    int (*plt_get_curr_idx) (void);
+
+    // move playlist nr. 'from' into position before nr. 'before', where
+    // before=-1 means last position
     void (*plt_move) (int from, int before);
 
+    // playlist saving and loading
+    DB_playItem_t * (*plt_load) (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+    int (*plt_save) (ddb_playlist_t *plt, DB_playItem_t *first, DB_playItem_t *last, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+
     // getting and working with a handle must be guarded using plt_lock/unlock
-    void *(*plt_get_handle) (int idx);
-    int (*plt_get_title) (void *handle, char *buffer, int bufsize);
-    int (*plt_set_title) (void *handle, const char *title);
+    ddb_playlist_t *(*plt_get_for_idx) (int idx);
+    int (*plt_get_title) (ddb_playlist_t *plt, char *buffer, int bufsize);
+    int (*plt_set_title) (ddb_playlist_t *plt, const char *title);
 
     // increments modification index
-    void (*plt_modified) (void *handle);
+    void (*plt_modified) (ddb_playlist_t *handle);
 
     // returns modication index
     // the index is incremented by 1 every time playlist changes
-    int (*plt_get_modification_idx) (void *handle);
+    int (*plt_get_modification_idx) (ddb_playlist_t *handle);
 
     // playlist metadata
     // this kind of metadata is stored in playlist (dbpl) files
-    void (*plt_add_meta) (void *handle, const char *key, const char *value);
-    void (*plt_replace_meta) (void *handle, const char *key, const char *value);
-    void (*plt_append_meta) (void *handle, const char *key, const char *value);
-    void (*plt_set_meta_int) (void *handle, const char *key, int value);
-    void (*plt_set_meta_float) (void *handle, const char *key, float value);
-    const char *(*plt_find_meta) (void *handle, const char *key);
-    DB_metaInfo_t * (*plt_get_metadata_head) (void *handle); // returns head of metadata linked list
-    void (*plt_delete_metadata) (void *handle, DB_metaInfo_t *meta);
-    int (*plt_find_meta_int) (void *handle, const char *key, int def);
-    float (*plt_find_meta_float) (void *handle, const char *key, float def);
-    void (*plt_delete_all_meta) (void *handle);
+    void (*plt_add_meta) (ddb_playlist_t *handle, const char *key, const char *value);
+    void (*plt_replace_meta) (ddb_playlist_t *handle, const char *key, const char *value);
+    void (*plt_append_meta) (ddb_playlist_t *handle, const char *key, const char *value);
+    void (*plt_set_meta_int) (ddb_playlist_t *handle, const char *key, int value);
+    void (*plt_set_meta_float) (ddb_playlist_t *handle, const char *key, float value);
+    const char *(*plt_find_meta) (ddb_playlist_t *handle, const char *key);
+    DB_metaInfo_t * (*plt_get_metadata_head) (ddb_playlist_t *handle); // returns head of metadata linked list
+    void (*plt_delete_metadata) (ddb_playlist_t *handle, DB_metaInfo_t *meta);
+    int (*plt_find_meta_int) (ddb_playlist_t *handle, const char *key, int def);
+    float (*plt_find_meta_float) (ddb_playlist_t *handle, const char *key, float def);
+    void (*plt_delete_all_meta) (ddb_playlist_t *handle);
 
     // playlist locking
     void (*pl_lock) (void);
@@ -425,7 +461,7 @@ typedef struct {
     // this function may return -1 if it is not possible to add files right now.
     // caller must cancel operation in this case, or wait until previous add
     // finishes
-    int (*pl_add_files_begin) (int playlist);
+    int (*pl_add_files_begin) (ddb_playlist_t *plt);
     void (*pl_add_files_end) (void);
     DB_playItem_t *(*pl_insert_item) (DB_playItem_t *after, DB_playItem_t *it);
     DB_playItem_t *(*pl_insert_dir) (DB_playItem_t *after, const char *dirname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
@@ -442,8 +478,6 @@ typedef struct {
     void (*pl_set_selected) (DB_playItem_t *it, int sel);
     int (*pl_is_selected) (DB_playItem_t *it);
     void (*pl_clear) (void);
-    int (*pl_load) (const char *name);
-    int (*pl_save) (const char *name);
     int (*pl_save_current) (void);
     int (*pl_save_all) (void);
     void (*pl_select_all) (void);
