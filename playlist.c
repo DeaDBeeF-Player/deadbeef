@@ -3552,28 +3552,88 @@ void
 pl_search_process (const char *text) {
     LOCK;
     pl_search_reset ();
+
+    // convert text to lowercase, to save some cycles
+    char lc[1000];
+    int n = sizeof (lc)-1;
+    const char *p = text;
+    char *out = lc;
+    while (*p) {
+        int32_t i = 0;
+        char s[10];
+        const char *next;
+        u8_nextchar (p, &i);
+        int l = u8_tolower (p, i, s);
+        n -= l;
+        if (n < 0) {
+            break;
+        }
+        memcpy (out, s, l);
+        p += i;
+        out += l;
+    }
+    *out = 0;
+
+    const char *cuesheet = metacache_add_string ("cuesheet");
+    const char *log = metacache_add_string("log");
+
+    static int cmpidx = 0;
+    cmpidx++;
+    if (cmpidx > 127) {
+        cmpidx = 1;
+    }
+
     for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
         it->selected = 0;
         if (*text) {
-            for (DB_metaInfo_t *m = it->meta; m; m = m->next) {
-                if (m->key[0] != ':' && m->key[0] != '_' && strcasecmp (m->key, "cuesheet") && utfcasestr (m->value, text)) {
-                    //fprintf (stderr, "%s -> %s match (%s.%s)\n", text, m->value, pl_find_meta (it, ":URI"), m->key);
-                    // add to list
-                    it->next[PL_SEARCH] = NULL;
-                    if (playlist->tail[PL_SEARCH]) {
-                        playlist->tail[PL_SEARCH]->next[PL_SEARCH] = it;
-                        playlist->tail[PL_SEARCH] = it;
+            DB_metaInfo_t *m = NULL;
+            for (m = it->meta; m; m = m->next) {
+                if (m->key[0] == ':' || m->key[0] == '_') {
+                    break;
+                }
+                if (m->key!=cuesheet && m->key!=log) {
+                    char cmp = *(m->value-1);
+
+                    if (abs (cmp) == cmpidx) {
+                        if (cmp > 0) {
+                            it->next[PL_SEARCH] = NULL;
+                            if (playlist->tail[PL_SEARCH]) {
+                                playlist->tail[PL_SEARCH]->next[PL_SEARCH] = it;
+                                playlist->tail[PL_SEARCH] = it;
+                            }
+                            else {
+                                playlist->head[PL_SEARCH] = playlist->tail[PL_SEARCH] = it;
+                            }
+                            it->selected = 1;
+                            playlist->count[PL_SEARCH]++;
+                            break;
+                        }
+                    }
+                    else if (utfcasestr_fast (m->value, lc)) {
+                        //fprintf (stderr, "%s -> %s match (%s.%s)\n", text, m->value, pl_find_meta (it, ":URI"), m->key);
+                        // add to list
+                        it->next[PL_SEARCH] = NULL;
+                        if (playlist->tail[PL_SEARCH]) {
+                            playlist->tail[PL_SEARCH]->next[PL_SEARCH] = it;
+                            playlist->tail[PL_SEARCH] = it;
+                        }
+                        else {
+                            playlist->head[PL_SEARCH] = playlist->tail[PL_SEARCH] = it;
+                        }
+                        it->selected = 1;
+                        playlist->count[PL_SEARCH]++;
+                        *((char *)m->value-1) = cmpidx;
+                        break;
                     }
                     else {
-                        playlist->head[PL_SEARCH] = playlist->tail[PL_SEARCH] = it;
+                        *((char *)m->value-1) = -cmpidx;
                     }
-                    it->selected = 1;
-                    playlist->count[PL_SEARCH]++;
-                    break;
                 }
             }
         }
     }
+    metacache_remove_string (cuesheet);
+    metacache_remove_string(log);
     UNLOCK;
 }
 

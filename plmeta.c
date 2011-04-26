@@ -30,6 +30,8 @@ void
 pl_add_meta (playItem_t *it, const char *key, const char *value) {
     LOCK;
     // check if it's already set
+    DB_metaInfo_t *normaltail = NULL;
+    DB_metaInfo_t *propstart = NULL;
     DB_metaInfo_t *tail = NULL;
     DB_metaInfo_t *m = it->meta;
     while (m) {
@@ -38,6 +40,15 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
             UNLOCK;
             return;
         }
+        // find end of normal metadata
+        if (!normaltail && (m->key[0] == ':' || m->key[0] == '_')) {
+            normaltail = tail;
+            propstart = m;
+            if (key[0] != ':' && key[0] != '_') {
+                break;
+            }
+        }
+        // find end of properties
         tail = m;
         m = m->next;
     }
@@ -46,40 +57,28 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
     if (!value || !*value) {
         UNLOCK;
         return;
-#if 0
-        if (!strcasecmp (key, "title")) {
-            // cut filename without path and extension
-            const char *pext = pl_find_meta (it, ":URI") + strlen (pl_find_meta (it, ":URI")) - 1;
-            while (pext >= pl_find_meta (it, ":URI") && *pext != '.') {
-                pext--;
-            }
-            const char *pname = pext;
-            while (pname >= pl_find_meta (it, ":URI") && *pname != '/') {
-                pname--;
-            }
-            if (*pname == '/') {
-                pname++;
-            }
-            strncpy (str, pname, pext-pname);
-            str[pext-pname] = 0;
-            value = str;
-        }
-        else {
-            UNLOCK;
-            return;
-        }
-#endif
     }
     m = malloc (sizeof (DB_metaInfo_t));
     memset (m, 0, sizeof (DB_metaInfo_t));
-    m->key = metacache_add_string (key); //key;
-    m->value = metacache_add_string (value); //strdup (value);
+    m->key = metacache_add_string (key);
+    m->value = metacache_add_string (value);
 
-    if (tail) {
-        tail->next = m;
+    if (key[0] == ':' || key[0] == '_') {
+        if (tail) {
+            tail->next = m;
+        }
+        else {
+            it->meta = m;
+        }
     }
     else {
-        it->meta = m;
+        m->next = propstart;
+        if (normaltail) {
+            normaltail->next = m;
+        }
+        else {
+            it->meta = m;
+        }
     }
     UNLOCK;
 }

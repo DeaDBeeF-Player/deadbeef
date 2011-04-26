@@ -107,4 +107,8 @@ u8_strcasecmp (const char *a, const char *b);
 const char *
 utfcasestr (const char *s1, const char *s2);
 
+// s2 must be lowercase
+const char *
+utfcasestr_fast (const char *s1, const char *s2);
+
 #endif

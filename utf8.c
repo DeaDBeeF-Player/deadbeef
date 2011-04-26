@@ -605,6 +605,18 @@ static const char upperchars[] = "ÁÉÍÑÓÚÜÄÖÅÆØÀÇÈÊАБВГДЕЁ
 #endif
 
 int
+u8_tolower_slow (const char *input, int len, char *out) {
+    struct u8_case_map_t *lc = u8_lc_in_word_set (input, len);
+    if (lc) {
+        int ll = strlen (lc->lower);
+        memcpy (out, lc->lower, ll);
+        out[ll] = 0;
+        return ll;
+    }
+    return 0;
+}
+
+int
 u8_tolower (const signed char *c, int l, char *out) {
     if (*c >= 65 && *c <= 90) {
         *out = *c + 0x20;//tolower (*c);
@@ -617,24 +629,10 @@ u8_tolower (const signed char *c, int l, char *out) {
         return 1;
     }
     else {
-#if 1
-        struct u8_case_map_t *lc = u8_lc_in_word_set (c, l);
-        if (lc) {
-            int ll = 2;//strlen (lc->lower);
-            memcpy (out, lc->lower, ll);
-            out[ll] = 0;
+        int ll = u8_tolower_slow (c, l, out);
+        if (ll) {
             return ll;
         }
-#else
-        for (int i = 0; i < sizeof (upperchars)-l; i++) {
-            if (!memcmp (upperchars+i, c, l)) {
-                // found!
-                memcpy (out, lowerchars+i, l);
-                out[l] = 0;
-                return l;
-            }
-        }
-#endif
         memcpy (out, c, l);
         out[l] = 0;
         return l;
@@ -679,6 +677,37 @@ utfcasestr (const char *s1, const char *s2) {
         }
         if (*p2 == 0) {
             //fprintf (stderr, "%s found in %s\n", s2, s1);
+            return p1;
+        }
+        int32_t i = 0;
+        u8_nextchar (s1, &i);
+        s1 += i;
+    }
+    return NULL;
+}
+
+#define min(x,y) ((x)<(y)?(x):(y))
+// s2 must be lowercase
+const char *
+utfcasestr_fast (const char *s1, const char *s2) {
+    while (*s1) {
+        const char *p1 = s1;
+        const char *p2 = s2;
+        while (*p2 && *p1) {
+            int32_t i1 = 0;
+            int32_t i2 = 0;
+            char lw1[10];
+            const char *next;
+            u8_nextchar (p1, &i1);
+            u8_nextchar (p2, &i2);
+            int l1 = u8_tolower (p1, i1, lw1);
+            if (memcmp (lw1, p2, min(i2,l1))) {
+                break;
+            }
+            p1 += i1;
+            p2 += i2;
+        }
+        if (*p2 == 0) {
             return p1;
         }
         int32_t i = 0;

@@ -74,12 +74,6 @@ void
 on_searchentry_changed                 (GtkEditable     *editable,
                                         gpointer         user_data)
 {
-    // final implementation must work in separate thread, and catch up when
-    // value was changed
-    // but for alpha, let's do it in GTK thread
-    
-    // walk playlist starting with playlist_head, and populate list starting
-    // with search_head
     search_refresh ();
     main_refresh ();
 }

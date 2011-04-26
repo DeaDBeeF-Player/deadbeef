@@ -24,6 +24,7 @@
 typedef struct metacache_str_s {
     struct metacache_str_s *next;
     uint32_t refcount;
+    char cmpidx; // positive means "equals", negative means "notequals"
     char str[1];
 } metacache_str_t;
 

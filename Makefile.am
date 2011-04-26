@@ -27,7 +27,9 @@ deadbeef_SOURCES =\
 	conf.c  conf.h\
 	threading_pthread.c threading.h\
 	volume.c volume.h\
-	junklib.h junklib.c utf8.c utf8.h u8_lc_map.h ConvertUTF/ConvertUTF.c ConvertUTF/ConvertUTF.h\
+	junklib.h junklib.c utf8.c utf8.h\
+	u8_lc_map.h\
+	ConvertUTF/ConvertUTF.c ConvertUTF/ConvertUTF.h\
 	optmath.h\
 	vfs.c vfs.h vfs_stdio.c\
 	md5/md5.c md5/md5.h\
