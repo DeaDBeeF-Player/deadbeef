@@ -104,6 +104,7 @@ static ddb_waveformat_t output_format;
 static int formatchanged;
 
 static DB_fileinfo_t *fileinfo;
+static DB_fileinfo_t *new_fileinfo;
 
 static int streamer_buffering;
 
@@ -124,6 +125,9 @@ static void
 streamer_abort_files (void) {
     if (fileinfo && fileinfo->file) {
         deadbeef->fabort (fileinfo->file);
+    }
+    if (new_fileinfo && new_fileinfo->file) {
+        deadbeef->fabort (new_fileinfo->file);
     }
     if (streamer_file) {
         deadbeef->fabort (streamer_file);
@@ -570,7 +574,6 @@ streamer_set_current (playItem_t *it) {
     DB_output_t *output = plug_get_output ();
     int err = 0;
     int send_songstarted = 0;
-    DB_fileinfo_t *new_fileinfo = NULL;
     playItem_t *from, *to;
     // need to add refs here, because streamer_start_playback can destroy items
     from = playing_track;
@@ -749,6 +752,7 @@ success:
             fileinfo = NULL;
         }
         fileinfo = new_fileinfo;
+        new_fileinfo = NULL;
     }
     mutex_unlock (decodemutex);
     if (send_songstarted && playing_track) {
