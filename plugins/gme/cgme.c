@@ -263,6 +263,9 @@ cgme_insert (DB_playItem_t *after, const char *fname) {
     }
     else {
         DB_FILE *f = deadbeef->fopen (fname);
+        if (!f) {
+            return NULL;
+        }
         int64_t sz = deadbeef->fgetlength (f);
         if (sz <= 0) {
             deadbeef->fclose (f);
