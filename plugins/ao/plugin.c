@@ -289,7 +289,6 @@ aoplug_insert (DB_playItem_t *after, const char *fname) {
         int i;
         for (i = 1; i < 9; i++) {
             if (!strncasecmp (info.title[i], "Length: ", 8)) {
-                printf ("len: %s\n", info.info[i]);
                 int min;
                 float sec;
                 if (sscanf (info.info[i], "%d:%f", &min, &sec) == 2) {
