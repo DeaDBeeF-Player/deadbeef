@@ -1347,7 +1347,6 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
                 playItem_t *it = pl_insert_file (after, url, pabort, cb, user_data);
                 if (it) {
                     after = it;
-                    pl_set_item_duration (it, atoi (length));
                     if (title[0]) {
                         pl_delete_all_meta (it);
                         pl_add_meta (it, "title", title);
@@ -1392,7 +1391,6 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
         playItem_t *it = pl_insert_file (after, url, pabort, cb, user_data);
         if (it) {
             after = it;
-            pl_set_item_duration (it, atoi (length));
             if (title[0]) {
                 pl_delete_all_meta (it);
                 pl_add_meta (it, "title", title);
