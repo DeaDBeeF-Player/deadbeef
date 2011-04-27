@@ -48,7 +48,7 @@ void
 write_column_config (const char *name, int idx, const char *title, int width, int align_right, int id, const char *format) {
     char key[128];
     char value[128];
-    snprintf (key, sizeof (key), "%s.column.%d", name, idx);
+    snprintf (key, sizeof (key), "%s.column.%02d", name, idx);
     snprintf (value, sizeof (value), "\"%s\" \"%s\" %d %d %d", title, format ? format : "", id, width, align_right);
     deadbeef->conf_set_str (key, value);
 }
