@@ -22,8 +22,11 @@ gtkpl_adddir_cb (gpointer data, gpointer userdata) {
 
 void
 gtkpl_add_dirs (GSList *lst) {
+    if (deadbeef->pl_add_files_begin (deadbeef->plt_get_curr ()) < 0) {
+        g_slist_free (lst);
+        return;
+    }
     deadbeef->pl_lock ();
-    deadbeef->pl_add_files_begin (deadbeef->plt_get_curr ());
     if (g_slist_length (lst) == 1
             && deadbeef->conf_get_int ("gtkui.name_playlist_from_folder", 0)) {
         ddb_playlist_t *p = deadbeef->plt_get_curr ();
@@ -56,7 +59,10 @@ gtkpl_addfile_cb (gpointer data, gpointer userdata) {
 
 void
 gtkpl_add_files (GSList *lst) {
-    deadbeef->pl_add_files_begin (deadbeef->plt_get_curr ());
+    if (deadbeef->pl_add_files_begin (deadbeef->plt_get_curr ()) < 0) {
+        g_slist_free (lst);
+        return;
+    }
     g_slist_foreach(lst, gtkpl_addfile_cb, NULL);
     g_slist_free (lst);
     deadbeef->pl_add_files_end ();
@@ -82,7 +88,9 @@ add_files_worker (void *data) {
 
 void
 gtkui_add_files (struct _GSList *lst) {
-    deadbeef->pl_add_files_begin (deadbeef->plt_get_curr ());
+    if (deadbeef->pl_add_files_begin (deadbeef->plt_get_curr ()) < 0) {
+        return;
+    }
     intptr_t tid = deadbeef->thread_start (add_files_worker, lst);
     deadbeef->thread_detach (tid);
 }
@@ -163,8 +171,11 @@ set_dnd_cursor_idle (gpointer data) {
 
 void
 gtkpl_add_fm_dropped_files (DB_playItem_t *drop_before, char *ptr, int length) {
+    if (deadbeef->pl_add_files_begin (deadbeef->plt_get_curr ()) < 0) {
+        free (ptr);
+        return;
+    }
     DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-    deadbeef->pl_add_files_begin (deadbeef->plt_get_curr ());
 
     DdbListviewIter first = NULL;
     DdbListviewIter after = NULL;

@@ -809,10 +809,11 @@ on_add_location_activate               (GtkMenuItem     *menuitem,
         if (entry) {
             const char *text = gtk_entry_get_text (entry);
             if (text) {
-                deadbeef->pl_add_files_begin (deadbeef->plt_get_curr ());
-                deadbeef->pl_add_file (text, NULL, NULL);
-                deadbeef->pl_add_files_end ();
-                playlist_refresh ();
+                if (!deadbeef->pl_add_files_begin (deadbeef->plt_get_curr ())) {
+                    deadbeef->pl_add_file (text, NULL, NULL);
+                    deadbeef->pl_add_files_end ();
+                    playlist_refresh ();
+                }
             }
         }
     }
