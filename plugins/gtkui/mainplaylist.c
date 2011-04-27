@@ -65,7 +65,7 @@ main_get_cursor (void) {
 static void
 main_set_cursor (int cursor) {
     char conf[100];
-    snprintf (conf, sizeof (conf), "playlist.cursor.%d", deadbeef->plt_get_curr ());
+    snprintf (conf, sizeof (conf), "playlist.cursor.%d", deadbeef->plt_get_curr_idx ());
     deadbeef->conf_set_int (conf, cursor);
     return deadbeef->pl_set_cursor (PL_MAIN, cursor);
 }
@@ -297,7 +297,6 @@ main_playlist_init (GtkWidget *widget) {
     DdbListview *listview = DDB_LISTVIEW(widget);
     main_binding.ref = (void (*) (DdbListviewIter))deadbeef->pl_item_ref;
     main_binding.unref = (void (*) (DdbListviewIter))deadbeef->pl_item_unref;
-    main_binding.is_selected = (int (*) (DdbListviewIter))deadbeef->pl_is_selected;
     ddb_listview_set_binding (listview, &main_binding);
     lock_column_config = 1;
     DB_conf_item_t *col = deadbeef->conf_find ("playlist.column.", NULL);

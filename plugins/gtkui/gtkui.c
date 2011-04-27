@@ -479,7 +479,6 @@ playlistswitch_cb (gpointer none) {
     int scroll = deadbeef->conf_get_int (conf, 0);
     snprintf (conf, sizeof (conf), "playlist.cursor.%d", curr);
     int cursor = deadbeef->conf_get_int (conf, -1);
-//    gdk_window_invalidate_rect (tabstrip->window, NULL, FALSE);
     ddb_tabstrip_refresh (DDB_TABSTRIP (tabstrip));
     DdbListview *listview = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
     deadbeef->pl_set_cursor (PL_MAIN, cursor);
@@ -491,7 +490,7 @@ playlistswitch_cb (gpointer none) {
         }
     }
 
-    playlist_refresh ();
+    ddb_listview_refresh (listview, DDB_LIST_CHANGED | DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL);
     ddb_listview_set_vscroll (listview, scroll);
     search_refresh ();
     return FALSE;
