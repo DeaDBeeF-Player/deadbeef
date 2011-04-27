@@ -62,7 +62,7 @@
 //    added flags field
 // 1.2->1.3 changelog:
 //    removed legacy data used for compat with 0.4.4
-//    note: ddb-0.5.0 should keep using 1.1 playlist format
+//    note: ddb-0.5.0 should keep using 1.2 playlist format
 //    1.3 support is designed for transition to ddb-0.6.0
 #define PLAYLIST_MAJOR_VER 1
 #define PLAYLIST_MINOR_VER 2
@@ -226,7 +226,6 @@ plt_get_curr (void) {
     }
     UNLOCK;
     return plt;
-
 }
 
 playlist_t *
@@ -2028,11 +2027,11 @@ plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fnam
     if (fwrite (&minorver, 1, 1, fp) != 1) {
         goto save_fail;
     }
-    uint32_t cnt = playlist->count[PL_MAIN];
+    uint32_t cnt = plt->count[PL_MAIN];
     if (fwrite (&cnt, 1, 4, fp) != 4) {
         goto save_fail;
     }
-    for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+    for (playItem_t *it = plt->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
         uint16_t l;
         uint8_t ll;
 #if (PLAYLIST_MINOR_VER==2)
@@ -2150,14 +2149,14 @@ plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fnam
     // write playlist metadata
     int16_t nm = 0;
     DB_metaInfo_t *m;
-    for (m = playlist->meta; m; m = m->next) {
+    for (m = plt->meta; m; m = m->next) {
         nm++;
     }
     if (fwrite (&nm, 1, 2, fp) != 2) {
         goto save_fail;
     }
 
-    for (m = playlist->meta; m; m = m->next) {
+    for (m = plt->meta; m; m = m->next) {
         uint16_t l;
         l = strlen (m->key);
         if (fwrite (&l, 1, 2, fp) != 2) {
@@ -2209,11 +2208,10 @@ pl_save_n (int n) {
         return -1;
     }
 
-    playlist_t *orig = playlist;
     int i;
-    for (i = 0, playlist = playlists_head; playlist && i < n; i++, playlist = playlist->next);
-    err = plt_save (playlist, NULL, NULL, path, NULL, NULL, NULL);
-    playlist = orig;
+    playlist_t *plt;
+    for (i = 0, plt = playlists_head; plt && i < n; i++, plt = plt->next);
+    err = plt_save (plt, NULL, NULL, path, NULL, NULL, NULL);
     plt_loading = 0;
     UNLOCK;
     return err;
@@ -2519,7 +2517,7 @@ plt_load (playlist_t *plt, playItem_t *after, const char *fname, int *pabort, in
                     goto load_fail;
                 }
                 value[l] = 0;
-                plt_add_meta (playlist, key, value);
+                plt_add_meta (plt, key, value);
             }
         }
     }
