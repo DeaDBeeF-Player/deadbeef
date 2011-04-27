@@ -372,6 +372,7 @@ m3uplug_save_m3u (const char *fname, DB_playItem_t *first, DB_playItem_t *last) 
     }
     DB_playItem_t *it = first;
     deadbeef->pl_item_ref (it);
+    fprintf (fp, "#M3UEXT\n");
     while (it) {
         int dur = (int)ceil(deadbeef->pl_get_item_duration (it));
         char s[1000];
