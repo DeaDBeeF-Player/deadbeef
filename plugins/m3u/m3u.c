@@ -40,6 +40,7 @@ skipspaces (const uint8_t *p, const uint8_t *end) {
 
 static DB_playItem_t *
 load_m3u (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data) {
+    printf ("load_m3u: cb=%p\n", cb);
     const char *slash = strrchr (fname, '/');
     trace ("enter pl_insert_m3u\n");
     // skip all empty lines and comments
@@ -60,7 +61,6 @@ load_m3u (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
     deadbeef->fclose (fp);
     const uint8_t *p = buffer;
     const uint8_t *end = buffer+sz;
-    deadbeef->pl_lock ();
     while (p < end) {
         p = skipspaces (p, end);
         if (p >= end) {
@@ -104,7 +104,6 @@ load_m3u (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
             if (after) {
                 deadbeef->pl_item_ref (after);
             }
-            deadbeef->pl_unlock ();
             free (buffer);
             return after;
         }
@@ -116,7 +115,6 @@ load_m3u (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
     if (after) {
         deadbeef->pl_item_ref (after);
     }
-    deadbeef->pl_unlock ();
     trace ("leave pl_insert_m3u\n");
     free (buffer);
     return after;
@@ -186,7 +184,6 @@ load_pls (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
     char title[1024] = "";
     char length[20] = "";
     int lastidx = -1;
-    deadbeef->pl_lock ();
     while (p < end) {
         p = skipspaces (p, end);
         if (p >= end) {
@@ -215,7 +212,6 @@ load_pls (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
                     if (after) {
                         deadbeef->pl_item_ref (after);
                     }
-                    deadbeef->pl_unlock ();
                     free (buffer);
                     return after;
                 }
@@ -256,7 +252,6 @@ load_pls (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
                     if (after) {
                         deadbeef->pl_item_ref (after);
                     }
-                    deadbeef->pl_unlock ();
                     free (buffer);
                     return after;
                 }
@@ -296,7 +291,6 @@ load_pls (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
                     if (after) {
                         deadbeef->pl_item_ref (after);
                     }
-                    deadbeef->pl_unlock ();
                     free (buffer);
                     return after;
                 }
@@ -341,7 +335,6 @@ load_pls (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_pla
     if (after) {
         deadbeef->pl_item_ref (after);
     }
-    deadbeef->pl_unlock ();
     free (buffer);
     return after;
 }

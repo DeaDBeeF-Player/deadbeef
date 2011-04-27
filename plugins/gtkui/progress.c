@@ -81,9 +81,8 @@ progress_settext (const char *text) {
     gtk_entry_set_text (GTK_ENTRY (progressitem), text);
 }
 
-void
-progress_show (void) {
-    progress_aborted = 0;
+gboolean
+gtkui_progress_show_idle (gpointer data) {
     GtkWidget *playlist = lookup_widget (mainwin, "playlist");
     if (playlist) {
         gtk_widget_set_sensitive (playlist, FALSE);
@@ -92,15 +91,29 @@ progress_show (void) {
     gtk_widget_show_all (progressdlg);
     gtk_window_present (GTK_WINDOW (progressdlg));
     gtk_window_set_transient_for (GTK_WINDOW (progressdlg), GTK_WINDOW (mainwin));
+    return FALSE;
 }
 
 void
-progress_hide (void) {
+progress_show (void) {
+    progress_aborted = 0;
+    g_idle_add (gtkui_progress_show_idle, NULL);
+}
+
+gboolean
+gtkui_progress_hide_idle (gpointer data) {
     gtk_widget_hide (progressdlg);
     GtkWidget *playlist = lookup_widget (mainwin, "playlist");
     if (playlist) {
         gtk_widget_set_sensitive (playlist, TRUE);
     }
+    //deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
+    return FALSE;
+}
+
+void
+progress_hide (void) {
+    g_idle_add (gtkui_progress_hide_idle, NULL);
 }
 
 void

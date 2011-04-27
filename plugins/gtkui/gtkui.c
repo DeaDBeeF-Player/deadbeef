@@ -737,6 +737,23 @@ playlist_filter_func (const GtkFileFilterInfo *filter_info, gpointer data) {
 }
 
 void
+load_playlist_thread (void *data) {
+    char *fname = data;
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_clear (plt);
+        int abort = 0;
+        DB_playItem_t *it = deadbeef->plt_load (plt, NULL, fname, &abort, NULL, NULL);
+        if (it) {
+            deadbeef->pl_item_unref (it);
+        }
+        deadbeef->plt_unref (plt);
+    }
+    g_free (fname);
+    gtkui_playlist_changed ();
+}
+
+void
 on_playlist_load_activate              (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
@@ -771,18 +788,8 @@ on_playlist_load_activate              (GtkMenuItem     *menuitem,
         gchar *fname = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
         gtk_widget_destroy (dlg);
         if (fname) {
-            ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-            if (plt) {
-                deadbeef->plt_clear (plt);
-                DB_playItem_t *it = deadbeef->plt_load (plt, NULL, fname, NULL, NULL, NULL);
-                if (it) {
-                    deadbeef->pl_item_unref (it);
-                }
-                deadbeef->plt_unref (plt);
-            }
-            g_free (fname);
-            main_refresh ();
-            search_refresh ();
+            uintptr_t tid = deadbeef->thread_start (load_playlist_thread, fname);
+            deadbeef->thread_detach (tid);
         }
     }
     else {
@@ -1106,25 +1113,12 @@ gtkui_thread (void *ctx) {
 }
 
 gboolean
-gtkui_progress_show_idle (gpointer data) {
-    progress_show ();
-    return FALSE;
-}
-
-gboolean
 gtkui_set_progress_text_idle (gpointer data) {
     char *text = (char *)data;
     if (text) {
         progress_settext (text);
         free (text);
     }
-    return FALSE;
-}
-
-gboolean
-gtkui_progress_hide_idle (gpointer data) {
-    progress_hide ();
-    //deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
     return FALSE;
 }
 
@@ -1145,6 +1139,8 @@ int (*gtkui_original_pl_add_file) (const char *fname, int (*cb)(DB_playItem_t *i
 int (*gtkui_original_pl_add_files_begin) (ddb_playlist_t *plt);
 void (*gtkui_original_pl_add_files_end) (void);
 
+DB_playItem_t * (*gtkui_original_plt_load) (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+
 int
 gtkui_pl_add_dir (const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data) {
     int res = gtkui_original_pl_add_dir (dirname, gtkui_add_file_info_cb, NULL);
@@ -1159,14 +1155,25 @@ gtkui_pl_add_file (const char *filename, int (*cb)(DB_playItem_t *it, void *data
 
 int
 gtkui_pl_add_files_begin (ddb_playlist_t *plt) {
-    g_idle_add (gtkui_progress_show_idle, NULL);
+    progress_show ();
     return gtkui_original_pl_add_files_begin (plt);
 }
 
 void
 gtkui_pl_add_files_end (void) {
-    g_idle_add (gtkui_progress_hide_idle, NULL);
+    progress_hide ();
     gtkui_original_pl_add_files_end ();
+}
+
+DB_playItem_t *
+gtkui_plt_load (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data) {
+    if (deadbeef->pl_add_files_begin (plt) < 0) {
+        return NULL;
+    }
+    DB_playItem_t *it = gtkui_original_plt_load (plt, after, fname, pabort, gtkui_add_file_info_cb, user_data);
+    deadbeef->pl_add_files_end ();
+
+    return it;
 }
 
 void
@@ -1205,7 +1212,7 @@ gtkui_start (void) {
         usleep (10000);
     }
 
-    // override default pl_add_dir
+    // override default file adding APIs to show progress bar
     gtkui_original_pl_add_dir = deadbeef->pl_add_dir;
     deadbeef->pl_add_dir = gtkui_pl_add_dir;
 
@@ -1217,6 +1224,9 @@ gtkui_start (void) {
 
     gtkui_original_pl_add_files_end = deadbeef->pl_add_files_end;
     deadbeef->pl_add_files_end = gtkui_pl_add_files_end;
+
+    gtkui_original_plt_load = deadbeef->plt_load;
+    deadbeef->plt_load = gtkui_plt_load;
 
     return 0;
 }

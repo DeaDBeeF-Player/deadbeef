@@ -2264,7 +2264,6 @@ plt_load (playlist_t *plt, playItem_t *after, const char *fname, int *pabort, in
         trace ("plt_load: failed to open %s\n", fname);
         return NULL;
     }
-    LOCK;
 
     // try plugins 1st
     const char *ext = strrchr (fname, '.');
@@ -2275,8 +2274,7 @@ plt_load (playlist_t *plt, playItem_t *after, const char *fname, int *pabort, in
         for (p = 0; plug[p]; p++) {
             for (e = 0; plug[p]->extensions[e]; e++) {
                 if (plug[p]->load && !strcasecmp (ext, plug[p]->extensions[e])) {
-                    DB_playItem_t *it = plug[p]->load (NULL, fname, NULL, NULL, NULL);
-                    UNLOCK;
+                    DB_playItem_t *it = plug[p]->load ((DB_playItem_t *)after, fname, pabort, (int (*)(DB_playItem_t *, void *))cb, user_data);
                     return (playItem_t *)it;
                 }
             }
@@ -2522,7 +2520,6 @@ plt_load (playlist_t *plt, playItem_t *after, const char *fname, int *pabort, in
         }
     }
 
-    UNLOCK;
     if (fp) {
         fclose (fp);
     }
@@ -2530,7 +2527,6 @@ plt_load (playlist_t *plt, playItem_t *after, const char *fname, int *pabort, in
     return last_added;
 load_fail:
     fprintf (stderr, "playlist load fail (%s)!\n", fname);
-    UNLOCK;
     if (fp) {
         fclose (fp);
     }
