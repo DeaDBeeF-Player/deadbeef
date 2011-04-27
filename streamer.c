@@ -661,7 +661,6 @@ streamer_set_current (playItem_t *it) {
                 if (!strcmp (decoders[i]->plugin.id, plug)) {
                     pl_replace_meta (it, ":DECODER", decoders[i]->plugin.id);
                     strncpy (decoder_id, decoders[i]->plugin.id, sizeof (decoder_id));
-                    pl_replace_meta (it, ":FILETYPE", decoders[i]->filetypes[0]);
                     trace ("\033[0;34mfound plugin %s\033[37;0m\n", plug);
                 }
             }

@@ -31,7 +31,6 @@ static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
 static const char * exts[] = { "vtx", NULL };
-static const char *filetypes[] = { "VTX", NULL };
 
 #define AY_FRAME_SIZE 14
 
@@ -259,7 +258,7 @@ vtx_insert (DB_playItem_t *after, const char *fname) {
     trace ("vtx: datasize: %d\n", hdr->regdata_size);
 
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
-    deadbeef->pl_add_meta (it, ":FILETYPE", filetypes[0]);
+    deadbeef->pl_add_meta (it, ":FILETYPE", "VTX");
 
     int numframes = hdr->regdata_size / AY_FRAME_SIZE;
 //    int totalsamples = numframes * hdr->playerFreq;
@@ -338,7 +337,6 @@ static DB_decoder_t plugin = {
     .seek_sample = vtx_seek_sample,
     .insert = vtx_insert,
     .exts = exts,
-    .filetypes = filetypes
 };
 
 DB_plugin_t *

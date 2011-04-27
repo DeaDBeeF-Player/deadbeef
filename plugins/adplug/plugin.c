@@ -23,7 +23,6 @@
 #include "../../deadbeef.h"
 
 extern const char *adplug_exts[];
-extern const char *adplug_filetypes[];
 
 DB_fileinfo_t *
 adplug_open (uint32_t hints);
@@ -85,6 +84,5 @@ DB_decoder_t adplug_plugin = {
     .seek_sample = adplug_seek_sample,
     .insert = adplug_insert,
     .exts = adplug_exts,
-    .filetypes = adplug_filetypes
 };
 

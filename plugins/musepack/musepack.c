@@ -521,7 +521,6 @@ musepack_stop (void) {
 }
 
 static const char * exts[] = { "mpc", "mpp", "mp+", NULL };
-static const char *filetypes[] = { "MusePack", NULL };
 
 // define plugin interface
 static DB_decoder_t plugin = {
@@ -564,7 +563,6 @@ static DB_decoder_t plugin = {
     .read_metadata = musepack_read_metadata,
     .write_metadata = musepack_write_metadata,
     .exts = exts,
-    .filetypes = filetypes
 };
 
 DB_plugin_t *

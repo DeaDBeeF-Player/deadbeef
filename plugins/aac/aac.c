@@ -1175,7 +1175,7 @@ aac_insert (DB_playItem_t *after, const char *fname) {
 
     if (fp->vfs->is_streaming ()) {
         trace ("streaming aac (%s)\n", fname);
-        ftype = plugin.filetypes[0];
+        ftype = "RAW AAC";
     }
     else {
         int skip = deadbeef->junk_get_leading_size (fp);
@@ -1206,10 +1206,10 @@ aac_insert (DB_playItem_t *after, const char *fname) {
             return NULL;
         }
         else if (res == 0) {
-            ftype = plugin.filetypes[1];
+            ftype = "MP4 AAC";
         }
         else if (res == 1) {
-            ftype = plugin.filetypes[0];
+            ftype = "RAW AAC";
         }
     }
 
@@ -1310,7 +1310,6 @@ aac_insert (DB_playItem_t *after, const char *fname) {
 }
 
 static const char * exts[] = { "aac", "mp4", "m4a", NULL };
-static const char *filetypes[] = { "RAW AAC", "MP4 AAC", NULL };
 
 // define plugin interface
 static DB_decoder_t plugin = {
@@ -1355,7 +1354,6 @@ static DB_decoder_t plugin = {
 #else
 #endif
     .exts = exts,
-    .filetypes = filetypes
 };
 
 DB_plugin_t *

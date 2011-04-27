@@ -32,7 +32,6 @@ DB_functions_t *deadbeef;
 static DB_decoder_t plugin;
 
 static const char * exts[] = { "psf", "psf2", "spu", "ssf", "qsf", "dsf", "minipsf", "minipsf2", "minissf", "miniqsf", "minidsf", NULL };
-static const char *filetypes[] = { "PSF", "PSF2", "SPU", "SSF", "QSF", "DSF", NULL };
 
 typedef struct {
     DB_fileinfo_t info;
@@ -260,26 +259,26 @@ aoplug_insert (DB_playItem_t *after, const char *fname) {
     if (*ext == '.') {
         ext++;
         if (!strcasecmp (ext, "psf") || !strcasecmp (ext, "minipsf")) {
-            deadbeef->pl_add_meta (it, ":FILETYPE", filetypes[0]);
+            deadbeef->pl_add_meta (it, ":FILETYPE", "PSF");
         }
         else if (!strcasecmp (ext, "psf2") || !strcasecmp (ext, "minipsf2")) {
-            deadbeef->pl_add_meta (it, ":FILETYPE", filetypes[1]);
+            deadbeef->pl_add_meta (it, ":FILETYPE", "PSF2");
         }
         else if (!strcasecmp (ext, "spu")) {
-            deadbeef->pl_add_meta (it, ":FILETYPE", filetypes[2]);
+            deadbeef->pl_add_meta (it, ":FILETYPE", "SPU");
         }
         else if (!strcasecmp (ext, "ssf") || !strcasecmp (ext, "minissf")) {
-            deadbeef->pl_add_meta (it, ":FILETYPE", filetypes[3]);
+            deadbeef->pl_add_meta (it, ":FILETYPE", "SSF");
         }
         else if (!strcasecmp (ext, "qsf") || !strcasecmp (ext, "miniqsf")) {
-            deadbeef->pl_add_meta (it, ":FILETYPE", filetypes[4]);
+            deadbeef->pl_add_meta (it, ":FILETYPE", "QSF");
         }
         else if (!strcasecmp (ext, "dsf") || !strcasecmp (ext, "minidsf")) {
-            deadbeef->pl_add_meta (it, ":FILETYPE", filetypes[5]);
+            deadbeef->pl_add_meta (it, ":FILETYPE", "DSF");
         }
     }
     else {
-        deadbeef->pl_add_meta (it, ":FILETYPE", filetypes[0]);
+        deadbeef->pl_add_meta (it, ":FILETYPE", "PSF");
     }
 
     float duration = 120;
@@ -383,7 +382,6 @@ static DB_decoder_t plugin = {
     .seek_sample = aoplug_seek_sample,
     .insert = aoplug_insert,
     .exts = exts,
-    .filetypes = filetypes
 };
 
 DB_plugin_t *

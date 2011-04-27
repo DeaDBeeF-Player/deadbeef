@@ -374,8 +374,6 @@ sndfile_insert (DB_playItem_t *after, const char *fname) {
 #define EXT_MAX 100
 
 static char *exts[EXT_MAX] = {NULL};
-static const char *filetypes[] = { "WAV", NULL };
-
 
 static void
 sndfile_init_exts (void) {
@@ -476,7 +474,6 @@ static DB_decoder_t plugin = {
     .seek_sample = sndfile_seek_sample,
     .insert = sndfile_insert,
     .exts = (const char **)exts,
-    .filetypes = filetypes,
     .plugin.start = sndfile_start,
     .plugin.stop = sndfile_stop,
     .plugin.configdialog = settings_dlg,

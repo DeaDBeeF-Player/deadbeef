@@ -1786,8 +1786,6 @@ void write_and_wait(shn_file *this_shn,int block_size)
 #endif
 
 static const char * exts[] = { "shn", NULL };
-static const char *filetypes[] = { "Shorten", NULL };
-
 
 static const char settings_dlg[] =
     "property \"Relative seek table path\" entry shn.relative_seektable_path seektables;\n"
@@ -1834,7 +1832,6 @@ static DB_decoder_t plugin = {
     .seek_sample = shn_seek_sample,
     .insert = shn_insert,
     .exts = exts,
-    .filetypes = filetypes
 };
 
 DB_plugin_t *

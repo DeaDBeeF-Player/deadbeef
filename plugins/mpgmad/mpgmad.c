@@ -785,6 +785,7 @@ cmp3_set_extra_properties (buffer_t *buffer) {
     snprintf (s, sizeof (s), "MPEG%s layer%d", versions[buffer->version-1], buffer->layer);
     deadbeef->pl_replace_meta (buffer->it, ":MPEG_VERSION", s);
     deadbeef->pl_replace_meta (buffer->it, ":XING_HEADER", buffer->have_xing_header ? "Yes" : "No");
+    deadbeef->pl_replace_meta (buffer->it, ":FILETYPE", "MP3");
 }
 
 static int
@@ -1297,10 +1298,6 @@ cmp3_seek (DB_fileinfo_t *_info, float time) {
     return cmp3_seek_sample (_info, sample);
 }
 
-static const char *filetypes[] = {
-    "MPEG 1.0 layer I", "MPEG 1.0 layer II", "MPEG 1.0 layer III", "MPEG 2.0 layer I", "MPEG 2.0 layer II", "MPEG 2.0 layer III", "MPEG 2.5 layer I", "MPEG 2.5 layer II", "MPEG 2.5 layer III", NULL
-};
-
 static DB_playItem_t *
 cmp3_insert (DB_playItem_t *after, const char *fname) {
     trace ("cmp3_insert %s\n", fname);
@@ -1334,46 +1331,6 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
         return NULL;
     }
 
-    const char *ftype = NULL;
-    if (buffer.version == 1) {
-        switch (buffer.layer) {
-        case 1:
-            ftype = filetypes[0];
-            break;
-        case 2:
-            ftype = filetypes[1];
-            break;
-        case 3:
-            ftype = filetypes[2];
-            break;
-        }
-    }
-    else if (buffer.version == 2) {
-        switch (buffer.layer) {
-        case 1:
-            ftype = filetypes[3];
-            break;
-        case 2:
-            ftype = filetypes[4];
-            break;
-        case 3:
-            ftype = filetypes[5];
-            break;
-        }
-    }
-    else {
-        switch (buffer.layer) {
-        case 1:
-            ftype = filetypes[6];
-            break;
-        case 2:
-            ftype = filetypes[7];
-            break;
-        case 3:
-            ftype = filetypes[8];
-            break;
-        }
-    }
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
 
     deadbeef->rewind (fp);
@@ -1391,7 +1348,6 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
     cmp3_set_extra_properties (&buffer);
 
     deadbeef->pl_set_item_duration (it, buffer.duration);
-    deadbeef->pl_replace_meta (it, ":FILETYPE", ftype);
     deadbeef->fclose (fp);
 
     // FIXME! bad numsamples passed to cue
@@ -1503,7 +1459,6 @@ static DB_decoder_t plugin = {
     .read_metadata = cmp3_read_metadata,
     .write_metadata = cmp3_write_metadata,
     .exts = exts,
-    .filetypes = filetypes
 };
 
 DB_plugin_t *

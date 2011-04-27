@@ -19,8 +19,6 @@
 #include "csid.h"
 
 static const char *exts[] = { "sid",NULL };
-const char *filetypes[] = { "SID", NULL };
-
 static const char settings_dlg[] =
     "property \"Enable HVSC Songlength DB\" checkbox hvsc_enable 0;\n"
     "property \"Songlengths.txt (from HVSC)\" file hvsc_path \"\";\n"
@@ -74,6 +72,5 @@ DB_decoder_t sid_plugin = {
 //    .numvoices = csid_numvoices,
 //    .mutevoice = csid_mutevoice,
     .exts = exts,
-    .filetypes = filetypes,
 };
 

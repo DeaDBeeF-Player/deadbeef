@@ -409,8 +409,6 @@ wv_write_metadata (DB_playItem_t *it) {
 }
 
 static const char *exts[] = { "wv", NULL };
-static const char *filetypes[] = { "wv", NULL };
-
 // define plugin interface
 static DB_decoder_t plugin = {
     DB_PLUGIN_SET_API_VERSION
@@ -459,7 +457,6 @@ static DB_decoder_t plugin = {
     .read_metadata = wv_read_metadata,
     .write_metadata = wv_write_metadata,
     .exts = exts,
-    .filetypes = filetypes
 };
 
 DB_plugin_t *

@@ -71,8 +71,6 @@ enum {
     FT_UNKNOWN = 5
 };
 
-static const char *filetypes[] = { "FFMPEG", NULL };
-
 #define FF_PROTOCOL_NAME "deadbeef"
 
 typedef struct {
@@ -818,7 +816,6 @@ static DB_decoder_t plugin = {
     .insert = ffmpeg_insert,
     .read_metadata = ffmpeg_read_metadata,
     .exts = (const char **)exts,
-    .filetypes = filetypes
 };
 
 DB_plugin_t *

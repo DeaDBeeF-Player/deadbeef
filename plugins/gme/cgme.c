@@ -445,7 +445,6 @@ static DB_decoder_t plugin = {
     .seek = cgme_seek,
     .insert = cgme_insert,
     .exts = exts,
-    .filetypes = exts
 };
 
 DB_plugin_t *

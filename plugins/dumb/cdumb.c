@@ -869,8 +869,6 @@ cgme_stop (void) {
     return 0;
 }
 
-static const char *filetypes[] = { "IT", "XM", "S3M", "STM", "669", "PTM", "PSM", "MTM", "RIFF", "ASY", "MOD", NULL };
-
 static const char settings_dlg[] =
     "property \"Resampling quality (0..2, higher is better)\" entry dumb.resampling_quality 2;\n"
     "property \"8-bit output (default is 16)\" checkbox dumb.8bitoutput 0;\n"
@@ -918,7 +916,6 @@ static DB_decoder_t plugin = {
     .insert = cdumb_insert,
     .read_metadata = cdumb_read_metadata,
     .exts = exts,
-    .filetypes = filetypes
 };
 
 DB_plugin_t *

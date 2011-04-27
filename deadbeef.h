@@ -851,9 +851,6 @@ typedef struct DB_decoder_s {
     // NULL terminated array of all supported prefixes (UADE support needs that)
     // e.g. "mod.song_title"
     const char **prefixes;
-
-    // NULL terminated array of all file type names
-    const char **filetypes;
 } DB_decoder_t;
 
 // output plugin

@@ -51,7 +51,6 @@
 #define trace(fmt,...)
 
 static const char * exts[] = { "wav", "dts", "cpt", NULL };
-static const char *filetypes[] = { "DTS WAV", "DTS", NULL };
 
 enum {
     FT_DTSWAV,
@@ -640,13 +639,13 @@ dts_insert (DB_playItem_t *after, const char *fname) {
     double dur = -1;
     // WAV format
     if ((offset = dts_open_wav (fp, &fmt, &totalsamples)) != -1) {
-        filetype = filetypes[FT_DTSWAV];
+        filetype = "DTS WAV";
         dur = (float)totalsamples / fmt.nSamplesPerSec;
     }
     else {
         // try raw DTS @ 48KHz
         offset = 0;
-        filetype = filetypes[FT_DTS];
+        filetype = "DTS";
         //fprintf (stderr, "dca: unrecognized format in %s\n", fname);
         //goto error;
     }
@@ -760,7 +759,6 @@ static DB_decoder_t plugin = {
     .seek_sample = dts_seek_sample,
     .insert = dts_insert,
     .exts = exts,
-    .filetypes = filetypes
 };
 
 DB_plugin_t *

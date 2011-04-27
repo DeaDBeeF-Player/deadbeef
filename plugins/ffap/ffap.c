@@ -1956,7 +1956,7 @@ static int ffap_write_metadata (DB_playItem_t *it) {
 }
 
 static const char *exts[] = { "ape", NULL };
-static const char *filetypes[] = { "APE", NULL };
+
 // define plugin interface
 static DB_decoder_t plugin = {
     DB_PLUGIN_SET_API_VERSION
@@ -1997,7 +1997,6 @@ static DB_decoder_t plugin = {
     .read_metadata = ffap_read_metadata,
     .write_metadata = ffap_write_metadata,
     .exts = exts,
-    .filetypes = filetypes
 };
 
 #if HAVE_SSE2 && !ARCH_UNKNOWN

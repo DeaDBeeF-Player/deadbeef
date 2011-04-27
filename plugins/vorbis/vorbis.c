@@ -763,7 +763,6 @@ error:
 
 
 static const char * exts[] = { "ogg", "ogx", NULL };
-static const char *filetypes[] = { "OggVorbis", NULL };
 
 // define plugin interface
 static DB_decoder_t plugin = {
@@ -805,8 +804,7 @@ static DB_decoder_t plugin = {
     .insert = cvorbis_insert,
     .read_metadata = cvorbis_read_metadata,
     .write_metadata = cvorbis_write_metadata,
-    .exts = exts,
-    .filetypes = filetypes
+    .exts = exts
 };
 
 DB_plugin_t *

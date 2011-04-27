@@ -613,8 +613,6 @@ cda_get_actions (DB_playItem_t *unused)
 }
 
 static const char *exts[] = { "cda", "nrg", NULL };
-static const char *filetypes[] = { "cdda", NULL };
-
 static const char settings_dlg[] =
     "property \"Use CDDB/FreeDB\" checkbox cdda.freedb.enable 1;\n"
     "property \"Prefer CD-Text over CDDB\" checkbox cdda.prefer_cdtext 1;\n"
@@ -662,7 +660,6 @@ static DB_decoder_t plugin = {
     .seek_sample = cda_seek_sample,
     .insert = cda_insert,
     .exts = exts,
-    .filetypes = filetypes,
 };
 
 DB_plugin_t *

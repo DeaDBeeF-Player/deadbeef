@@ -302,7 +302,6 @@ tta_stop (void) {
 }
 
 static const char * exts[] = { "tta", NULL };
-static const char *filetypes[] = { "TTA", NULL };
 
 // define plugin interface
 static DB_decoder_t plugin = {
@@ -346,7 +345,6 @@ static DB_decoder_t plugin = {
     .read_metadata = tta_read_metadata,
     .write_metadata = tta_write_metadata,
     .exts = exts,
-    .filetypes = filetypes
 };
 
 DB_plugin_t *

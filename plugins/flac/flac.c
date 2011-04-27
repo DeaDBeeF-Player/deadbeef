@@ -921,8 +921,6 @@ error:
 
 static const char *exts[] = { "flac", "oga", NULL };
 
-static const char *filetypes[] = { "FLAC", "OggFLAC", NULL };
-
 // define plugin interface
 static DB_decoder_t plugin = {
     DB_PLUGIN_SET_API_VERSION
@@ -961,7 +959,6 @@ static DB_decoder_t plugin = {
     .read_metadata = cflac_read_metadata,
     .write_metadata = cflac_write_metadata,
     .exts = exts,
-    .filetypes = filetypes
 };
 
 DB_plugin_t *
