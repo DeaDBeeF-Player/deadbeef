@@ -275,7 +275,7 @@ wv_seek (DB_fileinfo_t *_info, float sec) {
 }
 
 static DB_playItem_t *
-wv_insert (DB_playItem_t *after, const char *fname) {
+wv_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
         return NULL;
@@ -339,7 +339,7 @@ wv_insert (DB_playItem_t *after, const char *fname) {
     const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
     if (cuesheet) {
         trace ("found cuesheet: %s\n", cuesheet);
-        DB_playItem_t *last = deadbeef->pl_insert_cue_from_buffer (after, it, cuesheet, strlen (cuesheet), totalsamples, samplerate);
+        DB_playItem_t *last = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), totalsamples, samplerate);
         if (last) {
             deadbeef->fclose (fp);
             WavpackCloseFile (ctx);
@@ -349,7 +349,7 @@ wv_insert (DB_playItem_t *after, const char *fname) {
         }
     }
     // cue file on disc
-    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, it, totalsamples, samplerate);
+    DB_playItem_t *cue_after = deadbeef->plt_insert_cue (plt, after, it, totalsamples, samplerate);
     if (cue_after) {
         deadbeef->fclose (fp);
         WavpackCloseFile (ctx);
@@ -358,7 +358,7 @@ wv_insert (DB_playItem_t *after, const char *fname) {
         return cue_after;
     }
 
-    after = deadbeef->pl_insert_item (after, it);
+    after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
 
     deadbeef->fclose (fp);

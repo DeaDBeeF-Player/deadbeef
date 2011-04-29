@@ -1735,7 +1735,7 @@ error:
 }
 
 static DB_playItem_t *
-ffap_insert (DB_playItem_t *after, const char *fname) {
+ffap_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     APEContext ape_ctx;
     memset (&ape_ctx, 0, sizeof (ape_ctx));
     DB_FILE *fp = deadbeef->fopen (fname);
@@ -1786,7 +1786,7 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
     const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
     DB_playItem_t *cue = NULL;
     if (cuesheet) {
-        cue = deadbeef->pl_insert_cue_from_buffer (after, it, cuesheet, strlen (cuesheet), ape_ctx.totalsamples, ape_ctx.samplerate);
+        cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), ape_ctx.totalsamples, ape_ctx.samplerate);
         if (cue) {
             deadbeef->pl_item_unref (it);
             deadbeef->pl_item_unref (cue);
@@ -1809,7 +1809,7 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
     snprintf (s, sizeof (s), "%d", br);
     deadbeef->pl_add_meta (it, ":BITRATE", s);
 
-    cue  = deadbeef->pl_insert_cue (after, it, ape_ctx.totalsamples, ape_ctx.samplerate);
+    cue  = deadbeef->plt_insert_cue (plt, after, it, ape_ctx.totalsamples, ape_ctx.samplerate);
     if (cue) {
         deadbeef->pl_item_unref (it);
         deadbeef->pl_item_unref (cue);
@@ -1818,7 +1818,7 @@ ffap_insert (DB_playItem_t *after, const char *fname) {
 
     deadbeef->pl_add_meta (it, "title", NULL);
 
-    after = deadbeef->pl_insert_item (after, it);
+    after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
 
     return after;

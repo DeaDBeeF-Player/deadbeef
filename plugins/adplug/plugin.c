@@ -37,7 +37,7 @@ adplug_seek_sample (DB_fileinfo_t *, int sample);
 int
 adplug_seek (DB_fileinfo_t *, float time);
 DB_playItem_t *
-adplug_insert (DB_playItem_t *after, const char *fname);
+adplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname);
 int
 adplug_start (void);
 int

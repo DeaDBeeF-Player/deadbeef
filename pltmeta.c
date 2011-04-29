@@ -208,4 +208,29 @@ plt_delete_metadata (playlist_t *it, DB_metaInfo_t *meta) {
 }
 
 
+void
+plt_delete_all_meta (playlist_t *it) {
+    LOCK;
+    DB_metaInfo_t *m = it->meta;
+    DB_metaInfo_t *prev = NULL;
+    while (m) {
+        DB_metaInfo_t *next = m->next;
+        if (m->key[0] == ':') {
+            prev = m;
+        }
+        else {
+            if (prev) {
+                prev->next = next;
+            }
+            else {
+                it->meta = next;
+            }
+            metacache_remove_string (m->key);
+            metacache_remove_string (m->value);
+            free (m);
+        }
+        m = next;
+    }
+    UNLOCK;
+}
 

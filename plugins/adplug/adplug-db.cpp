@@ -241,7 +241,7 @@ adplug_add_meta (DB_playItem_t *it, const char *key, const char *value) {
 }
 
 DB_playItem_t *
-adplug_insert (DB_playItem_t *after, const char *fname) {
+adplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     // read information from the track
     // load/process cuesheet if exists
     // insert track into playlist
@@ -285,7 +285,7 @@ adplug_insert (DB_playItem_t *after, const char *fname) {
 #endif
         deadbeef->pl_add_meta (it, "title", NULL);
         // insert
-        after = deadbeef->pl_insert_item (after, it);
+        after = deadbeef->plt_insert_item (plt, after, it);
         deadbeef->pl_item_unref (it);
     }
 

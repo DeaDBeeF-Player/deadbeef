@@ -457,7 +457,7 @@ ffmpeg_read_metadata_internal (DB_playItem_t *it, AVFormatContext *fctx) {
 }
 
 static DB_playItem_t *
-ffmpeg_insert (DB_playItem_t *after, const char *fname) {
+ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     trace ("ffmpeg_insert %s\n", fname);
     // read information from the track
     // load/process cuesheet if exists
@@ -569,14 +569,14 @@ ffmpeg_insert (DB_playItem_t *after, const char *fname) {
     av_close_input_file(fctx);
 
     // external cuesheet
-    DB_playItem_t *cue = deadbeef->pl_insert_cue (after, it, totalsamples, samplerate);
+    DB_playItem_t *cue = deadbeef->plt_insert_cue (plt, after, it, totalsamples, samplerate);
     if (cue) {
         deadbeef->pl_item_unref (it);
         deadbeef->pl_item_unref (cue);
         return cue;
     }
     // now the track is ready, insert into playlist
-    after = deadbeef->pl_insert_item (after, it);
+    after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
     return after;
 }

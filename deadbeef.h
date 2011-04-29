@@ -445,6 +445,11 @@ typedef struct {
     float (*plt_find_meta_float) (ddb_playlist_t *handle, const char *key, float def);
     void (*plt_delete_all_meta) (ddb_playlist_t *handle);
 
+    // operating on playlist items
+    DB_playItem_t * (*plt_insert_item) (ddb_playlist_t *playlist, DB_playItem_t *after, DB_playItem_t *it);
+    DB_playItem_t * (*plt_insert_file) (ddb_playlist_t *playlist, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+    void (*plt_set_item_duration) (ddb_playlist_t *plt, DB_playItem_t *it, float duration);
+
     // playlist locking
     void (*pl_lock) (void);
     void (*pl_unlock) (void);
@@ -455,6 +460,8 @@ typedef struct {
     void (*pl_item_ref) (DB_playItem_t *it);
     void (*pl_item_unref) (DB_playItem_t *it);
     void (*pl_item_copy) (DB_playItem_t *out, DB_playItem_t *in);
+
+    // add files and folders to current playlist
     int (*pl_add_file) (const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
     int (*pl_add_dir) (const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 
@@ -462,8 +469,15 @@ typedef struct {
     // caller must cancel operation in this case, or wait until previous add
     // finishes
     int (*pl_add_files_begin) (ddb_playlist_t *plt);
+
+    // end must be called when add files operation is finished
     void (*pl_add_files_end) (void);
-    DB_playItem_t *(*pl_insert_item) (DB_playItem_t *after, DB_playItem_t *it);
+
+    // most of this functions are self explanatory
+    // if you don't get what they do -- look in the code
+    // NOTE: many of pl_* functions, especially the ones that operate on current
+    // playlist, are going to be nuked somewhere around 0.6 release, in favor of
+    // more explicit plt_* family
     DB_playItem_t *(*pl_insert_dir) (DB_playItem_t *after, const char *dirname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
     DB_playItem_t *(*pl_insert_file) (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
     int (*pl_get_idx_of) (DB_playItem_t *it);
@@ -561,8 +575,8 @@ typedef struct {
     int (*pl_playqueue_test) (DB_playItem_t *it);
 
     // cuesheet support
-    DB_playItem_t *(*pl_insert_cue_from_buffer) (DB_playItem_t *after, DB_playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate);
-    DB_playItem_t * (*pl_insert_cue) (DB_playItem_t *after, DB_playItem_t *origin, int numsamples, int samplerate);
+    DB_playItem_t *(*plt_insert_cue_from_buffer) (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate);
+    DB_playItem_t * (*plt_insert_cue) (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *origin, int numsamples, int samplerate);
 
     // volume control
     void (*volume_set_db) (float dB);
@@ -837,7 +851,7 @@ typedef struct DB_decoder_s {
     // 'insert' is called to insert new item to playlist
     // decoder is responsible to calculate duration, split it into subsongs, load cuesheet, etc
     // after==NULL means "prepend before 1st item in playlist"
-    DB_playItem_t * (*insert) (DB_playItem_t *after, const char *fname); 
+    DB_playItem_t * (*insert) (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname); 
 
     int (*numvoices) (DB_fileinfo_t *info);
     void (*mutevoice) (DB_fileinfo_t *info, int voice, int mute);
@@ -1012,12 +1026,12 @@ typedef struct DB_gui_s {
 typedef struct DB_playlist_s {
     DB_plugin_t plugin;
 
-    DB_playItem_t * (*load) (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+    DB_playItem_t * (*load) (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 
     // will save items from first to last (inclusive)
     // format is determined by extension
     // playlist is protected from changes during the call
-    int (*save) (const char *fname, DB_playItem_t *first, DB_playItem_t *last);
+    int (*save) (ddb_playlist_t *plt, const char *fname, DB_playItem_t *first, DB_playItem_t *last);
 
     const char **extensions; // NULL-terminated list of supported file extensions, e.g. {"m3u", "pls", NULL}
 } DB_playlist_t;

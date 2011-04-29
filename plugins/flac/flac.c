@@ -605,7 +605,7 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
 }
 
 static DB_playItem_t *
-cflac_insert (DB_playItem_t *after, const char *fname) {
+cflac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     trace ("flac: inserting %s\n", fname);
     DB_playItem_t *it = NULL;
     FLAC__StreamDecoder *decoder = NULL;
@@ -712,7 +712,7 @@ cflac_insert (DB_playItem_t *after, const char *fname) {
     // try embedded cue
     const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
     if (cuesheet) {
-        DB_playItem_t *last = deadbeef->pl_insert_cue_from_buffer (after, it, cuesheet, strlen (cuesheet), info.totalsamples, info.info.fmt.samplerate);
+        DB_playItem_t *last = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), info.totalsamples, info.info.fmt.samplerate);
         if (last) {
             deadbeef->pl_item_unref (it);
             deadbeef->pl_item_unref (last);
@@ -721,7 +721,7 @@ cflac_insert (DB_playItem_t *after, const char *fname) {
     }
 
     // try external cue
-    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, it, info.totalsamples, info.info.fmt.samplerate);
+    DB_playItem_t *cue_after = deadbeef->plt_insert_cue (plt, after, it, info.totalsamples, info.info.fmt.samplerate);
     if (cue_after) {
         if (info.file) {
             deadbeef->fclose (info.file);
@@ -731,7 +731,7 @@ cflac_insert (DB_playItem_t *after, const char *fname) {
         trace ("flac: loaded external cuesheet\n");
         return cue_after;
     }
-    after = deadbeef->pl_insert_item (after, it);
+    after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
     if (info.file) {
         deadbeef->fclose (info.file);

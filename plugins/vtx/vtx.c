@@ -228,7 +228,7 @@ vtx_seek (DB_fileinfo_t *_info, float time) {
 }
 
 static DB_playItem_t *
-vtx_insert (DB_playItem_t *after, const char *fname) {
+vtx_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     // read information from the track
     // load/process cuesheet if exists
     // insert track into playlist
@@ -271,7 +271,7 @@ vtx_insert (DB_playItem_t *after, const char *fname) {
     deadbeef->pl_add_meta (it, "album", hdr->from);
 
     ayemu_vtx_free (hdr);
-    after = deadbeef->pl_insert_item (after, it);
+    after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
     return after;
 }

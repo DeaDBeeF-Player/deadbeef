@@ -107,7 +107,7 @@ wmidi_seek (DB_fileinfo_t *_info, float time) {
 }
 
 DB_playItem_t *
-wmidi_insert (DB_playItem_t *after, const char *fname) {
+wmidi_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     DB_playItem_t *it = NULL;
 
     midi *m = WildMidi_Open (fname);
@@ -121,7 +121,7 @@ wmidi_insert (DB_playItem_t *after, const char *fname) {
     deadbeef->pl_add_meta (it, "title", NULL);
     deadbeef->pl_set_item_duration (it, inf->approx_total_samples / 44100.f);
     deadbeef->pl_add_meta (it, ":FILETYPE", "MID");
-    after = deadbeef->pl_insert_item (after, it);
+    after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
     WildMidi_Close (m);
     return after;

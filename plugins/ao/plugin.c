@@ -205,7 +205,7 @@ aoplug_add_meta (DB_playItem_t *it, const char *key, const char *value, const ch
 }
 
 static DB_playItem_t *
-aoplug_insert (DB_playItem_t *after, const char *fname) {
+aoplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
         trace ("psf: failed to fopen %s\n", fname);
@@ -327,7 +327,7 @@ aoplug_insert (DB_playItem_t *after, const char *fname) {
     }
     deadbeef->pl_set_item_duration (it, duration+fade);
     deadbeef->pl_add_meta (it, "title", NULL);
-    after = deadbeef->pl_insert_item (after, it);
+    after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
     return after;
 }

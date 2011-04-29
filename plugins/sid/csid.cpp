@@ -444,7 +444,7 @@ convstr (const char* str) {
 }
 
 extern "C" DB_playItem_t *
-csid_insert (DB_playItem_t *after, const char *fname) {
+csid_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     trace ("inserting %s\n", fname);
     sldb_load ();
     SidTune *tune;
@@ -569,7 +569,7 @@ csid_insert (DB_playItem_t *after, const char *fname) {
             deadbeef->pl_set_item_duration (it, length);
             deadbeef->pl_add_meta (it, ":FILETYPE", "SID");
 
-            after = deadbeef->pl_insert_item (after, it);
+            after = deadbeef->plt_insert_item (plt, after, it);
             deadbeef->pl_item_unref (it);
         }
     }

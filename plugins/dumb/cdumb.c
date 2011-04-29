@@ -791,7 +791,7 @@ cdumb_read_metadata (DB_playItem_t *it) {
 }
 
 static DB_playItem_t *
-cdumb_insert (DB_playItem_t *after, const char *fname) {
+cdumb_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     const char *ext = strrchr (fname, '.');
     if (ext) {
         ext++;
@@ -816,7 +816,7 @@ cdumb_insert (DB_playItem_t *after, const char *fname) {
     deadbeef->pl_set_item_duration (it, duh_get_length (duh)/65536.0f);
     deadbeef->pl_add_meta (it, ":FILETYPE", ftype);
 //    printf ("duration: %f\n", _info->duration);
-    after = deadbeef->pl_insert_item (after, it);
+    after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
     unload_duh (duh);
 

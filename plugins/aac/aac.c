@@ -1156,7 +1156,7 @@ aac_write_metadata (DB_playItem_t *it) {
 #endif
 
 static DB_playItem_t *
-aac_insert (DB_playItem_t *after, const char *fname) {
+aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     trace ("adding %s\n", fname);
     DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
@@ -1284,7 +1284,7 @@ aac_insert (DB_playItem_t *after, const char *fname) {
         DB_playItem_t *cue = NULL;
 
         if (cuesheet) {
-            cue = deadbeef->pl_insert_cue_from_buffer (after, it, cuesheet, strlen (cuesheet), totalsamples, samplerate);
+            cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), totalsamples, samplerate);
             if (cue) {
                 deadbeef->pl_item_unref (it);
                 deadbeef->pl_item_unref (cue);
@@ -1294,7 +1294,7 @@ aac_insert (DB_playItem_t *after, const char *fname) {
         }
         deadbeef->pl_unlock ();
 
-        cue  = deadbeef->pl_insert_cue (after, it, totalsamples, samplerate);
+        cue  = deadbeef->plt_insert_cue (plt, after, it, totalsamples, samplerate);
         if (cue) {
             deadbeef->pl_item_unref (it);
             deadbeef->pl_item_unref (cue);
@@ -1304,7 +1304,7 @@ aac_insert (DB_playItem_t *after, const char *fname) {
 
     deadbeef->pl_add_meta (it, "title", NULL);
 
-    after = deadbeef->pl_insert_item (after, it);
+    after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
     return after;
 }

@@ -294,7 +294,7 @@ sndfile_seek (DB_fileinfo_t *_info, float sec) {
 }
 
 static DB_playItem_t *
-sndfile_insert (DB_playItem_t *after, const char *fname) {
+sndfile_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     SF_INFO inf;
     sndfile_info_t info;
     memset (&info, 0, sizeof (info));
@@ -355,7 +355,7 @@ sndfile_insert (DB_playItem_t *after, const char *fname) {
     deadbeef->pl_add_meta (it, ":BITRATE", s);
 
 
-    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, it, totalsamples, samplerate);
+    DB_playItem_t *cue_after = deadbeef->plt_insert_cue (plt, after, it, totalsamples, samplerate);
     if (cue_after) {
         deadbeef->pl_item_unref (it);
         deadbeef->pl_item_unref (cue_after);
@@ -363,7 +363,7 @@ sndfile_insert (DB_playItem_t *after, const char *fname) {
     }
 
     deadbeef->pl_add_meta (it, "title", NULL);
-    after = deadbeef->pl_insert_item (after, it);
+    after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
 
     return after;

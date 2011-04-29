@@ -245,7 +245,7 @@ cgme_add_meta (DB_playItem_t *it, const char *key, const char *value) {
 }
 
 static DB_playItem_t *
-cgme_insert (DB_playItem_t *after, const char *fname) {
+cgme_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     Music_Emu *emu;
     trace ("gme_open_file %s\n", fname);
 
@@ -351,7 +351,7 @@ cgme_insert (DB_playItem_t *after, const char *fname) {
                         }
                     }
                 }
-                after = deadbeef->pl_insert_item (after, it);
+                after = deadbeef->plt_insert_item (plt, after, it);
                 deadbeef->pl_item_unref (it);
             }
             else {

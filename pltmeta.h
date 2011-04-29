@@ -52,4 +52,7 @@ plt_get_metadata_head (playlist_t *it);
 void
 plt_delete_metadata (playlist_t *it, DB_metaInfo_t *meta);
 
+void
+plt_delete_all_meta (playlist_t *it);
+
 #endif

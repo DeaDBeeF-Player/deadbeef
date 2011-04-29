@@ -319,7 +319,7 @@ mpc_set_trk_properties (DB_playItem_t *it, mpc_streaminfo *si, int64_t fsize) {
 }
 
 static DB_playItem_t *
-musepack_insert (DB_playItem_t *after, const char *fname) {
+musepack_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     trace ("mpc: inserting %s\n", fname);
     mpc_reader reader = {
         .read = musepack_vfs_read,
@@ -417,7 +417,7 @@ musepack_insert (DB_playItem_t *after, const char *fname) {
 
             mpc_set_trk_properties (it, &si, fsize);
 
-            after = deadbeef->pl_insert_item (after, it);
+            after = deadbeef->plt_insert_item (plt, after, it);
             prev = it;
             deadbeef->pl_item_unref (it);
         }
@@ -448,7 +448,7 @@ musepack_insert (DB_playItem_t *after, const char *fname) {
     const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
     DB_playItem_t *cue = NULL;
     if (cuesheet) {
-        cue = deadbeef->pl_insert_cue_from_buffer (after, it, cuesheet, strlen (cuesheet), totalsamples, si.sample_freq);
+        cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), totalsamples, si.sample_freq);
         if (cue) {
             deadbeef->pl_item_unref (it);
             deadbeef->pl_item_unref (cue);
@@ -461,7 +461,7 @@ musepack_insert (DB_playItem_t *after, const char *fname) {
     deadbeef->pl_unlock ();
 
     mpc_set_trk_properties (it, &si, fsize);
-    cue  = deadbeef->pl_insert_cue (after, it, totalsamples, si.sample_freq);
+    cue  = deadbeef->plt_insert_cue (plt, after, it, totalsamples, si.sample_freq);
     if (cue) {
         deadbeef->pl_item_unref (it);
         deadbeef->pl_item_unref (cue);
@@ -472,7 +472,7 @@ musepack_insert (DB_playItem_t *after, const char *fname) {
     }
 
     deadbeef->pl_add_meta (it, "title", NULL);
-    after = deadbeef->pl_insert_item (after, it);
+    after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
 
     mpc_demux_exit (demux);

@@ -1299,7 +1299,7 @@ cmp3_seek (DB_fileinfo_t *_info, float time) {
 }
 
 static DB_playItem_t *
-cmp3_insert (DB_playItem_t *after, const char *fname) {
+cmp3_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     trace ("cmp3_insert %s\n", fname);
     DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
@@ -1311,7 +1311,7 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
         deadbeef->fclose (fp);
         deadbeef->pl_add_meta (it, "title", NULL);
         deadbeef->pl_set_item_duration (it, -1);
-        after = deadbeef->pl_insert_item (after, it);
+        after = deadbeef->plt_insert_item (plt, after, it);
         deadbeef->pl_item_unref (it);
         return after;
     }
@@ -1347,18 +1347,18 @@ cmp3_insert (DB_playItem_t *after, const char *fname) {
     buffer.it = it;
     cmp3_set_extra_properties (&buffer);
 
-    deadbeef->pl_set_item_duration (it, buffer.duration);
+    deadbeef->plt_set_item_duration (plt, it, buffer.duration);
     deadbeef->fclose (fp);
 
     // FIXME! bad numsamples passed to cue
-    DB_playItem_t *cue_after = deadbeef->pl_insert_cue (after, it, buffer.totalsamples-buffer.delay-buffer.padding, buffer.samplerate);
+    DB_playItem_t *cue_after = deadbeef->plt_insert_cue (plt, after, it, buffer.totalsamples-buffer.delay-buffer.padding, buffer.samplerate);
     if (cue_after) {
         deadbeef->pl_item_unref (it);
         deadbeef->pl_item_unref (cue_after);
         return cue_after;
     }
 
-    after = deadbeef->pl_insert_item (after, it);
+    after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
     return after;
 }

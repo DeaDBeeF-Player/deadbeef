@@ -303,7 +303,7 @@ resolve_disc (CdIo_t *cdio)
 }
 
 static DB_playItem_t *
-insert_single_track (CdIo_t* cdio, DB_playItem_t *after, const char* file, int track_nr, int discid)
+insert_single_track (CdIo_t* cdio, ddb_playlist_t *plt, DB_playItem_t *after, const char* file, int track_nr, int discid)
 {
     char tmp[file ? strlen (file) + 20 : 20];
     if (file)
@@ -330,7 +330,7 @@ insert_single_track (CdIo_t* cdio, DB_playItem_t *after, const char* file, int t
 
     deadbeef->pl_set_meta_int (it, ":CDIO_DISCID", discid);
 
-    after = deadbeef->pl_insert_item (after, it);
+    after = deadbeef->plt_insert_item (plt, after, it);
 
     return after;
 }
@@ -483,7 +483,7 @@ read_disc_cdtext (struct cddb_thread_params *params)
 }
 
 static DB_playItem_t *
-cda_insert (DB_playItem_t *after, const char *fname) {
+cda_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     trace ("CDA insert: %s\n", fname);
     CdIo_t* cdio = NULL;
     int track_nr;
@@ -553,7 +553,7 @@ cda_insert (DB_playItem_t *after, const char *fname) {
         for (i = 0; i < tracks; i++)
         {
             trace ("inserting track %d\n", i);
-            res = insert_single_track (cdio, res, is_image ? fname : NULL, i+first_track, discid);
+            res = insert_single_track (cdio, plt, res, is_image ? fname : NULL, i+first_track, discid);
             if (res) {
                 p->items[i] = res;
             }
@@ -574,7 +574,7 @@ cda_insert (DB_playItem_t *after, const char *fname) {
     else
     {
         track_nr = atoi (shortname);
-        res = insert_single_track (cdio, after, NULL, track_nr, discid);
+        res = insert_single_track (cdio, plt, after, NULL, track_nr, discid);
         if (res) {
             read_track_cdtext (cdio, track_nr, res);
             deadbeef->pl_item_unref (res);

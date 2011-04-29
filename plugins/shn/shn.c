@@ -860,7 +860,7 @@ shn_seek (DB_fileinfo_t *_info, float time) {
 }
 
 DB_playItem_t *
-shn_insert (DB_playItem_t *after, const char *fname) {
+shn_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 	shn_file *tmp_file;
 	DB_FILE *f;
 	char data[4];
@@ -918,7 +918,7 @@ shn_insert (DB_playItem_t *after, const char *fname) {
     deadbeef->pl_add_meta (it, ":BITRATE", s);
     deadbeef->pl_add_meta (it, "title", NULL);
 
-    after = deadbeef->pl_insert_item (after, it);
+    after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
     return after;
 }

@@ -451,7 +451,7 @@ cvorbis_seek (DB_fileinfo_t *_info, float time) {
 }
 
 static DB_playItem_t *
-cvorbis_insert (DB_playItem_t *after, const char *fname) {
+cvorbis_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     // check for validity
     DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
@@ -464,7 +464,7 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
         deadbeef->pl_add_meta (it, ":FILETYPE", "OggVorbis");
         deadbeef->pl_set_item_duration (it, -1);
         deadbeef->pl_add_meta (it, "title", NULL);
-        after = deadbeef->pl_insert_item (after, it);
+        after = deadbeef->plt_insert_item (plt, after, it);
         deadbeef->pl_item_unref (it);
         deadbeef->fclose (fp);
         return after;
@@ -525,7 +525,7 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
 
 
         if (nstreams == 1) {
-            DB_playItem_t *cue = deadbeef->pl_insert_cue (after, it, totalsamples, samplerate);
+            DB_playItem_t *cue = deadbeef->plt_insert_cue (plt, after, it, totalsamples, samplerate);
             if (cue) {
                 deadbeef->pl_item_unref (it);
                 deadbeef->pl_item_unref (cue);
@@ -536,7 +536,7 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
             // embedded cue
             const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
             if (cuesheet) {
-                cue = deadbeef->pl_insert_cue_from_buffer (after, it, cuesheet, strlen (cuesheet), totalsamples, samplerate);
+                cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), totalsamples, samplerate);
                 if (cue) {
                     deadbeef->pl_item_unref (it);
                     deadbeef->pl_item_unref (cue);
@@ -549,7 +549,7 @@ cvorbis_insert (DB_playItem_t *after, const char *fname) {
             currentsample += totalsamples;
         }
 
-        after = deadbeef->pl_insert_item (after, it);
+        after = deadbeef->plt_insert_item (plt, after, it);
         deadbeef->pl_item_unref (it);
     }
     ov_clear (&vorbis_file);

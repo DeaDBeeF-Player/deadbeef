@@ -622,7 +622,7 @@ dts_seek (DB_fileinfo_t *_info, float time) {
 }
 
 static DB_playItem_t *
-dts_insert (DB_playItem_t *after, const char *fname) {
+dts_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
         trace ("dca: failed to open %s\n", fname);
@@ -690,7 +690,7 @@ dts_insert (DB_playItem_t *after, const char *fname) {
 
     // embedded cue
     DB_playItem_t *cue = NULL;
-    cue  = deadbeef->pl_insert_cue (after, it, totalsamples, state.sample_rate);
+    cue  = deadbeef->plt_insert_cue (plt, after, it, totalsamples, state.sample_rate);
     if (cue) {
         deadbeef->pl_item_unref (it);
         deadbeef->pl_item_unref (cue);
@@ -698,7 +698,7 @@ dts_insert (DB_playItem_t *after, const char *fname) {
     }
 
     deadbeef->pl_add_meta (it, "title", NULL);
-    after = deadbeef->pl_insert_item (after, it);
+    after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
 
     return after;

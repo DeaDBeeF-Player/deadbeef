@@ -178,7 +178,7 @@ tta_seek (DB_fileinfo_t *_info, float time) {
 }
 
 static DB_playItem_t *
-tta_insert (DB_playItem_t *after, const char *fname) {
+tta_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     tta_info tta;
     if (open_tta_file (fname, &tta, 0) != 0) {
         fprintf (stderr, "tta: failed to open %s\n", fname);
@@ -213,7 +213,7 @@ tta_insert (DB_playItem_t *after, const char *fname) {
     const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
     DB_playItem_t *cue = NULL;
     if (cuesheet) {
-        cue = deadbeef->pl_insert_cue_from_buffer (after, it, cuesheet, strlen (cuesheet), totalsamples, tta.SAMPLERATE);
+        cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), totalsamples, tta.SAMPLERATE);
         if (cue) {
             deadbeef->pl_item_unref (it);
             deadbeef->pl_item_unref (cue);
@@ -235,7 +235,7 @@ tta_insert (DB_playItem_t *after, const char *fname) {
     snprintf (s, sizeof (s), "%d", tta.BITRATE);
     deadbeef->pl_add_meta (it, ":BITRATE", s);
 
-    cue  = deadbeef->pl_insert_cue (after, it, totalsamples, tta.SAMPLERATE);
+    cue  = deadbeef->plt_insert_cue (plt, after, it, totalsamples, tta.SAMPLERATE);
     if (cue) {
         deadbeef->pl_item_unref (it);
         deadbeef->pl_item_unref (cue);
@@ -243,7 +243,7 @@ tta_insert (DB_playItem_t *after, const char *fname) {
     }
 
     deadbeef->pl_add_meta (it, "title", NULL);
-    after = deadbeef->pl_insert_item (after, it);
+    after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
 
     return after;

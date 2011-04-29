@@ -136,6 +136,15 @@ static DB_functions_t deadbeef_api = {
     .plt_set_meta_float = (void (*) (ddb_playlist_t *handle, const char *key, float value))plt_set_meta_float,
     .plt_find_meta = (const char *(*) (ddb_playlist_t *handle, const char *key))plt_find_meta,
     .plt_get_metadata_head = (DB_metaInfo_t * (*) (ddb_playlist_t *handle))plt_get_metadata_head,
+    .plt_delete_metadata = (void (*) (ddb_playlist_t *handle, DB_metaInfo_t *meta))plt_delete_metadata,
+    .plt_find_meta_int = (int (*) (ddb_playlist_t *handle, const char *key, int def))plt_find_meta_int,
+    .plt_find_meta_float = (float (*) (ddb_playlist_t *handle, const char *key, float def))plt_find_meta_float,
+    .plt_delete_all_meta = (void (*) (ddb_playlist_t *handle))plt_delete_all_meta,
+
+    // operating on playlist items
+    .plt_insert_item = (DB_playItem_t *(*) (ddb_playlist_t *playlist, DB_playItem_t *after, DB_playItem_t *it))plt_insert_item,
+    .plt_insert_file = (DB_playItem_t *(*) (ddb_playlist_t *playlist, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data))plt_insert_file,
+    .plt_set_item_duration = (void (*) (ddb_playlist_t *plt, DB_playItem_t *it, float duration))plt_set_item_duration,
 
     // playlist access
     .pl_lock = pl_lock,
@@ -151,7 +160,7 @@ static DB_functions_t deadbeef_api = {
     .pl_add_dir = (int (*) (const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data))pl_add_dir,
     .pl_add_files_begin = (int (*) (ddb_playlist_t *plt))pl_add_files_begin,
     .pl_add_files_end = pl_add_files_end,
-    .pl_insert_item = (DB_playItem_t *(*) (DB_playItem_t *after, DB_playItem_t *it))pl_insert_item,
+//    .pl_insert_item = (DB_playItem_t *(*) (DB_playItem_t *after, DB_playItem_t *it))pl_insert_item,
     .pl_insert_dir = (DB_playItem_t *(*) (DB_playItem_t *after, const char *dirname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data))pl_insert_dir,
     .pl_insert_file = (DB_playItem_t *(*) (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data))pl_insert_file,
     .pl_get_idx_of = (int (*) (DB_playItem_t *it))pl_get_idx_of,
@@ -204,8 +213,8 @@ static DB_functions_t deadbeef_api = {
     .pl_get_metadata_head = (DB_metaInfo_t *(*)(DB_playItem_t *it))pl_get_metadata_head,
     .pl_delete_metadata = (void (*)(DB_playItem_t *, DB_metaInfo_t *))pl_delete_metadata,
     // cuesheet support
-    .pl_insert_cue_from_buffer = (DB_playItem_t *(*) (DB_playItem_t *after, DB_playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate))pl_insert_cue_from_buffer,
-    .pl_insert_cue = (DB_playItem_t *(*)(DB_playItem_t *after, DB_playItem_t *origin, int numsamples, int samplerate))pl_insert_cue,
+    .plt_insert_cue_from_buffer = (DB_playItem_t *(*) (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate))plt_insert_cue_from_buffer,
+    .plt_insert_cue = (DB_playItem_t *(*)(ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *origin, int numsamples, int samplerate))plt_insert_cue,
     // playqueue support
     .pl_playqueue_push = (int (*) (DB_playItem_t *))pl_playqueue_push,
     .pl_playqueue_clear = pl_playqueue_clear,

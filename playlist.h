@@ -175,6 +175,9 @@ playItem_t *
 pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data);
 
 playItem_t *
+plt_insert_file (playlist_t *playlist, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data);
+
+playItem_t *
 pl_insert_item (playItem_t *after, playItem_t *it);
 
 playItem_t *
@@ -217,10 +220,10 @@ int
 pl_get_idx_of_iter (playItem_t *it, int iter);
 
 playItem_t *
-pl_insert_cue_from_buffer (playItem_t *after, playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate);
+plt_insert_cue_from_buffer (playlist_t *plt, playItem_t *after, playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate);
 
 playItem_t *
-pl_insert_cue (playItem_t *after, playItem_t *origin, int numsamples, int samplerate);
+plt_insert_cue (playlist_t *plt, playItem_t *after, playItem_t *origin, int numsamples, int samplerate);
 
 void
 pl_add_meta (playItem_t *it, const char *key, const char *value);
@@ -289,6 +292,9 @@ void
 pl_reshuffle (playItem_t **ppmin, playItem_t **ppmax);
 
 // required to calculate total playtime
+void
+plt_set_item_duration (playlist_t *playlist, playItem_t *it, float duration);
+
 void
 pl_set_item_duration (playItem_t *it, float duration);
 
