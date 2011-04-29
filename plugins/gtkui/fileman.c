@@ -22,33 +22,32 @@ gtkpl_adddir_cb (gpointer data, gpointer userdata) {
 
 void
 gtkpl_add_dirs (GSList *lst) {
-    if (deadbeef->pl_add_files_begin (deadbeef->plt_get_curr ()) < 0) {
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (deadbeef->pl_add_files_begin (plt) < 0) {
+        deadbeef->plt_unref (plt);
         g_slist_free (lst);
         return;
     }
     deadbeef->pl_lock ();
     if (g_slist_length (lst) == 1
             && deadbeef->conf_get_int ("gtkui.name_playlist_from_folder", 0)) {
-        ddb_playlist_t *p = deadbeef->plt_get_curr ();
-        if (p) {
-            char t[1000];
-            if (!deadbeef->plt_get_title (p, t, sizeof (t))) {
-                char *def = _("New Playlist");
-                if (!strncmp (t, def, strlen (def))) {
-                    const char *folder = strrchr ((char*)lst->data, '/');
-                    if (!folder) {
-                        folder = lst->data;
-                    }
-                    deadbeef->plt_set_title (p, folder+1);
+        char t[1000];
+        if (!deadbeef->plt_get_title (plt, t, sizeof (t))) {
+            char *def = _("New Playlist");
+            if (!strncmp (t, def, strlen (def))) {
+                const char *folder = strrchr ((char*)lst->data, '/');
+                if (!folder) {
+                    folder = lst->data;
                 }
+                deadbeef->plt_set_title (plt, folder+1);
             }
-            deadbeef->plt_unref (p);
         }
     }
     deadbeef->pl_unlock ();
     g_slist_foreach(lst, gtkpl_adddir_cb, NULL);
     g_slist_free (lst);
     deadbeef->pl_add_files_end ();
+    deadbeef->plt_unref (plt);
 }
 
 static void
@@ -59,13 +58,16 @@ gtkpl_addfile_cb (gpointer data, gpointer userdata) {
 
 void
 gtkpl_add_files (GSList *lst) {
-    if (deadbeef->pl_add_files_begin (deadbeef->plt_get_curr ()) < 0) {
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (deadbeef->pl_add_files_begin (plt) < 0) {
         g_slist_free (lst);
+        deadbeef->plt_unref (plt);
         return;
     }
     g_slist_foreach(lst, gtkpl_addfile_cb, NULL);
     g_slist_free (lst);
     deadbeef->pl_add_files_end ();
+    deadbeef->plt_unref (plt);
 }
 
 static void
@@ -88,9 +90,6 @@ add_files_worker (void *data) {
 
 void
 gtkui_add_files (struct _GSList *lst) {
-    if (deadbeef->pl_add_files_begin (deadbeef->plt_get_curr ()) < 0) {
-        return;
-    }
     intptr_t tid = deadbeef->thread_start (add_files_worker, lst);
     deadbeef->thread_detach (tid);
 }
