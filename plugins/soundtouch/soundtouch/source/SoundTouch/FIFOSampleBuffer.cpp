@@ -47,7 +47,6 @@
 #include <memory.h>
 #include <string.h>
 #include <assert.h>
-#include <stdexcept>
 
 #include "FIFOSampleBuffer.h"
 
@@ -175,7 +174,7 @@ void FIFOSampleBuffer::ensureCapacity(uint capacityRequirement)
         tempUnaligned = new SAMPLETYPE[sizeInBytes / sizeof(SAMPLETYPE) + 16 / sizeof(SAMPLETYPE)];
         if (tempUnaligned == NULL)
         {
-            throw std::runtime_error("Couldn't allocate memory!\n");
+            exit (-1);
         }
         // Align the buffer to begin at 16byte cache line boundary for optimal performance
         temp = (SAMPLETYPE *)(((ulong)tempUnaligned + 15) & (ulong)-16);

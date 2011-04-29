@@ -108,7 +108,6 @@ public:
 // depending on if we've a MMX/SSE/etc-capable CPU available or not.
 void * RateTransposer::operator new(size_t s)
 {
-    throw runtime_error("Error in RateTransoser::new: don't use \"new TDStretch\" directly, use \"newInstance\" to create a new instance instead!");
     return NULL;
 }
 

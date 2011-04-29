@@ -19,7 +19,7 @@ for i in nullout cdda flac alsa mpgmad hotkeys vtx \
 	 lastfm sid adplug sndfile artwork \
 	 supereq gme dumb notify musepack wildmidi \
 	 tta dca aac mms shn ao shellexec vfs_zip \
-	 m3u ; do
+	 m3u converter ; do
     if [ -f ./plugins/$i/.libs/$i.so ]; then
 		 cp ./plugins/$i/.libs/$i.so $PLUGDIR/
 	else
@@ -47,7 +47,7 @@ for i in pause_16.png play_16.png noartwork.jpg buffering_16.png; do
 done
 
 # docs
-for i in ChangeLog help.txt COPYING.GPLv2 about.txt translators.txt; do
+for i in ChangeLog help.txt COPYING.GPLv2 COPYING.LGPLv2.1 about.txt translators.txt; do
 	cp ./$i $DOCDIR/
 done
 
