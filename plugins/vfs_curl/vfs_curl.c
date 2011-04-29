@@ -55,10 +55,10 @@ typedef struct {
     uint8_t buffer[BUFFER_SIZE];
 
     DB_playItem_t *track;
-    long pos; // position in stream; use "& BUFFER_MASK" to make it index into ringbuffer
+    int64_t pos; // position in stream; use "& BUFFER_MASK" to make it index into ringbuffer
     int64_t length;
     int32_t remaining; // remaining bytes in buffer read from stream
-    int32_t skipbytes;
+    int64_t skipbytes;
     intptr_t tid; // thread id which does http requests
     intptr_t mutex;
     uint8_t nheaderpackets;
@@ -452,7 +452,9 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
             fp->content_type = strdup (value);
         }
         else if (!strcasecmp (key, "Content-Length")) {
-            fp->length = atoi (value);
+            if (fp->length < 0) {
+                fp->length = atoi (value);
+            }
         }
         else if (!strcasecmp (key, "icy-name")) {
             if (fp->track) {
@@ -570,7 +572,7 @@ http_thread_func (void *ctx) {
         headers = curl_slist_append (headers, "Icy-Metadata:1");
         curl_easy_setopt (curl, CURLOPT_HTTPHEADER, headers);
         if (fp->pos > 0 && fp->length >= 0) {
-            curl_easy_setopt (curl, CURLOPT_RESUME_FROM, fp->pos);
+            curl_easy_setopt (curl, CURLOPT_RESUME_FROM, (long)fp->pos);
         }
         if (deadbeef->conf_get_int ("network.proxy", 0)) {
             deadbeef->conf_lock ();
@@ -741,17 +743,17 @@ http_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
 //    trace ("http_read %d (status=%d)\n", size*nmemb, fp->status);
     fp->seektoend = 0;
     int sz = size * nmemb;
-    if (fp->status == STATUS_ABORTED || fp->status == STATUS_FINISHED) {
+    if (fp->status == STATUS_ABORTED || (fp->status == STATUS_FINISHED && fp->remaining == 0)) {
         return -1;
     }
     if (!fp->tid) {
         http_start_streamer (fp);
     }
-    while (fp->status != STATUS_FINISHED && sz > 0)
+    while ((fp->remaining > 0 || fp->status != STATUS_FINISHED) && sz > 0)
     {
         // wait until data is available
         while ((fp->remaining == 0 || fp->skipbytes > 0) && fp->status != STATUS_FINISHED) {
-            trace ("vfs_curl: readwait, status: %d..\n", fp->status);
+//            trace ("vfs_curl: readwait, status: %d..\n", fp->status);
             deadbeef->mutex_lock (fp->mutex);
             if (fp->status == STATUS_READING) {
                 struct timeval tm;
@@ -782,6 +784,7 @@ http_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
         }
     //    trace ("buffer remaining: %d\n", fp->remaining);
         deadbeef->mutex_lock (fp->mutex);
+        trace ("http_read %lld/%lld/%d\n", fp->pos, fp->length, fp->remaining);
         int cp = min (sz, fp->remaining);
         int readpos = fp->pos & BUFFER_MASK;
         int part1 = BUFFER_SIZE-readpos;
@@ -810,7 +813,7 @@ http_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
 
 static int
 http_seek (DB_FILE *stream, int64_t offset, int whence) {
-    trace ("http_seek %x %d\n", offset, whence);
+    trace ("http_seek %lld %d\n", offset, whence);
     assert (stream);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
     fp->seektoend = 0;
