@@ -1179,7 +1179,7 @@ cmp3_read (DB_fileinfo_t *_info, char *bytes, int size) {
 #endif
     int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
     mpgmad_info_t *info = (mpgmad_info_t *)_info;
-    if (info->buffer.duration >= 0) {
+    if (info->buffer.duration >= 0 && !info->buffer.file->vfs->is_streaming ()) {
         int curr = info->buffer.currentsample;
         //printf ("curr: %d -> end %d, padding: %d\n", curr, info->buffer.endsample, info->buffer.padding);
         if (size / samplesize + curr > info->buffer.endsample) {
