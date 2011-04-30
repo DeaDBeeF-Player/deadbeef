@@ -1,7 +1,7 @@
 if HAVE_CONVERTER
 
 if STATICLINK
-pkglib_LTLIBRARIES = converter.la converter_gtkui.la converter_gtkui_fallback.la
+pkglib_LTLIBRARIES = converter.la converter_gtkui.la converter_gtkui.fallback.la
 else
 pkglib_LTLIBRARIES = converter.la converter_gtkui.la
 endif
