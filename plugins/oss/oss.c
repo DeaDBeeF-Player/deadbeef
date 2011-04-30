@@ -212,15 +212,26 @@ oss_setformat (ddb_waveformat_t *fmt) {
     if (!memcmp (fmt, &plugin.fmt, sizeof (ddb_waveformat_t))) {
         return 0;
     }
-    deadbeef->mutex_lock (mutex);
 
-    if (0 != oss_set_hwparams (fmt)) {
-        return -1;
+    int _state = state;
+    int v4workaround = deadbeef->conf_get_int ("oss.v4workaround", 0);
+
+    if (v4workaround) {
+        oss_stop ();
+        memcpy (&plugin.fmt, fmt, sizeof (ddb_waveformat_t));
+    }
+    else {
+        deadbeef->mutex_lock (mutex);
+
+        if (0 != oss_set_hwparams (fmt)) {
+            deadbeef->mutex_unlock (mutex);
+            return -1;
+        }
+
+        deadbeef->mutex_unlock (mutex);
     }
 
-    deadbeef->mutex_unlock (mutex);
-
-    switch (state) {
+    switch (_state) {
     case OUTPUT_STATE_STOPPED:
         return oss_stop ();
     case OUTPUT_STATE_PLAYING:
@@ -293,8 +304,9 @@ oss_thread (void *context) {
 
         int write_size = oss_callback (buf, sizeof (buf));
         deadbeef->mutex_lock (mutex);
-        if ( write_size > 0 )
-           res = write (fd, buf, write_size);
+        if ( write_size > 0 ) {
+            res = write (fd, buf, write_size);
+        }
 
         deadbeef->mutex_unlock (mutex);
 //        if (res != write_size) {
@@ -356,7 +368,8 @@ oss_load (DB_functions_t *api) {
 }
 
 static const char settings_dlg[] =
-    "property \"Device file\" entry oss.device /dev/dsp;\n";
+    "property \"Device file\" entry oss.device /dev/dsp;\n"
+    "property \"OSS4 samplerate bug workaround\" checkbox oss.v4workaround 0;\n";
 
 // define plugin interface
 static DB_output_t plugin = {
