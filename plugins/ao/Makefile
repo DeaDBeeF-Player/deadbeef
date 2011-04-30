@@ -2,13 +2,14 @@ OUT=ao.so
 
 CC=gcc
 
-ZLIB_LIBS?=-lz
+#ZLIB_LIBS?=-lz
+ZLIB_LIBS=../../lib-x86-32/libz.a
 
 CFLAGS?=-O2 -fomit-frame-pointer
 CFLAGS+=-Wall -fPIC -DPATH_MAX=1024 -DHAS_PSXCPU=1 -I../.. -I./ -Ieng_ssf -Ieng_qsf -Ieng_dsf
 CFLAGS+=$(STATIC_CFLAGS)
 
-LDFLAGS+=-module -shared $(ZLIB_LIBS) -lm
+LDFLAGS+=-module -shared -lm
 
 SOURCES=plugin.c main.c corlett.c\
 eng_dsf/eng_dsf.c eng_dsf/dc_hw.c eng_dsf/aica.c eng_dsf/aicadsp.c eng_dsf/arm7.c eng_dsf/arm7i.c\
@@ -24,7 +25,7 @@ OBJECTS=$(SOURCES:.c=.o)
 all: $(SOURCES) $(OUT)
 
 $(OUT): $(OBJECTS)
-	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
+	$(CC) $(LDFLAGS) $(OBJECTS) -o $@ $(ZLIB_LIBS) 
 
 .c.o:
 	$(CC) $(CFLAGS) $< -c -o $@
