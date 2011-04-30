@@ -12,7 +12,7 @@ sed -i 's/-lstdc++ -lm -lgcc_s -lc -lgcc_s/-lm -lc/g' libtool
 make clean
 make -j9
 
-#ZLIB_LIBS="$ORIGIN/lib-x86-32/libz.a"
+ZLIB_LIBS="$ORIGIN/lib-x86-32/libz.a"
 CFLAGS="-I$ORIGIN/lib-x86-32/include"
 
 for i in shn dumb ao ; do
@@ -20,7 +20,7 @@ for i in shn dumb ao ; do
     cd $ORIGIN/plugins/$i
     make clean
     echo making $ORIGIN/plugins/$i
-    make -j8 STATIC_CFLAGS="$CFLAGS" CC=$CC CXX=$CXX
+    make -j8 STATIC_CFLAGS="$CFLAGS" CC=$CC CXX=$CXX ZLIB_LIBS=$ZLIB_LIBS
 done
 
 cd $ORIGIN

@@ -2,8 +2,7 @@ OUT=ao.so
 
 CC=gcc
 
-#ZLIB_LIBS?=-lz
-ZLIB_LIBS=../../lib-x86-32/libz.a
+ZLIB_LIBS?=-lz
 
 CFLAGS?=-O2 -fomit-frame-pointer
 CFLAGS+=-Wall -fPIC -DPATH_MAX=1024 -DHAS_PSXCPU=1 -I../.. -I./ -Ieng_ssf -Ieng_qsf -Ieng_dsf
