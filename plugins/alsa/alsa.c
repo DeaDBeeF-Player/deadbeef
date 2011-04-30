@@ -468,11 +468,14 @@ palsa_setformat (ddb_waveformat_t *fmt) {
     state = OUTPUT_STATE_STOPPED;
     snd_pcm_drop (audio);
     int ret = palsa_set_hw_params (fmt);
-    UNLOCK;
     if (ret < 0) {
         trace ("palsa_change_rate: impossible to set requested format\n");
+        // even if it failed -- copy the format
+        memcpy (&plugin.fmt, fmt, sizeof (ddb_waveformat_t));
+        UNLOCK;
         return -1;
     }
+    UNLOCK;
     trace ("new format %dbit %s %dch %dHz channelmask=%X\n", plugin.fmt.bps, plugin.fmt.is_float ? "float" : "int", plugin.fmt.channels, plugin.fmt.samplerate, plugin.fmt.channelmask);
 
     switch (s) {
