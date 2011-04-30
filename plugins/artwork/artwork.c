@@ -180,6 +180,7 @@ check_dir (const char *dir, mode_t mode)
     return 1;
 }
 
+#ifndef USE_IMLIB2
 struct my_error_mgr {
   struct jpeg_error_mgr pub;	/* "public" fields */
 
@@ -331,6 +332,7 @@ jpeg_resize (const char *fname, const char *outname, int scaled_size) {
 
     return 0;
 }
+#endif
 
 #define BUFFER_SIZE 4096
 

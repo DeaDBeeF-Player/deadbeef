@@ -103,6 +103,7 @@ AC_ARG_ENABLE(src,      [AS_HELP_STRING([--enable-src      ], [build libsamplera
 AC_ARG_ENABLE(m3u,      [AS_HELP_STRING([--enable-m3u      ], [build m3u plugin (default: auto)])], [enable_m3u=$enableval], [enable_m3u=yes])
 AC_ARG_ENABLE(vfs-zip,      [AS_HELP_STRING([--enable-vfs-zip      ], [build vfs_zip plugin (default: auto)])], [enable_vfs_zip=$enableval], [enable_vfs_zip=yes])
 AC_ARG_ENABLE(converter,      [AS_HELP_STRING([--enable-converter      ], [build converter plugin (default: auto)])], [enable_converter=$enableval], [enable_converter=yes])
+AC_ARG_ENABLE(artwork-imlib2, [AS_HELP_STRING([--enable-artwork-imlib2      ], [use imlib2 in artwork plugin (default: auto)])], [enable_artwork_imlib2=$enableval], [enable_artwork_imlib2=yes])
 
 if test "x$enable_staticlink" != "xno" ; then
     AC_DEFINE_UNQUOTED([STATICLINK], [1], [Define if building static version])
@@ -414,16 +415,24 @@ if test "x$enable_shellexec" != "xno" ; then
     HAVE_SHELLEXEC=yes
 fi
 
+
 if test "x$enable_artwork" != "xno" ; then
     if test "x$enable_staticlink" != "xno" ; then
         HAVE_JPEG=yes
         JPEG_DEPS_LIBS="../../$LIB/libjpeg.a"
         AC_SUBST(JPEG_DEPS_LIBS)
+        HAVE_IMLIB2=no
     else
-        AC_CHECK_LIB([jpeg], [main], [HAVE_JPEG=yes;JPEG_DEPS_LIBS="-ljpeg";AC_SUBST(JPEG_DEPS_LIBS)])
+        if test "x$enable_artwork_imlib2" != "xno" ; then
+            PKG_CHECK_MODULES(IMLIB2_DEPS, imlib2, HAVE_IMLIB2=yes, HAVE_IMLIB2=no)
+        fi
+
+        if test "x$enable_artwork_imlib2" == "xno" || test "x$HAVE_IMLIB2" == "xno" ; then
+            AC_CHECK_LIB([jpeg], [main], [HAVE_JPEG=yes;JPEG_DEPS_LIBS="-ljpeg";AC_SUBST(JPEG_DEPS_LIBS)])
+        fi
     fi
 
-    if test "x$HAVE_VFS_CURL" = "xyes" && test "x$HAVE_JPEG" == "xyes" ; then
+    if test "x$HAVE_VFS_CURL" = "xyes" && ( test "x$HAVE_JPEG" == "xyes" || test "x$HAVE_IMLIB2" == "xyes" ) ; then
         HAVE_ARTWORK=yes
     fi
 fi
@@ -569,6 +578,8 @@ AM_CONDITIONAL(HAVE_DSP_SRC, test "x$HAVE_DSP_SRC" = "xyes")
 AM_CONDITIONAL(HAVE_M3U, test "x$HAVE_M3U" = "xyes")
 AM_CONDITIONAL(HAVE_VFS_ZIP, test "x$HAVE_VFS_ZIP" = "xyes")
 AM_CONDITIONAL(HAVE_CONVERTER, test "x$HAVE_CONVERTER" = "xyes")
+AM_CONDITIONAL(HAVE_IMLIB2, test "x$HAVE_IMLIB2" = "xyes")
+AM_CONDITIONAL(HAVE_JPEG, test "x$HAVE_JPEG" = "xyes")
 
 AC_SUBST(PLUGINS_DIRS)
 
