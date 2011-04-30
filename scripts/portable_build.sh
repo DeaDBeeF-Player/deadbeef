@@ -3,15 +3,22 @@ VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print'`
 ORIGIN=`pwd | perl -ne 'chomp and print'`
 export APBUILD_STATIC_LIBGCC=1
 
-CC=$ORIGIN/tools/apbuild/apgcc CXX=$ORIGIN/tools/apbuild/apgcc ./configure --enable-staticlink --enable-portable --disable-nls --disable-pulse --disable-artwork-imlib2
+#./autogen.sh
+CC=$ORIGIN/tools/apbuild/apgcc
+CXX=$ORIGIN/tools/apbuild/apgcc
+
+./configure --enable-staticlink --enable-portable --disable-nls --disable-artwork-imlib2
 sed -i 's/-lstdc++ -lm -lgcc_s -lc -lgcc_s/-lm -lc/g' libtool
-make clean
-make -j9
+#make clean
+#make -j9
+
+ZLIB_LIBS=$ORIGIN/lib-x86-32/libz.a
+CFLAGS=-I $ORIGIN/lib-x86-32/include
 
 for i in dumb shn ao ; do
     cd $ORIGIN/plugins/$i
     make clean
-    make -j8
+    make -j8 ZLIB_LIBS=$ZLIB_LIBS STATIC_CFLAGS=$CFLAGS CC=$CC CXX=$CXX
 done
 
 cd $ORIGIN

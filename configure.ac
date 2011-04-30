@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([deadbeef], [devel])
+AC_INIT([deadbeef], [0.5.0-beta2])
 
 AC_CONFIG_HEADER(config.h)
 
@@ -180,16 +180,7 @@ else
 fi
 
 if test "x$enable_pulse" != "xno" ; then
-    if test "x$enable_staticlink" != "xno" ; then
-dnl ../../$LIB/libpulsecore-0.9.22.a ../../$LIB/libpulsecommon-0.9.22.a 
-dnl ../../$LIB/libpulsedsp.a 
-
-        PULSE_DEPS_LIBS="../../$LIB/libpulse-simple.a ../../$LIB/libpulse.a $DBUS_DEPS_LIBS"
-        AC_SUBST(PULSE_DEPS_LIBS)
-        HAVE_PULSE=yes
-    else
-        PKG_CHECK_MODULES(PULSE_DEPS, libpulse-simple, HAVE_PULSE=yes, HAVE_PULSE=no)
-    fi
+    PKG_CHECK_MODULES(PULSE_DEPS, libpulse-simple, HAVE_PULSE=yes, HAVE_PULSE=no)
 fi
 
 AC_CHECK_HEADER([iconv.h],[],[iconv.h not found.])

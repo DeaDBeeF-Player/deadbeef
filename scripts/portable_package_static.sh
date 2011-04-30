@@ -10,10 +10,10 @@ PLUGDIR=$SRCDIR/plugins
 DOCDIR=$SRCDIR/doc
 PIXMAPDIR=$SRCDIR/pixmaps
 
-rm portable_out/build/deadbeef-$VERSION-static.tar.bz2
+rm portable_out/build/deadbeef-$VERSION-static-i686.tar.bz2
 
 cd portable
-tar jcvf ../portable_out/build/deadbeef-$VERSION-static.tar.bz2\
+tar jcvf ../portable_out/build/deadbeef-$VERSION-static-i686.tar.bz2\
     $SRCDIR/deadbeef\
     $SRCDIR/deadbeef.png\
     $DOCDIR\
@@ -49,5 +49,11 @@ tar jcvf ../portable_out/build/deadbeef-$VERSION-static.tar.bz2\
     $PLUGDIR/vtx.so\
     $PLUGDIR/wavpack.so\
     $PLUGDIR/wildmidi.so\
+    $PLUGDIR/ao.so\
+    $PLUGDIR/shn.so\
+    $PLUGDIR/dumb.so\
+    $PLUGDIR/converter.so\
+    $PLUGDIR/converter_gtkui.so\
+    $PLUGDIR/pulse.so\
     $PIXMAPDIR
 cd ..
