@@ -22,9 +22,16 @@ for i in nullout cdda flac alsa mpgmad hotkeys vtx \
 	 m3u converter ; do
     if [ -f ./plugins/$i/.libs/$i.so ]; then
 		 cp ./plugins/$i/.libs/$i.so $PLUGDIR/
+	elif [ -f ./plugins/$i/$i.so ]; then
+		 cp ./plugins/$i/$i.so $PLUGDIR/
 	else
 		echo ./plugins/$i/.libs/$i.so not found
 	fi
+
+    if [ -f ./plugins/$i/.libs/${i}_gtkui.so ]; then
+		 cp ./plugins/$i/.libs/${i}_gtkui.so $PLUGDIR/
+    fi
+
     if [ -f ./plugins/$i/.libs/$i.fallback.so ]; then
 		 cp ./plugins/$i/.libs/$i.fallback.so $PLUGDIR/
     fi

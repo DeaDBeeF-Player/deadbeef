@@ -8,6 +8,14 @@ sed -i 's/-lstdc++ -lm -lgcc_s -lc -lgcc_s/-lm -lc/g' libtool
 make clean
 make -j9
 
+for i in dumb shn ao ; do
+    cd $ORIGIN/plugins/$i
+    make clean
+    make -j8
+done
+
+cd $ORIGIN
+
 echo "building pluginfo tool..."
 cd tools/pluginfo
 make
