@@ -50,3 +50,4 @@ stamp-it
 po/Makevars.template
 *.so
 tools/pluginfo/pluginfo
+cscope.out
