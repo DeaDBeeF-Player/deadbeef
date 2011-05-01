@@ -1157,7 +1157,6 @@ pl_insert_m3u (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
     vfs_fclose (fp);
     const uint8_t *p = buffer;
     const uint8_t *end = buffer+sz;
-    LOCK;
     while (p < end) {
         p = pl_str_skipspaces (p, end);
         if (p >= end) {
@@ -1186,7 +1185,6 @@ pl_insert_m3u (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
             after = it;
         }
         if (pabort && *pabort) {
-            UNLOCK;
             return after;
         }
         p = e;
@@ -1194,7 +1192,6 @@ pl_insert_m3u (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
             break;
         }
     }
-    UNLOCK;
     trace ("leave pl_insert_m3u\n");
     return after;
 }
@@ -1241,7 +1238,6 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
     char title[1024] = "";
     char length[20] = "";
     int lastidx = -1;
-    LOCK;
     while (p < end) {
         p = pl_str_skipspaces (p, end);
         if (p >= end) {
@@ -1272,7 +1268,6 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
                     }
                 }
                 if (pabort && *pabort) {
-                    UNLOCK;
                     return after;
                 }
                 url[0] = 0;
@@ -1313,7 +1308,6 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
                     }
                 }
                 if (pabort && *pabort) {
-                    UNLOCK;
                     return after;
                 }
                 url[0] = 0;
@@ -1353,7 +1347,6 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
                     }
                 }
                 if (pabort && *pabort) {
-                    UNLOCK;
                     return after;
                 }
                 url[0] = 0;
@@ -1397,7 +1390,6 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
             }
         }
     }
-    UNLOCK;
     return after;
 }
 
