@@ -1350,6 +1350,17 @@ cmp3_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     deadbeef->plt_set_item_duration (plt, it, buffer.duration);
     deadbeef->fclose (fp);
 
+    const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
+    if (cuesheet) {
+        DB_playItem_t *last = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), buffer.totalsamples-buffer.delay-buffer.padding, buffer.samplerate);
+        if (last) {
+            deadbeef->pl_item_unref (it);
+            deadbeef->pl_item_unref (last);
+            return last;
+        }
+    }
+
+
     // FIXME! bad numsamples passed to cue
     DB_playItem_t *cue_after = deadbeef->plt_insert_cue (plt, after, it, buffer.totalsamples-buffer.delay-buffer.padding, buffer.samplerate);
     if (cue_after) {
