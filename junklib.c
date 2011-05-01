@@ -3381,6 +3381,8 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
     DB_FILE *fp = NULL;
     FILE *out = NULL;
 
+    uint32_t item_flags = pl_get_item_flags (it);
+
     // get options
     int strip_id3v2 = junk_flags & JUNK_STRIP_ID3V2;
     int strip_id3v1 = junk_flags & JUNK_STRIP_ID3V1;
@@ -3713,6 +3715,28 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
         }
     }
 
+    if (strip_id3v1 && !write_id3v1) {
+        item_flags &= ~DDB_TAG_ID3V1;
+    }
+    if (strip_id3v2 && !write_id3v2) {
+        item_flags &= ~(DDB_TAG_ID3V22|DDB_TAG_ID3V23|DDB_TAG_ID3V24);
+    }
+    if (strip_apev2 && !write_apev2) {
+        item_flags &= ~DDB_TAG_APEV2;
+    }
+
+    if (write_id3v1) {
+        item_flags |= DDB_TAG_ID3V1;
+    }
+    if (write_id3v2) {
+        item_flags &= ~(DDB_TAG_ID3V22|DDB_TAG_ID3V23|DDB_TAG_ID3V24);
+        item_flags |= id3v2_version == 3 ? DDB_TAG_ID3V23 : DDB_TAG_ID3V24;
+    }
+    if (write_apev2) {
+        item_flags |= DDB_TAG_APEV2;
+    }
+
+    pl_set_item_flags (it, item_flags);
     err = 0;
 error:
     if (fp) {
