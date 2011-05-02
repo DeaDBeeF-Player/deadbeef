@@ -412,6 +412,9 @@ if test "x$enable_artwork" != "xno" ; then
         HAVE_JPEG=yes
         JPEG_DEPS_LIBS="../../$LIB/libjpeg.a"
         AC_SUBST(JPEG_DEPS_LIBS)
+        HAVE_PNG=yes
+        PNG_DEPS_LIBS="../../$LIB/libpng15.a ../../$LIB/libz.a"
+        AC_SUBST(PNG_DEPS_LIBS)
         HAVE_IMLIB2=no
     else
         if test "x$enable_artwork_imlib2" != "xno" ; then
@@ -420,6 +423,7 @@ if test "x$enable_artwork" != "xno" ; then
 
         if test "x$enable_artwork_imlib2" == "xno" || test "x$HAVE_IMLIB2" == "xno" ; then
             AC_CHECK_LIB([jpeg], [main], [HAVE_JPEG=yes;JPEG_DEPS_LIBS="-ljpeg";AC_SUBST(JPEG_DEPS_LIBS)])
+            AC_CHECK_LIB([png], [main], [HAVE_PNG=yes;PNG_DEPS_LIBS="-lpng -lz";AC_SUBST(PNG_DEPS_LIBS)])
         fi
     fi
 
@@ -571,6 +575,7 @@ AM_CONDITIONAL(HAVE_VFS_ZIP, test "x$HAVE_VFS_ZIP" = "xyes")
 AM_CONDITIONAL(HAVE_CONVERTER, test "x$HAVE_CONVERTER" = "xyes")
 AM_CONDITIONAL(HAVE_IMLIB2, test "x$HAVE_IMLIB2" = "xyes")
 AM_CONDITIONAL(HAVE_JPEG, test "x$HAVE_JPEG" = "xyes")
+AM_CONDITIONAL(HAVE_PNG, test "x$HAVE_PNG" = "xyes")
 
 AC_SUBST(PLUGINS_DIRS)
 

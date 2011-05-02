@@ -18,7 +18,8 @@ static uintptr_t imlib_mutex;
 #else
 #include <jpeglib.h>
 #include <jerror.h>
-#include <setjmp.h>
+//#include <setjmp.h>
+#include <png.h>
 #endif
 
 #define min(x,y) ((x)<(y)?(x):(y))
@@ -332,6 +333,263 @@ jpeg_resize (const char *fname, const char *outname, int scaled_size) {
 
     return 0;
 }
+
+int
+png_resize (const char *fname, const char *outname, int scaled_size) {
+    png_structp png_ptr = NULL;
+    png_infop info_ptr = NULL;
+    unsigned int sig_read = 0;
+    png_uint_32 width, height;
+    int bit_depth, color_type, interlace_type;
+    int number_passes;
+    png_uint_32 row;
+    int bpp;
+    int err = -1;
+    FILE *fp = NULL;
+    FILE *out = NULL;
+    struct my_error_mgr jerr;
+    struct jpeg_compress_struct cinfo_out;
+
+    fp = fopen(fname, "rb");
+    if (!fp) {
+        goto error;
+    }
+
+    png_ptr = png_create_read_struct (PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    if (!png_ptr) {
+        goto error;
+    }
+
+    if (setjmp(png_jmpbuf((png_ptr))))
+    {
+        fprintf (stderr, "failed to read png: %s\n", fname);
+        goto error;
+    }
+    png_init_io(png_ptr, fp);
+
+    info_ptr = png_create_info_struct (png_ptr);
+    if (!info_ptr) {
+        goto error;
+    }
+    //    if (setjmp (png_ptr->jmpbuf)) {
+    //        goto err;
+    //    }
+
+    png_set_sig_bytes (png_ptr, sig_read);
+
+    png_read_info(png_ptr, info_ptr);
+
+    png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type,
+            &interlace_type, NULL, NULL);
+
+    /* Strip alpha bytes from the input data without combining with the
+     * background (not recommended).
+     */
+    png_set_strip_alpha(png_ptr);
+
+    /* Extract multiple pixels with bit depths of 1, 2, and 4 from a single
+     * byte into separate bytes (useful for paletted and grayscale images).
+     */
+    png_set_packing(png_ptr);
+
+    /* Expand paletted colors into true RGB triplets */
+    if (color_type == PNG_COLOR_TYPE_PALETTE)
+        png_set_palette_to_rgb(png_ptr);
+
+    /* Expand grayscale images to the full 8 bits from 1, 2, or 4 bits/pixel */
+    if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
+        png_set_expand_gray_1_2_4_to_8(png_ptr);
+
+    //    /* Expand paletted or RGB images with transparency to full alpha channels
+    //     * so the data will be available as RGBA quartets.
+    //     */
+    //    if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
+    //        png_set_tRNS_to_alpha(png_ptr);
+
+    //    /* Set the background color to draw transparent and alpha images over.
+    //     * It is possible to set the red, green, and blue components directly
+    //     * for paletted images instead of supplying a palette index.  Note that
+    //     * even if the PNG file supplies a background, you are not required to
+    //     * use it - you should use the (solid) application background if it has one.
+    //     */
+    //
+    //    png_color_16 my_background, *image_background;
+    //
+    //    if (png_get_bKGD(png_ptr, info_ptr, &image_background))
+    //        png_set_background(png_ptr, image_background,
+    //                PNG_BACKGROUND_GAMMA_FILE, 1, 1.0);
+    //    else
+    //        png_set_background(png_ptr, &my_background,
+    //                PNG_BACKGROUND_GAMMA_SCREEN, 0, 1.0);
+
+    //    screen_gamma = 2.2;  /* A good guess for a PC monitor in a dimly
+    //                            lit room */
+
+    /* Tell libpng to handle the gamma conversion for you.  The final call
+     * is a good guess for PC generated images, but it should be configurable
+     * by the user at run time by the user.  It is strongly suggested that
+     * your application support gamma correction.
+     */
+
+    //    int intent;
+    //
+    //    if (png_get_sRGB(png_ptr, info_ptr, &intent))
+    //        png_set_gamma(png_ptr, screen_gamma, 0.45455);
+    //    else
+    //    {
+    //        double image_gamma;
+    //        if (png_get_gAMA(png_ptr, info_ptr, &image_gamma))
+    //            png_set_gamma(png_ptr, screen_gamma, image_gamma);
+    //        else
+    //            png_set_gamma(png_ptr, screen_gamma, 0.45455);
+    //    }
+
+    //    /* Flip the RGB pixels to BGR (or RGBA to BGRA) */
+    //    if (color_type & PNG_COLOR_MASK_COLOR)
+    //        png_set_bgr(png_ptr);
+    //
+    //    /* Swap the RGBA or GA data to ARGB or AG (or BGRA to ABGR) */
+    //    png_set_swap_alpha(png_ptr);
+    //
+    //    /* Swap bytes of 16 bit files to least significant byte first */
+    //    png_set_swap(png_ptr);
+    //
+    //    /* Add filler (or alpha) byte (before/after each RGB triplet) */
+    //    png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
+
+    /* Turn on interlace handling.  REQUIRED if you are not using
+     * png_read_image().  To see how to handle interlacing passes,
+     * see the png_read_row() method below:
+     */
+    number_passes = png_set_interlace_handling(png_ptr);
+
+    //    /* Optional call to gamma correct and add the background to the palette
+    //     * and update info structure.  REQUIRED if you are expecting libpng to
+    //     * update the palette for you (ie you selected such a transform above).
+    //     */
+    //    png_read_update_info(png_ptr, info_ptr);
+
+    /* Allocate the memory to hold the image using the fields of info_ptr. */
+
+    /* The easiest way to read the image: */
+
+    png_bytep *row_pointers = png_malloc(png_ptr, height*sizeof (png_bytep));
+
+    /* Clear the pointer array */
+    for (row = 0; row < height; row++)
+        row_pointers[row] = NULL;
+
+    for (row = 0; row < height; row++)
+        row_pointers[row] = png_malloc(png_ptr, png_get_rowbytes(png_ptr,
+                    info_ptr));
+
+    /* Now it's time to read the image.  One of these methods is REQUIRED */
+    /* The other way to read images - deal with interlacing: */
+
+    png_read_image(png_ptr, row_pointers);
+
+
+    out = fopen (outname, "w+b");
+    if (!out) {
+        fclose (fp);
+        return -1;
+    }
+
+
+    int i;
+    
+    cinfo_out.err = jpeg_std_error (&jerr.pub);
+    jerr.pub.error_exit = my_error_exit;
+    /* Establish the setjmp return context for my_error_exit to use. */
+    if (setjmp(jerr.setjmp_buffer)) {
+        /* If we get here, the JPEG code has signaled an error.
+         * We need to clean up the JPEG object, close the input file, and return.
+         */
+         goto error;
+    }
+
+    jpeg_create_compress(&cinfo_out);
+
+    jpeg_stdio_dest(&cinfo_out, out);
+
+    int sw, sh;
+    if (deadbeef->conf_get_int ("artwork.scale_towards_longer", 1)) {
+        if (width > height) {
+            sh = scaled_size;
+            sw = scaled_size * width / height;
+        }
+        else {
+            sw = scaled_size;
+            sh = scaled_size * height / width;
+        }
+    }
+    else {
+        if (width < height) {
+            sh = scaled_size;
+            sw = scaled_size * width / height;
+        }
+        else {
+            sw = scaled_size;
+            sh = scaled_size * height / width;
+        }
+    }
+
+    cinfo_out.image_width      = sw;
+    cinfo_out.image_height     = sh;
+    cinfo_out.input_components = 3;
+    cinfo_out.in_color_space   = JCS_RGB;
+
+    jpeg_set_defaults(&cinfo_out);
+
+    jpeg_set_quality(&cinfo_out, 100, TRUE);
+    jpeg_start_compress(&cinfo_out, TRUE);
+
+    float sy = 0;
+    float dy = (float)height / (float)sh;
+
+    int input_y = 1;
+    while (input_y <= height)
+    {
+        uint8_t *buf = row_pointers[input_y-1];
+
+        // scale row
+        uint8_t out_buf[sw * cinfo_out.input_components];
+        float sx = 0;
+        float dx = (float)width/(float)sw;
+        for (int i = 0; i < sw; i++) {
+            memcpy (&out_buf[i * cinfo_out.input_components], &buf[(int)sx * cinfo_out.input_components], cinfo_out.input_components);
+            sx += dx;
+        }
+
+        while ((int)sy == input_y-1) {
+            uint8_t *ptr = out_buf;
+            jpeg_write_scanlines(&cinfo_out, &ptr, 1);
+            sy += dy;
+        }
+        input_y++;
+    }
+
+    jpeg_finish_compress(&cinfo_out); //Always finish
+    jpeg_destroy_compress(&cinfo_out); //Free resources
+
+    /* Read rest of file, and get additional chunks in info_ptr - REQUIRED */
+    png_read_end(png_ptr, info_ptr);
+
+    err = 0;
+error:
+    if (out) {
+        fclose (out);
+    }
+    if (fp) {
+        fclose (fp);
+    }
+    if (png_ptr) {
+        png_destroy_read_struct (&png_ptr, info_ptr ? &info_ptr : NULL, (png_infopp)NULL);
+    }
+
+    return err;
+}
+
 #endif
 
 #define BUFFER_SIZE 4096
@@ -396,6 +654,11 @@ copy_file (const char *in, const char *out, int img_size) {
         int res = jpeg_resize (in, out, img_size);
         if (res != 0) {
             unlink (out);
+            res = png_resize (in, out, img_size);
+            if (res != 0) {
+                unlink (out);
+                return -1;
+            }
         }
 #endif
         return 0;
