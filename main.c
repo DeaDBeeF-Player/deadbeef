@@ -96,6 +96,7 @@ client_exec_command_line (const char *cmdline, int len) {
             fprintf (stdout, _("   --stop             Stop playback\n"));
             fprintf (stdout, _("   --pause            Pause playback\n"));
             fprintf (stdout, _("   --toggle-pause     Toggle pause\n"));
+            fprintf (stdout, _("   --play-pause       Start playback if stopped, toggle pause otherwise\n"));
             fprintf (stdout, _("   --next             Next song in playlist\n"));
             fprintf (stdout, _("   --prev             Previous song in playlist\n"));
             fprintf (stdout, _("   --random           Random song in playlist\n"));
@@ -105,6 +106,7 @@ client_exec_command_line (const char *cmdline, int len) {
                              "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
                              "                      copy[r]ight, [e]lapsed\n"));
             fprintf (stdout, _("                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"));
+            fprintf (stdout, _("                      for more info, see http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"));
             return 1;
         }
         else if (!strcmp (parg, "--version")) {
@@ -200,6 +202,16 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
         }
         else if (!strcmp (parg, "--toggle-pause")) {
             messagepump_push (DB_EV_TOGGLE_PAUSE, 0, 0, 0);
+            return 0;
+        }
+        else if (!strcmp (parg, "--play-pause")) {
+            int state = deadbeef->get_output ()->state ();
+            if (state == OUTPUT_STATE_PLAYING) {
+                deadbeef->sendmessage (DB_EV_PAUSE, 0, 0, 0);
+            }
+            else {
+                deadbeef->sendmessage (DB_EV_PLAY_CURRENT, 0, 0, 0);
+            }
             return 0;
         }
         else if (!strcmp (parg, "--random")) {
