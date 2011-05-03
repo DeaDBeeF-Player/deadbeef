@@ -1127,3 +1127,27 @@ on_add_from_archives_toggled           (GtkToggleButton *togglebutton,
 void
 on_ignore_archives_toggled             (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
+
+void
+on_sort_by_title_activate              (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_sort_by_track_nr_activate           (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_sort_by_album_activate              (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_sort_by_artist_activate             (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_sort_by_date_activate               (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_sort_by_custom_activate             (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);

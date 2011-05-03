@@ -1104,31 +1104,88 @@ title_formatting_help_link_create (gchar *widget_name, gchar *string1, gchar *st
 }
 
 
+
 void
-on_album1_activate                     (GtkMenuItem     *menuitem,
+on_sortfmt_activate                    (GtkEntry        *entry,
                                         gpointer         user_data)
 {
+    GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (entry));
+    gtk_dialog_response (GTK_DIALOG (toplevel), GTK_RESPONSE_OK);
+}
 
+
+
+GtkWidget*
+create_plugin_weblink (gchar *widget_name, gchar *string1, gchar *string2,
+                gint int1, gint int2)
+{
+    GtkWidget *link = gtk_link_button_new_with_label ("", "WWW");
+    gtk_widget_set_sensitive (link, FALSE);
+    return link;
+}
+
+void
+on_sort_by_title_activate              (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    deadbeef->pl_sort (PL_MAIN, -1, "%t", 1);
+
+    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+    ddb_listview_clear_sort (pl);
+    ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_LIST_CHANGED);
 }
 
 
 void
-on_artist1_activate                    (GtkMenuItem     *menuitem,
+on_sort_by_track_nr_activate           (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
+    deadbeef->pl_sort (PL_MAIN, -1, "%n", 1);
 
+    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+    ddb_listview_clear_sort (pl);
+    ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_LIST_CHANGED);
 }
 
 
 void
-on_date1_activate                      (GtkMenuItem     *menuitem,
+on_sort_by_album_activate              (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
+    deadbeef->pl_sort (PL_MAIN, -1, "%b", 1);
 
+    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+    ddb_listview_clear_sort (pl);
+    ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_LIST_CHANGED);
 }
 
+
 void
-on_custom2_activate                    (GtkMenuItem     *menuitem,
+on_sort_by_artist_activate             (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    deadbeef->pl_sort (PL_MAIN, -1, "%a", 1);
+
+    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+    ddb_listview_clear_sort (pl);
+    ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_LIST_CHANGED);
+}
+
+
+void
+on_sort_by_date_activate               (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    deadbeef->pl_sort (PL_MAIN, -1, "%y", 1);
+
+    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+    ddb_listview_clear_sort (pl);
+    ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_LIST_CHANGED);
+}
+
+
+void
+on_sort_by_custom_activate             (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     GtkWidget *dlg = create_sortbydlg ();
@@ -1157,29 +1214,10 @@ on_custom2_activate                    (GtkMenuItem     *menuitem,
 
         DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
         ddb_listview_clear_sort (pl);
-        ddb_listview_refresh (pl, DDB_REFRESH_LIST);
+        ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_LIST_CHANGED);
     }
 
     gtk_widget_destroy (dlg);
     dlg = NULL;
 }
 
-
-void
-on_sortfmt_activate                    (GtkEntry        *entry,
-                                        gpointer         user_data)
-{
-    GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (entry));
-    gtk_dialog_response (GTK_DIALOG (toplevel), GTK_RESPONSE_OK);
-}
-
-
-
-GtkWidget*
-create_plugin_weblink (gchar *widget_name, gchar *string1, gchar *string2,
-                gint int1, gint int2)
-{
-    GtkWidget *link = gtk_link_button_new_with_label ("", "WWW");
-    gtk_widget_set_sensitive (link, FALSE);
-    return link;
-}
