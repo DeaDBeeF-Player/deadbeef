@@ -499,6 +499,33 @@ plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle) {
     if (!plugin_api) {
         return -1;
     }
+
+    // check if same plugin with the same or bigger version is loaded already
+    plugin_t *prev = NULL;
+    for (plugin_t *p = plugins; p; prev = p, p = p->next) {
+        if (p->plugin->id && plugin_api->id && !strcmp (p->plugin->id, plugin_api->id)) {
+            if (plugin_api->version_major > p->plugin->version_major || (plugin_api->version_major == p->plugin->version_major && plugin_api->version_minor > p->plugin->version_minor)) {
+                trace ("found newer version of plugin \"%s\", replacing\n", plugin_api->id);
+                // unload older plugin before replacing
+                dlclose (p->handle);
+                if (prev) {
+                    prev->next = p->next;
+                }
+                else {
+                    plugins = p->next;
+                }
+                if (p->handle) {
+                    dlclose (p->handle);
+                }
+                free (p);
+            }
+            else {
+                trace ("found copy of plugin \"%s\", but newer version is already loaded\n", plugin_api->id)
+                return -1;
+            }
+        }
+    }
+
 #if !DISABLE_VERSIONCHECK
     if (plugin_api->api_vmajor != 0 || plugin_api->api_vminor != 0) {
         // version check enabled
@@ -510,7 +537,7 @@ plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle) {
         }
     }
     else {
-            trace ("\033[0;31mWARNING: plugin \"%s\" has disabled version check. do not distribute!\033[0;m\n", plugin_api->name);
+            trace ("\033[0;31mWARNING: plugin \"%s\" has disabled version check. please don't distribute it!\033[0;m\n", plugin_api->name);
     }
 #endif
     plugin_t *plug = malloc (sizeof (plugin_t));
@@ -542,26 +569,31 @@ plug_remove_plugin (void *p) {
     for (i = 0; g_decoder_plugins[i]; i++) {
         if (g_decoder_plugins[i] == p) {
             memmove (&g_decoder_plugins[i], &g_decoder_plugins[i+1], (MAX_DECODER_PLUGINS+1-i-1) * sizeof (void*));
+            break;
         }
     }
     for (i = 0; g_vfs_plugins[i]; i++) {
         if (g_vfs_plugins[i] == p) {
             memmove (&g_vfs_plugins[i], &g_vfs_plugins[i+1], (MAX_VFS_PLUGINS+1-i-1) * sizeof (void*));
+            break;
         }
     }
     for (i = 0; g_dsp_plugins[i]; i++) {
         if (g_dsp_plugins[i] == p) {
             memmove (&g_dsp_plugins[i], &g_dsp_plugins[i+1], (MAX_DSP_PLUGINS+1-i-1) * sizeof (void*));
+            break;
         }
     }
     for (i = 0; g_output_plugins[i]; i++) {
         if (g_output_plugins[i] == p) {
             memmove (&g_output_plugins[i], &g_output_plugins[i+1], (MAX_OUTPUT_PLUGINS+1-i-1) * sizeof (void*));
+            break;
         }
     }
     for (i = 0; g_playlist_plugins[i]; i++) {
         if (g_playlist_plugins[i] == p) {
             memmove (&g_playlist_plugins[i], &g_playlist_plugins[i+1], (MAX_PLAYLIST_PLUGINS+1-i-1) * sizeof (void*));
+            break;
         }
     }
 }
@@ -605,7 +637,6 @@ load_plugin (const char *plugdir, char *d_name, int l) {
     }
     if (plug_init_plugin (plug_load, handle) < 0) {
         d_name[l-3] = 0;
-        trace ("plugin %s is incompatible with current version of deadbeef, please upgrade the plugin\n", d_name);
         dlclose (handle);
         return -1;
     }
@@ -717,8 +748,6 @@ load_plugin_dir (const char *plugdir) {
                 }
 #endif
 
-                // FIXME: don't load duplicates (by names)
-
                 // add gui plugin names
                 if (!strncmp (d_name, "ddb_gui_", 8)) {
                     trace ("found gui plugin %s\n", d_name);
@@ -741,6 +770,7 @@ load_plugin_dir (const char *plugdir) {
                         break;
                     }
                     // add to list
+                    // FIXME check for gui plugins dupes
                     g_gui_names[g_num_gui_names++] = strdup (nm);
                     g_gui_names[g_num_gui_names] = NULL;
                     trace ("added %s gui plugin\n", nm);
@@ -788,7 +818,8 @@ plug_load_all (void) {
         }
     }
 
-    const char *plugins_dirs[] = { dirname, xdg_plugin_dir, NULL };
+    // load from HOME 1st, than replace from installdir if needed
+    const char *plugins_dirs[] = { xdg_plugin_dir, dirname, NULL };
 #else
     const char *plugins_dirs[] = { dirname, NULL };
 #endif
