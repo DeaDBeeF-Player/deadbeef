@@ -3365,7 +3365,7 @@ junk_detect_charset (const char *s) {
     if (can_be_russian (s)) {
         return "cp1251";
     }
-    return "iso8859-1";
+    return "cp1252";
 }
 
 int
