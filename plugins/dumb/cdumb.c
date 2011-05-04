@@ -706,13 +706,14 @@ convstr (const char* str, int sz, char *out, int out_sz) {
         return out;
     }
 
-    // check for utf8 (hack)
-    if (deadbeef->junk_iconv (str, sz, out, out_sz, "utf-8", "utf-8") >= 0) {
-        return out;
+    const char *cs = deadbeef->junk_detect_charset (str);
+    if (!cs) {
+        return str;
     }
-
-    if (deadbeef->junk_iconv (str, sz, out, out_sz, "cp1252", "utf-8") >= 0) {
-        return out;
+    else {
+        if (deadbeef->junk_iconv (str, sz, out, out_sz, cs, "utf-8") >= 0) {
+            return out;
+        }
     }
 
     trace ("cdumb: failed to detect charset\n");
