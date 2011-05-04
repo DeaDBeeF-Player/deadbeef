@@ -591,6 +591,15 @@ restore_resume_state (void) {
 
 int
 main (int argc, char *argv[]) {
+#if PORTABLE
+    strcpy (dbinstalldir, argv[0]);
+    char *e = dbinstalldir + strlen (dbinstalldir);
+    while (e >= dbinstalldir && *e != '/') {
+        e--;
+    }
+    *e = 0;
+#endif
+
 #ifdef __linux__
     signal (SIGSEGV, sigsegv_handler);
 #endif
@@ -598,7 +607,13 @@ main (int argc, char *argv[]) {
     setlocale (LC_NUMERIC, "C");
 #ifdef ENABLE_NLS
 //    fprintf (stderr, "enabling gettext support: package=" PACKAGE ", dir=" LOCALEDIR "...\n");
+#if PORTABLE
+    char localedir[PATH_MAX];
+    snprintf (localedir, sizeof (localedir), "%s/locale", dbinstalldir);
+	bindtextdomain (PACKAGE, localedir);
+#else
 	bindtextdomain (PACKAGE, LOCALEDIR);
+#endif
 	bind_textdomain_codeset (PACKAGE, "UTF-8");
 	textdomain (PACKAGE);
 #endif
@@ -616,15 +631,6 @@ main (int argc, char *argv[]) {
     srand (time (NULL));
 #ifdef __linux__
     prctl (PR_SET_NAME, "deadbeef-main", 0, 0, 0, 0);
-#endif
-
-#if PORTABLE
-    strcpy (dbinstalldir, argv[0]);
-    char *e = dbinstalldir + strlen (dbinstalldir);
-    while (e >= dbinstalldir && *e != '/') {
-        e--;
-    }
-    *e = 0;
 #endif
 
 #if PORTABLE_FULL

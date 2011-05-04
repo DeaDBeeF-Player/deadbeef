@@ -64,6 +64,14 @@ done
 # icon
 cp ./icons/32x32/deadbeef.png $OUTDIR/
 
+# translations
+mkdir -p $OUTDIR/locale
+for i in po/*.gmo ; do
+    base=`basename po/$i .gmo`
+    mkdir -p $OUTDIR/locale/$base/LC_MESSAGES
+    cp $i $OUTDIR/locale/$base/LC_MESSAGES/deadbeef.mo
+done
+
 # strip
 if [ $OSTYPE != 'Darwin' ];then
 	strip --strip-unneeded $OUTDIR/deadbeef
