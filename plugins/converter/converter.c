@@ -22,7 +22,11 @@
 #include <dirent.h>
 #include <unistd.h>
 #include "converter.h"
-#include <deadbeef.h>
+#include "../../deadbeef.h"
+
+#ifndef PATH_MAX
+#define PATH_MAX    1024    /* max # of characters in a path name */
+#endif
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
