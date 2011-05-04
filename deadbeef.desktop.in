@@ -13,3 +13,29 @@ Categories=AudioVideo;Player;GTK;
 Terminal=false
 Type=Application
 Icon=deadbeef
+
+X-Ayatana-Desktop-Shortcuts=Play;Pause;Stop;Next;Prev
+[Play Shortcut Group]
+Name=Play
+Exec=deadbeef --play
+TargetEnvironment=Unity
+
+[Pause Shortcut Group]
+Name=Pause
+Exec=deadbeef --pause
+TargetEnvironment=Unity
+
+[Stop Shortcut Group]
+Name=Stop
+Exec=deadbeef --stop
+TargetEnvironment=Unity
+
+[Next Shortcut Group]
+Name=Next
+Exec=deadbeef --next
+TargetEnvironment=Unity
+
+[Prev Shortcut Group]
+Name=Prev
+Exec=deadbeef --prev
+TargetEnvironment=Unity
