@@ -110,6 +110,9 @@ if test "x$enable_staticlink" != "xno" ; then
     STATICLINK=yes
 fi
 
+dnl check for libdl
+AC_CHECK_LIB([dl], [main], [HAVE_DL=yes;DL_LIBS="-ldl";AC_SUBST(DL_LIBS)])
+
 if test "x$enable_portable" != "xno" && test "x$enable_staticlink" != "xno" ; then
     AC_DEFINE_UNQUOTED([PORTABLE], [1], [Define if building portable version])
     PORTABLE=yes
@@ -450,7 +453,7 @@ fi
 
 if test "x$enable_src" != "xno" ; then
 if test "x$enable_staticlink" != "xno" ; then
-    LIBSAMPLERATE_DEPS_LIBS="../../$LIB/libsamplerate.a -lpthread -ldl"
+    LIBSAMPLERATE_DEPS_LIBS="../../$LIB/libsamplerate.a -lpthread ${DL_LIBS}"
     AC_SUBST(LIBSAMPLERATE_DEPS_LIBS)
     HAVE_DSP_SRC=yes
 else
