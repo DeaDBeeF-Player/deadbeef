@@ -246,7 +246,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
         playlist_t *curr_plt = plt_get_curr ();
         if (!queue) {
             pl_clear ();
-            plug_trigger_event_playlistchanged ();
+            messagepump_push (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
             pl_reset_cursor ();
         }
         if (parg < pend) {
@@ -357,7 +357,7 @@ server_update (void) {
         if ((size = recv (s2, str, 2048, 0)) >= 0) {
             if (size == 1 && str[0] == 0) {
                 // FIXME: that should be called right after activation of gui plugin
-                plug_trigger_event (DB_EV_ACTIVATED, 0);
+                messagepump_push (DB_EV_ACTIVATED, 0, 0, 0);
             }
             else {
                 server_exec_command_line (str, size, sendback, sizeof (sendback));
@@ -454,17 +454,17 @@ player_mainloop (void) {
             case DB_EV_PAUSE:
                 if (output->state () != OUTPUT_STATE_PAUSED) {
                     output->pause ();
-                    plug_trigger_event_paused (1);
+                    messagepump_push (DB_EV_PAUSED, 0, 1, 0);
                 }
                 break;
             case DB_EV_TOGGLE_PAUSE:
                 if (output->state () == OUTPUT_STATE_PAUSED) {
                     output->unpause ();
-                    plug_trigger_event_paused (0);
+                    messagepump_push (DB_EV_PAUSED, 0, 0, 0);
                 }
                 else {
                     output->pause ();
-                    plug_trigger_event_paused (1);
+                    messagepump_push (DB_EV_PAUSED, 0, 1, 0);
                 }
                 break;
             case DB_EV_PLAY_RANDOM:
@@ -473,7 +473,7 @@ player_mainloop (void) {
                 break;
             case DB_EV_PLAYLIST_REFRESH:
                 pl_save_current ();
-                plug_trigger_event_playlistchanged ();
+                messagepump_push (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
                 break;
             case DB_EV_CONFIGCHANGED:
                 conf_save ();
@@ -853,7 +853,7 @@ main (int argc, char *argv[]) {
 #endif
 
     // start all subsystems
-    plug_trigger_event_playlistchanged ();
+    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 
     streamer_init ();
 

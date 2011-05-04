@@ -1872,7 +1872,6 @@ pl_item_copy (playItem_t *out, playItem_t *it) {
     out->endsample = it->endsample;
     out->shufflerating = it->shufflerating;
     out->_duration = it->_duration;
-    out->started_timestamp = it->started_timestamp;
     out->next[PL_MAIN] = it->next[PL_MAIN];
     out->prev[PL_MAIN] = it->prev[PL_MAIN];
     out->next[PL_SEARCH] = it->next[PL_SEARCH];
@@ -3642,6 +3641,16 @@ pl_search_process (const char *text) {
     UNLOCK;
 }
 
+static void
+send_trackinfochanged (playItem_t *track) {
+    ddb_event_track_t *ev = (ddb_event_track_t *)messagepump_event_alloc (DB_EV_TRACKINFOCHANGED);
+    ev->track = DB_PLAYITEM (track);
+    if (track) {
+        pl_item_ref (track);
+    }
+    messagepump_push_event ((ddb_event_t*)ev, 0, 0);
+}
+
 int
 pl_playqueue_push (playItem_t *it) {
     if (playqueue_count == PLAYQUEUE_SIZE) {
@@ -3652,7 +3661,7 @@ pl_playqueue_push (playItem_t *it) {
     pl_item_ref (it);
     playqueue[playqueue_count++] = it;
     for (int i = 0; i < playqueue_count; i++) {
-        plug_trigger_event_trackinfochanged (playqueue[i]);
+        send_trackinfochanged (playqueue[i]);
     }
     UNLOCK;
     return 0;
@@ -3665,7 +3674,7 @@ pl_playqueue_clear (void) {
     playqueue_count = 0;
     int i;
     for (i = 0; i < cnt; i++) {
-        plug_trigger_event_trackinfochanged (playqueue[i]);
+        send_trackinfochanged (playqueue[i]);
     }
     for (i = 0; i < cnt; i++) {
         pl_item_unref (playqueue[i]);
@@ -3681,7 +3690,7 @@ pl_playqueue_pop (void) {
     LOCK;
     if (playqueue_count == 1) {
         playqueue_count = 0;
-        plug_trigger_event_trackinfochanged (playqueue[0]);
+        send_trackinfochanged (playqueue[0]);
         pl_item_unref (playqueue[0]);
         UNLOCK;
         return;
@@ -3689,9 +3698,9 @@ pl_playqueue_pop (void) {
     playItem_t *it = playqueue[0];
     memmove (&playqueue[0], &playqueue[1], (playqueue_count-1) * sizeof (playItem_t*));
     playqueue_count--;
-    plug_trigger_event_trackinfochanged (it);
+    send_trackinfochanged (it);
     for (int i = 0; i < playqueue_count; i++) {
-        plug_trigger_event_trackinfochanged (playqueue[i]);
+        send_trackinfochanged (playqueue[i]);
     }
     pl_item_unref (it);
     UNLOCK;
@@ -3707,7 +3716,7 @@ pl_playqueue_remove (playItem_t *it) {
                 if (i < playqueue_count-1) {
                     memmove (&playqueue[i], &playqueue[i+1], (playqueue_count-i) * sizeof (playItem_t*));
                 }
-                plug_trigger_event_trackinfochanged (it);
+                send_trackinfochanged (it);
                 pl_item_unref (it);
                 playqueue_count--;
                 break;
@@ -3718,7 +3727,7 @@ pl_playqueue_remove (playItem_t *it) {
         }
     }
     for (int i = 0; i < playqueue_count; i++) {
-        plug_trigger_event_trackinfochanged (playqueue[i]);
+        send_trackinfochanged (playqueue[i]);
     }
     UNLOCK;
 }

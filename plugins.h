@@ -46,24 +46,6 @@ void
 plug_ev_unsubscribe (DB_plugin_t *plugin, int ev, DB_callback_t callback, uintptr_t data);
 
 void
-plug_trigger_event (int ev, uintptr_t param);
-
-void
-plug_trigger_event_trackchange (struct playItem_s *from, struct playItem_s *to);
-
-void
-plug_trigger_event_trackinfochanged (struct playItem_s *track);
-
-void
-plug_trigger_event_paused (int paused);
-
-void
-plug_trigger_event_playlistchanged (void);
-
-void
-plug_trigger_event_volumechanged (void);
-
-void
 plug_md5 (uint8_t sig[16], const char *in, int len);
 
 void

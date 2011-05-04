@@ -33,8 +33,6 @@ typedef struct playItem_s {
     int startsample;
     int endsample;
     int shufflerating; // sort order for shuffle mode
-    float playtime; // total playtime
-    time_t started_timestamp; // result of calling time(NULL)
     // private area, must not be visible to plugins
     float _duration;
     uint32_t _flags;

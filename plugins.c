@@ -338,13 +338,13 @@ plug_get_pixmap_dir (void) {
 void
 plug_volume_set_db (float db) {
     volume_set_db (db);
-    plug_trigger_event_volumechanged ();
+    messagepump_push (DB_EV_VOLUMECHANGED, 0, 0, 0);
 }
 
 void
 plug_volume_set_amp (float amp) {
     volume_set_amp (amp);
-    plug_trigger_event_volumechanged ();
+    messagepump_push (DB_EV_VOLUMECHANGED, 0, 0, 0);
 }
 
 #define MAX_PLUGINS 100
@@ -429,68 +429,6 @@ plug_playback_set_pos (float pos) {
         pl_item_unref (trk);
     }
     streamer_set_seek (t);
-}
-
-// FIXME: this is backward-compatibility layer, should be killed
-void
-plug_trigger_event (int ev, uintptr_t param) {
-    ddb_event_t *event = NULL;
-    switch (ev) {
-    case DB_EV_SONGSTARTED:
-    case DB_EV_SONGFINISHED:
-        {
-        ddb_event_track_t *pev = (ddb_event_track_t *)messagepump_event_alloc (ev);
-        playItem_t *pltrack = streamer_get_playing_track ();
-        pev->track = DB_PLAYITEM (pltrack);
-        event = DB_EVENT (pev);
-        }
-        break;
-    }
-    if (event) {
-        messagepump_push_event (event, 0, 0);
-    }
-    else {
-        messagepump_push (ev, param, 0, 0);
-    }
-}
-
-void
-plug_trigger_event_trackchange (playItem_t *from, playItem_t *to) {
-    ddb_event_trackchange_t *event = (ddb_event_trackchange_t *)messagepump_event_alloc (DB_EV_SONGCHANGED);
-    if (from) {
-        pl_item_ref (from);
-    }
-    if (to) {
-        pl_item_ref (to);
-    }
-    event->from = (DB_playItem_t *)from;
-    event->to = (DB_playItem_t *)to;
-    messagepump_push_event ((ddb_event_t *)event, 0, 0);
-}
-
-void
-plug_trigger_event_trackinfochanged (playItem_t *track) {
-    ddb_event_track_t *ev = (ddb_event_track_t *)messagepump_event_alloc (DB_EV_TRACKINFOCHANGED);
-    ev->track = DB_PLAYITEM (track);
-    if (track) {
-        pl_item_ref (track);
-    }
-    messagepump_push_event ((ddb_event_t*)ev, 0, 0);
-}
-
-void
-plug_trigger_event_paused (int paused) {
-    messagepump_push (DB_EV_PAUSED, 0, paused, 0);
-}
-
-void
-plug_trigger_event_playlistchanged (void) {
-    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
-}
-
-void
-plug_trigger_event_volumechanged (void) {
-    messagepump_push (DB_EV_VOLUMECHANGED, 0, 0, 0);
 }
 
 int
@@ -1124,7 +1062,7 @@ plug_select_output (void) {
     if (!output_plugin) {
         return -1;
     }
-    plug_trigger_event (DB_EV_OUTPUTCHANGED, 0);
+    messagepump_push (DB_EV_OUTPUTCHANGED, 0, 0, 0);
     return 0;
 #endif
 }

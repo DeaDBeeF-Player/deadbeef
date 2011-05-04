@@ -62,8 +62,13 @@ static char lfm_err[CURL_ERROR_SIZE];
 
 static char lfm_nowplaying[2048]; // packet for nowplaying, or ""
 #define LFM_SUBMISSION_QUEUE_SIZE 50
-//static char lfm_subm_queue[LFM_SUBMISSION_QUEUE_SIZE][2048];
-static DB_playItem_t *lfm_subm_queue[LFM_SUBMISSION_QUEUE_SIZE];
+
+typedef struct {
+    DB_playItem_t *it;
+    time_t started_timestamp;
+} subm_item_t;
+
+static subm_item_t lfm_subm_queue[LFM_SUBMISSION_QUEUE_SIZE];
 
 static void
 lfm_update_auth (void) {
@@ -409,7 +414,7 @@ lfm_add_keyvalue_uri_encoded (char **out, int *outl, const char *key, const char
 // subm is submission idx, or -1 for nowplaying
 // returns number of bytes added, or -1
 static int
-lfm_format_uri (int subm, DB_playItem_t *song, char *out, int outl) {
+lfm_format_uri (int subm, DB_playItem_t *song, char *out, int outl, time_t started_timestamp) {
     if (subm > 50) {
         trace ("lastfm: it's only allowed to send up to 50 submissions at once (got idx=%d)\n", subm);
         return -1;
@@ -475,7 +480,7 @@ lfm_format_uri (int subm, DB_playItem_t *song, char *out, int outl) {
     out += processed;
     outl -= processed;
     if (subm >= 0) {
-        processed = snprintf (out, outl, "i[%d]=%d&o[%d]=P&r[%d]=&", subm, (int)song->started_timestamp, subm, subm);
+        processed = snprintf (out, outl, "i[%d]=%d&o[%d]=P&r[%d]=&", subm, (int)started_timestamp, subm, subm);
         if (processed > outl) {
 //            trace ("failed to add i[%d]=%d&o[%d]=P&r[%d]=&\n", subm, (int)song->started_timestamp, subm, subm);
             return -1;
@@ -494,7 +499,7 @@ lastfm_songstarted (ddb_event_track_t *ev, uintptr_t data) {
         return 0;
     }
     deadbeef->mutex_lock (lfm_mutex);
-    if (lfm_format_uri (-1, ev->track, lfm_nowplaying, sizeof (lfm_nowplaying)) < 0) {
+    if (lfm_format_uri (-1, ev->track, lfm_nowplaying, sizeof (lfm_nowplaying), ev->started_timestamp) < 0) {
         lfm_nowplaying[0] = 0;
     }
 //    trace ("%s\n", lfm_nowplaying);
@@ -507,44 +512,45 @@ lastfm_songstarted (ddb_event_track_t *ev, uintptr_t data) {
 }
 
 static int
-lastfm_songfinished (ddb_event_track_t *ev, uintptr_t data) {
-    trace ("lfm songfinished %s\n", ev->track->fname);
+lastfm_songchanged (ddb_event_trackchange_t *ev, uintptr_t data) {
     if (!deadbeef->conf_get_int ("lastfm.enable", 0)) {
         return 0;
     }
     // previous track must exist
-    if (!ev->track) {
+    if (!ev->from) {
         return 0;
     }
+    trace ("lfm songfinished %s\n", deadbeef->pl_find_meta (ev->from, ":URI"));
 #if !LFM_IGNORE_RULES
     // check submission rules
     // duration must be >= 30 sec
-    if (deadbeef->pl_get_item_duration (ev->track) < 30) {
-        trace ("track duration is %f seconds. not eligible for submission\n", deadbeef->pl_get_item_duration (ev->track));
+    if (deadbeef->pl_get_item_duration (ev->from) < 30) {
+        trace ("track duration is %f seconds. not eligible for submission\n", deadbeef->pl_get_item_duration (ev->from));
         return 0;
     }
     // must be played for >=240sec of half the total time
-    if (ev->track->playtime < 240 && ev->track->playtime < deadbeef->pl_get_item_duration (ev->track)/2) {
-        trace ("track playtime=%f seconds. not eligible for submission\n", ev->track->playtime);
+    if (ev->playtime < 240 && ev->playtime < deadbeef->pl_get_item_duration (ev->from)/2) {
+        trace ("track playtime=%f seconds. not eligible for submission\n", ev->playtime);
         return 0;
     }
 
 #endif
 
-    if (!deadbeef->pl_find_meta (ev->track, "artist")
-            || !deadbeef->pl_find_meta (ev->track, "title")
-//            || !deadbeef->pl_find_meta (ev->track, "album")
+    if (!deadbeef->pl_find_meta (ev->from, "artist")
+            || !deadbeef->pl_find_meta (ev->from, "title")
+//            || !deadbeef->pl_find_meta (ev->from, "album")
        ) {
-        trace ("lfm: not enough metadata for submission, artist=%s, title=%s, album=%s\n", deadbeef->pl_find_meta (ev->track, "artist"), deadbeef->pl_find_meta (ev->track, "title"), deadbeef->pl_find_meta (ev->track, "album"));
+        trace ("lfm: not enough metadata for submission, artist=%s, title=%s, album=%s\n", deadbeef->pl_find_meta (ev->from, "artist"), deadbeef->pl_find_meta (ev->from, "title"), deadbeef->pl_find_meta (ev->from, "album"));
         return 0;
     }
     deadbeef->mutex_lock (lfm_mutex);
     // find free place in queue
     for (int i = 0; i < LFM_SUBMISSION_QUEUE_SIZE; i++) {
-        if (!lfm_subm_queue[i]) {
+        if (!lfm_subm_queue[i].it) {
             trace ("lfm: song is now in queue for submission\n");
-            lfm_subm_queue[i] = deadbeef->pl_item_alloc ();
-            deadbeef->pl_item_copy (lfm_subm_queue[i], ev->track);
+            lfm_subm_queue[i].it = ev->from;
+            lfm_subm_queue[i].started_timestamp = ev->started_timestamp;
+            deadbeef->pl_item_ref (ev->from);
             break;
         }
     }
@@ -609,8 +615,8 @@ lfm_send_submissions (void) {
     int res;
     deadbeef->mutex_lock (lfm_mutex);
     for (i = 0; i < LFM_SUBMISSION_QUEUE_SIZE; i++) {
-        if (lfm_subm_queue[i]) {
-            res = lfm_format_uri (idx, lfm_subm_queue[i], r, len);
+        if (lfm_subm_queue[i].it) {
+            res = lfm_format_uri (idx, lfm_subm_queue[i].it, r, len, lfm_subm_queue[i].started_timestamp);
             if (res < 0) {
                 trace ("lfm: failed to format uri\n");
                 return;
@@ -655,9 +661,10 @@ lfm_send_submissions (void) {
                 trace ("submission successful, response:\n%s\n", lfm_reply);
                 deadbeef->mutex_lock (lfm_mutex);
                 for (i = 0; i < LFM_SUBMISSION_QUEUE_SIZE; i++) {
-                    if (lfm_subm_queue[i]) {
-                        deadbeef->pl_item_unref (lfm_subm_queue[i]);
-                        lfm_subm_queue[i] = NULL;
+                    if (lfm_subm_queue[i].it) {
+                        deadbeef->pl_item_unref (lfm_subm_queue[i].it);
+                        lfm_subm_queue[i].it = NULL;
+                        lfm_subm_queue[i].started_timestamp = 0;
                     }
                 }
                 deadbeef->mutex_unlock (lfm_mutex);
@@ -670,9 +677,11 @@ lfm_send_submissions (void) {
     trace ("submission successful (NOSEND=1):\n");
     deadbeef->mutex_lock (lfm_mutex);
     for (i = 0; i < LFM_SUBMISSION_QUEUE_SIZE; i++) {
-        if (lfm_subm_queue[i]) {
-            deadbeef->pl_item_unref (lfm_subm_queue[i]);
-            lfm_subm_queue[i] = NULL;
+        if (lfm_subm_queue[i].it) {
+            deadbeef->pl_item_unref (lfm_subm_queue[i].it);
+            lfm_subm_queue[i].it = NULL;
+            lfm_subm_queue[i].started_timestamp = 0;
+
         }
     }
     deadbeef->mutex_unlock (lfm_mutex);
@@ -805,7 +814,7 @@ lfm_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
         lastfm_songstarted ((ddb_event_track_t *)ctx, 0);
         break;
     case DB_EV_SONGCHANGED:
-        lastfm_songfinished ((ddb_event_track_t *)ctx, 0);
+        lastfm_songchanged ((ddb_event_trackchange_t *)ctx, 0);
         break;
     }
     return 0;

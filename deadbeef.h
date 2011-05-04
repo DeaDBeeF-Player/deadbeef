@@ -120,8 +120,6 @@ typedef struct DB_playItem_s {
     int startsample; // start sample of track, or -1 for auto
     int endsample; // end sample of track, or -1 for auto
     int shufflerating; // sort order for shuffle mode
-    float playtime; // actual playback time of this track in seconds
-    time_t started_timestamp; // result of calling time(NULL)
 } ddb_playItem_t;
 
 typedef ddb_playItem_t DB_playItem_t;
@@ -212,12 +210,16 @@ typedef struct {
 typedef struct {
     ddb_event_t ev;
     DB_playItem_t *track;
+    float playtime; // for SONGFINISHED event -- for how many seconds track was playing
+    time_t started_timestamp; // result of calling time(NULL) on playback start
 } ddb_event_track_t;
 
 typedef struct {
     ddb_event_t ev;
     DB_playItem_t *from;
     DB_playItem_t *to;
+    float playtime; // for SONGCHANGED event -- for how many seconds prev track was playing
+    time_t started_timestamp; // result of calling time(NULL) on playback start
 } ddb_event_trackchange_t;
 
 typedef struct {

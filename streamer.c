@@ -97,6 +97,8 @@ static int last_bitrate = -1; // last bitrate of current song
 
 static playlist_t *streamer_playlist;
 static playItem_t *playing_track;
+static float playtime; // total playtime of playing track
+static time_t started_timestamp; // result of calling time(NULL)
 static playItem_t *streaming_track;
 static playItem_t *playlist_track;
 
@@ -134,6 +136,42 @@ streamer_abort_files (void) {
     }
 }
 
+static void
+send_songstarted (playItem_t *trk) {
+    ddb_event_track_t *pev = (ddb_event_track_t *)messagepump_event_alloc (DB_EV_SONGSTARTED);
+    pev->track = DB_PLAYITEM (trk);
+    pl_item_ref (trk);
+    pev->playtime = 0;
+    pev->started_timestamp = time(NULL);
+    messagepump_push_event ((ddb_event_t*)pev, 0, 0);
+}
+
+static void
+send_songfinished (playItem_t *trk) {
+    ddb_event_track_t *pev = (ddb_event_track_t *)messagepump_event_alloc (DB_EV_SONGFINISHED);
+    pev->track = DB_PLAYITEM (trk);
+    pl_item_ref (trk);
+    pev->playtime = playtime;
+    pev->started_timestamp = started_timestamp;
+    messagepump_push_event ((ddb_event_t*)pev, 0, 0);
+}
+
+static void
+send_trackchanged (playItem_t *from, playItem_t *to) {
+    ddb_event_trackchange_t *event = (ddb_event_trackchange_t *)messagepump_event_alloc (DB_EV_SONGCHANGED);
+    event->playtime = playtime;
+    event->started_timestamp = started_timestamp;
+    if (from) {
+        pl_item_ref (from);
+    }
+    if (to) {
+        pl_item_ref (to);
+    }
+    event->from = (DB_playItem_t *)from;
+    event->to = (DB_playItem_t *)to;
+    messagepump_push_event ((ddb_event_t *)event, 0, 0);
+}
+
 void
 streamer_start_playback (playItem_t *from, playItem_t *it) {
     if (from) {
@@ -169,9 +207,9 @@ streamer_start_playback (playItem_t *from, playItem_t *it) {
         replaygain_set_values (albumgain, albumpeak, trackgain, trackpeak);
 
         playing_track->played = 1;
-        playing_track->started_timestamp = time (NULL);
+        started_timestamp = time (NULL);
         trace ("from=%p (%s), to=%p (%s) [2]\n", from, from ? pl_find_meta (from, ":URI") : "null", it, it ? pl_find_meta (it, ":URI") : "null");
-        plug_trigger_event_trackchange (from, it);
+        send_trackchanged (from, it);
     }
     if (from) {
         pl_item_unref (from);
@@ -240,6 +278,15 @@ str_get_for_idx (int idx) {
     return it;
 }
 
+static void
+send_trackinfochanged (playItem_t *track) {
+    ddb_event_track_t *ev = (ddb_event_track_t *)messagepump_event_alloc (DB_EV_TRACKINFOCHANGED);
+    ev->track = DB_PLAYITEM (track);
+    if (track) {
+        pl_item_ref (track);
+    }
+    messagepump_push_event ((ddb_event_t*)ev, 0, 0);
+}
 
 int
 streamer_move_to_nextsong (int reason) {
@@ -372,7 +419,7 @@ streamer_move_to_nextsong (int reason) {
             }
             if (!it) {
                 streamer_buffering = 0;
-                plug_trigger_event_trackinfochanged (streaming_track);
+                send_trackinfochanged (streaming_track);
                 playItem_t *temp;
                 plt_reshuffle (streamer_playlist, &temp, NULL);
                 streamer_set_nextsong (-2, -2);
@@ -400,7 +447,7 @@ streamer_move_to_nextsong (int reason) {
             }
             else {
                 streamer_buffering = 0;
-                plug_trigger_event_trackinfochanged (streaming_track);
+                send_trackinfochanged (streaming_track);
                 badsong = -1;
                 streamer_set_nextsong (-2, -2);
                 pl_unlock ();
@@ -573,7 +620,7 @@ streamer_set_current (playItem_t *it) {
     trace ("streamer_set_current %s\n", playing_track ? pl_find_meta (playing_track, ":URI") : "null");
     DB_output_t *output = plug_get_output ();
     int err = 0;
-    int send_songstarted = 0;
+    int do_songstarted = 0;
     playItem_t *from, *to;
     // need to add refs here, because streamer_start_playback can destroy items
     from = playing_track;
@@ -588,7 +635,7 @@ streamer_set_current (playItem_t *it) {
     if (!playing_track || output->state () == OUTPUT_STATE_STOPPED) {
         streamer_buffering = 1;
         trace ("\033[0;35mstreamer_start_playback[1] from %p to %p\033[37;0m\n", from, it);
-        send_songstarted = 1;
+        do_songstarted = 1;
         streamer_start_playback (from, it);
         bytes_until_next_song = -1;
     }
@@ -605,10 +652,10 @@ streamer_set_current (playItem_t *it) {
     }
     if (to) {
         trace ("draw before init: %p->%p, playing_track=%p, playlist_track=%p\n", from, to, playing_track, playlist_track);
-        plug_trigger_event_trackinfochanged (to);
+        send_trackinfochanged (to);
     }
     if (from) {
-        plug_trigger_event_trackinfochanged (from);
+        send_trackinfochanged (from);
     }
     char decoder_id[100] = "";
     char filetype[100] = "";
@@ -712,7 +759,7 @@ streamer_set_current (playItem_t *it) {
             streamer_buffering = 0;
             if (playlist_track == it) {
                 trace ("redraw track %d; playing_track=%p; playlist_track=%p\n", to, playing_track, playlist_track);
-                plug_trigger_event_trackinfochanged (to);
+                send_trackinfochanged (to);
             }
             err = -1;
             goto error;
@@ -733,7 +780,7 @@ streamer_set_current (playItem_t *it) {
         it->played = 1;
         streamer_buffering = 0;
         if (playlist_track == it) {
-            plug_trigger_event_trackinfochanged (to);
+            send_trackinfochanged (to);
         }
         if (from) {
             pl_item_unref (from);
@@ -754,11 +801,12 @@ success:
         new_fileinfo = NULL;
     }
     mutex_unlock (decodemutex);
-    if (send_songstarted && playing_track) {
+    if (do_songstarted && playing_track) {
         trace ("songstarted %s\n", playing_track ? pl_find_meta (playing_track, ":URI") : "null");
-        plug_trigger_event (DB_EV_SONGSTARTED, 0);
+        playtime = 0;
+        send_songstarted (playing_track);
     }
-    plug_trigger_event_trackinfochanged (to);
+    send_trackinfochanged (to);
 
     trace ("\033[0;32mstr: %p (%s), ply: %p (%s)\033[37;0m\n", streaming_track, streaming_track ? pl_find_meta (streaming_track, ":URI") : "null", playing_track, playing_track ? pl_find_meta (playing_track, ":URI") : "null");
 
@@ -857,7 +905,7 @@ streamer_start_new_song (void) {
         }
         mutex_unlock (decodemutex);
 
-        plug_trigger_event_trackchange (NULL, NULL);
+        send_trackchanged (NULL, NULL);
         return;
     }
     int ret = streamer_set_current (try);
@@ -958,7 +1006,7 @@ streamer_thread (void *ctx) {
             trace ("\033[0;34mnextsong=%d\033[37;0m\n", nextsong);
             if (playing_track) {
                 trace ("sending songfinished to plugins [3]\n");
-                plug_trigger_event (DB_EV_SONGFINISHED, 0);
+                send_songfinished (playing_track);
             }
             streamer_start_new_song ();
             // it's totally possible that song was switched
@@ -975,7 +1023,7 @@ streamer_thread (void *ctx) {
             output->stop ();
             if (playing_track) {
                 trace ("sending songfinished to plugins [1]\n");
-                plug_trigger_event (DB_EV_SONGFINISHED, 0);
+                send_songfinished (playing_track);
             }
             if (from) {
                 pl_item_ref (from);
@@ -985,7 +1033,7 @@ streamer_thread (void *ctx) {
                 pl_item_unref (playing_track);
                 playing_track = NULL;
             }
-            plug_trigger_event_trackchange (from, NULL);
+            send_trackchanged (from, NULL);
             if (from) {
                 pl_item_unref (from);
             }
@@ -1015,13 +1063,14 @@ streamer_thread (void *ctx) {
             // plugin will get pointer to str_playing_song
             if (playing_track) {
                 trace ("sending songfinished to plugins [2]\n");
-                plug_trigger_event (DB_EV_SONGFINISHED, 0);
+                send_songfinished (playing_track);
             }
             // copy streaming into playing
             trace ("\033[0;35mstreamer_start_playback[2] from %p to %p\033[37;0m\n", playing_track, streaming_track);
             streamer_start_playback (playing_track, streaming_track);
             trace ("songstarted %s\n", playing_track ? pl_find_meta (playing_track, ":URI") : "null");
-            plug_trigger_event (DB_EV_SONGSTARTED, 0);
+            playtime = 0;
+            send_songstarted (playing_track);
             last_bitrate = -1;
             avg_bitrate = -1;
             playlist_track = playing_track;
@@ -1105,7 +1154,7 @@ streamer_thread (void *ctx) {
                 bytes_until_next_song = -1;
                 streamer_buffering = 1;
                 if (streaming_track) {
-                    plug_trigger_event_trackinfochanged (streaming_track);
+                    send_trackinfochanged (streaming_track);
                 }
 
                 mutex_lock (decodemutex);
@@ -1125,7 +1174,7 @@ streamer_thread (void *ctx) {
 
                 if (!dec || !fileinfo) {
                     if (streaming_track) {
-                        plug_trigger_event_trackinfochanged (streaming_track);
+                        send_trackinfochanged (streaming_track);
                     }
                     trace ("failed to restart prev track on seek, trying to jump to next track\n");
                     streamer_move_to_nextsong (0);
@@ -1138,7 +1187,7 @@ streamer_thread (void *ctx) {
             bytes_until_next_song = -1;
             streamer_buffering = 1;
             if (streaming_track) {
-                plug_trigger_event_trackinfochanged (streaming_track);
+                send_trackinfochanged (streaming_track);
             }
             float dur = pl_get_item_duration (playing_track);
             if (fileinfo && playing_track && dur > 0) {
@@ -1236,7 +1285,7 @@ streamer_thread (void *ctx) {
         if ((streamer_ringbuf.remaining > 128000 && streamer_buffering) || !streaming_track) {
             streamer_buffering = 0;
             if (streaming_track) {
-                plug_trigger_event_trackinfochanged (streaming_track);
+                send_trackinfochanged (streaming_track);
             }
         }
         struct timeval tm2;
@@ -1721,10 +1770,7 @@ streamer_read (char *bytes, int size) {
     if (sz) {
         ringbuf_read (&streamer_ringbuf, bytes, sz);
         playpos += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels) * dsp_ratio;
-        playing_track->playtime += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels);
-        if (playlist_track) {
-            playlist_track->playtime = playing_track->playtime;
-        }
+        playtime += (float)sz/output->fmt.samplerate/((output->fmt.bps>>3)*output->fmt.channels);
         if (bytes_until_next_song > 0) {
             bytes_until_next_song -= sz;
             if (bytes_until_next_song < 0) {
@@ -1854,7 +1900,7 @@ streamer_play_current_track (void) {
     if (output->state () == OUTPUT_STATE_PAUSED && playing_track) {
         // unpause currently paused track
         output->unpause ();
-        plug_trigger_event_paused (0);
+        messagepump_push (DB_EV_PAUSED, 0, 0, 0);
     }
     else if (plt->current_row[PL_MAIN] != -1) {
         // play currently selected track in current playlist
