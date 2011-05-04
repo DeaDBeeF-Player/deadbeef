@@ -1771,6 +1771,9 @@ create_prefwin (void)
   GtkWidget *scrolledwindow2;
   GtkWidget *pref_pluginlist;
   GtkWidget *vbox12;
+  GtkWidget *hbox103;
+  GtkWidget *label130;
+  GtkWidget *plug_version;
   GtkWidget *scrolledwindow8;
   GtkWidget *plug_description;
   GtkWidget *hbox20;
@@ -2413,6 +2416,20 @@ create_prefwin (void)
   gtk_paned_pack2 (GTK_PANED (hpaned1), vbox12, TRUE, TRUE);
   gtk_container_set_border_width (GTK_CONTAINER (vbox12), 12);
 
+  hbox103 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox103);
+  gtk_box_pack_start (GTK_BOX (vbox12), hbox103, FALSE, TRUE, 0);
+
+  label130 = gtk_label_new (_("Version: "));
+  gtk_widget_show (label130);
+  gtk_box_pack_start (GTK_BOX (hbox103), label130, FALSE, FALSE, 0);
+
+  plug_version = gtk_entry_new ();
+  gtk_widget_show (plug_version);
+  gtk_box_pack_start (GTK_BOX (hbox103), plug_version, TRUE, TRUE, 0);
+  gtk_editable_set_editable (GTK_EDITABLE (plug_version), FALSE);
+  gtk_entry_set_invisible_char (GTK_ENTRY (plug_version), 8226);
+
   scrolledwindow8 = gtk_scrolled_window_new (NULL, NULL);
   gtk_widget_show (scrolledwindow8);
   gtk_box_pack_start (GTK_BOX (vbox12), scrolledwindow8, TRUE, TRUE, 0);
@@ -2778,6 +2795,9 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, scrolledwindow2, "scrolledwindow2");
   GLADE_HOOKUP_OBJECT (prefwin, pref_pluginlist, "pref_pluginlist");
   GLADE_HOOKUP_OBJECT (prefwin, vbox12, "vbox12");
+  GLADE_HOOKUP_OBJECT (prefwin, hbox103, "hbox103");
+  GLADE_HOOKUP_OBJECT (prefwin, label130, "label130");
+  GLADE_HOOKUP_OBJECT (prefwin, plug_version, "plug_version");
   GLADE_HOOKUP_OBJECT (prefwin, scrolledwindow8, "scrolledwindow8");
   GLADE_HOOKUP_OBJECT (prefwin, plug_description, "plug_description");
   GLADE_HOOKUP_OBJECT (prefwin, hbox20, "hbox20");

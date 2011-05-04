@@ -766,6 +766,11 @@ on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
     assert (p);
     GtkWidget *w = prefwin;
     assert (w);
+
+    char s[20];
+    snprintf (s, sizeof (s), "%d.%d", p->version_major, p->version_minor);
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "plug_version")), s);
+
     if (p->descr) {
         GtkTextView *tv = GTK_TEXT_VIEW (lookup_widget (w, "plug_description"));
 
