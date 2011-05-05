@@ -27,6 +27,7 @@
 #ifndef PATH_MAX
 #define PATH_MAX    1024    /* max # of characters in a path name */
 #endif
+#define min(x,y) ((x)<(y)?(x):(y))
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -386,8 +387,102 @@ scandir_preset_filter (const struct dirent *ent) {
     return 0;
 }
 
+static int
+copy_file (const char *in, const char *out) {
+    int BUFFER_SIZE = 1000;
+    FILE *fin = fopen (in, "rb");
+    if (!fin) {
+        trace ("converter: failed to open file %s for reading\n", in);
+        return -1;
+    }
+    FILE *fout = fopen (out, "w+b");
+    if (!fout) {
+        fclose (fin);
+        trace ("converter: failed to open file %s for writing\n", out);
+        return -1;
+    }
+    char *buf = malloc (BUFFER_SIZE);
+    if (!buf) {
+        trace ("converter: failed to alloc %d bytes\n", BUFFER_SIZE);
+        fclose (fin);
+        fclose (fout);
+        return -1;
+    }
+
+    fseek (fin, 0, SEEK_END);
+    size_t sz = ftell (fin);
+    rewind (fin);
+
+    while (sz > 0) {
+        int rs = min (sz, BUFFER_SIZE);
+        if (fread (buf, rs, 1, fin) != 1) {
+            trace ("converter: failed to read file %s\n", in);
+            break;
+        }
+        if (fwrite (buf, rs, 1, fout) != 1) {
+            trace ("converter: failed to write file %s\n", out);
+            break;
+        }
+        sz -= rs;
+    }
+    free (buf);
+    fclose (fin);
+    fclose (fout);
+    if (sz > 0) {
+        unlink (out);
+    }
+    return 0;
+}
+
 int
 load_encoder_presets (void) {
+    // check if we need to install presets
+    char ppath[1024];
+    char epath[1024];
+    char fpath[1024];
+    snprintf (ppath, sizeof (ppath), "%s/presets", deadbeef->get_config_dir ());
+    snprintf (epath, sizeof (epath), "%s/encoders", ppath);
+    snprintf (fpath, sizeof (fpath), "%s/.installed", epath);
+    struct stat stat_buf;
+    if (0 != stat (fpath, &stat_buf)) {
+        // file not found, install all presets from plugin_dir/convpresets/
+        mkdir (ppath, 0755);
+        mkdir (epath, 0755);
+        char preset_src_dir[1024];
+        snprintf (preset_src_dir, sizeof (preset_src_dir), "%s/convpresets", deadbeef->get_plugin_dir ());
+        struct dirent **namelist = NULL;
+        int n = scandir (preset_src_dir, &namelist, NULL, dirent_alphasort);
+        for (int i = 0; i < n; i++) {
+            // replace _ with spaces
+            char new_name[1024];
+            char *o = new_name;
+            char *in = namelist[i]->d_name;
+            while (*in) {
+                if (*in == '_') {
+                    *o++ = ' ';
+                    in++;
+                }
+                else {
+                    *o++ = *in++;
+                }
+            }
+            *o = 0;
+            char in_name[1024];
+            char out_name[1024];
+            snprintf (in_name, sizeof (in_name), "%s/%s", preset_src_dir, namelist[i]->d_name);
+            snprintf (out_name, sizeof (out_name), "%s/%s", epath, new_name);
+            copy_file (in_name, out_name);
+            free (namelist[i]);
+        }
+        if (namelist) {
+            free (namelist);
+        }
+        FILE *fp = fopen (fpath, "w+b");
+        if (fp) {
+            fclose (fp);
+        }
+    }
+
     ddb_encoder_preset_t *tail = NULL;
     char path[1024];
     if (snprintf (path, sizeof (path), "%s/presets/encoders", deadbeef->get_config_dir ()) < 0) {

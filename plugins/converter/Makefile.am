@@ -4,6 +4,21 @@ if STATICLINK
 pkglib_LTLIBRARIES = converter.la converter_gtkui.la converter_gtkui.fallback.la
 else
 pkglib_LTLIBRARIES = converter.la converter_gtkui.la
+
+convdatadir = $(libdir)/deadbeef/convpresets
+convdata_DATA = \
+	presets/AAC_(Nero_FAAC).txt\
+	presets/FLAC_(compression_level_5).txt\
+	presets/MP3_CBR_320_Kbps_(Lame).txt\
+	presets/MP3_VBR_192Kbps_(Lame).txt\
+	presets/MS_RIFF_WAV.txt\
+	presets/MusePack.txt\
+	presets/Ogg_Vorbis_(-q_5).txt\
+	presets/TTA.txt\
+	presets/WavPack.txt
+
+EXTRA_DIST = $(convdata_DATA)
+
 endif
 
 AM_CFLAGS = $(CFLAGS) -std=c99 -fPIC
