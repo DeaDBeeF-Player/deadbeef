@@ -377,6 +377,34 @@ actionitem_activate (GtkMenuItem     *menuitem,
     }
 }
 
+#define HOOKUP_OBJECT(component,widget,name) \
+  g_object_set_data_full (G_OBJECT (component), name, \
+    gtk_widget_ref (widget), (GDestroyNotify) gtk_widget_unref)
+
+
+static GtkWidget*
+find_popup                          (GtkWidget       *widget,
+                                        const gchar     *widget_name)
+{
+  GtkWidget *parent, *found_widget;
+
+  for (;;)
+    {
+      if (GTK_IS_MENU (widget))
+        parent = gtk_menu_get_attach_widget (GTK_MENU (widget));
+      else
+        parent = widget->parent;
+      if (!parent)
+        parent = (GtkWidget*) g_object_get_data (G_OBJECT (widget), "GladeParentKey");
+      if (parent == NULL)
+        break;
+      widget = parent;
+    }
+
+  found_widget = (GtkWidget*) g_object_get_data (G_OBJECT (widget),
+                                                 widget_name);
+  return found_widget;
+}
 void
 list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     clicked_idx = deadbeef->pl_get_idx_of (it);
@@ -466,12 +494,75 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
         {
             if (action->flags & DB_ACTION_COMMON)
                 continue;
+            
+            // create submenus (separated with '/')
+            const char *prev = action->title;
+            while (*prev && *prev == '/') {
+                prev++;
+            }
+            
+            GtkWidget *popup = NULL;
+            
+            for (;;) {
+                const char *slash = strchr (prev, '/');
+                if (slash && *(slash-1) != '\\') {
+                    char name[slash-prev+1];
+                    // replace \/ with /
+                    const char *p = prev;
+                    char *t = name;
+                    while (*p && p < slash) {
+                        if (*p == '\\' && *(p+1) == '/') {
+                            *t++ = '/';
+                            p += 2;
+                        }
+                        else {
+                            *t++ = *p++;
+                        }
+                    }
+                    *t = 0;
+
+                    // add popup
+                    GtkWidget *prev_menu = popup ? popup : playlist_menu;
+
+                    popup = find_popup (prev_menu, name);
+                    if (!popup) {
+                        GtkWidget *item = gtk_image_menu_item_new_with_mnemonic (_(name));
+                        gtk_widget_show (item);
+                        gtk_container_add (GTK_CONTAINER (prev_menu), item);
+                        popup = gtk_menu_new ();
+                        HOOKUP_OBJECT (prev_menu, popup, name);
+                        gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), popup);
+                    }
+                }
+                else {
+                    break;
+                }
+                prev = slash+1;
+            }
+
+
             count++;
             added_entries++;
             GtkWidget *actionitem;
-            actionitem = gtk_menu_item_new_with_mnemonic (_(action->title));
+
+            // replace \/ with /
+            const char *p = popup ? prev : action->title;
+            char title[strlen (p)+1];
+            char *t = title;
+            while (*p) {
+                if (*p == '\\' && *(p+1) == '/') {
+                    *t++ = '/';
+                    p += 2;
+                }
+                else {
+                    *t++ = *p++;
+                }
+            }
+            *t = 0;
+
+            actionitem = gtk_menu_item_new_with_mnemonic (_(title));
             gtk_widget_show (actionitem);
-            gtk_container_add (GTK_CONTAINER (playlist_menu), actionitem);
+            gtk_container_add (popup ? GTK_CONTAINER (popup) : GTK_CONTAINER (playlist_menu), actionitem);
             g_object_set_data (G_OBJECT (actionitem), "ps", listview);
 
             g_signal_connect ((gpointer) actionitem, "activate",
