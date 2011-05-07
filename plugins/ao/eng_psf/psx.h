@@ -64,8 +64,82 @@ struct address_map_t
 };
 typedef struct address_map_t *(*construct_map_t)(struct address_map_t *map);
 
+#define MAX_FILE_SLOTS	(32)
+
+typedef struct
+{
+	char name[10];
+	uint32 dispatch;
+} ExternLibEntries;
+
+typedef struct
+{
+	int32  iState;		// state of thread
+
+	uint32 flags;		// flags
+	uint32 routine;		// start of code for the thread
+	uint32 stackloc;	// stack location in IOP RAM
+	uint32 stacksize;	// stack size
+	uint32 refCon;		// user value passed in at CreateThread time
+
+	uint32 waitparm;	// what we're waiting on if in one the TS_WAIT* states
+	
+	uint32 save_regs[37];	// CPU registers belonging to this thread
+} Thread;
+
+typedef struct
+{
+	uint32 attr;
+	uint32 option;
+	int32 init;
+	int32 current;
+	int32 max;
+	int32 threadsWaiting;
+	int32 inuse;
+} Semaphore;
+
+#define SEMA_MAX	(64)
+
+typedef struct
+{
+	uint32 type;
+	uint32 value;
+	uint32 param;
+	int    inUse;
+} EventFlag;
+
+typedef struct
+{
+	uint32 count;
+	uint32 mode;
+	uint32 target;
+	uint32 sysclock;
+} Counter;
+
+
+typedef struct
+{
+	uint32 desc;
+	int32 status;
+	int32 mode;
+	uint32 fhandler;
+} EvtCtrlBlk[32];
+
+typedef struct
+{
+	int32  iActive;
+	uint32 count;
+	uint32 target;
+	uint32 source;
+	uint32 prescale;
+	uint32 handler;
+	uint32 hparam;
+	uint32 mode;
+} IOPTimer;
+
 typedef struct mips_cpu_context_s
 {
+    int psf_refresh;
 	UINT32 op;
 	UINT32 pc;
 	UINT32 prevpc;
@@ -91,6 +165,46 @@ typedef struct mips_cpu_context_s
     struct spu2_state_s *spu2;
     void (*spu_callback)(unsigned char *, long, void *);
     void *spu_callback_data;
+
+    // state
+    Counter root_cnts[3];	// 3 of the bastards
+
+    EvtCtrlBlk *Event;
+    EvtCtrlBlk *CounterEvent;
+
+    uint32 spu_delay, dma_icr, irq_data, irq_mask, dma_timer, WAI;
+    uint32 dma4_madr, dma4_bcr, dma4_chcr, dma4_delay;
+    uint32 dma7_madr, dma7_bcr, dma7_chcr, dma7_delay;
+    uint32 dma4_cb, dma7_cb, dma4_fval, dma4_flag, dma7_fval, dma7_flag;
+    uint32 irq9_cb, irq9_fval, irq9_flag;
+
+    volatile int softcall_target;
+    int filestat[MAX_FILE_SLOTS];
+    uint8 *filedata[MAX_FILE_SLOTS];
+    uint32 filesize[MAX_FILE_SLOTS], filepos[MAX_FILE_SLOTS];
+    int intr_susp;
+
+    uint64 sys_time;
+    int timerexp;
+
+    int32 iNumLibs;
+    ExternLibEntries	reglibs[32];
+
+    int32 iNumFlags;
+    EventFlag evflags[32];
+
+    int32 iNumSema;
+    Semaphore semaphores[SEMA_MAX];
+
+    int32 iNumThreads, iCurThread;
+    Thread threads[32];
+    IOPTimer iop_timers[8];
+    int32 iNumTimers;
+    int fcnt;
+    uint32 heap_addr, entry_int;
+    uint32 irq_regs[37];
+    int irq_mutex;
+
 } mips_cpu_context;
 
 union cpuinfo
