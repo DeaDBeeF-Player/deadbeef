@@ -197,11 +197,11 @@ aoplug_add_meta (DB_playItem_t *it, const char *key, const char *value, const ch
         res = tmp;
     }
 
-    if (res) {
-        char s[1024];
-        snprintf (s, sizeof (s), "%s%s", comment_title, res);
-        deadbeef->pl_append_meta (it, "comment", s);
-    }
+//    if (res) {
+//        char s[1024];
+//        snprintf (s, sizeof (s), "%s%s", comment_title, res);
+//        deadbeef->pl_append_meta (it, "comment", s);
+//    }
 }
 
 static DB_playItem_t *
@@ -313,15 +313,16 @@ aoplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             else if (!strncasecmp (info.title[i], "Year: ", 6)) {
                 aoplug_add_meta (it, "year", info.info[i], info.title[i]);
             }
-            else if (!strncasecmp (info.title[i], "Ripper: ", 8)) {
-                aoplug_add_meta (it, "vendor", info.info[i], info.title[i]);
-            }
             else if (!strncasecmp (info.title[i], "Fade: ", 6)) {
                 fade = atof (info.info[i]);
-                aoplug_add_meta (it, NULL, info.info[i], info.title[i]);
+                aoplug_add_meta (it, "fade", info.info[i], info.title[i]);
             }
             else {
-                aoplug_add_meta (it, NULL, info.info[i], info.title[i]);
+                char *colon = strchr (info.title[i], ':');
+                char name[colon-info.title[i]+1];
+                memcpy (name, info.title[i], colon-info.title[i]);
+                name[colon-info.title[i]] = 0;
+                aoplug_add_meta (it, name, info.info[i], info.title[i]);
             }
         }
     }
