@@ -296,12 +296,9 @@ mainwin_toggle_visible (void) {
 
 gboolean
 on_trayicon_activate (GtkWidget       *widget,
-                                        GdkEvent  *event,
                                         gpointer         user_data)
 {
-    if (event->type == GDK_BUTTON_PRESS) {
-        mainwin_toggle_visible ();
-    }
+    mainwin_toggle_visible ();
     return FALSE;
 }
 
