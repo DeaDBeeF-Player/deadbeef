@@ -27,12 +27,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <deadbeef/deadbeef.h>
 
 #include "ao.h"
 #include "eng_protos.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
+extern DB_functions_t *deadbeef;
 
 /* file types */
 static uint32 type;
@@ -63,30 +65,30 @@ int ao_get_lib(char *filename, uint8 **buffer, uint64 *length)
 {
 	uint8 *filebuf;
 	uint32 size;
-	FILE *auxfile;
+	DB_FILE *auxfile;
 
-	auxfile = fopen(filename, "rb");
+	auxfile = deadbeef->fopen(filename);
 	if (!auxfile)
 	{
 		fprintf(stderr, "Unable to find auxiliary file %s\n", filename);
 		return AO_FAIL;
 	}
 
-	fseek(auxfile, 0, SEEK_END);
-	size = ftell(auxfile);
-	fseek(auxfile, 0, SEEK_SET);
+	deadbeef->fseek(auxfile, 0, SEEK_END);
+	size = deadbeef->ftell(auxfile);
+	deadbeef->fseek(auxfile, 0, SEEK_SET);
 
 	filebuf = malloc(size);
 
 	if (!filebuf)
 	{
-		fclose(auxfile);
+		deadbeef->fclose(auxfile);
 		printf("ERROR: could not allocate %d bytes of memory\n", size);
 		return AO_FAIL;
 	}
 
-	fread(filebuf, size, 1, auxfile);
-	fclose(auxfile);
+	deadbeef->fread(filebuf, size, 1, auxfile);
+	deadbeef->fclose(auxfile);
 
 	*buffer = filebuf;
 	*length = (uint64)size;

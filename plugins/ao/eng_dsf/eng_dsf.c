@@ -69,19 +69,7 @@ void *dsf_start(const char *path, uint8 *buffer, uint32 length)
 		{
 			uint64 tmp_length;
 			char libpath[PATH_MAX];
-			const char *e = path + strlen(path);
-			while (e > path && *e != '/') {
-                e--;
-            }
-            if (*e == '/') {
-                e++;
-                memcpy (libpath, path, e-path);
-                libpath[e-path] = 0;
-                strcat (libpath, libfile);
-            }
-            else {
-                strcpy (libpath, libfile);
-            }
+            ao_getlibpath (path, s->c->lib, libpath, sizeof (libpath));
 	
 			#if DEBUG_LOADER	
 			printf("Loading library: %s\n", libpath);

@@ -226,4 +226,6 @@ int ao_decode (uint32 type, void *handle, int16 *buffer, uint32 size);
 
 int ao_command (uint32 type, void *handle, int32 command, int32 param);
 
+void ao_getlibpath (const char *path, const char *libname, char *libpath, int size);
+
 #endif // AO_H

@@ -18,7 +18,7 @@
 */
 #include <stdlib.h>
 #include <string.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "ao.h"
 #include "eng_protos.h"
 
