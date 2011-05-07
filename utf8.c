@@ -742,6 +742,14 @@ u8_strcasecmp (const char *a, const char *b) {
         p1 += i1;
         p2 += i2;
     }
+
+    if (*p1 == 0) {
+        return -1;
+    }
+    else if (*p2 == 0) {
+        return 1;
+    }
+
     return 0;
 }
 
