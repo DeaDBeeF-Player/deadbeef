@@ -221,6 +221,7 @@ cvorbis_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             return -1;
         }
         deadbeef->pl_set_item_duration (it, -1);
+        deadbeef->pl_replace_meta (it, ":FILETYPE", "OggVorbis");
     }
     else
     {
