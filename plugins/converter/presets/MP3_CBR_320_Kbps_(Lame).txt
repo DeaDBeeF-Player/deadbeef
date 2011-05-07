@@ -1,0 +1,10 @@
+title MP3 CBR 320 Kbps (Lame)
+ext mp3
+encoder lame --preset cbr 320 - %o
+method 0
+id3v2_version 0
+tag_id3v2 1
+tag_id3v1 1
+tag_apev2 0
+tag_flac 0
+tag_oggvorbis 0

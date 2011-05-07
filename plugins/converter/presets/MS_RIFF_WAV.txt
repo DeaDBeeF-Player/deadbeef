@@ -1,0 +1,10 @@
+title MS RIFF WAV
+ext wav
+encoder 
+method 0
+id3v2_version 0
+tag_id3v2 0
+tag_id3v1 0
+tag_apev2 0
+tag_flac 0
+tag_oggvorbis 0

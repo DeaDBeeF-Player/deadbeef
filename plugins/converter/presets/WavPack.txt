@@ -1,0 +1,10 @@
+title WavPack
+ext wv
+encoder wavpack -i - -o %o
+method 0
+id3v2_version 0
+tag_id3v2 0
+tag_id3v1 0
+tag_apev2 1
+tag_flac 0
+tag_oggvorbis 0
