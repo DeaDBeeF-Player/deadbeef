@@ -275,7 +275,9 @@ search_get_group (DdbListviewIter it, char *str, int size) {
 void
 search_col_sort (int col, int sort_order, void *user_data) {
     col_info_t *c = (col_info_t*)user_data;
-    deadbeef->pl_sort (PL_SEARCH, c->id, c->format, sort_order-1);
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    deadbeef->plt_sort (plt, PL_SEARCH, c->id, c->format, sort_order-1);
+    deadbeef->plt_unref (plt);
 }
 
 static int lock_column_config = 0;

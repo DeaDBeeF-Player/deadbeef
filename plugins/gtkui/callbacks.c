@@ -1128,7 +1128,9 @@ void
 on_sort_by_title_activate              (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    deadbeef->pl_sort (PL_MAIN, -1, "%t", 1);
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    deadbeef->plt_sort (plt, PL_MAIN, -1, "%t", 1);
+    deadbeef->plt_unref (plt);
 
     DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
     ddb_listview_clear_sort (pl);
@@ -1140,7 +1142,9 @@ void
 on_sort_by_track_nr_activate           (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    deadbeef->pl_sort (PL_MAIN, -1, "%n", 1);
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    deadbeef->plt_sort (plt, PL_MAIN, -1, "%n", 1);
+    deadbeef->plt_unref (plt);
 
     DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
     ddb_listview_clear_sort (pl);
@@ -1152,7 +1156,9 @@ void
 on_sort_by_album_activate              (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    deadbeef->pl_sort (PL_MAIN, -1, "%b", 1);
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    deadbeef->plt_sort (plt, PL_MAIN, -1, "%b", 1);
+    deadbeef->plt_unref (plt);
 
     DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
     ddb_listview_clear_sort (pl);
@@ -1164,7 +1170,9 @@ void
 on_sort_by_artist_activate             (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    deadbeef->pl_sort (PL_MAIN, -1, "%a", 1);
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    deadbeef->plt_sort (plt, PL_MAIN, -1, "%a", 1);
+    deadbeef->plt_unref (plt);
 
     DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
     ddb_listview_clear_sort (pl);
@@ -1176,7 +1184,9 @@ void
 on_sort_by_date_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    deadbeef->pl_sort (PL_MAIN, -1, "%y", 1);
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    deadbeef->plt_sort (plt, PL_MAIN, -1, "%y", 1);
+    deadbeef->plt_unref (plt);
 
     DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
     ddb_listview_clear_sort (pl);
@@ -1210,7 +1220,9 @@ on_sort_by_custom_activate             (GtkMenuItem     *menuitem,
         deadbeef->conf_set_int ("gtkui.sortby_order", order);
         deadbeef->conf_set_str ("gtkui.sortby_fmt", fmt);
 
-        deadbeef->pl_sort (PL_MAIN, -1, fmt, order == 0 ? 1 : 0);
+        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+        deadbeef->plt_sort (plt, PL_MAIN, -1, fmt, order == 0 ? 1 : 0);
+        deadbeef->plt_unref (plt);
 
         DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
         ddb_listview_clear_sort (pl);

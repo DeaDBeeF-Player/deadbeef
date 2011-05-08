@@ -140,7 +140,9 @@ playlist_tooltip_handler (GtkWidget *widget, gint x, gint y, gboolean keyboard_m
 void
 main_col_sort (int col, int sort_order, void *user_data) {
     col_info_t *c = (col_info_t*)user_data;
-    deadbeef->pl_sort (PL_MAIN, c->id, c->format, sort_order-1);
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    deadbeef->plt_sort (plt, PL_MAIN, c->id, c->format, sort_order-1);
+    deadbeef->plt_unref (plt);
 }
 void main_handle_doubleclick (DdbListview *listview, DdbListviewIter iter, int idx) {
     deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, idx, 0);

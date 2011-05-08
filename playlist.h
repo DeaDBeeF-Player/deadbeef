@@ -365,7 +365,7 @@ void
 pl_search_process (const char *text);
 
 void
-pl_sort (int iter, int id, const char *format, int ascending);
+plt_sort (playlist_t *plt, int iter, int id, const char *format, int ascending);
 
 // playqueue support functions
 int

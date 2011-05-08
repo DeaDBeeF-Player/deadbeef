@@ -3287,7 +3287,7 @@ qsort_cmp_func (const void *a, const void *b) {
 }
 
 void
-pl_sort (int iter, int id, const char *format, int ascending) {
+plt_sort (playlist_t *playlist, int iter, int id, const char *format, int ascending) {
     if (id == DB_COLUMN_FILENUMBER || !playlist->head[iter] || !playlist->head[iter]->next[iter]) {
         return;
     }

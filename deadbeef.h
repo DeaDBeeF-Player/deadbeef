@@ -563,7 +563,7 @@ typedef struct {
     float (*pl_get_item_duration) (DB_playItem_t *it);
     uint32_t (*pl_get_item_flags) (DB_playItem_t *it);
     void (*pl_set_item_flags) (DB_playItem_t *it, uint32_t flags);
-    void (*pl_sort) (int iter, int id, const char *format, int ascending);
+    void (*plt_sort) (ddb_playlist_t *plt, int iter, int id, const char *format, int ascending);
     void (*pl_items_copy_junk)(DB_playItem_t *from, DB_playItem_t *first, DB_playItem_t *last);
     // idx is one of DDB_REPLAYGAIN_* constants
     void (*pl_set_item_replaygain) (DB_playItem_t *it, int idx, float value);
