@@ -1031,13 +1031,15 @@ gtkui_thread (void *ctx) {
     mainwin = create_mainwin ();
     gtkpl_init ();
 
-#if PORTABLE
-    char iconpath[1024];
-    snprintf (iconpath, sizeof (iconpath), "%s/deadbeef.png", deadbeef->get_prefix ());
-    gtk_window_set_icon_from_file (GTK_WINDOW (mainwin), iconpath, NULL);
-#else
-    gtk_window_set_icon_name (GTK_WINDOW (mainwin), "deadbeef");
-#endif
+    GtkIconTheme *theme = gtk_icon_theme_get_default();
+    if (gtk_icon_theme_has_icon(theme, "deadbeef")) {
+        gtk_window_set_icon_name (GTK_WINDOW (mainwin), "deadbeef");
+    }
+    else {
+        char iconpath[1024];
+        snprintf (iconpath, sizeof (iconpath), "%s/deadbeef.png", deadbeef->get_prefix ());
+        gtk_window_set_icon_from_file (GTK_WINDOW (mainwin), iconpath, NULL);
+    }
 
     wingeom_restore (mainwin, "mainwin", 40, 40, 500, 300, 0);
 
