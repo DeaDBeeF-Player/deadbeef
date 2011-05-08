@@ -806,10 +806,14 @@ on_add_location_activate               (GtkMenuItem     *menuitem,
         if (entry) {
             const char *text = gtk_entry_get_text (entry);
             if (text) {
-                if (!deadbeef->pl_add_files_begin (deadbeef->plt_get_curr ())) {
-                    deadbeef->pl_add_file (text, NULL, NULL);
+                ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+                if (!deadbeef->pl_add_files_begin (plt)) {
+                    deadbeef->plt_add_file (plt, text, NULL, NULL);
                     deadbeef->pl_add_files_end ();
                     playlist_refresh ();
+                }
+                if (plt) {
+                    deadbeef->plt_unref (plt);
                 }
             }
         }
@@ -1132,22 +1136,22 @@ gtkui_add_file_info_cb (DB_playItem_t *it, void *data) {
     return 0;
 }
 
-int (*gtkui_original_pl_add_dir) (const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
-int (*gtkui_original_pl_add_file) (const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+int (*gtkui_original_plt_add_dir) (ddb_playlist_t *plt, const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+int (*gtkui_original_plt_add_file) (ddb_playlist_t *plt, const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 int (*gtkui_original_pl_add_files_begin) (ddb_playlist_t *plt);
 void (*gtkui_original_pl_add_files_end) (void);
 
 DB_playItem_t * (*gtkui_original_plt_load) (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 
 int
-gtkui_pl_add_dir (const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data) {
-    int res = gtkui_original_pl_add_dir (dirname, gtkui_add_file_info_cb, NULL);
+gtkui_plt_add_dir (ddb_playlist_t *plt, const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data) {
+    int res = gtkui_original_plt_add_dir (plt, dirname, gtkui_add_file_info_cb, NULL);
     return res;
 }
 
 int
-gtkui_pl_add_file (const char *filename, int (*cb)(DB_playItem_t *it, void *data), void *user_data) {
-    int res = gtkui_original_pl_add_file (filename, gtkui_add_file_info_cb, NULL);
+gtkui_plt_add_file (ddb_playlist_t *plt, const char *filename, int (*cb)(DB_playItem_t *it, void *data), void *user_data) {
+    int res = gtkui_original_plt_add_file (plt, filename, gtkui_add_file_info_cb, NULL);
     return res;
 }
 
@@ -1211,11 +1215,11 @@ gtkui_start (void) {
     }
 
     // override default file adding APIs to show progress bar
-    gtkui_original_pl_add_dir = deadbeef->pl_add_dir;
-    deadbeef->pl_add_dir = gtkui_pl_add_dir;
+    gtkui_original_plt_add_dir = deadbeef->plt_add_dir;
+    deadbeef->plt_add_dir = gtkui_plt_add_dir;
 
-    gtkui_original_pl_add_file = deadbeef->pl_add_file;
-    deadbeef->pl_add_file = gtkui_pl_add_file;
+    gtkui_original_plt_add_file = deadbeef->plt_add_file;
+    deadbeef->plt_add_file = gtkui_plt_add_file;
 
     gtkui_original_pl_add_files_begin = deadbeef->pl_add_files_begin;
     deadbeef->pl_add_files_begin = gtkui_pl_add_files_begin;

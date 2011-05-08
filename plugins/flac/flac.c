@@ -49,6 +49,7 @@ typedef struct {
     DB_FILE *file;
 
     // used only on insert
+    ddb_playlist_t *plt;
     DB_playItem_t *after;
     DB_playItem_t *last;
     DB_playItem_t *it;
@@ -583,7 +584,7 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
         _info->fmt.channels = metadata->data.stream_info.channels;
         _info->fmt.bps = metadata->data.stream_info.bits_per_sample;
         info->totalsamples = metadata->data.stream_info.total_samples;
-        deadbeef->pl_set_item_duration (it, metadata->data.stream_info.total_samples / (float)metadata->data.stream_info.sample_rate);
+        deadbeef->plt_set_item_duration (info->plt, it, metadata->data.stream_info.total_samples / (float)metadata->data.stream_info.sample_rate);
     }
     else if (metadata->type == FLAC__METADATA_TYPE_VORBIS_COMMENT) {
         const FLAC__StreamMetadata_VorbisComment *vc = &metadata->data.vorbis_comment;
@@ -614,6 +615,7 @@ cflac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     info.fname = fname;
     info.after = after;
     info.last = after;
+    info.plt = plt;
     info.file = deadbeef->fopen (fname);
     if (!info.file) {
         goto cflac_insert_fail;

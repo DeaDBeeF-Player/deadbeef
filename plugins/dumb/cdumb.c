@@ -814,7 +814,7 @@ cdumb_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     read_metadata_internal (it, itsd);
 
     dumb_it_do_initial_runthrough (duh);
-    deadbeef->pl_set_item_duration (it, duh_get_length (duh)/65536.0f);
+    deadbeef->plt_set_item_duration (plt, it, duh_get_length (duh)/65536.0f);
     deadbeef->pl_add_meta (it, ":FILETYPE", ftype);
 //    printf ("duration: %f\n", _info->duration);
     after = deadbeef->plt_insert_item (plt, after, it);

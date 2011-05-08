@@ -10,13 +10,17 @@
 
 void
 gtkpl_add_dir (DdbListview *ps, char *folder) {
-    gtkui_original_pl_add_dir (folder, gtkui_add_file_info_cb, NULL);
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    gtkui_original_plt_add_dir (plt, folder, gtkui_add_file_info_cb, NULL);
+    deadbeef->plt_unref (plt);
     g_free (folder);
 }
 
 static void
 gtkpl_adddir_cb (gpointer data, gpointer userdata) {
-    gtkui_original_pl_add_dir (data, gtkui_add_file_info_cb, userdata);
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    gtkui_original_plt_add_dir (plt, data, gtkui_add_file_info_cb, userdata);
+    deadbeef->plt_unref (plt);
     g_free (data);
 }
 
@@ -52,7 +56,9 @@ gtkpl_add_dirs (GSList *lst) {
 
 static void
 gtkpl_addfile_cb (gpointer data, gpointer userdata) {
-    gtkui_original_pl_add_file (data, gtkui_add_file_info_cb, userdata);
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    gtkui_original_plt_add_file (plt, data, gtkui_add_file_info_cb, userdata);
+    deadbeef->plt_unref (plt);
     g_free (data);
 }
 
@@ -170,8 +176,10 @@ set_dnd_cursor_idle (gpointer data) {
 
 void
 gtkpl_add_fm_dropped_files (DB_playItem_t *drop_before, char *ptr, int length) {
-    if (deadbeef->pl_add_files_begin (deadbeef->plt_get_curr ()) < 0) {
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (deadbeef->pl_add_files_begin (plt) < 0) {
         free (ptr);
+        deadbeef->plt_unref (plt);
         return;
     }
     DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
@@ -196,9 +204,9 @@ gtkpl_add_fm_dropped_files (DB_playItem_t *drop_before, char *ptr, int length) {
             //strncpy (fname, p, pe - p);
             //fname[pe - p] = 0;
             int abort = 0;
-            DdbListviewIter inserted = deadbeef->pl_insert_dir (after, fname, &abort, gtkui_add_file_info_cb, NULL);
+            DdbListviewIter inserted = deadbeef->plt_insert_dir (plt, after, fname, &abort, gtkui_add_file_info_cb, NULL);
             if (!inserted && !abort) {
-                inserted = deadbeef->pl_insert_file (after, fname, &abort, gtkui_add_file_info_cb, NULL);
+                inserted = deadbeef->plt_insert_file (plt, after, fname, &abort, gtkui_add_file_info_cb, NULL);
             }
             if (inserted) {
                 if (!first) {
@@ -223,6 +231,7 @@ gtkpl_add_fm_dropped_files (DB_playItem_t *drop_before, char *ptr, int length) {
     free (ptr);
 
     deadbeef->pl_add_files_end ();
+    deadbeef->plt_unref (plt);
     g_idle_add (set_dnd_cursor_idle, first);
 }
 

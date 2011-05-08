@@ -155,10 +155,10 @@ void
 plt_clear (playlist_t *plt);
 
 int
-pl_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *user_data);
+plt_add_dir (playlist_t *plt, const char *dirname, int (*cb)(playItem_t *it, void *data), void *user_data);
 
 int
-pl_add_file (const char *fname, int (*cb)(playItem_t *it, void *data), void *user_data);
+plt_add_file (playlist_t *plt, const char *fname, int (*cb)(playItem_t *it, void *data), void *user_data);
 
 int
 pl_add_files_begin (playlist_t *plt);
@@ -167,10 +167,7 @@ void
 pl_add_files_end (void);
 
 playItem_t *
-pl_insert_dir (playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data);
-
-playItem_t *
-pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data);
+plt_insert_dir (playlist_t *plt, playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data);
 
 playItem_t *
 plt_insert_file (playlist_t *playlist, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data);
@@ -293,9 +290,6 @@ pl_reshuffle (playItem_t **ppmin, playItem_t **ppmax);
 void
 plt_set_item_duration (playlist_t *playlist, playItem_t *it, float duration);
 
-void
-pl_set_item_duration (playItem_t *it, float duration);
-
 float
 pl_get_item_duration (playItem_t *it);
 
@@ -403,5 +397,11 @@ pl_set_order (int order);
 
 int
 pl_get_order (void);
+
+int
+plt_get_item_idx (playlist_t *plt, playItem_t *it, int iter);
+
+playlist_t *
+pl_get_playlist (playItem_t *it);
 
 #endif // __PLAYLIST_H

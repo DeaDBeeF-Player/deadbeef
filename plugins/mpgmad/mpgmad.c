@@ -823,7 +823,11 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             trace ("mp3 totalsamples: %d\n", info->buffer.endsample-info->buffer.startsample+1);
         }
         else {
-            deadbeef->pl_set_item_duration (it, info->buffer.duration);
+            ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
+            deadbeef->plt_set_item_duration (plt, it, info->buffer.duration);
+            if (plt) {
+                deadbeef->plt_unref (plt);
+            }
             info->buffer.startsample = info->buffer.delay;
             info->buffer.endsample = info->buffer.totalsamples-info->buffer.padding-1;
             trace ("mp3 totalsamples: %d (%d, %d, %d | %d %d)\n", info->buffer.endsample-info->buffer.startsample+1, info->buffer.totalsamples, info->buffer.delay, info->buffer.padding, info->buffer.startsample, info->buffer.endsample);
@@ -854,7 +858,11 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
         cmp3_set_extra_properties (&info->buffer);
 
-        deadbeef->pl_set_item_duration (it, info->buffer.duration);
+        ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
+        deadbeef->plt_set_item_duration (plt, it, info->buffer.duration);
+        if (plt) {
+            deadbeef->plt_unref (plt);
+        }
         if (info->buffer.duration >= 0) {
             info->buffer.endsample = info->buffer.totalsamples - 1;
         }
@@ -1310,7 +1318,7 @@ cmp3_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
         deadbeef->fclose (fp);
         deadbeef->pl_add_meta (it, "title", NULL);
-        deadbeef->pl_set_item_duration (it, -1);
+        deadbeef->plt_set_item_duration (plt, it, -1);
         after = deadbeef->plt_insert_item (plt, after, it);
         deadbeef->pl_item_unref (it);
         return after;

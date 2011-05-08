@@ -321,7 +321,7 @@ insert_single_track (CdIo_t* cdio, ddb_playlist_t *plt, DB_playItem_t *after, co
 
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (tmp, plugin.plugin.id);
     deadbeef->pl_add_meta (it, ":FILETYPE", "cdda");
-    deadbeef->pl_set_item_duration (it, (float)sector_count / 75.0);
+    deadbeef->plt_set_item_duration (plt, it, (float)sector_count / 75.0);
 
     snprintf (tmp, sizeof (tmp), "CD Track %02d", track_nr);
     deadbeef->pl_add_meta (it, "title", tmp);
@@ -591,7 +591,7 @@ cda_action_add_cd (DB_plugin_action_t *act, DB_playItem_t *it)
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {
         deadbeef->pl_add_files_begin (plt);
-        deadbeef->pl_add_file ("all.cda", NULL, NULL);
+        deadbeef->plt_add_file (plt, "all.cda", NULL, NULL);
         deadbeef->pl_add_files_end ();
         deadbeef->plt_modified (plt);
         deadbeef->plt_unref (plt);

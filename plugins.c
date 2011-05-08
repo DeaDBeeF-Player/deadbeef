@@ -127,6 +127,7 @@ static DB_functions_t deadbeef_api = {
     .plt_set_title = (int (*)(ddb_playlist_t *handle, const char *buffer))plt_set_title,
     .plt_modified = (void (*) (ddb_playlist_t *handle))plt_modified,
     .plt_get_modification_idx = (int (*) (ddb_playlist_t *handle))plt_get_modification_idx,
+    .plt_get_item_idx = (int (*) (ddb_playlist_t *plt, DB_playItem_t *it, int iter))plt_get_item_idx,
 
     // playlist metadata
     .plt_add_meta = (void (*) (ddb_playlist_t *handle, const char *key, const char *value))plt_add_meta,
@@ -144,6 +145,7 @@ static DB_functions_t deadbeef_api = {
     // operating on playlist items
     .plt_insert_item = (DB_playItem_t *(*) (ddb_playlist_t *playlist, DB_playItem_t *after, DB_playItem_t *it))plt_insert_item,
     .plt_insert_file = (DB_playItem_t *(*) (ddb_playlist_t *playlist, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data))plt_insert_file,
+    .plt_insert_dir = (DB_playItem_t *(*) (ddb_playlist_t *plt, DB_playItem_t *after, const char *dirname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data))plt_insert_dir,
     .plt_set_item_duration = (void (*) (ddb_playlist_t *plt, DB_playItem_t *it, float duration))plt_set_item_duration,
 
     // playlist access
@@ -156,18 +158,14 @@ static DB_functions_t deadbeef_api = {
     .pl_item_ref = (void (*)(DB_playItem_t *))pl_item_ref,
     .pl_item_unref = (void (*)(DB_playItem_t *))pl_item_unref,
     .pl_item_copy = (void (*)(DB_playItem_t *, DB_playItem_t *))pl_item_copy,
-    .pl_add_file = (int (*) (const char *, int (*cb)(DB_playItem_t *it, void *data), void *))pl_add_file,
-    .pl_add_dir = (int (*) (const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data))pl_add_dir,
+    .plt_add_file = (int (*) (ddb_playlist_t *plt, const char *, int (*cb)(DB_playItem_t *it, void *data), void *))plt_add_file,
+    .plt_add_dir = (int (*) (ddb_playlist_t *plt, const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data))plt_add_dir,
     .pl_add_files_begin = (int (*) (ddb_playlist_t *plt))pl_add_files_begin,
     .pl_add_files_end = pl_add_files_end,
-//    .pl_insert_item = (DB_playItem_t *(*) (DB_playItem_t *after, DB_playItem_t *it))pl_insert_item,
-    .pl_insert_dir = (DB_playItem_t *(*) (DB_playItem_t *after, const char *dirname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data))pl_insert_dir,
-    .pl_insert_file = (DB_playItem_t *(*) (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data))pl_insert_file,
     .pl_get_idx_of = (int (*) (DB_playItem_t *it))pl_get_idx_of,
     .pl_get_idx_of_iter = (int (*) (DB_playItem_t *it, int iter))pl_get_idx_of_iter,
     .pl_get_for_idx = (DB_playItem_t * (*)(int))pl_get_for_idx,
     .pl_get_for_idx_and_iter = (DB_playItem_t * (*) (int idx, int iter))pl_get_for_idx_and_iter,
-    .pl_set_item_duration = (void (*) (DB_playItem_t *it, float duration))pl_set_item_duration,
     .pl_get_item_duration = (float (*) (DB_playItem_t *it))pl_get_item_duration,
     .pl_get_item_flags = (uint32_t (*) (DB_playItem_t *it))pl_get_item_flags,
     .pl_set_item_flags = (void (*) (DB_playItem_t *it, uint32_t flags))pl_set_item_flags,
@@ -199,6 +197,7 @@ static DB_functions_t deadbeef_api = {
     .pl_copy_items = (void (*) (int iter, int plt_from, DB_playItem_t *before, uint32_t *indices, int cnt))pl_copy_items,
     .pl_search_reset = pl_search_reset,
     .pl_search_process = pl_search_process,
+    .pl_get_playlist = (ddb_playlist_t * (*) (DB_playItem_t *it))pl_get_playlist,
     // metainfo
     .pl_add_meta = (void (*) (DB_playItem_t *, const char *, const char *))pl_add_meta,
     .pl_append_meta = (void (*) (DB_playItem_t *, const char *, const char *))pl_append_meta,

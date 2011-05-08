@@ -264,8 +264,8 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
                 else {
                     pname = parg;
                 }
-                if (deadbeef->pl_add_dir (pname, NULL, NULL) < 0) {
-                    if (deadbeef->pl_add_file (pname, NULL, NULL) < 0) {
+                if (deadbeef->plt_add_dir ((ddb_playlist_t*)curr_plt, pname, NULL, NULL) < 0) {
+                    if (deadbeef->plt_add_file ((ddb_playlist_t*)curr_plt, pname, NULL, NULL) < 0) {
                         fprintf (stderr, "failed to add file or folder %s\n", pname);
                     }
                 }
@@ -273,6 +273,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
                 parg++;
             }
             deadbeef->pl_add_files_end ();
+            plt_unref (curr_plt);
         }
         messagepump_push (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
         if (!queue) {

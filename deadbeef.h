@@ -421,7 +421,6 @@ typedef struct {
     DB_playItem_t * (*plt_load) (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
     int (*plt_save) (ddb_playlist_t *plt, DB_playItem_t *first, DB_playItem_t *last, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 
-    // getting and working with a handle must be guarded using plt_lock/unlock
     ddb_playlist_t *(*plt_get_for_idx) (int idx);
     int (*plt_get_title) (ddb_playlist_t *plt, char *buffer, int bufsize);
     int (*plt_set_title) (ddb_playlist_t *plt, const char *title);
@@ -432,6 +431,9 @@ typedef struct {
     // returns modication index
     // the index is incremented by 1 every time playlist changes
     int (*plt_get_modification_idx) (ddb_playlist_t *handle);
+
+    // return index of an item in specified playlist, or -1 if not found
+    int (*plt_get_item_idx) (ddb_playlist_t *plt, DB_playItem_t *it, int iter);
 
     // playlist metadata
     // this kind of metadata is stored in playlist (dbpl) files
@@ -450,6 +452,7 @@ typedef struct {
     // operating on playlist items
     DB_playItem_t * (*plt_insert_item) (ddb_playlist_t *playlist, DB_playItem_t *after, DB_playItem_t *it);
     DB_playItem_t * (*plt_insert_file) (ddb_playlist_t *playlist, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+    DB_playItem_t *(*plt_insert_dir) (ddb_playlist_t *plt, DB_playItem_t *after, const char *dirname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
     void (*plt_set_item_duration) (ddb_playlist_t *plt, DB_playItem_t *it, float duration);
 
     // playlist locking
@@ -464,8 +467,8 @@ typedef struct {
     void (*pl_item_copy) (DB_playItem_t *out, DB_playItem_t *in);
 
     // add files and folders to current playlist
-    int (*pl_add_file) (const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
-    int (*pl_add_dir) (const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+    int (*plt_add_file) (ddb_playlist_t *plt, const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+    int (*plt_add_dir) (ddb_playlist_t *plt, const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 
     // this function may return -1 if it is not possible to add files right now.
     // caller must cancel operation in this case, or wait until previous add
@@ -480,8 +483,6 @@ typedef struct {
     // NOTE: many of pl_* functions, especially the ones that operate on current
     // playlist, are going to be nuked somewhere around 0.6 release, in favor of
     // more explicit plt_* family
-    DB_playItem_t *(*pl_insert_dir) (DB_playItem_t *after, const char *dirname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
-    DB_playItem_t *(*pl_insert_file) (DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
     int (*pl_get_idx_of) (DB_playItem_t *it);
     int (*pl_get_idx_of_iter) (DB_playItem_t *it, int iter);
     DB_playItem_t * (*pl_get_for_idx) (int idx);
@@ -538,6 +539,9 @@ typedef struct {
     void (*pl_search_reset) (void);
     void (*pl_search_process) (const char *text);
 
+    // find which playlist the specified item belongs to, returns NULL if none
+    ddb_playlist_t * (*pl_get_playlist) (DB_playItem_t *it);
+
     // direct access to metadata structures
     // not thread-safe, make sure to wrap with pl_lock/pl_unlock
     DB_metaInfo_t * (*pl_get_metadata_head) (DB_playItem_t *it); // returns head of metadata linked list
@@ -559,7 +563,6 @@ typedef struct {
     float (*pl_find_meta_float) (DB_playItem_t *it, const char *key, float def);
     void (*pl_replace_meta) (DB_playItem_t *it, const char *key, const char *value);
     void (*pl_delete_all_meta) (DB_playItem_t *it);
-    void (*pl_set_item_duration) (DB_playItem_t *it, float duration);
     float (*pl_get_item_duration) (DB_playItem_t *it);
     uint32_t (*pl_get_item_flags) (DB_playItem_t *it);
     void (*pl_set_item_flags) (DB_playItem_t *it, uint32_t flags);

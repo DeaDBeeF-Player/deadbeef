@@ -1766,7 +1766,7 @@ ffap_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     DB_playItem_t *it = NULL;
     it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
     deadbeef->pl_add_meta (it, ":FILETYPE", "APE");
-    deadbeef->pl_set_item_duration (it, duration);
+    deadbeef->plt_set_item_duration (plt, it, duration);
  
     /*int v2err = */deadbeef->junk_id3v2_read (it, fp);
     int v1err = deadbeef->junk_id3v1_read (it, fp);

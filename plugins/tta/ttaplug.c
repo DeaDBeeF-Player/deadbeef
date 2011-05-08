@@ -195,7 +195,7 @@ tta_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
     deadbeef->pl_add_meta (it, ":FILETYPE", "TTA");
-    deadbeef->pl_set_item_duration (it, dur);
+    deadbeef->plt_set_item_duration (plt, it, dur);
 
     close_tta_file (&tta);
     DB_FILE *fp = deadbeef->fopen (fname);

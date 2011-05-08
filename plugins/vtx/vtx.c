@@ -263,7 +263,7 @@ vtx_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     int numframes = hdr->regdata_size / AY_FRAME_SIZE;
 //    int totalsamples = numframes * hdr->playerFreq;
     trace ("vtx: numframes=%d, playerFreq=%d\n", numframes, hdr->playerFreq);
-    deadbeef->pl_set_item_duration (it, (float)numframes / hdr->playerFreq);
+    deadbeef->plt_set_item_duration (plt, it, (float)numframes / hdr->playerFreq);
 
     // add metadata
     deadbeef->pl_add_meta (it, "title", hdr->title);

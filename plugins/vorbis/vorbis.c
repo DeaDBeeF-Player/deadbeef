@@ -220,7 +220,11 @@ cvorbis_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             trace ("ov_open_callbacks returned %d\n", err);
             return -1;
         }
-        deadbeef->pl_set_item_duration (it, -1);
+        ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
+        deadbeef->plt_set_item_duration (plt, it, -1);
+        if (plt) {
+            deadbeef->plt_unref (plt);
+        }
         deadbeef->pl_replace_meta (it, ":FILETYPE", "OggVorbis");
     }
     else
@@ -463,7 +467,7 @@ cvorbis_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     if (fp->vfs->is_streaming ()) {
         DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
         deadbeef->pl_add_meta (it, ":FILETYPE", "OggVorbis");
-        deadbeef->pl_set_item_duration (it, -1);
+        deadbeef->plt_set_item_duration (plt, it, -1);
         deadbeef->pl_add_meta (it, "title", NULL);
         after = deadbeef->plt_insert_item (plt, after, it);
         deadbeef->pl_item_unref (it);
@@ -500,7 +504,7 @@ cvorbis_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
         deadbeef->pl_add_meta (it, ":FILETYPE", "OggVorbis");
         deadbeef->pl_set_meta_int (it, ":TRACKNUM", stream);
-        deadbeef->pl_set_item_duration (it, duration);
+        deadbeef->plt_set_item_duration (plt, it, duration);
         if (nstreams > 1) {
             it->startsample = currentsample;
             it->endsample = currentsample + totalsamples;

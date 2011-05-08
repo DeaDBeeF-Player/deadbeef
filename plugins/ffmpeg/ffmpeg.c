@@ -530,10 +530,10 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     deadbeef->pl_replace_meta (it, ":FILETYPE", codec->name);
 
     if (!deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI"))) {
-        deadbeef->pl_set_item_duration (it, -1);
+        deadbeef->plt_set_item_duration (plt, it, -1);
     }
     else {
-        deadbeef->pl_set_item_duration (it, duration);
+        deadbeef->plt_set_item_duration (plt, it, duration);
     }
 
     // add metainfo

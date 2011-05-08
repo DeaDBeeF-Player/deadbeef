@@ -318,7 +318,7 @@ sndfile_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     float duration = (float)totalsamples / samplerate;
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
     deadbeef->pl_add_meta (it, ":FILETYPE", "wav");
-    deadbeef->pl_set_item_duration (it, duration);
+    deadbeef->plt_set_item_duration (plt, it, duration);
 
     trace ("sndfile: totalsamples=%d, samplerate=%d, duration=%f\n", totalsamples, samplerate, duration);
 

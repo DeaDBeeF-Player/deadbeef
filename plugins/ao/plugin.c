@@ -18,7 +18,7 @@
 */
 #include <stdlib.h>
 #include <string.h>
-#include <deadbeef/deadbeef.h>
+#include "../../deadbeef.h"
 #include "ao.h"
 #include "eng_protos.h"
 
@@ -326,7 +326,7 @@ aoplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             }
         }
     }
-    deadbeef->pl_set_item_duration (it, duration+fade);
+    deadbeef->plt_set_item_duration (plt, it, duration+fade);
     deadbeef->pl_add_meta (it, "title", NULL);
     after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);

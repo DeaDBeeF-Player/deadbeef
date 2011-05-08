@@ -87,7 +87,7 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
         DB_playItem_t *it = NULL;
         if (strrchr (nm, '/')) {
             trace ("pl_insert_m3u: adding file %s\n", nm);
-            it = deadbeef->pl_insert_file (after, nm, pabort, cb, user_data);
+            it = deadbeef->plt_insert_file (plt, after, nm, pabort, cb, user_data);
         }
         else {
             int l = strlen (nm);
@@ -95,7 +95,7 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
             memcpy (fullpath, fname, slash - fname + 1);
             strcpy (fullpath + (slash - fname + 1), nm);
             trace ("pl_insert_m3u: adding file %s\n", fullpath);
-            it = deadbeef->pl_insert_file (after, fullpath, pabort, cb, user_data);
+            it = deadbeef->plt_insert_file (plt, after, fullpath, pabort, cb, user_data);
         }
         if (it) {
             after = it;

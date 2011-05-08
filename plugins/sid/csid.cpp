@@ -566,7 +566,7 @@ csid_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
                 //            trace ("\n");
                 //        }
             }
-            deadbeef->pl_set_item_duration (it, length);
+            deadbeef->plt_set_item_duration (plt, it, length);
             deadbeef->pl_add_meta (it, ":FILETYPE", "SID");
 
             after = deadbeef->plt_insert_item (plt, after, it);

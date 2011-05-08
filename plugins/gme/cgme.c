@@ -333,10 +333,10 @@ cgme_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
                 cgme_add_meta (it, "track", trk);
                 if (inf->length == -1 || inf->length == 0) {
                     float songlength = deadbeef->conf_get_float ("gme.songlength", 3);
-                    deadbeef->pl_set_item_duration (it, songlength * 60.f);
+                    deadbeef->plt_set_item_duration (plt, it, songlength * 60.f);
                 }
                 else {
-                    deadbeef->pl_set_item_duration (it, (float)inf->length/1000.f);
+                    deadbeef->plt_set_item_duration (plt, it, (float)inf->length/1000.f);
                 }
                 const char *ext = fname + strlen (fname) - 1;
                 while (ext >= fname && *ext != '.') {

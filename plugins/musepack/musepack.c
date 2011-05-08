@@ -401,11 +401,11 @@ musepack_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             else {
                 prev->endsample = it->startsample-1;
                 float dur = (prev->endsample - prev->startsample) / (float)si.sample_freq;
-                deadbeef->pl_set_item_duration (prev, dur);
+                deadbeef->plt_set_item_duration (plt, prev, dur);
             }
             if (i == nchapters - 1) {
                 float dur = (it->endsample - it->startsample) / (float)si.sample_freq;
-                deadbeef->pl_set_item_duration (it, dur);
+                deadbeef->plt_set_item_duration (plt, it, dur);
             }
             if (ch->tag_size > 0) {
                 uint8_t *tag = ch->tag;
@@ -432,7 +432,7 @@ musepack_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
     deadbeef->pl_add_meta (it, ":FILETYPE", "MusePack");
-    deadbeef->pl_set_item_duration (it, dur);
+    deadbeef->plt_set_item_duration (plt, it, dur);
 
     /*int apeerr = */deadbeef->junk_apev2_read (it, fp);
     deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, gain_album);

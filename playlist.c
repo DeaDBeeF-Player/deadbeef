@@ -844,7 +844,7 @@ pl_cue_parse_time (const char *p) {
 }
 
 static playItem_t *
-pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, char *track, char *index00, char *index01, char *pregap, char *title, char *albumperformer, char *performer, char *albumtitle, char *genre, char *date, char *replaygain_album_gain, char *replaygain_album_peak, char *replaygain_track_gain, char *replaygain_track_peak, const char *decoder_id, const char *ftype, int samplerate) {
+plt_process_cue_track (playlist_t *playlist, playItem_t *after, const char *fname, playItem_t **prev, char *track, char *index00, char *index01, char *pregap, char *title, char *albumperformer, char *performer, char *albumtitle, char *genre, char *date, char *replaygain_album_gain, char *replaygain_album_peak, char *replaygain_track_gain, char *replaygain_track_peak, const char *decoder_id, const char *ftype, int samplerate) {
     if (!track[0]) {
         trace ("pl_process_cue_track: invalid track (file=%s, title=%s)\n", fname, title);
         return after;
@@ -888,7 +888,7 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
             return after;
         }
         (*prev)->endsample = (prevtime * samplerate) - 1;
-        pl_set_item_duration (*prev, (float)((*prev)->endsample - (*prev)->startsample + 1) / samplerate);
+        plt_set_item_duration (playlist, *prev, (float)((*prev)->endsample - (*prev)->startsample + 1) / samplerate);
         if (pl_get_item_duration (*prev) < 0) {
             // might be bad cuesheet file, try to fix
             trace ("cuesheet seems to be corrupted, trying workaround\n");
@@ -896,7 +896,7 @@ pl_process_cue_track (playItem_t *after, const char *fname, playItem_t **prev, c
             prevtime = f_index01;
             (*prev)->endsample = (prevtime * samplerate) - 1;
             float dur = (float)((*prev)->endsample - (*prev)->startsample + 1) / samplerate;
-            pl_set_item_duration (*prev, dur);
+            plt_set_item_duration (playlist, *prev, dur);
             if (dur > 0) {
                 trace ("success :-D\n");
             }
@@ -1032,7 +1032,7 @@ plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t 
             if (title[0]) {
                 // add previous track
                 const char *filetype = pl_find_meta (origin, ":FILETYPE");
-                after = pl_process_cue_track (after, pl_find_meta (origin, ":URI"), &prev, track, index00, index01, pregap, title, albumperformer, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, pl_find_meta (origin, ":DECODER"), filetype, samplerate);
+                after = plt_process_cue_track (playlist, after, pl_find_meta (origin, ":URI"), &prev, track, index00, index01, pregap, title, albumperformer, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, pl_find_meta (origin, ":DECODER"), filetype, samplerate);
                 trace ("cue: added %p (%p)\n", after);
             }
 
@@ -1077,11 +1077,11 @@ plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t 
         return NULL;
     }
     const char *filetype = pl_find_meta (origin, ":FILETYPE");
-    after = pl_process_cue_track (after, pl_find_meta (origin, ":URI"), &prev, track, index00, index01, pregap, title, albumperformer, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, pl_find_meta (origin, ":DECODER"), filetype, samplerate);
+    after = plt_process_cue_track (playlist, after, pl_find_meta (origin, ":URI"), &prev, track, index00, index01, pregap, title, albumperformer, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, pl_find_meta (origin, ":DECODER"), filetype, samplerate);
     if (after) {
         trace ("last track endsample: %d\n", numsamples-1);
         after->endsample = numsamples-1;
-        pl_set_item_duration (after, (float)(after->endsample - after->startsample + 1) / samplerate);
+        plt_set_item_duration (playlist, after, (float)(after->endsample - after->startsample + 1) / samplerate);
     }
     // add caller ref
     if (after && after != ins) {
@@ -1137,7 +1137,7 @@ plt_insert_cue (playlist_t *plt, playItem_t *after, playItem_t *origin, int nums
 }
 
 playItem_t *
-pl_insert_m3u (playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
+plt_insert_m3u (playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     trace ("enter pl_insert_m3u\n");
     // skip all empty lines and comments
     DB_FILE *fp = vfs_fopen (fname);
@@ -1180,7 +1180,7 @@ pl_insert_m3u (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
         memcpy (nm, p, n);
         nm[n] = 0;
         trace ("pl_insert_m3u: adding file %s\n", nm);
-        playItem_t *it = pl_insert_file (after, nm, pabort, cb, user_data);
+        playItem_t *it = plt_insert_file (plt, after, nm, pabort, cb, user_data);
         if (it) {
             after = it;
         }
@@ -1198,8 +1198,8 @@ pl_insert_m3u (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
 
 // that has to be opened with vfs functions to allow loading from http, as
 // referenced from M3U.
-playItem_t *
-pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
+static playItem_t *
+plt_insert_pls (playlist_t *playlist, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     DB_FILE *fp = vfs_fopen (fname);
     if (!fp) {
         trace ("failed to open file %s\n", fname);
@@ -1258,10 +1258,10 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
             int idx = atoi (p + 4);
             if (url[0] && idx != lastidx && lastidx != -1) {
                 // add track
-                playItem_t *it = pl_insert_file (after, url, pabort, cb, user_data);
+                playItem_t *it = plt_insert_file (playlist, after, url, pabort, cb, user_data);
                 if (it) {
                     after = it;
-                    pl_set_item_duration (it, atoi (length));
+                    plt_set_item_duration (playlist, it, atoi (length));
                     if (title[0]) {
                         pl_delete_all_meta (it);
                         pl_add_meta (it, "title", title);
@@ -1298,10 +1298,10 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
             int idx = atoi (p + 5);
             if (url[0] && idx != lastidx && lastidx != -1) {
                 // add track
-                playItem_t *it = pl_insert_file (after, url, pabort, cb, user_data);
+                playItem_t *it = plt_insert_file (playlist, after, url, pabort, cb, user_data);
                 if (it) {
                     after = it;
-                    pl_set_item_duration (it, atoi (length));
+                    plt_set_item_duration (playlist, it, atoi (length));
                     if (title[0]) {
                         pl_delete_all_meta (it);
                         pl_add_meta (it, "title", title);
@@ -1338,7 +1338,7 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
             int idx = atoi (p + 6);
             if (url[0] && idx != lastidx && lastidx != -1) {
                 // add track
-                playItem_t *it = pl_insert_file (after, url, pabort, cb, user_data);
+                playItem_t *it = plt_insert_file (playlist, after, url, pabort, cb, user_data);
                 if (it) {
                     after = it;
                     if (title[0]) {
@@ -1381,7 +1381,7 @@ pl_insert_pls (playItem_t *after, const char *fname, int *pabort, int (*cb)(play
         p = e;
     }
     if (url[0]) {
-        playItem_t *it = pl_insert_file (after, url, pabort, cb, user_data);
+        playItem_t *it = plt_insert_file (playlist, after, url, pabort, cb, user_data);
         if (it) {
             after = it;
             if (title[0]) {
@@ -1400,9 +1400,6 @@ playItem_t *
 plt_insert_dir_int (playlist_t *playlist, DB_vfs_t *vfs, playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data);
 
 playItem_t *
-pl_insert_dir_int (DB_vfs_t *vfs, playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data);
-
-playItem_t *
 plt_insert_file (playlist_t *playlist, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     trace ("count: %d\n", playlist->count[PL_MAIN]);
     trace ("pl_insert_file %s\n", fname);
@@ -1418,7 +1415,7 @@ plt_insert_file (playlist_t *playlist, playItem_t *after, const char *fname, int
                 trace ("%s cont test\n", fname);
                 if (vfsplugs[i]->is_container (fname)) {
                     trace ("inserting %s via vfs %s\n", fname, vfsplugs[i]->plugin.id);
-                    playItem_t *it = pl_insert_dir_int (vfsplugs[i], after, fname, pabort, cb, user_data);
+                    playItem_t *it = plt_insert_dir_int (playlist, vfsplugs[i], after, fname, pabort, cb, user_data);
                     if (it) {
                         return it;
                     }
@@ -1447,11 +1444,11 @@ plt_insert_file (playlist_t *playlist, playItem_t *after, const char *fname, int
     // so that remote playlist files referenced from other playlist files could
     // be loaded correctly
     if (!strncmp (eol, "m3u", 3) || !strncmp (eol, "m3u8", 4)) {
-        return pl_insert_m3u (after, fname, pabort, cb, user_data);
+        return plt_insert_m3u (playlist, after, fname, pabort, cb, user_data);
     }
     else if (!strncmp (eol, "pls", 3)) {
 
-        return pl_insert_pls (after, fname, pabort, cb, user_data);
+        return plt_insert_pls (playlist, after, fname, pabort, cb, user_data);
     }
 
     // add all posible streams as special-case:
@@ -1554,11 +1551,6 @@ plt_insert_file (playlist_t *playlist, playItem_t *after, const char *fname, int
     return NULL;
 }
 
-playItem_t *
-pl_insert_file (playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
-    return plt_insert_file (playlist, after, fname, pabort, cb, user_data);
-}
-
 static int dirent_alphasort (const struct dirent **a, const struct dirent **b) {
     return strcmp ((*a)->d_name, (*b)->d_name);
 }
@@ -1624,18 +1616,12 @@ plt_insert_dir_int (playlist_t *playlist, DB_vfs_t *vfs, playItem_t *after, cons
     return after;
 }
 
-
 playItem_t *
-pl_insert_dir_int (DB_vfs_t *vfs, playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
-    return plt_insert_dir_int (playlist, vfs, after, dirname, pabort, cb, user_data);
-}
-
-playItem_t *
-pl_insert_dir (playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
+plt_insert_dir (playlist_t *playlist, playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     follow_symlinks = conf_get_int ("add_folders_follow_symlinks", 0);
     ignore_archives = conf_get_int ("ignore_archives", 1);
 
-    playItem_t *ret = pl_insert_dir_int (NULL, after, dirname, pabort, cb, user_data);
+    playItem_t *ret = plt_insert_dir_int (playlist, NULL, after, dirname, pabort, cb, user_data);
 
     ignore_archives = 0;
 
@@ -1643,9 +1629,9 @@ pl_insert_dir (playItem_t *after, const char *dirname, int *pabort, int (*cb)(pl
 }
 
 int
-pl_add_file (const char *fname, int (*cb)(playItem_t *it, void *data), void *user_data) {
+plt_add_file (playlist_t *plt, const char *fname, int (*cb)(playItem_t *it, void *data), void *user_data) {
     int abort = 0;
-    playItem_t *it = pl_insert_file (addfiles_playlist->tail[PL_MAIN], fname, &abort, cb, user_data);
+    playItem_t *it = plt_insert_file (plt, plt->tail[PL_MAIN], fname, &abort, cb, user_data);
     if (it) {
         // pl_insert_file doesn't hold reference, don't unref here
         return 0;
@@ -1654,9 +1640,9 @@ pl_add_file (const char *fname, int (*cb)(playItem_t *it, void *data), void *use
 }
 
 int
-pl_add_dir (const char *dirname, int (*cb)(playItem_t *it, void *data), void *user_data) {
+plt_add_dir (playlist_t *plt, const char *dirname, int (*cb)(playItem_t *it, void *data), void *user_data) {
     int abort = 0;
-    playItem_t *it = pl_insert_dir (addfiles_playlist->tail[PL_MAIN], dirname, &abort, cb, user_data);
+    playItem_t *it = plt_insert_dir (plt, plt->tail[PL_MAIN], dirname, &abort, cb, user_data);
     if (it) {
         // pl_insert_file doesn't hold reference, don't unref here
         return 0;
@@ -2669,13 +2655,6 @@ plt_set_item_duration (playlist_t *playlist, playItem_t *it, float duration) {
     char s[100];
     pl_format_time (it->_duration, s, sizeof(s));
     pl_replace_meta (it, ":DURATION", s);
-    UNLOCK;
-}
-
-void
-pl_set_item_duration (playItem_t *it, float duration) {
-    LOCK;
-    plt_set_item_duration (playlist, it, duration);
     UNLOCK;
 }
 
@@ -3799,4 +3778,38 @@ pl_set_item_flags (playItem_t *it, uint32_t flags) {
     pl_replace_meta (it, ":TAGS", s);
     pl_replace_meta (it, ":HAS_EMBEDDED_CUESHEET", (flags & DDB_HAS_EMBEDDED_CUESHEET) ? _("Yes") : _("No"));
     UNLOCK;
+}
+
+int
+plt_get_item_idx (playlist_t *plt, playItem_t *it, int iter) {
+    LOCK;
+    playItem_t *c = plt->head[iter];
+    int idx = 0;
+    while (c && c != it) {
+        c = c->next[iter];
+        idx++;
+    }
+    if (!c) {
+        UNLOCK;
+        return -1;
+    }
+    UNLOCK;
+    return idx;
+}
+
+playlist_t *
+pl_get_playlist (playItem_t *it) {
+    LOCK;
+    playlist_t *p = playlists_head;
+    while (p) {
+        int idx = plt_get_item_idx (p, it, PL_MAIN);
+        if (idx != -1) {
+            plt_ref (p);
+            UNLOCK;
+            return p;
+        }
+        p = p->next;
+    }
+    UNLOCK;
+    return NULL;
 }
