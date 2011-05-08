@@ -5,7 +5,7 @@
 
 <widget class="GtkDialog" id="converterdlg">
   <property name="visible">True</property>
-  <property name="title" translatable="yes">Converter</property>
+  <property name="title">Converter</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">True</property>
@@ -133,7 +133,7 @@
 		    <widget class="GtkButton" id="converter_output_browse">
 		      <property name="visible">True</property>
 		      <property name="can_focus">True</property>
-		      <property name="label" translatable="yes">...</property>
+		      <property name="label">...</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
 		      <property name="focus_on_click">True</property>
@@ -650,7 +650,7 @@ Overwrite</property>
 		<widget class="GtkButton" id="preserve_folder_browse">
 		  <property name="visible">True</property>
 		  <property name="can_focus">True</property>
-		  <property name="label" translatable="yes">...</property>
+		  <property name="label">...</property>
 		  <property name="use_underline">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
 		  <property name="focus_on_click">True</property>
@@ -1176,7 +1176,7 @@ Temporary file</property>
 			  <child>
 			    <widget class="GtkComboBox" id="id3v2_version">
 			      <property name="visible">True</property>
-			      <property name="items" translatable="yes">2.3
+			      <property name="items">2.3
 2.4</property>
 			      <property name="add_tearoffs">False</property>
 			      <property name="focus_on_click">True</property>

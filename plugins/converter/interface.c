@@ -76,7 +76,7 @@ create_converterdlg (void)
   tooltips = gtk_tooltips_new ();
 
   converterdlg = gtk_dialog_new ();
-  gtk_window_set_title (GTK_WINDOW (converterdlg), _("Converter"));
+  gtk_window_set_title (GTK_WINDOW (converterdlg), "Converter");
   gtk_window_set_modal (GTK_WINDOW (converterdlg), TRUE);
   gtk_window_set_destroy_with_parent (GTK_WINDOW (converterdlg), TRUE);
   gtk_window_set_type_hint (GTK_WINDOW (converterdlg), GDK_WINDOW_TYPE_HINT_DIALOG);
@@ -107,7 +107,7 @@ create_converterdlg (void)
   gtk_box_pack_start (GTK_BOX (hbox68), output_folder, TRUE, TRUE, 0);
   gtk_entry_set_invisible_char (GTK_ENTRY (output_folder), 9679);
 
-  converter_output_browse = gtk_button_new_with_mnemonic (_("..."));
+  converter_output_browse = gtk_button_new_with_mnemonic ("...");
   gtk_widget_show (converter_output_browse);
   gtk_box_pack_start (GTK_BOX (hbox68), converter_output_browse, FALSE, FALSE, 0);
 
@@ -238,7 +238,7 @@ create_converterdlg (void)
   gtk_box_pack_start (GTK_BOX (hbox102), preserve_root_folder, TRUE, TRUE, 0);
   gtk_entry_set_invisible_char (GTK_ENTRY (preserve_root_folder), 8226);
 
-  preserve_folder_browse = gtk_button_new_with_mnemonic (_("..."));
+  preserve_folder_browse = gtk_button_new_with_mnemonic ("...");
   gtk_widget_show (preserve_folder_browse);
   gtk_box_pack_start (GTK_BOX (hbox102), preserve_folder_browse, FALSE, FALSE, 0);
 
@@ -521,8 +521,8 @@ create_convpreset_editor (void)
   id3v2_version = gtk_combo_box_new_text ();
   gtk_widget_show (id3v2_version);
   gtk_box_pack_start (GTK_BOX (hbox104), id3v2_version, TRUE, TRUE, 0);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (id3v2_version), _("2.3"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (id3v2_version), _("2.4"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (id3v2_version), "2.3");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (id3v2_version), "2.4");
 
   label125 = gtk_label_new (_("<b>Tag writer</b>"));
   gtk_widget_show (label125);

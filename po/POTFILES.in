@@ -20,3 +20,9 @@ plugins/gtkui/deadbeef.glade
 plugins/gtkui/support.c
 plugins/wildmidi/wildmidiplug.c
 translation/extra.c
+plugins/converter/convgui.c
+plugins/converter/interface.c
+plugins/converter/support.c
+plugins/gtkui/dspconfig.c
+plugins/gtkui/fileman.c
+
