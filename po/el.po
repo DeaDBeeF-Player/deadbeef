@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-10 15:02+0200\n"
-"PO-Revision-Date: 2011-02-10 03:17+0200\n"
+"PO-Revision-Date: 2011-04-18 08:17+0200\n"
 "Last-Translator: George <forfolias@gmail.com>\n"
 "Language-Team: Greek\n"
 "Language: el\n"
@@ -301,7 +301,7 @@ msgstr "Ισοσταθμιστής"
 
 #: ../plugins/gtkui/interface.c:312 ../plugins/gtkui/deadbeef.glade.h:158
 msgid "_Playback"
-msgstr "Αναπαραγωγή"
+msgstr "_Αναπαραγωγή"
 
 #: ../plugins/gtkui/interface.c:319 ../plugins/gtkui/deadbeef.glade.h:86
 msgid "Order"
@@ -436,7 +436,7 @@ msgstr "Ιδιότητες"
 
 #: ../plugins/gtkui/interface.c:1363 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "editcolumndlg"
-msgstr "Διάλογος επεξεργασίας στύλης"
+msgstr "Επεξεργασία στήλης"
 
 #: ../plugins/gtkui/interface.c:1378 ../plugins/gtkui/interface.c:2869
 #: ../plugins/gtkui/deadbeef.glade.h:133
@@ -664,7 +664,7 @@ msgstr "Παράκαμψη (χάνει το GTK treeview θέμα, αλλά επ
 
 #: ../plugins/gtkui/interface.c:2011 ../plugins/gtkui/deadbeef.glade.h:34
 msgid "Even row"
-msgstr "Ζυγή σειρά "
+msgstr "Ζυγή σειρά"
 
 #: ../plugins/gtkui/interface.c:2018 ../plugins/gtkui/deadbeef.glade.h:85
 msgid "Odd row"
@@ -801,7 +801,7 @@ msgstr "Πρόσθετα"
 
 #: ../plugins/gtkui/interface.c:2853 ../plugins/gtkui/deadbeef.glade.h:162
 msgid "editplaylistdlg"
-msgstr "Διάλογος επεξεργασίας λίστας αναπαραγωγής"
+msgstr "Επεξεργασία λίστας αναπαραγωγής"
 
 #: ../plugins/gtkui/interface.c:2980 ../plugins/gtkui/deadbeef.glade.h:138
 msgid "URL:"
@@ -854,8 +854,9 @@ msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
 msgstr ""
-"τα αρχεία θα χαθούν. Να προχωρήσω; \\ n (Αυτό το παράθυρο μπορεί να "
-"απενεργοποιηθεί από τις ρυθμίσεις του πρόσθετου GTKUI)"
+"Τα αρχεία θα χαθούν. Να προχωρήσω;\n"
+"(Αυτό το παράθυρο μπορεί να απενεργοποιηθεί από τις ρυθμίσεις του πρόσθετου "
+"GTKUI)"
 
 #: ../plugins/gtkui/plcommon.c:325 ../plugins/gtkui/trkproperties.c:56
 msgid "Warning"
