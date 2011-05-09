@@ -136,6 +136,23 @@ streamer_abort_files (void) {
     }
 }
 
+
+void
+streamer_set_replaygain (playItem_t *it) {
+    // setup replaygain
+    pl_lock ();
+    const char *gain;
+    gain = pl_find_meta (it, ":REPLAYGAIN_ALBUMGAIN");
+    float albumgain = gain ? atof (gain) : 1000;
+    float albumpeak = pl_get_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK);
+
+    gain = pl_find_meta (it, ":REPLAYGAIN_TRACKGAIN");
+    float trackgain = gain ? atof (gain) : 1000;
+    float trackpeak = pl_get_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK);
+    pl_unlock ();
+    replaygain_set_values (albumgain, albumpeak, trackgain, trackpeak);
+}
+
 static void
 send_songstarted (playItem_t *trk) {
     ddb_event_track_t *pev = (ddb_event_track_t *)messagepump_event_alloc (DB_EV_SONGSTARTED);
@@ -192,19 +209,6 @@ streamer_start_playback (playItem_t *from, playItem_t *it) {
     playing_track = it;
     if (playing_track) {
         pl_item_ref (playing_track);
-
-        // setup replaygain
-        pl_lock ();
-        const char *gain;
-        gain = pl_find_meta (playing_track, ":REPLAYGAIN_ALBUMGAIN");
-        float albumgain = gain ? atof (gain) : 1000;
-        float albumpeak = pl_get_item_replaygain (playing_track, DDB_REPLAYGAIN_ALBUMPEAK);
-
-        gain = pl_find_meta (playing_track, ":REPLAYGAIN_TRACKGAIN");
-        float trackgain = gain ? atof (gain) : 1000;
-        float trackpeak = pl_get_item_replaygain (playing_track, DDB_REPLAYGAIN_TRACKPEAK);
-        pl_unlock ();
-        replaygain_set_values (albumgain, albumpeak, trackgain, trackpeak);
 
         playing_track->played = 1;
         started_timestamp = time (NULL);
@@ -770,7 +774,11 @@ streamer_set_current (playItem_t *it) {
                 pl_item_unref (streaming_track);
             }
             streaming_track = it;
-            pl_item_ref (streaming_track);
+            if (streaming_track) {
+                pl_item_ref (streaming_track);
+                streamer_set_replaygain (streaming_track);
+            }
+
             mutex_unlock (decodemutex);
             trace ("bps=%d, channels=%d, samplerate=%d\n", new_fileinfo->fmt.bps, new_fileinfo->fmt.channels, new_fileinfo->fmt.samplerate);
         }
@@ -1148,6 +1156,7 @@ streamer_thread (void *ctx) {
                 streaming_track = playing_track;
                 if (streaming_track) {
                     pl_item_ref (streaming_track);
+                    streamer_set_replaygain (streaming_track);
                 }
                 mutex_unlock (decodemutex);
 
