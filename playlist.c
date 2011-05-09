@@ -3337,7 +3337,9 @@ pl_reset_cursor (void) {
 
 float
 pl_get_totaltime (void) {
-    return playlist->totaltime;
+    LOCK;
+    float t = playlist->totaltime;
+    UNLOCK;
 }
 
 void
