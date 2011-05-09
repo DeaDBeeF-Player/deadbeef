@@ -1,4 +1,4 @@
-arquivo de ajuda para o tocador deadbeef
+arquivo de ajuda para o tocador DeaDBeeF
 
 * LINKS
 
@@ -16,8 +16,8 @@ arquivo de ajuda para o tocador deadbeef
     use as teclas acima + Shift para selecionar múltiplas faixas.
 
     o controle de reprodução é ao estilo do Winamp™.
-    Z, X, C, V, B, N keys are mapped to following actions:
-    anterior, reproduzir, pausar, parar, próxima, aleatória.
+    as teclas Z, X, C, V, B e N estão mapeadas para as seguintes ações:
+    anterior, reproduzir, pausar, parar, próxima e aleatória.
 
     note também as dicas de atalho nos menus.
 
@@ -30,7 +30,7 @@ arquivo de ajuda para o tocador deadbeef
 
     é preciso fechar o tocador antes de editar esse arquivo ou suas mudanças serão sobrescritas.
 
-    muita coisa pode ser configurada pelo menu editar -> preferências.
+    muita coisa pode ser configurada pelo menu Editar -> Preferências.
 
 * EXIBIÇÃO DA CAPA DO ÁLBUM
 

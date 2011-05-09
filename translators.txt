@@ -78,7 +78,8 @@ Portuguese
 
 Portuguese (Brazil)
  Henrique P. Machado <hpmachado@gnome.org>
-
+ Sérgio Cipolla <secipolla@gmail.com>
+ 
 Russian
  Dmitriy Simbiriatin <slpiv@mail.ru>
 
