@@ -260,7 +260,18 @@ add_field (GtkListStore *store, const char *key, const char *title, int is_prop)
     GtkTreeIter iter;
     gtk_list_store_append (store, &iter);
     if (!is_prop) {
-        gtk_list_store_set (store, &iter, 0, title, 1, n ? val : val + ml, 2, key, 3, n ? 1 : 0, -1);
+        if (n) {
+            gtk_list_store_set (store, &iter, 0, title, 1, val, 2, key, 3, n ? 1 : 0, -1);
+        }
+        else {
+            deadbeef->pl_lock ();
+            const char *val = deadbeef->pl_find_meta (tracks[0], key);
+            if (!val) {
+                val = "";
+            }
+            gtk_list_store_set (store, &iter, 0, title, 1, val, 2, key, 3, n ? 1 : 0, -1);
+            deadbeef->pl_unlock ();
+        }
     }
     else {
         gtk_list_store_set (store, &iter, 0, title, 1, n ? val : val + ml, -1);
