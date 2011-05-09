@@ -2379,6 +2379,7 @@ junk_apev2_add_text_frame (DB_apev2_tag_t *tag, const char *frame_id, const char
         tail = tail->next;
     }
 
+#if 0 // this will split every line into separate field
     const char *next = value;
     while (*value) {
         while (*next && *next != '\n') {
@@ -2417,6 +2418,26 @@ junk_apev2_add_text_frame (DB_apev2_tag_t *tag, const char *frame_id, const char
 
         value = next;
     }
+#endif
+    size_t size = strlen (value);
+    DB_apev2_frame_t *f = malloc (sizeof (DB_apev2_frame_t) + size);
+    if (!f) {
+        trace ("junk_apev2_add_text_frame: failed to allocate %d bytes\n", size);
+        return NULL;
+    }
+    memset (f, 0, sizeof (DB_apev2_frame_t));
+    f->flags = 0;
+    strcpy (f->key, frame_id);
+    f->size = size;
+    memcpy (f->data, value, size);
+
+    if (tail) {
+        tail->next = f;
+    }
+    else {
+        tag->frames = f;
+    }
+    tail = f;
     return tail;
 }
 
