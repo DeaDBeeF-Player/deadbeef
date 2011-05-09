@@ -256,6 +256,7 @@ static int tta_read_metadata (DB_playItem_t *it) {
         return -1;
     }
     deadbeef->pl_delete_all_meta (it);
+    /*int apeerr = */deadbeef->junk_apev2_read (it, fp);
     /*int v2err = */deadbeef->junk_id3v2_read (it, fp);
     /*int v1err = */deadbeef->junk_id3v1_read (it, fp);
     deadbeef->pl_add_meta (it, "title", NULL);
