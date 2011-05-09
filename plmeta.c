@@ -87,6 +87,12 @@ void
 pl_append_meta (playItem_t *it, const char *key, const char *value) {
     pl_lock ();
     const char *old = pl_find_meta (it, key);
+
+    if (old && (!strcasecmp (key, "cuesheet") || !strcasecmp (key, "log"))) {
+        pl_unlock ();
+        return;
+    }
+
     size_t newlen = strlen (value);
     if (!old) {
         pl_add_meta (it, key, value);
