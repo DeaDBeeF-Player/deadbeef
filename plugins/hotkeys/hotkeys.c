@@ -86,34 +86,6 @@ trim (char* s)
     return h;
 }
 
-static void
-cmd_seek_fwd (void *unused) {
-    deadbeef->playback_set_pos (deadbeef->playback_get_pos () + 5);
-}
-
-static void
-cmd_seek_back (void *unused) {
-    deadbeef->playback_set_pos (deadbeef->playback_get_pos () - 5);
-}
-
-static void
-cmd_volume_up (void *unused) {
-    deadbeef->volume_set_db (deadbeef->volume_get_db () + 2);
-}
-
-static void
-cmd_volume_down (void *unused) {
-    deadbeef->volume_set_db (deadbeef->volume_get_db () - 2);
-}
-
-static void
-cmd_stop_after_current (void *unused) {
-    int var = deadbeef->conf_get_int ("playlist.stop_after_current", 0);
-    var = 1 - var;
-    deadbeef->conf_set_int ("playlist.stop_after_current", var);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-}
-
 /*
     FIXME: This function has many common code with plcommon.c
     and it does full traverse of playlist twice
@@ -204,53 +176,6 @@ get_action (const char* command)
     }
 
     return NULL;
-
-
-#if 0
-    /*
-        These deadbeef functions don't take any parameters
-        but I assume we use cdecl convention so actual
-        parameters count doesn't matter.
-    */
-    // +waker:
-    // TODO: export all this commands as standard plugin actions
-    // ignore typecast warnings for now
-    if (!strcasecmp (command, "toggle_pause"))
-        return deadbeef->playback_pause;
-
-    else if (!strcasecmp (command, "play"))
-        return deadbeef->playback_play;
-
-    else if (!strcasecmp (command, "prev"))
-        return deadbeef->playback_prev;
-
-    else if (!strcasecmp (command, "next"))
-        return deadbeef->playback_next;
-
-    else if (!strcasecmp (command, "stop"))
-        return deadbeef->playback_stop;
-
-    else if (!strcasecmp (command, "play_random"))
-        return deadbeef->playback_random;
-
-    else if (!strcasecmp (command, "seek_fwd"))
-        return cmd_seek_fwd;
-
-    else if (!strcasecmp (command, "seek_back"))
-        return cmd_seek_back;
-
-    else if (!strcasecmp (command, "volume_up"))
-        return cmd_volume_up;
-
-    else if (!strcasecmp (command, "volume_down"))
-        return cmd_volume_down;
-
-    else if (!strcasecmp (command, "toggle_stop_after_current"))
-        return cmd_stop_after_current;
-
-    return cmd_invoke_plugin_command;
-//    return NULL;
-#endif
 }
 
 static int

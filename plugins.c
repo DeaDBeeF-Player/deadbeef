@@ -400,7 +400,7 @@ plugin_t *plugins_tail;
 float
 plug_playback_get_pos (void) {
     playItem_t *trk = streamer_get_playing_track ();
-    float dur = pl_get_item_duration (trk);
+    float dur = trk ? pl_get_item_duration (trk) : -1;
     if (!trk || dur <= 0) {
         if (trk) {
             pl_item_unref (trk);
@@ -416,7 +416,7 @@ plug_playback_get_pos (void) {
 void
 plug_playback_set_pos (float pos) {
     playItem_t *trk = streamer_get_playing_track ();
-    float dur = pl_get_item_duration (trk);
+    float dur = trk ? pl_get_item_duration (trk) : -1;
     if (!trk || dur <= 0) {
         if (trk) {
             pl_item_unref (trk);
