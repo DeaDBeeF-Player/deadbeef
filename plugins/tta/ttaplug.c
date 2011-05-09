@@ -203,6 +203,7 @@ tta_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     int64_t fsize = -1;
     if (fp) {
         fsize = deadbeef->fgetlength (fp);
+        /*int apeerr = */deadbeef->junk_apev2_read (it, fp);
         /*int v2err = */deadbeef->junk_id3v2_read (it, fp);
         /*int v1err = */deadbeef->junk_id3v1_read (it, fp);
         deadbeef->fclose (fp);
@@ -266,9 +267,11 @@ static int tta_write_metadata (DB_playItem_t *it) {
     // get options
 
     int strip_id3v2 = 0;
-    int strip_id3v1 = 0;
+    int strip_id3v1 = 1;
+    int strip_apev2 = 0;
     int write_id3v2 = 1;
-    int write_id3v1 = 1;
+    int write_id3v1 = 0;
+    int write_apev2 = 1;
 
     uint32_t junk_flags = 0;
     if (strip_id3v2) {
@@ -277,11 +280,17 @@ static int tta_write_metadata (DB_playItem_t *it) {
     if (strip_id3v1) {
         junk_flags |= JUNK_STRIP_ID3V1;
     }
+    if (strip_apev2) {
+        junk_flags |= JUNK_STRIP_APEV2;
+    }
     if (write_id3v2) {
         junk_flags |= JUNK_WRITE_ID3V2;
     }
     if (write_id3v1) {
         junk_flags |= JUNK_WRITE_ID3V1;
+    }
+    if (write_apev2) {
+        junk_flags |= JUNK_WRITE_APEV2;
     }
 
     int id3v2_version = 4;
