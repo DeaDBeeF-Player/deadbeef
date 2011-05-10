@@ -62,7 +62,9 @@ search_start (void) {
 
 void
 search_process (const char *text) {
-    deadbeef->pl_search_process (text);
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    deadbeef->plt_search_process (plt, text);
+    deadbeef->plt_unref (plt);
 
     int row = deadbeef->pl_get_cursor (PL_SEARCH);
     if (row >= deadbeef->pl_getcount (PL_SEARCH)) {

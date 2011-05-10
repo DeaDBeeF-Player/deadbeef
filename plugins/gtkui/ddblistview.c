@@ -963,7 +963,11 @@ ddb_listview_list_drag_data_received         (GtkWidget       *widget,
             UNREF (drop_before);
             drop_before = next;
         }
-        ps->binding->drag_n_drop (drop_before, plt, d, length, drag_context->action == GDK_ACTION_COPY ? 1 : 0);
+        ddb_playlist_t *p = deadbeef->plt_get_for_idx (plt);
+        if (p) {
+            ps->binding->drag_n_drop (drop_before, p, d, length, drag_context->action == GDK_ACTION_COPY ? 1 : 0);
+            deadbeef->plt_unref (p);
+        }
         if (drop_before) {
             UNREF (drop_before);
         }

@@ -41,6 +41,7 @@ typedef struct _DdbListview DdbListview;
 typedef struct _DdbListviewClass DdbListviewClass;
 
 typedef void * DdbListviewIter;
+typedef void * DdbPlaylistHandle;
 //typedef void * DdbListviewColIter;
 
 typedef struct {
@@ -68,7 +69,7 @@ typedef struct {
     int (*get_group) (DdbListviewIter it, char *str, int size);
 
     // drag-n-drop
-    void (*drag_n_drop) (DdbListviewIter before, int playlist, uint32_t *indices, int length, int copy);
+    void (*drag_n_drop) (DdbListviewIter before, DdbPlaylistHandle playlist_from, uint32_t *indices, int length, int copy);
     void (*external_drag_n_drop) (DdbListviewIter before, char *mem, int length);
 
     // callbacks

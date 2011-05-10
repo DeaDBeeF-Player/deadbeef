@@ -270,7 +270,11 @@ on_tabstrip_drag_data_received         (GtkWidget       *widget,
         int plt = *d;
         d++;
         int length = (data->length/4)-1;
-        ps->binding->drag_n_drop (NULL, plt, d, length, drag_context->action == GDK_ACTION_COPY ? 1 : 0);
+        ddb_playlist_t *p = deadbeef->plt_get_for_idx (plt);
+        if (p) {
+            ps->binding->drag_n_drop (NULL, p, d, length, drag_context->action == GDK_ACTION_COPY ? 1 : 0);
+            deadbeef->plt_unref (p);
+        }
     }
     gtk_drag_finish (drag_context, TRUE, FALSE, time);
 }

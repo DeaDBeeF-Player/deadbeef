@@ -402,6 +402,7 @@ typedef struct {
 
     // clear playlist
     void (*plt_clear) (ddb_playlist_t *plt);
+    void (*pl_clear) (void);
 
     // set current playlist
     void (*plt_set_curr) (ddb_playlist_t *plt);
@@ -454,6 +455,25 @@ typedef struct {
     DB_playItem_t * (*plt_insert_file) (ddb_playlist_t *playlist, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
     DB_playItem_t *(*plt_insert_dir) (ddb_playlist_t *plt, DB_playItem_t *after, const char *dirname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
     void (*plt_set_item_duration) (ddb_playlist_t *plt, DB_playItem_t *it, float duration);
+    int (*plt_remove_item) (ddb_playlist_t *playlist, DB_playItem_t *it);
+    int (*plt_getselcount) (ddb_playlist_t *playlist);
+    float (*plt_get_totaltime) (ddb_playlist_t *plt);
+    int (*plt_getcount) (ddb_playlist_t *plt, int iter);
+    int (*plt_delete_selected) (ddb_playlist_t *plt);
+    void (*plt_set_cursor) (ddb_playlist_t *plt, int iter, int cursor);
+    int (*plt_get_cursor) (ddb_playlist_t *plt, int iter);
+    void (*plt_select_all) (ddb_playlist_t *plt);
+    void (*plt_crop_selected) (ddb_playlist_t *plt);
+    DB_playItem_t *(*plt_get_first) (ddb_playlist_t *plt, int iter);
+    DB_playItem_t *(*plt_get_last) (ddb_playlist_t *plt, int iter);
+    void (*plt_move_items) (ddb_playlist_t *to, int iter, ddb_playlist_t *from, DB_playItem_t *drop_before, uint32_t *indexes, int count);
+    void (*plt_copy_items) (ddb_playlist_t *to, int iter, ddb_playlist_t * from, DB_playItem_t *before, uint32_t *indices, int cnt);
+    void (*plt_search_reset) (ddb_playlist_t *plt);
+    void (*plt_search_process) (ddb_playlist_t *plt, const char *text);
+
+    // add files and folders to current playlist
+    int (*plt_add_file) (ddb_playlist_t *plt, const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+    int (*plt_add_dir) (ddb_playlist_t *plt, const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 
     // playlist locking
     void (*pl_lock) (void);
@@ -465,10 +485,6 @@ typedef struct {
     void (*pl_item_ref) (DB_playItem_t *it);
     void (*pl_item_unref) (DB_playItem_t *it);
     void (*pl_item_copy) (DB_playItem_t *out, DB_playItem_t *in);
-
-    // add files and folders to current playlist
-    int (*plt_add_file) (ddb_playlist_t *plt, const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
-    int (*plt_add_dir) (ddb_playlist_t *plt, const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 
     // this function may return -1 if it is not possible to add files right now.
     // caller must cancel operation in this case, or wait until previous add
@@ -494,7 +510,6 @@ typedef struct {
     int (*pl_get_cursor) (int iter);
     void (*pl_set_selected) (DB_playItem_t *it, int sel);
     int (*pl_is_selected) (DB_playItem_t *it);
-    void (*pl_clear) (void);
     int (*pl_save_current) (void);
     int (*pl_save_all) (void);
     void (*pl_select_all) (void);
@@ -534,10 +549,6 @@ typedef struct {
     // _escaped version wraps all conversions with '' and replaces every ' in conversions with \'
     int (*pl_format_title_escaped) (DB_playItem_t *it, int idx, char *s, int size, int id, const char *fmt);
     void (*pl_format_time) (float t, char *dur, int size);
-    void (*pl_move_items) (int iter, int plt_from, DB_playItem_t *drop_before, uint32_t *indexes, int count);
-    void (*pl_copy_items) (int iter, int plt_from, DB_playItem_t *before, uint32_t *indices, int cnt);
-    void (*pl_search_reset) (void);
-    void (*pl_search_process) (const char *text);
 
     // find which playlist the specified item belongs to, returns NULL if none
     ddb_playlist_t * (*pl_get_playlist) (DB_playItem_t *it);

@@ -741,19 +741,19 @@ plt_move (int from, int to) {
 
 void
 plt_clear (playlist_t *plt) {
-    LOCK;
     while (plt->head[PL_MAIN]) {
-        pl_remove_item (plt->head[PL_MAIN]);
+        plt_remove_item (plt, plt->head[PL_MAIN]);
     }
     plt->current_row[PL_MAIN] = -1;
     plt->current_row[PL_SEARCH] = -1;
     plt_modified (plt);
-    UNLOCK;
 }
 
 void
 pl_clear (void) {
+    LOCK;
     plt_clear (playlist);
+    UNLOCK;
 }
 
 static const uint8_t *
@@ -1723,28 +1723,39 @@ plt_remove_item (playlist_t *playlist, playItem_t *it) {
 }
 
 int
-pl_remove_item (playItem_t *it) {
-    return plt_remove_item (playlist, it);
+plt_getcount (playlist_t *plt, int iter) {
+    return plt->count[iter];
 }
 
 int
 pl_getcount (int iter) {
+    LOCK;
     if (!playlist) {
+        UNLOCK;
         return 0;
     }
-    return playlist->count[iter];
+
+    int cnt = playlist->count[iter];
+    UNLOCK;
+    return cnt;
 }
 
 int
-pl_getselcount (void) {
+plt_getselcount (playlist_t *playlist) {
     // FIXME: slow!
     int cnt = 0;
-    LOCK;
     for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
         if (it->selected) {
             cnt++;
         }
     }
+    return cnt;
+}
+
+int
+pl_getselcount (void) {
+    LOCK;
+    int cnt = plt_getselcount (playlist);
     UNLOCK;
     return cnt;
 }
@@ -1940,7 +1951,7 @@ pl_item_unref (playItem_t *it) {
 }
 
 int
-pl_delete_selected (void) {
+plt_delete_selected (playlist_t *playlist) {
     LOCK;
     int i = 0;
     int ret = -1;
@@ -1951,7 +1962,7 @@ pl_delete_selected (void) {
             if (ret == -1) {
                 ret = i;
             }
-            pl_remove_item (it);
+            plt_remove_item (playlist, it);
         }
     }
     if (playlist->current_row[PL_MAIN] >= playlist->count[PL_MAIN]) {
@@ -1964,16 +1975,30 @@ pl_delete_selected (void) {
     return ret;
 }
 
+int
+pl_delete_selected (void) {
+    LOCK;
+    plt_delete_selected (playlist);
+    UNLOCK;
+}
+
 void
-pl_crop_selected (void) {
+plt_crop_selected (playlist_t *playlist) {
     LOCK;
     playItem_t *next = NULL;
     for (playItem_t *it = playlist->head[PL_MAIN]; it; it = next) {
         next = it->next[PL_MAIN];
         if (!it->selected) {
-            pl_remove_item (it);
+            plt_remove_item (playlist, it);
         }
     }
+    UNLOCK;
+}
+
+void
+pl_crop_selected (void) {
+    LOCK;
+    plt_crop_selected (playlist);
     UNLOCK;
 }
 
@@ -2593,11 +2618,18 @@ pl_load_all (void) {
 }
 
 void
-pl_select_all (void) {
+plt_select_all (playlist_t *playlist) {
     LOCK;
     for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
         it->selected = 1;
     }
+    UNLOCK;
+}
+
+void
+pl_select_all (void) {
+    LOCK;
+    plt_select_all (playlist);
     UNLOCK;
 }
 
@@ -3326,7 +3358,7 @@ plt_sort (playlist_t *playlist, int iter, int id, const char *format, int ascend
 }
 
 void
-pl_reset_cursor (void) {
+plt_reset_cursor (playlist_t *playlist) {
     int i;
     LOCK;
     for (i = 0; i < PL_MAX_ITERATORS; i++) {
@@ -3336,10 +3368,16 @@ pl_reset_cursor (void) {
 }
 
 float
+plt_get_totaltime (playlist_t *playlist) {
+    return playlist->totaltime;
+}
+
+float
 pl_get_totaltime (void) {
     LOCK;
-    float t = playlist->totaltime;
+    float t = plt_get_totaltime (playlist);
     UNLOCK;
+    return t;
 }
 
 void
@@ -3355,7 +3393,7 @@ pl_is_selected (playItem_t *it) {
 }
 
 playItem_t *
-pl_get_first (int iter) {
+plt_get_first (playlist_t *playlist, int iter) {
     if (!playlist) {
         return NULL;
     }
@@ -3367,12 +3405,28 @@ pl_get_first (int iter) {
 }
 
 playItem_t *
-pl_get_last (int iter) {
+pl_get_first (int iter) {
+    LOCK;
+    playItem_t *it = plt_get_first (playlist, iter);
+    UNLOCK;
+    return it;
+}
+
+playItem_t *
+plt_get_last (playlist_t *playlist, int iter) {
     playItem_t *p = playlist->tail[iter];
     if (p) {
         pl_item_ref (p);
     }
     return p;
+}
+
+playItem_t *
+pl_get_last (int iter) {
+    LOCK;
+    playItem_t *it = plt_get_last (playlist, iter);
+    UNLOCK;
+    return it;
 }
 
 playItem_t *
@@ -3394,17 +3448,30 @@ pl_get_prev (playItem_t *it, int iter) {
 }
 
 int
-pl_get_cursor (int iter) {
+plt_get_cursor (playlist_t *playlist, int iter) {
     if (!playlist) {
         return -1;
     }
     return playlist->current_row[iter];
 }
 
+int
+pl_get_cursor (int iter) {
+    LOCK;
+    int c = plt_get_cursor (playlist, iter);
+    UNLOCK;
+    return c;
+}
+
+void
+plt_set_cursor (playlist_t *playlist, int iter, int cursor) {
+    playlist->current_row[iter] = cursor;
+}
+
 void
 pl_set_cursor (int iter, int cursor) {
     LOCK;
-    playlist->current_row[iter] = cursor;
+    plt_set_cursor (playlist, iter, cursor);
     UNLOCK;
 }
 
@@ -3412,19 +3479,10 @@ pl_set_cursor (int iter, int cursor) {
 // list of items is indexes[count]
 // drop_before is insertion point
 void
-pl_move_items (int iter, int plt_from, playItem_t *drop_before, uint32_t *indexes, int count) {
+plt_move_items (playlist_t *to, int iter, playlist_t *from, playItem_t *drop_before, uint32_t *indexes, int count) {
     LOCK;
 
-    playlist_t *playlist = plt_get_for_idx (plt_from);
-    playlist_t *to = plt_get_curr ();
-
-    if (!playlist || !to) {
-        if (to) {
-            plt_unref (to);
-        }
-        if (playlist) {
-            plt_unref (playlist);
-        }
+    if (!from || !to) {
         UNLOCK;
         return;
     }
@@ -3432,7 +3490,7 @@ pl_move_items (int iter, int plt_from, playItem_t *drop_before, uint32_t *indexe
     // don't let streamer think that current song was removed
     no_remove_notify = 1;
 
-    // unlink items from playlist, and link together
+    // unlink items from from, and link together
     playItem_t *head = NULL;
     playItem_t *tail = NULL;
     int processed = 0;
@@ -3448,14 +3506,14 @@ pl_move_items (int iter, int plt_from, playItem_t *drop_before, uint32_t *indexe
         drop_after = to->tail[iter];
     }
 
-    for (playItem_t *it = playlist->head[iter]; it && processed < count; it = next, idx++) {
+    for (playItem_t *it = from->head[iter]; it && processed < count; it = next, idx++) {
         next = it->next[iter];
         if (idx == indexes[processed]) {
             pl_item_ref (it);
             if (drop_after == it) {
                 drop_after = it->prev[PL_MAIN];
             }
-            plt_remove_item (playlist, it);
+            plt_remove_item (from, it);
             plt_insert_item (to, drop_after, it);
             pl_item_unref (it);
             drop_after = it;
@@ -3463,29 +3521,14 @@ pl_move_items (int iter, int plt_from, playItem_t *drop_before, uint32_t *indexe
         }
     }
     no_remove_notify = 0;
-    if (to) {
-        plt_unref (to);
-    }
-    if (playlist) {
-        plt_unref (playlist);
-    }
     UNLOCK;
 }
 
 void
-pl_copy_items (int iter, int plt_from, playItem_t *before, uint32_t *indices, int cnt) {
+plt_copy_items (playlist_t *to, int iter, playlist_t *from, playItem_t *before, uint32_t *indices, int cnt) {
     pl_lock ();
 
-    playlist_t *from = plt_get_for_idx (plt_from);
-    playlist_t *to = plt_get_curr ();
-
     if (!from || !to) {
-        if (to) {
-            plt_unref (to);
-        }
-        if (from) {
-            plt_unref (from);
-        }
         pl_unlock ();
         return;
     }
@@ -3498,7 +3541,7 @@ pl_copy_items (int iter, int plt_from, playItem_t *before, uint32_t *indices, in
             idx++;
         }
         if (!it) {
-            trace ("pl_copy_items: warning: item %d not found in source playlist\n", indices[i]);
+            trace ("pl_copy_items: warning: item %d not found in source plt_to\n", indices[i]);
             continue;
         }
         playItem_t *it_new = pl_item_alloc ();
@@ -3509,17 +3552,11 @@ pl_copy_items (int iter, int plt_from, playItem_t *before, uint32_t *indices, in
         pl_item_unref (it_new);
 
     }
-    if (to) {
-        plt_unref (to);
-    }
-    if (from) {
-        plt_unref (from);
-    }
     pl_unlock ();
 }
 
 void
-pl_search_reset (void) {
+plt_search_reset (playlist_t *playlist) {
     LOCK;
     while (playlist->head[PL_SEARCH]) {
         playItem_t *next = playlist->head[PL_SEARCH]->next[PL_SEARCH];
@@ -3534,9 +3571,9 @@ pl_search_reset (void) {
 }
 
 void
-pl_search_process (const char *text) {
+plt_search_process (playlist_t *playlist, const char *text) {
     LOCK;
-    pl_search_reset ();
+    plt_search_reset (playlist);
 
     // convert text to lowercase, to save some cycles
     char lc[1000];

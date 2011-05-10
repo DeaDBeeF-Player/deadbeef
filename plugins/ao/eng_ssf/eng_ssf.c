@@ -91,7 +91,7 @@ void *ssf_start(const char *path, uint8 *buffer, uint32 length)
     ssf_synth_t *s = malloc (sizeof (ssf_synth_t));
     memset (s, 0, sizeof (ssf_synth_t));
 	uint8 *file, *lib_decoded, *lib_raw_file;
-	uint32 offset, plength, lengthMS, fadeMS;
+	uint32 offset, lengthMS, fadeMS;
 	uint64 file_len, lib_len, lib_raw_length;
 	corlett_t *lib;
 	char *libfile;

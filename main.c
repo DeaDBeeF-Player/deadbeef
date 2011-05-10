@@ -245,9 +245,9 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
         // add files
         playlist_t *curr_plt = plt_get_curr ();
         if (!queue) {
-            pl_clear ();
+            plt_clear (curr_plt);
             messagepump_push (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
-            pl_reset_cursor ();
+            plt_reset_cursor (curr_plt);
         }
         if (parg < pend) {
             if (deadbeef->pl_add_files_begin ((ddb_playlist_t *)curr_plt) != 0) {

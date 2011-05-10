@@ -179,7 +179,7 @@ playItem_t *
 plt_insert_item (playlist_t *playlist, playItem_t *after, playItem_t *it);
 
 int
-pl_remove_item (playItem_t *i);
+plt_remove_item (playlist_t *playlist, playItem_t *it);
 
 playItem_t *
 pl_item_alloc (void);
@@ -200,7 +200,13 @@ int
 pl_getcount (int iter);
 
 int
+plt_getcount (playlist_t *plt, int iter);
+
+int
 pl_getselcount (void);
+
+int
+plt_getselcount (playlist_t *playlist);
 
 playItem_t *
 pl_get_for_idx (int idx);
@@ -254,7 +260,13 @@ pl_delete_all_meta (playItem_t *it);
 
 // returns index of 1st deleted item
 int
+plt_delete_selected (playlist_t *plt);
+
+int
 pl_delete_selected (void);
+
+void
+plt_crop_selected (playlist_t *playlist);
 
 void
 pl_crop_selected (void);
@@ -276,6 +288,9 @@ plt_load (playlist_t *plt, playItem_t *after, const char *fname, int *pabort, in
 
 int
 pl_load_all (void);
+
+void
+plt_select_all (playlist_t *plt);
 
 void
 pl_select_all (void);
@@ -317,7 +332,10 @@ void
 pl_format_time (float t, char *dur, int size);
 
 void
-pl_reset_cursor (void);
+plt_reset_cursor (playlist_t *plt);
+
+float
+plt_get_totaltime (playlist_t *plt);
 
 float
 pl_get_totaltime (void);
@@ -329,7 +347,13 @@ int
 pl_is_selected (playItem_t *it);
 
 playItem_t *
+plt_get_first (playlist_t *playlist, int iter);
+
+playItem_t *
 pl_get_first (int iter);
+
+playItem_t *
+plt_get_last (playlist_t *playlist, int iter);
 
 playItem_t *
 pl_get_last (int iter);
@@ -341,22 +365,28 @@ playItem_t *
 pl_get_prev (playItem_t *it, int iter);
 
 int
+plt_get_cursor (playlist_t *plt, int iter);
+
+int
 pl_get_cursor (int iter);
+
+void
+plt_set_cursor (playlist_t *plt, int iter, int cursor);
 
 void
 pl_set_cursor (int iter, int cursor);
 
 void
-pl_move_items (int iter, int plt_from, playItem_t *drop_before, uint32_t *indexes, int count);
+plt_move_items (playlist_t *to, int iter, playlist_t *from, playItem_t *drop_before, uint32_t *indexes, int count);
 
 void
-pl_copy_items (int iter, int plt_from, playItem_t *before, uint32_t *indices, int cnt);
+plt_copy_items (playlist_t *to, int iter, playlist_t *from, playItem_t *before, uint32_t *indices, int cnt);
 
 void
-pl_search_reset (void);
+plt_search_reset (playlist_t *plt);
 
 void
-pl_search_process (const char *text);
+plt_search_process (playlist_t *plt, const char *text);
 
 void
 plt_sort (playlist_t *plt, int iter, int id, const char *format, int ascending);

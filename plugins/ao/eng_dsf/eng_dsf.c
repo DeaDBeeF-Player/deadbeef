@@ -44,7 +44,7 @@ void *dsf_start(const char *path, uint8 *buffer, uint32 length)
     memset (s, 0, sizeof (dsf_synth_t));
 
 	uint8 *file = NULL, *lib_decoded = NULL, *lib_raw_file = NULL;
-	uint32 offset, plength, lengthMS, fadeMS;
+	uint32 offset, lengthMS, fadeMS;
 	uint64 file_len, lib_len, lib_raw_length;
 	corlett_t *lib;
 	char *libfile;
