@@ -33,7 +33,8 @@ DB_decoder_t sid_plugin = {
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
-    .plugin.name = "SID decoder",
+    .plugin.name = "SID player",
+    .plugin.id = "sidplay2",
     .plugin.descr = "SID player based on libsidplay2",
     .plugin.copyright = 
         "Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"

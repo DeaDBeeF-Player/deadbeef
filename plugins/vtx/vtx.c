@@ -303,7 +303,7 @@ static DB_decoder_t plugin = {
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.id = "vtx",
-    .plugin.name = "VTX decoder",
+    .plugin.name = "VTX player",
     .plugin.descr = "AY8910/12 chip emulator and vtx file player",
     .plugin.copyright = 
         "Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"

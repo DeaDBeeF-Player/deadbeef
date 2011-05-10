@@ -57,5 +57,6 @@ tar jcvf ../portable_out/build/deadbeef-$VERSION-static-i686.tar.bz2\
     $PLUGDIR/converter_gtkui.fallback.so\
     $PLUGDIR/pulse.so\
     $PLUGDIR/dsp_libsrc.so\
-    $PIXMAPDIR
+    $PIXMAPDIR\
+    $SRCDIR/locale
 cd ..

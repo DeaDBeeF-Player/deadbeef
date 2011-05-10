@@ -31,7 +31,7 @@
 #include "callbacks.h"
 #include "interface.h"
 #include "support.h"
-#include "deadbeef.h"
+#include "../../deadbeef.h"
 #include "gtkui.h"
 #include "pluginconf.h"
 

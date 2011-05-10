@@ -20,7 +20,7 @@
 #define __CONVERTER_H
 
 #include <stdint.h>
-#include <deadbeef.h>
+#include "../../deadbeef.h"
 
 enum {
     DDB_ENCODER_METHOD_PIPE = 0,
