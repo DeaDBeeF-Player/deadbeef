@@ -35,7 +35,8 @@ GTKUI_SOURCES =    gtkui.c gtkui.h\
 				   actions.c actions.h\
 				   dspconfig.c dspconfig.h\
 				   tagwritersettings.c tagwritersettings.h\
-				   wingeom.c wingeom.h
+				   wingeom.c wingeom.h\
+				   pluginconf.h
 
 sdkdir = $(pkgincludedir)
 sdk_HEADERS = gtkui_api.h

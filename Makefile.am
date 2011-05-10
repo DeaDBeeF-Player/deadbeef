@@ -29,7 +29,6 @@ deadbeef_SOURCES =\
 	volume.c volume.h\
 	junklib.h junklib.c utf8.c utf8.h\
 	u8_lc_map.h\
-	ConvertUTF/ConvertUTF.c ConvertUTF/ConvertUTF.h\
 	optmath.h\
 	vfs.c vfs.h vfs_stdio.c\
 	md5/md5.c md5/md5.h\
@@ -38,6 +37,8 @@ deadbeef_SOURCES =\
 	ringbuf.c ringbuf.h\
 	dsppreset.c dsppreset.h\
 	replaygain.c replaygain.h
+	
+#	ConvertUTF/ConvertUTF.c ConvertUTF/ConvertUTF.h
 
 sdkdir = $(pkgincludedir)
 sdk_HEADERS = deadbeef.h

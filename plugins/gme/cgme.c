@@ -413,8 +413,8 @@ static DB_decoder_t plugin = {
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.id = "stdgme",
-    .plugin.name = "Game_Music_Emu decoder",
-    .plugin.descr = "chiptune music player based on GME",
+    .plugin.name = "Game-Music-Emu player",
+    .plugin.descr = "chiptune/game music player based on GME library",
     .plugin.copyright = 
         "Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"

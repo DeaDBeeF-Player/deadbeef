@@ -20,9 +20,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include "conf.h"
-#include "threading.h"
-#include "deadbeef.h"
+#include "../../deadbeef.h"
 #include "src.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
