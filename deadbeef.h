@@ -458,7 +458,7 @@ typedef struct {
     int (*plt_remove_item) (ddb_playlist_t *playlist, DB_playItem_t *it);
     int (*plt_getselcount) (ddb_playlist_t *playlist);
     float (*plt_get_totaltime) (ddb_playlist_t *plt);
-    int (*plt_getcount) (ddb_playlist_t *plt, int iter);
+    int (*plt_get_item_count) (ddb_playlist_t *plt, int iter);
     int (*plt_delete_selected) (ddb_playlist_t *plt);
     void (*plt_set_cursor) (ddb_playlist_t *plt, int iter, int cursor);
     int (*plt_get_cursor) (ddb_playlist_t *plt, int iter);
@@ -466,14 +466,20 @@ typedef struct {
     void (*plt_crop_selected) (ddb_playlist_t *plt);
     DB_playItem_t *(*plt_get_first) (ddb_playlist_t *plt, int iter);
     DB_playItem_t *(*plt_get_last) (ddb_playlist_t *plt, int iter);
+    DB_playItem_t * (*plt_get_item_for_idx) (ddb_playlist_t *playlist, int idx, int iter);
     void (*plt_move_items) (ddb_playlist_t *to, int iter, ddb_playlist_t *from, DB_playItem_t *drop_before, uint32_t *indexes, int count);
     void (*plt_copy_items) (ddb_playlist_t *to, int iter, ddb_playlist_t * from, DB_playItem_t *before, uint32_t *indices, int cnt);
     void (*plt_search_reset) (ddb_playlist_t *plt);
     void (*plt_search_process) (ddb_playlist_t *plt, const char *text);
+    void (*plt_sort) (ddb_playlist_t *plt, int iter, int id, const char *format, int ascending);
 
     // add files and folders to current playlist
     int (*plt_add_file) (ddb_playlist_t *plt, const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
     int (*plt_add_dir) (ddb_playlist_t *plt, const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+
+    // cuesheet support
+    DB_playItem_t *(*plt_insert_cue_from_buffer) (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate);
+    DB_playItem_t * (*plt_insert_cue) (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *origin, int numsamples, int samplerate);
 
     // playlist locking
     void (*pl_lock) (void);
@@ -498,25 +504,50 @@ typedef struct {
     // if you don't get what they do -- look in the code
     // NOTE: many of pl_* functions, especially the ones that operate on current
     // playlist, are going to be nuked somewhere around 0.6 release, in favor of
-    // more explicit plt_* family
+    // more explicit plt_* family.
+    // they are marked with DEPRECATED comment
+
+    // DEPRECATED: please use plt_get_item_idx
     int (*pl_get_idx_of) (DB_playItem_t *it);
     int (*pl_get_idx_of_iter) (DB_playItem_t *it, int iter);
+
+    // DEPRECATED: please use plt_get_item_for_idx
     DB_playItem_t * (*pl_get_for_idx) (int idx);
     DB_playItem_t * (*pl_get_for_idx_and_iter) (int idx, int iter);
+
+    // DEPRECATED: please use plt_get_totaltime
     float (*pl_get_totaltime) (void);
+
+    // DEPRECATED: please use plt_get_item_count
     int (*pl_getcount) (int iter);
+
+    // DEPRECATED: please use plt_delete_selected
     int (*pl_delete_selected) (void);
+
+    // DEPRECATED: please use plt_set_cursor
     void (*pl_set_cursor) (int iter, int cursor);
+
+    // DEPRECATED: please use plt_get_cursor
     int (*pl_get_cursor) (int iter);
+
+    // DEPRECATED: please use plt_crop_selected
+    void (*pl_crop_selected) (void);
+
+    // DEPRECATED: please use plt_getselcount
+    int (*pl_getselcount) (void);
+
+    // DEPRECATED: please use plt_get_first
+    DB_playItem_t *(*pl_get_first) (int iter);
+    
+    // DEPRECATED: please use plt_get_last
+    DB_playItem_t *(*pl_get_last) (int iter);
+
+
     void (*pl_set_selected) (DB_playItem_t *it, int sel);
     int (*pl_is_selected) (DB_playItem_t *it);
     int (*pl_save_current) (void);
     int (*pl_save_all) (void);
     void (*pl_select_all) (void);
-    void (*pl_crop_selected) (void);
-    int (*pl_getselcount) (void);
-    DB_playItem_t *(*pl_get_first) (int iter);
-    DB_playItem_t *(*pl_get_last) (int iter);
     DB_playItem_t *(*pl_get_next) (DB_playItem_t *it, int iter);
     DB_playItem_t *(*pl_get_prev) (DB_playItem_t *it, int iter);
     /*
@@ -577,7 +608,6 @@ typedef struct {
     float (*pl_get_item_duration) (DB_playItem_t *it);
     uint32_t (*pl_get_item_flags) (DB_playItem_t *it);
     void (*pl_set_item_flags) (DB_playItem_t *it, uint32_t flags);
-    void (*plt_sort) (ddb_playlist_t *plt, int iter, int id, const char *format, int ascending);
     void (*pl_items_copy_junk)(DB_playItem_t *from, DB_playItem_t *first, DB_playItem_t *last);
     // idx is one of DDB_REPLAYGAIN_* constants
     void (*pl_set_item_replaygain) (DB_playItem_t *it, int idx, float value);
@@ -589,10 +619,6 @@ typedef struct {
     void (*pl_playqueue_pop) (void);
     void (*pl_playqueue_remove) (DB_playItem_t *it);
     int (*pl_playqueue_test) (DB_playItem_t *it);
-
-    // cuesheet support
-    DB_playItem_t *(*plt_insert_cue_from_buffer) (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate);
-    DB_playItem_t * (*plt_insert_cue) (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *origin, int numsamples, int samplerate);
 
     // volume control
     void (*volume_set_db) (float dB);

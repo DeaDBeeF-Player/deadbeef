@@ -1723,7 +1723,7 @@ plt_remove_item (playlist_t *playlist, playItem_t *it) {
 }
 
 int
-plt_getcount (playlist_t *plt, int iter) {
+plt_get_item_count (playlist_t *plt, int iter) {
     return plt->count[iter];
 }
 
@@ -1761,7 +1761,7 @@ pl_getselcount (void) {
 }
 
 playItem_t *
-pl_get_for_idx_and_iter (int idx, int iter) {
+plt_get_item_for_idx (playlist_t *playlist, int idx, int iter) {
     LOCK;
     playItem_t *it = playlist->head[iter];
     while (idx--) {
@@ -1779,17 +1779,20 @@ pl_get_for_idx_and_iter (int idx, int iter) {
 }
 
 playItem_t *
+pl_get_for_idx_and_iter (int idx, int iter) {
+    LOCK;
+    playItem_t *it = plt_get_item_for_idx (playlist, idx, iter);
+    UNLOCK;
+    return it;
+}
+
+playItem_t *
 pl_get_for_idx (int idx) {
     return pl_get_for_idx_and_iter (idx, PL_MAIN);
 }
 
 int
-pl_get_idx_of (playItem_t *it) {
-    return pl_get_idx_of_iter (it, PL_MAIN);
-}
-
-int
-pl_get_idx_of_iter (playItem_t *it, int iter) {
+plt_get_item_idx (playlist_t *playlist, playItem_t *it, int iter) {
     LOCK;
     playItem_t *c = playlist->head[iter];
     int idx = 0;
@@ -1801,6 +1804,19 @@ pl_get_idx_of_iter (playItem_t *it, int iter) {
         UNLOCK;
         return -1;
     }
+    UNLOCK;
+    return idx;
+}
+
+int
+pl_get_idx_of (playItem_t *it) {
+    return pl_get_idx_of_iter (it, PL_MAIN);
+}
+
+int
+pl_get_idx_of_iter (playItem_t *it, int iter) {
+    LOCK;
+    int idx = plt_get_item_idx (playlist, it, iter);
     UNLOCK;
     return idx;
 }
@@ -3817,23 +3833,6 @@ pl_set_item_flags (playItem_t *it, uint32_t flags) {
     pl_replace_meta (it, ":TAGS", s);
     pl_replace_meta (it, ":HAS_EMBEDDED_CUESHEET", (flags & DDB_HAS_EMBEDDED_CUESHEET) ? _("Yes") : _("No"));
     UNLOCK;
-}
-
-int
-plt_get_item_idx (playlist_t *plt, playItem_t *it, int iter) {
-    LOCK;
-    playItem_t *c = plt->head[iter];
-    int idx = 0;
-    while (c && c != it) {
-        c = c->next[iter];
-        idx++;
-    }
-    if (!c) {
-        UNLOCK;
-        return -1;
-    }
-    UNLOCK;
-    return idx;
 }
 
 playlist_t *

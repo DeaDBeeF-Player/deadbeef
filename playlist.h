@@ -200,7 +200,7 @@ int
 pl_getcount (int iter);
 
 int
-plt_getcount (playlist_t *plt, int iter);
+plt_get_item_count (playlist_t *plt, int iter);
 
 int
 pl_getselcount (void);
@@ -212,7 +212,13 @@ playItem_t *
 pl_get_for_idx (int idx);
 
 playItem_t *
+plt_get_item_for_idx (playlist_t *playlist, int idx, int iter);
+
+playItem_t *
 pl_get_for_idx_and_iter (int idx, int iter);
+
+int
+plt_get_item_idx (playlist_t *playlist, playItem_t *it, int iter);
 
 int
 pl_get_idx_of (playItem_t *it);
@@ -427,9 +433,6 @@ pl_set_order (int order);
 
 int
 pl_get_order (void);
-
-int
-plt_get_item_idx (playlist_t *plt, playItem_t *it, int iter);
 
 playlist_t *
 pl_get_playlist (playItem_t *it);
