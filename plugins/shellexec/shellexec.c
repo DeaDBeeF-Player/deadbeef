@@ -73,9 +73,12 @@ shellexec_load (DB_functions_t *api) {
     return DB_PLUGIN (&plugin);
 }
 
-static char*
+static const char*
 trim (char* s)
 {
+    if (!s) {
+        return "";
+    }
     char *h, *t;
     
     for (h = s; *h == ' ' || *h == '\t'; h++);
@@ -214,7 +217,7 @@ static DB_misc_t plugin = {
     "shcmd is the command to execute, supports title formatting\n\n"
     "title is the name of command displayed in UI (context menu)\n\n"
     "name used for referencing commands from other plugins, e.g hotkeys\n\n"
-    "flags comma-separated of command flags, allowed flags are:\n"
+    "flags are comma-separated list of items, allowed items are:\n"
     "    single - command allowed only for single track\n"
     "    local - command allowed only for local files\n"
     "    remote - command allowed only for non-local files\n"
