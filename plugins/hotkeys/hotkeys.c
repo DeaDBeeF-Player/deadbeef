@@ -124,17 +124,17 @@ cmd_invoke_plugin_command (DB_plugin_action_t *action)
 
     if (selected_count == 0)
     {
-        fprintf (stderr, "No tracks selected\n");
+        trace ("No tracks selected\n");
         return;
     }
     if ((selected_count == 1) && (0 == action->flags & DB_ACTION_SINGLE_TRACK))
     {
-        fprintf (stderr, "Hotkeys: action %s not allowed for single track\n", action->name);
+        trace ("Hotkeys: action %s not allowed for single track\n", action->name);
         return;
     }
     if ((selected_count > 1) && (0 == action->flags & DB_ACTION_ALLOW_MULTIPLE_TRACKS))
     {
-        fprintf (stderr, "Hotkeys: action %s not allowed for multiple tracks\n", action->name);
+        trace ("Hotkeys: action %s not allowed for multiple tracks\n", action->name);
         return;
     }
 
@@ -190,7 +190,6 @@ read_config (Display *disp)
 
     DB_conf_item_t *item = deadbeef->conf_find ("hotkeys.", NULL);
     while (item) {
-//        fprintf (stderr, "hotkeys: adding %s %s\n", item->key, item->value);
         if (command_count == MAX_COMMAND_COUNT)
         {
             fprintf (stderr, "hotkeys: maximum number (%d) of commands exceeded\n", MAX_COMMAND_COUNT);
@@ -252,7 +251,7 @@ read_config (Display *disp)
                 }
                 if (!cmd_entry->keycode)
                 {
-                    fprintf (stderr, "hotkeys: got 0 from get_keycode while adding hotkey: %s %s\n", item->key, item->value);
+                    trace ("hotkeys: got 0 from get_keycode while adding hotkey: %s %s\n", item->key, item->value);
                     break;
                 }
             }
@@ -260,14 +259,14 @@ read_config (Display *disp)
 
         if (done) {
             if (cmd_entry->keycode == 0) {
-                fprintf (stderr, "hotkeys: Key not found while parsing %s %s\n", item->key, item->value);
+                trace ("hotkeys: Key not found while parsing %s %s\n", item->key, item->value);
             }
             else {
                 command = trim (command);
                 cmd_entry->action = get_action (command);
                 if (!cmd_entry->action)
                 {
-                    fprintf (stderr, "hotkeys: Unknown command <%s> while parsing %s %s\n", command,  item->key, item->value);
+                    trace ("hotkeys: Unknown command <%s> while parsing %s %s\n", command,  item->key, item->value);
                 }
                 else {
                     command_count++;
@@ -318,7 +317,7 @@ static int
 x_err_handler (Display *d, XErrorEvent *evt) {
     char buffer[1024];
     XGetErrorText (d, evt->error_code, buffer, sizeof (buffer));
-    fprintf (stderr, "hotkeys: xlib error: %s\n", buffer);
+    trace ("hotkeys: xlib error: %s\n", buffer);
 
     return 0;
 }
