@@ -40,7 +40,6 @@ skipspaces (const uint8_t *p, const uint8_t *end) {
 
 static DB_playItem_t *
 load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data) {
-    printf ("load_m3u: cb=%p\n", cb);
     const char *slash = strrchr (fname, '/');
     trace ("enter pl_insert_m3u\n");
     // skip all empty lines and comments
