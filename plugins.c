@@ -556,7 +556,7 @@ load_plugin (const char *plugdir, char *d_name, int l) {
     trace ("loading plugin %s/%s\n", plugdir, d_name);
     void *handle = dlopen (fullname, RTLD_NOW);
     if (!handle) {
-        trace ("dlopen error: %s\n", dlerror ());
+        //trace ("dlopen error: %s\n", dlerror ());
 #ifdef ANDROID
         break;
 #else
@@ -564,7 +564,7 @@ load_plugin (const char *plugdir, char *d_name, int l) {
         trace ("trying %s...\n", fullname);
         handle = dlopen (fullname, RTLD_NOW);
         if (!handle) {
-            trace ("dlopen error: %s\n", dlerror ());
+            //trace ("dlopen error: %s\n", dlerror ());
             return -1;
         }
         else {
@@ -608,14 +608,11 @@ load_gui_plugin (const char **plugdirs) {
                 if (!load_plugin (plugdirs[n], name, strlen (name))) {
                     return 0;
                 }
-                snprintf (name, sizeof (name), "ddb_gui_%s.fallback.so", conf_gui_plug);
-                if (!load_plugin (plugdirs[n], name, strlen (name))) {
-                    return 0;
-                }
             }
             break;
         }
     }
+    trace ("selected GUI plugin not found or failed to load, trying to find another GUI plugin\n");
 
     // try any plugin
     for (int i = 0; g_gui_names[i]; i++) {
@@ -624,9 +621,8 @@ load_gui_plugin (const char **plugdirs) {
             if (!load_plugin (plugdirs[n], name, strlen (name))) {
                 return 0;
             }
-            snprintf (name, sizeof (name), "ddb_gui_%s.fallback.so", g_gui_names[i]);
-            if (!load_plugin (plugdirs[n], name, strlen (name))) {
-                return 0;
+            else {
+                trace ("plugin not found or failed to load\n");
             }
         }
     }
@@ -726,7 +722,9 @@ load_plugin_dir (const char *plugdir) {
                     break;
                 }
 
-                load_plugin (plugdir, d_name, l);
+                if (0 != load_plugin (plugdir, d_name, l)) {
+                    trace ("plugin not found or failed to load\n");
+                }
                 break;
             }
             free (namelist[i]);
