@@ -285,6 +285,7 @@ trkproperties_fill_metadata (void) {
     }
     trkproperties_modified = 0;
     gtk_list_store_clear (store);
+    gtk_list_store_clear (propstore);
     deadbeef->pl_lock ();
 
     const char **keys = NULL;
