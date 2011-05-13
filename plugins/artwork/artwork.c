@@ -382,6 +382,9 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
     png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type,
             &interlace_type, NULL, NULL);
 
+    /* Tell libpng to strip 16 bit/color files down to 8 bits/color */
+    png_set_strip_16(png_ptr);
+
     /* Strip alpha bytes from the input data without combining with the
      * background (not recommended).
      */
