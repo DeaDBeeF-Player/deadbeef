@@ -89,7 +89,13 @@ void draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListview
 
     if (cinf->id == DB_COLUMN_ALBUM_ART) {
         if (theming) {
-            gtk_paint_flat_box (theme_treeview->style, drawable, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, theme_treeview, "cell_even_ruled", x, y, width, height);
+            GdkRectangle clip = {
+                .x = x,
+                .y = y,
+                .width = width,
+                .height = height,
+            };
+            gtk_paint_flat_box (theme_treeview->style, drawable, GTK_STATE_NORMAL, GTK_SHADOW_NONE, &clip, theme_treeview, "cell_even_ruled", x-1, y, width+2, height);
         }
         else {
             GdkGC *gc = gdk_gc_new (drawable);
