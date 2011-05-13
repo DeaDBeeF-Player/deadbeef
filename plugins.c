@@ -57,8 +57,7 @@
 
 // deadbeef api
 static DB_functions_t deadbeef_api = {
-    // FIXME: set to 1.0 after api freeze
-    .vmajor = 0,
+    .vmajor = 1,
     .vminor = 0,
     .md5 = plug_md5,
     .md5_to_str = plug_md5_to_str,
