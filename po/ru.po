@@ -1641,7 +1641,7 @@ msgstr "Количество потоков:"
 
 #: ../plugins/converter/interface.c:202
 msgid "Output sample format:"
-msgstr "Выходной формат дискретизации "
+msgstr "Выходной формат сэмплов:"
 
 #: ../plugins/converter/interface.c:209
 msgid "Keep source format"
