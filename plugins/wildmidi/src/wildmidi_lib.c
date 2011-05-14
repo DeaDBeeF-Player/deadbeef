@@ -383,6 +383,16 @@ void init_gauss (void) {
 	}
 }
 
+void
+free_gauss (void) {
+    for (int i = 0; i < (1<<10); i++) {
+        if (gauss_table[i]) {
+            free (gauss_table[i]);
+        }
+        gauss_table[i] = NULL;
+    }
+}
+
 unsigned long int delay_size[4][2];
 signed long int a[5][2];
 signed long int b[5][2];
@@ -5074,6 +5084,7 @@ WildMidi_Shutdown ( void ) {
 		}
 	}
 	WM_FreePatches();
+	free_gauss ();
 	WM_Initialized = 0;
 	return 0;
 }
