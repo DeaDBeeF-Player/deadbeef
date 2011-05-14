@@ -83,14 +83,11 @@ static const char *metainfo[] = {
     "GENRE", "genre",
     "COMMENT", "comment",
     "PERFORMER", "performer",
-//    "ENSEMBLE", "band",
     "COMPOSER", "composer",
-    "ENCODER", "vendor",
     "DISCNUMBER", "disc",
     "COPYRIGHT", "copyright",
     "TOTALTRACKS", "numtracks",
     "TRACKTOTAL", "numtracks",
-    "ALBUM ARTIST", "band",
     NULL
 };
 
