@@ -985,11 +985,9 @@ plug_unload_all (void) {
     trace ("stopped all plugins\n");
     while (plugins) {
         plugin_t *next = plugins->next;
-#ifndef ANDROID
         if (plugins->handle) {
             dlclose (plugins->handle);
         }
-#endif
         free (plugins);
         plugins = next;
     }

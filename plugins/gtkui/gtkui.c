@@ -1112,8 +1112,18 @@ gtkui_thread (void *ctx) {
     progress_destroy ();
     gtkui_hide_status_icon ();
     draw_free ();
-    gtk_widget_destroy (mainwin);
-    gtk_widget_destroy (searchwin);
+    if (theme_treeview) {
+        gtk_widget_destroy (theme_treeview);
+        theme_treeview = NULL;
+    }
+    if (mainwin) {
+        gtk_widget_destroy (mainwin);
+        mainwin = NULL;
+    }
+    if (searchwin) {
+        gtk_widget_destroy (searchwin);
+        searchwin = NULL;
+    }
     gdk_threads_leave ();
 }
 
