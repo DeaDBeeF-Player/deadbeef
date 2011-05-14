@@ -915,8 +915,9 @@ gtkui_add_new_playlist (void) {
         deadbeef->pl_lock ();
         for (i = 0; i < cnt; i++) {
             char t[100];
-            void *plt = deadbeef->plt_get_for_idx (i);
+            ddb_playlist_t *plt = deadbeef->plt_get_for_idx (i);
             deadbeef->plt_get_title (plt, t, sizeof (t));
+            deadbeef->plt_unref (plt);
             if (!strcasecmp (t, name)) {
                 break;
             }

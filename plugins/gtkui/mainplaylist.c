@@ -234,6 +234,10 @@ main_column_size_changed (DdbListview *listview, int col) {
 
 void main_col_free_user_data (void *data) {
     if (data) {
+        col_info_t *inf = data;
+        if (inf->format) {
+            free (inf->format);
+        }
         free (data);
     }
 }
@@ -336,6 +340,9 @@ main_playlist_init (GtkWidget *widget) {
 
 void
 main_playlist_free (void) {
+    g_object_unref (play16_pixbuf);
+    g_object_unref (pause16_pixbuf);
+    g_object_unref (buffering16_pixbuf);
 }
 
 void
