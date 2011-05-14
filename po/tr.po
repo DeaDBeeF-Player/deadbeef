@@ -9,8 +9,8 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://sourceforge.net/projects/lxde/support\n"
 "POT-Creation-Date: 2011-11-26 04:39+0000\n"
 "PO-Revision-Date: 2011-01-20 10:41+0000\n"
-"Last-Translator: reis33 <bahadiroglu33@gmail.com>\n"
-"Language-Team: Turkish <None>\n"
+"Last-Translator: decent <bahadiroglu33@gmail.com>\n"
+"Language-Team: Turkish <http://forum.ubuntu-tr.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -61,7 +61,7 @@ msgstr "Yardım"
 #: ../plugins/gtkui/callbacks.c:703
 #, c-format
 msgid "About DeaDBeeF %s"
-msgstr "DeaDBeef Hakkında %s"
+msgstr "DeaDBeef %s Hakkında"
 
 #: ../plugins/gtkui/callbacks.c:716
 #, c-format
@@ -83,7 +83,7 @@ msgstr "Çalma Listesini Yeniden Adlandır"
 
 #: ../plugins/gtkui/ddbtabstrip.c:679
 msgid "Remove Playlist"
-msgstr "Çalma Listesini Kaldır"
+msgstr "Çalma Listesini Sil"
 
 #: ../plugins/gtkui/ddbtabstrip.c:683
 msgid "Add New Playlist"
@@ -154,7 +154,7 @@ msgstr "%d gün %d:%02d:%02d"
 #: ../plugins/gtkui/gtkui.c:145
 #, c-format
 msgid "Stopped | %d tracks | %s total playtime"
-msgstr "Durduruldu | %d parça |toplam çalma zamanı %s"
+msgstr "Durduruldu | %d parça |toplam çalma zamanı: %s"
 
 #: ../plugins/gtkui/gtkui.c:158
 msgid "Mono"
@@ -205,7 +205,7 @@ msgstr "_Dosya"
 
 #: ../plugins/gtkui/interface.c:149 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "_Open file(s)"
-msgstr "_Dosya(lar) aç"
+msgstr "Dosy_a(lar) aç"
 
 #: ../plugins/gtkui/interface.c:165 ../plugins/gtkui/deadbeef.glade.h:4
 msgid "Add file(s)"
@@ -242,7 +242,7 @@ msgstr "_Çıkış"
 
 #: ../plugins/gtkui/interface.c:225 ../plugins/gtkui/deadbeef.glade.h:150
 msgid "_Edit"
-msgstr "_Düzenle"
+msgstr "Düz_enle"
 
 #: ../plugins/gtkui/interface.c:232 ../plugins/gtkui/deadbeef.glade.h:148
 msgid "_Clear"
@@ -377,7 +377,7 @@ msgstr "_Hakkında"
 
 #: ../plugins/gtkui/interface.c:446 ../plugins/gtkui/deadbeef.glade.h:160
 msgid "_Translators"
-msgstr "Çevirenler"
+msgstr "Çe_virenler"
 
 #: ../plugins/gtkui/interface.c:836 ../plugins/gtkui/deadbeef.glade.h:114
 msgid "Search"
@@ -628,7 +628,7 @@ msgstr "Durdurulduğunda başlık çubuğu metni:"
 
 #: ../plugins/gtkui/interface.c:1877 ../plugins/gtkui/deadbeef.glade.h:50
 msgid "GUI"
-msgstr "GKA"
+msgstr "GTK Kullanıcı Arayüzü"
 
 #: ../plugins/gtkui/interface.c:1892 ../plugins/gtkui/interface.c:1936
 #: ../plugins/gtkui/deadbeef.glade.h:88
@@ -748,7 +748,7 @@ msgstr "APEv2 Yaz"
 #: ../plugins/gtkui/interface.c:2228 ../plugins/gtkui/interface.c:2307
 #: ../plugins/gtkui/deadbeef.glade.h:127
 msgid "Strip ID3v2"
-msgstr "ID3v2şþeridi"
+msgstr "ID3v2 şeridi"
 
 #: ../plugins/gtkui/interface.c:2232 ../plugins/gtkui/interface.c:2355
 #: ../plugins/gtkui/deadbeef.glade.h:126
@@ -766,7 +766,7 @@ msgstr "ID3v2 sürümü"
 
 #: ../plugins/gtkui/interface.c:2251
 msgid "2.3 (Recommended)"
-msgstr "2.3 Önerilen"
+msgstr "2.3 (Önerilen)"
 
 #: ../plugins/gtkui/interface.c:2252
 msgid "2.4"
@@ -814,7 +814,7 @@ msgstr "çalmalistesidlgdüzenle"
 
 #: ../plugins/gtkui/interface.c:2984 ../plugins/gtkui/deadbeef.glade.h:137
 msgid "URL:"
-msgstr "URL"
+msgstr "URL:"
 
 #: ../plugins/gtkui/interface.c:3085 ../plugins/gtkui/deadbeef.glade.h:51
 msgid "Group By"
@@ -1122,7 +1122,7 @@ msgstr ""
 "Başlık\n"
 "Uzunluk\n"
 "Parça\n"
-"Bany / Albüm Sanatçısı\n"
+"Bant / Albüm Sanatçısı\n"
 "Özel"
 
 #: ../plugins/gtkui/deadbeef.glade.h:70
@@ -1168,7 +1168,7 @@ msgstr "Tercih edilen tampon boyutu"
 
 #: ../translation/extra.c:9
 msgid "Preferred period size"
-msgstr "Tercih edilen periyot"
+msgstr "Tercih edilen döngü"
 
 #. Last.fm plugin
 #: ../translation/extra.c:11
@@ -1194,11 +1194,11 @@ msgstr "Scrobble URL"
 #. Album Artwork plugin
 #: ../translation/extra.c:17
 msgid "Cache update period (hr)"
-msgstr "Önbellek güncelleştirme periyodu (saat)"
+msgstr "Önbellek güncelleştirme döngüsü (saat)"
 
 #: ../translation/extra.c:18
 msgid "Fetch from embedded tags"
-msgstr "Gömülü etikletlerden getir"
+msgstr "Gömülü etiketlerden getir"
 
 #: ../translation/extra.c:19
 msgid "Fetch from local folder"
