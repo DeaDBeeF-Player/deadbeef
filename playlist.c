@@ -145,6 +145,8 @@ pl_free (void) {
             }
         }
 
+        //fprintf (stderr, "\033[0;31mplt refc %d\033[37;0m\n", playlists_head->refc);
+
         plt_remove (0);
     }
     plt_loading = 0;

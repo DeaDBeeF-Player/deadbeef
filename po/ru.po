@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.4.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-08 11:48+0200\n"
-"PO-Revision-Date: 2010-09-03 14:22+0200\n"
-"Last-Translator: Dmitriy Simbiriatin <slpiv@mail.ru>\n"
+"POT-Creation-Date: 2011-05-14 20:00+0300\n"
+"PO-Revision-Date: 2011-05-14 19:53+0300\n"
+"Last-Translator: \n"
 "Language-Team: ru <slpiv@mail.ru>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
@@ -56,7 +56,8 @@ msgid "help.txt"
 msgstr "help.ru.txt"
 
 #: ../plugins/gtkui/callbacks.c:723 ../plugins/gtkui/interface.c:1155
-#: ../plugins/gtkui/deadbeef.glade.h:47
+#: ../plugins/gtkui/deadbeef.glade.h:47 ../plugins/converter/convgui.c:1232
+#: ../plugins/converter/convgui.c:1240
 msgid "Help"
 msgstr "Справка"
 
@@ -150,9 +151,8 @@ msgid "Zero Bands"
 msgstr "Обнулить частоты"
 
 #: ../plugins/gtkui/eq.c:387 ../plugins/converter/interface.c:826
-#, fuzzy
 msgid "Presets"
-msgstr "Сохранить"
+msgstr "Предустановки"
 
 #: ../plugins/gtkui/gtkui.c:137
 #, c-format
@@ -205,11 +205,11 @@ msgstr "Файлы плейлистов DeaDBeeF (*.dbpl)"
 msgid "Load Playlist"
 msgstr "Загрузить плейлист"
 
-#: ../plugins/gtkui/gtkui.c:906 ../plugins/gtkui/fileman.c:36
+#: ../plugins/gtkui/gtkui.c:910 ../plugins/gtkui/fileman.c:40
 msgid "New Playlist"
 msgstr "Новый плейлист"
 
-#: ../plugins/gtkui/gtkui.c:909
+#: ../plugins/gtkui/gtkui.c:913
 #, c-format
 msgid "New Playlist (%d)"
 msgstr "Новый плейлист (%d)"
@@ -291,36 +291,35 @@ msgstr "_Найти"
 
 #: ../plugins/gtkui/interface.c:288 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Sort By"
-msgstr ""
+msgstr "Сортировать по"
 
 #: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1516
-#: ../plugins/gtkui/mainplaylist.c:308 ../plugins/gtkui/prefwin.c:620
-#: ../plugins/gtkui/search.c:385 ../plugins/gtkui/deadbeef.glade.h:133
+#: ../plugins/gtkui/mainplaylist.c:310 ../plugins/gtkui/prefwin.c:620
+#: ../plugins/gtkui/search.c:387 ../plugins/gtkui/deadbeef.glade.h:133
 #: ../plugins/converter/convgui.c:782 ../plugins/converter/convgui.c:1203
 #: ../plugins/converter/interface.c:630
 msgid "Title"
 msgstr "Название"
 
 #: ../plugins/gtkui/interface.c:299 ../plugins/gtkui/deadbeef.glade.h:138
-#, fuzzy
 msgid "Track number"
 msgstr "Номер дорожки"
 
 #: ../plugins/gtkui/interface.c:303 ../plugins/gtkui/interface.c:1515
 #: ../plugins/gtkui/interface.c:1864 ../plugins/gtkui/deadbeef.glade.h:10
-#: ../translation/extra.c:68
+#: ../translation/extra.c:69
 msgid "Album"
 msgstr "Альбом"
 
 #. Track properties dialog
 #: ../plugins/gtkui/interface.c:307 ../plugins/gtkui/interface.c:1514
 #: ../plugins/gtkui/plcommon.c:992 ../plugins/gtkui/deadbeef.glade.h:12
-#: ../translation/extra.c:64
+#: ../translation/extra.c:65
 msgid "Artist"
 msgstr "Исполнитель"
 
 #: ../plugins/gtkui/interface.c:311 ../plugins/gtkui/deadbeef.glade.h:30
-#: ../translation/extra.c:69
+#: ../translation/extra.c:70
 msgid "Date"
 msgstr "Дата"
 
@@ -368,14 +367,12 @@ msgid "Linear"
 msgstr "По очереди"
 
 #: ../plugins/gtkui/interface.c:370 ../plugins/gtkui/deadbeef.glade.h:119
-#, fuzzy
 msgid "Shuffle tracks"
-msgstr "Вперемешку"
+msgstr "Перемешивать дорожки"
 
 #: ../plugins/gtkui/interface.c:375 ../plugins/gtkui/deadbeef.glade.h:118
-#, fuzzy
 msgid "Shuffle albums"
-msgstr "Вперемешку"
+msgstr "Перемешивать альбомы"
 
 #: ../plugins/gtkui/interface.c:380 ../plugins/gtkui/deadbeef.glade.h:102
 msgid "Random"
@@ -480,7 +477,7 @@ msgstr "Свойства дорожки"
 
 #: ../plugins/gtkui/interface.c:1270 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Settings"
-msgstr ""
+msgstr "Настройки"
 
 #: ../plugins/gtkui/interface.c:1296 ../plugins/gtkui/deadbeef.glade.h:148
 msgid "_Apply"
@@ -513,7 +510,7 @@ msgid "Item Index"
 msgstr "Порядковый номер"
 
 #. create default set of columns
-#: ../plugins/gtkui/interface.c:1511 ../plugins/gtkui/mainplaylist.c:305
+#: ../plugins/gtkui/interface.c:1511 ../plugins/gtkui/mainplaylist.c:307
 msgid "Playing"
 msgstr "Воспроизводится"
 
@@ -525,16 +522,16 @@ msgstr "Обложка альбома"
 msgid "Artist - Album"
 msgstr "Исполнитель - Альбом"
 
-#: ../plugins/gtkui/interface.c:1517 ../plugins/gtkui/mainplaylist.c:309
-#: ../plugins/gtkui/search.c:386
+#: ../plugins/gtkui/interface.c:1517 ../plugins/gtkui/mainplaylist.c:311
+#: ../plugins/gtkui/search.c:388
 msgid "Duration"
 msgstr "Продолжительность"
 
-#: ../plugins/gtkui/interface.c:1518 ../translation/extra.c:70
+#: ../plugins/gtkui/interface.c:1518 ../translation/extra.c:71
 msgid "Track Number"
 msgstr "Номер дорожки"
 
-#: ../plugins/gtkui/interface.c:1519 ../translation/extra.c:67
+#: ../plugins/gtkui/interface.c:1519 ../translation/extra.c:68
 msgid "Band / Album Artist"
 msgstr "Группа / Исполнитель альбома"
 
@@ -596,17 +593,16 @@ msgid "Replaygain peak scale"
 msgstr "Использовать пиковое значение"
 
 #: ../plugins/gtkui/interface.c:1874 ../plugins/gtkui/deadbeef.glade.h:106
-#, fuzzy
 msgid "Replaygain preamp:"
-msgstr "Режим автовыравнивания громкости:"
+msgstr "Предусиление автовыравнивания громкости:"
 
 #: ../plugins/gtkui/interface.c:1878 ../plugins/gtkui/deadbeef.glade.h:2
 msgid "-12 dB"
-msgstr ""
+msgstr "-12 дБ"
 
 #: ../plugins/gtkui/interface.c:1888 ../plugins/gtkui/deadbeef.glade.h:1
 msgid "+12 dB"
-msgstr ""
+msgstr "+12 дБ"
 
 #: ../plugins/gtkui/interface.c:1896 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
@@ -620,7 +616,7 @@ msgstr "Восстанавливать предыдущую сессию при 
 
 #: ../plugins/gtkui/interface.c:1909 ../plugins/gtkui/deadbeef.glade.h:36
 msgid "Don't add from archives when adding folders"
-msgstr ""
+msgstr "Не добавлять из архивов при добавлении каталогов"
 
 #: ../plugins/gtkui/interface.c:1913 ../plugins/gtkui/deadbeef.glade.h:89
 msgid "Playback"
@@ -632,17 +628,16 @@ msgid "Configure"
 msgstr "Настроить"
 
 #: ../plugins/gtkui/interface.c:1969 ../plugins/gtkui/deadbeef.glade.h:28
-#, fuzzy
 msgid "DSP Chain Preset"
-msgstr "Сохранить"
+msgstr "Предустановка для цепочки DSP"
 
 #: ../plugins/gtkui/interface.c:1981 ../plugins/gtkui/deadbeef.glade.h:159
 msgid "_Load"
-msgstr ""
+msgstr "_Загрузить"
 
 #: ../plugins/gtkui/interface.c:1985 ../plugins/gtkui/deadbeef.glade.h:27
 msgid "DSP"
-msgstr ""
+msgstr "DSP"
 
 #: ../plugins/gtkui/interface.c:1994 ../plugins/gtkui/deadbeef.glade.h:18
 msgid "Close minimizes to tray"
@@ -666,11 +661,11 @@ msgstr "Убрать пункт \"Удалить с диска\" из конте
 
 #: ../plugins/gtkui/interface.c:2014 ../plugins/gtkui/deadbeef.glade.h:15
 msgid "Auto-name playlists when adding a single folder"
-msgstr ""
+msgstr "Автоматически именовать плейлисты при добавлении одного каталога"
 
 #: ../plugins/gtkui/interface.c:2022 ../plugins/gtkui/deadbeef.glade.h:52
 msgid "Interface refresh rate (times per second):"
-msgstr ""
+msgstr "Частота обновления интерфейса (раз за секунду):"
 
 #: ../plugins/gtkui/interface.c:2036 ../plugins/gtkui/deadbeef.glade.h:135
 msgid "Titlebar text while playing:"
@@ -682,7 +677,7 @@ msgstr "Текст заголовка при остановке:"
 
 #: ../plugins/gtkui/interface.c:2064 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "GUI Plugin (changing requires restart):"
-msgstr ""
+msgstr "Графический интерфейс (для изменения необходим перезапуск):"
 
 #: ../plugins/gtkui/interface.c:2072 ../plugins/gtkui/deadbeef.glade.h:44
 msgid "GUI"
@@ -802,10 +797,10 @@ msgstr "Сеть"
 
 #: ../plugins/gtkui/interface.c:2423 ../plugins/gtkui/deadbeef.glade.h:142
 msgid "Version: "
-msgstr ""
+msgstr "Версия:"
 
 #: ../plugins/gtkui/interface.c:2487 ../plugins/gtkui/deadbeef.glade.h:22
-#: ../translation/extra.c:77
+#: ../translation/extra.c:78
 msgid "Copyright"
 msgstr "Авторские права"
 
@@ -823,38 +818,34 @@ msgstr "Группировать по"
 
 #: ../plugins/gtkui/interface.c:3198 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Sort by..."
-msgstr ""
+msgstr "Сортировать по..."
 
 #: ../plugins/gtkui/interface.c:3214 ../plugins/gtkui/deadbeef.glade.h:42
-#, fuzzy
 msgid "Format"
-msgstr "Формат:"
+msgstr "Формат"
 
 #: ../plugins/gtkui/interface.c:3244
 msgid "Ascending"
-msgstr ""
+msgstr "По возрастанию"
 
 #: ../plugins/gtkui/interface.c:3245
 msgid "Descending"
-msgstr ""
+msgstr "По убыванию"
 
 #: ../plugins/gtkui/interface.c:3298 ../plugins/gtkui/deadbeef.glade.h:112
 #: ../plugins/converter/interface.c:758
-#, fuzzy
 msgid "Select DSP Plugin"
-msgstr "Выделенное"
+msgstr "Выберите расширение DSP"
 
 #: ../plugins/gtkui/interface.c:3314 ../plugins/gtkui/deadbeef.glade.h:91
 #: ../plugins/converter/convgui.c:1008 ../plugins/converter/interface.c:774
 #: ../plugins/gtkui/dspconfig.c:139
-#, fuzzy
 msgid "Plugin"
-msgstr "Расширения"
+msgstr "Расширение"
 
 #: ../plugins/gtkui/interface.c:3400 ../plugins/gtkui/deadbeef.glade.h:131
-#, fuzzy
 msgid "Tag Writer Settings"
-msgstr "Редактор тегов"
+msgstr "Настройки редактора тегов"
 
 #: ../plugins/gtkui/interface.c:3431 ../plugins/gtkui/deadbeef.glade.h:145
 msgid "Write ID3v2"
@@ -905,11 +896,11 @@ msgstr "Кодировка ID3v1 (по умолчанию iso8859-1)"
 msgid "Write ID3v2.4"
 msgstr "Писать ID3v2.4"
 
-#: ../plugins/gtkui/mainplaylist.c:306 ../plugins/gtkui/search.c:383
+#: ../plugins/gtkui/mainplaylist.c:308 ../plugins/gtkui/search.c:385
 msgid "Artist / Album"
 msgstr "Исполнитель / Альбом"
 
-#: ../plugins/gtkui/mainplaylist.c:307 ../plugins/gtkui/search.c:384
+#: ../plugins/gtkui/mainplaylist.c:309 ../plugins/gtkui/search.c:386
 msgid "Track No"
 msgstr "№"
 
@@ -976,9 +967,9 @@ msgid "Open file..."
 msgstr "Открыть файл..."
 
 #: ../plugins/gtkui/pluginconf.c:217
-#, fuzzy, c-format
+#, c-format
 msgid "Configure %s"
-msgstr "Настроить"
+msgstr "Настроить %s"
 
 #: ../plugins/gtkui/prefwin.c:82
 msgid "Default Audio Device"
@@ -1019,7 +1010,7 @@ msgstr "Закрыть окно?"
 #. get value to edit
 #: ../plugins/gtkui/trkproperties.c:254
 msgid "[Multiple values] "
-msgstr ""
+msgstr "[Несколько значений] "
 
 #: ../plugins/gtkui/trkproperties.c:395 ../plugins/gtkui/trkproperties.c:407
 msgid "Key"
@@ -1031,38 +1022,35 @@ msgstr "Значение"
 
 #: ../plugins/gtkui/trkproperties.c:575
 msgid "Writing tags..."
-msgstr ""
+msgstr "Запись тегов..."
 
 #: ../plugins/gtkui/trkproperties.c:602
 msgid "Name:"
-msgstr ""
+msgstr "Название:"
 
 #: ../plugins/gtkui/trkproperties.c:614
 msgid "Field names must not start with : or _"
-msgstr ""
+msgstr "Имена полей не должны начинаться с \":\" или \"_\""
 
 #: ../plugins/gtkui/trkproperties.c:615 ../plugins/gtkui/trkproperties.c:649
 msgid "Cannot add field"
-msgstr ""
+msgstr "Не удаётся добавить поле"
 
 #: ../plugins/gtkui/trkproperties.c:648
 msgid "Field with such name already exists, please try different name."
-msgstr ""
+msgstr "Поле с таким же именем уже сущестует, пожалуйста, выберите другое имя."
 
 #: ../plugins/gtkui/trkproperties.c:673
-#, fuzzy
 msgid "Really remove selected field?"
-msgstr "Закрыть окно?"
+msgstr "Вы действительно хотите удалить выделенное поле?"
 
 #: ../plugins/gtkui/trkproperties.c:715
-#, fuzzy
 msgid "Add field"
-msgstr "Добавить файл(ы)"
+msgstr "Добавить поле"
 
 #: ../plugins/gtkui/trkproperties.c:718
-#, fuzzy
 msgid "Remove field"
-msgstr "Удалить"
+msgstr "Удалить поле"
 
 #: ../main.c:90
 #, c-format
@@ -1110,13 +1098,15 @@ msgstr "   --pause             Приостановить воспроизвед
 #: ../main.c:98
 #, c-format
 msgid "   --toggle-pause     Toggle pause\n"
-msgstr ""
+msgstr "   --toggle-pause      Приостановить воспроизведение\n"
 
 #: ../main.c:99
 #, c-format
 msgid ""
 "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
 msgstr ""
+"   --play-pause        Начать воспроизведение если остановлено, в противном "
+"случае - приостановить\n"
 
 #: ../main.c:100
 #, c-format
@@ -1172,16 +1162,18 @@ msgid ""
 "                      for more info, see http://sourceforge.net/apps/"
 "mediawiki/deadbeef/index.php?title=Title_Formatting\n"
 msgstr ""
+"                      для дополнительной информации, смотрите http://"
+"sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"
 
-#: ../playlist.c:416 ../playlist.c:2553
+#: ../playlist.c:416 ../playlist.c:2539
 msgid "Default"
 msgstr "Плейлист"
 
-#: ../playlist.c:3800
+#: ../playlist.c:3779
 msgid "Yes"
 msgstr "Да"
 
-#: ../playlist.c:3800
+#: ../playlist.c:3779
 msgid "No"
 msgstr "Нет"
 
@@ -1198,6 +1190,8 @@ msgid ""
 "Ascending\n"
 "Descending"
 msgstr ""
+"По возрастанию\n"
+"По убыванию"
 
 #: ../plugins/gtkui/deadbeef.glade.h:32
 msgid ""
@@ -1210,7 +1204,6 @@ msgstr ""
 "Альбом"
 
 #: ../plugins/gtkui/deadbeef.glade.h:54
-#, fuzzy
 msgid ""
 "Item Index\n"
 "Playing\n"
@@ -1231,8 +1224,8 @@ msgstr ""
 "Исполнитель\n"
 "Альбом\n"
 "Название\n"
-"Длина\n"
-"Дорожка\n"
+"Продолжительность\n"
+"Номер дорожки\n"
 "Группа / Исполнитель альбома\n"
 "Разное"
 
@@ -1279,7 +1272,7 @@ msgstr "Использовать передискретизацию с помо�
 msgid "Release device while stopped"
 msgstr "Освобождать устройство во время остановки"
 
-#: ../translation/extra.c:8 ../translation/extra.c:50
+#: ../translation/extra.c:8 ../translation/extra.c:51
 msgid "Preferred buffer size"
 msgstr "Предпочитаемый размер буфера"
 
@@ -1311,307 +1304,344 @@ msgstr "Адрес для скробблинга"
 #. OSS output plugin
 #: ../translation/extra.c:17
 msgid "Device file"
-msgstr ""
+msgstr "Файл устройства"
+
+#: ../translation/extra.c:18
+msgid "OSS4 samplerate bug workaround"
+msgstr "Исправление для ошибки частоты дискретизации в OSS4"
 
 #. Album Artwork plugin
-#: ../translation/extra.c:19
+#: ../translation/extra.c:20
 msgid "Cache update period (hr)"
 msgstr "Период обновления кэша (часы)"
 
-#: ../translation/extra.c:20
+#: ../translation/extra.c:21
 msgid "Fetch from embedded tags"
 msgstr "Получать из встроенных тегов"
 
-#: ../translation/extra.c:21
+#: ../translation/extra.c:22
 msgid "Fetch from local folder"
 msgstr "Получать из локальной директории"
 
-#: ../translation/extra.c:22
+#: ../translation/extra.c:23
 msgid "Local cover file mask"
 msgstr "Файловая маска для локальных обложек"
 
-#: ../translation/extra.c:23
+#: ../translation/extra.c:24
 msgid "Fetch from last.fm"
 msgstr "Получать из last.fm"
 
-#: ../translation/extra.c:24
+#: ../translation/extra.c:25
 msgid "Fetch from albumart.org"
 msgstr "Получать из albumart.org"
 
-#: ../translation/extra.c:25
+#: ../translation/extra.c:26
 msgid "Scale artwork towards longer side"
-msgstr ""
+msgstr "Масштабировать обложку относительно более длинной стороны"
 
 #. Audio CD player
-#: ../translation/extra.c:27
+#: ../translation/extra.c:28
 msgid "Use CDDB/FreeDB"
 msgstr "Использовать CDDB/FreeDB"
 
-#: ../translation/extra.c:28
+#: ../translation/extra.c:29
 msgid "Prefer CD-Text over CDDB"
 msgstr "Использовать CD-Text вместо CDDB"
 
-#: ../translation/extra.c:29
+#: ../translation/extra.c:30
 msgid "CDDB url (e.g. 'freedb.org')"
 msgstr "Адрес CDDB (например, 'freedb.org')"
 
-#: ../translation/extra.c:30
+#: ../translation/extra.c:31
 msgid "CDDB port number (e.g. '888')"
 msgstr "Номер порта CDDB (например, '888')"
 
-#: ../translation/extra.c:31
+#: ../translation/extra.c:32
 msgid "Prefer CDDB protocol over HTTP"
 msgstr "Использовать протокол CDDB вместо HTTP"
 
-#: ../translation/extra.c:32
+#: ../translation/extra.c:33
 msgid "Enable NRG image support"
 msgstr "Включить поддержку образов NRG"
 
 #. DUMB module player plugin
-#: ../translation/extra.c:34
+#: ../translation/extra.c:35
 msgid "Resampling quality (0..2, higher is better)"
 msgstr "Качество передискретизации (0..2, выше - лучше)"
 
 #. Game_Music_Emu decoder plugin
-#: ../translation/extra.c:36
+#: ../translation/extra.c:37
 msgid "Max song length (in minutes)"
 msgstr "Максимальная длина дорожки (в минутах)"
 
 #. Standard GTK2 user interface plugin
-#: ../translation/extra.c:38
+#: ../translation/extra.c:39
 msgid "Ask confirmation to delete files from disk"
 msgstr "Запрашивать подтверждение на удаление файлов с жёсткого диска"
 
-#: ../translation/extra.c:39
+#: ../translation/extra.c:40
 msgid "Status icon volume control sensitivity"
 msgstr "Чувствительность регулятора громкости в значке статуса"
 
-#: ../translation/extra.c:40
+#: ../translation/extra.c:41
 msgid "Custom status icon"
 msgstr "Пользовательский значок статуса"
 
-#: ../translation/extra.c:41
+#: ../translation/extra.c:42
 msgid "Run gtk_init with --sync (debug mode)"
 msgstr "Запускать gtk_init с ключом --sync (режим отладки)"
 
-#: ../translation/extra.c:42
+#: ../translation/extra.c:43
 msgid "Add separators between plugin context menu items"
-msgstr ""
+msgstr "Добавить разделители между элементами контекстного меню"
 
 #. OSD Notify plugin
-#: ../translation/extra.c:44
-#, fuzzy
-msgid "Notification title format"
-msgstr "Формат уведомления"
-
 #: ../translation/extra.c:45
-#, fuzzy
-msgid "Notification content format"
-msgstr "Формат уведомления"
+msgid "Notification title format"
+msgstr "Формат заголовка уведомления"
 
 #: ../translation/extra.c:46
-#, fuzzy
-msgid "Show album art"
-msgstr "Обложка альбома"
+msgid "Notification content format"
+msgstr "Формат содержимого уведомления"
 
 #: ../translation/extra.c:47
+msgid "Show album art"
+msgstr "Показывать обложку"
+
+#: ../translation/extra.c:48
 msgid "Album art size (px)"
-msgstr ""
+msgstr "Размер обложки (px)"
 
 #. PulseAudio output plugin
-#: ../translation/extra.c:49
+#: ../translation/extra.c:50
 msgid "PulseAudio server"
 msgstr "Сервер PulseAudio"
 
-#: ../translation/extra.c:51
+#: ../translation/extra.c:52
 msgid "Samplerate"
 msgstr "Частота дискретизации"
 
 #. SHN player plugin
-#: ../translation/extra.c:53
+#: ../translation/extra.c:54
 msgid "Relative seek table path"
 msgstr "Относительный путь таблицы поиска"
 
-#: ../translation/extra.c:54
+#: ../translation/extra.c:55
 msgid "Absolute seek table path"
 msgstr "Абсолютный путь таблицы поиска"
 
-#: ../translation/extra.c:55
+#: ../translation/extra.c:56
 msgid "Swap audio bytes (toggle if all you hear is static)"
 msgstr "Переставить местами аудио байты"
 
 #. SID decoder plugin
-#: ../translation/extra.c:57
-#, fuzzy
-msgid "Enable HVSC Songlength DB"
-msgstr "Включить поддержку HVSC"
-
 #: ../translation/extra.c:58
-msgid "Songlengths.txt (from HVSC)"
-msgstr ""
+msgid "Enable HVSC Songlength DB"
+msgstr "Включить HVSC Songlength DB"
 
 #: ../translation/extra.c:59
-msgid "Bits per sample (8 or 16)"
-msgstr ""
+msgid "Songlengths.txt (from HVSC)"
+msgstr "Songlengths.txt (из HVSC)"
 
 #: ../translation/extra.c:60
-#, fuzzy
+msgid "Bits per sample (8 or 16)"
+msgstr "Разрядность (8 или 16)"
+
+#: ../translation/extra.c:61
 msgid "Default song length (sec)"
-msgstr "Максимальная длина дорожки (в минутах)"
+msgstr "Длина дорожки по умолчанию (сек)"
 
 #. WildMidi player plugin
-#: ../translation/extra.c:62
+#: ../translation/extra.c:63
 msgid "Timidity++ bank configuration file"
 msgstr "Файл конфигурации для банка Timidity++"
 
-#: ../translation/extra.c:65
+#: ../translation/extra.c:66
 msgid "Track Title"
 msgstr "Название дорожки"
 
-#: ../translation/extra.c:66
+#: ../translation/extra.c:67
 msgid "Performer"
 msgstr "Исполнитель(и)"
 
-#: ../translation/extra.c:71
+#: ../translation/extra.c:72
 msgid "Total Tracks"
 msgstr "Всего дорожек"
 
-#: ../translation/extra.c:72
+#: ../translation/extra.c:73
 msgid "Genre"
 msgstr "Жанр"
 
-#: ../translation/extra.c:73
+#: ../translation/extra.c:74
 msgid "Composer"
 msgstr "Композитор"
 
-#: ../translation/extra.c:74
+#: ../translation/extra.c:75
 msgid "Disc Number"
 msgstr "Номер диска"
 
-#: ../translation/extra.c:75
+#: ../translation/extra.c:76
 msgid "Comment"
 msgstr "Комментарий"
 
-#: ../translation/extra.c:76
+#: ../translation/extra.c:77
 msgid "Encoder / Vendor"
 msgstr "Кодер / Продавец"
 
-#. FFmpeg deocder plugin
 #: ../translation/extra.c:79
+msgid "Location"
+msgstr "Расположение"
+
+#: ../translation/extra.c:80
+msgid "Subtrack Index"
+msgstr "Номер вложенной дорожки"
+
+#: ../translation/extra.c:81
+msgid "Tag Type(s)"
+msgstr "Тип(ы) тегов"
+
+#: ../translation/extra.c:82
+msgid "Embedded Cuesheet"
+msgstr "Встроенный файл cue"
+
+#: ../translation/extra.c:83
+msgid "Codec"
+msgstr "Кодек"
+
+#. FFmpeg deocder plugin
+#: ../translation/extra.c:85
 msgid "File Extensions (separate with ';')"
 msgstr "Расширения файлов (разделять с помощью ';')"
 
+#. Converter GUI
+#: ../translation/extra.c:87
+msgid "Convert"
+msgstr "Конвертировать"
+
+#. Resampler (Secret Rabbit Code)
+#: ../translation/extra.c:89
+msgid "Target Samplerate"
+msgstr "Частота дискретизации"
+
+#: ../translation/extra.c:90
+msgid "Quality / Algorythm"
+msgstr "Качество / Алгоритм"
+
 #: ../plugins/converter/convgui.c:107
 msgid "The file already exists. Overwrite?"
-msgstr ""
+msgstr "Файл уже существует. Перезаписать?"
 
 #: ../plugins/converter/convgui.c:109
 msgid "Converter warning"
-msgstr ""
+msgstr "Converter предупреждение"
 
 #: ../plugins/converter/convgui.c:221
 msgid "Please select encoder"
-msgstr ""
+msgstr "Пожалуйста, выберите кодировщик"
 
 #: ../plugins/converter/convgui.c:223
 msgid "Converter error"
-msgstr ""
+msgstr "Converter ошибка"
 
 #: ../plugins/converter/convgui.c:247
 msgid "Converting..."
-msgstr ""
+msgstr "Конвертирование..."
 
 #: ../plugins/converter/convgui.c:386 ../plugins/converter/convgui.c:488
 msgid "Select folder..."
-msgstr ""
+msgstr "Выберите каталог..."
 
 #: ../plugins/converter/convgui.c:627
 msgid "Failed to save encoder preset"
-msgstr ""
+msgstr "Не удалось сохранить предустановку кодировщика"
 
 #: ../plugins/converter/convgui.c:629 ../plugins/converter/convgui.c:1027
 msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
 msgstr ""
+"Проверьте права доступа на папку, в которой находится предустановка, "
+"выберите другое имя или освободите место на диске"
 
 #: ../plugins/converter/convgui.c:629 ../plugins/converter/convgui.c:1027
 msgid "Preset with the same name already exists. Try to pick another title."
-msgstr ""
+msgstr "Предустановка с таким же именем уже существует. Выберите другое имя."
 
 #: ../plugins/converter/convgui.c:630 ../plugins/converter/convgui.c:1028
 msgid "Error"
-msgstr ""
+msgstr "Ошибка"
 
 #: ../plugins/converter/convgui.c:684
 msgid "Add new encoder"
-msgstr ""
+msgstr "Добавить кодировщик"
 
 #: ../plugins/converter/convgui.c:716
 msgid "Edit encoder"
-msgstr ""
+msgstr "Редактировать кодировщик"
 
 #: ../plugins/converter/convgui.c:748 ../plugins/converter/convgui.c:1125
 msgid "Remove preset"
-msgstr ""
+msgstr "Удалить предустановку"
 
 #: ../plugins/converter/convgui.c:750 ../plugins/converter/convgui.c:1127
 msgid "This action will delete the selected preset. Are you sure?"
-msgstr ""
+msgstr "Это действие приведёт к удалению выбранной предустановки. Вы уверены? "
 
 #: ../plugins/converter/convgui.c:774
 msgid "Encoders"
-msgstr ""
+msgstr "Кодировщики"
 
 #: ../plugins/converter/convgui.c:830 ../plugins/gtkui/dspconfig.c:183
 msgid "Add plugin to DSP chain"
-msgstr ""
+msgstr "Добавить расширение  в цепочку DSP"
 
 #: ../plugins/converter/convgui.c:1026
 msgid "Failed to save DSP preset"
-msgstr ""
+msgstr "Не удалось сохранить предустановку DSP"
 
 #: ../plugins/converter/convgui.c:1090
 msgid "New DSP Preset"
-msgstr ""
+msgstr "Новая предустановка DSP"
 
 #: ../plugins/converter/convgui.c:1175
 msgid "Edit DSP Preset"
-msgstr ""
+msgstr "Редактировать предустановку DSP "
 
 #: ../plugins/converter/convgui.c:1195
 msgid "DSP Presets"
-msgstr ""
+msgstr "Предустановки DSP"
 
 #: ../plugins/converter/interface.c:97
 msgid "Output folder:"
-msgstr ""
+msgstr "Выходной каталог:"
 
 #: ../plugins/converter/interface.c:118
 msgid "Output file name:"
-msgstr ""
+msgstr "Имя выходного файла:"
 
 #: ../plugins/converter/interface.c:129
 msgid ""
 "Extension (e.g. .mp3) will be appended automatically.\n"
 "Leave the field empty for default (%a - %t)."
 msgstr ""
+"Расширение (например, .mp3) будет добавлено автоматически.\n"
+"Оставьте это поле пустым для использования настроек по умолчанию (%a - %t)."
 
 #: ../plugins/converter/interface.c:142
 msgid "Encoder:"
-msgstr ""
+msgstr "Кодировщик:"
 
 #: ../plugins/converter/interface.c:166
 msgid "DSP preset:"
-msgstr ""
+msgstr "Предустановка DSP:"
 
 #: ../plugins/converter/interface.c:189
 msgid "Number of threads:"
-msgstr ""
+msgstr "Количество потоков:"
 
 #: ../plugins/converter/interface.c:202
 msgid "Output sample format:"
-msgstr ""
+msgstr "Выходной формат дискретизации "
 
 #: ../plugins/converter/interface.c:209
 msgid "Keep source format"
@@ -1639,7 +1669,7 @@ msgstr "32 бит вещественный"
 
 #: ../plugins/converter/interface.c:220
 msgid "When file exists:"
-msgstr ""
+msgstr "Если файл существует:"
 
 #: ../plugins/converter/interface.c:227
 msgid "Prompt"
@@ -1655,15 +1685,15 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:386
 msgid "Edit Encoder Preset"
-msgstr ""
+msgstr "Редактировать предустановки"
 
 #: ../plugins/converter/interface.c:409
 msgid "Untitled Encoder"
-msgstr ""
+msgstr "Безымянный кодировщик"
 
 #: ../plugins/converter/interface.c:417
 msgid "Output file extension:"
-msgstr ""
+msgstr "Расширение выходного файла:"
 
 #: ../plugins/converter/interface.c:424
 msgid "E.g. mp3"
@@ -1679,6 +1709,8 @@ msgid ""
 "Example: lame - %o\n"
 "%i for input file, %o for output file, - for stdin"
 msgstr ""
+"Пример: lame - %o\n"
+"\"%i\" для входного файла, \"%o\" для выходного файла, \"-\" для stdin"
 
 #: ../plugins/converter/interface.c:453
 #, c-format
@@ -1686,14 +1718,16 @@ msgid ""
 "<small>%o - output file name\n"
 "%i - temporary input file name</small>"
 msgstr ""
+"<small>\"%o\" - имя выходного файла\n"
+"\"%i\" - имя временного входного файла</small>"
 
 #: ../plugins/converter/interface.c:462
 msgid "Method:"
-msgstr ""
+msgstr "Метод:"
 
 #: ../plugins/converter/interface.c:469
 msgid "Pipe"
-msgstr ""
+msgstr "Конвейер"
 
 #: ../plugins/converter/interface.c:470
 msgid "Temporary file"
@@ -1701,23 +1735,23 @@ msgstr "Временный файл"
 
 #: ../plugins/converter/interface.c:487
 msgid "APEv2"
-msgstr ""
+msgstr "APEv2"
 
 #: ../plugins/converter/interface.c:493
 msgid "ID3v1"
-msgstr ""
+msgstr "ID3v1"
 
 #: ../plugins/converter/interface.c:499
 msgid "OggVorbis"
-msgstr ""
+msgstr "OggVorbis"
 
 #: ../plugins/converter/interface.c:505
 msgid "FLAC"
-msgstr ""
+msgstr "FLAC"
 
 #: ../plugins/converter/interface.c:517
 msgid "ID3v2"
-msgstr ""
+msgstr "ID3v2"
 
 #: ../plugins/converter/interface.c:527
 msgid "<b>Tag writer</b>"
@@ -1725,11 +1759,14 @@ msgstr "<b>Запись тегов</b>"
 
 #: ../plugins/converter/interface.c:614
 msgid "DSP Preset Editor"
-msgstr ""
+msgstr "Редактор предустановок DSP"
 
 #: ../plugins/converter/interface.c:637
 msgid "Untitled DSP Preset"
-msgstr ""
+msgstr "Безымянная предустановка DSP"
+
+#~ msgid "Converter"
+#~ msgstr "Конвертер"
 
 #~ msgid "about.txt"
 #~ msgstr "about.txt"
@@ -1819,21 +1856,6 @@ msgstr ""
 
 #~ msgid "ALSA output plugin"
 #~ msgstr "Модуль вывода ALSA"
-
-#~ msgid "Location"
-#~ msgstr "Расположение"
-
-#~ msgid "Subtrack Index"
-#~ msgstr "Номер вложенной дорожки"
-
-#~ msgid "Tag Type(s)"
-#~ msgstr "Тип(ы) тегов"
-
-#~ msgid "Embedded Cuesheet"
-#~ msgstr "Встроенный файл cue"
-
-#~ msgid "Codec"
-#~ msgstr "Кодек"
 
 #~ msgid "DeaDBeeF now playing"
 #~ msgstr "DeaDBeeF сейчас играет"

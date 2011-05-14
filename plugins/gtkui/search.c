@@ -306,6 +306,10 @@ search_column_size_changed (DdbListview *listview, int col) {
 
 void search_col_free_user_data (void *data) {
     if (data) {
+        col_info_t *inf = data;
+        if (inf->format) {
+            free (inf->format);
+        }
         free (data);
     }
 }

@@ -15,6 +15,7 @@ _("Password")
 _("Scrobble URL")
 // OSS output plugin
 _("Device file")
+_("OSS4 samplerate bug workaround")
 // Album Artwork plugin
 _("Cache update period (hr)")
 _("Fetch from embedded tags")
@@ -75,5 +76,15 @@ _("Disc Number")
 _("Comment")
 _("Encoder / Vendor")
 _("Copyright")
+_("Location")
+_("Subtrack Index")
+_("Tag Type(s)")
+_("Embedded Cuesheet")
+_("Codec")
 // FFmpeg deocder plugin
 _("File Extensions (separate with ';')")
+//Converter GUI
+_("Convert")
+// Resampler (Secret Rabbit Code)
+_("Target Samplerate")
+_("Quality / Algorythm")

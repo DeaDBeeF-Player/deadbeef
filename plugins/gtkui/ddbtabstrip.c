@@ -47,10 +47,9 @@ plt_get_title_wrapper (int plt, char *buffer, int len) {
         strcpy (buffer, "");
         return;
     }
-    deadbeef->pl_lock ();
-    void *p = deadbeef->plt_get_for_idx (plt);
+    ddb_playlist_t *p = deadbeef->plt_get_for_idx (plt);
     deadbeef->plt_get_title (p, buffer, len);
-    deadbeef->pl_unlock ();
+    deadbeef->plt_unref (p);
     char *end;
     if (!g_utf8_validate (buffer, -1, (const gchar **)&end)) {
         *end = 0;
@@ -357,8 +356,9 @@ ddb_tabstrip_draw_tab (GtkWidget *widget, GdkDrawable *drawable, int idx, int se
     GdkColor clr;
     int fallback = 1;
     deadbeef->pl_lock ();
-    void *plt = deadbeef->plt_get_for_idx (idx);
+    ddb_playlist_t *plt = deadbeef->plt_get_for_idx (idx);
     const char *bgclr = deadbeef->plt_find_meta (plt, "gui.bgcolor");
+    deadbeef->plt_unref (plt);
     if (bgclr) {
         int r, g, b;
         if (3 == sscanf (bgclr, "%02x%02x%02x", &r, &g, &b)) {
@@ -495,7 +495,7 @@ set_tab_text_color (int idx, int selected) {
         return;
     }
     deadbeef->pl_lock ();
-    void *plt = deadbeef->plt_get_for_idx (idx);
+    ddb_playlist_t *plt = deadbeef->plt_get_for_idx (idx);
     int fallback = 1;
     const char *clr = deadbeef->plt_find_meta (plt, "gui.color");
     if (clr) {
@@ -506,6 +506,7 @@ set_tab_text_color (int idx, int selected) {
             draw_set_fg_color (fg);
         }
     }
+    deadbeef->plt_unref (plt);
     if (fallback) {
         GdkColor color;
         gtkui_get_tabstrip_text_color (&color);
@@ -697,8 +698,9 @@ on_rename_playlist1_activate           (GtkMenuItem     *menuitem,
     if (res == GTK_RESPONSE_OK) {
         const char *text = gtk_entry_get_text (GTK_ENTRY (e));
         deadbeef->pl_lock ();
-        void *p = deadbeef->plt_get_for_idx (tab_clicked);
+        ddb_playlist_t *p = deadbeef->plt_get_for_idx (tab_clicked);
         deadbeef->plt_set_title (p, text);
+        deadbeef->plt_unref (p);
         deadbeef->pl_unlock ();
     }
     gtk_widget_destroy (dlg);
