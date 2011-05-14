@@ -52,6 +52,7 @@
 
 #define DISABLE_LOCKING 0
 #define DEBUG_LOCKING 0
+//#define DETECT_PL_LOCK_RC 1
 
 // file format revision history
 // 1.1->1.2 changelog:
@@ -164,14 +165,21 @@ pl_free (void) {
 }
 
 #if DEBUG_LOCKING
-int pl_lock_cnt = 0;
+volatile int pl_lock_cnt = 0;
 #endif
-//pthread_t pl_lock_tid = 0;
+#if DETECT_PL_LOCK_RC
+static pthread_t tids[1000];
+static int ntids = 0;
+pthread_t pl_lock_tid = 0;
+#endif
 void
 pl_lock (void) {
 #if !DISABLE_LOCKING
     mutex_lock (mutex);
-    //pl_lock_tid = pthread_self();
+#if DETECT_PL_LOCK_RC
+    pl_lock_tid = pthread_self();
+    tids[ntids++] = pl_lock_tid;
+#endif
 
 #if DEBUG_LOCKING
     pl_lock_cnt++;
@@ -183,6 +191,17 @@ pl_lock (void) {
 void
 pl_unlock (void) {
 #if !DISABLE_LOCKING
+#if DETECT_PL_LOCK_RC
+    if (ntids > 0) {
+        ntids--;
+    }
+    if (ntids > 0) {
+        pl_lock_tid = tids[ntids-1];
+    }
+    else {
+        pl_lock_tid = 0;
+    }
+#endif
     mutex_unlock (mutex);
 #if DEBUG_LOCKING
     pl_lock_cnt--;
