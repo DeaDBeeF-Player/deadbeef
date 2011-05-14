@@ -511,6 +511,26 @@ load_encoder_presets (void) {
     return 0;
 }
 
+void
+free_encoder_presets (void) {
+    ddb_encoder_preset_t *p = encoder_presets;
+    while (p) {
+        ddb_encoder_preset_t *next = p->next;
+        if (p->title) {
+            free (p->title);
+        }
+        if (p->ext) {
+            free (p->ext);
+        }
+        if (p->encoder) {
+            free (p->encoder);
+        }
+        free (p);
+        p = next;
+    }
+    encoder_presets = NULL;
+}
+
 int
 load_dsp_presets (void) {
     ddb_dsp_preset_t *tail = NULL;
@@ -539,6 +559,23 @@ load_dsp_presets (void) {
     }
     free (namelist);
     return 0;
+}
+
+void
+free_dsp_presets (void) {
+    ddb_dsp_preset_t *p = dsp_presets;
+    while (p) {
+        ddb_dsp_preset_t *next = p->next;
+        if (p->title) {
+            free (p->title);
+        }
+        if (p->chain) {
+            deadbeef->dsp_preset_free (p->chain);
+        }
+        free (p);
+        p = next;
+    }
+    dsp_presets = NULL;
 }
 
 ddb_dsp_preset_t *
@@ -947,6 +984,8 @@ converter_start (void) {
 
 int
 converter_stop (void) {
+    free_encoder_presets ();
+    free_dsp_presets ();
     return 0;
 }
 
