@@ -709,28 +709,12 @@ copy_file (const char *in, const char *out, int img_size) {
     return 0;
 }
 
+static const char *filter_custom_mask = NULL;
 static int
 filter_custom (const struct dirent *f)
 {
-    char mask[200] = "";
-    char *p = artwork_filemask;
-    while (p) {
-        *mask = 0;
-        char *e = strchr (p, ';');
-        if (e) {
-            strncpy (mask, p, e-p);
-            mask[e-p] = 0;
-            e++;
-        }
-        else {
-            strcpy (mask, p);
-        }
-        if (*mask) {
-            if (!fnmatch (mask, f->d_name, FNM_CASEFOLD)) {
-                return 1;
-            }
-        }
-        p = e;
+    if (!fnmatch (filter_custom_mask, f->d_name, FNM_CASEFOLD)) {
+        return 1;
     }
     return 0;
 }
@@ -969,9 +953,30 @@ fetcher_thread (void *none)
                         *slash = 0; // assuming at least one slash exist
                     }
                     trace ("scanning directory: %s\n", path);
-                    files_count = scandir (path, &files, filter_custom, alphasort);
+                    char mask[200] = "";
+                    char *p = artwork_filemask;
+                    while (p) {
+                        *mask = 0;
+                        char *e = strchr (p, ';');
+                        if (e) {
+                            strncpy (mask, p, e-p);
+                            mask[e-p] = 0;
+                            e++;
+                        }
+                        else {
+                            strcpy (mask, p);
+                        }
+                        if (*mask) {
+                            filter_custom_mask = mask;
+                            files_count = scandir (path, &files, filter_custom, NULL);
+                            if (files_count != 0) {
+                                break;
+                            }
+                        }
+                        p = e;
+                    }
                     if (files_count == 0) {
-                        files_count = scandir (path, &files, filter_jpg, alphasort);
+                        files_count = scandir (path, &files, filter_jpg, NULL);
                     }
 
                     if (files_count > 0) {
