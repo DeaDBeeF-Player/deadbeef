@@ -56,6 +56,7 @@ case "$host" in
     AC_DEFINE(ARCH_UNKNOWN, 1, [architecture is unknown])
     ;;
 esac
+AC_SUBST(LIB)
 
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 

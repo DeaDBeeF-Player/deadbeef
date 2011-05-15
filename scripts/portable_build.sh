@@ -1,11 +1,12 @@
 #!/bin/sh
 VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print'`
 ORIGIN=`pwd | perl -ne 'chomp and print'`
+AP=$HOME/bin/autopackage
+export CC=$AP/apbuild/apgcc
+export CXX=$AP/apbuild/apgcc 
 export APBUILD_STATIC_LIBGCC=1
 
 ./autogen.sh
-export CC=$ORIGIN/tools/apbuild/apgcc
-export CXX=$ORIGIN/tools/apbuild/apgcc
 
 ./configure --enable-staticlink --enable-portable --disable-artwork-imlib2
 sed -i 's/-lstdc++ -lm -lgcc_s -lc -lgcc_s/-lm -lc/g' libtool
