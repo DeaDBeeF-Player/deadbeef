@@ -37,6 +37,9 @@ version 0.5.0
 	customizable lists of supported file extensions in SNDFILE and FFMPEG plugins
 	fixed rendering of right-to-left text in playlist group titles
 	added description with example to shellexec plugin
+	fixed mp3 gapless playback (via LAME info tags)
+	improved search speed
+	added --play-pause command line option
 
 version 0.4.4
 	fixed race condition in streamer interaction with output plugins
