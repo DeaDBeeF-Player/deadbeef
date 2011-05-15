@@ -697,6 +697,7 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
             }
 
             char enc[2000];
+            memset (enc, 0, sizeof (enc));
 
             // formatting: %o = outfile, %i = infile
             char *e = encoder_preset->encoder;
