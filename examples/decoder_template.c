@@ -18,7 +18,6 @@ typedef struct {
 } example_info_t;
 
 static const char * exts[] = { "example", NULL }; // e.g. mp3
-static const char *filetypes[] = { "example", NULL }; // e.g. MP3
 
 // allocate codec control structure
 static DB_fileinfo_t *
@@ -106,13 +105,16 @@ example_seek (DB_fileinfo_t *_info, float time) {
 // return NULL on failure
 
 static DB_playItem_t *
-example_insert (DB_playItem_t *after, const char *fname) {
+example_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     // open file
     DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
         trace ("example: failed to fopen %s\n", fname);
         return NULL;
     }
+
+    // decoder_* functions are imaginary -- you should replace them with real
+    // decoder library calls
     decoder_info_t *di = decoder_open ();
     if (!di) {
         trace ("example: failed to init decoder\n");
@@ -126,11 +128,22 @@ example_insert (DB_playItem_t *after, const char *fname) {
         return NULL;
     }
 
+    // replace "example" with your file type (e.g. MP3, WAV, etc)
+    const char *ft = "example";
+
+    // no cuesheet, prepare track for addition
+    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
+
+    deadbeef->pl_replace_meta (it, ":FILETYPE", ft);
+    deadbeef->plt_set_item_duration (plt, it, (float)ti.total_num_samples/ti.samplerate);
+
     // now we should have track duration, and can try loading cuesheet
     // 1st try embedded cuesheet
     if (ti.embeddedcuesheet[0]) {
-        DB_playItem_t *cue = deadbeef->pl_insert_cue_from_buffer (after, fname, ti.embeddedcuesheet, strlen (ti.embeddedcuesheet), &plugin, plugin.filetypes[0], ti.total_num_samples, ti.samplerate);
+        DB_playItem_t *cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, ti.embeddedcuesheet, strlen (ti.embeddedcuesheet), ti.total_num_samples, ti.samplerate);
         if (cue) {
+            deadbeef->pl_item_unref (it);
+            deadbeef->pl_item_unref (cue);
             // cuesheet loaded
             decoder_free (di);
             return cue;
@@ -138,19 +151,15 @@ example_insert (DB_playItem_t *after, const char *fname) {
     }
 
     // embedded cuesheet not found, try external one
-    DB_playItem_t *cue = deadbeef->pl_insert_cue (after, fname, &plugin, plugin.filetypes[0], ti.total_num_samples, ti.samplerate);
+    DB_playItem_t *cue = deadbeef->plt_insert_cue (plt, after, it, ti.total_num_samples, ti.samplerate);
     if (cue) {
         // cuesheet loaded
+        deadbeef->pl_item_unref (it);
+        deadbeef->pl_item_unref (cue);
         decoder_free (di);
         return cue;
     }
 
-    // no cuesheet, prepare track for addition
-    DB_playItem_t *it = deadbeef->pl_item_alloc ();
-    it->decoder_id = deadbeef->plug_get_decoder_id (plugin.plugin.id);
-    it->fname = strdup (fname);
-    it->filetype = filetypes[0];
-    deadbeef->pl_set_item_duration (it, (float)ti.total_num_samples/ti.samplerate);
 
     // add metainfo
     if (!strlen (ti.title)) {
@@ -167,7 +176,7 @@ example_insert (DB_playItem_t *after, const char *fname) {
     decoder_free (di);
 
     // now the track is ready, insert into playlist
-    after = deadbeef->pl_insert_item (after, it);
+    after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
     return after;
 }
@@ -196,10 +205,9 @@ static DB_decoder_t plugin = {
     .plugin.version_minor = 1,
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.name = "short plugin name",
+    .plugin.id = "example",
     .plugin.descr = "plugin description",
-    .plugin.author = "author name",
-    .plugin.email = "author email",
-    .plugin.website = "author/plugin website",
+    .plugin.copyright = "copyright message - author(s), license, etc",
     .plugin.start = example_start,
     .plugin.stop = example_stop,
     .init = example_init,
@@ -209,8 +217,6 @@ static DB_decoder_t plugin = {
     .seek_sample = example_seek_sample,
     .insert = example_insert,
     .exts = exts,
-    .id = "example",
-    .filetypes = filetypes
 };
 
 DB_plugin_t *

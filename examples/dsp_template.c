@@ -51,7 +51,7 @@ example_reset (ddb_dsp_context_t *ctx) {
 }
 
 int
-example_process (ddb_dsp_context_t *ctx, float *samples, int nframes, ddb_waveformat_t *fmt) {
+example_process (ddb_dsp_context_t *ctx, float *samples, int nframes, int maxframes, ddb_waveformat_t *fmt, float *r) {
     ddb_example_t *example = (ddb_example_t *)ctx;
     for (int i = 0; i < nframes*fmt->channels; i++) {
         samples[i] *= example->level;
@@ -115,9 +115,7 @@ static DB_dsp_t plugin = {
     .plugin.id = "example",
     .plugin.name = "example",
     .plugin.descr = "example DSP Plugin",
-    .plugin.author = "",
-    .plugin.email = "",
-    .plugin.website = "",
+    .plugin.copyright = "copyright message - author(s), license, etc",
     .num_params = example_num_params,
     .get_param_name = example_get_param_name,
     .set_param = example_set_param,
