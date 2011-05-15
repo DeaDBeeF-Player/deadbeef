@@ -2049,3 +2049,8 @@ streamer_set_dsp_chain (ddb_dsp_context_t *chain) {
         streamer_set_seek (playpos);
     }
 }
+
+void
+streamer_get_output_format (ddb_waveformat_t *fmt) {
+    memcpy (fmt, &output_format, sizeof (ddb_waveformat_t));
+}

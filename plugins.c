@@ -1081,9 +1081,12 @@ plug_reinit_sound (void) {
 
     ddb_waveformat_t fmt = {0};
 
+    streamer_get_output_format (&fmt);
     if (prev) {
         state = prev->state ();
-        memcpy (&fmt, &prev->fmt, sizeof (fmt));
+        if (!fmt.channels) {
+            memcpy (&fmt, &prev->fmt, sizeof (fmt));
+        }
         prev->free ();
     }
 
