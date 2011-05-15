@@ -34,23 +34,23 @@ fi
 case "$host" in
   i386-*-* | i486-*-* | i586-*-* | i686-*-* | i86pc-*-*)
     AC_DEFINE(ARCH_X86_32, 1, [architecture is x86])
-    LIB="lib-x86-32"
+    LIB="../deadbeef-deps/lib-x86-32"
     ;;
   x86_64-apple-*)
     AC_DEFINE(ARCH_X86_64_OSX, 1, [architecture is x86_64 for OSX])
-    LIB="lib-x86-64-osx"
+    LIB="../deadbeef-deps/lib-x86-64-osx"
     ;;
   x86_64-*-* | amd64-*-*)
     AC_DEFINE(ARCH_X86_64, 1, [architecture is x86_64])
-    LIB="lib-x86-64"
+    LIB="../deadbeef-deps/lib-x86-64"
     ;;
   powerpc-*-* )
     AC_DEFINE(ARCH_PPC_32, 1, [architecture is ppc32])
-    LIB="lib-ppc-32"
+    LIB="../deadbeef-deps/lib-ppc-32"
     ;;
   powerpc64-*-* )
     AC_DEFINE(ARCH_PPC_64, 1, [architecture is ppc64])
-    LIB="lib-ppc-64"
+    LIB="../deadbeef-deps/lib-ppc-64"
     ;;
   *)
     AC_DEFINE(ARCH_UNKNOWN, 1, [architecture is unknown])

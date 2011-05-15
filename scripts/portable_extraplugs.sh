@@ -6,8 +6,8 @@ export CC=$AP/apbuild/apgcc
 export CXX=$AP/apbuild/apgcc 
 export APBUILD_STATIC_LIBGCC=1
 
-ZLIB_LIBS="$ORIGIN/lib-x86-32/lib/libz.a"
-CFLAGS="-I$ORIGIN/lib-x86-32/include"
+ZLIB_LIBS="$ORIGIN/../deadbeef-deps/lib-x86-32/lib/libz.a"
+CFLAGS="-I$ORIGIN/../deadbeef-deps/lib-x86-32/include"
 
 for i in shn dumb ao ; do
     echo cd
