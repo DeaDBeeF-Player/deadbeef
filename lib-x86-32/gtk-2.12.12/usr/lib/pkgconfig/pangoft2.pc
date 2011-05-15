@@ -1,0 +1,11 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=/usr/lib
+includedir=${prefix}/include
+
+Name: Pango FT2 and Pango Fc
+Description: Freetype 2.0 and fontconfig font support for Pango
+Version: 1.20.5
+Requires: pango freetype2 fontconfig
+Libs: -L${libdir} -lpangoft2-1.0
+Cflags: -I${includedir}/pango-1.0

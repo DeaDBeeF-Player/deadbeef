@@ -133,7 +133,7 @@ CFLAGS="$CFLAGS $INSANE_CFLAGS -D_GNU_SOURCE $PREFIXFLAGS"
 
 if test "x$enable_staticlink" != "xno" ; then
     HAVE_ZLIB=yes
-    ZLIB_LIBS="../../$LIB/libz.a"
+    ZLIB_LIBS="../../$LIB/lib/libz.a"
 else
     AC_CHECK_LIB([z], [main], [HAVE_ZLIB=yes])
     ZLIB_LIBS="-lz"
@@ -142,7 +142,7 @@ AC_SUBST(ZLIB_LIBS)
 
 if test "x$enable_staticlink" != "xno" ; then
     HAVE_ZIP=yes
-    ZIP_LIBS="../../$LIB/libzip.a ../../$LIB/libz.a"
+    ZIP_LIBS="../../$LIB/lib/libzip.a ../../$LIB/lib/libz.a"
 else
     AC_CHECK_LIB([zip], [main], [HAVE_ZIP=yes])
     ZIP_LIBS="-lzip"
@@ -165,7 +165,7 @@ fi
 
 if test "x$enable_ffmpeg" != "xno" ; then
 if test "x$enable_staticlink" != "xno" ; then
-    FFMPEG_DEPS_LIBS="../../$LIB/libavcodec.a -lpthread ../../$LIB/libavformat.a ../../$LIB/libavcodec.a ../../$LIB/libavutil.a ../../$LIB/libavcore.a -lm ../../$LIB/libz.a "
+    FFMPEG_DEPS_LIBS="../../$LIB/lib/libavcodec.a -lpthread ../../$LIB/lib/libavformat.a ../../$LIB/lib/libavcodec.a ../../$LIB/lib/libavutil.a ../../$LIB/lib/libavcore.a -lm ../../$LIB/lib/libz.a "
     AC_SUBST(FFMPEG_DEPS_LIBS)
     HAVE_FFMPEG=yes
 else
@@ -175,7 +175,7 @@ fi
 
 if test "x$enable_staticlink" != "xno" ; then
     HAVE_DBUS=yes
-    DBUS_DEPS_LIBS="../../$LIB/libdbus-1.a ../../$LIB/libexpat.a -lrt"
+    DBUS_DEPS_LIBS="../../$LIB/lib/libdbus-1.a ../../$LIB/lib/libexpat.a -lrt"
     DBUS_DEPS_CFLAGS="-I../../$LIB/include/dbus-1"
     AC_SUBST(DBUS_DEPS_LIBS)
 else
@@ -203,7 +203,7 @@ fi
 dnl curl lib
 if test "x$enable_staticlink" != "xno" ; then
     HAVE_CURL=yes
-    CURL_LIBS="../../$LIB/libcurl.a -lrt"
+    CURL_LIBS="../../$LIB/lib/libcurl.a -lrt"
     AC_SUBST(CURL_LIBS)
 else
     AC_CHECK_LIB([curl], [main], [HAVE_CURL=yes])
@@ -216,7 +216,7 @@ dnl mpgmad plugin
 if test "x$enable_mpgmad" != "xno" ; then
 if test "x$enable_staticlink" != "xno" ; then
     HAVE_MPGMAD=yes
-    MAD_LIBS="../../$LIB/libmad.a"
+    MAD_LIBS="../../$LIB/lib/libmad.a"
     AC_SUBST(MAD_LIBS)
 else
     AC_CHECK_LIB([mad], [main], [HAVE_LIBMAD=yes])
@@ -232,7 +232,7 @@ dnl vorbis plugin
 if test "x$enable_vorbis" != "xno" ; then
 if test "x$enable_staticlink" != "xno" ; then
     HAVE_VORBISPLUGIN=yes
-    VORBIS_LIBS="../../$LIB/libogg.a ../../$LIB/libvorbis.a ../../$LIB/libvorbisenc.a ../../$LIB/libvorbisfile.a"
+    VORBIS_LIBS="../../$LIB/lib/libogg.a ../../$LIB/lib/libvorbis.a ../../$LIB/lib/libvorbisenc.a ../../$LIB/lib/libvorbisfile.a"
     AC_SUBST(VORBIS_LIBS)
 else
     AC_CHECK_LIB([vorbis], [main], [HAVE_VORBIS=yes])
@@ -249,7 +249,7 @@ dnl flac plugin
 if test "x$enable_flac" != "xno" ; then
 if test "x$enable_staticlink" != "xno" ; then
     HAVE_FLACPLUGIN=yes
-    FLAC_LIBS="../../$LIB/libFLAC.a ../../$LIB/libogg.a"
+    FLAC_LIBS="../../$LIB/lib/libFLAC.a ../../$LIB/lib/libogg.a"
     AC_SUBST(FLAC_LIBS)
 else
     AC_CHECK_LIB([FLAC], [main], [HAVE_FLAC=yes])
@@ -265,7 +265,7 @@ dnl wavpack plugin
 if test "x$enable_wavpack" != "xno" ; then
 if test "x$enable_staticlink" != "xno" ; then
     HAVE_WAVPACKPLUGIN=yes
-    WAVPACK_LIBS="../../$LIB/libwavpack.a"
+    WAVPACK_LIBS="../../$LIB/lib/libwavpack.a"
     AC_SUBST(WAVPACK_LIBS)
 else
     AC_CHECK_LIB([wavpack], [main], [HAVE_WAVPACK=yes])
@@ -281,7 +281,7 @@ dnl libsndfile plugin
 if test "x$enable_sndfile" != "xno" ; then
 if test "x$enable_staticlink" != "xno" ; then
     HAVE_SNDFILEPLUGIN=yes
-    SNDFILE_LIBS="../../$LIB/libsndfile.a"
+    SNDFILE_LIBS="../../$LIB/lib/libsndfile.a"
     AC_SUBST(SNDFILE_LIBS)
 else
     AC_CHECK_LIB([sndfile], [main], [HAVE_SNDFILE=yes])
@@ -306,7 +306,7 @@ dnl cdda plugin
 if test "x$enable_cdda" != "xno" ; then
 if test "x$enable_staticlink" != "xno" ; then
     HAVE_CDDAPLUGIN=yes
-    CDDA_LIBS="../../$LIB/libcdio.a ../../$LIB/libudf.a ../../$LIB/libiso9660.a ../../$LIB/libcddb.a"
+    CDDA_LIBS="../../$LIB/lib/libcdio.a ../../$LIB/lib/libudf.a ../../$LIB/lib/libiso9660.a ../../$LIB/lib/libcddb.a"
     AC_SUBST(CDDA_LIBS)
 else
     AC_CHECK_LIB([cdio], [main], [HAVE_CDIO=yes])
@@ -413,10 +413,10 @@ fi
 if test "x$enable_artwork" != "xno" ; then
     if test "x$enable_staticlink" != "xno" ; then
         HAVE_JPEG=yes
-        JPEG_DEPS_LIBS="../../$LIB/libjpeg.a"
+        JPEG_DEPS_LIBS="../../$LIB/lib/libjpeg.a"
         AC_SUBST(JPEG_DEPS_LIBS)
         HAVE_PNG=yes
-        PNG_DEPS_LIBS="../../$LIB/libpng15.a ../../$LIB/libz.a"
+        PNG_DEPS_LIBS="../../$LIB/lib/libpng.a ../../$LIB/lib/libz.a"
         AC_SUBST(PNG_DEPS_LIBS)
         HAVE_IMLIB2=no
     else
@@ -453,7 +453,7 @@ fi
 
 if test "x$enable_src" != "xno" ; then
 if test "x$enable_staticlink" != "xno" ; then
-    LIBSAMPLERATE_DEPS_LIBS="../../$LIB/libsamplerate.a -lpthread ${DL_LIBS}"
+    LIBSAMPLERATE_DEPS_LIBS="../../$LIB/lib/libsamplerate.a -lpthread ${DL_LIBS}"
     AC_SUBST(LIBSAMPLERATE_DEPS_LIBS)
     HAVE_DSP_SRC=yes
 else
@@ -502,7 +502,7 @@ fi
 
 if test "x$enable_aac" != "xno" ; then
 if test "x$enable_staticlink" != "xno" ; then
-    FAAD2_LIBS="../../$LIB/libfaad.a"
+    FAAD2_LIBS="../../$LIB/lib/libfaad.a"
     AC_SUBST(FAAD2_LIBS)
     HAVE_AAC=yes
 else

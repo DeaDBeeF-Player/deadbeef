@@ -1,0 +1,13 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+giomoduledir=${libdir}/gio/modules
+
+Name: GIO
+Description: glib I/O library
+Version: 2.16.6
+Requires: glib-2.0,gobject-2.0,gmodule-no-export-2.0
+Libs: -L${libdir} -lgio-2.0
+Cflags: 

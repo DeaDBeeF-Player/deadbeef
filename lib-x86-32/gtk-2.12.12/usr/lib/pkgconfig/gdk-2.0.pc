@@ -1,0 +1,13 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=/usr/lib
+includedir=${prefix}/include
+target=x11
+
+Name: GDK
+Description: GIMP Drawing Kit (${target} target)
+Version: 2.12.12
+Requires: gdk-pixbuf-2.0 pango pangocairo
+Requires.private: fontconfig x11 xext xrender xinerama xi xrandr xcursor xfixes xcomposite xdamage
+Libs: -L${libdir} -lgdk-${target}-2.0 
+Cflags: -I${includedir}/gtk-2.0 -I${libdir}/gtk-2.0/include 

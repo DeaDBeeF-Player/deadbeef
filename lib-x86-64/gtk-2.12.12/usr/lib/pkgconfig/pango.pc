@@ -1,0 +1,13 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=/usr/lib
+includedir=${prefix}/include
+
+pango_module_version=1.6.0
+
+Name: Pango
+Description: Internationalized text handling
+Version: 1.20.5
+Requires: glib-2.0,gobject-2.0,gmodule-no-export-2.0
+Libs: -L${libdir} -lpango-1.0 
+Cflags: -I${includedir}/pango-1.0

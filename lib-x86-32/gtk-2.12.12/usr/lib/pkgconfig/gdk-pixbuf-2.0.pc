@@ -1,0 +1,13 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=/usr/lib
+includedir=${prefix}/include
+
+Name: GdkPixbuf
+Description: Image loading and scaling
+Version: 2.12.12
+Requires: gobject-2.0,gmodule-no-export-2.0
+Libs: -L${libdir} -lgdk_pixbuf-2.0 -lm
+Cflags: -I${includedir}/gtk-2.0 
+
+Libs.private: -ltiff -ljpeg -lpng12

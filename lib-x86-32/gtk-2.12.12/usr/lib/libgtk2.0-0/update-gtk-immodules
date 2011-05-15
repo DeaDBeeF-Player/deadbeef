@@ -1,0 +1,31 @@
+#!/bin/sh
+
+# this script is a no-op since 2.10.3-2
+exit 0
+
+set -e
+
+VERSION="2.12.12"
+GTK_BINARY_VERSION="2.10.0"
+APIVER="2.0"
+SHARED_PKG="libgtk2.0-0"
+TMPFILE=$(mktemp -t "gtk+$APIVER-$VERSION.XXXXXXXXXX")
+
+echo -n "Updating the IM modules list for Gtk+ $VERSION..."
+"/usr/lib/$SHARED_PKG/gtk-query-immodules-$APIVER" \
+    $(find "/usr/lib/gtk-$APIVER/$GTK_BINARY_VERSION/immodules" -name '*.so') \
+    > "$TMPFILE"
+if [ "x`cat "$TMPFILE" | grep -v '^#'`" = "x" ]; then
+    echo "no Gtk+ IM modules found."
+else
+    echo "done."
+fi
+if ! test -d "/etc/gtk-$APIVER"; then
+    echo -n "Creating /etc/gtk-$APIVER..."
+    mkdir "/etc/gtk-$APIVER"
+    echo "done."
+fi
+cp "$TMPFILE" "/etc/gtk-$APIVER/gtk.immodules"
+chmod 644 "/etc/gtk-$APIVER/gtk.immodules"
+
+rm -f "$TMPFILE"

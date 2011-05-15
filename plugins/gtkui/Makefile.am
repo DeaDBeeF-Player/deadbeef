@@ -57,7 +57,8 @@ ddb_gui_GTK2_la_CFLAGS = -std=c99 $(GTKUI_DEPS_CFLAGS)
 
 # fallback lib
 if STATICLINK
-GTK_ROOT=../../../deadbeef-deps/gtk-debian/usr
+GTK_ROOT=@top_srcdir@/$(LIB)/gtk-2.12.12/usr
+#../../../deadbeef-deps/gtk-debian/usr
 
 ddb_gui_GTK2_fallback_la_SOURCES = $(gtkui_VALABUILTSOURCES) $(GTKUI_SOURCES)
 ddb_gui_GTK2_fallback_la_LDFLAGS = -module

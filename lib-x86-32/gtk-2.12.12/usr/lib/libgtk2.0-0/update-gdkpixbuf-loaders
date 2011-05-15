@@ -1,0 +1,28 @@
+#!/bin/sh
+
+# this script is a no-op since 2.10.3-2
+exit 0
+
+set -e
+
+VERSION="2.12.12"
+APIVER="2.0"
+SHARED_PKG="libgtk2.0-0"
+TMPFILE=$(mktemp -t "gtk+$APIVER-$VERSION.XXXXXXXXXX")
+
+echo -n "Updating the gdk-pixbuf loaders list for Gtk+ $VERSION..."
+"/usr/lib/$SHARED_PKG/gdk-pixbuf-query-loaders" > $TMPFILE
+if [ "x`cat "$TMPFILE" | grep -v '^#'`" = "x" ]; then
+    echo "no gdk-pixbuf loader found."
+else
+    echo "done."
+fi
+if ! test -d "/etc/gtk-$APIVER"; then
+    echo -n "Creating /etc/gtk-$APIVER..."
+    mkdir "/etc/gtk-$APIVER"
+    echo "done."
+fi
+cp "$TMPFILE" "/etc/gtk-$APIVER/gdk-pixbuf.loaders"
+chmod 644 "/etc/gtk-$APIVER/gdk-pixbuf.loaders"
+
+rm -f "$TMPFILE"
