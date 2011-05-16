@@ -274,6 +274,7 @@ plt_ref (playlist_t *plt) {
 void
 plt_unref (playlist_t *plt) {
     LOCK;
+    assert (plt->refc > 0);
     plt->refc--;
     if (plt->refc < 0) {
         trace ("\033[0;31mplaylist: bad refcount on playlist %p (%s)\033[37;0m\n", plt, plt->title);
@@ -410,6 +411,7 @@ plt_remove (int plt) {
         prev = p;
         p = p->next;
     }
+    streamer_notify_playlist_deleted (p);
     if (!plt_loading) {
         // move files (will decrease number of files by 1)
         for (int i = plt+1; i < playlists_count; i++) {
@@ -603,7 +605,6 @@ plt_get_modification_idx (playlist_t *plt) {
 void
 plt_free (playlist_t *plt) {
     LOCK;
-    streamer_notify_playlist_deleted (plt);
     plt_clear (plt);
     free (plt->title);
 

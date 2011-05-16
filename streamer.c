@@ -327,12 +327,13 @@ streamer_move_to_nextsong (int reason) {
             }
             else {
                 trace ("%s not found in current streaming playlist\n", pl_find_meta (it, ":URI"));
-                // find playlist
-                playlist_t *old = streamer_playlist;
-                streamer_playlist = plt_get_list ();
-                int i = 0;
-                while (streamer_playlist) {
-                    trace ("searching for %s in playlist %d\n", pl_find_meta (it, ":URI"), i);
+
+                playlist_t *p = pl_get_playlist (it);
+                if (p) {
+                    if (streamer_playlist) {
+                        plt_unref (streamer_playlist);
+                    }
+                    streamer_playlist = p;
                     int r = str_get_idx_of (it);
                     if (r >= 0) {
                         trace ("%s found in playlist %d\n", pl_find_meta (it, ":URI"), i);
@@ -341,11 +342,8 @@ streamer_move_to_nextsong (int reason) {
                         streamer_set_nextsong (r, 3);
                         return 0;
                     }
-                    i++;
-                    streamer_playlist = streamer_playlist->next;
                 }
                 trace ("%s not found in any playlists\n", pl_find_meta (it, ":URI"));
-                streamer_playlist = old;
                 pl_item_unref (it);
             }
         }
@@ -355,7 +353,6 @@ streamer_move_to_nextsong (int reason) {
     if (reason == 1) {
         if (streamer_playlist) {
             plt_unref (streamer_playlist);
-            streamer_playlist = NULL;
         }
         streamer_playlist = plt_get_curr ();
         // check if prev song is in this playlist
@@ -501,7 +498,6 @@ streamer_move_to_prevsong (void) {
     pl_lock ();
     if (streamer_playlist) {
         plt_unref (streamer_playlist);
-        streamer_playlist = NULL;
     }
     streamer_playlist = plt_get_curr ();
     // check if prev song is in this playlist
@@ -880,7 +876,6 @@ streamer_set_nextsong (int song, int pstate) {
             pl_lock ();
             if (streamer_playlist) {
                 plt_unref (streamer_playlist);
-                streamer_playlist = NULL;
             }
             streamer_playlist = plt_get_curr ();
             pl_unlock ();
@@ -1945,9 +1940,12 @@ streamer_play_current_track (void) {
 
         streamer_set_nextsong (idx, 1);
         pl_lock ();
+        if (streamer_playlist) {
+            plt_unref (streamer_playlist);
+        }
         streamer_playlist = plt;
-        plt_ref (plt);
         pl_unlock ();
+        return;
     }
     else {
         // restart currently playing track
@@ -1969,7 +1967,6 @@ streamer_set_current_playlist (int plt) {
     pl_lock ();
     if (streamer_playlist) {
         plt_unref (streamer_playlist);
-        streamer_playlist = NULL;
     }
     streamer_playlist = plt_get_for_idx (plt);
     pl_unlock ();
