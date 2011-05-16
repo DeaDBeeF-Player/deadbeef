@@ -631,22 +631,69 @@ dsp_preset_replace (ddb_dsp_preset_t *from, ddb_dsp_preset_t *to) {
     to->next = from->next;
 }
 
+
 static void
-get_output_path (DB_playItem_t *it, const char *outfolder, const char *outfile, ddb_encoder_preset_t *encoder_preset, char *out, int sz) {
-    char fname[PATH_MAX];
+get_output_field (DB_playItem_t *it, const char *field, char *out, int sz)
+{
     int idx = deadbeef->pl_get_idx_of (it);
-    deadbeef->pl_format_title (it, idx, fname, sizeof (fname), -1, outfile);
+    deadbeef->pl_format_title (it, idx, out, sz, -1, field);
+
     // replace invalid chars
-    char *p = fname;
     char invalid[] = "/\\?%*:|\"<>";
+    char *p = out;
     while (*p) {
         if (strchr (invalid, *p)) {
             *p = '_';
         }
         p++;
     }
-    snprintf (out, sz, "%s/%s.%s", outfolder, fname, encoder_preset->ext);
+    trace ("field '%s' expanded to '%s'\n", field, out);
+}
 
+static void
+get_output_path (DB_playItem_t *it, const char *outfolder, const char *outfile, ddb_encoder_preset_t *encoder_preset, char *out, int sz) {
+    int l;
+    char fname[PATH_MAX];
+    char *path = strdup (outfolder);
+    char *pattern = strdup (outfile);
+
+    // replace invalid chars
+    char invalid[] = "?%*:|\"<>";
+    char *p = path;
+    while (*p) {
+        if (strchr (invalid, *p)) {
+            *p = '_';
+        }
+        p++;
+    }
+    snprintf (out, sz, "%s/", path);
+
+    // split path and create directories
+    char *field = pattern;
+    char *s = pattern;
+    while (*s) {
+        if ((*s == '/') || (*s == '\\')) {
+            *s = '\0';
+            get_output_field (it, field, fname, sizeof(fname));
+
+            l = strlen (out);
+            snprintf (out+l, sz-l, "%s/", fname);
+            mkdir (out, 0755);
+
+            field = s+1;
+        }
+        s++;
+    }
+
+    // last part of outfile is the filename
+    get_output_field (it, field, fname, sizeof(fname));
+
+    l = strlen (out);
+    snprintf (out+l, sz-l, "%s.%s", fname, encoder_preset->ext);
+    trace ("converter output file is '%s'\n", out);
+
+    free (path);
+    free (pattern);
 }
 
 int
@@ -706,7 +753,7 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
             int len = sizeof (enc);
             while (e && *e) {
                 if (len <= 0) {
-                    fprintf (stderr, "converter: failed to assemble encoder command line - buffer is not big enough, try to shorten your parameters. max allowed length is %d characters\n", sizeof (enc));
+                    fprintf (stderr, "converter: failed to assemble encoder command line - buffer is not big enough, try to shorten your parameters. max allowed length is %lu characters\n", sizeof (enc));
                     goto error;
                 }
                 if (e[0] == '%' && e[1]) {
