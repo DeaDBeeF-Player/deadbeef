@@ -442,7 +442,6 @@ streamer_move_to_nextsong (int reason) {
                 return -1;
             }
             int r = str_get_idx_of (it);
-            extern pthread_t pl_lock_tid;
             pl_unlock ();
             streamer_set_nextsong (r, 1);
             return 0;
