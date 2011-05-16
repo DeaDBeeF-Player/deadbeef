@@ -291,7 +291,7 @@ on_import_fb2k_preset_clicked                  (GtkButton       *button,
                         ddb_equalizer_set_preamp (DDB_EQUALIZER (eqwin), 0);
                         for (int i = 0; i < 18; i++) {
                             ddb_equalizer_set_band (DDB_EQUALIZER (eqwin), i, vals[i]);
-                            set_param (eq, i+1, amp_to_db (vals[i]));
+                            set_param (eq, i+1, vals[i]);
                         }
                         gdk_window_invalidate_rect (eqwin->window, NULL, FALSE);
                         deadbeef->conf_save ();
