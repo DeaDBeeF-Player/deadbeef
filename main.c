@@ -599,6 +599,8 @@ main (int argc, char *argv[]) {
         e--;
     }
     *e = 0;
+#else
+    strcpy (dbinstalldir, PREFIX);
 #endif
 
 #ifdef __linux__
