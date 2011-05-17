@@ -103,7 +103,8 @@ static time_t started_timestamp; // result of calling time(NULL)
 static playItem_t *streaming_track;
 static playItem_t *playlist_track;
 
-static ddb_waveformat_t output_format;
+static ddb_waveformat_t output_format; // format that was requested after DSP
+static ddb_waveformat_t orig_output_format; // format that was requested before DSP
 static int formatchanged;
 
 static DB_fileinfo_t *fileinfo;
@@ -888,6 +889,16 @@ streamer_set_nextsong (int song, int pstate) {
 }
 
 void
+streamer_set_generic_output_format (void) {
+        output_format.bps = 16;
+        output_format.is_float = 0;
+        output_format.channels = 2;
+        output_format.samplerate = 44100;
+        output_format.channelmask = 3;
+        streamer_set_output_format ();
+}
+
+void
 streamer_set_seek (float pos) {
     seekpos = pos;
 }
@@ -963,14 +974,18 @@ streamer_start_new_song (void) {
         avg_bitrate = -1;
         if (output->state () != OUTPUT_STATE_PLAYING) {
             streamer_reset (1);
-            if (!dsp_on && fileinfo && memcmp (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t))) {
+            if (fileinfo && memcmp (&orig_output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t))) {
                 memcpy (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
+                memcpy (&orig_output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
                 fprintf (stderr, "streamer_set_output_format %dbit %s %dch %dHz channelmask=%X\n", output_format.bps, output_format.is_float ? "float" : "int", output_format.channels, output_format.samplerate, output_format.channelmask);
                 streamer_set_output_format ();
             }
             if (output->state () != OUTPUT_STATE_PLAYING) {
+                // give a chance to DSP plugins to convert format to something
+                // supported
+                streamer_set_generic_output_format ();
                 if (0 != output->play ()) {
-                    memset (&output_format, 0, sizeof (output_format));
+                    memset (&orig_output_format, 0, sizeof (orig_output_format));
                     fprintf (stderr, "streamer: failed to start playback (start track)\n");
                     streamer_set_nextsong (-2, 0);
                 }
@@ -982,13 +997,13 @@ streamer_start_new_song (void) {
             last_bitrate = -1;
             avg_bitrate = -1;
             streamer_reset (1);
-            if (fileinfo && memcmp (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t))) {
-                memcpy (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
+            if (fileinfo && memcmp (&orig_output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t))) {
+                memcpy (&orig_output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
                 formatchanged = 1;
             }
             // we need to start playback before we can pause it
             if (0 != output->play ()) {
-                memset (&output_format, 0, sizeof (output_format));
+                memset (&orig_output_format, 0, sizeof (orig_output_format));
                 fprintf (stderr, "streamer: failed to start playback (start track)\n");
                 streamer_set_nextsong (-2, 0);
             }
@@ -1099,7 +1114,8 @@ streamer_thread (void *ctx) {
             // don't switch if unchanged
             ddb_waveformat_t prevfmt;
             memcpy (&prevfmt, &output->fmt, sizeof (ddb_waveformat_t));
-            if (memcmp (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t))) {
+            if (memcmp (&orig_output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t))) {
+                memcpy (&orig_output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
                 memcpy (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
                 formatchanged = 1;
 #if 0
@@ -1250,7 +1266,7 @@ streamer_thread (void *ctx) {
         int skip = 0;
         if (bytes_until_next_song >= 0) {
             // check if streaming format differs from output
-            if (memcmp(&fileinfo->fmt, &output_format, sizeof (ddb_waveformat_t))) {
+            if (memcmp(&fileinfo->fmt, &orig_output_format, sizeof (ddb_waveformat_t))) {
                 skip = 1;
                 streamer_buffering = 0;
             }
@@ -1485,7 +1501,8 @@ streamer_dsp_postinit (void) {
         ctx = ctx->next;
     }
     if (!ctx && fileinfo) {
-        if (memcmp (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t))) {
+        if (memcmp (&orig_output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t))) {
+            memcpy (&orig_output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
             memcpy (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
             formatchanged = 1;
         }
@@ -1495,12 +1512,7 @@ streamer_dsp_postinit (void) {
         dsp_on = 1;
         // set some very generic format, this will allow playback of weird
         // formats after fixing them with dsp plugins
-        output_format.bps = 16;
-        output_format.is_float = 0;
-        output_format.channels = 2;
-        output_format.samplerate = 44100;
-        output_format.channelmask = 3;
-        streamer_set_output_format ();
+        streamer_set_generic_output_format ();
     }
     else if (!ctx) {
         dsp_on = 0;
