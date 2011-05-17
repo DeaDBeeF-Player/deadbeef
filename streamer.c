@@ -1728,8 +1728,9 @@ streamer_read_async (char *bytes, int size) {
                     streamer_set_output_format ();
                 }
 
-                //printf ("convert to %dbit %s %dch %dHz channelmask=%X\n", output->fmt.bps, output->fmt.is_float ? "float" : "int", output->fmt.channels, output->fmt.samplerate, output->fmt.channelmask);
-                int n = pcm_convert (&dspfmt, tempbuf, &output->fmt, bytes, nframes * dspsamplesize);
+                //printf ("convert from %dbit %s %dch %dHz channelmask=%X to %dbit %s %dch %dHz channelmask=%X\n", dspfmt.bps, dspfmt.is_float ? "float" : "int", dspfmt.channels, dspfmt.samplerate, dspfmt.channelmask, output->fmt.bps, output->fmt.is_float ? "float" : "int", output->fmt.channels, output->fmt.samplerate, output->fmt.channelmask);
+
+                int n = pcm_convert (&dspfmt, tempbuf, &output->fmt, bytes, nframes * dspfmt.channels * sizeof (float));
 
                 bytesread = n;
             }
