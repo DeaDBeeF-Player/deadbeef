@@ -858,12 +858,16 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
                     memcpy (&wavehdr[34], &output_bps, 2);
 
                     fwrite (wavehdr, 1, wavehdr_size, temp_file);
+                    if (encoder_preset->method == DDB_ENCODER_METHOD_PIPE) {
+                        size = 0;
+                    }
                     fwrite (&size, 1, sizeof (size), temp_file);
                     header_written = 1;
                 }
 
-                if (sz != fwrite (buffer, 1, sz, temp_file)) {
-                    fprintf (stderr, "converter: write error\n");
+                int64_t res = fwrite (buffer, 1, sz, temp_file);
+                if (sz != res) {
+                    fprintf (stderr, "converter: write error (%lld bytes written out of %d)\n", res, sz);
                     goto error;
                 }
             }
