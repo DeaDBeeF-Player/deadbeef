@@ -41,3 +41,4 @@ cp ./plugins/converter/.libs/converter.so /usr/local/lib/deadbeef/
 cp ./plugins/converter/.libs/converter_gtkui.so /usr/local/lib/deadbeef/
 cp ./plugins/soundtouch/ddb_soundtouch.so /usr/local/lib/deadbeef/
 cp ./plugins/vfs_zip/.libs/vfs_zip.so /usr/local/lib/deadbeef/
+cp ./plugins/mono2stereo/mono2stereo.so /usr/local/lib/deadbeef/
