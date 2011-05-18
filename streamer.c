@@ -2046,6 +2046,11 @@ streamer_set_dsp_chain (ddb_dsp_context_t *chain) {
     }
 
     streamer_dsp_postinit ();
+    if (fileinfo) {
+        memcpy (&orig_output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
+        memcpy (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
+        formatchanged = 1;
+    }
 
     char fname[PATH_MAX];
     snprintf (fname, sizeof (fname), "%s/dspconfig", plug_get_config_dir ());
