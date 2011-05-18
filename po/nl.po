@@ -70,9 +70,10 @@ msgid "DeaDBeeF %s ChangeLog"
 msgstr "DeaDBeeF %s ChangeLog"
 
 #: ../plugins/gtkui/callbacks.c:1080
-#, fuzzy, c-format
+#, c-format
+#, c-format
 msgid "DeaDBeeF Translators"
-msgstr "DeaDBeeF speelt nu af"
+msgstr "DeaDBeeF Vertalers"
 
 #: ../plugins/gtkui/ddbtabstrip.c:626
 msgid "Edit playlist"
@@ -353,7 +354,7 @@ msgstr "Stop met afspelen na huidig"
 
 #: ../plugins/gtkui/interface.c:394 ../plugins/gtkui/deadbeef.glade.h:69
 msgid "Jump to current track"
-msgstr ""
+msgstr "Spring naar huidig muziekstuk"
 
 #: ../plugins/gtkui/interface.c:401 ../plugins/gtkui/interface.c:408
 #: ../plugins/gtkui/deadbeef.glade.h:155
@@ -366,11 +367,11 @@ msgstr "_ChangeLog"
 
 #: ../plugins/gtkui/interface.c:425 ../plugins/gtkui/deadbeef.glade.h:154
 msgid "_GPLv2"
-msgstr ""
+msgstr "_GPLv2"
 
 #: ../plugins/gtkui/interface.c:429 ../plugins/gtkui/deadbeef.glade.h:156
 msgid "_LGPLv2.1"
-msgstr ""
+msgstr "LGPLv2.1"
 
 #: ../plugins/gtkui/interface.c:438 ../plugins/gtkui/deadbeef.glade.h:145
 msgid "_About"
@@ -378,7 +379,7 @@ msgstr "_Over"
 
 #: ../plugins/gtkui/interface.c:446 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "_Translators"
-msgstr ""
+msgstr "_Vertalers"
 
 #: ../plugins/gtkui/interface.c:836 ../plugins/gtkui/deadbeef.glade.h:114
 msgid "Search"
@@ -465,7 +466,7 @@ msgstr "Type:"
 
 #: ../plugins/gtkui/interface.c:1430
 msgid "Item Index"
-msgstr ""
+msgstr "Index van elementen"
 
 #. create default set of columns
 #: ../plugins/gtkui/interface.c:1431 ../plugins/gtkui/mainplaylist.c:305
@@ -529,7 +530,8 @@ msgid "Right"
 msgstr "Rechts"
 
 #: ../plugins/gtkui/interface.c:1472 ../plugins/gtkui/deadbeef.glade.h:35
-#, fuzzy, no-c-format
+#, no-c-format
+#, no-c-format
 msgid ""
 "Format conversions (start with %):\n"
 "  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
@@ -540,10 +542,11 @@ msgid ""
 "Example: %a - %t [%l]"
 msgstr ""
 "Formatteer conversies (begin met %):\n"
-"[a]rtiest, [t]itel, al[b]um, [B]and, [C]omposer\n"
-"titel[n]ummer, [N]totaltracks,\n"
-"[d]uur, [j]aar, [g]enre, [c]ommentaar,\n"
-"copy[r]echt, [b]estandnaam, [T]ags\n"
+"  [a]rtiest, [t]itel, al[b]um, [B]and, [C]omponist\n"
+"  titel[n]ummer, [N]totaltracks,\n"
+"  [l]engte, [y]jaar, [g]enre, [c]ommentaar,\n"
+"  auteurs[r]echt, [b]estandnaam, [T]ags,\n"
+"  [d]map, [D]MapMetPad\n"
 "Bijvoorbeeld: %a - %t [%l]"
 
 #: ../plugins/gtkui/interface.c:1501 ../plugins/gtkui/interface.c:2928
@@ -593,15 +596,16 @@ msgstr "Replaygain piek scale"
 #: ../plugins/gtkui/interface.c:1832 ../plugins/gtkui/deadbeef.glade.h:5
 msgid "Add files from command line (or file manager) to this playlist:"
 msgstr ""
+"Voeg bestanden toe vanaf de commandoregel (of de bestandbeheerder) aan deze "
+"afspeellijst:"
 
 #: ../plugins/gtkui/interface.c:1841 ../plugins/gtkui/deadbeef.glade.h:109
 msgid "Resume previous session on startup"
-msgstr ""
+msgstr "Hervat vorige sessie bij opstarten"
 
 #: ../plugins/gtkui/interface.c:1845 ../plugins/gtkui/deadbeef.glade.h:93
-#, fuzzy
 msgid "Playback"
-msgstr "_Playback"
+msgstr "Afspelen"
 
 #: ../plugins/gtkui/interface.c:1854 ../plugins/gtkui/deadbeef.glade.h:14
 msgid "Close minimizes to tray"
@@ -613,23 +617,23 @@ msgstr "Middelste muisknop sluit afspeellijst"
 
 #: ../plugins/gtkui/interface.c:1862 ../plugins/gtkui/deadbeef.glade.h:54
 msgid "Hide system tray icon"
-msgstr ""
+msgstr "Verberg systeemvakpictogram"
 
 #: ../plugins/gtkui/interface.c:1866 ../plugins/gtkui/deadbeef.glade.h:138
 msgid "Use bold font for currently playing track"
-msgstr ""
+msgstr "Gebruik vetgedrukt lettertype voor het thans afspelende muziekstuk"
 
 #: ../plugins/gtkui/interface.c:1870 ../plugins/gtkui/deadbeef.glade.h:53
 msgid "Hide \"Delete from disk\" context menu item"
-msgstr ""
+msgstr "Verberg \"Verwijder van schijf\" element in het contekstmenu"
 
 #: ../plugins/gtkui/interface.c:1878 ../plugins/gtkui/deadbeef.glade.h:133
 msgid "Titlebar text while playing:"
-msgstr ""
+msgstr "Titelbalktekst gedurende afspelen:"
 
 #: ../plugins/gtkui/interface.c:1892 ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Titlebar text while stopped:"
-msgstr ""
+msgstr "Titelbalktekst wanneer gestopt"
 
 #: ../plugins/gtkui/interface.c:1902 ../plugins/gtkui/deadbeef.glade.h:50
 msgid "GUI"
@@ -706,7 +710,7 @@ msgstr "Playlist kleuren"
 
 #: ../plugins/gtkui/interface.c:2121 ../plugins/gtkui/deadbeef.glade.h:15
 msgid "Colors"
-msgstr ""
+msgstr "Kleuren"
 
 #: ../plugins/gtkui/interface.c:2130 ../plugins/gtkui/deadbeef.glade.h:29
 msgid "Enable Proxy Server"
@@ -963,13 +967,12 @@ msgid "Really close the window?"
 msgstr "Weet u zeker dat u dit venster wilt sluiten?"
 
 #: ../plugins/gtkui/trkproperties.c:169
-#, fuzzy
 msgid "Location"
-msgstr "Voeg locatie toe"
+msgstr "Locatie"
 
 #: ../plugins/gtkui/trkproperties.c:172
 msgid "Subtrack Index"
-msgstr ""
+msgstr "Subspoor Index"
 
 #: ../plugins/gtkui/trkproperties.c:178
 msgid "Tag Type(s)"
@@ -989,7 +992,7 @@ msgstr "Nee"
 
 #: ../plugins/gtkui/trkproperties.c:182
 msgid "Codec"
-msgstr ""
+msgstr "Codec"
 
 #: ../plugins/gtkui/trkproperties.c:250 ../plugins/gtkui/trkproperties.c:262
 msgid "Key"
@@ -1107,7 +1110,6 @@ msgstr ""
 "Album"
 
 #: ../plugins/gtkui/deadbeef.glade.h:58
-#, fuzzy
 msgid ""
 "Item Index\n"
 "Playing\n"
@@ -1121,9 +1123,9 @@ msgid ""
 "Band / Album Artist\n"
 "Custom"
 msgstr ""
-"Bestandsnummer\n"
-"Speelt af\n"
-"Album Art\n"
+"Elementen Index\n"
+"Aan het afspelen\n"
+"Album Kunst\n"
 "Artiest - Album\n"
 "Artiest\n"
 "Album\n"
@@ -1150,6 +1152,9 @@ msgstr "Kon geen pixmap bestand vinden: %s"
 #, c-format
 msgid "wildmidi: freepats config file not found. Please install timidity-freepats package, or specify path to freepats.cfg in the plugin settings."
 msgstr ""
+"wildmidi: configuratiebestand voor freepats niet gevonden. Installeer "
+"timidity-freepats-pakket, of specificeer pad naar freepats.cfg in de plugin-"
+"instellingen"
 
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
@@ -1159,217 +1164,207 @@ msgstr "Voeg Audio CD toe"
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
-msgstr ""
+msgstr "Zoek het op, op Last.fm"
 
 #. ALSA output plugin
 #: ../translation/extra.c:6
 msgid "Use ALSA resampling"
-msgstr ""
+msgstr "Gebruik ALSA resampling"
 
 #: ../translation/extra.c:7
 msgid "Release device while stopped"
-msgstr ""
+msgstr "Laat apparaat los wanneer gestopt"
 
 #: ../translation/extra.c:8 ../translation/extra.c:43
 msgid "Preferred buffer size"
-msgstr ""
+msgstr "Voorkeursomvang van de buffer"
 
 #: ../translation/extra.c:9
 msgid "Preferred period size"
-msgstr ""
+msgstr "Voorkeursomvang van de periode"
 
 #. Last.fm plugin
 #: ../translation/extra.c:11
-#, fuzzy
 msgid "Enable scrobbler"
-msgstr "Schakel Proxy Server in"
+msgstr "Schakel scrobbler in"
 
 #: ../translation/extra.c:12
-#, fuzzy
 msgid "Disable nowplaying"
-msgstr "DeaDBeeF speelt nu af"
+msgstr "Schakel NuAanHetAfspelen uit"
 
 #: ../translation/extra.c:13
-#, fuzzy
 msgid "Username"
-msgstr "Proxy Gebruikersnaam:"
+msgstr "Gebruikersnaam:"
 
 #: ../translation/extra.c:14
-#, fuzzy
 msgid "Password"
-msgstr "Proxy wachtwoord:"
+msgstr "Wachtwoord:"
 
 #: ../translation/extra.c:15
 msgid "Scrobble URL"
-msgstr ""
+msgstr "Scrobble URL"
 
 #. Album Artwork plugin
 #: ../translation/extra.c:17
 msgid "Cache update period (hr)"
-msgstr ""
+msgstr "Periode voor bijwerken opslag (uur)"
 
 #: ../translation/extra.c:18
 msgid "Fetch from embedded tags"
-msgstr ""
+msgstr "Haal op uit ingebedde etiketten"
 
 #: ../translation/extra.c:19
 msgid "Fetch from local folder"
-msgstr ""
+msgstr "Haal op uit ingebedde map"
 
 #: ../translation/extra.c:20
 msgid "Local cover file mask"
-msgstr ""
+msgstr "Plaatselijk masker voor hoesbestand"
 
 #: ../translation/extra.c:21
 msgid "Fetch from last.fm"
-msgstr ""
+msgstr "Haal op van Last.fm"
 
 #: ../translation/extra.c:22
 msgid "Fetch from albumart.org"
-msgstr ""
+msgstr "Haal op van albumart.org"
 
 #. Audio CD player
 #: ../translation/extra.c:24
 msgid "Use CDDB/FreeDB"
-msgstr ""
+msgstr "Gebruik CDDB/FreeDB"
 
 #: ../translation/extra.c:25
 msgid "Prefer CD-Text over CDDB"
-msgstr ""
+msgstr "Verkies CD-tekst boven CDDB"
 
 #: ../translation/extra.c:26
 msgid "CDDB url (e.g. 'freedb.org')"
-msgstr ""
+msgstr "CDDB url (bijv. 'freedb.org')"
 
 #: ../translation/extra.c:27
 msgid "CDDB port number (e.g. '888')"
-msgstr ""
+msgstr "CDDB poortnummer (bijv. '888')"
 
 #: ../translation/extra.c:28
 msgid "Prefer CDDB protocol over HTTP"
-msgstr ""
+msgstr "Verkies CDDB-protocol boven HTTP"
 
 #: ../translation/extra.c:29
 msgid "Enable NRG image support"
-msgstr ""
+msgstr "Schakel NRG-afbeeldingsondersteuning in"
 
 #. DUMB module player plugin
 #: ../translation/extra.c:31
 msgid "Resampling quality (0..2, higher is better)"
-msgstr ""
+msgstr "Resampling-kwaliteit (0..2, hoger is beter)"
 
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:33
 msgid "Max song length (in minutes)"
-msgstr ""
+msgstr "Maximale muziekstukduur (in minuten)"
 
 #. Standard GTK2 user interface plugin
 #: ../translation/extra.c:35
-#, fuzzy
 msgid "Ask confirmation to delete files from disk"
-msgstr "Verwijder bestanden van schijf"
+msgstr "Vraag bevestiging voor het verwijderen van bestanden van de schijf"
 
 #: ../translation/extra.c:36
 msgid "Status icon volume control sensitivity"
-msgstr ""
+msgstr "Statuspictogram voor gevoeligheid van volumeknop"
 
 #: ../translation/extra.c:37
 msgid "Custom status icon"
-msgstr ""
+msgstr "Aangepast statuspictogram"
 
 #: ../translation/extra.c:38
 msgid "Run gtk_init with --sync (debug mode)"
-msgstr ""
+msgstr "Draai gtk_init met --sync (debug-modus)"
 
 #. OSD Notify plugin
 #: ../translation/extra.c:40
 msgid "Notification format"
-msgstr ""
+msgstr "Bestandtype van melding"
 
 #. PulseAudio output plugin
 #: ../translation/extra.c:42
 msgid "PulseAudio server"
-msgstr ""
+msgstr "PulseAudio server"
 
 #: ../translation/extra.c:44
 msgid "Samplerate"
-msgstr ""
+msgstr "Samplerate"
 
 #. SHN player plugin
 #: ../translation/extra.c:46
 msgid "Relative seek table path"
-msgstr ""
+msgstr "Relatief pad voor zoektabel"
 
 #: ../translation/extra.c:47
 msgid "Absolute seek table path"
-msgstr ""
+msgstr "Absoluut pad voor zoektabel"
 
 #: ../translation/extra.c:48
 msgid "Swap audio bytes (toggle if all you hear is static)"
-msgstr ""
+msgstr "Verwissel audio-bytes (schakel om indien u slechts statische ruis hoort"
 
 #. SID decoder plugin
 #: ../translation/extra.c:50
-#, fuzzy
 msgid "Enable HVSC"
-msgstr "Inschakelen"
+msgstr "HVSC inschakelen"
 
 #: ../translation/extra.c:51
 msgid "HVSC path"
-msgstr ""
+msgstr "HVSC-pad"
 
 #. WildMidi player plugin
 #: ../translation/extra.c:53
 msgid "Timidity++ bank configuration file"
-msgstr ""
+msgstr "Configuratiebestand voor Timidity++"
 
 #: ../translation/extra.c:56
-#, fuzzy
 msgid "Track Title"
-msgstr "Title nr."
+msgstr "Muziekstuk Titel"
 
 #: ../translation/extra.c:57
 msgid "Performer"
-msgstr ""
+msgstr "Artiest"
 
 #: ../translation/extra.c:60
 msgid "Date"
-msgstr ""
+msgstr "Datum"
 
 #: ../translation/extra.c:61
-#, fuzzy
 msgid "Track Number"
-msgstr "Title nr."
+msgstr "Muziekstuk Nummer"
 
 #: ../translation/extra.c:62
-#, fuzzy
 msgid "Total Tracks"
-msgstr "Titel / Titel Artiest"
+msgstr "Totaalaantal Muziekstukken"
 
 #: ../translation/extra.c:63
 msgid "Genre"
-msgstr ""
+msgstr "Genre"
 
 #: ../translation/extra.c:64
 msgid "Composer"
-msgstr ""
+msgstr "Componist"
 
 #: ../translation/extra.c:65
-#, fuzzy
 msgid "Disc Number"
-msgstr "Bestand´s nummer"
+msgstr "Schijf Nummer"
 
 #: ../translation/extra.c:66
 msgid "Comment"
-msgstr ""
+msgstr "Commentaar"
 
 #: ../translation/extra.c:67
 msgid "Encoder / Vendor"
-msgstr ""
+msgstr "Encodeur/Verkoper"
 
 #: ../translation/extra.c:68
 msgid "Copyright"
-msgstr ""
+msgstr "Auteursrecht"
 
 #~ msgid ""
 #~ "<b>WARNING</b>: tag writing feature is still in development.\n"
