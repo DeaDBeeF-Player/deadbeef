@@ -8,19 +8,19 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-11-09 04:43+0000\n"
-"PO-Revision-Date: 2010-08-30 11:05+0200\n"
-"Last-Translator: Sander <celettu@gmail.com>\n"
+"PO-Revision-Date: 2011-05-18 14:18+0200\n"
+"Last-Translator: Pjotr <pliniusminor@gmail.com>\n"
 "Language-Team: Spanish\n"
+"Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: nl\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.0.5\n"
 
 #: ../plugins/gtkui/callbacks.c:97
 msgid "Supported sound formats"
-msgstr "Ondersteunde geluidsformaten"
+msgstr "Ondersteunde bestandstypen voor geluid"
 
 #: ../plugins/gtkui/callbacks.c:108
 msgid "Other files (*)"
@@ -40,24 +40,24 @@ msgstr "Voeg map(pen) toe aan de afspeellijst..."
 
 #: ../plugins/gtkui/callbacks.c:192
 msgid "Follow symlinks"
-msgstr ""
+msgstr "Volg symbolische koppelingen"
 
 #: ../plugins/gtkui/callbacks.c:667
 msgid "Failed while reading help file"
-msgstr "Fout bij het lezen van het help bestand"
+msgstr "Fout bij het lezen van het hulpbestand"
 
 #: ../plugins/gtkui/callbacks.c:677
 msgid "Failed to load help file"
-msgstr "Fout bij het lezen van het help bestand"
+msgstr "Kon het hulpbestand niet laden"
 
 #: ../plugins/gtkui/callbacks.c:692
 msgid "help.txt"
-msgstr ""
+msgstr "help.txt"
 
 #: ../plugins/gtkui/callbacks.c:693 ../plugins/gtkui/interface.c:1125
 #: ../plugins/gtkui/deadbeef.glade.h:52
 msgid "Help"
-msgstr "Help"
+msgstr "Hulp"
 
 #: ../plugins/gtkui/callbacks.c:703
 #, c-format
