@@ -1681,7 +1681,7 @@ msgstr "Заменить"
 
 #: ../plugins/converter/interface.c:230
 msgid "Preserve folder structure, starting from:"
-msgstr ""
+msgstr "Сохранить структуру папок, начиная с:"
 
 #: ../plugins/converter/interface.c:386
 msgid "Edit Encoder Preset"
