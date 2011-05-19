@@ -312,7 +312,7 @@ on_trayicon_button_press_event (GtkWidget       *widget,
     if (event->button == 1 && event->type == GDK_BUTTON_PRESS) {
         mainwin_toggle_visible ();
     }
-    else if (event->button == 2) {
+    else if (event->button == 2 && event->type == GDK_BUTTON_PRESS) {
         deadbeef->sendmessage (DB_EV_TOGGLE_PAUSE, 0, 0, 0);
     }
     return FALSE;
