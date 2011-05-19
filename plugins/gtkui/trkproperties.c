@@ -582,6 +582,13 @@ on_write_tags_clicked                  (GtkButton       *button,
     gtk_tree_model_foreach (model, set_metadata_cb, NULL);
     deadbeef->pl_unlock ();
 
+    for (int i = 0; i < numtracks; i++) {
+        ddb_event_track_t *ev = (ddb_event_track_t *)deadbeef->event_alloc (DB_EV_TRACKINFOCHANGED);
+        ev->track = tracks[i];
+        deadbeef->pl_item_ref (ev->track);
+        deadbeef->event_send ((ddb_event_t*)ev, 0, 0);
+    }
+
     progress_aborted = 0;
     progressdlg = create_progressdlg ();
     gtk_window_set_title (GTK_WINDOW (progressdlg), _("Writing tags..."));

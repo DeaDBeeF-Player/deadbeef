@@ -413,9 +413,8 @@ trackinfochanged_wrapper (DdbListview *playlist, DB_playItem_t *track, int iter)
     }
 }
 
-static gboolean
-trackinfochanged_cb (gpointer data) {
-    DB_playItem_t *track = (DB_playItem_t *)data;
+void
+gtkui_trackinfochanged (DB_playItem_t *track) {
     GtkWidget *playlist = lookup_widget (mainwin, "playlist");
     trackinfochanged_wrapper (DDB_LISTVIEW (playlist), track, PL_MAIN);
 
@@ -431,8 +430,13 @@ trackinfochanged_cb (gpointer data) {
     if (curr) {
         deadbeef->pl_item_unref (curr);
     }
-    if (track) {
-        deadbeef->pl_item_unref (track);
+}
+
+static gboolean
+trackinfochanged_cb (gpointer data) {
+    gtkui_trackinfochanged (data);
+    if (data) {
+        deadbeef->pl_item_unref ((DB_playItem_t *)data);
     }
     return FALSE;
 }

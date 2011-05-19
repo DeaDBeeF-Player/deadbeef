@@ -169,4 +169,7 @@ gtkui_setup_gui_refresh ();
 int
 gtkui_get_curr_playlist_mod (void);
 
+void
+gtkui_trackinfochanged (DB_playItem_t *it);
+
 #endif
