@@ -52,7 +52,9 @@ static snd_pcm_uframes_t period_size;
 static snd_pcm_uframes_t req_buffer_size;
 static snd_pcm_uframes_t req_period_size;
 
+static int conf_alsa_resample = 1;
 static char conf_alsa_soundcard[100] = "default";
+
 
 //static snd_async_handler_t *pcm_callback;
 
@@ -228,7 +230,7 @@ retry:
     int val = plugin.fmt.samplerate;
     int ret = 0;
 
-    if ((err = snd_pcm_hw_params_set_rate_resample (audio, hw_params, 1)) < 0) {
+    if ((err = snd_pcm_hw_params_set_rate_resample (audio, hw_params, conf_alsa_resample)) < 0) {
         fprintf (stderr, "cannot setup resampling (%s)\n",
                 snd_strerror (err));
         goto error;
@@ -344,6 +346,7 @@ palsa_init (void) {
     mutex = 0;
 
     // get and cache conf variables
+    conf_alsa_resample = deadbeef->conf_get_int ("alsa.resample", 1);
     deadbeef->conf_get_str ("alsa_soundcard", "default", conf_alsa_soundcard, sizeof (conf_alsa_soundcard));
     trace ("alsa_soundcard: %s\n", conf_alsa_soundcard);
 
@@ -698,11 +701,13 @@ palsa_callback (char *stream, int len) {
 static int
 alsa_configchanged (void) {
     deadbeef->conf_lock ();
+    int alsa_resample = deadbeef->conf_get_int ("alsa.resample", 1);
     const char *alsa_soundcard = deadbeef->conf_get_str_fast ("alsa_soundcard", "default");
     int buffer = deadbeef->conf_get_int ("alsa.buffer", DEFAULT_BUFFER_SIZE);
     int period = deadbeef->conf_get_int ("alsa.period", DEFAULT_PERIOD_SIZE);
     if (audio &&
-            (strcmp (alsa_soundcard, conf_alsa_soundcard)
+            (alsa_resample != conf_alsa_resample
+            || strcmp (alsa_soundcard, conf_alsa_soundcard)
             || buffer != req_buffer_size
             || period != req_period_size)) {
         trace ("alsa: config option changed, restarting\n");
@@ -773,6 +778,7 @@ alsa_load (DB_functions_t *api) {
 }
 
 static const char settings_dlg[] =
+    "property \"Use ALSA resampling\" checkbox alsa.resample 1;\n"
     "property \"Release device while stopped\" checkbox alsa.freeonstop 0;\n"
     "property \"Preferred buffer size\" entry alsa.buffer " DEFAULT_BUFFER_SIZE_STR ";\n"
     "property \"Preferred period size\" entry alsa.period " DEFAULT_PERIOD_SIZE_STR ";\n"
