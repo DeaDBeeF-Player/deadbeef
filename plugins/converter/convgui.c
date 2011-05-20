@@ -355,6 +355,13 @@ converter_show_cb (void *ctx) {
 
 static int
 converter_show (DB_plugin_action_t *act, DB_playItem_t *it) {
+    if (converter_plugin->misc.plugin.version_minor >= 1) {
+        // reload all presets
+        converter_plugin->free_encoder_presets ();
+        converter_plugin->load_encoder_presets ();
+        converter_plugin->free_dsp_presets ();
+        converter_plugin->load_dsp_presets ();
+    }
     // this can be called from non-gtk thread
     gdk_threads_add_idle (converter_show_cb, NULL);
     return 0;
@@ -1269,14 +1276,18 @@ convgui_connect (void) {
 DB_misc_t plugin = {
     DB_PLUGIN_SET_API_VERSION
     .plugin.version_major = 1,
-    .plugin.version_minor = 0,
+    .plugin.version_minor = 1,
     .plugin.type = DB_PLUGIN_MISC,
     .plugin.name = "Converter GTK UI",
     .plugin.descr = "GTK2 User interface for the Converter plugin\n"
         "Usage:\n"
         "· select some tracks in playlist\n"
         "· right click\n"
-        "· select «Convert»",
+        "· select «Convert»\n\n"
+        "ChangeLog:\n"
+        "version 1.1\n"
+        "    Reload DSP and encoder presets on every converter access\n"
+        "    Write 0 wave data size into waveheader when using pipe, for oggenc compatibility\n",
     .plugin.copyright = 
         "Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"

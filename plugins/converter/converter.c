@@ -999,7 +999,7 @@ static ddb_converter_t plugin = {
     .misc.plugin.api_vmajor = DB_API_VERSION_MAJOR,
     .misc.plugin.api_vminor = DB_API_VERSION_MINOR,
     .misc.plugin.version_major = 1,
-    .misc.plugin.version_minor = 0,
+    .misc.plugin.version_minor = 1,
     .misc.plugin.type = DB_PLUGIN_MISC,
     .misc.plugin.name = "Converter",
     .misc.plugin.id = "converter",
@@ -1048,6 +1048,11 @@ static ddb_converter_t plugin = {
     .dsp_preset_replace = dsp_preset_replace,
     .get_output_path = get_output_path,
     .convert = convert,
+    // 1.1 entry points
+    .load_encoder_presets = load_encoder_presets,
+    .load_dsp_presets = load_dsp_presets,
+    .free_encoder_presets = free_encoder_presets,
+    .free_dsp_presets = free_dsp_presets,
 };
 
 DB_plugin_t *
