@@ -526,7 +526,6 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     int totalsamples = fctx->duration * samplerate / AV_TIME_BASE;
 
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
-    // FIXME: get proper codec
     deadbeef->pl_replace_meta (it, ":FILETYPE", codec->name);
 
     if (!deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI"))) {

@@ -1937,6 +1937,7 @@ playItem_t *
 pl_item_alloc (void) {
     playItem_t *it = malloc (sizeof (playItem_t));
     memset (it, 0, sizeof (playItem_t));
+    it->_duration = -1;
     it->_refc = 1;
     return it;
 }
