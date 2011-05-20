@@ -555,6 +555,7 @@ streamer_move_to_prevsong (void) {
 
             if (!it) {
                 pl_unlock ();
+                streamer_set_nextsong (-2, 1);
                 return -1;
             }
             int r = str_get_idx_of (it);
@@ -575,6 +576,7 @@ streamer_move_to_prevsong (void) {
         }
         if (!it) {
             pl_unlock ();
+            streamer_set_nextsong (-2, 1);
             return -1;
         }
         int r = str_get_idx_of (it);
