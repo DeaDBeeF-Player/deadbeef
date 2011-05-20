@@ -42,6 +42,7 @@ typedef struct {
     int endsample;
     int currentsample;
     int bitrate;
+    int sf_format;
 } sndfile_info_t;
 
 // vfs wrapper for sf
@@ -170,6 +171,7 @@ sndfile_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
     _info->plugin = &plugin;
+    info->sf_format = inf.format&0x000f;
 
     switch (inf.format&0x000f) {
     case SF_FORMAT_PCM_S8:
@@ -265,7 +267,15 @@ sndfile_read (DB_fileinfo_t *_info, char *bytes, int size) {
 
     int n = 0;
     n = sf_read_raw (info->ctx, (short *)bytes, size);
+
+    if (info->sf_format == SF_FORMAT_PCM_U8) {
+        for (int i = 0; i < n; i++) {
+            int sample = ((uint8_t *)bytes)[i];
+            ((int8_t *)bytes)[i] = sample-0x80;
+        }
+    }
     n /= samplesize;
+
     info->currentsample += n;
 
     size = n * samplesize;
