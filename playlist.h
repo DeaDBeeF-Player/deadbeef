@@ -304,9 +304,6 @@ pl_select_all (void);
 void
 plt_reshuffle (playlist_t *playlist, playItem_t **ppmin, playItem_t **ppmax);
 
-void
-pl_reshuffle (playItem_t **ppmin, playItem_t **ppmax);
-
 // required to calculate total playtime
 void
 plt_set_item_duration (playlist_t *playlist, playItem_t *it, float duration);
@@ -436,5 +433,8 @@ pl_get_order (void);
 
 playlist_t *
 pl_get_playlist (playItem_t *it);
+
+void
+plt_init_shuffle_albums (playlist_t *plt, int r);
 
 #endif // __PLAYLIST_H

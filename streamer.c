@@ -547,7 +547,7 @@ streamer_move_to_prevsong (void) {
                 // that means 1st in playlist, take amax
                 if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) {
                     if (!amax) {
-                        pl_reshuffle (NULL, &amax);
+                        plt_reshuffle (streamer_playlist, NULL, &amax);
                     }
                     it = amax;
                 }
@@ -615,6 +615,11 @@ streamer_move_to_randomsong (void) {
             r = 0;
         }
     }
+
+    if (pl_get_order () == PLAYBACK_ORDER_SHUFFLE_ALBUMS) {
+        plt_init_shuffle_albums (plt, r);
+    }
+
     streamer_set_nextsong (r, 1);
     return 0;
 }

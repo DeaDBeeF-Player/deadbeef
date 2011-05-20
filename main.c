@@ -440,6 +440,12 @@ player_mainloop (void) {
                 output->stop ();
                 pl_playqueue_clear ();
                 streamer_set_nextsong (p1, 1);
+                if (pl_get_order () == PLAYBACK_ORDER_SHUFFLE_ALBUMS) {
+                    int pl = streamer_get_current_playlist ();
+                    playlist_t *plt = plt_get_for_idx (pl);
+                    plt_init_shuffle_albums (plt, p1);
+                    plt_unref (plt);
+                }
                 break;
             case DB_EV_STOP:
                 streamer_set_nextsong (-2, 0);

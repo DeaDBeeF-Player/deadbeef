@@ -2703,11 +2703,6 @@ plt_reshuffle (playlist_t *playlist, playItem_t **ppmin, playItem_t **ppmax) {
 }
 
 void
-pl_reshuffle (playItem_t **ppmin, playItem_t **ppmax) {
-    plt_reshuffle (playlist, ppmin, ppmax);
-}
-
-void
 plt_set_item_duration (playlist_t *playlist, playItem_t *it, float duration) {
     LOCK;
     if (it->in_playlist) {
@@ -3872,4 +3867,27 @@ pl_get_playlist (playItem_t *it) {
     }
     UNLOCK;
     return NULL;
+}
+
+// this function must be called user starts track manually in shuffle albums mode
+// r is an index of current track
+// mark previous songs in the album as played
+void
+plt_init_shuffle_albums (playlist_t *plt, int r) {
+    printf ("init_shuffle_albums %d\n", r);
+    pl_lock ();
+    playItem_t *first = plt_get_item_for_idx (plt, r, PL_MAIN);
+    if (first->played) {
+        plt_reshuffle (plt, NULL, NULL);
+    }
+    if (first) {
+        int rating = first->shufflerating;
+        playItem_t *it = first->prev[PL_MAIN];
+        pl_item_unref (first);
+        while (it && rating == it->shufflerating) {
+            it->played = 1;
+            it = it->prev[PL_MAIN];
+        }
+    }
+    pl_unlock ();
 }
