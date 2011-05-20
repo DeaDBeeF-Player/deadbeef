@@ -227,7 +227,7 @@ static int fallback_io_tcp_connect(void *data, const char *host, int port)
                 error = -1;
                 break;
             }
-            sleep(1);
+            usleep(100000);
             continue;
         }
         else if (res == -1 && errno == EISCONN) {
