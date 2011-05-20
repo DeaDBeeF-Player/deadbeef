@@ -18,9 +18,6 @@
 #ifdef HAVE_CONFIG_H
 #  include "../../config.h"
 #endif
-#if HAVE_NOTIFY
-#include <libnotify/notify.h>
-#endif
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
@@ -1364,6 +1361,7 @@ ddb_listview_select_single (DdbListview *ps, int sel) {
 void
 ddb_listview_click_selection (DdbListview *ps, int ex, int ey, DdbListviewGroup *grp, int grp_index, int sel, int dnd) {
     deadbeef->pl_lock ();
+    ps->areaselect = 0;
     ddb_listview_groupcheck (ps);
     if (sel == -1 && (!grp || grp_index >= grp->num_items)) {
         // clicked empty space, deselect everything
