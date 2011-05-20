@@ -265,7 +265,7 @@ sndfile_read (DB_fileinfo_t *_info, char *bytes, int size) {
 
     int n = 0;
     if (info->read_as_short) {
-        n = sf_read_short(info->ctx, (short *)bytes, size/samplesize);
+        n = sf_readf_short(info->ctx, (short *)bytes, size/samplesize);
     }
     else {
         n = sf_read_raw (info->ctx, (short *)bytes, size);
@@ -439,7 +439,7 @@ sndfile_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     };
 
     if (inf.format&0x000f <= SF_FORMAT_VORBIS) {
-        deadbeef->pl_add_meta (it, "SF_FORMAT", subformats[inf.format&0x000f]);
+        deadbeef->pl_add_meta (it, ":SF_FORMAT", subformats[inf.format&0x000f]);
     }
 
     DB_playItem_t *cue_after = deadbeef->plt_insert_cue (plt, after, it, totalsamples, samplerate);
