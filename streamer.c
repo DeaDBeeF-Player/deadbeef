@@ -226,9 +226,9 @@ streamer_start_playback (playItem_t *from, playItem_t *it) {
         pl_item_ref (playing_track);
 
         playing_track->played = 1;
-        started_timestamp = time (NULL);
         trace ("from=%p (%s), to=%p (%s) [2]\n", from, from ? pl_find_meta (from, ":URI") : "null", it, it ? pl_find_meta (it, ":URI") : "null");
         send_trackchanged (from, it);
+        started_timestamp = time (NULL);
     }
     if (from) {
         pl_item_unref (from);
@@ -337,7 +337,6 @@ streamer_move_to_nextsong (int reason) {
                     streamer_playlist = p;
                     int r = str_get_idx_of (it);
                     if (r >= 0) {
-                        trace ("%s found in playlist %d\n", pl_find_meta (it, ":URI"), i);
                         pl_item_unref (it);
                         pl_unlock ();
                         streamer_set_nextsong (r, 3);

@@ -212,7 +212,7 @@ typedef struct {
     ddb_event_t ev;
     DB_playItem_t *track;
     float playtime; // for SONGFINISHED event -- for how many seconds track was playing
-    time_t started_timestamp; // result of calling time(NULL) on playback start
+    time_t started_timestamp; // time when "track" started playing
 } ddb_event_track_t;
 
 typedef struct {
@@ -220,7 +220,7 @@ typedef struct {
     DB_playItem_t *from;
     DB_playItem_t *to;
     float playtime; // for SONGCHANGED event -- for how many seconds prev track was playing
-    time_t started_timestamp; // result of calling time(NULL) on playback start
+    time_t started_timestamp; // time when "from" started playing
 } ddb_event_trackchange_t;
 
 typedef struct {
