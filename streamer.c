@@ -1653,12 +1653,14 @@ streamer_set_output_format (void) {
     int playing = (output->state () == OUTPUT_STATE_PLAYING);
 
     fprintf (stderr, "streamer_set_output_format %dbit %s %dch %dHz channelmask=%X, bufferfill: %d\n", output_format.bps, output_format.is_float ? "float" : "int", output_format.channels, output_format.samplerate, output_format.channelmask, streamer_ringbuf.remaining);
+    ddb_waveformat_t fmt;
+    memcpy (&fmt, &output_format, sizeof (ddb_waveformat_t));
     if (autoconv_8_to_16) {
-        if (output_format.bps == 8) {
-            output_format.bps = 16;
+        if (fmt.bps == 8) {
+            fmt.bps = 16;
         }
     }
-    output->setformat (&output_format);
+    output->setformat (&fmt);
     streamer_buffering = 1;
     if (playing && output->state () != OUTPUT_STATE_PLAYING) {
         if (0 != output->play ()) {
@@ -1937,7 +1939,12 @@ streamer_configchanged (void) {
     if (playing_track) {
         playing_track->played = 1;
     }
-    autoconv_8_to_16 = conf_get_int ("streamer.8_to_16", 1);
+    int conf_autoconv_8_to_16 = conf_get_int ("streamer.8_to_16", 1);
+    if (conf_autoconv_8_to_16 != autoconv_8_to_16) {
+        autoconv_8_to_16 = conf_autoconv_8_to_16;
+        formatchanged = 1;
+        streamer_reset (1);
+    }
 }
 
 void
