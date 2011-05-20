@@ -3875,7 +3875,6 @@ pl_get_playlist (playItem_t *it) {
 // mark previous songs in the album as played
 void
 plt_init_shuffle_albums (playlist_t *plt, int r) {
-    printf ("init_shuffle_albums %d\n", r);
     pl_lock ();
     playItem_t *first = plt_get_item_for_idx (plt, r, PL_MAIN);
     if (first->played) {
