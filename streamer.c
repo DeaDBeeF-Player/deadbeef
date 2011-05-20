@@ -64,6 +64,8 @@ static ddb_dsp_context_t *eq;
 
 static int dsp_on = 0;
 
+static int autoconv_8_to_16 = 1;
+
 static int streaming_terminate;
 
 // buffer up to 3 seconds at 44100Hz stereo
@@ -896,12 +898,12 @@ streamer_set_nextsong (int song, int pstate) {
 
 void
 streamer_set_generic_output_format (void) {
-        output_format.bps = 16;
-        output_format.is_float = 0;
-        output_format.channels = 2;
-        output_format.samplerate = 44100;
-        output_format.channelmask = 3;
-        streamer_set_output_format ();
+    output_format.bps = 16;
+    output_format.is_float = 0;
+    output_format.channels = 2;
+    output_format.samplerate = 44100;
+    output_format.channelmask = 3;
+    streamer_set_output_format ();
 }
 
 void
@@ -1651,6 +1653,11 @@ streamer_set_output_format (void) {
     int playing = (output->state () == OUTPUT_STATE_PLAYING);
 
     fprintf (stderr, "streamer_set_output_format %dbit %s %dch %dHz channelmask=%X, bufferfill: %d\n", output_format.bps, output_format.is_float ? "float" : "int", output_format.channels, output_format.samplerate, output_format.channelmask, streamer_ringbuf.remaining);
+    if (autoconv_8_to_16) {
+        if (output_format.bps == 8) {
+            output_format.bps = 16;
+        }
+    }
     output->setformat (&output_format);
     streamer_buffering = 1;
     if (playing && output->state () != OUTPUT_STATE_PLAYING) {
@@ -1930,6 +1937,7 @@ streamer_configchanged (void) {
     if (playing_track) {
         playing_track->played = 1;
     }
+    autoconv_8_to_16 = conf_get_int ("streamer.8_to_16", 1);
 }
 
 void
