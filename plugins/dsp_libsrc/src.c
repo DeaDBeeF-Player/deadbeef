@@ -86,6 +86,22 @@ ddb_src_set_ratio (ddb_dsp_context_t *_src, float ratio) {
 }
 
 int
+ddb_src_pass_through (ddb_dsp_context_t *_src, ddb_waveformat_t *fmt) {
+    ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
+
+    float samplerate = src->samplerate;
+    if (src->autosamplerate) {
+        DB_output_t *output = deadbeef->get_output ();
+        samplerate = output->fmt.samplerate;
+    }
+
+    if (fmt->samplerate == samplerate) {
+        return 1;
+    }
+    return 0;
+}
+
+int
 ddb_src_process (ddb_dsp_context_t *_src, float *samples, int nframes, int maxframes, ddb_waveformat_t *fmt, float *r) {
     ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
 
@@ -256,13 +272,14 @@ static const char settings_dlg[] =
 ;
 
 static DB_dsp_t plugin = {
-    .plugin.api_vmajor = DB_API_VERSION_MAJOR,
-    .plugin.api_vminor = DB_API_VERSION_MINOR,
+    // need 1.1 api for pass_through
+    .plugin.api_vmajor = 1,
+    .plugin.api_vminor = 1,
     .open = ddb_src_open,
     .close = ddb_src_close,
     .process = ddb_src_process,
-    .plugin.version_major = 0,
-    .plugin.version_minor = 1,
+    .plugin.version_major = 1,
+    .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DSP,
     .plugin.id = "SRC",
     .plugin.name = "Resampler (Secret Rabbit Code)",
@@ -291,6 +308,7 @@ static DB_dsp_t plugin = {
     .get_param = ddb_src_get_param,
     .reset = ddb_src_reset,
     .configdialog = settings_dlg,
+    .pass_through = ddb_src_pass_through,
 };
 
 DB_plugin_t *
