@@ -821,13 +821,17 @@ main (int argc, char *argv[]) {
 //    }
     close(s);
 
+    // become a server
+    if (server_start () < 0) {
+        exit (-1);
+    }
+
     // hack: report nowplaying
     if (!strcmp (cmdline, "--nowplaying")) {
         char nothing[] = "nothing";
         fwrite (nothing, 1, sizeof (nothing)-1, stdout);
         return 0;
     }
-
 
     pl_init ();
     conf_init ();
@@ -859,10 +863,6 @@ main (int argc, char *argv[]) {
         }
     }
 
-    // become a server
-    if (server_start () < 0) {
-        exit (-1);
-    }
 #if 0
     signal (SIGTERM, sigterm_handler);
     atexit (atexit_handler); // helps to save in simple cases
