@@ -126,7 +126,6 @@ retry:
     }
 
     snd_pcm_format_t sample_fmt;
-
     switch (plugin.fmt.bps) {
     case 8:
         sample_fmt = SND_PCM_FORMAT_S8;
@@ -221,17 +220,22 @@ retry:
     plugin.fmt.samplerate = val;
     trace ("chosen samplerate: %d Hz\n", val);
 
-    int nchan;
-    snd_pcm_hw_params_get_channels (hw_params, &nchan);
+    int chanmin, chanmax;
+    snd_pcm_hw_params_get_channels_min (hw_params, &chanmin);
+    snd_pcm_hw_params_get_channels_max (hw_params, &chanmax);
 
-    if ((err = snd_pcm_hw_params_set_channels (audio, hw_params, plugin.fmt.channels)) < 0) {
-        fprintf (stderr, "cannot set channel count (%s), trying to set channels=%d\n",
-                snd_strerror (err), nchan);
-        if ((err = snd_pcm_hw_params_set_channels (audio, hw_params, nchan)) < 0) {
-            fprintf (stderr, "cannot set channel count (%s)\n",
-                    snd_strerror (err));
-            goto error;
-        }
+    trace ("minchan: %d, maxchan: %d\n", chanmin, chanmax);
+    int nchan = plugin.fmt.channels;
+    if (nchan > chanmax) {
+        nchan = chanmax;
+    }
+    else if (nchan < chanmin) {
+        nchan = chanmin;
+    }
+    trace ("setting chan=%d\n", nchan);
+    if ((err = snd_pcm_hw_params_set_channels (audio, hw_params, nchan)) < 0) {
+        fprintf (stderr, "cannot set channel count (%s)\n",
+                snd_strerror (err));
     }
 
     snd_pcm_hw_params_get_channels (hw_params, &nchan);
