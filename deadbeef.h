@@ -61,6 +61,8 @@ extern "C" {
 
 // api version history:
 // 9.9 -- devel
+// 1.1 -- deadbeef-0.5.1
+//   adds pass_through method to dsp plugins for optimization purposes
 // 1.0 -- deadbeef-0.5.0
 // 0.10 -- deadbeef-0.4.4-portable-r1 (note: 0.4.4 uses api v0.9)
 // 0.9 -- deadbeef-0.4.3-portable-build3
@@ -74,7 +76,7 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 1
-#define DB_API_VERSION_MINOR 0
+#define DB_API_VERSION_MINOR 1
 
 #define DDB_PLUGIN_SET_API_VERSION\
     .plugin.api_vmajor = DB_API_VERSION_MAJOR,\
@@ -986,6 +988,13 @@ typedef struct DB_dsp_s {
     // config dialog implementation uses set/get param, so they must be
     // implemented if this is nonzero
     const char *configdialog;
+
+    // pass_through is available since 1.1 api
+    // can be NULL
+    // should return 1 if DSP plugin instance will pass data through, without
+    // modification, with the current parameters;
+    // 0 otherwise
+    int (*pass_through) (ddb_dsp_context_t *ctx, ddb_waveformat_t *fmt);
 } DB_dsp_t;
 
 // misc plugin

@@ -1691,7 +1691,28 @@ streamer_read_async (char *bytes, int size) {
         int outputsamplesize = output->fmt.channels * output->fmt.bps / 8;
         int inputsamplesize = fileinfo->fmt.channels * fileinfo->fmt.bps / 8;
 
-        if (!memcmp (&fileinfo->fmt, &output->fmt, sizeof (ddb_waveformat_t)) && !dsp_on) {
+        ddb_waveformat_t dspfmt;
+        memcpy (&dspfmt, &fileinfo->fmt, sizeof (ddb_waveformat_t));
+        dspfmt.bps = 32;
+        dspfmt.is_float = 1;
+        int can_pass_through = 0;
+        if (dsp_on) {
+            // check if DSP can be passed through
+            ddb_dsp_context_t *dsp = dsp_chain;
+            while (dsp) {
+                if (dsp->enabled && dsp->plugin->plugin.api_vminor >= 1) {
+                    if (dsp->plugin->pass_through && !dsp->plugin->pass_through (dsp, &dspfmt)) {
+                        break;
+                    }
+                }
+                dsp = dsp->next;
+            }
+            if (!dsp) {
+                can_pass_through = 1;
+            }
+        }
+
+        if (!memcmp (&fileinfo->fmt, &output->fmt, sizeof (ddb_waveformat_t)) && (!dsp_on || can_pass_through)) {
             // pass through from input to output
             bytesread = fileinfo->plugin->read (fileinfo, bytes, size);
 
@@ -1705,11 +1726,6 @@ streamer_read_async (char *bytes, int size) {
             int dsp_num_frames = size / (output->fmt.channels * output->fmt.bps / 8);
 
             char outbuf[dsp_num_frames * dspsamplesize];
-
-            ddb_waveformat_t dspfmt;
-            memcpy (&dspfmt, &fileinfo->fmt, sizeof (ddb_waveformat_t));
-            dspfmt.bps = 32;
-            dspfmt.is_float = 1;
 
             int inputsize = dsp_num_frames * inputsamplesize;
             char input[inputsize];
