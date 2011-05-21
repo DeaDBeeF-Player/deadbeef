@@ -29,8 +29,8 @@
 #endif
 #define min(x,y) ((x)<(y)?(x):(y))
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 static ddb_converter_t plugin;
 static DB_functions_t *deadbeef;
@@ -392,18 +392,18 @@ copy_file (const char *in, const char *out) {
     int BUFFER_SIZE = 1000;
     FILE *fin = fopen (in, "rb");
     if (!fin) {
-        trace ("converter: failed to open file %s for reading\n", in);
+        fprintf (stderr, "converter: failed to open file %s for reading\n", in);
         return -1;
     }
     FILE *fout = fopen (out, "w+b");
     if (!fout) {
         fclose (fin);
-        trace ("converter: failed to open file %s for writing\n", out);
+        fprintf (stderr, "converter: failed to open file %s for writing\n", out);
         return -1;
     }
     char *buf = malloc (BUFFER_SIZE);
     if (!buf) {
-        trace ("converter: failed to alloc %d bytes\n", BUFFER_SIZE);
+        fprintf (stderr, "converter: failed to alloc %d bytes\n", BUFFER_SIZE);
         fclose (fin);
         fclose (fout);
         return -1;
@@ -416,11 +416,11 @@ copy_file (const char *in, const char *out) {
     while (sz > 0) {
         int rs = min (sz, BUFFER_SIZE);
         if (fread (buf, rs, 1, fin) != 1) {
-            trace ("converter: failed to read file %s\n", in);
+            fprintf (stderr, "converter: failed to read file %s\n", in);
             break;
         }
         if (fwrite (buf, rs, 1, fout) != 1) {
-            trace ("converter: failed to write file %s\n", out);
+            fprintf (stderr, "converter: failed to write file %s\n", out);
             break;
         }
         sz -= rs;
@@ -654,8 +654,8 @@ static void
 get_output_path (DB_playItem_t *it, const char *outfolder, const char *outfile, ddb_encoder_preset_t *encoder_preset, char *out, int sz) {
     int l;
     char fname[PATH_MAX];
-    char *path = strdup (outfolder);
-    char *pattern = strdup (outfile);
+    char *path = outfolder[0] ? strdupa (outfolder) : strdupa (getenv("HOME"));
+    char *pattern = strdupa (outfile);
 
     // replace invalid chars
     char invalid[] = "?%*:|\"<>";
@@ -691,9 +691,6 @@ get_output_path (DB_playItem_t *it, const char *outfolder, const char *outfile, 
     l = strlen (out);
     snprintf (out+l, sz-l, "%s.%s", fname, encoder_preset->ext);
     trace ("converter output file is '%s'\n", out);
-
-    free (path);
-    free (pattern);
 }
 
 int
@@ -781,7 +778,7 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
                 }
             }
 
-            fprintf (stderr, "converter: will encode using: %s\n", enc);
+            fprintf (stderr, "converter: will encode using: %s\n", enc[0] ? enc : "internal RIFF WAVE writer");
 
             if (!encoder_preset->encoder[0]) {
                 // write to wave file
