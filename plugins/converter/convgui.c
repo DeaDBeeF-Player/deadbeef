@@ -1274,7 +1274,8 @@ convgui_connect (void) {
 }
 
 DB_misc_t plugin = {
-    DB_PLUGIN_SET_API_VERSION
+    .plugin.api_vmajor = 1,
+    .plugin.api_vminor = 0,
     .plugin.version_major = 1,
     .plugin.version_minor = 1,
     .plugin.type = DB_PLUGIN_MISC,

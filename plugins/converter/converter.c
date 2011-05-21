@@ -1040,8 +1040,8 @@ converter_stop (void) {
 
 // define plugin interface
 static ddb_converter_t plugin = {
-    .misc.plugin.api_vmajor = DB_API_VERSION_MAJOR,
-    .misc.plugin.api_vminor = DB_API_VERSION_MINOR,
+    .misc.plugin.api_vmajor = 1,
+    .misc.plugin.api_vminor = 0,
     .misc.plugin.version_major = 1,
     .misc.plugin.version_minor = 1,
     .misc.plugin.type = DB_PLUGIN_MISC,
