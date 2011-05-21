@@ -55,31 +55,8 @@ static snd_pcm_uframes_t req_period_size;
 static int conf_alsa_resample = 1;
 static char conf_alsa_soundcard[100] = "default";
 
-
-//static snd_async_handler_t *pcm_callback;
-
 static int
 palsa_callback (char *stream, int len);
-
-#if 0
-static void
-alsa_callback (snd_async_handler_t *pcm_callback) {
-    snd_pcm_t *pcm_handle = snd_async_handler_get_pcm(pcm_callback);
-    snd_pcm_sframes_t avail;
-    int err;
-    printf ("alsa_callback\n");
-
-    avail = snd_pcm_avail_update(pcm_handle);
-    while (avail >= period_size) {
-        char buf[avail * 4];
-        palsa_callback (buf, avail * 4);
-        if ((err = snd_pcm_writei (pcm_handle, buf, period_size)) < 0) {
-            perror ("snd_pcm_writei");
-        }
-        avail = snd_pcm_avail_update(pcm_handle);
-    }
-}
-#endif
 
 static void
 palsa_thread (void *context);

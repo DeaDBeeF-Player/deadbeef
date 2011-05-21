@@ -421,6 +421,7 @@ player_mainloop (void) {
             switch (msg) {
             case DB_EV_REINIT_SOUND:
                 plug_reinit_sound ();
+                streamer_reset (1);
                 conf_save ();
                 break;
             case DB_EV_TERMINATE:
