@@ -244,13 +244,19 @@ retry:
     plugin.fmt.samplerate = val;
     trace ("chosen samplerate: %d Hz\n", val);
 
+    int nchan;
+    snd_pcm_hw_params_get_channels (hw_params, &nchan);
+
     if ((err = snd_pcm_hw_params_set_channels (audio, hw_params, plugin.fmt.channels)) < 0) {
-        fprintf (stderr, "cannot set channel count (%s)\n",
-                snd_strerror (err));
-        goto error;
+        fprintf (stderr, "cannot set channel count (%s), trying to set channels=%d\n",
+                snd_strerror (err), nchan);
+        if ((err = snd_pcm_hw_params_set_channels (audio, hw_params, nchan)) < 0) {
+            fprintf (stderr, "cannot set channel count (%s)\n",
+                    snd_strerror (err));
+            goto error;
+        }
     }
 
-    int nchan;
     snd_pcm_hw_params_get_channels (hw_params, &nchan);
     trace ("alsa channels: %d\n", nchan);
 
@@ -269,12 +275,6 @@ retry:
         fprintf (stderr, "cannot set parameters (%s)\n",
                 snd_strerror (err));
         goto error;
-
-//        if (plugin.fmt.channels > 2 && plugin.fmt.samplerate >= 96000) {
-//            plugin.fmt.samplerate = 48000;
-//            fprintf (stderr, "falling back to 48000KHz\n");
-//            goto retry;
-//        }
     }
 
     plugin.fmt.is_float = 0;
@@ -472,7 +472,7 @@ palsa_setformat (ddb_waveformat_t *fmt) {
     snd_pcm_drop (audio);
     int ret = palsa_set_hw_params (fmt);
     if (ret < 0) {
-        trace ("palsa_change_rate: impossible to set requested format\n");
+        trace ("palsa_setformat: impossible to set requested format\n");
         // even if it failed -- copy the format
         memcpy (&plugin.fmt, fmt, sizeof (ddb_waveformat_t));
         UNLOCK;
