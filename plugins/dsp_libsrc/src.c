@@ -89,7 +89,7 @@ int
 ddb_src_process (ddb_dsp_context_t *_src, float *samples, int nframes, int maxframes, ddb_waveformat_t *fmt, float *r) {
     ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
 
-    int samplerate = src->samplerate;
+    float samplerate = src->samplerate;
     if (src->autosamplerate) {
         DB_output_t *output = deadbeef->get_output ();
         samplerate = output->fmt.samplerate;
@@ -156,7 +156,7 @@ ddb_src_process (ddb_dsp_context_t *_src, float *samples, int nframes, int maxfr
         if (src_err) {
             const char *err = src_strerror (src_err) ;
             fprintf (stderr, "src_process error %s\n"
-                    "srcdata.data_in=%p, srcdata.data_out=%p, srcdata.input_frames=%d, srcdata.output_frames=%d, srcdata.src_ratio=%f", err, src->srcdata.data_in, src->srcdata.data_out, (int)src->srcdata.input_frames, (int)src->srcdata.output_frames, src->srcdata.src_ratio);
+                    "srcdata.data_in=%p, srcdata.data_out=%p, srcdata.input_frames=%d, srcdata.output_frames=%d, srcdata.src_ratio=%f\n", err, src->srcdata.data_in, src->srcdata.data_out, (int)src->srcdata.input_frames, (int)src->srcdata.output_frames, src->srcdata.src_ratio);
             return nframes;
         }
 
