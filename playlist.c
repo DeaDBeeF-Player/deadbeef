@@ -2872,7 +2872,7 @@ pl_format_time (float t, char *dur, int size) {
         }
     }
     else {
-        strcpy (dur, "-:--");
+        strcpy (dur, "∞");
     }
 }
 
