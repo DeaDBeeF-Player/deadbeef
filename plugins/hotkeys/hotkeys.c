@@ -621,7 +621,7 @@ static DB_hotkeys_plugin_t plugin = {
     .misc.plugin.type = DB_PLUGIN_MISC,
     .misc.plugin.id = "hotkeys",
     .misc.plugin.name = "Global hotkeys support",
-    .misc.plugin.descr = "Allows to control player with global hotkeys",
+    .misc.plugin.descr = "Allows one to control player with global hotkeys",
     .misc.plugin.copyright = 
         "Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "Copyright (C) 2009-2011 Viktor Semykin <thesame.ml@gmail.com>\n"
