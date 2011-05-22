@@ -109,7 +109,7 @@ static playlist_t *addfiles_playlist; // current playlist for adding files/folde
 
 void
 pl_set_order (int order) {
-    if (pl_order != order && (pl_order == PLAYBACK_ORDER_SHUFFLE_TRACKS || pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS)) {
+    if (pl_order != order || pl_order == PLAYBACK_ORDER_SHUFFLE_TRACKS || pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS) {
         pl_order = order;
         for (playlist_t *plt = playlists_head; plt; plt = plt->next) {
             plt_reshuffle (plt, NULL, NULL);
