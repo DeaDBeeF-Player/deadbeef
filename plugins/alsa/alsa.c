@@ -160,7 +160,7 @@ retry:
 #endif
         }
         break;
-    };
+    }
 
     if ((err = snd_pcm_hw_params_set_format (audio, hw_params, sample_fmt)) < 0) {
         fprintf (stderr, "cannot set sample format (%s), trying all supported formats\n", snd_strerror (err));
