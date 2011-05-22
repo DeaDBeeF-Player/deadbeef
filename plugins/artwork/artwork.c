@@ -141,10 +141,18 @@ void
 queue_pop (void) {
     deadbeef->mutex_lock (mutex);
     cover_query_t *next = queue ? queue->next : NULL;
-    free (queue->fname);
-    free (queue->artist);
-    free (queue->album);
-    free (queue);
+    if (queue) {
+        if (queue->fname) {
+            free (queue->fname);
+        }
+        if (queue->artist) {
+            free (queue->artist);
+        }
+        if (queue->album) {
+            free (queue->album);
+        }
+        free (queue);
+    }
     queue = next;
     if (!queue) {
         queue_tail = NULL;
