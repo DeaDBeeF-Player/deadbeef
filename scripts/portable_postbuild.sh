@@ -45,10 +45,6 @@ fi
 if [ -f ./plugins/gtkui/.libs/ddb_gui_GTK2.fallback.so ]; then
     cp ./plugins/gtkui/.libs/ddb_gui_GTK2.fallback.so $PLUGDIR/
 fi
-if [ -f ./plugins/converter/.libs/converter_gtkui.fallback.so ]; then
-    cp ./plugins/converter/.libs/converter_gtkui.fallback.so $PLUGDIR/
-fi
-
 
 #pixmaps
 
