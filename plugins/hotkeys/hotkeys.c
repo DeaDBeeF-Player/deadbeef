@@ -127,12 +127,12 @@ cmd_invoke_plugin_command (DB_plugin_action_t *action)
         trace ("No tracks selected\n");
         return;
     }
-    if ((selected_count == 1) && (0 == action->flags & DB_ACTION_SINGLE_TRACK))
+    if ((selected_count == 1) && (!(action->flags & DB_ACTION_SINGLE_TRACK)))
     {
         trace ("Hotkeys: action %s not allowed for single track\n", action->name);
         return;
     }
-    if ((selected_count > 1) && (0 == action->flags & DB_ACTION_ALLOW_MULTIPLE_TRACKS))
+    if ((selected_count > 1) && (!(action->flags & DB_ACTION_ALLOW_MULTIPLE_TRACKS)))
     {
         trace ("Hotkeys: action %s not allowed for multiple tracks\n", action->name);
         return;
