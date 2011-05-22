@@ -1540,6 +1540,19 @@ streamer_dsp_init (void) {
     char fname[PATH_MAX];
     snprintf (fname, sizeof (fname), "%s/dspconfig", plug_get_config_dir ());
     dsp_chain = streamer_dsp_chain_load (fname);
+    if (!dsp_chain) {
+        // first run, let's add resampler
+        DB_dsp_t *src = (DB_dsp_t *)plug_get_for_id ("SRC");
+        if (src) {
+            ddb_dsp_context_t *inst = src->open ();
+            inst->enabled = 0;
+            src->set_param (inst, 0, "48000"); // samplerate
+            src->set_param (inst, 1, "2"); // quality=SINC_FASTEST
+            src->set_param (inst, 2, "1"); // auto
+            inst->next = dsp_chain;
+            dsp_chain = inst;
+        }
+    }
 
     eqplug = (DB_dsp_t *)plug_get_for_id ("supereq");
     streamer_dsp_postinit ();
