@@ -1713,8 +1713,13 @@ streamer_read_async (char *bytes, int size) {
             // check if DSP can be passed through
             ddb_dsp_context_t *dsp = dsp_chain;
             while (dsp) {
-                if (dsp->enabled && dsp->plugin->plugin.api_vminor >= 1) {
-                    if (dsp->plugin->pass_through && !dsp->plugin->pass_through (dsp, &dspfmt)) {
+                if (dsp->enabled) {
+                    if (dsp->plugin->plugin.api_vminor >= 1) {
+                        if (dsp->plugin->pass_through && !dsp->plugin->pass_through (dsp, &dspfmt)) {
+                            break;
+                        }
+                    }
+                    else {
                         break;
                     }
                 }
