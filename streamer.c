@@ -1708,14 +1708,14 @@ streamer_read_async (char *bytes, int size) {
         memcpy (&dspfmt, &fileinfo->fmt, sizeof (ddb_waveformat_t));
         dspfmt.bps = 32;
         dspfmt.is_float = 1;
-        int can_pass_through = 0;
+        int can_bypass = 0;
         if (dsp_on) {
             // check if DSP can be passed through
             ddb_dsp_context_t *dsp = dsp_chain;
             while (dsp) {
                 if (dsp->enabled) {
                     if (dsp->plugin->plugin.api_vminor >= 1) {
-                        if (dsp->plugin->pass_through && !dsp->plugin->pass_through (dsp, &dspfmt)) {
+                        if (dsp->plugin->can_bypass && !dsp->plugin->can_bypass (dsp, &dspfmt)) {
                             break;
                         }
                     }
@@ -1726,11 +1726,11 @@ streamer_read_async (char *bytes, int size) {
                 dsp = dsp->next;
             }
             if (!dsp) {
-                can_pass_through = 1;
+                can_bypass = 1;
             }
         }
 
-        if (!memcmp (&fileinfo->fmt, &output->fmt, sizeof (ddb_waveformat_t)) && (!dsp_on || can_pass_through)) {
+        if (!memcmp (&fileinfo->fmt, &output->fmt, sizeof (ddb_waveformat_t)) && (!dsp_on || can_bypass)) {
             // pass through from input to output
             bytesread = fileinfo->plugin->read (fileinfo, bytes, size);
 

@@ -86,7 +86,7 @@ ddb_src_set_ratio (ddb_dsp_context_t *_src, float ratio) {
 }
 
 int
-ddb_src_pass_through (ddb_dsp_context_t *_src, ddb_waveformat_t *fmt) {
+ddb_src_can_bypass (ddb_dsp_context_t *_src, ddb_waveformat_t *fmt) {
     ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
 
     float samplerate = src->samplerate;
@@ -308,7 +308,7 @@ static DB_dsp_t plugin = {
     .get_param = ddb_src_get_param,
     .reset = ddb_src_reset,
     .configdialog = settings_dlg,
-    .pass_through = ddb_src_pass_through,
+    .can_bypass = ddb_src_can_bypass,
 };
 
 DB_plugin_t *

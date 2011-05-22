@@ -989,12 +989,11 @@ typedef struct DB_dsp_s {
     // implemented if this is nonzero
     const char *configdialog;
 
-    // pass_through is available since 1.1 api
+    // can_bypass is available since 1.1 api
     // can be NULL
-    // should return 1 if DSP plugin instance will pass data through, without
-    // modification, with the current parameters;
+    // should return 1 if the DSP plugin will not touch data with the current parameters;
     // 0 otherwise
-    int (*pass_through) (ddb_dsp_context_t *ctx, ddb_waveformat_t *fmt);
+    int (*can_bypass) (ddb_dsp_context_t *ctx, ddb_waveformat_t *fmt);
 } DB_dsp_t;
 
 // misc plugin
