@@ -136,8 +136,8 @@ pcm_write_samples_16_to_32 (const ddb_waveformat_t * restrict inputfmt, const ch
             const char *in = input + channelmap[c]*2;
             out[0] = 0;
             out[1] = 0;
-            out[2] = input[0];
-            out[3] = input[1];
+            out[2] = in[0];
+            out[3] = in[1];
         }
         input += 2 * inputfmt->channels;
         output += outputsamplesize;
