@@ -364,7 +364,7 @@ actionitem_activate (GtkMenuItem     *menuitem,
     }
 
     // For single-track actions just invoke it with first selected track
-    if (0 == action->flags & DB_ACTION_ALLOW_MULTIPLE_TRACKS)
+    if (!(action->flags & DB_ACTION_ALLOW_MULTIPLE_TRACKS))
     {
         DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (clicked_idx, PL_MAIN);
         action->callback (action, it);
