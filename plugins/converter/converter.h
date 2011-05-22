@@ -145,6 +145,18 @@ typedef struct {
     int
     (*convert) (DB_playItem_t *it, const char *outfolder, const char *outfile, int output_bps, int output_is_float, int preserve_folder_structure, const char *root_folder, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort);
 
+    /////////////////////////////
+    // new APIs for converter-1.1
+    /////////////////////////////
+
+    int
+    (*load_encoder_presets) (void);
+    int
+    (*load_dsp_presets) (void);
+    void
+    (*free_encoder_presets) (void);
+    void
+    (*free_dsp_presets) (void);
 } ddb_converter_t;
 
 #endif

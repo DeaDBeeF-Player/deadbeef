@@ -202,8 +202,8 @@ shx_start ()
 
 // define plugin interface
 static DB_misc_t plugin = {
-    .plugin.api_vmajor = DB_API_VERSION_MAJOR,
-    .plugin.api_vminor = DB_API_VERSION_MINOR,
+    .plugin.api_vmajor = 1,
+    .plugin.api_vminor = 0,
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_MISC,

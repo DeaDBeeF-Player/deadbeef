@@ -29,8 +29,8 @@
 #endif
 #define min(x,y) ((x)<(y)?(x):(y))
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 static ddb_converter_t plugin;
 static DB_functions_t *deadbeef;
@@ -392,18 +392,18 @@ copy_file (const char *in, const char *out) {
     int BUFFER_SIZE = 1000;
     FILE *fin = fopen (in, "rb");
     if (!fin) {
-        trace ("converter: failed to open file %s for reading\n", in);
+        fprintf (stderr, "converter: failed to open file %s for reading\n", in);
         return -1;
     }
     FILE *fout = fopen (out, "w+b");
     if (!fout) {
         fclose (fin);
-        trace ("converter: failed to open file %s for writing\n", out);
+        fprintf (stderr, "converter: failed to open file %s for writing\n", out);
         return -1;
     }
     char *buf = malloc (BUFFER_SIZE);
     if (!buf) {
-        trace ("converter: failed to alloc %d bytes\n", BUFFER_SIZE);
+        fprintf (stderr, "converter: failed to alloc %d bytes\n", BUFFER_SIZE);
         fclose (fin);
         fclose (fout);
         return -1;
@@ -416,11 +416,11 @@ copy_file (const char *in, const char *out) {
     while (sz > 0) {
         int rs = min (sz, BUFFER_SIZE);
         if (fread (buf, rs, 1, fin) != 1) {
-            trace ("converter: failed to read file %s\n", in);
+            fprintf (stderr, "converter: failed to read file %s\n", in);
             break;
         }
         if (fwrite (buf, rs, 1, fout) != 1) {
-            trace ("converter: failed to write file %s\n", out);
+            fprintf (stderr, "converter: failed to write file %s\n", out);
             break;
         }
         sz -= rs;
@@ -631,22 +631,66 @@ dsp_preset_replace (ddb_dsp_preset_t *from, ddb_dsp_preset_t *to) {
     to->next = from->next;
 }
 
+
 static void
-get_output_path (DB_playItem_t *it, const char *outfolder, const char *outfile, ddb_encoder_preset_t *encoder_preset, char *out, int sz) {
-    char fname[PATH_MAX];
+get_output_field (DB_playItem_t *it, const char *field, char *out, int sz)
+{
     int idx = deadbeef->pl_get_idx_of (it);
-    deadbeef->pl_format_title (it, idx, fname, sizeof (fname), -1, outfile);
+    deadbeef->pl_format_title (it, idx, out, sz, -1, field);
+
     // replace invalid chars
-    char *p = fname;
     char invalid[] = "/\\?%*:|\"<>";
+    char *p = out;
     while (*p) {
         if (strchr (invalid, *p)) {
             *p = '_';
         }
         p++;
     }
-    snprintf (out, sz, "%s/%s.%s", outfolder, fname, encoder_preset->ext);
+    trace ("field '%s' expanded to '%s'\n", field, out);
+}
 
+static void
+get_output_path (DB_playItem_t *it, const char *outfolder, const char *outfile, ddb_encoder_preset_t *encoder_preset, char *out, int sz) {
+    int l;
+    char fname[PATH_MAX];
+    char *path = outfolder[0] ? strdupa (outfolder) : strdupa (getenv("HOME"));
+    char *pattern = strdupa (outfile);
+
+    // replace invalid chars
+    char invalid[] = "?%*:|\"<>";
+    char *p = path;
+    while (*p) {
+        if (strchr (invalid, *p)) {
+            *p = '_';
+        }
+        p++;
+    }
+    snprintf (out, sz, "%s/", path);
+
+    // split path and create directories
+    char *field = pattern;
+    char *s = pattern;
+    while (*s) {
+        if ((*s == '/') || (*s == '\\')) {
+            *s = '\0';
+            get_output_field (it, field, fname, sizeof(fname));
+
+            l = strlen (out);
+            snprintf (out+l, sz-l, "%s/", fname);
+            mkdir (out, 0755);
+
+            field = s+1;
+        }
+        s++;
+    }
+
+    // last part of outfile is the filename
+    get_output_field (it, field, fname, sizeof(fname));
+
+    l = strlen (out);
+    snprintf (out+l, sz-l, "%s.%s", fname, encoder_preset->ext);
+    trace ("converter output file is '%s'\n", out);
 }
 
 int
@@ -697,6 +741,7 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
             }
 
             char enc[2000];
+            memset (enc, 0, sizeof (enc));
 
             // formatting: %o = outfile, %i = infile
             char *e = encoder_preset->encoder;
@@ -705,7 +750,7 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
             int len = sizeof (enc);
             while (e && *e) {
                 if (len <= 0) {
-                    fprintf (stderr, "converter: failed to assemble encoder command line - buffer is not big enough, try to shorten your parameters. max allowed length is %d characters\n", sizeof (enc));
+                    fprintf (stderr, "converter: failed to assemble encoder command line - buffer is not big enough, try to shorten your parameters. max allowed length is %lu characters\n", sizeof (enc));
                     goto error;
                 }
                 if (e[0] == '%' && e[1]) {
@@ -733,7 +778,7 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
                 }
             }
 
-            fprintf (stderr, "converter: will encode using: %s\n", enc);
+            fprintf (stderr, "converter: will encode using: %s\n", enc[0] ? enc : "internal RIFF WAVE writer");
 
             if (!encoder_preset->encoder[0]) {
                 // write to wave file
@@ -857,12 +902,16 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
                     memcpy (&wavehdr[34], &output_bps, 2);
 
                     fwrite (wavehdr, 1, wavehdr_size, temp_file);
+                    if (encoder_preset->method == DDB_ENCODER_METHOD_PIPE) {
+                        size = 0;
+                    }
                     fwrite (&size, 1, sizeof (size), temp_file);
                     header_written = 1;
                 }
 
-                if (sz != fwrite (buffer, 1, sz, temp_file)) {
-                    fprintf (stderr, "converter: write error\n");
+                int64_t res = fwrite (buffer, 1, sz, temp_file);
+                if (sz != res) {
+                    fprintf (stderr, "converter: write error (%lld bytes written out of %d)\n", res, sz);
                     goto error;
                 }
             }
@@ -991,10 +1040,10 @@ converter_stop (void) {
 
 // define plugin interface
 static ddb_converter_t plugin = {
-    .misc.plugin.api_vmajor = DB_API_VERSION_MAJOR,
-    .misc.plugin.api_vminor = DB_API_VERSION_MINOR,
+    .misc.plugin.api_vmajor = 1,
+    .misc.plugin.api_vminor = 0,
     .misc.plugin.version_major = 1,
-    .misc.plugin.version_minor = 0,
+    .misc.plugin.version_minor = 1,
     .misc.plugin.type = DB_PLUGIN_MISC,
     .misc.plugin.name = "Converter",
     .misc.plugin.id = "converter",
@@ -1043,6 +1092,11 @@ static ddb_converter_t plugin = {
     .dsp_preset_replace = dsp_preset_replace,
     .get_output_path = get_output_path,
     .convert = convert,
+    // 1.1 entry points
+    .load_encoder_presets = load_encoder_presets,
+    .load_dsp_presets = load_dsp_presets,
+    .free_encoder_presets = free_encoder_presets,
+    .free_dsp_presets = free_dsp_presets,
 };
 
 DB_plugin_t *

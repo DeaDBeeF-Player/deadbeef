@@ -273,8 +273,7 @@ on_dsp_remove_clicked                  (GtkButton       *button,
         gtk_list_store_clear (mdl);
         fill_dsp_chain (mdl);
         GtkTreePath *path = gtk_tree_path_new_from_indices (idx, -1);
-        GtkTreeViewColumn *col;
-        gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, col, FALSE);
+        gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, NULL, FALSE);
         gtk_tree_path_free (path);
         update_streamer ();
     }
@@ -396,8 +395,7 @@ on_dsp_up_clicked                      (GtkButton       *button,
         return;
     }
     GtkTreePath *path = gtk_tree_path_new_from_indices (idx-1, -1);
-    GtkTreeViewColumn *col;
-    gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, col, FALSE);
+    gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, NULL, FALSE);
     gtk_tree_path_free (path);
     update_streamer ();
 }
@@ -417,8 +415,7 @@ on_dsp_down_clicked                    (GtkButton       *button,
         return;
     }
     GtkTreePath *path = gtk_tree_path_new_from_indices (idx+1, -1);
-    GtkTreeViewColumn *col;
-    gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, col, FALSE);
+    gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, NULL, FALSE);
     gtk_tree_path_free (path);
     update_streamer ();
 }

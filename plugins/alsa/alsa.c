@@ -23,8 +23,8 @@
 #include "../../deadbeef.h"
 #include "../../config.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
@@ -52,32 +52,11 @@ static snd_pcm_uframes_t period_size;
 static snd_pcm_uframes_t req_buffer_size;
 static snd_pcm_uframes_t req_period_size;
 
+static int conf_alsa_resample = 1;
 static char conf_alsa_soundcard[100] = "default";
-
-//static snd_async_handler_t *pcm_callback;
 
 static int
 palsa_callback (char *stream, int len);
-
-#if 0
-static void
-alsa_callback (snd_async_handler_t *pcm_callback) {
-    snd_pcm_t *pcm_handle = snd_async_handler_get_pcm(pcm_callback);
-    snd_pcm_sframes_t avail;
-    int err;
-    printf ("alsa_callback\n");
-
-    avail = snd_pcm_avail_update(pcm_handle);
-    while (avail >= period_size) {
-        char buf[avail * 4];
-        palsa_callback (buf, avail * 4);
-        if ((err = snd_pcm_writei (pcm_handle, buf, period_size)) < 0) {
-            perror ("snd_pcm_writei");
-        }
-        avail = snd_pcm_avail_update(pcm_handle);
-    }
-}
-#endif
 
 static void
 palsa_thread (void *context);
@@ -147,7 +126,6 @@ retry:
     }
 
     snd_pcm_format_t sample_fmt;
-
     switch (plugin.fmt.bps) {
     case 8:
         sample_fmt = SND_PCM_FORMAT_S8;
@@ -182,7 +160,7 @@ retry:
 #endif
         }
         break;
-    };
+    }
 
     if ((err = snd_pcm_hw_params_set_format (audio, hw_params, sample_fmt)) < 0) {
         fprintf (stderr, "cannot set sample format (%s), trying all supported formats\n", snd_strerror (err));
@@ -228,7 +206,7 @@ retry:
     int val = plugin.fmt.samplerate;
     int ret = 0;
 
-    if ((err = snd_pcm_hw_params_set_rate_resample (audio, hw_params, 1)) < 0) {
+    if ((err = snd_pcm_hw_params_set_rate_resample (audio, hw_params, conf_alsa_resample)) < 0) {
         fprintf (stderr, "cannot setup resampling (%s)\n",
                 snd_strerror (err));
         goto error;
@@ -242,13 +220,24 @@ retry:
     plugin.fmt.samplerate = val;
     trace ("chosen samplerate: %d Hz\n", val);
 
-    if ((err = snd_pcm_hw_params_set_channels (audio, hw_params, plugin.fmt.channels)) < 0) {
+    int chanmin, chanmax;
+    snd_pcm_hw_params_get_channels_min (hw_params, &chanmin);
+    snd_pcm_hw_params_get_channels_max (hw_params, &chanmax);
+
+    trace ("minchan: %d, maxchan: %d\n", chanmin, chanmax);
+    int nchan = plugin.fmt.channels;
+    if (nchan > chanmax) {
+        nchan = chanmax;
+    }
+    else if (nchan < chanmin) {
+        nchan = chanmin;
+    }
+    trace ("setting chan=%d\n", nchan);
+    if ((err = snd_pcm_hw_params_set_channels (audio, hw_params, nchan)) < 0) {
         fprintf (stderr, "cannot set channel count (%s)\n",
                 snd_strerror (err));
-        goto error;
     }
 
-    int nchan;
     snd_pcm_hw_params_get_channels (hw_params, &nchan);
     trace ("alsa channels: %d\n", nchan);
 
@@ -267,12 +256,6 @@ retry:
         fprintf (stderr, "cannot set parameters (%s)\n",
                 snd_strerror (err));
         goto error;
-
-//        if (plugin.fmt.channels > 2 && plugin.fmt.samplerate >= 96000) {
-//            plugin.fmt.samplerate = 48000;
-//            fprintf (stderr, "falling back to 48000KHz\n");
-//            goto retry;
-//        }
     }
 
     plugin.fmt.is_float = 0;
@@ -344,6 +327,7 @@ palsa_init (void) {
     mutex = 0;
 
     // get and cache conf variables
+    conf_alsa_resample = deadbeef->conf_get_int ("alsa.resample", 1);
     deadbeef->conf_get_str ("alsa_soundcard", "default", conf_alsa_soundcard, sizeof (conf_alsa_soundcard));
     trace ("alsa_soundcard: %s\n", conf_alsa_soundcard);
 
@@ -469,7 +453,7 @@ palsa_setformat (ddb_waveformat_t *fmt) {
     snd_pcm_drop (audio);
     int ret = palsa_set_hw_params (fmt);
     if (ret < 0) {
-        trace ("palsa_change_rate: impossible to set requested format\n");
+        trace ("palsa_setformat: impossible to set requested format\n");
         // even if it failed -- copy the format
         memcpy (&plugin.fmt, fmt, sizeof (ddb_waveformat_t));
         UNLOCK;
@@ -698,11 +682,13 @@ palsa_callback (char *stream, int len) {
 static int
 alsa_configchanged (void) {
     deadbeef->conf_lock ();
+    int alsa_resample = deadbeef->conf_get_int ("alsa.resample", 1);
     const char *alsa_soundcard = deadbeef->conf_get_str_fast ("alsa_soundcard", "default");
     int buffer = deadbeef->conf_get_int ("alsa.buffer", DEFAULT_BUFFER_SIZE);
     int period = deadbeef->conf_get_int ("alsa.period", DEFAULT_PERIOD_SIZE);
     if (audio &&
-            (strcmp (alsa_soundcard, conf_alsa_soundcard)
+            (alsa_resample != conf_alsa_resample
+            || strcmp (alsa_soundcard, conf_alsa_soundcard)
             || buffer != req_buffer_size
             || period != req_period_size)) {
         trace ("alsa: config option changed, restarting\n");
@@ -773,6 +759,7 @@ alsa_load (DB_functions_t *api) {
 }
 
 static const char settings_dlg[] =
+    "property \"Use ALSA resampling\" checkbox alsa.resample 1;\n"
     "property \"Release device while stopped\" checkbox alsa.freeonstop 0;\n"
     "property \"Preferred buffer size\" entry alsa.buffer " DEFAULT_BUFFER_SIZE_STR ";\n"
     "property \"Preferred period size\" entry alsa.period " DEFAULT_PERIOD_SIZE_STR ";\n"
@@ -780,7 +767,8 @@ static const char settings_dlg[] =
 
 // define plugin interface
 static DB_output_t plugin = {
-    DB_PLUGIN_SET_API_VERSION
+    .plugin.api_vmajor = 1,
+    .plugin.api_vminor = 0,
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_OUTPUT,

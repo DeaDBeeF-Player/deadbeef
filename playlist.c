@@ -52,6 +52,7 @@
 
 #define DISABLE_LOCKING 0
 #define DEBUG_LOCKING 0
+//#define DETECT_PL_LOCK_RC 1
 
 // file format revision history
 // 1.1->1.2 changelog:
@@ -108,7 +109,7 @@ static playlist_t *addfiles_playlist; // current playlist for adding files/folde
 
 void
 pl_set_order (int order) {
-    if (pl_order != order && (pl_order == PLAYBACK_ORDER_SHUFFLE_TRACKS || PLAYBACK_ORDER_SHUFFLE_ALBUMS)) {
+    if (pl_order != order && (pl_order == PLAYBACK_ORDER_SHUFFLE_TRACKS || pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS)) {
         pl_order = order;
         for (playlist_t *plt = playlists_head; plt; plt = plt->next) {
             plt_reshuffle (plt, NULL, NULL);
@@ -164,14 +165,21 @@ pl_free (void) {
 }
 
 #if DEBUG_LOCKING
-int pl_lock_cnt = 0;
+volatile int pl_lock_cnt = 0;
 #endif
-//pthread_t pl_lock_tid = 0;
+#if DETECT_PL_LOCK_RC
+static pthread_t tids[1000];
+static int ntids = 0;
+pthread_t pl_lock_tid = 0;
+#endif
 void
 pl_lock (void) {
 #if !DISABLE_LOCKING
     mutex_lock (mutex);
-    //pl_lock_tid = pthread_self();
+#if DETECT_PL_LOCK_RC
+    pl_lock_tid = pthread_self();
+    tids[ntids++] = pl_lock_tid;
+#endif
 
 #if DEBUG_LOCKING
     pl_lock_cnt++;
@@ -183,6 +191,17 @@ pl_lock (void) {
 void
 pl_unlock (void) {
 #if !DISABLE_LOCKING
+#if DETECT_PL_LOCK_RC
+    if (ntids > 0) {
+        ntids--;
+    }
+    if (ntids > 0) {
+        pl_lock_tid = tids[ntids-1];
+    }
+    else {
+        pl_lock_tid = 0;
+    }
+#endif
     mutex_unlock (mutex);
 #if DEBUG_LOCKING
     pl_lock_cnt--;
@@ -255,6 +274,7 @@ plt_ref (playlist_t *plt) {
 void
 plt_unref (playlist_t *plt) {
     LOCK;
+    assert (plt->refc > 0);
     plt->refc--;
     if (plt->refc < 0) {
         trace ("\033[0;31mplaylist: bad refcount on playlist %p (%s)\033[37;0m\n", plt, plt->title);
@@ -391,6 +411,7 @@ plt_remove (int plt) {
         prev = p;
         p = p->next;
     }
+    streamer_notify_playlist_deleted (p);
     if (!plt_loading) {
         // move files (will decrease number of files by 1)
         for (int i = plt+1; i < playlists_count; i++) {
@@ -584,7 +605,6 @@ plt_get_modification_idx (playlist_t *plt) {
 void
 plt_free (playlist_t *plt) {
     LOCK;
-    streamer_notify_playlist_deleted (plt);
     plt_clear (plt);
     free (plt->title);
 
@@ -1110,31 +1130,33 @@ plt_insert_cue (playlist_t *plt, playItem_t *after, playItem_t *origin, int nums
     char cuename[len+5];
     strcpy (cuename, fname);
     strcpy (cuename+len, ".cue");
-    FILE *fp = fopen (cuename, "rb");
+    DB_FILE *fp = vfs_fopen (cuename);
     if (!fp) {
         char *ptr = cuename + len-1;
         while (ptr >= cuename && *ptr != '.') {
             ptr--;
         }
         strcpy (ptr+1, "cue");
-        fp = fopen (cuename, "rb");
+        fp = vfs_fopen (cuename);
         if (!fp) {
             return NULL;
         }
     }
-    fseek (fp, 0, SEEK_END);
-    size_t sz = ftell (fp);
+    size_t sz = vfs_fgetlength (fp);
     if (sz == 0) {
-        fclose (fp);
+        vfs_fclose (fp);
         return NULL;
     }
-    rewind (fp);
-    uint8_t buf[sz];
-    if (fread (buf, 1, sz, fp) != sz) {
-        fclose (fp);
+    uint8_t *buf = alloca(sz);
+    if (!buf) {
+        vfs_fclose (fp);
         return NULL;
     }
-    fclose (fp);
+    if (vfs_fread (buf, 1, sz, fp) != sz) {
+        vfs_fclose (fp);
+        return NULL;
+    }
+    vfs_fclose (fp);
     return plt_insert_cue_from_buffer (plt, after, origin, buf, sz, numsamples, samplerate);
 }
 
@@ -1917,6 +1939,7 @@ playItem_t *
 pl_item_alloc (void) {
     playItem_t *it = malloc (sizeof (playItem_t));
     memset (it, 0, sizeof (playItem_t));
+    it->_duration = -1;
     it->_refc = 1;
     return it;
 }
@@ -2680,11 +2703,6 @@ plt_reshuffle (playlist_t *playlist, playItem_t **ppmin, playItem_t **ppmax) {
         *ppmax = pmax;
     }
     UNLOCK;
-}
-
-void
-pl_reshuffle (playItem_t **ppmin, playItem_t **ppmax) {
-    plt_reshuffle (playlist, ppmin, ppmax);
 }
 
 void
@@ -3852,4 +3870,26 @@ pl_get_playlist (playItem_t *it) {
     }
     UNLOCK;
     return NULL;
+}
+
+// this function must be called user starts track manually in shuffle albums mode
+// r is an index of current track
+// mark previous songs in the album as played
+void
+plt_init_shuffle_albums (playlist_t *plt, int r) {
+    pl_lock ();
+    playItem_t *first = plt_get_item_for_idx (plt, r, PL_MAIN);
+    if (first->played) {
+        plt_reshuffle (plt, NULL, NULL);
+    }
+    if (first) {
+        int rating = first->shufflerating;
+        playItem_t *it = first->prev[PL_MAIN];
+        pl_item_unref (first);
+        while (it && rating == it->shufflerating) {
+            it->played = 1;
+            it = it->prev[PL_MAIN];
+        }
+    }
+    pl_unlock ();
 }

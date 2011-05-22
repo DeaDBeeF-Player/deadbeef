@@ -31,7 +31,7 @@ converter_gtkui_la_CFLAGS = -std=c99 $(GTKUI_DEPS_CFLAGS)
 
 # fallback lib
 if STATICLINK
-GTK_ROOT=../../../deadbeef-deps/gtk-debian/usr
+GTK_ROOT=@top_srcdir@/$(LIB)/gtk-2.12.12/usr
 converter_gtkui_fallback_la_SOURCES = convgui.c interface.c support.c callbacks.h converter.h interface.h support.h
 converter_gtkui_fallback_la_LDFLAGS = -module
 

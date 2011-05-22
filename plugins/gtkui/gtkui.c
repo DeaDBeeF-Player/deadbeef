@@ -312,7 +312,7 @@ on_trayicon_button_press_event (GtkWidget       *widget,
     if (event->button == 1 && event->type == GDK_BUTTON_PRESS) {
         mainwin_toggle_visible ();
     }
-    else if (event->button == 2) {
+    else if (event->button == 2 && event->type == GDK_BUTTON_PRESS) {
         deadbeef->sendmessage (DB_EV_TOGGLE_PAUSE, 0, 0, 0);
     }
     return FALSE;
@@ -413,9 +413,8 @@ trackinfochanged_wrapper (DdbListview *playlist, DB_playItem_t *track, int iter)
     }
 }
 
-static gboolean
-trackinfochanged_cb (gpointer data) {
-    DB_playItem_t *track = (DB_playItem_t *)data;
+void
+gtkui_trackinfochanged (DB_playItem_t *track) {
     GtkWidget *playlist = lookup_widget (mainwin, "playlist");
     trackinfochanged_wrapper (DDB_LISTVIEW (playlist), track, PL_MAIN);
 
@@ -431,8 +430,13 @@ trackinfochanged_cb (gpointer data) {
     if (curr) {
         deadbeef->pl_item_unref (curr);
     }
-    if (track) {
-        deadbeef->pl_item_unref (track);
+}
+
+static gboolean
+trackinfochanged_cb (gpointer data) {
+    gtkui_trackinfochanged (data);
+    if (data) {
+        deadbeef->pl_item_unref ((DB_playItem_t *)data);
     }
     return FALSE;
 }
@@ -1334,8 +1338,8 @@ static const char settings_dlg[] =
 
 // define plugin interface
 static ddb_gtkui_t plugin = {
-    .gui.plugin.api_vmajor = DB_API_VERSION_MAJOR,
-    .gui.plugin.api_vminor = DB_API_VERSION_MINOR,
+    .gui.plugin.api_vmajor = 1,
+    .gui.plugin.api_vminor = 0,
     .gui.plugin.version_major = 1,
     .gui.plugin.version_minor = 0,
     .gui.plugin.type = DB_PLUGIN_MISC,

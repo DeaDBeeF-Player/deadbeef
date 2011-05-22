@@ -204,7 +204,7 @@ static int fallback_io_tcp_connect(void *data, const char *host, int port)
     return -1;
   }
 
-  if (fcntl (s, F_SETFL, fcntl (s, F_GETFL) & ~O_NONBLOCK) == -1) {
+  if (fcntl (s, F_SETFL, fcntl (s, F_GETFL) | O_NONBLOCK) == -1) {
     lprintf("mms: failed to set socket flags: %s\n", strerror(errno));
     return -1;
   }
@@ -218,8 +218,31 @@ static int fallback_io_tcp_connect(void *data, const char *host, int port)
     sin.sin_addr   = ia;
     sin.sin_port   = htons(port);
     
-    if (connect(s, (struct sockaddr *)&sin, sizeof(sin)) ==-1 && errno != EINPROGRESS) {
-      continue;
+    time_t t = time (NULL);
+    int error = 0;
+    for (;;) {
+        int res = connect(s, (struct sockaddr *)&sin, sizeof(sin));
+        if (res == -1 && (errno == EINPROGRESS || errno == EALREADY)) {
+            if (time (NULL) - t > 3) {
+                error = -1;
+                break;
+            }
+            usleep(100000);
+            continue;
+        }
+        else if (res == -1 && errno == EISCONN) {
+            break;
+        }
+        else if (res == -1) {
+            error = -1;
+            break;
+        }
+    }
+//        if (connect(s, (struct sockaddr *)&sin, sizeof(sin)) ==-1 && errno != EINPROGRESS) {
+//            continue;
+//        }
+    if (error) {
+        continue;
     }
     
     return s;

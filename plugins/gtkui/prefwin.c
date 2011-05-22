@@ -500,6 +500,9 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     // replaygain_preamp
     gtk_range_set_value (GTK_RANGE (lookup_widget (w, "replaygain_preamp")), deadbeef->conf_get_int ("replaygain_preamp", 0));
 
+    // 8_to_16
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "convert8to16")), deadbeef->conf_get_int ("streamer.8_to_16", 1));
+
     // dsp
     dsp_setup_init (prefwin);
 
@@ -1339,5 +1342,15 @@ on_ignore_archives_toggled             (GtkToggleButton *togglebutton,
 {
 
     deadbeef->conf_set_int ("ignore_archives", gtk_toggle_button_get_active (togglebutton));
+}
+
+
+
+void
+on_convert8to16_toggled                (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("streamer.8_to_16", gtk_toggle_button_get_active (togglebutton));
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 

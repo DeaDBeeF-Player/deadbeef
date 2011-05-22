@@ -57,8 +57,8 @@
 
 // deadbeef api
 static DB_functions_t deadbeef_api = {
-    .vmajor = 1,
-    .vminor = 0,
+    .vmajor = DB_API_VERSION_MAJOR,
+    .vminor = DB_API_VERSION_MINOR,
     .md5 = plug_md5,
     .md5_to_str = plug_md5_to_str,
     .md5_init = (void (*)(DB_md5_t *s))md5_init,
@@ -1081,9 +1081,12 @@ plug_reinit_sound (void) {
 
     ddb_waveformat_t fmt = {0};
 
+    streamer_get_output_format (&fmt);
     if (prev) {
         state = prev->state ();
-        memcpy (&fmt, &prev->fmt, sizeof (fmt));
+        if (!fmt.channels) {
+            memcpy (&fmt, &prev->fmt, sizeof (fmt));
+        }
         prev->free ();
     }
 

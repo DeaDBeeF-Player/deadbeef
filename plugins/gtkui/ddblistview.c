@@ -18,9 +18,6 @@
 #ifdef HAVE_CONFIG_H
 #  include "../../config.h"
 #endif
-#if HAVE_NOTIFY
-#include <libnotify/notify.h>
-#endif
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
@@ -1330,20 +1327,10 @@ ddb_listview_select_single (DdbListview *ps, int sel) {
         if (it == sel_it) {
             if (!selected) {
                 deadbeef->pl_set_selected (it, 1);
-//                if (nchanged < NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
-//                    ddb_listview_draw_row (ps, idx, it);
-//                    ps->binding->selection_changed (it, idx);
-//                }
-//                nchanged++;
             }
         }
         else if (selected) {
             deadbeef->pl_set_selected (it, 0);
-//            if (nchanged < NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW) {
-//                ddb_listview_draw_row (ps, idx, it);
-//                ps->binding->selection_changed (it, idx);
-//            }
-//            nchanged++;
         }
         DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
         UNREF (it);
@@ -1353,10 +1340,8 @@ ddb_listview_select_single (DdbListview *ps, int sel) {
     UNREF (sel_it);
     deadbeef->pl_unlock ();
 
-    if (nchanged >= NUM_CHANGED_ROWS_BEFORE_FULL_REDRAW, 1) {
-        ddb_listview_refresh (ps, DDB_REFRESH_LIST);
-        ps->binding->selection_changed (NULL, -1); // that means "selection changed a lot, redraw everything"
-    }
+    ddb_listview_refresh (ps, DDB_REFRESH_LIST);
+    ps->binding->selection_changed (NULL, -1); // that means "selection changed a lot, redraw everything"
     ps->area_selection_start = sel;
     ps->area_selection_end = sel;
 }
@@ -1364,6 +1349,7 @@ ddb_listview_select_single (DdbListview *ps, int sel) {
 void
 ddb_listview_click_selection (DdbListview *ps, int ex, int ey, DdbListviewGroup *grp, int grp_index, int sel, int dnd) {
     deadbeef->pl_lock ();
+    ps->areaselect = 0;
     ddb_listview_groupcheck (ps);
     if (sel == -1 && (!grp || grp_index >= grp->num_items)) {
         // clicked empty space, deselect everything

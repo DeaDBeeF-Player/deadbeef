@@ -39,6 +39,7 @@ typedef struct {
     int channels;
     int quality;
     float samplerate;
+    int autosamplerate;
     SRC_STATE *src;
     SRC_DATA srcdata;
     int remaining; // number of input samples in SRC buffer
@@ -85,10 +86,32 @@ ddb_src_set_ratio (ddb_dsp_context_t *_src, float ratio) {
 }
 
 int
+ddb_src_can_bypass (ddb_dsp_context_t *_src, ddb_waveformat_t *fmt) {
+    ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
+
+    float samplerate = src->samplerate;
+    if (src->autosamplerate) {
+        DB_output_t *output = deadbeef->get_output ();
+        samplerate = output->fmt.samplerate;
+    }
+
+    if (fmt->samplerate == samplerate) {
+        return 1;
+    }
+    return 0;
+}
+
+int
 ddb_src_process (ddb_dsp_context_t *_src, float *samples, int nframes, int maxframes, ddb_waveformat_t *fmt, float *r) {
     ddb_src_libsamplerate_t *src = (ddb_src_libsamplerate_t*)_src;
 
-    if (fmt->samplerate == src->samplerate) {
+    float samplerate = src->samplerate;
+    if (src->autosamplerate) {
+        DB_output_t *output = deadbeef->get_output ();
+        samplerate = output->fmt.samplerate;
+    }
+
+    if (fmt->samplerate == samplerate) {
         return nframes;
     }
 
@@ -104,9 +127,9 @@ ddb_src_process (ddb_dsp_context_t *_src, float *samples, int nframes, int maxfr
         src->need_reset = 0;
     }
 
-    float ratio = src->samplerate / fmt->samplerate;
+    float ratio = samplerate / fmt->samplerate;
     ddb_src_set_ratio (_src, ratio);
-    fmt->samplerate = src->samplerate;
+    fmt->samplerate = samplerate;
 
     int numoutframes = 0;
     int outsize = nframes*24;
@@ -149,7 +172,7 @@ ddb_src_process (ddb_dsp_context_t *_src, float *samples, int nframes, int maxfr
         if (src_err) {
             const char *err = src_strerror (src_err) ;
             fprintf (stderr, "src_process error %s\n"
-                    "srcdata.data_in=%p, srcdata.data_out=%p, srcdata.input_frames=%d, srcdata.output_frames=%d, srcdata.src_ratio=%f", err, src->srcdata.data_in, src->srcdata.data_out, (int)src->srcdata.input_frames, (int)src->srcdata.output_frames, src->srcdata.src_ratio);
+                    "srcdata.data_in=%p, srcdata.data_out=%p, srcdata.input_frames=%d, srcdata.output_frames=%d, srcdata.src_ratio=%f\n", err, src->srcdata.data_in, src->srcdata.data_out, (int)src->srcdata.input_frames, (int)src->srcdata.output_frames, src->srcdata.src_ratio);
             return nframes;
         }
 
@@ -177,7 +200,7 @@ ddb_src_process (ddb_dsp_context_t *_src, float *samples, int nframes, int maxfr
     //}
     //fwrite (input, 1,  numoutframes*sizeof(float)*(*nchannels), out);
 
-    fmt->samplerate = src->samplerate;
+    fmt->samplerate = samplerate;
     trace ("src: ratio=%f, in=%d, out=%d\n", ratio, nframes, numoutframes);
     return numoutframes;
 }
@@ -194,6 +217,8 @@ ddb_src_get_param_name (int p) {
         return "Quality";
     case SRC_PARAM_SAMPLERATE:
         return "Samplerate";
+    case SRC_PARAM_AUTOSAMPLERATE:
+        return "Auto samplerate";
     default:
         fprintf (stderr, "ddb_src_get_param_name: invalid param index (%d)\n", p);
     }
@@ -215,6 +240,9 @@ ddb_src_set_param (ddb_dsp_context_t *ctx, int p, const char *val) {
         ((ddb_src_libsamplerate_t*)ctx)->quality = atoi (val);
         ((ddb_src_libsamplerate_t*)ctx)->quality_changed = 1;
         break;
+    case SRC_PARAM_AUTOSAMPLERATE:
+        ((ddb_src_libsamplerate_t*)ctx)->autosamplerate = atoi (val);
+        break;
     default:
         fprintf (stderr, "ddb_src_set_param: invalid param index (%d)\n", p);
     }
@@ -229,24 +257,29 @@ ddb_src_get_param (ddb_dsp_context_t *ctx, int p, char *val, int sz) {
     case SRC_PARAM_QUALITY:
         snprintf (val, sz, "%d", ((ddb_src_libsamplerate_t*)ctx)->quality);
         break;
+    case SRC_PARAM_AUTOSAMPLERATE:
+        snprintf (val, sz, "%d", ((ddb_src_libsamplerate_t*)ctx)->autosamplerate);
+        break;
     default:
         fprintf (stderr, "ddb_src_get_param: invalid param index (%d)\n", p);
     }
 }
 
 static const char settings_dlg[] =
+    "property \"Automatic Samplerate (overrides Target Samplerate)\" checkbox 2 0;\n"
     "property \"Target Samplerate\" spinbtn[8192,192000,1] 0 48000;\n"
     "property \"Quality / Algorythm\" select[5] 1 2 SINC_BEST_QUALITY SINC_MEDIUM_QUALITY SINC_FASTEST ZERO_ORDER_HOLD LINEAR;\n"
 ;
 
 static DB_dsp_t plugin = {
-    .plugin.api_vmajor = DB_API_VERSION_MAJOR,
-    .plugin.api_vminor = DB_API_VERSION_MINOR,
+    // need 1.1 api for pass_through
+    .plugin.api_vmajor = 1,
+    .plugin.api_vminor = 1,
     .open = ddb_src_open,
     .close = ddb_src_close,
     .process = ddb_src_process,
-    .plugin.version_major = 0,
-    .plugin.version_minor = 1,
+    .plugin.version_major = 1,
+    .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DSP,
     .plugin.id = "SRC",
     .plugin.name = "Resampler (Secret Rabbit Code)",
@@ -275,6 +308,7 @@ static DB_dsp_t plugin = {
     .get_param = ddb_src_get_param,
     .reset = ddb_src_reset,
     .configdialog = settings_dlg,
+    .can_bypass = ddb_src_can_bypass,
 };
 
 DB_plugin_t *

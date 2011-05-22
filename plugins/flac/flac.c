@@ -294,7 +294,8 @@ cflac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
     int64_t totalsamples = FLAC__stream_decoder_get_total_samples (info->decoder);
     if (totalsamples <= 0) {
-        return -1;
+        trace ("flac: totalsamples=%lld\n", totalsamples);
+//        return -1;
     }
     float sec = totalsamples / (float)_info->fmt.samplerate;
     if (sec > 0) {
@@ -358,11 +359,13 @@ static int
 cflac_read (DB_fileinfo_t *_info, char *bytes, int size) {
     flac_info_t *info = (flac_info_t *)_info;
     int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
-    if (size / samplesize + info->currentsample > info->endsample) {
-        size = (info->endsample - info->currentsample + 1) * samplesize;
-        trace ("size truncated to %d bytes, cursample=%d, endsample=%d\n", size, info->currentsample, info->endsample);
-        if (size <= 0) {
-            return 0;
+    if (info->endsample >= 0) {
+        if (size / samplesize + info->currentsample > info->endsample) {
+            size = (info->endsample - info->currentsample + 1) * samplesize;
+            trace ("size truncated to %d bytes, cursample=%d, endsample=%d\n", size, info->currentsample, info->endsample);
+            if (size <= 0) {
+                return 0;
+            }
         }
     }
     int initsize = size;
@@ -584,7 +587,12 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
         _info->fmt.channels = metadata->data.stream_info.channels;
         _info->fmt.bps = metadata->data.stream_info.bits_per_sample;
         info->totalsamples = metadata->data.stream_info.total_samples;
-        deadbeef->plt_set_item_duration (info->plt, it, metadata->data.stream_info.total_samples / (float)metadata->data.stream_info.sample_rate);
+        if (metadata->data.stream_info.total_samples > 0) {
+            deadbeef->plt_set_item_duration (info->plt, it, metadata->data.stream_info.total_samples / (float)metadata->data.stream_info.sample_rate);
+        }
+        else {
+            deadbeef->plt_set_item_duration (info->plt, it, -1);
+        }
     }
     else if (metadata->type == FLAC__METADATA_TYPE_VORBIS_COMMENT) {
         const FLAC__StreamMetadata_VorbisComment *vc = &metadata->data.vorbis_comment;
@@ -925,7 +933,8 @@ static const char *exts[] = { "flac", "oga", NULL };
 
 // define plugin interface
 static DB_decoder_t plugin = {
-    DB_PLUGIN_SET_API_VERSION
+    .plugin.api_vmajor = 1,
+    .plugin.api_vminor = 0,
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,
@@ -954,7 +963,6 @@ static DB_decoder_t plugin = {
     .init = cflac_init,
     .free = cflac_free,
     .read = cflac_read,
-//    .read_float32 = cflac_read_float32,
     .seek = cflac_seek,
     .seek_sample = cflac_seek_sample,
     .insert = cflac_insert,

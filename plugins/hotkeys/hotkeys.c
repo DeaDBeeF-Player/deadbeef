@@ -127,12 +127,12 @@ cmd_invoke_plugin_command (DB_plugin_action_t *action)
         trace ("No tracks selected\n");
         return;
     }
-    if ((selected_count == 1) && (0 == action->flags & DB_ACTION_SINGLE_TRACK))
+    if ((selected_count == 1) && (!(action->flags & DB_ACTION_SINGLE_TRACK)))
     {
         trace ("Hotkeys: action %s not allowed for single track\n", action->name);
         return;
     }
-    if ((selected_count > 1) && (0 == action->flags & DB_ACTION_ALLOW_MULTIPLE_TRACKS))
+    if ((selected_count > 1) && (!(action->flags & DB_ACTION_ALLOW_MULTIPLE_TRACKS)))
     {
         trace ("Hotkeys: action %s not allowed for multiple tracks\n", action->name);
         return;
@@ -614,8 +614,8 @@ hotkeys_get_actions (DB_playItem_t *it)
 
 // define plugin interface
 static DB_hotkeys_plugin_t plugin = {
-    .misc.plugin.api_vmajor = DB_API_VERSION_MAJOR,
-    .misc.plugin.api_vminor = DB_API_VERSION_MINOR,
+    .misc.plugin.api_vmajor = 1,
+    .misc.plugin.api_vminor = 0,
     .misc.plugin.version_major = 1,
     .misc.plugin.version_minor = 0,
     .misc.plugin.type = DB_PLUGIN_MISC,

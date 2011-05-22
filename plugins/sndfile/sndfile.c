@@ -42,6 +42,8 @@ typedef struct {
     int endsample;
     int currentsample;
     int bitrate;
+    int sf_format;
+    int read_as_short;
 } sndfile_info_t;
 
 // vfs wrapper for sf
@@ -170,6 +172,7 @@ sndfile_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
     _info->plugin = &plugin;
+    info->sf_format = inf.format&0x000f;
 
     switch (inf.format&0x000f) {
     case SF_FORMAT_PCM_S8:
@@ -187,14 +190,11 @@ sndfile_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     case SF_FORMAT_PCM_32:
         _info->fmt.bps = 32;
         break;
-    case SF_FORMAT_DOUBLE:
-        fprintf (stderr, "[sndfile] 64 bit float input format is not supported (yet)\n");
-        return -1;
-//        _info->fmt.bps = 64;
-        break;
     default:
+        info->read_as_short = 1;
+        _info->fmt.bps = 16;
         fprintf (stderr, "[sndfile] unidentified input format: 0x%X\n", inf.format&0x000f);
-        return -1;
+        break;
     }
 
     _info->fmt.channels = inf.channels;
@@ -264,8 +264,21 @@ sndfile_read (DB_fileinfo_t *_info, char *bytes, int size) {
     }
 
     int n = 0;
-    n = sf_read_raw (info->ctx, (short *)bytes, size);
-    n /= samplesize;
+    if (info->read_as_short) {
+        n = sf_readf_short(info->ctx, (short *)bytes, size/samplesize);
+    }
+    else {
+        n = sf_read_raw (info->ctx, (short *)bytes, size);
+
+        if (info->sf_format == SF_FORMAT_PCM_U8) {
+            for (int i = 0; i < n; i++) {
+                int sample = ((uint8_t *)bytes)[i];
+                ((int8_t *)bytes)[i] = sample-0x80;
+            }
+        }
+        n /= samplesize;
+    }
+
     info->currentsample += n;
 
     size = n * samplesize;
@@ -344,7 +357,12 @@ sndfile_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         break;
     }
 
-    snprintf (s, sizeof (s), "%d", bps);
+    if (bps == -1) {
+        snprintf (s, sizeof (s), "unknown");
+    }
+    else {
+        snprintf (s, sizeof (s), "%d", bps);
+    }
     deadbeef->pl_add_meta (it, ":BPS", s);
     snprintf (s, sizeof (s), "%d", inf.channels);
     deadbeef->pl_add_meta (it, ":CHANNELS", s);
@@ -354,6 +372,75 @@ sndfile_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     snprintf (s, sizeof (s), "%d", br);
     deadbeef->pl_add_meta (it, ":BITRATE", s);
 
+    // sndfile subformats
+    const char *subformats[] = {
+        "",
+        "PCM_S8",
+        "PCM_16",
+        "PCM_24",
+        "PCM_32",
+        "PCM_U8",
+        "FLOAT",
+        "DOUBLE",
+        "",
+        "",
+        "ULAW",
+        "ALAW",
+        "IMA_ADPCM",
+        "MS_ADPCM",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "GSM610",
+        "VOX_ADPCM",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "G721_32",
+        "G723_24",
+        "G723_40",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "DWVW_12",
+        "DWVW_16",
+        "DWVW_24",
+        "DWVW_N",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "DPCM_8",
+        "DPCM_16",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "VORBIS",
+    };
+
+    if (inf.format&0x000f <= SF_FORMAT_VORBIS) {
+        deadbeef->pl_add_meta (it, ":SF_FORMAT", subformats[inf.format&0x000f]);
+    }
 
     DB_playItem_t *cue_after = deadbeef->plt_insert_cue (plt, after, it, totalsamples, samplerate);
     if (cue_after) {
@@ -441,7 +528,8 @@ static const char settings_dlg[] =
 
 // define plugin interface
 static DB_decoder_t plugin = {
-    DB_PLUGIN_SET_API_VERSION
+    .plugin.api_vmajor = 1,
+    .plugin.api_vminor = 0,
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,

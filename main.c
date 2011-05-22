@@ -421,6 +421,7 @@ player_mainloop (void) {
             switch (msg) {
             case DB_EV_REINIT_SOUND:
                 plug_reinit_sound ();
+                streamer_reset (1);
                 conf_save ();
                 break;
             case DB_EV_TERMINATE:
@@ -440,6 +441,12 @@ player_mainloop (void) {
                 output->stop ();
                 pl_playqueue_clear ();
                 streamer_set_nextsong (p1, 1);
+                if (pl_get_order () == PLAYBACK_ORDER_SHUFFLE_ALBUMS) {
+                    int pl = streamer_get_current_playlist ();
+                    playlist_t *plt = plt_get_for_idx (pl);
+                    plt_init_shuffle_albums (plt, p1);
+                    plt_unref (plt);
+                }
                 break;
             case DB_EV_STOP:
                 streamer_set_nextsong (-2, 0);
@@ -599,6 +606,8 @@ main (int argc, char *argv[]) {
         e--;
     }
     *e = 0;
+#else
+    strcpy (dbinstalldir, PREFIX);
 #endif
 
 #ifdef __linux__
@@ -812,13 +821,17 @@ main (int argc, char *argv[]) {
 //    }
     close(s);
 
+    // become a server
+    if (server_start () < 0) {
+        exit (-1);
+    }
+
     // hack: report nowplaying
     if (!strcmp (cmdline, "--nowplaying")) {
         char nothing[] = "nothing";
         fwrite (nothing, 1, sizeof (nothing)-1, stdout);
         return 0;
     }
-
 
     pl_init ();
     conf_init ();
@@ -850,10 +863,6 @@ main (int argc, char *argv[]) {
         }
     }
 
-    // become a server
-    if (server_start () < 0) {
-        exit (-1);
-    }
 #if 0
     signal (SIGTERM, sigterm_handler);
     atexit (atexit_handler); // helps to save in simple cases

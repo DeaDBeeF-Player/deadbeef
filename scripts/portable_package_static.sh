@@ -58,6 +58,7 @@ tar jcvf ../portable_out/build/deadbeef-$VERSION-static-i686.tar.bz2\
     $PLUGDIR/convpresets\
     $PLUGDIR/pulse.so\
     $PLUGDIR/dsp_libsrc.so\
+    $PLUGDIR/mono2stereo.so\
     $PIXMAPDIR\
     $SRCDIR/locale
 cd ..
