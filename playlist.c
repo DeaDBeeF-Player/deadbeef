@@ -1130,31 +1130,33 @@ plt_insert_cue (playlist_t *plt, playItem_t *after, playItem_t *origin, int nums
     char cuename[len+5];
     strcpy (cuename, fname);
     strcpy (cuename+len, ".cue");
-    FILE *fp = fopen (cuename, "rb");
+    DB_FILE *fp = vfs_fopen (cuename);
     if (!fp) {
         char *ptr = cuename + len-1;
         while (ptr >= cuename && *ptr != '.') {
             ptr--;
         }
         strcpy (ptr+1, "cue");
-        fp = fopen (cuename, "rb");
+        fp = vfs_fopen (cuename);
         if (!fp) {
             return NULL;
         }
     }
-    fseek (fp, 0, SEEK_END);
-    size_t sz = ftell (fp);
+    size_t sz = vfs_fgetlength (fp);
     if (sz == 0) {
-        fclose (fp);
+        vfs_fclose (fp);
         return NULL;
     }
-    rewind (fp);
-    uint8_t buf[sz];
-    if (fread (buf, 1, sz, fp) != sz) {
-        fclose (fp);
+    uint8_t *buf = alloca(sz);
+    if (!buf) {
+        vfs_fclose (fp);
         return NULL;
     }
-    fclose (fp);
+    if (vfs_fread (buf, 1, sz, fp) != sz) {
+        vfs_fclose (fp);
+        return NULL;
+    }
+    vfs_fclose (fp);
     return plt_insert_cue_from_buffer (plt, after, origin, buf, sz, numsamples, samplerate);
 }
 
