@@ -121,4 +121,10 @@ streamer_dsp_refresh (void);
 void
 streamer_get_output_format (ddb_waveformat_t *fmt);
 
+void
+streamer_dsp_postinit (void);
+
+int
+streamer_dsp_chain_save (const char *fname, ddb_dsp_context_t *chain);
+
 #endif // __STREAMER_H

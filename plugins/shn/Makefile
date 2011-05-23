@@ -1,8 +1,9 @@
-OUT=shn.so
+OUT=ddb_shn.so
 
-CC=gcc
+CC?=gcc
 
-CFLAGS+=-Wall -fPIC -std=c99 -D_GNU_SOURCE -DHAVE_CONFIG_H -I. -I../..
+CFLAGS?=-I../..
+CFLAGS+=-Wall -fPIC -std=c99 -D_GNU_SOURCE -DHAVE_CONFIG_H -I.
 
 LDFLAGS+=-module -shared -lm
 

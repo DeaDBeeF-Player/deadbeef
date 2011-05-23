@@ -2999,6 +2999,7 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
     uint8_t *tag = malloc (size);
     if (!tag) {
         fprintf (stderr, "junklib: out of memory while reading id3v2, tried to alloc %d bytes\n", size);
+        goto error;
     }
     if (deadbeef->fread (tag, 1, size, fp) != size) {
         goto error; // bad size

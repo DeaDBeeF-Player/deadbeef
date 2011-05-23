@@ -23,7 +23,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "shorten.h"
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "bitshift.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -1836,7 +1836,7 @@ static DB_decoder_t plugin = {
 };
 
 DB_plugin_t *
-shn_load (DB_functions_t *api) {
+ddb_shn_load (DB_functions_t *api) {
     deadbeef = api;
     return DB_PLUGIN (&plugin);
 }

@@ -116,6 +116,7 @@ static DB_dsp_t plugin = {
     .plugin.name = "example",
     .plugin.descr = "example DSP Plugin",
     .plugin.copyright = "copyright message - author(s), license, etc",
+    .plugin.website = "http://example.com",
     .num_params = example_num_params,
     .get_param_name = example_get_param_name,
     .set_param = example_set_param,

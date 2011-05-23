@@ -1,6 +1,6 @@
-OUT=ao.so
+OUT=ddb_aopsf.so
 
-CC=gcc
+CC?=gcc
 
 ZLIB_LIBS?=-lz
 

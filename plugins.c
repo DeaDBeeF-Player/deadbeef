@@ -558,7 +558,7 @@ load_plugin (const char *plugdir, char *d_name, int l) {
     if (!handle) {
         //trace ("dlopen error: %s\n", dlerror ());
 #ifdef ANDROID
-        break;
+        return -1;
 #else
         strcpy (fullname + strlen(fullname) - 3, ".fallback.so");
         trace ("trying %s...\n", fullname);
@@ -740,9 +740,9 @@ plug_load_all (void) {
     trace ("\033[0;31mDISABLE_VERSIONCHECK=1! do not distribute!\033[0;m\n");
 #endif
 
-#ifndef ANDROID
     const char *dirname = deadbeef->get_plugin_dir ();
 
+#ifndef ANDROID
     char *xdg_local_home = getenv ("XDG_LOCAL_HOME");
     char xdg_plugin_dir[1024];
 
@@ -783,7 +783,7 @@ plug_load_all (void) {
 
 #ifdef ANDROID
     char plugin_path[1000];
-    strncpy (plugin_path, conf_get_str ("android.plugin_path", ""), sizeof (plugin_path)-1);
+    strncpy (plugin_path, conf_get_str_fast ("android.plugin_path", ""), sizeof (plugin_path)-1);
     plugin_path[sizeof(plugin_path)-1] = 0;
     char *p = plugin_path;
     while (*p) {
