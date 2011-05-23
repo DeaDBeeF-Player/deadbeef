@@ -8,16 +8,17 @@ msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-10-06 04:37+0000\n"
-"PO-Revision-Date: 2010-10-06 12:05-0000\n"
-"Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
+"PO-Revision-Date: 2011-05-14 02:21+0200\n"
+"Last-Translator: Sérgio <smarquespt@gmail.com>\n"
 "Language-Team: \n"
+"Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Pootle 2.0.5\n"
 "X-Poedit-Language: Portuguese\n"
 "X-Poedit-Country: Portugal\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../plugins/gtkui/callbacks.c:97
 msgid "Supported sound formats"
@@ -41,7 +42,7 @@ msgstr "Adicionar pasta(s) à lista..."
 
 #: ../plugins/gtkui/callbacks.c:192
 msgid "Follow symlinks"
-msgstr "Seguir \"symlinks\""
+msgstr "Seguir ligações simbólicas"
 
 #: ../plugins/gtkui/callbacks.c:667
 msgid "Failed while reading help file"
@@ -146,7 +147,7 @@ msgstr "Tudo a zero"
 
 #: ../plugins/gtkui/eq.c:307
 msgid "Zero Preamp"
-msgstr "\"Zero Preamp\""
+msgstr "Amplificador nulo"
 
 #: ../plugins/gtkui/eq.c:314
 msgid "Zero Bands"
@@ -471,7 +472,7 @@ msgstr "Pausar"
 #: ../plugins/gtkui/interface.c:935
 #: ../plugins/gtkui/deadbeef.glade.h:97
 msgid "Previous"
-msgstr "Anterior "
+msgstr "Anterior"
 
 #: ../plugins/gtkui/interface.c:943
 #: ../plugins/gtkui/deadbeef.glade.h:83
@@ -600,7 +601,7 @@ msgstr "Faixa"
 #: ../plugins/gtkui/interface.c:1439
 #: ../translation/extra.c:58
 msgid "Band / Album Artist"
-msgstr "Banda/Artista do Álbum"
+msgstr "Banda / Artista do álbum"
 
 #: ../plugins/gtkui/interface.c:1440
 #: ../plugins/gtkui/plcommon.c:882
@@ -639,11 +640,11 @@ msgid ""
 "Example: %a - %t [%l]"
 msgstr ""
 "Conversão de formatos (iniciam com %):\n"
-"  [a]rtista, [t]ítulo, ál[b]um, [B]anda, [C]ompositor\n"
-"  [n]úmerodefaixa, [N]totaldefaixas,\n"
-"  [l]duração, [y]ano, [g]énero, [c]omentário,\n"
-"  di[r]eitosdeautor, nomede[f]icheiro, [F]nomecompletodocaminho,\n"
-" [T]detalhes [d]iretório, [D]iretóriocomcaminho\n"
+"[a]rtista, [t]ítulo, ál[b]um, [B]anda, [C]ompositor\n"
+"[n]úmerodefaixa, [N]totaldefaixas,\n"
+"[l]duração, [y]ano, [g]énero, [c]omentário,\n"
+"di[r]eitosdeautor, nomede[f]icheiro, [F]nomecompletodocaminho,\n"
+"[T]detalhes [d]iretório, [D]iretóriocomcaminho\n"
 "Exemplo: %a - %t [%l]"
 
 #: ../plugins/gtkui/interface.c:1501
@@ -665,7 +666,7 @@ msgstr "_OK"
 #: ../plugins/gtkui/interface.c:1753
 #: ../plugins/gtkui/deadbeef.glade.h:87
 msgid "Output plugin:"
-msgstr "\"Plug-ins\" de som:"
+msgstr "\"Plug-in\" de som:"
 
 #: ../plugins/gtkui/interface.c:1766
 #: ../plugins/gtkui/deadbeef.glade.h:86
@@ -960,7 +961,7 @@ msgstr "Autor(s):"
 #: ../plugins/gtkui/interface.c:2449
 #: ../plugins/gtkui/deadbeef.glade.h:28
 msgid "Email:"
-msgstr "\"Email\":"
+msgstr "Endereço eletrónico:"
 
 #: ../plugins/gtkui/interface.c:2464
 #: ../plugins/gtkui/deadbeef.glade.h:139
@@ -1023,7 +1024,7 @@ msgstr "Faixa n.º"
 #: ../plugins/gtkui/mainplaylist.c:308
 #: ../plugins/gtkui/search.c:441
 msgid "Title / Track Artist"
-msgstr "Título/Artista da faixa"
+msgstr "Título / Artista da faixa"
 
 #: ../plugins/gtkui/mainplaylist.c:309
 #: ../plugins/gtkui/search.c:442
@@ -1041,7 +1042,7 @@ msgid ""
 "(This dialog can be turned off in GTKUI plugin settings)"
 msgstr ""
 "Os ficheiros serão perdidos. Continuar?\n"
-"(Esta janela pode ser desligada nas definições do \"GTKUI\")"
+"(Esta janela pode ser desligada nas definições da GTKUI)"
 
 #: ../plugins/gtkui/plcommon.c:326
 #: ../plugins/gtkui/trkproperties.c:56
@@ -1152,7 +1153,7 @@ msgstr "Tipo(s) de detalhes"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Embedded Cuesheet"
-msgstr "\"Cuesheet\" incorporada"
+msgstr "Cuesheet incorporada"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Yes"
@@ -1243,7 +1244,7 @@ msgstr "   --queue            Acrescenta ficheiro(s) à lista existente\n"
 #: ../main.c:101
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr "   --nowplaying FMT   Imprime o nome da faixa para \"stdout\"\n"
+msgstr "   --nowplaying FMT   Imprime o nome da faixa para stdout\n"
 
 #: ../main.c:102
 #, c-format
@@ -1307,7 +1308,7 @@ msgstr ""
 "Título\n"
 "Duração\n"
 "Faixa\n"
-"Banda/artista do álbum\n"
+"Banda / artista do álbum\n"
 "Personalizar"
 
 #: ../plugins/gtkui/deadbeef.glade.h:70
@@ -1327,7 +1328,10 @@ msgstr "Incapaz de encontrar o ficheiro: %s"
 #: ../plugins/wildmidi/wildmidiplug.c:162
 #, c-format
 msgid "wildmidi: freepats config file not found. Please install timidity-freepats package, or specify path to freepats.cfg in the plugin settings."
-msgstr "wildmidi: o ficheiro de configuração \"freepats\" não foi encontrado. Por favor, instale o pacote timidity-freepats ou especifique o caminho para freepats.cfg nas definições do \"plug-in\"."
+msgstr ""
+"wildmidi: o ficheiro de configuração freepats não foi encontrado. Por favor, "
+"instale o pacote timidity-freepats ou especifique o caminho para "
+"freepats.cfg nas definições do \"plug-in\"."
 
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
@@ -1351,7 +1355,7 @@ msgstr "Libertar dispositivo se parado"
 #: ../translation/extra.c:8
 #: ../translation/extra.c:43
 msgid "Preferred buffer size"
-msgstr "Tamanho do \"buffer\""
+msgstr "Tamanho do buffer"
 
 #: ../translation/extra.c:9
 msgid "Preferred period size"
@@ -1389,7 +1393,7 @@ msgstr "Obter a partir dos detalhes"
 
 #: ../translation/extra.c:19
 msgid "Fetch from local folder"
-msgstr "Obter  numa pasta local"
+msgstr "Obter numa pasta local"
 
 #: ../translation/extra.c:20
 msgid "Local cover file mask"
@@ -1414,11 +1418,11 @@ msgstr "Preferir CD-Text a CDDB"
 
 #: ../translation/extra.c:26
 msgid "CDDB url (e.g. 'freedb.org')"
-msgstr "URL CDDB (ex: \"freedb.org\")"
+msgstr "URL CDDB (ex: freedb.org)"
 
 #: ../translation/extra.c:27
 msgid "CDDB port number (e.g. '888')"
-msgstr "Porta CDDB (ex: \"888\")"
+msgstr "Porta CDDB (ex: 888)"
 
 #: ../translation/extra.c:28
 msgid "Prefer CDDB protocol over HTTP"
@@ -1453,7 +1457,7 @@ msgstr "Ícone de estado personalizado"
 
 #: ../translation/extra.c:38
 msgid "Run gtk_init with --sync (debug mode)"
-msgstr "Execute gtk_init com --sync (modo \"debug\")"
+msgstr "Execute gtk_init com --sync (modo de depuração)"
 
 #. OSD Notify plugin
 #: ../translation/extra.c:40
@@ -1480,7 +1484,7 @@ msgstr "Caminho da tabela de pesquisa absoluta"
 
 #: ../translation/extra.c:48
 msgid "Swap audio bytes (toggle if all you hear is static)"
-msgstr "Trocar \"bytes\" áudio (troque se apenas ouvir estático)"
+msgstr "Trocar \"bytes\" áudio (troque apenas se ouvir defeitos)"
 
 #. SID decoder plugin
 #: ../translation/extra.c:50
@@ -1534,9 +1538,8 @@ msgstr "Comentário"
 
 #: ../translation/extra.c:67
 msgid "Encoder / Vendor"
-msgstr "Codificador/Fornecedor"
+msgstr "Codificador / Fornecedor"
 
 #: ../translation/extra.c:68
 msgid "Copyright"
 msgstr "Direitos de autor"
-
