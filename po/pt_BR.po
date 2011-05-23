@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-05-23 12:53-0300\n"
-"PO-Revision-Date: 2011-05-23 14:05-0300\n"
+"PO-Revision-Date: 2011-05-23 14:14-0300\n"
 "Last-Translator: Sérgio Cipolla <secipolla@gmail.com>\n"
 "Language-Team: Brazilian Portuguese <ldp-br@bazar2.conectiva.com.br>\n"
 "Language: pt_BR\n"
@@ -1317,7 +1317,9 @@ msgstr ""
 #: ../main.c:109
 #, c-format
 msgid "                      for more info, see http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"
-msgstr "                      para mais informações, veja http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"
+msgstr ""
+"                      para mais informações, veja:\n"
+"http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"
 
 #: ../playlist.c:439
 #: ../playlist.c:2605
