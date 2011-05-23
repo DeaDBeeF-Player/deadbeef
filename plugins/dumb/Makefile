@@ -1,4 +1,6 @@
-CC=gcc
+OUT=ddb_dumb.so
+
+CC?=gcc
 
 dumbpath=dumb-kode54
 
@@ -80,8 +82,6 @@ dumb-kode54/src/helpers/barray.c\
 cdumb.c
 
 OBJECTS=$(SOURCES:.c=.o)
-
-OUT=dumb.so
 
 all: $(SOURCES) $(OUT)
 
