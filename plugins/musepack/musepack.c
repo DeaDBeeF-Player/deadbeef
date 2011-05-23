@@ -120,7 +120,8 @@ musepack_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->fmt.bps = 32;
     _info->fmt.channels = info->si.channels;
     _info->fmt.samplerate = info->si.sample_freq;
-    for (int i = 0; i < _info->fmt.channels; i++) {
+    int i;
+    for (i = 0; i < _info->fmt.channels; i++) {
         _info->fmt.channelmask |= 1 << i;
     }
     _info->readpos = 0;
