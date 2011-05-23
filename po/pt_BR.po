@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-05-23 12:53-0300\n"
-"PO-Revision-Date: 2011-05-23 14:14-0300\n"
+"PO-Revision-Date: 2011-05-23 19:55-0300\n"
 "Last-Translator: Sérgio Cipolla <secipolla@gmail.com>\n"
 "Language-Team: Brazilian Portuguese <ldp-br@bazar2.conectiva.com.br>\n"
 "Language: pt_BR\n"
@@ -711,7 +711,7 @@ msgstr "+12 dB"
 #: ../plugins/gtkui/interface.c:1901
 #: ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
-msgstr "Adicionar arquivos pela linha de comando (ou gerenciador de arquivos) à esta lista de reprodução:"
+msgstr "Adicionar arquivos pela linha de comando (ou gerenciador de arquivos) a esta lista de reprodução:"
 
 #: ../plugins/gtkui/interface.c:1910
 #: ../plugins/gtkui/deadbeef.glade.h:108
