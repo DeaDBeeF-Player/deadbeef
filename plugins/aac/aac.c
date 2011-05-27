@@ -1256,7 +1256,7 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         MP4Close (mp4);
 #endif
     }
-    else if (ftype == "aac") {
+    else if (ftype && !strcmp (ftype, "RAW AAC")) {
         int apeerr = deadbeef->junk_apev2_read (it, fp);
         int v2err = deadbeef->junk_id3v2_read (it, fp);
         int v1err = deadbeef->junk_id3v1_read (it, fp);
