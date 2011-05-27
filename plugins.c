@@ -556,7 +556,7 @@ load_plugin (const char *plugdir, char *d_name, int l) {
     trace ("loading plugin %s/%s\n", plugdir, d_name);
     void *handle = dlopen (fullname, RTLD_NOW);
     if (!handle) {
-        //trace ("dlopen error: %s\n", dlerror ());
+        trace ("dlopen error: %s\n", dlerror ());
 #ifdef ANDROID
         return -1;
 #else
