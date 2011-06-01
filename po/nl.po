@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-11-09 04:43+0000\n"
-"PO-Revision-Date: 2011-05-28 16:38+0200\n"
+"PO-Revision-Date: 2011-06-02 00:20+0200\n"
 "Last-Translator: Pjotr <pliniusminor@gmail.com>\n"
 "Language-Team: Spanish\n"
 "Language: nl\n"
@@ -44,11 +44,11 @@ msgstr "Volg symbolische koppelingen"
 
 #: ../plugins/gtkui/callbacks.c:667
 msgid "Failed while reading help file"
-msgstr "Fout bij het lezen van het hulpbestand"
+msgstr "Fout bij lezen van hulpbestand"
 
 #: ../plugins/gtkui/callbacks.c:677
 msgid "Failed to load help file"
-msgstr "Kon het hulpbestand niet laden"
+msgstr "Kon hulpbestand niet laden"
 
 #: ../plugins/gtkui/callbacks.c:692
 msgid "help.txt"
