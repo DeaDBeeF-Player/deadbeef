@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-11-09 04:43+0000\n"
-"PO-Revision-Date: 2011-06-02 00:20+0200\n"
-"Last-Translator: Pjotr <pliniusminor@gmail.com>\n"
+"PO-Revision-Date: 2011-06-02 23:20+0200\n"
+"Last-Translator: Pjotr <>\n"
 "Language-Team: Spanish\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -339,7 +339,7 @@ msgstr "Enkel nummer herhalend"
 
 #: ../plugins/gtkui/interface.c:367 ../plugins/gtkui/deadbeef.glade.h:27
 msgid "Don't Loop"
-msgstr "Niet herhalend"
+msgstr "Niet telkens herhalen"
 
 #: ../plugins/gtkui/interface.c:373 ../plugins/gtkui/deadbeef.glade.h:113
 msgid "Scroll follows playback"
