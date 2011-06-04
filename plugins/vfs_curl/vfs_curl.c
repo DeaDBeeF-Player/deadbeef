@@ -611,7 +611,7 @@ http_thread_func (void *ctx) {
             if (*proxyuser || *proxypass) {
 #if LIBCURL_VERSION_MINOR >= 19 && LIBCURL_VERSION_PATCH >= 1
                 curl_easy_setopt (curl, CURLOPT_PROXYUSERNAME, proxyuser);
-                curl_easy_setopt (curl, CURLOPT_PROXYUSERNAME, proxypass);
+                curl_easy_setopt (curl, CURLOPT_PROXYPASSWORD, proxypass);
 #else
                 char pwd[200];
                 snprintf (pwd, sizeof (pwd), "%s:%s", proxyuser, proxypass);
@@ -784,7 +784,7 @@ http_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
         }
     //    trace ("buffer remaining: %d\n", fp->remaining);
         deadbeef->mutex_lock (fp->mutex);
-        trace ("http_read %lld/%lld/%d\n", fp->pos, fp->length, fp->remaining);
+        //trace ("http_read %lld/%lld/%d\n", fp->pos, fp->length, fp->remaining);
         int cp = min (sz, fp->remaining);
         int readpos = fp->pos & BUFFER_MASK;
         int part1 = BUFFER_SIZE-readpos;
@@ -813,7 +813,7 @@ http_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
 
 static int
 http_seek (DB_FILE *stream, int64_t offset, int whence) {
-    trace ("http_seek %lld %d\n", offset, whence);
+    //trace ("http_seek %lld %d\n", offset, whence);
     assert (stream);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
     fp->seektoend = 0;
