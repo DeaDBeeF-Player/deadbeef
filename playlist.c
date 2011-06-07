@@ -162,6 +162,7 @@ pl_free (void) {
         mutex_plt = 0;
     }
 #endif
+    playlist = NULL;
 }
 
 #if DEBUG_LOCKING

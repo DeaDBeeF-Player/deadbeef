@@ -996,6 +996,17 @@ plug_unload_all (void) {
         g_gui_names[i] = NULL;
     }
     plugins_tail = NULL;
+
+    memset (g_plugins, 0, sizeof (g_plugins));
+    memset (g_gui_names, 0, sizeof (g_gui_names));
+    g_num_gui_names = 0;
+    memset (g_decoder_plugins, 0, sizeof (g_decoder_plugins));
+    memset (g_vfs_plugins, 0, sizeof (g_vfs_plugins));
+    memset (g_dsp_plugins, 0, sizeof (g_dsp_plugins));
+    memset (g_output_plugins, 0, sizeof (g_output_plugins));
+    output_plugin = NULL;
+    memset (g_playlist_plugins, 0, sizeof (g_playlist_plugins));
+
     trace ("all plugins had been unloaded\n");
 }
 
