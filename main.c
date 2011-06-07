@@ -15,6 +15,9 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -26,7 +29,7 @@
 #include <sys/prctl.h>
 #endif
 #ifndef __linux__
-#define _POSIX_C_SOURCE
+#define _POSIX_C_SOURCE 1
 #endif
 #include <limits.h>
 #include <errno.h>
@@ -40,9 +43,6 @@
 #include <signal.h>
 #ifdef __linux__
 #include <execinfo.h>
-#endif
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
 #endif
 #include <unistd.h>
 #include "gettext.h"

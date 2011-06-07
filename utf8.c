@@ -19,6 +19,12 @@
     by Jeff Bezanson
     placed in the public domain Fall 2005
 */
+#ifdef HAVE_CONFIG_H
+#  include "config.h"
+#endif
+#ifdef HAVE_ALLOCA_H
+#  include <alloca.h>
+#endif
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

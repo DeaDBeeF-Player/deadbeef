@@ -24,7 +24,7 @@
 //#include <alloca.h>
 #include <string.h>
 #ifndef __linux__
-#define _POSIX_C_SOURCE
+#define _POSIX_C_SOURCE 1
 #endif
 #include <limits.h>
 #ifdef HAVE_CONFIG_H
