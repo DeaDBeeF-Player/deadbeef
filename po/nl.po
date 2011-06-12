@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-27 16:47+0200\n"
+"POT-Creation-Date: 2011-06-12 18:17+0200\n"
 "PO-Revision-Date: 2011-06-12 16:02+0200\n"
 "Last-Translator: Martin <brother@bsnet.se>\n"
 "Language-Team: Spanish\n"
@@ -122,6 +122,14 @@ msgstr "Voer Foobar2000 EQ-voorkeuze in..."
 msgid "Foobar2000 EQ presets (*.feq)"
 msgstr "Foobar2000 EQ presets (*.feq)"
 
+#: ../plugins/gtkui/eq.c:316
+msgid "Save Preset"
+msgstr "Opslaan Voorkeuze"
+
+#: ../plugins/gtkui/eq.c:324
+msgid "Load Preset"
+msgstr "Voorkeuze Laden"
+
 #: ../plugins/gtkui/eq.c:332
 msgid "Import Foobar2000 Preset"
 msgstr "Importeer Foobar2000 Voorkeuze"
@@ -142,17 +150,11 @@ msgstr "Voorversterking op nul"
 msgid "Zero Bands"
 msgstr "Zero Bands"
 
-#: ../plugins/gtkui/eq.c:320
-msgid "Save Preset"
-msgstr "Opslaan Voorkeuze"
-
-#: ../plugins/gtkui/eq.c:327
-msgid "Load Preset"
-msgstr "Voorkeuze Laden"
-
-#: ../plugins/gtkui/eq.c:334
-msgid "Import Foobar2000 Preset"
-msgstr "Foobar2000-voorkeuze invoeren"
+#: ../plugins/gtkui/eq.c:387 ../plugins/converter/interface.c:826
+#: ../plugins/converter/converter.glade.h:40
+#, fuzzy
+msgid "Presets"
+msgstr "Opslaan voorkeuze"
 
 #: ../plugins/gtkui/gtkui.c:137
 #, c-format
@@ -557,27 +559,9 @@ msgstr "Links"
 msgid "Right"
 msgstr "Rechts"
 
-#: ../plugins/gtkui/interface.c:1459 ../plugins/gtkui/interface.c:3007
-#: ../plugins/gtkui/deadbeef.glade.h:47
-#, no-c-format
-msgid ""
-"Format conversions (start with %):\n"
-"  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
-"  track[n]umber, [N]totaltracks,\n"
-"  [l]ength, [y]ear, [g]enre, [c]omment,\n"
-"  copy[r]ight, [f]ilename, [T]ags\n"
-"Example: %a - %t [%l]"
-msgstr ""
-"Formatteer conversies (begin met %):\n"
-"[a]rtiest, [t]itel, al[b]um, [B]and, [C]omposer\n"
-"titel[n]ummer, [N]totaltracks,\n"
-"[d]uur, [j]aar, [g]enre, [c]ommentaar,\n"
-"copy[r]echt, [b]estandnaam, [T]etiketten\n"
-"Bijvoorbeeld: %a - %t [%l]"
-
-#: ../plugins/gtkui/interface.c:1488 ../plugins/gtkui/interface.c:2801
-#: ../plugins/gtkui/interface.c:2913 ../plugins/gtkui/interface.c:3036
-#: ../plugins/gtkui/deadbeef.glade.h:133
+#: ../plugins/gtkui/interface.c:1583 ../plugins/gtkui/interface.c:2901
+#: ../plugins/gtkui/interface.c:3013 ../plugins/gtkui/interface.c:3139
+#: ../plugins/gtkui/deadbeef.glade.h:150
 msgid "_Cancel"
 msgstr "_Annuleer"
 
@@ -1188,7 +1172,16 @@ msgstr ""
 msgid "Default"
 msgstr "Standaard"
 
-#: ../plugins/gtkui/deadbeef.glade.h:1
+#: ../playlist.c:3858
+msgid "Yes"
+msgstr ""
+
+#: ../playlist.c:3858
+#, fuzzy
+msgid "No"
+msgstr "Geen"
+
+#: ../plugins/gtkui/deadbeef.glade.h:3
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
@@ -1842,56 +1835,6 @@ msgid ""
 "Overwrite"
 msgstr ""
 
-#~ msgid "Save playlist as"
-#~ msgstr "Speellijst opslaan als"
-
-#~ msgid "_Abort"
-#~ msgstr "_Afbreken"
-
-#~ msgid "editcolumndlg"
-#~ msgstr "editcolumndlg"
-
-#~ msgid "Length"
-#~ msgstr "Lengte"
-
-#~ msgid ""
-#~ "Format conversions (start with %):\n"
-#~ "  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
-#~ "  track[n]umber, [N]totaltracks,\n"
-#~ "  [l]ength, [y]ear, [g]enre, [c]omment,\n"
-#~ "  copy[r]ight, [f]ilename, [F]ullPathname, [T]ags,\n"
-#~ "  [d]irectory, [D]irectoryWithPath\n"
-#~ "Example: %a - %t [%l]"
-#~ msgstr ""
-#~ "Formatteer conversies (begin met %):\n"
-#~ "  [a]rtiest, [t]itel, al[b]um, [B]and, [C]omponist\n"
-#~ "  spoor[n]ummer, [N]totaltracks,\n"
-#~ "  [l]engte, [y]jaar, [g]enre, [c]ommentaar,\n"
-#~ "  auteurs[r]echt, [b]estandnaam, [T]ags,\n"
-#~ "  [d]map, [D]MapMetPad\n"
-#~ "Bijvoorbeeld: %a - %t [%l]"
-
-#~ msgid "Allow dynamic samplerate switching"
-#~ msgstr "Dynamische samplerate-wisseling toestaan"
-
-#~ msgid "Samplerate conversion quality:"
-#~ msgstr "Samplerate-conversiekwaliteit:"
-
-#~ msgid "Description:"
-#~ msgstr "Beschrijving:"
-
-#~ msgid "Author(s):"
-#~ msgstr "Auteur(s):"
-
-#~ msgid "Email:"
-#~ msgstr "E-mail:"
-
-#~ msgid "Website:"
-#~ msgstr "Webstek:"
-
-#~ msgid "editplaylistdlg"
-#~ msgstr "editplaylistdlg"
-
 #~ msgid ""
 #~ "Format conversions (start with %):\n"
 #~ "  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
@@ -1901,78 +1844,8 @@ msgstr ""
 #~ "Example: %a - %t [%l]"
 #~ msgstr ""
 #~ "Formatteer conversies (begin met %):\n"
-#~ "  [a]rtiest, [t]itel, al[b]um, [B]and, [C]omponist\n"
-#~ "  spoor[n]ummer, [N]totaltracks,\n"
-#~ "  [d]uur, [j]aar, [g]enre, [c]ommentaar,\n"
-#~ "  auteurs[r]echt, [b]estandnaam, [T]ags\n"
+#~ "[a]rtiest, [t]itel, al[b]um, [B]and, [C]omposer\n"
+#~ "titel[n]ummer, [N]totaltracks,\n"
+#~ "[d]uur, [j]aar, [g]enre, [c]ommentaar,\n"
+#~ "copy[r]echt, [b]estandnaam, [T]etiketten\n"
 #~ "Bijvoorbeeld: %a - %t [%l]"
-
-#~ msgid "Title / Track Artist"
-#~ msgstr "Titel / Spoor Artiest"
-
-#~ msgid "Setup %s"
-#~ msgstr "Configuratie %s"
-
-#~ msgid "ALSA output plugin"
-#~ msgstr "ALSA uitvoer-plugin"
-
-#~ msgid "DeaDBeeF now playing"
-#~ msgstr "DeaDBeeF is nu aan het spelen"
-
-#~ msgid "HVSC path"
-#~ msgstr "HVSC-pad"
-
-#~ msgid ""
-#~ "<b>WARNING</b>: tag writing feature is still in development.\n"
-#~ "<b>Make backup copies</b> before using."
-#~ msgstr ""
-#~ "<b>WAARSCHUWING</b>: tag schrijffout is nog steeds in ontwikkeling.\n"
-#~ "<b>Maak backup kopies</b> alvorens gebruik."
-
-#~ msgid "Couldn't get enough memory for input buffering."
-#~ msgstr "Kon niet voldoende geheugen krijgen voor input buffer"
-
-#~ msgid "Error reading first page of Ogg bitstream."
-#~ msgstr "Fout bij het lezen van eerste pagina van Ogg bitstream"
-
-#~ msgid "Error reading initial header packet."
-#~ msgstr "Fout bij lezen initieel header packet"
-
-#~ msgid "Couldn't get enough memory to register new stream serial number."
-#~ msgstr ""
-#~ "Kon niet voldoende geheugen krijgen voor de registratie van het nieuwe "
-#~ "stream serienummer."
-
-#~ msgid "Input truncated or empty."
-#~ msgstr "Input leeg of corrupt"
-
-#~ msgid "Input is not an Ogg bitstream."
-#~ msgstr "Input is geen Ogg bitstream."
-
-#~ msgid "Ogg bitstream does not contain Vorbis data."
-#~ msgstr "Ogg bitstream bevat geen Vorbis data"
-
-#~ msgid "EOF before recognised stream."
-#~ msgstr "EOF voor herkenning stream"
-
-#~ msgid "Ogg bitstream does not contain a supported data-type."
-#~ msgstr "Ogg bitstream bevat geen ondersteund data-type."
-
-#~ msgid "Corrupt secondary header."
-#~ msgstr "Secundaire header corrupt."
-
-#~ msgid "EOF before end of Vorbis headers."
-#~ msgstr "EOF voor einde van Vorbis headers."
-
-#~ msgid "Corrupt or missing data, continuing..."
-#~ msgstr "Data corrupt of onvolledig, doorgaan..."
-
-#~ msgid ""
-#~ "Error writing stream to output. Output stream may be corrupted or "
-#~ "truncated."
-#~ msgstr ""
-#~ "Fout bij schrijven van stream naar output. Output stream is mogelijk "
-#~ "corrupt of onvolledig."
-
-#~ msgid "Sound (adv.)"
-#~ msgstr "Geluid (adv.)"
