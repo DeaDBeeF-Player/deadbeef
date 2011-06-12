@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: 0.4.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-06-12 18:17+0200\n"
-"PO-Revision-Date: 2011-06-11 20:14+0200\n"
+"PO-Revision-Date: 2011-06-12 23:13+0200\n"
 "Last-Translator: Alexander <kazancas@gmail.com>\n"
 "Language-Team: ru <slpiv@mail.ru>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
+"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Pootle 2.0.5\n"
 
 #: ../plugins/gtkui/callbacks.c:121
@@ -1808,6 +1808,7 @@ msgid "Untitled DSP Preset"
 msgstr "Безымянная предустановка DSP"
 
 #: ../plugins/converter/converter.glade.h:23
+#, fuzzy
 msgid ""
 "Keep source format\n"
 "8 bit signed int\n"
@@ -1816,20 +1817,28 @@ msgid ""
 "32 bit signed int\n"
 "32 bit float"
 msgstr ""
+"Сохранить формат источника\n"
+"8 bit signed int\n"
+"16 bit signed int\n"
+"24 bit signed int\n"
+"32 bit signed int\n"
+"32 bit float"
 
 #: ../plugins/converter/converter.glade.h:36
-#, fuzzy
 msgid ""
 "Pipe\n"
 "Temporary file"
-msgstr "Временный файл"
+msgstr ""
+"Конвейер\n"
+"Временный файл"
 
 #: ../plugins/converter/converter.glade.h:41
-#, fuzzy
 msgid ""
 "Prompt\n"
 "Overwrite"
-msgstr "Заменить"
+msgstr ""
+"Подсказка\n"
+"Заменить"
 
 #~ msgid "Converter"
 #~ msgstr "Конвертер"
