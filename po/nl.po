@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-06-12 14:08+0200\n"
-"PO-Revision-Date: 2011-06-02 23:20+0200\n"
+"POT-Creation-Date: 2010-05-27 16:47+0200\n"
+"PO-Revision-Date: 2011-06-12 14:45+0200\n"
 "Last-Translator: Pjotr <>\n"
 "Language-Team: Spanish\n"
 "Language: nl\n"
@@ -100,7 +100,7 @@ msgstr "Maak nieuwe speellijst"
 
 #: ../plugins/gtkui/eq.c:136
 msgid "Save DeaDBeeF EQ Preset"
-msgstr "Bewaar DeaDBeef EQ Voorkeuze"
+msgstr "Bewaar DeaDBeeF EQ-voorkeuze"
 
 #: ../plugins/gtkui/eq.c:143
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
