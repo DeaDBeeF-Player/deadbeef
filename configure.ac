@@ -114,6 +114,11 @@ fi
 dnl check for libdl
 AC_CHECK_LIB([dl], [main], [HAVE_DL=yes;DL_LIBS="-ldl";AC_SUBST(DL_LIBS)])
 
+dnl check libsocket (OpenIndiana)
+AC_CHECK_LIB([socket], [main], [HAVE_SOCKET=yes;DL_LIBS="-lsocket";AC_SUBST(DL_LIBS)])
+dnl check for seperate alloca.h (OpenIndiana)
+AC_CHECK_HEADER([alloca.h],[],[alloca.h not found.])
+
 if test "x$enable_portable" != "xno" && test "x$enable_staticlink" != "xno" ; then
     AC_DEFINE_UNQUOTED([PORTABLE], [1], [Define if building portable version])
     PORTABLE=yes

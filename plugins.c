@@ -24,7 +24,7 @@
 //#include <alloca.h>
 #include <string.h>
 #ifndef __linux__
-#define _POSIX_C_SOURCE
+#define _POSIX_C_SOURCE 1
 #endif
 #include <limits.h>
 #ifdef HAVE_CONFIG_H
@@ -556,7 +556,7 @@ load_plugin (const char *plugdir, char *d_name, int l) {
     trace ("loading plugin %s/%s\n", plugdir, d_name);
     void *handle = dlopen (fullname, RTLD_NOW);
     if (!handle) {
-        //trace ("dlopen error: %s\n", dlerror ());
+        trace ("dlopen error: %s\n", dlerror ());
 #ifdef ANDROID
         return -1;
 #else
@@ -996,6 +996,17 @@ plug_unload_all (void) {
         g_gui_names[i] = NULL;
     }
     plugins_tail = NULL;
+
+    memset (g_plugins, 0, sizeof (g_plugins));
+    memset (g_gui_names, 0, sizeof (g_gui_names));
+    g_num_gui_names = 0;
+    memset (g_decoder_plugins, 0, sizeof (g_decoder_plugins));
+    memset (g_vfs_plugins, 0, sizeof (g_vfs_plugins));
+    memset (g_dsp_plugins, 0, sizeof (g_dsp_plugins));
+    memset (g_output_plugins, 0, sizeof (g_output_plugins));
+    output_plugin = NULL;
+    memset (g_playlist_plugins, 0, sizeof (g_playlist_plugins));
+
     trace ("all plugins had been unloaded\n");
 }
 

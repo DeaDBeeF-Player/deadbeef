@@ -271,6 +271,17 @@
 #define GINT16_TO_LE(val) (val)
 #endif
 
+/* If this is not defined, we are on Solaris */
+#ifndef u_int16_t
+#define u_int16_t uint16_t
+#endif
+#ifndef u_int32_t
+#define u_int32_t uint32_t
+#endif
+#ifndef u_int64_t
+#define u_int64_t uint64_t
+#endif
+
 #define LE_16(val) (GINT16_FROM_LE (*((u_int16_t*)(val))))
 #define BE_16(val) (GINT16_FROM_BE (*((u_int16_t*)(val))))
 #define LE_32(val) (GINT32_FROM_LE (*((u_int32_t*)(val))))

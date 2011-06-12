@@ -18,6 +18,9 @@
 #ifdef HAVE_CONFIG_H
 #  include "config.h"
 #endif
+#ifdef HAVE_ALLOCA_H
+#  include <alloca.h>
+#endif
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
@@ -31,7 +34,7 @@
 #include <time.h>
 #include <sys/time.h>
 #ifndef __linux__
-#define _POSIX_C_SOURCE
+#define _POSIX_C_SOURCE 1
 #endif
 #include <limits.h>
 #include <errno.h>
@@ -162,6 +165,7 @@ pl_free (void) {
         mutex_plt = 0;
     }
 #endif
+    playlist = NULL;
 }
 
 #if DEBUG_LOCKING

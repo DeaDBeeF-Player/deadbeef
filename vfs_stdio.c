@@ -169,6 +169,7 @@ static DB_vfs_t plugin = {
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_VFS,
     .plugin.name = "stdio vfs",
+    .plugin.id = "vfs_stdio",
     .plugin.descr = "Standard IO plugin\nUsed for reading normal local files\nIt is statically linked, so you can't delete it.",
     .plugin.copyright = 
         "Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"
