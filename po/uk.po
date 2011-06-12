@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-06-12 14:08+0200\n"
-"PO-Revision-Date: 2011-06-11 20:14+0200\n"
+"POT-Creation-Date: 2010-05-27 16:47+0200\n"
+"PO-Revision-Date: 2011-06-12 15:14+0200\n"
 "Last-Translator: Y P <yupadmin@gmail.com>\n"
 "Language-Team: UKRAINIAN <translate@linux.org.ua>\n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
+"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Pootle 2.0.5\n"
 "X-Poedit-Language: Ukrainian\n"
 "X-Poedit-SourceCharset: utf-8\n"
@@ -742,7 +742,7 @@ msgstr "Текст"
 
 #: ../plugins/gtkui/interface.c:2210 ../plugins/gtkui/deadbeef.glade.h:130
 msgid "Tab strip colors"
-msgstr "Кольори смужки вкладок"
+msgstr "Не додавати з архівів при додаванні тек"
 
 #: ../plugins/gtkui/interface.c:2219 ../plugins/gtkui/deadbeef.glade.h:86
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
@@ -1168,26 +1168,11 @@ msgstr ""
 "                      наприклад: --nowplaying \"%%a - %%t\" повинно показати "
 "\"виконавець - назва\"\n"
 
-#: ../main.c:109
-#, c-format
-msgid ""
-"                      for more info, see http://sourceforge.net/apps/"
-"mediawiki/deadbeef/index.php?title=Title_Formatting\n"
-msgstr ""
-
-#: ../playlist.c:443 ../playlist.c:2609
+#: ../playlist.c:369 ../playlist.c:2212
 msgid "Default"
 msgstr "Типово"
 
-#: ../playlist.c:3858
-msgid "Yes"
-msgstr "Так"
-
-#: ../playlist.c:3858
-msgid "No"
-msgstr "Ні"
-
-#: ../plugins/gtkui/deadbeef.glade.h:3
+#: ../plugins/gtkui/deadbeef.glade.h:1
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
@@ -1207,7 +1192,7 @@ msgid ""
 "Track\n"
 "Album"
 msgstr ""
-"Виключити\n"
+"Відключити\n"
 "Трек\n"
 "Альбом"
 
@@ -1226,19 +1211,19 @@ msgid ""
 "Band / Album Artist\n"
 "Custom"
 msgstr ""
-"Індекс\n"
+"Номер файла\n"
 "Програвання\n"
-"Обкладинка\n"
+"Обкладинка альбому\n"
 "Виконавець - Альбом\n"
 "Виконавець\n"
 "Альбом\n"
 "Назва\n"
-"Тривалість\n"
+"Довжина\n"
 "Трек\n"
 "Гурт / Альбом Виконавець\n"
-"Користувацьке"
+"Налаштувати"
 
-#: ../plugins/gtkui/deadbeef.glade.h:67
+#: ../plugins/gtkui/deadbeef.glade.h:60
 msgid ""
 "Left\n"
 "Right"
@@ -1252,440 +1237,53 @@ msgstr ""
 msgid "Couldn't find pixmap file: %s"
 msgstr "Не можу знайти файл pixmap: %s"
 
-#: ../plugins/wildmidi/wildmidiplug.c:162
-#, c-format
-msgid ""
-"wildmidi: freepats config file not found. Please install timidity-freepats "
-"package, or specify path to freepats.cfg in the plugin settings."
-msgstr ""
-"wildmidi: не знайдено файлу конфігурації freepats. Встановіть пакунок "
-"timidity-freepats, або вкажіть шлях до файлу freepats.cfg в настройках "
-"додатку."
-
-#. this file should list extra translatable strings that are not referenced
-#. directly in source code, e.g. scripted plugin configuration strings
-#: ../translation/extra.c:3
-msgid "Add Audio CD"
-msgstr "Додати Аудіо CD"
-
-#: ../translation/extra.c:4
-msgid "Lookup on Last.fm"
-msgstr "Шукати на Last.fm"
-
-#. ALSA output plugin
-#: ../translation/extra.c:6
-msgid "Use ALSA resampling"
-msgstr "Використовувати зміну якості ALSA"
-
-#: ../translation/extra.c:7
-msgid "Release device while stopped"
-msgstr "Вивільняти пристрій під час зупинки"
-
-#: ../translation/extra.c:8 ../translation/extra.c:51
-msgid "Preferred buffer size"
-msgstr "Бажаний розмір буфера"
-
-#: ../translation/extra.c:9
-msgid "Preferred period size"
-msgstr "Бажаний розмір періоду"
-
-#. Last.fm plugin
-#: ../translation/extra.c:11
-msgid "Enable scrobbler"
-msgstr "Включити скроблер"
-
-#: ../translation/extra.c:12
-msgid "Disable nowplaying"
-msgstr "Виключити програвання відразу"
-
-#: ../translation/extra.c:13
-msgid "Username"
-msgstr "Користувач"
-
-#: ../translation/extra.c:14
-msgid "Password"
-msgstr "Пароль"
-
-#: ../translation/extra.c:15
-msgid "Scrobble URL"
-msgstr "Адреса для скроблера"
-
-#. OSS output plugin
-#: ../translation/extra.c:17
-msgid "Device file"
-msgstr ""
-
-#: ../translation/extra.c:18
-msgid "OSS4 samplerate bug workaround"
-msgstr ""
-
-#. Album Artwork plugin
-#: ../translation/extra.c:20
-msgid "Cache update period (hr)"
-msgstr "Період оновлення кешу (год.)"
-
-#: ../translation/extra.c:21
-msgid "Fetch from embedded tags"
-msgstr "Отримувати з вставлених тегів"
-
-#: ../translation/extra.c:22
-msgid "Fetch from local folder"
-msgstr "Отримати з локальної теки"
-
-#: ../translation/extra.c:23
-msgid "Local cover file mask"
-msgstr "Маска файлу для локальних обкладинок"
-
-#: ../translation/extra.c:24
-msgid "Fetch from last.fm"
-msgstr "Отримати з last.fm"
-
-#: ../translation/extra.c:25
-msgid "Fetch from albumart.org"
-msgstr "Отримати з albumart.org"
-
-#: ../translation/extra.c:26
-msgid "Scale artwork towards longer side"
-msgstr ""
-
-#. Audio CD player
-#: ../translation/extra.c:28
-msgid "Use CDDB/FreeDB"
-msgstr "Використовувати CDDB/FreeDB"
-
-#: ../translation/extra.c:29
-msgid "Prefer CD-Text over CDDB"
-msgstr "Використовувати CD-Text замість CDDB"
-
-#: ../translation/extra.c:30
-msgid "CDDB url (e.g. 'freedb.org')"
-msgstr "CDDB лінк (наприклад 'freedb.org')"
-
-#: ../translation/extra.c:31
-msgid "CDDB port number (e.g. '888')"
-msgstr "Порт для CDDB (наприклад '888')"
-
-#: ../translation/extra.c:32
-msgid "Prefer CDDB protocol over HTTP"
-msgstr "Використовувати CDDB замість HTTP"
-
-#: ../translation/extra.c:33
-msgid "Enable NRG image support"
-msgstr "Включити підтримку образу NRG"
-
-#. DUMB module player plugin
-#: ../translation/extra.c:35
-msgid "Resampling quality (0..2, higher is better)"
-msgstr "Якість передискретизації (0..2, більше-краще)"
-
-#. Game_Music_Emu decoder plugin
-#: ../translation/extra.c:37
-msgid "Max song length (in minutes)"
-msgstr "Максимальна довжина пісні (хв.)"
-
-#. Standard GTK2 user interface plugin
-#: ../translation/extra.c:39
-msgid "Ask confirmation to delete files from disk"
-msgstr "Запистувати підтвердження перед вилученням файлів з диску"
-
-#: ../translation/extra.c:40
-msgid "Status icon volume control sensitivity"
-msgstr "Чутливість регулятора гучності в значку статусу"
-
-#: ../translation/extra.c:41
-msgid "Custom status icon"
-msgstr "Користувацький значок статусу"
-
-#: ../translation/extra.c:42
-msgid "Run gtk_init with --sync (debug mode)"
-msgstr "Запустити gtk_init з --sync (режим наладки)"
-
-#: ../translation/extra.c:43
-msgid "Add separators between plugin context menu items"
-msgstr ""
-
-#. OSD Notify plugin
-#: ../translation/extra.c:45
-#, fuzzy
-msgid "Notification title format"
-msgstr "Формат повідомлення"
-
-#: ../translation/extra.c:46
-#, fuzzy
-msgid "Notification content format"
-msgstr "Формат повідомлення"
-
-#: ../translation/extra.c:47
-#, fuzzy
-msgid "Show album art"
-msgstr "Обкладинка альбому"
-
-#: ../translation/extra.c:48
-msgid "Album art size (px)"
-msgstr ""
-
-#. PulseAudio output plugin
-#: ../translation/extra.c:50
-msgid "PulseAudio server"
-msgstr "Сервер PulseAudio"
-
-#: ../translation/extra.c:52
-msgid "Samplerate"
-msgstr "Частота дискретизації"
-
-#. SHN player plugin
-#: ../translation/extra.c:54
-msgid "Relative seek table path"
-msgstr "Відносний шлях таблиці пошуку"
-
-#: ../translation/extra.c:55
-msgid "Absolute seek table path"
-msgstr "Абсолютний шлях таблиці пошуку"
-
-#: ../translation/extra.c:56
-msgid "Swap audio bytes (toggle if all you hear is static)"
-msgstr "Переставити місцями аудіо байти"
-
-#. SID decoder plugin
-#: ../translation/extra.c:58
-#, fuzzy
-msgid "Enable HVSC Songlength DB"
-msgstr "Включити HVSC"
-
-#: ../translation/extra.c:59
-msgid "Songlengths.txt (from HVSC)"
-msgstr ""
-
-#: ../translation/extra.c:60
-msgid "Bits per sample (8 or 16)"
-msgstr ""
-
-#: ../translation/extra.c:61
-#, fuzzy
-msgid "Default song length (sec)"
-msgstr "Максимальна довжина пісні (хв.)"
-
-#. WildMidi player plugin
-#: ../translation/extra.c:63
-msgid "Timidity++ bank configuration file"
-msgstr "Файл налаштувань для банку Timidity++"
-
-#: ../translation/extra.c:66
-msgid "Track Title"
-msgstr "Назва треку"
-
-#: ../translation/extra.c:67
-msgid "Performer"
-msgstr "Виконавець"
-
-#: ../translation/extra.c:72
-msgid "Total Tracks"
-msgstr "Всіх треків"
-
-#: ../translation/extra.c:73
-msgid "Genre"
-msgstr "Жанр"
-
-#: ../translation/extra.c:74
-msgid "Composer"
-msgstr "Композитор"
-
-#: ../translation/extra.c:75
-msgid "Disc Number"
-msgstr "Номер диску"
-
-#: ../translation/extra.c:76
-msgid "Comment"
-msgstr "Коментар"
-
-#: ../translation/extra.c:77
-msgid "Encoder / Vendor"
-msgstr "Кодер / Продавець"
-
-#: ../translation/extra.c:79
-msgid "Location"
-msgstr "Розташування"
-
-#: ../translation/extra.c:80
-msgid "Subtrack Index"
-msgstr "Індекс субтреку"
-
-#: ../translation/extra.c:81
-msgid "Tag Type(s)"
-msgstr "Тип(и) мітки"
-
-#: ../translation/extra.c:82
-msgid "Embedded Cuesheet"
-msgstr "Вбудований список"
-
-#: ../translation/extra.c:83
-msgid "Codec"
-msgstr "Кодек"
-
-#. FFmpeg deocder plugin
-#: ../translation/extra.c:85
-msgid "File Extensions (separate with ';')"
-msgstr ""
-
-#. Converter GUI
-#: ../translation/extra.c:87
-msgid "Convert"
-msgstr ""
-
-#. Resampler (Secret Rabbit Code)
-#: ../translation/extra.c:89
-#, fuzzy
-msgid "Target Samplerate"
-msgstr "Частота дискретизації"
-
-#: ../translation/extra.c:90
-msgid "Quality / Algorythm"
-msgstr ""
-
-#: ../translation/extra.c:91
-msgid "Automatic Samplerate (overrides Target Samplerate)"
-msgstr ""
-
-#: ../plugins/converter/convgui.c:108
-msgid "The file already exists. Overwrite?"
-msgstr ""
-
-#: ../plugins/converter/convgui.c:110
-msgid "Converter warning"
-msgstr ""
-
-#: ../plugins/converter/convgui.c:222
-msgid "Please select encoder"
-msgstr ""
-
-#: ../plugins/converter/convgui.c:224
-msgid "Converter error"
-msgstr ""
-
-#: ../plugins/converter/convgui.c:248
-msgid "Converting..."
-msgstr ""
-
-#: ../plugins/converter/convgui.c:394 ../plugins/converter/convgui.c:496
-#, fuzzy
-msgid "Select folder..."
-msgstr "Вибрати все"
-
-#: ../plugins/converter/convgui.c:635
-msgid "Failed to save encoder preset"
-msgstr ""
-
-#: ../plugins/converter/convgui.c:637 ../plugins/converter/convgui.c:1035
-msgid ""
-"Check preset folder permissions, try to pick different title, or free up "
-"some disk space"
-msgstr ""
-
-#: ../plugins/converter/convgui.c:637 ../plugins/converter/convgui.c:1035
-msgid "Preset with the same name already exists. Try to pick another title."
-msgstr ""
-
-#: ../plugins/converter/convgui.c:638 ../plugins/converter/convgui.c:1036
-msgid "Error"
-msgstr ""
-
-#: ../plugins/converter/convgui.c:692
-msgid "Add new encoder"
-msgstr ""
-
-#: ../plugins/converter/convgui.c:724
-#, fuzzy
-msgid "Edit encoder"
-msgstr "Редагувати колонку"
-
-#: ../plugins/converter/convgui.c:756 ../plugins/converter/convgui.c:1133
-#, fuzzy
-msgid "Remove preset"
-msgstr "Зберегти типові значення"
-
-#: ../plugins/converter/convgui.c:758 ../plugins/converter/convgui.c:1135
-msgid "This action will delete the selected preset. Are you sure?"
-msgstr ""
-
-#: ../plugins/converter/convgui.c:782
-msgid "Encoders"
-msgstr ""
-
-#: ../plugins/converter/convgui.c:838 ../plugins/gtkui/dspconfig.c:183
-msgid "Add plugin to DSP chain"
-msgstr ""
-
-#: ../plugins/converter/convgui.c:1034
-msgid "Failed to save DSP preset"
-msgstr ""
-
-#: ../plugins/converter/convgui.c:1098
-#, fuzzy
-msgid "New DSP Preset"
-msgstr "Зберегти типові значення"
-
-#: ../plugins/converter/convgui.c:1183
-#, fuzzy
-msgid "Edit DSP Preset"
-msgstr "Зберегти типові значення"
-
-#: ../plugins/converter/convgui.c:1203
-#, fuzzy
-msgid "DSP Presets"
-msgstr "Зберегти типові значення"
-
-#: ../plugins/converter/interface.c:97
-#: ../plugins/converter/converter.glade.h:34
-#, fuzzy
-msgid "Output folder:"
-msgstr "Пристрій виводу:"
-
-#: ../plugins/converter/interface.c:118
-#: ../plugins/converter/converter.glade.h:33
-#, fuzzy
-msgid "Output file name:"
-msgstr "Плагін виводу:"
-
-#: ../plugins/converter/interface.c:129
-#: ../plugins/converter/converter.glade.h:18
-#, no-c-format
-msgid ""
-"Extension (e.g. .mp3) will be appended automatically.\n"
-"Leave the field empty for default (%a - %t)."
-msgstr ""
-
-#: ../plugins/converter/interface.c:142
-#: ../plugins/converter/converter.glade.h:13
-msgid "Encoder:"
-msgstr ""
-
-#: ../plugins/converter/interface.c:166
-#: ../plugins/converter/converter.glade.h:10
-#, fuzzy
-msgid "DSP preset:"
-msgstr "Зберегти типові значення"
-
-#: ../plugins/converter/interface.c:189
-#: ../plugins/converter/converter.glade.h:30
-msgid "Number of threads:"
-msgstr ""
-
-#: ../plugins/converter/interface.c:202
-#: ../plugins/converter/converter.glade.h:35
-msgid "Output sample format:"
-msgstr ""
-
-#: ../plugins/converter/interface.c:209
-msgid "Keep source format"
-msgstr ""
-
-#: ../plugins/converter/interface.c:210
-msgid "8 bit signed int"
-msgstr ""
-
-#: ../plugins/converter/interface.c:211
-msgid "16 bit signed int"
-msgstr ""
+#: ../plugins/vorbis/vcedit.c:129 ../plugins/vorbis/vcedit.c:155
+msgid "Couldn't get enough memory for input buffering."
+msgstr "Немає достатньо пам’яті для початку буферування."
+
+#: ../plugins/vorbis/vcedit.c:179 ../plugins/vorbis/vcedit.c:550
+msgid "Error reading first page of Ogg bitstream."
+msgstr "Помилка читання першої сторінки потоку Ogg."
+
+#: ../plugins/vorbis/vcedit.c:185 ../plugins/vorbis/vcedit.c:557
+msgid "Error reading initial header packet."
+msgstr "Помилка читання початкового заголовку пакету."
+
+#: ../plugins/vorbis/vcedit.c:237
+msgid "Couldn't get enough memory to register new stream serial number."
+msgstr "Немає достатньо пам’яті для реєстрації нового серійного номеру потоку."
+
+#: ../plugins/vorbis/vcedit.c:505
+msgid "Input truncated or empty."
+msgstr "Ввід обірвано або порожній."
+
+#: ../plugins/vorbis/vcedit.c:507
+msgid "Input is not an Ogg bitstream."
+msgstr "Ввід не є потоком Ogg."
+
+#: ../plugins/vorbis/vcedit.c:565
+msgid "Ogg bitstream does not contain Vorbis data."
+msgstr "Потік Ogg не містить даних Vorbis."
+
+#: ../plugins/vorbis/vcedit.c:578
+msgid "EOF before recognised stream."
+msgstr "EOF перед розпізнаванням потоку."
+
+#: ../plugins/vorbis/vcedit.c:594
+msgid "Ogg bitstream does not contain a supported data-type."
+msgstr "Потік Ogg не містить дані, що підтримуються."
+
+#: ../plugins/vorbis/vcedit.c:638
+msgid "Corrupt secondary header."
+msgstr "Пошкоджений вторинний заголовок."
+
+#: ../plugins/vorbis/vcedit.c:659
+msgid "EOF before end of Vorbis headers."
+msgstr "EOF перед кінцем заголовків Vorbis."
+
+#: ../plugins/vorbis/vcedit.c:834
+msgid "Corrupt or missing data, continuing..."
+msgstr "Пошкоджені або пропущені дані, продовжую..."
 
 #: ../plugins/converter/interface.c:212
 msgid "24 bit signed int"
@@ -1760,232 +1358,5 @@ msgid ""
 "<small>%o - output file name\n"
 "%i - temporary input file name</small>"
 msgstr ""
-
-#: ../plugins/converter/interface.c:462
-#: ../plugins/converter/converter.glade.h:29
-msgid "Method:"
-msgstr ""
-
-#: ../plugins/converter/interface.c:469
-msgid "Pipe"
-msgstr ""
-
-#: ../plugins/converter/interface.c:470
-msgid "Temporary file"
-msgstr ""
-
-#: ../plugins/converter/interface.c:487
-#: ../plugins/converter/converter.glade.h:5
-#, fuzzy
-msgid "APEv2"
-msgstr "Вписати APEv2"
-
-#: ../plugins/converter/interface.c:493
-#: ../plugins/converter/converter.glade.h:21
-#, fuzzy
-msgid "ID3v1"
-msgstr "Вписати ID3v1"
-
-#: ../plugins/converter/interface.c:499
-#: ../plugins/converter/converter.glade.h:31
-msgid "OggVorbis"
-msgstr ""
-
-#: ../plugins/converter/interface.c:505
-#: ../plugins/converter/converter.glade.h:20
-msgid "FLAC"
-msgstr ""
-
-#: ../plugins/converter/interface.c:517
-#: ../plugins/converter/converter.glade.h:22
-#, fuzzy
-msgid "ID3v2"
-msgstr "Вписати ID3v2"
-
-#: ../plugins/converter/interface.c:527
-#: ../plugins/converter/converter.glade.h:1
-#, fuzzy
-msgid "<b>Tag writer</b>"
-msgstr "Записувач мітки"
-
-#: ../plugins/converter/interface.c:614
-#: ../plugins/converter/converter.glade.h:9
-msgid "DSP Preset Editor"
-msgstr ""
-
-#: ../plugins/converter/interface.c:637
-#: ../plugins/converter/converter.glade.h:47
-msgid "Untitled DSP Preset"
-msgstr ""
-
-#: ../plugins/converter/converter.glade.h:23
-msgid ""
-"Keep source format\n"
-"8 bit signed int\n"
-"16 bit signed int\n"
-"24 bit signed int\n"
-"32 bit signed int\n"
-"32 bit float"
-msgstr ""
-
-#: ../plugins/converter/converter.glade.h:36
-msgid ""
-"Pipe\n"
-"Temporary file"
-msgstr ""
-
-#: ../plugins/converter/converter.glade.h:41
-msgid ""
-"Prompt\n"
-"Overwrite"
-msgstr ""
-
-#~ msgid "about.txt"
-#~ msgstr "about.txt"
-
-#~ msgid "ChangeLog"
-#~ msgstr "Список змін"
-
-#~ msgid "COPYING.GPLv2"
-#~ msgstr "COPYING.GPLv2"
-
-#~ msgid "COPYING.LGPLv2.1"
-#~ msgstr "COPYING.LGPLv2.1"
-
-#~ msgid "translators.txt"
-#~ msgstr "translators.txt"
-
-#~ msgid "Save playlist as"
-#~ msgstr "Зберегти список програвання як"
-
-#~ msgid "_Abort"
-#~ msgstr "_Припинити"
-
-#~ msgid "editcolumndlg"
-#~ msgstr "Редагувати колонку"
-
-#~ msgid "Length"
-#~ msgstr "Тривалість"
-
-#~ msgid ""
-#~ "Format conversions (start with %):\n"
-#~ "  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
-#~ "  track[n]umber, [N]totaltracks,\n"
-#~ "  [l]ength, [y]ear, [g]enre, [c]omment,\n"
-#~ "  copy[r]ight, [f]ilename, [F]ullPathname, [T]ags,\n"
-#~ "  [d]irectory, [D]irectoryWithPath\n"
-#~ "Example: %a - %t [%l]"
-#~ msgstr ""
-#~ "Перетворення формату (початок з %):\n"
-#~ "  [a]виконавець, [t]назва, [b]альбом, [B]гурт, [C]композитор\n"
-#~ " [n]номер треку, [N] кількість всіх треків,\n"
-#~ "  [l]протяжність, [y]рік, [g]жанр, [c]коментар,\n"
-#~ "  [r]копірайт, [f]назва файлу, [F]повний шлях, [T]мітки\n"
-#~ " [d]тека, [D]тека з шляхом\n"
-#~ "Приклад: %a - %t [%l]"
-
-#~ msgid "Allow dynamic samplerate switching"
-#~ msgstr "Дозволити перетворення частоти дискретизації"
-
-#~ msgid "Samplerate conversion quality:"
-#~ msgstr "Алгоритм інтерполяції:"
-
-#~ msgid "Description:"
-#~ msgstr "Опис:"
-
-#~ msgid "Author(s):"
-#~ msgstr "Автор(и):"
-
-#~ msgid "Email:"
-#~ msgstr "Електронна пошта:"
-
-#~ msgid "Website:"
-#~ msgstr "Веб-сторінка:"
-
-#~ msgid "editplaylistdlg"
-#~ msgstr "Редагувати список програвання"
-
-#~ msgid ""
-#~ "Format conversions (start with %):\n"
-#~ "  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
-#~ "  track[n]umber, [N]totaltracks,\n"
-#~ "  [l]ength, [y]ear, [g]enre, [c]omment,\n"
-#~ "  copy[r]ight, [f]ilename, [T]ags\n"
-#~ "Example: %a - %t [%l]"
-#~ msgstr ""
-#~ "Перетворення формату (початок з %):\n"
-#~ "  [a]виконавець, [t]назва, [b]альбом, [B]гурт, [C]композитор\n"
-#~ "  [n]номер треку, [N]всіх треків,\n"
-#~ "  [l]протяжність, [y]рік, [g]жанр, [c]коментар,\n"
-#~ "  [r]копірайт, [f]назва файлу, [T]мітки\n"
-#~ "Приклад: %a - %t [%l]"
-
-#~ msgid "Title / Track Artist"
-#~ msgstr "Назва / Виконавець треку"
-
-#~ msgid "Setup %s"
-#~ msgstr "Встановлення %s"
-
-#~ msgid "ALSA output plugin"
-#~ msgstr "Вихідний плагін ALSA"
-
-#~ msgid "DeaDBeeF now playing"
-#~ msgstr "DeaDBeeF почав програвання"
-
-#~ msgid "HVSC path"
-#~ msgstr "Шлях HVSC"
-
-#~ msgid "Couldn't get enough memory for input buffering."
-#~ msgstr "Не можу отримати достатньо пам’яті для вхідного буфорування."
-
-#~ msgid "Error reading first page of Ogg bitstream."
-#~ msgstr "Помилка читання першої сторінки потоку Ogg."
-
-#~ msgid "Error reading initial header packet."
-#~ msgstr "Помилка читання початкового пакету заголовку."
-
-#~ msgid "Couldn't get enough memory to register new stream serial number."
-#~ msgstr ""
-#~ "Не можу отримати достатньо пам’яті для реєстрації нового серійного номера "
-#~ "потоку."
-
-#~ msgid "Input truncated or empty."
-#~ msgstr "Вхідні дані спотворені або порожні."
-
-#~ msgid "Input is not an Ogg bitstream."
-#~ msgstr "Вхідні дані не є потоком Ogg."
-
-#~ msgid "Ogg bitstream does not contain Vorbis data."
-#~ msgstr "Потік Ogg не містить даних Vorbis."
-
-#~ msgid "EOF before recognised stream."
-#~ msgstr "EOF перед розпізнаним потоком."
-
-#~ msgid "Ogg bitstream does not contain a supported data-type."
-#~ msgstr "Потік Ogg не містить даних, що підтримуються."
-
-#~ msgid "Corrupt secondary header."
-#~ msgstr "Другий заголовок пошкоджено."
-
-#~ msgid "EOF before end of Vorbis headers."
-#~ msgstr "EOF перед кінцем заголовків Vorbis."
-
-#~ msgid "Corrupt or missing data, continuing..."
-#~ msgstr "Пошкоджено або пропущено заголовки, продовжую..."
-
-#~ msgid ""
-#~ "Error writing stream to output. Output stream may be corrupted or "
-#~ "truncated."
-#~ msgstr ""
-#~ "Помилка запису потоку до виходу. Вихідний потік, можливо, пошкоджено або "
-#~ "спотворено."
-
-#~ msgid ""
-#~ "<b>WARNING</b>: tag writing feature is still in development.\n"
-#~ "<b>Make backup copies</b> before using."
-#~ msgstr ""
-#~ "<b>ПОПЕРЕДЖЕННЯ</b>: запис міток все ще в розробці.\n"
-#~ "<b>Зробіть копії</b> перед використанням."
-
-#~ msgid "Sound (adv.)"
-#~ msgstr "Звук (розш.)"
+"Помилка запису потоку до виводу. Вихідний потік можливо буде пошкоджений або "
+"обірваний."
