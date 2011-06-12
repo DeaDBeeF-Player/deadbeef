@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-10-04 04:36+0000\n"
-"PO-Revision-Date: 2011-04-15 16:05+0200\n"
+"PO-Revision-Date: 2011-06-11 20:14+0200\n"
 "Last-Translator: Y P <yupadmin@gmail.com>\n"
 "Language-Team: UKRAINIAN <translate@linux.org.ua>\n"
 "Language: uk\n"
@@ -909,7 +909,7 @@ msgstr "Вилучити з черги програвання"
 
 #: ../plugins/gtkui/plcommon.c:415
 msgid "Reload metadata"
-msgstr "Перезавантажити метадані"
+msgstr "Перевантажити метадані"
 
 #: ../plugins/gtkui/plcommon.c:434
 msgid "Remove from disk"
