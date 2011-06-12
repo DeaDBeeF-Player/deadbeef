@@ -1,16 +1,16 @@
-# Deadbeef Audio Player
-# Copyright (C) 2009-2001 Alexey Yakovenko <waker@users.sourceforge.net>
+# Dutch translations for the Deadbeef Audio Player.
+# Copyright (C) the author of the Deadbeef package.
 # This file is distributed under the same license as the Deadbeef package.
-# depaz <depazzz@gmail.com>, 2010.
+# Pjotr, 2011.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: Deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-06-12 18:17+0200\n"
-"PO-Revision-Date: 2011-06-12 16:02+0200\n"
-"Last-Translator: Martin <brother@bsnet.se>\n"
-"Language-Team: Spanish\n"
+"PO-Revision-Date: 2011-06-12 22:41+0200\n"
+"Last-Translator: Pjotr <>\n"
+"Language-Team: Dutch\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -20,7 +20,7 @@ msgstr ""
 
 #: ../plugins/gtkui/callbacks.c:121
 msgid "Supported sound formats"
-msgstr "Ondersteunde soorten bestandsopmaak voor geluid"
+msgstr "Ondersteunde soorten bestandopmaak voor geluid"
 
 #: ../plugins/gtkui/callbacks.c:132 ../plugins/gtkui/gtkui.c:776
 msgid "Other files (*)"
@@ -44,11 +44,11 @@ msgstr "Volg symbolische koppelingen"
 
 #: ../plugins/gtkui/callbacks.c:697
 msgid "Failed while reading help file"
-msgstr "Fout bij lezen van hulpbestand"
+msgstr "Fout bij het lezen van het hulpbestand"
 
 #: ../plugins/gtkui/callbacks.c:707
 msgid "Failed to load help file"
-msgstr "Kon hulpbestand niet laden"
+msgstr "Kon het hulpbestand niet laden"
 
 #: ../plugins/gtkui/callbacks.c:722
 msgid "help.txt"
@@ -100,35 +100,35 @@ msgstr "Maak nieuwe speellijst"
 
 #: ../plugins/gtkui/eq.c:136
 msgid "Save DeaDBeeF EQ Preset"
-msgstr "Bewaar DeaDBeeF EQ-voorkeuze"
+msgstr "Bewaar DeaDBeef EQ Voorkeuze"
 
 #: ../plugins/gtkui/eq.c:143
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
-msgstr "DeaDBeeF EQ preset files (*.ddbeq)"
+msgstr "DeaDBeef EQ voorkeuze-bestanden (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:182
 msgid "Load DeaDBeeF EQ Preset..."
-msgstr "Laad DeaDBeeF EQ-voorkeuze..."
+msgstr "Laden DeaDBeeF EQ Voorkeuze..."
 
 #: ../plugins/gtkui/eq.c:186
 msgid "DeaDBeeF EQ presets (*.ddbeq)"
-msgstr "DeaDBeeF EQ presets (*.ddbeq)"
+msgstr "DeaDBeeF EQ voorkeuzes (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:247
 msgid "Import Foobar2000 EQ Preset..."
-msgstr "Voer Foobar2000 EQ-voorkeuze in..."
+msgstr "Importeer Foobar2000 EQ Voorkeuze..."
 
 #: ../plugins/gtkui/eq.c:251
 msgid "Foobar2000 EQ presets (*.feq)"
-msgstr "Foobar2000 EQ presets (*.feq)"
+msgstr "Foobar2000 EQ voorkeuzes (*.feq)"
 
 #: ../plugins/gtkui/eq.c:316
 msgid "Save Preset"
-msgstr "Opslaan Voorkeuze"
+msgstr "Opslaan voorkeuze"
 
 #: ../plugins/gtkui/eq.c:324
 msgid "Load Preset"
-msgstr "Voorkeuze Laden"
+msgstr "Laden Voorkeuze"
 
 #: ../plugins/gtkui/eq.c:332
 msgid "Import Foobar2000 Preset"
@@ -140,21 +140,20 @@ msgstr "Inschakelen"
 
 #: ../plugins/gtkui/eq.c:366
 msgid "Zero All"
-msgstr "Zet alles op nul"
+msgstr "Alles op nul"
 
 #: ../plugins/gtkui/eq.c:373
 msgid "Zero Preamp"
-msgstr "Voorversterking op nul"
+msgstr "Preamp op nul"
 
 #: ../plugins/gtkui/eq.c:380
 msgid "Zero Bands"
-msgstr "Zero Bands"
+msgstr "Banden op nul"
 
 #: ../plugins/gtkui/eq.c:387 ../plugins/converter/interface.c:826
 #: ../plugins/converter/converter.glade.h:40
-#, fuzzy
 msgid "Presets"
-msgstr "Opslaan voorkeuze"
+msgstr "Voorkeuzes"
 
 #: ../plugins/gtkui/gtkui.c:137
 #, c-format
@@ -294,7 +293,7 @@ msgstr "_Zoeken"
 
 #: ../plugins/gtkui/interface.c:288 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Sort By"
-msgstr ""
+msgstr "Sorteren op"
 
 #: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1516
 #: ../plugins/gtkui/mainplaylist.c:315 ../plugins/gtkui/prefwin.c:623
@@ -306,9 +305,8 @@ msgid "Title"
 msgstr "Titel"
 
 #: ../plugins/gtkui/interface.c:299 ../plugins/gtkui/deadbeef.glade.h:139
-#, fuzzy
 msgid "Track number"
-msgstr "Spoor Nummer"
+msgstr "Spoor nummer"
 
 #: ../plugins/gtkui/interface.c:303 ../plugins/gtkui/interface.c:1515
 #: ../plugins/gtkui/interface.c:1869 ../plugins/gtkui/deadbeef.glade.h:10
@@ -372,14 +370,12 @@ msgid "Linear"
 msgstr "Lineair"
 
 #: ../plugins/gtkui/interface.c:370 ../plugins/gtkui/deadbeef.glade.h:120
-#, fuzzy
 msgid "Shuffle tracks"
-msgstr "Schuffelen"
+msgstr "Sporen schuffelen"
 
 #: ../plugins/gtkui/interface.c:375 ../plugins/gtkui/deadbeef.glade.h:119
-#, fuzzy
 msgid "Shuffle albums"
-msgstr "Schuffelen"
+msgstr "Albums schuffelen"
 
 #: ../plugins/gtkui/interface.c:380 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Random"
@@ -399,7 +395,7 @@ msgstr "Enkel nummer herhalend"
 
 #: ../plugins/gtkui/interface.c:403 ../plugins/gtkui/deadbeef.glade.h:36
 msgid "Don't Loop"
-msgstr "Niet telkens herhalen"
+msgstr "Niet herhalend"
 
 #: ../plugins/gtkui/interface.c:409 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "Scroll follows playback"
@@ -484,7 +480,7 @@ msgstr "Eigenschappen van spoor"
 
 #: ../plugins/gtkui/interface.c:1270 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Settings"
-msgstr ""
+msgstr "Instellingen"
 
 #: ../plugins/gtkui/interface.c:1296 ../plugins/gtkui/deadbeef.glade.h:149
 msgid "_Apply"
@@ -581,7 +577,7 @@ msgstr "Uitvoerapparaat:"
 
 #: ../plugins/gtkui/interface.c:1841 ../plugins/gtkui/deadbeef.glade.h:12
 msgid "Always convert 8 bit audio to 16 bit"
-msgstr ""
+msgstr "8-bit-audio altijd omzetten naar 16-bit"
 
 #: ../plugins/gtkui/interface.c:1845 ../plugins/gtkui/deadbeef.glade.h:123
 msgid "Sound"
@@ -604,17 +600,16 @@ msgid "Replaygain peak scale"
 msgstr "Replaygain piek schaal"
 
 #: ../plugins/gtkui/interface.c:1879 ../plugins/gtkui/deadbeef.glade.h:107
-#, fuzzy
 msgid "Replaygain preamp:"
-msgstr "Replaygain modus:"
+msgstr "Replaygain voorversterking:"
 
 #: ../plugins/gtkui/interface.c:1883 ../plugins/gtkui/deadbeef.glade.h:2
 msgid "-12 dB"
-msgstr ""
+msgstr "-12 dB"
 
 #: ../plugins/gtkui/interface.c:1893 ../plugins/gtkui/deadbeef.glade.h:1
 msgid "+12 dB"
-msgstr ""
+msgstr "+12 dB"
 
 #: ../plugins/gtkui/interface.c:1901 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
@@ -628,7 +623,7 @@ msgstr "Hervat vorige sessie bij opstarten"
 
 #: ../plugins/gtkui/interface.c:1914 ../plugins/gtkui/deadbeef.glade.h:37
 msgid "Don't add from archives when adding folders"
-msgstr ""
+msgstr "Niet toevoegen vanuit archieven bij het toevoegen van mappen"
 
 #: ../plugins/gtkui/interface.c:1918 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Playback"
@@ -641,17 +636,16 @@ msgid "Configure"
 msgstr "Configureer"
 
 #: ../plugins/gtkui/interface.c:1974 ../plugins/gtkui/deadbeef.glade.h:29
-#, fuzzy
 msgid "DSP Chain Preset"
-msgstr "Opslaan voorkeuze"
+msgstr "DSP Chain voorkeuze"
 
 #: ../plugins/gtkui/interface.c:1986 ../plugins/gtkui/deadbeef.glade.h:160
 msgid "_Load"
-msgstr ""
+msgstr "_Laden"
 
 #: ../plugins/gtkui/interface.c:1990 ../plugins/gtkui/deadbeef.glade.h:28
 msgid "DSP"
-msgstr ""
+msgstr "DSP"
 
 #: ../plugins/gtkui/interface.c:1999 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Close minimizes to tray"
@@ -676,10 +670,11 @@ msgstr "Verberg \"Verwijder van schijf\"-element in het contekstmenu"
 #: ../plugins/gtkui/interface.c:2019 ../plugins/gtkui/deadbeef.glade.h:16
 msgid "Auto-name playlists when adding a single folder"
 msgstr ""
+"Geef speellijsten automatisch een naam bij het toevoegen van een enkele map"
 
 #: ../plugins/gtkui/interface.c:2027 ../plugins/gtkui/deadbeef.glade.h:53
 msgid "Interface refresh rate (times per second):"
-msgstr ""
+msgstr "Verversingssnelheid van gebruikersschil (keren per seconde):"
 
 #: ../plugins/gtkui/interface.c:2041 ../plugins/gtkui/deadbeef.glade.h:136
 msgid "Titlebar text while playing:"
@@ -691,7 +686,7 @@ msgstr "Titelbalktekst wanneer gestopt:"
 
 #: ../plugins/gtkui/interface.c:2069 ../plugins/gtkui/deadbeef.glade.h:46
 msgid "GUI Plugin (changing requires restart):"
-msgstr ""
+msgstr "GUI Plugin (wijzigen vereist herstart)"
 
 #: ../plugins/gtkui/interface.c:2077 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "GUI"
@@ -801,7 +796,7 @@ msgstr "Netwerk"
 
 #: ../plugins/gtkui/interface.c:2428 ../plugins/gtkui/deadbeef.glade.h:143
 msgid "Version: "
-msgstr ""
+msgstr "Versie: "
 
 #: ../plugins/gtkui/interface.c:2492 ../plugins/gtkui/deadbeef.glade.h:23
 #: ../translation/extra.c:78
@@ -822,39 +817,35 @@ msgstr "Groeperen op"
 
 #: ../plugins/gtkui/interface.c:3207 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Sort by..."
-msgstr ""
+msgstr "Sorteren op..."
 
 #: ../plugins/gtkui/interface.c:3223 ../plugins/gtkui/deadbeef.glade.h:43
-#, fuzzy
 msgid "Format"
 msgstr "Opmaaktype:"
 
 #: ../plugins/gtkui/interface.c:3253
 msgid "Ascending"
-msgstr ""
+msgstr "Oplopend"
 
 #: ../plugins/gtkui/interface.c:3254
 msgid "Descending"
-msgstr ""
+msgstr "Aflopend"
 
 #: ../plugins/gtkui/interface.c:3307 ../plugins/gtkui/deadbeef.glade.h:113
 #: ../plugins/converter/interface.c:758
 #: ../plugins/converter/converter.glade.h:44
-#, fuzzy
 msgid "Select DSP Plugin"
-msgstr "Selectie"
+msgstr "Selecteer DSP-plugin"
 
 #: ../plugins/gtkui/interface.c:3323 ../plugins/gtkui/deadbeef.glade.h:92
 #: ../plugins/converter/convgui.c:1016 ../plugins/converter/interface.c:774
 #: ../plugins/gtkui/dspconfig.c:139 ../plugins/converter/converter.glade.h:38
-#, fuzzy
 msgid "Plugin"
-msgstr "Plugins"
+msgstr "Plugin"
 
 #: ../plugins/gtkui/interface.c:3409 ../plugins/gtkui/deadbeef.glade.h:132
-#, fuzzy
 msgid "Tag Writer Settings"
-msgstr "Etiketschrijver"
+msgstr "Instellingen van Etiketschrijver"
 
 #: ../plugins/gtkui/interface.c:3440 ../plugins/gtkui/deadbeef.glade.h:146
 msgid "Write ID3v2"
@@ -976,9 +967,9 @@ msgid "Open file..."
 msgstr "Open bestand.."
 
 #: ../plugins/gtkui/pluginconf.c:217
-#, fuzzy, c-format
+#, c-format
 msgid "Configure %s"
-msgstr "Configureer"
+msgstr "Configureer %s"
 
 #: ../plugins/gtkui/prefwin.c:82
 msgid "Default Audio Device"
@@ -1020,7 +1011,7 @@ msgstr "Dit venster echt sluiten?"
 #. get value to edit
 #: ../plugins/gtkui/trkproperties.c:254
 msgid "[Multiple values] "
-msgstr ""
+msgstr "[Meerdere waarden] "
 
 #: ../plugins/gtkui/trkproperties.c:407 ../plugins/gtkui/trkproperties.c:419
 msgid "Key"
@@ -1032,38 +1023,35 @@ msgstr "Waarde"
 
 #: ../plugins/gtkui/trkproperties.c:594
 msgid "Writing tags..."
-msgstr ""
+msgstr "Etiketten aan het schrijven..."
 
 #: ../plugins/gtkui/trkproperties.c:621
 msgid "Name:"
-msgstr ""
+msgstr "Naam:"
 
 #: ../plugins/gtkui/trkproperties.c:633
 msgid "Field names must not start with : or _"
-msgstr ""
+msgstr "Veldnamen moeten niet beginnen met : of _"
 
 #: ../plugins/gtkui/trkproperties.c:634 ../plugins/gtkui/trkproperties.c:668
 msgid "Cannot add field"
-msgstr ""
+msgstr "Kan veld niet toevoegen"
 
 #: ../plugins/gtkui/trkproperties.c:667
 msgid "Field with such name already exists, please try different name."
-msgstr ""
+msgstr "Veld met deze naam bestaat reeds, probeer a.u.b. andere naam."
 
 #: ../plugins/gtkui/trkproperties.c:692
-#, fuzzy
 msgid "Really remove selected field?"
-msgstr "Dit venster echt sluiten?"
+msgstr "Gekozen veld echt verwijderen?"
 
 #: ../plugins/gtkui/trkproperties.c:734
-#, fuzzy
 msgid "Add field"
-msgstr "Voeg bestand(en) toe"
+msgstr "Voeg veld toe"
 
 #: ../plugins/gtkui/trkproperties.c:737
-#, fuzzy
 msgid "Remove field"
-msgstr "Verwijderen"
+msgstr "Verwijder veld"
 
 #: ../main.c:90
 #, c-format
@@ -1108,13 +1096,13 @@ msgstr "   --pause         Afspelen pauzeren\n"
 #: ../main.c:98
 #, c-format
 msgid "   --toggle-pause     Toggle pause\n"
-msgstr ""
+msgstr "   --toggle-pause     Pauze schakelen\n"
 
 #: ../main.c:99
 #, c-format
 msgid ""
 "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
-msgstr ""
+msgstr "   --play-pause       Begin afspelen indien gestopt, anders pauze schakelen\n"
 
 #: ../main.c:100
 #, c-format
@@ -1166,7 +1154,8 @@ msgstr ""
 msgid ""
 "                      for more info, see http://sourceforge.net/apps/"
 "mediawiki/deadbeef/index.php?title=Title_Formatting\n"
-msgstr ""
+msgstr "                      voor meer infor, zie http://sourceforge.net/apps/media"
+"wiki/deadbeef/index.php?title=Title_Formatting\n"
 
 #: ../playlist.c:443 ../playlist.c:2609
 msgid "Default"
@@ -1174,19 +1163,18 @@ msgstr "Standaard"
 
 #: ../playlist.c:3858
 msgid "Yes"
-msgstr ""
+msgstr "Ja"
 
 #: ../playlist.c:3858
-#, fuzzy
 msgid "No"
-msgstr "Geen"
+msgstr "Nee"
 
 #: ../plugins/gtkui/deadbeef.glade.h:3
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
 msgstr ""
-"2.3 (Aanbevolen)\n"
+"2.3 (Aangeraden)\n"
 "2.4"
 
 #: ../plugins/gtkui/deadbeef.glade.h:14
@@ -1194,6 +1182,8 @@ msgid ""
 "Ascending\n"
 "Descending"
 msgstr ""
+"Oplopend\n"
+"Aflopend"
 
 #: ../plugins/gtkui/deadbeef.glade.h:33
 msgid ""
@@ -1206,7 +1196,6 @@ msgstr ""
 "Album"
 
 #: ../plugins/gtkui/deadbeef.glade.h:55
-#, fuzzy
 msgid ""
 "Item Index\n"
 "Playing\n"
@@ -1228,7 +1217,7 @@ msgstr ""
 "Album\n"
 "Titel\n"
 "Lengte\n"
-"Nummer\n"
+"Spoor Nummer\n"
 "Groep / Album Artiest\n"
 "Aangepast"
 
@@ -1307,11 +1296,11 @@ msgstr "Scrobble URL"
 #. OSS output plugin
 #: ../translation/extra.c:17
 msgid "Device file"
-msgstr ""
+msgstr "Apparaatbestand"
 
 #: ../translation/extra.c:18
 msgid "OSS4 samplerate bug workaround"
-msgstr ""
+msgstr "Stoplap voor OSS4 samplerate-fout"
 
 #. Album Artwork plugin
 #: ../translation/extra.c:20
@@ -1340,7 +1329,7 @@ msgstr "Haal op van albumart.org"
 
 #: ../translation/extra.c:26
 msgid "Scale artwork towards longer side"
-msgstr ""
+msgstr "Schaal kunstwerk naar langere kant"
 
 #. Audio CD player
 #: ../translation/extra.c:28
@@ -1396,27 +1385,24 @@ msgstr "Draai gtk_init met --sync (debug-modus)"
 
 #: ../translation/extra.c:43
 msgid "Add separators between plugin context menu items"
-msgstr ""
+msgstr "Voeg scheidingstekens toe tussen contekstmenu-onderdelen van plugin"
 
 #. OSD Notify plugin
 #: ../translation/extra.c:45
-#, fuzzy
 msgid "Notification title format"
-msgstr "Bestandopmaak van melding"
+msgstr "Bestandtype voor meldingstitel"
 
 #: ../translation/extra.c:46
-#, fuzzy
 msgid "Notification content format"
-msgstr "Bestandopmaak van melding"
+msgstr "Bestandtype voor meldingsinhoud"
 
 #: ../translation/extra.c:47
-#, fuzzy
 msgid "Show album art"
-msgstr "Albumkunst"
+msgstr "Toon albumkunst"
 
 #: ../translation/extra.c:48
 msgid "Album art size (px)"
-msgstr ""
+msgstr "Grootte van albumkunst (px)"
 
 #. PulseAudio output plugin
 #: ../translation/extra.c:50
@@ -1443,22 +1429,20 @@ msgstr ""
 
 #. SID decoder plugin
 #: ../translation/extra.c:58
-#, fuzzy
 msgid "Enable HVSC Songlength DB"
-msgstr "HVSC inschakelen"
+msgstr "Schakel HVSC Songlength DB in"
 
 #: ../translation/extra.c:59
 msgid "Songlengths.txt (from HVSC)"
-msgstr ""
+msgstr "Songlengths.txt (vanuit HVSC)"
 
 #: ../translation/extra.c:60
 msgid "Bits per sample (8 or 16)"
-msgstr ""
+msgstr "Bits per sample (8 of 16)"
 
 #: ../translation/extra.c:61
-#, fuzzy
 msgid "Default song length (sec)"
-msgstr "Maximale muziekstukduur (in minuten)"
+msgstr "Standaard-liedduur (sec)"
 
 #. WildMidi player plugin
 #: ../translation/extra.c:63
@@ -1520,126 +1504,120 @@ msgstr "Codec"
 #. FFmpeg deocder plugin
 #: ../translation/extra.c:85
 msgid "File Extensions (separate with ';')"
-msgstr ""
+msgstr "Bestandextensies (te scheiden met ';')"
 
 #. Converter GUI
 #: ../translation/extra.c:87
 msgid "Convert"
-msgstr ""
+msgstr "Omzetten"
 
 #. Resampler (Secret Rabbit Code)
 #: ../translation/extra.c:89
-#, fuzzy
 msgid "Target Samplerate"
-msgstr "Samplerate"
+msgstr "Doel-samplerate"
 
 #: ../translation/extra.c:90
 msgid "Quality / Algorythm"
-msgstr ""
+msgstr "Kwaliteit / Algoritme"
 
 #: ../translation/extra.c:91
 msgid "Automatic Samplerate (overrides Target Samplerate)"
-msgstr ""
+msgstr "Automatische Samplerate (negeert Doel-Samplerate)"
 
 #: ../plugins/converter/convgui.c:108
 msgid "The file already exists. Overwrite?"
-msgstr ""
+msgstr "Het bestand bestaat al. Overschrijven?"
 
 #: ../plugins/converter/convgui.c:110
 msgid "Converter warning"
-msgstr ""
+msgstr "Waarschuwing van omzetter"
 
 #: ../plugins/converter/convgui.c:222
 msgid "Please select encoder"
-msgstr ""
+msgstr "Kies a.u.b. een codeerder"
 
 #: ../plugins/converter/convgui.c:224
 msgid "Converter error"
-msgstr ""
+msgstr "Fout van omzetter"
 
 #: ../plugins/converter/convgui.c:248
 msgid "Converting..."
-msgstr ""
+msgstr "Bezig met omzetten..."
 
 #: ../plugins/converter/convgui.c:394 ../plugins/converter/convgui.c:496
-#, fuzzy
 msgid "Select folder..."
-msgstr "Selecteer alles"
+msgstr "Selecteer map..."
 
 #: ../plugins/converter/convgui.c:635
 msgid "Failed to save encoder preset"
-msgstr ""
+msgstr "Kon codeerder-voorkeuze niet opslaan"
 
 #: ../plugins/converter/convgui.c:637 ../plugins/converter/convgui.c:1035
 msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
 msgstr ""
+"Controleer de maprechten voor voorkeuze, probeer een andere titel te kiezen, "
+"of maak wat schijfruimte vrij"
 
 #: ../plugins/converter/convgui.c:637 ../plugins/converter/convgui.c:1035
 msgid "Preset with the same name already exists. Try to pick another title."
 msgstr ""
+"Voorkeuze met dezelfde naam bestaat al. Probeer een andere titel te kiezen."
 
 #: ../plugins/converter/convgui.c:638 ../plugins/converter/convgui.c:1036
 msgid "Error"
-msgstr ""
+msgstr "Fout"
 
 #: ../plugins/converter/convgui.c:692
 msgid "Add new encoder"
-msgstr ""
+msgstr "Voeg nieuwe codeerder toe"
 
 #: ../plugins/converter/convgui.c:724
-#, fuzzy
 msgid "Edit encoder"
-msgstr "Kolom bewerken"
+msgstr "Codeerder bewerken"
 
 #: ../plugins/converter/convgui.c:756 ../plugins/converter/convgui.c:1133
-#, fuzzy
 msgid "Remove preset"
-msgstr "Opslaan voorkeuze"
+msgstr "Verwijder voorkeuze"
 
 #: ../plugins/converter/convgui.c:758 ../plugins/converter/convgui.c:1135
 msgid "This action will delete the selected preset. Are you sure?"
-msgstr ""
+msgstr "Dit zal de geselecteerde voorkeuze verwijderen. Weet u het zeker?"
 
 #: ../plugins/converter/convgui.c:782
 msgid "Encoders"
-msgstr ""
+msgstr "Codeerders"
 
 #: ../plugins/converter/convgui.c:838 ../plugins/gtkui/dspconfig.c:183
 msgid "Add plugin to DSP chain"
-msgstr ""
+msgstr "Voeg plugin toe aan DSP-ketting"
 
 #: ../plugins/converter/convgui.c:1034
 msgid "Failed to save DSP preset"
-msgstr ""
+msgstr "Kon DSP-voorkeuze niet opslaan"
 
 #: ../plugins/converter/convgui.c:1098
-#, fuzzy
 msgid "New DSP Preset"
-msgstr "Opslaan voorkeuze"
+msgstr "Nieuwe DSP-voorkeuze"
 
 #: ../plugins/converter/convgui.c:1183
-#, fuzzy
 msgid "Edit DSP Preset"
-msgstr "Opslaan voorkeuze"
+msgstr "DSP-voorkeuze bewerken"
 
 #: ../plugins/converter/convgui.c:1203
-#, fuzzy
 msgid "DSP Presets"
-msgstr "Opslaan voorkeuze"
+msgstr "DSP-voorkeuzes"
 
 #: ../plugins/converter/interface.c:97
 #: ../plugins/converter/converter.glade.h:34
-#, fuzzy
 msgid "Output folder:"
-msgstr "Uitvoerapparaat:"
+msgstr "Uitvoermap:"
 
 #: ../plugins/converter/interface.c:118
 #: ../plugins/converter/converter.glade.h:33
-#, fuzzy
 msgid "Output file name:"
-msgstr "Uitvoerplugin:"
+msgstr "Naam van uitvoerbestand:"
 
 #: ../plugins/converter/interface.c:129
 #: ../plugins/converter/converter.glade.h:18
@@ -1648,97 +1626,95 @@ msgid ""
 "Extension (e.g. .mp3) will be appended automatically.\n"
 "Leave the field empty for default (%a - %t)."
 msgstr ""
+"Extensie (bijv. .mp3) zal automatisch worden toegevoegd.\n"
+"Laat het veld leeg voor standaard (%a - %t)."
 
 #: ../plugins/converter/interface.c:142
 #: ../plugins/converter/converter.glade.h:13
 msgid "Encoder:"
-msgstr ""
+msgstr "Codeerder:"
 
 #: ../plugins/converter/interface.c:166
 #: ../plugins/converter/converter.glade.h:10
-#, fuzzy
 msgid "DSP preset:"
-msgstr "Opslaan voorkeuze"
+msgstr "DSP-voorkeuze:"
 
 #: ../plugins/converter/interface.c:189
 #: ../plugins/converter/converter.glade.h:30
 msgid "Number of threads:"
-msgstr ""
+msgstr "Aantal draadjes:"
 
 #: ../plugins/converter/interface.c:202
 #: ../plugins/converter/converter.glade.h:35
 msgid "Output sample format:"
-msgstr ""
+msgstr "Bestandtype van uitvoer-voorbeeld:"
 
 #: ../plugins/converter/interface.c:209
 msgid "Keep source format"
-msgstr ""
+msgstr "Behoud bronbestandtype"
 
 #: ../plugins/converter/interface.c:210
 msgid "8 bit signed int"
-msgstr ""
+msgstr "8 bit signed int"
 
 #: ../plugins/converter/interface.c:211
 msgid "16 bit signed int"
-msgstr ""
+msgstr "16 bit signed int"
 
 #: ../plugins/converter/interface.c:212
 msgid "24 bit signed int"
-msgstr ""
+msgstr "24 bit signed int"
 
 #: ../plugins/converter/interface.c:213
 msgid "32 bit signed int"
-msgstr ""
+msgstr "32 bit signed int"
 
 #: ../plugins/converter/interface.c:214
 msgid "32 bit float"
-msgstr ""
+msgstr "32 bit float"
 
 #: ../plugins/converter/interface.c:220
 #: ../plugins/converter/converter.glade.h:49
 msgid "When file exists:"
-msgstr ""
+msgstr "Wanneer het bestand bestaat:"
 
 #: ../plugins/converter/interface.c:227
 msgid "Prompt"
-msgstr ""
+msgstr "Vraag bevestiging"
 
 #: ../plugins/converter/interface.c:228
-#, fuzzy
 msgid "Overwrite"
-msgstr "Negeer"
+msgstr "Overschrijf"
 
 #: ../plugins/converter/interface.c:230
 #: ../plugins/converter/converter.glade.h:39
 msgid "Preserve folder structure, starting from:"
-msgstr ""
+msgstr "Behoud mapstructuur, te beginnen op:"
 
 #: ../plugins/converter/interface.c:386
 #: ../plugins/converter/converter.glade.h:12
-#, fuzzy
 msgid "Edit Encoder Preset"
-msgstr "Laden Voorkeuze"
+msgstr "Bewerk voorkeuze van codeerder"
 
 #: ../plugins/converter/interface.c:409
 #: ../plugins/converter/converter.glade.h:48
 msgid "Untitled Encoder"
-msgstr ""
+msgstr "Naamloze codeerder"
 
 #: ../plugins/converter/interface.c:417
 #: ../plugins/converter/converter.glade.h:32
-#, fuzzy
 msgid "Output file extension:"
-msgstr "Uitvoerplugin:"
+msgstr "Extensie van uitvoerbestand:"
 
 #: ../plugins/converter/interface.c:424
 #: ../plugins/converter/converter.glade.h:11
 msgid "E.g. mp3"
-msgstr ""
+msgstr "Bijv. mp3"
 
 #: ../plugins/converter/interface.c:432
 #: ../plugins/converter/converter.glade.h:7
 msgid "Command line:"
-msgstr ""
+msgstr "Opdrachtregel:"
 
 #: ../plugins/converter/interface.c:443
 #: ../plugins/converter/converter.glade.h:15
@@ -1747,6 +1723,8 @@ msgid ""
 "Example: lame - %o\n"
 "%i for input file, %o for output file, - for stdin"
 msgstr ""
+"Voorbeeld: lame - %o\n"
+"%i voor invoerbestand, %o voor uitvoerbestand, - for stdin"
 
 #: ../plugins/converter/interface.c:453
 #: ../plugins/converter/converter.glade.h:3
@@ -1755,63 +1733,61 @@ msgid ""
 "<small>%o - output file name\n"
 "%i - temporary input file name</small>"
 msgstr ""
+"<small>%o - uitvoerbestandnaaam\n"
+"%i - tijdelijke invoerbestandnaam</small>"
 
 #: ../plugins/converter/interface.c:462
 #: ../plugins/converter/converter.glade.h:29
 msgid "Method:"
-msgstr ""
+msgstr "Methode:"
 
 #: ../plugins/converter/interface.c:469
 msgid "Pipe"
-msgstr ""
+msgstr "Pijp"
 
 #: ../plugins/converter/interface.c:470
 msgid "Temporary file"
-msgstr ""
+msgstr "Tijdelijk bestand"
 
 #: ../plugins/converter/interface.c:487
 #: ../plugins/converter/converter.glade.h:5
-#, fuzzy
 msgid "APEv2"
-msgstr "APEv2 schrijven"
+msgstr "APEv2"
 
 #: ../plugins/converter/interface.c:493
 #: ../plugins/converter/converter.glade.h:21
-#, fuzzy
 msgid "ID3v1"
-msgstr "ID3v1 schrijven"
+msgstr "ID3v1"
 
 #: ../plugins/converter/interface.c:499
 #: ../plugins/converter/converter.glade.h:31
 msgid "OggVorbis"
-msgstr ""
+msgstr "OggVorbis"
 
 #: ../plugins/converter/interface.c:505
 #: ../plugins/converter/converter.glade.h:20
 msgid "FLAC"
-msgstr ""
+msgstr "FLAC"
 
 #: ../plugins/converter/interface.c:517
 #: ../plugins/converter/converter.glade.h:22
-#, fuzzy
 msgid "ID3v2"
-msgstr "ID3v2 schrijven"
+msgstr "ID3v2"
 
 #: ../plugins/converter/interface.c:527
 #: ../plugins/converter/converter.glade.h:1
-#, fuzzy
 msgid "<b>Tag writer</b>"
-msgstr "Etiketschrijver"
+msgstr "<b>Etiketschrijver</b>"
 
 #: ../plugins/converter/interface.c:614
 #: ../plugins/converter/converter.glade.h:9
 msgid "DSP Preset Editor"
-msgstr ""
+msgstr "DSP voorkeuzebewerker"
 
 #: ../plugins/converter/interface.c:637
 #: ../plugins/converter/converter.glade.h:47
 msgid "Untitled DSP Preset"
-msgstr ""
+msgstr "Naamloze DSP voorkeuze"
 
 #: ../plugins/converter/converter.glade.h:23
 msgid ""
@@ -1822,18 +1798,78 @@ msgid ""
 "32 bit signed int\n"
 "32 bit float"
 msgstr ""
+"Behoud bronbestandtype\n"
+"8 bit signed int\n"
+"16 bit signed int\n"
+"24 bit signed int\n"
+"32 bit signed int\n"
+"32 bit float"
 
 #: ../plugins/converter/converter.glade.h:36
 msgid ""
 "Pipe\n"
 "Temporary file"
 msgstr ""
+"Pijp\n"
+"Tijdelijk bestand"
 
 #: ../plugins/converter/converter.glade.h:41
 msgid ""
 "Prompt\n"
 "Overwrite"
 msgstr ""
+"Vraag bevestiging\n"
+"Overschrijven"
+
+#~ msgid "Save playlist as"
+#~ msgstr "Speellijst opslaan als"
+
+#~ msgid "_Abort"
+#~ msgstr "_Afbreken"
+
+#~ msgid "editcolumndlg"
+#~ msgstr "editcolumndlg"
+
+#~ msgid "Length"
+#~ msgstr "Lengte"
+
+#~ msgid ""
+#~ "Format conversions (start with %):\n"
+#~ "  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
+#~ "  track[n]umber, [N]totaltracks,\n"
+#~ "  [l]ength, [y]ear, [g]enre, [c]omment,\n"
+#~ "  copy[r]ight, [f]ilename, [F]ullPathname, [T]ags,\n"
+#~ "  [d]irectory, [D]irectoryWithPath\n"
+#~ "Example: %a - %t [%l]"
+#~ msgstr ""
+#~ "Formatteer conversies (begin met %):\n"
+#~ "  [a]rtiest, [t]itel, al[b]um, [B]and, [C]omponist\n"
+#~ "  spoor[n]ummer, [N]totaltracks,\n"
+#~ "  [l]engte, [y]jaar, [g]enre, [c]ommentaar,\n"
+#~ "  auteurs[r]echt, [b]estandnaam, [T]ags,\n"
+#~ "  [d]map, [D]MapMetPad\n"
+#~ "Bijvoorbeeld: %a - %t [%l]"
+
+#~ msgid "Allow dynamic samplerate switching"
+#~ msgstr "Dynamische samplerate-wisseling toestaan"
+
+#~ msgid "Samplerate conversion quality:"
+#~ msgstr "Samplerate-conversiekwaliteit:"
+
+#~ msgid "Description:"
+#~ msgstr "Beschrijving:"
+
+#~ msgid "Author(s):"
+#~ msgstr "Auteur(s):"
+
+#~ msgid "Email:"
+#~ msgstr "E-mail:"
+
+#~ msgid "Website:"
+#~ msgstr "Webstek:"
+
+#~ msgid "editplaylistdlg"
+#~ msgstr "editplaylistdlg"
 
 #~ msgid ""
 #~ "Format conversions (start with %):\n"
@@ -1844,8 +1880,79 @@ msgstr ""
 #~ "Example: %a - %t [%l]"
 #~ msgstr ""
 #~ "Formatteer conversies (begin met %):\n"
-#~ "[a]rtiest, [t]itel, al[b]um, [B]and, [C]omposer\n"
-#~ "titel[n]ummer, [N]totaltracks,\n"
-#~ "[d]uur, [j]aar, [g]enre, [c]ommentaar,\n"
-#~ "copy[r]echt, [b]estandnaam, [T]etiketten\n"
+#~ "  [a]rtiest, [t]itel, al[b]um, [B]and, [C]omponist\n"
+#~ "  spoor[n]ummer, [N]totaltracks,\n"
+#~ "  [d]uur, [j]aar, [g]enre, [c]ommentaar,\n"
+#~ "  auteurs[r]echt, [b]estandnaam, [T]ags\n"
 #~ "Bijvoorbeeld: %a - %t [%l]"
+
+#~ msgid "Title / Track Artist"
+#~ msgstr "Titel / Spoor Artiest"
+
+#~ msgid "Setup %s"
+#~ msgstr "Configuratie %s"
+
+#~ msgid "ALSA output plugin"
+#~ msgstr "ALSA uitvoer-plugin"
+
+#~ msgid "DeaDBeeF now playing"
+#~ msgstr "DeaDBeeF is nu aan het spelen"
+
+#~ msgid "HVSC path"
+#~ msgstr "HVSC-pad"
+
+#~ msgid ""
+#~ "<b>WARNING</b>: tag writing feature is still in development.\n"
+#~ "<b>Make backup copies</b> before using."
+#~ msgstr ""
+#~ "<b>WAARSCHUWING</b>: schrijffunctie voor etiketten is nog steeds in "
+#~ "ontwikkeling.\n"
+#~ "<b>Maak reservekopieën</b> alvorens te gebruiken."
+
+#~ msgid "Couldn't get enough memory for input buffering."
+#~ msgstr "Kon niet voldoende geheugen krijgen voor invoerbuffer."
+
+#~ msgid "Error reading first page of Ogg bitstream."
+#~ msgstr "Fout bij het lezen van eerste pagina van Ogg bitstream."
+
+#~ msgid "Error reading initial header packet."
+#~ msgstr "Fout bij lezen initieel header pakket."
+
+#~ msgid "Couldn't get enough memory to register new stream serial number."
+#~ msgstr ""
+#~ "Kon niet voldoende geheugen krijgen voor de registratie van het nieuwe "
+#~ "stream-serienummer."
+
+#~ msgid "Input truncated or empty."
+#~ msgstr "Invoer verminkt of leeg."
+
+#~ msgid "Input is not an Ogg bitstream."
+#~ msgstr "Input is geen Ogg bitstream."
+
+#~ msgid "Ogg bitstream does not contain Vorbis data."
+#~ msgstr "Ogg bitstream bevat geen Vorbis-gegevens."
+
+#~ msgid "EOF before recognised stream."
+#~ msgstr "EOF voor herkende stream."
+
+#~ msgid "Ogg bitstream does not contain a supported data-type."
+#~ msgstr "Ogg bitstream bevat geen ondersteund gegevenstype."
+
+#~ msgid "Corrupt secondary header."
+#~ msgstr "Secundaire header corrupt."
+
+#~ msgid "EOF before end of Vorbis headers."
+#~ msgstr "EOF voor einde van Vorbis-headers."
+
+#~ msgid "Corrupt or missing data, continuing..."
+#~ msgstr "Gegevens corrupt of ontbrekend, bezig met doorgaan..."
+
+#~ msgid ""
+#~ "Error writing stream to output. Output stream may be corrupted or "
+#~ "truncated."
+#~ msgstr ""
+#~ "Fout bij schrijven van stream naar uitvoer. Uitvoer-stream is mogelijk "
+#~ "corrupt of verminkt."
+
+#~ msgid "Sound (adv.)"
+#~ msgstr "Geluid (adv.)"
