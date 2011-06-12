@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: deadbeef master\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-10 15:02+0200\n"
-"PO-Revision-Date: 2011-03-14 10:56+0200\n"
+"PO-Revision-Date: 2011-04-25 01:40+0200\n"
 "Last-Translator: Rahman Yusri Aftian <aftian@yahoo.com>\n"
 "Language-Team: Indonesian Translation Team <id@li.org>\n"
 "Language: id\n"
@@ -561,7 +561,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1783 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Replaygain mode:"
-msgstr ""
+msgstr "Mode putar ulang:"
 
 #: ../plugins/gtkui/interface.c:1792
 msgid "Disable"
