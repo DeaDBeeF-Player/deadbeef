@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-06-12 13:48+0200\n"
+"POT-Creation-Date: 2011-06-12 14:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -81,6 +81,7 @@ msgstr ""
 #: ../plugins/gtkui/ddbtabstrip.c:692 ../plugins/gtkui/interface.c:1486
 #: ../plugins/gtkui/interface.c:2870 ../plugins/gtkui/deadbeef.glade.h:135
 #: ../plugins/converter/interface.c:402
+#: ../plugins/converter/converter.glade.h:46
 msgid "Title:"
 msgstr ""
 
@@ -149,6 +150,7 @@ msgid "Zero Bands"
 msgstr ""
 
 #: ../plugins/gtkui/eq.c:387 ../plugins/converter/interface.c:826
+#: ../plugins/converter/converter.glade.h:40
 msgid "Presets"
 msgstr ""
 
@@ -275,6 +277,7 @@ msgstr ""
 #: ../plugins/gtkui/interface.c:269 ../plugins/gtkui/plcommon.c:453
 #: ../plugins/gtkui/prefwin.c:323 ../plugins/gtkui/deadbeef.glade.h:104
 #: ../plugins/converter/interface.c:653
+#: ../plugins/converter/converter.glade.h:43
 msgid "Remove"
 msgstr ""
 
@@ -295,6 +298,7 @@ msgstr ""
 #: ../plugins/gtkui/search.c:393 ../plugins/gtkui/deadbeef.glade.h:134
 #: ../plugins/converter/convgui.c:790 ../plugins/converter/convgui.c:1211
 #: ../plugins/converter/interface.c:630
+#: ../plugins/converter/converter.glade.h:45
 msgid "Title"
 msgstr ""
 
@@ -623,6 +627,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1939 ../plugins/gtkui/interface.c:2471
 #: ../plugins/gtkui/deadbeef.glade.h:22 ../plugins/converter/interface.c:657
+#: ../plugins/converter/converter.glade.h:8
 msgid "Configure"
 msgstr ""
 
@@ -823,12 +828,13 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:3307 ../plugins/gtkui/deadbeef.glade.h:113
 #: ../plugins/converter/interface.c:758
+#: ../plugins/converter/converter.glade.h:44
 msgid "Select DSP Plugin"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:3323 ../plugins/gtkui/deadbeef.glade.h:92
 #: ../plugins/converter/convgui.c:1016 ../plugins/converter/interface.c:774
-#: ../plugins/gtkui/dspconfig.c:139
+#: ../plugins/gtkui/dspconfig.c:139 ../plugins/converter/converter.glade.h:38
 msgid "Plugin"
 msgstr ""
 
@@ -963,6 +969,7 @@ msgid "Default Audio Device"
 msgstr ""
 
 #: ../plugins/gtkui/prefwin.c:318 ../plugins/converter/interface.c:649
+#: ../plugins/converter/converter.glade.h:6
 msgid "Add"
 msgstr ""
 
@@ -1563,32 +1570,40 @@ msgid "DSP Presets"
 msgstr ""
 
 #: ../plugins/converter/interface.c:97
+#: ../plugins/converter/converter.glade.h:34
 msgid "Output folder:"
 msgstr ""
 
 #: ../plugins/converter/interface.c:118
+#: ../plugins/converter/converter.glade.h:33
 msgid "Output file name:"
 msgstr ""
 
 #: ../plugins/converter/interface.c:129
+#: ../plugins/converter/converter.glade.h:18
+#, no-c-format
 msgid ""
 "Extension (e.g. .mp3) will be appended automatically.\n"
 "Leave the field empty for default (%a - %t)."
 msgstr ""
 
 #: ../plugins/converter/interface.c:142
+#: ../plugins/converter/converter.glade.h:13
 msgid "Encoder:"
 msgstr ""
 
 #: ../plugins/converter/interface.c:166
+#: ../plugins/converter/converter.glade.h:10
 msgid "DSP preset:"
 msgstr ""
 
 #: ../plugins/converter/interface.c:189
+#: ../plugins/converter/converter.glade.h:30
 msgid "Number of threads:"
 msgstr ""
 
 #: ../plugins/converter/interface.c:202
+#: ../plugins/converter/converter.glade.h:35
 msgid "Output sample format:"
 msgstr ""
 
@@ -1617,6 +1632,7 @@ msgid "32 bit float"
 msgstr ""
 
 #: ../plugins/converter/interface.c:220
+#: ../plugins/converter/converter.glade.h:49
 msgid "When file exists:"
 msgstr ""
 
@@ -1629,44 +1645,53 @@ msgid "Overwrite"
 msgstr ""
 
 #: ../plugins/converter/interface.c:230
+#: ../plugins/converter/converter.glade.h:39
 msgid "Preserve folder structure, starting from:"
 msgstr ""
 
 #: ../plugins/converter/interface.c:386
+#: ../plugins/converter/converter.glade.h:12
 msgid "Edit Encoder Preset"
 msgstr ""
 
 #: ../plugins/converter/interface.c:409
+#: ../plugins/converter/converter.glade.h:48
 msgid "Untitled Encoder"
 msgstr ""
 
 #: ../plugins/converter/interface.c:417
+#: ../plugins/converter/converter.glade.h:32
 msgid "Output file extension:"
 msgstr ""
 
 #: ../plugins/converter/interface.c:424
+#: ../plugins/converter/converter.glade.h:11
 msgid "E.g. mp3"
 msgstr ""
 
 #: ../plugins/converter/interface.c:432
+#: ../plugins/converter/converter.glade.h:7
 msgid "Command line:"
 msgstr ""
 
 #: ../plugins/converter/interface.c:443
-#, c-format
+#: ../plugins/converter/converter.glade.h:15
+#, no-c-format
 msgid ""
 "Example: lame - %o\n"
 "%i for input file, %o for output file, - for stdin"
 msgstr ""
 
 #: ../plugins/converter/interface.c:453
-#, c-format
+#: ../plugins/converter/converter.glade.h:3
+#, no-c-format
 msgid ""
 "<small>%o - output file name\n"
 "%i - temporary input file name</small>"
 msgstr ""
 
 #: ../plugins/converter/interface.c:462
+#: ../plugins/converter/converter.glade.h:29
 msgid "Method:"
 msgstr ""
 
@@ -1679,33 +1704,63 @@ msgid "Temporary file"
 msgstr ""
 
 #: ../plugins/converter/interface.c:487
+#: ../plugins/converter/converter.glade.h:5
 msgid "APEv2"
 msgstr ""
 
 #: ../plugins/converter/interface.c:493
+#: ../plugins/converter/converter.glade.h:21
 msgid "ID3v1"
 msgstr ""
 
 #: ../plugins/converter/interface.c:499
+#: ../plugins/converter/converter.glade.h:31
 msgid "OggVorbis"
 msgstr ""
 
 #: ../plugins/converter/interface.c:505
+#: ../plugins/converter/converter.glade.h:20
 msgid "FLAC"
 msgstr ""
 
 #: ../plugins/converter/interface.c:517
+#: ../plugins/converter/converter.glade.h:22
 msgid "ID3v2"
 msgstr ""
 
 #: ../plugins/converter/interface.c:527
+#: ../plugins/converter/converter.glade.h:1
 msgid "<b>Tag writer</b>"
 msgstr ""
 
 #: ../plugins/converter/interface.c:614
+#: ../plugins/converter/converter.glade.h:9
 msgid "DSP Preset Editor"
 msgstr ""
 
 #: ../plugins/converter/interface.c:637
+#: ../plugins/converter/converter.glade.h:47
 msgid "Untitled DSP Preset"
+msgstr ""
+
+#: ../plugins/converter/converter.glade.h:23
+msgid ""
+"Keep source format\n"
+"8 bit signed int\n"
+"16 bit signed int\n"
+"24 bit signed int\n"
+"32 bit signed int\n"
+"32 bit float"
+msgstr ""
+
+#: ../plugins/converter/converter.glade.h:36
+msgid ""
+"Pipe\n"
+"Temporary file"
+msgstr ""
+
+#: ../plugins/converter/converter.glade.h:41
+msgid ""
+"Prompt\n"
+"Overwrite"
 msgstr ""
