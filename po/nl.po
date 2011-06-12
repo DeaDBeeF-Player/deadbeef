@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-05-27 16:47+0200\n"
-"PO-Revision-Date: 2011-06-12 14:45+0200\n"
+"PO-Revision-Date: 2011-06-12 14:52+0200\n"
 "Last-Translator: Pjotr <>\n"
 "Language-Team: Spanish\n"
 "Language: nl\n"
@@ -104,31 +104,23 @@ msgstr "Bewaar DeaDBeeF EQ-voorkeuze"
 
 #: ../plugins/gtkui/eq.c:143
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
-msgstr "DeaDBeef EQ voorkeuze-bestanden (*.ddbeq)"
+msgstr "DeaDBeeF EQ preset files (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:182
 msgid "Load DeaDBeeF EQ Preset..."
-msgstr "Laden DeaDBeeF EQ Voorkeuze..."
+msgstr "Laad DeaDBeeF EQ-voorkeuze..."
 
 #: ../plugins/gtkui/eq.c:186
 msgid "DeaDBeeF EQ presets (*.ddbeq)"
-msgstr "DeaDBeeF EQ voorkeuzes (*.ddbeq)"
+msgstr "DeaDBeeF EQ presets (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:247
 msgid "Import Foobar2000 EQ Preset..."
-msgstr "Importeer Foobar2000 EQ Voorkeuze..."
+msgstr "Voer Foobar2000 EQ-voorkeuze in..."
 
 #: ../plugins/gtkui/eq.c:251
 msgid "Foobar2000 EQ presets (*.feq)"
-msgstr "Foobar2000 EQ voorkeuzes (*.feq)"
-
-#: ../plugins/gtkui/eq.c:316
-msgid "Save Preset"
-msgstr "Opslaan voorkeuze"
-
-#: ../plugins/gtkui/eq.c:324
-msgid "Load Preset"
-msgstr "Laden Voorkeuze"
+msgstr "Foobar2000 EQ presets (*.feq)"
 
 #: ../plugins/gtkui/eq.c:332
 msgid "Import Foobar2000 Preset"
@@ -140,21 +132,27 @@ msgstr "Inschakelen"
 
 #: ../plugins/gtkui/eq.c:366
 msgid "Zero All"
-msgstr "Alles op nul"
+msgstr "Zet alles op nul"
 
 #: ../plugins/gtkui/eq.c:373
 msgid "Zero Preamp"
-msgstr "Preamp op nul"
+msgstr "Voorversterking op nul"
 
 #: ../plugins/gtkui/eq.c:380
 msgid "Zero Bands"
-msgstr "Banden op nul"
+msgstr "Zero Bands"
 
-#: ../plugins/gtkui/eq.c:387 ../plugins/converter/interface.c:826
-#: ../plugins/converter/converter.glade.h:40
-#, fuzzy
-msgid "Presets"
-msgstr "Opslaan voorkeuze"
+#: ../plugins/gtkui/eq.c:320
+msgid "Save Preset"
+msgstr "Opslaan Voorkeuze"
+
+#: ../plugins/gtkui/eq.c:327
+msgid "Load Preset"
+msgstr "Voorkeuze Laden"
+
+#: ../plugins/gtkui/eq.c:334
+msgid "Import Foobar2000 Preset"
+msgstr "Foobar2000-voorkeuze invoeren"
 
 #: ../plugins/gtkui/gtkui.c:137
 #, c-format
@@ -559,9 +557,27 @@ msgstr "Links"
 msgid "Right"
 msgstr "Rechts"
 
-#: ../plugins/gtkui/interface.c:1583 ../plugins/gtkui/interface.c:2901
-#: ../plugins/gtkui/interface.c:3013 ../plugins/gtkui/interface.c:3139
-#: ../plugins/gtkui/deadbeef.glade.h:150
+#: ../plugins/gtkui/interface.c:1459 ../plugins/gtkui/interface.c:3007
+#: ../plugins/gtkui/deadbeef.glade.h:47
+#, no-c-format
+msgid ""
+"Format conversions (start with %):\n"
+"  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
+"  track[n]umber, [N]totaltracks,\n"
+"  [l]ength, [y]ear, [g]enre, [c]omment,\n"
+"  copy[r]ight, [f]ilename, [T]ags\n"
+"Example: %a - %t [%l]"
+msgstr ""
+"Formatteer conversies (begin met %):\n"
+"[a]rtiest, [t]itel, al[b]um, [B]and, [C]omposer\n"
+"titel[n]ummer, [N]totaltracks,\n"
+"[d]uur, [j]aar, [g]enre, [c]ommentaar,\n"
+"copy[r]echt, [b]estandnaam, [T]etiketten\n"
+"Bijvoorbeeld: %a - %t [%l]"
+
+#: ../plugins/gtkui/interface.c:1488 ../plugins/gtkui/interface.c:2801
+#: ../plugins/gtkui/interface.c:2913 ../plugins/gtkui/interface.c:3036
+#: ../plugins/gtkui/deadbeef.glade.h:133
 msgid "_Cancel"
 msgstr "_Annuleer"
 
@@ -1172,20 +1188,12 @@ msgstr ""
 msgid "Default"
 msgstr "Standaard"
 
-#: ../playlist.c:3858
-msgid "Yes"
-msgstr "Ja"
-
-#: ../playlist.c:3858
-msgid "No"
-msgstr "Nee"
-
-#: ../plugins/gtkui/deadbeef.glade.h:3
+#: ../plugins/gtkui/deadbeef.glade.h:1
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
 msgstr ""
-"2.3 (Aangeraden)\n"
+"2.3 (Aanbevolen)\n"
 "2.4"
 
 #: ../plugins/gtkui/deadbeef.glade.h:14
