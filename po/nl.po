@@ -1,6 +1,7 @@
-# Dutch translations for the Deadbeef Audio Player.
+# Dutch translations for the Deadbeef package.
 # Copyright (C) the author of the Deadbeef package.
 # This file is distributed under the same license as the Deadbeef package.
+# Glenn de Groot, 2010.
 # Pjotr, 2011.
 #
 msgid ""
@@ -9,14 +10,13 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-06-12 18:17+0200\n"
 "PO-Revision-Date: 2011-06-12 22:41+0200\n"
-"Last-Translator: Pjotr <>\n"
+"Last-Translator: Pjotr\n"
 "Language-Team: Dutch\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Pootle 2.0.5\n"
 
 #: ../plugins/gtkui/callbacks.c:121
 msgid "Supported sound formats"
@@ -73,7 +73,8 @@ msgstr "DeaDBeeF %s Logboek van wijzigingen"
 #: ../plugins/gtkui/callbacks.c:1091
 #, c-format
 msgid "DeaDBeeF Translators"
-msgstr "DeaDBeeF Vertalers"
+msgstr "Glenn de Groot\n"
+"Pjotr"
 
 #: ../plugins/gtkui/ddbtabstrip.c:689 ../plugins/gtkui/trkproperties.c:618
 msgid "Edit playlist"
@@ -1842,7 +1843,7 @@ msgstr ""
 #~ "  [d]irectory, [D]irectoryWithPath\n"
 #~ "Example: %a - %t [%l]"
 #~ msgstr ""
-#~ "Formatteer conversies (begin met %):\n"
+#~ "Omzettingen van bestandopmaak (begin met %):\n"
 #~ "  [a]rtiest, [t]itel, al[b]um, [B]and, [C]omponist\n"
 #~ "  spoor[n]ummer, [N]totaltracks,\n"
 #~ "  [l]engte, [y]jaar, [g]enre, [c]ommentaar,\n"
@@ -1879,7 +1880,7 @@ msgstr ""
 #~ "  copy[r]ight, [f]ilename, [T]ags\n"
 #~ "Example: %a - %t [%l]"
 #~ msgstr ""
-#~ "Formatteer conversies (begin met %):\n"
+#~ "Omzettingen van bestandopmaak (begin met %):\n"
 #~ "  [a]rtiest, [t]itel, al[b]um, [B]and, [C]omponist\n"
 #~ "  spoor[n]ummer, [N]totaltracks,\n"
 #~ "  [d]uur, [j]aar, [g]enre, [c]ommentaar,\n"
