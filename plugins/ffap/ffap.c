@@ -41,7 +41,7 @@
 
 #ifdef TARGET_ANDROID
 int posix_memalign (void **memptr, size_t alignment, size_t size) {
-    *memptr = malloc (size);
+    *memptr = memalign (alignment, size);
     return *memptr ? 0 : -1;
 }
 #endif
@@ -1358,6 +1358,16 @@ scalarproduct_int16_c(int16_t * v1, int16_t * v2, int order, int shift)
     return res;
 }
 
+static int32_t scalarproduct_and_madd_int16_c(int16_t *v1, const int16_t *v2, const int16_t *v3, int order, int mul)
+{
+    int res = 0;
+    while (order--) {
+        res   += *v1 * *v2++;
+        *v1++ += mul * *v3++;
+    }
+    return res;
+}
+
 static void
 add_int16_c (int16_t *v1/*align 16*/, int16_t *v2, int len) {
     while (len--) {
@@ -1374,6 +1384,9 @@ sub_int16_c (int16_t *v1/*align 16*/, int16_t *v2, int len) {
 
 static int32_t
 (*scalarproduct_int16)(int16_t * v1, int16_t * v2, int order, int shift);
+
+static int32_t
+(*scalarproduct_and_madd_int16)(int16_t *v1, const int16_t *v2, const int16_t *v3, int order, int mul);
 
 static void
 (*add_int16) (int16_t *v1/*align 16*/, int16_t *v2, int len);
@@ -1412,6 +1425,7 @@ static inline void do_apply_filter(APEContext * ctx, int version, APEFilter *f, 
     int absres;
 
     while (count--) {
+#if 0
         /* round fixedpoint scalar product */
         res = (scalarproduct_int16(f->delay - order, f->coeffs, order, 0) + (1 << (fracbits - 1))) >> fracbits;
 
@@ -1420,7 +1434,10 @@ static inline void do_apply_filter(APEContext * ctx, int version, APEFilter *f, 
             add_int16(f->coeffs, f->adaptcoeffs - order, order);
         else if (*data > 0)
             sub_int16(f->coeffs, f->adaptcoeffs - order, order);
+#endif
 
+        res = scalarproduct_and_madd_int16(f->coeffs, f->delay - order, f->adaptcoeffs - order, order, APESIGN(*data));
+        res = (res + (1 << (fracbits - 1))) >> fracbits;
         res += *data;
 
         *data++ = res;
@@ -2103,10 +2120,23 @@ int mm_support(void)
 }
 #endif
 
+#if ARCH_ARM
+int32_t EXTERN_ASMff_scalarproduct_int16_neon(int16_t *v1, int16_t *v2, int len,
+                                    int shift);
+int32_t EXTERN_ASMff_scalarproduct_and_madd_int16_neon(int16_t *v1, const int16_t *v2, const int16_t *v3, int order, int mul);
+
+#endif
+
 DB_plugin_t *
 ffap_load (DB_functions_t *api) {
     // detect sse2
-#if HAVE_SSE2 && !ARCH_UNKNOWN
+#if ARCH_ARM
+        scalarproduct_int16 = EXTERN_ASMff_scalarproduct_int16_neon;
+        scalarproduct_and_madd_int16 = EXTERN_ASMff_scalarproduct_and_madd_int16_neon;
+        add_int16 = add_int16_c;
+        sub_int16 = sub_int16_c;
+#elif HAVE_SSE2 && !ARCH_UNKNOWN
+#error SSE2 version is broken in this branch, missing ff_scalarproduct_and_madd_int16_sse2
     trace ("ffap: was compiled with sse2 support\n");
     int mm_flags = mm_support ();
     if (mm_flags & FF_MM_SSE2) {
@@ -2122,8 +2152,9 @@ ffap_load (DB_functions_t *api) {
         sub_int16 = sub_int16_c;
     }
 #else
-    trace ("ffap: sse2 support was not compiled in\n");
+//    trace ("ffap: sse2 support was not compiled in\n");
     scalarproduct_int16 = scalarproduct_int16_c;
+    scalarproduct_and_madd_int16 = scalarproduct_and_madd_int16_c;
     add_int16 = add_int16_c;
     sub_int16 = sub_int16_c;
 #endif
