@@ -35,6 +35,7 @@ case "$host" in
   i386-*-* | i486-*-* | i586-*-* | i686-*-* | i86pc-*-*)
     AC_DEFINE(ARCH_X86_32, 1, [architecture is x86])
     LIB="../deadbeef-deps/lib-x86-32"
+    YASM_FLAGS="-f elf -D ARCH_X86_32 -m x86"
     ;;
   x86_64-apple-*)
     AC_DEFINE(ARCH_X86_64_OSX, 1, [architecture is x86_64 for OSX])
@@ -43,6 +44,7 @@ case "$host" in
   x86_64-*-* | amd64-*-*)
     AC_DEFINE(ARCH_X86_64, 1, [architecture is x86_64])
     LIB="../deadbeef-deps/lib-x86-64"
+    YASM_FLAGS="-f elf -D ARCH_X86_64 -m amd64"
     ;;
   powerpc-*-* )
     AC_DEFINE(ARCH_PPC_32, 1, [architecture is ppc32])
@@ -110,6 +112,9 @@ if test "x$enable_staticlink" != "xno" ; then
     AC_DEFINE_UNQUOTED([STATICLINK], [1], [Define if building static version])
     STATICLINK=yes
 fi
+
+dnl check for yasm
+AC_CHECK_PROG(HAVE_YASM, yasm, yes, no)
 
 dnl check for libdl
 AC_CHECK_LIB([dl], [main], [HAVE_DL=yes;DL_LIBS="-ldl";AC_SUBST(DL_LIBS)])
@@ -585,6 +590,7 @@ AM_CONDITIONAL(HAVE_CONVERTER, test "x$HAVE_CONVERTER" = "xyes")
 AM_CONDITIONAL(HAVE_IMLIB2, test "x$HAVE_IMLIB2" = "xyes")
 AM_CONDITIONAL(HAVE_JPEG, test "x$HAVE_JPEG" = "xyes")
 AM_CONDITIONAL(HAVE_PNG, test "x$HAVE_PNG" = "xyes")
+AM_CONDITIONAL(HAVE_YASM, test "x$HAVE_YASM" = "xyes")
 
 AC_SUBST(PLUGINS_DIRS)
 
