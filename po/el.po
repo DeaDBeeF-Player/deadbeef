@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-06-12 18:17+0200\n"
-"PO-Revision-Date: 2011-04-18 08:17+0200\n"
+"PO-Revision-Date: 2011-06-16 13:23+0200\n"
 "Last-Translator: George <forfolias@gmail.com>\n"
 "Language-Team: Greek\n"
 "Language: el\n"
@@ -54,7 +54,7 @@ msgstr "Αποτυχία κατά τη φόρτωση του αρχείου βο
 
 #: ../plugins/gtkui/callbacks.c:722
 msgid "help.txt"
-msgstr ""
+msgstr "help.txt"
 
 #: ../plugins/gtkui/callbacks.c:723 ../plugins/gtkui/interface.c:1155
 #: ../plugins/gtkui/deadbeef.glade.h:48 ../plugins/converter/convgui.c:1240
@@ -73,9 +73,9 @@ msgid "DeaDBeeF %s ChangeLog"
 msgstr "DeaDBeeF %s ChangeLog"
 
 #: ../plugins/gtkui/callbacks.c:1091
-#, fuzzy, c-format
+#, c-format
 msgid "DeaDBeeF Translators"
-msgstr "DeaDBeeF τώρα αναπαράγει"
+msgstr "Μεταφραστές του DeaDBeeF"
 
 #: ../plugins/gtkui/ddbtabstrip.c:689 ../plugins/gtkui/trkproperties.c:618
 msgid "Edit playlist"
@@ -297,7 +297,7 @@ msgstr "_Αναζήτηση"
 
 #: ../plugins/gtkui/interface.c:288 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Sort By"
-msgstr ""
+msgstr "Ταξινόμηση κατά"
 
 #: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1516
 #: ../plugins/gtkui/mainplaylist.c:315 ../plugins/gtkui/prefwin.c:623
@@ -309,9 +309,8 @@ msgid "Title"
 msgstr "Τίτλος"
 
 #: ../plugins/gtkui/interface.c:299 ../plugins/gtkui/deadbeef.glade.h:139
-#, fuzzy
 msgid "Track number"
-msgstr "Αριθμός αρχείου"
+msgstr "Αριθμός κομματιού"
 
 #: ../plugins/gtkui/interface.c:303 ../plugins/gtkui/interface.c:1515
 #: ../plugins/gtkui/interface.c:1869 ../plugins/gtkui/deadbeef.glade.h:10
@@ -329,7 +328,7 @@ msgstr "Καλλιτέχνης"
 #: ../plugins/gtkui/interface.c:311 ../plugins/gtkui/deadbeef.glade.h:31
 #: ../translation/extra.c:70
 msgid "Date"
-msgstr ""
+msgstr "Ημερομηνία"
 
 #: ../plugins/gtkui/interface.c:315 ../plugins/gtkui/interface.c:1520
 #: ../plugins/gtkui/plcommon.c:1002 ../plugins/gtkui/deadbeef.glade.h:27
@@ -377,12 +376,12 @@ msgstr "Γραμμικά"
 #: ../plugins/gtkui/interface.c:370 ../plugins/gtkui/deadbeef.glade.h:120
 #, fuzzy
 msgid "Shuffle tracks"
-msgstr "Ανακατεμένα"
+msgstr "Τυχαία αναπαραγωγή κομματιών"
 
 #: ../plugins/gtkui/interface.c:375 ../plugins/gtkui/deadbeef.glade.h:119
 #, fuzzy
 msgid "Shuffle albums"
-msgstr "Ανακατεμένα"
+msgstr "Τυχαία αναπαραγωγή άλμπουμ"
 
 #: ../plugins/gtkui/interface.c:380 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Random"
@@ -418,7 +417,7 @@ msgstr "Διακοπή μετά το τρέχον"
 
 #: ../plugins/gtkui/interface.c:430 ../plugins/gtkui/deadbeef.glade.h:66
 msgid "Jump to current track"
-msgstr ""
+msgstr "Μετάβαση στο τρέχον κομμάτι"
 
 #: ../plugins/gtkui/interface.c:437 ../plugins/gtkui/interface.c:444
 #: ../plugins/gtkui/deadbeef.glade.h:158
@@ -431,11 +430,11 @@ msgstr "_ChangeLog"
 
 #: ../plugins/gtkui/interface.c:461 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "_GPLv2"
-msgstr ""
+msgstr "_GPLv2"
 
 #: ../plugins/gtkui/interface.c:465 ../plugins/gtkui/deadbeef.glade.h:159
 msgid "_LGPLv2.1"
-msgstr ""
+msgstr "_LGPLv2.1"
 
 #: ../plugins/gtkui/interface.c:474 ../plugins/gtkui/deadbeef.glade.h:148
 msgid "_About"
@@ -443,7 +442,7 @@ msgstr "_Περί"
 
 #: ../plugins/gtkui/interface.c:482 ../plugins/gtkui/deadbeef.glade.h:165
 msgid "_Translators"
-msgstr ""
+msgstr "Βασιλάκος Γεώργιος <forfolias@linuxteam.cs.teilar.gr>"
 
 #: ../plugins/gtkui/interface.c:898 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "Search"
@@ -487,7 +486,7 @@ msgstr "Ιδιότητες κομματιού"
 
 #: ../plugins/gtkui/interface.c:1270 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Settings"
-msgstr ""
+msgstr "Ρυθμίσεις"
 
 #: ../plugins/gtkui/interface.c:1296 ../plugins/gtkui/deadbeef.glade.h:149
 msgid "_Apply"
@@ -516,8 +515,9 @@ msgid "Type:"
 msgstr "Τύπος"
 
 #: ../plugins/gtkui/interface.c:1510
+#, fuzzy
 msgid "Item Index"
-msgstr ""
+msgstr "Δείκτης αντικειμένου"
 
 #. create default set of columns
 #: ../plugins/gtkui/interface.c:1511 ../plugins/gtkui/mainplaylist.c:312
@@ -538,7 +538,6 @@ msgid "Duration"
 msgstr "Διάρκεια"
 
 #: ../plugins/gtkui/interface.c:1518 ../translation/extra.c:71
-#, fuzzy
 msgid "Track Number"
 msgstr "Αριθμός κομματιού"
 
@@ -585,7 +584,7 @@ msgstr "Συσκευή εξόδου:"
 
 #: ../plugins/gtkui/interface.c:1841 ../plugins/gtkui/deadbeef.glade.h:12
 msgid "Always convert 8 bit audio to 16 bit"
-msgstr ""
+msgstr "Πάντα να γίνεται μετατροπή του 8 bit ήχου σε 16 bit"
 
 #: ../plugins/gtkui/interface.c:1845 ../plugins/gtkui/deadbeef.glade.h:123
 msgid "Sound"
@@ -614,11 +613,11 @@ msgstr "Λειτουργία Replaygain:"
 
 #: ../plugins/gtkui/interface.c:1883 ../plugins/gtkui/deadbeef.glade.h:2
 msgid "-12 dB"
-msgstr ""
+msgstr "-12 dB"
 
 #: ../plugins/gtkui/interface.c:1893 ../plugins/gtkui/deadbeef.glade.h:1
 msgid "+12 dB"
-msgstr ""
+msgstr "+12 dB"
 
 #: ../plugins/gtkui/interface.c:1901 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
@@ -632,7 +631,7 @@ msgstr "Συνέχεια προηγούμενης συνεδρίας στην ε
 
 #: ../plugins/gtkui/interface.c:1914 ../plugins/gtkui/deadbeef.glade.h:37
 msgid "Don't add from archives when adding folders"
-msgstr ""
+msgstr "Να μη γίνεται προσθήκη από αρχειοθήκες κατά την προσθήκη φακέλων"
 
 #: ../plugins/gtkui/interface.c:1918 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Playback"
@@ -647,15 +646,15 @@ msgstr "Ρύθμιση"
 #: ../plugins/gtkui/interface.c:1974 ../plugins/gtkui/deadbeef.glade.h:29
 #, fuzzy
 msgid "DSP Chain Preset"
-msgstr "Αποθήκευση ρύθμισης"
+msgstr "Ρύθμιση DSP Chain"
 
 #: ../plugins/gtkui/interface.c:1986 ../plugins/gtkui/deadbeef.glade.h:160
 msgid "_Load"
-msgstr ""
+msgstr "_Φόρτωση"
 
 #: ../plugins/gtkui/interface.c:1990 ../plugins/gtkui/deadbeef.glade.h:28
 msgid "DSP"
-msgstr ""
+msgstr "DSP"
 
 #: ../plugins/gtkui/interface.c:1999 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Close minimizes to tray"
@@ -679,11 +678,11 @@ msgstr "Απόκρυψη του μενού \"Διαγραφή από το δίσ
 
 #: ../plugins/gtkui/interface.c:2019 ../plugins/gtkui/deadbeef.glade.h:16
 msgid "Auto-name playlists when adding a single folder"
-msgstr ""
+msgstr "Αυτόματη ονομασία λίστας αναπαραγωγής κατά το άνοιγμα ενός μόνο φακέλου"
 
 #: ../plugins/gtkui/interface.c:2027 ../plugins/gtkui/deadbeef.glade.h:53
 msgid "Interface refresh rate (times per second):"
-msgstr ""
+msgstr "Ρυθμός ανανέωσης διεπαφής (φορές το δευτερόλεπτο)"
 
 #: ../plugins/gtkui/interface.c:2041 ../plugins/gtkui/deadbeef.glade.h:136
 msgid "Titlebar text while playing:"
@@ -695,7 +694,7 @@ msgstr "Τίτος παραθύρου κατά τη διακοπή:"
 
 #: ../plugins/gtkui/interface.c:2069 ../plugins/gtkui/deadbeef.glade.h:46
 msgid "GUI Plugin (changing requires restart):"
-msgstr ""
+msgstr "Πρόσθετο γραφικής διεπαφής (η αλλαγή απαιτεί επανεκκίνηση):"
 
 #: ../plugins/gtkui/interface.c:2077 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "GUI"
@@ -805,12 +804,12 @@ msgstr "Δίκτυο"
 
 #: ../plugins/gtkui/interface.c:2428 ../plugins/gtkui/deadbeef.glade.h:143
 msgid "Version: "
-msgstr ""
+msgstr "Έκδοση:"
 
 #: ../plugins/gtkui/interface.c:2492 ../plugins/gtkui/deadbeef.glade.h:23
 #: ../translation/extra.c:78
 msgid "Copyright"
-msgstr ""
+msgstr "Πνευματικά δικαιώματα"
 
 #: ../plugins/gtkui/interface.c:2502 ../plugins/gtkui/deadbeef.glade.h:93
 msgid "Plugins"
@@ -826,39 +825,36 @@ msgstr "Ομαδοποίηση κατά"
 
 #: ../plugins/gtkui/interface.c:3207 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Sort by..."
-msgstr ""
+msgstr "Ταξινόμηση κατά..."
 
 #: ../plugins/gtkui/interface.c:3223 ../plugins/gtkui/deadbeef.glade.h:43
-#, fuzzy
 msgid "Format"
-msgstr "Μορφή:"
+msgstr "Μορφή"
 
 #: ../plugins/gtkui/interface.c:3253
 msgid "Ascending"
-msgstr ""
+msgstr "Αύξουσα"
 
 #: ../plugins/gtkui/interface.c:3254
 msgid "Descending"
-msgstr ""
+msgstr "Φθίνουσα"
 
 #: ../plugins/gtkui/interface.c:3307 ../plugins/gtkui/deadbeef.glade.h:113
 #: ../plugins/converter/interface.c:758
 #: ../plugins/converter/converter.glade.h:44
-#, fuzzy
 msgid "Select DSP Plugin"
-msgstr "Επιλεγμένο"
+msgstr "Επιλογή πρόσθετου DSP"
 
 #: ../plugins/gtkui/interface.c:3323 ../plugins/gtkui/deadbeef.glade.h:92
 #: ../plugins/converter/convgui.c:1016 ../plugins/converter/interface.c:774
 #: ../plugins/gtkui/dspconfig.c:139 ../plugins/converter/converter.glade.h:38
 #, fuzzy
 msgid "Plugin"
-msgstr "Πρόσθετα"
+msgstr "Πρόσθετο"
 
 #: ../plugins/gtkui/interface.c:3409 ../plugins/gtkui/deadbeef.glade.h:132
-#, fuzzy
 msgid "Tag Writer Settings"
-msgstr "Συγγραφέας ετικετών"
+msgstr "Ρυθμίσεις συγγραφέα ετικετών"
 
 #: ../plugins/gtkui/interface.c:3440 ../plugins/gtkui/deadbeef.glade.h:146
 msgid "Write ID3v2"
@@ -981,9 +977,9 @@ msgid "Open file..."
 msgstr "Άνοιγμα αρχείου..."
 
 #: ../plugins/gtkui/pluginconf.c:217
-#, fuzzy, c-format
+#, c-format
 msgid "Configure %s"
-msgstr "Ρύθμιση"
+msgstr "Ρύθμιση %s"
 
 #: ../plugins/gtkui/prefwin.c:82
 msgid "Default Audio Device"
@@ -1025,7 +1021,7 @@ msgstr "Είστε σίγουροι πως θέλετε να κλείσετε τ
 #. get value to edit
 #: ../plugins/gtkui/trkproperties.c:254
 msgid "[Multiple values] "
-msgstr ""
+msgstr "[Πολλαπλές τιμές]"
 
 #: ../plugins/gtkui/trkproperties.c:407 ../plugins/gtkui/trkproperties.c:419
 msgid "Key"
@@ -1037,38 +1033,36 @@ msgstr "Τιμή"
 
 #: ../plugins/gtkui/trkproperties.c:594
 msgid "Writing tags..."
-msgstr ""
+msgstr "Εγγραφή ετικετών..."
 
 #: ../plugins/gtkui/trkproperties.c:621
 msgid "Name:"
-msgstr ""
+msgstr "Όνομα:"
 
 #: ../plugins/gtkui/trkproperties.c:633
 msgid "Field names must not start with : or _"
-msgstr ""
+msgstr "Τα ονόματα των πεδίων δεν πρέπει να ξεκινάνε με : ή _"
 
 #: ../plugins/gtkui/trkproperties.c:634 ../plugins/gtkui/trkproperties.c:668
 msgid "Cannot add field"
-msgstr ""
+msgstr "Δεν ήταν δυνατή η προσθήκη του πεδίου"
 
 #: ../plugins/gtkui/trkproperties.c:667
 msgid "Field with such name already exists, please try different name."
 msgstr ""
+"Υπάρχει ήδη ένα πεδίο με αυτό το όνομα, δοκιμάστε με ένα διαφορετικό όνομα."
 
 #: ../plugins/gtkui/trkproperties.c:692
-#, fuzzy
 msgid "Really remove selected field?"
-msgstr "Είστε σίγουροι πως θέλετε να κλείσετε το παράθυρο;"
+msgstr "Είστε σίγουροι πως θέλετε να αφαιρέσετε το επιλεγμένο πεδίο;"
 
 #: ../plugins/gtkui/trkproperties.c:734
-#, fuzzy
 msgid "Add field"
-msgstr "Προσθήκη αρχείου"
+msgstr "Προσθήκη πεδίου"
 
 #: ../plugins/gtkui/trkproperties.c:737
-#, fuzzy
 msgid "Remove field"
-msgstr "Αφαίρεση"
+msgstr "Αφαίρεση πεδίου"
 
 #: ../main.c:90
 #, c-format
@@ -1113,13 +1107,14 @@ msgstr "--pause Παύση αναπαραγωγής\n"
 #: ../main.c:98
 #, c-format
 msgid "   --toggle-pause     Toggle pause\n"
-msgstr ""
+msgstr "--toggle-pause Εναλλαγή παύσης\n"
 
 #: ../main.c:99
 #, c-format
 msgid ""
 "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
-msgstr ""
+msgstr "--play-pause Εκκίνηση αναπαραγωγής εάν είναι σταματημένο, αλλιώς εναλλαγή "
+"παύσης\n"
 
 #: ../main.c:100
 #, c-format
@@ -1169,7 +1164,8 @@ msgstr "π.χ.: --nowplaying \"%%a - %%t\" θα εμφανίσει \"artist - ti
 msgid ""
 "                      for more info, see http://sourceforge.net/apps/"
 "mediawiki/deadbeef/index.php?title=Title_Formatting\n"
-msgstr ""
+msgstr "για περισσότερες πληροφορίες, δείτε στο http://sourceforge.net/apps/mediawik"
+"i/deadbeef/index.php?title=Title_Formatting\n"
 
 #: ../playlist.c:443 ../playlist.c:2609
 msgid "Default"
@@ -1196,6 +1192,8 @@ msgid ""
 "Ascending\n"
 "Descending"
 msgstr ""
+"Αύξουσα\n"
+"Φθίνουσα"
 
 #: ../plugins/gtkui/deadbeef.glade.h:33
 msgid ""
@@ -1208,7 +1206,6 @@ msgstr ""
 "Άλμπουμ"
 
 #: ../plugins/gtkui/deadbeef.glade.h:55
-#, fuzzy
 msgid ""
 "Item Index\n"
 "Playing\n"
@@ -1222,16 +1219,15 @@ msgid ""
 "Band / Album Artist\n"
 "Custom"
 msgstr ""
-"Αριθμός αρχείου\n"
-"Αναπαραγωγή\n"
+"Δείκτης αντικειμένουΑναπαραγωγή\n"
 "Εξώφυλλο\n"
 "Καλλιτέχνης - Άλμπουμ\n"
 "Καλλιτέχνης\n"
 "Άλμπουμ\n"
 "Τίτλος\n"
 "Διάρκεια\n"
-"Κομμάτι\n"
-"Καλλιτέχνης Μπάντας / Άλμπουμ\n"
+"Αριθμός κομματιού\n"
+"Μπάντα / Καλλιτέχνης άλμπουμ\n"
 "Προσαρμοσμένο"
 
 #: ../plugins/gtkui/deadbeef.glade.h:67
@@ -1266,247 +1262,244 @@ msgstr "Προσθήκη CD ήχου"
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
-msgstr ""
+msgstr "Αναζήτηση στο Last.fm"
 
 #. ALSA output plugin
 #: ../translation/extra.c:6
 msgid "Use ALSA resampling"
-msgstr ""
+msgstr "Χρήση αναδειγματοληψίας ALSA"
 
 #: ../translation/extra.c:7
-#, fuzzy
 msgid "Release device while stopped"
-msgstr "Τίτος παραθύρου κατά τη διακοπή:"
+msgstr "Απελευθέρωση της συσκευής κατά τη διακοπή"
 
 #: ../translation/extra.c:8 ../translation/extra.c:51
 msgid "Preferred buffer size"
-msgstr ""
+msgstr "Προτεινόμενο μέγεθος ενδιάμεσης μνήμης"
 
 #: ../translation/extra.c:9
 msgid "Preferred period size"
-msgstr ""
+msgstr "Προτεινόμενο μέγεθος περιόδου"
 
 #. Last.fm plugin
 #: ../translation/extra.c:11
 #, fuzzy
 msgid "Enable scrobbler"
-msgstr "Ενεργοποίηση Proxy Server"
+msgstr "Ενεργοποίηση scrobbler"
 
 #: ../translation/extra.c:12
 #, fuzzy
 msgid "Disable nowplaying"
-msgstr "DeaDBeeF τώρα αναπαράγει"
+msgstr "Απενεργοποίηση τρέχουσας αναπαραγωγής"
 
 #: ../translation/extra.c:13
-#, fuzzy
 msgid "Username"
-msgstr "Όνομα χρήστη Proxy:"
+msgstr "Όνομα χρήστη"
 
 #: ../translation/extra.c:14
-#, fuzzy
 msgid "Password"
-msgstr "Κωδικός Proxy:"
+msgstr "Κωδικός"
 
 #: ../translation/extra.c:15
+#, fuzzy
 msgid "Scrobble URL"
-msgstr ""
+msgstr "Διεύθυνση scrobble"
 
 #. OSS output plugin
 #: ../translation/extra.c:17
 msgid "Device file"
-msgstr ""
+msgstr "Αρχείο συσκευής"
 
 #: ../translation/extra.c:18
 msgid "OSS4 samplerate bug workaround"
-msgstr ""
+msgstr "Επίλυση σφάλματος δειγματοληψίας OSS4"
 
 #. Album Artwork plugin
 #: ../translation/extra.c:20
 msgid "Cache update period (hr)"
-msgstr ""
+msgstr "Περίοδος ανανέωσης λανθάνουσας μνήμης (ώρες)"
 
 #: ../translation/extra.c:21
 msgid "Fetch from embedded tags"
-msgstr ""
+msgstr "Ανάκτηση από ενσωματωμένες ετικέτες"
 
 #: ../translation/extra.c:22
 msgid "Fetch from local folder"
-msgstr ""
+msgstr "Ανάκτηση από τοπικό φάκελο"
 
 #: ../translation/extra.c:23
+#, fuzzy
 msgid "Local cover file mask"
-msgstr ""
+msgstr "Αρχείο μάσκας τοπικού εξώφυλλου"
 
 #: ../translation/extra.c:24
 msgid "Fetch from last.fm"
-msgstr ""
+msgstr "Ανάκτηση από το last.fm"
 
 #: ../translation/extra.c:25
 msgid "Fetch from albumart.org"
-msgstr ""
+msgstr "Ανάκτηση από το albumart.org"
 
 #: ../translation/extra.c:26
 msgid "Scale artwork towards longer side"
-msgstr ""
+msgstr "Αλλαγή μεγέθους εικόνας προς τη μακρύτερη πλευρά"
 
 #. Audio CD player
 #: ../translation/extra.c:28
 msgid "Use CDDB/FreeDB"
-msgstr ""
+msgstr "Χρήση CDDB/FreeDB"
 
 #: ../translation/extra.c:29
 msgid "Prefer CD-Text over CDDB"
-msgstr ""
+msgstr "Να προτιμάται το κείμενο-CD αντί του CDDB"
 
 #: ../translation/extra.c:30
 msgid "CDDB url (e.g. 'freedb.org')"
-msgstr ""
+msgstr "διεύθυνση CDDB (π.χ. 'freedb.org')"
 
 #: ../translation/extra.c:31
 msgid "CDDB port number (e.g. '888')"
-msgstr ""
+msgstr "Αριθμός θύρας CDDB (π.χ. '888')"
 
 #: ../translation/extra.c:32
 msgid "Prefer CDDB protocol over HTTP"
-msgstr ""
+msgstr "Να προτιμάται το CDDB πρωτόκολλο μέσω HTTP"
 
 #: ../translation/extra.c:33
 msgid "Enable NRG image support"
-msgstr ""
+msgstr "Ενεργοποίηση υποστήριξης NRG εικόνας"
 
 #. DUMB module player plugin
 #: ../translation/extra.c:35
 msgid "Resampling quality (0..2, higher is better)"
-msgstr ""
+msgstr "Ποιότητα αναδειγματοληψίας (0..2, υψηλότερα είναι καλύτερα)"
 
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:37
 msgid "Max song length (in minutes)"
-msgstr ""
+msgstr "Μέγιστη διάρκεια κομματιού (σε λεπτά)"
 
 #. Standard GTK2 user interface plugin
 #: ../translation/extra.c:39
-#, fuzzy
 msgid "Ask confirmation to delete files from disk"
-msgstr "Διαγραφή αρχείων από το δίσκο"
+msgstr "Ερώτηση επιβεβαίωσης για τη διαγραφή αρχείων από το δίσκο"
 
 #: ../translation/extra.c:40
 msgid "Status icon volume control sensitivity"
-msgstr ""
+msgstr "Ευαισθησία εικονιδίου ελέγχου έντασης"
 
 #: ../translation/extra.c:41
 msgid "Custom status icon"
-msgstr ""
+msgstr "Προσαρμοσμένο εικονίδιο κατάστασης"
 
 #: ../translation/extra.c:42
 msgid "Run gtk_init with --sync (debug mode)"
-msgstr ""
+msgstr "Εκτέλεση της gtk_init με --sync (κατάσταση αποσφαλμάτωσης)"
 
 #: ../translation/extra.c:43
+#, fuzzy
 msgid "Add separators between plugin context menu items"
-msgstr ""
+msgstr "Προσθήκη διαχωριστικών ανάμεσα στα αντικείμενα του μενού προσθέτων"
 
 #. OSD Notify plugin
 #: ../translation/extra.c:45
 msgid "Notification title format"
-msgstr ""
+msgstr "Μορφή τίτλου ειδοποίησης"
 
 #: ../translation/extra.c:46
 msgid "Notification content format"
-msgstr ""
+msgstr "Μορφή περιεχομένου ειδοποίησης"
 
 #: ../translation/extra.c:47
-#, fuzzy
 msgid "Show album art"
-msgstr "Σχέδιο άλπουμ"
+msgstr "Εμφάνιση εικόνας άλμπουμ"
 
 #: ../translation/extra.c:48
 msgid "Album art size (px)"
-msgstr ""
+msgstr "Μέγεθος εικόνας άλμπουμ (εικ)"
 
 #. PulseAudio output plugin
 #: ../translation/extra.c:50
 msgid "PulseAudio server"
-msgstr ""
+msgstr "Διακομιστής PulseAudio"
 
 #: ../translation/extra.c:52
 msgid "Samplerate"
-msgstr ""
+msgstr "Δειγματοληψία"
 
 #. SHN player plugin
 #: ../translation/extra.c:54
+#, fuzzy
 msgid "Relative seek table path"
-msgstr ""
+msgstr "Σχετική διαδρομή πίνακα αναζήτησης"
 
 #: ../translation/extra.c:55
+#, fuzzy
 msgid "Absolute seek table path"
-msgstr ""
+msgstr "Απόλυτη διαδρομή πίνακα αναζήτησης"
 
 #: ../translation/extra.c:56
 msgid "Swap audio bytes (toggle if all you hear is static)"
-msgstr ""
+msgstr "Εναλλαγή των byte ήχου (επιλογή αν ακούτε κάτι στατικό)"
 
 #. SID decoder plugin
 #: ../translation/extra.c:58
+#, fuzzy
 msgid "Enable HVSC Songlength DB"
-msgstr ""
+msgstr "Ενεργοποίηση HVSC Songlength DB"
 
 #: ../translation/extra.c:59
 msgid "Songlengths.txt (from HVSC)"
-msgstr ""
+msgstr "Songlengths.txt (από HVSC)"
 
 #: ../translation/extra.c:60
 msgid "Bits per sample (8 or 16)"
-msgstr ""
+msgstr "Bits ανά δείγμα (8 ή 16)"
 
 #: ../translation/extra.c:61
 msgid "Default song length (sec)"
-msgstr ""
+msgstr "Προεπιλεγμένη διάρκεια κομματιού (δευτ)"
 
 #. WildMidi player plugin
 #: ../translation/extra.c:63
 msgid "Timidity++ bank configuration file"
-msgstr ""
+msgstr "Αρχείο ρυθμίσεων Timidity++"
 
 #: ../translation/extra.c:66
-#, fuzzy
 msgid "Track Title"
-msgstr "Αριθμός κομματιού"
+msgstr "Τίτλος κομματιού"
 
 #: ../translation/extra.c:67
 msgid "Performer"
-msgstr ""
+msgstr "Ερμηνευτής"
 
 #: ../translation/extra.c:72
-#, fuzzy
 msgid "Total Tracks"
-msgstr "Τίτλος / Καλλιτέχνης κομματιού"
+msgstr "Σύνολο κομματιών"
 
 #: ../translation/extra.c:73
 msgid "Genre"
-msgstr ""
+msgstr "Είδος"
 
 #: ../translation/extra.c:74
 msgid "Composer"
-msgstr ""
+msgstr "Συνθέτης"
 
 #: ../translation/extra.c:75
-#, fuzzy
 msgid "Disc Number"
-msgstr "Αριθμός αρχείου"
+msgstr "Αριθμός δίσκου"
 
 #: ../translation/extra.c:76
 msgid "Comment"
-msgstr ""
+msgstr "Σχόλια"
 
 #: ../translation/extra.c:77
 msgid "Encoder / Vendor"
-msgstr ""
+msgstr "Κωδικοποιητής / Προμηθευτής"
 
 #: ../translation/extra.c:79
-#, fuzzy
 msgid "Location"
-msgstr "Προσθήκη τοποθεσίας"
+msgstr "Τοποθεσία"
 
 #: ../translation/extra.c:80
 msgid "Subtrack Index"
