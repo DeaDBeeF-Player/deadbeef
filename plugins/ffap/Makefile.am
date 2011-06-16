@@ -9,7 +9,6 @@ SUFFIXES = .asm
 
 if HAVE_YASM
 INTEL_SRC=dsputil_yasm.asm
-YASM_FLAGS="-f elf -D ARCH_X86_64 -m amd64"
 ffap_la_DEPENDENCIES=dsputil_yasm.lo
 endif
 

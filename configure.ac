@@ -59,6 +59,7 @@ case "$host" in
     ;;
 esac
 AC_SUBST(LIB)
+AC_SUBST(YASM_FLAGS)
 
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 
