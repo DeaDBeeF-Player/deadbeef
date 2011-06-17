@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-06-12 18:17+0200\n"
-"PO-Revision-Date: 2011-06-16 13:23+0200\n"
+"PO-Revision-Date: 2011-06-17 08:33+0200\n"
 "Last-Translator: George <forfolias@gmail.com>\n"
 "Language-Team: Greek\n"
 "Language: el\n"
@@ -156,7 +156,7 @@ msgstr "Μηδέν ζώνες"
 #: ../plugins/converter/converter.glade.h:40
 #, fuzzy
 msgid "Presets"
-msgstr "Αποθήκευση ρύθμισης"
+msgstr "Ρυθμίσεις"
 
 #: ../plugins/gtkui/gtkui.c:137
 #, c-format
@@ -374,12 +374,10 @@ msgid "Linear"
 msgstr "Γραμμικά"
 
 #: ../plugins/gtkui/interface.c:370 ../plugins/gtkui/deadbeef.glade.h:120
-#, fuzzy
 msgid "Shuffle tracks"
 msgstr "Τυχαία αναπαραγωγή κομματιών"
 
 #: ../plugins/gtkui/interface.c:375 ../plugins/gtkui/deadbeef.glade.h:119
-#, fuzzy
 msgid "Shuffle albums"
 msgstr "Τυχαία αναπαραγωγή άλμπουμ"
 
@@ -515,7 +513,6 @@ msgid "Type:"
 msgstr "Τύπος"
 
 #: ../plugins/gtkui/interface.c:1510
-#, fuzzy
 msgid "Item Index"
 msgstr "Δείκτης αντικειμένου"
 
@@ -848,7 +845,6 @@ msgstr "Επιλογή πρόσθετου DSP"
 #: ../plugins/gtkui/interface.c:3323 ../plugins/gtkui/deadbeef.glade.h:92
 #: ../plugins/converter/convgui.c:1016 ../plugins/converter/interface.c:774
 #: ../plugins/gtkui/dspconfig.c:139 ../plugins/converter/converter.glade.h:38
-#, fuzzy
 msgid "Plugin"
 msgstr "Πρόσθετο"
 
@@ -1283,12 +1279,10 @@ msgstr "Προτεινόμενο μέγεθος περιόδου"
 
 #. Last.fm plugin
 #: ../translation/extra.c:11
-#, fuzzy
 msgid "Enable scrobbler"
 msgstr "Ενεργοποίηση scrobbler"
 
 #: ../translation/extra.c:12
-#, fuzzy
 msgid "Disable nowplaying"
 msgstr "Απενεργοποίηση τρέχουσας αναπαραγωγής"
 
@@ -1301,7 +1295,6 @@ msgid "Password"
 msgstr "Κωδικός"
 
 #: ../translation/extra.c:15
-#, fuzzy
 msgid "Scrobble URL"
 msgstr "Διεύθυνση scrobble"
 
@@ -1397,9 +1390,8 @@ msgid "Run gtk_init with --sync (debug mode)"
 msgstr "Εκτέλεση της gtk_init με --sync (κατάσταση αποσφαλμάτωσης)"
 
 #: ../translation/extra.c:43
-#, fuzzy
 msgid "Add separators between plugin context menu items"
-msgstr "Προσθήκη διαχωριστικών ανάμεσα στα αντικείμενα του μενού προσθέτων"
+msgstr "Προσθήκη διαχωριστικών ανάμεσα στα περιεχόμενα του μενού προσθέτων"
 
 #. OSD Notify plugin
 #: ../translation/extra.c:45
@@ -1444,7 +1436,6 @@ msgstr "Εναλλαγή των byte ήχου (επιλογή αν ακούτε 
 
 #. SID decoder plugin
 #: ../translation/extra.c:58
-#, fuzzy
 msgid "Enable HVSC Songlength DB"
 msgstr "Ενεργοποίηση HVSC Songlength DB"
 
@@ -1502,8 +1493,9 @@ msgid "Location"
 msgstr "Τοποθεσία"
 
 #: ../translation/extra.c:80
+#, fuzzy
 msgid "Subtrack Index"
-msgstr ""
+msgstr "Δείκτης υποκομματιού"
 
 #: ../translation/extra.c:81
 msgid "Tag Type(s)"
@@ -1520,125 +1512,119 @@ msgstr "Κωδικοποιητής"
 #. FFmpeg deocder plugin
 #: ../translation/extra.c:85
 msgid "File Extensions (separate with ';')"
-msgstr ""
+msgstr "Επεκτάσεις αρχείων (χωρισμένες με ';')"
 
 #. Converter GUI
 #: ../translation/extra.c:87
 msgid "Convert"
-msgstr ""
+msgstr "Μετατροπή"
 
 #. Resampler (Secret Rabbit Code)
 #: ../translation/extra.c:89
 msgid "Target Samplerate"
-msgstr ""
+msgstr "Δειγματοληψία στόχου"
 
 #: ../translation/extra.c:90
 msgid "Quality / Algorythm"
-msgstr ""
+msgstr "Ποιότητα / Αλγόριθμος"
 
 #: ../translation/extra.c:91
 msgid "Automatic Samplerate (overrides Target Samplerate)"
-msgstr ""
+msgstr "Αυτόματη δειγματοληψία (αντικαθιστά τη δειγματοληψία στόχου)"
 
 #: ../plugins/converter/convgui.c:108
 msgid "The file already exists. Overwrite?"
-msgstr ""
+msgstr "Το αρχείο υπάρχει ήδη. Να αντικατασταθεί;"
 
 #: ../plugins/converter/convgui.c:110
 msgid "Converter warning"
-msgstr ""
+msgstr "Προειδοποίηση μετατροπέα"
 
 #: ../plugins/converter/convgui.c:222
 msgid "Please select encoder"
-msgstr ""
+msgstr "Παρακαλώ επιλέξτε κωδικοποιητή "
 
 #: ../plugins/converter/convgui.c:224
 msgid "Converter error"
-msgstr ""
+msgstr "Σφάλμα μετατροπέα"
 
 #: ../plugins/converter/convgui.c:248
 msgid "Converting..."
-msgstr ""
+msgstr "Μετατροπή..."
 
 #: ../plugins/converter/convgui.c:394 ../plugins/converter/convgui.c:496
-#, fuzzy
 msgid "Select folder..."
-msgstr "Επιλογή όλων"
+msgstr "Επιλογή φακέλου..."
 
 #: ../plugins/converter/convgui.c:635
 msgid "Failed to save encoder preset"
-msgstr ""
+msgstr "Αποτυχία αποθήκευσης ρύθμισης κωδικοποιητή"
 
 #: ../plugins/converter/convgui.c:637 ../plugins/converter/convgui.c:1035
 msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
 msgstr ""
+"Ελέγξτε τα δικαιώματα του φακέλου ρυθμίσεων, δοκιμάστε με διαφορετικό τίτλο, "
+"ή ελευθερώστε χώρο στο δίσκο"
 
 #: ../plugins/converter/convgui.c:637 ../plugins/converter/convgui.c:1035
 msgid "Preset with the same name already exists. Try to pick another title."
-msgstr ""
+msgstr "Υπάρχει ήδη ρύθμιση με αυτό το όνομα. Δοκιμάστε με διαφορετικό τίτλο."
 
 #: ../plugins/converter/convgui.c:638 ../plugins/converter/convgui.c:1036
 msgid "Error"
-msgstr ""
+msgstr "Σφάλμα"
 
 #: ../plugins/converter/convgui.c:692
 msgid "Add new encoder"
-msgstr ""
+msgstr "Προσθήκη νέου κωδικοποιητή"
 
 #: ../plugins/converter/convgui.c:724
-#, fuzzy
 msgid "Edit encoder"
-msgstr "Επεξεργασία στήλη"
+msgstr "Επεξεργασία κωδικοποιητή"
 
 #: ../plugins/converter/convgui.c:756 ../plugins/converter/convgui.c:1133
-#, fuzzy
 msgid "Remove preset"
-msgstr "Αποθήκευση ρύθμισης"
+msgstr "Αφαίρεση προεπιλογής"
 
 #: ../plugins/converter/convgui.c:758 ../plugins/converter/convgui.c:1135
 msgid "This action will delete the selected preset. Are you sure?"
-msgstr ""
+msgstr "Αυτή η ενέργεια θα διαγράψει την προεπιλεγμένη ρύθμιση. Είστε σίγουροι;"
 
 #: ../plugins/converter/convgui.c:782
 msgid "Encoders"
-msgstr ""
+msgstr "Κωδικοποιητές"
 
 #: ../plugins/converter/convgui.c:838 ../plugins/gtkui/dspconfig.c:183
 msgid "Add plugin to DSP chain"
-msgstr ""
+msgstr "Προσθήκη πρόσθετου στο DSP chain"
 
 #: ../plugins/converter/convgui.c:1034
 msgid "Failed to save DSP preset"
-msgstr ""
+msgstr "Αποτυχία αποθήκευσης προεπιλογής DSP"
 
 #: ../plugins/converter/convgui.c:1098
-#, fuzzy
 msgid "New DSP Preset"
-msgstr "Αποθήκευση ρύθμισης"
+msgstr "Νέα προεπιλογή DSP"
 
 #: ../plugins/converter/convgui.c:1183
-#, fuzzy
 msgid "Edit DSP Preset"
-msgstr "Αποθήκευση ρύθμισης"
+msgstr "Επεξεργασία προεπιλογής DSP"
 
 #: ../plugins/converter/convgui.c:1203
-#, fuzzy
 msgid "DSP Presets"
-msgstr "Αποθήκευση ρύθμισης"
+msgstr "Προεπιλογές DSP"
 
 #: ../plugins/converter/interface.c:97
 #: ../plugins/converter/converter.glade.h:34
-#, fuzzy
 msgid "Output folder:"
-msgstr "Συσκευή εξόδου:"
+msgstr "Φάκελος εξόδου:"
 
 #: ../plugins/converter/interface.c:118
 #: ../plugins/converter/converter.glade.h:33
-#, fuzzy
 msgid "Output file name:"
-msgstr "Πρόσθετο εξόδου:"
+msgstr "Όνομα αρχείου εξόδου:"
 
 #: ../plugins/converter/interface.c:129
 #: ../plugins/converter/converter.glade.h:18
@@ -1647,97 +1633,96 @@ msgid ""
 "Extension (e.g. .mp3) will be appended automatically.\n"
 "Leave the field empty for default (%a - %t)."
 msgstr ""
+"Επέκταση (π.χ. .mp3) θα προστεθεί αυτόματα.\n"
+"Αφήστε κενό το πεδίο για προεπιλογή (%a - %t)."
 
 #: ../plugins/converter/interface.c:142
 #: ../plugins/converter/converter.glade.h:13
 msgid "Encoder:"
-msgstr ""
+msgstr "Κωδικοποιητής:"
 
 #: ../plugins/converter/interface.c:166
 #: ../plugins/converter/converter.glade.h:10
-#, fuzzy
 msgid "DSP preset:"
-msgstr "Αποθήκευση ρύθμισης"
+msgstr "Προρύθμιση DSP:"
 
 #: ../plugins/converter/interface.c:189
 #: ../plugins/converter/converter.glade.h:30
 msgid "Number of threads:"
-msgstr ""
+msgstr "Αριθμός νημάτων:"
 
 #: ../plugins/converter/interface.c:202
 #: ../plugins/converter/converter.glade.h:35
+#, fuzzy
 msgid "Output sample format:"
-msgstr ""
+msgstr "Τύπος δειγματοληψίας εξόδου:"
 
 #: ../plugins/converter/interface.c:209
 msgid "Keep source format"
-msgstr ""
+msgstr "Να διατηρηθεί η μορφή της πηγής"
 
 #: ../plugins/converter/interface.c:210
 msgid "8 bit signed int"
-msgstr ""
+msgstr "8 bit ακέραιος"
 
 #: ../plugins/converter/interface.c:211
 msgid "16 bit signed int"
-msgstr ""
+msgstr "16 bit ακέραιος"
 
 #: ../plugins/converter/interface.c:212
 msgid "24 bit signed int"
-msgstr ""
+msgstr "24 bit ακέραιος"
 
 #: ../plugins/converter/interface.c:213
 msgid "32 bit signed int"
-msgstr ""
+msgstr "32 bit ακέραιος"
 
 #: ../plugins/converter/interface.c:214
 msgid "32 bit float"
-msgstr ""
+msgstr "32 bit δεκαδικός"
 
 #: ../plugins/converter/interface.c:220
 #: ../plugins/converter/converter.glade.h:49
 msgid "When file exists:"
-msgstr ""
+msgstr "Όταν το αρχείο υπάρχει ήδη:"
 
 #: ../plugins/converter/interface.c:227
 msgid "Prompt"
-msgstr ""
+msgstr "Προτροπή"
 
 #: ../plugins/converter/interface.c:228
-#, fuzzy
 msgid "Overwrite"
-msgstr "Παράκαμψη"
+msgstr "Αντικατάσταση"
 
 #: ../plugins/converter/interface.c:230
 #: ../plugins/converter/converter.glade.h:39
 msgid "Preserve folder structure, starting from:"
-msgstr ""
+msgstr "Διατήρηση δομής φακέλου, ξεκινώντας από:"
 
 #: ../plugins/converter/interface.c:386
 #: ../plugins/converter/converter.glade.h:12
-#, fuzzy
 msgid "Edit Encoder Preset"
-msgstr "Φόρτωση ρύθμισης"
+msgstr "Επεξεργασία προρύθμισης κωδικοποιητή"
 
 #: ../plugins/converter/interface.c:409
 #: ../plugins/converter/converter.glade.h:48
 msgid "Untitled Encoder"
-msgstr ""
+msgstr "Ανώνυμος κωδικοποιητής"
 
 #: ../plugins/converter/interface.c:417
 #: ../plugins/converter/converter.glade.h:32
-#, fuzzy
 msgid "Output file extension:"
-msgstr "Πρόσθετο εξόδου:"
+msgstr "Επέκταση αρχείου εξόδου:"
 
 #: ../plugins/converter/interface.c:424
 #: ../plugins/converter/converter.glade.h:11
 msgid "E.g. mp3"
-msgstr ""
+msgstr "Π.χ. mp3"
 
 #: ../plugins/converter/interface.c:432
 #: ../plugins/converter/converter.glade.h:7
 msgid "Command line:"
-msgstr ""
+msgstr "Γραμμή εντολών:"
 
 #: ../plugins/converter/interface.c:443
 #: ../plugins/converter/converter.glade.h:15
@@ -1746,6 +1731,8 @@ msgid ""
 "Example: lame - %o\n"
 "%i for input file, %o for output file, - for stdin"
 msgstr ""
+"Παράδειγμα: lame - %o\n"
+"%i για αρχείο εισόδου, %o για αρχείο εξόδου, - για stdin"
 
 #: ../plugins/converter/interface.c:453
 #: ../plugins/converter/converter.glade.h:3
@@ -1754,63 +1741,62 @@ msgid ""
 "<small>%o - output file name\n"
 "%i - temporary input file name</small>"
 msgstr ""
+"<small>%o - όνομα αρχείου εξόδου\n"
+"%i - όνομα προσωρινού αρχείου εισόδου</small>"
 
 #: ../plugins/converter/interface.c:462
 #: ../plugins/converter/converter.glade.h:29
 msgid "Method:"
-msgstr ""
+msgstr "Μέθοδος:"
 
 #: ../plugins/converter/interface.c:469
+#, fuzzy
 msgid "Pipe"
-msgstr ""
+msgstr "Ανακατεύθυνση"
 
 #: ../plugins/converter/interface.c:470
 msgid "Temporary file"
-msgstr ""
+msgstr "Προσωρινό αρχείο"
 
 #: ../plugins/converter/interface.c:487
 #: ../plugins/converter/converter.glade.h:5
-#, fuzzy
 msgid "APEv2"
-msgstr "Εγγραφή APEv2"
+msgstr "APEv2"
 
 #: ../plugins/converter/interface.c:493
 #: ../plugins/converter/converter.glade.h:21
-#, fuzzy
 msgid "ID3v1"
-msgstr "Εγγραφή ID3v1"
+msgstr "ID3v1"
 
 #: ../plugins/converter/interface.c:499
 #: ../plugins/converter/converter.glade.h:31
 msgid "OggVorbis"
-msgstr ""
+msgstr "OggVorbis"
 
 #: ../plugins/converter/interface.c:505
 #: ../plugins/converter/converter.glade.h:20
 msgid "FLAC"
-msgstr ""
+msgstr "FLAC"
 
 #: ../plugins/converter/interface.c:517
 #: ../plugins/converter/converter.glade.h:22
-#, fuzzy
 msgid "ID3v2"
-msgstr "Εγγραφή ID3v2"
+msgstr "ID3v2"
 
 #: ../plugins/converter/interface.c:527
 #: ../plugins/converter/converter.glade.h:1
-#, fuzzy
 msgid "<b>Tag writer</b>"
-msgstr "Συγγραφέας ετικετών"
+msgstr "<b>Συγγραφέας ετικετών</b>"
 
 #: ../plugins/converter/interface.c:614
 #: ../plugins/converter/converter.glade.h:9
 msgid "DSP Preset Editor"
-msgstr ""
+msgstr "Επεξεργαστής προρυθμίσεων DSP"
 
 #: ../plugins/converter/interface.c:637
 #: ../plugins/converter/converter.glade.h:47
 msgid "Untitled DSP Preset"
-msgstr ""
+msgstr "Ανώνυμη προρύθμιση DSP"
 
 #: ../plugins/converter/converter.glade.h:23
 msgid ""
@@ -1821,18 +1807,28 @@ msgid ""
 "32 bit signed int\n"
 "32 bit float"
 msgstr ""
+"Διατήρηση μορφής εισόδου\n"
+"8 bit ακέραιος\n"
+"16 bit ακέραιος\n"
+"24 bit ακέραιοςn32 bit ακέραιος\n"
+"32 bit δεκαδικός"
 
 #: ../plugins/converter/converter.glade.h:36
+#, fuzzy
 msgid ""
 "Pipe\n"
 "Temporary file"
 msgstr ""
+"Ανακατεύθυνση\n"
+"Προσωρινό αρχείο"
 
 #: ../plugins/converter/converter.glade.h:41
 msgid ""
 "Prompt\n"
 "Overwrite"
 msgstr ""
+"Προτροπή\n"
+"Αντικατάσταση"
 
 #~ msgid "Save playlist as"
 #~ msgstr "Αποθήκευση λίστας αναπαραγωγής ως"
