@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-06-12 18:17+0200\n"
-"PO-Revision-Date: 2011-06-17 10:21+0200\n"
+"PO-Revision-Date: 2011-06-17 11:23+0200\n"
 "Last-Translator: George <forfolias@gmail.com>\n"
 "Language-Team: Greek\n"
 "Language: el\n"
@@ -370,7 +370,7 @@ msgstr "Σειρά"
 
 #: ../plugins/gtkui/interface.c:365 ../plugins/gtkui/deadbeef.glade.h:70
 msgid "Linear"
-msgstr "Γραμμικά"
+msgstr "Γραμμική"
 
 #: ../plugins/gtkui/interface.c:370 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Shuffle tracks"
@@ -939,7 +939,7 @@ msgstr "Επαναφόρτωση μεταδεδομένων"
 
 #: ../plugins/gtkui/plcommon.c:461
 msgid "Remove from disk"
-msgstr "Αφαίρεση από τον δίσκο"
+msgstr "Διαγραφή από τον δίσκο"
 
 #: ../plugins/gtkui/plcommon.c:840 ../plugins/gtkui/plcommon.c:965
 msgid "Add column"
@@ -947,7 +947,7 @@ msgstr "Προσθήκη στήλης"
 
 #: ../plugins/gtkui/plcommon.c:870 ../plugins/gtkui/plcommon.c:969
 msgid "Edit column"
-msgstr "Επεξεργασία στήλη"
+msgstr "Επεξεργασία στήλης"
 
 #: ../plugins/gtkui/plcommon.c:973
 msgid "Remove column"
@@ -1070,7 +1070,7 @@ msgstr "Επιλογές:\n"
 #: ../main.c:92
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr " --help ή -h Εμφάνιση κειμένου βοήθειας και έξοδος\n"
+msgstr " --help ή -h Εμφάνιση κειμένου βοήθειας (αυτό το κείμενο) και έξοδος\n"
 
 #: ../main.c:93
 #, c-format
@@ -1319,9 +1319,8 @@ msgid "Fetch from local folder"
 msgstr "Ανάκτηση από τοπικό φάκελο"
 
 #: ../translation/extra.c:23
-#, fuzzy
 msgid "Local cover file mask"
-msgstr "Αρχείο μάσκας τοπικού εξώφυλλου"
+msgstr "Τοπικό αρχείο εξώφυλλου"
 
 #: ../translation/extra.c:24
 msgid "Fetch from last.fm"
@@ -1419,12 +1418,10 @@ msgstr "Δειγματοληψία"
 
 #. SHN player plugin
 #: ../translation/extra.c:54
-#, fuzzy
 msgid "Relative seek table path"
 msgstr "Σχετική διαδρομή πίνακα αναζήτησης"
 
 #: ../translation/extra.c:55
-#, fuzzy
 msgid "Absolute seek table path"
 msgstr "Απόλυτη διαδρομή πίνακα αναζήτησης"
 
@@ -1491,7 +1488,6 @@ msgid "Location"
 msgstr "Τοποθεσία"
 
 #: ../translation/extra.c:80
-#, fuzzy
 msgid "Subtrack Index"
 msgstr "Δείκτης υποκομματιού"
 
@@ -1652,9 +1648,8 @@ msgstr "Αριθμός νημάτων:"
 
 #: ../plugins/converter/interface.c:202
 #: ../plugins/converter/converter.glade.h:35
-#, fuzzy
 msgid "Output sample format:"
-msgstr "Τύπος δειγματοληψίας εξόδου:"
+msgstr "Μορφή δειγματοληψίας εξόδου:"
 
 #: ../plugins/converter/interface.c:209
 msgid "Keep source format"
@@ -1749,7 +1744,6 @@ msgid "Method:"
 msgstr "Μέθοδος:"
 
 #: ../plugins/converter/interface.c:469
-#, fuzzy
 msgid "Pipe"
 msgstr "Ανακατεύθυνση"
 
@@ -1814,7 +1808,6 @@ msgstr ""
 "32 bit δεκαδικός"
 
 #: ../plugins/converter/converter.glade.h:36
-#, fuzzy
 msgid ""
 "Pipe\n"
 "Temporary file"
