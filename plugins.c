@@ -45,6 +45,7 @@
 #include "premix.h"
 #include "dsppreset.h"
 #include "pltmeta.h"
+#include "metacache.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -316,7 +317,17 @@ static DB_functions_t deadbeef_api = {
     // dsp preset management
     .dsp_preset_load = dsp_preset_load,
     .dsp_preset_save = dsp_preset_save,
-    .dsp_preset_free = dsp_preset_free
+    .dsp_preset_free = dsp_preset_free,
+    // new 1.2 APIs
+    .plt_alloc = (ddb_playlist_t *(*)(const char *title))plt_alloc,
+    .plt_free = (void (*)(ddb_playlist_t *plt))plt_free,
+    //.plt_insert = plt_insert,
+    .plt_set_fast_mode = (void (*)(ddb_playlist_t *plt, int fast))plt_set_fast_mode,
+    .plt_is_fast_mode = (int (*)(ddb_playlist_t *plt))plt_is_fast_mode,
+    .metacache_add_string = metacache_add_string,
+    .metacache_remove_string = metacache_remove_string,
+    .metacache_ref = metacache_ref,
+    .metacache_unref = metacache_unref,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

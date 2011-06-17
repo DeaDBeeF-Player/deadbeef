@@ -56,6 +56,7 @@ typedef struct playlist_s {
     int current_row[PL_MAX_ITERATORS]; // current row (cursor)
     struct DB_metaInfo_s *meta; // linked list storing metainfo
     int refc;
+    unsigned fast_mode : 1;
 } playlist_t;
 
 // global playlist control functions
@@ -91,6 +92,9 @@ plt_ref (playlist_t *plt);
 
 void
 plt_unref (playlist_t *plt);
+
+playlist_t *
+plt_alloc (const char *title);
 
 void
 plt_free (playlist_t *plt);
@@ -436,5 +440,11 @@ pl_get_playlist (playItem_t *it);
 
 void
 plt_init_shuffle_albums (playlist_t *plt, int r);
+
+void
+plt_set_fast_mode (playlist_t *plt, int fast);
+
+int
+plt_is_fast_mode (playlist_t *plt);
 
 #endif // __PLAYLIST_H
