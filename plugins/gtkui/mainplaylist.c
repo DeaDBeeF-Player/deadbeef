@@ -347,9 +347,6 @@ main_playlist_free (void) {
 
 void
 main_refresh (void) {
-    if (mainwin && gtk_widget_get_visible (mainwin)) {
-        DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-        ddb_listview_refresh (pl, DDB_REFRESH_VSCROLL | DDB_REFRESH_LIST);
-    }
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 

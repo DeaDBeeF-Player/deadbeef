@@ -16,24 +16,29 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-#ifndef __MAINPLAYLIST_H
-#define __MAINPLAYLIST_H
+#ifndef __WIDGETS_H
+#define __WIDGETS_H
 
-#include "ddblistview.h"
-
-void
-main_playlist_init (GtkWidget *widget);
+#include "gtkui_api.h"
 
 void
-main_playlist_free (void);
+w_append (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child);
 
-void
-main_refresh (void);
+ddb_gtkui_widget_t *
+w_create_hsplitter (void);
 
-int
-main_get_idx (DdbListviewIter it);
+ddb_gtkui_widget_t *
+w_create_vsplitter (void);
 
-void
-main_drag_n_drop (DdbListviewIter before, DdbPlaylistHandle from_playlist, uint32_t *indices, int length, int copy);
+ddb_gtkui_widget_t *
+w_create_box (void);
 
+ddb_gtkui_widget_t *
+w_create_tabstrip (void);
+
+ddb_gtkui_widget_t *
+w_tabbed_playlist_create (void);
+
+ddb_gtkui_widget_t *
+w_create_playlist (void);
 #endif

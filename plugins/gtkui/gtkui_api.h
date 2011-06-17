@@ -25,9 +25,22 @@
 #ifndef __GTKUI_API_H
 #define __GTKUI_API_H
 
+typedef struct ddb_gtkui_widget_s {
+    const char *type;
+    GtkWidget *widget;
+
+    void (*destroy) (struct ddb_gtkui_widget_s *w);
+    int (*message) (struct ddb_gtkui_widget_s *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
+    struct ddb_gtkui_widget_s *children;
+    struct ddb_gtkui_widget_s *next; // points to next widget in the same container
+} ddb_gtkui_widget_t;
+
 typedef struct {
     DB_gui_t gui;
     GtkWidget * (*get_mainwin) (void);
+    void (*reg_widget) (const char *type, ddb_gtkui_widget_t *(*create_func) (void));
+    void (*unreg_widget) (const char *type);
+    ddb_gtkui_widget_t * (*get_root_widget) (void);
 } ddb_gtkui_t;
 
 #endif

@@ -104,17 +104,15 @@ static void
 open_files_worker (void *data) {
     GSList *lst = (GSList *)data;
     gtkpl_add_files (lst);
-    gtkui_playlist_changed ();
-    extern GtkWidget *mainwin;
-    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-    ddb_listview_set_cursor (pl, 0);
+    deadbeef->pl_set_cursor (PL_MAIN, 0);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
     deadbeef->sendmessage (DB_EV_PLAY_CURRENT, 0, 1, 0);
 }
 
 void
 gtkui_open_files (struct _GSList *lst) {
     deadbeef->pl_clear ();
-    playlist_refresh ();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 
     intptr_t tid = deadbeef->thread_start (open_files_worker, lst);
     deadbeef->thread_detach (tid);
@@ -164,13 +162,14 @@ strcopy_special (char *dest, const char *src, int len) {
 
 static gboolean
 set_dnd_cursor_idle (gpointer data) {
-    DdbListview *listview = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
     if (!data) {
-        ddb_listview_set_cursor (listview, -1);
+        deadbeef->pl_set_cursor (PL_MAIN, -1);
+        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
         return FALSE;
     }
     int cursor = deadbeef->pl_get_idx_of (DB_PLAYITEM (data));
-    ddb_listview_set_cursor (listview, cursor);
+    deadbeef->pl_set_cursor (PL_MAIN, cursor);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
     return FALSE;
 }
 
@@ -182,7 +181,6 @@ gtkpl_add_fm_dropped_files (DB_playItem_t *drop_before, char *ptr, int length) {
         deadbeef->plt_unref (plt);
         return;
     }
-    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
 
     DdbListviewIter first = NULL;
     DdbListviewIter after = NULL;

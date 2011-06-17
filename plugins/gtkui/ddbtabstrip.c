@@ -25,7 +25,7 @@
 #include "gtkui.h"
 #include "interface.h"
 #include "support.h"
-#include "ddblistview.h"
+#include "mainplaylist.h"
 
 #define GLADE_HOOKUP_OBJECT(component,widget,name) \
   g_object_set_data_full (G_OBJECT (component), name, \
@@ -253,8 +253,6 @@ on_tabstrip_drag_data_received         (GtkWidget       *widget,
                                         guint            target_type,
                                         guint            time)
 {
-    DdbListview *ps = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-
     gchar *ptr=(char*)data->data;
     if (target_type == 0) { // uris
         // this happens when dropped from file manager
@@ -262,7 +260,7 @@ on_tabstrip_drag_data_received         (GtkWidget       *widget,
         memcpy (mem, ptr, data->length);
         mem[data->length] = 0;
         // we don't pass control structure, but there's only one drag-drop view currently
-        ps->binding->external_drag_n_drop (NULL, mem, data->length);
+        gtkui_receive_fm_drop (NULL, mem, data->length);
     }
     else if (target_type == 1) {
         uint32_t *d= (uint32_t *)ptr;
@@ -271,7 +269,8 @@ on_tabstrip_drag_data_received         (GtkWidget       *widget,
         int length = (data->length/4)-1;
         ddb_playlist_t *p = deadbeef->plt_get_for_idx (plt);
         if (p) {
-            ps->binding->drag_n_drop (NULL, p, d, length, drag_context->action == GDK_ACTION_COPY ? 1 : 0);
+            //ps->binding->drag_n_drop (NULL, p, d, length, drag_context->action == GDK_ACTION_COPY ? 1 : 0);
+            main_drag_n_drop (NULL, p, d, length, drag_context->action == GDK_ACTION_COPY ? 1 : 0);
             deadbeef->plt_unref (p);
         }
     }
@@ -283,16 +282,16 @@ on_tabstrip_drag_leave                 (GtkWidget       *widget,
                                         GdkDragContext  *drag_context,
                                         guint            time)
 {
-    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-    ddb_listview_list_drag_leave (pl->list, drag_context, time, NULL);
+//    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+//    ddb_listview_list_drag_leave (pl->list, drag_context, time, NULL);
 }
 
 void
 on_tabstrip_drag_end                   (GtkWidget       *widget,
                                         GdkDragContext  *drag_context)
 {
-    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-    ddb_listview_list_drag_end (pl->list, drag_context, NULL);
+//    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
+//    ddb_listview_list_drag_end (pl->list, drag_context, NULL);
 }
 
 GtkWidget * ddb_tabstrip_new() {
@@ -713,8 +712,6 @@ on_remove_playlist1_activate           (GtkMenuItem     *menuitem,
 {
     if (tab_clicked != -1) {
         deadbeef->plt_remove (tab_clicked);
-        DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-        ddb_listview_refresh (pl, DDB_LIST_CHANGED | DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL);
         search_refresh ();
         int playlist = deadbeef->plt_get_curr_idx ();
         deadbeef->conf_set_int ("playlist.current", playlist);
@@ -910,8 +907,6 @@ on_tabstrip_button_press_event(GtkWidget      *widget,
             if (tab_clicked != -1) {
                 deadbeef->plt_remove (tab_clicked);
                 // force invalidation of playlist cache
-                DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-                ddb_listview_refresh (pl, DDB_LIST_CHANGED | DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL);
                 search_refresh ();
                 int playlist = deadbeef->plt_get_curr_idx ();
                 deadbeef->conf_set_int ("playlist.current", playlist);

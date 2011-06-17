@@ -282,9 +282,8 @@ on_select_all1_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     deadbeef->pl_select_all ();
-    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-    ddb_listview_refresh (pl, DDB_REFRESH_LIST);
-    pl = DDB_LISTVIEW (lookup_widget (searchwin, "searchlist"));
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    DdbListview *pl = DDB_LISTVIEW (lookup_widget (searchwin, "searchlist"));
     if (pl) {
         ddb_listview_refresh (pl, DDB_REFRESH_LIST);
     }
@@ -359,7 +358,7 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
         }
     }
     else {
-        ddb_listview_handle_keypress (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), event->keyval, event->state);
+// FIXME!        ddb_listview_handle_keypress (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), event->keyval, event->state);
     }
     return FALSE;
 }
@@ -837,6 +836,8 @@ void
 on_toggle_column_headers_activate      (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
+    // FIXME!
+    return;
     GtkWidget *playlist = lookup_widget (mainwin, "playlist");
     if (playlist) {
         if (!gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem))) {
@@ -902,6 +903,8 @@ void
 on_toggle_tabs                         (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
+    // FIXME!
+    return;
     GtkWidget *ts = lookup_widget (mainwin, "tabstrip");
     if (!gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem))) {
         deadbeef->conf_set_int ("gtkui.tabs.visible", 0);
@@ -945,9 +948,8 @@ on_deselect_all1_activate              (GtkMenuItem     *menuitem,
         it = next;
     }
     deadbeef->pl_unlock ();
-    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-    ddb_listview_refresh (pl, DDB_REFRESH_LIST);
-    pl = DDB_LISTVIEW (lookup_widget (searchwin, "searchlist"));
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    DdbListview *pl = DDB_LISTVIEW (lookup_widget (searchwin, "searchlist"));
     if (pl) {
         ddb_listview_refresh (pl, DDB_REFRESH_LIST);
     }
@@ -972,8 +974,7 @@ on_invert_selection1_activate          (GtkMenuItem     *menuitem,
         it = next;
     }
     deadbeef->pl_unlock ();
-    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-    ddb_listview_refresh (pl, DDB_REFRESH_LIST);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
 
@@ -1132,9 +1133,7 @@ on_sort_by_title_activate              (GtkMenuItem     *menuitem,
     deadbeef->plt_sort (plt, PL_MAIN, -1, "%t", 1);
     deadbeef->plt_unref (plt);
 
-    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-    ddb_listview_clear_sort (pl);
-    ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_LIST_CHANGED);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
 
@@ -1146,9 +1145,7 @@ on_sort_by_track_nr_activate           (GtkMenuItem     *menuitem,
     deadbeef->plt_sort (plt, PL_MAIN, -1, "%n", 1);
     deadbeef->plt_unref (plt);
 
-    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-    ddb_listview_clear_sort (pl);
-    ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_LIST_CHANGED);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
 
@@ -1160,9 +1157,7 @@ on_sort_by_album_activate              (GtkMenuItem     *menuitem,
     deadbeef->plt_sort (plt, PL_MAIN, -1, "%b", 1);
     deadbeef->plt_unref (plt);
 
-    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-    ddb_listview_clear_sort (pl);
-    ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_LIST_CHANGED);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
 
@@ -1174,9 +1169,7 @@ on_sort_by_artist_activate             (GtkMenuItem     *menuitem,
     deadbeef->plt_sort (plt, PL_MAIN, -1, "%a", 1);
     deadbeef->plt_unref (plt);
 
-    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-    ddb_listview_clear_sort (pl);
-    ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_LIST_CHANGED);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
 
@@ -1188,9 +1181,7 @@ on_sort_by_date_activate               (GtkMenuItem     *menuitem,
     deadbeef->plt_sort (plt, PL_MAIN, -1, "%y", 1);
     deadbeef->plt_unref (plt);
 
-    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-    ddb_listview_clear_sort (pl);
-    ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_LIST_CHANGED);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
 
@@ -1224,11 +1215,17 @@ on_sort_by_custom_activate             (GtkMenuItem     *menuitem,
         deadbeef->plt_sort (plt, PL_MAIN, -1, fmt, order == 0 ? 1 : 0);
         deadbeef->plt_unref (plt);
 
-        DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-        ddb_listview_clear_sort (pl);
-        ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_LIST_CHANGED);
+        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
     }
 
     gtk_widget_destroy (dlg);
     dlg = NULL;
 }
+
+void
+on_design_mode1_activate               (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+
+}
+

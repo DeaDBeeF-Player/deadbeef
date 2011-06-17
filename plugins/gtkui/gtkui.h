@@ -133,8 +133,8 @@ on_seekbar_motion_notify_event         (GtkWidget       *widget,
 void
 volumebar_redraw (void);
 
-void
-tabstrip_redraw (void);
+//void
+//tabstrip_redraw (void);
 
 void
 gtkui_playlist_changed (void);
@@ -171,5 +171,8 @@ gtkui_get_curr_playlist_mod (void);
 
 void
 gtkui_trackinfochanged (DB_playItem_t *it);
+
+gboolean
+redraw_queued_tracks_cb (gpointer plt);
 
 #endif
