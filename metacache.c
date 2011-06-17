@@ -114,3 +114,15 @@ metacache_remove_string (const char *str) {
         chain = chain->next;
     }
 }
+
+void
+metacache_ref (const char *str) {
+    uint32_t *refc = (uint32_t)(str-5);
+    *refc++;
+}
+
+void
+metacache_unref (const char *str) {
+    uint32_t *refc = (uint32_t *)(str-5);
+    *refc--;
+}
