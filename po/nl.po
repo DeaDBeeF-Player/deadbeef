@@ -1,4 +1,4 @@
-# Dutch translations for the Deadbeef package.
+# Dutch translation for the Deadbeef package.
 # Copyright (C) the author of the Deadbeef package.
 # This file is distributed under the same license as the Deadbeef package.
 # Glenn de Groot, 2010.
@@ -12,7 +12,7 @@ msgstr ""
 "PO-Revision-Date: 2011-06-12 22:41+0200\n"
 "Last-Translator: Pjotr\n"
 "Language-Team: Dutch\n"
-"Language: nl\n"
+"Language: nl (Dutch)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -36,7 +36,7 @@ msgstr "Voeg bestand(en) toe aan speellijst..."
 
 #: ../plugins/gtkui/callbacks.c:218
 msgid "Add folder(s) to playlist..."
-msgstr "Voeg map(pen) toe aan de speellijst..."
+msgstr "Voeg map(pen) toe aan speellijst..."
 
 #: ../plugins/gtkui/callbacks.c:223
 msgid "Follow symlinks"
@@ -48,7 +48,7 @@ msgstr "Fout bij het lezen van het hulpbestand"
 
 #: ../plugins/gtkui/callbacks.c:707
 msgid "Failed to load help file"
-msgstr "Kon het hulpbestand niet laden"
+msgstr "Kon hulpbestand niet laden"
 
 #: ../plugins/gtkui/callbacks.c:722
 msgid "help.txt"
@@ -101,39 +101,39 @@ msgstr "Maak nieuwe speellijst"
 
 #: ../plugins/gtkui/eq.c:136
 msgid "Save DeaDBeeF EQ Preset"
-msgstr "Bewaar DeaDBeef EQ Voorkeuze"
+msgstr "Bewaar DeaDBeef EQ Voorinstelling"
 
 #: ../plugins/gtkui/eq.c:143
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
-msgstr "DeaDBeef EQ voorkeuze-bestanden (*.ddbeq)"
+msgstr "DeaDBeef EQ voorinstelling-bestanden (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:182
 msgid "Load DeaDBeeF EQ Preset..."
-msgstr "Laden DeaDBeeF EQ Voorkeuze..."
+msgstr "Laden DeaDBeeF EQ Voorinstelling..."
 
 #: ../plugins/gtkui/eq.c:186
 msgid "DeaDBeeF EQ presets (*.ddbeq)"
-msgstr "DeaDBeeF EQ voorkeuzes (*.ddbeq)"
+msgstr "DeaDBeeF EQ-voorinstellingen (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:247
 msgid "Import Foobar2000 EQ Preset..."
-msgstr "Importeer Foobar2000 EQ Voorkeuze..."
+msgstr "Importeer Foobar2000 EQ Voorinstelling.."
 
 #: ../plugins/gtkui/eq.c:251
 msgid "Foobar2000 EQ presets (*.feq)"
-msgstr "Foobar2000 EQ voorkeuzes (*.feq)"
+msgstr "Foobar2000 EQ voorinstellingen (*.feq)"
 
 #: ../plugins/gtkui/eq.c:316
 msgid "Save Preset"
-msgstr "Opslaan voorkeuze"
+msgstr "Opslaan voorinstelling"
 
 #: ../plugins/gtkui/eq.c:324
 msgid "Load Preset"
-msgstr "Laden Voorkeuze"
+msgstr "Laden Voorinstelling"
 
 #: ../plugins/gtkui/eq.c:332
 msgid "Import Foobar2000 Preset"
-msgstr "Importeer Foobar2000 Voorkeuze"
+msgstr "Importeer Foobar2000 Voorinstelling"
 
 #: ../plugins/gtkui/eq.c:357
 msgid "Enable"
@@ -154,7 +154,7 @@ msgstr "Banden op nul"
 #: ../plugins/gtkui/eq.c:387 ../plugins/converter/interface.c:826
 #: ../plugins/converter/converter.glade.h:40
 msgid "Presets"
-msgstr "Voorkeuzes"
+msgstr "Voorinstellingen"
 
 #: ../plugins/gtkui/gtkui.c:137
 #, c-format
@@ -638,7 +638,7 @@ msgstr "Configureer"
 
 #: ../plugins/gtkui/interface.c:1974 ../plugins/gtkui/deadbeef.glade.h:29
 msgid "DSP Chain Preset"
-msgstr "DSP Chain voorkeuze"
+msgstr "DSP Chain voorinstelling"
 
 #: ../plugins/gtkui/interface.c:1986 ../plugins/gtkui/deadbeef.glade.h:160
 msgid "_Load"
@@ -1551,20 +1551,20 @@ msgstr "Selecteer map..."
 
 #: ../plugins/converter/convgui.c:635
 msgid "Failed to save encoder preset"
-msgstr "Kon codeerder-voorkeuze niet opslaan"
+msgstr "Kon codeerder-voorinstelling niet opslaan"
 
 #: ../plugins/converter/convgui.c:637 ../plugins/converter/convgui.c:1035
 msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
 msgstr ""
-"Controleer de maprechten voor voorkeuze, probeer een andere titel te kiezen, "
+"Controleer de maprechten voor voorinstelling, probeer een andere titel te kiezen, "
 "of maak wat schijfruimte vrij"
 
 #: ../plugins/converter/convgui.c:637 ../plugins/converter/convgui.c:1035
 msgid "Preset with the same name already exists. Try to pick another title."
 msgstr ""
-"Voorkeuze met dezelfde naam bestaat al. Probeer een andere titel te kiezen."
+"Voorinstelling met dezelfde naam bestaat al. Probeer een andere titel te kiezen."
 
 #: ../plugins/converter/convgui.c:638 ../plugins/converter/convgui.c:1036
 msgid "Error"
@@ -1580,11 +1580,11 @@ msgstr "Codeerder bewerken"
 
 #: ../plugins/converter/convgui.c:756 ../plugins/converter/convgui.c:1133
 msgid "Remove preset"
-msgstr "Verwijder voorkeuze"
+msgstr "Verwijder voorinstelling"
 
 #: ../plugins/converter/convgui.c:758 ../plugins/converter/convgui.c:1135
 msgid "This action will delete the selected preset. Are you sure?"
-msgstr "Dit zal de geselecteerde voorkeuze verwijderen. Weet u het zeker?"
+msgstr "Dit zal de geselecteerde voorinstelling verwijderen. Weet u het zeker?"
 
 #: ../plugins/converter/convgui.c:782
 msgid "Encoders"
@@ -1596,19 +1596,19 @@ msgstr "Voeg plugin toe aan DSP-ketting"
 
 #: ../plugins/converter/convgui.c:1034
 msgid "Failed to save DSP preset"
-msgstr "Kon DSP-voorkeuze niet opslaan"
+msgstr "Kon DSP-voorinstelling niet opslaan"
 
 #: ../plugins/converter/convgui.c:1098
 msgid "New DSP Preset"
-msgstr "Nieuwe DSP-voorkeuze"
+msgstr "Nieuwe DSP-voorinstelling"
 
 #: ../plugins/converter/convgui.c:1183
 msgid "Edit DSP Preset"
-msgstr "DSP-voorkeuze bewerken"
+msgstr "DSP-voorinstelling bewerken"
 
 #: ../plugins/converter/convgui.c:1203
 msgid "DSP Presets"
-msgstr "DSP-voorkeuzes"
+msgstr "DSP-voorinstellingen"
 
 #: ../plugins/converter/interface.c:97
 #: ../plugins/converter/converter.glade.h:34
@@ -1638,7 +1638,7 @@ msgstr "Codeerder:"
 #: ../plugins/converter/interface.c:166
 #: ../plugins/converter/converter.glade.h:10
 msgid "DSP preset:"
-msgstr "DSP-voorkeuze:"
+msgstr "DSP-voorinstelling:"
 
 #: ../plugins/converter/interface.c:189
 #: ../plugins/converter/converter.glade.h:30
@@ -1695,7 +1695,7 @@ msgstr "Behoud mapstructuur, te beginnen op:"
 #: ../plugins/converter/interface.c:386
 #: ../plugins/converter/converter.glade.h:12
 msgid "Edit Encoder Preset"
-msgstr "Bewerk voorkeuze van codeerder"
+msgstr "Bewerk voorinstelling van codeerder"
 
 #: ../plugins/converter/interface.c:409
 #: ../plugins/converter/converter.glade.h:48
@@ -1783,12 +1783,12 @@ msgstr "<b>Etiketschrijver</b>"
 #: ../plugins/converter/interface.c:614
 #: ../plugins/converter/converter.glade.h:9
 msgid "DSP Preset Editor"
-msgstr "DSP voorkeuzebewerker"
+msgstr "DSP voorinstellingbewerker"
 
 #: ../plugins/converter/interface.c:637
 #: ../plugins/converter/converter.glade.h:47
 msgid "Untitled DSP Preset"
-msgstr "Naamloze DSP voorkeuze"
+msgstr "Naamloze DSP voorinstelling"
 
 #: ../plugins/converter/converter.glade.h:23
 msgid ""
