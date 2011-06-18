@@ -736,6 +736,7 @@ ddb_listview_list_expose_event               (GtkWidget       *widget,
         GdkEventExpose  *event,
         gpointer         user_data)
 {
+    printf ("ddb_listview_list_expose_event\n");
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     widget = ps->list;
     if (widget->window) {
@@ -2577,6 +2578,7 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
+    printf ("ddb_listview_list_button_press_event\n");
     gtk_widget_grab_focus (widget);
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     if (event->button == 1) {

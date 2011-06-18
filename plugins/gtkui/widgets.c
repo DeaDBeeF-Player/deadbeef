@@ -25,6 +25,14 @@
 #include "ddblistview.h"
 #include "mainplaylist.h"
 
+typedef struct w_creator_s {
+    const char *type;
+    ddb_gtkui_widget_t *(*create_func) (void);
+    struct w_creator_s *next;
+} w_creator_t;
+
+static w_creator_t *w_creators;
+
 typedef struct {
     ddb_gtkui_widget_t base;
 } w_splitter_t;
@@ -257,12 +265,81 @@ w_tabbed_playlist_destroy (ddb_gtkui_widget_t *w) {
     free (tp);
 }
 
+int hidden = 0;
+
+void
+hide_widget (GtkWidget *widget, gpointer data) {
+    gtk_widget_hide (widget);
+    printf ("hide %s\n", G_OBJECT_TYPE_NAME (widget));
+}
+
+void
+show_widget (GtkWidget *widget, gpointer data) {
+    gtk_widget_show (widget);
+    printf ("show %s\n", G_OBJECT_TYPE_NAME (widget));
+}
+
+void
+w_menu_deactivate (GtkMenuShell *menushell, gpointer user_data) {
+    gtk_container_foreach (GTK_CONTAINER (user_data), show_widget, NULL);
+
+    // for some reason, after gtk_widget_show, eventbox appears behind,
+    // so here we have a workaround -- push it back on top
+    gtk_event_box_set_above_child (GTK_EVENT_BOX (user_data), FALSE);
+    gtk_event_box_set_above_child (GTK_EVENT_BOX (user_data), TRUE);
+    hidden = 0;
+}
+
+gboolean
+w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_data) {
+    printf ("w_button_press_event\n");
+    gtk_container_foreach (GTK_CONTAINER (widget), hide_widget, NULL);
+    hidden = 1;
+    gtk_widget_queue_draw (widget);
+    GtkWidget *menu;
+    GtkWidget *item;
+    menu = gtk_menu_new ();
+    item = gtk_menu_item_new_with_mnemonic ("Replace");
+    gtk_widget_show (item);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) menu, "deactivate", G_CALLBACK (w_menu_deactivate), widget);
+    gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
+    return FALSE;
+}
+
+gboolean
+w_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
+    if (hidden) {
+        GdkColor clr = {
+            .red = 0x2d00,
+            .green = 0x0000,
+            .blue = 0xd600
+        };
+        GdkGC *gc = gdk_gc_new (widget->window);
+        gdk_gc_set_rgb_fg_color (gc, &clr);
+        gdk_draw_rectangle (widget->window, gc, TRUE, widget->allocation.x, widget->allocation.y, widget->allocation.width, widget->allocation.height);
+        g_object_unref (gc);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
 ddb_gtkui_widget_t *
 w_tabbed_playlist_create (void) {
     w_tabbed_playlist_t *w = malloc (sizeof (w_tabbed_playlist_t));
     memset (w, 0, sizeof (w_tabbed_playlist_t));
 
-    w->base.widget = gtk_vbox_new (FALSE, 0);
+    w->base.widget = gtk_event_box_new ();
+    gtk_event_box_set_above_child (GTK_EVENT_BOX (w->base.widget), TRUE);
+    gtk_event_box_set_visible_window (GTK_EVENT_BOX (w->base.widget), FALSE);
+    gtk_widget_set_events (w->base.widget, GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
+    g_signal_connect ((gpointer) w->base.widget, "button_press_event", G_CALLBACK (w_button_press_event), w);
+    g_signal_connect ((gpointer) w->base.widget, "expose_event", G_CALLBACK (w_expose_event), w);
+
+    GtkWidget *vbox = gtk_vbox_new (FALSE, 0);
+    gtk_widget_show (vbox);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), vbox);
 
     GtkWidget *tabstrip = ddb_tabstrip_new ();
     w->tabstrip = (DdbTabStrip *)tabstrip;
@@ -273,12 +350,12 @@ w_tabbed_playlist_create (void) {
     GtkWidget *frame = gtk_frame_new (NULL);
     gtk_widget_show (frame);
 
-    gtk_box_pack_start (GTK_BOX (w->base.widget), tabstrip, FALSE, TRUE, 0);
+    gtk_box_pack_start (GTK_BOX (vbox), tabstrip, FALSE, TRUE, 0);
     gtk_widget_set_size_request (tabstrip, -1, 24);
     GTK_WIDGET_UNSET_FLAGS (tabstrip, GTK_CAN_FOCUS);
     GTK_WIDGET_UNSET_FLAGS (tabstrip, GTK_CAN_DEFAULT);
 
-    gtk_box_pack_start (GTK_BOX (w->base.widget), frame, TRUE, TRUE, 0);
+    gtk_box_pack_start (GTK_BOX (vbox), frame, TRUE, TRUE, 0);
     gtk_container_set_border_width (GTK_CONTAINER (frame), 1);
 
     gtk_container_add (GTK_CONTAINER (frame), list);
@@ -304,4 +381,61 @@ w_create_playlist (void) {
     memset (w, 0, sizeof (w_playlist_t));
     w->base.widget = ddb_listview_new ();
     return (ddb_gtkui_widget_t*)w;
+}
+
+void
+draw_designmode_rect (GtkWidget *widget, gpointer data) {
+    gdk_draw_rectangle (widget->window, widget->style->black_gc, TRUE, widget->allocation.x, widget->allocation.y, widget->allocation.width, widget->allocation.height);
+}
+
+void
+w_reg_widget (const char *type, ddb_gtkui_widget_t *(*create_func) (void)) {
+    w_creator_t *c;
+    for (c = w_creators; c; c = c->next) {
+        if (!strcmp (c->type, type)) {
+            fprintf (stderr, "gtkui w_reg_widget: widget type %s already registered\n");
+            return;
+        }
+    }
+    c = malloc (sizeof (w_creator_t));
+    memset (c, 0, sizeof (w_creator_t));
+    c->type = type;
+    c->create_func = create_func;
+    c->next = w_creators;
+    w_creators = c;
+}
+
+void
+w_unreg_widget (const char *type) {
+    w_creator_t *c, *prev = NULL;
+    for (c = w_creators; c; c = c->next) {
+        if (!strcmp (c->type, type)) {
+            if (prev) {
+                prev->next = c->next;
+            }
+            else {
+                w_creators = c->next;
+            }
+            free (c);
+            return;
+        }
+        prev = c;
+    }
+    fprintf (stderr, "gtkui w_unreg_widget: widget type %s is not registered\n");
+}
+
+ddb_gtkui_widget_t *
+w_create (const char *type) {
+    for (w_creator_t *c = w_creators; c; c = c->next) {
+        if (!strcmp (c->type, type)) {
+            ddb_gtkui_widget_t *w = c->create_func ();
+
+            // add design mode signal handlers
+//            g_signal_connect ((gpointer) w->widget, "button_press_event", G_CALLBACK (w_button_press_event), w);
+//            g_signal_connect_after ((gpointer) w->widget, "expose_event", G_CALLBACK (w_expose_event), w);
+
+            return w;
+        }
+    }
+    return NULL;
 }

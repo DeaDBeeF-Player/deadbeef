@@ -22,6 +22,15 @@
 #include "gtkui_api.h"
 
 void
+w_reg_widget (const char *type, ddb_gtkui_widget_t *(*create_func) (void));
+
+void
+w_unreg_widget (const char *type);
+
+ddb_gtkui_widget_t *
+w_create (const char *type);
+
+void
 w_append (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child);
 
 ddb_gtkui_widget_t *

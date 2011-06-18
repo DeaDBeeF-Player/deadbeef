@@ -980,15 +980,19 @@ gtkui_thread (void *ctx) {
     gtk_disable_setlocale ();
     gtk_init (&argc, (char ***)&argv);
 
+    // register widget types
+    w_reg_widget ("tabbed_playlist", w_tabbed_playlist_create);
+    w_reg_widget ("box", w_create_box);
+    w_reg_widget ("vsplitter", w_create_vsplitter);
+
     mainwin = create_mainwin ();
 
     // construct mainwindow widgets
     {
-        // root widget is a box
-        rootwidget = w_create_box ();
+        rootwidget = w_create ("box");
         gtk_widget_show (rootwidget->widget);
         gtk_box_pack_start (GTK_BOX(lookup_widget(mainwin, "plugins_bottom_vbox")), rootwidget->widget, TRUE, TRUE, 0);
-        ddb_gtkui_widget_t *plt = w_tabbed_playlist_create ();
+        ddb_gtkui_widget_t *plt = w_create ("tabbed_playlist");
         w_append (rootwidget, plt);
         gtk_box_pack_start (GTK_BOX(rootwidget->widget), plt->widget, TRUE, TRUE, 0);
         gtk_widget_show (plt->widget);
@@ -1062,6 +1066,10 @@ gtkui_thread (void *ctx) {
     gtk_initialized = 1;
 
     gtk_main ();
+
+    w_unreg_widget ("tabbed_playlist");
+    w_unreg_widget ("box");
+    w_unreg_widget ("vsplitter");
 
     if (refresh_timeout) {
         g_source_remove (refresh_timeout);
