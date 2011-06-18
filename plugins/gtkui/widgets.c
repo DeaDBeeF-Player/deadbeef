@@ -55,7 +55,7 @@ w_append (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
 }
 
 ddb_gtkui_widget_t *
-w_create_hsplitter (void) {
+w_hsplitter_create (void) {
     w_splitter_t *w = malloc (sizeof (w_splitter_t));
     memset (w, 0, sizeof (w_splitter_t));
     w->base.widget = gtk_hpaned_new ();
@@ -282,8 +282,9 @@ w_tabbed_playlist_create (void) {
     gtk_container_set_border_width (GTK_CONTAINER (frame), 1);
 
     gtk_container_add (GTK_CONTAINER (frame), list);
-    GTK_WIDGET_UNSET_FLAGS (list, GTK_CAN_FOCUS);
-    GTK_WIDGET_UNSET_FLAGS (list, GTK_CAN_DEFAULT);
+//    GTK_WIDGET_SET_FLAGS (list, GTK_CAN_FOCUS);
+//    GTK_WIDGET_SET_FLAGS (list, GTK_CAN_DEFAULT);
+    printf ("can_focus: %d\n", gtk_widget_get_can_focus (list));
     main_playlist_init (list);
     if (deadbeef->conf_get_int ("gtkui.headers.visible", 1)) {
         ddb_listview_show_header (w->list, 1);

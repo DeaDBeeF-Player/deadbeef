@@ -25,7 +25,7 @@ void
 w_append (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child);
 
 ddb_gtkui_widget_t *
-w_create_hsplitter (void);
+w_hsplitter_create (void);
 
 ddb_gtkui_widget_t *
 w_create_vsplitter (void);

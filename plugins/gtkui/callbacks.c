@@ -357,9 +357,6 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
             deadbeef->conf_set_int ("playlist.current", pl);
         }
     }
-    else {
-// FIXME!        ddb_listview_handle_keypress (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), event->keyval, event->state);
-    }
     return FALSE;
 }
 
