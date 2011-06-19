@@ -108,7 +108,7 @@ overwrite_prompt_cb (void *ctx) {
     GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("The file already exists. Overwrite?"));
     gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (mainwin));
     gtk_window_set_title (GTK_WINDOW (dlg), _("Converter warning"));
-    gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), ctl->fname);
+    gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), "%s", ctl->fname);
 
     int response = gtk_dialog_run (GTK_DIALOG (dlg));
     gtk_widget_destroy (dlg);
