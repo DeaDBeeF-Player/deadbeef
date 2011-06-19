@@ -22,6 +22,18 @@
 #include "gtkui_api.h"
 
 void
+w_init (void);
+
+void
+w_free (void);
+
+ddb_gtkui_widget_t *
+w_get_rootwidget (void);
+
+void
+w_set_design_mode (int active);
+
+void
 w_reg_widget (const char *type, ddb_gtkui_widget_t *(*create_func) (void));
 
 void
@@ -31,7 +43,13 @@ ddb_gtkui_widget_t *
 w_create (const char *type);
 
 void
+w_destroy (ddb_gtkui_widget_t *w);
+
+void
 w_append (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child);
+
+void
+w_remove (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child);
 
 ddb_gtkui_widget_t *
 w_hsplitter_create (void);

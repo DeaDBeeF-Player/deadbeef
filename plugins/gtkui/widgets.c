@@ -55,11 +55,80 @@ typedef struct {
     ddb_gtkui_widget_t base;
 } w_playlist_t;
 
+static int design_mode;
+static ddb_gtkui_widget_t *rootwidget;
+
+void
+w_init (void) {
+    rootwidget = w_create ("box");
+}
+
+void
+w_free (void) {
+    w_creator_t *next = NULL;
+    for (w_creator_t *cr = w_creators; cr; cr = next) {
+        next = cr->next;
+        free (cr);
+    }
+    w_creators = NULL;
+}
+
+ddb_gtkui_widget_t *
+w_get_rootwidget (void) {
+    return rootwidget;
+}
+
+static void
+set_design_mode (ddb_gtkui_widget_t *w) {
+    for (ddb_gtkui_widget_t *c = w->children; c; c = c->next) {
+        set_design_mode (c);
+    }
+    if (GTK_IS_EVENT_BOX (w->widget)) {
+        if (design_mode) {
+            gtk_event_box_set_above_child (GTK_EVENT_BOX (w->widget), TRUE);
+        }
+        else {
+            gtk_event_box_set_above_child (GTK_EVENT_BOX (w->widget), FALSE);
+        }
+    }
+}
+
+void
+w_set_design_mode (int active) {
+    design_mode = active;
+    set_design_mode (rootwidget);
+}
 
 void
 w_append (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
+    child->parent = cont;
     child->next = cont->children;
     cont->children = child;
+    if (cont->append) {
+        cont->append (cont, child);
+    }
+}
+
+void
+w_remove (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
+    if (cont->remove) {
+        cont->remove (cont, child);
+    }
+    child->widget = NULL;
+    ddb_gtkui_widget_t *prev = NULL;
+    for (ddb_gtkui_widget_t *c = cont->children; c; c = c->next) {
+        if (c == child) {
+            if (prev) {
+                prev->next = c->next;
+            }
+            else {
+                cont->children = c->next;
+            }
+            break;
+        }
+        prev = c;
+    }
+    child->parent = NULL;
 }
 
 ddb_gtkui_widget_t *
@@ -78,11 +147,43 @@ w_create_vsplitter (void) {
     return (ddb_gtkui_widget_t*)w;
 }
 
+void
+w_container_add (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
+    printf ("append %s to %s\n", child->type, cont->type);
+    GtkWidget *container = NULL;
+    if (GTK_IS_EVENT_BOX (cont->widget)) {
+        container = gtk_bin_get_child (GTK_BIN(cont->widget));
+    }
+    else {
+        container = cont->widget;
+    }
+    gtk_container_add (GTK_CONTAINER (container), child->widget);
+    gtk_widget_show (child->widget);
+}
+
+void
+w_container_remove (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
+    printf ("remove %s from %s\n", child->type, cont->type);
+    GtkWidget *container = NULL;
+    if (GTK_IS_EVENT_BOX (cont->widget)) {
+        container = gtk_bin_get_child (GTK_BIN(cont->widget));
+    }
+    else {
+        container = cont->widget;
+    }
+    gtk_container_remove (GTK_CONTAINER (container), child->widget);
+
+}
+
 ddb_gtkui_widget_t *
 w_create_box (void) {
     w_box_t *w = malloc (sizeof (w_box_t));
     memset (w, 0, sizeof (w_box_t));
     w->base.widget = gtk_vbox_new (FALSE, 0);
+    w->base.flags = DDB_W_CONTAINER | DDB_W_CONTAINER_MULTIPLE;
+    w->base.append = w_container_add; 
+    w->base.remove = w_container_remove;
+
     return (ddb_gtkui_widget_t*)w;
 }
 
@@ -260,9 +361,6 @@ w_tabbed_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, ui
 
 static void
 w_tabbed_playlist_destroy (ddb_gtkui_widget_t *w) {
-    w_tabbed_playlist_t *tp = (w_tabbed_playlist_t *)w;
-    gtk_widget_destroy (tp->base.widget);
-    free (tp);
 }
 
 int hidden = 0;
@@ -270,13 +368,11 @@ int hidden = 0;
 void
 hide_widget (GtkWidget *widget, gpointer data) {
     gtk_widget_hide (widget);
-    printf ("hide %s\n", G_OBJECT_TYPE_NAME (widget));
 }
 
 void
 show_widget (GtkWidget *widget, gpointer data) {
     gtk_widget_show (widget);
-    printf ("show %s\n", G_OBJECT_TYPE_NAME (widget));
 }
 
 void
@@ -290,16 +386,60 @@ w_menu_deactivate (GtkMenuShell *menushell, gpointer user_data) {
     hidden = 0;
 }
 
+static ddb_gtkui_widget_t *current_widget;
+
+static void
+on_replace_activate (GtkMenuItem *menuitem, gpointer user_data) {
+    for (w_creator_t *cr = w_creators; cr; cr = cr->next) {
+        if (cr->type == user_data) {
+            ddb_gtkui_widget_t *parent = current_widget->parent;
+            w_remove (parent, current_widget);
+            w_destroy (current_widget);
+            current_widget = w_create (user_data);
+            w_append (parent, current_widget);
+        }
+    }
+}
+
 gboolean
 w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_data) {
-    printf ("w_button_press_event\n");
+    if (!design_mode) {
+        return FALSE;
+    }
+    current_widget = user_data;
     gtk_container_foreach (GTK_CONTAINER (widget), hide_widget, NULL);
     hidden = 1;
     gtk_widget_queue_draw (widget);
     GtkWidget *menu;
+    GtkWidget *submenu;
     GtkWidget *item;
     menu = gtk_menu_new ();
-    item = gtk_menu_item_new_with_mnemonic ("Replace");
+    item = gtk_menu_item_new_with_mnemonic ("Replace with...");
+    gtk_widget_show (item);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+
+    submenu = gtk_menu_new ();
+    gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), submenu);
+
+    for (w_creator_t *cr = w_creators; cr; cr = cr->next) {
+        item = gtk_menu_item_new_with_mnemonic (cr->type);
+        gtk_widget_show (item);
+        gtk_container_add (GTK_CONTAINER (submenu), item);
+        g_signal_connect ((gpointer) item, "activate",
+                G_CALLBACK (on_replace_activate),
+                (void *)cr->type);
+    }
+
+    item = gtk_menu_item_new_with_mnemonic ("Delete");
+    gtk_widget_show (item);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    item = gtk_menu_item_new_with_mnemonic ("Cut");
+    gtk_widget_show (item);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    item = gtk_menu_item_new_with_mnemonic ("Copy");
+    gtk_widget_show (item);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    item = gtk_menu_item_new_with_mnemonic ("Paste");
     gtk_widget_show (item);
     gtk_container_add (GTK_CONTAINER (menu), item);
     g_signal_connect ((gpointer) menu, "deactivate", G_CALLBACK (w_menu_deactivate), widget);
@@ -331,7 +471,7 @@ w_tabbed_playlist_create (void) {
     memset (w, 0, sizeof (w_tabbed_playlist_t));
 
     w->base.widget = gtk_event_box_new ();
-    gtk_event_box_set_above_child (GTK_EVENT_BOX (w->base.widget), TRUE);
+    gtk_event_box_set_above_child (GTK_EVENT_BOX (w->base.widget), FALSE);
     gtk_event_box_set_visible_window (GTK_EVENT_BOX (w->base.widget), FALSE);
     gtk_widget_set_events (w->base.widget, GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
     g_signal_connect ((gpointer) w->base.widget, "button_press_event", G_CALLBACK (w_button_press_event), w);
@@ -359,9 +499,6 @@ w_tabbed_playlist_create (void) {
     gtk_container_set_border_width (GTK_CONTAINER (frame), 1);
 
     gtk_container_add (GTK_CONTAINER (frame), list);
-//    GTK_WIDGET_SET_FLAGS (list, GTK_CAN_FOCUS);
-//    GTK_WIDGET_SET_FLAGS (list, GTK_CAN_DEFAULT);
-    printf ("can_focus: %d\n", gtk_widget_get_can_focus (list));
     main_playlist_init (list);
     if (deadbeef->conf_get_int ("gtkui.headers.visible", 1)) {
         ddb_listview_show_header (w->list, 1);
@@ -429,7 +566,7 @@ w_create (const char *type) {
     for (w_creator_t *c = w_creators; c; c = c->next) {
         if (!strcmp (c->type, type)) {
             ddb_gtkui_widget_t *w = c->create_func ();
-
+            w->type = c->type;
             // add design mode signal handlers
 //            g_signal_connect ((gpointer) w->widget, "button_press_event", G_CALLBACK (w_button_press_event), w);
 //            g_signal_connect_after ((gpointer) w->widget, "expose_event", G_CALLBACK (w_expose_event), w);
@@ -438,4 +575,15 @@ w_create (const char *type) {
         }
     }
     return NULL;
+}
+
+void
+w_destroy (ddb_gtkui_widget_t *w) {
+    if (w->destroy) {
+        w->destroy (w);
+    }
+    if (w->widget) {
+        gtk_widget_destroy (w->widget);
+    }
+    free (w);
 }

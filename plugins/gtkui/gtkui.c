@@ -61,7 +61,6 @@ DB_artwork_plugin_t *coverart_plugin = NULL;
 
 // main widgets
 GtkWidget *mainwin;
-ddb_gtkui_widget_t *rootwidget;
 GtkWidget *searchwin;
 GtkStatusIcon *trayicon;
 GtkWidget *traymenu;
@@ -916,6 +915,7 @@ send_messages_to_widgets (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uin
 
 int
 gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    ddb_gtkui_widget_t *rootwidget = w_get_rootwidget ();
     if (rootwidget) {
         send_messages_to_widgets (rootwidget, id, ctx, p1, p2);
     }
@@ -989,12 +989,14 @@ gtkui_thread (void *ctx) {
 
     // construct mainwindow widgets
     {
-        rootwidget = w_create ("box");
+        w_init ();
+        ddb_gtkui_widget_t *rootwidget = w_get_rootwidget ();
         gtk_widget_show (rootwidget->widget);
         gtk_box_pack_start (GTK_BOX(lookup_widget(mainwin, "plugins_bottom_vbox")), rootwidget->widget, TRUE, TRUE, 0);
+
+
         ddb_gtkui_widget_t *plt = w_create ("tabbed_playlist");
         w_append (rootwidget, plt);
-        gtk_box_pack_start (GTK_BOX(rootwidget->widget), plt->widget, TRUE, TRUE, 0);
         gtk_widget_show (plt->widget);
     }
 
@@ -1067,9 +1069,10 @@ gtkui_thread (void *ctx) {
 
     gtk_main ();
 
-    w_unreg_widget ("tabbed_playlist");
-    w_unreg_widget ("box");
-    w_unreg_widget ("vsplitter");
+    w_free ();
+//    w_unreg_widget ("tabbed_playlist");
+//    w_unreg_widget ("box");
+//    w_unreg_widget ("vsplitter");
 
     if (refresh_timeout) {
         g_source_remove (refresh_timeout);

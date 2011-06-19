@@ -25,12 +25,28 @@
 #ifndef __GTKUI_API_H
 #define __GTKUI_API_H
 
+enum {
+    DDB_W_0 = 0,
+    DDB_W_CONTAINER = 1,
+    DDB_W_CONTAINER_MULTIPLE = 2,
+};
+
 typedef struct ddb_gtkui_widget_s {
     const char *type;
+    
+    struct ddb_gtkui_widget_s *parent;
+
     GtkWidget *widget;
+    
+    uint32_t flags;
 
     void (*destroy) (struct ddb_gtkui_widget_s *w);
+
+    void (*append) (struct ddb_gtkui_widget_s *container, struct ddb_gtkui_widget_s *child);
+    void (*remove) (struct ddb_gtkui_widget_s *container, struct ddb_gtkui_widget_s *child);
+
     int (*message) (struct ddb_gtkui_widget_s *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
+
     struct ddb_gtkui_widget_s *children;
     struct ddb_gtkui_widget_s *next; // points to next widget in the same container
 } ddb_gtkui_widget_t;
