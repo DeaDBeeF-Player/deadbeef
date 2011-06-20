@@ -982,8 +982,11 @@ gtkui_thread (void *ctx) {
 
     // register widget types
     w_reg_widget ("tabbed_playlist", w_tabbed_playlist_create);
-    w_reg_widget ("box", w_create_box);
-    w_reg_widget ("vsplitter", w_create_vsplitter);
+    w_reg_widget ("box", w_box_create);
+    w_reg_widget ("vsplitter", w_vsplitter_create);
+    w_reg_widget ("hsplitter", w_hsplitter_create);
+    w_reg_widget ("placeholder", w_placeholder_create);
+    w_reg_widget ("tabs", w_tabs_create);
 
     mainwin = create_mainwin ();
 

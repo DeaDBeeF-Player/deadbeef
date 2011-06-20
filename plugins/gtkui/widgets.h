@@ -55,17 +55,24 @@ ddb_gtkui_widget_t *
 w_hsplitter_create (void);
 
 ddb_gtkui_widget_t *
-w_create_vsplitter (void);
+w_vsplitter_create (void);
 
 ddb_gtkui_widget_t *
-w_create_box (void);
+w_box_create (void);
 
 ddb_gtkui_widget_t *
-w_create_tabstrip (void);
+w_tabstrip_create (void);
 
 ddb_gtkui_widget_t *
 w_tabbed_playlist_create (void);
 
 ddb_gtkui_widget_t *
-w_create_playlist (void);
+w_playlist_create (void);
+
+ddb_gtkui_widget_t *
+w_placeholder_create (void);
+
+ddb_gtkui_widget_t *
+w_tabs_create (void);
+
 #endif

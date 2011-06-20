@@ -55,6 +55,14 @@ typedef struct {
     ddb_gtkui_widget_t base;
 } w_playlist_t;
 
+typedef struct {
+    ddb_gtkui_widget_t base;
+} w_placeholder_t;
+
+typedef struct {
+    ddb_gtkui_widget_t base;
+} w_tabs_t;
+
 static int design_mode;
 static ddb_gtkui_widget_t *rootwidget;
 
@@ -102,8 +110,18 @@ w_set_design_mode (int active) {
 void
 w_append (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
     child->parent = cont;
-    child->next = cont->children;
-    cont->children = child;
+    if (!cont->children) {
+        cont->children = child;
+    }
+    else {
+        for (ddb_gtkui_widget_t *c = cont->children; c; c = c->next) {
+            if (!c->next) {
+                c->next = child;
+                break;
+            }
+        }
+    }
+
     if (cont->append) {
         cont->append (cont, child);
     }
@@ -131,19 +149,171 @@ w_remove (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
     child->parent = NULL;
 }
 
-ddb_gtkui_widget_t *
-w_hsplitter_create (void) {
-    w_splitter_t *w = malloc (sizeof (w_splitter_t));
-    memset (w, 0, sizeof (w_splitter_t));
-    w->base.widget = gtk_hpaned_new ();
-    return (ddb_gtkui_widget_t*)w;
+static ddb_gtkui_widget_t *current_widget;
+int hidden = 0;
+
+gboolean
+w_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
+    if (hidden && user_data == current_widget) {
+        GdkColor clr = {
+            .red = 0x2d00,
+            .green = 0x0000,
+            .blue = 0xd600
+        };
+        GdkGC *gc = gdk_gc_new (widget->window);
+        gdk_gc_set_rgb_fg_color (gc, &clr);
+        if (GTK_WIDGET_NO_WINDOW (widget)) {
+            gdk_draw_rectangle (widget->window, gc, TRUE, widget->allocation.x, widget->allocation.y, widget->allocation.width, widget->allocation.height);
+        }
+        else {
+            gdk_draw_rectangle (widget->window, gc, TRUE, 0, 0, widget->allocation.width, widget->allocation.height);
+        }
+        g_object_unref (gc);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void
+on_replace_activate (GtkMenuItem *menuitem, gpointer user_data) {
+    for (w_creator_t *cr = w_creators; cr; cr = cr->next) {
+        if (cr->type == user_data) {
+            ddb_gtkui_widget_t *parent = current_widget->parent;
+            if (parent->replace) {
+                parent->replace (parent, current_widget, w_create (user_data));
+            }
+            else {
+                w_remove (parent, current_widget);
+                w_destroy (current_widget);
+                current_widget = w_create (user_data);
+                w_append (parent, current_widget);
+                if (GTK_IS_EVENT_BOX (current_widget->widget)) {
+                    gtk_event_box_set_above_child (GTK_EVENT_BOX (current_widget->widget), FALSE);
+                    gtk_event_box_set_above_child (GTK_EVENT_BOX (current_widget->widget), TRUE);
+                }
+            }
+        }
+    }
+}
+
+void
+hide_widget (GtkWidget *widget, gpointer data) {
+    gtk_widget_hide (widget);
+}
+
+void
+show_widget (GtkWidget *widget, gpointer data) {
+    gtk_widget_show (widget);
+}
+
+void
+w_menu_deactivate (GtkMenuShell *menushell, gpointer user_data) {
+    hidden = 0;
+    if (GTK_IS_CONTAINER (user_data)) {
+        gtk_container_foreach (GTK_CONTAINER (user_data), show_widget, NULL);
+        if (GTK_IS_EVENT_BOX (user_data)) {
+            // for some reason, after gtk_widget_show, eventbox appears behind,
+            // so here we have a workaround -- push it back on top
+            gtk_event_box_set_above_child (GTK_EVENT_BOX (user_data), FALSE);
+            gtk_event_box_set_above_child (GTK_EVENT_BOX (user_data), TRUE);
+        }
+    }
+    gtk_widget_queue_draw (user_data);
+}
+
+gboolean
+w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_data) {
+    if (!design_mode || event->button != 3) {
+        return FALSE;
+    }
+
+    printf ("button_press on %s (%p)\n", G_OBJECT_TYPE_NAME (widget), widget);
+    current_widget = user_data;
+    hidden = 1;
+    if (GTK_IS_CONTAINER (widget)) {
+        gtk_container_foreach (GTK_CONTAINER (widget), hide_widget, NULL);
+    }
+    gtk_widget_queue_draw (widget);
+    GtkWidget *menu;
+    GtkWidget *submenu;
+    GtkWidget *item;
+    menu = gtk_menu_new ();
+    item = gtk_menu_item_new_with_mnemonic ("Replace with...");
+    gtk_widget_show (item);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+
+    submenu = gtk_menu_new ();
+    gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), submenu);
+
+    for (w_creator_t *cr = w_creators; cr; cr = cr->next) {
+        item = gtk_menu_item_new_with_mnemonic (cr->type);
+        gtk_widget_show (item);
+        gtk_container_add (GTK_CONTAINER (submenu), item);
+        g_signal_connect ((gpointer) item, "activate",
+                G_CALLBACK (on_replace_activate),
+                (void *)cr->type);
+    }
+
+    item = gtk_menu_item_new_with_mnemonic ("Delete");
+    gtk_widget_show (item);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    item = gtk_menu_item_new_with_mnemonic ("Cut");
+    gtk_widget_show (item);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    item = gtk_menu_item_new_with_mnemonic ("Copy");
+    gtk_widget_show (item);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    item = gtk_menu_item_new_with_mnemonic ("Paste");
+    gtk_widget_show (item);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) menu, "deactivate", G_CALLBACK (w_menu_deactivate), widget);
+    gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
+    return TRUE;
+}
+
+gboolean
+w_placeholder_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
+    cairo_t *cr = gdk_cairo_create (widget->window);
+    cairo_set_source_rgb (cr, 255, 0, 0);
+    cairo_surface_t *checker;
+    cairo_t *cr2;
+
+    checker = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, 12, 12);
+    cr2 = cairo_create (checker);
+
+    cairo_set_source_rgb (cr2, 0.5, 0.5 ,0.5);
+    cairo_paint (cr2);
+    cairo_set_source_rgb (cr2, 0, 0, 0);
+    cairo_move_to (cr2, 0, 0);
+    cairo_line_to (cr2, 12, 12);
+    cairo_move_to (cr2, 1, 12);
+    cairo_line_to (cr2, 12, 1);
+    cairo_set_line_width (cr2, 1);
+    cairo_set_antialias (cr2, CAIRO_ANTIALIAS_NONE);
+    cairo_stroke (cr2);
+    cairo_fill (cr2);
+    cairo_destroy (cr2);
+
+    cairo_set_source_surface (cr, checker, 0, 0);
+    cairo_pattern_t *pt = cairo_get_source(cr);
+    cairo_pattern_set_extend (pt, CAIRO_EXTEND_REPEAT);
+    cairo_rectangle (cr, 0, 0, widget->allocation.width, widget->allocation.height);
+    cairo_paint (cr);
+    cairo_surface_destroy (checker);
+    cairo_destroy (cr);
+    return FALSE;
 }
 
 ddb_gtkui_widget_t *
-w_create_vsplitter (void) {
-    w_splitter_t *w = malloc (sizeof (w_splitter_t));
-    memset (w, 0, sizeof (w_splitter_t));
-    w->base.widget = gtk_vpaned_new ();
+w_placeholder_create (void) {
+    w_placeholder_t *w = malloc (sizeof (w_placeholder_t));
+    memset (w, 0, sizeof (w_placeholder_t));
+    w->base.widget = gtk_drawing_area_new ();
+    gtk_widget_set_events (w->base.widget, GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
+    g_signal_connect ((gpointer) w->base.widget, "expose_event", G_CALLBACK (w_expose_event), w);
+    g_signal_connect_after ((gpointer) w->base.widget, "expose_event", G_CALLBACK (w_placeholder_expose_event), w);
+    g_signal_connect ((gpointer) w->base.widget, "button_press_event", G_CALLBACK (w_button_press_event), w);
     return (ddb_gtkui_widget_t*)w;
 }
 
@@ -176,7 +346,106 @@ w_container_remove (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
 }
 
 ddb_gtkui_widget_t *
-w_create_box (void) {
+w_vsplitter_create (void) {
+    w_splitter_t *w = malloc (sizeof (w_splitter_t));
+    memset (w, 0, sizeof (w_splitter_t));
+    w->base.widget = gtk_vpaned_new ();
+    w->base.append = w_container_add;
+    w->base.remove = w_container_remove;
+
+    ddb_gtkui_widget_t *ph1, *ph2;
+    ph1 = w_create ("placeholder");
+    ph2 = w_create ("placeholder");
+    g_signal_connect ((gpointer) w->base.widget, "expose_event", G_CALLBACK (w_expose_event), w);
+    g_signal_connect ((gpointer) w->base.widget, "button_press_event", G_CALLBACK (w_button_press_event), w);
+
+    w_append ((ddb_gtkui_widget_t*)w, ph1);
+    w_append ((ddb_gtkui_widget_t*)w, ph2);
+
+    return (ddb_gtkui_widget_t*)w;
+}
+
+ddb_gtkui_widget_t *
+w_hsplitter_create (void) {
+    w_splitter_t *w = malloc (sizeof (w_splitter_t));
+    memset (w, 0, sizeof (w_splitter_t));
+    w->base.widget = gtk_hpaned_new ();
+    w->base.append = w_container_add;
+    w->base.remove = w_container_remove;
+
+    ddb_gtkui_widget_t *ph1, *ph2;
+    ph1 = w_create ("placeholder");
+    ph2 = w_create ("placeholder");
+    g_signal_connect ((gpointer) w->base.widget, "expose_event", G_CALLBACK (w_expose_event), w);
+    g_signal_connect ((gpointer) w->base.widget, "button_press_event", G_CALLBACK (w_button_press_event), w);
+
+    w_append ((ddb_gtkui_widget_t*)w, ph1);
+    w_append ((ddb_gtkui_widget_t*)w, ph2);
+
+    return (ddb_gtkui_widget_t*)w;
+}
+
+void
+w_tabs_add (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
+    GtkWidget *label = gtk_label_new (child->type);
+    gtk_widget_show (label);
+    gtk_widget_show (child->widget);
+    gtk_notebook_append_page (GTK_NOTEBOOK (cont->widget), child->widget, label);
+}
+
+void
+w_tabs_replace (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child, ddb_gtkui_widget_t *newchild) {
+    printf ("w_tabs_replace %p\n", child);
+    int ntab = 0;
+    ddb_gtkui_widget_t *prev = NULL;
+    for (ddb_gtkui_widget_t *c = cont->children; c; c = c->next, ntab++) {
+        if (c == child) {
+            printf ("removing tab %d\n", ntab);
+            newchild->next = c->next;
+            if (prev) {
+                prev->next = newchild;
+            }
+            else {
+                cont->children = newchild;
+            }
+            newchild->parent = cont;
+            w_destroy (c);
+            GtkWidget *label = gtk_label_new (newchild->type);
+            gtk_widget_show (label);
+            gtk_widget_show (newchild->widget);
+            int pos = gtk_notebook_insert_page (GTK_NOTEBOOK (cont->widget), newchild->widget, label, ntab);
+            gtk_notebook_set_page (GTK_NOTEBOOK (cont->widget), pos);
+            break;
+        }
+    }
+}
+
+ddb_gtkui_widget_t *
+w_tabs_create (void) {
+    w_tabs_t *w = malloc (sizeof (w_tabs_t));
+    memset (w, 0, sizeof (w_tabs_t));
+    w->base.widget = gtk_notebook_new ();
+    w->base.append = w_tabs_add;
+    w->base.remove = w_container_remove;
+    w->base.replace = w_tabs_replace;
+
+    ddb_gtkui_widget_t *ph1, *ph2, *ph3;
+    ph1 = w_create ("placeholder");
+    ph2 = w_create ("placeholder");
+    ph3 = w_create ("placeholder");
+
+    g_signal_connect ((gpointer) w->base.widget, "expose_event", G_CALLBACK (w_expose_event), w);
+    g_signal_connect ((gpointer) w->base.widget, "button_press_event", G_CALLBACK (w_button_press_event), w);
+
+    w_append ((ddb_gtkui_widget_t*)w, ph1);
+    w_append ((ddb_gtkui_widget_t*)w, ph2);
+    w_append ((ddb_gtkui_widget_t*)w, ph3);
+
+    return (ddb_gtkui_widget_t*)w;
+}
+
+ddb_gtkui_widget_t *
+w_box_create (void) {
     w_box_t *w = malloc (sizeof (w_box_t));
     memset (w, 0, sizeof (w_box_t));
     w->base.widget = gtk_vbox_new (FALSE, 0);
@@ -361,108 +630,6 @@ w_tabbed_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, ui
 
 static void
 w_tabbed_playlist_destroy (ddb_gtkui_widget_t *w) {
-}
-
-int hidden = 0;
-
-void
-hide_widget (GtkWidget *widget, gpointer data) {
-    gtk_widget_hide (widget);
-}
-
-void
-show_widget (GtkWidget *widget, gpointer data) {
-    gtk_widget_show (widget);
-}
-
-void
-w_menu_deactivate (GtkMenuShell *menushell, gpointer user_data) {
-    gtk_container_foreach (GTK_CONTAINER (user_data), show_widget, NULL);
-
-    // for some reason, after gtk_widget_show, eventbox appears behind,
-    // so here we have a workaround -- push it back on top
-    gtk_event_box_set_above_child (GTK_EVENT_BOX (user_data), FALSE);
-    gtk_event_box_set_above_child (GTK_EVENT_BOX (user_data), TRUE);
-    hidden = 0;
-}
-
-static ddb_gtkui_widget_t *current_widget;
-
-static void
-on_replace_activate (GtkMenuItem *menuitem, gpointer user_data) {
-    for (w_creator_t *cr = w_creators; cr; cr = cr->next) {
-        if (cr->type == user_data) {
-            ddb_gtkui_widget_t *parent = current_widget->parent;
-            w_remove (parent, current_widget);
-            w_destroy (current_widget);
-            current_widget = w_create (user_data);
-            w_append (parent, current_widget);
-        }
-    }
-}
-
-gboolean
-w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_data) {
-    if (!design_mode) {
-        return FALSE;
-    }
-    current_widget = user_data;
-    gtk_container_foreach (GTK_CONTAINER (widget), hide_widget, NULL);
-    hidden = 1;
-    gtk_widget_queue_draw (widget);
-    GtkWidget *menu;
-    GtkWidget *submenu;
-    GtkWidget *item;
-    menu = gtk_menu_new ();
-    item = gtk_menu_item_new_with_mnemonic ("Replace with...");
-    gtk_widget_show (item);
-    gtk_container_add (GTK_CONTAINER (menu), item);
-
-    submenu = gtk_menu_new ();
-    gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), submenu);
-
-    for (w_creator_t *cr = w_creators; cr; cr = cr->next) {
-        item = gtk_menu_item_new_with_mnemonic (cr->type);
-        gtk_widget_show (item);
-        gtk_container_add (GTK_CONTAINER (submenu), item);
-        g_signal_connect ((gpointer) item, "activate",
-                G_CALLBACK (on_replace_activate),
-                (void *)cr->type);
-    }
-
-    item = gtk_menu_item_new_with_mnemonic ("Delete");
-    gtk_widget_show (item);
-    gtk_container_add (GTK_CONTAINER (menu), item);
-    item = gtk_menu_item_new_with_mnemonic ("Cut");
-    gtk_widget_show (item);
-    gtk_container_add (GTK_CONTAINER (menu), item);
-    item = gtk_menu_item_new_with_mnemonic ("Copy");
-    gtk_widget_show (item);
-    gtk_container_add (GTK_CONTAINER (menu), item);
-    item = gtk_menu_item_new_with_mnemonic ("Paste");
-    gtk_widget_show (item);
-    gtk_container_add (GTK_CONTAINER (menu), item);
-    g_signal_connect ((gpointer) menu, "deactivate", G_CALLBACK (w_menu_deactivate), widget);
-    gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
-    return FALSE;
-}
-
-gboolean
-w_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
-    if (hidden) {
-        GdkColor clr = {
-            .red = 0x2d00,
-            .green = 0x0000,
-            .blue = 0xd600
-        };
-        GdkGC *gc = gdk_gc_new (widget->window);
-        gdk_gc_set_rgb_fg_color (gc, &clr);
-        gdk_draw_rectangle (widget->window, gc, TRUE, widget->allocation.x, widget->allocation.y, widget->allocation.width, widget->allocation.height);
-        g_object_unref (gc);
-        return TRUE;
-    }
-
-    return FALSE;
 }
 
 ddb_gtkui_widget_t *

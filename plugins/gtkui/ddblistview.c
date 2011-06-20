@@ -2619,7 +2619,7 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
             UNREF (it);
         }
     }
-    return FALSE;
+    return TRUE;
 }
 
 gboolean

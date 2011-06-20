@@ -44,6 +44,7 @@ typedef struct ddb_gtkui_widget_s {
 
     void (*append) (struct ddb_gtkui_widget_s *container, struct ddb_gtkui_widget_s *child);
     void (*remove) (struct ddb_gtkui_widget_s *container, struct ddb_gtkui_widget_s *child);
+    void (*replace) (struct ddb_gtkui_widget_s *container, struct ddb_gtkui_widget_s *child, struct ddb_gtkui_widget_s *newchild);
 
     int (*message) (struct ddb_gtkui_widget_s *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
 
