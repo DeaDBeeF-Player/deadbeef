@@ -406,7 +406,7 @@ ddb_listview_init(DdbListview *listview)
     g_signal_connect ((gpointer) listview->list, "realize",
             G_CALLBACK (ddb_listview_list_realize),
             NULL);
-    g_signal_connect ((gpointer) listview->list, "button_press_event",
+    g_signal_connect_after ((gpointer) listview->list, "button_press_event",
             G_CALLBACK (ddb_listview_list_button_press_event),
             NULL);
     g_signal_connect ((gpointer) listview->list, "scroll_event",

@@ -210,16 +210,17 @@ show_widget (GtkWidget *widget, gpointer data) {
 void
 w_menu_deactivate (GtkMenuShell *menushell, gpointer user_data) {
     hidden = 0;
-    if (GTK_IS_CONTAINER (user_data)) {
-        gtk_container_foreach (GTK_CONTAINER (user_data), show_widget, NULL);
-        if (GTK_IS_EVENT_BOX (user_data)) {
+    ddb_gtkui_widget_t *w = user_data;
+    if (GTK_IS_CONTAINER (w->widget)) {
+        gtk_container_foreach (GTK_CONTAINER (w->widget), show_widget, NULL);
+        if (GTK_IS_EVENT_BOX (w->widget)) {
             // for some reason, after gtk_widget_show, eventbox appears behind,
             // so here we have a workaround -- push it back on top
-            gtk_event_box_set_above_child (GTK_EVENT_BOX (user_data), FALSE);
-            gtk_event_box_set_above_child (GTK_EVENT_BOX (user_data), TRUE);
+            gtk_event_box_set_above_child (GTK_EVENT_BOX (w->widget), FALSE);
+            gtk_event_box_set_above_child (GTK_EVENT_BOX (w->widget), TRUE);
         }
     }
-    gtk_widget_queue_draw (user_data);
+    gtk_widget_queue_draw (w->widget);
 }
 
 gboolean
@@ -227,14 +228,14 @@ w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_da
     if (!design_mode || event->button != 3) {
         return FALSE;
     }
-
     printf ("button_press on %s (%p)\n", G_OBJECT_TYPE_NAME (widget), widget);
+
     current_widget = user_data;
     hidden = 1;
     if (GTK_IS_CONTAINER (widget)) {
         gtk_container_foreach (GTK_CONTAINER (widget), hide_widget, NULL);
     }
-    gtk_widget_queue_draw (widget);
+    gtk_widget_queue_draw (((ddb_gtkui_widget_t *)user_data)->widget);
     GtkWidget *menu;
     GtkWidget *submenu;
     GtkWidget *item;
@@ -267,7 +268,7 @@ w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_da
     item = gtk_menu_item_new_with_mnemonic ("Paste");
     gtk_widget_show (item);
     gtk_container_add (GTK_CONTAINER (menu), item);
-    g_signal_connect ((gpointer) menu, "deactivate", G_CALLBACK (w_menu_deactivate), widget);
+    g_signal_connect ((gpointer) menu, "deactivate", G_CALLBACK (w_menu_deactivate), user_data);
     gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
     return TRUE;
 }
@@ -632,21 +633,35 @@ static void
 w_tabbed_playlist_destroy (ddb_gtkui_widget_t *w) {
 }
 
+static void
+w_override_signals (GtkWidget *widget, gpointer user_data) {
+    printf ("w_override_signals on %s (%p)\n", G_OBJECT_TYPE_NAME (widget), widget);
+    g_signal_connect ((gpointer) widget, "button_press_event", G_CALLBACK (w_button_press_event), user_data);
+    g_signal_connect ((gpointer) widget, "expose_event", G_CALLBACK (w_expose_event), user_data);
+    if (GTK_IS_CONTAINER (widget)) {
+        gtk_container_forall (GTK_CONTAINER (widget), w_override_signals, user_data);
+    }
+}
+
 ddb_gtkui_widget_t *
 w_tabbed_playlist_create (void) {
     w_tabbed_playlist_t *w = malloc (sizeof (w_tabbed_playlist_t));
     memset (w, 0, sizeof (w_tabbed_playlist_t));
 
+#if 0
     w->base.widget = gtk_event_box_new ();
+
     gtk_event_box_set_above_child (GTK_EVENT_BOX (w->base.widget), FALSE);
     gtk_event_box_set_visible_window (GTK_EVENT_BOX (w->base.widget), FALSE);
     gtk_widget_set_events (w->base.widget, GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
     g_signal_connect ((gpointer) w->base.widget, "button_press_event", G_CALLBACK (w_button_press_event), w);
     g_signal_connect ((gpointer) w->base.widget, "expose_event", G_CALLBACK (w_expose_event), w);
+#endif
 
     GtkWidget *vbox = gtk_vbox_new (FALSE, 0);
+    w->base.widget = vbox;
     gtk_widget_show (vbox);
-    gtk_container_add (GTK_CONTAINER (w->base.widget), vbox);
+//    gtk_container_add (GTK_CONTAINER (w->base.widget), vbox);
 
     GtkWidget *tabstrip = ddb_tabstrip_new ();
     w->tabstrip = (DdbTabStrip *)tabstrip;
@@ -673,6 +688,8 @@ w_tabbed_playlist_create (void) {
     else {
         ddb_listview_show_header (w->list, 0);
     }
+
+    gtk_container_forall (GTK_CONTAINER (w->base.widget), w_override_signals, w);
 
     w->base.message = w_tabbed_playlist_message;
     w->base.destroy = w_tabbed_playlist_destroy;
