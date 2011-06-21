@@ -96,14 +96,6 @@ set_design_mode (ddb_gtkui_widget_t *w) {
     for (ddb_gtkui_widget_t *c = w->children; c; c = c->next) {
         set_design_mode (c);
     }
-    if (GTK_IS_EVENT_BOX (w->widget)) {
-        if (design_mode) {
-            gtk_event_box_set_above_child (GTK_EVENT_BOX (w->widget), TRUE);
-        }
-        else {
-            gtk_event_box_set_above_child (GTK_EVENT_BOX (w->widget), FALSE);
-        }
-    }
 }
 
 void
@@ -154,6 +146,18 @@ w_remove (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
     child->parent = NULL;
 }
 
+void
+w_replace (ddb_gtkui_widget_t *w, ddb_gtkui_widget_t *from, ddb_gtkui_widget_t *to) {
+    if (w->replace) {
+        w->replace (w, from, to);
+    }
+    else {
+        w_remove (w, from);
+        w_destroy (from);
+        w_append (w, to);
+    }
+}
+
 const char *
 w_create_from_string (const char *s, ddb_gtkui_widget_t **parent) {
     char t[MAX_TOKEN];
@@ -163,6 +167,10 @@ w_create_from_string (const char *s, ddb_gtkui_widget_t **parent) {
         return NULL;
     }
     ddb_gtkui_widget_t *w = w_create (t);
+    // nuke all default children
+    while (w->children) {
+        w_remove (w, w->children);
+    }
 
     s = gettoken (s, t);
     printf ("%s\n", t);
@@ -240,20 +248,7 @@ static void
 on_replace_activate (GtkMenuItem *menuitem, gpointer user_data) {
     for (w_creator_t *cr = w_creators; cr; cr = cr->next) {
         if (cr->type == user_data) {
-            ddb_gtkui_widget_t *parent = current_widget->parent;
-            if (parent->replace) {
-                parent->replace (parent, current_widget, w_create (user_data));
-            }
-            else {
-                w_remove (parent, current_widget);
-                w_destroy (current_widget);
-                current_widget = w_create (user_data);
-                w_append (parent, current_widget);
-                if (GTK_IS_EVENT_BOX (current_widget->widget)) {
-                    gtk_event_box_set_above_child (GTK_EVENT_BOX (current_widget->widget), FALSE);
-                    gtk_event_box_set_above_child (GTK_EVENT_BOX (current_widget->widget), TRUE);
-                }
-            }
+            w_replace (current_widget->parent, current_widget, w_create (user_data));
         }
     }
 }
@@ -358,12 +353,6 @@ w_menu_deactivate (GtkMenuShell *menushell, gpointer user_data) {
     ddb_gtkui_widget_t *w = user_data;
     if (GTK_IS_CONTAINER (w->widget)) {
         gtk_container_foreach (GTK_CONTAINER (w->widget), show_widget, NULL);
-        if (GTK_IS_EVENT_BOX (w->widget)) {
-            // for some reason, after gtk_widget_show, eventbox appears behind,
-            // so here we have a workaround -- push it back on top
-            gtk_event_box_set_above_child (GTK_EVENT_BOX (w->widget), FALSE);
-            gtk_event_box_set_above_child (GTK_EVENT_BOX (w->widget), TRUE);
-        }
     }
     gtk_widget_queue_draw (w->widget);
 }
@@ -520,12 +509,7 @@ void
 w_container_add (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
     printf ("append %s to %s\n", child->type, cont->type);
     GtkWidget *container = NULL;
-    if (GTK_IS_EVENT_BOX (cont->widget)) {
-        container = gtk_bin_get_child (GTK_BIN(cont->widget));
-    }
-    else {
-        container = cont->widget;
-    }
+    container = cont->widget;
     gtk_container_add (GTK_CONTAINER (container), child->widget);
     gtk_widget_show (child->widget);
 }
@@ -534,12 +518,7 @@ void
 w_container_remove (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
     printf ("remove %s from %s\n", child->type, cont->type);
     GtkWidget *container = NULL;
-    if (GTK_IS_EVENT_BOX (cont->widget)) {
-        container = gtk_bin_get_child (GTK_BIN(cont->widget));
-    }
-    else {
-        container = cont->widget;
-    }
+    container = cont->widget;
     gtk_container_remove (GTK_CONTAINER (container), child->widget);
 
 }
@@ -592,6 +571,37 @@ w_placeholder_create (void) {
 }
 
 ////// vsplitter widget
+void
+w_splitter_replace (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child, ddb_gtkui_widget_t *newchild) {
+    printf ("w_splitter_replace %p\n", child);
+    int ntab = 0;
+    ddb_gtkui_widget_t *prev = NULL;
+    for (ddb_gtkui_widget_t *c = cont->children; c; c = c->next, ntab++) {
+        if (c == child) {
+            printf ("removing child %d\n", ntab);
+            newchild->next = c->next;
+            if (prev) {
+                prev->next = newchild;
+            }
+            else {
+                cont->children = newchild;
+            }
+            newchild->parent = cont;
+            gtk_container_remove (GTK_CONTAINER(cont->widget), c->widget);
+            c->widget = NULL;
+            w_destroy (c);
+            gtk_widget_show (newchild->widget);
+            if (ntab == 0) {
+                gtk_paned_add1 (GTK_PANED (cont->widget), newchild->widget);
+            }
+            else {
+                gtk_paned_add2 (GTK_PANED (cont->widget), newchild->widget);
+            }
+            break;
+        }
+        prev = c;
+    }
+}
 
 ddb_gtkui_widget_t *
 w_vsplitter_create (void) {
@@ -600,6 +610,7 @@ w_vsplitter_create (void) {
     w->base.widget = gtk_vpaned_new ();
     w->base.append = w_container_add;
     w->base.remove = w_container_remove;
+    w->base.replace = w_splitter_replace;
 
     ddb_gtkui_widget_t *ph1, *ph2;
     ph1 = w_create ("placeholder");
@@ -622,6 +633,7 @@ w_hsplitter_create (void) {
     w->base.widget = gtk_hpaned_new ();
     w->base.append = w_container_add;
     w->base.remove = w_container_remove;
+    w->base.replace = w_splitter_replace;
 
     ddb_gtkui_widget_t *ph1, *ph2;
     ph1 = w_create ("placeholder");
