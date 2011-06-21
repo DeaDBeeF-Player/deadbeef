@@ -244,6 +244,26 @@ w_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
     return FALSE;
 }
 
+static char paste_buffer[1000];
+
+static void
+save_widget_to_string (char *str, ddb_gtkui_widget_t *w) {
+    strcat (str, w->type);
+    strcat (str, "{");
+    for (ddb_gtkui_widget_t *c = w->children; c; c = c->next) {
+        save_widget_to_string (str, c);
+    }
+    strcat (str, "} ");
+}
+
+void
+w_save (void) {
+    char buf[1000] = "";
+    save_widget_to_string (buf, rootwidget->children);
+    deadbeef->conf_set_str ("gtkui.layout", buf);
+    deadbeef->conf_save ();
+}
+
 static void
 on_replace_activate (GtkMenuItem *menuitem, gpointer user_data) {
     for (w_creator_t *cr = w_creators; cr; cr = cr->next) {
@@ -251,6 +271,7 @@ on_replace_activate (GtkMenuItem *menuitem, gpointer user_data) {
             w_replace (current_widget->parent, current_widget, w_create (user_data));
         }
     }
+    w_save ();
 }
 
 static void
@@ -268,18 +289,7 @@ on_delete_activate (GtkMenuItem *menuitem, gpointer user_data) {
         current_widget = w_create ("placeholder");
         w_append (parent, current_widget);
     }
-}
-
-static char paste_buffer[1000];
-
-static void
-save_widget_to_string (char *str, ddb_gtkui_widget_t *w) {
-    strcat (str, w->type);
-    strcat (str, "{");
-    for (ddb_gtkui_widget_t *c = w->children; c; c = c->next) {
-        save_widget_to_string (str, c);
-    }
-    strcat (str, "} ");
+    w_save ();
 }
 
 static void
@@ -303,6 +313,7 @@ on_cut_activate (GtkMenuItem *menuitem, gpointer user_data) {
         w_append (parent, current_widget);
     }
     printf ("%s\n", paste_buffer);
+    w_save ();
 }
 
 static void
@@ -335,6 +346,7 @@ on_paste_activate (GtkMenuItem *menuitem, gpointer user_data) {
         current_widget = w;
         w_append (parent, current_widget);
     }
+    w_save ();
 }
 
 void

@@ -994,15 +994,26 @@ gtkui_thread (void *ctx) {
 
     // construct mainwindow widgets
     {
+
         w_init ();
         ddb_gtkui_widget_t *rootwidget = w_get_rootwidget ();
         gtk_widget_show (rootwidget->widget);
         gtk_box_pack_start (GTK_BOX(lookup_widget(mainwin, "plugins_bottom_vbox")), rootwidget->widget, TRUE, TRUE, 0);
 
+        // load layout
+        char layout[1024];
+        deadbeef->conf_get_str ("gtkui.layout", "tabbed_playlist { }", layout, sizeof (layout));
 
-        ddb_gtkui_widget_t *plt = w_create ("tabbed_playlist");
-        w_append (rootwidget, plt);
-        gtk_widget_show (plt->widget);
+        ddb_gtkui_widget_t *w = NULL;
+        w_create_from_string (layout, &w);
+        if (!w) {
+            ddb_gtkui_widget_t *plt = w_create ("tabbed_playlist");
+            w_append (rootwidget, plt);
+            gtk_widget_show (plt->widget);
+        }
+        else {
+            w_append (rootwidget, w);
+        }
     }
 
     gtkpl_init ();

@@ -75,4 +75,7 @@ w_placeholder_create (void);
 ddb_gtkui_widget_t *
 w_tabs_create (void);
 
+const char *
+w_create_from_string (const char *s, ddb_gtkui_widget_t **parent);
+
 #endif
