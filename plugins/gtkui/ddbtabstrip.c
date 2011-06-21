@@ -220,7 +220,6 @@ ddb_tabstrip_class_init(DdbTabStripClass *class)
   widget_class->realize = ddb_tabstrip_realize;
   widget_class->size_allocate = ddb_tabstrip_size_allocate;
   widget_class->expose_event = on_tabstrip_expose_event;
-  widget_class->button_press_event = on_tabstrip_button_press_event;
   widget_class->button_release_event = on_tabstrip_button_release_event;
   widget_class->configure_event = on_tabstrip_configure_event;
   widget_class->motion_notify_event = on_tabstrip_motion_notify_event;
@@ -308,6 +307,9 @@ ddb_tabstrip_init(DdbTabStrip *tabstrip)
     tabstrip->dragpt[1] = 0;
     tabstrip->prev_x = 0;
     tabstrip->movepos = 0;
+    g_signal_connect_after ((gpointer) tabstrip, "button_press_event",
+            G_CALLBACK (on_tabstrip_button_press_event),
+            NULL);
 }
 
 static int tab_clicked = -1;
@@ -842,7 +844,7 @@ on_tabstrip_button_press_event(GtkWidget      *widget,
                     ts->scroll_direction = -1;
                     ts->scroll_timer = g_timeout_add (300, tabstrip_scroll_cb, ts);
                 }
-                return FALSE;
+                return TRUE;
             }
             else if (event->x >= widget->allocation.width - arrow_widget_width) {
                 if (event->type == GDK_BUTTON_PRESS) {
@@ -850,7 +852,7 @@ on_tabstrip_button_press_event(GtkWidget      *widget,
                     ts->scroll_direction = 1;
                     ts->scroll_timer = g_timeout_add (300, tabstrip_scroll_cb, ts);
                 }
-                return FALSE;
+                return TRUE;
             }
         }
         if (tab_clicked != -1) {
@@ -863,9 +865,9 @@ on_tabstrip_button_press_event(GtkWidget      *widget,
                 if (playlist != -1) {
                     gtkui_playlist_set_curr (playlist);
                 }
-                return FALSE;
+                return TRUE;
             }
-            return FALSE;
+            return TRUE;
         }
 
         // adjust scroll if clicked tab spans border
@@ -901,7 +903,7 @@ on_tabstrip_button_press_event(GtkWidget      *widget,
             if (playlist != -1) {
                 gtkui_playlist_set_curr (playlist);
             }
-            return FALSE;
+            return TRUE;
         }
         else if (deadbeef->conf_get_int ("gtkui.mmb_delete_playlist", 1)) {
             if (tab_clicked != -1) {
@@ -913,7 +915,7 @@ on_tabstrip_button_press_event(GtkWidget      *widget,
             }
         }
     }
-    return FALSE;
+    return TRUE;
 }
 
 
