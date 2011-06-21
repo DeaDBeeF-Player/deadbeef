@@ -18,7 +18,7 @@
 */
 #include <stdlib.h>
 #include <string.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "ao.h"
 #include "eng_protos.h"
 
@@ -350,8 +350,8 @@ static DB_decoder_t plugin = {
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.id = "psf",
-    .plugin.name = "Audio Overload plugin",
-    .plugin.descr = "psf, psf2, spu, ssf, minidsf player based on Audio Overload library",
+    .plugin.name = "PSF player using Audio Overload SDK",
+    .plugin.descr = "plays psf, psf2, spu, ssf, dsf, qsf file formats",
     .plugin.copyright = 
         "Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
@@ -387,7 +387,7 @@ static DB_decoder_t plugin = {
 };
 
 DB_plugin_t *
-ao_load (DB_functions_t *api) {
+ddb_aopsf_load (DB_functions_t *api) {
     deadbeef = api;
     return DB_PLUGIN (&plugin);
 }

@@ -750,7 +750,7 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
             int len = sizeof (enc);
             while (e && *e) {
                 if (len <= 0) {
-                    fprintf (stderr, "converter: failed to assemble encoder command line - buffer is not big enough, try to shorten your parameters. max allowed length is %lu characters\n", sizeof (enc));
+                    fprintf (stderr, "converter: failed to assemble encoder command line - buffer is not big enough, try to shorten your parameters. max allowed length is %u characters\n", (unsigned)sizeof (enc));
                     goto error;
                 }
                 if (e[0] == '%' && e[1]) {

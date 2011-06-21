@@ -22,10 +22,6 @@
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
-#if HAVE_ICONV
-#define LIBICONV_PLUG
-#include <iconv.h>
-#endif
 #include "sidplay/sidplay2.h"
 #include "sidplay/builders/resid.h"
 //#include "md5.h"
@@ -414,33 +410,17 @@ csid_seek (DB_fileinfo_t *_info, float time) {
 }
 
 static const char *
-convstr (const char* str) {
-#ifdef HAVE_ICONV
-    int sz = strlen (str);
-    static char out[2048]; // FIXME: this is not thread-safe
-    const char *enc = "iso8859-1";
-    iconv_t cd = iconv_open ("utf-8", enc);
-    if (cd == (iconv_t)-1) {
-        trace ("can't convert from %s to utf8\n", enc);
-        return NULL;
+convstr (const char* str, int sz, char *out, int out_sz) {
+    const char *cs = deadbeef->junk_detect_charset (str);
+    if (!cs) {
+        return str;
     }
     else {
-        size_t inbytesleft = sz;
-        size_t outbytesleft = 2047;
-#ifdef __linux__
-        char *pin = (char*)str;
-#else
-        const char *pin = str;
-#endif
-        char *pout = out;
-        memset (out, 0, sizeof (out));
-        size_t res = iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
-        iconv_close (cd);
+        if (deadbeef->junk_iconv (str, sz, out, out_sz, cs, "utf-8") >= 0) {
+            return out;
+        }
     }
-    return out;
-#else
-    return str;
-#endif
+    return NULL;
 }
 
 extern "C" DB_playItem_t *
@@ -522,6 +502,7 @@ csid_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             int i = sidinfo.numberOfInfoStrings;
             int title_added = 0;
             trace ("set %d metainfo...\n", s);
+            char temp[2048];
             if (i >= 1 && sidinfo.infoString[0] && sidinfo.infoString[0][0]) {
                 const char *meta;
                 if (sidinfo.songs > 1) {
@@ -531,19 +512,19 @@ csid_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
                     meta = "title";
                     title_added = 1;
                 }
-                deadbeef->pl_add_meta (it, meta, convstr (sidinfo.infoString[0]));
+                deadbeef->pl_add_meta (it, meta, convstr (sidinfo.infoString[0], strlen (sidinfo.infoString[0]), temp, sizeof (temp)));
             }
             if (i >= 2 && sidinfo.infoString[1] && sidinfo.infoString[1][0]) {
-                deadbeef->pl_add_meta (it, "artist", convstr (sidinfo.infoString[1]));
+                deadbeef->pl_add_meta (it, "artist", convstr (sidinfo.infoString[1], strlen (sidinfo.infoString[1]), temp, sizeof (temp)));
             }
             if (i >= 3 && sidinfo.infoString[2] && sidinfo.infoString[2][0]) {
-                deadbeef->pl_add_meta (it, "copyright", convstr (sidinfo.infoString[2]));
+                deadbeef->pl_add_meta (it, "copyright", convstr (sidinfo.infoString[2], strlen (sidinfo.infoString[2]), temp, sizeof (temp)));
             }
 
             for (int j = 3; j < i; j++)
             {
                 if (sidinfo.infoString[j] && sidinfo.infoString[j][0]) {
-                    deadbeef->pl_add_meta (it, "info", convstr (sidinfo.infoString[j]));
+                    deadbeef->pl_add_meta (it, "info", convstr (sidinfo.infoString[j], strlen (sidinfo.infoString[j]), temp, sizeof (temp)));
                 }
             }
             char trk[10];

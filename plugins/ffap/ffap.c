@@ -41,7 +41,7 @@
 
 #ifdef TARGET_ANDROID
 int posix_memalign (void **memptr, size_t alignment, size_t size) {
-    *memptr = malloc (size);
+    *memptr = memalign (alignment, size);
     return *memptr ? 0 : -1;
 }
 #endif
@@ -1275,111 +1275,20 @@ typedef int x86_reg;
 typedef struct { uint64_t a, b; } xmm_reg;
 #define DECLARE_ALIGNED(n,t,v)      t v __attribute__ ((aligned (n)))
 #define DECLARE_ALIGNED_16(t, v) DECLARE_ALIGNED(16, t, v)
-static int32_t scalarproduct_int16_sse2 (int16_t * v1, int16_t * v2, int order, int shift)
-{
-    int res = 0;
-    DECLARE_ALIGNED_16(xmm_reg, sh);
-    x86_reg o = -(order << 1);
-
-    v1 += order;
-    v2 += order;
-    sh.a = shift;
-    __asm__ volatile(
-        "pxor      %%xmm7,  %%xmm7        \n\t"
-        "1:                               \n\t"
-        "movdqu    (%0,%3), %%xmm0        \n\t"
-        "movdqu  16(%0,%3), %%xmm1        \n\t"
-        "pmaddwd   (%1,%3), %%xmm0        \n\t"
-        "pmaddwd 16(%1,%3), %%xmm1        \n\t"
-        "paddd     %%xmm0,  %%xmm7        \n\t"
-        "paddd     %%xmm1,  %%xmm7        \n\t"
-        "add       $32,     %3            \n\t"
-        "js        1b                     \n\t"
-        "movhlps   %%xmm7,  %%xmm2        \n\t"
-        "paddd     %%xmm2,  %%xmm7        \n\t"
-        "psrad     %4,      %%xmm7        \n\t"
-        "pshuflw   $0x4E,   %%xmm7,%%xmm2 \n\t"
-        "paddd     %%xmm2,  %%xmm7        \n\t"
-        "movd      %%xmm7,  %2            \n\t"
-        : "+r"(v1), "+r"(v2), "=r"(res), "+r"(o)
-        : "m"(sh)
-    );
-    return res;
-}
-static void add_int16_sse2(int16_t * v1, int16_t * v2, int order)
-{
-    x86_reg o = -(order << 1);
-    v1 += order;
-    v2 += order;
-    __asm__ volatile(
-        "1:                          \n\t"
-        "movdqu   (%1,%2),   %%xmm0  \n\t"
-        "movdqu 16(%1,%2),   %%xmm1  \n\t"
-        "paddw    (%0,%2),   %%xmm0  \n\t"
-        "paddw  16(%0,%2),   %%xmm1  \n\t"
-        "movdqa   %%xmm0,    (%0,%2) \n\t"
-        "movdqa   %%xmm1,  16(%0,%2) \n\t"
-        "add      $32,       %2      \n\t"
-        "js       1b                 \n\t"
-        : "+r"(v1), "+r"(v2), "+r"(o)
-    );
-}
-
-static void sub_int16_sse2(int16_t * v1, int16_t * v2, int order)
-{
-    x86_reg o = -(order << 1);
-    v1 += order;
-    v2 += order;
-    __asm__ volatile(
-        "1:                           \n\t"
-        "movdqa    (%0,%2),   %%xmm0  \n\t"
-        "movdqa  16(%0,%2),   %%xmm2  \n\t"
-        "movdqu    (%1,%2),   %%xmm1  \n\t"
-        "movdqu  16(%1,%2),   %%xmm3  \n\t"
-        "psubw     %%xmm1,    %%xmm0  \n\t"
-        "psubw     %%xmm3,    %%xmm2  \n\t"
-        "movdqa    %%xmm0,    (%0,%2) \n\t"
-        "movdqa    %%xmm2,  16(%0,%2) \n\t"
-        "add       $32,       %2      \n\t"
-        "js        1b                 \n\t"
-        : "+r"(v1), "+r"(v2), "+r"(o)
-    );
-}
 #endif
 
-static int32_t
-scalarproduct_int16_c(int16_t * v1, int16_t * v2, int order, int shift)
+static int32_t scalarproduct_and_madd_int16_c(int16_t *v1, const int16_t *v2, const int16_t *v3, int order, int mul)
 {
     int res = 0;
-
-    while (order--)
-        res += (*v1++ * *v2++) >> shift;
-
+    while (order--) {
+        res   += *v1 * *v2++;
+        *v1++ += mul * *v3++;
+    }
     return res;
 }
 
-static void
-add_int16_c (int16_t *v1/*align 16*/, int16_t *v2, int len) {
-    while (len--) {
-        *v1++ += *v2++;
-    }
-}
-
-static void
-sub_int16_c (int16_t *v1/*align 16*/, int16_t *v2, int len) {
-    while (len--) {
-        *v1++ -= *v2++;
-    }
-}
-
 static int32_t
-(*scalarproduct_int16)(int16_t * v1, int16_t * v2, int order, int shift);
-
-static void
-(*add_int16) (int16_t *v1/*align 16*/, int16_t *v2, int len);
-
-static void
-(*sub_int16) (int16_t *v1/*align 16*/, int16_t *v2, int len);
+(*scalarproduct_and_madd_int16)(int16_t *v1, const int16_t *v2, const int16_t *v3, int order, int mul);
 
 static inline int16_t clip_int16(int a)
 {
@@ -1412,15 +1321,8 @@ static inline void do_apply_filter(APEContext * ctx, int version, APEFilter *f, 
     int absres;
 
     while (count--) {
-        /* round fixedpoint scalar product */
-        res = (scalarproduct_int16(f->delay - order, f->coeffs, order, 0) + (1 << (fracbits - 1))) >> fracbits;
-
-
-        if (*data < 0)
-            add_int16(f->coeffs, f->adaptcoeffs - order, order);
-        else if (*data > 0)
-            sub_int16(f->coeffs, f->adaptcoeffs - order, order);
-
+        res = scalarproduct_and_madd_int16(f->coeffs, f->delay - order, f->adaptcoeffs - order, order, APESIGN(*data));
+        res = (res + (1 << (fracbits - 1))) >> fracbits;
         res += *data;
 
         *data++ = res;
@@ -2002,6 +1904,8 @@ static DB_decoder_t plugin = {
 
 #if HAVE_SSE2 && !ARCH_UNKNOWN
 
+int32_t ff_scalarproduct_and_madd_int16_sse2(int16_t *v1, const int16_t *v2, const int16_t *v3, int order, int mul);
+
 #define FF_MM_MMX      0x0001 ///< standard MMX
 #define FF_MM_3DNOW    0x0004 ///< AMD 3DNOW
 #define FF_MM_MMX2     0x0002 ///< SSE integer functions or AMD MMX ext
@@ -2103,29 +2007,32 @@ int mm_support(void)
 }
 #endif
 
+#if ARCH_ARM
+int32_t EXTERN_ASMff_scalarproduct_int16_neon(int16_t *v1, int16_t *v2, int len,
+                                    int shift);
+int32_t EXTERN_ASMff_scalarproduct_and_madd_int16_neon(int16_t *v1, const int16_t *v2, const int16_t *v3, int order, int mul);
+
+#endif
+
 DB_plugin_t *
 ffap_load (DB_functions_t *api) {
     // detect sse2
-#if HAVE_SSE2 && !ARCH_UNKNOWN
+#if ARCH_ARM
+        scalarproduct_and_madd_int16 = EXTERN_ASMff_scalarproduct_and_madd_int16_neon;
+#elif HAVE_SSE2 && !ARCH_UNKNOWN
     trace ("ffap: was compiled with sse2 support\n");
     int mm_flags = mm_support ();
     if (mm_flags & FF_MM_SSE2) {
         trace ("ffap: sse2 support detected\n");
-        scalarproduct_int16 = scalarproduct_int16_sse2;
-        add_int16 = add_int16_sse2;
-        sub_int16 = sub_int16_sse2;
+        scalarproduct_and_madd_int16 = ff_scalarproduct_and_madd_int16_sse2;
     }
     else {
         trace ("ffap: sse2 is not supported by CPU\n");
-        scalarproduct_int16 = scalarproduct_int16_c;
-        add_int16 = add_int16_c;
-        sub_int16 = sub_int16_c;
+        scalarproduct_and_madd_int16 = scalarproduct_and_madd_int16_c;
     }
 #else
-    trace ("ffap: sse2 support was not compiled in\n");
-    scalarproduct_int16 = scalarproduct_int16_c;
-    add_int16 = add_int16_c;
-    sub_int16 = sub_int16_c;
+//    trace ("ffap: sse2 support was not compiled in\n");
+    scalarproduct_and_madd_int16 = scalarproduct_and_madd_int16_c;
 #endif
     deadbeef = api;
     return DB_PLUGIN (&plugin);

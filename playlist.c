@@ -18,6 +18,9 @@
 #ifdef HAVE_CONFIG_H
 #  include "config.h"
 #endif
+#ifdef HAVE_ALLOCA_H
+#  include <alloca.h>
+#endif
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
@@ -31,7 +34,7 @@
 #include <time.h>
 #include <sys/time.h>
 #ifndef __linux__
-#define _POSIX_C_SOURCE
+#define _POSIX_C_SOURCE 1
 #endif
 #include <limits.h>
 #include <errno.h>
@@ -109,7 +112,7 @@ static playlist_t *addfiles_playlist; // current playlist for adding files/folde
 
 void
 pl_set_order (int order) {
-    if (pl_order != order && (pl_order == PLAYBACK_ORDER_SHUFFLE_TRACKS || pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS)) {
+    if (pl_order != order || pl_order == PLAYBACK_ORDER_SHUFFLE_TRACKS || pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS) {
         pl_order = order;
         for (playlist_t *plt = playlists_head; plt; plt = plt->next) {
             plt_reshuffle (plt, NULL, NULL);
@@ -162,6 +165,7 @@ pl_free (void) {
         mutex_plt = 0;
     }
 #endif
+    playlist = NULL;
 }
 
 #if DEBUG_LOCKING
@@ -323,6 +327,15 @@ plt_get_sel_count (int plt) {
     return 0;
 }
 
+playlist_t *
+plt_alloc (const char *title) {
+    playlist_t *plt = malloc (sizeof (playlist_t));
+    memset (plt, 0, sizeof (playlist_t));
+    plt->refc = 1;
+    plt->title = strdup (title);
+    return plt;
+}
+
 int
 plt_add (int before, const char *title) {
     assert (before >= 0);
@@ -331,10 +344,7 @@ plt_add (int before, const char *title) {
         fprintf (stderr, "can't create more than 100 playlists. sorry.\n");
         return -1;
     }
-    playlist_t *plt = malloc (sizeof (playlist_t));
-    memset (plt, 0, sizeof (playlist_t));
-    plt->refc = 1;
-    plt->title = strdup (title);
+    playlist_t *plt = plt_alloc (title);
     plt_modified (plt);
 
     LOCK;
@@ -394,7 +404,7 @@ plt_add (int before, const char *title) {
         conf_save ();
         messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
     }
-    return playlists_count-1;
+    return before;
 }
 
 // NOTE: caller must ensure that configuration is saved after that call
@@ -976,7 +986,7 @@ plt_process_cue_track (playlist_t *playlist, playItem_t *after, const char *fnam
         pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, atof (replaygain_track_peak));
     }
     it->_flags |= DDB_IS_SUBTRACK | DDB_TAG_CUESHEET;
-    after = pl_insert_item (after, it);
+    after = plt_insert_item (playlist, after, it);
     pl_item_unref (it);
     *prev = it;
     return it;
@@ -3892,4 +3902,14 @@ plt_init_shuffle_albums (playlist_t *plt, int r) {
         }
     }
     pl_unlock ();
+}
+
+void
+plt_set_fast_mode (playlist_t *plt, int fast) {
+    plt->fast_mode = (unsigned)fast;
+}
+
+int
+plt_is_fast_mode (playlist_t *plt) {
+    return plt->fast_mode;
 }

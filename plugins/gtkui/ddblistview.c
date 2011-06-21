@@ -265,6 +265,14 @@ ddb_listview_motion_notify_event        (GtkWidget       *widget,
                                         GdkEventMotion  *event,
                                         gpointer         user_data);
 
+gboolean
+ddb_listview_list_key_press_event (GtkWidget *widget, GdkEventKey *event, gpointer user_data);
+
+gboolean
+ddb_listview_list_focus_in_event (GtkWidget *widget, GdkEvent *event, gpointer user_data);
+
+gboolean
+ddb_listview_list_focus_out_event (GtkWidget *widget, GdkEvent *event, gpointer user_data);
 
 static void
 ddb_listview_class_init(DdbListviewClass *class)
@@ -351,7 +359,9 @@ ddb_listview_init(DdbListview *listview)
     listview->list = gtk_drawing_area_new ();
     gtk_widget_show (listview->list);
     gtk_box_pack_start (GTK_BOX (vbox), listview->list, TRUE, TRUE, 0);
-    gtk_widget_set_events (listview->list, GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK);
+    GTK_WIDGET_SET_FLAGS (listview->list, GTK_CAN_FOCUS);
+    GTK_WIDGET_SET_FLAGS (listview->list, GTK_CAN_DEFAULT);
+    gtk_widget_set_events (listview->list, GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK | GDK_FOCUS_CHANGE_MASK);
 
     listview->hscrollbar = gtk_hscrollbar_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 0, 0, 0, 0)));
     gtk_widget_show (listview->hscrollbar);
@@ -396,7 +406,7 @@ ddb_listview_init(DdbListview *listview)
     g_signal_connect ((gpointer) listview->list, "realize",
             G_CALLBACK (ddb_listview_list_realize),
             NULL);
-    g_signal_connect ((gpointer) listview->list, "button_press_event",
+    g_signal_connect_after ((gpointer) listview->list, "button_press_event",
             G_CALLBACK (ddb_listview_list_button_press_event),
             NULL);
     g_signal_connect ((gpointer) listview->list, "scroll_event",
@@ -435,6 +445,10 @@ ddb_listview_init(DdbListview *listview)
     g_signal_connect ((gpointer) listview->hscrollbar, "value_changed",
             G_CALLBACK (ddb_listview_hscroll_value_changed),
             NULL);
+
+    g_signal_connect ((gpointer)listview->list, "key_press_event", G_CALLBACK (ddb_listview_list_key_press_event), NULL);
+    g_signal_connect ((gpointer)listview->list, "focus_in_event", G_CALLBACK (ddb_listview_list_focus_in_event), NULL);
+    g_signal_connect ((gpointer)listview->list, "focus_out_event", G_CALLBACK (ddb_listview_list_focus_out_event), NULL);
 }
 
 GtkWidget * ddb_listview_new()
@@ -2563,6 +2577,7 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
+    gtk_widget_grab_focus (widget);
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     if (event->button == 1) {
         ddb_listview_list_mouse1_pressed (ps, event->state, event->x, event->y, event->type);
@@ -2604,7 +2619,7 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
             UNREF (it);
         }
     }
-    return FALSE;
+    return TRUE;
 }
 
 gboolean
@@ -2968,4 +2983,24 @@ ddb_listview_clear_sort (DdbListview *listview) {
         c->sort_order = 0;
     }
     gtk_widget_queue_draw (listview->header);
+}
+
+gboolean
+ddb_listview_list_key_press_event (GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
+    DdbListview *listview = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
+    ddb_listview_handle_keypress (listview, event->keyval, event->state);
+    return FALSE;
+
+}
+
+gboolean
+ddb_listview_list_focus_in_event (GtkWidget *widget, GdkEvent *event, gpointer user_data) {
+    GTK_WIDGET_SET_FLAGS (widget, GTK_HAS_FOCUS);
+    return FALSE;
+}
+
+gboolean
+ddb_listview_list_focus_out_event (GtkWidget *widget, GdkEvent *event, gpointer user_data) {
+    GTK_WIDGET_UNSET_FLAGS (widget, GTK_HAS_FOCUS);
+    return FALSE;
 }

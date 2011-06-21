@@ -25,9 +25,36 @@
 #ifndef __GTKUI_API_H
 #define __GTKUI_API_H
 
+#define GTKUI_API_VERSION 1 // for compile-time checking
+
+typedef struct ddb_gtkui_widget_s {
+    const char *type;
+    
+    struct ddb_gtkui_widget_s *parent;
+
+    GtkWidget *widget;
+    
+    uint32_t flags;
+
+    void (*destroy) (struct ddb_gtkui_widget_s *w);
+
+    void (*append) (struct ddb_gtkui_widget_s *container, struct ddb_gtkui_widget_s *child);
+    void (*remove) (struct ddb_gtkui_widget_s *container, struct ddb_gtkui_widget_s *child);
+    void (*replace) (struct ddb_gtkui_widget_s *container, struct ddb_gtkui_widget_s *child, struct ddb_gtkui_widget_s *newchild);
+
+    int (*message) (struct ddb_gtkui_widget_s *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
+
+    struct ddb_gtkui_widget_s *children;
+    struct ddb_gtkui_widget_s *next; // points to next widget in the same container
+} ddb_gtkui_widget_t;
+
 typedef struct {
     DB_gui_t gui;
+    int api_version;
     GtkWidget * (*get_mainwin) (void);
+    void (*reg_widget) (const char *type, ddb_gtkui_widget_t *(*create_func) (void));
+    void (*unreg_widget) (const char *type);
+    ddb_gtkui_widget_t * (*get_root_widget) (void);
 } ddb_gtkui_t;
 
 #endif

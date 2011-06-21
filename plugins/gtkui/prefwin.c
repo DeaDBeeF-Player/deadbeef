@@ -860,8 +860,9 @@ on_tabstrip_light_color_set            (GtkColorButton  *colorbutton,
     deadbeef->conf_set_str ("gtkui.color.tabstrip_light", str);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
-    redraw_headers ();
-    tabstrip_redraw ();
+//    redraw_headers ();
+//    tabstrip_redraw ();
+    gtk_widget_queue_draw (mainwin);
 }
 
 
@@ -876,8 +877,9 @@ on_tabstrip_mid_color_set              (GtkColorButton  *colorbutton,
     deadbeef->conf_set_str ("gtkui.color.tabstrip_mid", str);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
-    redraw_headers ();
-    tabstrip_redraw ();
+//    redraw_headers ();
+//    tabstrip_redraw ();
+    gtk_widget_queue_draw (mainwin);
 }
 
 
@@ -892,8 +894,9 @@ on_tabstrip_dark_color_set             (GtkColorButton  *colorbutton,
     deadbeef->conf_set_str ("gtkui.color.tabstrip_dark", str);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
-    redraw_headers ();
-    tabstrip_redraw ();
+//    redraw_headers ();
+//    tabstrip_redraw ();
+    gtk_widget_queue_draw (mainwin);
 }
 
 void
@@ -907,8 +910,9 @@ on_tabstrip_base_color_set             (GtkColorButton  *colorbutton,
     deadbeef->conf_set_str ("gtkui.color.tabstrip_base", str);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
-    redraw_headers ();
-    tabstrip_redraw ();
+//    redraw_headers ();
+//    tabstrip_redraw ();
+    gtk_widget_queue_draw (mainwin);
 }
 
 void
@@ -922,8 +926,9 @@ on_tabstrip_text_color_set             (GtkColorButton  *colorbutton,
     deadbeef->conf_set_str ("gtkui.color.tabstrip_text", str);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
-    redraw_headers ();
-    tabstrip_redraw ();
+//    redraw_headers ();
+//    tabstrip_redraw ();
+    gtk_widget_queue_draw (mainwin);
 }
 
 void
@@ -1084,8 +1089,9 @@ on_override_tabstrip_colors_toggled    (GtkToggleButton *togglebutton,
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
     prefwin_init_theme_colors ();
-    redraw_headers ();
-    tabstrip_redraw ();
+//    redraw_headers ();
+//    tabstrip_redraw ();
+    gtk_widget_queue_draw (mainwin);
 }
 
 void

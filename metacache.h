@@ -25,4 +25,10 @@ metacache_add_string (const char *str);
 void
 metacache_remove_string (const char *str);
 
+void
+metacache_ref (const char *str);
+
+void
+metacache_unref (const char *str);
+
 #endif

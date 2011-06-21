@@ -16,6 +16,9 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
 #ifndef __linux__
 #define _LARGEFILE64_SOURCE
 #endif
@@ -308,6 +311,7 @@ sndfile_seek (DB_fileinfo_t *_info, float sec) {
 
 static DB_playItem_t *
 sndfile_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
+    trace ("adding file %s\n", fname);
     SF_INFO inf;
     sndfile_info_t info;
     memset (&info, 0, sizeof (info));
@@ -317,12 +321,15 @@ sndfile_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         return NULL;
     }
     int64_t fsize = deadbeef->fgetlength (info.file);
+    trace ("file: %p, size: %lld\n", info.file, deadbeef->fgetlength (info.file));
+    trace ("calling sf_open_virtual\n");
     info.ctx = sf_open_virtual (&vfs, SFM_READ, &inf, &info);
     if (!info.ctx) {
         trace ("sndfile: sf_open failed");
         deadbeef->fclose (info.file);
         return NULL;
     }
+    trace ("calling sf_open_virtual ok\n");
     int totalsamples = inf.frames;
     int samplerate = inf.samplerate;
     sf_close (info.ctx);

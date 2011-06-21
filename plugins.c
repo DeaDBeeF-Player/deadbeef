@@ -24,7 +24,7 @@
 //#include <alloca.h>
 #include <string.h>
 #ifndef __linux__
-#define _POSIX_C_SOURCE
+#define _POSIX_C_SOURCE 1
 #endif
 #include <limits.h>
 #ifdef HAVE_CONFIG_H
@@ -45,6 +45,7 @@
 #include "premix.h"
 #include "dsppreset.h"
 #include "pltmeta.h"
+#include "metacache.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -316,7 +317,17 @@ static DB_functions_t deadbeef_api = {
     // dsp preset management
     .dsp_preset_load = dsp_preset_load,
     .dsp_preset_save = dsp_preset_save,
-    .dsp_preset_free = dsp_preset_free
+    .dsp_preset_free = dsp_preset_free,
+    // new 1.2 APIs
+    .plt_alloc = (ddb_playlist_t *(*)(const char *title))plt_alloc,
+    .plt_free = (void (*)(ddb_playlist_t *plt))plt_free,
+    //.plt_insert = plt_insert,
+    .plt_set_fast_mode = (void (*)(ddb_playlist_t *plt, int fast))plt_set_fast_mode,
+    .plt_is_fast_mode = (int (*)(ddb_playlist_t *plt))plt_is_fast_mode,
+    .metacache_add_string = metacache_add_string,
+    .metacache_remove_string = metacache_remove_string,
+    .metacache_ref = metacache_ref,
+    .metacache_unref = metacache_unref,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;
@@ -556,9 +567,9 @@ load_plugin (const char *plugdir, char *d_name, int l) {
     trace ("loading plugin %s/%s\n", plugdir, d_name);
     void *handle = dlopen (fullname, RTLD_NOW);
     if (!handle) {
-        //trace ("dlopen error: %s\n", dlerror ());
+        trace ("dlopen error: %s\n", dlerror ());
 #ifdef ANDROID
-        break;
+        return -1;
 #else
         strcpy (fullname + strlen(fullname) - 3, ".fallback.so");
         trace ("trying %s...\n", fullname);
@@ -740,9 +751,9 @@ plug_load_all (void) {
     trace ("\033[0;31mDISABLE_VERSIONCHECK=1! do not distribute!\033[0;m\n");
 #endif
 
-#ifndef ANDROID
     const char *dirname = deadbeef->get_plugin_dir ();
 
+#ifndef ANDROID
     char *xdg_local_home = getenv ("XDG_LOCAL_HOME");
     char xdg_plugin_dir[1024];
 
@@ -783,7 +794,7 @@ plug_load_all (void) {
 
 #ifdef ANDROID
     char plugin_path[1000];
-    strncpy (plugin_path, conf_get_str ("android.plugin_path", ""), sizeof (plugin_path)-1);
+    strncpy (plugin_path, conf_get_str_fast ("android.plugin_path", ""), sizeof (plugin_path)-1);
     plugin_path[sizeof(plugin_path)-1] = 0;
     char *p = plugin_path;
     while (*p) {
@@ -996,6 +1007,17 @@ plug_unload_all (void) {
         g_gui_names[i] = NULL;
     }
     plugins_tail = NULL;
+
+    memset (g_plugins, 0, sizeof (g_plugins));
+    memset (g_gui_names, 0, sizeof (g_gui_names));
+    g_num_gui_names = 0;
+    memset (g_decoder_plugins, 0, sizeof (g_decoder_plugins));
+    memset (g_vfs_plugins, 0, sizeof (g_vfs_plugins));
+    memset (g_dsp_plugins, 0, sizeof (g_dsp_plugins));
+    memset (g_output_plugins, 0, sizeof (g_output_plugins));
+    output_plugin = NULL;
+    memset (g_playlist_plugins, 0, sizeof (g_playlist_plugins));
+
     trace ("all plugins had been unloaded\n");
 }
 

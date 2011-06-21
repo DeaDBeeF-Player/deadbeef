@@ -160,6 +160,7 @@ static DB_dsp_t plugin = {
         "along with this program; if not, write to the Free Software\n"
         "Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.\n"
     ,
+    .plugin.website = "http://deadbeef.sf.net",
     .num_params = m2s_num_params,
     .get_param_name = m2s_get_param_name,
     .set_param = m2s_set_param,
@@ -169,7 +170,7 @@ static DB_dsp_t plugin = {
 };
 
 DB_plugin_t *
-mono2stereo_load (DB_functions_t *f) {
+ddb_mono2stereo_load (DB_functions_t *f) {
     deadbeef = f;
     return &plugin.plugin;
 }

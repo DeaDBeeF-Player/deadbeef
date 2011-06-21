@@ -52,7 +52,10 @@ conf_free (void) {
         next = it->next;
         conf_item_free (it);
     }
+    conf_items = NULL;
+    changed = 0;
     mutex_free (mutex);
+    mutex = 0;
 }
 
 int

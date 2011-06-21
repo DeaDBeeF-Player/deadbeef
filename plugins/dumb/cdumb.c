@@ -23,7 +23,7 @@
 #include <string.h>
 #include "dumb.h"
 #include "internal/it.h"
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -921,7 +921,7 @@ static DB_decoder_t plugin = {
 };
 
 DB_plugin_t *
-dumb_load (DB_functions_t *api) {
+ddb_dumb_load (DB_functions_t *api) {
     deadbeef = api;
     return DB_PLUGIN (&plugin);
 }

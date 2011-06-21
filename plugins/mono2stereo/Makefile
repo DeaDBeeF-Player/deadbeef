@@ -1,4 +1,4 @@
-CC=gcc
+CC?=gcc
 
 CFLAGS+=-Wall -fPIC -D_GNU_SOURCE -std=c99
 
@@ -8,7 +8,7 @@ SOURCES=mono2stereo.c
 
 OBJECTS=$(SOURCES:.c=.o)
 
-OUT=mono2stereo.so
+OUT?=ddb_mono2stereo.so
 
 all: $(SOURCES) $(OUT)
 

@@ -8,16 +8,17 @@ msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-10-06 04:37+0000\n"
-"PO-Revision-Date: 2010-10-06 12:05-0000\n"
+"PO-Revision-Date: 2011-06-10 19:27-0000\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: \n"
+"Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Pootle 2.0.5\n"
 "X-Poedit-Language: Portuguese\n"
 "X-Poedit-Country: Portugal\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../plugins/gtkui/callbacks.c:97
 msgid "Supported sound formats"
@@ -41,7 +42,7 @@ msgstr "Adicionar pasta(s) à lista..."
 
 #: ../plugins/gtkui/callbacks.c:192
 msgid "Follow symlinks"
-msgstr "Seguir \"symlinks\""
+msgstr "Seguir ligações simbólicas"
 
 #: ../plugins/gtkui/callbacks.c:667
 msgid "Failed while reading help file"
@@ -64,7 +65,7 @@ msgstr "Ajuda"
 #: ../plugins/gtkui/callbacks.c:703
 #, c-format
 msgid "About DeaDBeeF %s"
-msgstr "Sobre DeaDBeef %s"
+msgstr "Sobre o DeaDBeef %s"
 
 #: ../plugins/gtkui/callbacks.c:705
 msgid "about.txt"
@@ -114,27 +115,27 @@ msgstr "Adicionar nova lista"
 
 #: ../plugins/gtkui/eq.c:113
 msgid "Save DeaDBeeF EQ Preset"
-msgstr "Gravar pré-Ajustes do EQ DeadBeeF"
+msgstr "Gravar pré-ajustes do EQ DeadBeeF"
 
 #: ../plugins/gtkui/eq.c:120
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
-msgstr "Ficheiros de pré-Ajustes do EQ DeadBeeF(*.ddbeq)"
+msgstr "Ficheiros de pré-ajustes do EQ DeadBeeF(*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:151
 msgid "Load DeaDBeeF EQ Preset..."
-msgstr "Carregar pré-Ajustes do EQ DeadBeeF..."
+msgstr "Carregar pré-ajustes do EQ DeadBeeF..."
 
 #: ../plugins/gtkui/eq.c:155
 msgid "DeaDBeeF EQ presets (*.ddbeq)"
-msgstr "Pré-Ajustes do EQ DeadBeeF (*.ddbeq)"
+msgstr "Pré-ajustes do EQ DeadBeeF (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:214
 msgid "Import Foobar2000 EQ Preset..."
-msgstr "Importar pré-Ajustes Foobar2000..."
+msgstr "Importar pré-ajustes Foobar2000..."
 
 #: ../plugins/gtkui/eq.c:218
 msgid "Foobar2000 EQ presets (*.feq)"
-msgstr "Pré-Ajustes Foobar2000 (*.feq)"
+msgstr "Pré-ajustes Foobar2000 (*.feq)"
 
 #: ../plugins/gtkui/eq.c:292
 msgid "Enable"
@@ -142,27 +143,27 @@ msgstr "Ativar"
 
 #: ../plugins/gtkui/eq.c:300
 msgid "Zero All"
-msgstr "Tudo a zero"
+msgstr "Nulo"
 
 #: ../plugins/gtkui/eq.c:307
 msgid "Zero Preamp"
-msgstr "\"Zero Preamp\""
+msgstr "Amplificador nulo"
 
 #: ../plugins/gtkui/eq.c:314
 msgid "Zero Bands"
-msgstr "Bandas a zero"
+msgstr "Bandas nulas"
 
 #: ../plugins/gtkui/eq.c:321
 msgid "Save Preset"
-msgstr "Gravar pré-Ajustes"
+msgstr "Gravar pré-ajustes"
 
 #: ../plugins/gtkui/eq.c:328
 msgid "Load Preset"
-msgstr "Carregar pré-Ajustes"
+msgstr "Carregar pré-ajustes"
 
 #: ../plugins/gtkui/eq.c:335
 msgid "Import Foobar2000 Preset"
-msgstr "Importar pré-Ajustes do Foobar2000"
+msgstr "Importar pré-ajustes do Foobar2000"
 
 #: ../plugins/gtkui/gtkui.c:133
 #, c-format
@@ -177,7 +178,7 @@ msgstr "%d dias %d:%02d:%02d"
 #: ../plugins/gtkui/gtkui.c:145
 #, c-format
 msgid "Stopped | %d tracks | %s total playtime"
-msgstr "Parado | %d faixas | %s reproduções"
+msgstr "Parado | %d músicas | %s reproduções"
 
 #: ../plugins/gtkui/gtkui.c:158
 msgid "Mono"
@@ -194,12 +195,12 @@ msgstr "| %4d kbps "
 
 #: ../plugins/gtkui/gtkui.c:189
 msgid "Paused | "
-msgstr "Pausado | "
+msgstr "Em pausa | "
 
 #: ../plugins/gtkui/gtkui.c:190
 #, c-format
 msgid "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
-msgstr "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d faixas | %s reproduções"
+msgstr "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d músicas | %s reproduções"
 
 #: ../plugins/gtkui/gtkui.c:661
 msgid "Save Playlist As"
@@ -360,7 +361,7 @@ msgstr "_Reprodução"
 #: ../plugins/gtkui/interface.c:323
 #: ../plugins/gtkui/deadbeef.glade.h:85
 msgid "Order"
-msgstr "Ordem"
+msgstr "Organização"
 
 #: ../plugins/gtkui/interface.c:330
 #: ../plugins/gtkui/deadbeef.glade.h:73
@@ -471,7 +472,7 @@ msgstr "Pausar"
 #: ../plugins/gtkui/interface.c:935
 #: ../plugins/gtkui/deadbeef.glade.h:97
 msgid "Previous"
-msgstr "Anterior "
+msgstr "Anterior"
 
 #: ../plugins/gtkui/interface.c:943
 #: ../plugins/gtkui/deadbeef.glade.h:83
@@ -506,7 +507,7 @@ msgstr "_Abortar"
 #: ../plugins/gtkui/interface.c:1189
 #: ../plugins/gtkui/deadbeef.glade.h:135
 msgid "Track Properties"
-msgstr "Propriedades da faixa"
+msgstr "Propriedades da música"
 
 #: ../plugins/gtkui/interface.c:1235
 #: ../plugins/gtkui/deadbeef.glade.h:146
@@ -600,7 +601,7 @@ msgstr "Faixa"
 #: ../plugins/gtkui/interface.c:1439
 #: ../translation/extra.c:58
 msgid "Band / Album Artist"
-msgstr "Banda/Artista do Álbum"
+msgstr "Banda / Artista do álbum"
 
 #: ../plugins/gtkui/interface.c:1440
 #: ../plugins/gtkui/plcommon.c:882
@@ -639,11 +640,11 @@ msgid ""
 "Example: %a - %t [%l]"
 msgstr ""
 "Conversão de formatos (iniciam com %):\n"
-"  [a]rtista, [t]ítulo, ál[b]um, [B]anda, [C]ompositor\n"
-"  [n]úmerodefaixa, [N]totaldefaixas,\n"
-"  [l]duração, [y]ano, [g]énero, [c]omentário,\n"
-"  di[r]eitosdeautor, nomede[f]icheiro, [F]nomecompletodocaminho,\n"
-" [T]detalhes [d]iretório, [D]iretóriocomcaminho\n"
+"[a]rtista, [t]ítulo, ál[b]um, [B]anda, [C]ompositor\n"
+"[n]úmerodefaixa, [N]totaldefaixas,\n"
+"[l]duração, [y]ano, [g]énero, [c]omentário,\n"
+"di[r]eitosdeautor, nomede[f]icheiro, [F]nomecompletodocaminho,\n"
+"[T]detalhes [d]iretório, [D]iretóriocomcaminho\n"
 "Exemplo: %a - %t [%l]"
 
 #: ../plugins/gtkui/interface.c:1501
@@ -665,7 +666,7 @@ msgstr "_OK"
 #: ../plugins/gtkui/interface.c:1753
 #: ../plugins/gtkui/deadbeef.glade.h:87
 msgid "Output plugin:"
-msgstr "\"Plug-ins\" de som:"
+msgstr "\"Plug-in\" de som:"
 
 #: ../plugins/gtkui/interface.c:1766
 #: ../plugins/gtkui/deadbeef.glade.h:86
@@ -680,7 +681,7 @@ msgstr "Som"
 #: ../plugins/gtkui/interface.c:1784
 #: ../plugins/gtkui/deadbeef.glade.h:10
 msgid "Allow dynamic samplerate switching"
-msgstr "Permitir troca dinâmica da taxa de amostragem"
+msgstr "Permitir troca dinâmica da frequência"
 
 #: ../plugins/gtkui/interface.c:1792
 #: ../plugins/gtkui/deadbeef.glade.h:110
@@ -734,12 +735,12 @@ msgstr "Ocultar ícone da área de notificação"
 #: ../plugins/gtkui/interface.c:1866
 #: ../plugins/gtkui/deadbeef.glade.h:138
 msgid "Use bold font for currently playing track"
-msgstr "Utilizar letra a negrito para a faixa em reprodução"
+msgstr "Utilizar letra a negrito para a faixa reproduzida"
 
 #: ../plugins/gtkui/interface.c:1870
 #: ../plugins/gtkui/deadbeef.glade.h:53
 msgid "Hide \"Delete from disk\" context menu item"
-msgstr "Ocultar item do menu de contexto \"Apagar do disco\""
+msgstr "Ocultar item do menu \"Apagar do disco\""
 
 #: ../plugins/gtkui/interface.c:1878
 #: ../plugins/gtkui/deadbeef.glade.h:133
@@ -955,12 +956,12 @@ msgstr "Descrição:"
 #: ../plugins/gtkui/interface.c:2434
 #: ../plugins/gtkui/deadbeef.glade.h:11
 msgid "Author(s):"
-msgstr "Autor(s):"
+msgstr "Autor(es):"
 
 #: ../plugins/gtkui/interface.c:2449
 #: ../plugins/gtkui/deadbeef.glade.h:28
 msgid "Email:"
-msgstr "\"Email\":"
+msgstr "Endereço eletrónico:"
 
 #: ../plugins/gtkui/interface.c:2464
 #: ../plugins/gtkui/deadbeef.glade.h:139
@@ -1023,7 +1024,7 @@ msgstr "Faixa n.º"
 #: ../plugins/gtkui/mainplaylist.c:308
 #: ../plugins/gtkui/search.c:441
 msgid "Title / Track Artist"
-msgstr "Título/Artista da faixa"
+msgstr "Título / Artista da faixa"
 
 #: ../plugins/gtkui/mainplaylist.c:309
 #: ../plugins/gtkui/search.c:442
@@ -1040,8 +1041,8 @@ msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
 msgstr ""
-"Os ficheiros serão perdidos. Continuar?\n"
-"(Esta janela pode ser desligada nas definições do \"GTKUI\")"
+"Os ficheiros serão eliminados. Continuar?\n"
+"(Esta janela pode ser desligada nas definições da GTKUI)"
 
 #: ../plugins/gtkui/plcommon.c:326
 #: ../plugins/gtkui/trkproperties.c:56
@@ -1050,11 +1051,11 @@ msgstr "Aviso"
 
 #: ../plugins/gtkui/plcommon.c:402
 msgid "Add to playback queue"
-msgstr "Colocar na fila da lista"
+msgstr "Colocar na fila de reprodução"
 
 #: ../plugins/gtkui/plcommon.c:407
 msgid "Remove from playback queue"
-msgstr "Remover da fila da lista"
+msgstr "Remover da fila de reprodução"
 
 #: ../plugins/gtkui/plcommon.c:415
 msgid "Reload metadata"
@@ -1084,7 +1085,7 @@ msgstr "Agrupar por"
 
 #: ../plugins/gtkui/plcommon.c:870
 msgid "None"
-msgstr "Nenhum"
+msgstr "Nada"
 
 #: ../plugins/gtkui/plcommon.c:874
 msgid "Artist/Date/Album"
@@ -1113,7 +1114,7 @@ msgstr "Teclas de atalho"
 
 #: ../plugins/gtkui/prefwin.c:401
 msgid "Slot"
-msgstr "Ranhura"
+msgstr "Slot"
 
 #: ../plugins/gtkui/prefwin.c:402
 msgid "Key combination"
@@ -1152,7 +1153,7 @@ msgstr "Tipo(s) de detalhes"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Embedded Cuesheet"
-msgstr "\"Cuesheet\" incorporada"
+msgstr "Cuesheet incorporada"
 
 #: ../plugins/gtkui/trkproperties.c:180
 msgid "Yes"
@@ -1198,7 +1199,7 @@ msgstr "   --help  ou  -h     Imprime a ajuda e sai\n"
 #: ../main.c:92
 #, c-format
 msgid "   --quit             Quit player\n"
-msgstr "   --quit             Sair do DeadBeeF\n"
+msgstr "   --quit             Sai do DeadBeeF\n"
 
 #: ../main.c:93
 #, c-format
@@ -1208,17 +1209,17 @@ msgstr "   --version          Imprime info da versão e sai\n"
 #: ../main.c:94
 #, c-format
 msgid "   --play             Start playback\n"
-msgstr "   --play             Iniciar reprodução\n"
+msgstr "   --play             Inicia a reprodução\n"
 
 #: ../main.c:95
 #, c-format
 msgid "   --stop             Stop playback\n"
-msgstr "   --stop             Parar reprodução\n"
+msgstr "   --stop             Para a reprodução\n"
 
 #: ../main.c:96
 #, c-format
 msgid "   --pause            Pause playback\n"
-msgstr "   --pause            Pausar reprodução\n"
+msgstr "   --pause            Pausa a reprodução\n"
 
 #: ../main.c:97
 #, c-format
@@ -1228,7 +1229,7 @@ msgstr "   --next             Avança uma música\n"
 #: ../main.c:98
 #, c-format
 msgid "   --prev             Previous song in playlist\n"
-msgstr "   --prev             Retrocede uma música\n"
+msgstr "   --prev             Recua uma música\n"
 
 #: ../main.c:99
 #, c-format
@@ -1238,12 +1239,12 @@ msgstr "   --random           Música aleatória na lista\n"
 #: ../main.c:100
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
-msgstr "   --queue            Acrescenta ficheiro(s) à lista existente\n"
+msgstr "   --queue            Junta ficheiro(s) à lista existente\n"
 
 #: ../main.c:101
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr "   --nowplaying FMT   Imprime o nome da faixa para \"stdout\"\n"
+msgstr "   --nowplaying FMT   Grava o nome da faixa para stdout\n"
 
 #: ../main.c:102
 #, c-format
@@ -1259,7 +1260,7 @@ msgstr ""
 #: ../main.c:105
 #, c-format
 msgid "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"
-msgstr "                      ex: --nowplaying \"%%a - %%t\" deve imprimir \"artista - título\"\n"
+msgstr "                      ex: --nowplaying \"%%a - %%t\" deve gravar \"artista - título\"\n"
 
 #: ../playlist.c:377
 #: ../playlist.c:2289
@@ -1307,7 +1308,7 @@ msgstr ""
 "Título\n"
 "Duração\n"
 "Faixa\n"
-"Banda/artista do álbum\n"
+"Banda / artista do álbum\n"
 "Personalizar"
 
 #: ../plugins/gtkui/deadbeef.glade.h:70
@@ -1327,7 +1328,7 @@ msgstr "Incapaz de encontrar o ficheiro: %s"
 #: ../plugins/wildmidi/wildmidiplug.c:162
 #, c-format
 msgid "wildmidi: freepats config file not found. Please install timidity-freepats package, or specify path to freepats.cfg in the plugin settings."
-msgstr "wildmidi: o ficheiro de configuração \"freepats\" não foi encontrado. Por favor, instale o pacote timidity-freepats ou especifique o caminho para freepats.cfg nas definições do \"plug-in\"."
+msgstr "wildmidi: o ficheiro de configuração freepats não foi encontrado. Por favor, instale o pacote timidity-freepats ou especifique o caminho para freepats.cfg nas definições do \"plug-in\"."
 
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
@@ -1351,11 +1352,11 @@ msgstr "Libertar dispositivo se parado"
 #: ../translation/extra.c:8
 #: ../translation/extra.c:43
 msgid "Preferred buffer size"
-msgstr "Tamanho do \"buffer\""
+msgstr "Tamanho do buffer"
 
 #: ../translation/extra.c:9
 msgid "Preferred period size"
-msgstr "Tamnaho do período"
+msgstr "Tamanho do período"
 
 #. Last.fm plugin
 #: ../translation/extra.c:11
@@ -1376,7 +1377,7 @@ msgstr "Senha"
 
 #: ../translation/extra.c:15
 msgid "Scrobble URL"
-msgstr "Memorizar URL"
+msgstr "Scrobble URL"
 
 #. Album Artwork plugin
 #: ../translation/extra.c:17
@@ -1389,7 +1390,7 @@ msgstr "Obter a partir dos detalhes"
 
 #: ../translation/extra.c:19
 msgid "Fetch from local folder"
-msgstr "Obter  numa pasta local"
+msgstr "Obter numa pasta local"
 
 #: ../translation/extra.c:20
 msgid "Local cover file mask"
@@ -1414,11 +1415,11 @@ msgstr "Preferir CD-Text a CDDB"
 
 #: ../translation/extra.c:26
 msgid "CDDB url (e.g. 'freedb.org')"
-msgstr "URL CDDB (ex: \"freedb.org\")"
+msgstr "URL CDDB (ex: freedb.org)"
 
 #: ../translation/extra.c:27
 msgid "CDDB port number (e.g. '888')"
-msgstr "Porta CDDB (ex: \"888\")"
+msgstr "Porta CDDB (ex: 888)"
 
 #: ../translation/extra.c:28
 msgid "Prefer CDDB protocol over HTTP"
@@ -1453,7 +1454,7 @@ msgstr "Ícone de estado personalizado"
 
 #: ../translation/extra.c:38
 msgid "Run gtk_init with --sync (debug mode)"
-msgstr "Execute gtk_init com --sync (modo \"debug\")"
+msgstr "Execute gtk_init com --sync (modo de depuração)"
 
 #. OSD Notify plugin
 #: ../translation/extra.c:40
@@ -1467,7 +1468,7 @@ msgstr "Servidor PulseAudio"
 
 #: ../translation/extra.c:44
 msgid "Samplerate"
-msgstr "Taxa de amostra"
+msgstr "Frequência"
 
 #. SHN player plugin
 #: ../translation/extra.c:46
@@ -1480,7 +1481,7 @@ msgstr "Caminho da tabela de pesquisa absoluta"
 
 #: ../translation/extra.c:48
 msgid "Swap audio bytes (toggle if all you hear is static)"
-msgstr "Trocar \"bytes\" áudio (troque se apenas ouvir estático)"
+msgstr "Trocar bytes áudio (apenas se ouvir defeitos)"
 
 #. SID decoder plugin
 #: ../translation/extra.c:50
@@ -1498,7 +1499,7 @@ msgstr "Ficheiro de configuração do Timidity++"
 
 #: ../translation/extra.c:56
 msgid "Track Title"
-msgstr "Título da faixa"
+msgstr "Título da música"
 
 #: ../translation/extra.c:57
 msgid "Performer"
@@ -1510,11 +1511,11 @@ msgstr "Data"
 
 #: ../translation/extra.c:61
 msgid "Track Number"
-msgstr "Número da faixa"
+msgstr "Número da música"
 
 #: ../translation/extra.c:62
 msgid "Total Tracks"
-msgstr "Total de faixas"
+msgstr "Total de músicas"
 
 #: ../translation/extra.c:63
 msgid "Genre"
@@ -1534,7 +1535,7 @@ msgstr "Comentário"
 
 #: ../translation/extra.c:67
 msgid "Encoder / Vendor"
-msgstr "Codificador/Fornecedor"
+msgstr "Codificador / Fornecedor"
 
 #: ../translation/extra.c:68
 msgid "Copyright"

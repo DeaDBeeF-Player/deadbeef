@@ -1580,6 +1580,7 @@ streamer_dsp_init (void) {
 
 int
 streamer_init (void) {
+    streaming_terminate = 0;
 #if WRITE_DUMP
     out = fopen ("out.raw", "w+b");
 #endif

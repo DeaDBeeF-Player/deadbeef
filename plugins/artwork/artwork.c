@@ -1,3 +1,6 @@
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -721,6 +724,11 @@ static const char *filter_custom_mask = NULL;
 static int
 filter_custom (const struct dirent *f)
 {
+// FNM_CASEFOLD is not defined on solaris. On other platforms it is.
+// It should be safe to define it as FNM_INGORECASE if it isn't defined.
+#ifndef FNM_CASEFOLD
+#define FNM_CASEFOLD FNM_IGNORECASE
+#endif
     if (!fnmatch (filter_custom_mask, f->d_name, FNM_CASEFOLD)) {
         return 1;
     }
