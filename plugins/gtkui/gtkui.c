@@ -987,6 +987,8 @@ gtkui_thread (void *ctx) {
     w_reg_widget ("hsplitter", w_hsplitter_create);
     w_reg_widget ("placeholder", w_placeholder_create);
     w_reg_widget ("tabs", w_tabs_create);
+    w_reg_widget ("tabstrip", w_tabstrip_create);
+    w_reg_widget ("playlist", w_playlist_create);
 
     mainwin = create_mainwin ();
 
