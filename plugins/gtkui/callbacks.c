@@ -44,6 +44,7 @@
 #include "drawing.h"
 #include "eq.h"
 #include "wingeom.h"
+#include "widgets.h"
 
 //#define trace(...) { fprintf (stderr, __VA_ARGS__); }
 #define trace(fmt,...)

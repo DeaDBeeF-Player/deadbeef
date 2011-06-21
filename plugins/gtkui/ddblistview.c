@@ -394,7 +394,7 @@ ddb_listview_init(DdbListview *listview)
     g_signal_connect ((gpointer) listview->header, "motion_notify_event",
             G_CALLBACK (ddb_listview_header_motion_notify_event),
             NULL);
-    g_signal_connect ((gpointer) listview->header, "button_press_event",
+    g_signal_connect_after ((gpointer) listview->header, "button_press_event",
             G_CALLBACK (ddb_listview_header_button_press_event),
             NULL);
     g_signal_connect ((gpointer) listview->header, "button_release_event",
@@ -2429,7 +2429,7 @@ ddb_listview_header_button_press_event           (GtkWidget       *widget,
     }
     ps->prev_header_x = -1;
     ps->last_header_motion_ev = -1;
-    return FALSE;
+    return TRUE;
 }
 
 gboolean
