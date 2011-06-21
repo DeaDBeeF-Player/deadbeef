@@ -981,14 +981,14 @@ gtkui_thread (void *ctx) {
     gtk_init (&argc, (char ***)&argv);
 
     // register widget types
-    w_reg_widget ("tabbed_playlist", w_tabbed_playlist_create);
-    w_reg_widget ("box", w_box_create);
-    w_reg_widget ("vsplitter", w_vsplitter_create);
-    w_reg_widget ("hsplitter", w_hsplitter_create);
-    w_reg_widget ("placeholder", w_placeholder_create);
-    w_reg_widget ("tabs", w_tabs_create);
-    w_reg_widget ("tabstrip", w_tabstrip_create);
-    w_reg_widget ("playlist", w_playlist_create);
+    w_reg_widget ("tabbed_playlist", _("Playlist with tabs"), w_tabbed_playlist_create);
+    w_reg_widget ("box", NULL, w_box_create);
+    w_reg_widget ("vsplitter", _("Splitter (top and bottom)"), w_vsplitter_create);
+    w_reg_widget ("hsplitter", _("Splitter (left and right)"), w_hsplitter_create);
+    w_reg_widget ("placeholder", NULL, w_placeholder_create);
+    w_reg_widget ("tabs", _("Tabs"), w_tabs_create);
+    w_reg_widget ("tabstrip", _("Playlist tabs"), w_tabstrip_create);
+    w_reg_widget ("playlist", _("Playlist"), w_playlist_create);
 
     mainwin = create_mainwin ();
 
@@ -1344,4 +1344,5 @@ static ddb_gtkui_t plugin = {
     .gui.plugin.message = gtkui_message,
     .gui.run_dialog = gtkui_run_dialog_root,
     .get_mainwin = gtkui_get_mainwin,
+    .api_version = GTKUI_API_VERSION,
 };

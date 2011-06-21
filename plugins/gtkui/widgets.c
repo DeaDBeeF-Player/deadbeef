@@ -24,9 +24,12 @@
 #include "ddbtabstrip.h"
 #include "ddblistview.h"
 #include "mainplaylist.h"
+#include "../../gettext.h"
+#include "parser.h"
 
 typedef struct w_creator_s {
     const char *type;
+    const char *title; // set to NULL to avoid exposing this widget type to user
     ddb_gtkui_widget_t *(*create_func) (void);
     struct w_creator_s *next;
 } w_creator_t;
@@ -151,6 +154,62 @@ w_remove (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
     child->parent = NULL;
 }
 
+const char *
+w_create_from_string (const char *s, ddb_gtkui_widget_t **parent) {
+    char t[MAX_TOKEN];
+    s = gettoken (s, t);
+    printf ("%s\n", t);
+    if (!s) {
+        return NULL;
+    }
+    ddb_gtkui_widget_t *w = w_create (t);
+
+    s = gettoken (s, t);
+    printf ("%s\n", t);
+    if (!s) {
+        w_destroy (w);
+        return NULL;
+    }
+    if (strcmp (t, "{")) {
+        w_destroy (w);
+        return NULL;
+    }
+
+    const char *back = s;
+    s = gettoken (s, t);
+    if (!s) {
+        w_destroy (w);
+        return NULL;
+    }
+    for (;;) {
+        printf ("internal: %s\n", t);
+        if (!strcmp (t, "}")) {
+            break;
+        }
+
+        s = w_create_from_string (back, &w);
+        if (!s) {
+            w_destroy (w);
+            return NULL;
+        }
+
+        back = s;
+        s = gettoken (s, t);
+        if (!s) {
+            w_destroy (w);
+            return NULL;
+        }
+    }
+
+    if (*parent) {
+        w_append (*parent, w);
+    }
+    else {
+        *parent = w;
+    }
+    return s;
+}
+
 static ddb_gtkui_widget_t *current_widget;
 static int hidden = 0;
 
@@ -199,6 +258,90 @@ on_replace_activate (GtkMenuItem *menuitem, gpointer user_data) {
     }
 }
 
+static void
+on_delete_activate (GtkMenuItem *menuitem, gpointer user_data) {
+    ddb_gtkui_widget_t *parent = current_widget->parent;
+    if (!strcmp (current_widget->type, "placeholder")) {
+        return;
+    }
+    if (parent->replace) {
+        parent->replace (parent, current_widget, w_create ("placeholder"));
+    }
+    else {
+        w_remove (parent, current_widget);
+        w_destroy (current_widget);
+        current_widget = w_create ("placeholder");
+        w_append (parent, current_widget);
+    }
+}
+
+static char paste_buffer[1000];
+
+static void
+save_widget_to_string (char *str, ddb_gtkui_widget_t *w) {
+    strcat (str, w->type);
+    strcat (str, "{");
+    for (ddb_gtkui_widget_t *c = w->children; c; c = c->next) {
+        save_widget_to_string (str, c);
+    }
+    strcat (str, "} ");
+}
+
+static void
+on_cut_activate (GtkMenuItem *menuitem, gpointer user_data) {
+    ddb_gtkui_widget_t *parent = current_widget->parent;
+    if (!strcmp (current_widget->type, "placeholder")) {
+        return;
+    }
+    // save hierarchy to string
+    // FIXME: use real clipboard
+    paste_buffer[0] = 0;
+    save_widget_to_string (paste_buffer, current_widget);
+
+    if (parent->replace) {
+        parent->replace (parent, current_widget, w_create ("placeholder"));
+    }
+    else {
+        w_remove (parent, current_widget);
+        w_destroy (current_widget);
+        current_widget = w_create ("placeholder");
+        w_append (parent, current_widget);
+    }
+    printf ("%s\n", paste_buffer);
+}
+
+static void
+on_copy_activate (GtkMenuItem *menuitem, gpointer user_data) {
+    ddb_gtkui_widget_t *parent = current_widget->parent;
+    if (!strcmp (current_widget->type, "placeholder")) {
+        return;
+    }
+    // save hierarchy to string
+    // FIXME: use real clipboard
+    paste_buffer[0] = 0;
+    save_widget_to_string (paste_buffer, current_widget);
+    printf ("%s\n", paste_buffer);
+}
+
+static void
+on_paste_activate (GtkMenuItem *menuitem, gpointer user_data) {
+    ddb_gtkui_widget_t *parent = current_widget->parent;
+    if (!paste_buffer[0]) {
+        return;
+    }
+    ddb_gtkui_widget_t *w = NULL;
+    w_create_from_string (paste_buffer, &w);
+    if (parent->replace) {
+        parent->replace (parent, current_widget, w);
+    }
+    else {
+        w_remove (parent, current_widget);
+        w_destroy (current_widget);
+        current_widget = w;
+        w_append (parent, current_widget);
+    }
+}
+
 void
 hide_widget (GtkWidget *widget, gpointer data) {
     gtk_widget_hide (widget);
@@ -242,34 +385,60 @@ w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_da
     GtkWidget *submenu;
     GtkWidget *item;
     menu = gtk_menu_new ();
-    item = gtk_menu_item_new_with_mnemonic ("Replace with...");
-    gtk_widget_show (item);
-    gtk_container_add (GTK_CONTAINER (menu), item);
+    if (strcmp (current_widget->type, "placeholder")) {
+        item = gtk_menu_item_new_with_mnemonic (_("Replace with..."));
+        gtk_widget_show (item);
+        gtk_container_add (GTK_CONTAINER (menu), item);
+    }
+    else {
+        item = gtk_menu_item_new_with_mnemonic (_("Insert..."));
+        gtk_widget_show (item);
+        gtk_container_add (GTK_CONTAINER (menu), item);
+    }
 
     submenu = gtk_menu_new ();
     gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), submenu);
 
     for (w_creator_t *cr = w_creators; cr; cr = cr->next) {
-        item = gtk_menu_item_new_with_mnemonic (cr->type);
-        gtk_widget_show (item);
-        gtk_container_add (GTK_CONTAINER (submenu), item);
-        g_signal_connect ((gpointer) item, "activate",
-                G_CALLBACK (on_replace_activate),
-                (void *)cr->type);
+        if (cr->title) {
+            item = gtk_menu_item_new_with_mnemonic (cr->title);
+            gtk_widget_show (item);
+            gtk_container_add (GTK_CONTAINER (submenu), item);
+            g_signal_connect ((gpointer) item, "activate",
+                    G_CALLBACK (on_replace_activate),
+                    (void *)cr->type);
+        }
     }
 
-    item = gtk_menu_item_new_with_mnemonic ("Delete");
-    gtk_widget_show (item);
-    gtk_container_add (GTK_CONTAINER (menu), item);
-    item = gtk_menu_item_new_with_mnemonic ("Cut");
-    gtk_widget_show (item);
-    gtk_container_add (GTK_CONTAINER (menu), item);
-    item = gtk_menu_item_new_with_mnemonic ("Copy");
-    gtk_widget_show (item);
-    gtk_container_add (GTK_CONTAINER (menu), item);
+    if (strcmp (current_widget->type, "placeholder")) {
+        item = gtk_menu_item_new_with_mnemonic (_("Delete"));
+        gtk_widget_show (item);
+        gtk_container_add (GTK_CONTAINER (menu), item);
+        g_signal_connect ((gpointer) item, "activate",
+                G_CALLBACK (on_delete_activate),
+                NULL);
+        
+        item = gtk_menu_item_new_with_mnemonic (_("Cut"));
+        gtk_widget_show (item);
+        gtk_container_add (GTK_CONTAINER (menu), item);
+        g_signal_connect ((gpointer) item, "activate",
+                G_CALLBACK (on_cut_activate),
+                NULL);
+
+        item = gtk_menu_item_new_with_mnemonic (_("Copy"));
+        gtk_widget_show (item);
+        gtk_container_add (GTK_CONTAINER (menu), item);
+        g_signal_connect ((gpointer) item, "activate",
+                G_CALLBACK (on_copy_activate),
+                NULL);
+    }
     item = gtk_menu_item_new_with_mnemonic ("Paste");
     gtk_widget_show (item);
     gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "activate",
+            G_CALLBACK (on_paste_activate),
+            NULL);
+
     g_signal_connect ((gpointer) menu, "deactivate", G_CALLBACK (w_menu_deactivate), user_data);
     gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
     return TRUE;
@@ -286,7 +455,7 @@ w_override_signals (GtkWidget *widget, gpointer user_data) {
 }
 
 void
-w_reg_widget (const char *type, ddb_gtkui_widget_t *(*create_func) (void)) {
+w_reg_widget (const char *type, const char *title, ddb_gtkui_widget_t *(*create_func) (void)) {
     w_creator_t *c;
     for (c = w_creators; c; c = c->next) {
         if (!strcmp (c->type, type)) {
@@ -297,6 +466,7 @@ w_reg_widget (const char *type, ddb_gtkui_widget_t *(*create_func) (void)) {
     c = malloc (sizeof (w_creator_t));
     memset (c, 0, sizeof (w_creator_t));
     c->type = type;
+    c->title = title;
     c->create_func = create_func;
     c->next = w_creators;
     w_creators = c;
@@ -535,7 +705,6 @@ w_box_create (void) {
     w_box_t *w = malloc (sizeof (w_box_t));
     memset (w, 0, sizeof (w_box_t));
     w->base.widget = gtk_vbox_new (FALSE, 0);
-    w->base.flags = DDB_W_CONTAINER | DDB_W_CONTAINER_MULTIPLE;
     w->base.append = w_container_add; 
     w->base.remove = w_container_remove;
 

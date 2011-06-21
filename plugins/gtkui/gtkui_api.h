@@ -25,11 +25,7 @@
 #ifndef __GTKUI_API_H
 #define __GTKUI_API_H
 
-enum {
-    DDB_W_0 = 0,
-    DDB_W_CONTAINER = 1,
-    DDB_W_CONTAINER_MULTIPLE = 2,
-};
+#define GTKUI_API_VERSION 1 // for compile-time checking
 
 typedef struct ddb_gtkui_widget_s {
     const char *type;
@@ -54,6 +50,7 @@ typedef struct ddb_gtkui_widget_s {
 
 typedef struct {
     DB_gui_t gui;
+    int api_version;
     GtkWidget * (*get_mainwin) (void);
     void (*reg_widget) (const char *type, ddb_gtkui_widget_t *(*create_func) (void));
     void (*unreg_widget) (const char *type);
