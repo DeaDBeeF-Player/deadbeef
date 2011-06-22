@@ -989,6 +989,7 @@ gtkui_thread (void *ctx) {
     w_reg_widget ("tabs", _("Tabs"), w_tabs_create);
     w_reg_widget ("tabstrip", _("Playlist tabs"), w_tabstrip_create);
     w_reg_widget ("playlist", _("Playlist"), w_playlist_create);
+    w_reg_widget ("selproperties", _("Selection properties"), w_selproperties_create);
 
     mainwin = create_mainwin ();
 
@@ -1086,9 +1087,6 @@ gtkui_thread (void *ctx) {
     gtk_main ();
 
     w_free ();
-//    w_unreg_widget ("tabbed_playlist");
-//    w_unreg_widget ("box");
-//    w_unreg_widget ("vsplitter");
 
     if (refresh_timeout) {
         g_source_remove (refresh_timeout);

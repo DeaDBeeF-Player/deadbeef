@@ -19,6 +19,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #include "gtkui.h"
 #include "widgets.h"
 #include "ddbtabstrip.h"
@@ -26,6 +27,7 @@
 #include "mainplaylist.h"
 #include "../../gettext.h"
 #include "parser.h"
+#include "trkproperties.h"
 
 typedef struct w_creator_s {
     const char *type;
@@ -65,6 +67,11 @@ typedef struct {
 typedef struct {
     ddb_gtkui_widget_t base;
 } w_tabs_t;
+
+typedef struct {
+    ddb_gtkui_widget_t base;
+    GtkWidget *tree;
+} w_selproperties_t;
 
 static int design_mode;
 static ddb_gtkui_widget_t *rootwidget;
@@ -972,4 +979,93 @@ w_playlist_create (void) {
 
     w->base.message = w_tabbed_playlist_message;
     return (ddb_gtkui_widget_t*)w;
+}
+
+////// selection properties widget
+
+gboolean
+fill_selproperties_cb (gpointer data) {
+    w_selproperties_t *w = data;
+    DB_playItem_t **tracks = NULL;
+    int numtracks = 0;
+    deadbeef->pl_lock ();
+    int nsel = deadbeef->pl_getselcount ();
+    if (0 < nsel) {
+        tracks = malloc (sizeof (DB_playItem_t *) * nsel);
+        if (tracks) {
+            int n = 0;
+            DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+            while (it) {
+                if (deadbeef->pl_is_selected (it)) {
+                    assert (n < nsel);
+                    deadbeef->pl_item_ref (it);
+                    tracks[n++] = it;
+                }
+                DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+                deadbeef->pl_item_unref (it);
+                it = next;
+            }
+            numtracks = nsel;
+        }
+        else {
+            deadbeef->pl_unlock ();
+            return FALSE;
+        }
+    }
+    GtkListStore *store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (w->tree)));
+    trkproperties_fill_meta (store, tracks, numtracks);
+    if (tracks) {
+        for (int i = 0; i < numtracks; i++) {
+            deadbeef->pl_item_unref (tracks[i]);
+        }
+        free (tracks);
+        tracks = NULL;
+        numtracks = 0;
+    }
+    deadbeef->pl_unlock ();
+    return FALSE;
+}
+
+static int
+selproperties_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    w_tabbed_playlist_t *tp = (w_tabbed_playlist_t *)w;
+    switch (id) {
+    case DB_EV_PLAYLISTCHANGED:
+    case DB_EV_SELCHANGED:
+        {
+            g_idle_add (fill_selproperties_cb, w);
+        }
+        break;
+    }
+    return 0;
+}
+
+ddb_gtkui_widget_t *
+w_selproperties_create (void) {
+    w_selproperties_t *w = malloc (sizeof (w_selproperties_t));
+    memset (w, 0, sizeof (w_selproperties_t));
+
+    w->base.widget = gtk_scrolled_window_new (NULL, NULL);
+    w->tree = gtk_tree_view_new ();
+    gtk_widget_show (w->tree);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), w->tree);
+    w->base.message = selproperties_message;
+
+    GtkListStore *store = gtk_list_store_new (4, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT);
+    gtk_tree_view_set_model (GTK_TREE_VIEW (w->tree), GTK_TREE_MODEL (store));
+    gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (w->tree), TRUE);
+
+    GtkCellRenderer *rend1 = gtk_cell_renderer_text_new ();
+    GtkCellRenderer *rend2 = gtk_cell_renderer_text_new ();
+    GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes (_("Key"), rend1, "text", 0, NULL);
+    gtk_tree_view_column_set_resizable (col1, TRUE);
+    GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes (_("Value"), rend2, "text", 1, NULL);
+    gtk_tree_view_column_set_resizable (col2, TRUE);
+    gtk_tree_view_append_column (GTK_TREE_VIEW (w->tree), col1);
+    gtk_tree_view_append_column (GTK_TREE_VIEW (w->tree), col2);
+    GtkCellRenderer *rend_propkey = gtk_cell_renderer_text_new ();
+    GtkCellRenderer *rend_propvalue = gtk_cell_renderer_text_new ();
+    gtk_tree_view_set_headers_clickable (GTK_TREE_VIEW (w->tree), TRUE);
+
+    return (ddb_gtkui_widget_t *)w;
 }

@@ -1427,6 +1427,7 @@ ddb_listview_click_selection (DdbListview *ps, int ex, int ey, DdbListviewGroup 
         UNREF (it);
     }
     deadbeef->pl_unlock ();
+    deadbeef->sendmessage (DB_EV_SELCHANGED, 0, deadbeef->plt_get_curr_idx (), PL_MAIN);
 }
 
 // {{{ expected behaviour for mouse1 without modifiers:

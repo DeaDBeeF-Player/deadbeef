@@ -157,6 +157,7 @@ void main_selection_changed (DdbListviewIter it, int idx) {
     else {
         ddb_listview_draw_row (search, search_get_idx ((DB_playItem_t *)it), it);
     }
+    deadbeef->sendmessage (DB_EV_SELCHANGED, 0, deadbeef->plt_get_curr_idx (), PL_MAIN);
 }
 
 void main_draw_group_title (DdbListview *listview, GdkDrawable *drawable, DdbListviewIter it, int x, int y, int width, int height) {

@@ -267,6 +267,9 @@ enum {
     DB_EV_PLAYLISTSWITCHED = 18, // playlist switch occured
     DB_EV_SEEK = 19, // seek current track to position p1 (ms)
 
+    // new in 1.2
+    DB_EV_SELCHANGED = 20, // selection changed in playlist p1 iter p2
+
     DB_EV_FIRST = 1000,
     DB_EV_SONGCHANGED = 1000, // current song changed from one to another, ctx=ddb_event_trackchange_t
     DB_EV_SONGSTARTED = 1001, // song started playing, ctx=ddb_event_track_t

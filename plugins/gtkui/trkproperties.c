@@ -52,8 +52,8 @@ static int numtracks;
 static GtkWidget *progressdlg;
 static int progress_aborted;
 
-static int
-build_key_list (const char ***pkeys, int props) {
+int
+build_key_list (const char ***pkeys, int props, DB_playItem_t **tracks, int numtracks) {
     int sz = 20;
     const char **keys = malloc (sizeof (const char *) * sz);
     if (!keys) {
@@ -100,7 +100,7 @@ equals_ptr (const char *a, const char *b) {
 }
 
 static int
-get_field_value (char *out, int size, const char *key, const char *(*getter)(DB_playItem_t *it, const char *key), int (*equals)(const char *a, const char *b)) {
+get_field_value (char *out, int size, const char *key, const char *(*getter)(DB_playItem_t *it, const char *key), int (*equals)(const char *a, const char *b), DB_playItem_t **tracks, int numtracks) {
     int multiple = 0;
     *out = 0;
     if (numtracks == 0) {
@@ -249,13 +249,13 @@ static const char *hc_props[] = {
 };
 
 void
-add_field (GtkListStore *store, const char *key, const char *title, int is_prop) {
+add_field (GtkListStore *store, const char *key, const char *title, int is_prop, DB_playItem_t **tracks, int numtracks) {
     // get value to edit
     const char *mult = is_prop ? "" : _("[Multiple values] ");
     char val[1000];
     size_t ml = strlen (mult);
     memcpy (val, mult, ml+1);
-    int n = get_field_value (val + ml, sizeof (val) - ml, key, deadbeef->pl_find_meta, equals_ptr);
+    int n = get_field_value (val + ml, sizeof (val) - ml, key, deadbeef->pl_find_meta, equals_ptr, tracks, numtracks);
 
     GtkTreeIter iter;
     gtk_list_store_append (store, &iter);
@@ -279,23 +279,17 @@ add_field (GtkListStore *store, const char *key, const char *title, int is_prop)
 }
 
 void
-trkproperties_fill_metadata (void) {
-    if (!trackproperties) {
-        return;
-    }
-    trkproperties_modified = 0;
+trkproperties_fill_meta (GtkListStore *store, DB_playItem_t **tracks, int numtracks) {
     gtk_list_store_clear (store);
-    gtk_list_store_clear (propstore);
-    deadbeef->pl_lock ();
 
     const char **keys = NULL;
-    int nkeys = build_key_list (&keys, 0);
+    int nkeys = build_key_list (&keys, 0, tracks, numtracks);
 
     int k;
 
     // add "standard" fields
     for (int i = 0; types[i]; i += 2) {
-        add_field (store, types[i], _(types[i+1]), 0);
+        add_field (store, types[i], _(types[i+1]), 0, tracks, numtracks);
     }
 
     // add all other fields
@@ -314,19 +308,31 @@ trkproperties_fill_metadata (void) {
         if (!types[i]) {
             snprintf (title, sizeof (title), "<%s>", keys[k]);
         }
-        add_field (store, keys[k], title, 0);
+        add_field (store, keys[k], title, 0, tracks, numtracks);
     }
     if (keys) {
         free (keys);
     }
+}
+
+void
+trkproperties_fill_metadata (void) {
+    if (!trackproperties) {
+        return;
+    }
+    trkproperties_modified = 0;
+    deadbeef->pl_lock ();
+
+    trkproperties_fill_meta (store, tracks, numtracks);
+    gtk_list_store_clear (propstore);
 
     // hardcoded properties
     for (int i = 0; hc_props[i]; i += 2) {
-        add_field (propstore, hc_props[i], _(hc_props[i+1]), 1);
+        add_field (propstore, hc_props[i], _(hc_props[i+1]), 1, tracks, numtracks);
     }
     // properties
-    keys = NULL;
-    nkeys = build_key_list (&keys, 1);
+    const char **keys = NULL;
+    int nkeys = build_key_list (&keys, 1, tracks, numtracks);
     for (int k = 0; k < nkeys; k++) {
         int i;
         for (i = 0; hc_props[i]; i += 2) {
@@ -339,7 +345,7 @@ trkproperties_fill_metadata (void) {
         }
         char title[1000];
         snprintf (title, sizeof (title), "<%s>", keys[k]+1);
-        add_field (propstore, keys[k], title, 1);
+        add_field (propstore, keys[k], title, 1, tracks, numtracks);
     }
     if (keys) {
         free (keys);

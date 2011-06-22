@@ -42,6 +42,9 @@ w_unreg_widget (const char *type);
 ddb_gtkui_widget_t *
 w_create (const char *type);
 
+const char *
+w_create_from_string (const char *s, ddb_gtkui_widget_t **parent);
+
 void
 w_destroy (ddb_gtkui_widget_t *w);
 
@@ -75,7 +78,7 @@ w_placeholder_create (void);
 ddb_gtkui_widget_t *
 w_tabs_create (void);
 
-const char *
-w_create_from_string (const char *s, ddb_gtkui_widget_t **parent);
+ddb_gtkui_widget_t *
+w_selproperties_create (void);
 
 #endif

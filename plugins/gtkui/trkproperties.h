@@ -19,6 +19,8 @@
 #ifndef __TRKPROPERTIES_H
 #define __TRKPROPERTIES_H
 
+#include "../../deadbeef.h"
+
 struct DB_playItem_s;
 
 void
@@ -29,5 +31,11 @@ trkproperties_destroy (void);
 
 void
 trkproperties_fill_metadata (void);
+
+int
+build_key_list (const char ***pkeys, int props, DB_playItem_t **tracks, int numtracks);
+
+void
+trkproperties_fill_meta (GtkListStore *store, DB_playItem_t **tracks, int numtracks);
 
 #endif
