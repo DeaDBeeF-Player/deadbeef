@@ -45,6 +45,8 @@ typedef struct {
 typedef struct load_query_s {
     char *fname;
     int width;
+    void (*callback) (void *user_data);
+    void *user_data;
     struct load_query_s *next;
 } load_query_t;
 
@@ -57,7 +59,7 @@ load_query_t *queue;
 load_query_t *tail;
 
 static void
-queue_add (const char *fname, int width) {
+queue_add (const char *fname, int width, void (*callback) (void *user_data), void *user_data) {
     deadbeef->mutex_lock (mutex);
     load_query_t *q;
     for (q = queue; q; q = q->next) {
@@ -70,6 +72,8 @@ queue_add (const char *fname, int width) {
     memset (q, 0, sizeof (load_query_t));
     q->fname = strdup (fname);
     q->width = width;
+    q->callback = callback;
+    q->user_data = user_data;
     if (tail) {
         tail->next = q;
         tail = q;
@@ -108,7 +112,7 @@ loading_thread (void *none) {
     for (;;) {
         trace ("covercache: waiting for signal\n");
         deadbeef->cond_wait (cond, mutex);
-        trace ("covercache: signal received\n");
+        trace ("covercache: signal received (terminate=%d, queue=%p)\n", terminate, queue);
         deadbeef->mutex_unlock (mutex);
         while (!terminate && queue) {
             int cache_min = 0;
@@ -144,6 +148,7 @@ loading_thread (void *none) {
             if (stat (queue->fname, &stat_buf) < 0) {
                 trace ("failed to stat file %s\n", queue->fname);
             }
+            trace ("covercache: caching pixbuf for %s\n", queue->fname);
             GdkPixbuf *pixbuf = NULL;
             GError *error = NULL;
             pixbuf = gdk_pixbuf_new_from_file_at_scale (queue->fname, queue->width, queue->width, TRUE, &error);
@@ -182,8 +187,12 @@ loading_thread (void *none) {
                 struct stat stat_buf;
                 deadbeef->mutex_unlock (mutex);
             }
+
+            if (queue->callback) {
+                queue->callback (queue->user_data);
+            }
             queue_pop ();
-            g_idle_add (redraw_playlist_cb, NULL);
+            //g_idle_add (redraw_playlist_cb, NULL);
         }
         if (terminate) {
             break;
@@ -191,20 +200,20 @@ loading_thread (void *none) {
     }
 }
 
-void
+static void
 cover_avail_callback (const char *fname, const char *artist, const char *album, void *user_data) {
     // means requested image is now in disk cache
     // load it into main memory
     GdkPixbuf *pb = get_cover_art (fname, artist, album, (intptr_t)user_data);
     if (pb) {
         g_object_unref (pb);
-        // already in cache, redraw
-        g_idle_add (redraw_playlist_cb, NULL);
+//        // already in cache, redraw
+//        g_idle_add (redraw_playlist_cb, NULL);
     }
 }
 
 static GdkPixbuf *
-get_pixbuf (const char *fname, int width) {
+get_pixbuf (const char *fname, int width, void (*callback)(void *user_data), void *user_data) {
     int requested_width = width;
     // find in cache
     deadbeef->mutex_lock (mutex);
@@ -232,8 +241,13 @@ get_pixbuf (const char *fname, int width) {
     }
 #endif
     deadbeef->mutex_unlock (mutex);
-    queue_add (fname, width);
+    queue_add (fname, width, callback, user_data);
     return NULL;
+}
+
+static void
+redraw_playlist (void *user_data) {
+    g_idle_add (redraw_playlist_cb, NULL);
 }
 
 GdkPixbuf *
@@ -243,7 +257,22 @@ get_cover_art (const char *fname, const char *artist, const char *album, int wid
     }
     char *image_fname = coverart_plugin->get_album_art (fname, artist, album, -1, cover_avail_callback, (void *)(intptr_t)width);
     if (image_fname) {
-        GdkPixbuf *pb = get_pixbuf (image_fname, width);
+        GdkPixbuf *pb = get_pixbuf (image_fname, width, redraw_playlist, NULL);
+        free (image_fname);
+        return pb;
+    }
+    return NULL;
+}
+
+GdkPixbuf *
+get_cover_art_callb (const char *fname, const char *artist, const char *album, int width, void
+(*callback) (void *user_data), void *user_data) {
+    if (!coverart_plugin) {
+        return NULL;
+    }
+    char *image_fname = coverart_plugin->get_album_art (fname, artist, album, -1, cover_avail_callback, (void *)(intptr_t)width);
+    if (image_fname) {
+        GdkPixbuf *pb = get_pixbuf (image_fname, width, callback, user_data);
         free (image_fname);
         return pb;
     }

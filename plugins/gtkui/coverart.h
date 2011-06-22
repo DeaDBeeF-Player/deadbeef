@@ -32,6 +32,10 @@
 GdkPixbuf *
 get_cover_art (const char *fname, const char *artist, const char *album, int width);
 
+GdkPixbuf *
+get_cover_art_callb (const char *fname, const char *artist, const char *album, int width, void
+(*cover_avail_callback) (void *user_data), void *user_data);
+
 void
 coverart_reset_queue (void);
 

@@ -28,6 +28,10 @@
 #include "../../gettext.h"
 #include "parser.h"
 #include "trkproperties.h"
+#include "coverart.h"
+
+#define min(x,y) ((x)<(y)?(x):(y))
+#define max(x,y) ((x)>(y)?(x):(y))
 
 typedef struct w_creator_s {
     const char *type;
@@ -72,6 +76,11 @@ typedef struct {
     ddb_gtkui_widget_t base;
     GtkWidget *tree;
 } w_selproperties_t;
+
+typedef struct {
+    ddb_gtkui_widget_t base;
+    GtkWidget *drawarea;
+} w_coverart_t;
 
 static int design_mode;
 static ddb_gtkui_widget_t *rootwidget;
@@ -358,11 +367,17 @@ on_paste_activate (GtkMenuItem *menuitem, gpointer user_data) {
 
 void
 hide_widget (GtkWidget *widget, gpointer data) {
+    if (GTK_IS_CONTAINER (widget)) {
+        gtk_container_foreach (GTK_CONTAINER (widget), hide_widget, NULL);
+    }
     gtk_widget_hide (widget);
 }
 
 void
 show_widget (GtkWidget *widget, gpointer data) {
+    if (GTK_IS_CONTAINER (widget)) {
+        gtk_container_foreach (GTK_CONTAINER (widget), show_widget, NULL);
+    }
     gtk_widget_show (widget);
 }
 
@@ -1066,6 +1081,86 @@ w_selproperties_create (void) {
     GtkCellRenderer *rend_propkey = gtk_cell_renderer_text_new ();
     GtkCellRenderer *rend_propvalue = gtk_cell_renderer_text_new ();
     gtk_tree_view_set_headers_clickable (GTK_TREE_VIEW (w->tree), TRUE);
+    w_override_signals (w->base.widget, w);
 
     return (ddb_gtkui_widget_t *)w;
 }
+
+///// cover art display
+static void
+cover_avail_callback (void *user_data) {
+    printf ("cover avail\n");
+    w_coverart_t *w = user_data;
+    gtk_widget_queue_draw (w->drawarea);
+}
+
+static gboolean
+coverart_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
+    printf ("coverart_expose_event\n");
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+    if (!it) {
+        return FALSE;
+    }
+    int width = widget->allocation.width;
+    int height = widget->allocation.height;
+    const char *album = deadbeef->pl_find_meta (it, "album");
+    const char *artist = deadbeef->pl_find_meta (it, "artist");
+    if (!album || !*album) {
+        album = deadbeef->pl_find_meta (it, "title");
+    }
+    GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta ((it), ":URI"), artist, album, min(width,height), cover_avail_callback, user_data);
+    if (pixbuf) {
+        printf ("found\n");
+        int pw = gdk_pixbuf_get_width (pixbuf);
+        int ph = gdk_pixbuf_get_height (pixbuf);
+        gdk_draw_pixbuf (widget->window, widget->style->white_gc, pixbuf, 0, 0, widget->allocation.width/2-pw/2, widget->allocation.height/2-ph/2, pw, ph, GDK_RGB_DITHER_NONE, 0, 0);
+        g_object_unref (pixbuf);
+    }
+    else {
+        printf ("not found\n");
+    }
+    deadbeef->pl_item_unref (it);
+    return TRUE;
+}
+
+static gboolean
+coverart_redraw_cb (void *user_data) {
+    w_coverart_t *w = user_data;
+    gtk_widget_queue_draw (w->drawarea);
+    return FALSE;
+}
+
+static int
+coverart_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    w_coverart_t *ca = (w_coverart_t *)w;
+    switch (id) {
+    case DB_EV_TRACKINFOCHANGED:
+        {
+            ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
+            DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+            if (it == ev->track) {
+                g_idle_add (coverart_redraw_cb, w);
+                deadbeef->pl_item_unref (it);
+            }
+        }
+        break;
+    }
+    return 0;
+}
+
+ddb_gtkui_widget_t *
+w_coverart_create (void) {
+    w_coverart_t *w = malloc (sizeof (w_coverart_t));
+    memset (w, 0, sizeof (w_coverart_t));
+
+    w->base.widget = gtk_event_box_new ();
+    w->base.message = coverart_message;
+    w->drawarea = gtk_drawing_area_new ();
+    gtk_widget_show (w->drawarea);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), w->drawarea);
+    g_signal_connect_after ((gpointer) w->drawarea, "expose_event", G_CALLBACK (coverart_expose_event), w);
+    w_override_signals (w->base.widget, w);
+    return (ddb_gtkui_widget_t *)w;
+}
+
+

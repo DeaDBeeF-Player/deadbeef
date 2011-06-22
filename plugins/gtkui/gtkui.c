@@ -990,6 +990,7 @@ gtkui_thread (void *ctx) {
     w_reg_widget ("tabstrip", _("Playlist tabs"), w_tabstrip_create);
     w_reg_widget ("playlist", _("Playlist"), w_playlist_create);
     w_reg_widget ("selproperties", _("Selection properties"), w_selproperties_create);
+    w_reg_widget ("coverart", _("Album art display"), w_coverart_create);
 
     mainwin = create_mainwin ();
 
