@@ -281,8 +281,7 @@ on_clear1_activate                     (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     deadbeef->pl_clear ();
-    main_refresh ();
-    search_refresh ();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
 void
@@ -290,8 +289,7 @@ on_remove1_activate                    (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     int cursor = deadbeef->pl_delete_selected ();
-    main_refresh ();
-    search_refresh ();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
 
@@ -299,20 +297,16 @@ void
 on_crop1_activate                      (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
     deadbeef->pl_crop_selected ();
-    main_refresh ();
-    search_refresh ();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
 void
 on_remove2_activate                    (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    GtkWidget *widget = GTK_WIDGET (menuitem);
     int cursor = deadbeef->pl_delete_selected ();
-    main_refresh ();
-    search_refresh ();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
 void
@@ -348,8 +342,7 @@ on_remove_from_disk_activate                    (GtkMenuItem     *menuitem,
     int cursor = deadbeef->pl_delete_selected ();
     deadbeef->pl_unlock ();
 
-    main_refresh ();
-    search_refresh ();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
 void
@@ -702,6 +695,16 @@ static DdbListview *last_playlist;
 static int active_column;
 
 void
+set_last_playlist_cm (DdbListview *pl) {
+    last_playlist = pl;
+}
+
+void
+set_active_column_cm (int col) {
+    active_column = col;
+}
+
+void
 append_column_from_textdef (DdbListview *listview, const uint8_t *def) {
     // syntax: "title" "format" id width alignright
     char token[MAX_TOKEN];
@@ -1031,14 +1034,6 @@ create_headermenu (int groupby)
                     NULL);
 
   return headermenu;
-}
-
-void
-header_context_menu (DdbListview *ps, int column) {
-    GtkWidget *menu = create_headermenu (GTK_WIDGET (ps) == lookup_widget (mainwin, "playlist") ? 1 : 0);
-    last_playlist = ps;
-    active_column = column;
-    gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, ps, 3, gtk_get_current_event_time());
 }
 
 void

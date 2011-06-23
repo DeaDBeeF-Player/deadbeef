@@ -319,13 +319,7 @@ void search_handle_doubleclick (DdbListview *listview, DdbListviewIter iter, int
 }
 
 void search_selection_changed (DdbListviewIter it, int idx) {
-    DdbListview *main = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-    if (idx == -1) {
-        ddb_listview_refresh (main, DDB_REFRESH_LIST);
-    }
-    else {
-        ddb_listview_draw_row (main, main_get_idx ((DB_playItem_t *)it), it);
-    }
+    deadbeef->sendmessage (DB_EV_SELCHANGED, 0, 0, 0);
 }
 
 void
@@ -333,6 +327,14 @@ search_delete_selected (void) {
     deadbeef->pl_delete_selected ();
     main_refresh ();
     search_refresh ();
+}
+
+void
+search_header_context_menu (DdbListview *ps, int column) {
+    GtkWidget *menu = create_headermenu (0);
+    set_last_playlist_cm (ps); // playlist ptr for context menu
+    set_active_column_cm (column);
+    gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, ps, 3, gtk_get_current_event_time());
 }
 
 DdbListviewBinding search_binding = {
@@ -371,7 +373,7 @@ DdbListviewBinding search_binding = {
     // callbacks
     .handle_doubleclick = search_handle_doubleclick,
     .selection_changed = search_selection_changed,
-    .header_context_menu = header_context_menu,
+    .header_context_menu = search_header_context_menu,
     .list_context_menu = list_context_menu,
     .delete_selected = search_delete_selected,
     .modification_idx = gtkui_get_curr_playlist_mod,

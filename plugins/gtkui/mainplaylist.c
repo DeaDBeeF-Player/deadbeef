@@ -253,6 +253,14 @@ main_vscroll_changed (int pos) {
     deadbeef->conf_set_int (conf, pos);
 }
 
+void
+main_header_context_menu (DdbListview *ps, int column) {
+    GtkWidget *menu = create_headermenu (1);
+    set_last_playlist_cm (ps); // playlist ptr for context menu
+    set_active_column_cm (column);
+    gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, ps, 3, gtk_get_current_event_time());
+}
+
 DdbListviewBinding main_binding = {
     // rows
     .count = main_get_count,
@@ -289,7 +297,7 @@ DdbListviewBinding main_binding = {
     // callbacks
     .handle_doubleclick = main_handle_doubleclick,
     .selection_changed = main_selection_changed,
-    .header_context_menu = header_context_menu,
+    .header_context_menu = main_header_context_menu,
     .list_context_menu = list_context_menu,
     .delete_selected = main_delete_selected,
     .vscroll_changed = main_vscroll_changed,
