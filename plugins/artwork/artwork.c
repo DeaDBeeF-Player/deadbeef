@@ -192,8 +192,7 @@ check_dir (const char *dir, mode_t mode)
         }
         if (slash)
             *slash = '/';
-    }
-    while (slash);
+    } while (slash);
     free (tmp);
     return 1;
 }

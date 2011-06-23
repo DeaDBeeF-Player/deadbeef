@@ -386,7 +386,7 @@ streamer_move_to_nextsong (int reason) {
     }
 
     if (pl_order == PLAYBACK_ORDER_SHUFFLE_TRACKS || pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS) { // shuffle
-        if (!curr) {
+        if (!curr || pl_order == PLAYBACK_ORDER_SHUFFLE_TRACKS) {
             // find minimal notplayed
             playItem_t *pmin = NULL; // notplayed minimum
             for (playItem_t *i = plt->head[PL_MAIN]; i; i = i->next[PL_MAIN]) {
@@ -405,7 +405,12 @@ streamer_move_to_nextsong (int reason) {
                 }
             }
             if (!it) {
+                streamer_buffering = 0;
+                send_trackinfochanged (streaming_track);
+                playItem_t *temp;
+                plt_reshuffle (streamer_playlist, &temp, NULL);
                 pl_unlock ();
+                streamer_set_nextsong (-2, -2);
                 return -1;
             }
             int r = str_get_idx_of (it);
@@ -2016,9 +2021,8 @@ streamer_play_current_track (void) {
         return;
     }
     else {
-        // restart currently playing track
         output->stop ();
-        streamer_set_nextsong (0, 1);
+        streamer_move_to_nextsong (1);
     }
     if (plt) {
         plt_unref (plt);

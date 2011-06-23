@@ -693,6 +693,34 @@ get_output_path (DB_playItem_t *it, const char *outfolder, const char *outfile, 
     trace ("converter output file is '%s'\n", out);
 }
 
+static int
+check_dir (const char *dir, mode_t mode)
+{
+    char *tmp = strdup (dir);
+    char *slash = tmp;
+    struct stat stat_buf;
+    do
+    {
+        slash = strstr (slash+1, "/");
+        if (slash)
+            *slash = 0;
+        if (-1 == stat (tmp, &stat_buf))
+        {
+            trace ("creating dir %s\n", tmp);
+            if (0 != mkdir (tmp, mode))
+            {
+                trace ("Failed to create %s (%d)\n", tmp, errno);
+                free (tmp);
+                return 0;
+            }
+        }
+        if (slash)
+            *slash = '/';
+    } while (slash);
+    free (tmp);
+    return 1;
+}
+
 int
 convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int output_bps, int output_is_float, int preserve_folder_structure, const char *root_folder, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort) {
     if (deadbeef->pl_get_item_duration (it) <= 0) {
@@ -700,6 +728,11 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
         const char *fname = deadbeef->pl_find_meta (it, ":URI");
         fprintf (stderr, "converter: stream %s doesn't have finite length, skipped\n", fname);
         deadbeef->pl_unlock ();
+        return -1;
+    }
+
+    if (!check_dir (outfolder, 0755)) {
+        fprintf (stderr, "converter: failed to create output folder: %s\n", outfolder);
         return -1;
     }
 
