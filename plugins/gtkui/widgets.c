@@ -774,7 +774,9 @@ trackinfochanged_cb (gpointer p) {
         }
         deadbeef->plt_unref (plt);
     }
-    deadbeef->pl_item_unref (d->trk);
+    if (d->trk) {
+        deadbeef->pl_item_unref (d->trk);
+    }
     free (d);
     return FALSE;
 }
