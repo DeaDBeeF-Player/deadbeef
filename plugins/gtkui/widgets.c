@@ -1123,6 +1123,8 @@ coverart_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1
             DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
             if (it == ev->track) {
                 g_idle_add (coverart_redraw_cb, w);
+            }
+            if (it) {
                 deadbeef->pl_item_unref (it);
             }
         }
