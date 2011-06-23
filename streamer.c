@@ -2021,9 +2021,8 @@ streamer_play_current_track (void) {
         return;
     }
     else {
-        // restart currently playing track
         output->stop ();
-        streamer_set_nextsong (0, 1);
+        streamer_move_to_nextsong (1);
     }
     if (plt) {
         plt_unref (plt);
