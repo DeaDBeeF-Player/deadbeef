@@ -281,6 +281,9 @@ add_field (GtkListStore *store, const char *key, const char *title, int is_prop,
 void
 trkproperties_fill_meta (GtkListStore *store, DB_playItem_t **tracks, int numtracks) {
     gtk_list_store_clear (store);
+    if (!tracks) {
+        return;
+    }
 
     const char **keys = NULL;
     int nkeys = build_key_list (&keys, 0, tracks, numtracks);
