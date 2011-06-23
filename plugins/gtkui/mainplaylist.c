@@ -127,10 +127,11 @@ void main_external_drag_n_drop (DdbListviewIter before, char *mem, int length) {
 gboolean
 playlist_tooltip_handler (GtkWidget *widget, gint x, gint y, gboolean keyboard_mode, GtkTooltip *tooltip, gpointer unused)
 {
-    GtkWidget *pl = lookup_widget (mainwin, "playlist");
-    DB_playItem_t *it = (DB_playItem_t *)ddb_listview_get_iter_from_coord (DDB_LISTVIEW (pl), 0, y);
+    DdbListview *pl = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
+    DB_playItem_t *it = (DB_playItem_t *)ddb_listview_get_iter_from_coord (pl, 0, y);
     if (it) {
         gtk_tooltip_set_text (tooltip, deadbeef->pl_find_meta (it, ":URI"));
+        deadbeef->pl_item_unref (it);
         return TRUE;
     }
     return FALSE;
@@ -330,8 +331,9 @@ main_playlist_init (GtkWidget *widget) {
         GValue value = {0, };
         g_value_init (&value, G_TYPE_BOOLEAN);
         g_value_set_boolean (&value, TRUE);
-        g_object_set_property (G_OBJECT (widget), "has-tooltip", &value);
-        g_signal_connect (G_OBJECT (widget), "query-tooltip", G_CALLBACK (playlist_tooltip_handler), NULL);
+        DdbListview *pl = DDB_LISTVIEW (widget);
+        g_object_set_property (G_OBJECT (pl->list), "has-tooltip", &value);
+        g_signal_connect (G_OBJECT (pl->list), "query-tooltip", G_CALLBACK (playlist_tooltip_handler), NULL);
     }
     deadbeef->conf_lock ();
     strncpy (group_by_str, deadbeef->conf_get_str_fast ("playlist.group_by", ""), sizeof (group_by_str));
