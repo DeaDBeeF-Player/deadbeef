@@ -178,7 +178,6 @@ const char *
 w_create_from_string (const char *s, ddb_gtkui_widget_t **parent) {
     char t[MAX_TOKEN];
     s = gettoken (s, t);
-    printf ("%s\n", t);
     if (!s) {
         return NULL;
     }
@@ -189,7 +188,6 @@ w_create_from_string (const char *s, ddb_gtkui_widget_t **parent) {
     }
 
     s = gettoken (s, t);
-    printf ("%s\n", t);
     if (!s) {
         w_destroy (w);
         return NULL;
@@ -206,7 +204,6 @@ w_create_from_string (const char *s, ddb_gtkui_widget_t **parent) {
         return NULL;
     }
     for (;;) {
-        printf ("internal: %s\n", t);
         if (!strcmp (t, "}")) {
             break;
         }
@@ -328,7 +325,6 @@ on_cut_activate (GtkMenuItem *menuitem, gpointer user_data) {
         current_widget = w_create ("placeholder");
         w_append (parent, current_widget);
     }
-    printf ("%s\n", paste_buffer);
     w_save ();
 }
 
@@ -342,7 +338,6 @@ on_copy_activate (GtkMenuItem *menuitem, gpointer user_data) {
     // FIXME: use real clipboard
     paste_buffer[0] = 0;
     save_widget_to_string (paste_buffer, current_widget);
-    printf ("%s\n", paste_buffer);
 }
 
 static void
@@ -396,7 +391,6 @@ w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_da
     if (!design_mode || event->button != 3) {
         return FALSE;
     }
-    printf ("button_press on %s (%p)\n", G_OBJECT_TYPE_NAME (widget), widget);
 
     current_widget = user_data;
     hidden = 1;
@@ -469,7 +463,6 @@ w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_da
 
 static void
 w_override_signals (GtkWidget *widget, gpointer user_data) {
-    printf ("w_override_signals on %s (%p)\n", G_OBJECT_TYPE_NAME (widget), widget);
     g_signal_connect ((gpointer) widget, "button_press_event", G_CALLBACK (w_button_press_event), user_data);
     g_signal_connect ((gpointer) widget, "expose_event", G_CALLBACK (w_expose_event), user_data);
     if (GTK_IS_CONTAINER (widget)) {
@@ -541,7 +534,6 @@ w_destroy (ddb_gtkui_widget_t *w) {
 ///// gtk_container convenience functions
 void
 w_container_add (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
-    printf ("append %s to %s\n", child->type, cont->type);
     GtkWidget *container = NULL;
     container = cont->widget;
     gtk_container_add (GTK_CONTAINER (container), child->widget);
@@ -550,7 +542,6 @@ w_container_add (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
 
 void
 w_container_remove (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
-    printf ("remove %s from %s\n", child->type, cont->type);
     GtkWidget *container = NULL;
     container = cont->widget;
     gtk_container_remove (GTK_CONTAINER (container), child->widget);
@@ -607,12 +598,10 @@ w_placeholder_create (void) {
 ////// vsplitter widget
 void
 w_splitter_replace (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child, ddb_gtkui_widget_t *newchild) {
-    printf ("w_splitter_replace %p\n", child);
     int ntab = 0;
     ddb_gtkui_widget_t *prev = NULL;
     for (ddb_gtkui_widget_t *c = cont->children; c; c = c->next, ntab++) {
         if (c == child) {
-            printf ("removing child %d\n", ntab);
             newchild->next = c->next;
             if (prev) {
                 prev->next = newchild;
@@ -693,12 +682,10 @@ w_tabs_add (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
 
 void
 w_tabs_replace (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child, ddb_gtkui_widget_t *newchild) {
-    printf ("w_tabs_replace %p\n", child);
     int ntab = 0;
     ddb_gtkui_widget_t *prev = NULL;
     for (ddb_gtkui_widget_t *c = cont->children; c; c = c->next, ntab++) {
         if (c == child) {
-            printf ("removing tab %d\n", ntab);
             newchild->next = c->next;
             if (prev) {
                 prev->next = newchild;
@@ -1087,16 +1074,14 @@ w_selproperties_create (void) {
 }
 
 ///// cover art display
-static void
-cover_avail_callback (void *user_data) {
-    printf ("cover avail\n");
+void
+coverart_avail_callback (void *user_data) {
     w_coverart_t *w = user_data;
     gtk_widget_queue_draw (w->drawarea);
 }
 
 static gboolean
 coverart_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
-    printf ("coverart_expose_event\n");
     DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
     if (!it) {
         return FALSE;
@@ -1108,16 +1093,12 @@ coverart_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_d
     if (!album || !*album) {
         album = deadbeef->pl_find_meta (it, "title");
     }
-    GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta ((it), ":URI"), artist, album, min(width,height), cover_avail_callback, user_data);
+    GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta ((it), ":URI"), artist, album, min(width,height), coverart_avail_callback, user_data);
     if (pixbuf) {
-        printf ("found\n");
         int pw = gdk_pixbuf_get_width (pixbuf);
         int ph = gdk_pixbuf_get_height (pixbuf);
         gdk_draw_pixbuf (widget->window, widget->style->white_gc, pixbuf, 0, 0, widget->allocation.width/2-pw/2, widget->allocation.height/2-ph/2, pw, ph, GDK_RGB_DITHER_NONE, 0, 0);
         g_object_unref (pixbuf);
-    }
-    else {
-        printf ("not found\n");
     }
     deadbeef->pl_item_unref (it);
     return TRUE;

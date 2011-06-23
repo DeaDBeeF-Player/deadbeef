@@ -117,6 +117,9 @@ queue_add (const char *fname, const char *artist, const char *album, int img_siz
     for (cover_query_t *q = queue; q; q = q->next) {
         if (!strcasecmp (artist, q->artist) || !strcasecmp (album, q->album)) {
             deadbeef->mutex_unlock (mutex);
+            if (callback) {
+                callback (NULL, NULL, NULL, user_data);
+            }
             return; // already in queue
         }
     }
@@ -153,6 +156,9 @@ queue_pop (void) {
         }
         if (queue->album) {
             free (queue->album);
+        }
+        if (queue->callback) {
+            queue->callback (NULL, NULL, NULL, queue->user_data);
         }
         free (queue);
     }
@@ -1045,6 +1051,7 @@ fetcher_thread (void *none)
                 }
                 if (param->callback) {
                     param->callback (param->fname, param->artist, param->album, param->user_data);
+                    param->callback = NULL;
                 }
             }
             queue_pop ();
@@ -1099,16 +1106,25 @@ get_album_art (const char *fname, const char *artist, const char *album, int siz
     if (!*artist || !*album)
     {
         //give up
+        if (callback) {
+            callback (NULL, NULL, NULL, user_data);
+        }
         return size == -1 ? strdup (get_default_cover ()) : NULL;
     }
 
     if (!deadbeef->is_local_file (fname)) {
+        if (callback) {
+            callback (NULL, NULL, NULL, user_data);
+        }
         return size == -1 ? strdup (get_default_cover ()) : NULL;
     }
 
     make_cache_path (path, sizeof (path), album, artist, size);
     char *p = find_image (path);
     if (p) {
+        if (callback) {
+            callback (NULL, NULL, NULL, user_data);
+        }
         return p;
     }
 
@@ -1127,6 +1143,9 @@ get_album_art (const char *fname, const char *artist, const char *album, int siz
             else {
                 int res = copy_file (unscaled_path, path, size);
                 if (!res) {
+                    if (callback) {
+                        callback (NULL, NULL, NULL, user_data);
+                    }
                     return strdup (path);
                 }
             }

@@ -200,16 +200,26 @@ loading_thread (void *none) {
     }
 }
 
+typedef struct {
+    int width;
+    void (*callback)(void *user_data);
+    void *user_data;
+} cover_avail_info_t;
+
 static void
 cover_avail_callback (const char *fname, const char *artist, const char *album, void *user_data) {
+    if (!fname) {
+        free (user_data);
+        return;
+    }
+    cover_avail_info_t *dt = user_data;
     // means requested image is now in disk cache
     // load it into main memory
-    GdkPixbuf *pb = get_cover_art (fname, artist, album, (intptr_t)user_data);
+    GdkPixbuf *pb = get_cover_art_callb (fname, artist, album, dt->width, dt->callback, dt->user_data);
     if (pb) {
         g_object_unref (pb);
-//        // already in cache, redraw
-//        g_idle_add (redraw_playlist_cb, NULL);
     }
+    free (dt);
 }
 
 static GdkPixbuf *
@@ -255,7 +265,11 @@ get_cover_art (const char *fname, const char *artist, const char *album, int wid
     if (!coverart_plugin) {
         return NULL;
     }
-    char *image_fname = coverart_plugin->get_album_art (fname, artist, album, -1, cover_avail_callback, (void *)(intptr_t)width);
+    cover_avail_info_t *dt = malloc (sizeof (cover_avail_info_t));
+    dt->width = width;
+    dt->callback = redraw_playlist;
+    dt->user_data = NULL;
+    char *image_fname = coverart_plugin->get_album_art (fname, artist, album, -1, cover_avail_callback, (void*)dt);
     if (image_fname) {
         GdkPixbuf *pb = get_pixbuf (image_fname, width, redraw_playlist, NULL);
         free (image_fname);
@@ -265,12 +279,15 @@ get_cover_art (const char *fname, const char *artist, const char *album, int wid
 }
 
 GdkPixbuf *
-get_cover_art_callb (const char *fname, const char *artist, const char *album, int width, void
-(*callback) (void *user_data), void *user_data) {
+get_cover_art_callb (const char *fname, const char *artist, const char *album, int width, void (*callback) (void *user_data), void *user_data) {
     if (!coverart_plugin) {
         return NULL;
     }
-    char *image_fname = coverart_plugin->get_album_art (fname, artist, album, -1, cover_avail_callback, (void *)(intptr_t)width);
+    cover_avail_info_t *dt = malloc (sizeof (cover_avail_info_t));
+    dt->width = width;
+    dt->callback = callback;
+    dt->user_data = user_data;
+    char *image_fname = coverart_plugin->get_album_art (fname, artist, album, -1, cover_avail_callback, dt);
     if (image_fname) {
         GdkPixbuf *pb = get_pixbuf (image_fname, width, callback, user_data);
         free (image_fname);
