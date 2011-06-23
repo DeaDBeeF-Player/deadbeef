@@ -670,7 +670,10 @@ palsa_thread (void *context) {
             frames_to_deliver = snd_pcm_avail_update (audio);
         }
         UNLOCK;
-        usleep ((period_size-frames_to_deliver) * 1000000 / plugin.fmt.samplerate / plugin.fmt.channels);
+        int sleeptime = period_size-frames_to_deliver;
+        if (sleeptime > 0 && plugin.fmt.samplerate > 0 && plugin.fmt.channels > 0) {
+            usleep (sleeptime * 1000000 / plugin.fmt.samplerate / plugin.fmt.channels);
+        }
     }
 }
 
