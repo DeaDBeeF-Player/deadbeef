@@ -8,13 +8,15 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-06-12 18:17+0200\n"
-"PO-Revision-Date: 2010-06-03 17:59+0100\n"
-"Last-Translator: Jan D. Behrens <zykure@web.de>\n"
+"PO-Revision-Date: 2011-06-23 13:29+0200\n"
+"Last-Translator: Lutz <lthuns@opensuse.org>\n"
 "Language-Team: \n"
-"Language: \n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Pootle 2.0.5\n"
 "X-Poedit-Country: Germany\n"
 "X-Poedit-Language: German\n"
 
@@ -577,8 +579,9 @@ msgid "Output device:"
 msgstr "Ausgabegerät:"
 
 #: ../plugins/gtkui/interface.c:1841 ../plugins/gtkui/deadbeef.glade.h:12
+#, fuzzy
 msgid "Always convert 8 bit audio to 16 bit"
-msgstr ""
+msgstr "8-Bit Audio immer nach 16-Bit umwandeln"
 
 #: ../plugins/gtkui/interface.c:1845 ../plugins/gtkui/deadbeef.glade.h:123
 msgid "Sound"
@@ -797,8 +800,9 @@ msgid "Network"
 msgstr "Netzwerk"
 
 #: ../plugins/gtkui/interface.c:2428 ../plugins/gtkui/deadbeef.glade.h:143
+#, fuzzy
 msgid "Version: "
-msgstr ""
+msgstr "Version:"
 
 #: ../plugins/gtkui/interface.c:2492 ../plugins/gtkui/deadbeef.glade.h:23
 #: ../translation/extra.c:78
@@ -1502,8 +1506,9 @@ msgid "Embedded Cuesheet"
 msgstr ""
 
 #: ../translation/extra.c:83
+#, fuzzy
 msgid "Codec"
-msgstr ""
+msgstr "Codec"
 
 #. FFmpeg deocder plugin
 #: ../translation/extra.c:85
@@ -1530,8 +1535,9 @@ msgid "Automatic Samplerate (overrides Target Samplerate)"
 msgstr ""
 
 #: ../plugins/converter/convgui.c:108
+#, fuzzy
 msgid "The file already exists. Overwrite?"
-msgstr ""
+msgstr "Die Datei existiert bereits. Wollen Sie diese überschreiben?"
 
 #: ../plugins/converter/convgui.c:110
 msgid "Converter warning"
