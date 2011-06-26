@@ -70,6 +70,7 @@ typedef struct {
 
 typedef struct {
     ddb_gtkui_widget_t base;
+    int clicked_page;
 } w_tabs_t;
 
 typedef struct {
@@ -456,6 +457,10 @@ w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_da
             G_CALLBACK (on_paste_activate),
             NULL);
 
+    if (current_widget->initmenu) {
+        current_widget->initmenu (current_widget, menu);
+    }
+
     g_signal_connect ((gpointer) menu, "deactivate", G_CALLBACK (w_menu_deactivate), user_data);
     gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
     return TRUE;
@@ -671,13 +676,135 @@ w_hsplitter_create (void) {
 }
 
 ///// tabs widget
+static gboolean
+tab_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_data);
+
+static void
+on_remove_tab_activate (GtkMenuItem *menuitem, gpointer user_data) {
+    w_tabs_t *w = user_data;
+
+    int i = 0;
+    for (ddb_gtkui_widget_t *c = w->base.children; c; c = c->next, i++) {
+        if (i == w->clicked_page) {
+            w_remove ((ddb_gtkui_widget_t *)w, c);
+            return;
+        }
+    }
+}
+
+static void
+on_add_tab_activate (GtkMenuItem *menuitem, gpointer user_data) {
+}
+
+static void
+on_move_tab_left_activate (GtkMenuItem *menuitem, gpointer user_data) {
+    w_tabs_t *w = user_data;
+    if (w->clicked_page <= 0) {
+        return;
+    }
+
+    // remove and save widget
+    int i = 0;
+    ddb_gtkui_widget_t *newchild = NULL;
+    ddb_gtkui_widget_t *prev = NULL;
+    for (ddb_gtkui_widget_t *c = w->base.children; c; c = c->next, i++) {
+        if (i == w->clicked_page) {
+            char buf[1000] = "";
+            save_widget_to_string (buf, c);
+            w_create_from_string (buf, &newchild);
+
+            w_remove ((ddb_gtkui_widget_t *)w, c);
+            break;
+        }
+    }
+    if (!newchild) {
+        return;
+    }
+
+    // add new child at new position
+    i = 0;
+    prev = NULL;
+    for (ddb_gtkui_widget_t *c = w->base.children; c; c = c->next, i++) {
+        if (i == w->clicked_page-1) {
+            if (prev) {
+                newchild->next = prev->next;
+                prev->next = newchild;
+            }
+            else {
+                newchild->next = w->base.children->next;
+                w->base.children->next = newchild;
+            }
+            GtkWidget *eventbox = gtk_event_box_new ();
+            GtkWidget *label = gtk_label_new (newchild->type);
+            gtk_widget_show (eventbox);
+            g_object_set_data (G_OBJECT (eventbox), "owner", w);
+            g_signal_connect ((gpointer) eventbox, "button_press_event", G_CALLBACK (tab_button_press_event), newchild->widget);
+            gtk_widget_show (label);
+            gtk_container_add (GTK_CONTAINER (eventbox), label);
+            gtk_widget_show (newchild->widget);
+
+            gtk_notebook_insert_page (GTK_NOTEBOOK (w->base.widget), newchild->widget, eventbox, w->clicked_page-1);
+            gtk_notebook_set_page (GTK_NOTEBOOK (w->base.widget), w->clicked_page-1);
+            break;
+        }
+        prev = c;
+    }
+}
+
+static gboolean
+tab_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_data) {
+    if (event->button != 3) {
+        return FALSE;
+    }
+    // user_data is child widget
+    if (design_mode) {
+        w_tabs_t *w = (w_tabs_t *)g_object_get_data (G_OBJECT (widget), "owner");
+        GtkWidget *menu;
+        GtkWidget *item;
+        menu = gtk_menu_new ();
+ 
+        item = gtk_menu_item_new_with_mnemonic (_("Move tab left"));
+        gtk_widget_show (item);
+        gtk_container_add (GTK_CONTAINER (menu), item);
+        g_signal_connect ((gpointer) item, "activate",
+                G_CALLBACK (on_move_tab_left_activate),
+                w);
+
+        item = gtk_menu_item_new_with_mnemonic (_("Move tab right"));
+        gtk_widget_show (item);
+        gtk_container_add (GTK_CONTAINER (menu), item);
+
+        item = gtk_menu_item_new_with_mnemonic (_("Remove tab"));
+        gtk_widget_show (item);
+        gtk_container_add (GTK_CONTAINER (menu), item);
+        g_signal_connect ((gpointer) item, "activate",
+                G_CALLBACK (on_remove_tab_activate),
+                w);
+
+        item = gtk_menu_item_new_with_mnemonic (_("Rename tab"));
+        gtk_widget_show (item);
+        gtk_container_add (GTK_CONTAINER (menu), item);
+
+        w->clicked_page = gtk_notebook_page_num (GTK_NOTEBOOK (w->base.widget), user_data);
+        gtk_notebook_set_page (GTK_NOTEBOOK (w->base.widget), w->clicked_page);
+
+        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
+        return TRUE;
+    }
+    return FALSE;
+}
 
 void
 w_tabs_add (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
+    GtkWidget *eventbox = gtk_event_box_new ();
     GtkWidget *label = gtk_label_new (child->type);
+    gtk_widget_show (eventbox);
+    g_object_set_data (G_OBJECT (eventbox), "owner", cont);
+    g_signal_connect ((gpointer) eventbox, "button_press_event", G_CALLBACK (tab_button_press_event), child->widget);
     gtk_widget_show (label);
+    gtk_container_add (GTK_CONTAINER (eventbox), label);
     gtk_widget_show (child->widget);
-    gtk_notebook_append_page (GTK_NOTEBOOK (cont->widget), child->widget, label);
+    gtk_notebook_append_page (GTK_NOTEBOOK (cont->widget), child->widget, eventbox);
 }
 
 void
@@ -694,15 +821,33 @@ w_tabs_replace (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child, ddb_gtkui_w
                 cont->children = newchild;
             }
             newchild->parent = cont;
+            gtk_notebook_remove_page (GTK_NOTEBOOK(cont->widget), ntab);
+            c->widget = NULL;
             w_destroy (c);
-            GtkWidget *label = gtk_label_new (newchild->type);
+            GtkWidget *eventbox = gtk_event_box_new ();
+            GtkWidget *label = gtk_label_new (child->type);
+            gtk_widget_show (eventbox);
+            g_object_set_data (G_OBJECT (eventbox), "owner", cont);
+            g_signal_connect ((gpointer) eventbox, "button_press_event", G_CALLBACK (tab_button_press_event), child->widget);
             gtk_widget_show (label);
+            gtk_container_add (GTK_CONTAINER (eventbox), label);
             gtk_widget_show (newchild->widget);
-            int pos = gtk_notebook_insert_page (GTK_NOTEBOOK (cont->widget), newchild->widget, label, ntab);
+            int pos = gtk_notebook_insert_page (GTK_NOTEBOOK (cont->widget), newchild->widget, eventbox, ntab);
             gtk_notebook_set_page (GTK_NOTEBOOK (cont->widget), pos);
             break;
         }
     }
+}
+
+void
+w_tabs_initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
+    GtkWidget *item;
+    item = gtk_menu_item_new_with_mnemonic (_("Add new tab"));
+    gtk_widget_show (item);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "activate",
+            G_CALLBACK (on_add_tab_activate),
+            w);
 }
 
 ddb_gtkui_widget_t *
@@ -713,6 +858,7 @@ w_tabs_create (void) {
     w->base.append = w_tabs_add;
     w->base.remove = w_container_remove;
     w->base.replace = w_tabs_replace;
+    w->base.initmenu = w_tabs_initmenu;
 
     ddb_gtkui_widget_t *ph1, *ph2, *ph3;
     ph1 = w_create ("placeholder");
@@ -1147,5 +1293,3 @@ w_coverart_create (void) {
     w_override_signals (w->base.widget, w);
     return (ddb_gtkui_widget_t *)w;
 }
-
-

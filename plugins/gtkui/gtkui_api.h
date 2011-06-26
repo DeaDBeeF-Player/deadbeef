@@ -44,6 +44,8 @@ typedef struct ddb_gtkui_widget_s {
 
     int (*message) (struct ddb_gtkui_widget_s *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
 
+    void (*initmenu) (struct ddb_gtkui_widget_s *w, GtkWidget *menu);
+
     struct ddb_gtkui_widget_s *children;
     struct ddb_gtkui_widget_s *next; // points to next widget in the same container
 } ddb_gtkui_widget_t;
