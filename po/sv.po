@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-06-12 18:17+0200\n"
-"PO-Revision-Date: 2010-09-28 02:25+0200\n"
+"PO-Revision-Date: 2011-06-27 15:52+0200\n"
 "Last-Translator: Martin <brother@bsnet.se>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: sv\n"
@@ -71,9 +71,9 @@ msgid "DeaDBeeF %s ChangeLog"
 msgstr "DeadBeeF %s Ändrligslogg"
 
 #: ../plugins/gtkui/callbacks.c:1091
-#, fuzzy, c-format
+#, c-format
 msgid "DeaDBeeF Translators"
-msgstr "DeaDBeeF spelar"
+msgstr "DeaDBeeF-översättare"
 
 #: ../plugins/gtkui/ddbtabstrip.c:689 ../plugins/gtkui/trkproperties.c:618
 msgid "Edit playlist"
@@ -152,9 +152,8 @@ msgstr "Nollställ band"
 
 #: ../plugins/gtkui/eq.c:387 ../plugins/converter/interface.c:826
 #: ../plugins/converter/converter.glade.h:40
-#, fuzzy
 msgid "Presets"
-msgstr "Spara inställningar"
+msgstr "Inställningar"
 
 #: ../plugins/gtkui/gtkui.c:137
 #, c-format
@@ -306,9 +305,8 @@ msgid "Title"
 msgstr "Titel"
 
 #: ../plugins/gtkui/interface.c:299 ../plugins/gtkui/deadbeef.glade.h:139
-#, fuzzy
 msgid "Track number"
-msgstr "Filnummer"
+msgstr "Spårnummer"
 
 #: ../plugins/gtkui/interface.c:303 ../plugins/gtkui/interface.c:1515
 #: ../plugins/gtkui/interface.c:1869 ../plugins/gtkui/deadbeef.glade.h:10
@@ -372,14 +370,12 @@ msgid "Linear"
 msgstr "Linjär"
 
 #: ../plugins/gtkui/interface.c:370 ../plugins/gtkui/deadbeef.glade.h:120
-#, fuzzy
 msgid "Shuffle tracks"
-msgstr "Blanda"
+msgstr "Blanda spår"
 
 #: ../plugins/gtkui/interface.c:375 ../plugins/gtkui/deadbeef.glade.h:119
-#, fuzzy
 msgid "Shuffle albums"
-msgstr "Blanda"
+msgstr "Blanda album"
 
 #: ../plugins/gtkui/interface.c:380 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Random"
@@ -537,7 +533,6 @@ msgid "Duration"
 msgstr "Längd"
 
 #: ../plugins/gtkui/interface.c:1518 ../translation/extra.c:71
-#, fuzzy
 msgid "Track Number"
 msgstr "Spårnummer"
 
@@ -607,9 +602,8 @@ msgid "Replaygain peak scale"
 msgstr "Övre gräns för justering av uppspelningsvolym"
 
 #: ../plugins/gtkui/interface.c:1879 ../plugins/gtkui/deadbeef.glade.h:107
-#, fuzzy
 msgid "Replaygain preamp:"
-msgstr "Läge för justering av uppspelningsvolym:"
+msgstr "Förstärkning av uppspelningsvolym:"
 
 #: ../plugins/gtkui/interface.c:1883 ../plugins/gtkui/deadbeef.glade.h:2
 msgid "-12 dB"
@@ -644,9 +638,8 @@ msgid "Configure"
 msgstr "Inställningar"
 
 #: ../plugins/gtkui/interface.c:1974 ../plugins/gtkui/deadbeef.glade.h:29
-#, fuzzy
 msgid "DSP Chain Preset"
-msgstr "Spara inställningar"
+msgstr "Inställningar för DSP-kedja"
 
 #: ../plugins/gtkui/interface.c:1986 ../plugins/gtkui/deadbeef.glade.h:160
 msgid "_Load"
@@ -830,9 +823,8 @@ msgid "Sort by..."
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:3223 ../plugins/gtkui/deadbeef.glade.h:43
-#, fuzzy
 msgid "Format"
-msgstr "Format:"
+msgstr "Format"
 
 #: ../plugins/gtkui/interface.c:3253
 msgid "Ascending"
@@ -845,21 +837,18 @@ msgstr ""
 #: ../plugins/gtkui/interface.c:3307 ../plugins/gtkui/deadbeef.glade.h:113
 #: ../plugins/converter/interface.c:758
 #: ../plugins/converter/converter.glade.h:44
-#, fuzzy
 msgid "Select DSP Plugin"
-msgstr "Markering"
+msgstr "Välj DSP-instick"
 
 #: ../plugins/gtkui/interface.c:3323 ../plugins/gtkui/deadbeef.glade.h:92
 #: ../plugins/converter/convgui.c:1016 ../plugins/converter/interface.c:774
 #: ../plugins/gtkui/dspconfig.c:139 ../plugins/converter/converter.glade.h:38
-#, fuzzy
 msgid "Plugin"
 msgstr "Instick"
 
 #: ../plugins/gtkui/interface.c:3409 ../plugins/gtkui/deadbeef.glade.h:132
-#, fuzzy
 msgid "Tag Writer Settings"
-msgstr "Tagg-skrivare"
+msgstr "Inställningar för tagg-skrivare"
 
 #: ../plugins/gtkui/interface.c:3440 ../plugins/gtkui/deadbeef.glade.h:146
 msgid "Write ID3v2"
@@ -981,9 +970,9 @@ msgid "Open file..."
 msgstr "Öppna fil..."
 
 #: ../plugins/gtkui/pluginconf.c:217
-#, fuzzy, c-format
+#, c-format
 msgid "Configure %s"
-msgstr "Inställningar"
+msgstr "Inställning för %s"
 
 #: ../plugins/gtkui/prefwin.c:82
 msgid "Default Audio Device"
@@ -1056,19 +1045,16 @@ msgid "Field with such name already exists, please try different name."
 msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:692
-#, fuzzy
 msgid "Really remove selected field?"
-msgstr "Ska fönstret verkligen stängas?"
+msgstr "Ska fältet verkligen tas bort?"
 
 #: ../plugins/gtkui/trkproperties.c:734
-#, fuzzy
 msgid "Add field"
-msgstr "Lägg till fil(er)"
+msgstr "Lägg till fält"
 
 #: ../plugins/gtkui/trkproperties.c:737
-#, fuzzy
 msgid "Remove field"
-msgstr "Ta bort"
+msgstr "Ta bort fält"
 
 #: ../main.c:90
 #, c-format
@@ -1212,7 +1198,6 @@ msgstr ""
 "Album"
 
 #: ../plugins/gtkui/deadbeef.glade.h:55
-#, fuzzy
 msgid ""
 "Item Index\n"
 "Playing\n"
@@ -1226,10 +1211,10 @@ msgid ""
 "Band / Album Artist\n"
 "Custom"
 msgstr ""
-"Filnummer\n"
+"Objektindex\n"
 "Spelar\n"
 "Albumbild\n"
-"Artist -Album\n"
+"Artist - Album\n"
 "Artist\n"
 "Album\n"
 "Titel\n"
@@ -1278,9 +1263,8 @@ msgid "Use ALSA resampling"
 msgstr ""
 
 #: ../translation/extra.c:7
-#, fuzzy
 msgid "Release device while stopped"
-msgstr "Text u titelraden utan uppspelning:"
+msgstr "Släpp enhet när uppspelningen stoppas"
 
 #: ../translation/extra.c:8 ../translation/extra.c:51
 msgid "Preferred buffer size"
@@ -1292,24 +1276,20 @@ msgstr ""
 
 #. Last.fm plugin
 #: ../translation/extra.c:11
-#, fuzzy
 msgid "Enable scrobbler"
-msgstr "Aktivera proxyserver"
+msgstr "Aktivera scrobbling"
 
 #: ../translation/extra.c:12
-#, fuzzy
 msgid "Disable nowplaying"
-msgstr "DeaDBeeF spelar"
+msgstr "Avaktivera \"nowplaying\""
 
 #: ../translation/extra.c:13
-#, fuzzy
 msgid "Username"
-msgstr "Användarnamn för proxy:"
+msgstr "Användarnamn"
 
 #: ../translation/extra.c:14
-#, fuzzy
 msgid "Password"
-msgstr "Lösenord för proxy:"
+msgstr "Lösenord"
 
 #: ../translation/extra.c:15
 msgid "Scrobble URL"
@@ -1390,9 +1370,8 @@ msgstr ""
 
 #. Standard GTK2 user interface plugin
 #: ../translation/extra.c:39
-#, fuzzy
 msgid "Ask confirmation to delete files from disk"
-msgstr "Radera filer från disk"
+msgstr "Fråga innan filer raderas från disk"
 
 #: ../translation/extra.c:40
 msgid "Status icon volume control sensitivity"
@@ -1420,9 +1399,8 @@ msgid "Notification content format"
 msgstr ""
 
 #: ../translation/extra.c:47
-#, fuzzy
 msgid "Show album art"
-msgstr "Albumillustration"
+msgstr "Visa albumbilder"
 
 #: ../translation/extra.c:48
 msgid "Album art size (px)"
@@ -1473,9 +1451,8 @@ msgid "Timidity++ bank configuration file"
 msgstr ""
 
 #: ../translation/extra.c:66
-#, fuzzy
 msgid "Track Title"
-msgstr "Spårnummer"
+msgstr "Spårtitel"
 
 #: ../translation/extra.c:67
 msgid "Performer"
@@ -1484,7 +1461,7 @@ msgstr ""
 #: ../translation/extra.c:72
 #, fuzzy
 msgid "Total Tracks"
-msgstr "Titel / Artist för spåret"
+msgstr "Total "
 
 #: ../translation/extra.c:73
 msgid "Genre"
@@ -1495,9 +1472,8 @@ msgid "Composer"
 msgstr ""
 
 #: ../translation/extra.c:75
-#, fuzzy
 msgid "Disc Number"
-msgstr "Filnummer"
+msgstr "Skivnummer"
 
 #: ../translation/extra.c:76
 msgid "Comment"
@@ -1508,9 +1484,8 @@ msgid "Encoder / Vendor"
 msgstr ""
 
 #: ../translation/extra.c:79
-#, fuzzy
 msgid "Location"
-msgstr "Lägg till plats"
+msgstr "Plats"
 
 #: ../translation/extra.c:80
 msgid "Subtrack Index"
@@ -1572,9 +1547,8 @@ msgid "Converting..."
 msgstr ""
 
 #: ../plugins/converter/convgui.c:394 ../plugins/converter/convgui.c:496
-#, fuzzy
 msgid "Select folder..."
-msgstr "Markera allt"
+msgstr "Välj katalog..."
 
 #: ../plugins/converter/convgui.c:635
 msgid "Failed to save encoder preset"
@@ -1604,9 +1578,8 @@ msgid "Edit encoder"
 msgstr "Redigera kolumn"
 
 #: ../plugins/converter/convgui.c:756 ../plugins/converter/convgui.c:1133
-#, fuzzy
 msgid "Remove preset"
-msgstr "Spara inställningar"
+msgstr "Ta bort inställningar"
 
 #: ../plugins/converter/convgui.c:758 ../plugins/converter/convgui.c:1135
 msgid "This action will delete the selected preset. Are you sure?"
