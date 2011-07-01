@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: deadbeef devel\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-06-12 18:17+0200\n"
-"PO-Revision-Date: 2010-10-15 21:44+0100\n"
-"Last-Translator: Cilyan Olowen <gaknar@gmail.com>\n"
+"PO-Revision-Date: 2011-07-01 20:52+0200\n"
+"Last-Translator: Mathieu <mathieu.millot@gmail.com>\n"
 "Language-Team: French\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -54,7 +54,7 @@ msgstr "Échec à l'ouverture du fichier d'aide"
 
 #: ../plugins/gtkui/callbacks.c:722
 msgid "help.txt"
-msgstr ""
+msgstr "help.txt"
 
 #: ../plugins/gtkui/callbacks.c:723 ../plugins/gtkui/interface.c:1155
 #: ../plugins/gtkui/deadbeef.glade.h:48 ../plugins/converter/convgui.c:1240
@@ -301,7 +301,7 @@ msgstr "_Rechercher"
 
 #: ../plugins/gtkui/interface.c:288 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Sort By"
-msgstr ""
+msgstr "Trier par"
 
 #: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1516
 #: ../plugins/gtkui/mainplaylist.c:315 ../plugins/gtkui/prefwin.c:623
@@ -313,9 +313,8 @@ msgid "Title"
 msgstr "Titre"
 
 #: ../plugins/gtkui/interface.c:299 ../plugins/gtkui/deadbeef.glade.h:139
-#, fuzzy
 msgid "Track number"
-msgstr "Numéro de fichier"
+msgstr "Numéro de piste"
 
 #: ../plugins/gtkui/interface.c:303 ../plugins/gtkui/interface.c:1515
 #: ../plugins/gtkui/interface.c:1869 ../plugins/gtkui/deadbeef.glade.h:10
@@ -333,7 +332,7 @@ msgstr "Artiste"
 #: ../plugins/gtkui/interface.c:311 ../plugins/gtkui/deadbeef.glade.h:31
 #: ../translation/extra.c:70
 msgid "Date"
-msgstr ""
+msgstr "Date"
 
 #: ../plugins/gtkui/interface.c:315 ../plugins/gtkui/interface.c:1520
 #: ../plugins/gtkui/plcommon.c:1002 ../plugins/gtkui/deadbeef.glade.h:27
@@ -379,14 +378,12 @@ msgid "Linear"
 msgstr "Linéaire"
 
 #: ../plugins/gtkui/interface.c:370 ../plugins/gtkui/deadbeef.glade.h:120
-#, fuzzy
 msgid "Shuffle tracks"
-msgstr "Mélanger"
+msgstr "Aléatoire (pistes)"
 
 #: ../plugins/gtkui/interface.c:375 ../plugins/gtkui/deadbeef.glade.h:119
-#, fuzzy
 msgid "Shuffle albums"
-msgstr "Mélanger"
+msgstr "Aléatoire (albums)"
 
 #: ../plugins/gtkui/interface.c:380 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Random"
@@ -422,7 +419,7 @@ msgstr "Arrêter après la piste actuelle"
 
 #: ../plugins/gtkui/interface.c:430 ../plugins/gtkui/deadbeef.glade.h:66
 msgid "Jump to current track"
-msgstr ""
+msgstr "Aller à la piste courante"
 
 #: ../plugins/gtkui/interface.c:437 ../plugins/gtkui/interface.c:444
 #: ../plugins/gtkui/deadbeef.glade.h:158
@@ -435,11 +432,11 @@ msgstr "_Notes de version"
 
 #: ../plugins/gtkui/interface.c:461 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "_GPLv2"
-msgstr ""
+msgstr "_GPLv2"
 
 #: ../plugins/gtkui/interface.c:465 ../plugins/gtkui/deadbeef.glade.h:159
 msgid "_LGPLv2.1"
-msgstr ""
+msgstr "_LGPL_v2.1"
 
 #: ../plugins/gtkui/interface.c:474 ../plugins/gtkui/deadbeef.glade.h:148
 msgid "_About"
@@ -447,7 +444,7 @@ msgstr "À pr_opos"
 
 #: ../plugins/gtkui/interface.c:482 ../plugins/gtkui/deadbeef.glade.h:165
 msgid "_Translators"
-msgstr ""
+msgstr "Traducteurs"
 
 #: ../plugins/gtkui/interface.c:898 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "Search"
@@ -491,7 +488,7 @@ msgstr "Propriétés de la piste"
 
 #: ../plugins/gtkui/interface.c:1270 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Settings"
-msgstr ""
+msgstr "Réglages"
 
 #: ../plugins/gtkui/interface.c:1296 ../plugins/gtkui/deadbeef.glade.h:149
 msgid "_Apply"
@@ -542,7 +539,6 @@ msgid "Duration"
 msgstr "Durée"
 
 #: ../plugins/gtkui/interface.c:1518 ../translation/extra.c:71
-#, fuzzy
 msgid "Track Number"
 msgstr "N° piste"
 
@@ -618,11 +614,11 @@ msgstr "Mode du ReplayGain (ajustement du volume) :"
 
 #: ../plugins/gtkui/interface.c:1883 ../plugins/gtkui/deadbeef.glade.h:2
 msgid "-12 dB"
-msgstr ""
+msgstr "-12 dB"
 
 #: ../plugins/gtkui/interface.c:1893 ../plugins/gtkui/deadbeef.glade.h:1
 msgid "+12 dB"
-msgstr ""
+msgstr "+12 dB"
 
 #: ../plugins/gtkui/interface.c:1901 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
@@ -636,7 +632,7 @@ msgstr "Charger la session précédente au démarrage"
 
 #: ../plugins/gtkui/interface.c:1914 ../plugins/gtkui/deadbeef.glade.h:37
 msgid "Don't add from archives when adding folders"
-msgstr ""
+msgstr "Ignorer les archives lors d'ajout de dossiers"
 
 #: ../plugins/gtkui/interface.c:1918 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Playback"
@@ -809,7 +805,7 @@ msgstr "Réseau"
 
 #: ../plugins/gtkui/interface.c:2428 ../plugins/gtkui/deadbeef.glade.h:143
 msgid "Version: "
-msgstr ""
+msgstr "Version : "
 
 #: ../plugins/gtkui/interface.c:2492 ../plugins/gtkui/deadbeef.glade.h:23
 #: ../translation/extra.c:78
@@ -830,7 +826,7 @@ msgstr "Grouper par"
 
 #: ../plugins/gtkui/interface.c:3207 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Sort by..."
-msgstr ""
+msgstr "Trier par..."
 
 #: ../plugins/gtkui/interface.c:3223 ../plugins/gtkui/deadbeef.glade.h:43
 #, fuzzy
@@ -1029,7 +1025,7 @@ msgstr "Fermer réellement la fenêtre ?"
 #. get value to edit
 #: ../plugins/gtkui/trkproperties.c:254
 msgid "[Multiple values] "
-msgstr ""
+msgstr "[Valeurs multiples] "
 
 #: ../plugins/gtkui/trkproperties.c:407 ../plugins/gtkui/trkproperties.c:419
 msgid "Key"
@@ -1041,28 +1037,27 @@ msgstr "Valeur"
 
 #: ../plugins/gtkui/trkproperties.c:594
 msgid "Writing tags..."
-msgstr ""
+msgstr "Ecriture des tags..."
 
 #: ../plugins/gtkui/trkproperties.c:621
 msgid "Name:"
-msgstr ""
+msgstr "Nom : "
 
 #: ../plugins/gtkui/trkproperties.c:633
 msgid "Field names must not start with : or _"
-msgstr ""
+msgstr "Le nom des champs ne peut commencer par ':' ou '_'"
 
 #: ../plugins/gtkui/trkproperties.c:634 ../plugins/gtkui/trkproperties.c:668
 msgid "Cannot add field"
-msgstr ""
+msgstr "Impossible d'ajouter le champ"
 
 #: ../plugins/gtkui/trkproperties.c:667
 msgid "Field with such name already exists, please try different name."
-msgstr ""
+msgstr "Un champ avec le même nom existe déjà, veuillez en choisir un autre."
 
 #: ../plugins/gtkui/trkproperties.c:692
-#, fuzzy
 msgid "Really remove selected field?"
-msgstr "Fermer réellement la fenêtre ?"
+msgstr "Effacer les champs sélectionnés ?"
 
 #: ../plugins/gtkui/trkproperties.c:734
 #, fuzzy
@@ -1204,6 +1199,8 @@ msgid ""
 "Ascending\n"
 "Descending"
 msgstr ""
+"Ascendant\n"
+"Descendant"
 
 #: ../plugins/gtkui/deadbeef.glade.h:33
 msgid ""
@@ -1274,7 +1271,7 @@ msgstr "Ajouter un CD Audio"
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
-msgstr ""
+msgstr "Rechercher sur Last.fm"
 
 #. ALSA output plugin
 #: ../translation/extra.c:6
@@ -1288,7 +1285,7 @@ msgstr "Barre de titre à l'arrêt :"
 
 #: ../translation/extra.c:8 ../translation/extra.c:51
 msgid "Preferred buffer size"
-msgstr ""
+msgstr "Taille préférée du tampon"
 
 #: ../translation/extra.c:9
 msgid "Preferred period size"
@@ -1296,28 +1293,24 @@ msgstr ""
 
 #. Last.fm plugin
 #: ../translation/extra.c:11
-#, fuzzy
 msgid "Enable scrobbler"
-msgstr "Activer le serveur mandataire"
+msgstr "Activer l'historique d'écoute (scrobbler)"
 
 #: ../translation/extra.c:12
-#, fuzzy
 msgid "Disable nowplaying"
-msgstr "En cours sur DeaDBeeF"
+msgstr "Désactiver l'affichage du titre en cours"
 
 #: ../translation/extra.c:13
-#, fuzzy
 msgid "Username"
-msgstr "Nom d'utilisateur sur le serveur mandataire :"
+msgstr "Nom d'utilisateur :"
 
 #: ../translation/extra.c:14
-#, fuzzy
 msgid "Password"
-msgstr "Mot de passe sur le serveur mandataire :"
+msgstr "Mot de passe :"
 
 #: ../translation/extra.c:15
 msgid "Scrobble URL"
-msgstr ""
+msgstr "Scrobble URL :"
 
 #. OSS output plugin
 #: ../translation/extra.c:17
@@ -1331,27 +1324,27 @@ msgstr ""
 #. Album Artwork plugin
 #: ../translation/extra.c:20
 msgid "Cache update period (hr)"
-msgstr ""
+msgstr "Période de mise à jour du cache (h) : "
 
 #: ../translation/extra.c:21
 msgid "Fetch from embedded tags"
-msgstr ""
+msgstr "Récupérer depuis les tags"
 
 #: ../translation/extra.c:22
 msgid "Fetch from local folder"
-msgstr ""
+msgstr "Récupérer depuis le dossier local"
 
 #: ../translation/extra.c:23
 msgid "Local cover file mask"
-msgstr ""
+msgstr "Masque de la couverture : "
 
 #: ../translation/extra.c:24
 msgid "Fetch from last.fm"
-msgstr ""
+msgstr "Récupérer depuis Last.fm"
 
 #: ../translation/extra.c:25
 msgid "Fetch from albumart.org"
-msgstr ""
+msgstr "Récupérer depuis albumart.org"
 
 #: ../translation/extra.c:26
 msgid "Scale artwork towards longer side"
@@ -1360,55 +1353,54 @@ msgstr ""
 #. Audio CD player
 #: ../translation/extra.c:28
 msgid "Use CDDB/FreeDB"
-msgstr ""
+msgstr "Utiliser CDDB/FreeDB"
 
 #: ../translation/extra.c:29
 msgid "Prefer CD-Text over CDDB"
-msgstr ""
+msgstr "Préférer CD-Text au lieu de CDDB"
 
 #: ../translation/extra.c:30
 msgid "CDDB url (e.g. 'freedb.org')"
-msgstr ""
+msgstr "Url CDDB (ex: 'freedb.org') : "
 
 #: ../translation/extra.c:31
 msgid "CDDB port number (e.g. '888')"
-msgstr ""
+msgstr "Port CDDB (ex: '888') : "
 
 #: ../translation/extra.c:32
 msgid "Prefer CDDB protocol over HTTP"
-msgstr ""
+msgstr "Préférer le protocole CDDB au lieu d'HTTP"
 
 #: ../translation/extra.c:33
 msgid "Enable NRG image support"
-msgstr ""
+msgstr "Activer le support des images NRG"
 
 #. DUMB module player plugin
 #: ../translation/extra.c:35
 msgid "Resampling quality (0..2, higher is better)"
-msgstr ""
+msgstr "Qualité du rééchantillonnage (0-2, 2: meilleur résultat) : "
 
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:37
 msgid "Max song length (in minutes)"
-msgstr ""
+msgstr "Longueur max de morceau (en min) : "
 
 #. Standard GTK2 user interface plugin
 #: ../translation/extra.c:39
-#, fuzzy
 msgid "Ask confirmation to delete files from disk"
-msgstr "Supprimer les fichiers du disque"
+msgstr "Demander confirmation avant de supprimer les fichiers locaux"
 
 #: ../translation/extra.c:40
 msgid "Status icon volume control sensitivity"
-msgstr ""
+msgstr "Sensibilité du contrôle du volume sur l'icône de notification : "
 
 #: ../translation/extra.c:41
 msgid "Custom status icon"
-msgstr ""
+msgstr "Icône de notification personnalisée : "
 
 #: ../translation/extra.c:42
 msgid "Run gtk_init with --sync (debug mode)"
-msgstr ""
+msgstr "Lancer gtk_init avec --sync (mode debug)"
 
 #: ../translation/extra.c:43
 msgid "Add separators between plugin context menu items"
@@ -1417,38 +1409,37 @@ msgstr ""
 #. OSD Notify plugin
 #: ../translation/extra.c:45
 msgid "Notification title format"
-msgstr ""
+msgstr "Format du titre des notifications : "
 
 #: ../translation/extra.c:46
 msgid "Notification content format"
-msgstr ""
+msgstr "Format du contenu des notifications : "
 
 #: ../translation/extra.c:47
-#, fuzzy
 msgid "Show album art"
-msgstr "Couverture de l'album"
+msgstr "Afficher la couverture de l'album"
 
 #: ../translation/extra.c:48
 msgid "Album art size (px)"
-msgstr ""
+msgstr "Taille de la couverture (px) : "
 
 #. PulseAudio output plugin
 #: ../translation/extra.c:50
 msgid "PulseAudio server"
-msgstr ""
+msgstr "Serveur PulseAudio : "
 
 #: ../translation/extra.c:52
 msgid "Samplerate"
-msgstr ""
+msgstr "Taux d'échantillonnage (Hz) : "
 
 #. SHN player plugin
 #: ../translation/extra.c:54
 msgid "Relative seek table path"
-msgstr ""
+msgstr "Chemin relatif de la table de recherche : "
 
 #: ../translation/extra.c:55
 msgid "Absolute seek table path"
-msgstr ""
+msgstr "Chemin absolu de la table de recherche : "
 
 #: ../translation/extra.c:56
 msgid "Swap audio bytes (toggle if all you hear is static)"
@@ -1474,7 +1465,7 @@ msgstr ""
 #. WildMidi player plugin
 #: ../translation/extra.c:63
 msgid "Timidity++ bank configuration file"
-msgstr ""
+msgstr "Chemin du fichier de configuration Timidity++ : "
 
 #: ../translation/extra.c:66
 #, fuzzy
@@ -1483,7 +1474,7 @@ msgstr "N° piste"
 
 #: ../translation/extra.c:67
 msgid "Performer"
-msgstr ""
+msgstr "Chanteur"
 
 #: ../translation/extra.c:72
 #, fuzzy
@@ -1492,29 +1483,27 @@ msgstr "Titre / Artiste de la piste"
 
 #: ../translation/extra.c:73
 msgid "Genre"
-msgstr ""
+msgstr "Genre"
 
 #: ../translation/extra.c:74
 msgid "Composer"
-msgstr ""
+msgstr "Compositeur"
 
 #: ../translation/extra.c:75
-#, fuzzy
 msgid "Disc Number"
-msgstr "Numéro de fichier"
+msgstr "N° disque"
 
 #: ../translation/extra.c:76
 msgid "Comment"
-msgstr ""
+msgstr "Commentaire"
 
 #: ../translation/extra.c:77
 msgid "Encoder / Vendor"
-msgstr ""
+msgstr "Encodeur / Editeur"
 
 #: ../translation/extra.c:79
-#, fuzzy
 msgid "Location"
-msgstr "Ajouter un emplacement"
+msgstr "Emplacement"
 
 #: ../translation/extra.c:80
 msgid "Subtrack Index"
@@ -1540,40 +1529,40 @@ msgstr ""
 #. Converter GUI
 #: ../translation/extra.c:87
 msgid "Convert"
-msgstr ""
+msgstr "Convertir"
 
 #. Resampler (Secret Rabbit Code)
 #: ../translation/extra.c:89
 msgid "Target Samplerate"
-msgstr ""
+msgstr "Echantillonnage de destination : "
 
 #: ../translation/extra.c:90
 msgid "Quality / Algorythm"
-msgstr ""
+msgstr "Qualité / Algorithme : "
 
 #: ../translation/extra.c:91
 msgid "Automatic Samplerate (overrides Target Samplerate)"
-msgstr ""
+msgstr "Echantillonnage automatique (ignore l'échantillonnage de destination)"
 
 #: ../plugins/converter/convgui.c:108
 msgid "The file already exists. Overwrite?"
-msgstr ""
+msgstr "Le fichier existe déjà. Voulez-vous l'écraser ?"
 
 #: ../plugins/converter/convgui.c:110
 msgid "Converter warning"
-msgstr ""
+msgstr "Avertissement"
 
 #: ../plugins/converter/convgui.c:222
 msgid "Please select encoder"
-msgstr ""
+msgstr "Veuillez sélectionner un encodeur"
 
 #: ../plugins/converter/convgui.c:224
 msgid "Converter error"
-msgstr ""
+msgstr "Erreur de conversion "
 
 #: ../plugins/converter/convgui.c:248
 msgid "Converting..."
-msgstr ""
+msgstr "Conversion..."
 
 #: ../plugins/converter/convgui.c:394 ../plugins/converter/convgui.c:496
 #, fuzzy
