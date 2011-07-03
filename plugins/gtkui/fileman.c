@@ -74,12 +74,16 @@ gtkpl_add_files (GSList *lst) {
     g_slist_free (lst);
     deadbeef->pl_add_files_end ();
     deadbeef->plt_unref (plt);
+    deadbeef->pl_save_all ();
+    deadbeef->conf_save ();
 }
 
 static void
 add_dirs_worker (void *data) {
     GSList *lst = (GSList *)data;
     gtkpl_add_dirs (lst);
+    deadbeef->pl_save_all ();
+    deadbeef->conf_save ();
 }
 
 void
@@ -104,6 +108,8 @@ static void
 open_files_worker (void *data) {
     GSList *lst = (GSList *)data;
     gtkpl_add_files (lst);
+    deadbeef->pl_save_all ();
+    deadbeef->conf_save ();
     gtkui_playlist_changed ();
     extern GtkWidget *mainwin;
     DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
