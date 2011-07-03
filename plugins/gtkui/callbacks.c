@@ -831,6 +831,7 @@ on_toggle_status_bar_activate          (GtkMenuItem     *menuitem,
             gtk_widget_show (sb);
         }
     }
+    deadbeef->conf_save ();
 }
 
 void
@@ -848,6 +849,7 @@ on_toggle_column_headers_activate      (GtkMenuItem     *menuitem,
             ddb_listview_show_header (DDB_LISTVIEW (playlist), 1);
         }
     }
+    deadbeef->conf_save ();
 }
 
 void
@@ -911,6 +913,7 @@ on_toggle_tabs                         (GtkMenuItem     *menuitem,
         deadbeef->conf_set_int ("gtkui.tabs.visible", 1);
         gtk_widget_show (ts);
     }
+    deadbeef->conf_save ();
 }
 
 
@@ -926,6 +929,7 @@ on_toggle_eq                           (GtkMenuItem     *menuitem,
         deadbeef->conf_set_int ("gtkui.eq.visible", 1);
         eq_window_show ();
     }
+    deadbeef->conf_save ();
 }
 
 
