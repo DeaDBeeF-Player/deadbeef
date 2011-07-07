@@ -718,7 +718,7 @@ ffmpeg_start (void) {
     ffmpeg_init_exts ();
     avcodec_init ();
     av_register_all ();
-#if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(52, 64, 0)
+#if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(52, 69, 0)
     av_register_protocol2 (&vfswrapper, sizeof(vfswrapper));
 #else
     av_register_protocol (&vfswrapper);
