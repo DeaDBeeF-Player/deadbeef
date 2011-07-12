@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-06-12 18:17+0200\n"
-"PO-Revision-Date: 2011-07-10 14:31+0200\n"
+"PO-Revision-Date: 2011-07-12 08:00+0200\n"
 "Last-Translator: Айнур <ainur.shakirov.tt@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: tt_RU\n"
@@ -39,7 +39,6 @@ msgid "Add folder(s) to playlist..."
 msgstr "Плейлистка каталог(лар) өстәү..."
 
 #: ../plugins/gtkui/callbacks.c:223
-#, fuzzy
 msgid "Follow symlinks"
 msgstr "Символик сылтама буенча бару"
 
@@ -295,7 +294,7 @@ msgstr "_Табу"
 
 #: ../plugins/gtkui/interface.c:288 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Sort By"
-msgstr ""
+msgstr "... буенча сортлау"
 
 #: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1516
 #: ../plugins/gtkui/mainplaylist.c:315 ../plugins/gtkui/prefwin.c:623
@@ -331,7 +330,7 @@ msgstr "Вакыт"
 #: ../plugins/gtkui/interface.c:315 ../plugins/gtkui/interface.c:1520
 #: ../plugins/gtkui/plcommon.c:1002 ../plugins/gtkui/deadbeef.glade.h:27
 msgid "Custom"
-msgstr ""
+msgstr "Өстәмә"
 
 #: ../plugins/gtkui/interface.c:324 ../plugins/gtkui/interface.c:1798
 #: ../plugins/gtkui/deadbeef.glade.h:94
@@ -815,11 +814,11 @@ msgstr "Веб-адрес"
 
 #: ../plugins/gtkui/interface.c:3083 ../plugins/gtkui/deadbeef.glade.h:47
 msgid "Group By"
-msgstr ""
+msgstr "... буенча төркемләү"
 
 #: ../plugins/gtkui/interface.c:3207 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Sort by..."
-msgstr ""
+msgstr "... буенча сортлау"
 
 #: ../plugins/gtkui/interface.c:3223 ../plugins/gtkui/deadbeef.glade.h:43
 msgid "Format"
@@ -954,7 +953,7 @@ msgstr "Багананы бетерү"
 
 #: ../plugins/gtkui/plcommon.c:983
 msgid "Group by"
-msgstr ""
+msgstr "... буенча төркемләү"
 
 #: ../plugins/gtkui/plcommon.c:990
 msgid "None"
@@ -1125,12 +1124,12 @@ msgstr "   --random           Плейлистагы очраклы җыр\n"
 #: ../main.c:103
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
-msgstr ""
+msgstr "   --queue            Булган плейлистка файллар өстәү\n"
 
 #: ../main.c:104
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr ""
+msgstr "   --nowplaying FMT   Форматланган трек исемен экранга басу\n"
 
 #: ../main.c:105
 #, c-format
@@ -1139,20 +1138,25 @@ msgid ""
 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
 "                      copy[r]ight, [e]lapsed\n"
 msgstr ""
+"                      FMT %%-синтаксис: %%a-башкаручы, %%t-исем, %%b-альбом,\n"
+"                      %%l-озынлык, %%n-трек саны, %%y-ел, %%c-аңлатма,\n"
+"                      %%r-автор хокуклары, %%e-үткән вакыт\n"
 
 #: ../main.c:108
 #, c-format
 msgid ""
 "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
 "- title\"\n"
-msgstr ""
+msgstr "                      Мәсәлән: --nowplaying \"%%a - %%t\" \"artist - title\" "
+"сыман текст экранга чыгарачак\n"
 
 #: ../main.c:109
 #, c-format
 msgid ""
 "                      for more info, see http://sourceforge.net/apps/"
 "mediawiki/deadbeef/index.php?title=Title_Formatting\n"
-msgstr ""
+msgstr "                     күбрәк мәгълуматны сез http://sourceforge.net/apps/medi"
+"awiki/deadbeef/index.php?title=Title_Formatting сайтында карый аласыз\n"
 
 #: ../playlist.c:443 ../playlist.c:2609
 msgid "Default"
@@ -1160,23 +1164,27 @@ msgstr ""
 
 #: ../playlist.c:3858
 msgid "Yes"
-msgstr ""
+msgstr "Әйе"
 
 #: ../playlist.c:3858
 msgid "No"
-msgstr ""
+msgstr "Юк"
 
 #: ../plugins/gtkui/deadbeef.glade.h:3
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
 msgstr ""
+"2.3 (тәкъдим ителә)\n"
+"2.4"
 
 #: ../plugins/gtkui/deadbeef.glade.h:14
 msgid ""
 "Ascending\n"
 "Descending"
 msgstr ""
+"Үсү буенча\n"
+"Кимү буенча"
 
 #: ../plugins/gtkui/deadbeef.glade.h:33
 msgid ""
@@ -1184,6 +1192,9 @@ msgid ""
 "Track\n"
 "Album"
 msgstr ""
+"Өзү\n"
+"Трек\n"
+"Альбом"
 
 #: ../plugins/gtkui/deadbeef.glade.h:55
 msgid ""
@@ -1199,18 +1210,31 @@ msgid ""
 "Band / Album Artist\n"
 "Custom"
 msgstr ""
+"Тәртип саны\n"
+"Уйный\n"
+"Альбом тышы\n"
+"Башкаручы - Альбом\n"
+"Башкаручы\n"
+"Альбом\n"
+"Исем\n"
+"Озаклык\n"
+"Трек саны\n"
+"Төркем / Альбом башкаручысы\n"
+"Өстәмә"
 
 #: ../plugins/gtkui/deadbeef.glade.h:67
 msgid ""
 "Left\n"
 "Right"
 msgstr ""
+"Сул як\n"
+"Уң як"
 
 #: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
 #: ../plugins/converter/support.c:90 ../plugins/converter/support.c:114
 #, c-format
 msgid "Couldn't find pixmap file: %s"
-msgstr ""
+msgstr "Рәсем файлын табып булмады: %s"
 
 #: ../plugins/wildmidi/wildmidiplug.c:162
 #, c-format
@@ -1218,376 +1242,380 @@ msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings."
 msgstr ""
+"wildmidi: freepats көйләү файлы табылмады. timidity-freepats төргәген "
+"урнаштырыгыз яки freepats.cfg файлы юлын өстәмәнең көйләүләрендә күрсәтегез."
 
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
 msgid "Add Audio CD"
-msgstr ""
+msgstr "СD Audio өстәү"
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
-msgstr ""
+msgstr "Last.fm'да күрсәтергә"
 
 #. ALSA output plugin
 #: ../translation/extra.c:6
 msgid "Use ALSA resampling"
-msgstr ""
+msgstr "ALSA буенча кире дискретлауны кулланырга"
 
 #: ../translation/extra.c:7
 msgid "Release device while stopped"
-msgstr ""
+msgstr "Туктаган вакытта җайланманы азат итергә"
 
 #: ../translation/extra.c:8 ../translation/extra.c:51
 msgid "Preferred buffer size"
-msgstr ""
+msgstr "Өстенлек буфер зурлыгы"
 
 #: ../translation/extra.c:9
 msgid "Preferred period size"
-msgstr ""
+msgstr "Өстенлек дәвер зурлыгы"
 
 #. Last.fm plugin
 #: ../translation/extra.c:11
 msgid "Enable scrobbler"
-msgstr ""
+msgstr "Скробблерны кабызу"
 
 #: ../translation/extra.c:12
 msgid "Disable nowplaying"
-msgstr ""
+msgstr "Хәзерге трек мәгълуматын җибәрмәскә"
 
 #: ../translation/extra.c:13
 msgid "Username"
-msgstr ""
+msgstr "Кулланучы исеме"
 
 #: ../translation/extra.c:14
 msgid "Password"
-msgstr ""
+msgstr "Пароль"
 
 #: ../translation/extra.c:15
 msgid "Scrobble URL"
-msgstr ""
+msgstr "Скробблинг өчен веб-адрес"
 
 #. OSS output plugin
 #: ../translation/extra.c:17
 msgid "Device file"
-msgstr ""
+msgstr "Җайланма файлы"
 
 #: ../translation/extra.c:18
 msgid "OSS4 samplerate bug workaround"
-msgstr ""
+msgstr "OSS4 дискретлау ешлыгы ялгышы өчен төзәтү"
 
 #. Album Artwork plugin
 #: ../translation/extra.c:20
 msgid "Cache update period (hr)"
-msgstr ""
+msgstr "Кэш яңарту периоды (сәг.) "
 
 #: ../translation/extra.c:21
 msgid "Fetch from embedded tags"
-msgstr ""
+msgstr "Кертелгән теглардан алырга"
 
 #: ../translation/extra.c:22
 msgid "Fetch from local folder"
-msgstr ""
+msgstr "Локаль каталогтан алырга"
 
 #: ../translation/extra.c:23
 msgid "Local cover file mask"
-msgstr ""
+msgstr "Локаль тышлар өчен файл битлеге"
 
 #: ../translation/extra.c:24
 msgid "Fetch from last.fm"
-msgstr ""
+msgstr "last.fm'нан алырга"
 
 #: ../translation/extra.c:25
 msgid "Fetch from albumart.org"
-msgstr ""
+msgstr "albumart.org'нан алырга"
 
 #: ../translation/extra.c:26
 msgid "Scale artwork towards longer side"
-msgstr ""
+msgstr "Озынрак ягы буенча тышны масштаблау"
 
 #. Audio CD player
 #: ../translation/extra.c:28
 msgid "Use CDDB/FreeDB"
-msgstr ""
+msgstr "CDDB/FreeDB'ны кулланырга"
 
 #: ../translation/extra.c:29
 msgid "Prefer CD-Text over CDDB"
-msgstr ""
+msgstr "CD-Text урнына CDDB белән кулланырга"
 
 #: ../translation/extra.c:30
 msgid "CDDB url (e.g. 'freedb.org')"
-msgstr ""
+msgstr "CDDB веб-адресы ('freedb.org', мәсәлән)"
 
 #: ../translation/extra.c:31
 msgid "CDDB port number (e.g. '888')"
-msgstr ""
+msgstr "CDDB порт саны ('888', мәсәлән)"
 
 #: ../translation/extra.c:32
 msgid "Prefer CDDB protocol over HTTP"
-msgstr ""
+msgstr "HTTP урнына CDDB белән кулланырга"
 
 #: ../translation/extra.c:33
 msgid "Enable NRG image support"
-msgstr ""
+msgstr "NRG сүрәт формат тотуын кабызу"
 
 #. DUMB module player plugin
 #: ../translation/extra.c:35
 msgid "Resampling quality (0..2, higher is better)"
-msgstr ""
+msgstr "Кире дискретлау сыйфаты (0..2, зуррак - әйбәтрәк)"
 
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:37
 msgid "Max song length (in minutes)"
-msgstr ""
+msgstr "Трекның иң югары озынлыгы (минутларда)"
 
 #. Standard GTK2 user interface plugin
 #: ../translation/extra.c:39
 msgid "Ask confirmation to delete files from disk"
-msgstr ""
+msgstr "Файлны бетерү алдыннан раслауны сорарга"
 
 #: ../translation/extra.c:40
 msgid "Status icon volume control sensitivity"
-msgstr ""
+msgstr "Торыш билгечектәге тавыш көчлеге көйләүченең сизгерлеге"
 
 #: ../translation/extra.c:41
 msgid "Custom status icon"
-msgstr ""
+msgstr "Кулланучының торыш билгечеге"
 
 #: ../translation/extra.c:42
 msgid "Run gtk_init with --sync (debug mode)"
-msgstr ""
+msgstr "gtk_init'ны --sync ачкычы белән җибәрү (төзәткеч эш тәртибе)"
 
 #: ../translation/extra.c:43
 msgid "Add separators between plugin context menu items"
-msgstr ""
+msgstr "Контекст меню юллары арасына аергычлар өстәргә"
 
 #. OSD Notify plugin
 #: ../translation/extra.c:45
 msgid "Notification title format"
-msgstr ""
+msgstr "Белдерүнең баш исем форматы"
 
 #: ../translation/extra.c:46
 msgid "Notification content format"
-msgstr ""
+msgstr "Белдерүнең эчтәлек форматы"
 
 #: ../translation/extra.c:47
 msgid "Show album art"
-msgstr ""
+msgstr "Альбом тышын күрсәтү"
 
 #: ../translation/extra.c:48
 msgid "Album art size (px)"
-msgstr ""
+msgstr "Альбом тышы зурлыгы (пикс.)"
 
 #. PulseAudio output plugin
 #: ../translation/extra.c:50
 msgid "PulseAudio server"
-msgstr ""
+msgstr "PulseAudio серверы"
 
 #: ../translation/extra.c:52
 msgid "Samplerate"
-msgstr ""
+msgstr "Дискретлау ешлыгы"
 
 #. SHN player plugin
 #: ../translation/extra.c:54
 msgid "Relative seek table path"
-msgstr ""
+msgstr "Эзләү таблицаның нисбәтле юлы"
 
 #: ../translation/extra.c:55
 msgid "Absolute seek table path"
-msgstr ""
+msgstr "Эзләү таблицаның абсолют юлы"
 
 #: ../translation/extra.c:56
 msgid "Swap audio bytes (toggle if all you hear is static)"
-msgstr ""
+msgstr "Аудио байтларны икенче урыннарга куерга."
 
 #. SID decoder plugin
 #: ../translation/extra.c:58
 msgid "Enable HVSC Songlength DB"
-msgstr ""
+msgstr "HVSC Songlength DB'ны кабызу"
 
 #: ../translation/extra.c:59
 msgid "Songlengths.txt (from HVSC)"
-msgstr ""
+msgstr "Songlengths.txt (HVSC'тан)"
 
 #: ../translation/extra.c:60
 msgid "Bits per sample (8 or 16)"
-msgstr ""
+msgstr "Дәрәҗә (8 яки 16)"
 
 #: ../translation/extra.c:61
 msgid "Default song length (sec)"
-msgstr ""
+msgstr "Үрнәкле трек озынлыгы (cек)"
 
 #. WildMidi player plugin
 #: ../translation/extra.c:63
 msgid "Timidity++ bank configuration file"
-msgstr ""
+msgstr "Timidity++ банкы өчен көйләү файлы."
 
 #: ../translation/extra.c:66
 msgid "Track Title"
-msgstr ""
+msgstr "Трек исеме"
 
 #: ../translation/extra.c:67
 msgid "Performer"
-msgstr ""
+msgstr "Башкаручы"
 
 #: ../translation/extra.c:72
 msgid "Total Tracks"
-msgstr ""
+msgstr "Трекның барлык саны"
 
 #: ../translation/extra.c:73
 msgid "Genre"
-msgstr ""
+msgstr "Жанр"
 
 #: ../translation/extra.c:74
 msgid "Composer"
-msgstr ""
+msgstr "Композитор"
 
 #: ../translation/extra.c:75
 msgid "Disc Number"
-msgstr ""
+msgstr "Диск саны"
 
 #: ../translation/extra.c:76
 msgid "Comment"
-msgstr ""
+msgstr "Аңлатма"
 
 #: ../translation/extra.c:77
 msgid "Encoder / Vendor"
-msgstr ""
+msgstr "Кодлаучы / Сатучы"
 
 #: ../translation/extra.c:79
 msgid "Location"
-msgstr ""
+msgstr "Урын"
 
 #: ../translation/extra.c:80
 msgid "Subtrack Index"
-msgstr ""
+msgstr "Кушып салынган трек номеры"
 
 #: ../translation/extra.c:81
 msgid "Tag Type(s)"
-msgstr ""
+msgstr "Тег төре/төрләре"
 
 #: ../translation/extra.c:82
 msgid "Embedded Cuesheet"
-msgstr ""
+msgstr "Кертелгән cue файлы"
 
 #: ../translation/extra.c:83
 msgid "Codec"
-msgstr ""
+msgstr "Кодек"
 
 #. FFmpeg deocder plugin
 #: ../translation/extra.c:85
 msgid "File Extensions (separate with ';')"
-msgstr ""
+msgstr "Файл киңәйтүчеләре (\";\" белән аерырга)"
 
 #. Converter GUI
 #: ../translation/extra.c:87
 msgid "Convert"
-msgstr ""
+msgstr "Әверелдерү"
 
 #. Resampler (Secret Rabbit Code)
 #: ../translation/extra.c:89
 msgid "Target Samplerate"
-msgstr ""
+msgstr "Дикретлау ешлыгы"
 
 #: ../translation/extra.c:90
 msgid "Quality / Algorythm"
-msgstr ""
+msgstr "Сыйфат / Алгоритм"
 
 #: ../translation/extra.c:91
 msgid "Automatic Samplerate (overrides Target Samplerate)"
-msgstr ""
+msgstr "Автоматик дикретлау (дикретлау ешлыгын алыштыра)"
 
 #: ../plugins/converter/convgui.c:108
 msgid "The file already exists. Overwrite?"
-msgstr ""
+msgstr "Бу файл инде бар. Алыштырыргамы?"
 
 #: ../plugins/converter/convgui.c:110
 msgid "Converter warning"
-msgstr ""
+msgstr "Әверелдерүче кисәтүе"
 
 #: ../plugins/converter/convgui.c:222
 msgid "Please select encoder"
-msgstr ""
+msgstr "Кодлаучыны сайлагыз"
 
 #: ../plugins/converter/convgui.c:224
 msgid "Converter error"
-msgstr ""
+msgstr "Әверелдерүче хатасы"
 
 #: ../plugins/converter/convgui.c:248
 msgid "Converting..."
-msgstr ""
+msgstr "Әверелдерә..."
 
 #: ../plugins/converter/convgui.c:394 ../plugins/converter/convgui.c:496
 msgid "Select folder..."
-msgstr ""
+msgstr "Каталогны сайлагыз..."
 
 #: ../plugins/converter/convgui.c:635
 msgid "Failed to save encoder preset"
-msgstr ""
+msgstr "Кодлаучының алдан куелган көйләвен истә калдырып булмады"
 
 #: ../plugins/converter/convgui.c:637 ../plugins/converter/convgui.c:1035
 msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
 msgstr ""
+"Алдан куелган көйләүләр урнашкан каталогның керү хокукларын тикшерегез, "
+"икенче исем сайлагыз, яки дискны бушатыгыз."
 
 #: ../plugins/converter/convgui.c:637 ../plugins/converter/convgui.c:1035
 msgid "Preset with the same name already exists. Try to pick another title."
-msgstr ""
+msgstr "Мондый исемле алдан куелган көйләү инде бар. Икенче исем сайлагыз."
 
 #: ../plugins/converter/convgui.c:638 ../plugins/converter/convgui.c:1036
 msgid "Error"
-msgstr ""
+msgstr "Хата"
 
 #: ../plugins/converter/convgui.c:692
 msgid "Add new encoder"
-msgstr ""
+msgstr "Яңа кодлаучыны өстәргә"
 
 #: ../plugins/converter/convgui.c:724
 msgid "Edit encoder"
-msgstr ""
+msgstr "Кодлаучыны үзгәртү"
 
 #: ../plugins/converter/convgui.c:756 ../plugins/converter/convgui.c:1133
 msgid "Remove preset"
-msgstr ""
+msgstr "Алдан куелган көйләүне бетерү"
 
 #: ../plugins/converter/convgui.c:758 ../plugins/converter/convgui.c:1135
 msgid "This action will delete the selected preset. Are you sure?"
-msgstr ""
+msgstr "Бу гамәл алдан куелган көйләүне бетерәчәк. Сез моны телисезме?"
 
 #: ../plugins/converter/convgui.c:782
 msgid "Encoders"
-msgstr ""
+msgstr "Кодлаучылар"
 
 #: ../plugins/converter/convgui.c:838 ../plugins/gtkui/dspconfig.c:183
 msgid "Add plugin to DSP chain"
-msgstr ""
+msgstr "DSP чылбырына өстәлмә кушу"
 
 #: ../plugins/converter/convgui.c:1034
 msgid "Failed to save DSP preset"
-msgstr ""
+msgstr "DSP'ның алдан куелган көйләүне истә калдырып булмады."
 
 #: ../plugins/converter/convgui.c:1098
 msgid "New DSP Preset"
-msgstr ""
+msgstr "Яңа DSP'ның алдан куелган көйләве"
 
 #: ../plugins/converter/convgui.c:1183
 msgid "Edit DSP Preset"
-msgstr ""
+msgstr "DSP'ның алдан куелган көйләвен үзгәртү"
 
 #: ../plugins/converter/convgui.c:1203
 msgid "DSP Presets"
-msgstr ""
+msgstr "DSP'ның алдан куелган көйләвеүләре"
 
 #: ../plugins/converter/interface.c:97
 #: ../plugins/converter/converter.glade.h:34
 msgid "Output folder:"
-msgstr ""
+msgstr "Чыгучы каталог:"
 
 #: ../plugins/converter/interface.c:118
 #: ../plugins/converter/converter.glade.h:33
 msgid "Output file name:"
-msgstr ""
+msgstr "Чыгучы файл исеме:"
 
 #: ../plugins/converter/interface.c:129
 #: ../plugins/converter/converter.glade.h:18
@@ -1596,30 +1624,32 @@ msgid ""
 "Extension (e.g. .mp3) will be appended automatically.\n"
 "Leave the field empty for default (%a - %t)."
 msgstr ""
+"Киңәйтмә (mp3, мәсәлән) автоматик рәвештә кушылачак.\n"
+"Үрнәкле көйләүләрне куллану өчен бу кырны буш калдырыгыз (%a - %t)."
 
 #: ../plugins/converter/interface.c:142
 #: ../plugins/converter/converter.glade.h:13
 msgid "Encoder:"
-msgstr ""
+msgstr "Кодлаучы:"
 
 #: ../plugins/converter/interface.c:166
 #: ../plugins/converter/converter.glade.h:10
 msgid "DSP preset:"
-msgstr ""
+msgstr "DSP'ның алдан куелган көйләве:"
 
 #: ../plugins/converter/interface.c:189
 #: ../plugins/converter/converter.glade.h:30
 msgid "Number of threads:"
-msgstr ""
+msgstr "Агымнар саны:"
 
 #: ../plugins/converter/interface.c:202
 #: ../plugins/converter/converter.glade.h:35
 msgid "Output sample format:"
-msgstr ""
+msgstr "Чыгучы өлге форматы:"
 
 #: ../plugins/converter/interface.c:209
 msgid "Keep source format"
-msgstr ""
+msgstr "Чыганак форматны калдыру"
 
 #: ../plugins/converter/interface.c:210
 msgid "8 bit signed int"
@@ -1644,45 +1674,45 @@ msgstr ""
 #: ../plugins/converter/interface.c:220
 #: ../plugins/converter/converter.glade.h:49
 msgid "When file exists:"
-msgstr ""
+msgstr "Файл булган вакытта:"
 
 #: ../plugins/converter/interface.c:227
 msgid "Prompt"
-msgstr ""
+msgstr "Күрсәтү"
 
 #: ../plugins/converter/interface.c:228
 msgid "Overwrite"
-msgstr ""
+msgstr "Алыштыру"
 
 #: ../plugins/converter/interface.c:230
 #: ../plugins/converter/converter.glade.h:39
 msgid "Preserve folder structure, starting from:"
-msgstr ""
+msgstr "Моннан башлап, каталог төзелешен саклау:"
 
 #: ../plugins/converter/interface.c:386
 #: ../plugins/converter/converter.glade.h:12
 msgid "Edit Encoder Preset"
-msgstr ""
+msgstr "Кодлаучының алдан куелган көйләвен үзгәртү"
 
 #: ../plugins/converter/interface.c:409
 #: ../plugins/converter/converter.glade.h:48
 msgid "Untitled Encoder"
-msgstr ""
+msgstr "Исемсез кодлаучы"
 
 #: ../plugins/converter/interface.c:417
 #: ../plugins/converter/converter.glade.h:32
 msgid "Output file extension:"
-msgstr ""
+msgstr "Чыгучы файл киңәйтүчесе:"
 
 #: ../plugins/converter/interface.c:424
 #: ../plugins/converter/converter.glade.h:11
 msgid "E.g. mp3"
-msgstr ""
+msgstr "mp3, мәсәлән"
 
 #: ../plugins/converter/interface.c:432
 #: ../plugins/converter/converter.glade.h:7
 msgid "Command line:"
-msgstr ""
+msgstr "Команда юлы:"
 
 #: ../plugins/converter/interface.c:443
 #: ../plugins/converter/converter.glade.h:15
@@ -1691,6 +1721,8 @@ msgid ""
 "Example: lame - %o\n"
 "%i for input file, %o for output file, - for stdin"
 msgstr ""
+"Мисал: lame - %o\n"
+"%i - керүче файл өчен, %o -чыгучы файл өчен, \"-\" stdin өчен"
 
 #: ../plugins/converter/interface.c:453
 #: ../plugins/converter/converter.glade.h:3
@@ -1699,44 +1731,46 @@ msgid ""
 "<small>%o - output file name\n"
 "%i - temporary input file name</small>"
 msgstr ""
+"<small>%o - чыгучы файл исеме\n"
+"%i - вакытлы керүче файл исеме</small>"
 
 #: ../plugins/converter/interface.c:462
 #: ../plugins/converter/converter.glade.h:29
 msgid "Method:"
-msgstr ""
+msgstr "Алым:"
 
 #: ../plugins/converter/interface.c:469
 msgid "Pipe"
-msgstr ""
+msgstr "Конвейер"
 
 #: ../plugins/converter/interface.c:470
 msgid "Temporary file"
-msgstr ""
+msgstr "Вакытлы файл"
 
 #: ../plugins/converter/interface.c:487
 #: ../plugins/converter/converter.glade.h:5
 msgid "APEv2"
-msgstr ""
+msgstr "APEv2"
 
 #: ../plugins/converter/interface.c:493
 #: ../plugins/converter/converter.glade.h:21
 msgid "ID3v1"
-msgstr ""
+msgstr "ID3v1"
 
 #: ../plugins/converter/interface.c:499
 #: ../plugins/converter/converter.glade.h:31
 msgid "OggVorbis"
-msgstr ""
+msgstr "OggVorbis"
 
 #: ../plugins/converter/interface.c:505
 #: ../plugins/converter/converter.glade.h:20
 msgid "FLAC"
-msgstr ""
+msgstr "FLAC"
 
 #: ../plugins/converter/interface.c:517
 #: ../plugins/converter/converter.glade.h:22
 msgid "ID3v2"
-msgstr ""
+msgstr "ID3v2"
 
 #: ../plugins/converter/interface.c:527
 #: ../plugins/converter/converter.glade.h:1
@@ -1746,12 +1780,12 @@ msgstr ""
 #: ../plugins/converter/interface.c:614
 #: ../plugins/converter/converter.glade.h:9
 msgid "DSP Preset Editor"
-msgstr ""
+msgstr "DSP'ның алдан куелган көйләүче мөхәррире"
 
 #: ../plugins/converter/interface.c:637
 #: ../plugins/converter/converter.glade.h:47
 msgid "Untitled DSP Preset"
-msgstr ""
+msgstr "Исемсез DSP'ның алдан куелган көйләве"
 
 #: ../plugins/converter/converter.glade.h:23
 msgid ""
@@ -1768,9 +1802,13 @@ msgid ""
 "Pipe\n"
 "Temporary file"
 msgstr ""
+"Конвейер\n"
+"Вакытлы файл"
 
 #: ../plugins/converter/converter.glade.h:41
 msgid ""
 "Prompt\n"
 "Overwrite"
 msgstr ""
+"Күрсәтү\n"
+"Алыштыру"
