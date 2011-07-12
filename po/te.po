@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-06-12 18:17+0200\n"
-"PO-Revision-Date: 2011-04-25 17:20+0200\n"
+"PO-Revision-Date: 2011-07-12 20:20+0200\n"
 "Last-Translator: PraveenIlla <mail2ipn@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: te\n"
@@ -52,7 +52,7 @@ msgstr "సహాయక ఫైల్ లోడుచేయుటలో విఫ
 
 #: ../plugins/gtkui/callbacks.c:722
 msgid "help.txt"
-msgstr ""
+msgstr "సహాయం.txt"
 
 #: ../plugins/gtkui/callbacks.c:723 ../plugins/gtkui/interface.c:1155
 #: ../plugins/gtkui/deadbeef.glade.h:48 ../plugins/converter/convgui.c:1240
@@ -71,9 +71,9 @@ msgid "DeaDBeeF %s ChangeLog"
 msgstr "డెడ్‌బీఫ్ %s మార్పుచిట్టా"
 
 #: ../plugins/gtkui/callbacks.c:1091
-#, fuzzy, c-format
+#, c-format
 msgid "DeaDBeeF Translators"
-msgstr "డెడ్‌బీఫ్ ఇప్పుడు ఆడిస్తున్నది"
+msgstr "డెడ్‌బీఫ్ అనువాదకులు"
 
 #: ../plugins/gtkui/ddbtabstrip.c:689 ../plugins/gtkui/trkproperties.c:618
 msgid "Edit playlist"
@@ -152,9 +152,8 @@ msgstr "బ్రాండ్లను సున్నాచేయి"
 
 #: ../plugins/gtkui/eq.c:387 ../plugins/converter/interface.c:826
 #: ../plugins/converter/converter.glade.h:40
-#, fuzzy
 msgid "Presets"
-msgstr "ప్రిసెట్ భద్రపరుచు"
+msgstr "ప్రిసెట్లు"
 
 #: ../plugins/gtkui/gtkui.c:137
 #, c-format
@@ -293,7 +292,7 @@ msgstr "కనుగొను (_F)"
 
 #: ../plugins/gtkui/interface.c:288 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Sort By"
-msgstr ""
+msgstr "ఇలా క్రమబద్దీకరించు"
 
 #: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1516
 #: ../plugins/gtkui/mainplaylist.c:315 ../plugins/gtkui/prefwin.c:623
@@ -305,9 +304,8 @@ msgid "Title"
 msgstr "శీర్షిక"
 
 #: ../plugins/gtkui/interface.c:299 ../plugins/gtkui/deadbeef.glade.h:139
-#, fuzzy
 msgid "Track number"
-msgstr "ఫైల్ సంఖ్య"
+msgstr "ట్రాక్ సంఖ్య"
 
 #: ../plugins/gtkui/interface.c:303 ../plugins/gtkui/interface.c:1515
 #: ../plugins/gtkui/interface.c:1869 ../plugins/gtkui/deadbeef.glade.h:10
@@ -325,12 +323,12 @@ msgstr "కళాకారుడు"
 #: ../plugins/gtkui/interface.c:311 ../plugins/gtkui/deadbeef.glade.h:31
 #: ../translation/extra.c:70
 msgid "Date"
-msgstr ""
+msgstr "తేదీ"
 
 #: ../plugins/gtkui/interface.c:315 ../plugins/gtkui/interface.c:1520
 #: ../plugins/gtkui/plcommon.c:1002 ../plugins/gtkui/deadbeef.glade.h:27
 msgid "Custom"
-msgstr ""
+msgstr "అనురూపితం"
 
 #: ../plugins/gtkui/interface.c:324 ../plugins/gtkui/interface.c:1798
 #: ../plugins/gtkui/deadbeef.glade.h:94
@@ -371,14 +369,12 @@ msgid "Linear"
 msgstr "ఒకే వరుసలో ఉన్నవి"
 
 #: ../plugins/gtkui/interface.c:370 ../plugins/gtkui/deadbeef.glade.h:120
-#, fuzzy
 msgid "Shuffle tracks"
-msgstr "యాదృచ్ఛికం"
+msgstr "యాదృచ్ఛిక ట్రాక్‌లు"
 
 #: ../plugins/gtkui/interface.c:375 ../plugins/gtkui/deadbeef.glade.h:119
-#, fuzzy
 msgid "Shuffle albums"
-msgstr "యాదృచ్ఛికం"
+msgstr "యాదృచ్ఛిక ఆల్బమ్‌లు"
 
 #: ../plugins/gtkui/interface.c:380 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Random"
@@ -386,19 +382,19 @@ msgstr "యాదృచ్ఛికం"
 
 #: ../plugins/gtkui/interface.c:386 ../plugins/gtkui/deadbeef.glade.h:74
 msgid "Looping"
-msgstr ""
+msgstr "ఆవృతం"
 
 #: ../plugins/gtkui/interface.c:393 ../plugins/gtkui/deadbeef.glade.h:72
 msgid "Loop All"
-msgstr ""
+msgstr "అన్నిటినీ ఆవృతం"
 
 #: ../plugins/gtkui/interface.c:398 ../plugins/gtkui/deadbeef.glade.h:73
 msgid "Loop Single Song"
-msgstr ""
+msgstr "ఒకే పాటని ఆవృతం"
 
 #: ../plugins/gtkui/interface.c:403 ../plugins/gtkui/deadbeef.glade.h:36
 msgid "Don't Loop"
-msgstr ""
+msgstr "ఆవృతం చేయవద్దు"
 
 #: ../plugins/gtkui/interface.c:409 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "Scroll follows playback"
@@ -414,7 +410,7 @@ msgstr "దీని తరువాత ఆపివేయి"
 
 #: ../plugins/gtkui/interface.c:430 ../plugins/gtkui/deadbeef.glade.h:66
 msgid "Jump to current track"
-msgstr ""
+msgstr "ప్రస్తుత ట్రాక్‌కి దూకు"
 
 #: ../plugins/gtkui/interface.c:437 ../plugins/gtkui/interface.c:444
 #: ../plugins/gtkui/deadbeef.glade.h:158
@@ -427,11 +423,11 @@ msgstr "మార్పుచిట్టా (_C)"
 
 #: ../plugins/gtkui/interface.c:461 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "_GPLv2"
-msgstr ""
+msgstr "GPLv2 (_G)"
 
 #: ../plugins/gtkui/interface.c:465 ../plugins/gtkui/deadbeef.glade.h:159
 msgid "_LGPLv2.1"
-msgstr ""
+msgstr "LGPLv2.1 (_L)"
 
 #: ../plugins/gtkui/interface.c:474 ../plugins/gtkui/deadbeef.glade.h:148
 msgid "_About"
@@ -439,7 +435,7 @@ msgstr "గురించి (_A)"
 
 #: ../plugins/gtkui/interface.c:482 ../plugins/gtkui/deadbeef.glade.h:165
 msgid "_Translators"
-msgstr ""
+msgstr "అనువాదకులు (_T)"
 
 #: ../plugins/gtkui/interface.c:898 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "Search"
@@ -483,7 +479,7 @@ msgstr "ట్రాక్ లక్షణాలు"
 
 #: ../plugins/gtkui/interface.c:1270 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Settings"
-msgstr ""
+msgstr "అమరికలు"
 
 #: ../plugins/gtkui/interface.c:1296 ../plugins/gtkui/deadbeef.glade.h:149
 msgid "_Apply"
@@ -513,7 +509,7 @@ msgstr "రకం:"
 
 #: ../plugins/gtkui/interface.c:1510
 msgid "Item Index"
-msgstr ""
+msgstr "అంశపు విషయసూచిక"
 
 #. create default set of columns
 #: ../plugins/gtkui/interface.c:1511 ../plugins/gtkui/mainplaylist.c:312
@@ -534,7 +530,6 @@ msgid "Duration"
 msgstr "నిడివి"
 
 #: ../plugins/gtkui/interface.c:1518 ../translation/extra.c:71
-#, fuzzy
 msgid "Track Number"
 msgstr "ట్రాక్ సంఖ్య"
 
@@ -581,7 +576,7 @@ msgstr "అవుట్‌పుట్ పరికరం:"
 
 #: ../plugins/gtkui/interface.c:1841 ../plugins/gtkui/deadbeef.glade.h:12
 msgid "Always convert 8 bit audio to 16 bit"
-msgstr ""
+msgstr "8 బిట్ ఆడియోని ఎల్లపుడూ 16 బిట్ కి పరివర్తించు"
 
 #: ../plugins/gtkui/interface.c:1845 ../plugins/gtkui/deadbeef.glade.h:123
 msgid "Sound"
@@ -609,11 +604,11 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1883 ../plugins/gtkui/deadbeef.glade.h:2
 msgid "-12 dB"
-msgstr ""
+msgstr "-12 dB"
 
 #: ../plugins/gtkui/interface.c:1893 ../plugins/gtkui/deadbeef.glade.h:1
 msgid "+12 dB"
-msgstr ""
+msgstr "+12 dB"
 
 #: ../plugins/gtkui/interface.c:1901 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
@@ -644,11 +639,11 @@ msgstr "ప్రిసెట్ భద్రపరుచు"
 
 #: ../plugins/gtkui/interface.c:1986 ../plugins/gtkui/deadbeef.glade.h:160
 msgid "_Load"
-msgstr ""
+msgstr "నింపు (_L)"
 
 #: ../plugins/gtkui/interface.c:1990 ../plugins/gtkui/deadbeef.glade.h:28
 msgid "DSP"
-msgstr ""
+msgstr "DSP"
 
 #: ../plugins/gtkui/interface.c:1999 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Close minimizes to tray"
@@ -798,12 +793,12 @@ msgstr "నెట్‌వర్క్"
 
 #: ../plugins/gtkui/interface.c:2428 ../plugins/gtkui/deadbeef.glade.h:143
 msgid "Version: "
-msgstr ""
+msgstr "రూపాంతరం: "
 
 #: ../plugins/gtkui/interface.c:2492 ../plugins/gtkui/deadbeef.glade.h:23
 #: ../translation/extra.c:78
 msgid "Copyright"
-msgstr ""
+msgstr "నకలుహక్కు"
 
 #: ../plugins/gtkui/interface.c:2502 ../plugins/gtkui/deadbeef.glade.h:93
 msgid "Plugins"
@@ -822,36 +817,32 @@ msgid "Sort by..."
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:3223 ../plugins/gtkui/deadbeef.glade.h:43
-#, fuzzy
 msgid "Format"
-msgstr "ఫార్మేట్:"
+msgstr "ఫార్మేట్"
 
 #: ../plugins/gtkui/interface.c:3253
 msgid "Ascending"
-msgstr ""
+msgstr "ఆరోహనక్రమం"
 
 #: ../plugins/gtkui/interface.c:3254
 msgid "Descending"
-msgstr ""
+msgstr "అవరోహనక్రమం"
 
 #: ../plugins/gtkui/interface.c:3307 ../plugins/gtkui/deadbeef.glade.h:113
 #: ../plugins/converter/interface.c:758
 #: ../plugins/converter/converter.glade.h:44
-#, fuzzy
 msgid "Select DSP Plugin"
-msgstr "ఎంపిక"
+msgstr "DSP ప్లగిన్ ఎంచుకొను"
 
 #: ../plugins/gtkui/interface.c:3323 ../plugins/gtkui/deadbeef.glade.h:92
 #: ../plugins/converter/convgui.c:1016 ../plugins/converter/interface.c:774
 #: ../plugins/gtkui/dspconfig.c:139 ../plugins/converter/converter.glade.h:38
-#, fuzzy
 msgid "Plugin"
-msgstr "ప్లగిన్‌లు"
+msgstr "ప్లగిన్‌"
 
 #: ../plugins/gtkui/interface.c:3409 ../plugins/gtkui/deadbeef.glade.h:132
-#, fuzzy
 msgid "Tag Writer Settings"
-msgstr "ట్యాగ్ వ్రైటర్"
+msgstr "ట్యాగ్ వ్రైటర్ అమరికలు"
 
 #: ../plugins/gtkui/interface.c:3440 ../plugins/gtkui/deadbeef.glade.h:146
 msgid "Write ID3v2"
@@ -973,9 +964,9 @@ msgid "Open file..."
 msgstr "ఫైల్ తెరువు..."
 
 #: ../plugins/gtkui/pluginconf.c:217
-#, fuzzy, c-format
+#, c-format
 msgid "Configure %s"
-msgstr "స్వరూపించు"
+msgstr "%s స్వరూపించు"
 
 #: ../plugins/gtkui/prefwin.c:82
 msgid "Default Audio Device"
@@ -1017,7 +1008,7 @@ msgstr "నిజంగానే విండో మూసివేయాలా?
 #. get value to edit
 #: ../plugins/gtkui/trkproperties.c:254
 msgid "[Multiple values] "
-msgstr ""
+msgstr "[బహుళ విలువలు] "
 
 #: ../plugins/gtkui/trkproperties.c:407 ../plugins/gtkui/trkproperties.c:419
 msgid "Key"
@@ -1029,38 +1020,36 @@ msgstr "విలువ"
 
 #: ../plugins/gtkui/trkproperties.c:594
 msgid "Writing tags..."
-msgstr ""
+msgstr "ట్యాగులను వ్రాస్తున్నది..."
 
 #: ../plugins/gtkui/trkproperties.c:621
 msgid "Name:"
-msgstr ""
+msgstr "పేరు:"
 
 #: ../plugins/gtkui/trkproperties.c:633
 msgid "Field names must not start with : or _"
-msgstr ""
+msgstr "క్షేత్రపు పేర్లు దీనితో ప్రారంభమవకూడదు : లేదా _"
 
 #: ../plugins/gtkui/trkproperties.c:634 ../plugins/gtkui/trkproperties.c:668
 msgid "Cannot add field"
-msgstr ""
+msgstr "క్షేత్రము జతచేయలేవు"
 
 #: ../plugins/gtkui/trkproperties.c:667
 msgid "Field with such name already exists, please try different name."
 msgstr ""
+"ఆ పేరుతో ఇంతకుముందే క్షేత్రము ఉన్నది. దయచేసి వేరొక పేరుని ప్రయత్నించండి."
 
 #: ../plugins/gtkui/trkproperties.c:692
-#, fuzzy
 msgid "Really remove selected field?"
-msgstr "నిజంగానే విండో మూసివేయాలా?"
+msgstr "ఎంచుకున్న క్షేత్రాన్ని నిజంగానే తీసివేయాలా?"
 
 #: ../plugins/gtkui/trkproperties.c:734
-#, fuzzy
 msgid "Add field"
-msgstr "ఫైళ్ళ(ను) జతచేయి"
+msgstr "క్షేత్రాన్ని జతచేయి"
 
 #: ../plugins/gtkui/trkproperties.c:737
-#, fuzzy
 msgid "Remove field"
-msgstr "తొలగించు"
+msgstr "క్షేత్రాన్ని తీసివేయి"
 
 #: ../main.c:90
 #, c-format
@@ -1185,6 +1174,8 @@ msgid ""
 "Ascending\n"
 "Descending"
 msgstr ""
+"ఆరోహనక్రమం\n"
+"అవరోహనక్రమం"
 
 #: ../plugins/gtkui/deadbeef.glade.h:33
 msgid ""
@@ -1197,7 +1188,6 @@ msgstr ""
 "ఆల్బమ్"
 
 #: ../plugins/gtkui/deadbeef.glade.h:55
-#, fuzzy
 msgid ""
 "Item Index\n"
 "Playing\n"
@@ -1211,15 +1201,15 @@ msgid ""
 "Band / Album Artist\n"
 "Custom"
 msgstr ""
-"ఫైల్ సంఖ్య\n"
+"అంశపు విషయసూచిక\n"
 "ఆడుతున్నది\n"
 "ఆల్బమ్ ముఖచిత్రం\n"
 "కళాకారుడు - ఆల్బమ్\n"
 "కళాకారుడు\n"
 "ఆల్బమ్\n"
 "శీర్షిక\n"
-"పొడవు\n"
-"ట్రాక్\n"
+"నిడివి\n"
+"ట్రాక్ సంఖ్య\n"
 "బ్యాండ్ / ఆల్బమ్ కళాకారుడు\n"
 "అనురూపితం"
 
@@ -1248,11 +1238,11 @@ msgstr ""
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
 msgid "Add Audio CD"
-msgstr ""
+msgstr "ఆడియో సీడీని జతచేయి"
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
-msgstr ""
+msgstr "last.fm నందు చూడు"
 
 #. ALSA output plugin
 #: ../translation/extra.c:6
@@ -1265,7 +1255,7 @@ msgstr ""
 
 #: ../translation/extra.c:8 ../translation/extra.c:51
 msgid "Preferred buffer size"
-msgstr ""
+msgstr "ప్రాధాన్య బఫర్ పరిమాణం"
 
 #: ../translation/extra.c:9
 msgid "Preferred period size"
@@ -1278,19 +1268,16 @@ msgid "Enable scrobbler"
 msgstr "ప్రోక్సీ సేవికను చేతనపరుచు"
 
 #: ../translation/extra.c:12
-#, fuzzy
 msgid "Disable nowplaying"
-msgstr "డెడ్‌బీఫ్ ఇప్పుడు ఆడిస్తున్నది"
+msgstr "ఇపుడుఆడించుటను అచేతనపరుచు"
 
 #: ../translation/extra.c:13
-#, fuzzy
 msgid "Username"
-msgstr "ప్రోక్సీ వాడుకరిపేరు:"
+msgstr "వాడుకరిపేరు"
 
 #: ../translation/extra.c:14
-#, fuzzy
 msgid "Password"
-msgstr "ప్రోక్సీ సంకేతపదం:"
+msgstr "సంకేతపదం"
 
 #: ../translation/extra.c:15
 msgid "Scrobble URL"
@@ -1299,7 +1286,7 @@ msgstr ""
 #. OSS output plugin
 #: ../translation/extra.c:17
 msgid "Device file"
-msgstr ""
+msgstr "పరికరము ఫైలు"
 
 #: ../translation/extra.c:18
 msgid "OSS4 samplerate bug workaround"
@@ -1469,29 +1456,27 @@ msgstr "శీర్షిక / ట్రాక్ కళాకారుడు"
 
 #: ../translation/extra.c:73
 msgid "Genre"
-msgstr ""
+msgstr "సాహిత్యం"
 
 #: ../translation/extra.c:74
 msgid "Composer"
-msgstr ""
+msgstr "స్వరకర్త"
 
 #: ../translation/extra.c:75
-#, fuzzy
 msgid "Disc Number"
-msgstr "ఫైల్ సంఖ్య"
+msgstr "డిస్క్ సంఖ్య"
 
 #: ../translation/extra.c:76
 msgid "Comment"
-msgstr ""
+msgstr "వ్యాఖ్య"
 
 #: ../translation/extra.c:77
 msgid "Encoder / Vendor"
-msgstr ""
+msgstr "ఎన్కోడర్ / వెండర్"
 
 #: ../translation/extra.c:79
-#, fuzzy
 msgid "Location"
-msgstr "స్థానమును జతచేయి"
+msgstr "స్థానము"
 
 #: ../translation/extra.c:80
 msgid "Subtrack Index"
@@ -1517,7 +1502,7 @@ msgstr ""
 #. Converter GUI
 #: ../translation/extra.c:87
 msgid "Convert"
-msgstr ""
+msgstr "పరివర్తించు"
 
 #. Resampler (Secret Rabbit Code)
 #: ../translation/extra.c:89
@@ -1534,28 +1519,27 @@ msgstr ""
 
 #: ../plugins/converter/convgui.c:108
 msgid "The file already exists. Overwrite?"
-msgstr ""
+msgstr "ఫైల్ ఇదివరకే ఉన్నది. దిద్దివ్రాయాలా?"
 
 #: ../plugins/converter/convgui.c:110
 msgid "Converter warning"
-msgstr ""
+msgstr "పరివర్తకము హెచ్చరిక"
 
 #: ../plugins/converter/convgui.c:222
 msgid "Please select encoder"
-msgstr ""
+msgstr "దయచేసి ఎన్కోడరును ఎంచుకోండి"
 
 #: ../plugins/converter/convgui.c:224
 msgid "Converter error"
-msgstr ""
+msgstr "పరివర్తకము దోషం"
 
 #: ../plugins/converter/convgui.c:248
 msgid "Converting..."
-msgstr ""
+msgstr "పరివర్తిస్తున్నది..."
 
 #: ../plugins/converter/convgui.c:394 ../plugins/converter/convgui.c:496
-#, fuzzy
 msgid "Select folder..."
-msgstr "అన్నీ ఎంచుకో"
+msgstr "సంచయాన్ని ఎంచుకొను..."
 
 #: ../plugins/converter/convgui.c:635
 msgid "Failed to save encoder preset"
@@ -1573,21 +1557,19 @@ msgstr ""
 
 #: ../plugins/converter/convgui.c:638 ../plugins/converter/convgui.c:1036
 msgid "Error"
-msgstr ""
+msgstr "దోషము"
 
 #: ../plugins/converter/convgui.c:692
 msgid "Add new encoder"
-msgstr ""
+msgstr "కొత్త ఎన్కోడరును జతచేయి"
 
 #: ../plugins/converter/convgui.c:724
-#, fuzzy
 msgid "Edit encoder"
-msgstr "నిలువువరుసను సవరించు"
+msgstr "ఎన్కోడరును సవరించు"
 
 #: ../plugins/converter/convgui.c:756 ../plugins/converter/convgui.c:1133
-#, fuzzy
 msgid "Remove preset"
-msgstr "ప్రిసెట్ భద్రపరుచు"
+msgstr "ప్రిసెట్ తీసివేయి"
 
 #: ../plugins/converter/convgui.c:758 ../plugins/converter/convgui.c:1135
 msgid "This action will delete the selected preset. Are you sure?"
@@ -1595,7 +1577,7 @@ msgstr ""
 
 #: ../plugins/converter/convgui.c:782
 msgid "Encoders"
-msgstr ""
+msgstr "ఎన్కోడర్లు"
 
 #: ../plugins/converter/convgui.c:838 ../plugins/gtkui/dspconfig.c:183
 msgid "Add plugin to DSP chain"
@@ -1622,15 +1604,13 @@ msgstr "ప్రిసెట్ భద్రపరుచు"
 
 #: ../plugins/converter/interface.c:97
 #: ../plugins/converter/converter.glade.h:34
-#, fuzzy
 msgid "Output folder:"
-msgstr "అవుట్‌పుట్ పరికరం:"
+msgstr "అవుట్‌పుట్ సంచయం:"
 
 #: ../plugins/converter/interface.c:118
 #: ../plugins/converter/converter.glade.h:33
-#, fuzzy
 msgid "Output file name:"
-msgstr "అవుట్‌పుట్ ప్లగిన్:"
+msgstr "అవుట్‌పుట్ ఫైల్ పేరు:"
 
 #: ../plugins/converter/interface.c:129
 #: ../plugins/converter/converter.glade.h:18
@@ -1643,7 +1623,7 @@ msgstr ""
 #: ../plugins/converter/interface.c:142
 #: ../plugins/converter/converter.glade.h:13
 msgid "Encoder:"
-msgstr ""
+msgstr "ఎన్కోడర్:"
 
 #: ../plugins/converter/interface.c:166
 #: ../plugins/converter/converter.glade.h:10
@@ -1750,7 +1730,7 @@ msgstr ""
 #: ../plugins/converter/interface.c:462
 #: ../plugins/converter/converter.glade.h:29
 msgid "Method:"
-msgstr ""
+msgstr "పద్ధతి:"
 
 #: ../plugins/converter/interface.c:469
 msgid "Pipe"
@@ -1758,41 +1738,37 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:470
 msgid "Temporary file"
-msgstr ""
+msgstr "తాత్కాలిక ఫైలు"
 
 #: ../plugins/converter/interface.c:487
 #: ../plugins/converter/converter.glade.h:5
-#, fuzzy
 msgid "APEv2"
-msgstr "APEv2 వ్రాయి"
+msgstr "APEv2"
 
 #: ../plugins/converter/interface.c:493
 #: ../plugins/converter/converter.glade.h:21
-#, fuzzy
 msgid "ID3v1"
-msgstr "ID3v1 వ్రాయి"
+msgstr "ID3v1"
 
 #: ../plugins/converter/interface.c:499
 #: ../plugins/converter/converter.glade.h:31
 msgid "OggVorbis"
-msgstr ""
+msgstr "OggVorbis"
 
 #: ../plugins/converter/interface.c:505
 #: ../plugins/converter/converter.glade.h:20
 msgid "FLAC"
-msgstr ""
+msgstr "FLAC"
 
 #: ../plugins/converter/interface.c:517
 #: ../plugins/converter/converter.glade.h:22
-#, fuzzy
 msgid "ID3v2"
-msgstr "ID3v2 వ్రాయి"
+msgstr "ID3v2"
 
 #: ../plugins/converter/interface.c:527
 #: ../plugins/converter/converter.glade.h:1
-#, fuzzy
 msgid "<b>Tag writer</b>"
-msgstr "ట్యాగ్ వ్రైటర్"
+msgstr "<b>ట్యాగ్ వ్రైటర్</b>"
 
 #: ../plugins/converter/interface.c:614
 #: ../plugins/converter/converter.glade.h:9
