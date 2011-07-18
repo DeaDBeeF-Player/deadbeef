@@ -734,7 +734,7 @@ convstr_id3v2 (int version, uint8_t encoding, const unsigned char* str, int sz) 
         }
     }
     // trim trailing linebreaks
-    for (n = converted_sz-2; n >= 0; n--) {
+    for (n = converted_sz-1; n >= 0; n--) {
         if (out[n] == '\n') {
             out[n] = 0;
         }
