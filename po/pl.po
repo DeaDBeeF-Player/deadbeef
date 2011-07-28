@@ -375,14 +375,12 @@ msgid "Linear"
 msgstr "Liniowa"
 
 #: ../plugins/gtkui/interface.c:370 ../plugins/gtkui/deadbeef.glade.h:120
-#, fuzzy
 msgid "Shuffle tracks"
-msgstr "Losowo"
+msgstr "Losowe nagrania"
 
 #: ../plugins/gtkui/interface.c:375 ../plugins/gtkui/deadbeef.glade.h:119
-#, fuzzy
 msgid "Shuffle albums"
-msgstr "Losowo"
+msgstr "Losowe albumy"
 
 #: ../plugins/gtkui/interface.c:380 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Random"
@@ -1168,7 +1166,9 @@ msgstr ""
 msgid ""
 "                      for more info, see http://sourceforge.net/apps/"
 "mediawiki/deadbeef/index.php?title=Title_Formatting\n"
-msgstr ""
+msgstr "                      w celu uzyskania większej ilości informacji, proszę "
+"odwiedzić stronę http://sourceforge.net/apps/mediawiki/deadbeef/index.php?ti"
+"tle=Title_Formatting\n"
 
 #: ../playlist.c:443 ../playlist.c:2609
 msgid "Default"
@@ -1442,13 +1442,12 @@ msgstr ""
 
 #. SID decoder plugin
 #: ../translation/extra.c:58
-#, fuzzy
 msgid "Enable HVSC Songlength DB"
-msgstr "Włączenie HVSC"
+msgstr "Włączenie bazy danych długości utworów HVSC"
 
 #: ../translation/extra.c:59
 msgid "Songlengths.txt (from HVSC)"
-msgstr ""
+msgstr "Położenie pliku Songlengths.txt (z HVSC)"
 
 #: ../translation/extra.c:60
 msgid "Bits per sample (8 or 16)"
@@ -1537,7 +1536,7 @@ msgstr "Jakość/algorytm"
 
 #: ../translation/extra.c:91
 msgid "Automatic Samplerate (overrides Target Samplerate)"
-msgstr ""
+msgstr "Automatycznie (ignoruje docelową częstotliwość próbkowania)"
 
 #: ../plugins/converter/convgui.c:108
 msgid "The file already exists. Overwrite?"
@@ -1572,6 +1571,8 @@ msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
 msgstr ""
+"Proszę sprawdzić uprawnienia dostępu do katalogu, spróbować użyć innego "
+"tytułu lub zwolnić pewną ilość przestrzeni na dysku."
 
 #: ../plugins/converter/convgui.c:637 ../plugins/converter/convgui.c:1035
 msgid "Preset with the same name already exists. Try to pick another title."
@@ -1616,9 +1617,8 @@ msgid "New DSP Preset"
 msgstr "Nowy profil filtrów DSP"
 
 #: ../plugins/converter/convgui.c:1183
-#, fuzzy
 msgid "Edit DSP Preset"
-msgstr "Zapisz ustawienia..."
+msgstr "Edytowanie profilu filtrów DSP"
 
 #: ../plugins/converter/convgui.c:1203
 msgid "DSP Presets"
