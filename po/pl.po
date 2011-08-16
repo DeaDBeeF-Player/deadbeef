@@ -10,20 +10,20 @@ msgstr ""
 "Project-Id-Version: DeaDBeef 0.5.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-06-12 18:17+0200\n"
-"PO-Revision-Date: 2011-07-24 15:02+0200\n"
-"Last-Translator: Piotr Sokół <psokol@jabster.pl>\n"
+"PO-Revision-Date: 2011-07-28 19:37+0200\n"
+"Last-Translator: Artur <mazdac@gmail.com>\n"
 "Language-Team: Polish <>\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=((n==1) ? 0 : ((n%10>=2 && n%10<=4 && (n"
-"%100<10 || n%100>=20)) ? 1 : 2));\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2);\n"
 "X-Generator: Pootle 2.0.5\n"
 
 #: ../plugins/gtkui/callbacks.c:121
 msgid "Supported sound formats"
-msgstr "Obsługiwane pliki dźwiękowe"
+msgstr "Obsługiwane formaty dźwięku"
 
 #: ../plugins/gtkui/callbacks.c:132 ../plugins/gtkui/gtkui.c:776
 msgid "Other files (*)"
@@ -31,15 +31,15 @@ msgstr "Inne pliki (*)"
 
 #: ../plugins/gtkui/callbacks.c:142
 msgid "Open file(s)..."
-msgstr "Wybór pliku"
+msgstr "Otwórz plik(i)..."
 
 #: ../plugins/gtkui/callbacks.c:177
 msgid "Add file(s) to playlist..."
-msgstr "Wybór pliku"
+msgstr "Dodaj plik(i) do listy odtwarzania..."
 
 #: ../plugins/gtkui/callbacks.c:218
 msgid "Add folder(s) to playlist..."
-msgstr "Wybór katalogu"
+msgstr "Dodaj katalog(i) do listy odtwarzania..."
 
 #: ../plugins/gtkui/callbacks.c:223
 msgid "Follow symlinks"
@@ -47,7 +47,7 @@ msgstr "Podążanie za dowiązaniami symbolicznymi"
 
 #: ../plugins/gtkui/callbacks.c:697
 msgid "Failed while reading help file"
-msgstr "Nie można odczytać pliku pomocy"
+msgstr "Błąd podczas odczytu pliku pomocy"
 
 #: ../plugins/gtkui/callbacks.c:707
 msgid "Failed to load help file"
@@ -103,7 +103,7 @@ msgstr "Utwórz listę odtwarzania"
 
 #: ../plugins/gtkui/eq.c:136
 msgid "Save DeaDBeeF EQ Preset"
-msgstr "Wybór pliku"
+msgstr "Zapisz ustawienia korektora DeaDBeeF"
 
 #: ../plugins/gtkui/eq.c:143
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
@@ -111,31 +111,31 @@ msgstr "Pliki ustawień korektora DeaDBeeF (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:182
 msgid "Load DeaDBeeF EQ Preset..."
-msgstr "Wybór pliku"
+msgstr "Wczytaj ustawienia korektora...."
 
 #: ../plugins/gtkui/eq.c:186
 msgid "DeaDBeeF EQ presets (*.ddbeq)"
-msgstr "Pliki ustawień korektora DeaDBeeF (*.ddbeq)"
+msgstr "Ustawienia korektora DeaDBeeF (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:247
 msgid "Import Foobar2000 EQ Preset..."
-msgstr "Wybór pliku"
+msgstr "Importuj ustawienia korektora Foobar2000..."
 
 #: ../plugins/gtkui/eq.c:251
 msgid "Foobar2000 EQ presets (*.feq)"
-msgstr "Pliki ustawień korektora Foobar2000 (*.feq)"
+msgstr "Ustawienia korektora Foobar2000 (*.feq)"
 
 #: ../plugins/gtkui/eq.c:316
 msgid "Save Preset"
-msgstr "Zapisz..."
+msgstr "Zapisz ustawienia"
 
 #: ../plugins/gtkui/eq.c:324
 msgid "Load Preset"
-msgstr "Wczytaj..."
+msgstr "Wczytaj ustawienia"
 
 #: ../plugins/gtkui/eq.c:332
 msgid "Import Foobar2000 Preset"
-msgstr "Importuj z programu Foobar2000..."
+msgstr "Importuj ustawienia Foobar2000..."
 
 #: ../plugins/gtkui/eq.c:357
 msgid "Enable"
@@ -189,7 +189,7 @@ msgstr "| %4d kb/s "
 
 #: ../plugins/gtkui/gtkui.c:193
 msgid "Paused | "
-msgstr "Wstrzymano odtwarzanie |"
+msgstr "Wstrzymano |"
 
 #: ../plugins/gtkui/gtkui.c:198
 #, c-format
@@ -201,15 +201,15 @@ msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:632
 msgid "Save Playlist As"
-msgstr "Wybór pliku"
+msgstr "Zapisz listę odtwarzania jako..."
 
 #: ../plugins/gtkui/gtkui.c:643
 msgid "DeaDBeeF playlist files (*.dbpl)"
-msgstr "Lista odtwarzania w formacie DeaDBeeF (*.dbpl)"
+msgstr "Pliki list odtwarzania DeaDBeeF (*.dbpl)"
 
 #: ../plugins/gtkui/gtkui.c:761
 msgid "Load Playlist"
-msgstr "Wybór pliku"
+msgstr "Wczytaj listę odtwarzania"
 
 #: ../plugins/gtkui/gtkui.c:914 ../plugins/gtkui/fileman.c:40
 msgid "New Playlist"
@@ -226,20 +226,20 @@ msgstr "_Plik"
 
 #: ../plugins/gtkui/interface.c:157 ../plugins/gtkui/deadbeef.glade.h:162
 msgid "_Open file(s)"
-msgstr "_Otwórz..."
+msgstr "_Otwórz plik(i)..."
 
 #: ../plugins/gtkui/interface.c:173 ../plugins/gtkui/deadbeef.glade.h:6
 msgid "Add file(s)"
-msgstr "Dodaj..."
+msgstr "Dodaj plik(i)..."
 
 #: ../plugins/gtkui/interface.c:181 ../plugins/gtkui/deadbeef.glade.h:8
 msgid "Add folder(s)"
-msgstr "Dodaj katalog..."
+msgstr "Dodaj katalog(i)..."
 
 #: ../plugins/gtkui/interface.c:189 ../plugins/gtkui/interface.c:2970
 #: ../plugins/gtkui/deadbeef.glade.h:9
 msgid "Add location"
-msgstr "Dodaj położenie..."
+msgstr "Dodaj położenie"
 
 #: ../plugins/gtkui/interface.c:198 ../plugins/gtkui/deadbeef.glade.h:79
 msgid "New playlist"
@@ -376,11 +376,11 @@ msgstr "Liniowa"
 
 #: ../plugins/gtkui/interface.c:370 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Shuffle tracks"
-msgstr "Losowe nagrania"
+msgstr "Losuj nagrania"
 
 #: ../plugins/gtkui/interface.c:375 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Shuffle albums"
-msgstr "Losowe albumy"
+msgstr "Losuj albumy"
 
 #: ../plugins/gtkui/interface.c:380 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Random"
@@ -388,27 +388,27 @@ msgstr "Losowo"
 
 #: ../plugins/gtkui/interface.c:386 ../plugins/gtkui/deadbeef.glade.h:74
 msgid "Looping"
-msgstr "Powtarzanie"
+msgstr "Zapętlanie"
 
 #: ../plugins/gtkui/interface.c:393 ../plugins/gtkui/deadbeef.glade.h:72
 msgid "Loop All"
-msgstr "Wszystkie ścieżki"
+msgstr "Zapętl listę"
 
 #: ../plugins/gtkui/interface.c:398 ../plugins/gtkui/deadbeef.glade.h:73
 msgid "Loop Single Song"
-msgstr "Pojedyncza ścieżka"
+msgstr "Zapętl pojedynczy utwór"
 
 #: ../plugins/gtkui/interface.c:403 ../plugins/gtkui/deadbeef.glade.h:36
 msgid "Don't Loop"
-msgstr "Brak"
+msgstr "Nie zapętlaj"
 
 #: ../plugins/gtkui/interface.c:409 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "Scroll follows playback"
-msgstr "Przewijanie podąża za odtwarzaniem"
+msgstr "Przewijaj listę za odtwarzanym utworem"
 
 #: ../plugins/gtkui/interface.c:414 ../plugins/gtkui/deadbeef.glade.h:26
 msgid "Cursor follows playback"
-msgstr "Kursor podąża za odtwarzaniem"
+msgstr "Kursor podąża za odtwarzanym utworem"
 
 #: ../plugins/gtkui/interface.c:418 ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Stop after current"
@@ -842,9 +842,8 @@ msgstr "Malejąco"
 #: ../plugins/gtkui/interface.c:3307 ../plugins/gtkui/deadbeef.glade.h:113
 #: ../plugins/converter/interface.c:758
 #: ../plugins/converter/converter.glade.h:44
-#, fuzzy
 msgid "Select DSP Plugin"
-msgstr "Zaznaczenie"
+msgstr "Wybierz wtyczkę DSP"
 
 #: ../plugins/gtkui/interface.c:3323 ../plugins/gtkui/deadbeef.glade.h:92
 #: ../plugins/converter/convgui.c:1016 ../plugins/converter/interface.c:774
@@ -1398,7 +1397,7 @@ msgstr "Uruchomienie gtk_init z opcją --sync (tryb diagnozowania błędów)"
 
 #: ../translation/extra.c:43
 msgid "Add separators between plugin context menu items"
-msgstr ""
+msgstr "Dodaj separatory między kolejnymi elementami menu kontekstowego"
 
 #. OSD Notify plugin
 #: ../translation/extra.c:45
@@ -1499,7 +1498,6 @@ msgid "Location"
 msgstr "Położenie"
 
 #: ../translation/extra.c:80
-#, fuzzy
 msgid "Subtrack Index"
 msgstr "Indeks nagrania"
 
@@ -1548,7 +1546,7 @@ msgstr "Ostrzeżenie konwertera"
 
 #: ../plugins/converter/convgui.c:222
 msgid "Please select encoder"
-msgstr ""
+msgstr "Wybierz program kodujący"
 
 #: ../plugins/converter/convgui.c:224
 msgid "Converter error"
@@ -1707,7 +1705,7 @@ msgstr "Zastępowanie"
 #: ../plugins/converter/interface.c:230
 #: ../plugins/converter/converter.glade.h:39
 msgid "Preserve folder structure, starting from:"
-msgstr ""
+msgstr "Chroń strukturę katalogów zaczynając od:"
 
 #: ../plugins/converter/interface.c:386
 #: ../plugins/converter/converter.glade.h:12
@@ -1801,7 +1799,7 @@ msgstr "<b>Etykiety</b>"
 #: ../plugins/converter/interface.c:614
 #: ../plugins/converter/converter.glade.h:9
 msgid "DSP Preset Editor"
-msgstr ""
+msgstr "Edytor ustawień DSP"
 
 #: ../plugins/converter/interface.c:637
 #: ../plugins/converter/converter.glade.h:47
