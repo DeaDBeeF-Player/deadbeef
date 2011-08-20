@@ -1,26 +1,25 @@
-# SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+# Ainur Shakirov <ainur.shakirov.tt@gmail.com>, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-06-12 18:17+0200\n"
-"PO-Revision-Date: 2011-07-26 10:51+0200\n"
-"Last-Translator: Ainur <ainur.shakirov.tt@gmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2011-08-18 00:43+0400\n"
+"Last-Translator: Ainur Shakirov <ainur.shakirov.tt@gmail.com>\n"
+"Language-Team: Tatar <>\n"
 "Language: tt_RU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Pootle 2.0.5\n"
+"X-Generator: Lokalize 1.2\n"
 
 #: ../plugins/gtkui/callbacks.c:121
 msgid "Supported sound formats"
-msgstr "Якланган тавыш форматлары"
+msgstr "Тотылган тавыш форматлары"
 
 #: ../plugins/gtkui/callbacks.c:132 ../plugins/gtkui/gtkui.c:776
 msgid "Other files (*)"
@@ -96,7 +95,7 @@ msgstr "Җыр исемлеген бетерү"
 
 #: ../plugins/gtkui/ddbtabstrip.c:756
 msgid "Add New Playlist"
-msgstr "Яңа җыр исемлеге өстәү"
+msgstr "Яңа җыр исемлеген өстәү"
 
 #: ../plugins/gtkui/eq.c:136
 msgid "Save DeaDBeeF EQ Preset"
@@ -117,7 +116,7 @@ msgstr "DeaDBeeF эквалайзерның алдан куелган көйлә
 # Есть вариант с заменой "импортлау" на "кертү"
 #: ../plugins/gtkui/eq.c:247
 msgid "Import Foobar2000 EQ Preset..."
-msgstr "FooBar2000 эквалайзерның алдан куелган көйләвен импортлау..."
+msgstr "FooBar2000 эквалайзерның алдан куелган көйләвен кушу..."
 
 #: ../plugins/gtkui/eq.c:251
 msgid "Foobar2000 EQ presets (*.feq)"
@@ -169,7 +168,7 @@ msgstr "%d көн %d:%02d:%02d"
 #: ../plugins/gtkui/gtkui.c:149
 #, c-format
 msgid "Stopped | %d tracks | %s total playtime"
-msgstr "Стоп | %d юл | %s бөтен вакыт"
+msgstr "Туктатылды | %d юл | %s бөтен вакыт"
 
 #: ../plugins/gtkui/gtkui.c:162
 msgid "Mono"
@@ -186,7 +185,7 @@ msgstr "| %4d кбит/с "
 
 #: ../plugins/gtkui/gtkui.c:193
 msgid "Paused | "
-msgstr "Тыналыш | "
+msgstr "Тыналды | "
 
 #: ../plugins/gtkui/gtkui.c:198
 #, c-format
@@ -262,7 +261,7 @@ msgstr "_Чистарту"
 
 #: ../plugins/gtkui/interface.c:244 ../plugins/gtkui/deadbeef.glade.h:114
 msgid "Select all"
-msgstr "Барысын да сайлау"
+msgstr "Барысын сайлау"
 
 #: ../plugins/gtkui/interface.c:251 ../plugins/gtkui/deadbeef.glade.h:32
 msgid "Deselect all"
@@ -329,7 +328,7 @@ msgstr "Вакыт"
 #: ../plugins/gtkui/interface.c:315 ../plugins/gtkui/interface.c:1520
 #: ../plugins/gtkui/plcommon.c:1002 ../plugins/gtkui/deadbeef.glade.h:27
 msgid "Custom"
-msgstr "Башка"
+msgstr "Өстәмә"
 
 #: ../plugins/gtkui/interface.c:324 ../plugins/gtkui/interface.c:1798
 #: ../plugins/gtkui/deadbeef.glade.h:94
@@ -379,7 +378,7 @@ msgstr "Альбомнарны болгату"
 
 #: ../plugins/gtkui/interface.c:380 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Random"
-msgstr "Очраклы рәвештә"
+msgstr "Очраклы"
 
 #: ../plugins/gtkui/interface.c:386 ../plugins/gtkui/deadbeef.glade.h:74
 msgid "Looping"
@@ -391,7 +390,7 @@ msgstr "Барысын"
 
 #: ../plugins/gtkui/interface.c:398 ../plugins/gtkui/deadbeef.glade.h:73
 msgid "Loop Single Song"
-msgstr "Юлны"
+msgstr "Юлны гына"
 
 #: ../plugins/gtkui/interface.c:403 ../plugins/gtkui/deadbeef.glade.h:36
 msgid "Don't Loop"
@@ -407,7 +406,7 @@ msgstr "Бу юлны сайлау"
 
 #: ../plugins/gtkui/interface.c:418 ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Stop after current"
-msgstr "Моннан соң туктарга"
+msgstr "Моннан соң туктау"
 
 #: ../plugins/gtkui/interface.c:430 ../plugins/gtkui/deadbeef.glade.h:66
 msgid "Jump to current track"
@@ -444,7 +443,7 @@ msgstr "Эзләү"
 
 #: ../plugins/gtkui/interface.c:973 ../plugins/gtkui/deadbeef.glade.h:125
 msgid "Stop"
-msgstr "Стоп"
+msgstr "Туктату"
 
 #: ../plugins/gtkui/interface.c:981 ../plugins/gtkui/deadbeef.glade.h:88
 msgid "Play"
@@ -456,11 +455,11 @@ msgstr "Тыналыш"
 
 #: ../plugins/gtkui/interface.c:997 ../plugins/gtkui/deadbeef.glade.h:95
 msgid "Previous"
-msgstr "Алдынгы"
+msgstr "Артка"
 
 #: ../plugins/gtkui/interface.c:1005 ../plugins/gtkui/deadbeef.glade.h:80
 msgid "Next"
-msgstr "Алдагы"
+msgstr "Алга"
 
 #: ../plugins/gtkui/interface.c:1013 ../plugins/gtkui/deadbeef.glade.h:89
 msgid "Play Random"
@@ -614,11 +613,11 @@ msgstr "+12 дБ"
 #: ../plugins/gtkui/interface.c:1901 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
 msgstr ""
-"Бу җыр исемлегенә файлларны команда юлыннан (яки файл-менеджердан) өстәргә:"
+"Бу җыр исемлегенә файлларны команда юлыннан (яки файл-менеджерыннан) өстәргә:"
 
 #: ../plugins/gtkui/interface.c:1910 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Resume previous session on startup"
-msgstr "Элекке булган сессияне торгызу"
+msgstr "Алдан булган сессияне торгызу"
 
 #: ../plugins/gtkui/interface.c:1914 ../plugins/gtkui/deadbeef.glade.h:37
 msgid "Don't add from archives when adding folders"
@@ -648,7 +647,7 @@ msgstr "DSP"
 
 #: ../plugins/gtkui/interface.c:1999 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Close minimizes to tray"
-msgstr "Тартмага урнаштырып ябарга"
+msgstr "Тартмага урнаштырып ябу"
 
 #: ../plugins/gtkui/interface.c:2003 ../plugins/gtkui/deadbeef.glade.h:77
 msgid "Middle mouse button closes playlist"
@@ -787,7 +786,7 @@ msgstr "Кулланучы исеме:"
 
 #: ../plugins/gtkui/interface.c:2387 ../plugins/gtkui/deadbeef.glade.h:97
 msgid "Proxy Password:"
-msgstr "Пароль:"
+msgstr "Серсүз:"
 
 #: ../plugins/gtkui/interface.c:2397 ../plugins/gtkui/deadbeef.glade.h:78
 msgid "Network"
@@ -901,7 +900,7 @@ msgstr "Башкаручы / Альбом"
 
 #: ../plugins/gtkui/mainplaylist.c:314 ../plugins/gtkui/search.c:392
 msgid "Track No"
-msgstr "№"
+msgstr "Юлның №"
 
 #: ../plugins/gtkui/plcommon.c:325
 msgid "Delete files from disk"
@@ -935,7 +934,7 @@ msgstr "Өстәмә мәгълуматны яңарту"
 
 #: ../plugins/gtkui/plcommon.c:461
 msgid "Remove from disk"
-msgstr "Дисктан бетерергә"
+msgstr "Дисктан бетерү"
 
 #: ../plugins/gtkui/plcommon.c:840 ../plugins/gtkui/plcommon.c:965
 msgid "Add column"
@@ -977,7 +976,7 @@ msgstr "Үрнәкле тавыш җайланмасы"
 #: ../plugins/gtkui/prefwin.c:318 ../plugins/converter/interface.c:649
 #: ../plugins/converter/converter.glade.h:6
 msgid "Add"
-msgstr "Өстәргә"
+msgstr "Өстәү"
 
 #: ../plugins/gtkui/prefwin.c:328
 msgid "Global Hotkeys"
@@ -1005,12 +1004,12 @@ msgstr "Бу юлның мәгълуматы үзгәрелде."
 
 #: ../plugins/gtkui/trkproperties.c:161
 msgid "Really close the window?"
-msgstr "Чыннан да тәрәзәне ябарга телисезме?"
+msgstr "Тәрәзәне ябарга телисезме?"
 
 #. get value to edit
 #: ../plugins/gtkui/trkproperties.c:254
 msgid "[Multiple values] "
-msgstr "[Берничә мәгънә] "
+msgstr "[Берничә кыйммәт] "
 
 #: ../plugins/gtkui/trkproperties.c:407 ../plugins/gtkui/trkproperties.c:419
 msgid "Key"
@@ -1018,7 +1017,7 @@ msgstr "Ачкыч"
 
 #: ../plugins/gtkui/trkproperties.c:408 ../plugins/gtkui/trkproperties.c:420
 msgid "Value"
-msgstr "Мәгънә"
+msgstr "Кыйммәт"
 
 #: ../plugins/gtkui/trkproperties.c:594
 msgid "Writing tags..."
@@ -1042,7 +1041,7 @@ msgstr "Мондый исемле кыр инде бар, икенче исем 
 
 #: ../plugins/gtkui/trkproperties.c:692
 msgid "Really remove selected field?"
-msgstr "Чыннан да сайланган кырны бетерергә телисезме?"
+msgstr "Сайланган кырны бетерергәме?"
 
 #: ../plugins/gtkui/trkproperties.c:734
 msgid "Add field"
@@ -1055,7 +1054,7 @@ msgstr "Кырны бетерү"
 #: ../main.c:90
 #, c-format
 msgid "Usage: deadbeef [options] [file(s)]\n"
-msgstr "Куллану: deadbeef [ачкыч] [файл(лар)]\n"
+msgstr "Куллану: deadbeef [ачкычлар] [файл(лар)]\n"
 
 #: ../main.c:91
 #, c-format
@@ -1101,7 +1100,8 @@ msgstr "   --toggle-pause     Уйнауның тыналышы\n"
 #, c-format
 msgid ""
 "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
-msgstr "   --play-pause       Туктау вакытында уйнауны җибәрергә, югыйсә - "
+msgstr ""
+"   --play-pause       Туктау вакытында уйнауны җибәрергә, югыйсә - "
 "туктатырга\n"
 
 #: ../main.c:100
@@ -1145,7 +1145,8 @@ msgstr ""
 msgid ""
 "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
 "- title\"\n"
-msgstr "                      мәсәлән: --nowplaying \"%%a - %%t\" \"artist - title\" "
+msgstr ""
+"                      мәсәлән: --nowplaying \"%%a - %%t\" \"artist - title\" "
 "сыман текстны экранга чыгарачак\n"
 
 #: ../main.c:109
@@ -1153,7 +1154,8 @@ msgstr "                      мәсәлән: --nowplaying \"%%a - %%t\" \"artis
 msgid ""
 "                      for more info, see http://sourceforge.net/apps/"
 "mediawiki/deadbeef/index.php?title=Title_Formatting\n"
-msgstr "                      күбрәк мәгълуматны сез http://sourceforge.net/apps/med"
+msgstr ""
+"                      күбрәк мәгълуматны сез http://sourceforge.net/apps/med"
 "iawiki/deadbeef/index.php?title=Title_Formatting сайтында карый аласыз\n"
 
 #: ../playlist.c:443 ../playlist.c:2609
@@ -1218,7 +1220,7 @@ msgstr ""
 "Озаклык\n"
 "Юл саны\n"
 "Төркем / Альбом башкаручысы\n"
-"Башка"
+"Өстәмә"
 
 #: ../plugins/gtkui/deadbeef.glade.h:67
 msgid ""
@@ -1260,20 +1262,20 @@ msgstr "ALSA буенча кире дискретлауны кулланырга
 
 #: ../translation/extra.c:7
 msgid "Release device while stopped"
-msgstr "Туктаган вакытта җайланманы азат итергә"
+msgstr "Туктаган вакытта җайланманы азат итү"
 
 #: ../translation/extra.c:8 ../translation/extra.c:51
 msgid "Preferred buffer size"
-msgstr "Өстенлек буфер зурлыгы"
+msgstr "Өстенлекле буфер зурлыгы"
 
 #: ../translation/extra.c:9
 msgid "Preferred period size"
-msgstr "Өстенлек дәвер зурлыгы"
+msgstr "Өстенлекле дәвер зурлыгы"
 
 #. Last.fm plugin
 #: ../translation/extra.c:11
 msgid "Enable scrobbler"
-msgstr "Скробблерны кабызу"
+msgstr "Скробблерны эшләтү"
 
 #: ../translation/extra.c:12
 msgid "Disable nowplaying"
@@ -1285,7 +1287,7 @@ msgstr "Кулланучы исеме"
 
 #: ../translation/extra.c:14
 msgid "Password"
-msgstr "Пароль"
+msgstr "Серсүз"
 
 #: ../translation/extra.c:15
 msgid "Scrobble URL"
@@ -1307,11 +1309,11 @@ msgstr "Кэш яңарту периоды (сәг.)"
 
 #: ../translation/extra.c:21
 msgid "Fetch from embedded tags"
-msgstr "Кертелгән теглардан алырга"
+msgstr "Кертелгән теглардан алу"
 
 #: ../translation/extra.c:22
 msgid "Fetch from local folder"
-msgstr "Локаль каталогтан алырга"
+msgstr "Локаль каталогтан алу"
 
 #: ../translation/extra.c:23
 msgid "Local cover file mask"
@@ -1319,11 +1321,11 @@ msgstr "Локаль тышлар өчен файл битлеге"
 
 #: ../translation/extra.c:24
 msgid "Fetch from last.fm"
-msgstr "last.fm сайтыннан алырга"
+msgstr "last.fm сайтыннан алу"
 
 #: ../translation/extra.c:25
 msgid "Fetch from albumart.org"
-msgstr "albumart.org сайтыннан алырга"
+msgstr "albumart.org сайтыннан алу"
 
 #: ../translation/extra.c:26
 msgid "Scale artwork towards longer side"
@@ -1332,11 +1334,11 @@ msgstr "Озынрак булган ягы буенча тышны масшта�
 #. Audio CD player
 #: ../translation/extra.c:28
 msgid "Use CDDB/FreeDB"
-msgstr "CDDB/FreeDB'ны кулланырга"
+msgstr "CDDB/FreeDB'ны куллану"
 
 #: ../translation/extra.c:29
 msgid "Prefer CD-Text over CDDB"
-msgstr "CD-Text урнына CDDB белән кулланырга"
+msgstr "CD-Text урнына CDDB белән куллану"
 
 #: ../translation/extra.c:30
 msgid "CDDB url (e.g. 'freedb.org')"
@@ -1348,7 +1350,7 @@ msgstr "CDDB порт саны («888», мәс)"
 
 #: ../translation/extra.c:32
 msgid "Prefer CDDB protocol over HTTP"
-msgstr "HTTP урнына CDDB белән кулланырга"
+msgstr "HTTP урнына CDDB белән куллану"
 
 #: ../translation/extra.c:33
 msgid "Enable NRG image support"
@@ -1422,7 +1424,7 @@ msgstr "Эзләү таблицаның абсолют юлы"
 
 #: ../translation/extra.c:56
 msgid "Swap audio bytes (toggle if all you hear is static)"
-msgstr "Аудио байтларны икенче урыннарга куерга"
+msgstr "Аудио байтларны үзара алыштыру"
 
 #. SID decoder plugin
 #: ../translation/extra.c:58
@@ -1439,7 +1441,7 @@ msgstr "Дәрәҗә (8 яки 16)"
 
 #: ../translation/extra.c:61
 msgid "Default song length (sec)"
-msgstr "Үрнәкле юл озынлыгы (cек)"
+msgstr "Үрнәк булган юл озынлыгы (cек)"
 
 #. WildMidi player plugin
 #: ../translation/extra.c:63
@@ -1567,7 +1569,7 @@ msgstr "Хата"
 
 #: ../plugins/converter/convgui.c:692
 msgid "Add new encoder"
-msgstr "Яңа кодлаучыны өстәргә"
+msgstr "Яңа кодлаучыны өстәү"
 
 #: ../plugins/converter/convgui.c:724
 msgid "Edit encoder"
@@ -1579,7 +1581,7 @@ msgstr "Алдан куелган көйләүне бетерү"
 
 #: ../plugins/converter/convgui.c:758 ../plugins/converter/convgui.c:1135
 msgid "This action will delete the selected preset. Are you sure?"
-msgstr "Бу гамәл алдан куелган көйләүне бетерәчәк. Сез моны телисезме?"
+msgstr "Бу гамәл алдан куелган көйләүне бетерәчәк. Дәвам итәргәме?"
 
 #: ../plugins/converter/convgui.c:782
 msgid "Encoders"
@@ -1608,12 +1610,12 @@ msgstr "DSP'ның алдан куелган көйләвеүләре"
 #: ../plugins/converter/interface.c:97
 #: ../plugins/converter/converter.glade.h:34
 msgid "Output folder:"
-msgstr "Чыгучы каталог:"
+msgstr "Чыгынты каталогы:"
 
 #: ../plugins/converter/interface.c:118
 #: ../plugins/converter/converter.glade.h:33
 msgid "Output file name:"
-msgstr "Чыгучы файл исеме:"
+msgstr "Чыгынты файл исеме:"
 
 #: ../plugins/converter/interface.c:129
 #: ../plugins/converter/converter.glade.h:18
@@ -1773,7 +1775,7 @@ msgstr "ID3v2"
 #: ../plugins/converter/interface.c:527
 #: ../plugins/converter/converter.glade.h:1
 msgid "<b>Tag writer</b>"
-msgstr "<b>Тэг язуы</b>"
+msgstr "<b>Тэг мөһәррире</b>"
 
 #: ../plugins/converter/interface.c:614
 #: ../plugins/converter/converter.glade.h:9
@@ -1816,3 +1818,5 @@ msgid ""
 msgstr ""
 "Күрсәтү\n"
 "Алыштыру"
+
+
