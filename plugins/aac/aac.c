@@ -407,8 +407,8 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     int totalsamples = -1;
 
     int offs = -1;
+    int skip = deadbeef->junk_get_leading_size (info->file);
     if (!info->file->vfs->is_streaming ()) {
-        int skip = deadbeef->junk_get_leading_size (info->file);
         if (skip >= 0) {
             deadbeef->fseek (info->file, skip, SEEK_SET);
         }
@@ -565,14 +565,23 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         if (!info->mp4file) {
             trace ("mp4 track not found, looking for aac stream...\n");
 
-            // not an mp4, try raw aac
-            deadbeef->rewind (info->file);
+            if (skip >= 0) {
+                deadbeef->fseek (info->file, skip, SEEK_SET);
+            }
+            else {
+                deadbeef->rewind (info->file);
+            }
             if (parse_aac_stream (info->file, &samplerate, &channels, &duration, &totalsamples) == -1) {
                 trace ("aac stream not found\n");
                 return -1;
             }
-            deadbeef->rewind (info->file);
-            trace ("found aac stream\n");
+            if (skip >= 0) {
+                deadbeef->fseek (info->file, skip, SEEK_SET);
+            }
+            else {
+                deadbeef->rewind (info->file);
+            }
+            trace ("found aac stream (junk: %d, offs: %d)\n", skip, offs);
         }
 
         _info->fmt.channels = channels;
@@ -607,6 +616,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         trace ("NeAACDecOpen\n");
         info->dec = NeAACDecOpen ();
 
+        trace ("prepare for NeAACDecInit: fread %d from offs %lld\n", AAC_BUFFER_SIZE, deadbeef->ftell (info->file));
         info->remaining = deadbeef->fread (info->buffer, 1, AAC_BUFFER_SIZE, info->file);
 
         NeAACDecConfigurationPtr conf = NeAACDecGetCurrentConfiguration (info->dec);
@@ -614,9 +624,9 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         NeAACDecSetConfiguration (info->dec, conf);
         unsigned long srate;
         unsigned char ch;
-        trace ("NeAACDecInit\n");
+        trace ("NeAACDecInit (%d bytes)\n", info->remaining);
         int consumed = NeAACDecInit (info->dec, info->buffer, info->remaining, &srate, &ch);
-        trace ("NeAACDecInit returned samplerate=%d, channels=%d\n", (int)srate, (int)ch);
+        trace ("NeAACDecInit returned samplerate=%d, channels=%d, consumed: %d\n", (int)srate, (int)ch, consumed);
         if (consumed < 0) {
             trace ("NeAACDecInit returned %d\n", consumed);
             return -1;
@@ -841,22 +851,37 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
         }
         else {
             if (info->remaining < AAC_BUFFER_SIZE) {
+                trace ("fread from offs %lld\n", deadbeef->ftell (info->file));
                 size_t res = deadbeef->fread (info->buffer + info->remaining, 1, AAC_BUFFER_SIZE-info->remaining, info->file);
                 if (res == 0) {
                     eof = 1;
                 }
                 info->remaining += res;
+                if (!info->remaining) {
+                    break;
+                }
             }
 
+            trace ("NeAACDecDecode %d bytes\n", info->remaining)
             samples = NeAACDecDecode (info->dec, &info->frame_info, info->buffer, info->remaining);
             if (!samples) {
-                trace ("NeAACDecDecode failed, consumed=%d\n", info->frame_info.bytesconsumed);
+                trace ("NeAACDecDecode failed with error %s (%d), consumed=%d\n", NeAACDecGetErrorMessage(info->frame_info.error), (int)info->frame_info.error, info->frame_info.bytesconsumed);
+
                 if (info->num_errors > 10) {
                     trace ("NeAACDecDecode failed %d times, interrupting\n", info->num_errors);
                     break;
                 }
                 info->num_errors++;
-                info->remaining = 0;
+                int s = 0;
+                while (!s && info->remaining > 0) {
+                    int ch, sr, br, sm;
+                    s = aac_sync (info->buffer, &ch, &sr, &br, &sm);
+                    if (s == 0) {
+                        memmove (info->buffer, info->buffer+1, info->remaining-1);
+                        info->remaining--;
+                    }
+                }
+//                info->remaining = 0;
                 continue;
             }
             info->num_errors=0;
@@ -881,6 +906,7 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
     }
 
     info->currentsample += (initsize-size) / samplesize;
+    trace ("aac_read return: %d\n", initsize-size);
     return initsize-size;
 }
 
@@ -1163,6 +1189,11 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     if (!fp) {
         trace ("not found\n");
         return NULL;
+    }
+    int skip = deadbeef->junk_get_leading_size (fp);
+    if (skip > 0) {
+        trace ("mpgmad: skipping %d bytes (tag)\n", skip);
+        deadbeef->fseek(fp, skip, SEEK_SET);
     }
 
     const char *ftype = NULL;
