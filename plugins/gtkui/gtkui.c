@@ -261,6 +261,16 @@ on_trayicon_scroll_event               (GtkWidget       *widget,
     deadbeef->volume_set_db (vol);
     volumebar_redraw ();
 
+    //Update volume bar tooltip
+    if (mainwin) {
+        GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
+        char s[100];
+        int db = vol;
+        snprintf (s, sizeof (s), "%s%ddB", db < 0 ? "" : "+", db);
+        gtk_widget_set_tooltip_text (volumebar, s);
+        gtk_widget_trigger_tooltip_query (volumebar);
+    }
+
 #if 0
     char str[100];
     if (deadbeef->conf_get_int ("gtkui.show_gain_in_db", 1)) {
