@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-06-12 18:17+0200\n"
-"PO-Revision-Date: 2011-07-12 20:20+0200\n"
+"PO-Revision-Date: 2011-08-24 11:05+0200\n"
 "Last-Translator: PraveenIlla <mail2ipn@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: te\n"
@@ -647,19 +647,19 @@ msgstr "DSP"
 
 #: ../plugins/gtkui/interface.c:1999 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Close minimizes to tray"
-msgstr ""
+msgstr "మూసివేత పళ్ళెము నందు కనిష్ఠీకరించబడుతుంది."
 
 #: ../plugins/gtkui/interface.c:2003 ../plugins/gtkui/deadbeef.glade.h:77
 msgid "Middle mouse button closes playlist"
-msgstr ""
+msgstr "మధ్యస్థ మౌస్ బటన్ ఆడేజాబితాను మూసివేస్తుంది"
 
 #: ../plugins/gtkui/interface.c:2007 ../plugins/gtkui/deadbeef.glade.h:50
 msgid "Hide system tray icon"
-msgstr ""
+msgstr "వ్యవస్థ పళ్లెం ప్రతీకను దాయి"
 
 #: ../plugins/gtkui/interface.c:2011 ../plugins/gtkui/deadbeef.glade.h:142
 msgid "Use bold font for currently playing track"
-msgstr ""
+msgstr "ప్రస్తుతము ఆడుతున్న ట్రాక్‌కి బొద్దు ఫాంటుని వాడు"
 
 #: ../plugins/gtkui/interface.c:2015 ../plugins/gtkui/deadbeef.glade.h:49
 msgid "Hide \"Delete from disk\" context menu item"
@@ -671,19 +671,19 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2027 ../plugins/gtkui/deadbeef.glade.h:53
 msgid "Interface refresh rate (times per second):"
-msgstr ""
+msgstr "అంతరవర్తి తాజాకరణ రేటు (సెకనుకి సమయం):"
 
 #: ../plugins/gtkui/interface.c:2041 ../plugins/gtkui/deadbeef.glade.h:136
 msgid "Titlebar text while playing:"
-msgstr ""
+msgstr "ఆడుతున్నపుడు శీర్షికపట్టీ పాఠ్యము:"
 
 #: ../plugins/gtkui/interface.c:2055 ../plugins/gtkui/deadbeef.glade.h:137
 msgid "Titlebar text while stopped:"
-msgstr ""
+msgstr "ఆపివేసినపుడు శీర్షికపట్టీ పాఠ్యము:"
 
 #: ../plugins/gtkui/interface.c:2069 ../plugins/gtkui/deadbeef.glade.h:46
 msgid "GUI Plugin (changing requires restart):"
-msgstr ""
+msgstr "ప్లగిన్ (మార్పులు చేస్తే పునఃప్రారంభం అవసరం):"
 
 #: ../plugins/gtkui/interface.c:2077 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "GUI"
@@ -708,7 +708,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2145 ../plugins/gtkui/deadbeef.glade.h:76
 msgid "Middle"
-msgstr ""
+msgstr "మధ్యస్థం"
 
 #: ../plugins/gtkui/interface.c:2152 ../plugins/gtkui/deadbeef.glade.h:69
 msgid "Light"
@@ -810,11 +810,11 @@ msgstr "URL:"
 
 #: ../plugins/gtkui/interface.c:3083 ../plugins/gtkui/deadbeef.glade.h:47
 msgid "Group By"
-msgstr ""
+msgstr "ఇలా సమీకరించు"
 
 #: ../plugins/gtkui/interface.c:3207 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Sort by..."
-msgstr ""
+msgstr "ఇలా పేర్చు..."
 
 #: ../plugins/gtkui/interface.c:3223 ../plugins/gtkui/deadbeef.glade.h:43
 msgid "Format"
