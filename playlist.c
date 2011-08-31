@@ -1113,8 +1113,12 @@ plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t 
     if (after && after != ins) {
         pl_item_ref (after);
     }
-    // copy metadata from embedded tags
     playItem_t *first = ins ? ins->next[PL_MAIN] : playlist->head[PL_MAIN];
+    if (!first) {
+        UNLOCK;
+        return NULL;
+    }
+    // copy metadata from embedded tags
     uint32_t f = pl_get_item_flags (origin);
     f |= DDB_TAG_CUESHEET | DDB_IS_SUBTRACK;
     if (pl_find_meta (origin, "cuesheet")) {
