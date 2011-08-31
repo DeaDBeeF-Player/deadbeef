@@ -118,6 +118,7 @@ main_drag_n_drop (DdbListviewIter before, DdbPlaylistHandle from_playlist, uint3
     }
     deadbeef->plt_unref (plt);
     deadbeef->pl_unlock ();
+    deadbeef->pl_save_all ();
 }
 
 void main_external_drag_n_drop (DdbListviewIter before, char *mem, int length) {
@@ -184,6 +185,7 @@ void main_draw_group_title (DdbListview *listview, GdkDrawable *drawable, DdbLis
 void
 main_delete_selected (void) {
     deadbeef->pl_delete_selected ();
+    deadbeef->pl_save_all ();
     main_refresh ();
     search_refresh ();
 }

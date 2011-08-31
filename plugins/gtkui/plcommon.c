@@ -281,6 +281,7 @@ on_clear1_activate                     (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     deadbeef->pl_clear ();
+    deadbeef->pl_save_all ();
     main_refresh ();
     search_refresh ();
 }
@@ -290,6 +291,7 @@ on_remove1_activate                    (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     int cursor = deadbeef->pl_delete_selected ();
+    deadbeef->pl_save_all ();
     main_refresh ();
     search_refresh ();
 }
@@ -301,6 +303,7 @@ on_crop1_activate                      (GtkMenuItem     *menuitem,
 {
     DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
     deadbeef->pl_crop_selected ();
+    deadbeef->pl_save_all ();
     main_refresh ();
     search_refresh ();
 }
@@ -311,6 +314,7 @@ on_remove2_activate                    (GtkMenuItem     *menuitem,
 {
     GtkWidget *widget = GTK_WIDGET (menuitem);
     int cursor = deadbeef->pl_delete_selected ();
+    deadbeef->pl_save_all ();
     main_refresh ();
     search_refresh ();
 }
@@ -346,6 +350,7 @@ on_remove_from_disk_activate                    (GtkMenuItem     *menuitem,
     }
 
     int cursor = deadbeef->pl_delete_selected ();
+    deadbeef->pl_save_all ();
     deadbeef->pl_unlock ();
 
     main_refresh ();
