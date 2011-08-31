@@ -241,7 +241,7 @@ static DB_functions_t deadbeef_api = {
     // junk reading
     .junk_id3v1_read = (int (*)(DB_playItem_t *it, DB_FILE *fp))junk_id3v1_read,
     .junk_id3v1_find = junk_id3v1_find,
-    .junk_id3v1_write = (int (*) (FILE *, DB_playItem_t *))junk_id3v1_write,
+    .junk_id3v1_write = (int (*) (FILE *, DB_playItem_t *, const char *))junk_id3v1_write,
     .junk_id3v2_find = junk_id3v2_find,
     .junk_id3v2_read = (int (*)(DB_playItem_t *it, DB_FILE *fp))junk_id3v2_read,
     .junk_id3v2_read_full = (int (*)(DB_playItem_t *, DB_id3v2_tag_t *tag, DB_FILE *fp))junk_id3v2_read_full,

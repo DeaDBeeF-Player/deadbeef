@@ -633,7 +633,7 @@ typedef struct {
     // junk reading/writing
     int (*junk_id3v1_read) (DB_playItem_t *it, DB_FILE *fp);
     int (*junk_id3v1_find) (DB_FILE *fp);
-    int (*junk_id3v1_write) (FILE *fp, DB_playItem_t *it);
+    int (*junk_id3v1_write) (FILE *fp, DB_playItem_t *it, const char *enc);
     int (*junk_id3v2_find) (DB_FILE *fp, int *psize);
     int (*junk_id3v2_read) (DB_playItem_t *it, DB_FILE *fp);
     int (*junk_id3v2_read_full) (DB_playItem_t *it, DB_id3v2_tag_t *tag, DB_FILE *fp);
