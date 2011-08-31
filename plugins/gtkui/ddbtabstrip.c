@@ -746,10 +746,16 @@ create_plmenu (void)
   plmenu = gtk_menu_new ();
 
   rename_playlist1 = gtk_menu_item_new_with_mnemonic (_("Rename Playlist"));
+  if (tab_clicked == -1) {
+      gtk_widget_set_sensitive (rename_playlist1, FALSE);
+  }
   gtk_widget_show (rename_playlist1);
   gtk_container_add (GTK_CONTAINER (plmenu), rename_playlist1);
 
   remove_playlist1 = gtk_menu_item_new_with_mnemonic (_("Remove Playlist"));
+  if (tab_clicked == -1) {
+      gtk_widget_set_sensitive (remove_playlist1, FALSE);
+  }
   gtk_widget_show (remove_playlist1);
   gtk_container_add (GTK_CONTAINER (plmenu), remove_playlist1);
 
