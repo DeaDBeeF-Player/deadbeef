@@ -89,7 +89,7 @@ get_int_volume (void) {
         if (rg_trackgain == 1) {
             return -1;
         }
-        vol = rg_trackgain_preamp * 1000;
+        vol = rg_trackgain * 1000;
         if (conf_replaygain_scale) {
             if (vol * rg_trackpeak > 1000) {
                 vol = 1000 / rg_trackpeak;
@@ -100,13 +100,14 @@ get_int_volume (void) {
         if (rg_albumgain == 1) {
             return -1;
         }
-        vol = rg_albumgain_preamp * 1000;
+        vol = rg_albumgain * 1000;
         if (conf_replaygain_scale) {
             if (vol * rg_albumpeak > 1000) {
                 vol = 1000 / rg_albumpeak;
             }
         }
     }
+    vol *= conf_replaygain_preamp;
     return vol;
 }
 
