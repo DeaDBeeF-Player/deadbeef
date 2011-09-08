@@ -1,4 +1,4 @@
-# Dutch translation for the deadbeef package.
+# Dutch translation of the deadbeef package.
 # Copyright (C) the author of the deadbeef package.
 # This file is distributed under the same license as the deadbeef package.
 # Glenn de Groot, 2010.
@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-06-12 18:17+0200\n"
-"PO-Revision-Date: 2011-06-12 22:41+0200\n"
+"PO-Revision-Date: 2011-09-08 22:41+0200\n"
 "Last-Translator: Pjotr\n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -68,7 +68,7 @@ msgstr "Over DeaDBeeF %s"
 #: ../plugins/gtkui/callbacks.c:746
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
-msgstr "DeaDBeeF %s Logboek van wijzigingen"
+msgstr "DeaDBeeF %s logboek van wijzigingen"
 
 #: ../plugins/gtkui/callbacks.c:1091
 #, c-format
@@ -89,11 +89,11 @@ msgstr "Titel:"
 
 #: ../plugins/gtkui/ddbtabstrip.c:748
 msgid "Rename Playlist"
-msgstr "Hernoem Speellijst"
+msgstr "Hernoem speellijst"
 
 #: ../plugins/gtkui/ddbtabstrip.c:752
 msgid "Remove Playlist"
-msgstr "Verwijder Speellijst"
+msgstr "Verwijder speellijst"
 
 #: ../plugins/gtkui/ddbtabstrip.c:756
 msgid "Add New Playlist"
@@ -129,7 +129,7 @@ msgstr "Opslaan voorinstelling"
 
 #: ../plugins/gtkui/eq.c:324
 msgid "Load Preset"
-msgstr "Laden Voorinstelling"
+msgstr "Laden voorinstelling"
 
 #: ../plugins/gtkui/eq.c:332
 msgid "Import Foobar2000 Preset"
@@ -209,12 +209,12 @@ msgstr "Speellijst laden"
 
 #: ../plugins/gtkui/gtkui.c:914 ../plugins/gtkui/fileman.c:40
 msgid "New Playlist"
-msgstr "Nieuwe Speellijst"
+msgstr "Nieuwe speellijst"
 
 #: ../plugins/gtkui/gtkui.c:917
 #, c-format
 msgid "New Playlist (%d)"
-msgstr "Nieuwe Speellijst (%d)"
+msgstr "Nieuwe speellijst (%d)"
 
 #: ../plugins/gtkui/interface.c:150 ../plugins/gtkui/deadbeef.glade.h:155
 msgid "_File"
@@ -307,7 +307,7 @@ msgstr "Titel"
 
 #: ../plugins/gtkui/interface.c:299 ../plugins/gtkui/deadbeef.glade.h:139
 msgid "Track number"
-msgstr "Spoor nummer"
+msgstr "Spoornummer"
 
 #: ../plugins/gtkui/interface.c:303 ../plugins/gtkui/interface.c:1515
 #: ../plugins/gtkui/interface.c:1869 ../plugins/gtkui/deadbeef.glade.h:10
@@ -533,7 +533,7 @@ msgstr "Duur"
 
 #: ../plugins/gtkui/interface.c:1518 ../translation/extra.c:71
 msgid "Track Number"
-msgstr "Spoor Nummer"
+msgstr "Spoornummer"
 
 #: ../plugins/gtkui/interface.c:1519 ../translation/extra.c:68
 msgid "Band / Album Artist"
@@ -708,7 +708,7 @@ msgstr "Achtergrond"
 
 #: ../plugins/gtkui/interface.c:2127 ../plugins/gtkui/deadbeef.glade.h:112
 msgid "Seekbar/Volumebar colors"
-msgstr "Kleuren Zoekbalk/Volumebalk"
+msgstr "Kleuren zoekbalk/volumebalk"
 
 #: ../plugins/gtkui/interface.c:2145 ../plugins/gtkui/deadbeef.glade.h:76
 msgid "Middle"
@@ -773,23 +773,23 @@ msgstr "Schakel Proxy Server in"
 
 #: ../plugins/gtkui/interface.c:2327 ../plugins/gtkui/deadbeef.glade.h:98
 msgid "Proxy Server Address:"
-msgstr "Proxy Server Adres:"
+msgstr "Proxy Server adres:"
 
 #: ../plugins/gtkui/interface.c:2341 ../plugins/gtkui/deadbeef.glade.h:99
 msgid "Proxy Server Port:"
-msgstr "Proxy Server Poort:"
+msgstr "Proxy Server poort:"
 
 #: ../plugins/gtkui/interface.c:2355 ../plugins/gtkui/deadbeef.glade.h:100
 msgid "Proxy Type:"
-msgstr "Proxy Type:"
+msgstr "Proxy type:"
 
 #: ../plugins/gtkui/interface.c:2374 ../plugins/gtkui/deadbeef.glade.h:101
 msgid "Proxy Username:"
-msgstr "Proxy Gebruikersnaam:"
+msgstr "Proxy gebruikersnaam:"
 
 #: ../plugins/gtkui/interface.c:2387 ../plugins/gtkui/deadbeef.glade.h:97
 msgid "Proxy Password:"
-msgstr "Proxy Wachtwoord:"
+msgstr "Proxy wachtwoord:"
 
 #: ../plugins/gtkui/interface.c:2397 ../plugins/gtkui/deadbeef.glade.h:78
 msgid "Network"
@@ -846,7 +846,7 @@ msgstr "Plugin"
 
 #: ../plugins/gtkui/interface.c:3409 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Tag Writer Settings"
-msgstr "Instellingen van Etiketschrijver"
+msgstr "Instellingen van etiketschrijver"
 
 #: ../plugins/gtkui/interface.c:3440 ../plugins/gtkui/deadbeef.glade.h:146
 msgid "Write ID3v2"
@@ -883,7 +883,7 @@ msgstr "ID3v2 versie"
 
 #: ../plugins/gtkui/interface.c:3479
 msgid "2.3 (Recommended)"
-msgstr "2.3 (Aangeraden)"
+msgstr "2.3 (aangeraden)"
 
 #: ../plugins/gtkui/interface.c:3480
 msgid "2.4"
@@ -974,7 +974,7 @@ msgstr "Configureer %s"
 
 #: ../plugins/gtkui/prefwin.c:82
 msgid "Default Audio Device"
-msgstr "Standaard Geluidsapparaat"
+msgstr "Standaard geluidapparaat"
 
 #: ../plugins/gtkui/prefwin.c:318 ../plugins/converter/interface.c:649
 #: ../plugins/converter/converter.glade.h:6
@@ -983,7 +983,7 @@ msgstr "Toevoegen"
 
 #: ../plugins/gtkui/prefwin.c:328
 msgid "Global Hotkeys"
-msgstr "Globale Sneltoetsen"
+msgstr "Globale sneltoetsen"
 
 #: ../plugins/gtkui/prefwin.c:390
 msgid "Slot"
@@ -1212,13 +1212,13 @@ msgid ""
 msgstr ""
 "Elementen Index\n"
 "Aan het afspelen\n"
-"Album Kunst\n"
+"Albumkunst\n"
 "Artiest - Album\n"
 "Artiest\n"
 "Album\n"
 "Titel\n"
 "Lengte\n"
-"Spoor Nummer\n"
+"Spoornummer\n"
 "Groep / Album Artiest\n"
 "Aangepast"
 
@@ -1250,7 +1250,7 @@ msgstr ""
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
 msgid "Add Audio CD"
-msgstr "Voeg Geluids-CD toe"
+msgstr "Voeg geluid-CD toe"
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
@@ -1386,7 +1386,7 @@ msgstr "Draai gtk_init met --sync (debug-modus)"
 
 #: ../translation/extra.c:43
 msgid "Add separators between plugin context menu items"
-msgstr "Voeg scheidingstekens toe tussen contekstmenu-onderdelen van plugin"
+msgstr "Voeg scheidingtekens toe tussen contextmenu-onderdelen van plugin"
 
 #. OSD Notify plugin
 #: ../translation/extra.c:45
@@ -1452,7 +1452,7 @@ msgstr "Configuratiebestand voor Timidity++ bank"
 
 #: ../translation/extra.c:66
 msgid "Track Title"
-msgstr "Spoor Titel"
+msgstr "Spoortitel"
 
 #: ../translation/extra.c:67
 msgid "Performer"
@@ -1460,7 +1460,7 @@ msgstr "Artiest"
 
 #: ../translation/extra.c:72
 msgid "Total Tracks"
-msgstr "Totaal aantal Sporen"
+msgstr "Totaal aantal sporen"
 
 #: ../translation/extra.c:73
 msgid "Genre"
@@ -1472,7 +1472,7 @@ msgstr "Componist"
 
 #: ../translation/extra.c:75
 msgid "Disc Number"
-msgstr "Schijf Nummer"
+msgstr "Schijfnummer"
 
 #: ../translation/extra.c:76
 msgid "Comment"
@@ -1496,7 +1496,7 @@ msgstr "Etiket-type(s)"
 
 #: ../translation/extra.c:82
 msgid "Embedded Cuesheet"
-msgstr "Ingebedde Informatietekst"
+msgstr "Ingebedde informatietekst"
 
 #: ../translation/extra.c:83
 msgid "Codec"
