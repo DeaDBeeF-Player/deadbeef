@@ -145,7 +145,7 @@ pl_free (void) {
 
         for (playItem_t *it = playlists_head->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
             if (it->_refc > 1) {
-                fprintf (stderr, "\033[0;31mWARNING: playitem %p %s has refc=%d at delete time\033[37;0m\n", it, pl_find_meta (it, ":URI"), it->_refc);
+                fprintf (stderr, "\033[0;31mWARNING: playitem %p %s(%s) has refc=%d at delete time\033[37;0m\n", it, pl_find_meta (it, ":URI"), pl_find_meta (it, "track"), it->_refc);
             }
         }
 
@@ -1964,7 +1964,7 @@ void
 pl_item_ref (playItem_t *it) {
     LOCK;
     it->_refc++;
-    //trace ("\033[0;34m+it %p: refc=%d: %s\033[37;0m\n", it, it->_refc, pl_find_meta (it, ":URI"));
+    //fprintf (stderr, "\033[0;34m+it %p: refc=%d: %s\033[37;0m\n", it, it->_refc, pl_find_meta (it, ":URI"));
     UNLOCK;
 }
 

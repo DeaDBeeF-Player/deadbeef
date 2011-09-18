@@ -416,6 +416,7 @@ find_popup                          (GtkWidget       *widget,
                                                  widget_name);
   return found_widget;
 }
+
 void
 list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     clicked_idx = deadbeef->pl_get_idx_of (it);
