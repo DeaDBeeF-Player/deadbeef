@@ -46,6 +46,7 @@ wingeom_save (GtkWidget *widget, const char *name) {
         snprintf (key, sizeof (key), "%s.geometry.h", name);
         deadbeef->conf_set_int (key, h);
     }
+    deadbeef->conf_save ();
 }
 
 void
