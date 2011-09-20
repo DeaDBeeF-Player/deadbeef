@@ -31,7 +31,7 @@ static uintptr_t imlib_mutex;
 #define trace(...)
 
 static char default_cover[PATH_MAX];
-#define DEFAULT_FILEMASK "*cover*.jpg;*front*.jpg;*folder*.jpg"
+#define DEFAULT_FILEMASK "*cover*.jpg;*front*.jpg;*folder*.jpg;*cover*.png;*front*.png;*folder*.png"
 
 static DB_artwork_plugin_t plugin;
 DB_functions_t *deadbeef;
