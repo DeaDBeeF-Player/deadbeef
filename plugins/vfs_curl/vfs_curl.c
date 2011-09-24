@@ -475,12 +475,9 @@ http_content_header_handler (void *ptr, size_t size, size_t nmemb, void *stream)
                 free (fp->content_type);
             }
             fp->content_type = strdup (value);
-            fp->length = -1;
         }
         else if (!strcasecmp (key, "Content-Length")) {
-            if (fp->length < 0) {
-                fp->length = atoi (value);
-            }
+            fp->length = atoi (value);
         }
         else if (!strcasecmp (key, "icy-name")) {
             if (fp->track) {
