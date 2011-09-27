@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <neaacdec.h>
+#include <assert.h>
 #ifdef HAVE_CONFIG_H
 #include "../../config.h"
 #endif
@@ -94,6 +95,7 @@ typedef struct {
     char *samplebuffer;
     int remap[10];
     int noremap;
+    int eof;
 } aac_info_t;
 
 // allocate codec control structure
@@ -813,8 +815,10 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
             unsigned char *buffer = NULL;
             int buffer_size = 0;
 #ifdef USE_MP4FF
+            assert (!info->eof);
             int rc = mp4ff_read_sample (info->mp4file, info->mp4track, info->mp4sample, &buffer, &buffer_size);
             if (rc == 0) {
+                info->eof = 1;
                 break;
             }
 #else
