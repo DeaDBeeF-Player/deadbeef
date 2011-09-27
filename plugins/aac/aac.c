@@ -975,14 +975,12 @@ aac_seek_sample (DB_fileinfo_t *_info, int sample) {
         info->skipsamples = sample - info->mp4sample * (info->mp4framesize-1);
     }
     else {
-        if (sample < info->currentsample, 1) {
-            int skip = deadbeef->junk_get_leading_size (info->file);
-            if (skip >= 0) {
-                deadbeef->fseek (info->file, skip, SEEK_SET);
-            }
-            else {
-                deadbeef->fseek (info->file, 0, SEEK_SET);
-            }
+        int skip = deadbeef->junk_get_leading_size (info->file);
+        if (skip >= 0) {
+            deadbeef->fseek (info->file, skip, SEEK_SET);
+        }
+        else {
+            deadbeef->fseek (info->file, 0, SEEK_SET);
         }
 
         int res = seek_raw_aac (info, sample);
