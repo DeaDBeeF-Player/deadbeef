@@ -21,7 +21,6 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <neaacdec.h>
-#include <assert.h>
 #ifdef HAVE_CONFIG_H
 #include "../../config.h"
 #endif
@@ -694,6 +693,10 @@ aac_free (DB_fileinfo_t *_info) {
 static int
 aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
     aac_info_t *info = (aac_info_t *)_info;
+    if (info->eof) {
+        trace ("aac_read: received call after eof\n");
+        return 0;
+    }
     int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
     if (!info->file->vfs->is_streaming ()) {
         if (info->currentsample + size / samplesize > info->endsample) {
@@ -815,7 +818,6 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
             unsigned char *buffer = NULL;
             int buffer_size = 0;
 #ifdef USE_MP4FF
-            assert (!info->eof);
             int rc = mp4ff_read_sample (info->mp4file, info->mp4track, info->mp4sample, &buffer, &buffer_size);
             if (rc == 0) {
                 info->eof = 1;
