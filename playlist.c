@@ -1470,7 +1470,7 @@ plt_insert_file (playlist_t *playlist, playItem_t *after, const char *fname, int
     else {
         fn++;
     }
-
+#if 0
     // detect pls/m3u files
     // they must be handled before checking for http://,
     // so that remote playlist files referenced from other playlist files could
@@ -1482,6 +1482,7 @@ plt_insert_file (playlist_t *playlist, playItem_t *after, const char *fname, int
 
         return plt_insert_pls (playlist, after, fname, pabort, cb, user_data);
     }
+#endif
 
     // add all posible streams as special-case:
     // set decoder to NULL, and filetype to "content"

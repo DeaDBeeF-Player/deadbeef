@@ -94,12 +94,14 @@ file_filter_func (const GtkFileFilterInfo *filter_info, gpointer data) {
             }
         }
     }
+#if 0
     if (!strcasecmp (p, "pls")) {
         return TRUE;
     }
     if (!strcasecmp (p, "m3u")) {
         return TRUE;
     }
+#endif
 
     // test container (vfs) formats
     DB_vfs_t **vfsplugs = deadbeef->plug_get_vfs_list ();
