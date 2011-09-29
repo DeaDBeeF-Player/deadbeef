@@ -223,7 +223,7 @@ http_parse_shoutcast_meta (HTTP_FILE *fp, const char *meta, int size) {
                 }
                 else {
                     const char *orig_title = deadbeef->pl_find_meta (fp->track, "title");
-                    if (!orig_title || strcasecmp (orig_title, tit)) {
+                    if (!orig_title || strcasecmp (orig_title, title)) {
                         vfs_curl_set_meta (fp->track, "title", title);
                         songstarted = 1;
                     }
