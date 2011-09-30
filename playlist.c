@@ -1168,6 +1168,7 @@ plt_insert_cue (playlist_t *plt, playItem_t *after, playItem_t *origin, int nums
     return plt_insert_cue_from_buffer (plt, after, origin, buf, sz, numsamples, samplerate);
 }
 
+#if 0
 playItem_t *
 plt_insert_m3u (playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     trace ("enter pl_insert_m3u\n");
@@ -1424,6 +1425,7 @@ plt_insert_pls (playlist_t *playlist, playItem_t *after, const char *fname, int 
     }
     return after;
 }
+#endif
 
 static int follow_symlinks = 0;
 static int ignore_archives = 0;
