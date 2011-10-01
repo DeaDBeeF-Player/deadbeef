@@ -726,16 +726,20 @@ typedef struct {
     int (*dsp_preset_save) (const char *fname, struct ddb_dsp_context_s *head);
     void (*dsp_preset_free) (struct ddb_dsp_context_s *head);
 
-    // new 1.2 APIs
+    // ******* new 1.2 APIs ********
     ddb_playlist_t *(*plt_alloc) (const char *title);
     void (*plt_free) (ddb_playlist_t *plt);
-    //int (*plt_insert) (ddb_playlist_t *plt, int before);
+
     void (*plt_set_fast_mode) (ddb_playlist_t *plt, int fast);
     int (*plt_is_fast_mode) (ddb_playlist_t *plt);
+
     const char * (*metacache_add_string) (const char *str);
     void (*metacache_remove_string) (const char *str);
     void (*metacache_ref) (const char *str);
     void (*metacache_unref) (const char *str);
+
+    // this function must return original un-overriden value (ignoring the keys prefixed with '!')
+    const char *(*pl_find_meta_raw) (DB_playItem_t *it, const char *key);
 } DB_functions_t;
 
 enum {

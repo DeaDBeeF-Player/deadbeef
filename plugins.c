@@ -328,6 +328,7 @@ static DB_functions_t deadbeef_api = {
     .metacache_remove_string = metacache_remove_string,
     .metacache_ref = metacache_ref,
     .metacache_unref = metacache_unref,
+    .pl_find_meta_raw = (const char *(*) (DB_playItem_t *it, const char *key))pl_find_meta_raw,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;
