@@ -67,7 +67,7 @@ build_key_list (const char ***pkeys, int props) {
     for (int i = 0; i < numtracks; i++) {
         DB_metaInfo_t *meta = deadbeef->pl_get_metadata_head (tracks[i]);
         while (meta) {
-            if ((props && meta->key[0] == ':') || (!props && meta->key[0] != ':')) {
+            if (meta->key[0] != '!' && ((props && meta->key[0] == ':') || (!props && meta->key[0] != ':'))) {
                 int k = 0;
                 for (; k < n; k++) {
                     if (meta->key == keys[k]) {
@@ -255,7 +255,7 @@ add_field (GtkListStore *store, const char *key, const char *title, int is_prop)
     char val[1000];
     size_t ml = strlen (mult);
     memcpy (val, mult, ml+1);
-    int n = get_field_value (val + ml, sizeof (val) - ml, key, deadbeef->pl_find_meta, equals_ptr);
+    int n = get_field_value (val + ml, sizeof (val) - ml, key, deadbeef->pl_find_meta_raw, equals_ptr);
 
     GtkTreeIter iter;
     gtk_list_store_append (store, &iter);
@@ -265,7 +265,7 @@ add_field (GtkListStore *store, const char *key, const char *title, int is_prop)
         }
         else {
             deadbeef->pl_lock ();
-            const char *val = deadbeef->pl_find_meta (tracks[0], key);
+            const char *val = deadbeef->pl_find_meta_raw (tracks[0], key);
             if (!val) {
                 val = "";
             }
@@ -489,7 +489,7 @@ static gboolean
 set_progress_cb (void *ctx) {
     DB_playItem_t *track = ctx;
     GtkWidget *progressitem = lookup_widget (progressdlg, "progresstitle");
-    const char *fname = deadbeef->pl_find_meta (track, ":URI");
+    const char *fname = deadbeef->pl_find_meta_raw (track, ":URI");
     gtk_entry_set_text (GTK_ENTRY (progressitem), fname);
     deadbeef->pl_item_unref (track);
 }
@@ -501,7 +501,7 @@ write_meta_worker (void *ctx) {
             break;
         }
         DB_playItem_t *track = tracks[t];
-        const char *decoder_id = deadbeef->pl_find_meta (track, ":DECODER");
+        const char *decoder_id = deadbeef->pl_find_meta_raw (track, ":DECODER");
         if (track && decoder_id) {
             int is_subtrack = deadbeef->pl_get_item_flags (track) & DDB_IS_SUBTRACK;
             if (is_subtrack) {
@@ -555,7 +555,7 @@ on_write_tags_clicked                  (GtkButton       *button,
         DB_metaInfo_t *meta = deadbeef->pl_get_metadata_head (tracks[i]);
         while (meta) {
             DB_metaInfo_t *next = meta->next;
-            if (meta->key[0] != ':') {
+            if (meta->key[0] != ':' && meta->key[0] != '!' && meta->key[0] != '_') {
                 GtkTreeIter iter;
                 gboolean res = gtk_tree_model_get_iter_first (model, &iter);
                 int mult = 0;
@@ -629,7 +629,7 @@ on_add_field_activate                 (GtkMenuItem     *menuitem,
             GtkTreeIter iter;
 
             // check for _ and :
-            if (text[0] == '_' || text[0] == ':') {
+            if (text[0] == '_' || text[0] == ':' || text[0] == '!') {
                 GtkWidget *d = gtk_message_dialog_new (GTK_WINDOW (dlg), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Field names must not start with : or _"));
                 gtk_window_set_title (GTK_WINDOW (d), _("Cannot add field"));
 
