@@ -723,7 +723,7 @@ cmp3_open (uint32_t hints) {
 }
 
 void
-cmp3_set_extra_properties (buffer_t *buffer) {
+cmp3_set_extra_properties (buffer_t *buffer, int fake) {
     char s[100];
     int64_t size = deadbeef->fgetlength (buffer->file);
     if (size >= 0) {
@@ -785,7 +785,7 @@ cmp3_set_extra_properties (buffer_t *buffer) {
     snprintf (s, sizeof (s), "MPEG%s layer%d", versions[buffer->version-1], buffer->layer);
     deadbeef->pl_replace_meta (buffer->it, ":MPEG_VERSION", s);
     deadbeef->pl_replace_meta (buffer->it, ":XING_HEADER", buffer->have_xing_header ? "Yes" : "No");
-    deadbeef->pl_replace_meta (buffer->it, ":FILETYPE", "MP3");
+    deadbeef->pl_replace_meta (buffer->it, fake ? "!FILETYPE" : ":FILETYPE", "MP3");
 }
 
 static int
@@ -839,7 +839,6 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
     else {
         deadbeef->fset_track (info->buffer.file, it);
-        deadbeef->pl_delete_meta (info->buffer.it, ":FILETYPE");
         int64_t len = deadbeef->fgetlength (info->buffer.file);
         if (len > 0) {
             deadbeef->pl_delete_all_meta (it);
@@ -856,7 +855,7 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         }
         deadbeef->fseek (info->buffer.file, 0, SEEK_SET);
 
-        cmp3_set_extra_properties (&info->buffer);
+        cmp3_set_extra_properties (&info->buffer, 1);
 
         ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
         deadbeef->plt_set_item_duration (plt, it, info->buffer.duration);
@@ -1353,7 +1352,7 @@ cmp3_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     deadbeef->pl_set_meta_int (it, ":MP3_PADDING", buffer.padding);
 
     buffer.it = it;
-    cmp3_set_extra_properties (&buffer);
+    cmp3_set_extra_properties (&buffer, 0);
 
     deadbeef->plt_set_item_duration (plt, it, buffer.duration);
     deadbeef->fclose (fp);
