@@ -384,19 +384,20 @@ load_pls (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
 static DB_playItem_t *
 m3uplug_load (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data) {
     const char *ext = strrchr (fname, '.');
-    if (!ext) {
-        return NULL;
-    }
-    ext++;
-
-    if (!strcasecmp (ext, "m3u") || !strcasecmp (ext, "m3u8")) {
-        return load_m3u (plt, after, fname, pabort, cb, user_data);
-    }
-    else if (!strcasecmp (ext, "pls")) {
-        return load_pls (plt, after, fname, pabort, cb, user_data);
+    if (ext) {
+        ext++;
     }
 
-    return NULL;
+    DB_playItem_t *ret = NULL;
+    if (ext && !strcasecmp (ext, "pls")) {
+        ret = load_pls (plt, after, fname, pabort, cb, user_data);
+    }
+    
+    if (!ret) {
+        ret = load_m3u (plt, after, fname, pabort, cb, user_data);
+    }
+
+    return ret;
 }
 
 int
