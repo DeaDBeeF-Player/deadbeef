@@ -728,100 +728,110 @@ streamer_set_current (playItem_t *it) {
                     plug = "ffmpeg";
                 }
                 else if (!strcmp (ct, "audio/x-mpegurl") || !strncmp (ct, "text/html", 9)) {
-                    char *buf;
+                    // download playlist into temp file
+                    char *buf = NULL;
+                    int fd = -1;
+                    FILE *out = NULL;
+
                     int size = vfs_fgetlength (fp);
                     if (size <= 0) {
                         size = MAX_PLAYLIST_DOWNLOAD_SIZE;
                     }
                     buf = malloc (size);
+                    if (!buf) {
+                        trace ("failed to alloc %d bytes for playlist buffer\n");
+                        goto m3u_error;
+                    }
+                    int rd = vfs_fread (buf, 1, size, fp);
+                    if (rd != size) {
+                        trace ("failed to download %d bytes (got %d bytes)\n", size, rd);
+                        goto m3u_error;
+                    }
+                    char tempfile[1000];
+                    const char *tmpdir = getenv ("TMPDIR");
+                    if (!tmpdir) {
+                        tmpdir = "/tmp";
+                    }
+                    snprintf (tempfile, sizeof (tempfile), "%s/ddbm3uXXXXXX", tmpdir);
+                    
+                    fd = mkstemp (tempfile);
+                    if (fd == -1) {
+                        trace ("failed to open temp file %s\n", tempfile);
+                        goto m3u_error;
+                    }
+                    out = fdopen (fd, "w+b");
+                    if (!out) {
+                        trace ("fdopen failed for %s\n", tempfile);
+                        goto m3u_error;
+                    }
+                    int rw = fwrite (buf, 1, size, out);
+                    if (rw != size) {
+                        trace ("failed to write %d bytes into file %s\n", size, tempfile);
+                        goto m3u_error;
+                    }
+                    fclose (out);
+                    fd = -1;
+                    out = NULL;
+
+                    // load playlist
+                    playlist_t *plt = plt_alloc ("temp");
+                    DB_playlist_t **plug = plug_get_playlist_list ();
+                    int p, e;
+                    DB_playItem_t *m3u = NULL;
+                    for (p = 0; plug[p]; p++) {
+                        if (plug[p]->load) {
+                            m3u = plug[p]->load ((ddb_playlist_t *)plt, NULL, tempfile, NULL, NULL, NULL);
+                            if (m3u) {
+                                break;
+                            }
+                        }
+                    }
+                    if (!m3u) {
+                        trace ("failed to load playlist from %s using any of the installed playlist plugins\n", tempfile);
+                        plt_free (plt);
+                        goto m3u_error;
+                    }
+
+                    // for every playlist uri: override stream uri with the one from playlist, and try to play it
+                    playItem_t *i = (playItem_t *)m3u;
+                    pl_item_ref (i);
+                    int res = -1;
+                    while (i) {
+                        pl_replace_meta (it, "!URI", pl_find_meta_raw (i, ":URI"));
+                        res = streamer_set_current (it);
+                        if (!res) {
+                            pl_item_unref (i);
+                            break;
+                        }
+                        playItem_t *next = pl_get_next (i, PL_MAIN);
+                        pl_item_unref (i);
+                        i = next;
+                    }
+                    pl_item_unref ((playItem_t*)m3u);
+                    plt_free (plt);
+                    if (res == 0) {
+                        // succeeded -- playing now
+                        if (from) {
+                            pl_item_unref (from);
+                        }
+                        if (to) {
+                            pl_item_unref (to);
+                        }
+                        return res;
+                    }
+                    unlink (tempfile);
+
+m3u_error:
                     if (buf) {
-                        int rd = vfs_fread (buf, 1, size, fp);
-                        if (rd == size) {
-                            char tempfile[1000];
-                            tmpnam (tempfile);
-                            int err = 0;
-                            FILE *out = fopen (tempfile, "w+b");
-                            if (out) {
-                                int rw = fwrite (buf, 1, size, out);
-                                if (rw != size) {
-                                    trace ("failed to write %d bytes into file %s\n", size, tempfile);
-                                    err = 1;
-                                }
-                                fclose (out);
-                            }
-                            else {
-                                err = 1;
-                                trace ("failed to open %s for writing\n", tempfile);
-                            }
-                            if (!err) {
-                                // load playlist
-                                playlist_t *plt = plt_alloc ("temp");
-                                DB_playlist_t **plug = plug_get_playlist_list ();
-                                int p, e;
-                                DB_playItem_t *m3u = NULL;
-                                for (p = 0; plug[p]; p++) {
-                                    if (plug[p]->load) {
-                                        m3u = plug[p]->load ((ddb_playlist_t *)plt, NULL, tempfile, NULL, NULL, NULL);
-                                        if (m3u) {
-                                            break;
-                                        }
-                                    }
-                                }
-                                if (m3u) {
-                                    playItem_t *i = (playItem_t *)m3u;
-                                    pl_item_ref (i);
-                                    int res = -1;
-                                    while (i) {
-                                        pl_replace_meta (it, "!URI", pl_find_meta_raw (i, ":URI"));
-                                        res = streamer_set_current (it);
-                                        if (!res) {
-                                            pl_item_unref (i);
-                                            break;
-                                        }
-                                        playItem_t *next = pl_get_next (i, PL_MAIN);
-                                        pl_item_unref (i);
-                                        i = next;
-                                    }
-#if 0
-                                    // get all URIs, and generate string for
-                                    // putting into metadata
-                                    char *buf = malloc (MAX_PLAYLIST_DOWNLOAD_SIZE);
-                                    buf[0] = 0;
-                                    playItem_t *i = (playItem_t *)m3u;
-                                    pl_item_ref (i);
-                                    while (i) {
-                                        const char *uri = pl_find_meta (i, ":URI");
-                                        if (uri) {
-                                            strcat (buf, uri);
-                                            strcat (buf, "\n");
-                                        }
-                                        playItem_t *next = pl_get_next (i, PL_MAIN);
-                                        pl_item_unref (i);
-                                        i = next;
-                                    }
-                                    pl_replace_meta (it, "_playlist", buf);
-                                    pl_replace_meta (it, "_nextpltrack", "0");
-                                    free (buf);
-#endif
-                                    pl_item_unref ((playItem_t*)m3u);
-                                    plt_free (plt);
-                                    if (res == 0) {
-                                        return res;
-                                    }
-                                }
-                                else {
-                                    trace ("failed to load playlist from %s\n", tempfile);
-                                }
-                            }
-                            unlink (tempfile);
-                        }
-                        else {
-                            trace ("failed to download %d bytes (got %d bytes)\n", size, rd);
-                        }
+                        free (buf);
                     }
-                    else {
-                        trace ("failed to allocate %d bytes for playlist download\n", size);
+                    if (out) {
+                        fclose (out);
                     }
+                    else if (fd != -1) {
+                        close (fd);
+                    }
+                    goto error;
                 }
             }
             mutex_lock (decodemutex);
