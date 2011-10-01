@@ -24,6 +24,7 @@
 #include <sys/prctl.h>
 #endif
 #include <sys/time.h>
+#include <errno.h>
 #include "threading.h"
 #include "playlist.h"
 #include "common.h"
@@ -48,6 +49,7 @@
 FILE *out;
 #endif
 
+#define MAX_PLAYLIST_DOWNLOAD_SIZE 25000
 
 static int
 streamer_read_async (char *bytes, int size);
@@ -699,7 +701,7 @@ streamer_set_current (playItem_t *it) {
         strncpy (filetype, ft, sizeof (filetype));
     }
     pl_unlock ();
-    if (!decoder_id[0] && filetype && !strcmp (filetype, "content")) {
+    if (!decoder_id[0] && (!strcmp (filetype, "content") || !filetype[0])) {
         // try to get content-type
         mutex_lock (decodemutex);
         trace ("\033[0;34mopening file %s\033[37;0m\n", pl_find_meta (it, ":URI"));
@@ -725,6 +727,102 @@ streamer_set_current (playItem_t *it) {
                 else if (!strcmp (ct, "audio/wma")) {
                     plug = "ffmpeg";
                 }
+                else if (!strcmp (ct, "audio/x-mpegurl") || !strncmp (ct, "text/html", 9)) {
+                    char *buf;
+                    int size = vfs_fgetlength (fp);
+                    if (size <= 0) {
+                        size = MAX_PLAYLIST_DOWNLOAD_SIZE;
+                    }
+                    buf = malloc (size);
+                    if (buf) {
+                        int rd = vfs_fread (buf, 1, size, fp);
+                        if (rd == size) {
+                            char tempfile[1000];
+                            tmpnam (tempfile);
+                            int err = 0;
+                            FILE *out = fopen (tempfile, "w+b");
+                            if (out) {
+                                int rw = fwrite (buf, 1, size, out);
+                                if (rw != size) {
+                                    trace ("failed to write %d bytes into file %s\n", size, tempfile);
+                                    err = 1;
+                                }
+                                fclose (out);
+                            }
+                            else {
+                                err = 1;
+                                trace ("failed to open %s for writing\n", tempfile);
+                            }
+                            if (!err) {
+                                // load playlist
+                                playlist_t *plt = plt_alloc ("temp");
+                                DB_playlist_t **plug = plug_get_playlist_list ();
+                                int p, e;
+                                DB_playItem_t *m3u = NULL;
+                                for (p = 0; plug[p]; p++) {
+                                    if (plug[p]->load) {
+                                        m3u = plug[p]->load ((ddb_playlist_t *)plt, NULL, tempfile, NULL, NULL, NULL);
+                                        if (m3u) {
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (m3u) {
+                                    playItem_t *i = (playItem_t *)m3u;
+                                    pl_item_ref (i);
+                                    int res = -1;
+                                    while (i) {
+                                        pl_replace_meta (it, "!URI", pl_find_meta_raw (i, ":URI"));
+                                        res = streamer_set_current (it);
+                                        if (!res) {
+                                            pl_item_unref (i);
+                                            break;
+                                        }
+                                        playItem_t *next = pl_get_next (i, PL_MAIN);
+                                        pl_item_unref (i);
+                                        i = next;
+                                    }
+#if 0
+                                    // get all URIs, and generate string for
+                                    // putting into metadata
+                                    char *buf = malloc (MAX_PLAYLIST_DOWNLOAD_SIZE);
+                                    buf[0] = 0;
+                                    playItem_t *i = (playItem_t *)m3u;
+                                    pl_item_ref (i);
+                                    while (i) {
+                                        const char *uri = pl_find_meta (i, ":URI");
+                                        if (uri) {
+                                            strcat (buf, uri);
+                                            strcat (buf, "\n");
+                                        }
+                                        playItem_t *next = pl_get_next (i, PL_MAIN);
+                                        pl_item_unref (i);
+                                        i = next;
+                                    }
+                                    pl_replace_meta (it, "_playlist", buf);
+                                    pl_replace_meta (it, "_nextpltrack", "0");
+                                    free (buf);
+#endif
+                                    pl_item_unref ((playItem_t*)m3u);
+                                    plt_free (plt);
+                                    if (res == 0) {
+                                        return res;
+                                    }
+                                }
+                                else {
+                                    trace ("failed to load playlist from %s\n", tempfile);
+                                }
+                            }
+                            unlink (tempfile);
+                        }
+                        else {
+                            trace ("failed to download %d bytes (got %d bytes)\n", size, rd);
+                        }
+                    }
+                    else {
+                        trace ("failed to allocate %d bytes for playlist download\n", size);
+                    }
+                }
             }
             mutex_lock (decodemutex);
             streamer_file = NULL;
@@ -736,9 +834,10 @@ streamer_set_current (playItem_t *it) {
             // match by decoder
             for (int i = 0; decoders[i]; i++) {
                 if (!strcmp (decoders[i]->plugin.id, plug)) {
-                    pl_replace_meta (it, ":DECODER", decoders[i]->plugin.id);
+                    pl_replace_meta (it, "!DECODER", decoders[i]->plugin.id);
                     strncpy (decoder_id, decoders[i]->plugin.id, sizeof (decoder_id));
                     trace ("\033[0;34mfound plugin %s\033[37;0m\n", plug);
+                    break;
                 }
             }
         }
@@ -763,8 +862,8 @@ streamer_set_current (playItem_t *it) {
                         for (int j = 0; exts[j]; j++) {
                             if (!strcasecmp (exts[j], ext)) {
                                 fprintf (stderr, "streamer: %s : changed decoder plugin to %s\n", fname, decs[i]->plugin.id);
-                                pl_replace_meta (it, ":DECODER", decs[i]->plugin.id);
-                                pl_replace_meta (it, ":FILETYPE", ext);
+                                pl_replace_meta (it, "!DECODER", decs[i]->plugin.id);
+                                pl_replace_meta (it, "!FILETYPE", ext);
                                 dec = decs[i];
                                 break;
                             }
