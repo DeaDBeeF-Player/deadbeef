@@ -144,6 +144,7 @@ streamer_unlock (void) {
 
 static void
 streamer_abort_files (void) {
+    trace ("\033[0;33mstreamer_abort_files\033[37;0m\n");
     if (fileinfo && fileinfo->file) {
         deadbeef->fabort (fileinfo->file);
     }
@@ -708,137 +709,141 @@ streamer_set_current (playItem_t *it) {
         DB_FILE *fp = streamer_file = vfs_fopen (pl_find_meta (it, ":URI"));
         mutex_unlock (decodemutex);
         const char *plug = NULL;
-        if (fp && vfs_get_content_type) {
-            const char *ct = vfs_get_content_type (fp);
-            if (ct) {
-                trace ("got content-type: %s\n", ct);
-                if (!strcmp (ct, "audio/mpeg")) {
-                    plug = "stdmpg";
-                }
-                else if (!strcmp (ct, "application/ogg")) {
-                    plug = "stdogg";
-                }
-                else if (!strcmp (ct, "audio/aacp")) {
-                    plug = "aac";
-                }
-                else if (!strcmp (ct, "audio/aac")) {
-                    plug = "aac";
-                }
-                else if (!strcmp (ct, "audio/wma")) {
-                    plug = "ffmpeg";
-                }
-                else if (!strcmp (ct, "audio/x-mpegurl") || !strncmp (ct, "text/html", 9)) {
-                    // download playlist into temp file
-                    char *buf = NULL;
-                    int fd = -1;
-                    FILE *out = NULL;
+        trace ("\033[0;34mgetting content-type\033[37;0m\n");
+        if (!fp) {
+            goto error;
+        }
+        const char *ct = vfs_get_content_type (fp);
+        if (!ct) {
+            vfs_fclose (fp);
+            goto error;
+        }
+        trace ("got content-type: %s\n", ct);
+        if (!strcmp (ct, "audio/mpeg")) {
+            plug = "stdmpg";
+        }
+        else if (!strcmp (ct, "application/ogg")) {
+            plug = "stdogg";
+        }
+        else if (!strcmp (ct, "audio/aacp")) {
+            plug = "aac";
+        }
+        else if (!strcmp (ct, "audio/aac")) {
+            plug = "aac";
+        }
+        else if (!strcmp (ct, "audio/wma")) {
+            plug = "ffmpeg";
+        }
+        else if (!strcmp (ct, "audio/x-mpegurl") || !strncmp (ct, "text/html", 9)) {
+            // download playlist into temp file
+            char *buf = NULL;
+            int fd = -1;
+            FILE *out = NULL;
 
-                    int size = vfs_fgetlength (fp);
-                    if (size <= 0) {
-                        size = MAX_PLAYLIST_DOWNLOAD_SIZE;
-                    }
-                    buf = malloc (size);
-                    if (!buf) {
-                        trace ("failed to alloc %d bytes for playlist buffer\n");
-                        goto m3u_error;
-                    }
-                    int rd = vfs_fread (buf, 1, size, fp);
-                    if (rd != size) {
-                        trace ("failed to download %d bytes (got %d bytes)\n", size, rd);
-                        goto m3u_error;
-                    }
-                    char tempfile[1000];
-                    const char *tmpdir = getenv ("TMPDIR");
-                    if (!tmpdir) {
-                        tmpdir = "/tmp";
-                    }
-                    snprintf (tempfile, sizeof (tempfile), "%s/ddbm3uXXXXXX", tmpdir);
-                    
-                    fd = mkstemp (tempfile);
-                    if (fd == -1) {
-                        trace ("failed to open temp file %s\n", tempfile);
-                        goto m3u_error;
-                    }
-                    out = fdopen (fd, "w+b");
-                    if (!out) {
-                        trace ("fdopen failed for %s\n", tempfile);
-                        goto m3u_error;
-                    }
-                    int rw = fwrite (buf, 1, size, out);
-                    if (rw != size) {
-                        trace ("failed to write %d bytes into file %s\n", size, tempfile);
-                        goto m3u_error;
-                    }
-                    fclose (out);
-                    fd = -1;
-                    out = NULL;
+            int size = vfs_fgetlength (fp);
+            if (size <= 0) {
+                size = MAX_PLAYLIST_DOWNLOAD_SIZE;
+            }
+            buf = malloc (size);
+            if (!buf) {
+                trace ("failed to alloc %d bytes for playlist buffer\n");
+                goto m3u_error;
+            }
+            int rd = vfs_fread (buf, 1, size, fp);
+            if (rd != size) {
+                trace ("failed to download %d bytes (got %d bytes)\n", size, rd);
+                goto m3u_error;
+            }
+            char tempfile[1000];
+            const char *tmpdir = getenv ("TMPDIR");
+            if (!tmpdir) {
+                tmpdir = "/tmp";
+            }
+            snprintf (tempfile, sizeof (tempfile), "%s/ddbm3uXXXXXX", tmpdir);
 
-                    // load playlist
-                    playlist_t *plt = plt_alloc ("temp");
-                    DB_playlist_t **plug = plug_get_playlist_list ();
-                    int p, e;
-                    DB_playItem_t *m3u = NULL;
-                    for (p = 0; plug[p]; p++) {
-                        if (plug[p]->load) {
-                            m3u = plug[p]->load ((ddb_playlist_t *)plt, NULL, tempfile, NULL, NULL, NULL);
-                            if (m3u) {
-                                break;
-                            }
-                        }
-                    }
-                    if (!m3u) {
-                        trace ("failed to load playlist from %s using any of the installed playlist plugins\n", tempfile);
-                        plt_free (plt);
-                        goto m3u_error;
-                    }
+            fd = mkstemp (tempfile);
+            if (fd == -1) {
+                trace ("failed to open temp file %s\n", tempfile);
+                goto m3u_error;
+            }
+            out = fdopen (fd, "w+b");
+            if (!out) {
+                trace ("fdopen failed for %s\n", tempfile);
+                goto m3u_error;
+            }
+            int rw = fwrite (buf, 1, size, out);
+            if (rw != size) {
+                trace ("failed to write %d bytes into file %s\n", size, tempfile);
+                goto m3u_error;
+            }
+            fclose (out);
+            fd = -1;
+            out = NULL;
 
-                    // for every playlist uri: override stream uri with the one from playlist, and try to play it
-                    playItem_t *i = (playItem_t *)m3u;
-                    pl_item_ref (i);
-                    int res = -1;
-                    while (i) {
-                        pl_replace_meta (it, "!URI", pl_find_meta_raw (i, ":URI"));
-                        res = streamer_set_current (it);
-                        if (!res) {
-                            pl_item_unref (i);
-                            break;
-                        }
-                        playItem_t *next = pl_get_next (i, PL_MAIN);
-                        pl_item_unref (i);
-                        i = next;
+            // load playlist
+            playlist_t *plt = plt_alloc ("temp");
+            DB_playlist_t **plug = plug_get_playlist_list ();
+            int p, e;
+            DB_playItem_t *m3u = NULL;
+            for (p = 0; plug[p]; p++) {
+                if (plug[p]->load) {
+                    m3u = plug[p]->load ((ddb_playlist_t *)plt, NULL, tempfile, NULL, NULL, NULL);
+                    if (m3u) {
+                        break;
                     }
-                    pl_item_unref ((playItem_t*)m3u);
-                    plt_free (plt);
-                    if (res == 0) {
-                        // succeeded -- playing now
-                        if (from) {
-                            pl_item_unref (from);
-                        }
-                        if (to) {
-                            pl_item_unref (to);
-                        }
-                        return res;
-                    }
-                    unlink (tempfile);
-
-m3u_error:
-                    if (buf) {
-                        free (buf);
-                    }
-                    if (out) {
-                        fclose (out);
-                    }
-                    else if (fd != -1) {
-                        close (fd);
-                    }
-                    goto error;
                 }
             }
-            mutex_lock (decodemutex);
-            streamer_file = NULL;
-            vfs_fclose (fp);
-            mutex_unlock (decodemutex);
+            if (!m3u) {
+                trace ("failed to load playlist from %s using any of the installed playlist plugins\n", tempfile);
+                plt_free (plt);
+                goto m3u_error;
+            }
+
+            // for every playlist uri: override stream uri with the one from playlist, and try to play it
+            playItem_t *i = (playItem_t *)m3u;
+            pl_item_ref (i);
+            int res = -1;
+            while (i) {
+                pl_replace_meta (it, "!URI", pl_find_meta_raw (i, ":URI"));
+                res = streamer_set_current (it);
+                if (!res) {
+                    pl_item_unref (i);
+                    break;
+                }
+                playItem_t *next = pl_get_next (i, PL_MAIN);
+                pl_item_unref (i);
+                i = next;
+            }
+            pl_item_unref ((playItem_t*)m3u);
+            plt_free (plt);
+            if (res == 0) {
+                // succeeded -- playing now
+                if (from) {
+                    pl_item_unref (from);
+                }
+                if (to) {
+                    pl_item_unref (to);
+                }
+                return res;
+            }
+            unlink (tempfile);
+
+m3u_error:
+            if (buf) {
+                free (buf);
+            }
+            if (out) {
+                fclose (out);
+            }
+            else if (fd != -1) {
+                close (fd);
+            }
+            goto error;
         }
+        mutex_lock (decodemutex);
+        streamer_file = NULL;
+        vfs_fclose (fp);
+        mutex_unlock (decodemutex);
         if (plug) {
             DB_decoder_t **decoders = plug_get_decoder_list ();
             // match by decoder
@@ -889,6 +894,7 @@ m3u_error:
                 trace ("\033[0;31mfailed to init decoder\033[37;0m\n")
                 dec->free (new_fileinfo);
                 new_fileinfo = NULL;
+                goto error;
             }
         }
 
