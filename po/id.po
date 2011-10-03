@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: deadbeef master\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-06-12 18:17+0200\n"
-"PO-Revision-Date: 2011-10-03 14:59+0200\n"
+"PO-Revision-Date: 2011-10-03 17:51+0200\n"
 "Last-Translator: andika <andika@gmail.com>\n"
 "Language-Team: Indonesian Translation Team <id@li.org>\n"
 "Language: id\n"
@@ -1011,7 +1011,7 @@ msgstr "Yakin menutup jendela?"
 #. get value to edit
 #: ../plugins/gtkui/trkproperties.c:254
 msgid "[Multiple values] "
-msgstr ""
+msgstr "[Nilai berganda]"
 
 #: ../plugins/gtkui/trkproperties.c:407 ../plugins/gtkui/trkproperties.c:419
 msgid "Key"
@@ -1023,37 +1023,35 @@ msgstr "Nilai"
 
 #: ../plugins/gtkui/trkproperties.c:594
 msgid "Writing tags..."
-msgstr ""
+msgstr "Menulis tag..."
 
 #: ../plugins/gtkui/trkproperties.c:621
 msgid "Name:"
-msgstr ""
+msgstr "Nama:"
 
 #: ../plugins/gtkui/trkproperties.c:633
 msgid "Field names must not start with : or _"
-msgstr ""
+msgstr "Nama ruas tak boleh diawali dengan : atau _"
 
 #: ../plugins/gtkui/trkproperties.c:634 ../plugins/gtkui/trkproperties.c:668
 msgid "Cannot add field"
-msgstr ""
+msgstr "Tak bisa menambah ruas"
 
 #: ../plugins/gtkui/trkproperties.c:667
 msgid "Field with such name already exists, please try different name."
-msgstr ""
+msgstr "Ruas dengan nama demikian telah ada, silakan coba nama lain."
 
 #: ../plugins/gtkui/trkproperties.c:692
 msgid "Really remove selected field?"
-msgstr ""
+msgstr "Yakin menghapus ruas yang dipilih?"
 
 #: ../plugins/gtkui/trkproperties.c:734
-#, fuzzy
 msgid "Add field"
-msgstr "Tambah berkas"
+msgstr "Tambah ruas"
 
 #: ../plugins/gtkui/trkproperties.c:737
-#, fuzzy
 msgid "Remove field"
-msgstr "Buang"
+msgstr "Hapus ruas"
 
 #: ../main.c:90
 #, c-format
@@ -1098,13 +1096,14 @@ msgstr "   --pause            Jeda memutar\n"
 #: ../main.c:98
 #, c-format
 msgid "   --toggle-pause     Toggle pause\n"
-msgstr ""
+msgstr "   --toggle-pause     Jungkitkan jeda\n"
 
 #: ../main.c:99
 #, c-format
 msgid ""
 "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
-msgstr ""
+msgstr "   --play-pause       Mulai memutar bila berhenti, jungkitkan jeda bila "
+"tidak\n"
 
 #: ../main.c:100
 #, c-format
@@ -1130,7 +1129,7 @@ msgstr ""
 #: ../main.c:104
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr ""
+msgstr "   --nowplaying FMT   Cetak nama trek terformat ke stdout\n"
 
 #: ../main.c:105
 #, c-format
@@ -1139,13 +1138,16 @@ msgid ""
 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
 "                      copy[r]ight, [e]lapsed\n"
 msgstr ""
+"                      FMT %%-sintaks: [a]rtis, [t]itle, al[b]um,\n"
+"                      [l]ength, track[n]umber, [y]ear, [c]omment, "
+"                     copy[r]ight, [e]lapsed"
 
 #: ../main.c:108
 #, c-format
 msgid ""
 "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
 "- title\"\n"
-msgstr ""
+msgstr "mis.: --nowplaying \"%%a - %%t\" mesti mencetak \"artis - judul\"\n"
 
 #: ../main.c:109
 #, c-format
@@ -1179,6 +1181,8 @@ msgid ""
 "Ascending\n"
 "Descending"
 msgstr ""
+"Naik\n"
+"Turun"
 
 #: ../plugins/gtkui/deadbeef.glade.h:33
 msgid ""
@@ -1186,6 +1190,9 @@ msgid ""
 "Track\n"
 "Album"
 msgstr ""
+"Dimatikan\n"
+"Trek\n"
+"Album"
 
 #: ../plugins/gtkui/deadbeef.glade.h:55
 msgid ""
@@ -1214,7 +1221,7 @@ msgstr ""
 #: ../plugins/converter/support.c:90 ../plugins/converter/support.c:114
 #, c-format
 msgid "Couldn't find pixmap file: %s"
-msgstr ""
+msgstr "Tak bisa temukan berkas pixmap: %s"
 
 #: ../plugins/wildmidi/wildmidiplug.c:162
 #, c-format
@@ -1231,53 +1238,50 @@ msgstr "Tambahkan CD Audio"
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
-msgstr ""
+msgstr "Cari di Last.fm"
 
 #. ALSA output plugin
 #: ../translation/extra.c:6
 msgid "Use ALSA resampling"
-msgstr ""
+msgstr "Gunakan pencuplikan ulang ALSA"
 
 #: ../translation/extra.c:7
 msgid "Release device while stopped"
-msgstr ""
+msgstr "Rilis perangkat ketika dihentikan"
 
 #: ../translation/extra.c:8 ../translation/extra.c:51
 msgid "Preferred buffer size"
-msgstr ""
+msgstr "Ukuran penyangga yang disukai"
 
 #: ../translation/extra.c:9
 msgid "Preferred period size"
-msgstr ""
+msgstr "Ukuran perioda yang disukai"
 
 #. Last.fm plugin
 #: ../translation/extra.c:11
-#, fuzzy
 msgid "Enable scrobbler"
-msgstr "Aktifkan Server Proksi"
+msgstr "Aktifkan scrobbler"
 
 #: ../translation/extra.c:12
 msgid "Disable nowplaying"
 msgstr ""
 
 #: ../translation/extra.c:13
-#, fuzzy
 msgid "Username"
-msgstr "Nama Pengguna Proksi:"
+msgstr "Nama pengguna"
 
 #: ../translation/extra.c:14
-#, fuzzy
 msgid "Password"
-msgstr "Sandi Proksi:"
+msgstr "Sandi"
 
 #: ../translation/extra.c:15
 msgid "Scrobble URL"
-msgstr ""
+msgstr "URL scrobble"
 
 #. OSS output plugin
 #: ../translation/extra.c:17
 msgid "Device file"
-msgstr ""
+msgstr "Berkas perangkat"
 
 #: ../translation/extra.c:18
 msgid "OSS4 samplerate bug workaround"
@@ -1286,15 +1290,15 @@ msgstr ""
 #. Album Artwork plugin
 #: ../translation/extra.c:20
 msgid "Cache update period (hr)"
-msgstr ""
+msgstr "Perioda pemutakhiran singgahan (jam)"
 
 #: ../translation/extra.c:21
 msgid "Fetch from embedded tags"
-msgstr ""
+msgstr "Ambil dari tag tertanam"
 
 #: ../translation/extra.c:22
 msgid "Fetch from local folder"
-msgstr ""
+msgstr "Ambil dari folder lokal"
 
 #: ../translation/extra.c:23
 msgid "Local cover file mask"
