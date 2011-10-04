@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-06-12 18:17+0200\n"
-"PO-Revision-Date: 2011-02-23 01:22+0200\n"
+"PO-Revision-Date: 2011-10-04 02:40+0200\n"
 "Last-Translator: zvacet <ikoli@yahoo.com>\n"
 "Language-Team: Croatian <>\n"
 "Language: hr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
+"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Pootle 2.0.5\n"
 
 #: ../plugins/gtkui/callbacks.c:121
@@ -53,7 +53,7 @@ msgstr "Neuspjeh u učitavanju datoteke pomoći"
 
 #: ../plugins/gtkui/callbacks.c:722
 msgid "help.txt"
-msgstr ""
+msgstr "help.txt"
 
 #: ../plugins/gtkui/callbacks.c:723 ../plugins/gtkui/interface.c:1155
 #: ../plugins/gtkui/deadbeef.glade.h:48 ../plugins/converter/convgui.c:1240
@@ -72,9 +72,9 @@ msgid "DeaDBeeF %s ChangeLog"
 msgstr ""
 
 #: ../plugins/gtkui/callbacks.c:1091
-#, fuzzy, c-format
+#, c-format
 msgid "DeaDBeeF Translators"
-msgstr "DeaDBeeF sada svira"
+msgstr "DeaDBeeF prevoditelji"
 
 #: ../plugins/gtkui/ddbtabstrip.c:689 ../plugins/gtkui/trkproperties.c:618
 msgid "Edit playlist"
@@ -153,9 +153,8 @@ msgstr ""
 
 #: ../plugins/gtkui/eq.c:387 ../plugins/converter/interface.c:826
 #: ../plugins/converter/converter.glade.h:40
-#, fuzzy
 msgid "Presets"
-msgstr "Spremi unaprijed postavljeno"
+msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:137
 #, c-format
@@ -296,7 +295,7 @@ msgstr "_Nađi"
 
 #: ../plugins/gtkui/interface.c:288 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Sort By"
-msgstr ""
+msgstr "Poredaj po"
 
 #: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1516
 #: ../plugins/gtkui/mainplaylist.c:315 ../plugins/gtkui/prefwin.c:623
@@ -308,9 +307,8 @@ msgid "Title"
 msgstr "Naslov"
 
 #: ../plugins/gtkui/interface.c:299 ../plugins/gtkui/deadbeef.glade.h:139
-#, fuzzy
 msgid "Track number"
-msgstr "Broj datoteke"
+msgstr "Broj zapisa"
 
 #: ../plugins/gtkui/interface.c:303 ../plugins/gtkui/interface.c:1515
 #: ../plugins/gtkui/interface.c:1869 ../plugins/gtkui/deadbeef.glade.h:10
@@ -328,7 +326,7 @@ msgstr "Umjetnik"
 #: ../plugins/gtkui/interface.c:311 ../plugins/gtkui/deadbeef.glade.h:31
 #: ../translation/extra.c:70
 msgid "Date"
-msgstr ""
+msgstr "Datum"
 
 #: ../plugins/gtkui/interface.c:315 ../plugins/gtkui/interface.c:1520
 #: ../plugins/gtkui/plcommon.c:1002 ../plugins/gtkui/deadbeef.glade.h:27
@@ -415,7 +413,7 @@ msgstr "Stop nakon trenutne"
 
 #: ../plugins/gtkui/interface.c:430 ../plugins/gtkui/deadbeef.glade.h:66
 msgid "Jump to current track"
-msgstr ""
+msgstr "Skoči na trenutni zapis"
 
 #: ../plugins/gtkui/interface.c:437 ../plugins/gtkui/interface.c:444
 #: ../plugins/gtkui/deadbeef.glade.h:158
@@ -428,11 +426,11 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:461 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "_GPLv2"
-msgstr ""
+msgstr "_GPLv2"
 
 #: ../plugins/gtkui/interface.c:465 ../plugins/gtkui/deadbeef.glade.h:159
 msgid "_LGPLv2.1"
-msgstr ""
+msgstr "_LGPLv2.1"
 
 #: ../plugins/gtkui/interface.c:474 ../plugins/gtkui/deadbeef.glade.h:148
 msgid "_About"
@@ -440,7 +438,7 @@ msgstr "_O programu"
 
 #: ../plugins/gtkui/interface.c:482 ../plugins/gtkui/deadbeef.glade.h:165
 msgid "_Translators"
-msgstr ""
+msgstr "_Prevoditelji"
 
 #: ../plugins/gtkui/interface.c:898 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "Search"
@@ -484,7 +482,7 @@ msgstr "Svojstva zapisa"
 
 #: ../plugins/gtkui/interface.c:1270 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Settings"
-msgstr ""
+msgstr "Postavke"
 
 #: ../plugins/gtkui/interface.c:1296 ../plugins/gtkui/deadbeef.glade.h:149
 msgid "_Apply"
@@ -514,7 +512,7 @@ msgstr "Tip:"
 
 #: ../plugins/gtkui/interface.c:1510
 msgid "Item Index"
-msgstr ""
+msgstr "Indeks stavke"
 
 #. create default set of columns
 #: ../plugins/gtkui/interface.c:1511 ../plugins/gtkui/mainplaylist.c:312
@@ -523,7 +521,7 @@ msgstr "Svira"
 
 #: ../plugins/gtkui/interface.c:1512
 msgid "Album Art"
-msgstr ""
+msgstr "Album Umjetnik"
 
 #: ../plugins/gtkui/interface.c:1513
 msgid "Artist - Album"
@@ -535,7 +533,6 @@ msgid "Duration"
 msgstr "Trajanje"
 
 #: ../plugins/gtkui/interface.c:1518 ../translation/extra.c:71
-#, fuzzy
 msgid "Track Number"
 msgstr "Broj zapisa"
 
@@ -582,7 +579,7 @@ msgstr "Izlazni uređaj:"
 
 #: ../plugins/gtkui/interface.c:1841 ../plugins/gtkui/deadbeef.glade.h:12
 msgid "Always convert 8 bit audio to 16 bit"
-msgstr ""
+msgstr "Uvijek pretvori 8 bit audio u 16 bit"
 
 #: ../plugins/gtkui/interface.c:1845 ../plugins/gtkui/deadbeef.glade.h:123
 msgid "Sound"
@@ -641,17 +638,16 @@ msgid "Configure"
 msgstr "Konfiguriraj"
 
 #: ../plugins/gtkui/interface.c:1974 ../plugins/gtkui/deadbeef.glade.h:29
-#, fuzzy
 msgid "DSP Chain Preset"
-msgstr "Spremi unaprijed postavljeno"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1986 ../plugins/gtkui/deadbeef.glade.h:160
 msgid "_Load"
-msgstr ""
+msgstr "_Učitaj"
 
 #: ../plugins/gtkui/interface.c:1990 ../plugins/gtkui/deadbeef.glade.h:28
 msgid "DSP"
-msgstr ""
+msgstr "DSP"
 
 #: ../plugins/gtkui/interface.c:1999 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Close minimizes to tray"
@@ -667,7 +663,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2011 ../plugins/gtkui/deadbeef.glade.h:142
 msgid "Use bold font for currently playing track"
-msgstr ""
+msgstr "Koristi podebljani font za zapis koji se trenutno izvodi"
 
 #: ../plugins/gtkui/interface.c:2015 ../plugins/gtkui/deadbeef.glade.h:49
 msgid "Hide \"Delete from disk\" context menu item"
@@ -691,7 +687,7 @@ msgstr "Tekst naslovne trake kad je zaustavljeno:"
 
 #: ../plugins/gtkui/interface.c:2069 ../plugins/gtkui/deadbeef.glade.h:46
 msgid "GUI Plugin (changing requires restart):"
-msgstr ""
+msgstr "Priključak grafičkog sučelja (promjena zahtjeva ponovno pokretanje):"
 
 #: ../plugins/gtkui/interface.c:2077 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "GUI"
@@ -781,11 +777,11 @@ msgstr "Adresa proxy poslužitelja:"
 
 #: ../plugins/gtkui/interface.c:2341 ../plugins/gtkui/deadbeef.glade.h:99
 msgid "Proxy Server Port:"
-msgstr ""
+msgstr "Port proxy poslužitelja:"
 
 #: ../plugins/gtkui/interface.c:2355 ../plugins/gtkui/deadbeef.glade.h:100
 msgid "Proxy Type:"
-msgstr ""
+msgstr "Tip proxy-ja:"
 
 #: ../plugins/gtkui/interface.c:2374 ../plugins/gtkui/deadbeef.glade.h:101
 msgid "Proxy Username:"
@@ -801,12 +797,12 @@ msgstr "Mreža"
 
 #: ../plugins/gtkui/interface.c:2428 ../plugins/gtkui/deadbeef.glade.h:143
 msgid "Version: "
-msgstr ""
+msgstr "Verzija: "
 
 #: ../plugins/gtkui/interface.c:2492 ../plugins/gtkui/deadbeef.glade.h:23
 #: ../translation/extra.c:78
 msgid "Copyright"
-msgstr ""
+msgstr "Autorska prava"
 
 #: ../plugins/gtkui/interface.c:2502 ../plugins/gtkui/deadbeef.glade.h:93
 msgid "Plugins"
@@ -822,12 +818,11 @@ msgstr "Grupiraj po"
 
 #: ../plugins/gtkui/interface.c:3207 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Sort by..."
-msgstr ""
+msgstr "Sortiraj po..."
 
 #: ../plugins/gtkui/interface.c:3223 ../plugins/gtkui/deadbeef.glade.h:43
-#, fuzzy
 msgid "Format"
-msgstr "Format:"
+msgstr "Format"
 
 #: ../plugins/gtkui/interface.c:3253
 msgid "Ascending"
@@ -840,16 +835,14 @@ msgstr ""
 #: ../plugins/gtkui/interface.c:3307 ../plugins/gtkui/deadbeef.glade.h:113
 #: ../plugins/converter/interface.c:758
 #: ../plugins/converter/converter.glade.h:44
-#, fuzzy
 msgid "Select DSP Plugin"
-msgstr "Odabir"
+msgstr "Odaberi DSP priključak"
 
 #: ../plugins/gtkui/interface.c:3323 ../plugins/gtkui/deadbeef.glade.h:92
 #: ../plugins/converter/convgui.c:1016 ../plugins/converter/interface.c:774
 #: ../plugins/gtkui/dspconfig.c:139 ../plugins/converter/converter.glade.h:38
-#, fuzzy
 msgid "Plugin"
-msgstr "Priključci"
+msgstr "Priključak"
 
 #: ../plugins/gtkui/interface.c:3409 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Tag Writer Settings"
@@ -902,7 +895,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:3523 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "Write ID3v2.4"
-msgstr ""
+msgstr "Piši ID3v2.4"
 
 #: ../plugins/gtkui/mainplaylist.c:313 ../plugins/gtkui/search.c:391
 msgid "Artist / Album"
@@ -975,9 +968,9 @@ msgid "Open file..."
 msgstr "Otvori datoteku..."
 
 #: ../plugins/gtkui/pluginconf.c:217
-#, fuzzy, c-format
+#, c-format
 msgid "Configure %s"
-msgstr "Konfiguriraj"
+msgstr "Konfiguriraj %s"
 
 #: ../plugins/gtkui/prefwin.c:82
 msgid "Default Audio Device"
@@ -998,7 +991,7 @@ msgstr ""
 
 #: ../plugins/gtkui/prefwin.c:391
 msgid "Key combination"
-msgstr ""
+msgstr "Kombinacija tipki"
 
 #: ../plugins/gtkui/progress.c:56
 msgid "Adding files..."
@@ -1010,7 +1003,7 @@ msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:159
 msgid "You've modified data for this track."
-msgstr ""
+msgstr "Promijenili ste podatke za ovaj zapis."
 
 #: ../plugins/gtkui/trkproperties.c:161
 msgid "Really close the window?"
@@ -1027,7 +1020,7 @@ msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:408 ../plugins/gtkui/trkproperties.c:420
 msgid "Value"
-msgstr ""
+msgstr "Vrijednost"
 
 #: ../plugins/gtkui/trkproperties.c:594
 msgid "Writing tags..."
@@ -1035,34 +1028,31 @@ msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:621
 msgid "Name:"
-msgstr ""
+msgstr "Ime:"
 
 #: ../plugins/gtkui/trkproperties.c:633
 msgid "Field names must not start with : or _"
-msgstr ""
+msgstr "Imena polja ne smiju započinjati sa : ili _"
 
 #: ../plugins/gtkui/trkproperties.c:634 ../plugins/gtkui/trkproperties.c:668
 msgid "Cannot add field"
-msgstr ""
+msgstr "Ne mogu dodati polje"
 
 #: ../plugins/gtkui/trkproperties.c:667
 msgid "Field with such name already exists, please try different name."
-msgstr ""
+msgstr "POlje sa tim imenom već postoji,molim pokušajte drugo ime."
 
 #: ../plugins/gtkui/trkproperties.c:692
-#, fuzzy
 msgid "Really remove selected field?"
-msgstr "Stvarno zatvoriti prozor?"
+msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:734
-#, fuzzy
 msgid "Add field"
-msgstr "Dodaj datoteku(e)"
+msgstr "Dodaj polje"
 
 #: ../plugins/gtkui/trkproperties.c:737
-#, fuzzy
 msgid "Remove field"
-msgstr "Ukloni"
+msgstr "Ukloni polje"
 
 #: ../main.c:90
 #, c-format
@@ -1196,6 +1186,9 @@ msgid ""
 "Track\n"
 "Album"
 msgstr ""
+"Onemogući\n"
+"Zapis\n"
+"Album"
 
 #: ../plugins/gtkui/deadbeef.glade.h:55
 msgid ""
@@ -1211,6 +1204,17 @@ msgid ""
 "Band / Album Artist\n"
 "Custom"
 msgstr ""
+"Indeks stavke\n"
+"Izvodim\n"
+"Album Umjetnik\n"
+"Umjetnik - Album\n"
+"Umjetnik\n"
+"Album\n"
+"Naslov\n"
+"Trajanje\n"
+"Broj zapisa\n"
+"Grupa / Album Umjetnik\n"
+"Prilagođeno"
 
 #: ../plugins/gtkui/deadbeef.glade.h:67
 msgid ""
@@ -1241,7 +1245,7 @@ msgstr "Dodaj audio CD"
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
-msgstr ""
+msgstr "Pogledaj na Last.fm"
 
 #. ALSA output plugin
 #: ../translation/extra.c:6
@@ -1249,13 +1253,12 @@ msgid "Use ALSA resampling"
 msgstr ""
 
 #: ../translation/extra.c:7
-#, fuzzy
 msgid "Release device while stopped"
-msgstr "Tekst naslovne trake kad je zaustavljeno:"
+msgstr "Otpusti uređaj kada je zaustavljen"
 
 #: ../translation/extra.c:8 ../translation/extra.c:51
 msgid "Preferred buffer size"
-msgstr ""
+msgstr "Poželjna veličina međuspremnika"
 
 #: ../translation/extra.c:9
 msgid "Preferred period size"
@@ -1263,24 +1266,20 @@ msgstr ""
 
 #. Last.fm plugin
 #: ../translation/extra.c:11
-#, fuzzy
 msgid "Enable scrobbler"
-msgstr "Omogući proxy poslužitelj"
+msgstr ""
 
 #: ../translation/extra.c:12
-#, fuzzy
 msgid "Disable nowplaying"
-msgstr "DeaDBeeF sada svira"
+msgstr ""
 
 #: ../translation/extra.c:13
-#, fuzzy
 msgid "Username"
-msgstr "Proxy korisničko ime:"
+msgstr "Korisničko ime"
 
 #: ../translation/extra.c:14
-#, fuzzy
 msgid "Password"
-msgstr "Proxy lozinka:"
+msgstr "Lozinka"
 
 #: ../translation/extra.c:15
 msgid "Scrobble URL"
@@ -1289,7 +1288,7 @@ msgstr ""
 #. OSS output plugin
 #: ../translation/extra.c:17
 msgid "Device file"
-msgstr ""
+msgstr "Datoteka uređaja"
 
 #: ../translation/extra.c:18
 msgid "OSS4 samplerate bug workaround"
@@ -1306,7 +1305,7 @@ msgstr ""
 
 #: ../translation/extra.c:22
 msgid "Fetch from local folder"
-msgstr ""
+msgstr "Ddohvati iz lokalne mape"
 
 #: ../translation/extra.c:23
 msgid "Local cover file mask"
@@ -1314,11 +1313,11 @@ msgstr ""
 
 #: ../translation/extra.c:24
 msgid "Fetch from last.fm"
-msgstr ""
+msgstr "Dohvati sa last.fm"
 
 #: ../translation/extra.c:25
 msgid "Fetch from albumart.org"
-msgstr ""
+msgstr "Dohvati sa albumart.org"
 
 #: ../translation/extra.c:26
 msgid "Scale artwork towards longer side"
@@ -1361,9 +1360,8 @@ msgstr ""
 
 #. Standard GTK2 user interface plugin
 #: ../translation/extra.c:39
-#, fuzzy
 msgid "Ask confirmation to delete files from disk"
-msgstr "Izbriši datoteke sa diska"
+msgstr "Pitaj za potvrdu brisanja datoteka sa diska"
 
 #: ../translation/extra.c:40
 msgid "Status icon volume control sensitivity"
@@ -1401,7 +1399,7 @@ msgstr ""
 #. PulseAudio output plugin
 #: ../translation/extra.c:50
 msgid "PulseAudio server"
-msgstr ""
+msgstr "PulseAudio poslužitelj"
 
 #: ../translation/extra.c:52
 msgid "Samplerate"
@@ -1443,31 +1441,28 @@ msgid "Timidity++ bank configuration file"
 msgstr ""
 
 #: ../translation/extra.c:66
-#, fuzzy
 msgid "Track Title"
-msgstr "Broj zapisa"
+msgstr "Naslov zapisa"
 
 #: ../translation/extra.c:67
 msgid "Performer"
 msgstr ""
 
 #: ../translation/extra.c:72
-#, fuzzy
 msgid "Total Tracks"
-msgstr "Naslov/ zapis umjetnik"
+msgstr "Ukupno zapisa"
 
 #: ../translation/extra.c:73
 msgid "Genre"
-msgstr ""
+msgstr "Vrsta"
 
 #: ../translation/extra.c:74
 msgid "Composer"
-msgstr ""
+msgstr "Skladatelj"
 
 #: ../translation/extra.c:75
-#, fuzzy
 msgid "Disc Number"
-msgstr "Broj datoteke"
+msgstr "Broj diska"
 
 #: ../translation/extra.c:76
 msgid "Comment"
@@ -1478,9 +1473,8 @@ msgid "Encoder / Vendor"
 msgstr ""
 
 #: ../translation/extra.c:79
-#, fuzzy
 msgid "Location"
-msgstr "Dodaj lokaciju"
+msgstr "Lokacija"
 
 #: ../translation/extra.c:80
 msgid "Subtrack Index"
@@ -1506,7 +1500,7 @@ msgstr ""
 #. Converter GUI
 #: ../translation/extra.c:87
 msgid "Convert"
-msgstr ""
+msgstr "Pretvori"
 
 #. Resampler (Secret Rabbit Code)
 #: ../translation/extra.c:89
@@ -1542,9 +1536,8 @@ msgid "Converting..."
 msgstr ""
 
 #: ../plugins/converter/convgui.c:394 ../plugins/converter/convgui.c:496
-#, fuzzy
 msgid "Select folder..."
-msgstr "Odaberi sve"
+msgstr "Odaberi mapu..."
 
 #: ../plugins/converter/convgui.c:635
 msgid "Failed to save encoder preset"
@@ -1562,21 +1555,19 @@ msgstr ""
 
 #: ../plugins/converter/convgui.c:638 ../plugins/converter/convgui.c:1036
 msgid "Error"
-msgstr ""
+msgstr "Greška"
 
 #: ../plugins/converter/convgui.c:692
 msgid "Add new encoder"
 msgstr ""
 
 #: ../plugins/converter/convgui.c:724
-#, fuzzy
 msgid "Edit encoder"
-msgstr "Uredi stupac"
+msgstr ""
 
 #: ../plugins/converter/convgui.c:756 ../plugins/converter/convgui.c:1133
-#, fuzzy
 msgid "Remove preset"
-msgstr "Spremi unaprijed postavljeno"
+msgstr ""
 
 #: ../plugins/converter/convgui.c:758 ../plugins/converter/convgui.c:1135
 msgid "This action will delete the selected preset. Are you sure?"
@@ -1595,31 +1586,26 @@ msgid "Failed to save DSP preset"
 msgstr ""
 
 #: ../plugins/converter/convgui.c:1098
-#, fuzzy
 msgid "New DSP Preset"
-msgstr "Spremi unaprijed postavljeno"
+msgstr ""
 
 #: ../plugins/converter/convgui.c:1183
-#, fuzzy
 msgid "Edit DSP Preset"
-msgstr "Spremi unaprijed postavljeno"
+msgstr ""
 
 #: ../plugins/converter/convgui.c:1203
-#, fuzzy
 msgid "DSP Presets"
-msgstr "Spremi unaprijed postavljeno"
+msgstr ""
 
 #: ../plugins/converter/interface.c:97
 #: ../plugins/converter/converter.glade.h:34
-#, fuzzy
 msgid "Output folder:"
-msgstr "Izlazni uređaj:"
+msgstr "Izlazna mapa:"
 
 #: ../plugins/converter/interface.c:118
 #: ../plugins/converter/converter.glade.h:33
-#, fuzzy
 msgid "Output file name:"
-msgstr "Izlazni priključak:"
+msgstr ""
 
 #: ../plugins/converter/interface.c:129
 #: ../plugins/converter/converter.glade.h:18
@@ -1636,9 +1622,8 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:166
 #: ../plugins/converter/converter.glade.h:10
-#, fuzzy
 msgid "DSP preset:"
-msgstr "Spremi unaprijed postavljeno"
+msgstr ""
 
 #: ../plugins/converter/interface.c:189
 #: ../plugins/converter/converter.glade.h:30
@@ -1677,7 +1662,7 @@ msgstr ""
 #: ../plugins/converter/interface.c:220
 #: ../plugins/converter/converter.glade.h:49
 msgid "When file exists:"
-msgstr ""
+msgstr "Kada datoteka postoji:"
 
 #: ../plugins/converter/interface.c:227
 msgid "Prompt"
@@ -1694,9 +1679,8 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:386
 #: ../plugins/converter/converter.glade.h:12
-#, fuzzy
 msgid "Edit Encoder Preset"
-msgstr "Učitaj unaprijed postavljeno"
+msgstr ""
 
 #: ../plugins/converter/interface.c:409
 #: ../plugins/converter/converter.glade.h:48
@@ -1705,9 +1689,8 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:417
 #: ../plugins/converter/converter.glade.h:32
-#, fuzzy
 msgid "Output file extension:"
-msgstr "Izlazni priključak:"
+msgstr ""
 
 #: ../plugins/converter/interface.c:424
 #: ../plugins/converter/converter.glade.h:11
@@ -1717,7 +1700,7 @@ msgstr ""
 #: ../plugins/converter/interface.c:432
 #: ../plugins/converter/converter.glade.h:7
 msgid "Command line:"
-msgstr ""
+msgstr "Naredbeni redak:"
 
 #: ../plugins/converter/interface.c:443
 #: ../plugins/converter/converter.glade.h:15
@@ -1738,7 +1721,7 @@ msgstr ""
 #: ../plugins/converter/interface.c:462
 #: ../plugins/converter/converter.glade.h:29
 msgid "Method:"
-msgstr ""
+msgstr "Metoda:"
 
 #: ../plugins/converter/interface.c:469
 msgid "Pipe"
@@ -1746,35 +1729,32 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:470
 msgid "Temporary file"
-msgstr ""
+msgstr "Privremena datoteka"
 
 #: ../plugins/converter/interface.c:487
 #: ../plugins/converter/converter.glade.h:5
-#, fuzzy
 msgid "APEv2"
-msgstr "Piši APEv2"
+msgstr "APEv2"
 
 #: ../plugins/converter/interface.c:493
 #: ../plugins/converter/converter.glade.h:21
-#, fuzzy
 msgid "ID3v1"
-msgstr "Piši ID3v1"
+msgstr "ID3v1"
 
 #: ../plugins/converter/interface.c:499
 #: ../plugins/converter/converter.glade.h:31
 msgid "OggVorbis"
-msgstr ""
+msgstr "OggVorbis"
 
 #: ../plugins/converter/interface.c:505
 #: ../plugins/converter/converter.glade.h:20
 msgid "FLAC"
-msgstr ""
+msgstr "FLAC"
 
 #: ../plugins/converter/interface.c:517
 #: ../plugins/converter/converter.glade.h:22
-#, fuzzy
 msgid "ID3v2"
-msgstr "Piši ID3v2"
+msgstr "ID3v2"
 
 #: ../plugins/converter/interface.c:527
 #: ../plugins/converter/converter.glade.h:1
