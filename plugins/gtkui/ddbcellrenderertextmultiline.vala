@@ -23,7 +23,7 @@ namespace Ddb {
         public bool editing_canceled = false;
         public string tree_path;
 
-        private override bool key_press_event (Gdk.EventKey event) {
+        public override bool key_press_event (Gdk.EventKey event) {
             bool res = true;
             if (event.keyval == Gdk.KeySyms.Return) {
                 if ((event.state & (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK)) != 0) {
