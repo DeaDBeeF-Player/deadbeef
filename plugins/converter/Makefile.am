@@ -29,8 +29,8 @@ converter_gtkui_la_LIBADD = $(LDADD) -L$(GTK_ROOT)/lib $(GTK_ROOT)/lib/libgtk-x1
 
 converter_gtkui_la_CFLAGS = -std=c99 -I $(GTK_ROOT)/include -I $(GTK_ROOT)/lib/gtk-2.0/include -I $(GTK_ROOT)/include/glib-2.0 -I $(GTK_ROOT)/include/gtk-2.0 -I $(GTK_ROOT)/include/cairo -I $(GTK_ROOT)/lib/glib-2.0/include/ -I $(GTK_ROOT)/include/pango-1.0 -I $(GTK_ROOT)/include/atk-1.0 -DULTRA_COMPATIBLE=1
 else
-converter_gtkui_la_LIBADD = $(LDADD) $(GTKUI_DEPS_LIBS)
-converter_gtkui_la_CFLAGS = -std=c99 $(GTKUI_DEPS_CFLAGS)
+converter_gtkui_la_LIBADD = $(LDADD) $(GTK2_DEPS_LIBS)
+converter_gtkui_la_CFLAGS = -std=c99 $(GTK2_DEPS_CFLAGS)
 endif
 
 
