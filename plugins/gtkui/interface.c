@@ -21,7 +21,7 @@
 
 #define GLADE_HOOKUP_OBJECT(component,widget,name) \
   g_object_set_data_full (G_OBJECT (component), name, \
-    gtk_widget_ref (widget), (GDestroyNotify) gtk_widget_unref)
+    g_object_ref(G_OBJECT(widget)), (GDestroyNotify) g_object_unref)
 
 #define GLADE_HOOKUP_OBJECT_NO_REF(component,widget,name) \
   g_object_set_data (G_OBJECT (component), name, widget)
@@ -498,7 +498,7 @@ create_mainwin (void)
   stopbtn = gtk_button_new ();
   gtk_widget_show (stopbtn);
   gtk_box_pack_start (GTK_BOX (hbox3), stopbtn, FALSE, FALSE, 0);
-  GTK_WIDGET_UNSET_FLAGS (stopbtn, GTK_CAN_FOCUS);
+  gtk_widget_set_can_focus(stopbtn, FALSE);
   gtk_widget_add_accelerator (stopbtn, "activate", accel_group,
                               GDK_v, (GdkModifierType) 0,
                               GTK_ACCEL_VISIBLE);
@@ -511,7 +511,7 @@ create_mainwin (void)
   playbtn = gtk_button_new ();
   gtk_widget_show (playbtn);
   gtk_box_pack_start (GTK_BOX (hbox3), playbtn, FALSE, FALSE, 0);
-  GTK_WIDGET_UNSET_FLAGS (playbtn, GTK_CAN_FOCUS);
+  gtk_widget_set_can_focus(playbtn, FALSE);
   gtk_widget_add_accelerator (playbtn, "activate", accel_group,
                               GDK_x, (GdkModifierType) 0,
                               GTK_ACCEL_VISIBLE);
@@ -527,7 +527,7 @@ create_mainwin (void)
   pausebtn = gtk_button_new ();
   gtk_widget_show (pausebtn);
   gtk_box_pack_start (GTK_BOX (hbox3), pausebtn, FALSE, FALSE, 0);
-  GTK_WIDGET_UNSET_FLAGS (pausebtn, GTK_CAN_FOCUS);
+  gtk_widget_set_can_focus(pausebtn, FALSE);
   gtk_widget_add_accelerator (pausebtn, "activate", accel_group,
                               GDK_c, (GdkModifierType) 0,
                               GTK_ACCEL_VISIBLE);
@@ -543,7 +543,7 @@ create_mainwin (void)
   prevbtn = gtk_button_new ();
   gtk_widget_show (prevbtn);
   gtk_box_pack_start (GTK_BOX (hbox3), prevbtn, FALSE, FALSE, 0);
-  GTK_WIDGET_UNSET_FLAGS (prevbtn, GTK_CAN_FOCUS);
+  gtk_widget_set_can_focus(prevbtn, FALSE);
   gtk_widget_add_accelerator (prevbtn, "activate", accel_group,
                               GDK_z, (GdkModifierType) 0,
                               GTK_ACCEL_VISIBLE);
@@ -556,7 +556,7 @@ create_mainwin (void)
   nextbtn = gtk_button_new ();
   gtk_widget_show (nextbtn);
   gtk_box_pack_start (GTK_BOX (hbox3), nextbtn, FALSE, FALSE, 0);
-  GTK_WIDGET_UNSET_FLAGS (nextbtn, GTK_CAN_FOCUS);
+  gtk_widget_set_can_focus(nextbtn, FALSE);
   gtk_widget_add_accelerator (nextbtn, "activate", accel_group,
                               GDK_b, (GdkModifierType) 0,
                               GTK_ACCEL_VISIBLE);
@@ -570,22 +570,22 @@ create_mainwin (void)
   gtk_widget_show (seekbar);
   gtk_box_pack_start (GTK_BOX (hbox2), seekbar, TRUE, TRUE, 2);
   gtk_widget_set_size_request (seekbar, 20, -1);
-  GTK_WIDGET_UNSET_FLAGS (seekbar, GTK_CAN_FOCUS);
-  GTK_WIDGET_UNSET_FLAGS (seekbar, GTK_CAN_DEFAULT);
+  gtk_widget_set_can_focus(seekbar, FALSE);
+  gtk_widget_set_can_default(seekbar, FALSE);
 
   volumebar = create_volumebar_widget ("volumebar", "", "", 0, 0);
   gtk_widget_show (volumebar);
   gtk_box_pack_start (GTK_BOX (hbox2), volumebar, FALSE, TRUE, 2);
   gtk_widget_set_size_request (volumebar, 70, -1);
-  GTK_WIDGET_UNSET_FLAGS (volumebar, GTK_CAN_FOCUS);
-  GTK_WIDGET_UNSET_FLAGS (volumebar, GTK_CAN_DEFAULT);
+  gtk_widget_set_can_focus(volumebar, FALSE);
+  gtk_widget_set_can_default(volumebar, FALSE);
 
   tabstrip = create_tabstrip_widget ("tabstrip", "", "", 0, 0);
   gtk_widget_show (tabstrip);
   gtk_box_pack_start (GTK_BOX (vbox1), tabstrip, FALSE, TRUE, 0);
   gtk_widget_set_size_request (tabstrip, -1, 24);
-  GTK_WIDGET_UNSET_FLAGS (tabstrip, GTK_CAN_FOCUS);
-  GTK_WIDGET_UNSET_FLAGS (tabstrip, GTK_CAN_DEFAULT);
+  gtk_widget_set_can_focus(tabstrip, FALSE);
+  gtk_widget_set_can_default(tabstrip, FALSE);
 
   frame1 = gtk_frame_new (NULL);
   gtk_widget_show (frame1);
@@ -595,8 +595,8 @@ create_mainwin (void)
   playlist = create_ddb_listview_widget ("playlist", "", "", 0, 0);
   gtk_widget_show (playlist);
   gtk_container_add (GTK_CONTAINER (frame1), playlist);
-  GTK_WIDGET_UNSET_FLAGS (playlist, GTK_CAN_FOCUS);
-  GTK_WIDGET_UNSET_FLAGS (playlist, GTK_CAN_DEFAULT);
+  gtk_widget_set_can_focus(playlist, FALSE);
+  gtk_widget_set_can_default(playlist, FALSE);
 
   plugins_bottom_vbox = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (plugins_bottom_vbox);
@@ -917,8 +917,8 @@ create_searchwin (void)
   searchlist = create_ddb_listview_widget ("searchlist", "", "", 0, 0);
   gtk_widget_show (searchlist);
   gtk_container_add (GTK_CONTAINER (frame2), searchlist);
-  GTK_WIDGET_UNSET_FLAGS (searchlist, GTK_CAN_FOCUS);
-  GTK_WIDGET_UNSET_FLAGS (searchlist, GTK_CAN_DEFAULT);
+  gtk_widget_set_can_focus(searchlist, FALSE);
+  gtk_widget_set_can_default(searchlist, FALSE);
 
   g_signal_connect ((gpointer) searchwin, "key_press_event",
                     G_CALLBACK (on_searchwin_key_press_event),
@@ -1115,7 +1115,7 @@ create_progressdlg (void)
   gtk_widget_show (progresstitle);
   gtk_box_pack_start (GTK_BOX (vbox6), progresstitle, TRUE, FALSE, 0);
   gtk_widget_set_size_request (progresstitle, 500, -1);
-  GTK_WIDGET_UNSET_FLAGS (progresstitle, GTK_CAN_FOCUS);
+  gtk_widget_set_can_focus(progresstitle, FALSE);
   gtk_editable_set_editable (GTK_EDITABLE (progresstitle), FALSE);
   gtk_entry_set_invisible_char (GTK_ENTRY (progresstitle), 8226);
 
@@ -1279,7 +1279,7 @@ create_trackproperties (void)
   write_tags = gtk_button_new ();
   gtk_widget_show (write_tags);
   gtk_container_add (GTK_CONTAINER (hbuttonbox1), write_tags);
-  GTK_WIDGET_SET_FLAGS (write_tags, GTK_CAN_DEFAULT);
+  gtk_widget_set_can_default(write_tags, TRUE);
 
   alignment11 = gtk_alignment_new (0.5, 0.5, 0, 0);
   gtk_widget_show (alignment11);
@@ -1300,7 +1300,7 @@ create_trackproperties (void)
   closebtn = gtk_button_new ();
   gtk_widget_show (closebtn);
   gtk_container_add (GTK_CONTAINER (hbuttonbox1), closebtn);
-  GTK_WIDGET_SET_FLAGS (closebtn, GTK_CAN_DEFAULT);
+  gtk_widget_set_can_default(closebtn, TRUE);
 
   alignment12 = gtk_alignment_new (0.5, 0.5, 0, 0);
   gtk_widget_show (alignment12);
@@ -1346,7 +1346,7 @@ create_trackproperties (void)
   button2 = gtk_button_new ();
   gtk_widget_show (button2);
   gtk_container_add (GTK_CONTAINER (hbuttonbox2), button2);
-  GTK_WIDGET_SET_FLAGS (button2, GTK_CAN_DEFAULT);
+  gtk_widget_set_can_default(button2, TRUE);
 
   alignment13 = gtk_alignment_new (0.5, 0.5, 0, 0);
   gtk_widget_show (alignment13);
@@ -1472,7 +1472,7 @@ create_editcolumndlg (void)
   gtk_window_set_modal (GTK_WINDOW (editcolumndlg), TRUE);
   gtk_window_set_type_hint (GTK_WINDOW (editcolumndlg), GDK_WINDOW_TYPE_HINT_DIALOG);
 
-  dialog_vbox1 = GTK_DIALOG (editcolumndlg)->vbox;
+  dialog_vbox1 = gtk_dialog_get_content_area (GTK_DIALOG (editcolumndlg));
   gtk_widget_show (dialog_vbox1);
 
   vbox14 = gtk_vbox_new (FALSE, 8);
@@ -1504,20 +1504,20 @@ create_editcolumndlg (void)
   gtk_box_pack_start (GTK_BOX (hbox30), label37, FALSE, FALSE, 0);
   gtk_misc_set_alignment (GTK_MISC (label37), 0, 0.5);
 
-  id = gtk_combo_box_new_text ();
+  id = gtk_combo_box_text_new ();
   gtk_widget_show (id);
   gtk_box_pack_start (GTK_BOX (hbox30), id, TRUE, TRUE, 0);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (id), _("Item Index"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (id), _("Playing"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (id), _("Album Art"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (id), _("Artist - Album"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (id), _("Artist"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (id), _("Album"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (id), _("Title"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (id), _("Duration"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (id), _("Track Number"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (id), _("Band / Album Artist"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (id), _("Custom"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (id), _("Item Index"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (id), _("Playing"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (id), _("Album Art"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (id), _("Artist - Album"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (id), _("Artist"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (id), _("Album"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (id), _("Title"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (id), _("Duration"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (id), _("Track Number"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (id), _("Band / Album Artist"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (id), _("Custom"));
 
   hbox31 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox31);
@@ -1541,8 +1541,8 @@ create_editcolumndlg (void)
   title_formatting_help_link = title_formatting_help_link_create ("title_formatting_help_link", "", "", 0, 0);
   gtk_widget_show (title_formatting_help_link);
   gtk_box_pack_start (GTK_BOX (hbox74), title_formatting_help_link, TRUE, TRUE, 0);
-  GTK_WIDGET_UNSET_FLAGS (title_formatting_help_link, GTK_CAN_FOCUS);
-  GTK_WIDGET_UNSET_FLAGS (title_formatting_help_link, GTK_CAN_DEFAULT);
+  gtk_widget_set_can_focus(title_formatting_help_link, FALSE);
+  gtk_widget_set_can_default(title_formatting_help_link, FALSE);
 
   hbox32 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox32);
@@ -1553,20 +1553,20 @@ create_editcolumndlg (void)
   gtk_box_pack_start (GTK_BOX (hbox32), label38, FALSE, FALSE, 0);
   gtk_misc_set_alignment (GTK_MISC (label38), 0, 0.5);
 
-  align = gtk_combo_box_new_text ();
+  align = gtk_combo_box_text_new ();
   gtk_widget_show (align);
   gtk_box_pack_start (GTK_BOX (hbox32), align, TRUE, TRUE, 0);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (align), _("Left"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (align), _("Right"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (align), _("Left"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (align), _("Right"));
 
-  dialog_action_area1 = GTK_DIALOG (editcolumndlg)->action_area;
+  dialog_action_area1 = gtk_dialog_get_action_area (GTK_DIALOG (editcolumndlg));
   gtk_widget_show (dialog_action_area1);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area1), GTK_BUTTONBOX_END);
 
   cancelbutton1 = gtk_button_new ();
   gtk_widget_show (cancelbutton1);
   gtk_dialog_add_action_widget (GTK_DIALOG (editcolumndlg), cancelbutton1, GTK_RESPONSE_CANCEL);
-  GTK_WIDGET_SET_FLAGS (cancelbutton1, GTK_CAN_DEFAULT);
+  gtk_widget_set_can_default(cancelbutton1, TRUE);
 
   alignment9 = gtk_alignment_new (0.5, 0.5, 0, 0);
   gtk_widget_show (alignment9);
@@ -1587,7 +1587,7 @@ create_editcolumndlg (void)
   okbutton1 = gtk_button_new ();
   gtk_widget_show (okbutton1);
   gtk_dialog_add_action_widget (GTK_DIALOG (editcolumndlg), okbutton1, GTK_RESPONSE_OK);
-  GTK_WIDGET_SET_FLAGS (okbutton1, GTK_CAN_DEFAULT);
+  gtk_widget_set_can_default(okbutton1, TRUE);
 
   alignment8 = gtk_alignment_new (0.5, 0.5, 0, 0);
   gtk_widget_show (alignment8);
@@ -1804,7 +1804,7 @@ create_prefwin (void)
   gtk_window_set_position (GTK_WINDOW (prefwin), GTK_WIN_POS_CENTER);
   gtk_window_set_type_hint (GTK_WINDOW (prefwin), GDK_WINDOW_TYPE_HINT_DIALOG);
 
-  dialog_vbox2 = GTK_DIALOG (prefwin)->vbox;
+  dialog_vbox2 = gtk_dialog_get_content_area (GTK_DIALOG (prefwin));
   gtk_widget_show (dialog_vbox2);
 
   notebook = gtk_notebook_new ();
@@ -1826,7 +1826,7 @@ create_prefwin (void)
   gtk_box_pack_start (GTK_BOX (hbox11), label23, FALSE, FALSE, 0);
   gtk_misc_set_alignment (GTK_MISC (label23), 0, 0.5);
 
-  pref_output_plugin = gtk_combo_box_new_text ();
+  pref_output_plugin = gtk_combo_box_text_new ();
   gtk_widget_show (pref_output_plugin);
   gtk_box_pack_start (GTK_BOX (hbox11), pref_output_plugin, TRUE, TRUE, 0);
 
@@ -1839,7 +1839,7 @@ create_prefwin (void)
   gtk_box_pack_start (GTK_BOX (hbox12), label4, FALSE, FALSE, 0);
   gtk_misc_set_alignment (GTK_MISC (label4), 0, 0.5);
 
-  pref_soundcard = gtk_combo_box_new_text ();
+  pref_soundcard = gtk_combo_box_text_new ();
   gtk_widget_show (pref_soundcard);
   gtk_box_pack_start (GTK_BOX (hbox12), pref_soundcard, TRUE, TRUE, 0);
 
@@ -1865,13 +1865,13 @@ create_prefwin (void)
   gtk_box_pack_start (GTK_BOX (hbox10), label8, FALSE, FALSE, 0);
   gtk_misc_set_alignment (GTK_MISC (label8), 0, 0.5);
 
-  pref_replaygain_mode = gtk_combo_box_new_text ();
+  pref_replaygain_mode = gtk_combo_box_text_new ();
   gtk_widget_show (pref_replaygain_mode);
   gtk_box_pack_start (GTK_BOX (hbox10), pref_replaygain_mode, TRUE, TRUE, 0);
   gtk_widget_set_size_request (pref_replaygain_mode, 337, -1);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_replaygain_mode), _("Disable"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_replaygain_mode), _("Track"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_replaygain_mode), _("Album"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (pref_replaygain_mode), _("Disable"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (pref_replaygain_mode), _("Track"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (pref_replaygain_mode), _("Album"));
 
   pref_replaygain_scale = gtk_check_button_new_with_mnemonic (_("Replaygain peak scale"));
   gtk_widget_show (pref_replaygain_scale);
@@ -2097,7 +2097,7 @@ create_prefwin (void)
   gtk_widget_show (label128);
   gtk_box_pack_start (GTK_BOX (hbox101), label128, FALSE, FALSE, 0);
 
-  gui_plugin = gtk_combo_box_new_text ();
+  gui_plugin = gtk_combo_box_text_new ();
   gtk_widget_show (gui_plugin);
   gtk_box_pack_start (GTK_BOX (hbox101), gui_plugin, TRUE, TRUE, 0);
 
@@ -2384,15 +2384,15 @@ create_prefwin (void)
   gtk_box_pack_start (GTK_BOX (hbox15), label20, FALSE, FALSE, 0);
   gtk_misc_set_alignment (GTK_MISC (label20), 0, 0.5);
 
-  pref_network_proxytype = gtk_combo_box_new_text ();
+  pref_network_proxytype = gtk_combo_box_text_new ();
   gtk_widget_show (pref_network_proxytype);
   gtk_box_pack_start (GTK_BOX (hbox15), pref_network_proxytype, TRUE, TRUE, 0);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_network_proxytype), "HTTP");
-  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_network_proxytype), "HTTP_1_0");
-  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_network_proxytype), "SOCKS4");
-  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_network_proxytype), "SOCKS5");
-  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_network_proxytype), "SOCKS4A");
-  gtk_combo_box_append_text (GTK_COMBO_BOX (pref_network_proxytype), "SOCKS5_HOSTNAME");
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (pref_network_proxytype), "HTTP");
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (pref_network_proxytype), "HTTP_1_0");
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (pref_network_proxytype), "SOCKS4");
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (pref_network_proxytype), "SOCKS5");
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (pref_network_proxytype), "SOCKS4A");
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (pref_network_proxytype), "SOCKS5_HOSTNAME");
 
   hbox61 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox61);
@@ -2523,22 +2523,22 @@ create_prefwin (void)
   weblink = create_plugin_weblink ("weblink", "", "", 0, 0);
   gtk_widget_show (weblink);
   gtk_box_pack_start (GTK_BOX (hbox20), weblink, TRUE, FALSE, 0);
-  GTK_WIDGET_UNSET_FLAGS (weblink, GTK_CAN_FOCUS);
-  GTK_WIDGET_UNSET_FLAGS (weblink, GTK_CAN_DEFAULT);
+  gtk_widget_set_can_focus(weblink, FALSE);
+  gtk_widget_set_can_default(weblink, FALSE);
 
   label3 = gtk_label_new (_("Plugins"));
   gtk_widget_show (label3);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 6), label3);
   gtk_misc_set_alignment (GTK_MISC (label3), 0.48, 0.5);
 
-  dialog_action_area2 = GTK_DIALOG (prefwin)->action_area;
+  dialog_action_area2 = gtk_dialog_get_action_area (GTK_DIALOG (prefwin));
   gtk_widget_show (dialog_action_area2);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area2), GTK_BUTTONBOX_END);
 
   closebutton1 = gtk_button_new_from_stock ("gtk-close");
   gtk_widget_show (closebutton1);
   gtk_dialog_add_action_widget (GTK_DIALOG (prefwin), closebutton1, GTK_RESPONSE_CLOSE);
-  GTK_WIDGET_SET_FLAGS (closebutton1, GTK_CAN_DEFAULT);
+  gtk_widget_set_can_default(closebutton1, TRUE);
 
   g_signal_connect ((gpointer) prefwin, "configure_event",
                     G_CALLBACK (on_prefwin_configure_event),
@@ -2890,7 +2890,7 @@ create_entrydialog (void)
   gtk_window_set_destroy_with_parent (GTK_WINDOW (entrydialog), TRUE);
   gtk_window_set_type_hint (GTK_WINDOW (entrydialog), GDK_WINDOW_TYPE_HINT_DIALOG);
 
-  dialog_vbox3 = GTK_DIALOG (entrydialog)->vbox;
+  dialog_vbox3 = gtk_dialog_get_content_area (GTK_DIALOG (entrydialog));
   gtk_widget_show (dialog_vbox3);
 
   vbox15 = gtk_vbox_new (FALSE, 0);
@@ -2912,14 +2912,14 @@ create_entrydialog (void)
   gtk_entry_set_invisible_char (GTK_ENTRY (title), 8226);
   gtk_entry_set_activates_default (GTK_ENTRY (title), TRUE);
 
-  dialog_action_area3 = GTK_DIALOG (entrydialog)->action_area;
+  dialog_action_area3 = gtk_dialog_get_action_area (GTK_DIALOG (entrydialog));
   gtk_widget_show (dialog_action_area3);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area3), GTK_BUTTONBOX_END);
 
   cancelbutton2 = gtk_button_new ();
   gtk_widget_show (cancelbutton2);
   gtk_dialog_add_action_widget (GTK_DIALOG (entrydialog), cancelbutton2, GTK_RESPONSE_CANCEL);
-  GTK_WIDGET_SET_FLAGS (cancelbutton2, GTK_CAN_DEFAULT);
+  gtk_widget_set_can_default(cancelbutton2, TRUE);
 
   alignment17 = gtk_alignment_new (0.5, 0.5, 0, 0);
   gtk_widget_show (alignment17);
@@ -2940,7 +2940,7 @@ create_entrydialog (void)
   okbutton2 = gtk_button_new ();
   gtk_widget_show (okbutton2);
   gtk_dialog_add_action_widget (GTK_DIALOG (entrydialog), okbutton2, GTK_RESPONSE_OK);
-  GTK_WIDGET_SET_FLAGS (okbutton2, GTK_CAN_DEFAULT);
+  gtk_widget_set_can_default(okbutton2, TRUE);
 
   alignment16 = gtk_alignment_new (0.5, 0.5, 0, 0);
   gtk_widget_show (alignment16);
@@ -3005,7 +3005,7 @@ create_addlocationdlg (void)
   gtk_window_set_title (GTK_WINDOW (addlocationdlg), _("Add location"));
   gtk_window_set_type_hint (GTK_WINDOW (addlocationdlg), GDK_WINDOW_TYPE_HINT_DIALOG);
 
-  dialog_vbox4 = GTK_DIALOG (addlocationdlg)->vbox;
+  dialog_vbox4 = gtk_dialog_get_content_area (GTK_DIALOG (addlocationdlg));
   gtk_widget_show (dialog_vbox4);
 
   hbox34 = gtk_hbox_new (FALSE, 8);
@@ -3024,14 +3024,14 @@ create_addlocationdlg (void)
   gtk_entry_set_invisible_char (GTK_ENTRY (addlocation_entry), 8226);
   gtk_entry_set_activates_default (GTK_ENTRY (addlocation_entry), TRUE);
 
-  addlocation_actionarea = GTK_DIALOG (addlocationdlg)->action_area;
+  addlocation_actionarea = gtk_dialog_get_action_area (GTK_DIALOG (addlocationdlg));
   gtk_widget_show (addlocation_actionarea);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (addlocation_actionarea), GTK_BUTTONBOX_END);
 
   cancelbutton3 = gtk_button_new ();
   gtk_widget_show (cancelbutton3);
   gtk_dialog_add_action_widget (GTK_DIALOG (addlocationdlg), cancelbutton3, GTK_RESPONSE_CANCEL);
-  GTK_WIDGET_SET_FLAGS (cancelbutton3, GTK_CAN_DEFAULT);
+  gtk_widget_set_can_default(cancelbutton3, TRUE);
 
   alignment18 = gtk_alignment_new (0.5, 0.5, 0, 0);
   gtk_widget_show (alignment18);
@@ -3052,7 +3052,7 @@ create_addlocationdlg (void)
   okbutton3 = gtk_button_new ();
   gtk_widget_show (okbutton3);
   gtk_dialog_add_action_widget (GTK_DIALOG (addlocationdlg), okbutton3, GTK_RESPONSE_OK);
-  GTK_WIDGET_SET_FLAGS (okbutton3, GTK_CAN_DEFAULT);
+  gtk_widget_set_can_default(okbutton3, TRUE);
 
   alignment19 = gtk_alignment_new (0.5, 0.5, 0, 0);
   gtk_widget_show (alignment19);
@@ -3118,7 +3118,7 @@ create_groupbydlg (void)
   gtk_window_set_title (GTK_WINDOW (groupbydlg), _("Group By"));
   gtk_window_set_type_hint (GTK_WINDOW (groupbydlg), GDK_WINDOW_TYPE_HINT_DIALOG);
 
-  dialog_vbox5 = GTK_DIALOG (groupbydlg)->vbox;
+  dialog_vbox5 = gtk_dialog_get_content_area (GTK_DIALOG (groupbydlg));
   gtk_widget_show (dialog_vbox5);
 
   vbox25 = gtk_vbox_new (FALSE, 8);
@@ -3147,17 +3147,17 @@ create_groupbydlg (void)
   custom1 = title_formatting_help_link_create ("custom1", "", "", 0, 0);
   gtk_widget_show (custom1);
   gtk_box_pack_start (GTK_BOX (hbox75), custom1, TRUE, TRUE, 0);
-  GTK_WIDGET_UNSET_FLAGS (custom1, GTK_CAN_FOCUS);
-  GTK_WIDGET_UNSET_FLAGS (custom1, GTK_CAN_DEFAULT);
+  gtk_widget_set_can_focus(custom1, FALSE);
+  gtk_widget_set_can_default(custom1, FALSE);
 
-  dialog_action_area4 = GTK_DIALOG (groupbydlg)->action_area;
+  dialog_action_area4 = gtk_dialog_get_action_area (GTK_DIALOG (groupbydlg));
   gtk_widget_show (dialog_action_area4);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area4), GTK_BUTTONBOX_END);
 
   cancelbutton4 = gtk_button_new ();
   gtk_widget_show (cancelbutton4);
   gtk_dialog_add_action_widget (GTK_DIALOG (groupbydlg), cancelbutton4, GTK_RESPONSE_CANCEL);
-  GTK_WIDGET_SET_FLAGS (cancelbutton4, GTK_CAN_DEFAULT);
+  gtk_widget_set_can_default(cancelbutton4, TRUE);
 
   alignment7 = gtk_alignment_new (0.5, 0.5, 0, 0);
   gtk_widget_show (alignment7);
@@ -3178,7 +3178,7 @@ create_groupbydlg (void)
   okbutton4 = gtk_button_new ();
   gtk_widget_show (okbutton4);
   gtk_dialog_add_action_widget (GTK_DIALOG (groupbydlg), okbutton4, GTK_RESPONSE_OK);
-  GTK_WIDGET_SET_FLAGS (okbutton4, GTK_CAN_DEFAULT);
+  gtk_widget_set_can_default(okbutton4, TRUE);
 
   alignment6 = gtk_alignment_new (0.5, 0.5, 0, 0);
   gtk_widget_show (alignment6);
@@ -3243,7 +3243,7 @@ create_sortbydlg (void)
   gtk_window_set_modal (GTK_WINDOW (sortbydlg), TRUE);
   gtk_window_set_type_hint (GTK_WINDOW (sortbydlg), GDK_WINDOW_TYPE_HINT_DIALOG);
 
-  dialog_vbox8 = GTK_DIALOG (sortbydlg)->vbox;
+  dialog_vbox8 = gtk_dialog_get_content_area (GTK_DIALOG (sortbydlg));
   gtk_widget_show (dialog_vbox8);
 
   vbox28 = gtk_vbox_new (FALSE, 8);
@@ -3271,8 +3271,8 @@ create_sortbydlg (void)
   custom3 = title_formatting_help_link_create ("custom3", "", "", 0, 0);
   gtk_widget_show (custom3);
   gtk_box_pack_start (GTK_BOX (hbox77), custom3, TRUE, TRUE, 0);
-  GTK_WIDGET_UNSET_FLAGS (custom3, GTK_CAN_FOCUS);
-  GTK_WIDGET_UNSET_FLAGS (custom3, GTK_CAN_DEFAULT);
+  gtk_widget_set_can_focus(custom3, FALSE);
+  gtk_widget_set_can_default(custom3, FALSE);
 
   hbox78 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox78);
@@ -3282,25 +3282,25 @@ create_sortbydlg (void)
   gtk_widget_show (label109);
   gtk_box_pack_start (GTK_BOX (hbox78), label109, FALSE, FALSE, 0);
 
-  sortorder = gtk_combo_box_new_text ();
+  sortorder = gtk_combo_box_text_new ();
   gtk_widget_show (sortorder);
   gtk_box_pack_start (GTK_BOX (hbox78), sortorder, TRUE, TRUE, 0);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (sortorder), _("Ascending"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (sortorder), _("Descending"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (sortorder), _("Ascending"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (sortorder), _("Descending"));
 
-  dialog_action_area7 = GTK_DIALOG (sortbydlg)->action_area;
+  dialog_action_area7 = gtk_dialog_get_action_area (GTK_DIALOG (sortbydlg));
   gtk_widget_show (dialog_action_area7);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area7), GTK_BUTTONBOX_END);
 
   cancelbutton5 = gtk_button_new_from_stock ("gtk-cancel");
   gtk_widget_show (cancelbutton5);
   gtk_dialog_add_action_widget (GTK_DIALOG (sortbydlg), cancelbutton5, GTK_RESPONSE_CANCEL);
-  GTK_WIDGET_SET_FLAGS (cancelbutton5, GTK_CAN_DEFAULT);
+  gtk_widget_set_can_default(cancelbutton5, TRUE);
 
   okbutton5 = gtk_button_new_from_stock ("gtk-ok");
   gtk_widget_show (okbutton5);
   gtk_dialog_add_action_widget (GTK_DIALOG (sortbydlg), okbutton5, GTK_RESPONSE_OK);
-  GTK_WIDGET_SET_FLAGS (okbutton5, GTK_CAN_DEFAULT);
+  gtk_widget_set_can_default(okbutton5, TRUE);
 
   g_signal_connect ((gpointer) sortfmt, "activate",
                     G_CALLBACK (on_sortfmt_activate),
@@ -3343,7 +3343,7 @@ create_select_dsp_plugin (void)
   gtk_window_set_modal (GTK_WINDOW (select_dsp_plugin), TRUE);
   gtk_window_set_type_hint (GTK_WINDOW (select_dsp_plugin), GDK_WINDOW_TYPE_HINT_DIALOG);
 
-  dialog_vbox10 = GTK_DIALOG (select_dsp_plugin)->vbox;
+  dialog_vbox10 = gtk_dialog_get_content_area (GTK_DIALOG (select_dsp_plugin));
   gtk_widget_show (dialog_vbox10);
 
   vbox31 = gtk_vbox_new (FALSE, 8);
@@ -3359,23 +3359,23 @@ create_select_dsp_plugin (void)
   gtk_widget_show (label113);
   gtk_box_pack_start (GTK_BOX (hbox85), label113, FALSE, FALSE, 0);
 
-  plugin = gtk_combo_box_new_text ();
+  plugin = gtk_combo_box_text_new ();
   gtk_widget_show (plugin);
   gtk_box_pack_start (GTK_BOX (hbox85), plugin, TRUE, TRUE, 0);
 
-  dialog_action_area9 = GTK_DIALOG (select_dsp_plugin)->action_area;
+  dialog_action_area9 = gtk_dialog_get_action_area (GTK_DIALOG (select_dsp_plugin));
   gtk_widget_show (dialog_action_area9);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area9), GTK_BUTTONBOX_END);
 
   cancelbutton7 = gtk_button_new_from_stock ("gtk-cancel");
   gtk_widget_show (cancelbutton7);
   gtk_dialog_add_action_widget (GTK_DIALOG (select_dsp_plugin), cancelbutton7, GTK_RESPONSE_CANCEL);
-  GTK_WIDGET_SET_FLAGS (cancelbutton7, GTK_CAN_DEFAULT);
+  gtk_widget_set_can_default(cancelbutton7, TRUE);
 
   okbutton7 = gtk_button_new_from_stock ("gtk-ok");
   gtk_widget_show (okbutton7);
   gtk_dialog_add_action_widget (GTK_DIALOG (select_dsp_plugin), okbutton7, GTK_RESPONSE_OK);
-  GTK_WIDGET_SET_FLAGS (okbutton7, GTK_CAN_DEFAULT);
+  gtk_widget_set_can_default(okbutton7, TRUE);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (select_dsp_plugin, select_dsp_plugin, "select_dsp_plugin");
@@ -3446,7 +3446,7 @@ create_tagwritersettings (void)
   gtk_window_set_type_hint (GTK_WINDOW (tagwritersettings), GDK_WINDOW_TYPE_HINT_DIALOG);
   gtk_dialog_set_has_separator (GTK_DIALOG (tagwritersettings), FALSE);
 
-  dialog_vbox11 = GTK_DIALOG (tagwritersettings)->vbox;
+  dialog_vbox11 = gtk_dialog_get_content_area (GTK_DIALOG (tagwritersettings));
   gtk_widget_show (dialog_vbox11);
 
   vbox32 = gtk_vbox_new (FALSE, 0);
@@ -3508,11 +3508,11 @@ create_tagwritersettings (void)
   gtk_widget_show (label118);
   gtk_box_pack_start (GTK_BOX (hbox91), label118, FALSE, FALSE, 0);
 
-  id3v2_version = gtk_combo_box_new_text ();
+  id3v2_version = gtk_combo_box_text_new ();
   gtk_widget_show (id3v2_version);
   gtk_box_pack_start (GTK_BOX (hbox91), id3v2_version, TRUE, TRUE, 0);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (id3v2_version), _("2.3 (Recommended)"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (id3v2_version), _("2.4"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (id3v2_version), _("2.3 (Recommended)"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (id3v2_version), _("2.4"));
 
   hbox92 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox92);
@@ -3624,14 +3624,14 @@ create_tagwritersettings (void)
   gtk_frame_set_label_widget (GTK_FRAME (frame10), label122);
   gtk_label_set_use_markup (GTK_LABEL (label122), TRUE);
 
-  dialog_action_area10 = GTK_DIALOG (tagwritersettings)->action_area;
+  dialog_action_area10 = gtk_dialog_get_action_area (GTK_DIALOG (tagwritersettings));
   gtk_widget_show (dialog_action_area10);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area10), GTK_BUTTONBOX_END);
 
   closebutton2 = gtk_button_new_from_stock ("gtk-close");
   gtk_widget_show (closebutton2);
   gtk_dialog_add_action_widget (GTK_DIALOG (tagwritersettings), closebutton2, GTK_RESPONSE_CLOSE);
-  GTK_WIDGET_SET_FLAGS (closebutton2, GTK_CAN_DEFAULT);
+  gtk_widget_set_can_default(closebutton2, TRUE);
 
   g_signal_connect ((gpointer) write_id3v2, "toggled",
                     G_CALLBACK (on_write_id3v2_toggled),

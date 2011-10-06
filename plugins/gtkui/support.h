@@ -7,6 +7,7 @@
 #endif
 
 #include <gtk/gtk.h>
+#include <gdk/gdkkeysyms-compat.h>
 
 /*
  * Standard gettext macros.
@@ -69,3 +70,10 @@ void        glade_set_atk_action_description (AtkAction       *action,
                                               const gchar     *action_name,
                                               const gchar     *description);
 
+#if GTK_CHECK_VERSION(3,0,0)
+GtkWidget *
+gtk_combo_box_entry_new_text(void);
+
+void
+gtk_dialog_set_has_separator (GtkDialog *dlg, gboolean has);
+#endif

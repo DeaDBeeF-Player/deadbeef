@@ -142,3 +142,13 @@ glade_set_atk_action_description       (AtkAction       *action,
     }
 }
 
+#if GTK_CHECK_VERSION(3,0,0)
+GtkWidget *
+gtk_combo_box_entry_new_text(void) {
+    GtkWidget *w = gtk_combo_box_text_new ();
+    gtk_combo_box_text_set_has_entry (GTK_COMBO_BOX_TEXT (w), TRUE);
+}
+void
+gtk_dialog_set_has_separator (GtkDialog *dlg, gboolean has) {
+}
+#endif

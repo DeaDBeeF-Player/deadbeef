@@ -24,13 +24,6 @@ AC_SUBST(GETTEXT_PACKAGE)
 test "$prefix" = NONE && prefix=/usr/local
 AC_DEFINE_UNQUOTED(LOCALEDIR, "${prefix}/${DATADIRNAME}/locale", [Name of gettext locale directory])
 
-if test "x$USE_MAINTAINER_MODE" = "xyes" ; then
-    AM_PROG_VALAC([0.7.0])
-    if test "x$VALAC" = "x" ; then
-        AC_MSG_ERROR([Cannot find the "valac" compiler in your PATH])
-    fi
-fi
-
 case "$host" in
   i386-*-* | i486-*-* | i586-*-* | i686-*-* | i86pc-*-*)
     AC_DEFINE(ARCH_X86_32, 1, [architecture is x86])
@@ -605,7 +598,6 @@ echo
 echo "Build Configuration:"
 echo
 echo "* Maintainer Mode:        $USE_MAINTAINER_MODE"
-echo "    * Vala:               $VALAC"
 fi
 
 dnl print summary

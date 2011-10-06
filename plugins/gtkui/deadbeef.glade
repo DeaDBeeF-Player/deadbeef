@@ -2846,7 +2846,7 @@ Album</property>
 		      <property name="update_policy">GTK_UPDATE_CONTINUOUS</property>
 		      <property name="inverted">False</property>
 		      <property name="adjustment">0 -12 12 0 0 0</property>
-		      <signal name="value_changed" handler="on_global_preamp_value_changed" last_modification_time="Sat, 01 Sep 2011 11:40:00 GMT"/>
+		      <signal name="value_changed" handler="on_global_preamp_value_changed" last_modification_time="Thu, 01 Sep 2011 11:40:00 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="padding">0</property>
