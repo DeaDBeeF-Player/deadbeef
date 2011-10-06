@@ -764,7 +764,7 @@ error:
 }
 
 
-static const char * exts[] = { "ogg", "ogx", NULL };
+static const char * exts[] = { "ogg", "ogx", "oga", NULL };
 
 // define plugin interface
 static DB_decoder_t plugin = {
