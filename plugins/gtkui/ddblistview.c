@@ -619,6 +619,8 @@ ddb_listview_list_pickpoint_y (DdbListview *listview, int y, DdbListviewGroup **
 
 void
 ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int w, int h) {
+    cairo_set_line_width (cr, 1);
+    cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
     GtkWidget *treeview = theme_treeview;
 
 #if !GTK_CHECK_VERSION(3,0,0)
@@ -767,8 +769,6 @@ ddb_listview_list_draw               (GtkWidget       *widget,
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     widget = ps->list;
-    cairo_set_line_width (cr, 1);
-    cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
     // FIXME: clip region
     ddb_listview_list_render (ps, cr, 0, 0, gtk_widget_get_allocated_width (widget), gtk_widget_get_allocated_height (widget));
     if (ps->drag_motion_y >= 0/* && ps->drag_motion_y-ps->scrollpos-3 < event->area.y+event->area.height && ps->drag_motion_y-ps->scrollpos+3 >= event->area.y*/) {
@@ -2077,7 +2077,7 @@ ddb_listview_list_track_dragdrop (DdbListview *ps, int y) {
 
 #if !GTK_CHECK_VERSION(3,0,0)
     // FIXME
-    ddb_listview_draw_dnd_marker (ps, cr);
+//    ddb_listview_draw_dnd_marker (ps, cr);
 #endif
     
     if (y < 10) {
@@ -2281,7 +2281,9 @@ ddb_listview_header_draw                 (GtkWidget       *widget,
     // FIXME: clip region
     cairo_set_line_width (cr, 1);
     cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
-    ddb_listview_header_expose (ps, cr, 0, 0, gtk_widget_get_allocated_width (widget), gtk_widget_get_allocated_height (widget));
+    GtkAllocation a;
+    gtk_widget_get_allocation (widget, &a);
+    ddb_listview_header_expose (ps, cr, 0, 0, a.width, a.height);
     return FALSE;
 }
 

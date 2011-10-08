@@ -182,8 +182,8 @@ volumebar_draw (GtkWidget *widget, cairo_t *cr) {
 
     GdkColor clr_fg;
     GdkColor clr_bg;
-    gtkui_get_bar_background_color (&clr_fg);
-    gtkui_get_bar_foreground_color (&clr_bg);
+    gtkui_get_bar_foreground_color (&clr_fg);
+    gtkui_get_bar_background_color (&clr_bg);
 
     for (int i = 0; i < n; i++) {
         float iy = (float)i + 3;
@@ -228,9 +228,9 @@ gboolean
 on_volumebar_expose_event                 (GtkWidget       *widget,
                                         GdkEventExpose  *event)
 {
-    cairo_t *cr = gdk_cairo_create (widget);
+    cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
     on_volumebar_draw (widget, cr);
-    gdk_cairo_destroy (cr);
+    cairo_destroy (cr);
     return FALSE;
 }
 #endif

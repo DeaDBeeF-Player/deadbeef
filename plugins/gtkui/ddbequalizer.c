@@ -826,10 +826,10 @@ static gboolean ddb_equalizer_real_draw (GtkWidget *base, cairo_t *cr) {
 #if !GTK_CHECK_VERSION(3,0,0)
 static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose* event) {
 	g_return_val_if_fail (event != NULL, FALSE);
-	cairo_t *ctx= gdk_cairo_create ((GdkDrawable*) gtk_widget_get_window (base));
+	cairo_t *cr= gdk_cairo_create ((GdkDrawable*) gtk_widget_get_window (base));
     ddb_equalizer_real_draw (base, cr);
-	_cairo_destroy0 (ctx);
-	return result;
+	_cairo_destroy0 (cr);
+	return FALSE;
 }
 #endif
 

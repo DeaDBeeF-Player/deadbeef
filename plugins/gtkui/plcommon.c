@@ -101,7 +101,7 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
                 .width = width,
                 .height = height,
             };
-            gtk_paint_flat_box (gtk_widget_get_style (theme_treeview), cr, GTK_STATE_NORMAL, GTK_SHADOW_NONE, &clip, theme_treeview, "cell_even_ruled", x-1, y, width+2, height);
+            gtk_paint_flat_box (gtk_widget_get_style (theme_treeview), gtk_widget_get_window (listview->list), GTK_STATE_NORMAL, GTK_SHADOW_NONE, &clip, theme_treeview, "cell_even_ruled", x-1, y, width+2, height);
 #endif
         }
         else {
