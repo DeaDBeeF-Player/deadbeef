@@ -339,13 +339,21 @@ static int tab_moved = 0;
 
 static void
 cairo_draw_lines (cairo_t *cr, GdkPoint *pts, int cnt) {
-    cairo_new_path (cr);
+    for (int i = 1; i < cnt; i++) {
+        cairo_move_to (cr, pts[i-1].x+1, pts[i-1].y+1);
+        cairo_line_to (cr, pts[i].x+1, pts[i].y+1);
+    }
+}
+
+static void
+cairo_draw_poly (cairo_t *cr, GdkPoint *pts, int cnt) {
     cairo_move_to (cr, pts[0].x, pts[0].y);
     for (int i = 1; i < cnt; i++) {
         cairo_line_to (cr, pts[i].x, pts[i].y);
     }
-    cairo_close_path (cr);
 }
+
+
 
 void
 ddb_tabstrip_draw_tab (GtkWidget *widget, cairo_t *cr, int idx, int selected, int x, int y, int w, int h) {
@@ -357,7 +365,7 @@ ddb_tabstrip_draw_tab (GtkWidget *widget, cairo_t *cr, int idx, int selected, in
     };
     GdkPoint points_frame1[] = {
         { x, y + h-2 },
-        { x, y + 1 },
+        { x, y + 0 },
         { x + 1, y + 0 },
         { x + w - h - 1, y + 0 },
         { x + w - h, y + 1 },
@@ -368,14 +376,13 @@ ddb_tabstrip_draw_tab (GtkWidget *widget, cairo_t *cr, int idx, int selected, in
     };
     GdkPoint points_frame2[] = {
         { x + 1, y + h + 1 },
-        { x + 1, y + 1 },
+        { x + 1, y + 0 },
         { x + w - h - 1, y + 1 },
         { x + w - h, y + 2 },
         { x + w - h + 1, y + 2 },
         { x + w-3, y + h - 2 },
         { x + w-2, y + h - 2 },
     };
-    //gdk_draw_rectangle (gtk_widget_get_window(widget), widget->style->black_gc, FALSE, x-1, y-1, w+2, h+2);
     GdkColor clr_bg;
     GdkColor clr_outer_frame;
     GdkColor clr_inner_frame;
@@ -410,7 +417,9 @@ ddb_tabstrip_draw_tab (GtkWidget *widget, cairo_t *cr, int idx, int selected, in
         gtkui_get_tabstrip_mid_color (&clr_inner_frame);
     }
     cairo_set_source_rgb (cr, clr_bg.red/65535.f, clr_bg.green/65535.f, clr_bg.blue/65535.0);
-    cairo_draw_lines (cr, points_filled, 4);
+    cairo_new_path (cr);
+    cairo_draw_poly (cr, points_filled, 4);
+    cairo_close_path (cr);
     cairo_fill (cr);
     cairo_set_source_rgb (cr, clr_outer_frame.red/65535.f, clr_outer_frame.green/65535.f, clr_outer_frame.blue/65535.0);
     cairo_draw_lines (cr, points_frame1, 9);
@@ -588,8 +597,8 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
 
     gtkui_get_tabstrip_dark_color (&clr);
     cairo_set_source_rgb (cr, clr.red/65535.f, clr.green/65535.f, clr.blue/65535.0);
-    cairo_move_to (cr, 0, 0);
-    cairo_line_to (cr, a.width, 0);
+    cairo_move_to (cr, 0, 1);
+    cairo_line_to (cr, a.width, 1);
     cairo_stroke (cr);
 
     int y = 4;
@@ -630,13 +639,13 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
     }
     GdkColor *pclr = &gtk_widget_get_style (widget)->dark[GTK_STATE_NORMAL];
     cairo_set_source_rgb (cr, pclr->red/65535.f, pclr->green/65535.f, pclr->blue/65535.0);
-    cairo_move_to (cr, 0, a.height-2);
-    cairo_line_to (cr, a.width, a.height-2);
+    cairo_move_to (cr, 0, a.height-1);
+    cairo_line_to (cr, a.width, a.height-1);
     cairo_stroke (cr);
     pclr = &gtk_widget_get_style (widget)->light[GTK_STATE_NORMAL];
     cairo_set_source_rgb (cr, pclr->red/65535.f, pclr->green/65535.f, pclr->blue/65535.0);
-    cairo_move_to (cr, 0, a.height-1);
-    cairo_line_to (cr, a.width, a.height-1);
+    cairo_move_to (cr, 0, a.height);
+    cairo_line_to (cr, a.width, a.height);
     cairo_stroke (cr);
     // calc position for drawin selected tab
     x = -hscroll;
@@ -683,7 +692,6 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
             x += w - tab_overlap_size;
         }
     }
-
     if (need_arrows) {
         int sz = a.height-3;
         gtkui_get_tabstrip_mid_color (&clr);

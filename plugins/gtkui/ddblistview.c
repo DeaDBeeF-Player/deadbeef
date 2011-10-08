@@ -2140,8 +2140,8 @@ ddb_listview_header_render (DdbListview *ps, cairo_t *cr) {
     cairo_fill (cr);
     gtkui_get_tabstrip_dark_color (&clr);
     cairo_set_source_rgb (cr, clr.red/65535.f, clr.green/65535.f, clr.blue/65535.f);
-    cairo_move_to (cr, 0, a.height-1);
-    cairo_line_to (cr, a.width, a.height-1);
+    cairo_move_to (cr, 0, a.height);
+    cairo_line_to (cr, a.width, a.height);
     cairo_stroke (cr);
 #else
 #if GTK_CHECK_VERSION(3,0,0)
