@@ -282,8 +282,7 @@ ddb_listview_class_init(DdbListviewClass *class)
 {
   GtkTableClass *widget_class = (GtkTableClass *) class;
   GObjectClass *object_class = (GObjectClass *) class;
-  // FIXME!!!
-  //object_class->destroy = ddb_listview_destroy;
+  object_class->finalize = ddb_listview_destroy;
 }
 
 static void
@@ -831,48 +830,8 @@ ddb_listview_vscroll_value_changed            (GtkRange        *widget,
         return;
     }
     if (newscroll != ps->scrollpos) {
-        GtkWidget *widget = ps->list;
-        int di = newscroll - ps->scrollpos;
-        int d = abs (di);
-        GtkAllocation a;
-        gtk_widget_get_allocation (ps->list, &a);
-        int height = a.height;
-        if (d < height) {
-            if (di > 0) {
-                // scroll down
-                // copy scrolled part of buffer
-#if !GTK_CHECK_VERSION(3,0,0)
-                // FIXME
-                gdk_draw_drawable (ps->list->window, widget->style->black_gc, ps->list->window, 0, d, 0, 0, a.width, a.height-d);
-#else
-//                cairo_region_copy ();
-#endif
-                // redraw other part
-                int start = height-d-1;
-                ps->scrollpos = newscroll;
-                // FIXME gtk_widget_queue_draw_area (ps->list, 0, start, ps->list->allocation.width, widget->allocation.height-start);
-            }
-            else {
-                // scroll up
-                // copy scrolled part of buffer
-#if !GTK_CHECK_VERSION(3,0,0)
-                // FIXME
-                gdk_draw_drawable (ps->list->window, widget->style->black_gc, ps->list->window, 0, 0, 0, d, widget->allocation.width, widget->allocation.height-d);
-#else
-//                cairo_region_copy ();
-#endif
-                // redraw other part
-                ps->scrollpos = newscroll;
-                // FIXME gtk_widget_queue_draw_area (ps->list, 0, 0, ps->list->allocation.width, d+1);
-            }
-        }
-        else {
-            // scrolled more than view height, redraw everything
-            ps->scrollpos = newscroll;
-            // FIXME gtk_widget_queue_draw (ps->list);
-        }
+        ps->scrollpos = newscroll;
         gtk_widget_queue_draw (ps->list);
-//        draw_drawable (widget->window, widget->style->black_gc, ps->list->window, 0, 0, 0, 0, widget->allocation.width, widget->allocation.height);
     }
 }
 
@@ -1289,7 +1248,6 @@ ddb_listview_list_render_row_background (DdbListview *ps, cairo_t *cr, DdbListvi
 
 	if (theming) {
 #if !GTK_CHECK_VERSION(3,0,0)
-        // FIXME
         if (gtk_widget_get_style (treeview)->depth == -1) {
             return; // drawing was called too early
         }

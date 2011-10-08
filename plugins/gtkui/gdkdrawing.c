@@ -46,16 +46,6 @@ draw_end (void) {
 }
 
 void
-draw_copy (cairo_t *dest_canvas, cairo_t *src_canvas, int dx, int dy, int sx, int sy, int w, int h) {
-// FIXME   gdk_draw_drawable (GDK_DRAWABLE (dest_canvas), gc, GDK_DRAWABLE (src_canvas), dx, dy, sx, sy, w, h);
-}
-
-void
-draw_pixbuf (cairo_t *dest_canvas, uintptr_t pixbuf, int dx, int dy, int sx, int sy, int w, int h) {
-// FIXME    gdk_draw_pixbuf (GDK_DRAWABLE (dest_canvas), gc, GDK_PIXBUF (pixbuf), sx, sy, dx, dy, w, h, GDK_RGB_DITHER_NONE, 0, 0);
-}
-
-void
 draw_set_fg_color (float *rgb) {
     cairo_set_source_rgb (drawable, rgb[0], rgb[1], rgb[2]);
 }

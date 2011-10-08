@@ -36,12 +36,6 @@ void
 draw_end (void);
 
 void
-draw_copy (cairo_t *dest_canvas, cairo_t *src_canvas, int dx, int dy, int sx, int sy, int w, int h);
-
-void
-draw_pixbuf (cairo_t *dest_canvas, uintptr_t pixbuf, int dx, int dy, int sx, int sy, int w, int h);
-
-void
 draw_set_fg_color (float *rgb);
 
 void

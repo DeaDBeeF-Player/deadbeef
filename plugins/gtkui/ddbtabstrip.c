@@ -231,7 +231,6 @@ ddb_tabstrip_class_init(DdbTabStripClass *class)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (class);
 #if !GTK_CHECK_VERSION(3,0,0)
-// FIXME?
   widget_class->expose_event = on_tabstrip_expose_event;
 #else
   widget_class->draw = on_tabstrip_draw;
@@ -248,8 +247,6 @@ ddb_tabstrip_class_init(DdbTabStripClass *class)
   widget_class->drag_end = on_tabstrip_drag_end;
   widget_class->drag_data_received = on_tabstrip_drag_data_received;
   widget_class->drag_leave = on_tabstrip_drag_leave;
-
-// FIXME?  object_class->destroy = ddb_tabstrip_destroy;
 }
 
 gboolean
