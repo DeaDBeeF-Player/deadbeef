@@ -35,7 +35,7 @@ write_column_config (const char *name, int idx, const char *title, int width, in
 void
 rewrite_column_config (DdbListview *listview, const char *name);
 
-void draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListviewIter it, DdbListviewIter group_it, int column, int group_y, int x, int y, int width, int height);
+void draw_column_data (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, DdbListviewIter group_it, int column, int group_y, int x, int y, int width, int height);
 
 void
 list_context_menu (DdbListview *listview, DdbListviewIter it, int idx);

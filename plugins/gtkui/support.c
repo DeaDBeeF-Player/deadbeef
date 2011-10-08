@@ -27,7 +27,7 @@ lookup_widget                          (GtkWidget       *widget,
       if (GTK_IS_MENU (widget))
         parent = gtk_menu_get_attach_widget (GTK_MENU (widget));
       else
-        parent = widget->parent;
+        parent = gtk_widget_get_parent (widget);
       if (!parent)
         parent = (GtkWidget*) g_object_get_data (G_OBJECT (widget), "GladeParentKey");
       if (parent == NULL)
@@ -145,8 +145,7 @@ glade_set_atk_action_description       (AtkAction       *action,
 #if GTK_CHECK_VERSION(3,0,0)
 GtkWidget *
 gtk_combo_box_entry_new_text(void) {
-    GtkWidget *w = gtk_combo_box_text_new ();
-    gtk_combo_box_text_set_has_entry (GTK_COMBO_BOX_TEXT (w), TRUE);
+    GtkWidget *w = gtk_combo_box_text_new_with_entry ();
 }
 void
 gtk_dialog_set_has_separator (GtkDialog *dlg, gboolean has) {

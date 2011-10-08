@@ -116,7 +116,7 @@ void
 seekbar_redraw (void);
 
 void
-seekbar_draw (GtkWidget *widget);
+seekbar_draw (GtkWidget *widget, cairo_t *cr);
 
 gboolean
 on_seekbar_button_press_event          (GtkWidget       *widget,

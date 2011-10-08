@@ -57,7 +57,7 @@ gtk_enum_sound_callback (const char *name, const char *desc, void *userdata) {
         return;
     }
     GtkComboBox *combobox = GTK_COMBO_BOX (userdata);
-    gtk_combo_box_append_text (combobox, desc);
+    gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combobox), desc);
 
     deadbeef->conf_lock ();
     if (!strcmp (deadbeef->conf_get_str_fast ("alsa_soundcard", "default"), name)) {
@@ -79,7 +79,7 @@ preferences_fill_soundcards (void) {
     GtkTreeModel *mdl = gtk_combo_box_get_model (combobox);
     gtk_list_store_clear (GTK_LIST_STORE (mdl));
 
-    gtk_combo_box_append_text (combobox, _("Default Audio Device"));
+    gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combobox), _("Default Audio Device"));
 
     deadbeef->conf_lock ();
     const char *s = deadbeef->conf_get_str_fast ("alsa_soundcard", "default");
@@ -318,12 +318,12 @@ prefwin_add_hotkeys_tab (GtkWidget *prefwin) {
     addhotkey = gtk_button_new_with_mnemonic (_("Add"));
     gtk_widget_show (addhotkey);
     gtk_container_add (GTK_CONTAINER (hbuttonbox3), addhotkey);
-    GTK_WIDGET_SET_FLAGS (addhotkey, GTK_CAN_DEFAULT);
+    gtk_widget_set_can_default (addhotkey, TRUE);
 
     removehotkey = gtk_button_new_with_mnemonic (_("Remove"));
     gtk_widget_show (removehotkey);
     gtk_container_add (GTK_CONTAINER (hbuttonbox3), removehotkey);
-    GTK_WIDGET_SET_FLAGS (removehotkey, GTK_CAN_DEFAULT);
+    gtk_widget_set_can_default (removehotkey, TRUE);
 
     label66 = gtk_label_new (_("Global Hotkeys"));
     gtk_widget_show (label66);
@@ -473,7 +473,7 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     const char *outplugname = deadbeef->conf_get_str_fast ("output_plugin", "ALSA output plugin");
     DB_output_t **out_plugs = deadbeef->plug_get_output_list ();
     for (int i = 0; out_plugs[i]; i++) {
-        gtk_combo_box_append_text (combobox, out_plugs[i]->plugin.name);
+        gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combobox), out_plugs[i]->plugin.name);
         if (!strcmp (outplugname, out_plugs[i]->plugin.name)) {
             gtk_combo_box_set_active (combobox, i);
         }
@@ -550,7 +550,7 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     combobox = GTK_COMBO_BOX (lookup_widget (w, "gui_plugin"));
     const char **names = deadbeef->plug_get_gui_names ();
     for (int i = 0; names[i]; i++) {
-        gtk_combo_box_append_text (combobox, names[i]);
+        gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combobox), names[i]);
         if (!strcmp (names[i], deadbeef->conf_get_str_fast ("gui_plugin", "GTK2"))) {
             gtk_combo_box_set_active (combobox, i);
         }
@@ -1331,7 +1331,7 @@ void
 on_gui_plugin_changed                  (GtkComboBox     *combobox,
                                         gpointer         user_data)
 {
-    gchar *txt = gtk_combo_box_get_active_text (combobox);
+    gchar *txt = gtk_combo_box_text_get_active_text (GTK_COMBO_BOX_TEXT (combobox));
     if (txt) {
         deadbeef->conf_set_str ("gui_plugin", txt);
         g_free (txt);

@@ -57,8 +57,13 @@ enum  {
 };
 static void ddb_seekbar_real_realize (GtkWidget* base);
 static void ddb_seekbar_real_unrealize (GtkWidget* base);
+#if GTK_CHECK_VERSION(3,0,0)
+static void ddb_seekbar_get_preferred_width (GtkWidget* base, gint *minimal_width, gint *natural_width);
+static void ddb_seekbar_get_preferred_height (GtkWidget* base, gint *minimal_height, gint *natural_height);
+#endif
 static void ddb_seekbar_real_size_request (GtkWidget* base, GtkRequisition* requisition);
 static gboolean ddb_seekbar_real_expose_event (GtkWidget* base, GdkEventExpose* event);
+static gboolean ddb_seekbar_real_draw (GtkWidget* base, cairo_t *cr);
 static gboolean ddb_seekbar_real_button_press_event (GtkWidget* base, GdkEventButton* event);
 static gboolean ddb_seekbar_real_button_release_event (GtkWidget* base, GdkEventButton* event);
 static gboolean ddb_seekbar_real_motion_notify_event (GtkWidget* base, GdkEventMotion* event);
@@ -82,6 +87,23 @@ static void ddb_seekbar_real_unrealize (GtkWidget* base) {
 	GTK_WIDGET_CLASS (ddb_seekbar_parent_class)->unrealize (GTK_WIDGET (self));
 }
 
+#if GTK_CHECK_VERSION(3,0,0)
+static void ddb_seekbar_get_preferred_width (GtkWidget* widget, gint *minimal_width, gint *natural_width) {
+    GtkRequisition requisition;
+
+    ddb_seekbar_real_size_request (widget, &requisition);
+
+    *minimal_width = *natural_width = requisition.width;
+}
+
+static void ddb_seekbar_get_preferred_height (GtkWidget* widget, gint *minimal_height, gint *natural_height) {
+    GtkRequisition requisition;
+
+    ddb_seekbar_real_size_request (widget, &requisition);
+
+    *minimal_height = *natural_height = requisition.height;
+}
+#endif
 
 static void ddb_seekbar_real_size_request (GtkWidget* base, GtkRequisition* requisition) {
 	DdbSeekbar * self;
@@ -92,15 +114,16 @@ static void ddb_seekbar_real_size_request (GtkWidget* base, GtkRequisition* requ
 	}
 }
 
+static gboolean ddb_seekbar_real_draw (GtkWidget* base, cairo_t *cr) {
+	seekbar_draw (base, cr);
+	return TRUE;
+}
 
 static gboolean ddb_seekbar_real_expose_event (GtkWidget* base, GdkEventExpose* event) {
-	DdbSeekbar * self;
-	gboolean result = FALSE;
-	self = (DdbSeekbar*) base;
-	g_return_val_if_fail (event != NULL, FALSE);
-	seekbar_draw (GTK_WIDGET (self));
-	result = TRUE;
-	return result;
+    cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (base));
+    ddb_seekbar_real_draw (base, cr);
+    cairo_destroy (cr);
+	return TRUE;
 }
 
 
@@ -184,8 +207,14 @@ static void ddb_seekbar_class_init (DdbSeekbarClass * klass) {
 	ddb_seekbar_parent_class = g_type_class_peek_parent (klass);
 	GTK_WIDGET_CLASS (klass)->realize = ddb_seekbar_real_realize;
 	GTK_WIDGET_CLASS (klass)->unrealize = ddb_seekbar_real_unrealize;
+#if GTK_CHECK_VERSION(3,0,0)
+	GTK_WIDGET_CLASS (klass)->get_preferred_width = ddb_seekbar_get_preferred_width;
+	GTK_WIDGET_CLASS (klass)->get_preferred_height = ddb_seekbar_get_preferred_height;
+	GTK_WIDGET_CLASS (klass)->draw = ddb_seekbar_real_draw;
+#else
 	GTK_WIDGET_CLASS (klass)->size_request = ddb_seekbar_real_size_request;
 	GTK_WIDGET_CLASS (klass)->expose_event = ddb_seekbar_real_expose_event;
+#endif
 	GTK_WIDGET_CLASS (klass)->button_press_event = ddb_seekbar_real_button_press_event;
 	GTK_WIDGET_CLASS (klass)->button_release_event = ddb_seekbar_real_button_release_event;
 	GTK_WIDGET_CLASS (klass)->motion_notify_event = ddb_seekbar_real_motion_notify_event;

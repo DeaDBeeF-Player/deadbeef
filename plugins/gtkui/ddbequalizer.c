@@ -85,7 +85,9 @@ enum  {
 #define DDB_EQUALIZER_spot_size 3
 static gboolean ddb_equalizer_real_configure_event (GtkWidget* base, GdkEventConfigure* event);
 static void ddb_equalizer_real_realize (GtkWidget* base);
+#if !GTK_CHECK_VERSION(3,0,0)
 static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose* event);
+#endif
 static inline gdouble ddb_equalizer_scale (DdbEqualizer* self, gdouble val);
 static gboolean ddb_equalizer_in_curve_area (DdbEqualizer* self, gdouble x, gdouble y);
 static void ddb_equalizer_update_eq_drag (DdbEqualizer* self, gdouble x, gdouble y);
@@ -128,7 +130,7 @@ static gpointer _g_object_ref0 (gpointer self) {
 }
 
 
-static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose* event) {
+static gboolean ddb_equalizer_real_draw (GtkWidget *base, cairo_t *cr) {
 	DdbEqualizer * self;
 	gboolean result = FALSE;
 	GdkColor _tmp0_ = {0};
@@ -163,22 +165,14 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 	gint _tmp23_;
 	gint height;
 	GdkWindow* _tmp24_ = NULL;
-	cairo_t* _tmp25_ = NULL;
-	cairo_t* ctx;
-	cairo_t* _tmp26_;
-	cairo_t* _tmp27_;
-	cairo_t* _tmp28_;
 	GdkColor _tmp29_;
 	guint16 _tmp30_;
 	GdkColor _tmp31_;
 	guint16 _tmp32_;
 	GdkColor _tmp33_;
 	guint16 _tmp34_;
-	cairo_t* _tmp35_;
 	gint _tmp36_;
 	gint _tmp37_;
-	cairo_t* _tmp38_;
-	cairo_t* _tmp39_;
 	GdkColor _tmp40_;
 	guint16 _tmp41_;
 	GdkColor _tmp42_;
@@ -192,41 +186,21 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 	gint _tmp62_;
 	gint _tmp63_;
 	gdouble vstep;
-	cairo_t* _tmp78_;
-	cairo_t* _tmp79_;
 	GdkColor _tmp80_;
 	guint16 _tmp81_;
 	GdkColor _tmp82_;
 	guint16 _tmp83_;
 	GdkColor _tmp84_;
 	guint16 _tmp85_;
-	cairo_t* _tmp86_;
-	PangoLayout* _tmp87_ = NULL;
 	PangoLayout* l;
-	PangoLayout* _tmp88_;
-	PangoContext* _tmp89_ = NULL;
-	PangoContext* _tmp90_;
 	PangoContext* pctx;
 	GtkStyle* _tmp91_ = NULL;
-	const PangoFontDescription* _tmp92_;
-	PangoFontDescription* _tmp93_ = NULL;
 	PangoFontDescription* fd;
-	const PangoFontDescription* _tmp94_;
 	GtkStyle* _tmp95_ = NULL;
-	const PangoFontDescription* _tmp96_;
 	gint _tmp97_ = 0;
-	PangoContext* _tmp98_;
-	const PangoFontDescription* _tmp99_;
-	const PangoFontDescription* _tmp129_;
 	GtkStyle* _tmp130_ = NULL;
-	const PangoFontDescription* _tmp131_;
 	gint _tmp132_ = 0;
-	PangoContext* _tmp133_;
-	const PangoFontDescription* _tmp134_;
-	PangoLayout* _tmp135_;
 	gint _tmp136_;
-	PangoLayout* _tmp137_;
-	const PangoFontDescription* _tmp138_;
 	gint _tmp139_ = 0;
 	gdouble _tmp140_ = 0.0;
 	GdkScreen* _tmp141_ = NULL;
@@ -235,7 +209,6 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 	gboolean _tmp143_ = FALSE;
 	gint _tmp144_;
 	gboolean _tmp148_;
-	cairo_t* _tmp170_;
 	gchar* tmp = NULL;
 	gdouble _tmp171_ = 0.0;
 	gdouble val;
@@ -244,70 +217,41 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 	const gchar* _tmp174_;
 	gdouble _tmp175_;
 	gchar* _tmp176_ = NULL;
-	PangoLayout* _tmp177_;
 	const gchar* _tmp178_;
 	const gchar* _tmp179_;
 	gint _tmp180_;
 	gint _tmp181_;
-	cairo_t* _tmp182_;
 	gint _tmp183_;
 	gint _tmp184_;
 	gint _tmp185_;
 	gint _tmp186_;
-	cairo_t* _tmp187_;
-	PangoLayout* _tmp188_;
-	cairo_t* _tmp189_;
-	cairo_t* _tmp190_;
 	gdouble _tmp191_ = 0.0;
 	const gchar* _tmp192_ = NULL;
 	gdouble _tmp193_;
 	const gchar* _tmp194_;
 	gdouble _tmp195_;
 	gchar* _tmp196_ = NULL;
-	PangoLayout* _tmp197_;
 	const gchar* _tmp198_;
 	const gchar* _tmp199_;
 	gint _tmp200_;
 	gint _tmp201_;
-	cairo_t* _tmp202_;
 	gint _tmp203_;
-	cairo_t* _tmp204_;
-	PangoLayout* _tmp205_;
-	cairo_t* _tmp206_;
-	cairo_t* _tmp207_;
-	PangoLayout* _tmp208_;
-	cairo_t* _tmp209_;
 	gint _tmp210_;
 	gdouble _tmp211_;
 	gint _tmp212_;
 	gint _tmp213_;
 	gint _tmp214_;
-	cairo_t* _tmp215_;
-	PangoLayout* _tmp216_;
-	cairo_t* _tmp217_;
-	cairo_t* _tmp218_;
-	PangoLayout* _tmp219_;
-	PangoLayout* _tmp220_;
-	cairo_t* _tmp221_;
 	gint _tmp222_;
 	gint _tmp223_;
-	cairo_t* _tmp224_;
-	PangoLayout* _tmp225_;
-	cairo_t* _tmp226_;
-	cairo_t* _tmp227_;
 	gint _tmp228_;
 	gint _tmp229_;
 	gint _tmp230_;
 	gint _tmp231_;
 	gint _tmp232_;
-	cairo_t* _tmp233_;
-	cairo_t* _tmp234_;
 	gdouble _tmp235_;
 	gint _tmp236_;
 	gint _tmp237_;
 	gint _tmp238_;
-	cairo_t* _tmp239_;
-	cairo_t* _tmp240_;
 	GdkColor _tmp241_;
 	guint16 _tmp242_;
 	GdkColor _tmp243_;
@@ -317,25 +261,17 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 	gint _tmp247_;
 	gint _tmp248_;
 	gint count;
-	cairo_t* _tmp258_;
-	cairo_t* _tmp259_;
 	gint bar_w;
 	gdouble _tmp260_;
 	gint _tmp261_;
-	cairo_t* _tmp300_;
-	cairo_t* _tmp301_;
 	gdouble* _tmp302_ = NULL;
 	gdouble* _tmp303_;
 	gint _tmp303__length1;
-	cairo_t* _tmp304_;
 	gint _tmp305_;
 	gint _tmp306_;
-	cairo_t* _tmp307_;
 	gint _tmp308_;
 	gint _tmp309_;
-	cairo_t* _tmp310_;
 	self = (DdbEqualizer*) base;
-	g_return_val_if_fail (event != NULL, FALSE);
 	gtkui_get_bar_foreground_color (&_tmp0_);
 	fore_bright_color = _tmp0_;
 	_tmp1_ = fore_bright_color;
@@ -371,34 +307,26 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 	_tmp23_ = _tmp22_.height;
 	height = _tmp23_;
 	_tmp24_ = gtk_widget_get_window ((GtkWidget*) self);
-	_tmp25_ = gdk_cairo_create ((GdkDrawable*) _tmp24_);
-	ctx = _tmp25_;
-	_tmp26_ = ctx;
-	cairo_set_antialias (_tmp26_, CAIRO_ANTIALIAS_NONE);
-	_tmp27_ = ctx;
-	cairo_set_line_width (_tmp27_, 1.0);
-	_tmp28_ = ctx;
+	cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
+	cairo_set_line_width (cr, 1.0);
 	_tmp29_ = c2;
 	_tmp30_ = _tmp29_.red;
 	_tmp31_ = c2;
 	_tmp32_ = _tmp31_.green;
 	_tmp33_ = c2;
 	_tmp34_ = _tmp33_.blue;
-	cairo_set_source_rgba (_tmp28_, _tmp30_ / 65535.0, _tmp32_ / 65535.0, _tmp34_ / 65535.0, (gdouble) 1);
-	_tmp35_ = ctx;
+	cairo_set_source_rgba (cr, _tmp30_ / 65535.0, _tmp32_ / 65535.0, _tmp34_ / 65535.0, (gdouble) 1);
 	_tmp36_ = width;
 	_tmp37_ = height;
-	cairo_rectangle (_tmp35_, (gdouble) 0, (gdouble) 0, (gdouble) _tmp36_, (gdouble) _tmp37_);
-	_tmp38_ = ctx;
-	cairo_fill (_tmp38_);
-	_tmp39_ = ctx;
+	cairo_rectangle (cr, (gdouble) 0, (gdouble) 0, (gdouble) _tmp36_, (gdouble) _tmp37_);
+	cairo_fill (cr);
 	_tmp40_ = fore_dark_color;
 	_tmp41_ = _tmp40_.red;
 	_tmp42_ = fore_dark_color;
 	_tmp43_ = _tmp42_.green;
 	_tmp44_ = fore_dark_color;
 	_tmp45_ = _tmp44_.blue;
-	cairo_set_source_rgba (_tmp39_, _tmp41_ / 65535.0, _tmp43_ / 65535.0, _tmp45_ / 65535.0, (gdouble) 1);
+	cairo_set_source_rgba (cr, _tmp41_ / 65535.0, _tmp43_ / 65535.0, _tmp45_ / 65535.0, (gdouble) 1);
 	_tmp46_ = width;
 	_tmp47_ = self->priv->eq_margin_left;
 	step = ((gdouble) (_tmp46_ - _tmp47_)) / ((gdouble) (DDB_EQUALIZER_bands + 1));
@@ -409,11 +337,9 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 		while (TRUE) {
 			gboolean _tmp49_;
 			gint _tmp51_;
-			cairo_t* _tmp52_;
 			gint _tmp53_;
 			gdouble _tmp54_;
 			gint _tmp55_;
-			cairo_t* _tmp56_;
 			gint _tmp57_;
 			gdouble _tmp58_;
 			gint _tmp59_;
@@ -430,18 +356,16 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 			if (!(_tmp51_ < DDB_EQUALIZER_bands)) {
 				break;
 			}
-			_tmp52_ = ctx;
 			_tmp53_ = i;
 			_tmp54_ = step;
 			_tmp55_ = self->priv->eq_margin_left;
-			cairo_move_to (_tmp52_, (gdouble) (((gint) ((_tmp53_ + 1) * _tmp54_)) + _tmp55_), (gdouble) 0);
-			_tmp56_ = ctx;
+			cairo_move_to (cr, (gdouble) (((gint) ((_tmp53_ + 1) * _tmp54_)) + _tmp55_), (gdouble) 0);
 			_tmp57_ = i;
 			_tmp58_ = step;
 			_tmp59_ = self->priv->eq_margin_left;
 			_tmp60_ = height;
 			_tmp61_ = self->priv->eq_margin_bottom;
-			cairo_line_to (_tmp56_, (gdouble) (((gint) ((_tmp57_ + 1) * _tmp58_)) + _tmp59_), (gdouble) (_tmp60_ - _tmp61_));
+			cairo_line_to (cr, (gdouble) (((gint) ((_tmp57_ + 1) * _tmp58_)) + _tmp59_), (gdouble) (_tmp60_ - _tmp61_));
 		}
 	}
 	_tmp62_ = height;
@@ -456,12 +380,10 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 			while (TRUE) {
 				gboolean _tmp65_;
 				gdouble _tmp67_;
-				cairo_t* _tmp68_;
 				gint _tmp69_;
 				gdouble _tmp70_;
 				gdouble _tmp71_;
 				gdouble _tmp72_;
-				cairo_t* _tmp73_;
 				gint _tmp74_;
 				gdouble _tmp75_;
 				gdouble _tmp76_;
@@ -477,50 +399,34 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 				if (!(_tmp67_ < ((gdouble) 2))) {
 					break;
 				}
-				_tmp68_ = ctx;
 				_tmp69_ = self->priv->eq_margin_left;
 				_tmp70_ = di;
 				_tmp71_ = self->priv->preamp;
 				_tmp72_ = vstep;
-				cairo_move_to (_tmp68_, (gdouble) _tmp69_, (gdouble) ((gint) ((_tmp70_ - _tmp71_) * _tmp72_)));
-				_tmp73_ = ctx;
+				cairo_move_to (cr, (gdouble) _tmp69_, (gdouble) ((gint) ((_tmp70_ - _tmp71_) * _tmp72_)));
 				_tmp74_ = width;
 				_tmp75_ = di;
 				_tmp76_ = self->priv->preamp;
 				_tmp77_ = vstep;
-				cairo_line_to (_tmp73_, (gdouble) _tmp74_, (gdouble) ((gint) ((_tmp75_ - _tmp76_) * _tmp77_)));
+				cairo_line_to (cr, (gdouble) _tmp74_, (gdouble) ((gint) ((_tmp75_ - _tmp76_) * _tmp77_)));
 			}
 		}
 	}
-	_tmp78_ = ctx;
-	cairo_stroke (_tmp78_);
-	_tmp79_ = ctx;
+	cairo_stroke (cr);
 	_tmp80_ = fore_bright_color;
 	_tmp81_ = _tmp80_.red;
 	_tmp82_ = fore_bright_color;
 	_tmp83_ = _tmp82_.green;
 	_tmp84_ = fore_bright_color;
 	_tmp85_ = _tmp84_.blue;
-	cairo_set_source_rgba (_tmp79_, _tmp81_ / 65535.0, _tmp83_ / 65535.0, _tmp85_ / 65535.0, (gdouble) 1);
-	_tmp86_ = ctx;
-	_tmp87_ = pango_cairo_create_layout (_tmp86_);
-	l = _tmp87_;
-	_tmp88_ = l;
-	_tmp89_ = pango_layout_get_context (_tmp88_);
-	_tmp90_ = _g_object_ref0 (_tmp89_);
-	pctx = _tmp90_;
-	_tmp91_ = gtk_widget_get_style ((GtkWidget*) self);
-	_tmp92_ = _tmp91_->font_desc;
-	_tmp93_ = pango_font_description_copy (_tmp92_);
-	fd = _tmp93_;
-	_tmp94_ = fd;
+	cairo_set_source_rgba (cr, _tmp81_ / 65535.0, _tmp83_ / 65535.0, _tmp85_ / 65535.0, (gdouble) 1);
+	l = pango_cairo_create_layout (cr);
+	pctx = pango_layout_get_context (l);
+	fd = pango_font_description_copy (gtk_widget_get_style ((GtkWidget*) self)->font_desc);
 	_tmp95_ = gtk_widget_get_style ((GtkWidget*) self);
-	_tmp96_ = _tmp95_->font_desc;
-	_tmp97_ = pango_font_description_get_size (_tmp96_);
-	pango_font_description_set_size (_tmp94_, (gint) (_tmp97_ * 0.7));
-	_tmp98_ = pctx;
-	_tmp99_ = fd;
-	pango_context_set_font_description (_tmp98_, _tmp99_);
+	_tmp97_ = pango_font_description_get_size (gtk_widget_get_style ((GtkWidget*) self)->font_desc);
+	pango_font_description_set_size (fd, (gint) (_tmp97_ * 0.7));
+	pango_context_set_font_description (pctx, fd);
 	{
 		gboolean _tmp100_;
 		i = 0;
@@ -528,8 +434,6 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 		while (TRUE) {
 			gboolean _tmp101_;
 			gint _tmp103_;
-			cairo_t* _tmp104_;
-			PangoLayout* _tmp105_;
 			gint _tmp106_;
 			const gchar* _tmp107_;
 			gint _tmp108_;
@@ -538,12 +442,10 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 			gint _tmp111_;
 			PangoRectangle ink = {0};
 			PangoRectangle log = {0};
-			PangoLayout* _tmp112_;
 			PangoRectangle _tmp113_ = {0};
 			PangoRectangle _tmp114_ = {0};
 			gint offs;
 			gint _tmp115_;
-			cairo_t* _tmp117_;
 			gint _tmp118_;
 			gdouble _tmp119_;
 			gint _tmp120_;
@@ -552,9 +454,6 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 			gint _tmp123_;
 			gint _tmp124_;
 			gint _tmp125_;
-			cairo_t* _tmp126_;
-			PangoLayout* _tmp127_;
-			cairo_t* _tmp128_;
 			_tmp101_ = _tmp100_;
 			if (!_tmp101_) {
 				gint _tmp102_;
@@ -566,18 +465,15 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 			if (!(_tmp103_ < DDB_EQUALIZER_bands)) {
 				break;
 			}
-			_tmp104_ = ctx;
-			cairo_save (_tmp104_);
-			_tmp105_ = l;
+			cairo_save (cr);
 			_tmp106_ = i;
 			_tmp107_ = freqs[_tmp106_];
 			_tmp108_ = i;
 			_tmp109_ = freqs[_tmp108_];
 			_tmp110_ = strlen (_tmp109_);
 			_tmp111_ = _tmp110_;
-			pango_layout_set_text (_tmp105_, _tmp107_, (gint) _tmp111_);
-			_tmp112_ = l;
-			pango_layout_get_pixel_extents (_tmp112_, &_tmp113_, &_tmp114_);
+			pango_layout_set_text (l, _tmp107_, (gint) _tmp111_);
+			pango_layout_get_pixel_extents (l, &_tmp113_, &_tmp114_);
 			ink = _tmp113_;
 			log = _tmp114_;
 			offs = 2;
@@ -587,7 +483,6 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 				_tmp116_ = offs;
 				offs = _tmp116_ + 2;
 			}
-			_tmp117_ = ctx;
 			_tmp118_ = i;
 			_tmp119_ = step;
 			_tmp120_ = self->priv->eq_margin_left;
@@ -596,29 +491,19 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 			_tmp123_ = height;
 			_tmp124_ = self->priv->eq_margin_bottom;
 			_tmp125_ = offs;
-			cairo_move_to (_tmp117_, (gdouble) ((((gint) ((_tmp118_ + 1) * _tmp119_)) + _tmp120_) - (_tmp122_ / 2)), (gdouble) ((_tmp123_ - _tmp124_) + _tmp125_));
-			_tmp126_ = ctx;
-			_tmp127_ = l;
-			pango_cairo_show_layout (_tmp126_, _tmp127_);
-			_tmp128_ = ctx;
-			cairo_restore (_tmp128_);
+			cairo_move_to (cr, (gdouble) ((((gint) ((_tmp118_ + 1) * _tmp119_)) + _tmp120_) - (_tmp122_ / 2)), (gdouble) ((_tmp123_ - _tmp124_) + _tmp125_));
+			pango_cairo_show_layout (cr, l);
+			cairo_restore (cr);
 		}
 	}
-	_tmp129_ = fd;
 	_tmp130_ = gtk_widget_get_style ((GtkWidget*) self);
-	_tmp131_ = _tmp130_->font_desc;
-	_tmp132_ = pango_font_description_get_size (_tmp131_);
-	pango_font_description_set_size (_tmp129_, (gint) _tmp132_);
-	_tmp133_ = pctx;
-	_tmp134_ = fd;
-	pango_context_set_font_description (_tmp133_, _tmp134_);
-	_tmp135_ = l;
+	_tmp132_ = pango_font_description_get_size (gtk_widget_get_style ((GtkWidget*) self)->font_desc);
+	pango_font_description_set_size (fd, (gint) _tmp132_);
+	pango_context_set_font_description (pctx, fd);
 	_tmp136_ = self->priv->eq_margin_left;
-	pango_layout_set_width (_tmp135_, _tmp136_ - 1);
-	_tmp137_ = l;
-	pango_layout_set_alignment (_tmp137_, PANGO_ALIGN_RIGHT);
-	_tmp138_ = fd;
-	_tmp139_ = pango_font_description_get_size (_tmp138_);
+	pango_layout_set_width (l, _tmp136_ - 1);
+	pango_layout_set_alignment (l, PANGO_ALIGN_RIGHT);
+	_tmp139_ = pango_font_description_get_size (gtk_widget_get_style ((GtkWidget*) self)->font_desc);
 	_tmp140_ = pango_units_to_double (_tmp139_);
 	_tmp141_ = gdk_screen_get_default ();
 	_tmp142_ = gdk_screen_get_resolution (_tmp141_);
@@ -637,7 +522,6 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 	}
 	_tmp148_ = _tmp143_;
 	if (_tmp148_) {
-		cairo_t* _tmp149_;
 		gint _tmp150_;
 		gint _tmp151_;
 		gint _tmp152_;
@@ -649,19 +533,13 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 		gdouble _tmp157_;
 		gchar* _tmp158_ = NULL;
 		gchar* tmp;
-		PangoLayout* _tmp159_;
 		const gchar* _tmp160_;
 		const gchar* _tmp161_;
 		gint _tmp162_;
 		gint _tmp163_;
-		cairo_t* _tmp164_;
 		gint _tmp165_;
 		gint _tmp166_;
-		cairo_t* _tmp167_;
-		PangoLayout* _tmp168_;
-		cairo_t* _tmp169_;
-		_tmp149_ = ctx;
-		cairo_save (_tmp149_);
+		cairo_save (cr);
 		_tmp150_ = self->priv->mouse_y;
 		_tmp151_ = height;
 		_tmp152_ = self->priv->eq_margin_bottom;
@@ -677,25 +555,19 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 		_tmp157_ = db;
 		_tmp158_ = g_strdup_printf ("%s%.1fdB", _tmp156_, _tmp157_);
 		tmp = _tmp158_;
-		_tmp159_ = l;
 		_tmp160_ = tmp;
 		_tmp161_ = tmp;
 		_tmp162_ = strlen (_tmp161_);
 		_tmp163_ = _tmp162_;
-		pango_layout_set_text (_tmp159_, _tmp160_, (gint) _tmp163_);
-		_tmp164_ = ctx;
+		pango_layout_set_text (l, _tmp160_, (gint) _tmp163_);
 		_tmp165_ = self->priv->eq_margin_left;
 		_tmp166_ = self->priv->mouse_y;
-		cairo_move_to (_tmp164_, (gdouble) (_tmp165_ - 1), (gdouble) (_tmp166_ - 3));
-		_tmp167_ = ctx;
-		_tmp168_ = l;
-		pango_cairo_show_layout (_tmp167_, _tmp168_);
-		_tmp169_ = ctx;
-		cairo_restore (_tmp169_);
+		cairo_move_to (cr, (gdouble) (_tmp165_ - 1), (gdouble) (_tmp166_ - 3));
+		pango_cairo_show_layout (cr, l);
+		cairo_restore (cr);
 		_g_free0 (tmp);
 	}
-	_tmp170_ = ctx;
-	cairo_save (_tmp170_);
+	cairo_save (cr);
 	_tmp171_ = ddb_equalizer_scale (self, (gdouble) 1);
 	val = _tmp171_;
 	_tmp173_ = val;
@@ -709,25 +581,19 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 	_tmp176_ = g_strdup_printf ("%s%.1fdB", _tmp174_, _tmp175_);
 	_g_free0 (tmp);
 	tmp = _tmp176_;
-	_tmp177_ = l;
 	_tmp178_ = tmp;
 	_tmp179_ = tmp;
 	_tmp180_ = strlen (_tmp179_);
 	_tmp181_ = _tmp180_;
-	pango_layout_set_text (_tmp177_, _tmp178_, (gint) _tmp181_);
-	_tmp182_ = ctx;
+	pango_layout_set_text (l, _tmp178_, (gint) _tmp181_);
 	_tmp183_ = self->priv->eq_margin_left;
 	_tmp184_ = height;
 	_tmp185_ = self->priv->eq_margin_bottom;
 	_tmp186_ = fontsize;
-	cairo_move_to (_tmp182_, (gdouble) (_tmp183_ - 1), (gdouble) ((_tmp184_ - _tmp185_) - _tmp186_));
-	_tmp187_ = ctx;
-	_tmp188_ = l;
-	pango_cairo_show_layout (_tmp187_, _tmp188_);
-	_tmp189_ = ctx;
-	cairo_restore (_tmp189_);
-	_tmp190_ = ctx;
-	cairo_save (_tmp190_);
+	cairo_move_to (cr, (gdouble) (_tmp183_ - 1), (gdouble) ((_tmp184_ - _tmp185_) - _tmp186_));
+	pango_cairo_show_layout (cr, l);
+	cairo_restore (cr);
+	cairo_save (cr);
 	_tmp191_ = ddb_equalizer_scale (self, (gdouble) 0);
 	val = _tmp191_;
 	_tmp193_ = val;
@@ -741,76 +607,53 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 	_tmp196_ = g_strdup_printf ("%s%.1fdB", _tmp194_, _tmp195_);
 	_g_free0 (tmp);
 	tmp = _tmp196_;
-	_tmp197_ = l;
 	_tmp198_ = tmp;
 	_tmp199_ = tmp;
 	_tmp200_ = strlen (_tmp199_);
 	_tmp201_ = _tmp200_;
-	pango_layout_set_text (_tmp197_, _tmp198_, (gint) _tmp201_);
-	_tmp202_ = ctx;
+	pango_layout_set_text (l, _tmp198_, (gint) _tmp201_);
 	_tmp203_ = self->priv->eq_margin_left;
-	cairo_move_to (_tmp202_, (gdouble) (_tmp203_ - 1), (gdouble) 1);
-	_tmp204_ = ctx;
-	_tmp205_ = l;
-	pango_cairo_show_layout (_tmp204_, _tmp205_);
-	_tmp206_ = ctx;
-	cairo_restore (_tmp206_);
-	_tmp207_ = ctx;
-	cairo_save (_tmp207_);
-	_tmp208_ = l;
-	pango_layout_set_text (_tmp208_, "+0dB", 4);
-	_tmp209_ = ctx;
+	cairo_move_to (cr, (gdouble) (_tmp203_ - 1), (gdouble) 1);
+	pango_cairo_show_layout (cr, l);
+	cairo_restore (cr);
+	cairo_save (cr);
+	pango_layout_set_text (l, "+0dB", 4);
 	_tmp210_ = self->priv->eq_margin_left;
 	_tmp211_ = self->priv->preamp;
 	_tmp212_ = height;
 	_tmp213_ = self->priv->eq_margin_bottom;
 	_tmp214_ = fontsize;
-	cairo_move_to (_tmp209_, (gdouble) (_tmp210_ - 1), (gdouble) (((gint) ((1 - _tmp211_) * (_tmp212_ - _tmp213_))) - (_tmp214_ / 2)));
-	_tmp215_ = ctx;
-	_tmp216_ = l;
-	pango_cairo_show_layout (_tmp215_, _tmp216_);
-	_tmp217_ = ctx;
-	cairo_restore (_tmp217_);
-	_tmp218_ = ctx;
-	cairo_save (_tmp218_);
-	_tmp219_ = l;
-	pango_layout_set_text (_tmp219_, "preamp", 6);
-	_tmp220_ = l;
-	pango_layout_set_alignment (_tmp220_, PANGO_ALIGN_LEFT);
-	_tmp221_ = ctx;
+	cairo_move_to (cr, (gdouble) (_tmp210_ - 1), (gdouble) (((gint) ((1 - _tmp211_) * (_tmp212_ - _tmp213_))) - (_tmp214_ / 2)));
+	pango_cairo_show_layout (cr, l);
+	cairo_restore (cr);
+	cairo_save (cr);
+	pango_layout_set_text (l, "preamp", 6);
+	pango_layout_set_alignment (l, PANGO_ALIGN_LEFT);
 	_tmp222_ = height;
 	_tmp223_ = self->priv->eq_margin_bottom;
-	cairo_move_to (_tmp221_, (gdouble) 1, (gdouble) ((_tmp222_ - _tmp223_) + 2));
-	_tmp224_ = ctx;
-	_tmp225_ = l;
-	pango_cairo_show_layout (_tmp224_, _tmp225_);
-	_tmp226_ = ctx;
-	cairo_restore (_tmp226_);
-	_tmp227_ = ctx;
+	cairo_move_to (cr, (gdouble) 1, (gdouble) ((_tmp222_ - _tmp223_) + 2));
+	pango_cairo_show_layout (cr, l);
+	cairo_restore (cr);
 	_tmp228_ = self->priv->eq_margin_left;
 	_tmp229_ = width;
 	_tmp230_ = self->priv->eq_margin_left;
 	_tmp231_ = height;
 	_tmp232_ = self->priv->eq_margin_bottom;
-	cairo_rectangle (_tmp227_, (gdouble) _tmp228_, (gdouble) 0, (gdouble) ((_tmp229_ - _tmp230_) - 1), (gdouble) ((_tmp231_ - _tmp232_) - 1));
-	_tmp233_ = ctx;
-	cairo_stroke (_tmp233_);
-	_tmp234_ = ctx;
+	cairo_rectangle (cr, (gdouble) _tmp228_, (gdouble) 0, (gdouble) ((_tmp229_ - _tmp230_) - 1), (gdouble) ((_tmp231_ - _tmp232_) - 1));
+	cairo_stroke (cr);
 	_tmp235_ = self->priv->preamp;
 	_tmp236_ = height;
 	_tmp237_ = self->priv->eq_margin_bottom;
 	_tmp238_ = height;
-	cairo_rectangle (_tmp234_, (gdouble) 0, (gdouble) ((gint) (_tmp235_ * (_tmp236_ - _tmp237_))), (gdouble) 11, (gdouble) _tmp238_);
-	_tmp239_ = ctx;
-	cairo_clip (_tmp239_);
-	_tmp240_ = ctx;
+	cairo_rectangle (cr, (gdouble) 0, (gdouble) ((gint) (_tmp235_ * (_tmp236_ - _tmp237_))), (gdouble) 11, (gdouble) _tmp238_);
+	cairo_clip (cr);
 	_tmp241_ = fore_bright_color;
 	_tmp242_ = _tmp241_.red;
 	_tmp243_ = fore_bright_color;
 	_tmp244_ = _tmp243_.green;
 	_tmp245_ = fore_bright_color;
 	_tmp246_ = _tmp245_.blue;
-	cairo_set_source_rgba (_tmp240_, _tmp242_ / 65535.0, _tmp244_ / 65535.0, _tmp246_ / 65535.0, 1.0);
+	cairo_set_source_rgba (cr, _tmp242_ / 65535.0, _tmp244_ / 65535.0, _tmp246_ / 65535.0, 1.0);
 	_tmp247_ = height;
 	_tmp248_ = self->priv->eq_margin_bottom;
 	count = ((gint) ((_tmp247_ - _tmp248_) / 6)) + 1;
@@ -824,7 +667,6 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 				gboolean _tmp250_;
 				gint _tmp252_;
 				gint _tmp253_;
-				cairo_t* _tmp254_;
 				gint _tmp255_;
 				gint _tmp256_;
 				gint _tmp257_;
@@ -840,18 +682,15 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 				if (!(_tmp252_ < _tmp253_)) {
 					break;
 				}
-				_tmp254_ = ctx;
 				_tmp255_ = height;
 				_tmp256_ = self->priv->eq_margin_bottom;
 				_tmp257_ = j;
-				cairo_rectangle (_tmp254_, (gdouble) 1, (gdouble) (((_tmp255_ - _tmp256_) - (_tmp257_ * 6)) - 6), (gdouble) 11, (gdouble) 4);
+				cairo_rectangle (cr, (gdouble) 1, (gdouble) (((_tmp255_ - _tmp256_) - (_tmp257_ * 6)) - 6), (gdouble) 11, (gdouble) 4);
 			}
 		}
 	}
-	_tmp258_ = ctx;
-	cairo_fill (_tmp258_);
-	_tmp259_ = ctx;
-	cairo_reset_clip (_tmp259_);
+	cairo_fill (cr);
+	cairo_reset_clip (cr);
 	bar_w = 11;
 	_tmp260_ = step;
 	_tmp261_ = bar_w;
@@ -867,8 +706,6 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 		while (TRUE) {
 			gboolean _tmp264_;
 			gint _tmp266_;
-			cairo_t* _tmp267_;
-			cairo_t* _tmp268_;
 			gint _tmp269_;
 			gdouble _tmp270_;
 			gint _tmp271_;
@@ -880,14 +717,12 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 			gint _tmp276_;
 			gint _tmp277_;
 			gint _tmp278_;
-			cairo_t* _tmp279_;
 			gint _tmp280_;
 			gint _tmp281_;
 			gdouble* _tmp282_;
 			gint _tmp282__length1;
 			gint _tmp283_;
 			gdouble _tmp284_;
-			cairo_t* _tmp299_;
 			_tmp264_ = _tmp263_;
 			if (!_tmp264_) {
 				gint _tmp265_;
@@ -899,9 +734,7 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 			if (!(_tmp266_ < DDB_EQUALIZER_bands)) {
 				break;
 			}
-			_tmp267_ = ctx;
-			cairo_reset_clip (_tmp267_);
-			_tmp268_ = ctx;
+			cairo_reset_clip (cr);
 			_tmp269_ = i;
 			_tmp270_ = step;
 			_tmp271_ = self->priv->eq_margin_left;
@@ -913,9 +746,8 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 			_tmp276_ = height;
 			_tmp277_ = self->priv->eq_margin_bottom;
 			_tmp278_ = height;
-			cairo_rectangle (_tmp268_, (gdouble) ((((gint) ((_tmp269_ + 1) * _tmp270_)) + _tmp271_) - (_tmp272_ / 2)), (gdouble) ((gint) (_tmp275_ * (_tmp276_ - _tmp277_))), (gdouble) 11, (gdouble) _tmp278_);
-			_tmp279_ = ctx;
-			cairo_clip (_tmp279_);
+			cairo_rectangle (cr, (gdouble) ((((gint) ((_tmp269_ + 1) * _tmp270_)) + _tmp271_) - (_tmp272_ / 2)), (gdouble) ((gint) (_tmp275_ * (_tmp276_ - _tmp277_))), (gdouble) 11, (gdouble) _tmp278_);
+			cairo_clip (cr);
 			_tmp280_ = height;
 			_tmp281_ = self->priv->eq_margin_bottom;
 			_tmp282_ = self->priv->values;
@@ -933,7 +765,6 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 						gboolean _tmp286_;
 						gint _tmp288_;
 						gint _tmp289_;
-						cairo_t* _tmp290_;
 						gint _tmp291_;
 						gdouble _tmp292_;
 						gint _tmp293_;
@@ -954,7 +785,6 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 						if (!(_tmp288_ < _tmp289_)) {
 							break;
 						}
-						_tmp290_ = ctx;
 						_tmp291_ = i;
 						_tmp292_ = step;
 						_tmp293_ = self->priv->eq_margin_left;
@@ -963,42 +793,45 @@ static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose
 						_tmp296_ = self->priv->eq_margin_bottom;
 						_tmp297_ = j;
 						_tmp298_ = bar_w;
-						cairo_rectangle (_tmp290_, (gdouble) ((((gint) ((_tmp291_ + 1) * _tmp292_)) + _tmp293_) - (_tmp294_ / 2)), (gdouble) (((_tmp295_ - _tmp296_) - (_tmp297_ * 6)) - 6), (gdouble) _tmp298_, (gdouble) 4);
+						cairo_rectangle (cr, (gdouble) ((((gint) ((_tmp291_ + 1) * _tmp292_)) + _tmp293_) - (_tmp294_ / 2)), (gdouble) (((_tmp295_ - _tmp296_) - (_tmp297_ * 6)) - 6), (gdouble) _tmp298_, (gdouble) 4);
 					}
 				}
 			}
-			_tmp299_ = ctx;
-			cairo_fill (_tmp299_);
+			cairo_fill (cr);
 		}
 	}
-	_tmp300_ = ctx;
-	cairo_reset_clip (_tmp300_);
-	_tmp301_ = ctx;
+	cairo_reset_clip (cr);
 	_tmp302_ = g_new0 (gdouble, 2);
 	_tmp302_[0] = (gdouble) 4;
 	_tmp302_[1] = (gdouble) 4;
 	_tmp303_ = _tmp302_;
 	_tmp303__length1 = 2;
-	cairo_set_dash (_tmp301_, _tmp303_, 2, (gdouble) 0);
+	cairo_set_dash (cr, _tmp303_, 2, (gdouble) 0);
 	_tmp303_ = (g_free (_tmp303_), NULL);
-	_tmp304_ = ctx;
 	_tmp305_ = self->priv->eq_margin_left;
 	_tmp306_ = self->priv->mouse_y;
-	cairo_move_to (_tmp304_, (gdouble) (_tmp305_ + 1), (gdouble) _tmp306_);
-	_tmp307_ = ctx;
+	cairo_move_to (cr, (gdouble) (_tmp305_ + 1), (gdouble) _tmp306_);
 	_tmp308_ = width;
 	_tmp309_ = self->priv->mouse_y;
-	cairo_line_to (_tmp307_, (gdouble) _tmp308_, (gdouble) _tmp309_);
-	_tmp310_ = ctx;
-	cairo_stroke (_tmp310_);
+	cairo_line_to (cr, (gdouble) _tmp308_, (gdouble) _tmp309_);
+	cairo_stroke (cr);
 	result = FALSE;
 	_g_free0 (tmp);
 	_pango_font_description_free0 (fd);
-	_g_object_unref0 (pctx);
 	_g_object_unref0 (l);
+
+    return FALSE;
+}
+
+#if !GTK_CHECK_VERSION(3,0,0)
+static gboolean ddb_equalizer_real_expose_event (GtkWidget* base, GdkEventExpose* event) {
+	g_return_val_if_fail (event != NULL, FALSE);
+	cairo_t *ctx= gdk_cairo_create ((GdkDrawable*) gtk_widget_get_window (base));
+    ddb_equalizer_real_draw (base, cr);
 	_cairo_destroy0 (ctx);
 	return result;
 }
+#endif
 
 
 static inline gdouble ddb_equalizer_scale (DdbEqualizer* self, gdouble val) {
@@ -1030,12 +863,12 @@ static gboolean ddb_equalizer_in_curve_area (DdbEqualizer* self, gdouble x, gdou
 	g_return_val_if_fail (self != NULL, FALSE);
 	_tmp3_ = x;
 	_tmp4_ = self->priv->eq_margin_left;
+    GtkAllocation _tmp6_;
+    gtk_widget_get_allocation ((GtkWidget*) self, &_tmp6_);
 	if (_tmp3_ > ((gdouble) _tmp4_)) {
 		gdouble _tmp5_;
-		GtkAllocation _tmp6_;
 		gint _tmp7_;
 		_tmp5_ = x;
-		_tmp6_ = ((GtkWidget*) self)->allocation;
 		_tmp7_ = _tmp6_.width;
 		_tmp2_ = _tmp5_ < ((gdouble) (_tmp7_ - 1));
 	} else {
@@ -1056,8 +889,7 @@ static gboolean ddb_equalizer_in_curve_area (DdbEqualizer* self, gdouble x, gdou
 		gint _tmp13_;
 		gint _tmp14_;
 		_tmp11_ = y;
-		_tmp12_ = ((GtkWidget*) self)->allocation;
-		_tmp13_ = _tmp12_.height;
+		_tmp13_ = _tmp6_.height;
 		_tmp14_ = self->priv->eq_margin_bottom;
 		_tmp0_ = _tmp11_ < ((gdouble) (_tmp13_ - _tmp14_));
 	} else {
@@ -1085,7 +917,7 @@ static void ddb_equalizer_update_eq_drag (DdbEqualizer* self, gdouble x, gdouble
 	gint _tmp11_;
 	gboolean _tmp13_;
 	g_return_if_fail (self != NULL);
-	_tmp0_ = ((GtkWidget*) self)->allocation;
+	gtk_widget_get_allocation ((GtkWidget*) self, &_tmp0_);
 	_tmp1_ = _tmp0_.width;
 	_tmp2_ = self->priv->eq_margin_left;
 	band_width = ((gdouble) (_tmp1_ - _tmp2_)) / ((gdouble) (DDB_EQUALIZER_bands + 1));
@@ -1130,7 +962,7 @@ static void ddb_equalizer_update_eq_drag (DdbEqualizer* self, gdouble x, gdouble
 		_tmp14__length1 = self->priv->values_length1;
 		_tmp15_ = band;
 		_tmp16_ = y;
-		_tmp17_ = ((GtkWidget*) self)->allocation;
+		gtk_widget_get_allocation ((GtkWidget*) self, &_tmp17_);
 		_tmp18_ = _tmp17_.height;
 		_tmp19_ = self->priv->eq_margin_bottom;
 		_tmp14_[_tmp15_] = _tmp16_ / ((gdouble) (_tmp18_ - _tmp19_));
@@ -1238,7 +1070,7 @@ static gboolean ddb_equalizer_real_button_press_event (GtkWidget* base, GdkEvent
 		gint _tmp23_;
 		_tmp19_ = *event;
 		_tmp20_ = _tmp19_.y;
-		_tmp21_ = ((GtkWidget*) self)->allocation;
+		gtk_widget_get_allocation ((GtkWidget*) self, &_tmp21_);
 		_tmp22_ = _tmp21_.height;
 		_tmp23_ = self->priv->eq_margin_bottom;
 		_tmp12_ = _tmp20_ <= ((gdouble) (_tmp22_ - _tmp23_));
@@ -1266,7 +1098,7 @@ static gboolean ddb_equalizer_real_button_press_event (GtkWidget* base, GdkEvent
 		gdouble _tmp34_;
 		_tmp28_ = *event;
 		_tmp29_ = _tmp28_.y;
-		_tmp30_ = ((GtkWidget*) self)->allocation;
+		gtk_widget_get_allocation ((GtkWidget*) self, &_tmp30_);
 		_tmp31_ = _tmp30_.height;
 		_tmp32_ = self->priv->eq_margin_bottom;
 		self->priv->preamp = _tmp29_ / ((gdouble) (_tmp31_ - _tmp32_));
@@ -1333,7 +1165,7 @@ static gboolean ddb_equalizer_real_motion_notify_event (GtkWidget* base, GdkEven
 	g_return_val_if_fail (event != NULL, FALSE);
 	_tmp0_ = *event;
 	_tmp1_ = _tmp0_.y;
-	_tmp2_ = ((GtkWidget*) self)->allocation;
+	gtk_widget_get_allocation ((GtkWidget*) self, &_tmp2_);
 	_tmp3_ = _tmp2_.height;
 	_tmp4_ = self->priv->eq_margin_bottom;
 	y = _tmp1_ / ((gdouble) (_tmp3_ - _tmp4_));
@@ -1486,7 +1318,11 @@ static void ddb_equalizer_class_init (DdbEqualizerClass * klass) {
 	g_type_class_add_private (klass, sizeof (DdbEqualizerPrivate));
 	GTK_WIDGET_CLASS (klass)->configure_event = ddb_equalizer_real_configure_event;
 	GTK_WIDGET_CLASS (klass)->realize = ddb_equalizer_real_realize;
+#if GTK_CHECK_VERSION(3,0,0)
+	GTK_WIDGET_CLASS (klass)->draw = ddb_equalizer_real_draw;
+#else
 	GTK_WIDGET_CLASS (klass)->expose_event = ddb_equalizer_real_expose_event;
+#endif
 	GTK_WIDGET_CLASS (klass)->button_press_event = ddb_equalizer_real_button_press_event;
 	GTK_WIDGET_CLASS (klass)->button_release_event = ddb_equalizer_real_button_release_event;
 	GTK_WIDGET_CLASS (klass)->leave_notify_event = ddb_equalizer_real_leave_notify_event;
