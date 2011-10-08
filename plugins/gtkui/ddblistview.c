@@ -1338,7 +1338,7 @@ ddb_listview_list_render_row_background (DdbListview *ps, cairo_t *cr, DdbListvi
         GdkColor clr;
         gtkui_get_listview_cursor_color (&clr);
         cairo_set_source_rgb (cr, clr.red/65535.f, clr.green/65535.f, clr.blue/65535.f);
-        cairo_rectangle (cr, x, y, w-1, h-1);
+        cairo_rectangle (cr, x+1, y+1, w-1, h-1);
         cairo_stroke (cr);
     }
 }

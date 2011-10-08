@@ -127,7 +127,6 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
             if (group_it) {
                 int h = cwidth - group_y;
                 h = min (height, art_h);
-//                gdk_draw_rectangle (drawable, GTK_WIDGET (listview)->style->white_gc, TRUE, x, y, width, h);
                 const char *album = deadbeef->pl_find_meta (group_it, "album");
                 const char *artist = deadbeef->pl_find_meta (group_it, "artist");
                 if (!album || !*album) {
@@ -142,7 +141,9 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
                         pw = min (art_width, pw);
                         ph -= sy;
                         ph = min (ph, h);
-                        // FIXME gdk_draw_pixbuf (drawable, GTK_WIDGET (listview)->style->white_gc, pixbuf, 0, sy, x + ART_PADDING_HORZ, art_y, pw, ph, GDK_RGB_DITHER_NONE, 0, 0);
+                        gdk_cairo_set_source_pixbuf (cr, pixbuf, (x + ART_PADDING_HORZ)-0, (art_y)-sy);
+                        cairo_rectangle (cr, x + ART_PADDING_HORZ, art_y, pw, ph);
+                        cairo_fill (cr);
                     }
                     g_object_unref (pixbuf);
                 }
@@ -162,7 +163,9 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
         else {
             pixbuf = buffering16_pixbuf;
         }
-        // FIXME gdk_draw_pixbuf (drawable, GTK_WIDGET (listview)->style->black_gc, pixbuf, 0, 0, x + cwidth/2 - 8, y + height/2 - 8, 16, 16, GDK_RGB_DITHER_NONE, 0, 0);
+        gdk_cairo_set_source_pixbuf (cr, pixbuf, x + cwidth/2 - 8, y + height/2 - 8);
+        cairo_rectangle (cr, x + cwidth/2 - 8, y + height/2 - 8, 16, 16);
+        cairo_fill (cr);
     }
     else if (it) {
         char text[1024];
