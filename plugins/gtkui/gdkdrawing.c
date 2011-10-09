@@ -53,7 +53,7 @@ draw_set_fg_color (float *rgb) {
 void
 draw_line (float x1, float y1, float x2, float y2) {
     cairo_move_to (drawable, x1, y1);
-    cairo_move_to (drawable, x2, y2);
+    cairo_line_to (drawable, x2, y2);
     cairo_stroke (drawable);
 }
 
