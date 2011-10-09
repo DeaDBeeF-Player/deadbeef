@@ -49,49 +49,6 @@ ddb_volumebar_send_configure (DdbVolumeBar *darea)
 }
 
 static void
-ddb_volumebar_realize (GtkWidget *widget) {
-  DdbVolumeBar *darea = DDB_VOLUMEBAR (widget);
-
-  gtk_widget_set_has_window (widget, FALSE);
-  GTK_WIDGET_CLASS (ddb_volumebar_parent_class)->realize (widget);
-
-#if 0
-  if (GTK_WIDGET_NO_WINDOW (widget))
-    {
-      GTK_WIDGET_CLASS (ddb_volumebar_parent_class)->realize (widget);
-    }
-  else
-    {
-      GTK_WIDGET_SET_FLAGS (widget, GTK_REALIZED);
-      gint attributes_mask;
-      GdkWindowAttr attributes;
-
-      attributes.window_type = GDK_WINDOW_CHILD;
-      attributes.x = widget->allocation.x;
-      attributes.y = widget->allocation.y;
-      attributes.width = widget->allocation.width;
-      attributes.height = widget->allocation.height;
-      attributes.wclass = GDK_INPUT_OUTPUT;
-      attributes.visual = gtk_widget_get_visual (widget);
-      attributes.colormap = gtk_widget_get_colormap (widget);
-      attributes.event_mask = gtk_widget_get_events (widget);
-      attributes.event_mask |= GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK;
-
-      attributes_mask = GDK_WA_X | GDK_WA_Y | GDK_WA_VISUAL | GDK_WA_COLORMAP;
-
-      gtk_widget_get_window(widget) = gdk_window_new (gtk_widget_get_parent_window (widget),
-                                       &attributes, attributes_mask);
-      gdk_window_set_user_data (gtk_widget_get_window(widget), darea);
-
-      widget->style = gtk_style_attach (widget->style, gtk_widget_get_window(widget));
-      gtk_style_set_background (widget->style, gtk_widget_get_window(widget), GTK_STATE_NORMAL);
-    }
-
-  ddb_volumebar_send_configure (DDB_VOLUMEBAR (widget));
-#endif
-}
-
-static void
 ddb_volumebar_size_allocate (GtkWidget     *widget,
 				GtkAllocation *allocation)
 {
@@ -141,7 +98,6 @@ static void
 ddb_volumebar_class_init(DdbVolumeBarClass *class)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (class);
-  widget_class->realize = ddb_volumebar_realize;
   widget_class->size_allocate = ddb_volumebar_size_allocate;
 #if GTK_CHECK_VERSION(3,0,0)
   widget_class->draw = on_volumebar_draw;
@@ -166,6 +122,7 @@ ddb_volumebar_init(DdbVolumeBar *volumebar)
     int db = deadbeef->volume_get_db ();
     snprintf (s, sizeof (s), "%s%ddB", db < 0 ? "" : "+", db);
     gtk_widget_set_tooltip_text (GTK_WIDGET (volumebar), s);
+    gtk_widget_set_has_window (GTK_WIDGET (volumebar), FALSE);
 }
 
 void
@@ -173,6 +130,13 @@ volumebar_draw (GtkWidget *widget, cairo_t *cr) {
     if (!widget) {
         return;
     }
+
+#if GTK_CHECK_VERSION(3,0,0)
+    GtkAllocation allocation;
+    gtk_widget_get_allocation (widget, &allocation);
+    cairo_translate (cr, -allocation.x, -allocation.y);
+#endif
+
     float range = -deadbeef->volume_get_min_db ();
     GtkAllocation a;
     gtk_widget_get_allocation (widget, &a);

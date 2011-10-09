@@ -514,6 +514,13 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
     if (!widget) {
         return;
     }
+
+#if GTK_CHECK_VERSION(3,0,0)
+    GtkAllocation allocation;
+    gtk_widget_get_allocation (widget, &allocation);
+    cairo_translate (cr, -allocation.x, -allocation.y);
+#endif
+
     GdkColor clr_selection, clr_back;
     gtkui_get_bar_foreground_color (&clr_selection);
     gtkui_get_bar_background_color (&clr_back);
@@ -578,27 +585,6 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
     }
 }
 
-#if 0
-void
-seekbar_expose (GtkWidget *widget, int x, int y, int w, int h) {
-	gdk_draw_drawable (widget->window, widget->style->black_gc, seekbar_backbuf, x, y, x, y, w, h);
-}
-
-gboolean
-on_seekbar_configure_event             (GtkWidget       *widget,
-                                        GdkEventConfigure *event,
-                                        gpointer         user_data)
-{
-    if (seekbar_backbuf) {
-        g_object_unref (seekbar_backbuf);
-        seekbar_backbuf = NULL;
-    }
-    seekbar_backbuf = gdk_pixmap_new (widget->window, widget->allocation.width, widget->allocation.height, -1);
-    seekbar_draw (widget);
-    return FALSE;
-}
-#endif
-
 gboolean
 on_seekbar_motion_notify_event         (GtkWidget       *widget,
                                         GdkEventMotion  *event)
@@ -652,8 +638,6 @@ void
 seekbar_redraw (void) {
     GtkWidget *widget = lookup_widget (mainwin, "seekbar");
     gtk_widget_queue_draw (widget);
-    //seekbar_draw (widget);
-    //seekbar_expose (widget, 0, 0, widget->allocation.width, widget->allocation.height);
 }
 
 gboolean
