@@ -20,8 +20,6 @@
 #endif
 
 #include <gtk/gtk.h>
-#include <gdk/gdkkeysyms.h>
-#include <gdk/gdkkeysyms-compat.h>
 #include <math.h>
 #include <stdlib.h>
 #include <time.h>
@@ -33,6 +31,7 @@
 #include "ddblistview.h"
 #include "drawing.h"
 #include "gtkui.h"
+#include "support.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))

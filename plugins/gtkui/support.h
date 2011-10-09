@@ -7,7 +7,11 @@
 #endif
 
 #include <gtk/gtk.h>
+#if GTK_CHECK_VERSION(3,0,0)
 #include <gdk/gdkkeysyms-compat.h>
+#else
+#include <gdk/gdkkeysyms.h>
+#endif
 
 /*
  * Standard gettext macros.

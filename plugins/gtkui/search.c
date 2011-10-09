@@ -150,10 +150,10 @@ on_searchwin_key_press_event           (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     // that's for when user attempts to navigate list while entry has focus
-    if (event->keyval == GDK_Escape) {
+    if (event->keyval == GDK_KEY_Escape) {
         gtk_widget_hide (widget);
     }
-    else if (event->keyval == GDK_Return) {
+    else if (event->keyval == GDK_KEY_Return) {
         if (deadbeef->pl_getcount (PL_SEARCH) > 0) {
             int row = deadbeef->pl_get_cursor (PL_SEARCH);
             DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (max (row, 0), PL_SEARCH);
@@ -163,7 +163,7 @@ on_searchwin_key_press_event           (GtkWidget       *widget,
             }
         }
     }
-    else if (event->keyval != GDK_Delete && event->keyval != GDK_Home && event->keyval != GDK_End){
+    else if (event->keyval != GDK_KEY_Delete && event->keyval != GDK_KEY_Home && event->keyval != GDK_KEY_End){
         GtkWidget *pl = lookup_widget (searchwin, "searchlist");
         if (!ddb_listview_handle_keypress (DDB_LISTVIEW (pl), event->keyval, event->state)) {
             return FALSE;
