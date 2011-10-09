@@ -7,5 +7,6 @@
   <source_directory></source_directory>
   <gnome_support>FALSE</gnome_support>
   <output_main_file>FALSE</output_main_file>
+  <output_support_files>FALSE</output_support_files>
   <output_build_files>FALSE</output_build_files>
 </glade-project>

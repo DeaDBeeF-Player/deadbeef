@@ -1363,7 +1363,11 @@ static ddb_gtkui_t plugin = {
     .gui.plugin.version_major = 1,
     .gui.plugin.version_minor = 0,
     .gui.plugin.type = DB_PLUGIN_MISC,
+#if GTK_CHECK_VERSION(3,0,0)
+    .gui.plugin.id = "gtkui3",
+#else
     .gui.plugin.id = "gtkui",
+#endif
     .gui.plugin.name = "Standard GTK2 user interface",
     .gui.plugin.descr = "Default DeaDBeeF GUI",
     .gui.plugin.copyright = 

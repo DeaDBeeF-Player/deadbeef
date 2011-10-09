@@ -39,7 +39,8 @@ cp ./plugins/dsp_libsrc/.libs/dsp_libsrc.so /usr/local/lib/deadbeef/
 cp ./plugins/m3u/.libs/m3u.so /usr/local/lib/deadbeef/
 cp ./plugins/ddb_input_uade2/ddb_input_uade2.so /usr/local/lib/deadbeef/
 cp ./plugins/converter/.libs/converter.so /usr/local/lib/deadbeef/
-cp ./plugins/converter/.libs/converter_gtkui.so /usr/local/lib/deadbeef/
+cp ./plugins/converter/.libs/converter_gtk2.so /usr/local/lib/deadbeef/
+cp ./plugins/converter/.libs/converter_gtk3.so /usr/local/lib/deadbeef/
 cp ./plugins/soundtouch/ddb_soundtouch.so /usr/local/lib/deadbeef/
 cp ./plugins/vfs_zip/.libs/vfs_zip.so /usr/local/lib/deadbeef/
 cp ./plugins/mono2stereo/mono2stereo.so /usr/local/lib/deadbeef/
