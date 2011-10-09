@@ -112,6 +112,24 @@ static gboolean ddb_equalizer_real_configure_event (GtkWidget* base, GdkEventCon
 	self = (DdbEqualizer*) base;
 	g_return_val_if_fail (event != NULL, FALSE);
 	gtkui_init_theme_colors ();
+
+	GtkStyle* _tmp0_ = NULL;
+	const PangoFontDescription* _tmp1_;
+	gint _tmp2_ = 0;
+	gdouble _tmp3_ = 0.0;
+	GdkScreen* _tmp4_ = NULL;
+	gdouble _tmp5_ = 0.0;
+	gint _tmp6_;
+
+	_tmp0_ = gtk_widget_get_style ((GtkWidget*) self);
+	_tmp1_ = _tmp0_->font_desc;
+	_tmp2_ = pango_font_description_get_size (_tmp1_);
+	_tmp3_ = pango_units_to_double (_tmp2_);
+	_tmp4_ = gdk_screen_get_default ();
+	_tmp5_ = gdk_screen_get_resolution (_tmp4_);
+	self->priv->eq_margin_bottom = (gint) (((_tmp3_ * _tmp5_) / 72) + 4);
+	_tmp6_ = self->priv->eq_margin_bottom;
+	self->priv->eq_margin_left = _tmp6_ * 4;
 	result = FALSE;
 	return result;
 }
@@ -130,695 +148,170 @@ static gpointer _g_object_ref0 (gpointer self) {
 }
 
 
-static gboolean ddb_equalizer_real_draw (GtkWidget *base, cairo_t *cr) {
-	DdbEqualizer * self;
-	gboolean result = FALSE;
-	GdkColor _tmp0_ = {0};
-	GdkColor fore_bright_color;
-	GdkColor _tmp1_;
-	GdkColor c1;
-	GdkColor _tmp2_ = {0};
-	GdkColor c2;
-	GdkColor _tmp3_;
-	GdkColor fore_dark_color;
-	guint16 _tmp4_;
-	GdkColor _tmp5_;
-	guint16 _tmp6_;
-	GdkColor _tmp7_;
-	guint16 _tmp8_;
-	guint16 _tmp9_;
-	GdkColor _tmp10_;
-	guint16 _tmp11_;
-	GdkColor _tmp12_;
-	guint16 _tmp13_;
-	guint16 _tmp14_;
-	GdkColor _tmp15_;
-	guint16 _tmp16_;
-	GdkColor _tmp17_;
-	guint16 _tmp18_;
-	GtkAllocation alloc = {0};
-	GtkAllocation _tmp19_ = {0};
-	GtkAllocation _tmp20_;
-	gint _tmp21_;
-	gint width;
-	GtkAllocation _tmp22_;
-	gint _tmp23_;
-	gint height;
-	GdkWindow* _tmp24_ = NULL;
-	GdkColor _tmp29_;
-	guint16 _tmp30_;
-	GdkColor _tmp31_;
-	guint16 _tmp32_;
-	GdkColor _tmp33_;
-	guint16 _tmp34_;
-	gint _tmp36_;
-	gint _tmp37_;
-	GdkColor _tmp40_;
-	guint16 _tmp41_;
-	GdkColor _tmp42_;
-	guint16 _tmp43_;
-	GdkColor _tmp44_;
-	guint16 _tmp45_;
-	gint _tmp46_;
-	gint _tmp47_;
-	gdouble step;
-	gint i = 0;
-	gint _tmp62_;
-	gint _tmp63_;
-	gdouble vstep;
-	GdkColor _tmp80_;
-	guint16 _tmp81_;
-	GdkColor _tmp82_;
-	guint16 _tmp83_;
-	GdkColor _tmp84_;
-	guint16 _tmp85_;
-	PangoLayout* l;
-	PangoContext* pctx;
-	GtkStyle* _tmp91_ = NULL;
-	PangoFontDescription* fd;
-	GtkStyle* _tmp95_ = NULL;
-	gint _tmp97_ = 0;
-	GtkStyle* _tmp130_ = NULL;
-	gint _tmp132_ = 0;
-	gint _tmp136_;
-	gint _tmp139_ = 0;
-	gdouble _tmp140_ = 0.0;
-	GdkScreen* _tmp141_ = NULL;
-	gdouble _tmp142_ = 0.0;
-	gint fontsize;
-	gboolean _tmp143_ = FALSE;
-	gint _tmp144_;
-	gboolean _tmp148_;
-	gchar* tmp = NULL;
-	gdouble _tmp171_ = 0.0;
-	gdouble val;
-	const gchar* _tmp172_ = NULL;
-	gdouble _tmp173_;
-	const gchar* _tmp174_;
-	gdouble _tmp175_;
-	gchar* _tmp176_ = NULL;
-	const gchar* _tmp178_;
-	const gchar* _tmp179_;
-	gint _tmp180_;
-	gint _tmp181_;
-	gint _tmp183_;
-	gint _tmp184_;
-	gint _tmp185_;
-	gint _tmp186_;
-	gdouble _tmp191_ = 0.0;
-	const gchar* _tmp192_ = NULL;
-	gdouble _tmp193_;
-	const gchar* _tmp194_;
-	gdouble _tmp195_;
-	gchar* _tmp196_ = NULL;
-	const gchar* _tmp198_;
-	const gchar* _tmp199_;
-	gint _tmp200_;
-	gint _tmp201_;
-	gint _tmp203_;
-	gint _tmp210_;
-	gdouble _tmp211_;
-	gint _tmp212_;
-	gint _tmp213_;
-	gint _tmp214_;
-	gint _tmp222_;
-	gint _tmp223_;
-	gint _tmp228_;
-	gint _tmp229_;
-	gint _tmp230_;
-	gint _tmp231_;
-	gint _tmp232_;
-	gdouble _tmp235_;
-	gint _tmp236_;
-	gint _tmp237_;
-	gint _tmp238_;
-	GdkColor _tmp241_;
-	guint16 _tmp242_;
-	GdkColor _tmp243_;
-	guint16 _tmp244_;
-	GdkColor _tmp245_;
-	guint16 _tmp246_;
-	gint _tmp247_;
-	gint _tmp248_;
-	gint count;
-	gint bar_w;
-	gdouble _tmp260_;
-	gint _tmp261_;
-	gdouble* _tmp302_ = NULL;
-	gdouble* _tmp303_;
-	gint _tmp303__length1;
-	gint _tmp305_;
-	gint _tmp306_;
-	gint _tmp308_;
-	gint _tmp309_;
-	self = (DdbEqualizer*) base;
-	gtkui_get_bar_foreground_color (&_tmp0_);
-	fore_bright_color = _tmp0_;
-	_tmp1_ = fore_bright_color;
-	c1 = _tmp1_;
-	gtkui_get_bar_background_color (&_tmp2_);
-	c2 = _tmp2_;
-	_tmp3_ = c2;
-	fore_dark_color = _tmp3_;
-	_tmp4_ = fore_dark_color.red;
-	_tmp5_ = c1;
-	_tmp6_ = _tmp5_.red;
-	_tmp7_ = c2;
-	_tmp8_ = _tmp7_.red;
-	fore_dark_color.red = _tmp4_ + ((gint16) ((_tmp6_ - _tmp8_) * 0.5));
-	_tmp9_ = fore_dark_color.green;
-	_tmp10_ = c1;
-	_tmp11_ = _tmp10_.green;
-	_tmp12_ = c2;
-	_tmp13_ = _tmp12_.green;
-	fore_dark_color.green = _tmp9_ + ((gint16) ((_tmp11_ - _tmp13_) * 0.5));
-	_tmp14_ = fore_dark_color.blue;
-	_tmp15_ = c1;
-	_tmp16_ = _tmp15_.blue;
-	_tmp17_ = c2;
-	_tmp18_ = _tmp17_.blue;
-	fore_dark_color.blue = _tmp14_ + ((gint16) ((_tmp16_ - _tmp18_) * 0.5));
-	gtk_widget_get_allocation ((GtkWidget*) self, &_tmp19_);
-	alloc = _tmp19_;
-	_tmp20_ = alloc;
-	_tmp21_ = _tmp20_.width;
-	width = _tmp21_;
-	_tmp22_ = alloc;
-	_tmp23_ = _tmp22_.height;
-	height = _tmp23_;
-	_tmp24_ = gtk_widget_get_window ((GtkWidget*) self);
-	cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
-	cairo_set_line_width (cr, 1.0);
-	_tmp29_ = c2;
-	_tmp30_ = _tmp29_.red;
-	_tmp31_ = c2;
-	_tmp32_ = _tmp31_.green;
-	_tmp33_ = c2;
-	_tmp34_ = _tmp33_.blue;
-	cairo_set_source_rgba (cr, _tmp30_ / 65535.0, _tmp32_ / 65535.0, _tmp34_ / 65535.0, (gdouble) 1);
-	_tmp36_ = width;
-	_tmp37_ = height;
-	cairo_rectangle (cr, (gdouble) 0, (gdouble) 0, (gdouble) _tmp36_, (gdouble) _tmp37_);
-	cairo_fill (cr);
-	_tmp40_ = fore_dark_color;
-	_tmp41_ = _tmp40_.red;
-	_tmp42_ = fore_dark_color;
-	_tmp43_ = _tmp42_.green;
-	_tmp44_ = fore_dark_color;
-	_tmp45_ = _tmp44_.blue;
-	cairo_set_source_rgba (cr, _tmp41_ / 65535.0, _tmp43_ / 65535.0, _tmp45_ / 65535.0, (gdouble) 1);
-	_tmp46_ = width;
-	_tmp47_ = self->priv->eq_margin_left;
-	step = ((gdouble) (_tmp46_ - _tmp47_)) / ((gdouble) (DDB_EQUALIZER_bands + 1));
-	{
-		gboolean _tmp48_;
-		i = 0;
-		_tmp48_ = TRUE;
-		while (TRUE) {
-			gboolean _tmp49_;
-			gint _tmp51_;
-			gint _tmp53_;
-			gdouble _tmp54_;
-			gint _tmp55_;
-			gint _tmp57_;
-			gdouble _tmp58_;
-			gint _tmp59_;
-			gint _tmp60_;
-			gint _tmp61_;
-			_tmp49_ = _tmp48_;
-			if (!_tmp49_) {
-				gint _tmp50_;
-				_tmp50_ = i;
-				i = _tmp50_ + 1;
-			}
-			_tmp48_ = FALSE;
-			_tmp51_ = i;
-			if (!(_tmp51_ < DDB_EQUALIZER_bands)) {
-				break;
-			}
-			_tmp53_ = i;
-			_tmp54_ = step;
-			_tmp55_ = self->priv->eq_margin_left;
-			cairo_move_to (cr, (gdouble) (((gint) ((_tmp53_ + 1) * _tmp54_)) + _tmp55_), (gdouble) 0);
-			_tmp57_ = i;
-			_tmp58_ = step;
-			_tmp59_ = self->priv->eq_margin_left;
-			_tmp60_ = height;
-			_tmp61_ = self->priv->eq_margin_bottom;
-			cairo_line_to (cr, (gdouble) (((gint) ((_tmp57_ + 1) * _tmp58_)) + _tmp59_), (gdouble) (_tmp60_ - _tmp61_));
-		}
-	}
-	_tmp62_ = height;
-	_tmp63_ = self->priv->eq_margin_bottom;
-	vstep = (gdouble) (_tmp62_ - _tmp63_);
-	{
-		gdouble di;
-		di = (gdouble) 0;
-		{
-			gboolean _tmp64_;
-			_tmp64_ = TRUE;
-			while (TRUE) {
-				gboolean _tmp65_;
-				gdouble _tmp67_;
-				gint _tmp69_;
-				gdouble _tmp70_;
-				gdouble _tmp71_;
-				gdouble _tmp72_;
-				gint _tmp74_;
-				gdouble _tmp75_;
-				gdouble _tmp76_;
-				gdouble _tmp77_;
-				_tmp65_ = _tmp64_;
-				if (!_tmp65_) {
-					gdouble _tmp66_;
-					_tmp66_ = di;
-					di = _tmp66_ + 0.25;
-				}
-				_tmp64_ = FALSE;
-				_tmp67_ = di;
-				if (!(_tmp67_ < ((gdouble) 2))) {
-					break;
-				}
-				_tmp69_ = self->priv->eq_margin_left;
-				_tmp70_ = di;
-				_tmp71_ = self->priv->preamp;
-				_tmp72_ = vstep;
-				cairo_move_to (cr, (gdouble) _tmp69_, (gdouble) ((gint) ((_tmp70_ - _tmp71_) * _tmp72_)));
-				_tmp74_ = width;
-				_tmp75_ = di;
-				_tmp76_ = self->priv->preamp;
-				_tmp77_ = vstep;
-				cairo_line_to (cr, (gdouble) _tmp74_, (gdouble) ((gint) ((_tmp75_ - _tmp76_) * _tmp77_)));
-			}
-		}
-	}
-	cairo_stroke (cr);
-	_tmp80_ = fore_bright_color;
-	_tmp81_ = _tmp80_.red;
-	_tmp82_ = fore_bright_color;
-	_tmp83_ = _tmp82_.green;
-	_tmp84_ = fore_bright_color;
-	_tmp85_ = _tmp84_.blue;
-	cairo_set_source_rgba (cr, _tmp81_ / 65535.0, _tmp83_ / 65535.0, _tmp85_ / 65535.0, (gdouble) 1);
-	l = pango_cairo_create_layout (cr);
-	pctx = pango_layout_get_context (l);
-	fd = pango_font_description_copy (gtk_widget_get_style ((GtkWidget*) self)->font_desc);
-	_tmp95_ = gtk_widget_get_style ((GtkWidget*) self);
-	_tmp97_ = pango_font_description_get_size (gtk_widget_get_style ((GtkWidget*) self)->font_desc);
-	pango_font_description_set_size (fd, (gint) (_tmp97_ * 0.7));
-	pango_context_set_font_description (pctx, fd);
-	{
-		gboolean _tmp100_;
-		i = 0;
-		_tmp100_ = TRUE;
-		while (TRUE) {
-			gboolean _tmp101_;
-			gint _tmp103_;
-			gint _tmp106_;
-			const gchar* _tmp107_;
-			gint _tmp108_;
-			const gchar* _tmp109_;
-			gint _tmp110_;
-			gint _tmp111_;
-			PangoRectangle ink = {0};
-			PangoRectangle log = {0};
-			PangoRectangle _tmp113_ = {0};
-			PangoRectangle _tmp114_ = {0};
-			gint offs;
-			gint _tmp115_;
-			gint _tmp118_;
-			gdouble _tmp119_;
-			gint _tmp120_;
-			PangoRectangle _tmp121_;
-			gint _tmp122_;
-			gint _tmp123_;
-			gint _tmp124_;
-			gint _tmp125_;
-			_tmp101_ = _tmp100_;
-			if (!_tmp101_) {
-				gint _tmp102_;
-				_tmp102_ = i;
-				i = _tmp102_ + 1;
-			}
-			_tmp100_ = FALSE;
-			_tmp103_ = i;
-			if (!(_tmp103_ < DDB_EQUALIZER_bands)) {
-				break;
-			}
-			cairo_save (cr);
-			_tmp106_ = i;
-			_tmp107_ = freqs[_tmp106_];
-			_tmp108_ = i;
-			_tmp109_ = freqs[_tmp108_];
-			_tmp110_ = strlen (_tmp109_);
-			_tmp111_ = _tmp110_;
-			pango_layout_set_text (l, _tmp107_, (gint) _tmp111_);
-			pango_layout_get_pixel_extents (l, &_tmp113_, &_tmp114_);
-			ink = _tmp113_;
-			log = _tmp114_;
-			offs = 2;
-			_tmp115_ = i;
-			if ((_tmp115_ % 2) != 0) {
-				gint _tmp116_;
-				_tmp116_ = offs;
-				offs = _tmp116_ + 2;
-			}
-			_tmp118_ = i;
-			_tmp119_ = step;
-			_tmp120_ = self->priv->eq_margin_left;
-			_tmp121_ = ink;
-			_tmp122_ = _tmp121_.width;
-			_tmp123_ = height;
-			_tmp124_ = self->priv->eq_margin_bottom;
-			_tmp125_ = offs;
-			cairo_move_to (cr, (gdouble) ((((gint) ((_tmp118_ + 1) * _tmp119_)) + _tmp120_) - (_tmp122_ / 2)), (gdouble) ((_tmp123_ - _tmp124_) + _tmp125_));
-			pango_cairo_show_layout (cr, l);
-			cairo_restore (cr);
-		}
-	}
-	_tmp130_ = gtk_widget_get_style ((GtkWidget*) self);
-	_tmp132_ = pango_font_description_get_size (gtk_widget_get_style ((GtkWidget*) self)->font_desc);
-	pango_font_description_set_size (fd, (gint) _tmp132_);
-	pango_context_set_font_description (pctx, fd);
-	_tmp136_ = self->priv->eq_margin_left;
-	pango_layout_set_width (l, _tmp136_ - 1);
-	pango_layout_set_alignment (l, PANGO_ALIGN_RIGHT);
-	_tmp139_ = pango_font_description_get_size (gtk_widget_get_style ((GtkWidget*) self)->font_desc);
-	_tmp140_ = pango_units_to_double (_tmp139_);
-	_tmp141_ = gdk_screen_get_default ();
-	_tmp142_ = gdk_screen_get_resolution (_tmp141_);
-	fontsize = (gint) ((_tmp140_ * _tmp142_) / 72);
-	_tmp144_ = self->priv->mouse_y;
-	if (_tmp144_ >= 0) {
-		gint _tmp145_;
-		gint _tmp146_;
-		gint _tmp147_;
-		_tmp145_ = self->priv->mouse_y;
-		_tmp146_ = height;
-		_tmp147_ = self->priv->eq_margin_bottom;
-		_tmp143_ = _tmp145_ < (_tmp146_ - _tmp147_);
-	} else {
-		_tmp143_ = FALSE;
-	}
-	_tmp148_ = _tmp143_;
-	if (_tmp148_) {
-		gint _tmp150_;
-		gint _tmp151_;
-		gint _tmp152_;
-		gdouble _tmp153_ = 0.0;
-		gdouble db;
-		const gchar* _tmp154_ = NULL;
-		gdouble _tmp155_;
-		const gchar* _tmp156_;
-		gdouble _tmp157_;
-		gchar* _tmp158_ = NULL;
-		gchar* tmp;
-		const gchar* _tmp160_;
-		const gchar* _tmp161_;
-		gint _tmp162_;
-		gint _tmp163_;
-		gint _tmp165_;
-		gint _tmp166_;
-		cairo_save (cr);
-		_tmp150_ = self->priv->mouse_y;
-		_tmp151_ = height;
-		_tmp152_ = self->priv->eq_margin_bottom;
-		_tmp153_ = ddb_equalizer_scale (self, ((gdouble) (_tmp150_ - 1)) / ((gdouble) ((_tmp151_ - _tmp152_) - 2)));
-		db = _tmp153_;
-		_tmp155_ = db;
-		if (_tmp155_ > ((gdouble) 0)) {
-			_tmp154_ = "+";
-		} else {
-			_tmp154_ = "";
-		}
-		_tmp156_ = _tmp154_;
-		_tmp157_ = db;
-		_tmp158_ = g_strdup_printf ("%s%.1fdB", _tmp156_, _tmp157_);
-		tmp = _tmp158_;
-		_tmp160_ = tmp;
-		_tmp161_ = tmp;
-		_tmp162_ = strlen (_tmp161_);
-		_tmp163_ = _tmp162_;
-		pango_layout_set_text (l, _tmp160_, (gint) _tmp163_);
-		_tmp165_ = self->priv->eq_margin_left;
-		_tmp166_ = self->priv->mouse_y;
-		cairo_move_to (cr, (gdouble) (_tmp165_ - 1), (gdouble) (_tmp166_ - 3));
-		pango_cairo_show_layout (cr, l);
-		cairo_restore (cr);
-		_g_free0 (tmp);
-	}
-	cairo_save (cr);
-	_tmp171_ = ddb_equalizer_scale (self, (gdouble) 1);
-	val = _tmp171_;
-	_tmp173_ = val;
-	if (_tmp173_ > ((gdouble) 0)) {
-		_tmp172_ = "+";
-	} else {
-		_tmp172_ = "";
-	}
-	_tmp174_ = _tmp172_;
-	_tmp175_ = val;
-	_tmp176_ = g_strdup_printf ("%s%.1fdB", _tmp174_, _tmp175_);
-	_g_free0 (tmp);
-	tmp = _tmp176_;
-	_tmp178_ = tmp;
-	_tmp179_ = tmp;
-	_tmp180_ = strlen (_tmp179_);
-	_tmp181_ = _tmp180_;
-	pango_layout_set_text (l, _tmp178_, (gint) _tmp181_);
-	_tmp183_ = self->priv->eq_margin_left;
-	_tmp184_ = height;
-	_tmp185_ = self->priv->eq_margin_bottom;
-	_tmp186_ = fontsize;
-	cairo_move_to (cr, (gdouble) (_tmp183_ - 1), (gdouble) ((_tmp184_ - _tmp185_) - _tmp186_));
-	pango_cairo_show_layout (cr, l);
-	cairo_restore (cr);
-	cairo_save (cr);
-	_tmp191_ = ddb_equalizer_scale (self, (gdouble) 0);
-	val = _tmp191_;
-	_tmp193_ = val;
-	if (_tmp193_ > ((gdouble) 0)) {
-		_tmp192_ = "+";
-	} else {
-		_tmp192_ = "";
-	}
-	_tmp194_ = _tmp192_;
-	_tmp195_ = val;
-	_tmp196_ = g_strdup_printf ("%s%.1fdB", _tmp194_, _tmp195_);
-	_g_free0 (tmp);
-	tmp = _tmp196_;
-	_tmp198_ = tmp;
-	_tmp199_ = tmp;
-	_tmp200_ = strlen (_tmp199_);
-	_tmp201_ = _tmp200_;
-	pango_layout_set_text (l, _tmp198_, (gint) _tmp201_);
-	_tmp203_ = self->priv->eq_margin_left;
-	cairo_move_to (cr, (gdouble) (_tmp203_ - 1), (gdouble) 1);
-	pango_cairo_show_layout (cr, l);
-	cairo_restore (cr);
-	cairo_save (cr);
-	pango_layout_set_text (l, "+0dB", 4);
-	_tmp210_ = self->priv->eq_margin_left;
-	_tmp211_ = self->priv->preamp;
-	_tmp212_ = height;
-	_tmp213_ = self->priv->eq_margin_bottom;
-	_tmp214_ = fontsize;
-	cairo_move_to (cr, (gdouble) (_tmp210_ - 1), (gdouble) (((gint) ((1 - _tmp211_) * (_tmp212_ - _tmp213_))) - (_tmp214_ / 2)));
-	pango_cairo_show_layout (cr, l);
-	cairo_restore (cr);
-	cairo_save (cr);
-	pango_layout_set_text (l, "preamp", 6);
-	pango_layout_set_alignment (l, PANGO_ALIGN_LEFT);
-	_tmp222_ = height;
-	_tmp223_ = self->priv->eq_margin_bottom;
-	cairo_move_to (cr, (gdouble) 1, (gdouble) ((_tmp222_ - _tmp223_) + 2));
-	pango_cairo_show_layout (cr, l);
-	cairo_restore (cr);
-	_tmp228_ = self->priv->eq_margin_left;
-	_tmp229_ = width;
-	_tmp230_ = self->priv->eq_margin_left;
-	_tmp231_ = height;
-	_tmp232_ = self->priv->eq_margin_bottom;
-	cairo_rectangle (cr, (gdouble) _tmp228_, (gdouble) 0, (gdouble) ((_tmp229_ - _tmp230_) - 1), (gdouble) ((_tmp231_ - _tmp232_) - 1));
-	cairo_stroke (cr);
-	_tmp235_ = self->priv->preamp;
-	_tmp236_ = height;
-	_tmp237_ = self->priv->eq_margin_bottom;
-	_tmp238_ = height;
-	cairo_rectangle (cr, (gdouble) 0, (gdouble) ((gint) (_tmp235_ * (_tmp236_ - _tmp237_))), (gdouble) 11, (gdouble) _tmp238_);
-	cairo_clip (cr);
-	_tmp241_ = fore_bright_color;
-	_tmp242_ = _tmp241_.red;
-	_tmp243_ = fore_bright_color;
-	_tmp244_ = _tmp243_.green;
-	_tmp245_ = fore_bright_color;
-	_tmp246_ = _tmp245_.blue;
-	cairo_set_source_rgba (cr, _tmp242_ / 65535.0, _tmp244_ / 65535.0, _tmp246_ / 65535.0, 1.0);
-	_tmp247_ = height;
-	_tmp248_ = self->priv->eq_margin_bottom;
-	count = ((gint) ((_tmp247_ - _tmp248_) / 6)) + 1;
-	{
-		gint j;
-		j = 0;
-		{
-			gboolean _tmp249_;
-			_tmp249_ = TRUE;
-			while (TRUE) {
-				gboolean _tmp250_;
-				gint _tmp252_;
-				gint _tmp253_;
-				gint _tmp255_;
-				gint _tmp256_;
-				gint _tmp257_;
-				_tmp250_ = _tmp249_;
-				if (!_tmp250_) {
-					gint _tmp251_;
-					_tmp251_ = j;
-					j = _tmp251_ + 1;
-				}
-				_tmp249_ = FALSE;
-				_tmp252_ = j;
-				_tmp253_ = count;
-				if (!(_tmp252_ < _tmp253_)) {
-					break;
-				}
-				_tmp255_ = height;
-				_tmp256_ = self->priv->eq_margin_bottom;
-				_tmp257_ = j;
-				cairo_rectangle (cr, (gdouble) 1, (gdouble) (((_tmp255_ - _tmp256_) - (_tmp257_ * 6)) - 6), (gdouble) 11, (gdouble) 4);
-			}
-		}
-	}
-	cairo_fill (cr);
-	cairo_reset_clip (cr);
-	bar_w = 11;
-	_tmp260_ = step;
-	_tmp261_ = bar_w;
-	if (_tmp260_ < ((gdouble) _tmp261_)) {
-		gdouble _tmp262_;
-		_tmp262_ = step;
-		bar_w = ((gint) _tmp262_) - 1;
-	}
-	{
-		gboolean _tmp263_;
-		i = 0;
-		_tmp263_ = TRUE;
-		while (TRUE) {
-			gboolean _tmp264_;
-			gint _tmp266_;
-			gint _tmp269_;
-			gdouble _tmp270_;
-			gint _tmp271_;
-			gint _tmp272_;
-			gdouble* _tmp273_;
-			gint _tmp273__length1;
-			gint _tmp274_;
-			gdouble _tmp275_;
-			gint _tmp276_;
-			gint _tmp277_;
-			gint _tmp278_;
-			gint _tmp280_;
-			gint _tmp281_;
-			gdouble* _tmp282_;
-			gint _tmp282__length1;
-			gint _tmp283_;
-			gdouble _tmp284_;
-			_tmp264_ = _tmp263_;
-			if (!_tmp264_) {
-				gint _tmp265_;
-				_tmp265_ = i;
-				i = _tmp265_ + 1;
-			}
-			_tmp263_ = FALSE;
-			_tmp266_ = i;
-			if (!(_tmp266_ < DDB_EQUALIZER_bands)) {
-				break;
-			}
-			cairo_reset_clip (cr);
-			_tmp269_ = i;
-			_tmp270_ = step;
-			_tmp271_ = self->priv->eq_margin_left;
-			_tmp272_ = bar_w;
-			_tmp273_ = self->priv->values;
-			_tmp273__length1 = self->priv->values_length1;
-			_tmp274_ = i;
-			_tmp275_ = _tmp273_[_tmp274_];
-			_tmp276_ = height;
-			_tmp277_ = self->priv->eq_margin_bottom;
-			_tmp278_ = height;
-			cairo_rectangle (cr, (gdouble) ((((gint) ((_tmp269_ + 1) * _tmp270_)) + _tmp271_) - (_tmp272_ / 2)), (gdouble) ((gint) (_tmp275_ * (_tmp276_ - _tmp277_))), (gdouble) 11, (gdouble) _tmp278_);
-			cairo_clip (cr);
-			_tmp280_ = height;
-			_tmp281_ = self->priv->eq_margin_bottom;
-			_tmp282_ = self->priv->values;
-			_tmp282__length1 = self->priv->values_length1;
-			_tmp283_ = i;
-			_tmp284_ = _tmp282_[_tmp283_];
-			count = ((gint) (((_tmp280_ - _tmp281_) * (1 - _tmp284_)) / 6)) + 1;
-			{
-				gint j;
-				j = 0;
-				{
-					gboolean _tmp285_;
-					_tmp285_ = TRUE;
-					while (TRUE) {
-						gboolean _tmp286_;
-						gint _tmp288_;
-						gint _tmp289_;
-						gint _tmp291_;
-						gdouble _tmp292_;
-						gint _tmp293_;
-						gint _tmp294_;
-						gint _tmp295_;
-						gint _tmp296_;
-						gint _tmp297_;
-						gint _tmp298_;
-						_tmp286_ = _tmp285_;
-						if (!_tmp286_) {
-							gint _tmp287_;
-							_tmp287_ = j;
-							j = _tmp287_ + 1;
-						}
-						_tmp285_ = FALSE;
-						_tmp288_ = j;
-						_tmp289_ = count;
-						if (!(_tmp288_ < _tmp289_)) {
-							break;
-						}
-						_tmp291_ = i;
-						_tmp292_ = step;
-						_tmp293_ = self->priv->eq_margin_left;
-						_tmp294_ = bar_w;
-						_tmp295_ = height;
-						_tmp296_ = self->priv->eq_margin_bottom;
-						_tmp297_ = j;
-						_tmp298_ = bar_w;
-						cairo_rectangle (cr, (gdouble) ((((gint) ((_tmp291_ + 1) * _tmp292_)) + _tmp293_) - (_tmp294_ / 2)), (gdouble) (((_tmp295_ - _tmp296_) - (_tmp297_ * 6)) - 6), (gdouble) _tmp298_, (gdouble) 4);
-					}
-				}
-			}
-			cairo_fill (cr);
-		}
-	}
-	cairo_reset_clip (cr);
-	_tmp302_ = g_new0 (gdouble, 2);
-	_tmp302_[0] = (gdouble) 4;
-	_tmp302_[1] = (gdouble) 4;
-	_tmp303_ = _tmp302_;
-	_tmp303__length1 = 2;
-	cairo_set_dash (cr, _tmp303_, 2, (gdouble) 0);
-	_tmp303_ = (g_free (_tmp303_), NULL);
-	_tmp305_ = self->priv->eq_margin_left;
-	_tmp306_ = self->priv->mouse_y;
-	cairo_move_to (cr, (gdouble) (_tmp305_ + 1), (gdouble) _tmp306_);
-	_tmp308_ = width;
-	_tmp309_ = self->priv->mouse_y;
-	cairo_line_to (cr, (gdouble) _tmp308_, (gdouble) _tmp309_);
-	cairo_stroke (cr);
-	result = FALSE;
-	_g_free0 (tmp);
-	_pango_font_description_free0 (fd);
-	_g_object_unref0 (l);
+static gboolean ddb_equalizer_real_draw (GtkWidget *widget, cairo_t *cr) {
+    DdbEqualizer *self = DDB_EQUALIZER (widget);
+    GdkColor fore_bright_color;
+    gtkui_get_bar_foreground_color (&fore_bright_color);
+    GdkColor c1 = fore_bright_color;
+    GdkColor c2;
+    gtkui_get_bar_background_color (&c2);
+    GdkColor fore_dark_color = c2;
+
+    fore_dark_color.red += (c1.red - c2.red) * 0.5;
+    fore_dark_color.green += (c1.green - c2.green) * 0.5;
+    fore_dark_color.blue += (c1.blue - c2.blue) * 0.5;
+
+    GtkAllocation alloc;
+    gtk_widget_get_allocation (widget, &alloc);
+
+    int width = alloc.width;
+    int height = alloc.height;
+
+    cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
+    cairo_set_line_width (cr, 1.0);
+    gdk_cairo_set_source_color (cr, &c2);
+    cairo_rectangle (cr, 0, 0, width, height);
+    cairo_fill (cr);
+
+    gdk_cairo_set_source_color (cr, &fore_dark_color);
+
+    //drawing grid:
+    double step = (double)(width - self->priv->eq_margin_left) / (double)(DDB_EQUALIZER_bands+1);
+    int i;
+    for (i = 0; i < DDB_EQUALIZER_bands; i++)
+    {
+        //does anyone know why this method is static?
+        cairo_move_to (cr, (int)((i+1)*step)+self->priv->eq_margin_left, 0);
+        cairo_line_to (cr, (int)((i+1)*step)+self->priv->eq_margin_left, height - self->priv->eq_margin_bottom);
+    }
+
+    double vstep = (double)(height-self->priv->eq_margin_bottom);
+    for (double di=0; di < 2; di += 0.25)
+    {
+        cairo_move_to (cr, self->priv->eq_margin_left, (int)((di-self->priv->preamp)*vstep));
+        cairo_line_to (cr, width, (int)((di-self->priv->preamp)*vstep));
+    }
+    cairo_stroke (cr);
+
+    gdk_cairo_set_source_color (cr, &fore_bright_color);
+
+    //drawing freqs:
+
+    PangoLayout *l = pango_cairo_create_layout (cr);
+    PangoContext *pctx = pango_layout_get_context (l);
+
+    GtkStyle *st = gtk_widget_get_style (widget);
+
+    PangoFontDescription *fd = pango_font_description_copy (st->font_desc);
+
+    pango_font_description_set_size (fd, (int)(pango_font_description_get_size (st->font_desc) * 0.7));
+    pango_context_set_font_description (pctx, fd);
+    for (i = 0; i < DDB_EQUALIZER_bands; i++)
+    {
+        cairo_save (cr);
+        pango_layout_set_text (l, freqs[i], strlen (freqs[i]));
+        PangoRectangle ink, log;
+        pango_layout_get_pixel_extents (l, &ink, &log);
+        int offs = 2;
+        if ((i % 2) != 0) {
+            offs += 2;
+        }
+        cairo_move_to (cr, (int)((i+1)*step)+self->priv->eq_margin_left - ink.width/2, height-self->priv->eq_margin_bottom + offs);
+        pango_cairo_show_layout (cr, l);
+        cairo_restore (cr);
+    }
+    pango_font_description_set_size (fd, (int)(pango_font_description_get_size (st->font_desc)));
+    pango_context_set_font_description (pctx, fd);
+
+    //drawing db's:
+    pango_layout_set_width (l, self->priv->eq_margin_left-1);
+    pango_layout_set_alignment (l, PANGO_ALIGN_RIGHT);
+
+    int fontsize = (int)(pango_units_to_double (pango_font_description_get_size (fd)) * gdk_screen_get_resolution (gdk_screen_get_default ()) / 72);
+
+    char tmp[100];
+
+    if ((self->priv->mouse_y >= 0) && (self->priv->mouse_y < height - self->priv->eq_margin_bottom))
+    {
+        cairo_save (cr);
+        double db = ddb_equalizer_scale(self, (double)(self->priv->mouse_y-1) / (double)(height - self->priv->eq_margin_bottom - 2));
+        snprintf (tmp, sizeof (tmp), "%s%.1fdB", db > 0 ? "+" : "", db);
+        pango_layout_set_text (l, tmp, strlen (tmp));
+        cairo_move_to (cr, self->priv->eq_margin_left-1, self->priv->mouse_y-3);
+        pango_cairo_show_layout (cr, l);
+        cairo_restore (cr);
+    }
+
+    cairo_save (cr);
+    double val = ddb_equalizer_scale(self, 1);
+    snprintf (tmp, sizeof (tmp), "%s%.1fdB", val > 0 ? "+" : "", val);
+    pango_layout_set_text (l, tmp, strlen(tmp));
+    cairo_move_to (cr, self->priv->eq_margin_left-1, height-self->priv->eq_margin_bottom-fontsize);
+    pango_cairo_show_layout (cr, l);
+    cairo_restore (cr);
+
+    cairo_save (cr);
+    val = ddb_equalizer_scale(self, 0);
+    snprintf (tmp, sizeof (tmp), "%s%.1fdB", val > 0 ? "+" : "", val);
+    pango_layout_set_text (l, tmp, strlen (tmp));
+    cairo_move_to (cr, self->priv->eq_margin_left-1, 1);
+    pango_cairo_show_layout (cr, l);
+    cairo_restore (cr);
+
+    cairo_save (cr);
+    pango_layout_set_text (l, "+0dB", 4);
+    cairo_move_to (cr, self->priv->eq_margin_left-1, (int)((1-self->priv->preamp)*(height-self->priv->eq_margin_bottom))-fontsize/2);
+    pango_cairo_show_layout (cr, l);
+    cairo_restore (cr);
+
+    cairo_save (cr);
+    pango_layout_set_text (l, "preamp", 6);
+    pango_layout_set_alignment (l, PANGO_ALIGN_LEFT);
+    cairo_move_to (cr, 1, height-self->priv->eq_margin_bottom+2);
+    pango_cairo_show_layout (cr, l);
+    cairo_restore (cr);
+
+    // frame
+    cairo_rectangle (cr, self->priv->eq_margin_left, 0, width-self->priv->eq_margin_left, height-self->priv->eq_margin_bottom);
+    cairo_stroke (cr);
+
+    //draw preamp
+    cairo_rectangle (cr, 0, (int)(self->priv->preamp * (height-self->priv->eq_margin_bottom)), 11, height);
+    cairo_clip (cr);
+
+    gdk_cairo_set_source_color (cr, &fore_bright_color);
+    int count = (int)((height-self->priv->eq_margin_bottom) / 6)+1;
+    for (int j = 0; j < count; j++) {
+        cairo_rectangle (cr, 1, height-self->priv->eq_margin_bottom-j*6 - 6, 11, 4);
+    }
+    cairo_fill (cr);
+    cairo_reset_clip (cr);
+
+    //drawing bars:
+    int bar_w = 11;
+    if (step < bar_w)
+        bar_w = (int)step-1;
+
+
+    for (i = 0; i < DDB_EQUALIZER_bands; i++)
+    {
+        cairo_reset_clip (cr);
+        cairo_rectangle (cr, (int)((i+1)*step)+self->priv->eq_margin_left - bar_w/2, (int)(self->priv->values[i] * (height-self->priv->eq_margin_bottom)), 11, height);
+        cairo_clip (cr);
+        count = (int)((height-self->priv->eq_margin_bottom) * (1-self->priv->values[i]) / 6)+1;
+        for (int j = 0; j < count; j++) {
+            cairo_rectangle (cr, (int)((i+1)*step)+self->priv->eq_margin_left - bar_w/2, height-self->priv->eq_margin_bottom-j*6 - 6, bar_w, 4);
+        }
+        cairo_fill (cr);
+    }
+
+    //drawing mouse coordinates:
+    cairo_reset_clip (cr);
+    double dash[] = {4, 4};
+    cairo_set_dash (cr, dash, 2, 0);
+    cairo_move_to (cr, self->priv->eq_margin_left+1, self->priv->mouse_y);
+    cairo_line_to (cr, width, self->priv->mouse_y);
+    cairo_stroke (cr);
 
     return FALSE;
 }
@@ -1290,25 +783,9 @@ static GObject * ddb_equalizer_constructor (GType type, guint n_construct_proper
 	GObject * obj;
 	GObjectClass * parent_class;
 	DdbEqualizer * self;
-	GtkStyle* _tmp0_ = NULL;
-	const PangoFontDescription* _tmp1_;
-	gint _tmp2_ = 0;
-	gdouble _tmp3_ = 0.0;
-	GdkScreen* _tmp4_ = NULL;
-	gdouble _tmp5_ = 0.0;
-	gint _tmp6_;
 	parent_class = G_OBJECT_CLASS (ddb_equalizer_parent_class);
 	obj = parent_class->constructor (type, n_construct_properties, construct_properties);
 	self = DDB_EQUALIZER (obj);
-	_tmp0_ = gtk_widget_get_style ((GtkWidget*) self);
-	_tmp1_ = _tmp0_->font_desc;
-	_tmp2_ = pango_font_description_get_size (_tmp1_);
-	_tmp3_ = pango_units_to_double (_tmp2_);
-	_tmp4_ = gdk_screen_get_default ();
-	_tmp5_ = gdk_screen_get_resolution (_tmp4_);
-	self->priv->eq_margin_bottom = (gint) (((_tmp3_ * _tmp5_) / 72) + 4);
-	_tmp6_ = self->priv->eq_margin_bottom;
-	self->priv->eq_margin_left = _tmp6_ * 4;
 	return obj;
 }
 
