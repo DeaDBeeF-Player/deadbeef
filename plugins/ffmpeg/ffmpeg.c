@@ -38,6 +38,7 @@
 #include <ffmpeg/avcodec.h>
 #include <ffmpeg/avutil.h>
 #include <ffmpeg/avstring.h>
+
 #define AVERROR_EOF AVERROR(EPIPE)
 
 #if LIBAVFORMAT_VERSION_MAJOR < 53
@@ -62,6 +63,8 @@ static DB_functions_t *deadbeef;
 #define DEFAULT_EXTS "m4a;wma;aa3;oma;ac3;vqf;amr"
 
 #define EXT_MAX 100
+
+#define FFMPEG_MAX_ANALYZE_DURATION 500000
 
 static char * exts[EXT_MAX] = {NULL};
 
@@ -140,6 +143,7 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     trace ("\033[0;31mffmpeg av_find_stream_info\033[37;0m\n");
     info->stream_id = -1;
+    info->fctx->max_analyze_duration = FFMPEG_MAX_ANALYZE_DURATION;
     av_find_stream_info(info->fctx);
     for (i = 0; i < info->fctx->nb_streams; i++)
     {
@@ -172,7 +176,7 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
 
-    deadbeef->pl_replace_meta (it, ":FILETYPE", info->codec->name);
+    deadbeef->pl_replace_meta (it, "!FILETYPE", info->codec->name);
 
     int bps = av_get_bits_per_sample_format (info->ctx->sample_fmt);
     int samplerate = info->ctx->sample_rate;
@@ -495,6 +499,7 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         return NULL;
     }
 
+    fctx->max_analyze_duration = FFMPEG_MAX_ANALYZE_DURATION;
     av_find_stream_info(fctx);
     for (i = 0; i < fctx->nb_streams; i++)
     {
