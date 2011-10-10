@@ -29,6 +29,7 @@ case "$host" in
     AC_DEFINE(ARCH_X86_32, 1, [architecture is x86])
     LIB="../deadbeef-deps/lib-x86-32"
     YASM_FLAGS="-f elf -D ARCH_X86_32 -m x86"
+    APE_USE_YASM=yes
     ;;
   x86_64-apple-*)
     AC_DEFINE(ARCH_X86_64_OSX, 1, [architecture is x86_64 for OSX])
@@ -38,6 +39,7 @@ case "$host" in
     AC_DEFINE(ARCH_X86_64, 1, [architecture is x86_64])
     LIB="../deadbeef-deps/lib-x86-64"
     YASM_FLAGS="-f elf -D ARCH_X86_64 -m amd64"
+    APE_USE_YASM=yes
     ;;
   powerpc-*-* )
     AC_DEFINE(ARCH_PPC_32, 1, [architecture is ppc32])
@@ -447,7 +449,7 @@ if test "x$enable_adplug" != "xno" ; then
     HAVE_ADPLUG=yes
 fi
 
-if test "x$enable_ffap" != "xno" ; then
+if test "x$enable_ffap" != "xno" && ( test "x$HAVE_YASM" == "xyes" || test "x$APE_USE_YASM" != "xyes" ) ; then
     HAVE_FFAP=yes
 fi
 
