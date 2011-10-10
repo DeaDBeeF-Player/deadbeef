@@ -169,7 +169,7 @@ gtk_combo_box_text_new () {
 
 GtkWidget *
 gtk_combo_box_text_new_with_entry   (void) {
-    return gtk_combo_box_new_with_entry ();
+    return gtk_combo_box_entry_new ();
 }
 
 void
