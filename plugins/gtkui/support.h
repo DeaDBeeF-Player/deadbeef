@@ -84,6 +84,8 @@ gtk_dialog_set_has_separator (GtkDialog *dlg, gboolean has);
 #if !GTK_CHECK_VERSION(2,22,0)
 GdkDragAction
 gdk_drag_context_get_selected_action (GdkDragContext *context);
+GList *
+gdk_drag_context_list_targets (GdkDragContext *context);
 #endif
 
 #if !GTK_CHECK_VERSION(2,24,0)

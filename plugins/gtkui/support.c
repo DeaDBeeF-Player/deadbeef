@@ -158,6 +158,10 @@ GdkDragAction
 gdk_drag_context_get_selected_action (GdkDragContext *context) {
     return context->action;
 }
+GList *
+gdk_drag_context_list_targets (GdkDragContext *context) {
+    context->targets;
+}
 #endif
 
 #if !GTK_CHECK_VERSION(2,24,0)
