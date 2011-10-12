@@ -160,7 +160,7 @@ gdk_drag_context_get_selected_action (GdkDragContext *context) {
 }
 GList *
 gdk_drag_context_list_targets (GdkDragContext *context) {
-    context->targets;
+    return context->targets;
 }
 #endif
 
