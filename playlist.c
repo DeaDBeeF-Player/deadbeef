@@ -1753,9 +1753,8 @@ plt_remove_item (playlist_t *playlist, playItem_t *it) {
 
     if (!no_remove_notify) {
         streamer_song_removed_notify (it);
+        pl_playqueue_remove (it);
     }
-
-    pl_playqueue_remove (it);
 
     // remove from both lists
     LOCK;
