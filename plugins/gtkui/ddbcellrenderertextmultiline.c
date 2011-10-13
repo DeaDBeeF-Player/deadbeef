@@ -90,6 +90,9 @@ enum  {
 };
 static gboolean ddb_cell_editable_text_view_real_key_press_event (GtkWidget* base, GdkEventKey* event);
 static void ddb_cell_editable_text_view_real_start_editing (GtkCellEditable* base, GdkEvent* event);
+#if GTK_CHECK_VERSION(2,20,0)
+static void ddb_cell_editable_text_view_real_editing_canceled (GtkCellRenderer*);
+#endif
 DdbCellEditableTextView* ddb_cell_editable_text_view_new (void);
 DdbCellEditableTextView* ddb_cell_editable_text_view_construct (GType object_type);
 static void ddb_cell_editable_text_view_finalize (GObject* obj);
@@ -164,6 +167,10 @@ static void ddb_cell_editable_text_view_real_start_editing (GtkCellEditable* bas
 	g_return_if_fail (event != NULL);
 }
 
+#if GTK_CHECK_VERSION(2,20,0)
+static void ddb_cell_editable_text_view_real_editing_canceled (GtkCellRenderer* base) {
+}
+#endif
 
 DdbCellEditableTextView* ddb_cell_editable_text_view_construct (GType object_type) {
 	DdbCellEditableTextView * self = NULL;
@@ -447,8 +454,10 @@ DdbCellRendererTextMultiline* ddb_cell_renderer_text_multiline_new (void) {
 static void ddb_cell_renderer_text_multiline_class_init (DdbCellRendererTextMultilineClass * klass) {
 	ddb_cell_renderer_text_multiline_parent_class = g_type_class_peek_parent (klass);
 	g_type_class_add_private (klass, sizeof (DdbCellRendererTextMultilinePrivate));
-	GTK_CELL_RENDERER_CLASS (klass)->start_editing = ddb_cell_renderer_text_multiline_real_start_editing;
 	G_OBJECT_CLASS (klass)->finalize = ddb_cell_renderer_text_multiline_finalize;
+#if GTK_CHECK_VERSION(2,20,0)
+	GTK_CELL_RENDERER_CLASS (klass)->editing_canceled = (void (*)(GtkCellRenderer*)) ddb_cell_editable_text_view_real_editing_canceled;
+#endif
 }
 
 
