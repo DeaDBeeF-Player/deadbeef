@@ -131,7 +131,7 @@ set_file_filter (GtkWidget *dlg, const char *name) {
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
     gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dlg), flt);
     flt = gtk_file_filter_new ();
-    gtk_file_filter_set_name (flt, _("Other files (*)"));
+    gtk_file_filter_set_name (flt, _("All files (*)"));
     gtk_file_filter_add_pattern (flt, "*");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
     return flt;
