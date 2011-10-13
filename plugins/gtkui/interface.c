@@ -1662,13 +1662,14 @@ create_prefwin (void)
   GtkWidget *label8;
   GtkWidget *pref_replaygain_mode;
   GtkWidget *pref_replaygain_scale;
+  GtkWidget *table1;
   GtkWidget *hbox100;
-  GtkWidget *label124;
   GtkWidget *label125;
   GtkWidget *replaygain_preamp;
   GtkWidget *label126;
-  GtkWidget *hbox100a;
+  GtkWidget *label124;
   GtkWidget *label124a;
+  GtkWidget *hbox100a;
   GtkWidget *label125a;
   GtkWidget *global_preamp;
   GtkWidget *label126a;
@@ -1877,13 +1878,16 @@ create_prefwin (void)
   gtk_widget_show (pref_replaygain_scale);
   gtk_box_pack_start (GTK_BOX (vbox8), pref_replaygain_scale, FALSE, FALSE, 0);
 
+  table1 = gtk_table_new (2, 2, FALSE);
+  gtk_widget_show (table1);
+  gtk_box_pack_start (GTK_BOX (vbox8), table1, FALSE, FALSE, 0);
+  gtk_table_set_col_spacings (GTK_TABLE (table1), 8);
+
   hbox100 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox100);
-  gtk_box_pack_start (GTK_BOX (vbox8), hbox100, FALSE, FALSE, 0);
-
-  label124 = gtk_label_new (_("Replaygain preamp:"));
-  gtk_widget_show (label124);
-  gtk_box_pack_start (GTK_BOX (hbox100), label124, FALSE, FALSE, 0);
+  gtk_table_attach (GTK_TABLE (table1), hbox100, 1, 2, 0, 1,
+                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
   label125 = gtk_label_new (_("-12 dB"));
   gtk_widget_show (label125);
@@ -1899,13 +1903,25 @@ create_prefwin (void)
   gtk_widget_show (label126);
   gtk_box_pack_start (GTK_BOX (hbox100), label126, FALSE, FALSE, 0);
 
-  hbox100a = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox100a);
-  gtk_box_pack_start (GTK_BOX (vbox8), hbox100a, FALSE, FALSE, 0);
+  label124 = gtk_label_new (_("Replaygain preamp:"));
+  gtk_widget_show (label124);
+  gtk_table_attach (GTK_TABLE (table1), label124, 0, 1, 0, 1,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label124), 0, 0.5);
 
   label124a = gtk_label_new (_("Global preamp:"));
   gtk_widget_show (label124a);
-  gtk_box_pack_start (GTK_BOX (hbox100a), label124a, FALSE, FALSE, 0);
+  gtk_table_attach (GTK_TABLE (table1), label124a, 0, 1, 1, 2,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label124a), 0, 0.5);
+
+  hbox100a = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox100a);
+  gtk_table_attach (GTK_TABLE (table1), hbox100a, 1, 2, 1, 2,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
 
   label125a = gtk_label_new (_("-12 dB"));
   gtk_widget_show (label125a);
@@ -2724,13 +2740,14 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, label8, "label8");
   GLADE_HOOKUP_OBJECT (prefwin, pref_replaygain_mode, "pref_replaygain_mode");
   GLADE_HOOKUP_OBJECT (prefwin, pref_replaygain_scale, "pref_replaygain_scale");
+  GLADE_HOOKUP_OBJECT (prefwin, table1, "table1");
   GLADE_HOOKUP_OBJECT (prefwin, hbox100, "hbox100");
-  GLADE_HOOKUP_OBJECT (prefwin, label124, "label124");
   GLADE_HOOKUP_OBJECT (prefwin, label125, "label125");
   GLADE_HOOKUP_OBJECT (prefwin, replaygain_preamp, "replaygain_preamp");
   GLADE_HOOKUP_OBJECT (prefwin, label126, "label126");
-  GLADE_HOOKUP_OBJECT (prefwin, hbox100a, "hbox100a");
+  GLADE_HOOKUP_OBJECT (prefwin, label124, "label124");
   GLADE_HOOKUP_OBJECT (prefwin, label124a, "label124a");
+  GLADE_HOOKUP_OBJECT (prefwin, hbox100a, "hbox100a");
   GLADE_HOOKUP_OBJECT (prefwin, label125a, "label125a");
   GLADE_HOOKUP_OBJECT (prefwin, global_preamp, "global_preamp");
   GLADE_HOOKUP_OBJECT (prefwin, label126a, "label126a");
