@@ -770,6 +770,7 @@ create_select_dsp_plugin (void)
   plugin = gtk_combo_box_text_new ();
   gtk_widget_show (plugin);
   gtk_box_pack_start (GTK_BOX (hbox85), plugin, TRUE, TRUE, 0);
+  gtk_widget_set_size_request (plugin, 232, -1);
 
   dialog_action_area9 = gtk_dialog_get_action_area (GTK_DIALOG (select_dsp_plugin));
   gtk_widget_show (dialog_action_area9);
@@ -815,6 +816,7 @@ create_preset_list (void)
   GtkWidget *okbutton8;
 
   preset_list = gtk_dialog_new ();
+  gtk_widget_set_size_request (preset_list, 450, 254);
   gtk_window_set_title (GTK_WINDOW (preset_list), _("Presets"));
   gtk_window_set_modal (GTK_WINDOW (preset_list), TRUE);
   gtk_window_set_type_hint (GTK_WINDOW (preset_list), GDK_WINDOW_TYPE_HINT_DIALOG);
@@ -852,7 +854,7 @@ create_preset_list (void)
   presets = gtk_tree_view_new ();
   gtk_widget_show (presets);
   gtk_container_add (GTK_CONTAINER (scrolledwindow8), presets);
-  gtk_widget_set_size_request (presets, 400, 176);
+  gtk_widget_set_size_request (presets, 400, 160);
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (presets), FALSE);
 
   dialog_action_area10 = gtk_dialog_get_action_area (GTK_DIALOG (preset_list));

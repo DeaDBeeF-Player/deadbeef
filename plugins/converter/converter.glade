@@ -1649,6 +1649,7 @@ Temporary file</property>
 
 	      <child>
 		<widget class="GtkComboBox" id="plugin">
+		  <property name="width_request">232</property>
 		  <property name="visible">True</property>
 		  <property name="add_tearoffs">False</property>
 		  <property name="focus_on_click">True</property>
@@ -1678,6 +1679,8 @@ Temporary file</property>
 </widget>
 
 <widget class="GtkDialog" id="preset_list">
+  <property name="width_request">450</property>
+  <property name="height_request">254</property>
   <property name="visible">True</property>
   <property name="title" translatable="yes">Presets</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
@@ -1806,7 +1809,7 @@ Temporary file</property>
 	      <child>
 		<widget class="GtkTreeView" id="presets">
 		  <property name="width_request">400</property>
-		  <property name="height_request">176</property>
+		  <property name="height_request">160</property>
 		  <property name="visible">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="headers_visible">False</property>
