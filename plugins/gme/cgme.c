@@ -199,7 +199,7 @@ cgme_read (DB_fileinfo_t *_info, char *bytes, int size) {
     if (gme_play (info->emu, size/2, (short*)bytes)) {
         return 0;
     }
-    if (info->reallength <= 0 && _info->readpos >= info->duration - conf_fadeout) {
+    if (conf_fadeout > 0 && info->duration >= conf_fadeout && info->reallength <= 0 && _info->readpos >= info->duration - conf_fadeout) {
         float fade_amnt =  (info->duration - _info->readpos) / (float)conf_fadeout;
         int nsamples = size/2;
         float fade_incr = 1.f / (_info->fmt.samplerate * conf_fadeout) * 256;
