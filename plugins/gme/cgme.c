@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "gme/gme.h"
 #include <zlib.h>
 #include "../../deadbeef.h"
@@ -39,6 +40,7 @@ int _Unwind_GetIPInfo;
 
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
+static int conf_fadeout = 10;
 
 typedef struct {
     DB_fileinfo_t info;
@@ -197,6 +199,22 @@ cgme_read (DB_fileinfo_t *_info, char *bytes, int size) {
     if (gme_play (info->emu, size/2, (short*)bytes)) {
         return 0;
     }
+    if (info->reallength <= 0 && _info->readpos >= info->duration - conf_fadeout) {
+        float fade_amnt =  (info->duration - _info->readpos) / (float)conf_fadeout;
+        int nsamples = size/2;
+        float fade_incr = 1.f / (_info->fmt.samplerate * conf_fadeout) * 256;
+        const float ln10=2.3025850929940002f;
+        float fade = exp(ln10*(-(1.f-fade_amnt) * 3));
+
+        for (int i = 0; i < nsamples; i++) {
+            ((short*)bytes)[i] *= fade;
+            if (!(i & 0xff)) {
+                fade_amnt += fade_incr;
+                fade = exp(ln10*(-(1.f-fade_amnt) * 3));
+            }
+        }
+    }
+
     _info->readpos += t;
     if (info->reallength == -1) {
         if (gme_track_ended (info->emu)) {
@@ -402,8 +420,19 @@ cgme_stop (void) {
     return 0;
 }
 
+int
+cgme_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    switch (id) {
+    case DB_EV_CONFIGCHANGED:
+        conf_fadeout = deadbeef->conf_get_int ("gme.fadeout", 10);
+        break;
+    }
+    return 0;
+}
+
 static const char settings_dlg[] =
     "property \"Max song length (in minutes)\" entry gme.songlength 3;\n"
+    "property \"Fadeout length (seconds)\" entry gme.fadeout 10;\n"
 ;
 
 // define plugin interface
