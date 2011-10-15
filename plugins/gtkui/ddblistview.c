@@ -2122,6 +2122,8 @@ ddb_listview_list_drag_end                   (GtkWidget       *widget,
 
 void
 ddb_listview_header_render (DdbListview *ps, cairo_t *cr) {
+    cairo_set_line_width (cr, 1);
+    cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
     GtkWidget *widget = ps->header;
     int x = -ps->hscrollpos;
     int w = 100;
