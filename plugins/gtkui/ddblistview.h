@@ -138,6 +138,7 @@ struct _DdbListview {
     float last_header_motion_ev; //is it subject to remove?
     int prev_header_x;
     int header_prepare;
+    int header_width; // previous width before resize
 
     struct _DdbListviewColumn *columns;
     struct _DdbListviewGroup *groups;

@@ -1354,6 +1354,7 @@ static const char settings_dlg[] =
     "property \"Custom status icon\" entry gtkui.custom_tray_icon \"" TRAY_ICON "\" ;\n"
     "property \"Run gtk_init with --sync (debug mode)\" checkbox gtkui.sync 0;\n"
     "property \"Add separators between plugin context menu items\" checkbox gtkui.action_separators 0;\n"
+    "property \"Auto-resize columns to fit the main window\" checkbox gtkui.autoresize_columns 0;\n"
 ;
 
 // define plugin interface

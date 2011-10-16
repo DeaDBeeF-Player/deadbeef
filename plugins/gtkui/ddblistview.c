@@ -57,7 +57,7 @@ G_DEFINE_TYPE (DdbListview, ddb_listview, GTK_TYPE_TABLE);
 
 struct _DdbListviewColumn {
     char *title;
-    int width;
+    float width;
     int minheight;
     struct _DdbListviewColumn *next;
     void *user_data;
@@ -318,6 +318,7 @@ ddb_listview_init(DdbListview *listview)
     listview->last_header_motion_ev = -1; //is it subject to remove?
     listview->prev_header_x = -1;
     listview->header_prepare = 0;
+    listview->header_width = 0;
 
     listview->columns = NULL;
     listview->groups = NULL;
@@ -2317,6 +2318,19 @@ ddb_listview_header_configure_event              (GtkWidget       *widget,
     if (height != a.height) {
         gtk_widget_set_size_request (widget, -1, height);
     }
+
+    if (ps->header_width == 0) {
+        ps->header_width = a.width;
+    }
+    else if (ps->header_width != a.width && deadbeef->conf_get_int ("gtkui.autoresize_columns", 0)) {
+        float ratio = (float)a.width / ps->header_width;
+        ps->header_width = a.width;
+        struct _DdbListviewColumn *c;
+        for (c = ps->columns; c; c = c->next) {
+            c->width *= ratio;
+        }
+    }
+
     return FALSE;
 }
 
