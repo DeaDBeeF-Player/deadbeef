@@ -671,7 +671,7 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
             if (grp_y + listview->grouptitle_height + (i+1) * listview->rowheight >= y + listview->scrollpos
                     && grp_y + listview->grouptitle_height + i * listview->rowheight < y + h + listview->scrollpos) {
                 GtkStyle *st = gtk_widget_get_style (listview->list);
-                cairo_set_source_rgb (cr, st->bg[GTK_STATE_NORMAL].red/65535.f, st->bg[GTK_STATE_NORMAL].green/65535.f, st->bg[GTK_STATE_NORMAL].blue/65535.f);
+                gdk_cairo_set_source_color (cr, &st->bg[GTK_STATE_NORMAL]);
                 cairo_rectangle (cr, -listview->hscrollpos, grp_y + listview->grouptitle_height + i * listview->rowheight - listview->scrollpos, listview->totalwidth, listview->rowheight);
                 cairo_fill (cr);
                 ddb_listview_list_render_row_background (listview, cr, it, (idx + 1 + i) & 1, (abs_idx+i) == listview->binding->cursor () ? 1 : 0, -listview->hscrollpos, grp_y + listview->grouptitle_height + i * listview->rowheight - listview->scrollpos, listview->totalwidth, listview->rowheight);
@@ -697,14 +697,13 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
 #if GTK_CHECK_VERSION(3,0,0)
                 gtk_paint_flat_box (gtk_widget_get_style (treeview), cr, GTK_STATE_NORMAL, GTK_SHADOW_NONE, treeview, "even_row_color", x, grp_y - listview->scrollpos + listview->grouptitle_height + listview->rowheight * grp->num_items, w, filler);
 #else
-                gtk_paint_flat_box (gtk_widget_get_style (treeview), gtk_widget_get_window (treeview), GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, "cell_even_ruled", x, grp_y - listview->scrollpos + listview->grouptitle_height + listview->rowheight * grp->num_items, w, filler);
+                gtk_paint_flat_box (gtk_widget_get_style (treeview), gtk_widget_get_window (listview->list), GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, treeview, "cell_even_ruled", x, grp_y - listview->scrollpos + listview->grouptitle_height + listview->rowheight * grp->num_items, w, filler);
 #endif
             }
             else {
                 GdkColor clr;
                 gtkui_get_listview_even_row_color (&clr);
-                cairo_set_source_rgb (cr, clr.red/65535.f, clr.green/65535.f, clr.blue/65535.f);
-
+                gdk_cairo_set_source_color (cr, &clr);
                 cairo_rectangle (cr, x, grp_y - listview->scrollpos + listview->grouptitle_height + listview->rowheight * grp->num_items, w, filler);
                 cairo_fill (cr);
             }
