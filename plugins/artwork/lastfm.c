@@ -11,7 +11,7 @@
 #include "escape.h"
 
 #define BASE_URL "http://ws.audioscrobbler.com/2.0/"
-#define API_KEY "b25b959554ed76058ac220b7b2e0a026"
+#define API_KEY "6b33c8ae4d598a9aff8fe63e334e6e86"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(...)
