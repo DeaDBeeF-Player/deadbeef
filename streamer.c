@@ -2243,3 +2243,27 @@ void
 streamer_get_output_format (ddb_waveformat_t *fmt) {
     memcpy (fmt, &output_format, sizeof (ddb_waveformat_t));
 }
+
+void
+streamer_notify_order_changed (int prev_order, int new_order) {
+    if (prev_order != PLAYBACK_ORDER_SHUFFLE_ALBUMS && new_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS) {
+        streamer_lock ();
+        playItem_t *curr = playing_track;
+        if (curr) {
+
+            const char *alb = pl_find_meta_raw (curr, "album");
+            const char *art = pl_find_meta_raw (curr, "artist");
+            playItem_t *next = curr->prev[PL_MAIN];
+            while (next) {
+                if (alb == pl_find_meta_raw (next, "album") && art == pl_find_meta_raw (next, "artist")) {
+                    next->played = 1;
+                    next = next->prev[PL_MAIN];
+                }
+                else {
+                    break;
+                }
+            }
+        }
+        streamer_unlock ();
+    }
+}

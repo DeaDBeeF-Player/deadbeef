@@ -105,7 +105,7 @@ static playlist_t dummy_playlist = {
     .refc = 1
 }; 
 
-static int pl_order; // mirrors "playback.order" config variable
+static int pl_order = -1; // mirrors "playback.order" config variable
 
 static int no_remove_notify;
 
@@ -113,12 +113,16 @@ static playlist_t *addfiles_playlist; // current playlist for adding files/folde
 
 void
 pl_set_order (int order) {
-    if (pl_order != order || pl_order == PLAYBACK_ORDER_SHUFFLE_TRACKS || pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS) {
+    int prev_order = pl_order;
+
+    if (pl_order != order) {
         pl_order = order;
         for (playlist_t *plt = playlists_head; plt; plt = plt->next) {
             plt_reshuffle (plt, NULL, NULL);
         }
     }
+
+    streamer_notify_order_changed (prev_order, pl_order);
 }
 
 int
