@@ -2728,12 +2728,17 @@ plt_reshuffle (playlist_t *playlist, playItem_t **ppmin, playItem_t **ppmax) {
     playItem_t *pmin = NULL;
     playItem_t *pmax = NULL;
     playItem_t *prev = NULL;
+    const char *alb = NULL;
+    const char *art = NULL;
     for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
-        if (pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS && prev && pl_find_meta_raw (prev, "album") == pl_find_meta_raw (it, "album") && pl_find_meta_raw (prev, "artist") == pl_find_meta_raw (it, "artist")) {
+        if (pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS && prev && alb == pl_find_meta_raw (it, "album") && art == pl_find_meta_raw (it, "artist")) {
             it->shufflerating = prev->shufflerating;
         }
         else {
+            prev = it;
             it->shufflerating = rand ();
+            alb = pl_find_meta_raw (it, "album");
+            art = pl_find_meta_raw (it, "artist");
         }
         if (!pmin || it->shufflerating < pmin->shufflerating) {
             pmin = it;
@@ -2742,7 +2747,6 @@ plt_reshuffle (playlist_t *playlist, playItem_t **ppmin, playItem_t **ppmax) {
             pmax = it;
         }
         it->played = 0;
-        prev = it;
     }
     if (ppmin) {
         *ppmin = pmin;
