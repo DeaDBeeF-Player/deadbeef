@@ -24,13 +24,16 @@
 static int conf_replaygain_mode = 0;
 static int conf_replaygain_scale = 1;
 static float conf_replaygain_preamp = 0;
+static float conf_global_preamp = 0;
 
 static float rg_albumgain = 1;
 static float rg_albumpeak = 1;
 static float rg_trackgain = 1;
 static float rg_trackpeak = 1;
-static float rg_albumgain_preamp = 1;
-static float rg_trackgain_preamp = 1;
+static float rg_albumgain_full_preamp = 1;
+static float rg_trackgain_full_preamp = 1;
+static float rg_albumgain_global_preamp = 1;
+static float rg_trackgain_global_preamp = 1;
 
 void
 replaygain_apply (ddb_waveformat_t *fmt, playItem_t *it, char *bytes, int bytesread) {
@@ -53,12 +56,15 @@ replaygain_apply (ddb_waveformat_t *fmt, playItem_t *it, char *bytes, int bytesr
 }
 
 void
-replaygain_set (int mode, int scale, float preamp) {
+replaygain_set (int mode, int scale, float preamp, float global_preamp) {
     conf_replaygain_mode = mode;
     conf_replaygain_scale = scale;
     conf_replaygain_preamp = db_to_amp (preamp);
-    rg_albumgain_preamp = rg_albumgain * conf_replaygain_preamp;
-    rg_trackgain_preamp = rg_trackgain * conf_replaygain_preamp;
+    conf_global_preamp = db_to_amp (global_preamp);
+    rg_albumgain_full_preamp = rg_albumgain * conf_replaygain_preamp * conf_global_preamp;
+    rg_trackgain_full_preamp = rg_trackgain * conf_replaygain_preamp * conf_global_preamp;
+    rg_albumgain_global_preamp = rg_albumgain * conf_global_preamp;
+    rg_trackgain_global_preamp = rg_trackgain * conf_global_preamp;
 }
 
 void
@@ -76,8 +82,10 @@ replaygain_set_values (float albumgain, float albumpeak, float trackgain, float 
     }
     rg_albumgain = db_to_amp (albumgain);
     rg_trackgain = db_to_amp (trackgain);
-    rg_albumgain_preamp = rg_albumgain * conf_replaygain_preamp;
-    rg_trackgain_preamp = rg_trackgain * conf_replaygain_preamp;
+    rg_albumgain_full_preamp = rg_albumgain * conf_replaygain_preamp * conf_global_preamp;
+    rg_trackgain_full_preamp = rg_trackgain * conf_replaygain_preamp * conf_global_preamp;
+    rg_albumgain_global_preamp = rg_albumgain * conf_global_preamp;
+    rg_trackgain_global_preamp = rg_trackgain * conf_global_preamp;
     rg_albumpeak = albumpeak;
     rg_trackpeak = trackpeak;
 }
@@ -87,9 +95,10 @@ get_int_volume (void) {
     int vol = 1000;
     if (conf_replaygain_mode == 1) {
         if (rg_trackgain == 1) {
-            return -1;
+            vol = rg_trackgain_global_preamp * 1000;
+        } else {
+            vol = rg_trackgain_full_preamp * 1000;
         }
-        vol = rg_trackgain_preamp * 1000;
         if (conf_replaygain_scale) {
             if (vol * rg_trackpeak > 1000) {
                 vol = 1000 / rg_trackpeak;
@@ -98,9 +107,10 @@ get_int_volume (void) {
     }
     else if (conf_replaygain_mode == 2) {
         if (rg_albumgain == 1) {
-            return -1;
+            vol = rg_albumgain_global_preamp * 1000;
+        } else {
+            vol = rg_albumgain_full_preamp * 1000;
         }
-        vol = rg_albumgain_preamp * 1000;
         if (conf_replaygain_scale) {
             if (vol * rg_albumpeak > 1000) {
                 vol = 1000 / rg_albumpeak;
@@ -213,9 +223,10 @@ apply_replay_gain_float32 (playItem_t *it, char *bytes, int size) {
     float vol = 1.f;
     if (conf_replaygain_mode == 1) {
         if (rg_trackgain == 1) {
-            return;
+            vol = rg_trackgain_global_preamp;
+        } else {
+            vol = rg_trackgain_full_preamp;
         }
-        vol = rg_trackgain_preamp;
         if (conf_replaygain_scale) {
             if (vol * rg_trackpeak > 1.f) {
                 vol = 1.f / rg_trackpeak;
@@ -224,9 +235,10 @@ apply_replay_gain_float32 (playItem_t *it, char *bytes, int size) {
     }
     else if (conf_replaygain_mode == 2) {
         if (rg_albumgain == 1) {
-            return;
+            vol = rg_albumgain_global_preamp;
+        } else {
+            vol = rg_albumgain_full_preamp;
         }
-        vol = rg_albumgain_preamp;
         if (conf_replaygain_scale) {
             if (vol * rg_albumpeak > 1.f) {
                 vol = 1.f / rg_albumpeak;

@@ -347,7 +347,7 @@ static int
 lfm_uri_encode (char *out, int outl, const char *str) {
     int l = outl;
     //trace ("lfm_uri_encode %p %d %s\n", out, outl, str);
-    while (*str) {
+    while (*str && *((uint8_t*)str) >= 32) {
         if (outl <= 1) {
             //trace ("no space left for 1 byte in buffer\n");
             return -1;

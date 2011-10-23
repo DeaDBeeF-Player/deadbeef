@@ -252,9 +252,9 @@ gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons, in
     int pack[100] = {0};
     int ncurr = 0;
 
-    widgets[ncurr] = GTK_DIALOG (win)->vbox;
+    widgets[ncurr] = gtk_dialog_get_content_area (GTK_DIALOG (win));
     gtk_box_set_spacing (GTK_BOX (widgets[ncurr]), 8);
-    GtkWidget *action_area = GTK_DIALOG (win)->action_area;
+    GtkWidget *action_area = gtk_dialog_get_action_area (GTK_DIALOG (win));
     gtk_widget_show (action_area);
     gtk_button_box_set_layout (GTK_BUTTON_BOX (action_area), GTK_BUTTONBOX_END);
 
@@ -421,7 +421,7 @@ gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons, in
             label = gtk_label_new (_(labeltext));
             gtk_widget_show (label);
 
-            prop = gtk_combo_box_new_text ();
+            prop = gtk_combo_box_text_new ();
             gtk_widget_show (prop);
 
             for (int i = 0; i < n; i++) {
@@ -431,7 +431,7 @@ gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons, in
                     break;
                 }
 
-                gtk_combo_box_append_text (GTK_COMBO_BOX (prop), entry);
+                gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (prop), entry);
             }
             if (!script) {
                 break;

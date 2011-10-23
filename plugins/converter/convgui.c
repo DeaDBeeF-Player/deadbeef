@@ -246,7 +246,7 @@ converter_process (converter_ctx_t *conv)
     }
 
     GtkWidget *progress = gtk_dialog_new_with_buttons (_("Converting..."), GTK_WINDOW (gtkui_plugin->get_mainwin ()), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
-    GtkWidget *vbox = GTK_DIALOG (progress)->vbox;
+    GtkWidget *vbox = gtk_dialog_get_content_area (GTK_DIALOG (progress));
     GtkWidget *entry = gtk_entry_new ();
     gtk_widget_set_size_request (entry, 400, -1);
     gtk_editable_set_editable (GTK_EDITABLE (entry), FALSE);
@@ -1265,7 +1265,11 @@ convgui_get_actions (DB_playItem_t *it)
 
 int
 convgui_connect (void) {
+#if GTK_CHECK_VERSION(3,0,0)
+    gtkui_plugin = (ddb_gtkui_t *)deadbeef->plug_get_for_id ("gtkui3");
+#else
     gtkui_plugin = (ddb_gtkui_t *)deadbeef->plug_get_for_id ("gtkui");
+#endif
     converter_plugin = (ddb_converter_t *)deadbeef->plug_get_for_id ("converter");
     if (!gtkui_plugin || !converter_plugin) {
         return -1;
@@ -1312,7 +1316,11 @@ DB_misc_t plugin = {
 };
 
 DB_plugin_t *
-converter_gtkui_load (DB_functions_t *api) {
+#if GTK_CHECK_VERSION(3,0,0)
+converter_gtk3_load (DB_functions_t *api) {
+#else
+converter_gtk2_load (DB_functions_t *api) {
+#endif
     deadbeef = api;
     return DB_PLUGIN (&plugin);
 }

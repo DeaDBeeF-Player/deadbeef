@@ -73,8 +73,8 @@ typedef struct {
     void (*external_drag_n_drop) (DdbListviewIter before, char *mem, int length);
 
     // callbacks
-    void (*draw_group_title) (DdbListview *listview, GdkDrawable *drawable, DdbListviewIter iter, int x, int y, int width, int height);
-    void (*draw_column_data) (DdbListview *listview, GdkDrawable *drawable, DdbListviewIter iter, DdbListviewIter group_iter, int column, int group_y, int x, int y, int width, int height);
+    void (*draw_group_title) (DdbListview *listview, cairo_t *drawable, DdbListviewIter iter, int x, int y, int width, int height);
+    void (*draw_column_data) (DdbListview *listview, cairo_t *drawable, DdbListviewIter iter, DdbListviewIter group_iter, int column, int group_y, int x, int y, int width, int height);
     void (*list_context_menu) (DdbListview *listview, DdbListviewIter iter, int idx);
     void (*header_context_menu) (DdbListview *listview, int col);
     void (*handle_doubleclick) (DdbListview *listview, DdbListviewIter iter, int idx);
@@ -138,6 +138,7 @@ struct _DdbListview {
     float last_header_motion_ev; //is it subject to remove?
     int prev_header_x;
     int header_prepare;
+    int header_width; // previous width before resize
 
     struct _DdbListviewColumn *columns;
     struct _DdbListviewGroup *groups;

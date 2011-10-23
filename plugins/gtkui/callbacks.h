@@ -277,10 +277,6 @@ on_volumebar_motion_notify_event       (GtkWidget       *widget,
                                         GdkEventMotion  *event,
                                         gpointer         user_data);
 
-void
-on_main_quit                           (GtkObject       *object,
-                                        gpointer         user_data);
-
 gboolean
 on_mainwin_delete_event                (GtkWidget       *widget,
                                         GdkEvent        *event,
@@ -1102,6 +1098,10 @@ on_prefwin_map_event                   (GtkWidget       *widget,
 
 void
 on_replaygain_preamp_value_changed     (GtkRange        *range,
+                                        gpointer         user_data);
+
+void
+on_global_preamp_value_changed         (GtkRange        *range,
                                         gpointer         user_data);
 
 void

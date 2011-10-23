@@ -672,7 +672,7 @@ palsa_thread (void *context) {
         UNLOCK;
         int sleeptime = period_size-frames_to_deliver;
         if (sleeptime > 0 && plugin.fmt.samplerate > 0 && plugin.fmt.channels > 0) {
-            usleep (sleeptime * 1000000 / plugin.fmt.samplerate / plugin.fmt.channels);
+            usleep (sleeptime * 1000 / plugin.fmt.samplerate / plugin.fmt.channels * 1000);
         }
     }
 }

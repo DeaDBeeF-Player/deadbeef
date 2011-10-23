@@ -30,7 +30,7 @@ int
 junk_id3v1_find (DB_FILE *fp);
 
 int
-junk_id3v1_write (FILE *fp, struct playItem_s *it);
+junk_id3v1_write (FILE *fp, struct playItem_s *it, const char *enc);
 
 int
 junk_id3v2_find (DB_FILE *fp, int *psize);

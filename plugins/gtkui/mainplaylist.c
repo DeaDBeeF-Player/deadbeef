@@ -118,6 +118,7 @@ main_drag_n_drop (DdbListviewIter before, DdbPlaylistHandle from_playlist, uint3
     }
     deadbeef->plt_unref (plt);
     deadbeef->pl_unlock ();
+    deadbeef->pl_save_all ();
 }
 
 void main_external_drag_n_drop (DdbListviewIter before, char *mem, int length) {
@@ -161,13 +162,13 @@ void main_selection_changed (DdbListviewIter it, int idx) {
     deadbeef->sendmessage (DB_EV_SELCHANGED, 0, deadbeef->plt_get_curr_idx (), PL_MAIN);
 }
 
-void main_draw_group_title (DdbListview *listview, GdkDrawable *drawable, DdbListviewIter it, int x, int y, int width, int height) {
+void main_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListviewIter it, int x, int y, int width, int height) {
     if (group_by_str && group_by_str[0]) {
         char str[1024];
         deadbeef->pl_format_title ((DB_playItem_t *)it, -1, str, sizeof (str), -1, group_by_str);
         int theming = !gtkui_override_listview_colors ();
         if (theming) {
-            GdkColor *clr = &theme_treeview->style->fg[GTK_STATE_NORMAL];
+            GdkColor *clr = &gtk_widget_get_style(theme_treeview)->fg[GTK_STATE_NORMAL];
             float rgb[] = {clr->red/65535.f, clr->green/65535.f, clr->blue/65535.f};
             draw_set_fg_color (rgb);
         }
@@ -186,6 +187,7 @@ void main_draw_group_title (DdbListview *listview, GdkDrawable *drawable, DdbLis
 void
 main_delete_selected (void) {
     deadbeef->pl_delete_selected ();
+    deadbeef->pl_save_all ();
     main_refresh ();
     search_refresh ();
 }

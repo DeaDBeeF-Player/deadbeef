@@ -38,10 +38,15 @@
 #include <ffmpeg/avcodec.h>
 #include <ffmpeg/avutil.h>
 #include <ffmpeg/avstring.h>
+
 #define AVERROR_EOF AVERROR(EPIPE)
 
 #if LIBAVFORMAT_VERSION_MAJOR < 53
 #define av_register_protocol register_protocol
+#endif
+
+#ifndef AV_VERSION_INT
+#define AV_VERSION_INT(a, b, c) (a<<16 | b<<8 | c)
 #endif
 
 #endif
@@ -58,6 +63,8 @@ static DB_functions_t *deadbeef;
 #define DEFAULT_EXTS "m4a;wma;aa3;oma;ac3;vqf;amr"
 
 #define EXT_MAX 100
+
+#define FFMPEG_MAX_ANALYZE_DURATION 500000
 
 static char * exts[EXT_MAX] = {NULL};
 
@@ -136,11 +143,17 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     trace ("\033[0;31mffmpeg av_find_stream_info\033[37;0m\n");
     info->stream_id = -1;
+    info->fctx->max_analyze_duration = FFMPEG_MAX_ANALYZE_DURATION;
     av_find_stream_info(info->fctx);
     for (i = 0; i < info->fctx->nb_streams; i++)
     {
         info->ctx = info->fctx->streams[i]->codec;
-        if (info->ctx->codec_type == CODEC_TYPE_AUDIO)
+        if (info->ctx->codec_type ==
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(52, 64, 0)
+            AVMEDIA_TYPE_AUDIO)
+#else
+            CODEC_TYPE_AUDIO)
+#endif
         {
             info->codec = avcodec_find_decoder (info->ctx->codec_id);
             if (info->codec != NULL) {
@@ -163,7 +176,7 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
 
-    deadbeef->pl_replace_meta (it, ":FILETYPE", info->codec->name);
+    deadbeef->pl_replace_meta (it, "!FILETYPE", info->codec->name);
 
     int bps = av_get_bits_per_sample_format (info->ctx->sample_fmt);
     int samplerate = info->ctx->sample_rate;
@@ -279,10 +292,10 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
             int out_size = AVCODEC_MAX_AUDIO_FRAME_SIZE;
             int len;
             //trace ("in: out_size=%d(%d), size=%d\n", out_size, AVCODEC_MAX_AUDIO_FRAME_SIZE, size);
-#if (LIBAVCODEC_VERSION_MAJOR <= 52) && (LIBAVCODEC_VERSION_MINOR <= 25)
-            len = avcodec_decode_audio2 (info->ctx, (int16_t *)info->buffer, &out_size, info->pkt.data, info->pkt.size);
-#else
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(52,25,0)
             len = avcodec_decode_audio3 (info->ctx, (int16_t *)info->buffer, &out_size, &info->pkt);
+#else
+            len = avcodec_decode_audio2 (info->ctx, (int16_t *)info->buffer, &out_size, info->pkt.data, info->pkt.size);
 #endif
             trace ("out: out_size=%d, len=%d\n", out_size, len);
             if (len <= 0) {
@@ -418,7 +431,7 @@ static const char *map[] = {
 
 static int
 ffmpeg_read_metadata_internal (DB_playItem_t *it, AVFormatContext *fctx) {
-#if LIBAVFORMAT_VERSION_MAJOR <= 52 && LIBAVFORMAT_VERSION_MINOR < 43
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(52,43,0)
     if (!strlen (fctx->title)) {
         // title is empty, this call will set track title to filename without extension
         deadbeef->pl_add_meta (it, "title", NULL);
@@ -486,11 +499,17 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         return NULL;
     }
 
+    fctx->max_analyze_duration = FFMPEG_MAX_ANALYZE_DURATION;
     av_find_stream_info(fctx);
     for (i = 0; i < fctx->nb_streams; i++)
     {
         ctx = fctx->streams[i]->codec;
-        if (ctx->codec_type == CODEC_TYPE_AUDIO)
+        if (ctx->codec_type ==
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(52, 64, 0)
+            AVMEDIA_TYPE_AUDIO)
+#else
+            CODEC_TYPE_AUDIO)
+#endif
         {
             codec = avcodec_find_decoder(ctx->codec_id);
             if (codec != NULL && !strcasecmp (codec->name, "alac")) { // only open alac streams
@@ -704,7 +723,11 @@ ffmpeg_start (void) {
     ffmpeg_init_exts ();
     avcodec_init ();
     av_register_all ();
+#if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(52, 69, 0)
+    av_register_protocol2 (&vfswrapper, sizeof(vfswrapper));
+#else
     av_register_protocol (&vfswrapper);
+#endif
     return 0;
 }
 
@@ -745,7 +768,12 @@ ffmpeg_read_metadata (DB_playItem_t *it) {
     for (i = 0; i < fctx->nb_streams; i++)
     {
         ctx = fctx->streams[i]->codec;
-        if (ctx->codec_type == CODEC_TYPE_AUDIO)
+        if (ctx->codec_type ==
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(52, 64, 0)
+            AVMEDIA_TYPE_AUDIO)
+#else
+            CODEC_TYPE_AUDIO)
+#endif
         {
             codec = avcodec_find_decoder(ctx->codec_id);
             if (codec != NULL)

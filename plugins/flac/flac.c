@@ -704,6 +704,11 @@ cflac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     }
     FLAC__stream_decoder_delete(decoder);
     decoder = NULL;
+
+    if (info.info.fmt.samplerate <= 0) {
+        goto cflac_insert_fail;
+    }
+
     deadbeef->pl_add_meta (it, ":FILETYPE", isogg ? "OggFLAC" : "FLAC");
 
     char s[100];
@@ -716,8 +721,10 @@ cflac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     deadbeef->pl_add_meta (it, ":BPS", s);
     snprintf (s, sizeof (s), "%d", info.info.fmt.samplerate);
     deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
-    snprintf (s, sizeof (s), "%d", (int)roundf((fsize-info.tagsize) / deadbeef->pl_get_item_duration (it) * 8 / 1000));
-    deadbeef->pl_add_meta (it, ":BITRATE", s);
+    if ( deadbeef->pl_get_item_duration (it) > 0) {
+        snprintf (s, sizeof (s), "%d", (int)roundf((fsize-info.tagsize) / deadbeef->pl_get_item_duration (it) * 8 / 1000));
+        deadbeef->pl_add_meta (it, ":BITRATE", s);
+    }
 
     // try embedded cue
     const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");

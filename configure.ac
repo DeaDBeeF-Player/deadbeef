@@ -24,18 +24,12 @@ AC_SUBST(GETTEXT_PACKAGE)
 test "$prefix" = NONE && prefix=/usr/local
 AC_DEFINE_UNQUOTED(LOCALEDIR, "${prefix}/${DATADIRNAME}/locale", [Name of gettext locale directory])
 
-if test "x$USE_MAINTAINER_MODE" = "xyes" ; then
-    AM_PROG_VALAC([0.7.0])
-    if test "x$VALAC" = "x" ; then
-        AC_MSG_ERROR([Cannot find the "valac" compiler in your PATH])
-    fi
-fi
-
 case "$host" in
   i386-*-* | i486-*-* | i586-*-* | i686-*-* | i86pc-*-*)
     AC_DEFINE(ARCH_X86_32, 1, [architecture is x86])
     LIB="../deadbeef-deps/lib-x86-32"
     YASM_FLAGS="-f elf -D ARCH_X86_32 -m x86"
+    APE_USE_YASM=yes
     ;;
   x86_64-apple-*)
     AC_DEFINE(ARCH_X86_64_OSX, 1, [architecture is x86_64 for OSX])
@@ -45,6 +39,7 @@ case "$host" in
     AC_DEFINE(ARCH_X86_64, 1, [architecture is x86_64])
     LIB="../deadbeef-deps/lib-x86-64"
     YASM_FLAGS="-f elf -D ARCH_X86_64 -m amd64"
+    APE_USE_YASM=yes
     ;;
   powerpc-*-* )
     AC_DEFINE(ARCH_PPC_32, 1, [architecture is ppc32])
@@ -74,8 +69,9 @@ AC_ARG_ENABLE(nullout,  [AS_HELP_STRING([--disable-nullout ], [disable NULL outp
 AC_ARG_ENABLE(alsa,     [AS_HELP_STRING([--disable-alsa    ], [disable ALSA output plugin (default: enabled)])], [enable_alsa=$enableval], [enable_alsa=yes])
 AC_ARG_ENABLE(oss,      [AS_HELP_STRING([--disable-oss     ], [disable Open Sound System output plugin (default: enabled)])], [enable_oss=$enableval], [enable_oss=yes])
 AC_ARG_ENABLE(pulse,    [AS_HELP_STRING([--disable-pulse   ], [disable PulseAudio output plugin (default: enabled)])], [enable_pulse=$enableval], [enable_pulse=yes])
-AC_ARG_ENABLE(gtkui,    [AS_HELP_STRING([--disable-gtkui   ], [disable standard GTK2 user interface plugin (default: enabled)])], [enable_gtkui=$enableval], [enable_gtkui=yes])
-dnl AC_ARG_ENABLE(gtk3,     [AS_HELP_STRING([--enable-gtk3     ], [use GTK3 library (default: disabled)])], [enable_gtk3=$enableval], [enable_gtk3=no])
+AC_ARG_ENABLE(gtkui,    [AS_HELP_STRING([--disable-gtkui   ], [disable standard GTK+ user interface plugin (default: enabled)])], [enable_gtkui=$enableval], [enable_gtkui=yes])
+AC_ARG_ENABLE(gtk3,     [AS_HELP_STRING([--enable-gtk3     ], [build GTK3 version of gtkui plugin (default: disabled)])], [enable_gtk3=$enableval], [enable_gtk3=no])
+AC_ARG_ENABLE(gtk2,     [AS_HELP_STRING([--disable-gtk2     ], [build GTK2 version of gtkui plugin (default: enabled)])], [enable_gtk2=$enableval], [enable_gtk2=yes])
 AC_ARG_ENABLE(vfs_curl, [AS_HELP_STRING([--disable-vfs-curl], [disable HTTP streaming vfs plugin (default: enabled)])], [enable_vfs_curl=$enableval], [enable_vfs_curl=yes])
 AC_ARG_ENABLE(lfm,      [AS_HELP_STRING([--disable-lfm     ], [disable last.fm/libre.fm scrobbler plugin (default: enabled)])], [enable_lfm=$enableval], [enable_lfm=yes])
 AC_ARG_ENABLE(artwork,  [AS_HELP_STRING([--disable-artwork ], [disable album art loader plugin (default: enabled)])], [enable_artwork=$enableval], [enable_artwork=yes])
@@ -162,14 +158,16 @@ else
 fi
 AC_SUBST(ZIP_LIBS)
 
-if test "x$enable_gtkui" != "xno" ; then
-dnl    if test "x$enable_gtk3" == "xyes" ; then
-dnl        PKG_CHECK_MODULES(GTKUI_DEPS, gtk+-3.0 >= 2.90 gthread-2.0 glib-2.0, HAVE_GTK=yes, HAVE_GTK=no)
-dnl    else
-        PKG_CHECK_MODULES(GTKUI_DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0, HAVE_GTK=yes, HAVE_GTK=no)
-dnl    fi
+if test "x$enable_gtk3" == "xyes" ; then
+    PKG_CHECK_MODULES(GTK3_DEPS, gtk+-3.0 >= 3.0 gthread-2.0 glib-2.0, HAVE_GTK3=yes, HAVE_GTK3=no)
 else
-    HAVE_GTK=no
+    HAVE_GTK3=no
+fi
+
+if test "x$enable_gtk2" == "xyes" ; then
+    PKG_CHECK_MODULES(GTK2_DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0, HAVE_GTK2=yes, HAVE_GTK2=no)
+else
+    HAVE_GTK2=no
 fi
 
 if test "x$enable_alsa" != "xno" ; then
@@ -334,7 +332,7 @@ fi
 
 dnl gtkui plugin
 if test "x$enable_gtkui" != "xno" ; then
-    if test "x$HAVE_GTK" = "xyes" ; then
+    if test "x$HAVE_GTK2" == "xyes" || test "x$HAVE_GTK3" == "xyes" ; then
         HAVE_GTKUI=yes
     fi
 fi
@@ -452,7 +450,7 @@ if test "x$enable_adplug" != "xno" ; then
     HAVE_ADPLUG=yes
 fi
 
-if test "x$enable_ffap" != "xno" ; then
+if test "x$enable_ffap" != "xno" && ( test "x$HAVE_YASM" == "xyes" || test "x$APE_USE_YASM" != "xyes" ) ; then
     HAVE_FFAP=yes
 fi
 
@@ -545,7 +543,7 @@ if test "x$enable_vfs_zip" != "xno" ; then
 fi
 
 if test "x$enable_converter" != "xno" ; then
-    if test "x$HAVE_GTK" = "xyes" ; then
+    if test "x$HAVE_GTK2" = "xyes" || test "x$HAVE_GTK3" = "xyes" ; then
         HAVE_CONVERTER=yes
     fi
 fi
@@ -562,6 +560,8 @@ AM_CONDITIONAL(HAVE_WAVPACK, test "x$HAVE_WAVPACKPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_SNDFILE, test "x$HAVE_SNDFILEPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_CDDA, test "x$HAVE_CDDAPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_GTKUI, test "x$HAVE_GTKUI" = "xyes")
+AM_CONDITIONAL(HAVE_GTK2, test "x$HAVE_GTK2" = "xyes")
+AM_CONDITIONAL(HAVE_GTK3, test "x$HAVE_GTK3" = "xyes")
 AM_CONDITIONAL(HAVE_ALSA, test "x$HAVE_ALSAPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_FFMPEG, test "x$HAVE_FFMPEGPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_PULSE, test "x$HAVE_PULSEPLUGIN" = "xyes")
@@ -606,7 +606,6 @@ echo
 echo "Build Configuration:"
 echo
 echo "* Maintainer Mode:        $USE_MAINTAINER_MODE"
-echo "    * Vala:               $VALAC"
 fi
 
 dnl print summary
@@ -640,7 +639,7 @@ PRINT_PLUGIN_INFO([vtx],[vtx file player (ay8910/12 emulation)],[test "x$HAVE_VT
 PRINT_PLUGIN_INFO([adplug],[adplug player (OPL2/OPL3 emulation)],[test "x$HAVE_ADPLUG" = "xyes"])
 PRINT_PLUGIN_INFO([vfs_curl],[http/ftp streaming support],[test "x$HAVE_VFS_CURL" = "xyes"])
 PRINT_PLUGIN_INFO([cdda],[cd audio player],[test "x$HAVE_CDDAPLUGIN" = "xyes"])
-PRINT_PLUGIN_INFO([gtkui],[GTK user interface],[test "x$HAVE_GTK" = "xyes"])
+PRINT_PLUGIN_INFO([gtkui],[GTK user interface],[test "x$HAVE_GTKUI" = "xyes"])
 PRINT_PLUGIN_INFO([hotkeys],[Global hotkeys support],[test "x$HAVE_HOTKEYS" = "xyes"])
 PRINT_PLUGIN_INFO([ffmpeg],[ffmpeg codecs],[test "x$HAVE_FFMPEGPLUGIN" = "xyes"])
 PRINT_PLUGIN_INFO([oss],[oss output plugin],[test "x$HAVE_OSS" = "xyes"])

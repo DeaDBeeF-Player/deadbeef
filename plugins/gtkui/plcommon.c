@@ -74,7 +74,7 @@ rewrite_column_config (DdbListview *listview, const char *name) {
 #define ART_PADDING_HORZ 8
 #define ART_PADDING_VERT 0
 
-void draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListviewIter it, DdbListviewIter group_it, int column, int group_y, int x, int y, int width, int height) {
+void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, DdbListviewIter group_it, int column, int group_y, int x, int y, int width, int height) {
     const char *ctitle;
     int cwidth;
     int calign_right;
@@ -89,20 +89,27 @@ void draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListview
 
     if (cinf->id == DB_COLUMN_ALBUM_ART) {
         if (theming) {
+#if GTK_CHECK_VERSION(3,0,0)
+            cairo_rectangle (cr, x, y, width, height);
+            cairo_clip (cr);
+            gtk_paint_flat_box (gtk_widget_get_style (theme_treeview), cr, GTK_STATE_NORMAL, GTK_SHADOW_NONE, theme_treeview, "cell_even_ruled", x-1, y, width+2, height);
+            cairo_reset_clip (cr);
+#else
             GdkRectangle clip = {
                 .x = x,
                 .y = y,
                 .width = width,
                 .height = height,
             };
-            gtk_paint_flat_box (theme_treeview->style, drawable, GTK_STATE_NORMAL, GTK_SHADOW_NONE, &clip, theme_treeview, "cell_even_ruled", x-1, y, width+2, height);
+            gtk_paint_flat_box (gtk_widget_get_style (theme_treeview), gtk_widget_get_window (listview->list), GTK_STATE_NORMAL, GTK_SHADOW_NONE, &clip, theme_treeview, "cell_even_ruled", x-1, y, width+2, height);
+#endif
         }
         else {
-            GdkGC *gc = gdk_gc_new (drawable);
             GdkColor clr;
-            gdk_gc_set_rgb_fg_color (gc, (gtkui_get_listview_even_row_color (&clr), &clr));
-            gdk_draw_rectangle (drawable, gc, TRUE, x, y, width, height);
-            g_object_unref (gc);
+            gtkui_get_listview_even_row_color (&clr);
+            cairo_set_source_rgb (cr, clr.red/65535.f, clr.green/65535.f, clr.blue/65535.f);
+            cairo_rectangle (cr, x, y, width, height);
+            cairo_fill (cr);
         }
         int art_width = width - ART_PADDING_HORZ * 2;
         int art_y = y; // dest y
@@ -120,7 +127,6 @@ void draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListview
             if (group_it) {
                 int h = cwidth - group_y;
                 h = min (height, art_h);
-//                gdk_draw_rectangle (drawable, GTK_WIDGET (listview)->style->white_gc, TRUE, x, y, width, h);
                 const char *album = deadbeef->pl_find_meta (group_it, "album");
                 const char *artist = deadbeef->pl_find_meta (group_it, "artist");
                 if (!album || !*album) {
@@ -135,8 +141,9 @@ void draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListview
                         pw = min (art_width, pw);
                         ph -= sy;
                         ph = min (ph, h);
-                        gdk_draw_pixbuf (drawable, GTK_WIDGET (listview)->style->white_gc, pixbuf, 0, sy, x + ART_PADDING_HORZ, art_y, pw, ph, GDK_RGB_DITHER_NONE, 0, 0);
-//                        gdk_draw_rectangle (drawable, GTK_WIDGET (listview)->style->black_gc, FALSE, x + ART_PADDING_HORZ, art_y, pw, ph);
+                        gdk_cairo_set_source_pixbuf (cr, pixbuf, (x + ART_PADDING_HORZ)-0, (art_y)-sy);
+                        cairo_rectangle (cr, x + ART_PADDING_HORZ, art_y, pw, ph);
+                        cairo_fill (cr);
                     }
                     g_object_unref (pixbuf);
                 }
@@ -156,7 +163,9 @@ void draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListview
         else {
             pixbuf = buffering16_pixbuf;
         }
-        gdk_draw_pixbuf (drawable, GTK_WIDGET (listview)->style->black_gc, pixbuf, 0, 0, x + cwidth/2 - 8, y + height/2 - 8, 16, 16, GDK_RGB_DITHER_NONE, 0, 0);
+        gdk_cairo_set_source_pixbuf (cr, pixbuf, x + cwidth/2 - 8, y + height/2 - 8);
+        cairo_rectangle (cr, x + cwidth/2 - 8, y + height/2 - 8, 16, 16);
+        cairo_fill (cr);
     }
     else if (it) {
         char text[1024];
@@ -164,10 +173,10 @@ void draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListview
         GdkColor *color = NULL;
         if (theming) {
             if (deadbeef->pl_is_selected (it)) {
-                color = &theme_treeview->style->text[GTK_STATE_SELECTED];
+                color = &gtk_widget_get_style (theme_treeview)->text[GTK_STATE_SELECTED];
             }
             else {
-                color = &theme_treeview->style->text[GTK_STATE_NORMAL];
+                color = &gtk_widget_get_style (theme_treeview)->text[GTK_STATE_NORMAL];
             }
         }
         else {
@@ -182,7 +191,7 @@ void draw_column_data (DdbListview *listview, GdkDrawable *drawable, DdbListview
         float fg[3] = {(float)color->red/0xffff, (float)color->green/0xffff, (float)color->blue/0xffff};
         draw_set_fg_color (fg);
 
-        draw_init_font (GTK_WIDGET (listview)->style);
+        draw_init_font (gtk_widget_get_style (GTK_WIDGET (listview)));
         if (gtkui_embolden_current_track && it && it == playing_track) {
             draw_init_font_bold ();
         }
@@ -281,6 +290,7 @@ on_clear1_activate                     (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     deadbeef->pl_clear ();
+    deadbeef->pl_save_all ();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
@@ -289,6 +299,7 @@ on_remove1_activate                    (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     int cursor = deadbeef->pl_delete_selected ();
+    deadbeef->pl_save_all ();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
@@ -298,6 +309,7 @@ on_crop1_activate                      (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     deadbeef->pl_crop_selected ();
+    deadbeef->pl_save_all ();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
@@ -306,6 +318,7 @@ on_remove2_activate                    (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     int cursor = deadbeef->pl_delete_selected ();
+    deadbeef->pl_save_all ();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
@@ -340,6 +353,7 @@ on_remove_from_disk_activate                    (GtkMenuItem     *menuitem,
     }
 
     int cursor = deadbeef->pl_delete_selected ();
+    deadbeef->pl_save_all ();
     deadbeef->pl_unlock ();
 
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
@@ -378,7 +392,7 @@ actionitem_activate (GtkMenuItem     *menuitem,
 
 #define HOOKUP_OBJECT(component,widget,name) \
   g_object_set_data_full (G_OBJECT (component), name, \
-    gtk_widget_ref (widget), (GDestroyNotify) gtk_widget_unref)
+    g_object_ref (widget), (GDestroyNotify) g_object_unref)
 
 
 static GtkWidget*
@@ -392,7 +406,7 @@ find_popup                          (GtkWidget       *widget,
       if (GTK_IS_MENU (widget))
         parent = gtk_menu_get_attach_widget (GTK_MENU (widget));
       else
-        parent = widget->parent;
+        parent = gtk_widget_get_parent (widget);
       if (!parent)
         parent = (GtkWidget*) g_object_get_data (G_OBJECT (widget), "GladeParentKey");
       if (parent == NULL)
@@ -404,6 +418,7 @@ find_popup                          (GtkWidget       *widget,
                                                  widget_name);
   return found_widget;
 }
+
 void
 list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     clicked_idx = deadbeef->pl_get_idx_of (it);

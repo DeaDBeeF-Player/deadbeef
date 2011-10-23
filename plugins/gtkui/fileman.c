@@ -74,12 +74,16 @@ gtkpl_add_files (GSList *lst) {
     g_slist_free (lst);
     deadbeef->pl_add_files_end ();
     deadbeef->plt_unref (plt);
+    deadbeef->pl_save_all ();
+    deadbeef->conf_save ();
 }
 
 static void
 add_dirs_worker (void *data) {
     GSList *lst = (GSList *)data;
     gtkpl_add_dirs (lst);
+    deadbeef->pl_save_all ();
+    deadbeef->conf_save ();
 }
 
 void
@@ -104,6 +108,8 @@ static void
 open_files_worker (void *data) {
     GSList *lst = (GSList *)data;
     gtkpl_add_files (lst);
+    deadbeef->pl_save_all ();
+    deadbeef->conf_save ();
     deadbeef->pl_set_cursor (PL_MAIN, 0);
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
     deadbeef->sendmessage (DB_EV_PLAY_CURRENT, 0, 1, 0);
@@ -230,6 +236,7 @@ gtkpl_add_fm_dropped_files (DB_playItem_t *drop_before, char *ptr, int length) {
 
     deadbeef->pl_add_files_end ();
     deadbeef->plt_unref (plt);
+    deadbeef->pl_save_all ();
     g_idle_add (set_dnd_cursor_idle, first);
 }
 

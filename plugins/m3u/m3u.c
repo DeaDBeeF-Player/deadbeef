@@ -58,14 +58,45 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
     }
     deadbeef->fread (buffer, 1, sz, fp);
     deadbeef->fclose (fp);
+
+    int line = 0;
+    int read_extm3u = 0;
+
     const uint8_t *p = buffer;
     const uint8_t *end = buffer+sz;
+    const uint8_t *e;
+    int length = -1;
+    char title[1000] = "";
+    char artist[1000] = "";
     while (p < end) {
+        line++;
         p = skipspaces (p, end);
         if (p >= end) {
             break;
         }
         if (*p == '#') {
+            if (line == 1) {
+                if (end - p >= 7 && !strncmp (p, "#EXTM3U", 7)) {
+                    read_extm3u = 1;
+                }
+            }
+            else if (read_extm3u) {
+                if (end - p >= 8 && !strncmp (p, "#EXTINF:", 8)) {
+                    length = -1;
+                    title[0] = 0;
+                    artist[0] = 0;
+                    p += 8;
+                    e = p;
+                    while (e < end && *e >= 0x20) {
+                        e++;
+                    }
+                    int n = e-p;
+                    uint8_t nm[n+1];
+                    memcpy (nm, p, n);
+                    nm[n] = 0;
+                    sscanf (nm, "%d,%1000s - %1000s", &length, artist, title);
+                }
+            }
             while (p < end && *p >= 0x20) {
                 p++;
             }
@@ -74,7 +105,7 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
             }
             continue;
         }
-        const uint8_t *e = p;
+        e = p;
         while (e < end && *e >= 0x20) {
             e++;
         }
@@ -87,6 +118,18 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
         if (strrchr (nm, '/')) {
             trace ("pl_insert_m3u: adding file %s\n", nm);
             it = deadbeef->plt_insert_file (plt, after, nm, pabort, cb, user_data);
+            if (length >= 0) {
+                deadbeef->plt_set_item_duration (plt, it, length);
+            }
+            if (title[0]) {
+                deadbeef->pl_replace_meta (it, "title", title);
+            }
+            else if (artist[0]) {
+                deadbeef->pl_replace_meta (it, "title", " ");
+            }
+            if (artist[0]) {
+                deadbeef->pl_replace_meta (it, "artist", artist);
+            }
         }
         else {
             int l = strlen (nm);
@@ -341,19 +384,20 @@ load_pls (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
 static DB_playItem_t *
 m3uplug_load (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data) {
     const char *ext = strrchr (fname, '.');
-    if (!ext) {
-        return NULL;
-    }
-    ext++;
-
-    if (!strcasecmp (ext, "m3u") || !strcasecmp (ext, "m3u8")) {
-        return load_m3u (plt, after, fname, pabort, cb, user_data);
-    }
-    else if (!strcasecmp (ext, "pls")) {
-        return load_pls (plt, after, fname, pabort, cb, user_data);
+    if (ext) {
+        ext++;
     }
 
-    return NULL;
+    DB_playItem_t *ret = NULL;
+    if (ext && !strcasecmp (ext, "pls")) {
+        ret = load_pls (plt, after, fname, pabort, cb, user_data);
+    }
+    
+    if (!ret) {
+        ret = load_m3u (plt, after, fname, pabort, cb, user_data);
+    }
+
+    return ret;
 }
 
 int

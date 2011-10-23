@@ -77,7 +77,7 @@ int gtkui_embolden_current_track;
 void
 gtkpl_init (void) {
     theme_treeview = gtk_tree_view_new ();
-    GTK_WIDGET_UNSET_FLAGS (theme_treeview, GTK_CAN_FOCUS);
+    gtk_widget_set_can_focus (theme_treeview, FALSE);
     gtk_widget_show (theme_treeview);
     GtkWidget *vbox1 = lookup_widget (mainwin, "vbox1");
     gtk_box_pack_start (GTK_BOX (vbox1), theme_treeview, FALSE, FALSE, 0);
@@ -115,7 +115,7 @@ static struct timeval last_br_update;
 
 static gboolean
 update_songinfo (gpointer ctx) {
-    int iconified = gdk_window_get_state(mainwin->window) & GDK_WINDOW_STATE_ICONIFIED;
+    int iconified = gdk_window_get_state(gtk_widget_get_window(mainwin)) & GDK_WINDOW_STATE_ICONIFIED;
     if (!gtk_widget_get_visible (mainwin) || iconified) {
         return FALSE;
     }
@@ -216,7 +216,9 @@ update_songinfo (gpointer ctx) {
         GtkWidget *widget = lookup_widget (mainwin, "seekbar");
         // translate volume to seekbar pixels
         songpos /= duration;
-        songpos *= widget->allocation.width;
+        GtkAllocation a;
+        gtk_widget_get_allocation (widget, &a);
+        songpos *= a.width;
         if (fabs (songpos - last_songpos) > 0.01) {
             gtk_widget_queue_draw (widget);
             last_songpos = songpos;
@@ -261,6 +263,16 @@ on_trayicon_scroll_event               (GtkWidget       *widget,
     deadbeef->volume_set_db (vol);
     volumebar_redraw ();
 
+    //Update volume bar tooltip
+    if (mainwin) {
+        GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
+        char s[100];
+        int db = vol;
+        snprintf (s, sizeof (s), "%s%ddB", db < 0 ? "" : "+", db);
+        gtk_widget_set_tooltip_text (volumebar, s);
+        gtk_widget_trigger_tooltip_query (volumebar);
+    }
+
 #if 0
     char str[100];
     if (deadbeef->conf_get_int ("gtkui.show_gain_in_db", 1)) {
@@ -277,7 +289,7 @@ on_trayicon_scroll_event               (GtkWidget       *widget,
 
 void
 mainwin_toggle_visible (void) {
-    int iconified = gdk_window_get_state(mainwin->window) & GDK_WINDOW_STATE_ICONIFIED;
+    int iconified = gdk_window_get_state(gtk_widget_get_window(mainwin)) & GDK_WINDOW_STATE_ICONIFIED;
     if (gtk_widget_get_visible (mainwin) && !iconified) {
         gtk_widget_hide (mainwin);
     }
@@ -355,6 +367,10 @@ redraw_queued_tracks (DdbListview *pl) {
 gboolean
 redraw_queued_tracks_cb (gpointer plt) {
     DdbListview *list = plt;
+    int iconified = gdk_window_get_state(gtk_widget_get_window(mainwin)) & GDK_WINDOW_STATE_ICONIFIED;
+    if (!gtk_widget_get_visible (mainwin) || iconified) {
+        return FALSE;
+    }
     redraw_queued_tracks (list);
     return FALSE;
 }
@@ -476,7 +492,7 @@ gtkui_on_frameupdate (gpointer data) {
 static gboolean
 gtkui_volumechanged_cb (gpointer ctx) {
     GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
-    gdk_window_invalidate_rect (volumebar->window, NULL, FALSE);
+    gdk_window_invalidate_rect (gtk_widget_get_window (volumebar), NULL, FALSE);
     return FALSE;
 }
 
@@ -828,7 +844,7 @@ update_win_title_idle (gpointer data) {
 
 static gboolean
 redraw_seekbar_cb (gpointer nothing) {
-    int iconified = gdk_window_get_state(mainwin->window) & GDK_WINDOW_STATE_ICONIFIED;
+    int iconified = gdk_window_get_state(gtk_widget_get_window(mainwin)) & GDK_WINDOW_STATE_ICONIFIED;
     if (!gtk_widget_get_visible (mainwin) || iconified) {
         return FALSE;
     }
@@ -871,7 +887,7 @@ gtkui_add_new_playlist (void) {
 void
 volumebar_redraw (void) {
     GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
-    gdk_window_invalidate_rect (volumebar->window, NULL, FALSE);
+    gdk_window_invalidate_rect (gtk_widget_get_window (volumebar), NULL, FALSE);
 }
 
 //void
@@ -1304,11 +1320,19 @@ gtkui_get_mainwin (void) {
     return mainwin;
 }
 
+#if !GTK_CHECK_VERSION(3,0,0)
 DB_plugin_t *
 ddb_gui_GTK2_load (DB_functions_t *api) {
     deadbeef = api;
     return DB_PLUGIN (&plugin);
 }
+#else
+DB_plugin_t *
+ddb_gui_GTK3_load (DB_functions_t *api) {
+    deadbeef = api;
+    return DB_PLUGIN (&plugin);
+}
+#endif
 
 static const char settings_dlg[] =
     "property \"Ask confirmation to delete files from disk\" checkbox gtkui.delete_files_ask 1;\n"
@@ -1317,6 +1341,7 @@ static const char settings_dlg[] =
     "property \"Custom status icon\" entry gtkui.custom_tray_icon \"" TRAY_ICON "\" ;\n"
     "property \"Run gtk_init with --sync (debug mode)\" checkbox gtkui.sync 0;\n"
     "property \"Add separators between plugin context menu items\" checkbox gtkui.action_separators 0;\n"
+    "property \"Auto-resize columns to fit the main window\" checkbox gtkui.autoresize_columns 0;\n"
 ;
 
 // define plugin interface
@@ -1326,7 +1351,11 @@ static ddb_gtkui_t plugin = {
     .gui.plugin.version_major = 1,
     .gui.plugin.version_minor = 0,
     .gui.plugin.type = DB_PLUGIN_MISC,
+#if GTK_CHECK_VERSION(3,0,0)
+    .gui.plugin.id = "gtkui3",
+#else
     .gui.plugin.id = "gtkui",
+#endif
     .gui.plugin.name = "Standard GTK2 user interface",
     .gui.plugin.descr = "Default DeaDBeeF GUI",
     .gui.plugin.copyright = 

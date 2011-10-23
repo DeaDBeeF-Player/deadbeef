@@ -27,7 +27,7 @@
 void
 wingeom_save (GtkWidget *widget, const char *name) {
 #if GTK_CHECK_VERSION(2,2,0)
-	GdkWindowState window_state = gdk_window_get_state (GDK_WINDOW (widget->window));
+	GdkWindowState window_state = gdk_window_get_state (gtk_widget_get_window (widget));
 #else
 	GdkWindowState window_state = gdk_window_get_state (G_OBJECT (widget));
 #endif
@@ -46,6 +46,7 @@ wingeom_save (GtkWidget *widget, const char *name) {
         snprintf (key, sizeof (key), "%s.geometry.h", name);
         deadbeef->conf_set_int (key, h);
     }
+    deadbeef->conf_save ();
 }
 
 void

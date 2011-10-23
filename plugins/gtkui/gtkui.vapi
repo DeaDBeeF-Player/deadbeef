@@ -1,5 +1,4 @@
-[CCode (cheader_filename = "gtkui.h")]
-[CCode (cheader_filename = "drawing.h")]
+[CCode (cheader_filename = "drawing.h,gtkui.h")]
 [CCode (cprefix = "Gtkui", lower_case_cprefix = "gtkui_")]
 namespace Gtkui {
         public static unowned Gdk.Color get_bar_foreground_color ();

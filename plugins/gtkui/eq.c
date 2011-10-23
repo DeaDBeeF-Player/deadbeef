@@ -97,7 +97,7 @@ on_zero_all_clicked                  (GtkButton       *button,
                 // set dsp
                 set_param (eq, i+1, 0);
             }
-            gdk_window_invalidate_rect (eqwin->window, NULL, FALSE);
+            gtk_widget_queue_draw (eqwin);
         }
     }
 }
@@ -110,7 +110,7 @@ on_zero_preamp_clicked                  (GtkButton       *button,
         if (eq) {
             set_param (eq, 0, 0);
             ddb_equalizer_set_preamp (DDB_EQUALIZER (eqwin), 0);
-            gdk_window_invalidate_rect (eqwin->window, NULL, FALSE);
+            gtk_widget_queue_draw (eqwin);
         }
     }
 }
@@ -125,7 +125,7 @@ on_zero_bands_clicked                  (GtkButton       *button,
                 ddb_equalizer_set_band (DDB_EQUALIZER (eqwin), i, 0);
                 set_param (eq, i+1, 0);
             }
-            gdk_window_invalidate_rect (eqwin->window, NULL, FALSE);
+            gtk_widget_queue_draw (eqwin);
         }
     }
 }
@@ -227,7 +227,7 @@ on_load_preset_clicked                  (GtkMenuItem       *menuitem,
                             ddb_equalizer_set_band (DDB_EQUALIZER (eqwin), i, vals[i]);
                             set_param (eq, i+1, vals[i]);
                         }
-                        gdk_window_invalidate_rect (eqwin->window, NULL, FALSE);
+                        gtk_widget_queue_draw (eqwin);
                         deadbeef->conf_save ();
                     }
                 }
@@ -293,7 +293,7 @@ on_import_fb2k_preset_clicked                  (GtkButton       *button,
                             ddb_equalizer_set_band (DDB_EQUALIZER (eqwin), i, vals[i]);
                             set_param (eq, i+1, vals[i]);
                         }
-                        gdk_window_invalidate_rect (eqwin->window, NULL, FALSE);
+                        gtk_widget_queue_draw (eqwin);
                         deadbeef->conf_save ();
                     }
                 }

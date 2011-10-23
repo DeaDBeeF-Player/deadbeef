@@ -35,58 +35,17 @@ ddb_volumebar_send_configure (DdbVolumeBar *darea)
 
   widget = GTK_WIDGET (darea);
 
-  event->configure.window = g_object_ref (widget->window);
+  event->configure.window = g_object_ref (gtk_widget_get_window(widget));
   event->configure.send_event = TRUE;
-  event->configure.x = widget->allocation.x;
-  event->configure.y = widget->allocation.y;
-  event->configure.width = widget->allocation.width;
-  event->configure.height = widget->allocation.height;
+  GtkAllocation a;
+  gtk_widget_get_allocation (widget, &a);
+  event->configure.x = a.x;
+  event->configure.y = a.y;
+  event->configure.width = a.width;
+  event->configure.height = a.height;
   
   gtk_widget_event (widget, event);
   gdk_event_free (event);
-}
-
-static void
-ddb_volumebar_realize (GtkWidget *widget) {
-  DdbVolumeBar *darea = DDB_VOLUMEBAR (widget);
-
-  gtk_widget_set_has_window (widget, FALSE);
-  GTK_WIDGET_CLASS (ddb_volumebar_parent_class)->realize (widget);
-
-#if 0
-  if (GTK_WIDGET_NO_WINDOW (widget))
-    {
-      GTK_WIDGET_CLASS (ddb_volumebar_parent_class)->realize (widget);
-    }
-  else
-    {
-      GTK_WIDGET_SET_FLAGS (widget, GTK_REALIZED);
-      gint attributes_mask;
-      GdkWindowAttr attributes;
-
-      attributes.window_type = GDK_WINDOW_CHILD;
-      attributes.x = widget->allocation.x;
-      attributes.y = widget->allocation.y;
-      attributes.width = widget->allocation.width;
-      attributes.height = widget->allocation.height;
-      attributes.wclass = GDK_INPUT_OUTPUT;
-      attributes.visual = gtk_widget_get_visual (widget);
-      attributes.colormap = gtk_widget_get_colormap (widget);
-      attributes.event_mask = gtk_widget_get_events (widget);
-      attributes.event_mask |= GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK;
-
-      attributes_mask = GDK_WA_X | GDK_WA_Y | GDK_WA_VISUAL | GDK_WA_COLORMAP;
-
-      widget->window = gdk_window_new (gtk_widget_get_parent_window (widget),
-                                       &attributes, attributes_mask);
-      gdk_window_set_user_data (widget->window, darea);
-
-      widget->style = gtk_style_attach (widget->style, widget->window);
-      gtk_style_set_background (widget->style, widget->window, GTK_STATE_NORMAL);
-    }
-
-  ddb_volumebar_send_configure (DDB_VOLUMEBAR (widget));
-#endif
 }
 
 static void
@@ -96,18 +55,21 @@ ddb_volumebar_size_allocate (GtkWidget     *widget,
   g_return_if_fail (DDB_IS_VOLUMEBAR (widget));
   g_return_if_fail (allocation != NULL);
 
-  widget->allocation = *allocation;
+  gtk_widget_set_allocation (widget, allocation);
 
   if (gtk_widget_get_realized (widget))
     {
       if (gtk_widget_get_has_window (widget))
-        gdk_window_move_resize (widget->window,
+        gdk_window_move_resize (gtk_widget_get_window(widget),
                                 allocation->x, allocation->y,
                                 allocation->width, allocation->height);
 
       ddb_volumebar_send_configure (DDB_VOLUMEBAR (widget));
     }
 }
+
+gboolean
+on_volumebar_draw (GtkWidget    *widget, cairo_t *cr);
 
 gboolean
 on_volumebar_expose_event                 (GtkWidget       *widget,
@@ -136,9 +98,12 @@ static void
 ddb_volumebar_class_init(DdbVolumeBarClass *class)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (class);
-  widget_class->realize = ddb_volumebar_realize;
   widget_class->size_allocate = ddb_volumebar_size_allocate;
+#if GTK_CHECK_VERSION(3,0,0)
+  widget_class->draw = on_volumebar_draw;
+#else
   widget_class->expose_event = on_volumebar_expose_event;
+#endif
   widget_class->button_press_event = on_volumebar_button_press_event;
   widget_class->button_release_event = on_volumebar_button_release_event;
   widget_class->motion_notify_event = on_volumebar_motion_notify_event;
@@ -157,43 +122,54 @@ ddb_volumebar_init(DdbVolumeBar *volumebar)
     int db = deadbeef->volume_get_db ();
     snprintf (s, sizeof (s), "%s%ddB", db < 0 ? "" : "+", db);
     gtk_widget_set_tooltip_text (GTK_WIDGET (volumebar), s);
+    gtk_widget_set_has_window (GTK_WIDGET (volumebar), FALSE);
 }
 
 void
-volumebar_draw (GtkWidget *widget) {
+volumebar_draw (GtkWidget *widget, cairo_t *cr) {
     if (!widget) {
         return;
     }
-    GdkDrawable *volumebar_backbuf = GDK_DRAWABLE (widget->window);
+
+#if GTK_CHECK_VERSION(3,0,0)
+    GtkAllocation allocation;
+    gtk_widget_get_allocation (widget, &allocation);
+    cairo_translate (cr, -allocation.x, -allocation.y);
+#endif
+
     float range = -deadbeef->volume_get_min_db ();
-    int n = widget->allocation.width / 4;
+    GtkAllocation a;
+    gtk_widget_get_allocation (widget, &a);
+    int n = a.width / 4;
     float vol = (range + deadbeef->volume_get_db ()) / range * n;
     float h = 17;
 
-    GdkGC *back_gc = gdk_gc_new (widget->window);
-    GdkColor clr;
-    gdk_gc_set_rgb_fg_color (back_gc, (gtkui_get_bar_background_color (&clr), &clr));
-
-    GdkGC *front_gc = gdk_gc_new (widget->window);
-    gdk_gc_set_rgb_fg_color (front_gc, (gtkui_get_bar_foreground_color (&clr), &clr));
+    GdkColor clr_fg;
+    GdkColor clr_bg;
+    gtkui_get_bar_foreground_color (&clr_fg);
+    gtkui_get_bar_background_color (&clr_bg);
 
     for (int i = 0; i < n; i++) {
         float iy = (float)i + 3;
         int _x = i * 4;
         int _h = h * iy / n;
-        int _y = widget->allocation.height/2-h/2;
+        int _y = a.height/2-h/2;
         _y += (h - _h);
         int _w = 3;
         if (i < vol) {
-            gdk_draw_rectangle (volumebar_backbuf, front_gc, TRUE, _x + widget->allocation.x, _y + widget->allocation.y, _w, _h);
+            cairo_set_source_rgb (cr, clr_fg.red/65535.f, clr_fg.green/65535.f, clr_fg.blue/65535.f);
+            cairo_rectangle (cr, _x + a.x, _y + a.y, _w, _h);
+            cairo_fill (cr);
         }
         else {
-            gdk_draw_rectangle (volumebar_backbuf, back_gc, TRUE, _x + widget->allocation.x, _y + widget->allocation.y, _w, _h);
+            cairo_set_source_rgb (cr, clr_bg.red/65535.f, clr_bg.green/65535.f, clr_bg.blue/65535.f);
+            cairo_rectangle (cr, _x + a.x, _y + a.y, _w, _h);
+            cairo_fill (cr);
         }
     }
 #if 0
     if (DDB_VOLUMEBAR (widget)->show_dbs) {
-        draw_begin ((uintptr_t)widget->window);
+        draw_begin ((uintptr_t)gtk_widget_get_window(widget));
         draw_init_font (widget->style);
         char s[100];
         int db = deadbeef->volume_get_db ();
@@ -204,25 +180,34 @@ volumebar_draw (GtkWidget *widget) {
         draw_end ();
     }
 #endif
-    g_object_unref (back_gc);
-    g_object_unref (front_gc);
 }
 
+gboolean
+on_volumebar_draw (GtkWidget    *widget, cairo_t *cr) {
+    volumebar_draw (widget, cr);
+}
+
+#if !GTK_CHECK_VERSION(3,0,0)
 gboolean
 on_volumebar_expose_event                 (GtkWidget       *widget,
                                         GdkEventExpose  *event)
 {
-    volumebar_draw (widget);
+    cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
+    on_volumebar_draw (widget, cr);
+    cairo_destroy (cr);
     return FALSE;
 }
+#endif
 
 gboolean
 on_volumebar_motion_notify_event       (GtkWidget       *widget,
                                         GdkEventMotion  *event)
 {
+    GtkAllocation a;
+    gtk_widget_get_allocation (widget, &a);
     if (event->state & GDK_BUTTON1_MASK) {
         float range = -deadbeef->volume_get_min_db ();
-        float volume = (event->x - widget->allocation.x) / widget->allocation.width * range - range;
+        float volume = (event->x - a.x) / a.width * range - range;
         if (volume > 0) {
             volume = 0;
         }
@@ -244,9 +229,11 @@ gboolean
 on_volumebar_button_press_event        (GtkWidget       *widget,
                                         GdkEventButton  *event)
 {
+    GtkAllocation a;
+    gtk_widget_get_allocation (widget, &a);
     if (event->button == 1) {
         float range = -deadbeef->volume_get_min_db ();
-        float volume = (event->x - widget->allocation.x)/ widget->allocation.width * range - range;
+        float volume = (event->x - a.x)/ a.width * range - range;
         if (volume < -range) {
             volume = -range;
         }

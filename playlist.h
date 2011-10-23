@@ -244,8 +244,12 @@ pl_append_meta (playItem_t *it, const char *key, const char *value);
 
 // must be used in explicit pl_lock/unlock block
 // that makes it possible to avoid copying metadata on every access
+// pl_find_meta may return overriden value (where the key is prefixed with '!')
 const char *
 pl_find_meta (playItem_t *it, const char *key);
+
+const char *
+pl_find_meta_raw (playItem_t *it, const char *key);
 
 int
 pl_find_meta_int (playItem_t *it, const char *key, int def);

@@ -41,10 +41,10 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
             return;
         }
         // find end of normal metadata
-        if (!normaltail && (m->key[0] == ':' || m->key[0] == '_')) {
+        if (!normaltail && (m->key[0] == ':' || m->key[0] == '_' || m->key[0] == '!')) {
             normaltail = tail;
             propstart = m;
-            if (key[0] != ':' && key[0] != '_') {
+            if (key[0] != ':' && key[0] != '_' && key[0] != '!') {
                 break;
             }
         }
@@ -63,7 +63,7 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
     m->key = metacache_add_string (key);
     m->value = metacache_add_string (value);
 
-    if (key[0] == ':' || key[0] == '_') {
+    if (key[0] == ':' || key[0] == '_' || key[0] == '!') {
         if (tail) {
             tail->next = m;
         }
@@ -86,7 +86,7 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
 void
 pl_append_meta (playItem_t *it, const char *key, const char *value) {
     pl_lock ();
-    const char *old = pl_find_meta (it, key);
+    const char *old = pl_find_meta_raw (it, key);
 
     if (old && (!strcasecmp (key, "cuesheet") || !strcasecmp (key, "log"))) {
         pl_unlock ();
@@ -192,6 +192,34 @@ const char *
 pl_find_meta (playItem_t *it, const char *key) {
     pl_lock ();
     DB_metaInfo_t *m = it->meta;
+
+    if (key && key[0] == ':') {
+        // try to find an override
+        while (m) {
+            if (m->key[0] == '!' && !strcasecmp (key+1, m->key+1)) {
+                pl_unlock ();
+                return m->value;
+            }
+            m = m->next;
+        }
+    }
+
+    m = it->meta;
+    while (m) {
+        if (!strcasecmp (key, m->key)) {
+            pl_unlock ();
+            return m->value;
+        }
+        m = m->next;
+    }
+    pl_unlock ();
+    return NULL;
+}
+
+const char *
+pl_find_meta_raw (playItem_t *it, const char *key) {
+    pl_lock ();
+    DB_metaInfo_t *m = it->meta;
     while (m) {
         if (!strcasecmp (key, m->key)) {
             pl_unlock ();
@@ -257,7 +285,7 @@ pl_delete_all_meta (playItem_t *it) {
     DB_metaInfo_t *prev = NULL;
     while (m) {
         DB_metaInfo_t *next = m->next;
-        if (m->key[0] == ':') {
+        if (m->key[0] == ':'  || m->key[0] == '_' || m->key[0] == '!') {
             prev = m;
         }
         else {
