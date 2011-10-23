@@ -353,7 +353,7 @@ DB_plugin_t * pulse_load(DB_functions_t *api)
 
 static const char settings_dlg[] =
     "property \"PulseAudio server\" entry " CONFSTR_PULSE_SERVERADDR " default;\n"
-    "property \"Preferred buffer size\" entry " CONFSTR_PULSE_BUFFERSIZE " 4096;\n";
+    "property \"Preferred buffer size\" entry " CONFSTR_PULSE_BUFFERSIZE " 8192;\n";
 
 static DB_output_t plugin =
 {
