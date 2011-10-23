@@ -19,7 +19,7 @@
 #define __MESSAGEPUMP_H
 
 #include <stdint.h>
-#include <deadbeef.h>
+#include "deadbeef.h"
 
 int messagepump_init (void);
 void messagepump_free (void);

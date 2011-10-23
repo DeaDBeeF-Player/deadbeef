@@ -107,6 +107,7 @@ AC_ARG_ENABLE(artwork-imlib2, [AS_HELP_STRING([--enable-artwork-imlib2      ], [
 AC_ARG_ENABLE(dumb,      [AS_HELP_STRING([--enable-dumb      ], [build DUMB plugin (default: auto)])], [enable_dumb=$enableval], [enable_dumb=yes])
 AC_ARG_ENABLE(shn,      [AS_HELP_STRING([--enable-shn      ], [build SHN plugin (default: auto)])], [enable_shn=$enableval], [enable_shn=yes])
 AC_ARG_ENABLE(psf,      [AS_HELP_STRING([--enable-psf      ], [build AOSDK-based PSF(,QSF,SSF,DSF) plugin (default: auto)])], [enable_psf=$enableval], [enable_psf=yes])
+AC_ARG_ENABLE(mono2stereo,      [AS_HELP_STRING([--enable-mono2stereo      ], [build mono2stereo DSP plugin (default: auto)])], [enable_mono2stereo=$enableval], [enable_mono2stereo=yes])
 
 if test "x$enable_staticlink" != "xno" ; then
     AC_DEFINE_UNQUOTED([STATICLINK], [1], [Define if building static version])
@@ -562,7 +563,11 @@ if test "x$enable_psf" != "xno" ; then
     HAVE_PSF=yes
 fi
 
-PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/ao"
+if test "x$enable_mono2stereo" != "xno" ; then
+    HAVE_MONO2STEREO=yes
+fi
+
+PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/ao plugins/mono2stereo"
 
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_FLAC, test "x$HAVE_FLACPLUGIN" = "xyes")
@@ -610,6 +615,7 @@ AM_CONDITIONAL(HAVE_YASM, test "x$HAVE_YASM" = "xyes")
 AM_CONDITIONAL(HAVE_DUMB, test "x$HAVE_DUMB" = "xyes")
 AM_CONDITIONAL(HAVE_PSF, test "x$HAVE_PSF" = "xyes")
 AM_CONDITIONAL(HAVE_SHN, test "x$HAVE_SHN" = "xyes")
+AM_CONDITIONAL(HAVE_MONO2STEREO, test "x$HAVE_MONO2STEREO" = "xyes")
 
 AC_SUBST(PLUGINS_DIRS)
 
@@ -673,6 +679,7 @@ PRINT_PLUGIN_INFO([converter],[plugin for converting files to any formats],[test
 PRINT_PLUGIN_INFO([psf],[PSF format plugin, using AOSDK],[test "x$HAVE_PSF" = "xyes"])
 PRINT_PLUGIN_INFO([dumb],[DUMB module plugin, for MOD, S3M, etc],[test "x$HAVE_DUMB" = "xyes"])
 PRINT_PLUGIN_INFO([shn],[SHN plugin based on xmms-shn],[test "x$HAVE_SHN" = "xyes"])
+PRINT_PLUGIN_INFO([mono2stereo],[mono2stereo DSP plugin],[test "x$HAVE_MONO2STEREO" = "xyes"])
 
 echo
 
@@ -717,6 +724,7 @@ plugins/converter/Makefile
 plugins/dumb/Makefile
 plugins/ao/Makefile
 plugins/shn/Makefile
+plugins/mono2stereo/Makefile
 intl/Makefile
 po/Makefile.in
 deadbeef.desktop
