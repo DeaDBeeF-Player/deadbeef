@@ -25,6 +25,10 @@ static uintptr_t imlib_mutex;
 #include <png.h>
 #endif
 
+#ifdef USE_METAFLAC
+#include <FLAC/metadata.h>
+#endif
+
 #define min(x,y) ((x)<(y)?(x):(y))
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -958,6 +962,79 @@ fetcher_thread (void *none)
                             deadbeef->fclose (fp);
                         }
                     }
+
+#ifdef USE_METAFLAC
+                    {
+                        // try to load embedded from flac metadata
+                        FLAC__StreamMetadata *meta=NULL;
+                        do{
+                            trace ("trying to load artwork flac metadata for %s\n", param->fname);
+
+                            if(!FLAC__metadata_get_picture(
+                                param->fname,                  // filename
+                                &meta,                         // picture
+                                FLAC__STREAM_METADATA_PICTURE_TYPE_FRONT_COVER,                            // type
+                                NULL,                          // mime_type
+                                NULL,                          // description
+                                (unsigned)(-1),                // max_width
+                                (unsigned)(-1),                // max_height
+                                (unsigned)(-1),                // max_depth
+                                (unsigned)(-1)                 // max_colors
+                                )){
+                                    trace ("%s don't have an embedded cover\n",param->fname);
+
+                                if(!FLAC__metadata_get_picture(
+                                    param->fname,                  // filename
+                                    &meta,                         // picture
+                                    -1,                            // type
+                                    NULL,                          // mime_type
+                                    NULL,                          // description
+                                    (unsigned)(-1),                // max_width
+                                    (unsigned)(-1),                // max_height
+                                    (unsigned)(-1),                // max_depth
+                                    (unsigned)(-1)                 // max_colors
+                                    )){
+                                        trace ("%s don't have an embedded album art\n",param->fname);
+                                        break;
+                                }
+
+                            }
+                            FLAC__StreamMetadata_Picture *pic=&(meta->data.picture);
+
+                            trace ("found flac cover art of %d bytes (%s)\n", pic->data_length, pic->description);
+                            char tmp_path[1024];
+                            char cache_path[1024];
+                            make_cache_path (cache_path, sizeof (cache_path), param->album, param->artist, -1);
+                            trace ("will write flac cover art into %s\n", cache_path);
+                            snprintf (tmp_path, sizeof (tmp_path), "%s.part", cache_path);
+                            FILE *out = fopen (tmp_path, "w+b");
+                            if (!out) {
+                                trace ("artwork: failed to open %s for writing\n", tmp_path);
+                                break;
+                            }
+                            if (fwrite (pic->data, 1, pic->data_length, out) != pic->data_length) {
+                                trace ("artwork: failed to write flac picture into %s\n", tmp_path);
+                                fclose (out);
+                                unlink (tmp_path);
+                                break;
+                            }
+                            fclose (out);
+                            int err = rename (tmp_path, cache_path);
+                            if (err != 0) {
+                                trace ("Failed not move %s to %s: %s\n", tmp_path, cache_path, strerror (err));
+                                unlink (tmp_path);
+                                break;
+                            }
+                            unlink (tmp_path);
+                            got_pic = 1;
+                        }while(0);
+
+                        if(meta!=NULL){
+                            trace ("release flac metadata block\n");
+                            FLAC__metadata_object_delete(meta);
+                        }
+                    }
+#endif
                 }
 
                 if (!got_pic && artwork_enable_local) {
