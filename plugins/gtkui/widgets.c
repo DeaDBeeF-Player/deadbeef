@@ -694,6 +694,17 @@ on_remove_tab_activate (GtkMenuItem *menuitem, gpointer user_data) {
 
 static void
 on_add_tab_activate (GtkMenuItem *menuitem, gpointer user_data) {
+    w_tabs_t *w = user_data;
+
+    ddb_gtkui_widget_t *ph;
+    ph = w_create ("placeholder");
+    w_append ((ddb_gtkui_widget_t*)w, ph);
+
+    int i = 0;
+    for (ddb_gtkui_widget_t *c = w->base.children; c; c = c->next, i++);
+    w->clicked_page = i-1;
+    gtk_notebook_set_page (GTK_NOTEBOOK (w->base.widget), w->clicked_page);
+
 }
 
 static void
