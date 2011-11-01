@@ -745,10 +745,25 @@ on_move_tab_left_activate (GtkMenuItem *menuitem, gpointer user_data) {
 
             gtk_notebook_insert_page (GTK_NOTEBOOK (w->base.widget), newchild->widget, eventbox, w->clicked_page-1);
             gtk_notebook_set_page (GTK_NOTEBOOK (w->base.widget), w->clicked_page-1);
+            w->clicked_page--;
             break;
         }
         prev = c;
     }
+}
+
+static void
+on_move_tab_right_activate (GtkMenuItem *menuitem, gpointer user_data) {
+    w_tabs_t *w = user_data;
+
+    int i = 0;
+    for (ddb_gtkui_widget_t *c = w->base.children; c; c = c->next, i++);
+    if (w->clicked_page >= i)
+        return;
+
+    gtk_notebook_set_page (GTK_NOTEBOOK (w->base.widget), ++w->clicked_page);
+    on_move_tab_left_activate (menuitem, user_data);
+    gtk_notebook_set_page (GTK_NOTEBOOK (w->base.widget), ++w->clicked_page);
 }
 
 static gboolean
@@ -773,6 +788,9 @@ tab_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_
         item = gtk_menu_item_new_with_mnemonic (_("Move tab right"));
         gtk_widget_show (item);
         gtk_container_add (GTK_CONTAINER (menu), item);
+        g_signal_connect ((gpointer) item, "activate",
+                G_CALLBACK (on_move_tab_right_activate),
+                w);
 
         item = gtk_menu_item_new_with_mnemonic (_("Remove tab"));
         gtk_widget_show (item);
