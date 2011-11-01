@@ -181,6 +181,10 @@ static time_t request_timer = 0;
 
 static void
 cover_avail_callback (const char *fname, const char *artist, const char *album, void *user_data) {
+    if (!fname) {
+        // Give up
+        return;
+    }
     deadbeef->pl_lock ();
     if (last_track && (time (NULL) - request_timer < 4)) {
         show_notification (last_track);
