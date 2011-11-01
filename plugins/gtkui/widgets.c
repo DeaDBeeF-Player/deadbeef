@@ -480,7 +480,7 @@ w_reg_widget (const char *type, const char *title, ddb_gtkui_widget_t *(*create_
     w_creator_t *c;
     for (c = w_creators; c; c = c->next) {
         if (!strcmp (c->type, type)) {
-            fprintf (stderr, "gtkui w_reg_widget: widget type %s already registered\n");
+            fprintf (stderr, "gtkui w_reg_widget: widget type %s already registered\n", type);
             return;
         }
     }
@@ -509,7 +509,7 @@ w_unreg_widget (const char *type) {
         }
         prev = c;
     }
-    fprintf (stderr, "gtkui w_unreg_widget: widget type %s is not registered\n");
+    fprintf (stderr, "gtkui w_unreg_widget: widget type %s is not registered\n", type);
 }
 
 ddb_gtkui_widget_t *
@@ -731,8 +731,8 @@ on_move_tab_left_activate (GtkMenuItem *menuitem, gpointer user_data) {
                 prev->next = newchild;
             }
             else {
-                newchild->next = w->base.children->next;
-                w->base.children->next = newchild;
+                newchild->next = w->base.children;
+                w->base.children = newchild;
             }
             GtkWidget *eventbox = gtk_event_box_new ();
             GtkWidget *label = gtk_label_new (newchild->type);
@@ -811,7 +811,7 @@ void
 w_tabs_replace (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child, ddb_gtkui_widget_t *newchild) {
     int ntab = 0;
     ddb_gtkui_widget_t *prev = NULL;
-    for (ddb_gtkui_widget_t *c = cont->children; c; c = c->next, ntab++) {
+    for (ddb_gtkui_widget_t *c = cont->children; c; prev = c, c = c->next, ntab++) {
         if (c == child) {
             newchild->next = c->next;
             if (prev) {
@@ -825,10 +825,10 @@ w_tabs_replace (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child, ddb_gtkui_w
             c->widget = NULL;
             w_destroy (c);
             GtkWidget *eventbox = gtk_event_box_new ();
-            GtkWidget *label = gtk_label_new (child->type);
+            GtkWidget *label = gtk_label_new (newchild->type);
             gtk_widget_show (eventbox);
             g_object_set_data (G_OBJECT (eventbox), "owner", cont);
-            g_signal_connect ((gpointer) eventbox, "button_press_event", G_CALLBACK (tab_button_press_event), child->widget);
+            g_signal_connect ((gpointer) eventbox, "button_press_event", G_CALLBACK (tab_button_press_event), newchild->widget);
             gtk_widget_show (label);
             gtk_container_add (GTK_CONTAINER (eventbox), label);
             gtk_widget_show (newchild->widget);
