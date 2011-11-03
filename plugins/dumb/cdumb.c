@@ -23,7 +23,7 @@
 #include <string.h>
 #include "dumb.h"
 #include "internal/it.h"
-#include <deadbeef/deadbeef.h>
+#include "../../deadbeef.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)

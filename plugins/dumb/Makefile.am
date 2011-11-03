@@ -1,14 +1,14 @@
-OUT=ddb_dumb.so
+if HAVE_DUMB
+dumbpath=@top_srcdir@/plugins/dumb/dumb-kode54
 
-CC?=gcc
+EXTRA_DIST = $(dumbpath)/readme.txt $(dumbpath)/ChangeLog $(dumbpath)/licence.txt $(dumbpath)/release.txt $(dumbpath)/todo.txt
 
-dumbpath=dumb-kode54
+pkglib_LTLIBRARIES = ddb_dumb.la
 
-CFLAGS+=-Wall -fPIC -D_GNU_SOURCE -I$(dumbpath)/include -std=c99
+AM_CFLAGS = $(CFLAGS) -I$(dumbpath)/include -std=c99
+ddb_dumb_la_LDFLAGS = -module -lm
 
-LDFLAGS+=-module -shared -lm
-
-SOURCES=\
+ddb_dumb_la_SOURCES =\
 dumb-kode54/src/it/readam.c\
 dumb-kode54/src/it/readstm.c\
 dumb-kode54/src/it/loads3m.c\
@@ -79,18 +79,29 @@ dumb-kode54/src/helpers/riff.c\
 dumb-kode54/src/helpers/memfile.c\
 dumb-kode54/src/helpers/sampbuf.c\
 dumb-kode54/src/helpers/barray.c\
+dumb-kode54/studio/include/guitop.h\
+dumb-kode54/studio/include/dumbgui.h\
+dumb-kode54/studio/include/options.h\
+dumb-kode54/studio/include/subclip.h\
+dumb-kode54/studio/include/main.h\
+dumb-kode54/studio/include/guiproc.h\
+dumb-kode54/studio/include/dumbmenu.h\
+dumb-kode54/studio/include/dumbdesk.h\
+dumb-kode54/src/tools/it/modulus.h\
+dumb-kode54/include/internal/it.h\
+dumb-kode54/include/internal/dumb.h\
+dumb-kode54/include/internal/barray.h\
+dumb-kode54/include/internal/riff.h\
+dumb-kode54/include/internal/aldumb.h\
+dumb-kode54/include/dumb.h\
+dumb-kode54/include/aldumb.h\
+dumb-kode54/winamp/in_duh.h\
+dumb-kode54/winamp/in2.h\
+dumb-kode54/winamp/resource.h\
+dumb-kode54/winamp/out.h\
+dumb-kode54/winamp/gui.h\
+dumb-kode54/src/helpers/resample.inc\
+dumb-kode54/src/helpers/resamp2.inc\
+dumb-kode54/src/helpers/resamp3.inc\
 cdumb.c
-
-OBJECTS=$(SOURCES:.c=.o)
-
-all: $(SOURCES) $(OUT)
-
-$(OUT): $(OBJECTS)
-	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
-
-.c.o:
-	$(CC) $(CFLAGS) $< -c -o $@
-
-clean:
-	rm $(OBJECTS) $(OUT)
-
+endif

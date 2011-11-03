@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include <deadbeef/deadbeef.h>
+#include "../../deadbeef.h"
 
 enum {
     M2S_PARAM_LEFTMIX,

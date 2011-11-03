@@ -598,7 +598,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             return -1;
         }
         trace("parse_aac_stream returned %x\n", offs);
-        deadbeef->pl_replace_meta (it, ":FILETYPE", "AAC");
+        deadbeef->pl_replace_meta (it, "!FILETYPE", "AAC");
     }
 
     if (offs >= 0) {
