@@ -966,11 +966,11 @@ fetcher_thread (void *none)
 #ifdef USE_METAFLAC
                     {
                         // try to load embedded from flac metadata
-                        FLAC__StreamMetadata *meta=NULL;
-                        do{
+                        FLAC__StreamMetadata *meta = NULL;
+                        do {
                             trace ("trying to load artwork flac metadata for %s\n", param->fname);
 
-                            if(!FLAC__metadata_get_picture(
+                            if (!FLAC__metadata_get_picture (
                                 param->fname,                  // filename
                                 &meta,                         // picture
                                 FLAC__STREAM_METADATA_PICTURE_TYPE_FRONT_COVER,                            // type
@@ -983,7 +983,7 @@ fetcher_thread (void *none)
                                 )){
                                     trace ("%s don't have an embedded cover\n",param->fname);
 
-                                if(!FLAC__metadata_get_picture(
+                                if (!FLAC__metadata_get_picture (
                                     param->fname,                  // filename
                                     &meta,                         // picture
                                     -1,                            // type
@@ -999,7 +999,7 @@ fetcher_thread (void *none)
                                 }
 
                             }
-                            FLAC__StreamMetadata_Picture *pic=&(meta->data.picture);
+                            FLAC__StreamMetadata_Picture *pic = &meta->data.picture;
 
                             trace ("found flac cover art of %d bytes (%s)\n", pic->data_length, pic->description);
                             char tmp_path[1024];
@@ -1027,11 +1027,11 @@ fetcher_thread (void *none)
                             }
                             unlink (tmp_path);
                             got_pic = 1;
-                        }while(0);
+                        } while (0);
 
-                        if(meta!=NULL){
+                        if (meta != NULL) {
                             trace ("release flac metadata block\n");
-                            FLAC__metadata_object_delete(meta);
+                            FLAC__metadata_object_delete (meta);
                         }
                     }
 #endif
