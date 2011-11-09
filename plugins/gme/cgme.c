@@ -115,18 +115,15 @@ cgme_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     gme_fileinfo_t *info = (gme_fileinfo_t*)_info;
     int samplerate = deadbeef->conf_get_int ("synth.samplerate", 44100);
 
-    gme_err_t res;
+    gme_err_t res = "gme uninitialized";
     const char *ext = strrchr (deadbeef->pl_find_meta (it, ":URI"), '.');
-    if (ext && !strcasecmp (ext, ".vgz")) {
-        trace ("opening gzipped vgm...\n");
-        char *buffer;
-        int sz;
-        if (!read_gzfile (deadbeef->pl_find_meta (it, ":URI"), &buffer, &sz)) {
-            res = gme_open_data (buffer, sz, &info->emu, samplerate);
-            free (buffer);
-        }
+    char *buffer;
+    int sz;
+    if (!read_gzfile (deadbeef->pl_find_meta (it, ":URI"), &buffer, &sz)) {
+        res = gme_open_data (buffer, sz, &info->emu, samplerate);
+        free (buffer);
     }
-    else {
+    if (res) {
         DB_FILE *f = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
         int64_t sz = deadbeef->fgetlength (f);
         if (sz <= 0) {
@@ -268,19 +265,16 @@ cgme_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     Music_Emu *emu;
     trace ("gme_open_file %s\n", fname);
 
-    gme_err_t res;
+    gme_err_t res = "gme uninitialized";
 
     const char *ext = strrchr (fname, '.');
-    if (ext && !strcasecmp (ext, ".vgz")) {
-        trace ("opening gzipped vgm...\n");
-        char *buffer;
-        int sz;
-        if (!read_gzfile (fname, &buffer, &sz)) {
-            res = gme_open_data (buffer, sz, &emu, gme_info_only);
-            free (buffer);
-        }
+    char *buffer;
+    int sz;
+    if (!read_gzfile (fname, &buffer, &sz)) {
+        res = gme_open_data (buffer, sz, &emu, gme_info_only);
+        free (buffer);
     }
-    else {
+    if (res) {
         DB_FILE *f = deadbeef->fopen (fname);
         if (!f) {
             return NULL;
