@@ -52,6 +52,11 @@ typedef struct cover_query_s {
     struct cover_query_s *next;
 } cover_query_t;
 
+typedef struct mutex_cond_s {
+    uintptr_t mutex;
+    uintptr_t cond;
+} mutex_cond_t;
+
 static cover_query_t *queue;
 static cover_query_t *queue_tail;
 static uintptr_t mutex;
@@ -1232,6 +1237,34 @@ get_album_art (const char *fname, const char *artist, const char *album, int siz
     return size == -1 ? strdup (get_default_cover ()) : NULL;
 }
 
+static void
+sync_callback (const char *fname, const char *artist, const char *album, void *user_data) {
+    mutex_cond_t *mc = (mutex_cond_t *)user_data;
+    if (mc) {
+        deadbeef->mutex_lock (mc->mutex);
+        deadbeef->cond_signal (mc->cond);
+        deadbeef->mutex_unlock (mc->mutex);
+    }
+}
+
+char*
+get_album_art_sync (const char *fname, const char *artist, const char *album, int size) {
+    mutex_cond_t *mc = malloc (sizeof (mutex_cond_t));
+    mc->mutex = deadbeef->mutex_create ();
+    mc->cond = deadbeef->cond_create ();
+    deadbeef->mutex_lock (mc->mutex);
+    char *image_fname = get_album_art (fname, artist, album, size, sync_callback, mc);
+    while (!image_fname) {
+        deadbeef->cond_wait (mc->cond, mc->mutex);
+        image_fname = get_album_art (fname, artist, album, size, sync_callback, mc);
+    }
+    deadbeef->mutex_unlock (mc->mutex);
+    deadbeef->mutex_free (mc->mutex);
+    deadbeef->cond_free (mc->cond);
+    free (mc);
+    return image_fname;
+}
+
 DB_plugin_t *
 artwork_load (DB_functions_t *api) {
     deadbeef = api;
@@ -1250,6 +1283,9 @@ artwork_reset (int fast) {
             free (queue->next->fname);
             free (queue->next->artist);
             free (queue->next->album);
+            if (queue->next->callback == sync_callback) {
+                sync_callback (NULL, NULL, NULL, queue->next->user_data);
+            }
             queue->next = next;
             if (next == NULL) {
                 queue_tail = queue;
@@ -1421,6 +1457,7 @@ static DB_artwork_plugin_t plugin = {
     .plugin.plugin.configdialog = settings_dlg,
     .plugin.plugin.message = artwork_message,
     .get_album_art = get_album_art,
+    .get_album_art_sync = get_album_art_sync,
     .reset = artwork_reset,
     .get_default_cover = get_default_cover,
 };
