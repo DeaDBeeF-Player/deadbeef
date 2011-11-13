@@ -22,6 +22,7 @@
 #include <FLAC/metadata.h>
 #include <math.h>
 #include "../../deadbeef.h"
+#include "../artwork/artwork.h"
 
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
@@ -921,6 +922,81 @@ cflac_write_metadata (DB_playItem_t *it) {
         }
         m = m->next;
     }
+
+    // Add Coverart if available
+    DB_artwork_plugin_t *coverart_plugin = NULL;
+    DB_plugin_t **plugins = deadbeef->plug_get_list ();
+    for (int i = 0; plugins[i]; i++) {
+        DB_plugin_t *p = plugins[i];
+        if (p->id && !strcmp (p->id, "artwork")) {
+            coverart_plugin = (DB_artwork_plugin_t *)p;
+            break;
+        }
+    }
+
+    if (coverart_plugin) {
+
+        deadbeef->pl_lock ();
+        const char *album = deadbeef->pl_find_meta (it, "album");
+        const char *artist = deadbeef->pl_find_meta (it, "artist");
+        if (!album || !*album) {
+            album = deadbeef->pl_find_meta (it, "title");
+        }
+        const char *fname = deadbeef->pl_find_meta (it, ":URI");
+        deadbeef->pl_unlock ();
+
+        char *image_fname = coverart_plugin->get_album_art_sync (fname, artist, album, -1);
+        //char *image_fname = coverart_plugin->get_album_art (fname, artist, album, -1, NULL, NULL);
+        printf ("image_fname = %s\n",image_fname);
+        if (image_fname && strcmp (image_fname, coverart_plugin->get_default_cover())) {
+            // Read file
+            DB_FILE *fp = deadbeef->fopen (image_fname);
+            FLAC__byte *coverart_data = NULL;
+            FLAC__StreamMetadata *metadata = NULL;
+            if (!fp) {
+                fprintf (stderr, "flac: cannot open coverart %s\n", image_fname);
+                goto error2;
+            }
+
+            int64_t len = deadbeef->fgetlength (fp);
+            coverart_data = malloc (len);
+            if (!coverart_data) {
+                fprintf (stderr, "flac: cannot allocate memory\n");
+                goto error2;
+            }
+            if (!deadbeef->fread (coverart_data, len, 1, fp)) {
+                fprintf (stderr, "flac: cannot read from %s\n",image_fname);
+                goto error2;
+            }
+
+            // Write Metadata
+            metadata = FLAC__metadata_object_new (FLAC__METADATA_TYPE_PICTURE);
+            if (!metadata) {
+                fprintf (stderr, "flac: failed to allocate new picture block\n");
+                goto error2;
+            }
+
+            //FLAC__metadata_object_picture_set_mime_type (...);
+            FLAC__metadata_object_picture_set_description (metadata, "Cover", true);
+            FLAC__metadata_object_picture_set_data (metadata, coverart_data,len, true);
+            metadata->data.picture.type = FLAC__STREAM_METADATA_PICTURE_TYPE_FRONT_COVER;
+
+            while (FLAC__metadata_iterator_next (iter));
+            if (!FLAC__metadata_iterator_insert_block_after (iter, metadata)) {
+                fprintf (stderr, "flac: failed to append picture block to chain\n");
+                goto error2;
+            }
+
+error2:
+            if (fp) {
+                deadbeef->fclose (fp);
+            }
+            if (coverart_data) {
+                free (coverart_data);
+            }
+        }
+    }
+
 
     if (!FLAC__metadata_chain_write (chain, 1, 0)) {
         trace ("cflac_write_metadata: FLAC__metadata_chain_write failed\n");
