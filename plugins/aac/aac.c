@@ -878,16 +878,7 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
                     break;
                 }
                 info->num_errors++;
-                int s = 0;
-                while (!s && info->remaining > 0) {
-                    int ch, sr, br, sm;
-                    s = aac_sync (info->buffer, &ch, &sr, &br, &sm);
-                    if (s == 0) {
-                        memmove (info->buffer, info->buffer+1, info->remaining-1);
-                        info->remaining--;
-                    }
-                }
-//                info->remaining = 0;
+                info->remaining = 0;
                 continue;
             }
             info->num_errors=0;
