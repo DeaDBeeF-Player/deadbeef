@@ -1240,28 +1240,25 @@ get_album_art (const char *fname, const char *artist, const char *album, int siz
 static void
 sync_callback (const char *fname, const char *artist, const char *album, void *user_data) {
     mutex_cond_t *mc = (mutex_cond_t *)user_data;
-    if (mc) {
-        deadbeef->mutex_lock (mc->mutex);
-        deadbeef->cond_signal (mc->cond);
-        deadbeef->mutex_unlock (mc->mutex);
-    }
+    deadbeef->mutex_lock (mc->mutex);
+    deadbeef->cond_signal (mc->cond);
+    deadbeef->mutex_unlock (mc->mutex);
 }
 
-char*
+static char*
 get_album_art_sync (const char *fname, const char *artist, const char *album, int size) {
-    mutex_cond_t *mc = malloc (sizeof (mutex_cond_t));
-    mc->mutex = deadbeef->mutex_create ();
-    mc->cond = deadbeef->cond_create ();
-    deadbeef->mutex_lock (mc->mutex);
-    char *image_fname = get_album_art (fname, artist, album, size, sync_callback, mc);
+    mutex_cond_t mc;
+    mc.mutex = deadbeef->mutex_create ();
+    mc.cond = deadbeef->cond_create ();
+    deadbeef->mutex_lock (mc.mutex);
+    char *image_fname = get_album_art (fname, artist, album, size, sync_callback, &mc);
     while (!image_fname) {
-        deadbeef->cond_wait (mc->cond, mc->mutex);
-        image_fname = get_album_art (fname, artist, album, size, sync_callback, mc);
+        deadbeef->cond_wait (mc.cond, mc.mutex);
+        image_fname = get_album_art (fname, artist, album, size, sync_callback, &mc);
     }
-    deadbeef->mutex_unlock (mc->mutex);
-    deadbeef->mutex_free (mc->mutex);
-    deadbeef->cond_free (mc->cond);
-    free (mc);
+    deadbeef->mutex_unlock (mc.mutex);
+    deadbeef->mutex_free (mc.mutex);
+    deadbeef->cond_free (mc.cond);
     return image_fname;
 }
 
@@ -1428,7 +1425,7 @@ static DB_artwork_plugin_t plugin = {
     .plugin.plugin.api_vmajor = 1,
     .plugin.plugin.api_vminor = 0,
     .plugin.plugin.version_major = 1,
-    .plugin.plugin.version_minor = 0,
+    .plugin.plugin.version_minor = 1,
     .plugin.plugin.type = DB_PLUGIN_MISC,
     .plugin.plugin.id = "artwork",
     .plugin.plugin.name = "Album Artwork",
@@ -1457,7 +1454,7 @@ static DB_artwork_plugin_t plugin = {
     .plugin.plugin.configdialog = settings_dlg,
     .plugin.plugin.message = artwork_message,
     .get_album_art = get_album_art,
-    .get_album_art_sync = get_album_art_sync,
     .reset = artwork_reset,
     .get_default_cover = get_default_cover,
+    .get_album_art_sync = get_album_art_sync,
 };
