@@ -928,7 +928,7 @@ cflac_write_metadata (DB_playItem_t *it) {
     DB_plugin_t **plugins = deadbeef->plug_get_list ();
     for (int i = 0; plugins[i]; i++) {
         DB_plugin_t *p = plugins[i];
-        if (p->id && !strcmp (p->id, "artwork")) {
+        if (p->id && !strcmp (p->id, "artwork") && p->version_major == 1 && p->version_minor >= 1) {
             coverart_plugin = (DB_artwork_plugin_t *)p;
             break;
         }
@@ -937,17 +937,20 @@ cflac_write_metadata (DB_playItem_t *it) {
     if (coverart_plugin) {
 
         deadbeef->pl_lock ();
-        const char *album = deadbeef->pl_find_meta (it, "album");
-        const char *artist = deadbeef->pl_find_meta (it, "artist");
-        if (!album || !*album) {
-            album = deadbeef->pl_find_meta (it, "title");
+        const char *alb = deadbeef->pl_find_meta (it, "album");
+        const char *art = deadbeef->pl_find_meta (it, "artist");
+        if (!alb || !*alb) {
+            alb = deadbeef->pl_find_meta (it, "title");
         }
-        const char *fname = deadbeef->pl_find_meta (it, ":URI");
+        const char *fn = deadbeef->pl_find_meta (it, ":URI");
+
+        char *album = alb ? strdupa (alb) : NULL;
+        char *artist = art ? strdupa (art) : NULL;
+        char *fname = fn ? strdupa (fn) : NULL;
         deadbeef->pl_unlock ();
 
         char *image_fname = coverart_plugin->get_album_art_sync (fname, artist, album, -1);
-        //char *image_fname = coverart_plugin->get_album_art (fname, artist, album, -1, NULL, NULL);
-        printf ("image_fname = %s\n",image_fname);
+
         if (image_fname && strcmp (image_fname, coverart_plugin->get_default_cover())) {
             // Read file
             DB_FILE *fp = deadbeef->fopen (image_fname);
