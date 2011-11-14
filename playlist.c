@@ -1206,265 +1206,6 @@ plt_insert_cue (playlist_t *plt, playItem_t *after, playItem_t *origin, int nums
     return plt_insert_cue_from_buffer (plt, after, origin, buf, sz, numsamples, samplerate);
 }
 
-#if 0
-playItem_t *
-plt_insert_m3u (playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
-    trace ("enter pl_insert_m3u\n");
-    // skip all empty lines and comments
-    DB_FILE *fp = vfs_fopen (fname);
-    if (!fp) {
-        trace ("failed to open file %s\n", fname);
-        return NULL;
-    }
-    int sz = vfs_fgetlength (fp);
-    if (sz > 1024*1024) {
-        vfs_fclose (fp);
-        trace ("file %s is too large to be a playlist\n", fname);
-        return NULL;
-    }
-    trace ("loading m3u...\n");
-    uint8_t buffer[sz];
-    vfs_fread (buffer, 1, sz, fp);
-    vfs_fclose (fp);
-    const uint8_t *p = buffer;
-    const uint8_t *end = buffer+sz;
-    while (p < end) {
-        p = pl_str_skipspaces (p, end);
-        if (p >= end) {
-            break;
-        }
-        if (*p == '#') {
-            while (p < end && *p >= 0x20) {
-                p++;
-            }
-            if (p >= end) {
-                break;
-            }
-            continue;
-        }
-        const uint8_t *e = p;
-        while (e < end && *e >= 0x20) {
-            e++;
-        }
-        int n = e-p;
-        uint8_t nm[n+1];
-        memcpy (nm, p, n);
-        nm[n] = 0;
-        trace ("pl_insert_m3u: adding file %s\n", nm);
-        playItem_t *it = plt_insert_file (plt, after, nm, pabort, cb, user_data);
-        if (it) {
-            after = it;
-        }
-        if (pabort && *pabort) {
-            return after;
-        }
-        p = e;
-        if (p >= end) {
-            break;
-        }
-    }
-    trace ("leave pl_insert_m3u\n");
-    return after;
-}
-
-// that has to be opened with vfs functions to allow loading from http, as
-// referenced from M3U.
-static playItem_t *
-plt_insert_pls (playlist_t *playlist, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
-    DB_FILE *fp = vfs_fopen (fname);
-    if (!fp) {
-        trace ("failed to open file %s\n", fname);
-        return NULL;
-    }
-    int sz = vfs_fgetlength (fp);
-    if (sz > 1024*1024) {
-        vfs_fclose (fp);
-        trace ("file %s is too large to be a playlist\n", fname);
-        return NULL;
-    }
-    if (sz < 10) {
-        vfs_fclose (fp);
-        trace ("file %s is too small to be a playlist (%d)\n", fname, sz);
-        return NULL;
-    }
-    vfs_rewind (fp);
-    uint8_t buffer[sz];
-    vfs_fread (buffer, 1, sz, fp);
-    vfs_fclose (fp);
-    // 1st line must be "[playlist]"
-    const uint8_t *p = buffer;
-    const uint8_t *end = buffer+sz;
-    if (strncasecmp (p, "[playlist]", 10)) {
-        trace ("file %s doesn't begin with [playlist]\n", fname);
-        return NULL;
-    }
-    p += 10;
-    p = pl_str_skipspaces (p, end);
-    if (p >= end) {
-        trace ("file %s finished before numberofentries had been read\n", fname);
-        return NULL;
-    }
-    // fetch all tracks
-    char url[1024] = "";
-    char title[1024] = "";
-    char length[20] = "";
-    int lastidx = -1;
-    while (p < end) {
-        p = pl_str_skipspaces (p, end);
-        if (p >= end) {
-            break;
-        }
-        if (end-p < 6) {
-            break;
-        }
-        const uint8_t *e;
-        int n;
-        if (!strncasecmp (p, "numberofentries=", 16) || !strncasecmp (p, "version=", 8)) {
-            while (p < end && *p >= 0x20) {
-                p++;
-            }
-            continue;
-        }
-        else if (!strncasecmp (p, "file", 4)) {
-            int idx = atoi (p + 4);
-            if (url[0] && idx != lastidx && lastidx != -1) {
-                // add track
-                playItem_t *it = plt_insert_file (playlist, after, url, pabort, cb, user_data);
-                if (it) {
-                    after = it;
-                    plt_set_item_duration (playlist, it, atoi (length));
-                    if (title[0]) {
-                        pl_delete_all_meta (it);
-                        pl_add_meta (it, "title", title);
-                    }
-                }
-                if (pabort && *pabort) {
-                    return after;
-                }
-                url[0] = 0;
-                title[0] = 0;
-                length[0] = 0;
-            }
-            lastidx = idx;
-            p += 4;
-            while (p < end && *p != '=') {
-                p++;
-            }
-            p++;
-            if (p >= end) {
-                break;
-            }
-            e = p;
-            while (e < end && *e >= 0x20) {
-                e++;
-            }
-            n = e-p;
-            n = min (n, sizeof (url)-1);
-            memcpy (url, p, n);
-            url[n] = 0;
-            trace ("url: %s\n", url);
-            p = ++e;
-        }
-        else if (!strncasecmp (p, "title", 5)) {
-            int idx = atoi (p + 5);
-            if (url[0] && idx != lastidx && lastidx != -1) {
-                // add track
-                playItem_t *it = plt_insert_file (playlist, after, url, pabort, cb, user_data);
-                if (it) {
-                    after = it;
-                    plt_set_item_duration (playlist, it, atoi (length));
-                    if (title[0]) {
-                        pl_delete_all_meta (it);
-                        pl_add_meta (it, "title", title);
-                    }
-                }
-                if (pabort && *pabort) {
-                    return after;
-                }
-                url[0] = 0;
-                title[0] = 0;
-                length[0] = 0;
-            }
-            lastidx = idx;
-            p += 5;
-            while (p < end && *p != '=') {
-                p++;
-            }
-            p++;
-            if (p >= end) {
-                break;
-            }
-            e = p;
-            while (e < end && *e >= 0x20) {
-                e++;
-            }
-            n = e-p;
-            n = min (n, sizeof (title)-1);
-            memcpy (title, p, n);
-            title[n] = 0;
-            trace ("title: %s\n", title);
-            p = ++e;
-        }
-        else if (!strncasecmp (p, "length", 6)) {
-            int idx = atoi (p + 6);
-            if (url[0] && idx != lastidx && lastidx != -1) {
-                // add track
-                playItem_t *it = plt_insert_file (playlist, after, url, pabort, cb, user_data);
-                if (it) {
-                    after = it;
-                    if (title[0]) {
-                        pl_delete_all_meta (it);
-                        pl_add_meta (it, "title", title);
-                    }
-                }
-                if (pabort && *pabort) {
-                    return after;
-                }
-                url[0] = 0;
-                title[0] = 0;
-                length[0] = 0;
-            }
-            lastidx = idx;
-            p += 6;
-            // skip =
-            while (p < end && *p != '=') {
-                p++;
-            }
-            p++;
-            if (p >= end) {
-                break;
-            }
-            e = p;
-            while (e < end && *e >= 0x20) {
-                e++;
-            }
-            n = e-p;
-            n = min (n, sizeof (length)-1);
-            memcpy (length, p, n);
-        }
-        else {
-            trace ("invalid entry in pls file: %s\n", p);
-            break;
-        }
-        while (e < end && *e < 0x20) {
-            e++;
-        }
-        p = e;
-    }
-    if (url[0]) {
-        playItem_t *it = plt_insert_file (playlist, after, url, pabort, cb, user_data);
-        if (it) {
-            after = it;
-            if (title[0]) {
-                pl_delete_all_meta (it);
-                pl_add_meta (it, "title", title);
-            }
-        }
-    }
-    return after;
-}
-#endif
-
 static int follow_symlinks = 0;
 static int ignore_archives = 0;
 
@@ -1496,13 +1237,6 @@ plt_insert_file (playlist_t *playlist, playItem_t *after, const char *fname, int
         }
     }
 
-    // detect decoder
-    const char *eol = strrchr (fname, '.');
-    if (!eol) {
-        return NULL;
-    }
-    eol++;
-
     const char *fn = strrchr (fname, '/');
     if (!fn) {
         fn = fname;
@@ -1510,19 +1244,6 @@ plt_insert_file (playlist_t *playlist, playItem_t *after, const char *fname, int
     else {
         fn++;
     }
-#if 0
-    // detect pls/m3u files
-    // they must be handled before checking for http://,
-    // so that remote playlist files referenced from other playlist files could
-    // be loaded correctly
-    if (!strncmp (eol, "m3u", 3) || !strncmp (eol, "m3u8", 4)) {
-        return plt_insert_m3u (playlist, after, fname, pabort, cb, user_data);
-    }
-    else if (!strncmp (eol, "pls", 3)) {
-
-        return plt_insert_pls (playlist, after, fname, pabort, cb, user_data);
-    }
-#endif
 
     // add all posible streams as special-case:
     // set decoder to NULL, and filetype to "content"
@@ -1586,6 +1307,13 @@ plt_insert_file (playlist_t *playlist, playItem_t *after, const char *fname, int
     else {
         fname += 7;
     }
+
+    // detect decoder
+    const char *eol = strrchr (fname, '.');
+    if (!eol) {
+        return NULL;
+    }
+    eol++;
 
     DB_decoder_t **decoders = plug_get_decoder_list ();
     // match by decoder
