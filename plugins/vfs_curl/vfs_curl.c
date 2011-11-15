@@ -429,7 +429,7 @@ parse_header (const uint8_t *p, const uint8_t *e, uint8_t *key, int keysize, uin
     p = v;
 
     // find linebreak
-    while (v < e && *v != 0x0d || *v == 0x0a) {
+    while (v < e && *v != 0x0d && *v != 0x0a) {
         v++;
     }
     
