@@ -1653,7 +1653,24 @@ plt_insert_item (playlist_t *playlist, playItem_t *after, playItem_t *it) {
 
     // shuffle
     playItem_t *prev = it->prev[PL_MAIN];
-    if (pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS && prev && pl_find_meta_raw (prev, "album") == pl_find_meta_raw (it, "album") && pl_find_meta_raw (prev, "artist") == pl_find_meta_raw (it, "artist")) {
+    const char *aa = NULL, *prev_aa = NULL;
+    if (prev) {
+        aa = pl_find_meta_raw (it, "band");
+        if (!aa) {
+            aa = pl_find_meta_raw (it, "album artist");
+        }
+        if (!aa) {
+            aa = pl_find_meta_raw (it, "albumartist");
+        }
+        prev_aa = pl_find_meta_raw (prev, "band");
+        if (!prev_aa) {
+            prev_aa = pl_find_meta_raw (prev, "album artist");
+        }
+        if (!prev_aa) {
+            prev_aa = pl_find_meta_raw (prev, "albumartist");
+        }
+    }
+    if (pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS && prev && pl_find_meta_raw (prev, "album") == pl_find_meta_raw (it, "album") && ((aa && prev_aa && aa == prev_aa) || pl_find_meta_raw (prev, "artist") == pl_find_meta_raw (it, "artist"))) {
         it->shufflerating = prev->shufflerating;
     }
     else {
@@ -2458,8 +2475,17 @@ plt_reshuffle (playlist_t *playlist, playItem_t **ppmin, playItem_t **ppmax) {
     playItem_t *prev = NULL;
     const char *alb = NULL;
     const char *art = NULL;
+    const char *aa = NULL;
     for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
-        if (pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS && prev && alb == pl_find_meta_raw (it, "album") && art == pl_find_meta_raw (it, "artist")) {
+        const char *new_aa = NULL;
+        new_aa = pl_find_meta_raw (it, "band");
+        if (!new_aa) {
+            new_aa = pl_find_meta_raw (it, "album artist");
+        }
+        if (!new_aa) {
+            new_aa = pl_find_meta_raw (it, "albumartist");
+        }
+        if (pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS && prev && alb == pl_find_meta_raw (it, "album") && ((aa && new_aa && aa == new_aa) || art == pl_find_meta_raw (it, "artist"))) {
             it->shufflerating = prev->shufflerating;
         }
         else {
@@ -2467,6 +2493,7 @@ plt_reshuffle (playlist_t *playlist, playItem_t **ppmin, playItem_t **ppmax) {
             it->shufflerating = rand ();
             alb = pl_find_meta_raw (it, "album");
             art = pl_find_meta_raw (it, "artist");
+            aa = new_aa;
         }
         if (!pmin || it->shufflerating < pmin->shufflerating) {
             pmin = it;
@@ -3185,6 +3212,9 @@ plt_reset_cursor (playlist_t *playlist) {
 
 float
 plt_get_totaltime (playlist_t *playlist) {
+    if (!playlist) {
+        return 0;
+    }
     return playlist->totaltime;
 }
 
