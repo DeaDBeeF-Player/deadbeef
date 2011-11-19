@@ -462,7 +462,7 @@ static DB_decoder_t plugin = {
     .plugin.copyright = 
         "Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
-        "Uses Game-Music-Emu v0.5.5 by Shay Green <gblargg@gmail.com>, http://www.slack.net/~ant/libs\n"
+        "Uses Game-Music-Emu by Shay Green <gblargg@gmail.com>, http://code.google.com/p/game-music-emu/\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
         "modify it under the terms of the GNU General Public License\n"
