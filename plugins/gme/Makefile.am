@@ -1,7 +1,8 @@
 if HAVE_GME
 
 #gmeversion=Game_Music_Emu-0.5.2
-gmeversion=game-music-emu-0.5.5
+#gmeversion=game-music-emu-0.5.5
+gmeversion=game-music-emu-svn
 gmepath=@top_srcdir@/plugins/gme/$(gmeversion)
 
 EXTRA_DIST = $(gmepath)/changes.txt $(gmepath)/design.txt $(gmepath)/gme.txt $(gmepath)/license.txt $(gmepath)/readme.txt 
@@ -110,7 +111,8 @@ $(gmeversion)/gme/Vgm_Emu.h\
 $(gmeversion)/gme/Vgm_Emu_Impl.h\
 $(gmeversion)/gme/Ym2413_Emu.h\
 $(gmeversion)/gme/Ym2612_Emu.h\
-$(gmeversion)/gme/gme_types.h
+$(gmeversion)/gme/gme_types.h\
+$(gmeversion)/gme/Spc_Filter.cpp
 
 gme_la_LDFLAGS = -module -nostdlib -lsupc++
 gme_la_LIBADD = $(ZLIB_LIBS)

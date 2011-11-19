@@ -6,6 +6,23 @@
 // Uncomment to use zlib for transparent decompression of gzipped files
 //#define HAVE_ZLIB_H
 
+// Uncomment and edit list to support only the listed game music types,
+// so that the others don't get linked in at all.
+/*
+#define GME_TYPE_LIST \
+	gme_ay_type,\
+	gme_gbs_type,\
+	gme_gym_type,\
+	gme_hes_type,\
+	gme_kss_type,\
+	gme_nsf_type,\
+	gme_nsfe_type,\
+	gme_sap_type,\
+	gme_spc_type,\
+	gme_vgm_type,\
+	gme_vgz_type
+*/
+
 // Uncomment to enable platform-specific optimizations
 #define BLARGG_NONPORTABLE 1
 
@@ -22,8 +39,5 @@
 #ifdef HAVE_CONFIG_H
 	#include "config.h"
 #endif
-
-// Add supported emulator types
-#include "gme_types.h"
 
 #endif
