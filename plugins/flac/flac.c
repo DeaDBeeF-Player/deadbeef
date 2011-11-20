@@ -27,6 +27,8 @@
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
+static DB_artwork_plugin_t *coverart_plugin = NULL;
+
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
@@ -923,19 +925,27 @@ cflac_write_metadata (DB_playItem_t *it) {
         m = m->next;
     }
 
-    // Add Coverart if available
-    DB_artwork_plugin_t *coverart_plugin = NULL;
-    DB_plugin_t **plugins = deadbeef->plug_get_list ();
-    for (int i = 0; plugins[i]; i++) {
-        DB_plugin_t *p = plugins[i];
-        if (p->id && !strcmp (p->id, "artwork") && p->version_major == 1 && p->version_minor >= 1) {
-            coverart_plugin = (DB_artwork_plugin_t *)p;
+    while (FLAC__metadata_iterator_prev (iter));
+    do {
+        data = FLAC__metadata_iterator_get_block (iter);
+        if (data && data->type == FLAC__METADATA_TYPE_PICTURE) {
             break;
+        }
+    } while (FLAC__metadata_iterator_next (iter));
+
+    if (!coverart_plugin) {
+        DB_plugin_t **plugins = deadbeef->plug_get_list ();
+        for (int i = 0; plugins[i]; i++) {
+            DB_plugin_t *p = plugins[i];
+            if (p->id && !strcmp (p->id, "artwork") && p->version_major == 1 && p->version_minor >= 1) {
+                coverart_plugin = (DB_artwork_plugin_t *)p;
+                break;
+            }
         }
     }
 
-    if (coverart_plugin) {
-
+    // Add Coverart if the file don't has one and we do
+    if (data->type != FLAC__METADATA_TYPE_PICTURE && coverart_plugin) {
         deadbeef->pl_lock ();
         const char *alb = deadbeef->pl_find_meta (it, "album");
         const char *art = deadbeef->pl_find_meta (it, "artist");
@@ -979,10 +989,16 @@ cflac_write_metadata (DB_playItem_t *it) {
                 goto error2;
             }
 
-            //FLAC__metadata_object_picture_set_mime_type (...);
             FLAC__metadata_object_picture_set_description (metadata, "Cover", true);
             FLAC__metadata_object_picture_set_data (metadata, coverart_data,len, true);
             metadata->data.picture.type = FLAC__STREAM_METADATA_PICTURE_TYPE_FRONT_COVER;
+
+            // FIXME Very Naive check here, consider using libjpeg or libpng for instead
+            if (*(uint32_t *)coverart_data == 0x474e5089) {  // png header
+                metadata->data.picture.mime_type = strdup ("image/png");
+            } else {
+                metadata->data.picture.mime_type = strdup ("image/jpeg");
+            }
 
             while (FLAC__metadata_iterator_next (iter));
             if (!FLAC__metadata_iterator_insert_block_after (iter, metadata)) {
