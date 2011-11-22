@@ -11,6 +11,9 @@ Bulgarian
 Catalan
  sisco <sisco.garcia@ubuntu.cat>
 
+Czech
+ Vašek Kovářík <l3d9z6@seznam.cz>
+
 Chinese (Simplified)
  Yinghua_Wang <wantinghard@gmail.com>
 
