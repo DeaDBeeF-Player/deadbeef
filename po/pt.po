@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-06-12 18:17+0200\n"
-"PO-Revision-Date: 2011-11-20 12:55-0000\n"
-"Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
+"PO-Revision-Date: 2011-11-22 14:47+0200\n"
+"Last-Translator: Sérgio <smarquespt@gmail.com>\n"
 "Language-Team: \n"
 "Language: pt\n"
 "MIME-Version: 1.0\n"
@@ -1056,7 +1056,7 @@ msgstr "2.4"
 #: ../plugins/gtkui/interface.c:3486
 #: ../plugins/gtkui/deadbeef.glade.h:51
 msgid "ID3v1 character encoding (default is iso8859-1)"
-msgstr "Codificação de caracteres ID3v1 (omissão é iso8859-1)"
+msgstr "Codificação de caracteres ID3v1 (padrão é iso8859-1)"
 
 #: ../plugins/gtkui/interface.c:3523
 #: ../plugins/gtkui/deadbeef.glade.h:147
@@ -1989,4 +1989,3 @@ msgid ""
 msgstr ""
 "Perguntar\n"
 "Substituição"
-
