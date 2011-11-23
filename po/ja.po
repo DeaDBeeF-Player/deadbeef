@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: deadbeef devel\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-07 18:38+0900\n"
+"POT-Creation-Date: 2011-11-23 14:16+0100\n"
 "PO-Revision-Date: 2010-06-29 17:37+0900\n"
 "Last-Translator: Hironao Komatsu <hironao@users.sourceforge.net>\n"
 "Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
@@ -18,785 +18,914 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: ../plugins/gtkui/callbacks.c:97
+#: ../plugins/gtkui/callbacks.c:123
 msgid "Supported sound formats"
 msgstr "サポートされている音声フォーマット"
 
-#: ../plugins/gtkui/callbacks.c:108
-msgid "Other files (*)"
+#: ../plugins/gtkui/callbacks.c:134
+#, fuzzy
+msgid "All files (*)"
 msgstr "他のファイル (*)"
 
-#: ../plugins/gtkui/callbacks.c:117
+#: ../plugins/gtkui/callbacks.c:144
 msgid "Open file(s)..."
 msgstr "ファイルを開く..."
 
-#: ../plugins/gtkui/callbacks.c:150
+#: ../plugins/gtkui/callbacks.c:179
 msgid "Add file(s) to playlist..."
 msgstr "ファイルをプレイリストに追加..."
 
-#: ../plugins/gtkui/callbacks.c:182
+#: ../plugins/gtkui/callbacks.c:220
 msgid "Add folder(s) to playlist..."
 msgstr "フォルダをプレイリストに追加..."
 
-#: ../plugins/gtkui/callbacks.c:640
+#: ../plugins/gtkui/callbacks.c:225
+msgid "Follow symlinks"
+msgstr ""
+
+#: ../plugins/gtkui/callbacks.c:711
 msgid "Failed while reading help file"
 msgstr "ヘルプファイルの読み込み中に失敗しました"
 
-#: ../plugins/gtkui/callbacks.c:650
+#: ../plugins/gtkui/callbacks.c:721
 msgid "Failed to load help file"
 msgstr "ヘルプファイルの読み込みに失敗しました"
 
-#: ../plugins/gtkui/callbacks.c:664 ../plugins/gtkui/interface.c:1105
-#: ../plugins/gtkui/deadbeef.glade.h:56
+#: ../plugins/gtkui/callbacks.c:736
+msgid "help.txt"
+msgstr ""
+
+#: ../plugins/gtkui/callbacks.c:737 ../plugins/gtkui/interface.c:1155
+#: ../plugins/gtkui/deadbeef.glade.h:49 ../plugins/converter/convgui.c:1240
+#: ../plugins/converter/convgui.c:1248
 msgid "Help"
 msgstr "ヘルプ"
 
-#: ../plugins/gtkui/callbacks.c:674
+#: ../plugins/gtkui/callbacks.c:747
 #, c-format
 msgid "About DeaDBeeF %s"
 msgstr "DeaDBeeF %s について"
 
-#: ../plugins/gtkui/callbacks.c:685
+#: ../plugins/gtkui/callbacks.c:760
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
 msgstr "DeaDBeeF %s の更新履歴"
 
-#: ../plugins/gtkui/ddbtabstrip.c:527
+#: ../plugins/gtkui/callbacks.c:1116
+#, fuzzy, c-format
+msgid "DeaDBeeF Translators"
+msgstr "DeaDBeeF は現在演奏中です"
+
+#: ../plugins/gtkui/ddbtabstrip.c:755 ../plugins/gtkui/trkproperties.c:618
 msgid "Edit playlist"
 msgstr "プレイリストの編集"
 
-#: ../plugins/gtkui/ddbtabstrip.c:604
+#: ../plugins/gtkui/ddbtabstrip.c:758 ../plugins/gtkui/interface.c:1486
+#: ../plugins/gtkui/interface.c:2922 ../plugins/gtkui/deadbeef.glade.h:136
+#: ../plugins/converter/interface.c:395
+msgid "Title:"
+msgstr "タイトル:"
+
+#: ../plugins/gtkui/ddbtabstrip.c:814
 msgid "Rename Playlist"
 msgstr "プレイリストの名前変更"
 
-#: ../plugins/gtkui/ddbtabstrip.c:608
+#: ../plugins/gtkui/ddbtabstrip.c:821
 msgid "Remove Playlist"
 msgstr "プレイリストの削除"
 
-#: ../plugins/gtkui/ddbtabstrip.c:612
+#: ../plugins/gtkui/ddbtabstrip.c:828
 msgid "Add New Playlist"
 msgstr "プレイリストの新規追加"
 
-#: ../plugins/gtkui/eq.c:113
+#: ../plugins/gtkui/eq.c:136
 msgid "Save DeaDBeeF EQ Preset"
 msgstr "DeaDBeeF イコライザ設定の保存"
 
-#: ../plugins/gtkui/eq.c:120
+#: ../plugins/gtkui/eq.c:143
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
 msgstr "DeaDBeeF イコライザ設定 (*.ddbeq)"
 
-#: ../plugins/gtkui/eq.c:151
+#: ../plugins/gtkui/eq.c:182
 msgid "Load DeaDBeeF EQ Preset..."
 msgstr "DeaDBeeF イコライザ設定を読み込む..."
 
-#: ../plugins/gtkui/eq.c:155
+#: ../plugins/gtkui/eq.c:186
 msgid "DeaDBeeF EQ presets (*.ddbeq)"
 msgstr "DeaDBeeF イコライザ設定 (*.ddbeq)"
 
-#: ../plugins/gtkui/eq.c:214
+#: ../plugins/gtkui/eq.c:247
 msgid "Import Foobar2000 EQ Preset..."
 msgstr "Foobar2000 イコライザ設定をインポート..."
 
-#: ../plugins/gtkui/eq.c:218
+#: ../plugins/gtkui/eq.c:251
 msgid "Foobar2000 EQ presets (*.feq)"
 msgstr "Foobar2000 イコライザ設定 (*.feq)"
 
-#: ../plugins/gtkui/eq.c:292
-msgid "Enable"
-msgstr "有効にする"
-
-#: ../plugins/gtkui/eq.c:299
-msgid "Zero All"
-msgstr "すべてゼロに"
-
-#: ../plugins/gtkui/eq.c:306
-msgid "Zero Preamp"
-msgstr "プリアンプをゼロに"
-
-#: ../plugins/gtkui/eq.c:313
-msgid "Zero Bands"
-msgstr "バンドをゼロに"
-
-#: ../plugins/gtkui/eq.c:320
+#: ../plugins/gtkui/eq.c:316
 msgid "Save Preset"
 msgstr "イコライザ設定を保存"
 
-#: ../plugins/gtkui/eq.c:327
+#: ../plugins/gtkui/eq.c:324
 msgid "Load Preset"
 msgstr "イコライザ設定の読み込み"
 
-#: ../plugins/gtkui/eq.c:334
+#: ../plugins/gtkui/eq.c:332
 msgid "Import Foobar2000 Preset"
 msgstr "Foobar2000 イコライザ設定をインポート"
 
-#: ../plugins/gtkui/gtkui.c:128
+#: ../plugins/gtkui/eq.c:357
+msgid "Enable"
+msgstr "有効にする"
+
+#: ../plugins/gtkui/eq.c:366
+msgid "Zero All"
+msgstr "すべてゼロに"
+
+#: ../plugins/gtkui/eq.c:373
+msgid "Zero Preamp"
+msgstr "プリアンプをゼロに"
+
+#: ../plugins/gtkui/eq.c:380
+msgid "Zero Bands"
+msgstr "バンドをゼロに"
+
+#: ../plugins/gtkui/eq.c:387 ../plugins/converter/interface.c:820
+#, fuzzy
+msgid "Presets"
+msgstr "イコライザ設定を保存"
+
+#: ../plugins/gtkui/gtkui.c:137
 #, c-format
 msgid "1 day %d:%02d:%02d"
 msgstr "1 日 %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:131
+#: ../plugins/gtkui/gtkui.c:140
 #, c-format
 msgid "%d days %d:%02d:%02d"
 msgstr "%d 日 %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:140
+#: ../plugins/gtkui/gtkui.c:149
 #, c-format
 msgid "Stopped | %d tracks | %s total playtime"
 msgstr "停止 | %d トラック | %s 合計演奏時間"
 
-#: ../plugins/gtkui/gtkui.c:150
+#: ../plugins/gtkui/gtkui.c:162
 msgid "Mono"
 msgstr "Mono"
 
-#: ../plugins/gtkui/gtkui.c:150
+#: ../plugins/gtkui/gtkui.c:162
 msgid "Stereo"
 msgstr "Stereo"
 
-#: ../plugins/gtkui/gtkui.c:170
+#: ../plugins/gtkui/gtkui.c:187
 #, c-format
 msgid "| %4d kbps "
 msgstr "| %4d kbps "
 
-#: ../plugins/gtkui/gtkui.c:176
+#: ../plugins/gtkui/gtkui.c:193
 msgid "Paused | "
 msgstr "ポーズ | "
 
-#: ../plugins/gtkui/gtkui.c:177
+#: ../plugins/gtkui/gtkui.c:198
 #, c-format
 msgid ""
 "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
 msgstr ""
 "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d トラック | %s 合計演奏時間"
 
-#: ../plugins/gtkui/gtkui.c:533
+#: ../plugins/gtkui/gtkui.c:644
 msgid "Save Playlist As"
 msgstr "名前をつけてプレイリストを保存"
 
-#: ../plugins/gtkui/gtkui.c:542 ../plugins/gtkui/gtkui.c:603
+#: ../plugins/gtkui/gtkui.c:655
 msgid "DeaDBeeF playlist files (*.dbpl)"
 msgstr "DeaDBeeF プレイリストファイル (*.dbpl)"
 
-#: ../plugins/gtkui/gtkui.c:596
+#: ../plugins/gtkui/gtkui.c:773
 msgid "Load Playlist"
 msgstr "プレイリストをロード"
 
-#: ../plugins/gtkui/gtkui.c:741
+#: ../plugins/gtkui/gtkui.c:788
+msgid "Other files (*)"
+msgstr "他のファイル (*)"
+
+#: ../plugins/gtkui/gtkui.c:926 ../plugins/gtkui/fileman.c:40
 msgid "New Playlist"
 msgstr "新規プレイリスト"
 
-#: ../plugins/gtkui/gtkui.c:744
+#: ../plugins/gtkui/gtkui.c:929
 #, c-format
 msgid "New Playlist (%d)"
 msgstr "新規プレイリスト (%d)"
 
-#: ../plugins/gtkui/interface.c:140 ../plugins/gtkui/deadbeef.glade.h:138
+#: ../plugins/gtkui/interface.c:150 ../plugins/gtkui/deadbeef.glade.h:156
 msgid "_File"
 msgstr "ファイル(_F)"
 
-#: ../plugins/gtkui/interface.c:147 ../plugins/gtkui/deadbeef.glade.h:142
+#: ../plugins/gtkui/interface.c:157 ../plugins/gtkui/deadbeef.glade.h:163
 msgid "_Open file(s)"
 msgstr "ファイルを開く(_O)"
 
-#: ../plugins/gtkui/interface.c:163 ../plugins/gtkui/deadbeef.glade.h:7
+#: ../plugins/gtkui/interface.c:173 ../plugins/gtkui/deadbeef.glade.h:6
 msgid "Add file(s)"
 msgstr "ファイルを追加"
 
-#: ../plugins/gtkui/interface.c:171 ../plugins/gtkui/deadbeef.glade.h:8
+#: ../plugins/gtkui/interface.c:181 ../plugins/gtkui/deadbeef.glade.h:8
 msgid "Add folder(s)"
 msgstr "フォルダを追加"
 
-#: ../plugins/gtkui/interface.c:179 ../plugins/gtkui/deadbeef.glade.h:6
-msgid "Add Audio CD"
-msgstr "音楽 CD を追加"
-
-#: ../plugins/gtkui/interface.c:187 ../plugins/gtkui/interface.c:2870
+#: ../plugins/gtkui/interface.c:189 ../plugins/gtkui/interface.c:3022
 #: ../plugins/gtkui/deadbeef.glade.h:9
 msgid "Add location"
 msgstr "場所を追加"
 
-#: ../plugins/gtkui/interface.c:196 ../plugins/gtkui/deadbeef.glade.h:72
+#: ../plugins/gtkui/interface.c:198 ../plugins/gtkui/deadbeef.glade.h:80
 msgid "New playlist"
 msgstr "新規プレイリスト"
 
-#: ../plugins/gtkui/interface.c:203 ../plugins/gtkui/deadbeef.glade.h:64
+#: ../plugins/gtkui/interface.c:205 ../plugins/gtkui/deadbeef.glade.h:72
 msgid "Load playlist"
 msgstr "プレイリストをロード"
 
-#: ../plugins/gtkui/interface.c:207 ../plugins/gtkui/deadbeef.glade.h:99
+#: ../plugins/gtkui/interface.c:209 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "Save playlist"
 msgstr "プレイリストを保存"
 
-#: ../plugins/gtkui/interface.c:211 ../plugins/gtkui/deadbeef.glade.h:100
-msgid "Save playlist as"
-msgstr "名前をつけてプレイリストを保存"
-
-#: ../plugins/gtkui/interface.c:220 ../plugins/gtkui/deadbeef.glade.h:144
+#: ../plugins/gtkui/interface.c:218 ../plugins/gtkui/deadbeef.glade.h:165
 msgid "_Quit"
 msgstr "終了(_Q)"
 
-#: ../plugins/gtkui/interface.c:231 ../plugins/gtkui/deadbeef.glade.h:137
+#: ../plugins/gtkui/interface.c:229 ../plugins/gtkui/deadbeef.glade.h:155
 msgid "_Edit"
 msgstr "編集(_E)"
 
-#: ../plugins/gtkui/interface.c:238 ../plugins/gtkui/deadbeef.glade.h:135
+#: ../plugins/gtkui/interface.c:236 ../plugins/gtkui/deadbeef.glade.h:153
 msgid "_Clear"
 msgstr "クリア(_C)"
 
-#: ../plugins/gtkui/interface.c:246 ../plugins/gtkui/deadbeef.glade.h:104
+#: ../plugins/gtkui/interface.c:244 ../plugins/gtkui/deadbeef.glade.h:115
 msgid "Select all"
 msgstr "すべて選択"
 
-#: ../plugins/gtkui/interface.c:253 ../plugins/gtkui/deadbeef.glade.h:24
+#: ../plugins/gtkui/interface.c:251 ../plugins/gtkui/deadbeef.glade.h:32
 msgid "Deselect all"
 msgstr "すべて選択解除"
 
-#: ../plugins/gtkui/interface.c:260 ../plugins/gtkui/deadbeef.glade.h:59
+#: ../plugins/gtkui/interface.c:258 ../plugins/gtkui/deadbeef.glade.h:55
 msgid "Invert selection"
 msgstr "選択の反転"
 
-#: ../plugins/gtkui/interface.c:264 ../plugins/gtkui/deadbeef.glade.h:107
+#: ../plugins/gtkui/interface.c:262 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Selection"
 msgstr "選択"
 
-#: ../plugins/gtkui/interface.c:271 ../plugins/gtkui/plcommon.c:387
-#: ../plugins/gtkui/prefwin.c:272 ../plugins/gtkui/deadbeef.glade.h:95
+#: ../plugins/gtkui/interface.c:269 ../plugins/gtkui/plcommon.c:468
+#: ../plugins/gtkui/prefwin.c:323 ../plugins/gtkui/deadbeef.glade.h:105
+#: ../plugins/converter/interface.c:645
 msgid "Remove"
 msgstr "取り除く"
 
-#: ../plugins/gtkui/interface.c:279 ../plugins/gtkui/deadbeef.glade.h:19
+#: ../plugins/gtkui/interface.c:277 ../plugins/gtkui/deadbeef.glade.h:24
 msgid "Crop"
 msgstr "選択以外を取り除く"
 
-#: ../plugins/gtkui/interface.c:283 ../plugins/gtkui/deadbeef.glade.h:139
+#: ../plugins/gtkui/interface.c:281 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "_Find"
 msgstr "検索(_F)"
 
-#: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1706
-#: ../plugins/gtkui/deadbeef.glade.h:85
-msgid "Preferences"
-msgstr "設定"
-
-#: ../plugins/gtkui/interface.c:299 ../plugins/gtkui/deadbeef.glade.h:145
-msgid "_View"
-msgstr "表示(_V)"
-
-#: ../plugins/gtkui/interface.c:306 ../plugins/gtkui/deadbeef.glade.h:111
-msgid "Status bar"
-msgstr "ステータスバー"
-
-#: ../plugins/gtkui/interface.c:310 ../plugins/gtkui/deadbeef.glade.h:17
-msgid "Column headers"
-msgstr "カラムのヘッダ"
-
-#: ../plugins/gtkui/interface.c:314 ../plugins/gtkui/deadbeef.glade.h:118
-msgid "Tabs"
-msgstr "タブ"
-
-#: ../plugins/gtkui/interface.c:318 ../plugins/gtkui/deadbeef.glade.h:32
-msgid "Equalizer"
-msgstr "イコライザ"
-
-#: ../plugins/gtkui/interface.c:322 ../plugins/gtkui/deadbeef.glade.h:143
-msgid "_Playback"
-msgstr "再生(_P)"
-
-#: ../plugins/gtkui/interface.c:329 ../plugins/gtkui/deadbeef.glade.h:75
-msgid "Order"
-msgstr "演奏順"
-
-#: ../plugins/gtkui/interface.c:336 ../plugins/gtkui/deadbeef.glade.h:63
-msgid "Linear"
-msgstr "順に"
-
-#: ../plugins/gtkui/interface.c:342 ../plugins/gtkui/deadbeef.glade.h:108
-msgid "Shuffle"
-msgstr "シャッフル"
-
-#: ../plugins/gtkui/interface.c:348 ../plugins/gtkui/deadbeef.glade.h:94
-msgid "Random"
-msgstr "ランダム"
-
-#: ../plugins/gtkui/interface.c:354 ../plugins/gtkui/deadbeef.glade.h:67
-msgid "Looping"
-msgstr "ループ"
-
-#: ../plugins/gtkui/interface.c:361 ../plugins/gtkui/deadbeef.glade.h:65
-msgid "Loop All"
-msgstr "全体をループ"
-
-#: ../plugins/gtkui/interface.c:367 ../plugins/gtkui/deadbeef.glade.h:66
-msgid "Loop Single Song"
-msgstr "一つの曲をループ"
-
-#: ../plugins/gtkui/interface.c:373 ../plugins/gtkui/deadbeef.glade.h:28
-msgid "Don't Loop"
-msgstr "ループしない"
-
-#: ../plugins/gtkui/interface.c:379 ../plugins/gtkui/deadbeef.glade.h:101
-msgid "Scroll follows playback"
-msgstr "再生に従ってスクロール"
-
-#: ../plugins/gtkui/interface.c:384 ../plugins/gtkui/deadbeef.glade.h:21
-msgid "Cursor follows playback"
-msgstr "再生に従ってカーソルを移動"
-
-#: ../plugins/gtkui/interface.c:388 ../plugins/gtkui/deadbeef.glade.h:113
-msgid "Stop after current"
-msgstr "現在の再生の終了後に停止"
-
-#: ../plugins/gtkui/interface.c:395 ../plugins/gtkui/interface.c:402
-#: ../plugins/gtkui/deadbeef.glade.h:140
-msgid "_Help"
-msgstr "ヘルプ(_H)"
-
-#: ../plugins/gtkui/interface.c:410 ../plugins/gtkui/deadbeef.glade.h:134
-msgid "_ChangeLog"
-msgstr "更新履歴(_C)"
-
-#: ../plugins/gtkui/interface.c:432 ../plugins/gtkui/deadbeef.glade.h:131
-msgid "_About"
-msgstr "情報(_A)"
-
-#: ../plugins/gtkui/interface.c:816 ../plugins/gtkui/deadbeef.glade.h:102
-msgid "Search"
-msgstr "検索"
-
-#: ../plugins/gtkui/interface.c:891 ../plugins/gtkui/deadbeef.glade.h:112
-msgid "Stop"
-msgstr "停止"
-
-#: ../plugins/gtkui/interface.c:899 ../plugins/gtkui/deadbeef.glade.h:81
-msgid "Play"
-msgstr "再生"
-
-#: ../plugins/gtkui/interface.c:907 ../plugins/gtkui/deadbeef.glade.h:80
-msgid "Pause"
-msgstr "ポーズ"
-
-#: ../plugins/gtkui/interface.c:915 ../plugins/gtkui/deadbeef.glade.h:86
-msgid "Previous"
-msgstr "前へ"
-
-#: ../plugins/gtkui/interface.c:923 ../plugins/gtkui/deadbeef.glade.h:73
-msgid "Next"
-msgstr "次へ"
-
-#: ../plugins/gtkui/interface.c:931 ../plugins/gtkui/deadbeef.glade.h:82
-msgid "Play Random"
-msgstr "ランダムに再生"
-
-#: ../plugins/gtkui/interface.c:940 ../plugins/gtkui/deadbeef.glade.h:5
-msgid "About"
-msgstr "情報"
-
-#: ../plugins/gtkui/interface.c:953 ../plugins/gtkui/deadbeef.glade.h:93
-msgid "Quit"
-msgstr "終了"
-
-#: ../plugins/gtkui/interface.c:1025 ../plugins/gtkui/deadbeef.glade.h:10
-msgid "Adding files..."
-msgstr "ファイルの追加..."
-
-#: ../plugins/gtkui/interface.c:1069 ../plugins/gtkui/deadbeef.glade.h:130
-msgid "_Abort"
-msgstr "中止(_A)"
-
-#: ../plugins/gtkui/interface.c:1170 ../plugins/gtkui/deadbeef.glade.h:122
-msgid "Track Properties"
-msgstr "トラックのプロパティ"
-
-#: ../plugins/gtkui/interface.c:1194 ../plugins/gtkui/deadbeef.glade.h:3
-msgid ""
-"<b>WARNING</b>: tag writing feature is still in development.\n"
-"<b>Make backup copies</b> before using."
+#: ../plugins/gtkui/interface.c:288 ../plugins/gtkui/deadbeef.glade.h:122
+msgid "Sort By"
 msgstr ""
-"<b>警告</b>: タグの書き出し機能はまだ開発段階です。\n"
-"使用前に<b>バックアップを作成してください</b>。"
 
-#: ../plugins/gtkui/interface.c:1221 ../plugins/gtkui/deadbeef.glade.h:132
-msgid "_Apply"
-msgstr "適用(_A)"
-
-#: ../plugins/gtkui/interface.c:1242 ../plugins/gtkui/interface.c:1288
-#: ../plugins/gtkui/interface.c:2436 ../plugins/gtkui/deadbeef.glade.h:136
-msgid "_Close"
-msgstr "閉じる(_C)"
-
-#: ../plugins/gtkui/interface.c:1246 ../plugins/gtkui/deadbeef.glade.h:68
-msgid "Metadata"
-msgstr "メタデータ"
-
-#: ../plugins/gtkui/interface.c:1292 ../plugins/gtkui/plcommon.c:402
-#: ../plugins/gtkui/deadbeef.glade.h:87
-msgid "Properties"
-msgstr "プロパティ"
-
-#: ../plugins/gtkui/interface.c:1378 ../plugins/gtkui/deadbeef.glade.h:146
-msgid "editcolumndlg"
-msgstr "editcolumndlg"
-
-#: ../plugins/gtkui/interface.c:1393 ../plugins/gtkui/interface.c:2770
-#: ../plugins/gtkui/deadbeef.glade.h:121
-msgid "Title:"
-msgstr "タイトル:"
-
-#: ../plugins/gtkui/interface.c:1401 ../plugins/gtkui/deadbeef.glade.h:31
-msgid "Enter new column title here"
-msgstr "新規カラムのタイトルをここに入力します"
-
-#: ../plugins/gtkui/interface.c:1409 ../plugins/gtkui/deadbeef.glade.h:123
-msgid "Type:"
-msgstr "形式:"
-
-#: ../plugins/gtkui/interface.c:1417
-msgid "File number"
-msgstr "ファイル番号"
-
-#. create default set of columns
-#: ../plugins/gtkui/interface.c:1418 ../plugins/gtkui/mainplaylist.c:297
-msgid "Playing"
-msgstr "再生"
-
-#: ../plugins/gtkui/interface.c:1419
-msgid "Album Art"
-msgstr "アルバムアート"
-
-#: ../plugins/gtkui/interface.c:1420
-msgid "Artist - Album"
-msgstr "アーティスト - アルバム"
-
-#: ../plugins/gtkui/interface.c:1421 ../plugins/gtkui/plcommon.c:774
-msgid "Artist"
-msgstr "アーティスト"
-
-#: ../plugins/gtkui/interface.c:1422 ../plugins/gtkui/interface.c:1795
-msgid "Album"
-msgstr "アルバム"
-
-#: ../plugins/gtkui/interface.c:1423 ../plugins/gtkui/prefwin.c:488
+#: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1516
+#: ../plugins/gtkui/mainplaylist.c:318 ../plugins/gtkui/prefwin.c:626
+#: ../plugins/gtkui/search.c:393 ../plugins/gtkui/deadbeef.glade.h:135
+#: ../plugins/converter/convgui.c:790 ../plugins/converter/convgui.c:1211
+#: ../plugins/converter/interface.c:622
 msgid "Title"
 msgstr "タイトル"
 
-#: ../plugins/gtkui/interface.c:1424
-msgid "Length"
-msgstr "長さ"
+#: ../plugins/gtkui/interface.c:299 ../plugins/gtkui/deadbeef.glade.h:140
+#, fuzzy
+msgid "Track number"
+msgstr "ファイル番号"
 
-#: ../plugins/gtkui/interface.c:1425 ../plugins/gtkui/interface.c:1794
-msgid "Track"
-msgstr "トラック"
+#: ../plugins/gtkui/interface.c:303 ../plugins/gtkui/interface.c:1515
+#: ../plugins/gtkui/interface.c:1875 ../plugins/gtkui/deadbeef.glade.h:10
+#: ../translation/extra.c:69
+msgid "Album"
+msgstr "アルバム"
 
-#: ../plugins/gtkui/interface.c:1426
-msgid "Band / Album Artist"
-msgstr "バンド / アルバムのアーティスト"
+#. Track properties dialog
+#: ../plugins/gtkui/interface.c:307 ../plugins/gtkui/interface.c:1514
+#: ../plugins/gtkui/plcommon.c:1013 ../plugins/gtkui/deadbeef.glade.h:13
+#: ../translation/extra.c:65
+msgid "Artist"
+msgstr "アーティスト"
 
-#: ../plugins/gtkui/interface.c:1427 ../plugins/gtkui/plcommon.c:778
+#: ../plugins/gtkui/interface.c:311 ../plugins/gtkui/deadbeef.glade.h:31
+#: ../translation/extra.c:70
+msgid "Date"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:315 ../plugins/gtkui/interface.c:1520
+#: ../plugins/gtkui/plcommon.c:1017 ../plugins/gtkui/deadbeef.glade.h:27
 msgid "Custom"
 msgstr "カスタム"
 
-#: ../plugins/gtkui/interface.c:1433 ../plugins/gtkui/interface.c:2997
-#: ../plugins/gtkui/deadbeef.glade.h:53
+#: ../plugins/gtkui/interface.c:324 ../plugins/gtkui/interface.c:1804
+#: ../plugins/gtkui/deadbeef.glade.h:95
+msgid "Preferences"
+msgstr "設定"
+
+#: ../plugins/gtkui/interface.c:328 ../plugins/gtkui/deadbeef.glade.h:167
+msgid "_View"
+msgstr "表示(_V)"
+
+#: ../plugins/gtkui/interface.c:335 ../plugins/gtkui/deadbeef.glade.h:125
+msgid "Status bar"
+msgstr "ステータスバー"
+
+#: ../plugins/gtkui/interface.c:339 ../plugins/gtkui/deadbeef.glade.h:21
+msgid "Column headers"
+msgstr "カラムのヘッダ"
+
+#: ../plugins/gtkui/interface.c:343 ../plugins/gtkui/deadbeef.glade.h:132
+msgid "Tabs"
+msgstr "タブ"
+
+#: ../plugins/gtkui/interface.c:347 ../plugins/gtkui/deadbeef.glade.h:40
+msgid "Equalizer"
+msgstr "イコライザ"
+
+#: ../plugins/gtkui/interface.c:351 ../plugins/gtkui/deadbeef.glade.h:164
+msgid "_Playback"
+msgstr "再生(_P)"
+
+#: ../plugins/gtkui/interface.c:358 ../plugins/gtkui/interface.c:3298
+#: ../plugins/gtkui/deadbeef.glade.h:83
+msgid "Order"
+msgstr "演奏順"
+
+#: ../plugins/gtkui/interface.c:365 ../plugins/gtkui/deadbeef.glade.h:71
+msgid "Linear"
+msgstr "順に"
+
+#: ../plugins/gtkui/interface.c:370 ../plugins/gtkui/deadbeef.glade.h:121
+#, fuzzy
+msgid "Shuffle tracks"
+msgstr "シャッフル"
+
+#: ../plugins/gtkui/interface.c:375 ../plugins/gtkui/deadbeef.glade.h:120
+#, fuzzy
+msgid "Shuffle albums"
+msgstr "シャッフル"
+
+#: ../plugins/gtkui/interface.c:380 ../plugins/gtkui/deadbeef.glade.h:104
+msgid "Random"
+msgstr "ランダム"
+
+#: ../plugins/gtkui/interface.c:386 ../plugins/gtkui/deadbeef.glade.h:75
+msgid "Looping"
+msgstr "ループ"
+
+#: ../plugins/gtkui/interface.c:393 ../plugins/gtkui/deadbeef.glade.h:73
+msgid "Loop All"
+msgstr "全体をループ"
+
+#: ../plugins/gtkui/interface.c:398 ../plugins/gtkui/deadbeef.glade.h:74
+msgid "Loop Single Song"
+msgstr "一つの曲をループ"
+
+#: ../plugins/gtkui/interface.c:403 ../plugins/gtkui/deadbeef.glade.h:36
+msgid "Don't Loop"
+msgstr "ループしない"
+
+#: ../plugins/gtkui/interface.c:409 ../plugins/gtkui/deadbeef.glade.h:111
+msgid "Scroll follows playback"
+msgstr "再生に従ってスクロール"
+
+#: ../plugins/gtkui/interface.c:414 ../plugins/gtkui/deadbeef.glade.h:26
+msgid "Cursor follows playback"
+msgstr "再生に従ってカーソルを移動"
+
+#: ../plugins/gtkui/interface.c:418 ../plugins/gtkui/deadbeef.glade.h:127
+msgid "Stop after current"
+msgstr "現在の再生の終了後に停止"
+
+#: ../plugins/gtkui/interface.c:430 ../plugins/gtkui/deadbeef.glade.h:67
+msgid "Jump to current track"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:437 ../plugins/gtkui/interface.c:444
+#: ../plugins/gtkui/deadbeef.glade.h:159
+msgid "_Help"
+msgstr "ヘルプ(_H)"
+
+#: ../plugins/gtkui/interface.c:452 ../plugins/gtkui/deadbeef.glade.h:152
+msgid "_ChangeLog"
+msgstr "更新履歴(_C)"
+
+#: ../plugins/gtkui/interface.c:461 ../plugins/gtkui/deadbeef.glade.h:158
+msgid "_GPLv2"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:465 ../plugins/gtkui/deadbeef.glade.h:160
+msgid "_LGPLv2.1"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:474 ../plugins/gtkui/deadbeef.glade.h:149
+msgid "_About"
+msgstr "情報(_A)"
+
+#: ../plugins/gtkui/interface.c:482 ../plugins/gtkui/deadbeef.glade.h:166
+#, fuzzy
+msgid "_Translators"
+msgstr "DeaDBeeF は現在演奏中です"
+
+#: ../plugins/gtkui/interface.c:898 ../plugins/gtkui/deadbeef.glade.h:112
+msgid "Search"
+msgstr "検索"
+
+#: ../plugins/gtkui/interface.c:973 ../plugins/gtkui/deadbeef.glade.h:126
+msgid "Stop"
+msgstr "停止"
+
+#: ../plugins/gtkui/interface.c:981 ../plugins/gtkui/deadbeef.glade.h:89
+msgid "Play"
+msgstr "再生"
+
+#: ../plugins/gtkui/interface.c:989 ../plugins/gtkui/deadbeef.glade.h:88
+msgid "Pause"
+msgstr "ポーズ"
+
+#: ../plugins/gtkui/interface.c:997 ../plugins/gtkui/deadbeef.glade.h:96
+msgid "Previous"
+msgstr "前へ"
+
+#: ../plugins/gtkui/interface.c:1005 ../plugins/gtkui/deadbeef.glade.h:81
+msgid "Next"
+msgstr "次へ"
+
+#: ../plugins/gtkui/interface.c:1013 ../plugins/gtkui/deadbeef.glade.h:90
+msgid "Play Random"
+msgstr "ランダムに再生"
+
+#: ../plugins/gtkui/interface.c:1022 ../plugins/gtkui/deadbeef.glade.h:5
+msgid "About"
+msgstr "情報"
+
+#: ../plugins/gtkui/interface.c:1035 ../plugins/gtkui/deadbeef.glade.h:103
+msgid "Quit"
+msgstr "終了"
+
+#: ../plugins/gtkui/interface.c:1225 ../plugins/gtkui/deadbeef.glade.h:139
+msgid "Track Properties"
+msgstr "トラックのプロパティ"
+
+#: ../plugins/gtkui/interface.c:1270 ../plugins/gtkui/deadbeef.glade.h:119
+msgid "Settings"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1296 ../plugins/gtkui/deadbeef.glade.h:150
+msgid "_Apply"
+msgstr "適用(_A)"
+
+#: ../plugins/gtkui/interface.c:1317 ../plugins/gtkui/interface.c:1363
+#: ../plugins/gtkui/deadbeef.glade.h:154
+msgid "_Close"
+msgstr "閉じる(_C)"
+
+#: ../plugins/gtkui/interface.c:1321 ../plugins/gtkui/deadbeef.glade.h:76
+msgid "Metadata"
+msgstr "メタデータ"
+
+#: ../plugins/gtkui/interface.c:1367 ../plugins/gtkui/plcommon.c:618
+#: ../plugins/gtkui/deadbeef.glade.h:97
+msgid "Properties"
+msgstr "プロパティ"
+
+#: ../plugins/gtkui/interface.c:1494 ../plugins/gtkui/deadbeef.glade.h:39
+msgid "Enter new column title here"
+msgstr "新規カラムのタイトルをここに入力します"
+
+#: ../plugins/gtkui/interface.c:1502 ../plugins/gtkui/deadbeef.glade.h:141
+msgid "Type:"
+msgstr "形式:"
+
+#: ../plugins/gtkui/interface.c:1510
+msgid "Item Index"
+msgstr ""
+
+#. create default set of columns
+#: ../plugins/gtkui/interface.c:1511 ../plugins/gtkui/mainplaylist.c:315
+msgid "Playing"
+msgstr "再生"
+
+#: ../plugins/gtkui/interface.c:1512
+msgid "Album Art"
+msgstr "アルバムアート"
+
+#: ../plugins/gtkui/interface.c:1513
+msgid "Artist - Album"
+msgstr "アーティスト - アルバム"
+
+#: ../plugins/gtkui/interface.c:1517 ../plugins/gtkui/mainplaylist.c:319
+#: ../plugins/gtkui/search.c:394
+msgid "Duration"
+msgstr "演奏時間"
+
+#: ../plugins/gtkui/interface.c:1518 ../translation/extra.c:71
+#, fuzzy
+msgid "Track Number"
+msgstr "トラック番号"
+
+#: ../plugins/gtkui/interface.c:1519 ../translation/extra.c:68
+msgid "Band / Album Artist"
+msgstr "バンド / アルバムのアーティスト"
+
+#: ../plugins/gtkui/interface.c:1526 ../plugins/gtkui/interface.c:3150
+#: ../plugins/gtkui/deadbeef.glade.h:44
 msgid "Format:"
 msgstr "書式:"
 
-#: ../plugins/gtkui/interface.c:1448 ../plugins/gtkui/deadbeef.glade.h:11
+#: ../plugins/gtkui/interface.c:1551 ../plugins/gtkui/deadbeef.glade.h:11
 msgid "Alignment:"
 msgstr "配置:"
 
-#: ../plugins/gtkui/interface.c:1456
+#: ../plugins/gtkui/interface.c:1559
 msgid "Left"
 msgstr "左"
 
-#: ../plugins/gtkui/interface.c:1457
+#: ../plugins/gtkui/interface.c:1560
 msgid "Right"
 msgstr "右"
 
-#: ../plugins/gtkui/interface.c:1459 ../plugins/gtkui/interface.c:3007
-#: ../plugins/gtkui/deadbeef.glade.h:47
-#, no-c-format
-msgid ""
-"Format conversions (start with %):\n"
-"  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
-"  track[n]umber, [N]totaltracks,\n"
-"  [l]ength, [y]ear, [g]enre, [c]omment,\n"
-"  copy[r]ight, [f]ilename, [T]ags\n"
-"Example: %a - %t [%l]"
-msgstr ""
-"書式変換 (% に続けて):\n"
-"  アーティスト[a], タイトル[t], アルバム[b], バンド[B], 作曲[C]\n"
-"  トラック番号[n], トラック数[N],\n"
-"  長さ[l], 年[y], ジャンル[g], コメント[c],\n"
-"  著作権[r], ファイル名[f], タグ[T]\n"
-"例: %a - %t [%l]"
-
-#: ../plugins/gtkui/interface.c:1488 ../plugins/gtkui/interface.c:2801
-#: ../plugins/gtkui/interface.c:2913 ../plugins/gtkui/interface.c:3036
-#: ../plugins/gtkui/deadbeef.glade.h:133
+#: ../plugins/gtkui/interface.c:1583 ../plugins/gtkui/interface.c:2953
+#: ../plugins/gtkui/interface.c:3065 ../plugins/gtkui/interface.c:3191
+#: ../plugins/gtkui/deadbeef.glade.h:151
 msgid "_Cancel"
 msgstr "キャンセル(_C)"
 
-#: ../plugins/gtkui/interface.c:1509 ../plugins/gtkui/interface.c:2822
-#: ../plugins/gtkui/interface.c:2934 ../plugins/gtkui/interface.c:3057
-#: ../plugins/gtkui/deadbeef.glade.h:141
+#: ../plugins/gtkui/interface.c:1604 ../plugins/gtkui/interface.c:2974
+#: ../plugins/gtkui/interface.c:3086 ../plugins/gtkui/interface.c:3212
+#: ../plugins/gtkui/deadbeef.glade.h:162
 msgid "_OK"
 msgstr "OK(_O)"
 
-#: ../plugins/gtkui/interface.c:1726 ../plugins/gtkui/deadbeef.glade.h:77
+#: ../plugins/gtkui/interface.c:1825 ../plugins/gtkui/deadbeef.glade.h:85
 msgid "Output plugin:"
 msgstr "出力プラグイン:"
 
-#: ../plugins/gtkui/interface.c:1739 ../plugins/gtkui/deadbeef.glade.h:76
+#: ../plugins/gtkui/interface.c:1838 ../plugins/gtkui/deadbeef.glade.h:84
 msgid "Output device:"
 msgstr "出力デバイス:"
 
-#: ../plugins/gtkui/interface.c:1748 ../plugins/gtkui/deadbeef.glade.h:109
+#: ../plugins/gtkui/interface.c:1847 ../plugins/gtkui/deadbeef.glade.h:12
+msgid "Always convert 8 bit audio to 16 bit"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1851 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "Sound"
 msgstr "音声"
 
-#: ../plugins/gtkui/interface.c:1757 ../plugins/gtkui/deadbeef.glade.h:12
-msgid "Allow dynamic samplerate switching"
-msgstr "動的なサンプルレートの切り替えを許す"
-
-#: ../plugins/gtkui/interface.c:1765 ../plugins/gtkui/deadbeef.glade.h:98
-msgid "Samplerate conversion quality:"
-msgstr "サンプルレート変換の品質:"
-
-#: ../plugins/gtkui/interface.c:1784 ../plugins/gtkui/deadbeef.glade.h:96
+#: ../plugins/gtkui/interface.c:1864 ../plugins/gtkui/deadbeef.glade.h:106
 msgid "Replaygain mode:"
 msgstr "リプレイゲインのモード:"
 
-#: ../plugins/gtkui/interface.c:1793
+#: ../plugins/gtkui/interface.c:1873
 msgid "Disable"
 msgstr "無効"
 
-#: ../plugins/gtkui/interface.c:1797 ../plugins/gtkui/deadbeef.glade.h:97
+#: ../plugins/gtkui/interface.c:1874
+msgid "Track"
+msgstr "トラック"
+
+#: ../plugins/gtkui/interface.c:1877 ../plugins/gtkui/deadbeef.glade.h:107
 msgid "Replaygain peak scale"
 msgstr "リプレイゲインのピークを調整する"
 
-#: ../plugins/gtkui/interface.c:1801 ../plugins/gtkui/deadbeef.glade.h:110
-msgid "Sound (adv.)"
-msgstr "音声 (高度)"
+#: ../plugins/gtkui/interface.c:1892 ../plugins/gtkui/interface.c:1926
+#: ../plugins/gtkui/deadbeef.glade.h:2
+msgid "-12 dB"
+msgstr ""
 
-#: ../plugins/gtkui/interface.c:1810 ../plugins/gtkui/deadbeef.glade.h:16
+#: ../plugins/gtkui/interface.c:1902 ../plugins/gtkui/interface.c:1936
+#: ../plugins/gtkui/deadbeef.glade.h:1
+msgid "+12 dB"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1906 ../plugins/gtkui/deadbeef.glade.h:108
+#, fuzzy
+msgid "Replaygain preamp:"
+msgstr "リプレイゲインのモード:"
+
+#: ../plugins/gtkui/interface.c:1913 ../plugins/gtkui/deadbeef.glade.h:47
+#, fuzzy
+msgid "Global preamp:"
+msgstr "リプレイゲインのモード:"
+
+#: ../plugins/gtkui/interface.c:1944 ../plugins/gtkui/deadbeef.glade.h:7
+msgid "Add files from command line (or file manager) to this playlist:"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1953 ../plugins/gtkui/deadbeef.glade.h:109
+msgid "Resume previous session on startup"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1957 ../plugins/gtkui/deadbeef.glade.h:37
+msgid "Don't add from archives when adding folders"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1961 ../plugins/gtkui/deadbeef.glade.h:91
+#, fuzzy
+msgid "Playback"
+msgstr "再生(_P)"
+
+#: ../plugins/gtkui/interface.c:1982 ../plugins/gtkui/interface.c:2514
+#: ../plugins/gtkui/deadbeef.glade.h:22 ../plugins/converter/interface.c:649
+msgid "Configure"
+msgstr "設定"
+
+#: ../plugins/gtkui/interface.c:2017 ../plugins/gtkui/deadbeef.glade.h:29
+#, fuzzy
+msgid "DSP Chain Preset"
+msgstr "イコライザ設定を保存"
+
+#: ../plugins/gtkui/interface.c:2029 ../plugins/gtkui/deadbeef.glade.h:161
+msgid "_Load"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2033 ../plugins/gtkui/deadbeef.glade.h:28
+msgid "DSP"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2042 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Close minimizes to tray"
 msgstr "ウィンドウを閉じたときシステムトレイに格納"
 
-#: ../plugins/gtkui/interface.c:1814 ../plugins/gtkui/deadbeef.glade.h:70
+#: ../plugins/gtkui/interface.c:2046 ../plugins/gtkui/deadbeef.glade.h:78
 msgid "Middle mouse button closes playlist"
 msgstr "マウスの中クリックでプレイリストを閉じる"
 
-#: ../plugins/gtkui/interface.c:1827 ../plugins/gtkui/interface.c:1871
-#: ../plugins/gtkui/deadbeef.glade.h:78
+#: ../plugins/gtkui/interface.c:2050 ../plugins/gtkui/deadbeef.glade.h:51
+msgid "Hide system tray icon"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2054 ../plugins/gtkui/deadbeef.glade.h:143
+msgid "Use bold font for currently playing track"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2058 ../plugins/gtkui/deadbeef.glade.h:50
+msgid "Hide \"Delete from disk\" context menu item"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2062 ../plugins/gtkui/deadbeef.glade.h:16
+msgid "Auto-name playlists when adding a single folder"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2070 ../plugins/gtkui/deadbeef.glade.h:54
+msgid "Interface refresh rate (times per second):"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2084 ../plugins/gtkui/deadbeef.glade.h:137
+msgid "Titlebar text while playing:"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2098 ../plugins/gtkui/deadbeef.glade.h:138
+msgid "Titlebar text while stopped:"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2112 ../plugins/gtkui/deadbeef.glade.h:46
+msgid "GUI Plugin (changing requires restart):"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2120 ../plugins/gtkui/deadbeef.glade.h:45
+msgid "GUI"
+msgstr "GUI"
+
+#: ../plugins/gtkui/interface.c:2135 ../plugins/gtkui/interface.c:2179
+#: ../plugins/gtkui/deadbeef.glade.h:86
 msgid "Override"
 msgstr "デフォルトを上書きする"
 
-#: ../plugins/gtkui/interface.c:1836 ../plugins/gtkui/deadbeef.glade.h:45
+#: ../plugins/gtkui/interface.c:2144 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Foreground"
 msgstr "前景色"
 
-#: ../plugins/gtkui/interface.c:1843 ../plugins/gtkui/deadbeef.glade.h:14
+#: ../plugins/gtkui/interface.c:2151 ../plugins/gtkui/deadbeef.glade.h:17
 msgid "Background"
 msgstr "背景色"
 
-#: ../plugins/gtkui/interface.c:1862 ../plugins/gtkui/deadbeef.glade.h:103
+#: ../plugins/gtkui/interface.c:2170 ../plugins/gtkui/deadbeef.glade.h:113
 msgid "Seekbar/Volumebar colors"
 msgstr "シークバーと音量バーの色"
 
-#: ../plugins/gtkui/interface.c:1880 ../plugins/gtkui/deadbeef.glade.h:69
+#: ../plugins/gtkui/interface.c:2188 ../plugins/gtkui/deadbeef.glade.h:77
 msgid "Middle"
 msgstr "中間色"
 
-#: ../plugins/gtkui/interface.c:1887 ../plugins/gtkui/deadbeef.glade.h:62
+#: ../plugins/gtkui/interface.c:2195 ../plugins/gtkui/deadbeef.glade.h:70
 msgid "Light"
 msgstr "明色"
 
-#: ../plugins/gtkui/interface.c:1894 ../plugins/gtkui/deadbeef.glade.h:22
+#: ../plugins/gtkui/interface.c:2202 ../plugins/gtkui/deadbeef.glade.h:30
 msgid "Dark"
 msgstr "暗色"
 
-#: ../plugins/gtkui/interface.c:1925 ../plugins/gtkui/deadbeef.glade.h:15
+#: ../plugins/gtkui/interface.c:2233 ../plugins/gtkui/deadbeef.glade.h:18
 msgid "Base"
 msgstr "基底色"
 
-#: ../plugins/gtkui/interface.c:1932 ../plugins/gtkui/deadbeef.glade.h:117
+#: ../plugins/gtkui/interface.c:2240 ../plugins/gtkui/interface.c:2297
+#: ../plugins/gtkui/deadbeef.glade.h:134
+msgid "Text"
+msgstr "文字色"
+
+#: ../plugins/gtkui/interface.c:2253 ../plugins/gtkui/deadbeef.glade.h:131
 msgid "Tab strip colors"
 msgstr "タブの色"
 
-#: ../plugins/gtkui/interface.c:1941 ../plugins/gtkui/deadbeef.glade.h:79
+#: ../plugins/gtkui/interface.c:2262 ../plugins/gtkui/deadbeef.glade.h:87
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
 msgstr ""
 "デフォルトを上書きする (GTKテーマが不適用になりますが描画が高速化します)"
 
-#: ../plugins/gtkui/interface.c:1950 ../plugins/gtkui/deadbeef.glade.h:33
+#: ../plugins/gtkui/interface.c:2271 ../plugins/gtkui/deadbeef.glade.h:41
 msgid "Even row"
 msgstr "偶数行"
 
-#: ../plugins/gtkui/interface.c:1957 ../plugins/gtkui/deadbeef.glade.h:74
+#: ../plugins/gtkui/interface.c:2278 ../plugins/gtkui/deadbeef.glade.h:82
 msgid "Odd row"
 msgstr "奇数行"
 
-#: ../plugins/gtkui/interface.c:1976 ../plugins/gtkui/deadbeef.glade.h:120
-msgid "Text"
-msgstr "文字色"
-
-#: ../plugins/gtkui/interface.c:1983 ../plugins/gtkui/deadbeef.glade.h:105
+#: ../plugins/gtkui/interface.c:2304 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Selected row"
 msgstr "選択の行"
 
-#: ../plugins/gtkui/interface.c:2002 ../plugins/gtkui/deadbeef.glade.h:106
+#: ../plugins/gtkui/interface.c:2323 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Selected text"
 msgstr "選択の文字色"
 
-#: ../plugins/gtkui/interface.c:2015 ../plugins/gtkui/deadbeef.glade.h:20
+#: ../plugins/gtkui/interface.c:2336 ../plugins/gtkui/deadbeef.glade.h:25
 msgid "Cursor"
 msgstr "カーソル"
 
-#: ../plugins/gtkui/interface.c:2028 ../plugins/gtkui/deadbeef.glade.h:83
+#: ../plugins/gtkui/interface.c:2349 ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Playlist colors"
 msgstr "プレイリストの色"
 
-#: ../plugins/gtkui/interface.c:2032 ../plugins/gtkui/deadbeef.glade.h:54
-msgid "GUI"
-msgstr "GUI"
+#: ../plugins/gtkui/interface.c:2353 ../plugins/gtkui/deadbeef.glade.h:20
+msgid "Colors"
+msgstr ""
 
-#: ../plugins/gtkui/interface.c:2041 ../plugins/gtkui/deadbeef.glade.h:30
+#: ../plugins/gtkui/interface.c:2362 ../plugins/gtkui/deadbeef.glade.h:38
 msgid "Enable Proxy Server"
 msgstr "プロクシサーバを有効にする"
 
-#: ../plugins/gtkui/interface.c:2049 ../plugins/gtkui/deadbeef.glade.h:89
+#: ../plugins/gtkui/interface.c:2370 ../plugins/gtkui/deadbeef.glade.h:99
 msgid "Proxy Server Address:"
 msgstr "プロクシサーバのアドレス:"
 
-#: ../plugins/gtkui/interface.c:2063 ../plugins/gtkui/deadbeef.glade.h:90
+#: ../plugins/gtkui/interface.c:2384 ../plugins/gtkui/deadbeef.glade.h:100
 msgid "Proxy Server Port:"
 msgstr "プロクシサーバのポート番号:"
 
-#: ../plugins/gtkui/interface.c:2077 ../plugins/gtkui/deadbeef.glade.h:91
+#: ../plugins/gtkui/interface.c:2398 ../plugins/gtkui/deadbeef.glade.h:101
 msgid "Proxy Type:"
 msgstr "プロクシの形式:"
 
-#: ../plugins/gtkui/interface.c:2096 ../plugins/gtkui/deadbeef.glade.h:92
+#: ../plugins/gtkui/interface.c:2417 ../plugins/gtkui/deadbeef.glade.h:102
 msgid "Proxy Username:"
 msgstr "プロクシのユーザ名:"
 
-#: ../plugins/gtkui/interface.c:2109 ../plugins/gtkui/deadbeef.glade.h:88
+#: ../plugins/gtkui/interface.c:2430 ../plugins/gtkui/deadbeef.glade.h:98
 msgid "Proxy Password:"
 msgstr "プロクシのパスワード:"
 
-#: ../plugins/gtkui/interface.c:2119 ../plugins/gtkui/deadbeef.glade.h:71
+#: ../plugins/gtkui/interface.c:2440 ../plugins/gtkui/deadbeef.glade.h:79
 msgid "Network"
 msgstr "ネットワーク"
 
-#: ../plugins/gtkui/interface.c:2147 ../plugins/gtkui/deadbeef.glade.h:128
-msgid "Write ID3v2"
-msgstr "ID3v2 の書き出し"
+#: ../plugins/gtkui/interface.c:2471 ../plugins/gtkui/deadbeef.glade.h:144
+msgid "Version: "
+msgstr ""
 
-#: ../plugins/gtkui/interface.c:2151 ../plugins/gtkui/interface.c:2278
-#: ../plugins/gtkui/deadbeef.glade.h:127
-msgid "Write ID3v1"
-msgstr "ID3v1 の書き出し"
+#: ../plugins/gtkui/interface.c:2535 ../plugins/gtkui/deadbeef.glade.h:23
+#: ../translation/extra.c:78
+msgid "Copyright"
+msgstr ""
 
-#: ../plugins/gtkui/interface.c:2155 ../plugins/gtkui/interface.c:2234
-#: ../plugins/gtkui/interface.c:2274 ../plugins/gtkui/deadbeef.glade.h:126
-msgid "Write APEv2"
-msgstr "APEv2 の書き出し"
-
-#: ../plugins/gtkui/interface.c:2163 ../plugins/gtkui/interface.c:2242
-#: ../plugins/gtkui/deadbeef.glade.h:116
-msgid "Strip ID3v2"
-msgstr "ID3v2 の除去"
-
-#: ../plugins/gtkui/interface.c:2167 ../plugins/gtkui/interface.c:2290
-#: ../plugins/gtkui/deadbeef.glade.h:115
-msgid "Strip ID3v1"
-msgstr "ID3v1 の除去"
-
-#: ../plugins/gtkui/interface.c:2171 ../plugins/gtkui/interface.c:2246
-#: ../plugins/gtkui/interface.c:2286 ../plugins/gtkui/deadbeef.glade.h:114
-msgid "Strip APEv2"
-msgstr "APEv2 の除去"
-
-#: ../plugins/gtkui/interface.c:2179 ../plugins/gtkui/deadbeef.glade.h:58
-msgid "ID3v2 version"
-msgstr "ID3v2 のバージョン"
-
-#: ../plugins/gtkui/interface.c:2186
-msgid "2.3 (Recommended)"
-msgstr "2.3 (推奨)"
-
-#: ../plugins/gtkui/interface.c:2187
-msgid "2.4"
-msgstr "2.4"
-
-#: ../plugins/gtkui/interface.c:2193 ../plugins/gtkui/deadbeef.glade.h:57
-msgid "ID3v1 character encoding (default is iso8859-1)"
-msgstr "ID3v1 の文字エンコーディング (デフォルトは iso8859-1)"
-
-#: ../plugins/gtkui/interface.c:2230 ../plugins/gtkui/deadbeef.glade.h:129
-msgid "Write ID3v2.4"
-msgstr "ID3v2.4 の書き出し"
-
-#: ../plugins/gtkui/interface.c:2299 ../plugins/gtkui/deadbeef.glade.h:119
-msgid "Tag writer"
-msgstr "タグ書き出し"
-
-#: ../plugins/gtkui/interface.c:2330 ../plugins/gtkui/deadbeef.glade.h:23
-msgid "Description:"
-msgstr "説明:"
-
-#: ../plugins/gtkui/interface.c:2345 ../plugins/gtkui/deadbeef.glade.h:13
-msgid "Author(s):"
-msgstr "作者:"
-
-#: ../plugins/gtkui/interface.c:2360 ../plugins/gtkui/deadbeef.glade.h:29
-msgid "Email:"
-msgstr "Email:"
-
-#: ../plugins/gtkui/interface.c:2375 ../plugins/gtkui/deadbeef.glade.h:125
-msgid "Website:"
-msgstr "Webサイト:"
-
-#: ../plugins/gtkui/interface.c:2406 ../plugins/gtkui/deadbeef.glade.h:18
-msgid "Configure"
-msgstr "設定"
-
-#: ../plugins/gtkui/interface.c:2410 ../plugins/gtkui/deadbeef.glade.h:84
+#: ../plugins/gtkui/interface.c:2545 ../plugins/gtkui/deadbeef.glade.h:94
 msgid "Plugins"
 msgstr "プラグイン"
 
-#: ../plugins/gtkui/interface.c:2754 ../plugins/gtkui/deadbeef.glade.h:147
-msgid "editplaylistdlg"
-msgstr "editplaylistdlg"
-
-#: ../plugins/gtkui/interface.c:2881 ../plugins/gtkui/deadbeef.glade.h:124
+#: ../plugins/gtkui/interface.c:3033 ../plugins/gtkui/deadbeef.glade.h:142
 msgid "URL:"
 msgstr "URL:"
 
-#: ../plugins/gtkui/interface.c:2982 ../plugins/gtkui/deadbeef.glade.h:55
+#: ../plugins/gtkui/interface.c:3135 ../plugins/gtkui/deadbeef.glade.h:48
 msgid "Group By"
 msgstr "グループ化"
 
-#: ../plugins/gtkui/mainplaylist.c:298 ../plugins/gtkui/search.c:433
+#: ../plugins/gtkui/interface.c:3259 ../plugins/gtkui/deadbeef.glade.h:123
+msgid "Sort by..."
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:3275 ../plugins/gtkui/deadbeef.glade.h:43
+#, fuzzy
+msgid "Format"
+msgstr "書式:"
+
+#: ../plugins/gtkui/interface.c:3305
+msgid "Ascending"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:3306
+msgid "Descending"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:3359 ../plugins/gtkui/deadbeef.glade.h:114
+#: ../plugins/converter/interface.c:750
+#, fuzzy
+msgid "Select DSP Plugin"
+msgstr "選択"
+
+#: ../plugins/gtkui/interface.c:3375 ../plugins/gtkui/deadbeef.glade.h:93
+#: ../plugins/converter/convgui.c:1016 ../plugins/converter/interface.c:766
+#: ../plugins/gtkui/dspconfig.c:139
+#, fuzzy
+msgid "Plugin"
+msgstr "プラグイン"
+
+#: ../plugins/gtkui/interface.c:3461 ../plugins/gtkui/deadbeef.glade.h:133
+#, fuzzy
+msgid "Tag Writer Settings"
+msgstr "タグ書き出し"
+
+#: ../plugins/gtkui/interface.c:3492 ../plugins/gtkui/deadbeef.glade.h:147
+msgid "Write ID3v2"
+msgstr "ID3v2 の書き出し"
+
+#: ../plugins/gtkui/interface.c:3496 ../plugins/gtkui/interface.c:3623
+#: ../plugins/gtkui/deadbeef.glade.h:146
+msgid "Write ID3v1"
+msgstr "ID3v1 の書き出し"
+
+#: ../plugins/gtkui/interface.c:3500 ../plugins/gtkui/interface.c:3579
+#: ../plugins/gtkui/interface.c:3619 ../plugins/gtkui/deadbeef.glade.h:145
+msgid "Write APEv2"
+msgstr "APEv2 の書き出し"
+
+#: ../plugins/gtkui/interface.c:3508 ../plugins/gtkui/interface.c:3587
+#: ../plugins/gtkui/deadbeef.glade.h:130
+msgid "Strip ID3v2"
+msgstr "ID3v2 の除去"
+
+#: ../plugins/gtkui/interface.c:3512 ../plugins/gtkui/interface.c:3635
+#: ../plugins/gtkui/deadbeef.glade.h:129
+msgid "Strip ID3v1"
+msgstr "ID3v1 の除去"
+
+#: ../plugins/gtkui/interface.c:3516 ../plugins/gtkui/interface.c:3591
+#: ../plugins/gtkui/interface.c:3631 ../plugins/gtkui/deadbeef.glade.h:128
+msgid "Strip APEv2"
+msgstr "APEv2 の除去"
+
+#: ../plugins/gtkui/interface.c:3524 ../plugins/gtkui/deadbeef.glade.h:53
+msgid "ID3v2 version"
+msgstr "ID3v2 のバージョン"
+
+#: ../plugins/gtkui/interface.c:3531
+msgid "2.3 (Recommended)"
+msgstr "2.3 (推奨)"
+
+#: ../plugins/gtkui/interface.c:3532
+msgid "2.4"
+msgstr "2.4"
+
+#: ../plugins/gtkui/interface.c:3538 ../plugins/gtkui/deadbeef.glade.h:52
+msgid "ID3v1 character encoding (default is iso8859-1)"
+msgstr "ID3v1 の文字エンコーディング (デフォルトは iso8859-1)"
+
+#: ../plugins/gtkui/interface.c:3575 ../plugins/gtkui/deadbeef.glade.h:148
+msgid "Write ID3v2.4"
+msgstr "ID3v2.4 の書き出し"
+
+#: ../plugins/gtkui/mainplaylist.c:316 ../plugins/gtkui/search.c:391
 msgid "Artist / Album"
 msgstr "アーティスト / アルバム"
 
-#: ../plugins/gtkui/mainplaylist.c:299 ../plugins/gtkui/search.c:434
+#: ../plugins/gtkui/mainplaylist.c:317 ../plugins/gtkui/search.c:392
 msgid "Track No"
 msgstr "トラック番号"
 
-#: ../plugins/gtkui/mainplaylist.c:300 ../plugins/gtkui/search.c:435
-msgid "Title / Track Artist"
-msgstr "タイトル / トラックのアーティスト"
-
-#: ../plugins/gtkui/mainplaylist.c:301 ../plugins/gtkui/search.c:436
-#: ../plugins/gtkui/trkproperties.c:175
-msgid "Duration"
-msgstr "演奏時間"
-
-#: ../plugins/gtkui/plcommon.c:316
+#: ../plugins/gtkui/plcommon.c:338
 msgid "Delete files from disk"
 msgstr "ファイルをディスクから削除"
 
-#: ../plugins/gtkui/plcommon.c:317
+#: ../plugins/gtkui/plcommon.c:339
 msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
@@ -804,191 +933,223 @@ msgstr ""
 "ファイルは失われます。続けますか？\n"
 "(このダイアログは GTKUI プラグインの設定で無効にできます)"
 
-#: ../plugins/gtkui/plcommon.c:318 ../plugins/gtkui/trkproperties.c:56
+#: ../plugins/gtkui/plcommon.c:340 ../plugins/gtkui/trkproperties.c:162
+#: ../plugins/gtkui/trkproperties.c:693 ../plugins/converter/convgui.c:759
+#: ../plugins/converter/convgui.c:1136
 msgid "Warning"
 msgstr "警告"
 
-#: ../plugins/gtkui/plcommon.c:363
+#: ../plugins/gtkui/plcommon.c:444
 msgid "Add to playback queue"
 msgstr "再生キューへ追加"
 
-#: ../plugins/gtkui/plcommon.c:368
+#: ../plugins/gtkui/plcommon.c:449
 msgid "Remove from playback queue"
 msgstr "再生キューから削除"
 
-#: ../plugins/gtkui/plcommon.c:376
+#: ../plugins/gtkui/plcommon.c:457
 msgid "Reload metadata"
 msgstr "メタデータを再読み込み"
 
-#: ../plugins/gtkui/plcommon.c:392
+#: ../plugins/gtkui/plcommon.c:476
 msgid "Remove from disk"
 msgstr "ディスクから削除"
 
-#: ../plugins/gtkui/plcommon.c:616 ../plugins/gtkui/plcommon.c:741
+#: ../plugins/gtkui/plcommon.c:855 ../plugins/gtkui/plcommon.c:980
 msgid "Add column"
 msgstr "カラムの追加"
 
-#: ../plugins/gtkui/plcommon.c:646 ../plugins/gtkui/plcommon.c:745
+#: ../plugins/gtkui/plcommon.c:885 ../plugins/gtkui/plcommon.c:984
 msgid "Edit column"
 msgstr "カラムの編集"
 
-#: ../plugins/gtkui/plcommon.c:749
+#: ../plugins/gtkui/plcommon.c:988
 msgid "Remove column"
 msgstr "カラムの削除"
 
-#: ../plugins/gtkui/plcommon.c:759
+#: ../plugins/gtkui/plcommon.c:998
 msgid "Group by"
 msgstr "グループ化"
 
-#: ../plugins/gtkui/plcommon.c:766
+#: ../plugins/gtkui/plcommon.c:1005
 msgid "None"
 msgstr "なし"
 
-#: ../plugins/gtkui/plcommon.c:770
+#: ../plugins/gtkui/plcommon.c:1009
 msgid "Artist/Date/Album"
 msgstr "アーティスト/日付/アルバム"
 
-#: ../plugins/gtkui/pluginconf.c:41
+#: ../plugins/gtkui/pluginconf.c:42
 msgid "Open file..."
 msgstr "ファイルを開く..."
 
-#: ../plugins/gtkui/pluginconf.c:139
-#, c-format
-msgid "Setup %s"
-msgstr "%s の設定"
+#: ../plugins/gtkui/pluginconf.c:217
+#, fuzzy, c-format
+msgid "Configure %s"
+msgstr "設定"
 
-#: ../plugins/gtkui/prefwin.c:98
+#: ../plugins/gtkui/prefwin.c:82
 msgid "Default Audio Device"
 msgstr "デフォルトの音声デバイス"
 
-#: ../plugins/gtkui/prefwin.c:267
+#: ../plugins/gtkui/prefwin.c:318 ../plugins/converter/interface.c:641
 msgid "Add"
 msgstr "追加"
 
-#: ../plugins/gtkui/prefwin.c:277
+#: ../plugins/gtkui/prefwin.c:328
 msgid "Global Hotkeys"
 msgstr "グローバルホットキー"
 
-#: ../plugins/gtkui/prefwin.c:332
+#: ../plugins/gtkui/prefwin.c:390
 msgid "Slot"
 msgstr "スロット"
 
-#: ../plugins/gtkui/prefwin.c:333
+#: ../plugins/gtkui/prefwin.c:391
 msgid "Key combination"
 msgstr "キーの組み合わせ"
 
-#. output plugin selection
-#: ../plugins/gtkui/prefwin.c:379 ../plugins/gtkui/prefwin.c:569
-#: ../plugins.c:833
-msgid "ALSA output plugin"
-msgstr "ALSA 出力プラグイン"
+#: ../plugins/gtkui/progress.c:56
+msgid "Adding files..."
+msgstr "ファイルの追加..."
 
-#: ../plugins/gtkui/progress.c:64
+#: ../plugins/gtkui/progress.c:90
 msgid "Initializing..."
 msgstr "初期化中..."
 
-#: ../plugins/gtkui/trkproperties.c:53
+#: ../plugins/gtkui/trkproperties.c:159
 msgid "You've modified data for this track."
 msgstr "あなたはこのトラックのデータを変更しました。"
 
-#: ../plugins/gtkui/trkproperties.c:55
+#: ../plugins/gtkui/trkproperties.c:161
 msgid "Really close the window?"
 msgstr "本当にウィンドウを閉じますか？"
 
-#: ../plugins/gtkui/trkproperties.c:178
-msgid "Tag Type(s)"
-msgstr "タグの形式"
+#. get value to edit
+#: ../plugins/gtkui/trkproperties.c:254
+msgid "[Multiple values] "
+msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:180
-msgid "Embedded Cuesheet"
-msgstr "埋め込みCUEシート"
-
-#: ../plugins/gtkui/trkproperties.c:180
-msgid "Yes"
-msgstr "はい"
-
-#: ../plugins/gtkui/trkproperties.c:180
-msgid "No"
-msgstr "いいえ"
-
-#: ../plugins/gtkui/trkproperties.c:248 ../plugins/gtkui/trkproperties.c:260
+#: ../plugins/gtkui/trkproperties.c:407 ../plugins/gtkui/trkproperties.c:419
 msgid "Key"
 msgstr "キー"
 
-#: ../plugins/gtkui/trkproperties.c:249 ../plugins/gtkui/trkproperties.c:261
+#: ../plugins/gtkui/trkproperties.c:408 ../plugins/gtkui/trkproperties.c:420
 msgid "Value"
 msgstr "値"
 
-#: ../plugins/notify/notify.c:138
-msgid "DeaDBeeF now playing"
-msgstr "DeaDBeeF は現在演奏中です"
+#: ../plugins/gtkui/trkproperties.c:594
+msgid "Writing tags..."
+msgstr ""
 
-#: ../main.c:84
+#: ../plugins/gtkui/trkproperties.c:621
+msgid "Name:"
+msgstr ""
+
+#: ../plugins/gtkui/trkproperties.c:633
+msgid "Field names must not start with : or _"
+msgstr ""
+
+#: ../plugins/gtkui/trkproperties.c:634 ../plugins/gtkui/trkproperties.c:668
+#, fuzzy
+msgid "Cannot add field"
+msgstr "ファイルを追加"
+
+#: ../plugins/gtkui/trkproperties.c:667
+msgid "Field with such name already exists, please try different name."
+msgstr ""
+
+#: ../plugins/gtkui/trkproperties.c:692
+#, fuzzy
+msgid "Really remove selected field?"
+msgstr "本当にウィンドウを閉じますか？"
+
+#: ../plugins/gtkui/trkproperties.c:734
+#, fuzzy
+msgid "Add field"
+msgstr "ファイルを追加"
+
+#: ../plugins/gtkui/trkproperties.c:737
+#, fuzzy
+msgid "Remove field"
+msgstr "取り除く"
+
+#: ../main.c:91
 #, c-format
 msgid "Usage: deadbeef [options] [file(s)]\n"
 msgstr "使い方: deadbeef [オプション] [ファイル...]\n"
 
-#: ../main.c:85
+#: ../main.c:92
 #, c-format
 msgid "Options:\n"
 msgstr "オプション:\n"
 
-#: ../main.c:86
+#: ../main.c:93
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
 msgstr "   --help  or  -h     ヘルプ (このメッセージ) を表示して終了\n"
 
-#: ../main.c:87
+#: ../main.c:94
 #, c-format
 msgid "   --quit             Quit player\n"
 msgstr "   --quit             プレイヤを終了する\n"
 
-#: ../main.c:88
+#: ../main.c:95
 #, c-format
 msgid "   --version          Print version info and exit\n"
 msgstr "   --version          バージョン情報を表示して終了\n"
 
-#: ../main.c:89
+#: ../main.c:96
 #, c-format
 msgid "   --play             Start playback\n"
 msgstr "   --play             再生を開始する\n"
 
-#: ../main.c:90
+#: ../main.c:97
 #, c-format
 msgid "   --stop             Stop playback\n"
 msgstr "   --stop             再生を停止する\n"
 
-#: ../main.c:91
+#: ../main.c:98
 #, c-format
 msgid "   --pause            Pause playback\n"
 msgstr "   --pause            ポーズする\n"
 
-#: ../main.c:92
+#: ../main.c:99
+#, c-format
+msgid "   --toggle-pause     Toggle pause\n"
+msgstr ""
+
+#: ../main.c:100
+#, c-format
+msgid ""
+"   --play-pause       Start playback if stopped, toggle pause otherwise\n"
+msgstr ""
+
+#: ../main.c:101
 #, c-format
 msgid "   --next             Next song in playlist\n"
 msgstr "   --next             プレイリストの次の曲へ\n"
 
-#: ../main.c:93
+#: ../main.c:102
 #, c-format
 msgid "   --prev             Previous song in playlist\n"
 msgstr "   --prev             プレイリストの前の曲へ\n"
 
-#: ../main.c:94
+#: ../main.c:103
 #, c-format
 msgid "   --random           Random song in playlist\n"
 msgstr "   --random           プレイリストからランダムに選んだ曲へ\n"
 
-#: ../main.c:95
+#: ../main.c:104
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
 msgstr "   --queue            ファイルを既存のプレイリストに追加する\n"
 
-#: ../main.c:96
+#: ../main.c:105
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
 msgstr "   --nowplaying 書式  書式化されたトラック名を stdout に書き出します\n"
 
-#: ../main.c:97
+#: ../main.c:106
 #, c-format
 msgid ""
 "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
@@ -1000,7 +1161,7 @@ msgstr ""
 "                      長さ[l], トラック番号[n], 年[y], コメント[c],\n"
 "                      著作権[r], 経過時間[e]\n"
 
-#: ../main.c:100
+#: ../main.c:109
 #, c-format
 msgid ""
 "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
@@ -1009,11 +1170,26 @@ msgstr ""
 "                      例: --nowplaying \"%%a - %%t\" は \"アーティスト - タイ"
 "トル\" と表示します\n"
 
-#: ../playlist.c:369 ../playlist.c:2212
+#: ../main.c:110
+#, c-format
+msgid ""
+"                      for more info, see http://sourceforge.net/apps/"
+"mediawiki/deadbeef/index.php?title=Title_Formatting\n"
+msgstr ""
+
+#: ../playlist.c:454 ../playlist.c:2398
 msgid "Default"
 msgstr "デフォルト"
 
-#: ../plugins/gtkui/deadbeef.glade.h:1
+#: ../playlist.c:3664
+msgid "Yes"
+msgstr "はい"
+
+#: ../playlist.c:3664
+msgid "No"
+msgstr "いいえ"
+
+#: ../plugins/gtkui/deadbeef.glade.h:3
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
@@ -1021,7 +1197,13 @@ msgstr ""
 "2.3 (推奨)\n"
 "2.4"
 
-#: ../plugins/gtkui/deadbeef.glade.h:25
+#: ../plugins/gtkui/deadbeef.glade.h:14
+msgid ""
+"Ascending\n"
+"Descending"
+msgstr ""
+
+#: ../plugins/gtkui/deadbeef.glade.h:33
 msgid ""
 "Disable\n"
 "Track\n"
@@ -1031,17 +1213,18 @@ msgstr ""
 "トラック\n"
 "アルバム"
 
-#: ../plugins/gtkui/deadbeef.glade.h:34
+#: ../plugins/gtkui/deadbeef.glade.h:56
+#, fuzzy
 msgid ""
-"File number\n"
+"Item Index\n"
 "Playing\n"
 "Album Art\n"
 "Artist - Album\n"
 "Artist\n"
 "Album\n"
 "Title\n"
-"Length\n"
-"Track\n"
+"Duration\n"
+"Track Number\n"
 "Band / Album Artist\n"
 "Custom"
 msgstr ""
@@ -1057,7 +1240,7 @@ msgstr ""
 "バンド / アルバムのアーティスト\n"
 "カスタム"
 
-#: ../plugins/gtkui/deadbeef.glade.h:60
+#: ../plugins/gtkui/deadbeef.glade.h:68
 msgid ""
 "Left\n"
 "Right"
@@ -1066,144 +1249,651 @@ msgstr ""
 "右"
 
 #: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
+#: ../plugins/converter/support.c:90 ../plugins/converter/support.c:114
 #, c-format
 msgid "Couldn't find pixmap file: %s"
 msgstr "Pixmap ファイルが見つかりません: %s"
 
-#: ../plugins/vorbis/vcedit.c:129 ../plugins/vorbis/vcedit.c:155
-msgid "Couldn't get enough memory for input buffering."
-msgstr "入力バッファに必要なメモリが確保できません。"
-
-#: ../plugins/vorbis/vcedit.c:179 ../plugins/vorbis/vcedit.c:550
-msgid "Error reading first page of Ogg bitstream."
-msgstr "Ogg ビットストリームの最初のページの読み込みにエラー。"
-
-#: ../plugins/vorbis/vcedit.c:185 ../plugins/vorbis/vcedit.c:557
-msgid "Error reading initial header packet."
-msgstr "最初のヘッダのパケットの読み込みにエラー。"
-
-#: ../plugins/vorbis/vcedit.c:237
-msgid "Couldn't get enough memory to register new stream serial number."
-msgstr "新規ストリームのシリアル番号の登録に必要なメモリが確保できません。"
-
-#: ../plugins/vorbis/vcedit.c:505
-msgid "Input truncated or empty."
-msgstr "入力は欠損しているか空です。"
-
-#: ../plugins/vorbis/vcedit.c:507
-msgid "Input is not an Ogg bitstream."
-msgstr "入力は Ogg ビットストリームではありません。"
-
-#: ../plugins/vorbis/vcedit.c:565
-msgid "Ogg bitstream does not contain Vorbis data."
-msgstr "Ogg ビットストリーム中に Vorbis データがありません。"
-
-#: ../plugins/vorbis/vcedit.c:578
-msgid "EOF before recognised stream."
-msgstr "認識できるストリームの前に EOF があります。"
-
-#: ../plugins/vorbis/vcedit.c:594
-msgid "Ogg bitstream does not contain a supported data-type."
-msgstr "Ogg ビットストリーム中に対応したデータ型がありません。"
-
-#: ../plugins/vorbis/vcedit.c:638
-msgid "Corrupt secondary header."
-msgstr "第2ヘッダが破損しています。"
-
-#: ../plugins/vorbis/vcedit.c:659
-msgid "EOF before end of Vorbis headers."
-msgstr "Vorbis ヘッダの終わりの前に EOF があります。"
-
-#: ../plugins/vorbis/vcedit.c:834
-msgid "Corrupt or missing data, continuing..."
-msgstr "データは破損または失われています。続行..."
-
-#: ../plugins/vorbis/vcedit.c:874
+#: ../plugins/wildmidi/wildmidiplug.c:162
+#, c-format
 msgid ""
-"Error writing stream to output. Output stream may be corrupted or truncated."
+"wildmidi: freepats config file not found. Please install timidity-freepats "
+"package, or specify path to freepats.cfg in the plugin settings."
 msgstr ""
-"ストリームの書き出し時にエラー。出力ストリームは破損もしくは欠損している可能"
-"性があります。"
 
-#, fuzzy
-#~ msgid "DeaDBeeF Translators"
-#~ msgstr "DeaDBeeF は現在演奏中です"
+#. this file should list extra translatable strings that are not referenced
+#. directly in source code, e.g. scripted plugin configuration strings
+#: ../translation/extra.c:3
+msgid "Add Audio CD"
+msgstr "音楽 CD を追加"
 
-#, fuzzy
-#~ msgid "Presets"
-#~ msgstr "イコライザ設定を保存"
+#: ../translation/extra.c:4
+msgid "Lookup on Last.fm"
+msgstr ""
 
+#. ALSA output plugin
+#: ../translation/extra.c:6
+msgid "Use ALSA resampling"
+msgstr ""
+
+#: ../translation/extra.c:7
+msgid "Release device while stopped"
+msgstr ""
+
+#: ../translation/extra.c:8 ../translation/extra.c:51
+msgid "Preferred buffer size"
+msgstr ""
+
+#: ../translation/extra.c:9
+msgid "Preferred period size"
+msgstr ""
+
+#. Last.fm plugin
+#: ../translation/extra.c:11
 #, fuzzy
-#~ msgid "Track number"
+msgid "Enable scrobbler"
+msgstr "プロクシサーバを有効にする"
+
+#: ../translation/extra.c:12
+#, fuzzy
+msgid "Disable nowplaying"
+msgstr "DeaDBeeF は現在演奏中です"
+
+#: ../translation/extra.c:13
+#, fuzzy
+msgid "Username"
+msgstr "プロクシのユーザ名:"
+
+#: ../translation/extra.c:14
+#, fuzzy
+msgid "Password"
+msgstr "プロクシのパスワード:"
+
+#: ../translation/extra.c:15
+msgid "Scrobble URL"
+msgstr ""
+
+#. OSS output plugin
+#: ../translation/extra.c:17
+#, fuzzy
+msgid "Device file"
+msgstr "取り除く"
+
+#: ../translation/extra.c:18
+msgid "OSS4 samplerate bug workaround"
+msgstr ""
+
+#. Album Artwork plugin
+#: ../translation/extra.c:20
+msgid "Cache update period (hr)"
+msgstr ""
+
+#: ../translation/extra.c:21
+msgid "Fetch from embedded tags"
+msgstr ""
+
+#: ../translation/extra.c:22
+msgid "Fetch from local folder"
+msgstr ""
+
+#: ../translation/extra.c:23
+msgid "Local cover file mask"
+msgstr ""
+
+#: ../translation/extra.c:24
+msgid "Fetch from last.fm"
+msgstr ""
+
+#: ../translation/extra.c:25
+msgid "Fetch from albumart.org"
+msgstr ""
+
+#: ../translation/extra.c:26
+msgid "Scale artwork towards longer side"
+msgstr ""
+
+#. Audio CD player
+#: ../translation/extra.c:28
+msgid "Use CDDB/FreeDB"
+msgstr ""
+
+#: ../translation/extra.c:29
+msgid "Prefer CD-Text over CDDB"
+msgstr ""
+
+#: ../translation/extra.c:30
+msgid "CDDB url (e.g. 'freedb.org')"
+msgstr ""
+
+#: ../translation/extra.c:31
+msgid "CDDB port number (e.g. '888')"
+msgstr ""
+
+#: ../translation/extra.c:32
+msgid "Prefer CDDB protocol over HTTP"
+msgstr ""
+
+#: ../translation/extra.c:33
+msgid "Enable NRG image support"
+msgstr ""
+
+#. DUMB module player plugin
+#: ../translation/extra.c:35
+msgid "Resampling quality (0..2, higher is better)"
+msgstr ""
+
+#. Game_Music_Emu decoder plugin
+#: ../translation/extra.c:37
+msgid "Max song length (in minutes)"
+msgstr ""
+
+#. Standard GTK2 user interface plugin
+#: ../translation/extra.c:39
+#, fuzzy
+msgid "Ask confirmation to delete files from disk"
+msgstr "ファイルをディスクから削除"
+
+#: ../translation/extra.c:40
+msgid "Status icon volume control sensitivity"
+msgstr ""
+
+#: ../translation/extra.c:41
+msgid "Custom status icon"
+msgstr ""
+
+#: ../translation/extra.c:42
+msgid "Run gtk_init with --sync (debug mode)"
+msgstr ""
+
+#: ../translation/extra.c:43
+msgid "Add separators between plugin context menu items"
+msgstr ""
+
+#. OSD Notify plugin
+#: ../translation/extra.c:45
+msgid "Notification title format"
+msgstr ""
+
+#: ../translation/extra.c:46
+msgid "Notification content format"
+msgstr ""
+
+#: ../translation/extra.c:47
+#, fuzzy
+msgid "Show album art"
+msgstr "アルバムアート"
+
+#: ../translation/extra.c:48
+msgid "Album art size (px)"
+msgstr ""
+
+#. PulseAudio output plugin
+#: ../translation/extra.c:50
+msgid "PulseAudio server"
+msgstr ""
+
+#: ../translation/extra.c:52
+msgid "Samplerate"
+msgstr ""
+
+#. SHN player plugin
+#: ../translation/extra.c:54
+msgid "Relative seek table path"
+msgstr ""
+
+#: ../translation/extra.c:55
+msgid "Absolute seek table path"
+msgstr ""
+
+#: ../translation/extra.c:56
+msgid "Swap audio bytes (toggle if all you hear is static)"
+msgstr ""
+
+#. SID decoder plugin
+#: ../translation/extra.c:58
+msgid "Enable HVSC Songlength DB"
+msgstr ""
+
+#: ../translation/extra.c:59
+msgid "Songlengths.txt (from HVSC)"
+msgstr ""
+
+#: ../translation/extra.c:60
+msgid "Bits per sample (8 or 16)"
+msgstr ""
+
+#: ../translation/extra.c:61
+msgid "Default song length (sec)"
+msgstr ""
+
+#. WildMidi player plugin
+#: ../translation/extra.c:63
+msgid "Timidity++ bank configuration file"
+msgstr ""
+
+#: ../translation/extra.c:66
+#, fuzzy
+msgid "Track Title"
+msgstr "トラック番号"
+
+#: ../translation/extra.c:67
+msgid "Performer"
+msgstr ""
+
+#: ../translation/extra.c:72
+#, fuzzy
+msgid "Total Tracks"
+msgstr "タイトル / トラックのアーティスト"
+
+#: ../translation/extra.c:73
+msgid "Genre"
+msgstr ""
+
+#: ../translation/extra.c:74
+msgid "Composer"
+msgstr ""
+
+#: ../translation/extra.c:75
+#, fuzzy
+msgid "Disc Number"
+msgstr "ファイル番号"
+
+#: ../translation/extra.c:76
+msgid "Comment"
+msgstr ""
+
+#: ../translation/extra.c:77
+msgid "Encoder / Vendor"
+msgstr ""
+
+#: ../translation/extra.c:79
+#, fuzzy
+msgid "Location"
+msgstr "場所を追加"
+
+#: ../translation/extra.c:80
+msgid "Subtrack Index"
+msgstr ""
+
+#: ../translation/extra.c:81
+msgid "Tag Type(s)"
+msgstr "タグの形式"
+
+#: ../translation/extra.c:82
+msgid "Embedded Cuesheet"
+msgstr "埋め込みCUEシート"
+
+#: ../translation/extra.c:83
+msgid "Codec"
+msgstr ""
+
+#. FFmpeg deocder plugin
+#: ../translation/extra.c:85
+msgid "File Extensions (separate with ';')"
+msgstr ""
+
+#. Converter GUI
+#: ../translation/extra.c:87
+msgid "Convert"
+msgstr ""
+
+#. Resampler (Secret Rabbit Code)
+#: ../translation/extra.c:89
+msgid "Target Samplerate"
+msgstr ""
+
+#: ../translation/extra.c:90
+msgid "Quality / Algorythm"
+msgstr ""
+
+#: ../translation/extra.c:91
+msgid "Automatic Samplerate (overrides Target Samplerate)"
+msgstr ""
+
+#: ../plugins/converter/convgui.c:108
+msgid "The file already exists. Overwrite?"
+msgstr ""
+
+#: ../plugins/converter/convgui.c:110
+msgid "Converter warning"
+msgstr ""
+
+#: ../plugins/converter/convgui.c:222
+msgid "Please select encoder"
+msgstr ""
+
+#: ../plugins/converter/convgui.c:224
+msgid "Converter error"
+msgstr ""
+
+#: ../plugins/converter/convgui.c:248
+msgid "Converting..."
+msgstr ""
+
+#: ../plugins/converter/convgui.c:394 ../plugins/converter/convgui.c:496
+#, fuzzy
+msgid "Select folder..."
+msgstr "すべて選択"
+
+#: ../plugins/converter/convgui.c:635
+#, fuzzy
+msgid "Failed to save encoder preset"
+msgstr "イコライザ設定の読み込み"
+
+#: ../plugins/converter/convgui.c:637 ../plugins/converter/convgui.c:1035
+msgid ""
+"Check preset folder permissions, try to pick different title, or free up "
+"some disk space"
+msgstr ""
+
+#: ../plugins/converter/convgui.c:637 ../plugins/converter/convgui.c:1035
+msgid "Preset with the same name already exists. Try to pick another title."
+msgstr ""
+
+#: ../plugins/converter/convgui.c:638 ../plugins/converter/convgui.c:1036
+msgid "Error"
+msgstr ""
+
+#: ../plugins/converter/convgui.c:692
+#, fuzzy
+msgid "Add new encoder"
+msgstr "カラムの編集"
+
+#: ../plugins/converter/convgui.c:724
+#, fuzzy
+msgid "Edit encoder"
+msgstr "カラムの編集"
+
+#: ../plugins/converter/convgui.c:756 ../plugins/converter/convgui.c:1133
+#, fuzzy
+msgid "Remove preset"
+msgstr "イコライザ設定を保存"
+
+#: ../plugins/converter/convgui.c:758 ../plugins/converter/convgui.c:1135
+msgid "This action will delete the selected preset. Are you sure?"
+msgstr ""
+
+#: ../plugins/converter/convgui.c:782
+#, fuzzy
+msgid "Encoders"
+msgstr "カラムの編集"
+
+#: ../plugins/converter/convgui.c:838 ../plugins/gtkui/dspconfig.c:183
+msgid "Add plugin to DSP chain"
+msgstr ""
+
+#: ../plugins/converter/convgui.c:1034
+#, fuzzy
+msgid "Failed to save DSP preset"
+msgstr "イコライザ設定を保存"
+
+#: ../plugins/converter/convgui.c:1098
+#, fuzzy
+msgid "New DSP Preset"
+msgstr "イコライザ設定を保存"
+
+#: ../plugins/converter/convgui.c:1183
+#, fuzzy
+msgid "Edit DSP Preset"
+msgstr "イコライザ設定を保存"
+
+#: ../plugins/converter/convgui.c:1203
+#, fuzzy
+msgid "DSP Presets"
+msgstr "イコライザ設定を保存"
+
+#: ../plugins/converter/interface.c:94
+#, fuzzy
+msgid "Output folder:"
+msgstr "出力デバイス:"
+
+#: ../plugins/converter/interface.c:115
+#, fuzzy
+msgid "Output file name:"
+msgstr "出力プラグイン:"
+
+#: ../plugins/converter/interface.c:126
+msgid ""
+"Extension (e.g. .mp3) will be appended automatically.\n"
+"Leave the field empty for default (%a - %t)."
+msgstr ""
+
+#: ../plugins/converter/interface.c:139
+#, fuzzy
+msgid "Encoder:"
+msgstr "カラムの編集"
+
+#: ../plugins/converter/interface.c:163
+#, fuzzy
+msgid "DSP preset:"
+msgstr "イコライザ設定を保存"
+
+#: ../plugins/converter/interface.c:186
+msgid "Number of threads:"
+msgstr ""
+
+#: ../plugins/converter/interface.c:199
+#, fuzzy
+msgid "Output sample format:"
+msgstr "出力プラグイン:"
+
+#: ../plugins/converter/interface.c:206
+msgid "Keep source format"
+msgstr ""
+
+#: ../plugins/converter/interface.c:207
+msgid "8 bit signed int"
+msgstr ""
+
+#: ../plugins/converter/interface.c:208
+msgid "16 bit signed int"
+msgstr ""
+
+#: ../plugins/converter/interface.c:209
+msgid "24 bit signed int"
+msgstr ""
+
+#: ../plugins/converter/interface.c:210
+msgid "32 bit signed int"
+msgstr ""
+
+#: ../plugins/converter/interface.c:211
+msgid "32 bit float"
+msgstr ""
+
+#: ../plugins/converter/interface.c:217
+msgid "When file exists:"
+msgstr ""
+
+#: ../plugins/converter/interface.c:224
+msgid "Prompt"
+msgstr ""
+
+#: ../plugins/converter/interface.c:225
+#, fuzzy
+msgid "Overwrite"
+msgstr "デフォルトを上書きする"
+
+#: ../plugins/converter/interface.c:227
+msgid "Preserve folder structure, starting from:"
+msgstr ""
+
+#: ../plugins/converter/interface.c:379
+#, fuzzy
+msgid "Edit Encoder Preset"
+msgstr "イコライザ設定の読み込み"
+
+#: ../plugins/converter/interface.c:402
+#, fuzzy
+msgid "Untitled Encoder"
+msgstr "カラムの編集"
+
+#: ../plugins/converter/interface.c:410
+#, fuzzy
+msgid "Output file extension:"
+msgstr "出力プラグイン:"
+
+#: ../plugins/converter/interface.c:417
+msgid "E.g. mp3"
+msgstr ""
+
+#: ../plugins/converter/interface.c:425
+msgid "Command line:"
+msgstr ""
+
+#: ../plugins/converter/interface.c:436
+#, c-format
+msgid ""
+"Example: lame - %o\n"
+"%i for input file, %o for output file, - for stdin"
+msgstr ""
+
+#: ../plugins/converter/interface.c:446
+#, c-format
+msgid ""
+"<small>%o - output file name\n"
+"%i - temporary input file name</small>"
+msgstr ""
+
+#: ../plugins/converter/interface.c:455
+msgid "Method:"
+msgstr ""
+
+#: ../plugins/converter/interface.c:462
+msgid "Pipe"
+msgstr ""
+
+#: ../plugins/converter/interface.c:463
+msgid "Temporary file"
+msgstr ""
+
+#: ../plugins/converter/interface.c:480
+#, fuzzy
+msgid "APEv2"
+msgstr "APEv2 の書き出し"
+
+#: ../plugins/converter/interface.c:486
+#, fuzzy
+msgid "ID3v1"
+msgstr "ID3v1 の書き出し"
+
+#: ../plugins/converter/interface.c:492
+msgid "OggVorbis"
+msgstr ""
+
+#: ../plugins/converter/interface.c:498
+msgid "FLAC"
+msgstr ""
+
+#: ../plugins/converter/interface.c:510
+#, fuzzy
+msgid "ID3v2"
+msgstr "ID3v2 の書き出し"
+
+#: ../plugins/converter/interface.c:520
+#, fuzzy
+msgid "<b>Tag writer</b>"
+msgstr "タグ書き出し"
+
+#: ../plugins/converter/interface.c:606
+#, fuzzy
+msgid "DSP Preset Editor"
+msgstr "イコライザ設定を保存"
+
+#: ../plugins/converter/interface.c:629
+#, fuzzy
+msgid "Untitled DSP Preset"
+msgstr "イコライザ設定を保存"
+
+#~ msgid "Save playlist as"
+#~ msgstr "名前をつけてプレイリストを保存"
+
+#~ msgid "Shuffle"
+#~ msgstr "シャッフル"
+
+#~ msgid "_Abort"
+#~ msgstr "中止(_A)"
+
+#~ msgid ""
+#~ "<b>WARNING</b>: tag writing feature is still in development.\n"
+#~ "<b>Make backup copies</b> before using."
+#~ msgstr ""
+#~ "<b>警告</b>: タグの書き出し機能はまだ開発段階です。\n"
+#~ "使用前に<b>バックアップを作成してください</b>。"
+
+#~ msgid "editcolumndlg"
+#~ msgstr "editcolumndlg"
+
+#~ msgid "File number"
 #~ msgstr "ファイル番号"
 
-#, fuzzy
-#~ msgid "Shuffle tracks"
-#~ msgstr "シャッフル"
+#~ msgid "Length"
+#~ msgstr "長さ"
 
-#, fuzzy
-#~ msgid "Shuffle albums"
-#~ msgstr "シャッフル"
+#~ msgid ""
+#~ "Format conversions (start with %):\n"
+#~ "  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
+#~ "  track[n]umber, [N]totaltracks,\n"
+#~ "  [l]ength, [y]ear, [g]enre, [c]omment,\n"
+#~ "  copy[r]ight, [f]ilename, [T]ags\n"
+#~ "Example: %a - %t [%l]"
+#~ msgstr ""
+#~ "書式変換 (% に続けて):\n"
+#~ "  アーティスト[a], タイトル[t], アルバム[b], バンド[B], 作曲[C]\n"
+#~ "  トラック番号[n], トラック数[N],\n"
+#~ "  長さ[l], 年[y], ジャンル[g], コメント[c],\n"
+#~ "  著作権[r], ファイル名[f], タグ[T]\n"
+#~ "例: %a - %t [%l]"
 
-#, fuzzy
-#~ msgid "Track Number"
-#~ msgstr "トラック番号"
+#~ msgid "Allow dynamic samplerate switching"
+#~ msgstr "動的なサンプルレートの切り替えを許す"
 
-#, fuzzy
-#~ msgid "Replaygain preamp:"
-#~ msgstr "リプレイゲインのモード:"
+#~ msgid "Samplerate conversion quality:"
+#~ msgstr "サンプルレート変換の品質:"
 
-#, fuzzy
-#~ msgid "Playback"
-#~ msgstr "再生(_P)"
+#~ msgid "Sound (adv.)"
+#~ msgstr "音声 (高度)"
 
-#, fuzzy
-#~ msgid "DSP Chain Preset"
-#~ msgstr "イコライザ設定を保存"
-
-#, fuzzy
-#~ msgid "Format"
-#~ msgstr "書式:"
-
-#, fuzzy
-#~ msgid "Select DSP Plugin"
-#~ msgstr "選択"
-
-#, fuzzy
-#~ msgid "Plugin"
-#~ msgstr "プラグイン"
-
-#, fuzzy
-#~ msgid "Tag Writer Settings"
+#~ msgid "Tag writer"
 #~ msgstr "タグ書き出し"
 
-#, fuzzy
-#~ msgid "Configure %s"
-#~ msgstr "設定"
+#~ msgid "Description:"
+#~ msgstr "説明:"
 
-#, fuzzy
-#~ msgid "Really remove selected field?"
-#~ msgstr "本当にウィンドウを閉じますか？"
+#~ msgid "Author(s):"
+#~ msgstr "作者:"
 
-#, fuzzy
-#~ msgid "Add field"
-#~ msgstr "ファイルを追加"
+#~ msgid "Email:"
+#~ msgstr "Email:"
 
-#, fuzzy
-#~ msgid "Remove field"
-#~ msgstr "取り除く"
+#~ msgid "Website:"
+#~ msgstr "Webサイト:"
 
-#, fuzzy
+#~ msgid "editplaylistdlg"
+#~ msgstr "editplaylistdlg"
+
+#~ msgid "Title / Track Artist"
+#~ msgstr "タイトル / トラックのアーティスト"
+
+#~ msgid "Setup %s"
+#~ msgstr "%s の設定"
+
+#~ msgid "ALSA output plugin"
+#~ msgstr "ALSA 出力プラグイン"
+
+#~ msgid "DeaDBeeF now playing"
+#~ msgstr "DeaDBeeF は現在演奏中です"
+
 #~ msgid ""
-#~ "Item Index\n"
+#~ "File number\n"
 #~ "Playing\n"
 #~ "Album Art\n"
 #~ "Artist - Album\n"
 #~ "Artist\n"
 #~ "Album\n"
 #~ "Title\n"
-#~ "Duration\n"
-#~ "Track Number\n"
+#~ "Length\n"
+#~ "Track\n"
 #~ "Band / Album Artist\n"
 #~ "Custom"
 #~ msgstr ""
@@ -1219,106 +1909,45 @@ msgstr ""
 #~ "バンド / アルバムのアーティスト\n"
 #~ "カスタム"
 
-#, fuzzy
-#~ msgid "Enable scrobbler"
-#~ msgstr "プロクシサーバを有効にする"
+#~ msgid "Couldn't get enough memory for input buffering."
+#~ msgstr "入力バッファに必要なメモリが確保できません。"
 
-#, fuzzy
-#~ msgid "Disable nowplaying"
-#~ msgstr "DeaDBeeF は現在演奏中です"
+#~ msgid "Error reading first page of Ogg bitstream."
+#~ msgstr "Ogg ビットストリームの最初のページの読み込みにエラー。"
 
-#, fuzzy
-#~ msgid "Username"
-#~ msgstr "プロクシのユーザ名:"
+#~ msgid "Error reading initial header packet."
+#~ msgstr "最初のヘッダのパケットの読み込みにエラー。"
 
-#, fuzzy
-#~ msgid "Password"
-#~ msgstr "プロクシのパスワード:"
+#~ msgid "Couldn't get enough memory to register new stream serial number."
+#~ msgstr "新規ストリームのシリアル番号の登録に必要なメモリが確保できません。"
 
-#, fuzzy
-#~ msgid "Ask confirmation to delete files from disk"
-#~ msgstr "ファイルをディスクから削除"
+#~ msgid "Input truncated or empty."
+#~ msgstr "入力は欠損しているか空です。"
 
-#, fuzzy
-#~ msgid "Show album art"
-#~ msgstr "アルバムアート"
+#~ msgid "Input is not an Ogg bitstream."
+#~ msgstr "入力は Ogg ビットストリームではありません。"
 
-#, fuzzy
-#~ msgid "Track Title"
-#~ msgstr "トラック番号"
+#~ msgid "Ogg bitstream does not contain Vorbis data."
+#~ msgstr "Ogg ビットストリーム中に Vorbis データがありません。"
 
-#, fuzzy
-#~ msgid "Total Tracks"
-#~ msgstr "タイトル / トラックのアーティスト"
+#~ msgid "EOF before recognised stream."
+#~ msgstr "認識できるストリームの前に EOF があります。"
 
-#, fuzzy
-#~ msgid "Disc Number"
-#~ msgstr "ファイル番号"
+#~ msgid "Ogg bitstream does not contain a supported data-type."
+#~ msgstr "Ogg ビットストリーム中に対応したデータ型がありません。"
 
-#, fuzzy
-#~ msgid "Location"
-#~ msgstr "場所を追加"
+#~ msgid "Corrupt secondary header."
+#~ msgstr "第2ヘッダが破損しています。"
 
-#, fuzzy
-#~ msgid "Select folder..."
-#~ msgstr "すべて選択"
+#~ msgid "EOF before end of Vorbis headers."
+#~ msgstr "Vorbis ヘッダの終わりの前に EOF があります。"
 
-#, fuzzy
-#~ msgid "Edit encoder"
-#~ msgstr "カラムの編集"
+#~ msgid "Corrupt or missing data, continuing..."
+#~ msgstr "データは破損または失われています。続行..."
 
-#, fuzzy
-#~ msgid "Remove preset"
-#~ msgstr "イコライザ設定を保存"
-
-#, fuzzy
-#~ msgid "New DSP Preset"
-#~ msgstr "イコライザ設定を保存"
-
-#, fuzzy
-#~ msgid "Edit DSP Preset"
-#~ msgstr "イコライザ設定を保存"
-
-#, fuzzy
-#~ msgid "DSP Presets"
-#~ msgstr "イコライザ設定を保存"
-
-#, fuzzy
-#~ msgid "Output folder:"
-#~ msgstr "出力デバイス:"
-
-#, fuzzy
-#~ msgid "Output file name:"
-#~ msgstr "出力プラグイン:"
-
-#, fuzzy
-#~ msgid "DSP preset:"
-#~ msgstr "イコライザ設定を保存"
-
-#, fuzzy
-#~ msgid "Overwrite"
-#~ msgstr "デフォルトを上書きする"
-
-#, fuzzy
-#~ msgid "Edit Encoder Preset"
-#~ msgstr "イコライザ設定の読み込み"
-
-#, fuzzy
-#~ msgid "Output file extension:"
-#~ msgstr "出力プラグイン:"
-
-#, fuzzy
-#~ msgid "APEv2"
-#~ msgstr "APEv2 の書き出し"
-
-#, fuzzy
-#~ msgid "ID3v1"
-#~ msgstr "ID3v1 の書き出し"
-
-#, fuzzy
-#~ msgid "ID3v2"
-#~ msgstr "ID3v2 の書き出し"
-
-#, fuzzy
-#~ msgid "<b>Tag writer</b>"
-#~ msgstr "タグ書き出し"
+#~ msgid ""
+#~ "Error writing stream to output. Output stream may be corrupted or "
+#~ "truncated."
+#~ msgstr ""
+#~ "ストリームの書き出し時にエラー。出力ストリームは破損もしくは欠損している可"
+#~ "能性があります。"

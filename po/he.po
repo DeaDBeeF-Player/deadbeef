@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-10 15:02+0200\n"
+"POT-Creation-Date: 2011-11-23 14:16+0100\n"
 "PO-Revision-Date: 2011-11-13 15:37+0200\n"
 "Last-Translator: Yaron <sh.yaron@gmail.com>\n"
 "Language-Team: Gezer <sh.yaron@gmail.com>\n"
@@ -21,154 +21,175 @@ msgstr ""
 "X-Poedit-Country: ISRAEL\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
-#: ../plugins/gtkui/callbacks.c:97
+#: ../plugins/gtkui/callbacks.c:123
 msgid "Supported sound formats"
 msgstr "מבני השמע הנתמכים"
 
-#: ../plugins/gtkui/callbacks.c:108
-msgid "Other files (*)"
+#: ../plugins/gtkui/callbacks.c:134
+#, fuzzy
+msgid "All files (*)"
 msgstr "קבצים אחרים (*)"
 
-#: ../plugins/gtkui/callbacks.c:118
+#: ../plugins/gtkui/callbacks.c:144
 msgid "Open file(s)..."
 msgstr "פתיחת קובץ/ים..."
 
-#: ../plugins/gtkui/callbacks.c:151
+#: ../plugins/gtkui/callbacks.c:179
 msgid "Add file(s) to playlist..."
 msgstr "הוספת קובץ/ים לרשימת ההשמעה..."
 
-#: ../plugins/gtkui/callbacks.c:190
+#: ../plugins/gtkui/callbacks.c:220
 msgid "Add folder(s) to playlist..."
 msgstr "הוספת תיקייה/ות לרשימת ההשמעה..."
 
-#: ../plugins/gtkui/callbacks.c:192
+#: ../plugins/gtkui/callbacks.c:225
 msgid "Follow symlinks"
 msgstr "מעקב אחר קישורים סימבוליים"
 
-#: ../plugins/gtkui/callbacks.c:677
+#: ../plugins/gtkui/callbacks.c:711
 msgid "Failed while reading help file"
 msgstr "אירע כשל במהלך קריאת קובץ העזרה"
 
-#: ../plugins/gtkui/callbacks.c:687
+#: ../plugins/gtkui/callbacks.c:721
 msgid "Failed to load help file"
 msgstr "אירע כשל בטעינת קובץ העזרה"
 
-#: ../plugins/gtkui/callbacks.c:701 ../plugins/gtkui/interface.c:1090
-#: ../plugins/gtkui/deadbeef.glade.h:65
+#: ../plugins/gtkui/callbacks.c:736
+msgid "help.txt"
+msgstr "help.txt"
+
+#: ../plugins/gtkui/callbacks.c:737 ../plugins/gtkui/interface.c:1155
+#: ../plugins/gtkui/deadbeef.glade.h:49 ../plugins/converter/convgui.c:1240
+#: ../plugins/converter/convgui.c:1248
 msgid "Help"
 msgstr "עזרה"
 
-#: ../plugins/gtkui/callbacks.c:711
+#: ../plugins/gtkui/callbacks.c:747
 #, c-format
 msgid "About DeaDBeeF %s"
 msgstr "על אודות DeaDBeeF %s"
 
-#: ../plugins/gtkui/callbacks.c:722
+#: ../plugins/gtkui/callbacks.c:760
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
 msgstr "יומן השינויים של DeaDBeeF %s"
 
-#: ../plugins/gtkui/ddbtabstrip.c:527
+#: ../plugins/gtkui/callbacks.c:1116
+#, c-format
+msgid "DeaDBeeF Translators"
+msgstr "מתרגמי DeaDBeeF"
+
+#: ../plugins/gtkui/ddbtabstrip.c:755 ../plugins/gtkui/trkproperties.c:618
 msgid "Edit playlist"
 msgstr "עריכת רשימת ההשמעה"
 
-#: ../plugins/gtkui/ddbtabstrip.c:604
+#: ../plugins/gtkui/ddbtabstrip.c:758 ../plugins/gtkui/interface.c:1486
+#: ../plugins/gtkui/interface.c:2922 ../plugins/gtkui/deadbeef.glade.h:136
+#: ../plugins/converter/interface.c:395
+msgid "Title:"
+msgstr "כותרת:"
+
+#: ../plugins/gtkui/ddbtabstrip.c:814
 msgid "Rename Playlist"
 msgstr "שינוי שם רשימת ההשמעה"
 
-#: ../plugins/gtkui/ddbtabstrip.c:608
+#: ../plugins/gtkui/ddbtabstrip.c:821
 msgid "Remove Playlist"
 msgstr "הסרת רשימת ההשמעה"
 
-#: ../plugins/gtkui/ddbtabstrip.c:612
+#: ../plugins/gtkui/ddbtabstrip.c:828
 msgid "Add New Playlist"
 msgstr "הוספת רשימת השמעה חדשה"
 
-#: ../plugins/gtkui/eq.c:113
+#: ../plugins/gtkui/eq.c:136
 msgid "Save DeaDBeeF EQ Preset"
 msgstr "שמירת תצורת האקוולייזר של DeaDBeeF"
 
-#: ../plugins/gtkui/eq.c:120
+#: ../plugins/gtkui/eq.c:143
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
 msgstr "קובץ תצורת אקוולייזר של DeaDBeeF ‏(‎*.ddbeq)"
 
-#: ../plugins/gtkui/eq.c:151
+#: ../plugins/gtkui/eq.c:182
 msgid "Load DeaDBeeF EQ Preset..."
 msgstr "טעינת תצורת אקוולייזר של DeaDBeeF..."
 
-#: ../plugins/gtkui/eq.c:155
+#: ../plugins/gtkui/eq.c:186
 msgid "DeaDBeeF EQ presets (*.ddbeq)"
 msgstr "תצורות אקוולייזר של DeaDBeeF ‏(‎*.ddbeq)"
 
-#: ../plugins/gtkui/eq.c:214
+#: ../plugins/gtkui/eq.c:247
 msgid "Import Foobar2000 EQ Preset..."
 msgstr "ייבוא קובץ תצורת אקוולייזר של Foobar2000..."
 
-#: ../plugins/gtkui/eq.c:218
+#: ../plugins/gtkui/eq.c:251
 msgid "Foobar2000 EQ presets (*.feq)"
 msgstr "תצורות אקוולייזר של Foobar2000‏ (‎*.feq)"
 
-#: ../plugins/gtkui/eq.c:292
-msgid "Enable"
-msgstr "הפעלה"
-
-#: ../plugins/gtkui/eq.c:300
-msgid "Zero All"
-msgstr "הכל אפס"
-
-#: ../plugins/gtkui/eq.c:307
-msgid "Zero Preamp"
-msgstr "איפוס מגבר קדם"
-
-#: ../plugins/gtkui/eq.c:314
-msgid "Zero Bands"
-msgstr "איפוס הערוצים"
-
-#: ../plugins/gtkui/eq.c:321
+#: ../plugins/gtkui/eq.c:316
 msgid "Save Preset"
 msgstr "שמירת תצורה"
 
-#: ../plugins/gtkui/eq.c:328
+#: ../plugins/gtkui/eq.c:324
 msgid "Load Preset"
 msgstr "טעינת תצורה"
 
-#: ../plugins/gtkui/eq.c:335
+#: ../plugins/gtkui/eq.c:332
 msgid "Import Foobar2000 Preset"
 msgstr "ייבוא תצורה של Foobar2000"
 
-#: ../plugins/gtkui/gtkui.c:133
+#: ../plugins/gtkui/eq.c:357
+msgid "Enable"
+msgstr "הפעלה"
+
+#: ../plugins/gtkui/eq.c:366
+msgid "Zero All"
+msgstr "הכל אפס"
+
+#: ../plugins/gtkui/eq.c:373
+msgid "Zero Preamp"
+msgstr "איפוס מגבר קדם"
+
+#: ../plugins/gtkui/eq.c:380
+msgid "Zero Bands"
+msgstr "איפוס הערוצים"
+
+#: ../plugins/gtkui/eq.c:387 ../plugins/converter/interface.c:820
+msgid "Presets"
+msgstr "תצורות"
+
+#: ../plugins/gtkui/gtkui.c:137
 #, c-format
 msgid "1 day %d:%02d:%02d"
 msgstr "יום אחד %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:136
+#: ../plugins/gtkui/gtkui.c:140
 #, c-format
 msgid "%d days %d:%02d:%02d"
 msgstr "%d ימים %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:145
+#: ../plugins/gtkui/gtkui.c:149
 #, c-format
 msgid "Stopped | %d tracks | %s total playtime"
 msgstr "נעצר | %d רצועות | %s סך כל זמן הנגינה"
 
-#: ../plugins/gtkui/gtkui.c:158
+#: ../plugins/gtkui/gtkui.c:162
 msgid "Mono"
 msgstr "מונו"
 
-#: ../plugins/gtkui/gtkui.c:158
+#: ../plugins/gtkui/gtkui.c:162
 msgid "Stereo"
 msgstr "סטריאו"
 
-#: ../plugins/gtkui/gtkui.c:183
+#: ../plugins/gtkui/gtkui.c:187
 #, c-format
 msgid "| %4d kbps "
 msgstr "| %4d קסל״ש "
 
-#: ../plugins/gtkui/gtkui.c:189
+#: ../plugins/gtkui/gtkui.c:193
 msgid "Paused | "
 msgstr "מושהה |"
 
-#: ../plugins/gtkui/gtkui.c:190
+#: ../plugins/gtkui/gtkui.c:198
 #, c-format
 msgid ""
 "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
@@ -176,682 +197,726 @@ msgstr ""
 "%s%s %s| %d הרץ | %d סיביות | %s | %d:%02d / %s | %d רצועות | %s סך כל זמן "
 "הנגינה"
 
-#: ../plugins/gtkui/gtkui.c:660
+#: ../plugins/gtkui/gtkui.c:644
 msgid "Save Playlist As"
 msgstr "שמירת רשימת ההשמעה בשם"
 
-#: ../plugins/gtkui/gtkui.c:669 ../plugins/gtkui/gtkui.c:730
+#: ../plugins/gtkui/gtkui.c:655
 msgid "DeaDBeeF playlist files (*.dbpl)"
 msgstr "קובצי רשימת השמעה של DeaDBeeF‏ (*.dbpl)"
 
-#: ../plugins/gtkui/gtkui.c:723
+#: ../plugins/gtkui/gtkui.c:773
 msgid "Load Playlist"
 msgstr "טעינת רשימת השמעה"
 
-#: ../plugins/gtkui/gtkui.c:863
+#: ../plugins/gtkui/gtkui.c:788
+msgid "Other files (*)"
+msgstr "קבצים אחרים (*)"
+
+#: ../plugins/gtkui/gtkui.c:926 ../plugins/gtkui/fileman.c:40
 msgid "New Playlist"
 msgstr "רשימת השמעה חדשה"
 
-#: ../plugins/gtkui/gtkui.c:866
+#: ../plugins/gtkui/gtkui.c:929
 #, c-format
 msgid "New Playlist (%d)"
 msgstr "רשימת השמעה חדשה (%d)"
 
-#: ../plugins/gtkui/interface.c:138 ../plugins/gtkui/deadbeef.glade.h:153
+#: ../plugins/gtkui/interface.c:150 ../plugins/gtkui/deadbeef.glade.h:156
 msgid "_File"
 msgstr "_קובץ"
 
-#: ../plugins/gtkui/interface.c:145 ../plugins/gtkui/deadbeef.glade.h:157
+#: ../plugins/gtkui/interface.c:157 ../plugins/gtkui/deadbeef.glade.h:163
 msgid "_Open file(s)"
 msgstr "_פתיחת קובץ/ים"
 
-#: ../plugins/gtkui/interface.c:161 ../plugins/gtkui/deadbeef.glade.h:6
+#: ../plugins/gtkui/interface.c:173 ../plugins/gtkui/deadbeef.glade.h:6
 msgid "Add file(s)"
 msgstr "הוספת קובץ/ים"
 
-#: ../plugins/gtkui/interface.c:169 ../plugins/gtkui/deadbeef.glade.h:8
+#: ../plugins/gtkui/interface.c:181 ../plugins/gtkui/deadbeef.glade.h:8
 msgid "Add folder(s)"
 msgstr "הוספת תיקייה/ות"
 
-#: ../plugins/gtkui/interface.c:177 ../plugins/gtkui/interface.c:2969
+#: ../plugins/gtkui/interface.c:189 ../plugins/gtkui/interface.c:3022
 #: ../plugins/gtkui/deadbeef.glade.h:9
 msgid "Add location"
 msgstr "הוספת מיקום"
 
-#: ../plugins/gtkui/interface.c:186 ../plugins/gtkui/deadbeef.glade.h:83
+#: ../plugins/gtkui/interface.c:198 ../plugins/gtkui/deadbeef.glade.h:80
 msgid "New playlist"
 msgstr "רשימת השמעה חדשה"
 
-#: ../plugins/gtkui/interface.c:193 ../plugins/gtkui/deadbeef.glade.h:75
+#: ../plugins/gtkui/interface.c:205 ../plugins/gtkui/deadbeef.glade.h:72
 msgid "Load playlist"
 msgstr "טעינת רשימת השמעה"
 
-#: ../plugins/gtkui/interface.c:197 ../plugins/gtkui/deadbeef.glade.h:112
+#: ../plugins/gtkui/interface.c:209 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "Save playlist"
 msgstr "שמירת רשימת השמעה"
 
-#: ../plugins/gtkui/interface.c:201 ../plugins/gtkui/deadbeef.glade.h:113
-msgid "Save playlist as"
-msgstr "שמירת רשימת השמעה בשם"
-
-#: ../plugins/gtkui/interface.c:210 ../plugins/gtkui/deadbeef.glade.h:159
+#: ../plugins/gtkui/interface.c:218 ../plugins/gtkui/deadbeef.glade.h:165
 msgid "_Quit"
 msgstr "י_ציאה"
 
-#: ../plugins/gtkui/interface.c:221 ../plugins/gtkui/deadbeef.glade.h:152
+#: ../plugins/gtkui/interface.c:229 ../plugins/gtkui/deadbeef.glade.h:155
 msgid "_Edit"
 msgstr "ע_ריכה"
 
-#: ../plugins/gtkui/interface.c:228 ../plugins/gtkui/deadbeef.glade.h:150
+#: ../plugins/gtkui/interface.c:236 ../plugins/gtkui/deadbeef.glade.h:153
 msgid "_Clear"
 msgstr "_מחיקה"
 
-#: ../plugins/gtkui/interface.c:236 ../plugins/gtkui/deadbeef.glade.h:117
+#: ../plugins/gtkui/interface.c:244 ../plugins/gtkui/deadbeef.glade.h:115
 msgid "Select all"
 msgstr "בחירת הכל"
 
-#: ../plugins/gtkui/interface.c:243 ../plugins/gtkui/deadbeef.glade.h:25
+#: ../plugins/gtkui/interface.c:251 ../plugins/gtkui/deadbeef.glade.h:32
 msgid "Deselect all"
 msgstr "ביטול בחירת הכול"
 
-#: ../plugins/gtkui/interface.c:250 ../plugins/gtkui/deadbeef.glade.h:70
+#: ../plugins/gtkui/interface.c:258 ../plugins/gtkui/deadbeef.glade.h:55
 msgid "Invert selection"
 msgstr "הפיכת הבחירה"
 
-#: ../plugins/gtkui/interface.c:254 ../plugins/gtkui/deadbeef.glade.h:120
+#: ../plugins/gtkui/interface.c:262 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Selection"
 msgstr "בחירה"
 
-#: ../plugins/gtkui/interface.c:261 ../plugins/gtkui/plcommon.c:425
-#: ../plugins/gtkui/prefwin.c:317 ../plugins/gtkui/deadbeef.glade.h:107
+#: ../plugins/gtkui/interface.c:269 ../plugins/gtkui/plcommon.c:468
+#: ../plugins/gtkui/prefwin.c:323 ../plugins/gtkui/deadbeef.glade.h:105
+#: ../plugins/converter/interface.c:645
 msgid "Remove"
 msgstr "הסרה"
 
-#: ../plugins/gtkui/interface.c:269 ../plugins/gtkui/deadbeef.glade.h:20
+#: ../plugins/gtkui/interface.c:277 ../plugins/gtkui/deadbeef.glade.h:24
 msgid "Crop"
 msgstr "חיתוך"
 
-#: ../plugins/gtkui/interface.c:273 ../plugins/gtkui/deadbeef.glade.h:154
+#: ../plugins/gtkui/interface.c:281 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "_Find"
 msgstr "_חיפוש"
 
-#: ../plugins/gtkui/interface.c:285 ../plugins/gtkui/interface.c:1705
-#: ../plugins/gtkui/deadbeef.glade.h:97
-msgid "Preferences"
-msgstr "העדפות"
+#: ../plugins/gtkui/interface.c:288 ../plugins/gtkui/deadbeef.glade.h:122
+msgid "Sort By"
+msgstr "סידור לפי"
 
-#: ../plugins/gtkui/interface.c:289 ../plugins/gtkui/deadbeef.glade.h:160
-msgid "_View"
-msgstr "_תצוגה"
-
-#: ../plugins/gtkui/interface.c:296 ../plugins/gtkui/deadbeef.glade.h:123
-msgid "Status bar"
-msgstr "שורת מצב"
-
-#: ../plugins/gtkui/interface.c:300 ../plugins/gtkui/deadbeef.glade.h:18
-msgid "Column headers"
-msgstr "כותרות העמודות"
-
-#: ../plugins/gtkui/interface.c:304 ../plugins/gtkui/deadbeef.glade.h:130
-msgid "Tabs"
-msgstr "לשוניות"
-
-#: ../plugins/gtkui/interface.c:308 ../plugins/gtkui/deadbeef.glade.h:33
-msgid "Equalizer"
-msgstr "אקוולייזר"
-
-#: ../plugins/gtkui/interface.c:312 ../plugins/gtkui/deadbeef.glade.h:158
-msgid "_Playback"
-msgstr "ה_שמעה"
-
-#: ../plugins/gtkui/interface.c:319 ../plugins/gtkui/deadbeef.glade.h:86
-msgid "Order"
-msgstr "סדר"
-
-#: ../plugins/gtkui/interface.c:326 ../plugins/gtkui/deadbeef.glade.h:74
-msgid "Linear"
-msgstr "קווי"
-
-#: ../plugins/gtkui/interface.c:332 ../plugins/gtkui/deadbeef.glade.h:121
-#, fuzzy
-msgid "Shuffle"
-msgstr "ערבול בין הרצועות"
-
-#: ../plugins/gtkui/interface.c:338 ../plugins/gtkui/deadbeef.glade.h:106
-msgid "Random"
-msgstr "אקראי"
-
-#: ../plugins/gtkui/interface.c:344 ../plugins/gtkui/deadbeef.glade.h:78
-msgid "Looping"
-msgstr "נגינה בלולאה"
-
-#: ../plugins/gtkui/interface.c:351 ../plugins/gtkui/deadbeef.glade.h:76
-msgid "Loop All"
-msgstr "לולאה על הכול"
-
-#: ../plugins/gtkui/interface.c:357 ../plugins/gtkui/deadbeef.glade.h:77
-msgid "Loop Single Song"
-msgstr "לולאה על שיר בודד"
-
-#: ../plugins/gtkui/interface.c:363 ../plugins/gtkui/deadbeef.glade.h:29
-msgid "Don't Loop"
-msgstr "ללא לולאה"
-
-#: ../plugins/gtkui/interface.c:369 ../plugins/gtkui/deadbeef.glade.h:114
-msgid "Scroll follows playback"
-msgstr "הגלילה עוקבת אחר ההשמעה"
-
-#: ../plugins/gtkui/interface.c:374 ../plugins/gtkui/deadbeef.glade.h:22
-msgid "Cursor follows playback"
-msgstr "הסמן עוקב אחר ההשמעה"
-
-#: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:125
-msgid "Stop after current"
-msgstr "עצירה לאחר הנוכחי"
-
-#: ../plugins/gtkui/interface.c:385 ../plugins/gtkui/interface.c:392
-#: ../plugins/gtkui/deadbeef.glade.h:155
-msgid "_Help"
-msgstr "ע_זרה"
-
-#: ../plugins/gtkui/interface.c:400 ../plugins/gtkui/deadbeef.glade.h:149
-msgid "_ChangeLog"
-msgstr "יומן _שינויים"
-
-#: ../plugins/gtkui/interface.c:422 ../plugins/gtkui/deadbeef.glade.h:146
-msgid "_About"
-msgstr "על _אודות"
-
-#: ../plugins/gtkui/interface.c:801 ../plugins/gtkui/deadbeef.glade.h:115
-msgid "Search"
-msgstr "חיפוש"
-
-#: ../plugins/gtkui/interface.c:876 ../plugins/gtkui/deadbeef.glade.h:124
-msgid "Stop"
-msgstr "עצירה"
-
-#: ../plugins/gtkui/interface.c:884 ../plugins/gtkui/deadbeef.glade.h:92
-msgid "Play"
-msgstr "נגינה"
-
-#: ../plugins/gtkui/interface.c:892 ../plugins/gtkui/deadbeef.glade.h:91
-msgid "Pause"
-msgstr "השהיה"
-
-#: ../plugins/gtkui/interface.c:900 ../plugins/gtkui/deadbeef.glade.h:98
-msgid "Previous"
-msgstr "הקודם"
-
-#: ../plugins/gtkui/interface.c:908 ../plugins/gtkui/deadbeef.glade.h:84
-msgid "Next"
-msgstr "הבא"
-
-#: ../plugins/gtkui/interface.c:916 ../plugins/gtkui/deadbeef.glade.h:93
-msgid "Play Random"
-msgstr "נגינה אקראית"
-
-#: ../plugins/gtkui/interface.c:925 ../plugins/gtkui/deadbeef.glade.h:5
-msgid "About"
-msgstr "על אודות"
-
-#: ../plugins/gtkui/interface.c:938 ../plugins/gtkui/deadbeef.glade.h:105
-msgid "Quit"
-msgstr "יציאה"
-
-#: ../plugins/gtkui/interface.c:1010 ../plugins/gtkui/deadbeef.glade.h:10
-msgid "Adding files..."
-msgstr "מתבצעת הוספת קבצים..."
-
-#: ../plugins/gtkui/interface.c:1054 ../plugins/gtkui/deadbeef.glade.h:145
-msgid "_Abort"
-msgstr "_ביטול"
-
-#: ../plugins/gtkui/interface.c:1155 ../plugins/gtkui/deadbeef.glade.h:136
-msgid "Track Properties"
-msgstr "מאפייני הרצועה"
-
-#: ../plugins/gtkui/interface.c:1179 ../plugins/gtkui/deadbeef.glade.h:3
-msgid ""
-"<b>WARNING</b>: tag writing feature is still in development.\n"
-"<b>Make backup copies</b> before using."
-msgstr ""
-"<b>אזהרה</b>: תכונת כתיבת התגיות נמצאת עדיין בפיתוח.\n"
-"<b>יש ליצור עותקי גיבוי</b> בטרם השימוש."
-
-#: ../plugins/gtkui/interface.c:1206 ../plugins/gtkui/deadbeef.glade.h:147
-msgid "_Apply"
-msgstr "ה_חלה"
-
-#: ../plugins/gtkui/interface.c:1227 ../plugins/gtkui/interface.c:1273
-#: ../plugins/gtkui/interface.c:2497 ../plugins/gtkui/deadbeef.glade.h:151
-msgid "_Close"
-msgstr "_סגירה"
-
-#: ../plugins/gtkui/interface.c:1231 ../plugins/gtkui/deadbeef.glade.h:79
-msgid "Metadata"
-msgstr "נתוני על"
-
-#: ../plugins/gtkui/interface.c:1277 ../plugins/gtkui/plcommon.c:503
-#: ../plugins/gtkui/deadbeef.glade.h:99
-msgid "Properties"
-msgstr "מאפיינים"
-
-#: ../plugins/gtkui/interface.c:1363 ../plugins/gtkui/deadbeef.glade.h:161
-msgid "editcolumndlg"
-msgstr "editcolumndlg"
-
-#: ../plugins/gtkui/interface.c:1378 ../plugins/gtkui/interface.c:2869
-#: ../plugins/gtkui/deadbeef.glade.h:133
-msgid "Title:"
-msgstr "כותרת:"
-
-#: ../plugins/gtkui/interface.c:1386 ../plugins/gtkui/deadbeef.glade.h:32
-msgid "Enter new column title here"
-msgstr "יש להזין את הכותרת החדשה כאן"
-
-#: ../plugins/gtkui/interface.c:1394 ../plugins/gtkui/deadbeef.glade.h:137
-msgid "Type:"
-msgstr "סוג:"
-
-#: ../plugins/gtkui/interface.c:1402
-#, fuzzy
-msgid "File number"
-msgstr "תקליטור מס׳"
-
-#. create default set of columns
-#: ../plugins/gtkui/interface.c:1403 ../plugins/gtkui/mainplaylist.c:300
-msgid "Playing"
-msgstr "מתנגן"
-
-#: ../plugins/gtkui/interface.c:1404
-msgid "Album Art"
-msgstr "עטיפת האלבום"
-
-#: ../plugins/gtkui/interface.c:1405
-msgid "Artist - Album"
-msgstr "אומן – אלבום"
-
-#: ../plugins/gtkui/interface.c:1406 ../plugins/gtkui/plcommon.c:877
-msgid "Artist"
-msgstr "אומן"
-
-#: ../plugins/gtkui/interface.c:1407 ../plugins/gtkui/interface.c:1794
-msgid "Album"
-msgstr "אלבום"
-
-#: ../plugins/gtkui/interface.c:1408 ../plugins/gtkui/prefwin.c:595
+#: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1516
+#: ../plugins/gtkui/mainplaylist.c:318 ../plugins/gtkui/prefwin.c:626
+#: ../plugins/gtkui/search.c:393 ../plugins/gtkui/deadbeef.glade.h:135
+#: ../plugins/converter/convgui.c:790 ../plugins/converter/convgui.c:1211
+#: ../plugins/converter/interface.c:622
 msgid "Title"
 msgstr "כותרת"
 
-#: ../plugins/gtkui/interface.c:1409
-msgid "Length"
-msgstr "משך"
+#: ../plugins/gtkui/interface.c:299 ../plugins/gtkui/deadbeef.glade.h:140
+msgid "Track number"
+msgstr "מספר הרצועה"
 
-#: ../plugins/gtkui/interface.c:1410 ../plugins/gtkui/interface.c:1793
-msgid "Track"
-msgstr "רצועה"
+#: ../plugins/gtkui/interface.c:303 ../plugins/gtkui/interface.c:1515
+#: ../plugins/gtkui/interface.c:1875 ../plugins/gtkui/deadbeef.glade.h:10
+#: ../translation/extra.c:69
+msgid "Album"
+msgstr "אלבום"
 
-#: ../plugins/gtkui/interface.c:1411
-msgid "Band / Album Artist"
-msgstr "להקה / אומן האלבום"
+#. Track properties dialog
+#: ../plugins/gtkui/interface.c:307 ../plugins/gtkui/interface.c:1514
+#: ../plugins/gtkui/plcommon.c:1013 ../plugins/gtkui/deadbeef.glade.h:13
+#: ../translation/extra.c:65
+msgid "Artist"
+msgstr "אומן"
 
-#: ../plugins/gtkui/interface.c:1412 ../plugins/gtkui/plcommon.c:881
+#: ../plugins/gtkui/interface.c:311 ../plugins/gtkui/deadbeef.glade.h:31
+#: ../translation/extra.c:70
+msgid "Date"
+msgstr "תאריך"
+
+#: ../plugins/gtkui/interface.c:315 ../plugins/gtkui/interface.c:1520
+#: ../plugins/gtkui/plcommon.c:1017 ../plugins/gtkui/deadbeef.glade.h:27
 msgid "Custom"
 msgstr "מותאם אישית"
 
-#: ../plugins/gtkui/interface.c:1418 ../plugins/gtkui/interface.c:3096
-#: ../plugins/gtkui/deadbeef.glade.h:62
-msgid "Format:"
-msgstr "מבנה:"
+#: ../plugins/gtkui/interface.c:324 ../plugins/gtkui/interface.c:1804
+#: ../plugins/gtkui/deadbeef.glade.h:95
+msgid "Preferences"
+msgstr "העדפות"
 
-#: ../plugins/gtkui/interface.c:1433 ../plugins/gtkui/deadbeef.glade.h:11
-msgid "Alignment:"
-msgstr "יישור:"
+#: ../plugins/gtkui/interface.c:328 ../plugins/gtkui/deadbeef.glade.h:167
+msgid "_View"
+msgstr "_תצוגה"
 
-#: ../plugins/gtkui/interface.c:1441
-msgid "Left"
-msgstr "שמאל"
+#: ../plugins/gtkui/interface.c:335 ../plugins/gtkui/deadbeef.glade.h:125
+msgid "Status bar"
+msgstr "שורת מצב"
 
-#: ../plugins/gtkui/interface.c:1442
-msgid "Right"
-msgstr "ימין"
+#: ../plugins/gtkui/interface.c:339 ../plugins/gtkui/deadbeef.glade.h:21
+msgid "Column headers"
+msgstr "כותרות העמודות"
 
-#: ../plugins/gtkui/interface.c:1444 ../plugins/gtkui/deadbeef.glade.h:48
-#, no-c-format
-msgid ""
-"Format conversions (start with %):\n"
-"  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
-"  track[n]umber, [N]totaltracks,\n"
-"  [l]ength, [y]ear, [g]enre, [c]omment,\n"
-"  copy[r]ight, [f]ilename, [F]ullPathname, [T]ags,\n"
-"  [d]irectory, [D]irectoryWithPath\n"
-"Example: %a - %t [%l]"
-msgstr ""
-"המרות בעיצוב (מתחילות ב־%):\n"
-"  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
-"  track[n]umber, [N]totaltracks\n"
-"  [l]ength, [y]ear, [g]enre, [c]omment\n"
-"  copy[r]ight, [f]ilename, [T]ags,\n"
-"  [d]irectory, [D]irectoryWithPath\n"
-"דוגמה: %a‏ - %t‏ [%l]"
+#: ../plugins/gtkui/interface.c:343 ../plugins/gtkui/deadbeef.glade.h:132
+msgid "Tabs"
+msgstr "לשוניות"
 
-#: ../plugins/gtkui/interface.c:1473 ../plugins/gtkui/interface.c:2900
-#: ../plugins/gtkui/interface.c:3012 ../plugins/gtkui/interface.c:3135
-#: ../plugins/gtkui/deadbeef.glade.h:148
-msgid "_Cancel"
-msgstr "_ביטול"
+#: ../plugins/gtkui/interface.c:347 ../plugins/gtkui/deadbeef.glade.h:40
+msgid "Equalizer"
+msgstr "אקוולייזר"
 
-#: ../plugins/gtkui/interface.c:1494 ../plugins/gtkui/interface.c:2921
-#: ../plugins/gtkui/interface.c:3033 ../plugins/gtkui/interface.c:3156
-#: ../plugins/gtkui/deadbeef.glade.h:156
-msgid "_OK"
-msgstr "_אישור"
+#: ../plugins/gtkui/interface.c:351 ../plugins/gtkui/deadbeef.glade.h:164
+msgid "_Playback"
+msgstr "ה_שמעה"
 
-#: ../plugins/gtkui/interface.c:1725 ../plugins/gtkui/deadbeef.glade.h:88
-msgid "Output plugin:"
-msgstr "תוסף פלט:"
+#: ../plugins/gtkui/interface.c:358 ../plugins/gtkui/interface.c:3298
+#: ../plugins/gtkui/deadbeef.glade.h:83
+msgid "Order"
+msgstr "סדר"
 
-#: ../plugins/gtkui/interface.c:1738 ../plugins/gtkui/deadbeef.glade.h:87
-msgid "Output device:"
-msgstr "התקן הפלט:"
+#: ../plugins/gtkui/interface.c:365 ../plugins/gtkui/deadbeef.glade.h:71
+msgid "Linear"
+msgstr "קווי"
 
-#: ../plugins/gtkui/interface.c:1747 ../plugins/gtkui/deadbeef.glade.h:122
-msgid "Sound"
-msgstr "שמע"
-
-#: ../plugins/gtkui/interface.c:1756 ../plugins/gtkui/deadbeef.glade.h:12
-msgid "Allow dynamic samplerate switching"
-msgstr "הפעלת החלפת קצב דגימה דינמי"
-
-#: ../plugins/gtkui/interface.c:1764 ../plugins/gtkui/deadbeef.glade.h:111
-msgid "Samplerate conversion quality:"
-msgstr "איכות החלפת קצב הדגימה:"
-
-#: ../plugins/gtkui/interface.c:1783 ../plugins/gtkui/deadbeef.glade.h:108
-msgid "Replaygain mode:"
-msgstr "מצב הגברת נגינה חוזרת:"
-
-#: ../plugins/gtkui/interface.c:1792
-msgid "Disable"
-msgstr "לא פעיל"
-
-#: ../plugins/gtkui/interface.c:1796 ../plugins/gtkui/deadbeef.glade.h:109
-msgid "Replaygain peak scale"
-msgstr "מידת הגברת הנגינה החוזרת"
-
-#: ../plugins/gtkui/interface.c:1804 ../plugins/gtkui/deadbeef.glade.h:7
-msgid "Add files from command line (or file manager) to this playlist:"
-msgstr "הוספת קבצים משורת הפקודה (או ממנהל הקבצים) לרשימת ההשמעה:"
-
-#: ../plugins/gtkui/interface.c:1813 ../plugins/gtkui/deadbeef.glade.h:110
-msgid "Resume previous session on startup"
-msgstr "המשך ההפעלה הקודמת עם התחלת התכנית"
-
-#: ../plugins/gtkui/interface.c:1817 ../plugins/gtkui/deadbeef.glade.h:94
-msgid "Playback"
-msgstr "השמעה"
-
-#: ../plugins/gtkui/interface.c:1826 ../plugins/gtkui/deadbeef.glade.h:16
-msgid "Close minimizes to tray"
-msgstr "סגירה ממזערת לאזור המערכת"
-
-#: ../plugins/gtkui/interface.c:1830 ../plugins/gtkui/deadbeef.glade.h:81
-msgid "Middle mouse button closes playlist"
-msgstr "לחצן אמצעי סוגר את רשימת ההשמעה"
-
-#: ../plugins/gtkui/interface.c:1834 ../plugins/gtkui/deadbeef.glade.h:67
-msgid "Hide system tray icon"
-msgstr "הסתרת הסמל באזור הדיווחים"
-
-#: ../plugins/gtkui/interface.c:1838 ../plugins/gtkui/deadbeef.glade.h:139
-msgid "Use bold font for currently playing track"
-msgstr "שימוש בגופן מודגש עבור הרצועה המתנגנת כעת"
-
-#: ../plugins/gtkui/interface.c:1842 ../plugins/gtkui/deadbeef.glade.h:66
-msgid "Hide \"Delete from disk\" context menu item"
-msgstr "הסתרת פריט ההקשר \"מחיקה מהכונן\""
-
-#: ../plugins/gtkui/interface.c:1850 ../plugins/gtkui/deadbeef.glade.h:134
-msgid "Titlebar text while playing:"
-msgstr "טקסט הכותרת בעת ההשמעה:"
-
-#: ../plugins/gtkui/interface.c:1864 ../plugins/gtkui/deadbeef.glade.h:135
-msgid "Titlebar text while stopped:"
-msgstr "טקסט הכותרת בעת עצירה:"
-
-#: ../plugins/gtkui/interface.c:1874 ../plugins/gtkui/deadbeef.glade.h:63
-msgid "GUI"
-msgstr "מנשק משתמש"
-
-#: ../plugins/gtkui/interface.c:1888 ../plugins/gtkui/interface.c:1932
-#: ../plugins/gtkui/deadbeef.glade.h:89
-msgid "Override"
-msgstr "דריסה"
-
-#: ../plugins/gtkui/interface.c:1897 ../plugins/gtkui/deadbeef.glade.h:46
-msgid "Foreground"
-msgstr "קידמה"
-
-#: ../plugins/gtkui/interface.c:1904 ../plugins/gtkui/deadbeef.glade.h:14
-msgid "Background"
-msgstr "רקע"
-
-#: ../plugins/gtkui/interface.c:1923 ../plugins/gtkui/deadbeef.glade.h:116
-msgid "Seekbar/Volumebar colors"
-msgstr "צבעי פס גלילת ההשמעה/פס עוצמת השמע"
-
-#: ../plugins/gtkui/interface.c:1941 ../plugins/gtkui/deadbeef.glade.h:80
-msgid "Middle"
-msgstr "בינוני"
-
-#: ../plugins/gtkui/interface.c:1948 ../plugins/gtkui/deadbeef.glade.h:73
-msgid "Light"
-msgstr "בהיר"
-
-#: ../plugins/gtkui/interface.c:1955 ../plugins/gtkui/deadbeef.glade.h:23
-msgid "Dark"
-msgstr "כהה"
-
-#: ../plugins/gtkui/interface.c:1986 ../plugins/gtkui/deadbeef.glade.h:15
-msgid "Base"
-msgstr "בסיסי"
-
-#: ../plugins/gtkui/interface.c:1993 ../plugins/gtkui/deadbeef.glade.h:129
-msgid "Tab strip colors"
-msgstr "צבעי ראשי הלשוניות"
-
-#: ../plugins/gtkui/interface.c:2002 ../plugins/gtkui/deadbeef.glade.h:90
-msgid "Override (looses GTK treeview theming, but speeds up rendering)"
-msgstr "דריסה (רכיבי העיצוב של ה־GTK יאבדו אך העיבוד יהיה מהיר יותר)"
-
-#: ../plugins/gtkui/interface.c:2011 ../plugins/gtkui/deadbeef.glade.h:34
-msgid "Even row"
-msgstr "שורה זוגית"
-
-#: ../plugins/gtkui/interface.c:2018 ../plugins/gtkui/deadbeef.glade.h:85
-msgid "Odd row"
-msgstr "שורה אי־זוגית"
-
-#: ../plugins/gtkui/interface.c:2037 ../plugins/gtkui/deadbeef.glade.h:132
-msgid "Text"
-msgstr "טקסט"
-
-#: ../plugins/gtkui/interface.c:2044 ../plugins/gtkui/deadbeef.glade.h:118
-msgid "Selected row"
-msgstr "שורה נבחרת"
-
-#: ../plugins/gtkui/interface.c:2063 ../plugins/gtkui/deadbeef.glade.h:119
-msgid "Selected text"
-msgstr "טקסט שנבחר"
-
-#: ../plugins/gtkui/interface.c:2076 ../plugins/gtkui/deadbeef.glade.h:21
-msgid "Cursor"
-msgstr "סמן"
-
-#: ../plugins/gtkui/interface.c:2089 ../plugins/gtkui/deadbeef.glade.h:95
-msgid "Playlist colors"
-msgstr "צבעי רשימת ההשמעה"
-
-#: ../plugins/gtkui/interface.c:2093 ../plugins/gtkui/deadbeef.glade.h:17
-msgid "Colors"
-msgstr "צבעים"
-
-#: ../plugins/gtkui/interface.c:2102 ../plugins/gtkui/deadbeef.glade.h:31
-msgid "Enable Proxy Server"
-msgstr "הפעלת שרת מתווך"
-
-#: ../plugins/gtkui/interface.c:2110 ../plugins/gtkui/deadbeef.glade.h:101
-msgid "Proxy Server Address:"
-msgstr "כתובת שרת התיווך:"
-
-#: ../plugins/gtkui/interface.c:2124 ../plugins/gtkui/deadbeef.glade.h:102
-msgid "Proxy Server Port:"
-msgstr "פתחת שרת התיווך:"
-
-#: ../plugins/gtkui/interface.c:2138 ../plugins/gtkui/deadbeef.glade.h:103
-msgid "Proxy Type:"
-msgstr "סוג שרת התיווך:"
-
-#: ../plugins/gtkui/interface.c:2157 ../plugins/gtkui/deadbeef.glade.h:104
-msgid "Proxy Username:"
-msgstr "שם המשתמש במתווך:"
-
-#: ../plugins/gtkui/interface.c:2170 ../plugins/gtkui/deadbeef.glade.h:100
-msgid "Proxy Password:"
-msgstr "הססמה במתווך:"
-
-#: ../plugins/gtkui/interface.c:2180 ../plugins/gtkui/deadbeef.glade.h:82
-msgid "Network"
-msgstr "רשת"
-
-#: ../plugins/gtkui/interface.c:2208 ../plugins/gtkui/deadbeef.glade.h:143
-msgid "Write ID3v2"
-msgstr "כתיבת ID3v2"
-
-#: ../plugins/gtkui/interface.c:2212 ../plugins/gtkui/interface.c:2339
-#: ../plugins/gtkui/deadbeef.glade.h:142
-msgid "Write ID3v1"
-msgstr "כתיבת ID3v1"
-
-#: ../plugins/gtkui/interface.c:2216 ../plugins/gtkui/interface.c:2295
-#: ../plugins/gtkui/interface.c:2335 ../plugins/gtkui/deadbeef.glade.h:141
-msgid "Write APEv2"
-msgstr "כתיבת APEv2"
-
-#: ../plugins/gtkui/interface.c:2224 ../plugins/gtkui/interface.c:2303
-#: ../plugins/gtkui/deadbeef.glade.h:128
-msgid "Strip ID3v2"
-msgstr "הסרת ID3v2"
-
-#: ../plugins/gtkui/interface.c:2228 ../plugins/gtkui/interface.c:2351
-#: ../plugins/gtkui/deadbeef.glade.h:127
-msgid "Strip ID3v1"
-msgstr "הסרת ID3v1"
-
-#: ../plugins/gtkui/interface.c:2232 ../plugins/gtkui/interface.c:2307
-#: ../plugins/gtkui/interface.c:2347 ../plugins/gtkui/deadbeef.glade.h:126
-msgid "Strip APEv2"
-msgstr "הסרת APEv2"
-
-#: ../plugins/gtkui/interface.c:2240 ../plugins/gtkui/deadbeef.glade.h:69
-msgid "ID3v2 version"
-msgstr "גרסת ID3v2"
-
-#: ../plugins/gtkui/interface.c:2247
-msgid "2.3 (Recommended)"
-msgstr "2.3 (מומלץ)"
-
-#: ../plugins/gtkui/interface.c:2248
-msgid "2.4"
-msgstr "2.4"
-
-#: ../plugins/gtkui/interface.c:2254 ../plugins/gtkui/deadbeef.glade.h:68
-msgid "ID3v1 character encoding (default is iso8859-1)"
-msgstr "קידוד התווים של ID3v1 (בררת המחדל היא iso8859-1)"
-
-#: ../plugins/gtkui/interface.c:2291 ../plugins/gtkui/deadbeef.glade.h:144
-msgid "Write ID3v2.4"
-msgstr "כתיבת ID3v2.4"
-
-#: ../plugins/gtkui/interface.c:2360 ../plugins/gtkui/deadbeef.glade.h:131
+#: ../plugins/gtkui/interface.c:370 ../plugins/gtkui/deadbeef.glade.h:121
 #, fuzzy
-msgid "Tag writer"
-msgstr "<b>כותב תגיות</b>"
+msgid "Shuffle tracks"
+msgstr "ערבול בין האלבומים"
 
-#: ../plugins/gtkui/interface.c:2391 ../plugins/gtkui/deadbeef.glade.h:24
-msgid "Description:"
-msgstr "תיאור:"
+#: ../plugins/gtkui/interface.c:375 ../plugins/gtkui/deadbeef.glade.h:120
+msgid "Shuffle albums"
+msgstr "ערבול בין האלבומים"
 
-#: ../plugins/gtkui/interface.c:2406 ../plugins/gtkui/deadbeef.glade.h:13
-msgid "Author(s):"
-msgstr "מחבר/ים:"
+#: ../plugins/gtkui/interface.c:380 ../plugins/gtkui/deadbeef.glade.h:104
+msgid "Random"
+msgstr "אקראי"
 
-#: ../plugins/gtkui/interface.c:2421 ../plugins/gtkui/deadbeef.glade.h:30
-msgid "Email:"
-msgstr "דוא\"ל:"
+#: ../plugins/gtkui/interface.c:386 ../plugins/gtkui/deadbeef.glade.h:75
+msgid "Looping"
+msgstr "נגינה בלולאה"
 
-#: ../plugins/gtkui/interface.c:2436 ../plugins/gtkui/deadbeef.glade.h:140
-msgid "Website:"
-msgstr "אתר:"
+#: ../plugins/gtkui/interface.c:393 ../plugins/gtkui/deadbeef.glade.h:73
+msgid "Loop All"
+msgstr "לולאה על הכול"
 
-#: ../plugins/gtkui/interface.c:2467 ../plugins/gtkui/deadbeef.glade.h:19
-msgid "Configure"
-msgstr "הגדרה"
+#: ../plugins/gtkui/interface.c:398 ../plugins/gtkui/deadbeef.glade.h:74
+msgid "Loop Single Song"
+msgstr "לולאה על שיר בודד"
 
-#: ../plugins/gtkui/interface.c:2471 ../plugins/gtkui/deadbeef.glade.h:96
-msgid "Plugins"
-msgstr "תוספים"
+#: ../plugins/gtkui/interface.c:403 ../plugins/gtkui/deadbeef.glade.h:36
+msgid "Don't Loop"
+msgstr "ללא לולאה"
 
-#: ../plugins/gtkui/interface.c:2853 ../plugins/gtkui/deadbeef.glade.h:162
-msgid "editplaylistdlg"
-msgstr "editplaylistdlg"
+#: ../plugins/gtkui/interface.c:409 ../plugins/gtkui/deadbeef.glade.h:111
+msgid "Scroll follows playback"
+msgstr "הגלילה עוקבת אחר ההשמעה"
 
-#: ../plugins/gtkui/interface.c:2980 ../plugins/gtkui/deadbeef.glade.h:138
-msgid "URL:"
-msgstr "כתובת:"
+#: ../plugins/gtkui/interface.c:414 ../plugins/gtkui/deadbeef.glade.h:26
+msgid "Cursor follows playback"
+msgstr "הסמן עוקב אחר ההשמעה"
 
-#: ../plugins/gtkui/interface.c:3081 ../plugins/gtkui/deadbeef.glade.h:64
-msgid "Group By"
-msgstr "קיבוץ לפי"
+#: ../plugins/gtkui/interface.c:418 ../plugins/gtkui/deadbeef.glade.h:127
+msgid "Stop after current"
+msgstr "עצירה לאחר הנוכחי"
 
-#: ../plugins/gtkui/interface.c:3106 ../plugins/gtkui/deadbeef.glade.h:56
-#, no-c-format
-msgid ""
-"Format conversions (start with %):\n"
-"  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
-"  track[n]umber, [N]totaltracks,\n"
-"  [l]ength, [y]ear, [g]enre, [c]omment,\n"
-"  copy[r]ight, [f]ilename, [T]ags\n"
-"Example: %a - %t [%l]"
-msgstr ""
-"המרות בעיצוב (מתחילות ב־%):\n"
-"  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer  track[n]umber, [N]"
-"totaltracks,  [l]ength, [y]ear, [g]enre, [c]omment,  copy[r]ight, [f]"
-"ilename, [T]agsדוגמה: %a‏ - %t‏ [%l]"
+#: ../plugins/gtkui/interface.c:430 ../plugins/gtkui/deadbeef.glade.h:67
+msgid "Jump to current track"
+msgstr "מעבר לרצועה הנוכחית"
 
-#: ../plugins/gtkui/mainplaylist.c:301 ../plugins/gtkui/search.c:434
-msgid "Artist / Album"
-msgstr "אומן / אלבום"
+#: ../plugins/gtkui/interface.c:437 ../plugins/gtkui/interface.c:444
+#: ../plugins/gtkui/deadbeef.glade.h:159
+msgid "_Help"
+msgstr "ע_זרה"
 
-#: ../plugins/gtkui/mainplaylist.c:302 ../plugins/gtkui/search.c:435
-msgid "Track No"
-msgstr "רצועה מספר"
+#: ../plugins/gtkui/interface.c:452 ../plugins/gtkui/deadbeef.glade.h:152
+msgid "_ChangeLog"
+msgstr "יומן _שינויים"
 
-#: ../plugins/gtkui/mainplaylist.c:303 ../plugins/gtkui/search.c:436
-#, fuzzy
-msgid "Title / Track Artist"
-msgstr "סך כל הרצועות"
+#: ../plugins/gtkui/interface.c:461 ../plugins/gtkui/deadbeef.glade.h:158
+msgid "_GPLv2"
+msgstr "_GPLv2"
 
-#: ../plugins/gtkui/mainplaylist.c:304 ../plugins/gtkui/search.c:437
-#: ../plugins/gtkui/trkproperties.c:175
+#: ../plugins/gtkui/interface.c:465 ../plugins/gtkui/deadbeef.glade.h:160
+msgid "_LGPLv2.1"
+msgstr "_LGPLv2.1"
+
+#: ../plugins/gtkui/interface.c:474 ../plugins/gtkui/deadbeef.glade.h:149
+msgid "_About"
+msgstr "על _אודות"
+
+#: ../plugins/gtkui/interface.c:482 ../plugins/gtkui/deadbeef.glade.h:166
+msgid "_Translators"
+msgstr "מ_תרגמים"
+
+#: ../plugins/gtkui/interface.c:898 ../plugins/gtkui/deadbeef.glade.h:112
+msgid "Search"
+msgstr "חיפוש"
+
+#: ../plugins/gtkui/interface.c:973 ../plugins/gtkui/deadbeef.glade.h:126
+msgid "Stop"
+msgstr "עצירה"
+
+#: ../plugins/gtkui/interface.c:981 ../plugins/gtkui/deadbeef.glade.h:89
+msgid "Play"
+msgstr "נגינה"
+
+#: ../plugins/gtkui/interface.c:989 ../plugins/gtkui/deadbeef.glade.h:88
+msgid "Pause"
+msgstr "השהיה"
+
+#: ../plugins/gtkui/interface.c:997 ../plugins/gtkui/deadbeef.glade.h:96
+msgid "Previous"
+msgstr "הקודם"
+
+#: ../plugins/gtkui/interface.c:1005 ../plugins/gtkui/deadbeef.glade.h:81
+msgid "Next"
+msgstr "הבא"
+
+#: ../plugins/gtkui/interface.c:1013 ../plugins/gtkui/deadbeef.glade.h:90
+msgid "Play Random"
+msgstr "נגינה אקראית"
+
+#: ../plugins/gtkui/interface.c:1022 ../plugins/gtkui/deadbeef.glade.h:5
+msgid "About"
+msgstr "על אודות"
+
+#: ../plugins/gtkui/interface.c:1035 ../plugins/gtkui/deadbeef.glade.h:103
+msgid "Quit"
+msgstr "יציאה"
+
+#: ../plugins/gtkui/interface.c:1225 ../plugins/gtkui/deadbeef.glade.h:139
+msgid "Track Properties"
+msgstr "מאפייני הרצועה"
+
+#: ../plugins/gtkui/interface.c:1270 ../plugins/gtkui/deadbeef.glade.h:119
+msgid "Settings"
+msgstr "הגדרות"
+
+#: ../plugins/gtkui/interface.c:1296 ../plugins/gtkui/deadbeef.glade.h:150
+msgid "_Apply"
+msgstr "ה_חלה"
+
+#: ../plugins/gtkui/interface.c:1317 ../plugins/gtkui/interface.c:1363
+#: ../plugins/gtkui/deadbeef.glade.h:154
+msgid "_Close"
+msgstr "_סגירה"
+
+#: ../plugins/gtkui/interface.c:1321 ../plugins/gtkui/deadbeef.glade.h:76
+msgid "Metadata"
+msgstr "נתוני על"
+
+#: ../plugins/gtkui/interface.c:1367 ../plugins/gtkui/plcommon.c:618
+#: ../plugins/gtkui/deadbeef.glade.h:97
+msgid "Properties"
+msgstr "מאפיינים"
+
+#: ../plugins/gtkui/interface.c:1494 ../plugins/gtkui/deadbeef.glade.h:39
+msgid "Enter new column title here"
+msgstr "יש להזין את הכותרת החדשה כאן"
+
+#: ../plugins/gtkui/interface.c:1502 ../plugins/gtkui/deadbeef.glade.h:141
+msgid "Type:"
+msgstr "סוג:"
+
+#: ../plugins/gtkui/interface.c:1510
+msgid "Item Index"
+msgstr "אינדקס הפריט"
+
+#. create default set of columns
+#: ../plugins/gtkui/interface.c:1511 ../plugins/gtkui/mainplaylist.c:315
+msgid "Playing"
+msgstr "מתנגן"
+
+#: ../plugins/gtkui/interface.c:1512
+msgid "Album Art"
+msgstr "עטיפת האלבום"
+
+#: ../plugins/gtkui/interface.c:1513
+msgid "Artist - Album"
+msgstr "אומן – אלבום"
+
+#: ../plugins/gtkui/interface.c:1517 ../plugins/gtkui/mainplaylist.c:319
+#: ../plugins/gtkui/search.c:394
 msgid "Duration"
 msgstr "משך"
 
-#: ../plugins/gtkui/plcommon.c:323
+#: ../plugins/gtkui/interface.c:1518 ../translation/extra.c:71
+msgid "Track Number"
+msgstr "רצועה מספר"
+
+#: ../plugins/gtkui/interface.c:1519 ../translation/extra.c:68
+msgid "Band / Album Artist"
+msgstr "להקה / אומן האלבום"
+
+#: ../plugins/gtkui/interface.c:1526 ../plugins/gtkui/interface.c:3150
+#: ../plugins/gtkui/deadbeef.glade.h:44
+msgid "Format:"
+msgstr "מבנה:"
+
+#: ../plugins/gtkui/interface.c:1551 ../plugins/gtkui/deadbeef.glade.h:11
+msgid "Alignment:"
+msgstr "יישור:"
+
+#: ../plugins/gtkui/interface.c:1559
+msgid "Left"
+msgstr "שמאל"
+
+#: ../plugins/gtkui/interface.c:1560
+msgid "Right"
+msgstr "ימין"
+
+#: ../plugins/gtkui/interface.c:1583 ../plugins/gtkui/interface.c:2953
+#: ../plugins/gtkui/interface.c:3065 ../plugins/gtkui/interface.c:3191
+#: ../plugins/gtkui/deadbeef.glade.h:151
+msgid "_Cancel"
+msgstr "_ביטול"
+
+#: ../plugins/gtkui/interface.c:1604 ../plugins/gtkui/interface.c:2974
+#: ../plugins/gtkui/interface.c:3086 ../plugins/gtkui/interface.c:3212
+#: ../plugins/gtkui/deadbeef.glade.h:162
+msgid "_OK"
+msgstr "_אישור"
+
+#: ../plugins/gtkui/interface.c:1825 ../plugins/gtkui/deadbeef.glade.h:85
+msgid "Output plugin:"
+msgstr "תוסף פלט:"
+
+#: ../plugins/gtkui/interface.c:1838 ../plugins/gtkui/deadbeef.glade.h:84
+msgid "Output device:"
+msgstr "התקן הפלט:"
+
+#: ../plugins/gtkui/interface.c:1847 ../plugins/gtkui/deadbeef.glade.h:12
+msgid "Always convert 8 bit audio to 16 bit"
+msgstr "תמיד להמיר שמע של 8 סיביות ל־16 סיביות"
+
+#: ../plugins/gtkui/interface.c:1851 ../plugins/gtkui/deadbeef.glade.h:124
+msgid "Sound"
+msgstr "שמע"
+
+#: ../plugins/gtkui/interface.c:1864 ../plugins/gtkui/deadbeef.glade.h:106
+msgid "Replaygain mode:"
+msgstr "מצב הגברת נגינה חוזרת:"
+
+#: ../plugins/gtkui/interface.c:1873
+msgid "Disable"
+msgstr "לא פעיל"
+
+#: ../plugins/gtkui/interface.c:1874
+msgid "Track"
+msgstr "רצועה"
+
+#: ../plugins/gtkui/interface.c:1877 ../plugins/gtkui/deadbeef.glade.h:107
+msgid "Replaygain peak scale"
+msgstr "מידת הגברת הנגינה החוזרת"
+
+#: ../plugins/gtkui/interface.c:1892 ../plugins/gtkui/interface.c:1926
+#: ../plugins/gtkui/deadbeef.glade.h:2
+msgid "-12 dB"
+msgstr "-12 dB"
+
+#: ../plugins/gtkui/interface.c:1902 ../plugins/gtkui/interface.c:1936
+#: ../plugins/gtkui/deadbeef.glade.h:1
+msgid "+12 dB"
+msgstr "+12 dB"
+
+#: ../plugins/gtkui/interface.c:1906 ../plugins/gtkui/deadbeef.glade.h:108
+msgid "Replaygain preamp:"
+msgstr "הגברת נגינה חוזרת:"
+
+#: ../plugins/gtkui/interface.c:1913 ../plugins/gtkui/deadbeef.glade.h:47
+#, fuzzy
+msgid "Global preamp:"
+msgstr "הגברת נגינה חוזרת:"
+
+#: ../plugins/gtkui/interface.c:1944 ../plugins/gtkui/deadbeef.glade.h:7
+msgid "Add files from command line (or file manager) to this playlist:"
+msgstr "הוספת קבצים משורת הפקודה (או ממנהל הקבצים) לרשימת ההשמעה:"
+
+#: ../plugins/gtkui/interface.c:1953 ../plugins/gtkui/deadbeef.glade.h:109
+msgid "Resume previous session on startup"
+msgstr "המשך ההפעלה הקודמת עם התחלת התכנית"
+
+#: ../plugins/gtkui/interface.c:1957 ../plugins/gtkui/deadbeef.glade.h:37
+msgid "Don't add from archives when adding folders"
+msgstr "אין להוסיף מארכיונים בעת הוספת תיקיות"
+
+#: ../plugins/gtkui/interface.c:1961 ../plugins/gtkui/deadbeef.glade.h:91
+msgid "Playback"
+msgstr "השמעה"
+
+#: ../plugins/gtkui/interface.c:1982 ../plugins/gtkui/interface.c:2514
+#: ../plugins/gtkui/deadbeef.glade.h:22 ../plugins/converter/interface.c:649
+msgid "Configure"
+msgstr "הגדרה"
+
+#: ../plugins/gtkui/interface.c:2017 ../plugins/gtkui/deadbeef.glade.h:29
+msgid "DSP Chain Preset"
+msgstr "תצורת שרשרת DSP"
+
+#: ../plugins/gtkui/interface.c:2029 ../plugins/gtkui/deadbeef.glade.h:161
+msgid "_Load"
+msgstr "_טעינה"
+
+#: ../plugins/gtkui/interface.c:2033 ../plugins/gtkui/deadbeef.glade.h:28
+msgid "DSP"
+msgstr "DSP"
+
+#: ../plugins/gtkui/interface.c:2042 ../plugins/gtkui/deadbeef.glade.h:19
+msgid "Close minimizes to tray"
+msgstr "סגירה ממזערת לאזור המערכת"
+
+#: ../plugins/gtkui/interface.c:2046 ../plugins/gtkui/deadbeef.glade.h:78
+msgid "Middle mouse button closes playlist"
+msgstr "לחצן אמצעי סוגר את רשימת ההשמעה"
+
+#: ../plugins/gtkui/interface.c:2050 ../plugins/gtkui/deadbeef.glade.h:51
+msgid "Hide system tray icon"
+msgstr "הסתרת הסמל באזור הדיווחים"
+
+#: ../plugins/gtkui/interface.c:2054 ../plugins/gtkui/deadbeef.glade.h:143
+msgid "Use bold font for currently playing track"
+msgstr "שימוש בגופן מודגש עבור הרצועה המתנגנת כעת"
+
+#: ../plugins/gtkui/interface.c:2058 ../plugins/gtkui/deadbeef.glade.h:50
+msgid "Hide \"Delete from disk\" context menu item"
+msgstr "הסתרת פריט ההקשר \"מחיקה מהכונן\""
+
+#: ../plugins/gtkui/interface.c:2062 ../plugins/gtkui/deadbeef.glade.h:16
+msgid "Auto-name playlists when adding a single folder"
+msgstr "מתן שם אוטומטית לרשימות השמעה בעת הוספת תיקייה בודדת"
+
+#: ../plugins/gtkui/interface.c:2070 ../plugins/gtkui/deadbeef.glade.h:54
+msgid "Interface refresh rate (times per second):"
+msgstr "קצב רענון המנשק (פעמים בשנייה):"
+
+#: ../plugins/gtkui/interface.c:2084 ../plugins/gtkui/deadbeef.glade.h:137
+msgid "Titlebar text while playing:"
+msgstr "טקסט הכותרת בעת ההשמעה:"
+
+#: ../plugins/gtkui/interface.c:2098 ../plugins/gtkui/deadbeef.glade.h:138
+msgid "Titlebar text while stopped:"
+msgstr "טקסט הכותרת בעת עצירה:"
+
+#: ../plugins/gtkui/interface.c:2112 ../plugins/gtkui/deadbeef.glade.h:46
+msgid "GUI Plugin (changing requires restart):"
+msgstr "תוסף מנשק משתמש (שינויים דורשים הפעלה מחדש):"
+
+#: ../plugins/gtkui/interface.c:2120 ../plugins/gtkui/deadbeef.glade.h:45
+msgid "GUI"
+msgstr "מנשק משתמש"
+
+#: ../plugins/gtkui/interface.c:2135 ../plugins/gtkui/interface.c:2179
+#: ../plugins/gtkui/deadbeef.glade.h:86
+msgid "Override"
+msgstr "דריסה"
+
+#: ../plugins/gtkui/interface.c:2144 ../plugins/gtkui/deadbeef.glade.h:42
+msgid "Foreground"
+msgstr "קידמה"
+
+#: ../plugins/gtkui/interface.c:2151 ../plugins/gtkui/deadbeef.glade.h:17
+msgid "Background"
+msgstr "רקע"
+
+#: ../plugins/gtkui/interface.c:2170 ../plugins/gtkui/deadbeef.glade.h:113
+msgid "Seekbar/Volumebar colors"
+msgstr "צבעי פס גלילת ההשמעה/פס עוצמת השמע"
+
+#: ../plugins/gtkui/interface.c:2188 ../plugins/gtkui/deadbeef.glade.h:77
+msgid "Middle"
+msgstr "בינוני"
+
+#: ../plugins/gtkui/interface.c:2195 ../plugins/gtkui/deadbeef.glade.h:70
+msgid "Light"
+msgstr "בהיר"
+
+#: ../plugins/gtkui/interface.c:2202 ../plugins/gtkui/deadbeef.glade.h:30
+msgid "Dark"
+msgstr "כהה"
+
+#: ../plugins/gtkui/interface.c:2233 ../plugins/gtkui/deadbeef.glade.h:18
+msgid "Base"
+msgstr "בסיסי"
+
+#: ../plugins/gtkui/interface.c:2240 ../plugins/gtkui/interface.c:2297
+#: ../plugins/gtkui/deadbeef.glade.h:134
+msgid "Text"
+msgstr "טקסט"
+
+#: ../plugins/gtkui/interface.c:2253 ../plugins/gtkui/deadbeef.glade.h:131
+msgid "Tab strip colors"
+msgstr "צבעי ראשי הלשוניות"
+
+#: ../plugins/gtkui/interface.c:2262 ../plugins/gtkui/deadbeef.glade.h:87
+msgid "Override (looses GTK treeview theming, but speeds up rendering)"
+msgstr "דריסה (רכיבי העיצוב של ה־GTK יאבדו אך העיבוד יהיה מהיר יותר)"
+
+#: ../plugins/gtkui/interface.c:2271 ../plugins/gtkui/deadbeef.glade.h:41
+msgid "Even row"
+msgstr "שורה זוגית"
+
+#: ../plugins/gtkui/interface.c:2278 ../plugins/gtkui/deadbeef.glade.h:82
+msgid "Odd row"
+msgstr "שורה אי־זוגית"
+
+#: ../plugins/gtkui/interface.c:2304 ../plugins/gtkui/deadbeef.glade.h:116
+msgid "Selected row"
+msgstr "שורה נבחרת"
+
+#: ../plugins/gtkui/interface.c:2323 ../plugins/gtkui/deadbeef.glade.h:117
+msgid "Selected text"
+msgstr "טקסט שנבחר"
+
+#: ../plugins/gtkui/interface.c:2336 ../plugins/gtkui/deadbeef.glade.h:25
+msgid "Cursor"
+msgstr "סמן"
+
+#: ../plugins/gtkui/interface.c:2349 ../plugins/gtkui/deadbeef.glade.h:92
+msgid "Playlist colors"
+msgstr "צבעי רשימת ההשמעה"
+
+#: ../plugins/gtkui/interface.c:2353 ../plugins/gtkui/deadbeef.glade.h:20
+msgid "Colors"
+msgstr "צבעים"
+
+#: ../plugins/gtkui/interface.c:2362 ../plugins/gtkui/deadbeef.glade.h:38
+msgid "Enable Proxy Server"
+msgstr "הפעלת שרת מתווך"
+
+#: ../plugins/gtkui/interface.c:2370 ../plugins/gtkui/deadbeef.glade.h:99
+msgid "Proxy Server Address:"
+msgstr "כתובת שרת התיווך:"
+
+#: ../plugins/gtkui/interface.c:2384 ../plugins/gtkui/deadbeef.glade.h:100
+msgid "Proxy Server Port:"
+msgstr "פתחת שרת התיווך:"
+
+#: ../plugins/gtkui/interface.c:2398 ../plugins/gtkui/deadbeef.glade.h:101
+msgid "Proxy Type:"
+msgstr "סוג שרת התיווך:"
+
+#: ../plugins/gtkui/interface.c:2417 ../plugins/gtkui/deadbeef.glade.h:102
+msgid "Proxy Username:"
+msgstr "שם המשתמש במתווך:"
+
+#: ../plugins/gtkui/interface.c:2430 ../plugins/gtkui/deadbeef.glade.h:98
+msgid "Proxy Password:"
+msgstr "הססמה במתווך:"
+
+#: ../plugins/gtkui/interface.c:2440 ../plugins/gtkui/deadbeef.glade.h:79
+msgid "Network"
+msgstr "רשת"
+
+#: ../plugins/gtkui/interface.c:2471 ../plugins/gtkui/deadbeef.glade.h:144
+msgid "Version: "
+msgstr "גרסה:"
+
+#: ../plugins/gtkui/interface.c:2535 ../plugins/gtkui/deadbeef.glade.h:23
+#: ../translation/extra.c:78
+msgid "Copyright"
+msgstr "זכויות יוצרים"
+
+#: ../plugins/gtkui/interface.c:2545 ../plugins/gtkui/deadbeef.glade.h:94
+msgid "Plugins"
+msgstr "תוספים"
+
+#: ../plugins/gtkui/interface.c:3033 ../plugins/gtkui/deadbeef.glade.h:142
+msgid "URL:"
+msgstr "כתובת:"
+
+#: ../plugins/gtkui/interface.c:3135 ../plugins/gtkui/deadbeef.glade.h:48
+msgid "Group By"
+msgstr "קיבוץ לפי"
+
+#: ../plugins/gtkui/interface.c:3259 ../plugins/gtkui/deadbeef.glade.h:123
+msgid "Sort by..."
+msgstr "סידור לפי..."
+
+#: ../plugins/gtkui/interface.c:3275 ../plugins/gtkui/deadbeef.glade.h:43
+msgid "Format"
+msgstr "מבנה"
+
+#: ../plugins/gtkui/interface.c:3305
+msgid "Ascending"
+msgstr "סדר עולה"
+
+#: ../plugins/gtkui/interface.c:3306
+msgid "Descending"
+msgstr "סדר יורד"
+
+#: ../plugins/gtkui/interface.c:3359 ../plugins/gtkui/deadbeef.glade.h:114
+#: ../plugins/converter/interface.c:750
+msgid "Select DSP Plugin"
+msgstr "בחירת תוסף DSP"
+
+#: ../plugins/gtkui/interface.c:3375 ../plugins/gtkui/deadbeef.glade.h:93
+#: ../plugins/converter/convgui.c:1016 ../plugins/converter/interface.c:766
+#: ../plugins/gtkui/dspconfig.c:139
+msgid "Plugin"
+msgstr "תוסף"
+
+#: ../plugins/gtkui/interface.c:3461 ../plugins/gtkui/deadbeef.glade.h:133
+msgid "Tag Writer Settings"
+msgstr "הגדרות כותב התגיות"
+
+#: ../plugins/gtkui/interface.c:3492 ../plugins/gtkui/deadbeef.glade.h:147
+msgid "Write ID3v2"
+msgstr "כתיבת ID3v2"
+
+#: ../plugins/gtkui/interface.c:3496 ../plugins/gtkui/interface.c:3623
+#: ../plugins/gtkui/deadbeef.glade.h:146
+msgid "Write ID3v1"
+msgstr "כתיבת ID3v1"
+
+#: ../plugins/gtkui/interface.c:3500 ../plugins/gtkui/interface.c:3579
+#: ../plugins/gtkui/interface.c:3619 ../plugins/gtkui/deadbeef.glade.h:145
+msgid "Write APEv2"
+msgstr "כתיבת APEv2"
+
+#: ../plugins/gtkui/interface.c:3508 ../plugins/gtkui/interface.c:3587
+#: ../plugins/gtkui/deadbeef.glade.h:130
+msgid "Strip ID3v2"
+msgstr "הסרת ID3v2"
+
+#: ../plugins/gtkui/interface.c:3512 ../plugins/gtkui/interface.c:3635
+#: ../plugins/gtkui/deadbeef.glade.h:129
+msgid "Strip ID3v1"
+msgstr "הסרת ID3v1"
+
+#: ../plugins/gtkui/interface.c:3516 ../plugins/gtkui/interface.c:3591
+#: ../plugins/gtkui/interface.c:3631 ../plugins/gtkui/deadbeef.glade.h:128
+msgid "Strip APEv2"
+msgstr "הסרת APEv2"
+
+#: ../plugins/gtkui/interface.c:3524 ../plugins/gtkui/deadbeef.glade.h:53
+msgid "ID3v2 version"
+msgstr "גרסת ID3v2"
+
+#: ../plugins/gtkui/interface.c:3531
+msgid "2.3 (Recommended)"
+msgstr "2.3 (מומלץ)"
+
+#: ../plugins/gtkui/interface.c:3532
+msgid "2.4"
+msgstr "2.4"
+
+#: ../plugins/gtkui/interface.c:3538 ../plugins/gtkui/deadbeef.glade.h:52
+msgid "ID3v1 character encoding (default is iso8859-1)"
+msgstr "קידוד התווים של ID3v1 (בררת המחדל היא iso8859-1)"
+
+#: ../plugins/gtkui/interface.c:3575 ../plugins/gtkui/deadbeef.glade.h:148
+msgid "Write ID3v2.4"
+msgstr "כתיבת ID3v2.4"
+
+#: ../plugins/gtkui/mainplaylist.c:316 ../plugins/gtkui/search.c:391
+msgid "Artist / Album"
+msgstr "אומן / אלבום"
+
+#: ../plugins/gtkui/mainplaylist.c:317 ../plugins/gtkui/search.c:392
+msgid "Track No"
+msgstr "רצועה מספר"
+
+#: ../plugins/gtkui/plcommon.c:338
 msgid "Delete files from disk"
 msgstr "מחיקת הקובץ מהכונן"
 
-#: ../plugins/gtkui/plcommon.c:324
+#: ../plugins/gtkui/plcommon.c:339
 msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
@@ -859,196 +924,220 @@ msgstr ""
 "הקבצים יאבדו. להמשיך?\n"
 "(ניתן לכבות תיבת דו־שיח זו בהגדרות התוסף GTKUI)"
 
-#: ../plugins/gtkui/plcommon.c:325 ../plugins/gtkui/trkproperties.c:56
+#: ../plugins/gtkui/plcommon.c:340 ../plugins/gtkui/trkproperties.c:162
+#: ../plugins/gtkui/trkproperties.c:693 ../plugins/converter/convgui.c:759
+#: ../plugins/converter/convgui.c:1136
 msgid "Warning"
 msgstr "אזהרה"
 
-#: ../plugins/gtkui/plcommon.c:401
+#: ../plugins/gtkui/plcommon.c:444
 msgid "Add to playback queue"
 msgstr "הוספה לתור ההשמעה"
 
-#: ../plugins/gtkui/plcommon.c:406
+#: ../plugins/gtkui/plcommon.c:449
 msgid "Remove from playback queue"
 msgstr "הסרה מתור ההשמעה"
 
-#: ../plugins/gtkui/plcommon.c:414
+#: ../plugins/gtkui/plcommon.c:457
 msgid "Reload metadata"
 msgstr "טעינת נתוני העל מחדש"
 
-#: ../plugins/gtkui/plcommon.c:433
+#: ../plugins/gtkui/plcommon.c:476
 msgid "Remove from disk"
 msgstr "הסרה מהכונן"
 
-#: ../plugins/gtkui/plcommon.c:719 ../plugins/gtkui/plcommon.c:844
+#: ../plugins/gtkui/plcommon.c:855 ../plugins/gtkui/plcommon.c:980
 msgid "Add column"
 msgstr "הוספת עמודה"
 
-#: ../plugins/gtkui/plcommon.c:749 ../plugins/gtkui/plcommon.c:848
+#: ../plugins/gtkui/plcommon.c:885 ../plugins/gtkui/plcommon.c:984
 msgid "Edit column"
 msgstr "עריכת עמודה"
 
-#: ../plugins/gtkui/plcommon.c:852
+#: ../plugins/gtkui/plcommon.c:988
 msgid "Remove column"
 msgstr "הסרת עמודה"
 
-#: ../plugins/gtkui/plcommon.c:862
+#: ../plugins/gtkui/plcommon.c:998
 msgid "Group by"
 msgstr "קיבוץ לפי"
 
-#: ../plugins/gtkui/plcommon.c:869
+#: ../plugins/gtkui/plcommon.c:1005
 msgid "None"
 msgstr "ללא"
 
-#: ../plugins/gtkui/plcommon.c:873
+#: ../plugins/gtkui/plcommon.c:1009
 msgid "Artist/Date/Album"
 msgstr "אומן/תאריך/אלבום"
 
-#: ../plugins/gtkui/pluginconf.c:41
+#: ../plugins/gtkui/pluginconf.c:42
 msgid "Open file..."
 msgstr "פתיחת קובץ..."
 
-#: ../plugins/gtkui/pluginconf.c:142
+#: ../plugins/gtkui/pluginconf.c:217
 #, c-format
-msgid "Setup %s"
+msgid "Configure %s"
 msgstr "הגדרת %s"
 
-#: ../plugins/gtkui/prefwin.c:98
+#: ../plugins/gtkui/prefwin.c:82
 msgid "Default Audio Device"
 msgstr "התקן השמע כברירת מחדל"
 
-#: ../plugins/gtkui/prefwin.c:312
+#: ../plugins/gtkui/prefwin.c:318 ../plugins/converter/interface.c:641
 msgid "Add"
 msgstr "הוספה"
 
-#: ../plugins/gtkui/prefwin.c:322
+#: ../plugins/gtkui/prefwin.c:328
 msgid "Global Hotkeys"
 msgstr "מקשי קיצור גלובליים"
 
-#: ../plugins/gtkui/prefwin.c:384
+#: ../plugins/gtkui/prefwin.c:390
 msgid "Slot"
 msgstr "חריץ"
 
-#: ../plugins/gtkui/prefwin.c:385
+#: ../plugins/gtkui/prefwin.c:391
 msgid "Key combination"
 msgstr "צירוף מקשים"
 
-#. output plugin selection
-#: ../plugins/gtkui/prefwin.c:464 ../plugins/gtkui/prefwin.c:676
-#: ../plugins.c:872
-msgid "ALSA output plugin"
-msgstr "תוסף הפלט ALSA"
+#: ../plugins/gtkui/progress.c:56
+msgid "Adding files..."
+msgstr "מתבצעת הוספת קבצים..."
 
-#: ../plugins/gtkui/progress.c:64
+#: ../plugins/gtkui/progress.c:90
 msgid "Initializing..."
 msgstr "בהפעלה..."
 
-#: ../plugins/gtkui/trkproperties.c:53
+#: ../plugins/gtkui/trkproperties.c:159
 msgid "You've modified data for this track."
 msgstr "השתנו נתונים ברצועה זו."
 
-#: ../plugins/gtkui/trkproperties.c:55
+#: ../plugins/gtkui/trkproperties.c:161
 msgid "Really close the window?"
 msgstr "האם באמת לסגור את החלון?"
 
-#: ../plugins/gtkui/trkproperties.c:178
-msgid "Tag Type(s)"
-msgstr "סוג/י התגים"
+#. get value to edit
+#: ../plugins/gtkui/trkproperties.c:254
+msgid "[Multiple values] "
+msgstr "[ערכים מרובים]"
 
-#: ../plugins/gtkui/trkproperties.c:180
-msgid "Embedded Cuesheet"
-msgstr "רשימת Cue מוטמעת"
-
-#: ../plugins/gtkui/trkproperties.c:180
-msgid "Yes"
-msgstr "כן"
-
-#: ../plugins/gtkui/trkproperties.c:180
-msgid "No"
-msgstr "לא"
-
-#: ../plugins/gtkui/trkproperties.c:182
-msgid "Codec"
-msgstr "קודק"
-
-#: ../plugins/gtkui/trkproperties.c:250 ../plugins/gtkui/trkproperties.c:262
+#: ../plugins/gtkui/trkproperties.c:407 ../plugins/gtkui/trkproperties.c:419
 msgid "Key"
 msgstr "מפתח"
 
-#: ../plugins/gtkui/trkproperties.c:251 ../plugins/gtkui/trkproperties.c:263
+#: ../plugins/gtkui/trkproperties.c:408 ../plugins/gtkui/trkproperties.c:420
 msgid "Value"
 msgstr "ערך"
 
-#: ../plugins/notify/notify.c:138
-#, fuzzy
-msgid "DeaDBeeF now playing"
-msgstr "נטרול „מתנגן כעת“"
+#: ../plugins/gtkui/trkproperties.c:594
+msgid "Writing tags..."
+msgstr "התגיות נכתבות..."
 
-#: ../main.c:89
+#: ../plugins/gtkui/trkproperties.c:621
+msgid "Name:"
+msgstr "שם:"
+
+#: ../plugins/gtkui/trkproperties.c:633
+msgid "Field names must not start with : or _"
+msgstr "שמות השדות לא יכולים להתחיל בתווים : או _"
+
+#: ../plugins/gtkui/trkproperties.c:634 ../plugins/gtkui/trkproperties.c:668
+msgid "Cannot add field"
+msgstr "לא ניתן להוסיף שדה"
+
+#: ../plugins/gtkui/trkproperties.c:667
+msgid "Field with such name already exists, please try different name."
+msgstr "שדה בשם זה כבר קיים, נא לנסות שם אחר."
+
+#: ../plugins/gtkui/trkproperties.c:692
+msgid "Really remove selected field?"
+msgstr "האם אכן להסיר את השדה הנבחר?"
+
+#: ../plugins/gtkui/trkproperties.c:734
+msgid "Add field"
+msgstr "הוספת שדה"
+
+#: ../plugins/gtkui/trkproperties.c:737
+msgid "Remove field"
+msgstr "הסרת שדה"
+
+#: ../main.c:91
 #, c-format
 msgid "Usage: deadbeef [options] [file(s)]\n"
 msgstr "Usage: deadbeef [options] [file(s)]\n"
 
-#: ../main.c:90
+#: ../main.c:92
 #, c-format
 msgid "Options:\n"
 msgstr "Options:\n"
 
-#: ../main.c:91
+#: ../main.c:93
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
 msgstr "   --help  or  -h     Print help (this message) and exit\n"
 
-#: ../main.c:92
+#: ../main.c:94
 #, c-format
 msgid "   --quit             Quit player\n"
 msgstr "   --quit             Quit player\n"
 
-#: ../main.c:93
+#: ../main.c:95
 #, c-format
 msgid "   --version          Print version info and exit\n"
 msgstr "   --version          Print version info and exit\n"
 
-#: ../main.c:94
+#: ../main.c:96
 #, c-format
 msgid "   --play             Start playback\n"
 msgstr "   --play             Start playback\n"
 
-#: ../main.c:95
+#: ../main.c:97
 #, c-format
 msgid "   --stop             Stop playback\n"
 msgstr "   --stop             Stop playback\n"
 
-#: ../main.c:96
+#: ../main.c:98
 #, c-format
 msgid "   --pause            Pause playback\n"
 msgstr "   --pause            Pause playback\n"
 
-#: ../main.c:97
+#: ../main.c:99
+#, c-format
+msgid "   --toggle-pause     Toggle pause\n"
+msgstr "   --toggle-pause     Toggle pause\n"
+
+#: ../main.c:100
+#, c-format
+msgid ""
+"   --play-pause       Start playback if stopped, toggle pause otherwise\n"
+msgstr ""
+"   --play-pause       Start playback if stopped, toggle pause otherwise\n"
+
+#: ../main.c:101
 #, c-format
 msgid "   --next             Next song in playlist\n"
 msgstr "   --next             Next song in playlist\n"
 
-#: ../main.c:98
+#: ../main.c:102
 #, c-format
 msgid "   --prev             Previous song in playlist\n"
 msgstr "   --prev             Previous song in playlist\n"
 
-#: ../main.c:99
+#: ../main.c:103
 #, c-format
 msgid "   --random           Random song in playlist\n"
 msgstr "   --random           Random song in playlist\n"
 
-#: ../main.c:100
+#: ../main.c:104
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
 msgstr "   --queue            Append file(s) to existing playlist\n"
 
-#: ../main.c:101
+#: ../main.c:105
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
 msgstr "   --nowplaying FMT   Print formatted track name to stdout\n"
 
-#: ../main.c:102
+#: ../main.c:106
 #, c-format
 msgid ""
 "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
@@ -1059,7 +1148,7 @@ msgstr ""
 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
 "                      copy[r]ight, [e]lapsed\n"
 
-#: ../main.c:105
+#: ../main.c:109
 #, c-format
 msgid ""
 "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
@@ -1068,11 +1157,28 @@ msgstr ""
 "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
 "- title\"\n"
 
-#: ../playlist.c:377 ../playlist.c:2289
+#: ../main.c:110
+#, c-format
+msgid ""
+"                      for more info, see http://sourceforge.net/apps/"
+"mediawiki/deadbeef/index.php?title=Title_Formatting\n"
+msgstr ""
+"                      for more info, see http://sourceforge.net/apps/"
+"mediawiki/deadbeef/index.php?title=Title_Formatting\n"
+
+#: ../playlist.c:454 ../playlist.c:2398
 msgid "Default"
 msgstr "בררת מחדל"
 
-#: ../plugins/gtkui/deadbeef.glade.h:1
+#: ../playlist.c:3664
+msgid "Yes"
+msgstr "כן"
+
+#: ../playlist.c:3664
+msgid "No"
+msgstr "לא"
+
+#: ../plugins/gtkui/deadbeef.glade.h:3
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
@@ -1080,7 +1186,15 @@ msgstr ""
 "2.3 (מומלץ)\n"
 "2.4"
 
-#: ../plugins/gtkui/deadbeef.glade.h:26
+#: ../plugins/gtkui/deadbeef.glade.h:14
+msgid ""
+"Ascending\n"
+"Descending"
+msgstr ""
+"סדר עולה\n"
+"סדר יורד"
+
+#: ../plugins/gtkui/deadbeef.glade.h:33
 msgid ""
 "Disable\n"
 "Track\n"
@@ -1090,18 +1204,18 @@ msgstr ""
 "רצועה\n"
 "אלבום"
 
-#: ../plugins/gtkui/deadbeef.glade.h:35
+#: ../plugins/gtkui/deadbeef.glade.h:56
 #, fuzzy
 msgid ""
-"File number\n"
+"Item Index\n"
 "Playing\n"
 "Album Art\n"
 "Artist - Album\n"
 "Artist\n"
 "Album\n"
 "Title\n"
-"Length\n"
-"Track\n"
+"Duration\n"
+"Track Number\n"
 "Band / Album Artist\n"
 "Custom"
 msgstr ""
@@ -1116,7 +1230,7 @@ msgstr ""
 "רצועהלהקה / אמן האלבום\n"
 "מותאם אישית"
 
-#: ../plugins/gtkui/deadbeef.glade.h:71
+#: ../plugins/gtkui/deadbeef.glade.h:68
 msgid ""
 "Left\n"
 "Right"
@@ -1125,62 +1239,10 @@ msgstr ""
 "ימין"
 
 #: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
+#: ../plugins/converter/support.c:90 ../plugins/converter/support.c:114
 #, c-format
 msgid "Couldn't find pixmap file: %s"
 msgstr "לא ניתן למצוא את קובץ ה־pixmap:‏ %s"
-
-#: ../plugins/vorbis/vcedit.c:129 ../plugins/vorbis/vcedit.c:155
-msgid "Couldn't get enough memory for input buffering."
-msgstr "לא ניתן לקבל מספיק זיכרון לצורך אגירת הקלט."
-
-#: ../plugins/vorbis/vcedit.c:179 ../plugins/vorbis/vcedit.c:550
-msgid "Error reading first page of Ogg bitstream."
-msgstr "ארעה שגיאה בעת קריאת העמוד הראשון של תזרים הסיביות מסוג Ogg."
-
-#: ../plugins/vorbis/vcedit.c:185 ../plugins/vorbis/vcedit.c:557
-msgid "Error reading initial header packet."
-msgstr "ארעה שגיאה בקריאת מנת הכותרת ההתחלתית."
-
-#: ../plugins/vorbis/vcedit.c:237
-msgid "Couldn't get enough memory to register new stream serial number."
-msgstr "לא ניתן לקבל מספיק זיכרון כדי לרשום את המספר הסידורי של התזרים החדש."
-
-#: ../plugins/vorbis/vcedit.c:505
-msgid "Input truncated or empty."
-msgstr "הקלט קטוע או ריק."
-
-#: ../plugins/vorbis/vcedit.c:507
-msgid "Input is not an Ogg bitstream."
-msgstr "הקלט אינו תזרים סיביות מסוג Ogg."
-
-#: ../plugins/vorbis/vcedit.c:565
-msgid "Ogg bitstream does not contain Vorbis data."
-msgstr "תזרים הסיביות מסוג Ogg אין מכיל נתוני Vorbis."
-
-#: ../plugins/vorbis/vcedit.c:578
-msgid "EOF before recognised stream."
-msgstr "EOF לפני תזרים מוכר."
-
-#: ../plugins/vorbis/vcedit.c:594
-msgid "Ogg bitstream does not contain a supported data-type."
-msgstr "תזרים הסיביות מסוג Ogg אינו מכיל טיפוס נתונים נתמך."
-
-#: ../plugins/vorbis/vcedit.c:638
-msgid "Corrupt secondary header."
-msgstr "כותרת משנית פגומה."
-
-#: ../plugins/vorbis/vcedit.c:659
-msgid "EOF before end of Vorbis headers."
-msgstr "EOF (סוף הקובץ) בטרם סוף כותרות ה־Vorbis."
-
-#: ../plugins/vorbis/vcedit.c:834
-msgid "Corrupt or missing data, continuing..."
-msgstr "נתונים פגומים או חסרים, ממשיך..."
-
-#: ../plugins/vorbis/vcedit.c:874
-msgid ""
-"Error writing stream to output. Output stream may be corrupted or truncated."
-msgstr "ארעה שגיאה בכתיבת התזרים לפלט. תזרים הפלט פגום או קטוע."
 
 #: ../plugins/wildmidi/wildmidiplug.c:162
 #, c-format
@@ -1191,518 +1253,655 @@ msgstr ""
 "wildmidi: קובץ התצורה של freepats. נא להתקין את החבילהtimidity-freepats, או "
 "לציין את הנתיב אל freepats.cfg בהגדרות התוסף."
 
-#~ msgid "Add Audio CD"
-#~ msgstr "הוספת תקליטור שמע"
+#. this file should list extra translatable strings that are not referenced
+#. directly in source code, e.g. scripted plugin configuration strings
+#: ../translation/extra.c:3
+msgid "Add Audio CD"
+msgstr "הוספת תקליטור שמע"
+
+#: ../translation/extra.c:4
+msgid "Lookup on Last.fm"
+msgstr "חיפוש ב־Last.fm"
+
+#. ALSA output plugin
+#: ../translation/extra.c:6
+msgid "Use ALSA resampling"
+msgstr "שימוש בדגימה חוזרת של ALSA"
+
+#: ../translation/extra.c:7
+msgid "Release device while stopped"
+msgstr "שחרור ההתקן בעת עצירה"
+
+#: ../translation/extra.c:8 ../translation/extra.c:51
+msgid "Preferred buffer size"
+msgstr "גודל האוגר המועדף"
+
+#: ../translation/extra.c:9
+msgid "Preferred period size"
+msgstr "משך הזמן המועדף"
+
+#. Last.fm plugin
+#: ../translation/extra.c:11
+msgid "Enable scrobbler"
+msgstr "הפעלת Scrobbler"
+
+#: ../translation/extra.c:12
+#, fuzzy
+msgid "Disable nowplaying"
+msgstr "נטרול „מתנגן כעת“"
+
+#: ../translation/extra.c:13
+msgid "Username"
+msgstr "שם משתמש"
+
+#: ../translation/extra.c:14
+msgid "Password"
+msgstr "ססמה"
+
+#: ../translation/extra.c:15
+msgid "Scrobble URL"
+msgstr "הכתובת של Scrobble"
+
+#. OSS output plugin
+#: ../translation/extra.c:17
+msgid "Device file"
+msgstr "קובץ ההתקן"
+
+#: ../translation/extra.c:18
+msgid "OSS4 samplerate bug workaround"
+msgstr "מעקף לתקלת קצב הדגימה ב־OSS4"
+
+#. Album Artwork plugin
+#: ../translation/extra.c:20
+msgid "Cache update period (hr)"
+msgstr "ההפרש בין מועדי עדכון המטמון (שעות)"
+
+#: ../translation/extra.c:21
+msgid "Fetch from embedded tags"
+msgstr "קבלה מתגיות מובנות"
+
+#: ../translation/extra.c:22
+msgid "Fetch from local folder"
+msgstr "קבלה מתיקייה מקומית"
+
+#: ../translation/extra.c:23
+msgid "Local cover file mask"
+msgstr "מסכת קבצים של עטיפות מקומיות"
+
+#: ../translation/extra.c:24
+msgid "Fetch from last.fm"
+msgstr "קבלה מ־Last.fm"
+
+#: ../translation/extra.c:25
+msgid "Fetch from albumart.org"
+msgstr "קבלה מ־albumart.org"
+
+#: ../translation/extra.c:26
+msgid "Scale artwork towards longer side"
+msgstr "מתיחת העטיפה לעבר הצד הארוך יותר"
+
+#. Audio CD player
+#: ../translation/extra.c:28
+msgid "Use CDDB/FreeDB"
+msgstr "שימוש ב־CDDB/FreeDB"
+
+#: ../translation/extra.c:29
+msgid "Prefer CD-Text over CDDB"
+msgstr "העדפת CD-Text על פני CDDB"
+
+#: ../translation/extra.c:30
+msgid "CDDB url (e.g. 'freedb.org')"
+msgstr "כתובת ה־CDDB (לדוגמה: 'freedb.org')"
+
+#: ../translation/extra.c:31
+msgid "CDDB port number (e.g. '888')"
+msgstr "מס׳ הפתחה של ה־CDDB (לדוגמה: '888')"
+
+#: ../translation/extra.c:32
+msgid "Prefer CDDB protocol over HTTP"
+msgstr "העדפת הפרוטוקול CDDB על פני HTTP"
+
+#: ../translation/extra.c:33
+msgid "Enable NRG image support"
+msgstr "הפעלת תמיכה בתמונות NRG"
+
+#. DUMB module player plugin
+#: ../translation/extra.c:35
+msgid "Resampling quality (0..2, higher is better)"
+msgstr "איכות הדגימה החוזרת (0..2, גבוה יותר - איכותי יותר)"
+
+#. Game_Music_Emu decoder plugin
+#: ../translation/extra.c:37
+msgid "Max song length (in minutes)"
+msgstr "אורך השיר המרבי (בדקות)"
+
+#. Standard GTK2 user interface plugin
+#: ../translation/extra.c:39
+msgid "Ask confirmation to delete files from disk"
+msgstr "בקשת אישור למחיקת קבצים מהכונן"
+
+#: ../translation/extra.c:40
+msgid "Status icon volume control sensitivity"
+msgstr "רגישות בקרת העצמה דרך סמל המצב"
+
+#: ../translation/extra.c:41
+msgid "Custom status icon"
+msgstr "סמל מצב מותאם אישית"
+
+# אם המחרוזת הזאת מופיעה במסוף והתבלבלתי נא להעתיק את המחרוזת המקורית לתרגום
+#: ../translation/extra.c:42
+msgid "Run gtk_init with --sync (debug mode)"
+msgstr "הפעלת gtk_init עם הפרמטר ‎--sync (מצב ניפוי שגיאות)"
+
+#: ../translation/extra.c:43
+msgid "Add separators between plugin context menu items"
+msgstr "הוספת הפרדה בין פריטי תפריט ההקשר של התוסף"
+
+#. OSD Notify plugin
+#: ../translation/extra.c:45
+msgid "Notification title format"
+msgstr "מבנה כותרת ההתרעה"
+
+#: ../translation/extra.c:46
+msgid "Notification content format"
+msgstr "מבנה תוכן ההתרעה"
+
+#: ../translation/extra.c:47
+msgid "Show album art"
+msgstr "הצגת עטיפת האלבום"
+
+#: ../translation/extra.c:48
+msgid "Album art size (px)"
+msgstr "גודל עטיפת האלבום (פיקסלים)"
+
+#. PulseAudio output plugin
+#: ../translation/extra.c:50
+msgid "PulseAudio server"
+msgstr "שרת PulseAudio"
+
+#: ../translation/extra.c:52
+msgid "Samplerate"
+msgstr "קצב דגימה"
+
+#. SHN player plugin
+#: ../translation/extra.c:54
+msgid "Relative seek table path"
+msgstr "נתיב טבלת חיפוש יחסי"
+
+#: ../translation/extra.c:55
+msgid "Absolute seek table path"
+msgstr "נתיב טבלת חיפוש מוחלט"
+
+#: ../translation/extra.c:56
+msgid "Swap audio bytes (toggle if all you hear is static)"
+msgstr "החלפת בתים של שמע (יש להחליף מצב אם שומעים רעש סטטי)"
+
+#. SID decoder plugin
+#: ../translation/extra.c:58
+msgid "Enable HVSC Songlength DB"
+msgstr "הפעלת מסד נתונים של אורך שירים - HVSC"
+
+#: ../translation/extra.c:59
+msgid "Songlengths.txt (from HVSC)"
+msgstr "Songlengths.txt (מהשירות HVSC)"
+
+#: ../translation/extra.c:60
+msgid "Bits per sample (8 or 16)"
+msgstr "סיביות לדגימה (8 או 16)"
+
+#: ../translation/extra.c:61
+msgid "Default song length (sec)"
+msgstr "אורך שיר כברירת מחדל (שניות)"
+
+#. WildMidi player plugin
+#: ../translation/extra.c:63
+msgid "Timidity++ bank configuration file"
+msgstr "קובץ מאגר התצורה של Timidity++‎"
+
+#: ../translation/extra.c:66
+msgid "Track Title"
+msgstr "כותרת הרצועה"
+
+#: ../translation/extra.c:67
+msgid "Performer"
+msgstr "מבצע/ת"
+
+#: ../translation/extra.c:72
+#, fuzzy
+msgid "Total Tracks"
+msgstr "סך כל הרצועות"
+
+#: ../translation/extra.c:73
+msgid "Genre"
+msgstr "סגנון"
+
+#: ../translation/extra.c:74
+msgid "Composer"
+msgstr "מלחין/ה"
+
+#: ../translation/extra.c:75
+#, fuzzy
+msgid "Disc Number"
+msgstr "רצועה מספר"
+
+#: ../translation/extra.c:76
+msgid "Comment"
+msgstr "הערה"
+
+#: ../translation/extra.c:77
+msgid "Encoder / Vendor"
+msgstr "קידוד / יצור"
+
+#: ../translation/extra.c:79
+msgid "Location"
+msgstr "מיקום"
+
+#: ../translation/extra.c:80
+msgid "Subtrack Index"
+msgstr "אינדקס תת־הרצועה"
+
+#: ../translation/extra.c:81
+msgid "Tag Type(s)"
+msgstr "סוג/י התגים"
+
+#: ../translation/extra.c:82
+msgid "Embedded Cuesheet"
+msgstr "רשימת Cue מוטמעת"
+
+#: ../translation/extra.c:83
+msgid "Codec"
+msgstr "קודק"
+
+#. FFmpeg deocder plugin
+#: ../translation/extra.c:85
+msgid "File Extensions (separate with ';')"
+msgstr "סיומות קבצים (יש להפריד ב־';')"
+
+#. Converter GUI
+#: ../translation/extra.c:87
+msgid "Convert"
+msgstr "המרה"
+
+#. Resampler (Secret Rabbit Code)
+#: ../translation/extra.c:89
+msgid "Target Samplerate"
+msgstr "קצב דגימת היעד"
+
+#: ../translation/extra.c:90
+msgid "Quality / Algorythm"
+msgstr "איכות / אלגוריתם"
+
+#: ../translation/extra.c:91
+msgid "Automatic Samplerate (overrides Target Samplerate)"
+msgstr "קצב דגימה אוטומטי (דורס את קצב דגימת היעד)"
+
+#: ../plugins/converter/convgui.c:108
+msgid "The file already exists. Overwrite?"
+msgstr "הקובץ כבר קיים. האם לשכתב?"
+
+#: ../plugins/converter/convgui.c:110
+msgid "Converter warning"
+msgstr "אזהרה מהממיר"
+
+#: ../plugins/converter/convgui.c:222
+msgid "Please select encoder"
+msgstr "נא לבחור מצפין"
+
+#: ../plugins/converter/convgui.c:224
+msgid "Converter error"
+msgstr "שגיאת ממיר"
+
+#: ../plugins/converter/convgui.c:248
+msgid "Converting..."
+msgstr "בהמרה..."
+
+#: ../plugins/converter/convgui.c:394 ../plugins/converter/convgui.c:496
+msgid "Select folder..."
+msgstr "בחירת תיקייה..."
+
+#: ../plugins/converter/convgui.c:635
+msgid "Failed to save encoder preset"
+msgstr "אירע כשל בשמירת ערכת ההצפנה"
+
+#: ../plugins/converter/convgui.c:637 ../plugins/converter/convgui.c:1035
+msgid ""
+"Check preset folder permissions, try to pick different title, or free up "
+"some disk space"
+msgstr ""
+"נא לבדוק את הרשאות תיקיית התצורות, יש לנסות לבחור בכותרת אחרת או לפנות קצת "
+"מקום בכונן"
+
+#: ../plugins/converter/convgui.c:637 ../plugins/converter/convgui.c:1035
+msgid "Preset with the same name already exists. Try to pick another title."
+msgstr "תצורה באותו השם כבר קיימת. נא לנסות לבחור בשם אחר."
+
+#: ../plugins/converter/convgui.c:638 ../plugins/converter/convgui.c:1036
+msgid "Error"
+msgstr "שגיאה"
+
+#: ../plugins/converter/convgui.c:692
+msgid "Add new encoder"
+msgstr "הוספת מצפין חדש"
+
+#: ../plugins/converter/convgui.c:724
+msgid "Edit encoder"
+msgstr "עריכת מצפין"
+
+#: ../plugins/converter/convgui.c:756 ../plugins/converter/convgui.c:1133
+msgid "Remove preset"
+msgstr "הסרת תצורה"
+
+#: ../plugins/converter/convgui.c:758 ../plugins/converter/convgui.c:1135
+msgid "This action will delete the selected preset. Are you sure?"
+msgstr "הפעולה תמחק את התצורה הנבחרת. האם לעשות זאת?"
+
+#: ../plugins/converter/convgui.c:782
+msgid "Encoders"
+msgstr "מצפינים"
+
+#: ../plugins/converter/convgui.c:838 ../plugins/gtkui/dspconfig.c:183
+msgid "Add plugin to DSP chain"
+msgstr "הוספת התוסף לשרשרת ה־DSP"
+
+#: ../plugins/converter/convgui.c:1034
+msgid "Failed to save DSP preset"
+msgstr "שמירת תצורת ה־DSP נכשלה"
+
+#: ../plugins/converter/convgui.c:1098
+msgid "New DSP Preset"
+msgstr "תצורת DSP חדשה"
+
+#: ../plugins/converter/convgui.c:1183
+msgid "Edit DSP Preset"
+msgstr "עריכת תצורת DSP"
+
+#: ../plugins/converter/convgui.c:1203
+msgid "DSP Presets"
+msgstr "תצורות DSP"
+
+#: ../plugins/converter/interface.c:94
+msgid "Output folder:"
+msgstr "תיקיית הפלט:"
+
+#: ../plugins/converter/interface.c:115
+msgid "Output file name:"
+msgstr "שם קובץ הפלט:"
+
+#: ../plugins/converter/interface.c:126
+msgid ""
+"Extension (e.g. .mp3) will be appended automatically.\n"
+"Leave the field empty for default (%a - %t)."
+msgstr ""
+"סיומות (לדוגמה: .mp3) יתווספו אוטומטית.\n"
+"יש להשאיר את השדה ריק לקבלת שם בררת המחדל ‎(%a - %t)‎."
+
+#: ../plugins/converter/interface.c:139
+msgid "Encoder:"
+msgstr "מצפין:"
+
+#: ../plugins/converter/interface.c:163
+msgid "DSP preset:"
+msgstr "תצורת DSP:"
+
+#: ../plugins/converter/interface.c:186
+msgid "Number of threads:"
+msgstr "מספר התהליכים:"
+
+#: ../plugins/converter/interface.c:199
+msgid "Output sample format:"
+msgstr "מבנה דגימת הפלט:"
+
+#: ../plugins/converter/interface.c:206
+msgid "Keep source format"
+msgstr "שמירה על מבנה המקור"
+
+#: ../plugins/converter/interface.c:207
+msgid "8 bit signed int"
+msgstr "מספר שלם עם סימן ב־8 סיביות"
+
+#: ../plugins/converter/interface.c:208
+msgid "16 bit signed int"
+msgstr "מספר שלם עם סימן ב־16 סיביות"
+
+#: ../plugins/converter/interface.c:209
+msgid "24 bit signed int"
+msgstr "מספר שלם עם סימן ב־24 סיביות"
+
+#: ../plugins/converter/interface.c:210
+msgid "32 bit signed int"
+msgstr "מספר שלם עם סימן ב־32 סיביות"
+
+#: ../plugins/converter/interface.c:211
+msgid "32 bit float"
+msgstr "מספר עם נקודה צפה ב־32 סיביות"
+
+#: ../plugins/converter/interface.c:217
+msgid "When file exists:"
+msgstr "כאשר הקובץ קיים:"
+
+#: ../plugins/converter/interface.c:224
+msgid "Prompt"
+msgstr "הצגת בקשה"
+
+#: ../plugins/converter/interface.c:225
+msgid "Overwrite"
+msgstr "שכתוב"
+
+#: ../plugins/converter/interface.c:227
+msgid "Preserve folder structure, starting from:"
+msgstr "שמירת מבנה התיקיות, החל מ־:"
+
+#: ../plugins/converter/interface.c:379
+msgid "Edit Encoder Preset"
+msgstr "עריכת תצורת המצפין"
+
+#: ../plugins/converter/interface.c:402
+msgid "Untitled Encoder"
+msgstr "מצפין ללא שם"
+
+#: ../plugins/converter/interface.c:410
+msgid "Output file extension:"
+msgstr "סיומת קובץ הפלט:"
+
+#: ../plugins/converter/interface.c:417
+msgid "E.g. mp3"
+msgstr "לדוגמה: mp3"
+
+#: ../plugins/converter/interface.c:425
+msgid "Command line:"
+msgstr "שורת הפקודה:"
+
+#: ../plugins/converter/interface.c:436
+#, c-format
+msgid ""
+"Example: lame - %o\n"
+"%i for input file, %o for output file, - for stdin"
+msgstr ""
+"לדוגמה: lame - %o\n"
+"%i לציון קובץ קלט, %o לציון קובץ קלט, - עבור הקלט מ־stdin"
+
+#: ../plugins/converter/interface.c:446
+#, c-format
+msgid ""
+"<small>%o - output file name\n"
+"%i - temporary input file name</small>"
+msgstr ""
+"<small>%o - שם קובץ הפלט\n"
+"%i - השם הזמני לקובץ הקלט</small>"
+
+#: ../plugins/converter/interface.c:455
+msgid "Method:"
+msgstr "שיטה:"
+
+#: ../plugins/converter/interface.c:462
+msgid "Pipe"
+msgstr "שרשור"
+
+#: ../plugins/converter/interface.c:463
+msgid "Temporary file"
+msgstr "קובץ זמני"
+
+#: ../plugins/converter/interface.c:480
+msgid "APEv2"
+msgstr "APEv2"
+
+#: ../plugins/converter/interface.c:486
+msgid "ID3v1"
+msgstr "ID3v1"
+
+#: ../plugins/converter/interface.c:492
+msgid "OggVorbis"
+msgstr "OggVorbis"
+
+#: ../plugins/converter/interface.c:498
+msgid "FLAC"
+msgstr "FLAC"
+
+#: ../plugins/converter/interface.c:510
+msgid "ID3v2"
+msgstr "ID3v2"
+
+#: ../plugins/converter/interface.c:520
+#, fuzzy
+msgid "<b>Tag writer</b>"
+msgstr "<b>כותב תגיות</b>"
+
+#: ../plugins/converter/interface.c:606
+msgid "DSP Preset Editor"
+msgstr "ערוך תצורות DSP"
+
+#: ../plugins/converter/interface.c:629
+msgid "Untitled DSP Preset"
+msgstr "תצורת DSP ללא שם"
+
+#~ msgid "Save playlist as"
+#~ msgstr "שמירת רשימת השמעה בשם"
+
+#, fuzzy
+#~ msgid "Shuffle"
+#~ msgstr "ערבול בין הרצועות"
+
+#~ msgid "_Abort"
+#~ msgstr "_ביטול"
+
+#~ msgid ""
+#~ "<b>WARNING</b>: tag writing feature is still in development.\n"
+#~ "<b>Make backup copies</b> before using."
+#~ msgstr ""
+#~ "<b>אזהרה</b>: תכונת כתיבת התגיות נמצאת עדיין בפיתוח.\n"
+#~ "<b>יש ליצור עותקי גיבוי</b> בטרם השימוש."
+
+#~ msgid "editcolumndlg"
+#~ msgstr "editcolumndlg"
+
+#, fuzzy
+#~ msgid "File number"
+#~ msgstr "תקליטור מס׳"
+
+#~ msgid "Length"
+#~ msgstr "משך"
+
+#~ msgid ""
+#~ "Format conversions (start with %):\n"
+#~ "  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
+#~ "  track[n]umber, [N]totaltracks,\n"
+#~ "  [l]ength, [y]ear, [g]enre, [c]omment,\n"
+#~ "  copy[r]ight, [f]ilename, [F]ullPathname, [T]ags,\n"
+#~ "  [d]irectory, [D]irectoryWithPath\n"
+#~ "Example: %a - %t [%l]"
+#~ msgstr ""
+#~ "המרות בעיצוב (מתחילות ב־%):\n"
+#~ "  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
+#~ "  track[n]umber, [N]totaltracks\n"
+#~ "  [l]ength, [y]ear, [g]enre, [c]omment\n"
+#~ "  copy[r]ight, [f]ilename, [T]ags,\n"
+#~ "  [d]irectory, [D]irectoryWithPath\n"
+#~ "דוגמה: %a‏ - %t‏ [%l]"
+
+#~ msgid "Allow dynamic samplerate switching"
+#~ msgstr "הפעלת החלפת קצב דגימה דינמי"
+
+#~ msgid "Samplerate conversion quality:"
+#~ msgstr "איכות החלפת קצב הדגימה:"
+
+#~ msgid "Description:"
+#~ msgstr "תיאור:"
+
+#~ msgid "Author(s):"
+#~ msgstr "מחבר/ים:"
+
+#~ msgid "Email:"
+#~ msgstr "דוא\"ל:"
+
+#~ msgid "Website:"
+#~ msgstr "אתר:"
+
+#~ msgid "editplaylistdlg"
+#~ msgstr "editplaylistdlg"
+
+#~ msgid ""
+#~ "Format conversions (start with %):\n"
+#~ "  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
+#~ "  track[n]umber, [N]totaltracks,\n"
+#~ "  [l]ength, [y]ear, [g]enre, [c]omment,\n"
+#~ "  copy[r]ight, [f]ilename, [T]ags\n"
+#~ "Example: %a - %t [%l]"
+#~ msgstr ""
+#~ "המרות בעיצוב (מתחילות ב־%):\n"
+#~ "  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer  track[n]umber, [N]"
+#~ "totaltracks,  [l]ength, [y]ear, [g]enre, [c]omment,  copy[r]ight, [f]"
+#~ "ilename, [T]agsדוגמה: %a‏ - %t‏ [%l]"
+
+#~ msgid "Setup %s"
+#~ msgstr "הגדרת %s"
+
+#~ msgid "ALSA output plugin"
+#~ msgstr "תוסף הפלט ALSA"
+
+#~ msgid "Couldn't get enough memory for input buffering."
+#~ msgstr "לא ניתן לקבל מספיק זיכרון לצורך אגירת הקלט."
+
+#~ msgid "Error reading first page of Ogg bitstream."
+#~ msgstr "ארעה שגיאה בעת קריאת העמוד הראשון של תזרים הסיביות מסוג Ogg."
+
+#~ msgid "Error reading initial header packet."
+#~ msgstr "ארעה שגיאה בקריאת מנת הכותרת ההתחלתית."
+
+#~ msgid "Couldn't get enough memory to register new stream serial number."
+#~ msgstr ""
+#~ "לא ניתן לקבל מספיק זיכרון כדי לרשום את המספר הסידורי של התזרים החדש."
+
+#~ msgid "Input truncated or empty."
+#~ msgstr "הקלט קטוע או ריק."
+
+#~ msgid "Input is not an Ogg bitstream."
+#~ msgstr "הקלט אינו תזרים סיביות מסוג Ogg."
+
+#~ msgid "Ogg bitstream does not contain Vorbis data."
+#~ msgstr "תזרים הסיביות מסוג Ogg אין מכיל נתוני Vorbis."
+
+#~ msgid "EOF before recognised stream."
+#~ msgstr "EOF לפני תזרים מוכר."
+
+#~ msgid "Ogg bitstream does not contain a supported data-type."
+#~ msgstr "תזרים הסיביות מסוג Ogg אינו מכיל טיפוס נתונים נתמך."
+
+#~ msgid "Corrupt secondary header."
+#~ msgstr "כותרת משנית פגומה."
+
+#~ msgid "EOF before end of Vorbis headers."
+#~ msgstr "EOF (סוף הקובץ) בטרם סוף כותרות ה־Vorbis."
+
+#~ msgid "Corrupt or missing data, continuing..."
+#~ msgstr "נתונים פגומים או חסרים, ממשיך..."
+
+#~ msgid ""
+#~ "Error writing stream to output. Output stream may be corrupted or "
+#~ "truncated."
+#~ msgstr "ארעה שגיאה בכתיבת התזרים לפלט. תזרים הפלט פגום או קטוע."
 
 #~ msgid "Sound (adv.)"
 #~ msgstr "שמע (מתקדם)"
-
-#~ msgid "help.txt"
-#~ msgstr "help.txt"
-
-#~ msgid "DeaDBeeF Translators"
-#~ msgstr "מתרגמי DeaDBeeF"
-
-#~ msgid "Presets"
-#~ msgstr "תצורות"
-
-#~ msgid "Sort By"
-#~ msgstr "סידור לפי"
-
-#~ msgid "Track number"
-#~ msgstr "מספר הרצועה"
-
-#~ msgid "Date"
-#~ msgstr "תאריך"
-
-#~ msgid "Shuffle albums"
-#~ msgstr "ערבול בין האלבומים"
-
-#~ msgid "Jump to current track"
-#~ msgstr "מעבר לרצועה הנוכחית"
-
-#~ msgid "_GPLv2"
-#~ msgstr "_GPLv2"
-
-#~ msgid "_LGPLv2.1"
-#~ msgstr "_LGPLv2.1"
-
-#~ msgid "_Translators"
-#~ msgstr "מ_תרגמים"
-
-#~ msgid "Settings"
-#~ msgstr "הגדרות"
-
-#~ msgid "Item Index"
-#~ msgstr "אינדקס הפריט"
-
-#~ msgid "Track Number"
-#~ msgstr "רצועה מספר"
-
-#~ msgid "Always convert 8 bit audio to 16 bit"
-#~ msgstr "תמיד להמיר שמע של 8 סיביות ל־16 סיביות"
-
-#~ msgid "Replaygain preamp:"
-#~ msgstr "הגברת נגינה חוזרת:"
-
-#~ msgid "-12 dB"
-#~ msgstr "-12 dB"
-
-#~ msgid "+12 dB"
-#~ msgstr "+12 dB"
-
-#~ msgid "Don't add from archives when adding folders"
-#~ msgstr "אין להוסיף מארכיונים בעת הוספת תיקיות"
-
-#~ msgid "DSP Chain Preset"
-#~ msgstr "תצורת שרשרת DSP"
-
-#~ msgid "_Load"
-#~ msgstr "_טעינה"
-
-#~ msgid "DSP"
-#~ msgstr "DSP"
-
-#~ msgid "Auto-name playlists when adding a single folder"
-#~ msgstr "מתן שם אוטומטית לרשימות השמעה בעת הוספת תיקייה בודדת"
-
-#~ msgid "Interface refresh rate (times per second):"
-#~ msgstr "קצב רענון המנשק (פעמים בשנייה):"
-
-#~ msgid "GUI Plugin (changing requires restart):"
-#~ msgstr "תוסף מנשק משתמש (שינויים דורשים הפעלה מחדש):"
-
-#~ msgid "Version: "
-#~ msgstr "גרסה:"
-
-#~ msgid "Copyright"
-#~ msgstr "זכויות יוצרים"
-
-#~ msgid "Sort by..."
-#~ msgstr "סידור לפי..."
-
-#~ msgid "Format"
-#~ msgstr "מבנה"
-
-#~ msgid "Ascending"
-#~ msgstr "סדר עולה"
-
-#~ msgid "Descending"
-#~ msgstr "סדר יורד"
-
-#~ msgid "Select DSP Plugin"
-#~ msgstr "בחירת תוסף DSP"
-
-#~ msgid "Plugin"
-#~ msgstr "תוסף"
-
-#~ msgid "Tag Writer Settings"
-#~ msgstr "הגדרות כותב התגיות"
-
-#~ msgid "Configure %s"
-#~ msgstr "הגדרת %s"
-
-#~ msgid "[Multiple values] "
-#~ msgstr "[ערכים מרובים]"
-
-#~ msgid "Writing tags..."
-#~ msgstr "התגיות נכתבות..."
-
-#~ msgid "Name:"
-#~ msgstr "שם:"
-
-#~ msgid "Field names must not start with : or _"
-#~ msgstr "שמות השדות לא יכולים להתחיל בתווים : או _"
-
-#~ msgid "Cannot add field"
-#~ msgstr "לא ניתן להוסיף שדה"
-
-#~ msgid "Field with such name already exists, please try different name."
-#~ msgstr "שדה בשם זה כבר קיים, נא לנסות שם אחר."
-
-#~ msgid "Really remove selected field?"
-#~ msgstr "האם אכן להסיר את השדה הנבחר?"
-
-#~ msgid "Add field"
-#~ msgstr "הוספת שדה"
-
-#~ msgid "Remove field"
-#~ msgstr "הסרת שדה"
-
-#~ msgid "   --toggle-pause     Toggle pause\n"
-#~ msgstr "   --toggle-pause     Toggle pause\n"
-
-#~ msgid ""
-#~ "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
-#~ msgstr ""
-#~ "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
-
-#~ msgid ""
-#~ "                      for more info, see http://sourceforge.net/apps/"
-#~ "mediawiki/deadbeef/index.php?title=Title_Formatting\n"
-#~ msgstr ""
-#~ "                      for more info, see http://sourceforge.net/apps/"
-#~ "mediawiki/deadbeef/index.php?title=Title_Formatting\n"
-
-#~ msgid ""
-#~ "Ascending\n"
-#~ "Descending"
-#~ msgstr ""
-#~ "סדר עולה\n"
-#~ "סדר יורד"
-
-#~ msgid "Lookup on Last.fm"
-#~ msgstr "חיפוש ב־Last.fm"
-
-#~ msgid "Use ALSA resampling"
-#~ msgstr "שימוש בדגימה חוזרת של ALSA"
-
-#~ msgid "Release device while stopped"
-#~ msgstr "שחרור ההתקן בעת עצירה"
-
-#~ msgid "Preferred buffer size"
-#~ msgstr "גודל האוגר המועדף"
-
-#~ msgid "Preferred period size"
-#~ msgstr "משך הזמן המועדף"
-
-#~ msgid "Enable scrobbler"
-#~ msgstr "הפעלת Scrobbler"
-
-#~ msgid "Username"
-#~ msgstr "שם משתמש"
-
-#~ msgid "Password"
-#~ msgstr "ססמה"
-
-#~ msgid "Scrobble URL"
-#~ msgstr "הכתובת של Scrobble"
-
-#~ msgid "Device file"
-#~ msgstr "קובץ ההתקן"
-
-#~ msgid "OSS4 samplerate bug workaround"
-#~ msgstr "מעקף לתקלת קצב הדגימה ב־OSS4"
-
-#~ msgid "Cache update period (hr)"
-#~ msgstr "ההפרש בין מועדי עדכון המטמון (שעות)"
-
-#~ msgid "Fetch from embedded tags"
-#~ msgstr "קבלה מתגיות מובנות"
-
-#~ msgid "Fetch from local folder"
-#~ msgstr "קבלה מתיקייה מקומית"
-
-#~ msgid "Local cover file mask"
-#~ msgstr "מסכת קבצים של עטיפות מקומיות"
-
-#~ msgid "Fetch from last.fm"
-#~ msgstr "קבלה מ־Last.fm"
-
-#~ msgid "Fetch from albumart.org"
-#~ msgstr "קבלה מ־albumart.org"
-
-#~ msgid "Scale artwork towards longer side"
-#~ msgstr "מתיחת העטיפה לעבר הצד הארוך יותר"
-
-#~ msgid "Use CDDB/FreeDB"
-#~ msgstr "שימוש ב־CDDB/FreeDB"
-
-#~ msgid "Prefer CD-Text over CDDB"
-#~ msgstr "העדפת CD-Text על פני CDDB"
-
-#~ msgid "CDDB url (e.g. 'freedb.org')"
-#~ msgstr "כתובת ה־CDDB (לדוגמה: 'freedb.org')"
-
-#~ msgid "CDDB port number (e.g. '888')"
-#~ msgstr "מס׳ הפתחה של ה־CDDB (לדוגמה: '888')"
-
-#~ msgid "Prefer CDDB protocol over HTTP"
-#~ msgstr "העדפת הפרוטוקול CDDB על פני HTTP"
-
-#~ msgid "Enable NRG image support"
-#~ msgstr "הפעלת תמיכה בתמונות NRG"
-
-#~ msgid "Resampling quality (0..2, higher is better)"
-#~ msgstr "איכות הדגימה החוזרת (0..2, גבוה יותר - איכותי יותר)"
-
-#~ msgid "Max song length (in minutes)"
-#~ msgstr "אורך השיר המרבי (בדקות)"
-
-#~ msgid "Ask confirmation to delete files from disk"
-#~ msgstr "בקשת אישור למחיקת קבצים מהכונן"
-
-#~ msgid "Status icon volume control sensitivity"
-#~ msgstr "רגישות בקרת העצמה דרך סמל המצב"
-
-#~ msgid "Custom status icon"
-#~ msgstr "סמל מצב מותאם אישית"
-
-# אם המחרוזת הזאת מופיעה במסוף והתבלבלתי נא להעתיק את המחרוזת המקורית לתרגום
-#~ msgid "Run gtk_init with --sync (debug mode)"
-#~ msgstr "הפעלת gtk_init עם הפרמטר ‎--sync (מצב ניפוי שגיאות)"
-
-#~ msgid "Add separators between plugin context menu items"
-#~ msgstr "הוספת הפרדה בין פריטי תפריט ההקשר של התוסף"
-
-#~ msgid "Notification title format"
-#~ msgstr "מבנה כותרת ההתרעה"
-
-#~ msgid "Notification content format"
-#~ msgstr "מבנה תוכן ההתרעה"
-
-#~ msgid "Show album art"
-#~ msgstr "הצגת עטיפת האלבום"
-
-#~ msgid "Album art size (px)"
-#~ msgstr "גודל עטיפת האלבום (פיקסלים)"
-
-#~ msgid "PulseAudio server"
-#~ msgstr "שרת PulseAudio"
-
-#~ msgid "Samplerate"
-#~ msgstr "קצב דגימה"
-
-#~ msgid "Relative seek table path"
-#~ msgstr "נתיב טבלת חיפוש יחסי"
-
-#~ msgid "Absolute seek table path"
-#~ msgstr "נתיב טבלת חיפוש מוחלט"
-
-#~ msgid "Swap audio bytes (toggle if all you hear is static)"
-#~ msgstr "החלפת בתים של שמע (יש להחליף מצב אם שומעים רעש סטטי)"
-
-#~ msgid "Enable HVSC Songlength DB"
-#~ msgstr "הפעלת מסד נתונים של אורך שירים - HVSC"
-
-#~ msgid "Songlengths.txt (from HVSC)"
-#~ msgstr "Songlengths.txt (מהשירות HVSC)"
-
-#~ msgid "Bits per sample (8 or 16)"
-#~ msgstr "סיביות לדגימה (8 או 16)"
-
-#~ msgid "Default song length (sec)"
-#~ msgstr "אורך שיר כברירת מחדל (שניות)"
-
-#~ msgid "Timidity++ bank configuration file"
-#~ msgstr "קובץ מאגר התצורה של Timidity++‎"
-
-#~ msgid "Track Title"
-#~ msgstr "כותרת הרצועה"
-
-#~ msgid "Performer"
-#~ msgstr "מבצע/ת"
-
-#~ msgid "Genre"
-#~ msgstr "סגנון"
-
-#~ msgid "Composer"
-#~ msgstr "מלחין/ה"
-
-#~ msgid "Comment"
-#~ msgstr "הערה"
-
-#~ msgid "Encoder / Vendor"
-#~ msgstr "קידוד / יצור"
-
-#~ msgid "Location"
-#~ msgstr "מיקום"
-
-#~ msgid "Subtrack Index"
-#~ msgstr "אינדקס תת־הרצועה"
-
-#~ msgid "File Extensions (separate with ';')"
-#~ msgstr "סיומות קבצים (יש להפריד ב־';')"
-
-#~ msgid "Convert"
-#~ msgstr "המרה"
-
-#~ msgid "Target Samplerate"
-#~ msgstr "קצב דגימת היעד"
-
-#~ msgid "Quality / Algorythm"
-#~ msgstr "איכות / אלגוריתם"
-
-#~ msgid "Automatic Samplerate (overrides Target Samplerate)"
-#~ msgstr "קצב דגימה אוטומטי (דורס את קצב דגימת היעד)"
-
-#~ msgid "The file already exists. Overwrite?"
-#~ msgstr "הקובץ כבר קיים. האם לשכתב?"
-
-#~ msgid "Converter warning"
-#~ msgstr "אזהרה מהממיר"
-
-#~ msgid "Please select encoder"
-#~ msgstr "נא לבחור מצפין"
-
-#~ msgid "Converter error"
-#~ msgstr "שגיאת ממיר"
-
-#~ msgid "Converting..."
-#~ msgstr "בהמרה..."
-
-#~ msgid "Select folder..."
-#~ msgstr "בחירת תיקייה..."
-
-#~ msgid "Failed to save encoder preset"
-#~ msgstr "אירע כשל בשמירת ערכת ההצפנה"
-
-#~ msgid ""
-#~ "Check preset folder permissions, try to pick different title, or free up "
-#~ "some disk space"
-#~ msgstr ""
-#~ "נא לבדוק את הרשאות תיקיית התצורות, יש לנסות לבחור בכותרת אחרת או לפנות "
-#~ "קצת מקום בכונן"
-
-#~ msgid "Preset with the same name already exists. Try to pick another title."
-#~ msgstr "תצורה באותו השם כבר קיימת. נא לנסות לבחור בשם אחר."
-
-#~ msgid "Error"
-#~ msgstr "שגיאה"
-
-#~ msgid "Add new encoder"
-#~ msgstr "הוספת מצפין חדש"
-
-#~ msgid "Edit encoder"
-#~ msgstr "עריכת מצפין"
-
-#~ msgid "Remove preset"
-#~ msgstr "הסרת תצורה"
-
-#~ msgid "This action will delete the selected preset. Are you sure?"
-#~ msgstr "הפעולה תמחק את התצורה הנבחרת. האם לעשות זאת?"
-
-#~ msgid "Encoders"
-#~ msgstr "מצפינים"
-
-#~ msgid "Add plugin to DSP chain"
-#~ msgstr "הוספת התוסף לשרשרת ה־DSP"
-
-#~ msgid "Failed to save DSP preset"
-#~ msgstr "שמירת תצורת ה־DSP נכשלה"
-
-#~ msgid "New DSP Preset"
-#~ msgstr "תצורת DSP חדשה"
-
-#~ msgid "Edit DSP Preset"
-#~ msgstr "עריכת תצורת DSP"
-
-#~ msgid "DSP Presets"
-#~ msgstr "תצורות DSP"
-
-#~ msgid "Output folder:"
-#~ msgstr "תיקיית הפלט:"
-
-#~ msgid "Output file name:"
-#~ msgstr "שם קובץ הפלט:"
-
-#~ msgid ""
-#~ "Extension (e.g. .mp3) will be appended automatically.\n"
-#~ "Leave the field empty for default (%a - %t)."
-#~ msgstr ""
-#~ "סיומות (לדוגמה: .mp3) יתווספו אוטומטית.\n"
-#~ "יש להשאיר את השדה ריק לקבלת שם בררת המחדל ‎(%a - %t)‎."
-
-#~ msgid "Encoder:"
-#~ msgstr "מצפין:"
-
-#~ msgid "DSP preset:"
-#~ msgstr "תצורת DSP:"
-
-#~ msgid "Number of threads:"
-#~ msgstr "מספר התהליכים:"
-
-#~ msgid "Output sample format:"
-#~ msgstr "מבנה דגימת הפלט:"
-
-#~ msgid "Keep source format"
-#~ msgstr "שמירה על מבנה המקור"
-
-#~ msgid "8 bit signed int"
-#~ msgstr "מספר שלם עם סימן ב־8 סיביות"
-
-#~ msgid "16 bit signed int"
-#~ msgstr "מספר שלם עם סימן ב־16 סיביות"
-
-#~ msgid "24 bit signed int"
-#~ msgstr "מספר שלם עם סימן ב־24 סיביות"
-
-#~ msgid "32 bit signed int"
-#~ msgstr "מספר שלם עם סימן ב־32 סיביות"
-
-#~ msgid "32 bit float"
-#~ msgstr "מספר עם נקודה צפה ב־32 סיביות"
-
-#~ msgid "When file exists:"
-#~ msgstr "כאשר הקובץ קיים:"
-
-#~ msgid "Prompt"
-#~ msgstr "הצגת בקשה"
-
-#~ msgid "Overwrite"
-#~ msgstr "שכתוב"
-
-#~ msgid "Preserve folder structure, starting from:"
-#~ msgstr "שמירת מבנה התיקיות, החל מ־:"
-
-#~ msgid "Edit Encoder Preset"
-#~ msgstr "עריכת תצורת המצפין"
-
-#~ msgid "Untitled Encoder"
-#~ msgstr "מצפין ללא שם"
-
-#~ msgid "Output file extension:"
-#~ msgstr "סיומת קובץ הפלט:"
-
-#~ msgid "E.g. mp3"
-#~ msgstr "לדוגמה: mp3"
-
-#~ msgid "Command line:"
-#~ msgstr "שורת הפקודה:"
-
-#~ msgid ""
-#~ "Example: lame - %o\n"
-#~ "%i for input file, %o for output file, - for stdin"
-#~ msgstr ""
-#~ "לדוגמה: lame - %o\n"
-#~ "%i לציון קובץ קלט, %o לציון קובץ קלט, - עבור הקלט מ־stdin"
-
-#~ msgid ""
-#~ "<small>%o - output file name\n"
-#~ "%i - temporary input file name</small>"
-#~ msgstr ""
-#~ "<small>%o - שם קובץ הפלט\n"
-#~ "%i - השם הזמני לקובץ הקלט</small>"
-
-#~ msgid "Method:"
-#~ msgstr "שיטה:"
-
-#~ msgid "Pipe"
-#~ msgstr "שרשור"
-
-#~ msgid "Temporary file"
-#~ msgstr "קובץ זמני"
-
-#~ msgid "APEv2"
-#~ msgstr "APEv2"
-
-#~ msgid "ID3v1"
-#~ msgstr "ID3v1"
-
-#~ msgid "OggVorbis"
-#~ msgstr "OggVorbis"
-
-#~ msgid "FLAC"
-#~ msgstr "FLAC"
-
-#~ msgid "ID3v2"
-#~ msgstr "ID3v2"
-
-#~ msgid "DSP Preset Editor"
-#~ msgstr "ערוך תצורות DSP"
-
-#~ msgid "Untitled DSP Preset"
-#~ msgstr "תצורת DSP ללא שם"
 
 #~ msgid ""
 #~ "Keep source format\n"

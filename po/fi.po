@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-10 15:02+0200\n"
+"POT-Creation-Date: 2011-11-23 14:16+0100\n"
 "PO-Revision-Date: 2011-04-10 13:25+0200\n"
 "Last-Translator: Jesse <jesse.jaara@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,1014 +18,1120 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.0.5\n"
 
-#: ../plugins/gtkui/callbacks.c:97
+#: ../plugins/gtkui/callbacks.c:123
 msgid "Supported sound formats"
 msgstr "Tuetut ääniformaatit"
 
-#: ../plugins/gtkui/callbacks.c:108
-msgid "Other files (*)"
+#: ../plugins/gtkui/callbacks.c:134
+#, fuzzy
+msgid "All files (*)"
 msgstr "Muut tiedostot (*)"
 
-#: ../plugins/gtkui/callbacks.c:118
+#: ../plugins/gtkui/callbacks.c:144
 msgid "Open file(s)..."
 msgstr "Avaa tiedosto(ja)..."
 
-#: ../plugins/gtkui/callbacks.c:151
+#: ../plugins/gtkui/callbacks.c:179
 msgid "Add file(s) to playlist..."
 msgstr "Lisää tiedosto(ja) soittolistalle..."
 
-#: ../plugins/gtkui/callbacks.c:190
+#: ../plugins/gtkui/callbacks.c:220
 msgid "Add folder(s) to playlist..."
 msgstr "Lisää kansio(ita) soittolistalle..."
 
-#: ../plugins/gtkui/callbacks.c:192
+#: ../plugins/gtkui/callbacks.c:225
 msgid "Follow symlinks"
 msgstr "Seuraa symboolisia linkkejä"
 
-#: ../plugins/gtkui/callbacks.c:677
+#: ../plugins/gtkui/callbacks.c:711
 msgid "Failed while reading help file"
 msgstr "Virhe ohjetiedostoa avattaessa"
 
-#: ../plugins/gtkui/callbacks.c:687
+#: ../plugins/gtkui/callbacks.c:721
 msgid "Failed to load help file"
 msgstr "Ohjetiedoston avaaminen epäonnistui"
 
-#: ../plugins/gtkui/callbacks.c:701 ../plugins/gtkui/interface.c:1090
-#: ../plugins/gtkui/deadbeef.glade.h:65
+#: ../plugins/gtkui/callbacks.c:736
+msgid "help.txt"
+msgstr ""
+
+#: ../plugins/gtkui/callbacks.c:737 ../plugins/gtkui/interface.c:1155
+#: ../plugins/gtkui/deadbeef.glade.h:49 ../plugins/converter/convgui.c:1240
+#: ../plugins/converter/convgui.c:1248
 msgid "Help"
 msgstr "Ohje"
 
-#: ../plugins/gtkui/callbacks.c:711
+#: ../plugins/gtkui/callbacks.c:747
 #, c-format
 msgid "About DeaDBeeF %s"
 msgstr "Tietoja ohjelmasta DeaDBeeF %s"
 
-#: ../plugins/gtkui/callbacks.c:722
+#: ../plugins/gtkui/callbacks.c:760
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
 msgstr "DeaDBeeF %s:n muutosloki"
 
-#: ../plugins/gtkui/ddbtabstrip.c:527
+#: ../plugins/gtkui/callbacks.c:1116
+#, c-format
+msgid "DeaDBeeF Translators"
+msgstr ""
+
+#: ../plugins/gtkui/ddbtabstrip.c:755 ../plugins/gtkui/trkproperties.c:618
 msgid "Edit playlist"
 msgstr "Muokkaa soittolistaa"
 
-#: ../plugins/gtkui/ddbtabstrip.c:604
+#: ../plugins/gtkui/ddbtabstrip.c:758 ../plugins/gtkui/interface.c:1486
+#: ../plugins/gtkui/interface.c:2922 ../plugins/gtkui/deadbeef.glade.h:136
+#: ../plugins/converter/interface.c:395
+msgid "Title:"
+msgstr ""
+
+#: ../plugins/gtkui/ddbtabstrip.c:814
 msgid "Rename Playlist"
 msgstr "Uudelleennimeä soittolista"
 
-#: ../plugins/gtkui/ddbtabstrip.c:608
+#: ../plugins/gtkui/ddbtabstrip.c:821
 msgid "Remove Playlist"
 msgstr "Poista soittolista"
 
-#: ../plugins/gtkui/ddbtabstrip.c:612
+#: ../plugins/gtkui/ddbtabstrip.c:828
 msgid "Add New Playlist"
 msgstr "Luo uusi soittolista"
 
-#: ../plugins/gtkui/eq.c:113
+#: ../plugins/gtkui/eq.c:136
 msgid "Save DeaDBeeF EQ Preset"
 msgstr "Tallenna DeaDBeeF EQ esiasetus"
 
-#: ../plugins/gtkui/eq.c:120
+#: ../plugins/gtkui/eq.c:143
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
 msgstr "DeaDBeeF EQ esiasetustiedostot (*.ddbeq)"
 
-#: ../plugins/gtkui/eq.c:151
+#: ../plugins/gtkui/eq.c:182
 msgid "Load DeaDBeeF EQ Preset..."
 msgstr "Lataa DeaDBeeF EQ esiasetus..."
 
-#: ../plugins/gtkui/eq.c:155
+#: ../plugins/gtkui/eq.c:186
 msgid "DeaDBeeF EQ presets (*.ddbeq)"
 msgstr "DeaDBeeF EQ esiasetukset (*.ddbeq)"
 
-#: ../plugins/gtkui/eq.c:214
+#: ../plugins/gtkui/eq.c:247
 msgid "Import Foobar2000 EQ Preset..."
 msgstr "Tuo Foobar2000 EQ esiasetus..."
 
-#: ../plugins/gtkui/eq.c:218
+#: ../plugins/gtkui/eq.c:251
 msgid "Foobar2000 EQ presets (*.feq)"
 msgstr "Foobar2000 EQ esiasetukset (*.feq)"
 
-#: ../plugins/gtkui/eq.c:292
+#: ../plugins/gtkui/eq.c:316
+msgid "Save Preset"
+msgstr "Tallenna esiasetus..."
+
+#: ../plugins/gtkui/eq.c:324
+msgid "Load Preset"
+msgstr "Lataa esiasetus..."
+
+#: ../plugins/gtkui/eq.c:332
+msgid "Import Foobar2000 Preset"
+msgstr "Tuo Foobar2000 EQ Esiasetus"
+
+#: ../plugins/gtkui/eq.c:357
 msgid "Enable"
 msgstr "Kytke päälle"
 
-#: ../plugins/gtkui/eq.c:300
+#: ../plugins/gtkui/eq.c:366
 msgid "Zero All"
 msgstr "Nolla kaikki"
 
-#: ../plugins/gtkui/eq.c:307
+#: ../plugins/gtkui/eq.c:373
 msgid "Zero Preamp"
 msgstr "Nollaa esivahvistin"
 
 # Tällä viitataan selvästikkin niihin muihin liukusäätimiin, jotka muuttavat eri taajuus asteiden vahvistusta
-#: ../plugins/gtkui/eq.c:314
+#: ../plugins/gtkui/eq.c:380
 msgid "Zero Bands"
 msgstr "Nollaa kanavat"
 
-#: ../plugins/gtkui/eq.c:321
-msgid "Save Preset"
+#: ../plugins/gtkui/eq.c:387 ../plugins/converter/interface.c:820
+#, fuzzy
+msgid "Presets"
 msgstr "Tallenna esiasetus..."
 
-#: ../plugins/gtkui/eq.c:328
-msgid "Load Preset"
-msgstr "Lataa esiasetus..."
-
-#: ../plugins/gtkui/eq.c:335
-msgid "Import Foobar2000 Preset"
-msgstr "Tuo Foobar2000 EQ Esiasetus"
-
-#: ../plugins/gtkui/gtkui.c:133
+#: ../plugins/gtkui/gtkui.c:137
 #, c-format
 msgid "1 day %d:%02d:%02d"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:136
+#: ../plugins/gtkui/gtkui.c:140
 #, c-format
 msgid "%d days %d:%02d:%02d"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:145
+#: ../plugins/gtkui/gtkui.c:149
 #, c-format
 msgid "Stopped | %d tracks | %s total playtime"
 msgstr "Pysäytetty | %d raitaa | toisto aika %s"
 
-#: ../plugins/gtkui/gtkui.c:158
+#: ../plugins/gtkui/gtkui.c:162
 msgid "Mono"
 msgstr "Mono"
 
-#: ../plugins/gtkui/gtkui.c:158
+#: ../plugins/gtkui/gtkui.c:162
 msgid "Stereo"
 msgstr "Stereo"
 
-#: ../plugins/gtkui/gtkui.c:183
+#: ../plugins/gtkui/gtkui.c:187
 #, c-format
 msgid "| %4d kbps "
 msgstr "| %4d Kb/s"
 
-#: ../plugins/gtkui/gtkui.c:189
+#: ../plugins/gtkui/gtkui.c:193
 msgid "Paused | "
 msgstr "Keskeytetty |"
 
-#: ../plugins/gtkui/gtkui.c:190
+#: ../plugins/gtkui/gtkui.c:198
 #, c-format
 msgid ""
 "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
 msgstr ""
 "%s%s %s| %dHz | %d bittiä | %s | %d:%02d / %s | %d raitaa | toisto aika %s"
 
-#: ../plugins/gtkui/gtkui.c:660
+#: ../plugins/gtkui/gtkui.c:644
 msgid "Save Playlist As"
 msgstr "Tallenna soittolista nimellä"
 
-#: ../plugins/gtkui/gtkui.c:669 ../plugins/gtkui/gtkui.c:730
+#: ../plugins/gtkui/gtkui.c:655
 msgid "DeaDBeeF playlist files (*.dbpl)"
 msgstr "DeadBeef toistolista tiedosto (*.dbpl)"
 
-#: ../plugins/gtkui/gtkui.c:723
+#: ../plugins/gtkui/gtkui.c:773
 msgid "Load Playlist"
 msgstr "Lataa soittolista"
 
-#: ../plugins/gtkui/gtkui.c:863
+#: ../plugins/gtkui/gtkui.c:788
+msgid "Other files (*)"
+msgstr "Muut tiedostot (*)"
+
+#: ../plugins/gtkui/gtkui.c:926 ../plugins/gtkui/fileman.c:40
 msgid "New Playlist"
 msgstr "Uusi soittolista"
 
-#: ../plugins/gtkui/gtkui.c:866
+#: ../plugins/gtkui/gtkui.c:929
 #, c-format
 msgid "New Playlist (%d)"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:138 ../plugins/gtkui/deadbeef.glade.h:153
+#: ../plugins/gtkui/interface.c:150 ../plugins/gtkui/deadbeef.glade.h:156
 msgid "_File"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:145 ../plugins/gtkui/deadbeef.glade.h:157
+#: ../plugins/gtkui/interface.c:157 ../plugins/gtkui/deadbeef.glade.h:163
 msgid "_Open file(s)"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:161 ../plugins/gtkui/deadbeef.glade.h:6
+#: ../plugins/gtkui/interface.c:173 ../plugins/gtkui/deadbeef.glade.h:6
 msgid "Add file(s)"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:169 ../plugins/gtkui/deadbeef.glade.h:8
+#: ../plugins/gtkui/interface.c:181 ../plugins/gtkui/deadbeef.glade.h:8
 msgid "Add folder(s)"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:177 ../plugins/gtkui/interface.c:2969
+#: ../plugins/gtkui/interface.c:189 ../plugins/gtkui/interface.c:3022
 #: ../plugins/gtkui/deadbeef.glade.h:9
 msgid "Add location"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:186 ../plugins/gtkui/deadbeef.glade.h:83
+#: ../plugins/gtkui/interface.c:198 ../plugins/gtkui/deadbeef.glade.h:80
 msgid "New playlist"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:193 ../plugins/gtkui/deadbeef.glade.h:75
+#: ../plugins/gtkui/interface.c:205 ../plugins/gtkui/deadbeef.glade.h:72
 msgid "Load playlist"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:197 ../plugins/gtkui/deadbeef.glade.h:112
+#: ../plugins/gtkui/interface.c:209 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "Save playlist"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:201 ../plugins/gtkui/deadbeef.glade.h:113
-msgid "Save playlist as"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:210 ../plugins/gtkui/deadbeef.glade.h:159
+#: ../plugins/gtkui/interface.c:218 ../plugins/gtkui/deadbeef.glade.h:165
 msgid "_Quit"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:221 ../plugins/gtkui/deadbeef.glade.h:152
+#: ../plugins/gtkui/interface.c:229 ../plugins/gtkui/deadbeef.glade.h:155
 msgid "_Edit"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:228 ../plugins/gtkui/deadbeef.glade.h:150
+#: ../plugins/gtkui/interface.c:236 ../plugins/gtkui/deadbeef.glade.h:153
 msgid "_Clear"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:236 ../plugins/gtkui/deadbeef.glade.h:117
+#: ../plugins/gtkui/interface.c:244 ../plugins/gtkui/deadbeef.glade.h:115
 msgid "Select all"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:243 ../plugins/gtkui/deadbeef.glade.h:25
+#: ../plugins/gtkui/interface.c:251 ../plugins/gtkui/deadbeef.glade.h:32
 msgid "Deselect all"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:250 ../plugins/gtkui/deadbeef.glade.h:70
+#: ../plugins/gtkui/interface.c:258 ../plugins/gtkui/deadbeef.glade.h:55
 msgid "Invert selection"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:254 ../plugins/gtkui/deadbeef.glade.h:120
+#: ../plugins/gtkui/interface.c:262 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Selection"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:261 ../plugins/gtkui/plcommon.c:425
-#: ../plugins/gtkui/prefwin.c:317 ../plugins/gtkui/deadbeef.glade.h:107
+#: ../plugins/gtkui/interface.c:269 ../plugins/gtkui/plcommon.c:468
+#: ../plugins/gtkui/prefwin.c:323 ../plugins/gtkui/deadbeef.glade.h:105
+#: ../plugins/converter/interface.c:645
 msgid "Remove"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:269 ../plugins/gtkui/deadbeef.glade.h:20
+#: ../plugins/gtkui/interface.c:277 ../plugins/gtkui/deadbeef.glade.h:24
 msgid "Crop"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:273 ../plugins/gtkui/deadbeef.glade.h:154
+#: ../plugins/gtkui/interface.c:281 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "_Find"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:285 ../plugins/gtkui/interface.c:1705
-#: ../plugins/gtkui/deadbeef.glade.h:97
-msgid "Preferences"
+#: ../plugins/gtkui/interface.c:288 ../plugins/gtkui/deadbeef.glade.h:122
+msgid "Sort By"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:289 ../plugins/gtkui/deadbeef.glade.h:160
-msgid "_View"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:296 ../plugins/gtkui/deadbeef.glade.h:123
-msgid "Status bar"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:300 ../plugins/gtkui/deadbeef.glade.h:18
-msgid "Column headers"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:304 ../plugins/gtkui/deadbeef.glade.h:130
-msgid "Tabs"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:308 ../plugins/gtkui/deadbeef.glade.h:33
-msgid "Equalizer"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:312 ../plugins/gtkui/deadbeef.glade.h:158
-msgid "_Playback"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:319 ../plugins/gtkui/deadbeef.glade.h:86
-msgid "Order"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:326 ../plugins/gtkui/deadbeef.glade.h:74
-msgid "Linear"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:332 ../plugins/gtkui/deadbeef.glade.h:121
-msgid "Shuffle"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:338 ../plugins/gtkui/deadbeef.glade.h:106
-msgid "Random"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:344 ../plugins/gtkui/deadbeef.glade.h:78
-msgid "Looping"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:351 ../plugins/gtkui/deadbeef.glade.h:76
-msgid "Loop All"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:357 ../plugins/gtkui/deadbeef.glade.h:77
-msgid "Loop Single Song"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:363 ../plugins/gtkui/deadbeef.glade.h:29
-msgid "Don't Loop"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:369 ../plugins/gtkui/deadbeef.glade.h:114
-msgid "Scroll follows playback"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:374 ../plugins/gtkui/deadbeef.glade.h:22
-msgid "Cursor follows playback"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:125
-msgid "Stop after current"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:385 ../plugins/gtkui/interface.c:392
-#: ../plugins/gtkui/deadbeef.glade.h:155
-msgid "_Help"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:400 ../plugins/gtkui/deadbeef.glade.h:149
-msgid "_ChangeLog"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:422 ../plugins/gtkui/deadbeef.glade.h:146
-msgid "_About"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:801 ../plugins/gtkui/deadbeef.glade.h:115
-msgid "Search"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:876 ../plugins/gtkui/deadbeef.glade.h:124
-msgid "Stop"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:884 ../plugins/gtkui/deadbeef.glade.h:92
-msgid "Play"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:892 ../plugins/gtkui/deadbeef.glade.h:91
-msgid "Pause"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:900 ../plugins/gtkui/deadbeef.glade.h:98
-msgid "Previous"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:908 ../plugins/gtkui/deadbeef.glade.h:84
-msgid "Next"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:916 ../plugins/gtkui/deadbeef.glade.h:93
-msgid "Play Random"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:925 ../plugins/gtkui/deadbeef.glade.h:5
-msgid "About"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:938 ../plugins/gtkui/deadbeef.glade.h:105
-msgid "Quit"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:1010 ../plugins/gtkui/deadbeef.glade.h:10
-msgid "Adding files..."
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:1054 ../plugins/gtkui/deadbeef.glade.h:145
-msgid "_Abort"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:1155 ../plugins/gtkui/deadbeef.glade.h:136
-msgid "Track Properties"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:1179 ../plugins/gtkui/deadbeef.glade.h:3
-msgid ""
-"<b>WARNING</b>: tag writing feature is still in development.\n"
-"<b>Make backup copies</b> before using."
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:1206 ../plugins/gtkui/deadbeef.glade.h:147
-msgid "_Apply"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:1227 ../plugins/gtkui/interface.c:1273
-#: ../plugins/gtkui/interface.c:2497 ../plugins/gtkui/deadbeef.glade.h:151
-msgid "_Close"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:1231 ../plugins/gtkui/deadbeef.glade.h:79
-msgid "Metadata"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:1277 ../plugins/gtkui/plcommon.c:503
-#: ../plugins/gtkui/deadbeef.glade.h:99
-msgid "Properties"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:1363 ../plugins/gtkui/deadbeef.glade.h:161
-msgid "editcolumndlg"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:1378 ../plugins/gtkui/interface.c:2869
-#: ../plugins/gtkui/deadbeef.glade.h:133
-msgid "Title:"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:1386 ../plugins/gtkui/deadbeef.glade.h:32
-msgid "Enter new column title here"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:1394 ../plugins/gtkui/deadbeef.glade.h:137
-msgid "Type:"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:1402
-msgid "File number"
-msgstr ""
-
-#. create default set of columns
-#: ../plugins/gtkui/interface.c:1403 ../plugins/gtkui/mainplaylist.c:300
-msgid "Playing"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:1404
-msgid "Album Art"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:1405
-msgid "Artist - Album"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:1406 ../plugins/gtkui/plcommon.c:877
-msgid "Artist"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:1407 ../plugins/gtkui/interface.c:1794
-msgid "Album"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:1408 ../plugins/gtkui/prefwin.c:595
+#: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1516
+#: ../plugins/gtkui/mainplaylist.c:318 ../plugins/gtkui/prefwin.c:626
+#: ../plugins/gtkui/search.c:393 ../plugins/gtkui/deadbeef.glade.h:135
+#: ../plugins/converter/convgui.c:790 ../plugins/converter/convgui.c:1211
+#: ../plugins/converter/interface.c:622
 msgid "Title"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1409
-msgid "Length"
+#: ../plugins/gtkui/interface.c:299 ../plugins/gtkui/deadbeef.glade.h:140
+msgid "Track number"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1410 ../plugins/gtkui/interface.c:1793
-msgid "Track"
+#: ../plugins/gtkui/interface.c:303 ../plugins/gtkui/interface.c:1515
+#: ../plugins/gtkui/interface.c:1875 ../plugins/gtkui/deadbeef.glade.h:10
+#: ../translation/extra.c:69
+msgid "Album"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1411
-msgid "Band / Album Artist"
+#. Track properties dialog
+#: ../plugins/gtkui/interface.c:307 ../plugins/gtkui/interface.c:1514
+#: ../plugins/gtkui/plcommon.c:1013 ../plugins/gtkui/deadbeef.glade.h:13
+#: ../translation/extra.c:65
+msgid "Artist"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1412 ../plugins/gtkui/plcommon.c:881
+#: ../plugins/gtkui/interface.c:311 ../plugins/gtkui/deadbeef.glade.h:31
+#: ../translation/extra.c:70
+msgid "Date"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:315 ../plugins/gtkui/interface.c:1520
+#: ../plugins/gtkui/plcommon.c:1017 ../plugins/gtkui/deadbeef.glade.h:27
 msgid "Custom"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1418 ../plugins/gtkui/interface.c:3096
-#: ../plugins/gtkui/deadbeef.glade.h:62
-msgid "Format:"
+#: ../plugins/gtkui/interface.c:324 ../plugins/gtkui/interface.c:1804
+#: ../plugins/gtkui/deadbeef.glade.h:95
+msgid "Preferences"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1433 ../plugins/gtkui/deadbeef.glade.h:11
-msgid "Alignment:"
+#: ../plugins/gtkui/interface.c:328 ../plugins/gtkui/deadbeef.glade.h:167
+msgid "_View"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1441
-msgid "Left"
+#: ../plugins/gtkui/interface.c:335 ../plugins/gtkui/deadbeef.glade.h:125
+msgid "Status bar"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1442
-msgid "Right"
+#: ../plugins/gtkui/interface.c:339 ../plugins/gtkui/deadbeef.glade.h:21
+msgid "Column headers"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1444 ../plugins/gtkui/deadbeef.glade.h:48
-#, no-c-format
-msgid ""
-"Format conversions (start with %):\n"
-"  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
-"  track[n]umber, [N]totaltracks,\n"
-"  [l]ength, [y]ear, [g]enre, [c]omment,\n"
-"  copy[r]ight, [f]ilename, [F]ullPathname, [T]ags,\n"
-"  [d]irectory, [D]irectoryWithPath\n"
-"Example: %a - %t [%l]"
+#: ../plugins/gtkui/interface.c:343 ../plugins/gtkui/deadbeef.glade.h:132
+msgid "Tabs"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1473 ../plugins/gtkui/interface.c:2900
-#: ../plugins/gtkui/interface.c:3012 ../plugins/gtkui/interface.c:3135
-#: ../plugins/gtkui/deadbeef.glade.h:148
-msgid "_Cancel"
+#: ../plugins/gtkui/interface.c:347 ../plugins/gtkui/deadbeef.glade.h:40
+msgid "Equalizer"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1494 ../plugins/gtkui/interface.c:2921
-#: ../plugins/gtkui/interface.c:3033 ../plugins/gtkui/interface.c:3156
-#: ../plugins/gtkui/deadbeef.glade.h:156
-msgid "_OK"
+#: ../plugins/gtkui/interface.c:351 ../plugins/gtkui/deadbeef.glade.h:164
+msgid "_Playback"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1725 ../plugins/gtkui/deadbeef.glade.h:88
-msgid "Output plugin:"
+#: ../plugins/gtkui/interface.c:358 ../plugins/gtkui/interface.c:3298
+#: ../plugins/gtkui/deadbeef.glade.h:83
+msgid "Order"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1738 ../plugins/gtkui/deadbeef.glade.h:87
-msgid "Output device:"
+#: ../plugins/gtkui/interface.c:365 ../plugins/gtkui/deadbeef.glade.h:71
+msgid "Linear"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1747 ../plugins/gtkui/deadbeef.glade.h:122
-msgid "Sound"
+#: ../plugins/gtkui/interface.c:370 ../plugins/gtkui/deadbeef.glade.h:121
+msgid "Shuffle tracks"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1756 ../plugins/gtkui/deadbeef.glade.h:12
-msgid "Allow dynamic samplerate switching"
+#: ../plugins/gtkui/interface.c:375 ../plugins/gtkui/deadbeef.glade.h:120
+msgid "Shuffle albums"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1764 ../plugins/gtkui/deadbeef.glade.h:111
-msgid "Samplerate conversion quality:"
+#: ../plugins/gtkui/interface.c:380 ../plugins/gtkui/deadbeef.glade.h:104
+msgid "Random"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1783 ../plugins/gtkui/deadbeef.glade.h:108
-msgid "Replaygain mode:"
+#: ../plugins/gtkui/interface.c:386 ../plugins/gtkui/deadbeef.glade.h:75
+msgid "Looping"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1792
-msgid "Disable"
+#: ../plugins/gtkui/interface.c:393 ../plugins/gtkui/deadbeef.glade.h:73
+msgid "Loop All"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1796 ../plugins/gtkui/deadbeef.glade.h:109
-msgid "Replaygain peak scale"
+#: ../plugins/gtkui/interface.c:398 ../plugins/gtkui/deadbeef.glade.h:74
+msgid "Loop Single Song"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1804 ../plugins/gtkui/deadbeef.glade.h:7
-msgid "Add files from command line (or file manager) to this playlist:"
+#: ../plugins/gtkui/interface.c:403 ../plugins/gtkui/deadbeef.glade.h:36
+msgid "Don't Loop"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1813 ../plugins/gtkui/deadbeef.glade.h:110
-msgid "Resume previous session on startup"
+#: ../plugins/gtkui/interface.c:409 ../plugins/gtkui/deadbeef.glade.h:111
+msgid "Scroll follows playback"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1817 ../plugins/gtkui/deadbeef.glade.h:94
-msgid "Playback"
+#: ../plugins/gtkui/interface.c:414 ../plugins/gtkui/deadbeef.glade.h:26
+msgid "Cursor follows playback"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1826 ../plugins/gtkui/deadbeef.glade.h:16
-msgid "Close minimizes to tray"
+#: ../plugins/gtkui/interface.c:418 ../plugins/gtkui/deadbeef.glade.h:127
+msgid "Stop after current"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1830 ../plugins/gtkui/deadbeef.glade.h:81
-msgid "Middle mouse button closes playlist"
+#: ../plugins/gtkui/interface.c:430 ../plugins/gtkui/deadbeef.glade.h:67
+msgid "Jump to current track"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1834 ../plugins/gtkui/deadbeef.glade.h:67
-msgid "Hide system tray icon"
+#: ../plugins/gtkui/interface.c:437 ../plugins/gtkui/interface.c:444
+#: ../plugins/gtkui/deadbeef.glade.h:159
+msgid "_Help"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1838 ../plugins/gtkui/deadbeef.glade.h:139
-msgid "Use bold font for currently playing track"
+#: ../plugins/gtkui/interface.c:452 ../plugins/gtkui/deadbeef.glade.h:152
+msgid "_ChangeLog"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1842 ../plugins/gtkui/deadbeef.glade.h:66
-msgid "Hide \"Delete from disk\" context menu item"
+#: ../plugins/gtkui/interface.c:461 ../plugins/gtkui/deadbeef.glade.h:158
+msgid "_GPLv2"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1850 ../plugins/gtkui/deadbeef.glade.h:134
-msgid "Titlebar text while playing:"
+#: ../plugins/gtkui/interface.c:465 ../plugins/gtkui/deadbeef.glade.h:160
+msgid "_LGPLv2.1"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1864 ../plugins/gtkui/deadbeef.glade.h:135
-msgid "Titlebar text while stopped:"
+#: ../plugins/gtkui/interface.c:474 ../plugins/gtkui/deadbeef.glade.h:149
+msgid "_About"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1874 ../plugins/gtkui/deadbeef.glade.h:63
-msgid "GUI"
+#: ../plugins/gtkui/interface.c:482 ../plugins/gtkui/deadbeef.glade.h:166
+msgid "_Translators"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1888 ../plugins/gtkui/interface.c:1932
-#: ../plugins/gtkui/deadbeef.glade.h:89
-msgid "Override"
+#: ../plugins/gtkui/interface.c:898 ../plugins/gtkui/deadbeef.glade.h:112
+msgid "Search"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1897 ../plugins/gtkui/deadbeef.glade.h:46
-msgid "Foreground"
+#: ../plugins/gtkui/interface.c:973 ../plugins/gtkui/deadbeef.glade.h:126
+msgid "Stop"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1904 ../plugins/gtkui/deadbeef.glade.h:14
-msgid "Background"
+#: ../plugins/gtkui/interface.c:981 ../plugins/gtkui/deadbeef.glade.h:89
+msgid "Play"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1923 ../plugins/gtkui/deadbeef.glade.h:116
-msgid "Seekbar/Volumebar colors"
+#: ../plugins/gtkui/interface.c:989 ../plugins/gtkui/deadbeef.glade.h:88
+msgid "Pause"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1941 ../plugins/gtkui/deadbeef.glade.h:80
-msgid "Middle"
+#: ../plugins/gtkui/interface.c:997 ../plugins/gtkui/deadbeef.glade.h:96
+msgid "Previous"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1948 ../plugins/gtkui/deadbeef.glade.h:73
-msgid "Light"
+#: ../plugins/gtkui/interface.c:1005 ../plugins/gtkui/deadbeef.glade.h:81
+msgid "Next"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1955 ../plugins/gtkui/deadbeef.glade.h:23
-msgid "Dark"
+#: ../plugins/gtkui/interface.c:1013 ../plugins/gtkui/deadbeef.glade.h:90
+msgid "Play Random"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1986 ../plugins/gtkui/deadbeef.glade.h:15
-msgid "Base"
+#: ../plugins/gtkui/interface.c:1022 ../plugins/gtkui/deadbeef.glade.h:5
+msgid "About"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1993 ../plugins/gtkui/deadbeef.glade.h:129
-msgid "Tab strip colors"
+#: ../plugins/gtkui/interface.c:1035 ../plugins/gtkui/deadbeef.glade.h:103
+msgid "Quit"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2002 ../plugins/gtkui/deadbeef.glade.h:90
-msgid "Override (looses GTK treeview theming, but speeds up rendering)"
+#: ../plugins/gtkui/interface.c:1225 ../plugins/gtkui/deadbeef.glade.h:139
+msgid "Track Properties"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2011 ../plugins/gtkui/deadbeef.glade.h:34
-msgid "Even row"
+#: ../plugins/gtkui/interface.c:1270 ../plugins/gtkui/deadbeef.glade.h:119
+msgid "Settings"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2018 ../plugins/gtkui/deadbeef.glade.h:85
-msgid "Odd row"
+#: ../plugins/gtkui/interface.c:1296 ../plugins/gtkui/deadbeef.glade.h:150
+msgid "_Apply"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2037 ../plugins/gtkui/deadbeef.glade.h:132
-msgid "Text"
+#: ../plugins/gtkui/interface.c:1317 ../plugins/gtkui/interface.c:1363
+#: ../plugins/gtkui/deadbeef.glade.h:154
+msgid "_Close"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2044 ../plugins/gtkui/deadbeef.glade.h:118
-msgid "Selected row"
+#: ../plugins/gtkui/interface.c:1321 ../plugins/gtkui/deadbeef.glade.h:76
+msgid "Metadata"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2063 ../plugins/gtkui/deadbeef.glade.h:119
-msgid "Selected text"
+#: ../plugins/gtkui/interface.c:1367 ../plugins/gtkui/plcommon.c:618
+#: ../plugins/gtkui/deadbeef.glade.h:97
+msgid "Properties"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2076 ../plugins/gtkui/deadbeef.glade.h:21
-msgid "Cursor"
+#: ../plugins/gtkui/interface.c:1494 ../plugins/gtkui/deadbeef.glade.h:39
+msgid "Enter new column title here"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2089 ../plugins/gtkui/deadbeef.glade.h:95
-msgid "Playlist colors"
+#: ../plugins/gtkui/interface.c:1502 ../plugins/gtkui/deadbeef.glade.h:141
+msgid "Type:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2093 ../plugins/gtkui/deadbeef.glade.h:17
-msgid "Colors"
+#: ../plugins/gtkui/interface.c:1510
+msgid "Item Index"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2102 ../plugins/gtkui/deadbeef.glade.h:31
-msgid "Enable Proxy Server"
+#. create default set of columns
+#: ../plugins/gtkui/interface.c:1511 ../plugins/gtkui/mainplaylist.c:315
+msgid "Playing"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2110 ../plugins/gtkui/deadbeef.glade.h:101
-msgid "Proxy Server Address:"
+#: ../plugins/gtkui/interface.c:1512
+msgid "Album Art"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2124 ../plugins/gtkui/deadbeef.glade.h:102
-msgid "Proxy Server Port:"
+#: ../plugins/gtkui/interface.c:1513
+msgid "Artist - Album"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2138 ../plugins/gtkui/deadbeef.glade.h:103
-msgid "Proxy Type:"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:2157 ../plugins/gtkui/deadbeef.glade.h:104
-msgid "Proxy Username:"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:2170 ../plugins/gtkui/deadbeef.glade.h:100
-msgid "Proxy Password:"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:2180 ../plugins/gtkui/deadbeef.glade.h:82
-msgid "Network"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:2208 ../plugins/gtkui/deadbeef.glade.h:143
-msgid "Write ID3v2"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:2212 ../plugins/gtkui/interface.c:2339
-#: ../plugins/gtkui/deadbeef.glade.h:142
-msgid "Write ID3v1"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:2216 ../plugins/gtkui/interface.c:2295
-#: ../plugins/gtkui/interface.c:2335 ../plugins/gtkui/deadbeef.glade.h:141
-msgid "Write APEv2"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:2224 ../plugins/gtkui/interface.c:2303
-#: ../plugins/gtkui/deadbeef.glade.h:128
-msgid "Strip ID3v2"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:2228 ../plugins/gtkui/interface.c:2351
-#: ../plugins/gtkui/deadbeef.glade.h:127
-msgid "Strip ID3v1"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:2232 ../plugins/gtkui/interface.c:2307
-#: ../plugins/gtkui/interface.c:2347 ../plugins/gtkui/deadbeef.glade.h:126
-msgid "Strip APEv2"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:2240 ../plugins/gtkui/deadbeef.glade.h:69
-msgid "ID3v2 version"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:2247
-msgid "2.3 (Recommended)"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:2248
-msgid "2.4"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:2254 ../plugins/gtkui/deadbeef.glade.h:68
-msgid "ID3v1 character encoding (default is iso8859-1)"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:2291 ../plugins/gtkui/deadbeef.glade.h:144
-msgid "Write ID3v2.4"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:2360 ../plugins/gtkui/deadbeef.glade.h:131
-msgid "Tag writer"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:2391 ../plugins/gtkui/deadbeef.glade.h:24
-msgid "Description:"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:2406 ../plugins/gtkui/deadbeef.glade.h:13
-msgid "Author(s):"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:2421 ../plugins/gtkui/deadbeef.glade.h:30
-msgid "Email:"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:2436 ../plugins/gtkui/deadbeef.glade.h:140
-msgid "Website:"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:2467 ../plugins/gtkui/deadbeef.glade.h:19
-msgid "Configure"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:2471 ../plugins/gtkui/deadbeef.glade.h:96
-msgid "Plugins"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:2853 ../plugins/gtkui/deadbeef.glade.h:162
-msgid "editplaylistdlg"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:2980 ../plugins/gtkui/deadbeef.glade.h:138
-msgid "URL:"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:3081 ../plugins/gtkui/deadbeef.glade.h:64
-msgid "Group By"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:3106 ../plugins/gtkui/deadbeef.glade.h:56
-#, no-c-format
-msgid ""
-"Format conversions (start with %):\n"
-"  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
-"  track[n]umber, [N]totaltracks,\n"
-"  [l]ength, [y]ear, [g]enre, [c]omment,\n"
-"  copy[r]ight, [f]ilename, [T]ags\n"
-"Example: %a - %t [%l]"
-msgstr ""
-
-#: ../plugins/gtkui/mainplaylist.c:301 ../plugins/gtkui/search.c:434
-msgid "Artist / Album"
-msgstr ""
-
-#: ../plugins/gtkui/mainplaylist.c:302 ../plugins/gtkui/search.c:435
-msgid "Track No"
-msgstr ""
-
-#: ../plugins/gtkui/mainplaylist.c:303 ../plugins/gtkui/search.c:436
-msgid "Title / Track Artist"
-msgstr ""
-
-#: ../plugins/gtkui/mainplaylist.c:304 ../plugins/gtkui/search.c:437
-#: ../plugins/gtkui/trkproperties.c:175
+#: ../plugins/gtkui/interface.c:1517 ../plugins/gtkui/mainplaylist.c:319
+#: ../plugins/gtkui/search.c:394
 msgid "Duration"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:323
+#: ../plugins/gtkui/interface.c:1518 ../translation/extra.c:71
+msgid "Track Number"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1519 ../translation/extra.c:68
+msgid "Band / Album Artist"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1526 ../plugins/gtkui/interface.c:3150
+#: ../plugins/gtkui/deadbeef.glade.h:44
+msgid "Format:"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1551 ../plugins/gtkui/deadbeef.glade.h:11
+msgid "Alignment:"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1559
+msgid "Left"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1560
+msgid "Right"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1583 ../plugins/gtkui/interface.c:2953
+#: ../plugins/gtkui/interface.c:3065 ../plugins/gtkui/interface.c:3191
+#: ../plugins/gtkui/deadbeef.glade.h:151
+msgid "_Cancel"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1604 ../plugins/gtkui/interface.c:2974
+#: ../plugins/gtkui/interface.c:3086 ../plugins/gtkui/interface.c:3212
+#: ../plugins/gtkui/deadbeef.glade.h:162
+msgid "_OK"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1825 ../plugins/gtkui/deadbeef.glade.h:85
+msgid "Output plugin:"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1838 ../plugins/gtkui/deadbeef.glade.h:84
+msgid "Output device:"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1847 ../plugins/gtkui/deadbeef.glade.h:12
+msgid "Always convert 8 bit audio to 16 bit"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1851 ../plugins/gtkui/deadbeef.glade.h:124
+msgid "Sound"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1864 ../plugins/gtkui/deadbeef.glade.h:106
+msgid "Replaygain mode:"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1873
+msgid "Disable"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1874
+msgid "Track"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1877 ../plugins/gtkui/deadbeef.glade.h:107
+msgid "Replaygain peak scale"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1892 ../plugins/gtkui/interface.c:1926
+#: ../plugins/gtkui/deadbeef.glade.h:2
+msgid "-12 dB"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1902 ../plugins/gtkui/interface.c:1936
+#: ../plugins/gtkui/deadbeef.glade.h:1
+msgid "+12 dB"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1906 ../plugins/gtkui/deadbeef.glade.h:108
+msgid "Replaygain preamp:"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1913 ../plugins/gtkui/deadbeef.glade.h:47
+msgid "Global preamp:"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1944 ../plugins/gtkui/deadbeef.glade.h:7
+msgid "Add files from command line (or file manager) to this playlist:"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1953 ../plugins/gtkui/deadbeef.glade.h:109
+msgid "Resume previous session on startup"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1957 ../plugins/gtkui/deadbeef.glade.h:37
+msgid "Don't add from archives when adding folders"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1961 ../plugins/gtkui/deadbeef.glade.h:91
+msgid "Playback"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1982 ../plugins/gtkui/interface.c:2514
+#: ../plugins/gtkui/deadbeef.glade.h:22 ../plugins/converter/interface.c:649
+msgid "Configure"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2017 ../plugins/gtkui/deadbeef.glade.h:29
+#, fuzzy
+msgid "DSP Chain Preset"
+msgstr "Tallenna esiasetus..."
+
+#: ../plugins/gtkui/interface.c:2029 ../plugins/gtkui/deadbeef.glade.h:161
+msgid "_Load"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2033 ../plugins/gtkui/deadbeef.glade.h:28
+msgid "DSP"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2042 ../plugins/gtkui/deadbeef.glade.h:19
+msgid "Close minimizes to tray"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2046 ../plugins/gtkui/deadbeef.glade.h:78
+msgid "Middle mouse button closes playlist"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2050 ../plugins/gtkui/deadbeef.glade.h:51
+msgid "Hide system tray icon"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2054 ../plugins/gtkui/deadbeef.glade.h:143
+msgid "Use bold font for currently playing track"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2058 ../plugins/gtkui/deadbeef.glade.h:50
+msgid "Hide \"Delete from disk\" context menu item"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2062 ../plugins/gtkui/deadbeef.glade.h:16
+msgid "Auto-name playlists when adding a single folder"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2070 ../plugins/gtkui/deadbeef.glade.h:54
+msgid "Interface refresh rate (times per second):"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2084 ../plugins/gtkui/deadbeef.glade.h:137
+msgid "Titlebar text while playing:"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2098 ../plugins/gtkui/deadbeef.glade.h:138
+msgid "Titlebar text while stopped:"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2112 ../plugins/gtkui/deadbeef.glade.h:46
+msgid "GUI Plugin (changing requires restart):"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2120 ../plugins/gtkui/deadbeef.glade.h:45
+msgid "GUI"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2135 ../plugins/gtkui/interface.c:2179
+#: ../plugins/gtkui/deadbeef.glade.h:86
+msgid "Override"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2144 ../plugins/gtkui/deadbeef.glade.h:42
+msgid "Foreground"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2151 ../plugins/gtkui/deadbeef.glade.h:17
+msgid "Background"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2170 ../plugins/gtkui/deadbeef.glade.h:113
+msgid "Seekbar/Volumebar colors"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2188 ../plugins/gtkui/deadbeef.glade.h:77
+msgid "Middle"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2195 ../plugins/gtkui/deadbeef.glade.h:70
+msgid "Light"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2202 ../plugins/gtkui/deadbeef.glade.h:30
+msgid "Dark"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2233 ../plugins/gtkui/deadbeef.glade.h:18
+msgid "Base"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2240 ../plugins/gtkui/interface.c:2297
+#: ../plugins/gtkui/deadbeef.glade.h:134
+msgid "Text"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2253 ../plugins/gtkui/deadbeef.glade.h:131
+msgid "Tab strip colors"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2262 ../plugins/gtkui/deadbeef.glade.h:87
+msgid "Override (looses GTK treeview theming, but speeds up rendering)"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2271 ../plugins/gtkui/deadbeef.glade.h:41
+msgid "Even row"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2278 ../plugins/gtkui/deadbeef.glade.h:82
+msgid "Odd row"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2304 ../plugins/gtkui/deadbeef.glade.h:116
+msgid "Selected row"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2323 ../plugins/gtkui/deadbeef.glade.h:117
+msgid "Selected text"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2336 ../plugins/gtkui/deadbeef.glade.h:25
+msgid "Cursor"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2349 ../plugins/gtkui/deadbeef.glade.h:92
+msgid "Playlist colors"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2353 ../plugins/gtkui/deadbeef.glade.h:20
+msgid "Colors"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2362 ../plugins/gtkui/deadbeef.glade.h:38
+msgid "Enable Proxy Server"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2370 ../plugins/gtkui/deadbeef.glade.h:99
+msgid "Proxy Server Address:"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2384 ../plugins/gtkui/deadbeef.glade.h:100
+msgid "Proxy Server Port:"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2398 ../plugins/gtkui/deadbeef.glade.h:101
+msgid "Proxy Type:"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2417 ../plugins/gtkui/deadbeef.glade.h:102
+msgid "Proxy Username:"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2430 ../plugins/gtkui/deadbeef.glade.h:98
+msgid "Proxy Password:"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2440 ../plugins/gtkui/deadbeef.glade.h:79
+msgid "Network"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2471 ../plugins/gtkui/deadbeef.glade.h:144
+msgid "Version: "
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2535 ../plugins/gtkui/deadbeef.glade.h:23
+#: ../translation/extra.c:78
+msgid "Copyright"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2545 ../plugins/gtkui/deadbeef.glade.h:94
+msgid "Plugins"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:3033 ../plugins/gtkui/deadbeef.glade.h:142
+msgid "URL:"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:3135 ../plugins/gtkui/deadbeef.glade.h:48
+msgid "Group By"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:3259 ../plugins/gtkui/deadbeef.glade.h:123
+msgid "Sort by..."
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:3275 ../plugins/gtkui/deadbeef.glade.h:43
+msgid "Format"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:3305
+msgid "Ascending"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:3306
+msgid "Descending"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:3359 ../plugins/gtkui/deadbeef.glade.h:114
+#: ../plugins/converter/interface.c:750
+msgid "Select DSP Plugin"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:3375 ../plugins/gtkui/deadbeef.glade.h:93
+#: ../plugins/converter/convgui.c:1016 ../plugins/converter/interface.c:766
+#: ../plugins/gtkui/dspconfig.c:139
+msgid "Plugin"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:3461 ../plugins/gtkui/deadbeef.glade.h:133
+msgid "Tag Writer Settings"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:3492 ../plugins/gtkui/deadbeef.glade.h:147
+msgid "Write ID3v2"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:3496 ../plugins/gtkui/interface.c:3623
+#: ../plugins/gtkui/deadbeef.glade.h:146
+msgid "Write ID3v1"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:3500 ../plugins/gtkui/interface.c:3579
+#: ../plugins/gtkui/interface.c:3619 ../plugins/gtkui/deadbeef.glade.h:145
+msgid "Write APEv2"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:3508 ../plugins/gtkui/interface.c:3587
+#: ../plugins/gtkui/deadbeef.glade.h:130
+msgid "Strip ID3v2"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:3512 ../plugins/gtkui/interface.c:3635
+#: ../plugins/gtkui/deadbeef.glade.h:129
+msgid "Strip ID3v1"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:3516 ../plugins/gtkui/interface.c:3591
+#: ../plugins/gtkui/interface.c:3631 ../plugins/gtkui/deadbeef.glade.h:128
+msgid "Strip APEv2"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:3524 ../plugins/gtkui/deadbeef.glade.h:53
+msgid "ID3v2 version"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:3531
+msgid "2.3 (Recommended)"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:3532
+msgid "2.4"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:3538 ../plugins/gtkui/deadbeef.glade.h:52
+msgid "ID3v1 character encoding (default is iso8859-1)"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:3575 ../plugins/gtkui/deadbeef.glade.h:148
+msgid "Write ID3v2.4"
+msgstr ""
+
+#: ../plugins/gtkui/mainplaylist.c:316 ../plugins/gtkui/search.c:391
+msgid "Artist / Album"
+msgstr ""
+
+#: ../plugins/gtkui/mainplaylist.c:317 ../plugins/gtkui/search.c:392
+msgid "Track No"
+msgstr ""
+
+#: ../plugins/gtkui/plcommon.c:338
 msgid "Delete files from disk"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:324
+#: ../plugins/gtkui/plcommon.c:339
 msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:325 ../plugins/gtkui/trkproperties.c:56
+#: ../plugins/gtkui/plcommon.c:340 ../plugins/gtkui/trkproperties.c:162
+#: ../plugins/gtkui/trkproperties.c:693 ../plugins/converter/convgui.c:759
+#: ../plugins/converter/convgui.c:1136
 msgid "Warning"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:401
+#: ../plugins/gtkui/plcommon.c:444
 msgid "Add to playback queue"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:406
+#: ../plugins/gtkui/plcommon.c:449
 msgid "Remove from playback queue"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:414
+#: ../plugins/gtkui/plcommon.c:457
 msgid "Reload metadata"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:433
+#: ../plugins/gtkui/plcommon.c:476
 msgid "Remove from disk"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:719 ../plugins/gtkui/plcommon.c:844
+#: ../plugins/gtkui/plcommon.c:855 ../plugins/gtkui/plcommon.c:980
 msgid "Add column"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:749 ../plugins/gtkui/plcommon.c:848
+#: ../plugins/gtkui/plcommon.c:885 ../plugins/gtkui/plcommon.c:984
 msgid "Edit column"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:852
+#: ../plugins/gtkui/plcommon.c:988
 msgid "Remove column"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:862
+#: ../plugins/gtkui/plcommon.c:998
 msgid "Group by"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:869
+#: ../plugins/gtkui/plcommon.c:1005
 msgid "None"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:873
+#: ../plugins/gtkui/plcommon.c:1009
 msgid "Artist/Date/Album"
 msgstr ""
 
-#: ../plugins/gtkui/pluginconf.c:41
+#: ../plugins/gtkui/pluginconf.c:42
 msgid "Open file..."
 msgstr ""
 
-#: ../plugins/gtkui/pluginconf.c:142
+#: ../plugins/gtkui/pluginconf.c:217
 #, c-format
-msgid "Setup %s"
+msgid "Configure %s"
 msgstr ""
 
-#: ../plugins/gtkui/prefwin.c:98
+#: ../plugins/gtkui/prefwin.c:82
 msgid "Default Audio Device"
 msgstr ""
 
-#: ../plugins/gtkui/prefwin.c:312
+#: ../plugins/gtkui/prefwin.c:318 ../plugins/converter/interface.c:641
 msgid "Add"
 msgstr ""
 
-#: ../plugins/gtkui/prefwin.c:322
+#: ../plugins/gtkui/prefwin.c:328
 msgid "Global Hotkeys"
 msgstr ""
 
-#: ../plugins/gtkui/prefwin.c:384
+#: ../plugins/gtkui/prefwin.c:390
 msgid "Slot"
 msgstr ""
 
-#: ../plugins/gtkui/prefwin.c:385
+#: ../plugins/gtkui/prefwin.c:391
 msgid "Key combination"
 msgstr ""
 
-#. output plugin selection
-#: ../plugins/gtkui/prefwin.c:464 ../plugins/gtkui/prefwin.c:676
-#: ../plugins.c:872
-msgid "ALSA output plugin"
+#: ../plugins/gtkui/progress.c:56
+msgid "Adding files..."
 msgstr ""
 
-#: ../plugins/gtkui/progress.c:64
+#: ../plugins/gtkui/progress.c:90
 msgid "Initializing..."
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:53
+#: ../plugins/gtkui/trkproperties.c:159
 msgid "You've modified data for this track."
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:55
+#: ../plugins/gtkui/trkproperties.c:161
 msgid "Really close the window?"
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:178
-msgid "Tag Type(s)"
+#. get value to edit
+#: ../plugins/gtkui/trkproperties.c:254
+msgid "[Multiple values] "
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:180
-msgid "Embedded Cuesheet"
-msgstr ""
-
-#: ../plugins/gtkui/trkproperties.c:180
-msgid "Yes"
-msgstr ""
-
-#: ../plugins/gtkui/trkproperties.c:180
-msgid "No"
-msgstr ""
-
-#: ../plugins/gtkui/trkproperties.c:182
-msgid "Codec"
-msgstr ""
-
-#: ../plugins/gtkui/trkproperties.c:250 ../plugins/gtkui/trkproperties.c:262
+#: ../plugins/gtkui/trkproperties.c:407 ../plugins/gtkui/trkproperties.c:419
 msgid "Key"
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:251 ../plugins/gtkui/trkproperties.c:263
+#: ../plugins/gtkui/trkproperties.c:408 ../plugins/gtkui/trkproperties.c:420
 msgid "Value"
 msgstr ""
 
-#: ../plugins/notify/notify.c:138
-msgid "DeaDBeeF now playing"
+#: ../plugins/gtkui/trkproperties.c:594
+msgid "Writing tags..."
 msgstr ""
 
-#: ../main.c:89
-#, c-format
-msgid "Usage: deadbeef [options] [file(s)]\n"
+#: ../plugins/gtkui/trkproperties.c:621
+msgid "Name:"
 msgstr ""
 
-#: ../main.c:90
-#, c-format
-msgid "Options:\n"
+#: ../plugins/gtkui/trkproperties.c:633
+msgid "Field names must not start with : or _"
+msgstr ""
+
+#: ../plugins/gtkui/trkproperties.c:634 ../plugins/gtkui/trkproperties.c:668
+msgid "Cannot add field"
+msgstr ""
+
+#: ../plugins/gtkui/trkproperties.c:667
+msgid "Field with such name already exists, please try different name."
+msgstr ""
+
+#: ../plugins/gtkui/trkproperties.c:692
+msgid "Really remove selected field?"
+msgstr ""
+
+#: ../plugins/gtkui/trkproperties.c:734
+msgid "Add field"
+msgstr ""
+
+#: ../plugins/gtkui/trkproperties.c:737
+msgid "Remove field"
 msgstr ""
 
 #: ../main.c:91
 #, c-format
-msgid "   --help  or  -h     Print help (this message) and exit\n"
+msgid "Usage: deadbeef [options] [file(s)]\n"
 msgstr ""
 
 #: ../main.c:92
 #, c-format
-msgid "   --quit             Quit player\n"
+msgid "Options:\n"
 msgstr ""
 
 #: ../main.c:93
 #, c-format
-msgid "   --version          Print version info and exit\n"
+msgid "   --help  or  -h     Print help (this message) and exit\n"
 msgstr ""
 
 #: ../main.c:94
 #, c-format
-msgid "   --play             Start playback\n"
+msgid "   --quit             Quit player\n"
 msgstr ""
 
 #: ../main.c:95
 #, c-format
-msgid "   --stop             Stop playback\n"
+msgid "   --version          Print version info and exit\n"
 msgstr ""
 
 #: ../main.c:96
 #, c-format
-msgid "   --pause            Pause playback\n"
+msgid "   --play             Start playback\n"
 msgstr ""
 
 #: ../main.c:97
 #, c-format
-msgid "   --next             Next song in playlist\n"
+msgid "   --stop             Stop playback\n"
 msgstr ""
 
 #: ../main.c:98
 #, c-format
-msgid "   --prev             Previous song in playlist\n"
+msgid "   --pause            Pause playback\n"
 msgstr ""
 
 #: ../main.c:99
 #, c-format
-msgid "   --random           Random song in playlist\n"
+msgid "   --toggle-pause     Toggle pause\n"
 msgstr ""
 
 #: ../main.c:100
 #, c-format
-msgid "   --queue            Append file(s) to existing playlist\n"
+msgid ""
+"   --play-pause       Start playback if stopped, toggle pause otherwise\n"
 msgstr ""
 
 #: ../main.c:101
 #, c-format
-msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
+msgid "   --next             Next song in playlist\n"
 msgstr ""
 
 #: ../main.c:102
+#, c-format
+msgid "   --prev             Previous song in playlist\n"
+msgstr ""
+
+#: ../main.c:103
+#, c-format
+msgid "   --random           Random song in playlist\n"
+msgstr ""
+
+#: ../main.c:104
+#, c-format
+msgid "   --queue            Append file(s) to existing playlist\n"
+msgstr ""
+
+#: ../main.c:105
+#, c-format
+msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
+msgstr ""
+
+#: ../main.c:106
 #, c-format
 msgid ""
 "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
@@ -1033,107 +1139,76 @@ msgid ""
 "                      copy[r]ight, [e]lapsed\n"
 msgstr ""
 
-#: ../main.c:105
+#: ../main.c:109
 #, c-format
 msgid ""
 "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
 "- title\"\n"
 msgstr ""
 
-#: ../playlist.c:377 ../playlist.c:2289
+#: ../main.c:110
+#, c-format
+msgid ""
+"                      for more info, see http://sourceforge.net/apps/"
+"mediawiki/deadbeef/index.php?title=Title_Formatting\n"
+msgstr ""
+
+#: ../playlist.c:454 ../playlist.c:2398
 msgid "Default"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:1
+#: ../playlist.c:3664
+msgid "Yes"
+msgstr ""
+
+#: ../playlist.c:3664
+msgid "No"
+msgstr ""
+
+#: ../plugins/gtkui/deadbeef.glade.h:3
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:26
+#: ../plugins/gtkui/deadbeef.glade.h:14
+msgid ""
+"Ascending\n"
+"Descending"
+msgstr ""
+
+#: ../plugins/gtkui/deadbeef.glade.h:33
 msgid ""
 "Disable\n"
 "Track\n"
 "Album"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:35
+#: ../plugins/gtkui/deadbeef.glade.h:56
 msgid ""
-"File number\n"
+"Item Index\n"
 "Playing\n"
 "Album Art\n"
 "Artist - Album\n"
 "Artist\n"
 "Album\n"
 "Title\n"
-"Length\n"
-"Track\n"
+"Duration\n"
+"Track Number\n"
 "Band / Album Artist\n"
 "Custom"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:71
+#: ../plugins/gtkui/deadbeef.glade.h:68
 msgid ""
 "Left\n"
 "Right"
 msgstr ""
 
 #: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
+#: ../plugins/converter/support.c:90 ../plugins/converter/support.c:114
 #, c-format
 msgid "Couldn't find pixmap file: %s"
-msgstr ""
-
-#: ../plugins/vorbis/vcedit.c:129 ../plugins/vorbis/vcedit.c:155
-msgid "Couldn't get enough memory for input buffering."
-msgstr ""
-
-#: ../plugins/vorbis/vcedit.c:179 ../plugins/vorbis/vcedit.c:550
-msgid "Error reading first page of Ogg bitstream."
-msgstr ""
-
-#: ../plugins/vorbis/vcedit.c:185 ../plugins/vorbis/vcedit.c:557
-msgid "Error reading initial header packet."
-msgstr ""
-
-#: ../plugins/vorbis/vcedit.c:237
-msgid "Couldn't get enough memory to register new stream serial number."
-msgstr ""
-
-#: ../plugins/vorbis/vcedit.c:505
-msgid "Input truncated or empty."
-msgstr ""
-
-#: ../plugins/vorbis/vcedit.c:507
-msgid "Input is not an Ogg bitstream."
-msgstr ""
-
-#: ../plugins/vorbis/vcedit.c:565
-msgid "Ogg bitstream does not contain Vorbis data."
-msgstr ""
-
-#: ../plugins/vorbis/vcedit.c:578
-msgid "EOF before recognised stream."
-msgstr ""
-
-#: ../plugins/vorbis/vcedit.c:594
-msgid "Ogg bitstream does not contain a supported data-type."
-msgstr ""
-
-#: ../plugins/vorbis/vcedit.c:638
-msgid "Corrupt secondary header."
-msgstr ""
-
-#: ../plugins/vorbis/vcedit.c:659
-msgid "EOF before end of Vorbis headers."
-msgstr ""
-
-#: ../plugins/vorbis/vcedit.c:834
-msgid "Corrupt or missing data, continuing..."
-msgstr ""
-
-#: ../plugins/vorbis/vcedit.c:874
-msgid ""
-"Error writing stream to output. Output stream may be corrupted or truncated."
 msgstr ""
 
 #: ../plugins/wildmidi/wildmidiplug.c:162
@@ -1141,4 +1216,518 @@ msgstr ""
 msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings."
+msgstr ""
+
+#. this file should list extra translatable strings that are not referenced
+#. directly in source code, e.g. scripted plugin configuration strings
+#: ../translation/extra.c:3
+msgid "Add Audio CD"
+msgstr ""
+
+#: ../translation/extra.c:4
+msgid "Lookup on Last.fm"
+msgstr ""
+
+#. ALSA output plugin
+#: ../translation/extra.c:6
+msgid "Use ALSA resampling"
+msgstr ""
+
+#: ../translation/extra.c:7
+msgid "Release device while stopped"
+msgstr ""
+
+#: ../translation/extra.c:8 ../translation/extra.c:51
+msgid "Preferred buffer size"
+msgstr ""
+
+#: ../translation/extra.c:9
+msgid "Preferred period size"
+msgstr ""
+
+#. Last.fm plugin
+#: ../translation/extra.c:11
+msgid "Enable scrobbler"
+msgstr ""
+
+#: ../translation/extra.c:12
+msgid "Disable nowplaying"
+msgstr ""
+
+#: ../translation/extra.c:13
+msgid "Username"
+msgstr ""
+
+#: ../translation/extra.c:14
+msgid "Password"
+msgstr ""
+
+#: ../translation/extra.c:15
+msgid "Scrobble URL"
+msgstr ""
+
+#. OSS output plugin
+#: ../translation/extra.c:17
+msgid "Device file"
+msgstr ""
+
+#: ../translation/extra.c:18
+msgid "OSS4 samplerate bug workaround"
+msgstr ""
+
+#. Album Artwork plugin
+#: ../translation/extra.c:20
+msgid "Cache update period (hr)"
+msgstr ""
+
+#: ../translation/extra.c:21
+msgid "Fetch from embedded tags"
+msgstr ""
+
+#: ../translation/extra.c:22
+msgid "Fetch from local folder"
+msgstr ""
+
+#: ../translation/extra.c:23
+msgid "Local cover file mask"
+msgstr ""
+
+#: ../translation/extra.c:24
+msgid "Fetch from last.fm"
+msgstr ""
+
+#: ../translation/extra.c:25
+msgid "Fetch from albumart.org"
+msgstr ""
+
+#: ../translation/extra.c:26
+msgid "Scale artwork towards longer side"
+msgstr ""
+
+#. Audio CD player
+#: ../translation/extra.c:28
+msgid "Use CDDB/FreeDB"
+msgstr ""
+
+#: ../translation/extra.c:29
+msgid "Prefer CD-Text over CDDB"
+msgstr ""
+
+#: ../translation/extra.c:30
+msgid "CDDB url (e.g. 'freedb.org')"
+msgstr ""
+
+#: ../translation/extra.c:31
+msgid "CDDB port number (e.g. '888')"
+msgstr ""
+
+#: ../translation/extra.c:32
+msgid "Prefer CDDB protocol over HTTP"
+msgstr ""
+
+#: ../translation/extra.c:33
+msgid "Enable NRG image support"
+msgstr ""
+
+#. DUMB module player plugin
+#: ../translation/extra.c:35
+msgid "Resampling quality (0..2, higher is better)"
+msgstr ""
+
+#. Game_Music_Emu decoder plugin
+#: ../translation/extra.c:37
+msgid "Max song length (in minutes)"
+msgstr ""
+
+#. Standard GTK2 user interface plugin
+#: ../translation/extra.c:39
+msgid "Ask confirmation to delete files from disk"
+msgstr ""
+
+#: ../translation/extra.c:40
+msgid "Status icon volume control sensitivity"
+msgstr ""
+
+#: ../translation/extra.c:41
+msgid "Custom status icon"
+msgstr ""
+
+#: ../translation/extra.c:42
+msgid "Run gtk_init with --sync (debug mode)"
+msgstr ""
+
+#: ../translation/extra.c:43
+msgid "Add separators between plugin context menu items"
+msgstr ""
+
+#. OSD Notify plugin
+#: ../translation/extra.c:45
+msgid "Notification title format"
+msgstr ""
+
+#: ../translation/extra.c:46
+msgid "Notification content format"
+msgstr ""
+
+#: ../translation/extra.c:47
+msgid "Show album art"
+msgstr ""
+
+#: ../translation/extra.c:48
+msgid "Album art size (px)"
+msgstr ""
+
+#. PulseAudio output plugin
+#: ../translation/extra.c:50
+msgid "PulseAudio server"
+msgstr ""
+
+#: ../translation/extra.c:52
+msgid "Samplerate"
+msgstr ""
+
+#. SHN player plugin
+#: ../translation/extra.c:54
+msgid "Relative seek table path"
+msgstr ""
+
+#: ../translation/extra.c:55
+msgid "Absolute seek table path"
+msgstr ""
+
+#: ../translation/extra.c:56
+msgid "Swap audio bytes (toggle if all you hear is static)"
+msgstr ""
+
+#. SID decoder plugin
+#: ../translation/extra.c:58
+msgid "Enable HVSC Songlength DB"
+msgstr ""
+
+#: ../translation/extra.c:59
+msgid "Songlengths.txt (from HVSC)"
+msgstr ""
+
+#: ../translation/extra.c:60
+msgid "Bits per sample (8 or 16)"
+msgstr ""
+
+#: ../translation/extra.c:61
+msgid "Default song length (sec)"
+msgstr ""
+
+#. WildMidi player plugin
+#: ../translation/extra.c:63
+msgid "Timidity++ bank configuration file"
+msgstr ""
+
+#: ../translation/extra.c:66
+msgid "Track Title"
+msgstr ""
+
+#: ../translation/extra.c:67
+msgid "Performer"
+msgstr ""
+
+#: ../translation/extra.c:72
+msgid "Total Tracks"
+msgstr ""
+
+#: ../translation/extra.c:73
+msgid "Genre"
+msgstr ""
+
+#: ../translation/extra.c:74
+msgid "Composer"
+msgstr ""
+
+#: ../translation/extra.c:75
+msgid "Disc Number"
+msgstr ""
+
+#: ../translation/extra.c:76
+msgid "Comment"
+msgstr ""
+
+#: ../translation/extra.c:77
+msgid "Encoder / Vendor"
+msgstr ""
+
+#: ../translation/extra.c:79
+msgid "Location"
+msgstr ""
+
+#: ../translation/extra.c:80
+msgid "Subtrack Index"
+msgstr ""
+
+#: ../translation/extra.c:81
+msgid "Tag Type(s)"
+msgstr ""
+
+#: ../translation/extra.c:82
+msgid "Embedded Cuesheet"
+msgstr ""
+
+#: ../translation/extra.c:83
+msgid "Codec"
+msgstr ""
+
+#. FFmpeg deocder plugin
+#: ../translation/extra.c:85
+msgid "File Extensions (separate with ';')"
+msgstr ""
+
+#. Converter GUI
+#: ../translation/extra.c:87
+msgid "Convert"
+msgstr ""
+
+#. Resampler (Secret Rabbit Code)
+#: ../translation/extra.c:89
+msgid "Target Samplerate"
+msgstr ""
+
+#: ../translation/extra.c:90
+msgid "Quality / Algorythm"
+msgstr ""
+
+#: ../translation/extra.c:91
+msgid "Automatic Samplerate (overrides Target Samplerate)"
+msgstr ""
+
+#: ../plugins/converter/convgui.c:108
+msgid "The file already exists. Overwrite?"
+msgstr ""
+
+#: ../plugins/converter/convgui.c:110
+msgid "Converter warning"
+msgstr ""
+
+#: ../plugins/converter/convgui.c:222
+msgid "Please select encoder"
+msgstr ""
+
+#: ../plugins/converter/convgui.c:224
+msgid "Converter error"
+msgstr ""
+
+#: ../plugins/converter/convgui.c:248
+msgid "Converting..."
+msgstr ""
+
+#: ../plugins/converter/convgui.c:394 ../plugins/converter/convgui.c:496
+msgid "Select folder..."
+msgstr ""
+
+#: ../plugins/converter/convgui.c:635
+msgid "Failed to save encoder preset"
+msgstr ""
+
+#: ../plugins/converter/convgui.c:637 ../plugins/converter/convgui.c:1035
+msgid ""
+"Check preset folder permissions, try to pick different title, or free up "
+"some disk space"
+msgstr ""
+
+#: ../plugins/converter/convgui.c:637 ../plugins/converter/convgui.c:1035
+msgid "Preset with the same name already exists. Try to pick another title."
+msgstr ""
+
+#: ../plugins/converter/convgui.c:638 ../plugins/converter/convgui.c:1036
+msgid "Error"
+msgstr ""
+
+#: ../plugins/converter/convgui.c:692
+msgid "Add new encoder"
+msgstr ""
+
+#: ../plugins/converter/convgui.c:724
+msgid "Edit encoder"
+msgstr ""
+
+#: ../plugins/converter/convgui.c:756 ../plugins/converter/convgui.c:1133
+#, fuzzy
+msgid "Remove preset"
+msgstr "Tallenna esiasetus..."
+
+#: ../plugins/converter/convgui.c:758 ../plugins/converter/convgui.c:1135
+msgid "This action will delete the selected preset. Are you sure?"
+msgstr ""
+
+#: ../plugins/converter/convgui.c:782
+msgid "Encoders"
+msgstr ""
+
+#: ../plugins/converter/convgui.c:838 ../plugins/gtkui/dspconfig.c:183
+msgid "Add plugin to DSP chain"
+msgstr ""
+
+#: ../plugins/converter/convgui.c:1034
+msgid "Failed to save DSP preset"
+msgstr ""
+
+#: ../plugins/converter/convgui.c:1098
+#, fuzzy
+msgid "New DSP Preset"
+msgstr "Tallenna esiasetus..."
+
+#: ../plugins/converter/convgui.c:1183
+#, fuzzy
+msgid "Edit DSP Preset"
+msgstr "Tallenna esiasetus..."
+
+#: ../plugins/converter/convgui.c:1203
+#, fuzzy
+msgid "DSP Presets"
+msgstr "Tallenna esiasetus..."
+
+#: ../plugins/converter/interface.c:94
+msgid "Output folder:"
+msgstr ""
+
+#: ../plugins/converter/interface.c:115
+msgid "Output file name:"
+msgstr ""
+
+#: ../plugins/converter/interface.c:126
+msgid ""
+"Extension (e.g. .mp3) will be appended automatically.\n"
+"Leave the field empty for default (%a - %t)."
+msgstr ""
+
+#: ../plugins/converter/interface.c:139
+msgid "Encoder:"
+msgstr ""
+
+#: ../plugins/converter/interface.c:163
+#, fuzzy
+msgid "DSP preset:"
+msgstr "Tallenna esiasetus..."
+
+#: ../plugins/converter/interface.c:186
+msgid "Number of threads:"
+msgstr ""
+
+#: ../plugins/converter/interface.c:199
+msgid "Output sample format:"
+msgstr ""
+
+#: ../plugins/converter/interface.c:206
+msgid "Keep source format"
+msgstr ""
+
+#: ../plugins/converter/interface.c:207
+msgid "8 bit signed int"
+msgstr ""
+
+#: ../plugins/converter/interface.c:208
+msgid "16 bit signed int"
+msgstr ""
+
+#: ../plugins/converter/interface.c:209
+msgid "24 bit signed int"
+msgstr ""
+
+#: ../plugins/converter/interface.c:210
+msgid "32 bit signed int"
+msgstr ""
+
+#: ../plugins/converter/interface.c:211
+msgid "32 bit float"
+msgstr ""
+
+#: ../plugins/converter/interface.c:217
+msgid "When file exists:"
+msgstr ""
+
+#: ../plugins/converter/interface.c:224
+msgid "Prompt"
+msgstr ""
+
+#: ../plugins/converter/interface.c:225
+msgid "Overwrite"
+msgstr ""
+
+#: ../plugins/converter/interface.c:227
+msgid "Preserve folder structure, starting from:"
+msgstr ""
+
+#: ../plugins/converter/interface.c:379
+#, fuzzy
+msgid "Edit Encoder Preset"
+msgstr "Lataa esiasetus..."
+
+#: ../plugins/converter/interface.c:402
+msgid "Untitled Encoder"
+msgstr ""
+
+#: ../plugins/converter/interface.c:410
+msgid "Output file extension:"
+msgstr ""
+
+#: ../plugins/converter/interface.c:417
+msgid "E.g. mp3"
+msgstr ""
+
+#: ../plugins/converter/interface.c:425
+msgid "Command line:"
+msgstr ""
+
+#: ../plugins/converter/interface.c:436
+#, c-format
+msgid ""
+"Example: lame - %o\n"
+"%i for input file, %o for output file, - for stdin"
+msgstr ""
+
+#: ../plugins/converter/interface.c:446
+#, c-format
+msgid ""
+"<small>%o - output file name\n"
+"%i - temporary input file name</small>"
+msgstr ""
+
+#: ../plugins/converter/interface.c:455
+msgid "Method:"
+msgstr ""
+
+#: ../plugins/converter/interface.c:462
+msgid "Pipe"
+msgstr ""
+
+#: ../plugins/converter/interface.c:463
+msgid "Temporary file"
+msgstr ""
+
+#: ../plugins/converter/interface.c:480
+msgid "APEv2"
+msgstr ""
+
+#: ../plugins/converter/interface.c:486
+msgid "ID3v1"
+msgstr ""
+
+#: ../plugins/converter/interface.c:492
+msgid "OggVorbis"
+msgstr ""
+
+#: ../plugins/converter/interface.c:498
+msgid "FLAC"
+msgstr ""
+
+#: ../plugins/converter/interface.c:510
+msgid "ID3v2"
+msgstr ""
+
+#: ../plugins/converter/interface.c:520
+msgid "<b>Tag writer</b>"
+msgstr ""
+
+#: ../plugins/converter/interface.c:606
+msgid "DSP Preset Editor"
+msgstr ""
+
+#: ../plugins/converter/interface.c:629
+msgid "Untitled DSP Preset"
 msgstr ""
