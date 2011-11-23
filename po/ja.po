@@ -12,6 +12,7 @@ msgstr ""
 "PO-Revision-Date: 2010-06-29 17:37+0900\n"
 "Last-Translator: Hironao Komatsu <hironao@users.sourceforge.net>\n"
 "Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1123,3 +1124,201 @@ msgid ""
 msgstr ""
 "ストリームの書き出し時にエラー。出力ストリームは破損もしくは欠損している可能"
 "性があります。"
+
+#, fuzzy
+#~ msgid "DeaDBeeF Translators"
+#~ msgstr "DeaDBeeF は現在演奏中です"
+
+#, fuzzy
+#~ msgid "Presets"
+#~ msgstr "イコライザ設定を保存"
+
+#, fuzzy
+#~ msgid "Track number"
+#~ msgstr "ファイル番号"
+
+#, fuzzy
+#~ msgid "Shuffle tracks"
+#~ msgstr "シャッフル"
+
+#, fuzzy
+#~ msgid "Shuffle albums"
+#~ msgstr "シャッフル"
+
+#, fuzzy
+#~ msgid "Track Number"
+#~ msgstr "トラック番号"
+
+#, fuzzy
+#~ msgid "Replaygain preamp:"
+#~ msgstr "リプレイゲインのモード:"
+
+#, fuzzy
+#~ msgid "Playback"
+#~ msgstr "再生(_P)"
+
+#, fuzzy
+#~ msgid "DSP Chain Preset"
+#~ msgstr "イコライザ設定を保存"
+
+#, fuzzy
+#~ msgid "Format"
+#~ msgstr "書式:"
+
+#, fuzzy
+#~ msgid "Select DSP Plugin"
+#~ msgstr "選択"
+
+#, fuzzy
+#~ msgid "Plugin"
+#~ msgstr "プラグイン"
+
+#, fuzzy
+#~ msgid "Tag Writer Settings"
+#~ msgstr "タグ書き出し"
+
+#, fuzzy
+#~ msgid "Configure %s"
+#~ msgstr "設定"
+
+#, fuzzy
+#~ msgid "Really remove selected field?"
+#~ msgstr "本当にウィンドウを閉じますか？"
+
+#, fuzzy
+#~ msgid "Add field"
+#~ msgstr "ファイルを追加"
+
+#, fuzzy
+#~ msgid "Remove field"
+#~ msgstr "取り除く"
+
+#, fuzzy
+#~ msgid ""
+#~ "Item Index\n"
+#~ "Playing\n"
+#~ "Album Art\n"
+#~ "Artist - Album\n"
+#~ "Artist\n"
+#~ "Album\n"
+#~ "Title\n"
+#~ "Duration\n"
+#~ "Track Number\n"
+#~ "Band / Album Artist\n"
+#~ "Custom"
+#~ msgstr ""
+#~ "ファイル番号\n"
+#~ "演奏中\n"
+#~ "アルバムアート\n"
+#~ "アーティスト - アルバム\n"
+#~ "アーティスト\n"
+#~ "アルバム\n"
+#~ "タイトル\n"
+#~ "長さ\n"
+#~ "トラック\n"
+#~ "バンド / アルバムのアーティスト\n"
+#~ "カスタム"
+
+#, fuzzy
+#~ msgid "Enable scrobbler"
+#~ msgstr "プロクシサーバを有効にする"
+
+#, fuzzy
+#~ msgid "Disable nowplaying"
+#~ msgstr "DeaDBeeF は現在演奏中です"
+
+#, fuzzy
+#~ msgid "Username"
+#~ msgstr "プロクシのユーザ名:"
+
+#, fuzzy
+#~ msgid "Password"
+#~ msgstr "プロクシのパスワード:"
+
+#, fuzzy
+#~ msgid "Ask confirmation to delete files from disk"
+#~ msgstr "ファイルをディスクから削除"
+
+#, fuzzy
+#~ msgid "Show album art"
+#~ msgstr "アルバムアート"
+
+#, fuzzy
+#~ msgid "Track Title"
+#~ msgstr "トラック番号"
+
+#, fuzzy
+#~ msgid "Total Tracks"
+#~ msgstr "タイトル / トラックのアーティスト"
+
+#, fuzzy
+#~ msgid "Disc Number"
+#~ msgstr "ファイル番号"
+
+#, fuzzy
+#~ msgid "Location"
+#~ msgstr "場所を追加"
+
+#, fuzzy
+#~ msgid "Select folder..."
+#~ msgstr "すべて選択"
+
+#, fuzzy
+#~ msgid "Edit encoder"
+#~ msgstr "カラムの編集"
+
+#, fuzzy
+#~ msgid "Remove preset"
+#~ msgstr "イコライザ設定を保存"
+
+#, fuzzy
+#~ msgid "New DSP Preset"
+#~ msgstr "イコライザ設定を保存"
+
+#, fuzzy
+#~ msgid "Edit DSP Preset"
+#~ msgstr "イコライザ設定を保存"
+
+#, fuzzy
+#~ msgid "DSP Presets"
+#~ msgstr "イコライザ設定を保存"
+
+#, fuzzy
+#~ msgid "Output folder:"
+#~ msgstr "出力デバイス:"
+
+#, fuzzy
+#~ msgid "Output file name:"
+#~ msgstr "出力プラグイン:"
+
+#, fuzzy
+#~ msgid "DSP preset:"
+#~ msgstr "イコライザ設定を保存"
+
+#, fuzzy
+#~ msgid "Overwrite"
+#~ msgstr "デフォルトを上書きする"
+
+#, fuzzy
+#~ msgid "Edit Encoder Preset"
+#~ msgstr "イコライザ設定の読み込み"
+
+#, fuzzy
+#~ msgid "Output file extension:"
+#~ msgstr "出力プラグイン:"
+
+#, fuzzy
+#~ msgid "APEv2"
+#~ msgstr "APEv2 の書き出し"
+
+#, fuzzy
+#~ msgid "ID3v1"
+#~ msgstr "ID3v1 の書き出し"
+
+#, fuzzy
+#~ msgid "ID3v2"
+#~ msgstr "ID3v2 の書き出し"
+
+#, fuzzy
+#~ msgid "<b>Tag writer</b>"
+#~ msgstr "タグ書き出し"

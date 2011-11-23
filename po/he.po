@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-10 15:02+0200\n"
-"PO-Revision-Date: 2011-03-08 14:22+0200\n"
+"PO-Revision-Date: 2011-11-13 15:37+0200\n"
 "Last-Translator: Yaron <sh.yaron@gmail.com>\n"
 "Language-Team: Gezer <sh.yaron@gmail.com>\n"
 "Language: he\n"
@@ -90,7 +90,7 @@ msgstr "שמירת תצורת האקוולייזר של DeaDBeeF"
 
 #: ../plugins/gtkui/eq.c:120
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
-msgstr "קובץ תצורת אקוולייזר של DeaDBeeF ‏(*.ddbeq)"
+msgstr "קובץ תצורת אקוולייזר של DeaDBeeF ‏(‎*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:151
 msgid "Load DeaDBeeF EQ Preset..."
@@ -98,7 +98,7 @@ msgstr "טעינת תצורת אקוולייזר של DeaDBeeF..."
 
 #: ../plugins/gtkui/eq.c:155
 msgid "DeaDBeeF EQ presets (*.ddbeq)"
-msgstr "תצורות אקוולייזר של DeaDBeeF"
+msgstr "תצורות אקוולייזר של DeaDBeeF ‏(‎*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:214
 msgid "Import Foobar2000 EQ Preset..."
@@ -106,7 +106,7 @@ msgstr "ייבוא קובץ תצורת אקוולייזר של Foobar2000..."
 
 #: ../plugins/gtkui/eq.c:218
 msgid "Foobar2000 EQ presets (*.feq)"
-msgstr "תצורות אקוולייזר של Foobar2000‏ (*.feq)"
+msgstr "תצורות אקוולייזר של Foobar2000‏ (‎*.feq)"
 
 #: ../plugins/gtkui/eq.c:292
 msgid "Enable"
@@ -162,7 +162,7 @@ msgstr "סטריאו"
 #: ../plugins/gtkui/gtkui.c:183
 #, c-format
 msgid "| %4d kbps "
-msgstr "| %4d קסל\"ש "
+msgstr "| %4d קסל״ש "
 
 #: ../plugins/gtkui/gtkui.c:189
 msgid "Paused | "
@@ -313,8 +313,9 @@ msgid "Linear"
 msgstr "קווי"
 
 #: ../plugins/gtkui/interface.c:332 ../plugins/gtkui/deadbeef.glade.h:121
+#, fuzzy
 msgid "Shuffle"
-msgstr "ערבול"
+msgstr "ערבול בין הרצועות"
 
 #: ../plugins/gtkui/interface.c:338 ../plugins/gtkui/deadbeef.glade.h:106
 msgid "Random"
@@ -453,8 +454,9 @@ msgid "Type:"
 msgstr "סוג:"
 
 #: ../plugins/gtkui/interface.c:1402
+#, fuzzy
 msgid "File number"
-msgstr "מספר הקובץ"
+msgstr "תקליטור מס׳"
 
 #. create default set of columns
 #: ../plugins/gtkui/interface.c:1403 ../plugins/gtkui/mainplaylist.c:300
@@ -765,15 +767,16 @@ msgstr "2.4"
 
 #: ../plugins/gtkui/interface.c:2254 ../plugins/gtkui/deadbeef.glade.h:68
 msgid "ID3v1 character encoding (default is iso8859-1)"
-msgstr "קידוד התווים של ID3v1 (ברירת המחדל היא iso8859-1)"
+msgstr "קידוד התווים של ID3v1 (בררת המחדל היא iso8859-1)"
 
 #: ../plugins/gtkui/interface.c:2291 ../plugins/gtkui/deadbeef.glade.h:144
 msgid "Write ID3v2.4"
 msgstr "כתיבת ID3v2.4"
 
 #: ../plugins/gtkui/interface.c:2360 ../plugins/gtkui/deadbeef.glade.h:131
+#, fuzzy
 msgid "Tag writer"
-msgstr "כותב תגיות"
+msgstr "<b>כותב תגיות</b>"
 
 #: ../plugins/gtkui/interface.c:2391 ../plugins/gtkui/deadbeef.glade.h:24
 msgid "Description:"
@@ -835,8 +838,9 @@ msgid "Track No"
 msgstr "רצועה מספר"
 
 #: ../plugins/gtkui/mainplaylist.c:303 ../plugins/gtkui/search.c:436
+#, fuzzy
 msgid "Title / Track Artist"
-msgstr "אמן הרצועה / כותרת"
+msgstr "סך כל הרצועות"
 
 #: ../plugins/gtkui/mainplaylist.c:304 ../plugins/gtkui/search.c:437
 #: ../plugins/gtkui/trkproperties.c:175
@@ -975,8 +979,9 @@ msgid "Value"
 msgstr "ערך"
 
 #: ../plugins/notify/notify.c:138
+#, fuzzy
 msgid "DeaDBeeF now playing"
-msgstr "DeaDBeeF מנגן כעת"
+msgstr "נטרול „מתנגן כעת“"
 
 #: ../main.c:89
 #, c-format
@@ -1065,7 +1070,7 @@ msgstr ""
 
 #: ../playlist.c:377 ../playlist.c:2289
 msgid "Default"
-msgstr "ברירת מחדל"
+msgstr "בררת מחדל"
 
 #: ../plugins/gtkui/deadbeef.glade.h:1
 msgid ""
@@ -1082,9 +1087,11 @@ msgid ""
 "Album"
 msgstr ""
 "נטרול\n"
-"רצועהאלבום"
+"רצועה\n"
+"אלבום"
 
 #: ../plugins/gtkui/deadbeef.glade.h:35
+#, fuzzy
 msgid ""
 "File number\n"
 "Playing\n"
@@ -1098,8 +1105,16 @@ msgid ""
 "Band / Album Artist\n"
 "Custom"
 msgstr ""
-"מספר הקובץ\n"
-"מתנגןעטיפת האלבוםאמן - אלבוםאמןאלבוםכותרתמשךרצועהלהקה / אמן האלבוםמותאם אישית"
+"אינדקס הפריט\n"
+"מתנגן\n"
+"עטיפת האלבום\n"
+"אמן - אלבום\n"
+"אמן\n"
+"אלבום\n"
+"כותרת\n"
+"משך\n"
+"רצועהלהקה / אמן האלבום\n"
+"מותאם אישית"
 
 #: ../plugins/gtkui/deadbeef.glade.h:71
 msgid ""
@@ -1181,3 +1196,539 @@ msgstr ""
 
 #~ msgid "Sound (adv.)"
 #~ msgstr "שמע (מתקדם)"
+
+#~ msgid "help.txt"
+#~ msgstr "help.txt"
+
+#~ msgid "DeaDBeeF Translators"
+#~ msgstr "מתרגמי DeaDBeeF"
+
+#~ msgid "Presets"
+#~ msgstr "תצורות"
+
+#~ msgid "Sort By"
+#~ msgstr "סידור לפי"
+
+#~ msgid "Track number"
+#~ msgstr "מספר הרצועה"
+
+#~ msgid "Date"
+#~ msgstr "תאריך"
+
+#~ msgid "Shuffle albums"
+#~ msgstr "ערבול בין האלבומים"
+
+#~ msgid "Jump to current track"
+#~ msgstr "מעבר לרצועה הנוכחית"
+
+#~ msgid "_GPLv2"
+#~ msgstr "_GPLv2"
+
+#~ msgid "_LGPLv2.1"
+#~ msgstr "_LGPLv2.1"
+
+#~ msgid "_Translators"
+#~ msgstr "מ_תרגמים"
+
+#~ msgid "Settings"
+#~ msgstr "הגדרות"
+
+#~ msgid "Item Index"
+#~ msgstr "אינדקס הפריט"
+
+#~ msgid "Track Number"
+#~ msgstr "רצועה מספר"
+
+#~ msgid "Always convert 8 bit audio to 16 bit"
+#~ msgstr "תמיד להמיר שמע של 8 סיביות ל־16 סיביות"
+
+#~ msgid "Replaygain preamp:"
+#~ msgstr "הגברת נגינה חוזרת:"
+
+#~ msgid "-12 dB"
+#~ msgstr "-12 dB"
+
+#~ msgid "+12 dB"
+#~ msgstr "+12 dB"
+
+#~ msgid "Don't add from archives when adding folders"
+#~ msgstr "אין להוסיף מארכיונים בעת הוספת תיקיות"
+
+#~ msgid "DSP Chain Preset"
+#~ msgstr "תצורת שרשרת DSP"
+
+#~ msgid "_Load"
+#~ msgstr "_טעינה"
+
+#~ msgid "DSP"
+#~ msgstr "DSP"
+
+#~ msgid "Auto-name playlists when adding a single folder"
+#~ msgstr "מתן שם אוטומטית לרשימות השמעה בעת הוספת תיקייה בודדת"
+
+#~ msgid "Interface refresh rate (times per second):"
+#~ msgstr "קצב רענון המנשק (פעמים בשנייה):"
+
+#~ msgid "GUI Plugin (changing requires restart):"
+#~ msgstr "תוסף מנשק משתמש (שינויים דורשים הפעלה מחדש):"
+
+#~ msgid "Version: "
+#~ msgstr "גרסה:"
+
+#~ msgid "Copyright"
+#~ msgstr "זכויות יוצרים"
+
+#~ msgid "Sort by..."
+#~ msgstr "סידור לפי..."
+
+#~ msgid "Format"
+#~ msgstr "מבנה"
+
+#~ msgid "Ascending"
+#~ msgstr "סדר עולה"
+
+#~ msgid "Descending"
+#~ msgstr "סדר יורד"
+
+#~ msgid "Select DSP Plugin"
+#~ msgstr "בחירת תוסף DSP"
+
+#~ msgid "Plugin"
+#~ msgstr "תוסף"
+
+#~ msgid "Tag Writer Settings"
+#~ msgstr "הגדרות כותב התגיות"
+
+#~ msgid "Configure %s"
+#~ msgstr "הגדרת %s"
+
+#~ msgid "[Multiple values] "
+#~ msgstr "[ערכים מרובים]"
+
+#~ msgid "Writing tags..."
+#~ msgstr "התגיות נכתבות..."
+
+#~ msgid "Name:"
+#~ msgstr "שם:"
+
+#~ msgid "Field names must not start with : or _"
+#~ msgstr "שמות השדות לא יכולים להתחיל בתווים : או _"
+
+#~ msgid "Cannot add field"
+#~ msgstr "לא ניתן להוסיף שדה"
+
+#~ msgid "Field with such name already exists, please try different name."
+#~ msgstr "שדה בשם זה כבר קיים, נא לנסות שם אחר."
+
+#~ msgid "Really remove selected field?"
+#~ msgstr "האם אכן להסיר את השדה הנבחר?"
+
+#~ msgid "Add field"
+#~ msgstr "הוספת שדה"
+
+#~ msgid "Remove field"
+#~ msgstr "הסרת שדה"
+
+#~ msgid "   --toggle-pause     Toggle pause\n"
+#~ msgstr "   --toggle-pause     Toggle pause\n"
+
+#~ msgid ""
+#~ "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
+#~ msgstr ""
+#~ "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
+
+#~ msgid ""
+#~ "                      for more info, see http://sourceforge.net/apps/"
+#~ "mediawiki/deadbeef/index.php?title=Title_Formatting\n"
+#~ msgstr ""
+#~ "                      for more info, see http://sourceforge.net/apps/"
+#~ "mediawiki/deadbeef/index.php?title=Title_Formatting\n"
+
+#~ msgid ""
+#~ "Ascending\n"
+#~ "Descending"
+#~ msgstr ""
+#~ "סדר עולה\n"
+#~ "סדר יורד"
+
+#~ msgid "Lookup on Last.fm"
+#~ msgstr "חיפוש ב־Last.fm"
+
+#~ msgid "Use ALSA resampling"
+#~ msgstr "שימוש בדגימה חוזרת של ALSA"
+
+#~ msgid "Release device while stopped"
+#~ msgstr "שחרור ההתקן בעת עצירה"
+
+#~ msgid "Preferred buffer size"
+#~ msgstr "גודל האוגר המועדף"
+
+#~ msgid "Preferred period size"
+#~ msgstr "משך הזמן המועדף"
+
+#~ msgid "Enable scrobbler"
+#~ msgstr "הפעלת Scrobbler"
+
+#~ msgid "Username"
+#~ msgstr "שם משתמש"
+
+#~ msgid "Password"
+#~ msgstr "ססמה"
+
+#~ msgid "Scrobble URL"
+#~ msgstr "הכתובת של Scrobble"
+
+#~ msgid "Device file"
+#~ msgstr "קובץ ההתקן"
+
+#~ msgid "OSS4 samplerate bug workaround"
+#~ msgstr "מעקף לתקלת קצב הדגימה ב־OSS4"
+
+#~ msgid "Cache update period (hr)"
+#~ msgstr "ההפרש בין מועדי עדכון המטמון (שעות)"
+
+#~ msgid "Fetch from embedded tags"
+#~ msgstr "קבלה מתגיות מובנות"
+
+#~ msgid "Fetch from local folder"
+#~ msgstr "קבלה מתיקייה מקומית"
+
+#~ msgid "Local cover file mask"
+#~ msgstr "מסכת קבצים של עטיפות מקומיות"
+
+#~ msgid "Fetch from last.fm"
+#~ msgstr "קבלה מ־Last.fm"
+
+#~ msgid "Fetch from albumart.org"
+#~ msgstr "קבלה מ־albumart.org"
+
+#~ msgid "Scale artwork towards longer side"
+#~ msgstr "מתיחת העטיפה לעבר הצד הארוך יותר"
+
+#~ msgid "Use CDDB/FreeDB"
+#~ msgstr "שימוש ב־CDDB/FreeDB"
+
+#~ msgid "Prefer CD-Text over CDDB"
+#~ msgstr "העדפת CD-Text על פני CDDB"
+
+#~ msgid "CDDB url (e.g. 'freedb.org')"
+#~ msgstr "כתובת ה־CDDB (לדוגמה: 'freedb.org')"
+
+#~ msgid "CDDB port number (e.g. '888')"
+#~ msgstr "מס׳ הפתחה של ה־CDDB (לדוגמה: '888')"
+
+#~ msgid "Prefer CDDB protocol over HTTP"
+#~ msgstr "העדפת הפרוטוקול CDDB על פני HTTP"
+
+#~ msgid "Enable NRG image support"
+#~ msgstr "הפעלת תמיכה בתמונות NRG"
+
+#~ msgid "Resampling quality (0..2, higher is better)"
+#~ msgstr "איכות הדגימה החוזרת (0..2, גבוה יותר - איכותי יותר)"
+
+#~ msgid "Max song length (in minutes)"
+#~ msgstr "אורך השיר המרבי (בדקות)"
+
+#~ msgid "Ask confirmation to delete files from disk"
+#~ msgstr "בקשת אישור למחיקת קבצים מהכונן"
+
+#~ msgid "Status icon volume control sensitivity"
+#~ msgstr "רגישות בקרת העצמה דרך סמל המצב"
+
+#~ msgid "Custom status icon"
+#~ msgstr "סמל מצב מותאם אישית"
+
+# אם המחרוזת הזאת מופיעה במסוף והתבלבלתי נא להעתיק את המחרוזת המקורית לתרגום
+#~ msgid "Run gtk_init with --sync (debug mode)"
+#~ msgstr "הפעלת gtk_init עם הפרמטר ‎--sync (מצב ניפוי שגיאות)"
+
+#~ msgid "Add separators between plugin context menu items"
+#~ msgstr "הוספת הפרדה בין פריטי תפריט ההקשר של התוסף"
+
+#~ msgid "Notification title format"
+#~ msgstr "מבנה כותרת ההתרעה"
+
+#~ msgid "Notification content format"
+#~ msgstr "מבנה תוכן ההתרעה"
+
+#~ msgid "Show album art"
+#~ msgstr "הצגת עטיפת האלבום"
+
+#~ msgid "Album art size (px)"
+#~ msgstr "גודל עטיפת האלבום (פיקסלים)"
+
+#~ msgid "PulseAudio server"
+#~ msgstr "שרת PulseAudio"
+
+#~ msgid "Samplerate"
+#~ msgstr "קצב דגימה"
+
+#~ msgid "Relative seek table path"
+#~ msgstr "נתיב טבלת חיפוש יחסי"
+
+#~ msgid "Absolute seek table path"
+#~ msgstr "נתיב טבלת חיפוש מוחלט"
+
+#~ msgid "Swap audio bytes (toggle if all you hear is static)"
+#~ msgstr "החלפת בתים של שמע (יש להחליף מצב אם שומעים רעש סטטי)"
+
+#~ msgid "Enable HVSC Songlength DB"
+#~ msgstr "הפעלת מסד נתונים של אורך שירים - HVSC"
+
+#~ msgid "Songlengths.txt (from HVSC)"
+#~ msgstr "Songlengths.txt (מהשירות HVSC)"
+
+#~ msgid "Bits per sample (8 or 16)"
+#~ msgstr "סיביות לדגימה (8 או 16)"
+
+#~ msgid "Default song length (sec)"
+#~ msgstr "אורך שיר כברירת מחדל (שניות)"
+
+#~ msgid "Timidity++ bank configuration file"
+#~ msgstr "קובץ מאגר התצורה של Timidity++‎"
+
+#~ msgid "Track Title"
+#~ msgstr "כותרת הרצועה"
+
+#~ msgid "Performer"
+#~ msgstr "מבצע/ת"
+
+#~ msgid "Genre"
+#~ msgstr "סגנון"
+
+#~ msgid "Composer"
+#~ msgstr "מלחין/ה"
+
+#~ msgid "Comment"
+#~ msgstr "הערה"
+
+#~ msgid "Encoder / Vendor"
+#~ msgstr "קידוד / יצור"
+
+#~ msgid "Location"
+#~ msgstr "מיקום"
+
+#~ msgid "Subtrack Index"
+#~ msgstr "אינדקס תת־הרצועה"
+
+#~ msgid "File Extensions (separate with ';')"
+#~ msgstr "סיומות קבצים (יש להפריד ב־';')"
+
+#~ msgid "Convert"
+#~ msgstr "המרה"
+
+#~ msgid "Target Samplerate"
+#~ msgstr "קצב דגימת היעד"
+
+#~ msgid "Quality / Algorythm"
+#~ msgstr "איכות / אלגוריתם"
+
+#~ msgid "Automatic Samplerate (overrides Target Samplerate)"
+#~ msgstr "קצב דגימה אוטומטי (דורס את קצב דגימת היעד)"
+
+#~ msgid "The file already exists. Overwrite?"
+#~ msgstr "הקובץ כבר קיים. האם לשכתב?"
+
+#~ msgid "Converter warning"
+#~ msgstr "אזהרה מהממיר"
+
+#~ msgid "Please select encoder"
+#~ msgstr "נא לבחור מצפין"
+
+#~ msgid "Converter error"
+#~ msgstr "שגיאת ממיר"
+
+#~ msgid "Converting..."
+#~ msgstr "בהמרה..."
+
+#~ msgid "Select folder..."
+#~ msgstr "בחירת תיקייה..."
+
+#~ msgid "Failed to save encoder preset"
+#~ msgstr "אירע כשל בשמירת ערכת ההצפנה"
+
+#~ msgid ""
+#~ "Check preset folder permissions, try to pick different title, or free up "
+#~ "some disk space"
+#~ msgstr ""
+#~ "נא לבדוק את הרשאות תיקיית התצורות, יש לנסות לבחור בכותרת אחרת או לפנות "
+#~ "קצת מקום בכונן"
+
+#~ msgid "Preset with the same name already exists. Try to pick another title."
+#~ msgstr "תצורה באותו השם כבר קיימת. נא לנסות לבחור בשם אחר."
+
+#~ msgid "Error"
+#~ msgstr "שגיאה"
+
+#~ msgid "Add new encoder"
+#~ msgstr "הוספת מצפין חדש"
+
+#~ msgid "Edit encoder"
+#~ msgstr "עריכת מצפין"
+
+#~ msgid "Remove preset"
+#~ msgstr "הסרת תצורה"
+
+#~ msgid "This action will delete the selected preset. Are you sure?"
+#~ msgstr "הפעולה תמחק את התצורה הנבחרת. האם לעשות זאת?"
+
+#~ msgid "Encoders"
+#~ msgstr "מצפינים"
+
+#~ msgid "Add plugin to DSP chain"
+#~ msgstr "הוספת התוסף לשרשרת ה־DSP"
+
+#~ msgid "Failed to save DSP preset"
+#~ msgstr "שמירת תצורת ה־DSP נכשלה"
+
+#~ msgid "New DSP Preset"
+#~ msgstr "תצורת DSP חדשה"
+
+#~ msgid "Edit DSP Preset"
+#~ msgstr "עריכת תצורת DSP"
+
+#~ msgid "DSP Presets"
+#~ msgstr "תצורות DSP"
+
+#~ msgid "Output folder:"
+#~ msgstr "תיקיית הפלט:"
+
+#~ msgid "Output file name:"
+#~ msgstr "שם קובץ הפלט:"
+
+#~ msgid ""
+#~ "Extension (e.g. .mp3) will be appended automatically.\n"
+#~ "Leave the field empty for default (%a - %t)."
+#~ msgstr ""
+#~ "סיומות (לדוגמה: .mp3) יתווספו אוטומטית.\n"
+#~ "יש להשאיר את השדה ריק לקבלת שם בררת המחדל ‎(%a - %t)‎."
+
+#~ msgid "Encoder:"
+#~ msgstr "מצפין:"
+
+#~ msgid "DSP preset:"
+#~ msgstr "תצורת DSP:"
+
+#~ msgid "Number of threads:"
+#~ msgstr "מספר התהליכים:"
+
+#~ msgid "Output sample format:"
+#~ msgstr "מבנה דגימת הפלט:"
+
+#~ msgid "Keep source format"
+#~ msgstr "שמירה על מבנה המקור"
+
+#~ msgid "8 bit signed int"
+#~ msgstr "מספר שלם עם סימן ב־8 סיביות"
+
+#~ msgid "16 bit signed int"
+#~ msgstr "מספר שלם עם סימן ב־16 סיביות"
+
+#~ msgid "24 bit signed int"
+#~ msgstr "מספר שלם עם סימן ב־24 סיביות"
+
+#~ msgid "32 bit signed int"
+#~ msgstr "מספר שלם עם סימן ב־32 סיביות"
+
+#~ msgid "32 bit float"
+#~ msgstr "מספר עם נקודה צפה ב־32 סיביות"
+
+#~ msgid "When file exists:"
+#~ msgstr "כאשר הקובץ קיים:"
+
+#~ msgid "Prompt"
+#~ msgstr "הצגת בקשה"
+
+#~ msgid "Overwrite"
+#~ msgstr "שכתוב"
+
+#~ msgid "Preserve folder structure, starting from:"
+#~ msgstr "שמירת מבנה התיקיות, החל מ־:"
+
+#~ msgid "Edit Encoder Preset"
+#~ msgstr "עריכת תצורת המצפין"
+
+#~ msgid "Untitled Encoder"
+#~ msgstr "מצפין ללא שם"
+
+#~ msgid "Output file extension:"
+#~ msgstr "סיומת קובץ הפלט:"
+
+#~ msgid "E.g. mp3"
+#~ msgstr "לדוגמה: mp3"
+
+#~ msgid "Command line:"
+#~ msgstr "שורת הפקודה:"
+
+#~ msgid ""
+#~ "Example: lame - %o\n"
+#~ "%i for input file, %o for output file, - for stdin"
+#~ msgstr ""
+#~ "לדוגמה: lame - %o\n"
+#~ "%i לציון קובץ קלט, %o לציון קובץ קלט, - עבור הקלט מ־stdin"
+
+#~ msgid ""
+#~ "<small>%o - output file name\n"
+#~ "%i - temporary input file name</small>"
+#~ msgstr ""
+#~ "<small>%o - שם קובץ הפלט\n"
+#~ "%i - השם הזמני לקובץ הקלט</small>"
+
+#~ msgid "Method:"
+#~ msgstr "שיטה:"
+
+#~ msgid "Pipe"
+#~ msgstr "שרשור"
+
+#~ msgid "Temporary file"
+#~ msgstr "קובץ זמני"
+
+#~ msgid "APEv2"
+#~ msgstr "APEv2"
+
+#~ msgid "ID3v1"
+#~ msgstr "ID3v1"
+
+#~ msgid "OggVorbis"
+#~ msgstr "OggVorbis"
+
+#~ msgid "FLAC"
+#~ msgstr "FLAC"
+
+#~ msgid "ID3v2"
+#~ msgstr "ID3v2"
+
+#~ msgid "DSP Preset Editor"
+#~ msgstr "ערוך תצורות DSP"
+
+#~ msgid "Untitled DSP Preset"
+#~ msgstr "תצורת DSP ללא שם"
+
+#~ msgid ""
+#~ "Keep source format\n"
+#~ "8 bit signed int\n"
+#~ "16 bit signed int\n"
+#~ "24 bit signed int\n"
+#~ "32 bit signed int\n"
+#~ "32 bit float"
+#~ msgstr ""
+#~ "שמירה על מבנה המקור\n"
+#~ "מספר שלם עם סימן ב־8 סיביות\n"
+#~ "מספר שלם עם סימן ב־16 סיביות\n"
+#~ "מספר שלם עם סימן ב־24 סיביות\n"
+#~ "מספר שלם עם סימן ב־32 סיביות\n"
+#~ "מספר עם נקודה צפה ב־32 סיביות"
+
+#~ msgid ""
+#~ "Pipe\n"
+#~ "Temporary file"
+#~ msgstr ""
+#~ "שרשור\n"
+#~ "קובץ זמני"
+
+#~ msgid ""
+#~ "Prompt\n"
+#~ "Overwrite"
+#~ msgstr ""
+#~ "הצגת בקשה\n"
+#~ "שכתוב"
