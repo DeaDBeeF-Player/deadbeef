@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lxde.deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2011-11-23 18:31+0200\n"
+"PO-Revision-Date: 2011-11-23 18:50+0200\n"
 "Last-Translator: mbouzada <mbouzada@gmail.com>\n"
 "Language-Team: Galician <proxecto@trasno.net>\n"
 "Language: gl\n"
@@ -1554,162 +1554,155 @@ msgstr "Seleccionar cartafol"
 
 #: ../plugins/converter/convgui.c:635
 msgid "Failed to save encoder preset"
-msgstr ""
+msgstr "Produciuse un fallo ao gardar os axustes do codificador"
 
 #: ../plugins/converter/convgui.c:637 ../plugins/converter/convgui.c:1035
 msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
 msgstr ""
+"Comprobe os permisos predeterminados do cartafol, tente escoller outro "
+"título, ou liberar algo de espazo no disco"
 
 #: ../plugins/converter/convgui.c:637 ../plugins/converter/convgui.c:1035
 msgid "Preset with the same name already exists. Try to pick another title."
-msgstr ""
+msgstr "Xa existe un axuste con este título. Tente escoller outro título."
 
 #: ../plugins/converter/convgui.c:638 ../plugins/converter/convgui.c:1036
 msgid "Error"
-msgstr ""
+msgstr "Erro"
 
 #: ../plugins/converter/convgui.c:692
 msgid "Add new encoder"
-msgstr ""
+msgstr "Engadir un novo codificador"
 
 #: ../plugins/converter/convgui.c:724
-#, fuzzy
 msgid "Edit encoder"
-msgstr "Editar columna"
+msgstr "Editar o codificador"
 
 #: ../plugins/converter/convgui.c:756 ../plugins/converter/convgui.c:1133
-#, fuzzy
 msgid "Remove preset"
-msgstr "Gardar axustes"
+msgstr "Retirar o axuste"
 
 #: ../plugins/converter/convgui.c:758 ../plugins/converter/convgui.c:1135
 msgid "This action will delete the selected preset. Are you sure?"
-msgstr ""
+msgstr "Esta acción elimina o axuste seleccionado. Está vostede seguro?"
 
 #: ../plugins/converter/convgui.c:782
 msgid "Encoders"
-msgstr ""
+msgstr "Codificadores"
 
 #: ../plugins/converter/convgui.c:838 ../plugins/gtkui/dspconfig.c:183
 msgid "Add plugin to DSP chain"
-msgstr ""
+msgstr "Engadir un «engadido» á cadea DSP"
 
 #: ../plugins/converter/convgui.c:1034
 msgid "Failed to save DSP preset"
-msgstr ""
+msgstr "Non foi posíbel gardar o axuste DSP"
 
 #: ../plugins/converter/convgui.c:1098
-#, fuzzy
 msgid "New DSP Preset"
-msgstr "Gardar axustes"
+msgstr "Novo axuste DSP"
 
 #: ../plugins/converter/convgui.c:1183
-#, fuzzy
 msgid "Edit DSP Preset"
-msgstr "Gardar axustes"
+msgstr "Editar o axuste DSP"
 
 #: ../plugins/converter/convgui.c:1203
-#, fuzzy
 msgid "DSP Presets"
-msgstr "Gardar axustes"
+msgstr "Axustes DSP"
 
 #: ../plugins/converter/interface.c:94
-#, fuzzy
 msgid "Output folder:"
-msgstr "Dispositivo de saída:"
+msgstr "Cartafol de saída:"
 
 #: ../plugins/converter/interface.c:115
-#, fuzzy
 msgid "Output file name:"
-msgstr "Engadido de saída:"
+msgstr "Nome do ficheiro de saída:"
 
 #: ../plugins/converter/interface.c:126
 msgid ""
 "Extension (e.g. .mp3) will be appended automatically.\n"
 "Leave the field empty for default (%a - %t)."
 msgstr ""
+"A extensión (p.ex. mp3) engadirase automaticamente.\n"
+"Deixar o campo baleiro de xeito predeterminado (%a -%t)."
 
 #: ../plugins/converter/interface.c:139
 msgid "Encoder:"
-msgstr ""
+msgstr "Codificador"
 
 #: ../plugins/converter/interface.c:163
-#, fuzzy
 msgid "DSP preset:"
-msgstr "Gardar axustes"
+msgstr "Axuste DSP"
 
 #: ../plugins/converter/interface.c:186
 msgid "Number of threads:"
-msgstr ""
+msgstr "Número de fíos:"
 
 #: ../plugins/converter/interface.c:199
 msgid "Output sample format:"
-msgstr ""
+msgstr "Formato da mostra de saída"
 
 #: ../plugins/converter/interface.c:206
 msgid "Keep source format"
-msgstr ""
+msgstr "Manter o formato da orixe"
 
 #: ../plugins/converter/interface.c:207
 msgid "8 bit signed int"
-msgstr ""
+msgstr "8 bit asinados int"
 
 #: ../plugins/converter/interface.c:208
 msgid "16 bit signed int"
-msgstr ""
+msgstr "16 bit asinados int"
 
 #: ../plugins/converter/interface.c:209
 msgid "24 bit signed int"
-msgstr ""
+msgstr "24 bit asinados int"
 
 #: ../plugins/converter/interface.c:210
 msgid "32 bit signed int"
-msgstr ""
+msgstr "32 bit asinados int"
 
 #: ../plugins/converter/interface.c:211
 msgid "32 bit float"
-msgstr ""
+msgstr "32 bit flotantes"
 
 #: ../plugins/converter/interface.c:217
 msgid "When file exists:"
-msgstr ""
+msgstr "Cando o ficheiro xa existe:"
 
 #: ../plugins/converter/interface.c:224
 msgid "Prompt"
-msgstr ""
+msgstr "Preguntar"
 
 #: ../plugins/converter/interface.c:225
-#, fuzzy
 msgid "Overwrite"
-msgstr "Cambiar"
+msgstr "Sobrescribir"
 
 #: ../plugins/converter/interface.c:227
 msgid "Preserve folder structure, starting from:"
-msgstr ""
+msgstr "Preservar a estrutura de cartafoles, a partir de:"
 
 #: ../plugins/converter/interface.c:379
-#, fuzzy
 msgid "Edit Encoder Preset"
-msgstr "Cargar axustes"
+msgstr "Editar os axustes do codificador"
 
 #: ../plugins/converter/interface.c:402
 msgid "Untitled Encoder"
-msgstr ""
+msgstr "Codificador sen título"
 
 #: ../plugins/converter/interface.c:410
-#, fuzzy
 msgid "Output file extension:"
-msgstr "Engadido de saída:"
+msgstr "Extensión do ficheiro de saída:"
 
 #: ../plugins/converter/interface.c:417
 msgid "E.g. mp3"
-msgstr ""
+msgstr "P.ex. mp3"
 
 #: ../plugins/converter/interface.c:425
 msgid "Command line:"
-msgstr ""
+msgstr "Liña de ordes:"
 
 #: ../plugins/converter/interface.c:436
 #, c-format
@@ -1717,6 +1710,9 @@ msgid ""
 "Example: lame - %o\n"
 "%i for input file, %o for output file, - for stdin"
 msgstr ""
+"Exemplo: lame - %o\n"
+"%i para o ficheiro de entrada, %o para o ficheiro de saída, - para a entrada "
+"estándar"
 
 #: ../plugins/converter/interface.c:446
 #, c-format
@@ -1724,54 +1720,52 @@ msgid ""
 "<small>%o - output file name\n"
 "%i - temporary input file name</small>"
 msgstr ""
+"<small>%o - nome do ficheiro de saída\n"
+"%i - nome do ficheiro temporal de entrada</small>"
 
 #: ../plugins/converter/interface.c:455
 msgid "Method:"
-msgstr ""
+msgstr "Método:"
 
 #: ../plugins/converter/interface.c:462
 msgid "Pipe"
-msgstr ""
+msgstr "Canalización"
 
 #: ../plugins/converter/interface.c:463
 msgid "Temporary file"
-msgstr ""
+msgstr "Ficheiro temporal"
 
 #: ../plugins/converter/interface.c:480
-#, fuzzy
 msgid "APEv2"
-msgstr "Escribir APEv2"
+msgstr "APEv2"
 
 #: ../plugins/converter/interface.c:486
-#, fuzzy
 msgid "ID3v1"
-msgstr "Escribir ID3v1"
+msgstr "ID3v1"
 
 #: ../plugins/converter/interface.c:492
 msgid "OggVorbis"
-msgstr ""
+msgstr "OggVorbis"
 
 #: ../plugins/converter/interface.c:498
 msgid "FLAC"
-msgstr ""
+msgstr "FLAC"
 
 #: ../plugins/converter/interface.c:510
-#, fuzzy
 msgid "ID3v2"
-msgstr "Escribir ID3v2"
+msgstr "ID3v2"
 
 #: ../plugins/converter/interface.c:520
-#, fuzzy
 msgid "<b>Tag writer</b>"
-msgstr "Editor de etiquetas"
+msgstr "<b>Escritor de etiquetas</b>"
 
 #: ../plugins/converter/interface.c:606
 msgid "DSP Preset Editor"
-msgstr ""
+msgstr "Editor de axustes DSP"
 
 #: ../plugins/converter/interface.c:629
 msgid "Untitled DSP Preset"
-msgstr ""
+msgstr "Axuste DSP sen título"
 
 #~ msgid "Save playlist as"
 #~ msgstr "Gardar a lista de reprodución como"
