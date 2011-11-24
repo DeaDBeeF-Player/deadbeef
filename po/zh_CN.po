@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2010-10-19 13:46+0200\n"
+"PO-Revision-Date: 2011-11-24 05:01+0200\n"
 "Last-Translator: Yinghua_Wang <wantinghard@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
@@ -1443,7 +1443,7 @@ msgstr "默认歌曲长度(秒)"
 #. WildMidi player plugin
 #: ../translation/extra.c:63
 msgid "Timidity++ bank configuration file"
-msgstr ""
+msgstr "Timidity++ 音色库配置文件"
 
 #: ../translation/extra.c:66
 msgid "Track Title"
