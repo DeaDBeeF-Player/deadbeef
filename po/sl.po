@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2011-11-24 17:14+0200\n"
+"PO-Revision-Date: 2011-11-24 21:43+0200\n"
 "Last-Translator: Klemen <klemen.kosir@gmx.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: sl\n"
@@ -1346,7 +1346,7 @@ msgstr ""
 #. Audio CD player
 #: ../translation/extra.c:28
 msgid "Use CDDB/FreeDB"
-msgstr ""
+msgstr "Uporabi CDDB/FreeDB"
 
 #: ../translation/extra.c:29
 msgid "Prefer CD-Text over CDDB"
@@ -1354,11 +1354,11 @@ msgstr ""
 
 #: ../translation/extra.c:30
 msgid "CDDB url (e.g. 'freedb.org')"
-msgstr ""
+msgstr "Naslov CDDB (npr. \"freedb.org\")"
 
 #: ../translation/extra.c:31
 msgid "CDDB port number (e.g. '888')"
-msgstr ""
+msgstr "Številka vrat CDDB (npr. \"888\")"
 
 #: ../translation/extra.c:32
 msgid "Prefer CDDB protocol over HTTP"
@@ -1366,17 +1366,17 @@ msgstr ""
 
 #: ../translation/extra.c:33
 msgid "Enable NRG image support"
-msgstr ""
+msgstr "Omogoči podporo za odtise NRG"
 
 #. DUMB module player plugin
 #: ../translation/extra.c:35
 msgid "Resampling quality (0..2, higher is better)"
-msgstr ""
+msgstr "Kakovost prevzorčenja (0 ... 2, večje je boljše)"
 
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:37
 msgid "Max song length (in minutes)"
-msgstr ""
+msgstr "Največja dolžina pesmi (v minutah)"
 
 #. Standard GTK2 user interface plugin
 #: ../translation/extra.c:39
@@ -1390,11 +1390,11 @@ msgstr ""
 
 #: ../translation/extra.c:41
 msgid "Custom status icon"
-msgstr ""
+msgstr "Ikona stanja po meri"
 
 #: ../translation/extra.c:42
 msgid "Run gtk_init with --sync (debug mode)"
-msgstr ""
+msgstr "Zaženi gtk_init z možnostjo --sync (način razhroščevanja)"
 
 #: ../translation/extra.c:43
 msgid "Add separators between plugin context menu items"
@@ -1410,22 +1410,21 @@ msgid "Notification content format"
 msgstr ""
 
 #: ../translation/extra.c:47
-#, fuzzy
 msgid "Show album art"
-msgstr "Naslovnica albuma"
+msgstr "Pokaži naslovnico albuma"
 
 #: ../translation/extra.c:48
 msgid "Album art size (px)"
-msgstr ""
+msgstr "Velikost naslovnice albuma (slik. točke)"
 
 #. PulseAudio output plugin
 #: ../translation/extra.c:50
 msgid "PulseAudio server"
-msgstr ""
+msgstr "Strežnik PulseAudio"
 
 #: ../translation/extra.c:52
 msgid "Samplerate"
-msgstr ""
+msgstr "Hitrost vzorčenja"
 
 #. SHN player plugin
 #: ../translation/extra.c:54
@@ -1451,11 +1450,11 @@ msgstr ""
 
 #: ../translation/extra.c:60
 msgid "Bits per sample (8 or 16)"
-msgstr ""
+msgstr "Bitov na vzorec (8 ali 16)"
 
 #: ../translation/extra.c:61
 msgid "Default song length (sec)"
-msgstr ""
+msgstr "Privzeta dolžina pesmi (v sekundah)"
 
 #. WildMidi player plugin
 #: ../translation/extra.c:63
@@ -1463,44 +1462,40 @@ msgid "Timidity++ bank configuration file"
 msgstr ""
 
 #: ../translation/extra.c:66
-#, fuzzy
 msgid "Track Title"
-msgstr "Skladba št."
+msgstr "Naslov skladbe"
 
 #: ../translation/extra.c:67
 msgid "Performer"
-msgstr ""
+msgstr "Izvajalec"
 
 #: ../translation/extra.c:72
-#, fuzzy
 msgid "Total Tracks"
-msgstr "Naslov / Izvajalec skladbe"
+msgstr "Število skladb"
 
 #: ../translation/extra.c:73
 msgid "Genre"
-msgstr ""
+msgstr "Zvrst"
 
 #: ../translation/extra.c:74
 msgid "Composer"
-msgstr ""
+msgstr "Skladatelj"
 
 #: ../translation/extra.c:75
-#, fuzzy
 msgid "Disc Number"
-msgstr "Številka datoteke"
+msgstr "Številka diska"
 
 #: ../translation/extra.c:76
 msgid "Comment"
-msgstr ""
+msgstr "Opomba"
 
 #: ../translation/extra.c:77
 msgid "Encoder / Vendor"
 msgstr ""
 
 #: ../translation/extra.c:79
-#, fuzzy
 msgid "Location"
-msgstr "Dodaj mesto"
+msgstr "Mesto"
 
 #: ../translation/extra.c:80
 msgid "Subtrack Index"
@@ -1526,7 +1521,7 @@ msgstr ""
 #. Converter GUI
 #: ../translation/extra.c:87
 msgid "Convert"
-msgstr ""
+msgstr "Pretvori"
 
 #. Resampler (Secret Rabbit Code)
 #: ../translation/extra.c:89
@@ -1535,7 +1530,7 @@ msgstr ""
 
 #: ../translation/extra.c:90
 msgid "Quality / Algorythm"
-msgstr ""
+msgstr "Kakovost / Algoritem"
 
 #: ../translation/extra.c:91
 msgid "Automatic Samplerate (overrides Target Samplerate)"
@@ -1543,7 +1538,7 @@ msgstr ""
 
 #: ../plugins/converter/convgui.c:108
 msgid "The file already exists. Overwrite?"
-msgstr ""
+msgstr "Datoteka že obstaja. Ali jo želite prepisati?"
 
 #: ../plugins/converter/convgui.c:110
 msgid "Converter warning"
@@ -1551,20 +1546,19 @@ msgstr ""
 
 #: ../plugins/converter/convgui.c:222
 msgid "Please select encoder"
-msgstr ""
+msgstr "Prosimo, izberite kodirnik"
 
 #: ../plugins/converter/convgui.c:224
 msgid "Converter error"
-msgstr ""
+msgstr "Napaka kodirnika"
 
 #: ../plugins/converter/convgui.c:248
 msgid "Converting..."
-msgstr ""
+msgstr "Pretvarjanje ..."
 
 #: ../plugins/converter/convgui.c:394 ../plugins/converter/convgui.c:496
-#, fuzzy
 msgid "Select folder..."
-msgstr "Izberi vse"
+msgstr "Izberi mapo ..."
 
 #: ../plugins/converter/convgui.c:635
 msgid "Failed to save encoder preset"
@@ -1582,16 +1576,15 @@ msgstr ""
 
 #: ../plugins/converter/convgui.c:638 ../plugins/converter/convgui.c:1036
 msgid "Error"
-msgstr ""
+msgstr "Napaka"
 
 #: ../plugins/converter/convgui.c:692
 msgid "Add new encoder"
-msgstr ""
+msgstr "Dodaj nov kodirnik"
 
 #: ../plugins/converter/convgui.c:724
-#, fuzzy
 msgid "Edit encoder"
-msgstr "Uredi stolpec"
+msgstr "Uredi kodirnik"
 
 #: ../plugins/converter/convgui.c:756 ../plugins/converter/convgui.c:1133
 #, fuzzy
@@ -1604,7 +1597,7 @@ msgstr ""
 
 #: ../plugins/converter/convgui.c:782
 msgid "Encoders"
-msgstr ""
+msgstr "Kodirniki"
 
 #: ../plugins/converter/convgui.c:838 ../plugins/gtkui/dspconfig.c:183
 msgid "Add plugin to DSP chain"
@@ -1630,14 +1623,12 @@ msgid "DSP Presets"
 msgstr "Shrani prednastavljene"
 
 #: ../plugins/converter/interface.c:94
-#, fuzzy
 msgid "Output folder:"
-msgstr "Izhodna naprava:"
+msgstr "Izhodna mapa:"
 
 #: ../plugins/converter/interface.c:115
-#, fuzzy
 msgid "Output file name:"
-msgstr "Izhodni vstavek:"
+msgstr "Ime izhodne datoteke:"
 
 #: ../plugins/converter/interface.c:126
 msgid ""
@@ -1647,7 +1638,7 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:139
 msgid "Encoder:"
-msgstr ""
+msgstr "Kodirnik:"
 
 #: ../plugins/converter/interface.c:163
 #, fuzzy
@@ -1656,7 +1647,7 @@ msgstr "Shrani prednastavljene"
 
 #: ../plugins/converter/interface.c:186
 msgid "Number of threads:"
-msgstr ""
+msgstr "Število niti:"
 
 #: ../plugins/converter/interface.c:199
 msgid "Output sample format:"
@@ -1695,7 +1686,6 @@ msgid "Prompt"
 msgstr ""
 
 #: ../plugins/converter/interface.c:225
-#, fuzzy
 msgid "Overwrite"
 msgstr "Prepiši"
 
@@ -1710,20 +1700,19 @@ msgstr "Naloži prednastavljene"
 
 #: ../plugins/converter/interface.c:402
 msgid "Untitled Encoder"
-msgstr ""
+msgstr "Neimenovan kodirnik"
 
 #: ../plugins/converter/interface.c:410
-#, fuzzy
 msgid "Output file extension:"
-msgstr "Izhodni vstavek:"
+msgstr "Pripona izhodne datoteke:"
 
 #: ../plugins/converter/interface.c:417
 msgid "E.g. mp3"
-msgstr ""
+msgstr "Npr. mp3"
 
 #: ../plugins/converter/interface.c:425
 msgid "Command line:"
-msgstr ""
+msgstr "Ukazna vrstica:"
 
 #: ../plugins/converter/interface.c:436
 #, c-format
@@ -1741,43 +1730,39 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:455
 msgid "Method:"
-msgstr ""
+msgstr "Način:"
 
 #: ../plugins/converter/interface.c:462
 msgid "Pipe"
-msgstr ""
+msgstr "Cevovod"
 
 #: ../plugins/converter/interface.c:463
 msgid "Temporary file"
-msgstr ""
+msgstr "Začasna datoteka"
 
 #: ../plugins/converter/interface.c:480
-#, fuzzy
 msgid "APEv2"
-msgstr "Zapiši APEv2"
+msgstr "APEv2"
 
 #: ../plugins/converter/interface.c:486
-#, fuzzy
 msgid "ID3v1"
-msgstr "Zapiši ID3v1"
+msgstr "ID3v1"
 
 #: ../plugins/converter/interface.c:492
 msgid "OggVorbis"
-msgstr ""
+msgstr "Ogg Vorbis"
 
 #: ../plugins/converter/interface.c:498
 msgid "FLAC"
-msgstr ""
+msgstr "FLAC"
 
 #: ../plugins/converter/interface.c:510
-#, fuzzy
 msgid "ID3v2"
-msgstr "Zapiši ID3v2"
+msgstr "ID3v2"
 
 #: ../plugins/converter/interface.c:520
-#, fuzzy
 msgid "<b>Tag writer</b>"
-msgstr "Označevanje"
+msgstr "<b>Zapisovalnik oznak</b>"
 
 #: ../plugins/converter/interface.c:606
 msgid "DSP Preset Editor"
