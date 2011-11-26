@@ -1053,6 +1053,7 @@ gtkui_thread (void *ctx) {
         gtk_window_set_icon_name (GTK_WINDOW (mainwin), "deadbeef");
     }
     else {
+        // try loading icon from $prefix/deadbeef.png (for static build)
         char iconpath[1024];
         snprintf (iconpath, sizeof (iconpath), "%s/deadbeef.png", deadbeef->get_prefix ());
         gtk_window_set_icon_from_file (GTK_WINDOW (mainwin), iconpath, NULL);
