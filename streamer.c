@@ -941,11 +941,11 @@ m3u_error:
     }
 success:
     mutex_lock (decodemutex);
+    if (fileinfo) {
+        fileinfo->plugin->free (fileinfo);
+        fileinfo = NULL;
+    }
     if (new_fileinfo) {
-        if (fileinfo) {
-            fileinfo->plugin->free (fileinfo);
-            fileinfo = NULL;
-        }
         fileinfo = new_fileinfo;
         new_fileinfo = NULL;
     }
@@ -1246,45 +1246,6 @@ streamer_thread (void *ctx) {
                 memcpy (&orig_output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
                 memcpy (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
                 formatchanged = 1;
-#if 0
-            // FIXME: this breaks gapless playback if output sampletate was
-            // changed by dsp plugin
-                memcpy (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
-                streamer_unlock (); // prevent race-condition in output plugins
-                output->setformat (&fileinfo->fmt);
-                streamer_lock ();
-                // check if the format actually changed
-                if (memcmp (&output->fmt, &prevfmt, sizeof (ddb_waveformat_t))) {
-                    // restart streaming of current track
-                    trace ("streamer: output samplerate changed from %d to %d; restarting track\n", prevfmt.samplerate, output->fmt.samplerate);
-                    mutex_lock (decodemutex);
-                    fileinfo->plugin->free (fileinfo);
-                    fileinfo = NULL;
-                    DB_decoder_t *dec = NULL;
-                    dec = plug_get_decoder_for_id (streaming_track->decoder_id);
-                    if (dec) {
-                        fileinfo = dec->open (0);
-                        if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (streaming_track)) < 0) {
-                            dec->free (fileinfo);
-                            fileinfo = NULL;
-                        }
-                    }
-                    if (!dec || !fileinfo) {
-                        // FIXME: handle error
-                    }
-                    mutex_unlock (decodemutex);
-                    bytes_until_next_song = -1;
-                    streamer_buffering = 1;
-                    streamer_reset (1);
-                    if (output->state () != OUTPUT_STATE_PLAYING) {
-                        if (0 != output->play ()) {
-                            memset (&output_format, 0, sizeof (output_format));
-                            fprintf (stderr, "streamer: failed to start playback (track transition format change)\n");
-                            streamer_set_nextsong (-2, 0);
-                        }
-                    }
-                }
-#endif
             }
             streamer_unlock ();
         }
