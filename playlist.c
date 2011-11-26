@@ -2705,9 +2705,7 @@ pl_format_elapsed (const char *ret, char *elapsed, int size) {
 // @escape_chars: list of escapable characters terminated with 0, or NULL if none
 static int
 pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s, int size, int id, const char *fmt) {
-    char dur[50];
-    char elp[50];
-    char fno[50];
+    char tmp[50];
     char tags[200];
     char dirname[PATH_MAX];
     const char *duration = NULL;
@@ -2723,8 +2721,8 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
             if (idx == -1) {
                 idx = pl_get_idx_of (it);
             }
-            snprintf (fno, sizeof (fno), "%d", idx+1);
-            text = fno;
+            snprintf (tmp, sizeof (tmp), "%d", idx+1);
+            text = tmp;
             break;
         case DB_COLUMN_PLAYING:
             UNLOCK;
@@ -2848,8 +2846,8 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                         p++;
                     }
                     if (!(*p)) {
-                        snprintf (fno, sizeof (fno), "%02d", atoi (meta));
-                        meta = fno;
+                        snprintf (tmp, sizeof (tmp), "%02d", atoi (meta));
+                        meta = tmp;
                     }
                 }
             }
@@ -2869,7 +2867,7 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                 meta = pl_find_meta_raw (it, "copyright");
             }
             else if (*fmt == 'l') {
-                const char *value = (duration = pl_format_duration (it, duration, dur, sizeof (dur)));
+                const char *value = (duration = pl_format_duration (it, duration, tmp, sizeof (tmp)));
                 while (n > 0 && *value) {
                     *s++ = *value++;
                     n--;
@@ -2877,7 +2875,7 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
             }
             else if (*fmt == 'e') {
                 // what a hack..
-                const char *value = (elapsed = pl_format_elapsed (elapsed, elp, sizeof (elp)));
+                const char *value = (elapsed = pl_format_elapsed (elapsed, tmp, sizeof (tmp)));
                 while (n > 0 && *value) {
                     *s++ = *value++;
                     n--;
@@ -2979,6 +2977,36 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                     strncpy (dirname, f, len);
                     dirname[len] = 0;
                     meta = dirname;
+                }
+            }
+            else if (*fmt == 'L') {
+                float l = 0;
+                for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+                    if (it->selected) {
+                        l += it->_duration;
+                    }
+                }
+                pl_format_time (l, tmp, sizeof(tmp));
+                meta = tmp;
+            }
+            else if (*fmt == 'X') {
+                int n = 0;
+                for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+                    if (it->selected) {
+                        n++;
+                    }
+                }
+                snprintf (tmp, sizeof (tmp), "%d", n);
+                meta = tmp;
+            }
+            else if (*fmt == 'Z') {
+                DB_fileinfo_t *c = deadbeef->streamer_get_current_fileinfo (); // FIXME: might crash streamer
+                if (c->fmt.channels <= 2) {
+                    meta = c->fmt.channels == 1 ? _("Mono") : _("Stereo");
+                }
+                else {
+                    snprintf (tmp, sizeof (tmp), "%dch Multichannel", c->fmt.channels);
+                    meta = tmp;
                 }
             }
             else if (*fmt == 'V') {
