@@ -89,10 +89,6 @@ conf_load (void) {
         while (*p && *p <= 0x20) {
             p++;
         }
-        if (!*p) {
-            fprintf (stderr, "error in config file line %d\n", line);
-            continue;
-        }
         char *value = p;
         // remove trailing trash
         while (*p && *p >= 0x20) {
