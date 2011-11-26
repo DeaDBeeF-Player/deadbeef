@@ -2,7 +2,7 @@ iconspath=@top_srcdir@/icons
 
 # icons should always be installed into gtk prefix (either gtk2 or gtk3 - doesn't
 # matter)
-GTK_PREFIX=`pkg-config --variable=prefix gtk+-2.0 || pkg-config --variable=prefix gtk+-3.0`
+GTK_PREFIX=`pkg-config --variable=prefix gtk+-2.0 || pkg-config --variable=prefix gtk+-3.0 || echo /usr`
 
 icon16dir=$(GTK_PREFIX)/share/icons/hicolor/16x16/apps
 icon16_DATA=$(iconspath)/16x16/deadbeef.png
