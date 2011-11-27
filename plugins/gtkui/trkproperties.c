@@ -482,6 +482,8 @@ write_finished_cb (void *ctx) {
     main_refresh ();
     search_refresh ();
     trkproperties_modified = 0;
+    show_track_properties_dlg ();
+
     return FALSE;
 }
 
