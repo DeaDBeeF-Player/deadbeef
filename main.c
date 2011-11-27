@@ -76,6 +76,8 @@ char dbdocdir[PATH_MAX]; // see deadbeef->get_doc_dir
 char dbplugindir[PATH_MAX]; // see deadbeef->get_plugin_dir
 char dbpixmapdir[PATH_MAX]; // see deadbeef->get_pixmap_dir
 
+char use_gui_plugin[100];
+
 // client-side commandline support
 // -1 error, program must exit with error code -1
 //  0 proceed normally as nothing happened
@@ -102,6 +104,7 @@ client_exec_command_line (const char *cmdline, int len) {
             fprintf (stdout, _("   --prev             Previous song in playlist\n"));
             fprintf (stdout, _("   --random           Random song in playlist\n"));
             fprintf (stdout, _("   --queue            Append file(s) to existing playlist\n"));
+            fprintf (stdout, _("   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\""));
             fprintf (stdout, _("   --nowplaying FMT   Print formatted track name to stdout\n"));
             fprintf (stdout, _("                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
                              "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
@@ -113,6 +116,11 @@ client_exec_command_line (const char *cmdline, int len) {
         else if (!strcmp (parg, "--version")) {
             fprintf (stdout, "DeaDBeeF " VERSION " Copyright © 2009-2011 Alexey Yakovenko\n");
             return 1;
+        }
+        else if (!strcmp (parg, "--gui")) {
+            parg += strlen (parg);
+            parg++;
+            strcpy (use_gui_plugin, parg);
         }
         parg += strlen (parg);
         parg++;
@@ -822,6 +830,10 @@ main (int argc, char *argv[]) {
     pl_init ();
     conf_init ();
     conf_load (); // required by some plugins at startup
+
+    if (use_gui_plugin[0]) {
+        conf_set_str ("gui_plugin", use_gui_plugin);
+    }
 
     conf_set_str ("deadbeef_version", VERSION);
 
