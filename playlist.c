@@ -3569,6 +3569,7 @@ pl_playqueue_clear (void) {
     }
     for (i = 0; i < cnt; i++) {
         pl_item_unref (playqueue[i]);
+        playqueue[i] = NULL;
     }
     UNLOCK;
 }

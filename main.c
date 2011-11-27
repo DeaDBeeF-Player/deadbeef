@@ -426,6 +426,7 @@ player_mainloop (void) {
                 conf_save ();
                 break;
             case DB_EV_TERMINATE:
+                pl_playqueue_clear ();
                 term = 1;
                 break;
             case DB_EV_PLAY_CURRENT:
@@ -883,6 +884,7 @@ main (int argc, char *argv[]) {
     server_tid = thread_start (server_loop, NULL);
     // this runs in main thread (blocks right here)
     player_mainloop ();
+
     // terminate server and wait for completion
     if (server_tid) {
         server_terminate = 1;
@@ -924,9 +926,7 @@ main (int argc, char *argv[]) {
     conf_free ();
     messagepump_free ();
     plug_cleanup ();
-#if 0
-    sigterm_handled = 1;
-#endif
+
     fprintf (stderr, "hej-hej!\n");
     return 0;
 }
