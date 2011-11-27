@@ -426,8 +426,16 @@ player_mainloop (void) {
                 conf_save ();
                 break;
             case DB_EV_TERMINATE:
-                pl_playqueue_clear ();
-                term = 1;
+                {
+                    pl_playqueue_clear ();
+
+                    // stop streaming and playback before unloading plugins
+                    DB_output_t *output = plug_get_output ();
+                    output->stop ();
+                    streamer_free ();
+                    output->free ();
+                    term = 1;
+                }
                 break;
             case DB_EV_PLAY_CURRENT:
                 if (p1) {
@@ -501,32 +509,8 @@ player_mainloop (void) {
             return;
         }
         messagepump_wait ();
-        //usleep(50000);
-        //plug_trigger_event (DB_EV_FRAMEUPDATE, 0);
     }
 }
-
-#if 0
-static int sigterm_handled = 0;
-void
-atexit_handler (void) {
-    fprintf (stderr, "atexit_handler\n");
-    if (!sigterm_handled) {
-        fprintf (stderr, "handling atexit.\n");
-        pl_save_all ();
-        conf_save ();
-    }
-}
-
-void
-sigterm_handler (int sig) {
-    fprintf (stderr, "got sigterm.\n");
-    atexit_handler ();
-    sigterm_handled = 1;
-    fprintf (stderr, "bye.\n");
-    exit (0);
-}
-#endif
 
 #ifdef __linux__
 void
@@ -908,12 +892,6 @@ main (int argc, char *argv[]) {
 
     // stop receiving messages from outside
     server_close ();
-
-    // stop streaming and playback before unloading plugins
-    DB_output_t *output = plug_get_output ();
-    output->stop ();
-    streamer_free ();
-    output->free ();
 
     // plugins might still hood references to playitems,
     // and query configuration in background
