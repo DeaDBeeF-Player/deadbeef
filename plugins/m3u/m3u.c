@@ -94,7 +94,18 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
                     uint8_t nm[n+1];
                     memcpy (nm, p, n);
                     nm[n] = 0;
-                    sscanf (nm, "%d,%1000s - %1000s", &length, artist, title);
+                    length = atoi (nm);
+                    char *c = nm;
+                    while (*c && *c != ',') {
+                        c++;
+                    }
+                    if (*c == ',') {
+                        c++;
+                        if (2 != sscanf (c, "%1000s - %1000s", artist, title)) {
+                            strncpy (artist, c, sizeof (artist)-1);
+                            artist[sizeof(artist)-1] = 0;
+                        }
+                    }
                 }
             }
             while (p < end && *p >= 0x20) {
