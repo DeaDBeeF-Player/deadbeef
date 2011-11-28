@@ -832,17 +832,20 @@ fetcher_thread (void *none)
                             if (!res) {
                                 for (DB_id3v2_frame_t *f = tag.frames; f; f = f->next) {
                                     if (!strcmp (f->id, "APIC")) {
-
                                         if (f->size < 20) {
                                             trace ("artwork: id3v2 APIC frame is too small\n");
                                             continue;
                                         }
                                         uint8_t *data = f->data;
+                                        if (tag.version[0] == 4) {
+                                            // skip size
+                                            data += 4;
+                                        }
                                         uint8_t *end = f->data + f->size;
                                         int enc = *data;
                                         data++; // enc
                                         // mime-type must always be ASCII - hence enc is 0 here
-                                        uint8_t *mime_end = id3v2_skip_str (0, data, end);
+                                        uint8_t *mime_end = id3v2_skip_str (enc, data, end);
                                         if (!mime_end) {
                                             trace ("artwork: corrupted id3v2 APIC frame\n");
                                             continue;
