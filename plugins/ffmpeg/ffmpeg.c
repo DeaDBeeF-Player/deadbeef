@@ -415,6 +415,7 @@ static const char *map[] = {
     "album", "album",
     "track", "track",
     "date", "year",
+    "WM/Year", "year",
     "genre", "genre",
     "comment", "comment",
     "performer", "performer",
