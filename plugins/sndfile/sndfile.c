@@ -196,7 +196,7 @@ sndfile_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     default:
         info->read_as_short = 1;
         _info->fmt.bps = 16;
-        fprintf (stderr, "[sndfile] unidentified input format: 0x%X\n", inf.format&0x000f);
+        trace ("[sndfile] unidentified input format: 0x%X\n", inf.format&0x000f);
         break;
     }
 
