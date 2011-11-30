@@ -894,7 +894,7 @@ m3u_error:
                 trace ("\033[0;31mfailed to init decoder\033[37;0m\n")
                 dec->free (new_fileinfo);
                 new_fileinfo = NULL;
-                goto error;
+//                goto error;
             }
         }
 
