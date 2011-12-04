@@ -104,7 +104,7 @@ client_exec_command_line (const char *cmdline, int len) {
             fprintf (stdout, _("   --prev             Previous song in playlist\n"));
             fprintf (stdout, _("   --random           Random song in playlist\n"));
             fprintf (stdout, _("   --queue            Append file(s) to existing playlist\n"));
-            fprintf (stdout, _("   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\""));
+            fprintf (stdout, _("   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"));
             fprintf (stdout, _("   --nowplaying FMT   Print formatted track name to stdout\n"));
             fprintf (stdout, _("                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
                              "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
