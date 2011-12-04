@@ -462,8 +462,6 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
                     trace ("mp4 track: %d\n", i);
                     int samples = mp4ff_num_samples(info->mp4file, i);
                     info->mp4samples = samples;
-                    trace ("mp4 mp4samples=%d, nsamples=%d, samplerate=%d\n", samples, samples * 1024, samplerate);
-                    totalsamples = samples;
                     info->mp4track = i;
 
                     // init mp4 decoding
@@ -476,6 +474,8 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
                     }
                     samplerate = srate;
                     channels = ch;
+                    samples = (int64_t)samples * srate / mp4ff_time_scale (info->mp4file, i);
+                    totalsamples = samples;
                     NeAACDecConfigurationPtr conf = NeAACDecGetCurrentConfiguration (info->dec);
                     conf->dontUpSampleImplicitSBR = 1;
                     NeAACDecSetConfiguration (info->dec, conf);
@@ -658,6 +658,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             info->endsample = totalsamples-1;
         }
     }
+    trace ("totalsamples: %d, endsample: %d, samples-from-duration: %d\n", totalsamples-1, info->endsample, (int)deadbeef->pl_get_item_duration (it)*44100);
 
     for (int i = 0; i < _info->fmt.channels; i++) {
         _info->fmt.channelmask |= 1 << i;
@@ -702,7 +703,7 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
         if (info->currentsample + size / samplesize > info->endsample) {
             size = (info->endsample - info->currentsample + 1) * samplesize;
             if (size <= 0) {
-                trace ("aac_read: eof");
+                trace ("aac_read: eof (current=%d, total=%d)\n", info->currentsample, info->endsample);
                 return 0;
             }
         }
@@ -903,7 +904,6 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
     }
 
     info->currentsample += (initsize-size) / samplesize;
-    trace ("aac_read return: %d\n", initsize-size);
     return initsize-size;
 }
 
@@ -968,8 +968,9 @@ aac_seek_sample (DB_fileinfo_t *_info, int sample) {
 
     sample += info->startsample;
     if (info->mp4file) {
-        info->mp4sample = sample / (info->mp4framesize-1);
-        info->skipsamples = sample - info->mp4sample * (info->mp4framesize-1);
+        int scale = _info->fmt.samplerate / mp4ff_time_scale (info->mp4file, info->mp4track) * info->mp4framesize;
+        info->mp4sample = sample / scale;
+        info->skipsamples = sample - info->mp4sample * scale;
     }
     else {
         int skip = deadbeef->junk_get_leading_size (info->file);
