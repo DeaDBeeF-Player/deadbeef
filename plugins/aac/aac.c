@@ -42,6 +42,8 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
+// FIXME: use aac_probe in both _init and _insert, in order to avoid LOTS of code duplication
+
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
@@ -287,39 +289,65 @@ aac_probe (DB_FILE *fp, const char *fname, MP4FILE_CB *cb, float *duration, int 
         int i = -1;
         trace ("looking for mp4 data...\n");
         int sr = -1;
+        unsigned char*  buff = 0;
+        unsigned int    buff_size = 0;
         for (i = 0; i < ntracks; i++) {
-            unsigned char*  buff = 0;
-            unsigned int    buff_size = 0;
             mp4AudioSpecificConfig mp4ASC;
             mp4ff_get_decoder_config(mp4, i, &buff, &buff_size);
             if(buff){
                 int rc = AudioSpecificConfig(buff, buff_size, &mp4ASC);
                 sr = mp4ASC.samplingFrequency;
-                free(buff);
-                if(rc < 0)
+                if(rc < 0) {
+                    free (buff);
+                    buff = 0;
                     continue;
+                }
                 break;
             }
         }
-
-        if (i != ntracks) 
+        if (i != ntracks && buff) 
         {
-            trace ("mp4 track: %d\n", i);
-            if (sr != -1) {
-                *samplerate = sr;
+            // init mp4 decoding
+            NeAACDecHandle dec = NeAACDecOpen ();
+            unsigned long srate;
+            unsigned char ch;
+            if (NeAACDecInit2(dec, buff, buff_size, &srate, &ch) < 0) {
+                trace ("NeAACDecInit2 returned error\n");
+                goto error;
+            }
+            *samplerate = srate;
+            *channels = ch;
+            int samples = mp4ff_num_samples(mp4, i);
+            samples = (int64_t)samples * srate / mp4ff_time_scale (mp4, i);
+            int tsamples = samples;
+            NeAACDecConfigurationPtr conf = NeAACDecGetCurrentConfiguration (dec);
+            conf->dontUpSampleImplicitSBR = 1;
+            NeAACDecSetConfiguration (dec, conf);
+            mp4AudioSpecificConfig mp4ASC;
+            int mp4framesize;
+            if (NeAACDecAudioSpecificConfig(buff, buff_size, &mp4ASC) >= 0)
+            {
+                mp4framesize = 1024;
+                if (mp4ASC.frameLengthFlag == 1) {
+                    mp4framesize = 960;
+                }
+                if (mp4ASC.sbr_present_flag == 1) {
+                    mp4framesize *= 2;
+                }
             }
             else {
-                *samplerate = mp4ff_get_sample_rate (mp4, i);
+                trace ("NeAACDecAudioSpecificConfig failed, can't get mp4framesize\n");
+                goto error;
             }
-            *channels = mp4ff_get_channel_count (mp4, i);
-            int samples = mp4ff_num_samples(mp4, i) * 1024;
-            samples = (int64_t)samples * (*samplerate) / mp4ff_time_scale (mp4, i);
+            tsamples *= mp4framesize;
 
             trace ("mp4 nsamples=%d, samplerate=%d, timescale=%d, duration=%lld\n", samples, *samplerate, mp4ff_time_scale(mp4, i), mp4ff_get_track_duration(mp4, i));
-            *duration = (float)samples / (*samplerate);
+            *duration = (float)tsamples / (*samplerate);
+            
+            NeAACDecClose (dec);
 
             if (totalsamples) {
-                *totalsamples = samples;
+                *totalsamples = tsamples;
             }
             if (mp4track) {
                 *mp4track = i;
@@ -328,7 +356,21 @@ aac_probe (DB_FILE *fp, const char *fname, MP4FILE_CB *cb, float *duration, int 
                 mp4ff_close (mp4);
             }
             return 0;
+error:
+            NeAACDecClose (dec);
+            free (buff);
+            if (!*pmp4) {
+                mp4ff_close (mp4);
+            }
+            return -1;
         }
+        else {
+            mp4ff_close (mp4);
+        }
+        if (buff) {
+            free (buff);
+        }
+
     }
 #else
     MP4FileHandle mp4File = mp4;
@@ -470,6 +512,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
                     unsigned char ch;
                     if (NeAACDecInit2(info->dec, buff, buff_size, &srate, &ch) < 0) {
                         trace ("NeAACDecInit2 returned error\n");
+                        free (buff);
                         return -1;
                     }
                     samplerate = srate;
@@ -492,11 +535,13 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
                     }
                     totalsamples *= info->mp4framesize;
                     duration = (float)totalsamples  / samplerate;
-                    free (buff);
                 }
                 else {
                     mp4ff_close (info->mp4file);
                     info->mp4file = NULL;
+                }
+                if (buff) {
+                    free (buff);
                 }
             }
             else {
@@ -504,6 +549,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
                 info->mp4file = NULL;
             }
         }
+// {{{ libmp4v2 code
 #else
         trace ("aac_init: MP4ReadProvider %s\n", deadbeef->pl_find_meta (it, ":URI"));
         info->mp4file = MP4ReadProvider (deadbeef->pl_find_meta (it, ":URI"), 0, &info->mp4reader);
@@ -563,6 +609,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             info->mp4file = NULL;
         }
 #endif
+// }}}
         if (!info->mp4file) {
             trace ("mp4 track not found, looking for aac stream...\n");
 
