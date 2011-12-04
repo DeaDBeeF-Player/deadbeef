@@ -325,7 +325,7 @@ sndfile_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     trace ("calling sf_open_virtual\n");
     info.ctx = sf_open_virtual (&vfs, SFM_READ, &inf, &info);
     if (!info.ctx) {
-        trace ("sndfile: sf_open failed");
+        trace ("sndfile: sf_open failed\n");
         deadbeef->fclose (info.file);
         return NULL;
     }
