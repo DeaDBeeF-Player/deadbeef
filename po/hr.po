@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2011-12-06 11:58+0200\n"
+"PO-Revision-Date: 2011-12-06 12:23+0200\n"
 "Last-Translator: zvacet <ikoli@yahoo.com>\n"
 "Language-Team: Croatian <>\n"
 "Language: hr\n"
@@ -296,7 +296,7 @@ msgstr "_Nađi"
 
 #: ../plugins/gtkui/interface.c:288 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Sort By"
-msgstr ""
+msgstr "Posloži po"
 
 #: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1516
 #: ../plugins/gtkui/mainplaylist.c:318 ../plugins/gtkui/prefwin.c:626
@@ -326,7 +326,7 @@ msgstr "Umjetnik"
 #: ../plugins/gtkui/interface.c:311 ../plugins/gtkui/deadbeef.glade.h:31
 #: ../translation/extra.c:70
 msgid "Date"
-msgstr ""
+msgstr "Datum"
 
 #: ../plugins/gtkui/interface.c:315 ../plugins/gtkui/interface.c:1520
 #: ../plugins/gtkui/plcommon.c:1017 ../plugins/gtkui/deadbeef.glade.h:27
@@ -413,7 +413,7 @@ msgstr "Stop nakon trenutne"
 
 #: ../plugins/gtkui/interface.c:430 ../plugins/gtkui/deadbeef.glade.h:67
 msgid "Jump to current track"
-msgstr ""
+msgstr "Skoči na trenutni zapis"
 
 #: ../plugins/gtkui/interface.c:437 ../plugins/gtkui/interface.c:444
 #: ../plugins/gtkui/deadbeef.glade.h:159
@@ -426,11 +426,11 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:461 ../plugins/gtkui/deadbeef.glade.h:158
 msgid "_GPLv2"
-msgstr ""
+msgstr "_GPLv2"
 
 #: ../plugins/gtkui/interface.c:465 ../plugins/gtkui/deadbeef.glade.h:160
 msgid "_LGPLv2.1"
-msgstr ""
+msgstr "_LGPLv2.1"
 
 #: ../plugins/gtkui/interface.c:474 ../plugins/gtkui/deadbeef.glade.h:149
 msgid "_About"
@@ -482,7 +482,7 @@ msgstr "Svojstva zapisa"
 
 #: ../plugins/gtkui/interface.c:1270 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Settings"
-msgstr ""
+msgstr "Postavke"
 
 #: ../plugins/gtkui/interface.c:1296 ../plugins/gtkui/deadbeef.glade.h:150
 msgid "_Apply"
@@ -579,7 +579,7 @@ msgstr "Izlazni uređaj:"
 
 #: ../plugins/gtkui/interface.c:1847 ../plugins/gtkui/deadbeef.glade.h:12
 msgid "Always convert 8 bit audio to 16 bit"
-msgstr ""
+msgstr "Uvijek pretvori 8 bit audio u 16 bit"
 
 #: ../plugins/gtkui/interface.c:1851 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "Sound"
@@ -648,11 +648,11 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2029 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "_Load"
-msgstr ""
+msgstr "_Učitaj"
 
 #: ../plugins/gtkui/interface.c:2033 ../plugins/gtkui/deadbeef.glade.h:28
 msgid "DSP"
-msgstr ""
+msgstr "DSP"
 
 #: ../plugins/gtkui/interface.c:2042 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Close minimizes to tray"
@@ -668,7 +668,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2054 ../plugins/gtkui/deadbeef.glade.h:143
 msgid "Use bold font for currently playing track"
-msgstr ""
+msgstr "Koristi podebljani font za zapis koji trenutno svira"
 
 #: ../plugins/gtkui/interface.c:2058 ../plugins/gtkui/deadbeef.glade.h:50
 msgid "Hide \"Delete from disk\" context menu item"
@@ -782,11 +782,11 @@ msgstr "Adresa proxy poslužitelja:"
 
 #: ../plugins/gtkui/interface.c:2384 ../plugins/gtkui/deadbeef.glade.h:100
 msgid "Proxy Server Port:"
-msgstr ""
+msgstr "Port proxy poslužitelja:"
 
 #: ../plugins/gtkui/interface.c:2398 ../plugins/gtkui/deadbeef.glade.h:101
 msgid "Proxy Type:"
-msgstr ""
+msgstr "Vrsta proxy-a"
 
 #: ../plugins/gtkui/interface.c:2417 ../plugins/gtkui/deadbeef.glade.h:102
 msgid "Proxy Username:"
@@ -802,12 +802,12 @@ msgstr "Mreža"
 
 #: ../plugins/gtkui/interface.c:2471 ../plugins/gtkui/deadbeef.glade.h:144
 msgid "Version: "
-msgstr ""
+msgstr "Verzija: "
 
 #: ../plugins/gtkui/interface.c:2535 ../plugins/gtkui/deadbeef.glade.h:23
 #: ../translation/extra.c:78
 msgid "Copyright"
-msgstr ""
+msgstr "Autorska prava"
 
 #: ../plugins/gtkui/interface.c:2545 ../plugins/gtkui/deadbeef.glade.h:94
 msgid "Plugins"
@@ -823,7 +823,7 @@ msgstr "Grupiraj po"
 
 #: ../plugins/gtkui/interface.c:3259 ../plugins/gtkui/deadbeef.glade.h:123
 msgid "Sort by..."
-msgstr ""
+msgstr "Poredaj po..."
 
 #: ../plugins/gtkui/interface.c:3275 ../plugins/gtkui/deadbeef.glade.h:43
 msgid "Format"
@@ -1023,7 +1023,7 @@ msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:408 ../plugins/gtkui/trkproperties.c:420
 msgid "Value"
-msgstr ""
+msgstr "Vrijednost"
 
 #: ../plugins/gtkui/trkproperties.c:594
 msgid "Writing tags..."
@@ -1031,19 +1031,19 @@ msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:621
 msgid "Name:"
-msgstr ""
+msgstr "Ime:"
 
 #: ../plugins/gtkui/trkproperties.c:633
 msgid "Field names must not start with : or _"
-msgstr ""
+msgstr "Imena polja ne smiju započinjati sa : ili _"
 
 #: ../plugins/gtkui/trkproperties.c:634 ../plugins/gtkui/trkproperties.c:668
 msgid "Cannot add field"
-msgstr ""
+msgstr "Ne mogu dodati polje"
 
 #: ../plugins/gtkui/trkproperties.c:667
 msgid "Field with such name already exists, please try different name."
-msgstr ""
+msgstr "Polje sa tim imenom već postoji,molim pokušajte s drugim imenom"
 
 #: ../plugins/gtkui/trkproperties.c:692
 msgid "Really remove selected field?"
@@ -1204,6 +1204,17 @@ msgid ""
 "Band / Album Artist\n"
 "Custom"
 msgstr ""
+"Indeks stavke\n"
+"Svira\n"
+"Album Umjet\n"
+"Umjetnik-Album\n"
+"Umjetnik\n"
+"Album\n"
+"Naslov\n"
+"Trajanje\n"
+"Broj zapisa\n"
+"Grupa / Album Umjetnik\n"
+"Prilagođeno"
 
 #: ../plugins/gtkui/deadbeef.glade.h:68
 msgid ""
@@ -1435,7 +1446,7 @@ msgstr "Naslov zapisa"
 
 #: ../translation/extra.c:67
 msgid "Performer"
-msgstr ""
+msgstr "Izvođač"
 
 #: ../translation/extra.c:72
 msgid "Total Tracks"
@@ -1455,7 +1466,7 @@ msgstr "Broj diska"
 
 #: ../translation/extra.c:76
 msgid "Comment"
-msgstr ""
+msgstr "Komentar"
 
 #: ../translation/extra.c:77
 msgid "Encoder / Vendor"
@@ -1479,17 +1490,17 @@ msgstr ""
 
 #: ../translation/extra.c:83
 msgid "Codec"
-msgstr ""
+msgstr "Kodek"
 
 #. FFmpeg deocder plugin
 #: ../translation/extra.c:85
 msgid "File Extensions (separate with ';')"
-msgstr ""
+msgstr "Proširenja datoteke (odvojeno pomoću ';')"
 
 #. Converter GUI
 #: ../translation/extra.c:87
 msgid "Convert"
-msgstr ""
+msgstr "Pretvori"
 
 #. Resampler (Secret Rabbit Code)
 #: ../translation/extra.c:89
@@ -1544,7 +1555,7 @@ msgstr ""
 
 #: ../plugins/converter/convgui.c:638 ../plugins/converter/convgui.c:1036
 msgid "Error"
-msgstr ""
+msgstr "Greška"
 
 #: ../plugins/converter/convgui.c:692
 msgid "Add new encoder"
@@ -1674,7 +1685,7 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:425
 msgid "Command line:"
-msgstr ""
+msgstr "Naredbeni redak:"
 
 #: ../plugins/converter/interface.c:436
 #, c-format
@@ -1692,7 +1703,7 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:455
 msgid "Method:"
-msgstr ""
+msgstr "Metoda:"
 
 #: ../plugins/converter/interface.c:462
 msgid "Pipe"
@@ -1700,7 +1711,7 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:463
 msgid "Temporary file"
-msgstr ""
+msgstr "Privremena datoteka"
 
 #: ../plugins/converter/interface.c:480
 msgid "APEv2"
