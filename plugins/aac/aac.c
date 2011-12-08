@@ -294,7 +294,7 @@ aac_probe (DB_FILE *fp, const char *fname, MP4FILE_CB *cb, float *duration, int 
         for (i = 0; i < ntracks; i++) {
             mp4AudioSpecificConfig mp4ASC;
             mp4ff_get_decoder_config(mp4, i, &buff, &buff_size);
-            if(buff){
+            if (buff) {
                 int rc = AudioSpecificConfig(buff, buff_size, &mp4ASC);
                 sr = mp4ASC.samplingFrequency;
                 if(rc < 0) {
@@ -307,6 +307,7 @@ aac_probe (DB_FILE *fp, const char *fname, MP4FILE_CB *cb, float *duration, int 
         }
         if (i != ntracks && buff) 
         {
+            trace ("found audio track (%d)\n", i);
             // init mp4 decoding
             NeAACDecHandle dec = NeAACDecOpen ();
             unsigned long srate;
@@ -365,10 +366,13 @@ error:
             return -1;
         }
         else {
+            trace ("audio track not found\n");
             mp4ff_close (mp4);
+            mp4 = NULL;
         }
         if (buff) {
             free (buff);
+            buff = NULL;
         }
 
     }

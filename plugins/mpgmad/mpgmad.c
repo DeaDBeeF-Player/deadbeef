@@ -25,6 +25,8 @@
 #include <sys/time.h>
 #include "../../deadbeef.h"
 
+#pragma GCC optimize("O0")
+
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
