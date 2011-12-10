@@ -78,55 +78,83 @@ char dbpixmapdir[PATH_MAX]; // see deadbeef->get_pixmap_dir
 
 char use_gui_plugin[100];
 
-// client-side commandline support
-// -1 error, program must exit with error code -1
-//  0 proceed normally as nothing happened
-//  1 no error, but program must exit with error code 0
-int
-client_exec_command_line (const char *cmdline, int len) {
-    const uint8_t *parg = (const uint8_t *)cmdline;
-    const uint8_t *pend = cmdline + len;
-    while (parg < pend) {
-        //        if (filter == 1) {
-        // help, version and nowplaying are executed with any filter
-        if (!strcmp (parg, "--help") || !strcmp (parg, "-h")) {
-            fprintf (stdout, _("Usage: deadbeef [options] [file(s)]\n"));
-            fprintf (stdout, _("Options:\n"));
-            fprintf (stdout, _("   --help  or  -h     Print help (this message) and exit\n"));
-            fprintf (stdout, _("   --quit             Quit player\n"));
-            fprintf (stdout, _("   --version          Print version info and exit\n"));
-            fprintf (stdout, _("   --play             Start playback\n"));
-            fprintf (stdout, _("   --stop             Stop playback\n"));
-            fprintf (stdout, _("   --pause            Pause playback\n"));
-            fprintf (stdout, _("   --toggle-pause     Toggle pause\n"));
-            fprintf (stdout, _("   --play-pause       Start playback if stopped, toggle pause otherwise\n"));
-            fprintf (stdout, _("   --next             Next song in playlist\n"));
-            fprintf (stdout, _("   --prev             Previous song in playlist\n"));
-            fprintf (stdout, _("   --random           Random song in playlist\n"));
-            fprintf (stdout, _("   --queue            Append file(s) to existing playlist\n"));
-            fprintf (stdout, _("   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"));
-            fprintf (stdout, _("   --nowplaying FMT   Print formatted track name to stdout\n"));
-            fprintf (stdout, _("                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
-                             "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
-                             "                      copy[r]ight, [e]lapsed\n"));
-            fprintf (stdout, _("                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"));
-            fprintf (stdout, _("                      for more info, see http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"));
-            return 1;
-        }
-        else if (!strcmp (parg, "--version")) {
-            fprintf (stdout, "DeaDBeeF " VERSION " Copyright © 2009-2011 Alexey Yakovenko\n");
-            return 1;
-        }
-        else if (!strcmp (parg, "--gui")) {
-            parg += strlen (parg);
-            parg++;
-            strcpy (use_gui_plugin, parg);
-        }
-        parg += strlen (parg);
-        parg++;
+static char *usage[] = {
+"Usage: deadbeef [options] [file(s)]\n",
+"Options:\n",
+"   --help  or  -h     Print help (this message) and exit\n",
+"   --quit             Quit player\n",
+"   --version          Print version info and exit\n",
+"   --play             Start playback\n",
+"   --stop             Stop playback\n",
+"   --pause            Pause playback\n",
+"   --toggle-pause     Toggle pause\n",
+"   --play-pause       Start playback if stopped, toggle pause otherwise\n",
+"   --next             Next song in playlist\n",
+"   --prev             Previous song in playlist\n",
+"   --random           Random song in playlist\n",
+"   --queue            Append file(s) to existing playlist\n",
+"   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n",
+"   --nowplaying FMT   Print formatted track name to stdout\n",
+"                      FMT %-syntax: [a]rtist, [t]itle, al[b]um,\n" \
+"                      [l]ength, track[n]umber, [y]ear, [c]omment,\n" \
+"                      copy[r]ight, [e]lapsed\n",
+"                      e.g.: --nowplaying \"%a - %t\" should print \"artist - title\"\n",
+"                      for more info, see http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n",
+NULL
+};
+
+// Parse command line an return a single buffer with all
+// parameters concatenated (separated by \0).  File names
+// are resolved.
+char*
+prepare_command_line (int argc, char *argv[], int *size) {
+    int seen_ddash = 0;
+
+    // initial buffer limit, will expand if needed
+    int limit = 4096;
+    char *buf = (char*) malloc (limit);
+
+    if (argc <= 1) {
+        buf[0] = 0;
+        *size = 1;
+        return buf;
     }
-    return 0;
+
+    int p = 0;
+    for (int i = 1; i < argc; i++) {
+        // if argument is a filename, try to resolve it
+        char resolved[PATH_MAX];
+        char *arg;
+        if (!strncmp ("--", argv[i], 2) && !seen_ddash || !realpath (argv[i], resolved)) {
+            arg = argv[i];
+        }
+        else {
+            arg = resolved;
+        }
+
+        // make sure that there is enough space in the buffer;
+        // re-allocate, if needed
+        int arglen = strlen(arg) + 1;
+        while (p + arglen >= limit) {
+            char *newbuf = (char*) malloc (limit * 2);
+            memcpy (newbuf, buf, p);
+            free (buf);
+            limit *= 2;
+            buf = newbuf;
+        }
+
+        memcpy (buf + p, arg, arglen);
+        p += arglen;
+
+        if (!strcmp("--", argv[i])) {
+            seen_ddash = 1;
+        }
+    }
+
+    *size = p;
+    return buf;
 }
+
 
 // this function executes server-side commands only
 // must be called only from within server
@@ -350,6 +378,39 @@ server_close (void) {
     }
 }
 
+// Read the whole message till end-of-stream
+char*
+read_entire_message (int sockfd, int *size) {
+    int bufsize = 4096; // initial buffer size, will expand if
+                        // the actual package turns out to be bigger
+    char *buf = (char*) malloc(bufsize);
+    int rdp = 0;
+
+    for (;;) {
+        if (rdp >= bufsize) {
+            int newsize = bufsize * 2;
+            char *newbuf = (char*) malloc(newsize);
+            memcpy(newbuf, buf, rdp);
+            free(buf);
+            buf = newbuf;
+            bufsize = newsize;
+        }
+
+        int rd = recv(sockfd, buf + rdp, bufsize - rdp, 0);
+        if (rd < 0) {
+            free(buf);
+            return NULL;
+        }
+        if (rd == 0) {
+            break;
+        }
+        rdp += rd;
+    }
+
+    *size = rdp;
+    return buf;
+}
+
 int
 server_update (void) {
     // handle remote stuff
@@ -361,16 +422,16 @@ server_update (void) {
         return -1;
     }
     else if (s2 != -1) {
-        char str[2048];
+        int size = -1;
+        char *buf = read_entire_message(s2, &size);
         char sendback[1024] = "";
-        int size;
-        if ((size = recv (s2, str, 2048, 0)) >= 0) {
-            if (size == 1 && str[0] == 0) {
+        if (size > 0) {
+            if (size == 1 && buf[0] == 0) {
                 // FIXME: that should be called right after activation of gui plugin
                 messagepump_push (DB_EV_ACTIVATED, 0, 0, 0);
             }
             else {
-                server_exec_command_line (str, size, sendback, sizeof (sendback));
+                server_exec_command_line (buf, size, sendback, sizeof (sendback));
             }
         }
         if (sendback[0]) {
@@ -381,6 +442,8 @@ server_update (void) {
             send (s2, "", 1, 0);
         }
         close(s2);
+
+        free(buf);
     }
     return 0;
 }
@@ -700,6 +763,24 @@ main (int argc, char *argv[]) {
         return -1;
     }
 #endif
+
+    for (int i = 1; i < argc; i++) {
+        // help, version and nowplaying are executed with any filter
+        if (!strcmp (argv[i], "--help") || !strcmp (argv[i], "-h")) {
+            for (int j = 0; usage[j]; j++)
+                fputs (_(usage[j]), stdout);
+            return 0;
+        }
+        else if (!strcmp (argv[i], "--version")) {
+            fprintf (stdout, "DeaDBeeF " VERSION " Copyright © 2009-2011 Alexey Yakovenko\n");
+            return 0;
+        }
+        else if (!strcmp (argv[i], "--gui")) {
+            strncpy (use_gui_plugin, argv[i], sizeof(use_gui_plugin) - 1);
+            use_gui_plugin[sizeof(use_gui_plugin)] = 0;
+        }
+    }
+
     trace ("installdir: %s\n", dbinstalldir);
     trace ("confdir: %s\n", confdir);
     trace ("docdir: %s\n", dbdocdir);
@@ -708,52 +789,8 @@ main (int argc, char *argv[]) {
 
     mkdir (dbconfdir, 0755);
 
-    char cmdline[2048];
-    cmdline[0] = 0;
     int size = 0;
-    if (argc > 1) {
-        size = 2048;
-        // join command line into single string
-        char *p = cmdline;
-        cmdline[0] = 0;
-        for (int i = 1; i < argc; i++) {
-            if (size < 2) {
-                break;
-            }
-            if (i > 1) {
-                size--;
-                p++;
-            }
-            int len = strlen (argv[i]);
-            if (len >= size) {
-                break;
-            }
-            char resolved[PATH_MAX];
-            // need to resolve path here, because remote doesn't know current
-            // path of this process
-            if (argv[i][0] != '-' && realpath (argv[i], resolved)) {
-                len = strlen (resolved);
-                if (len >= size) {
-                    break;
-                }
-                memcpy (p, resolved, len+1);
-            }
-            else {
-                memcpy (p, argv[i], len+1);
-            }
-            p += len;
-            size -= len;
-        }
-        size = 2048 - size + 1;
-    }
-    int res;
-    res = client_exec_command_line (cmdline, size);
-    if (res == 1) {
-        return 0;
-    }
-    else if (res < 0) {
-        return res;
-    }
+    char *cmdline = prepare_command_line (argc, argv, &size);
 
     // try to connect to remote player
     int s, len;
@@ -775,18 +812,16 @@ main (int argc, char *argv[]) {
     len = offsetof(struct sockaddr_un, sun_path) + strlen (remote.sun_path);
 #endif
     if (connect(s, (struct sockaddr *)&remote, len) == 0) {
-        if (argc <= 1) {
-            cmdline[0] = 0;
-            size = 1;
-        }
-
         // pass args to remote and exit
         if (send(s, cmdline, size, 0) == -1) {
             perror ("send");
             exit (-1);
         }
-        char out[2048] = "";
-        ssize_t sz = recv(s, out, sizeof (out), 0);
+        // end of message
+        shutdown(s, SHUT_WR);
+
+        int sz = -1;
+        char *out = read_entire_message(s, &sz);
         if (sz == -1) {
             fprintf (stderr, "failed to pass args to remote!\n");
             exit (-1);
@@ -848,7 +883,7 @@ main (int argc, char *argv[]) {
     // execute server commands in local context
     int noloadpl = 0;
     if (argc > 1) {
-        res = server_exec_command_line (cmdline, size, NULL, 0);
+        int res = server_exec_command_line (cmdline, size, NULL, 0);
         // some of the server commands ran on 1st instance should terminate it
         if (res == 2) {
             noloadpl = 1;
@@ -860,6 +895,8 @@ main (int argc, char *argv[]) {
             exit (-1);
         }
     }
+
+    free (cmdline);
 
 #if 0
     signal (SIGTERM, sigterm_handler);
