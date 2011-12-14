@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lxde.deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2011-11-23 18:50+0200\n"
+"PO-Revision-Date: 2011-12-14 15:11+0200\n"
 "Last-Translator: mbouzada <mbouzada@gmail.com>\n"
 "Language-Team: Galician <proxecto@trasno.net>\n"
 "Language: gl\n"
@@ -45,11 +45,11 @@ msgstr "Seguir ligazóns simbólicas"
 
 #: ../plugins/gtkui/callbacks.c:711
 msgid "Failed while reading help file"
-msgstr "Produciuse un erro ao ler o ficheiro de axuda"
+msgstr "Produciuse un fallo ao ler o ficheiro de axuda"
 
 #: ../plugins/gtkui/callbacks.c:721
 msgid "Failed to load help file"
-msgstr "Produciuse un erro ao cargar o ficheiro de axuda"
+msgstr "Produciuse un fallo ao cargar o ficheiro de axuda"
 
 #: ../plugins/gtkui/callbacks.c:736
 msgid "help.txt"
@@ -144,7 +144,7 @@ msgstr "Restabelecer todo"
 
 #: ../plugins/gtkui/eq.c:373
 msgid "Zero Preamp"
-msgstr "Restabelecero  preamplificador"
+msgstr "Restabelecer o preamplificador"
 
 #: ../plugins/gtkui/eq.c:380
 msgid "Zero Bands"
@@ -191,7 +191,7 @@ msgstr "Pausado | "
 msgid ""
 "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
 msgstr ""
-"%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d pistas | Tempo total:  %s"
+"%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d pistas | Tempo total: %s"
 
 #: ../plugins/gtkui/gtkui.c:644
 msgid "Save Playlist As"
@@ -925,7 +925,7 @@ msgstr ""
 #: ../plugins/gtkui/trkproperties.c:693 ../plugins/converter/convgui.c:759
 #: ../plugins/converter/convgui.c:1136
 msgid "Warning"
-msgstr "Aiso"
+msgstr "Aviso"
 
 #: ../plugins/gtkui/plcommon.c:444
 msgid "Add to playback queue"
