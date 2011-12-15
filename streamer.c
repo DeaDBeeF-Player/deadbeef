@@ -146,19 +146,13 @@ static void
 streamer_abort_files (void) {
     trace ("\033[0;33mstreamer_abort_files\033[37;0m\n");
     if (fileinfo && fileinfo->file) {
-        printf ("\033[0;33mstreamer_abort1 %p\033[37;0m\n", fileinfo->file);
         deadbeef->fabort (fileinfo->file);
-        fileinfo->file = NULL;
     }
     if (new_fileinfo && new_fileinfo->file) {
-        printf ("\033[0;33mstreamer_abort2 %p\033[37;0m\n", new_fileinfo->file);
         deadbeef->fabort (new_fileinfo->file);
-        new_fileinfo->file = NULL;
     }
     if (streamer_file) {
-        printf ("\033[0;33mstreamer_abort3 %p\033[37;0m\n", streamer_file);
         deadbeef->fabort (streamer_file);
-        streamer_file = NULL;
     }
 }
 
