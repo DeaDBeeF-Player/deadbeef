@@ -779,6 +779,14 @@ plug_load_all (void) {
 
     // load from HOME 1st, than replace from installdir if needed
     const char *plugins_dirs[] = { xdg_plugin_dir, dirname, NULL };
+
+    // If xdg_plugin_dir and dirname is the same, we should avoid each plugin
+    // to be load twice.
+    // XXX: Here absolute path is assumed, however if dirname is a relative
+    // path it won't work.
+    if (strcmp(xdg_plugin_dir, dirname) == 0) {
+        plugins_dirs[1] = NULL;
+    }
 #else
     const char *plugins_dirs[] = { dirname, NULL };
 #endif
