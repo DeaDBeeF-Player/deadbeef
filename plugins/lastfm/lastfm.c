@@ -831,10 +831,9 @@ lfm_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 
 static int
 lastfm_start (void) {
-    lfm_sess[0] = 0;
-    lfm_mutex = 0;
-    lfm_cond = 9;
-    lfm_tid = 0;
+    if (lfm_mutex) {
+        return;
+    }
     lfm_stopthread = 0;
     lfm_mutex = deadbeef->mutex_create_nonrecursive ();
     lfm_cond = deadbeef->cond_create ();
@@ -942,7 +941,7 @@ static DB_misc_t plugin = {
     .plugin.type = DB_PLUGIN_MISC,
     .plugin.name = "last.fm scrobbler",
     .plugin.descr = "Sends played songs information to your last.fm account, or other service that use AudioScrobbler protocol",
-    .plugin.copyright = 
+    .plugin.copyright =
         "Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
