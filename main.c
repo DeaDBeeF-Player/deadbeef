@@ -78,30 +78,30 @@ char dbpixmapdir[PATH_MAX]; // see deadbeef->get_pixmap_dir
 
 char use_gui_plugin[100];
 
-static char *usage[] = {
-"Usage: deadbeef [options] [file(s)]\n",
-"Options:\n",
-"   --help  or  -h     Print help (this message) and exit\n",
-"   --quit             Quit player\n",
-"   --version          Print version info and exit\n",
-"   --play             Start playback\n",
-"   --stop             Stop playback\n",
-"   --pause            Pause playback\n",
-"   --toggle-pause     Toggle pause\n",
-"   --play-pause       Start playback if stopped, toggle pause otherwise\n",
-"   --next             Next song in playlist\n",
-"   --prev             Previous song in playlist\n",
-"   --random           Random song in playlist\n",
-"   --queue            Append file(s) to existing playlist\n",
-"   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n",
-"   --nowplaying FMT   Print formatted track name to stdout\n",
-"                      FMT %-syntax: [a]rtist, [t]itle, al[b]um,\n" \
-"                      [l]ength, track[n]umber, [y]ear, [c]omment,\n" \
-"                      copy[r]ight, [e]lapsed\n",
-"                      e.g.: --nowplaying \"%a - %t\" should print \"artist - title\"\n",
-"                      for more info, see http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n",
-NULL
-};
+static void
+print_help (void) {
+    fprintf (stdout, _("Usage: deadbeef [options] [--] [file(s)]\n"));
+    fprintf (stdout, _("Options:\n"));
+    fprintf (stdout, _("   --help  or  -h     Print help (this message) and exit\n"));
+    fprintf (stdout, _("   --quit             Quit player\n"));
+    fprintf (stdout, _("   --version          Print version info and exit\n"));
+    fprintf (stdout, _("   --play             Start playback\n"));
+    fprintf (stdout, _("   --stop             Stop playback\n"));
+    fprintf (stdout, _("   --pause            Pause playback\n"));
+    fprintf (stdout, _("   --toggle-pause     Toggle pause\n"));
+    fprintf (stdout, _("   --play-pause       Start playback if stopped, toggle pause otherwise\n"));
+    fprintf (stdout, _("   --next             Next song in playlist\n"));
+    fprintf (stdout, _("   --prev             Previous song in playlist\n"));
+    fprintf (stdout, _("   --random           Random song in playlist\n"));
+    fprintf (stdout, _("   --queue            Append file(s) to existing playlist\n"));
+    fprintf (stdout, _("   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"));
+    fprintf (stdout, _("   --nowplaying FMT   Print formatted track name to stdout\n"));
+    fprintf (stdout, _("                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
+                "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
+                "                      copy[r]ight, [e]lapsed\n"));
+    fprintf (stdout, _("                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"));
+    fprintf (stdout, _("                      for more info, see http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"));
+}
 
 // Parse command line an return a single buffer with all
 // parameters concatenated (separated by \0).  File names
@@ -767,8 +767,7 @@ main (int argc, char *argv[]) {
     for (int i = 1; i < argc; i++) {
         // help, version and nowplaying are executed with any filter
         if (!strcmp (argv[i], "--help") || !strcmp (argv[i], "-h")) {
-            for (int j = 0; usage[j]; j++)
-                fputs (_(usage[j]), stdout);
+            print_help ();
             return 0;
         }
         else if (!strcmp (argv[i], "--version")) {
