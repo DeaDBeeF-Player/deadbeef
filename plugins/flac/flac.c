@@ -925,6 +925,8 @@ cflac_write_metadata (DB_playItem_t *it) {
         m = m->next;
     }
 
+    // check if we have embedded cover
+    data = NULL;
     while (FLAC__metadata_iterator_prev (iter));
     do {
         data = FLAC__metadata_iterator_get_block (iter);
@@ -944,8 +946,9 @@ cflac_write_metadata (DB_playItem_t *it) {
         }
     }
 
-    // Add Coverart if the file don't has one and we do
-    if (data->type != FLAC__METADATA_TYPE_PICTURE && coverart_plugin) {
+    // add coverart if the file doesn't have it
+    // FIXME: should have an option to overwrite it
+    if ((!data || data->type != FLAC__METADATA_TYPE_PICTURE) && coverart_plugin) {
         deadbeef->pl_lock ();
         const char *alb = deadbeef->pl_find_meta (it, "album");
         const char *art = deadbeef->pl_find_meta (it, "artist");
@@ -962,7 +965,6 @@ cflac_write_metadata (DB_playItem_t *it) {
         char *image_fname = coverart_plugin->get_album_art_sync (fname, artist, album, -1);
 
         if (image_fname && strcmp (image_fname, coverart_plugin->get_default_cover())) {
-            // Read file
             DB_FILE *fp = deadbeef->fopen (image_fname);
             FLAC__byte *coverart_data = NULL;
             FLAC__StreamMetadata *metadata = NULL;
@@ -972,6 +974,10 @@ cflac_write_metadata (DB_playItem_t *it) {
             }
 
             int64_t len = deadbeef->fgetlength (fp);
+            if (len < 4) {
+                fprintf (stderr, "flac: cover image file %s is too small\n", image_fname);
+                goto error2;
+            }
             coverart_data = malloc (len);
             if (!coverart_data) {
                 fprintf (stderr, "flac: cannot allocate memory\n");
@@ -982,7 +988,6 @@ cflac_write_metadata (DB_playItem_t *it) {
                 goto error2;
             }
 
-            // Write Metadata
             metadata = FLAC__metadata_object_new (FLAC__METADATA_TYPE_PICTURE);
             if (!metadata) {
                 fprintf (stderr, "flac: failed to allocate new picture block\n");
@@ -993,7 +998,6 @@ cflac_write_metadata (DB_playItem_t *it) {
             FLAC__metadata_object_picture_set_data (metadata, coverart_data,len, true);
             metadata->data.picture.type = FLAC__STREAM_METADATA_PICTURE_TYPE_FRONT_COVER;
 
-            // FIXME Very Naive check here, consider using libjpeg or libpng for instead
             if (*(uint32_t *)coverart_data == 0x474e5089) {  // png header
                 metadata->data.picture.mime_type = strdup ("image/png");
             } else {
