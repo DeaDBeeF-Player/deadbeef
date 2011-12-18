@@ -19,7 +19,7 @@ if HAVE_YASM
 	$(LIBTOOL) --tag=CC --mode=compile $(YASM) $(YASM_FLAGS)  -o $@ $<
 endif
 
-ffap_la_LDFLAGS = -module
+ffap_la_LDFLAGS = -module -lm
 
 AM_CFLAGS = $(CFLAGS) -fPIC -std=c99
 endif
