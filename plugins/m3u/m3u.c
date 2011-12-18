@@ -19,7 +19,7 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <math.h>
+#include <math.h> // for ceil
 #include "../../deadbeef.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
