@@ -71,7 +71,7 @@ GtkWidget *theme_button;
 
 int gtkui_embolden_current_track;
 
-#define TRAY_ICON "deadbeef-tray-icon"
+#define TRAY_ICON "deadbeef_tray_icon"
 
 // that must be called before gtk_init
 void
