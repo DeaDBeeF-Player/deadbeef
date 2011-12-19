@@ -776,7 +776,7 @@ main (int argc, char *argv[]) {
         }
         else if (!strcmp (argv[i], "--gui")) {
             strncpy (use_gui_plugin, argv[i], sizeof(use_gui_plugin) - 1);
-            use_gui_plugin[sizeof(use_gui_plugin)] = 0;
+            use_gui_plugin[sizeof(use_gui_plugin) - 1] = 0;
         }
     }
 
