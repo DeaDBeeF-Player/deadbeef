@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2011-12-06 12:23+0200\n"
+"PO-Revision-Date: 2011-12-20 15:45+0200\n"
 "Last-Translator: zvacet <ikoli@yahoo.com>\n"
 "Language-Team: Croatian <>\n"
 "Language: hr\n"
@@ -157,12 +157,12 @@ msgstr "Unaprijed postavljeno"
 #: ../plugins/gtkui/gtkui.c:137
 #, c-format
 msgid "1 day %d:%02d:%02d"
-msgstr ""
+msgstr "1 dan %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:140
 #, c-format
 msgid "%d days %d:%02d:%02d"
-msgstr ""
+msgstr "%d dana %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:149
 #, c-format
@@ -180,7 +180,7 @@ msgstr "Stereo"
 #: ../plugins/gtkui/gtkui.c:187
 #, c-format
 msgid "| %4d kbps "
-msgstr ""
+msgstr "| %4d kbps "
 
 #: ../plugins/gtkui/gtkui.c:193
 msgid "Paused | "
@@ -521,7 +521,7 @@ msgstr "Svira"
 
 #: ../plugins/gtkui/interface.c:1512
 msgid "Album Art"
-msgstr ""
+msgstr "Album Umjetnik"
 
 #: ../plugins/gtkui/interface.c:1513
 msgid "Artist - Album"
@@ -786,7 +786,7 @@ msgstr "Port proxy poslužitelja:"
 
 #: ../plugins/gtkui/interface.c:2398 ../plugins/gtkui/deadbeef.glade.h:101
 msgid "Proxy Type:"
-msgstr "Vrsta proxy-a"
+msgstr "Vrsta proxy-a:"
 
 #: ../plugins/gtkui/interface.c:2417 ../plugins/gtkui/deadbeef.glade.h:102
 msgid "Proxy Username:"
@@ -1043,7 +1043,7 @@ msgstr "Ne mogu dodati polje"
 
 #: ../plugins/gtkui/trkproperties.c:667
 msgid "Field with such name already exists, please try different name."
-msgstr "Polje sa tim imenom već postoji,molim pokušajte s drugim imenom"
+msgstr "Polje sa tim imenom već postoji,molim pokušajte s drugim imenom."
 
 #: ../plugins/gtkui/trkproperties.c:692
 msgid "Really remove selected field?"
