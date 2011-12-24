@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lxde.deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2011-12-14 15:11+0200\n"
+"PO-Revision-Date: 2011-12-24 13:48+0200\n"
 "Last-Translator: mbouzada <mbouzada@gmail.com>\n"
 "Language-Team: Galician <proxecto@trasno.net>\n"
 "Language: gl\n"
@@ -1070,7 +1070,7 @@ msgstr "Opcións:\n"
 #: ../main.c:93
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr "   --help  ou  -h     Mostrar a axuda (esta mensaxe) e saír\n"
+msgstr "   --help  ou  -h     Amosar a axuda (esta mensaxe) e saír\n"
 
 #: ../main.c:94
 #, c-format
@@ -1080,7 +1080,7 @@ msgstr "   --quit             Pechar o reprodutor\n"
 #: ../main.c:95
 #, c-format
 msgid "   --version          Print version info and exit\n"
-msgstr "   --version          Mostrar a versión e saír\n"
+msgstr "   --version          Amosar a versión e saír\n"
 
 #: ../main.c:96
 #, c-format
@@ -1133,7 +1133,7 @@ msgstr ""
 #: ../main.c:105
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr "   --nowplaying FMT   Mostrar o nome da pista formatado por stdout\n"
+msgstr "   --nowplaying FMT   Amosar o nome da pista formatado por stdout\n"
 
 #: ../main.c:106
 #, c-format
@@ -1151,7 +1151,7 @@ msgstr ""
 msgid ""
 "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
 "- title\"\n"
-msgstr "                      e.g.: --nowplaying «%%a - %%t» mostraría «interprete - "
+msgstr "                      e.g.: --nowplaying «%%a - %%t» amosaría: «interprete - "
 "título»\n"
 
 #: ../main.c:110
@@ -1403,7 +1403,7 @@ msgstr "Formato do contido de notificación"
 
 #: ../translation/extra.c:47
 msgid "Show album art"
-msgstr "Mostrar a portada"
+msgstr "Amosar a portada"
 
 #: ../translation/extra.c:48
 msgid "Album art size (px)"
