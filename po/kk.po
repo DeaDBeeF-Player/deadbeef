@@ -8,14 +8,15 @@ msgstr ""
 "Project-Id-Version: master\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2011-12-25 22:07+0600\n"
-"Last-Translator: Baurzhan Muftakhidinov <baurthefirst@gmail.com>\n"
+"PO-Revision-Date: 2011-12-26 12:59+0200\n"
+"Last-Translator: sotrud_nik <baurthefirst@gmail.com>\n"
 "Language-Team: Kazakh <kk_KZ@googlegroups.com>\n"
 "Language: kk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Pootle 2.0.5\n"
 
 #: ../plugins/gtkui/callbacks.c:123
 msgid "Supported sound formats"
@@ -708,14 +709,13 @@ msgstr "+12 дБ"
 
 #: ../plugins/gtkui/interface.c:1906
 #: ../plugins/gtkui/deadbeef.glade.h:108
-#, fuzzy
 msgid "Replaygain preamp:"
-msgstr "Дыбыс қаттылығын авто түзету:"
+msgstr "Дыбыс қаттылығын автотүзетудің алдын-ала күшейтілуі:"
 
 #: ../plugins/gtkui/interface.c:1913
 #: ../plugins/gtkui/deadbeef.glade.h:47
 msgid "Global preamp:"
-msgstr ""
+msgstr "Дыбыс қаттылығын жалпы алдын-ала күшейту:"
 
 #: ../plugins/gtkui/interface.c:1944
 #: ../plugins/gtkui/deadbeef.glade.h:7
@@ -746,9 +746,8 @@ msgstr "Баптау"
 
 #: ../plugins/gtkui/interface.c:2017
 #: ../plugins/gtkui/deadbeef.glade.h:29
-#, fuzzy
 msgid "DSP Chain Preset"
-msgstr "Баптауды сақтау"
+msgstr "DSP тізбегінің баптауы"
 
 #: ../plugins/gtkui/interface.c:2029
 #: ../plugins/gtkui/deadbeef.glade.h:161
@@ -1469,7 +1468,7 @@ msgstr "Құрылғы файлы"
 
 #: ../translation/extra.c:18
 msgid "OSS4 samplerate bug workaround"
-msgstr ""
+msgstr "OSS4 үшін дискреттеу жиілігінің қатесіне түзету"
 
 #. Album Artwork plugin
 #: ../translation/extra.c:20
@@ -1498,7 +1497,7 @@ msgstr "albumart.org сайтынан алу"
 
 #: ../translation/extra.c:26
 msgid "Scale artwork towards longer side"
-msgstr ""
+msgstr "Альбом мұқабасын ұзын жағы бойынша масштабтау"
 
 #. Audio CD player
 #: ../translation/extra.c:28
@@ -1554,7 +1553,7 @@ msgstr "gtk_init --sync қосып, жөнелту (жөндеу режимі)"
 
 #: ../translation/extra.c:43
 msgid "Add separators between plugin context menu items"
-msgstr ""
+msgstr "Контекст мәзірі элементтері арасына ажыратқышты қосу"
 
 #. OSD Notify plugin
 #: ../translation/extra.c:45
@@ -1606,7 +1605,7 @@ msgstr "Songlengths.txt (HVSC-дан)"
 
 #: ../translation/extra.c:60
 msgid "Bits per sample (8 or 16)"
-msgstr ""
+msgstr "Разрядтылығы (8 не 16)"
 
 #: ../translation/extra.c:61
 msgid "Default song length (sec)"
@@ -1690,7 +1689,7 @@ msgstr "Сапасы / Алгоритмі"
 
 #: ../translation/extra.c:91
 msgid "Automatic Samplerate (overrides Target Samplerate)"
-msgstr ""
+msgstr "Дискреттеудің автожиілігі (дискреттеу жиілігін қайта анықтайды)"
 
 #: ../plugins/converter/convgui.c:108
 msgid "The file already exists. Overwrite?"
@@ -1719,17 +1718,19 @@ msgstr "Буманы тандаңыз..."
 
 #: ../plugins/converter/convgui.c:635
 msgid "Failed to save encoder preset"
-msgstr ""
+msgstr "Кодтауыштың баптауын сақтау сәтсіз"
 
 #: ../plugins/converter/convgui.c:637
 #: ../plugins/converter/convgui.c:1035
 msgid "Check preset folder permissions, try to pick different title, or free up some disk space"
 msgstr ""
+"Баптау сақталатын бума рұқсаттарын тексеріңіз, басқа атауды таңдаңыз не "
+"біршама диск кеңістігін босатыңыз."
 
 #: ../plugins/converter/convgui.c:637
 #: ../plugins/converter/convgui.c:1035
 msgid "Preset with the same name already exists. Try to pick another title."
-msgstr ""
+msgstr "Ондай атымен баптау бар болып тұр. Басқа атын көрсетіңіз."
 
 #: ../plugins/converter/convgui.c:638
 #: ../plugins/converter/convgui.c:1036
@@ -1752,7 +1753,7 @@ msgstr "Баптауды өшіру"
 #: ../plugins/converter/convgui.c:758
 #: ../plugins/converter/convgui.c:1135
 msgid "This action will delete the selected preset. Are you sure?"
-msgstr ""
+msgstr "Бұл әрекет нәтижесінде таңдалған баптау өшіріледі. Осыны қалайсыз ба?"
 
 #: ../plugins/converter/convgui.c:782
 msgid "Encoders"
@@ -1761,11 +1762,11 @@ msgstr "Кодтауыштар"
 #: ../plugins/converter/convgui.c:838
 #: ../plugins/gtkui/dspconfig.c:183
 msgid "Add plugin to DSP chain"
-msgstr ""
+msgstr "Плагинді DSP тізбегіне қосу"
 
 #: ../plugins/converter/convgui.c:1034
 msgid "Failed to save DSP preset"
-msgstr ""
+msgstr "DSP баптауын сақтау сәтсіз"
 
 #: ../plugins/converter/convgui.c:1098
 msgid "New DSP Preset"
@@ -1792,6 +1793,8 @@ msgid ""
 "Extension (e.g. .mp3) will be appended automatically.\n"
 "Leave the field empty for default (%a - %t)."
 msgstr ""
+"Кеңейтуі (мыс. .mp3) автоқосылады.\n"
+"Үнсіз келісім үшін бос қалдырыңыз (%a - %t)."
 
 #: ../plugins/converter/interface.c:139
 msgid "Encoder:"
@@ -1807,11 +1810,11 @@ msgstr "Ағымдар саны:"
 
 #: ../plugins/converter/interface.c:199
 msgid "Output sample format:"
-msgstr ""
+msgstr "Сэмплдердің шығыс пішімі:"
 
 #: ../plugins/converter/interface.c:206
 msgid "Keep source format"
-msgstr ""
+msgstr "Бастапқы пішімді қалдыру"
 
 #: ../plugins/converter/interface.c:207
 msgid "8 bit signed int"
@@ -1875,6 +1878,8 @@ msgid ""
 "Example: lame - %o\n"
 "%i for input file, %o for output file, - for stdin"
 msgstr ""
+"Мысалы: lame - %o\n"
+"%i кіріс файлы, %o шығыс файлы үшін, - stdin үшін"
 
 #: ../plugins/converter/interface.c:446
 #, c-format
@@ -1882,6 +1887,8 @@ msgid ""
 "<small>%o - output file name\n"
 "%i - temporary input file name</small>"
 msgstr ""
+"<small>%o - шығыс файлы аты\n"
+"%i - уақытша кіріс файлының аты</small>"
 
 #: ../plugins/converter/interface.c:455
 msgid "Method:"
