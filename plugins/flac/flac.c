@@ -925,6 +925,7 @@ cflac_write_metadata (DB_playItem_t *it) {
         m = m->next;
     }
 
+#if 0 // fetching covers is broken, disabling for 0.5.2
     // check if we have embedded cover
     data = NULL;
     while (FLAC__metadata_iterator_prev (iter));
@@ -1019,7 +1020,7 @@ error2:
             }
         }
     }
-
+#endif
 
     if (!FLAC__metadata_chain_write (chain, 1, 0)) {
         trace ("cflac_write_metadata: FLAC__metadata_chain_write failed\n");
