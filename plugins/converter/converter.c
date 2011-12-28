@@ -739,7 +739,8 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
         return -1;
     }
 
-    if (!check_dir (outfolder, 0755)) {
+    char *path = outfolder[0] ? strdupa (outfolder) : strdupa (getenv("HOME"));
+    if (!check_dir (path, 0755)) {
         fprintf (stderr, "converter: failed to create output folder: %s\n", outfolder);
         return -1;
     }
