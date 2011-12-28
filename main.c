@@ -474,6 +474,26 @@ server_loop (void *ctx) {
 }
 
 void
+save_resume_state (void) {
+    playItem_t *trk = streamer_get_playing_track ();
+    DB_output_t *output = plug_get_output ();
+    float playpos = -1;
+    int playtrack = -1;
+    int playlist = streamer_get_current_playlist ();
+    int paused = (output->state () == OUTPUT_STATE_PAUSED);
+    if (trk && playlist >= 0) {
+        playtrack = str_get_idx_of (trk);
+        playpos = streamer_get_playpos ();
+        pl_item_unref (trk);
+    }
+
+    conf_set_float ("resume.position", playpos);
+    conf_set_int ("resume.track", playtrack);
+    conf_set_int ("resume.playlist", playlist);
+    conf_set_int ("resume.paused", paused);
+}
+
+void
 player_mainloop (void) {
     for (;;) {
         uint32_t msg;
@@ -498,6 +518,8 @@ player_mainloop (void) {
                 break;
             case DB_EV_TERMINATE:
                 {
+                    save_resume_state ();
+
                     pl_playqueue_clear ();
 
                     // stop streaming and playback before unloading plugins
@@ -614,26 +636,6 @@ sigsegv_handler (int sig) {
     exit (0);
 }
 #endif
-
-void
-save_resume_state (void) {
-    playItem_t *trk = streamer_get_playing_track ();
-    DB_output_t *output = plug_get_output ();
-    float playpos = -1;
-    int playtrack = -1;
-    int playlist = streamer_get_current_playlist ();
-    int paused = (output->state () == OUTPUT_STATE_PAUSED);
-    if (trk && playlist >= 0) {
-        playtrack = str_get_idx_of (trk);
-        playpos = streamer_get_playpos ();
-        pl_item_unref (trk);
-    }
-
-    conf_set_float ("resume.position", playpos);
-    conf_set_int ("resume.track", playtrack);
-    conf_set_int ("resume.playlist", playlist);
-    conf_set_int ("resume.paused", paused);
-}
 
 void
 restore_resume_state (void) {
@@ -923,8 +925,6 @@ main (int argc, char *argv[]) {
         thread_join (server_tid);
         server_tid = 0;
     }
-
-    save_resume_state ();
 
     // save config
     pl_save_all ();
