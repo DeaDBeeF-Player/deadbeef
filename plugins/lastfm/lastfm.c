@@ -832,7 +832,7 @@ lfm_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 static int
 lastfm_start (void) {
     if (lfm_mutex) {
-        return;
+        return -1;
     }
     lfm_stopthread = 0;
     lfm_mutex = deadbeef->mutex_create_nonrecursive ();
