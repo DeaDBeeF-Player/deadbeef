@@ -2107,15 +2107,10 @@ pl_save_all (void) {
 
 playItem_t *
 plt_load (playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
-    FILE *fp = fopen (fname, "rb");
-    if (!fp) {
-        trace ("plt_load: failed to open %s\n", fname);
-        return NULL;
-    }
-
     // try plugins 1st
     const char *ext = strrchr (fname, '.');
     if (ext) {
+        trace ("finding playlist plugin for %s\n", ext);
         ext++;
         DB_playlist_t **plug = plug_get_playlist_list ();
         int p, e;
@@ -2129,6 +2124,12 @@ plt_load (playlist_t *plt, playItem_t *after, const char *fname, int *pabort, in
         }
     }
     trace ("plt_load: loading dbpl\n");
+    FILE *fp = fopen (fname, "rb");
+    if (!fp) {
+        trace ("plt_load: failed to open %s\n", fname);
+        return NULL;
+    }
+
 
     uint8_t majorver;
     uint8_t minorver;
