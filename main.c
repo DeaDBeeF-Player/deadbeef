@@ -303,7 +303,14 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
                 }
                 if (deadbeef->plt_add_dir ((ddb_playlist_t*)curr_plt, pname, NULL, NULL) < 0) {
                     if (deadbeef->plt_add_file ((ddb_playlist_t*)curr_plt, pname, NULL, NULL) < 0) {
-                        fprintf (stderr, "failed to add file or folder %s\n", pname);
+                        int ab = 0;
+                        playItem_t *it = plt_load (curr_plt, NULL, pname, &ab, NULL, NULL);
+                        if (it) {
+                            pl_item_unref (it);
+                        }
+                        else {
+                            fprintf (stderr, "failed to add file or folder %s\n", pname);
+                        }
                     }
                 }
                 parg += strlen (parg);
