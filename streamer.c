@@ -711,11 +711,15 @@ streamer_set_current (playItem_t *it) {
         const char *plug = NULL;
         trace ("\033[0;34mgetting content-type\033[37;0m\n");
         if (!fp) {
+            err = -1;
             goto error;
         }
         const char *ct = vfs_get_content_type (fp);
         if (!ct) {
             vfs_fclose (fp);
+            fp = NULL;
+            streamer_file = NULL;
+            err = -1;
             goto error;
         }
         trace ("got content-type: %s\n", ct);
