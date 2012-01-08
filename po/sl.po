@@ -8,14 +8,16 @@ msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2012-01-08 12:33+0100\n"
-"Last-Translator: Klemen Košir <klemen.kosir@gmx.com>\n"
+"PO-Revision-Date: 2012-01-08 13:34+0200\n"
+"Last-Translator: Klemen <klemen.kosir@gmx.com>\n"
 "Language-Team: Slovenian <lugos-slo@lugos.si>\n"
 "Language: sl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n%100==4 ? 3 : 0);\n"
+"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || "
+"n%100==4 ? 3 : 0);;\n"
+"X-Generator: Pootle 2.0.5\n"
 
 #: ../plugins/gtkui/callbacks.c:123
 msgid "Supported sound formats"
@@ -1182,7 +1184,7 @@ msgstr "Ali res želite zapreti to okno?"
 #. get value to edit
 #: ../plugins/gtkui/trkproperties.c:254
 msgid "[Multiple values] "
-msgstr "[Več vrednosti]"
+msgstr "[Več vrednosti] "
 
 #: ../plugins/gtkui/trkproperties.c:407
 #: ../plugins/gtkui/trkproperties.c:419
@@ -1928,4 +1930,3 @@ msgstr "Urejevalnik prednastavitev DSP"
 #: ../plugins/converter/interface.c:629
 msgid "Untitled DSP Preset"
 msgstr "Neimenovane prednastavitve DSP"
-
