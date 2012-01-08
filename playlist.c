@@ -1402,6 +1402,10 @@ plt_insert_dir_int (playlist_t *playlist, DB_vfs_t *vfs, playItem_t *after, cons
                 }
                 else {
                     inserted = plt_insert_file (playlist, after, namelist[i]->d_name, pabort, cb, user_data);
+                    if (!inserted) {
+                        // special case for loading playlists in zip files
+                        inserted = plt_load (playlist, after, namelist[i]->d_name, pabort, cb, user_data);
+                    }
                 }
                 if (inserted) {
                     after = inserted;
