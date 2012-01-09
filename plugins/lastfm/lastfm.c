@@ -318,15 +318,15 @@ fail:
 
 static int
 lfm_fetch_song_info (DB_playItem_t *song, const char **a, const char **t, const char **b, float *l, const char **n, const char **m) {
-    *a = deadbeef->pl_find_meta (song, "band");
+    *a = deadbeef->pl_find_meta (song, "artist");
+    if (!(*a)) {
+        *a = deadbeef->pl_find_meta (song, "band");
+    }
     if (!(*a)) {
         *a = deadbeef->pl_find_meta (song, "album artist");
     }
     if (!(*a)) {
         *a = deadbeef->pl_find_meta (song, "albumartist");
-    }
-    if (!(*a)) {
-        *a = deadbeef->pl_find_meta (song, "artist");
     }
     if (!*a) {
         return -1;
