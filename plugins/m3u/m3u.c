@@ -192,11 +192,13 @@ pls_insert_file (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, c
         trace ("pls_insert_file: adding file %s\n", fullpath);
         it = deadbeef->plt_insert_file (plt, after, fullpath, pabort, cb, user_data);
     }
-    if (length[0]) {
-        deadbeef->plt_set_item_duration (plt, it, atoi (length));
-    }
-    if (title[0]) {
-        deadbeef->pl_replace_meta (it, "title", title);
+    if (it) {
+        if (length[0]) {
+            deadbeef->plt_set_item_duration (plt, it, atoi (length));
+        }
+        if (title[0]) {
+            deadbeef->pl_replace_meta (it, "title", title);
+        }
     }
     return it;
 }
