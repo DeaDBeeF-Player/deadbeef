@@ -1369,7 +1369,7 @@ ddb_listview_select_single (DdbListview *ps, int sel) {
 }
 
 void
-ddb_listview_click_selection (DdbListview *ps, int ex, int ey, DdbListviewGroup *grp, int grp_index, int sel, int dnd) {
+ddb_listview_click_selection (DdbListview *ps, int ex, int ey, DdbListviewGroup *grp, int grp_index, int sel, int dnd, int button) {
     deadbeef->pl_lock ();
     ps->areaselect = 0;
     ddb_listview_groupcheck (ps);
@@ -1420,7 +1420,9 @@ ddb_listview_click_selection (DdbListview *ps, int ex, int ey, DdbListviewGroup 
     else {
         // clicked specific item - select, or start drag-n-drop
         DdbListviewIter it = ps->binding->get_for_idx (sel);
-        if (!it || !ps->binding->is_selected (it) || !ps->binding->drag_n_drop) {
+        if (!it || !ps->binding->is_selected (it)
+                || (!ps->binding->drag_n_drop && button == 1)) // HACK: don't reset selection by right click in search window
+        {
             // reset selection, and set it to single item
             ddb_listview_select_single (ps, sel);
             if (dnd) {
@@ -1509,7 +1511,7 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, Gd
     // handle multiple selection
     if (!(state & (GDK_CONTROL_MASK|GDK_SHIFT_MASK)))
     {
-        ddb_listview_click_selection (ps, ex, ey, grp, grp_index, sel, 1);
+        ddb_listview_click_selection (ps, ex, ey, grp, grp_index, sel, 1, 1);
     }
     else if (state & GDK_CONTROL_MASK) {
         // toggle selection
@@ -2682,7 +2684,7 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
             if (sel != -1) {
                 ps->binding->set_cursor (sel);
             }
-            ddb_listview_click_selection (ps, event->x, event->y, grp, grp_index, sel, 0);
+            ddb_listview_click_selection (ps, event->x, event->y, grp, grp_index, sel, 0, event->button);
             if (sel == -1 && grp_index < grp->num_items) {
                 sel = ps->binding->get_idx (grp->head);
             }
