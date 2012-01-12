@@ -125,6 +125,25 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
         memcpy (nm, p, n);
         nm[n] = 0;
 
+        if (title[0]) {
+            const char *cs = deadbeef->junk_detect_charset (title);
+            if (cs) {
+                char tmp[2048];
+                if (deadbeef->junk_iconv (title, strlen (title), tmp, sizeof (tmp), cs, "utf-8") >= 0) {
+                    strcpy (title, tmp);
+                }
+            }
+        }
+        if (artist[0]) {
+            const char *cs = deadbeef->junk_detect_charset (artist);
+            if (cs) {
+                char tmp[2048];
+                if (deadbeef->junk_iconv (artist, strlen (artist), tmp, sizeof (tmp), cs, "utf-8") >= 0) {
+                    strcpy (artist, tmp);
+                }
+            }
+        }
+
         DB_playItem_t *it = NULL;
         if (strrchr (nm, '/')) {
             trace ("pl_insert_m3u: adding file %s\n", nm);
