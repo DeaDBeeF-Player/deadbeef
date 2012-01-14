@@ -318,15 +318,29 @@ fail:
 
 static int
 lfm_fetch_song_info (DB_playItem_t *song, const char **a, const char **t, const char **b, float *l, const char **n, const char **m) {
-    *a = deadbeef->pl_find_meta (song, "artist");
-    if (!(*a)) {
+    if (deadbeef->conf_get_int ("lastfm.prefer_album_artist", 0)) {
         *a = deadbeef->pl_find_meta (song, "band");
+        if (!(*a)) {
+            *a = deadbeef->pl_find_meta (song, "album artist");
+        }
+        if (!(*a)) {
+            *a = deadbeef->pl_find_meta (song, "albumartist");
+        }
+        if (!(*a)) {
+            *a = deadbeef->pl_find_meta (song, "artist");
+        }
     }
-    if (!(*a)) {
-        *a = deadbeef->pl_find_meta (song, "album artist");
-    }
-    if (!(*a)) {
-        *a = deadbeef->pl_find_meta (song, "albumartist");
+    else {
+        *a = deadbeef->pl_find_meta (song, "artist");
+        if (!(*a)) {
+            *a = deadbeef->pl_find_meta (song, "band");
+        }
+        if (!(*a)) {
+            *a = deadbeef->pl_find_meta (song, "album artist");
+        }
+        if (!(*a)) {
+            *a = deadbeef->pl_find_meta (song, "albumartist");
+        }
     }
     if (!*a) {
         return -1;
@@ -930,6 +944,7 @@ static const char settings_dlg[] =
     "property Username entry lastfm.login \"\";\n"
     "property Password password lastfm.password \"\";"
     "property \"Scrobble URL\" entry lastfm.scrobbler_url \""SCROBBLER_URL_LFM"\";"
+    "property \"Prefer Album Artist over Artist field\" checkbox lastfm.prefer_album_artist 0;"
 ;
 
 // define plugin interface
