@@ -1630,7 +1630,7 @@ streamer_dsp_init (void) {
         DB_dsp_t *src = (DB_dsp_t *)plug_get_for_id ("SRC");
         if (src) {
             ddb_dsp_context_t *inst = src->open ();
-            inst->enabled = 0;
+            inst->enabled = 1;
             src->set_param (inst, 0, "48000"); // samplerate
             src->set_param (inst, 1, "2"); // quality=SINC_FASTEST
             src->set_param (inst, 2, "1"); // auto
