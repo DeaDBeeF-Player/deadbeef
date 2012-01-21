@@ -332,9 +332,11 @@ aac_probe (DB_FILE *fp, const char *fname, MP4FILE_CB *cb, float *duration, int 
                 if (mp4ASC.frameLengthFlag == 1) {
                     mp4framesize = 960;
                 }
-                if (mp4ASC.sbr_present_flag == 1) {
-                    mp4framesize *= 2;
-                }
+                // commented this out, since it fixes double-duration bug on
+                // some mp4 files
+                //if (mp4ASC.sbr_present_flag == 1) {
+                //    mp4framesize *= 2;
+                //}
             }
             else {
                 trace ("NeAACDecAudioSpecificConfig failed, can't get mp4framesize\n");
@@ -344,6 +346,7 @@ aac_probe (DB_FILE *fp, const char *fname, MP4FILE_CB *cb, float *duration, int 
 
             trace ("mp4 nsamples=%d, samplerate=%d, timescale=%d, duration=%lld\n", samples, *samplerate, mp4ff_time_scale(mp4, i), mp4ff_get_track_duration(mp4, i));
             *duration = (float)tsamples / (*samplerate);
+            trace ("mp4 duration: %f (tsamples %d/samplerate %d)\n", *duration, tsamples, *samplerate);
             
             NeAACDecClose (dec);
 
@@ -533,9 +536,9 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
                         if (mp4ASC.frameLengthFlag == 1) {
                             info->mp4framesize = 960;
                         }
-                        if (mp4ASC.sbr_present_flag == 1) {
-                            info->mp4framesize *= 2;
-                        }
+//                        if (mp4ASC.sbr_present_flag == 1) {
+//                            info->mp4framesize *= 2;
+//                        }
                     }
                     totalsamples *= info->mp4framesize;
                     duration = (float)totalsamples  / samplerate;
@@ -593,9 +596,9 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
                     if (mp4ASC.frameLengthFlag == 1) {
                         info->mp4framesize = 960;
                     }
-                    if (mp4ASC.sbr_present_flag == 1) {
-                        info->mp4framesize *= 2;
-                    }
+//                    if (mp4ASC.sbr_present_flag == 1) {
+//                        info->mp4framesize *= 2;
+//                    }
                 }
                 //totalsamples *= info->mp4framesize;
                 free (pConfig);
