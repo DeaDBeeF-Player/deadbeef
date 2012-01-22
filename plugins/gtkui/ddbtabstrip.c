@@ -20,6 +20,7 @@
 #include <string.h>
 #include <assert.h>
 #include <glib.h>
+#include <stdlib.h>
 #include "ddbtabstrip.h"
 #include "drawing.h"
 #include "gtkui.h"
@@ -797,6 +798,139 @@ on_add_new_playlist1_activate          (GtkMenuItem     *menuitem,
     }
 }
 
+static void
+on_actionitem_activate (GtkMenuItem     *menuitem,
+                           DB_plugin_action_t *action)
+{
+    ddb_playlist_t *plt = NULL;
+    if (tab_clicked != -1) {
+        plt = deadbeef->plt_get_for_idx (tab_clicked);
+    }
+    action->callback (action, plt);
+    deadbeef->plt_unref (plt);
+}
+
+static GtkWidget*
+find_popup                          (GtkWidget       *widget,
+                                        const gchar     *widget_name)
+{
+  GtkWidget *parent, *found_widget;
+
+  for (;;)
+    {
+      if (GTK_IS_MENU (widget))
+        parent = gtk_menu_get_attach_widget (GTK_MENU (widget));
+      else
+        parent = gtk_widget_get_parent (widget);
+      if (!parent)
+        parent = (GtkWidget*) g_object_get_data (G_OBJECT (widget), "GladeParentKey");
+      if (parent == NULL)
+        break;
+      widget = parent;
+    }
+
+  found_widget = (GtkWidget*) g_object_get_data (G_OBJECT (widget),
+                                                 widget_name);
+  return found_widget;
+}
+
+void
+add_tab_actions (GtkWidget *menu) {
+    DB_plugin_t **plugins = deadbeef->plug_get_list();
+    int i;
+
+    int added_entries = 0;
+    for (i = 0; plugins[i]; i++)
+    {
+        if (!plugins[i]->get_actions)
+            continue;
+
+        DB_plugin_action_t *actions = plugins[i]->get_actions (NULL);
+        DB_plugin_action_t *action;
+
+        int count = 0;
+        for (action = actions; action; action = action->next)
+        {
+            char *tmp = NULL;
+            if (!(action->flags & DB_ACTION_PLAYLIST))
+                continue;
+
+            // create submenus (separated with '/')
+            const char *prev = action->title;
+            while (*prev && *prev == '/') {
+                prev++;
+            }
+            
+            GtkWidget *popup = NULL;
+            
+            for (;;) {
+                const char *slash = strchr (prev, '/');
+                if (slash && *(slash-1) != '\\') {
+                    char name[slash-prev+1];
+                    // replace \/ with /
+                    const char *p = prev;
+                    char *t = name;
+                    while (*p && p < slash) {
+                        if (*p == '\\' && *(p+1) == '/') {
+                            *t++ = '/';
+                            p += 2;
+                        }
+                        else {
+                            *t++ = *p++;
+                        }
+                    }
+                    *t = 0;
+
+                    // add popup
+                    GtkWidget *prev_menu = popup ? popup : menu;
+
+                    popup = find_popup (prev_menu, name);
+                    if (!popup) {
+                        GtkWidget *item = gtk_image_menu_item_new_with_mnemonic (_(name));
+                        gtk_widget_show (item);
+                        gtk_container_add (GTK_CONTAINER (prev_menu), item);
+                        popup = gtk_menu_new ();
+                        //HOOKUP_OBJECT (prev_menu, popup, name);
+                        gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), popup);
+                    }
+                }
+                else {
+                    break;
+                }
+                prev = slash+1;
+            }
+
+
+            count++;
+            added_entries++;
+            GtkWidget *actionitem;
+
+            // replace \/ with /
+            const char *p = popup ? prev : action->title;
+            char title[strlen (p)+1];
+            char *t = title;
+            while (*p) {
+                if (*p == '\\' && *(p+1) == '/') {
+                    *t++ = '/';
+                    p += 2;
+                }
+                else {
+                    *t++ = *p++;
+                }
+            }
+            *t = 0;
+
+            actionitem = gtk_menu_item_new_with_mnemonic (_(title));
+            gtk_widget_show (actionitem);
+            gtk_container_add (popup ? GTK_CONTAINER (popup) : GTK_CONTAINER (menu), actionitem);
+
+            g_signal_connect ((gpointer) actionitem, "activate",
+                    G_CALLBACK (on_actionitem_activate),
+                    action);
+        }
+    }
+}
+
 GtkWidget*
 create_plmenu (void)
 {
@@ -844,6 +978,8 @@ create_plmenu (void)
   GLADE_HOOKUP_OBJECT (plmenu, rename_playlist1, "rename_playlist1");
   GLADE_HOOKUP_OBJECT (plmenu, remove_playlist1, "remove_playlist1");
   GLADE_HOOKUP_OBJECT (plmenu, add_new_playlist1, "add_new_playlist1");
+
+  add_tab_actions (plmenu);
 
   return plmenu;
 }

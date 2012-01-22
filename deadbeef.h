@@ -756,12 +756,17 @@ enum {
     DB_ACTION_CAN_MULTIPLE_TRACKS = 1 << 3,
     
     /* Action is inactive */
-    DB_ACTION_DISABLED = 1 << 4
+    DB_ACTION_DISABLED = 1 << 4,
+
+    /* Action for the playlist (tab) */
+    DB_ACTION_PLAYLIST = 1 << 5,
 };
 
 struct DB_plugin_action_s;
 
-typedef int (*DB_plugin_action_callback_t) (struct DB_plugin_action_s *action, DB_playItem_t *it);
+// userdata type depends on type of action
+// can be track ptr, or playlist ptr, etc
+typedef int (*DB_plugin_action_callback_t) (struct DB_plugin_action_s *action, void *userdata);
 
 typedef struct DB_plugin_action_s {
     const char *title;

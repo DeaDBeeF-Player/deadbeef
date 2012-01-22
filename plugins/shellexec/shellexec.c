@@ -204,6 +204,9 @@ shx_start ()
         if (0 == strstr (flags, "single"))
             action->parent.flags |= DB_ACTION_ALLOW_MULTIPLE_TRACKS;
 
+        if (strstr (flags, "playlist"))
+            action->parent.flags |= DB_ACTION_PLAYLIST;
+
         if (prev)
             prev->parent.next = (DB_plugin_action_t *)action;
         prev = action;
