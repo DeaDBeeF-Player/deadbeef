@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2012-01-08 13:34+0200\n"
+"PO-Revision-Date: 2012-01-22 22:12+0200\n"
 "Last-Translator: Klemen <klemen.kosir@gmx.com>\n"
 "Language-Team: Slovenian <lugos-slo@lugos.si>\n"
 "Language: sl\n"
@@ -105,39 +105,39 @@ msgstr "Dodaj nov seznam predvajanja"
 
 #: ../plugins/gtkui/eq.c:136
 msgid "Save DeaDBeeF EQ Preset"
-msgstr "Shrani prednastavitve izenačevalnika DeaDBeeF"
+msgstr "Shrani predlogo nastavitev uravnalnika DeaDBeeF"
 
 #: ../plugins/gtkui/eq.c:143
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
-msgstr "Prednastavitve izenačevalnika DeaDBeeF (*.ddbeq)"
+msgstr "Predloge nastavitev uravnalnika DeaDBeeF (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:182
 msgid "Load DeaDBeeF EQ Preset..."
-msgstr "Naloži prednastavitve izenačevalnika DeaDBeeF ..."
+msgstr "Naloži predlogo nastavitev uravnalnika DeaDBeeF ..."
 
 #: ../plugins/gtkui/eq.c:186
 msgid "DeaDBeeF EQ presets (*.ddbeq)"
-msgstr "Prednastavitve izenačevalnika DeaDBeeF (*.ddbeq)"
+msgstr "Predloge nastavitev uravnalnika DeaDBeeF (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:247
 msgid "Import Foobar2000 EQ Preset..."
-msgstr "Uvozi prednastavitve izenačevalnika Foobar2000 ..."
+msgstr "Uvozi predlogo nastavitev uravnalnika Foobar2000 ..."
 
 #: ../plugins/gtkui/eq.c:251
 msgid "Foobar2000 EQ presets (*.feq)"
-msgstr "Prednastavitve izenačevalnika Foobar2000 (*.feq)"
+msgstr "Predloge nastavitev uravnalnika Foobar2000 (*.feq)"
 
 #: ../plugins/gtkui/eq.c:316
 msgid "Save Preset"
-msgstr "Shrani prednastavitve"
+msgstr "Shrani predlogo nastavitev"
 
 #: ../plugins/gtkui/eq.c:324
 msgid "Load Preset"
-msgstr "Naloži prednastavitve"
+msgstr "Naloži predlogo nastavitev"
 
 #: ../plugins/gtkui/eq.c:332
 msgid "Import Foobar2000 Preset"
-msgstr "Uvozi prednastavitve Foobar2000"
+msgstr "Uvozi predlogo nastavitev za Foobar2000"
 
 #: ../plugins/gtkui/eq.c:357
 msgid "Enable"
@@ -158,7 +158,7 @@ msgstr "Ponastavi pasove"
 #: ../plugins/gtkui/eq.c:387
 #: ../plugins/converter/interface.c:820
 msgid "Presets"
-msgstr "Prednastavitve"
+msgstr "Predloge nastavitev"
 
 #: ../plugins/gtkui/gtkui.c:137
 #, c-format
@@ -398,7 +398,7 @@ msgstr "Zavihki"
 #: ../plugins/gtkui/interface.c:347
 #: ../plugins/gtkui/deadbeef.glade.h:40
 msgid "Equalizer"
-msgstr "Izenačevalnik"
+msgstr "Uravnalnik"
 
 #: ../plugins/gtkui/interface.c:351
 #: ../plugins/gtkui/deadbeef.glade.h:164
@@ -748,7 +748,7 @@ msgstr "Nastavitve"
 #: ../plugins/gtkui/interface.c:2017
 #: ../plugins/gtkui/deadbeef.glade.h:29
 msgid "DSP Chain Preset"
-msgstr "Prednastavitve verige DSP"
+msgstr "Predloga nastavitev verige DSP"
 
 #: ../plugins/gtkui/interface.c:2029
 #: ../plugins/gtkui/deadbeef.glade.h:161
@@ -1717,17 +1717,19 @@ msgstr "Izberite mapo ..."
 
 #: ../plugins/converter/convgui.c:635
 msgid "Failed to save encoder preset"
-msgstr "Prednastavitev kodirnika ni mogoče shraniti"
+msgstr "Predloge nastavitev kodirnika ni mogoče shraniti"
 
 #: ../plugins/converter/convgui.c:637
 #: ../plugins/converter/convgui.c:1035
 msgid "Check preset folder permissions, try to pick different title, or free up some disk space"
-msgstr "Preverite dovoljenja mape prednastavitev, izberite drugo ime ali sprostite nekaj prostora na disku."
+msgstr ""
+"Preverite dovoljenja mape predloge nastavitev, izberite drugo ime ali "
+"sprostite nekaj prostora na disku."
 
 #: ../plugins/converter/convgui.c:637
 #: ../plugins/converter/convgui.c:1035
 msgid "Preset with the same name already exists. Try to pick another title."
-msgstr "Prednastavitve s tem imenom že obstajajo."
+msgstr "Predloga nastavitev s tem imenom že obstaja."
 
 #: ../plugins/converter/convgui.c:638
 #: ../plugins/converter/convgui.c:1036
@@ -1745,12 +1747,12 @@ msgstr "Uredi kodirnik"
 #: ../plugins/converter/convgui.c:756
 #: ../plugins/converter/convgui.c:1133
 msgid "Remove preset"
-msgstr "Odstrani prednastavitve"
+msgstr "Odstrani predlogo nastavitev"
 
 #: ../plugins/converter/convgui.c:758
 #: ../plugins/converter/convgui.c:1135
 msgid "This action will delete the selected preset. Are you sure?"
-msgstr "Ali ste prepričani, da želite izbrisati izbrane prednastavitve?"
+msgstr "Ali ste prepričani, da želite izbrisati izbrano predlogo nastavitev?"
 
 #: ../plugins/converter/convgui.c:782
 msgid "Encoders"
@@ -1763,19 +1765,19 @@ msgstr "Dodaj vstavek v verigo DSP"
 
 #: ../plugins/converter/convgui.c:1034
 msgid "Failed to save DSP preset"
-msgstr "Prednastavitev DSP ni mogoče shraniti"
+msgstr "Predloge nastavitev DSP ni mogoče shraniti."
 
 #: ../plugins/converter/convgui.c:1098
 msgid "New DSP Preset"
-msgstr "Nove prednastavitve DSP"
+msgstr "Nova predloga nastavitev DSP"
 
 #: ../plugins/converter/convgui.c:1183
 msgid "Edit DSP Preset"
-msgstr "Uredi prednastavitve DSP"
+msgstr "Uredi predlogo nastavitev DSP"
 
 #: ../plugins/converter/convgui.c:1203
 msgid "DSP Presets"
-msgstr "Prednastavitve DSP"
+msgstr "Predloge nastavitev DSP"
 
 #: ../plugins/converter/interface.c:94
 msgid "Output folder:"
@@ -1799,7 +1801,7 @@ msgstr "Kodirnik:"
 
 #: ../plugins/converter/interface.c:163
 msgid "DSP preset:"
-msgstr "Prednastavitve DSP:"
+msgstr "Predloga nastavitev DSP:"
 
 #: ../plugins/converter/interface.c:186
 msgid "Number of threads:"
@@ -1851,7 +1853,7 @@ msgstr "Ohrani zgradbo map, začni z:"
 
 #: ../plugins/converter/interface.c:379
 msgid "Edit Encoder Preset"
-msgstr "Uredi prednastavitve kodirnika"
+msgstr "Uredi predlogo nastavitev kodirnika"
 
 #: ../plugins/converter/interface.c:402
 msgid "Untitled Encoder"
@@ -1925,8 +1927,8 @@ msgstr "<b>Zapisovalnik oznak</b>"
 
 #: ../plugins/converter/interface.c:606
 msgid "DSP Preset Editor"
-msgstr "Urejevalnik prednastavitev DSP"
+msgstr "Urejevalnik predlog nastavitev DSP"
 
 #: ../plugins/converter/interface.c:629
 msgid "Untitled DSP Preset"
-msgstr "Neimenovane prednastavitve DSP"
+msgstr "Neimenovana predloga nastavitev DSP"
