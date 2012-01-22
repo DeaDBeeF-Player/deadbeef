@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2012-01-22 18:36+0200\n"
+"PO-Revision-Date: 2012-01-22 18:43+0200\n"
 "Last-Translator: Anari <anari.jalakas@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: et\n"
@@ -1102,9 +1102,8 @@ msgstr "   --toggle-pause     Pausi lülitamine\n"
 #, c-format
 msgid ""
 "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
-msgstr ""
-"   --play-pause       Kui peatatud siis alustab taasesitlust, muidu lülitab "
-"pausi ümber"
+msgstr "   --play-pause       Kui peatatud siis alustab taasesitlust, muidu lülitab "
+"pausi ümber\n"
 
 #: ../main.c:101
 #, c-format
@@ -1129,7 +1128,7 @@ msgstr "   --queue            Lisab faili(e) esitlusloendisse\n"
 #: ../main.c:105
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr "   --nowplaying FMT   Prindib loo andmed etteantud formaadis"
+msgstr "   --nowplaying FMT   Prindib loo andmed etteantud formaadis\n"
 
 #: ../main.c:106
 #, c-format
@@ -1138,9 +1137,9 @@ msgid ""
 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
 "                      copy[r]ight, [e]lapsed\n"
 msgstr ""
-"                      FMT %%-syntax: [a]rtist, [t]iitel, al[b]um, "
-"                     [l]ength, track[n]umber, [y]ear, [c]omment, "
-"                     copy[r]ight, [e]lapsed"
+"                      FMT %%-syntax: [a]rtist, [t]iitel, al[b]um,\n"
+"                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
+"                      copy[r]ight, [e]lapsed\n"
 
 #: ../main.c:109
 #, c-format
@@ -1191,7 +1190,10 @@ msgid ""
 "Disable\n"
 "Track\n"
 "Album"
-msgstr "KeelaLuguAlbum"
+msgstr ""
+"Keela\n"
+"Lugu\n"
+"Album"
 
 #: ../plugins/gtkui/deadbeef.glade.h:56
 msgid ""
