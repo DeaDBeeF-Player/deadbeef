@@ -908,7 +908,7 @@ static DB_plugin_action_t love_action = {
     .title = "Love at Last.fm",
     .name = "lfm_love",
     .flags = DB_ACTION_SINGLE_TRACK,
-    .callback = lfm_action_love,
+    .callback = DDB_ACTION_CALLBACK(lfm_action_love),
     .next = NULL
 };
 
@@ -916,7 +916,7 @@ static DB_plugin_action_t lookup_action = {
     .title = "Lookup on Last.fm",
     .name = "lfm_lookup",
     .flags = DB_ACTION_SINGLE_TRACK,
-    .callback = lfm_action_lookup,
+    .callback = DDB_ACTION_CALLBACK (lfm_action_lookup),
     .next = NULL// &love_action
 };
 

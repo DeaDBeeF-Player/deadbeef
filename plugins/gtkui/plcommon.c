@@ -513,7 +513,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
         int count = 0;
         for (action = actions; action; action = action->next)
         {
-            if (action->flags & DB_ACTION_COMMON)
+            if (action->flags & (DB_ACTION_COMMON | DB_ACTION_PLAYLIST))
                 continue;
             
             // create submenus (separated with '/')

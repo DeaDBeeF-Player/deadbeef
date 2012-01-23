@@ -742,6 +742,15 @@ typedef struct {
     const char *(*pl_find_meta_raw) (DB_playItem_t *it, const char *key);
 } DB_functions_t;
 
+// NOTE: an item placement must be selected like this
+// if (flags & DB_ACTION_COMMON)  -> main menu, or nowhere, or where GUI plugin wants
+//    basically, to put it into main menu, prefix the item title with the menu name
+//    e.g. title = "File/MyItem" --> this will add the item under File menu
+//    
+// if (flags & PLAYLIST)  -> playlist (tab) context menu
+//
+// if (none of the above)  -> track context menu
+
 enum {
     /* Action in main menu (or whereever ui prefers) */
     DB_ACTION_COMMON = 1 << 0,
@@ -759,14 +768,18 @@ enum {
     DB_ACTION_DISABLED = 1 << 4,
 
     /* Action for the playlist (tab) */
+    /* this is new in 0.5.2 (API v1.2) */
     DB_ACTION_PLAYLIST = 1 << 5,
 };
 
 struct DB_plugin_action_s;
 
 // userdata type depends on type of action
-// can be track ptr, or playlist ptr, etc
+// it must be NULL for DB_ACTION_COMMON
+// or ddb_playlist_t * for DB_ACTION_PLAYLIST
+// or ddb_playItem_t * for none of the above (track context menu)
 typedef int (*DB_plugin_action_callback_t) (struct DB_plugin_action_s *action, void *userdata);
+#define DDB_ACTION_CALLBACK(x)((int (*)(struct DB_plugin_action_s *action, void *userdata))x)
 
 typedef struct DB_plugin_action_s {
     const char *title;

@@ -602,7 +602,7 @@ cda_action_add_cd (DB_plugin_action_t *act, DB_playItem_t *it)
 static DB_plugin_action_t add_cd_action = {
     .title = "File/Add Audio CD",
     .flags = DB_ACTION_COMMON,
-    .callback = cda_action_add_cd,
+    .callback = DDB_ACTION_CALLBACK(cda_action_add_cd),
     .next = NULL
 };
 

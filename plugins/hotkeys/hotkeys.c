@@ -514,7 +514,7 @@ static DB_plugin_action_t action_play = {
     .title = "Play",
     .name = "play",
     .flags = DB_ACTION_COMMON,
-    .callback = action_play_cb,
+    .callback = DDB_ACTION_CALLBACK (action_play_cb),
     .next = NULL
 };
 
@@ -522,7 +522,7 @@ static DB_plugin_action_t action_stop = {
     .title = "Stop",
     .name = "stop",
     .flags = DB_ACTION_COMMON,
-    .callback = action_stop_cb,
+    .callback = DDB_ACTION_CALLBACK(action_stop_cb),
     .next = &action_play
 };
 
@@ -530,7 +530,7 @@ static DB_plugin_action_t action_prev = {
     .title = "Previous",
     .name = "prev",
     .flags = DB_ACTION_COMMON,
-    .callback = action_prev_cb,
+    .callback = DDB_ACTION_CALLBACK(action_prev_cb),
     .next = &action_stop
 };
 
@@ -538,7 +538,7 @@ static DB_plugin_action_t action_next = {
     .title = "Next",
     .name = "next",
     .flags = DB_ACTION_COMMON,
-    .callback = action_next_cb,
+    .callback = DDB_ACTION_CALLBACK(action_next_cb),
     .next = &action_prev
 };
 
@@ -546,7 +546,7 @@ static DB_plugin_action_t action_toggle_pause = {
     .title = "Toggle Pause",
     .name = "toggle_pause",
     .flags = DB_ACTION_COMMON,
-    .callback = action_toggle_pause_cb,
+    .callback = DDB_ACTION_CALLBACK(action_toggle_pause_cb),
     .next = &action_next
 };
 
@@ -554,7 +554,7 @@ static DB_plugin_action_t action_play_pause = {
     .title = "Play\\/Pause",
     .name = "play_pause",
     .flags = DB_ACTION_COMMON,
-    .callback = action_play_pause_cb,
+    .callback = DDB_ACTION_CALLBACK(action_play_pause_cb),
     .next = &action_toggle_pause
 };
 
@@ -562,7 +562,7 @@ static DB_plugin_action_t action_play_random = {
     .title = "Play Random",
     .name = "playback_random",
     .flags = DB_ACTION_COMMON,
-    .callback = action_play_random_cb,
+    .callback = DDB_ACTION_CALLBACK(action_play_random_cb),
     .next = &action_play_pause
 };
 
@@ -570,7 +570,7 @@ static DB_plugin_action_t action_seek_forward = {
     .title = "Seek Forward",
     .name = "seek_fwd",
     .flags = DB_ACTION_COMMON,
-    .callback = action_seek_forward_cb,
+    .callback = DDB_ACTION_CALLBACK(action_seek_forward_cb),
     .next = &action_play_random
 };
 
@@ -578,7 +578,7 @@ static DB_plugin_action_t action_seek_backward = {
     .title = "Seek Backward",
     .name = "seek_back",
     .flags = DB_ACTION_COMMON,
-    .callback = action_seek_backward_cb,
+    .callback = DDB_ACTION_CALLBACK(action_seek_backward_cb),
     .next = &action_seek_forward
 };
 
@@ -586,7 +586,7 @@ static DB_plugin_action_t action_volume_up = {
     .title = "Volume Up",
     .name = "volume_up",
     .flags = DB_ACTION_COMMON,
-    .callback = action_volume_up_cb,
+    .callback = DDB_ACTION_CALLBACK(action_volume_up_cb),
     .next = &action_seek_backward
 };
 
@@ -594,7 +594,7 @@ static DB_plugin_action_t action_volume_down = {
     .title = "Volume Down",
     .name = "volume_down",
     .flags = DB_ACTION_COMMON,
-    .callback = action_volume_down_cb,
+    .callback = DDB_ACTION_CALLBACK(action_volume_down_cb),
     .next = &action_volume_up
 };
 
@@ -602,7 +602,7 @@ static DB_plugin_action_t action_toggle_stop_after_current = {
     .title = "Toggle Stop After Current",
     .name = "toggle_stop_after_current",
     .flags = DB_ACTION_COMMON,
-    .callback = action_toggle_stop_after_current_cb,
+    .callback = DDB_ACTION_CALLBACK(action_toggle_stop_after_current_cb),
     .next = &action_volume_down
 };
 

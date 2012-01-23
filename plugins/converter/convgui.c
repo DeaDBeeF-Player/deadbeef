@@ -1251,7 +1251,7 @@ static DB_plugin_action_t convert_action = {
     .title = "Convert",
     .name = "convert",
     .flags = DB_ACTION_CAN_MULTIPLE_TRACKS | DB_ACTION_ALLOW_MULTIPLE_TRACKS | DB_ACTION_SINGLE_TRACK,
-    .callback = converter_show,
+    .callback = DDB_ACTION_CALLBACK(converter_show),
     .next = NULL
 };
 
