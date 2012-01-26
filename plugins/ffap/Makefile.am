@@ -3,8 +3,8 @@ ffapdir = $(libdir)/$(PACKAGE)
 pkglib_LTLIBRARIES = ffap.la
 
 topsrcdir = @top_srcdir@
-EXTRA_PROGRAMS = foo
 YASM=$(topsrcdir)/yasmwrapper.sh
+EXTRA_DIST = dsputil_yasm.asm x86inc.asm
 SUFFIXES = .asm
 
 if HAVE_YASM
