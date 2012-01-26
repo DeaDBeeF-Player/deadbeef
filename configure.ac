@@ -3,7 +3,7 @@ AC_INIT([deadbeef], [devel])
 
 AC_CONFIG_HEADER(config.h)
 
-AM_INIT_AUTOMAKE([1.11 dist-bzip2])
+AM_INIT_AUTOMAKE([1.11 dist-bzip2 tar-pax])
 AM_MAINTAINER_MODE()
 
 AC_USE_SYSTEM_EXTENSIONS
