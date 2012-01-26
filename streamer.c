@@ -145,6 +145,7 @@ streamer_unlock (void) {
 static void
 streamer_abort_files (void) {
     trace ("\033[0;33mstreamer_abort_files\033[37;0m\n");
+    mutex_lock (decodemutex);
     if (fileinfo && fileinfo->file) {
         deadbeef->fabort (fileinfo->file);
     }
@@ -154,6 +155,7 @@ streamer_abort_files (void) {
     if (streamer_file) {
         deadbeef->fabort (streamer_file);
     }
+    mutex_unlock (decodemutex);
 }
 
 
@@ -893,11 +895,15 @@ m3u_error:
         }
         if (dec) {
             trace ("\033[0;33minit decoder for %s (%s)\033[37;0m\n", pl_find_meta (it, ":URI"), decoder_id);
+            mutex_lock (decodemutex);
             new_fileinfo = dec->open (0);
+            mutex_unlock (decodemutex);
             if (new_fileinfo && dec->init (new_fileinfo, DB_PLAYITEM (it)) != 0) {
-                trace ("\033[0;31mfailed to init decoder\033[37;0m\n")
+                trace ("\033[0;31mfailed to init decoder\033[37;0m\n");
+                mutex_lock (decodemutex);
                 dec->free (new_fileinfo);
                 new_fileinfo = NULL;
+                mutex_unlock (decodemutex);
 //                goto error;
             }
         }
@@ -1294,12 +1300,17 @@ streamer_thread (void *ctx) {
                 pl_unlock ();
                 if (dec) {
                     fileinfo = dec->open (0);
+                    mutex_unlock (decodemutex);
                     if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (streaming_track)) != 0) {
+                        mutex_lock (decodemutex);
                         dec->free (fileinfo);
                         fileinfo = NULL;
+                        mutex_unlock (decodemutex);
                     }
                 }
-                mutex_unlock (decodemutex);
+                else {
+                    mutex_unlock (decodemutex);
+                }
 
                 if (!dec || !fileinfo) {
                     if (streaming_track) {
