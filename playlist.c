@@ -1816,8 +1816,9 @@ plt_delete_selected (playlist_t *playlist) {
 int
 pl_delete_selected (void) {
     LOCK;
-    plt_delete_selected (playlist);
+    int ret = plt_delete_selected (playlist);
     UNLOCK;
+    return ret;
 }
 
 void
@@ -2581,6 +2582,7 @@ pl_get_item_replaygain (playItem_t *it, int idx) {
     case DDB_REPLAYGAIN_TRACKPEAK:
         return pl_find_meta_float (it, rg_keys[idx], 1);
     }
+    return 0;
 }
 
 int

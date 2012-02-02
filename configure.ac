@@ -58,7 +58,6 @@ AC_SUBST(YASM_FLAGS)
 
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 
-
 dnl INSANE_CFLAGS="-Wformat -Wdisabled-optimization -Wcomment -Wchar-subscripts -Wunused-function -Wunused-value -Wuninitialized -Wtype-limits -Wbad-function-cast"
 dnl INSANE_CXXFLAGS="-Wcomment -Wchar-subscripts -Wunused-function -Wunused-value -Wuninitialized -Wtype-limits"
 

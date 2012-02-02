@@ -1130,6 +1130,7 @@ junk_apev2_add_frame (playItem_t *it, DB_apev2_tag_t *tag_store, DB_apev2_frame_
             }
         }
     }
+    return 0;
 }
 
 int

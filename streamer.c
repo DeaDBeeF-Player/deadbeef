@@ -1780,6 +1780,7 @@ streamer_set_output_format (void) {
             return -1;
         }
     }
+    return 0;
 }
 
 // decodes data and converts to current output format

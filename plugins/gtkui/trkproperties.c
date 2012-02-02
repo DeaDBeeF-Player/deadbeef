@@ -494,6 +494,7 @@ set_progress_cb (void *ctx) {
     const char *fname = deadbeef->pl_find_meta_raw (track, ":URI");
     gtk_entry_set_text (GTK_ENTRY (progressitem), fname);
     deadbeef->pl_item_unref (track);
+    return FALSE;
 }
 
 static void

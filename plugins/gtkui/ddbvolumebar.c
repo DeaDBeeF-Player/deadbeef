@@ -185,6 +185,7 @@ volumebar_draw (GtkWidget *widget, cairo_t *cr) {
 gboolean
 on_volumebar_draw (GtkWidget    *widget, cairo_t *cr) {
     volumebar_draw (widget, cr);
+    return FALSE;
 }
 
 #if !GTK_CHECK_VERSION(3,0,0)
