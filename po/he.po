@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2011-11-13 15:37+0200\n"
+"PO-Revision-Date: 2011-12-16 12:49+0200\n"
 "Last-Translator: Yaron <sh.yaron@gmail.com>\n"
 "Language-Team: Gezer <sh.yaron@gmail.com>\n"
 "Language: he\n"
@@ -26,9 +26,8 @@ msgid "Supported sound formats"
 msgstr "מבני השמע הנתמכים"
 
 #: ../plugins/gtkui/callbacks.c:134
-#, fuzzy
 msgid "All files (*)"
-msgstr "קבצים אחרים (*)"
+msgstr "כל הקבצים (*)"
 
 #: ../plugins/gtkui/callbacks.c:144
 msgid "Open file(s)..."
@@ -375,9 +374,8 @@ msgid "Linear"
 msgstr "קווי"
 
 #: ../plugins/gtkui/interface.c:370 ../plugins/gtkui/deadbeef.glade.h:121
-#, fuzzy
 msgid "Shuffle tracks"
-msgstr "ערבול בין האלבומים"
+msgstr "ערבול בין הרצועות"
 
 #: ../plugins/gtkui/interface.c:375 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Shuffle albums"
@@ -620,9 +618,8 @@ msgid "Replaygain preamp:"
 msgstr "הגברת נגינה חוזרת:"
 
 #: ../plugins/gtkui/interface.c:1913 ../plugins/gtkui/deadbeef.glade.h:47
-#, fuzzy
 msgid "Global preamp:"
-msgstr "הגברת נגינה חוזרת:"
+msgstr "הגברת נגינה כללית:"
 
 #: ../plugins/gtkui/interface.c:1944 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
@@ -1205,7 +1202,6 @@ msgstr ""
 "אלבום"
 
 #: ../plugins/gtkui/deadbeef.glade.h:56
-#, fuzzy
 msgid ""
 "Item Index\n"
 "Playing\n"
@@ -1227,7 +1223,8 @@ msgstr ""
 "אלבום\n"
 "כותרת\n"
 "משך\n"
-"רצועהלהקה / אמן האלבום\n"
+"מס׳ הרצועה\n"
+"להקה / אמן האלבום\n"
 "מותאם אישית"
 
 #: ../plugins/gtkui/deadbeef.glade.h:68
@@ -1286,7 +1283,6 @@ msgid "Enable scrobbler"
 msgstr "הפעלת Scrobbler"
 
 #: ../translation/extra.c:12
-#, fuzzy
 msgid "Disable nowplaying"
 msgstr "נטרול „מתנגן כעת“"
 
@@ -1467,7 +1463,6 @@ msgid "Performer"
 msgstr "מבצע/ת"
 
 #: ../translation/extra.c:72
-#, fuzzy
 msgid "Total Tracks"
 msgstr "סך כל הרצועות"
 
@@ -1480,9 +1475,8 @@ msgid "Composer"
 msgstr "מלחין/ה"
 
 #: ../translation/extra.c:75
-#, fuzzy
 msgid "Disc Number"
-msgstr "רצועה מספר"
+msgstr "דיסק מספר"
 
 #: ../translation/extra.c:76
 msgid "Comment"
@@ -1762,7 +1756,6 @@ msgid "ID3v2"
 msgstr "ID3v2"
 
 #: ../plugins/converter/interface.c:520
-#, fuzzy
 msgid "<b>Tag writer</b>"
 msgstr "<b>כותב תגיות</b>"
 
