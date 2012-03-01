@@ -120,7 +120,7 @@ cgme_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     char *buffer;
     int sz;
     if (!read_gzfile (deadbeef->pl_find_meta (it, ":URI"), &buffer, &sz)) {
-        res = gme_open_data (buffer, sz, &info->emu, samplerate);
+        res = gme_open_data (deadbeef->pl_find_meta (it, ":URI"), buffer, sz, &info->emu, samplerate);
         free (buffer);
     }
     if (res) {
@@ -142,7 +142,7 @@ cgme_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             return -1;
         }
 
-        res = gme_open_data (buf, sz, &info->emu, samplerate);
+        res = gme_open_data (deadbeef->pl_find_meta (it, ":URI"), buf, sz, &info->emu, samplerate);
         free (buf);
     }
 
@@ -271,7 +271,7 @@ cgme_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     char *buffer;
     int sz;
     if (!read_gzfile (fname, &buffer, &sz)) {
-        res = gme_open_data (buffer, sz, &emu, gme_info_only);
+        res = gme_open_data (fname, buffer, sz, &emu, gme_info_only);
         free (buffer);
     }
     if (res) {
@@ -296,7 +296,7 @@ cgme_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             return NULL;
         }
 
-        res = gme_open_data (buf, sz, &emu, gme_info_only);
+        res = gme_open_data (fname, buf, sz, &emu, gme_info_only);
         free (buf);
     }
 
@@ -393,7 +393,7 @@ cgme_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         }
     }
     else {
-        trace ("gme_open_file/data failed\n");
+        trace ("gme_open_file/data failed with error %s\n", res);
     }
     return after;
 }

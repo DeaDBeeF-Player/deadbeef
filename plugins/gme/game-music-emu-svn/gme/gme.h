@@ -185,7 +185,7 @@ int gme_type_multitrack( gme_type_t );
 extern const char* const gme_wrong_file_type;
 
 /* Same as gme_open_file(), but uses file data already in memory. Makes copy of data. */
-gme_err_t gme_open_data( void const* data, long size, Music_Emu** out, int sample_rate );
+gme_err_t gme_open_data( const char *path, void const* data, long size, Music_Emu** out, int sample_rate );
 
 /* Determine likely game music type based on first four bytes of file. Returns
 string containing proper file suffix (i.e. "NSF", "SPC", etc.) or "" if

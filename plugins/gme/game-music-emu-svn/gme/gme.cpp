@@ -126,14 +126,14 @@ BLARGG_EXPORT gme_err_t gme_identify_file( const char* path, gme_type_t* type_ou
 	return 0;   
 }
 
-BLARGG_EXPORT gme_err_t gme_open_data( void const* data, long size, Music_Emu** out, int sample_rate )
+BLARGG_EXPORT gme_err_t gme_open_data( const char *path, void const* data, long size, Music_Emu** out, int sample_rate )
 {
 	require( (data || !size) && out );
 	*out = 0;
 	
 	gme_type_t file_type = 0;
 	if ( size >= 4 )
-		file_type = gme_identify_extension( gme_identify_header( data ) );
+		file_type = gme_identify_extension( path );
 	if ( !file_type )
 		return gme_wrong_file_type;
 	
