@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2012-02-27 15:24+0200\n"
+"PO-Revision-Date: 2012-03-07 14:11+0200\n"
 "Last-Translator: Martin <brother@bsnet.se>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: sv\n"
@@ -643,9 +643,8 @@ msgid "Configure"
 msgstr "Inställningar"
 
 #: ../plugins/gtkui/interface.c:2017 ../plugins/gtkui/deadbeef.glade.h:29
-#, fuzzy
 msgid "DSP Chain Preset"
-msgstr "Spara inställningar"
+msgstr "Inställningar för DSP-kedja"
 
 #: ../plugins/gtkui/interface.c:2029 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "_Load"
@@ -1463,7 +1462,7 @@ msgstr "Spårtitel"
 
 #: ../translation/extra.c:67
 msgid "Performer"
-msgstr ""
+msgstr "Artist"
 
 #: ../translation/extra.c:72
 #, fuzzy
@@ -1472,11 +1471,11 @@ msgstr "Titel / Artist för spåret"
 
 #: ../translation/extra.c:73
 msgid "Genre"
-msgstr ""
+msgstr "Genre"
 
 #: ../translation/extra.c:74
 msgid "Composer"
-msgstr ""
+msgstr "Kompositör"
 
 #: ../translation/extra.c:75
 msgid "Disc Number"
@@ -1484,7 +1483,7 @@ msgstr "Skivnummer"
 
 #: ../translation/extra.c:76
 msgid "Comment"
-msgstr ""
+msgstr "Kommentar"
 
 #: ../translation/extra.c:77
 msgid "Encoder / Vendor"
