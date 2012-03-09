@@ -151,3 +151,11 @@ void
 gtk_dialog_set_has_separator (GtkDialog *dlg, gboolean has) {
 }
 #endif
+
+#if !GTK_CHECK_VERSION(2,24,0)
+#define GTK_COMBO_BOX_TEXT GTK_COMBO_BOX
+GtkWidget *
+gtk_combo_box_text_new () {
+    return gtk_combo_box_new_text ();
+}
+#endif
