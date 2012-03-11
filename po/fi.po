@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2012-03-10 21:02+0200\n"
+"PO-Revision-Date: 2012-03-11 10:13+0200\n"
 "Last-Translator: Juhani <juhaninumminen0@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: fi\n"
@@ -224,15 +224,15 @@ msgstr "_Tiedosto"
 
 #: ../plugins/gtkui/interface.c:157 ../plugins/gtkui/deadbeef.glade.h:163
 msgid "_Open file(s)"
-msgstr "_Avaa tiedostoja"
+msgstr "_Avaa tiedosto(ja)"
 
 #: ../plugins/gtkui/interface.c:173 ../plugins/gtkui/deadbeef.glade.h:6
 msgid "Add file(s)"
-msgstr "Lisää tiedostoja"
+msgstr "Lisää tiedosto(ja)"
 
 #: ../plugins/gtkui/interface.c:181 ../plugins/gtkui/deadbeef.glade.h:8
 msgid "Add folder(s)"
-msgstr "Lisää hakemistoja"
+msgstr "Lisää hakemisto(ja)"
 
 #: ../plugins/gtkui/interface.c:189 ../plugins/gtkui/interface.c:3022
 #: ../plugins/gtkui/deadbeef.glade.h:9
@@ -351,7 +351,7 @@ msgstr "Sarakkeiden otsikot"
 
 #: ../plugins/gtkui/interface.c:343 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Tabs"
-msgstr ""
+msgstr "Välilehdet"
 
 #: ../plugins/gtkui/interface.c:347 ../plugins/gtkui/deadbeef.glade.h:40
 msgid "Equalizer"
@@ -368,7 +368,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:365 ../plugins/gtkui/deadbeef.glade.h:71
 msgid "Linear"
-msgstr ""
+msgstr "Lineaarinen"
 
 #: ../plugins/gtkui/interface.c:370 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Shuffle tracks"
@@ -621,6 +621,8 @@ msgstr ""
 #: ../plugins/gtkui/interface.c:1944 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
 msgstr ""
+"Lisää tiedostoja komentoriviltä (tai tiedostonhallinnasta) tähän "
+"soittolistaan:"
 
 #: ../plugins/gtkui/interface.c:1953 ../plugins/gtkui/deadbeef.glade.h:109
 msgid "Resume previous session on startup"
@@ -658,23 +660,23 @@ msgstr "Pienennä ilmaisinalueelle suljettaessa"
 
 #: ../plugins/gtkui/interface.c:2046 ../plugins/gtkui/deadbeef.glade.h:78
 msgid "Middle mouse button closes playlist"
-msgstr ""
+msgstr "Hiiren keskipainike sulkee soittolistan"
 
 #: ../plugins/gtkui/interface.c:2050 ../plugins/gtkui/deadbeef.glade.h:51
 msgid "Hide system tray icon"
-msgstr ""
+msgstr "Piilota ilmaisinalueen kuvake"
 
 #: ../plugins/gtkui/interface.c:2054 ../plugins/gtkui/deadbeef.glade.h:143
 msgid "Use bold font for currently playing track"
-msgstr ""
+msgstr "Käytä lihavoitua kirjasinta soitettavalle raidalle"
 
 #: ../plugins/gtkui/interface.c:2058 ../plugins/gtkui/deadbeef.glade.h:50
 msgid "Hide \"Delete from disk\" context menu item"
-msgstr ""
+msgstr "Piilota \"Poista levyltä\"-kontekstivalinta"
 
 #: ../plugins/gtkui/interface.c:2062 ../plugins/gtkui/deadbeef.glade.h:16
 msgid "Auto-name playlists when adding a single folder"
-msgstr ""
+msgstr "Nimeä soittolista automaattisesti lisättäessä yksittäinen kansio"
 
 #: ../plugins/gtkui/interface.c:2070 ../plugins/gtkui/deadbeef.glade.h:54
 msgid "Interface refresh rate (times per second):"
@@ -715,15 +717,15 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2188 ../plugins/gtkui/deadbeef.glade.h:77
 msgid "Middle"
-msgstr ""
+msgstr "Keski"
 
 #: ../plugins/gtkui/interface.c:2195 ../plugins/gtkui/deadbeef.glade.h:70
 msgid "Light"
-msgstr ""
+msgstr "Kevyt"
 
 #: ../plugins/gtkui/interface.c:2202 ../plugins/gtkui/deadbeef.glade.h:30
 msgid "Dark"
-msgstr ""
+msgstr "Tumma"
 
 #: ../plugins/gtkui/interface.c:2233 ../plugins/gtkui/deadbeef.glade.h:18
 msgid "Base"
@@ -752,19 +754,19 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2304 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Selected row"
-msgstr ""
+msgstr "Valittu rivi"
 
 #: ../plugins/gtkui/interface.c:2323 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Selected text"
-msgstr ""
+msgstr "Valittu teksti"
 
 #: ../plugins/gtkui/interface.c:2336 ../plugins/gtkui/deadbeef.glade.h:25
 msgid "Cursor"
-msgstr ""
+msgstr "Hiiriosoitin"
 
 #: ../plugins/gtkui/interface.c:2349 ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Playlist colors"
-msgstr ""
+msgstr "Soittolistojen värit"
 
 #: ../plugins/gtkui/interface.c:2353 ../plugins/gtkui/deadbeef.glade.h:20
 msgid "Colors"
@@ -825,26 +827,26 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:3275 ../plugins/gtkui/deadbeef.glade.h:43
 msgid "Format"
-msgstr ""
+msgstr "Tiedostomuoto"
 
 #: ../plugins/gtkui/interface.c:3305
 msgid "Ascending"
-msgstr ""
+msgstr "Nouseva"
 
 #: ../plugins/gtkui/interface.c:3306
 msgid "Descending"
-msgstr ""
+msgstr "Laskeva"
 
 #: ../plugins/gtkui/interface.c:3359 ../plugins/gtkui/deadbeef.glade.h:114
 #: ../plugins/converter/interface.c:750
 msgid "Select DSP Plugin"
-msgstr ""
+msgstr "Valitse DSP-liitännäinen"
 
 #: ../plugins/gtkui/interface.c:3375 ../plugins/gtkui/deadbeef.glade.h:93
 #: ../plugins/converter/convgui.c:1016 ../plugins/converter/interface.c:766
 #: ../plugins/gtkui/dspconfig.c:139
 msgid "Plugin"
-msgstr ""
+msgstr "Liitännäinen"
 
 #: ../plugins/gtkui/interface.c:3461 ../plugins/gtkui/deadbeef.glade.h:133
 msgid "Tag Writer Settings"
@@ -852,17 +854,17 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:3492 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "Write ID3v2"
-msgstr ""
+msgstr "Kirjoita ID3v2"
 
 #: ../plugins/gtkui/interface.c:3496 ../plugins/gtkui/interface.c:3623
 #: ../plugins/gtkui/deadbeef.glade.h:146
 msgid "Write ID3v1"
-msgstr ""
+msgstr "Kirjoita ID3v1"
 
 #: ../plugins/gtkui/interface.c:3500 ../plugins/gtkui/interface.c:3579
 #: ../plugins/gtkui/interface.c:3619 ../plugins/gtkui/deadbeef.glade.h:145
 msgid "Write APEv2"
-msgstr ""
+msgstr "Kirjoita APEv2"
 
 #: ../plugins/gtkui/interface.c:3508 ../plugins/gtkui/interface.c:3587
 #: ../plugins/gtkui/deadbeef.glade.h:130
@@ -881,75 +883,78 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:3524 ../plugins/gtkui/deadbeef.glade.h:53
 msgid "ID3v2 version"
-msgstr ""
+msgstr "ID3v2 versio"
 
 #: ../plugins/gtkui/interface.c:3531
 msgid "2.3 (Recommended)"
-msgstr ""
+msgstr "2.3 (suositeltu)"
 
 #: ../plugins/gtkui/interface.c:3532
 msgid "2.4"
-msgstr ""
+msgstr "2.4"
 
 #: ../plugins/gtkui/interface.c:3538 ../plugins/gtkui/deadbeef.glade.h:52
 msgid "ID3v1 character encoding (default is iso8859-1)"
-msgstr ""
+msgstr "ID3v1-merkistökoodaus (oletus: iso8859-1)"
 
 #: ../plugins/gtkui/interface.c:3575 ../plugins/gtkui/deadbeef.glade.h:148
 msgid "Write ID3v2.4"
-msgstr ""
+msgstr "Kirjoita ID3v2.4"
 
 #: ../plugins/gtkui/mainplaylist.c:316 ../plugins/gtkui/search.c:391
 msgid "Artist / Album"
-msgstr ""
+msgstr "Artisti / Albumi"
 
 #: ../plugins/gtkui/mainplaylist.c:317 ../plugins/gtkui/search.c:392
 msgid "Track No"
-msgstr ""
+msgstr "Raita nro"
 
 #: ../plugins/gtkui/plcommon.c:338
 msgid "Delete files from disk"
-msgstr ""
+msgstr "Poista tiedostot levyltä"
 
 #: ../plugins/gtkui/plcommon.c:339
 msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
 msgstr ""
+"Tiedostot menetetään. Jatketaanko?\n"
+"(Tämä valintaikkuna voidaan kytkeä pois päältä GTKUI-liitännäisen "
+"asetuksissa)"
 
 #: ../plugins/gtkui/plcommon.c:340 ../plugins/gtkui/trkproperties.c:162
 #: ../plugins/gtkui/trkproperties.c:693 ../plugins/converter/convgui.c:759
 #: ../plugins/converter/convgui.c:1136
 msgid "Warning"
-msgstr ""
+msgstr "Varoitus"
 
 #: ../plugins/gtkui/plcommon.c:444
 msgid "Add to playback queue"
-msgstr ""
+msgstr "Lisää toistojonoon"
 
 #: ../plugins/gtkui/plcommon.c:449
 msgid "Remove from playback queue"
-msgstr ""
+msgstr "Poista toistojonosta"
 
 #: ../plugins/gtkui/plcommon.c:457
 msgid "Reload metadata"
-msgstr ""
+msgstr "Lataa metatiedot uudelleen"
 
 #: ../plugins/gtkui/plcommon.c:476
 msgid "Remove from disk"
-msgstr ""
+msgstr "Poista levyltä"
 
 #: ../plugins/gtkui/plcommon.c:855 ../plugins/gtkui/plcommon.c:980
 msgid "Add column"
-msgstr ""
+msgstr "Lisää sarake"
 
 #: ../plugins/gtkui/plcommon.c:885 ../plugins/gtkui/plcommon.c:984
 msgid "Edit column"
-msgstr ""
+msgstr "Muokkaa saraketta"
 
 #: ../plugins/gtkui/plcommon.c:988
 msgid "Remove column"
-msgstr ""
+msgstr "Poista sarake"
 
 #: ../plugins/gtkui/plcommon.c:998
 msgid "Group by"
@@ -957,15 +962,15 @@ msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:1005
 msgid "None"
-msgstr ""
+msgstr "Ei mitään"
 
 #: ../plugins/gtkui/plcommon.c:1009
 msgid "Artist/Date/Album"
-msgstr ""
+msgstr "Artisti/Pvm/Albumi"
 
 #: ../plugins/gtkui/pluginconf.c:42
 msgid "Open file..."
-msgstr ""
+msgstr "Avaa tiedosto..."
 
 #: ../plugins/gtkui/pluginconf.c:217
 #, c-format
@@ -974,11 +979,11 @@ msgstr ""
 
 #: ../plugins/gtkui/prefwin.c:82
 msgid "Default Audio Device"
-msgstr ""
+msgstr "Oletusäänilaite"
 
 #: ../plugins/gtkui/prefwin.c:318 ../plugins/converter/interface.c:641
 msgid "Add"
-msgstr ""
+msgstr "Lisää"
 
 #: ../plugins/gtkui/prefwin.c:328
 msgid "Global Hotkeys"
@@ -994,11 +999,11 @@ msgstr ""
 
 #: ../plugins/gtkui/progress.c:56
 msgid "Adding files..."
-msgstr ""
+msgstr "Lisätään tiedostoja..."
 
 #: ../plugins/gtkui/progress.c:90
 msgid "Initializing..."
-msgstr ""
+msgstr "Alustetaan..."
 
 #: ../plugins/gtkui/trkproperties.c:159
 msgid "You've modified data for this track."
@@ -1006,36 +1011,36 @@ msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:161
 msgid "Really close the window?"
-msgstr ""
+msgstr "Haluatko varmasti sulkea tämän ikkunan?"
 
 #. get value to edit
 #: ../plugins/gtkui/trkproperties.c:254
 msgid "[Multiple values] "
-msgstr ""
+msgstr "[Useita arvoja] "
 
 #: ../plugins/gtkui/trkproperties.c:407 ../plugins/gtkui/trkproperties.c:419
 msgid "Key"
-msgstr ""
+msgstr "Avain"
 
 #: ../plugins/gtkui/trkproperties.c:408 ../plugins/gtkui/trkproperties.c:420
 msgid "Value"
-msgstr ""
+msgstr "Arvo"
 
 #: ../plugins/gtkui/trkproperties.c:594
 msgid "Writing tags..."
-msgstr ""
+msgstr "Kirjoitetaan tageja..."
 
 #: ../plugins/gtkui/trkproperties.c:621
 msgid "Name:"
-msgstr ""
+msgstr "Nimi:"
 
 #: ../plugins/gtkui/trkproperties.c:633
 msgid "Field names must not start with : or _"
-msgstr ""
+msgstr "Tiedostonimet eivät voi alkaa merkeillä : tai _"
 
 #: ../plugins/gtkui/trkproperties.c:634 ../plugins/gtkui/trkproperties.c:668
 msgid "Cannot add field"
-msgstr ""
+msgstr "Kenttää ei voi lisätä"
 
 #: ../plugins/gtkui/trkproperties.c:667
 msgid "Field with such name already exists, please try different name."
@@ -1056,17 +1061,17 @@ msgstr ""
 #: ../main.c:91
 #, c-format
 msgid "Usage: deadbeef [options] [file(s)]\n"
-msgstr ""
+msgstr "Käyttö: deadbeef [valinnat] [tiedosto(t)]\n"
 
 #: ../main.c:92
 #, c-format
 msgid "Options:\n"
-msgstr ""
+msgstr "Valitsimet:\n"
 
 #: ../main.c:93
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr ""
+msgstr "   --help  tai  -h    Näytä ohje (tämä viesti) ja poistu\n"
 
 #: ../main.c:94
 #, c-format
@@ -1076,7 +1081,7 @@ msgstr ""
 #: ../main.c:95
 #, c-format
 msgid "   --version          Print version info and exit\n"
-msgstr ""
+msgstr "   --version          Näytä versiotiedot ja poistu\n"
 
 #: ../main.c:96
 #, c-format
@@ -1153,27 +1158,31 @@ msgstr ""
 
 #: ../playlist.c:454 ../playlist.c:2398
 msgid "Default"
-msgstr ""
+msgstr "Oletus"
 
 #: ../playlist.c:3664
 msgid "Yes"
-msgstr ""
+msgstr "Kyllä"
 
 #: ../playlist.c:3664
 msgid "No"
-msgstr ""
+msgstr "Ei"
 
 #: ../plugins/gtkui/deadbeef.glade.h:3
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
 msgstr ""
+"2.3 (suositeltu)\n"
+"2.4"
 
 #: ../plugins/gtkui/deadbeef.glade.h:14
 msgid ""
 "Ascending\n"
 "Descending"
 msgstr ""
+"Nouseva\n"
+"Laskeva"
 
 #: ../plugins/gtkui/deadbeef.glade.h:33
 msgid ""
@@ -1202,12 +1211,14 @@ msgid ""
 "Left\n"
 "Right"
 msgstr ""
+"Vasen\n"
+"Oikea"
 
 #: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
 #: ../plugins/converter/support.c:90 ../plugins/converter/support.c:114
 #, c-format
 msgid "Couldn't find pixmap file: %s"
-msgstr ""
+msgstr "Bittikarttatiedostoa ei löydetty: %s"
 
 #: ../plugins/wildmidi/wildmidiplug.c:162
 #, c-format
@@ -1220,11 +1231,11 @@ msgstr ""
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
 msgid "Add Audio CD"
-msgstr ""
+msgstr "Lisää ääni-CD"
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
-msgstr ""
+msgstr "Etsi Last.fm-palvelusta"
 
 #. ALSA output plugin
 #: ../translation/extra.c:6
@@ -1254,11 +1265,11 @@ msgstr ""
 
 #: ../translation/extra.c:13
 msgid "Username"
-msgstr ""
+msgstr "Käyttäjänimi"
 
 #: ../translation/extra.c:14
 msgid "Password"
-msgstr ""
+msgstr "Salasana"
 
 #: ../translation/extra.c:15
 msgid "Scrobble URL"
@@ -1267,7 +1278,7 @@ msgstr ""
 #. OSS output plugin
 #: ../translation/extra.c:17
 msgid "Device file"
-msgstr ""
+msgstr "Laitetiedosto"
 
 #: ../translation/extra.c:18
 msgid "OSS4 samplerate bug workaround"
@@ -1292,11 +1303,11 @@ msgstr ""
 
 #: ../translation/extra.c:24
 msgid "Fetch from last.fm"
-msgstr ""
+msgstr "Hae last.fm -palvelusta"
 
 #: ../translation/extra.c:25
 msgid "Fetch from albumart.org"
-msgstr ""
+msgstr "Hae albumart.org -palvelusta"
 
 #: ../translation/extra.c:26
 msgid "Scale artwork towards longer side"
@@ -1305,7 +1316,7 @@ msgstr ""
 #. Audio CD player
 #: ../translation/extra.c:28
 msgid "Use CDDB/FreeDB"
-msgstr ""
+msgstr "Käytä CDDB/FreeDB:tä"
 
 #: ../translation/extra.c:29
 msgid "Prefer CD-Text over CDDB"
@@ -1421,31 +1432,31 @@ msgstr ""
 
 #: ../translation/extra.c:66
 msgid "Track Title"
-msgstr ""
+msgstr "Raidan otsikko"
 
 #: ../translation/extra.c:67
 msgid "Performer"
-msgstr ""
+msgstr "Esittäjä"
 
 #: ../translation/extra.c:72
 msgid "Total Tracks"
-msgstr ""
+msgstr "Raitoja yhteensä"
 
 #: ../translation/extra.c:73
 msgid "Genre"
-msgstr ""
+msgstr "Tyylilaji"
 
 #: ../translation/extra.c:74
 msgid "Composer"
-msgstr ""
+msgstr "Säveltäjä"
 
 #: ../translation/extra.c:75
 msgid "Disc Number"
-msgstr ""
+msgstr "Levyn numero"
 
 #: ../translation/extra.c:76
 msgid "Comment"
-msgstr ""
+msgstr "Kommentti"
 
 #: ../translation/extra.c:77
 msgid "Encoder / Vendor"
@@ -1453,7 +1464,7 @@ msgstr ""
 
 #: ../translation/extra.c:79
 msgid "Location"
-msgstr ""
+msgstr "Sijainti"
 
 #: ../translation/extra.c:80
 msgid "Subtrack Index"
@@ -1469,7 +1480,7 @@ msgstr ""
 
 #: ../translation/extra.c:83
 msgid "Codec"
-msgstr ""
+msgstr "Koodekki"
 
 #. FFmpeg deocder plugin
 #: ../translation/extra.c:85
@@ -1479,7 +1490,7 @@ msgstr ""
 #. Converter GUI
 #: ../translation/extra.c:87
 msgid "Convert"
-msgstr ""
+msgstr "Muunna"
 
 #. Resampler (Secret Rabbit Code)
 #: ../translation/extra.c:89
@@ -1488,7 +1499,7 @@ msgstr ""
 
 #: ../translation/extra.c:90
 msgid "Quality / Algorythm"
-msgstr ""
+msgstr "Laatu / algoritmi"
 
 #: ../translation/extra.c:91
 msgid "Automatic Samplerate (overrides Target Samplerate)"
@@ -1496,7 +1507,7 @@ msgstr ""
 
 #: ../plugins/converter/convgui.c:108
 msgid "The file already exists. Overwrite?"
-msgstr ""
+msgstr "Tiedosto on jo olemassa. Ylikirjoita?"
 
 #: ../plugins/converter/convgui.c:110
 msgid "Converter warning"
@@ -1504,7 +1515,7 @@ msgstr ""
 
 #: ../plugins/converter/convgui.c:222
 msgid "Please select encoder"
-msgstr ""
+msgstr "Valitse koodekki"
 
 #: ../plugins/converter/convgui.c:224
 msgid "Converter error"
@@ -1512,11 +1523,11 @@ msgstr ""
 
 #: ../plugins/converter/convgui.c:248
 msgid "Converting..."
-msgstr ""
+msgstr "Muunnetaan..."
 
 #: ../plugins/converter/convgui.c:394 ../plugins/converter/convgui.c:496
 msgid "Select folder..."
-msgstr ""
+msgstr "Valitse kansio..."
 
 #: ../plugins/converter/convgui.c:635
 msgid "Failed to save encoder preset"
@@ -1534,7 +1545,7 @@ msgstr ""
 
 #: ../plugins/converter/convgui.c:638 ../plugins/converter/convgui.c:1036
 msgid "Error"
-msgstr ""
+msgstr "Virhe"
 
 #: ../plugins/converter/convgui.c:692
 msgid "Add new encoder"
@@ -1545,9 +1556,8 @@ msgid "Edit encoder"
 msgstr ""
 
 #: ../plugins/converter/convgui.c:756 ../plugins/converter/convgui.c:1133
-#, fuzzy
 msgid "Remove preset"
-msgstr "Tallenna esiasetus..."
+msgstr "Poista esiasetus"
 
 #: ../plugins/converter/convgui.c:758 ../plugins/converter/convgui.c:1135
 msgid "This action will delete the selected preset. Are you sure?"
@@ -1567,17 +1577,15 @@ msgstr ""
 
 #: ../plugins/converter/convgui.c:1098
 msgid "New DSP Preset"
-msgstr "Uusi DSP-esiasetus..."
+msgstr "Uusi DSP-esiasetus"
 
 #: ../plugins/converter/convgui.c:1183
-#, fuzzy
 msgid "Edit DSP Preset"
-msgstr "Tallenna esiasetus..."
+msgstr "Muokkaa DSP-esiasetusta"
 
 #: ../plugins/converter/convgui.c:1203
-#, fuzzy
 msgid "DSP Presets"
-msgstr "Tallenna esiasetus..."
+msgstr "DSP-esiasetukset"
 
 #: ../plugins/converter/interface.c:94
 msgid "Output folder:"
@@ -1588,19 +1596,19 @@ msgid "Output file name:"
 msgstr ""
 
 #: ../plugins/converter/interface.c:126
+#, fuzzy
 msgid ""
 "Extension (e.g. .mp3) will be appended automatically.\n"
 "Leave the field empty for default (%a - %t)."
-msgstr ""
+msgstr "Tiedoston pääte (esim. .mp3) lisätään automaattisesti.\n"
 
 #: ../plugins/converter/interface.c:139
 msgid "Encoder:"
 msgstr ""
 
 #: ../plugins/converter/interface.c:163
-#, fuzzy
 msgid "DSP preset:"
-msgstr "Tallenna esiasetus..."
+msgstr "DSP-esiasetus:"
 
 #: ../plugins/converter/interface.c:186
 msgid "Number of threads:"
@@ -1636,15 +1644,15 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:217
 msgid "When file exists:"
-msgstr ""
+msgstr "Kun tiedosto on jo olemassa:"
 
 #: ../plugins/converter/interface.c:224
 msgid "Prompt"
-msgstr ""
+msgstr "Kysy"
 
 #: ../plugins/converter/interface.c:225
 msgid "Overwrite"
-msgstr ""
+msgstr "Ylikirjoita"
 
 #: ../plugins/converter/interface.c:227
 msgid "Preserve folder structure, starting from:"
@@ -1665,11 +1673,11 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:417
 msgid "E.g. mp3"
-msgstr ""
+msgstr "Esim. mp3"
 
 #: ../plugins/converter/interface.c:425
 msgid "Command line:"
-msgstr ""
+msgstr "Komentorivi:"
 
 #: ../plugins/converter/interface.c:436
 #, c-format
@@ -1677,6 +1685,8 @@ msgid ""
 "Example: lame - %o\n"
 "%i for input file, %o for output file, - for stdin"
 msgstr ""
+"Esimerkki: lame - %o\n"
+"%i on sisääntulotiedosto, %o on ulostulotiedosto, - on stdin"
 
 #: ../plugins/converter/interface.c:446
 #, c-format
@@ -1695,27 +1705,27 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:463
 msgid "Temporary file"
-msgstr ""
+msgstr "Tilapäinen tiedosto"
 
 #: ../plugins/converter/interface.c:480
 msgid "APEv2"
-msgstr ""
+msgstr "APEv2"
 
 #: ../plugins/converter/interface.c:486
 msgid "ID3v1"
-msgstr ""
+msgstr "ID3v1"
 
 #: ../plugins/converter/interface.c:492
 msgid "OggVorbis"
-msgstr ""
+msgstr "Ogg Vorbis"
 
 #: ../plugins/converter/interface.c:498
 msgid "FLAC"
-msgstr ""
+msgstr "FLAC"
 
 #: ../plugins/converter/interface.c:510
 msgid "ID3v2"
-msgstr ""
+msgstr "ID3v2"
 
 #: ../plugins/converter/interface.c:520
 msgid "<b>Tag writer</b>"
