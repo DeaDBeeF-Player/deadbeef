@@ -1117,20 +1117,18 @@ plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t 
 //            fprintf (stderr, "got unknown line:\n%s\n", p);
         }
     }
-    if (!title[0]) {
-        UNLOCK;
-        return NULL;
-    }
-    // handle last track
-    playItem_t *it = plt_process_cue_track (playlist, pl_find_meta_raw (origin, ":URI"), &prev, track, index00, index01, pregap, title, albumperformer, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, pl_find_meta_raw (origin, ":DECODER"), filetype, samplerate);
-    if (it) {
-        trace ("last track endsample: %d\n", numsamples-1);
-        it->endsample = numsamples-1;
-        if (it->endsample >= numsamples || it->startsample >= numsamples) {
-            goto error;
+    if (title[0]) {
+        // handle last track
+        playItem_t *it = plt_process_cue_track (playlist, pl_find_meta_raw (origin, ":URI"), &prev, track, index00, index01, pregap, title, albumperformer, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, pl_find_meta_raw (origin, ":DECODER"), filetype, samplerate);
+        if (it) {
+            trace ("last track endsample: %d\n", numsamples-1);
+            it->endsample = numsamples-1;
+            if (it->endsample >= numsamples || it->startsample >= numsamples) {
+                goto error;
+            }
+            plt_set_item_duration (playlist, it, (float)(it->endsample - it->startsample + 1) / samplerate);
+            cuetracks[ncuetracks++] = it;
         }
-        plt_set_item_duration (playlist, it, (float)(it->endsample - it->startsample + 1) / samplerate);
-        cuetracks[ncuetracks++] = it;
     }
 
     if (!ncuetracks) {
@@ -1161,6 +1159,7 @@ plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t 
     UNLOCK;
     return after;
 error:
+    trace ("cue parsing error occured\n");
     for (int i = 0; i < ncuetracks; i++) {
         pl_item_unref (cuetracks[i]);
     }
