@@ -42,6 +42,12 @@ int _Unwind_GetDataRelBase;
 int _Unwind_GetRegionStart;
 int _Unwind_SetGR;
 int _Unwind_GetIPInfo;
+//int __cxa_pure_virtual;
+////int _Znaj;
+////int _ZdaPv;
+//int __cxa_guard_release;
+////int _ZdlPv;
+//int __cxa_guard_acquire;
 
 extern "C" {
 

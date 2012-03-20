@@ -49,11 +49,11 @@ tar jcvf ../portable_out/build/deadbeef-$VERSION-static-i686.tar.bz2\
     $PLUGDIR/vtx.so\
     $PLUGDIR/wavpack.so\
     $PLUGDIR/wildmidi.so\
-    $PLUGDIR/ao.so\
-    $PLUGDIR/shn.so\
-    $PLUGDIR/dumb.so\
+    $PLUGDIR/ddb_ao.so\
+    $PLUGDIR/ddb_shn.so\
+    $PLUGDIR/ddb_dumb.so\
     $PLUGDIR/converter.so\
-    $PLUGDIR/converter_gtkui.so\
+    $PLUGDIR/converter_gtk2.so\
     $PLUGDIR/convpresets\
     $PLUGDIR/pulse.so\
     $PLUGDIR/dsp_libsrc.so\

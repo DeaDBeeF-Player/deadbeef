@@ -387,7 +387,7 @@ static DB_decoder_t plugin = {
 };
 
 DB_plugin_t *
-ddb_aopsf_load (DB_functions_t *api) {
+ddb_ao_load (DB_functions_t *api) {
     deadbeef = api;
     return DB_PLUGIN (&plugin);
 }
