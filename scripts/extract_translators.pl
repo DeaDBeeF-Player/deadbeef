@@ -34,7 +34,7 @@ foreach my $f (@files) {
     if ($script) {
         print " ($script)";
     }
-    print "\n";
+    print " $code\n";
     while (<F>) {
         if (/^#/) {
             if (/\@/ && !(/Yakovenko/) && !(/EMAIL/)) {

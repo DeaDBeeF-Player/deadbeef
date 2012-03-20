@@ -33,11 +33,20 @@ Hungarian
 English (United Kingdom)
  Steve (Yorvyk) Cook <yorvik.ubunto@googlemail.com>
 
+Esperanto
+ Kristjan <kristjan.schmidt@googlemail.com>
+
 Spanish
  depaz <depazzz@gmail.com>
 
+Estonian
+ Anari <anari.jalakas@gmail.com>
+
 Persian
  Ali <aysabzevar@gmail.com>
+
+Finnish
+ Juhani <juhaninumminen0@gmail.com>
 
 French
  Cilyan Olowen <gaknar@gmail.com>
@@ -63,11 +72,17 @@ Japanese
 Kazakh
  Baurzhan Muftakhidinov <baurthefirst@gmail.com>
 
-Khmer
+Central Khmer
  SatyaN <satyathavy@gmail.com>
 
-Luganda
+Ganda
  kizito <kbirabwa@yahoo.co.uk>
+
+Lithuanian
+ Julius <zadintuvas@gmail.com>
+
+Bokmal, Norwegian
+ Sam <wilsonsamm@hotmail.com>
 
 Dutch
  depaz <depazzz@gmail.com>
@@ -89,8 +104,14 @@ Romanian
 Russian
  Dmitriy Simbiriatin <slpiv@mail.ru>
 
+Sinhala
+ danishka <danishka@gmail.com>
+
 Slovak
  Ivan Masár <helix84@centrum.sk>
+
+Slovenian
+ Klemen Košir <klemen.kosir@gmx.com>
 
 Serbian
  Jay A. Fleming <tito.nehru.naser@gmail.com>
@@ -101,8 +122,14 @@ Serbian (latin)
 Swedish
  Martin <brother@bsnet.se>
 
+Telugu
+ PraveenIlla <mail2ipn@gmail.com>
+
 Turkish
- bahadiroglu <bahadiroglu33@gmail.com>
+ decent <bahadiroglu33@gmail.com>
+
+Uighur
+ Gheyret Kenji <gheyret@gmail.com>
 
 Ukrainian
  Yarema aka Knedlyk <yupadmin@gmail.com>
