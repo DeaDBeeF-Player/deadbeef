@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -886,7 +886,7 @@ static DB_decoder_t plugin = {
     .plugin.name = "DUMB module player",
     .plugin.descr = "module player based on DUMB library",
     .plugin.copyright = 
-        "Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "Uses a fork of DUMB (Dynamic Universal Music Bibliotheque), Version 0.9.3\n"
         "Copyright (C) 2001-2005 Ben Davis, Robert J Ohannessian and Julien Cugniere\n"

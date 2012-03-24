@@ -1,6 +1,6 @@
 /*
     Shellexec plugin for DeaDBeeF
-    Copyright (C) 2010-2011 Alexey Yakovenko <waker@users.sf.net>
+    Copyright (C) 2010-2012 Alexey Yakovenko <waker@users.sf.net>
     Copyright (C) 2010 Viktor Semykin <thesame.ml@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
@@ -245,7 +245,7 @@ static DB_misc_t plugin = {
     "this would show the name of selected track in notification popup"
     ,
     .plugin.copyright = 
-        "Copyright (C) 2010-2011 Alexey Yakovenko <waker@users.sf.net>\n"
+        "Copyright (C) 2010-2012 Alexey Yakovenko <waker@users.sf.net>\n"
         "Copyright (C) 2010 Viktor Semykin <thesame.ml@gmail.com>\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"

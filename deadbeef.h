@@ -2,7 +2,7 @@
   deadbeef.h -- plugin API of the DeaDBeeF audio player
   http://deadbeef.sourceforge.net
 
-  Copyright (C) 2009-2011 Alexey Yakovenko
+  Copyright (C) 2009-2012 Alexey Yakovenko
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -61,6 +61,7 @@ extern "C" {
 
 // api version history:
 // 9.9 -- devel
+// 1.2 -- deadbeef-0.5.2
 // 1.1 -- deadbeef-0.5.1
 //   adds pass_through method to dsp plugins for optimization purposes
 // 1.0 -- deadbeef-0.5.0
