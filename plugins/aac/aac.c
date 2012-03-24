@@ -1113,7 +1113,6 @@ aac_load_tags (DB_playItem_t *it, mp4ff_t *mp4) {
         deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, atof (s));
         free (s);
     }
-    deadbeef->pl_add_meta (it, "title", NULL);
 }
 #endif
 
@@ -1145,6 +1144,7 @@ aac_read_metadata (DB_playItem_t *it) {
     if (mp4) {
         aac_load_tags (it, mp4);
         mp4ff_close (mp4);
+        deadbeef->pl_add_meta (it, "title", NULL);
     }
     else {
         /*int apeerr = */deadbeef->junk_apev2_read (it, fp);
@@ -1309,6 +1309,7 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     trace ("duration: %f sec\n", duration);
 
     // read tags
+    printf ("ftype: %s\n", ftype);
     if (mp4) {
 #ifdef USE_MP4FF
         aac_load_tags (it, mp4);
@@ -1345,12 +1346,11 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         MP4Close (mp4);
 #endif
     }
-    else if (ftype && !strcmp (ftype, "RAW AAC")) {
-        int apeerr = deadbeef->junk_apev2_read (it, fp);
-        int v2err = deadbeef->junk_id3v2_read (it, fp);
-        int v1err = deadbeef->junk_id3v1_read (it, fp);
-        deadbeef->pl_add_meta (it, "title", NULL);
-    }
+
+    int apeerr = deadbeef->junk_apev2_read (it, fp);
+    int v2err = deadbeef->junk_id3v2_read (it, fp);
+    int v1err = deadbeef->junk_id3v1_read (it, fp);
+    deadbeef->pl_add_meta (it, "title", NULL);
 
     int64_t fsize = deadbeef->fgetlength (fp);
 
