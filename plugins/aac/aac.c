@@ -460,7 +460,6 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     int channels = -1;
     int totalsamples = -1;
 
-    int offs = -1;
     info->junk = deadbeef->junk_get_leading_size (info->file);
     if (!info->file->vfs->is_streaming ()) {
         if (info->junk >= 0) {
@@ -469,7 +468,6 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         else {
             info->junk = 0;
         }
-        offs = deadbeef->ftell (info->file);
     }
     else {
         deadbeef->fset_track (info->file, it);
@@ -633,9 +631,13 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             else {
                 deadbeef->rewind (info->file);
             }
-            if (parse_aac_stream (info->file, &samplerate, &channels, &duration, &totalsamples) == -1) {
+            int offs = parse_aac_stream (info->file, &samplerate, &channels, &duration, &totalsamples);
+            if (offs == -1) {
                 trace ("aac stream not found\n");
                 return -1;
+            }
+            if (offs > info->junk) {
+                info->junk = offs;
             }
             if (info->junk >= 0) {
                 deadbeef->fseek (info->file, info->junk, SEEK_SET);
@@ -653,18 +655,18 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         // sync before attempting to init
         int samplerate, channels;
         float duration;
-        offs = parse_aac_stream (info->file, &samplerate, &channels, &duration, NULL);
+        int offs = parse_aac_stream (info->file, &samplerate, &channels, &duration, NULL);
         if (offs < 0) {
             trace ("aac: parse_aac_stream failed\n");
             return -1;
+        }
+        if (offs > info->junk) {
+            info->junk = offs;
         }
         trace("parse_aac_stream returned %x\n", offs);
         deadbeef->pl_replace_meta (it, "!FILETYPE", "AAC");
     }
 
-    if (offs >= 0) {
-        deadbeef->fseek (info->file, offs, SEEK_SET);
-    }
 //    duration = (float)totalsamples / samplerate;
 //    deadbeef->pl_set_item_duration (it, duration);
 
