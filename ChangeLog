@@ -47,6 +47,7 @@ version 0.5.2
 	fixed resampler dsp plugin auto-configuration when the player is started for the 1st time
 	plugin API now allows to extend playlist context menu
 	added "audio/ogg" mime-type support
+	fixed playing mp4/aac files with id3v2 tags
 
 version 0.5.1
 	fixed crash bug after deleting playlists
