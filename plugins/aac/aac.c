@@ -1309,7 +1309,6 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     trace ("duration: %f sec\n", duration);
 
     // read tags
-    printf ("ftype: %s\n", ftype);
     if (mp4) {
 #ifdef USE_MP4FF
         aac_load_tags (it, mp4);
