@@ -423,12 +423,20 @@ m3uplug_load (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int 
     }
 
     DB_playItem_t *ret = NULL;
+
+    int tried_pls = 0;
+
     if (ext && !strcasecmp (ext, "pls")) {
+        tried_pls = 1;
         ret = load_pls (plt, after, fname, pabort, cb, user_data);
     }
     
     if (!ret) {
         ret = load_m3u (plt, after, fname, pabort, cb, user_data);
+    }
+
+    if (!ret && !tried_pls) {
+        ret = load_pls (plt, after, fname, pabort, cb, user_data);
     }
 
     return ret;
