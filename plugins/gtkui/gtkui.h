@@ -29,27 +29,9 @@
 #include "../../config.h"
 #endif
 
-#if defined(ULTRA_COMPATIBLE)
-#warning compiling for compatibility with gtk <2.14
-#endif
-
-// workaround to make older gtk compatible with vala codegen
-#if !GTK_CHECK_VERSION(2,14,0) || defined(ULTRA_COMPATIBLE)
-#define gtk_widget_get_window(widget) ((widget)->window)
-#endif
-
-#if !GTK_CHECK_VERSION(2,18,0) || defined(ULTRA_COMPATIBLE)
-#define gtk_widget_set_has_window(widget, has_window) \
-  if (has_window) GTK_WIDGET_UNSET_FLAGS (widget, GTK_NO_WINDOW); \
-  else GTK_WIDGET_SET_FLAGS (widget, GTK_NO_WINDOW);
-
-#define gtk_widget_get_visible(widget) (GTK_WIDGET_VISIBLE(widget))
-#define gtk_widget_get_has_window(widget) (!GTK_WIDGET_NO_WINDOW(widget))
-#endif
-
-#if !GTK_CHECK_VERSION(2,20,0) || defined(ULTRA_COMPATIBLE)
-#define gtk_widget_get_realized(widget) (GTK_WIDGET_REALIZED(widget))
-#endif
+//#if defined(ULTRA_COMPATIBLE)
+//#warning compiling for compatibility with gtk <2.14
+//#endif
 
 #include "../../deadbeef.h"
 
