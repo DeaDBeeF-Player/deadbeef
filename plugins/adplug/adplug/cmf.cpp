@@ -137,13 +137,20 @@ bool CcmfPlayer::load(const std::string &filename, const CFileProvider &fp)
 	this->cmfHeader.iTagOffsetComposer = f->readInt(2);
 	this->cmfHeader.iTagOffsetRemarks = f->readInt(2);
 	f->readString((char *)this->cmfHeader.iChannelsInUse, 16);
-	this->cmfHeader.iNumInstruments = f->readInt(2);
-	this->cmfHeader.iTempo = f->readInt(2);
+	if (iVer == 0x0100) {
+		this->cmfHeader.iNumInstruments = f->readInt(1);
+		this->cmfHeader.iTempo = 0;
+	} else { // 0x0101
+		this->cmfHeader.iNumInstruments = f->readInt(2);
+		this->cmfHeader.iTempo = f->readInt(2);
+	}
 
 	// Load the instruments
 
 	f->seek(this->cmfHeader.iInstrumentBlockOffset);
-	this->pInstruments = new SBI[128];  // Always 128 available for use
+	this->pInstruments = new SBI[
+		(this->cmfHeader.iNumInstruments < 128) ? 128 : this->cmfHeader.iNumInstruments
+	];  // Always at least 128 available for use
 
 	for (int i = 0; i < this->cmfHeader.iNumInstruments; i++) {
 		this->pInstruments[i].op[0].iCharMult = f->readInt(1);
@@ -280,20 +287,16 @@ bool CcmfPlayer::update()
 						// This will have read in the terminating EOX (0xF7) message too
 						break;
 					}
-					case 0xF1: // MIDI Time Code Quarter Frame
-                        this->iPlayPointer++;
-						//this->data[this->iPlayPointer++]; // message data (ignored)
-						break;
-					case 0xF2: // Song position pointer
-                        this->iPlayPointer++;
-                        this->iPlayPointer++;
-//						this->data[this->iPlayPointer++]; // message data (ignored)
-//						this->data[this->iPlayPointer++];
-						break;
-					case 0xF3: // Song select
-                        this->iPlayPointer++;
-//						this->data[this->iPlayPointer++]; // message data (ignored)
-						AdPlug_LogWrite("CMF: MIDI Song Select is not implemented.\n");
+ 					case 0xF1: // MIDI Time Code Quarter Frame
+						this->data[this->iPlayPointer++]; // message data (ignored)
+ 						break;
+ 					case 0xF2: // Song position pointer
+						this->data[this->iPlayPointer++]; // message data (ignored)
+						this->data[this->iPlayPointer++];
+ 						break;
+ 					case 0xF3: // Song select
+						this->data[this->iPlayPointer++]; // message data (ignored)
+ 						AdPlug_LogWrite("CMF: MIDI Song Select is not implemented.\n");
 						break;
 					case 0xF6: // Tune request
 						break;
@@ -359,6 +362,9 @@ void CcmfPlayer::rewind(int subsong)
   // Enable use of WaveSel register on OPL3 (even though we're only an OPL2!)
   // Apparently this enables nine-channel mode?
 	this->writeOPL(0x01, 0x20);
+
+	// Disable OPL3 mode (can be left enabled by a previous non-CMF song)
+	this->writeOPL(0x05, 0x00);
 
 	// Really make sure CSM+SEL are off (again, Creative's player...)
 	this->writeOPL(0x08, 0x00);
