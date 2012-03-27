@@ -43,6 +43,11 @@ adplug_start (void);
 int
 adplug_stop (void);
 
+static const char settings_dlg[] =
+    "property \"Prefer Ken emu over Satoh (surround won't work)\" checkbox adplug.use_ken 0;\n"
+    "property \"Enable surround\" checkbox adplug.surround 1;\n"
+;
+
 // define plugin interface
 DB_decoder_t adplug_plugin = {
     .plugin.api_vmajor = 1,
@@ -77,6 +82,7 @@ DB_decoder_t adplug_plugin = {
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.start = adplug_start,
     .plugin.stop = adplug_stop,
+    .plugin.configdialog = settings_dlg,
     .open = adplug_open,
     .init = adplug_init,
     .free = adplug_free,

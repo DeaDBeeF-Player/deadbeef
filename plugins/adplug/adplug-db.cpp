@@ -23,6 +23,8 @@
 #include "../../deadbeef.h"
 #include "adplug.h"
 #include "emuopl.h"
+#include "kemuopl.h"
+#include "surroundopl.h"
 #include "silentopl.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
@@ -61,7 +63,7 @@ const char *adplug_filetypes[] = { "A2M", "ADL", "AMD", "BAM", "CFF", "CMF", "D0
 
 typedef struct {
     DB_fileinfo_t info;
-    CEmuopl *opl;
+    Copl *opl;
     CPlayer *decoder;
     int totalsamples;
     int currentsample;
@@ -86,8 +88,26 @@ adplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     int samplerate = deadbeef->conf_get_int ("synth.samplerate", 44100);
     int bps = 16; // NOTE: there's no need to support 8bit input, because adplug simply downgrades 16bit signal to 8bits
     int channels = 2;
-    info->opl = new CEmuopl (samplerate, bps == 16 ? true : false, channels == 2);
-//    opl->settype (Copl::TYPE_OPL2);
+    if (deadbeef->conf_get_int ("adplug.surround", 1)) {
+        if (deadbeef->conf_get_int ("adplug.use_ken", 0)) {
+            Copl *a = new CKemuopl(samplerate, bps == 16, false);
+            Copl *b = new CKemuopl(samplerate, bps == 16, false);
+            info->opl = new CSurroundopl(a, b, bps == 16);
+        }
+        else {
+            Copl *a = new CEmuopl(samplerate, bps == 16, false);
+            Copl *b = new CEmuopl(samplerate, bps == 16, false);
+            info->opl = new CSurroundopl(a, b, bps == 16);
+        }
+    }
+    else {
+        if (deadbeef->conf_get_int ("adplug.use_satoh", 0)) {
+            info->opl = new CEmuopl (samplerate, bps == 16, channels == 2);
+        }
+        else {
+            info->opl = new CKemuopl (samplerate, bps == 16, channels == 2);
+        }
+    }
     info->decoder = CAdPlug::factory (deadbeef->pl_find_meta (it, ":URI"), info->opl, CAdPlug::players);
     if (!info->decoder) {
         trace ("adplug: failed to open %s\n", deadbeef->pl_find_meta (it, ":URI"));
