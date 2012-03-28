@@ -101,9 +101,24 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
                     }
                     if (*c == ',') {
                         c++;
-                        if (2 != sscanf (c, "%1000s - %1000s", artist, title)) {
-                            strncpy (artist, c, sizeof (artist)-1);
+                        const char *dash = NULL;
+                        const char *newdash = strstr (c, " - ");
+
+                        while (newdash) {
+                            dash = newdash;
+                            newdash = strstr (newdash+3, " - ");
+                        }
+
+                        if (dash) {
+                            strncpy (title, dash+3, sizeof (title)-1);
+                            title[sizeof(title)-1] = 0;
+                            int l = dash - c;
+                            strncpy (artist, c, min(l, sizeof (artist)));
                             artist[sizeof(artist)-1] = 0;
+                        }
+                        else {
+                            strncpy (title, c, sizeof (title)-1);
+                            title[sizeof(title)-1] = 0;
                         }
                     }
                 }
@@ -450,11 +465,16 @@ m3uplug_save_m3u (const char *fname, DB_playItem_t *first, DB_playItem_t *last) 
     }
     DB_playItem_t *it = first;
     deadbeef->pl_item_ref (it);
-    fprintf (fp, "#M3UEXT\n");
+    fprintf (fp, "#EXTM3U\n");
     while (it) {
         int dur = (int)ceil(deadbeef->pl_get_item_duration (it));
         char s[1000];
-        deadbeef->pl_format_title (it, -1, s, sizeof (s), -1, "%a - %t");
+        if (deadbeef->pl_find_meta (it, "artist")) {
+            deadbeef->pl_format_title (it, -1, s, sizeof (s), -1, "%a - %t");
+        }
+        else {
+            deadbeef->pl_format_title (it, -1, s, sizeof (s), -1, "%t");
+        }
         const char *fname = deadbeef->pl_find_meta (it, ":URI");
         fprintf (fp, "#EXTINF:%d,%s\n", dur, s);
         fprintf (fp, "%s\n", fname);
