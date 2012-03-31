@@ -3558,7 +3558,7 @@ static void process_playing(DUMB_IT_SIGRENDERER *sigrenderer, IT_PLAYING *playin
 	playing->sample_vibrato_time += playing->sample->vibrato_speed;
 }
 
-#ifndef __linux__
+#if !(_XOPEN_SOURCE >= 600 || _ISOC99_SOURCE || _POSIX_C_SOURCE >= 200112L)
 static inline float log2(float x) {return (float)log(x)/(float)log(2.0f);}
 #endif
 
