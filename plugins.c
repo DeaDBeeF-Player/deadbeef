@@ -329,6 +329,8 @@ static DB_functions_t deadbeef_api = {
     .metacache_ref = metacache_ref,
     .metacache_unref = metacache_unref,
     .pl_find_meta_raw = (const char *(*) (DB_playItem_t *it, const char *key))pl_find_meta_raw,
+    // ******* new 1.3 APIs ********
+    .streamer_dsp_chain_save = streamer_dsp_chain_save,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

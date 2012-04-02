@@ -61,6 +61,7 @@ extern "C" {
 
 // api version history:
 // 9.9 -- devel
+// 1.3 -- deadbeef-0.5.3
 // 1.2 -- deadbeef-0.5.2
 // 1.1 -- deadbeef-0.5.1
 //   adds pass_through method to dsp plugins for optimization purposes
@@ -77,7 +78,7 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 1
-#define DB_API_VERSION_MINOR 2
+#define DB_API_VERSION_MINOR 3
 
 #define DDB_PLUGIN_SET_API_VERSION\
     .plugin.api_vmajor = DB_API_VERSION_MAJOR,\
@@ -741,6 +742,9 @@ typedef struct {
 
     // this function must return original un-overriden value (ignoring the keys prefixed with '!')
     const char *(*pl_find_meta_raw) (DB_playItem_t *it, const char *key);
+
+    // ******* new 1.3 APIs ********
+    int (*streamer_dsp_chain_save) (void);
 } DB_functions_t;
 
 // NOTE: an item placement must be selected like this

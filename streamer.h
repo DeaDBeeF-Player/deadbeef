@@ -125,7 +125,7 @@ void
 streamer_dsp_postinit (void);
 
 int
-streamer_dsp_chain_save (const char *fname, ddb_dsp_context_t *chain);
+streamer_dsp_chain_save (void);
 
 void
 streamer_notify_order_changed (int prev_order, int new_order);

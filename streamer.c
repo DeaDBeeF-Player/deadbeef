@@ -1549,7 +1549,7 @@ error:
 }
 
 int
-streamer_dsp_chain_save (const char *fname, ddb_dsp_context_t *chain) {
+streamer_dsp_chain_save_internal (const char *fname, ddb_dsp_context_t *chain) {
     FILE *fp = fopen (fname, "w+t");
     if (!fp) {
         return -1;
@@ -1573,6 +1573,13 @@ streamer_dsp_chain_save (const char *fname, ddb_dsp_context_t *chain) {
 
     fclose (fp);
     return 0;
+}
+
+int
+streamer_dsp_chain_save (void) {
+    char fname[PATH_MAX];
+    snprintf (fname, sizeof (fname), "%s/dspconfig", plug_get_config_dir ());
+    return streamer_dsp_chain_save_internal (fname, dsp_chain);
 }
 
 void
@@ -1728,9 +1735,7 @@ streamer_free (void) {
     mutex_free (mutex);
     mutex = 0;
 
-    char fname[PATH_MAX];
-    snprintf (fname, sizeof (fname), "%s/dspconfig", plug_get_config_dir ());
-    streamer_dsp_chain_save (fname, dsp_chain);
+    streamer_dsp_chain_save();
 
     streamer_dsp_chain_free (dsp_chain);
     dsp_chain = NULL;
@@ -2208,9 +2213,7 @@ streamer_set_dsp_chain (ddb_dsp_context_t *chain) {
         formatchanged = 1;
     }
 
-    char fname[PATH_MAX];
-    snprintf (fname, sizeof (fname), "%s/dspconfig", plug_get_config_dir ());
-    streamer_dsp_chain_save (fname, dsp_chain);
+    streamer_dsp_chain_save();
     streamer_reset (1);
 
     mutex_unlock (decodemutex);
