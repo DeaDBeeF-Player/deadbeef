@@ -120,6 +120,7 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
                             strncpy (title, c, sizeof (title)-1);
                             title[sizeof(title)-1] = 0;
                         }
+                        trace ("title: %s, artist: %s\n", title, artist);
                     }
                 }
             }

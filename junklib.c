@@ -736,7 +736,7 @@ convstr_id3v2 (int version, uint8_t encoding, const unsigned char* str, int sz) 
     }
     // trim trailing linebreaks
     for (n = converted_sz-1; n >= 0; n--) {
-        if (out[n] == '\n') {
+        if ((uint8_t)out[n] <= 32) {
             out[n] = 0;
         }
         else {
