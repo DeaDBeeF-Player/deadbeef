@@ -1257,3 +1257,4 @@ on_sort_by_custom_activate             (GtkMenuItem     *menuitem,
     gtk_widget_destroy (dlg);
     dlg = NULL;
 }
+

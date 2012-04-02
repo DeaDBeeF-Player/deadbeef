@@ -1158,6 +1158,10 @@ streamer_next (int bytesread) {
     if (conf_get_int ("playlist.stop_after_current", 0)) {
         streamer_buffering = 0;
         streamer_set_nextsong (-2, -2);
+        if (conf_get_int ("playlist.stop_after_current_reset", 0)) {
+            conf_set_int ("playlist.stop_after_current", 0);
+            deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+        }
     }
     else {
         streamer_move_to_nextsong (0);
