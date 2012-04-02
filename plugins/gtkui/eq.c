@@ -68,6 +68,7 @@ eq_value_changed (DdbEqualizer *widget)
             set_param (eq, i+1, ddb_equalizer_get_band (widget, i));
         }
         set_param (eq, 0, ddb_equalizer_get_preamp (widget));
+        deadbeef->streamer_dsp_chain_save ();
     }
 }
 
@@ -79,6 +80,7 @@ on_enable_toggled         (GtkToggleButton *togglebutton,
         int enabled = gtk_toggle_button_get_active (togglebutton) ? 1 : 0;
         eq->enabled =  enabled;
         deadbeef->streamer_dsp_refresh ();
+        deadbeef->streamer_dsp_chain_save ();
     }
 }
 
@@ -98,6 +100,7 @@ on_zero_all_clicked                  (GtkButton       *button,
                 set_param (eq, i+1, 0);
             }
             gtk_widget_queue_draw (eqwin);
+            deadbeef->streamer_dsp_chain_save ();
         }
     }
 }
@@ -111,6 +114,7 @@ on_zero_preamp_clicked                  (GtkButton       *button,
             set_param (eq, 0, 0);
             ddb_equalizer_set_preamp (DDB_EQUALIZER (eqwin), 0);
             gtk_widget_queue_draw (eqwin);
+            deadbeef->streamer_dsp_chain_save ();
         }
     }
 }
@@ -126,6 +130,7 @@ on_zero_bands_clicked                  (GtkButton       *button,
                 set_param (eq, i+1, 0);
             }
             gtk_widget_queue_draw (eqwin);
+            deadbeef->streamer_dsp_chain_save ();
         }
     }
 }
@@ -228,7 +233,7 @@ on_load_preset_clicked                  (GtkMenuItem       *menuitem,
                             set_param (eq, i+1, vals[i]);
                         }
                         gtk_widget_queue_draw (eqwin);
-                        deadbeef->conf_save ();
+                        deadbeef->streamer_dsp_chain_save ();
                     }
                 }
                 else {
@@ -294,7 +299,7 @@ on_import_fb2k_preset_clicked                  (GtkButton       *button,
                             set_param (eq, i+1, vals[i]);
                         }
                         gtk_widget_queue_draw (eqwin);
-                        deadbeef->conf_save ();
+                        deadbeef->streamer_dsp_chain_save ();
                     }
                 }
                 else {
