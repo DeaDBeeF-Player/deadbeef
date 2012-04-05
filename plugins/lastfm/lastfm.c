@@ -896,12 +896,14 @@ lfm_action_lookup (DB_plugin_action_t *action, DB_playItem_t *it)
         return 0;
     system (command);
     free (command);
+    return 0;
 }
 
 static int
 lfm_action_love (DB_plugin_action_t *act, DB_playItem_t *it)
 {
     printf ("Love starts here\n");
+    return 0;
 }
 
 static DB_plugin_action_t love_action = {

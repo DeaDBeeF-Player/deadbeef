@@ -597,6 +597,7 @@ cda_action_add_cd (DB_plugin_action_t *act, DB_playItem_t *it)
         deadbeef->plt_unref (plt);
     }
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    return 0;
 }
 
 static DB_plugin_action_t add_cd_action = {

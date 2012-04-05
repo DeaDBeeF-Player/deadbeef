@@ -222,6 +222,7 @@ ddb_src_get_param_name (int p) {
     default:
         fprintf (stderr, "ddb_src_get_param_name: invalid param index (%d)\n", p);
     }
+    return NULL;
 }
 
 void
