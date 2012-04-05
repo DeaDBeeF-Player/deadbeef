@@ -23,6 +23,7 @@
 #include "wingeom.h"
 #include "../../deadbeef.h"
 #include "gtkui.h"
+#include "support.h"
 
 void
 wingeom_save (GtkWidget *widget, const char *name) {
