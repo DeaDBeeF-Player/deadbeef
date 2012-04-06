@@ -1149,6 +1149,10 @@ on_sort_by_date_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
 
 void
+on_sort_by_random_activate               (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
 on_sort_by_custom_activate             (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
 

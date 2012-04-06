@@ -3174,7 +3174,13 @@ qsort_cmp_func (const void *a, const void *b) {
 }
 
 void
-plt_sort (playlist_t *playlist, int iter, int id, const char *format, int ascending) {
+plt_sort (playlist_t *playlist, int iter, int id, const char *format, int order) {
+    if (order == DDB_SORT_RANDOM) {
+        plt_sort_random (playlist, iter);
+        return;
+    }
+    int ascending = order == DDB_SORT_DESCENDING ? 0 : 1;
+
     if (id == DB_COLUMN_FILENUMBER || !playlist->head[iter] || !playlist->head[iter]->next[iter]) {
         return;
     }
@@ -3227,6 +3233,56 @@ plt_sort (playlist_t *playlist, int iter, int id, const char *format, int ascend
     gettimeofday (&tm2, NULL);
     int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
     trace ("sort time: %f seconds\n", ms / 1000.f);
+
+    plt_modified (playlist);
+
+    UNLOCK;
+}
+
+void
+plt_sort_random (playlist_t *playlist, int iter) {
+    if (!playlist->head[iter] || !playlist->head[iter]->next[iter]) {
+        return;
+    }
+
+    LOCK;
+
+    const int playlist_count = playlist->count[iter];
+    playItem_t **array = malloc (playlist_count * sizeof (playItem_t *));
+    int idx = 0;
+    for (playItem_t *it = playlist->head[iter]; it; it = it->next[iter], idx++) {
+        array[idx] = it;
+    }
+
+    //randomize array
+    for (int swap_a = 0; swap_a < playlist_count - 1; swap_a++) {
+        //select random item above swap_a-1
+        const int swap_b = swap_a + (rand() / (float)RAND_MAX * (playlist_count - swap_a));
+
+        //swap a with b
+        playItem_t* const swap_temp = array[swap_a];
+        array[swap_a] = array[swap_b];
+        array[swap_b] = swap_temp;
+
+    }
+
+    playItem_t *prev = NULL;
+    playlist->head[iter] = 0;
+    for (idx = 0; idx < playlist->count[iter]; idx++) {
+        playItem_t *it = array[idx];
+        it->prev[iter] = prev;
+        it->next[iter] = NULL;
+        if (!prev) {
+            playlist->head[iter] = it;
+        }
+        else {
+            prev->next[iter] = it;
+        }
+        prev = it;
+    }
+    playlist->tail[iter] = array[playlist->count[iter]-1];
+
+    free (array);
 
     plt_modified (playlist);
 

@@ -69,6 +69,7 @@ create_mainwin (void)
   GtkWidget *album1;
   GtkWidget *artist1;
   GtkWidget *date1;
+  GtkWidget *random1;
   GtkWidget *custom2;
   GtkWidget *separator5;
   GtkWidget *preferences;
@@ -311,6 +312,10 @@ create_mainwin (void)
   date1 = gtk_menu_item_new_with_mnemonic (_("Date"));
   gtk_widget_show (date1);
   gtk_container_add (GTK_CONTAINER (sort_by1_menu), date1);
+
+  random1 = gtk_menu_item_new_with_mnemonic (_("Random"));
+  gtk_widget_show (random1);
+  gtk_container_add (GTK_CONTAINER (sort_by1_menu), random1);
 
   custom2 = gtk_menu_item_new_with_mnemonic (_("Custom"));
   gtk_widget_show (custom2);
@@ -693,6 +698,9 @@ create_mainwin (void)
   g_signal_connect ((gpointer) date1, "activate",
                     G_CALLBACK (on_sort_by_date_activate),
                     NULL);
+  g_signal_connect ((gpointer) random1, "activate",
+                    G_CALLBACK (on_sort_by_random_activate),
+                    NULL);
   g_signal_connect ((gpointer) custom2, "activate",
                     G_CALLBACK (on_sort_by_custom_activate),
                     NULL);
@@ -819,6 +827,7 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, album1, "album1");
   GLADE_HOOKUP_OBJECT (mainwin, artist1, "artist1");
   GLADE_HOOKUP_OBJECT (mainwin, date1, "date1");
+  GLADE_HOOKUP_OBJECT (mainwin, random1, "random1");
   GLADE_HOOKUP_OBJECT (mainwin, custom2, "custom2");
   GLADE_HOOKUP_OBJECT (mainwin, separator5, "separator5");
   GLADE_HOOKUP_OBJECT (mainwin, preferences, "preferences");

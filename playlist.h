@@ -400,7 +400,10 @@ void
 plt_search_process (playlist_t *plt, const char *text);
 
 void
-plt_sort (playlist_t *plt, int iter, int id, const char *format, int ascending);
+plt_sort (playlist_t *plt, int iter, int id, const char *format, int order);
+
+void
+plt_sort_random (playlist_t *plt, int iter);
 
 // playqueue support functions
 int

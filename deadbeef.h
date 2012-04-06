@@ -295,6 +295,13 @@ enum {
     DDB_REPLAYGAIN_TRACKPEAK,
 };
 
+// sort order constants
+enum ddb_sort_order_t {
+    DDB_SORT_DESCENDING,
+    DDB_SORT_ASCENDING,
+    DDB_SORT_RANDOM, // available since API 1.3
+};
+
 // typecasting macros
 #define DB_PLUGIN(x) ((DB_plugin_t *)(x))
 #define DB_CALLBACK(x) ((DB_callback_t)(x))
@@ -476,7 +483,7 @@ typedef struct {
     void (*plt_copy_items) (ddb_playlist_t *to, int iter, ddb_playlist_t * from, DB_playItem_t *before, uint32_t *indices, int cnt);
     void (*plt_search_reset) (ddb_playlist_t *plt);
     void (*plt_search_process) (ddb_playlist_t *plt, const char *text);
-    void (*plt_sort) (ddb_playlist_t *plt, int iter, int id, const char *format, int ascending);
+    void (*plt_sort) (ddb_playlist_t *plt, int iter, int id, const char *format, int order);
 
     // add files and folders to current playlist
     int (*plt_add_file) (ddb_playlist_t *plt, const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);

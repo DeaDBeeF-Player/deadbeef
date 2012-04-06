@@ -365,6 +365,15 @@
 			  </child>
 
 			  <child>
+			    <widget class="GtkMenuItem" id="random1">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Random</property>
+			      <property name="use_underline">True</property>
+			      <signal name="activate" handler="on_sort_by_random_activate" last_modification_time="Sun, 26 Feb 2012 19:22:44 GMT"/>
+			    </widget>
+			  </child>
+
+			  <child>
 			    <widget class="GtkMenuItem" id="custom2">
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Custom</property>
