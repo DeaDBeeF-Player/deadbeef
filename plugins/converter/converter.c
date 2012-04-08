@@ -737,7 +737,7 @@ check_dir (const char *dir, mode_t mode)
 }
 
 int
-convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int output_bps, int output_is_float, int preserve_folder_structure, const char *root_folder, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort) {
+convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int output_bps, int output_is_float, int preserve_folder_structure, const char *root_folder, int write_to_source_folder, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort) {
     if (deadbeef->pl_get_item_duration (it) <= 0) {
         deadbeef->pl_lock ();
         const char *fname = deadbeef->pl_find_meta (it, ":URI");
@@ -774,8 +774,21 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
                 output_bps = fileinfo->fmt.bps;
                 output_is_float = fileinfo->fmt.is_float;
             }
+            const char *outpath;
 
-            get_output_path (it, preserve_folder_structure ? root_folder : outfolder, outfile, encoder_preset, out, sizeof (out));
+            if (write_to_source_folder) {
+                char *path = strdupa (deadbeef->pl_find_meta (it, ":URI"));
+                char *sep = strrchr (path, '/');
+                if (sep) {
+                    *sep = 0;
+                }
+                outpath = path;
+            }
+            else {
+                outpath = preserve_folder_structure ? root_folder : outfolder;
+            }
+
+            get_output_path (it, outpath, outfile, encoder_preset, out, sizeof (out));
             if (encoder_preset->method == DDB_ENCODER_METHOD_FILE) {
                 const char *tmp = getenv ("TMPDIR");
                 if (!tmp) {
@@ -1090,6 +1103,11 @@ error:
 }
 
 int
+convert_1_0 (DB_playItem_t *it, const char *outfolder, const char *outfile, int output_bps, int output_is_float, int preserve_folder_structure, const char *root_folder, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort) {
+    return convert (it, outfolder, outfile, output_bps, output_is_float, preserve_folder_structure, root_folder, 0, encoder_preset, dsp_preset, abort);
+}
+
+int
 converter_cmd (int cmd, ...) {
     return -1;
 }
@@ -1114,7 +1132,7 @@ static ddb_converter_t plugin = {
     .misc.plugin.api_vmajor = 1,
     .misc.plugin.api_vminor = 0,
     .misc.plugin.version_major = 1,
-    .misc.plugin.version_minor = 1,
+    .misc.plugin.version_minor = 2,
     .misc.plugin.type = DB_PLUGIN_MISC,
     .misc.plugin.name = "Converter",
     .misc.plugin.id = "converter",
@@ -1162,6 +1180,7 @@ static ddb_converter_t plugin = {
     .dsp_preset_remove = dsp_preset_remove,
     .dsp_preset_replace = dsp_preset_replace,
     .get_output_path = get_output_path,
+    .convert_1_0 = convert_1_0,
     .convert = convert,
     // 1.1 entry points
     .load_encoder_presets = load_encoder_presets,

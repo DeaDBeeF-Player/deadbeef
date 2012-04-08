@@ -38,6 +38,7 @@ create_converterdlg (void)
   GtkWidget *output_folder;
   GtkWidget *converter_output_browse;
   GtkWidget *write_to_source_folder;
+  GtkWidget *preserve_folders;
   GtkWidget *hbox100;
   GtkWidget *label122;
   GtkWidget *hbox101;
@@ -65,7 +66,6 @@ create_converterdlg (void)
   GtkWidget *hbox99;
   GtkWidget *label121;
   GtkWidget *overwrite_action;
-  GtkWidget *preserve_folders;
   GtkWidget *dialog_action_area5;
   GtkWidget *converter_cancel;
   GtkWidget *converter_ok;
@@ -107,7 +107,12 @@ create_converterdlg (void)
   gtk_box_pack_start (GTK_BOX (hbox68), converter_output_browse, FALSE, FALSE, 0);
 
   write_to_source_folder = gtk_check_button_new_with_mnemonic (_("Write to source track folder"));
+  gtk_widget_show (write_to_source_folder);
   gtk_box_pack_start (GTK_BOX (vbox26), write_to_source_folder, FALSE, FALSE, 0);
+
+  preserve_folders = gtk_check_button_new_with_mnemonic (_("Preserve folder structure"));
+  gtk_widget_show (preserve_folders);
+  gtk_box_pack_start (GTK_BOX (vbox26), preserve_folders, FALSE, FALSE, 0);
 
   hbox100 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox100);
@@ -225,10 +230,6 @@ create_converterdlg (void)
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (overwrite_action), _("Prompt"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (overwrite_action), _("Overwrite"));
 
-  preserve_folders = gtk_check_button_new_with_mnemonic (_("Preserve folder structure"));
-  gtk_widget_show (preserve_folders);
-  gtk_box_pack_start (GTK_BOX (vbox26), preserve_folders, FALSE, FALSE, 0);
-
   dialog_action_area5 = gtk_dialog_get_action_area (GTK_DIALOG (converterdlg));
   gtk_widget_show (dialog_action_area5);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area5), GTK_BUTTONBOX_END);
@@ -249,8 +250,8 @@ create_converterdlg (void)
   g_signal_connect ((gpointer) converter_output_browse, "clicked",
                     G_CALLBACK (on_converter_output_browse_clicked),
                     NULL);
-  g_signal_connect ((gpointer) write_to_source_folder, "toggled",
-                    G_CALLBACK (on_write_to_source_folder_toggled),
+  g_signal_connect ((gpointer) preserve_folders, "toggled",
+                    G_CALLBACK (on_preserve_folders_toggled),
                     NULL);
   g_signal_connect ((gpointer) output_file, "changed",
                     G_CALLBACK (on_output_file_changed),
@@ -276,9 +277,6 @@ create_converterdlg (void)
   g_signal_connect ((gpointer) overwrite_action, "changed",
                     G_CALLBACK (on_overwrite_action_changed),
                     NULL);
-  g_signal_connect ((gpointer) preserve_folders, "toggled",
-                    G_CALLBACK (on_preserve_folders_toggled),
-                    NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (converterdlg, converterdlg, "converterdlg");
@@ -290,6 +288,7 @@ create_converterdlg (void)
   GLADE_HOOKUP_OBJECT (converterdlg, output_folder, "output_folder");
   GLADE_HOOKUP_OBJECT (converterdlg, converter_output_browse, "converter_output_browse");
   GLADE_HOOKUP_OBJECT (converterdlg, write_to_source_folder, "write_to_source_folder");
+  GLADE_HOOKUP_OBJECT (converterdlg, preserve_folders, "preserve_folders");
   GLADE_HOOKUP_OBJECT (converterdlg, hbox100, "hbox100");
   GLADE_HOOKUP_OBJECT (converterdlg, label122, "label122");
   GLADE_HOOKUP_OBJECT (converterdlg, hbox101, "hbox101");
@@ -316,7 +315,6 @@ create_converterdlg (void)
   GLADE_HOOKUP_OBJECT (converterdlg, hbox99, "hbox99");
   GLADE_HOOKUP_OBJECT (converterdlg, label121, "label121");
   GLADE_HOOKUP_OBJECT (converterdlg, overwrite_action, "overwrite_action");
-  GLADE_HOOKUP_OBJECT (converterdlg, preserve_folders, "preserve_folders");
   GLADE_HOOKUP_OBJECT_NO_REF (converterdlg, dialog_action_area5, "dialog_action_area5");
   GLADE_HOOKUP_OBJECT (converterdlg, converter_cancel, "converter_cancel");
   GLADE_HOOKUP_OBJECT (converterdlg, converter_ok, "converter_ok");

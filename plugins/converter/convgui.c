@@ -178,7 +178,21 @@ converter_worker (void *ctx) {
             }
         }
 
-        converter_plugin->get_output_path (conv->convert_items[n], conv->preserve_folder_structure ? outfolder_preserve : conv->outfolder, conv->outfile, conv->encoder_preset, outpath, sizeof (outpath));
+        const char *outfolder;
+        
+        if (conv->write_to_source_folder) {
+            char *path = strdupa (info->text);
+            char *sep = strrchr (path, '/');
+            if (sep) {
+                *sep = 0;
+            }
+            outfolder = path;
+        }
+        else {
+            outfolder = conv->preserve_folder_structure ? outfolder_preserve : conv->outfolder;
+        }
+
+        converter_plugin->get_output_path (conv->convert_items[n], outfolder, conv->outfile, conv->encoder_preset, outpath, sizeof (outpath));
 
         int skip = 0;
         struct stat st;
@@ -211,7 +225,7 @@ converter_worker (void *ctx) {
         }
 
         if (!skip) {
-            converter_plugin->convert (conv->convert_items[n], conv->outfolder, conv->outfile, conv->output_bps, conv->output_is_float, conv->preserve_folder_structure, outfolder_preserve, conv->encoder_preset, conv->dsp_preset, &conv->cancelled);
+            converter_plugin->convert (conv->convert_items[n], conv->outfolder, conv->outfile, conv->output_bps, conv->output_is_float, conv->preserve_folder_structure, outfolder_preserve, conv->write_to_source_folder, conv->encoder_preset, conv->dsp_preset, &conv->cancelled);
         }
         if (conv->cancelled) {
             for (; n < conv->convert_items_count; n++) {
@@ -313,6 +327,10 @@ converter_process (converter_ctx_t *conv)
     return 0;
 }
 
+void
+on_write_to_source_folder_toggled      (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
 static gboolean
 converter_show_cb (void *ctx) {
     converter_ctx_t *conv = malloc (sizeof (converter_ctx_t));
@@ -347,7 +365,15 @@ converter_show_cb (void *ctx) {
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (conv->converter, "output_folder")), deadbeef->conf_get_str_fast ("converter.output_folder", ""));
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (conv->converter, "output_file")), deadbeef->conf_get_str_fast ("converter.output_file", ""));
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "preserve_folders")), deadbeef->conf_get_int ("converter.preserve_folder_structure", 0));
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "write_to_source_folder")), deadbeef->conf_get_int ("converter.write_to_source_folder", 0));
+    int write_to_source_folder = deadbeef->conf_get_int ("converter.write_to_source_folder", 0);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "write_to_source_folder")), write_to_source_folder);
+
+    g_signal_connect ((gpointer) lookup_widget (conv->converter, "write_to_source_folder"), "toggled",
+            G_CALLBACK (on_write_to_source_folder_toggled),
+            conv);
+
+    gtk_widget_set_sensitive (lookup_widget (conv->converter, "output_folder"), !write_to_source_folder);
+    gtk_widget_set_sensitive (lookup_widget (conv->converter, "preserve_folders"), !write_to_source_folder);
     gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (conv->converter, "overwrite_action")), deadbeef->conf_get_int ("converter.overwrite_action", 0));
     deadbeef->conf_unlock ();
 
@@ -558,7 +584,11 @@ void
 on_write_to_source_folder_toggled      (GtkToggleButton *togglebutton,
                                         gpointer         user_data)
 {
-    deadbeef->conf_set_int ("converter.write_to_source_folder", gtk_toggle_button_get_active (togglebutton));
+    int active = gtk_toggle_button_get_active (togglebutton);
+    converter_ctx_t *conv = user_data;
+    deadbeef->conf_set_int ("converter.write_to_source_folder", active);
+    gtk_widget_set_sensitive (lookup_widget (conv->converter, "output_folder"), !active);
+    gtk_widget_set_sensitive (lookup_widget (conv->converter, "preserve_folders"), !active);
 }
 
 

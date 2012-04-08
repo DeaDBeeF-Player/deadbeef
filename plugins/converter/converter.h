@@ -142,8 +142,9 @@ typedef struct {
     void
     (*get_output_path) (DB_playItem_t *it, const char *outfolder, const char *outfile, ddb_encoder_preset_t *encoder_preset, char *out, int sz);
 
+    // this function is deprecated, please don't use directly
     int
-    (*convert) (DB_playItem_t *it, const char *outfolder, const char *outfile, int output_bps, int output_is_float, int preserve_folder_structure, const char *root_folder, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort);
+    (*convert_1_0) (DB_playItem_t *it, const char *outfolder, const char *outfile, int output_bps, int output_is_float, int preserve_folder_structure, const char *root_folder, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort);
 
     /////////////////////////////
     // new APIs for converter-1.1
@@ -157,6 +158,12 @@ typedef struct {
     (*free_encoder_presets) (void);
     void
     (*free_dsp_presets) (void);
+
+    /////////////////////////////
+    // new APIs for converter-1.2
+    /////////////////////////////
+    int
+    (*convert) (DB_playItem_t *it, const char *outfolder, const char *outfile, int output_bps, int output_is_float, int preserve_folder_structure, const char *root_folder, int write_to_source_folder, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort);
 } ddb_converter_t;
 
 #endif
