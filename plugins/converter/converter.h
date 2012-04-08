@@ -139,8 +139,9 @@ typedef struct {
     /////////////////////////////
 
 
+    // this function is deprecated, please don't use directly
     void
-    (*get_output_path) (DB_playItem_t *it, const char *outfolder, const char *outfile, ddb_encoder_preset_t *encoder_preset, char *out, int sz);
+    (*get_output_path_1_0) (DB_playItem_t *it, const char *outfolder, const char *outfile, ddb_encoder_preset_t *encoder_preset, char *out, int sz);
 
     // this function is deprecated, please don't use directly
     int
@@ -163,7 +164,17 @@ typedef struct {
     // new APIs for converter-1.2
     /////////////////////////////
     int
-    (*convert) (DB_playItem_t *it, const char *outfolder, const char *outfile, int output_bps, int output_is_float, int preserve_folder_structure, const char *root_folder, int write_to_source_folder, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort);
+    (*convert) (
+            DB_playItem_t *it, // track to be converted
+            const char *outpath, // final path to write the file (should normally be obtained using get_output_path)
+            int output_bps, // stream should be pre-converted to this resolution
+            int output_is_float, // stream should be converted to float
+            ddb_encoder_preset_t *encoder_preset, // encoder preset to use
+            ddb_dsp_preset_t *dsp_preset, // dsp preset to use
+            int *abort // *abort will be checked regularly, conversion will be interrupted if it's non-zero
+    );
+    void
+    (*get_output_path) (DB_playItem_t *it, const char *outfolder, const char *outfile, ddb_encoder_preset_t *encoder_preset, int preserve_folder_structure, const char *root_folder, int write_to_source_folder, char *out, int sz);
 } ddb_converter_t;
 
 #endif

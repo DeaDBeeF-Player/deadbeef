@@ -665,11 +665,41 @@ get_output_field (DB_playItem_t *it, const char *field, char *out, int sz)
     trace ("field '%s' expanded to '%s'\n", field, out);
 }
 
-static void
-get_output_path (DB_playItem_t *it, const char *outfolder, const char *outfile, ddb_encoder_preset_t *encoder_preset, char *out, int sz) {
+void
+get_output_path (DB_playItem_t *it, const char *outfolder_user, const char *outfile, ddb_encoder_preset_t *encoder_preset, int preserve_folder_structure, const char *root_folder, int write_to_source_folder, char *out, int sz) {
+
+    const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
+    char outfolder_preserve[2000];
+    if (preserve_folder_structure) {
+        // generate new outfolder
+        int rootlen = strlen (root_folder);
+        const char *e = strrchr (uri, '/');
+        if (e) {
+            const char *s = uri + rootlen;
+            char subpath[e-s+1];
+            memcpy (subpath, s, e-s);
+            subpath[e-s] = 0;
+            snprintf (outfolder_preserve, sizeof (outfolder_preserve), "%s/%s", outfolder_user[0] ? outfolder_user : getenv("HOME"), subpath);
+        }
+    }
+
+    const char *outfolder;
+
+    if (write_to_source_folder) {
+        char *path = strdupa (uri);
+        char *sep = strrchr (path, '/');
+        if (sep) {
+            *sep = 0;
+        }
+        outfolder = path;
+    }
+    else {
+        outfolder = preserve_folder_structure ? outfolder_preserve : outfolder_user;
+    }
+
     int l;
     char fname[PATH_MAX];
-    char *path = outfolder[0] ? strdupa (outfolder) : strdupa (getenv("HOME"));
+    char *path = strdupa (outfolder);
     char *pattern = strdupa (outfile);
 
     // replace invalid chars
@@ -708,6 +738,13 @@ get_output_path (DB_playItem_t *it, const char *outfolder, const char *outfile, 
     trace ("converter output file is '%s'\n", out);
 }
 
+static void
+get_output_path_1_0 (DB_playItem_t *it, const char *outfolder, const char *outfile, ddb_encoder_preset_t *encoder_preset, char *out, int sz) {
+    fprintf (stderr, "converter: warning: old version of \"get_output_path\" has been called, please update your plugins which depend on converter 1.1\n");
+    *out = 0;
+    sz = 0;
+}
+
 static int
 check_dir (const char *dir, mode_t mode)
 {
@@ -724,7 +761,7 @@ check_dir (const char *dir, mode_t mode)
             trace ("creating dir %s\n", tmp);
             if (0 != mkdir (tmp, mode))
             {
-                trace ("Failed to create %s (%d)\n", tmp, errno);
+                trace ("Failed to create %s\n", tmp);
                 free (tmp);
                 return 0;
             }
@@ -737,7 +774,7 @@ check_dir (const char *dir, mode_t mode)
 }
 
 int
-convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int output_bps, int output_is_float, int preserve_folder_structure, const char *root_folder, int write_to_source_folder, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort) {
+convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort) {
     if (deadbeef->pl_get_item_duration (it) <= 0) {
         deadbeef->pl_lock ();
         const char *fname = deadbeef->pl_find_meta (it, ":URI");
@@ -746,18 +783,11 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
         return -1;
     }
 
-    char *path = preserve_folder_structure ? strdupa (root_folder) : (outfolder[0] ? strdupa (outfolder) : strdupa (getenv("HOME")));
-    if (!check_dir (path, 0755)) {
-        fprintf (stderr, "converter: failed to create output folder: %s\n", outfolder);
-        return -1;
-    }
-
     int err = -1;
     FILE *enc_pipe = NULL;
     int temp_file = -1;
     DB_decoder_t *dec = NULL;
     DB_fileinfo_t *fileinfo = NULL;
-    char out[PATH_MAX] = ""; // full path to output file
     char input_file_name[PATH_MAX] = "";
     dec = (DB_decoder_t *)deadbeef->plug_get_for_id (deadbeef->pl_find_meta (it, ":DECODER"));
 
@@ -774,21 +804,17 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
                 output_bps = fileinfo->fmt.bps;
                 output_is_float = fileinfo->fmt.is_float;
             }
-            const char *outpath;
 
-            if (write_to_source_folder) {
-                char *path = strdupa (deadbeef->pl_find_meta (it, ":URI"));
-                char *sep = strrchr (path, '/');
-                if (sep) {
-                    *sep = 0;
+            char *final_path = strdupa (out);
+            char *sep = strrchr (final_path, '/');
+            if (sep) {
+                *sep = 0;
+                if (!check_dir (final_path, 0755)) {
+                    fprintf (stderr, "converter: failed to create output folder: %s\n", final_path);
+                    goto error;
                 }
-                outpath = path;
-            }
-            else {
-                outpath = preserve_folder_structure ? root_folder : outfolder;
             }
 
-            get_output_path (it, outpath, outfile, encoder_preset, out, sizeof (out));
             if (encoder_preset->method == DDB_ENCODER_METHOD_FILE) {
                 const char *tmp = getenv ("TMPDIR");
                 if (!tmp) {
@@ -1104,7 +1130,8 @@ error:
 
 int
 convert_1_0 (DB_playItem_t *it, const char *outfolder, const char *outfile, int output_bps, int output_is_float, int preserve_folder_structure, const char *root_folder, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort) {
-    return convert (it, outfolder, outfile, output_bps, output_is_float, preserve_folder_structure, root_folder, 0, encoder_preset, dsp_preset, abort);
+    fprintf (stderr, "converter: warning: old version of \"convert\" has been called, please update your plugins which depend on converter 1.1\n");
+    return -1;
 }
 
 int
@@ -1179,14 +1206,16 @@ static ddb_converter_t plugin = {
     .dsp_preset_append = dsp_preset_append,
     .dsp_preset_remove = dsp_preset_remove,
     .dsp_preset_replace = dsp_preset_replace,
-    .get_output_path = get_output_path,
+    .get_output_path_1_0 = get_output_path_1_0,
     .convert_1_0 = convert_1_0,
-    .convert = convert,
     // 1.1 entry points
     .load_encoder_presets = load_encoder_presets,
     .load_dsp_presets = load_dsp_presets,
     .free_encoder_presets = free_encoder_presets,
     .free_dsp_presets = free_dsp_presets,
+    // 1.2 entry points
+    .convert = convert,
+    .get_output_path = get_output_path,
 };
 
 DB_plugin_t *

@@ -165,34 +165,7 @@ converter_worker (void *ctx) {
 
         char outpath[2000];
 
-        char outfolder_preserve[2000];
-        if (conv->preserve_folder_structure) {
-            // generate new outfolder
-            const char *e = strrchr (info->text, '/');
-            if (e) {
-                const char *s = info->text + rootlen;
-                char subpath[e-s+1];
-                memcpy (subpath, s, e-s);
-                subpath[e-s] = 0;
-                snprintf (outfolder_preserve, sizeof (outfolder_preserve), "%s/%s", conv->outfolder[0] ? conv->outfolder : getenv("HOME"), subpath);
-            }
-        }
-
-        const char *outfolder;
-        
-        if (conv->write_to_source_folder) {
-            char *path = strdupa (info->text);
-            char *sep = strrchr (path, '/');
-            if (sep) {
-                *sep = 0;
-            }
-            outfolder = path;
-        }
-        else {
-            outfolder = conv->preserve_folder_structure ? outfolder_preserve : conv->outfolder;
-        }
-
-        converter_plugin->get_output_path (conv->convert_items[n], outfolder, conv->outfile, conv->encoder_preset, outpath, sizeof (outpath));
+        converter_plugin->get_output_path (conv->convert_items[n], conv->outfolder, conv->outfile, conv->encoder_preset, conv->preserve_folder_structure, root, conv->write_to_source_folder, outpath, sizeof (outpath));
 
         int skip = 0;
         struct stat st;
@@ -225,7 +198,7 @@ converter_worker (void *ctx) {
         }
 
         if (!skip) {
-            converter_plugin->convert (conv->convert_items[n], conv->outfolder, conv->outfile, conv->output_bps, conv->output_is_float, conv->preserve_folder_structure, outfolder_preserve, conv->write_to_source_folder, conv->encoder_preset, conv->dsp_preset, &conv->cancelled);
+            converter_plugin->convert (conv->convert_items[n], outpath, conv->output_bps, conv->output_is_float, conv->encoder_preset, conv->dsp_preset, &conv->cancelled);
         }
         if (conv->cancelled) {
             for (; n < conv->convert_items_count; n++) {
@@ -1315,7 +1288,15 @@ convgui_connect (void) {
     gtkui_plugin = (ddb_gtkui_t *)deadbeef->plug_get_for_id ("gtkui");
 #endif
     converter_plugin = (ddb_converter_t *)deadbeef->plug_get_for_id ("converter");
-    if (!gtkui_plugin || !converter_plugin) {
+    if (!gtkui_plugin) {
+        fprintf (stderr, "convgui: gtkui plugin not found\n");
+        return -1;
+    }
+    if (!converter_plugin) {
+        fprintf (stderr, "convgui: converter plugin not found\n");
+    }
+    if (converter_plugin->misc.plugin.version_major != 1 || converter_plugin->misc.plugin.version_minor < 2) {
+        fprintf (stderr, "convgui: need converter>=1.2, but found %d.%d\n", converter_plugin->misc.plugin.version_major, converter_plugin->misc.plugin.version_minor);
         return -1;
     }
     return 0;
