@@ -27,6 +27,10 @@
 #include "interface.h"
 #include "../gtkui/gtkui_api.h"
 
+#ifndef PATH_MAX
+#define PATH_MAX    1024    /* max # of characters in a path name */
+#endif
+
 DB_functions_t *deadbeef;
 
 ddb_converter_t *converter_plugin;
@@ -42,7 +46,6 @@ typedef struct {
     char *outfolder;
     char *outfile;
     int preserve_folder_structure;
-    char *preserve_root_folder;
     int output_bps;
     int output_is_float;
     int overwrite_action;
@@ -121,6 +124,37 @@ static void
 converter_worker (void *ctx) {
     converter_ctx_t *conv = ctx;
 
+    char root[2000] = "";
+    int rootlen = 0;
+    // prepare for preserving folder struct
+    if (conv->preserve_folder_structure && conv->convert_items_count >= 1) {
+        // start with the 1st track path
+        strncpy (root, deadbeef->pl_find_meta (conv->convert_items[0], ":URI"), sizeof (root));
+        char *sep = strrchr (root, '/');
+        if (sep) {
+            *sep = 0;
+        }
+        // reduce
+        rootlen = strlen (root);
+        for (int n = 1; n < conv->convert_items_count; n++) {
+            const char *path = deadbeef->pl_find_meta (conv->convert_items[n], ":URI");
+            if (strncmp (path, root, rootlen)) {
+                // find where path splits
+                char *r = root;
+                while (*path && *r) {
+                    if (*path != *r) {
+                        *r = 0;
+                        rootlen = r-root;
+                        break;
+                    }
+                    path++;
+                    r++;
+                }
+            }
+        }
+//        fprintf (stderr, "common root path: %s\n", root);
+    }
+
     for (int n = 0; n < conv->convert_items_count; n++) {
         update_progress_info_t *info = malloc (sizeof (update_progress_info_t));
         info->entry = conv->progress_entry;
@@ -129,7 +163,21 @@ converter_worker (void *ctx) {
         g_idle_add (update_progress_cb, info);
 
         char outpath[2000];
-        converter_plugin->get_output_path (conv->convert_items[n], conv->outfolder, conv->outfile, conv->encoder_preset, outpath, sizeof (outpath));
+
+        char outfolder_preserve[2000];
+        if (conv->preserve_folder_structure) {
+            // generate new outfolder
+            const char *e = strrchr (info->text, '/');
+            if (e) {
+                const char *s = info->text + rootlen;
+                char subpath[e-s+1];
+                memcpy (subpath, s, e-s);
+                subpath[e-s] = 0;
+                snprintf (outfolder_preserve, sizeof (outfolder_preserve), "%s/%s", conv->outfolder, subpath);
+            }
+        }
+
+        converter_plugin->get_output_path (conv->convert_items[n], conv->preserve_folder_structure ? outfolder_preserve : conv->outfolder, conv->outfile, conv->encoder_preset, outpath, sizeof (outpath));
 
         int skip = 0;
         struct stat st;
@@ -162,7 +210,7 @@ converter_worker (void *ctx) {
         }
 
         if (!skip) {
-            converter_plugin->convert (conv->convert_items[n], conv->outfolder, conv->outfile, conv->output_bps, conv->output_is_float, conv->preserve_folder_structure, conv->preserve_root_folder, conv->encoder_preset, conv->dsp_preset, &conv->cancelled);
+            converter_plugin->convert (conv->convert_items[n], conv->outfolder, conv->outfile, conv->output_bps, conv->output_is_float, conv->preserve_folder_structure, outfolder_preserve, conv->encoder_preset, conv->dsp_preset, &conv->cancelled);
         }
         if (conv->cancelled) {
             for (; n < conv->convert_items_count; n++) {
@@ -192,7 +240,6 @@ converter_process (converter_ctx_t *conv)
     }
     conv->outfile = strdup (outfile);
     conv->preserve_folder_structure = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "preserve_folders")));
-    conv->preserve_root_folder = strdup (gtk_entry_get_text (GTK_ENTRY (lookup_widget (conv->converter, "preserve_root_folder"))));
     conv->overwrite_action = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (conv->converter, "overwrite_action")));
 
     GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (conv->converter, "output_format"));
@@ -297,7 +344,6 @@ converter_show_cb (void *ctx) {
     deadbeef->conf_lock ();
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (conv->converter, "output_folder")), deadbeef->conf_get_str_fast ("converter.output_folder", ""));
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (conv->converter, "output_file")), deadbeef->conf_get_str_fast ("converter.output_file", ""));
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (conv->converter, "preserve_root_folder")), deadbeef->conf_get_str_fast ("converter.preserve_root_folder", ""));
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "preserve_folders")), deadbeef->conf_get_int ("converter.preserve_folder_structure", 0));
     gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (conv->converter, "overwrite_action")), deadbeef->conf_get_int ("converter.overwrite_action", 0));
     deadbeef->conf_unlock ();
@@ -490,39 +536,6 @@ on_encoder_changed                     (GtkEditable     *editable,
 }
 
 void
-on_preserve_folder_browse_clicked      (GtkButton       *button,
-                                        gpointer         user_data)
-{
-    GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Select folder..."), GTK_WINDOW (current_ctx->converter), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
-    gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (current_ctx->converter));
-
-    gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dlg), FALSE);
-    // restore folder
-    deadbeef->conf_lock ();
-    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), deadbeef->conf_get_str_fast ("filechooser.lastdir", ""));
-    deadbeef->conf_unlock ();
-    int response = gtk_dialog_run (GTK_DIALOG (dlg));
-    // store folder
-    gchar *folder = gtk_file_chooser_get_current_folder_uri (GTK_FILE_CHOOSER (dlg));
-    if (folder) {
-        deadbeef->conf_set_str ("filechooser.lastdir", folder);
-        g_free (folder);
-    }
-    if (response == GTK_RESPONSE_OK) {
-        folder = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
-        gtk_widget_destroy (dlg);
-        if (folder) {
-            GtkWidget *entry = lookup_widget (current_ctx->converter, "preserve_root_folder");
-            gtk_entry_set_text (GTK_ENTRY (entry), folder);
-            g_free (folder);
-        }
-    }
-    else {
-        gtk_widget_destroy (dlg);
-    }
-}
-
-void
 on_output_file_changed                 (GtkEntry        *entry,
                                         gpointer         user_data)
 {
@@ -535,14 +548,6 @@ on_preserve_folders_toggled            (GtkToggleButton *togglebutton,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("converter.preserve_folder_structure", gtk_toggle_button_get_active (togglebutton));
-    deadbeef->conf_save ();
-}
-
-void
-on_preserve_root_folder_changed        (GtkEntry        *entry,
-                                        gpointer         user_data)
-{
-    deadbeef->conf_set_str ("converter.preserve_root_folder", gtk_entry_get_text (entry));
     deadbeef->conf_save ();
 }
 

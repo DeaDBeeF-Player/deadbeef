@@ -746,7 +746,7 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
         return -1;
     }
 
-    char *path = outfolder[0] ? strdupa (outfolder) : strdupa (getenv("HOME"));
+    char *path = preserve_folder_structure ? strdupa (root_folder) : (outfolder[0] ? strdupa (outfolder) : strdupa (getenv("HOME")));
     if (!check_dir (path, 0755)) {
         fprintf (stderr, "converter: failed to create output folder: %s\n", outfolder);
         return -1;
@@ -775,7 +775,7 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
                 output_is_float = fileinfo->fmt.is_float;
             }
 
-            get_output_path (it, outfolder, outfile, encoder_preset, out, sizeof (out));
+            get_output_path (it, preserve_folder_structure ? root_folder : outfolder, outfile, encoder_preset, out, sizeof (out));
             if (encoder_preset->method == DDB_ENCODER_METHOD_FILE) {
                 const char *tmp = getenv ("TMPDIR");
                 if (!tmp) {

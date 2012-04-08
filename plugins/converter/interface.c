@@ -65,9 +65,6 @@ create_converterdlg (void)
   GtkWidget *label121;
   GtkWidget *overwrite_action;
   GtkWidget *preserve_folders;
-  GtkWidget *hbox102;
-  GtkWidget *preserve_root_folder;
-  GtkWidget *preserve_folder_browse;
   GtkWidget *dialog_action_area5;
   GtkWidget *converter_cancel;
   GtkWidget *converter_ok;
@@ -224,20 +221,9 @@ create_converterdlg (void)
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (overwrite_action), _("Prompt"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (overwrite_action), _("Overwrite"));
 
-  preserve_folders = gtk_check_button_new_with_mnemonic (_("Preserve folder structure, starting from:"));
+  preserve_folders = gtk_check_button_new_with_mnemonic (_("Preserve folder structure"));
+  gtk_widget_show (preserve_folders);
   gtk_box_pack_start (GTK_BOX (vbox26), preserve_folders, FALSE, FALSE, 0);
-
-  hbox102 = gtk_hbox_new (FALSE, 0);
-  gtk_box_pack_start (GTK_BOX (vbox26), hbox102, TRUE, TRUE, 0);
-
-  preserve_root_folder = gtk_entry_new ();
-  gtk_widget_show (preserve_root_folder);
-  gtk_box_pack_start (GTK_BOX (hbox102), preserve_root_folder, TRUE, TRUE, 0);
-  gtk_entry_set_invisible_char (GTK_ENTRY (preserve_root_folder), 8226);
-
-  preserve_folder_browse = gtk_button_new_with_mnemonic ("...");
-  gtk_widget_show (preserve_folder_browse);
-  gtk_box_pack_start (GTK_BOX (hbox102), preserve_folder_browse, FALSE, FALSE, 0);
 
   dialog_action_area5 = gtk_dialog_get_action_area (GTK_DIALOG (converterdlg));
   gtk_widget_show (dialog_action_area5);
@@ -286,12 +272,6 @@ create_converterdlg (void)
   g_signal_connect ((gpointer) preserve_folders, "toggled",
                     G_CALLBACK (on_preserve_folders_toggled),
                     NULL);
-  g_signal_connect ((gpointer) preserve_root_folder, "changed",
-                    G_CALLBACK (on_preserve_root_folder_changed),
-                    NULL);
-  g_signal_connect ((gpointer) preserve_folder_browse, "clicked",
-                    G_CALLBACK (on_preserve_folder_browse_clicked),
-                    NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (converterdlg, converterdlg, "converterdlg");
@@ -329,9 +309,6 @@ create_converterdlg (void)
   GLADE_HOOKUP_OBJECT (converterdlg, label121, "label121");
   GLADE_HOOKUP_OBJECT (converterdlg, overwrite_action, "overwrite_action");
   GLADE_HOOKUP_OBJECT (converterdlg, preserve_folders, "preserve_folders");
-  GLADE_HOOKUP_OBJECT (converterdlg, hbox102, "hbox102");
-  GLADE_HOOKUP_OBJECT (converterdlg, preserve_root_folder, "preserve_root_folder");
-  GLADE_HOOKUP_OBJECT (converterdlg, preserve_folder_browse, "preserve_folder_browse");
   GLADE_HOOKUP_OBJECT_NO_REF (converterdlg, dialog_action_area5, "dialog_action_area5");
   GLADE_HOOKUP_OBJECT (converterdlg, converter_cancel, "converter_cancel");
   GLADE_HOOKUP_OBJECT (converterdlg, converter_ok, "converter_ok");
