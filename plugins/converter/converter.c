@@ -18,8 +18,10 @@
 */
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <fcntl.h>
 #include <unistd.h>
 #include "converter.h"
 #include "../../deadbeef.h"
@@ -27,6 +29,11 @@
 #ifndef PATH_MAX
 #define PATH_MAX    1024    /* max # of characters in a path name */
 #endif
+
+#ifndef __linux__
+#define O_LARGEFILE 0
+#endif
+
 #define min(x,y) ((x)<(y)?(x):(y))
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -747,7 +754,7 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
 
     int err = -1;
     FILE *enc_pipe = NULL;
-    FILE *temp_file = NULL;
+    int temp_file = -1;
     DB_decoder_t *dec = NULL;
     DB_fileinfo_t *fileinfo = NULL;
     char out[PATH_MAX] = ""; // full path to output file
@@ -822,17 +829,19 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
 
             fprintf (stderr, "converter: will encode using: %s\n", enc[0] ? enc : "internal RIFF WAVE writer");
 
+            mode_t wrmode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+
             if (!encoder_preset->encoder[0]) {
                 // write to wave file
-                temp_file = fopen (out, "w+b");
-                if (!temp_file) {
+                temp_file = open (out, O_LARGEFILE | O_WRONLY | O_CREAT | O_TRUNC, wrmode);
+                if (temp_file == -1) {
                     fprintf (stderr, "converter: failed to open output wave file %s\n", out);
                     goto error;
                 }
             }
             else if (encoder_preset->method == DDB_ENCODER_METHOD_FILE) {
-                temp_file = fopen (input_file_name, "w+b");
-                if (!temp_file) {
+                temp_file = open (input_file_name, O_LARGEFILE | O_WRONLY | O_CREAT | O_TRUNC, wrmode);
+                if (temp_file == -1) {
                     fprintf (stderr, "converter: failed to open temp file %s\n", input_file_name);
                     goto error;
                 }
@@ -845,8 +854,8 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
                 }
             }
 
-            if (!temp_file) {
-                temp_file = enc_pipe;
+            if (temp_file == -1 && enc_pipe) {
+                temp_file = fileno (enc_pipe);
             }
 
             // write wave header
@@ -943,15 +952,21 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
                     memcpy (&wavehdr[32], &blockalign, 2);
                     memcpy (&wavehdr[34], &output_bps, 2);
 
-                    fwrite (wavehdr, 1, wavehdr_size, temp_file);
+                    if (wavehdr_size != write (temp_file, wavehdr, wavehdr_size)) {
+                        fprintf (stderr, "converter: wave header write error\n");
+                        goto error;
+                    }
                     if (encoder_preset->method == DDB_ENCODER_METHOD_PIPE) {
                         size = 0;
                     }
-                    fwrite (&size, 1, sizeof (size), temp_file);
+                    if (write (temp_file, &size, sizeof (size)) != sizeof (size)) {
+                        fprintf (stderr, "converter: wave header size write error\n");
+                        goto error;
+                    }
                     header_written = 1;
                 }
 
-                int64_t res = fwrite (buffer, 1, sz, temp_file);
+                int64_t res = write (temp_file, buffer, sz);
                 if (sz != res) {
                     fprintf (stderr, "converter: write error (%lld bytes written out of %d)\n", res, sz);
                     goto error;
@@ -960,12 +975,17 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
             if (abort && *abort) {
                 goto error;
             }
-            if (temp_file && temp_file != enc_pipe) {
-                fseek (temp_file, wavehdr_size, SEEK_SET);
-                fwrite (&outsize, 1, 4, temp_file);
+            if (temp_file != -1 && (!enc_pipe || temp_file != fileno (enc_pipe))) {
+                lseek (temp_file, wavehdr_size, SEEK_SET);
+                if (4 != write (temp_file, &outsize, 4)) {
+                    fprintf (stderr, "converter: data size write error\n");
+                    goto error;
+                }
 
-                fclose (temp_file);
-                temp_file = NULL;
+                if (temp_file != -1 && (!enc_pipe || temp_file != fileno (enc_pipe))) {
+                    close (temp_file);
+                    temp_file = -1;
+                }
             }
 
             if (encoder_preset->encoder[0] && encoder_preset->method == DDB_ENCODER_METHOD_FILE) {
@@ -975,9 +995,9 @@ convert (DB_playItem_t *it, const char *outfolder, const char *outfile, int outp
     }
     err = 0;
 error:
-    if (temp_file && temp_file != enc_pipe) {
-        fclose (temp_file);
-        temp_file = NULL;
+    if (temp_file != -1 && (!enc_pipe || temp_file != fileno (enc_pipe))) {
+        close (temp_file);
+        temp_file = -1;
     }
     if (enc_pipe) {
         pclose (enc_pipe);
@@ -995,7 +1015,18 @@ error:
     }
 
     // write junklib tags
-    uint32_t tagflags = JUNK_STRIP_ID3V2 | JUNK_STRIP_APEV2 | JUNK_STRIP_ID3V1;
+
+    DB_playItem_t *out_it = NULL;
+
+    if (encoder_preset->tag_id3v2 || encoder_preset->tag_id3v1 || encoder_preset->tag_apev2 || encoder_preset->tag_flac || encoder_preset->tag_oggvorbis) {
+
+        DB_playItem_t *out_it = deadbeef->pl_item_alloc ();
+        deadbeef->pl_item_copy (out_it, it);
+        deadbeef->pl_replace_meta (out_it, ":URI", out);
+        deadbeef->pl_delete_meta (out_it, "cuesheet");
+    }
+
+    uint32_t tagflags = 0;
     if (encoder_preset->tag_id3v2) {
         tagflags |= JUNK_WRITE_ID3V2;
     }
@@ -1005,12 +1036,11 @@ error:
     if (encoder_preset->tag_apev2) {
         tagflags |= JUNK_WRITE_APEV2;
     }
-    DB_playItem_t *out_it = deadbeef->pl_item_alloc ();
-    deadbeef->pl_item_copy (out_it, it);
-    deadbeef->pl_replace_meta (out_it, ":URI", out);
-    deadbeef->pl_delete_meta (out_it, "cuesheet");
 
-    deadbeef->junk_rewrite_tags (out_it, tagflags, encoder_preset->id3v2_version + 3, "iso8859-1");
+    if (tagflags) {
+        tagflags = JUNK_STRIP_ID3V2 | JUNK_STRIP_APEV2 | JUNK_STRIP_ID3V1;
+        deadbeef->junk_rewrite_tags (out_it, tagflags, encoder_preset->id3v2_version + 3, "iso8859-1");
+    }
 
     // write flac tags
     if (encoder_preset->tag_flac) {
@@ -1053,9 +1083,9 @@ error:
             }
         }
     }
-
-    deadbeef->pl_item_unref (out_it);
-
+    if (out_it) {
+        deadbeef->pl_item_unref (out_it);
+    }
 
     return err;
 }
