@@ -1019,8 +1019,7 @@ error:
     DB_playItem_t *out_it = NULL;
 
     if (encoder_preset->tag_id3v2 || encoder_preset->tag_id3v1 || encoder_preset->tag_apev2 || encoder_preset->tag_flac || encoder_preset->tag_oggvorbis) {
-
-        DB_playItem_t *out_it = deadbeef->pl_item_alloc ();
+        out_it = deadbeef->pl_item_alloc ();
         deadbeef->pl_item_copy (out_it, it);
         deadbeef->pl_replace_meta (out_it, ":URI", out);
         deadbeef->pl_delete_meta (out_it, "cuesheet");
@@ -1038,7 +1037,7 @@ error:
     }
 
     if (tagflags) {
-        tagflags = JUNK_STRIP_ID3V2 | JUNK_STRIP_APEV2 | JUNK_STRIP_ID3V1;
+        tagflags |= JUNK_STRIP_ID3V2 | JUNK_STRIP_APEV2 | JUNK_STRIP_ID3V1;
         deadbeef->junk_rewrite_tags (out_it, tagflags, encoder_preset->id3v2_version + 3, "iso8859-1");
     }
 

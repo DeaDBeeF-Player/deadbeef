@@ -37,6 +37,7 @@ create_converterdlg (void)
   GtkWidget *hbox68;
   GtkWidget *output_folder;
   GtkWidget *converter_output_browse;
+  GtkWidget *write_to_source_folder;
   GtkWidget *hbox100;
   GtkWidget *label122;
   GtkWidget *hbox101;
@@ -104,6 +105,9 @@ create_converterdlg (void)
   converter_output_browse = gtk_button_new_with_mnemonic ("...");
   gtk_widget_show (converter_output_browse);
   gtk_box_pack_start (GTK_BOX (hbox68), converter_output_browse, FALSE, FALSE, 0);
+
+  write_to_source_folder = gtk_check_button_new_with_mnemonic (_("Write to source track folder"));
+  gtk_box_pack_start (GTK_BOX (vbox26), write_to_source_folder, FALSE, FALSE, 0);
 
   hbox100 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox100);
@@ -245,6 +249,9 @@ create_converterdlg (void)
   g_signal_connect ((gpointer) converter_output_browse, "clicked",
                     G_CALLBACK (on_converter_output_browse_clicked),
                     NULL);
+  g_signal_connect ((gpointer) write_to_source_folder, "toggled",
+                    G_CALLBACK (on_write_to_source_folder_toggled),
+                    NULL);
   g_signal_connect ((gpointer) output_file, "changed",
                     G_CALLBACK (on_output_file_changed),
                     NULL);
@@ -282,6 +289,7 @@ create_converterdlg (void)
   GLADE_HOOKUP_OBJECT (converterdlg, hbox68, "hbox68");
   GLADE_HOOKUP_OBJECT (converterdlg, output_folder, "output_folder");
   GLADE_HOOKUP_OBJECT (converterdlg, converter_output_browse, "converter_output_browse");
+  GLADE_HOOKUP_OBJECT (converterdlg, write_to_source_folder, "write_to_source_folder");
   GLADE_HOOKUP_OBJECT (converterdlg, hbox100, "hbox100");
   GLADE_HOOKUP_OBJECT (converterdlg, label122, "label122");
   GLADE_HOOKUP_OBJECT (converterdlg, hbox101, "hbox101");

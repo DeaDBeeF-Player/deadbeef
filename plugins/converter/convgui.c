@@ -46,6 +46,7 @@ typedef struct {
     char *outfolder;
     char *outfile;
     int preserve_folder_structure;
+    int write_to_source_folder;
     int output_bps;
     int output_is_float;
     int overwrite_action;
@@ -173,7 +174,7 @@ converter_worker (void *ctx) {
                 char subpath[e-s+1];
                 memcpy (subpath, s, e-s);
                 subpath[e-s] = 0;
-                snprintf (outfolder_preserve, sizeof (outfolder_preserve), "%s/%s", conv->outfolder, subpath);
+                snprintf (outfolder_preserve, sizeof (outfolder_preserve), "%s/%s", conv->outfolder[0] ? conv->outfolder : getenv("HOME"), subpath);
             }
         }
 
@@ -240,6 +241,7 @@ converter_process (converter_ctx_t *conv)
     }
     conv->outfile = strdup (outfile);
     conv->preserve_folder_structure = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "preserve_folders")));
+    conv->write_to_source_folder = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "write_to_source_folder")));
     conv->overwrite_action = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (conv->converter, "overwrite_action")));
 
     GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (conv->converter, "output_format"));
@@ -345,6 +347,7 @@ converter_show_cb (void *ctx) {
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (conv->converter, "output_folder")), deadbeef->conf_get_str_fast ("converter.output_folder", ""));
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (conv->converter, "output_file")), deadbeef->conf_get_str_fast ("converter.output_file", ""));
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "preserve_folders")), deadbeef->conf_get_int ("converter.preserve_folder_structure", 0));
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "write_to_source_folder")), deadbeef->conf_get_int ("converter.write_to_source_folder", 0));
     gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (conv->converter, "overwrite_action")), deadbeef->conf_get_int ("converter.overwrite_action", 0));
     deadbeef->conf_unlock ();
 
@@ -550,6 +553,14 @@ on_preserve_folders_toggled            (GtkToggleButton *togglebutton,
     deadbeef->conf_set_int ("converter.preserve_folder_structure", gtk_toggle_button_get_active (togglebutton));
     deadbeef->conf_save ();
 }
+
+void
+on_write_to_source_folder_toggled      (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("converter.write_to_source_folder", gtk_toggle_button_get_active (togglebutton));
+}
+
 
 DB_decoder_t *
 plug_get_decoder_for_id (const char *id) {
