@@ -388,8 +388,8 @@ gtkpl_songchanged_wrapper (DB_playItem_t *from, DB_playItem_t *to) {
     }
     g_idle_add (update_win_title_idle, ft);
     g_idle_add (redraw_seekbar_cb, NULL);
-    if (searchwin && searchwin->window) {
-        int iconified = gdk_window_get_state(searchwin->window) & GDK_WINDOW_STATE_ICONIFIED;
+    if (searchwin && gtk_widget_get_window (searchwin)) {
+        int iconified = gdk_window_get_state(gtk_widget_get_window (searchwin)) & GDK_WINDOW_STATE_ICONIFIED;
         if (gtk_widget_get_visible (searchwin) && !iconified) {
             g_idle_add (redraw_queued_tracks_cb, DDB_LISTVIEW (lookup_widget (searchwin, "searchlist")));
         }

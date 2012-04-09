@@ -369,8 +369,8 @@ ddb_listview_init(DdbListview *listview)
     listview->list = gtk_drawing_area_new ();
     gtk_widget_show (listview->list);
     gtk_box_pack_start (GTK_BOX (vbox), listview->list, TRUE, TRUE, 0);
-    GTK_WIDGET_SET_FLAGS (listview->list, GTK_CAN_FOCUS);
-    GTK_WIDGET_SET_FLAGS (listview->list, GTK_CAN_DEFAULT);
+    gtk_widget_set_can_focus (listview->list, TRUE);
+    gtk_widget_set_can_default (listview->list, TRUE);
     gtk_widget_set_events (listview->list, GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK | GDK_FOCUS_CHANGE_MASK);
 
     listview->hscrollbar = gtk_hscrollbar_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 0, 0, 0, 0)));
@@ -1264,7 +1264,7 @@ ddb_listview_list_render_row_background (DdbListview *ps, cairo_t *cr, DdbListvi
         if (gtk_widget_get_style (treeview)->depth == -1) {
             return; // drawing was called too early
         }
-        GTK_WIDGET_SET_FLAGS (GTK_WIDGET (treeview), GTK_HAS_FOCUS);
+        gtk_widget_set_can_focus (GTK_WIDGET (treeview), TRUE);
 #endif
     }
     int sel = it && ps->binding->is_selected (it);
@@ -3104,12 +3104,12 @@ ddb_listview_list_key_press_event (GtkWidget *widget, GdkEventKey *event, gpoint
 
 gboolean
 ddb_listview_list_focus_in_event (GtkWidget *widget, GdkEvent *event, gpointer user_data) {
-    GTK_WIDGET_SET_FLAGS (widget, GTK_HAS_FOCUS);
+    gtk_widget_set_can_focus (widget, TRUE);
     return FALSE;
 }
 
 gboolean
 ddb_listview_list_focus_out_event (GtkWidget *widget, GdkEvent *event, gpointer user_data) {
-    GTK_WIDGET_UNSET_FLAGS (widget, GTK_HAS_FOCUS);
+    gtk_widget_set_can_focus (widget, FALSE);
     return FALSE;
 }
