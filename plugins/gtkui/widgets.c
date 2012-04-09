@@ -1225,6 +1225,7 @@ w_selproperties_create (void) {
     memset (w, 0, sizeof (w_selproperties_t));
 
     w->base.widget = gtk_scrolled_window_new (NULL, NULL);
+    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (w->base.widget), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     w->tree = gtk_tree_view_new ();
     gtk_widget_show (w->tree);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->tree);
