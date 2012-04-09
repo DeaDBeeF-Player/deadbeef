@@ -67,6 +67,7 @@ typedef struct {
 
 typedef struct {
     ddb_gtkui_widget_t base;
+    GtkWidget *drawarea;
 } w_placeholder_t;
 
 typedef struct {
@@ -606,16 +607,18 @@ ddb_gtkui_widget_t *
 w_placeholder_create (void) {
     w_placeholder_t *w = malloc (sizeof (w_placeholder_t));
     memset (w, 0, sizeof (w_placeholder_t));
-    w->base.widget = gtk_drawing_area_new ();
-    gtk_widget_set_events (w->base.widget, GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
+
+    w->base.widget = gtk_event_box_new ();
+    w->drawarea  = gtk_drawing_area_new ();
+    gtk_widget_show (w->drawarea);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), w->drawarea);
+
 #if !GTK_CHECK_VERSION(3,0,0)
-    g_signal_connect ((gpointer) w->base.widget, "expose_event", G_CALLBACK (w_expose_event), w);
-    g_signal_connect_after ((gpointer) w->base.widget, "expose_event", G_CALLBACK (w_placeholder_expose_event), w);
+    g_signal_connect_after ((gpointer) w->drawarea, "expose_event", G_CALLBACK (w_placeholder_expose_event), w);
 #else
-    g_signal_connect ((gpointer) w->base.widget, "draw", G_CALLBACK (w_draw_event), w);
-    g_signal_connect_after ((gpointer) w->base.widget, "draw", G_CALLBACK (w_placeholder_draw), w);
+    g_signal_connect_after ((gpointer) w->drawarea, "draw", G_CALLBACK (w_placeholder_draw), w);
 #endif
-    g_signal_connect ((gpointer) w->base.widget, "button_press_event", G_CALLBACK (w_button_press_event), w);
+    w_override_signals (w->base.widget, w);
     return (ddb_gtkui_widget_t*)w;
 }
 
