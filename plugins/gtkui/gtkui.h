@@ -140,9 +140,6 @@ extern int (*gtkui_original_plt_add_dir) (ddb_playlist_t *plt, const char *dirna
 extern int (*gtkui_original_plt_add_file) (ddb_playlist_t *plt, const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 
 void
-gtkui_focus_on_playing_track (void);
-
-void
 gtkui_playlist_set_curr (int playlist);
 
 void

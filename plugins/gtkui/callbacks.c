@@ -1102,7 +1102,7 @@ void
 on_jump_to_current_track1_activate     (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    gtkui_focus_on_playing_track ();
+    deadbeef->sendmessage (DB_EV_TRACKFOCUSCURRENT, 0, 0, 0);
 }
 
 static GtkWidget *translatorswindow;

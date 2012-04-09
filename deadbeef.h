@@ -278,6 +278,8 @@ enum {
     DB_EV_SONGFINISHED = 1002, // song finished playing, ctx=ddb_event_track_t
     DB_EV_TRACKINFOCHANGED = 1004, // trackinfo was changed (included medatata and playback status), ctx=ddb_event_track_t
     DB_EV_SEEKED = 1005, // seek happened, ctx=ddb_event_playpos_t
+    // new in 1.4
+    DB_EV_TRACKFOCUSCURRENT = 1006, // user wants to highlight/find the current playing track
     DB_EV_MAX
 };
 
@@ -755,6 +757,7 @@ typedef struct {
 
     // ******* new 1.3 APIs ********
     int (*streamer_dsp_chain_save) (void);
+
 } DB_functions_t;
 
 // NOTE: an item placement must be selected like this

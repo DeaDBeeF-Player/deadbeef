@@ -1196,24 +1196,6 @@ gtkui_plt_load (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, in
 }
 
 void
-gtkui_focus_on_playing_track (void) {
-    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
-    if (it) {
-        int plt = deadbeef->streamer_get_current_playlist ();
-        if (plt != deadbeef->plt_get_curr_idx ()) {
-            deadbeef->plt_set_curr_idx (plt);
-        }
-        int idx = deadbeef->pl_get_idx_of (it);
-        if (idx != -1) {
-            DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-            ddb_listview_scroll_to (pl, idx);
-            ddb_listview_set_cursor (pl, idx);
-        }
-        deadbeef->pl_item_unref (it);
-    }
-}
-
-void
 gtkui_playlist_set_curr (int playlist) {
     deadbeef->plt_set_curr_idx (playlist);
     deadbeef->conf_set_int ("playlist.current", playlist);
