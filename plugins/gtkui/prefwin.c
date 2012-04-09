@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -533,6 +533,10 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
 
     // add from archives
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "ignore_archives")), deadbeef->conf_get_int ("ignore_archives", 1));
+
+    // reset autostop
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "reset_autostop")), deadbeef->conf_get_int ("playlist.stop_after_current_reset", 0));
+
     // titlebar text
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "titlebar_format_playing")), deadbeef->conf_get_str_fast ("gtkui.titlebar_playing", "%a - %t - DeaDBeeF-%V"));
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "titlebar_format_stopped")), deadbeef->conf_get_str_fast ("gtkui.titlebar_stopped", "DeaDBeeF-%V"));
@@ -1359,6 +1363,13 @@ on_ignore_archives_toggled             (GtkToggleButton *togglebutton,
 {
 
     deadbeef->conf_set_int ("ignore_archives", gtk_toggle_button_get_active (togglebutton));
+}
+
+void
+on_reset_autostop_toggled              (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("playlist.stop_after_current_reset", gtk_toggle_button_get_active (togglebutton));
 }
 
 

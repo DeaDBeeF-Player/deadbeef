@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -506,7 +506,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
         int count = 0;
         for (action = actions; action; action = action->next)
         {
-            if (action->flags & DB_ACTION_COMMON)
+            if (action->flags & (DB_ACTION_COMMON | DB_ACTION_PLAYLIST))
                 continue;
             
             // create submenus (separated with '/')

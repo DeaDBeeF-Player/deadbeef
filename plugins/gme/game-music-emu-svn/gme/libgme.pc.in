@@ -1,0 +1,15 @@
+# entries grouped with CMake are expanded by CMake
+# ${foo} entries are left alone by CMake and much
+# later are used by pkg-config.
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+lib_suffix=
+libdir=${exec_prefix}/lib${lib_suffix}
+includedir=${prefix}/include
+
+Name: Game_Music_Emu
+Description: A video game emulation library for music.
+URL: http://code.google.com/p/game-music-emu/
+Version: @GME_VERSION@
+Cflags: -I${includedir}
+Libs: -L${libdir} -lgme

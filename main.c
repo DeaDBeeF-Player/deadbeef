@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@
 #include <sys/types.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/select.h>
 #include <sys/un.h>
 #include <sys/fcntl.h>
 #include <sys/errno.h>
@@ -75,49 +76,85 @@ char dbdocdir[PATH_MAX]; // see deadbeef->get_doc_dir
 char dbplugindir[PATH_MAX]; // see deadbeef->get_plugin_dir
 char dbpixmapdir[PATH_MAX]; // see deadbeef->get_pixmap_dir
 
-// client-side commandline support
-// -1 error, program must exit with error code -1
-//  0 proceed normally as nothing happened
-//  1 no error, but program must exit with error code 0
-int
-client_exec_command_line (const char *cmdline, int len) {
-    const uint8_t *parg = (const uint8_t *)cmdline;
-    const uint8_t *pend = cmdline + len;
-    while (parg < pend) {
-        //        if (filter == 1) {
-        // help, version and nowplaying are executed with any filter
-        if (!strcmp (parg, "--help") || !strcmp (parg, "-h")) {
-            fprintf (stdout, _("Usage: deadbeef [options] [file(s)]\n"));
-            fprintf (stdout, _("Options:\n"));
-            fprintf (stdout, _("   --help  or  -h     Print help (this message) and exit\n"));
-            fprintf (stdout, _("   --quit             Quit player\n"));
-            fprintf (stdout, _("   --version          Print version info and exit\n"));
-            fprintf (stdout, _("   --play             Start playback\n"));
-            fprintf (stdout, _("   --stop             Stop playback\n"));
-            fprintf (stdout, _("   --pause            Pause playback\n"));
-            fprintf (stdout, _("   --toggle-pause     Toggle pause\n"));
-            fprintf (stdout, _("   --play-pause       Start playback if stopped, toggle pause otherwise\n"));
-            fprintf (stdout, _("   --next             Next song in playlist\n"));
-            fprintf (stdout, _("   --prev             Previous song in playlist\n"));
-            fprintf (stdout, _("   --random           Random song in playlist\n"));
-            fprintf (stdout, _("   --queue            Append file(s) to existing playlist\n"));
-            fprintf (stdout, _("   --nowplaying FMT   Print formatted track name to stdout\n"));
-            fprintf (stdout, _("                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
-                             "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
-                             "                      copy[r]ight, [e]lapsed\n"));
-            fprintf (stdout, _("                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"));
-            fprintf (stdout, _("                      for more info, see http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"));
-            return 1;
-        }
-        else if (!strcmp (parg, "--version")) {
-            fprintf (stdout, "DeaDBeeF " VERSION " Copyright © 2009-2011 Alexey Yakovenko\n");
-            return 1;
-        }
-        parg += strlen (parg);
-        parg++;
-    }
-    return 0;
+char use_gui_plugin[100];
+
+static void
+print_help (void) {
+    fprintf (stdout, _("Usage: deadbeef [options] [--] [file(s)]\n"));
+    fprintf (stdout, _("Options:\n"));
+    fprintf (stdout, _("   --help  or  -h     Print help (this message) and exit\n"));
+    fprintf (stdout, _("   --quit             Quit player\n"));
+    fprintf (stdout, _("   --version          Print version info and exit\n"));
+    fprintf (stdout, _("   --play             Start playback\n"));
+    fprintf (stdout, _("   --stop             Stop playback\n"));
+    fprintf (stdout, _("   --pause            Pause playback\n"));
+    fprintf (stdout, _("   --toggle-pause     Toggle pause\n"));
+    fprintf (stdout, _("   --play-pause       Start playback if stopped, toggle pause otherwise\n"));
+    fprintf (stdout, _("   --next             Next song in playlist\n"));
+    fprintf (stdout, _("   --prev             Previous song in playlist\n"));
+    fprintf (stdout, _("   --random           Random song in playlist\n"));
+    fprintf (stdout, _("   --queue            Append file(s) to existing playlist\n"));
+    fprintf (stdout, _("   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"));
+    fprintf (stdout, _("   --nowplaying FMT   Print formatted track name to stdout\n"));
+    fprintf (stdout, _("                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
+                "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
+                "                      copy[r]ight, [e]lapsed\n"));
+    fprintf (stdout, _("                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"));
+    fprintf (stdout, _("                      for more info, see http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"));
 }
+
+// Parse command line an return a single buffer with all
+// parameters concatenated (separated by \0).  File names
+// are resolved.
+char*
+prepare_command_line (int argc, char *argv[], int *size) {
+    int seen_ddash = 0;
+
+    // initial buffer limit, will expand if needed
+    int limit = 4096;
+    char *buf = (char*) malloc (limit);
+
+    if (argc <= 1) {
+        buf[0] = 0;
+        *size = 1;
+        return buf;
+    }
+
+    int p = 0;
+    for (int i = 1; i < argc; i++) {
+        // if argument is a filename, try to resolve it
+        char resolved[PATH_MAX];
+        char *arg;
+        if (!strncmp ("--", argv[i], 2) && !seen_ddash || !realpath (argv[i], resolved)) {
+            arg = argv[i];
+        }
+        else {
+            arg = resolved;
+        }
+
+        // make sure that there is enough space in the buffer;
+        // re-allocate, if needed
+        int arglen = strlen(arg) + 1;
+        while (p + arglen >= limit) {
+            char *newbuf = (char*) malloc (limit * 2);
+            memcpy (newbuf, buf, p);
+            free (buf);
+            limit *= 2;
+            buf = newbuf;
+        }
+
+        memcpy (buf + p, arg, arglen);
+        p += arglen;
+
+        if (!strcmp("--", argv[i])) {
+            seen_ddash = 1;
+        }
+    }
+
+    *size = p;
+    return buf;
+}
+
 
 // this function executes server-side commands only
 // must be called only from within server
@@ -266,7 +303,14 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
                 }
                 if (deadbeef->plt_add_dir ((ddb_playlist_t*)curr_plt, pname, NULL, NULL) < 0) {
                     if (deadbeef->plt_add_file ((ddb_playlist_t*)curr_plt, pname, NULL, NULL) < 0) {
-                        fprintf (stderr, "failed to add file or folder %s\n", pname);
+                        int ab = 0;
+                        playItem_t *it = plt_load (curr_plt, NULL, pname, &ab, NULL, NULL);
+                        if (it) {
+                            pl_item_unref (it);
+                        }
+                        else {
+                            fprintf (stderr, "failed to add file or folder %s\n", pname);
+                        }
                     }
                 }
                 parg += strlen (parg);
@@ -341,6 +385,39 @@ server_close (void) {
     }
 }
 
+// Read the whole message till end-of-stream
+char*
+read_entire_message (int sockfd, int *size) {
+    int bufsize = 4096; // initial buffer size, will expand if
+                        // the actual package turns out to be bigger
+    char *buf = (char*) malloc(bufsize);
+    int rdp = 0;
+
+    for (;;) {
+        if (rdp >= bufsize) {
+            int newsize = bufsize * 2;
+            char *newbuf = (char*) malloc(newsize);
+            memcpy(newbuf, buf, rdp);
+            free(buf);
+            buf = newbuf;
+            bufsize = newsize;
+        }
+
+        int rd = recv(sockfd, buf + rdp, bufsize - rdp, 0);
+        if (rd < 0) {
+            free(buf);
+            return NULL;
+        }
+        if (rd == 0) {
+            break;
+        }
+        rdp += rd;
+    }
+
+    *size = rdp;
+    return buf;
+}
+
 int
 server_update (void) {
     // handle remote stuff
@@ -352,16 +429,16 @@ server_update (void) {
         return -1;
     }
     else if (s2 != -1) {
-        char str[2048];
+        int size = -1;
+        char *buf = read_entire_message(s2, &size);
         char sendback[1024] = "";
-        int size;
-        if ((size = recv (s2, str, 2048, 0)) >= 0) {
-            if (size == 1 && str[0] == 0) {
+        if (size > 0) {
+            if (size == 1 && buf[0] == 0) {
                 // FIXME: that should be called right after activation of gui plugin
                 messagepump_push (DB_EV_ACTIVATED, 0, 0, 0);
             }
             else {
-                server_exec_command_line (str, size, sendback, sizeof (sendback));
+                server_exec_command_line (buf, size, sendback, sizeof (sendback));
             }
         }
         if (sendback[0]) {
@@ -372,6 +449,8 @@ server_update (void) {
             send (s2, "", 1, 0);
         }
         close(s2);
+
+        free(buf);
     }
     return 0;
 }
@@ -402,6 +481,26 @@ server_loop (void *ctx) {
 }
 
 void
+save_resume_state (void) {
+    playItem_t *trk = streamer_get_playing_track ();
+    DB_output_t *output = plug_get_output ();
+    float playpos = -1;
+    int playtrack = -1;
+    int playlist = streamer_get_current_playlist ();
+    int paused = (output->state () == OUTPUT_STATE_PAUSED);
+    if (trk && playlist >= 0) {
+        playtrack = str_get_idx_of (trk);
+        playpos = streamer_get_playpos ();
+        pl_item_unref (trk);
+    }
+
+    conf_set_float ("resume.position", playpos);
+    conf_set_int ("resume.track", playtrack);
+    conf_set_int ("resume.playlist", playlist);
+    conf_set_int ("resume.paused", paused);
+}
+
+void
 player_mainloop (void) {
     for (;;) {
         uint32_t msg;
@@ -425,7 +524,18 @@ player_mainloop (void) {
                 conf_save ();
                 break;
             case DB_EV_TERMINATE:
-                term = 1;
+                {
+                    save_resume_state ();
+
+                    pl_playqueue_clear ();
+
+                    // stop streaming and playback before unloading plugins
+                    DB_output_t *output = plug_get_output ();
+                    output->stop ();
+                    streamer_free ();
+                    output->free ();
+                    term = 1;
+                }
                 break;
             case DB_EV_PLAY_CURRENT:
                 if (p1) {
@@ -499,32 +609,8 @@ player_mainloop (void) {
             return;
         }
         messagepump_wait ();
-        //usleep(50000);
-        //plug_trigger_event (DB_EV_FRAMEUPDATE, 0);
     }
 }
-
-#if 0
-static int sigterm_handled = 0;
-void
-atexit_handler (void) {
-    fprintf (stderr, "atexit_handler\n");
-    if (!sigterm_handled) {
-        fprintf (stderr, "handling atexit.\n");
-        pl_save_all ();
-        conf_save ();
-    }
-}
-
-void
-sigterm_handler (int sig) {
-    fprintf (stderr, "got sigterm.\n");
-    atexit_handler ();
-    sigterm_handled = 1;
-    fprintf (stderr, "bye.\n");
-    exit (0);
-}
-#endif
 
 #ifdef __linux__
 void
@@ -557,26 +643,6 @@ sigsegv_handler (int sig) {
     exit (0);
 }
 #endif
-
-void
-save_resume_state (void) {
-    playItem_t *trk = streamer_get_playing_track ();
-    DB_output_t *output = plug_get_output ();
-    float playpos = -1;
-    int playtrack = -1;
-    int playlist = streamer_get_current_playlist ();
-    int paused = (output->state () == OUTPUT_STATE_PAUSED);
-    if (trk && playlist >= 0) {
-        playtrack = str_get_idx_of (trk);
-        playpos = streamer_get_playpos ();
-        pl_item_unref (trk);
-    }
-
-    conf_set_float ("resume.position", playpos);
-    conf_set_int ("resume.track", playtrack);
-    conf_set_int ("resume.playlist", playlist);
-    conf_set_int ("resume.paused", paused);
-}
 
 void
 restore_resume_state (void) {
@@ -706,6 +772,23 @@ main (int argc, char *argv[]) {
         return -1;
     }
 #endif
+
+    for (int i = 1; i < argc; i++) {
+        // help, version and nowplaying are executed with any filter
+        if (!strcmp (argv[i], "--help") || !strcmp (argv[i], "-h")) {
+            print_help ();
+            return 0;
+        }
+        else if (!strcmp (argv[i], "--version")) {
+            fprintf (stdout, "DeaDBeeF " VERSION " Copyright © 2009-2012 Alexey Yakovenko\n");
+            return 0;
+        }
+        else if (!strcmp (argv[i], "--gui")) {
+            strncpy (use_gui_plugin, argv[i], sizeof(use_gui_plugin) - 1);
+            use_gui_plugin[sizeof(use_gui_plugin) - 1] = 0;
+        }
+    }
+
     trace ("installdir: %s\n", dbinstalldir);
     trace ("confdir: %s\n", confdir);
     trace ("docdir: %s\n", dbdocdir);
@@ -714,52 +797,8 @@ main (int argc, char *argv[]) {
 
     mkdir (dbconfdir, 0755);
 
-    char cmdline[2048];
-    cmdline[0] = 0;
     int size = 0;
-    if (argc > 1) {
-        size = 2048;
-        // join command line into single string
-        char *p = cmdline;
-        cmdline[0] = 0;
-        for (int i = 1; i < argc; i++) {
-            if (size < 2) {
-                break;
-            }
-            if (i > 1) {
-                size--;
-                p++;
-            }
-            int len = strlen (argv[i]);
-            if (len >= size) {
-                break;
-            }
-            char resolved[PATH_MAX];
-            // need to resolve path here, because remote doesn't know current
-            // path of this process
-            if (argv[i][0] != '-' && realpath (argv[i], resolved)) {
-                len = strlen (resolved);
-                if (len >= size) {
-                    break;
-                }
-                memcpy (p, resolved, len+1);
-            }
-            else {
-                memcpy (p, argv[i], len+1);
-            }
-            p += len;
-            size -= len;
-        }
-        size = 2048 - size + 1;
-    }
-    int res;
-    res = client_exec_command_line (cmdline, size);
-    if (res == 1) {
-        return 0;
-    }
-    else if (res < 0) {
-        return res;
-    }
+    char *cmdline = prepare_command_line (argc, argv, &size);
 
     // try to connect to remote player
     int s, len;
@@ -781,18 +820,16 @@ main (int argc, char *argv[]) {
     len = offsetof(struct sockaddr_un, sun_path) + strlen (remote.sun_path);
 #endif
     if (connect(s, (struct sockaddr *)&remote, len) == 0) {
-        if (argc <= 1) {
-            cmdline[0] = 0;
-            size = 1;
-        }
-
         // pass args to remote and exit
         if (send(s, cmdline, size, 0) == -1) {
             perror ("send");
             exit (-1);
         }
-        char out[2048] = "";
-        ssize_t sz = recv(s, out, sizeof (out), 0);
+        // end of message
+        shutdown(s, SHUT_WR);
+
+        int sz = -1;
+        char *out = read_entire_message(s, &sz);
         if (sz == -1) {
             fprintf (stderr, "failed to pass args to remote!\n");
             exit (-1);
@@ -837,6 +874,10 @@ main (int argc, char *argv[]) {
     conf_init ();
     conf_load (); // required by some plugins at startup
 
+    if (use_gui_plugin[0]) {
+        conf_set_str ("gui_plugin", use_gui_plugin);
+    }
+
     conf_set_str ("deadbeef_version", VERSION);
 
     volume_set_db (conf_get_float ("playback.volume", 0)); // volume need to be initialized before plugins start
@@ -850,7 +891,7 @@ main (int argc, char *argv[]) {
     // execute server commands in local context
     int noloadpl = 0;
     if (argc > 1) {
-        res = server_exec_command_line (cmdline, size, NULL, 0);
+        int res = server_exec_command_line (cmdline, size, NULL, 0);
         // some of the server commands ran on 1st instance should terminate it
         if (res == 2) {
             noloadpl = 1;
@@ -862,6 +903,8 @@ main (int argc, char *argv[]) {
             exit (-1);
         }
     }
+
+    free (cmdline);
 
 #if 0
     signal (SIGTERM, sigterm_handler);
@@ -882,14 +925,13 @@ main (int argc, char *argv[]) {
     server_tid = thread_start (server_loop, NULL);
     // this runs in main thread (blocks right here)
     player_mainloop ();
+
     // terminate server and wait for completion
     if (server_tid) {
         server_terminate = 1;
         thread_join (server_tid);
         server_tid = 0;
     }
-
-    save_resume_state ();
 
     // save config
     pl_save_all ();
@@ -906,12 +948,6 @@ main (int argc, char *argv[]) {
     // stop receiving messages from outside
     server_close ();
 
-    // stop streaming and playback before unloading plugins
-    DB_output_t *output = plug_get_output ();
-    output->stop ();
-    streamer_free ();
-    output->free ();
-
     // plugins might still hood references to playitems,
     // and query configuration in background
     // so unload everything 1st before final cleanup
@@ -923,9 +959,7 @@ main (int argc, char *argv[]) {
     conf_free ();
     messagepump_free ();
     plug_cleanup ();
-#if 0
-    sigterm_handled = 1;
-#endif
+
     fprintf (stderr, "hej-hej!\n");
     return 0;
 }

@@ -4,14 +4,16 @@ AC_INIT([deadbeef], [devel])
 AC_CONFIG_HEADER(config.h)
 
 AM_INIT_AUTOMAKE([1.11 dist-bzip2])
+AM_SILENT_RULES([yes])
 AM_MAINTAINER_MODE()
 
 AC_USE_SYSTEM_EXTENSIONS
+LT_INIT
 AC_PROG_CC
 AC_PROG_CXX
 AC_STDC_HEADERS
 AC_PROG_INSTALL
-AC_PROG_LIBTOOL
+#AC_PROG_LIBTOOL
 AC_CONFIG_MACRO_DIR([m4])
 AC_C_BIGENDIAN
 AM_GNU_GETTEXT
@@ -57,7 +59,6 @@ AC_SUBST(LIB)
 AC_SUBST(YASM_FLAGS)
 
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
-
 
 dnl INSANE_CFLAGS="-Wformat -Wdisabled-optimization -Wcomment -Wchar-subscripts -Wunused-function -Wunused-value -Wuninitialized -Wtype-limits -Wbad-function-cast"
 dnl INSANE_CXXFLAGS="-Wcomment -Wchar-subscripts -Wunused-function -Wunused-value -Wuninitialized -Wtype-limits"

@@ -597,12 +597,13 @@ cda_action_add_cd (DB_plugin_action_t *act, DB_playItem_t *it)
         deadbeef->plt_unref (plt);
     }
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    return 0;
 }
 
 static DB_plugin_action_t add_cd_action = {
     .title = "File/Add Audio CD",
     .flags = DB_ACTION_COMMON,
-    .callback = cda_action_add_cd,
+    .callback = DDB_ACTION_CALLBACK(cda_action_add_cd),
     .next = NULL
 };
 
@@ -633,7 +634,7 @@ static DB_decoder_t plugin = {
     .plugin.name = "Audio CD player",
     .plugin.descr = "Audio CD plugin using libcdio and libcddb",
     .plugin.copyright = 
-        "Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "Copyright (C) 2009-2011 Viktor Semykin <thesame.ml@gmail.com>\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"

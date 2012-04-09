@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -19,7 +19,7 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <math.h>
+#include <math.h> // for ceil
 #include "../../deadbeef.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -94,7 +94,34 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
                     uint8_t nm[n+1];
                     memcpy (nm, p, n);
                     nm[n] = 0;
-                    sscanf (nm, "%d,%1000s - %1000s", &length, artist, title);
+                    length = atoi (nm);
+                    char *c = nm;
+                    while (*c && *c != ',') {
+                        c++;
+                    }
+                    if (*c == ',') {
+                        c++;
+                        const char *dash = NULL;
+                        const char *newdash = strstr (c, " - ");
+
+                        while (newdash) {
+                            dash = newdash;
+                            newdash = strstr (newdash+3, " - ");
+                        }
+
+                        if (dash) {
+                            strncpy (title, dash+3, sizeof (title)-1);
+                            title[sizeof(title)-1] = 0;
+                            int l = dash - c;
+                            strncpy (artist, c, min(l, sizeof (artist)));
+                            artist[sizeof(artist)-1] = 0;
+                        }
+                        else {
+                            strncpy (title, c, sizeof (title)-1);
+                            title[sizeof(title)-1] = 0;
+                        }
+                        trace ("title: %s, artist: %s\n", title, artist);
+                    }
                 }
             }
             while (p < end && *p >= 0x20) {
@@ -114,21 +141,42 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
         memcpy (nm, p, n);
         nm[n] = 0;
 
+        if (title[0]) {
+            const char *cs = deadbeef->junk_detect_charset (title);
+            if (cs) {
+                char tmp[2048];
+                if (deadbeef->junk_iconv (title, strlen (title), tmp, sizeof (tmp), cs, "utf-8") >= 0) {
+                    strcpy (title, tmp);
+                }
+            }
+        }
+        if (artist[0]) {
+            const char *cs = deadbeef->junk_detect_charset (artist);
+            if (cs) {
+                char tmp[2048];
+                if (deadbeef->junk_iconv (artist, strlen (artist), tmp, sizeof (tmp), cs, "utf-8") >= 0) {
+                    strcpy (artist, tmp);
+                }
+            }
+        }
+
         DB_playItem_t *it = NULL;
         if (strrchr (nm, '/')) {
             trace ("pl_insert_m3u: adding file %s\n", nm);
             it = deadbeef->plt_insert_file (plt, after, nm, pabort, cb, user_data);
-            if (length >= 0) {
-                deadbeef->plt_set_item_duration (plt, it, length);
-            }
-            if (title[0]) {
-                deadbeef->pl_replace_meta (it, "title", title);
-            }
-            else if (artist[0]) {
-                deadbeef->pl_replace_meta (it, "title", " ");
-            }
-            if (artist[0]) {
-                deadbeef->pl_replace_meta (it, "artist", artist);
+            if (it) {
+                if (length >= 0) {
+                    deadbeef->plt_set_item_duration (plt, it, length);
+                }
+                if (title[0]) {
+                    deadbeef->pl_replace_meta (it, "title", title);
+                }
+                else if (artist[0]) {
+                    deadbeef->pl_replace_meta (it, "title", " ");
+                }
+                if (artist[0]) {
+                    deadbeef->pl_replace_meta (it, "artist", artist);
+                }
             }
         }
         else {
@@ -179,11 +227,13 @@ pls_insert_file (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, c
         trace ("pls_insert_file: adding file %s\n", fullpath);
         it = deadbeef->plt_insert_file (plt, after, fullpath, pabort, cb, user_data);
     }
-    if (length[0]) {
-        deadbeef->plt_set_item_duration (plt, it, atoi (length));
-    }
-    if (title[0]) {
-        deadbeef->pl_replace_meta (it, "title", title);
+    if (it) {
+        if (length[0]) {
+            deadbeef->plt_set_item_duration (plt, it, atoi (length));
+        }
+        if (title[0]) {
+            deadbeef->pl_replace_meta (it, "title", title);
+        }
     }
     return it;
 }
@@ -389,12 +439,20 @@ m3uplug_load (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int 
     }
 
     DB_playItem_t *ret = NULL;
+
+    int tried_pls = 0;
+
     if (ext && !strcasecmp (ext, "pls")) {
+        tried_pls = 1;
         ret = load_pls (plt, after, fname, pabort, cb, user_data);
     }
     
     if (!ret) {
         ret = load_m3u (plt, after, fname, pabort, cb, user_data);
+    }
+
+    if (!ret && !tried_pls) {
+        ret = load_pls (plt, after, fname, pabort, cb, user_data);
     }
 
     return ret;
@@ -408,11 +466,16 @@ m3uplug_save_m3u (const char *fname, DB_playItem_t *first, DB_playItem_t *last) 
     }
     DB_playItem_t *it = first;
     deadbeef->pl_item_ref (it);
-    fprintf (fp, "#M3UEXT\n");
+    fprintf (fp, "#EXTM3U\n");
     while (it) {
         int dur = (int)ceil(deadbeef->pl_get_item_duration (it));
         char s[1000];
-        deadbeef->pl_format_title (it, -1, s, sizeof (s), -1, "%a - %t");
+        if (deadbeef->pl_find_meta (it, "artist")) {
+            deadbeef->pl_format_title (it, -1, s, sizeof (s), -1, "%a - %t");
+        }
+        else {
+            deadbeef->pl_format_title (it, -1, s, sizeof (s), -1, "%t");
+        }
         const char *fname = deadbeef->pl_find_meta (it, ":URI");
         fprintf (fp, "#EXTINF:%d,%s\n", dur, s);
         fprintf (fp, "%s\n", fname);
@@ -496,7 +559,7 @@ DB_playlist_t plugin = {
     .plugin.name = "M3U and PLS support",
     .plugin.descr = "Importing and exporting M3U and PLS formats\nRecognizes .pls, .m3u and .m3u8 file types\n\nNOTE: only utf8 file names are currently supported",
     .plugin.copyright = 
-        "Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
         "modify it under the terms of the GNU General Public License\n"

@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,9 +22,12 @@
 #include <FLAC/metadata.h>
 #include <math.h>
 #include "../../deadbeef.h"
+#include "../artwork/artwork.h"
 
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
+
+static DB_artwork_plugin_t *coverart_plugin = NULL;
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -922,6 +925,103 @@ cflac_write_metadata (DB_playItem_t *it) {
         m = m->next;
     }
 
+#if 0 // fetching covers is broken, disabling for 0.5.2
+    // check if we have embedded cover
+    data = NULL;
+    while (FLAC__metadata_iterator_prev (iter));
+    do {
+        data = FLAC__metadata_iterator_get_block (iter);
+        if (data && data->type == FLAC__METADATA_TYPE_PICTURE) {
+            break;
+        }
+    } while (FLAC__metadata_iterator_next (iter));
+
+    if (!coverart_plugin) {
+        DB_plugin_t **plugins = deadbeef->plug_get_list ();
+        for (int i = 0; plugins[i]; i++) {
+            DB_plugin_t *p = plugins[i];
+            if (p->id && !strcmp (p->id, "artwork") && p->version_major == 1 && p->version_minor >= 1) {
+                coverart_plugin = (DB_artwork_plugin_t *)p;
+                break;
+            }
+        }
+    }
+
+    // add coverart if the file doesn't have it
+    // FIXME: should have an option to overwrite it
+    if ((!data || data->type != FLAC__METADATA_TYPE_PICTURE) && coverart_plugin) {
+        deadbeef->pl_lock ();
+        const char *alb = deadbeef->pl_find_meta (it, "album");
+        const char *art = deadbeef->pl_find_meta (it, "artist");
+        if (!alb || !*alb) {
+            alb = deadbeef->pl_find_meta (it, "title");
+        }
+        const char *fn = deadbeef->pl_find_meta (it, ":URI");
+
+        char *album = alb ? strdupa (alb) : NULL;
+        char *artist = art ? strdupa (art) : NULL;
+        char *fname = fn ? strdupa (fn) : NULL;
+        deadbeef->pl_unlock ();
+
+        char *image_fname = coverart_plugin->get_album_art_sync (fname, artist, album, -1);
+
+        if (image_fname && strcmp (image_fname, coverart_plugin->get_default_cover())) {
+            DB_FILE *fp = deadbeef->fopen (image_fname);
+            FLAC__byte *coverart_data = NULL;
+            FLAC__StreamMetadata *metadata = NULL;
+            if (!fp) {
+                fprintf (stderr, "flac: cannot open coverart %s\n", image_fname);
+                goto error2;
+            }
+
+            int64_t len = deadbeef->fgetlength (fp);
+            if (len < 4) {
+                fprintf (stderr, "flac: cover image file %s is too small\n", image_fname);
+                goto error2;
+            }
+            coverart_data = malloc (len);
+            if (!coverart_data) {
+                fprintf (stderr, "flac: cannot allocate memory\n");
+                goto error2;
+            }
+            if (!deadbeef->fread (coverart_data, len, 1, fp)) {
+                fprintf (stderr, "flac: cannot read from %s\n",image_fname);
+                goto error2;
+            }
+
+            metadata = FLAC__metadata_object_new (FLAC__METADATA_TYPE_PICTURE);
+            if (!metadata) {
+                fprintf (stderr, "flac: failed to allocate new picture block\n");
+                goto error2;
+            }
+
+            FLAC__metadata_object_picture_set_description (metadata, "Cover", true);
+            FLAC__metadata_object_picture_set_data (metadata, coverart_data,len, true);
+            metadata->data.picture.type = FLAC__STREAM_METADATA_PICTURE_TYPE_FRONT_COVER;
+
+            if (*(uint32_t *)coverart_data == 0x474e5089) {  // png header
+                metadata->data.picture.mime_type = strdup ("image/png");
+            } else {
+                metadata->data.picture.mime_type = strdup ("image/jpeg");
+            }
+
+            while (FLAC__metadata_iterator_next (iter));
+            if (!FLAC__metadata_iterator_insert_block_after (iter, metadata)) {
+                fprintf (stderr, "flac: failed to append picture block to chain\n");
+                goto error2;
+            }
+
+error2:
+            if (fp) {
+                deadbeef->fclose (fp);
+            }
+            if (coverart_data) {
+                free (coverart_data);
+            }
+        }
+    }
+#endif
+
     if (!FLAC__metadata_chain_write (chain, 1, 0)) {
         trace ("cflac_write_metadata: FLAC__metadata_chain_write failed\n");
         goto error;
@@ -949,7 +1049,7 @@ static DB_decoder_t plugin = {
     .plugin.name = "FLAC decoder",
     .plugin.descr = "FLAC decoder using libFLAC",
     .plugin.copyright = 
-        "Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
         "modify it under the terms of the GNU General Public License\n"

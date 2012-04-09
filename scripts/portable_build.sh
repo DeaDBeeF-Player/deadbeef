@@ -13,7 +13,7 @@ sed -i 's/-lstdc++ -lm -lgcc_s -lc -lgcc_s/-lm -lc/g' libtool
 make clean
 make -j9
 
-./scripts/portable_extraplugs.sh
+#./scripts/portable_extraplugs.sh
 
 cd $ORIGIN
 

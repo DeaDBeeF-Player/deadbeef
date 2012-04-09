@@ -3,8 +3,8 @@ ffapdir = $(libdir)/$(PACKAGE)
 pkglib_LTLIBRARIES = ffap.la
 
 topsrcdir = @top_srcdir@
-EXTRA_PROGRAMS = foo
 YASM=$(topsrcdir)/yasmwrapper.sh
+EXTRA_DIST = dsputil_yasm.asm x86inc.asm
 SUFFIXES = .asm
 
 if HAVE_YASM
@@ -19,7 +19,7 @@ if HAVE_YASM
 	$(LIBTOOL) --tag=CC --mode=compile $(YASM) $(YASM_FLAGS)  -o $@ $<
 endif
 
-ffap_la_LDFLAGS = -module
+ffap_la_LDFLAGS = -module -lm
 
 AM_CFLAGS = $(CFLAGS) -fPIC -std=c99
 endif

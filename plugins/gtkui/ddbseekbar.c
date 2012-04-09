@@ -23,7 +23,7 @@
 #include <gdk/gdk.h>
 #include <drawing.h>
 #include <gtkui.h>
-
+#include "support.h"
 
 #define DDB_TYPE_SEEKBAR (ddb_seekbar_get_type ())
 #define DDB_SEEKBAR(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), DDB_TYPE_SEEKBAR, DdbSeekbar))

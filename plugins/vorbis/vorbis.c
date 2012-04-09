@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -199,7 +199,7 @@ cvorbis_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     info->info.file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
     if (!info->info.file) {
-        trace ("ogg: failed to open file %s\n", it->fname);
+        trace ("ogg: failed to open file %s\n", deadbeef->pl_find_meta (it, ":URI"));
         return -1;
     }
     int ln = deadbeef->fgetlength (info->info.file);
@@ -576,11 +576,11 @@ cvorbis_read_metadata (DB_playItem_t *it) {
     
     fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
     if (!fp) {
-        trace ("cvorbis_read_metadata: failed to fopen %s\n", it->fname);
+        trace ("cvorbis_read_metadata: failed to fopen %s\n", deadbeef->pl_find_meta (it, ":URI"));
         return -1;
     }
     if (fp->vfs->is_streaming ()) {
-        trace ("cvorbis_read_metadata: failed to fopen %s\n", it->fname);
+        trace ("cvorbis_read_metadata: failed to fopen %s\n", deadbeef->pl_find_meta (it, ":URI"));
         goto error;
     }
     ov_callbacks ovcb = {
@@ -597,7 +597,7 @@ cvorbis_read_metadata (DB_playItem_t *it) {
     int tracknum = deadbeef->pl_find_meta_int (it, ":TRACKNUM", -1);
     vi = ov_info (&vorbis_file, tracknum);
     if (!vi) { // not a vorbis stream
-        trace ("cvorbis_read_metadata: failed to ov_open %s\n", it->fname);
+        trace ("cvorbis_read_metadata: failed to ov_open %s\n", deadbeef->pl_find_meta (it, ":URI"));
         goto error;
     }
 
@@ -640,7 +640,7 @@ cvorbis_write_metadata (DB_playItem_t *it) {
     }
     fp = fopen (deadbeef->pl_find_meta (it, ":URI"), "rb");
     if (!fp) {
-        trace ("cvorbis_write_metadata: failed to read metadata from %s\n", it->fname);
+        trace ("cvorbis_write_metadata: failed to read metadata from %s\n", deadbeef->pl_find_meta (it, ":URI"));
         goto error;
     }
     if (vcedit_open (state, fp) != 0) {
@@ -732,7 +732,7 @@ cvorbis_write_metadata (DB_playItem_t *it) {
     }
 
     if (vcedit_write (state, out) < 0) {
-        trace ("cvorbis_write_metadata: failed to write tags to %s, error: %s\n", it->fname, vcedit_error (state));
+        trace ("cvorbis_write_metadata: failed to write tags to %s, error: %s\n", deadbeef->pl_find_meta (it, ":URI"), vcedit_error (state));
         goto error;
     }
 
@@ -777,7 +777,7 @@ static DB_decoder_t plugin = {
     .plugin.name = "OggVorbis decoder",
     .plugin.descr = "OggVorbis decoder using standard xiph.org libraries",
     .plugin.copyright = 
-        "Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
         "modify it under the terms of the GNU General Public License\n"

@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -491,6 +491,8 @@ write_finished_cb (void *ctx) {
     main_refresh ();
     search_refresh ();
     trkproperties_modified = 0;
+    show_track_properties_dlg ();
+
     return FALSE;
 }
 
@@ -501,6 +503,7 @@ set_progress_cb (void *ctx) {
     const char *fname = deadbeef->pl_find_meta_raw (track, ":URI");
     gtk_entry_set_text (GTK_ENTRY (progressitem), fname);
     deadbeef->pl_item_unref (track);
+    return FALSE;
 }
 
 static void

@@ -20,7 +20,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 unsigned const resampler_extra = 256;
 
-Dual_Resampler::Dual_Resampler() { }
+Dual_Resampler::Dual_Resampler() {
+    sample_buf_size = 0;
+}
 
 Dual_Resampler::~Dual_Resampler() { }
 

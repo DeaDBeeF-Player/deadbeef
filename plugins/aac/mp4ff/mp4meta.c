@@ -335,7 +335,13 @@ int32_t mp4ff_parse_metadata(mp4ff_t *f, const int32_t size)
         subsize = mp4ff_atom_read_header(f, &atom_type, &header_size);
         if (subsize == 0)
             break;
-        mp4ff_parse_tag(f, atom_type, (uint32_t)(subsize-header_size));
+        if (atom_type == ATOM_UNKNOWN) {
+            // don't try to read unknown atoms
+			mp4ff_set_position(f, mp4ff_position(f)+subsize-header_size);
+        }
+        else {
+            mp4ff_parse_tag(f, atom_type, (uint32_t)(subsize-header_size));
+        }
         sumsize += subsize;
     }
 

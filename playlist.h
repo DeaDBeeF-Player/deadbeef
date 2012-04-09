@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -400,7 +400,10 @@ void
 plt_search_process (playlist_t *plt, const char *text);
 
 void
-plt_sort (playlist_t *plt, int iter, int id, const char *format, int ascending);
+plt_sort (playlist_t *plt, int iter, int id, const char *format, int order);
+
+void
+plt_sort_random (playlist_t *plt, int iter);
 
 // playqueue support functions
 int

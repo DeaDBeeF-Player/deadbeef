@@ -43,6 +43,7 @@ full list of dependencies:
     faad2: for AAC plugin
     zlib: for Audio Overload plugin (psf, psf2, etc), GME (for vgz)
     libzip: for vfs_zip plugin
+    yasm: required to build assembly portions of ffap plugin on supported platforms (x86, x86_64)
 
 actual package names for your Linux distribution may vary.
 

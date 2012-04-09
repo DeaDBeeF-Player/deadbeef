@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -88,10 +88,6 @@ conf_load (void) {
         // skip whitespace
         while (*p && *p <= 0x20) {
             p++;
-        }
-        if (!*p) {
-            fprintf (stderr, "error in config file line %d\n", line);
-            continue;
         }
         char *value = p;
         // remove trailing trash

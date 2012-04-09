@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -367,7 +367,7 @@ static DB_output_t plugin =
     .plugin.descr = "At the moment of this writing, PulseAudio seems to be very unstable in many (or most) GNU/Linux distributions.\nIf you experience problems - please try switching to ALSA or OSS output.\nIf that doesn't help - please uninstall PulseAudio from your system, and try ALSA or OSS again.\nThanks for understanding",
     .plugin.copyright =
         "Copyright (C) 2011 Jan D. Behrens <zykure@web.de>\n"
-        "Copyright (C) 2010-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2010-2012 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "Copyright (C) 2010 Anton Novikov <tonn.post@gmail.com>\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"

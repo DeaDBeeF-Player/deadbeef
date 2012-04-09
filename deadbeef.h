@@ -2,7 +2,7 @@
   deadbeef.h -- plugin API of the DeaDBeeF audio player
   http://deadbeef.sourceforge.net
 
-  Copyright (C) 2009-2011 Alexey Yakovenko
+  Copyright (C) 2009-2012 Alexey Yakovenko
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -61,6 +61,8 @@ extern "C" {
 
 // api version history:
 // 9.9 -- devel
+// 1.3 -- deadbeef-0.5.3
+// 1.2 -- deadbeef-0.5.2
 // 1.1 -- deadbeef-0.5.1
 //   adds pass_through method to dsp plugins for optimization purposes
 // 1.0 -- deadbeef-0.5.0
@@ -76,7 +78,7 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 1
-#define DB_API_VERSION_MINOR 2
+#define DB_API_VERSION_MINOR 3
 
 #define DDB_PLUGIN_SET_API_VERSION\
     .plugin.api_vmajor = DB_API_VERSION_MAJOR,\
@@ -296,6 +298,13 @@ enum {
     DDB_REPLAYGAIN_TRACKPEAK,
 };
 
+// sort order constants
+enum ddb_sort_order_t {
+    DDB_SORT_DESCENDING,
+    DDB_SORT_ASCENDING,
+    DDB_SORT_RANDOM, // available since API 1.3
+};
+
 // typecasting macros
 #define DB_PLUGIN(x) ((DB_plugin_t *)(x))
 #define DB_CALLBACK(x) ((DB_callback_t)(x))
@@ -477,7 +486,7 @@ typedef struct {
     void (*plt_copy_items) (ddb_playlist_t *to, int iter, ddb_playlist_t * from, DB_playItem_t *before, uint32_t *indices, int cnt);
     void (*plt_search_reset) (ddb_playlist_t *plt);
     void (*plt_search_process) (ddb_playlist_t *plt, const char *text);
-    void (*plt_sort) (ddb_playlist_t *plt, int iter, int id, const char *format, int ascending);
+    void (*plt_sort) (ddb_playlist_t *plt, int iter, int id, const char *format, int order);
 
     // add files and folders to current playlist
     int (*plt_add_file) (ddb_playlist_t *plt, const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
@@ -743,7 +752,19 @@ typedef struct {
 
     // this function must return original un-overriden value (ignoring the keys prefixed with '!')
     const char *(*pl_find_meta_raw) (DB_playItem_t *it, const char *key);
+
+    // ******* new 1.3 APIs ********
+    int (*streamer_dsp_chain_save) (void);
 } DB_functions_t;
+
+// NOTE: an item placement must be selected like this
+// if (flags & DB_ACTION_COMMON)  -> main menu, or nowhere, or where GUI plugin wants
+//    basically, to put it into main menu, prefix the item title with the menu name
+//    e.g. title = "File/MyItem" --> this will add the item under File menu
+//    
+// if (flags & PLAYLIST)  -> playlist (tab) context menu
+//
+// if (none of the above)  -> track context menu
 
 enum {
     /* Action in main menu (or whereever ui prefers) */
@@ -759,12 +780,21 @@ enum {
     DB_ACTION_CAN_MULTIPLE_TRACKS = 1 << 3,
     
     /* Action is inactive */
-    DB_ACTION_DISABLED = 1 << 4
+    DB_ACTION_DISABLED = 1 << 4,
+
+    /* Action for the playlist (tab) */
+    /* this is new in 0.5.2 (API v1.2) */
+    DB_ACTION_PLAYLIST = 1 << 5,
 };
 
 struct DB_plugin_action_s;
 
-typedef int (*DB_plugin_action_callback_t) (struct DB_plugin_action_s *action, DB_playItem_t *it);
+// userdata type depends on type of action
+// it must be NULL for DB_ACTION_COMMON
+// or ddb_playlist_t * for DB_ACTION_PLAYLIST
+// or ddb_playItem_t * for none of the above (track context menu)
+typedef int (*DB_plugin_action_callback_t) (struct DB_plugin_action_s *action, void *userdata);
+#define DDB_ACTION_CALLBACK(x)((int (*)(struct DB_plugin_action_s *action, void *userdata))x)
 
 typedef struct DB_plugin_action_s {
     const char *title;

@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -29,27 +29,9 @@
 #include "../../config.h"
 #endif
 
-#if defined(ULTRA_COMPATIBLE)
-#warning compiling for compatibility with gtk <2.14
-#endif
-
-// workaround to make older gtk compatible with vala codegen
-#if !GTK_CHECK_VERSION(2,14,0) || defined(ULTRA_COMPATIBLE)
-#define gtk_widget_get_window(widget) ((widget)->window)
-#endif
-
-#if !GTK_CHECK_VERSION(2,18,0) || defined(ULTRA_COMPATIBLE)
-#define gtk_widget_set_has_window(widget, has_window) \
-  if (has_window) GTK_WIDGET_UNSET_FLAGS (widget, GTK_NO_WINDOW); \
-  else GTK_WIDGET_SET_FLAGS (widget, GTK_NO_WINDOW);
-
-#define gtk_widget_get_visible(widget) (GTK_WIDGET_VISIBLE(widget))
-#define gtk_widget_get_has_window(widget) (!GTK_WIDGET_NO_WINDOW(widget))
-#endif
-
-#if !GTK_CHECK_VERSION(2,20,0) || defined(ULTRA_COMPATIBLE)
-#define gtk_widget_get_realized(widget) (GTK_WIDGET_REALIZED(widget))
-#endif
+//#if defined(ULTRA_COMPATIBLE)
+//#warning compiling for compatibility with gtk <2.14
+//#endif
 
 #include "../../deadbeef.h"
 
@@ -174,5 +156,7 @@ gtkui_trackinfochanged (DB_playItem_t *it);
 
 gboolean
 redraw_queued_tracks_cb (gpointer plt);
+
+extern DB_playItem_t * (*gtkui_original_plt_load) (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 
 #endif

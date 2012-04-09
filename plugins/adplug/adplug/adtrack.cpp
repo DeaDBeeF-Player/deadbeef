@@ -64,11 +64,8 @@ bool CadtrackLoader::load(const char * filename, const CFileProvider &fp)
   char instfilename[PATH_MAX];
   strncpy (instfilename, filename, sizeof (instfilename)-5);
   instfilename[PATH_MAX-5] = 0;
-  char *pext = instfilename + strlen (instfilename);
-  while (pext > instfilename && *pext != '.') {
-      pext--;
-  }
-  if (*pext == '.') {
+  char *pext = strrchr (instfilename, '.');
+  if (pext) {
       strcpy (pext, ".ins");
   }
   else {

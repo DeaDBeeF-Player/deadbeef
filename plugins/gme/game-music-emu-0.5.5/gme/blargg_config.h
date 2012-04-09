@@ -7,7 +7,7 @@
 //#define HAVE_ZLIB_H
 
 // Uncomment to enable platform-specific optimizations
-//#define BLARGG_NONPORTABLE 1
+#define BLARGG_NONPORTABLE 1
 
 // Uncomment to use faster, lower quality sound synthesis
 //#define BLIP_BUFFER_FAST 1

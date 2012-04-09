@@ -24,12 +24,17 @@ for i in nullout cdda flac alsa mpgmad hotkeys vtx \
 		 cp ./plugins/$i/.libs/$i.so $PLUGDIR/
 	elif [ -f ./plugins/$i/$i.so ]; then
 		 cp ./plugins/$i/$i.so $PLUGDIR/
+	elif [ -f ./plugins/$i/.libs/ddb_$i.so ]; then
+		 cp ./plugins/$i/.libs/ddb_$i.so $PLUGDIR/
 	else
 		echo ./plugins/$i/.libs/$i.so not found
 	fi
 
-    if [ -f ./plugins/$i/.libs/${i}_gtkui.so ]; then
-		 cp ./plugins/$i/.libs/${i}_gtkui.so $PLUGDIR/
+    if [ -f ./plugins/$i/.libs/${i}_gtk2.so ]; then
+		 cp ./plugins/$i/.libs/${i}_gtk2.so $PLUGDIR/
+    fi
+    if [ -f ./plugins/$i/.libs/${i}_gtk3.so ]; then
+		 cp ./plugins/$i/.libs/${i}_gtk3.so $PLUGDIR/
     fi
 
     if [ -f ./plugins/$i/.libs/$i.fallback.so ]; then

@@ -58,6 +58,6 @@ docs_DATA = README help.txt about.txt translators.txt ChangeLog\
 desktopdir = $(datadir)/applications
 desktop_DATA = deadbeef.desktop
 
-EXTRA_DIST = $(docs_DATA) $(desktop_DATA) $(INTLTOOL_FILES) translation/extra.c sj_to_unicode.h examples/decoder_template.c examples/dsp_template.c
+EXTRA_DIST = $(docs_DATA) $(desktop_DATA) $(INTLTOOL_FILES) translation/extra.c sj_to_unicode.h examples/decoder_template.c examples/dsp_template.c yasmwrapper.sh
 
 ACLOCAL_AMFLAGS = -I m4

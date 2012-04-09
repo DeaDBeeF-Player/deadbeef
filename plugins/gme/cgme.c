@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -115,18 +115,15 @@ cgme_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     gme_fileinfo_t *info = (gme_fileinfo_t*)_info;
     int samplerate = deadbeef->conf_get_int ("synth.samplerate", 44100);
 
-    gme_err_t res;
+    gme_err_t res = "gme uninitialized";
     const char *ext = strrchr (deadbeef->pl_find_meta (it, ":URI"), '.');
-    if (ext && !strcasecmp (ext, ".vgz")) {
-        trace ("opening gzipped vgm...\n");
-        char *buffer;
-        int sz;
-        if (!read_gzfile (deadbeef->pl_find_meta (it, ":URI"), &buffer, &sz)) {
-            res = gme_open_data (buffer, sz, &info->emu, samplerate);
-            free (buffer);
-        }
+    char *buffer;
+    int sz;
+    if (!read_gzfile (deadbeef->pl_find_meta (it, ":URI"), &buffer, &sz)) {
+        res = gme_open_data (deadbeef->pl_find_meta (it, ":URI"), buffer, sz, &info->emu, samplerate);
+        free (buffer);
     }
-    else {
+    if (res) {
         DB_FILE *f = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
         int64_t sz = deadbeef->fgetlength (f);
         if (sz <= 0) {
@@ -145,7 +142,7 @@ cgme_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             return -1;
         }
 
-        res = gme_open_data (buf, sz, &info->emu, samplerate);
+        res = gme_open_data (deadbeef->pl_find_meta (it, ":URI"), buf, sz, &info->emu, samplerate);
         free (buf);
     }
 
@@ -268,19 +265,16 @@ cgme_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     Music_Emu *emu;
     trace ("gme_open_file %s\n", fname);
 
-    gme_err_t res;
+    gme_err_t res = "gme uninitialized";
 
     const char *ext = strrchr (fname, '.');
-    if (ext && !strcasecmp (ext, ".vgz")) {
-        trace ("opening gzipped vgm...\n");
-        char *buffer;
-        int sz;
-        if (!read_gzfile (fname, &buffer, &sz)) {
-            res = gme_open_data (buffer, sz, &emu, gme_info_only);
-            free (buffer);
-        }
+    char *buffer;
+    int sz;
+    if (!read_gzfile (fname, &buffer, &sz)) {
+        res = gme_open_data (fname, buffer, sz, &emu, gme_info_only);
+        free (buffer);
     }
-    else {
+    if (res) {
         DB_FILE *f = deadbeef->fopen (fname);
         if (!f) {
             return NULL;
@@ -302,7 +296,7 @@ cgme_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             return NULL;
         }
 
-        res = gme_open_data (buf, sz, &emu, gme_info_only);
+        res = gme_open_data (fname, buf, sz, &emu, gme_info_only);
         free (buf);
     }
 
@@ -399,7 +393,7 @@ cgme_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         }
     }
     else {
-        trace ("gme_open_file/data failed\n");
+        trace ("gme_open_file/data failed with error %s\n", res);
     }
     return after;
 }
@@ -466,9 +460,9 @@ static DB_decoder_t plugin = {
     .plugin.name = "Game-Music-Emu player",
     .plugin.descr = "chiptune/game music player based on GME library",
     .plugin.copyright = 
-        "Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
-        "Uses Game-Music-Emu v0.5.5 by Shay Green <gblargg@gmail.com>, http://www.slack.net/~ant/libs\n"
+        "Uses Game-Music-Emu by Shay Green <gblargg@gmail.com>, http://code.google.com/p/game-music-emu/\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
         "modify it under the terms of the GNU General Public License\n"

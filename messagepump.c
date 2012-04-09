@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ messagepump_reset (void) {
 int
 messagepump_push (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     if (!mfree) {
-        fprintf (stderr, "WARNING: message queue is full! message ignored (%d %p %d %d)\n", id, (void*)ctx, p1, p2);
+        //fprintf (stderr, "WARNING: message queue is full! message ignored (%d %p %d %d)\n", id, (void*)ctx, p1, p2);
         if (id >= DB_EV_FIRST && ctx) {
             messagepump_event_free ((ddb_event_t *)ctx);
         }

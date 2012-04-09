@@ -211,6 +211,9 @@ gtkpl_add_fm_dropped_files (DB_playItem_t *drop_before, char *ptr, int length) {
             DdbListviewIter inserted = deadbeef->plt_insert_dir (plt, after, fname, &abort, gtkui_add_file_info_cb, NULL);
             if (!inserted && !abort) {
                 inserted = deadbeef->plt_insert_file (plt, after, fname, &abort, gtkui_add_file_info_cb, NULL);
+                if (!inserted && !abort) {
+                    inserted = gtkui_original_plt_load (plt, after, fname, &abort, gtkui_add_file_info_cb, NULL);
+                }
             }
             if (inserted) {
                 if (!first) {

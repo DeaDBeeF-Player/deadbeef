@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -125,7 +125,7 @@ void
 streamer_dsp_postinit (void);
 
 int
-streamer_dsp_chain_save (const char *fname, ddb_dsp_context_t *chain);
+streamer_dsp_chain_save (void);
 
 void
 streamer_notify_order_changed (int prev_order, int new_order);

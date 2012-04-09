@@ -30,7 +30,7 @@
 #include <cairo.h>
 #include <pango/pangocairo.h>
 #include <pango/pango.h>
-
+#include "support.h"
 
 #define DDB_TYPE_EQUALIZER (ddb_equalizer_get_type ())
 #define DDB_EQUALIZER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), DDB_TYPE_EQUALIZER, DdbEqualizer))
