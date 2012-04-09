@@ -335,7 +335,11 @@ converter_show_cb (void *ctx) {
 
     conv->converter = create_converterdlg ();
     deadbeef->conf_lock ();
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (conv->converter, "output_folder")), deadbeef->conf_get_str_fast ("converter.output_folder", ""));
+    const char *out_folder = deadbeef->conf_get_str_fast ("converter.output_folder", "");
+    if (!out_folder[0]) {
+        out_folder = getenv("HOME");
+    }
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (conv->converter, "output_folder")), out_folder);
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (conv->converter, "output_file")), deadbeef->conf_get_str_fast ("converter.output_file", ""));
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "preserve_folders")), deadbeef->conf_get_int ("converter.preserve_folder_structure", 0));
     int write_to_source_folder = deadbeef->conf_get_int ("converter.write_to_source_folder", 0);
@@ -445,7 +449,17 @@ on_converter_output_browse_clicked     (GtkButton       *button,
     gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dlg), FALSE);
     // restore folder
     deadbeef->conf_lock ();
-    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), deadbeef->conf_get_str_fast ("converter.lastdir", ""));
+    char dir[2000];
+    deadbeef->conf_get_str ("converter.lastdir", "", dir, sizeof (dir));
+    if (!dir[0]) {
+        const char *out_folder = deadbeef->conf_get_str_fast ("converter.output_folder", "");
+        if (!out_folder[0]) {
+            out_folder = getenv("HOME");
+        }
+        snprintf (dir, sizeof (dir), "file://%s", out_folder);
+    }
+
+    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), dir);
     deadbeef->conf_unlock ();
     int response = gtk_dialog_run (GTK_DIALOG (dlg));
     // store folder
