@@ -242,10 +242,12 @@ w_draw_event (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
         GtkAllocation allocation;
         gtk_widget_get_allocation(widget, &allocation);
 
-        if (gtk_widget_get_has_window (widget)) {
+        if (!gtk_widget_get_has_window (widget)) {
+            cairo_reset_clip (cr);
             cairo_rectangle (cr, allocation.x, allocation.y, allocation.width, allocation.height);
         }
         else {
+            cairo_reset_clip (cr);
             cairo_rectangle (cr, 0, 0, allocation.width, allocation.height);
         }
         cairo_fill (cr);
@@ -387,6 +389,7 @@ w_menu_deactivate (GtkMenuShell *menushell, gpointer user_data) {
     if (GTK_IS_CONTAINER (w->widget)) {
         gtk_container_foreach (GTK_CONTAINER (w->widget), show_widget, NULL);
     }
+    gtk_widget_set_app_paintable (w->widget, FALSE);
     gtk_widget_queue_draw (w->widget);
 }
 
@@ -401,6 +404,7 @@ w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_da
     if (GTK_IS_CONTAINER (widget)) {
         gtk_container_foreach (GTK_CONTAINER (widget), hide_widget, NULL);
     }
+    gtk_widget_set_app_paintable (widget, TRUE);
     gtk_widget_queue_draw (((ddb_gtkui_widget_t *)user_data)->widget);
     GtkWidget *menu;
     GtkWidget *submenu;
@@ -969,7 +973,7 @@ typedef struct {
 } w_trackdata_t;
 
 static gboolean
-trackinfochanged_cb (gpointer p) {
+tabbed_trackinfochanged_cb (gpointer p) {
     w_trackdata_t *d = p;
     w_tabbed_playlist_t *tp = (w_tabbed_playlist_t *)d->w;
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
@@ -977,6 +981,25 @@ trackinfochanged_cb (gpointer p) {
         int idx = deadbeef->plt_get_item_idx (plt, (DB_playItem_t *)d->trk, PL_MAIN);
         if (idx != -1) {
             ddb_listview_draw_row (tp->list, idx, (DdbListviewIter)d->trk);
+        }
+        deadbeef->plt_unref (plt);
+    }
+    if (d->trk) {
+        deadbeef->pl_item_unref (d->trk);
+    }
+    free (d);
+    return FALSE;
+}
+
+static gboolean
+trackinfochanged_cb (gpointer data) {
+    w_trackdata_t *d = data;
+    w_playlist_t *p = (w_playlist_t *)d->w;
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        int idx = deadbeef->plt_get_item_idx (plt, (DB_playItem_t *)d->trk, PL_MAIN);
+        if (idx != -1) {
+            ddb_listview_draw_row (DDB_LISTVIEW (p->base.widget), idx, (DdbListviewIter)d->trk);
         }
         deadbeef->plt_unref (plt);
     }
@@ -1000,16 +1023,23 @@ paused_cb (gpointer p) {
 }
 
 static gboolean
-refresh_cb (gpointer p) {
+tabbed_refresh_cb (gpointer p) {
     w_tabbed_playlist_t *tp = (w_tabbed_playlist_t *)p;
     ddb_listview_clear_sort (tp->list);
     ddb_listview_refresh (tp->list, DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL);
     return FALSE;
 }
 
+static gboolean
+refresh_cb (gpointer data) {
+    w_playlist_t *p = (w_playlist_t *)data;
+    ddb_listview_clear_sort (DDB_LISTVIEW (p->base.widget));
+    ddb_listview_refresh (DDB_LISTVIEW (p->base.widget), DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL);
+    return FALSE;
+}
 
 static gboolean
-playlistswitch_cb (gpointer p) {
+tabbed_playlistswitch_cb (gpointer p) {
     w_tabbed_playlist_t *tp = (w_tabbed_playlist_t *)p;
     int curr = deadbeef->plt_get_curr_idx ();
     char conf[100];
@@ -1032,6 +1062,29 @@ playlistswitch_cb (gpointer p) {
     return FALSE;
 }
 
+static gboolean
+playlistswitch_cb (gpointer data) {
+    w_playlist_t *p = (w_playlist_t *)data;
+    int curr = deadbeef->plt_get_curr_idx ();
+    char conf[100];
+    snprintf (conf, sizeof (conf), "playlist.scroll.%d", curr);
+    int scroll = deadbeef->conf_get_int (conf, 0);
+    snprintf (conf, sizeof (conf), "playlist.cursor.%d", curr);
+    int cursor = deadbeef->conf_get_int (conf, -1);
+    deadbeef->pl_set_cursor (PL_MAIN, cursor);
+    if (cursor != -1) {
+        DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (cursor, PL_MAIN);
+        if (it) {
+            deadbeef->pl_set_selected (it, 1);
+            deadbeef->pl_item_unref (it);
+        }
+    }
+
+    ddb_listview_refresh (DDB_LISTVIEW (p->base.widget), DDB_LIST_CHANGED | DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL);
+    ddb_listview_set_vscroll (DDB_LISTVIEW (p->base.widget), scroll);
+    return FALSE;
+}
+
 struct fromto_t {
     ddb_gtkui_widget_t *w;
     DB_playItem_t *from;
@@ -1039,7 +1092,7 @@ struct fromto_t {
 };
 
 static gboolean
-songchanged_cb (gpointer p) {
+tabbed_songchanged_cb (gpointer p) {
     struct fromto_t *ft = p;
     DB_playItem_t *from = ft->from;
     DB_playItem_t *to = ft->to;
@@ -1084,12 +1137,103 @@ songchanged_cb (gpointer p) {
     return FALSE;
 }
 
+static gboolean
+songchanged_cb (gpointer data) {
+    struct fromto_t *ft = data;
+    DB_playItem_t *from = ft->from;
+    DB_playItem_t *to = ft->to;
+    w_playlist_t *p = (w_playlist_t *)ft->w;
+    int to_idx = -1;
+    if (!ddb_listview_is_scrolling (DDB_LISTVIEW (p->base.widget)) && to) {
+        int cursor_follows_playback = deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 0);
+        int scroll_follows_playback = deadbeef->conf_get_int ("playlist.scroll.followplayback", 0);
+        int plt = deadbeef->streamer_get_current_playlist ();
+        if (plt != -1) {
+            if (cursor_follows_playback && plt != deadbeef->plt_get_curr_idx ()) {
+                deadbeef->plt_set_curr_idx (plt);
+            }
+            to_idx = deadbeef->pl_get_idx_of (to);
+            if (to_idx != -1) {
+                if (cursor_follows_playback) {
+                    ddb_listview_set_cursor_noscroll (DDB_LISTVIEW (p->base.widget), to_idx);
+                }
+                if (scroll_follows_playback && plt == deadbeef->plt_get_curr_idx ()) {
+                    ddb_listview_scroll_to (DDB_LISTVIEW (p->base.widget), to_idx);
+                }
+            }
+        }
+    }
+
+    if (from) {
+        int idx = deadbeef->pl_get_idx_of (from);
+        if (idx != -1) {
+            ddb_listview_draw_row (DDB_LISTVIEW (p->base.widget), idx, from);
+        }
+    }
+    if (to && to_idx != -1) {
+        ddb_listview_draw_row (DDB_LISTVIEW (p->base.widget), to_idx, to);
+    }
+    if (ft->from) {
+        deadbeef->pl_item_unref (ft->from);
+    }
+    if (ft->to) {
+        deadbeef->pl_item_unref (ft->to);
+    }
+    free (ft);
+    return FALSE;
+}
+
 static int
 w_tabbed_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     w_tabbed_playlist_t *tp = (w_tabbed_playlist_t *)w;
     switch (id) {
     case DB_EV_SONGCHANGED:
         g_idle_add (redraw_queued_tracks_cb, tp->list);
+        ddb_event_trackchange_t *ev = (ddb_event_trackchange_t *)ctx;
+        struct fromto_t *ft = malloc (sizeof (struct fromto_t));
+        ft->from = ev->from;
+        ft->to = ev->to;
+        if (ft->from) {
+            deadbeef->pl_item_ref (ft->from);
+        }
+        if (ft->to) {
+            deadbeef->pl_item_ref (ft->to);
+        }
+        ft->w = w;
+        g_idle_add (tabbed_songchanged_cb, ft);
+        break;
+    case DB_EV_TRACKINFOCHANGED:
+        {
+            ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
+            if (ev->track) {
+                deadbeef->pl_item_ref (ev->track);
+            }
+            w_trackdata_t *d = malloc (sizeof (w_trackdata_t));
+            memset (d, 0, sizeof (w_trackdata_t));
+            d->w = w;
+            d->trk = ev->track;
+            g_idle_add (tabbed_trackinfochanged_cb, d);
+        }
+        break;
+    case DB_EV_PAUSED:
+        g_idle_add (paused_cb, w);
+        break;
+    case DB_EV_PLAYLISTCHANGED:
+        g_idle_add (tabbed_refresh_cb, w);
+        break;
+    case DB_EV_PLAYLISTSWITCHED:
+        g_idle_add (tabbed_playlistswitch_cb, w);
+        break;
+    }
+    return 0;
+}
+
+static int
+w_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    w_playlist_t *p = (w_playlist_t *)w;
+    switch (id) {
+    case DB_EV_SONGCHANGED:
+        g_idle_add (redraw_queued_tracks_cb, p->base.widget);
         ddb_event_trackchange_t *ev = (ddb_event_trackchange_t *)ctx;
         struct fromto_t *ft = malloc (sizeof (struct fromto_t));
         ft->from = ev->from;
@@ -1128,7 +1272,6 @@ w_tabbed_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, ui
     }
     return 0;
 }
-
 ddb_gtkui_widget_t *
 w_tabbed_playlist_create (void) {
     w_tabbed_playlist_t *w = malloc (sizeof (w_tabbed_playlist_t));
@@ -1187,7 +1330,7 @@ w_playlist_create (void) {
 
     w_override_signals (w->base.widget, w);
 
-    w->base.message = w_tabbed_playlist_message;
+    w->base.message = w_playlist_message;
     return (ddb_gtkui_widget_t*)w;
 }
 
