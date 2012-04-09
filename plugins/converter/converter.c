@@ -654,7 +654,7 @@ get_output_field (DB_playItem_t *it, const char *field, char *out, int sz)
     deadbeef->pl_format_title (it, idx, out, sz, -1, field);
 
     // replace invalid chars
-    char invalid[] = "/\\?%*:|\"<>";
+    char invalid[] = "/\\?%*:|\"<>`";
     char *p = out;
     while (*p) {
         if (strchr (invalid, *p)) {
@@ -703,7 +703,7 @@ get_output_path (DB_playItem_t *it, const char *outfolder_user, const char *outf
     char *pattern = strdupa (outfile);
 
     // replace invalid chars
-    char invalid[] = "?%*:|\"<>";
+    char invalid[] = "?%*:|\"<>`";
     char *p = path;
     while (*p) {
         if (strchr (invalid, *p)) {
