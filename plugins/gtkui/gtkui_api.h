@@ -29,7 +29,10 @@
 
 typedef struct ddb_gtkui_widget_s {
     const char *type;
-    
+    char *name;
+    int width;
+    int height;
+
     struct ddb_gtkui_widget_s *parent;
 
     GtkWidget *widget;

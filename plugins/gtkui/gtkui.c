@@ -1019,7 +1019,7 @@ gtkui_thread (void *ctx) {
         gtk_box_pack_start (GTK_BOX(lookup_widget(mainwin, "plugins_bottom_vbox")), rootwidget->widget, TRUE, TRUE, 0);
 
         // load layout
-        char layout[1024];
+        char layout[4000];
         deadbeef->conf_get_str ("gtkui.layout", "tabbed_playlist { }", layout, sizeof (layout));
 
         ddb_gtkui_widget_t *w = NULL;

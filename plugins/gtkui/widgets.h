@@ -27,6 +27,9 @@ w_init (void);
 void
 w_free (void);
 
+void
+w_save (void);
+
 ddb_gtkui_widget_t *
 w_get_rootwidget (void);
 
@@ -41,6 +44,9 @@ w_unreg_widget (const char *type);
 
 ddb_gtkui_widget_t *
 w_create (const char *type);
+
+void
+w_set_name (ddb_gtkui_widget_t *w, const char *name);
 
 const char *
 w_create_from_string (const char *s, ddb_gtkui_widget_t **parent);

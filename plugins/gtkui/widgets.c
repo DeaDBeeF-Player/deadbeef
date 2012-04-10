@@ -97,6 +97,7 @@ w_init (void) {
 
 void
 w_free (void) {
+    w_save ();
     w_creator_t *next = NULL;
     for (w_creator_t *cr = w_creators; cr; cr = next) {
         next = cr->next;
@@ -140,6 +141,14 @@ w_append (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
 
     if (cont->append) {
         cont->append (cont, child);
+    }
+    if (cont->type) {
+        if (!strcmp (cont->type, "hsplitter") && child == cont->children) {
+            gtk_paned_set_position (GTK_PANED(cont->widget), child->width);
+        }
+        else if (!strcmp (cont->type, "vsplitter") && child == cont->children) {
+            gtk_paned_set_position (GTK_PANED(cont->widget), child->height);
+        }
     }
 }
 
@@ -190,6 +199,33 @@ w_create_from_string (const char *s, ddb_gtkui_widget_t **parent) {
         w_remove (w, w->children);
     }
 
+    // name
+    s = gettoken (s, t);
+    if (!s) {
+        w_destroy (w);
+        return NULL;
+    }
+    if (t[0]) {
+        w_set_name (w, t);
+    }
+
+    // width
+    s = gettoken (s, t);
+    if (!s) {
+        w_destroy (w);
+        return NULL;
+    }
+    w->width = atoi (t);
+
+    // height
+    s = gettoken (s, t);
+    if (!s) {
+        w_destroy (w);
+        return NULL;
+    }
+    w->height = atoi (t);
+
+    // {
     s = gettoken (s, t);
     if (!s) {
         w_destroy (w);
@@ -270,6 +306,13 @@ static char paste_buffer[1000];
 static void
 save_widget_to_string (char *str, ddb_gtkui_widget_t *w) {
     strcat (str, w->type);
+    strcat (str, " \"");
+    strcat (str, w->name ? w->name : "");
+    char wh[100];
+    GtkAllocation a;
+    gtk_widget_get_allocation (w->widget, &a);
+    snprintf (wh, sizeof (wh), "\" %d %d ", a.width, a.height);
+    strcat (str, wh);
     strcat (str, "{");
     for (ddb_gtkui_widget_t *c = w->children; c; c = c->next) {
         save_widget_to_string (str, c);
@@ -534,12 +577,26 @@ w_create (const char *type) {
 }
 
 void
+w_set_name (ddb_gtkui_widget_t *w, const char *name) {
+    if (w->name) {
+        free (w->name);
+        w->name = NULL;
+    }
+    if (name) {
+        w->name = strdup (name);
+    }
+}
+
+void
 w_destroy (ddb_gtkui_widget_t *w) {
     if (w->destroy) {
         w->destroy (w);
     }
     if (w->widget) {
         gtk_widget_destroy (w->widget);
+    }
+    if (w->name) {
+        free (w->name);
     }
     free (w);
 }
