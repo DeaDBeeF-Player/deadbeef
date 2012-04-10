@@ -651,23 +651,30 @@ static void
 get_output_field (DB_playItem_t *it, const char *field, char *out, int sz)
 {
     int idx = deadbeef->pl_get_idx_of (it);
-    deadbeef->pl_format_title (it, idx, out, sz, -1, field);
+    char temp[PATH_MAX];
+    deadbeef->pl_format_title (it, idx, temp, sizeof (temp), -1, field);
 
-    // replace invalid chars
-    char invalid[] = "/\\?%*:|\"<>`";
+    // escape special chars
+    char invalid[] = "$\"`\\";
     char *p = out;
-    while (*p) {
-        if (strchr (invalid, *p)) {
-            *p = '_';
+    char *t = temp;
+    int n = sz;
+    while (*t && n > 1) {
+        if (strchr (invalid, *t)) {
+            *p++ = '\\';
+            n--;
         }
-        p++;
+        *p++ = *t;
+        n--;
+        t++;
     }
+    *p = 0;
     trace ("field '%s' expanded to '%s'\n", field, out);
 }
 
 void
 get_output_path (DB_playItem_t *it, const char *outfolder_user, const char *outfile, ddb_encoder_preset_t *encoder_preset, int preserve_folder_structure, const char *root_folder, int write_to_source_folder, char *out, int sz) {
-
+    trace ("get_output_path: %s %s %s\n", outfolder_user, outfile, root_folder);
     const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     char outfolder_preserve[2000];
     if (preserve_folder_structure) {
@@ -699,18 +706,24 @@ get_output_path (DB_playItem_t *it, const char *outfolder_user, const char *outf
 
     int l;
     char fname[PATH_MAX];
-    char *path = strdupa (outfolder);
+    int pathl = strlen(outfolder)*2+1;
+    char path[pathl];
     char *pattern = strdupa (outfile);
 
-    // replace invalid chars
-    char invalid[] = "?%*:|\"<>`";
+    // escape special chars
+    char invalid[] = "$\"`\\";
     char *p = path;
-    while (*p) {
-        if (strchr (invalid, *p)) {
-            *p = '_';
+    const char *t = outfolder;
+    while (*t && pathl > 1) {
+        if (strchr (invalid, *t)) {
+            *p++ = '\\';
+            pathl--;
         }
-        p++;
+        *p++ = *t;
+        pathl--;
+        t++;
     }
+    *p = 0;
     snprintf (out, sz, "%s/", path);
 
     // split path and create directories
