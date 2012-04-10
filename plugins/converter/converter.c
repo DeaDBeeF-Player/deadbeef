@@ -686,7 +686,7 @@ get_output_path (DB_playItem_t *it, const char *outfolder_user, const char *outf
             char subpath[e-s+1];
             memcpy (subpath, s, e-s);
             subpath[e-s] = 0;
-            snprintf (outfolder_preserve, sizeof (outfolder_preserve), "%s/%s", outfolder_user[0] ? outfolder_user : getenv("HOME"), subpath);
+            snprintf (outfolder_preserve, sizeof (outfolder_preserve), "%s%s", outfolder_user[0] ? outfolder_user : getenv("HOME"), subpath);
         }
     }
 
