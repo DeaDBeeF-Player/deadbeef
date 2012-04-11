@@ -42,6 +42,9 @@ w_reg_widget (const char *type, const char *title, ddb_gtkui_widget_t *(*create_
 void
 w_unreg_widget (const char *type);
 
+int
+w_is_registered (const char *type);
+
 ddb_gtkui_widget_t *
 w_create (const char *type);
 
@@ -56,6 +59,9 @@ w_destroy (ddb_gtkui_widget_t *w);
 
 void
 w_append (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child);
+
+void
+w_replace (ddb_gtkui_widget_t *w, ddb_gtkui_widget_t *from, ddb_gtkui_widget_t *to);
 
 void
 w_remove (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child);

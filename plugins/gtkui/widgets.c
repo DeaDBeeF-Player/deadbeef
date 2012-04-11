@@ -564,6 +564,12 @@ w_unreg_widget (const char *type) {
     fprintf (stderr, "gtkui w_unreg_widget: widget type %s is not registered\n", type);
 }
 
+int
+w_is_registered (const char *type) {
+    // FIXME
+    return 0;
+}
+
 ddb_gtkui_widget_t *
 w_create (const char *type) {
     for (w_creator_t *c = w_creators; c; c = c->next) {
