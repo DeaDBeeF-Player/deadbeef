@@ -307,6 +307,10 @@ enum ddb_sort_order_t {
     DDB_SORT_RANDOM, // available since API 1.3
 };
 
+// audio memory constants
+#define DDB_AUDIO_MEMORY_FRAMES 1000
+#define DDB_AUDIO_MEMORY_BUFFER_SIZE (DDB_AUDIO_MEMORY_FRAMES*4*20)
+
 // typecasting macros
 #define DB_PLUGIN(x) ((DB_plugin_t *)(x))
 #define DB_CALLBACK(x) ((DB_callback_t)(x))
@@ -758,6 +762,11 @@ typedef struct {
     // ******* new 1.3 APIs ********
     int (*streamer_dsp_chain_save) (void);
 
+    // access real-time audio data (e.g. for visualization)
+    // returns data size in bytes
+    // fmt and data will be filled with last bytes that came to the output plugin
+    // data size must be at least DDB_AUDIO_MEMORY_BUFFER_SIZE
+    int (*audio_get_waveform_data) (ddb_waveformat_t *fmt, char *data);
 } DB_functions_t;
 
 // NOTE: an item placement must be selected like this

@@ -90,6 +90,7 @@ static char streambuffer[STREAM_BUFFER_SIZE];
 static int bytes_until_next_song = 0;
 static uintptr_t mutex;
 static uintptr_t decodemutex;
+static uintptr_t audio_mem_mutex;
 static int nextsong = -1;
 static int nextsong_pstate = -1;
 static int badsong = -1;
@@ -118,6 +119,10 @@ static int streamer_buffering;
 
 // to allow interruption of stall file requests
 static DB_FILE *streamer_file;
+
+// for vis plugins
+static char audio_data[DDB_AUDIO_MEMORY_BUFFER_SIZE];
+static ddb_waveformat_t audio_fmt;
 
 #if DETECT_PL_LOCK_RC
 volatile pthread_t streamer_lock_tid = 0;
@@ -1693,6 +1698,7 @@ streamer_init (void) {
 #endif
     mutex = mutex_create ();
     decodemutex = mutex_create ();
+    audio_mem_mutex = mutex_create ();
 
     ringbuf_init (&streamer_ringbuf, streambuffer, STREAM_BUFFER_SIZE);
 
@@ -1734,6 +1740,8 @@ streamer_free (void) {
     decodemutex = 0;
     mutex_free (mutex);
     mutex = 0;
+    mutex_free (audio_mem_mutex);
+    audio_mem_mutex = 0;
 
     streamer_dsp_chain_save();
 
@@ -1953,6 +1961,7 @@ streamer_read (char *bytes, int size) {
     if (formatchanged && bytes_until_next_song <= 0) {
         streamer_set_output_format ();
         formatchanged = 0;
+        memset (audio_data, 0, sizeof (audio_data));
     }
     streamer_lock ();
     int sz = min (size, streamer_ringbuf.remaining);
@@ -2001,6 +2010,18 @@ streamer_read (char *bytes, int size) {
     int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
     printf ("streamer_read took %d ms\n", ms);
 #endif
+
+    mutex_lock (audio_mem_mutex);
+    int mem_size = DDB_AUDIO_MEMORY_FRAMES * (output->fmt.bps >> 3) * output->fmt.channels;
+    if (sz < mem_size) {
+        memmove (audio_data, audio_data + mem_size - sz, sz);
+        memcpy (audio_data + mem_size - sz, bytes, sz);
+    }
+    else {
+        memcpy (audio_data, bytes + sz - mem_size, mem_size);
+    }
+    memcpy (&audio_fmt, &output->fmt, sizeof (ddb_waveformat_t));
+    mutex_unlock (audio_mem_mutex);
 
     if (!output->has_volume) {
         char *stream = bytes;
@@ -2250,4 +2271,17 @@ streamer_notify_order_changed (int prev_order, int new_order) {
         }
         streamer_unlock ();
     }
+}
+
+int
+audio_get_waveform_data (ddb_waveformat_t *fmt, char *data) {
+    if (!audio_mem_mutex) {
+        return -1;
+    }
+    mutex_lock (audio_mem_mutex);
+    memcpy (fmt, &audio_fmt, sizeof (ddb_waveformat_t));
+    int mem_size = DDB_AUDIO_MEMORY_FRAMES * (audio_fmt.bps >> 3) * audio_fmt.channels;
+    memcpy (data, audio_data, mem_size);
+    mutex_unlock (audio_mem_mutex);
+    return mem_size;
 }

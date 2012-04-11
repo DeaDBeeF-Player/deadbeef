@@ -86,6 +86,12 @@ typedef struct {
     GtkWidget *drawarea;
 } w_coverart_t;
 
+typedef struct {
+    ddb_gtkui_widget_t base;
+    GtkWidget *drawarea;
+    guint drawtimer;
+} w_scope_t;
+
 static int design_mode;
 static ddb_gtkui_widget_t *rootwidget;
 
@@ -181,7 +187,6 @@ w_init_cb (void *data) {
 
 void
 w_replace (ddb_gtkui_widget_t *w, ddb_gtkui_widget_t *from, ddb_gtkui_widget_t *to) {
-    printf ("replace to %s\n", to->type);
     if (w->replace) {
         w->replace (w, from, to);
         if (to->init) {
@@ -1681,6 +1686,82 @@ w_coverart_create (void) {
     g_signal_connect_after ((gpointer) w->drawarea, "expose_event", G_CALLBACK (coverart_expose_event), w);
 #else
     g_signal_connect_after ((gpointer) w->drawarea, "draw", G_CALLBACK (coverart_draw), w);
+#endif
+    w_override_signals (w->base.widget, w);
+    return (ddb_gtkui_widget_t *)w;
+}
+
+///// scope vis
+void
+w_scope_destroy (ddb_gtkui_widget_t *w) {
+    w_scope_t *s = (w_scope_t *)w;
+    if (s->drawtimer) {
+        g_source_remove (s->drawtimer);
+    }
+}
+
+gboolean
+w_scope_draw_cb (void *data) {
+    w_scope_t *s = data;
+    gtk_widget_queue_draw (s->drawarea);
+    return TRUE;
+}
+
+gboolean
+scope_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
+    ddb_waveformat_t fmt;
+    char data[DDB_AUDIO_MEMORY_BUFFER_SIZE];
+    int size = deadbeef->audio_get_waveform_data (&fmt, data);
+    if (fmt.channels && size > 0) {
+        cairo_set_source_rgb (cr, 0, 0, 0);
+        cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
+        cairo_set_line_width (cr, 1);
+        GtkAllocation a;
+        gtk_widget_get_allocation (widget, &a);
+        short *samples = (short *)data;
+
+        int nframes = size / (fmt.bps/8*fmt.channels);
+        float incr = nframes / (float)a.width;
+        float pos = 0;
+        for (int x = 0; x < a.width; x++, pos += incr) {
+            short s = max (samples[(int)pos*2], samples[(int)pos*2+1]);
+            cairo_line_to (cr, x, s * a.height/2 / 0x7fff + a.height/2);
+        }
+        cairo_stroke (cr);
+    }
+
+    return FALSE;
+}
+
+gboolean
+scope_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
+    cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
+    gboolean res = scope_draw (widget, cr, user_data);
+    cairo_destroy (cr);
+    return res;
+}
+
+void
+w_scope_init (ddb_gtkui_widget_t *w) {
+    w_scope_t *s = (w_scope_t *)w;
+    s->drawtimer = g_timeout_add (33, w_scope_draw_cb, w);
+}
+
+ddb_gtkui_widget_t *
+w_scope_create (void) {
+    w_scope_t *w = malloc (sizeof (w_scope_t));
+    memset (w, 0, sizeof (w_scope_t));
+
+    w->base.widget = gtk_event_box_new ();
+    w->base.init = w_scope_init;
+    w->base.destroy  = w_scope_destroy;
+    w->drawarea = gtk_drawing_area_new ();
+    gtk_widget_show (w->drawarea);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), w->drawarea);
+#if !GTK_CHECK_VERSION(3,0,0)
+    g_signal_connect_after ((gpointer) w->drawarea, "expose_event", G_CALLBACK (scope_expose_event), w);
+#else
+    g_signal_connect_after ((gpointer) w->drawarea, "draw", G_CALLBACK (scope_draw), w);
 #endif
     w_override_signals (w->base.widget, w);
     return (ddb_gtkui_widget_t *)w;

@@ -331,6 +331,7 @@ static DB_functions_t deadbeef_api = {
     .pl_find_meta_raw = (const char *(*) (DB_playItem_t *it, const char *key))pl_find_meta_raw,
     // ******* new 1.3 APIs ********
     .streamer_dsp_chain_save = streamer_dsp_chain_save,
+    .audio_get_waveform_data = audio_get_waveform_data,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;
