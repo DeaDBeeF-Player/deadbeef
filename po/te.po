@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2011-04-25 17:20+0200\n"
+"PO-Revision-Date: 2012-04-11 04:12+0200\n"
 "Last-Translator: PraveenIlla <mail2ipn@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: te\n"
@@ -23,9 +23,8 @@ msgid "Supported sound formats"
 msgstr "సహకారంవున్న శబ్ధపు ఫార్మేట్లు"
 
 #: ../plugins/gtkui/callbacks.c:134
-#, fuzzy
 msgid "All files (*)"
-msgstr "ఇతర ఫైళ్ళు (*)"
+msgstr "అన్ని ఫైళ్ళు (*)"
 
 #: ../plugins/gtkui/callbacks.c:144
 msgid "Open file(s)..."
@@ -37,7 +36,7 @@ msgstr "పాటలజాబితాకు ఫైళ్ళ(ను) జతచ�
 
 #: ../plugins/gtkui/callbacks.c:220
 msgid "Add folder(s) to playlist..."
-msgstr "సంచయా(ల)ను పాటలజాబితాకు జతచేయి..."
+msgstr "సంచయము(ల)ను పాటలజాబితాకు జతచేయి..."
 
 #: ../plugins/gtkui/callbacks.c:225
 msgid "Follow symlinks"
@@ -53,7 +52,7 @@ msgstr "సహాయక ఫైల్ లోడుచేయుటలో విఫ
 
 #: ../plugins/gtkui/callbacks.c:736
 msgid "help.txt"
-msgstr ""
+msgstr "సహాయం.txt"
 
 #: ../plugins/gtkui/callbacks.c:737 ../plugins/gtkui/interface.c:1155
 #: ../plugins/gtkui/deadbeef.glade.h:49 ../plugins/converter/convgui.c:1240
@@ -69,12 +68,12 @@ msgstr "డెడ్‌బీఫ్ %s గురించి"
 #: ../plugins/gtkui/callbacks.c:760
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
-msgstr "డెడ్‌బీఫ్ %s మార్పుచిట్టా"
+msgstr "డెడ్‌బీఫ్ %s మార్పులచిట్టా"
 
 #: ../plugins/gtkui/callbacks.c:1116
-#, fuzzy, c-format
+#, c-format
 msgid "DeaDBeeF Translators"
-msgstr "డెడ్‌బీఫ్ ఇప్పుడు ఆడిస్తున్నది"
+msgstr "డెడ్‌బీఫ్ అనువాదకులు"
 
 #: ../plugins/gtkui/ddbtabstrip.c:755 ../plugins/gtkui/trkproperties.c:618
 msgid "Edit playlist"
