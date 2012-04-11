@@ -49,7 +49,7 @@
 #include <stdlib.h>
 #include <limits.h>
 
-#include <deadbeef/deadbeef.h>
+#include "../../deadbeef.h"
 #include "shellexec.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
