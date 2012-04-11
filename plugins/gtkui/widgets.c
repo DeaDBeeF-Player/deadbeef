@@ -143,6 +143,9 @@ w_append (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
     if (cont->append) {
         cont->append (cont, child);
     }
+    if (child->init) {
+        child->init (child);
+    }
 }
 
 void
@@ -167,10 +170,23 @@ w_remove (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
     child->parent = NULL;
 }
 
+gboolean
+w_init_cb (void *data) {
+    ddb_gtkui_widget_t *w = data;
+    if (w->init) {
+        w->init (w);
+    }
+    return FALSE;
+}
+
 void
 w_replace (ddb_gtkui_widget_t *w, ddb_gtkui_widget_t *from, ddb_gtkui_widget_t *to) {
+    printf ("replace to %s\n", to->type);
     if (w->replace) {
         w->replace (w, from, to);
+        if (to->init) {
+            g_idle_add (w_init_cb, to);
+        }
     }
     else {
         w_remove (w, from);
@@ -721,16 +737,29 @@ w_splitter_replace (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child, ddb_gtk
     }
 }
 
+void
+w_vsplitter_init (ddb_gtkui_widget_t *w) {
+    int pos = ((w_splitter_t *)w)->position;
+    if (pos == -1) {
+        GtkAllocation a;
+        gtk_widget_get_allocation (w->widget, &a);
+        pos = a.height/2;
+    }
+    gtk_paned_set_position (GTK_PANED(w->widget), pos);
+}
+
 ddb_gtkui_widget_t *
 w_vsplitter_create (void) {
     w_splitter_t *w = malloc (sizeof (w_splitter_t));
     memset (w, 0, sizeof (w_splitter_t));
+    w->position = -1;
     w->base.widget = gtk_vpaned_new ();
     w->base.append = w_splitter_add;
     w->base.remove = w_container_remove;
     w->base.replace = w_splitter_replace;
     w->base.load = w_splitter_load;
     w->base.save = w_splitter_save;
+    w->base.init = w_vsplitter_init;
 
     ddb_gtkui_widget_t *ph1, *ph2;
     ph1 = w_create ("placeholder");
@@ -749,17 +778,29 @@ w_vsplitter_create (void) {
 }
 
 ////// hsplitter widget
+void
+w_hsplitter_init (ddb_gtkui_widget_t *w) {
+    int pos = ((w_splitter_t *)w)->position;
+    if (pos == -1) {
+        GtkAllocation a;
+        gtk_widget_get_allocation (w->widget, &a);
+        pos = a.width/2;
+    }
+    gtk_paned_set_position (GTK_PANED(w->widget), pos);
+}
 
 ddb_gtkui_widget_t *
 w_hsplitter_create (void) {
     w_splitter_t *w = malloc (sizeof (w_splitter_t));
     memset (w, 0, sizeof (w_splitter_t));
+    w->position = -1;
     w->base.widget = gtk_hpaned_new ();
     w->base.append = w_splitter_add;
     w->base.remove = w_container_remove;
     w->base.replace = w_splitter_replace;
     w->base.load = w_splitter_load;
     w->base.save = w_splitter_save;
+    w->base.init = w_hsplitter_init;
 
     ddb_gtkui_widget_t *ph1, *ph2;
     ph1 = w_create ("placeholder");
