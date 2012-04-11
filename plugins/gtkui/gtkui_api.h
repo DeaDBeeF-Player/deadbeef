@@ -30,14 +30,16 @@
 typedef struct ddb_gtkui_widget_s {
     const char *type;
     char *name;
-    int width;
-    int height;
 
     struct ddb_gtkui_widget_s *parent;
 
     GtkWidget *widget;
     
     uint32_t flags;
+
+    const char *(*load) (struct ddb_gtkui_widget_s *w, const char *s);
+
+    void (*save) (struct ddb_gtkui_widget_s *w, char *s, int sz);
 
     void (*destroy) (struct ddb_gtkui_widget_s *w);
 
