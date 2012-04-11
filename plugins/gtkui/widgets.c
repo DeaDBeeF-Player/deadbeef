@@ -20,6 +20,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
 #include "gtkui.h"
 #include "widgets.h"
 #include "ddbtabstrip.h"
@@ -29,6 +31,7 @@
 #include "parser.h"
 #include "trkproperties.h"
 #include "coverart.h"
+#include "gtkuigl.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -90,6 +93,7 @@ typedef struct {
     ddb_gtkui_widget_t base;
     GtkWidget *drawarea;
     guint drawtimer;
+    GdkGLContext *glcontext;
 } w_scope_t;
 
 static int design_mode;
@@ -1697,6 +1701,11 @@ w_scope_destroy (ddb_gtkui_widget_t *w) {
     w_scope_t *s = (w_scope_t *)w;
     if (s->drawtimer) {
         g_source_remove (s->drawtimer);
+        s->drawtimer = 0;
+    }
+    if (s->glcontext) {
+        gdk_gl_context_destroy (s->glcontext);
+        s->glcontext = NULL;
     }
 }
 
@@ -1735,6 +1744,43 @@ scope_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 
 gboolean
 scope_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
+    w_scope_t *w = user_data;
+    ddb_waveformat_t fmt;
+    char data[DDB_AUDIO_MEMORY_BUFFER_SIZE];
+    int size = deadbeef->audio_get_waveform_data (&fmt, data);
+    if (fmt.channels && size > 0) {
+        GtkAllocation a;
+        gtk_widget_get_allocation (widget, &a);
+
+        GdkGLDrawable *d = gtk_widget_get_gl_drawable (widget);
+        gdk_gl_drawable_gl_begin (d, w->glcontext);
+
+        glClear (GL_COLOR_BUFFER_BIT);
+		glMatrixMode (GL_PROJECTION);
+		glLoadIdentity ();
+		gluOrtho2D(0,a.width,a.height,0);
+		glMatrixMode (GL_MODELVIEW);
+		glViewport (0, 0, a.width, a.height);
+        glBegin (GL_LINE_STRIP);
+
+        short *samples = (short *)data;
+
+        int nframes = size / (fmt.bps/8*fmt.channels);
+        float incr = nframes / (float)a.width;
+        float pos = 0;
+        for (int x = 0; x < a.width; x++, pos += incr) {
+            short s = max (samples[(int)pos*2], samples[(int)pos*2+1]);
+            glVertex2f (x, s * a.height/2 / 0x7fff + a.height/2);
+        }
+
+        glEnd();
+        gdk_gl_drawable_swap_buffers (d);
+
+        gdk_gl_drawable_gl_end (d);
+    }
+
+    return FALSE;
+
     cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
     gboolean res = scope_draw (widget, cr, user_data);
     cairo_destroy (cr);
@@ -1750,6 +1796,13 @@ w_scope_init (ddb_gtkui_widget_t *w) {
     s->drawtimer = g_timeout_add (33, w_scope_draw_cb, w);
 }
 
+void
+scope_realize (GtkWidget *widget, gpointer data) {
+    w_scope_t *w = data;
+    w->glcontext = gtk_widget_create_gl_context (w->drawarea, NULL, TRUE, GDK_GL_RGBA_TYPE);
+    printf ("ctx: %p\n", w->glcontext);
+}
+
 ddb_gtkui_widget_t *
 w_scope_create (void) {
     w_scope_t *w = malloc (sizeof (w_scope_t));
@@ -1759,6 +1812,12 @@ w_scope_create (void) {
     w->base.init = w_scope_init;
     w->base.destroy  = w_scope_destroy;
     w->drawarea = gtk_drawing_area_new ();
+    int attrlist[] = {GDK_GL_ATTRIB_LIST_NONE};
+    GdkGLConfig *conf = gdk_gl_config_new_by_mode ((GdkGLConfigMode)(GDK_GL_MODE_RGB |
+                        GDK_GL_MODE_DOUBLE));
+    printf ("conf: %p\n", conf);
+    gboolean cap = gtk_widget_set_gl_capability (w->drawarea, conf, NULL, TRUE, GDK_GL_RGBA_TYPE);
+    printf ("cap: %d\n", cap);
     gtk_widget_show (w->drawarea);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->drawarea);
 #if !GTK_CHECK_VERSION(3,0,0)
@@ -1766,6 +1825,7 @@ w_scope_create (void) {
 #else
     g_signal_connect_after ((gpointer) w->drawarea, "draw", G_CALLBACK (scope_draw), w);
 #endif
+    g_signal_connect_after (G_OBJECT (w->drawarea), "realize", G_CALLBACK (scope_realize), w);
     w_override_signals (w->base.widget, w);
     return (ddb_gtkui_widget_t *)w;
 }

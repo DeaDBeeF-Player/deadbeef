@@ -170,7 +170,7 @@ else
 fi
 
 if test "x$enable_gtk2" == "xyes" ; then
-    PKG_CHECK_MODULES(GTK2_DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0, HAVE_GTK2=yes, HAVE_GTK2=no)
+    PKG_CHECK_MODULES(GTK2_DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0 gtkglext-1.0, HAVE_GTK2=yes, HAVE_GTK2=no)
 else
     HAVE_GTK2=no
 fi

@@ -25,7 +25,8 @@ GTKUI_SOURCES =    gtkui.c gtkui.h\
 				   pluginconf.h\
 				   widgets.c widgets.h\
 				   ddbseekbar.h ddbequalizer.h ddbcellrenderertextmultiline.h\
-				   ddbseekbar.c ddbequalizer.c ddbcellrenderertextmultiline.c
+				   ddbseekbar.c ddbequalizer.c ddbcellrenderertextmultiline.c\
+				   gtkuigl.c gtkuigl.h
 
 sdkdir = $(pkgincludedir)
 sdk_HEADERS = gtkui_api.h
@@ -52,7 +53,7 @@ endif
 if HAVE_GTK2
 ddb_gui_GTK2_la_SOURCES = $(GTKUI_SOURCES)
 ddb_gui_GTK2_la_LDFLAGS = -module
-ddb_gui_GTK2_la_LIBADD = $(LDADD) $(GTK2_DEPS_LIBS)
+ddb_gui_GTK2_la_LIBADD = $(LDADD) $(GTK2_DEPS_LIBS) -lGLU
 ddb_gui_GTK2_la_CFLAGS = -std=c99 $(GTK2_DEPS_CFLAGS)
 endif
 if HAVE_GTK3
