@@ -2014,7 +2014,7 @@ streamer_read (char *bytes, int size) {
     mutex_lock (audio_mem_mutex);
     int mem_size = DDB_AUDIO_MEMORY_FRAMES * (output->fmt.bps >> 3) * output->fmt.channels;
     if (sz < mem_size) {
-        memmove (audio_data, audio_data + mem_size - sz, sz);
+        memmove (audio_data, audio_data + sz, mem_size-sz);
         memcpy (audio_data + mem_size - sz, bytes, sz);
     }
     else {
