@@ -1744,6 +1744,9 @@ scope_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data
 void
 w_scope_init (ddb_gtkui_widget_t *w) {
     w_scope_t *s = (w_scope_t *)w;
+    if (s->drawtimer) {
+        g_source_remove (s->drawtimer);
+    }
     s->drawtimer = g_timeout_add (33, w_scope_draw_cb, w);
 }
 
