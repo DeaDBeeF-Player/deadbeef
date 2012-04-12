@@ -144,6 +144,10 @@ converter_worker (void *ctx) {
                 char *r = root;
                 while (*path && *r) {
                     if (*path != *r) {
+                        // find new separator
+                        while (r > root && *r != '/') {
+                            r--;
+                        }
                         *r = 0;
                         rootlen = r-root;
                         break;
@@ -153,7 +157,7 @@ converter_worker (void *ctx) {
                 }
             }
         }
-//        fprintf (stderr, "common root path: %s\n", root);
+        fprintf (stderr, "common root path: %s\n", root);
     }
 
     for (int n = 0; n < conv->convert_items_count; n++) {

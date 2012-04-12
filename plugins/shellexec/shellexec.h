@@ -21,7 +21,7 @@
 #ifndef __SHELLEXEC_H
 #define __SHELLEXEC_H
 
-#include <deadbeef/deadbeef.h>
+#include "../../deadbeef.h"
 
 //Probably it's reasonable to move these flags to parent struct
 enum {
