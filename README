@@ -37,13 +37,14 @@ full list of dependencies:
     libsndfile: for sndfile plugin
     libcdio + libcddb: for cd audio plugin
     ffmpeg (libavcodec + libavformat): for ffmpeg plugin
-    xlib: for global hotkeys
+    xlib: for global hotkeys and for gtkui opengl support
     dbus: for notification daemon support (OSD current song notifications)
     pulseaudio: for PulseAudio output plugin
     faad2: for AAC plugin
     zlib: for Audio Overload plugin (psf, psf2, etc), GME (for vgz)
     libzip: for vfs_zip plugin
     yasm: required to build assembly portions of ffap plugin on supported platforms (x86, x86_64)
+    gtkglext: for gtkui opengl support
 
 actual package names for your Linux distribution may vary.
 

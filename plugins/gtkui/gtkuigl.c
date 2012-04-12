@@ -22,6 +22,7 @@
 #include "gtkuigl.h"
 
 static int gl_initialized;
+//PFNGLXSWAPINTERVALSGIPROC glXSwapIntervalSGI;
 
 int
 gtkui_gl_init (void) {
@@ -35,6 +36,7 @@ gtkui_gl_init (void) {
     if (!success) {
         return -1;
     }
+//    glXSwapIntervalSGI = (PFNGLXSWAPINTERVALSGIPROC) glXGetProcAddressARB((const GLubyte*)"glXSwapIntervalSGI");
     return 0;
 }
 

@@ -20,8 +20,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
 #include "gtkui.h"
 #include "widgets.h"
 #include "ddbtabstrip.h"
@@ -1754,6 +1752,9 @@ scope_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data
 
         GdkGLDrawable *d = gtk_widget_get_gl_drawable (widget);
         gdk_gl_drawable_gl_begin (d, w->glcontext);
+//        if (glXSwapIntervalSGI) {
+//            glXSwapIntervalSGI (1);
+//        }
 
         glClear (GL_COLOR_BUFFER_BIT);
 		glMatrixMode (GL_PROJECTION);
@@ -1761,6 +1762,28 @@ scope_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data
 		gluOrtho2D(0,a.width,a.height,0);
 		glMatrixMode (GL_MODELVIEW);
 		glViewport (0, 0, a.width, a.height);
+
+#if 0
+        // vsync test
+        static int box = 0;
+        static int speed = 5;
+        if (box > a.width-50) {
+            box = a.width-50;
+            speed = -5;
+        }
+        else if (box < 0) {
+            box = 0;
+            speed = 5;
+        }
+        box += speed;
+
+        glBegin (GL_QUADS);
+        glVertex2f (box, 0);
+        glVertex2f (box+50, 0);
+        glVertex2f (box+50, 50);
+        glVertex2f (box, 50);
+        glEnd ();
+#endif
         glBegin (GL_LINE_STRIP);
 
         short *samples = (short *)data;
@@ -1778,6 +1801,13 @@ scope_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data
 
         gdk_gl_drawable_gl_end (d);
     }
+    else {
+        GdkGLDrawable *d = gtk_widget_get_gl_drawable (widget);
+        gdk_gl_drawable_gl_begin (d, w->glcontext);
+        glClear (GL_COLOR_BUFFER_BIT);
+        gdk_gl_drawable_swap_buffers (d);
+        gdk_gl_drawable_gl_end (d);
+    }
 
     return FALSE;
 
@@ -1790,6 +1820,7 @@ scope_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data
 void
 w_scope_init (ddb_gtkui_widget_t *w) {
     w_scope_t *s = (w_scope_t *)w;
+    gtkui_gl_init ();
     if (s->drawtimer) {
         g_source_remove (s->drawtimer);
     }
@@ -1800,7 +1831,6 @@ void
 scope_realize (GtkWidget *widget, gpointer data) {
     w_scope_t *w = data;
     w->glcontext = gtk_widget_create_gl_context (w->drawarea, NULL, TRUE, GDK_GL_RGBA_TYPE);
-    printf ("ctx: %p\n", w->glcontext);
 }
 
 ddb_gtkui_widget_t *
@@ -1815,9 +1845,7 @@ w_scope_create (void) {
     int attrlist[] = {GDK_GL_ATTRIB_LIST_NONE};
     GdkGLConfig *conf = gdk_gl_config_new_by_mode ((GdkGLConfigMode)(GDK_GL_MODE_RGB |
                         GDK_GL_MODE_DOUBLE));
-    printf ("conf: %p\n", conf);
     gboolean cap = gtk_widget_set_gl_capability (w->drawarea, conf, NULL, TRUE, GDK_GL_RGBA_TYPE);
-    printf ("cap: %d\n", cap);
     gtk_widget_show (w->drawarea);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->drawarea);
 #if !GTK_CHECK_VERSION(3,0,0)

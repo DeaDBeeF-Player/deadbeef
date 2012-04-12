@@ -47,6 +47,7 @@
 #include "gtkui_api.h"
 #include "wingeom.h"
 #include "widgets.h"
+#include "X11/Xlib.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)

@@ -20,5 +20,17 @@
 #define __GTKUIGL_H
 
 #include <gtk/gtkgl.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+//#include <GL/glx.h>
+//#include <GL/glxext.h>
+//
+//#ifndef GLX_SGI_swap_control
+//typedef int ( * PFNGLXSWAPINTERVALSGIPROC) (int interval);
+//#endif
+//extern PFNGLXSWAPINTERVALSGIPROC glXSwapIntervalSGI;
+
+int
+gtkui_gl_init (void);
 
 #endif
