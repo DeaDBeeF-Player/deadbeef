@@ -1717,25 +1717,21 @@ w_scope_draw_cb (void *data) {
 gboolean
 scope_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     ddb_waveformat_t fmt;
-    char data[DDB_AUDIO_MEMORY_BUFFER_SIZE];
-    int size = deadbeef->audio_get_waveform_data (&fmt, data);
-    if (fmt.channels && size > 0) {
-        cairo_set_source_rgb (cr, 0, 0, 0);
-        cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
-        cairo_set_line_width (cr, 1);
-        GtkAllocation a;
-        gtk_widget_get_allocation (widget, &a);
-        short *samples = (short *)data;
+    float data[DDB_AUDIO_MEMORY_FRAMES];
+    deadbeef->audio_get_waveform_data (data);
+    cairo_set_source_rgb (cr, 0, 0, 0);
+    cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
+    cairo_set_line_width (cr, 1);
+    GtkAllocation a;
+    gtk_widget_get_allocation (widget, &a);
 
-        int nframes = size / (fmt.bps/8*fmt.channels);
-        float incr = nframes / (float)a.width;
-        float pos = 0;
-        for (int x = 0; x < a.width; x++, pos += incr) {
-            short s = max (samples[(int)pos*2], samples[(int)pos*2+1]);
-            cairo_line_to (cr, x, s * a.height/2 / 0x7fff + a.height/2);
-        }
-        cairo_stroke (cr);
+    float incr = (float)DDB_AUDIO_MEMORY_FRAMES / a.width;
+    float pos = 0;
+    for (int x = 0; x < a.width; x++, pos += incr) {
+        float s = data[(int)pos];
+        cairo_line_to (cr, x, s * a.height/2 / 0x7fff + a.height/2);
     }
+    cairo_stroke (cr);
 
     return FALSE;
 }
@@ -1743,71 +1739,60 @@ scope_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 gboolean
 scope_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
     w_scope_t *w = user_data;
-    ddb_waveformat_t fmt;
-    char data[DDB_AUDIO_MEMORY_BUFFER_SIZE];
-    int size = deadbeef->audio_get_waveform_data (&fmt, data);
-    if (fmt.channels && size > 0) {
-        GtkAllocation a;
-        gtk_widget_get_allocation (widget, &a);
+    float data[DDB_AUDIO_MEMORY_FRAMES];
+    deadbeef->audio_get_waveform_data (data);
+    GtkAllocation a;
+    gtk_widget_get_allocation (widget, &a);
 
-        GdkGLDrawable *d = gtk_widget_get_gl_drawable (widget);
-        gdk_gl_drawable_gl_begin (d, w->glcontext);
-//        if (glXSwapIntervalSGI) {
-//            glXSwapIntervalSGI (1);
-//        }
+    GdkGLDrawable *d = gtk_widget_get_gl_drawable (widget);
+    gdk_gl_drawable_gl_begin (d, w->glcontext);
+    //        if (glXSwapIntervalSGI) {
+    //            glXSwapIntervalSGI (1);
+    //        }
 
-        glClear (GL_COLOR_BUFFER_BIT);
-		glMatrixMode (GL_PROJECTION);
-		glLoadIdentity ();
-		gluOrtho2D(0,a.width,a.height,0);
-		glMatrixMode (GL_MODELVIEW);
-		glViewport (0, 0, a.width, a.height);
+    glClear (GL_COLOR_BUFFER_BIT);
+    glMatrixMode (GL_PROJECTION);
+    glLoadIdentity ();
+    gluOrtho2D(0,a.width,a.height,0);
+    glMatrixMode (GL_MODELVIEW);
+    glViewport (0, 0, a.width, a.height);
 
 #if 0
-        // vsync test
-        static int box = 0;
-        static int speed = 5;
-        if (box > a.width-50) {
-            box = a.width-50;
-            speed = -5;
-        }
-        else if (box < 0) {
-            box = 0;
-            speed = 5;
-        }
-        box += speed;
+    // vsync test
+    static int box = 0;
+    static int speed = 5;
+    if (box > a.width-50) {
+        box = a.width-50;
+        speed = -5;
+    }
+    else if (box < 0) {
+        box = 0;
+        speed = 5;
+    }
+    box += speed;
 
-        glBegin (GL_QUADS);
-        glVertex2f (box, 0);
-        glVertex2f (box+50, 0);
-        glVertex2f (box+50, 50);
-        glVertex2f (box, 50);
-        glEnd ();
+    glBegin (GL_QUADS);
+    glVertex2f (box, 0);
+    glVertex2f (box+50, 0);
+    glVertex2f (box+50, 50);
+    glVertex2f (box, 50);
+    glEnd ();
 #endif
-        glBegin (GL_LINE_STRIP);
+    glBegin (GL_LINE_STRIP);
 
-        short *samples = (short *)data;
+    short *samples = (short *)data;
 
-        int nframes = size / (fmt.bps/8*fmt.channels);
-        float incr = nframes / (float)a.width;
-        float pos = 0;
-        for (int x = 0; x < a.width; x++, pos += incr) {
-            short s = max (samples[(int)pos*2], samples[(int)pos*2+1]);
-            glVertex2f (x, s * a.height/2 / 0x7fff + a.height/2);
-        }
-
-        glEnd();
-        gdk_gl_drawable_swap_buffers (d);
-
-        gdk_gl_drawable_gl_end (d);
+    float incr = (float)DDB_AUDIO_MEMORY_FRAMES / a.width;
+    float pos = 0;
+    for (int x = 0; x < a.width; x++, pos += incr) {
+        float s = data[(int)pos];
+        glVertex2f (x, s * a.height/2 + a.height/2);
     }
-    else {
-        GdkGLDrawable *d = gtk_widget_get_gl_drawable (widget);
-        gdk_gl_drawable_gl_begin (d, w->glcontext);
-        glClear (GL_COLOR_BUFFER_BIT);
-        gdk_gl_drawable_swap_buffers (d);
-        gdk_gl_drawable_gl_end (d);
-    }
+
+    glEnd();
+    gdk_gl_drawable_swap_buffers (d);
+
+    gdk_gl_drawable_gl_end (d);
 
     return FALSE;
 

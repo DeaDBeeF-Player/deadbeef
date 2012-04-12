@@ -309,7 +309,6 @@ enum ddb_sort_order_t {
 
 // audio memory constants
 #define DDB_AUDIO_MEMORY_FRAMES 1000
-#define DDB_AUDIO_MEMORY_BUFFER_SIZE (DDB_AUDIO_MEMORY_FRAMES*4*20)
 
 // typecasting macros
 #define DB_PLUGIN(x) ((DB_plugin_t *)(x))
@@ -765,8 +764,8 @@ typedef struct {
     // access real-time audio data (e.g. for visualization)
     // returns data size in bytes
     // fmt and data will be filled with last bytes that came to the output plugin
-    // data size must be at least DDB_AUDIO_MEMORY_BUFFER_SIZE
-    int (*audio_get_waveform_data) (ddb_waveformat_t *fmt, char *data);
+    // data size must be float[DDB_AUDIO_MEMORY_FRAMES]
+    void (*audio_get_waveform_data) (float *data);
 } DB_functions_t;
 
 // NOTE: an item placement must be selected like this

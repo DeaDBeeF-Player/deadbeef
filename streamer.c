@@ -121,8 +121,7 @@ static int streamer_buffering;
 static DB_FILE *streamer_file;
 
 // for vis plugins
-static char audio_data[DDB_AUDIO_MEMORY_BUFFER_SIZE];
-static ddb_waveformat_t audio_fmt;
+static float audio_data[DDB_AUDIO_MEMORY_FRAMES];
 
 #if DETECT_PL_LOCK_RC
 volatile pthread_t streamer_lock_tid = 0;
@@ -1961,7 +1960,6 @@ streamer_read (char *bytes, int size) {
     if (formatchanged && bytes_until_next_song <= 0) {
         streamer_set_output_format ();
         formatchanged = 0;
-        memset (audio_data, 0, sizeof (audio_data));
     }
     streamer_lock ();
     int sz = min (size, streamer_ringbuf.remaining);
@@ -2012,15 +2010,23 @@ streamer_read (char *bytes, int size) {
 #endif
 
     mutex_lock (audio_mem_mutex);
-    int mem_size = DDB_AUDIO_MEMORY_FRAMES * (output->fmt.bps >> 3) * output->fmt.channels;
-    if (sz < mem_size) {
-        memmove (audio_data, audio_data + sz, mem_size-sz);
-        memcpy (audio_data + mem_size - sz, bytes, sz);
+    int in_frame_size = (output->fmt.bps >> 3) * output->fmt.channels;
+    int in_frames = sz / in_frame_size;
+    ddb_waveformat_t out_fmt = {
+        .bps = 32,
+        .channels = 1,
+        .samplerate = output->fmt.samplerate,
+        .channelmask = DDB_SPEAKER_FRONT_LEFT,
+        .is_float = 1,
+        .is_bigendian = 0
+    };
+    if (in_frames < DDB_AUDIO_MEMORY_FRAMES) {
+        memmove (audio_data, audio_data + in_frames, (DDB_AUDIO_MEMORY_FRAMES-in_frames)*sizeof (float));
+        pcm_convert (&output->fmt, bytes, &out_fmt, (char *)(audio_data + DDB_AUDIO_MEMORY_FRAMES - in_frames), sz);
     }
     else {
-        memcpy (audio_data, bytes + sz - mem_size, mem_size);
+        pcm_convert (&output->fmt, bytes + sz - DDB_AUDIO_MEMORY_FRAMES * in_frame_size, &out_fmt, (char *)audio_data, DDB_AUDIO_MEMORY_FRAMES * in_frame_size);
     }
-    memcpy (&audio_fmt, &output->fmt, sizeof (ddb_waveformat_t));
     mutex_unlock (audio_mem_mutex);
 
     if (!output->has_volume) {
@@ -2273,15 +2279,12 @@ streamer_notify_order_changed (int prev_order, int new_order) {
     }
 }
 
-int
-audio_get_waveform_data (ddb_waveformat_t *fmt, char *data) {
+void
+audio_get_waveform_data (float *data) {
     if (!audio_mem_mutex) {
-        return -1;
+        return;
     }
     mutex_lock (audio_mem_mutex);
-    memcpy (fmt, &audio_fmt, sizeof (ddb_waveformat_t));
-    int mem_size = DDB_AUDIO_MEMORY_FRAMES * (audio_fmt.bps >> 3) * audio_fmt.channels;
-    memcpy (data, audio_data, mem_size);
+    memcpy (data, audio_data, sizeof (audio_data));
     mutex_unlock (audio_mem_mutex);
-    return mem_size;
 }

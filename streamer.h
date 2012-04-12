@@ -130,7 +130,7 @@ streamer_dsp_chain_save (void);
 void
 streamer_notify_order_changed (int prev_order, int new_order);
 
-int
-audio_get_waveform_data (ddb_waveformat_t *fmt, char *data);
+void
+audio_get_waveform_data (float *data);
 
 #endif // __STREAMER_H
