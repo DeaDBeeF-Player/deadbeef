@@ -405,6 +405,10 @@ read_entire_message (int sockfd, int *size) {
 
         int rd = recv(sockfd, buf + rdp, bufsize - rdp, 0);
         if (rd < 0) {
+            if (errno == EAGAIN) {
+                usleep (50000);
+                continue;
+            }
             free(buf);
             return NULL;
         }
