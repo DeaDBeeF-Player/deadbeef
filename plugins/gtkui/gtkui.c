@@ -978,7 +978,7 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 
 void
 gtkui_thread (void *ctx) {
-    XInitThreads ();
+    XInitThreads (); // gtkglext/xcb doesn't work without this
     // let's start some gtk
     g_thread_init (NULL);
 //    add_pixmap_directory (PREFIX "/share/deadbeef/pixmaps");
