@@ -1010,6 +1010,7 @@ gtkui_thread (void *ctx) {
     w_reg_widget ("selproperties", _("Selection properties"), w_selproperties_create);
     w_reg_widget ("coverart", _("Album art display"), w_coverart_create);
     w_reg_widget ("scope", _("Scope"), w_scope_create);
+    w_reg_widget ("spectrum", _("Spectrum"), w_spectrum_create);
 
     mainwin = create_mainwin ();
 

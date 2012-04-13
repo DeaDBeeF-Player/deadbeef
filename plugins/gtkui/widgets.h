@@ -98,4 +98,8 @@ w_coverart_create (void);
 
 ddb_gtkui_widget_t *
 w_scope_create (void);
+
+ddb_gtkui_widget_t *
+w_spectrum_create (void);
+
 #endif

@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <math.h>
 #include "gtkui.h"
 #include "widgets.h"
 #include "ddbtabstrip.h"
@@ -93,6 +94,13 @@ typedef struct {
     guint drawtimer;
     GdkGLContext *glcontext;
 } w_scope_t;
+
+typedef struct {
+    ddb_gtkui_widget_t base;
+    GtkWidget *drawarea;
+    guint drawtimer;
+    GdkGLContext *glcontext;
+} w_spectrum_t;
 
 static int design_mode;
 static ddb_gtkui_widget_t *rootwidget;
@@ -1718,7 +1726,7 @@ gboolean
 scope_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     ddb_waveformat_t fmt;
     float data[DDB_AUDIO_MEMORY_FRAMES];
-    deadbeef->audio_get_waveform_data (data);
+    deadbeef->audio_get_waveform_data (DDB_AUDIO_WAVEFORM, data);
     cairo_set_source_rgb (cr, 0, 0, 0);
     cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
     cairo_set_line_width (cr, 1);
@@ -1740,7 +1748,7 @@ gboolean
 scope_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
     w_scope_t *w = user_data;
     float data[DDB_AUDIO_MEMORY_FRAMES];
-    deadbeef->audio_get_waveform_data (data);
+    deadbeef->audio_get_waveform_data (DDB_AUDIO_WAVEFORM, data);
     GtkAllocation a;
     gtk_widget_get_allocation (widget, &a);
 
@@ -1839,6 +1847,186 @@ w_scope_create (void) {
     g_signal_connect_after ((gpointer) w->drawarea, "draw", G_CALLBACK (scope_draw), w);
 #endif
     g_signal_connect_after (G_OBJECT (w->drawarea), "realize", G_CALLBACK (scope_realize), w);
+    w_override_signals (w->base.widget, w);
+    return (ddb_gtkui_widget_t *)w;
+}
+
+///// spectrum vis
+void
+w_spectrum_destroy (ddb_gtkui_widget_t *w) {
+    w_spectrum_t *s = (w_spectrum_t *)w;
+    if (s->drawtimer) {
+        g_source_remove (s->drawtimer);
+        s->drawtimer = 0;
+    }
+    if (s->glcontext) {
+        gdk_gl_context_destroy (s->glcontext);
+        s->glcontext = NULL;
+    }
+}
+
+gboolean
+w_spectrum_draw_cb (void *data) {
+    w_spectrum_t *s = data;
+    gtk_widget_queue_draw (s->drawarea);
+    return TRUE;
+}
+
+// spectrum analyzer based on cairo-spectrum from audacious
+// Copyright (c) 2011 William Pitcock <nenolod@dereferenced.org>
+#define MAX_BANDS 256
+#define VIS_DELAY 1
+#define VIS_DELAY_PEAK 10
+#define VIS_FALLOFF 3
+#define VIS_FALLOFF_PEAK 1
+#define BAND_WIDTH 5
+static float xscale[MAX_BANDS + 1];
+static int bars[MAX_BANDS + 1];
+static int delay[MAX_BANDS + 1];
+static int peaks[MAX_BANDS + 1];
+static int delay_peak[MAX_BANDS + 1];
+
+static void calculate_bands(int bands)
+{
+	int i;
+
+	for (i = 0; i < bands; i++)
+		xscale[i] = powf(257., ((float) i / (float) bands)) - 1;
+}
+
+
+gboolean
+spectrum_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
+    w_spectrum_t *w = user_data;
+    float data[DDB_AUDIO_MEMORY_FRAMES];
+    float *freq = data;
+    deadbeef->audio_get_waveform_data (DDB_AUDIO_FREQ, data);
+
+    GtkAllocation a;
+    gtk_widget_get_allocation (widget, &a);
+
+    int width, height, bands;
+    bands = a.width/BAND_WIDTH;
+    bands = CLAMP(bands, 4, MAX_BANDS);
+    width = a.width;
+    height = a.height;
+	calculate_bands(bands);
+
+	for (int i = 0; i < bands; i ++)
+	{
+		int a = ceil (xscale[i]);
+		int b = floor (xscale[i + 1]);
+		float n = 0;
+
+		if (b < a)
+			n += freq[b] * (xscale[i + 1] - xscale[i]);
+		else
+		{
+			if (a > 0)
+				n += freq[a - 1] * (a - xscale[i]);
+			for (; a < b; a ++)
+				n += freq[a];
+			if (b < 256)
+				n += freq[b] * (xscale[i + 1] - b);
+		}
+
+		/* 40 dB range */
+		int x = 20 * log10 (n * 100);
+		x = CLAMP (x, 0, 40);
+
+		bars[i] -= MAX (0, VIS_FALLOFF - delay[i]);
+		peaks[i] -= MAX (0, VIS_FALLOFF_PEAK - delay_peak[i]);;
+
+		if (delay[i])
+			delay[i]--;
+		if (delay_peak[i])
+			delay_peak[i]--;
+
+		if (x > bars[i])
+		{
+			bars[i] = x;
+			delay[i] = VIS_DELAY;
+		}
+		if (x > peaks[i]) {
+            peaks[i] = x;
+            delay_peak[i] = VIS_DELAY_PEAK;
+        }
+	}
+
+    GdkGLDrawable *d = gtk_widget_get_gl_drawable (widget);
+    gdk_gl_drawable_gl_begin (d, w->glcontext);
+
+    glClear (GL_COLOR_BUFFER_BIT);
+    glMatrixMode (GL_PROJECTION);
+    glLoadIdentity ();
+    gluOrtho2D(0,a.width,a.height,0);
+    glMatrixMode (GL_MODELVIEW);
+    glViewport (0, 0, a.width, a.height);
+
+    glBegin (GL_QUADS);
+	gfloat base_s = (height / 40);
+
+	for (gint i = 0; i <= bands; i++)
+	{
+		gint x = ((width / bands) * i) + 2;
+        int y = a.height - bars[i] * base_s;
+		glVertex2f (x + 1, y);
+		glVertex2f (x + 1 + (width / bands) - 1, y);
+		glVertex2f (x + 1 + (width / bands) - 1, a.height);
+		glVertex2f (x + 1, a.height);
+
+        // peak
+        y = a.height - peaks[i] * base_s;
+		glVertex2f (x + 1, y);
+		glVertex2f (x + 1 + (width / bands) - 1, y);
+		glVertex2f (x + 1 + (width / bands) - 1, y+1);
+		glVertex2f (x + 1, y+1);
+	}
+    glEnd();
+    gdk_gl_drawable_swap_buffers (d);
+
+    gdk_gl_drawable_gl_end (d);
+
+    return FALSE;
+}
+
+void
+w_spectrum_init (ddb_gtkui_widget_t *w) {
+    w_spectrum_t *s = (w_spectrum_t *)w;
+    gtkui_gl_init ();
+    if (s->drawtimer) {
+        g_source_remove (s->drawtimer);
+    }
+    s->drawtimer = g_timeout_add (33, w_spectrum_draw_cb, w);
+}
+
+void
+spectrum_realize (GtkWidget *widget, gpointer data) {
+    w_spectrum_t *w = data;
+    w->glcontext = gtk_widget_create_gl_context (w->drawarea, NULL, TRUE, GDK_GL_RGBA_TYPE);
+}
+
+ddb_gtkui_widget_t *
+w_spectrum_create (void) {
+    w_spectrum_t *w = malloc (sizeof (w_spectrum_t));
+    memset (w, 0, sizeof (w_spectrum_t));
+
+    w->base.widget = gtk_event_box_new ();
+    w->base.init = w_spectrum_init;
+    w->base.destroy  = w_spectrum_destroy;
+    w->drawarea = gtk_drawing_area_new ();
+    int attrlist[] = {GDK_GL_ATTRIB_LIST_NONE};
+    GdkGLConfig *conf = gdk_gl_config_new_by_mode ((GdkGLConfigMode)(GDK_GL_MODE_RGB |
+                        GDK_GL_MODE_DOUBLE));
+    gboolean cap = gtk_widget_set_gl_capability (w->drawarea, conf, NULL, TRUE, GDK_GL_RGBA_TYPE);
+    gtk_widget_show (w->drawarea);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), w->drawarea);
+#if !GTK_CHECK_VERSION(3,0,0)
+    g_signal_connect_after ((gpointer) w->drawarea, "expose_event", G_CALLBACK (spectrum_expose_event), w);
+#else
+    g_signal_connect_after ((gpointer) w->drawarea, "draw", G_CALLBACK (spectrum_draw), w);
+#endif
+    g_signal_connect_after (G_OBJECT (w->drawarea), "realize", G_CALLBACK (spectrum_realize), w);
     w_override_signals (w->base.widget, w);
     return (ddb_gtkui_widget_t *)w;
 }
