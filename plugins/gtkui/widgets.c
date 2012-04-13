@@ -1790,9 +1790,9 @@ scope_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data
 
     short *samples = (short *)data;
 
-    float incr = (float)DDB_AUDIO_MEMORY_FRAMES / a.width;
-    float pos = 0;
-    for (int x = 0; x < a.width; x++, pos += incr) {
+    float incr = a.width / (float)DDB_AUDIO_MEMORY_FRAMES;
+    int pos = 0;
+    for (float x = 0; x < a.width && pos < DDB_AUDIO_MEMORY_FRAMES; x += incr, pos ++) {
         float s = data[(int)pos];
         glVertex2f (x, s * a.height/2 + a.height/2);
     }
@@ -1813,11 +1813,13 @@ scope_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data
 void
 w_scope_init (ddb_gtkui_widget_t *w) {
     w_scope_t *s = (w_scope_t *)w;
-    gtkui_gl_init ();
     if (s->drawtimer) {
         g_source_remove (s->drawtimer);
+        s->drawtimer = 0;
     }
-    s->drawtimer = g_timeout_add (33, w_scope_draw_cb, w);
+    if (!gtkui_gl_init ()) {
+        s->drawtimer = g_timeout_add (33, w_scope_draw_cb, w);
+    }
 }
 
 void
@@ -1964,18 +1966,20 @@ spectrum_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_d
     glViewport (0, 0, a.width, a.height);
 
     glBegin (GL_QUADS);
-	gfloat base_s = (height / 40);
+	float base_s = (height / 40.f);
 
 	for (gint i = 0; i <= bands; i++)
 	{
 		gint x = ((width / bands) * i) + 2;
         int y = a.height - bars[i] * base_s;
+        glColor3f (0, 0.5, 1);
 		glVertex2f (x + 1, y);
 		glVertex2f (x + 1 + (width / bands) - 1, y);
 		glVertex2f (x + 1 + (width / bands) - 1, a.height);
 		glVertex2f (x + 1, a.height);
 
         // peak
+        glColor3f (1, 1, 1);
         y = a.height - peaks[i] * base_s;
 		glVertex2f (x + 1, y);
 		glVertex2f (x + 1 + (width / bands) - 1, y);
@@ -1996,8 +2000,11 @@ w_spectrum_init (ddb_gtkui_widget_t *w) {
     gtkui_gl_init ();
     if (s->drawtimer) {
         g_source_remove (s->drawtimer);
+        s->drawtimer = 0;
     }
-    s->drawtimer = g_timeout_add (33, w_spectrum_draw_cb, w);
+    if (!gtkui_gl_init ()) {
+        s->drawtimer = g_timeout_add (33, w_spectrum_draw_cb, w);
+    }
 }
 
 void

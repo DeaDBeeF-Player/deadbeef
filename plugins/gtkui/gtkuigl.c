@@ -34,9 +34,11 @@ gtkui_gl_init (void) {
     argv[0] = "deadbeef";
     gboolean success = gdk_gl_init_check (&argc, (char ***)&argv);
     if (!success) {
+        fprintf (stderr, "gdk_gl_init_check failed\n");
         return -1;
     }
 //    glXSwapIntervalSGI = (PFNGLXSWAPINTERVALSGIPROC) glXGetProcAddressARB((const GLubyte*)"glXSwapIntervalSGI");
+    fprintf (stderr, "gdk_gl_init_check success\n");
     return 0;
 }
 
