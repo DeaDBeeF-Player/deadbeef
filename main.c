@@ -454,7 +454,9 @@ server_update (void) {
         }
         close(s2);
 
-        free(buf);
+        if (buf) {
+            free(buf);
+        }
     }
     return 0;
 }
@@ -853,6 +855,9 @@ main (int argc, char *argv[]) {
             else if (sz > 0 && out[0]) {
                 fprintf (stderr, "%s\n", out);
             }
+        }
+        if (out) {
+            free (out);
         }
         close (s);
         exit (0);
