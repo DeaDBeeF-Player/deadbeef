@@ -121,6 +121,7 @@ static int streamer_buffering;
 static DB_FILE *streamer_file;
 
 // for vis plugins
+static float freq_data[DDB_AUDIO_MEMORY_FRAMES];
 static float audio_data[DDB_AUDIO_MEMORY_FRAMES];
 
 #if DETECT_PL_LOCK_RC
@@ -1947,6 +1948,16 @@ streamer_read_async (char *bytes, int size) {
     return bytesread;
 }
 
+void rdft(int, int, float *, int *, float *);
+static void do_fft(int n,float *x)
+{
+    static int ipsize = 0,wsize=0;
+    static int ip[18];
+    static float w[256];
+
+    rdft(n,1,x,ip,w);
+}
+
 int
 streamer_read (char *bytes, int size) {
 #if 0
@@ -2027,6 +2038,14 @@ streamer_read (char *bytes, int size) {
     else {
         pcm_convert (&output->fmt, bytes + sz - DDB_AUDIO_MEMORY_FRAMES * in_frame_size, &out_fmt, (char *)audio_data, DDB_AUDIO_MEMORY_FRAMES * in_frame_size);
     }
+
+    memcpy (freq_data, audio_data, sizeof (audio_data));
+    int N = DDB_AUDIO_MEMORY_FRAMES;
+    do_fft(N, freq_data);
+    for (int n = 0; n < N / 2 - 1; n ++)
+        freq_data[n] = 2 * fabs (freq_data[1 + n]) / N;
+    freq_data[N / 2 - 1] = fabs(freq_data[N / 2]) / N;
+
     mutex_unlock (audio_mem_mutex);
 
     if (!output->has_volume) {
@@ -2280,11 +2299,11 @@ streamer_notify_order_changed (int prev_order, int new_order) {
 }
 
 void
-audio_get_waveform_data (float *data) {
+audio_get_waveform_data (int type, float *data) {
     if (!audio_mem_mutex) {
         return;
     }
     mutex_lock (audio_mem_mutex);
-    memcpy (data, audio_data, sizeof (audio_data));
+    memcpy (data, type == DDB_AUDIO_WAVEFORM ? audio_data : freq_data, sizeof (audio_data));
     mutex_unlock (audio_mem_mutex);
 }

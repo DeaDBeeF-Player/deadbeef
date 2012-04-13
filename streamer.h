@@ -131,6 +131,6 @@ void
 streamer_notify_order_changed (int prev_order, int new_order);
 
 void
-audio_get_waveform_data (float *data);
+audio_get_waveform_data (int type, float *data);
 
 #endif // __STREAMER_H

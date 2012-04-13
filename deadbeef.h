@@ -307,8 +307,13 @@ enum ddb_sort_order_t {
     DDB_SORT_RANDOM, // available since API 1.3
 };
 
+enum ddb_audio_data_type_t {
+    DDB_AUDIO_WAVEFORM,
+    DDB_AUDIO_FREQ,
+};
+
 // audio memory constants
-#define DDB_AUDIO_MEMORY_FRAMES 1000
+#define DDB_AUDIO_MEMORY_FRAMES 512
 
 // typecasting macros
 #define DB_PLUGIN(x) ((DB_plugin_t *)(x))
@@ -765,7 +770,7 @@ typedef struct {
     // returns data size in bytes
     // fmt and data will be filled with last bytes that came to the output plugin
     // data size must be float[DDB_AUDIO_MEMORY_FRAMES]
-    void (*audio_get_waveform_data) (float *data);
+    void (*audio_get_waveform_data) (int type, float *data);
 } DB_functions_t;
 
 // NOTE: an item placement must be selected like this
