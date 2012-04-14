@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2012-04-14 06:45+0200\n"
+"PO-Revision-Date: 2012-04-14 07:02+0200\n"
 "Last-Translator: Walter <wwycheuk@gmail.com>\n"
 "Language-Team: zh_TW <zh@li.org>\n"
 "Language: zh_TW\n"
@@ -46,11 +46,11 @@ msgstr ""
 
 #: ../plugins/gtkui/callbacks.c:711
 msgid "Failed while reading help file"
-msgstr ""
+msgstr "未能讀取說明檔案"
 
 #: ../plugins/gtkui/callbacks.c:721
 msgid "Failed to load help file"
-msgstr ""
+msgstr "未能載入說明檔案"
 
 #: ../plugins/gtkui/callbacks.c:736
 msgid "help.txt"
@@ -75,7 +75,7 @@ msgstr "DeaDBeeF %s ChangeLog"
 #: ../plugins/gtkui/callbacks.c:1116
 #, c-format
 msgid "DeaDBeeF Translators"
-msgstr ""
+msgstr "DeaDBeeF 翻譯者"
 
 #: ../plugins/gtkui/ddbtabstrip.c:755 ../plugins/gtkui/trkproperties.c:618
 msgid "Edit playlist"
@@ -133,7 +133,7 @@ msgstr "載入 Preset"
 
 #: ../plugins/gtkui/eq.c:332
 msgid "Import Foobar2000 Preset"
-msgstr "載入 Foobar2000 Preset"
+msgstr "匯入 Foobar2000 Preset"
 
 #: ../plugins/gtkui/eq.c:357
 msgid "Enable"
@@ -152,24 +152,23 @@ msgid "Zero Bands"
 msgstr ""
 
 #: ../plugins/gtkui/eq.c:387 ../plugins/converter/interface.c:820
-#, fuzzy
 msgid "Presets"
-msgstr "儲存 Preset"
+msgstr "Preset 值"
 
 #: ../plugins/gtkui/gtkui.c:137
 #, c-format
 msgid "1 day %d:%02d:%02d"
-msgstr ""
+msgstr "1 天 %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:140
 #, c-format
 msgid "%d days %d:%02d:%02d"
-msgstr ""
+msgstr "%d 天 %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:149
 #, c-format
 msgid "Stopped | %d tracks | %s total playtime"
-msgstr ""
+msgstr "停止 | 第 %d 軌 | 總播放時間 %s"
 
 #: ../plugins/gtkui/gtkui.c:162
 msgid "Mono"
@@ -186,13 +185,13 @@ msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:193
 msgid "Paused | "
-msgstr ""
+msgstr "暫停 | "
 
 #: ../plugins/gtkui/gtkui.c:198
 #, c-format
 msgid ""
 "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
-msgstr ""
+msgstr "%s%s %s| %dHz | %d 位元 | %s | %d:%02d / %s | 第 %d 軌 | 總播放時間 %s"
 
 #: ../plugins/gtkui/gtkui.c:644
 msgid "Save Playlist As"
@@ -246,11 +245,11 @@ msgstr "新播放清單"
 
 #: ../plugins/gtkui/interface.c:205 ../plugins/gtkui/deadbeef.glade.h:72
 msgid "Load playlist"
-msgstr ""
+msgstr "載入播放清單"
 
 #: ../plugins/gtkui/interface.c:209 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "Save playlist"
-msgstr ""
+msgstr "儲存播放清單"
 
 #: ../plugins/gtkui/interface.c:218 ../plugins/gtkui/deadbeef.glade.h:165
 msgid "_Quit"
@@ -314,24 +313,24 @@ msgstr ""
 #: ../plugins/gtkui/interface.c:1875 ../plugins/gtkui/deadbeef.glade.h:10
 #: ../translation/extra.c:69
 msgid "Album"
-msgstr ""
+msgstr "專輯"
 
 #. Track properties dialog
 #: ../plugins/gtkui/interface.c:307 ../plugins/gtkui/interface.c:1514
 #: ../plugins/gtkui/plcommon.c:1013 ../plugins/gtkui/deadbeef.glade.h:13
 #: ../translation/extra.c:65
 msgid "Artist"
-msgstr ""
+msgstr "藝人"
 
 #: ../plugins/gtkui/interface.c:311 ../plugins/gtkui/deadbeef.glade.h:31
 #: ../translation/extra.c:70
 msgid "Date"
-msgstr ""
+msgstr "日期"
 
 #: ../plugins/gtkui/interface.c:315 ../plugins/gtkui/interface.c:1520
 #: ../plugins/gtkui/plcommon.c:1017 ../plugins/gtkui/deadbeef.glade.h:27
 msgid "Custom"
-msgstr ""
+msgstr "自訂"
 
 #: ../plugins/gtkui/interface.c:324 ../plugins/gtkui/interface.c:1804
 #: ../plugins/gtkui/deadbeef.glade.h:95
@@ -372,14 +371,12 @@ msgid "Linear"
 msgstr "線性"
 
 #: ../plugins/gtkui/interface.c:370 ../plugins/gtkui/deadbeef.glade.h:121
-#, fuzzy
 msgid "Shuffle tracks"
-msgstr "洗牌"
+msgstr "調亂曲目"
 
 #: ../plugins/gtkui/interface.c:375 ../plugins/gtkui/deadbeef.glade.h:120
-#, fuzzy
 msgid "Shuffle albums"
-msgstr "洗牌"
+msgstr "調亂專輯"
 
 #: ../plugins/gtkui/interface.c:380 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Random"
@@ -440,7 +437,7 @@ msgstr "關於(_A)"
 
 #: ../plugins/gtkui/interface.c:482 ../plugins/gtkui/deadbeef.glade.h:166
 msgid "_Translators"
-msgstr ""
+msgstr "翻譯者(_T)"
 
 #: ../plugins/gtkui/interface.c:898 ../plugins/gtkui/deadbeef.glade.h:112
 msgid "Search"
@@ -460,7 +457,7 @@ msgstr "暫停"
 
 #: ../plugins/gtkui/interface.c:997 ../plugins/gtkui/deadbeef.glade.h:96
 msgid "Previous"
-msgstr "上一個"
+msgstr "上一首"
 
 #: ../plugins/gtkui/interface.c:1005 ../plugins/gtkui/deadbeef.glade.h:81
 msgid "Next"
@@ -468,11 +465,11 @@ msgstr "下一首"
 
 #: ../plugins/gtkui/interface.c:1013 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Play Random"
-msgstr ""
+msgstr "隨機播放"
 
 #: ../plugins/gtkui/interface.c:1022 ../plugins/gtkui/deadbeef.glade.h:5
 msgid "About"
-msgstr ""
+msgstr "關於"
 
 #: ../plugins/gtkui/interface.c:1035 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Quit"
@@ -484,16 +481,16 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1270 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Settings"
-msgstr ""
+msgstr "設定"
 
 #: ../plugins/gtkui/interface.c:1296 ../plugins/gtkui/deadbeef.glade.h:150
 msgid "_Apply"
-msgstr ""
+msgstr "套用(_A)"
 
 #: ../plugins/gtkui/interface.c:1317 ../plugins/gtkui/interface.c:1363
 #: ../plugins/gtkui/deadbeef.glade.h:154
 msgid "_Close"
-msgstr ""
+msgstr "關閉(_C)"
 
 #: ../plugins/gtkui/interface.c:1321 ../plugins/gtkui/deadbeef.glade.h:76
 msgid "Metadata"
@@ -527,7 +524,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1513
 msgid "Artist - Album"
-msgstr ""
+msgstr "藝人 - 專輯"
 
 #: ../plugins/gtkui/interface.c:1517 ../plugins/gtkui/mainplaylist.c:319
 #: ../plugins/gtkui/search.c:394
@@ -593,7 +590,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1873
 msgid "Disable"
-msgstr ""
+msgstr "停用"
 
 #: ../plugins/gtkui/interface.c:1874
 msgid "Track"
@@ -634,9 +631,8 @@ msgid "Don't add from archives when adding folders"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:1961 ../plugins/gtkui/deadbeef.glade.h:91
-#, fuzzy
 msgid "Playback"
-msgstr "播放(_P)"
+msgstr "播放"
 
 #: ../plugins/gtkui/interface.c:1982 ../plugins/gtkui/interface.c:2514
 #: ../plugins/gtkui/deadbeef.glade.h:22 ../plugins/converter/interface.c:649
@@ -644,13 +640,12 @@ msgid "Configure"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:2017 ../plugins/gtkui/deadbeef.glade.h:29
-#, fuzzy
 msgid "DSP Chain Preset"
-msgstr "儲存 Preset"
+msgstr "DSP 連鎖 Preset"
 
 #: ../plugins/gtkui/interface.c:2029 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "_Load"
-msgstr ""
+msgstr "載入(_L)"
 
 #: ../plugins/gtkui/interface.c:2033 ../plugins/gtkui/deadbeef.glade.h:28
 msgid "DSP"
@@ -736,7 +731,7 @@ msgstr ""
 #: ../plugins/gtkui/interface.c:2240 ../plugins/gtkui/interface.c:2297
 #: ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Text"
-msgstr ""
+msgstr "文字"
 
 #: ../plugins/gtkui/interface.c:2253 ../plugins/gtkui/deadbeef.glade.h:131
 msgid "Tab strip colors"
