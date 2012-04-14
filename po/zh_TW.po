@@ -8,13 +8,15 @@ msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2010-05-30 16:19+0800\n"
-"Last-Translator: Hong Jen Yee <pcman.tw@gmail.com>\n"
+"PO-Revision-Date: 2012-04-14 06:45+0200\n"
+"Last-Translator: Walter <wwycheuk@gmail.com>\n"
 "Language-Team: zh_TW <zh@li.org>\n"
-"Language: \n"
+"Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Pootle 2.0.5\n"
 "X-Poedit-Language: Chinese\n"
 "X-Poedit-Country: TAIWAN\n"
 
@@ -23,9 +25,8 @@ msgid "Supported sound formats"
 msgstr "支援的聲音格式"
 
 #: ../plugins/gtkui/callbacks.c:134
-#, fuzzy
 msgid "All files (*)"
-msgstr "其他檔案 (*)"
+msgstr "全部檔案 (*)"
 
 #: ../plugins/gtkui/callbacks.c:144
 msgid "Open file(s)..."
@@ -172,11 +173,11 @@ msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:162
 msgid "Mono"
-msgstr ""
+msgstr "單聲道"
 
 #: ../plugins/gtkui/gtkui.c:162
 msgid "Stereo"
-msgstr ""
+msgstr "立體聲"
 
 #: ../plugins/gtkui/gtkui.c:187
 #, c-format
@@ -199,7 +200,7 @@ msgstr "另存播放清單"
 
 #: ../plugins/gtkui/gtkui.c:655
 msgid "DeaDBeeF playlist files (*.dbpl)"
-msgstr ""
+msgstr "DeaDBeeF 播放清單檔案 (*.dbpl)"
 
 #: ../plugins/gtkui/gtkui.c:773
 msgid "Load Playlist"
