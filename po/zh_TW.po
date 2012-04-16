@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2012-04-14 17:21+0200\n"
+"PO-Revision-Date: 2012-04-16 06:39+0200\n"
 "Last-Translator: Walter <wwycheuk@gmail.com>\n"
 "Language-Team: zh_TW <zh@li.org>\n"
 "Language: zh_TW\n"
@@ -253,7 +253,7 @@ msgstr "儲存播放清單"
 
 #: ../plugins/gtkui/interface.c:218 ../plugins/gtkui/deadbeef.glade.h:165
 msgid "_Quit"
-msgstr "離開(_Q)"
+msgstr "結束(_Q)"
 
 #: ../plugins/gtkui/interface.c:229 ../plugins/gtkui/deadbeef.glade.h:155
 msgid "_Edit"
