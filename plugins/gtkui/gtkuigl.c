@@ -22,23 +22,27 @@
 #include "gtkuigl.h"
 
 static int gl_initialized;
+static int gl_init_state;
 //PFNGLXSWAPINTERVALSGIPROC glXSwapIntervalSGI;
 
 int
 gtkui_gl_init (void) {
     if (gl_initialized) {
-        return 0;
+        return gl_init_state;
     }
+    gl_initialized = 1;
     int argc = 1;
     const char **argv = alloca (sizeof (char *) * argc);
     argv[0] = "deadbeef";
     gboolean success = gdk_gl_init_check (&argc, (char ***)&argv);
     if (!success) {
         fprintf (stderr, "gdk_gl_init_check failed\n");
+        gl_init_state = -1;
         return -1;
     }
 //    glXSwapIntervalSGI = (PFNGLXSWAPINTERVALSGIPROC) glXGetProcAddressARB((const GLubyte*)"glXSwapIntervalSGI");
     fprintf (stderr, "gdk_gl_init_check success\n");
+    gl_init_state = 0;
     return 0;
 }
 
