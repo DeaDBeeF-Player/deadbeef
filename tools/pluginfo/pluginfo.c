@@ -67,7 +67,18 @@ main (int argc, char *argv[]) {
     printf ("version=\"%d.%d\"\n", plug->version_major, plug->version_minor);
     printf ("id=\"%s\"\n", plug->id);
     printf ("name=\"%s\"\n", plug->name);
-    printf ("descr=\"%s\"\n", plug->descr);
+    printf ("descr=\"");
+    const char *c;
+    for (c = plug->descr; *c; c++) {
+        if (*c == '"') {
+            printf ("\\\"");
+        }
+        else {
+            printf ("%c", *c);
+        }
+    }
+    
+    printf ("\"\n");
     printf ("website=\"%s\"\n", plug->website);
 
     dlclose (handle);
