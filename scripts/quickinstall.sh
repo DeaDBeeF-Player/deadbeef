@@ -35,6 +35,8 @@ cp ./plugins/mms/.libs/mms.so /usr/local/lib/deadbeef/
 cp ./plugins/shn/.libs/ddb_shn.so /usr/local/lib/deadbeef/
 cp ./plugins/ao/.libs/ddb_aopsf.so /usr/local/lib/deadbeef/
 cp ./plugins/shellexec/.libs/shellexec.so /usr/local/lib/deadbeef/
+cp ./plugins/shellexecui/.libs/shellexec_gtk2.so /usr/local/lib/deadbeef/
+cp ./plugins/shellexecui/.libs/shellexec_gtk3.so /usr/local/lib/deadbeef/
 cp ./plugins/dsp_libsrc/.libs/dsp_libsrc.so /usr/local/lib/deadbeef/
 cp ./plugins/m3u/.libs/m3u.so /usr/local/lib/deadbeef/
 cp ./plugins/ddb_input_uade2/ddb_input_uade2.so /usr/local/lib/deadbeef/
