@@ -625,7 +625,12 @@ palsa_thread (void *context) {
             }
             err = 0;
             char buf[period_size * (plugin.fmt.bps>>3) * plugin.fmt.channels];
+            UNLOCK; // holding a lock here may cause deadlock in the streamer
             int bytes_to_write = palsa_callback (buf, period_size * (plugin.fmt.bps>>3) * plugin.fmt.channels);
+            LOCK;
+            if (alsa_terminate) {
+                break;
+            }
 
             if (bytes_to_write >= (plugin.fmt.bps>>3) * plugin.fmt.channels) {
                 UNLOCK;
