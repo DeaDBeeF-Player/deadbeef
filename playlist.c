@@ -3531,9 +3531,6 @@ plt_search_process (playlist_t *playlist, const char *text) {
     }
     *out = 0;
 
-    const char *cuesheet = metacache_add_string ("cuesheet");
-    const char *log = metacache_add_string("log");
-
     static int cmpidx = 0;
     cmpidx++;
     if (cmpidx > 127) {
@@ -3548,7 +3545,7 @@ plt_search_process (playlist_t *playlist, const char *text) {
                 if (m->key[0] == ':' || m->key[0] == '_' || m->key[0] == '!') {
                     break;
                 }
-                if (m->key!=cuesheet && m->key!=log) {
+                if (strcasecmp(m->key, "cuesheet") && strcasecmp (m->key, "log")) {
                     char cmp = *(m->value-1);
 
                     if (abs (cmp) == cmpidx) {
@@ -3589,8 +3586,6 @@ plt_search_process (playlist_t *playlist, const char *text) {
             }
         }
     }
-    metacache_remove_string (cuesheet);
-    metacache_remove_string(log);
     UNLOCK;
 }
 
