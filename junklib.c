@@ -2877,6 +2877,9 @@ junk_id3v2_load_txx (int version_major, playItem_t *it, uint8_t *readptr, int sy
         else if (!strcasecmp (txx, "replaygain_track_peak")) {
             pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, atof (val));
         }
+        else if (!strcasecmp (txx, "date")) { // HACK: fb2k date support
+            pl_append_meta (it, "year", val);
+        }
         else {
             pl_append_meta (it, txx, val);
         }
