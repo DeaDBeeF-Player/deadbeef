@@ -878,11 +878,16 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
         char *samples = NULL;
 
         if (info->mp4file) {
+            if (info->mp4sample >= info->mp4samples) {
+                break;
+            }
+            
             unsigned char *buffer = NULL;
             int buffer_size = 0;
 #ifdef USE_MP4FF
             int rc = mp4ff_read_sample (info->mp4file, info->mp4track, info->mp4sample, &buffer, &buffer_size);
             if (rc == 0) {
+                trace ("mp4ff_read_sample failed\n");
                 info->eof = 1;
                 break;
             }
@@ -902,12 +907,6 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
             u_int64_t myDuration = MP4ConvertFromTrackDuration (info->mp4file, info->mp4track,
                     sampleDuration, MP4_MSECS_TIME_SCALE);
 #endif
-            if (info->mp4sample >= info->mp4samples) {
-                if (buffer) {
-                    free (buffer);
-                }
-                break;
-            }
             info->mp4sample++;
             samples = NeAACDecDecode(info->dec, &info->frame_info, buffer, buffer_size);
 
