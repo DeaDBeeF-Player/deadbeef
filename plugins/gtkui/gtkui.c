@@ -1104,7 +1104,6 @@ gtkui_thread (void *ctx) {
 
     progress_init ();
     cover_art_init ();
-    add_mainmenu_actions (lookup_widget (mainwin, "menubar1"));
 
     gtk_widget_show (mainwin);
 
@@ -1293,6 +1292,7 @@ gtkui_connect_cb (void *none) {
         }
     }
     gtkui_playlist_changed ();
+    add_mainmenu_actions (lookup_widget (mainwin, "menubar1"));
     return FALSE;
 }
 

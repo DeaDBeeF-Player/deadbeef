@@ -48,7 +48,6 @@ create_shellexec_conf_dialog (void)
 
   dialog_vbox = gtk_dialog_get_content_area (GTK_DIALOG (shellexec_conf_dialog));
   gtk_widget_show (dialog_vbox);
-  gtk_box_set_spacing(GTK_BOX(dialog_vbox), 8);
 
   hbox1 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox1);
@@ -75,7 +74,6 @@ create_shellexec_conf_dialog (void)
   command_treeview = gtk_tree_view_new ();
   gtk_widget_show (command_treeview);
   gtk_container_add (GTK_CONTAINER (scrolledwindow), command_treeview);
-  gtk_widget_set_size_request (command_treeview, 300, 200);
 
   dialog_action_area = gtk_dialog_get_action_area (GTK_DIALOG (shellexec_conf_dialog));
   gtk_widget_show (dialog_action_area);
@@ -145,7 +143,6 @@ create_shellexec_conf_edit_dialog (void)
 
   dialog_vbox1 = gtk_dialog_get_content_area (GTK_DIALOG (shellexec_conf_edit_dialog));
   gtk_widget_show (dialog_vbox1);
-  gtk_box_set_spacing(GTK_BOX(dialog_vbox1), 8);
 
   table1 = gtk_table_new (3, 2, FALSE);
   gtk_widget_show (table1);

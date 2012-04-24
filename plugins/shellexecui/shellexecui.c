@@ -369,6 +369,7 @@ static int
 shellexecui_action_callback(DB_plugin_action_t *action,
                                 void *user_data) {
     conf_dlg = create_shellexec_conf_dialog();
+    gtk_widget_set_size_request (conf_dlg, 400, 400);
     dirty = 0;
     gtk_window_set_transient_for(GTK_WINDOW(conf_dlg),
                                  GTK_WINDOW(gtkui_plugin->get_mainwin()));
@@ -414,7 +415,11 @@ static DB_misc_t plugin = {
     .plugin.api_vminor = 0,
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
-    .plugin.id = "shellexecui",
+#if GTK_CHECK_VERSION(3,0,0)
+    .plugin.id = "shellexec_gtk2",
+#else
+    .plugin.id = "shellexec_gtk3",
+#endif
     .plugin.name = "Shellexec GTK UI",
     .plugin.descr = "A GTK UI for the Shellexec plugin",
     .plugin.copyright = 
