@@ -136,7 +136,7 @@ on_remove_button_clicked (GtkButton *button,
                                                  GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO,
                                                  _("Delete"));
         gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (confirm_dlg),
-                                                  _("This action will delete the selected shell command. Are you sure?"));
+                                                  "%s", _("This action will delete the selected shell command. Are you sure?"));
         gtk_window_set_transient_for(GTK_WINDOW (confirm_dlg), GTK_WINDOW (conf_dlg));
         gtk_window_set_title (GTK_WINDOW (confirm_dlg), _("Confirm Remove"));
         int response = gtk_dialog_run (GTK_DIALOG (confirm_dlg));
@@ -260,7 +260,7 @@ validate_command_edit () {
                                                          GTK_MESSAGE_WARNING, GTK_BUTTONS_OK,
                                                          _("Invalid Values"));
         gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (invalid_dlg),
-                                                  message);
+                                                  "%s", message);
         gtk_window_set_transient_for(GTK_WINDOW (invalid_dlg), GTK_WINDOW (conf_dlg));
         gtk_window_set_title (GTK_WINDOW (invalid_dlg), _("Invalid Values"));
         gtk_dialog_run (GTK_DIALOG (invalid_dlg));
