@@ -120,16 +120,15 @@ create_shellexec_conf_edit_dialog (void)
   GtkWidget *table1;
   GtkWidget *title_label;
   GtkWidget *cmd_label;
-  GtkWidget *name_entry;
   GtkWidget *cmd_entry;
   GtkWidget *name_label;
   GtkWidget *title_entry;
+  GtkWidget *name_entry;
   GtkWidget *single_check;
   GtkWidget *multiple_check;
   GtkWidget *local_check;
   GtkWidget *remote_check;
   GtkWidget *playlist_check;
-  GtkWidget *disabled_check;
   GtkWidget *dialog_action_area1;
   GtkWidget *edit_cancel_button;
   GtkWidget *edit_ok_button;
@@ -157,28 +156,22 @@ create_shellexec_conf_edit_dialog (void)
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (title_label), 0, 0.5);
 
-  cmd_label = gtk_label_new (_("Shell Command:"));
+  cmd_label = gtk_label_new (_("Command:"));
   gtk_widget_show (cmd_label);
   gtk_table_attach (GTK_TABLE (table1), cmd_label, 0, 1, 2, 3,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (cmd_label), 0, 0.5);
 
-  name_entry = gtk_entry_new ();
-  gtk_widget_show (name_entry);
-  gtk_table_attach (GTK_TABLE (table1), name_entry, 1, 2, 0, 1,
-                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_entry_set_invisible_char (GTK_ENTRY (name_entry), 8226);
-
   cmd_entry = gtk_entry_new ();
   gtk_widget_show (cmd_entry);
   gtk_table_attach (GTK_TABLE (table1), cmd_entry, 1, 2, 2, 3,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
+  gtk_widget_set_tooltip_text (cmd_entry, _("Arbitrary shell command. Will be executed in the shell context which the main application was started from. Title formatting can be used. Example: xdg-open %D"));
   gtk_entry_set_invisible_char (GTK_ENTRY (cmd_entry), 8226);
 
-  name_label = gtk_label_new (_("Name:"));
+  name_label = gtk_label_new (_("ID:"));
   gtk_widget_show (name_label);
   gtk_table_attach (GTK_TABLE (table1), name_label, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
@@ -190,7 +183,16 @@ create_shellexec_conf_edit_dialog (void)
   gtk_table_attach (GTK_TABLE (table1), title_entry, 1, 2, 1, 2,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
+  gtk_widget_set_tooltip_text (title_entry, _("Free-form name, for example \"My Shell Command\""));
   gtk_entry_set_invisible_char (GTK_ENTRY (title_entry), 8226);
+
+  name_entry = gtk_entry_new ();
+  gtk_widget_show (name_entry);
+  gtk_table_attach (GTK_TABLE (table1), name_entry, 1, 2, 0, 1,
+                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_widget_set_tooltip_text (name_entry, _("Command ID, normally it should be something short, for example \"youtube_open\". It must be unique."));
+  gtk_entry_set_invisible_char (GTK_ENTRY (name_entry), 8226);
 
   single_check = gtk_check_button_new_with_mnemonic (_("Single Tracks"));
   gtk_widget_show (single_check);
@@ -211,10 +213,6 @@ create_shellexec_conf_edit_dialog (void)
   playlist_check = gtk_check_button_new_with_mnemonic (_("Playlist"));
   gtk_widget_show (playlist_check);
   gtk_box_pack_start (GTK_BOX (dialog_vbox1), playlist_check, FALSE, FALSE, 0);
-
-  disabled_check = gtk_check_button_new_with_mnemonic (_("Disabled"));
-  gtk_widget_show (disabled_check);
-  gtk_box_pack_start (GTK_BOX (dialog_vbox1), disabled_check, FALSE, FALSE, 0);
 
   dialog_action_area1 = gtk_dialog_get_action_area (GTK_DIALOG (shellexec_conf_edit_dialog));
   gtk_widget_show (dialog_action_area1);
@@ -243,16 +241,15 @@ create_shellexec_conf_edit_dialog (void)
   GLADE_HOOKUP_OBJECT (shellexec_conf_edit_dialog, table1, "table1");
   GLADE_HOOKUP_OBJECT (shellexec_conf_edit_dialog, title_label, "title_label");
   GLADE_HOOKUP_OBJECT (shellexec_conf_edit_dialog, cmd_label, "cmd_label");
-  GLADE_HOOKUP_OBJECT (shellexec_conf_edit_dialog, name_entry, "name_entry");
   GLADE_HOOKUP_OBJECT (shellexec_conf_edit_dialog, cmd_entry, "cmd_entry");
   GLADE_HOOKUP_OBJECT (shellexec_conf_edit_dialog, name_label, "name_label");
   GLADE_HOOKUP_OBJECT (shellexec_conf_edit_dialog, title_entry, "title_entry");
+  GLADE_HOOKUP_OBJECT (shellexec_conf_edit_dialog, name_entry, "name_entry");
   GLADE_HOOKUP_OBJECT (shellexec_conf_edit_dialog, single_check, "single_check");
   GLADE_HOOKUP_OBJECT (shellexec_conf_edit_dialog, multiple_check, "multiple_check");
   GLADE_HOOKUP_OBJECT (shellexec_conf_edit_dialog, local_check, "local_check");
   GLADE_HOOKUP_OBJECT (shellexec_conf_edit_dialog, remote_check, "remote_check");
   GLADE_HOOKUP_OBJECT (shellexec_conf_edit_dialog, playlist_check, "playlist_check");
-  GLADE_HOOKUP_OBJECT (shellexec_conf_edit_dialog, disabled_check, "disabled_check");
   GLADE_HOOKUP_OBJECT_NO_REF (shellexec_conf_edit_dialog, dialog_action_area1, "dialog_action_area1");
   GLADE_HOOKUP_OBJECT (shellexec_conf_edit_dialog, edit_cancel_button, "edit_cancel_button");
   GLADE_HOOKUP_OBJECT (shellexec_conf_edit_dialog, edit_ok_button, "edit_ok_button");

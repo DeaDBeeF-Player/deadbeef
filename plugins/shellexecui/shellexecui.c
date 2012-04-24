@@ -37,8 +37,6 @@ static GtkWidget *conf_dlg;
 static GtkWidget *edit_dlg;
 static Shx_action_t *current_action; // selection action when edit window is active
 
-static int dirty = 0;
-
 enum {
     COL_TITLE = 0,
     COL_META,
@@ -47,12 +45,18 @@ enum {
 
 static int
 name_exists(const char *name, Shx_action_t *skip) {
-    Shx_action_t *action = actions;
-    while(action) {
-        if(action != skip && strcmp(action->parent.name, name) == 0) {
-            return 1;
+    DB_plugin_t **p = deadbeef->plug_get_list ();
+    for (int i = 0; p[i]; i++) {
+        if (!p[i]->get_actions) {
+            continue;
         }
-        action = (Shx_action_t*)action->parent.next;
+        DB_plugin_action_t *action = p[i]->get_actions (NULL);
+        while(action) {
+            if(action != (DB_plugin_action_t*)skip && action->name && !strcmp(action->name, name)) {
+                return 1;
+            }
+            action = action->next;
+        }
     }
     return 0;
 }
@@ -72,9 +76,6 @@ is_empty(const char *name) {
 void
 on_save_button_clicked (GtkButton *button,
                           gpointer user_data) {
-    if(dirty) {
-        shellexec_plugin->shx_save_actions(actions);
-    }
     gtk_widget_destroy(conf_dlg);
 }
 
@@ -95,9 +96,12 @@ on_add_button_clicked (GtkButton *button,
     // generate unique command name
     char name[15] = "new_cmd";
     int suffix = 0;
-    while(name_exists(name, NULL)) { // create a unique name
-        snprintf(name, 15, "new_cmd%d", suffix);
+    while(name_exists(name, NULL) && suffix < 1000) { // create a unique name
+        snprintf(name, sizeof (name), "new_cmd%d", suffix);
         suffix++;
+    }
+    if (name_exists (name, NULL)) {
+        return;
     }
     // Set default values in text fields
     gtk_entry_set_text(
@@ -173,7 +177,8 @@ on_remove_button_clicked (GtkButton *button,
         }
         gtk_list_store_remove(GTK_LIST_STORE(treemodel), &iter);
 
-        dirty = 1;
+        shellexec_plugin->save_actions(actions);
+        deadbeef->sendmessage (DB_EV_ACTIONSCHANGED, 0, 0, 0);
     }
 }
 
@@ -235,19 +240,19 @@ validate_command_edit () {
 
     text = gtk_entry_get_text(GTK_ENTRY(lookup_widget(edit_dlg, "name_entry")));
     if(is_empty(text) || name_exists(text, current_action)) {
-        strcat(message, _("Name should be non-empty and unique\n"));
+        strcat(message, _("ID must be non-empty and unique.\n"));
         valid = 0;
     }
 
     text = gtk_entry_get_text(GTK_ENTRY(lookup_widget(edit_dlg, "title_entry")));
     if(is_empty(text)) {
-        strcat(message, _("Title should be non-empty\n"));
+        strcat(message, _("Title must be non-empty.\n"));
         valid = 0;
     }
 
     text = gtk_entry_get_text(GTK_ENTRY(lookup_widget(edit_dlg, "cmd_entry")));
     if(is_empty(text)) {
-        strcat(message, _("Shell Command should be non-empty\n"));
+        strcat(message, _("Shell Command must be non-empty.\n"));
         valid = 0;
     }
 
@@ -331,8 +336,8 @@ on_edit_ok_button_clicked (GtkButton *button, gpointer user_data) {
     edit_dlg = NULL;
     current_action = NULL;
 
-    dirty = 1;
-    //enable_button(conf_dlg, "save_button");
+    shellexec_plugin->save_actions(actions);
+    deadbeef->sendmessage (DB_EV_ACTIONSCHANGED, 0, 0, 0);
 }
 
 static void
@@ -350,7 +355,7 @@ init_treeview() {
                                    G_TYPE_STRING,
                                    //G_TYPE_BOOLEAN,
                                    G_TYPE_POINTER);
-    actions = shellexec_plugin->shx_get_actions(NULL, FALSE);
+    actions = (Shx_action_t *)shellexec_plugin->misc.plugin.get_actions(NULL);
     Shx_action_t *action = actions;
     GtkTreeIter iter;
     while(action) {
@@ -370,11 +375,9 @@ shellexecui_action_callback(DB_plugin_action_t *action,
                                 void *user_data) {
     conf_dlg = create_shellexec_conf_dialog();
     gtk_widget_set_size_request (conf_dlg, 400, 400);
-    dirty = 0;
     gtk_window_set_transient_for(GTK_WINDOW(conf_dlg),
                                  GTK_WINDOW(gtkui_plugin->get_mainwin()));
     init_treeview();
-    //disable_button(conf_dlg, "save_button");
     gtk_widget_show(conf_dlg);
     return 0;
 }

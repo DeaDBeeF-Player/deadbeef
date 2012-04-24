@@ -268,6 +268,7 @@ enum {
     DB_EV_OUTPUTCHANGED = 17, // sound output plugin changed
     DB_EV_PLAYLISTSWITCHED = 18, // playlist switch occured
     DB_EV_SEEK = 19, // seek current track to position p1 (ms)
+    DB_EV_ACTIONSCHANGED = 20, // plugin actions were changed, e.g. for reinitializing gui
 
     DB_EV_FIRST = 1000,
     DB_EV_SONGCHANGED = 1000, // current song changed from one to another, ctx=ddb_event_trackchange_t
@@ -859,7 +860,8 @@ typedef struct DB_plugin_s {
     // cmdline_size is number of bytes pointed by cmdline
     int (*exec_cmdline) (const char *cmdline, int cmdline_size);
     
-    // @returns linked list of actions
+    // @returns linked list of actions for the specified track
+    // when it is NULL -- the plugin must return list of all actions
     DB_plugin_action_t* (*get_actions) (DB_playItem_t *it);
 
     // mainloop will call this function for every plugin

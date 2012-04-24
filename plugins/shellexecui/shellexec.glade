@@ -257,7 +257,7 @@
 	  <child>
 	    <widget class="GtkLabel" id="cmd_label">
 	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">Shell Command:</property>
+	      <property name="label" translatable="yes">Command:</property>
 	      <property name="use_underline">False</property>
 	      <property name="use_markup">False</property>
 	      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -283,29 +283,9 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkEntry" id="name_entry">
-	      <property name="visible">True</property>
-	      <property name="can_focus">True</property>
-	      <property name="editable">True</property>
-	      <property name="visibility">True</property>
-	      <property name="max_length">0</property>
-	      <property name="text" translatable="yes"></property>
-	      <property name="has_frame">True</property>
-	      <property name="invisible_char">•</property>
-	      <property name="activates_default">False</property>
-	    </widget>
-	    <packing>
-	      <property name="left_attach">1</property>
-	      <property name="right_attach">2</property>
-	      <property name="top_attach">0</property>
-	      <property name="bottom_attach">1</property>
-	      <property name="y_options"></property>
-	    </packing>
-	  </child>
-
-	  <child>
 	    <widget class="GtkEntry" id="cmd_entry">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Arbitrary shell command. Will be executed in the shell context which the main application was started from. Title formatting can be used. Example: xdg-open %D</property>
 	      <property name="can_focus">True</property>
 	      <property name="editable">True</property>
 	      <property name="visibility">True</property>
@@ -327,7 +307,7 @@
 	  <child>
 	    <widget class="GtkLabel" id="name_label">
 	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">Name:</property>
+	      <property name="label" translatable="yes">ID:</property>
 	      <property name="use_underline">False</property>
 	      <property name="use_markup">False</property>
 	      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -355,6 +335,7 @@
 	  <child>
 	    <widget class="GtkEntry" id="title_entry">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Free-form name, for example &quot;My Shell Command&quot;</property>
 	      <property name="can_focus">True</property>
 	      <property name="editable">True</property>
 	      <property name="visibility">True</property>
@@ -369,6 +350,28 @@
 	      <property name="right_attach">2</property>
 	      <property name="top_attach">1</property>
 	      <property name="bottom_attach">2</property>
+	      <property name="y_options"></property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkEntry" id="name_entry">
+	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Command ID, normally it should be something short, for example &quot;youtube_open&quot;. It must be unique.</property>
+	      <property name="can_focus">True</property>
+	      <property name="editable">True</property>
+	      <property name="visibility">True</property>
+	      <property name="max_length">0</property>
+	      <property name="text" translatable="yes"></property>
+	      <property name="has_frame">True</property>
+	      <property name="invisible_char">•</property>
+	      <property name="activates_default">False</property>
+	    </widget>
+	    <packing>
+	      <property name="left_attach">1</property>
+	      <property name="right_attach">2</property>
+	      <property name="top_attach">0</property>
+	      <property name="bottom_attach">1</property>
 	      <property name="y_options"></property>
 	    </packing>
 	  </child>
@@ -461,25 +464,6 @@
 	  <property name="visible">True</property>
 	  <property name="can_focus">True</property>
 	  <property name="label" translatable="yes">Playlist</property>
-	  <property name="use_underline">True</property>
-	  <property name="relief">GTK_RELIEF_NORMAL</property>
-	  <property name="focus_on_click">True</property>
-	  <property name="active">False</property>
-	  <property name="inconsistent">False</property>
-	  <property name="draw_indicator">True</property>
-	</widget>
-	<packing>
-	  <property name="padding">0</property>
-	  <property name="expand">False</property>
-	  <property name="fill">False</property>
-	</packing>
-      </child>
-
-      <child>
-	<widget class="GtkCheckButton" id="disabled_check">
-	  <property name="visible">True</property>
-	  <property name="can_focus">True</property>
-	  <property name="label" translatable="yes">Disabled</property>
 	  <property name="use_underline">True</property>
 	  <property name="relief">GTK_RELIEF_NORMAL</property>
 	  <property name="focus_on_click">True</property>

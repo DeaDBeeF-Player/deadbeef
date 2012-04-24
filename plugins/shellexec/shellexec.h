@@ -40,10 +40,8 @@ typedef struct Shx_action_s
 typedef struct Shx_plugin_s
 {
 	DB_misc_t misc;
-	Shx_action_t *
-	(*shx_get_actions)(DB_plugin_action_callback_t callback, int omit_disabled);
 	void
-	(*shx_save_actions)(Shx_action_t *action_list);
+	(*save_actions)(Shx_action_t *action_list);
 } Shx_plugin_t;
 
 #endif
