@@ -39,6 +39,7 @@
         local - command allowed for local files
         remote - command allowed for non-local files
         playlist - command allowed for playlist tabs
+        common - command appears in main menu bar
 */
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
@@ -159,6 +160,9 @@ shx_save_actions(Shx_action_t *action_list)
         if(action->parent.flags & DB_ACTION_ALLOW_MULTIPLE_TRACKS) {
             strcat(conf_line, "multiple,");
         }
+        if(action->parent.flags & DB_ACTION_COMMON) {
+            strcat(conf_line, "common,");
+        }
         deadbeef->conf_set_str(conf_key, conf_line);
         action = (Shx_action_t*)action->parent.next;
         i++;
@@ -234,6 +238,9 @@ shx_get_actions (DB_plugin_action_callback_t callback)
 
         if (strstr (flags, "playlist"))
             action->parent.flags |= DB_ACTION_PLAYLIST;
+
+        if (strstr (flags, "common"))
+            action->parent.flags |= DB_ACTION_COMMON;
 
         if (prev)
             prev->parent.next = (DB_plugin_action_t *)action;

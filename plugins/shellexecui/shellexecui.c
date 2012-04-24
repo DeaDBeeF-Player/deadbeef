@@ -221,6 +221,9 @@ on_edit_button_clicked(GtkButton *button, gpointer user_data) {
         gtk_toggle_button_set_active(
             GTK_TOGGLE_BUTTON(lookup_widget(edit_dlg, "remote_check")),
             current_action->shx_flags & SHX_ACTION_REMOTE_ONLY);
+        gtk_toggle_button_set_active(
+            GTK_TOGGLE_BUTTON(lookup_widget(edit_dlg, "common_check")),
+            current_action->parent.flags & DB_ACTION_COMMON);
 
         //disable_button(edit_dlg, "edit_ok_button"); // OK button is disabled by default
         gtk_widget_show(edit_dlg);
@@ -325,6 +328,8 @@ on_edit_ok_button_clicked (GtkButton *button, gpointer user_data) {
     shx_flags = (shx_flags & ~SHX_ACTION_LOCAL_ONLY) | (active?SHX_ACTION_LOCAL_ONLY:0);
     active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(lookup_widget(edit_dlg, "remote_check")));
     shx_flags = (shx_flags & ~SHX_ACTION_REMOTE_ONLY) | (active?SHX_ACTION_REMOTE_ONLY:0);
+    active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(lookup_widget(edit_dlg, "common_check")));
+    flags = (flags & ~DB_ACTION_COMMON) | (active?DB_ACTION_COMMON:0);
 
     current_action->parent.flags = flags;
     current_action->shx_flags = shx_flags;

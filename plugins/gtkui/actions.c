@@ -28,6 +28,10 @@
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
 
+#define GLADE_HOOKUP_OBJECT(component,widget,name) \
+  g_object_set_data_full (G_OBJECT (component), name, \
+    g_object_ref(G_OBJECT(widget)), (GDestroyNotify) g_object_unref)
+
 static void
 on_actionitem_activate (GtkMenuItem     *menuitem,
                            DB_plugin_action_t *action)
@@ -72,7 +76,7 @@ add_mainmenu_actions (GtkWidget *mainwin)
 
             char *prev_title = NULL;
 
-            GtkWidget *current = mainwin;
+            GtkWidget *current = lookup_widget (mainwin, "menubar1");
             GtkWidget *previous;
 
             while (1)
@@ -95,8 +99,9 @@ add_mainmenu_actions (GtkWidget *mainwin)
                         gtk_menu_shell_insert (GTK_MENU_SHELL (current), actionitem, 5);
                     else if (0 == strcmp ("Edit", prev_title))
                         gtk_menu_shell_insert (GTK_MENU_SHELL (current), actionitem, 7);
-                    else
+                    else {
                         gtk_container_add (GTK_CONTAINER (current), actionitem);
+                    }
 
                     g_signal_connect ((gpointer) actionitem, "activate",
                         G_CALLBACK (on_actionitem_activate),
@@ -109,7 +114,7 @@ add_mainmenu_actions (GtkWidget *mainwin)
                 snprintf (menuname, sizeof (menuname), "%s_menu", ptr);
 
                 previous = current;
-                current = lookup_widget (current, menuname);
+                current = lookup_widget (mainwin, menuname);
                 if (!current)
                 {
                     GtkWidget *newitem;
@@ -125,6 +130,7 @@ add_mainmenu_actions (GtkWidget *mainwin)
 
                     current = gtk_menu_new ();
                     gtk_menu_item_set_submenu (GTK_MENU_ITEM (newitem), current);
+                    GLADE_HOOKUP_OBJECT (mainwin, current, "Plugins_menu");
                 }
                 prev_title = ptr;
                 ptr = slash + 1;

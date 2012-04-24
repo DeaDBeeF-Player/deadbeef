@@ -129,6 +129,7 @@ create_shellexec_conf_edit_dialog (void)
   GtkWidget *local_check;
   GtkWidget *remote_check;
   GtkWidget *playlist_check;
+  GtkWidget *common_check;
   GtkWidget *dialog_action_area1;
   GtkWidget *edit_cancel_button;
   GtkWidget *edit_ok_button;
@@ -197,22 +198,32 @@ create_shellexec_conf_edit_dialog (void)
   single_check = gtk_check_button_new_with_mnemonic (_("Single Tracks"));
   gtk_widget_show (single_check);
   gtk_box_pack_start (GTK_BOX (dialog_vbox1), single_check, FALSE, FALSE, 0);
+  gtk_widget_set_tooltip_text (single_check, _("Works on single track."));
 
   multiple_check = gtk_check_button_new_with_mnemonic (_("Multiple Tracks"));
   gtk_widget_show (multiple_check);
   gtk_box_pack_start (GTK_BOX (dialog_vbox1), multiple_check, FALSE, FALSE, 0);
+  gtk_widget_set_tooltip_text (multiple_check, _("Works on multiple tracks."));
 
   local_check = gtk_check_button_new_with_mnemonic (_("Local"));
   gtk_widget_show (local_check);
   gtk_box_pack_start (GTK_BOX (dialog_vbox1), local_check, FALSE, FALSE, 0);
+  gtk_widget_set_tooltip_text (local_check, _("Works on local files."));
 
   remote_check = gtk_check_button_new_with_mnemonic (_("Remote"));
   gtk_widget_show (remote_check);
   gtk_box_pack_start (GTK_BOX (dialog_vbox1), remote_check, FALSE, FALSE, 0);
+  gtk_widget_set_tooltip_text (remote_check, _("Works on remote files (e.g. http:// streams)"));
 
   playlist_check = gtk_check_button_new_with_mnemonic (_("Playlist"));
   gtk_widget_show (playlist_check);
   gtk_box_pack_start (GTK_BOX (dialog_vbox1), playlist_check, FALSE, FALSE, 0);
+  gtk_widget_set_tooltip_text (playlist_check, _("Item should appear on the playlist tab context menu"));
+
+  common_check = gtk_check_button_new_with_mnemonic (_("Common"));
+  gtk_widget_show (common_check);
+  gtk_box_pack_start (GTK_BOX (dialog_vbox1), common_check, FALSE, FALSE, 0);
+  gtk_widget_set_tooltip_text (common_check, _("Item should appear in the main menu"));
 
   dialog_action_area1 = gtk_dialog_get_action_area (GTK_DIALOG (shellexec_conf_edit_dialog));
   gtk_widget_show (dialog_action_area1);
@@ -250,6 +261,7 @@ create_shellexec_conf_edit_dialog (void)
   GLADE_HOOKUP_OBJECT (shellexec_conf_edit_dialog, local_check, "local_check");
   GLADE_HOOKUP_OBJECT (shellexec_conf_edit_dialog, remote_check, "remote_check");
   GLADE_HOOKUP_OBJECT (shellexec_conf_edit_dialog, playlist_check, "playlist_check");
+  GLADE_HOOKUP_OBJECT (shellexec_conf_edit_dialog, common_check, "common_check");
   GLADE_HOOKUP_OBJECT_NO_REF (shellexec_conf_edit_dialog, dialog_action_area1, "dialog_action_area1");
   GLADE_HOOKUP_OBJECT (shellexec_conf_edit_dialog, edit_cancel_button, "edit_cancel_button");
   GLADE_HOOKUP_OBJECT (shellexec_conf_edit_dialog, edit_ok_button, "edit_ok_button");

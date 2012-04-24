@@ -1292,7 +1292,7 @@ gtkui_connect_cb (void *none) {
         }
     }
     gtkui_playlist_changed ();
-    add_mainmenu_actions (lookup_widget (mainwin, "menubar1"));
+    add_mainmenu_actions (mainwin);
     return FALSE;
 }
 
