@@ -40,8 +40,38 @@ on_actionitem_activate (GtkMenuItem     *menuitem,
 }
 
 void
-add_mainmenu_actions (GtkWidget *mainwin)
+remove_actions (GtkWidget *widget, void *data) {
+    if (GTK_IS_MENU_ITEM (widget)) {
+        const char *name = gtk_menu_item_get_label (GTK_MENU_ITEM (widget));
+    }
+    const char *name = g_object_get_data (G_OBJECT (widget), "plugaction");
+    if (name) {
+        gtk_container_remove (GTK_CONTAINER (data), widget);
+    }
+    if (GTK_IS_MENU_ITEM (widget)) {
+        GtkWidget *menu = gtk_menu_item_get_submenu (GTK_MENU_ITEM (widget));
+        if (menu) {
+            gtk_container_foreach (GTK_CONTAINER (menu), remove_actions, menu);
+            // if menu is empty -- remove parent menu item
+            GList *lst = gtk_container_get_children (GTK_CONTAINER (menu));
+            if (lst) {
+                g_list_free (lst);
+            }
+            else {
+                gtk_container_remove (data, widget);
+            }
+        }
+    }
+}
+
+void
+add_mainmenu_actions (void)
 {
+    GtkWidget *menubar = lookup_widget (mainwin, "menubar1");
+    // remove all plugaction_*** menu items and empty submenus
+    gtk_container_foreach (GTK_CONTAINER (menubar), remove_actions, menubar);
+
+    // add new
     DB_plugin_t **plugins = deadbeef->plug_get_list();
     int i;
 
@@ -76,7 +106,7 @@ add_mainmenu_actions (GtkWidget *mainwin)
 
             char *prev_title = NULL;
 
-            GtkWidget *current = lookup_widget (mainwin, "menubar1");
+            GtkWidget *current = menubar;
             GtkWidget *previous;
 
             while (1)
@@ -106,6 +136,7 @@ add_mainmenu_actions (GtkWidget *mainwin)
                     g_signal_connect ((gpointer) actionitem, "activate",
                         G_CALLBACK (on_actionitem_activate),
                         action);
+                    g_object_set_data_full (G_OBJECT (actionitem), "plugaction", strdup (action->name), free);
                     break;
                 }
                 *slash = 0;
@@ -130,7 +161,7 @@ add_mainmenu_actions (GtkWidget *mainwin)
 
                     current = gtk_menu_new ();
                     gtk_menu_item_set_submenu (GTK_MENU_ITEM (newitem), current);
-                    GLADE_HOOKUP_OBJECT (mainwin, current, "Plugins_menu");
+                    GLADE_HOOKUP_OBJECT (mainwin, current, menuname);
                 }
                 prev_title = ptr;
                 ptr = slash + 1;

@@ -1021,6 +1021,9 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     case DB_EV_PLAYLISTSWITCHED:
         g_idle_add (playlistswitch_cb, NULL);
         break;
+    case DB_EV_ACTIONSCHANGED:
+        add_mainmenu_actions ();
+        break;
     }
     return 0;
 }
@@ -1292,7 +1295,7 @@ gtkui_connect_cb (void *none) {
         }
     }
     gtkui_playlist_changed ();
-    add_mainmenu_actions (mainwin);
+    add_mainmenu_actions ();
     return FALSE;
 }
 
