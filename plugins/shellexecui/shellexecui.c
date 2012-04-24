@@ -17,13 +17,12 @@
 */
 #include <stdlib.h>
 #include <string.h>
-#include <deadbeef/deadbeef.h>
 #include <gtk/gtk.h>
-#include <deadbeef/gtkui_api.h>
-#include <glib/gprintf.h>
 #include "interface.h"
 #include "callbacks.h"
 #include "support.h"
+#include "../../deadbeef.h"
+#include "../gtkui/gtkui_api.h"
 #include "../shellexec/shellexec.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
