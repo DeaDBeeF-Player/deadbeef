@@ -210,9 +210,6 @@ on_edit_button_clicked(GtkButton *button, gpointer user_data) {
             GTK_TOGGLE_BUTTON(lookup_widget(edit_dlg, "multiple_check")),
             current_action->parent.flags & DB_ACTION_ALLOW_MULTIPLE_TRACKS);
         gtk_toggle_button_set_active(
-            GTK_TOGGLE_BUTTON(lookup_widget(edit_dlg, "disabled_check")),
-            current_action->parent.flags & DB_ACTION_DISABLED);
-        gtk_toggle_button_set_active(
             GTK_TOGGLE_BUTTON(lookup_widget(edit_dlg, "playlist_check")),
             current_action->parent.flags & DB_ACTION_PLAYLIST);
         gtk_toggle_button_set_active(
@@ -225,7 +222,6 @@ on_edit_button_clicked(GtkButton *button, gpointer user_data) {
             GTK_TOGGLE_BUTTON(lookup_widget(edit_dlg, "common_check")),
             current_action->parent.flags & DB_ACTION_COMMON);
 
-        //disable_button(edit_dlg, "edit_ok_button"); // OK button is disabled by default
         gtk_widget_show(edit_dlg);
     }
 }
@@ -322,8 +318,6 @@ on_edit_ok_button_clicked (GtkButton *button, gpointer user_data) {
     flags = (flags & ~DB_ACTION_ALLOW_MULTIPLE_TRACKS) | (active?DB_ACTION_ALLOW_MULTIPLE_TRACKS:0);
     active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(lookup_widget(edit_dlg, "playlist_check")));
     flags = (flags & ~DB_ACTION_PLAYLIST) | (active?DB_ACTION_PLAYLIST:0);
-    active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(lookup_widget(edit_dlg, "disabled_check")));
-    flags = (flags & ~DB_ACTION_DISABLED) | (active?DB_ACTION_DISABLED:0);
     active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(lookup_widget(edit_dlg, "local_check")));
     shx_flags = (shx_flags & ~SHX_ACTION_LOCAL_ONLY) | (active?SHX_ACTION_LOCAL_ONLY:0);
     active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(lookup_widget(edit_dlg, "remote_check")));
