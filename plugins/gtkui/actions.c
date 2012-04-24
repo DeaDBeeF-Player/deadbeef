@@ -41,9 +41,6 @@ on_actionitem_activate (GtkMenuItem     *menuitem,
 
 void
 remove_actions (GtkWidget *widget, void *data) {
-    if (GTK_IS_MENU_ITEM (widget)) {
-        const char *name = gtk_menu_item_get_label (GTK_MENU_ITEM (widget));
-    }
     const char *name = g_object_get_data (G_OBJECT (widget), "plugaction");
     if (name) {
         gtk_container_remove (GTK_CONTAINER (data), widget);
