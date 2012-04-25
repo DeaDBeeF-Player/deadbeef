@@ -30,6 +30,9 @@ search_start (void);
 void
 search_refresh (void);
 
+void
+search_redraw (void);
+
 int
 search_get_idx (DdbListviewIter it);
 
