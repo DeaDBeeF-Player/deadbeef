@@ -127,10 +127,10 @@ shx_find_sep (char *str) {
 }
 
 void
-shx_save_actions(Shx_action_t *action_list)
+shx_save_actions (void)
 {
     deadbeef->conf_remove_items("shellexec.");
-    Shx_action_t *action = action_list;
+    Shx_action_t *action = actions;
     int i = 0;
     while(action) {
         // build config line
@@ -254,6 +254,54 @@ shx_get_actions (DB_plugin_action_callback_t callback)
     return action_list;
 }
 
+Shx_action_t*
+shx_action_add (void) {
+    Shx_action_t *a = calloc (sizeof (Shx_action_t), 1);
+    if (!actions) {
+        actions = a;
+    }
+    else {
+        for (Shx_action_t *last = actions; last; last = (Shx_action_t *)last->parent.next) {
+            if (!last->parent.next) {
+                last->parent.next = (DB_plugin_action_t *)a;
+            }
+        }
+    }
+    return a;
+}
+
+void
+shx_action_free (Shx_action_t *a) {
+    if (a->shcommand) {
+        free ((char *)a->shcommand);
+    }
+    if (a->parent.title) {
+        free ((char *)a->parent.title);
+    }
+    if (a->parent.name) {
+        free ((char *)a->parent.name);
+    }
+    free (a);
+}
+
+void
+shx_action_remove (Shx_action_t *action) {
+    Shx_action_t *prev = NULL;
+    for (Shx_action_t *a = actions; a; a = (Shx_action_t *)a->parent.next) {
+        if (a == action) {
+            if (prev) {
+                prev->parent.next = a->parent.next;
+            }
+            else {
+                actions = (Shx_action_t *)a->parent.next;
+            }
+            break;
+        }
+        prev = a;
+    }
+    shx_action_free (action);
+}
+
 static int
 shx_start ()
 {
@@ -331,6 +379,9 @@ static Shx_plugin_t plugin = {
     .misc.plugin.start = shx_start,
     .misc.plugin.stop = shx_stop,
     .misc.plugin.get_actions = shx_get_plugin_actions,
-    .save_actions = shx_save_actions
+    .save_actions = shx_save_actions,
+    .action_add = shx_action_add,
+    .action_remove = shx_action_remove,
+    .action_free = shx_action_free,
 };
 

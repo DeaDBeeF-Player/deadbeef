@@ -149,20 +149,8 @@ on_remove_button_clicked (GtkButton *button,
         gtk_tree_model_get(treemodel, &iter, COL_META, &action, -1);
 
         //remove action from list
-        if(actions == action) {
-            actions = (Shx_action_t*)action->parent.next;
-        }
-        else {
-            Shx_action_t *prev = actions;
-            while(((Shx_action_t*)prev->parent.next) != action) {
-                prev = (Shx_action_t*)prev->parent.next;
-            }
-            prev->parent.next = action->parent.next;
-        }
-        free((void *)action->shcommand);
-        free((void *)action->parent.name);
-        free((void *)action->parent.title);
-        free(action);
+        shellexec_plugin->action_remove (action);
+        actions = (Shx_action_t *)shellexec_plugin->misc.plugin.get_actions(NULL);
 
         GtkTreeIter next_iter = iter;
         if(gtk_tree_model_iter_next(treemodel, &next_iter)) {
@@ -177,7 +165,7 @@ on_remove_button_clicked (GtkButton *button,
         }
         gtk_list_store_remove(GTK_LIST_STORE(treemodel), &iter);
 
-        shellexec_plugin->save_actions(actions);
+        shellexec_plugin->save_actions();
         deadbeef->sendmessage (DB_EV_ACTIONSCHANGED, 0, 0, 0);
     }
 }
@@ -281,17 +269,8 @@ on_edit_ok_button_clicked (GtkButton *button, gpointer user_data) {
     GtkTreeIter iter;
 
     if(current_action == NULL) {
-        current_action = calloc(sizeof(Shx_action_t), 1);
-        if(!actions) {
-            actions = current_action;
-        }
-        else {
-            Shx_action_t *last = actions;
-            while(last->parent.next) {
-                last = (Shx_action_t *)last->parent.next;
-            }
-            last->parent.next = (DB_plugin_action_t*)current_action;
-        }
+        current_action = shellexec_plugin->action_add ();
+        actions = (Shx_action_t *)shellexec_plugin->misc.plugin.get_actions(NULL);
         gtk_list_store_append(GTK_LIST_STORE(treemodel), &iter);
         gtk_list_store_set(GTK_LIST_STORE(treemodel), &iter, COL_META, current_action, -1);
         gtk_tree_selection_select_iter(selection, &iter);
@@ -335,7 +314,7 @@ on_edit_ok_button_clicked (GtkButton *button, gpointer user_data) {
     edit_dlg = NULL;
     current_action = NULL;
 
-    shellexec_plugin->save_actions(actions);
+    shellexec_plugin->save_actions();
     deadbeef->sendmessage (DB_EV_ACTIONSCHANGED, 0, 0, 0);
 }
 
