@@ -21,8 +21,8 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-//#include <alloca.h>
 #include <string.h>
+#include <sys/stat.h>
 #ifndef __linux__
 #define _POSIX_C_SOURCE 1
 #endif
@@ -567,6 +567,13 @@ static int
 load_plugin (const char *plugdir, char *d_name, int l) {
     char fullname[PATH_MAX];
     snprintf (fullname, PATH_MAX, "%s/%s", plugdir, d_name);
+
+    // check if the file exists, to avoid printing bogus errors
+    struct stat s;
+    if (0 != stat (fullname, &s)) {
+        return -1;
+    }
+
     trace ("loading plugin %s/%s\n", plugdir, d_name);
     void *handle = dlopen (fullname, RTLD_NOW);
     if (!handle) {
