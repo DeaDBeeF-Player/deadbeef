@@ -30,6 +30,7 @@
 #include "interface.h"
 #include "parser.h"
 #include "actions.h"
+#include "search.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
