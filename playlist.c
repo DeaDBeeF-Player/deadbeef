@@ -2134,12 +2134,14 @@ plt_load (playlist_t *plt, playItem_t *after, const char *fname, int *pabort, in
         return NULL;
     }
 
+    playItem_t *last_added = NULL;
 
     uint8_t majorver;
     uint8_t minorver;
     playItem_t *it = NULL;
     char magic[4];
     if (fread (magic, 1, 4, fp) != 4) {
+        trace ("failed to read magic\n");
         goto load_fail;
     }
     if (strncmp (magic, "DBPL", 4)) {
@@ -2165,8 +2167,6 @@ plt_load (playlist_t *plt, playItem_t *after, const char *fname, int *pabort, in
     if (fread (&cnt, 1, 4, fp) != 4) {
         goto load_fail;
     }
-
-    playItem_t *last_added = NULL;
 
     for (uint32_t i = 0; i < cnt; i++) {
         it = pl_item_alloc ();
@@ -2379,6 +2379,7 @@ plt_load (playlist_t *plt, playItem_t *after, const char *fname, int *pabort, in
     trace ("plt_load: success\n");
     return last_added;
 load_fail:
+    plt_clear (plt);
     fprintf (stderr, "playlist load fail (%s)!\n", fname);
     if (fp) {
         fclose (fp);
@@ -3551,6 +3552,7 @@ plt_search_process (playlist_t *playlist, const char *text) {
                     if (abs (cmp) == cmpidx) {
                         if (cmp > 0) {
                             it->next[PL_SEARCH] = NULL;
+                            it->prev[PL_SEARCH] = playlist->tail[PL_SEARCH];
                             if (playlist->tail[PL_SEARCH]) {
                                 playlist->tail[PL_SEARCH]->next[PL_SEARCH] = it;
                                 playlist->tail[PL_SEARCH] = it;
@@ -3567,6 +3569,7 @@ plt_search_process (playlist_t *playlist, const char *text) {
                         //fprintf (stderr, "%s -> %s match (%s.%s)\n", text, m->value, pl_find_meta_raw (it, ":URI"), m->key);
                         // add to list
                         it->next[PL_SEARCH] = NULL;
+                        it->prev[PL_SEARCH] = playlist->tail[PL_SEARCH];
                         if (playlist->tail[PL_SEARCH]) {
                             playlist->tail[PL_SEARCH]->next[PL_SEARCH] = it;
                             playlist->tail[PL_SEARCH] = it;
