@@ -269,6 +269,7 @@ enum {
     DB_EV_PLAYLISTSWITCHED = 18, // playlist switch occured
     DB_EV_SEEK = 19, // seek current track to position p1 (ms)
     DB_EV_ACTIONSCHANGED = 20, // plugin actions were changed, e.g. for reinitializing gui
+    DB_EV_DSPCHAINCHANGED = 21, // emitted when any parameter of the main dsp chain has been changed
 
     DB_EV_FIRST = 1000,
     DB_EV_SONGCHANGED = 1000, // current song changed from one to another, ctx=ddb_event_trackchange_t

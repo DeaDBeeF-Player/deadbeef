@@ -2221,6 +2221,7 @@ streamer_set_dsp_chain (ddb_dsp_context_t *chain) {
     if (playing_track && output->state () != OUTPUT_STATE_STOPPED) {
         streamer_set_seek (playpos);
     }
+    messagepump_push (DB_EV_DSPCHAINCHANGED, 0, 0, 0);
 }
 
 void
