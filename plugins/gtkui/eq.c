@@ -443,3 +443,17 @@ eq_redraw (void) {
     }
 }
 
+void
+eq_refresh (void) {
+    ddb_dsp_context_t *eq = get_supereq ();
+    if (eq && eqwin) {
+        char s[20];
+        eq->plugin->get_param (eq, 0, s, sizeof (s));
+        ddb_equalizer_set_preamp (DDB_EQUALIZER (eqwin), atof(s));
+        for (int i = 0; i < 18; i++) {
+            eq->plugin->get_param (eq, i+1, s, sizeof (s));
+            ddb_equalizer_set_band (DDB_EQUALIZER (eqwin), i, atoi(s));
+        }
+        eq_redraw ();
+    }
+}

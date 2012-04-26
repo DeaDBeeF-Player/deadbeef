@@ -1024,6 +1024,9 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     case DB_EV_ACTIONSCHANGED:
         add_mainmenu_actions ();
         break;
+    case DB_EV_DSPCHAINCHANGED:
+        eq_refresh ();
+        break;
     }
     return 0;
 }
