@@ -1,3 +1,25 @@
+version 0.5.3
+	m3u: fixed few parser bugs; added audio/x-scpls mime-type support; fixed m3uext support
+	adplug: upgraded to 2.2.1, added fake-surround support and emu selection
+	added ShellExec GUI configuration support (thanks to Azeem Arshad)
+	fixed id3v2 parser whitespace trimming bug
+	"Stop after current" can be reconfigured to be auto-reset each time
+	auto-save EQ start on every change
+	gcc 4.7 compile fix in SID plugin
+	added new Sort->Random feature, to randomize the playlist (thanks to Defusix)
+	converter: fixed writing wav files sized over 2 gigs
+	converter: added support for reconstructing of the folder structrure based on longest common root folder
+	converter: added support for writing files to the source track folders
+	fixed possible hang caused by race condition in the alsa/streamer interaction
+	wildmidi: fixed possible linking errors
+	fixed ignoring cuesheet and log fields in search
+	added support for TXX DATE field as written by FB2K
+	bogus "plugin.so file not found" errors are no longer printed
+	fixed bug in search window causing all tracks to become selected on some actions
+	fixed possible crash when loading corrupted playlist files
+	EQ window will reflect changes in the DSP chain configuration
+	fixed excessive CPU load while streamer is waiting for the last track to finish
+
 version 0.5.2
 	fixed reading id3v2 and apev2 tags from raw AAC files
 	fixed proxy authentication bug in vfs_curl plugin
