@@ -4,7 +4,7 @@ version 0.5.3
 	added ShellExec GUI configuration support (thanks to Azeem Arshad)
 	fixed id3v2 parser whitespace trimming bug
 	"Stop after current" can be reconfigured to be auto-reset each time
-	auto-save EQ start on every change
+	auto-save EQ state on every change
 	gcc 4.7 compile fix in SID plugin
 	added new Sort->Random feature, to randomize the playlist (thanks to Defusix)
 	converter: fixed writing wav files sized over 2 gigs
