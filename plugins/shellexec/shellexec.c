@@ -257,6 +257,7 @@ shx_get_actions (DB_plugin_action_callback_t callback)
 Shx_action_t*
 shx_action_add (void) {
     Shx_action_t *a = calloc (sizeof (Shx_action_t), 1);
+    a->parent.callback = (DB_plugin_action_callback_t)shx_callback;
     if (!actions) {
         actions = a;
     }
