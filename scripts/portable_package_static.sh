@@ -39,6 +39,7 @@ tar jcvf ../portable_out/build/deadbeef-$VERSION-static-i686.tar.bz2\
     $PLUGDIR/nullout.so\
     $PLUGDIR/oss.so\
     $PLUGDIR/shellexec.so\
+    $PLUGDIR/shellexecui_gtk2.so\
     $PLUGDIR/sid.so\
     $PLUGDIR/sndfile.so\
     $PLUGDIR/supereq.so\
