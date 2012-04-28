@@ -397,9 +397,9 @@ static DB_misc_t plugin = {
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
 #if GTK_CHECK_VERSION(3,0,0)
-    .plugin.id = "shellexec_gtk2",
+    .plugin.id = "shellexecui_gtk2",
 #else
-    .plugin.id = "shellexec_gtk3",
+    .plugin.id = "shellexecui_gtk3",
 #endif
     .plugin.name = "Shellexec GTK UI",
     .plugin.descr = "A GTK UI for the Shellexec plugin",
@@ -426,9 +426,9 @@ static DB_misc_t plugin = {
 
 DB_plugin_t *
 #if GTK_CHECK_VERSION(3,0,0)
-shellexec_gtk3_load (DB_functions_t *api) {
+shellexecui_gtk3_load (DB_functions_t *api) {
 #else
-shellexec_gtk2_load (DB_functions_t *api) {
+shellexecui_gtk2_load (DB_functions_t *api) {
 #endif
     deadbeef = api;
     return DB_PLUGIN(&plugin);
