@@ -1406,6 +1406,9 @@ streamer_thread (void *ctx) {
             do {
                 int prev_buns = bytes_until_next_song;
                 int nb = streamer_read_async (readbuffer+bytesread,sz-bytesread);
+                if (nb <= 0) {
+                    break;
+                }
                 bytesread += nb;
                 struct timeval tm2;
                 gettimeofday (&tm2, NULL);
