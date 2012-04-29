@@ -265,6 +265,7 @@ shx_action_add (void) {
         for (Shx_action_t *last = actions; last; last = (Shx_action_t *)last->parent.next) {
             if (!last->parent.next) {
                 last->parent.next = (DB_plugin_action_t *)a;
+                break;
             }
         }
     }
