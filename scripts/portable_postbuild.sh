@@ -1,7 +1,8 @@
 #!/bin/sh
 VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print'`
 OSTYPE=`uname -s`
-OUTDIR=portable/deadbeef-$VERSION
+ARCH=`uname -m | perl -ne 'chomp and print'`
+OUTDIR=portable/$ARCH/deadbeef-$VERSION
 PLUGDIR=$OUTDIR/plugins
 DOCDIR=$OUTDIR/doc
 PIXMAPDIR=$OUTDIR/pixmaps

@@ -10,10 +10,12 @@ PLUGDIR=$SRCDIR/plugins
 DOCDIR=$SRCDIR/doc
 PIXMAPDIR=$SRCDIR/pixmaps
 
-rm portable_out/build/deadbeef-$VERSION-static-i686.tar.bz2
+ARCH=`uname -m | perl -ne 'chomp and print'`
 
-cd portable
-tar jcvf ../portable_out/build/deadbeef-$VERSION-static-i686.tar.bz2\
+rm portable_out/build/deadbeef-$VERSION-static-$ARCH.tar.bz2
+
+cd portable/$ARCH
+tar jcvf ../..//portable_out/build/deadbeef-$VERSION-static-$ARCH.tar.bz2\
     $SRCDIR/deadbeef\
     $SRCDIR/deadbeef.png\
     $DOCDIR\
@@ -58,7 +60,7 @@ tar jcvf ../portable_out/build/deadbeef-$VERSION-static-i686.tar.bz2\
     $PLUGDIR/convpresets\
     $PLUGDIR/pulse.so\
     $PLUGDIR/dsp_libsrc.so\
-    $PLUGDIR/mono2stereo.so\
+    $PLUGDIR/ddb_mono2stereo.so\
     $PIXMAPDIR\
     $SRCDIR/locale
-cd ..
+cd ../..

@@ -9,7 +9,7 @@ export APBUILD_STATIC_LIBGCC=1
 
 ./autogen.sh
 
-./configure --enable-staticlink=yes --enable-portable=yes --disable-artwork-imlib2
+./configure --enable-staticlink --disable-artwork-imlib2 --prefix=/opt/deadbeef
 sed -i 's/-lstdc++ -lm -lgcc_s -lc -lgcc_s/-lm -lc/g' libtool
 make clean
 make -j9
@@ -23,5 +23,6 @@ cd tools/pluginfo
 make
 cd ../../
 
-./scripts/portable_postbuild.sh
+#./scripts/portable_postbuild.sh
+fakeroot -- ./scripts/static_install.sh
 

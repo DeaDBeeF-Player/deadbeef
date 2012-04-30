@@ -76,9 +76,15 @@ extern __const unsigned short int *__ctype_b;	/* Characteristics.  */
 extern __const __int32_t *__ctype_tolower; /* Case conversions.  */
 extern __const __int32_t *__ctype_toupper; /* Case conversions.  */
 
+#if __x86_64__
+__asm__(".symver __ctype_b,__ctype_b@GLIBC_2.2.5");
+__asm__(".symver __ctype_tolower,__ctype_tolower@GLIBC_2.2.5");
+__asm__(".symver __ctype_toupper,__ctype_toupper@GLIBC_2.2.5");
+#else
 __asm__(".symver __ctype_b,__ctype_b@GLIBC_2.0");
-__asm__(".symver __ctype_tolower,__ctype_tolower@GLIBC_2.0");
-__asm__(".symver __ctype_toupper,__ctype_toupper@GLIBC_2.0");
+__asm__(".symver __ctype_tolower,__ctype_tolower@GLIBC_2.2.5");
+__asm__(".symver __ctype_toupper,__ctype_toupper@GLIBC_2.2.5");
+#endif
 
 #define	__isctype(c, type) \
   (__ctype_b[(int) (c)] & (unsigned short int) type)
