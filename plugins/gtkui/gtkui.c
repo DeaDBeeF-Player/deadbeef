@@ -982,6 +982,12 @@ gtkui_setup_gui_refresh (void) {
     refresh_timeout = g_timeout_add (tm, gtkui_on_frameupdate, NULL);
 }
 
+gboolean
+add_mainmenu_actions_cb (void *data) {
+    add_mainmenu_actions ();
+    return FALSE;
+}
+
 int
 gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     switch (id) {
@@ -1022,7 +1028,7 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
         g_idle_add (playlistswitch_cb, NULL);
         break;
     case DB_EV_ACTIONSCHANGED:
-        add_mainmenu_actions ();
+        g_idle_add (add_mainmenu_actions_cb, NULL);
         break;
     case DB_EV_DSPCHAINCHANGED:
         eq_refresh ();
