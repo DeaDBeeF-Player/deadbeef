@@ -83,6 +83,11 @@ trim (char* s)
 static int
 shx_callback (Shx_action_t *action, DB_playItem_t *it)
 {
+    if (action->parent.flags&(DB_ACTION_PLAYLIST|DB_ACTION_COMMON)) {
+        trace ("%s\n", action->shcommand);
+        system (action->shcommand);
+        return 0;
+    }
     char cmd[_POSIX_ARG_MAX];
     int res = deadbeef->pl_format_title_escaped (it, -1, cmd, sizeof (cmd) - 2, -1, action->shcommand);
     if (res < 0) {
