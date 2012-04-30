@@ -1,5 +1,7 @@
 if HAVE_SHELLEXECUI
 
+EXTRA_DIST = shellexec.glade
+
 if HAVE_GTK2
 if HAVE_GTK3
 pkglib_LTLIBRARIES = shellexecui_gtk2.la shellexecui_gtk3.la
