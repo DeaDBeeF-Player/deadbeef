@@ -25,4 +25,8 @@ plugins/converter/interface.c
 plugins/converter/support.c
 plugins/gtkui/dspconfig.c
 plugins/gtkui/fileman.c
-
+plugins/converter/converter.glade
+plugins/shellexecui/interface.c
+plugins/shellexecui/shellexecui.c
+plugins/shellexecui/support.c
+plugins/shellexecui/shellexec.glade

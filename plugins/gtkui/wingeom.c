@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 #include "wingeom.h"
 #include "../../deadbeef.h"
 #include "gtkui.h"
+#include "support.h"
 
 void
 wingeom_save (GtkWidget *widget, const char *name) {

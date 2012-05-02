@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -534,7 +534,7 @@ static DB_decoder_t plugin = {
     .plugin.name = "MusePack decoder",
     .plugin.descr = "Musepack decoder using libmppdec",
     .plugin.copyright = 
-        "Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "Uses Musepack SV8 libs (r435), (C) 2005-2009, The Musepack Development Team\n"
         "\n"

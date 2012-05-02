@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -625,7 +625,12 @@ palsa_thread (void *context) {
             }
             err = 0;
             char buf[period_size * (plugin.fmt.bps>>3) * plugin.fmt.channels];
+            UNLOCK; // holding a lock here may cause deadlock in the streamer
             int bytes_to_write = palsa_callback (buf, period_size * (plugin.fmt.bps>>3) * plugin.fmt.channels);
+            LOCK;
+            if (alsa_terminate) {
+                break;
+            }
 
             if (bytes_to_write >= (plugin.fmt.bps>>3) * plugin.fmt.channels) {
                 UNLOCK;
@@ -779,7 +784,7 @@ static DB_output_t plugin = {
     .plugin.name = "ALSA output plugin",
     .plugin.descr = "plays sound through linux standard alsa library",
     .plugin.copyright = 
-        "Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
         "modify it under the terms of the GNU General Public License\n"

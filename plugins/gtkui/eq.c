@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -68,6 +68,7 @@ eq_value_changed (DdbEqualizer *widget)
             set_param (eq, i+1, ddb_equalizer_get_band (widget, i));
         }
         set_param (eq, 0, ddb_equalizer_get_preamp (widget));
+        deadbeef->streamer_dsp_chain_save ();
     }
 }
 
@@ -79,6 +80,7 @@ on_enable_toggled         (GtkToggleButton *togglebutton,
         int enabled = gtk_toggle_button_get_active (togglebutton) ? 1 : 0;
         eq->enabled =  enabled;
         deadbeef->streamer_dsp_refresh ();
+        deadbeef->streamer_dsp_chain_save ();
     }
 }
 
@@ -98,6 +100,7 @@ on_zero_all_clicked                  (GtkButton       *button,
                 set_param (eq, i+1, 0);
             }
             gtk_widget_queue_draw (eqwin);
+            deadbeef->streamer_dsp_chain_save ();
         }
     }
 }
@@ -111,6 +114,7 @@ on_zero_preamp_clicked                  (GtkButton       *button,
             set_param (eq, 0, 0);
             ddb_equalizer_set_preamp (DDB_EQUALIZER (eqwin), 0);
             gtk_widget_queue_draw (eqwin);
+            deadbeef->streamer_dsp_chain_save ();
         }
     }
 }
@@ -126,6 +130,7 @@ on_zero_bands_clicked                  (GtkButton       *button,
                 set_param (eq, i+1, 0);
             }
             gtk_widget_queue_draw (eqwin);
+            deadbeef->streamer_dsp_chain_save ();
         }
     }
 }
@@ -228,7 +233,7 @@ on_load_preset_clicked                  (GtkMenuItem       *menuitem,
                             set_param (eq, i+1, vals[i]);
                         }
                         gtk_widget_queue_draw (eqwin);
-                        deadbeef->conf_save ();
+                        deadbeef->streamer_dsp_chain_save ();
                     }
                 }
                 else {
@@ -294,7 +299,7 @@ on_import_fb2k_preset_clicked                  (GtkButton       *button,
                             set_param (eq, i+1, vals[i]);
                         }
                         gtk_widget_queue_draw (eqwin);
-                        deadbeef->conf_save ();
+                        deadbeef->streamer_dsp_chain_save ();
                     }
                 }
                 else {
@@ -438,3 +443,17 @@ eq_redraw (void) {
     }
 }
 
+void
+eq_refresh (void) {
+    ddb_dsp_context_t *eq = get_supereq ();
+    if (eq && eqwin) {
+        char s[20];
+        eq->plugin->get_param (eq, 0, s, sizeof (s));
+        ddb_equalizer_set_preamp (DDB_EQUALIZER (eqwin), atof(s));
+        for (int i = 0; i < 18; i++) {
+            eq->plugin->get_param (eq, i+1, s, sizeof (s));
+            ddb_equalizer_set_band (DDB_EQUALIZER (eqwin), i, atoi(s));
+        }
+        eq_redraw ();
+    }
+}

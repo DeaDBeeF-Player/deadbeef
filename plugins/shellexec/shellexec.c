@@ -1,7 +1,9 @@
 /*
     Shellexec plugin for DeaDBeeF
-    Copyright (C) 2010-2011 Alexey Yakovenko <waker@users.sf.net>
-    Copyright (C) 2010 Viktor Semykin <thesame.ml@gmail.com>
+    Copyright (C) 2010-2012 Deadbeef team
+    Original developer Viktor Semykin <thesame.ml@gmail.com>
+    Maintainance, minor improvements Alexey Yakovenko <waker@users.sf.net>
+    GUI support and bugfixing Azeem Arshad <kr00r4n@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,10 +34,12 @@
         configuration
 
     @flags comma-separated of command flags, allowed flags are:
-        single - command allowed only for single track
-        local - command allowed only for local files
-        remote - command allowed only for non-local files
-        disabled - ignore command
+        single - command allowed for single track
+        multiple - command allowerd for multiple tracks
+        local - command allowed for local files
+        remote - command allowed for non-local files
+        playlist - command allowed for playlist tabs
+        common - command appears in main menu bar
 */
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
@@ -46,26 +50,13 @@
 #include <limits.h>
 
 #include "../../deadbeef.h"
+#include "shellexec.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
-static DB_misc_t plugin;
+static Shx_plugin_t plugin;
 static DB_functions_t *deadbeef;
-
-//Probably it's reasonable to move these flags to parent struct
-enum {
-    SHX_ACTION_LOCAL_ONLY       = 1 << 0,
-    SHX_ACTION_REMOTE_ONLY      = 1 << 1
-};
-
-typedef struct Shx_action_s
-{
-    DB_plugin_action_t parent;
-
-    const char *shcommand;
-    uint32_t shx_flags;
-} Shx_action_t;
 
 static Shx_action_t *actions;
 
@@ -92,6 +83,11 @@ trim (char* s)
 static int
 shx_callback (Shx_action_t *action, DB_playItem_t *it)
 {
+    if (action->parent.flags&(DB_ACTION_PLAYLIST|DB_ACTION_COMMON)) {
+        trace ("%s\n", action->shcommand);
+        system (action->shcommand);
+        return 0;
+    }
     char cmd[_POSIX_ARG_MAX];
     int res = deadbeef->pl_format_title_escaped (it, -1, cmd, sizeof (cmd) - 2, -1, action->shcommand);
     if (res < 0) {
@@ -105,15 +101,15 @@ shx_callback (Shx_action_t *action, DB_playItem_t *it)
 }
 
 static DB_plugin_action_t *
-shx_get_actions (DB_playItem_t *it)
+shx_get_plugin_actions (DB_playItem_t *it)
 {
     int is_local = it ? deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI")) : 1;
 
     Shx_action_t *action;
     for (action = actions; action; action = (Shx_action_t *)action->parent.next)
     {
-        if (((action->shx_flags & SHX_ACTION_LOCAL_ONLY) && !is_local) ||
-            ((action->shx_flags & SHX_ACTION_REMOTE_ONLY) && is_local))
+        if ((!(action->shx_flags & SHX_ACTION_LOCAL_ONLY) && is_local) ||
+            (!(action->shx_flags & SHX_ACTION_REMOTE_ONLY) && !is_local))
             action->parent.flags |= DB_ACTION_DISABLED;
         else
             action->parent.flags &= ~DB_ACTION_DISABLED;
@@ -135,18 +131,60 @@ shx_find_sep (char *str) {
     return str;
 }
 
-static int
-shx_start ()
+void
+shx_save_actions (void)
 {
-    actions = NULL;
-    Shx_action_t *prev = NULL;
+    deadbeef->conf_remove_items("shellexec.");
+    Shx_action_t *action = actions;
+    int i = 0;
+    while(action) {
+        // build config line
+        // format- shellexec.NN shcmd:title:name:flags
+        size_t conf_line_length = 100 +
+                                  strlen(action->shcommand) + 1 +
+                                  strlen(action->parent.title) + 1 +
+                                  strlen(action->parent.name) + 1;
+        char conf_line[conf_line_length];
+        char conf_key[50];
+        sprintf(conf_key, "shellexec.%d", i);
+        sprintf(conf_line, "%s:%s:%s:", action->shcommand,
+                                        action->parent.title,
+                                        action->parent.name);
+        if(action->shx_flags & SHX_ACTION_REMOTE_ONLY) {
+            strcat(conf_line, "remote,");
+        }
+        if(action->shx_flags & SHX_ACTION_LOCAL_ONLY) {
+            strcat(conf_line, "local,");
+        }
+        if(action->parent.flags & DB_ACTION_PLAYLIST) {
+            strcat(conf_line, "playlist,");
+        }
+        if(action->parent.flags & DB_ACTION_SINGLE_TRACK) {
+            strcat(conf_line, "single,");
+        }
+        if(action->parent.flags & DB_ACTION_ALLOW_MULTIPLE_TRACKS) {
+            strcat(conf_line, "multiple,");
+        }
+        if(action->parent.flags & DB_ACTION_COMMON) {
+            strcat(conf_line, "common,");
+        }
+        deadbeef->conf_set_str(conf_key, conf_line);
+        action = (Shx_action_t*)action->parent.next;
+        i++;
+    }
+    deadbeef->conf_save();
+}
 
+Shx_action_t*
+shx_get_actions (DB_plugin_action_callback_t callback)
+{
+    Shx_action_t *action_list = NULL;
+    Shx_action_t *prev = NULL;
     DB_conf_item_t *item = deadbeef->conf_find ("shellexec.", NULL);
     while (item)
     {
         size_t l = strlen (item->value) + 1;
         char tmp[l];
-        char *tmpptr;
         strcpy (tmp, item->value);
         trace ("Shellexec: %s\n", tmp);
 
@@ -178,19 +216,15 @@ shx_start ()
             name = "noname";
         }
         if (!flags) {
-            flags = "local";
+            flags = "local,single";
         }
-
-        if (strstr (flags, "disabled"))
-            continue;
 
         Shx_action_t *action = calloc (sizeof (Shx_action_t), 1);
 
         action->parent.title = strdup (title);
         action->parent.name = strdup (name);
         action->shcommand = strdup (command);
-        action->parent.callback = (DB_plugin_action_callback_t)shx_callback;
-        action->parent.flags = DB_ACTION_SINGLE_TRACK;
+        action->parent.callback = callback;
         action->parent.next = NULL;
 
         action->shx_flags = 0;
@@ -201,37 +235,122 @@ shx_start ()
         if (strstr (flags, "remote"))
             action->shx_flags |= SHX_ACTION_REMOTE_ONLY;
 
-        if (0 == strstr (flags, "single"))
+        if (strstr (flags, "single"))
+            action->parent.flags |= DB_ACTION_SINGLE_TRACK;
+
+        if (strstr (flags, "multiple"))
             action->parent.flags |= DB_ACTION_ALLOW_MULTIPLE_TRACKS;
 
         if (strstr (flags, "playlist"))
             action->parent.flags |= DB_ACTION_PLAYLIST;
 
+        if (strstr (flags, "common"))
+            action->parent.flags |= DB_ACTION_COMMON;
+
         if (prev)
             prev->parent.next = (DB_plugin_action_t *)action;
         prev = action;
 
-        if (!actions)
-            actions = action;
+        if (!action_list)
+            action_list = action;
 
         item = deadbeef->conf_find ("shellexec.", item);
     }
+    return action_list;
+}
+
+Shx_action_t*
+shx_action_add (void) {
+    Shx_action_t *a = calloc (sizeof (Shx_action_t), 1);
+    a->parent.callback = (DB_plugin_action_callback_t)shx_callback;
+    if (!actions) {
+        actions = a;
+    }
+    else {
+        for (Shx_action_t *last = actions; last; last = (Shx_action_t *)last->parent.next) {
+            if (!last->parent.next) {
+                last->parent.next = (DB_plugin_action_t *)a;
+                break;
+            }
+        }
+    }
+    return a;
+}
+
+void
+shx_action_free (Shx_action_t *a) {
+    if (a->shcommand) {
+        free ((char *)a->shcommand);
+    }
+    if (a->parent.title) {
+        free ((char *)a->parent.title);
+    }
+    if (a->parent.name) {
+        free ((char *)a->parent.name);
+    }
+    free (a);
+}
+
+void
+shx_action_remove (Shx_action_t *action) {
+    Shx_action_t *prev = NULL;
+    for (Shx_action_t *a = actions; a; a = (Shx_action_t *)a->parent.next) {
+        if (a == action) {
+            if (prev) {
+                prev->parent.next = a->parent.next;
+            }
+            else {
+                actions = (Shx_action_t *)a->parent.next;
+            }
+            break;
+        }
+        prev = a;
+    }
+    shx_action_free (action);
+}
+
+static int
+shx_start ()
+{
+    actions = shx_get_actions((DB_plugin_action_callback_t)shx_callback);
+    return 0;
+}
+
+static int
+shx_stop ()
+{
+    Shx_action_t *a = actions;
+    while (a) {
+        Shx_action_t *next = (Shx_action_t *)a->parent.next;
+        if (a->shcommand) {
+            free ((char *)a->shcommand);
+        }
+        if (a->parent.title) {
+            free ((char *)a->parent.title);
+        }
+        if (a->parent.name) {
+            free ((char *)a->parent.name);
+        }
+        free (a);
+        a = next;
+    }
+    actions = NULL;
     return 0;
 }
 
 // define plugin interface
-static DB_misc_t plugin = {
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
-    .plugin.version_major = 1,
-    .plugin.version_minor = 0,
-    .plugin.type = DB_PLUGIN_MISC,
-    .plugin.id = "shellexec",
-    .plugin.name = "Shell commands",
-    .plugin.descr = "Executes configurable shell commands for tracks\n"
+static Shx_plugin_t plugin = {
+    .misc.plugin.api_vmajor = 1,
+    .misc.plugin.api_vminor = 0,
+    .misc.plugin.version_major = 1,
+    .misc.plugin.version_minor = 1,
+    .misc.plugin.type = DB_PLUGIN_MISC,
+    .misc.plugin.id = "shellexec",
+    .misc.plugin.name = "Shell commands",
+    .misc.plugin.descr = "Executes configurable shell commands for tracks\n"
     "This plugin doesn't have GUI configuration yet. Please setup manually in config file\n"
     "Syntax:\n"
-    "shellexec.NN shcmd:title:name:flags\n\n"
+    "shellexec.NN shcmd:title:name:flag1,flag2,flag3,...\n\n"
     "NN is any (unique) number, e.g. 01, 02, 03, etc\n\n"
     "shcmd is the command to execute, supports title formatting\n\n"
     "title is the name of command displayed in UI (context menu)\n\n"
@@ -240,13 +359,14 @@ static DB_misc_t plugin = {
     "    single - command allowed only for single track\n"
     "    local - command allowed only for local files\n"
     "    remote - command allowed only for non-local files\n"
-    "    disabled - ignore command\n\n"
-    "EXAMPLE: shellexec.00 notify-send \"%a - %t\":Show selected track:notify:singe\n"
+    "EXAMPLE: shellexec.00 notify-send \"%a - %t\":Show selected track:notify:single\n"
     "this would show the name of selected track in notification popup"
     ,
-    .plugin.copyright = 
-        "Copyright (C) 2010-2011 Alexey Yakovenko <waker@users.sf.net>\n"
-        "Copyright (C) 2010 Viktor Semykin <thesame.ml@gmail.com>\n"
+    .misc.plugin.copyright = 
+        "Copyright (C) 2010-2012 Deadbeef team\n"
+        "Original developer Viktor Semykin <thesame.ml@gmail.com>\n"
+        "Maintainance, minor improvements Alexey Yakovenko <waker@users.sf.net>\n"
+        "GUI support and bugfixing Azeem Arshad <kr00r4n@gmail.com>"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
         "modify it under the terms of the GNU General Public License\n"
@@ -262,8 +382,13 @@ static DB_misc_t plugin = {
         "along with this program; if not, write to the Free Software\n"
         "Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.\n"
     ,
-    .plugin.website = "http://deadbeef.sf.net",
-    .plugin.start = shx_start,
-    .plugin.get_actions = shx_get_actions
+    .misc.plugin.website = "http://deadbeef.sf.net",
+    .misc.plugin.start = shx_start,
+    .misc.plugin.stop = shx_stop,
+    .misc.plugin.get_actions = shx_get_plugin_actions,
+    .save_actions = shx_save_actions,
+    .action_add = shx_action_add,
+    .action_remove = shx_action_remove,
+    .action_free = shx_action_free,
 };
 

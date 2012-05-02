@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -740,7 +740,7 @@ streamer_set_current (playItem_t *it) {
         else if (!strcmp (ct, "audio/wma")) {
             plug = "ffmpeg";
         }
-        else if (!strcmp (ct, "audio/x-mpegurl") || !strncmp (ct, "text/html", 9)) {
+        else if (!strcmp (ct, "audio/x-mpegurl") || !strncmp (ct, "text/html", 9) || !strncmp (ct, "audio/x-scpls", 13)) {
             // download playlist into temp file
             char *buf = NULL;
             int fd = -1;
@@ -1158,6 +1158,10 @@ streamer_next (int bytesread) {
     if (conf_get_int ("playlist.stop_after_current", 0)) {
         streamer_buffering = 0;
         streamer_set_nextsong (-2, -2);
+        if (conf_get_int ("playlist.stop_after_current_reset", 0)) {
+            conf_set_int ("playlist.stop_after_current", 0);
+            deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+        }
     }
     else {
         streamer_move_to_nextsong (0);
@@ -1402,6 +1406,9 @@ streamer_thread (void *ctx) {
             do {
                 int prev_buns = bytes_until_next_song;
                 int nb = streamer_read_async (readbuffer+bytesread,sz-bytesread);
+                if (nb <= 0) {
+                    break;
+                }
                 bytesread += nb;
                 struct timeval tm2;
                 gettimeofday (&tm2, NULL);
@@ -1545,7 +1552,7 @@ error:
 }
 
 int
-streamer_dsp_chain_save (const char *fname, ddb_dsp_context_t *chain) {
+streamer_dsp_chain_save_internal (const char *fname, ddb_dsp_context_t *chain) {
     FILE *fp = fopen (fname, "w+t");
     if (!fp) {
         return -1;
@@ -1569,6 +1576,13 @@ streamer_dsp_chain_save (const char *fname, ddb_dsp_context_t *chain) {
 
     fclose (fp);
     return 0;
+}
+
+int
+streamer_dsp_chain_save (void) {
+    char fname[PATH_MAX];
+    snprintf (fname, sizeof (fname), "%s/dspconfig", plug_get_config_dir ());
+    return streamer_dsp_chain_save_internal (fname, dsp_chain);
 }
 
 void
@@ -1724,9 +1738,7 @@ streamer_free (void) {
     mutex_free (mutex);
     mutex = 0;
 
-    char fname[PATH_MAX];
-    snprintf (fname, sizeof (fname), "%s/dspconfig", plug_get_config_dir ());
-    streamer_dsp_chain_save (fname, dsp_chain);
+    streamer_dsp_chain_save();
 
     streamer_dsp_chain_free (dsp_chain);
     dsp_chain = NULL;
@@ -2204,9 +2216,7 @@ streamer_set_dsp_chain (ddb_dsp_context_t *chain) {
         formatchanged = 1;
     }
 
-    char fname[PATH_MAX];
-    snprintf (fname, sizeof (fname), "%s/dspconfig", plug_get_config_dir ());
-    streamer_dsp_chain_save (fname, dsp_chain);
+    streamer_dsp_chain_save();
     streamer_reset (1);
 
     mutex_unlock (decodemutex);
@@ -2214,6 +2224,7 @@ streamer_set_dsp_chain (ddb_dsp_context_t *chain) {
     if (playing_track && output->state () != OUTPUT_STATE_STOPPED) {
         streamer_set_seek (playpos);
     }
+    messagepump_push (DB_EV_DSPCHAINCHANGED, 0, 0, 0);
 }
 
 void

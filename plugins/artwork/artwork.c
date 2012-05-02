@@ -1417,7 +1417,7 @@ static DB_artwork_plugin_t plugin = {
     .plugin.plugin.name = "Album Artwork",
     .plugin.plugin.descr = "Loads album artwork either from local directories or from internet",
     .plugin.plugin.copyright = 
-        "Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "Copyright (C) 2009-2011 Viktor Semykin <thesame.ml@gmail.com>\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"

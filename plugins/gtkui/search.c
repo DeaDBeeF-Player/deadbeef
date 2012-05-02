@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -86,6 +86,14 @@ search_refresh (void) {
         GtkEntry *entry = GTK_ENTRY (lookup_widget (searchwin, "searchentry"));
         const gchar *text = gtk_entry_get_text (entry);
         search_process (text);
+        GtkWidget *pl = lookup_widget (searchwin, "searchlist");
+        ddb_listview_refresh (DDB_LISTVIEW (pl), DDB_REFRESH_VSCROLL | DDB_REFRESH_LIST | DDB_LIST_CHANGED);
+    }
+}
+
+void
+search_redraw (void) {
+    if (searchwin && gtk_widget_get_visible (searchwin)) {
         GtkWidget *pl = lookup_widget (searchwin, "searchlist");
         ddb_listview_refresh (DDB_LISTVIEW (pl), DDB_REFRESH_VSCROLL | DDB_REFRESH_LIST | DDB_LIST_CHANGED);
     }

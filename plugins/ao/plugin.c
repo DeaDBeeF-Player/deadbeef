@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -353,7 +353,7 @@ static DB_decoder_t plugin = {
     .plugin.name = "PSF player using Audio Overload SDK",
     .plugin.descr = "plays psf, psf2, spu, ssf, dsf, qsf file formats",
     .plugin.copyright = 
-        "Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "Uses modified aosdk-1.4.8 - library for playing .PSF (Sony PlayStation), .SPU (Sony PlayStation), .PSF2 (Sony PlayStation 2), .SSF (Sega Saturn), .DSF (Sega Dreamcast), and .QSF (Capcom QSound) audio file formats,\n"
         "http://rbelmont.mameworld.info/?page_id=221\n"
@@ -387,7 +387,7 @@ static DB_decoder_t plugin = {
 };
 
 DB_plugin_t *
-ddb_aopsf_load (DB_functions_t *api) {
+ddb_ao_load (DB_functions_t *api) {
     deadbeef = api;
     return DB_PLUGIN (&plugin);
 }

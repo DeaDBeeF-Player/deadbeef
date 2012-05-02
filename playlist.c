@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -2134,12 +2134,14 @@ plt_load (playlist_t *plt, playItem_t *after, const char *fname, int *pabort, in
         return NULL;
     }
 
+    playItem_t *last_added = NULL;
 
     uint8_t majorver;
     uint8_t minorver;
     playItem_t *it = NULL;
     char magic[4];
     if (fread (magic, 1, 4, fp) != 4) {
+        trace ("failed to read magic\n");
         goto load_fail;
     }
     if (strncmp (magic, "DBPL", 4)) {
@@ -2165,8 +2167,6 @@ plt_load (playlist_t *plt, playItem_t *after, const char *fname, int *pabort, in
     if (fread (&cnt, 1, 4, fp) != 4) {
         goto load_fail;
     }
-
-    playItem_t *last_added = NULL;
 
     for (uint32_t i = 0; i < cnt; i++) {
         it = pl_item_alloc ();
@@ -2379,6 +2379,7 @@ plt_load (playlist_t *plt, playItem_t *after, const char *fname, int *pabort, in
     trace ("plt_load: success\n");
     return last_added;
 load_fail:
+    plt_clear (plt);
     fprintf (stderr, "playlist load fail (%s)!\n", fname);
     if (fp) {
         fclose (fp);
@@ -3174,7 +3175,13 @@ qsort_cmp_func (const void *a, const void *b) {
 }
 
 void
-plt_sort (playlist_t *playlist, int iter, int id, const char *format, int ascending) {
+plt_sort (playlist_t *playlist, int iter, int id, const char *format, int order) {
+    if (order == DDB_SORT_RANDOM) {
+        plt_sort_random (playlist, iter);
+        return;
+    }
+    int ascending = order == DDB_SORT_DESCENDING ? 0 : 1;
+
     if (id == DB_COLUMN_FILENUMBER || !playlist->head[iter] || !playlist->head[iter]->next[iter]) {
         return;
     }
@@ -3227,6 +3234,56 @@ plt_sort (playlist_t *playlist, int iter, int id, const char *format, int ascend
     gettimeofday (&tm2, NULL);
     int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
     trace ("sort time: %f seconds\n", ms / 1000.f);
+
+    plt_modified (playlist);
+
+    UNLOCK;
+}
+
+void
+plt_sort_random (playlist_t *playlist, int iter) {
+    if (!playlist->head[iter] || !playlist->head[iter]->next[iter]) {
+        return;
+    }
+
+    LOCK;
+
+    const int playlist_count = playlist->count[iter];
+    playItem_t **array = malloc (playlist_count * sizeof (playItem_t *));
+    int idx = 0;
+    for (playItem_t *it = playlist->head[iter]; it; it = it->next[iter], idx++) {
+        array[idx] = it;
+    }
+
+    //randomize array
+    for (int swap_a = 0; swap_a < playlist_count - 1; swap_a++) {
+        //select random item above swap_a-1
+        const int swap_b = swap_a + (rand() / (float)RAND_MAX * (playlist_count - swap_a));
+
+        //swap a with b
+        playItem_t* const swap_temp = array[swap_a];
+        array[swap_a] = array[swap_b];
+        array[swap_b] = swap_temp;
+
+    }
+
+    playItem_t *prev = NULL;
+    playlist->head[iter] = 0;
+    for (idx = 0; idx < playlist->count[iter]; idx++) {
+        playItem_t *it = array[idx];
+        it->prev[iter] = prev;
+        it->next[iter] = NULL;
+        if (!prev) {
+            playlist->head[iter] = it;
+        }
+        else {
+            prev->next[iter] = it;
+        }
+        prev = it;
+    }
+    playlist->tail[iter] = array[playlist->count[iter]-1];
+
+    free (array);
 
     plt_modified (playlist);
 
@@ -3475,9 +3532,6 @@ plt_search_process (playlist_t *playlist, const char *text) {
     }
     *out = 0;
 
-    const char *cuesheet = metacache_add_string ("cuesheet");
-    const char *log = metacache_add_string("log");
-
     static int cmpidx = 0;
     cmpidx++;
     if (cmpidx > 127) {
@@ -3492,12 +3546,13 @@ plt_search_process (playlist_t *playlist, const char *text) {
                 if (m->key[0] == ':' || m->key[0] == '_' || m->key[0] == '!') {
                     break;
                 }
-                if (m->key!=cuesheet && m->key!=log) {
+                if (strcasecmp(m->key, "cuesheet") && strcasecmp (m->key, "log")) {
                     char cmp = *(m->value-1);
 
                     if (abs (cmp) == cmpidx) {
                         if (cmp > 0) {
                             it->next[PL_SEARCH] = NULL;
+                            it->prev[PL_SEARCH] = playlist->tail[PL_SEARCH];
                             if (playlist->tail[PL_SEARCH]) {
                                 playlist->tail[PL_SEARCH]->next[PL_SEARCH] = it;
                                 playlist->tail[PL_SEARCH] = it;
@@ -3514,6 +3569,7 @@ plt_search_process (playlist_t *playlist, const char *text) {
                         //fprintf (stderr, "%s -> %s match (%s.%s)\n", text, m->value, pl_find_meta_raw (it, ":URI"), m->key);
                         // add to list
                         it->next[PL_SEARCH] = NULL;
+                        it->prev[PL_SEARCH] = playlist->tail[PL_SEARCH];
                         if (playlist->tail[PL_SEARCH]) {
                             playlist->tail[PL_SEARCH]->next[PL_SEARCH] = it;
                             playlist->tail[PL_SEARCH] = it;
@@ -3533,8 +3589,6 @@ plt_search_process (playlist_t *playlist, const char *text) {
             }
         }
     }
-    metacache_remove_string (cuesheet);
-    metacache_remove_string(log);
     UNLOCK;
 }
 

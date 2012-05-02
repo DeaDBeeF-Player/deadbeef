@@ -2349,7 +2349,7 @@ MOS6510::MOS6510 (EventContext *context)
 #   ifdef HAVE_EXCEPTIONS
                     instr->cycle = new(std::nothrow) (void (MOS6510::*[cycleCount]) (void));
 #   else
-                    instr->cycle = new (void (MOS6510::*[cycleCount]) (void));
+                    instr->cycle = new (void (MOS6510::*[(int)cycleCount]) (void));
 #   endif
 #endif // _MSC_VER
                     if (!instr->cycle)
@@ -2441,7 +2441,7 @@ MOS6510::MOS6510 (EventContext *context)
 #   ifdef HAVE_EXCEPTIONS
                     instr->cycle = new(std::nothrow) (void (MOS6510::*[cycleCount]) (void));
 #   else
-                    instr->cycle = new (void (MOS6510::*[cycleCount]) (void));
+                    instr->cycle = new (void (MOS6510::*[(int)cycleCount]) (void));
 #   endif
 #endif // _MSC_VER
                     if (!instr->cycle)

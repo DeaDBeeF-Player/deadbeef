@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -896,12 +896,14 @@ lfm_action_lookup (DB_plugin_action_t *action, DB_playItem_t *it)
         return 0;
     system (command);
     free (command);
+    return 0;
 }
 
 static int
 lfm_action_love (DB_plugin_action_t *act, DB_playItem_t *it)
 {
     printf ("Love starts here\n");
+    return 0;
 }
 
 static DB_plugin_action_t love_action = {
@@ -957,7 +959,7 @@ static DB_misc_t plugin = {
     .plugin.name = "last.fm scrobbler",
     .plugin.descr = "Sends played songs information to your last.fm account, or other service that use AudioScrobbler protocol",
     .plugin.copyright =
-        "Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
         "modify it under the terms of the GNU General Public License\n"

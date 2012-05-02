@@ -2,7 +2,7 @@
   deadbeef.h -- plugin API of the DeaDBeeF audio player
   http://deadbeef.sourceforge.net
 
-  Copyright (C) 2009-2011 Alexey Yakovenko
+  Copyright (C) 2009-2012 Alexey Yakovenko
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -61,6 +61,8 @@ extern "C" {
 
 // api version history:
 // 9.9 -- devel
+// 1.3 -- deadbeef-0.5.3
+// 1.2 -- deadbeef-0.5.2
 // 1.1 -- deadbeef-0.5.1
 //   adds pass_through method to dsp plugins for optimization purposes
 // 1.0 -- deadbeef-0.5.0
@@ -76,7 +78,7 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 1
-#define DB_API_VERSION_MINOR 2
+#define DB_API_VERSION_MINOR 3
 
 #define DDB_PLUGIN_SET_API_VERSION\
     .plugin.api_vmajor = DB_API_VERSION_MAJOR,\
@@ -266,6 +268,8 @@ enum {
     DB_EV_OUTPUTCHANGED = 17, // sound output plugin changed
     DB_EV_PLAYLISTSWITCHED = 18, // playlist switch occured
     DB_EV_SEEK = 19, // seek current track to position p1 (ms)
+    DB_EV_ACTIONSCHANGED = 20, // plugin actions were changed, e.g. for reinitializing gui
+    DB_EV_DSPCHAINCHANGED = 21, // emitted when any parameter of the main dsp chain has been changed
 
     DB_EV_FIRST = 1000,
     DB_EV_SONGCHANGED = 1000, // current song changed from one to another, ctx=ddb_event_trackchange_t
@@ -291,6 +295,13 @@ enum {
     DDB_REPLAYGAIN_ALBUMPEAK,
     DDB_REPLAYGAIN_TRACKGAIN,
     DDB_REPLAYGAIN_TRACKPEAK,
+};
+
+// sort order constants
+enum ddb_sort_order_t {
+    DDB_SORT_DESCENDING,
+    DDB_SORT_ASCENDING,
+    DDB_SORT_RANDOM, // available since API 1.3
 };
 
 // typecasting macros
@@ -474,7 +485,7 @@ typedef struct {
     void (*plt_copy_items) (ddb_playlist_t *to, int iter, ddb_playlist_t * from, DB_playItem_t *before, uint32_t *indices, int cnt);
     void (*plt_search_reset) (ddb_playlist_t *plt);
     void (*plt_search_process) (ddb_playlist_t *plt, const char *text);
-    void (*plt_sort) (ddb_playlist_t *plt, int iter, int id, const char *format, int ascending);
+    void (*plt_sort) (ddb_playlist_t *plt, int iter, int id, const char *format, int order);
 
     // add files and folders to current playlist
     int (*plt_add_file) (ddb_playlist_t *plt, const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
@@ -740,6 +751,9 @@ typedef struct {
 
     // this function must return original un-overriden value (ignoring the keys prefixed with '!')
     const char *(*pl_find_meta_raw) (DB_playItem_t *it, const char *key);
+
+    // ******* new 1.3 APIs ********
+    int (*streamer_dsp_chain_save) (void);
 } DB_functions_t;
 
 // NOTE: an item placement must be selected like this
@@ -847,7 +861,8 @@ typedef struct DB_plugin_s {
     // cmdline_size is number of bytes pointed by cmdline
     int (*exec_cmdline) (const char *cmdline, int cmdline_size);
     
-    // @returns linked list of actions
+    // @returns linked list of actions for the specified track
+    // when it is NULL -- the plugin must return list of all actions
     DB_plugin_action_t* (*get_actions) (DB_playItem_t *it);
 
     // mainloop will call this function for every plugin

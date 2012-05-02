@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>,
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>,
         Viktor Semykin <thesame.ml@gmail.com>
 
     This program is free software; you can redistribute it and/or
@@ -21,6 +21,6 @@
 #ifndef __ACTIONS_H
 #define __ACTIONS_H
 
-void add_mainmenu_actions (GtkWidget *mainwin);
+void add_mainmenu_actions (void);
 
 #endif

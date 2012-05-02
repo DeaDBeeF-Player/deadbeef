@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -982,6 +982,12 @@ gtkui_setup_gui_refresh (void) {
     refresh_timeout = g_timeout_add (tm, gtkui_on_frameupdate, NULL);
 }
 
+gboolean
+add_mainmenu_actions_cb (void *data) {
+    add_mainmenu_actions ();
+    return FALSE;
+}
+
 int
 gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     switch (id) {
@@ -1020,6 +1026,12 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
         break;
     case DB_EV_PLAYLISTSWITCHED:
         g_idle_add (playlistswitch_cb, NULL);
+        break;
+    case DB_EV_ACTIONSCHANGED:
+        g_idle_add (add_mainmenu_actions_cb, NULL);
+        break;
+    case DB_EV_DSPCHAINCHANGED:
+        eq_refresh ();
         break;
     }
     return 0;
@@ -1104,7 +1116,6 @@ gtkui_thread (void *ctx) {
 
     progress_init ();
     cover_art_init ();
-    add_mainmenu_actions (lookup_widget (mainwin, "menubar1"));
 
     gtk_widget_show (mainwin);
 
@@ -1293,6 +1304,7 @@ gtkui_connect_cb (void *none) {
         }
     }
     gtkui_playlist_changed ();
+    add_mainmenu_actions ();
     return FALSE;
 }
 
@@ -1383,7 +1395,7 @@ static ddb_gtkui_t plugin = {
     .gui.plugin.descr = "User interface using GTK+ 2.x",
 #endif
     .gui.plugin.copyright = 
-        "Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
         "modify it under the terms of the GNU General Public License\n"

@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -30,6 +30,7 @@
 #include "interface.h"
 #include "parser.h"
 #include "actions.h"
+#include "search.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -224,7 +225,8 @@ main_add_to_playback_queue_activate     (GtkMenuItem     *menuitem,
         deadbeef->pl_item_unref (it);
         it = next;
     }
-    playlist_refresh ();
+    main_refresh ();
+    search_redraw ();
 }
 
 void
@@ -242,7 +244,8 @@ main_remove_from_playback_queue_activate
         deadbeef->pl_item_unref (it);
         it = next;
     }
-    playlist_refresh ();
+    main_refresh ();
+    search_redraw ();
 }
 
 void
@@ -274,7 +277,8 @@ main_reload_metadata_activate
         deadbeef->pl_item_unref (it);
         it = next;
     }
-    playlist_refresh ();
+    main_refresh ();
+    search_redraw ();
     trkproperties_fill_metadata ();
 }
 
@@ -302,7 +306,7 @@ on_remove1_activate                    (GtkMenuItem     *menuitem,
     int cursor = deadbeef->pl_delete_selected ();
     deadbeef->pl_save_all ();
     main_refresh ();
-    search_refresh ();
+    search_redraw ();
 }
 
 
@@ -314,18 +318,17 @@ on_crop1_activate                      (GtkMenuItem     *menuitem,
     deadbeef->pl_crop_selected ();
     deadbeef->pl_save_all ();
     main_refresh ();
-    search_refresh ();
+    search_redraw ();
 }
 
 void
 on_remove2_activate                    (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    GtkWidget *widget = GTK_WIDGET (menuitem);
     int cursor = deadbeef->pl_delete_selected ();
     deadbeef->pl_save_all ();
     main_refresh ();
-    search_refresh ();
+    search_redraw ();
 }
 
 void
@@ -363,7 +366,7 @@ on_remove_from_disk_activate                    (GtkMenuItem     *menuitem,
     deadbeef->pl_unlock ();
 
     main_refresh ();
-    search_refresh ();
+    search_redraw ();
 }
 
 void

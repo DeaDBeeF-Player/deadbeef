@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -21,8 +21,8 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-//#include <alloca.h>
 #include <string.h>
+#include <sys/stat.h>
 #ifndef __linux__
 #define _POSIX_C_SOURCE 1
 #endif
@@ -172,7 +172,7 @@ static DB_functions_t deadbeef_api = {
     .pl_get_item_duration = (float (*) (DB_playItem_t *it))pl_get_item_duration,
     .pl_get_item_flags = (uint32_t (*) (DB_playItem_t *it))pl_get_item_flags,
     .pl_set_item_flags = (void (*) (DB_playItem_t *it, uint32_t flags))pl_set_item_flags,
-    .plt_sort = (void (*) (ddb_playlist_t *plt, int iter, int id, const char *format, int ascending))plt_sort,
+    .plt_sort = (void (*) (ddb_playlist_t *plt, int iter, int id, const char *format, int order))plt_sort,
     .pl_items_copy_junk = (void (*)(DB_playItem_t *from, DB_playItem_t *first, DB_playItem_t *last))pl_items_copy_junk,
     .pl_set_item_replaygain = (void (*)(DB_playItem_t *it, int idx, float value))pl_set_item_replaygain,
     .pl_get_item_replaygain = (float (*)(DB_playItem_t *it, int idx))pl_get_item_replaygain,
@@ -329,6 +329,8 @@ static DB_functions_t deadbeef_api = {
     .metacache_ref = metacache_ref,
     .metacache_unref = metacache_unref,
     .pl_find_meta_raw = (const char *(*) (DB_playItem_t *it, const char *key))pl_find_meta_raw,
+    // ******* new 1.3 APIs ********
+    .streamer_dsp_chain_save = streamer_dsp_chain_save,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;
@@ -565,6 +567,13 @@ static int
 load_plugin (const char *plugdir, char *d_name, int l) {
     char fullname[PATH_MAX];
     snprintf (fullname, PATH_MAX, "%s/%s", plugdir, d_name);
+
+    // check if the file exists, to avoid printing bogus errors
+    struct stat s;
+    if (0 != stat (fullname, &s)) {
+        return -1;
+    }
+
     trace ("loading plugin %s/%s\n", plugdir, d_name);
     void *handle = dlopen (fullname, RTLD_NOW);
     if (!handle) {

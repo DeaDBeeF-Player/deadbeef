@@ -1,0 +1,11 @@
+pkgname = deadbeef
+pkgdesc = An audio player for GNU/Linux based on GTK2.
+url = http://deadbeef.sourceforge.net
+packager = Alexey Yakovenko <waker@users.sf.net>
+license = GPL2
+depend = gtk2
+depend = hicolor-icon-theme
+depend = desktop-file-utils
+optdepend = libx11: for global hotkeys plugin
+optdepend = alsa-lib: for ALSA output
+optdepend = pulseaudio: for PulseAudio output

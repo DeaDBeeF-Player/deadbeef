@@ -196,3 +196,26 @@ gtk_combo_box_text_get_active_text  (GtkComboBoxText *combo_box) {
 }
 
 #endif
+
+#if !GTK_CHECK_VERSION(2,18,0) || defined(ULTRA_COMPATIBLE)
+void
+gtk_widget_set_allocation (GtkWidget *widget, const GtkAllocation *allocation) {
+    widget->allocation.x = (allocation)->x;
+    widget->allocation.y = (allocation)->y;
+    widget->allocation.width = (allocation)->width;
+    widget->allocation.height = (allocation)->height;
+}
+
+void
+gtk_widget_get_allocation (GtkWidget *widget, GtkAllocation *allocation) {
+    (allocation)->x = widget->allocation.x;
+    (allocation)->y = widget->allocation.y;
+    (allocation)->width = widget->allocation.width;
+    (allocation)->height = widget->allocation.height;
+}
+
+void
+gtk_widget_set_window(GtkWidget *widget, GdkWindow *window) {
+    widget->window = window;
+}
+#endif

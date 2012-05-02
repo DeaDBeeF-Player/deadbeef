@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -43,6 +43,11 @@ adplug_start (void);
 int
 adplug_stop (void);
 
+static const char settings_dlg[] =
+    "property \"Prefer Ken emu over Satoh (surround won't work)\" checkbox adplug.use_ken 0;\n"
+    "property \"Enable surround\" checkbox adplug.surround 1;\n"
+;
+
 // define plugin interface
 DB_decoder_t adplug_plugin = {
     .plugin.api_vmajor = 1,
@@ -54,7 +59,7 @@ DB_decoder_t adplug_plugin = {
     .plugin.name = "Adplug player",
     .plugin.descr = "Adplug player (ADLIB OPL2/OPL3 emulator)",
     .plugin.copyright = 
-        "Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "Uses modified AdPlug library\n"
         "Copyright (C) 1999 - 2010 Simon Peter, et al.\n"
@@ -77,6 +82,7 @@ DB_decoder_t adplug_plugin = {
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.start = adplug_start,
     .plugin.stop = adplug_stop,
+    .plugin.configdialog = settings_dlg,
     .open = adplug_open,
     .init = adplug_init,
     .free = adplug_free,

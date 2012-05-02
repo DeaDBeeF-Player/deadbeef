@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1149,9 +1149,17 @@ on_sort_by_date_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
 
 void
+on_sort_by_random_activate               (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
 on_sort_by_custom_activate             (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
 
 void
 on_convert8to16_toggled                (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_reset_autostop_toggled              (GtkToggleButton *togglebutton,
                                         gpointer         user_data);

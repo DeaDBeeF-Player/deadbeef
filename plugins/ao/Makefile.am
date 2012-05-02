@@ -1,7 +1,7 @@
 if HAVE_PSF
 aodir = $(libdir)/$(PACKAGE)
-pkglib_LTLIBRARIES = ddb_aopsf.la
-ddb_aopsf_la_SOURCES = plugin.c main.c corlett.c\
+pkglib_LTLIBRARIES = ddb_ao.la
+ddb_ao_la_SOURCES = plugin.c main.c corlett.c\
 eng_dsf/eng_dsf.c eng_dsf/dc_hw.c eng_dsf/aica.c eng_dsf/aicadsp.c eng_dsf/arm7.c eng_dsf/arm7i.c\
 eng_ssf/m68kcpu.c eng_ssf/m68kopac.c eng_ssf/m68kopdm.c eng_ssf/m68kopnz.c eng_ssf/m68kops.c \
 eng_ssf/scsp.c eng_ssf/scspdsp.c eng_ssf/sat_hw.c eng_ssf/eng_ssf.c\
@@ -17,11 +17,11 @@ eng_psf/cpuintrf.h eng_psf/mamemem.h eng_psf/psx.h\
 eng_psf/peops/adsr.h eng_psf/peops/dma.h eng_psf/peops/externals.h eng_psf/peops/gauss_i.h eng_psf/peops/registers.h eng_psf/peops/regs.h eng_psf/peops/spu.h eng_psf/peops/stdafx.h\
 eng_psf/peops2/adsr.h eng_psf/peops2/dma.h eng_psf/peops2/externals.h eng_psf/peops2/gauss_i.h eng_psf/peops2/psemuxa.h eng_psf/peops2/registers.h eng_psf/peops2/regs.h eng_psf/peops2/reverb.h eng_psf/peops2/spu.h eng_psf/peops2/stdafx.h 
 
-ddb_aopsf_la_LDFLAGS = -module -fPIC
+ddb_ao_la_LDFLAGS = -module $(ZLIB_LIBS)
 
 EXTRA_DIST=eng_psf/peops/reverb.c eng_psf/peops/adsr.c eng_psf/peops/registers.c eng_psf/peops/dma.c eng_psf/peops2/spu2.c eng_psf/peops2/reverb2.c eng_psf/peops2/adsr2.c eng_dsf/arm7memil.c eng_dsf/aicalfo.c eng_ssf/scsplfo.c
 
-ddb_aopsf_la_LIBADD = $(LDADD)
-AM_CFLAGS = $(CFLAGS) -Wall -DPATH_MAX=1024 -DHAS_PSXCPU=1 -I.. -Ieng_ssf -Ieng_qsf -Ieng_dsf -lm $(ZLIB_LIBS)
+ddb_ao_la_LIBADD = $(LDADD)
+AM_CFLAGS = $(CFLAGS) -Wall -DPATH_MAX=1024 -DHAS_PSXCPU=1 -I.. -Ieng_ssf -Ieng_qsf -Ieng_dsf -lm -fPIC 
 endif
 

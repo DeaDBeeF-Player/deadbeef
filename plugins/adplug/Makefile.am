@@ -5,9 +5,9 @@ adlibdir = $(libdir)/$(PACKAGE)
 pkglib_LTLIBRARIES = adplug.la
 
 AM_CFLAGS = $(CFLAGS) -std=c99 -I$(adplugpath)/adplug -I$(adplugpath)/libbinio -fPIC
-adplug_la_LDFLAGS = -module -nostdlib
+adplug_la_LDFLAGS = -module -nostdlib -lm -lsupc++
 
-AM_CPPFLAGS = $(CXXFLAGS) -Dstricmp=strcasecmp -DVERSION=\"2.1\" -I$(adplugpath)/adplug -I$(adplugpath)/libbinio -fno-exceptions -fno-rtti -nostdlib -fno-unwind-tables -fPIC
+AM_CPPFLAGS = $(CXXFLAGS) -Dstricmp=strcasecmp -DVERSION=\"2.1\" -I$(adplugpath)/adplug -I$(adplugpath)/libbinio -fno-exceptions -fno-rtti -fno-unwind-tables
 
 adplug_la_SOURCES = plugin.c\
                    adplug-db.cpp\

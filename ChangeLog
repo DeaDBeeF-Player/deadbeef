@@ -1,3 +1,76 @@
+version 0.5.3
+	m3u: fixed few parser bugs; added audio/x-scpls mime-type support; fixed m3uext support
+	adplug: upgraded to 2.2.1, added fake-surround support and emu selection
+	added ShellExec GUI configuration support (thanks to Azeem Arshad)
+	fixed id3v2 parser whitespace trimming bug
+	"Stop after current" can be reconfigured to be auto-reset each time
+	auto-save EQ state on every change
+	gcc 4.7 compile fix in SID plugin
+	added new Sort->Random feature, to randomize the playlist (thanks to Defusix)
+	converter: fixed writing wav files sized over 2 gigs
+	converter: added support for reconstructing of the folder structrure based on longest common root folder
+	converter: added support for writing files to the source track folders
+	fixed possible hang caused by race condition in the alsa/streamer interaction
+	wildmidi: fixed possible linking errors
+	fixed ignoring cuesheet and log fields in search
+	added support for TXX DATE field as written by FB2K
+	bogus "plugin.so file not found" errors are no longer printed
+	fixed bug in search window causing all tracks to become selected on some actions
+	fixed possible crash when loading corrupted playlist files
+	EQ window will reflect changes in the DSP chain configuration
+	fixed excessive CPU load while streamer is waiting for the last track to finish
+
+version 0.5.2
+	fixed reading id3v2 and apev2 tags from raw AAC files
+	fixed proxy authentication bug in vfs_curl plugin
+	added OpenIndian b148 support (Kevin van der Vlist)
+	improved APE performance
+	fixed freeze bug in alsa plugin on x86_64
+	added automatic creation of directory structure to the converter plugin
+	few fixes in random and shuffle modes
+	improved automatic config saving
+	added support for ffmpeg-0.8 (Igor Murzov)
+	fixed rename/remove playlist crash when no playlist was selected
+	last.fm plugin will now split multiline fields when scrobbling
+	few bug fixes / improvements in cuesheet support
+	fixed writing non-ascii id3v1 tags
+	pressing enter/play in paused state will now play selected track (bugfix)
+	fixed content-length handling after redirects in vfs_curl plugin
+	artwork plugin now supports png by default
+	fixed rdb check in aac adts parser, this means improved aac support (by 少昊)
+	fixed rare aac crash
+	added EXTM3U support
+	m3u and pls files are now supported only via Load Playlist menu
+	fix off-by-one error in convstr_id3v2 (gohai)
+	improved support for the case when an M3U file contains URIs of other M3Us
+	improved volumebar tooltip (xent)
+	replaygain preamp improvements (Jan D. Behrens)
+	ignore embedded album cuesheets in single-track files
+	experimental GTK3 support, can be enabled with ./configure --enable-gtk3
+	Vala is not used in this project anymore
+	vorbis plugin will now try to open .OGA files
+	GME plugin: added fadeout support, fixed intro/looping, fixed headerless files support (e.g. some GYM), improved gzipped files detection
+	added auto-resizing support to playlist columns
+	DUMB, AudioOverload, SHN, Mono2Stereo plugins are now back in the main tarball
+	default PulseAudio buffer is set to 8K
+	added FLAC embedded album covers (Tydus)
+	added "Album Artist" support to shuffle albums mode
+	fixed several memory leaks
+	config file parser now supports blank values
+	added %L %X %Z to title formatting for "selected playback length", "selected track count", "current channel configuration" respectively
+	added new commandline switch --gui to select GUI plugin
+	added WM/Year field support to ffmpeg plugin
+	fixed reading embedded covers from id3v2.4
+	added optional "Album Artist" support to last.fm
+	aac: improved duration scanner, fixed infinite loop in mp4ff ATOM_UNKNOWN handler
+	avoid scanning/loading plugins twice when XDG_LOCAL_HOME is the same as install directory (Thynson)
+	improvements in the command line handling code (Eugene Debrev)
+	shellexec now supports quoting strings for more flexibility
+	fixed resampler dsp plugin auto-configuration when the player is started for the 1st time
+	plugin API now allows to extend playlist context menu
+	added "audio/ogg" mime-type support
+	fixed playing mp4/aac files with id3v2 tags
+
 version 0.5.1
 	fixed crash bug after deleting playlists
 	fixed importing fb2k EQ presets

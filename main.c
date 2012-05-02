@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -405,6 +405,10 @@ read_entire_message (int sockfd, int *size) {
 
         int rd = recv(sockfd, buf + rdp, bufsize - rdp, 0);
         if (rd < 0) {
+            if (errno == EAGAIN) {
+                usleep (50000);
+                continue;
+            }
             free(buf);
             return NULL;
         }
@@ -450,7 +454,9 @@ server_update (void) {
         }
         close(s2);
 
-        free(buf);
+        if (buf) {
+            free(buf);
+        }
     }
     return 0;
 }
@@ -780,7 +786,7 @@ main (int argc, char *argv[]) {
             return 0;
         }
         else if (!strcmp (argv[i], "--version")) {
-            fprintf (stdout, "DeaDBeeF " VERSION " Copyright © 2009-2011 Alexey Yakovenko\n");
+            fprintf (stdout, "DeaDBeeF " VERSION " Copyright © 2009-2012 Alexey Yakovenko\n");
             return 0;
         }
         else if (!strcmp (argv[i], "--gui")) {
@@ -849,6 +855,9 @@ main (int argc, char *argv[]) {
             else if (sz > 0 && out[0]) {
                 fprintf (stderr, "%s\n", out);
             }
+        }
+        if (out) {
+            free (out);
         }
         close (s);
         exit (0);
