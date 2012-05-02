@@ -89,3 +89,5 @@ _("Convert")
 _("Target Samplerate")
 _("Quality / Algorythm")
 _("Automatic Samplerate (overrides Target Samplerate)")
+// please note: do NOT translate the Edit/ part
+_("Edit/Configure custom shell commands")
