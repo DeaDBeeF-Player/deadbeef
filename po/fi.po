@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2012-03-11 10:13+0200\n"
+"PO-Revision-Date: 2012-03-18 09:42+0200\n"
 "Last-Translator: Juhani <juhaninumminen0@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: fi\n"
@@ -123,11 +123,11 @@ msgstr "Foobar2000 EQ esiasetukset (*.feq)"
 
 #: ../plugins/gtkui/eq.c:316
 msgid "Save Preset"
-msgstr "Tallenna esiasetus..."
+msgstr "Tallenna esiasetus"
 
 #: ../plugins/gtkui/eq.c:324
 msgid "Load Preset"
-msgstr "Lataa esiasetus..."
+msgstr "Lataa esiasetus"
 
 #: ../plugins/gtkui/eq.c:332
 msgid "Import Foobar2000 Preset"
@@ -287,7 +287,7 @@ msgstr "Poista"
 
 #: ../plugins/gtkui/interface.c:277 ../plugins/gtkui/deadbeef.glade.h:24
 msgid "Crop"
-msgstr ""
+msgstr "Rajaa"
 
 #: ../plugins/gtkui/interface.c:281 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "_Find"
@@ -364,7 +364,7 @@ msgstr "T_oisto"
 #: ../plugins/gtkui/interface.c:358 ../plugins/gtkui/interface.c:3298
 #: ../plugins/gtkui/deadbeef.glade.h:83
 msgid "Order"
-msgstr ""
+msgstr "Järjestys"
 
 #: ../plugins/gtkui/interface.c:365 ../plugins/gtkui/deadbeef.glade.h:71
 msgid "Linear"
@@ -384,35 +384,35 @@ msgstr "Satunnainen"
 
 #: ../plugins/gtkui/interface.c:386 ../plugins/gtkui/deadbeef.glade.h:75
 msgid "Looping"
-msgstr ""
+msgstr "Toisto"
 
 #: ../plugins/gtkui/interface.c:393 ../plugins/gtkui/deadbeef.glade.h:73
 msgid "Loop All"
-msgstr ""
+msgstr "Toista kaikki"
 
 #: ../plugins/gtkui/interface.c:398 ../plugins/gtkui/deadbeef.glade.h:74
 msgid "Loop Single Song"
-msgstr ""
+msgstr "Toista yksi kappale"
 
 #: ../plugins/gtkui/interface.c:403 ../plugins/gtkui/deadbeef.glade.h:36
 msgid "Don't Loop"
-msgstr ""
+msgstr "Älä toista"
 
 #: ../plugins/gtkui/interface.c:409 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "Scroll follows playback"
-msgstr ""
+msgstr "Vieritys seuraa toistoa"
 
 #: ../plugins/gtkui/interface.c:414 ../plugins/gtkui/deadbeef.glade.h:26
 msgid "Cursor follows playback"
-msgstr ""
+msgstr "Hiiri seuraa toistoa"
 
 #: ../plugins/gtkui/interface.c:418 ../plugins/gtkui/deadbeef.glade.h:127
 msgid "Stop after current"
-msgstr ""
+msgstr "Pysäytä tämän kappaleen jälkeen"
 
 #: ../plugins/gtkui/interface.c:430 ../plugins/gtkui/deadbeef.glade.h:67
 msgid "Jump to current track"
-msgstr ""
+msgstr "Hyppää nykyiseen raitaan"
 
 #: ../plugins/gtkui/interface.c:437 ../plugins/gtkui/interface.c:444
 #: ../plugins/gtkui/deadbeef.glade.h:159
@@ -511,12 +511,12 @@ msgstr "Tyyppi:"
 
 #: ../plugins/gtkui/interface.c:1510
 msgid "Item Index"
-msgstr ""
+msgstr "KOhteen indeksi"
 
 #. create default set of columns
 #: ../plugins/gtkui/interface.c:1511 ../plugins/gtkui/mainplaylist.c:315
 msgid "Playing"
-msgstr ""
+msgstr "Soitetaan"
 
 #: ../plugins/gtkui/interface.c:1512
 msgid "Album Art"
@@ -537,7 +537,7 @@ msgstr "Raidan Numero"
 
 #: ../plugins/gtkui/interface.c:1519 ../translation/extra.c:68
 msgid "Band / Album Artist"
-msgstr ""
+msgstr "Yhtye / Albumin artisti"
 
 #: ../plugins/gtkui/interface.c:1526 ../plugins/gtkui/interface.c:3150
 #: ../plugins/gtkui/deadbeef.glade.h:44
@@ -546,7 +546,7 @@ msgstr "Tiedostomuoto:"
 
 #: ../plugins/gtkui/interface.c:1551 ../plugins/gtkui/deadbeef.glade.h:11
 msgid "Alignment:"
-msgstr ""
+msgstr "Kohdistus:"
 
 #: ../plugins/gtkui/interface.c:1559
 msgid "Left"
@@ -570,11 +570,11 @@ msgstr "_OK"
 
 #: ../plugins/gtkui/interface.c:1825 ../plugins/gtkui/deadbeef.glade.h:85
 msgid "Output plugin:"
-msgstr ""
+msgstr "Ulostuloliitännäinen:"
 
 #: ../plugins/gtkui/interface.c:1838 ../plugins/gtkui/deadbeef.glade.h:84
 msgid "Output device:"
-msgstr ""
+msgstr "Ulostulolaite:"
 
 #: ../plugins/gtkui/interface.c:1847 ../plugins/gtkui/deadbeef.glade.h:12
 msgid "Always convert 8 bit audio to 16 bit"
@@ -582,15 +582,15 @@ msgstr "Muunna aina 8-bittinen ääni 16-bittiseksi"
 
 #: ../plugins/gtkui/interface.c:1851 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "Sound"
-msgstr ""
+msgstr "Ääni"
 
 #: ../plugins/gtkui/interface.c:1864 ../plugins/gtkui/deadbeef.glade.h:106
 msgid "Replaygain mode:"
-msgstr ""
+msgstr "Replaygain-tila:"
 
 #: ../plugins/gtkui/interface.c:1873
 msgid "Disable"
-msgstr ""
+msgstr "Pois päältä"
 
 #: ../plugins/gtkui/interface.c:1874
 msgid "Track"
@@ -598,7 +598,7 @@ msgstr "Raita"
 
 #: ../plugins/gtkui/interface.c:1877 ../plugins/gtkui/deadbeef.glade.h:107
 msgid "Replaygain peak scale"
-msgstr ""
+msgstr "Replaygain-huippuskaala"
 
 #: ../plugins/gtkui/interface.c:1892 ../plugins/gtkui/interface.c:1926
 #: ../plugins/gtkui/deadbeef.glade.h:2
@@ -612,11 +612,11 @@ msgstr "+12 dB"
 
 #: ../plugins/gtkui/interface.c:1906 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Replaygain preamp:"
-msgstr ""
+msgstr "Replaygain-esivahvistus:"
 
 #: ../plugins/gtkui/interface.c:1913 ../plugins/gtkui/deadbeef.glade.h:47
 msgid "Global preamp:"
-msgstr ""
+msgstr "Yleinen esivahvistus:"
 
 #: ../plugins/gtkui/interface.c:1944 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
@@ -626,15 +626,15 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1953 ../plugins/gtkui/deadbeef.glade.h:109
 msgid "Resume previous session on startup"
-msgstr ""
+msgstr "Palauta edellinen istunto käynnistyksessä"
 
 #: ../plugins/gtkui/interface.c:1957 ../plugins/gtkui/deadbeef.glade.h:37
 msgid "Don't add from archives when adding folders"
-msgstr ""
+msgstr "Älä lisää arkistoista lisättäessä kansioita"
 
 #: ../plugins/gtkui/interface.c:1961 ../plugins/gtkui/deadbeef.glade.h:91
 msgid "Playback"
-msgstr ""
+msgstr "Toisto"
 
 #: ../plugins/gtkui/interface.c:1982 ../plugins/gtkui/interface.c:2514
 #: ../plugins/gtkui/deadbeef.glade.h:22 ../plugins/converter/interface.c:649
@@ -642,9 +642,8 @@ msgid "Configure"
 msgstr "Tee asetukset"
 
 #: ../plugins/gtkui/interface.c:2017 ../plugins/gtkui/deadbeef.glade.h:29
-#, fuzzy
 msgid "DSP Chain Preset"
-msgstr "Tallenna esiasetus..."
+msgstr "DSP ketjuesiasetus"
 
 #: ../plugins/gtkui/interface.c:2029 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "_Load"
@@ -680,19 +679,21 @@ msgstr "Nimeä soittolista automaattisesti lisättäessä yksittäinen kansio"
 
 #: ../plugins/gtkui/interface.c:2070 ../plugins/gtkui/deadbeef.glade.h:54
 msgid "Interface refresh rate (times per second):"
-msgstr ""
+msgstr "Käyttöliittymän päivitysnopeus (kertaa sekunnissa):"
 
 #: ../plugins/gtkui/interface.c:2084 ../plugins/gtkui/deadbeef.glade.h:137
 msgid "Titlebar text while playing:"
-msgstr ""
+msgstr "Otsikkopalkin teksti toistettaessa:"
 
 #: ../plugins/gtkui/interface.c:2098 ../plugins/gtkui/deadbeef.glade.h:138
 msgid "Titlebar text while stopped:"
-msgstr ""
+msgstr "Otsikkopalkin teksti, kun toisto on pysäytetty:"
 
 #: ../plugins/gtkui/interface.c:2112 ../plugins/gtkui/deadbeef.glade.h:46
 msgid "GUI Plugin (changing requires restart):"
 msgstr ""
+"Käyttöliittymäliitännäinen (vaihtaminen vaatii ohjelman "
+"uudellenkäynnistyksen):"
 
 #: ../plugins/gtkui/interface.c:2120 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "GUI"
@@ -701,19 +702,19 @@ msgstr "Käyttöliittymä"
 #: ../plugins/gtkui/interface.c:2135 ../plugins/gtkui/interface.c:2179
 #: ../plugins/gtkui/deadbeef.glade.h:86
 msgid "Override"
-msgstr ""
+msgstr "Ohita"
 
 #: ../plugins/gtkui/interface.c:2144 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Foreground"
-msgstr ""
+msgstr "Etuala"
 
 #: ../plugins/gtkui/interface.c:2151 ../plugins/gtkui/deadbeef.glade.h:17
 msgid "Background"
-msgstr ""
+msgstr "Tausta"
 
 #: ../plugins/gtkui/interface.c:2170 ../plugins/gtkui/deadbeef.glade.h:113
 msgid "Seekbar/Volumebar colors"
-msgstr ""
+msgstr "Etsintä-/äänenvoimakkuuspalkin värit"
 
 #: ../plugins/gtkui/interface.c:2188 ../plugins/gtkui/deadbeef.glade.h:77
 msgid "Middle"
@@ -729,7 +730,7 @@ msgstr "Tumma"
 
 #: ../plugins/gtkui/interface.c:2233 ../plugins/gtkui/deadbeef.glade.h:18
 msgid "Base"
-msgstr ""
+msgstr "Pohja"
 
 #: ../plugins/gtkui/interface.c:2240 ../plugins/gtkui/interface.c:2297
 #: ../plugins/gtkui/deadbeef.glade.h:134
@@ -738,19 +739,20 @@ msgstr "Teksti"
 
 #: ../plugins/gtkui/interface.c:2253 ../plugins/gtkui/deadbeef.glade.h:131
 msgid "Tab strip colors"
-msgstr ""
+msgstr "Välilehden värit"
 
 #: ../plugins/gtkui/interface.c:2262 ../plugins/gtkui/deadbeef.glade.h:87
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
 msgstr ""
+"Ohita asetus (GTKn treeview-teema menetetään, mutta nopeuttaa renderöintiä)"
 
 #: ../plugins/gtkui/interface.c:2271 ../plugins/gtkui/deadbeef.glade.h:41
 msgid "Even row"
-msgstr ""
+msgstr "Parillinen rivi"
 
 #: ../plugins/gtkui/interface.c:2278 ../plugins/gtkui/deadbeef.glade.h:82
 msgid "Odd row"
-msgstr ""
+msgstr "Pariton rivi"
 
 #: ../plugins/gtkui/interface.c:2304 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Selected row"
@@ -819,11 +821,11 @@ msgstr "URL:"
 
 #: ../plugins/gtkui/interface.c:3135 ../plugins/gtkui/deadbeef.glade.h:48
 msgid "Group By"
-msgstr ""
+msgstr "Ryhmittele"
 
 #: ../plugins/gtkui/interface.c:3259 ../plugins/gtkui/deadbeef.glade.h:123
 msgid "Sort by..."
-msgstr ""
+msgstr "Järjestä..."
 
 #: ../plugins/gtkui/interface.c:3275 ../plugins/gtkui/deadbeef.glade.h:43
 msgid "Format"
@@ -850,7 +852,7 @@ msgstr "Liitännäinen"
 
 #: ../plugins/gtkui/interface.c:3461 ../plugins/gtkui/deadbeef.glade.h:133
 msgid "Tag Writer Settings"
-msgstr ""
+msgstr "Tagikirjoittajan asetukset"
 
 #: ../plugins/gtkui/interface.c:3492 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "Write ID3v2"
@@ -869,17 +871,17 @@ msgstr "Kirjoita APEv2"
 #: ../plugins/gtkui/interface.c:3508 ../plugins/gtkui/interface.c:3587
 #: ../plugins/gtkui/deadbeef.glade.h:130
 msgid "Strip ID3v2"
-msgstr ""
+msgstr "Poista ID3v2"
 
 #: ../plugins/gtkui/interface.c:3512 ../plugins/gtkui/interface.c:3635
 #: ../plugins/gtkui/deadbeef.glade.h:129
 msgid "Strip ID3v1"
-msgstr ""
+msgstr "Poista ID3v1"
 
 #: ../plugins/gtkui/interface.c:3516 ../plugins/gtkui/interface.c:3591
 #: ../plugins/gtkui/interface.c:3631 ../plugins/gtkui/deadbeef.glade.h:128
 msgid "Strip APEv2"
-msgstr ""
+msgstr "Poista APEv2"
 
 #: ../plugins/gtkui/interface.c:3524 ../plugins/gtkui/deadbeef.glade.h:53
 msgid "ID3v2 version"
@@ -958,7 +960,7 @@ msgstr "Poista sarake"
 
 #: ../plugins/gtkui/plcommon.c:998
 msgid "Group by"
-msgstr ""
+msgstr "Ryhmittele"
 
 #: ../plugins/gtkui/plcommon.c:1005
 msgid "None"
@@ -975,7 +977,7 @@ msgstr "Avaa tiedosto..."
 #: ../plugins/gtkui/pluginconf.c:217
 #, c-format
 msgid "Configure %s"
-msgstr ""
+msgstr "Tee asetukset %s"
 
 #: ../plugins/gtkui/prefwin.c:82
 msgid "Default Audio Device"
@@ -987,15 +989,15 @@ msgstr "Lisää"
 
 #: ../plugins/gtkui/prefwin.c:328
 msgid "Global Hotkeys"
-msgstr ""
+msgstr "Yleiset pikanäppäimet"
 
 #: ../plugins/gtkui/prefwin.c:390
 msgid "Slot"
-msgstr ""
+msgstr "Toiminto"
 
 #: ../plugins/gtkui/prefwin.c:391
 msgid "Key combination"
-msgstr ""
+msgstr "Näppäinyhdistelmä"
 
 #: ../plugins/gtkui/progress.c:56
 msgid "Adding files..."
@@ -1007,7 +1009,7 @@ msgstr "Alustetaan..."
 
 #: ../plugins/gtkui/trkproperties.c:159
 msgid "You've modified data for this track."
-msgstr ""
+msgstr "Olet muokannut tämän raidan dataa."
 
 #: ../plugins/gtkui/trkproperties.c:161
 msgid "Really close the window?"
@@ -1044,19 +1046,19 @@ msgstr "Kenttää ei voi lisätä"
 
 #: ../plugins/gtkui/trkproperties.c:667
 msgid "Field with such name already exists, please try different name."
-msgstr ""
+msgstr "Samanniminen kenttä on jo olemassa, yritä toista nimeä."
 
 #: ../plugins/gtkui/trkproperties.c:692
 msgid "Really remove selected field?"
-msgstr ""
+msgstr "Poistetaanko valittu kenttä todella?"
 
 #: ../plugins/gtkui/trkproperties.c:734
 msgid "Add field"
-msgstr ""
+msgstr "Lisää kenttä"
 
 #: ../plugins/gtkui/trkproperties.c:737
 msgid "Remove field"
-msgstr ""
+msgstr "Poista kentät"
 
 #: ../main.c:91
 #, c-format
@@ -1076,7 +1078,7 @@ msgstr "   --help  tai  -h    Näytä ohje (tämä viesti) ja poistu\n"
 #: ../main.c:94
 #, c-format
 msgid "   --quit             Quit player\n"
-msgstr ""
+msgstr "   --quit             Sulje soitin\n"
 
 #: ../main.c:95
 #, c-format
@@ -1086,53 +1088,54 @@ msgstr "   --version          Näytä versiotiedot ja poistu\n"
 #: ../main.c:96
 #, c-format
 msgid "   --play             Start playback\n"
-msgstr ""
+msgstr "   --play             Aloita toisto\n"
 
 #: ../main.c:97
 #, c-format
 msgid "   --stop             Stop playback\n"
-msgstr ""
+msgstr "   --stop             Pysäytä toisto\n"
 
 #: ../main.c:98
 #, c-format
 msgid "   --pause            Pause playback\n"
-msgstr ""
+msgstr "   --pause            Keskeytä toisto\n"
 
 #: ../main.c:99
 #, c-format
 msgid "   --toggle-pause     Toggle pause\n"
-msgstr ""
+msgstr "   --toggle-pause     Vaihda keskeytyksen ja toiston välillä\n"
 
 #: ../main.c:100
 #, c-format
 msgid ""
 "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
-msgstr ""
+msgstr "   --play-pause       Aloita toisto, jos pysäytetty, muuten vaihda "
+"keskeytyksen ja toiston välillä\n"
 
 #: ../main.c:101
 #, c-format
 msgid "   --next             Next song in playlist\n"
-msgstr ""
+msgstr "   --next             Seuraava kappale soittolistalla\n"
 
 #: ../main.c:102
 #, c-format
 msgid "   --prev             Previous song in playlist\n"
-msgstr ""
+msgstr "   --prev             Edellinen kappale soittolistalla\n"
 
 #: ../main.c:103
 #, c-format
 msgid "   --random           Random song in playlist\n"
-msgstr ""
+msgstr "   --random           Satunnainen kappale soittolistalla\n"
 
 #: ../main.c:104
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
-msgstr ""
+msgstr "   --queue            Lisää tiedosto(t) olemassa olevaan soittolistaan\n"
 
 #: ../main.c:105
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr ""
+msgstr "   --nowplaying FMT   Tulosta muotoiltu raidan nimi stdoutiin\n"
 
 #: ../main.c:106
 #, c-format
@@ -1141,20 +1144,25 @@ msgid ""
 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
 "                      copy[r]ight, [e]lapsed\n"
 msgstr ""
+"                      FMT %%-syntaksi: [a]rtist, [t]itle, al[b]um,\n"
+"                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
+"                      copy[r]ight, [e]lapsed\n"
 
 #: ../main.c:109
 #, c-format
 msgid ""
 "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
 "- title\"\n"
-msgstr ""
+msgstr "                      esim.: --nowplaying \"%%a - %%t\" tulostaa \"artisti - "
+"otsikko\"\n"
 
 #: ../main.c:110
 #, c-format
 msgid ""
 "                      for more info, see http://sourceforge.net/apps/"
 "mediawiki/deadbeef/index.php?title=Title_Formatting\n"
-msgstr ""
+msgstr "                      lisätietoja osoitteessa http://sourceforge.net/apps/me"
+"diawiki/deadbeef/index.php?title=Title_Formatting\n"
 
 #: ../playlist.c:454 ../playlist.c:2398
 msgid "Default"
@@ -1190,6 +1198,9 @@ msgid ""
 "Track\n"
 "Album"
 msgstr ""
+"Pois käytöstä\n"
+"Raita\n"
+"Albumi"
 
 #: ../plugins/gtkui/deadbeef.glade.h:56
 msgid ""
@@ -1205,6 +1216,17 @@ msgid ""
 "Band / Album Artist\n"
 "Custom"
 msgstr ""
+"Kohteen indeksi\n"
+"Soitetaan\n"
+"Albumin kansikuva\n"
+"Artisti - Albumi\n"
+"Artisti\n"
+"Albumi\n"
+"Otsikko\n"
+"Kesto\n"
+"Raidan numero\n"
+"Bändi / Albumin artisti\n"
+"Mukautettu"
 
 #: ../plugins/gtkui/deadbeef.glade.h:68
 msgid ""
@@ -1226,6 +1248,9 @@ msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings."
 msgstr ""
+"wildmidi: freepats-asetustiedostoa ei löydetty. Asenna paketti timidity-"
+"freepats tai määrittele tiedoston freepats.cfg sijainti liitännäisten "
+"asetuksissa."
 
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
@@ -1244,7 +1269,7 @@ msgstr ""
 
 #: ../translation/extra.c:7
 msgid "Release device while stopped"
-msgstr ""
+msgstr "Vapauta laite, kun toisto on lopetettu"
 
 #: ../translation/extra.c:8 ../translation/extra.c:51
 msgid "Preferred buffer size"
@@ -1261,7 +1286,7 @@ msgstr ""
 
 #: ../translation/extra.c:12
 msgid "Disable nowplaying"
-msgstr ""
+msgstr "Ota nowplaying pois käytöstö"
 
 #: ../translation/extra.c:13
 msgid "Username"
@@ -1287,15 +1312,15 @@ msgstr ""
 #. Album Artwork plugin
 #: ../translation/extra.c:20
 msgid "Cache update period (hr)"
-msgstr ""
+msgstr "Välimuistin päivitysväli"
 
 #: ../translation/extra.c:21
 msgid "Fetch from embedded tags"
-msgstr ""
+msgstr "Nouda sisällytetyistä tageista"
 
 #: ../translation/extra.c:22
 msgid "Fetch from local folder"
-msgstr ""
+msgstr "Nouda paikallisesta kansiosta"
 
 #: ../translation/extra.c:23
 msgid "Local cover file mask"
@@ -1311,7 +1336,7 @@ msgstr "Hae albumart.org -palvelusta"
 
 #: ../translation/extra.c:26
 msgid "Scale artwork towards longer side"
-msgstr ""
+msgstr "Skaalaa albumin kuva pidempää sivua kohti"
 
 #. Audio CD player
 #: ../translation/extra.c:28
@@ -1320,23 +1345,23 @@ msgstr "Käytä CDDB/FreeDB:tä"
 
 #: ../translation/extra.c:29
 msgid "Prefer CD-Text over CDDB"
-msgstr ""
+msgstr "Suosi CD-Textiä CDDB:n yli"
 
 #: ../translation/extra.c:30
 msgid "CDDB url (e.g. 'freedb.org')"
-msgstr ""
+msgstr "CDDB:n url (esim. \"freedb.org\")"
 
 #: ../translation/extra.c:31
 msgid "CDDB port number (e.g. '888')"
-msgstr ""
+msgstr "CDDB:n portin numero (esim. \"888\")"
 
 #: ../translation/extra.c:32
 msgid "Prefer CDDB protocol over HTTP"
-msgstr ""
+msgstr "Suosi CDDB-protokollaa HTTP:n yli"
 
 #: ../translation/extra.c:33
 msgid "Enable NRG image support"
-msgstr ""
+msgstr "Ota käyttöön tuki NRG-levykuville"
 
 #. DUMB module player plugin
 #: ../translation/extra.c:35
@@ -1346,12 +1371,12 @@ msgstr ""
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:37
 msgid "Max song length (in minutes)"
-msgstr ""
+msgstr "Kappaleen maksimipituus (minuuteissa)"
 
 #. Standard GTK2 user interface plugin
 #: ../translation/extra.c:39
 msgid "Ask confirmation to delete files from disk"
-msgstr ""
+msgstr "Kysy vahvistus ennen kuin tiedostoja poistetaan levyltä"
 
 #: ../translation/extra.c:40
 msgid "Status icon volume control sensitivity"
@@ -1359,11 +1384,11 @@ msgstr ""
 
 #: ../translation/extra.c:41
 msgid "Custom status icon"
-msgstr ""
+msgstr "Oma tilakuvake"
 
 #: ../translation/extra.c:42
 msgid "Run gtk_init with --sync (debug mode)"
-msgstr ""
+msgstr "Suorita gtk_init --sync-valitsimen kanssa (virheenjäljitystila)"
 
 #: ../translation/extra.c:43
 msgid "Add separators between plugin context menu items"
@@ -1380,20 +1405,20 @@ msgstr ""
 
 #: ../translation/extra.c:47
 msgid "Show album art"
-msgstr ""
+msgstr "Näytä albumin kansi"
 
 #: ../translation/extra.c:48
 msgid "Album art size (px)"
-msgstr ""
+msgstr "Albumin kannen koko (px)"
 
 #. PulseAudio output plugin
 #: ../translation/extra.c:50
 msgid "PulseAudio server"
-msgstr ""
+msgstr "PulseAudio-palvelin"
 
 #: ../translation/extra.c:52
 msgid "Samplerate"
-msgstr ""
+msgstr "Näytetaajuus"
 
 #. SHN player plugin
 #: ../translation/extra.c:54
@@ -1419,11 +1444,11 @@ msgstr ""
 
 #: ../translation/extra.c:60
 msgid "Bits per sample (8 or 16)"
-msgstr ""
+msgstr "Bittiä/näyte (8 tai 16)"
 
 #: ../translation/extra.c:61
 msgid "Default song length (sec)"
-msgstr ""
+msgstr "Kappaleen oletuspituus (sek)"
 
 #. WildMidi player plugin
 #: ../translation/extra.c:63
@@ -1460,7 +1485,7 @@ msgstr "Kommentti"
 
 #: ../translation/extra.c:77
 msgid "Encoder / Vendor"
-msgstr ""
+msgstr "Enkooderi / toimittaja"
 
 #: ../translation/extra.c:79
 msgid "Location"
@@ -1476,7 +1501,7 @@ msgstr ""
 
 #: ../translation/extra.c:82
 msgid "Embedded Cuesheet"
-msgstr ""
+msgstr "Sisällytetty cuesheet"
 
 #: ../translation/extra.c:83
 msgid "Codec"
@@ -1485,7 +1510,7 @@ msgstr "Koodekki"
 #. FFmpeg deocder plugin
 #: ../translation/extra.c:85
 msgid "File Extensions (separate with ';')"
-msgstr ""
+msgstr "Tiedostopäätteet (erota \";\"-merkillä)"
 
 #. Converter GUI
 #: ../translation/extra.c:87
@@ -1596,11 +1621,12 @@ msgid "Output file name:"
 msgstr ""
 
 #: ../plugins/converter/interface.c:126
-#, fuzzy
 msgid ""
 "Extension (e.g. .mp3) will be appended automatically.\n"
 "Leave the field empty for default (%a - %t)."
-msgstr "Tiedoston pääte (esim. .mp3) lisätään automaattisesti.\n"
+msgstr ""
+"Tiedoston pääte (esim. .mp3) lisätään automaattisesti.\n"
+"Jätettäessä tyhjäksi oletus on (%a - %t)."
 
 #: ../plugins/converter/interface.c:139
 msgid "Encoder:"
@@ -1659,9 +1685,8 @@ msgid "Preserve folder structure, starting from:"
 msgstr ""
 
 #: ../plugins/converter/interface.c:379
-#, fuzzy
 msgid "Edit Encoder Preset"
-msgstr "Lataa esiasetus..."
+msgstr "Muokkaa enkooderin esiasetusta"
 
 #: ../plugins/converter/interface.c:402
 msgid "Untitled Encoder"

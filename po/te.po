@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2011-04-25 17:20+0200\n"
+"PO-Revision-Date: 2012-04-11 04:21+0200\n"
 "Last-Translator: PraveenIlla <mail2ipn@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: te\n"
@@ -23,9 +23,8 @@ msgid "Supported sound formats"
 msgstr "సహకారంవున్న శబ్ధపు ఫార్మేట్లు"
 
 #: ../plugins/gtkui/callbacks.c:134
-#, fuzzy
 msgid "All files (*)"
-msgstr "ఇతర ఫైళ్ళు (*)"
+msgstr "అన్ని ఫైళ్ళు (*)"
 
 #: ../plugins/gtkui/callbacks.c:144
 msgid "Open file(s)..."
@@ -37,7 +36,7 @@ msgstr "పాటలజాబితాకు ఫైళ్ళ(ను) జతచ�
 
 #: ../plugins/gtkui/callbacks.c:220
 msgid "Add folder(s) to playlist..."
-msgstr "సంచయా(ల)ను పాటలజాబితాకు జతచేయి..."
+msgstr "సంచయము(ల)ను పాటలజాబితాకు జతచేయి..."
 
 #: ../plugins/gtkui/callbacks.c:225
 msgid "Follow symlinks"
@@ -53,7 +52,7 @@ msgstr "సహాయక ఫైల్ లోడుచేయుటలో విఫ
 
 #: ../plugins/gtkui/callbacks.c:736
 msgid "help.txt"
-msgstr ""
+msgstr "సహాయం.txt"
 
 #: ../plugins/gtkui/callbacks.c:737 ../plugins/gtkui/interface.c:1155
 #: ../plugins/gtkui/deadbeef.glade.h:49 ../plugins/converter/convgui.c:1240
@@ -69,12 +68,12 @@ msgstr "డెడ్‌బీఫ్ %s గురించి"
 #: ../plugins/gtkui/callbacks.c:760
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
-msgstr "డెడ్‌బీఫ్ %s మార్పుచిట్టా"
+msgstr "డెడ్‌బీఫ్ %s మార్పులచిట్టా"
 
 #: ../plugins/gtkui/callbacks.c:1116
-#, fuzzy, c-format
+#, c-format
 msgid "DeaDBeeF Translators"
-msgstr "డెడ్‌బీఫ్ ఇప్పుడు ఆడిస్తున్నది"
+msgstr "డెడ్‌బీఫ్ అనువాదకులు"
 
 #: ../plugins/gtkui/ddbtabstrip.c:755 ../plugins/gtkui/trkproperties.c:618
 msgid "Edit playlist"
@@ -151,9 +150,8 @@ msgid "Zero Bands"
 msgstr "బ్రాండ్లను సున్నాచేయి"
 
 #: ../plugins/gtkui/eq.c:387 ../plugins/converter/interface.c:820
-#, fuzzy
 msgid "Presets"
-msgstr "ప్రిసెట్ భద్రపరుచు"
+msgstr "ప్రిసెట్లు"
 
 #: ../plugins/gtkui/gtkui.c:137
 #, c-format
@@ -295,7 +293,7 @@ msgstr "కనుగొను (_F)"
 
 #: ../plugins/gtkui/interface.c:288 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Sort By"
-msgstr ""
+msgstr "ఇలా క్రమబద్దీకరించు"
 
 #: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1516
 #: ../plugins/gtkui/mainplaylist.c:318 ../plugins/gtkui/prefwin.c:626
@@ -306,9 +304,8 @@ msgid "Title"
 msgstr "శీర్షిక"
 
 #: ../plugins/gtkui/interface.c:299 ../plugins/gtkui/deadbeef.glade.h:140
-#, fuzzy
 msgid "Track number"
-msgstr "ఫైల్ సంఖ్య"
+msgstr "పాట సంఖ్య"
 
 #: ../plugins/gtkui/interface.c:303 ../plugins/gtkui/interface.c:1515
 #: ../plugins/gtkui/interface.c:1875 ../plugins/gtkui/deadbeef.glade.h:10
@@ -326,12 +323,12 @@ msgstr "కళాకారుడు"
 #: ../plugins/gtkui/interface.c:311 ../plugins/gtkui/deadbeef.glade.h:31
 #: ../translation/extra.c:70
 msgid "Date"
-msgstr ""
+msgstr "తేదీ"
 
 #: ../plugins/gtkui/interface.c:315 ../plugins/gtkui/interface.c:1520
 #: ../plugins/gtkui/plcommon.c:1017 ../plugins/gtkui/deadbeef.glade.h:27
 msgid "Custom"
-msgstr ""
+msgstr "అనురూపితం"
 
 #: ../plugins/gtkui/interface.c:324 ../plugins/gtkui/interface.c:1804
 #: ../plugins/gtkui/deadbeef.glade.h:95
@@ -372,14 +369,12 @@ msgid "Linear"
 msgstr "ఒకే వరుసలో ఉన్నవి"
 
 #: ../plugins/gtkui/interface.c:370 ../plugins/gtkui/deadbeef.glade.h:121
-#, fuzzy
 msgid "Shuffle tracks"
-msgstr "యాదృచ్ఛికం"
+msgstr "పాటలను యాదృచ్ఛికపరుచు"
 
 #: ../plugins/gtkui/interface.c:375 ../plugins/gtkui/deadbeef.glade.h:120
-#, fuzzy
 msgid "Shuffle albums"
-msgstr "యాదృచ్ఛికం"
+msgstr "ఆల్బములను యాదృచ్ఛికపరుచు"
 
 #: ../plugins/gtkui/interface.c:380 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Random"
@@ -387,19 +382,19 @@ msgstr "యాదృచ్ఛికం"
 
 #: ../plugins/gtkui/interface.c:386 ../plugins/gtkui/deadbeef.glade.h:75
 msgid "Looping"
-msgstr ""
+msgstr "ఆవృతీకరణ"
 
 #: ../plugins/gtkui/interface.c:393 ../plugins/gtkui/deadbeef.glade.h:73
 msgid "Loop All"
-msgstr ""
+msgstr "అన్నీ ఆవృతం"
 
 #: ../plugins/gtkui/interface.c:398 ../plugins/gtkui/deadbeef.glade.h:74
 msgid "Loop Single Song"
-msgstr ""
+msgstr "ఒక పాట ఆవృతం"
 
 #: ../plugins/gtkui/interface.c:403 ../plugins/gtkui/deadbeef.glade.h:36
 msgid "Don't Loop"
-msgstr ""
+msgstr "ఆవృతీకరించవద్దు"
 
 #: ../plugins/gtkui/interface.c:409 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "Scroll follows playback"
@@ -415,7 +410,7 @@ msgstr "దీని తరువాత ఆపివేయి"
 
 #: ../plugins/gtkui/interface.c:430 ../plugins/gtkui/deadbeef.glade.h:67
 msgid "Jump to current track"
-msgstr ""
+msgstr "తరువాత పాటకి వెళ్ళు"
 
 #: ../plugins/gtkui/interface.c:437 ../plugins/gtkui/interface.c:444
 #: ../plugins/gtkui/deadbeef.glade.h:159
@@ -428,11 +423,11 @@ msgstr "మార్పుచిట్టా (_C)"
 
 #: ../plugins/gtkui/interface.c:461 ../plugins/gtkui/deadbeef.glade.h:158
 msgid "_GPLv2"
-msgstr ""
+msgstr "GPLv2 (_G)"
 
 #: ../plugins/gtkui/interface.c:465 ../plugins/gtkui/deadbeef.glade.h:160
 msgid "_LGPLv2.1"
-msgstr ""
+msgstr "LGPLv2.1 (_L)"
 
 #: ../plugins/gtkui/interface.c:474 ../plugins/gtkui/deadbeef.glade.h:149
 msgid "_About"
@@ -440,7 +435,7 @@ msgstr "గురించి (_A)"
 
 #: ../plugins/gtkui/interface.c:482 ../plugins/gtkui/deadbeef.glade.h:166
 msgid "_Translators"
-msgstr ""
+msgstr "అనువాదకులు (_T)"
 
 #: ../plugins/gtkui/interface.c:898 ../plugins/gtkui/deadbeef.glade.h:112
 msgid "Search"
@@ -484,7 +479,7 @@ msgstr "ట్రాక్ లక్షణాలు"
 
 #: ../plugins/gtkui/interface.c:1270 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Settings"
-msgstr ""
+msgstr "అమరికలు"
 
 #: ../plugins/gtkui/interface.c:1296 ../plugins/gtkui/deadbeef.glade.h:150
 msgid "_Apply"
@@ -514,7 +509,7 @@ msgstr "రకం:"
 
 #: ../plugins/gtkui/interface.c:1510
 msgid "Item Index"
-msgstr ""
+msgstr "అంశపు సూచీ"
 
 #. create default set of columns
 #: ../plugins/gtkui/interface.c:1511 ../plugins/gtkui/mainplaylist.c:315
@@ -535,9 +530,8 @@ msgid "Duration"
 msgstr "నిడివి"
 
 #: ../plugins/gtkui/interface.c:1518 ../translation/extra.c:71
-#, fuzzy
 msgid "Track Number"
-msgstr "ట్రాక్ సంఖ్య"
+msgstr "పాట సంఖ్య"
 
 #: ../plugins/gtkui/interface.c:1519 ../translation/extra.c:68
 msgid "Band / Album Artist"
@@ -582,7 +576,7 @@ msgstr "అవుట్‌పుట్ పరికరం:"
 
 #: ../plugins/gtkui/interface.c:1847 ../plugins/gtkui/deadbeef.glade.h:12
 msgid "Always convert 8 bit audio to 16 bit"
-msgstr ""
+msgstr "ఎల్పప్పుడూ 8 బిట్ ఆడియోని 16 బిట్‌కి పరివర్తించు"
 
 #: ../plugins/gtkui/interface.c:1851 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "Sound"
@@ -590,7 +584,7 @@ msgstr "ధ్వని"
 
 #: ../plugins/gtkui/interface.c:1864 ../plugins/gtkui/deadbeef.glade.h:106
 msgid "Replaygain mode:"
-msgstr ""
+msgstr "రిప్లైగెయిన్ రీతి:"
 
 #: ../plugins/gtkui/interface.c:1873
 msgid "Disable"
@@ -602,25 +596,25 @@ msgstr "ట్రాక్"
 
 #: ../plugins/gtkui/interface.c:1877 ../plugins/gtkui/deadbeef.glade.h:107
 msgid "Replaygain peak scale"
-msgstr ""
+msgstr "రిప్లైగెయిన్ పీక్ స్కేల్"
 
 #: ../plugins/gtkui/interface.c:1892 ../plugins/gtkui/interface.c:1926
 #: ../plugins/gtkui/deadbeef.glade.h:2
 msgid "-12 dB"
-msgstr ""
+msgstr "-12 dB"
 
 #: ../plugins/gtkui/interface.c:1902 ../plugins/gtkui/interface.c:1936
 #: ../plugins/gtkui/deadbeef.glade.h:1
 msgid "+12 dB"
-msgstr ""
+msgstr "+12 dB"
 
 #: ../plugins/gtkui/interface.c:1906 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Replaygain preamp:"
-msgstr ""
+msgstr "రిప్లైగెయిన్ ప్రీఆంప్:"
 
 #: ../plugins/gtkui/interface.c:1913 ../plugins/gtkui/deadbeef.glade.h:47
 msgid "Global preamp:"
-msgstr ""
+msgstr "గ్లోబల్ ప్రీఆంప్:"
 
 #: ../plugins/gtkui/interface.c:1944 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
@@ -632,7 +626,7 @@ msgstr "ప్రారంభములో మునుపటి కొనసా�
 
 #: ../plugins/gtkui/interface.c:1957 ../plugins/gtkui/deadbeef.glade.h:37
 msgid "Don't add from archives when adding folders"
-msgstr ""
+msgstr "సంచయాలను జతచేస్తున్నపుడు సంగ్రహాలను జతచేయవద్దు"
 
 #: ../plugins/gtkui/interface.c:1961 ../plugins/gtkui/deadbeef.glade.h:91
 msgid "Playback"
@@ -644,17 +638,16 @@ msgid "Configure"
 msgstr "స్వరూపించు"
 
 #: ../plugins/gtkui/interface.c:2017 ../plugins/gtkui/deadbeef.glade.h:29
-#, fuzzy
 msgid "DSP Chain Preset"
-msgstr "ప్రిసెట్ భద్రపరుచు"
+msgstr "DSP చైన్ ప్రిసెట్"
 
 #: ../plugins/gtkui/interface.c:2029 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "_Load"
-msgstr ""
+msgstr "నింపు (_L)"
 
 #: ../plugins/gtkui/interface.c:2033 ../plugins/gtkui/deadbeef.glade.h:28
 msgid "DSP"
-msgstr ""
+msgstr "DSP"
 
 #: ../plugins/gtkui/interface.c:2042 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Close minimizes to tray"
