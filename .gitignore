@@ -51,3 +51,4 @@ po/Makevars.template
 *.so
 tools/pluginfo/pluginfo
 cscope.out
+tools/apbuild/apsymbols.h
