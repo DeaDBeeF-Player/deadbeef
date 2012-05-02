@@ -3,7 +3,7 @@ VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print'`
 ORIGIN=`pwd | perl -ne 'chomp and print'`
 AP=$ORIGIN/tools/apbuild
 export CC=$AP/apgcc
-export CXX=$AP/apgcc 
+export CXX=$AP/apgcc
 
 export APBUILD_STATIC_LIBGCC=1
 
