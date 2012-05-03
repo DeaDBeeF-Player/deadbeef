@@ -613,6 +613,9 @@ palsa_thread (void *context) {
             continue;
         }
         LOCK;
+        char buf[period_size * (plugin.fmt.bps>>3) * plugin.fmt.channels];
+        int bytes_to_write = 0;
+        
         /* find out how much space is available for playback data */
         snd_pcm_sframes_t frames_to_deliver = snd_pcm_avail_update (audio);
 
@@ -624,12 +627,13 @@ palsa_thread (void *context) {
                 break;
             }
             err = 0;
-            char buf[period_size * (plugin.fmt.bps>>3) * plugin.fmt.channels];
-            UNLOCK; // holding a lock here may cause deadlock in the streamer
-            int bytes_to_write = palsa_callback (buf, period_size * (plugin.fmt.bps>>3) * plugin.fmt.channels);
-            LOCK;
-            if (alsa_terminate) {
-                break;
+            if (!bytes_to_write) {
+                UNLOCK; // holding a lock here may cause deadlock in the streamer
+                bytes_to_write = palsa_callback (buf, period_size * (plugin.fmt.bps>>3) * plugin.fmt.channels);
+                LOCK;
+                if (OUTPUT_STATE_PLAYING != state || alsa_terminate) {
+                    break;
+                }
             }
 
             if (bytes_to_write >= (plugin.fmt.bps>>3) * plugin.fmt.channels) {
@@ -643,6 +647,7 @@ palsa_thread (void *context) {
             else {
                 UNLOCK;
                 usleep (10000);
+                bytes_to_write = 0;
                 LOCK;
                 continue;
             }
@@ -669,9 +674,10 @@ palsa_thread (void *context) {
                     //}
                     snd_pcm_prepare (audio);
                     snd_pcm_start (audio);
-                    continue;
                 }
+                continue;
             }
+            bytes_to_write = 0;
             frames_to_deliver = snd_pcm_avail_update (audio);
         }
         UNLOCK;
