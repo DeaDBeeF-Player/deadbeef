@@ -91,3 +91,4 @@ _("Quality / Algorythm")
 _("Automatic Samplerate (overrides Target Samplerate)")
 // please note: do NOT translate the Edit/ part
 _("Edit/Configure custom shell commands")
+_("Disable gapless playback (faster scanning)")
