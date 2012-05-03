@@ -2,6 +2,7 @@
 
 PWD=`pwd`
 VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print'`
+ARCH_VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print' | sed 's/-//'`
 BUILD=`cat PORTABLE_BUILD | perl -ne 'chomp and print'`
 ARCH=`uname -m | perl -ne 'chomp and print'`
 INDIR=$PWD/static/$ARCH/deadbeef-$VERSION
@@ -19,7 +20,9 @@ cp -r $INDIR/* $TEMPDIR/
 # rm unneeded files
 rm $TEMPDIR/opt/deadbeef/lib/deadbeef/*.la
 for i in $TEMPDIR/opt/deadbeef/lib/deadbeef/*.so.0.0.0; do
-    mv $i $TEMPDIR/opt/deadbeef/lib/deadbeef/`basename $i .0.0.0`
+    n=$TEMPDIR/opt/deadbeef/lib/deadbeef/`basename $i .0.0.0`
+    mv $i $n
+    strip --strip-unneeded $n
 done
 rm $TEMPDIR/opt/deadbeef/lib/deadbeef/*.so.*
 rm $TEMPDIR/opt/deadbeef/lib/deadbeef/*.a
@@ -32,7 +35,7 @@ mv $TEMPDIR/opt/deadbeef/share/icons $TEMPDIR/usr/share/
 
 # generate .PKGINFO
 echo "# `date -u`" >$PKGINFO
-echo "pkgver = $VERSION-$BUILD" >>$PKGINFO
+echo "pkgver = $ARCH_VERSION-$BUILD" >>$PKGINFO
 echo "builddate = `date --utc  +%s`" >>$PKGINFO
 echo "size = `du -sb $TEMPDIR | awk '{print $1}'`" >>$PKGINFO
 echo "arch = $ARCH" >>$PKGINFO
@@ -43,4 +46,4 @@ cp tools/packages/arch_install $INSTALL
 
 # archive
 cd $TEMPDIR
-fakeroot -- tar Jcvf $OUTDIR/deadbeef-$VERSION-$BUILD-$ARCH.pkg.tar.xz * .PKGINFO .INSTALL
+fakeroot -- tar Jcvf $OUTDIR/deadbeef-static-$ARCH_VERSION-$BUILD-$ARCH.pkg.tar.xz * .PKGINFO .INSTALL

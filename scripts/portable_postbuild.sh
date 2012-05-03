@@ -6,6 +6,7 @@ OUTDIR=portable/$ARCH/deadbeef-$VERSION
 PLUGDIR=$OUTDIR/plugins
 DOCDIR=$OUTDIR/doc
 PIXMAPDIR=$OUTDIR/pixmaps
+echo OUTDIR=$OUTDIR
 
 rm -rf $OUTDIR
 
