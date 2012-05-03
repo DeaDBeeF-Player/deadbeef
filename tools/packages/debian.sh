@@ -27,8 +27,12 @@ cp -r $INDIR/* $TEMPDIR/
 # rm unneeded files
 rm $TEMPDIR/opt/deadbeef/lib/deadbeef/*.la
 for i in $TEMPDIR/opt/deadbeef/lib/deadbeef/*.so.0.0.0; do
-    mv $i $TEMPDIR/opt/deadbeef/lib/deadbeef/`basename $i .0.0.0`
+    n=$TEMPDIR/opt/deadbeef/lib/deadbeef/`basename $i .0.0.0`
+    mv $i $n
+    strip --strip-unneeded $n
 done
+strip --strip-unneeded $TEMPDIR/opt/deadbeef/bin/deadbeef
+
 rm $TEMPDIR/opt/deadbeef/lib/deadbeef/*.so.*
 rm $TEMPDIR/opt/deadbeef/lib/deadbeef/*.a
 
@@ -43,7 +47,7 @@ echo "2.0" >$TEMPDIR/debian-binary
 
 # generate control
 echo "Version: $VERSION-$BUILD" >$TEMPDIR/control
-echo "Installed-Size: `du -sb $TEMPDIR | awk '{print $1}'`" >>$TEMPDIR/control
+echo "Installed-Size: `du -sb $TEMPDIR | awk '{print int($1/1024)}'`" >>$TEMPDIR/control
 echo "Architecture: $DEB_ARCH" >>$TEMPDIR/control
 cat $PWD/tools/packages/deb_control >>$TEMPDIR/control
 
