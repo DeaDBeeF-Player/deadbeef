@@ -19,6 +19,10 @@ version 0.5.3
 	fixed possible crash when loading corrupted playlist files
 	EQ window will reflect changes in the DSP chain configuration
 	fixed excessive CPU load while streamer is waiting for the last track to finish
+	alsa: fixed sleep time bug, which should improve CPU load (thanks to Martin Panter)
+	alsa: fixed buffer underrun handling problem which was causing sound jittering on slow media like sshfs, cd, etc (thanks to Martin Panter)
+	mp3: added option to disable gapless playback, but improve speed (thanks to Martin Panter)
+	aac: fix to potential reading past the end of array (thanks to Martin Panter)
 
 version 0.5.2
 	fixed reading id3v2 and apev2 tags from raw AAC files
