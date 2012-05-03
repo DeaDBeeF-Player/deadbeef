@@ -807,7 +807,7 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             trace ("mpgmad: skipping %d(%xH) bytes of junk\n", skip, skip);
             deadbeef->fseek (info->buffer.file, skip, SEEK_SET);
         }
-        int res = cmp3_scan_stream (&info->buffer, -1);
+        int res = cmp3_scan_stream (&info->buffer, deadbeef->conf_get_int ("mp3.disable_gapless", 0) ? 0 : -1);
         if (res < 0) {
             trace ("mpgmad: cmp3_init: initial cmp3_scan_stream failed\n");
             return -1;
@@ -1440,6 +1440,10 @@ static const char *exts[] = {
 	"mp1", "mp2", "mp3", NULL
 };
 
+static const char settings_dlg[] =
+    "property \"Disable gapless playback (faster scanning)\" checkbox mp3.disable_gapless 0;\n"
+;
+
 // define plugin interface
 static DB_decoder_t plugin = {
     .plugin.api_vmajor = 1,
@@ -1468,6 +1472,7 @@ static DB_decoder_t plugin = {
         "Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.\n"
     ,
     .plugin.website = "http://deadbeef.sf.net",
+    .plugin.configdialog = settings_dlg,
     .open = cmp3_open,
     .init = cmp3_init,
     .free = cmp3_free,
