@@ -652,6 +652,7 @@ http_thread_func (void *ctx) {
             trace ("curl error:\n%s\n", fp->http_err);
         }
         deadbeef->mutex_lock (fp->mutex);
+#if 0
         if (status == 0 && fp->length < 0 && fp->status != STATUS_ABORTED && fp->status != STATUS_SEEK) {
             trace ("vfs_curl: restarting stream\n");
             // NOTE: don't do http_stream_reset here - we don't want to cut the ending
@@ -669,6 +670,7 @@ http_thread_func (void *ctx) {
             deadbeef->mutex_unlock (fp->mutex);
             continue;
         }
+#endif
         if (fp->status != STATUS_SEEK) {
             trace ("vfs_curl: break loop\n");
             deadbeef->mutex_unlock (fp->mutex);

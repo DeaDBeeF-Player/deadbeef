@@ -755,8 +755,9 @@ streamer_set_current (playItem_t *it) {
                 trace ("failed to alloc %d bytes for playlist buffer\n");
                 goto m3u_error;
             }
+            trace ("reading %d bytes\n", size);
             int rd = vfs_fread (buf, 1, size, fp);
-            if (rd != size) {
+            if (rd <= 0) {
                 trace ("failed to download %d bytes (got %d bytes)\n", size, rd);
                 goto m3u_error;
             }
@@ -772,13 +773,14 @@ streamer_set_current (playItem_t *it) {
                 trace ("failed to open temp file %s\n", tempfile);
                 goto m3u_error;
             }
+            trace ("writing to %s\n", tempfile);
             out = fdopen (fd, "w+b");
             if (!out) {
                 trace ("fdopen failed for %s\n", tempfile);
                 goto m3u_error;
             }
-            int rw = fwrite (buf, 1, size, out);
-            if (rw != size) {
+            int rw = fwrite (buf, 1, rd, out);
+            if (rw != rd) {
                 trace ("failed to write %d bytes into file %s\n", size, tempfile);
                 goto m3u_error;
             }
@@ -786,6 +788,7 @@ streamer_set_current (playItem_t *it) {
             fd = -1;
             out = NULL;
 
+            trace ("loading playlist from %s\n", tempfile);
             // load playlist
             playlist_t *plt = plt_alloc ("temp");
             DB_playlist_t **plug = plug_get_playlist_list ();
