@@ -9,7 +9,7 @@ export APBUILD_STATIC_LIBGCC=1
 
 ./autogen.sh
 
-./configure --enable-staticlink=yes --enable-portable=yes --disable-artwork-imlib2
+./configure --enable-staticlink --enable-portable --disable-artwork-imlib2
 sed -i 's/-lstdc++ -lm -lgcc_s -lc -lgcc_s/-lm -lc/g' libtool
 make clean
 make -j9
@@ -22,6 +22,4 @@ echo "building pluginfo tool..."
 cd tools/pluginfo
 make
 cd ../../
-
-./scripts/portable_postbuild.sh
 

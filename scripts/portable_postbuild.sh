@@ -79,6 +79,7 @@ for i in po/*.gmo ; do
 done
 cp translation/help.pt_BR.txt $OUTDIR/doc/
 cp translation/help.ru.txt $OUTDIR/doc/
+touch $OUTDIR/.ddb_portable
 
 # strip
 if [ $OSTYPE != 'Darwin' ];then

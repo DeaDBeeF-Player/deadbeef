@@ -1,23 +1,28 @@
 #!/bin/sh
 
+./scripts/portable_postbuild.sh
+
 # package for distribution
 VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print'`
 BUILD=`cat PORTABLE_BUILD | perl -ne 'chomp and print'`
+ARCH=`uname -m | perl -ne 'chomp and print'`
 
 # main distro
 SRCDIR=deadbeef-$VERSION
 PLUGDIR=$SRCDIR/plugins
 DOCDIR=$SRCDIR/doc
 PIXMAPDIR=$SRCDIR/pixmaps
+OUTNAME=deadbeef-static_${VERSION}-${BUILD}_${ARCH}.tar.bz2
 
 ARCH=`uname -m | perl -ne 'chomp and print'`
 
-rm portable_out/build/deadbeef-$VERSION-static-$ARCH.tar.bz2
+rm portable_out/build/$OUTNAME
 
 cd portable/$ARCH
-tar jcvf ../..//portable_out/build/deadbeef-$VERSION-static-$ARCH.tar.bz2\
+tar jcvf ../../portable_out/build/$OUTNAME\
     $SRCDIR/deadbeef\
     $SRCDIR/deadbeef.png\
+    $SRCDIR/.ddb_portable\
     $DOCDIR\
     $PLUGDIR/aac.so\
     $PLUGDIR/adplug.so\
