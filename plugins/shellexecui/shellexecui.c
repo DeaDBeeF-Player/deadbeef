@@ -348,15 +348,22 @@ init_treeview() {
     g_object_unref(liststore);
 }
 
-static int
-shellexecui_action_callback(DB_plugin_action_t *action,
-                                void *user_data) {
+static gboolean
+shellexecui_action_gtk (void *data)
+{
     conf_dlg = create_shellexec_conf_dialog();
     gtk_widget_set_size_request (conf_dlg, 400, 400);
     gtk_window_set_transient_for(GTK_WINDOW(conf_dlg),
                                  GTK_WINDOW(gtkui_plugin->get_mainwin()));
     init_treeview();
     gtk_widget_show(conf_dlg);
+    return FALSE;
+}
+
+static int
+shellexecui_action_callback(DB_plugin_action_t *action,
+                                void *user_data) {
+    g_idle_add (shellexecui_action_gtk, NULL);
     return 0;
 }
 
