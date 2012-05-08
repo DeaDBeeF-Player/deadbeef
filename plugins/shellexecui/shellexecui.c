@@ -404,11 +404,12 @@ static DB_misc_t plugin = {
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
 #if GTK_CHECK_VERSION(3,0,0)
-    .plugin.id = "shellexecui_gtk2",
-#else
     .plugin.id = "shellexecui_gtk3",
+    .plugin.name = "Shellexec GTK3 UI",
+#else
+    .plugin.id = "shellexecui_gtk2",
+    .plugin.name = "Shellexec GTK2 UI",
 #endif
-    .plugin.name = "Shellexec GTK UI",
     .plugin.descr = "A GTK UI for the Shellexec plugin",
     .plugin.copyright = 
         "Copyright (C) 2012 Azeem Arshad <kr00r4n@gmail.com>\n"
