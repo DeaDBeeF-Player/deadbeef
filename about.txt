@@ -31,13 +31,16 @@ Contributors:
     Sofias <sofias@radikalismus.com>
         Icon
 
+    starws
+        The best QA dude in the world
+
     Stas Akimushkin <uncle.lag@gmail.com>
         Original artwork
 
     Viktor Semykin <thesame.ml@gmail.com>
-        Global Hotkeys, CD Audio, Cover Art, ShellExec plugins, lots of patches and suggestions
+        Global Hotkeys, CD Audio, Cover Art, ShellExec plugins, lots of patches and suggestions, and the default cover art image
 
-    These people sent patches or helped with testing, distribution, or in other ways:
+    These people have also contributed significantly to the project by sending patches, testing, etc:
     
         Alex Dedul <rotmer@gmail.com>
         David Bryant <david@wavpack.com>
@@ -46,9 +49,11 @@ Contributors:
         Igor Rudchenko <igor@thinkpads.net>
         Jan D. Behrens <zykure@web.de>
         Kryksyh <druid@foobar2000.ru>
+        Martin Panter
         Serghey Kotlyarov <shadowsbrother@gmail.com>
         Themaister <maister@archlinux.us>
         Veniamin Gvozdikov <g.veniamin@googlemail.com>
+        
 
     If you think your name is missing here, or needs to be removed, please send an email to Alexey Yakovenko <waker@users.sf.net>
 
