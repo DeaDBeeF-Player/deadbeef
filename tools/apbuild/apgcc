@@ -78,10 +78,6 @@ if (!defined $appath) {
 		$appath = $FindBin::Bin;
 	}
 }
-my $arch=`uname -m`;
-chomp $arch;
-`cp $appath/apsymbols.h.$arch $appath/apsymbols.h`;
-
 
 # Special constants
 our @linking = ('-Wl,--enable-new-dtags,--rpath,${ORIGIN}/../lib,--rpath,${ORIGIN}/../lib/autopackage');
