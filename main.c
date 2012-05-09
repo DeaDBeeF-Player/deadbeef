@@ -697,17 +697,13 @@ main (int argc, char *argv[]) {
     char *e = strrchr (dbinstalldir, '/');
     if (e) {
         *e = 0;
-    }
-    else {
-        fprintf (stderr, "couldn't determine install folder from path %s\n", argv[0]);
-        exit (-1);
-    }
-    struct stat st;
-    char checkpath[PATH_MAX];
-    snprintf (checkpath, sizeof (checkpath), "%s/.ddb_portable", dbinstalldir);
-    if (!stat (checkpath, &st)) {
-        if (S_ISREG (st.st_mode)) {
-            portable = 1;
+        struct stat st;
+        char checkpath[PATH_MAX];
+        snprintf (checkpath, sizeof (checkpath), "%s/.ddb_portable", dbinstalldir);
+        if (!stat (checkpath, &st)) {
+            if (S_ISREG (st.st_mode)) {
+                portable = 1;
+            }
         }
     }
     if (!portable) {
