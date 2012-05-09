@@ -47,6 +47,7 @@ typedef struct {
     int bitrate;
     int sf_format;
     int read_as_short;
+    int sf_need_endswap;
 } sndfile_info_t;
 
 // vfs wrapper for sf
@@ -176,6 +177,7 @@ sndfile_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
     _info->plugin = &plugin;
     info->sf_format = inf.format&0x000f;
+    info->sf_need_endswap = sf_command (info->ctx, SFC_RAW_DATA_NEEDS_ENDSWAP, NULL, 0);
 
     switch (inf.format&0x000f) {
     case SF_FORMAT_PCM_S8:
@@ -277,6 +279,36 @@ sndfile_read (DB_fileinfo_t *_info, char *bytes, int size) {
             for (int i = 0; i < n; i++) {
                 int sample = ((uint8_t *)bytes)[i];
                 ((int8_t *)bytes)[i] = sample-0x80;
+            }
+        }
+        else if (info->sf_need_endswap) {
+            switch (info->info.fmt.bps) {
+            case 16:
+                {
+                    uint16_t *data = (uint16_t *)bytes;
+                    for (int i = 0; i < n; i++, data++) {
+                        *data = ((*data & 0xff) << 8) | ((*data & 0xff00) >> 8);
+                    }
+                }
+                break;
+            case 24:
+                {
+                    uint8_t *data = bytes;
+                    for (int i = 0; i < n; i++, data += 3) {
+                        uint8_t temp = data[0];
+                        data[0] = data[2];
+                        data[2] = temp;
+                    }
+                }
+                break;
+            case 32:
+                {
+                    uint32_t *data = (uint32_t *)bytes;
+                    for (int i = 0; i < n; i++, data++) {
+                        *data = ((*data & 0xff) << 24) | ((*data & 0xff00) << 8) | ((*data & 0xff0000) >> 8) | ((*data & 0xff0000) >> 24);
+                    }
+                }
+                break;
             }
         }
         n /= samplesize;
