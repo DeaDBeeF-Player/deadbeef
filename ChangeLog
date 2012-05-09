@@ -1,3 +1,8 @@
+version 0.5.4
+	fixed starting the player using "deadbeef" command without path
+	fixed missing ; in deadbeef.desktop
+	fixed big-endian support in sndfile plugin
+
 version 0.5.3
 	m3u: fixed few parser bugs; added audio/x-scpls mime-type support; fixed m3uext support
 	adplug: upgraded to 2.2.1, added fake-surround support and emu selection
