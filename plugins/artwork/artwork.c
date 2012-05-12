@@ -10,6 +10,9 @@
 #include <unistd.h>
 #include <fnmatch.h>
 #include <inttypes.h>
+#if HAVE_SYS_SYSLIMITS_H
+#include <sys/syslimits.h>
+#endif
 #include "../../deadbeef.h"
 #include "artwork.h"
 #include "lastfm.h"
