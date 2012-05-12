@@ -1199,7 +1199,9 @@ streamer_thread (void *ctx) {
             bytes_until_next_song = -1;
             trace ("nextsong=-2\n");
             nextsong = -1;
+            streamer_unlock ();
             output->stop ();
+            streamer_lock ();
             if (playing_track) {
                 trace ("sending songfinished to plugins [1]\n");
                 send_songfinished (playing_track);
