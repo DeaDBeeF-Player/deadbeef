@@ -26,6 +26,16 @@
 #include "converter.h"
 #include "../../deadbeef.h"
 
+#ifndef strdupa
+# define strdupa(s)							      \
+    ({									      \
+      const char *old = (s);					      \
+      size_t len = strlen (old) + 1;				      \
+      char *new = (char *) alloca (len);			      \
+      (char *) memcpy (new, old, len);				      \
+    })
+#endif
+
 #ifndef PATH_MAX
 #define PATH_MAX    1024    /* max # of characters in a path name */
 #endif
