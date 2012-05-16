@@ -197,6 +197,37 @@ on_hk_binding_edited (GtkCellRendererAccel *accel, gchar *path, guint accel_key,
         strcat (new_value, "Alt ");
     }
 
+    // translate numlock keycodes into non-numlock codes
+    switch (accel_key) {
+    case GDK_KP_0:
+        accel_key = GDK_KP_Insert;
+        break;
+    case GDK_KP_1:
+        accel_key = GDK_KP_End;
+        break;
+    case GDK_KP_2:
+        accel_key = GDK_KP_Down;
+        break;
+    case GDK_KP_3:
+        accel_key = GDK_KP_Page_Down;
+        break;
+    case GDK_KP_4:
+        accel_key = GDK_KP_Left;
+        break;
+    case GDK_KP_6:
+        accel_key = GDK_KP_Right;
+        break;
+    case GDK_KP_7:
+        accel_key = GDK_KP_Home;
+        break;
+    case GDK_KP_8:
+        accel_key = GDK_KP_Up;
+        break;
+    case GDK_KP_9:
+        accel_key = GDK_KP_Page_Up;
+        break;
+    }
+
     // find key name from hotkeys plugin
     DB_plugin_t *hotkeys = deadbeef->plug_get_for_id ("hotkeys");
     if (hotkeys) {
