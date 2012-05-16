@@ -2,21 +2,22 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Algimantas Margevičius <margevicius.algimantas@gmail.com>, 2012.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2011-03-05 22:43+0200\n"
-"Last-Translator: Julius <zadintuvas@gmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2012-05-16 17:37+0300\n"
+"Last-Translator: Algimantas Margevičius <margevicius.algimantas@gmail.com>\n"
+"Language-Team: Lietuvių <>\n"
 "Language: lt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n"
-"%100<10 || n%100>=20) ? 1 : 2);\n"
+"%100<10 || n%100>=20) ? 1 : 2)\n"
 "X-Generator: Pootle 2.0.5\n"
 
 #: ../plugins/gtkui/callbacks.c:123
@@ -25,7 +26,7 @@ msgstr ""
 
 #: ../plugins/gtkui/callbacks.c:134
 msgid "All files (*)"
-msgstr ""
+msgstr "Visi failai (*)"
 
 #: ../plugins/gtkui/callbacks.c:144
 msgid "Open file(s)..."
@@ -41,7 +42,7 @@ msgstr ""
 
 #: ../plugins/gtkui/callbacks.c:225
 msgid "Follow symlinks"
-msgstr ""
+msgstr "Sekti simbolines nuorodas"
 
 #: ../plugins/gtkui/callbacks.c:711
 msgid "Failed while reading help file"
@@ -53,28 +54,28 @@ msgstr ""
 
 #: ../plugins/gtkui/callbacks.c:736
 msgid "help.txt"
-msgstr ""
+msgstr "help.txt"
 
 #: ../plugins/gtkui/callbacks.c:737 ../plugins/gtkui/interface.c:1155
 #: ../plugins/gtkui/deadbeef.glade.h:49 ../plugins/converter/convgui.c:1240
 #: ../plugins/converter/convgui.c:1248
 msgid "Help"
-msgstr ""
+msgstr "Žinynas"
 
 #: ../plugins/gtkui/callbacks.c:747
 #, c-format
 msgid "About DeaDBeeF %s"
-msgstr ""
+msgstr "Apie DeaDBeeF %s"
 
 #: ../plugins/gtkui/callbacks.c:760
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
-msgstr ""
+msgstr "DeaDBeeF %s keitimų žurnalas"
 
 #: ../plugins/gtkui/callbacks.c:1116
 #, c-format
 msgid "DeaDBeeF Translators"
-msgstr ""
+msgstr "DeaDBeeF Vertėjai"
 
 #: ../plugins/gtkui/ddbtabstrip.c:755 ../plugins/gtkui/trkproperties.c:618
 msgid "Edit playlist"
@@ -84,19 +85,19 @@ msgstr ""
 #: ../plugins/gtkui/interface.c:2922 ../plugins/gtkui/deadbeef.glade.h:136
 #: ../plugins/converter/interface.c:395
 msgid "Title:"
-msgstr ""
+msgstr "Pavadinimas:"
 
 #: ../plugins/gtkui/ddbtabstrip.c:814
 msgid "Rename Playlist"
-msgstr ""
+msgstr "Pervadinti grojaraštį"
 
 #: ../plugins/gtkui/ddbtabstrip.c:821
 msgid "Remove Playlist"
-msgstr ""
+msgstr "Pašalinti grojaraštį"
 
 #: ../plugins/gtkui/ddbtabstrip.c:828
 msgid "Add New Playlist"
-msgstr ""
+msgstr "Pridėti naują grojaraštį"
 
 #: ../plugins/gtkui/eq.c:136
 msgid "Save DeaDBeeF EQ Preset"
@@ -124,11 +125,11 @@ msgstr ""
 
 #: ../plugins/gtkui/eq.c:316
 msgid "Save Preset"
-msgstr ""
+msgstr "Įrašyti nustatymų rinkinį"
 
 #: ../plugins/gtkui/eq.c:324
 msgid "Load Preset"
-msgstr ""
+msgstr "Įkelti nustatymų rinkinį"
 
 #: ../plugins/gtkui/eq.c:332
 msgid "Import Foobar2000 Preset"
@@ -136,7 +137,7 @@ msgstr ""
 
 #: ../plugins/gtkui/eq.c:357
 msgid "Enable"
-msgstr ""
+msgstr "Įjungti"
 
 #: ../plugins/gtkui/eq.c:366
 msgid "Zero All"
@@ -152,17 +153,17 @@ msgstr ""
 
 #: ../plugins/gtkui/eq.c:387 ../plugins/converter/interface.c:820
 msgid "Presets"
-msgstr ""
+msgstr "Nustatymų rinkiniai"
 
 #: ../plugins/gtkui/gtkui.c:137
 #, c-format
 msgid "1 day %d:%02d:%02d"
-msgstr ""
+msgstr "1 diena %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:140
 #, c-format
 msgid "%d days %d:%02d:%02d"
-msgstr ""
+msgstr "%d dienos %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:149
 #, c-format
@@ -171,20 +172,20 @@ msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:162
 msgid "Mono"
-msgstr ""
+msgstr "Mono"
 
 #: ../plugins/gtkui/gtkui.c:162
 msgid "Stereo"
-msgstr ""
+msgstr "Stereo"
 
 #: ../plugins/gtkui/gtkui.c:187
 #, c-format
 msgid "| %4d kbps "
-msgstr ""
+msgstr "| %4d kbps "
 
 #: ../plugins/gtkui/gtkui.c:193
 msgid "Paused | "
-msgstr ""
+msgstr "Sustabdyta | "
 
 #: ../plugins/gtkui/gtkui.c:198
 #, c-format
@@ -202,7 +203,7 @@ msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:773
 msgid "Load Playlist"
-msgstr ""
+msgstr "Įkelti grojaraštį"
 
 #: ../plugins/gtkui/gtkui.c:788
 msgid "Other files (*)"
@@ -210,16 +211,16 @@ msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:926 ../plugins/gtkui/fileman.c:40
 msgid "New Playlist"
-msgstr ""
+msgstr "Naujas grojaraštis"
 
 #: ../plugins/gtkui/gtkui.c:929
 #, c-format
 msgid "New Playlist (%d)"
-msgstr ""
+msgstr "Naujas grojaraštis (%d)"
 
 #: ../plugins/gtkui/interface.c:150 ../plugins/gtkui/deadbeef.glade.h:156
 msgid "_File"
-msgstr ""
+msgstr "_Failas"
 
 #: ../plugins/gtkui/interface.c:157 ../plugins/gtkui/deadbeef.glade.h:163
 msgid "_Open file(s)"
@@ -240,61 +241,61 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:198 ../plugins/gtkui/deadbeef.glade.h:80
 msgid "New playlist"
-msgstr ""
+msgstr "Naujas grojaraštis"
 
 #: ../plugins/gtkui/interface.c:205 ../plugins/gtkui/deadbeef.glade.h:72
 msgid "Load playlist"
-msgstr ""
+msgstr "Įkelti grojaraštį"
 
 #: ../plugins/gtkui/interface.c:209 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "Save playlist"
-msgstr ""
+msgstr "Išsaugoti grojaraštį"
 
 #: ../plugins/gtkui/interface.c:218 ../plugins/gtkui/deadbeef.glade.h:165
 msgid "_Quit"
-msgstr ""
+msgstr "I_šeiti"
 
 #: ../plugins/gtkui/interface.c:229 ../plugins/gtkui/deadbeef.glade.h:155
 msgid "_Edit"
-msgstr ""
+msgstr "K_eisti"
 
 #: ../plugins/gtkui/interface.c:236 ../plugins/gtkui/deadbeef.glade.h:153
 msgid "_Clear"
-msgstr ""
+msgstr "Iš_valyti"
 
 #: ../plugins/gtkui/interface.c:244 ../plugins/gtkui/deadbeef.glade.h:115
 msgid "Select all"
-msgstr ""
+msgstr "Pasirinkti visus"
 
 #: ../plugins/gtkui/interface.c:251 ../plugins/gtkui/deadbeef.glade.h:32
 msgid "Deselect all"
-msgstr ""
+msgstr "Atžymėti viską"
 
 #: ../plugins/gtkui/interface.c:258 ../plugins/gtkui/deadbeef.glade.h:55
 msgid "Invert selection"
-msgstr ""
+msgstr "Atvirkštinis pasirinkimas"
 
 #: ../plugins/gtkui/interface.c:262 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Selection"
-msgstr ""
+msgstr "Pasirinkimas"
 
 #: ../plugins/gtkui/interface.c:269 ../plugins/gtkui/plcommon.c:468
 #: ../plugins/gtkui/prefwin.c:323 ../plugins/gtkui/deadbeef.glade.h:105
 #: ../plugins/converter/interface.c:645
 msgid "Remove"
-msgstr ""
+msgstr "Pašalinti"
 
 #: ../plugins/gtkui/interface.c:277 ../plugins/gtkui/deadbeef.glade.h:24
 msgid "Crop"
-msgstr ""
+msgstr "Apkirpti"
 
 #: ../plugins/gtkui/interface.c:281 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "_Find"
-msgstr ""
+msgstr "_Ieškoti"
 
 #: ../plugins/gtkui/interface.c:288 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Sort By"
-msgstr ""
+msgstr "Rikiuoti pagal"
 
 #: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1516
 #: ../plugins/gtkui/mainplaylist.c:318 ../plugins/gtkui/prefwin.c:626
@@ -302,100 +303,100 @@ msgstr ""
 #: ../plugins/converter/convgui.c:790 ../plugins/converter/convgui.c:1211
 #: ../plugins/converter/interface.c:622
 msgid "Title"
-msgstr ""
+msgstr "Pavadinimas"
 
 #: ../plugins/gtkui/interface.c:299 ../plugins/gtkui/deadbeef.glade.h:140
 msgid "Track number"
-msgstr ""
+msgstr "Takelio numeris"
 
 #: ../plugins/gtkui/interface.c:303 ../plugins/gtkui/interface.c:1515
 #: ../plugins/gtkui/interface.c:1875 ../plugins/gtkui/deadbeef.glade.h:10
 #: ../translation/extra.c:69
 msgid "Album"
-msgstr ""
+msgstr "Albumas"
 
 #. Track properties dialog
 #: ../plugins/gtkui/interface.c:307 ../plugins/gtkui/interface.c:1514
 #: ../plugins/gtkui/plcommon.c:1013 ../plugins/gtkui/deadbeef.glade.h:13
 #: ../translation/extra.c:65
 msgid "Artist"
-msgstr ""
+msgstr "Atlikėjas"
 
 #: ../plugins/gtkui/interface.c:311 ../plugins/gtkui/deadbeef.glade.h:31
 #: ../translation/extra.c:70
 msgid "Date"
-msgstr ""
+msgstr "Data"
 
 #: ../plugins/gtkui/interface.c:315 ../plugins/gtkui/interface.c:1520
 #: ../plugins/gtkui/plcommon.c:1017 ../plugins/gtkui/deadbeef.glade.h:27
 msgid "Custom"
-msgstr ""
+msgstr "Pasirinkta"
 
 #: ../plugins/gtkui/interface.c:324 ../plugins/gtkui/interface.c:1804
 #: ../plugins/gtkui/deadbeef.glade.h:95
 msgid "Preferences"
-msgstr ""
+msgstr "Nustatymai"
 
 #: ../plugins/gtkui/interface.c:328 ../plugins/gtkui/deadbeef.glade.h:167
 msgid "_View"
-msgstr ""
+msgstr "R_odymas"
 
 #: ../plugins/gtkui/interface.c:335 ../plugins/gtkui/deadbeef.glade.h:125
 msgid "Status bar"
-msgstr ""
+msgstr "Būsenos juosta"
 
 #: ../plugins/gtkui/interface.c:339 ../plugins/gtkui/deadbeef.glade.h:21
 msgid "Column headers"
-msgstr ""
+msgstr "Stulpelio antraštės"
 
 #: ../plugins/gtkui/interface.c:343 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Tabs"
-msgstr ""
+msgstr "Kortelės"
 
 #: ../plugins/gtkui/interface.c:347 ../plugins/gtkui/deadbeef.glade.h:40
 msgid "Equalizer"
-msgstr ""
+msgstr "Ekvalaizeris"
 
 #: ../plugins/gtkui/interface.c:351 ../plugins/gtkui/deadbeef.glade.h:164
 msgid "_Playback"
-msgstr ""
+msgstr "_Atkūrimas"
 
 #: ../plugins/gtkui/interface.c:358 ../plugins/gtkui/interface.c:3298
 #: ../plugins/gtkui/deadbeef.glade.h:83
 msgid "Order"
-msgstr ""
+msgstr "Tvarka"
 
 #: ../plugins/gtkui/interface.c:365 ../plugins/gtkui/deadbeef.glade.h:71
 msgid "Linear"
-msgstr ""
+msgstr "Linijinis"
 
 #: ../plugins/gtkui/interface.c:370 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Shuffle tracks"
-msgstr ""
+msgstr "Maišyti takelius"
 
 #: ../plugins/gtkui/interface.c:375 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Shuffle albums"
-msgstr ""
+msgstr "Maišyti albumus"
 
 #: ../plugins/gtkui/interface.c:380 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Random"
-msgstr ""
+msgstr "Atsitiktine tvarka"
 
 #: ../plugins/gtkui/interface.c:386 ../plugins/gtkui/deadbeef.glade.h:75
 msgid "Looping"
-msgstr ""
+msgstr "Kartojimas"
 
 #: ../plugins/gtkui/interface.c:393 ../plugins/gtkui/deadbeef.glade.h:73
 msgid "Loop All"
-msgstr ""
+msgstr "Kartoti visus"
 
 #: ../plugins/gtkui/interface.c:398 ../plugins/gtkui/deadbeef.glade.h:74
 msgid "Loop Single Song"
-msgstr ""
+msgstr "Kartoti vieną dainą"
 
 #: ../plugins/gtkui/interface.c:403 ../plugins/gtkui/deadbeef.glade.h:36
 msgid "Don't Loop"
-msgstr ""
+msgstr "Nekartoti"
 
 #: ../plugins/gtkui/interface.c:409 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "Scroll follows playback"
@@ -407,7 +408,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:418 ../plugins/gtkui/deadbeef.glade.h:127
 msgid "Stop after current"
-msgstr ""
+msgstr "Sustabdyti po dabartinės dainos"
 
 #: ../plugins/gtkui/interface.c:430 ../plugins/gtkui/deadbeef.glade.h:67
 msgid "Jump to current track"
@@ -416,89 +417,89 @@ msgstr ""
 #: ../plugins/gtkui/interface.c:437 ../plugins/gtkui/interface.c:444
 #: ../plugins/gtkui/deadbeef.glade.h:159
 msgid "_Help"
-msgstr ""
+msgstr "_Žinynas"
 
 #: ../plugins/gtkui/interface.c:452 ../plugins/gtkui/deadbeef.glade.h:152
 msgid "_ChangeLog"
-msgstr ""
+msgstr "_Keitimų žurnalas"
 
 #: ../plugins/gtkui/interface.c:461 ../plugins/gtkui/deadbeef.glade.h:158
 msgid "_GPLv2"
-msgstr ""
+msgstr "_GPLv2"
 
 #: ../plugins/gtkui/interface.c:465 ../plugins/gtkui/deadbeef.glade.h:160
 msgid "_LGPLv2.1"
-msgstr ""
+msgstr "_LGPLv2.1"
 
 #: ../plugins/gtkui/interface.c:474 ../plugins/gtkui/deadbeef.glade.h:149
 msgid "_About"
-msgstr ""
+msgstr "_Apie"
 
 #: ../plugins/gtkui/interface.c:482 ../plugins/gtkui/deadbeef.glade.h:166
 msgid "_Translators"
-msgstr ""
+msgstr "_Vertėjai"
 
 #: ../plugins/gtkui/interface.c:898 ../plugins/gtkui/deadbeef.glade.h:112
 msgid "Search"
-msgstr ""
+msgstr "Ieškoti"
 
 #: ../plugins/gtkui/interface.c:973 ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Stop"
-msgstr ""
+msgstr "Stabdyti"
 
 #: ../plugins/gtkui/interface.c:981 ../plugins/gtkui/deadbeef.glade.h:89
 msgid "Play"
-msgstr ""
+msgstr "Groti"
 
 #: ../plugins/gtkui/interface.c:989 ../plugins/gtkui/deadbeef.glade.h:88
 msgid "Pause"
-msgstr ""
+msgstr "Pristabdyti"
 
 #: ../plugins/gtkui/interface.c:997 ../plugins/gtkui/deadbeef.glade.h:96
 msgid "Previous"
-msgstr ""
+msgstr "Ankstesnis"
 
 #: ../plugins/gtkui/interface.c:1005 ../plugins/gtkui/deadbeef.glade.h:81
 msgid "Next"
-msgstr ""
+msgstr "Sekantis"
 
 #: ../plugins/gtkui/interface.c:1013 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Play Random"
-msgstr ""
+msgstr "Atsitiktinis grojimas"
 
 #: ../plugins/gtkui/interface.c:1022 ../plugins/gtkui/deadbeef.glade.h:5
 msgid "About"
-msgstr ""
+msgstr "Apie"
 
 #: ../plugins/gtkui/interface.c:1035 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Quit"
-msgstr ""
+msgstr "Išeiti"
 
 #: ../plugins/gtkui/interface.c:1225 ../plugins/gtkui/deadbeef.glade.h:139
 msgid "Track Properties"
-msgstr ""
+msgstr "Takelio savybės"
 
 #: ../plugins/gtkui/interface.c:1270 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Settings"
-msgstr ""
+msgstr "Nustatymai"
 
 #: ../plugins/gtkui/interface.c:1296 ../plugins/gtkui/deadbeef.glade.h:150
 msgid "_Apply"
-msgstr ""
+msgstr "Prit_aikyti"
 
 #: ../plugins/gtkui/interface.c:1317 ../plugins/gtkui/interface.c:1363
 #: ../plugins/gtkui/deadbeef.glade.h:154
 msgid "_Close"
-msgstr ""
+msgstr "_Užverti"
 
 #: ../plugins/gtkui/interface.c:1321 ../plugins/gtkui/deadbeef.glade.h:76
 msgid "Metadata"
-msgstr ""
+msgstr "Metaduomenys"
 
 #: ../plugins/gtkui/interface.c:1367 ../plugins/gtkui/plcommon.c:618
 #: ../plugins/gtkui/deadbeef.glade.h:97
 msgid "Properties"
-msgstr ""
+msgstr "Savybės"
 
 #: ../plugins/gtkui/interface.c:1494 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Enter new column title here"
@@ -506,7 +507,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1502 ../plugins/gtkui/deadbeef.glade.h:141
 msgid "Type:"
-msgstr ""
+msgstr "Tipas:"
 
 #: ../plugins/gtkui/interface.c:1510
 msgid "Item Index"
@@ -515,7 +516,7 @@ msgstr ""
 #. create default set of columns
 #: ../plugins/gtkui/interface.c:1511 ../plugins/gtkui/mainplaylist.c:315
 msgid "Playing"
-msgstr ""
+msgstr "Atkuriama"
 
 #: ../plugins/gtkui/interface.c:1512
 msgid "Album Art"
@@ -523,57 +524,57 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1513
 msgid "Artist - Album"
-msgstr ""
+msgstr "Atlikėjas - Albumas"
 
 #: ../plugins/gtkui/interface.c:1517 ../plugins/gtkui/mainplaylist.c:319
 #: ../plugins/gtkui/search.c:394
 msgid "Duration"
-msgstr ""
+msgstr "Trukmė"
 
 #: ../plugins/gtkui/interface.c:1518 ../translation/extra.c:71
 msgid "Track Number"
-msgstr ""
+msgstr "Takelio numeris"
 
 #: ../plugins/gtkui/interface.c:1519 ../translation/extra.c:68
 msgid "Band / Album Artist"
-msgstr ""
+msgstr "Grupė / Albumo atlikėjas"
 
 #: ../plugins/gtkui/interface.c:1526 ../plugins/gtkui/interface.c:3150
 #: ../plugins/gtkui/deadbeef.glade.h:44
 msgid "Format:"
-msgstr ""
+msgstr "Formatas:"
 
 #: ../plugins/gtkui/interface.c:1551 ../plugins/gtkui/deadbeef.glade.h:11
 msgid "Alignment:"
-msgstr ""
+msgstr "Lygiavimas:"
 
 #: ../plugins/gtkui/interface.c:1559
 msgid "Left"
-msgstr ""
+msgstr "Kairė"
 
 #: ../plugins/gtkui/interface.c:1560
 msgid "Right"
-msgstr ""
+msgstr "Dešinė"
 
 #: ../plugins/gtkui/interface.c:1583 ../plugins/gtkui/interface.c:2953
 #: ../plugins/gtkui/interface.c:3065 ../plugins/gtkui/interface.c:3191
 #: ../plugins/gtkui/deadbeef.glade.h:151
 msgid "_Cancel"
-msgstr ""
+msgstr "_Atsisakyti"
 
 #: ../plugins/gtkui/interface.c:1604 ../plugins/gtkui/interface.c:2974
 #: ../plugins/gtkui/interface.c:3086 ../plugins/gtkui/interface.c:3212
 #: ../plugins/gtkui/deadbeef.glade.h:162
 msgid "_OK"
-msgstr ""
+msgstr "_Gerai"
 
 #: ../plugins/gtkui/interface.c:1825 ../plugins/gtkui/deadbeef.glade.h:85
 msgid "Output plugin:"
-msgstr ""
+msgstr "Išvesties įskiepis:"
 
 #: ../plugins/gtkui/interface.c:1838 ../plugins/gtkui/deadbeef.glade.h:84
 msgid "Output device:"
-msgstr ""
+msgstr "Išvesties įrenginys:"
 
 #: ../plugins/gtkui/interface.c:1847 ../plugins/gtkui/deadbeef.glade.h:12
 msgid "Always convert 8 bit audio to 16 bit"
@@ -581,7 +582,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1851 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "Sound"
-msgstr ""
+msgstr "Garsas"
 
 #: ../plugins/gtkui/interface.c:1864 ../plugins/gtkui/deadbeef.glade.h:106
 msgid "Replaygain mode:"
@@ -589,11 +590,11 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1873
 msgid "Disable"
-msgstr ""
+msgstr "Išjungti"
 
 #: ../plugins/gtkui/interface.c:1874
 msgid "Track"
-msgstr ""
+msgstr "Takelis"
 
 #: ../plugins/gtkui/interface.c:1877 ../plugins/gtkui/deadbeef.glade.h:107
 msgid "Replaygain peak scale"
@@ -602,12 +603,12 @@ msgstr ""
 #: ../plugins/gtkui/interface.c:1892 ../plugins/gtkui/interface.c:1926
 #: ../plugins/gtkui/deadbeef.glade.h:2
 msgid "-12 dB"
-msgstr ""
+msgstr "-12 dB"
 
 #: ../plugins/gtkui/interface.c:1902 ../plugins/gtkui/interface.c:1936
 #: ../plugins/gtkui/deadbeef.glade.h:1
 msgid "+12 dB"
-msgstr ""
+msgstr "+12 dB"
 
 #: ../plugins/gtkui/interface.c:1906 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Replaygain preamp:"
@@ -631,12 +632,12 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1961 ../plugins/gtkui/deadbeef.glade.h:91
 msgid "Playback"
-msgstr ""
+msgstr "Atkūrimas"
 
 #: ../plugins/gtkui/interface.c:1982 ../plugins/gtkui/interface.c:2514
 #: ../plugins/gtkui/deadbeef.glade.h:22 ../plugins/converter/interface.c:649
 msgid "Configure"
-msgstr ""
+msgstr "Konfigūruoti"
 
 #: ../plugins/gtkui/interface.c:2017 ../plugins/gtkui/deadbeef.glade.h:29
 msgid "DSP Chain Preset"
@@ -644,11 +645,11 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2029 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "_Load"
-msgstr ""
+msgstr "_Įkelti"
 
 #: ../plugins/gtkui/interface.c:2033 ../plugins/gtkui/deadbeef.glade.h:28
 msgid "DSP"
-msgstr ""
+msgstr "DSP"
 
 #: ../plugins/gtkui/interface.c:2042 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Close minimizes to tray"
@@ -692,20 +693,20 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2120 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "GUI"
-msgstr ""
+msgstr "Grafinė sąsaja"
 
 #: ../plugins/gtkui/interface.c:2135 ../plugins/gtkui/interface.c:2179
 #: ../plugins/gtkui/deadbeef.glade.h:86
 msgid "Override"
-msgstr ""
+msgstr "Perrašyti"
 
 #: ../plugins/gtkui/interface.c:2144 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Foreground"
-msgstr "Priekis"
+msgstr "Priekinis planas"
 
 #: ../plugins/gtkui/interface.c:2151 ../plugins/gtkui/deadbeef.glade.h:17
 msgid "Background"
-msgstr ""
+msgstr "Fonas"
 
 #: ../plugins/gtkui/interface.c:2170 ../plugins/gtkui/deadbeef.glade.h:113
 msgid "Seekbar/Volumebar colors"
@@ -713,24 +714,24 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2188 ../plugins/gtkui/deadbeef.glade.h:77
 msgid "Middle"
-msgstr ""
+msgstr "Vidurinis"
 
 #: ../plugins/gtkui/interface.c:2195 ../plugins/gtkui/deadbeef.glade.h:70
 msgid "Light"
-msgstr ""
+msgstr "Šviesus"
 
 #: ../plugins/gtkui/interface.c:2202 ../plugins/gtkui/deadbeef.glade.h:30
 msgid "Dark"
-msgstr ""
+msgstr "Tamsus"
 
 #: ../plugins/gtkui/interface.c:2233 ../plugins/gtkui/deadbeef.glade.h:18
 msgid "Base"
-msgstr ""
+msgstr "Bazinis"
 
 #: ../plugins/gtkui/interface.c:2240 ../plugins/gtkui/interface.c:2297
 #: ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Text"
-msgstr ""
+msgstr "Tekstas"
 
 #: ../plugins/gtkui/interface.c:2253 ../plugins/gtkui/deadbeef.glade.h:131
 msgid "Tab strip colors"
@@ -754,11 +755,11 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2323 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Selected text"
-msgstr ""
+msgstr "Pažymėtas tekstas"
 
 #: ../plugins/gtkui/interface.c:2336 ../plugins/gtkui/deadbeef.glade.h:25
 msgid "Cursor"
-msgstr ""
+msgstr "Žymeklis"
 
 #: ../plugins/gtkui/interface.c:2349 ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Playlist colors"
@@ -766,72 +767,72 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2353 ../plugins/gtkui/deadbeef.glade.h:20
 msgid "Colors"
-msgstr ""
+msgstr "Spalvos"
 
 #: ../plugins/gtkui/interface.c:2362 ../plugins/gtkui/deadbeef.glade.h:38
 msgid "Enable Proxy Server"
-msgstr ""
+msgstr "Įjungti tarpinis serverį"
 
 #: ../plugins/gtkui/interface.c:2370 ../plugins/gtkui/deadbeef.glade.h:99
 msgid "Proxy Server Address:"
-msgstr ""
+msgstr "Tarpinis serveris:"
 
 #: ../plugins/gtkui/interface.c:2384 ../plugins/gtkui/deadbeef.glade.h:100
 msgid "Proxy Server Port:"
-msgstr ""
+msgstr "Tarpinio serverio prievadas:"
 
 #: ../plugins/gtkui/interface.c:2398 ../plugins/gtkui/deadbeef.glade.h:101
 msgid "Proxy Type:"
-msgstr ""
+msgstr "Tarpinio serverio tipas:"
 
 #: ../plugins/gtkui/interface.c:2417 ../plugins/gtkui/deadbeef.glade.h:102
 msgid "Proxy Username:"
-msgstr ""
+msgstr "Tarpinio serverio naudotojo vardas:"
 
 #: ../plugins/gtkui/interface.c:2430 ../plugins/gtkui/deadbeef.glade.h:98
 msgid "Proxy Password:"
-msgstr ""
+msgstr "Tarpinio serverio slaptažodis:"
 
 #: ../plugins/gtkui/interface.c:2440 ../plugins/gtkui/deadbeef.glade.h:79
 msgid "Network"
-msgstr ""
+msgstr "Tinklas"
 
 #: ../plugins/gtkui/interface.c:2471 ../plugins/gtkui/deadbeef.glade.h:144
 msgid "Version: "
-msgstr ""
+msgstr "Versija: "
 
 #: ../plugins/gtkui/interface.c:2535 ../plugins/gtkui/deadbeef.glade.h:23
 #: ../translation/extra.c:78
 msgid "Copyright"
-msgstr ""
+msgstr "Autorinės teisės"
 
 #: ../plugins/gtkui/interface.c:2545 ../plugins/gtkui/deadbeef.glade.h:94
 msgid "Plugins"
-msgstr ""
+msgstr "Įskiepiai"
 
 #: ../plugins/gtkui/interface.c:3033 ../plugins/gtkui/deadbeef.glade.h:142
 msgid "URL:"
-msgstr ""
+msgstr "URL:"
 
 #: ../plugins/gtkui/interface.c:3135 ../plugins/gtkui/deadbeef.glade.h:48
 msgid "Group By"
-msgstr ""
+msgstr "Grupuoti pagal"
 
 #: ../plugins/gtkui/interface.c:3259 ../plugins/gtkui/deadbeef.glade.h:123
 msgid "Sort by..."
-msgstr ""
+msgstr "Rikiuoti pagal..."
 
 #: ../plugins/gtkui/interface.c:3275 ../plugins/gtkui/deadbeef.glade.h:43
 msgid "Format"
-msgstr ""
+msgstr "Formatas"
 
 #: ../plugins/gtkui/interface.c:3305
 msgid "Ascending"
-msgstr ""
+msgstr "Didėjantis"
 
 #: ../plugins/gtkui/interface.c:3306
 msgid "Descending"
-msgstr ""
+msgstr "Mažėjantis"
 
 #: ../plugins/gtkui/interface.c:3359 ../plugins/gtkui/deadbeef.glade.h:114
 #: ../plugins/converter/interface.c:750
@@ -842,7 +843,7 @@ msgstr ""
 #: ../plugins/converter/convgui.c:1016 ../plugins/converter/interface.c:766
 #: ../plugins/gtkui/dspconfig.c:139
 msgid "Plugin"
-msgstr ""
+msgstr "Įskiepis"
 
 #: ../plugins/gtkui/interface.c:3461 ../plugins/gtkui/deadbeef.glade.h:133
 msgid "Tag Writer Settings"
@@ -850,44 +851,44 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:3492 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "Write ID3v2"
-msgstr ""
+msgstr "Rašyti ID3v2"
 
 #: ../plugins/gtkui/interface.c:3496 ../plugins/gtkui/interface.c:3623
 #: ../plugins/gtkui/deadbeef.glade.h:146
 msgid "Write ID3v1"
-msgstr ""
+msgstr "Rašyti ID3v1"
 
 #: ../plugins/gtkui/interface.c:3500 ../plugins/gtkui/interface.c:3579
 #: ../plugins/gtkui/interface.c:3619 ../plugins/gtkui/deadbeef.glade.h:145
 msgid "Write APEv2"
-msgstr ""
+msgstr "Rašyti APEv2"
 
 #: ../plugins/gtkui/interface.c:3508 ../plugins/gtkui/interface.c:3587
 #: ../plugins/gtkui/deadbeef.glade.h:130
 msgid "Strip ID3v2"
-msgstr ""
+msgstr "Šalinti ID3v2"
 
 #: ../plugins/gtkui/interface.c:3512 ../plugins/gtkui/interface.c:3635
 #: ../plugins/gtkui/deadbeef.glade.h:129
 msgid "Strip ID3v1"
-msgstr ""
+msgstr "Šalinti ID3v1"
 
 #: ../plugins/gtkui/interface.c:3516 ../plugins/gtkui/interface.c:3591
 #: ../plugins/gtkui/interface.c:3631 ../plugins/gtkui/deadbeef.glade.h:128
 msgid "Strip APEv2"
-msgstr ""
+msgstr "Šalinti APEv2"
 
 #: ../plugins/gtkui/interface.c:3524 ../plugins/gtkui/deadbeef.glade.h:53
 msgid "ID3v2 version"
-msgstr ""
+msgstr "ID3v2 versija"
 
 #: ../plugins/gtkui/interface.c:3531
 msgid "2.3 (Recommended)"
-msgstr ""
+msgstr "2.3 (Rekomenduojama)"
 
 #: ../plugins/gtkui/interface.c:3532
 msgid "2.4"
-msgstr ""
+msgstr "2.4"
 
 #: ../plugins/gtkui/interface.c:3538 ../plugins/gtkui/deadbeef.glade.h:52
 msgid "ID3v1 character encoding (default is iso8859-1)"
@@ -899,7 +900,7 @@ msgstr ""
 
 #: ../plugins/gtkui/mainplaylist.c:316 ../plugins/gtkui/search.c:391
 msgid "Artist / Album"
-msgstr ""
+msgstr "Atlikėjas / Albumas"
 
 #: ../plugins/gtkui/mainplaylist.c:317 ../plugins/gtkui/search.c:392
 msgid "Track No"
@@ -919,27 +920,27 @@ msgstr ""
 #: ../plugins/gtkui/trkproperties.c:693 ../plugins/converter/convgui.c:759
 #: ../plugins/converter/convgui.c:1136
 msgid "Warning"
-msgstr ""
+msgstr "Įspėjimas"
 
 #: ../plugins/gtkui/plcommon.c:444
 msgid "Add to playback queue"
-msgstr ""
+msgstr "Pridėti į atkūrimo eilę"
 
 #: ../plugins/gtkui/plcommon.c:449
 msgid "Remove from playback queue"
-msgstr ""
+msgstr "Pašalinti iš grojimo eilės"
 
 #: ../plugins/gtkui/plcommon.c:457
 msgid "Reload metadata"
-msgstr ""
+msgstr "Iš naujo įkelti meta duomenis"
 
 #: ../plugins/gtkui/plcommon.c:476
 msgid "Remove from disk"
-msgstr ""
+msgstr "Pašalinti iš disko"
 
 #: ../plugins/gtkui/plcommon.c:855 ../plugins/gtkui/plcommon.c:980
 msgid "Add column"
-msgstr ""
+msgstr "Pridėti stulpelį"
 
 #: ../plugins/gtkui/plcommon.c:885 ../plugins/gtkui/plcommon.c:984
 msgid "Edit column"
@@ -947,15 +948,15 @@ msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:988
 msgid "Remove column"
-msgstr ""
+msgstr "Pašalinti stulpelį"
 
 #: ../plugins/gtkui/plcommon.c:998
 msgid "Group by"
-msgstr ""
+msgstr "Grupuoti pagal"
 
 #: ../plugins/gtkui/plcommon.c:1005
 msgid "None"
-msgstr ""
+msgstr "Nieką"
 
 #: ../plugins/gtkui/plcommon.c:1009
 msgid "Artist/Date/Album"
@@ -963,7 +964,7 @@ msgstr ""
 
 #: ../plugins/gtkui/pluginconf.c:42
 msgid "Open file..."
-msgstr ""
+msgstr "Atverti failą..."
 
 #: ../plugins/gtkui/pluginconf.c:217
 #, c-format
@@ -976,15 +977,15 @@ msgstr ""
 
 #: ../plugins/gtkui/prefwin.c:318 ../plugins/converter/interface.c:641
 msgid "Add"
-msgstr ""
+msgstr "Pridėti"
 
 #: ../plugins/gtkui/prefwin.c:328
 msgid "Global Hotkeys"
-msgstr ""
+msgstr "Bendri karštieji klavišai"
 
 #: ../plugins/gtkui/prefwin.c:390
 msgid "Slot"
-msgstr ""
+msgstr "Lizdas"
 
 #: ../plugins/gtkui/prefwin.c:391
 msgid "Key combination"
@@ -992,11 +993,11 @@ msgstr ""
 
 #: ../plugins/gtkui/progress.c:56
 msgid "Adding files..."
-msgstr ""
+msgstr "Pridedami failai..."
 
 #: ../plugins/gtkui/progress.c:90
 msgid "Initializing..."
-msgstr ""
+msgstr "Inicializuojama..."
 
 #: ../plugins/gtkui/trkproperties.c:159
 msgid "You've modified data for this track."
@@ -1013,11 +1014,11 @@ msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:407 ../plugins/gtkui/trkproperties.c:419
 msgid "Key"
-msgstr ""
+msgstr "Raktas"
 
 #: ../plugins/gtkui/trkproperties.c:408 ../plugins/gtkui/trkproperties.c:420
 msgid "Value"
-msgstr ""
+msgstr "Reikšmė"
 
 #: ../plugins/gtkui/trkproperties.c:594
 msgid "Writing tags..."
@@ -1025,7 +1026,7 @@ msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:621
 msgid "Name:"
-msgstr ""
+msgstr "Pavadinimas:"
 
 #: ../plugins/gtkui/trkproperties.c:633
 msgid "Field names must not start with : or _"
@@ -1045,21 +1046,21 @@ msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:734
 msgid "Add field"
-msgstr ""
+msgstr "Pridėti lauką"
 
 #: ../plugins/gtkui/trkproperties.c:737
 msgid "Remove field"
-msgstr ""
+msgstr "Pašalinti lauką"
 
 #: ../main.c:91
 #, c-format
 msgid "Usage: deadbeef [options] [file(s)]\n"
-msgstr ""
+msgstr "Naudojimas: deadbeef [parinktys][failai]\n"
 
 #: ../main.c:92
 #, c-format
 msgid "Options:\n"
-msgstr ""
+msgstr "Parinktys:\n"
 
 #: ../main.c:93
 #, c-format
@@ -1074,7 +1075,7 @@ msgstr ""
 #: ../main.c:95
 #, c-format
 msgid "   --version          Print version info and exit\n"
-msgstr ""
+msgstr "  --version     Parodyti versijos informaciją ir išeiti"
 
 #: ../main.c:96
 #, c-format
@@ -1151,21 +1152,23 @@ msgstr ""
 
 #: ../playlist.c:454 ../playlist.c:2398
 msgid "Default"
-msgstr ""
+msgstr "Numatyta"
 
 #: ../playlist.c:3664
 msgid "Yes"
-msgstr ""
+msgstr "Taip"
 
 #: ../playlist.c:3664
 msgid "No"
-msgstr ""
+msgstr "Ne"
 
 #: ../plugins/gtkui/deadbeef.glade.h:3
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
 msgstr ""
+"2.3 (Rekomenduojama)\n"
+"2.4"
 
 #: ../plugins/gtkui/deadbeef.glade.h:14
 msgid ""
@@ -1252,11 +1255,11 @@ msgstr ""
 
 #: ../translation/extra.c:13
 msgid "Username"
-msgstr ""
+msgstr "Naudotojas"
 
 #: ../translation/extra.c:14
 msgid "Password"
-msgstr ""
+msgstr "Slaptažodis"
 
 #: ../translation/extra.c:15
 msgid "Scrobble URL"
@@ -1380,7 +1383,7 @@ msgstr ""
 
 #: ../translation/extra.c:52
 msgid "Samplerate"
-msgstr ""
+msgstr "Diskretizavimo dažnis"
 
 #. SHN player plugin
 #: ../translation/extra.c:54
@@ -1419,31 +1422,31 @@ msgstr ""
 
 #: ../translation/extra.c:66
 msgid "Track Title"
-msgstr ""
+msgstr "Takelio pavadinimas"
 
 #: ../translation/extra.c:67
 msgid "Performer"
-msgstr ""
+msgstr "Atlikėjas"
 
 #: ../translation/extra.c:72
 msgid "Total Tracks"
-msgstr ""
+msgstr "Viso takelių"
 
 #: ../translation/extra.c:73
 msgid "Genre"
-msgstr ""
+msgstr "Žanras"
 
 #: ../translation/extra.c:74
 msgid "Composer"
-msgstr ""
+msgstr "Kompozitorius"
 
 #: ../translation/extra.c:75
 msgid "Disc Number"
-msgstr ""
+msgstr "Disko numeris"
 
 #: ../translation/extra.c:76
 msgid "Comment"
-msgstr ""
+msgstr "Komentaras"
 
 #: ../translation/extra.c:77
 msgid "Encoder / Vendor"
@@ -1451,7 +1454,7 @@ msgstr ""
 
 #: ../translation/extra.c:79
 msgid "Location"
-msgstr ""
+msgstr "Vieta"
 
 #: ../translation/extra.c:80
 msgid "Subtrack Index"
@@ -1467,7 +1470,7 @@ msgstr ""
 
 #: ../translation/extra.c:83
 msgid "Codec"
-msgstr ""
+msgstr "Kodekas"
 
 #. FFmpeg deocder plugin
 #: ../translation/extra.c:85
@@ -1477,7 +1480,7 @@ msgstr ""
 #. Converter GUI
 #: ../translation/extra.c:87
 msgid "Convert"
-msgstr ""
+msgstr "Konvertuoti"
 
 #. Resampler (Secret Rabbit Code)
 #: ../translation/extra.c:89
@@ -1494,7 +1497,7 @@ msgstr ""
 
 #: ../plugins/converter/convgui.c:108
 msgid "The file already exists. Overwrite?"
-msgstr ""
+msgstr "Failas jau egzistuoja. Perrašyti?"
 
 #: ../plugins/converter/convgui.c:110
 msgid "Converter warning"
@@ -1502,7 +1505,7 @@ msgstr ""
 
 #: ../plugins/converter/convgui.c:222
 msgid "Please select encoder"
-msgstr ""
+msgstr "Prašome pasirinkti koduotoją"
 
 #: ../plugins/converter/convgui.c:224
 msgid "Converter error"
@@ -1510,11 +1513,11 @@ msgstr ""
 
 #: ../plugins/converter/convgui.c:248
 msgid "Converting..."
-msgstr ""
+msgstr "Konvertuojama..."
 
 #: ../plugins/converter/convgui.c:394 ../plugins/converter/convgui.c:496
 msgid "Select folder..."
-msgstr ""
+msgstr "Pasirinkite aplanką..."
 
 #: ../plugins/converter/convgui.c:635
 msgid "Failed to save encoder preset"
@@ -1532,11 +1535,11 @@ msgstr ""
 
 #: ../plugins/converter/convgui.c:638 ../plugins/converter/convgui.c:1036
 msgid "Error"
-msgstr ""
+msgstr "Klaida"
 
 #: ../plugins/converter/convgui.c:692
 msgid "Add new encoder"
-msgstr ""
+msgstr "Pridėti naują koduotoją"
 
 #: ../plugins/converter/convgui.c:724
 msgid "Edit encoder"
@@ -1576,7 +1579,7 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:94
 msgid "Output folder:"
-msgstr ""
+msgstr "Paskirties aplankas:"
 
 #: ../plugins/converter/interface.c:115
 msgid "Output file name:"
@@ -1590,7 +1593,7 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:139
 msgid "Encoder:"
-msgstr ""
+msgstr "Koduotojas:"
 
 #: ../plugins/converter/interface.c:163
 msgid "DSP preset:"
@@ -1610,23 +1613,23 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:207
 msgid "8 bit signed int"
-msgstr ""
+msgstr "8 bit signed int"
 
 #: ../plugins/converter/interface.c:208
 msgid "16 bit signed int"
-msgstr ""
+msgstr "16 bit signed int"
 
 #: ../plugins/converter/interface.c:209
 msgid "24 bit signed int"
-msgstr ""
+msgstr "24 bit signed int"
 
 #: ../plugins/converter/interface.c:210
 msgid "32 bit signed int"
-msgstr ""
+msgstr "32 bit signed int"
 
 #: ../plugins/converter/interface.c:211
 msgid "32 bit float"
-msgstr ""
+msgstr "32 bit float"
 
 #: ../plugins/converter/interface.c:217
 msgid "When file exists:"
@@ -1634,11 +1637,11 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:224
 msgid "Prompt"
-msgstr ""
+msgstr "Paklausti"
 
 #: ../plugins/converter/interface.c:225
 msgid "Overwrite"
-msgstr ""
+msgstr "Perrašyti"
 
 #: ../plugins/converter/interface.c:227
 msgid "Preserve folder structure, starting from:"
@@ -1658,11 +1661,11 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:417
 msgid "E.g. mp3"
-msgstr ""
+msgstr "Pvz. mp3"
 
 #: ../plugins/converter/interface.c:425
 msgid "Command line:"
-msgstr ""
+msgstr "Komandinė eilutė:"
 
 #: ../plugins/converter/interface.c:436
 #, c-format
@@ -1680,39 +1683,39 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:455
 msgid "Method:"
-msgstr ""
+msgstr "Metodas:"
 
 #: ../plugins/converter/interface.c:462
 msgid "Pipe"
-msgstr ""
+msgstr "Kanalas"
 
 #: ../plugins/converter/interface.c:463
 msgid "Temporary file"
-msgstr ""
+msgstr "Laikinas failas"
 
 #: ../plugins/converter/interface.c:480
 msgid "APEv2"
-msgstr ""
+msgstr "APEv2"
 
 #: ../plugins/converter/interface.c:486
 msgid "ID3v1"
-msgstr ""
+msgstr "ID3v1"
 
 #: ../plugins/converter/interface.c:492
 msgid "OggVorbis"
-msgstr ""
+msgstr "OggVorbis"
 
 #: ../plugins/converter/interface.c:498
 msgid "FLAC"
-msgstr ""
+msgstr "FLAC"
 
 #: ../plugins/converter/interface.c:510
 msgid "ID3v2"
-msgstr ""
+msgstr "ID3v2"
 
 #: ../plugins/converter/interface.c:520
 msgid "<b>Tag writer</b>"
-msgstr ""
+msgstr "<b>Žymių rašyklė</b>"
 
 #: ../plugins/converter/interface.c:606
 msgid "DSP Preset Editor"
