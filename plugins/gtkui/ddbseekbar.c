@@ -148,6 +148,26 @@ static gboolean ddb_seekbar_real_motion_notify_event (GtkWidget* base, GdkEventM
 	_tmp0_ = *event;
 	_tmp1_ = on_seekbar_motion_notify_event ((GtkWidget*) self, &_tmp0_);
 	result = _tmp1_;
+
+    DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
+    if (trk) {
+        GtkAllocation a;
+        gtk_widget_get_allocation (base, &a);
+        float time = (event->x - a.x) * deadbeef->pl_get_item_duration (trk) / (a.width);
+        if (time < 0) {
+            time = 0;
+        }
+        deadbeef->pl_item_unref (trk);
+        char s[1000];
+        int hr = time/360;
+        int mn = (time-hr*360)/60;
+        int sc = time-hr*360-mn*60;
+        snprintf (s, sizeof (s), "%02d:%02d:%02d", hr, mn, sc);
+
+        printf ("set tooltip text %s\n", s);
+        gtk_widget_set_tooltip_text (base, s);
+        gtk_widget_trigger_tooltip_query (base);
+    }
 	return result;
 }
 
@@ -206,6 +226,7 @@ static void ddb_seekbar_class_init (DdbSeekbarClass * klass) {
 
 static void ddb_seekbar_instance_init (DdbSeekbar * self) {
 	gtk_widget_set_has_window ((GtkWidget*) self, FALSE);
+	gtk_widget_set_has_tooltip ((GtkWidget*) self, TRUE);
 }
 
 
