@@ -788,6 +788,7 @@
 		  <signal name="clicked" handler="on_playbtn_clicked" last_modification_time="Sun, 05 Jul 2009 10:48:53 GMT"/>
 		  <accelerator key="x" modifiers="0" signal="activate"/>
 		  <accelerator key="Return" modifiers="0" signal="activate"/>
+		  <accelerator key="KP_Enter" modifiers="0" signal="activate"/>
 
 		  <child>
 		    <widget class="GtkImage" id="image2">

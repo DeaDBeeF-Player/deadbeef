@@ -523,6 +523,9 @@ create_mainwin (void)
   gtk_widget_add_accelerator (playbtn, "activate", accel_group,
                               GDK_Return, (GdkModifierType) 0,
                               GTK_ACCEL_VISIBLE);
+  gtk_widget_add_accelerator (playbtn, "activate", accel_group,
+                              GDK_KP_Enter, (GdkModifierType) 0,
+                              GTK_ACCEL_VISIBLE);
   gtk_button_set_relief (GTK_BUTTON (playbtn), GTK_RELIEF_NONE);
 
   image2 = gtk_image_new_from_stock ("gtk-media-play", GTK_ICON_SIZE_BUTTON);
