@@ -3543,8 +3543,19 @@ plt_search_process (playlist_t *playlist, const char *text) {
         if (*text) {
             DB_metaInfo_t *m = NULL;
             for (m = it->meta; m; m = m->next) {
-                if (m->key[0] == ':' || m->key[0] == '_' || m->key[0] == '!') {
+                int is_uri = !strcmp (m->key, ":URI");
+                if ((m->key[0] == ':' && !is_uri) || m->key[0] == '_' || m->key[0] == '!') {
                     break;
+                }
+                const char *value = m->value;
+                if (is_uri) {
+                    value = strrchr (value, '/');
+                    if (value) {
+                        value++;
+                    }
+                    else {
+                        value = m->value;
+                    }
                 }
                 if (strcasecmp(m->key, "cuesheet") && strcasecmp (m->key, "log")) {
                     char cmp = *(m->value-1);
@@ -3565,8 +3576,8 @@ plt_search_process (playlist_t *playlist, const char *text) {
                             break;
                         }
                     }
-                    else if (utfcasestr_fast (m->value, lc)) {
-                        //fprintf (stderr, "%s -> %s match (%s.%s)\n", text, m->value, pl_find_meta_raw (it, ":URI"), m->key);
+                    else if (utfcasestr_fast (value, lc)) {
+                        //fprintf (stderr, "%s -> %s match (%s.%s)\n", text, value, pl_find_meta_raw (it, ":URI"), m->key);
                         // add to list
                         it->next[PL_SEARCH] = NULL;
                         it->prev[PL_SEARCH] = playlist->tail[PL_SEARCH];
