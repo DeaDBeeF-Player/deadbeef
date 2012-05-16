@@ -222,7 +222,7 @@ cvorbis_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         if (plt) {
             deadbeef->plt_unref (plt);
         }
-        deadbeef->pl_replace_meta (it, ":FILETYPE", "OggVorbis");
+        deadbeef->pl_replace_meta (it, "!FILETYPE", "OggVorbis");
     }
     else
     {
@@ -463,7 +463,7 @@ cvorbis_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     int64_t fsize = deadbeef->fgetlength (fp);
     if (fp->vfs->is_streaming ()) {
         DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
-        deadbeef->pl_add_meta (it, ":FILETYPE", "OggVorbis");
+        deadbeef->pl_add_meta (it, "!FILETYPE", "OggVorbis");
         deadbeef->plt_set_item_duration (plt, it, -1);
         deadbeef->pl_add_meta (it, "title", NULL);
         after = deadbeef->plt_insert_item (plt, after, it);
