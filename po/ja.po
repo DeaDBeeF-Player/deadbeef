@@ -68,6 +68,7 @@ msgid "DeaDBeeF %s ChangeLog"
 msgstr "DeaDBeeF %s の更新履歴"
 
 #, c-format, c-format
+#, c-format
 #~ msgid "DeaDBeeF Translators"
 #~ msgstr "DeaDBeeF の翻訳者"
 
@@ -915,6 +916,7 @@ msgid "Open file..."
 msgstr "ファイルを開く..."
 
 #, c-format, c-format
+#, c-format
 #~ msgid "Configure %s"
 #~ msgstr "%s の設定"
 
