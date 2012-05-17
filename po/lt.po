@@ -1,23 +1,22 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # Algimantas Margevičius <margevicius.algimantas@gmail.com>, 2012.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2012-05-17 08:05+0200\n"
-"Last-Translator: Algimantas <gymka@mail.ru>\n"
+"PO-Revision-Date: 2012-05-17 08:53+0300\n"
+"Last-Translator: Algimantas Margevičius <margevicius.algimantas@gmail.com>\n"
 "Language-Team: Lietuvių <>\n"
 "Language: lt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n%"
-"100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n"
+"%100<10 || n%100>=20) ? 1 : 2)\n"
 "X-Generator: Pootle 2.0.5\n"
 
 #: ../plugins/gtkui/callbacks.c:123
@@ -600,7 +599,7 @@ msgstr "Takelis"
 
 #: ../plugins/gtkui/interface.c:1877 ../plugins/gtkui/deadbeef.glade.h:107
 msgid "Replaygain peak scale"
-msgstr "Garsinimo peržiūros dydis"
+msgstr "Garsinimo mastelis"
 
 #: ../plugins/gtkui/interface.c:1892 ../plugins/gtkui/interface.c:1926
 #: ../plugins/gtkui/deadbeef.glade.h:2
@@ -614,11 +613,11 @@ msgstr "+12 dB"
 
 #: ../plugins/gtkui/interface.c:1906 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Replaygain preamp:"
-msgstr "Replaygain preamp:"
+msgstr "Pagarsinimo lygis:"
 
 #: ../plugins/gtkui/interface.c:1913 ../plugins/gtkui/deadbeef.glade.h:47
 msgid "Global preamp:"
-msgstr "Bendras preamp:"
+msgstr "Bendras pagarsinimas:"
 
 #: ../plugins/gtkui/interface.c:1944 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
@@ -631,7 +630,7 @@ msgstr "Paleidus programą tęsti ankstesnę sesiją"
 
 #: ../plugins/gtkui/interface.c:1957 ../plugins/gtkui/deadbeef.glade.h:37
 msgid "Don't add from archives when adding folders"
-msgstr "Prideant aplankus, nepridėti iš archyvų"
+msgstr "Prideant aplankus, nepridėti failų iš archyvų"
 
 #: ../plugins/gtkui/interface.c:1961 ../plugins/gtkui/deadbeef.glade.h:91
 msgid "Playback"
@@ -676,7 +675,7 @@ msgstr "Kontekstiniame meniu nerodyti „Pašalinti iš disko“"
 
 #: ../plugins/gtkui/interface.c:2062 ../plugins/gtkui/deadbeef.glade.h:16
 msgid "Auto-name playlists when adding a single folder"
-msgstr "Pridedant vieną aplanką, grojaraštį pavadinti automatiškai"
+msgstr "Pridedant tik vieną aplanką, grojaraštį pavadinti automatiškai"
 
 #: ../plugins/gtkui/interface.c:2070 ../plugins/gtkui/deadbeef.glade.h:54
 msgid "Interface refresh rate (times per second):"
@@ -692,7 +691,8 @@ msgstr "Pavadinimo juostos tekstas sustabdžius:"
 
 #: ../plugins/gtkui/interface.c:2112 ../plugins/gtkui/deadbeef.glade.h:46
 msgid "GUI Plugin (changing requires restart):"
-msgstr "GUI Įskiepis (pakeitimam įsigalioti, reikia paleisti iš naujo):"
+msgstr ""
+"Grafinės sąsajos įskiepis (pakeitimam įsigalioti, reikia paleisti iš naujo):"
 
 #: ../plugins/gtkui/interface.c:2120 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "GUI"
@@ -775,7 +775,7 @@ msgstr "Spalvos"
 
 #: ../plugins/gtkui/interface.c:2362 ../plugins/gtkui/deadbeef.glade.h:38
 msgid "Enable Proxy Server"
-msgstr "Įjungti tarpinis serverį"
+msgstr "Įjungti tarpinį serverį"
 
 #: ../plugins/gtkui/interface.c:2370 ../plugins/gtkui/deadbeef.glade.h:99
 msgid "Proxy Server Address:"
@@ -934,7 +934,7 @@ msgstr "Pridėti į atkūrimo eilę"
 
 #: ../plugins/gtkui/plcommon.c:449
 msgid "Remove from playback queue"
-msgstr "Pašalinti iš grojimo eilės"
+msgstr "Pašalinti iš atkūrimo eilės"
 
 #: ../plugins/gtkui/plcommon.c:457
 msgid "Reload metadata"
@@ -991,7 +991,7 @@ msgstr "Bendri karštieji klavišai"
 
 #: ../plugins/gtkui/prefwin.c:390
 msgid "Slot"
-msgstr "Lizdas"
+msgstr "Veiksmas"
 
 #: ../plugins/gtkui/prefwin.c:391
 msgid "Key combination"
@@ -1081,7 +1081,7 @@ msgstr "   --quit             Užverti grotuvą\n"
 #: ../main.c:95
 #, c-format
 msgid "   --version          Print version info and exit\n"
-msgstr "  --version     Parodyti versijos informaciją ir išeiti\n"
+msgstr "   --version     Parodyti versijos informaciją ir išeiti\n"
 
 #: ../main.c:96
 #, c-format
@@ -1150,7 +1150,8 @@ msgstr ""
 msgid ""
 "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
 "- title\"\n"
-msgstr "                     pvz.: --nowplaying \"%%a - %%t\" turėtų atvaizduoti "
+msgstr ""
+"                     pvz.: --nowplaying \"%%a - %%t\" turėtų atvaizduoti "
 "„atlikėjas - pavadinimas“\n"
 
 #: ../main.c:110
@@ -1158,8 +1159,9 @@ msgstr "                     pvz.: --nowplaying \"%%a - %%t\" turėtų atvaizduo
 msgid ""
 "                      for more info, see http://sourceforge.net/apps/"
 "mediawiki/deadbeef/index.php?title=Title_Formatting\n"
-msgstr "                      plačiau http://sourceforge.net/apps/mediawiki/deadbeef"
-"/index.php?title=Title_Formatting\n"
+msgstr ""
+"                      plačiau http://sourceforge.net/apps/mediawiki/deadbeef/"
+"index.php?title=Title_Formatting\n"
 
 #: ../playlist.c:454 ../playlist.c:2398
 msgid "Default"
@@ -1246,8 +1248,7 @@ msgid ""
 "package, or specify path to freepats.cfg in the plugin settings."
 msgstr ""
 "wildmidi: freepats konfigūracijos failas nerastas. Įdiekite timidity-"
-"freepats paetą, arba įskiepio nustatymuose nurodykite kelią iki "
-"freepats.cfg."
+"freepats paetą, arba įskiepio nustatymuose nurodykite kelią iki freepats.cfg."
 
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
