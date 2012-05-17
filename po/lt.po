@@ -1058,10 +1058,9 @@ msgstr "Pridėti lauką"
 msgid "Remove field"
 msgstr "Pašalinti lauką"
 
-#: ../main.c:91
 #, c-format
-msgid "Usage: deadbeef [options] [file(s)]\n"
-msgstr "Naudojimas: deadbeef [parinktys][failai]\n"
+#~ msgid "Usage: deadbeef [options] [file(s)]\n"
+#~ msgstr "Naudojimas: deadbeef [parinktys][failai]\n"
 
 #: ../main.c:92
 #, c-format
@@ -1680,9 +1679,8 @@ msgstr "Paklausti"
 msgid "Overwrite"
 msgstr "Perrašyti"
 
-#: ../plugins/converter/interface.c:227
-msgid "Preserve folder structure, starting from:"
-msgstr "Išlaikyti aplanko struktūrą, pradedant:"
+#~ msgid "Preserve folder structure, starting from:"
+#~ msgstr "Išlaikyti aplanko struktūrą, pradedant:"
 
 #: ../plugins/converter/interface.c:379
 msgid "Edit Encoder Preset"
@@ -1765,3 +1763,219 @@ msgstr "DSP nustatymų rinkinių redaktorius"
 #: ../plugins/converter/interface.c:629
 msgid "Untitled DSP Preset"
 msgstr "Nepavadintas DSP nustatymų rinkinys"
+
+#: ../plugins/shellexecui/interface.c:218
+#: ../plugins/shellexecui/shellexec.glade.h:23
+msgid "Playlist"
+msgstr "Grojaraštis"
+
+#: ../plugins/shellexecui/shellexecui.c:249
+#: ../plugins/shellexecui/shellexecui.c:253
+msgid "Invalid Values"
+msgstr "Netinkamos reikšmės"
+
+#: ../plugins/shellexecui/interface.c:160
+#: ../plugins/shellexecui/shellexec.glade.h:8
+msgid "Command:"
+msgstr "Komanda:"
+
+#. please note: do NOT translate the Edit/ part
+#: ../translation/extra.c:93
+msgid "Edit/Configure custom shell commands"
+msgstr "Keisti/Konfigūruoti pasirinktines shell komandas"
+
+#: ../plugins/shellexecui/interface.c:203
+#: ../plugins/shellexecui/shellexec.glade.h:17
+msgid "Multiple Tracks"
+msgstr "Keletas takelių"
+
+#: ../plugins/gtkui/interface.c:1974 ../plugins/gtkui/deadbeef.glade.h:104
+msgid "Auto-reset \"Stop after current\""
+msgstr "Automatiškai atstatyti „Sustabdyti po dabartinės dainos“"
+
+#: ../plugins/shellexecui/interface.c:226
+#: ../plugins/shellexecui/shellexec.glade.h:24
+msgid "Item should appear in the main menu"
+msgstr "Elementas turėtų atsirasti pagrindiniame meniu"
+
+#: ../plugins/shellexecui/shellexecui.c:94
+msgid "Add Command"
+msgstr "Pridėti komandą"
+
+#: ../plugins/shellexecui/interface.c:216
+#: ../plugins/shellexecui/shellexec.glade.h:20
+msgid "Works on remote files (e.g. http:// streams)"
+msgstr "Veikia su nutolusiais failais (pvz. http:// streams)"
+
+#: ../plugins/shellexecui/interface.c:208
+#: ../plugins/shellexecui/shellexec.glade.h:19
+msgid "Local"
+msgstr "Vietinis"
+
+#: ../plugins/shellexecui/interface.c:187
+#: ../plugins/shellexecui/shellexec.glade.h:12
+msgid "Free-form name, for example \"My Shell Command\""
+msgstr "Laisva forma, pavyzdžiui „Mano shell komanda“"
+
+#: ../main.c:97
+#, c-format
+msgid ""
+"   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
+msgstr ""
+"   --gui ĮSKIEPIS       Nurodo kurį GUI įskiepį naudoti, numatytasis yra "
+"„GTK2“\n"
+
+#: ../plugins/converter/converter.glade.h:34
+msgid ""
+"Pipe\n"
+"Temporary file"
+msgstr ""
+"Kanalas\n"
+"Laikinas failas"
+
+#: ../plugins/shellexecui/shellexecui.c:141
+msgid "Confirm Remove"
+msgstr "Patvirtinti pašalinimą"
+
+#: ../plugins/shellexecui/shellexecui.c:139
+msgid "This action will delete the selected shell command. Are you sure?"
+msgstr "Bus pašalinta pasirinkta shell komanda. Ar jūs įsitikinę?"
+
+#: ../plugins/shellexecui/interface.c:64
+#: ../plugins/shellexecui/shellexec.glade.h:5
+msgid "Edit"
+msgstr "Keisti"
+
+#: ../plugins/shellexecui/interface.c:45
+#: ../plugins/shellexecui/shellexec.glade.h:1
+msgid "Custom Shell Commands"
+msgstr "Pasirinktinės shell komandos"
+
+#: ../plugins/converter/converter.glade.h:19
+msgid ""
+"Prompt\n"
+"Overwrite"
+msgstr ""
+"Paklausti\n"
+"Perrašyti"
+
+#: ../plugins/shellexecui/interface.c:211
+#: ../plugins/shellexecui/shellexec.glade.h:18
+msgid "Works on local files."
+msgstr "Veikia su vietiniais failais."
+
+#: ../plugins/converter/interface.c:109
+#: ../plugins/converter/converter.glade.h:2
+msgid "Write to source track folder"
+msgstr "Rašyti į takelio šaltinio aplanką"
+
+#: ../plugins/converter/converter.glade.h:12
+msgid ""
+"Keep source format\n"
+"8 bit signed int\n"
+"16 bit signed int\n"
+"24 bit signed int\n"
+"32 bit signed int\n"
+"32 bit float"
+msgstr ""
+"Išlaikyti šaltinio formatą\n"
+"8 bit signed int\n"
+"16 bit signed int\n"
+"24 bit signed int\n"
+"32 bit signed int\n"
+"32 bit float"
+
+#: ../plugins/shellexecui/interface.c:221
+#: ../plugins/shellexecui/shellexec.glade.h:22
+msgid "Item should appear on the playlist tab context menu"
+msgstr "Elementas turėtų pasirodyti grojaraščio kortelės kontekstiniame meniu"
+
+#: ../plugins/shellexecui/interface.c:213
+#: ../plugins/shellexecui/shellexec.glade.h:21
+msgid "Remote"
+msgstr "Nutolęs"
+
+#: ../main.c:83
+#, c-format
+msgid "Usage: deadbeef [options] [--] [file(s)]\n"
+msgstr "Naudojimas: deadbeef [parinktys][failai]\n"
+
+#: ../translation/extra.c:94
+msgid "Disable gapless playback (faster scanning)"
+msgstr "Išjungti „gapless“ atkūrimą (greičiau skanuoja)"
+
+#: ../plugins/shellexecui/interface.c:206
+#: ../plugins/shellexecui/shellexec.glade.h:16
+msgid "Works on multiple tracks."
+msgstr "Veikia su keliais takeliais."
+
+#: ../plugins/converter/interface.c:113
+#: ../plugins/converter/converter.glade.h:3
+msgid "Preserve folder structure"
+msgstr "Išlaikyti aplanko struktūrą"
+
+#: ../plugins/shellexecui/interface.c:201
+#: ../plugins/shellexecui/shellexec.glade.h:14
+msgid "Works on single track."
+msgstr "Veikia su vienu takeliu."
+
+#: ../plugins/shellexecui/interface.c:223
+#: ../plugins/shellexecui/shellexec.glade.h:25
+msgid "Common"
+msgstr "Bendras"
+
+#: ../plugins/shellexecui/shellexecui.c:137
+msgid "Delete"
+msgstr "Pašalinti"
+
+#: ../plugins/shellexecui/shellexecui.c:242
+msgid "Shell Command must be non-empty.\n"
+msgstr "Shell komanda negali būti tuščia.\n"
+
+#: ../plugins/shellexecui/interface.c:175
+#: ../plugins/shellexecui/shellexec.glade.h:11
+msgid "ID:"
+msgstr "ID:"
+
+#: ../plugins/shellexecui/shellexecui.c:236
+msgid "Title must be non-empty.\n"
+msgstr "Pavadinimas negali būti tuščias.\n"
+
+#: ../plugins/shellexecui/interface.c:139
+#: ../plugins/shellexecui/shellexec.glade.h:6
+msgid "Edit Command"
+msgstr "Keisti komandą"
+
+#: ../plugins/shellexecui/interface.c:172
+#: ../plugins/shellexecui/shellexec.glade.h:10
+#, no-c-format
+msgid ""
+"Arbitrary shell command. Will be executed in the shell context which the "
+"main application was started from. Title formatting can be used. Example: "
+"xdg-open %D"
+msgstr ""
+"Sutartinė shell komanda. Bus įvykdyta tokiam shell kontekste kokiame buvo "
+"paleista programa. Galima naudoti pavadinimo formatą. Pvz. xdg-open %D"
+
+#: ../plugins/shellexecui/shellexecui.c:230
+msgid "ID must be non-empty and unique.\n"
+msgstr "ID negali būti tuščias ar kartotis.\n"
+
+#: ../plugins/shellexecui/interface.c:195
+#: ../plugins/shellexecui/shellexec.glade.h:13
+msgid ""
+"Command ID, normally it should be something short, for example \"youtube_open"
+"\". It must be unique."
+msgstr ""
+"Komandos ID, tai turėtų būti kažkas trumpo, pvayzdžiui „youtube_atverti“. "
+"Negali kartotis."
+
+#: ../plugins/shellexecui/interface.c:198
+#: ../plugins/shellexecui/shellexec.glade.h:15
+msgid "Single Tracks"
+msgstr "Pavieniai takeliai"
+
+#: ../plugins/shellexecui/interface.c:82
+#: ../plugins/shellexecui/shellexec.glade.h:2
+msgid "Close"
+msgstr "Užverti"
