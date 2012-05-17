@@ -117,15 +117,22 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     // return -1 on failure
 
     int ret;
-    int l = strlen (deadbeef->pl_find_meta (it, ":URI"));
-    char *uri = alloca (l + sizeof (FF_PROTOCOL_NAME) + 1);
+    char *uri = NULL;
     int i;
 
-    // construct uri
-    memcpy (uri, FF_PROTOCOL_NAME, sizeof (FF_PROTOCOL_NAME)-1);
-    memcpy (uri + sizeof (FF_PROTOCOL_NAME)-1, ":", 1);
-    memcpy (uri + sizeof (FF_PROTOCOL_NAME), deadbeef->pl_find_meta (it, ":URI"), l);
-    uri[sizeof (FF_PROTOCOL_NAME) + l] = 0;
+    deadbeef->pl_lock ();
+    {
+        const char *fname = deadbeef->pl_find_meta (it, ":URI");
+        int l = strlen (fname);
+        uri = alloca (l + sizeof (FF_PROTOCOL_NAME) + 1);
+
+        // construct uri
+        memcpy (uri, FF_PROTOCOL_NAME, sizeof (FF_PROTOCOL_NAME)-1);
+        memcpy (uri + sizeof (FF_PROTOCOL_NAME)-1, ":", 1);
+        memcpy (uri + sizeof (FF_PROTOCOL_NAME), fname, l);
+        uri[sizeof (FF_PROTOCOL_NAME) + l] = 0;
+    }
+    deadbeef->pl_unlock ();
     trace ("ffmpeg: uri: %s\n", uri);
 
     // open file
@@ -548,7 +555,7 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
     deadbeef->pl_replace_meta (it, ":FILETYPE", codec->name);
 
-    if (!deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI"))) {
+    if (!deadbeef->is_local_file (fname)) {
         deadbeef->plt_set_item_duration (plt, it, -1);
     }
     else {
@@ -560,7 +567,7 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     
     int64_t fsize = -1;
 
-    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    DB_FILE *fp = deadbeef->fopen (fname);
     if (fp) {
         if (!fp->vfs->is_streaming ()) {
             fsize = deadbeef->fgetlength (fp);
@@ -748,15 +755,22 @@ ffmpeg_read_metadata (DB_playItem_t *it) {
     AVCodecContext *ctx = NULL;
     AVFormatContext *fctx = NULL;
     int ret;
-    int l = strlen (deadbeef->pl_find_meta (it, ":URI"));
-    char *uri = alloca (l + sizeof (FF_PROTOCOL_NAME) + 1);
+    char *uri = NULL;
     int i;
 
-    // construct uri
-    memcpy (uri, FF_PROTOCOL_NAME, sizeof (FF_PROTOCOL_NAME)-1);
-    memcpy (uri + sizeof (FF_PROTOCOL_NAME)-1, ":", 1);
-    memcpy (uri + sizeof (FF_PROTOCOL_NAME), deadbeef->pl_find_meta (it, ":URI"), l);
-    uri[sizeof (FF_PROTOCOL_NAME) + l] = 0;
+    deadbeef->pl_lock ();
+    {
+        char *fname = deadbeef->pl_find_meta (it, ":URI");
+        int l = strlen (fname);
+        uri = alloca (l + sizeof (FF_PROTOCOL_NAME) + 1);
+
+        // construct uri
+        memcpy (uri, FF_PROTOCOL_NAME, sizeof (FF_PROTOCOL_NAME)-1);
+        memcpy (uri + sizeof (FF_PROTOCOL_NAME)-1, ":", 1);
+        memcpy (uri + sizeof (FF_PROTOCOL_NAME), fname, l);
+        uri[sizeof (FF_PROTOCOL_NAME) + l] = 0;
+    }
+    deadbeef->pl_unlock ();
     trace ("ffmpeg: uri: %s\n", uri);
 
     // open file

@@ -361,8 +361,9 @@ on_remove_from_disk_activate                    (GtkMenuItem     *menuitem,
 
     DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
     while (it) {
-        if (deadbeef->pl_is_selected (it) && deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI"))) {
-            unlink (deadbeef->pl_find_meta (it, ":URI"));
+        const char *uri = deadbeef->pl_find_meta (it, ":URI");
+        if (deadbeef->pl_is_selected (it) && deadbeef->is_local_file (uri)) {
+            unlink (uri);
         }
         DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
         deadbeef->pl_item_unref (it);

@@ -130,7 +130,7 @@ converter_worker (void *ctx) {
     // prepare for preserving folder struct
     if (conv->preserve_folder_structure && conv->convert_items_count >= 1) {
         // start with the 1st track path
-        strncpy (root, deadbeef->pl_find_meta (conv->convert_items[0], ":URI"), sizeof (root));
+        deadbeef->pl_get_meta (conv->convert_items[0], ":URI", root, sizeof (root));
         char *sep = strrchr (root, '/');
         if (sep) {
             *sep = 0;
@@ -138,6 +138,7 @@ converter_worker (void *ctx) {
         // reduce
         rootlen = strlen (root);
         for (int n = 1; n < conv->convert_items_count; n++) {
+            deadbeef->pl_lock ();
             const char *path = deadbeef->pl_find_meta (conv->convert_items[n], ":URI");
             if (strncmp (path, root, rootlen)) {
                 // find where path splits
@@ -156,6 +157,7 @@ converter_worker (void *ctx) {
                     r++;
                 }
             }
+            deadbeef->pl_unlock ();
         }
         fprintf (stderr, "common root path: %s\n", root);
     }
@@ -164,7 +166,9 @@ converter_worker (void *ctx) {
         update_progress_info_t *info = malloc (sizeof (update_progress_info_t));
         info->entry = conv->progress_entry;
         g_object_ref (info->entry);
+        deadbeef->pl_lock ();
         info->text = strdup (deadbeef->pl_find_meta (conv->convert_items[n], ":URI"));
+        deadbeef->pl_unlock ();
         g_idle_add (update_progress_cb, info);
 
         char outpath[2000];

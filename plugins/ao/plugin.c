@@ -66,7 +66,9 @@ aoplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->plugin = &plugin;
     info->duration = deadbeef->pl_get_item_duration (it);
 
+    deadbeef->pl_lock ();
     DB_FILE *file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    deadbeef->pl_unlock ();
     if (!file) {
         trace ("psf: failed to fopen %s\n", deadbeef->pl_find_meta (it, ":URI"));
         return -1;
@@ -81,7 +83,9 @@ aoplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
 
 	if (deadbeef->fread(info->filebuffer, 1, info->filesize, file) != info->filesize) {
+        deadbeef->pl_lock ();
 		fprintf(stderr, "psf: file read error: %s\n", deadbeef->pl_find_meta (it, ":URI"));
+		deadbeef->pl_unlock ();
 		deadbeef->fclose (file);
         return -1;
     }
@@ -93,7 +97,9 @@ aoplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
 
+    deadbeef->pl_lock ();
     info->decoder = ao_start (info->type, deadbeef->pl_find_meta (it, ":URI"), (uint8 *)info->filebuffer, info->filesize);
+    deadbeef->pl_unlock ();
     if (!info->decoder) {
         fprintf (stderr, "psf: ao_start failed\n");
         return -1;

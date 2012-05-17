@@ -690,7 +690,9 @@ ffap_init (DB_fileinfo_t *_info, DB_playItem_t *it)
 {
     ape_info_t *info = (ape_info_t*)_info;
 
+    deadbeef->pl_lock ();
     info->fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    deadbeef->pl_unlock ();
     if (!info->fp) {
         return -1;
     }
@@ -1812,7 +1814,9 @@ ffap_seek (DB_fileinfo_t *_info, float seconds) {
 
 
 static int ffap_read_metadata (DB_playItem_t *it) {
+    deadbeef->pl_lock ();
     DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    deadbeef->pl_unlock ();
     if (!fp) {
         return -1;
     }

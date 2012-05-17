@@ -449,7 +449,9 @@ static int
 aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     aac_info_t *info = (aac_info_t *)_info;
 
+    deadbeef->pl_lock ();
     info->file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    deadbeef->pl_unlock ();
     if (!info->file) {
         return -1;
     }
@@ -1119,7 +1121,9 @@ aac_load_tags (DB_playItem_t *it, mp4ff_t *mp4) {
 int
 aac_read_metadata (DB_playItem_t *it) {
 #ifdef USE_MP4FF
+    deadbeef->pl_lock ();
     DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    deadbeef->pl_unlock ();
     if (!fp) {
         return -1;
     }

@@ -685,7 +685,9 @@ get_output_field (DB_playItem_t *it, const char *field, char *out, int sz)
 void
 get_output_path (DB_playItem_t *it, const char *outfolder_user, const char *outfile, ddb_encoder_preset_t *encoder_preset, int preserve_folder_structure, const char *root_folder, int write_to_source_folder, char *out, int sz) {
     trace ("get_output_path: %s %s %s\n", outfolder_user, outfile, root_folder);
+    deadbeef->pl_lock ();
     const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
+    deadbeef->pl_unlock ();
     char outfolder_preserve[2000];
     if (preserve_folder_structure) {
         // generate new outfolder
@@ -800,8 +802,7 @@ int
 convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort) {
     if (deadbeef->pl_get_item_duration (it) <= 0) {
         deadbeef->pl_lock ();
-        const char *fname = deadbeef->pl_find_meta (it, ":URI");
-        fprintf (stderr, "converter: stream %s doesn't have finite length, skipped\n", fname);
+        fprintf (stderr, "converter: stream %s doesn't have finite length, skipped\n", deadbeef->pl_find_meta (it, ":URI"));
         deadbeef->pl_unlock ();
         return -1;
     }
@@ -812,7 +813,9 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
     DB_decoder_t *dec = NULL;
     DB_fileinfo_t *fileinfo = NULL;
     char input_file_name[PATH_MAX] = "";
+    deadbeef->pl_lock ();
     dec = (DB_decoder_t *)deadbeef->plug_get_for_id (deadbeef->pl_find_meta (it, ":DECODER"));
+    deadbeef->pl_unlock ();
 
     if (dec) {
         fileinfo = dec->open (0);

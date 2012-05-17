@@ -131,7 +131,9 @@ playlist_tooltip_handler (GtkWidget *widget, gint x, gint y, gboolean keyboard_m
     GtkWidget *pl = lookup_widget (mainwin, "playlist");
     DB_playItem_t *it = (DB_playItem_t *)ddb_listview_get_iter_from_coord (DDB_LISTVIEW (pl), 0, y);
     if (it) {
+        deadbeef->pl_lock ();
         gtk_tooltip_set_text (tooltip, deadbeef->pl_find_meta (it, ":URI"));
+        deadbeef->pl_unlock ();
         deadbeef->pl_item_unref (it);
         return TRUE;
     }

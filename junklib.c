@@ -889,6 +889,8 @@ junk_id3v1_write (FILE *fp, playItem_t *it, const char *enc) {
 
     const char *meta;
 
+    pl_lock ();
+
 #define conv(name, store) {\
     memset (store, 0x20, sizeof (store));\
     meta = pl_find_meta (it, name);\
@@ -932,6 +934,8 @@ junk_id3v1_write (FILE *fp, playItem_t *it, const char *enc) {
             }
         }
     }
+
+    pl_unlock ();
 
     if (fwrite ("TAG", 1, 3, fp) != 3) {
         trace ("junk_id3v1_write: failed to write signature\n");
@@ -3418,8 +3422,11 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
     int write_id3v1 = junk_flags & JUNK_WRITE_ID3V1;
     int write_apev2 = junk_flags & JUNK_WRITE_APEV2;
 
+    char tmppath[PATH_MAX];
     // find the beginning and the end of audio data
-    const char *fname = pl_find_meta (it, ":URI");
+    char fname[PATH_MAX];
+    pl_get_meta (it, ":URI", fname, sizeof (fname));
+    snprintf (tmppath, sizeof (tmppath), "%s.temp", fname);
     fp = deadbeef->fopen (fname);
     if (!fp) {
         trace ("file not found %s\n", fname);
@@ -3470,8 +3477,6 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
 
     // open output file
     out = NULL;
-    char tmppath[PATH_MAX];
-    snprintf (tmppath, sizeof (tmppath), "%s.temp", pl_find_meta (it, ":URI"));
 
     out = fopen (tmppath, "w+b");
     trace ("will write tags into %s\n", tmppath);
@@ -3549,11 +3554,15 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
 
         // COMM
         junk_id3v2_remove_frames (&id3v2, "COMM");
-        const char *val = pl_find_meta (it, "comment");
-        if (val && *val) {
-            junk_id3v2_remove_frames (&id3v2, "COMM");
-            junk_id3v2_add_comment_frame (&id3v2, "eng", "", val);
+        pl_lock ();
+        {
+            const char *val = pl_find_meta (it, "comment");
+            if (val && *val) {
+                junk_id3v2_remove_frames (&id3v2, "COMM");
+                junk_id3v2_add_comment_frame (&id3v2, "eng", "", val);
+            }
         }
+        pl_unlock ();
 
         // remove all known normal frames (they will be refilled from track metadata)
         int idx = id3v2.version[0] == 3 ? MAP_ID3V23 : MAP_ID3V24;
@@ -3594,18 +3603,22 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
         }
 
         // add tracknumber/totaltracks
-        const char *track = pl_find_meta (it, "track");
-        const char *totaltracks = pl_find_meta (it, "numtracks");
-        if (track && totaltracks) {
-            char s[100];
-            snprintf (s, sizeof (s), "%s/%s", track, totaltracks);
-            junk_id3v2_remove_frames (&id3v2, "TRCK");
-            junk_id3v2_add_text_frame (&id3v2, "TRCK", s);
+        pl_lock ();
+        {
+            const char *track = pl_find_meta (it, "track");
+            const char *totaltracks = pl_find_meta (it, "numtracks");
+            if (track && totaltracks) {
+                char s[100];
+                snprintf (s, sizeof (s), "%s/%s", track, totaltracks);
+                junk_id3v2_remove_frames (&id3v2, "TRCK");
+                junk_id3v2_add_text_frame (&id3v2, "TRCK", s);
+            }
+            else if (track) {
+                junk_id3v2_remove_frames (&id3v2, "TRCK");
+                junk_id3v2_add_text_frame (&id3v2, "TRCK", track);
+            }
         }
-        else if (track) {
-            junk_id3v2_remove_frames (&id3v2, "TRCK");
-            junk_id3v2_add_text_frame (&id3v2, "TRCK", track);
-        }
+        pl_unlock ();
 
         // write tag
         if (junk_id3v2_write (out, &id3v2) != 0) {
@@ -3698,18 +3711,22 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
         }
 
         // add tracknumber/totaltracks
-        const char *track = pl_find_meta (it, "track");
-        const char *totaltracks = pl_find_meta (it, "numtracks");
-        if (track && totaltracks) {
-            char s[100];
-            snprintf (s, sizeof (s), "%s/%s", track, totaltracks);
-            junk_apev2_remove_frames (&apev2, "Track");
-            junk_apev2_add_text_frame (&apev2, "Track", s);
+        pl_lock ();
+        {
+            const char *track = pl_find_meta (it, "track");
+            const char *totaltracks = pl_find_meta (it, "numtracks");
+            if (track && totaltracks) {
+                char s[100];
+                snprintf (s, sizeof (s), "%s/%s", track, totaltracks);
+                junk_apev2_remove_frames (&apev2, "Track");
+                junk_apev2_add_text_frame (&apev2, "Track", s);
+            }
+            else if (track) {
+                junk_apev2_remove_frames (&apev2, "Track");
+                junk_apev2_add_text_frame (&apev2, "Track", track);
+            }
         }
-        else if (track) {
-            junk_apev2_remove_frames (&apev2, "Track");
-            junk_apev2_add_text_frame (&apev2, "Track", track);
-        }
+        pl_unlock ();
 
         // write tag
         if (deadbeef->junk_apev2_write (out, &apev2, 0, 1) != 0) {
@@ -3776,7 +3793,9 @@ error:
         free (buffer);
     }
     if (!err) {
-        rename (tmppath, pl_find_meta (it, ":URI"));
+        pl_lock ();
+        rename (tmppath, fname);
+        pl_unlock ();
     }
     else {
         unlink (tmppath);

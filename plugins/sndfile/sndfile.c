@@ -162,7 +162,9 @@ sndfile_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     sndfile_info_t *info = (sndfile_info_t*)_info;
 
     SF_INFO inf;
+    deadbeef->pl_lock ();
     DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    deadbeef->pl_unlock ();
     if (!fp) {
         trace ("sndfile: failed to open %s\n", deadbeef->pl_find_meta (it, ":URI"));
         return -1;

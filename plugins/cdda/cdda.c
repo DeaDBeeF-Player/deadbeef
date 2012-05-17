@@ -81,9 +81,8 @@ cda_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     trace ("cdda: init %s\n", deadbeef->pl_find_meta (it, ":URI"));
 
-    size_t l = strlen (deadbeef->pl_find_meta (it, ":URI"));
-    char location[l+1];
-    memcpy (location, deadbeef->pl_find_meta (it, ":URI"), l+1);
+    char location[PATH_MAX];
+    deadbeef->pl_get_meta (it, ":URI", location, sizeof (location));
 
     char *nr = strchr (location, '#');
     if (nr) {

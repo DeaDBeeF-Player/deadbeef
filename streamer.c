@@ -708,7 +708,9 @@ streamer_set_current (playItem_t *it) {
         // try to get content-type
         mutex_lock (decodemutex);
         trace ("\033[0;34mopening file %s\033[37;0m\n", pl_find_meta (it, ":URI"));
+        pl_lock ();
         DB_FILE *fp = streamer_file = vfs_fopen (pl_find_meta (it, ":URI"));
+        pl_unlock ();
         mutex_unlock (decodemutex);
         const char *plug = NULL;
         trace ("\033[0;34mgetting content-type\033[37;0m\n");
@@ -877,6 +879,7 @@ m3u_error:
         dec = plug_get_decoder_for_id (decoder_id);
         if (!dec) {
             // find new decoder by file extension
+            pl_lock ();
             const char *fname = pl_find_meta (it, ":URI");
             const char *ext = strrchr (fname, '.');
             if (ext) {
@@ -897,6 +900,7 @@ m3u_error:
                     }
                 }
             }
+            pl_unlock ();
         }
         if (dec) {
             trace ("\033[0;33minit decoder for %s (%s)\033[37;0m\n", pl_find_meta (it, ":URI"), decoder_id);

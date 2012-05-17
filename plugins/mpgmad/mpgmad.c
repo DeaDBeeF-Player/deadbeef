@@ -1364,10 +1364,10 @@ cmp3_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
         if (cuesheet) {
             DB_playItem_t *last = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), buffer.totalsamples-buffer.delay-buffer.padding, buffer.samplerate);
-            deadbeef->pl_unlock ();
             if (last) {
                 deadbeef->pl_item_unref (it);
                 deadbeef->pl_item_unref (last);
+                deadbeef->pl_unlock ();
                 return last;
             }
         }
