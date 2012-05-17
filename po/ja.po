@@ -22,9 +22,8 @@ msgstr ""
 msgid "Supported sound formats"
 msgstr "サポートされている音声フォーマット"
 
-#, fuzzy
 #~ msgid "All files (*)"
-#~ msgstr "他のファイル (*)"
+#~ msgstr "すべてのファイル (*)"
 
 #: ../plugins/gtkui/callbacks.c:144
 msgid "Open file(s)..."
@@ -39,7 +38,7 @@ msgid "Add folder(s) to playlist..."
 msgstr "フォルダをプレイリストに追加..."
 
 #~ msgid "Follow symlinks"
-#~ msgstr ""
+#~ msgstr "Symlink を追跡する"
 
 #: ../plugins/gtkui/callbacks.c:711
 msgid "Failed while reading help file"
@@ -50,7 +49,7 @@ msgid "Failed to load help file"
 msgstr "ヘルプファイルの読み込みに失敗しました"
 
 #~ msgid "help.txt"
-#~ msgstr ""
+#~ msgstr "help.txt"
 
 #: ../plugins/gtkui/callbacks.c:737 ../plugins/gtkui/interface.c:1155
 #: ../plugins/gtkui/deadbeef.glade.h:49 ../plugins/converter/convgui.c:1240
@@ -68,9 +67,9 @@ msgstr "DeaDBeeF %s について"
 msgid "DeaDBeeF %s ChangeLog"
 msgstr "DeaDBeeF %s の更新履歴"
 
-#, fuzzy, c-format
+#, c-format, c-format
 #~ msgid "DeaDBeeF Translators"
-#~ msgstr "DeaDBeeF は現在演奏中です"
+#~ msgstr "DeaDBeeF の翻訳者"
 
 #: ../plugins/gtkui/ddbtabstrip.c:755 ../plugins/gtkui/trkproperties.c:618
 msgid "Edit playlist"
@@ -146,9 +145,8 @@ msgstr "プリアンプをゼロに"
 msgid "Zero Bands"
 msgstr "バンドをゼロに"
 
-#, fuzzy
 #~ msgid "Presets"
-#~ msgstr "イコライザ設定を保存"
+#~ msgstr "プリセット"
 
 #: ../plugins/gtkui/gtkui.c:137
 #, c-format
@@ -290,7 +288,7 @@ msgid "_Find"
 msgstr "検索(_F)"
 
 #~ msgid "Sort By"
-#~ msgstr ""
+#~ msgstr "ソートする："
 
 #: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1516
 #: ../plugins/gtkui/mainplaylist.c:318 ../plugins/gtkui/prefwin.c:626
@@ -300,9 +298,8 @@ msgstr "検索(_F)"
 msgid "Title"
 msgstr "タイトル"
 
-#, fuzzy
 #~ msgid "Track number"
-#~ msgstr "ファイル番号"
+#~ msgstr "トラック番号"
 
 #: ../plugins/gtkui/interface.c:303 ../plugins/gtkui/interface.c:1515
 #: ../plugins/gtkui/interface.c:1875 ../plugins/gtkui/deadbeef.glade.h:10
@@ -318,7 +315,7 @@ msgid "Artist"
 msgstr "アーティスト"
 
 #~ msgid "Date"
-#~ msgstr ""
+#~ msgstr "日付"
 
 #: ../plugins/gtkui/interface.c:315 ../plugins/gtkui/interface.c:1520
 #: ../plugins/gtkui/plcommon.c:1017 ../plugins/gtkui/deadbeef.glade.h:27
@@ -363,13 +360,11 @@ msgstr "演奏順"
 msgid "Linear"
 msgstr "順に"
 
-#, fuzzy
 #~ msgid "Shuffle tracks"
-#~ msgstr "シャッフル"
+#~ msgstr "トラックをシャッフル"
 
-#, fuzzy
 #~ msgid "Shuffle albums"
-#~ msgstr "シャッフル"
+#~ msgstr "アルバムをシャッフル"
 
 #: ../plugins/gtkui/interface.c:380 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Random"
@@ -404,7 +399,7 @@ msgid "Stop after current"
 msgstr "現在の再生の終了後に停止"
 
 #~ msgid "Jump to current track"
-#~ msgstr ""
+#~ msgstr "現在のトラックへ飛ぶ"
 
 #: ../plugins/gtkui/interface.c:437 ../plugins/gtkui/interface.c:444
 #: ../plugins/gtkui/deadbeef.glade.h:159
@@ -416,18 +411,17 @@ msgid "_ChangeLog"
 msgstr "更新履歴(_C)"
 
 #~ msgid "_GPLv2"
-#~ msgstr ""
+#~ msgstr "_GPLv2"
 
 #~ msgid "_LGPLv2.1"
-#~ msgstr ""
+#~ msgstr "_LGPLv2.1"
 
 #: ../plugins/gtkui/interface.c:474 ../plugins/gtkui/deadbeef.glade.h:149
 msgid "_About"
 msgstr "情報(_A)"
 
-#, fuzzy
 #~ msgid "_Translators"
-#~ msgstr "DeaDBeeF は現在演奏中です"
+#~ msgstr "翻訳者(_T)"
 
 #: ../plugins/gtkui/interface.c:898 ../plugins/gtkui/deadbeef.glade.h:112
 msgid "Search"
@@ -470,7 +464,7 @@ msgid "Track Properties"
 msgstr "トラックのプロパティ"
 
 #~ msgid "Settings"
-#~ msgstr ""
+#~ msgstr "設定"
 
 #: ../plugins/gtkui/interface.c:1296 ../plugins/gtkui/deadbeef.glade.h:150
 msgid "_Apply"
@@ -499,7 +493,7 @@ msgid "Type:"
 msgstr "形式:"
 
 #~ msgid "Item Index"
-#~ msgstr ""
+#~ msgstr "アイテムのインデックス"
 
 #. create default set of columns
 #: ../plugins/gtkui/interface.c:1511 ../plugins/gtkui/mainplaylist.c:315
@@ -519,7 +513,6 @@ msgstr "アーティスト - アルバム"
 msgid "Duration"
 msgstr "演奏時間"
 
-#, fuzzy
 #~ msgid "Track Number"
 #~ msgstr "トラック番号"
 
@@ -565,7 +558,7 @@ msgid "Output device:"
 msgstr "出力デバイス:"
 
 #~ msgid "Always convert 8 bit audio to 16 bit"
-#~ msgstr ""
+#~ msgstr "常に 8 bit オーディオを 16 bit に変換する"
 
 #: ../plugins/gtkui/interface.c:1851 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "Sound"
@@ -588,46 +581,42 @@ msgid "Replaygain peak scale"
 msgstr "リプレイゲインのピークを調整する"
 
 #~ msgid "-12 dB"
-#~ msgstr ""
+#~ msgstr "-12 dB"
 
 #~ msgid "+12 dB"
-#~ msgstr ""
+#~ msgstr "+12 dB"
 
-#, fuzzy
 #~ msgid "Replaygain preamp:"
-#~ msgstr "リプレイゲインのモード:"
+#~ msgstr "リプレイゲインのプリアンプ:"
 
-#, fuzzy
 #~ msgid "Global preamp:"
-#~ msgstr "リプレイゲインのモード:"
+#~ msgstr "全体のプリアンプ:"
 
 #~ msgid "Add files from command line (or file manager) to this playlist:"
-#~ msgstr ""
+#~ msgstr "コマンドライン (あるいはファイルマネージャ) からこのプレイリストにファイルを追加"
 
 #~ msgid "Resume previous session on startup"
-#~ msgstr ""
+#~ msgstr "立ち上げ時に前回のセッションを復元する"
 
 #~ msgid "Don't add from archives when adding folders"
-#~ msgstr ""
+#~ msgstr "フォルダを追加するときアーカイブを含まない"
 
-#, fuzzy
 #~ msgid "Playback"
-#~ msgstr "再生(_P)"
+#~ msgstr "再生"
 
 #: ../plugins/gtkui/interface.c:1982 ../plugins/gtkui/interface.c:2514
 #: ../plugins/gtkui/deadbeef.glade.h:22 ../plugins/converter/interface.c:649
 msgid "Configure"
 msgstr "設定"
 
-#, fuzzy
 #~ msgid "DSP Chain Preset"
-#~ msgstr "イコライザ設定を保存"
+#~ msgstr "DSP チェインプリセット"
 
 #~ msgid "_Load"
-#~ msgstr ""
+#~ msgstr "ロード(_L)"
 
 #~ msgid "DSP"
-#~ msgstr ""
+#~ msgstr "DSP"
 
 #: ../plugins/gtkui/interface.c:2042 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Close minimizes to tray"
@@ -638,28 +627,28 @@ msgid "Middle mouse button closes playlist"
 msgstr "マウスの中クリックでプレイリストを閉じる"
 
 #~ msgid "Hide system tray icon"
-#~ msgstr ""
+#~ msgstr "システムトレイのアイコンを隠す"
 
 #~ msgid "Use bold font for currently playing track"
-#~ msgstr ""
+#~ msgstr "再生中のトラックには太字フォントを使う"
 
 #~ msgid "Hide \"Delete from disk\" context menu item"
-#~ msgstr ""
+#~ msgstr "コンテキストメニューの \"ディスクから削除\" を隠す"
 
 #~ msgid "Auto-name playlists when adding a single folder"
-#~ msgstr ""
+#~ msgstr "一つのフォルダから追加するときはプレイリストの名前を自動でつける"
 
 #~ msgid "Interface refresh rate (times per second):"
-#~ msgstr ""
+#~ msgstr "インタフェースの更新頻度 (毎秒):"
 
 #~ msgid "Titlebar text while playing:"
-#~ msgstr ""
+#~ msgstr "再生中のタイトルバーの文字列:"
 
 #~ msgid "Titlebar text while stopped:"
-#~ msgstr ""
+#~ msgstr "停止中の文字列:"
 
 #~ msgid "GUI Plugin (changing requires restart):"
-#~ msgstr ""
+#~ msgstr "GUI プラグイン (再スタートが必要です):"
 
 #: ../plugins/gtkui/interface.c:2120 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "GUI"
@@ -737,7 +726,7 @@ msgid "Playlist colors"
 msgstr "プレイリストの色"
 
 #~ msgid "Colors"
-#~ msgstr ""
+#~ msgstr "色"
 
 #: ../plugins/gtkui/interface.c:2362 ../plugins/gtkui/deadbeef.glade.h:38
 msgid "Enable Proxy Server"
@@ -768,10 +757,10 @@ msgid "Network"
 msgstr "ネットワーク"
 
 #~ msgid "Version: "
-#~ msgstr ""
+#~ msgstr "バージョン:"
 
 #~ msgid "Copyright"
-#~ msgstr ""
+#~ msgstr "Copyright"
 
 #: ../plugins/gtkui/interface.c:2545 ../plugins/gtkui/deadbeef.glade.h:94
 msgid "Plugins"
@@ -786,29 +775,25 @@ msgid "Group By"
 msgstr "グループ化"
 
 #~ msgid "Sort by..."
-#~ msgstr ""
+#~ msgstr "ソート"
 
-#, fuzzy
 #~ msgid "Format"
-#~ msgstr "書式:"
+#~ msgstr "書式"
 
 #~ msgid "Ascending"
-#~ msgstr ""
+#~ msgstr "昇順"
 
 #~ msgid "Descending"
-#~ msgstr ""
+#~ msgstr "降順"
 
-#, fuzzy
 #~ msgid "Select DSP Plugin"
-#~ msgstr "選択"
+#~ msgstr "DSP プラグインの選択"
 
-#, fuzzy
 #~ msgid "Plugin"
 #~ msgstr "プラグイン"
 
-#, fuzzy
 #~ msgid "Tag Writer Settings"
-#~ msgstr "タグ書き出し"
+#~ msgstr "タグ書き出しの設定"
 
 #: ../plugins/gtkui/interface.c:3492 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "Write ID3v2"
@@ -929,9 +914,9 @@ msgstr "アーティスト/日付/アルバム"
 msgid "Open file..."
 msgstr "ファイルを開く..."
 
-#, fuzzy, c-format
+#, c-format, c-format
 #~ msgid "Configure %s"
-#~ msgstr "設定"
+#~ msgstr "%s の設定"
 
 #: ../plugins/gtkui/prefwin.c:82
 msgid "Default Audio Device"
@@ -970,7 +955,7 @@ msgid "Really close the window?"
 msgstr "本当にウィンドウを閉じますか？"
 
 #~ msgid "[Multiple values] "
-#~ msgstr ""
+#~ msgstr "[複数の値] "
 
 #: ../plugins/gtkui/trkproperties.c:407 ../plugins/gtkui/trkproperties.c:419
 msgid "Key"
@@ -981,37 +966,32 @@ msgid "Value"
 msgstr "値"
 
 #~ msgid "Writing tags..."
-#~ msgstr ""
+#~ msgstr "タグの書き出し中..."
 
 #~ msgid "Name:"
-#~ msgstr ""
+#~ msgstr "名前:"
 
 #~ msgid "Field names must not start with : or _"
-#~ msgstr ""
+#~ msgstr "フィールドは : や _ で始まることができません"
 
-#, fuzzy
 #~ msgid "Cannot add field"
-#~ msgstr "ファイルを追加"
+#~ msgstr "フィールドを追加できません"
 
 #~ msgid "Field with such name already exists, please try different name."
-#~ msgstr ""
+#~ msgstr "同じ名前のフィールドがあります。別の名前で試してください。"
 
-#, fuzzy
 #~ msgid "Really remove selected field?"
-#~ msgstr "本当にウィンドウを閉じますか？"
+#~ msgstr "本当にこのフィールドを削除しますか？"
 
-#, fuzzy
 #~ msgid "Add field"
-#~ msgstr "ファイルを追加"
+#~ msgstr "フィールドを追加"
 
-#, fuzzy
 #~ msgid "Remove field"
-#~ msgstr "取り除く"
+#~ msgstr "フィールドを削除"
 
-#: ../main.c:91
 #, c-format
-msgid "Usage: deadbeef [options] [file(s)]\n"
-msgstr "使い方: deadbeef [オプション] [ファイル...]\n"
+#~ msgid "Usage: deadbeef [options] [file(s)]\n"
+#~ msgstr "使い方: deadbeef [オプション] [ファイル...]\n"
 
 #: ../main.c:92
 #, c-format
@@ -1050,12 +1030,12 @@ msgstr "   --pause            ポーズする\n"
 
 #, c-format
 #~ msgid "   --toggle-pause     Toggle pause\n"
-#~ msgstr ""
+#~ msgstr "   --toggle-pause     ポーズのトグル\n"
 
 #, c-format
 #~ msgid ""
 #~ "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
-#~ msgstr ""
+#~ msgstr "   --play-pause       停止中なら再生開始し、でなければポーズします\n"
 
 #: ../main.c:101
 #, c-format
@@ -1107,7 +1087,8 @@ msgstr ""
 #~ msgid ""
 #~ "                      for more info, see http://sourceforge.net/apps/"
 #~ "mediawiki/deadbeef/index.php?title=Title_Formatting\n"
-#~ msgstr ""
+#~ msgstr "                      詳しくはこちら: http://sourceforge.net/apps/mediawiki/deadbee"
+#~ "f/index.php?title=Title_Formatting\n"
 
 #: ../playlist.c:454 ../playlist.c:2398
 msgid "Default"
@@ -1133,6 +1114,8 @@ msgstr ""
 #~ "Ascending\n"
 #~ "Descending"
 #~ msgstr ""
+#~ "昇順\n"
+#~ "降順"
 
 #: ../plugins/gtkui/deadbeef.glade.h:33
 msgid ""
@@ -1144,7 +1127,6 @@ msgstr ""
 "トラック\n"
 "アルバム"
 
-#, fuzzy
 #~ msgid ""
 #~ "Item Index\n"
 #~ "Playing\n"
@@ -1158,7 +1140,7 @@ msgstr ""
 #~ "Band / Album Artist\n"
 #~ "Custom"
 #~ msgstr ""
-#~ "ファイル番号\n"
+#~ "アイテム番号\n"
 #~ "演奏中\n"
 #~ "アルバムアート\n"
 #~ "アーティスト - アルバム\n"
@@ -1166,7 +1148,7 @@ msgstr ""
 #~ "アルバム\n"
 #~ "タイトル\n"
 #~ "長さ\n"
-#~ "トラック\n"
+#~ "トラック番号\n"
 #~ "バンド / アルバムのアーティスト\n"
 #~ "カスタム"
 
@@ -1189,6 +1171,8 @@ msgstr "Pixmap ファイルが見つかりません: %s"
 #~ "wildmidi: freepats config file not found. Please install timidity-freepats "
 #~ "package, or specify path to freepats.cfg in the plugin settings."
 #~ msgstr ""
+#~ "wildmidi: freepats 設定ファイルが見つかりません。timidity-freepats "
+#~ "パッケージをインストールするか、freepats.cfg へのパスをプラグインの設定で指定してください。"
 
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
@@ -1197,183 +1181,172 @@ msgid "Add Audio CD"
 msgstr "音楽 CD を追加"
 
 #~ msgid "Lookup on Last.fm"
-#~ msgstr ""
+#~ msgstr "Last.fm で検索する"
 
 #~ msgid "Use ALSA resampling"
-#~ msgstr ""
+#~ msgstr "ALSA のリサンプリングを使う"
 
 #~ msgid "Release device while stopped"
-#~ msgstr ""
+#~ msgstr "停止中はデバイスを開放する"
 
 #~ msgid "Preferred buffer size"
-#~ msgstr ""
+#~ msgstr "バッファサイズの指定"
 
 #~ msgid "Preferred period size"
-#~ msgstr ""
+#~ msgstr "区分サイズの指定"
 
-#, fuzzy
 #~ msgid "Enable scrobbler"
-#~ msgstr "プロクシサーバを有効にする"
+#~ msgstr "Scrobber を有効にする"
 
-#, fuzzy
 #~ msgid "Disable nowplaying"
-#~ msgstr "DeaDBeeF は現在演奏中です"
+#~ msgstr "Nowplaying を無効にする"
 
-#, fuzzy
 #~ msgid "Username"
-#~ msgstr "プロクシのユーザ名:"
+#~ msgstr "ユーザ名:"
 
-#, fuzzy
 #~ msgid "Password"
-#~ msgstr "プロクシのパスワード:"
+#~ msgstr "パスワード:"
 
 #~ msgid "Scrobble URL"
-#~ msgstr ""
+#~ msgstr "Scrobble URL"
 
-#, fuzzy
 #~ msgid "Device file"
-#~ msgstr "取り除く"
+#~ msgstr "デバイスファイル"
 
 #~ msgid "OSS4 samplerate bug workaround"
-#~ msgstr ""
+#~ msgstr "OSS4 のサンプルレートのバグを回避する"
 
 #~ msgid "Cache update period (hr)"
-#~ msgstr ""
+#~ msgstr "キャッシュの更新間隔 (時)"
 
 #~ msgid "Fetch from embedded tags"
-#~ msgstr ""
+#~ msgstr "埋め込みタグから取得する"
 
 #~ msgid "Fetch from local folder"
-#~ msgstr ""
+#~ msgstr "ローカルのフォルダから取得する"
 
 #~ msgid "Local cover file mask"
-#~ msgstr ""
+#~ msgstr "ローカルのカバーファイルのマスク"
 
 #~ msgid "Fetch from last.fm"
-#~ msgstr ""
+#~ msgstr "Last.fm から取得する"
 
 #~ msgid "Fetch from albumart.org"
-#~ msgstr ""
+#~ msgstr "Albumart.org から取得する"
 
 #~ msgid "Scale artwork towards longer side"
-#~ msgstr ""
+#~ msgstr "ジャケット絵を引き伸ばす"
 
 #~ msgid "Use CDDB/FreeDB"
-#~ msgstr ""
+#~ msgstr "CDDB/FreeDB を使う"
 
 #~ msgid "Prefer CD-Text over CDDB"
-#~ msgstr ""
+#~ msgstr "CD-Text より CDDB を優先する"
 
 #~ msgid "CDDB url (e.g. 'freedb.org')"
-#~ msgstr ""
+#~ msgstr "CDDB の URL ('freedb.org' など)"
 
 #~ msgid "CDDB port number (e.g. '888')"
-#~ msgstr ""
+#~ msgstr "CDDB のポート番号 ('888' など)"
 
 #~ msgid "Prefer CDDB protocol over HTTP"
-#~ msgstr ""
+#~ msgstr "CDDB プロトコルを HTTP より優先する"
 
 #~ msgid "Enable NRG image support"
-#~ msgstr ""
+#~ msgstr "NRG イメージのサポートを有効にする"
 
 #~ msgid "Resampling quality (0..2, higher is better)"
-#~ msgstr ""
+#~ msgstr "リサンプリングを品質 (0..2, 大きい方が高品質)"
 
 #~ msgid "Max song length (in minutes)"
-#~ msgstr ""
+#~ msgstr "最大の曲長 (分)"
 
-#, fuzzy
 #~ msgid "Ask confirmation to delete files from disk"
-#~ msgstr "ファイルをディスクから削除"
+#~ msgstr "ファイルをディスクから削除する前に確認をとる"
 
 #~ msgid "Status icon volume control sensitivity"
-#~ msgstr ""
+#~ msgstr "ステータスアイコンの音量コントロールの感度"
 
 #~ msgid "Custom status icon"
-#~ msgstr ""
+#~ msgstr "ステータスアイコンの変更"
 
 #~ msgid "Run gtk_init with --sync (debug mode)"
-#~ msgstr ""
+#~ msgstr "--sync の時 gtk_init する (デバッグ用)"
 
 #~ msgid "Add separators between plugin context menu items"
-#~ msgstr ""
+#~ msgstr "プラグインのコンテキストメニューのアイテムにセパレータを挟む"
 
 #~ msgid "Notification title format"
-#~ msgstr ""
+#~ msgstr "通知のタイトルの書式"
 
 #~ msgid "Notification content format"
-#~ msgstr ""
+#~ msgstr "通知の内容の書式"
 
-#, fuzzy
 #~ msgid "Show album art"
-#~ msgstr "アルバムアート"
+#~ msgstr "アルバムアート を表示する"
 
 #~ msgid "Album art size (px)"
-#~ msgstr ""
+#~ msgstr "アルバムアートのサイズ (ピクセル)"
 
 #~ msgid "PulseAudio server"
-#~ msgstr ""
+#~ msgstr "PulseAudio サーバー"
 
 #~ msgid "Samplerate"
-#~ msgstr ""
+#~ msgstr "サンプルレート"
 
 #~ msgid "Relative seek table path"
-#~ msgstr ""
+#~ msgstr "相対的なシークテーブルのパス"
 
 #~ msgid "Absolute seek table path"
-#~ msgstr ""
+#~ msgstr "絶対的なシークテーブルのパス"
 
 #~ msgid "Swap audio bytes (toggle if all you hear is static)"
-#~ msgstr ""
+#~ msgstr "オーディオのバイトを入れ替える (平坦な音しか聞こえない場合、有効に)"
 
 #~ msgid "Enable HVSC Songlength DB"
-#~ msgstr ""
+#~ msgstr "HVSC 曲長データベースを有効にする"
 
 #~ msgid "Songlengths.txt (from HVSC)"
-#~ msgstr ""
+#~ msgstr "Songlengths.txt (from HVSC)"
 
 #~ msgid "Bits per sample (8 or 16)"
-#~ msgstr ""
+#~ msgstr "サンプルのビット数 (8 or 16)"
 
 #~ msgid "Default song length (sec)"
-#~ msgstr ""
+#~ msgstr "デフォルトの曲の長さ (秒)"
 
 #~ msgid "Timidity++ bank configuration file"
-#~ msgstr ""
+#~ msgstr "Timidity++ bank 設定ファイル"
 
-#, fuzzy
 #~ msgid "Track Title"
-#~ msgstr "トラック番号"
+#~ msgstr "トラックのタイトル"
 
 #~ msgid "Performer"
-#~ msgstr ""
+#~ msgstr "演奏者"
 
-#, fuzzy
 #~ msgid "Total Tracks"
-#~ msgstr "タイトル / トラックのアーティスト"
+#~ msgstr "総トラック数"
 
 #~ msgid "Genre"
-#~ msgstr ""
+#~ msgstr "ジャンル"
 
 #~ msgid "Composer"
-#~ msgstr ""
+#~ msgstr "作曲者"
 
-#, fuzzy
 #~ msgid "Disc Number"
-#~ msgstr "ファイル番号"
+#~ msgstr "ディスク番号"
 
 #~ msgid "Comment"
-#~ msgstr ""
+#~ msgstr "コメント"
 
 #~ msgid "Encoder / Vendor"
-#~ msgstr ""
+#~ msgstr "エンコーダ / ベンダ"
 
-#, fuzzy
 #~ msgid "Location"
-#~ msgstr "場所を追加"
+#~ msgstr "場所"
 
 #~ msgid "Subtrack Index"
-#~ msgstr ""
+#~ msgstr "サブトラックのインデックス"
 
 #: ../translation/extra.c:81
 msgid "Tag Type(s)"
@@ -1384,222 +1357,206 @@ msgid "Embedded Cuesheet"
 msgstr "埋め込みCUEシート"
 
 #~ msgid "Codec"
-#~ msgstr ""
+#~ msgstr "コーデック"
 
 #~ msgid "File Extensions (separate with ';')"
-#~ msgstr ""
+#~ msgstr "ファイルの拡張子 (';'で区切る)"
 
 #~ msgid "Convert"
-#~ msgstr ""
+#~ msgstr "変換する"
 
 #~ msgid "Target Samplerate"
-#~ msgstr ""
+#~ msgstr "サンプルレートの指定"
 
 #~ msgid "Quality / Algorythm"
-#~ msgstr ""
+#~ msgstr "音質 / アルゴリズム"
 
 #~ msgid "Automatic Samplerate (overrides Target Samplerate)"
-#~ msgstr ""
+#~ msgstr "サンプルレートの自動設定 (指定したサンプルレートを上書きします)"
 
 #~ msgid "The file already exists. Overwrite?"
-#~ msgstr ""
+#~ msgstr "そのファイルは既に存在します。上書きしますか？"
 
 #~ msgid "Converter warning"
-#~ msgstr ""
+#~ msgstr "コンバータの警告"
 
 #~ msgid "Please select encoder"
-#~ msgstr ""
+#~ msgstr "エンコーダを選択してください"
 
 #~ msgid "Converter error"
-#~ msgstr ""
+#~ msgstr "変換エラー"
 
 #~ msgid "Converting..."
-#~ msgstr ""
+#~ msgstr "変換中..."
 
-#, fuzzy
 #~ msgid "Select folder..."
-#~ msgstr "すべて選択"
+#~ msgstr "フォルダの選択..."
 
-#, fuzzy
 #~ msgid "Failed to save encoder preset"
-#~ msgstr "イコライザ設定の読み込み"
+#~ msgstr "エンコーダのプリセットの保存に失敗しました"
 
 #~ msgid ""
 #~ "Check preset folder permissions, try to pick different title, or free up "
 #~ "some disk space"
-#~ msgstr ""
+#~ msgstr "フォルダのパーミッション、名前の重複、ディスクの空き容量を確認してください"
 
 #~ msgid "Preset with the same name already exists. Try to pick another title."
-#~ msgstr ""
+#~ msgstr "同じ名前のプリセットが既にあります。別の名前で試してください。"
 
 #~ msgid "Error"
-#~ msgstr ""
+#~ msgstr "エラー"
 
-#, fuzzy
 #~ msgid "Add new encoder"
-#~ msgstr "カラムの編集"
+#~ msgstr "新規エンコーダの追加"
 
-#, fuzzy
 #~ msgid "Edit encoder"
-#~ msgstr "カラムの編集"
+#~ msgstr "エンコーダの編集"
 
-#, fuzzy
 #~ msgid "Remove preset"
-#~ msgstr "イコライザ設定を保存"
+#~ msgstr "プリセットの削除"
 
 #~ msgid "This action will delete the selected preset. Are you sure?"
-#~ msgstr ""
+#~ msgstr "選択中のプリセットを削除します。続けますか？"
 
-#, fuzzy
 #~ msgid "Encoders"
-#~ msgstr "カラムの編集"
+#~ msgstr "エンコーダ"
 
 #~ msgid "Add plugin to DSP chain"
-#~ msgstr ""
+#~ msgstr "プラグインを DSP チェインに追加"
 
-#, fuzzy
 #~ msgid "Failed to save DSP preset"
-#~ msgstr "イコライザ設定を保存"
+#~ msgstr "DSP プリセットの保存に失敗しました"
 
-#, fuzzy
 #~ msgid "New DSP Preset"
-#~ msgstr "イコライザ設定を保存"
+#~ msgstr "新規の DSP プリセット"
 
-#, fuzzy
 #~ msgid "Edit DSP Preset"
-#~ msgstr "イコライザ設定を保存"
+#~ msgstr "DSP プリセットの編集"
 
-#, fuzzy
 #~ msgid "DSP Presets"
-#~ msgstr "イコライザ設定を保存"
+#~ msgstr "DSP プリセット"
 
-#, fuzzy
 #~ msgid "Output folder:"
-#~ msgstr "出力デバイス:"
+#~ msgstr "出力先フォルダ:"
 
-#, fuzzy
 #~ msgid "Output file name:"
-#~ msgstr "出力プラグイン:"
+#~ msgstr "出力ファイル名:"
 
+#, no-c-format
 #~ msgid ""
 #~ "Extension (e.g. .mp3) will be appended automatically.\n"
 #~ "Leave the field empty for default (%a - %t)."
 #~ msgstr ""
+#~ "拡張子 (.mp3など) は自動で追加されます。\n"
+#~ "このフィールドを空にするとデフォルトを使います (%a - %t)。"
 
-#, fuzzy
 #~ msgid "Encoder:"
-#~ msgstr "カラムの編集"
+#~ msgstr "エンコーダ:"
 
-#, fuzzy
 #~ msgid "DSP preset:"
-#~ msgstr "イコライザ設定を保存"
+#~ msgstr "DSP のプリセット:"
 
 #~ msgid "Number of threads:"
-#~ msgstr ""
+#~ msgstr "スレッドの数:"
 
-#, fuzzy
 #~ msgid "Output sample format:"
-#~ msgstr "出力プラグイン:"
+#~ msgstr "出力のサンプルのフォーマット:"
 
 #~ msgid "Keep source format"
-#~ msgstr ""
+#~ msgstr "元のままにする"
 
 #~ msgid "8 bit signed int"
-#~ msgstr ""
+#~ msgstr "8 bit 符号つき整数"
 
 #~ msgid "16 bit signed int"
-#~ msgstr ""
+#~ msgstr "16 bit 符号つき整数"
 
 #~ msgid "24 bit signed int"
-#~ msgstr ""
+#~ msgstr "24 bit 符号つき整数"
 
 #~ msgid "32 bit signed int"
-#~ msgstr ""
+#~ msgstr "32 bit 符号つき整数"
 
 #~ msgid "32 bit float"
-#~ msgstr ""
+#~ msgstr "32 bit 浮動小数点数"
 
 #~ msgid "When file exists:"
-#~ msgstr ""
+#~ msgstr "ファイルが存在するとき:"
 
 #~ msgid "Prompt"
-#~ msgstr ""
+#~ msgstr "尋ねる"
 
-#, fuzzy
 #~ msgid "Overwrite"
-#~ msgstr "デフォルトを上書きする"
+#~ msgstr "上書きする"
 
 #~ msgid "Preserve folder structure, starting from:"
 #~ msgstr ""
 
-#, fuzzy
 #~ msgid "Edit Encoder Preset"
-#~ msgstr "イコライザ設定の読み込み"
+#~ msgstr "エンコーダのプリセット設定"
 
-#, fuzzy
 #~ msgid "Untitled Encoder"
-#~ msgstr "カラムの編集"
+#~ msgstr "無題のエンコーダ"
 
-#, fuzzy
 #~ msgid "Output file extension:"
-#~ msgstr "出力プラグイン:"
+#~ msgstr "出力ファイルの拡張子:"
 
 #~ msgid "E.g. mp3"
-#~ msgstr ""
+#~ msgstr "例: mp3"
 
 #~ msgid "Command line:"
-#~ msgstr ""
+#~ msgstr "コマンドライン:"
 
 #, c-format
+#, no-c-format
 #~ msgid ""
 #~ "Example: lame - %o\n"
 #~ "%i for input file, %o for output file, - for stdin"
 #~ msgstr ""
+#~ "例: lame - %o\n"
+#~ "%i: 入力ファイル, %o: 出力ファイル, -: 標準入力"
 
 #, c-format
+#, no-c-format
 #~ msgid ""
 #~ "<small>%o - output file name\n"
 #~ "%i - temporary input file name</small>"
 #~ msgstr ""
+#~ "<small>%o - 出力先のファイル名\n"
+#~ "%i - 入力の一時ファイル名</small>"
 
 #~ msgid "Method:"
-#~ msgstr ""
+#~ msgstr "経由する:"
 
 #~ msgid "Pipe"
-#~ msgstr ""
+#~ msgstr "パイプ"
 
 #~ msgid "Temporary file"
-#~ msgstr ""
+#~ msgstr "一時ファイル"
 
-#, fuzzy
 #~ msgid "APEv2"
-#~ msgstr "APEv2 の書き出し"
+#~ msgstr "APEv2"
 
-#, fuzzy
 #~ msgid "ID3v1"
-#~ msgstr "ID3v1 の書き出し"
+#~ msgstr "ID3v1"
 
 #~ msgid "OggVorbis"
-#~ msgstr ""
+#~ msgstr "OggVorbis"
 
 #~ msgid "FLAC"
-#~ msgstr ""
+#~ msgstr "FLAC"
 
-#, fuzzy
 #~ msgid "ID3v2"
-#~ msgstr "ID3v2 の書き出し"
+#~ msgstr "ID3v2"
 
-#, fuzzy
 #~ msgid "<b>Tag writer</b>"
-#~ msgstr "タグ書き出し"
+#~ msgstr "<b>タグ書き出し</b>"
 
-#, fuzzy
 #~ msgid "DSP Preset Editor"
-#~ msgstr "イコライザ設定を保存"
+#~ msgstr "DSP プリセットエディタ"
 
-#, fuzzy
 #~ msgid "Untitled DSP Preset"
-#~ msgstr "イコライザ設定を保存"
+#~ msgstr "無題の DSP プリセット"
 
 #~ msgid "Save playlist as"
 #~ msgstr "名前をつけてプレイリストを保存"
@@ -1747,3 +1704,214 @@ msgstr "埋め込みCUEシート"
 #~ "Error writing stream to output. Output stream may be corrupted or "
 #~ "truncated."
 #~ msgstr "ストリームの書き出し時にエラー。出力ストリームは破損もしくは欠損している可能性があります。"
+
+#: ../plugins/shellexecui/interface.c:218
+#: ../plugins/shellexecui/shellexec.glade.h:23
+msgid "Playlist"
+msgstr "プレイリスト"
+
+#: ../plugins/shellexecui/shellexecui.c:249
+#: ../plugins/shellexecui/shellexecui.c:253
+msgid "Invalid Values"
+msgstr "不正な値"
+
+#: ../plugins/shellexecui/interface.c:160
+#: ../plugins/shellexecui/shellexec.glade.h:8
+msgid "Command:"
+msgstr "コマンド:"
+
+#. please note: do NOT translate the Edit/ part
+#: ../translation/extra.c:93
+msgid "Edit/Configure custom shell commands"
+msgstr "シェルコマンドの編集と設定"
+
+#: ../plugins/shellexecui/interface.c:203
+#: ../plugins/shellexecui/shellexec.glade.h:17
+msgid "Multiple Tracks"
+msgstr "複数トラック"
+
+#: ../plugins/gtkui/interface.c:1971 ../plugins/gtkui/deadbeef.glade.h:104
+msgid "Auto-reset \"Stop after current\""
+msgstr "現在の再生の終了後にリセット"
+
+#: ../plugins/shellexecui/interface.c:226
+#: ../plugins/shellexecui/shellexec.glade.h:24
+msgid "Item should appear in the main menu"
+msgstr "アイテムはメインメニューに現れます"
+
+#: ../plugins/shellexecui/shellexecui.c:94
+msgid "Add Command"
+msgstr "コマンドの追加"
+
+#: ../plugins/shellexecui/interface.c:216
+#: ../plugins/shellexecui/shellexec.glade.h:20
+msgid "Works on remote files (e.g. http:// streams)"
+msgstr "リモートのファイル (http:// ストリームなど) に対して動作します"
+
+#: ../plugins/shellexecui/interface.c:208
+#: ../plugins/shellexecui/shellexec.glade.h:19
+msgid "Local"
+msgstr "ローカル"
+
+#: ../plugins/shellexecui/interface.c:187
+#: ../plugins/shellexecui/shellexec.glade.h:12
+msgid "Free-form name, for example \"My Shell Command\""
+msgstr "\"My Shell Command\" のような自由な形式の名前"
+
+#: ../main.c:97
+#, c-format
+msgid ""
+"   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
+msgstr ""
+"   --gui PLUGIN       使用する GUI プラグインを指定します。デフォルトは "
+"\"GTK2\"\n"
+
+#: ../plugins/converter/converter.glade.h:34
+msgid ""
+"Pipe\n"
+"Temporary file"
+msgstr ""
+"パイプ\n"
+"一時ファイル"
+
+#: ../plugins/shellexecui/shellexecui.c:141
+msgid "Confirm Remove"
+msgstr "削除の確認"
+
+#: ../plugins/shellexecui/shellexecui.c:139
+msgid "This action will delete the selected shell command. Are you sure?"
+msgstr "選択中のシェルのコマンドを削除します。続けますか？"
+
+#: ../plugins/shellexecui/interface.c:64
+#: ../plugins/shellexecui/shellexec.glade.h:5
+msgid "Edit"
+msgstr "編集"
+
+#: ../plugins/shellexecui/interface.c:45
+#: ../plugins/shellexecui/shellexec.glade.h:1
+msgid "Custom Shell Commands"
+msgstr "シェルのコマンド"
+
+#: ../plugins/converter/converter.glade.h:19
+msgid ""
+"Prompt\n"
+"Overwrite"
+msgstr ""
+"尋ねる\n"
+"上書きする"
+
+#: ../plugins/shellexecui/interface.c:211
+#: ../plugins/shellexecui/shellexec.glade.h:18
+msgid "Works on local files."
+msgstr "ローカルのファイルに対して動作します"
+
+#: ../plugins/converter/interface.c:109
+#: ../plugins/converter/converter.glade.h:2
+msgid "Write to source track folder"
+msgstr "元のトラックと同じフォルダに書く"
+
+#: ../plugins/converter/converter.glade.h:12
+msgid ""
+"Keep source format\n"
+"8 bit signed int\n"
+"16 bit signed int\n"
+"24 bit signed int\n"
+"32 bit signed int\n"
+"32 bit float"
+msgstr ""
+"元のままにする\n"
+"8 bit 符号つき整数\n"
+"16 bit 符号つき整数\n"
+"24 bit 符号つき整数\n"
+"32 bit 符号つき整数\n"
+"32 bit 浮動小数点数"
+
+#: ../plugins/shellexecui/interface.c:221
+#: ../plugins/shellexecui/shellexec.glade.h:22
+msgid "Item should appear on the playlist tab context menu"
+msgstr "アイテムはプレイリストタブのコンテキストメニューに現れます"
+
+#: ../plugins/shellexecui/interface.c:213
+#: ../plugins/shellexecui/shellexec.glade.h:21
+msgid "Remote"
+msgstr "リモート"
+
+#: ../main.c:83
+#, c-format
+msgid "Usage: deadbeef [options] [--] [file(s)]\n"
+msgstr "使い方: deadbeef [オプション] [--] [ファイル...]\n"
+
+#: ../plugins/shellexecui/interface.c:206
+#: ../plugins/shellexecui/shellexec.glade.h:16
+msgid "Works on multiple tracks."
+msgstr "複数のトラックに対して動作します"
+
+#: ../plugins/converter/interface.c:113
+#: ../plugins/converter/converter.glade.h:3
+msgid "Preserve folder structure"
+msgstr "フォルダ構造を保存する"
+
+#: ../plugins/shellexecui/interface.c:201
+#: ../plugins/shellexecui/shellexec.glade.h:14
+msgid "Works on single track."
+msgstr "単一のトラックに対して動作します"
+
+#: ../plugins/shellexecui/interface.c:223
+#: ../plugins/shellexecui/shellexec.glade.h:25
+msgid "Common"
+msgstr "共通"
+
+#: ../plugins/shellexecui/shellexecui.c:137
+msgid "Delete"
+msgstr "削除"
+
+#: ../plugins/shellexecui/shellexecui.c:242
+msgid "Shell Command must be non-empty.\n"
+msgstr "シェルのコマンドは空にできません\n"
+
+#: ../plugins/shellexecui/interface.c:175
+#: ../plugins/shellexecui/shellexec.glade.h:11
+msgid "ID:"
+msgstr "ID:"
+
+#: ../plugins/shellexecui/shellexecui.c:236
+msgid "Title must be non-empty.\n"
+msgstr "タイトルは空にできません\n"
+
+#: ../plugins/shellexecui/interface.c:139
+#: ../plugins/shellexecui/shellexec.glade.h:6
+msgid "Edit Command"
+msgstr "コマンドの編集"
+
+#: ../plugins/shellexecui/interface.c:172
+#: ../plugins/shellexecui/shellexec.glade.h:10
+#, no-c-format
+msgid ""
+"Arbitrary shell command. Will be executed in the shell context which the "
+"main application was started from. Title formatting can be used. Example: "
+"xdg-open %D"
+msgstr ""
+"任意のシェルのコマンド。アプリケーションを立ち上げたシェルのコンテキストから"
+"実行されます。xdg-open %D のような書式が使えます"
+
+#: ../plugins/shellexecui/shellexecui.c:230
+msgid "ID must be non-empty and unique.\n"
+msgstr "IDは空でなく、一意である必要があります\n"
+
+#: ../plugins/shellexecui/interface.c:195
+#: ../plugins/shellexecui/shellexec.glade.h:13
+msgid ""
+"Command ID, normally it should be something short, for example \"youtube_open"
+"\". It must be unique."
+msgstr ""
+"コマンド ID (\"youtube_open\" のような短い識別子)。一意である必要があります"
+
+#: ../plugins/shellexecui/interface.c:198
+#: ../plugins/shellexecui/shellexec.glade.h:15
+msgid "Single Tracks"
+msgstr "単一トラック"
+
+#: ../plugins/shellexecui/interface.c:82
+#: ../plugins/shellexecui/shellexec.glade.h:2
+msgid "Close"
+msgstr "閉じる"
