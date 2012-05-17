@@ -13,6 +13,7 @@ _("Disable nowplaying")
 _("Username")
 _("Password")
 _("Scrobble URL")
+_("Prefer Album Artist over Artist field")
 // OSS output plugin
 _("Device file")
 _("OSS4 samplerate bug workaround")
@@ -33,8 +34,11 @@ _("Prefer CDDB protocol over HTTP")
 _("Enable NRG image support")
 // DUMB module player plugin
 _("Resampling quality (0..2, higher is better)")
+_("8-bit output (default is 16)")
 // Game_Music_Emu decoder plugin
 _("Max song length (in minutes)")
+_("Fadeout length (seconds)")
+_("Play loops nr. of times (if available)")
 // Standard GTK2 user interface plugin
 _("Ask confirmation to delete files from disk")
 _("Status icon volume control sensitivity")
@@ -89,6 +93,11 @@ _("Convert")
 _("Target Samplerate")
 _("Quality / Algorythm")
 _("Automatic Samplerate (overrides Target Samplerate)")
+// shellexecui
 // please note: do NOT translate the Edit/ part
 _("Edit/Configure custom shell commands")
+// mpgmad
 _("Disable gapless playback (faster scanning)")
+// adplug
+_("Prefer Ken emu over Satoh (surround won't work)")
+_("Enable surround")
