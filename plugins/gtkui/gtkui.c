@@ -47,6 +47,7 @@
 #include "pluginconf.h"
 #include "gtkui_api.h"
 #include "wingeom.h"
+#include "smclient/eggsmclient.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -1037,15 +1038,26 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     return 0;
 }
 
+static void
+smclient_quit_requested (EggSMClient *client, gpointer user_data) {
+    egg_sm_client_will_quit (client, TRUE);
+}
+
+static void
+smclient_quit_cancelled (EggSMClient *client, gpointer user_data) {
+}
+
+static void
+smclient_quit (EggSMClient *client, gpointer user_data) {
+    deadbeef->sendmessage (DB_EV_TERMINATE, 0, 0, 0);
+}
+
+static void
+smclient_save_state (EggSMClient *client, const char *state_dir, gpointer user_data) {
+}
+
 void
 gtkui_thread (void *ctx) {
-    // let's start some gtk
-    g_thread_init (NULL);
-//    add_pixmap_directory (PREFIX "/share/deadbeef/pixmaps");
-    add_pixmap_directory (deadbeef->get_pixmap_dir ());
-    gdk_threads_init ();
-    gdk_threads_enter ();
-
     int argc = 2;
     const char **argv = alloca (sizeof (char *) * argc);
     argv[0] = "deadbeef";
@@ -1054,6 +1066,34 @@ gtkui_thread (void *ctx) {
     if (!deadbeef->conf_get_int ("gtkui.sync", 0)) {
         argc = 1;
     }
+
+    g_type_init ();
+    GOptionContext *goption_context;
+    GError *err = NULL;
+    goption_context = g_option_context_new (_("- Test logout functionality"));
+    g_option_context_add_group (goption_context, gtk_get_option_group (TRUE));
+    g_option_context_add_group (goption_context, egg_sm_client_get_option_group ());
+
+    if (!g_option_context_parse (goption_context, &argc, (char ***)&argv, &err))
+    {
+        g_printerr ("Could not parse arguments: %s\n", err->message);
+        g_error_free (err);
+    }
+    else {
+        EggSMClient *client = egg_sm_client_get ();
+        g_signal_connect (client, "quit-requested", G_CALLBACK (smclient_quit_requested), NULL);
+        g_signal_connect (client, "quit-cancelled", G_CALLBACK (smclient_quit_cancelled), NULL);
+        g_signal_connect (client, "quit", G_CALLBACK (smclient_quit), NULL);
+        g_signal_connect (client, "save-state", G_CALLBACK (smclient_save_state), NULL);
+    }
+
+    // let's start some gtk
+    g_thread_init (NULL);
+//    add_pixmap_directory (PREFIX "/share/deadbeef/pixmaps");
+    add_pixmap_directory (deadbeef->get_pixmap_dir ());
+    gdk_threads_init ();
+    gdk_threads_enter ();
+
     gtk_disable_setlocale ();
     gtk_init (&argc, (char ***)&argv);
 

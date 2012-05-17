@@ -261,6 +261,15 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
         else if (!strcmp (parg, "--quit")) {
             messagepump_push (DB_EV_TERMINATE, 0, 0, 0);
         }
+        else if (!strcmp (parg, "--sm-client-id")) {
+            parg += strlen (parg);
+            parg++;
+            if (parg < pend) {
+                parg += strlen (parg);
+                parg++;
+            }
+            continue;
+        }
         else if (parg[0] != '-') {
             break; // unknown option is filename
         }
