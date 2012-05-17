@@ -192,9 +192,9 @@ update_songinfo (gpointer ctx) {
             }
         }
         const char *spaused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED ? _("Paused | ") : "";
-        const char *filetype = deadbeef->pl_find_meta (track, ":FILETYPE");
-        if (!filetype) {
-            filetype = "-";
+        char filetype[20];
+        if (!deadbeef->pl_get_meta (track, ":FILETYPE", filetype, sizeof (filetype))) {
+            strcpy (filetype, "-");
         }
         snprintf (sbtext_new, sizeof (sbtext_new), _("%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"), spaused, filetype, sbitrate, samplerate, bitspersample, mode, minpos, secpos, t, deadbeef->pl_getcount (PL_MAIN), totaltime_str);
     }

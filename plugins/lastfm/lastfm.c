@@ -49,6 +49,8 @@ static uintptr_t lfm_cond;
 static int lfm_stopthread;
 static intptr_t lfm_tid;
 
+#define META_FIELD_SIZE 200
+
 DB_plugin_t *
 lastfm_load (DB_functions_t *api) {
     deadbeef = api;
@@ -317,50 +319,41 @@ fail:
 }
 
 static int
-lfm_fetch_song_info (DB_playItem_t *song, const char **a, const char **t, const char **b, float *l, const char **n, const char **m) {
+lfm_fetch_song_info (DB_playItem_t *song, char *a, char *t, char *b, float *l, char *n, char *m) {
     if (deadbeef->conf_get_int ("lastfm.prefer_album_artist", 0)) {
-        *a = deadbeef->pl_find_meta (song, "band");
-        if (!(*a)) {
-            *a = deadbeef->pl_find_meta (song, "album artist");
-        }
-        if (!(*a)) {
-            *a = deadbeef->pl_find_meta (song, "albumartist");
-        }
-        if (!(*a)) {
-            *a = deadbeef->pl_find_meta (song, "artist");
+        if (!deadbeef->pl_get_meta (song, "band", a, META_FIELD_SIZE)) {
+            if (!deadbeef->pl_get_meta (song, "album artist", a, META_FIELD_SIZE)) {
+                if (!deadbeef->pl_get_meta (song, "albumartist", a, META_FIELD_SIZE)) {
+                    if (!deadbeef->pl_get_meta (song, "artist", a, META_FIELD_SIZE)) {
+                        return -1;
+                    }
+                }
+            }
         }
     }
     else {
-        *a = deadbeef->pl_find_meta (song, "artist");
-        if (!(*a)) {
-            *a = deadbeef->pl_find_meta (song, "band");
-        }
-        if (!(*a)) {
-            *a = deadbeef->pl_find_meta (song, "album artist");
-        }
-        if (!(*a)) {
-            *a = deadbeef->pl_find_meta (song, "albumartist");
+        if (!deadbeef->pl_get_meta (song, "artist", a, META_FIELD_SIZE)) {
+            if (!deadbeef->pl_get_meta (song, "band", a, META_FIELD_SIZE)) {
+                if (!deadbeef->pl_get_meta (song, "album artist", a, META_FIELD_SIZE)) {
+                    if (!deadbeef->pl_get_meta (song, "albumartist", a, META_FIELD_SIZE)) {
+                        return -1;
+                    }
+                }
+            }
         }
     }
-    if (!*a) {
+    if (!deadbeef->pl_get_meta (song, "title", t, META_FIELD_SIZE)) {
         return -1;
     }
-    *t = deadbeef->pl_find_meta (song, "title");
-    if (!*t) {
-        return -1;
-    }
-    *b = deadbeef->pl_find_meta (song, "album");
-    if (!*b) {
-        *b = "";
+    if (!deadbeef->pl_get_meta (song, "album", b, META_FIELD_SIZE)) {
+        *b = 0;
     }
     *l = deadbeef->pl_get_item_duration (song);
-    *n = deadbeef->pl_find_meta (song, "track");
-    if (!*n) {
-        *n = "";
+    if (!deadbeef->pl_get_meta (song, "track", n, META_FIELD_SIZE)) {
+        *n = 0;
     }
-    *m = deadbeef->pl_find_meta (song, "mbid");
-    if (!*m) {
-        *m = "";
+    if (!deadbeef->pl_get_meta (song, "mbid", m, META_FIELD_SIZE)) {
+        *m = 0;
     }
     return 0;
 }
@@ -443,12 +436,12 @@ lfm_format_uri (int subm, DB_playItem_t *song, char *out, int outl, time_t start
         return -1;
     }
     int sz = outl;
-    const char *a; // artist
-    const char *t; // title
-    const char *b; // album
+    char a[META_FIELD_SIZE]; // artist
+    char t[META_FIELD_SIZE]; // title
+    char b[META_FIELD_SIZE]; // album
     float l; // duration
-    const char *n; // tracknum
-    const char *m; // muzicbrainz id
+    char n[META_FIELD_SIZE]; // tracknum
+    char m[META_FIELD_SIZE]; // muzicbrainz id
 
     char ka[6] = "a";
     char kt[6] = "t";
@@ -466,7 +459,7 @@ lfm_format_uri (int subm, DB_playItem_t *song, char *out, int outl, time_t start
         strcpy (km+1, ka+1);
     }
 
-    if (lfm_fetch_song_info (song, &a, &t, &b, &l, &n, &m) == 0) {
+    if (lfm_fetch_song_info (song, a, t, b, &l, n, m) == 0) {
 //        trace ("playtime: %f\nartist: %s\ntitle: %s\nalbum: %s\nduration: %f\ntracknum: %s\n---\n", song->playtime, a, t, b, l, n);
     }
     else {
@@ -559,9 +552,8 @@ lastfm_songchanged (ddb_event_trackchange_t *ev, uintptr_t data) {
 
 #endif
 
-    if (!deadbeef->pl_find_meta (ev->from, "artist")
-            || !deadbeef->pl_find_meta (ev->from, "title")
-//            || !deadbeef->pl_find_meta (ev->from, "album")
+    if (!deadbeef->pl_meta_exists (ev->from, "artist")
+            || !deadbeef->pl_meta_exists (ev->from, "title")
        ) {
         trace ("lfm: not enough metadata for submission, artist=%s, title=%s, album=%s\n", deadbeef->pl_find_meta (ev->from, "artist"), deadbeef->pl_find_meta (ev->from, "title"), deadbeef->pl_find_meta (ev->from, "album"));
         return 0;
@@ -876,11 +868,14 @@ lastfm_stop (void) {
 static int
 lfm_action_lookup (DB_plugin_action_t *action, DB_playItem_t *it)
 {
-    const char *artist = deadbeef->pl_find_meta (it, "artist");
-    const char *title = deadbeef->pl_find_meta (it, "title");
-
-    if (!title || !artist)
+    char artist[META_FIELD_SIZE];
+    if (!deadbeef->pl_get_meta (it, "artist", artist, sizeof (artist))) {
         return 0;
+    }
+    char title[META_FIELD_SIZE];
+    if (!deadbeef->pl_get_meta (it, "title", title, sizeof (title))) {
+        return 0;
+    }
 
     char eartist [strlen (artist) * 3 + 1];
     char etitle [strlen (title) * 3 + 1];
@@ -925,9 +920,10 @@ static DB_plugin_action_t lookup_action = {
 static DB_plugin_action_t *
 lfm_get_actions (DB_playItem_t *it)
 {
+    deadbeef->pl_lock ();
     if (!it ||
-        !deadbeef->pl_find_meta (it, "artist") ||
-        !deadbeef->pl_find_meta (it, "title"))
+        !deadbeef->pl_meta_exists (it, "artist") ||
+        !deadbeef->pl_meta_exists (it, "title"))
     {
         love_action.flags |= DB_ACTION_DISABLED;
         lookup_action.flags |= DB_ACTION_DISABLED;
@@ -937,6 +933,7 @@ lfm_get_actions (DB_playItem_t *it)
         love_action.flags &= ~DB_ACTION_DISABLED;
         lookup_action.flags &= ~DB_ACTION_DISABLED;
     }
+    deadbeef->pl_unlock ();
     return &lookup_action;
 }
 

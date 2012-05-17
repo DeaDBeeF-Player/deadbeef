@@ -331,6 +331,11 @@ static DB_functions_t deadbeef_api = {
     .pl_find_meta_raw = (const char *(*) (DB_playItem_t *it, const char *key))pl_find_meta_raw,
     // ******* new 1.3 APIs ********
     .streamer_dsp_chain_save = streamer_dsp_chain_save,
+    // ******* new 1.4 APIs ********
+    .pl_get_meta = (int (*) (DB_playItem_t *it, const char *key, char *val, int size))pl_get_meta,
+    .pl_get_meta_raw = (int (*) (DB_playItem_t *it, const char *key, char *val, int size))pl_get_meta_raw,
+    .plt_get_meta = (int (*) (ddb_playlist_t *handle, const char *key, char *val, int size))plt_get_meta,
+    .pl_meta_exists = (int (*) (DB_playItem_t *it, const char *key))pl_meta_exists,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

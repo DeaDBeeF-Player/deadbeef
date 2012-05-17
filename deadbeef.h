@@ -61,6 +61,7 @@ extern "C" {
 
 // api version history:
 // 9.9 -- devel
+// 1.4 -- deadbeef-0.5.5
 // 1.3 -- deadbeef-0.5.3
 // 1.2 -- deadbeef-0.5.2
 // 1.1 -- deadbeef-0.5.1
@@ -750,10 +751,20 @@ typedef struct {
     void (*metacache_unref) (const char *str);
 
     // this function must return original un-overriden value (ignoring the keys prefixed with '!')
+    // it's not thread-safe, and must be used under the same conditions as the
+    // pl_find_meta
     const char *(*pl_find_meta_raw) (DB_playItem_t *it, const char *key);
 
     // ******* new 1.3 APIs ********
     int (*streamer_dsp_chain_save) (void);
+
+    // ******* new 1.4 APIs ********
+    int (*pl_get_meta) (DB_playItem_t *it, const char *key, char *val, int size);
+    int (*pl_get_meta_raw) (DB_playItem_t *it, const char *key, char *val, int size);
+    int (*plt_get_meta) (ddb_playlist_t *handle, const char *key, char *val, int size);
+
+    // fast way to test if a field exists in playitem
+    int (*pl_meta_exists) (DB_playItem_t *it, const char *key);
 } DB_functions_t;
 
 // NOTE: an item placement must be selected like this

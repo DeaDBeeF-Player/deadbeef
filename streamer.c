@@ -813,7 +813,9 @@ streamer_set_current (playItem_t *it) {
             pl_item_ref (i);
             int res = -1;
             while (i) {
+                pl_lock ();
                 pl_replace_meta (it, "!URI", pl_find_meta_raw (i, ":URI"));
+                pl_unlock ();
                 res = streamer_set_current (it);
                 if (!res) {
                     pl_item_unref (i);
@@ -2244,6 +2246,7 @@ streamer_notify_order_changed (int prev_order, int new_order) {
         playItem_t *curr = playing_track;
         if (curr) {
 
+            pl_lock ();
             const char *alb = pl_find_meta_raw (curr, "album");
             const char *art = pl_find_meta_raw (curr, "artist");
             playItem_t *next = curr->prev[PL_MAIN];
@@ -2256,6 +2259,7 @@ streamer_notify_order_changed (int prev_order, int new_order) {
                     break;
                 }
             }
+            pl_unlock ();
         }
         streamer_unlock ();
     }

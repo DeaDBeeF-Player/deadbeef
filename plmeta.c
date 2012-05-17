@@ -190,14 +190,13 @@ pl_delete_meta (playItem_t *it, const char *key) {
 
 const char *
 pl_find_meta (playItem_t *it, const char *key) {
-    pl_lock ();
+    pl_ensure_lock ();
     DB_metaInfo_t *m = it->meta;
 
     if (key && key[0] == ':') {
         // try to find an override
         while (m) {
             if (m->key[0] == '!' && !strcasecmp (key+1, m->key+1)) {
-                pl_unlock ();
                 return m->value;
             }
             m = m->next;
@@ -207,27 +206,23 @@ pl_find_meta (playItem_t *it, const char *key) {
     m = it->meta;
     while (m) {
         if (!strcasecmp (key, m->key)) {
-            pl_unlock ();
             return m->value;
         }
         m = m->next;
     }
-    pl_unlock ();
     return NULL;
 }
 
 const char *
 pl_find_meta_raw (playItem_t *it, const char *key) {
-    pl_lock ();
+    pl_ensure_lock ();
     DB_metaInfo_t *m = it->meta;
     while (m) {
         if (!strcasecmp (key, m->key)) {
-            pl_unlock ();
             return m->value;
         }
         m = m->next;
     }
-    pl_unlock ();
     return NULL;
 }
 
@@ -302,4 +297,40 @@ pl_delete_all_meta (playItem_t *it) {
         m = next;
     }
     UNLOCK;
+}
+
+int
+pl_get_meta (playItem_t *it, const char *key, char *val, int size) {
+    *val = 0;
+    pl_lock ();
+    const char *v = pl_find_meta (it, key);
+    if (!val) {
+        pl_unlock ();
+        return 0;
+    }
+    strncpy (val, v, size);
+    pl_unlock ();
+    return 1;
+}
+
+int
+pl_get_meta_raw (playItem_t *it, const char *key, char *val, int size) {
+    *val = 0;
+    pl_lock ();
+    const char *v = pl_find_meta_raw (it, key);
+    if (!val) {
+        pl_unlock ();
+        return 0;
+    }
+    strncpy (val, v, size);
+    pl_unlock ();
+    return 1;
+}
+
+int
+pl_meta_exists (playItem_t *it, const char *key) {
+    pl_lock ();
+    const char *v = pl_find_meta (it, key);
+    pl_unlock ();
+    return v ? 1 : 0;
 }

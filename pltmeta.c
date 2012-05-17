@@ -234,3 +234,16 @@ plt_delete_all_meta (playlist_t *it) {
     UNLOCK;
 }
 
+int
+plt_get_meta (playlist_t *handle, const char *key, char *val, int size) {
+    *val = 0;
+    LOCK;
+    const char *v = plt_find_meta (handle, key);
+    if (!v) {
+        UNLOCK;
+        return 0;
+    }
+    strncpy (val, v, size);
+    UNLOCK;
+    return 1;
+}

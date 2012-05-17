@@ -107,6 +107,7 @@ get_field_value (char *out, int size, const char *key, const char *(*getter)(DB_
         return 0;
     }
     char *p = out;
+    deadbeef->pl_lock ();
     const char **prev = malloc (sizeof (const char *) * numtracks);
     memset (prev, 0, sizeof (const char *) * numtracks);
     for (int i = 0; i < numtracks; i++) {
@@ -142,6 +143,7 @@ get_field_value (char *out, int size, const char *key, const char *(*getter)(DB_
             break;
         }
     }
+    deadbeef->pl_unlock ();
     if (size <= 1) {
         gchar *prev = g_utf8_prev_char (out-4);
         strcpy (prev, "...");
@@ -491,8 +493,9 @@ static gboolean
 set_progress_cb (void *ctx) {
     DB_playItem_t *track = ctx;
     GtkWidget *progressitem = lookup_widget (progressdlg, "progresstitle");
-    const char *fname = deadbeef->pl_find_meta_raw (track, ":URI");
-    gtk_entry_set_text (GTK_ENTRY (progressitem), fname);
+    deadbeef->pl_lock ();
+    gtk_entry_set_text (GTK_ENTRY (progressitem), deadbeef->pl_find_meta_raw (track, ":URI"));
+    deadbeef->pl_unlock ();
     deadbeef->pl_item_unref (track);
     return FALSE;
 }
@@ -504,8 +507,15 @@ write_meta_worker (void *ctx) {
             break;
         }
         DB_playItem_t *track = tracks[t];
-        const char *decoder_id = deadbeef->pl_find_meta_raw (track, ":DECODER");
-        if (track && decoder_id) {
+        deadbeef->pl_lock ();
+        const char *dec = deadbeef->pl_find_meta_raw (track, ":DECODER");
+        char decoder_id[100];
+        if (dec) {
+            strncpy (decoder_id, dec, sizeof (decoder_id));
+        }
+        int match = track && dec;
+        deadbeef->pl_unlock ();
+        if (match) {
             int is_subtrack = deadbeef->pl_get_item_flags (track) & DDB_IS_SUBTRACK;
             if (is_subtrack) {
                 continue;

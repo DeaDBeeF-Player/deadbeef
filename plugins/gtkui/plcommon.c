@@ -256,8 +256,16 @@ main_reload_metadata_activate
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (menuitem), "ps"));
     DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
     while (it) {
-        const char *decoder_id = deadbeef->pl_find_meta (it, ":DECODER");
-        if (deadbeef->pl_is_selected (it) && deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI")) && decoder_id) {
+        deadbeef->pl_lock ();
+        char decoder_id[100];
+        const char *dec = deadbeef->pl_find_meta (it, ":DECODER");
+        if (dec) {
+            strncpy (decoder_id, dec, sizeof (decoder_id));
+        }
+        int match = deadbeef->pl_is_selected (it) && deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI")) && dec;
+        deadbeef->pl_unlock ();
+
+        if (match) {
             uint32_t f = deadbeef->pl_get_item_flags (it);
             if (!(f & DDB_IS_SUBTRACK)) {
                 f &= ~DDB_TAG_MASK;

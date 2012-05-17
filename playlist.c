@@ -55,7 +55,7 @@
 
 #define DISABLE_LOCKING 0
 #define DEBUG_LOCKING 0
-//#define DETECT_PL_LOCK_RC 1
+#define DETECT_PL_LOCK_RC 1
 
 // file format revision history
 // 1.1->1.2 changelog:
@@ -186,7 +186,7 @@ pl_lock (void) {
 #if !DISABLE_LOCKING
     mutex_lock (mutex);
 #if DETECT_PL_LOCK_RC
-    pl_lock_tid = pthread_self();
+    pl_lock_tid = pthread_self ();
     tids[ntids++] = pl_lock_tid;
 #endif
 
@@ -1170,10 +1170,12 @@ error:
 playItem_t *
 plt_insert_cue (playlist_t *plt, playItem_t *after, playItem_t *origin, int numsamples, int samplerate) {
     trace ("pl_insert_cue numsamples=%d, samplerate=%d\n", numsamples, samplerate);
+    pl_lock ();
     const char *fname = pl_find_meta_raw (origin, ":URI");
     int len = strlen (fname);
     char cuename[len+5];
     strcpy (cuename, fname);
+    pl_unlock ();
     strcpy (cuename+len, ".cue");
     DB_FILE *fp = vfs_fopen (cuename);
     if (!fp) {
@@ -3811,4 +3813,18 @@ plt_set_fast_mode (playlist_t *plt, int fast) {
 int
 plt_is_fast_mode (playlist_t *plt) {
     return plt->fast_mode;
+}
+
+void
+pl_ensure_lock (void) {
+#if DETECT_PL_LOCK_RC
+    pthread_t tid = pthread_self ();
+    for (int i = 0; i < ntids; i++) {
+        if (tids[i] == tid) {
+            return;
+        }
+    }
+    fprintf (stderr, "\033[0;31mnon-thread-safe playlist access function was called outside of pl_lock. please make a backtrace and post a bug. thank you.\033[37;0m\n");
+    assert(0);
+#endif
 }
