@@ -272,7 +272,7 @@ Player::Player (void)
  m_running           (false),
  m_sampleCount       (0)
 {
-    srand ((uint) ::time(NULL));
+//    srand ((uint) ::time(NULL));
     m_rand = (uint_least32_t) rand ();
     
     // Set the ICs to use this environment
