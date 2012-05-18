@@ -47,7 +47,9 @@
 #include "pluginconf.h"
 #include "gtkui_api.h"
 #include "wingeom.h"
+#ifdef EGG_SM_CLIENT_BACKEND_XSMP
 #include "smclient/eggsmclient.h"
+#endif
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -1038,6 +1040,7 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     return 0;
 }
 
+#ifdef EGG_SM_CLIENT_BACKEND_XSMP
 static void
 smclient_quit_requested (EggSMClient *client, gpointer user_data) {
     egg_sm_client_will_quit (client, TRUE);
@@ -1055,6 +1058,7 @@ smclient_quit (EggSMClient *client, gpointer user_data) {
 static void
 smclient_save_state (EggSMClient *client, const char *state_dir, gpointer user_data) {
 }
+#endif
 
 void
 gtkui_thread (void *ctx) {
@@ -1067,6 +1071,8 @@ gtkui_thread (void *ctx) {
         argc = 1;
     }
 
+    gtk_disable_setlocale ();
+#ifdef EGG_SM_CLIENT_BACKEND_XSMP
     g_type_init ();
     GOptionContext *goption_context;
     GError *err = NULL;
@@ -1086,6 +1092,7 @@ gtkui_thread (void *ctx) {
         g_signal_connect (client, "quit", G_CALLBACK (smclient_quit), NULL);
         g_signal_connect (client, "save-state", G_CALLBACK (smclient_save_state), NULL);
     }
+#endif
 
     // let's start some gtk
     g_thread_init (NULL);
@@ -1094,7 +1101,6 @@ gtkui_thread (void *ctx) {
     gdk_threads_init ();
     gdk_threads_enter ();
 
-    gtk_disable_setlocale ();
     gtk_init (&argc, (char ***)&argv);
 
     mainwin = create_mainwin ();
