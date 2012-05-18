@@ -461,6 +461,13 @@ streamer_move_to_nextsong (int reason) {
     }
     else if (pl_order == PLAYBACK_ORDER_LINEAR) { // linear
         playItem_t *it = NULL;
+        if (!curr) {
+            int cur = plt_get_cursor (streamer_playlist, PL_MAIN);
+            if (cur != -1) {
+                curr = plt_get_item_for_idx (streamer_playlist, cur, PL_MAIN);
+                pl_item_unref (curr);
+            }
+        }
         if (curr) {
             it = curr->next[PL_MAIN];
         }
@@ -578,6 +585,13 @@ streamer_move_to_prevsong (void) {
     }
     else if (pl_order == PLAYBACK_ORDER_LINEAR) { // linear
         playItem_t *it = NULL;
+        if (!playlist_track) {
+            int cur = plt_get_cursor (streamer_playlist, PL_MAIN);
+            if (cur != -1) {
+                playlist_track = plt_get_item_for_idx (streamer_playlist, cur, PL_MAIN);
+                pl_item_unref (playlist_track);
+            }
+        }
         if (playlist_track) {
             it = playlist_track->prev[PL_MAIN];
         }
