@@ -190,20 +190,20 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
             }
         }
         float fg[3] = {(float)color->red/0xffff, (float)color->green/0xffff, (float)color->blue/0xffff};
-        draw_set_fg_color (fg);
+        draw_set_fg_color (&listview->listctx, fg);
 
-        draw_init_font (gtk_widget_get_style (GTK_WIDGET (listview)));
+        draw_init_font (&listview->listctx, gtk_widget_get_style (GTK_WIDGET (listview)));
         if (gtkui_embolden_current_track && it && it == playing_track) {
-            draw_init_font_bold ();
+            draw_init_font_bold (&listview->listctx);
         }
         if (calign_right) {
-            draw_text (x+5, y + 3, cwidth-10, 1, text);
+            draw_text (&listview->listctx, x+5, y + 3, cwidth-10, 1, text);
         }
         else {
-            draw_text (x + 5, y + 3, cwidth-10, 0, text);
+            draw_text (&listview->listctx, x + 5, y + 3, cwidth-10, 0, text);
         }
         if (gtkui_embolden_current_track && it && it == playing_track) {
-            draw_init_font_normal ();
+            draw_init_font_normal (&listview->listctx);
         }
     }
     if (playing_track) {

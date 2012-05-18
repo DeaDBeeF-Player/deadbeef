@@ -1179,7 +1179,7 @@ gtkui_thread (void *ctx) {
     trkproperties_destroy ();
     progress_destroy ();
     gtkui_hide_status_icon ();
-    draw_free ();
+//    draw_free ();
     if (theme_treeview) {
         gtk_widget_destroy (theme_treeview);
         theme_treeview = NULL;

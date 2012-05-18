@@ -20,6 +20,7 @@
 #define __DDBTABSTRIP_H
 
 #include <gtk/gtk.h>
+#include "drawing.h"
 
 G_BEGIN_DECLS
 
@@ -46,6 +47,7 @@ struct _DdbTabStrip {
     int movepos;
     guint scroll_timer;
     int scroll_direction;
+    drawctx_t drawctx;
 };
 
 struct _DdbTabStripClass {

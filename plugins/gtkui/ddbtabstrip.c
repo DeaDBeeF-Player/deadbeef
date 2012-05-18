@@ -225,6 +225,7 @@ ddb_tabstrip_destroy(GObject *object)
   g_return_if_fail(DDB_IS_TABSTRIP(object));
 
   tabstrip = DDB_TABSTRIP (object);
+  draw_free (&tabstrip->drawctx);
 }
 
 static void
@@ -326,6 +327,7 @@ ddb_tabstrip_init(DdbTabStrip *tabstrip)
     tabstrip->dragpt[1] = 0;
     tabstrip->prev_x = 0;
     tabstrip->movepos = 0;
+    drawctx_init (&tabstrip->drawctx);
 }
 
 static int tab_clicked = -1;
@@ -436,7 +438,7 @@ ddb_tabstrip_get_tab_width (DdbTabStrip *ts, int tab) {
     char title[100];
     plt_get_title_wrapper (tab, title, sizeof (title));
     int h = 0;
-    draw_get_text_extents (title, strlen (title), &width, &h);
+    draw_get_text_extents (&ts->drawctx, title, strlen (title), &width, &h);
     width += text_left_padding + text_right_padding;
     if (width < min_tab_size) {
         width = min_tab_size;
@@ -532,7 +534,7 @@ tabstrip_adjust_hscroll (DdbTabStrip *ts) {
 }
 
 void
-set_tab_text_color (int idx, int selected) {
+set_tab_text_color (DdbTabStrip *ts, int idx, int selected) {
     if (idx == -1) {
         return;
     }
@@ -545,7 +547,7 @@ set_tab_text_color (int idx, int selected) {
         if (3 == sscanf (clr, "%02x%02x%02x", &r, &g, &b)) {
             fallback = 0;
             float fg[3] = {(float)r/0xff, (float)g/0xff, (float)b/0xff};
-            draw_set_fg_color (fg);
+            draw_set_fg_color (&ts->drawctx, fg);
         }
     }
     deadbeef->plt_unref (plt);
@@ -553,7 +555,7 @@ set_tab_text_color (int idx, int selected) {
         GdkColor color;
         gtkui_get_tabstrip_text_color (&color);
         float fg[3] = {(float)color.red/0xffff, (float)color.green/0xffff, (float)color.blue/0xffff};
-        draw_set_fg_color (fg);
+        draw_set_fg_color (&ts->drawctx, fg);
     }
     deadbeef->pl_unlock ();
 }
@@ -578,7 +580,7 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
 
     int x = -hscroll;
     int w = 0;
-    int h = draw_get_font_size ();
+    int h = draw_get_font_size (&ts->drawctx);
     h = a.height;
     tab_overlap_size = (h-4)/2;
     text_right_padding = h - 3;
@@ -604,7 +606,7 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
 
     int y = 4;
     h = a.height - 4;
-    draw_begin (cr);
+    draw_begin (&ts->drawctx, cr);
     int need_draw_moving = 0;
     int idx;
     int widths[cnt];
@@ -612,7 +614,7 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
         char title[100];
         plt_get_title_wrapper (idx, title, sizeof (title));
         int h = 0;
-        draw_get_text_extents (title, strlen (title), &widths[idx], &h);
+        draw_get_text_extents (&ts->drawctx, title, strlen (title), &widths[idx], &h);
         widths[idx] += text_left_padding + text_right_padding;
         if (widths[idx] < min_tab_size) {
             widths[idx] = min_tab_size;
@@ -633,8 +635,8 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
             char tab_title[100];
             plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
 
-            set_tab_text_color (idx, tab_selected);
-            draw_text (x + text_left_padding, y - text_vert_offset, w, 0, tab_title);
+            set_tab_text_color (ts, idx, tab_selected);
+            draw_text (&ts->drawctx, x + text_left_padding, y - text_vert_offset, w, 0, tab_title);
         }
         x += w - tab_overlap_size;
     }
@@ -666,8 +668,8 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
         ddb_tabstrip_draw_tab (widget, cr, idx, 1, x, y, w, h);
         char tab_title[100];
         plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
-        set_tab_text_color (idx, tab_selected);
-        draw_text (x + text_left_padding, y - text_vert_offset, w, 0, tab_title);
+        set_tab_text_color (ts, idx, tab_selected);
+        draw_text (&ts->drawctx, x + text_left_padding, y - text_vert_offset, w, 0, tab_title);
     }
     else {
         need_draw_moving = 1;
@@ -685,8 +687,8 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
                     ddb_tabstrip_draw_tab (widget, cr, idx, 1, x, y, w, h);
                     char tab_title[100];
                     plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
-                    set_tab_text_color (idx, tab_selected);
-                    draw_text (x + text_left_padding, y - text_vert_offset, w, 0, tab_title);
+                    set_tab_text_color (ts, idx, tab_selected);
+                    draw_text (&ts->drawctx, x + text_left_padding, y - text_vert_offset, w, 0, tab_title);
                 }
                 break;
             }
@@ -714,7 +716,7 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
 #endif
     }
 
-    draw_end ();
+    draw_end (&ts->drawctx);
 }
 
 static int
@@ -733,7 +735,7 @@ get_tab_under_cursor (DdbTabStrip *ts, int x) {
         plt_get_title_wrapper (idx, title, sizeof (title));
         int w = 0;
         int h = 0;
-        draw_get_text_extents (title, strlen (title), &w, &h);
+        draw_get_text_extents (&ts->drawctx, title, strlen (title), &w, &h);
         w += text_left_padding + text_right_padding;
         if (w < min_tab_size) {
             w = min_tab_size;
@@ -1155,10 +1157,10 @@ gboolean
 on_tabstrip_configure_event              (GtkWidget       *widget,
                                         GdkEventConfigure *event)
 {
-    draw_init_font (gtk_widget_get_style (widget));
     DdbTabStrip *ts = DDB_TABSTRIP (widget);
+    draw_init_font (&ts->drawctx, gtk_widget_get_style (widget));
     tabstrip_adjust_hscroll (ts);
-    int height = draw_get_listview_rowheight () + 4;
+    int height = draw_get_listview_rowheight (&ts->drawctx) + 4;
     GtkAllocation a;
     gtk_widget_get_allocation (widget, &a);
     if (height != a.height) {

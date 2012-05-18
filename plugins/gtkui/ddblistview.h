@@ -21,6 +21,7 @@
 #include <gtk/gtk.h>
 #include <sys/time.h>
 #include <stdint.h>
+#include "drawing.h"
 
 // drag and drop targets
 enum {
@@ -153,6 +154,10 @@ struct _DdbListview {
 
     GdkCursor *cursor_sz;
     GdkCursor *cursor_drag;
+
+    // drawing contexts
+    drawctx_t listctx;
+    drawctx_t hdrctx;
 };
 
 struct _DdbListviewClass {
