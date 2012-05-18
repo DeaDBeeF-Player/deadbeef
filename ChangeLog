@@ -1,3 +1,21 @@
+version 0.5.5
+	fixed converter GUI plugin crash if the converter plugin not found
+	fixed compiling on FreeBSD
+	fixed race condition bug in streamer
+	fixed flac embedded cover loading bug
+	fixed multiline tag field editing
+	fixed vorbis streaming audio bug
+	fixed numlock handling in global hotkeys setup
+	fixed KP_Return not working
+	fixed filename being ignored in the search window
+	fixed session saving on reboot/logout using XSMP via eggsmclient
+	fixed few missing translation strings
+	fixed many instability issues caused by improper use of pl_find_meta[_raw] calls
+	fixed improper use of GtkStyle in playlist and tabs widgets
+	fixed prev/next handling when playback is stopped
+	fixed random playback bug caused by libsidplay2 calling srand(time(NULL))
+	fixed crash in adplug when playing ADL files
+
 version 0.5.4
 	fixed starting the player using "deadbeef" command without path
 	fixed missing ; in deadbeef.desktop
