@@ -304,7 +304,7 @@ pl_get_meta (playItem_t *it, const char *key, char *val, int size) {
     *val = 0;
     pl_lock ();
     const char *v = pl_find_meta (it, key);
-    if (!val) {
+    if (!v) {
         pl_unlock ();
         return 0;
     }
@@ -318,7 +318,7 @@ pl_get_meta_raw (playItem_t *it, const char *key, char *val, int size) {
     *val = 0;
     pl_lock ();
     const char *v = pl_find_meta_raw (it, key);
-    if (!val) {
+    if (!v) {
         pl_unlock ();
         return 0;
     }
