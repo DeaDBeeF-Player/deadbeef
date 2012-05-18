@@ -269,7 +269,7 @@ ddb_src_get_param (ddb_dsp_context_t *ctx, int p, char *val, int sz) {
 static const char settings_dlg[] =
     "property \"Automatic Samplerate (overrides Target Samplerate)\" checkbox 2 0;\n"
     "property \"Target Samplerate\" spinbtn[8192,192000,1] 0 48000;\n"
-    "property \"Quality / Algorythm\" select[5] 1 2 SINC_BEST_QUALITY SINC_MEDIUM_QUALITY SINC_FASTEST ZERO_ORDER_HOLD LINEAR;\n"
+    "property \"Quality / Algorithm\" select[5] 1 2 SINC_BEST_QUALITY SINC_MEDIUM_QUALITY SINC_FASTEST ZERO_ORDER_HOLD LINEAR;\n"
 ;
 
 static DB_dsp_t plugin = {

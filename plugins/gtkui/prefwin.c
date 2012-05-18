@@ -418,7 +418,7 @@ prefwin_add_hotkeys_tab (GtkWidget *prefwin) {
             hkstore);
 
 
-    GtkTreeViewColumn *hk_col1 = gtk_tree_view_column_new_with_attributes (_("Slot"), rend_hk_slot, "text", 0, NULL);
+    GtkTreeViewColumn *hk_col1 = gtk_tree_view_column_new_with_attributes (_("Action"), rend_hk_slot, "text", 0, NULL);
     GtkTreeViewColumn *hk_col2 = gtk_tree_view_column_new_with_attributes (_("Key combination"), rend_hk_binding, "text", 1, NULL);
     gtk_tree_view_append_column (hktree, hk_col1);
     gtk_tree_view_append_column (hktree, hk_col2);

@@ -1,6 +1,6 @@
 // this file should list extra translatable strings that are not referenced
 // directly in source code, e.g. scripted plugin configuration strings
-_("Add Audio CD")
+_("Add audio CD")
 _("Lookup on Last.fm")
 // ALSA output plugin
 _("Use ALSA resampling")
@@ -91,7 +91,7 @@ _("File Extensions (separate with ';')")
 _("Convert")
 // Resampler (Secret Rabbit Code)
 _("Target Samplerate")
-_("Quality / Algorythm")
+_("Quality / Algorithm")
 _("Automatic Samplerate (overrides Target Samplerate)")
 // shellexecui
 // please note: do NOT translate the Edit/ part

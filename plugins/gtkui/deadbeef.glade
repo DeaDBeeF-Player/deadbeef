@@ -62,7 +62,7 @@
 		      <accelerator key="O" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image555">
+			<widget class="GtkImage" id="image587">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-open</property>
 			  <property name="icon_size">1</property>
@@ -89,7 +89,7 @@
 		      <signal name="activate" handler="on_add_files_activate" last_modification_time="Sat, 04 Jul 2009 13:04:01 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image556">
+			<widget class="GtkImage" id="image588">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-add</property>
 			  <property name="icon_size">1</property>
@@ -110,7 +110,7 @@
 		      <signal name="activate" handler="on_add_folders_activate" last_modification_time="Sun, 06 Sep 2009 17:51:40 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image557">
+			<widget class="GtkImage" id="image589">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-add</property>
 			  <property name="icon_size">1</property>
@@ -181,7 +181,7 @@
 		      <accelerator key="Q" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image558">
+			<widget class="GtkImage" id="image590">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-quit</property>
 			  <property name="icon_size">1</property>
@@ -215,7 +215,7 @@
 		      <signal name="activate" handler="on_clear1_activate" last_modification_time="Sun, 06 Sep 2009 18:30:03 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image559">
+			<widget class="GtkImage" id="image591">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-clear</property>
 			  <property name="icon_size">1</property>
@@ -274,7 +274,7 @@
 			      <signal name="activate" handler="on_remove1_activate" last_modification_time="Sun, 06 Sep 2009 18:30:03 GMT"/>
 
 			      <child internal-child="image">
-				<widget class="GtkImage" id="image560">
+				<widget class="GtkImage" id="image592">
 				  <property name="visible">True</property>
 				  <property name="stock">gtk-remove</property>
 				  <property name="icon_size">1</property>
@@ -313,7 +313,7 @@
 		  <child>
 		    <widget class="GtkMenuItem" id="sort_by1">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Sort By</property>
+		      <property name="label" translatable="yes">Sort by</property>
 		      <property name="use_underline">True</property>
 
 		      <child>
@@ -481,7 +481,7 @@
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Linear</property>
 			      <property name="use_underline">True</property>
-			      <property name="active">False</property>
+			      <property name="active">True</property>
 			      <signal name="activate" handler="on_order_linear_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
 			    </widget>
 			  </child>
@@ -491,7 +491,7 @@
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Shuffle tracks</property>
 			      <property name="use_underline">True</property>
-			      <property name="active">False</property>
+			      <property name="active">True</property>
 			      <property name="group">order_linear</property>
 			      <signal name="activate" handler="on_order_shuffle_activate" last_modification_time="Fri, 21 Aug 2009 16:46:02 GMT"/>
 			    </widget>
@@ -502,7 +502,7 @@
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Shuffle albums</property>
 			      <property name="use_underline">True</property>
-			      <property name="active">False</property>
+			      <property name="active">True</property>
 			      <property name="group">order_linear</property>
 			      <signal name="activate" handler="on_order_shuffle_albums_activate" last_modification_time="Sun, 12 Dec 2010 18:14:47 GMT"/>
 			    </widget>
@@ -535,9 +535,9 @@
 			  <child>
 			    <widget class="GtkRadioMenuItem" id="loop_all">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Loop All</property>
+			      <property name="label" translatable="yes">Loop all</property>
 			      <property name="use_underline">True</property>
-			      <property name="active">False</property>
+			      <property name="active">True</property>
 			      <signal name="activate" handler="on_loop_all_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
 			    </widget>
 			  </child>
@@ -545,9 +545,9 @@
 			  <child>
 			    <widget class="GtkRadioMenuItem" id="loop_single">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Loop Single Song</property>
+			      <property name="label" translatable="yes">Loop single song</property>
 			      <property name="use_underline">True</property>
-			      <property name="active">False</property>
+			      <property name="active">True</property>
 			      <property name="group">loop_all</property>
 			      <signal name="activate" handler="on_loop_single_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
 			    </widget>
@@ -556,7 +556,7 @@
 			  <child>
 			    <widget class="GtkRadioMenuItem" id="loop_disable">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Don't Loop</property>
+			      <property name="label" translatable="yes">Don't loop</property>
 			      <property name="use_underline">True</property>
 			      <property name="active">True</property>
 			      <property name="group">loop_all</property>
@@ -636,7 +636,7 @@
 		      <signal name="activate" handler="on_help1_activate" last_modification_time="Tue, 08 Sep 2009 17:32:06 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image561">
+			<widget class="GtkImage" id="image593">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-help</property>
 			  <property name="icon_size">1</property>
@@ -696,7 +696,7 @@
 		      <signal name="activate" handler="on_about1_activate" last_modification_time="Sat, 04 Jul 2009 12:57:58 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image562">
+			<widget class="GtkImage" id="image594">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-about</property>
 			  <property name="icon_size">1</property>
@@ -717,7 +717,7 @@
 		      <signal name="activate" handler="on_translators1_activate" last_modification_time="Sun, 19 Sep 2010 13:38:07 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image563">
+			<widget class="GtkImage" id="image595">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-about</property>
 			  <property name="icon_size">1</property>
