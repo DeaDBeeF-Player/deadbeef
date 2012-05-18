@@ -458,6 +458,8 @@ typedef struct {
     void (*plt_append_meta) (ddb_playlist_t *handle, const char *key, const char *value);
     void (*plt_set_meta_int) (ddb_playlist_t *handle, const char *key, int value);
     void (*plt_set_meta_float) (ddb_playlist_t *handle, const char *key, float value);
+
+    // plt_find_meta must always be used in the pl_lock/unlock block
     const char *(*plt_find_meta) (ddb_playlist_t *handle, const char *key);
     DB_metaInfo_t * (*plt_get_metadata_head) (ddb_playlist_t *handle); // returns head of metadata linked list
     void (*plt_delete_metadata) (ddb_playlist_t *handle, DB_metaInfo_t *meta);
