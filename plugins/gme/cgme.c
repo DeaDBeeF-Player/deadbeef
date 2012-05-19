@@ -128,6 +128,10 @@ cgme_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         }
         if (res) {
             DB_FILE *f = deadbeef->fopen (fname);
+            if (!f) {
+                deadbeef->pl_unlock ();
+                return -1;
+            }
             int64_t sz = deadbeef->fgetlength (f);
             if (sz <= 0) {
                 deadbeef->fclose (f);
