@@ -1133,12 +1133,23 @@ aac_read_metadata (DB_playItem_t *it) {
         return -1;
     }
 
+    aac_info_t inf;
+    memset (&inf, 0, sizeof (inf));
+    inf.file = fp;
+    inf.junk = deadbeef->junk_get_leading_size (fp);
+    if (inf.junk >= 0) {
+        deadbeef->fseek (inf.file, inf.junk, SEEK_SET);
+    }
+    else {
+        inf.junk = 0;
+    }
+
     MP4FILE_CB cb = {
         .read = aac_fs_read,
         .write = NULL,
         .seek = aac_fs_seek,
         .truncate = NULL,
-        .user_data = fp
+        .user_data = &inf
     };
 
     deadbeef->pl_delete_all_meta (it);
@@ -1149,12 +1160,10 @@ aac_read_metadata (DB_playItem_t *it) {
         mp4ff_close (mp4);
         deadbeef->pl_add_meta (it, "title", NULL);
     }
-    else {
-        /*int apeerr = */deadbeef->junk_apev2_read (it, fp);
-        /*int v2err = */deadbeef->junk_id3v2_read (it, fp);
-        /*int v1err = */deadbeef->junk_id3v1_read (it, fp);
-        deadbeef->pl_add_meta (it, "title", NULL);
-    }
+    /*int apeerr = */deadbeef->junk_apev2_read (it, fp);
+    /*int v2err = */deadbeef->junk_id3v2_read (it, fp);
+    /*int v1err = */deadbeef->junk_id3v1_read (it, fp);
+    deadbeef->pl_add_meta (it, "title", NULL);
     deadbeef->fclose (fp);
 #endif
     return 0;
@@ -1352,7 +1361,6 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     int apeerr = deadbeef->junk_apev2_read (it, fp);
     int v2err = deadbeef->junk_id3v2_read (it, fp);
     int v1err = deadbeef->junk_id3v1_read (it, fp);
-    deadbeef->pl_add_meta (it, "title", NULL);
 
     int64_t fsize = deadbeef->fgetlength (fp);
 
