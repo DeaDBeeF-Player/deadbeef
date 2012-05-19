@@ -30,3 +30,5 @@ plugins/shellexecui/interface.c
 plugins/shellexecui/shellexecui.c
 plugins/shellexecui/support.c
 plugins/shellexecui/shellexec.glade
+plugins/gtkui/smclient/eggdesktopfile.c
+plugins/gtkui/smclient/eggsmclient.c

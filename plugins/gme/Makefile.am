@@ -109,6 +109,7 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/Blip_Buffer_impl.h\
 	$(gmeversion)/gme/Classic_Emu.h\
 	$(gmeversion)/gme/divfix.h\
+	$(gmeversion)/gme/Data_Reader.h\
 	$(gmeversion)/gme/Downsampler.h\
 	$(gmeversion)/gme/Dual_Resampler.h\
 	$(gmeversion)/gme/Effects_Buffer.h\
@@ -175,7 +176,7 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/Spc_Cpu.h\
 	$(gmeversion)/gme/Spc_Dsp.h\
 	$(gmeversion)/gme/Spc_Emu.h\
-	$(gmeversion)/gme/SPC_Filter.h\
+	$(gmeversion)/gme/Spc_Filter.h\
 	$(gmeversion)/gme/Track_Filter.h\
 	$(gmeversion)/gme/Upsampler.h\
 	$(gmeversion)/gme/Vgm_Core.h\
