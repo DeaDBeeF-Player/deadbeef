@@ -16,6 +16,8 @@ version 0.5.5
 	fixed random playback bug caused by libsidplay2 calling srand(time(NULL))
 	fixed crash in adplug when playing ADL files
 	fixed crash in aac reload metadata
+	fixed Grandia - Parallel Trippers.gbs crash in GME plugin
+	fixed crash in GME plugin when a file doesn't exist 
 
 version 0.5.4
 	fixed starting the player using "deadbeef" command without path
