@@ -978,6 +978,7 @@ fetcher_thread (void *none)
 
 #ifdef USE_METAFLAC
                     // try to load embedded from flac metadata
+                    for (;;)
                     {
                         const char *filename = param->fname;
                         FLAC__Metadata_Chain *chain = FLAC__metadata_chain_new();
@@ -1040,6 +1041,7 @@ fetcher_thread (void *none)
                         if (iterator) {
                             FLAC__metadata_iterator_delete(iterator);
                         }
+                        break;
                     }
 #endif
                 }
