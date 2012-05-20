@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2012-04-08 20:16+0200\n"
+"PO-Revision-Date: 2012-05-20 22:09+0200\n"
 "Last-Translator: George <forfolias@gmail.com>\n"
 "Language-Team: Greek\n"
 "Language: el\n"
@@ -1326,7 +1326,7 @@ msgstr "Λήψη από τον τοπικό φάκελο"
 
 #: ../translation/extra.c:23
 msgid "Local cover file mask"
-msgstr ""
+msgstr "Αρχείο μάσκας τοπικού εξώφυλλου"
 
 #: ../translation/extra.c:24
 msgid "Fetch from last.fm"
@@ -1425,15 +1425,15 @@ msgstr "Δειγματοληψία"
 #. SHN player plugin
 #: ../translation/extra.c:54
 msgid "Relative seek table path"
-msgstr ""
+msgstr "Διαδρομή πίνακα σχετικής αναζήτησης"
 
 #: ../translation/extra.c:55
 msgid "Absolute seek table path"
-msgstr ""
+msgstr "Διαδρομή πίνακα απόλυτης αναζήτησης"
 
 #: ../translation/extra.c:56
 msgid "Swap audio bytes (toggle if all you hear is static)"
-msgstr ""
+msgstr "Εναλλαγή bytes ήχου (επιλέξτε αν ακούτε μόνο κάτι στατικό)"
 
 #. SID decoder plugin
 #: ../translation/extra.c:58
@@ -1446,7 +1446,7 @@ msgstr "Songlengths.txt (from HVSC)"
 
 #: ../translation/extra.c:60
 msgid "Bits per sample (8 or 16)"
-msgstr ""
+msgstr "Bits ανά δείγμα (8 or 16)"
 
 #: ../translation/extra.c:61
 msgid "Default song length (sec)"
@@ -1455,7 +1455,7 @@ msgstr "Προεπιλεγμένη διάρκεια τραγουδιού (δευ
 #. WildMidi player plugin
 #: ../translation/extra.c:63
 msgid "Timidity++ bank configuration file"
-msgstr ""
+msgstr "Αρχείο ρυθμίσεων Timidity++"
 
 #: ../translation/extra.c:66
 msgid "Track Title"
@@ -1495,7 +1495,7 @@ msgstr "Τοποθεσία"
 
 #: ../translation/extra.c:80
 msgid "Subtrack Index"
-msgstr ""
+msgstr "Δείκτης υποκομματιού"
 
 #: ../translation/extra.c:81
 msgid "Tag Type(s)"
@@ -1639,9 +1639,8 @@ msgid "Encoder:"
 msgstr "Κωδικοποιητής:"
 
 #: ../plugins/converter/interface.c:163
-#, fuzzy
 msgid "DSP preset:"
-msgstr "Αποθήκευση ρύθμισης"
+msgstr "Ρύθμιση DSP:"
 
 #: ../plugins/converter/interface.c:186
 msgid "Number of threads:"
@@ -1689,16 +1688,15 @@ msgstr "Αντικατάσταση"
 
 #: ../plugins/converter/interface.c:227
 msgid "Preserve folder structure, starting from:"
-msgstr ""
+msgstr "Διατήρηση δομής φακέλου, αρχής γενομένης από:"
 
 #: ../plugins/converter/interface.c:379
-#, fuzzy
 msgid "Edit Encoder Preset"
-msgstr "Φόρτωση ρύθμισης"
+msgstr "Επεξεργασία ρύθμισης κωδικοποιητή"
 
 #: ../plugins/converter/interface.c:402
 msgid "Untitled Encoder"
-msgstr ""
+msgstr "Ανώνυμος κωδικοποιητής"
 
 #: ../plugins/converter/interface.c:410
 msgid "Output file extension:"
@@ -1736,7 +1734,7 @@ msgstr "Μέθοδος"
 
 #: ../plugins/converter/interface.c:462
 msgid "Pipe"
-msgstr ""
+msgstr "Σωλήνωση"
 
 #: ../plugins/converter/interface.c:463
 msgid "Temporary file"
@@ -1768,11 +1766,11 @@ msgstr "<b>Συγγραφέας ετικετών</b>"
 
 #: ../plugins/converter/interface.c:606
 msgid "DSP Preset Editor"
-msgstr ""
+msgstr "Επεξεργαστής ρυθμίσεων DSP"
 
 #: ../plugins/converter/interface.c:629
 msgid "Untitled DSP Preset"
-msgstr ""
+msgstr "Ανώνυμη ρύθμιση DSP"
 
 #~ msgid "Save playlist as"
 #~ msgstr "Αποθήκευση λίστας αναπαραγωγής ως"
