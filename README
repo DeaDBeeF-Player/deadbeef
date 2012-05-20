@@ -23,9 +23,13 @@ TABLE OF CONTENTS
 
 * after build finishes, run "make install" as root
 
-full list of dependencies:
+full list of dependencies is below.
+most of them are optional, which means deadbeef will build and run without them, but to make it useful - you'd probably need at least GTK UI plugin and some audio codecs built.
+
     libsamplerate: for dsp_libsrc plugin (resampler)
     gtk+-2.0 >= 2.12 (+ gthread, + glib): GTK+ 2.0 user interface
+    libsm: optional dependency for gtkui session client support
+    libice: optional dependency for gtkui session client support
     alsa-lib: ALSA support
     libvorbis and libogg: for ogg vorbis plugin
     libcurl >= 7.10: for last.fm, vfs_curl (shoutcast/icecast), artwork plugins
