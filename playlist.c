@@ -55,7 +55,7 @@
 
 #define DISABLE_LOCKING 0
 #define DEBUG_LOCKING 0
-#define DETECT_PL_LOCK_RC 1
+#define DETECT_PL_LOCK_RC 0
 
 // file format revision history
 // 1.1->1.2 changelog:
