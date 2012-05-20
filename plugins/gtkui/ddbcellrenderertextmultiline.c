@@ -486,7 +486,6 @@ static void ddb_cell_renderer_text_multiline_class_init (DdbCellRendererTextMult
 
 static void ddb_cell_renderer_text_multiline_instance_init (DdbCellRendererTextMultiline * self) {
 	self->priv = DDB_CELL_RENDERER_TEXT_MULTILINE_GET_PRIVATE (self);
-    printf ("alloc priv %p %p\n", self, self->priv);
 }
 
 
