@@ -2038,6 +2038,7 @@ plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fnam
     fclose (fp);
     if (rename (tempfile, fname) != 0) {
         fprintf (stderr, "playlist rename %s -> %s failed: %s\n", tempfile, fname, strerror (errno));
+        return -1;
     }
     return 0;
 save_fail:
