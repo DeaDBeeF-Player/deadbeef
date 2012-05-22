@@ -1864,10 +1864,12 @@ plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fnam
         }
     }
 
+    char tempfile[PATH_MAX];
+    snprintf (tempfile, sizeof (tempfile), "%s.tmp", fname);
     const char magic[] = "DBPL";
     uint8_t majorver = PLAYLIST_MAJOR_VER;
     uint8_t minorver = PLAYLIST_MINOR_VER;
-    FILE *fp = fopen (fname, "w+b");
+    FILE *fp = fopen (tempfile, "w+b");
     if (!fp) {
         UNLOCK;
         return -1;
@@ -2034,11 +2036,14 @@ plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fnam
 
     UNLOCK;
     fclose (fp);
+    if (rename (tempfile, fname) != 0) {
+        fprintf (stderr, "playlist rename %s -> %s failed: %s\n", tempfile, fname, strerror (errno));
+    }
     return 0;
 save_fail:
     UNLOCK;
     fclose (fp);
-    unlink (fname);
+    unlink (tempfile);
     return -1;
 }
 

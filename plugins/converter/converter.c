@@ -16,6 +16,12 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
+#ifdef HAVE_CONFIG_H
+#  include "../../config.h"
+#endif
+#if HAVE_SYS_SYSLIMITS_H
+#include <sys/syslimits.h>
+#endif
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
@@ -34,10 +40,6 @@
       char *new = (char *) alloca (len);			      \
       (char *) memcpy (new, old, len);				      \
     })
-#endif
-
-#ifndef PATH_MAX
-#define PATH_MAX    1024    /* max # of characters in a path name */
 #endif
 
 #ifndef __linux__
