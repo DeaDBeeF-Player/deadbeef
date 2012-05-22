@@ -19,8 +19,11 @@
 #define __COMMON_H
 
 #include <limits.h>
-#ifndef PATH_MAX
-#define PATH_MAX    1024    /* max # of characters in a path name */
+#ifdef HAVE_CONFIG_H
+#  include "config.h"
+#endif
+#if HAVE_SYS_SYSLIMITS_H
+#include <sys/syslimits.h>
 #endif
 
 #define min(x,y) ((x)<(y)?(x):(y))
