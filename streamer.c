@@ -1578,29 +1578,47 @@ error:
 
 int
 streamer_dsp_chain_save_internal (const char *fname, ddb_dsp_context_t *chain) {
-    FILE *fp = fopen (fname, "w+t");
+    char tempfile[PATH_MAX];
+    snprintf (tempfile, sizeof (tempfile), "%s.tmp", fname);
+    FILE *fp = fopen (tempfile, "w+t");
     if (!fp) {
         return -1;
     }
 
     ddb_dsp_context_t *ctx = chain;
     while (ctx) {
-        fprintf (fp, "%s %d {\n", ctx->plugin->plugin.id, (int)ctx->enabled);
+        if (fprintf (fp, "%s %d {\n", ctx->plugin->plugin.id, (int)ctx->enabled) < 0) {
+            fprintf (stderr, "write to %s failed (%s)\n", tempfile, strerror (errno));
+            goto error;
+        }
         if (ctx->plugin->num_params) {
             int n = ctx->plugin->num_params ();
             int i;
             for (i = 0; i < n; i++) {
                 char v[1000];
                 ctx->plugin->get_param (ctx, i, v, sizeof (v));
-                fprintf (fp, "\t%s\n", v);
+                if (fprintf (fp, "\t%s\n", v) < 0) {
+                    fprintf (stderr, "write to %s failed (%s)\n", tempfile, strerror (errno));
+                    goto error;
+                }
             }
         }
-        fprintf (fp, "}\n");
+        if (fprintf (fp, "}\n") < 0) {
+            fprintf (stderr, "write to %s failed (%s)\n", tempfile, strerror (errno));
+            goto error;
+        }
         ctx = ctx->next;
     }
 
     fclose (fp);
+    if (rename (tempfile, fname) != 0) {
+        fprintf (stderr, "dspconfig rename %s -> %s failed: %s\n", tempfile, fname, strerror (errno));
+        return -1;
+    }
     return 0;
+error:
+    fclose (fp);
+    return -1;
 }
 
 int
