@@ -83,8 +83,8 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
             else if (read_extm3u) {
                 if (end - p >= 8 && !strncmp (p, "#EXTINF:", 8)) {
                     length = -1;
-                    title[0] = 0;
-                    artist[0] = 0;
+                    memset (title, 0, sizeof (title));
+                    memset (artist, 0, sizeof (artist));
                     p += 8;
                     e = p;
                     while (e < end && *e >= 0x20) {
