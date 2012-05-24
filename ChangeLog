@@ -19,6 +19,7 @@ version 0.5.5
 	fixed Grandia - Parallel Trippers.gbs crash in GME plugin
 	fixed crash in GME plugin when a file doesn't exist 
 	fixed integer overflow bug in float32->int32 conversion
+	fixed m3u parser string copy bug
 
 version 0.5.4
 	fixed starting the player using "deadbeef" command without path
