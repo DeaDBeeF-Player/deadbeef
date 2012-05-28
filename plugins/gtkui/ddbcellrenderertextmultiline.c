@@ -149,7 +149,7 @@ enum
 {
   PROP_0,
 
-  PROP_EDITING_canceled,
+  PROP_EDITING_CANCELED,
 
   N_PROPERTIES
 };
@@ -166,7 +166,7 @@ ddb_cell_editable_text_view_set_property (GObject      *object,
 
   switch (property_id)
     {
-    case PROP_EDITING_canceled:
+    case PROP_EDITING_CANCELED:
       self->priv->editing_canceled = g_value_get_boolean (value);
       break;
 
@@ -187,7 +187,7 @@ ddb_cell_editable_text_view_get_property (GObject    *object,
 
   switch (property_id)
     {
-    case PROP_EDITING_canceled:
+    case PROP_EDITING_CANCELED:
       g_value_set_boolean (value, self->priv->editing_canceled);
       break;
 
@@ -207,7 +207,7 @@ static void ddb_cell_editable_text_view_class_init (DdbCellEditableTextViewClass
     G_OBJECT_CLASS (klass)->set_property = ddb_cell_editable_text_view_set_property;
     G_OBJECT_CLASS (klass)->get_property = ddb_cell_editable_text_view_get_property;
 
-    obj_properties[PROP_EDITING_canceled] =
+    obj_properties[PROP_EDITING_CANCELED] =
         g_param_spec_boolean ("editing-canceled",
                 "Editing canceled",
                 "Indicates whether editing on the cell has been canceled",
@@ -215,7 +215,7 @@ static void ddb_cell_editable_text_view_class_init (DdbCellEditableTextViewClass
                 G_PARAM_READWRITE);
 
     GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
-    g_object_class_install_properties (gobject_class, N_PROPERTIES, obj_properties);
+    g_object_class_install_property (gobject_class, PROP_EDITING_CANCELED, obj_properties[PROP_EDITING_CANCELED]);
 }
 
 
