@@ -940,10 +940,14 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
             uint16_t outch = fileinfo->fmt.channels;
 
             int samplesize = fileinfo->fmt.channels * fileinfo->fmt.bps / 8;
-            int bs = 10250 * samplesize;
-            char buffer[bs * 4];
-            int dspsize = bs / samplesize * sizeof (float) * fileinfo->fmt.channels;
-            char dspbuffer[dspsize * 4];
+
+            // block size
+            int bs = 2000 * samplesize;
+            // expected buffer size after worst-case dsp
+            int dspsize = bs/samplesize*sizeof(float)*8*48;
+            char buffer[dspsize];
+            // account for up to float32 7.1 resampled to 48x ratio
+            char dspbuffer[dspsize];
             int eof = 0;
             for (;;) {
                 if (eof) {
