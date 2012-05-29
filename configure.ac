@@ -119,6 +119,9 @@ fi
 dnl check for yasm
 AC_CHECK_PROG(HAVE_YASM, yasm, yes, no)
 
+dnl check for log2
+AC_CHECK_LIB([m], [log2], AC_DEFINE([HAVE_LOG2], [], [Define to 1 if the system has log2 in libm]))
+
 dnl check for libdl
 AC_CHECK_LIB([dl], [main], [HAVE_DL=yes;DL_LIBS="-ldl";AC_SUBST(DL_LIBS)])
 
