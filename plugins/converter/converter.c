@@ -974,7 +974,14 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
                     int frames = sz / samplesize;
                     while (dsp) {
                         frames = dsp->plugin->process (dsp, (float *)dspbuffer, frames, sizeof (dspbuffer) / (fmt.channels * 4), &fmt, NULL);
+                        if (frames <= 0) {
+                            break;
+                        }
                         dsp = dsp->next;
+                    }
+                    if (frames <= 0) {
+                        fprintf (stderr, "converter: dsp error, please check you dsp preset\n");
+                        goto error;
                     }
 
                     outsr = fmt.samplerate;
@@ -1083,6 +1090,9 @@ error:
     }
     if (input_file_name[0] && strcmp (input_file_name, "-")) {
         unlink (input_file_name);
+    }
+    if (err != 0) {
+        return err;
     }
 
     // write junklib tags
