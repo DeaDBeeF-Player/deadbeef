@@ -108,6 +108,9 @@ ddb_src_process (ddb_dsp_context_t *_src, float *samples, int nframes, int maxfr
     float samplerate = src->samplerate;
     if (src->autosamplerate) {
         DB_output_t *output = deadbeef->get_output ();
+        if (output->fmt.samplerate <= 0) {
+            return -1;
+        }
         samplerate = output->fmt.samplerate;
     }
 
@@ -268,7 +271,7 @@ ddb_src_get_param (ddb_dsp_context_t *ctx, int p, char *val, int sz) {
 
 static const char settings_dlg[] =
     "property \"Automatic Samplerate (overrides Target Samplerate)\" checkbox 2 0;\n"
-    "property \"Target Samplerate\" spinbtn[8192,192000,1] 0 48000;\n"
+    "property \"Target Samplerate\" spinbtn[8000,192000,1] 0 48000;\n"
     "property \"Quality / Algorithm\" select[5] 1 2 SINC_BEST_QUALITY SINC_MEDIUM_QUALITY SINC_FASTEST ZERO_ORDER_HOLD LINEAR;\n"
 ;
 
