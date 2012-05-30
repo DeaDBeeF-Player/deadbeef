@@ -1464,6 +1464,7 @@ static ddb_gtkui_t plugin = {
     .gui.plugin.disconnect = gtkui_disconnect,
     .gui.plugin.configdialog = settings_dlg,
     .gui.plugin.message = gtkui_message,
-    .gui.run_dialog = gtkui_run_dialog_root,
+    .gui.run_dialog_1 = gtkui_run_dialog_root,
+    .gui.run_dialog = (int (*) (void *parentwindow, ddb_dialog_t *dlg, uint32_t buttons, int (*callback)(int button, void *ctx), void *ctx))gtkui_run_dialog,
     .get_mainwin = gtkui_get_mainwin,
 };
