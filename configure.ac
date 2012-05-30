@@ -131,6 +131,7 @@ dnl check for seperate alloca.h (OpenIndiana)
 AC_CHECK_HEADER([alloca.h],[],[alloca.h not found.])
 dnl check for syslimits.h (BSD)
 AC_CHECK_HEADERS([sys/syslimits.h])
+AC_CHECK_HEADERS([sys/cdefs.h])
 
 if test "x$enable_portable" != "xno" && test "x$enable_staticlink" != "xno" ; then
     AC_DEFINE_UNQUOTED([PORTABLE], [1], [Define if building portable version])
