@@ -19,6 +19,9 @@
 #ifdef HAVE_CONFIG_H
 #  include "../../config.h"
 #endif
+#if HAVE_SYS_CDEFS_H
+#include <sys/cdefs.h>
+#endif
 #if HAVE_SYS_SYSLIMITS_H
 #include <sys/syslimits.h>
 #endif
