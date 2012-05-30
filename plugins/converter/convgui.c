@@ -869,6 +869,21 @@ fill_dsp_preset_chain (GtkListStore *mdl) {
     }
 }
 
+static int
+listview_get_index (GtkWidget *list) {
+    GtkTreePath *path;
+    GtkTreeViewColumn *col;
+    gtk_tree_view_get_cursor (GTK_TREE_VIEW (list), &path, &col);
+    if (!path) {
+        // nothing selected
+        return -1;
+    }
+    int *indices = gtk_tree_path_get_indices (path);
+    int idx = *indices;
+    g_free (indices);
+    return idx;
+}
+
 void
 on_dsp_preset_add_plugin_clicked       (GtkButton       *button,
                                         gpointer         user_data)
@@ -914,8 +929,12 @@ on_dsp_preset_add_plugin_clicked       (GtkButton       *button,
             // reinit list of instances
             GtkWidget *list = lookup_widget (toplevel, "plugins");
             GtkListStore *mdl = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW(list)));
+            int idx = listview_get_index (list);
             gtk_list_store_clear (mdl);
             fill_dsp_preset_chain (mdl);
+            GtkTreePath *path = gtk_tree_path_new_from_indices (idx, -1);
+            gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, NULL, FALSE);
+            gtk_tree_path_free (path);
         }
         else {
             fprintf (stderr, "converter: failed to add DSP plugin to chain\n");
@@ -988,16 +1007,7 @@ on_dsp_preset_plugin_configure_clicked (GtkButton       *button,
 {
     GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (button));
     GtkWidget *list = lookup_widget (toplevel, "plugins");
-    GtkTreePath *path;
-    GtkTreeViewColumn *col;
-    gtk_tree_view_get_cursor (GTK_TREE_VIEW (list), &path, &col);
-    if (!path || !col) {
-        // nothing selected
-        return;
-    }
-    int *indices = gtk_tree_path_get_indices (path);
-    int idx = *indices;
-    g_free (indices);
+    int idx = listview_get_index (list);
     if (idx == -1) {
         return;
     }
@@ -1018,21 +1028,6 @@ on_dsp_preset_plugin_configure_clicked (GtkButton       *button,
     };
     gtkui_plugin->gui.run_dialog (toplevel, &conf, 0, NULL, NULL);
     current_dsp_context = NULL;
-}
-
-static int
-listview_get_index (GtkWidget *list) {
-    GtkTreePath *path;
-    GtkTreeViewColumn *col;
-    gtk_tree_view_get_cursor (GTK_TREE_VIEW (list), &path, &col);
-    if (!path || !col) {
-        // nothing selected
-        return - 1;
-    }
-    int *indices = gtk_tree_path_get_indices (path);
-    int idx = *indices;
-    g_free (indices);
-    return idx;
 }
 
 static int
@@ -1139,6 +1134,9 @@ edit_dsp_preset (const char *title, GtkWidget *toplevel, int overwrite) {
         gtk_tree_view_set_model (GTK_TREE_VIEW (list), GTK_TREE_MODEL (mdl));
 
         fill_dsp_preset_chain (mdl);
+        GtkTreePath *path = gtk_tree_path_new_from_indices (0, -1);
+        gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, NULL, FALSE);
+        gtk_tree_path_free (path);
     }
 
     for (;;) {
