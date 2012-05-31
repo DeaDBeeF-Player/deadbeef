@@ -28,6 +28,9 @@
 
 void
 pl_add_meta (playItem_t *it, const char *key, const char *value) {
+    if (!value || !*value) {
+        return;
+    }
     LOCK;
     // check if it's already set
     DB_metaInfo_t *normaltail = NULL;
@@ -54,10 +57,6 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
     }
     // add
     char str[256];
-    if (!value || !*value) {
-        UNLOCK;
-        return;
-    }
     m = malloc (sizeof (DB_metaInfo_t));
     memset (m, 0, sizeof (DB_metaInfo_t));
     m->key = metacache_add_string (key);
