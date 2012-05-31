@@ -169,13 +169,10 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
                     deadbeef->plt_set_item_duration (plt, it, length);
                 }
                 if (title[0]) {
-                    deadbeef->pl_replace_meta (it, "title", title);
-                }
-                else if (artist[0]) {
-                    deadbeef->pl_replace_meta (it, "title", " ");
+                    deadbeef->pl_add_meta (it, "title", title);
                 }
                 if (artist[0]) {
-                    deadbeef->pl_replace_meta (it, "artist", artist);
+                    deadbeef->pl_add_meta (it, "artist", artist);
                 }
             }
         }
