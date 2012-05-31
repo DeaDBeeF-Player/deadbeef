@@ -20,6 +20,10 @@ version 0.5.5
 	fixed crash in GME plugin when a file doesn't exist 
 	fixed integer overflow bug in float32->int32 conversion
 	fixed m3u parser string copy bug
+	fixed several dsp bugs in the converter
+	fixed up/down buttons in the converter's dsp preset editor 
+	fixed selected row bugs in dsp preset editors in gtkui preferences and converter
+	fixed parent window of dsp plugin configure window
 
 version 0.5.4
 	fixed starting the player using "deadbeef" command without path
