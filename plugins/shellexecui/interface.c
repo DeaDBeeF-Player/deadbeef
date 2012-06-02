@@ -31,6 +31,7 @@ create_shellexec_conf_dialog (void)
 {
   GtkWidget *shellexec_conf_dialog;
   GtkWidget *dialog_vbox;
+  GtkWidget *vbox1;
   GtkWidget *hbox1;
   GtkWidget *add_button;
   GtkWidget *remove_button;
@@ -49,9 +50,13 @@ create_shellexec_conf_dialog (void)
   dialog_vbox = gtk_dialog_get_content_area (GTK_DIALOG (shellexec_conf_dialog));
   gtk_widget_show (dialog_vbox);
 
+  vbox1 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox1);
+  gtk_box_pack_start (GTK_BOX (dialog_vbox), vbox1, TRUE, TRUE, 0);
+
   hbox1 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox1);
-  gtk_box_pack_start (GTK_BOX (dialog_vbox), hbox1, FALSE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox1), hbox1, FALSE, TRUE, 0);
 
   add_button = gtk_button_new_with_mnemonic (_("Add"));
   gtk_widget_show (add_button);
@@ -67,7 +72,7 @@ create_shellexec_conf_dialog (void)
 
   scrolledwindow = gtk_scrolled_window_new (NULL, NULL);
   gtk_widget_show (scrolledwindow);
-  gtk_box_pack_end (GTK_BOX (dialog_vbox), scrolledwindow, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox1), scrolledwindow, TRUE, TRUE, 0);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow), GTK_SHADOW_IN);
 
@@ -100,6 +105,7 @@ create_shellexec_conf_dialog (void)
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (shellexec_conf_dialog, shellexec_conf_dialog, "shellexec_conf_dialog");
   GLADE_HOOKUP_OBJECT_NO_REF (shellexec_conf_dialog, dialog_vbox, "dialog_vbox");
+  GLADE_HOOKUP_OBJECT (shellexec_conf_dialog, vbox1, "vbox1");
   GLADE_HOOKUP_OBJECT (shellexec_conf_dialog, hbox1, "hbox1");
   GLADE_HOOKUP_OBJECT (shellexec_conf_dialog, add_button, "add_button");
   GLADE_HOOKUP_OBJECT (shellexec_conf_dialog, remove_button, "remove_button");
