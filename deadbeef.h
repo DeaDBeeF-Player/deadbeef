@@ -79,7 +79,7 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 1
-#define DB_API_VERSION_MINOR 3
+#define DB_API_VERSION_MINOR 4
 
 #define DDB_PLUGIN_SET_API_VERSION\
     .plugin.api_vmajor = DB_API_VERSION_MAJOR,\
