@@ -24,6 +24,7 @@ version 0.5.5
 	fixed up/down buttons in the converter's dsp preset editor 
 	fixed selected row bugs in dsp preset editors in gtkui preferences and converter
 	fixed parent window of dsp plugin configure window
+	fixed all known issues in gtk3 plugin -- it should be fully working now
 
 version 0.5.4
 	fixed starting the player using "deadbeef" command without path
