@@ -531,6 +531,13 @@ ddb_listview_list_realize                    (GtkWidget       *widget,
 //    gtk_drag_dest_set_track_motion (widget, TRUE);
 }
 
+static gboolean
+ddb_listview_reconf_scrolling (void *ps) {
+    ddb_listview_list_setup_vscroll (ps);
+    ddb_listview_list_setup_hscroll (ps);
+    return FALSE;
+}
+
 gboolean
 ddb_listview_list_configure_event            (GtkWidget       *widget,
         GdkEventConfigure *event,
@@ -545,9 +552,7 @@ ddb_listview_list_configure_event            (GtkWidget       *widget,
         ddb_listview_build_groups (ps);
     }
 
-    ddb_listview_list_setup_vscroll (ps);
-    ddb_listview_list_setup_hscroll (ps);
-    widget = ps->list;
+    g_idle_add (ddb_listview_reconf_scrolling, ps);
 
     return FALSE;
 }
