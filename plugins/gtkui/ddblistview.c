@@ -360,7 +360,11 @@ ddb_listview_init(DdbListview *listview)
     listview->list = gtk_drawing_area_new ();
     gtk_widget_show (listview->list);
     gtk_box_pack_start (GTK_BOX (vbox), listview->list, TRUE, TRUE, 0);
-    gtk_widget_set_events (listview->list, GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK);
+    int events = GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK;
+#if GTK_CHECK_VERSION(3,0,0)
+    events |= GDK_SCROLL_MASK;
+#endif
+    gtk_widget_set_events (listview->list, events);
 
     listview->hscrollbar = gtk_hscrollbar_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 0, 0, 0, 0)));
     gtk_widget_show (listview->hscrollbar);

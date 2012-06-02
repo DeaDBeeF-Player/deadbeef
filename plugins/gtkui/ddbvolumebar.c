@@ -123,6 +123,7 @@ ddb_volumebar_init(DdbVolumeBar *volumebar)
     snprintf (s, sizeof (s), "%s%ddB", db < 0 ? "" : "+", db);
     gtk_widget_set_tooltip_text (GTK_WIDGET (volumebar), s);
     gtk_widget_set_has_window (GTK_WIDGET (volumebar), FALSE);
+    gtk_widget_set_events (GTK_WIDGET (volumebar), GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
 }
 
 void

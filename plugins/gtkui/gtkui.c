@@ -1104,6 +1104,10 @@ gtkui_thread (void *ctx) {
     gtk_init (&argc, (char ***)&argv);
 
     mainwin = create_mainwin ();
+#if GTK_CHECK_VERSION(3,0,0)
+    gtk_widget_set_events (GTK_WIDGET (mainwin), gtk_widget_get_events (GTK_WIDGET (mainwin)) | GDK_SCROLL_MASK);
+#endif
+
     gtkpl_init ();
 
     GtkIconTheme *theme = gtk_icon_theme_get_default();
