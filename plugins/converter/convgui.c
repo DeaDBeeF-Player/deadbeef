@@ -1028,8 +1028,9 @@ on_dsp_preset_plugin_configure_clicked (GtkButton       *button,
         .layout = p->plugin->configdialog,
         .set_param = dsp_ctx_set_param,
         .get_param = dsp_ctx_get_param,
+        .parent = toplevel
     };
-    gtkui_plugin->gui.run_dialog (toplevel, &conf, 0, NULL, NULL);
+    gtkui_plugin->gui.run_dialog (&conf, 0, NULL, NULL);
     current_dsp_context = NULL;
 }
 
