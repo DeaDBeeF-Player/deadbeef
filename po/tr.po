@@ -8,23 +8,23 @@ msgstr ""
 "Project-Id-Version: LXDE\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2011-01-20 10:41+0000\n"
-"Last-Translator: decent <bahadiroglu33@gmail.com>\n"
+"PO-Revision-Date: 2012-05-06 15:22+0200\n"
+"Last-Translator: Necdet <necdetyucel@gmail.com>\n"
 "Language-Team: Turkish <http://forum.ubuntu-tr.net>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Pootle 2.0.5\n"
 
 #: ../plugins/gtkui/callbacks.c:123
 msgid "Supported sound formats"
 msgstr "Desteklenen ses biçimleri"
 
 #: ../plugins/gtkui/callbacks.c:134
-#, fuzzy
 msgid "All files (*)"
-msgstr "Diğer dosyalar (*)"
+msgstr "Tüm dosyalar (*)"
 
 #: ../plugins/gtkui/callbacks.c:144
 msgid "Open file(s)..."
@@ -150,9 +150,8 @@ msgid "Zero Bands"
 msgstr "Bantları Sıfırla"
 
 #: ../plugins/gtkui/eq.c:387 ../plugins/converter/interface.c:820
-#, fuzzy
 msgid "Presets"
-msgstr "Ayarları Kaydet"
+msgstr "Önayarlar:"
 
 #: ../plugins/gtkui/gtkui.c:137
 #, c-format
@@ -296,7 +295,7 @@ msgstr "_Bul"
 
 #: ../plugins/gtkui/interface.c:288 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Sort By"
-msgstr ""
+msgstr "Sıralama Kriteri"
 
 #: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1516
 #: ../plugins/gtkui/mainplaylist.c:318 ../plugins/gtkui/prefwin.c:626
@@ -307,7 +306,6 @@ msgid "Title"
 msgstr "Başlık"
 
 #: ../plugins/gtkui/interface.c:299 ../plugins/gtkui/deadbeef.glade.h:140
-#, fuzzy
 msgid "Track number"
 msgstr "Parça Numarası"
 
@@ -373,14 +371,12 @@ msgid "Linear"
 msgstr "Sıralı"
 
 #: ../plugins/gtkui/interface.c:370 ../plugins/gtkui/deadbeef.glade.h:121
-#, fuzzy
 msgid "Shuffle tracks"
-msgstr "Karışık"
+msgstr "Parçaları karıştır"
 
 #: ../plugins/gtkui/interface.c:375 ../plugins/gtkui/deadbeef.glade.h:120
-#, fuzzy
 msgid "Shuffle albums"
-msgstr "Karışık"
+msgstr "Albümleri karıştır"
 
 #: ../plugins/gtkui/interface.c:380 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Random"
@@ -485,7 +481,7 @@ msgstr "Parça Özellikleri"
 
 #: ../plugins/gtkui/interface.c:1270 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Settings"
-msgstr ""
+msgstr "Ayarlar"
 
 #: ../plugins/gtkui/interface.c:1296 ../plugins/gtkui/deadbeef.glade.h:150
 msgid "_Apply"
@@ -582,7 +578,7 @@ msgstr "Çıktı aygıtı"
 
 #: ../plugins/gtkui/interface.c:1847 ../plugins/gtkui/deadbeef.glade.h:12
 msgid "Always convert 8 bit audio to 16 bit"
-msgstr ""
+msgstr "8 bit sesi her zaman 16 bite çevir"
 
 #: ../plugins/gtkui/interface.c:1851 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "Sound"
@@ -607,21 +603,20 @@ msgstr "Ses gücü sabitleme en yüksek limit"
 #: ../plugins/gtkui/interface.c:1892 ../plugins/gtkui/interface.c:1926
 #: ../plugins/gtkui/deadbeef.glade.h:2
 msgid "-12 dB"
-msgstr ""
+msgstr "-12 dB"
 
 #: ../plugins/gtkui/interface.c:1902 ../plugins/gtkui/interface.c:1936
 #: ../plugins/gtkui/deadbeef.glade.h:1
 msgid "+12 dB"
-msgstr ""
+msgstr "+12 dB"
 
 #: ../plugins/gtkui/interface.c:1906 ../plugins/gtkui/deadbeef.glade.h:108
-#, fuzzy
 msgid "Replaygain preamp:"
-msgstr "Ses gücü sabitleme kipi:"
+msgstr "ReplayGain preamp:"
 
 #: ../plugins/gtkui/interface.c:1913 ../plugins/gtkui/deadbeef.glade.h:47
 msgid "Global preamp:"
-msgstr ""
+msgstr "Genel önamfi:"
 
 #: ../plugins/gtkui/interface.c:1944 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
@@ -635,7 +630,7 @@ msgstr "Açılışta önceki oturum ile devam et"
 
 #: ../plugins/gtkui/interface.c:1957 ../plugins/gtkui/deadbeef.glade.h:37
 msgid "Don't add from archives when adding folders"
-msgstr ""
+msgstr "Dizin eklerken arşivden ekleme"
 
 #: ../plugins/gtkui/interface.c:1961 ../plugins/gtkui/deadbeef.glade.h:91
 msgid "Playback"
@@ -647,17 +642,16 @@ msgid "Configure"
 msgstr "Yapılandırma"
 
 #: ../plugins/gtkui/interface.c:2017 ../plugins/gtkui/deadbeef.glade.h:29
-#, fuzzy
 msgid "DSP Chain Preset"
-msgstr "Ayarları Kaydet"
+msgstr "DSP Zinciri Önayarları"
 
 #: ../plugins/gtkui/interface.c:2029 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "_Load"
-msgstr ""
+msgstr "_Yükle"
 
 #: ../plugins/gtkui/interface.c:2033 ../plugins/gtkui/deadbeef.glade.h:28
 msgid "DSP"
-msgstr ""
+msgstr "DSP"
 
 #: ../plugins/gtkui/interface.c:2042 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Close minimizes to tray"
@@ -681,11 +675,11 @@ msgstr "Diskten sil girdisini\" sağ tık menüsünde\" gösterme"
 
 #: ../plugins/gtkui/interface.c:2062 ../plugins/gtkui/deadbeef.glade.h:16
 msgid "Auto-name playlists when adding a single folder"
-msgstr ""
+msgstr "Bir dizin eklendiğinde şarkı listesini otomatik isimlendir"
 
 #: ../plugins/gtkui/interface.c:2070 ../plugins/gtkui/deadbeef.glade.h:54
 msgid "Interface refresh rate (times per second):"
-msgstr ""
+msgstr "Arayüz tazeleme oranı (saniyede defa)"
 
 #: ../plugins/gtkui/interface.c:2084 ../plugins/gtkui/deadbeef.glade.h:137
 msgid "Titlebar text while playing:"
@@ -697,7 +691,7 @@ msgstr "Durdurulduğunda başlık çubuğu metni:"
 
 #: ../plugins/gtkui/interface.c:2112 ../plugins/gtkui/deadbeef.glade.h:46
 msgid "GUI Plugin (changing requires restart):"
-msgstr ""
+msgstr "GUI Eklentisi (yeniden başlatınca geçerli olur)"
 
 #: ../plugins/gtkui/interface.c:2120 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "GUI"
@@ -807,7 +801,7 @@ msgstr "Ağ"
 
 #: ../plugins/gtkui/interface.c:2471 ../plugins/gtkui/deadbeef.glade.h:144
 msgid "Version: "
-msgstr ""
+msgstr "Sürüm:"
 
 #: ../plugins/gtkui/interface.c:2535 ../plugins/gtkui/deadbeef.glade.h:23
 #: ../translation/extra.c:78
@@ -828,38 +822,34 @@ msgstr "Gruplandırma Ölçütü"
 
 #: ../plugins/gtkui/interface.c:3259 ../plugins/gtkui/deadbeef.glade.h:123
 msgid "Sort by..."
-msgstr ""
+msgstr "Sıralama kriteri..."
 
 #: ../plugins/gtkui/interface.c:3275 ../plugins/gtkui/deadbeef.glade.h:43
-#, fuzzy
 msgid "Format"
-msgstr "Biçim:"
+msgstr "Biçim"
 
 #: ../plugins/gtkui/interface.c:3305
 msgid "Ascending"
-msgstr ""
+msgstr "Artan"
 
 #: ../plugins/gtkui/interface.c:3306
 msgid "Descending"
-msgstr ""
+msgstr "Azalan"
 
 #: ../plugins/gtkui/interface.c:3359 ../plugins/gtkui/deadbeef.glade.h:114
 #: ../plugins/converter/interface.c:750
-#, fuzzy
 msgid "Select DSP Plugin"
-msgstr "Seçim"
+msgstr "DSP Eklentisini Seçin"
 
 #: ../plugins/gtkui/interface.c:3375 ../plugins/gtkui/deadbeef.glade.h:93
 #: ../plugins/converter/convgui.c:1016 ../plugins/converter/interface.c:766
 #: ../plugins/gtkui/dspconfig.c:139
-#, fuzzy
 msgid "Plugin"
-msgstr "Eklentiler"
+msgstr "Eklenti"
 
 #: ../plugins/gtkui/interface.c:3461 ../plugins/gtkui/deadbeef.glade.h:133
-#, fuzzy
 msgid "Tag Writer Settings"
-msgstr "Etiketleyici"
+msgstr "Etiket Yazma Tercihleri"
 
 #: ../plugins/gtkui/interface.c:3492 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "Write ID3v2"
@@ -981,9 +971,9 @@ msgid "Open file..."
 msgstr "Dosya aç..."
 
 #: ../plugins/gtkui/pluginconf.c:217
-#, fuzzy, c-format
+#, c-format
 msgid "Configure %s"
-msgstr "Yapılandırma"
+msgstr "%s'i yapılandır"
 
 #: ../plugins/gtkui/prefwin.c:82
 msgid "Default Audio Device"
@@ -1024,7 +1014,7 @@ msgstr "Pencere gerçekten kapatılsın mı?"
 #. get value to edit
 #: ../plugins/gtkui/trkproperties.c:254
 msgid "[Multiple values] "
-msgstr ""
+msgstr "[çoklu değerler]"
 
 #: ../plugins/gtkui/trkproperties.c:407 ../plugins/gtkui/trkproperties.c:419
 msgid "Key"
@@ -1036,38 +1026,35 @@ msgstr "Değer"
 
 #: ../plugins/gtkui/trkproperties.c:594
 msgid "Writing tags..."
-msgstr ""
+msgstr "Etiketler yazılıyor..."
 
 #: ../plugins/gtkui/trkproperties.c:621
 msgid "Name:"
-msgstr ""
+msgstr "İsim:"
 
 #: ../plugins/gtkui/trkproperties.c:633
 msgid "Field names must not start with : or _"
-msgstr ""
+msgstr "Alan isimleri : veya _ ile başlayamaz"
 
 #: ../plugins/gtkui/trkproperties.c:634 ../plugins/gtkui/trkproperties.c:668
 msgid "Cannot add field"
-msgstr ""
+msgstr "Alan eklenemez"
 
 #: ../plugins/gtkui/trkproperties.c:667
 msgid "Field with such name already exists, please try different name."
-msgstr ""
+msgstr "Bu isimde bir alan mevcut, lütfen başka bir isimle tekrar deneyin."
 
 #: ../plugins/gtkui/trkproperties.c:692
-#, fuzzy
 msgid "Really remove selected field?"
-msgstr "Pencere gerçekten kapatılsın mı?"
+msgstr "Seçilen alan gerçekten kaldırılsın mı?"
 
 #: ../plugins/gtkui/trkproperties.c:734
-#, fuzzy
 msgid "Add field"
-msgstr "Dosya(lar) ekle"
+msgstr "Alan ekle"
 
 #: ../plugins/gtkui/trkproperties.c:737
-#, fuzzy
 msgid "Remove field"
-msgstr "Kaldır"
+msgstr "Alan sil"
 
 #: ../main.c:91
 #, c-format
@@ -1112,13 +1099,13 @@ msgstr "   --pause             Oynatımı duraklat\n"
 #: ../main.c:99
 #, c-format
 msgid "   --toggle-pause     Toggle pause\n"
-msgstr ""
+msgstr "   --toggle-pause     Duraklamayı geç\n"
 
 #: ../main.c:100
 #, c-format
 msgid ""
 "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
-msgstr ""
+msgstr "--play-pause Durdurulmuşsa çal, değilse duraklamayı geç\n"
 
 #: ../main.c:101
 #, c-format
@@ -1143,7 +1130,8 @@ msgstr "   --queue            Çalma listesine parça(lar) ekle\n"
 #: ../main.c:105
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr "   --nowplaying FMT   Değiştirilmiş dosya adını std çıktısına yazdır\n"
+msgstr "   --nowplaying FMT   Değiştirilmiş dosya adını standard çıktıya (stdout) "
+"yazdır\n"
 
 #: ../main.c:106
 #, c-format
@@ -1170,7 +1158,8 @@ msgstr ""
 msgid ""
 "                      for more info, see http://sourceforge.net/apps/"
 "mediawiki/deadbeef/index.php?title=Title_Formatting\n"
-msgstr ""
+msgstr "daha fazla bilgi için http://sourceforge.net/apps/mediawiki/deadbeef/index.p"
+"hp?title=Title_Formatting adresine bakabilirsiniz\n"
 
 #: ../playlist.c:454 ../playlist.c:2398
 msgid "Default"
@@ -1197,6 +1186,8 @@ msgid ""
 "Ascending\n"
 "Descending"
 msgstr ""
+"Artan\n"
+"Azalan"
 
 #: ../plugins/gtkui/deadbeef.glade.h:33
 msgid ""
@@ -1209,7 +1200,6 @@ msgstr ""
 "Albüm"
 
 #: ../plugins/gtkui/deadbeef.glade.h:56
-#, fuzzy
 msgid ""
 "Item Index\n"
 "Playing\n"
@@ -1230,9 +1220,9 @@ msgstr ""
 "Sanatçı\n"
 "Albüm\n"
 "Başlık\n"
-"Uzunluk\n"
-"Parça\n"
-"Bant / Albüm Sanatçısı\n"
+"Süre\n"
+"Parça Numarası\n"
+"Grup / Albüm Sanatçısı\n"
 "Özel"
 
 #: ../plugins/gtkui/deadbeef.glade.h:68
@@ -1301,7 +1291,7 @@ msgstr "Kullanıcıadı"
 
 #: ../translation/extra.c:14
 msgid "Password"
-msgstr "Şifre"
+msgstr "Parola"
 
 #: ../translation/extra.c:15
 msgid "Scrobble URL"
@@ -1310,11 +1300,11 @@ msgstr "Scrobble URL"
 #. OSS output plugin
 #: ../translation/extra.c:17
 msgid "Device file"
-msgstr ""
+msgstr "Aygıt dosyası"
 
 #: ../translation/extra.c:18
 msgid "OSS4 samplerate bug workaround"
-msgstr ""
+msgstr "OSS4 örnekleme hızı hatası için geçici çözüm"
 
 #. Album Artwork plugin
 #: ../translation/extra.c:20
@@ -1343,7 +1333,7 @@ msgstr "albumart.org'dan getir"
 
 #: ../translation/extra.c:26
 msgid "Scale artwork towards longer side"
-msgstr ""
+msgstr "Kapağı uzun kenara göre ölçekle"
 
 #. Audio CD player
 #: ../translation/extra.c:28
@@ -1399,27 +1389,24 @@ msgstr "--sync ile gtk_init çalıştır (hata ayıklama kipinde)"
 
 #: ../translation/extra.c:43
 msgid "Add separators between plugin context menu items"
-msgstr ""
+msgstr "Eklenti içeriği menü öğeleri arasına ayırıcı ekle"
 
 #. OSD Notify plugin
 #: ../translation/extra.c:45
-#, fuzzy
 msgid "Notification title format"
-msgstr "Bildirim biçimi"
+msgstr "Bilgilendirme başlık biçimi"
 
 #: ../translation/extra.c:46
-#, fuzzy
 msgid "Notification content format"
-msgstr "Bildirim biçimi"
+msgstr "Bilgineldirme içerik biçimi"
 
 #: ../translation/extra.c:47
-#, fuzzy
 msgid "Show album art"
-msgstr "Albüm Kapağı"
+msgstr "Albüm kapağını göster"
 
 #: ../translation/extra.c:48
 msgid "Album art size (px)"
-msgstr ""
+msgstr "Albüm kapağı büyüklüğü (px)"
 
 #. PulseAudio output plugin
 #: ../translation/extra.c:50
@@ -1445,22 +1432,20 @@ msgstr "Ses takas baytları(duyduğunuz bütün geçiş statik ise)"
 
 #. SID decoder plugin
 #: ../translation/extra.c:58
-#, fuzzy
 msgid "Enable HVSC Songlength DB"
-msgstr "HVSC etkin"
+msgstr "HVSC Songlength DB'yi etkinleştir"
 
 #: ../translation/extra.c:59
 msgid "Songlengths.txt (from HVSC)"
-msgstr ""
+msgstr "Songlengths.txt (HVSC'den)"
 
 #: ../translation/extra.c:60
 msgid "Bits per sample (8 or 16)"
-msgstr ""
+msgstr "Örnekleme başına bit (8 veya 16)"
 
 #: ../translation/extra.c:61
-#, fuzzy
 msgid "Default song length (sec)"
-msgstr "En büyük parça uzunluğu (dakika cinsinden)"
+msgstr "Öntanımlı parça uzunluğu (saniye)"
 
 #. WildMidi player plugin
 #: ../translation/extra.c:63
@@ -1522,210 +1507,201 @@ msgstr "Çözücü"
 #. FFmpeg deocder plugin
 #: ../translation/extra.c:85
 msgid "File Extensions (separate with ';')"
-msgstr ""
+msgstr "Dosya Uzantıları (';' ile ayırın)"
 
 #. Converter GUI
 #: ../translation/extra.c:87
 msgid "Convert"
-msgstr ""
+msgstr "Dönüştür"
 
 #. Resampler (Secret Rabbit Code)
 #: ../translation/extra.c:89
-#, fuzzy
 msgid "Target Samplerate"
-msgstr "Örnekleme oranı"
+msgstr "Hedef örnekleme oranı"
 
 #: ../translation/extra.c:90
 msgid "Quality / Algorythm"
-msgstr ""
+msgstr "Kalite / Algoritma"
 
 #: ../translation/extra.c:91
 msgid "Automatic Samplerate (overrides Target Samplerate)"
-msgstr ""
+msgstr "Otomatik örnekleme oranı (hedef örnekleme oranının üzerine yazılır)"
 
 #: ../plugins/converter/convgui.c:108
 msgid "The file already exists. Overwrite?"
-msgstr ""
+msgstr "Dosya mevcut. Üzerine yazılsın mı?"
 
 #: ../plugins/converter/convgui.c:110
 msgid "Converter warning"
-msgstr ""
+msgstr "Dönüştürücü uyarısı"
 
 #: ../plugins/converter/convgui.c:222
 msgid "Please select encoder"
-msgstr ""
+msgstr "Lütfen bir kodlayıcı seçin"
 
 #: ../plugins/converter/convgui.c:224
 msgid "Converter error"
-msgstr ""
+msgstr "Dönüştürücü hatası"
 
 #: ../plugins/converter/convgui.c:248
 msgid "Converting..."
-msgstr ""
+msgstr "Dönüştürülüyor..."
 
 #: ../plugins/converter/convgui.c:394 ../plugins/converter/convgui.c:496
-#, fuzzy
 msgid "Select folder..."
-msgstr "Tümünü seç"
+msgstr "Dizin seçin..."
 
 #: ../plugins/converter/convgui.c:635
 msgid "Failed to save encoder preset"
-msgstr ""
+msgstr "Kodlayıcı önayarları kaydedilemedi"
 
 #: ../plugins/converter/convgui.c:637 ../plugins/converter/convgui.c:1035
 msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
 msgstr ""
+"Dizinin erişim izinlerini kontrol edin, başka bir isim deneyin veya yeterli "
+"disk alanını boşaltın"
 
 #: ../plugins/converter/convgui.c:637 ../plugins/converter/convgui.c:1035
 msgid "Preset with the same name already exists. Try to pick another title."
-msgstr ""
+msgstr "Bu isimle bir önayar mevcut. Başka bir isim seçin."
 
 #: ../plugins/converter/convgui.c:638 ../plugins/converter/convgui.c:1036
 msgid "Error"
-msgstr ""
+msgstr "Hata"
 
 #: ../plugins/converter/convgui.c:692
 msgid "Add new encoder"
-msgstr ""
+msgstr "Yeni kodlayıcı ekle"
 
 #: ../plugins/converter/convgui.c:724
-#, fuzzy
 msgid "Edit encoder"
-msgstr "Sütunu düzenle"
+msgstr "Kodlayıcıyı düzenle"
 
 #: ../plugins/converter/convgui.c:756 ../plugins/converter/convgui.c:1133
-#, fuzzy
 msgid "Remove preset"
-msgstr "Ayarları Kaydet"
+msgstr "Önayarı kaldır"
 
 #: ../plugins/converter/convgui.c:758 ../plugins/converter/convgui.c:1135
 msgid "This action will delete the selected preset. Are you sure?"
-msgstr ""
+msgstr "Seçtiğiniz önayar silinecek. Bunu yapmak istediğinizden emin misiniz?"
 
 #: ../plugins/converter/convgui.c:782
 msgid "Encoders"
-msgstr ""
+msgstr "Kodlayıcılar"
 
 #: ../plugins/converter/convgui.c:838 ../plugins/gtkui/dspconfig.c:183
 msgid "Add plugin to DSP chain"
-msgstr ""
+msgstr "DSP zincirine eklenti ekle"
 
 #: ../plugins/converter/convgui.c:1034
 msgid "Failed to save DSP preset"
-msgstr ""
+msgstr "DSP önayarı kaydedilemedi"
 
 #: ../plugins/converter/convgui.c:1098
-#, fuzzy
 msgid "New DSP Preset"
-msgstr "Ayarları Kaydet"
+msgstr "Yeni DSP Önayarı"
 
 #: ../plugins/converter/convgui.c:1183
-#, fuzzy
 msgid "Edit DSP Preset"
-msgstr "Ayarları Kaydet"
+msgstr "DSP Önayarını Düzenle"
 
 #: ../plugins/converter/convgui.c:1203
-#, fuzzy
 msgid "DSP Presets"
-msgstr "Ayarları Kaydet"
+msgstr "DSP Önayarları"
 
 #: ../plugins/converter/interface.c:94
-#, fuzzy
 msgid "Output folder:"
-msgstr "Çıktı aygıtı"
+msgstr "Çıktı dizini:"
 
 #: ../plugins/converter/interface.c:115
-#, fuzzy
 msgid "Output file name:"
-msgstr "Çıktı eklentisi"
+msgstr "Çıktı dosya adı:"
 
 #: ../plugins/converter/interface.c:126
 msgid ""
 "Extension (e.g. .mp3) will be appended automatically.\n"
 "Leave the field empty for default (%a - %t)."
 msgstr ""
+"Dosya uzantısı (.mp3 gibi) otomatik olarak eklenecektir.\n"
+"Öntanımlı olanı kullanmak için bu alanı boş bırakın (%a - %t)."
 
 #: ../plugins/converter/interface.c:139
 msgid "Encoder:"
-msgstr ""
+msgstr "Kodlayıcı:"
 
 #: ../plugins/converter/interface.c:163
-#, fuzzy
 msgid "DSP preset:"
-msgstr "Ayarları Kaydet"
+msgstr "DSP önayarı:"
 
 #: ../plugins/converter/interface.c:186
 msgid "Number of threads:"
-msgstr ""
+msgstr "Thread sayısı:"
 
 #: ../plugins/converter/interface.c:199
 msgid "Output sample format:"
-msgstr ""
+msgstr "Çıktı örneği biçimi:"
 
 #: ../plugins/converter/interface.c:206
 msgid "Keep source format"
-msgstr ""
+msgstr "Kaynak biçimini koru"
 
 #: ../plugins/converter/interface.c:207
 msgid "8 bit signed int"
-msgstr ""
+msgstr "8 bit signed int"
 
 #: ../plugins/converter/interface.c:208
 msgid "16 bit signed int"
-msgstr ""
+msgstr "16 bit signed int"
 
 #: ../plugins/converter/interface.c:209
 msgid "24 bit signed int"
-msgstr ""
+msgstr "24 bit signed int"
 
 #: ../plugins/converter/interface.c:210
 msgid "32 bit signed int"
-msgstr ""
+msgstr "32 bit signed int"
 
 #: ../plugins/converter/interface.c:211
 msgid "32 bit float"
-msgstr ""
+msgstr "32 bit float"
 
 #: ../plugins/converter/interface.c:217
 msgid "When file exists:"
-msgstr ""
+msgstr "Dosya mevcut olduğunda:"
 
 #: ../plugins/converter/interface.c:224
 msgid "Prompt"
-msgstr ""
+msgstr "İstem"
 
 #: ../plugins/converter/interface.c:225
-#, fuzzy
 msgid "Overwrite"
-msgstr "Üstüne bindir"
+msgstr "Üstüne yaz"
 
 #: ../plugins/converter/interface.c:227
 msgid "Preserve folder structure, starting from:"
-msgstr ""
+msgstr "Dizin yapısını buradan başlayarak koru:"
 
 #: ../plugins/converter/interface.c:379
-#, fuzzy
 msgid "Edit Encoder Preset"
-msgstr "Ayarları Yükle"
+msgstr "Kodlayıcının Önayarlarını Düzenle"
 
 #: ../plugins/converter/interface.c:402
 msgid "Untitled Encoder"
-msgstr ""
+msgstr "İsimsiz Kodlayıcı"
 
 #: ../plugins/converter/interface.c:410
-#, fuzzy
 msgid "Output file extension:"
-msgstr "Çıktı eklentisi"
+msgstr "Oluşacak dosyanın uzantısı:"
 
 #: ../plugins/converter/interface.c:417
 msgid "E.g. mp3"
-msgstr ""
+msgstr "mp3 gibi"
 
 #: ../plugins/converter/interface.c:425
 msgid "Command line:"
-msgstr ""
+msgstr "Komut satırı:"
 
 #: ../plugins/converter/interface.c:436
 #, c-format
@@ -1733,6 +1709,9 @@ msgid ""
 "Example: lame - %o\n"
 "%i for input file, %o for output file, - for stdin"
 msgstr ""
+"Örnek: lame - %o\n"
+"girdi dosyası için %i, çıktı dosyası için %o, stdin (standard girdi) için - "
+"for"
 
 #: ../plugins/converter/interface.c:446
 #, c-format
@@ -1740,54 +1719,52 @@ msgid ""
 "<small>%o - output file name\n"
 "%i - temporary input file name</small>"
 msgstr ""
+"<small>%o - oluşacak dosyanın adı\n"
+"%i - geçici girdi dosyasının adı</small>"
 
 #: ../plugins/converter/interface.c:455
 msgid "Method:"
-msgstr ""
+msgstr "Yöntem:"
 
 #: ../plugins/converter/interface.c:462
 msgid "Pipe"
-msgstr ""
+msgstr "Boru"
 
 #: ../plugins/converter/interface.c:463
 msgid "Temporary file"
-msgstr ""
+msgstr "Geçici dosya"
 
 #: ../plugins/converter/interface.c:480
-#, fuzzy
 msgid "APEv2"
-msgstr "APEv2 Yaz"
+msgstr "APEv2"
 
 #: ../plugins/converter/interface.c:486
-#, fuzzy
 msgid "ID3v1"
-msgstr "ID3v1 Yaz"
+msgstr "ID3v1"
 
 #: ../plugins/converter/interface.c:492
 msgid "OggVorbis"
-msgstr ""
+msgstr "OggVorbis"
 
 #: ../plugins/converter/interface.c:498
 msgid "FLAC"
-msgstr ""
+msgstr "FLAC"
 
 #: ../plugins/converter/interface.c:510
-#, fuzzy
 msgid "ID3v2"
-msgstr "ID3v2 Yaz"
+msgstr "ID3v2"
 
 #: ../plugins/converter/interface.c:520
-#, fuzzy
 msgid "<b>Tag writer</b>"
-msgstr "Etiketleyici"
+msgstr "<b>Etiket yazıcı</b>"
 
 #: ../plugins/converter/interface.c:606
 msgid "DSP Preset Editor"
-msgstr ""
+msgstr "DSP Önayar Düzenleyicisi"
 
 #: ../plugins/converter/interface.c:629
 msgid "Untitled DSP Preset"
-msgstr ""
+msgstr "İsimsiz DSP Önayarı"
 
 #~ msgid "Save playlist as"
 #~ msgstr "Çalma listesini farklı kaydet"

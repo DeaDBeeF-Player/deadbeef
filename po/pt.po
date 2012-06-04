@@ -1,14 +1,14 @@
 # Portuguese translation of deadbeef package
 # Copyright (C) 2010 THE deadbeef'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the deadbeef package.
-# Sérgio Marques <smarquespt@gmail.com>, 2010,2011.
+# Sérgio Marques <smarquespt@gmail.com>, 2010-2012.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2011-11-24 18:47-0000\n"
+"PO-Revision-Date: 2012-05-18 16:21-0000\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -30,15 +30,15 @@ msgstr "Todos os ficheiros (*)"
 
 #: ../plugins/gtkui/callbacks.c:144
 msgid "Open file(s)..."
-msgstr "Abrir ficheiro(s)..."
+msgstr "Abrir ficheiros..."
 
 #: ../plugins/gtkui/callbacks.c:179
 msgid "Add file(s) to playlist..."
-msgstr "Adicionar ficheiro(s) à lista de reprodução..."
+msgstr "Adicionar ficheiros à lista de reprodução..."
 
 #: ../plugins/gtkui/callbacks.c:220
 msgid "Add folder(s) to playlist..."
-msgstr "Adicionar pasta(s) à lista de reprodução..."
+msgstr "Adicionar pastas à lista de reprodução..."
 
 #: ../plugins/gtkui/callbacks.c:225
 msgid "Follow symlinks"
@@ -46,7 +46,7 @@ msgstr "Seguir ligações simbólicas"
 
 #: ../plugins/gtkui/callbacks.c:711
 msgid "Failed while reading help file"
-msgstr "Falha ao ler a ajuda"
+msgstr "Falha ao abrir a ajuda"
 
 #: ../plugins/gtkui/callbacks.c:721
 msgid "Failed to load help file"
@@ -122,11 +122,11 @@ msgstr "Pré-ajustes do EQ DeadBeeF (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:247
 msgid "Import Foobar2000 EQ Preset..."
-msgstr "Importar pré-ajustes Foobar2000..."
+msgstr "Importar pré-ajustes do Foobar2000..."
 
 #: ../plugins/gtkui/eq.c:251
 msgid "Foobar2000 EQ presets (*.feq)"
-msgstr "Pré-ajustes Foobar2000 (*.feq)"
+msgstr "Pré-ajustes do Foobar2000 (*.feq)"
 
 #: ../plugins/gtkui/eq.c:316
 msgid "Save Preset"
@@ -232,17 +232,17 @@ msgstr "_Ficheiro"
 #: ../plugins/gtkui/interface.c:157
 #: ../plugins/gtkui/deadbeef.glade.h:163
 msgid "_Open file(s)"
-msgstr "Abrir ficheir_o(s)"
+msgstr "Abrir ficheir_os"
 
 #: ../plugins/gtkui/interface.c:173
 #: ../plugins/gtkui/deadbeef.glade.h:6
 msgid "Add file(s)"
-msgstr "Adicionar ficheiro(s)"
+msgstr "Adicionar ficheiros"
 
 #: ../plugins/gtkui/interface.c:181
 #: ../plugins/gtkui/deadbeef.glade.h:8
 msgid "Add folder(s)"
-msgstr "Adicionar pasta(s)"
+msgstr "Adicionar pastas"
 
 #: ../plugins/gtkui/interface.c:189
 #: ../plugins/gtkui/interface.c:3022
@@ -521,7 +521,7 @@ msgstr "Reproduzir"
 #: ../plugins/gtkui/interface.c:989
 #: ../plugins/gtkui/deadbeef.glade.h:88
 msgid "Pause"
-msgstr "Pausar"
+msgstr "Pausa"
 
 #: ../plugins/gtkui/interface.c:997
 #: ../plugins/gtkui/deadbeef.glade.h:96
@@ -622,7 +622,7 @@ msgstr "Número da faixa"
 #: ../plugins/gtkui/interface.c:1519
 #: ../translation/extra.c:68
 msgid "Band / Album Artist"
-msgstr "Banda / Artista do álbum"
+msgstr "Banda/Artista do álbum"
 
 #: ../plugins/gtkui/interface.c:1526
 #: ../plugins/gtkui/interface.c:3150
@@ -657,7 +657,7 @@ msgstr "_Cancelar"
 #: ../plugins/gtkui/interface.c:3212
 #: ../plugins/gtkui/deadbeef.glade.h:162
 msgid "_OK"
-msgstr "_OK"
+msgstr "C_onfirmar"
 
 #: ../plugins/gtkui/interface.c:1825
 #: ../plugins/gtkui/deadbeef.glade.h:85
@@ -784,12 +784,12 @@ msgstr "Utilizar letra a negrito para a faixa atual"
 #: ../plugins/gtkui/interface.c:2058
 #: ../plugins/gtkui/deadbeef.glade.h:50
 msgid "Hide \"Delete from disk\" context menu item"
-msgstr "Ocultar item do menu \"Apagar do disco\""
+msgstr "Ocultar item do menu \"Eliminar do disco\""
 
 #: ../plugins/gtkui/interface.c:2062
 #: ../plugins/gtkui/deadbeef.glade.h:16
 msgid "Auto-name playlists when adding a single folder"
-msgstr "Nome automático das listas de reprodução, ao adicionar uma pasta"
+msgstr "Ao adicionar uma pasta, dar nome às listas de reprodução"
 
 #: ../plugins/gtkui/interface.c:2070
 #: ../plugins/gtkui/deadbeef.glade.h:54
@@ -809,7 +809,7 @@ msgstr "Barra de título se parada:"
 #: ../plugins/gtkui/interface.c:2112
 #: ../plugins/gtkui/deadbeef.glade.h:46
 msgid "GUI Plugin (changing requires restart):"
-msgstr "\"Plug-in\" de GUI (tem que reiniciar o deadbeef):"
+msgstr "Plugin GUI (tem que reiniciar o deadbeef):"
 
 #: ../plugins/gtkui/interface.c:2120
 #: ../plugins/gtkui/deadbeef.glade.h:45
@@ -840,7 +840,7 @@ msgstr "Cor das barras de volume/procura"
 #: ../plugins/gtkui/interface.c:2188
 #: ../plugins/gtkui/deadbeef.glade.h:77
 msgid "Middle"
-msgstr "Central"
+msgstr "Normal"
 
 #: ../plugins/gtkui/interface.c:2195
 #: ../plugins/gtkui/deadbeef.glade.h:70
@@ -957,7 +957,7 @@ msgstr "Direitos de autor"
 #: ../plugins/gtkui/interface.c:2545
 #: ../plugins/gtkui/deadbeef.glade.h:94
 msgid "Plugins"
-msgstr "\"Plug-ins\""
+msgstr "Plugins"
 
 #: ../plugins/gtkui/interface.c:3033
 #: ../plugins/gtkui/deadbeef.glade.h:142
@@ -991,7 +991,7 @@ msgstr "Descendente"
 #: ../plugins/gtkui/deadbeef.glade.h:114
 #: ../plugins/converter/interface.c:750
 msgid "Select DSP Plugin"
-msgstr "Selecione o \"plug-in\" DSP"
+msgstr "Selecione o plugin DSP"
 
 #: ../plugins/gtkui/interface.c:3375
 #: ../plugins/gtkui/deadbeef.glade.h:93
@@ -999,7 +999,7 @@ msgstr "Selecione o \"plug-in\" DSP"
 #: ../plugins/converter/interface.c:766
 #: ../plugins/gtkui/dspconfig.c:139
 msgid "Plugin"
-msgstr "\"Plug-in\""
+msgstr "Plugin"
 
 #: ../plugins/gtkui/interface.c:3461
 #: ../plugins/gtkui/deadbeef.glade.h:133
@@ -1069,7 +1069,7 @@ msgstr "Gravar ID3v2.4"
 #: ../plugins/gtkui/mainplaylist.c:316
 #: ../plugins/gtkui/search.c:391
 msgid "Artist / Album"
-msgstr "Artista / Álbum"
+msgstr "Artista/Álbum"
 
 #: ../plugins/gtkui/mainplaylist.c:317
 #: ../plugins/gtkui/search.c:392
@@ -1078,7 +1078,7 @@ msgstr "Faixa n.º"
 
 #: ../plugins/gtkui/plcommon.c:338
 msgid "Delete files from disk"
-msgstr "Apagar ficheiros no disco"
+msgstr "Eliminar ficheiros no disco"
 
 #: ../plugins/gtkui/plcommon.c:339
 msgid ""
@@ -1098,7 +1098,7 @@ msgstr "Aviso"
 
 #: ../plugins/gtkui/plcommon.c:444
 msgid "Add to playback queue"
-msgstr "Juntar à fila de reprodução"
+msgstr "Adicionar à fila de reprodução"
 
 #: ../plugins/gtkui/plcommon.c:449
 msgid "Remove from playback queue"
@@ -1235,7 +1235,7 @@ msgstr "Remover campo"
 #: ../main.c:91
 #, c-format
 msgid "Usage: deadbeef [options] [file(s)]\n"
-msgstr "Utilização: deadbeef [opções] [ficheiro(s)]\n"
+msgstr "Utilização: deadbeef [opções] [ficheiros]\n"
 
 #: ../main.c:92
 #, c-format
@@ -1300,7 +1300,7 @@ msgstr "   --random           Música aleatória na lista\n"
 #: ../main.c:104
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
-msgstr "   --queue            Junta ficheiro(s) à lista existente\n"
+msgstr "   --queue            Junta os ficheiros à lista existente\n"
 
 #: ../main.c:105
 #, c-format
@@ -1331,7 +1331,7 @@ msgstr "                      para mais informações, consulte http://sourcefor
 #: ../playlist.c:454
 #: ../playlist.c:2398
 msgid "Default"
-msgstr "Pré-definição"
+msgstr "Pré-definiço"
 
 #: ../playlist.c:3664
 msgid "Yes"
@@ -1412,7 +1412,7 @@ msgstr "Incapaz de encontrar o ficheiro: %s"
 #: ../plugins/wildmidi/wildmidiplug.c:162
 #, c-format
 msgid "wildmidi: freepats config file not found. Please install timidity-freepats package, or specify path to freepats.cfg in the plugin settings."
-msgstr "wildmidi: o ficheiro de configuração freepats não foi encontrado. Por favor, instale o pacote timidity-freepats ou especifique o caminho para freepats.cfg nas definições do \"plug-in\"."
+msgstr "wildmidi: o ficheiro de configuração freepats não foi encontrado. Por favor, instale o pacote timidity-freepats ou especifique o caminho para freepats.cfg nas definições do plugin."
 
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
@@ -1529,12 +1529,12 @@ msgstr "Ativar suporte a imagens NRG"
 #. DUMB module player plugin
 #: ../translation/extra.c:35
 msgid "Resampling quality (0..2, higher is better)"
-msgstr "Qualidade de frquência (0..2, quanto mais alto, melhor)"
+msgstr "Qualidade de frequência (0..2, quanto mais alto, melhor)"
 
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:37
 msgid "Max song length (in minutes)"
-msgstr "Duração máxima de músicas (minutos)"
+msgstr "Duração máxima das faixas (minutos)"
 
 #. Standard GTK2 user interface plugin
 #: ../translation/extra.c:39
@@ -1599,7 +1599,7 @@ msgstr "Trocar bytes áudio (apenas se ouvir defeitos)"
 #. SID decoder plugin
 #: ../translation/extra.c:58
 msgid "Enable HVSC Songlength DB"
-msgstr "Ativar base de dados de duração HVSC"
+msgstr "Ativar base de dados HVSC"
 
 #: ../translation/extra.c:59
 msgid "Songlengths.txt (from HVSC)"
@@ -1611,7 +1611,7 @@ msgstr "Bits por frequência (8 ou 16)"
 
 #: ../translation/extra.c:61
 msgid "Default song length (sec)"
-msgstr "Duração pré-definida das músicas (seg)"
+msgstr "Duração pré-definida das faixas (seg)"
 
 #. WildMidi player plugin
 #: ../translation/extra.c:63
@@ -1660,7 +1660,7 @@ msgstr "Índice de subfaixa"
 
 #: ../translation/extra.c:81
 msgid "Tag Type(s)"
-msgstr "Tipo(s) de detalhes"
+msgstr "Tipo de detalhes"
 
 #: ../translation/extra.c:82
 msgid "Embedded Cuesheet"
@@ -1762,7 +1762,7 @@ msgstr "Codificadores"
 #: ../plugins/converter/convgui.c:838
 #: ../plugins/gtkui/dspconfig.c:183
 msgid "Add plugin to DSP chain"
-msgstr "Adicionar \"plug-in\" à cadeia DSP"
+msgstr "Adicionar plugin à cadeia DSP"
 
 #: ../plugins/converter/convgui.c:1034
 msgid "Failed to save DSP preset"
@@ -1934,138 +1934,3 @@ msgstr "Editor de DSP"
 msgid "Untitled DSP Preset"
 msgstr "Pré-ajuste DSP sem nome"
 
-#~ msgid "about.txt"
-#~ msgstr "about.txt"
-
-#, fuzzy
-#~ msgid "ChangeLog"
-#~ msgstr "_Alterações"
-
-#~ msgid "COPYING.GPLv2"
-#~ msgstr "COPYING.GPLv2"
-
-#, fuzzy
-#~ msgid "COPYING.LGPLv2.1"
-#~ msgstr "_LGPLv2.1"
-
-#, fuzzy
-#~ msgid "translators.txt"
-#~ msgstr "_Tradutores"
-
-#, fuzzy
-#~ msgid "Save playlist as"
-#~ msgstr "Gravar lista de reprodução"
-
-#, fuzzy
-#~ msgid "_Abort"
-#~ msgstr "_Sobre"
-
-#, fuzzy
-#~ msgid "editcolumndlg"
-#~ msgstr "Editar coluna"
-
-#, fuzzy
-#~ msgid "Length"
-#~ msgstr "Esquerda"
-
-#~ msgid ""
-#~ "Format conversions (start with %):\n"
-#~ "  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
-#~ "  track[n]umber, [N]totaltracks,\n"
-#~ "  [l]ength, [y]ear, [g]enre, [c]omment,\n"
-#~ "  copy[r]ight, [f]ilename, [F]ullPathname, [T]ags,\n"
-#~ "  [d]irectory, [D]irectoryWithPath\n"
-#~ "Example: %a - %t [%l]"
-#~ msgstr ""
-#~ "Conversão de formatos (iniciam com %):\n"
-#~ "[a]rtista, [t]ítulo, ál[b]um, [B]anda, [C]ompositor\n"
-#~ "[n]úmerodefaixa, [N]totaldefaixas,\n"
-#~ "[l]duração, [y]ano, [g]énero, [c]omentário,\n"
-#~ "di[r]eitosdeautor, nomede[f]icheiro, [F]nomecompletodocaminho,\n"
-#~ "[T]detalhes [d]iretório, [D]iretóriocomcaminho\n"
-#~ "Exemplo: %a - %t [%l]"
-
-#~ msgid "Allow dynamic samplerate switching"
-#~ msgstr "Permitir troca dinâmica da frequência"
-
-#~ msgid "Samplerate conversion quality:"
-#~ msgstr "Qualidade de conversão:"
-
-#, fuzzy
-#~ msgid "Description:"
-#~ msgstr "Duração"
-
-#~ msgid "Author(s):"
-#~ msgstr "Autor(es):"
-
-#~ msgid "Email:"
-#~ msgstr "Endereço eletrónico:"
-
-#~ msgid "Website:"
-#~ msgstr "Sítio web:"
-
-#, fuzzy
-#~ msgid "editplaylistdlg"
-#~ msgstr "Editar lista de reprodução"
-
-#~ msgid ""
-#~ "Format conversions (start with %):\n"
-#~ "  [a]rtist, [t]itle, al[b]um, [B]and, [C]omposer\n"
-#~ "  track[n]umber, [N]totaltracks,\n"
-#~ "  [l]ength, [y]ear, [g]enre, [c]omment,\n"
-#~ "  copy[r]ight, [f]ilename, [T]ags\n"
-#~ "Example: %a - %t [%l]"
-#~ msgstr ""
-#~ "Conversão de formatos (iniciam com %):\n"
-#~ "  [a]rtista, [t]ítulo, ál[b]um, [B]anda, [C]ompositor\n"
-#~ "  [n]úmerodefaixa, [N]totaldefaixas,\n"
-#~ "  [l]duração, [y]ano, [g]énero, [c]omentário,\n"
-#~ "  di[r]eitosdeautor, nomede[f]icheiro, [T]detalhes\n"
-#~ "Exemplo: %a - %t [%l]"
-
-#, fuzzy
-#~ msgid "Title / Track Artist"
-#~ msgstr "Total de faixas"
-
-#~ msgid "Setup %s"
-#~ msgstr "Configurar %s"
-
-#, fuzzy
-#~ msgid "ALSA output plugin"
-#~ msgstr "Sistema de som:"
-
-#, fuzzy
-#~ msgid "DeaDBeeF now playing"
-#~ msgstr "Desativar em reprodução"
-
-#~ msgid "HVSC path"
-#~ msgstr "Caminho HVSC"
-
-#~ msgid ""
-#~ "Keep source format\n"
-#~ "8 bit signed int\n"
-#~ "16 bit signed int\n"
-#~ "24 bit signed int\n"
-#~ "32 bit signed int\n"
-#~ "32 bit float"
-#~ msgstr ""
-#~ "Manter formato original\n"
-#~ "8 bit signed int\n"
-#~ "16 bit signed int\n"
-#~ "24 bit signed int\n"
-#~ "32 bit signed int\n"
-#~ "32 bit float"
-
-#~ msgid ""
-#~ "Pipe\n"
-#~ "Temporary file"
-#~ msgstr ""
-#~ "Canal\n"
-#~ "Ficheiro temporário"
-
-#~ msgid ""
-#~ "Prompt\n"
-#~ "Overwrite"
-#~ msgstr ""
-#~ "Perguntar\n"
-#~ "Substituição"
