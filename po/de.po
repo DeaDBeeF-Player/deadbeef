@@ -8,13 +8,15 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2010-06-03 17:59+0100\n"
-"Last-Translator: Jan D. Behrens <zykure@web.de>\n"
+"PO-Revision-Date: 2012-04-17 23:22+0200\n"
+"Last-Translator: Jan D. <zykure@web.de>\n"
 "Language-Team: \n"
-"Language: \n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Pootle 2.0.5\n"
 "X-Poedit-Country: Germany\n"
 "X-Poedit-Language: German\n"
 
@@ -23,9 +25,8 @@ msgid "Supported sound formats"
 msgstr "Unterstützte Tonformate"
 
 #: ../plugins/gtkui/callbacks.c:134
-#, fuzzy
 msgid "All files (*)"
-msgstr "Andere Dateien (*)"
+msgstr "Alle Dateien (*)"
 
 #: ../plugins/gtkui/callbacks.c:144
 msgid "Open file(s)..."
@@ -1162,7 +1163,8 @@ msgstr ""
 msgid ""
 "                      for more info, see http://sourceforge.net/apps/"
 "mediawiki/deadbeef/index.php?title=Title_Formatting\n"
-msgstr ""
+msgstr "für mehr Informationen siehe http://sourceforge.net/apps/mediawiki/deadbeef/"
+"index.php?title=Title_Formatting\n"
 
 #: ../playlist.c:454 ../playlist.c:2398
 msgid "Default"

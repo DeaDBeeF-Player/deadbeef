@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2012-02-07 10:15+0200\n"
+"PO-Revision-Date: 2012-04-18 01:46+0200\n"
 "Last-Translator: Gheyret <gheyret@gmail.com>\n"
 "Language-Team: Uyghur Computer Science Association <UKIJ@yahoogroups.com>\n"
 "Language: ug\n"
@@ -1308,7 +1308,7 @@ msgstr "ئۈسكۈنە ھۆججىتى"
 
 #: ../translation/extra.c:18
 msgid "OSS4 samplerate bug workaround"
-msgstr ""
+msgstr "OSS4 ئەۋرىشكىلەش نىسبىتىدىكى كەمتۈكلەرنى تۈزىتىش"
 
 #. Album Artwork plugin
 #: ../translation/extra.c:20
@@ -1337,7 +1337,7 @@ msgstr "albumart.org دىن ئېلىش"
 
 #: ../translation/extra.c:26
 msgid "Scale artwork towards longer side"
-msgstr ""
+msgstr "سۈرەتنى ئۇزۇن تەرىپى بويىچە چوڭايتىش"
 
 #. Audio CD player
 #: ../translation/extra.c:28
@@ -1346,7 +1346,7 @@ msgstr "CDDB/FreeDB نى ئىشلىتىش"
 
 #: ../translation/extra.c:29
 msgid "Prefer CD-Text over CDDB"
-msgstr ""
+msgstr "CDDB نى ئەمەس CD-Text نى ئالدىن ئويلىشىش"
 
 #: ../translation/extra.c:30
 msgid "CDDB url (e.g. 'freedb.org')"
@@ -1358,7 +1358,7 @@ msgstr "CDDB ئېغىز نومۇرى( ‹888› دېگەندەك)"
 
 #: ../translation/extra.c:32
 msgid "Prefer CDDB protocol over HTTP"
-msgstr ""
+msgstr "HTTP نى ئەمەس CDDB كېلىشىمىنى ئالدىن ئويلىشىش"
 
 #: ../translation/extra.c:33
 msgid "Enable NRG image support"
@@ -1433,6 +1433,7 @@ msgstr "مۇتلەق ئىزدەش جەدۋىلىنىڭ يولى"
 #: ../translation/extra.c:56
 msgid "Swap audio bytes (toggle if all you hear is static)"
 msgstr ""
+"ئۈن بايتلىرىنى ئالماشتۇرۇش (ئەگەر ئۆزگىرىش بولمىسا ئەسلىگە كەلتۈرسە بولىدۇ)"
 
 #. SID decoder plugin
 #: ../translation/extra.c:58
@@ -1685,7 +1686,7 @@ msgstr "قاپلاش"
 
 #: ../plugins/converter/interface.c:227
 msgid "Preserve folder structure, starting from:"
-msgstr ""
+msgstr "بۇ يەردىن باشلانغان قىسقۇچ قۇرۇلمىسىنى ساقلاپ قېلىش:"
 
 #: ../plugins/converter/interface.c:379
 msgid "Edit Encoder Preset"
