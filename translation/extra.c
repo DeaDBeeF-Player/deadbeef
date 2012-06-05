@@ -94,8 +94,7 @@ _("Target Samplerate")
 _("Quality / Algorithm")
 _("Automatic Samplerate (overrides Target Samplerate)")
 // shellexecui
-// please note: do NOT translate the Edit/ part
-_("Edit/Configure custom shell commands")
+_("Configure custom shell commands")
 // mpgmad
 _("Disable gapless playback (faster scanning)")
 // adplug
