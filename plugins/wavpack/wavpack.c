@@ -382,6 +382,7 @@ wv_read_metadata (DB_playItem_t *it) {
     if (!fp) {
         return -1;
     }
+    deadbeef->pl_delete_all_meta (it);
     int apeerr = deadbeef->junk_apev2_read (it, fp);
     if (!apeerr) {
         trace ("wv: ape tag found\n");
