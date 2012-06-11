@@ -288,7 +288,7 @@ sndfile_read (DB_fileinfo_t *_info, char *bytes, int size) {
             case 16:
                 {
                     uint16_t *data = (uint16_t *)bytes;
-                    for (int i = 0; i < n; i++, data++) {
+                    for (int i = 0; i < n/2; i++, data++) {
                         *data = ((*data & 0xff) << 8) | ((*data & 0xff00) >> 8);
                     }
                 }
@@ -296,7 +296,7 @@ sndfile_read (DB_fileinfo_t *_info, char *bytes, int size) {
             case 24:
                 {
                     uint8_t *data = bytes;
-                    for (int i = 0; i < n; i++, data += 3) {
+                    for (int i = 0; i < n/3; i++, data += 3) {
                         uint8_t temp = data[0];
                         data[0] = data[2];
                         data[2] = temp;
@@ -306,7 +306,7 @@ sndfile_read (DB_fileinfo_t *_info, char *bytes, int size) {
             case 32:
                 {
                     uint32_t *data = (uint32_t *)bytes;
-                    for (int i = 0; i < n; i++, data++) {
+                    for (int i = 0; i < n/4; i++, data++) {
                         *data = ((*data & 0xff) << 24) | ((*data & 0xff00) << 8) | ((*data & 0xff0000) >> 8) | ((*data & 0xff0000) >> 24);
                     }
                 }
