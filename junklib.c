@@ -1200,6 +1200,15 @@ junk_apev2_read_full_mem (playItem_t *it, DB_apev2_tag_t *tag_store, char *mem, 
             memcpy (value, mem, itemsize);
             value[itemsize] = 0;
 
+            // replace 0s with \n
+            uint8_t *p = value;
+            while (p < value + itemsize - 1) {
+                if (*p == 0) {
+                    *p = '\n';
+                }
+                p++;
+            }
+
             junk_apev2_add_frame (it, tag_store, &tail, itemsize, itemflags, key, value);
 
             free (value);
@@ -1304,6 +1313,15 @@ junk_apev2_read_full (playItem_t *it, DB_apev2_tag_t *tag_store, DB_FILE *fp) {
                 return -1;
             }
             value[itemsize] = 0;
+
+            // replace 0s with \n
+            uint8_t *p = value;
+            while (p < value + itemsize - 1) {
+                if (*p == 0) {
+                    *p = '\n';
+                }
+                p++;
+            }
 
             junk_apev2_add_frame (it, tag_store, &tail, itemsize, itemflags, key, value);
             free (value);
