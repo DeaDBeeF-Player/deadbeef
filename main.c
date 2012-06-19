@@ -524,97 +524,99 @@ player_mainloop (void) {
         uint32_t p2;
         int term = 0;
         while (messagepump_pop(&msg, &ctx, &p1, &p2) != -1) {
-            // broadcast to all plugins
-            DB_plugin_t **plugs = plug_get_list ();
-            for (int n = 0; plugs[n]; n++) {
-                if (plugs[n]->message) {
-                    plugs[n]->message (msg, ctx, p1, p2);
+            if (!term) { // when term is set to 1 -- it means we can't handle events, but we still need to process them to avoid memleaks
+                // broadcast to all plugins
+                DB_plugin_t **plugs = plug_get_list ();
+                for (int n = 0; plugs[n]; n++) {
+                    if (plugs[n]->message) {
+                        plugs[n]->message (msg, ctx, p1, p2);
+                    }
                 }
-            }
-            DB_output_t *output = plug_get_output ();
-            switch (msg) {
-            case DB_EV_REINIT_SOUND:
-                plug_reinit_sound ();
-                streamer_reset (1);
-                conf_save ();
-                break;
-            case DB_EV_TERMINATE:
-                {
-                    save_resume_state ();
+                DB_output_t *output = plug_get_output ();
+                switch (msg) {
+                case DB_EV_REINIT_SOUND:
+                    plug_reinit_sound ();
+                    streamer_reset (1);
+                    conf_save ();
+                    break;
+                case DB_EV_TERMINATE:
+                    {
+                        save_resume_state ();
 
-                    pl_playqueue_clear ();
+                        pl_playqueue_clear ();
 
-                    // stop streaming and playback before unloading plugins
-                    DB_output_t *output = plug_get_output ();
-                    output->stop ();
-                    streamer_free ();
-                    output->free ();
-                    term = 1;
-                }
-                break;
-            case DB_EV_PLAY_CURRENT:
-                if (p1) {
+                        // stop streaming and playback before unloading plugins
+                        DB_output_t *output = plug_get_output ();
+                        output->stop ();
+                        streamer_free ();
+                        output->free ();
+                        term = 1;
+                    }
+                    break;
+                case DB_EV_PLAY_CURRENT:
+                    if (p1) {
+                        output->stop ();
+                        pl_playqueue_clear ();
+                        streamer_set_nextsong (0, 1);
+                    }
+                    else {
+                        streamer_play_current_track ();
+                    }
+                    break;
+                case DB_EV_PLAY_NUM:
                     output->stop ();
                     pl_playqueue_clear ();
-                    streamer_set_nextsong (0, 1);
+                    streamer_set_nextsong (p1, 1);
+                    if (pl_get_order () == PLAYBACK_ORDER_SHUFFLE_ALBUMS) {
+                        int pl = streamer_get_current_playlist ();
+                        playlist_t *plt = plt_get_for_idx (pl);
+                        plt_init_shuffle_albums (plt, p1);
+                        plt_unref (plt);
+                    }
+                    break;
+                case DB_EV_STOP:
+                    streamer_set_nextsong (-2, 0);
+                    break;
+                case DB_EV_NEXT:
+                    output->stop ();
+                    streamer_move_to_nextsong (1);
+                    break;
+                case DB_EV_PREV:
+                    output->stop ();
+                    streamer_move_to_prevsong ();
+                    break;
+                case DB_EV_PAUSE:
+                    if (output->state () != OUTPUT_STATE_PAUSED) {
+                        output->pause ();
+                        messagepump_push (DB_EV_PAUSED, 0, 1, 0);
+                    }
+                    break;
+                case DB_EV_TOGGLE_PAUSE:
+                    if (output->state () == OUTPUT_STATE_PAUSED) {
+                        output->unpause ();
+                        messagepump_push (DB_EV_PAUSED, 0, 0, 0);
+                    }
+                    else {
+                        output->pause ();
+                        messagepump_push (DB_EV_PAUSED, 0, 1, 0);
+                    }
+                    break;
+                case DB_EV_PLAY_RANDOM:
+                    output->stop ();
+                    streamer_move_to_randomsong ();
+                    break;
+                case DB_EV_PLAYLIST_REFRESH:
+                    pl_save_current ();
+                    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+                    break;
+                case DB_EV_CONFIGCHANGED:
+                    conf_save ();
+                    streamer_configchanged ();
+                    break;
+                case DB_EV_SEEK:
+                    streamer_set_seek (p1 / 1000.f);
+                    break;
                 }
-                else {
-                    streamer_play_current_track ();
-                }
-                break;
-            case DB_EV_PLAY_NUM:
-                output->stop ();
-                pl_playqueue_clear ();
-                streamer_set_nextsong (p1, 1);
-                if (pl_get_order () == PLAYBACK_ORDER_SHUFFLE_ALBUMS) {
-                    int pl = streamer_get_current_playlist ();
-                    playlist_t *plt = plt_get_for_idx (pl);
-                    plt_init_shuffle_albums (plt, p1);
-                    plt_unref (plt);
-                }
-                break;
-            case DB_EV_STOP:
-                streamer_set_nextsong (-2, 0);
-                break;
-            case DB_EV_NEXT:
-                output->stop ();
-                streamer_move_to_nextsong (1);
-                break;
-            case DB_EV_PREV:
-                output->stop ();
-                streamer_move_to_prevsong ();
-                break;
-            case DB_EV_PAUSE:
-                if (output->state () != OUTPUT_STATE_PAUSED) {
-                    output->pause ();
-                    messagepump_push (DB_EV_PAUSED, 0, 1, 0);
-                }
-                break;
-            case DB_EV_TOGGLE_PAUSE:
-                if (output->state () == OUTPUT_STATE_PAUSED) {
-                    output->unpause ();
-                    messagepump_push (DB_EV_PAUSED, 0, 0, 0);
-                }
-                else {
-                    output->pause ();
-                    messagepump_push (DB_EV_PAUSED, 0, 1, 0);
-                }
-                break;
-            case DB_EV_PLAY_RANDOM:
-                output->stop ();
-                streamer_move_to_randomsong ();
-                break;
-            case DB_EV_PLAYLIST_REFRESH:
-                pl_save_current ();
-                messagepump_push (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
-                break;
-            case DB_EV_CONFIGCHANGED:
-                conf_save ();
-                streamer_configchanged ();
-                break;
-            case DB_EV_SEEK:
-                streamer_set_seek (p1 / 1000.f);
-                break;
             }
             if (msg >= DB_EV_FIRST && ctx) {
                 messagepump_event_free ((ddb_event_t *)ctx);
