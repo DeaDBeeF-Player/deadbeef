@@ -16,6 +16,7 @@ config.h
 config.h.in
 config.status
 config.sub
+config.rpath
 depcomp
 stamp-h*
 *.zip
