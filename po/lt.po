@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-30 08:26+0300\n"
-"PO-Revision-Date: 2012-06-30 08:37+0300\n"
+"POT-Creation-Date: 2012-07-07 18:10+0300\n"
+"PO-Revision-Date: 2012-07-07 18:32+0300\n"
 "Last-Translator: Algimantas <margevicius.algimantas@mail.ru>\n"
 "Language-Team: Lietuvių <>\n"
 "Language: lt\n"
@@ -225,7 +225,7 @@ msgstr "Naujas grojaraštis (%d)"
 
 #: ../plugins/gtkui/gtkui.c:1079
 msgid "- Test logout functionality"
-msgstr "- Išbandyti atsijungimo funkcionalumą"
+msgstr "- Tikrinti atsijungimo funkcionalumą"
 
 #: ../plugins/gtkui/interface.c:151 ../plugins/gtkui/deadbeef.glade.h:1
 msgid "_File"
@@ -1332,7 +1332,7 @@ msgstr "Scrobble URL"
 
 #: ../translation/extra.c:16
 msgid "Prefer Album Artist over Artist field"
-msgstr "Primenybę teikti albumo atlikėjo, o ne atlikėjo laukeliui"
+msgstr "Pirmiau atlikėjo laukelis, paskui albumo atlikėjo"
 
 #. OSS output plugin
 #: ../translation/extra.c:18
@@ -1404,7 +1404,7 @@ msgstr "Diskretizacijos kokybė (0..2, didesnė yra geriau)"
 
 #: ../translation/extra.c:37
 msgid "8-bit output (default is 16)"
-msgstr "8-bitų išvestis (numatytoji yra 16)"
+msgstr "8 bitų išvestis (numatytoji yra 16)"
 
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:39
@@ -1413,11 +1413,11 @@ msgstr "Didžiausia dainos trukmė (minutėmis)"
 
 #: ../translation/extra.c:40
 msgid "Fadeout length (seconds)"
-msgstr "Išblankimo trukmė (sekundėmis)"
+msgstr "Išnykimo trukmė (sekundėmis)"
 
 #: ../translation/extra.c:41
 msgid "Play loops nr. of times (if available)"
-msgstr "Kiek kartų kartoti ciklus (jei įmanoma)"
+msgstr "Kiek kartų kartoti (jei įmanoma)"
 
 #. Standard GTK2 user interface plugin
 #: ../translation/extra.c:43
@@ -2047,7 +2047,7 @@ msgstr "Netinkamos reikšmės"
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:165
 #, c-format
 msgid "File is not a valid .desktop file"
-msgstr "Failas nėra tinkamas .desktop failas"
+msgstr "Failas nėra taisyklingas .desktop failas"
 
 #. translators: 'Version' is from a desktop file, and
 #. * should not be translated. '%s' would probably be a
@@ -2055,7 +2055,7 @@ msgstr "Failas nėra tinkamas .desktop failas"
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:191
 #, c-format
 msgid "Unrecognized desktop file Version '%s'"
-msgstr "Neatpažinta „desktop“ failo versija „%s“"
+msgstr "Neatpažinta darbastalio failo versija „%s“"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:974
 #, c-format
@@ -2065,32 +2065,32 @@ msgstr "Paleidžiama %s"
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1116
 #, c-format
 msgid "Application does not accept documents on command line"
-msgstr "Programa nepriema dokumentų per komandinę eilutę"
+msgstr "Programa nepriima dokumentų iš komandinės eilutės"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1184
 #, c-format
 msgid "Unrecognized launch option: %d"
-msgstr "Neatpažinta paleidimo pasirinktis: %d"
+msgstr "Neatpažinta paleidimo parinktis: %d"
 
 #. translators: The 'Type=Link' string is found in a
 #. * desktop file, and should not be translated.
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1391
 #, c-format
 msgid "Can't pass document URIs to a 'Type=Link' desktop entry"
-msgstr "Perduoti dokumentų URI į 'Type=Link' darbastalio failo įrašą neįmanoma"
+msgstr "Negalima perduoti dokumento URI darbastalio įrašui „Type=Link“"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1412
 #, c-format
 msgid "Not a launchable item"
-msgstr "Nevykdomasis įrašas"
+msgstr "Nepaleistinas elementas"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:226
 msgid "Disable connection to session manager"
-msgstr "Išjungti prisijungimą prie sesijos tvarkyklės"
+msgstr "Išjungti prisijungimą prie seansų valdyklės"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:229
 msgid "Specify file containing saved configuration"
-msgstr "Nurodyti failą kuriame saugoma konfigūracija"
+msgstr "Nurodykite failą su įrašytais nustatymais"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:229
 msgid "FILE"
@@ -2106,11 +2106,11 @@ msgstr "ID"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:253
 msgid "Session management options:"
-msgstr "Sesijos valdymo parinktys:"
+msgstr "Seanso valdymo parinktys:"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:254
 msgid "Show session management options"
-msgstr "Rodyti sesijos valdymo pasirinktis"
+msgstr "Rodyti seanso valdymo nustatymus"
 
 #~ msgid "Slot"
 #~ msgstr "Veiksmas"
