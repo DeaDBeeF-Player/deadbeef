@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2012-07-09 19:54+0200\n"
+"PO-Revision-Date: 2012-07-09 21:31+0200\n"
 "Last-Translator: Daniel <d@winzen4.de>\n"
 "Language-Team: \n"
 "Language: de\n"
@@ -1148,6 +1148,9 @@ msgid ""
 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
 "                      copy[r]ight, [e]lapsed\n"
 msgstr ""
+"                      FMT %%-Syntax: [a]rtist, [t]itel, Al[b]um,\n"
+"                      [l]änge, Titel[n]ummer, [y]Jahr, [c]Kommentar,\n"
+"                      copy[r]ight, [e]verstrichen\n"
 
 #: ../main.c:109
 #, c-format
