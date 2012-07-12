@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2012-07-10 16:55+0200\n"
+"PO-Revision-Date: 2012-07-12 13:34+0200\n"
 "Last-Translator: Asier_Iturralde_Sarasola <asier.iturralde@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: eu\n"
@@ -1427,7 +1427,7 @@ msgstr ""
 
 #: ../translation/extra.c:66
 msgid "Track Title"
-msgstr ""
+msgstr "Pistaren izenburua"
 
 #: ../translation/extra.c:67
 msgid "Performer"
@@ -1435,11 +1435,11 @@ msgstr ""
 
 #: ../translation/extra.c:72
 msgid "Total Tracks"
-msgstr ""
+msgstr "Pistak guztira"
 
 #: ../translation/extra.c:73
 msgid "Genre"
-msgstr ""
+msgstr "Generoa"
 
 #: ../translation/extra.c:74
 msgid "Composer"
@@ -1447,11 +1447,11 @@ msgstr ""
 
 #: ../translation/extra.c:75
 msgid "Disc Number"
-msgstr ""
+msgstr "Disko zenbakia"
 
 #: ../translation/extra.c:76
 msgid "Comment"
-msgstr ""
+msgstr "Iruzkina"
 
 #: ../translation/extra.c:77
 msgid "Encoder / Vendor"
@@ -1485,7 +1485,7 @@ msgstr ""
 #. Converter GUI
 #: ../translation/extra.c:87
 msgid "Convert"
-msgstr ""
+msgstr "Bihurtu"
 
 #. Resampler (Secret Rabbit Code)
 #: ../translation/extra.c:89
@@ -1646,7 +1646,7 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:225
 msgid "Overwrite"
-msgstr ""
+msgstr "Gainidatzi"
 
 #: ../plugins/converter/interface.c:227
 msgid "Preserve folder structure, starting from:"
@@ -1662,15 +1662,15 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:410
 msgid "Output file extension:"
-msgstr ""
+msgstr "Irteerako fitxategiaren luzapena:"
 
 #: ../plugins/converter/interface.c:417
 msgid "E.g. mp3"
-msgstr ""
+msgstr "Adibidez, mp3"
 
 #: ../plugins/converter/interface.c:425
 msgid "Command line:"
-msgstr ""
+msgstr "Komando-lerroa:"
 
 #: ../plugins/converter/interface.c:436
 #, c-format
@@ -1688,7 +1688,7 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:455
 msgid "Method:"
-msgstr ""
+msgstr "Metodoa:"
 
 #: ../plugins/converter/interface.c:462
 msgid "Pipe"
@@ -1700,32 +1700,32 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:480
 msgid "APEv2"
-msgstr ""
+msgstr "APEv2"
 
 #: ../plugins/converter/interface.c:486
 msgid "ID3v1"
-msgstr ""
+msgstr "ID3v1"
 
 #: ../plugins/converter/interface.c:492
 msgid "OggVorbis"
-msgstr ""
+msgstr "OggVorbis"
 
 #: ../plugins/converter/interface.c:498
 msgid "FLAC"
-msgstr ""
+msgstr "FLAC"
 
 #: ../plugins/converter/interface.c:510
 msgid "ID3v2"
-msgstr ""
+msgstr "ID3v2"
 
 #: ../plugins/converter/interface.c:520
 msgid "<b>Tag writer</b>"
-msgstr ""
+msgstr "<b>Etiketa idazlea</b>"
 
 #: ../plugins/converter/interface.c:606
 msgid "DSP Preset Editor"
-msgstr ""
+msgstr "DSP aurrezarpenen editorea"
 
 #: ../plugins/converter/interface.c:629
 msgid "Untitled DSP Preset"
-msgstr ""
+msgstr "Izenbururik gabeko DSP aurrezarpena"
