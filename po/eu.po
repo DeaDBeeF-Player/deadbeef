@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2012-07-12 13:34+0200\n"
+"PO-Revision-Date: 2012-07-12 20:50+0200\n"
 "Last-Translator: Asier_Iturralde_Sarasola <asier.iturralde@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: eu\n"
@@ -918,15 +918,15 @@ msgstr ""
 #: ../plugins/gtkui/trkproperties.c:693 ../plugins/converter/convgui.c:759
 #: ../plugins/converter/convgui.c:1136
 msgid "Warning"
-msgstr ""
+msgstr "Abisua"
 
 #: ../plugins/gtkui/plcommon.c:444
 msgid "Add to playback queue"
-msgstr ""
+msgstr "Gehitu erreprodukzio-ilarara"
 
 #: ../plugins/gtkui/plcommon.c:449
 msgid "Remove from playback queue"
-msgstr ""
+msgstr "Kendu erreprodukzio-ilaratik"
 
 #: ../plugins/gtkui/plcommon.c:457
 msgid "Reload metadata"
@@ -1037,10 +1037,12 @@ msgstr "Ezin da eremua gehitu"
 #: ../plugins/gtkui/trkproperties.c:667
 msgid "Field with such name already exists, please try different name."
 msgstr ""
+"Izen hori duen eremua existitzen da dagoeneko, mesedez erabili izen "
+"desberdin bat."
 
 #: ../plugins/gtkui/trkproperties.c:692
 msgid "Really remove selected field?"
-msgstr ""
+msgstr "Ziur hautatutako eremua ezabatu nahi duzula?"
 
 #: ../plugins/gtkui/trkproperties.c:734
 msgid "Add field"
@@ -1146,11 +1148,12 @@ msgstr ""
 msgid ""
 "                      for more info, see http://sourceforge.net/apps/"
 "mediawiki/deadbeef/index.php?title=Title_Formatting\n"
-msgstr ""
+msgstr "                      Informazio gehiagorako, begiratu http://sourceforge.ne"
+"t/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"
 
 #: ../playlist.c:454 ../playlist.c:2398
 msgid "Default"
-msgstr ""
+msgstr "Lehenetsia"
 
 #: ../playlist.c:3664
 msgid "Yes"
@@ -1200,6 +1203,17 @@ msgid ""
 "Band / Album Artist\n"
 "Custom"
 msgstr ""
+"Elementuaren indizea\n"
+"Erreproduzitzen\n"
+"Albumaren azala\n"
+"Artista - Albuma\n"
+"Artista\n"
+"Albuma\n"
+"Izenburua\n"
+"Iraupena\n"
+"Pista zenbakia\n"
+"Taldea / Albuma Artista\n"
+"Pertsonalizatua"
 
 #: ../plugins/gtkui/deadbeef.glade.h:68
 msgid ""
@@ -1226,11 +1240,11 @@ msgstr ""
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
 msgid "Add Audio CD"
-msgstr ""
+msgstr "Gehitu audio CDa"
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
-msgstr ""
+msgstr "Bilatu Last.fm-n"
 
 #. ALSA output plugin
 #: ../translation/extra.c:6
@@ -1260,11 +1274,11 @@ msgstr ""
 
 #: ../translation/extra.c:13
 msgid "Username"
-msgstr ""
+msgstr "Erabiltzaile-izena"
 
 #: ../translation/extra.c:14
 msgid "Password"
-msgstr ""
+msgstr "Pasahitza"
 
 #: ../translation/extra.c:15
 msgid "Scrobble URL"
@@ -1273,7 +1287,7 @@ msgstr ""
 #. OSS output plugin
 #: ../translation/extra.c:17
 msgid "Device file"
-msgstr ""
+msgstr "Gailu-fitxategia"
 
 #: ../translation/extra.c:18
 msgid "OSS4 samplerate bug workaround"
@@ -1311,7 +1325,7 @@ msgstr ""
 #. Audio CD player
 #: ../translation/extra.c:28
 msgid "Use CDDB/FreeDB"
-msgstr ""
+msgstr "Erabili CDDB/FreeDB"
 
 #: ../translation/extra.c:29
 msgid "Prefer CD-Text over CDDB"
@@ -1319,11 +1333,11 @@ msgstr ""
 
 #: ../translation/extra.c:30
 msgid "CDDB url (e.g. 'freedb.org')"
-msgstr ""
+msgstr "CDDB url-a (adibidez, 'freedb.org')"
 
 #: ../translation/extra.c:31
 msgid "CDDB port number (e.g. '888')"
-msgstr ""
+msgstr "CDDB ataka zenbakia (adibidez, '888')"
 
 #: ../translation/extra.c:32
 msgid "Prefer CDDB protocol over HTTP"
@@ -1331,7 +1345,7 @@ msgstr ""
 
 #: ../translation/extra.c:33
 msgid "Enable NRG image support"
-msgstr ""
+msgstr "Gaitu NRG irudien euskarria"
 
 #. DUMB module player plugin
 #: ../translation/extra.c:35
@@ -1354,7 +1368,7 @@ msgstr ""
 
 #: ../translation/extra.c:41
 msgid "Custom status icon"
-msgstr ""
+msgstr "Egoera-ikono pertsonalizatua"
 
 #: ../translation/extra.c:42
 msgid "Run gtk_init with --sync (debug mode)"
@@ -1367,11 +1381,11 @@ msgstr ""
 #. OSD Notify plugin
 #: ../translation/extra.c:45
 msgid "Notification title format"
-msgstr ""
+msgstr "Jakinarazpenen izenburuaren formatua"
 
 #: ../translation/extra.c:46
 msgid "Notification content format"
-msgstr ""
+msgstr "Jakinarazpenen edukiaren formatua"
 
 #: ../translation/extra.c:47
 msgid "Show album art"
@@ -1384,7 +1398,7 @@ msgstr ""
 #. PulseAudio output plugin
 #: ../translation/extra.c:50
 msgid "PulseAudio server"
-msgstr ""
+msgstr "PulseAudio zerbitzaria"
 
 #: ../translation/extra.c:52
 msgid "Samplerate"
@@ -1467,7 +1481,7 @@ msgstr ""
 
 #: ../translation/extra.c:81
 msgid "Tag Type(s)"
-msgstr ""
+msgstr "Etiketa mota(k)"
 
 #: ../translation/extra.c:82
 msgid "Embedded Cuesheet"
@@ -1480,7 +1494,7 @@ msgstr ""
 #. FFmpeg deocder plugin
 #: ../translation/extra.c:85
 msgid "File Extensions (separate with ';')"
-msgstr ""
+msgstr "Fitxategi-luzapenak (';'-z banatuta)"
 
 #. Converter GUI
 #: ../translation/extra.c:87
@@ -1494,7 +1508,7 @@ msgstr ""
 
 #: ../translation/extra.c:90
 msgid "Quality / Algorythm"
-msgstr ""
+msgstr "Kalitatea / Algoritmoa"
 
 #: ../translation/extra.c:91
 msgid "Automatic Samplerate (overrides Target Samplerate)"
@@ -1502,31 +1516,31 @@ msgstr ""
 
 #: ../plugins/converter/convgui.c:108
 msgid "The file already exists. Overwrite?"
-msgstr ""
+msgstr "Fitxategia dagoeneko existitzen da. Gainidatzi?"
 
 #: ../plugins/converter/convgui.c:110
 msgid "Converter warning"
-msgstr ""
+msgstr "Bihurtzailearen abisua"
 
 #: ../plugins/converter/convgui.c:222
 msgid "Please select encoder"
-msgstr ""
+msgstr "Mesedez hautatu kodetzailea"
 
 #: ../plugins/converter/convgui.c:224
 msgid "Converter error"
-msgstr ""
+msgstr "Bihurtzailearen errorea"
 
 #: ../plugins/converter/convgui.c:248
 msgid "Converting..."
-msgstr ""
+msgstr "Bihurtzen..."
 
 #: ../plugins/converter/convgui.c:394 ../plugins/converter/convgui.c:496
 msgid "Select folder..."
-msgstr ""
+msgstr "Hautatu karpeta..."
 
 #: ../plugins/converter/convgui.c:635
 msgid "Failed to save encoder preset"
-msgstr ""
+msgstr "Huts egin du kodetzailearen aurrezarpena gordetzean"
 
 #: ../plugins/converter/convgui.c:637 ../plugins/converter/convgui.c:1035
 msgid ""
@@ -1537,58 +1551,60 @@ msgstr ""
 #: ../plugins/converter/convgui.c:637 ../plugins/converter/convgui.c:1035
 msgid "Preset with the same name already exists. Try to pick another title."
 msgstr ""
+"Izen bereko aurrezarpen bat existitzen da dagoeneko. Aukeratu beste izenburu "
+"bat."
 
 #: ../plugins/converter/convgui.c:638 ../plugins/converter/convgui.c:1036
 msgid "Error"
-msgstr ""
+msgstr "Errorea"
 
 #: ../plugins/converter/convgui.c:692
 msgid "Add new encoder"
-msgstr ""
+msgstr "Gehitu kodetzaile berria"
 
 #: ../plugins/converter/convgui.c:724
 msgid "Edit encoder"
-msgstr ""
+msgstr "Editatu kodetzailea"
 
 #: ../plugins/converter/convgui.c:756 ../plugins/converter/convgui.c:1133
 msgid "Remove preset"
-msgstr ""
+msgstr "Kendu aurrezarpena"
 
 #: ../plugins/converter/convgui.c:758 ../plugins/converter/convgui.c:1135
 msgid "This action will delete the selected preset. Are you sure?"
-msgstr ""
+msgstr "Ekintza honek hautatutako aurrezarpena ezabatuko du. Ziur zaude?"
 
 #: ../plugins/converter/convgui.c:782
 msgid "Encoders"
-msgstr ""
+msgstr "Kodetzaileak"
 
 #: ../plugins/converter/convgui.c:838 ../plugins/gtkui/dspconfig.c:183
 msgid "Add plugin to DSP chain"
-msgstr ""
+msgstr "Gehitu plugina DSP kateari"
 
 #: ../plugins/converter/convgui.c:1034
 msgid "Failed to save DSP preset"
-msgstr ""
+msgstr "Hutsegitea DSP aurrezarpena gordetzean"
 
 #: ../plugins/converter/convgui.c:1098
 msgid "New DSP Preset"
-msgstr ""
+msgstr "DSP aurrezarpen berria"
 
 #: ../plugins/converter/convgui.c:1183
 msgid "Edit DSP Preset"
-msgstr ""
+msgstr "Editatu DSP aurrezarpena"
 
 #: ../plugins/converter/convgui.c:1203
 msgid "DSP Presets"
-msgstr ""
+msgstr "DSP aurrezarpenak"
 
 #: ../plugins/converter/interface.c:94
 msgid "Output folder:"
-msgstr ""
+msgstr "Irteerako karpeta:"
 
 #: ../plugins/converter/interface.c:115
 msgid "Output file name:"
-msgstr ""
+msgstr "Irteerako fitxategi-izena:"
 
 #: ../plugins/converter/interface.c:126
 msgid ""
@@ -1598,15 +1614,15 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:139
 msgid "Encoder:"
-msgstr ""
+msgstr "Kodetzailea:"
 
 #: ../plugins/converter/interface.c:163
 msgid "DSP preset:"
-msgstr ""
+msgstr "DSP aurrezarpena:"
 
 #: ../plugins/converter/interface.c:186
 msgid "Number of threads:"
-msgstr ""
+msgstr "Hari kopurua:"
 
 #: ../plugins/converter/interface.c:199
 msgid "Output sample format:"
@@ -1654,11 +1670,11 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:379
 msgid "Edit Encoder Preset"
-msgstr ""
+msgstr "Editatu kodetzailearen aurrezarpena"
 
 #: ../plugins/converter/interface.c:402
 msgid "Untitled Encoder"
-msgstr ""
+msgstr "Kodetzaile izengabeak"
 
 #: ../plugins/converter/interface.c:410
 msgid "Output file extension:"
@@ -1692,11 +1708,11 @@ msgstr "Metodoa:"
 
 #: ../plugins/converter/interface.c:462
 msgid "Pipe"
-msgstr ""
+msgstr "Kanalizazioa"
 
 #: ../plugins/converter/interface.c:463
 msgid "Temporary file"
-msgstr ""
+msgstr "Aldi baterako fitxategia"
 
 #: ../plugins/converter/interface.c:480
 msgid "APEv2"
