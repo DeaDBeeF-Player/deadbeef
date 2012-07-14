@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2012-07-12 20:50+0200\n"
+"PO-Revision-Date: 2012-07-14 13:49+0200\n"
 "Last-Translator: Asier_Iturralde_Sarasola <asier.iturralde@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: eu\n"
@@ -99,27 +99,27 @@ msgstr "Gehitu erreprodukzio-zerrenda berria"
 
 #: ../plugins/gtkui/eq.c:136
 msgid "Save DeaDBeeF EQ Preset"
-msgstr ""
+msgstr "Gorde DeaDBeeF EQ aurrezarpena"
 
 #: ../plugins/gtkui/eq.c:143
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
-msgstr ""
+msgstr "DeaDBeeF EQ aurrezarpen-fitxategiak (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:182
 msgid "Load DeaDBeeF EQ Preset..."
-msgstr ""
+msgstr "Kargatu DeaDBeeF EQ aurrezarpena..."
 
 #: ../plugins/gtkui/eq.c:186
 msgid "DeaDBeeF EQ presets (*.ddbeq)"
-msgstr ""
+msgstr "DeaDBeeF EQ aurrezarpenak (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:247
 msgid "Import Foobar2000 EQ Preset..."
-msgstr ""
+msgstr "Inportatu Foobar2000 EQ aurrezarpena..."
 
 #: ../plugins/gtkui/eq.c:251
 msgid "Foobar2000 EQ presets (*.feq)"
-msgstr ""
+msgstr "Foobar2000 EQ aurrezarpenak (*.feq)"
 
 #: ../plugins/gtkui/eq.c:316
 msgid "Save Preset"
@@ -166,7 +166,7 @@ msgstr ""
 #: ../plugins/gtkui/gtkui.c:149
 #, c-format
 msgid "Stopped | %d tracks | %s total playtime"
-msgstr ""
+msgstr "Geldituta | %d pista | guztizko erreprodukzio-denbora: %s"
 
 #: ../plugins/gtkui/gtkui.c:162
 msgid "Mono"
@@ -190,6 +190,8 @@ msgstr "Pausatuta | "
 msgid ""
 "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
 msgstr ""
+"%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d pista | guztizko "
+"erreprodukzio-denbora: %s"
 
 #: ../plugins/gtkui/gtkui.c:644
 msgid "Save Playlist As"
@@ -366,51 +368,51 @@ msgstr "Ordena"
 
 #: ../plugins/gtkui/interface.c:365 ../plugins/gtkui/deadbeef.glade.h:71
 msgid "Linear"
-msgstr ""
+msgstr "Lineala"
 
 #: ../plugins/gtkui/interface.c:370 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Shuffle tracks"
-msgstr ""
+msgstr "Nahastu pistak"
 
 #: ../plugins/gtkui/interface.c:375 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Shuffle albums"
-msgstr ""
+msgstr "Nahastu albumak"
 
 #: ../plugins/gtkui/interface.c:380 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Random"
-msgstr ""
+msgstr "Ausazkoa"
 
 #: ../plugins/gtkui/interface.c:386 ../plugins/gtkui/deadbeef.glade.h:75
 msgid "Looping"
-msgstr ""
+msgstr "Errepikapenak"
 
 #: ../plugins/gtkui/interface.c:393 ../plugins/gtkui/deadbeef.glade.h:73
 msgid "Loop All"
-msgstr ""
+msgstr "Errepikatu guztiak"
 
 #: ../plugins/gtkui/interface.c:398 ../plugins/gtkui/deadbeef.glade.h:74
 msgid "Loop Single Song"
-msgstr ""
+msgstr "Errepikatu kanta bat"
 
 #: ../plugins/gtkui/interface.c:403 ../plugins/gtkui/deadbeef.glade.h:36
 msgid "Don't Loop"
-msgstr ""
+msgstr "Ez errepikatu"
 
 #: ../plugins/gtkui/interface.c:409 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "Scroll follows playback"
-msgstr ""
+msgstr "Korritzeak erreprodukzioa jarraitzen du"
 
 #: ../plugins/gtkui/interface.c:414 ../plugins/gtkui/deadbeef.glade.h:26
 msgid "Cursor follows playback"
-msgstr ""
+msgstr "Kurtsoreak erreprodukzioa jarraitzen du"
 
 #: ../plugins/gtkui/interface.c:418 ../plugins/gtkui/deadbeef.glade.h:127
 msgid "Stop after current"
-msgstr ""
+msgstr "Gelditu unekoaren ondoren"
 
 #: ../plugins/gtkui/interface.c:430 ../plugins/gtkui/deadbeef.glade.h:67
 msgid "Jump to current track"
-msgstr ""
+msgstr "Jauzi uneko pistara"
 
 #: ../plugins/gtkui/interface.c:437 ../plugins/gtkui/interface.c:444
 #: ../plugins/gtkui/deadbeef.glade.h:159
@@ -463,7 +465,7 @@ msgstr "Hurrengoa"
 
 #: ../plugins/gtkui/interface.c:1013 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Play Random"
-msgstr ""
+msgstr "Erreproduzitu ausazkoa"
 
 #: ../plugins/gtkui/interface.c:1022 ../plugins/gtkui/deadbeef.glade.h:5
 msgid "About"
@@ -509,7 +511,7 @@ msgstr "Mota:"
 
 #: ../plugins/gtkui/interface.c:1510
 msgid "Item Index"
-msgstr ""
+msgstr "Elementuaren indizea"
 
 #. create default set of columns
 #: ../plugins/gtkui/interface.c:1511 ../plugins/gtkui/mainplaylist.c:315
@@ -518,7 +520,7 @@ msgstr "Erreproduzitzen"
 
 #: ../plugins/gtkui/interface.c:1512
 msgid "Album Art"
-msgstr ""
+msgstr "Albumaren azala"
 
 #: ../plugins/gtkui/interface.c:1513
 msgid "Artist - Album"
@@ -619,10 +621,12 @@ msgstr ""
 #: ../plugins/gtkui/interface.c:1944 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
 msgstr ""
+"Gehitu fitxategiak erreprodukzio-zerrenda honetara komando-lerrotik (edo "
+"fitxategi-kudeatzailetik):"
 
 #: ../plugins/gtkui/interface.c:1953 ../plugins/gtkui/deadbeef.glade.h:109
 msgid "Resume previous session on startup"
-msgstr ""
+msgstr "Berrezarri aurreko saioa abiatzean"
 
 #: ../plugins/gtkui/interface.c:1957 ../plugins/gtkui/deadbeef.glade.h:37
 msgid "Don't add from archives when adding folders"
@@ -639,7 +643,7 @@ msgstr "Konfiguratu"
 
 #: ../plugins/gtkui/interface.c:2017 ../plugins/gtkui/deadbeef.glade.h:29
 msgid "DSP Chain Preset"
-msgstr ""
+msgstr "DSP katearen aurrezarpenak"
 
 #: ../plugins/gtkui/interface.c:2029 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "_Load"
