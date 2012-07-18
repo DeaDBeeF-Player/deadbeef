@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 0xDeadBeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2011-02-18 05:14+0200\n"
+"PO-Revision-Date: 2012-07-18 16:14+0200\n"
 "Last-Translator: Duy Hung <nguyentieuhau@gmail.com>\n"
 "Language-Team: English (United Kingdom) <yorvik.ubunto@gmail.com>\n"
 "Language: vi\n"
@@ -44,7 +44,7 @@ msgstr "Thêm thư mục vào playlist..."
 
 #: ../plugins/gtkui/callbacks.c:225
 msgid "Follow symlinks"
-msgstr ""
+msgstr "Đi theo liên kết tượng trưng"
 
 #: ../plugins/gtkui/callbacks.c:711
 msgid "Failed while reading help file"
@@ -56,7 +56,7 @@ msgstr "Không thể đọc tập tin trợ giúp"
 
 #: ../plugins/gtkui/callbacks.c:736
 msgid "help.txt"
-msgstr ""
+msgstr "help.txt"
 
 #: ../plugins/gtkui/callbacks.c:737 ../plugins/gtkui/interface.c:1155
 #: ../plugins/gtkui/deadbeef.glade.h:49 ../plugins/converter/convgui.c:1240
@@ -70,14 +70,14 @@ msgid "About DeaDBeeF %s"
 msgstr "Về DeaDBeeF %s"
 
 #: ../plugins/gtkui/callbacks.c:760
-#, fuzzy, c-format
+#, c-format
 msgid "DeaDBeeF %s ChangeLog"
-msgstr "DeaDBeeF %s ChangeLog"
+msgstr "DeaDBeeF %s Nhật ký thay đổi"
 
 #: ../plugins/gtkui/callbacks.c:1116
-#, fuzzy, c-format
+#, c-format
 msgid "DeaDBeeF Translators"
-msgstr "DeaDBeeF đang phát"
+msgstr "DeaDBeeF Dịch giả"
 
 #: ../plugins/gtkui/ddbtabstrip.c:755 ../plugins/gtkui/trkproperties.c:618
 msgid "Edit playlist"
@@ -102,73 +102,60 @@ msgid "Add New Playlist"
 msgstr "Thêm Playlist Mới"
 
 #: ../plugins/gtkui/eq.c:136
-#, fuzzy
 msgid "Save DeaDBeeF EQ Preset"
-msgstr "Save DeaDBeeF EQ Preset"
+msgstr "Lưu DeaDBeeF EQ Preset"
 
 #: ../plugins/gtkui/eq.c:143
-#, fuzzy
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
-msgstr "DeaDBeeF EQ preset files (*.ddbeq)"
+msgstr "Tập tin DeaDBeeF EQ preset (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:182
-#, fuzzy
 msgid "Load DeaDBeeF EQ Preset..."
-msgstr "Load DeaDBeeF EQ Preset..."
+msgstr "Nạp DeaDBeeF EQ Preset..."
 
 #: ../plugins/gtkui/eq.c:186
-#, fuzzy
 msgid "DeaDBeeF EQ presets (*.ddbeq)"
 msgstr "DeaDBeeF EQ presets (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:247
-#, fuzzy
 msgid "Import Foobar2000 EQ Preset..."
-msgstr "Import Foobar2000 EQ Preset..."
+msgstr "Nhập Foobar2000 EQ Preset..."
 
 #: ../plugins/gtkui/eq.c:251
-#, fuzzy
 msgid "Foobar2000 EQ presets (*.feq)"
 msgstr "Foobar2000 EQ presets (*.feq)"
 
 #: ../plugins/gtkui/eq.c:316
-#, fuzzy
 msgid "Save Preset"
-msgstr "Save Preset"
+msgstr "Lưu Preset"
 
 #: ../plugins/gtkui/eq.c:324
-#, fuzzy
 msgid "Load Preset"
-msgstr "Load Preset"
+msgstr "Nạp Preset"
 
 #: ../plugins/gtkui/eq.c:332
-#, fuzzy
 msgid "Import Foobar2000 Preset"
-msgstr "Import Foobar2000 Preset"
+msgstr "Nhập Foobar2000 Preset"
 
 #: ../plugins/gtkui/eq.c:357
 msgid "Enable"
 msgstr "Bật"
 
 #: ../plugins/gtkui/eq.c:366
-#, fuzzy
 msgid "Zero All"
-msgstr "Zero All"
+msgstr "Tất Cả Về 0"
 
 #: ../plugins/gtkui/eq.c:373
-#, fuzzy
 msgid "Zero Preamp"
-msgstr "Zero Preamp"
+msgstr "Preamp Về 0"
 
 #: ../plugins/gtkui/eq.c:380
-#, fuzzy
 msgid "Zero Bands"
-msgstr "Zero Bands"
+msgstr "Bands Về 0"
 
 #: ../plugins/gtkui/eq.c:387 ../plugins/converter/interface.c:820
-#, fuzzy
 msgid "Presets"
-msgstr "Save Preset"
+msgstr "Presets"
 
 #: ../plugins/gtkui/gtkui.c:137
 #, c-format
@@ -186,12 +173,10 @@ msgid "Stopped | %d tracks | %s total playtime"
 msgstr "Dừng phát | %d bài | Tất cả %s"
 
 #: ../plugins/gtkui/gtkui.c:162
-#, fuzzy
 msgid "Mono"
 msgstr "Mono"
 
 #: ../plugins/gtkui/gtkui.c:162
-#, fuzzy
 msgid "Stereo"
 msgstr "Stereo"
 
@@ -212,12 +197,11 @@ msgstr "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d bài | Tất cả %s"
 
 #: ../plugins/gtkui/gtkui.c:644
 msgid "Save Playlist As"
-msgstr "Sao chép Playlist"
+msgstr "Sao Chép Playlist"
 
 #: ../plugins/gtkui/gtkui.c:655
-#, fuzzy
 msgid "DeaDBeeF playlist files (*.dbpl)"
-msgstr "DeaDBeeF playlist files (*.dbpl)"
+msgstr "Tập tin DeaDBeeF playlist (*.dbpl)"
 
 #: ../plugins/gtkui/gtkui.c:773
 msgid "Load Playlist"
@@ -271,7 +255,7 @@ msgstr "Lưu playlist"
 
 #: ../plugins/gtkui/interface.c:218 ../plugins/gtkui/deadbeef.glade.h:165
 msgid "_Quit"
-msgstr "_Thoát"
+msgstr "T_hoát"
 
 #: ../plugins/gtkui/interface.c:229 ../plugins/gtkui/deadbeef.glade.h:155
 msgid "_Edit"
@@ -309,11 +293,11 @@ msgstr "Cắt"
 
 #: ../plugins/gtkui/interface.c:281 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "_Find"
-msgstr "_Tìm"
+msgstr "Tì_m"
 
 #: ../plugins/gtkui/interface.c:288 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Sort By"
-msgstr ""
+msgstr "Sắp Xếp Theo"
 
 #: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1516
 #: ../plugins/gtkui/mainplaylist.c:318 ../plugins/gtkui/prefwin.c:626
@@ -324,9 +308,8 @@ msgid "Title"
 msgstr "Tiêu đề"
 
 #: ../plugins/gtkui/interface.c:299 ../plugins/gtkui/deadbeef.glade.h:140
-#, fuzzy
 msgid "Track number"
-msgstr "Thứ tự"
+msgstr "Thứ tự bài"
 
 #: ../plugins/gtkui/interface.c:303 ../plugins/gtkui/interface.c:1515
 #: ../plugins/gtkui/interface.c:1875 ../plugins/gtkui/deadbeef.glade.h:10
@@ -344,7 +327,7 @@ msgstr "Nghệ sĩ"
 #: ../plugins/gtkui/interface.c:311 ../plugins/gtkui/deadbeef.glade.h:31
 #: ../translation/extra.c:70
 msgid "Date"
-msgstr ""
+msgstr "Ngày"
 
 #: ../plugins/gtkui/interface.c:315 ../plugins/gtkui/interface.c:1520
 #: ../plugins/gtkui/plcommon.c:1017 ../plugins/gtkui/deadbeef.glade.h:27
@@ -369,39 +352,33 @@ msgid "Column headers"
 msgstr "Tiêu đề cột"
 
 #: ../plugins/gtkui/interface.c:343 ../plugins/gtkui/deadbeef.glade.h:132
-#, fuzzy
 msgid "Tabs"
 msgstr "Thẻ"
 
 #: ../plugins/gtkui/interface.c:347 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "Equalizer"
 msgstr "Equalizer"
 
 #: ../plugins/gtkui/interface.c:351 ../plugins/gtkui/deadbeef.glade.h:164
-#, fuzzy
 msgid "_Playback"
-msgstr "_Playback"
+msgstr "Phát _lại"
 
 #: ../plugins/gtkui/interface.c:358 ../plugins/gtkui/interface.c:3298
 #: ../plugins/gtkui/deadbeef.glade.h:83
 msgid "Order"
-msgstr "Thứ tự phát"
+msgstr "Thứ tự"
 
 #: ../plugins/gtkui/interface.c:365 ../plugins/gtkui/deadbeef.glade.h:71
-#, fuzzy
 msgid "Linear"
 msgstr "Theo thứ tự"
 
 #: ../plugins/gtkui/interface.c:370 ../plugins/gtkui/deadbeef.glade.h:121
-#, fuzzy
 msgid "Shuffle tracks"
-msgstr "Theo vòng tròn"
+msgstr "Bài hát ngẫu nhiên"
 
 #: ../plugins/gtkui/interface.c:375 ../plugins/gtkui/deadbeef.glade.h:120
-#, fuzzy
 msgid "Shuffle albums"
-msgstr "Theo vòng tròn"
+msgstr "Album ngẫu nhiên"
 
 #: ../plugins/gtkui/interface.c:380 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Random"
@@ -413,60 +390,56 @@ msgstr "Lặp lại"
 
 #: ../plugins/gtkui/interface.c:393 ../plugins/gtkui/deadbeef.glade.h:73
 msgid "Loop All"
-msgstr "Lặp lại Tất cả"
+msgstr "Lặp Lại Tất Cả"
 
 #: ../plugins/gtkui/interface.c:398 ../plugins/gtkui/deadbeef.glade.h:74
 msgid "Loop Single Song"
-msgstr "Lặp lại Một Bài"
+msgstr "Lặp Lại Một Bài"
 
 #: ../plugins/gtkui/interface.c:403 ../plugins/gtkui/deadbeef.glade.h:36
 msgid "Don't Loop"
-msgstr "Không Lặp lại"
+msgstr "Không Lặp Lại"
 
 #: ../plugins/gtkui/interface.c:409 ../plugins/gtkui/deadbeef.glade.h:111
-#, fuzzy
 msgid "Scroll follows playback"
-msgstr "Trượt theo quá trình playback"
+msgstr "Trượt theo quá trình phát lại"
 
 #: ../plugins/gtkui/interface.c:414 ../plugins/gtkui/deadbeef.glade.h:26
-#, fuzzy
 msgid "Cursor follows playback"
-msgstr "Trỏ chuột theo quá trình playback"
+msgstr "Con trỏ đi theo quá trình phát lại"
 
 #: ../plugins/gtkui/interface.c:418 ../plugins/gtkui/deadbeef.glade.h:127
-#, fuzzy
 msgid "Stop after current"
-msgstr "Dừng sau khi kết thúc bài nhạc"
+msgstr "Dừng sau khi kết thúc bài hiện tại"
 
 #: ../plugins/gtkui/interface.c:430 ../plugins/gtkui/deadbeef.glade.h:67
 msgid "Jump to current track"
-msgstr ""
+msgstr "Nhảy đến bài hiện tại"
 
 #: ../plugins/gtkui/interface.c:437 ../plugins/gtkui/interface.c:444
 #: ../plugins/gtkui/deadbeef.glade.h:159
 msgid "_Help"
-msgstr "_Trợ giúp"
+msgstr "T_rợ giúp"
 
 #: ../plugins/gtkui/interface.c:452 ../plugins/gtkui/deadbeef.glade.h:152
-#, fuzzy
 msgid "_ChangeLog"
-msgstr "_ChangeLog"
+msgstr "_Nhật ký thay đổi"
 
 #: ../plugins/gtkui/interface.c:461 ../plugins/gtkui/deadbeef.glade.h:158
 msgid "_GPLv2"
-msgstr ""
+msgstr "_GPLv2"
 
 #: ../plugins/gtkui/interface.c:465 ../plugins/gtkui/deadbeef.glade.h:160
 msgid "_LGPLv2.1"
-msgstr ""
+msgstr "_LGPLv2.1"
 
 #: ../plugins/gtkui/interface.c:474 ../plugins/gtkui/deadbeef.glade.h:149
 msgid "_About"
-msgstr "_Thông tin"
+msgstr "Thôn_g tin"
 
 #: ../plugins/gtkui/interface.c:482 ../plugins/gtkui/deadbeef.glade.h:166
 msgid "_Translators"
-msgstr ""
+msgstr "_Dịch giả"
 
 #: ../plugins/gtkui/interface.c:898 ../plugins/gtkui/deadbeef.glade.h:112
 msgid "Search"
@@ -494,7 +467,7 @@ msgstr "Sau"
 
 #: ../plugins/gtkui/interface.c:1013 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Play Random"
-msgstr "Phát Ngẫu nhiên"
+msgstr "Phát Ngẫu Nhiên"
 
 #: ../plugins/gtkui/interface.c:1022 ../plugins/gtkui/deadbeef.glade.h:5
 msgid "About"
@@ -506,23 +479,22 @@ msgstr "Thoát"
 
 #: ../plugins/gtkui/interface.c:1225 ../plugins/gtkui/deadbeef.glade.h:139
 msgid "Track Properties"
-msgstr "Thông tin Bài nhạc"
+msgstr "Thông Tin Bài Nhạc"
 
 #: ../plugins/gtkui/interface.c:1270 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Settings"
-msgstr ""
+msgstr "Thiết lập"
 
 #: ../plugins/gtkui/interface.c:1296 ../plugins/gtkui/deadbeef.glade.h:150
 msgid "_Apply"
-msgstr "_Áp dụng"
+msgstr "Á_p dụng"
 
 #: ../plugins/gtkui/interface.c:1317 ../plugins/gtkui/interface.c:1363
 #: ../plugins/gtkui/deadbeef.glade.h:154
 msgid "_Close"
-msgstr "_Đóng"
+msgstr "Đó_ng"
 
 #: ../plugins/gtkui/interface.c:1321 ../plugins/gtkui/deadbeef.glade.h:76
-#, fuzzy
 msgid "Metadata"
 msgstr "Metadata"
 
@@ -541,7 +513,7 @@ msgstr "Loại:"
 
 #: ../plugins/gtkui/interface.c:1510
 msgid "Item Index"
-msgstr ""
+msgstr "Item Index"
 
 #. create default set of columns
 #: ../plugins/gtkui/interface.c:1511 ../plugins/gtkui/mainplaylist.c:315
@@ -562,14 +534,12 @@ msgid "Duration"
 msgstr "Thời lượng"
 
 #: ../plugins/gtkui/interface.c:1518 ../translation/extra.c:71
-#, fuzzy
 msgid "Track Number"
-msgstr "Bài Số"
+msgstr "Thứ Tự Bài Hát"
 
 #: ../plugins/gtkui/interface.c:1519 ../translation/extra.c:68
-#, fuzzy
 msgid "Band / Album Artist"
-msgstr "Nhóm / Nghệ sĩ Chính"
+msgstr "Nhóm / Nghệ sĩ"
 
 #: ../plugins/gtkui/interface.c:1526 ../plugins/gtkui/interface.c:3150
 #: ../plugins/gtkui/deadbeef.glade.h:44
@@ -598,30 +568,27 @@ msgstr "_Hủy"
 #: ../plugins/gtkui/interface.c:3086 ../plugins/gtkui/interface.c:3212
 #: ../plugins/gtkui/deadbeef.glade.h:162
 msgid "_OK"
-msgstr "_Đồng ý"
+msgstr "Đồng _ý"
 
 #: ../plugins/gtkui/interface.c:1825 ../plugins/gtkui/deadbeef.glade.h:85
-#, fuzzy
 msgid "Output plugin:"
-msgstr "Output plugin:"
+msgstr "Plugin đầu ra:"
 
 #: ../plugins/gtkui/interface.c:1838 ../plugins/gtkui/deadbeef.glade.h:84
-#, fuzzy
 msgid "Output device:"
-msgstr "Output device:"
+msgstr "Thiết bị đầu ra:"
 
 #: ../plugins/gtkui/interface.c:1847 ../plugins/gtkui/deadbeef.glade.h:12
 msgid "Always convert 8 bit audio to 16 bit"
-msgstr ""
+msgstr "Luôn luôn chuyển đổi âm thanh 8 bit sang 16 bit"
 
 #: ../plugins/gtkui/interface.c:1851 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "Sound"
 msgstr "Âm thanh"
 
 #: ../plugins/gtkui/interface.c:1864 ../plugins/gtkui/deadbeef.glade.h:106
-#, fuzzy
 msgid "Replaygain mode:"
-msgstr "Replay-gain mode:"
+msgstr "Chế độ Replaygain:"
 
 #: ../plugins/gtkui/interface.c:1873
 msgid "Disable"
@@ -632,45 +599,42 @@ msgid "Track"
 msgstr "Bài"
 
 #: ../plugins/gtkui/interface.c:1877 ../plugins/gtkui/deadbeef.glade.h:107
-#, fuzzy
 msgid "Replaygain peak scale"
-msgstr "Replay-gain peak scale"
+msgstr "Tỉ lệ cao điểm Replaygain"
 
 #: ../plugins/gtkui/interface.c:1892 ../plugins/gtkui/interface.c:1926
 #: ../plugins/gtkui/deadbeef.glade.h:2
 msgid "-12 dB"
-msgstr ""
+msgstr "-12 dB"
 
 #: ../plugins/gtkui/interface.c:1902 ../plugins/gtkui/interface.c:1936
 #: ../plugins/gtkui/deadbeef.glade.h:1
 msgid "+12 dB"
-msgstr ""
+msgstr "+12 dB"
 
 #: ../plugins/gtkui/interface.c:1906 ../plugins/gtkui/deadbeef.glade.h:108
-#, fuzzy
 msgid "Replaygain preamp:"
-msgstr "Replay-gain mode:"
+msgstr "Khuếch đại trước của Replaygain:"
 
 #: ../plugins/gtkui/interface.c:1913 ../plugins/gtkui/deadbeef.glade.h:47
 msgid "Global preamp:"
-msgstr ""
+msgstr "Khuếch đại trước toàn cục:"
 
 #: ../plugins/gtkui/interface.c:1944 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
-msgstr ""
+msgstr "Thêm tập tin từ dòng lệnh (hay bộ quản lý tập tin) vào playlist này:"
 
 #: ../plugins/gtkui/interface.c:1953 ../plugins/gtkui/deadbeef.glade.h:109
 msgid "Resume previous session on startup"
-msgstr ""
+msgstr "Phục hội lại phiên làm việc cuối khi vừa khởi động"
 
 #: ../plugins/gtkui/interface.c:1957 ../plugins/gtkui/deadbeef.glade.h:37
 msgid "Don't add from archives when adding folders"
-msgstr ""
+msgstr "Không thêm từ các tập tin lưu trữ khi thêm thư mục"
 
 #: ../plugins/gtkui/interface.c:1961 ../plugins/gtkui/deadbeef.glade.h:91
-#, fuzzy
 msgid "Playback"
-msgstr "_Playback"
+msgstr "Phát lạ_i"
 
 #: ../plugins/gtkui/interface.c:1982 ../plugins/gtkui/interface.c:2514
 #: ../plugins/gtkui/deadbeef.glade.h:22 ../plugins/converter/interface.c:649
@@ -678,17 +642,16 @@ msgid "Configure"
 msgstr "Cấu hình"
 
 #: ../plugins/gtkui/interface.c:2017 ../plugins/gtkui/deadbeef.glade.h:29
-#, fuzzy
 msgid "DSP Chain Preset"
-msgstr "Save Preset"
+msgstr "DSP Chain Preset"
 
 #: ../plugins/gtkui/interface.c:2029 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "_Load"
-msgstr ""
+msgstr "_Nạp"
 
 #: ../plugins/gtkui/interface.c:2033 ../plugins/gtkui/deadbeef.glade.h:28
 msgid "DSP"
-msgstr ""
+msgstr "DSP"
 
 #: ../plugins/gtkui/interface.c:2042 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Close minimizes to tray"
@@ -700,11 +663,11 @@ msgstr "Nút giữa của chuột đóng playlist"
 
 #: ../plugins/gtkui/interface.c:2050 ../plugins/gtkui/deadbeef.glade.h:51
 msgid "Hide system tray icon"
-msgstr ""
+msgstr "Ẩn biểu tượng khay hệ thống"
 
 #: ../plugins/gtkui/interface.c:2054 ../plugins/gtkui/deadbeef.glade.h:143
 msgid "Use bold font for currently playing track"
-msgstr ""
+msgstr "Sử dụng phông đậm cho bài đang được phát"
 
 #: ../plugins/gtkui/interface.c:2058 ../plugins/gtkui/deadbeef.glade.h:50
 msgid "Hide \"Delete from disk\" context menu item"
