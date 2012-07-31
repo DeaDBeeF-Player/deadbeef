@@ -55,6 +55,8 @@ static snd_pcm_uframes_t req_period_size;
 static int conf_alsa_resample = 1;
 static char conf_alsa_soundcard[100] = "default";
 
+static int alsa_formatchanged = 0;
+
 static int
 palsa_callback (char *stream, int len);
 
@@ -459,24 +461,29 @@ palsa_setformat (ddb_waveformat_t *fmt) {
         UNLOCK;
         return -1;
     }
-    UNLOCK;
     trace ("new format %dbit %s %dch %dHz channelmask=%X\n", plugin.fmt.bps, plugin.fmt.is_float ? "float" : "int", plugin.fmt.channels, plugin.fmt.samplerate, plugin.fmt.channelmask);
 
+    int res = -1;
     switch (s) {
     case OUTPUT_STATE_STOPPED:
-        return palsa_stop ();
+        res = palsa_stop ();
+        break;
     case OUTPUT_STATE_PLAYING:
-        return palsa_play ();
+        res = palsa_play ();
+        break;
     case OUTPUT_STATE_PAUSED:
         if (0 != palsa_play ()) {
-            return -1;
+            res = -1;
         }
         if (0 != palsa_pause ()) {
-            return -1;
+            res = -1;
         }
         break;
     }
-    return 0;
+    trace ("alsa_formatchanged=1\n");
+    alsa_formatchanged = 1;
+    UNLOCK;
+    return res;
 }
 
 int
@@ -613,6 +620,12 @@ palsa_thread (void *context) {
             continue;
         }
         LOCK;
+        if (alsa_formatchanged) {
+            trace ("handled alsa_formatchanged [1]\n");
+            alsa_formatchanged = 0;
+            UNLOCK;
+            continue;
+        }
         char buf[period_size * (plugin.fmt.bps>>3) * plugin.fmt.channels];
         int bytes_to_write = 0;
         
@@ -640,6 +653,12 @@ palsa_thread (void *context) {
                 UNLOCK;
                 err = snd_pcm_writei (audio, buf, snd_pcm_bytes_to_frames(audio, bytes_to_write));
                 LOCK;
+                if (alsa_formatchanged) {
+                    trace ("handled alsa_formatchanged [2]\n");
+                    alsa_formatchanged = 0;
+                    UNLOCK;
+                    break;
+                }
                 if (alsa_terminate) {
                     break;
                 }
@@ -649,6 +668,11 @@ palsa_thread (void *context) {
                 usleep (10000);
                 bytes_to_write = 0;
                 LOCK;
+                if (alsa_formatchanged) {
+                    trace ("handled alsa_formatchanged [3]\n");
+                    alsa_formatchanged = 0;
+                    break;
+                }
                 continue;
             }
 
