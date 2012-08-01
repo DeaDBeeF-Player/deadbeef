@@ -30,7 +30,7 @@
 #include "aac_parser.h"
 
 #ifdef USE_MP4FF
-#include "mp4ff/mp4ff.h"
+#include "mp4ff.h"
 #else
 #warning linking mp4v2 to faad2 is illegal
 #include <mp4v2/mp4v2.h>
