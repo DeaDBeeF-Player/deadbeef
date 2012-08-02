@@ -200,6 +200,7 @@ if test "x$enable_staticlink" != "xno" ; then
     HAVE_FFMPEG=yes
 else
     PKG_CHECK_MODULES(FFMPEG_DEPS, libavcodec >= 51.0.0 libavutil libavformat >= 52.0.0, HAVE_FFMPEG=yes, HAVE_FFMPEG=no)
+dnl    PKG_CHECK_MODULES(FFMPEG_DEPS, libavcodec libavutil libavformat < 54.6.0, HAVE_FFMPEG=yes, HAVE_FFMPEG=no)
 fi
 fi
 
