@@ -58,6 +58,7 @@ struct stream_tTAG {
     DB_FILE *f;
     int bigendian;
     int eof;
+    int64_t junk_offset;
 };
 
 void stream_read(stream_t *stream, size_t size, void *buf)
@@ -133,9 +134,9 @@ uint8_t stream_read_uint8(stream_t *stream)
 }
 
 
-void stream_skip(stream_t *stream, size_t skip)
+void stream_skip(stream_t *stream, int64_t skip)
 {
-    if (deadbeef->fseek(stream->f, (long)skip, SEEK_CUR) == 0) return;
+    if (deadbeef->fseek(stream->f, skip, SEEK_CUR) == 0) return;
     if (errno == ESPIPE)
     {
         char *buffer = malloc(skip);
@@ -149,18 +150,21 @@ int stream_eof(stream_t *stream)
     return stream->eof;
 }
 
-long stream_tell(stream_t *stream)
+int64_t stream_tell(stream_t *stream)
 {
-    return deadbeef->ftell(stream->f); /* returns -1 on error */
+    int64_t res = deadbeef->ftell(stream->f); /* returns -1 on error */
+    if (res < 0) {
+        return res;
+    }
+    return res - stream->junk_offset;
 }
 
-int stream_setpos(stream_t *stream, long pos)
+int64_t stream_setpos(stream_t *stream, int64_t pos)
 {
-    return deadbeef->fseek(stream->f, pos, SEEK_SET);
+    return deadbeef->fseek(stream->f, pos + stream->junk_offset, SEEK_SET);
 }
 
-stream_t *stream_create_file(DB_FILE *file,
-                             int bigendian)
+stream_t *stream_create_file(DB_FILE *file, int bigendian, int64_t junk_offset)
 {
     stream_t *new_stream;
 
@@ -168,6 +172,7 @@ stream_t *stream_create_file(DB_FILE *file,
     new_stream->f = file;
     new_stream->bigendian = bigendian;
     new_stream->eof = 0;
+    new_stream->junk_offset = 0;//junk_offset;
 
     return new_stream;
 }

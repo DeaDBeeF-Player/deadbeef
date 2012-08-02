@@ -68,6 +68,7 @@ typedef struct {
     int startsample;
     int endsample;
     int current_frame;
+    int64_t dataoffs;
 } alacplug_info_t;
 
 // allocate codec control structure
@@ -155,13 +156,14 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
 
-    info->stream = stream_create_file (info->file, 1);
+    info->stream = stream_create_file (info->file, 1, info->junk);
 
     if (!qtmovie_read(info->stream, &info->demux_res)) {
         if (!info->demux_res.format_read || info->demux_res.format != MAKEFOURCC('a','l','a','c')) {
             return -1;
         }
     }
+    info->dataoffs = deadbeef->ftell (info->file);
 
     info->alac = create_alac(info->demux_res.sample_size, info->demux_res.num_channels);
     alac_set_info(info->alac, info->demux_res.codecdata);
@@ -293,37 +295,39 @@ alacplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
 
 static int
 alacplug_seek_sample (DB_fileinfo_t *_info, int sample) {
-    return 0;
-#if 0
     alacplug_info_t *info = (alacplug_info_t *)_info;
 
-    sample += info->startsample;
-    if (info->mp4file) {
-        int scale = _info->fmt.samplerate / mp4ff_time_scale (info->mp4file, info->mp4track) * info->mp4framesize;
-        info->mp4sample = sample / scale;
-        info->skipsamples = sample - info->mp4sample * scale;
-    }
-    else {
-        int skip = deadbeef->junk_get_leading_size (info->file);
-        if (skip >= 0) {
-            deadbeef->fseek (info->file, skip, SEEK_SET);
-        }
-        else {
-            deadbeef->fseek (info->file, 0, SEEK_SET);
-        }
+    int totalsamples = 0;
+    int64_t seekpos = 0;
+    int i;
+    for (i = 0; i < info->demux_res.num_sample_byte_sizes; i++)
+    {
+        unsigned int thissample_duration = 0;
+        unsigned int thissample_bytesize = 0;
 
-        int res = seek_raw_aac (info, sample);
-        if (res < 0) {
-            return -1;
+        get_sample_info(&info->demux_res, i, &thissample_duration,
+                &thissample_bytesize);
+
+        if (totalsamples + thissample_duration > sample) {
+            info->skipsamples = sample - totalsamples;
+            break;
         }
-        info->skipsamples = res;
+        totalsamples += thissample_duration;
+        seekpos += info->demux_res.sample_byte_size[i];
     }
-    info->remaining = 0;
+
+    if (i == info->demux_res.num_sample_byte_sizes) {
+        return -1;
+    }
+
+
+    deadbeef->fseek(info->file, info->dataoffs + seekpos, SEEK_SET);
+
+    info->current_frame = i;
     info->out_remaining = 0;
     info->currentsample = sample;
     _info->readpos = (float)(info->currentsample - info->startsample) / _info->fmt.samplerate;
     return 0;
-#endif
 }
 
 static int
@@ -459,7 +463,7 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     float duration = -1;
 
-    stream = stream_create_file (fp, 1);
+    stream = stream_create_file (fp, 1, info.junk);
     if (!stream) {
         trace ("alac: stream_create_file failed\n");
         goto error;

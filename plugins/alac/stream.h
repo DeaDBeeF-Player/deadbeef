@@ -24,15 +24,15 @@ uint16_t stream_read_uint16(stream_t *stream);
 int8_t stream_read_int8(stream_t *stream);
 uint8_t stream_read_uint8(stream_t *stream);
 
-void stream_skip(stream_t *stream, size_t skip);
+void stream_skip(stream_t *stream, int64_t skip);
 
 int stream_eof(stream_t *stream);
 
-long stream_tell(stream_t *stream);
-int stream_setpos(stream_t *stream, long pos);
+int64_t stream_tell(stream_t *stream);
+int64_t stream_setpos(stream_t *stream, int64_t pos);
 
 stream_t *stream_create_file(DB_FILE *file,
-                             int bigendian);
+                             int bigendian, int64_t junk_offset);
 void stream_destroy(stream_t *stream);
 
 #endif /* STREAM_H */
