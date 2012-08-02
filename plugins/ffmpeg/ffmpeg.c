@@ -51,8 +51,13 @@
 
 #endif
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
+#error FFMPEG-0.11 and higher is unsupported. please downgrade to an older FFMPEG version, or configure deadbeef with --disable-ffmpeg flag
+//#define av_get_bits_per_sample_format av_get_bits_per_sample_fmt
+#else
+
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -78,7 +83,9 @@ enum {
     FT_UNKNOWN = 5
 };
 
+#if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(54, 6, 0)
 #define FF_PROTOCOL_NAME "deadbeef"
+#endif
 
 typedef struct {
     DB_fileinfo_t info;
@@ -123,6 +130,9 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     deadbeef->pl_lock ();
     {
         const char *fname = deadbeef->pl_find_meta (it, ":URI");
+#if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
+        uri = strdupa (fname);
+#else
         int l = strlen (fname);
         uri = alloca (l + sizeof (FF_PROTOCOL_NAME) + 1);
 
@@ -131,6 +141,7 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         memcpy (uri + sizeof (FF_PROTOCOL_NAME)-1, ":", 1);
         memcpy (uri + sizeof (FF_PROTOCOL_NAME), fname, l);
         uri[sizeof (FF_PROTOCOL_NAME) + l] = 0;
+#endif
     }
     deadbeef->pl_unlock ();
     trace ("ffmpeg: uri: %s\n", uri);
@@ -139,7 +150,12 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     trace ("\033[0;31mffmpeg av_open_input_file\033[37;0m\n");
     current_track = it;
     current_info = _info;
+#if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
+    info->fctx = avformat_alloc_context ();
+    if ((ret = avformat_open_input(&info->fctx, uri, NULL, NULL)) < 0) {
+#else
     if ((ret = av_open_input_file(&info->fctx, uri, NULL, 0, NULL)) < 0) {
+#endif
         current_track = NULL;
         trace ("\033[0;31minfo->fctx is %p, ret %d/%s\033[0;31m\n", info->fctx, ret, strerror(-ret));
         return -1;
@@ -459,8 +475,7 @@ ffmpeg_read_metadata_internal (DB_playItem_t *it, AVFormatContext *fctx) {
     snprintf (tmp, sizeof (tmp), "%d", fctx->track);
     deadbeef->pl_add_meta (it, "track", tmp);
 #else
-// read using other means?
-// av_metadata_get?
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(54,23,0)
     AVMetadata *md = fctx->metadata;
 
     for (int m = 0; map[m]; m += 2) {
@@ -472,7 +487,23 @@ ffmpeg_read_metadata_internal (DB_playItem_t *it, AVFormatContext *fctx) {
             }
         } while (tag);
     }
-    deadbeef->pl_add_meta (it, "title", NULL);
+#else
+    // ffmpeg-0.11 new metadata format
+    AVDictionary *md = fctx->metadata;
+    AVDictionaryEntry *t = NULL;
+    while (t = av_dict_get (md, "", t, AV_DICT_IGNORE_SUFFIX)) {
+        int m;
+        for (m = 0; map[m]; m += 2) {
+            if (!strcasecmp (t->key, map[m])) {
+                deadbeef->pl_append_meta (it, map[m+1], t->value);
+                break;
+            }
+        }
+        if (!map[m]) {
+            deadbeef->pl_append_meta (it, t->key, t->value);
+        }
+    }
+#endif
 #endif
     return 0;
 }
@@ -491,26 +522,50 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     AVFormatContext *fctx = NULL;
     int ret;
     int l = strlen (fname);
-    char *uri = alloca (l + sizeof (FF_PROTOCOL_NAME) + 1);
+    char *uri = NULL;
     int i;
 
     // construct uri
+#if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
+    uri = strdupa (fname);
+#else
+    uri = alloca (l + sizeof (FF_PROTOCOL_NAME) + 1);
     memcpy (uri, FF_PROTOCOL_NAME, sizeof (FF_PROTOCOL_NAME)-1);
     memcpy (uri + sizeof (FF_PROTOCOL_NAME)-1, ":", 1);
     memcpy (uri + sizeof (FF_PROTOCOL_NAME), fname, l);
     uri[sizeof (FF_PROTOCOL_NAME) + l] = 0;
+#endif
     trace ("ffmpeg: uri: %s\n", uri);
 
     // open file
+#if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
+    fctx = avformat_alloc_context ();
+    if ((ret = avformat_open_input(&fctx, uri, NULL, NULL)) < 0) {
+#else
     if ((ret = av_open_input_file(&fctx, uri, NULL, 0, NULL)) < 0) {
+#endif
         trace ("fctx is %p, ret %d/%s", fctx, ret, strerror(-ret));
         return NULL;
     }
 
+    trace ("fctx is %p, ret %d/%s\n", fctx, ret, strerror(-ret));
     fctx->max_analyze_duration = FFMPEG_MAX_ANALYZE_DURATION;
-    av_find_stream_info(fctx);
+#if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
+    int nb_streams = fctx->nb_streams;
+    ret = avformat_find_stream_info(fctx, NULL);
+#else
+    ret = av_find_stream_info(fctx);
+    int nb_streams = fctx->nb_streams;
+#endif
+    if (ret < 0) {
+        trace ("av_find_stream_info ret: %d/%s\n", ret, strerror(-ret));
+    }
+    trace ("nb_streams=%x\n", nb_streams);
     for (i = 0; i < fctx->nb_streams; i++)
     {
+        if (!fctx->streams[i]) {
+            continue;
+        }
         ctx = fctx->streams[i]->codec;
         if (ctx->codec_type ==
 #if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(52, 64, 0)
@@ -607,15 +662,20 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     return after;
 }
 
-// vfs wrapper for ffmpeg
+#if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(54, 6, 0)
+// vfs wrapper for ffmpeg, can't only be done with ffmpeg<0.11
 static int
 ffmpeg_vfs_open(URLContext *h, const char *filename, int flags)
 {
     DB_FILE *f;
     av_strstart(filename, FF_PROTOCOL_NAME ":", &filename);
+#if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(54, 6, 0)
     if (flags & URL_WRONLY) {
         return -ENOENT;
-    } else {
+    }
+    else
+#endif
+    {
         f = deadbeef->fopen (filename);
     }
 
@@ -681,6 +741,7 @@ static URLProtocol vfswrapper = {
     .url_seek = ffmpeg_vfs_seek,
     .url_close = ffmpeg_vfs_close,
 };
+#endif
 
 static void
 ffmpeg_init_exts (void) {
@@ -729,9 +790,15 @@ ffmpeg_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 static int
 ffmpeg_start (void) {
     ffmpeg_init_exts ();
-    avcodec_init ();
+#if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(54, 6, 0)
+    avcodec_register_all ();
+#endif
     av_register_all ();
-#if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(52, 69, 0)
+#if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
+#warning FFMPEG-0.11 is no longer exposing register_protocol API, which means that it cant work with MMS and HTTP plugins. if you need this functionality, please downgrade FFMPEG, and rebuild the FFMPEG plugin
+//    ffurl_register_protocol(&vfswrapper, sizeof(vfswrapper));
+    avformat_network_init ();
+#elif LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(52, 69, 0)
     av_register_protocol2 (&vfswrapper, sizeof(vfswrapper));
 #else
     av_register_protocol (&vfswrapper);
@@ -760,7 +827,10 @@ ffmpeg_read_metadata (DB_playItem_t *it) {
 
     deadbeef->pl_lock ();
     {
-        char *fname = deadbeef->pl_find_meta (it, ":URI");
+        const char *fname = deadbeef->pl_find_meta (it, ":URI");
+#if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
+        uri = strdupa (fname);
+#else
         int l = strlen (fname);
         uri = alloca (l + sizeof (FF_PROTOCOL_NAME) + 1);
 
@@ -769,12 +839,18 @@ ffmpeg_read_metadata (DB_playItem_t *it) {
         memcpy (uri + sizeof (FF_PROTOCOL_NAME)-1, ":", 1);
         memcpy (uri + sizeof (FF_PROTOCOL_NAME), fname, l);
         uri[sizeof (FF_PROTOCOL_NAME) + l] = 0;
+#endif
     }
     deadbeef->pl_unlock ();
     trace ("ffmpeg: uri: %s\n", uri);
 
     // open file
+#if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
+    fctx = avformat_alloc_context ();
+    if ((ret = avformat_open_input(&fctx, uri, NULL, NULL)) < 0) {
+#else
     if ((ret = av_open_input_file(&fctx, uri, NULL, 0, NULL)) < 0) {
+#endif
         trace ("fctx is %p, ret %d/%s", fctx, ret, strerror(-ret));
         return -1;
     }
@@ -867,3 +943,4 @@ ffmpeg_load (DB_functions_t *api) {
     return DB_PLUGIN (&plugin);
 }
 
+#endif
