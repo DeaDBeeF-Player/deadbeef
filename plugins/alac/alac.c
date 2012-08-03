@@ -150,10 +150,16 @@ void alac_set_info(alac_file *alac, char *inputbuffer)
   alac->setinfo_8a_rate = *(uint32_t*)ptr;
   if (!host_bigendian)
       _Swap32(alac->setinfo_8a_rate);
+
   ptr += 4;
 
   allocate_buffers(alac);
 
+}
+
+int
+alac_get_samplerate(alac_file *alac) {
+    return alac->setinfo_8a_rate;
 }
 
 /* stream reading */
@@ -1154,11 +1160,34 @@ void decode_frame(alac_file *alac,
 alac_file *create_alac(int samplesize, int numchannels)
 {
     alac_file *newfile = malloc(sizeof(alac_file));
+    memset (newfile, 0, sizeof (alac_file));
 
     newfile->samplesize = samplesize;
     newfile->numchannels = numchannels;
     newfile->bytespersample = (samplesize / 8) * numchannels;
 
     return newfile;
+}
+
+void alac_file_free (alac_file *alac) {
+    if (alac->predicterror_buffer_a) {
+        free (alac->predicterror_buffer_a);
+    }
+    if (alac->predicterror_buffer_b) {
+        free (alac->predicterror_buffer_b);
+    }
+    if (alac->outputsamples_buffer_a) {
+        free (alac->outputsamples_buffer_a);
+    }
+    if (alac->outputsamples_buffer_b) {
+        free (alac->outputsamples_buffer_b);
+    }
+    if (alac->uncompressed_bytes_buffer_a) {
+        free (alac->uncompressed_bytes_buffer_a);
+    }
+    if (alac->uncompressed_bytes_buffer_b) {
+        free (alac->uncompressed_bytes_buffer_b);
+    }
+    free (alac);
 }
 

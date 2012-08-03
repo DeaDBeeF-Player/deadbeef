@@ -113,7 +113,7 @@ static int read_chunk_stsd(qtmovie_t *qtmovie, size_t chunk_len)
 {
     unsigned int i;
     uint32_t numentries;
-    size_t size_remaining = chunk_len - 8; /* FIXME WRONG */
+    size_t size_remaining = chunk_len - 8;
 
     /* version */
     stream_read_uint8(qtmovie->stream);
@@ -127,99 +127,70 @@ static int read_chunk_stsd(qtmovie_t *qtmovie, size_t chunk_len)
     numentries = stream_read_uint32(qtmovie->stream);
     size_remaining -= 4;
 
-    if (numentries != 1)
-    {
-        trace ("only expecting one entry in sample description atom!\n");
-        return 0;
-    }
+//    if (numentries != 1)
+//    {
+//        trace ("only expecting one entry in sample description atom!\n");
+//        return 0;
+//    }
 
     for (i = 0; i < numentries; i++)
     {
         uint32_t entry_size;
-        uint16_t version;
 
         uint32_t entry_remaining;
 
         entry_size = stream_read_uint32(qtmovie->stream);
         qtmovie->res->format = stream_read_uint32(qtmovie->stream);
+        trace ("format: %c%c%c%c\n",SPLITFOURCC(qtmovie->res->format));
         entry_remaining = entry_size;
         entry_remaining -= 8;
 
+
         /* sound info: */
 
-        stream_skip(qtmovie->stream, 6); /* reserved */
-        entry_remaining -= 6;
-
-        version = stream_read_uint16(qtmovie->stream);
-        if (version != 1)
-            trace ("unknown version??\n");
-        entry_remaining -= 2;
-
-        /* revision level */
-        stream_read_uint16(qtmovie->stream);
-        /* vendor */
-        stream_read_uint32(qtmovie->stream);
-        entry_remaining -= 6;
-
-        /* EH?? spec doesn't say theres an extra 16 bits here.. but there is! */
-        stream_read_uint16(qtmovie->stream);
-        entry_remaining -= 2;
+        /* reserved + data reference index + sound version + reserved */
+        stream_skip(qtmovie->stream, 6 + 2 + 2 + 6);
+        entry_remaining -= 6 + 2 + 2 + 6;
 
         qtmovie->res->num_channels = stream_read_uint16(qtmovie->stream);
-
         qtmovie->res->sample_size = stream_read_uint16(qtmovie->stream);
         entry_remaining -= 4;
 
-        /* compression id */
-        stream_read_uint16(qtmovie->stream);
         /* packet size */
-        stream_read_uint16(qtmovie->stream);
-        entry_remaining -= 4;
-
-        /* sample rate - 32bit fixed point = 16bit?? */
-        qtmovie->res->sample_rate = stream_read_uint16(qtmovie->stream);
-        entry_remaining -= 2;
-
-        /* skip 2 */
         stream_skip(qtmovie->stream, 2);
-        entry_remaining -= 2;
+        qtmovie->res->sample_rate = stream_read_uint32(qtmovie->stream);
+        /* reserved size */
+        stream_skip(qtmovie->stream, 2);
+        entry_remaining -= 8;
 
         /* remaining is codec data */
-
-#if 0
-        qtmovie->res->codecdata_len = stream_read_uint32(qtmovie->stream);
-        if (qtmovie->res->codecdata_len != entry_remaining)
-            trace ("perhaps not? %i vs %i\n",
-                    qtmovie->res->codecdata_len, entry_remaining);
-        entry_remaining -= 4;
-        stream_read_uint32(qtmovie->stream); /* 'alac' */
-        entry_remaining -= 4;
-
-        qtmovie->res->codecdata = malloc(qtmovie->res->codecdata_len - 8);
-
-        stream_read(qtmovie->stream,
-                entry_remaining,
-                qtmovie->res->codecdata);
-        entry_remaining = 0;
-
-#else
         /* 12 = audio format atom, 8 = padding */
         qtmovie->res->codecdata_len = entry_remaining + 12 + 8;
-        qtmovie->res->codecdata = malloc(qtmovie->res->codecdata_len);
+        if (qtmovie->res->codecdata_len > 64)
+        {
+            trace ("codecdata too large (%d) in stsd\n", 
+                    (int)qtmovie->res->codecdata_len);
+            return 0;
+        }
+
         memset(qtmovie->res->codecdata, 0, qtmovie->res->codecdata_len);
         /* audio format atom */
+#if 0
+        /* The ALAC decoder skips these bytes, so there is no need to store them,
+           and this code isn't endian/alignment safe */
         ((unsigned int*)qtmovie->res->codecdata)[0] = 0x0c000000;
         ((unsigned int*)qtmovie->res->codecdata)[1] = MAKEFOURCC('a','m','r','f');
         ((unsigned int*)qtmovie->res->codecdata)[2] = MAKEFOURCC('c','a','l','a');
+#endif
 
         stream_read(qtmovie->stream,
                 entry_remaining,
                 ((char*)qtmovie->res->codecdata) + 12);
         entry_remaining -= entry_remaining;
 
-#endif
         if (entry_remaining)
             stream_skip(qtmovie->stream, entry_remaining);
+
 
         qtmovie->res->format_read = 1;
         if (qtmovie->res->format != MAKEFOURCC('a','l','a','c'))
