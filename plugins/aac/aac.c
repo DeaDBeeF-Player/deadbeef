@@ -1092,27 +1092,38 @@ int32_t mp4ff_meta_find_by_name(const mp4ff_t *f, const char *item, char **value
 void
 aac_load_tags (DB_playItem_t *it, mp4ff_t *mp4) {
     char *s = NULL;
+    int got_itunes_tags = 0;
     for (int i = 0; metainfo[i]; i += 2) {
         if (mp4ff_meta_find_by_name(mp4, metainfo[i], &s)) {
             deadbeef->pl_add_meta (it, metainfo[i+1], s);
+            got_itunes_tags = 1;
             free (s);
         }
     }
     if (mp4ff_meta_find_by_name(mp4, "replaygain_track_gain", &s)) {
         deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, atof (s));
+        got_itunes_tags = 1;
         free (s);
     }
     if (mp4ff_meta_find_by_name(mp4, "replaygain_track_peak", &s)) {
         deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, atof (s));
+        got_itunes_tags = 1;
         free (s);
     }
     if (mp4ff_meta_find_by_name(mp4, "replaygain_album_gain", &s)) {
         deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, atof (s));
+        got_itunes_tags = 1;
         free (s);
     }
     if (mp4ff_meta_find_by_name(mp4, "replaygain_album_peak", &s)) {
         deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, atof (s));
+        got_itunes_tags = 1;
         free (s);
+    }
+    if (got_itunes_tags) {
+        uint32_t f = deadbeef->pl_get_item_flags (it);
+        f |= DDB_TAG_ITUNES;
+        deadbeef->pl_set_item_flags (it, f);
     }
 }
 #endif
@@ -1158,12 +1169,10 @@ aac_read_metadata (DB_playItem_t *it) {
     if (mp4) {
         aac_load_tags (it, mp4);
         mp4ff_close (mp4);
-        deadbeef->pl_add_meta (it, "title", NULL);
     }
     /*int apeerr = */deadbeef->junk_apev2_read (it, fp);
     /*int v2err = */deadbeef->junk_id3v2_read (it, fp);
     /*int v1err = */deadbeef->junk_id3v1_read (it, fp);
-    deadbeef->pl_add_meta (it, "title", NULL);
     deadbeef->fclose (fp);
 #endif
     return 0;
@@ -1352,7 +1361,6 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         }
         deadbeef->pl_add_meta (it, "copyright", tags->copyright);
         deadbeef->pl_add_meta (it, "vendor", tags->encodedBy);
-        deadbeef->pl_add_meta (it, "title", NULL);
         MP4TagsFree (tags);
         MP4Close (mp4);
 #endif
@@ -1401,8 +1409,6 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             return cue;
         }
     }
-
-    deadbeef->pl_add_meta (it, "title", NULL);
 
     after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
