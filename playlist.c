@@ -2947,6 +2947,10 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                     c = snprintf (t, e-t, "Icy | ");
                     t += c;
                 }
+                if (it->_flags & DDB_TAG_ITUNES) {
+                    c = snprintf (t, e-t, "iTunes | ");
+                    t += c;
+                }
                 if (t != tags) {
                     *(t - 3) = 0;
                 }
