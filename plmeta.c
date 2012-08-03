@@ -295,6 +295,9 @@ pl_delete_all_meta (playItem_t *it) {
         }
         m = next;
     }
+    uint32_t f = pl_get_item_flags (it);
+    f &= ~DDB_TAG_MASK;
+    pl_set_item_flags (it, f);
     UNLOCK;
 }
 
