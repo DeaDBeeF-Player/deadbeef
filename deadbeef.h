@@ -116,8 +116,9 @@ enum {
     DDB_TAG_VORBISCOMMENTS = (1<<13),
     DDB_TAG_CUESHEET = (1<<14),
     DDB_TAG_ICY = (1<<15),
+    DDB_TAG_ITUNES = (1<<16),
 
-    DDB_TAG_MASK = 0x0000ff00
+    DDB_TAG_MASK = 0x000fff00
 };
 
 // playlist item
