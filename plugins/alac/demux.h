@@ -31,7 +31,7 @@ typedef struct
     uint32_t num_sample_byte_sizes;
 
     uint32_t codecdata_len;
-    void *codecdata;
+    char codecdata[64];
 
     uint32_t mdat_len;
 #if 0
