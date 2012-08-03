@@ -297,6 +297,8 @@ static int
 alacplug_seek_sample (DB_fileinfo_t *_info, int sample) {
     alacplug_info_t *info = (alacplug_info_t *)_info;
 
+    sample += info->startsample;
+
     int totalsamples = 0;
     int64_t seekpos = 0;
     int i;
