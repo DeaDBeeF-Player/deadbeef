@@ -32,6 +32,7 @@
 
 #include <stdlib.h>
 #include <errno.h>
+#include <string.h>
 #ifdef _WIN32
 	#include "stdint_win.h"
 #else
@@ -169,6 +170,7 @@ stream_t *stream_create_file(DB_FILE *file, int bigendian, int64_t junk_offset)
     stream_t *new_stream;
 
     new_stream = (stream_t*)malloc(sizeof(stream_t));
+    memset (new_stream, 0, sizeof (new_stream));
     new_stream->f = file;
     new_stream->bigendian = bigendian;
     new_stream->eof = 0;
