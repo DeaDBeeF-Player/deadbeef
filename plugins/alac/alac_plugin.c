@@ -203,6 +203,7 @@ alacplug_free (DB_fileinfo_t *_info) {
         if (info->stream) {
             stream_destroy (info->stream);
         }
+        qtmovie_free_demux (&info->demux_res);
         if (info->alac) {
             alac_file_free (info->alac);
         }
@@ -456,6 +457,7 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     mp4ff_t *mp4 = NULL;
     DB_playItem_t *it = NULL;
     demux_res_t demux_res;
+    memset (&demux_res, 0, sizeof (demux_res));
     stream_t *stream;
     DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
@@ -529,16 +531,21 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         mp4ff_close (mp4);
         mp4 = NULL;
     }
+    int samplerate = demux_res.sample_rate;
+    int bps = demux_res.sample_size;
+    int channels = demux_res.num_channels;
+
+    qtmovie_free_demux (&demux_res);
 
     if (duration > 0) {
         char s[100];
         snprintf (s, sizeof (s), "%lld", fsize);
         deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
-        snprintf (s, sizeof (s), "%d", demux_res.sample_size);
+        snprintf (s, sizeof (s), "%d", bps);
         deadbeef->pl_add_meta (it, ":BPS", s);
-        snprintf (s, sizeof (s), "%d", demux_res.num_channels);
+        snprintf (s, sizeof (s), "%d", channels);
         deadbeef->pl_add_meta (it, ":CHANNELS", s);
-        snprintf (s, sizeof (s), "%d", demux_res.sample_rate);
+        snprintf (s, sizeof (s), "%d", samplerate);
         deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
         int br = (int)roundf(fsize / duration * 8 / 1000);
         snprintf (s, sizeof (s), "%d", br);
@@ -549,7 +556,7 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         DB_playItem_t *cue = NULL;
 
         if (cuesheet) {
-            cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), totalsamples, demux_res.sample_rate);
+            cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), totalsamples, samplerate);
             if (cue) {
                 deadbeef->pl_item_unref (it);
                 deadbeef->pl_item_unref (cue);
@@ -559,7 +566,7 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         }
         deadbeef->pl_unlock ();
 
-        cue  = deadbeef->plt_insert_cue (plt, after, it, totalsamples, demux_res.sample_rate);
+        cue  = deadbeef->plt_insert_cue (plt, after, it, totalsamples, samplerate);
         if (cue) {
             deadbeef->pl_item_unref (it);
             deadbeef->pl_item_unref (cue);
@@ -577,6 +584,7 @@ error:
     if (mp4) {
         mp4ff_close (mp4);
     }
+    qtmovie_free_demux (&demux_res);
     return it;
 }
 

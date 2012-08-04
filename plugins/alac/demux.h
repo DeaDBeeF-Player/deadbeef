@@ -58,5 +58,7 @@ int qtmovie_read(stream_t *stream, demux_res_t *demux_res);
     (char)code
 #endif
 
+void qtmovie_free_demux (demux_res_t *demux_res);
+
 #endif /* DEMUX_H */
 

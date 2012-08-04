@@ -584,6 +584,7 @@ int qtmovie_read(stream_t *file, demux_res_t *demux_res)
     qtmovie_t *qtmovie;
 
     qtmovie = (qtmovie_t*)malloc(sizeof(qtmovie_t));
+    memset (qtmovie, 0, sizeof (qtmovie_t));
 
     /* construct the stream */
     qtmovie->stream = file;
@@ -601,12 +602,14 @@ int qtmovie_read(stream_t *file, demux_res_t *demux_res)
         chunk_len = stream_read_uint32(qtmovie->stream);
         if (stream_eof(qtmovie->stream))
         {
+            free (qtmovie);
             return 0;
         }
 
         if (chunk_len == 1)
         {
             trace ("need 64bit support\n");
+            free (qtmovie);
             return 0;
         }
         chunk_id = stream_read_uint32(qtmovie->stream);
@@ -617,11 +620,15 @@ int qtmovie_read(stream_t *file, demux_res_t *demux_res)
             read_chunk_ftyp(qtmovie, chunk_len);
             break;
         case MAKEFOURCC('m','o','o','v'):
-            if (read_chunk_moov(qtmovie, chunk_len) == 0)
+            if (read_chunk_moov(qtmovie, chunk_len) == 0) {
+                free (qtmovie);
                 return 0; /* failed to read moov, can't do anything */
+            }
             if (found_mdat)
             {
-                return set_saved_mdat(qtmovie);
+                int res = set_saved_mdat(qtmovie);
+                free (qtmovie);
+                return res;
             }
             found_moov = 1;
             break;
@@ -631,8 +638,10 @@ int qtmovie_read(stream_t *file, demux_res_t *demux_res)
              */
         case MAKEFOURCC('m','d','a','t'):
             read_chunk_mdat(qtmovie, chunk_len, !found_moov);
-            if (found_moov)
+            if (found_moov) {
+                free (qtmovie);
                 return 1;
+            }
             found_mdat = 1;
             break;
 
@@ -643,11 +652,22 @@ int qtmovie_read(stream_t *file, demux_res_t *demux_res)
         default:
             trace ("(top) unknown chunk id: %c%c%c%c\n",
                     SPLITFOURCC(chunk_id));
+            free (qtmovie);
             return 0;
         }
 
     }
+    free (qtmovie);
     return 0;
 }
 
 
+void qtmovie_free_demux (demux_res_t *demux_res) {
+    if (demux_res->time_to_sample) {
+        free (demux_res->time_to_sample);
+    }
+    if (demux_res->sample_byte_size) {
+        free (demux_res->sample_byte_size);
+    }
+    memset (demux_res, 0, sizeof (demux_res_t));
+}
