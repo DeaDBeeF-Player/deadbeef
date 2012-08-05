@@ -998,6 +998,10 @@ plt_process_cue_track (playlist_t *playlist, const char *fname, playItem_t **pre
 playItem_t *
 plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate) {
     LOCK;
+    if (buffersize >= 3 && buffer[0] == 0xef && buffer[1] == 0xbb && buffer[2] == 0xbf) {
+        buffer += 3;
+        buffersize -= 3;
+    }
     playItem_t *ins = after;
     trace ("plt_insert_cue_from_buffer numsamples=%d, samplerate=%d\n", numsamples, samplerate);
     char albumperformer[256] = "";
