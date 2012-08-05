@@ -857,11 +857,13 @@ init_column (col_info_t *inf, int id, const char *format) {
     }
 }
 
+int editcolumn_title_changed = 0;
 
 void
 on_add_column_activate                 (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
+    editcolumn_title_changed = 0;
     GtkWidget *dlg = create_editcolumndlg ();
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
     gtk_window_set_title (GTK_WINDOW (dlg), _("Add column"));
@@ -908,6 +910,7 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
     }
 
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "title")), title);
+    editcolumn_title_changed = 0;
     int idx = 10;
     if (inf->id == -1) {
         if (inf->format) {

@@ -2153,6 +2153,7 @@
 		  <property name="has_frame">True</property>
 		  <property name="invisible_char">●</property>
 		  <property name="activates_default">True</property>
+		  <signal name="changed" handler="on_editcolumn_title_changed" last_modification_time="Sun, 05 Aug 2012 10:23:04 GMT"/>
 		</widget>
 		<packing>
 		  <property name="padding">0</property>

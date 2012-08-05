@@ -801,6 +801,16 @@ on_helpwindow_key_press_event          (GtkWidget       *widget,
     return FALSE;
 }
 
+// defined in plcommon.c
+extern int editcolumn_title_changed;
+
+void
+on_editcolumn_title_changed            (GtkEditable     *editable,
+                                        gpointer         user_data)
+{
+    editcolumn_title_changed = 1;
+}
+
 void
 on_column_id_changed                   (GtkComboBox     *combobox,
                                         gpointer         user_data)
@@ -817,6 +827,14 @@ on_column_id_changed                   (GtkComboBox     *combobox,
         return;
     }
     gtk_widget_set_sensitive (fmt, act >= DB_COLUMN_ID_MAX ? TRUE : FALSE);
+
+    if (!editcolumn_title_changed) {
+        GtkWidget *title= lookup_widget (toplevel, "title");
+        if (title) {
+            gtk_entry_set_text (GTK_ENTRY (title), gtk_combo_box_get_active_text (combobox));
+            editcolumn_title_changed = 0;
+        }
+    }
 }
 
 
@@ -1272,4 +1290,5 @@ on_sort_by_custom_activate             (GtkMenuItem     *menuitem,
     gtk_widget_destroy (dlg);
     dlg = NULL;
 }
+
 

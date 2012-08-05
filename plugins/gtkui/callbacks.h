@@ -1163,3 +1163,7 @@ on_convert8to16_toggled                (GtkToggleButton *togglebutton,
 void
 on_reset_autostop_toggled              (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
+
+void
+on_editcolumn_title_changed            (GtkEditable     *editable,
+                                        gpointer         user_data);
