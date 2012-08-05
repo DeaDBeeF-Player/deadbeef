@@ -831,7 +831,7 @@ on_column_id_changed                   (GtkComboBox     *combobox,
     if (!editcolumn_title_changed) {
         GtkWidget *title= lookup_widget (toplevel, "title");
         if (title) {
-            gtk_entry_set_text (GTK_ENTRY (title), gtk_combo_box_get_active_text (combobox));
+            gtk_entry_set_text (GTK_ENTRY (title), gtk_combo_box_text_get_active_text (GTK_COMBO_BOX_TEXT (combobox)));
             editcolumn_title_changed = 0;
         }
     }
