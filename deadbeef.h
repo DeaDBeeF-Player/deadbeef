@@ -288,7 +288,6 @@ enum pl_column_t {
     DB_COLUMN_FILENUMBER = 0,
     DB_COLUMN_PLAYING = 1,
     DB_COLUMN_ALBUM_ART = 8,
-    DB_COLUMN_ID_MAX
 };
 
 // replaygain constants
