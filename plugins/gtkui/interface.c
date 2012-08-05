@@ -1622,6 +1622,9 @@ create_editcolumndlg (void)
   gtk_widget_show (label85);
   gtk_box_pack_start (GTK_BOX (hbox49), label85, FALSE, FALSE, 0);
 
+  g_signal_connect ((gpointer) title, "changed",
+                    G_CALLBACK (on_editcolumn_title_changed),
+                    NULL);
   g_signal_connect ((gpointer) id, "changed",
                     G_CALLBACK (on_column_id_changed),
                     NULL);
