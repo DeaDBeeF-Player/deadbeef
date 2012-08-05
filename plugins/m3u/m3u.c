@@ -50,15 +50,20 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
     }
     int sz = deadbeef->fgetlength (fp);
     trace ("loading m3u...\n");
-    uint8_t *buffer = malloc (sz);
-    if (!buffer) {
+    uint8_t *membuffer = malloc (sz);
+    if (!membuffer) {
         deadbeef->fclose (fp);
         trace ("failed to allocate %d bytes to read the file %s\n", sz, fname);
         return NULL;
     }
+    uint8_t *buffer = membuffer;
     deadbeef->fread (buffer, 1, sz, fp);
     deadbeef->fclose (fp);
 
+    if (sz >= 3 && buffer[0] == 0xef && buffer[1] == 0xbb && buffer[2] == 0xbf) {
+        buffer += 3;
+        sz -= 3;
+    }
     int line = 0;
     int read_extm3u = 0;
 
@@ -191,7 +196,7 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
             if (after) {
                 deadbeef->pl_item_ref (after);
             }
-            free (buffer);
+            free (membuffer);
             return after;
         }
         p = e;
@@ -203,7 +208,7 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
         deadbeef->pl_item_ref (after);
     }
     trace ("leave pl_insert_m3u\n");
-    free (buffer);
+    free (membuffer);
     return after;
 }
 
