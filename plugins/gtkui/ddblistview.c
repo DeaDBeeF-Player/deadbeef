@@ -352,6 +352,15 @@ ddb_listview_init(DdbListview *listview)
     gtk_widget_show (vbox);
     gtk_box_pack_start (GTK_BOX (hbox), vbox, TRUE, TRUE, 0);
 
+    GtkWidget *sepbox = gtk_vbox_new (FALSE, 0);
+    gtk_widget_show (sepbox);
+    gtk_container_set_border_width (GTK_CONTAINER (sepbox), 1);
+    gtk_box_pack_start (GTK_BOX (vbox), sepbox, FALSE, TRUE, 0);
+
+    GtkWidget *hsep  = gtk_hseparator_new ();
+    gtk_widget_show (hsep);
+    gtk_box_pack_start (GTK_BOX (sepbox), hsep, FALSE, TRUE, 0);
+
     listview->header = gtk_drawing_area_new ();
     gtk_widget_show (listview->header);
     gtk_box_pack_start (GTK_BOX (vbox), listview->header, FALSE, TRUE, 0);

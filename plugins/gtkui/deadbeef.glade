@@ -954,22 +954,12 @@
       </child>
 
       <child>
-	<widget class="GtkFrame" id="frame1">
-	  <property name="border_width">1</property>
+	<widget class="Custom" id="playlist">
 	  <property name="visible">True</property>
-	  <property name="label_xalign">0</property>
-	  <property name="label_yalign">0.5</property>
-	  <property name="shadow_type">GTK_SHADOW_ETCHED_IN</property>
-
-	  <child>
-	    <widget class="Custom" id="playlist">
-	      <property name="visible">True</property>
-	      <property name="creation_function">create_ddb_listview_widget</property>
-	      <property name="int1">0</property>
-	      <property name="int2">0</property>
-	      <property name="last_modification_time">Sat, 13 Feb 2010 20:26:03 GMT</property>
-	    </widget>
-	  </child>
+	  <property name="creation_function">create_ddb_listview_widget</property>
+	  <property name="int1">0</property>
+	  <property name="int2">0</property>
+	  <property name="last_modification_time">Sat, 13 Feb 2010 20:26:03 GMT</property>
 	</widget>
 	<packing>
 	  <property name="padding">0</property>
@@ -1033,10 +1023,9 @@
 
   <child>
     <widget class="GtkVBox" id="vbox4">
-      <property name="border_width">4</property>
       <property name="visible">True</property>
       <property name="homogeneous">False</property>
-      <property name="spacing">0</property>
+      <property name="spacing">4</property>
 
       <child>
 	<widget class="GtkEntry" id="searchentry">
@@ -1059,21 +1048,12 @@
       </child>
 
       <child>
-	<widget class="GtkFrame" id="frame2">
+	<widget class="Custom" id="searchlist">
 	  <property name="visible">True</property>
-	  <property name="label_xalign">0</property>
-	  <property name="label_yalign">0.5</property>
-	  <property name="shadow_type">GTK_SHADOW_ETCHED_IN</property>
-
-	  <child>
-	    <widget class="Custom" id="searchlist">
-	      <property name="visible">True</property>
-	      <property name="creation_function">create_ddb_listview_widget</property>
-	      <property name="int1">0</property>
-	      <property name="int2">0</property>
-	      <property name="last_modification_time">Sat, 13 Feb 2010 20:26:18 GMT</property>
-	    </widget>
-	  </child>
+	  <property name="creation_function">create_ddb_listview_widget</property>
+	  <property name="int1">0</property>
+	  <property name="int2">0</property>
+	  <property name="last_modification_time">Sat, 13 Feb 2010 20:26:18 GMT</property>
 	</widget>
 	<packing>
 	  <property name="padding">0</property>

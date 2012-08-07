@@ -127,7 +127,6 @@ create_mainwin (void)
   GtkWidget *seekbar;
   GtkWidget *volumebar;
   GtkWidget *tabstrip;
-  GtkWidget *frame1;
   GtkWidget *playlist;
   GtkWidget *plugins_bottom_vbox;
   GtkWidget *statusbar;
@@ -600,14 +599,9 @@ create_mainwin (void)
   gtk_widget_set_can_focus(tabstrip, FALSE);
   gtk_widget_set_can_default(tabstrip, FALSE);
 
-  frame1 = gtk_frame_new (NULL);
-  gtk_widget_show (frame1);
-  gtk_box_pack_start (GTK_BOX (vbox1), frame1, TRUE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (frame1), 1);
-
   playlist = create_ddb_listview_widget ("playlist", "", "", 0, 0);
   gtk_widget_show (playlist);
-  gtk_container_add (GTK_CONTAINER (frame1), playlist);
+  gtk_box_pack_start (GTK_BOX (vbox1), playlist, TRUE, TRUE, 0);
   gtk_widget_set_can_focus(playlist, FALSE);
   gtk_widget_set_can_default(playlist, FALSE);
 
@@ -891,7 +885,6 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, seekbar, "seekbar");
   GLADE_HOOKUP_OBJECT (mainwin, volumebar, "volumebar");
   GLADE_HOOKUP_OBJECT (mainwin, tabstrip, "tabstrip");
-  GLADE_HOOKUP_OBJECT (mainwin, frame1, "frame1");
   GLADE_HOOKUP_OBJECT (mainwin, playlist, "playlist");
   GLADE_HOOKUP_OBJECT (mainwin, plugins_bottom_vbox, "plugins_bottom_vbox");
   GLADE_HOOKUP_OBJECT (mainwin, statusbar, "statusbar");
@@ -907,7 +900,6 @@ create_searchwin (void)
   GtkWidget *searchwin;
   GtkWidget *vbox4;
   GtkWidget *searchentry;
-  GtkWidget *frame2;
   GtkWidget *searchlist;
 
   searchwin = gtk_window_new (GTK_WINDOW_TOPLEVEL);
@@ -916,10 +908,9 @@ create_searchwin (void)
   gtk_window_set_skip_taskbar_hint (GTK_WINDOW (searchwin), TRUE);
   gtk_window_set_skip_pager_hint (GTK_WINDOW (searchwin), TRUE);
 
-  vbox4 = gtk_vbox_new (FALSE, 0);
+  vbox4 = gtk_vbox_new (FALSE, 4);
   gtk_widget_show (vbox4);
   gtk_container_add (GTK_CONTAINER (searchwin), vbox4);
-  gtk_container_set_border_width (GTK_CONTAINER (vbox4), 4);
 
   searchentry = gtk_entry_new ();
   gtk_widget_show (searchentry);
@@ -927,13 +918,9 @@ create_searchwin (void)
   gtk_entry_set_invisible_char (GTK_ENTRY (searchentry), 8226);
   gtk_entry_set_activates_default (GTK_ENTRY (searchentry), TRUE);
 
-  frame2 = gtk_frame_new (NULL);
-  gtk_widget_show (frame2);
-  gtk_box_pack_start (GTK_BOX (vbox4), frame2, TRUE, TRUE, 0);
-
   searchlist = create_ddb_listview_widget ("searchlist", "", "", 0, 0);
   gtk_widget_show (searchlist);
-  gtk_container_add (GTK_CONTAINER (frame2), searchlist);
+  gtk_box_pack_start (GTK_BOX (vbox4), searchlist, TRUE, TRUE, 0);
   gtk_widget_set_can_focus(searchlist, FALSE);
   gtk_widget_set_can_default(searchlist, FALSE);
 
@@ -957,7 +944,6 @@ create_searchwin (void)
   GLADE_HOOKUP_OBJECT_NO_REF (searchwin, searchwin, "searchwin");
   GLADE_HOOKUP_OBJECT (searchwin, vbox4, "vbox4");
   GLADE_HOOKUP_OBJECT (searchwin, searchentry, "searchentry");
-  GLADE_HOOKUP_OBJECT (searchwin, frame2, "frame2");
   GLADE_HOOKUP_OBJECT (searchwin, searchlist, "searchlist");
 
   return searchwin;
