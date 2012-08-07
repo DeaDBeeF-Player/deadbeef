@@ -1191,6 +1191,7 @@ ddb_listview_list_setup_hscroll (DdbListview *ps) {
     }
     if (size == 0) {
         gtk_widget_hide (scroll);
+        gtk_widget_queue_draw (ps->list);
     }
     else {
         GtkAdjustment *adj = (GtkAdjustment*)gtk_adjustment_new (gtk_range_get_value (GTK_RANGE (scroll)), 0, size, 1, w, w);
