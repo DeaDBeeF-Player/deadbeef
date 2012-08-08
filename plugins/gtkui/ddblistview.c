@@ -2390,7 +2390,7 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
     ev_x = event->x;
     ev_y = event->y;
     ev_state = event->state;
-#if GTK_CHECK_VERSION(2,12,0) && !defined(ULTRA_COMPATIBLE)
+#if GTK_CHECK_VERSION(2,12,0)
     gdk_event_request_motions (event);
 #endif
 
@@ -2752,7 +2752,7 @@ ddb_listview_motion_notify_event        (GtkWidget       *widget,
 {
     int x = event->x;
     int y = event->y;
-#if GTK_CHECK_VERSION(2,12,0) && !defined(ULTRA_COMPATIBLE)
+#if GTK_CHECK_VERSION(2,12,0)
     gdk_event_request_motions (event);
 #endif
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
