@@ -1198,7 +1198,7 @@ on_tabstrip_motion_notify_event          (GtkWidget       *widget,
     ev_x = event->x;
     ev_y = event->y;
     ev_state = event->state;
-#if GTK_CHECK_VERSION(2,12,0) && !defined(ULTRA_COMPATIBLE)
+#if GTK_CHECK_VERSION(2,12,0)
     gdk_event_request_motions (event);
 #endif
     if ((ev_state & GDK_BUTTON1_MASK) && ts->prepare) {

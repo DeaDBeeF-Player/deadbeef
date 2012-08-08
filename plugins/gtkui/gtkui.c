@@ -236,7 +236,7 @@ update_songinfo (gpointer ctx) {
 void
 set_tray_tooltip (const char *text) {
     if (trayicon) {
-#if !GTK_CHECK_VERSION(2,16,0) || defined(ULTRA_COMPATIBLE)
+#if !GTK_CHECK_VERSION(2,16,0)
         gtk_status_icon_set_tooltip (trayicon, text);
 #else
         gtk_status_icon_set_tooltip_text (trayicon, text);
@@ -307,8 +307,7 @@ mainwin_toggle_visible (void) {
     }
 }
 
-#if !GTK_CHECK_VERSION(2,14,0) || defined(ULTRA_COMPATIBLE)
-
+#if !GTK_CHECK_VERSION(2,14,0)
 gboolean
 on_trayicon_activate (GtkWidget       *widget,
                                         gpointer         user_data)
@@ -570,9 +569,10 @@ gtkui_update_status_icon (gpointer unused) {
         g_object_set (trayicon, "visible", FALSE, NULL);
     }
 
-#if !GTK_CHECK_VERSION(2,14,0) || defined(ULTRA_COMPATIBLE)
+#if !GTK_CHECK_VERSION(2,14,0)
     g_signal_connect ((gpointer)trayicon, "activate", G_CALLBACK (on_trayicon_activate), NULL);
 #else
+    printf ("connecting button tray signals\n");
     g_signal_connect ((gpointer)trayicon, "scroll_event", G_CALLBACK (on_trayicon_scroll_event), NULL);
     g_signal_connect ((gpointer)trayicon, "button_press_event", G_CALLBACK (on_trayicon_button_press_event), NULL);
 #endif
