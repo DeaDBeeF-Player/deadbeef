@@ -65,10 +65,21 @@ endif
 
 # normal lib
 if HAVE_GTK2
+
 ddb_gui_GTK2_la_SOURCES = $(GTKUI_SOURCES)
 ddb_gui_GTK2_la_LDFLAGS = -module
+
+if STATICLINK
+GTK_ROOT_216=@top_srcdir@/$(LIB)/gtk-2.16.0
+
+ddb_gui_GTK2_la_LIBADD = $(LDADD) -L$(GTK_ROOT_216)/lib -lgtk-x11-2.0 -lgdk-x11-2.0 -latk-1.0 -lgio-2.0 -lpangoft2-1.0 -lgdk_pixbuf-2.0 -lpangocairo-1.0 -lcairo -lpango-1.0 -lfreetype -lfontconfig -lgobject-2.0 -lgmodule-2.0 -lglib-2.0 $(SM_LIBADD)
+
+ddb_gui_GTK2_la_CFLAGS = -std=c99 -I$(GTK_ROOT_216)/include/gtk-2.0 -I$(GTK_ROOT_216)/lib/gtk-2.0/include -I$(GTK_ROOT_216)/include/atk-1.0 -I$(GTK_ROOT_216)/include/cairo -I$(GTK_ROOT_216)/include/pango-1.0 -I$(GTK_ROOT_216)/include -I$(GTK_ROOT_216)/include/glib-2.0 -I$(GTK_ROOT_216)/lib/glib-2.0/include -DULTRA_COMPATIBLE=1 $(SM_CFLAGS)
+else
 ddb_gui_GTK2_la_LIBADD = $(LDADD) $(GTK2_DEPS_LIBS) $(SM_LIBADD)
 ddb_gui_GTK2_la_CFLAGS = -std=c99 $(GTK2_DEPS_CFLAGS) $(SM_CFLAGS)
+endif
+
 endif
 if HAVE_GTK3
 ddb_gui_GTK3_la_SOURCES = $(GTKUI_SOURCES)
