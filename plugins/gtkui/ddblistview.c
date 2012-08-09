@@ -1302,10 +1302,18 @@ ddb_listview_list_render_row_background (DdbListview *ps, cairo_t *cr, DdbListvi
         }
         else {
             GdkColor clr;
+#if !GTK_CHECK_VERSION(3,0,0)
+            GdkGC *gc = gdk_gc_new (ps->list->window);
+            gdk_gc_set_rgb_fg_color (gc, (gtkui_get_listview_selection_color (&clr), &clr));
+            gdk_draw_rectangle (ps->list->window, gc, TRUE, x, y, w, h);
+            g_object_unref (gc);
+
+#else
             gtkui_get_listview_selection_color (&clr);
             cairo_set_source_rgb (cr, clr.red/65535.f, clr.green/65535.f, clr.blue/65535.f);
             cairo_rectangle (cr, x, y, w, h);
             cairo_fill (cr);
+#endif
         }
     }
 	if (cursor) {
@@ -1313,10 +1321,17 @@ ddb_listview_list_render_row_background (DdbListview *ps, cairo_t *cr, DdbListvi
         // but we want it anyway
         //treeview->style->fg_gc[GTK_STATE_NORMAL]
         GdkColor clr;
+#if !GTK_CHECK_VERSION(3,0,0)
+        GdkGC *gc = gdk_gc_new (ps->list->window);
+        gdk_gc_set_rgb_fg_color (gc, (gtkui_get_listview_cursor_color (&clr), &clr));
+        gdk_draw_rectangle (ps->list->window, gc, FALSE, x, y, w-1, h-1);
+        g_object_unref (gc);
+#else
         gtkui_get_listview_cursor_color (&clr);
         cairo_set_source_rgb (cr, clr.red/65535.f, clr.green/65535.f, clr.blue/65535.f);
         cairo_rectangle (cr, x+1, y+1, w-1, h-1);
         cairo_stroke (cr);
+#endif
     }
 }
 
