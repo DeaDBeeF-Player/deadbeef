@@ -293,6 +293,11 @@ static int count_leading_zeros(int input)
     }
     return output;
 }
+#elif defined(__GNUC__)
+static int count_leading_zeros(int input)
+{
+    return __builtin_clz(input);
+}
 #else
 #warning using generic count leading zeroes. You may wish to write one for your CPU / compiler
 static int count_leading_zeros(int input)
