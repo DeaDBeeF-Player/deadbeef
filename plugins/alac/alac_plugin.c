@@ -39,8 +39,8 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 static DB_decoder_t plugin;
 DB_functions_t *deadbeef;
@@ -485,7 +485,7 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     if (!qtmovie_read(stream, &demux_res)) {
         if (!demux_res.format_read || demux_res.format != MAKEFOURCC('a','l','a','c')) {
-            trace ("alac track not found in the file %s\n", fname);
+            trace ("alac track not found in the file %s, expected atom %X got %X\n", fname, MAKEFOURCC('a','l','a','c'), demux_res.format);
             goto error;
         }
     }
