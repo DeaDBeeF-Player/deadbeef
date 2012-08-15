@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2012-07-14 13:49+0200\n"
+"PO-Revision-Date: 2012-08-15 19:55+0200\n"
 "Last-Translator: Asier_Iturralde_Sarasola <asier.iturralde@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: eu\n"
@@ -156,12 +156,12 @@ msgstr "Aurrezarpenak"
 #: ../plugins/gtkui/gtkui.c:137
 #, c-format
 msgid "1 day %d:%02d:%02d"
-msgstr ""
+msgstr "Egun 1 %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:140
 #, c-format
 msgid "%d days %d:%02d:%02d"
-msgstr ""
+msgstr "%d egun %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:149
 #, c-format
@@ -655,47 +655,48 @@ msgstr "DSP"
 
 #: ../plugins/gtkui/interface.c:2042 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Close minimizes to tray"
-msgstr ""
+msgstr "Ixteak erretilura minimizatzen du"
 
 #: ../plugins/gtkui/interface.c:2046 ../plugins/gtkui/deadbeef.glade.h:78
 msgid "Middle mouse button closes playlist"
-msgstr ""
+msgstr "Saguaren erdiko botoiak erreprodukzio-zerrenda ixten du"
 
 #: ../plugins/gtkui/interface.c:2050 ../plugins/gtkui/deadbeef.glade.h:51
 msgid "Hide system tray icon"
-msgstr ""
+msgstr "Ezkutatu sistemaren erretiluko ikonoa"
 
 #: ../plugins/gtkui/interface.c:2054 ../plugins/gtkui/deadbeef.glade.h:143
 msgid "Use bold font for currently playing track"
-msgstr ""
+msgstr "Erabili letra-tipo lodia unean erreproduzitzen ari den pistarentzat"
 
 #: ../plugins/gtkui/interface.c:2058 ../plugins/gtkui/deadbeef.glade.h:50
 msgid "Hide \"Delete from disk\" context menu item"
-msgstr ""
+msgstr "Ezkutatu \"Ezabatu diskotik\" laster-menuko elementua"
 
 #: ../plugins/gtkui/interface.c:2062 ../plugins/gtkui/deadbeef.glade.h:16
 msgid "Auto-name playlists when adding a single folder"
 msgstr ""
+"Izendatu erreprodukzio-zerrendak automatikoki karpeta bakar bat gehitzean"
 
 #: ../plugins/gtkui/interface.c:2070 ../plugins/gtkui/deadbeef.glade.h:54
 msgid "Interface refresh rate (times per second):"
-msgstr ""
+msgstr "Interfazearen freskatze-maiztasuna (zenbatetan segundoko)"
 
 #: ../plugins/gtkui/interface.c:2084 ../plugins/gtkui/deadbeef.glade.h:137
 msgid "Titlebar text while playing:"
-msgstr ""
+msgstr "TItulu-barraren testua erreproduzitzean:"
 
 #: ../plugins/gtkui/interface.c:2098 ../plugins/gtkui/deadbeef.glade.h:138
 msgid "Titlebar text while stopped:"
-msgstr ""
+msgstr "Titulu-barraren testua gelditutakoan:"
 
 #: ../plugins/gtkui/interface.c:2112 ../plugins/gtkui/deadbeef.glade.h:46
 msgid "GUI Plugin (changing requires restart):"
-msgstr ""
+msgstr "GUI plugina (aldatzeak berrabiaraztea eskatzen du):"
 
 #: ../plugins/gtkui/interface.c:2120 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "GUI"
-msgstr ""
+msgstr "GUI"
 
 #: ../plugins/gtkui/interface.c:2135 ../plugins/gtkui/interface.c:2179
 #: ../plugins/gtkui/deadbeef.glade.h:86
@@ -712,7 +713,7 @@ msgstr "Atzeko planoa"
 
 #: ../plugins/gtkui/interface.c:2170 ../plugins/gtkui/deadbeef.glade.h:113
 msgid "Seekbar/Volumebar colors"
-msgstr ""
+msgstr "Bilaketa-barra/Bolumen-barraren koloreak"
 
 #: ../plugins/gtkui/interface.c:2188 ../plugins/gtkui/deadbeef.glade.h:77
 msgid "Middle"
@@ -894,7 +895,7 @@ msgstr "2.4"
 
 #: ../plugins/gtkui/interface.c:3538 ../plugins/gtkui/deadbeef.glade.h:52
 msgid "ID3v1 character encoding (default is iso8859-1)"
-msgstr ""
+msgstr "ID3v1 karaktere-kodeketa (lehenetsia iso8859-1 da)"
 
 #: ../plugins/gtkui/interface.c:3575 ../plugins/gtkui/deadbeef.glade.h:148
 msgid "Write ID3v2.4"
@@ -917,6 +918,8 @@ msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
 msgstr ""
+"Fitxategiak galduko dira. Jarraitu?\n"
+"(Elkarrizketa-koadro hau kendu daiteke GTKUI pluginaren ezarpenak erabiliz)"
 
 #: ../plugins/gtkui/plcommon.c:340 ../plugins/gtkui/trkproperties.c:162
 #: ../plugins/gtkui/trkproperties.c:693 ../plugins/converter/convgui.c:759
@@ -1003,11 +1006,11 @@ msgstr "Hasieratzen..."
 
 #: ../plugins/gtkui/trkproperties.c:159
 msgid "You've modified data for this track."
-msgstr ""
+msgstr "Pista honen datuak aldatu dituzu."
 
 #: ../plugins/gtkui/trkproperties.c:161
 msgid "Really close the window?"
-msgstr ""
+msgstr "Ziur leihoa itxi nahi duzula?"
 
 #. get value to edit
 #: ../plugins/gtkui/trkproperties.c:254
@@ -1032,7 +1035,7 @@ msgstr "Izena:"
 
 #: ../plugins/gtkui/trkproperties.c:633
 msgid "Field names must not start with : or _"
-msgstr ""
+msgstr "Ezin dituzu : edo _ erabili eremu-izenen hasieran"
 
 #: ../plugins/gtkui/trkproperties.c:634 ../plugins/gtkui/trkproperties.c:668
 msgid "Cannot add field"
@@ -1105,32 +1108,34 @@ msgstr "   --toggle-pause     Txandakatu pausatzea\n"
 #, c-format
 msgid ""
 "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
-msgstr ""
+msgstr "   --play-pause       Hasi erreproduzitzen geldituta badago, bestela "
+"txandakatu pausa\n"
 
 #: ../main.c:101
 #, c-format
 msgid "   --next             Next song in playlist\n"
-msgstr ""
+msgstr "   --next             Erreprodukzio-zerrendako hurrengo kanta\n"
 
 #: ../main.c:102
 #, c-format
 msgid "   --prev             Previous song in playlist\n"
-msgstr ""
+msgstr "   --prev             Erreprodukzio-zerrendako aurreko kanta\n"
 
 #: ../main.c:103
 #, c-format
 msgid "   --random           Random song in playlist\n"
-msgstr ""
+msgstr "   --random           Erreprodukzio-zerrendako ausazko kanta\n"
 
 #: ../main.c:104
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
-msgstr ""
+msgstr "   --queue            Gehitu fitxategia(k) existitzen den erreprodukzio-"
+"zerrendara\n"
 
 #: ../main.c:105
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr ""
+msgstr "   --nowplaying FMT   Inprimatu formatudun pista-izena irteera estandarrera\n"
 
 #: ../main.c:106
 #, c-format
@@ -1145,7 +1150,8 @@ msgstr ""
 msgid ""
 "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
 "- title\"\n"
-msgstr ""
+msgstr "                      adibidez.: --nowplaying \"%%a - %%t\" erabiliz gero "
+"\"artista - titulua\" inprimatuko du\n"
 
 #: ../main.c:110
 #, c-format
@@ -1239,6 +1245,9 @@ msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings."
 msgstr ""
+"wildmidi: ez da aurkitu freepats konfigurazio-fitxategia. Mesedez instalatu "
+"timidity-freepats paketea edo zehaztu freepats.cfg fitxategirako bidea "
+"pluginaren ezarpenetan."
 
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
@@ -1253,7 +1262,7 @@ msgstr "Bilatu Last.fm-n"
 #. ALSA output plugin
 #: ../translation/extra.c:6
 msgid "Use ALSA resampling"
-msgstr ""
+msgstr "Erabili ALSA berlaginketa"
 
 #: ../translation/extra.c:7
 msgid "Release device while stopped"
@@ -1261,7 +1270,7 @@ msgstr ""
 
 #: ../translation/extra.c:8 ../translation/extra.c:51
 msgid "Preferred buffer size"
-msgstr ""
+msgstr "Hobetsitako buffer tamaina"
 
 #: ../translation/extra.c:9
 msgid "Preferred period size"
@@ -1333,7 +1342,7 @@ msgstr "Erabili CDDB/FreeDB"
 
 #: ../translation/extra.c:29
 msgid "Prefer CD-Text over CDDB"
-msgstr ""
+msgstr "Hobetsi CD-Text CDDBren aurrean"
 
 #: ../translation/extra.c:30
 msgid "CDDB url (e.g. 'freedb.org')"
@@ -1345,7 +1354,7 @@ msgstr "CDDB ataka zenbakia (adibidez, '888')"
 
 #: ../translation/extra.c:32
 msgid "Prefer CDDB protocol over HTTP"
-msgstr ""
+msgstr "Hobetsi CDDB protokoloa HTTPren aurrean"
 
 #: ../translation/extra.c:33
 msgid "Enable NRG image support"
@@ -1354,17 +1363,17 @@ msgstr "Gaitu NRG irudien euskarria"
 #. DUMB module player plugin
 #: ../translation/extra.c:35
 msgid "Resampling quality (0..2, higher is better)"
-msgstr ""
+msgstr "Birlaginketa kalitatea (0..2, altuagoa hobea da)"
 
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:37
 msgid "Max song length (in minutes)"
-msgstr ""
+msgstr "Kantuen gehienezko iraupena (minututan)"
 
 #. Standard GTK2 user interface plugin
 #: ../translation/extra.c:39
 msgid "Ask confirmation to delete files from disk"
-msgstr ""
+msgstr "Eskatu berrespena diskotik fitxategiak ezabatzeko"
 
 #: ../translation/extra.c:40
 msgid "Status icon volume control sensitivity"
@@ -1376,7 +1385,7 @@ msgstr "Egoera-ikono pertsonalizatua"
 
 #: ../translation/extra.c:42
 msgid "Run gtk_init with --sync (debug mode)"
-msgstr ""
+msgstr "Exekutatu gtk_init --sync aukerarekin (arazketa modua)"
 
 #: ../translation/extra.c:43
 msgid "Add separators between plugin context menu items"
@@ -1393,11 +1402,11 @@ msgstr "Jakinarazpenen edukiaren formatua"
 
 #: ../translation/extra.c:47
 msgid "Show album art"
-msgstr ""
+msgstr "Erakutsi albumen azalak"
 
 #: ../translation/extra.c:48
 msgid "Album art size (px)"
-msgstr ""
+msgstr "Albumen azalen tamaina (px)"
 
 #. PulseAudio output plugin
 #: ../translation/extra.c:50
@@ -1406,7 +1415,7 @@ msgstr "PulseAudio zerbitzaria"
 
 #: ../translation/extra.c:52
 msgid "Samplerate"
-msgstr ""
+msgstr "Lagintze-maiztasuna"
 
 #. SHN player plugin
 #: ../translation/extra.c:54
@@ -1424,7 +1433,7 @@ msgstr ""
 #. SID decoder plugin
 #: ../translation/extra.c:58
 msgid "Enable HVSC Songlength DB"
-msgstr ""
+msgstr "Gaitu HVSC Songlength DB"
 
 #: ../translation/extra.c:59
 msgid "Songlengths.txt (from HVSC)"
@@ -1432,11 +1441,11 @@ msgstr ""
 
 #: ../translation/extra.c:60
 msgid "Bits per sample (8 or 16)"
-msgstr ""
+msgstr "Bitak lagineko (8 ala 16)"
 
 #: ../translation/extra.c:61
 msgid "Default song length (sec)"
-msgstr ""
+msgstr "Kanten iraupen lehenetsia (seg)"
 
 #. WildMidi player plugin
 #: ../translation/extra.c:63
