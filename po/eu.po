@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2012-08-15 19:55+0200\n"
+"PO-Revision-Date: 2012-08-15 21:08+0200\n"
 "Last-Translator: Asier_Iturralde_Sarasola <asier.iturralde@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: eu\n"
@@ -143,11 +143,11 @@ msgstr "Zerotu guztia"
 
 #: ../plugins/gtkui/eq.c:373
 msgid "Zero Preamp"
-msgstr ""
+msgstr "Zerotu aurreanplifikazioa"
 
 #: ../plugins/gtkui/eq.c:380
 msgid "Zero Bands"
-msgstr ""
+msgstr "Zerotu bandak"
 
 #: ../plugins/gtkui/eq.c:387 ../plugins/converter/interface.c:820
 msgid "Presets"
@@ -616,7 +616,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1913 ../plugins/gtkui/deadbeef.glade.h:47
 msgid "Global preamp:"
-msgstr ""
+msgstr "Aurreanplifikazio orokorra:"
 
 #: ../plugins/gtkui/interface.c:1944 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
@@ -869,17 +869,17 @@ msgstr "Idatzi APEv2"
 #: ../plugins/gtkui/interface.c:3508 ../plugins/gtkui/interface.c:3587
 #: ../plugins/gtkui/deadbeef.glade.h:130
 msgid "Strip ID3v2"
-msgstr ""
+msgstr "Soildu ID3v2"
 
 #: ../plugins/gtkui/interface.c:3512 ../plugins/gtkui/interface.c:3635
 #: ../plugins/gtkui/deadbeef.glade.h:129
 msgid "Strip ID3v1"
-msgstr ""
+msgstr "Soildu ID3v1"
 
 #: ../plugins/gtkui/interface.c:3516 ../plugins/gtkui/interface.c:3591
 #: ../plugins/gtkui/interface.c:3631 ../plugins/gtkui/deadbeef.glade.h:128
 msgid "Strip APEv2"
-msgstr ""
+msgstr "Soildu APEv2"
 
 #: ../plugins/gtkui/interface.c:3524 ../plugins/gtkui/deadbeef.glade.h:53
 msgid "ID3v2 version"
@@ -1144,6 +1144,9 @@ msgid ""
 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
 "                      copy[r]ight, [e]lapsed\n"
 msgstr ""
+"                      FMT %%-sintaxia: a: artista, t: izenburua, b: albuma,\n"
+"                      l: iraupena, n: pista zenbakia, y: urtea, c: iruzkina,\n"
+"                      r: copyright-a, e: igarotakoa\n"
 
 #: ../main.c:109
 #, c-format
@@ -1237,7 +1240,7 @@ msgstr ""
 #: ../plugins/converter/support.c:90 ../plugins/converter/support.c:114
 #, c-format
 msgid "Couldn't find pixmap file: %s"
-msgstr ""
+msgstr "Ezin izan da pixmap fitxategia aurkitu: %s"
 
 #: ../plugins/wildmidi/wildmidiplug.c:162
 #, c-format
@@ -1266,7 +1269,7 @@ msgstr "Erabili ALSA berlaginketa"
 
 #: ../translation/extra.c:7
 msgid "Release device while stopped"
-msgstr ""
+msgstr "Askatu gailua geldituta dagoen bitartean"
 
 #: ../translation/extra.c:8 ../translation/extra.c:51
 msgid "Preferred buffer size"
@@ -1279,11 +1282,11 @@ msgstr ""
 #. Last.fm plugin
 #: ../translation/extra.c:11
 msgid "Enable scrobbler"
-msgstr ""
+msgstr "Gaitu scrobbler"
 
 #: ../translation/extra.c:12
 msgid "Disable nowplaying"
-msgstr ""
+msgstr "Desgaitu orain erreproduzitzen"
 
 #: ../translation/extra.c:13
 msgid "Username"
@@ -1295,7 +1298,7 @@ msgstr "Pasahitza"
 
 #: ../translation/extra.c:15
 msgid "Scrobble URL"
-msgstr ""
+msgstr "Scrobble URLa"
 
 #. OSS output plugin
 #: ../translation/extra.c:17
@@ -1304,20 +1307,20 @@ msgstr "Gailu-fitxategia"
 
 #: ../translation/extra.c:18
 msgid "OSS4 samplerate bug workaround"
-msgstr ""
+msgstr "OSS4 lagintze-maiztasun errorearen konponbidea"
 
 #. Album Artwork plugin
 #: ../translation/extra.c:20
 msgid "Cache update period (hr)"
-msgstr ""
+msgstr "Cache-aren eguneraketaren epea (ordu)"
 
 #: ../translation/extra.c:21
 msgid "Fetch from embedded tags"
-msgstr ""
+msgstr "Eskuratu txertatutako etiketetatik"
 
 #: ../translation/extra.c:22
 msgid "Fetch from local folder"
-msgstr ""
+msgstr "Eskuratu karpeta lokaletik"
 
 #: ../translation/extra.c:23
 msgid "Local cover file mask"
@@ -1325,11 +1328,11 @@ msgstr ""
 
 #: ../translation/extra.c:24
 msgid "Fetch from last.fm"
-msgstr ""
+msgstr "Eskuratu last.fm-tik"
 
 #: ../translation/extra.c:25
 msgid "Fetch from albumart.org"
-msgstr ""
+msgstr "Eskuratu albumart.org-etik"
 
 #: ../translation/extra.c:26
 msgid "Scale artwork towards longer side"
@@ -1389,7 +1392,7 @@ msgstr "Exekutatu gtk_init --sync aukerarekin (arazketa modua)"
 
 #: ../translation/extra.c:43
 msgid "Add separators between plugin context menu items"
-msgstr ""
+msgstr "Gehitu banatzaileak pluginen laster-menuetako elementuen artean"
 
 #. OSD Notify plugin
 #: ../translation/extra.c:45
@@ -1420,11 +1423,11 @@ msgstr "Lagintze-maiztasuna"
 #. SHN player plugin
 #: ../translation/extra.c:54
 msgid "Relative seek table path"
-msgstr ""
+msgstr "Bilaketa taularen bide erlatiboa"
 
 #: ../translation/extra.c:55
 msgid "Absolute seek table path"
-msgstr ""
+msgstr "Bilaketa taularen bide absolutua"
 
 #: ../translation/extra.c:56
 msgid "Swap audio bytes (toggle if all you hear is static)"
@@ -1437,7 +1440,7 @@ msgstr "Gaitu HVSC Songlength DB"
 
 #: ../translation/extra.c:59
 msgid "Songlengths.txt (from HVSC)"
-msgstr ""
+msgstr "Songlengths.txt (HVSC-tik)"
 
 #: ../translation/extra.c:60
 msgid "Bits per sample (8 or 16)"
@@ -1450,7 +1453,7 @@ msgstr "Kanten iraupen lehenetsia (seg)"
 #. WildMidi player plugin
 #: ../translation/extra.c:63
 msgid "Timidity++ bank configuration file"
-msgstr ""
+msgstr "Timidity++ bankuaren konfigurazio-fitxategia"
 
 #: ../translation/extra.c:66
 msgid "Track Title"
@@ -1458,7 +1461,7 @@ msgstr "Pistaren izenburua"
 
 #: ../translation/extra.c:67
 msgid "Performer"
-msgstr ""
+msgstr "Interpretatzailea"
 
 #: ../translation/extra.c:72
 msgid "Total Tracks"
@@ -1470,7 +1473,7 @@ msgstr "Generoa"
 
 #: ../translation/extra.c:74
 msgid "Composer"
-msgstr ""
+msgstr "Konpositorea"
 
 #: ../translation/extra.c:75
 msgid "Disc Number"
@@ -1482,15 +1485,15 @@ msgstr "Iruzkina"
 
 #: ../translation/extra.c:77
 msgid "Encoder / Vendor"
-msgstr ""
+msgstr "Kodetzailea / Saltzailea"
 
 #: ../translation/extra.c:79
 msgid "Location"
-msgstr ""
+msgstr "Kokapena"
 
 #: ../translation/extra.c:80
 msgid "Subtrack Index"
-msgstr ""
+msgstr "Azpi-pista indizea"
 
 #: ../translation/extra.c:81
 msgid "Tag Type(s)"
@@ -1517,7 +1520,7 @@ msgstr "Bihurtu"
 #. Resampler (Secret Rabbit Code)
 #: ../translation/extra.c:89
 msgid "Target Samplerate"
-msgstr ""
+msgstr "Helburuko lagintze-maiztasuna"
 
 #: ../translation/extra.c:90
 msgid "Quality / Algorythm"
@@ -1526,6 +1529,8 @@ msgstr "Kalitatea / Algoritmoa"
 #: ../translation/extra.c:91
 msgid "Automatic Samplerate (overrides Target Samplerate)"
 msgstr ""
+"Lagintze-maiztasun automatikoa (helburuko lagintze-maiztasuna indargabetzen "
+"du)"
 
 #: ../plugins/converter/convgui.c:108
 msgid "The file already exists. Overwrite?"
@@ -1560,6 +1565,8 @@ msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
 msgstr ""
+"Egiaztatu aurrezarpenen karpetaren baimenak, erabili beste izen bat edo egin "
+"leku librea diskoan"
 
 #: ../plugins/converter/convgui.c:637 ../plugins/converter/convgui.c:1035
 msgid "Preset with the same name already exists. Try to pick another title."
