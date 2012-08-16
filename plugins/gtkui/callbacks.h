@@ -1167,3 +1167,7 @@ on_reset_autostop_toggled              (GtkToggleButton *togglebutton,
 void
 on_editcolumn_title_changed            (GtkEditable     *editable,
                                         gpointer         user_data);
+
+void
+on_useragent_changed                   (GtkEditable     *editable,
+                                        gpointer         user_data);

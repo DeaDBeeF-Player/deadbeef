@@ -636,6 +636,10 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "proxyuser")), deadbeef->conf_get_str_fast ("network.proxy.username", ""));
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "proxypassword")), deadbeef->conf_get_str_fast ("network.proxy.password", ""));
 
+    char ua[100];
+    deadbeef->conf_get_str ("network.http_user_agent", "deadbeef", ua, sizeof (ua));
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "useragent")), ua);
+
     // list of plugins
     GtkTreeView *tree = GTK_TREE_VIEW (lookup_widget (w, "pref_pluginlist"));
     GtkCellRenderer *rend_text = gtk_cell_renderer_text_new ();
@@ -1404,6 +1408,16 @@ on_convert8to16_toggled                (GtkToggleButton *togglebutton,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("streamer.8_to_16", gtk_toggle_button_get_active (togglebutton));
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+
+
+void
+on_useragent_changed                   (GtkEditable     *editable,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_str ("network.http_user_agent", gtk_entry_get_text (GTK_ENTRY (editable)));
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 

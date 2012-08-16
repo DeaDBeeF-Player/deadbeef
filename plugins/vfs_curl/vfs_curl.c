@@ -576,7 +576,9 @@ http_thread_func (void *ctx) {
         struct curl_slist *headers = NULL;
         curl_easy_reset (curl);
         curl_easy_setopt (curl, CURLOPT_URL, fp->url);
-        curl_easy_setopt (curl, CURLOPT_USERAGENT, "deadbeef");
+        char ua[100];
+        deadbeef->conf_get_str ("network.http_user_agent", "deadbeef", ua, sizeof (ua));
+        curl_easy_setopt (curl, CURLOPT_USERAGENT, ua);
         curl_easy_setopt (curl, CURLOPT_NOPROGRESS, 1);
         curl_easy_setopt (curl, CURLOPT_WRITEFUNCTION, http_curl_write);
         curl_easy_setopt (curl, CURLOPT_WRITEDATA, ctx);
