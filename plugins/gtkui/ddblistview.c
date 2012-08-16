@@ -2355,16 +2355,19 @@ ddb_listview_header_configure_event              (GtkWidget       *widget,
         gtk_widget_set_size_request (widget, -1, height);
     }
 
-    if (ps->header_width == 0) {
-        ps->header_width = a.width;
-    }
-    else if (ps->header_width != a.width && deadbeef->conf_get_int ("gtkui.autoresize_columns", 0)) {
-        float ratio = (float)a.width / ps->header_width;
-        ps->header_width = a.width;
-        struct _DdbListviewColumn *c;
-        for (c = ps->columns; c; c = c->next) {
-            c->width *= ratio;
+    if (gtkui_init_complete) {
+        if (ps->header_width != a.width && deadbeef->conf_get_int ("gtkui.autoresize_columns", 0)) {
+            float ratio = (float)a.width / ps->header_width;
+            ps->header_width = a.width;
+            struct _DdbListviewColumn *c;
+            for (c = ps->columns; c; c = c->next) {
+                c->width *= ratio;
+            }
+            ps->binding->columns_changed (ps);
         }
+    }
+    else {
+        ps->header_width = a.width;
     }
 
     return FALSE;

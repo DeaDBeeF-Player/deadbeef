@@ -73,6 +73,7 @@ GtkWidget *theme_treeview;
 GtkWidget *theme_button;
 
 int gtkui_embolden_current_track;
+int gtkui_init_complete;
 
 #define TRAY_ICON "deadbeef_tray_icon"
 
@@ -1060,6 +1061,12 @@ smclient_save_state (EggSMClient *client, const char *state_dir, gpointer user_d
 }
 #endif
 
+gboolean
+gtkui_init_complete_cb (void *ctx) {
+    gtkui_init_complete = 1;
+    return FALSE;
+}
+
 void
 gtkui_thread (void *ctx) {
     int argc = 2;
@@ -1177,6 +1184,8 @@ gtkui_thread (void *ctx) {
     deadbeef->pl_format_title (NULL, -1, str, sizeof (str), -1, fmt);
     gtk_window_set_title (GTK_WINDOW (mainwin), str);
     gtk_initialized = 1;
+
+    g_idle_add (gtkui_init_complete_cb, NULL);
 
     gtk_main ();
 
