@@ -130,6 +130,9 @@ curl_req_send (const char *req, const char *post) {
     curl_easy_setopt(curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
     curl_easy_setopt (curl, CURLOPT_NOSIGNAL, 1);
     curl_easy_setopt (curl, CURLOPT_PROGRESSFUNCTION, lfm_curl_control);
+    char ua[100];
+    deadbeef->conf_get_str ("network.http_user_agent", "deadbeef", ua, sizeof (ua));
+    curl_easy_setopt (curl, CURLOPT_USERAGENT, ua);
     curl_easy_setopt (curl, CURLOPT_NOPROGRESS, 0);
     if (post) {
         curl_easy_setopt(curl, CURLOPT_POST, 1);

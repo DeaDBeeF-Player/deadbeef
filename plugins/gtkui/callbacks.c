@@ -1291,4 +1291,3 @@ on_sort_by_custom_activate             (GtkMenuItem     *menuitem,
     dlg = NULL;
 }
 
-

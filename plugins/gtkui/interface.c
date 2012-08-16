@@ -1780,6 +1780,10 @@ create_prefwin (void)
   GtkWidget *hbox62;
   GtkWidget *label98;
   GtkWidget *proxypassword;
+  GtkWidget *hseparator1;
+  GtkWidget *hbox104;
+  GtkWidget *label131;
+  GtkWidget *useragent;
   GtkWidget *label16;
   GtkWidget *hpaned1;
   GtkWidget *scrolledwindow2;
@@ -2448,6 +2452,23 @@ create_prefwin (void)
   gtk_entry_set_visibility (GTK_ENTRY (proxypassword), FALSE);
   gtk_entry_set_invisible_char (GTK_ENTRY (proxypassword), 9679);
 
+  hseparator1 = gtk_hseparator_new ();
+  gtk_widget_show (hseparator1);
+  gtk_box_pack_start (GTK_BOX (vbox11), hseparator1, FALSE, TRUE, 0);
+
+  hbox104 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox104);
+  gtk_box_pack_start (GTK_BOX (vbox11), hbox104, FALSE, TRUE, 0);
+
+  label131 = gtk_label_new (_("HTTP User Agent:"));
+  gtk_widget_show (label131);
+  gtk_box_pack_start (GTK_BOX (hbox104), label131, FALSE, FALSE, 0);
+
+  useragent = gtk_entry_new ();
+  gtk_widget_show (useragent);
+  gtk_box_pack_start (GTK_BOX (hbox104), useragent, TRUE, TRUE, 0);
+  gtk_entry_set_invisible_char (GTK_ENTRY (useragent), 8226);
+
   label16 = gtk_label_new (_("Network"));
   gtk_widget_show (label16);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 5), label16);
@@ -2726,6 +2747,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) proxypassword, "changed",
                     G_CALLBACK (on_proxypassword_changed),
                     NULL);
+  g_signal_connect ((gpointer) useragent, "changed",
+                    G_CALLBACK (on_useragent_changed),
+                    NULL);
   g_signal_connect ((gpointer) pref_pluginlist, "cursor_changed",
                     G_CALLBACK (on_pref_pluginlist_cursor_changed),
                     NULL);
@@ -2866,6 +2890,10 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, hbox62, "hbox62");
   GLADE_HOOKUP_OBJECT (prefwin, label98, "label98");
   GLADE_HOOKUP_OBJECT (prefwin, proxypassword, "proxypassword");
+  GLADE_HOOKUP_OBJECT (prefwin, hseparator1, "hseparator1");
+  GLADE_HOOKUP_OBJECT (prefwin, hbox104, "hbox104");
+  GLADE_HOOKUP_OBJECT (prefwin, label131, "label131");
+  GLADE_HOOKUP_OBJECT (prefwin, useragent, "useragent");
   GLADE_HOOKUP_OBJECT (prefwin, label16, "label16");
   GLADE_HOOKUP_OBJECT (prefwin, hpaned1, "hpaned1");
   GLADE_HOOKUP_OBJECT (prefwin, scrolledwindow2, "scrolledwindow2");
