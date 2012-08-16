@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2012-08-15 21:08+0200\n"
+"PO-Revision-Date: 2012-08-16 23:15+0200\n"
 "Last-Translator: Asier_Iturralde_Sarasola <asier.iturralde@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: eu\n"
@@ -701,7 +701,7 @@ msgstr "GUI"
 #: ../plugins/gtkui/interface.c:2135 ../plugins/gtkui/interface.c:2179
 #: ../plugins/gtkui/deadbeef.glade.h:86
 msgid "Override"
-msgstr ""
+msgstr "Indargabetu"
 
 #: ../plugins/gtkui/interface.c:2144 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Foreground"
@@ -743,6 +743,8 @@ msgstr ""
 #: ../plugins/gtkui/interface.c:2262 ../plugins/gtkui/deadbeef.glade.h:87
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
 msgstr ""
+"Indargabetu (GTK zuhaitz-ikuspegien gaiak galtzen dira, baina errendatzea "
+"azkartzen da)"
 
 #: ../plugins/gtkui/interface.c:2271 ../plugins/gtkui/deadbeef.glade.h:41
 msgid "Even row"
@@ -1324,7 +1326,7 @@ msgstr "Eskuratu karpeta lokaletik"
 
 #: ../translation/extra.c:23
 msgid "Local cover file mask"
-msgstr ""
+msgstr "Azal-fitxategi lokalen maskara"
 
 #: ../translation/extra.c:24
 msgid "Fetch from last.fm"
@@ -1380,7 +1382,7 @@ msgstr "Eskatu berrespena diskotik fitxategiak ezabatzeko"
 
 #: ../translation/extra.c:40
 msgid "Status icon volume control sensitivity"
-msgstr ""
+msgstr "Bolumen-kontrola egoera-ikonoaren sentikortasuna"
 
 #: ../translation/extra.c:41
 msgid "Custom status icon"
@@ -1432,6 +1434,8 @@ msgstr "Bilaketa taularen bide absolutua"
 #: ../translation/extra.c:56
 msgid "Swap audio bytes (toggle if all you hear is static)"
 msgstr ""
+"Trukatu audio bytak (txandakatu entzuten duzun gauza bakarra soinu estatikoa "
+"bada)"
 
 #. SID decoder plugin
 #: ../translation/extra.c:58
@@ -1505,7 +1509,7 @@ msgstr ""
 
 #: ../translation/extra.c:83
 msgid "Codec"
-msgstr ""
+msgstr "Kodeka"
 
 #. FFmpeg deocder plugin
 #: ../translation/extra.c:85
@@ -1631,6 +1635,8 @@ msgid ""
 "Extension (e.g. .mp3) will be appended automatically.\n"
 "Leave the field empty for default (%a - %t)."
 msgstr ""
+"Luzapena (adibidez, .mp3) automatikoki gehituko da.\n"
+"Utzi eremua hutsik balio lehenetsia erabiltzeko (%a - %t)."
 
 #: ../plugins/converter/interface.c:139
 msgid "Encoder:"
@@ -1646,39 +1652,39 @@ msgstr "Hari kopurua:"
 
 #: ../plugins/converter/interface.c:199
 msgid "Output sample format:"
-msgstr ""
+msgstr "Irteerako lagin-formatua:"
 
 #: ../plugins/converter/interface.c:206
 msgid "Keep source format"
-msgstr ""
+msgstr "Mantendu iturburuko formatua"
 
 #: ../plugins/converter/interface.c:207
 msgid "8 bit signed int"
-msgstr ""
+msgstr "8 biteko zeinudun osokoa"
 
 #: ../plugins/converter/interface.c:208
 msgid "16 bit signed int"
-msgstr ""
+msgstr "16 biteko zeinudun osokoa"
 
 #: ../plugins/converter/interface.c:209
 msgid "24 bit signed int"
-msgstr ""
+msgstr "24 biteko zeinudun osokoa"
 
 #: ../plugins/converter/interface.c:210
 msgid "32 bit signed int"
-msgstr ""
+msgstr "32 biteko zeinudun osokoa"
 
 #: ../plugins/converter/interface.c:211
 msgid "32 bit float"
-msgstr ""
+msgstr "32 biteko koma mugikorreko zenbakia"
 
 #: ../plugins/converter/interface.c:217
 msgid "When file exists:"
-msgstr ""
+msgstr "Fitxategia existitzen denean:"
 
 #: ../plugins/converter/interface.c:224
 msgid "Prompt"
-msgstr ""
+msgstr "Gonbita"
 
 #: ../plugins/converter/interface.c:225
 msgid "Overwrite"
@@ -1686,7 +1692,7 @@ msgstr "Gainidatzi"
 
 #: ../plugins/converter/interface.c:227
 msgid "Preserve folder structure, starting from:"
-msgstr ""
+msgstr "Mantendu karpeta-egitura, hemendik hasita:"
 
 #: ../plugins/converter/interface.c:379
 msgid "Edit Encoder Preset"
@@ -1721,6 +1727,8 @@ msgid ""
 "<small>%o - output file name\n"
 "%i - temporary input file name</small>"
 msgstr ""
+"<small>%o - irteerako fitxategi-izena\n"
+"%i - aldi baterako sarrerako fitxategi-izena</small>"
 
 #: ../plugins/converter/interface.c:455
 msgid "Method:"
