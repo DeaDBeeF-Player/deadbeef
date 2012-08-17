@@ -1984,6 +1984,20 @@ ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state) {
         ps->binding->delete_selected ();
         cursor = ps->binding->cursor ();
     }
+    else if (keyval == GDK_Menu) {
+        DdbListviewIter it = ps->binding->head ();
+        while (it && !ps->binding->is_selected (it)) {
+            DdbListviewIter next = ps->binding->next (it);
+            ps->binding->unref (it);
+            it = next;
+        }
+        if (it) {
+            int sel = ps->binding->get_idx (it);
+            ps->binding->list_context_menu (ps, it, sel);
+            ps->binding->unref (it);
+        }
+        return 0;
+    }
     else {
         return 0;
     }
