@@ -113,14 +113,14 @@ aac_open (uint32_t hints) {
 #ifdef USE_MP4FF
 static uint32_t
 aac_fs_read (void *user_data, void *buffer, uint32_t length) {
-    trace ("aac_fs_read %d\n", length);
+//    trace ("aac_fs_read %d\n", length);
     aac_info_t *info = user_data;
     return deadbeef->fread (buffer, 1, length, info->file);
 }
 static uint32_t
 aac_fs_seek (void *user_data, uint64_t position) {
     aac_info_t *info = user_data;
-    trace ("aac_fs_seek %lld (%lld)\n", position, position + info->junk);
+//    trace ("aac_fs_seek %lld (%lld)\n", position, position + info->junk);
     return deadbeef->fseek (info->file, position+info->junk, SEEK_SET);
 }
 
@@ -311,20 +311,21 @@ aac_probe (DB_FILE *fp, const char *fname, MP4FILE_CB *cb, float *duration, int 
         }
         if (i != ntracks && buff) 
         {
-            trace ("found audio track (%d)\n", i);
-            // init mp4 decoding
-            NeAACDecHandle dec = NeAACDecOpen ();
             unsigned long srate;
             unsigned char ch;
+            int samples;
+
+            trace ("found audio track (%d)\n", i);
+
+            // init mp4 decoding
+            NeAACDecHandle dec = NeAACDecOpen ();
             if (NeAACDecInit2(dec, buff, buff_size, &srate, &ch) < 0) {
                 trace ("NeAACDecInit2 returned error\n");
                 goto error;
             }
             *samplerate = srate;
             *channels = ch;
-            int samples = mp4ff_num_samples(mp4, i);
-            samples = (int64_t)samples * srate / mp4ff_time_scale (mp4, i);
-            int tsamples = samples;
+            samples = (int64_t)mp4ff_num_samples(mp4, i);
             NeAACDecConfigurationPtr conf = NeAACDecGetCurrentConfiguration (dec);
             conf->dontUpSampleImplicitSBR = 1;
             NeAACDecSetConfiguration (dec, conf);
@@ -332,30 +333,23 @@ aac_probe (DB_FILE *fp, const char *fname, MP4FILE_CB *cb, float *duration, int 
             int mp4framesize;
             if (NeAACDecAudioSpecificConfig(buff, buff_size, &mp4ASC) >= 0)
             {
-                mp4framesize = 1024;
-                if (mp4ASC.frameLengthFlag == 1) {
-                    mp4framesize = 960;
+                mp4framesize = mp4ASC.frameLengthFlag == 1 ? 960 : 1024;
+                if (mp4ASC.sbr_present_flag == 1) {
+                    mp4framesize *= 2;
                 }
-                // commented this out, since it fixes double-duration bug on
-                // some mp4 files
-                //if (mp4ASC.sbr_present_flag == 1) {
-                //    mp4framesize *= 2;
-                //}
             }
             else {
                 trace ("NeAACDecAudioSpecificConfig failed, can't get mp4framesize\n");
                 goto error;
             }
-            tsamples *= mp4framesize;
+            samples *= mp4framesize;
 
-            trace ("mp4 nsamples=%d, samplerate=%d, timescale=%d, duration=%lld\n", samples, *samplerate, mp4ff_time_scale(mp4, i), mp4ff_get_track_duration(mp4, i));
-            *duration = (float)tsamples / (*samplerate);
-            trace ("mp4 duration: %f (tsamples %d/samplerate %d)\n", *duration, tsamples, *samplerate);
+            *duration = (float)samples / (*samplerate);
             
             NeAACDecClose (dec);
 
             if (totalsamples) {
-                *totalsamples = tsamples;
+                *totalsamples = samples;
             }
             if (mp4track) {
                 *mp4track = i;
@@ -531,7 +525,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
                     }
                     samplerate = srate;
                     channels = ch;
-                    samples = (int64_t)samples * srate / mp4ff_time_scale (info->mp4file, i);
+                    samples = (int64_t)samples;
                     totalsamples = samples;
                     NeAACDecConfigurationPtr conf = NeAACDecGetCurrentConfiguration (info->dec);
                     conf->dontUpSampleImplicitSBR = 1;
@@ -539,13 +533,10 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
                     mp4AudioSpecificConfig mp4ASC;
                     if (NeAACDecAudioSpecificConfig(buff, buff_size, &mp4ASC) >= 0)
                     {
-                        info->mp4framesize = 1024;
-                        if (mp4ASC.frameLengthFlag == 1) {
-                            info->mp4framesize = 960;
+                        info->mp4framesize = mp4ASC.frameLengthFlag == 1 ? 960 : 1024;
+                        if (mp4ASC.sbr_present_flag == 1) {
+                            info->mp4framesize *= 2;
                         }
-//                        if (mp4ASC.sbr_present_flag == 1) {
-//                            info->mp4framesize *= 2;
-//                        }
                     }
                     totalsamples *= info->mp4framesize;
                     duration = (float)totalsamples  / samplerate;
@@ -599,15 +590,11 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
                 mp4AudioSpecificConfig mp4ASC;
                 if (NeAACDecAudioSpecificConfig(pConfig, configSize, &mp4ASC) >= 0)
                 {
-                    info->mp4framesize = 1024;
-                    if (mp4ASC.frameLengthFlag == 1) {
-                        info->mp4framesize = 960;
+                    info->mp4framesize = mp4ASC.frameLengthFlag == 1 ? 960 : 1024;
+                    if (mp4ASC.sbr_present_flag == 1) {
+                        info->mp4framesize *= 2;
                     }
-//                    if (mp4ASC.sbr_present_flag == 1) {
-//                        info->mp4framesize *= 2;
-//                    }
                 }
-                //totalsamples *= info->mp4framesize;
                 free (pConfig);
                 info->maxSampleSize = MP4GetTrackMaxSampleSize(info->mp4file, info->mp4track);
                 info->samplebuffer = malloc (info->maxSampleSize);
@@ -1030,7 +1017,7 @@ aac_seek_sample (DB_fileinfo_t *_info, int sample) {
 
     sample += info->startsample;
     if (info->mp4file) {
-        int scale = _info->fmt.samplerate / mp4ff_time_scale (info->mp4file, info->mp4track) * info->mp4framesize;
+        int scale = info->mp4framesize;
         info->mp4sample = sample / scale;
         info->skipsamples = sample - info->mp4sample * scale;
     }
