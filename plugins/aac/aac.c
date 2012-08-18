@@ -304,9 +304,13 @@ aac_probe (DB_FILE *fp, const char *fname, MP4FILE_CB *cb, float *duration, int 
                 if(rc < 0) {
                     free (buff);
                     buff = 0;
+                    trace ("aac: AudioSpecificConfig returned result=%d\n", rc);
                     continue;
                 }
                 break;
+            }
+            else {
+                trace ("aac: mp4ff_get_decoder_config returned NULL buffer\n");
             }
         }
         if (i != ntracks && buff) 
