@@ -224,6 +224,8 @@ static uint8_t mp4ff_atom_name_to_type(const int8_t a, const int8_t b,
         return ATOM_DESCRIPTION;
     else if (mp4ff_atom_compare(a,b,c,d, 'p','c','s','t'))
         return ATOM_PODCAST;
+    else if (mp4ff_atom_compare(a,b,c,d, '-','-','-','-'))
+        return ATOM_CUSTOM;
     else
         return ATOM_UNKNOWN;
 }
