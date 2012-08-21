@@ -370,33 +370,47 @@ void
 alacplug_load_tags (DB_playItem_t *it, mp4ff_t *mp4) {
     char *s = NULL;
     int got_itunes_tags = 0;
-    for (int i = 0; metainfo[i]; i += 2) {
-        if (mp4ff_meta_find_by_name(mp4, metainfo[i], &s)) {
-            deadbeef->pl_add_meta (it, metainfo[i+1], s);
+
+    int n = mp4ff_meta_get_num_items (mp4);
+    for (int t = 0; t < n; t++)  {
+        char *key = NULL;
+        char *value = NULL;
+        int res = mp4ff_meta_get_by_index(mp4, t, &key, &value);
+        if (key && value) {
             got_itunes_tags = 1;
-            free (s);
+            if (!strcasecmp (key, "replaygain_track_gain")) {
+                deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, atof (value));
+            }
+            else if (!strcasecmp (key, "replaygain_album_gain")) {
+                deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, atof (value));
+            }
+            else if (!strcasecmp (key, "replaygain_track_peak")) {
+                deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, atof (value));
+            }
+            else if (!strcasecmp (key, "replaygain_album_peak")) {
+                deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, atof (value));
+            }
+            else {
+                int i;
+                for (i = 0; metainfo[i]; i += 2) {
+                    if (!strcasecmp (metainfo[i], key)) {
+                        deadbeef->pl_add_meta (it, metainfo[i+1], value);
+                        break;
+                    }
+                }
+                if (!metainfo[i]) {
+                    deadbeef->pl_add_meta (it, key, value);
+                }
+            }
+        }
+        if (key) {
+            free (key);
+        }
+        if (value) {
+            free (value);
         }
     }
-    if (mp4ff_meta_find_by_name(mp4, "replaygain_track_gain", &s)) {
-        deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, atof (s));
-        got_itunes_tags = 1;
-        free (s);
-    }
-    if (mp4ff_meta_find_by_name(mp4, "replaygain_track_peak", &s)) {
-        deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, atof (s));
-        got_itunes_tags = 1;
-        free (s);
-    }
-    if (mp4ff_meta_find_by_name(mp4, "replaygain_album_gain", &s)) {
-        deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, atof (s));
-        got_itunes_tags = 1;
-        free (s);
-    }
-    if (mp4ff_meta_find_by_name(mp4, "replaygain_album_peak", &s)) {
-        deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, atof (s));
-        got_itunes_tags = 1;
-        free (s);
-    }
+
     if (got_itunes_tags) {
         uint32_t f = deadbeef->pl_get_item_flags (it);
         f |= DDB_TAG_ITUNES;
