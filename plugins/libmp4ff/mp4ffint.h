@@ -93,6 +93,7 @@ extern "C" {
 #define ATOM_SEASON         170
 #define ATOM_EPISODE        171
 #define ATOM_PODCAST        172
+#define ATOM_CUSTOM         173
 
 #define ATOM_UNKNOWN 255
 #define ATOM_FREE ATOM_UNKNOWN
