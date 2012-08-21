@@ -29,20 +29,13 @@
 #include "../../deadbeef.h"
 #include "aac_parser.h"
 
-#ifdef USE_MP4FF
 #include "mp4ff.h"
-#else
-#warning linking mp4v2 to faad2 is illegal
-#include <mp4v2/mp4v2.h>
-#endif
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
-
-// FIXME: use aac_probe in both _init and _insert, in order to avoid LOTS of code duplication
 
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
@@ -51,13 +44,8 @@ static DB_functions_t *deadbeef;
 #define AAC_BUFFER_SIZE (FAAD_MIN_STREAMSIZE * 16)
 #define OUT_BUFFER_SIZE 100000
 
-#ifdef USE_MP4FF
 #define MP4FILE mp4ff_t *
 #define MP4FILE_CB mp4ff_callback_t
-#else
-#define MP4FILE MP4FileHandle
-#define MP4FILE_CB MP4FileProvider
-#endif
 
 
 // aac channel mapping
@@ -80,7 +68,6 @@ typedef struct {
     MP4FILE_CB mp4reader;
     NeAACDecFrameInfo frame_info; // last frame info
     int32_t timescale;
-    uint32_t maxSampleSize;
     int mp4track;
     int mp4samples;
     int mp4sample;
@@ -110,7 +97,6 @@ aac_open (uint32_t hints) {
     return _info;
 }
 
-#ifdef USE_MP4FF
 static uint32_t
 aac_fs_read (void *user_data, void *buffer, uint32_t length) {
 //    trace ("aac_fs_read %d\n", length);
@@ -124,30 +110,6 @@ aac_fs_seek (void *user_data, uint64_t position) {
     return deadbeef->fseek (info->file, position+info->junk, SEEK_SET);
 }
 
-#else
-static void *
-aac_fs_open (const char *fname, MP4FileMode mode) {
-    return deadbeef->fopen (fname);
-}
-static int
-aac_fs_seek (void* handle, int64_t pos) {
-    return deadbeef->fseek ((DB_FILE*)handle, pos, SEEK_SET);
-}
-
-static int
-aac_fs_read (void *handle, void *buffer, int64_t length, int64_t *nin, int64_t maxChunkSize) {
-    if (deadbeef->fread (buffer, length, 1, (DB_FILE*)handle) != 1) {
-        return 1;
-    }
-    *nin = length;
-    return 0;
-}
-static int
-aac_fs_close (void *handle) {
-    deadbeef->fclose ((DB_FILE*)handle);
-    return 1;
-}
-#endif
 
 static int
 parse_aac_stream(DB_FILE *fp, int *psamplerate, int *pchannels, float *pduration, int *ptotalsamples)
@@ -260,186 +222,72 @@ parse_aac_stream(DB_FILE *fp, int *psamplerate, int *pchannels, float *pduration
     return firstframepos;
 }
 
-// returns -1 for error, 0 for mp4, 1 for aac
-int
-aac_probe (DB_FILE *fp, const char *fname, MP4FILE_CB *cb, float *duration, int *samplerate, int *channels, int *totalsamples, int *mp4track, MP4FILE *pmp4) {
-    // try mp4
-    trace ("aac_probe: pos=%lld, junk=%d\n", deadbeef->ftell (fp), ((aac_info_t*)cb->user_data)->junk);
-
-    if (mp4track) {
-        *mp4track = -1;
-    }
-    if (*pmp4) {
-        *pmp4 = NULL;
-    }
-    *duration = -1;
-#ifdef USE_MP4FF
-    trace ("mp4ff_open_read\n");
-    mp4ff_t *mp4 = mp4ff_open_read (cb);
-#else
-    MP4FileHandle mp4 = MP4ReadProvider (fname, 0, cb);
-#endif
-    if (!mp4) {
-        trace ("not an mp4 file\n");
-        return -1;
-    }
-    if (pmp4) {
-        *pmp4 = mp4;
-    }
-#ifdef USE_MP4FF
-    int ntracks = mp4ff_total_tracks (mp4);
-    if (ntracks > 0) {
-        trace ("m4a container detected, ntracks=%d\n", ntracks);
-        int i = -1;
-        trace ("looking for mp4 data...\n");
-        int sr = -1;
-        unsigned char*  buff = 0;
-        unsigned int    buff_size = 0;
-        for (i = 0; i < ntracks; i++) {
-            mp4AudioSpecificConfig mp4ASC;
-            mp4ff_get_decoder_config(mp4, i, &buff, &buff_size);
-            if (buff) {
-                int rc = AudioSpecificConfig(buff, buff_size, &mp4ASC);
-                sr = mp4ASC.samplingFrequency;
-                if(rc < 0) {
-                    free (buff);
-                    buff = 0;
-                    trace ("aac: AudioSpecificConfig returned result=%d\n", rc);
-                    continue;
-                }
-                break;
-            }
-            else {
-                trace ("aac: mp4ff_get_decoder_config returned NULL buffer\n");
-            }
-        }
-        if (i != ntracks && buff) 
-        {
-            unsigned long srate;
-            unsigned char ch;
-            int samples;
-
-            trace ("found audio track (%d)\n", i);
-
-            // init mp4 decoding
-            NeAACDecHandle dec = NeAACDecOpen ();
-            if (NeAACDecInit2(dec, buff, buff_size, &srate, &ch) < 0) {
-                trace ("NeAACDecInit2 returned error\n");
-                goto error;
-            }
-            *samplerate = srate;
-            *channels = ch;
-            samples = (int64_t)mp4ff_num_samples(mp4, i);
-            NeAACDecConfigurationPtr conf = NeAACDecGetCurrentConfiguration (dec);
-            conf->dontUpSampleImplicitSBR = 1;
-            NeAACDecSetConfiguration (dec, conf);
-            mp4AudioSpecificConfig mp4ASC;
-            int mp4framesize;
-            if (NeAACDecAudioSpecificConfig(buff, buff_size, &mp4ASC) >= 0)
-            {
-                mp4framesize = mp4ASC.frameLengthFlag == 1 ? 960 : 1024;
-                if (mp4ASC.sbr_present_flag == 1) {
-                    mp4framesize *= 2;
-                }
-            }
-            else {
-                trace ("NeAACDecAudioSpecificConfig failed, can't get mp4framesize\n");
-                goto error;
-            }
-            samples *= mp4framesize;
-
-            *duration = (float)samples / (*samplerate);
-            
-            NeAACDecClose (dec);
-
-            if (totalsamples) {
-                *totalsamples = samples;
-            }
-            if (mp4track) {
-                *mp4track = i;
-            }
-            if (!*pmp4) {
-                mp4ff_close (mp4);
-            }
-            return 0;
-error:
-            NeAACDecClose (dec);
+static int
+mp4_track_get_info(mp4ff_t *mp4, int track, float *duration, int *samplerate, int *channels, int *totalsamples) {
+    int sr = -1;
+    unsigned char*  buff = 0;
+    unsigned int    buff_size = 0;
+    mp4AudioSpecificConfig mp4ASC;
+    mp4ff_get_decoder_config(mp4, track, &buff, &buff_size);
+    if (buff) {
+        int rc = AudioSpecificConfig(buff, buff_size, &mp4ASC);
+        sr = mp4ASC.samplingFrequency;
+        if(rc < 0) {
             free (buff);
-            if (!*pmp4) {
-                mp4ff_close (mp4);
-            }
+            trace ("aac: AudioSpecificConfig returned result=%d\n", rc);
             return -1;
         }
-        else {
-            trace ("audio track not found\n");
-            mp4ff_close (mp4);
-            mp4 = NULL;
-        }
-        if (buff) {
-            free (buff);
-            buff = NULL;
-        }
-
-    }
-#else
-    MP4FileHandle mp4File = mp4;
-    MP4TrackId trackId = MP4FindTrackId(mp4File, 0, "audio", 0);
-    trace ("trackid: %d\n", trackId);
-    uint32_t timeScale = MP4GetTrackTimeScale(mp4File, trackId);
-    MP4Duration trackDuration = MP4GetTrackDuration(mp4File, trackId);
-    MP4SampleId numSamples = MP4GetTrackNumberOfSamples(mp4File, trackId);
-    u_int8_t* pConfig;
-    uint32_t configSize = 0;
-    bool res = MP4GetTrackESConfiguration(mp4File, trackId, &pConfig, &configSize);
-    if (res && pConfig) {
-        mp4AudioSpecificConfig mp4ASC;
-        int rc = AudioSpecificConfig(pConfig, configSize, &mp4ASC);
-        free (pConfig);
-        if (rc >= 0) {
-            *samplerate = mp4ASC.samplingFrequency;
-            *channels = MP4GetTrackAudioChannels (mp4File, trackId);
-//            int64_t duration = MP4ConvertFromTrackDuration (mp4File, trackId, trackDuration, timeScale);
-            int samples = MP4GetTrackNumberOfSamples (mp4File, trackId) * 1024 * (*channels);
-            trace ("mp4 nsamples=%d, timescale=%d, samplerate=%d\n", samples, timeScale, *samplerate);
-            *duration = (float)samples / (*samplerate);
-
-            if (totalsamples) {
-                *totalsamples = samples;
-            }
-            if (mp4track) {
-                *mp4track = trackId;
-            }
-            if (!*pmp4) {
-                MP4Close (mp4);
-            }
-            return 0;
-        }
-    }
-#endif
-    if (*pmp4) {
-        *pmp4 = NULL;
     }
 
-    if (mp4) {
-#if USE_MP4FF
-        mp4ff_close (mp4);
-#else
-        MP4Close (mp4);
-#endif
-        mp4 = NULL;
-    }
-    trace ("mp4 track not found, looking for aac stream...\n");
+    unsigned long srate;
+    unsigned char ch;
+    int samples;
 
-    // not an mp4, try raw aac
-#if USE_MP4FF
+    // init mp4 decoding
+    NeAACDecHandle dec = NeAACDecOpen ();
+    if (NeAACDecInit2(dec, buff, buff_size, &srate, &ch) < 0) {
+        trace ("NeAACDecInit2 returned error\n");
+        goto error;
+    }
+    *samplerate = srate;
+    *channels = ch;
+    samples = (int64_t)mp4ff_num_samples(mp4, track);
+    NeAACDecConfigurationPtr conf = NeAACDecGetCurrentConfiguration (dec);
+    conf->dontUpSampleImplicitSBR = 1;
+    NeAACDecSetConfiguration (dec, conf);
+    int mp4framesize = mp4ASC.frameLengthFlag == 1 ? 960 : 1024;
+    if (mp4ASC.sbr_present_flag == 1) {
+        mp4framesize *= 2;
+    }
+    samples *= mp4framesize;
+
+    *duration = (float)samples / (*samplerate);
+    
+    NeAACDecClose (dec);
+
+    if (totalsamples) {
+        *totalsamples = samples;
+    }
+    return 0;
+error:
+    if (dec) {
+        NeAACDecClose (dec);
+    }
+    free (buff);
+    return -1;
+}
+
+// returns -1 for error, 0 for aac
+int
+aac_probe (DB_FILE *fp, float *duration, int *samplerate, int *channels, int *totalsamples) {
+
     deadbeef->rewind (fp);
-#endif
     if (parse_aac_stream (fp, samplerate, channels, duration, totalsamples) == -1) {
         trace ("aac stream not found\n");
         return -1;
     }
     trace ("found aac stream\n");
-    return 1;
+    return 0;
 }
 
 
@@ -474,149 +322,82 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
 
     info->mp4track = -1;
-#if USE_MP4FF
     info->mp4reader.read = aac_fs_read;
     info->mp4reader.write = NULL;
     info->mp4reader.seek = aac_fs_seek;
     info->mp4reader.truncate = NULL;
     info->mp4reader.user_data = info;
-#else
-    info->mp4reader.open = aac_fs_open;
-    info->mp4reader.seek = aac_fs_seek;
-    info->mp4reader.read = aac_fs_read;
-    info->mp4reader.write = NULL;
-    info->mp4reader.close = aac_fs_close;
-#endif
 
     if (!info->file->vfs->is_streaming ()) {
-#ifdef USE_MP4FF
         trace ("aac_init: mp4ff_open_read %s\n", deadbeef->pl_find_meta (it, ":URI"));
         info->mp4file = mp4ff_open_read (&info->mp4reader);
         if (info->mp4file) {
-            int ntracks = mp4ff_total_tracks (info->mp4file);
-            if (ntracks > 0) {
-                trace ("m4a container detected, ntracks=%d\n", ntracks);
-                int i = -1;
-                unsigned char*  buff = 0;
-                unsigned int    buff_size = 0;
-                for (i = 0; i < ntracks; i++) {
-                    mp4AudioSpecificConfig mp4ASC;
-                    mp4ff_get_decoder_config (info->mp4file, i, &buff, &buff_size);
-                    if(buff){
-                        int rc = AudioSpecificConfig(buff, buff_size, &mp4ASC);
-                        if(rc < 0)
-                            continue;
+            info->mp4track = deadbeef->pl_find_meta_int (it, ":TRACKNUM", -1);
+            trace ("track: %d\n", info->mp4track);
+            if (info->mp4track < 0) {
+                trace ("aac: warning: the file was added by old aac plugin, might be wrong, please re-add\n");
+                // find
+                int ntracks = mp4ff_total_tracks (info->mp4file);
+                for (int i = 0; i < ntracks; i++) {
+                    int res = mp4_track_get_info (info->mp4file, i, &duration, &samplerate, &channels, &totalsamples);
+                    if (res == 0) {
+                        info->mp4track = i;
                         break;
                     }
                 }
-                trace ("mp4 probe-buffer size: %d\n", buff_size);
+            }
+            if (info->mp4track >= 0) {
+                // prepare decoder
+                int res = mp4_track_get_info (info->mp4file, info->mp4track, &duration, &samplerate, &channels, &totalsamples);
+                if (res != 0) {
+                    trace ("aac: mp4_track_get_info(%d) returned error\n", info->mp4track);
+                    return -1;
+                }
 
-                if (i != ntracks && buff) 
-                {
-                    trace ("mp4 track: %d\n", i);
-                    int samples = mp4ff_num_samples(info->mp4file, i);
-                    info->mp4samples = samples;
-                    info->mp4track = i;
-
-                    // init mp4 decoding
-                    info->dec = NeAACDecOpen ();
-                    unsigned long srate;
-                    unsigned char ch;
-                    if (NeAACDecInit2(info->dec, buff, buff_size, &srate, &ch) < 0) {
-                        trace ("NeAACDecInit2 returned error\n");
+                // init mp4 decoding
+                info->mp4samples = mp4ff_num_samples(info->mp4file, info->mp4track);
+                info->dec = NeAACDecOpen ();
+                unsigned long srate;
+                unsigned char ch;
+                unsigned char*  buff = 0;
+                unsigned int    buff_size = 0;
+                mp4AudioSpecificConfig mp4ASC;
+                mp4ff_get_decoder_config (info->mp4file, info->mp4track, &buff, &buff_size);
+                if(buff) {
+                    int rc = AudioSpecificConfig(buff, buff_size, &mp4ASC);
+                    if(rc < 0) {
                         free (buff);
                         return -1;
                     }
-                    samplerate = srate;
-                    channels = ch;
-                    samples = (int64_t)samples;
-                    totalsamples = samples;
-                    NeAACDecConfigurationPtr conf = NeAACDecGetCurrentConfiguration (info->dec);
-                    conf->dontUpSampleImplicitSBR = 1;
-                    NeAACDecSetConfiguration (info->dec, conf);
-                    mp4AudioSpecificConfig mp4ASC;
-                    if (NeAACDecAudioSpecificConfig(buff, buff_size, &mp4ASC) >= 0)
-                    {
-                        info->mp4framesize = mp4ASC.frameLengthFlag == 1 ? 960 : 1024;
-                        if (mp4ASC.sbr_present_flag == 1) {
-                            info->mp4framesize *= 2;
-                        }
-                    }
-                    totalsamples *= info->mp4framesize;
-                    duration = (float)totalsamples  / samplerate;
                 }
-                else {
-                    mp4ff_close (info->mp4file);
-                    info->mp4file = NULL;
+                
+                if (NeAACDecInit2(info->dec, buff, buff_size, &srate, &ch) < 0) {
+                    trace ("NeAACDecInit2 returned error\n");
+                    free (buff);
+                    return -1;
                 }
+                if (NeAACDecAudioSpecificConfig(buff, buff_size, &mp4ASC) < 0) {
+                    return -1;
+                }
+                info->mp4framesize = mp4ASC.frameLengthFlag == 1 ? 960 : 1024;
+                if (mp4ASC.sbr_present_flag == 1) {
+                    info->mp4framesize *= 2;
+                }
+
                 if (buff) {
                     free (buff);
                 }
             }
             else {
-                mp4ff_close (info->mp4file);
-                info->mp4file = NULL;
+                trace ("aac: audio track not found\n");
+                return -1;
             }
-        }
-// {{{ libmp4v2 code
-#else
-        trace ("aac_init: MP4ReadProvider %s\n", deadbeef->pl_find_meta (it, ":URI"));
-        info->mp4file = MP4ReadProvider (deadbeef->pl_find_meta (it, ":URI"), 0, &info->mp4reader);
-        info->mp4track = MP4FindTrackId(info->mp4file, 0, "audio", 0);
-        trace ("aac_init: MP4FindTrackId returned %d\n", info->mp4track);
-        if (info->mp4track >= 0) {
-            info->timescale = MP4GetTrackTimeScale(info->mp4file, info->mp4track);
-
-            u_int8_t* pConfig;
-            uint32_t configSize = 0;
-            bool res = MP4GetTrackESConfiguration(info->mp4file, info->mp4track, &pConfig, &configSize);
-
-            mp4AudioSpecificConfig mp4ASC;
-            int rc = AudioSpecificConfig(pConfig, configSize, &mp4ASC);
-            if (rc >= 0) {
-                _info->samplerate = mp4ASC.samplingFrequency;
-                _info->channels = MP4GetTrackAudioChannels (info->mp4file, info->mp4track);
-                totalsamples = MP4GetTrackNumberOfSamples (info->mp4file, info->mp4track) * 1024 * _info->channels;
-
-                // init mp4 decoding
-                info->dec = NeAACDecOpen ();
-                unsigned long srate;
-                unsigned char ch;
-                if (NeAACDecInit2(info->dec, pConfig, configSize, &srate, &ch) < 0) {
-                    trace ("NeAACDecInit2 returned error\n");
-                    return -1;
-                }
-                samplerate = srate;
-                channels = ch;
-                NeAACDecConfigurationPtr conf = NeAACDecGetCurrentConfiguration (info->dec);
-                conf->dontUpSampleImplicitSBR = 1;
-                NeAACDecSetConfiguration (info->dec, conf);
-                mp4AudioSpecificConfig mp4ASC;
-                if (NeAACDecAudioSpecificConfig(pConfig, configSize, &mp4ASC) >= 0)
-                {
-                    info->mp4framesize = mp4ASC.frameLengthFlag == 1 ? 960 : 1024;
-                    if (mp4ASC.sbr_present_flag == 1) {
-                        info->mp4framesize *= 2;
-                    }
-                }
-                free (pConfig);
-                info->maxSampleSize = MP4GetTrackMaxSampleSize(info->mp4file, info->mp4track);
-                info->samplebuffer = malloc (info->maxSampleSize);
-                info->mp4sample = 1;
-            }
-            else {
-                MP4Close (info->mp4file);
-                info->mp4file = NULL;
-            }
+            trace ("aac: successfully initialized track %d\n", info->mp4track);
+            _info->fmt.samplerate = samplerate;
+            _info->fmt.channels = channels;
         }
         else {
-            MP4Close (info->mp4file);
-            info->mp4file = NULL;
-        }
-#endif
-// }}}
-        if (!info->mp4file) {
-            trace ("mp4 track not found, looking for aac stream...\n");
+            trace ("aac: looking for raw stream...\n");
 
             if (info->junk >= 0) {
                 deadbeef->fseek (info->file, info->junk, SEEK_SET);
@@ -667,10 +448,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->plugin = &plugin;
 
     if (!info->mp4file) {
-        //trace ("NeAACDecGetCapabilities\n");
-        //unsigned long caps = NeAACDecGetCapabilities();
-
-        trace ("NeAACDecOpen\n");
+        trace ("NeAACDecOpen for raw stream\n");
         info->dec = NeAACDecOpen ();
 
         trace ("prepare for NeAACDecInit: fread %d from offs %lld\n", AAC_BUFFER_SIZE, deadbeef->ftell (info->file));
@@ -714,7 +492,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             info->endsample = totalsamples-1;
         }
     }
-    trace ("totalsamples: %d, endsample: %d, samples-from-duration: %d\n", totalsamples-1, info->endsample, (int)deadbeef->pl_get_item_duration (it)*44100);
+    trace ("totalsamples: %d, endsample: %d, samples-from-duration: %d, samplerate %d, channels %d\n", totalsamples-1, info->endsample, (int)deadbeef->pl_get_item_duration (it)*44100, _info->fmt.samplerate, _info->fmt.channels);
 
     for (int i = 0; i < _info->fmt.channels; i++) {
         _info->fmt.channelmask |= 1 << i;
@@ -734,11 +512,7 @@ aac_free (DB_fileinfo_t *_info) {
             deadbeef->fclose (info->file);
         }
         if (info->mp4file) {
-#ifdef USE_MP4FF
             mp4ff_close (info->mp4file);
-#else
-            MP4Close (info->mp4file);
-#endif
         }
         if (info->dec) {
             NeAACDecClose (info->dec);
@@ -872,34 +646,18 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
 
         if (info->mp4file) {
             if (info->mp4sample >= info->mp4samples) {
+                printf ("aac: finished with the last mp4sample\n");
                 break;
             }
             
             unsigned char *buffer = NULL;
             int buffer_size = 0;
-#ifdef USE_MP4FF
             int rc = mp4ff_read_sample (info->mp4file, info->mp4track, info->mp4sample, &buffer, &buffer_size);
             if (rc == 0) {
                 trace ("mp4ff_read_sample failed\n");
                 info->eof = 1;
                 break;
             }
-#else
-
-            buffer = info->samplebuffer;
-            buffer_size = info->maxSampleSize;
-            MP4Timestamp sampleTime;
-            MP4Duration sampleDuration;
-            MP4Duration sampleRenderingOffset;
-            bool isSyncSample;
-            MP4ReadSample (info->mp4file, info->mp4track, info->mp4sample, &buffer, &buffer_size, &sampleTime, &sampleDuration, &sampleRenderingOffset, &isSyncSample);
-            // convert timestamp and duration from track time to milliseconds
-            u_int64_t myTime = MP4ConvertFromTrackTimestamp (info->mp4file, info->mp4track, 
-                    sampleTime, MP4_MSECS_TIME_SCALE);
-
-            u_int64_t myDuration = MP4ConvertFromTrackDuration (info->mp4file, info->mp4track,
-                    sampleDuration, MP4_MSECS_TIME_SCALE);
-#endif
             info->mp4sample++;
             samples = NeAACDecDecode(info->dec, &info->frame_info, buffer, buffer_size);
 
@@ -907,6 +665,7 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
                 free (buffer);
             }
             if (!samples) {
+                printf ("aac: NeAACDecDecode returned NULL\n");
                 break;
             }
         }
@@ -1052,7 +811,6 @@ aac_seek (DB_fileinfo_t *_info, float t) {
     return aac_seek_sample (_info, t * _info->fmt.samplerate);
 }
 
-#ifdef USE_MP4FF
 static const char *metainfo[] = {
     "artist", "artist",
     "title", "title",
@@ -1133,12 +891,10 @@ aac_load_tags (DB_playItem_t *it, mp4ff_t *mp4) {
         deadbeef->pl_set_item_flags (it, f);
     }
 }
-#endif
 
 
 int
 aac_read_metadata (DB_playItem_t *it) {
-#ifdef USE_MP4FF
     deadbeef->pl_lock ();
     DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
@@ -1181,91 +937,8 @@ aac_read_metadata (DB_playItem_t *it) {
     /*int v2err = */deadbeef->junk_id3v2_read (it, fp);
     /*int v1err = */deadbeef->junk_id3v1_read (it, fp);
     deadbeef->fclose (fp);
-#endif
     return 0;
 }
-
-#ifdef USE_MP4FF
-#if 0
-static uint32_t
-mp4ff_read_cb (void *user_data, void *buffer, uint32_t length) {
-//    trace ("aac_fs_read %d\n", length);
-    FILE *fp = (FILE *)user_data;
-    return fread (buffer, 1, length, fp);
-}
-static uint32_t
-mp4ff_seek_cb (void *user_data, uint64_t position) {
-//    trace ("aac_fs_seek\n");
-    FILE *fp = (FILE *)user_data;
-    return fseek (fp, position, SEEK_SET);
-}
-static uint32_t
-mp4ff_write_cb(void *user_data, void *buffer, uint32_t length) {
-    FILE *fp = (FILE *)user_data;
-    return fwrite (buffer, 1, length, fp);
-}
-
-static uint32_t
-mp4ff_truncate_cb(void *user_data) 
-{
-    FILE *fp = (FILE *)user_data;
-    ftruncate(fileno(fp), ftello(fp));
-    return 0;
-}
-#endif
-#endif
-
-#ifdef USE_MP4FF
-#if 0
-static int
-aac_write_metadata (DB_playItem_t *it) {
-    mp4ff_metadata_t md;
-    memset (&md, 0, sizeof (md));
-    deadbeef->pl_lock ();
-    DB_metaInfo_t *meta = deadbeef->pl_get_metadata_head (it);
-
-    // find numtags 1st
-    while (meta) {
-        if (meta->key[0] != ':') {
-            md.count++;
-        }
-        meta = meta->next;
-    }
-
-    // fill tags
-    if (md.count) {
-        md.tags = malloc (sizeof (mp4ff_tag_t) * md.count);
-        int n = 0;
-        meta = deadbeef->pl_get_metadata_head (it);
-        while (meta) {
-            if (meta->key[0] != ':') {
-                md.tags[n].item = "";//(char *)meta->key;
-                md.tags[n].value = (char *)meta->value;
-                n++;
-            }
-            meta = meta->next;
-        }
-    }
-
-    mp4ff_callback_t f = {
-        .read = mp4ff_read_cb,
-        .write = mp4ff_write_cb,
-        .seek = mp4ff_seek_cb,
-        .truncate = mp4ff_truncate_cb,
-    };
-
-    FILE *fp = fopen (deadbeef->pl_find_meta (it, ":URI"), "w");
-    f.user_data = fp;
-
-    mp4ff_meta_update (&f, &md);
-    if (md.tags) {
-        free (md.tags);
-    }
-    deadbeef->pl_unlock ();
-    return 0;
-}
-#endif
-#endif
 
 static DB_playItem_t *
 aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
@@ -1303,126 +976,158 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         // slowwww!
         info.file = fp;
         MP4FILE_CB cb = {
-#ifdef USE_MP4FF
             .read = aac_fs_read,
             .write = NULL,
             .seek = aac_fs_seek,
             .truncate = NULL,
             .user_data = &info
-#else
-            .open = aac_fs_open,
-            .seek = aac_fs_seek,
-            .read = aac_fs_read,
-            .write = NULL,
-            .close = aac_fs_close
-#endif
         };
+        mp4ff_t *mp4 = mp4ff_open_read (&cb);
+        if (mp4) {
+            int ntracks = mp4ff_total_tracks (mp4);
 
-        int res = aac_probe (fp, fname, &cb, &duration, &samplerate, &channels, &totalsamples, &mp4track, &mp4);
-        if (res == -1) {
-            deadbeef->fclose (fp);
-            return NULL;
-        }
-        else if (res == 0) {
+            // calculate number of aac subtracks
+            int num_aac_tracks = 0;
+            for (int i = 0; i < ntracks; i++) {
+                int res = mp4_track_get_info (mp4, i, &duration, &samplerate, &channels, &totalsamples);
+                if (res >= 0) {
+                    num_aac_tracks++;
+                }
+            }
+
+            for (int i = 0; i < ntracks; i++) {
+                int res = mp4_track_get_info (mp4, i, &duration, &samplerate, &channels, &totalsamples);
+                if (res >= 0) {
+                    trace ("aac: found audio track %d\n", i);
+
+                    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
+                    deadbeef->pl_add_meta (it, ":FILETYPE", ftype);
+                    deadbeef->pl_set_meta_int (it, ":TRACKNUM", i);
+                    if (num_aac_tracks > 1) {
+                        deadbeef->pl_set_item_flags (it, DDB_IS_SUBTRACK);
+                    }
+                    deadbeef->plt_set_item_duration (plt, it, duration);
+                    aac_load_tags (it, mp4);
+                    if (num_aac_tracks == 1) {
+                        int apeerr = deadbeef->junk_apev2_read (it, fp);
+                        int v2err = deadbeef->junk_id3v2_read (it, fp);
+                        int v1err = deadbeef->junk_id3v1_read (it, fp);
+                    }
+
+                    int64_t fsize = deadbeef->fgetlength (fp);
+
+                    if (duration > 0) {
+                        char s[100];
+                        snprintf (s, sizeof (s), "%lld", fsize);
+                        deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
+                        deadbeef->pl_add_meta (it, ":BPS", "16");
+                        snprintf (s, sizeof (s), "%d", channels);
+                        deadbeef->pl_add_meta (it, ":CHANNELS", s);
+                        snprintf (s, sizeof (s), "%d", samplerate);
+                        deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
+                        int br = (int)roundf(fsize / duration * 8 / 1000);
+                        snprintf (s, sizeof (s), "%d", br);
+                        deadbeef->pl_add_meta (it, ":BITRATE", s);
+
+                        // only attempt cuesheet for single-track files
+                        if (num_aac_tracks == 1) {
+                            // embedded cue
+                            deadbeef->pl_lock ();
+                            const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
+                            DB_playItem_t *cue = NULL;
+
+                            if (cuesheet) {
+                                cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), totalsamples, samplerate);
+                                if (cue) {
+                                    deadbeef->pl_item_unref (it);
+                                    deadbeef->pl_item_unref (cue);
+                                    deadbeef->pl_unlock ();
+                                    return cue;
+                                }
+                            }
+                            deadbeef->pl_unlock ();
+
+                            cue  = deadbeef->plt_insert_cue (plt, after, it, totalsamples, samplerate);
+                            if (cue) {
+                                deadbeef->pl_item_unref (it);
+                                deadbeef->pl_item_unref (cue);
+                                return cue;
+                            }
+                        }
+                    }
+
+                    after = deadbeef->plt_insert_item (plt, after, it);
+                    deadbeef->pl_item_unref (it);
+                }
+            }
             ftype = "MP4 AAC";
         }
-        else if (res == 1) {
-            ftype = "RAW AAC";
-        }
-    }
-
-    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
-    deadbeef->pl_add_meta (it, ":FILETYPE", ftype);
-    deadbeef->plt_set_item_duration (plt, it, duration);
-    trace ("duration: %f sec\n", duration);
-
-    // read tags
-    if (mp4) {
-#ifdef USE_MP4FF
-        aac_load_tags (it, mp4);
-        mp4ff_close (mp4);
-#else
-        const MP4Tags *tags = MP4TagsAlloc ();
-        MP4TagsFetch (tags, mp4);
-
-        deadbeef->pl_add_meta (it, "title", tags->name);
-        deadbeef->pl_add_meta (it, "artist", tags->artist);
-        deadbeef->pl_add_meta (it, "albumArtist", tags->albumArtist);
-        deadbeef->pl_add_meta (it, "album", tags->album);
-        deadbeef->pl_add_meta (it, "composer", tags->composer);
-        deadbeef->pl_add_meta (it, "comments", tags->comments);
-        deadbeef->pl_add_meta (it, "genre", tags->genre);
-        deadbeef->pl_add_meta (it, "year", tags->releaseDate);
-        char s[10];
-        if (tags->track) {
-            snprintf (s, sizeof (s), "%d", tags->track->index);
-            deadbeef->pl_add_meta (it, "track", s);
-            snprintf (s, sizeof (s), "%d", tags->track->total);
-            deadbeef->pl_add_meta (it, "numtracks", s);
-        }
-        if (tags->disk) {
-            snprintf (s, sizeof (s), "%d", tags->disk->index);
-            deadbeef->pl_add_meta (it, "disc", s);
-            snprintf (s, sizeof (s), "%d", tags->disk->total);
-            deadbeef->pl_add_meta (it, "numdiscs", s);
-        }
-        deadbeef->pl_add_meta (it, "copyright", tags->copyright);
-        deadbeef->pl_add_meta (it, "vendor", tags->encodedBy);
-        MP4TagsFree (tags);
-        MP4Close (mp4);
-#endif
-    }
-
-    int apeerr = deadbeef->junk_apev2_read (it, fp);
-    int v2err = deadbeef->junk_id3v2_read (it, fp);
-    int v1err = deadbeef->junk_id3v1_read (it, fp);
-
-    int64_t fsize = deadbeef->fgetlength (fp);
-
-    deadbeef->fclose (fp);
-
-    if (duration > 0) {
-        char s[100];
-        snprintf (s, sizeof (s), "%lld", fsize);
-        deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
-        deadbeef->pl_add_meta (it, ":BPS", "16");
-        snprintf (s, sizeof (s), "%d", channels);
-        deadbeef->pl_add_meta (it, ":CHANNELS", s);
-        snprintf (s, sizeof (s), "%d", samplerate);
-        deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
-        int br = (int)roundf(fsize / duration * 8 / 1000);
-        snprintf (s, sizeof (s), "%d", br);
-        deadbeef->pl_add_meta (it, ":BITRATE", s);
-        // embedded cue
-        deadbeef->pl_lock ();
-        const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
-        DB_playItem_t *cue = NULL;
-
-        if (cuesheet) {
-            cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), totalsamples, samplerate);
-            if (cue) {
-                deadbeef->pl_item_unref (it);
-                deadbeef->pl_item_unref (cue);
-                deadbeef->pl_unlock ();
-                return cue;
+        else {
+            int res = aac_probe (fp, &duration, &samplerate, &channels, &totalsamples);
+            if (res == -1) {
+                deadbeef->fclose (fp);
+                return NULL;
             }
-        }
-        deadbeef->pl_unlock ();
+            ftype = "RAW AAC";
+            DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
+            deadbeef->pl_add_meta (it, ":FILETYPE", ftype);
+            deadbeef->plt_set_item_duration (plt, it, duration);
+            trace ("duration: %f sec\n", duration);
 
-        cue  = deadbeef->plt_insert_cue (plt, after, it, totalsamples, samplerate);
-        if (cue) {
+            // read tags
+            int apeerr = deadbeef->junk_apev2_read (it, fp);
+            int v2err = deadbeef->junk_id3v2_read (it, fp);
+            int v1err = deadbeef->junk_id3v1_read (it, fp);
+
+            int64_t fsize = deadbeef->fgetlength (fp);
+
+            deadbeef->fclose (fp);
+
+            if (duration > 0) {
+                char s[100];
+                snprintf (s, sizeof (s), "%lld", fsize);
+                deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
+                deadbeef->pl_add_meta (it, ":BPS", "16");
+                snprintf (s, sizeof (s), "%d", channels);
+                deadbeef->pl_add_meta (it, ":CHANNELS", s);
+                snprintf (s, sizeof (s), "%d", samplerate);
+                deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
+                int br = (int)roundf(fsize / duration * 8 / 1000);
+                snprintf (s, sizeof (s), "%d", br);
+                deadbeef->pl_add_meta (it, ":BITRATE", s);
+                // embedded cue
+                deadbeef->pl_lock ();
+                const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
+                DB_playItem_t *cue = NULL;
+
+                if (cuesheet) {
+                    cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), totalsamples, samplerate);
+                    if (cue) {
+                        deadbeef->pl_item_unref (it);
+                        deadbeef->pl_item_unref (cue);
+                        deadbeef->pl_unlock ();
+                        return cue;
+                    }
+                }
+                deadbeef->pl_unlock ();
+
+                cue  = deadbeef->plt_insert_cue (plt, after, it, totalsamples, samplerate);
+                if (cue) {
+                    deadbeef->pl_item_unref (it);
+                    deadbeef->pl_item_unref (cue);
+                    return cue;
+                }
+            }
+
+            after = deadbeef->plt_insert_item (plt, after, it);
             deadbeef->pl_item_unref (it);
-            deadbeef->pl_item_unref (cue);
-            return cue;
         }
     }
 
-    after = deadbeef->plt_insert_item (plt, after, it);
-    deadbeef->pl_item_unref (it);
     return after;
 }
 
-static const char * exts[] = { "aac", "mp4", "m4a", NULL };
+static const char * exts[] = { "aac", "mp4", "m4a", "m4b", NULL };
 
 // define plugin interface
 static DB_decoder_t plugin = {
@@ -1462,11 +1167,6 @@ static DB_decoder_t plugin = {
     .seek_sample = aac_seek_sample,
     .insert = aac_insert,
     .read_metadata = aac_read_metadata,
-#ifdef USE_MP4FF
-    // mp4ff metadata writer doesn't work
-    // .write_metadata = aac_write_metadata,
-#else
-#endif
     .exts = exts,
 };
 
