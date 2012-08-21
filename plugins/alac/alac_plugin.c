@@ -378,28 +378,30 @@ alacplug_load_tags (DB_playItem_t *it, mp4ff_t *mp4) {
         int res = mp4ff_meta_get_by_index(mp4, t, &key, &value);
         if (key && value) {
             got_itunes_tags = 1;
-            if (!strcasecmp (key, "replaygain_track_gain")) {
-                deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, atof (value));
-            }
-            else if (!strcasecmp (key, "replaygain_album_gain")) {
-                deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, atof (value));
-            }
-            else if (!strcasecmp (key, "replaygain_track_peak")) {
-                deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, atof (value));
-            }
-            else if (!strcasecmp (key, "replaygain_album_peak")) {
-                deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, atof (value));
-            }
-            else {
-                int i;
-                for (i = 0; metainfo[i]; i += 2) {
-                    if (!strcasecmp (metainfo[i], key)) {
-                        deadbeef->pl_add_meta (it, metainfo[i+1], value);
-                        break;
-                    }
+            if (strcasecmp (key, "cover")) {
+                if (!strcasecmp (key, "replaygain_track_gain")) {
+                    deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, atof (value));
                 }
-                if (!metainfo[i]) {
-                    deadbeef->pl_add_meta (it, key, value);
+                else if (!strcasecmp (key, "replaygain_album_gain")) {
+                    deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, atof (value));
+                }
+                else if (!strcasecmp (key, "replaygain_track_peak")) {
+                    deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, atof (value));
+                }
+                else if (!strcasecmp (key, "replaygain_album_peak")) {
+                    deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, atof (value));
+                }
+                else {
+                    int i;
+                    for (i = 0; metainfo[i]; i += 2) {
+                        if (!strcasecmp (metainfo[i], key)) {
+                            deadbeef->pl_add_meta (it, metainfo[i+1], value);
+                            break;
+                        }
+                    }
+                    if (!metainfo[i]) {
+                        deadbeef->pl_add_meta (it, key, value);
+                    }
                 }
             }
         }
