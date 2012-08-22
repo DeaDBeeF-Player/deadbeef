@@ -6,12 +6,12 @@
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2
     of the License, or (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -190,6 +190,14 @@ on_trackproperties_key_press_event     (GtkWidget       *widget,
 {
     if (event->keyval == GDK_Escape) {
         on_trackproperties_delete_event (trackproperties, NULL, NULL);
+        return TRUE;
+    }
+    else if (event->keyval == GDK_Delete) {
+        on_remove_field_activate (NULL, NULL);
+        return TRUE;
+    }
+    else if (event->keyval == GDK_Insert) {
+        on_add_field_activate (NULL, NULL);
         return TRUE;
     }
     return FALSE;
@@ -626,6 +634,10 @@ on_write_tags_clicked                  (GtkButton       *button,
 void
 on_add_field_activate                 (GtkMenuItem     *menuitem,
                                         gpointer         user_data) {
+    GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
+    if (!gtk_widget_is_focus(treeview)) {
+        return; // do not add field if Metadata tab is not focused
+    }
     GtkWidget *dlg = create_entrydialog ();
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
     gtk_window_set_title (GTK_WINDOW (dlg), _("Edit playlist"));
@@ -636,9 +648,9 @@ on_add_field_activate                 (GtkMenuItem     *menuitem,
         int res = gtk_dialog_run (GTK_DIALOG (dlg));
         if (res == GTK_RESPONSE_OK) {
             e = lookup_widget (dlg, "title");
-            
+
             const char *text = gtk_entry_get_text (GTK_ENTRY(e));
-            
+
             GtkTreeIter iter;
 
             // check for _ and :
@@ -674,6 +686,11 @@ on_add_field_activate                 (GtkMenuItem     *menuitem,
 
                 gtk_list_store_append (store, &iter);
                 gtk_list_store_set (store, &iter, 0, title, 1, value, 2, key, -1);
+                GtkTreePath *path;
+                gint rows = gtk_tree_model_iter_n_children (GTK_TREE_MODEL (store), NULL);
+                path = gtk_tree_path_new_from_indices (rows - 1, -1);
+                gtk_tree_view_set_cursor (treeview, path, NULL, TRUE); // set cursur onto new field
+                gtk_tree_path_free(path);
                 trkproperties_modified = 1;
             }
             else {
@@ -694,20 +711,14 @@ void
 on_remove_field_activate                 (GtkMenuItem     *menuitem,
                                         gpointer         user_data) {
 
+    GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
+    if (!gtk_widget_is_focus(treeview)) {
+        return; // do not remove field if Metadata tab is not focused
+    }
     GtkTreePath *path;
     GtkTreeViewColumn *col;
-    GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
     gtk_tree_view_get_cursor (treeview, &path, &col);
     if (!path || !col) {
-        return;
-    }
-
-    GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (trackproperties), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("Really remove selected field?"));
-    gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
-
-    int response = gtk_dialog_run (GTK_DIALOG (dlg));
-    gtk_widget_destroy (dlg);
-    if (response != GTK_RESPONSE_YES) {
         return;
     }
 
@@ -730,6 +741,7 @@ on_remove_field_activate                 (GtkMenuItem     *menuitem,
     else {
         gtk_list_store_remove (store, &iter);
     }
+    gtk_tree_view_set_cursor (treeview, path, NULL, FALSE); // restore cursur after deletion
     gtk_tree_path_free (path);
     trkproperties_modified = 1;
 }
