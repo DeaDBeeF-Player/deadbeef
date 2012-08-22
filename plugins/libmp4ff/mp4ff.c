@@ -99,6 +99,9 @@ void mp4ff_close(mp4ff_t *ff)
     mp4ff_tag_delete(&(ff->tags));
 #endif
 
+    mp4ff_chapters_free (ff);
+    mp4ff_tref_free (ff);
+
     if (ff) free(ff);
 }
 
@@ -253,6 +256,11 @@ int32_t mp4ff_get_decoder_config(const mp4ff_t *f, const int32_t track,
 int32_t mp4ff_get_track_type(const mp4ff_t *f, const int track)
 {
 	return f->track[track]->type;
+}
+
+int32_t mp4ff_get_track_id(const mp4ff_t *f, const int track)
+{
+	return f->track[track]->id;
 }
 
 int32_t mp4ff_total_tracks(const mp4ff_t *f)
@@ -428,7 +436,7 @@ int32_t mp4ff_read_sample(mp4ff_t *f, const int32_t track, const int32_t sample,
 
     *audio_buffer = (uint8_t*)malloc(*bytes);
     if (!(*audio_buffer)) {
-        fprintf (stderr, "mp4ff_read_sample: malloc failure (tried to alloc %d bytes). possible mp4ff bug or memleak! please report a bug to deadbeef developers (i'm serious).\n", *bytes);
+        //fprintf (stderr, "mp4ff_read_sample: malloc failure (tried to alloc %d bytes). possible mp4ff bug or memleak! please report a bug to deadbeef developers (i'm serious).\n", *bytes);
         return 0;
     }
 

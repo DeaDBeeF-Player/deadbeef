@@ -43,7 +43,9 @@ extern "C" {
 #define TRACK_AUDIO   1
 #define TRACK_VIDEO   2
 #define TRACK_SYSTEM  3
+#define TRACK_TEXT    4
 
+#define ATOM_TREF 100
 
 #define SUBATOMIC 128
 
@@ -52,7 +54,6 @@ extern "C" {
 #define ATOM_MDAT 130
 #define ATOM_MVHD 131
 #define ATOM_TKHD 132
-#define ATOM_TREF 133
 #define ATOM_MDHD 134
 #define ATOM_VMHD 135
 #define ATOM_SMHD 136
@@ -76,6 +77,7 @@ extern "C" {
 #define ATOM_PRIV 154
 #define ATOM_USER 155
 #define ATOM_KEY  156
+#define ATOM_TEXT 157
 
 #define ATOM_ALBUM_ARTIST	157
 #define ATOM_CONTENTGROUP   158
@@ -94,6 +96,8 @@ extern "C" {
 #define ATOM_EPISODE        171
 #define ATOM_PODCAST        172
 #define ATOM_CUSTOM         173
+#define ATOM_CHPL           174
+#define ATOM_CHAP           175
 
 #define ATOM_UNKNOWN 255
 #define ATOM_FREE ATOM_UNKNOWN
@@ -166,6 +170,7 @@ typedef struct
 typedef struct
 {
     int32_t type;
+    int32_t id;
     int32_t channelCount;
     int32_t sampleSize;
     uint16_t sampleRate;
@@ -211,6 +216,22 @@ typedef struct
 
 } mp4ff_track_t;
 
+typedef struct
+{
+    uint8_t i_chapter;
+    struct
+    {
+        char    *psz_name;
+        int64_t  i_start;
+    } chapter[256];
+} mp4ff_chapterdata_t;
+
+typedef struct
+{
+    uint32_t i_entry_count;
+    uint32_t *i_track_ID;
+} mp4ff_trefdata_t;
+
 /* mp4 main file structure */
 typedef struct
 {
@@ -236,6 +257,10 @@ typedef struct
 
     /* metadata */
     mp4ff_metadata_t tags;
+
+    /* chapters */
+    mp4ff_chapterdata_t chapters;
+    mp4ff_trefdata_t tref;
 } mp4ff_t;
 
 
@@ -337,6 +362,8 @@ int32_t mp4ff_num_samples(const mp4ff_t *f, const int32_t track);
 uint32_t mp4ff_meta_genre_to_index(const char * genrestr);//returns 1-based index, 0 if not found
 const char * mp4ff_meta_index_to_genre(uint32_t idx);//returns pointer to static string
 
+void mp4ff_chapters_free (mp4ff_t *f);
+void mp4ff_tref_free (mp4ff_t *f);
 
 #ifdef __cplusplus
 }
