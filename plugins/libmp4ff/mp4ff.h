@@ -40,20 +40,7 @@ extern "C" {
 #else
 #include "mp4ff_int_types.h"
 #endif
-
-/* file callback structure */
-typedef struct
-{
-    uint32_t (*read)(void *user_data, void *buffer, uint32_t length);
-    uint32_t (*write)(void *udata, void *buffer, uint32_t length);
-    uint32_t (*seek)(void *user_data, uint64_t position);
-	uint32_t (*truncate)(void *user_data);
-    void *user_data;
-} mp4ff_callback_t;
-
-/* mp4 main file structure */
-typedef void* mp4ff_t;
-
+#include "mp4ffint.h"
 
 /* API */
 
@@ -78,6 +65,9 @@ int32_t mp4ff_read_sample_getsize(mp4ff_t *f, const int track, const int sample)
 int32_t mp4ff_get_decoder_config(const mp4ff_t *f, const int track,
                              unsigned char** ppBuf, unsigned int* pBufSize);
 int32_t mp4ff_get_track_type(const mp4ff_t *f, const int track);
+int32_t mp4ff_get_track_id(const mp4ff_t *f, const int track);
+int32_t mp4ff_get_track_fmt_cat(const mp4ff_t *f, const int track);
+int32_t mp4ff_get_track_fmt_codec(const mp4ff_t *f, const int track);
 int32_t mp4ff_total_tracks(const mp4ff_t *f);
 int32_t mp4ff_num_samples(const mp4ff_t *f, const int track);
 int32_t mp4ff_time_scale(const mp4ff_t *f, const int track);
@@ -113,19 +103,10 @@ int mp4ff_meta_get_tempo(const mp4ff_t *f, char **value);
 int32_t mp4ff_meta_get_coverart(const mp4ff_t *f, char **value);
 #ifdef USE_TAGGING
 
-/* metadata tag structure */
-typedef struct
-{
-    char *item;
-    char *value;
-} mp4ff_tag_t;
-
-/* metadata list structure */
-typedef struct
-{
-    mp4ff_tag_t *tags;
-    uint32_t count;
-} mp4ff_metadata_t;
+int32_t mp4ff_chapters_get_num_items (mp4ff_t *f);
+const char *mp4ff_chapters_get_item (mp4ff_t *f, int i);
+int32_t mp4ff_chap_get_num_tracks (mp4ff_t *f);
+int32_t mp4ff_chap_get_track_id (mp4ff_t *f, int t);
 
 int32_t mp4ff_meta_update(mp4ff_callback_t *f,const mp4ff_metadata_t * data);
 
