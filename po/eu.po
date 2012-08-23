@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2012-08-16 23:15+0200\n"
+"PO-Revision-Date: 2012-08-17 02:20+0200\n"
 "Last-Translator: Asier_Iturralde_Sarasola <asier.iturralde@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: eu\n"
@@ -586,7 +586,7 @@ msgstr "Soinua"
 
 #: ../plugins/gtkui/interface.c:1864 ../plugins/gtkui/deadbeef.glade.h:106
 msgid "Replaygain mode:"
-msgstr ""
+msgstr "Replaygain modua:"
 
 #: ../plugins/gtkui/interface.c:1873
 msgid "Disable"
@@ -598,7 +598,7 @@ msgstr "Pista"
 
 #: ../plugins/gtkui/interface.c:1877 ../plugins/gtkui/deadbeef.glade.h:107
 msgid "Replaygain peak scale"
-msgstr ""
+msgstr "Replaygain gailurraren eskala"
 
 #: ../plugins/gtkui/interface.c:1892 ../plugins/gtkui/interface.c:1926
 #: ../plugins/gtkui/deadbeef.glade.h:2
@@ -612,7 +612,7 @@ msgstr "+12 dB"
 
 #: ../plugins/gtkui/interface.c:1906 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Replaygain preamp:"
-msgstr ""
+msgstr "Replaygain aurre-anplifikazioa:"
 
 #: ../plugins/gtkui/interface.c:1913 ../plugins/gtkui/deadbeef.glade.h:47
 msgid "Global preamp:"
@@ -630,7 +630,7 @@ msgstr "Berrezarri aurreko saioa abiatzean"
 
 #: ../plugins/gtkui/interface.c:1957 ../plugins/gtkui/deadbeef.glade.h:37
 msgid "Don't add from archives when adding folders"
-msgstr ""
+msgstr "Ez gehitu fitxategietatik karpetak gehitzean"
 
 #: ../plugins/gtkui/interface.c:1961 ../plugins/gtkui/deadbeef.glade.h:91
 msgid "Playback"
@@ -738,7 +738,7 @@ msgstr "Testua"
 
 #: ../plugins/gtkui/interface.c:2253 ../plugins/gtkui/deadbeef.glade.h:131
 msgid "Tab strip colors"
-msgstr ""
+msgstr "Fitxen koloreak"
 
 #: ../plugins/gtkui/interface.c:2262 ../plugins/gtkui/deadbeef.glade.h:87
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
@@ -988,11 +988,11 @@ msgstr "Gehitu"
 
 #: ../plugins/gtkui/prefwin.c:328
 msgid "Global Hotkeys"
-msgstr ""
+msgstr "Laster-tekla orokorrak"
 
 #: ../plugins/gtkui/prefwin.c:390
 msgid "Slot"
-msgstr ""
+msgstr "Ekintza"
 
 #: ../plugins/gtkui/prefwin.c:391
 msgid "Key combination"
@@ -1279,7 +1279,7 @@ msgstr "Hobetsitako buffer tamaina"
 
 #: ../translation/extra.c:9
 msgid "Preferred period size"
-msgstr ""
+msgstr "Hobetsitako epe-tamaina"
 
 #. Last.fm plugin
 #: ../translation/extra.c:11
@@ -1338,7 +1338,7 @@ msgstr "Eskuratu albumart.org-etik"
 
 #: ../translation/extra.c:26
 msgid "Scale artwork towards longer side"
-msgstr ""
+msgstr "Eskalatu azala alderik handieneruntz"
 
 #. Audio CD player
 #: ../translation/extra.c:28
@@ -1505,7 +1505,7 @@ msgstr "Etiketa mota(k)"
 
 #: ../translation/extra.c:82
 msgid "Embedded Cuesheet"
-msgstr ""
+msgstr "Txertatutako cue-orria"
 
 #: ../translation/extra.c:83
 msgid "Codec"
@@ -1720,6 +1720,9 @@ msgid ""
 "Example: lame - %o\n"
 "%i for input file, %o for output file, - for stdin"
 msgstr ""
+"Adibidea: lame - %o\n"
+"%i sarrerako fitxategiarentzat, %o irteerako fitxategiarentzat, - irteera "
+"estandarrarentzat"
 
 #: ../plugins/converter/interface.c:446
 #, c-format
