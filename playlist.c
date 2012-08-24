@@ -1018,6 +1018,8 @@ plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t 
     char replaygain_album_peak[256] = "";
     char replaygain_track_gain[256] = "";
     char replaygain_track_peak[256] = "";
+    const char *uri = pl_find_meta_raw (origin, ":URI");
+    const char *dec = pl_find_meta_raw (origin, ":DECODER");
     const char *filetype = pl_find_meta_raw (origin, ":FILETYPE");
 
     playItem_t *cuetracks[MAX_CUE_TRACKS];
@@ -1072,10 +1074,10 @@ plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t 
             pl_get_value_from_cue (p + 9, sizeof (date), date);
         }
         else if (!strncmp (p, "TRACK ", 6)) {
-            trace ("cue: adding track: %s %s %s\n", pl_find_meta_raw (origin, ":URI"), title, track);
+            trace ("cue: adding track: %s %s %s\n", uri, title, track);
             if (title[0]) {
                 // add previous track
-                playItem_t *it = plt_process_cue_track (playlist, pl_find_meta_raw (origin, ":URI"), &prev, track, index00, index01, pregap, title, albumperformer, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, pl_find_meta_raw (origin, ":DECODER"), filetype, samplerate);
+                playItem_t *it = plt_process_cue_track (playlist, uri, &prev, track, index00, index01, pregap, title, albumperformer, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, dec, filetype, samplerate);
                 trace ("cue: added %p\n", it);
                 if (it) {
                     if (it->startsample >= numsamples || it->endsample >= numsamples) {
@@ -1123,8 +1125,6 @@ plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t 
     }
     if (title[0]) {
         // handle last track
-        const char *uri = pl_find_meta_raw (origin, ":URI");
-        const char *dec = pl_find_meta_raw (origin, ":DECODER");
         playItem_t *it = plt_process_cue_track (playlist, uri, &prev, track, index00, index01, pregap, title, albumperformer, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, dec, filetype, samplerate);
         if (it) {
             trace ("last track endsample: %d\n", numsamples-1);
