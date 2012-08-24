@@ -167,6 +167,7 @@ extract_i32_le (unsigned char *buf)
 
     return x;
 }
+
 static inline uint16_t
 extract_i16 (const uint8_t *buf)
 {
@@ -176,7 +177,6 @@ extract_i16 (const uint8_t *buf)
     x = buf[0];
     x <<= 8;
     x |= buf[1];
-    x <<= 8;
 
     return x;
 }
