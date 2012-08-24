@@ -1123,7 +1123,9 @@ plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t 
     }
     if (title[0]) {
         // handle last track
-        playItem_t *it = plt_process_cue_track (playlist, pl_find_meta_raw (origin, ":URI"), &prev, track, index00, index01, pregap, title, albumperformer, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, pl_find_meta_raw (origin, ":DECODER"), filetype, samplerate);
+        const char *uri = pl_find_meta_raw (origin, ":URI");
+        const char *dec = pl_find_meta_raw (origin, ":DECODER");
+        playItem_t *it = plt_process_cue_track (playlist, uri, &prev, track, index00, index01, pregap, title, albumperformer, performer, albumtitle, genre, date, replaygain_album_gain, replaygain_album_peak, replaygain_track_gain, replaygain_track_peak, dec, filetype, samplerate);
         if (it) {
             trace ("last track endsample: %d\n", numsamples-1);
             it->endsample = numsamples-1;
