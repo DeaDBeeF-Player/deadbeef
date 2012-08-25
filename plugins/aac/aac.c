@@ -1104,13 +1104,22 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 ///                }
 ///            }
 
+/// show how many audio tracks is in the mp4
+///            int naudio = 0;
+///            for (int i = 0; i < ntracks; i++) {
+///                if (mp4ff_get_track_type (mp4, i) == TRACK_AUDIO) {
+///                    naudio++;
+///                }
+///            }
+///            trace ("found %d audio tracks\n", naudio);
+
             for (int i = 0; i < ntracks; i++) {
                 if (mp4ff_get_track_type (mp4, i) != TRACK_AUDIO) {
                     continue;
                 }
                 int res = mp4_track_get_info (mp4, i, &duration, &samplerate, &channels, &totalsamples);
                 if (res >= 0 && duration > 0) {
-                    trace ("aac: found audio track %d\n", i);
+                    trace ("aac: found audio track %d (duration=%f, totalsamples=%d)\n", i, duration, totalsamples);
 
                     int num_chapters;
                     aac_chapter_t *chapters = NULL;
