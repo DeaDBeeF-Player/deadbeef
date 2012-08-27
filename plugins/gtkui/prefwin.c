@@ -151,7 +151,6 @@ on_hk_slot_edited (GtkCellRendererText *renderer, gchar *path, gchar *new_text, 
 
 void
 on_hk_slot_changed (GtkCellRendererCombo *combo, gchar *path, GtkTreeIter *new_iter, gpointer user_data) {
-
     GtkTreeModel *combo_model = NULL;
     g_object_get (combo, "model", &combo_model, NULL);
     GValue gtitle = {0,}, gname = {0,};
@@ -365,12 +364,11 @@ prefwin_add_hotkeys_tab (GtkWidget *prefwin) {
     GLADE_HOOKUP_OBJECT (prefwin, addhotkey, "addhotkey");
     GLADE_HOOKUP_OBJECT (prefwin, removehotkey, "removehotkey");
 
-    GtkTreeView *hktree = GTK_TREE_VIEW (lookup_widget (prefwin, "hotkeystree"));
     GtkListStore *hkstore = gtk_list_store_new (3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
     GtkCellRenderer *rend_hk_slot = gtk_cell_renderer_combo_new ();
 
     g_signal_connect ((gpointer)addhotkey, "clicked", G_CALLBACK (on_addhotkey_clicked), hkstore);
-    g_signal_connect ((gpointer)removehotkey, "clicked", G_CALLBACK (on_removehotkey_clicked), hktree);
+    g_signal_connect ((gpointer)removehotkey, "clicked", G_CALLBACK (on_removehotkey_clicked), GTK_TREE_VIEW (hotkeystree));
 
     GtkListStore *slots_store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
     // traverse all plugins and collect all exported actions to dropdown
@@ -403,9 +401,6 @@ prefwin_add_hotkeys_tab (GtkWidget *prefwin) {
     g_object_set (G_OBJECT (rend_hk_slot), "model", slots_store, NULL);
     g_object_set (G_OBJECT (rend_hk_slot), "editable", TRUE, NULL);
 
-//    g_signal_connect ((gpointer)rend_hk_slot, "edited",
-//            G_CALLBACK (on_hk_slot_edited),
-//            hkstore);
     g_signal_connect ((gpointer)rend_hk_slot, "changed",
             G_CALLBACK (on_hk_slot_changed),
             hkstore);
@@ -420,8 +415,8 @@ prefwin_add_hotkeys_tab (GtkWidget *prefwin) {
 
     GtkTreeViewColumn *hk_col1 = gtk_tree_view_column_new_with_attributes (_("Action"), rend_hk_slot, "text", 0, NULL);
     GtkTreeViewColumn *hk_col2 = gtk_tree_view_column_new_with_attributes (_("Key combination"), rend_hk_binding, "text", 1, NULL);
-    gtk_tree_view_append_column (hktree, hk_col1);
-    gtk_tree_view_append_column (hktree, hk_col2);
+    gtk_tree_view_append_column (GTK_TREE_VIEW (hotkeystree), hk_col1);
+    gtk_tree_view_append_column (GTK_TREE_VIEW (hotkeystree), hk_col2);
 
     // fetch hotkeys from config, and add them to list
     // model:
@@ -481,7 +476,7 @@ prefwin_add_hotkeys_tab (GtkWidget *prefwin) {
             item = deadbeef->conf_find ("hotkeys.", item);
         }
     }
-    gtk_tree_view_set_model (hktree, GTK_TREE_MODEL (hkstore));
+    gtk_tree_view_set_model (GTK_TREE_VIEW (hotkeystree), GTK_TREE_MODEL (hkstore));
 
 }
 
