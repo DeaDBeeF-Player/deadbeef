@@ -19,6 +19,7 @@
 
 #include <stdlib.h>
 #include <string.h>//might not be necessary later; required for memset
+#include <stdint.h>
 
 #include "dumb.h"
 #include "internal/it.h"
