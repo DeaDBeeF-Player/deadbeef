@@ -107,6 +107,9 @@ int32_t mp4ff_chapters_get_num_items (mp4ff_t *f);
 const char *mp4ff_chapters_get_item (mp4ff_t *f, int i);
 int32_t mp4ff_chap_get_num_tracks (mp4ff_t *f);
 int32_t mp4ff_chap_get_track_id (mp4ff_t *f, int t);
+int64_t mp4ff_get_track_dts (mp4ff_t *f, int t, int s);
+int64_t mp4ff_get_track_pts_delta(mp4ff_t *f, int t);
+int mp4ff_get_track_sample_size(mp4ff_t *f, int t, int s);
 
 int32_t mp4ff_meta_update(mp4ff_callback_t *f,const mp4ff_metadata_t * data);
 

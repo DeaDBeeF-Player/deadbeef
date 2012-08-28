@@ -33,6 +33,9 @@
 #include <stdio.h>
 #include "mp4ffint.h"
 
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
+
 mp4ff_t *mp4ff_open_read(mp4ff_callback_t *f)
 {
     mp4ff_t *ff = malloc(sizeof(mp4ff_t));
@@ -57,6 +60,43 @@ mp4ff_t *mp4ff_open_read_metaonly(mp4ff_callback_t *f)
     parse_atoms(ff,1);
 
     return ff;
+}
+
+void mp4ff_track_free (mp4ff_track_t *trk) {
+    if (trk->chunk_sample_first) {
+        free (trk->chunk_sample_first);
+    }
+    if (trk->chunk_first_dts) {
+        free (trk->chunk_first_dts);
+    }
+    if (trk->chunk_last_dts) {
+        free (trk->chunk_last_dts);
+    }
+    if (trk->p_sample_count_dts) {
+        for (int i = 0; i < trk->stsc_entry_count; i++) {
+            free (trk->p_sample_count_dts[i]);
+        }
+        free (trk->p_sample_count_dts);
+    }
+    if (trk->p_sample_delta_dts) {
+        for (int i = 0; i < trk->stsc_entry_count; i++) {
+            free (trk->p_sample_delta_dts[i]);
+        }
+        free (trk->p_sample_delta_dts);
+    }
+    if (trk->p_sample_count_pts) {
+        for (int i = 0; i < trk->stsc_entry_count; i++) {
+            free (trk->p_sample_count_pts[i]);
+        }
+        free (trk->p_sample_count_pts);
+    }
+    if (trk->p_sample_offset_pts) {
+        for (int i = 0; i < trk->stsc_entry_count; i++) {
+            free (trk->p_sample_offset_pts[i]);
+        }
+        free (trk->p_sample_offset_pts);
+    }
+    free (trk);
 }
 
 void mp4ff_close(mp4ff_t *ff)
@@ -91,7 +131,7 @@ void mp4ff_close(mp4ff_t *ff)
             if (ff->track[i]->p_drms)
                 drms_free(ff->track[i]->p_drms);
 #endif
-            free(ff->track[i]);
+            mp4ff_track_free (ff->track[i]);
         }
     }
 
@@ -175,6 +215,13 @@ int32_t parse_sub_atoms(mp4ff_t *f, const uint64_t total_size,int meta_only)
             parse_sub_atoms(f, size-header_size,meta_only);
         } else {
             mp4ff_atom_read(f, (uint32_t)size, atom_type);
+        }
+        if (atom_type == ATOM_TRAK)
+        {
+            trace ("mp4ff_track_create_chunks_index\n");
+            mp4ff_track_create_chunks_index (f, f->track[f->total_tracks-1]);
+            trace ("mp4ff_track_create_samples_index\n");
+            mp4ff_track_create_samples_index (f, f->track[f->total_tracks-1]);
         }
     }
 
