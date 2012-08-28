@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2012-05-18 16:21-0000\n"
-"Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
+"PO-Revision-Date: 2012-08-28 12:40+0200\n"
+"Last-Translator: Sérgio <smarquespt@gmail.com>\n"
 "Language-Team: \n"
+"Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: pt\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.0.5\n"
 "X-Poedit-Language: Portuguese\n"
@@ -1412,7 +1412,10 @@ msgstr "Incapaz de encontrar o ficheiro: %s"
 #: ../plugins/wildmidi/wildmidiplug.c:162
 #, c-format
 msgid "wildmidi: freepats config file not found. Please install timidity-freepats package, or specify path to freepats.cfg in the plugin settings."
-msgstr "wildmidi: o ficheiro de configuração freepats não foi encontrado. Por favor, instale o pacote timidity-freepats ou especifique o caminho para freepats.cfg nas definições do plugin."
+msgstr ""
+"wildmidi: o ficheiro de configuração freepats não foi encontrado. Por favor "
+"instale o pacote timidity-freepats ou especifique o caminho para "
+"freepats.cfg nas definições do plugin."
 
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
@@ -1703,7 +1706,7 @@ msgstr "Aviso de conversão"
 
 #: ../plugins/converter/convgui.c:222
 msgid "Please select encoder"
-msgstr "Por favor, escolha o codificador"
+msgstr "Por favor escolha o codificador"
 
 #: ../plugins/converter/convgui.c:224
 msgid "Converter error"
@@ -1933,4 +1936,3 @@ msgstr "Editor de DSP"
 #: ../plugins/converter/interface.c:629
 msgid "Untitled DSP Preset"
 msgstr "Pré-ajuste DSP sem nome"
-
