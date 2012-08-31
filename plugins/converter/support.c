@@ -145,7 +145,7 @@ glade_set_atk_action_description       (AtkAction       *action,
 #if GTK_CHECK_VERSION(3,0,0)
 GtkWidget *
 gtk_combo_box_entry_new_text(void) {
-    GtkWidget *w = gtk_combo_box_text_new_with_entry ();
+    return gtk_combo_box_text_new_with_entry ();
 }
 
 void
