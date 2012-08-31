@@ -669,6 +669,24 @@ can_be_russian (const signed char *str) {
     return 0;
 }
 
+static int
+can_be_chinese (const signed char *str) {
+    for (; *str; str++) {
+        if (((unsigned char) *str >= 0x81 && (unsigned char) *str <= 0xFE )
+           && ((unsigned char) *(str+1) >= 0x30 && (unsigned char) *(str+1) <= 0x39)
+           && ((unsigned char) *(str+2) >= 0x81 && (unsigned char) *(str+2) <= 0xFE)
+           && ((unsigned char) *(str+3) >= 0x30 && (unsigned char) *(str+3) <= 0x39)) {
+           return 1;
+        } 
+        if (((unsigned char) *str >= 0x81 && (unsigned char) *str <= 0xFE )
+           && (((unsigned char) *(str+1) >= 0x40 && (unsigned char) *(str+1) <= 0x7E)
+           || ((unsigned char) *(str+1) >= 0x80 && (unsigned char) *(str+1) <= 0xFE))) {
+           return 1;
+        } 
+    }
+    return 0;
+}
+
 static char *
 convstr_id3v2 (int version, uint8_t encoding, const unsigned char* str, int sz) {
     char out[2048] = "";
@@ -682,8 +700,11 @@ convstr_id3v2 (int version, uint8_t encoding, const unsigned char* str, int sz) 
         enc = UTF8_STR;
     }
     else if (encoding == 0) {
+        if (can_be_chinese (str)) {
+        // hack to add cp936 support
+            enc = "cp936";
+	} else if (can_be_russian (str)) {
         // hack to add limited cp1251 recoding support
-        if (can_be_russian (str)) {
             enc = "cp1251";
         }
         else {
@@ -766,7 +787,11 @@ convstr_id3v1 (const char* str, int sz) {
         return str;
     }
     const char *enc = "iso8859-1";
-    if (can_be_russian (str)) {
+    if (can_be_chinese (str)) {
+        // hack to add cp936 support
+        enc = "cp936";
+    } else if (can_be_russian (str)) {
+        // hack to add limited cp1251 recoding support
         enc = "cp1251";
     }
 
@@ -3409,6 +3434,10 @@ junk_detect_charset (const char *s) {
     // check if that's already utf8
     if (u8_valid (s, strlen (s), NULL)) {
         return NULL; // means no recoding required
+    }
+    // hack to add cp936 support
+    if (can_be_chinese (s)) {
+       return "cp936";
     }
     // check if that could be non-latin1 (too many nonascii chars)
     if (can_be_russian (s)) {
