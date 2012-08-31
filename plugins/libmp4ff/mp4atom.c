@@ -245,6 +245,8 @@ static uint8_t mp4ff_atom_name_to_type(const int8_t a, const int8_t b,
         return ATOM_TEXT;
     else if (mp4ff_atom_compare(a,b,c,d, 's','b','t','l'))
         return ATOM_TEXT;
+    else if (mp4ff_atom_compare(a,b,c,d, 'e','l','s','t'))
+        return ATOM_ELST;
     else
         return ATOM_UNKNOWN;
 }
@@ -1067,99 +1069,108 @@ int mp4ff_track_create_samples_index (mp4ff_t *f, mp4ff_track_t *trk)
 
     return 0;
 }
-#if 0
-int64_t mp4ff_get_track_dts (mp4ff *f, int t, int s)
+
+int64_t mp4ff_get_track_dts (mp4ff_t *f, int t, int s)
 {
-#define track f->tracks[t]
+    mp4ff_track_t *p_track = f->track[t];
     // find chunk for the sample
     int i_chunk = 0;
-    for (i_chunk = 0; i_chunk < track.stts_entry_count; i_chunk++) {
-        if (track.stts_sample_first[i_chunk] < s) {
+    for (i_chunk = 0; i_chunk < p_track->stts_entry_count; i_chunk++) {
+        if (p_track->chunk_sample_first[i_chunk] < s) {
             fprintf (stderr, "chunk for sample %d: %d\n", s, i_chunk);
             break;
         }
     }
 
     unsigned int i_index = 0;
-    unsigned int i_sample = s - track.stts_sample_first[i_chunk];
-    int64_t i_dts = track.chunk_first_dts[i_chunk];
+    unsigned int i_sample = s - p_track->chunk_sample_first[i_chunk];
+    int64_t i_dts = p_track->chunk_first_dts[i_chunk];
 
     while( i_sample > 0 )
     {
-        if( i_sample > track.p_sample_count_dts[i_chunk][i_index] )
+        if( i_sample > p_track->p_sample_count_dts[i_chunk][i_index] )
         {
-            i_dts += track.p_sample_count_dts[i_chunk][i_index] *
-                track.p_sample_delta_dts[i_chunk][i_index];
-            i_sample -= track.p_sample_count_dts[i_chunk][i_index];
+            i_dts += p_track->p_sample_count_dts[i_chunk][i_index] *
+                p_track->p_sample_delta_dts[i_chunk][i_index];
+            i_sample -= p_track->p_sample_count_dts[i_chunk][i_index];
             i_index++;
         }
         else
         {
-            i_dts += i_sample * track.p_sample_delta_dts[i_chunk][i_index];
+            i_dts += i_sample * p_track->p_sample_delta_dts[i_chunk][i_index];
             break;
         }
     }
 
-#undef track
 
+#if 0
+    // we don't need elst
     /* now handle elst */
-    if( p_track->p_elst )
+    if (p_track->elst_entry_count)
     {
-        demux_sys_t         *p_sys = p_demux->p_sys;
-        MP4_Box_data_elst_t *elst = p_track->p_elst->data.p_elst;
-
         /* convert to offset */
-        if( ( elst->i_media_rate_integer[p_track->i_elst] > 0 ||
-              elst->i_media_rate_fraction[p_track->i_elst] > 0 ) &&
-            elst->i_media_time[p_track->i_elst] > 0 )
+        if( ( p_track->elst_media_rate_integer[p_track->i_elst] > 0 ||
+              p_track->elst_media_rate_fraction[p_track->i_elst] > 0 ) &&
+            p_track->elst_media_time[p_track->i_elst] > 0 )
         {
-            i_dts -= elst->i_media_time[p_track->i_elst];
+            i_dts -= p_track->elst_media_time[p_track->i_elst];
         }
 
         /* add i_elst_time */
-        i_dts += p_track->i_elst_time * p_track->i_timescale /
-            p_sys->i_timescale;
+        i_dts += p_track->i_elst_time * p_track->timeScale /
+            f->time_scale;
 
         if( i_dts < 0 ) i_dts = 0;
     }
+#endif
 
-    return INT64_C(1000000) * i_dts / p_track->i_timescale;
+    return (int64_t)1000000 * i_dts / p_track->timeScale;
 }
 
-int64_t mp4ff_get_track_pts_delta(mp4ff *f, int t)
+int64_t mp4ff_get_track_pts_delta(mp4ff_t *f, int t, int i_sample)
 {
-    mp4_chunk_t *ck = &p_track->chunk[p_track->i_chunk];
+    mp4ff_track_t *p_track = f->track[t];
+    int i_chunk = 0;
+    for (; i_chunk < p_track->stts_entry_count; i_chunk++) {
+        if (i_sample > p_track->chunk_sample_first[i_chunk]) {
+            break;
+        }
+    }
     unsigned int i_index = 0;
-    unsigned int i_sample = p_track->i_sample - ck->i_sample_first;
+    i_sample = i_sample - p_track->chunk_sample_first[i_chunk];
 
-    if( ck->p_sample_count_pts == NULL || ck->p_sample_offset_pts == NULL )
+    if( p_track->p_sample_count_pts[i_chunk] == NULL || p_track->p_sample_offset_pts[i_chunk] == NULL )
         return -1;
 
     for( i_index = 0;; i_index++ )
     {
-        if( i_sample < ck->p_sample_count_pts[i_index] )
-            return ck->p_sample_offset_pts[i_index] * INT64_C(1000000) /
-                   (int64_t)p_track->i_timescale;
+        if( i_sample < p_track->p_sample_count_pts[i_chunk][i_index] )
+            return p_track->p_sample_offset_pts[i_chunk][i_index] * (int64_t)1000000 /
+                   (int64_t)p_track->timeScale;
 
-        i_sample -= ck->p_sample_count_pts[i_index];
+        i_sample -= p_track->p_sample_count_pts[i_chunk][i_index];
     }
+    return 0;
 }
 
-int mp4ff_get_track_sample_size(mp4ff *f, int t, int s)
+int mp4ff_get_track_sample_size(mp4ff_t *f, int t, int s)
 {
+    mp4ff_track_t *p_track = f->track[t];
     int i_size;
-    MP4_Box_data_sample_soun_t *p_soun;
 
-    if( p_track->i_sample_size == 0 )
+    if( p_track->stsz_sample_size == 0 )
     {
         /* most simple case */
-        return p_track->p_sample_size[p_track->i_sample];
+        return p_track->stsz_table[s];
     }
-    if( p_track->fmt.i_cat != AUDIO_ES )
+    if(p_track->type != TRACK_AUDIO)
     {
-        return p_track->i_sample_size;
+        return p_track->stsz_sample_size;
     }
 
+// that's all we need for chapters, sound length is calculated differently for now
+    return 0;
+#if 0
     p_soun = p_track->p_sample->data.p_sample_soun;
 
     if( p_soun->i_qt_version == 1 )
@@ -1189,5 +1200,5 @@ int mp4ff_get_track_sample_size(mp4ff *f, int t, int s)
 
     //fprintf( stderr, "size=%d\n", i_size );
     return i_size;
-}
 #endif
+}

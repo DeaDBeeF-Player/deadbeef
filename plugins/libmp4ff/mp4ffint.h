@@ -77,7 +77,6 @@ extern "C" {
 #define ATOM_PRIV 154
 #define ATOM_USER 155
 #define ATOM_KEY  156
-#define ATOM_TEXT 157
 
 #define ATOM_ALBUM_ARTIST	157
 #define ATOM_CONTENTGROUP   158
@@ -98,6 +97,8 @@ extern "C" {
 #define ATOM_CUSTOM         173
 #define ATOM_CHPL           174
 #define ATOM_CHAP           175
+#define ATOM_TEXT 176
+#define ATOM_ELST 176
 
 #define ATOM_UNKNOWN 255
 #define ATOM_FREE ATOM_UNKNOWN
@@ -216,6 +217,18 @@ typedef struct
     int32_t ctts_entry_count;
     int32_t *ctts_sample_count;
     int32_t *ctts_sample_offset;
+
+
+#if 0
+    /* elst */
+    int      i_elst;         /* current elst */
+    int64_t  i_elst_time;    /* current elst start time (in movie time scale)*/
+    uint32_t elst_entry_count;
+    uint64_t *elst_segment_duration;
+    int64_t  *elst_media_time;
+    uint16_t *elst_media_rate_integer;
+    uint16_t *elst_media_rate_fraction;
+#endif
 
     /* esde */
     uint8_t *decoderConfig;
