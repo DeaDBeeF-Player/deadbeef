@@ -222,7 +222,7 @@ parse_aac_stream(DB_FILE *fp, int *psamplerate, int *pchannels, float *pduration
 }
 
 static int
-mp4_track_get_info(mp4ff_t *mp4, int track, float *duration, int *samplerate, int *channels, int *totalsamples) {
+mp4_track_get_info(mp4ff_t *mp4, int track, float *duration, int *samplerate, int *channels, int *totalsamples, int *mp4framesize) {
     int sr = -1;
     unsigned char*  buff = 0;
     unsigned int    buff_size = 0;
@@ -251,22 +251,23 @@ mp4_track_get_info(mp4ff_t *mp4, int track, float *duration, int *samplerate, in
     *samplerate = srate;
     *channels = ch;
     samples = (int64_t)mp4ff_num_samples(mp4, track);
-    NeAACDecConfigurationPtr conf = NeAACDecGetCurrentConfiguration (dec);
-    conf->dontUpSampleImplicitSBR = 1;
-    NeAACDecSetConfiguration (dec, conf);
-    int mp4framesize = mp4ASC.frameLengthFlag == 1 ? 960 : 1024;
-    if (mp4ASC.sbr_present_flag == 1) {
-        mp4framesize *= 2;
-    }
-    samples *= mp4framesize;
-
-    *duration = (float)samples / (*samplerate);
     
     NeAACDecClose (dec);
 
-    if (totalsamples) {
-        *totalsamples = samples;
+    int i_sample_count = mp4ff_num_samples (mp4, track);
+    int i_sample;
+
+    int64_t total_dur = 0;
+    for( i_sample = 0; i_sample < i_sample_count; i_sample++ )
+    {
+        total_dur += mp4ff_get_sample_duration (mp4, track, i_sample);
     }
+    if (totalsamples) {
+        *totalsamples = total_dur * (*samplerate) / mp4ff_time_scale (mp4, track);
+        *mp4framesize = (*totalsamples) / i_sample;
+    }
+    *duration = total_dur / (float)mp4ff_time_scale (mp4, track);
+
     return 0;
 error:
     if (dec) {
@@ -336,7 +337,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
                 if (mp4ff_get_track_type (info->mp4, i) != TRACK_AUDIO) {
                     continue;
                 }
-                int res = mp4_track_get_info (info->mp4, i, &duration, &samplerate, &channels, &totalsamples);
+                int res = mp4_track_get_info (info->mp4, i, &duration, &samplerate, &channels, &totalsamples, &info->mp4framesize);
                 if (res >= 0 && duration > 0) {
                     info->mp4track = i;
                     break;
@@ -345,7 +346,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             trace ("track: %d\n", info->mp4track);
             if (info->mp4track >= 0) {
                 // prepare decoder
-                int res = mp4_track_get_info (info->mp4, info->mp4track, &duration, &samplerate, &channels, &totalsamples);
+                int res = mp4_track_get_info (info->mp4, info->mp4track, &duration, &samplerate, &channels, &totalsamples, &info->mp4framesize);
                 if (res != 0) {
                     trace ("aac: mp4_track_get_info(%d) returned error\n", info->mp4track);
                     return -1;
@@ -360,25 +361,10 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
                 unsigned int    buff_size = 0;
                 mp4AudioSpecificConfig mp4ASC;
                 mp4ff_get_decoder_config (info->mp4, info->mp4track, &buff, &buff_size);
-                if(buff) {
-                    int rc = AudioSpecificConfig(buff, buff_size, &mp4ASC);
-                    if(rc < 0) {
-                        free (buff);
-                        return -1;
-                    }
-                }
-                
                 if (NeAACDecInit2(info->dec, buff, buff_size, &srate, &ch) < 0) {
                     trace ("NeAACDecInit2 returned error\n");
                     free (buff);
                     return -1;
-                }
-                if (NeAACDecAudioSpecificConfig(buff, buff_size, &mp4ASC) < 0) {
-                    return -1;
-                }
-                info->mp4framesize = mp4ASC.frameLengthFlag == 1 ? 960 : 1024;
-                if (mp4ASC.sbr_present_flag == 1) {
-                    info->mp4framesize *= 2;
                 }
 
                 if (buff) {
@@ -974,9 +960,24 @@ aac_load_itunes_chapters (mp4ff_t *mp4, /* out */ int *num_chapters, int sampler
             int64_t curr_sample = 0;
             for( i_sample = 0; i_sample < i_sample_count; i_sample++ )
             {
+#if 0
+                const int64_t i_dts = mp4ff_get_track_dts (mp4, j, i_sample);
+                const int64_t i_pts_delta = mp4ff_get_track_pts_delta(mp4, j, i_sample);
+                trace ("i_dts = %lld, i_pts_delta = %lld\n", i_dts, i_pts_delta);
+                const unsigned int i_size = mp4ff_get_track_sample_size(mp4, j, i_sample);
+                if (i_size <= 0) {
+                    continue;
+                }
+
+                int64_t i_time_offset = i_dts + max (i_pts_delta, 0);
+#endif
                 int32_t dur = (int64_t)1000 * mp4ff_get_sample_duration (mp4, j, i_sample) / mp4ff_time_scale (mp4, j); // milliseconds
                 total_dur += dur;
-                trace ("dur: %d (%f min)\n", dur, dur / 1000.f / 60.f);
+#if 0
+                trace ("dur: %d %f min // offs: %lld %f (from currsample: %f)\n", dur, dur / 1000.f / 60.f, i_time_offset, i_time_offset / 1000000.f / 60.f, curr_sample * 1000.f/ samplerate);
+#else
+                trace ("dur: %d %f min\n", dur, dur / 1000.f / 60.f);
+#endif
                 unsigned char *buffer = NULL;
                 int buffer_size = 0;
 
@@ -1117,7 +1118,8 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
                 if (mp4ff_get_track_type (mp4, i) != TRACK_AUDIO) {
                     continue;
                 }
-                int res = mp4_track_get_info (mp4, i, &duration, &samplerate, &channels, &totalsamples);
+                int mp4framesize;
+                int res = mp4_track_get_info (mp4, i, &duration, &samplerate, &channels, &totalsamples, &mp4framesize);
                 if (res >= 0 && duration > 0) {
                     trace ("aac: found audio track %d (duration=%f, totalsamples=%d)\n", i, duration, totalsamples);
 

@@ -190,11 +190,13 @@ typedef struct
     int32_t *stts_sample_count;
     int32_t *stts_sample_delta;
 
+#if 0
+// experimental support for indexing chunks samples based on VLC code
     /* chunk index generated in mp4ff_create_chunks_index */
-    // i_chunk_count = stsc_entry_count
     // chunk->i_sample_count = stsc_samples_per_chunk[i_chunk]
     // chunk->i_sample_description_index = stsc_sample_desc_index[chunk]
     // trk->p_sample_size[i_sample] = stsz_sample_size ? stsz_sample_size : stsz_table[i_sample]
+    int32_t i_chunk_count; // stco_entry_count
     int32_t *chunk_sample_first;
     int32_t *chunk_first_dts;
     int32_t *chunk_last_dts;
@@ -202,7 +204,7 @@ typedef struct
     int32_t **p_sample_delta_dts;
     int32_t **p_sample_count_pts;
     int32_t **p_sample_offset_pts;
-
+#endif
     /* stsc */
     int32_t stsc_entry_count;
     int32_t *stsc_first_chunk;
@@ -369,8 +371,10 @@ mp4ff_t *mp4ff_open_edit(mp4ff_callback_t *f);
 #endif
 void mp4ff_close(mp4ff_t *ff);
 //void mp4ff_track_add(mp4ff_t *f);
+#if 0
 int mp4ff_track_create_chunks_index(mp4ff_t *f, mp4ff_track_t *trk);
 int mp4ff_track_create_samples_index (mp4ff_t *f, mp4ff_track_t *trk);
+#endif
 int32_t parse_sub_atoms(mp4ff_t *f, const uint64_t total_size,int meta_only);
 int32_t parse_atoms(mp4ff_t *f,int meta_only);
 

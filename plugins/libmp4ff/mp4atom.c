@@ -44,8 +44,8 @@
 #include "mp4ffint.h"
 #include <stdio.h>
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 #define min(x,y) ((x)<(y)?(x):(y))
 
 #define       COPYRIGHT_SYMBOL        ((int8_t)0xA9)
@@ -845,6 +845,7 @@ int32_t mp4ff_atom_read(mp4ff_t *f, const int32_t size, const uint8_t atom_type)
     return 0;
 }
 
+#if 0
 int mp4ff_track_create_chunks_index(mp4ff_t *f, mp4ff_track_t *trk)
 {
     unsigned int i_chunk;
@@ -859,18 +860,19 @@ int mp4ff_track_create_chunks_index(mp4ff_t *f, mp4ff_track_t *trk)
         return -1;
     }
 
-    int i_chunk_count = trk->stsc_entry_count;
+    trk->i_chunk_count = trk->stco_entry_count;
 
-    trk->chunk_sample_first = malloc (sizeof (int32_t) * i_chunk_count);
-    trk->chunk_first_dts = malloc (sizeof (int32_t) * i_chunk_count);
-    trk->chunk_last_dts = malloc (sizeof (int32_t) * i_chunk_count);
-    trk->p_sample_count_dts = malloc (sizeof (int32_t *) * i_chunk_count);
-    trk->p_sample_delta_dts = malloc (sizeof (int32_t *) * i_chunk_count);
-    trk->p_sample_count_pts = malloc (sizeof (int32_t *) * i_chunk_count);
-    trk->p_sample_offset_pts = malloc (sizeof (int32_t *) * i_chunk_count);
+    trace ("\033[0;31mchunk count %d\033[37;0m\n", trk->i_chunk_count);
+    trk->chunk_sample_first = malloc (sizeof (int32_t) * trk->i_chunk_count);
+    trk->chunk_first_dts = malloc (sizeof (int32_t) * trk->i_chunk_count);
+    trk->chunk_last_dts = malloc (sizeof (int32_t) * trk->i_chunk_count);
+    trk->p_sample_count_dts = malloc (sizeof (int32_t *) * trk->i_chunk_count);
+    trk->p_sample_delta_dts = malloc (sizeof (int32_t *) * trk->i_chunk_count);
+    trk->p_sample_count_pts = malloc (sizeof (int32_t *) * trk->i_chunk_count);
+    trk->p_sample_offset_pts = malloc (sizeof (int32_t *) * trk->i_chunk_count);
 
     /* first we read chunk offset */
-    for( i_chunk = 0; i_chunk < i_chunk_count; i_chunk++ )
+    for( i_chunk = 0; i_chunk < trk->i_chunk_count; i_chunk++ )
     {
         // chunk.i_offset = stco_chunk_offset[i_chunk]
         trk->chunk_first_dts[i_chunk] = 0;
@@ -883,7 +885,7 @@ int mp4ff_track_create_chunks_index(mp4ff_t *f, mp4ff_track_t *trk)
     /* now we read index for SampleEntry( soun vide mp4a mp4v ...)
         to be used for the sample XXX begin to 1
         We construct it begining at the end */
-    i_last = i_chunk_count; /* last chunk proceded */
+    i_last = trk->i_chunk_count; /* last chunk proceded */
     i_index = trk->stsc_entry_count;
     if( !i_index )
     {
@@ -891,14 +893,16 @@ int mp4ff_track_create_chunks_index(mp4ff_t *f, mp4ff_track_t *trk)
         return -1;
     }
     trk->chunk_sample_first[0] = 0;
-    for (int i = 1; i < trk->stts_entry_count; i++)
+    trace ("\033[0;35mchunk_sample_first[%d]=%d\033[37;0m\n", 0, trk->chunk_sample_first[0]);
+    for (int i = 1; i < trk->i_chunk_count; i++)
     {
         trk->chunk_sample_first[i] = 
             trk->chunk_sample_first[i-1] +
-            trk->stts_sample_count[i-1];
+            trk->stsc_samples_per_chunk[i-1];
+        trace ("\033[0;35mchunk_sample_first[%d]=%d\033[37;0m\n", i, trk->chunk_sample_first[i]);
     }
 
-    trace ("track[Id 0x%x] read %d chunks\n", trk->id, i_chunk_count);
+    trace ("track[Id 0x%x] read %d chunks\n", trk->id, trk->i_chunk_count);
     return 0;
 }
 
@@ -934,30 +938,35 @@ int mp4ff_track_create_samples_index (mp4ff_t *f, mp4ff_track_t *trk)
 
     i_next_dts = 0;
     i_index = 0; i_index_sample_used = 0;
-    for( i_chunk = 0; i_chunk < trk->stsc_entry_count; i_chunk++ )
+    for( i_chunk = 0; i_chunk < trk->i_chunk_count; i_chunk++ )
     {
+        trace ("calculating first/last dts for chunk %d\n", i_chunk);
         int64_t i_entry, i_sample_count, i;
 
         /* save first dts */
         trk->chunk_first_dts[i_chunk] = i_next_dts;
         trk->chunk_last_dts[i_chunk]  = i_next_dts;
+        trace ("init %lld\n", i_next_dts);
 
         /* count how many entries are needed for this chunk
          * for p_sample_delta_dts and p_sample_count_dts */
         i_sample_count = trk->stsc_samples_per_chunk[i_chunk];
+        trace ("init i_sample_count %d\n", i_sample_count);
 
-        trace ("calc i_entry for chunk %d\n", i_chunk);
         i_entry = 0;
         while( i_sample_count > 0 )
         {
-            trace ("i_entry = %d, i_index = %d, i_sample_count = %d, i_sample_count - stts_sample_count[i_index+i_entry] = %d\n", i_entry, i_index, i_sample_count, i_sample_count - trk->stts_sample_count[i_index+i_entry]);
             i_sample_count -= trk->stts_sample_count[i_index+i_entry];
+            trace ("- i_sample_count %d\n", i_sample_count);
             /* don't count already used sample in this entry */
-            if( i_entry == 0 )
+            if( i_entry == 0 ) {
                 i_sample_count += i_index_sample_used;
+                trace ("+ i_sample_count %d\n", i_sample_count);
+            }
 
             i_entry++;
         }
+        trace ("+ i_entry %d\n", i_entry);
         /* allocate them */
         trace ("alloc mem for chunk %d (%d entries, %d samples-per-chunk)\n", i_chunk, i_entry, trk->stsc_samples_per_chunk[i_chunk]);
         trk->p_sample_count_dts[i_chunk] = calloc( i_entry, sizeof( uint32_t ) );
@@ -1001,11 +1010,9 @@ int mp4ff_track_create_samples_index (mp4ff_t *f, mp4ff_track_t *trk)
      */
     if (trk->ctts_entry_count)
     {
-        trace ("CTTS table\n");
-
         /* Create pts-dts table per chunk */
         i_index = 0; i_index_sample_used = 0;
-        for( i_chunk = 0; i_chunk < trk->stsc_entry_count; i_chunk++ )
+        for( i_chunk = 0; i_chunk < trk->i_chunk_count; i_chunk++ )
         {
             int64_t i_entry, i_sample_count, i;
 
@@ -1075,16 +1082,17 @@ int64_t mp4ff_get_track_dts (mp4ff_t *f, int t, int s)
     mp4ff_track_t *p_track = f->track[t];
     // find chunk for the sample
     int i_chunk = 0;
-    for (i_chunk = 0; i_chunk < p_track->stts_entry_count; i_chunk++) {
-        if (p_track->chunk_sample_first[i_chunk] < s) {
-            fprintf (stderr, "chunk for sample %d: %d\n", s, i_chunk);
+    for (i_chunk = 0; i_chunk < p_track->i_chunk_count-1; i_chunk++) {
+        if (p_track->chunk_sample_first[i_chunk+1] > s) {
             break;
         }
     }
+//    trace ("i_chunk for sample %d: %d (out of %d)\n", s, i_chunk, p_track->i_chunk_count);
 
     unsigned int i_index = 0;
     unsigned int i_sample = s - p_track->chunk_sample_first[i_chunk];
     int64_t i_dts = p_track->chunk_first_dts[i_chunk];
+    trace ("start dts: %lld (i_sample: %d)\n", i_dts, i_sample);
 
     while( i_sample > 0 )
     {
@@ -1130,17 +1138,21 @@ int64_t mp4ff_get_track_dts (mp4ff_t *f, int t, int s)
 int64_t mp4ff_get_track_pts_delta(mp4ff_t *f, int t, int i_sample)
 {
     mp4ff_track_t *p_track = f->track[t];
+    // find chunk for the sample
     int i_chunk = 0;
-    for (; i_chunk < p_track->stts_entry_count; i_chunk++) {
-        if (i_sample > p_track->chunk_sample_first[i_chunk]) {
+    for (i_chunk = 0; i_chunk < p_track->i_chunk_count-1; i_chunk++) {
+        if (p_track->chunk_sample_first[i_chunk+1] > i_sample) {
             break;
         }
     }
+//    trace ("i_chunk for sample %d: %d (out of %d)\n", i_sample, i_chunk, p_track->i_chunk_count);
     unsigned int i_index = 0;
     i_sample = i_sample - p_track->chunk_sample_first[i_chunk];
 
-    if( p_track->p_sample_count_pts[i_chunk] == NULL || p_track->p_sample_offset_pts[i_chunk] == NULL )
+    if( p_track->p_sample_count_pts[i_chunk] == NULL || p_track->p_sample_offset_pts[i_chunk] == NULL ) {
+        trace ("pts info not found :(\n");
         return -1;
+    }
 
     for( i_index = 0;; i_index++ )
     {
@@ -1202,3 +1214,4 @@ int mp4ff_get_track_sample_size(mp4ff_t *f, int t, int s)
     return i_size;
 #endif
 }
+#endif
