@@ -63,6 +63,7 @@ mp4ff_t *mp4ff_open_read_metaonly(mp4ff_callback_t *f)
 }
 
 void mp4ff_track_free (mp4ff_track_t *trk) {
+#if 0
     if (trk->chunk_sample_first) {
         free (trk->chunk_sample_first);
     }
@@ -96,6 +97,7 @@ void mp4ff_track_free (mp4ff_track_t *trk) {
         }
         free (trk->p_sample_offset_pts);
     }
+#endif
     free (trk);
 }
 
@@ -216,6 +218,7 @@ int32_t parse_sub_atoms(mp4ff_t *f, const uint64_t total_size,int meta_only)
         } else {
             mp4ff_atom_read(f, (uint32_t)size, atom_type);
         }
+#if 0
         if (atom_type == ATOM_TRAK)
         {
             trace ("mp4ff_track_create_chunks_index\n");
@@ -223,6 +226,7 @@ int32_t parse_sub_atoms(mp4ff_t *f, const uint64_t total_size,int meta_only)
             trace ("mp4ff_track_create_samples_index\n");
             mp4ff_track_create_samples_index (f, f->track[f->total_tracks-1]);
         }
+#endif
     }
 
     return 0;
