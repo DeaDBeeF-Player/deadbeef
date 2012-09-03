@@ -1,19 +1,25 @@
-/*
-    DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
+/* junklib -- library for reading tags from various audio files for deadbeef player
+  http://deadbeef.sourceforge.net
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 2 of the License, or
-    (at your option) any later version.
+  Copyright (C) 2009-2012 Alexey Yakovenko
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+
+  Alexey Yakovenko waker@users.sourceforge.net
 */
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -677,12 +683,12 @@ can_be_chinese (const signed char *str) {
            && ((unsigned char) *(str+2) >= 0x81 && (unsigned char) *(str+2) <= 0xFE)
            && ((unsigned char) *(str+3) >= 0x30 && (unsigned char) *(str+3) <= 0x39)) {
            return 1;
-        } 
+        }
         if (((unsigned char) *str >= 0x81 && (unsigned char) *str <= 0xFE )
            && (((unsigned char) *(str+1) >= 0x40 && (unsigned char) *(str+1) <= 0x7E)
            || ((unsigned char) *(str+1) >= 0x80 && (unsigned char) *(str+1) <= 0xFE))) {
            return 1;
-        } 
+        }
     }
     return 0;
 }
@@ -703,7 +709,8 @@ convstr_id3v2 (int version, uint8_t encoding, const unsigned char* str, int sz) 
         if (can_be_chinese (str)) {
         // hack to add cp936 support
             enc = "cp936";
-	} else if (can_be_russian (str)) {
+	}
+	else if (can_be_russian (str)) {
         // hack to add limited cp1251 recoding support
             enc = "cp1251";
         }
@@ -790,7 +797,8 @@ convstr_id3v1 (const char* str, int sz) {
     if (can_be_chinese (str)) {
         // hack to add cp936 support
         enc = "cp936";
-    } else if (can_be_russian (str)) {
+    }
+    else if (can_be_russian (str)) {
         // hack to add limited cp1251 recoding support
         enc = "cp1251";
     }
