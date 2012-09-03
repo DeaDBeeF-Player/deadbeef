@@ -1722,6 +1722,8 @@ create_prefwin (void)
   GtkWidget *hbox101;
   GtkWidget *label128;
   GtkWidget *gui_plugin;
+  GtkWidget *enable_cp1251_recoding;
+  GtkWidget *enable_cp936_recoding;
   GtkWidget *label2;
   GtkWidget *notebook4;
   GtkWidget *vbox21;
@@ -2132,7 +2134,15 @@ create_prefwin (void)
   gtk_widget_show (gui_plugin);
   gtk_box_pack_start (GTK_BOX (hbox101), gui_plugin, TRUE, TRUE, 0);
 
-  label2 = gtk_label_new (_("GUI"));
+  enable_cp1251_recoding = gtk_check_button_new_with_mnemonic (_("Enable Russian CP1251 detection and recoding"));
+  gtk_widget_show (enable_cp1251_recoding);
+  gtk_box_pack_start (GTK_BOX (vbox9), enable_cp1251_recoding, FALSE, FALSE, 0);
+
+  enable_cp936_recoding = gtk_check_button_new_with_mnemonic (_("Enable Chinese CP936 detection and recoding"));
+  gtk_widget_show (enable_cp936_recoding);
+  gtk_box_pack_start (GTK_BOX (vbox9), enable_cp936_recoding, FALSE, FALSE, 0);
+
+  label2 = gtk_label_new (_("GUI/Misc"));
   gtk_widget_show (label2);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 3), label2);
 
@@ -2681,6 +2691,12 @@ create_prefwin (void)
   g_signal_connect ((gpointer) gui_plugin, "changed",
                     G_CALLBACK (on_gui_plugin_changed),
                     NULL);
+  g_signal_connect ((gpointer) enable_cp1251_recoding, "toggled",
+                    G_CALLBACK (on_enable_cp1251_recoding_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) enable_cp936_recoding, "toggled",
+                    G_CALLBACK (on_enable_cp936_recoding_toggled),
+                    NULL);
   g_signal_connect ((gpointer) override_bar_colors, "toggled",
                     G_CALLBACK (on_override_bar_colors_toggled),
                     NULL);
@@ -2832,6 +2848,8 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, hbox101, "hbox101");
   GLADE_HOOKUP_OBJECT (prefwin, label128, "label128");
   GLADE_HOOKUP_OBJECT (prefwin, gui_plugin, "gui_plugin");
+  GLADE_HOOKUP_OBJECT (prefwin, enable_cp1251_recoding, "enable_cp1251_recoding");
+  GLADE_HOOKUP_OBJECT (prefwin, enable_cp936_recoding, "enable_cp936_recoding");
   GLADE_HOOKUP_OBJECT (prefwin, label2, "label2");
   GLADE_HOOKUP_OBJECT (prefwin, notebook4, "notebook4");
   GLADE_HOOKUP_OBJECT (prefwin, vbox21, "vbox21");
