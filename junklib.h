@@ -116,4 +116,13 @@ junk_recode (const char *in, int inlen, char *out, int outlen, const char *cs);
 int
 junk_rewrite_tags (struct playItem_s *it, uint32_t junk_flags, int id3v2_version, const char *id3v1_encoding);
 
+void
+junk_enable_cp1251_detection (int enable);
+
+void
+junk_configchanged (void);
+
+void
+junk_enable_cp936_detection (int enable);
+
 #endif // __JUNKLIB_H
