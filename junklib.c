@@ -50,6 +50,10 @@ uint16_t sj_to_unicode[] = {
 #include "playlist.h"
 #include "utf8.h"
 #include "plugins.h"
+#include "conf.h"
+
+int enable_cp1251_detection = 1;
+int enable_cp936_detection = 0;
 
 #define MAX_TEXT_FRAME_SIZE 1024
 #define MAX_CUESHEET_FRAME_SIZE 10000
@@ -651,6 +655,9 @@ static const char *junk_genretbl[] = {
 
 static int
 can_be_russian (const signed char *str) {
+    if (!enable_cp1251_detection) {
+        return 0;
+    }
     int latin = 0;
     int rus = 0;
     int rus_in_row = 0;
@@ -677,6 +684,9 @@ can_be_russian (const signed char *str) {
 
 static int
 can_be_chinese (const signed char *str) {
+    if (!enable_cp936_detection) {
+        return 0;
+    }
     for (; *str; str++) {
         if (((unsigned char) *str >= 0x81 && (unsigned char) *str <= 0xFE )
            && ((unsigned char) *(str+1) >= 0x30 && (unsigned char) *(str+1) <= 0x39)
@@ -707,11 +717,11 @@ convstr_id3v2 (int version, uint8_t encoding, const unsigned char* str, int sz) 
     }
     else if (encoding == 0) {
         if (can_be_chinese (str)) {
-        // hack to add cp936 support
+            // hack to add cp936 support
             enc = "cp936";
-	}
-	else if (can_be_russian (str)) {
-        // hack to add limited cp1251 recoding support
+        }
+        else if (can_be_russian (str)) {
+            // hack to add limited cp1251 recoding support
             enc = "cp1251";
         }
         else {
@@ -3858,3 +3868,20 @@ error:
     return err;
 }
 
+void
+junk_enable_cp1251_detection (int enable) {
+    enable_cp1251_detection = enable;
+}
+
+void
+junk_enable_cp936_detection (int enable) {
+    enable_cp936_detection = enable;
+}
+
+void
+junk_configchanged (void) {
+    int cp1251 = conf_get_int ("junk.enable_cp1251_detection", 1);
+    int cp936 = conf_get_int ("junk.enable_cp936_detection", 0);
+    junk_enable_cp1251_detection (cp1251);
+    junk_enable_cp936_detection (cp936);
+}

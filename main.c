@@ -55,6 +55,7 @@
 #include "volume.h"
 #include "plugins.h"
 #include "common.h"
+#include "junklib.h"
 
 #ifndef PREFIX
 #error PREFIX must be defined
@@ -612,6 +613,7 @@ player_mainloop (void) {
                 case DB_EV_CONFIGCHANGED:
                     conf_save ();
                     streamer_configchanged ();
+                    junk_configchanged ();
                     break;
                 case DB_EV_SEEK:
                     streamer_set_seek (p1 / 1000.f);
