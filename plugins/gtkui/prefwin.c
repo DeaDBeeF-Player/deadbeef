@@ -576,6 +576,13 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     // resume last session
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "resume_last_session")), deadbeef->conf_get_int ("resume_last_session", 0));
 
+    // enable cp1251 recoding
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "enable_cp1251_recoding")), deadbeef->conf_get_int ("junk.enable_cp1251_detection", 1));
+
+    // enable cp936 recoding
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "enable_cp936_recoding")), deadbeef->conf_get_int ("junk.enable_cp936_detection", 0));
+
+
     // fill gui plugin list
     combobox = GTK_COMBO_BOX (lookup_widget (w, "gui_plugin"));
     const char **names = deadbeef->plug_get_gui_names ();
@@ -1275,6 +1282,25 @@ on_resume_last_session_toggled         (GtkToggleButton *togglebutton,
 {
     int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
     deadbeef->conf_set_int ("resume_last_session", active);
+}
+
+void
+on_enable_cp1251_recoding_toggled      (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
+    deadbeef->conf_set_int ("junk.enable_cp1251_detection", active);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+
+void
+on_enable_cp936_recoding_toggled       (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
+    deadbeef->conf_set_int ("junk.enable_cp936_detection", active);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 
