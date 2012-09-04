@@ -34,8 +34,8 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
@@ -1114,8 +1114,10 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 ///            }
 ///            trace ("found %d audio tracks\n", naudio);
 
-            for (int i = 0; i < ntracks; i++) {
+            int i;
+            for (i = 0; i < ntracks; i++) {
                 if (mp4ff_get_track_type (mp4, i) != TRACK_AUDIO) {
+                    trace ("aac: track %d is not audio\n");
                     continue;
                 }
                 int mp4framesize;
@@ -1196,6 +1198,9 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
                     deadbeef->pl_item_unref (it);
                     break;
                 }
+            }
+            if (i == ntracks) {
+                return NULL;
             }
             ftype = "MP4 AAC";
         }
