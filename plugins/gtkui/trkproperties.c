@@ -689,7 +689,7 @@ on_add_field_activate                 (GtkMenuItem     *menuitem,
                 GtkTreePath *path;
                 gint rows = gtk_tree_model_iter_n_children (GTK_TREE_MODEL (store), NULL);
                 path = gtk_tree_path_new_from_indices (rows - 1, -1);
-                gtk_tree_view_set_cursor (treeview, path, NULL, TRUE); // set cursur onto new field
+                gtk_tree_view_set_cursor (treeview, path, NULL, TRUE); // set cursor onto new field
                 gtk_tree_path_free(path);
                 trkproperties_modified = 1;
             }
@@ -741,7 +741,7 @@ on_remove_field_activate                 (GtkMenuItem     *menuitem,
     else {
         gtk_list_store_remove (store, &iter);
     }
-    gtk_tree_view_set_cursor (treeview, path, NULL, FALSE); // restore cursur after deletion
+    gtk_tree_view_set_cursor (treeview, path, NULL, FALSE); // restore cursor after deletion
     gtk_tree_path_free (path);
     trkproperties_modified = 1;
 }
