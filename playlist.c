@@ -1335,6 +1335,7 @@ plt_insert_file (playlist_t *playlist, playItem_t *after, const char *fname, int
                         if (cb && cb (inserted, user_data) < 0) {
                             *pabort = 1;
                         }
+                        trace ("file has been added by decoder: %s\n", decoders[i]->plugin.id);
                         return inserted;
                     }
                 }
