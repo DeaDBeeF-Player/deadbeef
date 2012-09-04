@@ -553,6 +553,7 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     qtmovie_free_demux (&demux_res);
 
+    trace ("duration %f\n", duration);
     if (duration > 0) {
         char s[100];
         snprintf (s, sizeof (s), "%lld", fsize);
@@ -590,6 +591,7 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         }
     }
 
+    trace ("success\n");
 success:
     after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
