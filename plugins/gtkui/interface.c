@@ -3193,7 +3193,7 @@ create_groupbydlg (void)
   GtkWidget *label83;
 
   groupbydlg = gtk_dialog_new ();
-  gtk_window_set_title (GTK_WINDOW (groupbydlg), _("Group By"));
+  gtk_window_set_title (GTK_WINDOW (groupbydlg), _("Group By ..."));
   gtk_window_set_type_hint (GTK_WINDOW (groupbydlg), GDK_WINDOW_TYPE_HINT_DIALOG);
 
   dialog_vbox5 = gtk_dialog_get_content_area (GTK_DIALOG (groupbydlg));
@@ -3317,7 +3317,7 @@ create_sortbydlg (void)
   GtkWidget *okbutton5;
 
   sortbydlg = gtk_dialog_new ();
-  gtk_window_set_title (GTK_WINDOW (sortbydlg), _("Sort by..."));
+  gtk_window_set_title (GTK_WINDOW (sortbydlg), _("Sort by ..."));
   gtk_window_set_modal (GTK_WINDOW (sortbydlg), TRUE);
   gtk_window_set_type_hint (GTK_WINDOW (sortbydlg), GDK_WINDOW_TYPE_HINT_DIALOG);
 
