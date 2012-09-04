@@ -329,7 +329,7 @@ ddb_tabstrip_init(DdbTabStrip *tabstrip)
     tabstrip->movepos = 0;
     drawctx_init (&tabstrip->drawctx);
 #if GTK_CHECK_VERSION(3,0,0)
-    gtk_widget_set_events (GTK_WIDGET (tabstrip), gtk_widget_get_events (GTK_WIDGET (mainwin)) | GDK_SCROLL_MASK);
+    gtk_widget_set_events (GTK_WIDGET (tabstrip), gtk_widget_get_events (GTK_WIDGET (tabstrip)) | GDK_SCROLL_MASK);
 #endif
 }
 
