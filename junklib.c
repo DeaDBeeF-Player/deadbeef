@@ -683,21 +683,24 @@ can_be_russian (const signed char *str) {
 }
 
 static int
-can_be_chinese (const signed char *str) {
+can_be_chinese (const uint8_t *str) {
     if (!enable_cp936_detection) {
         return 0;
     }
-    for (; *str; str++) {
-        if (((unsigned char) *str >= 0x81 && (unsigned char) *str <= 0xFE )
-           && ((unsigned char) *(str+1) >= 0x30 && (unsigned char) *(str+1) <= 0x39)
-           && ((unsigned char) *(str+2) >= 0x81 && (unsigned char) *(str+2) <= 0xFE)
-           && ((unsigned char) *(str+3) >= 0x30 && (unsigned char) *(str+3) <= 0x39)) {
-           return 1;
+    int len = strlen (str);
+    for (int i = 0; *str; str++, i++) {
+        if (i < len-3
+                && (*str >= 0x81 && *str <= 0xFE )
+                && (*(str+1) >= 0x30 && *(str+1) <= 0x39)
+                && (*(str+2) >= 0x81 && *(str+2) <= 0xFE)
+                && (*(str+3) >= 0x30 && *(str+3) <= 0x39)) {
+            return 1;
         }
-        if (((unsigned char) *str >= 0x81 && (unsigned char) *str <= 0xFE )
-           && (((unsigned char) *(str+1) >= 0x40 && (unsigned char) *(str+1) <= 0x7E)
-           || ((unsigned char) *(str+1) >= 0x80 && (unsigned char) *(str+1) <= 0xFE))) {
-           return 1;
+        if (i < len - 1
+                && (*str >= 0x81 && *str <= 0xFE )
+                && ((*(str+1) >= 0x40 && *(str+1) <= 0x7E)
+                    || (*(str+1) >= 0x80 && *(str+1) <= 0xFE))) {
+            return 1;
         }
     }
     return 0;
