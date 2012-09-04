@@ -640,7 +640,7 @@ on_add_field_activate                 (GtkMenuItem     *menuitem,
     }
     GtkWidget *dlg = create_entrydialog ();
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
-    gtk_window_set_title (GTK_WINDOW (dlg), _("Edit playlist"));
+    gtk_window_set_title (GTK_WINDOW (dlg), _("Field name"));
     GtkWidget *e;
     e = lookup_widget (dlg, "title_label");
     gtk_label_set_text (GTK_LABEL(e), _("Name:"));
