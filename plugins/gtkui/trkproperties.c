@@ -46,7 +46,7 @@ static GtkWidget *trackproperties;
 static GtkCellRenderer *rend_text2;
 static GtkListStore *store;
 static GtkListStore *propstore;
-static int trkproperties_modified;
+int trkproperties_modified;
 static DB_playItem_t **tracks;
 static int numtracks;
 static GtkWidget *progressdlg;
@@ -182,6 +182,14 @@ on_trackproperties_delete_event        (GtkWidget       *widget,
     }
     return TRUE;
 }
+
+void
+on_remove_field_activate                 (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_add_field_activate                 (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
 
 gboolean
 on_trackproperties_key_press_event     (GtkWidget       *widget,
@@ -635,7 +643,7 @@ void
 on_add_field_activate                 (GtkMenuItem     *menuitem,
                                         gpointer         user_data) {
     GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
-    if (!gtk_widget_is_focus(treeview)) {
+    if (!gtk_widget_is_focus(GTK_WIDGET (treeview))) {
         return; // do not add field if Metadata tab is not focused
     }
     GtkWidget *dlg = create_entrydialog ();
@@ -712,7 +720,7 @@ on_remove_field_activate                 (GtkMenuItem     *menuitem,
                                         gpointer         user_data) {
 
     GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
-    if (!gtk_widget_is_focus(treeview)) {
+    if (!gtk_widget_is_focus(GTK_WIDGET (treeview))) {
         return; // do not remove field if Metadata tab is not focused
     }
     GtkTreePath *path;
