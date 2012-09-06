@@ -576,8 +576,20 @@ palsa_stop (void) {
 #endif
     UNLOCK;
     deadbeef->streamer_reset (1);
-    if (deadbeef->conf_get_int ("alsa.freeonstop", 0))  {
+    DB_playItem_t *ts = deadbeef->streamer_get_streaming_track ();
+    DB_playItem_t *tp = deadbeef->streamer_get_playing_track ();
+    if (deadbeef->conf_get_int ("alsa.freeonstop", 0) && !ts && !tp)  {
         palsa_free ();
+        printf ("\033[0;31malsa released!\033[37;0m\n");
+    }
+    else {
+        printf ("\033[0;32malsa not released!\033[37;0m\n");
+    }
+    if (tp) {
+        deadbeef->pl_item_unref (tp);
+    }
+    if (ts) {
+        deadbeef->pl_item_unref (ts);
     }
     return 0;
 }
