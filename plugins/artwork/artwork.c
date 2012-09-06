@@ -1080,7 +1080,7 @@ fetcher_thread (void *none)
                         p = e;
                     }
                     if (files_count == 0) {
-                        files_count = scandir (path, &files, filter_jpg, NULL);
+                        files_count = scandir (path, &files, filter_jpg, alphasort);
                     }
 
                     if (files_count > 0) {
