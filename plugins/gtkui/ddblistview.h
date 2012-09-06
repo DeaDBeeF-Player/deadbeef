@@ -142,6 +142,8 @@ struct _DdbListview {
     int header_width; // previous width before resize
 
     struct _DdbListviewColumn *columns;
+    gboolean lock_columns;
+
     struct _DdbListviewGroup *groups;
     int groups_build_idx; // must be the same as playlist modification idx
     int fullheight;
@@ -260,6 +262,9 @@ ddb_listview_list_drag_end                   (GtkWidget       *widget,
 
 void
 ddb_listview_clear_sort (DdbListview *listview);
+
+void
+ddb_listview_lock_columns (DdbListview *lv, gboolean lock);
 
 G_END_DECLS
 
