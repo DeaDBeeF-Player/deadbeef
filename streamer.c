@@ -856,6 +856,7 @@ streamer_set_current (playItem_t *it) {
             unlink (tempfile);
 
 m3u_error:
+            err = -1;
             if (buf) {
                 free (buf);
             }
