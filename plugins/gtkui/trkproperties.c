@@ -194,7 +194,7 @@ on_trackproperties_key_press_event     (GtkWidget       *widget,
     }
     else if (event->keyval == GDK_Delete) {
         on_remove_field_activate (NULL, NULL);
-        return TRUE;
+        return FALSE;
     }
     else if (event->keyval == GDK_Insert) {
         on_add_field_activate (NULL, NULL);
