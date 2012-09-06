@@ -1220,9 +1220,6 @@ streamer_thread (void *ctx) {
             bytes_until_next_song = -1;
             trace ("nextsong=-2\n");
             nextsong = -1;
-            streamer_unlock ();
-            output->stop ();
-            streamer_lock ();
             if (playing_track) {
                 trace ("sending songfinished to plugins [1]\n");
                 send_songfinished (playing_track);
@@ -1240,6 +1237,7 @@ streamer_thread (void *ctx) {
                 pl_item_unref (from);
             }
             streamer_unlock ();
+            output->stop ();
             continue;
         }
         else if (output->state () == OUTPUT_STATE_STOPPED) {
