@@ -50,12 +50,20 @@ extern DB_functions_t *deadbeef; // defined in gtkui.c
 extern GtkWidget *searchwin;
 extern GtkWidget *mainwin;
 
+static gboolean
+unlock_search_columns_cb (void *ctx) {
+    ddb_listview_lock_columns (DDB_LISTVIEW (lookup_widget (searchwin, "searchlist")), 0);
+    return FALSE;
+}
+
 void
 search_start (void) {
+    ddb_listview_lock_columns (DDB_LISTVIEW (lookup_widget (searchwin, "searchlist")), 1);
     wingeom_restore (searchwin, "searchwin", -1, -1, 450, 150, 0);
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (searchwin, "searchentry")), "");
     gtk_widget_show (searchwin);
     gtk_window_present (GTK_WINDOW (searchwin));
+    g_idle_add (unlock_search_columns_cb, NULL);
     search_refresh ();
     main_refresh ();
 }

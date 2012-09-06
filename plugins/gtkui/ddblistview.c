@@ -321,6 +321,7 @@ ddb_listview_init(DdbListview *listview)
     listview->header_width = 0;
 
     listview->columns = NULL;
+    listview->lock_columns = 1;
     listview->groups = NULL;
 
     listview->block_redraw_on_scroll = 0;
@@ -2369,8 +2370,11 @@ ddb_listview_header_configure_event              (GtkWidget       *widget,
         gtk_widget_set_size_request (widget, -1, height);
     }
 
-    if (gtkui_init_complete) {
+    if (!ps->lock_columns) {
         if (ps->header_width != a.width && deadbeef->conf_get_int ("gtkui.autoresize_columns", 0)) {
+            if (ps->header_width == 0) {
+                ps->header_width = a.width;
+            }
             float ratio = (float)a.width / ps->header_width;
             ps->header_width = a.width;
             struct _DdbListviewColumn *c;
@@ -2385,6 +2389,11 @@ ddb_listview_header_configure_event              (GtkWidget       *widget,
     }
 
     return FALSE;
+}
+
+void
+ddb_listview_lock_columns (DdbListview *lv, gboolean lock) {
+    lv->lock_columns = lock;
 }
 
 
