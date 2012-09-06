@@ -26,6 +26,9 @@ extern int search_count;
 void
 search_start (void);
 
+void
+search_destroy (void);
+
 // should be called whenever playlist was changed
 void
 search_refresh (void);

@@ -1386,6 +1386,10 @@ gtkui_disconnect (void) {
 
 static gboolean
 quit_gtk_cb (gpointer nothing) {
+    extern int trkproperties_modified;
+    trkproperties_modified = 0;
+    trkproperties_destroy ();
+    search_destroy ();
     gtk_main_quit ();
     return FALSE;
 }

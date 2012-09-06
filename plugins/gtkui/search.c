@@ -69,6 +69,12 @@ search_start (void) {
 }
 
 void
+search_destroy (void) {
+    gtk_widget_destroy (searchwin);
+    searchwin = NULL;
+}
+
+void
 search_process (const char *text) {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     deadbeef->plt_search_process (plt, text);
@@ -417,4 +423,3 @@ search_playlist_init (GtkWidget *widget) {
     }
     lock_column_config = 0;
 }
-
