@@ -2732,6 +2732,7 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
     char dirname[PATH_MAX];
     const char *duration = NULL;
     const char *elapsed = NULL;
+    int escape_slash = 0;
 
     char *ss = s;
 
@@ -2799,6 +2800,10 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                     }
                     fmt = e;
                 }
+            }
+            else if (*fmt == '/') {
+                // this means all '/' in the ongoing fields must be replaced with '\'
+                escape_slash = 1;
             }
             else if (*fmt == 'a') {
                 meta = pl_find_meta_raw (it, "artist");
@@ -3054,22 +3059,21 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                     n--;
                     while (n > 2 && *value) {
                         const char *e = escape_chars;
-                        for (; *e; e++) {
-                            if (*value == *e) {
-                                if (n < 2) {
-                                    // doesn't fit into output buffer, return
-                                    // empty string and error code
-                                    *ss = 0;
-                                    return -1;
-                                }
-                                *s++ = '\\';
-                                n--;
-                                *s++ = *value++;
-                                n--;
-                            }
-                            else {
-                                *s++ = *value++;
-                            }
+                        if (strchr (escape_chars, *value)) {
+                            *s++ = '\\';
+                            n--;
+                            *s++ = *value++;
+                            n--;
+                        }
+                        else if (escape_slash && *value == '/') {
+                            *s++ = '\\';
+                            n--;
+                            *s++ = '\\';
+                            n--;
+                            break;
+                        }
+                        else {
+                            *s++ = *value++;
                         }
                     }
                     if (n < 1) {
@@ -3082,8 +3086,15 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                 }
                 else {
                     while (n > 0 && *value) {
-                        *s++ = *value++;
-                        n--;
+                        if (escape_slash && *value == '/') {
+                            *s++ = '\\';
+                            n--;
+                            value++;
+                        }
+                        else {
+                            *s++ = *value++;
+                            n--;
+                        }
                     }
                 }
             }
