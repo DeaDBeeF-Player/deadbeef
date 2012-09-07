@@ -667,7 +667,9 @@ get_output_field (DB_playItem_t *it, const char *field, char *out, int sz)
 {
     int idx = deadbeef->pl_get_idx_of (it);
     char temp[PATH_MAX];
-    deadbeef->pl_format_title (it, idx, temp, sizeof (temp), -1, field);
+    char fmt[strlen(field)+3];
+    snprintf (fmt, sizeof (fmt), "%%/%s", field);
+    deadbeef->pl_format_title (it, idx, temp, sizeof (temp), -1, fmt);
 
     // escape special chars
     char invalid[] = "$\"`\\";
@@ -679,12 +681,6 @@ get_output_field (DB_playItem_t *it, const char *field, char *out, int sz)
             *p++ = '\\';
             n--;
             *p++ = *t;
-            n--;
-        }
-        else if (*t == '/') {
-            *p++ = '\\';
-            n--;
-            *p++ = '\\';
             n--;
         }
         else {
