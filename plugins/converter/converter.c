@@ -678,9 +678,19 @@ get_output_field (DB_playItem_t *it, const char *field, char *out, int sz)
         if (strchr (invalid, *t)) {
             *p++ = '\\';
             n--;
+            *p++ = *t;
+            n--;
         }
-        *p++ = *t;
-        n--;
+        else if (*t == '/') {
+            *p++ = '\\';
+            n--;
+            *p++ = '\\';
+            n--;
+        }
+        else {
+            *p++ = *t;
+            n--;
+        }
         t++;
     }
     *p = 0;
