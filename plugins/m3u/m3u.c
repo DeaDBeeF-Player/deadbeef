@@ -19,7 +19,6 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <ctype.h>
 #include <math.h> // for ceil
 #include "../../deadbeef.h"
 
