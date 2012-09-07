@@ -19,6 +19,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include <math.h> // for ceil
 #include "../../deadbeef.h"
 
@@ -166,7 +167,26 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
         }
 
         DB_playItem_t *it = NULL;
-        if (strrchr (nm, '/')) {
+        int is_fullpath = 0;
+        if (nm[0] == '/') {
+            is_fullpath = 1;
+        }
+        else {
+            uint8_t *p = strstr (nm, "://");
+            if (p) {
+                p--;
+                while (p >= nm) {
+                    if (*p < 'a' && *p > 'z') {
+                        break;
+                    }
+                    p--;
+                }
+                if (p < nm) {
+                    is_fullpath = 1;
+                }
+            }
+        }
+        if (is_fullpath) { // full path
             trace ("pl_insert_m3u: adding file %s\n", nm);
             it = deadbeef->plt_insert_file (plt, after, nm, pabort, cb, user_data);
             if (it) {
