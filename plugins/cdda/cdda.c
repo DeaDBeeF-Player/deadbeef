@@ -414,7 +414,7 @@ cddb_thread (void *items_i)
 static void
 read_track_cdtext (CdIo_t *cdio, int track_nr, DB_playItem_t *item)
 {
-#if LIBCDIO_VERSION_NUM > 82
+#if CDIO_API_VERSION >= 6
     cdtext_t *cdtext = cdio_get_cdtext (cdio);
 #else
     cdtext_t *cdtext = cdio_get_cdtext (cdio, 0);
@@ -429,7 +429,7 @@ read_track_cdtext (CdIo_t *cdio, int track_nr, DB_playItem_t *item)
     int field_type;
     for (field_type = 0; field_type < MAX_CDTEXT_FIELDS; field_type++)
     {
-#if LIBCDIO_VERSION_NUM > 82
+#if CDIO_API_VERSION >= 6
         const char *text = cdtext_get_const (cdtext, field_type, track_nr);
 #else
         const char *text = cdtext_get_const (field_type, cdtext);
@@ -439,7 +439,7 @@ read_track_cdtext (CdIo_t *cdio, int track_nr, DB_playItem_t *item)
         {
             switch (field_type)
             {
-#if LIBCDIO_VERSION_NUM > 82
+#if CDIO_API_VERSION >= 6
                 case CDTEXT_FIELD_TITLE: album = text; break;
                 case CDTEXT_FIELD_PERFORMER: artist = text; break;
 #else
@@ -458,7 +458,7 @@ read_track_cdtext (CdIo_t *cdio, int track_nr, DB_playItem_t *item)
         deadbeef->pl_replace_meta (item, "album", album);
     }
 
-#if LIBCDIO_VERSION_NUM > 82
+#if CDIO_API_VERSION >= 6
     cdtext = cdio_get_cdtext (cdio);
 #else
     cdtext = cdio_get_cdtext (cdio, track_nr);
@@ -468,7 +468,7 @@ read_track_cdtext (CdIo_t *cdio, int track_nr, DB_playItem_t *item)
 
     for (field_type = 0; field_type < MAX_CDTEXT_FIELDS; field_type++)
     {
-#if LIBCDIO_VERSION_NUM > 82
+#if CDIO_API_VERSION >= 6
         const char *text = cdtext_get_const (cdtext, field_type, track_nr);
 #else
         const char *text = cdtext_get_const (field_type, cdtext);
@@ -478,7 +478,7 @@ read_track_cdtext (CdIo_t *cdio, int track_nr, DB_playItem_t *item)
             continue;
         switch (field_type)
         {
-#if LIBCDIO_VERSION_NUM > 82
+#if CDIO_API_VERSION >= 6
             case CDTEXT_FIELD_TITLE:      field = "title";    break;
             case CDTEXT_FIELD_PERFORMER:  field = "artist";   break;
             case CDTEXT_FIELD_COMPOSER:   field = "composer"; break;
@@ -507,7 +507,7 @@ static int
 read_disc_cdtext (struct cddb_thread_params *params)
 {
     DB_playItem_t **items = params->items;
-#if LIBCDIO_VERSION_NUM > 82
+#if CDIO_API_VERSION >= 6
     cdtext_t *cdtext = cdio_get_cdtext (params->cdio);
 #else
     cdtext_t *cdtext = cdio_get_cdtext (params->cdio, 0);
