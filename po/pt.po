@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2012-08-28 12:40+0200\n"
+"PO-Revision-Date: 2012-09-10 11:48+0200\n"
 "Last-Translator: Sérgio <smarquespt@gmail.com>\n"
 "Language-Team: \n"
 "Language: pt\n"
@@ -389,7 +389,7 @@ msgstr "Barra de estado"
 #: ../plugins/gtkui/interface.c:339
 #: ../plugins/gtkui/deadbeef.glade.h:21
 msgid "Column headers"
-msgstr "Cabeçalhos de colunas"
+msgstr "Titulo das colunas"
 
 #: ../plugins/gtkui/interface.c:343
 #: ../plugins/gtkui/deadbeef.glade.h:132
@@ -445,7 +445,7 @@ msgstr "Repetir todas"
 #: ../plugins/gtkui/interface.c:398
 #: ../plugins/gtkui/deadbeef.glade.h:74
 msgid "Loop Single Song"
-msgstr "Repetir uma música"
+msgstr "Repetir uma faixa"
 
 #: ../plugins/gtkui/interface.c:403
 #: ../plugins/gtkui/deadbeef.glade.h:36
@@ -672,7 +672,7 @@ msgstr "Dispositivo de som:"
 #: ../plugins/gtkui/interface.c:1847
 #: ../plugins/gtkui/deadbeef.glade.h:12
 msgid "Always convert 8 bit audio to 16 bit"
-msgstr "Converter, sempre, 8 bits em 16 bits"
+msgstr "Converter áudio 8 bits para 16 bits"
 
 #: ../plugins/gtkui/interface.c:1851
 #: ../plugins/gtkui/deadbeef.glade.h:124
@@ -727,12 +727,12 @@ msgstr "Adicionar ficheiros via linha de comandos (ou gestor de ficheiros) para 
 #: ../plugins/gtkui/interface.c:1953
 #: ../plugins/gtkui/deadbeef.glade.h:109
 msgid "Resume previous session on startup"
-msgstr "Ao iniciar, retomar a sessão anterior"
+msgstr "Retomar a sessão anterior ao iniciar"
 
 #: ../plugins/gtkui/interface.c:1957
 #: ../plugins/gtkui/deadbeef.glade.h:37
 msgid "Don't add from archives when adding folders"
-msgstr "Não adicionar arquivos, ao adicionar pastas"
+msgstr "Ao adicionar pastas não adicionar arquivos"
 
 #: ../plugins/gtkui/interface.c:1961
 #: ../plugins/gtkui/deadbeef.glade.h:91
@@ -789,7 +789,7 @@ msgstr "Ocultar item do menu \"Eliminar do disco\""
 #: ../plugins/gtkui/interface.c:2062
 #: ../plugins/gtkui/deadbeef.glade.h:16
 msgid "Auto-name playlists when adding a single folder"
-msgstr "Ao adicionar uma pasta, dar nome às listas de reprodução"
+msgstr "Ao adicionar uma pasta dar nome às listas de reprodução"
 
 #: ../plugins/gtkui/interface.c:2070
 #: ../plugins/gtkui/deadbeef.glade.h:54
@@ -809,12 +809,12 @@ msgstr "Barra de título se parada:"
 #: ../plugins/gtkui/interface.c:2112
 #: ../plugins/gtkui/deadbeef.glade.h:46
 msgid "GUI Plugin (changing requires restart):"
-msgstr "Plugin GUI (tem que reiniciar o deadbeef):"
+msgstr "Plugin da interface (tem que reiniciar o deadbeef):"
 
 #: ../plugins/gtkui/interface.c:2120
 #: ../plugins/gtkui/deadbeef.glade.h:45
 msgid "GUI"
-msgstr "GUI"
+msgstr "Interface gráfica"
 
 #: ../plugins/gtkui/interface.c:2135
 #: ../plugins/gtkui/interface.c:2179
@@ -871,7 +871,7 @@ msgstr "Cores do separador"
 #: ../plugins/gtkui/interface.c:2262
 #: ../plugins/gtkui/deadbeef.glade.h:87
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
-msgstr "Sobrepor (perde a vista em árvore, mas acelera o processamento)"
+msgstr "Sobrepor (perde a vista em árvore mas acelera o processamento)"
 
 #: ../plugins/gtkui/interface.c:2271
 #: ../plugins/gtkui/deadbeef.glade.h:41
@@ -931,12 +931,12 @@ msgstr "Tipo de proxy:"
 #: ../plugins/gtkui/interface.c:2417
 #: ../plugins/gtkui/deadbeef.glade.h:102
 msgid "Proxy Username:"
-msgstr "Utilizador de proxy:"
+msgstr "Utilizador do proxy:"
 
 #: ../plugins/gtkui/interface.c:2430
 #: ../plugins/gtkui/deadbeef.glade.h:98
 msgid "Proxy Password:"
-msgstr "Senha de proxy:"
+msgstr "Senha do proxy:"
 
 #: ../plugins/gtkui/interface.c:2440
 #: ../plugins/gtkui/deadbeef.glade.h:79
@@ -1059,7 +1059,7 @@ msgstr "2.4"
 #: ../plugins/gtkui/interface.c:3538
 #: ../plugins/gtkui/deadbeef.glade.h:52
 msgid "ID3v1 character encoding (default is iso8859-1)"
-msgstr "Codificação de caracteres ID3v1 (omissão é iso8859-1)"
+msgstr "Codificação de caracteres ID3v1 (por definição é iso8859-1)"
 
 #: ../plugins/gtkui/interface.c:3575
 #: ../plugins/gtkui/deadbeef.glade.h:148
@@ -1245,7 +1245,7 @@ msgstr "Opções:\n"
 #: ../main.c:93
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr "   --help  ou  -h     Imprime a ajuda (esta mensagem) e sai\n"
+msgstr "   --help  ou  -h     Mostra a ajuda (esta mensagem) e sai\n"
 
 #: ../main.c:94
 #, c-format
@@ -1255,7 +1255,7 @@ msgstr "   --quit             Sai do DeadBeeF\n"
 #: ../main.c:95
 #, c-format
 msgid "   --version          Print version info and exit\n"
-msgstr "   --version          Imprime informações da versão e sai\n"
+msgstr "   --version          Mostra as informações da versão e sai\n"
 
 #: ../main.c:96
 #, c-format
@@ -1331,7 +1331,7 @@ msgstr "                      para mais informações, consulte http://sourcefor
 #: ../playlist.c:454
 #: ../playlist.c:2398
 msgid "Default"
-msgstr "Pré-definiço"
+msgstr "Pré-definida"
 
 #: ../playlist.c:3664
 msgid "Yes"
@@ -1464,7 +1464,7 @@ msgstr "Senha"
 
 #: ../translation/extra.c:15
 msgid "Scrobble URL"
-msgstr "\"Scrobble\" URL"
+msgstr "URL de \"Scrobble\""
 
 #. OSS output plugin
 #: ../translation/extra.c:17
@@ -1478,7 +1478,7 @@ msgstr "Resolução para o erro OSS4"
 #. Album Artwork plugin
 #: ../translation/extra.c:20
 msgid "Cache update period (hr)"
-msgstr "Atualização de cache (hr)"
+msgstr "Atualização de cache (horas)"
 
 #: ../translation/extra.c:21
 msgid "Fetch from embedded tags"
@@ -1502,7 +1502,7 @@ msgstr "Obter no albumart.org"
 
 #: ../translation/extra.c:26
 msgid "Scale artwork towards longer side"
-msgstr "Ajustar capa de álbum"
+msgstr "Ajustar tamanho da capa de álbum"
 
 #. Audio CD player
 #: ../translation/extra.c:28
@@ -1532,7 +1532,7 @@ msgstr "Ativar suporte a imagens NRG"
 #. DUMB module player plugin
 #: ../translation/extra.c:35
 msgid "Resampling quality (0..2, higher is better)"
-msgstr "Qualidade de frequência (0..2, quanto mais alto, melhor)"
+msgstr "Qualidade de frequência (0..2, quanto mais alto melhor)"
 
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:37
@@ -1614,7 +1614,7 @@ msgstr "Bits por frequência (8 ou 16)"
 
 #: ../translation/extra.c:61
 msgid "Default song length (sec)"
-msgstr "Duração pré-definida das faixas (seg)"
+msgstr "Duração pré-definida das faixas (seg.)"
 
 #. WildMidi player plugin
 #: ../translation/extra.c:63
