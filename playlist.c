@@ -1081,6 +1081,7 @@ plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t 
                 trace ("cue: added %p\n", it);
                 if (it) {
                     if (it->startsample >= numsamples || it->endsample >= numsamples) {
+                        trace ("cue: the track is shorter than cue timeline\n");
                         goto error;
                     }
                     cuetracks[ncuetracks++] = it;
