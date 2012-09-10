@@ -9,25 +9,25 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-23 14:16+0100\n"
-"PO-Revision-Date: 2011-11-18 18:16+0100\n"
-"Last-Translator: Vašek Kovářík <l3d9z6@seznam.cz>\n"
+"PO-Revision-Date: 2012-08-14 13:25+0200\n"
+"Last-Translator: ALIUM <info@aloisnespor.info>\n"
 "Language-Team: čeština <>\n"
-"Language: \n"
+"Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"X-Generator: Pootle 2.0.5\n"
 "X-Poedit-Country: Czech Republic\n"
 "X-Poedit-Language: Czech\n"
-"Plural-Forms: nplurals=2; plural=(n!=1);\n"
 
 #: ../plugins/gtkui/callbacks.c:123
 msgid "Supported sound formats"
 msgstr "Podporované zvukové formáty"
 
 #: ../plugins/gtkui/callbacks.c:134
-#, fuzzy
 msgid "All files (*)"
-msgstr "Další soubory (*)"
+msgstr "Všechny soubory (*)"
 
 #: ../plugins/gtkui/callbacks.c:144
 msgid "Open file(s)..."
@@ -272,7 +272,7 @@ msgstr "Vybrat vše"
 
 #: ../plugins/gtkui/interface.c:251 ../plugins/gtkui/deadbeef.glade.h:32
 msgid "Deselect all"
-msgstr "Zrušit výběr "
+msgstr "Zrušit výběr"
 
 #: ../plugins/gtkui/interface.c:258 ../plugins/gtkui/deadbeef.glade.h:55
 msgid "Invert selection"
@@ -540,7 +540,7 @@ msgstr "Číslo stopy"
 
 #: ../plugins/gtkui/interface.c:1519 ../translation/extra.c:68
 msgid "Band / Album Artist"
-msgstr "Skupina/umělec alba"
+msgstr "Skupina / umělec alba"
 
 #: ../plugins/gtkui/interface.c:1526 ../plugins/gtkui/interface.c:3150
 #: ../plugins/gtkui/deadbeef.glade.h:44
@@ -618,9 +618,8 @@ msgid "Replaygain preamp:"
 msgstr "Předzesilovač replaygain:"
 
 #: ../plugins/gtkui/interface.c:1913 ../plugins/gtkui/deadbeef.glade.h:47
-#, fuzzy
 msgid "Global preamp:"
-msgstr "Předzesilovač replaygain:"
+msgstr "Globální předzesilovač (preamp):"
 
 #: ../plugins/gtkui/interface.c:1944 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Add files from command line (or file manager) to this playlist:"
@@ -805,7 +804,7 @@ msgstr "Síť"
 
 #: ../plugins/gtkui/interface.c:2471 ../plugins/gtkui/deadbeef.glade.h:144
 msgid "Version: "
-msgstr "Verze:"
+msgstr "Verze: "
 
 #: ../plugins/gtkui/interface.c:2535 ../plugins/gtkui/deadbeef.glade.h:23
 #: ../translation/extra.c:78
@@ -910,7 +909,7 @@ msgstr "Umělec / Album"
 
 #: ../plugins/gtkui/mainplaylist.c:317 ../plugins/gtkui/search.c:392
 msgid "Track No"
-msgstr "Stopa č."
+msgstr "Stopa č"
 
 #: ../plugins/gtkui/plcommon.c:338
 msgid "Delete files from disk"
@@ -1018,7 +1017,7 @@ msgstr "Opravdu zavřít okno?"
 #. get value to edit
 #: ../plugins/gtkui/trkproperties.c:254
 msgid "[Multiple values] "
-msgstr "[Vícenásobné hodnoty]"
+msgstr "[Vícenásobné hodnoty] "
 
 #: ../plugins/gtkui/trkproperties.c:407 ../plugins/gtkui/trkproperties.c:419
 msgid "Key"
@@ -1250,9 +1249,9 @@ msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings."
 msgstr ""
-"wilmidi: konfigurační soubor freepats nenalezen. Instalujte balíček timidity-"
-"freepats nebo v nastavení zásuvného modulu nastavte cestu k souboru freepats."
-"cfg"
+"wilmidi: konfigurační soubor freepats nenalezen. Instalujte balíček "
+"timidity-freepats nebo v nastavení zásuvného modulu nastavte cestu k souboru "
+"freepats.cfg."
 
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
