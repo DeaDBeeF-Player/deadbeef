@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-11 12:10+0200\n"
-"PO-Revision-Date: 2012-09-11 21:05+0200\n"
+"PO-Revision-Date: 2012-09-11 21:10+0200\n"
 "Last-Translator: Sérgio <smarquespt@gmail.com>\n"
 "Language-Team: \n"
 "Language: pt\n"
@@ -1938,6 +1938,8 @@ msgid ""
 "main application was started from. Title formatting can be used. Example: "
 "xdg-open %D"
 msgstr ""
+"Um comando arbitrário. Este comando será executado na consola da aplicação "
+"que o inicia. Pode utilizar a formatação de título. Por exemplo: xdg-open %D"
 
 #: ../plugins/shellexecui/interface.c:181
 #: ../plugins/shellexecui/shellexec.glade.h:11
@@ -2052,7 +2054,7 @@ msgstr "Valores inválidos"
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:165
 #, c-format
 msgid "File is not a valid .desktop file"
-msgstr ""
+msgstr "O ficheiro não é um ficheiro .desktop válido"
 
 #. translators: 'Version' is from a desktop file, and
 #. * should not be translated. '%s' would probably be a
@@ -2060,7 +2062,7 @@ msgstr ""
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:191
 #, c-format
 msgid "Unrecognized desktop file Version '%s'"
-msgstr ""
+msgstr "Ficheiro .desktop desconhecido. Version %s"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:974
 #, c-format
@@ -2082,12 +2084,12 @@ msgstr "Opção desconhecida: %d"
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1391
 #, c-format
 msgid "Can't pass document URIs to a 'Type=Link' desktop entry"
-msgstr ""
+msgstr "Não pode enviar URIs de documentos para uma entrada Type=Link"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1412
 #, c-format
 msgid "Not a launchable item"
-msgstr ""
+msgstr "Não é um item que possa ser iniciado"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:226
 msgid "Disable connection to session manager"
@@ -2095,7 +2097,7 @@ msgstr "Desativar ligação ao gestor de sesões"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:229
 msgid "Specify file containing saved configuration"
-msgstr ""
+msgstr "Especifique o ficheiro de configuração"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:229
 msgid "FILE"
@@ -2103,7 +2105,7 @@ msgstr "Ficheiro"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:232
 msgid "Specify session management ID"
-msgstr ""
+msgstr "Especifique a ID da gestão de sessões"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:232
 msgid "ID"
