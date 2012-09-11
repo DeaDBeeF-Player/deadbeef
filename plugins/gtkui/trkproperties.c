@@ -654,6 +654,7 @@ on_add_field_activate                 (GtkMenuItem     *menuitem,
         return; // do not add field if Metadata tab is not focused
     }
     GtkWidget *dlg = create_entrydialog ();
+    gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (trackproperties));
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
     gtk_window_set_title (GTK_WINDOW (dlg), _("Field name"));
     GtkWidget *e;
@@ -720,6 +721,7 @@ on_add_field_activate                 (GtkMenuItem     *menuitem,
         break;
     }
     gtk_widget_destroy (dlg);
+    gtk_window_present (GTK_WINDOW (trackproperties));
 }
 
 void
