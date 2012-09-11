@@ -196,18 +196,23 @@ on_trackproperties_key_press_event     (GtkWidget       *widget,
                                         GdkEventKey     *event,
                                         gpointer         user_data)
 {
+#if 0
     if (event->keyval == GDK_Escape) {
+        printf ("trkproperties esc\n");
         on_trackproperties_delete_event (trackproperties, NULL, NULL);
         return TRUE;
     }
     else if (event->keyval == GDK_Delete) {
+        printf ("trkproperties del\n");
         on_remove_field_activate (NULL, NULL);
         return FALSE;
     }
     else if (event->keyval == GDK_Insert) {
+        printf ("trkproperties ins\n");
         on_add_field_activate (NULL, NULL);
         return TRUE;
     }
+#endif
     return FALSE;
 }
 
