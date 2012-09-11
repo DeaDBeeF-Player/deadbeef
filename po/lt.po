@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-11 07:21+0300\n"
+"POT-Creation-Date: 2012-09-11 12:10+0200\n"
 "PO-Revision-Date: 2012-09-11 07:23+0300\n"
 "Last-Translator: Algimantas Margevičius <margevicius.algimantas@gmail.com>\n"
 "Language-Team: Lietuvių <>\n"
@@ -174,11 +174,11 @@ msgstr "%d dienos %d:%02d:%02d"
 msgid "Stopped | %d tracks | %s total playtime"
 msgstr "Sustabdyta | %d takeliai | %s bendras grojimo laikas"
 
-#: ../plugins/gtkui/gtkui.c:165 ../playlist.c:3037
+#: ../plugins/gtkui/gtkui.c:165 ../playlist.c:3036
 msgid "Mono"
 msgstr "Mono"
 
-#: ../plugins/gtkui/gtkui.c:165 ../playlist.c:3037
+#: ../plugins/gtkui/gtkui.c:165 ../playlist.c:3036
 msgid "Stereo"
 msgstr "Stereo"
 
@@ -1206,15 +1206,15 @@ msgstr ""
 "                      plačiau http://sourceforge.net/apps/mediawiki/deadbeef/"
 "index.php?title=Title_Formatting\n"
 
-#: ../playlist.c:454 ../playlist.c:2419
+#: ../playlist.c:454 ../playlist.c:2418
 msgid "Default"
 msgstr "Numatyta"
 
-#: ../playlist.c:3794
+#: ../playlist.c:3793
 msgid "Yes"
 msgstr "Taip"
 
-#: ../playlist.c:3794
+#: ../playlist.c:3793
 msgid "No"
 msgstr "Ne"
 
