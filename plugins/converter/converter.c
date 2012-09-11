@@ -1111,7 +1111,18 @@ error:
     if (encoder_preset->tag_id3v2 || encoder_preset->tag_id3v1 || encoder_preset->tag_apev2 || encoder_preset->tag_flac || encoder_preset->tag_oggvorbis) {
         out_it = deadbeef->pl_item_alloc ();
         deadbeef->pl_item_copy (out_it, it);
-        deadbeef->pl_replace_meta (out_it, ":URI", out);
+        char unesc_path[2000];
+        char invalid[] = "$\"`\\";
+        const char *p = out;
+        char *o = unesc_path;
+        while (*p) {
+            if (*p == '\\') {
+                p++;
+            }
+            *o++ = *p++;
+        }
+        *o = 0;
+        deadbeef->pl_replace_meta (out_it, ":URI", unesc_path);
         deadbeef->pl_delete_meta (out_it, "cuesheet");
     }
 
