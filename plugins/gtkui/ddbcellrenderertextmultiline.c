@@ -126,7 +126,6 @@ static gboolean ddb_cell_editable_text_view_real_key_press_event (GtkWidget* bas
 static void ddb_cell_editable_text_view_real_start_editing (GtkCellEditable* base, GdkEvent* event) {
 	DdbCellEditableTextView * self;
 	self = (DdbCellEditableTextView*) base;
-	g_return_if_fail (event != NULL);
 }
 
 #if GTK_CHECK_VERSION(2,20,0)
@@ -373,7 +372,6 @@ static GtkCellEditable* ddb_cell_renderer_text_multiline_real_start_editing (Gtk
 	DdbCellEditableTextView* _tmp41_;
 	DdbCellEditableTextView* _tmp42_;
 	self = (DdbCellRendererTextMultiline*) base;
-	g_return_val_if_fail (event != NULL, NULL);
 	g_return_val_if_fail (widget != NULL, NULL);
 	g_return_val_if_fail (path != NULL, NULL);
 	g_return_val_if_fail (background_area != NULL, NULL);
