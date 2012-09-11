@@ -458,6 +458,9 @@ static GtkCellEditable* ddb_cell_renderer_text_multiline_real_start_editing (Gtk
 	_g_object_unref0 (store);
 	_g_object_unref0 (tv);
 	_gtk_tree_path_free0 (p);
+	// evil hack! need to make an event for that
+	extern int trkproperties_block_keyhandler;
+	trkproperties_block_keyhandler = 1;
 	return result;
 }
 

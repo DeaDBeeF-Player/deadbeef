@@ -191,28 +191,29 @@ void
 on_add_field_activate                 (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
 
+int trkproperties_block_keyhandler = 0;
+
+
 gboolean
 on_trackproperties_key_press_event     (GtkWidget       *widget,
                                         GdkEventKey     *event,
                                         gpointer         user_data)
 {
-#if 0
+    if (trkproperties_block_keyhandler) {
+        return FALSE;
+    }
     if (event->keyval == GDK_Escape) {
-        printf ("trkproperties esc\n");
         on_trackproperties_delete_event (trackproperties, NULL, NULL);
         return TRUE;
     }
     else if (event->keyval == GDK_Delete) {
-        printf ("trkproperties del\n");
         on_remove_field_activate (NULL, NULL);
-        return FALSE;
+        return TRUE;
     }
     else if (event->keyval == GDK_Insert) {
-        printf ("trkproperties ins\n");
         on_add_field_activate (NULL, NULL);
         return TRUE;
     }
-#endif
     return FALSE;
 }
 
@@ -244,6 +245,7 @@ on_metadata_edited (GtkCellRendererText *renderer, gchar *path, gchar *new_text,
         gtk_list_store_set (store, &iter, 1, new_text, 3, 0, -1);
         trkproperties_modified = 1;
     }
+    trkproperties_block_keyhandler = 0;
 }
 
 // full metadata
