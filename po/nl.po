@@ -8,24 +8,24 @@ msgid ""
 msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-10 20:26+0200\n"
-"PO-Revision-Date: 2011-09-08 22:41+0200\n"
-"Last-Translator: Pjotr\n"
+"POT-Creation-Date: 2012-09-11 12:10+0200\n"
+"PO-Revision-Date: 2012-09-12 16:23+0200\n"
+"Last-Translator: Pjotr <pjotrvertaalt@gmail.com>\n"
 "Language-Team: Dutch\n"
-"Language: nl (Dutch)\n"
+"Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Pootle 2.0.5\n"
 
 #: ../plugins/gtkui/callbacks.c:123
 msgid "Supported sound formats"
 msgstr "Ondersteunde soorten bestandopmaak voor geluid"
 
 #: ../plugins/gtkui/callbacks.c:134
-#, fuzzy
 msgid "All files (*)"
-msgstr "Andere bestanden (*)"
+msgstr "Alle bestanden (*)"
 
 #: ../plugins/gtkui/callbacks.c:144
 msgid "Open file(s)..."
@@ -226,7 +226,7 @@ msgstr "Nieuwe speellijst (%d)"
 
 #: ../plugins/gtkui/gtkui.c:1085
 msgid "- Test logout functionality"
-msgstr ""
+msgstr "- Probeer de afmeldfunctionaliteit uit"
 
 #: ../plugins/gtkui/interface.c:150 ../plugins/gtkui/deadbeef.glade.h:1
 msgid "_File"
@@ -307,7 +307,6 @@ msgid "_Find"
 msgstr "_Zoeken"
 
 #: ../plugins/gtkui/interface.c:288 ../plugins/gtkui/deadbeef.glade.h:19
-#, fuzzy
 msgid "Sort by"
 msgstr "Sorteren op"
 
@@ -404,19 +403,16 @@ msgid "Looping"
 msgstr "Herhalend"
 
 #: ../plugins/gtkui/interface.c:400 ../plugins/gtkui/deadbeef.glade.h:39
-#, fuzzy
 msgid "Loop all"
-msgstr "Alles herhalend"
+msgstr "Herhaal alles"
 
 #: ../plugins/gtkui/interface.c:406 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "Loop single song"
-msgstr "Enkel nummer herhalend"
+msgstr "Herhaal enkel nummer"
 
 #: ../plugins/gtkui/interface.c:412 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "Don't loop"
-msgstr "Niet herhalend"
+msgstr "Herhaal niet"
 
 #: ../plugins/gtkui/interface.c:418 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
@@ -635,9 +631,8 @@ msgid "Replaygain preamp:"
 msgstr "Replaygain voorversterking:"
 
 #: ../plugins/gtkui/interface.c:1926 ../plugins/gtkui/deadbeef.glade.h:100
-#, fuzzy
 msgid "Global preamp:"
-msgstr "Replaygain voorversterking:"
+msgstr "Algemene voorversterking:"
 
 #: ../plugins/gtkui/interface.c:1957 ../plugins/gtkui/deadbeef.glade.h:101
 msgid "Add files from command line (or file manager) to this playlist:"
@@ -654,9 +649,8 @@ msgid "Don't add from archives when adding folders"
 msgstr "Niet toevoegen vanuit archieven bij het toevoegen van mappen"
 
 #: ../plugins/gtkui/interface.c:1974 ../plugins/gtkui/deadbeef.glade.h:104
-#, fuzzy
 msgid "Auto-reset \"Stop after current\""
-msgstr "Stop na huidig"
+msgstr "\"Stop na huidig\" terugzetten op standaardwaarden"
 
 #: ../plugins/gtkui/interface.c:1978 ../plugins/gtkui/deadbeef.glade.h:105
 msgid "Playback"
@@ -707,11 +701,11 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2083 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Enable Russian CP1251 detection and recoding"
-msgstr ""
+msgstr "Schakel Russische CP1251-detectie en -hercodering in"
 
 #: ../plugins/gtkui/interface.c:2087 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Enable Chinese CP936 detection and recoding"
-msgstr ""
+msgstr "Schakel Chinese CP936-detectie en -hercodering in"
 
 #: ../plugins/gtkui/interface.c:2095 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Interface refresh rate (times per second):"
@@ -731,7 +725,7 @@ msgstr "GUI Plugin (wijzigen vereist herstart)"
 
 #: ../plugins/gtkui/interface.c:2145 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "GUI/Misc"
-msgstr ""
+msgstr "GUI/Gemengd"
 
 #: ../plugins/gtkui/interface.c:2160 ../plugins/gtkui/interface.c:2204
 #: ../plugins/gtkui/deadbeef.glade.h:123
@@ -833,7 +827,7 @@ msgstr "Proxy wachtwoord:"
 
 #: ../plugins/gtkui/interface.c:2473 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "HTTP User Agent:"
-msgstr ""
+msgstr "HTTP User Agent:"
 
 #: ../plugins/gtkui/interface.c:2482 ../plugins/gtkui/deadbeef.glade.h:148
 msgid "Network"
@@ -857,12 +851,10 @@ msgid "URL:"
 msgstr "URL:"
 
 #: ../plugins/gtkui/interface.c:3196 ../plugins/gtkui/deadbeef.glade.h:153
-#, fuzzy
 msgid "Group By ..."
-msgstr "Groeperen op"
+msgstr "Groeperen op..."
 
 #: ../plugins/gtkui/interface.c:3320 ../plugins/gtkui/deadbeef.glade.h:154
-#, fuzzy
 msgid "Sort by ..."
 msgstr "Sorteren op..."
 
@@ -1033,9 +1025,8 @@ msgid "Global Hotkeys"
 msgstr "Globale sneltoetsen"
 
 #: ../plugins/gtkui/prefwin.c:416
-#, fuzzy
 msgid "Action"
-msgstr "Locatie"
+msgstr "Actie"
 
 #: ../plugins/gtkui/prefwin.c:417
 msgid "Key combination"
@@ -1076,7 +1067,7 @@ msgstr "Etiketten aan het schrijven..."
 
 #: ../plugins/gtkui/trkproperties.c:651
 msgid "Field name"
-msgstr ""
+msgstr "Veldnaam"
 
 #: ../plugins/gtkui/trkproperties.c:654
 msgid "Name:"
@@ -1103,9 +1094,9 @@ msgid "Remove field"
 msgstr "Verwijder veld"
 
 #: ../main.c:84
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: deadbeef [options] [--] [file(s)]\n"
-msgstr "Gebruik: deadbeef [opties] [bestand(en)]\n"
+msgstr "Gebruik: deadbeef [opties] [--] [bestand(en)]\n"
 
 #: ../main.c:85
 #, c-format
@@ -1178,7 +1169,8 @@ msgstr "   --queue         Bestand(en) toevoegen aan speellijst\n"
 #, c-format
 msgid ""
 "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
-msgstr ""
+msgstr "   --gui PLUGIN       Bepaalt welke GUI-plugin er gebruikt moet worden, "
+"standaard is \"GTK2\"\n"
 
 #: ../main.c:99
 #, c-format
@@ -1306,7 +1298,6 @@ msgstr ""
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
-#, fuzzy
 msgid "Add audio CD"
 msgstr "Voeg geluid-CD toe"
 
@@ -1354,7 +1345,7 @@ msgstr "Scrobble URL"
 
 #: ../translation/extra.c:16
 msgid "Prefer Album Artist over Artist field"
-msgstr ""
+msgstr "Geef de voorkeur aan 'Album Artiest' boven het veld 'Artiest'"
 
 #. OSS output plugin
 #: ../translation/extra.c:18
@@ -1426,7 +1417,7 @@ msgstr "Resampling-kwaliteit (0..2, hoger is beter)"
 
 #: ../translation/extra.c:37
 msgid "8-bit output (default is 16)"
-msgstr ""
+msgstr "8-bit uitvoer (standaard is 16)"
 
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:39
@@ -1434,13 +1425,12 @@ msgid "Max song length (in minutes)"
 msgstr "Maximale muziekstukduur (in minuten)"
 
 #: ../translation/extra.c:40
-#, fuzzy
 msgid "Fadeout length (seconds)"
-msgstr "Standaard-liedduur (sec)"
+msgstr "Wegsterflengte (seconden)"
 
 #: ../translation/extra.c:41
 msgid "Play loops nr. of times (if available)"
-msgstr ""
+msgstr "Speel herhalingen aantal keren (indien beschikbaar)"
 
 #. Standard GTK2 user interface plugin
 #: ../translation/extra.c:43
@@ -1593,7 +1583,6 @@ msgid "Target Samplerate"
 msgstr "Doel-samplerate"
 
 #: ../translation/extra.c:94
-#, fuzzy
 msgid "Quality / Algorithm"
 msgstr "Kwaliteit / Algoritme"
 
@@ -1604,22 +1593,21 @@ msgstr "Automatische Samplerate (negeert Doel-Samplerate)"
 #. shellexecui
 #: ../translation/extra.c:97
 msgid "Configure custom shell commands"
-msgstr ""
+msgstr "Stel aangepaste opdrachten in voor gebruikersschil"
 
 #. mpgmad
 #: ../translation/extra.c:99
 msgid "Disable gapless playback (faster scanning)"
-msgstr ""
+msgstr "Schakel tussenpauzeloos afspelen uit (sneller doorzoeken)"
 
 #. adplug
 #: ../translation/extra.c:101
 msgid "Prefer Ken emu over Satoh (surround won't work)"
-msgstr ""
+msgstr "Geef de voorkeur aan Ken emu boven Sato (ruimtelijk zal niet werken)"
 
 #: ../translation/extra.c:102
-#, fuzzy
 msgid "Enable surround"
-msgstr "Schakel scrobbler in"
+msgstr "Schakel ruimtelijk in"
 
 #: ../plugins/converter/convgui.c:117
 msgid "The file already exists. Overwrite?"
@@ -1715,13 +1703,12 @@ msgstr "Uitvoermap:"
 #: ../plugins/converter/interface.c:109
 #: ../plugins/converter/converter.glade.h:2
 msgid "Write to source track folder"
-msgstr ""
+msgstr "Schrijf naar map van bronnummer"
 
 #: ../plugins/converter/interface.c:113
 #: ../plugins/converter/converter.glade.h:3
-#, fuzzy
 msgid "Preserve folder structure"
-msgstr "Behoud mapstructuur, te beginnen op:"
+msgstr "Behoud mapstructuur"
 
 #: ../plugins/converter/interface.c:121
 #: ../plugins/converter/converter.glade.h:4
@@ -1928,31 +1915,27 @@ msgstr ""
 #: ../plugins/shellexecui/interface.c:46
 #: ../plugins/shellexecui/shellexec.glade.h:1
 msgid "Custom Shell Commands"
-msgstr ""
+msgstr "Aangepaste opdrachten voor gebruikersschil"
 
 #: ../plugins/shellexecui/interface.c:69
 #: ../plugins/shellexecui/shellexec.glade.h:5
-#, fuzzy
 msgid "Edit"
-msgstr "_Bewerken"
+msgstr "Bewerken"
 
 #: ../plugins/shellexecui/interface.c:87
 #: ../plugins/shellexecui/shellexec.glade.h:2
-#, fuzzy
 msgid "Close"
-msgstr "_Sluiten"
+msgstr "Sluiten"
 
 #: ../plugins/shellexecui/interface.c:145
 #: ../plugins/shellexecui/shellexec.glade.h:6
-#, fuzzy
 msgid "Edit Command"
-msgstr "Kolom bewerken"
+msgstr "Opdracht bewerken"
 
 #: ../plugins/shellexecui/interface.c:166
 #: ../plugins/shellexecui/shellexec.glade.h:8
-#, fuzzy
 msgid "Command:"
-msgstr "Opdrachtregel:"
+msgstr "Opdracht:"
 
 #: ../plugins/shellexecui/interface.c:178
 #: ../plugins/shellexecui/shellexec.glade.h:10
@@ -1962,16 +1945,19 @@ msgid ""
 "main application was started from. Title formatting can be used. Example: "
 "xdg-open %D"
 msgstr ""
+"Willekeurige opdracht voor gebruikersschil. Zal worden uitgevoerd in de "
+"schilomgeving waarbinnen de hoofdtoepassing werd opgestart. Het formatteren "
+"van de titel kan worden gebruikt. Voorbeeld: xdg-open %D"
 
 #: ../plugins/shellexecui/interface.c:181
 #: ../plugins/shellexecui/shellexec.glade.h:11
 msgid "ID:"
-msgstr ""
+msgstr "ID:"
 
 #: ../plugins/shellexecui/interface.c:193
 #: ../plugins/shellexecui/shellexec.glade.h:12
 msgid "Free-form name, for example \"My Shell Command\""
-msgstr ""
+msgstr "Vormvrije naam, bijvoorbeeld 'Mijn schilopdracht'"
 
 #: ../plugins/shellexecui/interface.c:201
 #: ../plugins/shellexecui/shellexec.glade.h:13
@@ -1979,56 +1965,53 @@ msgid ""
 "Command ID, normally it should be something short, for example \"youtube_open"
 "\". It must be unique."
 msgstr ""
+"ID van de opdracht, gewoonlijk zou het iets korts moeten zijn, bijvoorbeeld "
+"'uitzending-gemist_openen'. Het moet uniek zijn."
 
 #: ../plugins/shellexecui/interface.c:204
 #: ../plugins/shellexecui/shellexec.glade.h:15
-#, fuzzy
 msgid "Single Tracks"
-msgstr "Sporen schuffelen"
+msgstr "Enkele nummers"
 
 #: ../plugins/shellexecui/interface.c:207
 #: ../plugins/shellexecui/shellexec.glade.h:14
 msgid "Works on single track."
-msgstr ""
+msgstr "Werkt op enkel nummer."
 
 #: ../plugins/shellexecui/interface.c:209
 #: ../plugins/shellexecui/shellexec.glade.h:17
-#, fuzzy
 msgid "Multiple Tracks"
-msgstr "[Meerdere waarden] "
+msgstr "Meerdere nummers"
 
 #: ../plugins/shellexecui/interface.c:212
 #: ../plugins/shellexecui/shellexec.glade.h:16
 msgid "Works on multiple tracks."
-msgstr ""
+msgstr "Werkt op meerdere nummers."
 
 #: ../plugins/shellexecui/interface.c:214
 #: ../plugins/shellexecui/shellexec.glade.h:19
-#, fuzzy
 msgid "Local"
-msgstr "Locatie"
+msgstr "Plaatselijk"
 
 #: ../plugins/shellexecui/interface.c:217
 #: ../plugins/shellexecui/shellexec.glade.h:18
 msgid "Works on local files."
-msgstr ""
+msgstr "Werkt op plaatselijke bestanden."
 
 #: ../plugins/shellexecui/interface.c:219
 #: ../plugins/shellexecui/shellexec.glade.h:21
-#, fuzzy
 msgid "Remote"
-msgstr "Verwijderen"
+msgstr "Op afstand"
 
 #: ../plugins/shellexecui/interface.c:222
 #: ../plugins/shellexecui/shellexec.glade.h:20
 msgid "Works on remote files (e.g. http:// streams)"
-msgstr ""
+msgstr "Werkt op bestanden-op-afstand (bijvoorbeeld http:// streams)"
 
 #: ../plugins/shellexecui/interface.c:224
 #: ../plugins/shellexecui/shellexec.glade.h:23
-#, fuzzy
 msgid "Playlist"
-msgstr "Nieuwe speellijst"
+msgstr "Speellijst"
 
 #: ../plugins/shellexecui/interface.c:227
 #: ../plugins/shellexecui/shellexec.glade.h:22

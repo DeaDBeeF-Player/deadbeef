@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-10 20:26+0200\n"
-"PO-Revision-Date: 2012-09-04 07:44+0300\n"
+"POT-Creation-Date: 2012-09-11 12:10+0200\n"
+"PO-Revision-Date: 2012-09-11 07:23+0300\n"
 "Last-Translator: Algimantas Margevičius <margevicius.algimantas@gmail.com>\n"
 "Language-Team: Lietuvių <>\n"
 "Language: lt\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n"
 "%100<10 || n%100>=20) ? 1 : 2)\n"
-"X-Generator: Pootle 2.0.5\n"
+"X-Generator: Gtranslator 2.91.5\n"
 
 #: ../plugins/gtkui/callbacks.c:123
 msgid "Supported sound formats"
@@ -851,12 +851,10 @@ msgid "URL:"
 msgstr "URL:"
 
 #: ../plugins/gtkui/interface.c:3196 ../plugins/gtkui/deadbeef.glade.h:153
-#, fuzzy
 msgid "Group By ..."
-msgstr "Grupuoti pagal"
+msgstr "Grupuoti pagal..."
 
 #: ../plugins/gtkui/interface.c:3320 ../plugins/gtkui/deadbeef.glade.h:154
-#, fuzzy
 msgid "Sort by ..."
 msgstr "Rikiuoti pagal..."
 
@@ -1069,7 +1067,7 @@ msgstr "Rašomos žymės..."
 
 #: ../plugins/gtkui/trkproperties.c:651
 msgid "Field name"
-msgstr ""
+msgstr "Lauko pavadinimas"
 
 #: ../plugins/gtkui/trkproperties.c:654
 msgid "Name:"
