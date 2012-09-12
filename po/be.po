@@ -8,16 +8,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.4.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-10 20:26+0200\n"
-"PO-Revision-Date: 2011-12-15 20:32+0200\n"
+"POT-Creation-Date: 2012-09-11 12:10+0200\n"
+"PO-Revision-Date: 2012-09-12 20:49+0200\n"
 "Last-Translator: Мікалай <crom-a@tut.by>\n"
 "Language-Team: Belarusian <>\n"
 "Language: be\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: \n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
+"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Pootle 2.0.5\n"
 
 #: ../plugins/gtkui/callbacks.c:123
@@ -104,27 +104,27 @@ msgstr "Дадаць новы плэйліст"
 
 #: ../plugins/gtkui/eq.c:141
 msgid "Save DeaDBeeF EQ Preset"
-msgstr "Захаваць перадусталёўкі эквалайзера DeaDBeeF"
+msgstr "Запісаць прэсет эквалайзера DeaDBeeF"
 
 #: ../plugins/gtkui/eq.c:148
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
-msgstr "Файлы перадусталёвак DeaDBeeF (*.ddbeq)"
+msgstr "Файлы прэсетаў эквалайзера DeaDBeeF (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:187
 msgid "Load DeaDBeeF EQ Preset..."
-msgstr "Загрузіць перадусталёўкі эквалайзера DeaDBeeF..."
+msgstr "Чытаць прэсет эквалайзера DeaDBeeF..."
 
 #: ../plugins/gtkui/eq.c:191
 msgid "DeaDBeeF EQ presets (*.ddbeq)"
-msgstr "Перадусталёўкі эквалайзера DeaDBeeF (*.ddbeq)"
+msgstr "Прэсет эквалайзера DeaDBeeF (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:252
 msgid "Import Foobar2000 EQ Preset..."
-msgstr "Імпартаваць перадусталёўку эквалайзера Foobar2000..."
+msgstr "Імпартаваць прэсет эквалайзера Foobar2000..."
 
 #: ../plugins/gtkui/eq.c:256
 msgid "Foobar2000 EQ presets (*.feq)"
-msgstr "Перадусталёўкі эквалайзера Foobar2000 (*.feq)"
+msgstr "Прэсет эквалайзера Foobar2000 (*.feq)"
 
 #: ../plugins/gtkui/eq.c:321
 msgid "Save Preset"
@@ -132,11 +132,11 @@ msgstr "Запісаць"
 
 #: ../plugins/gtkui/eq.c:329
 msgid "Load Preset"
-msgstr "Загрузіць"
+msgstr "Чытаць"
 
 #: ../plugins/gtkui/eq.c:337
 msgid "Import Foobar2000 Preset"
-msgstr "Імпартаваць перадусталёўку Foobar2000"
+msgstr "Імпартаваць прэсет Foobar2000"
 
 #: ../plugins/gtkui/eq.c:362
 msgid "Enable"
@@ -157,7 +157,7 @@ msgstr "Абнуліць частоты"
 #: ../plugins/gtkui/eq.c:392 ../plugins/converter/interface.c:803
 #: ../plugins/converter/converter.glade.h:50
 msgid "Presets"
-msgstr "Профілі"
+msgstr "Прэсеты"
 
 #: ../plugins/gtkui/gtkui.c:140
 #, c-format
@@ -225,11 +225,11 @@ msgstr "Новы плэйліст (%d)"
 
 #: ../plugins/gtkui/gtkui.c:1085
 msgid "- Test logout functionality"
-msgstr ""
+msgstr "- Тэст функцыянальнасці выхаду"
 
 #: ../plugins/gtkui/interface.c:150 ../plugins/gtkui/deadbeef.glade.h:1
 msgid "_File"
-msgstr "_Файл"
+msgstr "Ф_айл"
 
 #: ../plugins/gtkui/interface.c:157 ../plugins/gtkui/deadbeef.glade.h:2
 msgid "_Open file(s)"
@@ -262,7 +262,7 @@ msgstr "Запісаць плэйліст"
 
 #: ../plugins/gtkui/interface.c:218 ../plugins/gtkui/deadbeef.glade.h:9
 msgid "_Quit"
-msgstr "_Выйсцi"
+msgstr "Вы_йсцi"
 
 #: ../plugins/gtkui/interface.c:229 ../plugins/gtkui/deadbeef.glade.h:10
 msgid "_Edit"
@@ -270,7 +270,7 @@ msgstr "_Рэдагаваць"
 
 #: ../plugins/gtkui/interface.c:236 ../plugins/gtkui/deadbeef.glade.h:11
 msgid "_Clear"
-msgstr "_Ачысціць"
+msgstr "Ачы_сціць"
 
 #: ../plugins/gtkui/interface.c:244 ../plugins/gtkui/deadbeef.glade.h:12
 msgid "Select all"
@@ -306,7 +306,6 @@ msgid "_Find"
 msgstr "_Знайсці"
 
 #: ../plugins/gtkui/interface.c:288 ../plugins/gtkui/deadbeef.glade.h:19
-#, fuzzy
 msgid "Sort by"
 msgstr "Парадкаваць па"
 
@@ -355,7 +354,7 @@ msgstr "Карыстальніцкі"
 #: ../plugins/gtkui/interface.c:328 ../plugins/gtkui/interface.c:1817
 #: ../plugins/gtkui/deadbeef.glade.h:27
 msgid "Preferences"
-msgstr "Наладкі"
+msgstr "Настаўленні"
 
 #: ../plugins/gtkui/interface.c:332 ../plugins/gtkui/deadbeef.glade.h:28
 msgid "_View"
@@ -403,17 +402,14 @@ msgid "Looping"
 msgstr "Паўтараць"
 
 #: ../plugins/gtkui/interface.c:400 ../plugins/gtkui/deadbeef.glade.h:39
-#, fuzzy
 msgid "Loop all"
 msgstr "Паўтараць усё"
 
 #: ../plugins/gtkui/interface.c:406 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "Loop single song"
 msgstr "Паўтараць адзін трэк"
 
 #: ../plugins/gtkui/interface.c:412 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "Don't loop"
 msgstr "Не паўтараць"
 
@@ -509,11 +505,11 @@ msgstr "_Ужыць"
 #: ../plugins/gtkui/interface.c:1320 ../plugins/gtkui/interface.c:1366
 #: ../plugins/gtkui/deadbeef.glade.h:65
 msgid "_Close"
-msgstr "_Замкнуць"
+msgstr "_Закрыць"
 
 #: ../plugins/gtkui/interface.c:1324 ../plugins/gtkui/deadbeef.glade.h:66
 msgid "Metadata"
-msgstr "Метаданыя"
+msgstr "Метазвесткі"
 
 #: ../plugins/gtkui/interface.c:1370 ../plugins/gtkui/plcommon.c:630
 #: ../plugins/gtkui/deadbeef.glade.h:67
@@ -589,7 +585,7 @@ msgstr "_ОК"
 
 #: ../plugins/gtkui/interface.c:1838 ../plugins/gtkui/deadbeef.glade.h:88
 msgid "Output plugin:"
-msgstr "Модуль вываду:"
+msgstr "Плагін вываду:"
 
 #: ../plugins/gtkui/interface.c:1851 ../plugins/gtkui/deadbeef.glade.h:89
 msgid "Output device:"
@@ -631,7 +627,7 @@ msgstr "+12 дБ"
 
 #: ../plugins/gtkui/interface.c:1919 ../plugins/gtkui/deadbeef.glade.h:99
 msgid "Replaygain preamp:"
-msgstr "Перадузмацненне з рыплэйгейна:"
+msgstr "Перадузмацненне аўтаўстаноўкі:"
 
 #: ../plugins/gtkui/interface.c:1926 ../plugins/gtkui/deadbeef.glade.h:100
 msgid "Global preamp:"
@@ -651,9 +647,8 @@ msgid "Don't add from archives when adding folders"
 msgstr "Не дадаваць з архіваў пры праглядзе каталога"
 
 #: ../plugins/gtkui/interface.c:1974 ../plugins/gtkui/deadbeef.glade.h:104
-#, fuzzy
 msgid "Auto-reset \"Stop after current\""
-msgstr "Спыніць пасля бягучага"
+msgstr "Аўта-скіданне \"Спыніць пасля бягучага\""
 
 #: ../plugins/gtkui/interface.c:1978 ../plugins/gtkui/deadbeef.glade.h:105
 msgid "Playback"
@@ -703,11 +698,11 @@ msgstr "Аўтаматычна называць плэйліст, калі да�
 
 #: ../plugins/gtkui/interface.c:2083 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Enable Russian CP1251 detection and recoding"
-msgstr ""
+msgstr "Уключыць выяўленне і перакадаванне знаказбору рускі CP1251"
 
 #: ../plugins/gtkui/interface.c:2087 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Enable Chinese CP936 detection and recoding"
-msgstr ""
+msgstr "Уключыць выяўленне і перакадаванне знаказбору кітайскі CP936"
 
 #: ../plugins/gtkui/interface.c:2095 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Interface refresh rate (times per second):"
@@ -727,7 +722,7 @@ msgstr "Плагін графічнага інтэрфейсу (змена па�
 
 #: ../plugins/gtkui/interface.c:2145 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "GUI/Misc"
-msgstr ""
+msgstr "Графічны інтэрфейс/Рознае"
 
 #: ../plugins/gtkui/interface.c:2160 ../plugins/gtkui/interface.c:2204
 #: ../plugins/gtkui/deadbeef.glade.h:123
@@ -831,7 +826,7 @@ msgstr "Пароль:"
 
 #: ../plugins/gtkui/interface.c:2473 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "HTTP User Agent:"
-msgstr ""
+msgstr "HTTP User Agent:"
 
 #: ../plugins/gtkui/interface.c:2482 ../plugins/gtkui/deadbeef.glade.h:148
 msgid "Network"
@@ -855,12 +850,10 @@ msgid "URL:"
 msgstr "URL:"
 
 #: ../plugins/gtkui/interface.c:3196 ../plugins/gtkui/deadbeef.glade.h:153
-#, fuzzy
 msgid "Group By ..."
 msgstr "Групаваць па"
 
 #: ../plugins/gtkui/interface.c:3320 ../plugins/gtkui/deadbeef.glade.h:154
-#, fuzzy
 msgid "Sort by ..."
 msgstr "Парадкаваць па..."
 
@@ -1031,9 +1024,8 @@ msgid "Global Hotkeys"
 msgstr "Гарачыя клавішы"
 
 #: ../plugins/gtkui/prefwin.c:416
-#, fuzzy
 msgid "Action"
-msgstr "Месцазнаходжанне"
+msgstr "Дзеянне"
 
 #: ../plugins/gtkui/prefwin.c:417
 msgid "Key combination"
@@ -1049,7 +1041,7 @@ msgstr "Ініцыялізацыя..."
 
 #: ../plugins/gtkui/trkproperties.c:161
 msgid "You've modified data for this track."
-msgstr "Дадзеныя для гэтага трэка былі зменены."
+msgstr "Звесткі для гэтага трэка былі зменены."
 
 #: ../plugins/gtkui/trkproperties.c:163
 msgid "Really close the window?"
@@ -1074,7 +1066,7 @@ msgstr "Запісанне тэгаў..."
 
 #: ../plugins/gtkui/trkproperties.c:651
 msgid "Field name"
-msgstr ""
+msgstr "Назва поля"
 
 #: ../plugins/gtkui/trkproperties.c:654
 msgid "Name:"
@@ -1101,7 +1093,7 @@ msgid "Remove field"
 msgstr "Сцерці поле"
 
 #: ../main.c:84
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: deadbeef [options] [--] [file(s)]\n"
 msgstr "Ужыванне: deadbeef [опцыі] [файл(ы)]\n"
 
@@ -1178,7 +1170,7 @@ msgstr "   --queue             Дадаць файл(ы) у існуючы пл�
 #, c-format
 msgid ""
 "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
-msgstr ""
+msgstr "   --gui PLUGIN       Паказвае, які плагін GUI ужываць, звычайна \"GTK2\"\n"
 
 #: ../main.c:99
 #, c-format
@@ -1307,7 +1299,6 @@ msgstr ""
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
-#, fuzzy
 msgid "Add audio CD"
 msgstr "Дадаць аўдыё CD"
 
@@ -1355,7 +1346,7 @@ msgstr "Адрас для скроблінга"
 
 #: ../translation/extra.c:16
 msgid "Prefer Album Artist over Artist field"
-msgstr ""
+msgstr "Паказваць выканаўцу альбома замест выканаўцы трэка"
 
 #. OSS output plugin
 #: ../translation/extra.c:18
@@ -1377,7 +1368,7 @@ msgstr "Атрымліваць з унутраных тэгаў"
 
 #: ../translation/extra.c:23
 msgid "Fetch from local folder"
-msgstr "Атрымліваць з лакальнай тэчкі"
+msgstr "Атрымліваць з лакальнага каталога"
 
 #: ../translation/extra.c:24
 msgid "Local cover file mask"
@@ -1423,11 +1414,11 @@ msgstr "Уключыць падтрымку NRG вобразаў"
 #. DUMB module player plugin
 #: ../translation/extra.c:36
 msgid "Resampling quality (0..2, higher is better)"
-msgstr "Якасць перадысрэтызацыі (0..2, вышэй - лепш)"
+msgstr "Якасць перадыскрэтызацыі (0..2, вышэй - лепш)"
 
 #: ../translation/extra.c:37
 msgid "8-bit output (default is 16)"
-msgstr ""
+msgstr "8-бітны выхад (тыповы 16-бітны)"
 
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:39
@@ -1435,13 +1426,12 @@ msgid "Max song length (in minutes)"
 msgstr "Максімальная даўжыня трэка (у хвілінах)"
 
 #: ../translation/extra.c:40
-#, fuzzy
 msgid "Fadeout length (seconds)"
-msgstr "Тыповая даўжыня трэка (сек.)"
+msgstr "Даўжыня сціхання (секундаў)"
 
 #: ../translation/extra.c:41
 msgid "Play loops nr. of times (if available)"
-msgstr ""
+msgstr "Прайграць колца лк разоў (калі даступна)"
 
 #. Standard GTK2 user interface plugin
 #: ../translation/extra.c:43
@@ -1551,11 +1541,11 @@ msgstr "Нумар дыска"
 
 #: ../translation/extra.c:80
 msgid "Comment"
-msgstr "Каментар"
+msgstr "Каментарый"
 
 #: ../translation/extra.c:81
 msgid "Encoder / Vendor"
-msgstr "Кодер / Продавец"
+msgstr "Кодар / Прадавец"
 
 #: ../translation/extra.c:83
 msgid "Location"
@@ -1593,7 +1583,6 @@ msgid "Target Samplerate"
 msgstr "Мэтавая частата дыскрэтызацыі"
 
 #: ../translation/extra.c:94
-#, fuzzy
 msgid "Quality / Algorithm"
 msgstr "Якасць / Алгарытм"
 
@@ -1604,22 +1593,21 @@ msgstr "Аўтаматычная частата дыскрэтызацыі (пе
 #. shellexecui
 #: ../translation/extra.c:97
 msgid "Configure custom shell commands"
-msgstr ""
+msgstr "Наставіць адмысловыя загады абалонкі"
 
 #. mpgmad
 #: ../translation/extra.c:99
 msgid "Disable gapless playback (faster scanning)"
-msgstr ""
+msgstr "Выключыць непарыўнае прайграванне (хутчэйшае сканаванне)"
 
 #. adplug
 #: ../translation/extra.c:101
 msgid "Prefer Ken emu over Satoh (surround won't work)"
-msgstr ""
+msgstr "Пераважаць эмуляцыю Ken над Satoh (гук вакол не працуе)"
 
 #: ../translation/extra.c:102
-#, fuzzy
 msgid "Enable surround"
-msgstr "Уключыць скроблер"
+msgstr "Уключыць гук вакол"
 
 #: ../plugins/converter/convgui.c:117
 msgid "The file already exists. Overwrite?"
@@ -1643,7 +1631,7 @@ msgstr "Пераўтварэнне..."
 
 #: ../plugins/converter/convgui.c:459
 msgid "Select folder..."
-msgstr "Вылучыць каталог..."
+msgstr "Выбраць каталог..."
 
 #: ../plugins/converter/convgui.c:681
 msgid "Failed to save encoder preset"
@@ -1713,13 +1701,12 @@ msgstr "Каталог вываду:"
 #: ../plugins/converter/interface.c:109
 #: ../plugins/converter/converter.glade.h:2
 msgid "Write to source track folder"
-msgstr ""
+msgstr "Пісаць у каталог з крынічнымі трэкамі"
 
 #: ../plugins/converter/interface.c:113
 #: ../plugins/converter/converter.glade.h:3
-#, fuzzy
 msgid "Preserve folder structure"
-msgstr "Захоўваць структуру каталогаў, пачынаючы з:"
+msgstr "Захоўваць структуру каталогаў"
 
 #: ../plugins/converter/interface.c:121
 #: ../plugins/converter/converter.glade.h:4
@@ -1900,49 +1887,53 @@ msgid ""
 "32 bit signed int\n"
 "32 bit float"
 msgstr ""
+"Захоўваць крынічны фармат\n"
+"8-бітавы знакавы цэлы\n"
+"16-бітавы знакавы цэлы\n"
+"24-бітавы знакавы цэлы\n"
+"32-бітавы знакавы цэлы\n"
+"32-бітавы плыўны"
 
 #: ../plugins/converter/converter.glade.h:19
-#, fuzzy
 msgid ""
 "Prompt\n"
 "Overwrite"
-msgstr "Перапісаць"
+msgstr ""
+"Спытаць\n"
+"Перапісаць"
 
 #: ../plugins/converter/converter.glade.h:34
-#, fuzzy
 msgid ""
 "Pipe\n"
 "Temporary file"
-msgstr "Часовы файл"
+msgstr ""
+"Канвеер\n"
+"Часовы файл"
 
 #: ../plugins/shellexecui/interface.c:46
 #: ../plugins/shellexecui/shellexec.glade.h:1
 msgid "Custom Shell Commands"
-msgstr ""
+msgstr "Адмысловыя загады абалонкі"
 
 #: ../plugins/shellexecui/interface.c:69
 #: ../plugins/shellexecui/shellexec.glade.h:5
-#, fuzzy
 msgid "Edit"
 msgstr "_Рэдагаваць"
 
 #: ../plugins/shellexecui/interface.c:87
 #: ../plugins/shellexecui/shellexec.glade.h:2
-#, fuzzy
 msgid "Close"
-msgstr "_Замкнуць"
+msgstr "_Замкрыць"
 
 #: ../plugins/shellexecui/interface.c:145
 #: ../plugins/shellexecui/shellexec.glade.h:6
-#, fuzzy
 msgid "Edit Command"
-msgstr "Рэдагаваць слупок"
+msgstr "Рэдагаваць загад"
 
 #: ../plugins/shellexecui/interface.c:166
 #: ../plugins/shellexecui/shellexec.glade.h:8
-#, fuzzy
 msgid "Command:"
-msgstr "Загадны радок:"
+msgstr "Загад:"
 
 #: ../plugins/shellexecui/interface.c:178
 #: ../plugins/shellexecui/shellexec.glade.h:10
@@ -1952,16 +1943,19 @@ msgid ""
 "main application was started from. Title formatting can be used. Example: "
 "xdg-open %D"
 msgstr ""
+"Адвольны загад абалонкі. Будзе выкананы ў тым кантэксце абалонкі, з якім "
+"стартавала галоўная праграма. Можна ўжываць фарматаванне назвы. Прыклад: "
+"xdg-open %D"
 
 #: ../plugins/shellexecui/interface.c:181
 #: ../plugins/shellexecui/shellexec.glade.h:11
 msgid "ID:"
-msgstr ""
+msgstr "ID:"
 
 #: ../plugins/shellexecui/interface.c:193
 #: ../plugins/shellexecui/shellexec.glade.h:12
 msgid "Free-form name, for example \"My Shell Command\""
-msgstr ""
+msgstr "Назва ў адвольнай форме, напрыклад \"Мой загад абалонкі\""
 
 #: ../plugins/shellexecui/interface.c:201
 #: ../plugins/shellexecui/shellexec.glade.h:13
@@ -1969,113 +1963,106 @@ msgid ""
 "Command ID, normally it should be something short, for example \"youtube_open"
 "\". It must be unique."
 msgstr ""
+"Ідэнтыфікатар ID загада, звычайна нешта кароткае, напрыклад \"youtube_open\". "
+"Павінен быць унікальным."
 
 #: ../plugins/shellexecui/interface.c:204
 #: ../plugins/shellexecui/shellexec.glade.h:15
-#, fuzzy
 msgid "Single Tracks"
-msgstr "Перамяшаць трэкі"
+msgstr "Асобныя трэкі"
 
 #: ../plugins/shellexecui/interface.c:207
 #: ../plugins/shellexecui/shellexec.glade.h:14
 msgid "Works on single track."
-msgstr ""
+msgstr "Працуе на асобным трэку"
 
 #: ../plugins/shellexecui/interface.c:209
 #: ../plugins/shellexecui/shellexec.glade.h:17
-#, fuzzy
 msgid "Multiple Tracks"
-msgstr "[Некалькі велічынь] "
+msgstr "Некалькі трэкаў"
 
 #: ../plugins/shellexecui/interface.c:212
 #: ../plugins/shellexecui/shellexec.glade.h:16
 msgid "Works on multiple tracks."
-msgstr ""
+msgstr "Працуе на некалькіх трэках"
 
 #: ../plugins/shellexecui/interface.c:214
 #: ../plugins/shellexecui/shellexec.glade.h:19
-#, fuzzy
 msgid "Local"
-msgstr "Месцазнаходжанне"
+msgstr "Лакальны"
 
 #: ../plugins/shellexecui/interface.c:217
 #: ../plugins/shellexecui/shellexec.glade.h:18
 msgid "Works on local files."
-msgstr ""
+msgstr "Працуе на лакальных файлах"
 
 #: ../plugins/shellexecui/interface.c:219
 #: ../plugins/shellexecui/shellexec.glade.h:21
-#, fuzzy
 msgid "Remote"
-msgstr "Сцерці"
+msgstr "Адлеглы"
 
 #: ../plugins/shellexecui/interface.c:222
 #: ../plugins/shellexecui/shellexec.glade.h:20
 msgid "Works on remote files (e.g. http:// streams)"
-msgstr ""
+msgstr "Працуе на адлеглых файлах (напр., http:// струменях)"
 
 #: ../plugins/shellexecui/interface.c:224
 #: ../plugins/shellexecui/shellexec.glade.h:23
-#, fuzzy
 msgid "Playlist"
-msgstr "Новы плэйліст"
+msgstr "Плэйліст"
 
 #: ../plugins/shellexecui/interface.c:227
 #: ../plugins/shellexecui/shellexec.glade.h:22
 msgid "Item should appear on the playlist tab context menu"
-msgstr ""
+msgstr "Элемент з'явіцца ў кантэкстным меню карткі плэйліста"
 
 #: ../plugins/shellexecui/interface.c:229
 #: ../plugins/shellexecui/shellexec.glade.h:25
-#, fuzzy
 msgid "Common"
-msgstr "Каментар"
+msgstr "Агульны"
 
 #: ../plugins/shellexecui/interface.c:232
 #: ../plugins/shellexecui/shellexec.glade.h:24
 msgid "Item should appear in the main menu"
-msgstr ""
+msgstr "Элемент з'явіцца ў галоўным меню"
 
 #: ../plugins/shellexecui/shellexecui.c:94
-#, fuzzy
 msgid "Add Command"
-msgstr "Дадаць слупок"
+msgstr "Дадаць загад"
 
 #: ../plugins/shellexecui/shellexecui.c:137
 msgid "Delete"
-msgstr ""
+msgstr "Сцерці"
 
 #: ../plugins/shellexecui/shellexecui.c:139
-#, fuzzy
 msgid "This action will delete the selected shell command. Are you sure?"
-msgstr "Гэта дзеянне выдаліць вылучаны профіль. Упэўнены?"
+msgstr "Гэта дзеянне выдаліць вылучаны загад абалонкі. Упэўнены?"
 
 #: ../plugins/shellexecui/shellexecui.c:141
-#, fuzzy
 msgid "Confirm Remove"
-msgstr "Канфігурацыя"
+msgstr "Пацвердзіць выдаленне"
 
 #: ../plugins/shellexecui/shellexecui.c:230
 msgid "ID must be non-empty and unique.\n"
-msgstr ""
+msgstr "ID павінен быць непустым і ўнікальным.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:236
 msgid "Title must be non-empty.\n"
-msgstr ""
+msgstr "Назва павінна быць непустой.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:242
 msgid "Shell Command must be non-empty.\n"
-msgstr ""
+msgstr "Загад абалонкі павінен быць непустым.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:249
 #: ../plugins/shellexecui/shellexecui.c:253
 msgid "Invalid Values"
-msgstr ""
+msgstr "Недапушчальныя значэнні"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:165
 #, c-format
 msgid "File is not a valid .desktop file"
-msgstr ""
+msgstr "Файл не з'яўляецца звычайным .desktop файлам"
 
 #. translators: 'Version' is from a desktop file, and
 #. * should not be translated. '%s' would probably be a
@@ -2083,62 +2070,62 @@ msgstr ""
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:191
 #, c-format
 msgid "Unrecognized desktop file Version '%s'"
-msgstr ""
+msgstr "Нераспазнаны desktop файл Version '%s'"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:974
-#, fuzzy, c-format
+#, c-format
 msgid "Starting %s"
-msgstr "Настаўленні"
+msgstr "Запуск %s"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1116
 #, c-format
 msgid "Application does not accept documents on command line"
-msgstr ""
+msgstr "Праграма не прымае дакументы ў загадным радку"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1184
 #, c-format
 msgid "Unrecognized launch option: %d"
-msgstr ""
+msgstr "Нераспазнаная опцыя запуску: %d"
 
 #. translators: The 'Type=Link' string is found in a
 #. * desktop file, and should not be translated.
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1391
 #, c-format
 msgid "Can't pass document URIs to a 'Type=Link' desktop entry"
-msgstr ""
+msgstr "Нельга перадаць URIs дакумента ў элемент 'Type=Link' desktop entry"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1412
 #, c-format
 msgid "Not a launchable item"
-msgstr ""
+msgstr "Не запускальны элемент"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:226
 msgid "Disable connection to session manager"
-msgstr ""
+msgstr "Адключыць злучэнне з кіраўніком сеансаў"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:229
 msgid "Specify file containing saved configuration"
-msgstr ""
+msgstr "Задаць файл, які ўтрымлівае запісаную канфігурацыю"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:229
 msgid "FILE"
-msgstr ""
+msgstr "ФАЙЛ"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:232
 msgid "Specify session management ID"
-msgstr ""
+msgstr "Задаць ID кіраўніка сеансаў"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:232
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:253
 msgid "Session management options:"
-msgstr ""
+msgstr "Опцыі кіраўніка сеансаў:"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:254
 msgid "Show session management options"
-msgstr ""
+msgstr "Паказаць опцыі кіраўніка сеансаў"
 
 #~ msgid "GUI"
 #~ msgstr "Інтэрфейс"

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-10 20:26+0200\n"
-"PO-Revision-Date: 2012-01-22 18:43+0200\n"
+"POT-Creation-Date: 2012-09-11 12:10+0200\n"
+"PO-Revision-Date: 2012-09-11 16:40+0200\n"
 "Last-Translator: Anari <anari.jalakas@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: et\n"
@@ -304,7 +304,6 @@ msgid "_Find"
 msgstr "_Otsi"
 
 #: ../plugins/gtkui/interface.c:288 ../plugins/gtkui/deadbeef.glade.h:19
-#, fuzzy
 msgid "Sort by"
 msgstr "Sorteeri"
 
@@ -401,19 +400,16 @@ msgid "Looping"
 msgstr "Kordamine"
 
 #: ../plugins/gtkui/interface.c:400 ../plugins/gtkui/deadbeef.glade.h:39
-#, fuzzy
 msgid "Loop all"
-msgstr "Korda kõiki"
+msgstr "Kõikide kordamine"
 
 #: ../plugins/gtkui/interface.c:406 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "Loop single song"
-msgstr "Korda lugu"
+msgstr "Loo kordamine"
 
 #: ../plugins/gtkui/interface.c:412 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "Don't loop"
-msgstr "Ära korda"
+msgstr "Ei korda"
 
 #: ../plugins/gtkui/interface.c:418 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
@@ -850,12 +846,10 @@ msgid "URL:"
 msgstr "URL:"
 
 #: ../plugins/gtkui/interface.c:3196 ../plugins/gtkui/deadbeef.glade.h:153
-#, fuzzy
 msgid "Group By ..."
-msgstr "Grupeerimine"
+msgstr "Grupeerimine..."
 
 #: ../plugins/gtkui/interface.c:3320 ../plugins/gtkui/deadbeef.glade.h:154
-#, fuzzy
 msgid "Sort by ..."
 msgstr "Sorteerimine..."
 
@@ -1026,9 +1020,8 @@ msgid "Global Hotkeys"
 msgstr "Globaalsed kiirklahvid"
 
 #: ../plugins/gtkui/prefwin.c:416
-#, fuzzy
 msgid "Action"
-msgstr "Asukoht"
+msgstr "Tegevus"
 
 #: ../plugins/gtkui/prefwin.c:417
 msgid "Key combination"
@@ -1069,7 +1062,7 @@ msgstr "Siltide kirjutamine..."
 
 #: ../plugins/gtkui/trkproperties.c:651
 msgid "Field name"
-msgstr ""
+msgstr "Välja nimi"
 
 #: ../plugins/gtkui/trkproperties.c:654
 msgid "Name:"
@@ -1096,9 +1089,9 @@ msgid "Remove field"
 msgstr "Eemalda väli"
 
 #: ../main.c:84
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: deadbeef [options] [--] [file(s)]\n"
-msgstr "Kasutamine: deadbeef [valikud] [fail(id)]\n"
+msgstr "Kasutamine: deadbeef [valikud] [--] [fail(id)]\n"
 
 #: ../main.c:85
 #, c-format
@@ -1299,9 +1292,8 @@ msgstr ""
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
-#, fuzzy
 msgid "Add audio CD"
-msgstr "Lisa audio CD"
+msgstr "Audio CD lisamine"
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
@@ -1419,7 +1411,7 @@ msgstr "Ümberdiskreetimise kvaliteet (0..2, suurem on parem)"
 
 #: ../translation/extra.c:37
 msgid "8-bit output (default is 16)"
-msgstr ""
+msgstr "8-bitine väljund (vaikimisi on 16)"
 
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:39
@@ -1585,7 +1577,6 @@ msgid "Target Samplerate"
 msgstr "Tulemuse diskreetimissagedus"
 
 #: ../translation/extra.c:94
-#, fuzzy
 msgid "Quality / Algorithm"
 msgstr "Kvaliteet / Algoritm"
 
@@ -1610,9 +1601,8 @@ msgid "Prefer Ken emu over Satoh (surround won't work)"
 msgstr ""
 
 #: ../translation/extra.c:102
-#, fuzzy
 msgid "Enable surround"
-msgstr "Luba scrobbler"
+msgstr "Ruumilise heli lubamine"
 
 #: ../plugins/converter/convgui.c:117
 msgid "The file already exists. Overwrite?"
@@ -1916,27 +1906,23 @@ msgstr ""
 
 #: ../plugins/shellexecui/interface.c:69
 #: ../plugins/shellexecui/shellexec.glade.h:5
-#, fuzzy
 msgid "Edit"
-msgstr "_Redigeerimine"
+msgstr "Redigeerimine"
 
 #: ../plugins/shellexecui/interface.c:87
 #: ../plugins/shellexecui/shellexec.glade.h:2
-#, fuzzy
 msgid "Close"
-msgstr "_Sulge"
+msgstr "Sulgemine"
 
 #: ../plugins/shellexecui/interface.c:145
 #: ../plugins/shellexecui/shellexec.glade.h:6
-#, fuzzy
 msgid "Edit Command"
-msgstr "Muuda veergu"
+msgstr "Käsu muutmine"
 
 #: ../plugins/shellexecui/interface.c:166
 #: ../plugins/shellexecui/shellexec.glade.h:8
-#, fuzzy
 msgid "Command:"
-msgstr "Käsurida:"
+msgstr "Käsk:"
 
 #: ../plugins/shellexecui/interface.c:178
 #: ../plugins/shellexecui/shellexec.glade.h:10
@@ -1950,7 +1936,7 @@ msgstr ""
 #: ../plugins/shellexecui/interface.c:181
 #: ../plugins/shellexecui/shellexec.glade.h:11
 msgid "ID:"
-msgstr ""
+msgstr "ID:"
 
 #: ../plugins/shellexecui/interface.c:193
 #: ../plugins/shellexecui/shellexec.glade.h:12
