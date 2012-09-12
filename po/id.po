@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: deadbeef master\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-11 12:10+0200\n"
-"PO-Revision-Date: 2012-07-09 05:59+0200\n"
+"PO-Revision-Date: 2012-09-11 14:32+0200\n"
 "Last-Translator: Andika <andika@gmail.com>\n"
 "Language-Team: Indonesian Translation Team <id@li.org>\n"
 "Language: id\n"
@@ -223,7 +223,7 @@ msgstr "Daftar Putar Baru (%d)"
 
 #: ../plugins/gtkui/gtkui.c:1085
 msgid "- Test logout functionality"
-msgstr ""
+msgstr "- Uji fungsionalitas log keluar"
 
 #: ../plugins/gtkui/interface.c:150 ../plugins/gtkui/deadbeef.glade.h:1
 msgid "_File"
@@ -304,9 +304,8 @@ msgid "_Find"
 msgstr "_Cari"
 
 #: ../plugins/gtkui/interface.c:288 ../plugins/gtkui/deadbeef.glade.h:19
-#, fuzzy
 msgid "Sort by"
-msgstr "Urut Berdasarkan"
+msgstr "Urut berdasarkan"
 
 #: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1519
 #: ../plugins/gtkui/mainplaylist.c:320 ../plugins/gtkui/prefwin.c:667
@@ -401,19 +400,16 @@ msgid "Looping"
 msgstr "Perulangan"
 
 #: ../plugins/gtkui/interface.c:400 ../plugins/gtkui/deadbeef.glade.h:39
-#, fuzzy
 msgid "Loop all"
-msgstr "Ulang Semua"
+msgstr "Ulang semua"
 
 #: ../plugins/gtkui/interface.c:406 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "Loop single song"
-msgstr "Ulang Satu Lagu"
+msgstr "Ulang satu lagu"
 
 #: ../plugins/gtkui/interface.c:412 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "Don't loop"
-msgstr "Tidak ulang"
+msgstr "Jangan ulang"
 
 #: ../plugins/gtkui/interface.c:418 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
@@ -650,9 +646,8 @@ msgid "Don't add from archives when adding folders"
 msgstr "Jangan tambahkan dari arsip ketika menambahkan folder"
 
 #: ../plugins/gtkui/interface.c:1974 ../plugins/gtkui/deadbeef.glade.h:104
-#, fuzzy
 msgid "Auto-reset \"Stop after current\""
-msgstr "Berhenti setelah ini"
+msgstr "Reset otomatis \"Berhenti setelah ini\""
 
 #: ../plugins/gtkui/interface.c:1978 ../plugins/gtkui/deadbeef.glade.h:105
 msgid "Playback"
@@ -702,11 +697,11 @@ msgstr "Otomatis namai daftar putar ketika menambahkan sebuah folder"
 
 #: ../plugins/gtkui/interface.c:2083 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Enable Russian CP1251 detection and recoding"
-msgstr ""
+msgstr "Fungsikan deteksi dan pengkodean ulang CP1251 Rusia"
 
 #: ../plugins/gtkui/interface.c:2087 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Enable Chinese CP936 detection and recoding"
-msgstr ""
+msgstr "Fungsikan deteksi dan pengkodean ulang CP936 Cina"
 
 #: ../plugins/gtkui/interface.c:2095 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Interface refresh rate (times per second):"
@@ -726,7 +721,7 @@ msgstr "Plugin GUI (mengubahnya perlu memulai ulang):"
 
 #: ../plugins/gtkui/interface.c:2145 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "GUI/Misc"
-msgstr ""
+msgstr "GUI/Rupa-rupa"
 
 #: ../plugins/gtkui/interface.c:2160 ../plugins/gtkui/interface.c:2204
 #: ../plugins/gtkui/deadbeef.glade.h:123
@@ -828,7 +823,7 @@ msgstr "Sandi Proksi:"
 
 #: ../plugins/gtkui/interface.c:2473 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "HTTP User Agent:"
-msgstr ""
+msgstr "HTTP User Agent:"
 
 #: ../plugins/gtkui/interface.c:2482 ../plugins/gtkui/deadbeef.glade.h:148
 msgid "Network"
@@ -852,14 +847,12 @@ msgid "URL:"
 msgstr "URL:"
 
 #: ../plugins/gtkui/interface.c:3196 ../plugins/gtkui/deadbeef.glade.h:153
-#, fuzzy
 msgid "Group By ..."
-msgstr "Kelompokkan Berdasarkan"
+msgstr "Kelompokkan Berdasarkan ..."
 
 #: ../plugins/gtkui/interface.c:3320 ../plugins/gtkui/deadbeef.glade.h:154
-#, fuzzy
 msgid "Sort by ..."
-msgstr "Urut berdasarkan..."
+msgstr "Urut berdasarkan ..."
 
 #: ../plugins/gtkui/interface.c:3336 ../plugins/gtkui/deadbeef.glade.h:155
 msgid "Format"
@@ -1028,9 +1021,8 @@ msgid "Global Hotkeys"
 msgstr "Tombol Pintas Global"
 
 #: ../plugins/gtkui/prefwin.c:416
-#, fuzzy
 msgid "Action"
-msgstr "Tambah lokasi"
+msgstr "Aksi"
 
 #: ../plugins/gtkui/prefwin.c:417
 msgid "Key combination"
@@ -1071,7 +1063,7 @@ msgstr "Menulis tag..."
 
 #: ../plugins/gtkui/trkproperties.c:651
 msgid "Field name"
-msgstr ""
+msgstr "Nama ruas"
 
 #: ../plugins/gtkui/trkproperties.c:654
 msgid "Name:"
@@ -1098,9 +1090,9 @@ msgid "Remove field"
 msgstr "Buang ruas"
 
 #: ../main.c:84
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: deadbeef [options] [--] [file(s)]\n"
-msgstr "Cara pakai: deadbeef [opsi] [berkas]\n"
+msgstr "Cara pakai: deadbeef [opsi] [--] [berkas]\n"
 
 #: ../main.c:85
 #, c-format
@@ -1175,7 +1167,8 @@ msgstr ""
 #, c-format
 msgid ""
 "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
-msgstr ""
+msgstr "--gui PLUGIN  Memberitahu plugin GUI mana yang dipakai, nilai baku adalah "
+"\"GTK2\"\n"
 
 #: ../main.c:99
 #, c-format
@@ -1302,9 +1295,8 @@ msgstr ""
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
-#, fuzzy
 msgid "Add audio CD"
-msgstr "Tambahkan CD Audio"
+msgstr "Tambahkan CD audio"
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
@@ -1350,7 +1342,7 @@ msgstr "URL scrobble"
 
 #: ../translation/extra.c:16
 msgid "Prefer Album Artist over Artist field"
-msgstr ""
+msgstr "Lebih suka Artis Album daripada ruas Artis"
 
 #. OSS output plugin
 #: ../translation/extra.c:18
@@ -1422,7 +1414,7 @@ msgstr "Kualitas pencuplikan ulang (0..2, lebih besar lebih baik)"
 
 #: ../translation/extra.c:37
 msgid "8-bit output (default is 16)"
-msgstr ""
+msgstr "Keluaran 8-bit (baku adalah 16)"
 
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:39
@@ -1431,11 +1423,11 @@ msgstr "Panjang lagu maks (dalam menit)"
 
 #: ../translation/extra.c:40
 msgid "Fadeout length (seconds)"
-msgstr ""
+msgstr "Lama waktu suara makin pelan (detik)"
 
 #: ../translation/extra.c:41
 msgid "Play loops nr. of times (if available)"
-msgstr ""
+msgstr "Putar ulang sekian kali (bila tersedia)"
 
 #. Standard GTK2 user interface plugin
 #: ../translation/extra.c:43
@@ -1587,7 +1579,6 @@ msgid "Target Samplerate"
 msgstr "Samplerate Target"
 
 #: ../translation/extra.c:94
-#, fuzzy
 msgid "Quality / Algorithm"
 msgstr "Kualitas / Algoritma"
 
@@ -1598,22 +1589,21 @@ msgstr "Samplerate Otomatis (menimpa Samplerate Target)"
 #. shellexecui
 #: ../translation/extra.c:97
 msgid "Configure custom shell commands"
-msgstr ""
+msgstr "Tata perintah shell ubahan"
 
 #. mpgmad
 #: ../translation/extra.c:99
 msgid "Disable gapless playback (faster scanning)"
-msgstr ""
+msgstr "Nonaktifkan putar tanpa jeda (pemindaian lebih cepat)"
 
 #. adplug
 #: ../translation/extra.c:101
 msgid "Prefer Ken emu over Satoh (surround won't work)"
-msgstr ""
+msgstr "Lebih suka emu Ken daripada Satoh (suara surround tak akan bekerja)"
 
 #: ../translation/extra.c:102
-#, fuzzy
 msgid "Enable surround"
-msgstr "Aktifkan Server Proksi"
+msgstr "Aktifkan suara surround"
 
 #: ../plugins/converter/convgui.c:117
 msgid "The file already exists. Overwrite?"
@@ -1707,13 +1697,12 @@ msgstr "Folder keluaran:"
 #: ../plugins/converter/interface.c:109
 #: ../plugins/converter/converter.glade.h:2
 msgid "Write to source track folder"
-msgstr ""
+msgstr "Tulis ke folder trek sumber"
 
 #: ../plugins/converter/interface.c:113
 #: ../plugins/converter/converter.glade.h:3
-#, fuzzy
 msgid "Preserve folder structure"
-msgstr "Pertahankan struktur folder, mulai dari:"
+msgstr "Pertahankan struktur folder"
 
 #: ../plugins/converter/interface.c:121
 #: ../plugins/converter/converter.glade.h:4
@@ -1894,46 +1883,53 @@ msgid ""
 "32 bit signed int\n"
 "32 bit float"
 msgstr ""
+"Pertahankan format sumber\n"
+"8 bit signed int\n"
+"16 bit signed int\n"
+"24 bit signed int\n"
+"32 bit signed int\n"
+"32 bit float"
 
 #: ../plugins/converter/converter.glade.h:19
 msgid ""
 "Prompt\n"
 "Overwrite"
 msgstr ""
+"Tanyakan\n"
+"Timpa"
 
 #: ../plugins/converter/converter.glade.h:34
 msgid ""
 "Pipe\n"
 "Temporary file"
 msgstr ""
+"Pipa\n"
+"Berkas temporer"
 
 #: ../plugins/shellexecui/interface.c:46
 #: ../plugins/shellexecui/shellexec.glade.h:1
 msgid "Custom Shell Commands"
-msgstr ""
+msgstr "Perintah Shell Ubahan"
 
 #: ../plugins/shellexecui/interface.c:69
 #: ../plugins/shellexecui/shellexec.glade.h:5
-#, fuzzy
 msgid "Edit"
-msgstr "_Sunting"
+msgstr "Sunting"
 
 #: ../plugins/shellexecui/interface.c:87
 #: ../plugins/shellexecui/shellexec.glade.h:2
-#, fuzzy
 msgid "Close"
-msgstr "_Tutup"
+msgstr "Tutup"
 
 #: ../plugins/shellexecui/interface.c:145
 #: ../plugins/shellexecui/shellexec.glade.h:6
-#, fuzzy
 msgid "Edit Command"
-msgstr "Sunting kolom"
+msgstr "Perintah Sunting"
 
 #: ../plugins/shellexecui/interface.c:166
 #: ../plugins/shellexecui/shellexec.glade.h:8
 msgid "Command:"
-msgstr ""
+msgstr "Perintah:"
 
 #: ../plugins/shellexecui/interface.c:178
 #: ../plugins/shellexecui/shellexec.glade.h:10
