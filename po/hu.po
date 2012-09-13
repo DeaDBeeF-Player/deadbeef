@@ -1146,14 +1146,14 @@ msgstr "   --pause            Lejátszás szüneteltetése\n"
 #: ../main.c:92
 #, c-format
 msgid "   --toggle-pause     Toggle pause\n"
-msgstr "   --toggle-pause     Lejátszás/Szüneteltetés"
+msgstr "   --toggle-pause     Lejátszás/Szüneteltetés\n"
 
 #: ../main.c:93
 #, c-format
 msgid ""
 "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
 msgstr ""
-"   --play-pause       Lejátszás indítása, lejátszás közben szüneteltetés"
+"   --play-pause       Lejátszás indítása, lejátszás közben szüneteltetés\n"
 
 #: ../main.c:94
 #, c-format
