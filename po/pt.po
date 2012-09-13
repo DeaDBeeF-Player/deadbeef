@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-11 12:10+0200\n"
-"PO-Revision-Date: 2012-09-13 00:24+0100\n"
-"Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
+"PO-Revision-Date: 2012-09-13 11:50+0200\n"
+"Last-Translator: Sérgio <smarquespt@gmail.com>\n"
 "Language-Team: \n"
-"Language: Portuguese\n"
+"Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1915,7 +1915,7 @@ msgstr "Manter formato original"
 
 #: ../plugins/converter/interface.c:213
 msgid "8 bit signed int"
-msgstr "Inteiro de 8 bit"
+msgstr "Inteiro de 8 bits"
 
 #: ../plugins/converter/interface.c:214
 msgid "16 bit signed int"
@@ -2065,8 +2065,8 @@ msgid ""
 "Prompt\n"
 "Overwrite"
 msgstr ""
-"Solicitar\n"
-"substituição"
+"Perguntar\n"
+"Substituir"
 
 #: ../plugins/converter/converter.glade.h:34
 msgid ""
@@ -2074,7 +2074,7 @@ msgid ""
 "Temporary file"
 msgstr ""
 "Canal\n"
-"temporário"
+"Ficheiro temporário"
 
 #: ../plugins/shellexecui/interface.c:46
 #: ../plugins/shellexecui/shellexec.glade.h:1
