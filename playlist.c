@@ -3812,7 +3812,7 @@ pl_get_playlist (playItem_t *it) {
     return NULL;
 }
 
-// this function must be called user starts track manually in shuffle albums mode
+// this function must be called when the user starts track manually in shuffle albums mode
 // r is an index of current track
 // mark previous songs in the album as played
 void

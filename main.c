@@ -676,6 +676,13 @@ restore_resume_state (void) {
             streamer_lock (); // need to hold streamer thread to make the resume operation atomic
             streamer_set_current_playlist (plt);
             streamer_set_nextsong (track, paused ? 2 : 3);
+            if (pl_get_order () == PLAYBACK_ORDER_SHUFFLE_ALBUMS) {
+                playlist_t *p = plt_get_for_idx (plt);
+                if (p) {
+                    plt_init_shuffle_albums (p, track);
+                    plt_unref (p);
+                }
+            }
             streamer_set_seek (pos);
             streamer_unlock ();
         }
