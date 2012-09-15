@@ -381,33 +381,34 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             }
         }
 
+        if (!info->mp4) {
+            trace ("aac: looking for raw stream...\n");
 
-        trace ("aac: looking for raw stream...\n");
+            if (info->junk >= 0) {
+                deadbeef->fseek (info->file, info->junk, SEEK_SET);
+            }
+            else {
+                deadbeef->rewind (info->file);
+            }
+            int offs = parse_aac_stream (info->file, &samplerate, &channels, &duration, &totalsamples);
+            if (offs == -1) {
+                trace ("aac stream not found\n");
+                return -1;
+            }
+            if (offs > info->junk) {
+                info->junk = offs;
+            }
+            if (info->junk >= 0) {
+                deadbeef->fseek (info->file, info->junk, SEEK_SET);
+            }
+            else {
+                deadbeef->rewind (info->file);
+            }
+            trace ("found aac stream (junk: %d, offs: %d)\n", info->junk, offs);
 
-        if (info->junk >= 0) {
-            deadbeef->fseek (info->file, info->junk, SEEK_SET);
+            _info->fmt.channels = channels;
+            _info->fmt.samplerate = samplerate;
         }
-        else {
-            deadbeef->rewind (info->file);
-        }
-        int offs = parse_aac_stream (info->file, &samplerate, &channels, &duration, &totalsamples);
-        if (offs == -1) {
-            trace ("aac stream not found\n");
-            return -1;
-        }
-        if (offs > info->junk) {
-            info->junk = offs;
-        }
-        if (info->junk >= 0) {
-            deadbeef->fseek (info->file, info->junk, SEEK_SET);
-        }
-        else {
-            deadbeef->rewind (info->file);
-        }
-        trace ("found aac stream (junk: %d, offs: %d)\n", info->junk, offs);
-
-        _info->fmt.channels = channels;
-        _info->fmt.samplerate = samplerate;
     }
     else {
         // sync before attempting to init
