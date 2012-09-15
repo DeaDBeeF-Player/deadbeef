@@ -40,7 +40,7 @@ most of them are optional, which means deadbeef will build and run without them,
     wavpack: for wavpack plugin
     libsndfile: for sndfile plugin
     libcdio + libcddb: for cd audio plugin
-    ffmpeg (libavcodec + libavformat): for ffmpeg plugin
+    ffmpeg < 0.11: for ffmpeg plugin (versions >= 0.11 are not supported)
     xlib: for global hotkeys
     dbus: for notification daemon support (OSD current song notifications)
     pulseaudio: for PulseAudio output plugin
