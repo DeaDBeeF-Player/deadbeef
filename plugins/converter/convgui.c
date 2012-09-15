@@ -1419,15 +1419,11 @@ DB_misc_t plugin = {
 #else
     .plugin.name = "Converter GTK2 UI",
 #endif
-    .plugin.descr = "GTK2 User interface for the Converter plugin\n"
+    .plugin.descr = "GTK User interface for the Converter plugin\n"
         "Usage:\n"
         "· select some tracks in playlist\n"
         "· right click\n"
-        "· select «Convert»\n\n"
-        "ChangeLog:\n"
-        "version 1.1\n"
-        "    Reload DSP and encoder presets on every converter access\n"
-        "    Write 0 wave data size into waveheader when using pipe, for oggenc compatibility\n",
+        "· select «Convert»\n",
     .plugin.copyright = 
         "Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
