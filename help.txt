@@ -54,3 +54,11 @@ help file for deadbeef player
     Unknown Artist - Unknown Album.flac <---- open this file
     Unknown Artist - Unknown Album.cue  <---- this file will be used automatically
 
+* KNOWN ISSUES
+
+    global hotkeys configuration is buggy when using GTK3, this is a GTK3 bug:
+    https://bugzilla.gnome.org/show_bug.cgi?id=682826
+
+    ffmpeg devs have been breaking their APIs way too frequently, so i decided to wait until they stop.
+    currently, if you need WMA playback, please use statically-built ffmpeg plugin.
+    you should be able to find it in one of the static builds on the official deadbeef website.
