@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-11 12:10+0200\n"
-"PO-Revision-Date: 2012-01-22 22:12+0200\n"
+"PO-Revision-Date: 2012-09-20 08:56+0200\n"
 "Last-Translator: Klemen <klemen.kosir@gmx.com>\n"
 "Language-Team: Slovenian <lugos-slo@lugos.si>\n"
 "Language: sl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n"
-"%100==4 ? 3 : 0);;\n"
+"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || "
+"n%100==4 ? 3 : 0);;\n"
 "X-Generator: Pootle 2.0.5\n"
 
 #: ../plugins/gtkui/callbacks.c:123
@@ -306,7 +306,6 @@ msgid "_Find"
 msgstr "_Najdi"
 
 #: ../plugins/gtkui/interface.c:288 ../plugins/gtkui/deadbeef.glade.h:19
-#, fuzzy
 msgid "Sort by"
 msgstr "Razvrsti po"
 
@@ -403,17 +402,14 @@ msgid "Looping"
 msgstr "Ponavljanje"
 
 #: ../plugins/gtkui/interface.c:400 ../plugins/gtkui/deadbeef.glade.h:39
-#, fuzzy
 msgid "Loop all"
 msgstr "Ponavljaj vse skladbe"
 
 #: ../plugins/gtkui/interface.c:406 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "Loop single song"
 msgstr "Ponavljaj eno skladbo"
 
 #: ../plugins/gtkui/interface.c:412 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "Don't loop"
 msgstr "Brez ponavljanja"
 
@@ -828,7 +824,7 @@ msgstr "Geslo:"
 
 #: ../plugins/gtkui/interface.c:2473 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "HTTP User Agent:"
-msgstr ""
+msgstr "Uporabniški posrednik HTTP:"
 
 #: ../plugins/gtkui/interface.c:2482 ../plugins/gtkui/deadbeef.glade.h:148
 msgid "Network"
@@ -852,12 +848,10 @@ msgid "URL:"
 msgstr "URL:"
 
 #: ../plugins/gtkui/interface.c:3196 ../plugins/gtkui/deadbeef.glade.h:153
-#, fuzzy
 msgid "Group By ..."
-msgstr "Združi po"
+msgstr "Združi po ..."
 
 #: ../plugins/gtkui/interface.c:3320 ../plugins/gtkui/deadbeef.glade.h:154
-#, fuzzy
 msgid "Sort by ..."
 msgstr "Razvrsti po ..."
 
@@ -1026,9 +1020,8 @@ msgid "Global Hotkeys"
 msgstr "Bližnjice"
 
 #: ../plugins/gtkui/prefwin.c:416
-#, fuzzy
 msgid "Action"
-msgstr "Mesto"
+msgstr "Dejanje"
 
 #: ../plugins/gtkui/prefwin.c:417
 msgid "Key combination"
@@ -1069,7 +1062,7 @@ msgstr "Zapisovanje oznak ..."
 
 #: ../plugins/gtkui/trkproperties.c:651
 msgid "Field name"
-msgstr ""
+msgstr "Ime polja"
 
 #: ../plugins/gtkui/trkproperties.c:654
 msgid "Name:"
@@ -1096,9 +1089,9 @@ msgid "Remove field"
 msgstr "Odstrani polje"
 
 #: ../main.c:84
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: deadbeef [options] [--] [file(s)]\n"
-msgstr "Uporaba: deadbeef [možnosti] [datoteka]\n"
+msgstr "Uporaba: deadbeef [možnosti] [--] [datoteka]\n"
 
 #: ../main.c:85
 #, c-format
@@ -1302,7 +1295,6 @@ msgstr ""
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
-#, fuzzy
 msgid "Add audio CD"
 msgstr "Dodaj zvočni CD"
 
@@ -1436,7 +1428,7 @@ msgstr "Privzeta dolžina skladbe (v sekundah)"
 
 #: ../translation/extra.c:41
 msgid "Play loops nr. of times (if available)"
-msgstr ""
+msgstr "Ponovi n-krat (če je na voljo)"
 
 #. Standard GTK2 user interface plugin
 #: ../translation/extra.c:43
@@ -1588,7 +1580,6 @@ msgid "Target Samplerate"
 msgstr "Ciljna hitrost vzorčenja"
 
 #: ../translation/extra.c:94
-#, fuzzy
 msgid "Quality / Algorithm"
 msgstr "Kakovost / Algoritem"
 
@@ -1604,7 +1595,7 @@ msgstr ""
 #. mpgmad
 #: ../translation/extra.c:99
 msgid "Disable gapless playback (faster scanning)"
-msgstr ""
+msgstr "Onemogoči predvajanje brez premora (hitrejše preiskovanje)"
 
 #. adplug
 #: ../translation/extra.c:101
@@ -1612,9 +1603,8 @@ msgid "Prefer Ken emu over Satoh (surround won't work)"
 msgstr ""
 
 #: ../translation/extra.c:102
-#, fuzzy
 msgid "Enable surround"
-msgstr "Omogoči pošiljanje zgodovine predvajanja"
+msgstr "Omogoči prostorski zvok"
 
 #: ../plugins/converter/convgui.c:117
 msgid "The file already exists. Overwrite?"
@@ -1712,9 +1702,8 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:113
 #: ../plugins/converter/converter.glade.h:3
-#, fuzzy
 msgid "Preserve folder structure"
-msgstr "Ohrani zgradbo map, začni z:"
+msgstr "Ohrani zgradbo map"
 
 #: ../plugins/converter/interface.c:121
 #: ../plugins/converter/converter.glade.h:4
@@ -1897,11 +1886,12 @@ msgid ""
 msgstr ""
 
 #: ../plugins/converter/converter.glade.h:19
-#, fuzzy
 msgid ""
 "Prompt\n"
 "Overwrite"
-msgstr "Prepiši"
+msgstr ""
+"Vprašaj\n"
+"Prepiši"
 
 #: ../plugins/converter/converter.glade.h:34
 #, fuzzy
@@ -1917,27 +1907,23 @@ msgstr ""
 
 #: ../plugins/shellexecui/interface.c:69
 #: ../plugins/shellexecui/shellexec.glade.h:5
-#, fuzzy
 msgid "Edit"
-msgstr "_Uredi"
+msgstr "Uredi"
 
 #: ../plugins/shellexecui/interface.c:87
 #: ../plugins/shellexecui/shellexec.glade.h:2
-#, fuzzy
 msgid "Close"
-msgstr "_Zapri"
+msgstr "Zapri"
 
 #: ../plugins/shellexecui/interface.c:145
 #: ../plugins/shellexecui/shellexec.glade.h:6
-#, fuzzy
 msgid "Edit Command"
-msgstr "Uredi stolpec"
+msgstr "Uredi ukaz"
 
 #: ../plugins/shellexecui/interface.c:166
 #: ../plugins/shellexecui/shellexec.glade.h:8
-#, fuzzy
 msgid "Command:"
-msgstr "Ukazna vrstica:"
+msgstr "Ukaz:"
 
 #: ../plugins/shellexecui/interface.c:178
 #: ../plugins/shellexecui/shellexec.glade.h:10
@@ -1951,7 +1937,7 @@ msgstr ""
 #: ../plugins/shellexecui/interface.c:181
 #: ../plugins/shellexecui/shellexec.glade.h:11
 msgid "ID:"
-msgstr ""
+msgstr "ID:"
 
 #: ../plugins/shellexecui/interface.c:193
 #: ../plugins/shellexecui/shellexec.glade.h:12
@@ -2011,9 +1997,8 @@ msgstr ""
 
 #: ../plugins/shellexecui/interface.c:224
 #: ../plugins/shellexecui/shellexec.glade.h:23
-#, fuzzy
 msgid "Playlist"
-msgstr "Nov seznam predvajanja"
+msgstr "Seznam predvajanja"
 
 #: ../plugins/shellexecui/interface.c:227
 #: ../plugins/shellexecui/shellexec.glade.h:22
