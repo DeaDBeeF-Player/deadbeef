@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-11 12:10+0200\n"
-"PO-Revision-Date: 2012-04-18 01:46+0200\n"
+"PO-Revision-Date: 2012-09-13 03:58+0200\n"
 "Last-Translator: Gheyret <gheyret@gmail.com>\n"
 "Language-Team: Uyghur Computer Science Association <UKIJ@yahoogroups.com>\n"
 "Language: ug\n"
@@ -224,7 +224,7 @@ msgstr "يېڭى قويۇش تىزىمى(%d)"
 
 #: ../plugins/gtkui/gtkui.c:1085
 msgid "- Test logout functionality"
-msgstr ""
+msgstr "- تىزىمدىن چىقىش ئىقتىدارىنى سىناش"
 
 #: ../plugins/gtkui/interface.c:150 ../plugins/gtkui/deadbeef.glade.h:1
 msgid "_File"
@@ -305,7 +305,6 @@ msgid "_Find"
 msgstr "ئىزدە(_F)"
 
 #: ../plugins/gtkui/interface.c:288 ../plugins/gtkui/deadbeef.glade.h:19
-#, fuzzy
 msgid "Sort by"
 msgstr "تەرتىپى"
 
@@ -402,17 +401,14 @@ msgid "Looping"
 msgstr "قايتىلاۋاتىدۇ"
 
 #: ../plugins/gtkui/interface.c:400 ../plugins/gtkui/deadbeef.glade.h:39
-#, fuzzy
 msgid "Loop all"
-msgstr "ھەممىسىنى قايتىلاش"
+msgstr "ھەممىسىنى قايتىلا"
 
 #: ../plugins/gtkui/interface.c:406 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "Loop single song"
-msgstr "بىرلا ناخشىنى قايتىلاش"
+msgstr "بىرلا ناخشىنى قايتىلا"
 
 #: ../plugins/gtkui/interface.c:412 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "Don't loop"
 msgstr "قايتىلىما"
 
@@ -651,9 +647,8 @@ msgid "Don't add from archives when adding folders"
 msgstr "قىسقۇچتىن قوشۇۋاتقاندا ئارخىپتىن قوشما"
 
 #: ../plugins/gtkui/interface.c:1974 ../plugins/gtkui/deadbeef.glade.h:104
-#, fuzzy
 msgid "Auto-reset \"Stop after current\""
-msgstr "ھازىرقىسى تاماملانغاندا توختىتىش"
+msgstr "ھازىرقىسى توختىغاندا ئەسلىگە قايتۇر"
 
 #: ../plugins/gtkui/interface.c:1978 ../plugins/gtkui/deadbeef.glade.h:105
 msgid "Playback"
@@ -703,11 +698,11 @@ msgstr "يەككە مۇندەرىجە قوشۇلغاندا قويۇش تىزىم
 
 #: ../plugins/gtkui/interface.c:2083 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Enable Russian CP1251 detection and recoding"
-msgstr ""
+msgstr "رۇسچە كودلاش CP1251 نى بايقاش ۋە خاتىرىلەشنى ئىناۋەتلىك قىلسۇن"
 
 #: ../plugins/gtkui/interface.c:2087 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Enable Chinese CP936 detection and recoding"
-msgstr ""
+msgstr "خەنزۇچە كودلاش CP936 نى بايقاش ۋە خاتىرىلەشنى ئىناۋەتلىك قىلسۇن"
 
 #: ../plugins/gtkui/interface.c:2095 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Interface refresh rate (times per second):"
@@ -727,7 +722,7 @@ msgstr "GUI قىستۇرمىسى (ئۆزگەرتىلگەندىن كېيىن قا
 
 #: ../plugins/gtkui/interface.c:2145 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "GUI/Misc"
-msgstr ""
+msgstr "GUI/Misc"
 
 #: ../plugins/gtkui/interface.c:2160 ../plugins/gtkui/interface.c:2204
 #: ../plugins/gtkui/deadbeef.glade.h:123
@@ -831,7 +826,7 @@ msgstr "ۋاكالەتچى ئىمى:"
 
 #: ../plugins/gtkui/interface.c:2473 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "HTTP User Agent:"
-msgstr ""
+msgstr "HTTP ئىش بېجىرگۈچىسى:"
 
 #: ../plugins/gtkui/interface.c:2482 ../plugins/gtkui/deadbeef.glade.h:148
 msgid "Network"
@@ -855,7 +850,6 @@ msgid "URL:"
 msgstr "URL:"
 
 #: ../plugins/gtkui/interface.c:3196 ../plugins/gtkui/deadbeef.glade.h:153
-#, fuzzy
 msgid "Group By ..."
 msgstr "گۇرۇپپىلاش"
 
@@ -1074,7 +1068,7 @@ msgstr "خەتكۈچلەرنى يېزىۋاتىدۇ…"
 
 #: ../plugins/gtkui/trkproperties.c:651
 msgid "Field name"
-msgstr ""
+msgstr "سۆز بۆلەك ئاتى"
 
 #: ../plugins/gtkui/trkproperties.c:654
 msgid "Name:"
@@ -1101,9 +1095,9 @@ msgid "Remove field"
 msgstr "سوز بۆلىكىنى چىقىرىۋېتىش"
 
 #: ../main.c:84
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: deadbeef [options] [--] [file(s)]\n"
-msgstr "ئىشلىتىش ئۇسۇلى: deadbeef [options] [file(s)]\n"
+msgstr "ئىشلىتىش ئۇسۇلى: deadbeef [تاللانمىلار] [--] [ھۆججەت(لەر)]\n"
 
 #: ../main.c:85
 #, c-format
@@ -1305,9 +1299,8 @@ msgstr ""
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
-#, fuzzy
 msgid "Add audio CD"
-msgstr "ئۈن CD نى قوشۇش"
+msgstr "ئۈن CD نى قوش"
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
@@ -1425,7 +1418,7 @@ msgstr "ئەۋرىشكىلەش سۈپىتى (0..2, چوڭ بولسا ياخشى)
 
 #: ../translation/extra.c:37
 msgid "8-bit output (default is 16)"
-msgstr ""
+msgstr "8 بىتلىق چىقىرىش(كۆڭۈلدىكىسى 16 بىت)"
 
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:39
