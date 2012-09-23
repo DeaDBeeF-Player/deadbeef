@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF 0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-11 12:10+0200\n"
+"POT-Creation-Date: 2012-09-23 14:33+0200\n"
 "PO-Revision-Date: 2012-09-19 07:20+0100\n"
 "Last-Translator: Jay A.Fleming <tito.nehru.naser@gmail.com>\n"
 "Language-Team: \n"
@@ -15,7 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Pootle 2.0.5\n"
 
 #: ../plugins/gtkui/callbacks.c:123
@@ -54,10 +55,8 @@ msgstr "Неуспело отварање датотеке помоћи"
 msgid "help.txt"
 msgstr "help.txt"
 
-#: ../plugins/gtkui/callbacks.c:737
-#: ../plugins/gtkui/interface.c:1158
-#: ../plugins/gtkui/deadbeef.glade.h:61
-#: ../plugins/converter/convgui.c:1362
+#: ../plugins/gtkui/callbacks.c:737 ../plugins/gtkui/interface.c:1158
+#: ../plugins/gtkui/deadbeef.glade.h:61 ../plugins/converter/convgui.c:1362
 #: ../plugins/converter/convgui.c:1370
 msgid "Help"
 msgstr "Помоћ"
@@ -81,10 +80,8 @@ msgstr "DeaDBeeF преводиоци"
 msgid "Edit playlist"
 msgstr "Уреди листу"
 
-#: ../plugins/gtkui/ddbtabstrip.c:845
-#: ../plugins/gtkui/interface.c:1489
-#: ../plugins/gtkui/interface.c:2983
-#: ../plugins/gtkui/deadbeef.glade.h:70
+#: ../plugins/gtkui/ddbtabstrip.c:845 ../plugins/gtkui/interface.c:1489
+#: ../plugins/gtkui/interface.c:2983 ../plugins/gtkui/deadbeef.glade.h:70
 #: ../plugins/converter/interface.c:378
 #: ../plugins/converter/converter.glade.h:22
 #: ../plugins/shellexecui/interface.c:159
@@ -156,8 +153,7 @@ msgstr "Претпојачало на нулу"
 msgid "Zero Bands"
 msgstr "Подручја на нулу"
 
-#: ../plugins/gtkui/eq.c:392
-#: ../plugins/converter/interface.c:803
+#: ../plugins/gtkui/eq.c:392 ../plugins/converter/interface.c:803
 #: ../plugins/converter/converter.glade.h:50
 msgid "Presets"
 msgstr "Поставке"
@@ -177,13 +173,11 @@ msgstr "%d дана %d:%02d:%02d"
 msgid "Stopped | %d tracks | %s total playtime"
 msgstr "Заустављено | %d песама | %s укупно време свирања"
 
-#: ../plugins/gtkui/gtkui.c:165
-#: ../playlist.c:3036
+#: ../plugins/gtkui/gtkui.c:165 ../playlist.c:3037
 msgid "Mono"
 msgstr "Моно"
 
-#: ../plugins/gtkui/gtkui.c:165
-#: ../playlist.c:3036
+#: ../plugins/gtkui/gtkui.c:165 ../playlist.c:3037
 msgid "Stereo"
 msgstr "Стерео"
 
@@ -198,8 +192,11 @@ msgstr "Паузирано | "
 
 #: ../plugins/gtkui/gtkui.c:201
 #, c-format
-msgid "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
-msgstr "%s%s %s| %d херца | %d бита | %s | %d:%02d / %s | %d песама | %s укупно време свирања"
+msgid ""
+"%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
+msgstr ""
+"%s%s %s| %d херца | %d бита | %s | %d:%02d / %s | %d песама | %s укупно "
+"време свирања"
 
 #: ../plugins/gtkui/gtkui.c:647
 msgid "Save Playlist As"
@@ -217,8 +214,7 @@ msgstr "Учитај листу"
 msgid "Other files (*)"
 msgstr "Остале датотеке (*)"
 
-#: ../plugins/gtkui/gtkui.c:929
-#: ../plugins/gtkui/fileman.c:41
+#: ../plugins/gtkui/gtkui.c:929 ../plugins/gtkui/fileman.c:41
 msgid "New Playlist"
 msgstr "Нова листа"
 
@@ -231,86 +227,69 @@ msgstr "Нова листа (%d)"
 msgid "- Test logout functionality"
 msgstr "- Провера могуђности одјављивања"
 
-#: ../plugins/gtkui/interface.c:150
-#: ../plugins/gtkui/deadbeef.glade.h:1
+#: ../plugins/gtkui/interface.c:150 ../plugins/gtkui/deadbeef.glade.h:1
 msgid "_File"
 msgstr "_Датотека"
 
-#: ../plugins/gtkui/interface.c:157
-#: ../plugins/gtkui/deadbeef.glade.h:2
+#: ../plugins/gtkui/interface.c:157 ../plugins/gtkui/deadbeef.glade.h:2
 msgid "_Open file(s)"
 msgstr "_Отвори датотеку(е)"
 
-#: ../plugins/gtkui/interface.c:173
-#: ../plugins/gtkui/deadbeef.glade.h:3
+#: ../plugins/gtkui/interface.c:173 ../plugins/gtkui/deadbeef.glade.h:3
 msgid "Add file(s)"
 msgstr "Додај датотеку(е)"
 
-#: ../plugins/gtkui/interface.c:181
-#: ../plugins/gtkui/deadbeef.glade.h:4
+#: ../plugins/gtkui/interface.c:181 ../plugins/gtkui/deadbeef.glade.h:4
 msgid "Add folder(s)"
 msgstr "Додај директоријум(е)"
 
-#: ../plugins/gtkui/interface.c:189
-#: ../plugins/gtkui/interface.c:3083
+#: ../plugins/gtkui/interface.c:189 ../plugins/gtkui/interface.c:3083
 #: ../plugins/gtkui/deadbeef.glade.h:5
 msgid "Add location"
 msgstr "Додај место"
 
-#: ../plugins/gtkui/interface.c:198
-#: ../plugins/gtkui/deadbeef.glade.h:6
+#: ../plugins/gtkui/interface.c:198 ../plugins/gtkui/deadbeef.glade.h:6
 msgid "New playlist"
 msgstr "Нова листа"
 
-#: ../plugins/gtkui/interface.c:205
-#: ../plugins/gtkui/deadbeef.glade.h:7
+#: ../plugins/gtkui/interface.c:205 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Load playlist"
 msgstr "Учитај листу"
 
-#: ../plugins/gtkui/interface.c:209
-#: ../plugins/gtkui/deadbeef.glade.h:8
+#: ../plugins/gtkui/interface.c:209 ../plugins/gtkui/deadbeef.glade.h:8
 msgid "Save playlist"
 msgstr "Сачувај листу"
 
-#: ../plugins/gtkui/interface.c:218
-#: ../plugins/gtkui/deadbeef.glade.h:9
+#: ../plugins/gtkui/interface.c:218 ../plugins/gtkui/deadbeef.glade.h:9
 msgid "_Quit"
 msgstr "_Излаз"
 
-#: ../plugins/gtkui/interface.c:229
-#: ../plugins/gtkui/deadbeef.glade.h:10
+#: ../plugins/gtkui/interface.c:229 ../plugins/gtkui/deadbeef.glade.h:10
 msgid "_Edit"
 msgstr "_Уређивање"
 
-#: ../plugins/gtkui/interface.c:236
-#: ../plugins/gtkui/deadbeef.glade.h:11
+#: ../plugins/gtkui/interface.c:236 ../plugins/gtkui/deadbeef.glade.h:11
 msgid "_Clear"
 msgstr "О_чисти"
 
-#: ../plugins/gtkui/interface.c:244
-#: ../plugins/gtkui/deadbeef.glade.h:12
+#: ../plugins/gtkui/interface.c:244 ../plugins/gtkui/deadbeef.glade.h:12
 msgid "Select all"
 msgstr "Изабери све"
 
-#: ../plugins/gtkui/interface.c:251
-#: ../plugins/gtkui/deadbeef.glade.h:13
+#: ../plugins/gtkui/interface.c:251 ../plugins/gtkui/deadbeef.glade.h:13
 msgid "Deselect all"
 msgstr "Поништи избор"
 
-#: ../plugins/gtkui/interface.c:258
-#: ../plugins/gtkui/deadbeef.glade.h:14
+#: ../plugins/gtkui/interface.c:258 ../plugins/gtkui/deadbeef.glade.h:14
 msgid "Invert selection"
 msgstr "Обрни избор"
 
-#: ../plugins/gtkui/interface.c:262
-#: ../plugins/gtkui/deadbeef.glade.h:15
+#: ../plugins/gtkui/interface.c:262 ../plugins/gtkui/deadbeef.glade.h:15
 msgid "Selection"
 msgstr "Избор"
 
-#: ../plugins/gtkui/interface.c:269
-#: ../plugins/gtkui/plcommon.c:480
-#: ../plugins/gtkui/prefwin.c:353
-#: ../plugins/gtkui/deadbeef.glade.h:16
+#: ../plugins/gtkui/interface.c:269 ../plugins/gtkui/plcommon.c:480
+#: ../plugins/gtkui/prefwin.c:353 ../plugins/gtkui/deadbeef.glade.h:16
 #: ../plugins/converter/interface.c:628
 #: ../plugins/converter/converter.glade.h:46
 #: ../plugins/shellexecui/interface.c:65
@@ -318,288 +297,230 @@ msgstr "Избор"
 msgid "Remove"
 msgstr "Уклони"
 
-#: ../plugins/gtkui/interface.c:277
-#: ../plugins/gtkui/deadbeef.glade.h:17
+#: ../plugins/gtkui/interface.c:277 ../plugins/gtkui/deadbeef.glade.h:17
 msgid "Crop"
 msgstr "Одсеци"
 
-#: ../plugins/gtkui/interface.c:281
-#: ../plugins/gtkui/deadbeef.glade.h:18
+#: ../plugins/gtkui/interface.c:281 ../plugins/gtkui/deadbeef.glade.h:18
 msgid "_Find"
 msgstr "_Тражи"
 
-#: ../plugins/gtkui/interface.c:288
-#: ../plugins/gtkui/deadbeef.glade.h:19
+#: ../plugins/gtkui/interface.c:288 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Sort by"
 msgstr "Сложи по"
 
-#: ../plugins/gtkui/interface.c:295
-#: ../plugins/gtkui/interface.c:1519
-#: ../plugins/gtkui/mainplaylist.c:320
-#: ../plugins/gtkui/prefwin.c:667
-#: ../plugins/gtkui/search.c:415
-#: ../plugins/gtkui/deadbeef.glade.h:20
-#: ../plugins/converter/convgui.c:834
-#: ../plugins/converter/convgui.c:1333
+#: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1519
+#: ../plugins/gtkui/mainplaylist.c:320 ../plugins/gtkui/prefwin.c:667
+#: ../plugins/gtkui/search.c:415 ../plugins/gtkui/deadbeef.glade.h:20
+#: ../plugins/converter/convgui.c:834 ../plugins/converter/convgui.c:1333
 #: ../plugins/converter/interface.c:605
 #: ../plugins/converter/converter.glade.h:43
 #: ../plugins/shellexecui/shellexecui.c:327
 msgid "Title"
 msgstr "Наслов"
 
-#: ../plugins/gtkui/interface.c:299
-#: ../plugins/gtkui/deadbeef.glade.h:21
+#: ../plugins/gtkui/interface.c:299 ../plugins/gtkui/deadbeef.glade.h:21
 msgid "Track number"
 msgstr "Број нумере"
 
-#: ../plugins/gtkui/interface.c:303
-#: ../plugins/gtkui/interface.c:1518
-#: ../plugins/gtkui/interface.c:1888
-#: ../plugins/gtkui/deadbeef.glade.h:22
+#: ../plugins/gtkui/interface.c:303 ../plugins/gtkui/interface.c:1518
+#: ../plugins/gtkui/interface.c:1888 ../plugins/gtkui/deadbeef.glade.h:22
 #: ../translation/extra.c:73
 msgid "Album"
 msgstr "Албум"
 
 #. Track properties dialog
-#: ../plugins/gtkui/interface.c:307
-#: ../plugins/gtkui/interface.c:1517
-#: ../plugins/gtkui/plcommon.c:1028
-#: ../plugins/gtkui/deadbeef.glade.h:23
+#: ../plugins/gtkui/interface.c:307 ../plugins/gtkui/interface.c:1517
+#: ../plugins/gtkui/plcommon.c:1028 ../plugins/gtkui/deadbeef.glade.h:23
 #: ../translation/extra.c:69
 msgid "Artist"
 msgstr "Извођач"
 
-#: ../plugins/gtkui/interface.c:311
-#: ../plugins/gtkui/deadbeef.glade.h:24
+#: ../plugins/gtkui/interface.c:311 ../plugins/gtkui/deadbeef.glade.h:24
 #: ../translation/extra.c:74
 msgid "Date"
 msgstr "Датум"
 
-#: ../plugins/gtkui/interface.c:315
-#: ../plugins/gtkui/interface.c:387
+#: ../plugins/gtkui/interface.c:315 ../plugins/gtkui/interface.c:387
 #: ../plugins/gtkui/deadbeef.glade.h:25
 msgid "Random"
 msgstr "Случајно"
 
-#: ../plugins/gtkui/interface.c:319
-#: ../plugins/gtkui/interface.c:1523
-#: ../plugins/gtkui/plcommon.c:1032
-#: ../plugins/gtkui/deadbeef.glade.h:26
+#: ../plugins/gtkui/interface.c:319 ../plugins/gtkui/interface.c:1523
+#: ../plugins/gtkui/plcommon.c:1032 ../plugins/gtkui/deadbeef.glade.h:26
 msgid "Custom"
 msgstr "Прилагођено"
 
-#: ../plugins/gtkui/interface.c:328
-#: ../plugins/gtkui/interface.c:1817
+#: ../plugins/gtkui/interface.c:328 ../plugins/gtkui/interface.c:1817
 #: ../plugins/gtkui/deadbeef.glade.h:27
 msgid "Preferences"
 msgstr "Подешавања"
 
-#: ../plugins/gtkui/interface.c:332
-#: ../plugins/gtkui/deadbeef.glade.h:28
+#: ../plugins/gtkui/interface.c:332 ../plugins/gtkui/deadbeef.glade.h:28
 msgid "_View"
 msgstr "П_реглед"
 
-#: ../plugins/gtkui/interface.c:339
-#: ../plugins/gtkui/deadbeef.glade.h:29
+#: ../plugins/gtkui/interface.c:339 ../plugins/gtkui/deadbeef.glade.h:29
 msgid "Status bar"
 msgstr "Статусна трака"
 
-#: ../plugins/gtkui/interface.c:343
-#: ../plugins/gtkui/deadbeef.glade.h:30
+#: ../plugins/gtkui/interface.c:343 ../plugins/gtkui/deadbeef.glade.h:30
 msgid "Column headers"
 msgstr "Колона заглавља"
 
-#: ../plugins/gtkui/interface.c:347
-#: ../plugins/gtkui/deadbeef.glade.h:31
+#: ../plugins/gtkui/interface.c:347 ../plugins/gtkui/deadbeef.glade.h:31
 msgid "Tabs"
 msgstr "Листови"
 
-#: ../plugins/gtkui/interface.c:351
-#: ../plugins/gtkui/deadbeef.glade.h:32
+#: ../plugins/gtkui/interface.c:351 ../plugins/gtkui/deadbeef.glade.h:32
 msgid "Equalizer"
 msgstr "Еквилајзер"
 
-#: ../plugins/gtkui/interface.c:355
-#: ../plugins/gtkui/deadbeef.glade.h:33
+#: ../plugins/gtkui/interface.c:355 ../plugins/gtkui/deadbeef.glade.h:33
 msgid "_Playback"
 msgstr "Ре_продукција"
 
-#: ../plugins/gtkui/interface.c:362
-#: ../plugins/gtkui/interface.c:3359
+#: ../plugins/gtkui/interface.c:362 ../plugins/gtkui/interface.c:3359
 #: ../plugins/gtkui/deadbeef.glade.h:34
 msgid "Order"
 msgstr "Редослед"
 
-#: ../plugins/gtkui/interface.c:369
-#: ../plugins/gtkui/deadbeef.glade.h:35
+#: ../plugins/gtkui/interface.c:369 ../plugins/gtkui/deadbeef.glade.h:35
 msgid "Linear"
 msgstr "Линијски"
 
-#: ../plugins/gtkui/interface.c:375
-#: ../plugins/gtkui/deadbeef.glade.h:36
+#: ../plugins/gtkui/interface.c:375 ../plugins/gtkui/deadbeef.glade.h:36
 msgid "Shuffle tracks"
 msgstr "Насумично нумере"
 
-#: ../plugins/gtkui/interface.c:381
-#: ../plugins/gtkui/deadbeef.glade.h:37
+#: ../plugins/gtkui/interface.c:381 ../plugins/gtkui/deadbeef.glade.h:37
 msgid "Shuffle albums"
 msgstr "Насумично албуми"
 
-#: ../plugins/gtkui/interface.c:393
-#: ../plugins/gtkui/deadbeef.glade.h:38
+#: ../plugins/gtkui/interface.c:393 ../plugins/gtkui/deadbeef.glade.h:38
 msgid "Looping"
 msgstr "Понављање"
 
-#: ../plugins/gtkui/interface.c:400
-#: ../plugins/gtkui/deadbeef.glade.h:39
+#: ../plugins/gtkui/interface.c:400 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Loop all"
 msgstr "Понови све"
 
-#: ../plugins/gtkui/interface.c:406
-#: ../plugins/gtkui/deadbeef.glade.h:40
+#: ../plugins/gtkui/interface.c:406 ../plugins/gtkui/deadbeef.glade.h:40
 msgid "Loop single song"
 msgstr "Понављај нумеру"
 
-#: ../plugins/gtkui/interface.c:412
-#: ../plugins/gtkui/deadbeef.glade.h:41
+#: ../plugins/gtkui/interface.c:412 ../plugins/gtkui/deadbeef.glade.h:41
 msgid "Don't loop"
 msgstr "Не понављај"
 
-#: ../plugins/gtkui/interface.c:418
-#: ../plugins/gtkui/deadbeef.glade.h:42
+#: ../plugins/gtkui/interface.c:418 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
 msgstr "Клизач прати репродукцију песама"
 
-#: ../plugins/gtkui/interface.c:423
-#: ../plugins/gtkui/deadbeef.glade.h:43
+#: ../plugins/gtkui/interface.c:423 ../plugins/gtkui/deadbeef.glade.h:43
 msgid "Cursor follows playback"
 msgstr "Показивач прати репродукцију песама"
 
-#: ../plugins/gtkui/interface.c:427
-#: ../plugins/gtkui/deadbeef.glade.h:44
+#: ../plugins/gtkui/interface.c:427 ../plugins/gtkui/deadbeef.glade.h:44
 msgid "Stop after current"
 msgstr "Заустави после тренутне нумере"
 
-#: ../plugins/gtkui/interface.c:439
-#: ../plugins/gtkui/deadbeef.glade.h:45
+#: ../plugins/gtkui/interface.c:439 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "Jump to current track"
 msgstr "Иди на нумеру која се репродукује"
 
-#: ../plugins/gtkui/interface.c:446
-#: ../plugins/gtkui/interface.c:453
+#: ../plugins/gtkui/interface.c:446 ../plugins/gtkui/interface.c:453
 #: ../plugins/gtkui/deadbeef.glade.h:46
 msgid "_Help"
 msgstr "_Помоћ"
 
-#: ../plugins/gtkui/interface.c:461
-#: ../plugins/gtkui/deadbeef.glade.h:47
+#: ../plugins/gtkui/interface.c:461 ../plugins/gtkui/deadbeef.glade.h:47
 msgid "_ChangeLog"
 msgstr "Дневник и_змена"
 
-#: ../plugins/gtkui/interface.c:470
-#: ../plugins/gtkui/deadbeef.glade.h:48
+#: ../plugins/gtkui/interface.c:470 ../plugins/gtkui/deadbeef.glade.h:48
 msgid "_GPLv2"
 msgstr "_GPLv2"
 
-#: ../plugins/gtkui/interface.c:474
-#: ../plugins/gtkui/deadbeef.glade.h:49
+#: ../plugins/gtkui/interface.c:474 ../plugins/gtkui/deadbeef.glade.h:49
 msgid "_LGPLv2.1"
 msgstr "_LGPLv2.1"
 
-#: ../plugins/gtkui/interface.c:483
-#: ../plugins/gtkui/deadbeef.glade.h:50
+#: ../plugins/gtkui/interface.c:483 ../plugins/gtkui/deadbeef.glade.h:50
 msgid "_About"
 msgstr "О прогр_аму"
 
-#: ../plugins/gtkui/interface.c:491
-#: ../plugins/gtkui/deadbeef.glade.h:51
+#: ../plugins/gtkui/interface.c:491 ../plugins/gtkui/deadbeef.glade.h:51
 msgid "_Translators"
 msgstr "_Преводиоци"
 
-#: ../plugins/gtkui/interface.c:907
-#: ../plugins/gtkui/deadbeef.glade.h:52
+#: ../plugins/gtkui/interface.c:907 ../plugins/gtkui/deadbeef.glade.h:52
 msgid "Search"
 msgstr "Тражи"
 
-#: ../plugins/gtkui/interface.c:976
-#: ../plugins/gtkui/deadbeef.glade.h:53
+#: ../plugins/gtkui/interface.c:976 ../plugins/gtkui/deadbeef.glade.h:53
 msgid "Stop"
 msgstr "Заустави"
 
-#: ../plugins/gtkui/interface.c:984
-#: ../plugins/gtkui/deadbeef.glade.h:54
+#: ../plugins/gtkui/interface.c:984 ../plugins/gtkui/deadbeef.glade.h:54
 msgid "Play"
 msgstr "Пусти"
 
-#: ../plugins/gtkui/interface.c:992
-#: ../plugins/gtkui/deadbeef.glade.h:55
+#: ../plugins/gtkui/interface.c:992 ../plugins/gtkui/deadbeef.glade.h:55
 msgid "Pause"
 msgstr "Паузирај"
 
-#: ../plugins/gtkui/interface.c:1000
-#: ../plugins/gtkui/deadbeef.glade.h:56
+#: ../plugins/gtkui/interface.c:1000 ../plugins/gtkui/deadbeef.glade.h:56
 msgid "Previous"
 msgstr "Претходна"
 
-#: ../plugins/gtkui/interface.c:1008
-#: ../plugins/gtkui/deadbeef.glade.h:57
+#: ../plugins/gtkui/interface.c:1008 ../plugins/gtkui/deadbeef.glade.h:57
 msgid "Next"
 msgstr "Наредна"
 
-#: ../plugins/gtkui/interface.c:1016
-#: ../plugins/gtkui/deadbeef.glade.h:58
+#: ../plugins/gtkui/interface.c:1016 ../plugins/gtkui/deadbeef.glade.h:58
 msgid "Play Random"
 msgstr "Пусти насумично"
 
-#: ../plugins/gtkui/interface.c:1025
-#: ../plugins/gtkui/deadbeef.glade.h:59
+#: ../plugins/gtkui/interface.c:1025 ../plugins/gtkui/deadbeef.glade.h:59
 msgid "About"
 msgstr "О програму"
 
-#: ../plugins/gtkui/interface.c:1038
-#: ../plugins/gtkui/deadbeef.glade.h:60
+#: ../plugins/gtkui/interface.c:1038 ../plugins/gtkui/deadbeef.glade.h:60
 msgid "Quit"
 msgstr "Излаз"
 
-#: ../plugins/gtkui/interface.c:1228
-#: ../plugins/gtkui/deadbeef.glade.h:62
+#: ../plugins/gtkui/interface.c:1228 ../plugins/gtkui/deadbeef.glade.h:62
 msgid "Track Properties"
 msgstr "Особине нумере"
 
-#: ../plugins/gtkui/interface.c:1273
-#: ../plugins/gtkui/deadbeef.glade.h:63
+#: ../plugins/gtkui/interface.c:1273 ../plugins/gtkui/deadbeef.glade.h:63
 msgid "Settings"
 msgstr "Подешавања"
 
-#: ../plugins/gtkui/interface.c:1299
-#: ../plugins/gtkui/deadbeef.glade.h:64
+#: ../plugins/gtkui/interface.c:1299 ../plugins/gtkui/deadbeef.glade.h:64
 msgid "_Apply"
 msgstr "С_ачувај промене"
 
-#: ../plugins/gtkui/interface.c:1320
-#: ../plugins/gtkui/interface.c:1366
+#: ../plugins/gtkui/interface.c:1320 ../plugins/gtkui/interface.c:1366
 #: ../plugins/gtkui/deadbeef.glade.h:65
 msgid "_Close"
 msgstr "_Затвори"
 
-#: ../plugins/gtkui/interface.c:1324
-#: ../plugins/gtkui/deadbeef.glade.h:66
+#: ../plugins/gtkui/interface.c:1324 ../plugins/gtkui/deadbeef.glade.h:66
 msgid "Metadata"
 msgstr "Подаци о нумери"
 
-#: ../plugins/gtkui/interface.c:1370
-#: ../plugins/gtkui/plcommon.c:630
+#: ../plugins/gtkui/interface.c:1370 ../plugins/gtkui/plcommon.c:630
 #: ../plugins/gtkui/deadbeef.glade.h:67
 msgid "Properties"
 msgstr "Особине"
 
-#: ../plugins/gtkui/interface.c:1497
-#: ../plugins/gtkui/deadbeef.glade.h:71
+#: ../plugins/gtkui/interface.c:1497 ../plugins/gtkui/deadbeef.glade.h:71
 msgid "Enter new column title here"
 msgstr "Унесите име за нову колону овде"
 
-#: ../plugins/gtkui/interface.c:1505
-#: ../plugins/gtkui/deadbeef.glade.h:72
+#: ../plugins/gtkui/interface.c:1505 ../plugins/gtkui/deadbeef.glade.h:72
 msgid "Type:"
 msgstr "Врста:"
 
@@ -608,8 +529,7 @@ msgid "Item Index"
 msgstr "Редни број"
 
 #. create default set of columns
-#: ../plugins/gtkui/interface.c:1514
-#: ../plugins/gtkui/mainplaylist.c:317
+#: ../plugins/gtkui/interface.c:1514 ../plugins/gtkui/mainplaylist.c:317
 msgid "Playing"
 msgstr "Репродукује се"
 
@@ -621,30 +541,25 @@ msgstr "Омотнице албума"
 msgid "Artist - Album"
 msgstr "Извођач — Албум"
 
-#: ../plugins/gtkui/interface.c:1520
-#: ../plugins/gtkui/mainplaylist.c:321
+#: ../plugins/gtkui/interface.c:1520 ../plugins/gtkui/mainplaylist.c:321
 #: ../plugins/gtkui/search.c:416
 msgid "Duration"
 msgstr "Трајање"
 
-#: ../plugins/gtkui/interface.c:1521
-#: ../translation/extra.c:75
+#: ../plugins/gtkui/interface.c:1521 ../translation/extra.c:75
 msgid "Track Number"
 msgstr "Број нумере"
 
-#: ../plugins/gtkui/interface.c:1522
-#: ../translation/extra.c:72
+#: ../plugins/gtkui/interface.c:1522 ../translation/extra.c:72
 msgid "Band / Album Artist"
 msgstr "Група / Извођач"
 
-#: ../plugins/gtkui/interface.c:1529
-#: ../plugins/gtkui/interface.c:3211
+#: ../plugins/gtkui/interface.c:1529 ../plugins/gtkui/interface.c:3211
 #: ../plugins/gtkui/deadbeef.glade.h:84
 msgid "Format:"
 msgstr "Формат:"
 
-#: ../plugins/gtkui/interface.c:1554
-#: ../plugins/gtkui/deadbeef.glade.h:85
+#: ../plugins/gtkui/interface.c:1554 ../plugins/gtkui/deadbeef.glade.h:85
 msgid "Alignment:"
 msgstr "Поравнање:"
 
@@ -656,44 +571,35 @@ msgstr "Лево"
 msgid "Right"
 msgstr "Десно"
 
-#: ../plugins/gtkui/interface.c:1586
-#: ../plugins/gtkui/interface.c:3014
-#: ../plugins/gtkui/interface.c:3126
-#: ../plugins/gtkui/interface.c:3252
+#: ../plugins/gtkui/interface.c:1586 ../plugins/gtkui/interface.c:3014
+#: ../plugins/gtkui/interface.c:3126 ../plugins/gtkui/interface.c:3252
 #: ../plugins/gtkui/deadbeef.glade.h:68
 msgid "_Cancel"
 msgstr "_Поништи"
 
-#: ../plugins/gtkui/interface.c:1607
-#: ../plugins/gtkui/interface.c:3035
-#: ../plugins/gtkui/interface.c:3147
-#: ../plugins/gtkui/interface.c:3273
+#: ../plugins/gtkui/interface.c:1607 ../plugins/gtkui/interface.c:3035
+#: ../plugins/gtkui/interface.c:3147 ../plugins/gtkui/interface.c:3273
 #: ../plugins/gtkui/deadbeef.glade.h:69
 msgid "_OK"
 msgstr "_У реду"
 
-#: ../plugins/gtkui/interface.c:1838
-#: ../plugins/gtkui/deadbeef.glade.h:88
+#: ../plugins/gtkui/interface.c:1838 ../plugins/gtkui/deadbeef.glade.h:88
 msgid "Output plugin:"
 msgstr "Излазни додаци:"
 
-#: ../plugins/gtkui/interface.c:1851
-#: ../plugins/gtkui/deadbeef.glade.h:89
+#: ../plugins/gtkui/interface.c:1851 ../plugins/gtkui/deadbeef.glade.h:89
 msgid "Output device:"
 msgstr "Излазни уређај"
 
-#: ../plugins/gtkui/interface.c:1860
-#: ../plugins/gtkui/deadbeef.glade.h:90
+#: ../plugins/gtkui/interface.c:1860 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Always convert 8 bit audio to 16 bit"
 msgstr "Увек претварај 8-битни у 16-битни звук"
 
-#: ../plugins/gtkui/interface.c:1864
-#: ../plugins/gtkui/deadbeef.glade.h:91
+#: ../plugins/gtkui/interface.c:1864 ../plugins/gtkui/deadbeef.glade.h:91
 msgid "Sound"
 msgstr "Звук"
 
-#: ../plugins/gtkui/interface.c:1877
-#: ../plugins/gtkui/deadbeef.glade.h:92
+#: ../plugins/gtkui/interface.c:1877 ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Replaygain mode:"
 msgstr "Replaygain мод:"
 
@@ -705,311 +611,253 @@ msgstr "Онемогући"
 msgid "Track"
 msgstr "Нумера"
 
-#: ../plugins/gtkui/interface.c:1890
-#: ../plugins/gtkui/deadbeef.glade.h:96
+#: ../plugins/gtkui/interface.c:1890 ../plugins/gtkui/deadbeef.glade.h:96
 msgid "Replaygain peak scale"
 msgstr "Replaygain скала вршних вредности"
 
-#: ../plugins/gtkui/interface.c:1905
-#: ../plugins/gtkui/interface.c:1939
+#: ../plugins/gtkui/interface.c:1905 ../plugins/gtkui/interface.c:1939
 #: ../plugins/gtkui/deadbeef.glade.h:97
 msgid "-12 dB"
 msgstr "-12 dB"
 
-#: ../plugins/gtkui/interface.c:1915
-#: ../plugins/gtkui/interface.c:1949
+#: ../plugins/gtkui/interface.c:1915 ../plugins/gtkui/interface.c:1949
 #: ../plugins/gtkui/deadbeef.glade.h:98
 msgid "+12 dB"
 msgstr "+12 dB"
 
-#: ../plugins/gtkui/interface.c:1919
-#: ../plugins/gtkui/deadbeef.glade.h:99
+#: ../plugins/gtkui/interface.c:1919 ../plugins/gtkui/deadbeef.glade.h:99
 msgid "Replaygain preamp:"
 msgstr "Replaygain претпојачавач:"
 
-#: ../plugins/gtkui/interface.c:1926
-#: ../plugins/gtkui/deadbeef.glade.h:100
+#: ../plugins/gtkui/interface.c:1926 ../plugins/gtkui/deadbeef.glade.h:100
 msgid "Global preamp:"
 msgstr "Претпојачавач:"
 
-#: ../plugins/gtkui/interface.c:1957
-#: ../plugins/gtkui/deadbeef.glade.h:101
+#: ../plugins/gtkui/interface.c:1957 ../plugins/gtkui/deadbeef.glade.h:101
 msgid "Add files from command line (or file manager) to this playlist:"
-msgstr "Додај датотеке из линије за наредбе (или управника датотека) у ову листу:"
+msgstr ""
+"Додај датотеке из линије за наредбе (или управника датотека) у ову листу:"
 
-#: ../plugins/gtkui/interface.c:1966
-#: ../plugins/gtkui/deadbeef.glade.h:102
+#: ../plugins/gtkui/interface.c:1966 ../plugins/gtkui/deadbeef.glade.h:102
 msgid "Resume previous session on startup"
 msgstr "Врати претходну сесију при покретању"
 
-#: ../plugins/gtkui/interface.c:1970
-#: ../plugins/gtkui/deadbeef.glade.h:103
+#: ../plugins/gtkui/interface.c:1970 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Don't add from archives when adding folders"
 msgstr "Не учитавај датотеке из архива приликом додавања директоријума"
 
-#: ../plugins/gtkui/interface.c:1974
-#: ../plugins/gtkui/deadbeef.glade.h:104
+#: ../plugins/gtkui/interface.c:1974 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Auto-reset \"Stop after current\""
 msgstr "Опет постави „Заустави после тренутне нумере“"
 
-#: ../plugins/gtkui/interface.c:1978
-#: ../plugins/gtkui/deadbeef.glade.h:105
+#: ../plugins/gtkui/interface.c:1978 ../plugins/gtkui/deadbeef.glade.h:105
 msgid "Playback"
 msgstr "Репродукција"
 
-#: ../plugins/gtkui/interface.c:1999
-#: ../plugins/gtkui/interface.c:2556
-#: ../plugins/gtkui/deadbeef.glade.h:106
-#: ../plugins/converter/interface.c:632
+#: ../plugins/gtkui/interface.c:1999 ../plugins/gtkui/interface.c:2556
+#: ../plugins/gtkui/deadbeef.glade.h:106 ../plugins/converter/interface.c:632
 #: ../plugins/converter/converter.glade.h:47
 msgid "Configure"
 msgstr "Подеси"
 
-#: ../plugins/gtkui/interface.c:2034
-#: ../plugins/gtkui/deadbeef.glade.h:107
+#: ../plugins/gtkui/interface.c:2034 ../plugins/gtkui/deadbeef.glade.h:107
 msgid "DSP Chain Preset"
 msgstr "Поставке оквира за дигиталну обраду"
 
-#: ../plugins/gtkui/interface.c:2046
-#: ../plugins/gtkui/deadbeef.glade.h:108
+#: ../plugins/gtkui/interface.c:2046 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "_Load"
 msgstr "У_читај"
 
-#: ../plugins/gtkui/interface.c:2050
-#: ../plugins/gtkui/deadbeef.glade.h:109
+#: ../plugins/gtkui/interface.c:2050 ../plugins/gtkui/deadbeef.glade.h:109
 msgid "DSP"
 msgstr "Дигитална обрада звука (DSP)"
 
-#: ../plugins/gtkui/interface.c:2059
-#: ../plugins/gtkui/deadbeef.glade.h:110
+#: ../plugins/gtkui/interface.c:2059 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "Close minimizes to tray"
 msgstr "Код клика на затвори смести у обавештајну зону"
 
-#: ../plugins/gtkui/interface.c:2063
-#: ../plugins/gtkui/deadbeef.glade.h:111
+#: ../plugins/gtkui/interface.c:2063 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "Middle mouse button closes playlist"
 msgstr "Средње дугме миша затвара листу"
 
-#: ../plugins/gtkui/interface.c:2067
-#: ../plugins/gtkui/deadbeef.glade.h:112
+#: ../plugins/gtkui/interface.c:2067 ../plugins/gtkui/deadbeef.glade.h:112
 msgid "Hide system tray icon"
 msgstr "Не приказуј икону у обавештајној зони"
 
-#: ../plugins/gtkui/interface.c:2071
-#: ../plugins/gtkui/deadbeef.glade.h:113
+#: ../plugins/gtkui/interface.c:2071 ../plugins/gtkui/deadbeef.glade.h:113
 msgid "Use bold font for currently playing track"
 msgstr "Користи задебљан фонт за нумеру која се репродукује"
 
-#: ../plugins/gtkui/interface.c:2075
-#: ../plugins/gtkui/deadbeef.glade.h:114
+#: ../plugins/gtkui/interface.c:2075 ../plugins/gtkui/deadbeef.glade.h:114
 msgid "Hide \"Delete from disk\" context menu item"
 msgstr "Сакриј ставке „Обриши са диска“ у менију"
 
-#: ../plugins/gtkui/interface.c:2079
-#: ../plugins/gtkui/deadbeef.glade.h:115
+#: ../plugins/gtkui/interface.c:2079 ../plugins/gtkui/deadbeef.glade.h:115
 msgid "Auto-name playlists when adding a single folder"
 msgstr "Самоименовање листа нумера при додавању само једног директоријума"
 
-#: ../plugins/gtkui/interface.c:2083
-#: ../plugins/gtkui/deadbeef.glade.h:116
+#: ../plugins/gtkui/interface.c:2083 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Enable Russian CP1251 detection and recoding"
 msgstr "Омогући руско CP1251 препознавање и снимање"
 
-#: ../plugins/gtkui/interface.c:2087
-#: ../plugins/gtkui/deadbeef.glade.h:117
+#: ../plugins/gtkui/interface.c:2087 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Enable Chinese CP936 detection and recoding"
 msgstr "Омогући кинеско CP936 препознавање и снимање"
 
-#: ../plugins/gtkui/interface.c:2095
-#: ../plugins/gtkui/deadbeef.glade.h:118
+#: ../plugins/gtkui/interface.c:2095 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Interface refresh rate (times per second):"
 msgstr "Освежавање приказа (колико пута у секунди)"
 
-#: ../plugins/gtkui/interface.c:2109
-#: ../plugins/gtkui/deadbeef.glade.h:119
+#: ../plugins/gtkui/interface.c:2109 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Titlebar text while playing:"
 msgstr "При репродукцији, испиши на насловној линији: "
 
-#: ../plugins/gtkui/interface.c:2123
-#: ../plugins/gtkui/deadbeef.glade.h:120
+#: ../plugins/gtkui/interface.c:2123 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Titlebar text while stopped:"
 msgstr "По заустављеној репродукцији, испиши на насловној линији: "
 
-#: ../plugins/gtkui/interface.c:2137
-#: ../plugins/gtkui/deadbeef.glade.h:121
+#: ../plugins/gtkui/interface.c:2137 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "GUI Plugin (changing requires restart):"
 msgstr "Додатак графичког корисничког сучеља (неопходно поновно покретање)"
 
-#: ../plugins/gtkui/interface.c:2145
-#: ../plugins/gtkui/deadbeef.glade.h:122
+#: ../plugins/gtkui/interface.c:2145 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "GUI/Misc"
 msgstr "Граф.кор. сучеље/Разно"
 
-#: ../plugins/gtkui/interface.c:2160
-#: ../plugins/gtkui/interface.c:2204
+#: ../plugins/gtkui/interface.c:2160 ../plugins/gtkui/interface.c:2204
 #: ../plugins/gtkui/deadbeef.glade.h:123
 msgid "Override"
 msgstr "Замени подразумевано"
 
-#: ../plugins/gtkui/interface.c:2169
-#: ../plugins/gtkui/deadbeef.glade.h:124
+#: ../plugins/gtkui/interface.c:2169 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "Foreground"
 msgstr "Боја текста"
 
-#: ../plugins/gtkui/interface.c:2176
-#: ../plugins/gtkui/deadbeef.glade.h:125
+#: ../plugins/gtkui/interface.c:2176 ../plugins/gtkui/deadbeef.glade.h:125
 msgid "Background"
 msgstr "Позадина"
 
-#: ../plugins/gtkui/interface.c:2195
-#: ../plugins/gtkui/deadbeef.glade.h:126
+#: ../plugins/gtkui/interface.c:2195 ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Seekbar/Volumebar colors"
 msgstr "Траке за премотавање/гласноћу"
 
-#: ../plugins/gtkui/interface.c:2213
-#: ../plugins/gtkui/deadbeef.glade.h:127
+#: ../plugins/gtkui/interface.c:2213 ../plugins/gtkui/deadbeef.glade.h:127
 msgid "Middle"
 msgstr "Средње"
 
-#: ../plugins/gtkui/interface.c:2220
-#: ../plugins/gtkui/deadbeef.glade.h:128
+#: ../plugins/gtkui/interface.c:2220 ../plugins/gtkui/deadbeef.glade.h:128
 msgid "Light"
 msgstr "Светло"
 
-#: ../plugins/gtkui/interface.c:2227
-#: ../plugins/gtkui/deadbeef.glade.h:129
+#: ../plugins/gtkui/interface.c:2227 ../plugins/gtkui/deadbeef.glade.h:129
 msgid "Dark"
 msgstr "Тамно"
 
-#: ../plugins/gtkui/interface.c:2258
-#: ../plugins/gtkui/deadbeef.glade.h:130
+#: ../plugins/gtkui/interface.c:2258 ../plugins/gtkui/deadbeef.glade.h:130
 msgid "Base"
 msgstr "Основа"
 
-#: ../plugins/gtkui/interface.c:2265
-#: ../plugins/gtkui/interface.c:2322
+#: ../plugins/gtkui/interface.c:2265 ../plugins/gtkui/interface.c:2322
 #: ../plugins/gtkui/deadbeef.glade.h:131
 msgid "Text"
 msgstr "Текст"
 
-#: ../plugins/gtkui/interface.c:2278
-#: ../plugins/gtkui/deadbeef.glade.h:132
+#: ../plugins/gtkui/interface.c:2278 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Tab strip colors"
 msgstr "Боје одвајања листова"
 
-#: ../plugins/gtkui/interface.c:2287
-#: ../plugins/gtkui/deadbeef.glade.h:133
+#: ../plugins/gtkui/interface.c:2287 ../plugins/gtkui/deadbeef.glade.h:133
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
-msgstr "Замени подразумевано (губе се ГТК теме погледа стабла, али се добија бржи приказ)"
+msgstr ""
+"Замени подразумевано (губе се ГТК теме погледа стабла, али се добија бржи "
+"приказ)"
 
-#: ../plugins/gtkui/interface.c:2296
-#: ../plugins/gtkui/deadbeef.glade.h:134
+#: ../plugins/gtkui/interface.c:2296 ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Even row"
 msgstr "Паран ред"
 
-#: ../plugins/gtkui/interface.c:2303
-#: ../plugins/gtkui/deadbeef.glade.h:135
+#: ../plugins/gtkui/interface.c:2303 ../plugins/gtkui/deadbeef.glade.h:135
 msgid "Odd row"
 msgstr " Непаран ред"
 
-#: ../plugins/gtkui/interface.c:2329
-#: ../plugins/gtkui/deadbeef.glade.h:136
+#: ../plugins/gtkui/interface.c:2329 ../plugins/gtkui/deadbeef.glade.h:136
 msgid "Selected row"
 msgstr "Одабран ред"
 
-#: ../plugins/gtkui/interface.c:2348
-#: ../plugins/gtkui/deadbeef.glade.h:137
+#: ../plugins/gtkui/interface.c:2348 ../plugins/gtkui/deadbeef.glade.h:137
 msgid "Selected text"
 msgstr "Одабран текст"
 
-#: ../plugins/gtkui/interface.c:2361
-#: ../plugins/gtkui/deadbeef.glade.h:138
+#: ../plugins/gtkui/interface.c:2361 ../plugins/gtkui/deadbeef.glade.h:138
 msgid "Cursor"
 msgstr "Показивач"
 
-#: ../plugins/gtkui/interface.c:2374
-#: ../plugins/gtkui/deadbeef.glade.h:139
+#: ../plugins/gtkui/interface.c:2374 ../plugins/gtkui/deadbeef.glade.h:139
 msgid "Playlist colors"
 msgstr "Боје листе"
 
-#: ../plugins/gtkui/interface.c:2378
-#: ../plugins/gtkui/deadbeef.glade.h:140
+#: ../plugins/gtkui/interface.c:2378 ../plugins/gtkui/deadbeef.glade.h:140
 msgid "Colors"
 msgstr "Боје"
 
-#: ../plugins/gtkui/interface.c:2387
-#: ../plugins/gtkui/deadbeef.glade.h:141
+#: ../plugins/gtkui/interface.c:2387 ../plugins/gtkui/deadbeef.glade.h:141
 msgid "Enable Proxy Server"
 msgstr "Омогући прокси сервер"
 
-#: ../plugins/gtkui/interface.c:2395
-#: ../plugins/gtkui/deadbeef.glade.h:142
+#: ../plugins/gtkui/interface.c:2395 ../plugins/gtkui/deadbeef.glade.h:142
 msgid "Proxy Server Address:"
 msgstr "Адреса прокси сервера:"
 
-#: ../plugins/gtkui/interface.c:2409
-#: ../plugins/gtkui/deadbeef.glade.h:143
+#: ../plugins/gtkui/interface.c:2409 ../plugins/gtkui/deadbeef.glade.h:143
 msgid "Proxy Server Port:"
 msgstr "Порт прокси сервера:"
 
-#: ../plugins/gtkui/interface.c:2423
-#: ../plugins/gtkui/deadbeef.glade.h:144
+#: ../plugins/gtkui/interface.c:2423 ../plugins/gtkui/deadbeef.glade.h:144
 msgid "Proxy Type:"
 msgstr "Тип проксија:"
 
-#: ../plugins/gtkui/interface.c:2442
-#: ../plugins/gtkui/deadbeef.glade.h:145
+#: ../plugins/gtkui/interface.c:2442 ../plugins/gtkui/deadbeef.glade.h:145
 msgid "Proxy Username:"
 msgstr "Прокси корисничко име:"
 
-#: ../plugins/gtkui/interface.c:2455
-#: ../plugins/gtkui/deadbeef.glade.h:146
+#: ../plugins/gtkui/interface.c:2455 ../plugins/gtkui/deadbeef.glade.h:146
 msgid "Proxy Password:"
 msgstr "Прокси лозинка:"
 
-#: ../plugins/gtkui/interface.c:2473
-#: ../plugins/gtkui/deadbeef.glade.h:147
+#: ../plugins/gtkui/interface.c:2473 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "HTTP User Agent:"
 msgstr "Веб прегледник:"
 
-#: ../plugins/gtkui/interface.c:2482
-#: ../plugins/gtkui/deadbeef.glade.h:148
+#: ../plugins/gtkui/interface.c:2482 ../plugins/gtkui/deadbeef.glade.h:148
 msgid "Network"
 msgstr "Мрежа"
 
-#: ../plugins/gtkui/interface.c:2513
-#: ../plugins/gtkui/deadbeef.glade.h:149
+#: ../plugins/gtkui/interface.c:2513 ../plugins/gtkui/deadbeef.glade.h:149
 msgid "Version: "
 msgstr "Издање:"
 
-#: ../plugins/gtkui/interface.c:2577
-#: ../plugins/gtkui/deadbeef.glade.h:150
+#: ../plugins/gtkui/interface.c:2577 ../plugins/gtkui/deadbeef.glade.h:150
 #: ../translation/extra.c:82
 msgid "Copyright"
 msgstr "Ауторска права"
 
-#: ../plugins/gtkui/interface.c:2587
-#: ../plugins/gtkui/deadbeef.glade.h:151
+#: ../plugins/gtkui/interface.c:2587 ../plugins/gtkui/deadbeef.glade.h:151
 msgid "Plugins"
 msgstr "Додаци"
 
-#: ../plugins/gtkui/interface.c:3094
-#: ../plugins/gtkui/deadbeef.glade.h:152
+#: ../plugins/gtkui/interface.c:3094 ../plugins/gtkui/deadbeef.glade.h:152
 msgid "URL:"
 msgstr "URL:"
 
-#: ../plugins/gtkui/interface.c:3196
-#: ../plugins/gtkui/deadbeef.glade.h:153
+#: ../plugins/gtkui/interface.c:3196 ../plugins/gtkui/deadbeef.glade.h:153
 msgid "Group By ..."
 msgstr "Групиши по"
 
-#: ../plugins/gtkui/interface.c:3320
-#: ../plugins/gtkui/deadbeef.glade.h:154
+#: ../plugins/gtkui/interface.c:3320 ../plugins/gtkui/deadbeef.glade.h:154
 msgid "Sort by ..."
 msgstr "Сложи по..."
 
-#: ../plugins/gtkui/interface.c:3336
-#: ../plugins/gtkui/deadbeef.glade.h:155
+#: ../plugins/gtkui/interface.c:3336 ../plugins/gtkui/deadbeef.glade.h:155
 msgid "Format"
 msgstr "Облик:"
 
@@ -1021,66 +869,52 @@ msgstr "Растуће"
 msgid "Descending"
 msgstr "Опадајуће"
 
-#: ../plugins/gtkui/interface.c:3420
-#: ../plugins/gtkui/deadbeef.glade.h:158
+#: ../plugins/gtkui/interface.c:3420 ../plugins/gtkui/deadbeef.glade.h:158
 #: ../plugins/converter/interface.c:733
 #: ../plugins/converter/converter.glade.h:48
 msgid "Select DSP Plugin"
 msgstr "Избор додатка за дигиталну обраду"
 
-#: ../plugins/gtkui/interface.c:3436
-#: ../plugins/gtkui/deadbeef.glade.h:159
-#: ../plugins/converter/convgui.c:1135
-#: ../plugins/converter/interface.c:749
-#: ../plugins/gtkui/dspconfig.c:139
-#: ../plugins/converter/converter.glade.h:49
+#: ../plugins/gtkui/interface.c:3436 ../plugins/gtkui/deadbeef.glade.h:159
+#: ../plugins/converter/convgui.c:1135 ../plugins/converter/interface.c:749
+#: ../plugins/gtkui/dspconfig.c:139 ../plugins/converter/converter.glade.h:49
 msgid "Plugin"
 msgstr "Додатак"
 
-#: ../plugins/gtkui/interface.c:3522
-#: ../plugins/gtkui/deadbeef.glade.h:160
+#: ../plugins/gtkui/interface.c:3522 ../plugins/gtkui/deadbeef.glade.h:160
 msgid "Tag Writer Settings"
 msgstr "Подешавања писача ознака"
 
-#: ../plugins/gtkui/interface.c:3553
-#: ../plugins/gtkui/deadbeef.glade.h:161
+#: ../plugins/gtkui/interface.c:3553 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "Write ID3v2"
 msgstr "Уписуј ID3v2"
 
-#: ../plugins/gtkui/interface.c:3557
-#: ../plugins/gtkui/interface.c:3684
+#: ../plugins/gtkui/interface.c:3557 ../plugins/gtkui/interface.c:3684
 #: ../plugins/gtkui/deadbeef.glade.h:162
 msgid "Write ID3v1"
 msgstr "Уписуј ID3v1"
 
-#: ../plugins/gtkui/interface.c:3561
-#: ../plugins/gtkui/interface.c:3640
-#: ../plugins/gtkui/interface.c:3680
-#: ../plugins/gtkui/deadbeef.glade.h:163
+#: ../plugins/gtkui/interface.c:3561 ../plugins/gtkui/interface.c:3640
+#: ../plugins/gtkui/interface.c:3680 ../plugins/gtkui/deadbeef.glade.h:163
 msgid "Write APEv2"
 msgstr "Уписуј APEv2"
 
-#: ../plugins/gtkui/interface.c:3569
-#: ../plugins/gtkui/interface.c:3648
+#: ../plugins/gtkui/interface.c:3569 ../plugins/gtkui/interface.c:3648
 #: ../plugins/gtkui/deadbeef.glade.h:164
 msgid "Strip ID3v2"
 msgstr "Уклони ID3v2"
 
-#: ../plugins/gtkui/interface.c:3573
-#: ../plugins/gtkui/interface.c:3696
+#: ../plugins/gtkui/interface.c:3573 ../plugins/gtkui/interface.c:3696
 #: ../plugins/gtkui/deadbeef.glade.h:165
 msgid "Strip ID3v1"
 msgstr "Уклони ID3v1"
 
-#: ../plugins/gtkui/interface.c:3577
-#: ../plugins/gtkui/interface.c:3652
-#: ../plugins/gtkui/interface.c:3692
-#: ../plugins/gtkui/deadbeef.glade.h:166
+#: ../plugins/gtkui/interface.c:3577 ../plugins/gtkui/interface.c:3652
+#: ../plugins/gtkui/interface.c:3692 ../plugins/gtkui/deadbeef.glade.h:166
 msgid "Strip APEv2"
 msgstr "Уклони APEv2"
 
-#: ../plugins/gtkui/interface.c:3585
-#: ../plugins/gtkui/deadbeef.glade.h:167
+#: ../plugins/gtkui/interface.c:3585 ../plugins/gtkui/deadbeef.glade.h:167
 msgid "ID3v2 version"
 msgstr "ID3v2 верзија"
 
@@ -1092,23 +926,19 @@ msgstr "2.3 (Препоручено)"
 msgid "2.4"
 msgstr "2.4"
 
-#: ../plugins/gtkui/interface.c:3599
-#: ../plugins/gtkui/deadbeef.glade.h:170
+#: ../plugins/gtkui/interface.c:3599 ../plugins/gtkui/deadbeef.glade.h:170
 msgid "ID3v1 character encoding (default is iso8859-1)"
 msgstr "ID3v1 кодирање знакова (подразумевано је iso8859-1)"
 
-#: ../plugins/gtkui/interface.c:3636
-#: ../plugins/gtkui/deadbeef.glade.h:171
+#: ../plugins/gtkui/interface.c:3636 ../plugins/gtkui/deadbeef.glade.h:171
 msgid "Write ID3v2.4"
 msgstr "Уписуј ID3v2.4"
 
-#: ../plugins/gtkui/mainplaylist.c:318
-#: ../plugins/gtkui/search.c:413
+#: ../plugins/gtkui/mainplaylist.c:318 ../plugins/gtkui/search.c:413
 msgid "Artist / Album"
 msgstr "Извођач / Албум"
 
-#: ../plugins/gtkui/mainplaylist.c:319
-#: ../plugins/gtkui/search.c:414
+#: ../plugins/gtkui/mainplaylist.c:319 ../plugins/gtkui/search.c:414
 msgid "Track No"
 msgstr "Број нумере"
 
@@ -1124,10 +954,8 @@ msgstr ""
 "Дадотеке ће бити обрисане. Да ли сте сигурни?\n"
 "(Овај дијалог може да се искључи у подешавањима додатка GTKUI)"
 
-#: ../plugins/gtkui/plcommon.c:351
-#: ../plugins/gtkui/trkproperties.c:164
-#: ../plugins/converter/convgui.c:803
-#: ../plugins/converter/convgui.c:1258
+#: ../plugins/gtkui/plcommon.c:351 ../plugins/gtkui/trkproperties.c:164
+#: ../plugins/converter/convgui.c:803 ../plugins/converter/convgui.c:1258
 msgid "Warning"
 msgstr "Упозорење"
 
@@ -1147,13 +975,11 @@ msgstr "Поново учитај податке о нумери"
 msgid "Remove from disk"
 msgstr "Уклони са диска"
 
-#: ../plugins/gtkui/plcommon.c:869
-#: ../plugins/gtkui/plcommon.c:995
+#: ../plugins/gtkui/plcommon.c:869 ../plugins/gtkui/plcommon.c:995
 msgid "Add column"
 msgstr "Додај колону"
 
-#: ../plugins/gtkui/plcommon.c:899
-#: ../plugins/gtkui/plcommon.c:999
+#: ../plugins/gtkui/plcommon.c:899 ../plugins/gtkui/plcommon.c:999
 msgid "Edit column"
 msgstr "Уреди колону"
 
@@ -1186,8 +1012,7 @@ msgstr "Подеси %s"
 msgid "Default Audio Device"
 msgstr "Подразумевани звучни уређај"
 
-#: ../plugins/gtkui/prefwin.c:348
-#: ../plugins/converter/interface.c:624
+#: ../plugins/gtkui/prefwin.c:348 ../plugins/converter/interface.c:624
 #: ../plugins/converter/converter.glade.h:45
 #: ../plugins/shellexecui/interface.c:61
 #: ../plugins/shellexecui/shellexec.glade.h:3
@@ -1223,50 +1048,47 @@ msgid "Really close the window?"
 msgstr "Желите ли заиста да затворите овај прозор?"
 
 #. get value to edit
-#: ../plugins/gtkui/trkproperties.c:272
+#: ../plugins/gtkui/trkproperties.c:279
 msgid "[Multiple values] "
 msgstr "[Вишеструке вредности] "
 
-#: ../plugins/gtkui/trkproperties.c:425
-#: ../plugins/gtkui/trkproperties.c:437
+#: ../plugins/gtkui/trkproperties.c:432 ../plugins/gtkui/trkproperties.c:444
 msgid "Key"
 msgstr "Кључ"
 
-#: ../plugins/gtkui/trkproperties.c:426
-#: ../plugins/gtkui/trkproperties.c:438
+#: ../plugins/gtkui/trkproperties.c:433 ../plugins/gtkui/trkproperties.c:445
 msgid "Value"
 msgstr "Вредност"
 
-#: ../plugins/gtkui/trkproperties.c:623
+#: ../plugins/gtkui/trkproperties.c:630
 msgid "Writing tags..."
 msgstr "Уписујем ознаке..."
 
-#: ../plugins/gtkui/trkproperties.c:651
+#: ../plugins/gtkui/trkproperties.c:659
 msgid "Field name"
 msgstr "Име поља"
 
-#: ../plugins/gtkui/trkproperties.c:654
+#: ../plugins/gtkui/trkproperties.c:662
 msgid "Name:"
 msgstr "Име:"
 
-#: ../plugins/gtkui/trkproperties.c:666
+#: ../plugins/gtkui/trkproperties.c:674
 msgid "Field names must not start with : or _"
 msgstr "Имена поља не могу почињати знацима : или _"
 
-#: ../plugins/gtkui/trkproperties.c:667
-#: ../plugins/gtkui/trkproperties.c:706
+#: ../plugins/gtkui/trkproperties.c:675 ../plugins/gtkui/trkproperties.c:714
 msgid "Cannot add field"
 msgstr "Не могу да додам поље"
 
-#: ../plugins/gtkui/trkproperties.c:705
+#: ../plugins/gtkui/trkproperties.c:713
 msgid "Field with such name already exists, please try different name."
 msgstr "Поље са истим именом већ постоји. Дајте пољу друго име."
 
-#: ../plugins/gtkui/trkproperties.c:767
+#: ../plugins/gtkui/trkproperties.c:776
 msgid "Add field"
 msgstr "Додај поље"
 
-#: ../plugins/gtkui/trkproperties.c:770
+#: ../plugins/gtkui/trkproperties.c:779
 msgid "Remove field"
 msgstr "Уклони поље"
 
@@ -1317,8 +1139,10 @@ msgstr "   --toggle-pause     Паузирај\n"
 
 #: ../main.c:93
 #, c-format
-msgid "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
-msgstr "   --play-pause       Започни репродукцију ако је заустављена, и обратно\n"
+msgid ""
+"   --play-pause       Start playback if stopped, toggle pause otherwise\n"
+msgstr ""
+"   --play-pause       Започни репродукцију ако је заустављена, и обратно\n"
 
 #: ../main.c:94
 #, c-format
@@ -1342,8 +1166,11 @@ msgstr "   --queue            Додај датотеку(е) у постоје�
 
 #: ../main.c:98
 #, c-format
-msgid "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
-msgstr "   --gui ДОДАТАК       Одабир Граф. корисничког сучеља (подразумевано је „GTK2“)\n"
+msgid ""
+"   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
+msgstr ""
+"   --gui ДОДАТАК       Одабир Граф. корисничког сучеља (подразумевано је "
+"„GTK2“)\n"
 
 #: ../main.c:99
 #, c-format
@@ -1363,24 +1190,31 @@ msgstr ""
 
 #: ../main.c:103
 #, c-format
-msgid "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"
-msgstr "                      Н.пр.: --nowplaying \"%%a - %%t\" ће исписати \"Извођач - Наслов\"\n"
+msgid ""
+"                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
+"- title\"\n"
+msgstr ""
+"                      Н.пр.: --nowplaying \"%%a - %%t\" ће исписати "
+"\"Извођач - Наслов\"\n"
 
 #: ../main.c:104
 #, c-format
-msgid "                      for more info, see http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"
-msgstr "                     додатне информације на http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"
+msgid ""
+"                      for more info, see http://sourceforge.net/apps/"
+"mediawiki/deadbeef/index.php?title=Title_Formatting\n"
+msgstr ""
+"                     додатне информације на http://sourceforge.net/apps/"
+"mediawiki/deadbeef/index.php?title=Title_Formatting\n"
 
-#: ../playlist.c:454
-#: ../playlist.c:2418
+#: ../playlist.c:454 ../playlist.c:2419
 msgid "Default"
 msgstr "Подразумевано"
 
-#: ../playlist.c:3793
+#: ../playlist.c:3794
 msgid "Yes"
 msgstr "Да"
 
-#: ../playlist.c:3793
+#: ../playlist.c:3794
 msgid "No"
 msgstr "Не"
 
@@ -1444,20 +1278,22 @@ msgstr ""
 "2.3 (Препоручено)\n"
 "2.4"
 
-#: ../plugins/gtkui/support.c:90
-#: ../plugins/gtkui/support.c:114
-#: ../plugins/converter/support.c:90
-#: ../plugins/converter/support.c:114
-#: ../plugins/shellexecui/support.c:90
-#: ../plugins/shellexecui/support.c:114
+#: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
+#: ../plugins/converter/support.c:90 ../plugins/converter/support.c:114
+#: ../plugins/shellexecui/support.c:90 ../plugins/shellexecui/support.c:114
 #, c-format
 msgid "Couldn't find pixmap file: %s"
 msgstr "Не могу пронаћи датотеку са битмапираном сликом: %s"
 
 #: ../plugins/wildmidi/wildmidiplug.c:164
 #, c-format
-msgid "wildmidi: freepats config file not found. Please install timidity-freepats package, or specify path to freepats.cfg in the plugin settings."
-msgstr "wildmidi: \"freepats\" датотека са подешавањима није пронађена. Инсталирајте \"timidity-freepats\" програм или подесите путању до датотеке \"freepats.cfg\"."
+msgid ""
+"wildmidi: freepats config file not found. Please install timidity-freepats "
+"package, or specify path to freepats.cfg in the plugin settings."
+msgstr ""
+"wildmidi: \"freepats\" датотека са подешавањима није пронађена. Инсталирајте "
+"\"timidity-freepats\" програм или подесите путању до датотеке \"freepats.cfg"
+"\"."
 
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
@@ -1478,8 +1314,7 @@ msgstr "Користи ALSA претварања учесталости узор
 msgid "Release device while stopped"
 msgstr "Ослободи уређај након завршене репродукције"
 
-#: ../translation/extra.c:8
-#: ../translation/extra.c:55
+#: ../translation/extra.c:8 ../translation/extra.c:55
 msgid "Preferred buffer size"
 msgstr "Најрадије користи бафер величине"
 
@@ -1754,7 +1589,8 @@ msgstr "Квалитет / Алгоритам"
 
 #: ../translation/extra.c:95
 msgid "Automatic Samplerate (overrides Target Samplerate)"
-msgstr "Аутоматска учесталост узорковања (преклапа циљну учесталост узорковања)"
+msgstr ""
+"Аутоматска учесталост узорковања (преклапа циљну учесталост узорковања)"
 
 #. shellexecui
 #: ../translation/extra.c:97
@@ -1769,7 +1605,8 @@ msgstr "Без паузе између нумера (брже скенирање
 #. adplug
 #: ../translation/extra.c:101
 msgid "Prefer Ken emu over Satoh (surround won't work)"
-msgstr "Радије користи „Ken“ него „Satoh“ емулацију (окружујући звук неће радити)"
+msgstr ""
+"Радије користи „Ken“ него „Satoh“ емулацију (окружујући звук неће радити)"
 
 #: ../translation/extra.c:102
 msgid "Enable surround"
@@ -1803,18 +1640,19 @@ msgstr "Одаберите директоријум..."
 msgid "Failed to save encoder preset"
 msgstr "Није успело чување поставки кодера"
 
-#: ../plugins/converter/convgui.c:683
-#: ../plugins/converter/convgui.c:1157
-msgid "Check preset folder permissions, try to pick different title, or free up some disk space"
-msgstr "Проверите дозволе директоријума за чување поставки или дајте поставки друго име или проверите да ли имате довољно слободног простора на диску"
+#: ../plugins/converter/convgui.c:683 ../plugins/converter/convgui.c:1157
+msgid ""
+"Check preset folder permissions, try to pick different title, or free up "
+"some disk space"
+msgstr ""
+"Проверите дозволе директоријума за чување поставки или дајте поставки друго "
+"име или проверите да ли имате довољно слободног простора на диску"
 
-#: ../plugins/converter/convgui.c:683
-#: ../plugins/converter/convgui.c:1157
+#: ../plugins/converter/convgui.c:683 ../plugins/converter/convgui.c:1157
 msgid "Preset with the same name already exists. Try to pick another title."
 msgstr "Поставка са истим именом већ постоји. Дајте поставци друго име."
 
-#: ../plugins/converter/convgui.c:684
-#: ../plugins/converter/convgui.c:1158
+#: ../plugins/converter/convgui.c:684 ../plugins/converter/convgui.c:1158
 msgid "Error"
 msgstr "Грешка"
 
@@ -1826,13 +1664,11 @@ msgstr "Додај нови кодер"
 msgid "Edit encoder"
 msgstr "Уреди кодер"
 
-#: ../plugins/converter/convgui.c:800
-#: ../plugins/converter/convgui.c:1255
+#: ../plugins/converter/convgui.c:800 ../plugins/converter/convgui.c:1255
 msgid "Remove preset"
 msgstr "Уклони поставку"
 
-#: ../plugins/converter/convgui.c:802
-#: ../plugins/converter/convgui.c:1257
+#: ../plugins/converter/convgui.c:802 ../plugins/converter/convgui.c:1257
 msgid "This action will delete the selected preset. Are you sure?"
 msgstr "Овом радњом ћете обрисати одабрану поставку. Да ли то заиста желите?"
 
@@ -1840,8 +1676,7 @@ msgstr "Овом радњом ћете обрисати одабрану пос�
 msgid "Encoders"
 msgstr "Кодери"
 
-#: ../plugins/converter/convgui.c:897
-#: ../plugins/gtkui/dspconfig.c:186
+#: ../plugins/converter/convgui.c:897 ../plugins/gtkui/dspconfig.c:186
 msgid "Add plugin to DSP chain"
 msgstr "Додајте додатак у оквир за дигиталну обраду"
 
@@ -2107,8 +1942,13 @@ msgstr "Наредба:"
 #: ../plugins/shellexecui/interface.c:178
 #: ../plugins/shellexecui/shellexec.glade.h:10
 #, no-c-format
-msgid "Arbitrary shell command. Will be executed in the shell context which the main application was started from. Title formatting can be used. Example: xdg-open %D"
-msgstr "Произвољна наредба љуске — Извршиће се у окружењу љуске из којег је и главни програм покренут. Форматирање наслова је могуће. Нпр: xdg-open %D"
+msgid ""
+"Arbitrary shell command. Will be executed in the shell context which the "
+"main application was started from. Title formatting can be used. Example: "
+"xdg-open %D"
+msgstr ""
+"Произвољна наредба љуске — Извршиће се у окружењу љуске из којег је и главни "
+"програм покренут. Форматирање наслова је могуће. Нпр: xdg-open %D"
 
 #: ../plugins/shellexecui/interface.c:181
 #: ../plugins/shellexecui/shellexec.glade.h:11
@@ -2122,8 +1962,12 @@ msgstr "Слободно-дато име. Нпр. „Моја наредба љ�
 
 #: ../plugins/shellexecui/interface.c:201
 #: ../plugins/shellexecui/shellexec.glade.h:13
-msgid "Command ID, normally it should be something short, for example \"youtube_open\". It must be unique."
-msgstr "ИБ наредбе је обично је врло кратак (нпр. „youtube_open“), а мора бити јединствен."
+msgid ""
+"Command ID, normally it should be something short, for example \"youtube_open"
+"\". It must be unique."
+msgstr ""
+"ИБ наредбе је обично је врло кратак (нпр. „youtube_open“), а мора бити "
+"јединствен."
 
 #: ../plugins/shellexecui/interface.c:204
 #: ../plugins/shellexecui/shellexec.glade.h:15
@@ -2195,7 +2039,8 @@ msgstr "Обриши"
 
 #: ../plugins/shellexecui/shellexecui.c:139
 msgid "This action will delete the selected shell command. Are you sure?"
-msgstr "Овом радњом ћете обрисати одабрану наредбу љуске. Да ли то заиста желите?"
+msgstr ""
+"Овом радњом ћете обрисати одабрану наредбу љуске. Да ли то заиста желите?"
 
 #: ../plugins/shellexecui/shellexecui.c:141
 msgid "Confirm Remove"
@@ -2285,4 +2130,3 @@ msgstr "Поставке управљања сесијом:"
 #: ../plugins/gtkui/smclient/eggsmclient.c:254
 msgid "Show session management options"
 msgstr "Прикажи поставке управљања сесијом"
-
