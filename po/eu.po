@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-11 12:10+0200\n"
+"POT-Creation-Date: 2012-09-23 14:33+0200\n"
 "PO-Revision-Date: 2012-08-17 02:20+0200\n"
 "Last-Translator: Asier_Iturralde_Sarasola <asier.iturralde@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -172,11 +172,11 @@ msgstr "%d egun %d:%02d:%02d"
 msgid "Stopped | %d tracks | %s total playtime"
 msgstr "Geldituta | %d pista | guztizko erreprodukzio-denbora: %s"
 
-#: ../plugins/gtkui/gtkui.c:165 ../playlist.c:3036
+#: ../plugins/gtkui/gtkui.c:165 ../playlist.c:3037
 msgid "Mono"
 msgstr "Mono"
 
-#: ../plugins/gtkui/gtkui.c:165 ../playlist.c:3036
+#: ../plugins/gtkui/gtkui.c:165 ../playlist.c:3037
 msgid "Stereo"
 msgstr "Estereo"
 
@@ -1057,49 +1057,49 @@ msgid "Really close the window?"
 msgstr "Ziur leihoa itxi nahi duzula?"
 
 #. get value to edit
-#: ../plugins/gtkui/trkproperties.c:272
+#: ../plugins/gtkui/trkproperties.c:279
 msgid "[Multiple values] "
 msgstr "[Hainbat balio] "
 
-#: ../plugins/gtkui/trkproperties.c:425 ../plugins/gtkui/trkproperties.c:437
+#: ../plugins/gtkui/trkproperties.c:432 ../plugins/gtkui/trkproperties.c:444
 msgid "Key"
 msgstr "Gakoa"
 
-#: ../plugins/gtkui/trkproperties.c:426 ../plugins/gtkui/trkproperties.c:438
+#: ../plugins/gtkui/trkproperties.c:433 ../plugins/gtkui/trkproperties.c:445
 msgid "Value"
 msgstr "Balioa"
 
-#: ../plugins/gtkui/trkproperties.c:623
+#: ../plugins/gtkui/trkproperties.c:630
 msgid "Writing tags..."
 msgstr "Etiketak idazten..."
 
-#: ../plugins/gtkui/trkproperties.c:651
+#: ../plugins/gtkui/trkproperties.c:659
 msgid "Field name"
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:654
+#: ../plugins/gtkui/trkproperties.c:662
 msgid "Name:"
 msgstr "Izena:"
 
-#: ../plugins/gtkui/trkproperties.c:666
+#: ../plugins/gtkui/trkproperties.c:674
 msgid "Field names must not start with : or _"
 msgstr "Ezin dituzu : edo _ erabili eremu-izenen hasieran"
 
-#: ../plugins/gtkui/trkproperties.c:667 ../plugins/gtkui/trkproperties.c:706
+#: ../plugins/gtkui/trkproperties.c:675 ../plugins/gtkui/trkproperties.c:714
 msgid "Cannot add field"
 msgstr "Ezin da eremua gehitu"
 
-#: ../plugins/gtkui/trkproperties.c:705
+#: ../plugins/gtkui/trkproperties.c:713
 msgid "Field with such name already exists, please try different name."
 msgstr ""
 "Izen hori duen eremua existitzen da dagoeneko, mesedez erabili izen "
 "desberdin bat."
 
-#: ../plugins/gtkui/trkproperties.c:767
+#: ../plugins/gtkui/trkproperties.c:776
 msgid "Add field"
 msgstr "Gehitu eremua"
 
-#: ../plugins/gtkui/trkproperties.c:770
+#: ../plugins/gtkui/trkproperties.c:779
 msgid "Remove field"
 msgstr "Kendu eremua"
 
@@ -1220,15 +1220,15 @@ msgstr ""
 "                      Informazio gehiagorako, begiratu http://sourceforge."
 "net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"
 
-#: ../playlist.c:454 ../playlist.c:2418
+#: ../playlist.c:454 ../playlist.c:2419
 msgid "Default"
 msgstr "Lehenetsia"
 
-#: ../playlist.c:3793
+#: ../playlist.c:3794
 msgid "Yes"
 msgstr "Bai"
 
-#: ../playlist.c:3793
+#: ../playlist.c:3794
 msgid "No"
 msgstr "Ez"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: deadbeef 0.4.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-11 12:10+0200\n"
+"POT-Creation-Date: 2012-09-23 14:33+0200\n"
 "PO-Revision-Date: 2012-09-02 15:58+0200\n"
 "Last-Translator: Bendegúz <gyonkibendeguz@gmail.com>\n"
 "Language-Team: ned <polesz@nedudu.hu>\n"
@@ -175,11 +175,11 @@ msgstr "%d nap %d:%02d:%02d"
 msgid "Stopped | %d tracks | %s total playtime"
 msgstr "Megállítva | %d sáv | %s teljes lejátszási idő"
 
-#: ../plugins/gtkui/gtkui.c:165 ../playlist.c:3036
+#: ../plugins/gtkui/gtkui.c:165 ../playlist.c:3037
 msgid "Mono"
 msgstr "Monó"
 
-#: ../plugins/gtkui/gtkui.c:165 ../playlist.c:3036
+#: ../plugins/gtkui/gtkui.c:165 ../playlist.c:3037
 msgid "Stereo"
 msgstr "Sztereó"
 
@@ -1058,48 +1058,48 @@ msgid "Really close the window?"
 msgstr "Valóban bezárja az ablakot?"
 
 #. get value to edit
-#: ../plugins/gtkui/trkproperties.c:272
+#: ../plugins/gtkui/trkproperties.c:279
 msgid "[Multiple values] "
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:425 ../plugins/gtkui/trkproperties.c:437
+#: ../plugins/gtkui/trkproperties.c:432 ../plugins/gtkui/trkproperties.c:444
 msgid "Key"
 msgstr "Billentyű"
 
-#: ../plugins/gtkui/trkproperties.c:426 ../plugins/gtkui/trkproperties.c:438
+#: ../plugins/gtkui/trkproperties.c:433 ../plugins/gtkui/trkproperties.c:445
 msgid "Value"
 msgstr "Érték"
 
-#: ../plugins/gtkui/trkproperties.c:623
+#: ../plugins/gtkui/trkproperties.c:630
 msgid "Writing tags..."
 msgstr "Címkék írása..."
 
-#: ../plugins/gtkui/trkproperties.c:651
+#: ../plugins/gtkui/trkproperties.c:659
 msgid "Field name"
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:654
+#: ../plugins/gtkui/trkproperties.c:662
 msgid "Name:"
 msgstr "Név:"
 
-#: ../plugins/gtkui/trkproperties.c:666
+#: ../plugins/gtkui/trkproperties.c:674
 msgid "Field names must not start with : or _"
 msgstr "A szövegmezők tartalma nem kezdődhet kettősponttal vagy aláhúzásjellel"
 
-#: ../plugins/gtkui/trkproperties.c:667 ../plugins/gtkui/trkproperties.c:706
+#: ../plugins/gtkui/trkproperties.c:675 ../plugins/gtkui/trkproperties.c:714
 msgid "Cannot add field"
 msgstr "Mező hozzáadása sikertelen"
 
-#: ../plugins/gtkui/trkproperties.c:705
+#: ../plugins/gtkui/trkproperties.c:713
 msgid "Field with such name already exists, please try different name."
 msgstr ""
 "Egy azonos névvel rendelkező mező már létezik, adj meg egy másik nevet."
 
-#: ../plugins/gtkui/trkproperties.c:767
+#: ../plugins/gtkui/trkproperties.c:776
 msgid "Add field"
 msgstr "Mező hozzáadása"
 
-#: ../plugins/gtkui/trkproperties.c:770
+#: ../plugins/gtkui/trkproperties.c:779
 msgid "Remove field"
 msgstr "Mező eltávolítása"
 
@@ -1215,15 +1215,15 @@ msgstr ""
 "                      további információ: http://sourceforge.net/apps/"
 "mediawiki/deadbeef/index.php?title=Title_Formatting\n"
 
-#: ../playlist.c:454 ../playlist.c:2418
+#: ../playlist.c:454 ../playlist.c:2419
 msgid "Default"
 msgstr "Alapértelmezett"
 
-#: ../playlist.c:3793
+#: ../playlist.c:3794
 msgid "Yes"
 msgstr "Igen"
 
-#: ../playlist.c:3793
+#: ../playlist.c:3794
 msgid "No"
 msgstr "Nem"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-11 12:10+0200\n"
+"POT-Creation-Date: 2012-09-23 14:33+0200\n"
 "PO-Revision-Date: 2011-11-24 05:01+0200\n"
 "Last-Translator: Yinghua_Wang <wantinghard@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -172,11 +172,11 @@ msgstr "%d 天 %d:%02d:%02d"
 msgid "Stopped | %d tracks | %s total playtime"
 msgstr "已停止 | 音轨数 %d | 播放总时长 %s"
 
-#: ../plugins/gtkui/gtkui.c:165 ../playlist.c:3036
+#: ../plugins/gtkui/gtkui.c:165 ../playlist.c:3037
 msgid "Mono"
 msgstr "单声道"
 
-#: ../plugins/gtkui/gtkui.c:165 ../playlist.c:3036
+#: ../plugins/gtkui/gtkui.c:165 ../playlist.c:3037
 msgid "Stereo"
 msgstr "立体声"
 
@@ -1050,47 +1050,47 @@ msgid "Really close the window?"
 msgstr "真的关闭该窗口吗？"
 
 #. get value to edit
-#: ../plugins/gtkui/trkproperties.c:272
+#: ../plugins/gtkui/trkproperties.c:279
 msgid "[Multiple values] "
 msgstr "[多个值] "
 
-#: ../plugins/gtkui/trkproperties.c:425 ../plugins/gtkui/trkproperties.c:437
+#: ../plugins/gtkui/trkproperties.c:432 ../plugins/gtkui/trkproperties.c:444
 msgid "Key"
 msgstr "键"
 
-#: ../plugins/gtkui/trkproperties.c:426 ../plugins/gtkui/trkproperties.c:438
+#: ../plugins/gtkui/trkproperties.c:433 ../plugins/gtkui/trkproperties.c:445
 msgid "Value"
 msgstr "值"
 
-#: ../plugins/gtkui/trkproperties.c:623
+#: ../plugins/gtkui/trkproperties.c:630
 msgid "Writing tags..."
 msgstr "正在写入标签..."
 
-#: ../plugins/gtkui/trkproperties.c:651
+#: ../plugins/gtkui/trkproperties.c:659
 msgid "Field name"
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:654
+#: ../plugins/gtkui/trkproperties.c:662
 msgid "Name:"
 msgstr "名称："
 
-#: ../plugins/gtkui/trkproperties.c:666
+#: ../plugins/gtkui/trkproperties.c:674
 msgid "Field names must not start with : or _"
 msgstr "字段名称不能以 : 或 _ 开头"
 
-#: ../plugins/gtkui/trkproperties.c:667 ../plugins/gtkui/trkproperties.c:706
+#: ../plugins/gtkui/trkproperties.c:675 ../plugins/gtkui/trkproperties.c:714
 msgid "Cannot add field"
 msgstr "无法添加字段"
 
-#: ../plugins/gtkui/trkproperties.c:705
+#: ../plugins/gtkui/trkproperties.c:713
 msgid "Field with such name already exists, please try different name."
 msgstr "同名的字段已经存在，请尝试其他名称。"
 
-#: ../plugins/gtkui/trkproperties.c:767
+#: ../plugins/gtkui/trkproperties.c:776
 msgid "Add field"
 msgstr "添加字段"
 
-#: ../plugins/gtkui/trkproperties.c:770
+#: ../plugins/gtkui/trkproperties.c:779
 msgid "Remove field"
 msgstr "移除字段"
 
@@ -1204,15 +1204,15 @@ msgstr ""
 "                      更多信息请参阅 http://sourceforge.net/apps/mediawiki/"
 "deadbeef/index.php?title=Title_Formatting\n"
 
-#: ../playlist.c:454 ../playlist.c:2418
+#: ../playlist.c:454 ../playlist.c:2419
 msgid "Default"
 msgstr "默认"
 
-#: ../playlist.c:3793
+#: ../playlist.c:3794
 msgid "Yes"
 msgstr "是"
 
-#: ../playlist.c:3793
+#: ../playlist.c:3794
 msgid "No"
 msgstr "否"
 

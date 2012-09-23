@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-11 12:10+0200\n"
+"POT-Creation-Date: 2012-09-23 14:33+0200\n"
 "PO-Revision-Date: 2012-09-13 03:58+0200\n"
 "Last-Translator: Gheyret <gheyret@gmail.com>\n"
 "Language-Team: Uyghur Computer Science Association <UKIJ@yahoogroups.com>\n"
@@ -172,11 +172,11 @@ msgstr "%d كۈن %d:%02d:%02d"
 msgid "Stopped | %d tracks | %s total playtime"
 msgstr "توختىغان  | %d  نەغمە  | %s جەمئىي قويۇش ۋاقتى"
 
-#: ../plugins/gtkui/gtkui.c:165 ../playlist.c:3036
+#: ../plugins/gtkui/gtkui.c:165 ../playlist.c:3037
 msgid "Mono"
 msgstr "يەككە يوللۇق ئاۋاز"
 
-#: ../plugins/gtkui/gtkui.c:165 ../playlist.c:3036
+#: ../plugins/gtkui/gtkui.c:165 ../playlist.c:3037
 msgid "Stereo"
 msgstr "ستېرېئو"
 
@@ -1050,47 +1050,47 @@ msgid "Really close the window?"
 msgstr "كۆزنەكنى راستلا ياپامسىز؟"
 
 #. get value to edit
-#: ../plugins/gtkui/trkproperties.c:272
+#: ../plugins/gtkui/trkproperties.c:279
 msgid "[Multiple values] "
 msgstr "[بىر قانچە قىممەت] "
 
-#: ../plugins/gtkui/trkproperties.c:425 ../plugins/gtkui/trkproperties.c:437
+#: ../plugins/gtkui/trkproperties.c:432 ../plugins/gtkui/trkproperties.c:444
 msgid "Key"
 msgstr "ئاچقۇچ"
 
-#: ../plugins/gtkui/trkproperties.c:426 ../plugins/gtkui/trkproperties.c:438
+#: ../plugins/gtkui/trkproperties.c:433 ../plugins/gtkui/trkproperties.c:445
 msgid "Value"
 msgstr "قىممەت"
 
-#: ../plugins/gtkui/trkproperties.c:623
+#: ../plugins/gtkui/trkproperties.c:630
 msgid "Writing tags..."
 msgstr "خەتكۈچلەرنى يېزىۋاتىدۇ…"
 
-#: ../plugins/gtkui/trkproperties.c:651
+#: ../plugins/gtkui/trkproperties.c:659
 msgid "Field name"
 msgstr "سۆز بۆلەك ئاتى"
 
-#: ../plugins/gtkui/trkproperties.c:654
+#: ../plugins/gtkui/trkproperties.c:662
 msgid "Name:"
 msgstr "ئاتى:"
 
-#: ../plugins/gtkui/trkproperties.c:666
+#: ../plugins/gtkui/trkproperties.c:674
 msgid "Field names must not start with : or _"
 msgstr "سوز بۆلىكى ئاتى : ياكى _ بىلەن باشلانماسلىقى كېرەك"
 
-#: ../plugins/gtkui/trkproperties.c:667 ../plugins/gtkui/trkproperties.c:706
+#: ../plugins/gtkui/trkproperties.c:675 ../plugins/gtkui/trkproperties.c:714
 msgid "Cannot add field"
 msgstr "سوز بۆلىكى قوشقىلى بولمىدى"
 
-#: ../plugins/gtkui/trkproperties.c:705
+#: ../plugins/gtkui/trkproperties.c:713
 msgid "Field with such name already exists, please try different name."
 msgstr "بۇنداق ئاتى بار سوز بۆلىكى مەۋجۇت، باشقا ئاتنى سىناپ كۆرۈڭ."
 
-#: ../plugins/gtkui/trkproperties.c:767
+#: ../plugins/gtkui/trkproperties.c:776
 msgid "Add field"
 msgstr "سوز بۆلىكى قوشۇش"
 
-#: ../plugins/gtkui/trkproperties.c:770
+#: ../plugins/gtkui/trkproperties.c:779
 msgid "Remove field"
 msgstr "سوز بۆلىكىنى چىقىرىۋېتىش"
 
@@ -1209,15 +1209,15 @@ msgstr ""
 "                      تېخىمۇ كوپ ئۇچۇرلار ئۈچۈن http://sourceforge.net/apps/"
 "mediawiki/deadbeef/index.php?title=Title_Formatting گە قاراڭ\n"
 
-#: ../playlist.c:454 ../playlist.c:2418
+#: ../playlist.c:454 ../playlist.c:2419
 msgid "Default"
 msgstr "كۆڭۈلدىكى"
 
-#: ../playlist.c:3793
+#: ../playlist.c:3794
 msgid "Yes"
 msgstr "ھەئە"
 
-#: ../playlist.c:3793
+#: ../playlist.c:3794
 msgid "No"
 msgstr "ياق"
 

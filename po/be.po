@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.4.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-11 12:10+0200\n"
+"POT-Creation-Date: 2012-09-23 14:33+0200\n"
 "PO-Revision-Date: 2012-09-12 20:49+0200\n"
 "Last-Translator: Мікалай <crom-a@tut.by>\n"
 "Language-Team: Belarusian <>\n"
@@ -16,8 +16,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: \n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
-"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Pootle 2.0.5\n"
 
 #: ../plugins/gtkui/callbacks.c:123
@@ -174,11 +174,11 @@ msgstr "%d дзён %d:%02d:%02d"
 msgid "Stopped | %d tracks | %s total playtime"
 msgstr "Стоп | %d трэкаў | %s агульны час"
 
-#: ../plugins/gtkui/gtkui.c:165 ../playlist.c:3036
+#: ../plugins/gtkui/gtkui.c:165 ../playlist.c:3037
 msgid "Mono"
 msgstr "Мона"
 
-#: ../plugins/gtkui/gtkui.c:165 ../playlist.c:3036
+#: ../plugins/gtkui/gtkui.c:165 ../playlist.c:3037
 msgid "Stereo"
 msgstr "Стэрэа"
 
@@ -1048,47 +1048,47 @@ msgid "Really close the window?"
 msgstr "Закрыць акно?"
 
 #. get value to edit
-#: ../plugins/gtkui/trkproperties.c:272
+#: ../plugins/gtkui/trkproperties.c:279
 msgid "[Multiple values] "
 msgstr "[Некалькі велічынь] "
 
-#: ../plugins/gtkui/trkproperties.c:425 ../plugins/gtkui/trkproperties.c:437
+#: ../plugins/gtkui/trkproperties.c:432 ../plugins/gtkui/trkproperties.c:444
 msgid "Key"
 msgstr "Ключ"
 
-#: ../plugins/gtkui/trkproperties.c:426 ../plugins/gtkui/trkproperties.c:438
+#: ../plugins/gtkui/trkproperties.c:433 ../plugins/gtkui/trkproperties.c:445
 msgid "Value"
 msgstr "Значэнне"
 
-#: ../plugins/gtkui/trkproperties.c:623
+#: ../plugins/gtkui/trkproperties.c:630
 msgid "Writing tags..."
 msgstr "Запісанне тэгаў..."
 
-#: ../plugins/gtkui/trkproperties.c:651
+#: ../plugins/gtkui/trkproperties.c:659
 msgid "Field name"
 msgstr "Назва поля"
 
-#: ../plugins/gtkui/trkproperties.c:654
+#: ../plugins/gtkui/trkproperties.c:662
 msgid "Name:"
 msgstr "Назва:"
 
-#: ../plugins/gtkui/trkproperties.c:666
+#: ../plugins/gtkui/trkproperties.c:674
 msgid "Field names must not start with : or _"
 msgstr "Назвы палёў не могуць пачынацца з : ці _"
 
-#: ../plugins/gtkui/trkproperties.c:667 ../plugins/gtkui/trkproperties.c:706
+#: ../plugins/gtkui/trkproperties.c:675 ../plugins/gtkui/trkproperties.c:714
 msgid "Cannot add field"
 msgstr "Немагчыма дадаць поле"
 
-#: ../plugins/gtkui/trkproperties.c:705
+#: ../plugins/gtkui/trkproperties.c:713
 msgid "Field with such name already exists, please try different name."
 msgstr "Поле з такой назвай ужо ёсць, паспрабуйце назваць інакш."
 
-#: ../plugins/gtkui/trkproperties.c:767
+#: ../plugins/gtkui/trkproperties.c:776
 msgid "Add field"
 msgstr "Дадаць поле"
 
-#: ../plugins/gtkui/trkproperties.c:770
+#: ../plugins/gtkui/trkproperties.c:779
 msgid "Remove field"
 msgstr "Сцерці поле"
 
@@ -1170,7 +1170,8 @@ msgstr "   --queue             Дадаць файл(ы) у існуючы пл�
 #, c-format
 msgid ""
 "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
-msgstr "   --gui PLUGIN       Паказвае, які плагін GUI ужываць, звычайна \"GTK2\"\n"
+msgstr ""
+"   --gui PLUGIN       Паказвае, які плагін GUI ужываць, звычайна \"GTK2\"\n"
 
 #: ../main.c:99
 #, c-format
@@ -1208,15 +1209,15 @@ msgstr ""
 "                     за падрабязнымі звесткамі, гл. http://sourceforge.net/"
 "apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"
 
-#: ../playlist.c:454 ../playlist.c:2418
+#: ../playlist.c:454 ../playlist.c:2419
 msgid "Default"
 msgstr "Прадвызначана"
 
-#: ../playlist.c:3793
+#: ../playlist.c:3794
 msgid "Yes"
 msgstr "Так"
 
-#: ../playlist.c:3793
+#: ../playlist.c:3794
 msgid "No"
 msgstr "Не"
 
@@ -1944,8 +1945,8 @@ msgid ""
 "xdg-open %D"
 msgstr ""
 "Адвольны загад абалонкі. Будзе выкананы ў тым кантэксце абалонкі, з якім "
-"стартавала галоўная праграма. Можна ўжываць фарматаванне назвы. Прыклад: "
-"xdg-open %D"
+"стартавала галоўная праграма. Можна ўжываць фарматаванне назвы. Прыклад: xdg-"
+"open %D"
 
 #: ../plugins/shellexecui/interface.c:181
 #: ../plugins/shellexecui/shellexec.glade.h:11
@@ -1963,8 +1964,8 @@ msgid ""
 "Command ID, normally it should be something short, for example \"youtube_open"
 "\". It must be unique."
 msgstr ""
-"Ідэнтыфікатар ID загада, звычайна нешта кароткае, напрыклад \"youtube_open\". "
-"Павінен быць унікальным."
+"Ідэнтыфікатар ID загада, звычайна нешта кароткае, напрыклад \"youtube_open"
+"\". Павінен быць унікальным."
 
 #: ../plugins/shellexecui/interface.c:204
 #: ../plugins/shellexecui/shellexec.glade.h:15
