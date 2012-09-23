@@ -2075,7 +2075,7 @@ msgstr "Подтвердите удаление"
 
 #: ../plugins/shellexecui/shellexecui.c:230
 msgid "ID must be non-empty and unique.\n"
-msgstr "идентификатор должен быть уникальным и непустым"
+msgstr "идентификатор должен быть уникальным и непустым\n"
 
 #: ../plugins/shellexecui/shellexecui.c:236
 msgid "Title must be non-empty.\n"
