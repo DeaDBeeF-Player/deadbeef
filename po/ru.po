@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: 0.4.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-11 12:10+0200\n"
-"PO-Revision-Date: 2011-12-15 15:34+0200\n"
+"PO-Revision-Date: 2012-09-14 17:14+0200\n"
 "Last-Translator: Max <mpui@tut.by>\n"
 "Language-Team: ru <slpiv@mail.ru>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
+"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Pootle 2.0.5\n"
 
 #: ../plugins/gtkui/callbacks.c:123
@@ -224,7 +224,7 @@ msgstr "Новый плейлист (%d)"
 
 #: ../plugins/gtkui/gtkui.c:1085
 msgid "- Test logout functionality"
-msgstr ""
+msgstr "- Проверить функцию вызода из системы"
 
 #: ../plugins/gtkui/interface.c:150 ../plugins/gtkui/deadbeef.glade.h:1
 msgid "_File"
@@ -305,7 +305,6 @@ msgid "_Find"
 msgstr "_Найти"
 
 #: ../plugins/gtkui/interface.c:288 ../plugins/gtkui/deadbeef.glade.h:19
-#, fuzzy
 msgid "Sort by"
 msgstr "Сортировать по"
 
@@ -402,17 +401,16 @@ msgid "Looping"
 msgstr "Повторять"
 
 #: ../plugins/gtkui/interface.c:400 ../plugins/gtkui/deadbeef.glade.h:39
-#, fuzzy
 msgid "Loop all"
-msgstr "Все"
+msgstr "Весь список"
 
+# может лучше "текущую"?
 #: ../plugins/gtkui/interface.c:406 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "Loop single song"
-msgstr "Дорожку"
+msgstr "Отдельную дорожку"
 
+# или "Остановиться в конце списка"?
 #: ../plugins/gtkui/interface.c:412 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "Don't loop"
 msgstr "Не повторять"
 
@@ -651,9 +649,8 @@ msgid "Don't add from archives when adding folders"
 msgstr "Не добавлять из архивов при добавлении каталогов"
 
 #: ../plugins/gtkui/interface.c:1974 ../plugins/gtkui/deadbeef.glade.h:104
-#, fuzzy
 msgid "Auto-reset \"Stop after current\""
-msgstr "Останавливать после текущей"
+msgstr "Автосброс функции \"Остановить воспроизведение после текущей дорожки\""
 
 #: ../plugins/gtkui/interface.c:1978 ../plugins/gtkui/deadbeef.glade.h:105
 msgid "Playback"
@@ -703,11 +700,11 @@ msgstr "Автоматически именовать плейлисты при 
 
 #: ../plugins/gtkui/interface.c:2083 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Enable Russian CP1251 detection and recoding"
-msgstr ""
+msgstr "Включить распознавание и перекодирование кодировки CP1251"
 
 #: ../plugins/gtkui/interface.c:2087 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Enable Chinese CP936 detection and recoding"
-msgstr ""
+msgstr "Включить распознавание и перекодирование кодировки CP936"
 
 #: ../plugins/gtkui/interface.c:2095 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Interface refresh rate (times per second):"
@@ -727,7 +724,7 @@ msgstr "Графический интерфейс (для изменения н�
 
 #: ../plugins/gtkui/interface.c:2145 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "GUI/Misc"
-msgstr ""
+msgstr "Графический интерфейс / прочее"
 
 #: ../plugins/gtkui/interface.c:2160 ../plugins/gtkui/interface.c:2204
 #: ../plugins/gtkui/deadbeef.glade.h:123
@@ -839,7 +836,7 @@ msgstr "Пароль:"
 
 #: ../plugins/gtkui/interface.c:2473 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "HTTP User Agent:"
-msgstr ""
+msgstr "значение HTTP User Agent"
 
 #: ../plugins/gtkui/interface.c:2482 ../plugins/gtkui/deadbeef.glade.h:148
 msgid "Network"
@@ -863,12 +860,10 @@ msgid "URL:"
 msgstr "Адрес:"
 
 #: ../plugins/gtkui/interface.c:3196 ../plugins/gtkui/deadbeef.glade.h:153
-#, fuzzy
 msgid "Group By ..."
 msgstr "Группировать по"
 
 #: ../plugins/gtkui/interface.c:3320 ../plugins/gtkui/deadbeef.glade.h:154
-#, fuzzy
 msgid "Sort by ..."
 msgstr "Сортировать по..."
 
@@ -1039,9 +1034,8 @@ msgid "Global Hotkeys"
 msgstr "Горячие клавиши"
 
 #: ../plugins/gtkui/prefwin.c:416
-#, fuzzy
 msgid "Action"
-msgstr "Расположение"
+msgstr "Действие"
 
 #: ../plugins/gtkui/prefwin.c:417
 msgid "Key combination"
@@ -1082,7 +1076,7 @@ msgstr "Запись тегов..."
 
 #: ../plugins/gtkui/trkproperties.c:651
 msgid "Field name"
-msgstr ""
+msgstr "Название поля"
 
 #: ../plugins/gtkui/trkproperties.c:654
 msgid "Name:"
@@ -1109,7 +1103,7 @@ msgid "Remove field"
 msgstr "Удалить поле"
 
 #: ../main.c:84
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: deadbeef [options] [--] [file(s)]\n"
 msgstr "Использование: deadbeef [опции] [файл(ы)]\n"
 
@@ -1188,13 +1182,13 @@ msgstr "   --queue             Добавить файл(ы) в существу
 #, c-format
 msgid ""
 "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
-msgstr ""
+msgstr "   --gui PLUGIN        Выбирает модуль графической оболочки, \"GTK2\" по "
+"умолчанию\n"
 
 #: ../main.c:99
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr ""
-"   --nowplaying FMT    Вывести на экран форматированное название дорожки\n"
+msgstr "   --nowplaying FMT    Вывести на экран форматированное название дорожки\n"
 
 #: ../main.c:100
 #, c-format
@@ -1319,7 +1313,6 @@ msgstr ""
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
-#, fuzzy
 msgid "Add audio CD"
 msgstr "Добавить аудио CD"
 
@@ -1367,7 +1360,7 @@ msgstr "Адрес для скробблинга"
 
 #: ../translation/extra.c:16
 msgid "Prefer Album Artist over Artist field"
-msgstr ""
+msgstr "Использовать поле Album Artist вместо Artist при возможности"
 
 #. OSS output plugin
 #: ../translation/extra.c:18
@@ -1439,7 +1432,7 @@ msgstr "Качество передискретизации (0..2, выше - л
 
 #: ../translation/extra.c:37
 msgid "8-bit output (default is 16)"
-msgstr ""
+msgstr "Разраядность выходного потока 8 бит (по умолчнию - 16)"
 
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:39
@@ -1447,13 +1440,14 @@ msgid "Max song length (in minutes)"
 msgstr "Максимальная длина дорожки (в минутах)"
 
 #: ../translation/extra.c:40
-#, fuzzy
 msgid "Fadeout length (seconds)"
-msgstr "Длина дорожки по умолчанию (сек)"
+msgstr "Длительность затухания (сек)"
 
+# loop может иметь значение "сэмпл", хотя здесь вряд-ли так
 #: ../translation/extra.c:41
+#, fuzzy
 msgid "Play loops nr. of times (if available)"
-msgstr ""
+msgstr "Количество проигрываний повторов (если доступно)"
 
 #. Standard GTK2 user interface plugin
 #: ../translation/extra.c:43
@@ -1605,7 +1599,6 @@ msgid "Target Samplerate"
 msgstr "Частота дискретизации"
 
 #: ../translation/extra.c:94
-#, fuzzy
 msgid "Quality / Algorithm"
 msgstr "Качество / Алгоритм"
 
@@ -1614,15 +1607,21 @@ msgid "Automatic Samplerate (overrides Target Samplerate)"
 msgstr ""
 "Автоматическая частота дискретизации (переопределяет частоту дискретизации)"
 
+# тафталогия...
 #. shellexecui
 #: ../translation/extra.c:97
+#, fuzzy
 msgid "Configure custom shell commands"
-msgstr ""
+msgstr "Параметры вызова команд командной строки"
 
+# хотелось бы покороче
 #. mpgmad
 #: ../translation/extra.c:99
+#, fuzzy
 msgid "Disable gapless playback (faster scanning)"
 msgstr ""
+"Выключить утсранение тишины между дорожками при проигрывание (ускоряет "
+"сканирование файлов)"
 
 #. adplug
 #: ../translation/extra.c:101
@@ -1726,7 +1725,7 @@ msgstr "Выходной каталог:"
 #: ../plugins/converter/interface.c:109
 #: ../plugins/converter/converter.glade.h:2
 msgid "Write to source track folder"
-msgstr ""
+msgstr "Записать в каталог исходной дорожки"
 
 #: ../plugins/converter/interface.c:113
 #: ../plugins/converter/converter.glade.h:3
@@ -1913,13 +1912,20 @@ msgid ""
 "32 bit signed int\n"
 "32 bit float"
 msgstr ""
+"Как в исохдной дорожке\n"
+"8 бит целочисленный\n"
+"16 бит целочисленный\n"
+"24 бит целочисленный\n"
+"32 бит целочисленный\n"
+"32 бит c плавающей запятой"
 
 #: ../plugins/converter/converter.glade.h:19
-#, fuzzy
 msgid ""
 "Prompt\n"
 "Overwrite"
-msgstr "Заменить"
+msgstr ""
+"спросить \n"
+"о перезаписи"
 
 #: ../plugins/converter/converter.glade.h:34
 #, fuzzy
@@ -1928,35 +1934,34 @@ msgid ""
 "Temporary file"
 msgstr "Временный файл"
 
+# или "командной строки"
 #: ../plugins/shellexecui/interface.c:46
 #: ../plugins/shellexecui/shellexec.glade.h:1
+#, fuzzy
 msgid "Custom Shell Commands"
-msgstr ""
+msgstr "Настроить вызовы команд оболочки"
 
 #: ../plugins/shellexecui/interface.c:69
 #: ../plugins/shellexecui/shellexec.glade.h:5
-#, fuzzy
 msgid "Edit"
-msgstr "_Правка"
+msgstr "Правка"
 
 #: ../plugins/shellexecui/interface.c:87
 #: ../plugins/shellexecui/shellexec.glade.h:2
-#, fuzzy
 msgid "Close"
-msgstr "_Закрыть"
+msgstr "Закрыть"
 
 #: ../plugins/shellexecui/interface.c:145
 #: ../plugins/shellexecui/shellexec.glade.h:6
-#, fuzzy
 msgid "Edit Command"
-msgstr "Редактировать столбец"
+msgstr "Редактировать команду"
 
 #: ../plugins/shellexecui/interface.c:166
 #: ../plugins/shellexecui/shellexec.glade.h:8
-#, fuzzy
 msgid "Command:"
-msgstr "Командная строка"
+msgstr "Команда"
 
+# "выполнена в контексте командной строки основной программы" -может не стоит писать об этом. Для тех, кто понимает, что это, оно очевидно, остальным - безразлично
 #: ../plugins/shellexecui/interface.c:178
 #: ../plugins/shellexecui/shellexec.glade.h:10
 #, no-c-format
@@ -1965,16 +1970,18 @@ msgid ""
 "main application was started from. Title formatting can be used. Example: "
 "xdg-open %D"
 msgstr ""
+"Произвольная команда командной строки. Будет выполнена в контексте командной "
+"строки основной программы, из которой запущена. Например: xdg-open %D"
 
 #: ../plugins/shellexecui/interface.c:181
 #: ../plugins/shellexecui/shellexec.glade.h:11
 msgid "ID:"
-msgstr ""
+msgstr "ID:"
 
 #: ../plugins/shellexecui/interface.c:193
 #: ../plugins/shellexecui/shellexec.glade.h:12
 msgid "Free-form name, for example \"My Shell Command\""
-msgstr ""
+msgstr "Произвольное имя, например \"Моя команда\""
 
 #: ../plugins/shellexecui/interface.c:201
 #: ../plugins/shellexecui/shellexec.glade.h:13
@@ -1982,99 +1989,95 @@ msgid ""
 "Command ID, normally it should be something short, for example \"youtube_open"
 "\". It must be unique."
 msgstr ""
+"Уникальный идентификатор команды, рекомендуется использовать короткие "
+"идентификаторы вида \"youtube_open\""
 
 #: ../plugins/shellexecui/interface.c:204
 #: ../plugins/shellexecui/shellexec.glade.h:15
-#, fuzzy
 msgid "Single Tracks"
-msgstr "Перемешивать дорожки"
+msgstr "Отдельные дорожки"
 
 #: ../plugins/shellexecui/interface.c:207
 #: ../plugins/shellexecui/shellexec.glade.h:14
 msgid "Works on single track."
-msgstr ""
+msgstr "Для работы с одной дорожкой"
 
 #: ../plugins/shellexecui/interface.c:209
 #: ../plugins/shellexecui/shellexec.glade.h:17
-#, fuzzy
 msgid "Multiple Tracks"
-msgstr "[Несколько значений] "
+msgstr "Несколько дорожек"
 
 #: ../plugins/shellexecui/interface.c:212
 #: ../plugins/shellexecui/shellexec.glade.h:16
 msgid "Works on multiple tracks."
-msgstr ""
+msgstr "Для работы с несколькими дорожками"
 
 #: ../plugins/shellexecui/interface.c:214
 #: ../plugins/shellexecui/shellexec.glade.h:19
-#, fuzzy
 msgid "Local"
-msgstr "Расположение"
+msgstr "Локально"
 
 #: ../plugins/shellexecui/interface.c:217
 #: ../plugins/shellexecui/shellexec.glade.h:18
 msgid "Works on local files."
-msgstr ""
+msgstr "Для работы с файлами на текущем компьютере"
 
 #: ../plugins/shellexecui/interface.c:219
 #: ../plugins/shellexecui/shellexec.glade.h:21
-#, fuzzy
 msgid "Remote"
-msgstr "Удалить"
+msgstr "Удалённо"
 
 #: ../plugins/shellexecui/interface.c:222
 #: ../plugins/shellexecui/shellexec.glade.h:20
 msgid "Works on remote files (e.g. http:// streams)"
-msgstr ""
+msgstr "Для работы с удалёнными файлами"
 
 #: ../plugins/shellexecui/interface.c:224
 #: ../plugins/shellexecui/shellexec.glade.h:23
-#, fuzzy
 msgid "Playlist"
-msgstr "Новый плейлист"
+msgstr "Список воспроизведения"
 
 #: ../plugins/shellexecui/interface.c:227
 #: ../plugins/shellexecui/shellexec.glade.h:22
 msgid "Item should appear on the playlist tab context menu"
 msgstr ""
+"Элемент должен появиться во вкладке \"список воспроизведения\" контекстного "
+"меню"
 
 #: ../plugins/shellexecui/interface.c:229
 #: ../plugins/shellexecui/shellexec.glade.h:25
-#, fuzzy
 msgid "Common"
-msgstr "Комментарий"
+msgstr "Общая"
 
 #: ../plugins/shellexecui/interface.c:232
 #: ../plugins/shellexecui/shellexec.glade.h:24
 msgid "Item should appear in the main menu"
-msgstr ""
+msgstr "Элемент должен появиться в главном меню"
 
 #: ../plugins/shellexecui/shellexecui.c:94
-#, fuzzy
 msgid "Add Command"
-msgstr "Добавить столбец"
+msgstr "Добавить команду"
 
+# команду??
 #: ../plugins/shellexecui/shellexecui.c:137
 msgid "Delete"
-msgstr ""
+msgstr "Удалить"
 
 #: ../plugins/shellexecui/shellexecui.c:139
-#, fuzzy
 msgid "This action will delete the selected shell command. Are you sure?"
-msgstr "Это действие приведёт к удалению выбранной предустановки. Вы уверены? "
+msgstr "Это действие приведёт к удалению выбранной команды. Вы уверены? "
 
 #: ../plugins/shellexecui/shellexecui.c:141
-#, fuzzy
 msgid "Confirm Remove"
-msgstr "Настроить"
+msgstr "Подтвердите удаление"
 
 #: ../plugins/shellexecui/shellexecui.c:230
 msgid "ID must be non-empty and unique.\n"
-msgstr ""
+msgstr "идентификатор должен быть уникальным и непустым"
 
 #: ../plugins/shellexecui/shellexecui.c:236
 msgid "Title must be non-empty.\n"
-msgstr ""
+msgstr "Название должно быть непустым\n"
 
 #: ../plugins/shellexecui/shellexecui.c:242
 msgid "Shell Command must be non-empty.\n"
