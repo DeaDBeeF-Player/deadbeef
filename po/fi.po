@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-23 14:33+0200\n"
-"PO-Revision-Date: 2012-06-06 16:50+0200\n"
-"Last-Translator: Juhani <juhaninumminen0@gmail.com>\n"
+"PO-Revision-Date: 2012-09-24 22:47+0200\n"
+"Last-Translator: Elias <wompatti@fffin.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
@@ -703,11 +703,11 @@ msgstr "Nimeä soittolista automaattisesti lisättäessä yksittäinen kansio"
 
 #: ../plugins/gtkui/interface.c:2083 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Enable Russian CP1251 detection and recoding"
-msgstr ""
+msgstr "Kytke päälle venäjänkielisen merkistön CP1251 tunnistus ja muunto"
 
 #: ../plugins/gtkui/interface.c:2087 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Enable Chinese CP936 detection and recoding"
-msgstr ""
+msgstr "Kytke päälle kiinankielisen merkistön CP936 tunnistus ja muunto"
 
 #: ../plugins/gtkui/interface.c:2095 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Interface refresh rate (times per second):"
@@ -728,8 +728,9 @@ msgstr ""
 "uudellenkäynnistyksen):"
 
 #: ../plugins/gtkui/interface.c:2145 ../plugins/gtkui/deadbeef.glade.h:122
+#, fuzzy
 msgid "GUI/Misc"
-msgstr ""
+msgstr "Käyttöliittymä/Sekalaiset"
 
 #: ../plugins/gtkui/interface.c:2160 ../plugins/gtkui/interface.c:2204
 #: ../plugins/gtkui/deadbeef.glade.h:123
@@ -1075,8 +1076,9 @@ msgid "Writing tags..."
 msgstr "Kirjoitetaan tageja..."
 
 #: ../plugins/gtkui/trkproperties.c:659
+#, fuzzy
 msgid "Field name"
-msgstr ""
+msgstr "Kentän nimi"
 
 #: ../plugins/gtkui/trkproperties.c:662
 msgid "Name:"
@@ -1177,10 +1179,11 @@ msgstr ""
 "   --queue            Lisää tiedosto(t) olemassa olevaan soittolistaan\n"
 
 #: ../main.c:98
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
-msgstr ""
+msgstr "   --gui PLUGIN       Määrittää mitä graafisen käyttöliittymän liitännäistä "
+"käytetään, oletus on \"GTK2\"\n"
 
 #: ../main.c:99
 #, c-format
@@ -1318,20 +1321,23 @@ msgstr "Etsi Last.fm-palvelusta"
 
 #. ALSA output plugin
 #: ../translation/extra.c:6
+#, fuzzy
 msgid "Use ALSA resampling"
-msgstr ""
+msgstr "Käytä ALSA:n taajuusmuunninta"
 
 #: ../translation/extra.c:7
 msgid "Release device while stopped"
 msgstr "Vapauta laite, kun toisto on lopetettu"
 
 #: ../translation/extra.c:8 ../translation/extra.c:55
+#, fuzzy
 msgid "Preferred buffer size"
-msgstr ""
+msgstr "Suositeltu puskurin koko"
 
 #: ../translation/extra.c:9
+#, fuzzy
 msgid "Preferred period size"
-msgstr ""
+msgstr "Suositeltu jakson koko"
 
 #. Last.fm plugin
 #: ../translation/extra.c:11
@@ -1355,8 +1361,9 @@ msgid "Scrobble URL"
 msgstr "Scrobble URL"
 
 #: ../translation/extra.c:16
+#, fuzzy
 msgid "Prefer Album Artist over Artist field"
-msgstr ""
+msgstr "Suosi albumin esittäjää yksittäisen kappaleen esittäjän sijaan"
 
 #. OSS output plugin
 #: ../translation/extra.c:18
@@ -1364,8 +1371,9 @@ msgid "Device file"
 msgstr "Laitetiedosto"
 
 #: ../translation/extra.c:19
+#, fuzzy
 msgid "OSS4 samplerate bug workaround"
-msgstr ""
+msgstr "Kierrä OSS4:n taajuusmuunnoksen ohjelmointivirhe"
 
 #. Album Artwork plugin
 #: ../translation/extra.c:21
@@ -1381,8 +1389,9 @@ msgid "Fetch from local folder"
 msgstr "Nouda paikallisesta kansiosta"
 
 #: ../translation/extra.c:24
+#, fuzzy
 msgid "Local cover file mask"
-msgstr ""
+msgstr "Paikallisten kansikuvien maski"
 
 #: ../translation/extra.c:25
 msgid "Fetch from last.fm"
@@ -1424,11 +1433,11 @@ msgstr "Ota käyttöön tuki NRG-levykuville"
 #. DUMB module player plugin
 #: ../translation/extra.c:36
 msgid "Resampling quality (0..2, higher is better)"
-msgstr ""
+msgstr "Muunnoksen laatu (0..2, suurempi on parempi)"
 
 #: ../translation/extra.c:37
 msgid "8-bit output (default is 16)"
-msgstr ""
+msgstr "8-bittinen lähtö (oletus on 16)"
 
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:39
@@ -1438,11 +1447,12 @@ msgstr "Kappaleen maksimipituus (minuuteissa)"
 #: ../translation/extra.c:40
 #, fuzzy
 msgid "Fadeout length (seconds)"
-msgstr "Kappaleen oletuspituus (sek)"
+msgstr "Häivytyksen pituus (sek)"
 
 #: ../translation/extra.c:41
+#, fuzzy
 msgid "Play loops nr. of times (if available)"
-msgstr ""
+msgstr "Toista kappaleita n. kertaa (jos saatavilla)"
 
 #. Standard GTK2 user interface plugin
 #: ../translation/extra.c:43
@@ -1450,8 +1460,9 @@ msgid "Ask confirmation to delete files from disk"
 msgstr "Kysy vahvistus ennen kuin tiedostoja poistetaan levyltä"
 
 #: ../translation/extra.c:44
+#, fuzzy
 msgid "Status icon volume control sensitivity"
-msgstr ""
+msgstr "Ilmoitinalueen äänenvoimakkuuden säädön herkkyys"
 
 #: ../translation/extra.c:45
 msgid "Custom status icon"
@@ -1468,11 +1479,11 @@ msgstr ""
 #. OSD Notify plugin
 #: ../translation/extra.c:49
 msgid "Notification title format"
-msgstr ""
+msgstr "Ilmoituksen otsikon muoto"
 
 #: ../translation/extra.c:50
 msgid "Notification content format"
-msgstr ""
+msgstr "Ilmoituksen sisällön muoto"
 
 #: ../translation/extra.c:51
 msgid "Show album art"
@@ -1501,8 +1512,9 @@ msgid "Absolute seek table path"
 msgstr ""
 
 #: ../translation/extra.c:60
+#, fuzzy
 msgid "Swap audio bytes (toggle if all you hear is static)"
-msgstr ""
+msgstr "Käännä äänen bitit toisinpäin (vaihda jos kuulet vain kohinaa)"
 
 #. SID decoder plugin
 #: ../translation/extra.c:62
@@ -1523,8 +1535,9 @@ msgstr "Kappaleen oletuspituus (sek)"
 
 #. WildMidi player plugin
 #: ../translation/extra.c:67
+#, fuzzy
 msgid "Timidity++ bank configuration file"
-msgstr ""
+msgstr "Timidity++:n pankin asetustiedosto"
 
 #: ../translation/extra.c:70
 msgid "Track Title"
@@ -1590,8 +1603,9 @@ msgstr "Muunna"
 
 #. Resampler (Secret Rabbit Code)
 #: ../translation/extra.c:93
+#, fuzzy
 msgid "Target Samplerate"
-msgstr ""
+msgstr "Kohdetaajuus"
 
 #: ../translation/extra.c:94
 #, fuzzy
@@ -1599,36 +1613,41 @@ msgid "Quality / Algorithm"
 msgstr "Laatu / algoritmi"
 
 #: ../translation/extra.c:95
+#, fuzzy
 msgid "Automatic Samplerate (overrides Target Samplerate)"
-msgstr ""
+msgstr "Automaattisesti valittu taajuus (syrjäyttää valitun kohdetaajuuden)"
 
 #. shellexecui
 #: ../translation/extra.c:97
+#, fuzzy
 msgid "Configure custom shell commands"
-msgstr ""
+msgstr "Konfiguroi mukautettuja komentotulkin komentoja"
 
 #. mpgmad
 #: ../translation/extra.c:99
+#, fuzzy
 msgid "Disable gapless playback (faster scanning)"
-msgstr ""
+msgstr "Poista tauoton toisto käytöstä (nopeampi haku)"
 
 #. adplug
 #: ../translation/extra.c:101
+#, fuzzy
 msgid "Prefer Ken emu over Satoh (surround won't work)"
-msgstr ""
+msgstr "Suosi Ken-emulointia Satohin sijaan (tilaääni ei toimi)"
 
 #: ../translation/extra.c:102
 #, fuzzy
 msgid "Enable surround"
-msgstr "Ota käyttöön scrobbler"
+msgstr "Ota tilaääni käyttöön"
 
 #: ../plugins/converter/convgui.c:117
 msgid "The file already exists. Overwrite?"
 msgstr "Tiedosto on jo olemassa. Ylikirjoita?"
 
 #: ../plugins/converter/convgui.c:119
+#, fuzzy
 msgid "Converter warning"
-msgstr ""
+msgstr "Muuntimen varoitus"
 
 #: ../plugins/converter/convgui.c:271
 msgid "Please select encoder"
@@ -1636,7 +1655,7 @@ msgstr "Valitse koodekki"
 
 #: ../plugins/converter/convgui.c:273
 msgid "Converter error"
-msgstr ""
+msgstr "Muuntimen virhe"
 
 #: ../plugins/converter/convgui.c:297
 msgid "Converting..."
@@ -1647,18 +1666,23 @@ msgid "Select folder..."
 msgstr "Valitse kansio..."
 
 #: ../plugins/converter/convgui.c:681
+#, fuzzy
 msgid "Failed to save encoder preset"
-msgstr ""
+msgstr "Enkooderin esiasetuksen tallennus epäonnistui"
 
 #: ../plugins/converter/convgui.c:683 ../plugins/converter/convgui.c:1157
+#, fuzzy
 msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
 msgstr ""
+"Tarkista halutun hakemiston käyttöoikeudet, valitse eri otsikko tai vapauta "
+"levytilaa"
 
 #: ../plugins/converter/convgui.c:683 ../plugins/converter/convgui.c:1157
+#, fuzzy
 msgid "Preset with the same name already exists. Try to pick another title."
-msgstr ""
+msgstr "Samanniminen esiasetus on jo olemassa. Valitse toinen nimi."
 
 #: ../plugins/converter/convgui.c:684 ../plugins/converter/convgui.c:1158
 msgid "Error"
@@ -1666,31 +1690,34 @@ msgstr "Virhe"
 
 #: ../plugins/converter/convgui.c:738
 msgid "Add new encoder"
-msgstr ""
+msgstr "Lisää uusi enkooderi"
 
 #: ../plugins/converter/convgui.c:768
 msgid "Edit encoder"
-msgstr ""
+msgstr "Muokkaa enkooderia"
 
 #: ../plugins/converter/convgui.c:800 ../plugins/converter/convgui.c:1255
 msgid "Remove preset"
 msgstr "Poista esiasetus"
 
 #: ../plugins/converter/convgui.c:802 ../plugins/converter/convgui.c:1257
+#, fuzzy
 msgid "This action will delete the selected preset. Are you sure?"
-msgstr ""
+msgstr "Tämä toiminto poistaa valitun esiasetuksen. Oletko varma?"
 
 #: ../plugins/converter/convgui.c:826
 msgid "Encoders"
-msgstr ""
+msgstr "Enkooderit"
 
 #: ../plugins/converter/convgui.c:897 ../plugins/gtkui/dspconfig.c:186
+#, fuzzy
 msgid "Add plugin to DSP chain"
-msgstr ""
+msgstr "Lisää liitännäinen DSP-ketjuun"
 
 #: ../plugins/converter/convgui.c:1156
+#, fuzzy
 msgid "Failed to save DSP preset"
-msgstr ""
+msgstr "DSP-esiasetuksen tallennus epäonnistui"
 
 #: ../plugins/converter/convgui.c:1220
 msgid "New DSP Preset"
@@ -1707,22 +1734,23 @@ msgstr "DSP-esiasetukset"
 #: ../plugins/converter/interface.c:92
 #: ../plugins/converter/converter.glade.h:1
 msgid "Output folder:"
-msgstr ""
+msgstr "Kohdehakemisto:"
 
 #: ../plugins/converter/interface.c:109
 #: ../plugins/converter/converter.glade.h:2
+#, fuzzy
 msgid "Write to source track folder"
-msgstr ""
+msgstr "Kirjoita tiedostot lähdehakemistoon"
 
 #: ../plugins/converter/interface.c:113
 #: ../plugins/converter/converter.glade.h:3
 msgid "Preserve folder structure"
-msgstr ""
+msgstr "Säilytä hakemiston rakenne"
 
 #: ../plugins/converter/interface.c:121
 #: ../plugins/converter/converter.glade.h:4
 msgid "Output file name:"
-msgstr ""
+msgstr "Kohdetiedoston nimi:"
 
 #: ../plugins/converter/interface.c:132
 #: ../plugins/converter/converter.glade.h:6
@@ -1737,7 +1765,7 @@ msgstr ""
 #: ../plugins/converter/interface.c:145
 #: ../plugins/converter/converter.glade.h:8
 msgid "Encoder:"
-msgstr ""
+msgstr "Enkooderi:"
 
 #: ../plugins/converter/interface.c:169
 #: ../plugins/converter/converter.glade.h:9
@@ -1746,17 +1774,20 @@ msgstr "DSP-esiasetus:"
 
 #: ../plugins/converter/interface.c:192
 #: ../plugins/converter/converter.glade.h:10
+#, fuzzy
 msgid "Number of threads:"
-msgstr ""
+msgstr "Säikeiden määrä:"
 
 #: ../plugins/converter/interface.c:205
 #: ../plugins/converter/converter.glade.h:11
+#, fuzzy
 msgid "Output sample format:"
-msgstr ""
+msgstr "Lopputuloksen näytteen tyyppi:"
 
 #: ../plugins/converter/interface.c:212
+#, fuzzy
 msgid "Keep source format"
-msgstr ""
+msgstr "Säilytä alkuperäinen muoto"
 
 #: ../plugins/converter/interface.c:213
 msgid "8 bit signed int"
@@ -1798,13 +1829,15 @@ msgstr "Muokkaa enkooderin esiasetusta"
 
 #: ../plugins/converter/interface.c:385
 #: ../plugins/converter/converter.glade.h:23
+#, fuzzy
 msgid "Untitled Encoder"
-msgstr ""
+msgstr "Nimetön enkooderi"
 
 #: ../plugins/converter/interface.c:393
 #: ../plugins/converter/converter.glade.h:24
+#, fuzzy
 msgid "Output file extension:"
-msgstr ""
+msgstr "Kohdetiedoston tiedostopääte:"
 
 #: ../plugins/converter/interface.c:400
 #: ../plugins/converter/converter.glade.h:25
@@ -1828,20 +1861,23 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:429
 #: ../plugins/converter/converter.glade.h:31
-#, no-c-format
+#, fuzzy, no-c-format
 msgid ""
 "<small>%o - output file name\n"
 "%i - temporary input file name</small>"
 msgstr ""
+"<small>%o - kohdetiedoston tiedostonimi\n"
+"%i - väliaikainen lähdetiedoston tiedostonimi</small>"
 
 #: ../plugins/converter/interface.c:438
 #: ../plugins/converter/converter.glade.h:33
+#, fuzzy
 msgid "Method:"
-msgstr ""
+msgstr "Menetelmä:"
 
 #: ../plugins/converter/interface.c:445
 msgid "Pipe"
-msgstr ""
+msgstr "Putki"
 
 #: ../plugins/converter/interface.c:446
 msgid "Temporary file"
@@ -1874,18 +1910,21 @@ msgstr "ID3v2"
 
 #: ../plugins/converter/interface.c:503
 #: ../plugins/converter/converter.glade.h:41
+#, fuzzy
 msgid "<b>Tag writer</b>"
-msgstr ""
+msgstr "<b>Tagin kirjoitus</b>"
 
 #: ../plugins/converter/interface.c:589
 #: ../plugins/converter/converter.glade.h:42
+#, fuzzy
 msgid "DSP Preset Editor"
-msgstr ""
+msgstr "DSP-esiasetusten muokkain"
 
 #: ../plugins/converter/interface.c:612
 #: ../plugins/converter/converter.glade.h:44
+#, fuzzy
 msgid "Untitled DSP Preset"
-msgstr ""
+msgstr "Nimetön DSP-esiasetus"
 
 #: ../plugins/converter/converter.glade.h:12
 msgid ""
@@ -1951,20 +1990,25 @@ msgstr ""
 
 #: ../plugins/shellexecui/interface.c:181
 #: ../plugins/shellexecui/shellexec.glade.h:11
+#, fuzzy
 msgid "ID:"
-msgstr ""
+msgstr "Tunnus:"
 
 #: ../plugins/shellexecui/interface.c:193
 #: ../plugins/shellexecui/shellexec.glade.h:12
+#, fuzzy
 msgid "Free-form name, for example \"My Shell Command\""
-msgstr ""
+msgstr "Vapaavalintainen nimi, esimerkiksi \"Minun komentotulkkikomentoni\""
 
 #: ../plugins/shellexecui/interface.c:201
 #: ../plugins/shellexecui/shellexec.glade.h:13
+#, fuzzy
 msgid ""
 "Command ID, normally it should be something short, for example \"youtube_open"
 "\". It must be unique."
 msgstr ""
+"Komennon tunnus. Tunnuksen tulee olla lyhyt, esimerkiksi \"avaa_youtube\". "
+"Tunnuksen tulee olla ainutlaatuinen."
 
 #: ../plugins/shellexecui/interface.c:204
 #: ../plugins/shellexecui/shellexec.glade.h:15
@@ -2039,11 +2083,12 @@ msgstr "Lisää sarake"
 
 #: ../plugins/shellexecui/shellexecui.c:137
 msgid "Delete"
-msgstr ""
+msgstr "Poista"
 
 #: ../plugins/shellexecui/shellexecui.c:139
+#, fuzzy
 msgid "This action will delete the selected shell command. Are you sure?"
-msgstr ""
+msgstr "Tämä toiminto poistaa valitun komennon. Oletko varma?"
 
 #: ../plugins/shellexecui/shellexecui.c:141
 #, fuzzy
@@ -2051,34 +2096,38 @@ msgid "Confirm Remove"
 msgstr "Tee asetukset"
 
 #: ../plugins/shellexecui/shellexecui.c:230
+#, fuzzy
 msgid "ID must be non-empty and unique.\n"
-msgstr ""
+msgstr "Tunnus ei voi olla tyhjä eikä samaa tunnusta voi käyttää kahdesti.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:236
+#, fuzzy
 msgid "Title must be non-empty.\n"
-msgstr ""
+msgstr "Nimi ei voi olla tyhjä.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:242
+#, fuzzy
 msgid "Shell Command must be non-empty.\n"
-msgstr ""
+msgstr "Komento ei voi olla tyhjä.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:249
 #: ../plugins/shellexecui/shellexecui.c:253
+#, fuzzy
 msgid "Invalid Values"
-msgstr ""
+msgstr "Virheelliset arvot"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:165
-#, c-format
+#, c-format, fuzzy
 msgid "File is not a valid .desktop file"
-msgstr ""
+msgstr "Tiedosto ei ole kelvollinen .desktop-tiedosto"
 
 #. translators: 'Version' is from a desktop file, and
 #. * should not be translated. '%s' would probably be a
 #. * version number.
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:191
-#, c-format
+#, c-format, fuzzy
 msgid "Unrecognized desktop file Version '%s'"
-msgstr ""
+msgstr "Tunnistamaton desktop-tiedoston kohta Version '%s'"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:974
 #, fuzzy, c-format
@@ -2091,9 +2140,9 @@ msgid "Application does not accept documents on command line"
 msgstr ""
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1184
-#, c-format
+#, c-format, fuzzy
 msgid "Unrecognized launch option: %d"
-msgstr ""
+msgstr "Tunnistamaton käynnistysvalitsin: %d"
 
 #. translators: The 'Type=Link' string is found in a
 #. * desktop file, and should not be translated.
@@ -2103,9 +2152,9 @@ msgid "Can't pass document URIs to a 'Type=Link' desktop entry"
 msgstr ""
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1412
-#, c-format
+#, c-format, fuzzy
 msgid "Not a launchable item"
-msgstr ""
+msgstr "Ei käynnistettävä kohde"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:226
 msgid "Disable connection to session manager"
