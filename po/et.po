@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-23 14:33+0200\n"
-"PO-Revision-Date: 2012-09-11 16:40+0200\n"
+"PO-Revision-Date: 2012-09-28 22:58+0200\n"
 "Last-Translator: Anari <anari.jalakas@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: et\n"
@@ -223,7 +223,7 @@ msgstr "Uus esitusloend (%d)"
 
 #: ../plugins/gtkui/gtkui.c:1085
 msgid "- Test logout functionality"
-msgstr ""
+msgstr "- Väljalogimise funktsionaalsuse testimine"
 
 #: ../plugins/gtkui/interface.c:150 ../plugins/gtkui/deadbeef.glade.h:1
 msgid "_File"
@@ -696,11 +696,11 @@ msgstr "Esitusloendi automaatne nimetamine üksiku kausta lisamisel"
 
 #: ../plugins/gtkui/interface.c:2083 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Enable Russian CP1251 detection and recoding"
-msgstr ""
+msgstr "Luba Vene CP1251 avastamine ja salvestamine"
 
 #: ../plugins/gtkui/interface.c:2087 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Enable Chinese CP936 detection and recoding"
-msgstr ""
+msgstr "Luba HiinaCP936 avastamine ja salvestamine"
 
 #: ../plugins/gtkui/interface.c:2095 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Interface refresh rate (times per second):"
@@ -720,7 +720,7 @@ msgstr "Graafiline plugin (muutus nõuab taaskäivitust):"
 
 #: ../plugins/gtkui/interface.c:2145 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "GUI/Misc"
-msgstr ""
+msgstr "GUI/Muud"
 
 #: ../plugins/gtkui/interface.c:2160 ../plugins/gtkui/interface.c:2204
 #: ../plugins/gtkui/deadbeef.glade.h:123
@@ -822,7 +822,7 @@ msgstr "Puhverserveri parool:"
 
 #: ../plugins/gtkui/interface.c:2473 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "HTTP User Agent:"
-msgstr ""
+msgstr "HTTP kasutajaagent:"
 
 #: ../plugins/gtkui/interface.c:2482 ../plugins/gtkui/deadbeef.glade.h:148
 msgid "Network"
@@ -1339,7 +1339,7 @@ msgstr "Scrobble URL"
 
 #: ../translation/extra.c:16
 msgid "Prefer Album Artist over Artist field"
-msgstr ""
+msgstr "Eelista albumi artisti välja artistile"
 
 #. OSS output plugin
 #: ../translation/extra.c:18
@@ -1419,9 +1419,8 @@ msgid "Max song length (in minutes)"
 msgstr "Maksimaalne loo pikkus (minutites)"
 
 #: ../translation/extra.c:40
-#, fuzzy
 msgid "Fadeout length (seconds)"
-msgstr "Vaikimis loo pikkus (sek.)"
+msgstr "Sujuva vaigistumise pikkus (sekundit)"
 
 #: ../translation/extra.c:41
 msgid "Play loops nr. of times (if available)"
@@ -1588,7 +1587,7 @@ msgstr ""
 #. shellexecui
 #: ../translation/extra.c:97
 msgid "Configure custom shell commands"
-msgstr ""
+msgstr "Kohandatud käskude seadistamine"
 
 #. mpgmad
 #: ../translation/extra.c:99
@@ -1697,13 +1696,12 @@ msgstr "Väljundkaust:"
 #: ../plugins/converter/interface.c:109
 #: ../plugins/converter/converter.glade.h:2
 msgid "Write to source track folder"
-msgstr ""
+msgstr "Kirjuta loo kausta"
 
 #: ../plugins/converter/interface.c:113
 #: ../plugins/converter/converter.glade.h:3
-#, fuzzy
 msgid "Preserve folder structure"
-msgstr "Kausta struktuuri säilitamine, alates:"
+msgstr "Kausta struktuuri säilitamine"
 
 #: ../plugins/converter/interface.c:121
 #: ../plugins/converter/converter.glade.h:4
@@ -1884,20 +1882,28 @@ msgid ""
 "32 bit signed int\n"
 "32 bit float"
 msgstr ""
+"Allika formaadi säilitamine\n"
+"8 bit signed int\n"
+"16 bit signed int\n"
+"24 bit signed int\n"
+"32 bit signed int\n"
+"32 bit float"
 
 #: ../plugins/converter/converter.glade.h:19
-#, fuzzy
 msgid ""
 "Prompt\n"
 "Overwrite"
-msgstr "Kirjuta üle"
+msgstr ""
+"Küsi\n"
+"Ülekirjutamine"
 
 #: ../plugins/converter/converter.glade.h:34
-#, fuzzy
 msgid ""
 "Pipe\n"
 "Temporary file"
-msgstr "Ajutine fail"
+msgstr ""
+"Pipe\n"
+"Ajutine fail"
 
 #: ../plugins/shellexecui/interface.c:46
 #: ../plugins/shellexecui/shellexec.glade.h:1
