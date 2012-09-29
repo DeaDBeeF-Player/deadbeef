@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-23 14:33+0200\n"
-"PO-Revision-Date: 2012-09-29 15:23+0200\n"
+"PO-Revision-Date: 2012-09-29 15:28+0200\n"
 "Last-Translator: Y P <yupadmin@gmail.com>\n"
 "Language-Team: UKRAINIAN <translate@linux.org.ua>\n"
 "Language: uk\n"
@@ -1602,7 +1602,7 @@ msgstr "Налаштування власних команд шелу"
 #. mpgmad
 #: ../translation/extra.c:99
 msgid "Disable gapless playback (faster scanning)"
-msgstr ""
+msgstr "Відключити безперервне відтворення (швидке сканування)"
 
 #. adplug
 #: ../translation/extra.c:101
@@ -2019,7 +2019,7 @@ msgstr "Список програвання"
 #: ../plugins/shellexecui/interface.c:227
 #: ../plugins/shellexecui/shellexec.glade.h:22
 msgid "Item should appear on the playlist tab context menu"
-msgstr ""
+msgstr "Це повинно з’явитися у вкладці списку програвання контекстного меню"
 
 #: ../plugins/shellexecui/interface.c:229
 #: ../plugins/shellexecui/shellexec.glade.h:25
@@ -2029,7 +2029,7 @@ msgstr "Загальне"
 #: ../plugins/shellexecui/interface.c:232
 #: ../plugins/shellexecui/shellexec.glade.h:24
 msgid "Item should appear in the main menu"
-msgstr ""
+msgstr "Це повинно появитися в основному меню"
 
 #: ../plugins/shellexecui/shellexecui.c:94
 msgid "Add Command"
