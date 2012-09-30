@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-23 14:33+0200\n"
-"PO-Revision-Date: 2012-04-08 23:49+0200\n"
+"PO-Revision-Date: 2012-09-30 08:17+0200\n"
 "Last-Translator: Радослав <reckku@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: bg\n"
@@ -594,7 +594,7 @@ msgstr "Иходно устройство:"
 
 #: ../plugins/gtkui/interface.c:1860 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Always convert 8 bit audio to 16 bit"
-msgstr "Винаги да се конвертира 8-битов звук в 16-битов"
+msgstr "Винаги да се преобразува 8-битов звук в 16-битов"
 
 #: ../plugins/gtkui/interface.c:1864 ../plugins/gtkui/deadbeef.glade.h:91
 msgid "Sound"
@@ -628,11 +628,11 @@ msgstr "+12 дБ"
 
 #: ../plugins/gtkui/interface.c:1919 ../plugins/gtkui/deadbeef.glade.h:99
 msgid "Replaygain preamp:"
-msgstr "Режим на усилване:"
+msgstr "Режим на предусилване:"
 
 #: ../plugins/gtkui/interface.c:1926 ../plugins/gtkui/deadbeef.glade.h:100
 msgid "Global preamp:"
-msgstr "Усилване за цялата система:"
+msgstr "Цялостно усилване:"
 
 #: ../plugins/gtkui/interface.c:1957 ../plugins/gtkui/deadbeef.glade.h:101
 msgid "Add files from command line (or file manager) to this playlist:"
@@ -1359,7 +1359,7 @@ msgstr "Файл за устройство"
 
 #: ../translation/extra.c:19
 msgid "OSS4 samplerate bug workaround"
-msgstr "Решение за OSS4 бъг"
+msgstr "Решение за бъг в честотата на дискретизация на OSS4"
 
 #. Album Artwork plugin
 #: ../translation/extra.c:21
@@ -1474,7 +1474,7 @@ msgstr "Показвай обложка на албума"
 
 #: ../translation/extra.c:52
 msgid "Album art size (px)"
-msgstr "Размер на обложката (пиксели)"
+msgstr "Размер на обложката (в пиксели)"
 
 #. PulseAudio output plugin
 #: ../translation/extra.c:54
@@ -1483,7 +1483,7 @@ msgstr "Сървър на PulseAudio"
 
 #: ../translation/extra.c:56
 msgid "Samplerate"
-msgstr "Честота"
+msgstr "Честота на дискретизация"
 
 #. SHN player plugin
 #: ../translation/extra.c:58
@@ -1509,7 +1509,7 @@ msgstr "Songlenghts.txt (от HVSC)"
 
 #: ../translation/extra.c:64
 msgid "Bits per sample (8 or 16)"
-msgstr "Части за период (8 или 16)"
+msgstr "Битове за дискрета (8 или 16)"
 
 #: ../translation/extra.c:65
 msgid "Default song length (sec)"
@@ -1585,17 +1585,15 @@ msgstr "Превръщане"
 #. Resampler (Secret Rabbit Code)
 #: ../translation/extra.c:93
 msgid "Target Samplerate"
-msgstr "Честота на резултатния файл"
+msgstr "Честота на дискретизация на целта"
 
 #: ../translation/extra.c:94
-#, fuzzy
 msgid "Quality / Algorithm"
 msgstr "Качесво/Алгоритъм"
 
 #: ../translation/extra.c:95
 msgid "Automatic Samplerate (overrides Target Samplerate)"
-msgstr ""
-"Автоматична честота (презаписва зададената честота на резултатния файл)"
+msgstr "Автоматична честота на дискретизация (презаписва тази на целта)"
 
 #. shellexecui
 #: ../translation/extra.c:97
@@ -1683,23 +1681,23 @@ msgstr "Планове за кодиране"
 
 #: ../plugins/converter/convgui.c:897 ../plugins/gtkui/dspconfig.c:186
 msgid "Add plugin to DSP chain"
-msgstr "Слагане на добавка в DSP канала"
+msgstr "Слагане на добавка в DSP веригата"
 
 #: ../plugins/converter/convgui.c:1156
 msgid "Failed to save DSP preset"
-msgstr "Неуспех при запаметяване на DSP профила"
+msgstr "Неуспех при запаметяване на фиксирана настройка за DSP "
 
 #: ../plugins/converter/convgui.c:1220
 msgid "New DSP Preset"
-msgstr "Нов DSP профил"
+msgstr "Нова DSP фиксирана настройка"
 
 #: ../plugins/converter/convgui.c:1305
 msgid "Edit DSP Preset"
-msgstr "Редактирай DSP профила"
+msgstr "Редактирай DSP фиксирана настройка"
 
 #: ../plugins/converter/convgui.c:1325
 msgid "DSP Presets"
-msgstr "DSP профили"
+msgstr "DSP фиксирани настройки"
 
 #: ../plugins/converter/interface.c:92
 #: ../plugins/converter/converter.glade.h:1
@@ -1751,7 +1749,7 @@ msgstr "Брой на нишките:"
 #: ../plugins/converter/interface.c:205
 #: ../plugins/converter/converter.glade.h:11
 msgid "Output sample format:"
-msgstr "Формат на резултатната честота:"
+msgstr "Изходна честота на дискретизация:"
 
 #: ../plugins/converter/interface.c:212
 msgid "Keep source format"
