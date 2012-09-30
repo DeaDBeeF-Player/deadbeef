@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-23 14:33+0200\n"
-"PO-Revision-Date: 2012-05-06 11:45+0200\n"
+"PO-Revision-Date: 2012-10-01 01:28+0200\n"
 "Last-Translator: zvacet <ikoli@yahoo.com>\n"
 "Language-Team: Croatian <>\n"
 "Language: hr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
+"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Pootle 2.0.5\n"
 
 #: ../plugins/gtkui/callbacks.c:123
@@ -306,7 +306,6 @@ msgid "_Find"
 msgstr "_Nađi"
 
 #: ../plugins/gtkui/interface.c:288 ../plugins/gtkui/deadbeef.glade.h:19
-#, fuzzy
 msgid "Sort by"
 msgstr "Posloži po"
 
@@ -649,9 +648,8 @@ msgid "Don't add from archives when adding folders"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:1974 ../plugins/gtkui/deadbeef.glade.h:104
-#, fuzzy
 msgid "Auto-reset \"Stop after current\""
-msgstr "Stop nakon trenutne"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1978 ../plugins/gtkui/deadbeef.glade.h:105
 msgid "Playback"
@@ -851,14 +849,12 @@ msgid "URL:"
 msgstr "URL:"
 
 #: ../plugins/gtkui/interface.c:3196 ../plugins/gtkui/deadbeef.glade.h:153
-#, fuzzy
 msgid "Group By ..."
-msgstr "Grupiraj po"
+msgstr "Grupiraj po ..."
 
 #: ../plugins/gtkui/interface.c:3320 ../plugins/gtkui/deadbeef.glade.h:154
-#, fuzzy
 msgid "Sort by ..."
-msgstr "Poredaj po..."
+msgstr "Poredaj po ..."
 
 #: ../plugins/gtkui/interface.c:3336 ../plugins/gtkui/deadbeef.glade.h:155
 msgid "Format"
@@ -1027,9 +1023,8 @@ msgid "Global Hotkeys"
 msgstr ""
 
 #: ../plugins/gtkui/prefwin.c:416
-#, fuzzy
 msgid "Action"
-msgstr "Lokacija"
+msgstr ""
 
 #: ../plugins/gtkui/prefwin.c:417
 msgid "Key combination"
@@ -1086,7 +1081,7 @@ msgstr "Ne mogu dodati polje"
 
 #: ../plugins/gtkui/trkproperties.c:713
 msgid "Field with such name already exists, please try different name."
-msgstr "Polje sa tim imenom već postoji,molim pokušajte s drugim imenom."
+msgstr "Polje sa tim imenom već postoji, molim pokušajte s drugim imenom."
 
 #: ../plugins/gtkui/trkproperties.c:776
 msgid "Add field"
@@ -1286,7 +1281,6 @@ msgstr ""
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
-#, fuzzy
 msgid "Add audio CD"
 msgstr "Dodaj audio CD"
 
@@ -1875,11 +1869,10 @@ msgid ""
 msgstr ""
 
 #: ../plugins/converter/converter.glade.h:34
-#, fuzzy
 msgid ""
 "Pipe\n"
 "Temporary file"
-msgstr "Privremena datoteka"
+msgstr ""
 
 #: ../plugins/shellexecui/interface.c:46
 #: ../plugins/shellexecui/shellexec.glade.h:1
@@ -1888,27 +1881,23 @@ msgstr ""
 
 #: ../plugins/shellexecui/interface.c:69
 #: ../plugins/shellexecui/shellexec.glade.h:5
-#, fuzzy
 msgid "Edit"
-msgstr "_Uredi"
+msgstr "Uredi"
 
 #: ../plugins/shellexecui/interface.c:87
 #: ../plugins/shellexecui/shellexec.glade.h:2
-#, fuzzy
 msgid "Close"
-msgstr "_Zatvori"
+msgstr "Zatvori"
 
 #: ../plugins/shellexecui/interface.c:145
 #: ../plugins/shellexecui/shellexec.glade.h:6
-#, fuzzy
 msgid "Edit Command"
-msgstr "Uredi stupac"
+msgstr "Uredi naredbu"
 
 #: ../plugins/shellexecui/interface.c:166
 #: ../plugins/shellexecui/shellexec.glade.h:8
-#, fuzzy
 msgid "Command:"
-msgstr "Naredbeni redak:"
+msgstr "Naredba:"
 
 #: ../plugins/shellexecui/interface.c:178
 #: ../plugins/shellexecui/shellexec.glade.h:10
@@ -1938,9 +1927,8 @@ msgstr ""
 
 #: ../plugins/shellexecui/interface.c:204
 #: ../plugins/shellexecui/shellexec.glade.h:15
-#, fuzzy
 msgid "Single Tracks"
-msgstr "Ukupno zapisa"
+msgstr ""
 
 #: ../plugins/shellexecui/interface.c:207
 #: ../plugins/shellexecui/shellexec.glade.h:14
@@ -1949,9 +1937,8 @@ msgstr ""
 
 #: ../plugins/shellexecui/interface.c:209
 #: ../plugins/shellexecui/shellexec.glade.h:17
-#, fuzzy
 msgid "Multiple Tracks"
-msgstr "Ukupno zapisa"
+msgstr ""
 
 #: ../plugins/shellexecui/interface.c:212
 #: ../plugins/shellexecui/shellexec.glade.h:16
@@ -1960,9 +1947,8 @@ msgstr ""
 
 #: ../plugins/shellexecui/interface.c:214
 #: ../plugins/shellexecui/shellexec.glade.h:19
-#, fuzzy
 msgid "Local"
-msgstr "Lokacija"
+msgstr ""
 
 #: ../plugins/shellexecui/interface.c:217
 #: ../plugins/shellexecui/shellexec.glade.h:18
@@ -1971,9 +1957,8 @@ msgstr ""
 
 #: ../plugins/shellexecui/interface.c:219
 #: ../plugins/shellexecui/shellexec.glade.h:21
-#, fuzzy
 msgid "Remote"
-msgstr "Ukloni"
+msgstr "Udaljeno"
 
 #: ../plugins/shellexecui/interface.c:222
 #: ../plugins/shellexecui/shellexec.glade.h:20
@@ -1982,9 +1967,8 @@ msgstr ""
 
 #: ../plugins/shellexecui/interface.c:224
 #: ../plugins/shellexecui/shellexec.glade.h:23
-#, fuzzy
 msgid "Playlist"
-msgstr "Nova lista izvođenja"
+msgstr "Lista izvođenja"
 
 #: ../plugins/shellexecui/interface.c:227
 #: ../plugins/shellexecui/shellexec.glade.h:22
@@ -1993,9 +1977,8 @@ msgstr ""
 
 #: ../plugins/shellexecui/interface.c:229
 #: ../plugins/shellexecui/shellexec.glade.h:25
-#, fuzzy
 msgid "Common"
-msgstr "Komentar"
+msgstr ""
 
 #: ../plugins/shellexecui/interface.c:232
 #: ../plugins/shellexecui/shellexec.glade.h:24
@@ -2003,9 +1986,8 @@ msgid "Item should appear in the main menu"
 msgstr ""
 
 #: ../plugins/shellexecui/shellexecui.c:94
-#, fuzzy
 msgid "Add Command"
-msgstr "Dodaj stupac"
+msgstr "Dodaj naredbu"
 
 #: ../plugins/shellexecui/shellexecui.c:137
 msgid "Delete"
@@ -2016,9 +1998,8 @@ msgid "This action will delete the selected shell command. Are you sure?"
 msgstr ""
 
 #: ../plugins/shellexecui/shellexecui.c:141
-#, fuzzy
 msgid "Confirm Remove"
-msgstr "Konfiguriraj"
+msgstr "Potvrdi uklanjanje"
 
 #: ../plugins/shellexecui/shellexecui.c:230
 msgid "ID must be non-empty and unique.\n"
@@ -2051,9 +2032,9 @@ msgid "Unrecognized desktop file Version '%s'"
 msgstr ""
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:974
-#, fuzzy, c-format
+#, c-format
 msgid "Starting %s"
-msgstr "Postavke"
+msgstr ""
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1116
 #, c-format
