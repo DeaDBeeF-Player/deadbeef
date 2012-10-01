@@ -3819,6 +3819,10 @@ void
 plt_init_shuffle_albums (playlist_t *plt, int r) {
     pl_lock ();
     playItem_t *first = plt_get_item_for_idx (plt, r, PL_MAIN);
+    if (!first) {
+        pl_unlock ();
+        return;
+    }
     if (first->played) {
         plt_reshuffle (plt, NULL, NULL);
     }
