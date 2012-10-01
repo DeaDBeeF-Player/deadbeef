@@ -159,7 +159,8 @@ static off_t fallback_io_read(void *data, int socket, char *buf, off_t num)
   off_t len = 0, ret;
 /*   lprintf("%d\n", fallback_io_select(data, socket, MMS_IO_READ_READY, 1000)); */
   errno = 0;
-  while (len < num)
+  int nretry = 5;
+  while (len < num && nretry > 0)
   {
     ret = (off_t)read(socket, buf + len, num - len);
     if(ret == 0)
@@ -170,6 +171,7 @@ static off_t fallback_io_read(void *data, int socket, char *buf, off_t num)
       switch(errno)
       {
           case EAGAIN:
+              nretry--;
             continue;
           default:
             /* if already read something, return it, we will fail next time */
