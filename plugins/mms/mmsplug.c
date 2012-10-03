@@ -28,6 +28,7 @@ typedef struct {
     DB_vfs_t *vfs;
     mmsx_t *stream;
     const mms_io_t *io;
+    int need_abort;
 } MMS_FILE;
 
 static DB_vfs_t plugin;
@@ -49,7 +50,7 @@ static DB_FILE *
 mms_open (const char *fname) {
     MMS_FILE *fp = malloc (sizeof (MMS_FILE));
     fp->io = mms_get_default_io_impl();
-    fp->stream = mmsx_connect ((mms_io_t *)fp->io, fp, fname, 1544000);
+    fp->stream = mmsx_connect ((mms_io_t *)fp->io, fp, fname, 1544000, &fp->need_abort);
     if (!fp->stream) {
         free (fp);
         return NULL;
@@ -118,6 +119,11 @@ mms_is_streaming (void) {
     return 1;
 }
 
+static void
+mms_abort (DB_FILE *fp) {
+    ((MMS_FILE *)fp)->need_abort = 1;
+}
+
 static DB_vfs_t plugin = {
     .plugin.api_vmajor = 1,
     .plugin.api_vminor = 0,
@@ -156,6 +162,7 @@ static DB_vfs_t plugin = {
     .get_content_type = mms_get_content_type,
     .get_schemes = mms_get_schemes,
     .is_streaming = mms_is_streaming,
+    .abort = mms_abort,
 };
 
 DB_plugin_t *
