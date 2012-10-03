@@ -39,7 +39,7 @@ typedef struct mms_s mms_t;
 
 mms_t*   mms_connect (mms_io_t *io, void *data, const char *url, int bandwidth);
 
-int      mms_read (mms_io_t *io, mms_t *instance, char *data, int len);
+int      mms_read (mms_io_t *io, mms_t *instance, char *data, int len, int *need_abort);
 int      mms_request_time_seek (mms_io_t *io, mms_t *instance, double time_sec);
 int      mms_time_seek (mms_io_t *io, mms_t *instance, double time_sec);
 int      mms_request_packet_seek (mms_io_t *io, mms_t *instance,
