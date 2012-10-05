@@ -299,7 +299,9 @@ csid_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     
     // libsidplay crashes if file doesn't exist
     // so i have to check it here
+    deadbeef->pl_lock ();
     DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    deadbeef->pl_unlock ();
     if (!fp ){
         return -1;
     }
@@ -318,7 +320,9 @@ csid_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     info->resid->sampling (samplerate);
     info->duration = deadbeef->pl_get_item_duration (it);
+    deadbeef->pl_lock ();
     info->tune = new SidTune (deadbeef->pl_find_meta (it, ":URI"));
+    deadbeef->pl_unlock ();
 
     info->tune->selectSong (deadbeef->pl_find_meta_int (it, ":TRACKNUM", 0)+1);
     sid2_config_t conf;

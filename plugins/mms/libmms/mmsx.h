@@ -39,7 +39,7 @@ extern "C" {
 
 typedef struct mmsx_s mmsx_t;
 
-mmsx_t*   mmsx_connect (mms_io_t *io, void *data, const char *url, int bandwidth);
+mmsx_t*   mmsx_connect (mms_io_t *io, void *data, const char *url, int bandwidth, int *need_abort);
 
 int       mmsx_read (mms_io_t *io, mmsx_t *instance, char *data, int len);
 int       mmsx_time_seek (mms_io_t *io, mmsx_t *instance, double time_sec);

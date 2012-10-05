@@ -16,6 +16,15 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
+#ifdef HAVE_CONFIG_H
+#  include "../../config.h"
+#endif
+#if HAVE_SYS_CDEFS_H
+#include <sys/cdefs.h>
+#endif
+#if HAVE_SYS_SYSLIMITS_H
+#include <sys/syslimits.h>
+#endif
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
@@ -26,8 +35,14 @@
 #include "converter.h"
 #include "../../deadbeef.h"
 
-#ifndef PATH_MAX
-#define PATH_MAX    1024    /* max # of characters in a path name */
+#ifndef strdupa
+# define strdupa(s)							      \
+    ({									      \
+      const char *old = (s);					      \
+      size_t len = strlen (old) + 1;				      \
+      char *new = (char *) alloca (len);			      \
+      (char *) memcpy (new, old, len);				      \
+    })
 #endif
 
 #ifndef __linux__
@@ -652,7 +667,9 @@ get_output_field (DB_playItem_t *it, const char *field, char *out, int sz)
 {
     int idx = deadbeef->pl_get_idx_of (it);
     char temp[PATH_MAX];
-    deadbeef->pl_format_title (it, idx, temp, sizeof (temp), -1, field);
+    char fmt[strlen(field)+3];
+    snprintf (fmt, sizeof (fmt), "%%/%s", field);
+    deadbeef->pl_format_title (it, idx, temp, sizeof (temp), -1, fmt);
 
     // escape special chars
     char invalid[] = "$\"`\\";
@@ -663,9 +680,13 @@ get_output_field (DB_playItem_t *it, const char *field, char *out, int sz)
         if (strchr (invalid, *t)) {
             *p++ = '\\';
             n--;
+            *p++ = *t;
+            n--;
         }
-        *p++ = *t;
-        n--;
+        else {
+            *p++ = *t;
+            n--;
+        }
         t++;
     }
     *p = 0;
@@ -675,7 +696,9 @@ get_output_field (DB_playItem_t *it, const char *field, char *out, int sz)
 void
 get_output_path (DB_playItem_t *it, const char *outfolder_user, const char *outfile, ddb_encoder_preset_t *encoder_preset, int preserve_folder_structure, const char *root_folder, int write_to_source_folder, char *out, int sz) {
     trace ("get_output_path: %s %s %s\n", outfolder_user, outfile, root_folder);
+    deadbeef->pl_lock ();
     const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
+    deadbeef->pl_unlock ();
     char outfolder_preserve[2000];
     if (preserve_folder_structure) {
         // generate new outfolder
@@ -790,8 +813,7 @@ int
 convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort) {
     if (deadbeef->pl_get_item_duration (it) <= 0) {
         deadbeef->pl_lock ();
-        const char *fname = deadbeef->pl_find_meta (it, ":URI");
-        fprintf (stderr, "converter: stream %s doesn't have finite length, skipped\n", fname);
+        fprintf (stderr, "converter: stream %s doesn't have finite length, skipped\n", deadbeef->pl_find_meta (it, ":URI"));
         deadbeef->pl_unlock ();
         return -1;
     }
@@ -802,7 +824,9 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
     DB_decoder_t *dec = NULL;
     DB_fileinfo_t *fileinfo = NULL;
     char input_file_name[PATH_MAX] = "";
+    deadbeef->pl_lock ();
     dec = (DB_decoder_t *)deadbeef->plug_get_for_id (deadbeef->pl_find_meta (it, ":DECODER"));
+    deadbeef->pl_unlock ();
 
     if (dec) {
         fileinfo = dec->open (0);
@@ -925,10 +949,14 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
             uint16_t outch = fileinfo->fmt.channels;
 
             int samplesize = fileinfo->fmt.channels * fileinfo->fmt.bps / 8;
-            int bs = 10250 * samplesize;
-            char buffer[bs * 4];
-            int dspsize = bs / samplesize * sizeof (float) * fileinfo->fmt.channels;
-            char dspbuffer[dspsize * 4];
+
+            // block size
+            int bs = 2000 * samplesize;
+            // expected buffer size after worst-case dsp
+            int dspsize = bs/samplesize*sizeof(float)*8*48;
+            char buffer[dspsize];
+            // account for up to float32 7.1 resampled to 48x ratio
+            char dspbuffer[dspsize];
             int eof = 0;
             for (;;) {
                 if (eof) {
@@ -955,7 +983,14 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
                     int frames = sz / samplesize;
                     while (dsp) {
                         frames = dsp->plugin->process (dsp, (float *)dspbuffer, frames, sizeof (dspbuffer) / (fmt.channels * 4), &fmt, NULL);
+                        if (frames <= 0) {
+                            break;
+                        }
                         dsp = dsp->next;
+                    }
+                    if (frames <= 0) {
+                        fprintf (stderr, "converter: dsp error, please check you dsp preset\n");
+                        goto error;
                     }
 
                     outsr = fmt.samplerate;
@@ -1065,6 +1100,9 @@ error:
     if (input_file_name[0] && strcmp (input_file_name, "-")) {
         unlink (input_file_name);
     }
+    if (err != 0) {
+        return err;
+    }
 
     // write junklib tags
 
@@ -1073,7 +1111,18 @@ error:
     if (encoder_preset->tag_id3v2 || encoder_preset->tag_id3v1 || encoder_preset->tag_apev2 || encoder_preset->tag_flac || encoder_preset->tag_oggvorbis) {
         out_it = deadbeef->pl_item_alloc ();
         deadbeef->pl_item_copy (out_it, it);
-        deadbeef->pl_replace_meta (out_it, ":URI", out);
+        char unesc_path[2000];
+        char invalid[] = "$\"`\\";
+        const char *p = out;
+        char *o = unesc_path;
+        while (*p) {
+            if (*p == '\\') {
+                p++;
+            }
+            *o++ = *p++;
+        }
+        *o = 0;
+        deadbeef->pl_replace_meta (out_it, ":URI", unesc_path);
         deadbeef->pl_delete_meta (out_it, "cuesheet");
     }
 

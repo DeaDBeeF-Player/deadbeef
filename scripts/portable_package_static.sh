@@ -1,21 +1,28 @@
 #!/bin/sh
 
+./scripts/portable_postbuild.sh
+
 # package for distribution
 VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print'`
 BUILD=`cat PORTABLE_BUILD | perl -ne 'chomp and print'`
+ARCH=`uname -m | perl -ne 'chomp and print'`
 
 # main distro
 SRCDIR=deadbeef-$VERSION
 PLUGDIR=$SRCDIR/plugins
 DOCDIR=$SRCDIR/doc
 PIXMAPDIR=$SRCDIR/pixmaps
+OUTNAME=deadbeef-static_${VERSION}-${BUILD}_${ARCH}.tar.bz2
 
-rm portable_out/build/deadbeef-$VERSION-static-i686.tar.bz2
+ARCH=`uname -m | perl -ne 'chomp and print'`
 
-cd portable
-tar jcvf ../portable_out/build/deadbeef-$VERSION-static-i686.tar.bz2\
+rm portable_out/build/$OUTNAME
+
+cd portable/$ARCH
+tar jcvf ../../portable_out/build/$OUTNAME\
     $SRCDIR/deadbeef\
     $SRCDIR/deadbeef.png\
+    $SRCDIR/.ddb_portable\
     $DOCDIR\
     $PLUGDIR/aac.so\
     $PLUGDIR/adplug.so\
@@ -39,6 +46,7 @@ tar jcvf ../portable_out/build/deadbeef-$VERSION-static-i686.tar.bz2\
     $PLUGDIR/nullout.so\
     $PLUGDIR/oss.so\
     $PLUGDIR/shellexec.so\
+    $PLUGDIR/shellexecui_gtk2.so\
     $PLUGDIR/sid.so\
     $PLUGDIR/sndfile.so\
     $PLUGDIR/supereq.so\
@@ -57,7 +65,7 @@ tar jcvf ../portable_out/build/deadbeef-$VERSION-static-i686.tar.bz2\
     $PLUGDIR/convpresets\
     $PLUGDIR/pulse.so\
     $PLUGDIR/dsp_libsrc.so\
-    $PLUGDIR/mono2stereo.so\
+    $PLUGDIR/ddb_mono2stereo.so\
     $PIXMAPDIR\
     $SRCDIR/locale
-cd ..
+cd ../..

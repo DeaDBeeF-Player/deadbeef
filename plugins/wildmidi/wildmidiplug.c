@@ -52,7 +52,9 @@ int
 wmidi_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     wmidi_info_t *info = (wmidi_info_t *)_info;
 
+    deadbeef->pl_lock ();
     info->m = WildMidi_Open (deadbeef->pl_find_meta (it, ":URI"));
+    deadbeef->pl_unlock ();
     if (!info->m) {
         trace ("wmidi: failed to open %s\n", deadbeef->pl_find_meta (it, ":URI"));
         return -1;

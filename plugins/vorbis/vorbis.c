@@ -112,10 +112,13 @@ update_vorbis_comments (DB_playItem_t *it, vorbis_comment *vc, int refresh_playl
                 int l = strlen (metainfo[m]);
                 if (vc->comment_lengths[i] > l && !strncasecmp (metainfo[m], s, l) && s[l] == '=') {
                     if (refresh_playlist == 2) {
+                        deadbeef->pl_lock ();
                         const char *val = deadbeef->pl_find_meta (it, metainfo[m+1]);
                         if (!val || strcmp (val, s+l+1)) {
+                            deadbeef->pl_unlock ();
                             return 1;
                         }
+                        deadbeef->pl_unlock ();
                     }
                     else {
                         deadbeef->pl_append_meta (it, metainfo[m+1], s + l + 1);
@@ -197,7 +200,9 @@ cvorbis_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->ptrack = it;
     deadbeef->pl_item_ref (it);
 
+    deadbeef->pl_lock ();
     info->info.file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    deadbeef->pl_unlock ();
     if (!info->info.file) {
         trace ("ogg: failed to open file %s\n", deadbeef->pl_find_meta (it, ":URI"));
         return -1;
@@ -222,7 +227,7 @@ cvorbis_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         if (plt) {
             deadbeef->plt_unref (plt);
         }
-        deadbeef->pl_replace_meta (it, ":FILETYPE", "OggVorbis");
+        deadbeef->pl_replace_meta (it, "!FILETYPE", "OggVorbis");
     }
     else
     {
@@ -463,7 +468,7 @@ cvorbis_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     int64_t fsize = deadbeef->fgetlength (fp);
     if (fp->vfs->is_streaming ()) {
         DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
-        deadbeef->pl_add_meta (it, ":FILETYPE", "OggVorbis");
+        deadbeef->pl_add_meta (it, "!FILETYPE", "OggVorbis");
         deadbeef->plt_set_item_duration (plt, it, -1);
         deadbeef->pl_add_meta (it, "title", NULL);
         after = deadbeef->plt_insert_item (plt, after, it);
@@ -536,16 +541,19 @@ cvorbis_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             }
 
             // embedded cue
+            deadbeef->pl_lock ();
             const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
             if (cuesheet) {
                 cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), totalsamples, samplerate);
                 if (cue) {
+                    deadbeef->pl_unlock ();
                     deadbeef->pl_item_unref (it);
                     deadbeef->pl_item_unref (cue);
                     ov_clear (&vorbis_file);
                     return cue;
                 }
             }
+            deadbeef->pl_unlock ();
         }
         else {
             currentsample += totalsamples;
@@ -574,7 +582,9 @@ cvorbis_read_metadata (DB_playItem_t *it) {
     OggVorbis_File vorbis_file;
     vorbis_info *vi = NULL;
     
+    deadbeef->pl_lock ();
     fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    deadbeef->pl_unlock ();
     if (!fp) {
         trace ("cvorbis_read_metadata: failed to fopen %s\n", deadbeef->pl_find_meta (it, ":URI"));
         return -1;
@@ -624,6 +634,8 @@ cvorbis_write_metadata (DB_playItem_t *it) {
     FILE *out = NULL;
     int err = -1;
     char outname[PATH_MAX] = "";
+    char fname[PATH_MAX];
+    deadbeef->pl_get_meta (it, ":URI", fname, sizeof (fname));
 
     struct field {
         struct field *next;
@@ -638,9 +650,9 @@ cvorbis_write_metadata (DB_playItem_t *it) {
         trace ("cvorbis_write_metadata: vcedit_new_state failed\n");
         return -1;
     }
-    fp = fopen (deadbeef->pl_find_meta (it, ":URI"), "rb");
+    fp = fopen (fname, "rb");
     if (!fp) {
-        trace ("cvorbis_write_metadata: failed to read metadata from %s\n", deadbeef->pl_find_meta (it, ":URI"));
+        trace ("cvorbis_write_metadata: failed to read metadata from %s\n", fname);
         goto error;
     }
     if (vcedit_open (state, fp) != 0) {
@@ -717,13 +729,13 @@ cvorbis_write_metadata (DB_playItem_t *it) {
         m = m->next;
     }
     deadbeef->pl_unlock ();
-
     // add preserved fields
     for (struct field *f = preserved_fields; f; f = f->next) {
         vorbis_comment_add (vc, f->data);
     }
 
-    snprintf (outname, sizeof (outname), "%s.temp.ogg", deadbeef->pl_find_meta (it, ":URI"));
+    snprintf (outname, sizeof (outname), "%s.temp.ogg", fname);
+
 
     out = fopen (outname, "w+b");
     if (!out) {
@@ -732,7 +744,7 @@ cvorbis_write_metadata (DB_playItem_t *it) {
     }
 
     if (vcedit_write (state, out) < 0) {
-        trace ("cvorbis_write_metadata: failed to write tags to %s, error: %s\n", deadbeef->pl_find_meta (it, ":URI"), vcedit_error (state));
+        trace ("cvorbis_write_metadata: failed to write tags to %s, error: %s\n", fname, vcedit_error (state));
         goto error;
     }
 
@@ -754,7 +766,7 @@ error:
     }
 
     if (!err) {
-        rename (outname, deadbeef->pl_find_meta (it, ":URI"));
+        rename (outname, fname);
     }
     else if (out) {
         unlink (outname);

@@ -671,7 +671,7 @@ WM_BufferFile (const char *filename, unsigned long int *size) {
 	return data;						
 }
 
-inline void
+static inline void
 WM_Lock (int * wmlock) {
 	LOCK_START:
 	if (__builtin_expect(((*wmlock) == 0),1)) {
@@ -689,7 +689,7 @@ WM_Lock (int * wmlock) {
 	goto LOCK_START;
 }
 
-inline void
+static inline void
 WM_Unlock (int *wmlock) {
 	(*wmlock)--;
 }
@@ -2498,7 +2498,7 @@ do_note_off (unsigned char ch, struct _mdi *mdi, unsigned long int ptr) {
 	return;
 }
 
-inline unsigned long int
+static inline unsigned long int
 get_inc (struct _mdi *mdi, struct _note *nte) {
 	int ch = nte->noteid >> 8;
 	signed long int note_f;
@@ -2519,7 +2519,7 @@ get_inc (struct _mdi *mdi, struct _note *nte) {
 	return (((freq / ((WM_SampleRate * 100) / 1024)) * 1024 / nte->sample->inc_div));
 }
 
-inline signed short int
+static inline signed short int
 get_volume(struct _mdi *mdi, unsigned char ch, struct _note *nte) {
 	signed long int volume;
 	

@@ -28,6 +28,10 @@
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
 
+#define GLADE_HOOKUP_OBJECT(component,widget,name) \
+  g_object_set_data_full (G_OBJECT (component), name, \
+    g_object_ref(G_OBJECT(widget)), (GDestroyNotify) g_object_unref)
+
 static void
 on_actionitem_activate (GtkMenuItem     *menuitem,
                            DB_plugin_action_t *action)
@@ -36,8 +40,35 @@ on_actionitem_activate (GtkMenuItem     *menuitem,
 }
 
 void
-add_mainmenu_actions (GtkWidget *mainwin)
+remove_actions (GtkWidget *widget, void *data) {
+    const char *name = g_object_get_data (G_OBJECT (widget), "plugaction");
+    if (name) {
+        gtk_container_remove (GTK_CONTAINER (data), widget);
+    }
+    if (GTK_IS_MENU_ITEM (widget)) {
+        GtkWidget *menu = gtk_menu_item_get_submenu (GTK_MENU_ITEM (widget));
+        if (menu) {
+            gtk_container_foreach (GTK_CONTAINER (menu), remove_actions, menu);
+            // if menu is empty -- remove parent menu item
+            GList *lst = gtk_container_get_children (GTK_CONTAINER (menu));
+            if (lst) {
+                g_list_free (lst);
+            }
+            else {
+                gtk_container_remove (data, widget);
+            }
+        }
+    }
+}
+
+void
+add_mainmenu_actions (void)
 {
+    GtkWidget *menubar = lookup_widget (mainwin, "menubar1");
+    // remove all plugaction_*** menu items and empty submenus
+    gtk_container_foreach (GTK_CONTAINER (menubar), remove_actions, menubar);
+
+    // add new
     DB_plugin_t **plugins = deadbeef->plug_get_list();
     int i;
 
@@ -72,7 +103,7 @@ add_mainmenu_actions (GtkWidget *mainwin)
 
             char *prev_title = NULL;
 
-            GtkWidget *current = mainwin;
+            GtkWidget *current = menubar;
             GtkWidget *previous;
 
             while (1)
@@ -95,12 +126,14 @@ add_mainmenu_actions (GtkWidget *mainwin)
                         gtk_menu_shell_insert (GTK_MENU_SHELL (current), actionitem, 5);
                     else if (0 == strcmp ("Edit", prev_title))
                         gtk_menu_shell_insert (GTK_MENU_SHELL (current), actionitem, 7);
-                    else
+                    else {
                         gtk_container_add (GTK_CONTAINER (current), actionitem);
+                    }
 
                     g_signal_connect ((gpointer) actionitem, "activate",
                         G_CALLBACK (on_actionitem_activate),
                         action);
+                    g_object_set_data_full (G_OBJECT (actionitem), "plugaction", strdup (action->name), free);
                     break;
                 }
                 *slash = 0;
@@ -109,7 +142,7 @@ add_mainmenu_actions (GtkWidget *mainwin)
                 snprintf (menuname, sizeof (menuname), "%s_menu", ptr);
 
                 previous = current;
-                current = lookup_widget (current, menuname);
+                current = lookup_widget (mainwin, menuname);
                 if (!current)
                 {
                     GtkWidget *newitem;
@@ -125,6 +158,7 @@ add_mainmenu_actions (GtkWidget *mainwin)
 
                     current = gtk_menu_new ();
                     gtk_menu_item_set_submenu (GTK_MENU_ITEM (newitem), current);
+                    GLADE_HOOKUP_OBJECT (mainwin, current, menuname);
                 }
                 prev_title = ptr;
                 ptr = slash + 1;

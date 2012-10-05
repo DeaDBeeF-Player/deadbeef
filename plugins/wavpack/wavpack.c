@@ -125,21 +125,26 @@ wv_open (uint32_t hints) {
 static int
 wv_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     wvctx_t *info = (wvctx_t *)_info;
+    deadbeef->pl_lock ();
     info->file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    deadbeef->pl_unlock ();
     if (!info->file) {
         return -1;
     }
 
 #ifndef TINYWV
-    char *c_fname = alloca (strlen (deadbeef->pl_find_meta (it, ":URI")) + 2);
+    deadbeef->pl_lock ();
+    const char *uri = deadbeef->pl_find_meta (it, ":URI");
+    char *c_fname = alloca (strlen (uri) + 2);
     if (c_fname) {
-        strcpy (c_fname, deadbeef->pl_find_meta (it, ":URI"));
+        strcpy (c_fname, uri);
         strcat (c_fname, "c");
         info->c_file = deadbeef->fopen (c_fname);
     }
     else {
         fprintf (stderr, "wavpack warning: failed to alloc memory for correction file name\n");
     }
+    deadbeef->pl_unlock ();
 #endif
 
     char error[80];
@@ -336,11 +341,13 @@ wv_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     deadbeef->pl_add_meta (it, ":WAVPACK_MODE", s);
 
     // embedded cue
+    deadbeef->pl_lock ();
     const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
     if (cuesheet) {
         trace ("found cuesheet: %s\n", cuesheet);
         DB_playItem_t *last = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), totalsamples, samplerate);
         if (last) {
+            deadbeef->pl_unlock ();
             deadbeef->fclose (fp);
             WavpackCloseFile (ctx);
             deadbeef->pl_item_unref (it);
@@ -348,6 +355,7 @@ wv_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             return last;
         }
     }
+    deadbeef->pl_unlock ();
     // cue file on disc
     DB_playItem_t *cue_after = deadbeef->plt_insert_cue (plt, after, it, totalsamples, samplerate);
     if (cue_after) {
@@ -368,10 +376,13 @@ wv_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
 int
 wv_read_metadata (DB_playItem_t *it) {
+    deadbeef->pl_lock ();
     DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    deadbeef->pl_unlock ();
     if (!fp) {
         return -1;
     }
+    deadbeef->pl_delete_all_meta (it);
     int apeerr = deadbeef->junk_apev2_read (it, fp);
     if (!apeerr) {
         trace ("wv: ape tag found\n");

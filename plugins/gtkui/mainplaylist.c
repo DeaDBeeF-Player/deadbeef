@@ -131,7 +131,9 @@ playlist_tooltip_handler (GtkWidget *widget, gint x, gint y, gboolean keyboard_m
     DdbListview *pl = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     DB_playItem_t *it = (DB_playItem_t *)ddb_listview_get_iter_from_coord (pl, 0, y);
     if (it) {
+        deadbeef->pl_lock ();
         gtk_tooltip_set_text (tooltip, deadbeef->pl_find_meta (it, ":URI"));
+        deadbeef->pl_unlock ();
         deadbeef->pl_item_unref (it);
         return TRUE;
     }
@@ -170,18 +172,18 @@ void main_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListvie
         if (theming) {
             GdkColor *clr = &gtk_widget_get_style(theme_treeview)->fg[GTK_STATE_NORMAL];
             float rgb[] = {clr->red/65535.f, clr->green/65535.f, clr->blue/65535.f};
-            draw_set_fg_color (rgb);
+            draw_set_fg_color (&listview->listctx, rgb);
         }
         else {
             GdkColor clr;
             gtkui_get_listview_text_color (&clr);
             float rgb[] = {clr.red/65535.f, clr.green/65535.f, clr.blue/65535.f};
-            draw_set_fg_color (rgb);
+            draw_set_fg_color (&listview->listctx, rgb);
         }
         int ew, eh;
-        draw_get_text_extents (str, -1, &ew, &eh);
-        draw_text (x + 5, y + height/2 - draw_get_font_size ()/2 - 2, ew+5, 0, str);
-        draw_line (x + 5 + ew + 3, y+height/2, x + width, y+height/2);
+        draw_get_text_extents (&listview->listctx, str, -1, &ew, &eh);
+        draw_text (&listview->listctx, x + 5, y + height/2 - draw_get_font_size (&listview->listctx)/2 - 2, ew+5, 0, str);
+        draw_line (&listview->listctx, x + 5 + ew + 3, y+height/2, x + width, y+height/2);
     }
 }
 void

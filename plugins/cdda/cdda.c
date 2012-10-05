@@ -18,11 +18,20 @@
 
 /* screwed/maintained by Alexey Yakovenko <waker@users.sourceforge.net> */
 
+#ifdef HAVE_CONFIG_H
+#  include "../../config.h"
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
 #include <sys/types.h>
+#if HAVE_SYS_CDEFS_H
+#include <sys/cdefs.h>
+#endif
+#if HAVE_SYS_SYSLIMITS_H
+#include <sys/syslimits.h>
+#endif
 
 #include <cdio/cdio.h>
 #include <cdio/cdtext.h>
@@ -81,9 +90,8 @@ cda_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     trace ("cdda: init %s\n", deadbeef->pl_find_meta (it, ":URI"));
 
-    size_t l = strlen (deadbeef->pl_find_meta (it, ":URI"));
-    char location[l+1];
-    memcpy (location, deadbeef->pl_find_meta (it, ":URI"), l+1);
+    char location[PATH_MAX];
+    deadbeef->pl_get_meta (it, ":URI", location, sizeof (location));
 
     char *nr = strchr (location, '#');
     if (nr) {
@@ -406,7 +414,11 @@ cddb_thread (void *items_i)
 static void
 read_track_cdtext (CdIo_t *cdio, int track_nr, DB_playItem_t *item)
 {
+#if CDIO_API_VERSION >= 6
+    cdtext_t *cdtext = cdio_get_cdtext (cdio);
+#else
     cdtext_t *cdtext = cdio_get_cdtext (cdio, 0);
+#endif
     if (!cdtext)
     {
         trace ("No cdtext\n");
@@ -417,14 +429,23 @@ read_track_cdtext (CdIo_t *cdio, int track_nr, DB_playItem_t *item)
     int field_type;
     for (field_type = 0; field_type < MAX_CDTEXT_FIELDS; field_type++)
     {
+#if CDIO_API_VERSION >= 6
+        const char *text = cdtext_get_const (cdtext, field_type, track_nr);
+#else
         const char *text = cdtext_get_const (field_type, cdtext);
+#endif
         const char *field = NULL;
         if (text)
         {
             switch (field_type)
             {
+#if CDIO_API_VERSION >= 6
+                case CDTEXT_FIELD_TITLE: album = text; break;
+                case CDTEXT_FIELD_PERFORMER: artist = text; break;
+#else
                 case CDTEXT_TITLE: album = text; break;
                 case CDTEXT_PERFORMER: artist = text; break;
+#endif
             }
         }
     }
@@ -437,24 +458,41 @@ read_track_cdtext (CdIo_t *cdio, int track_nr, DB_playItem_t *item)
         deadbeef->pl_replace_meta (item, "album", album);
     }
 
+#if CDIO_API_VERSION >= 6
+    cdtext = cdio_get_cdtext (cdio);
+#else
     cdtext = cdio_get_cdtext (cdio, track_nr);
+#endif
     if (!cdtext)
         return;
 
     for (field_type = 0; field_type < MAX_CDTEXT_FIELDS; field_type++)
     {
+#if CDIO_API_VERSION >= 6
+        const char *text = cdtext_get_const (cdtext, field_type, track_nr);
+#else
         const char *text = cdtext_get_const (field_type, cdtext);
+#endif
         const char *field = NULL;
         if (!text)
             continue;
         switch (field_type)
         {
+#if CDIO_API_VERSION >= 6
+            case CDTEXT_FIELD_TITLE:      field = "title";    break;
+            case CDTEXT_FIELD_PERFORMER:  field = "artist";   break;
+            case CDTEXT_FIELD_COMPOSER:   field = "composer"; break;
+            case CDTEXT_FIELD_GENRE:      field = "genre";    break;
+            case CDTEXT_FIELD_SONGWRITER: field = "songwriter";   break;
+            case CDTEXT_FIELD_MESSAGE:    field = "comment";  break;
+#else
             case CDTEXT_TITLE:      field = "title";    break;
             case CDTEXT_PERFORMER:  field = "artist";   break;
             case CDTEXT_COMPOSER:   field = "composer"; break;
             case CDTEXT_GENRE:      field = "genre";    break;
             case CDTEXT_SONGWRITER: field = "songwriter";   break;
             case CDTEXT_MESSAGE:    field = "comment";  break;
+#endif
             default: field = NULL;
         }
         if (field && text)
@@ -469,7 +507,11 @@ static int
 read_disc_cdtext (struct cddb_thread_params *params)
 {
     DB_playItem_t **items = params->items;
+#if CDIO_API_VERSION >= 6
+    cdtext_t *cdtext = cdio_get_cdtext (params->cdio);
+#else
     cdtext_t *cdtext = cdio_get_cdtext (params->cdio, 0);
+#endif
     if (!cdtext)
         return 0;
 
@@ -601,7 +643,8 @@ cda_action_add_cd (DB_plugin_action_t *act, DB_playItem_t *it)
 }
 
 static DB_plugin_action_t add_cd_action = {
-    .title = "File/Add Audio CD",
+    .name = "cd_add",
+    .title = "File/Add audio CD",
     .flags = DB_ACTION_COMMON,
     .callback = DDB_ACTION_CALLBACK(cda_action_add_cd),
     .next = NULL

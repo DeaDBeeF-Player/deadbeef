@@ -23,8 +23,8 @@
 #include "../../deadbeef.h"
 #include "../../config.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
@@ -54,6 +54,8 @@ static snd_pcm_uframes_t req_period_size;
 
 static int conf_alsa_resample = 1;
 static char conf_alsa_soundcard[100] = "default";
+
+static int alsa_formatchanged = 0;
 
 static int
 palsa_callback (char *stream, int len);
@@ -459,24 +461,29 @@ palsa_setformat (ddb_waveformat_t *fmt) {
         UNLOCK;
         return -1;
     }
-    UNLOCK;
     trace ("new format %dbit %s %dch %dHz channelmask=%X\n", plugin.fmt.bps, plugin.fmt.is_float ? "float" : "int", plugin.fmt.channels, plugin.fmt.samplerate, plugin.fmt.channelmask);
 
+    int res = -1;
     switch (s) {
     case OUTPUT_STATE_STOPPED:
-        return palsa_stop ();
+        res = palsa_stop ();
+        break;
     case OUTPUT_STATE_PLAYING:
-        return palsa_play ();
+        res = palsa_play ();
+        break;
     case OUTPUT_STATE_PAUSED:
         if (0 != palsa_play ()) {
-            return -1;
+            res = -1;
         }
         if (0 != palsa_pause ()) {
-            return -1;
+            res = -1;
         }
         break;
     }
-    return 0;
+    trace ("alsa_formatchanged=1\n");
+    alsa_formatchanged = 1;
+    UNLOCK;
+    return res;
 }
 
 int
@@ -569,8 +576,20 @@ palsa_stop (void) {
 #endif
     UNLOCK;
     deadbeef->streamer_reset (1);
-    if (deadbeef->conf_get_int ("alsa.freeonstop", 0))  {
+    DB_playItem_t *ts = deadbeef->streamer_get_streaming_track ();
+    DB_playItem_t *tp = deadbeef->streamer_get_playing_track ();
+    if (deadbeef->conf_get_int ("alsa.freeonstop", 0) && !ts && !tp)  {
         palsa_free ();
+        trace ("\033[0;31malsa released!\033[37;0m\n");
+    }
+    else {
+        trace ("\033[0;32malsa not released!\033[37;0m\n");
+    }
+    if (tp) {
+        deadbeef->pl_item_unref (tp);
+    }
+    if (ts) {
+        deadbeef->pl_item_unref (ts);
     }
     return 0;
 }
@@ -613,6 +632,15 @@ palsa_thread (void *context) {
             continue;
         }
         LOCK;
+        if (alsa_formatchanged) {
+            trace ("handled alsa_formatchanged [1]\n");
+            alsa_formatchanged = 0;
+            UNLOCK;
+            continue;
+        }
+        char buf[period_size * (plugin.fmt.bps>>3) * plugin.fmt.channels];
+        int bytes_to_write = 0;
+        
         /* find out how much space is available for playback data */
         snd_pcm_sframes_t frames_to_deliver = snd_pcm_avail_update (audio);
 
@@ -624,13 +652,25 @@ palsa_thread (void *context) {
                 break;
             }
             err = 0;
-            char buf[period_size * (plugin.fmt.bps>>3) * plugin.fmt.channels];
-            int bytes_to_write = palsa_callback (buf, period_size * (plugin.fmt.bps>>3) * plugin.fmt.channels);
+            if (!bytes_to_write) {
+                UNLOCK; // holding a lock here may cause deadlock in the streamer
+                bytes_to_write = palsa_callback (buf, period_size * (plugin.fmt.bps>>3) * plugin.fmt.channels);
+                LOCK;
+                if (OUTPUT_STATE_PLAYING != state || alsa_terminate) {
+                    break;
+                }
+            }
 
             if (bytes_to_write >= (plugin.fmt.bps>>3) * plugin.fmt.channels) {
                 UNLOCK;
                 err = snd_pcm_writei (audio, buf, snd_pcm_bytes_to_frames(audio, bytes_to_write));
                 LOCK;
+                if (alsa_formatchanged) {
+                    trace ("handled alsa_formatchanged [2]\n");
+                    alsa_formatchanged = 0;
+                    UNLOCK;
+                    break;
+                }
                 if (alsa_terminate) {
                     break;
                 }
@@ -638,7 +678,13 @@ palsa_thread (void *context) {
             else {
                 UNLOCK;
                 usleep (10000);
+                bytes_to_write = 0;
                 LOCK;
+                if (alsa_formatchanged) {
+                    trace ("handled alsa_formatchanged [3]\n");
+                    alsa_formatchanged = 0;
+                    break;
+                }
                 continue;
             }
 
@@ -664,15 +710,16 @@ palsa_thread (void *context) {
                     //}
                     snd_pcm_prepare (audio);
                     snd_pcm_start (audio);
-                    continue;
                 }
+                continue;
             }
+            bytes_to_write = 0;
             frames_to_deliver = snd_pcm_avail_update (audio);
         }
         UNLOCK;
         int sleeptime = period_size-frames_to_deliver;
         if (sleeptime > 0 && plugin.fmt.samplerate > 0 && plugin.fmt.channels > 0) {
-            usleep (sleeptime * 1000 / plugin.fmt.samplerate / plugin.fmt.channels * 1000);
+            usleep (sleeptime * 1000 / plugin.fmt.samplerate * 1000);
         }
     }
 }

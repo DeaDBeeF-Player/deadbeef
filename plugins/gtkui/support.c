@@ -145,7 +145,7 @@ glade_set_atk_action_description       (AtkAction       *action,
 #if GTK_CHECK_VERSION(3,0,0)
 GtkWidget *
 gtk_combo_box_entry_new_text(void) {
-    GtkWidget *w = gtk_combo_box_text_new_with_entry ();
+    return gtk_combo_box_text_new_with_entry ();
 }
 
 void
@@ -197,7 +197,7 @@ gtk_combo_box_text_get_active_text  (GtkComboBoxText *combo_box) {
 
 #endif
 
-#if !GTK_CHECK_VERSION(2,18,0) || defined(ULTRA_COMPATIBLE)
+#if !GTK_CHECK_VERSION(2,18,0)
 void
 gtk_widget_set_allocation (GtkWidget *widget, const GtkAllocation *allocation) {
     widget->allocation.x = (allocation)->x;

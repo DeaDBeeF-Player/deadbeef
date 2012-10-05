@@ -1167,3 +1167,19 @@ on_design_mode1_activate               (GtkMenuItem     *menuitem,
 void
 on_reset_autostop_toggled              (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
+
+void
+on_editcolumn_title_changed            (GtkEditable     *editable,
+                                        gpointer         user_data);
+
+void
+on_useragent_changed                   (GtkEditable     *editable,
+                                        gpointer         user_data);
+
+void
+on_enable_cp1251_recoding_toggled      (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_enable_cp936_recoding_toggled       (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);

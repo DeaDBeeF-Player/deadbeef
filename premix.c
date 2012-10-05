@@ -369,7 +369,14 @@ static inline void
 pcm_write_samples_float_to_32 (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int nsamples, int * restrict channelmap, int outputsamplesize) {
     for (int s = 0; s < nsamples; s++) {
         for (int c = 0; c < outputfmt->channels; c++) {
-            int sample = (*((float*)(input + channelmap[c] * 4))) * (float)0x7fffffff;
+            float fsample = (*((float*)(input + channelmap[c] * 4)));
+            if (fsample > 0.999f) {
+                fsample = 0.999f;
+            }
+            else if (fsample < -0.999f) {
+                fsample = -0.999f;
+            }
+            int sample = fsample * (float)0x7fffffff;
             *((int32_t *)(output + 4 * c)) = sample;
         }
         input += 4 * inputfmt->channels;

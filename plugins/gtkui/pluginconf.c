@@ -212,6 +212,9 @@ ddb_button_from_gtk_response (int response) {
 
 int
 gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons, int (*callback)(int button, void *ctx), void *ctx) {
+    if (!parentwin) {
+        parentwin = mainwin;
+    }
     // create window
     char title[200];
     snprintf (title, sizeof (title), _("Configure %s"), conf->title);
@@ -531,5 +534,5 @@ gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons, in
 
 int
 gtkui_run_dialog_root (ddb_dialog_t *conf, uint32_t buttons, int (*callback)(int button, void *ctx), void *ctx) {
-    return gtkui_run_dialog (mainwin, conf, buttons, callback, ctx);
+    return gtkui_run_dialog (conf->parent ? conf->parent : mainwin, conf, buttons, callback, ctx);
 }

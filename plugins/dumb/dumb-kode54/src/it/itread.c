@@ -19,11 +19,10 @@
 
 #include <stdlib.h>
 #include <string.h>//might not be necessary later; required for memset
+#include <stdint.h>
 
 #include "dumb.h"
 #include "internal/it.h"
-
-
 
 #define INVESTIGATE_OLD_INSTRUMENTS
 
@@ -43,11 +42,9 @@ static int it_seek(DUMBFILE *f, long offset)
 	return 0;
 }
 
-
-
 typedef unsigned char byte;
-typedef unsigned short word;
-typedef unsigned long dword;
+typedef uint16_t word;
+typedef uint32_t dword;
 
 typedef struct readblock_crap readblock_crap;
 
@@ -126,8 +123,8 @@ static int decompress8(DUMBFILE *f, signed char *data, int len, int cmwt)
 {
 	int blocklen, blockpos;
 	byte bitwidth;
-	word val;
-	char d1, d2;
+	long val;
+	signed char d1, d2;
 	readblock_crap crap;
 
 	memset(&crap, 0, sizeof(crap));
@@ -146,12 +143,12 @@ static int decompress8(DUMBFILE *f, signed char *data, int len, int cmwt)
 		//Start the decompression:
 		while (blockpos < blocklen) {
 			//Read a value:
-			val = (word)readbits(bitwidth, &crap);
+			val = readbits(bitwidth, &crap);
 			//Check for bit width change:
 
 			if (bitwidth < 7) { //Method 1:
 				if (val == (1 << (bitwidth - 1))) {
-					val = (word)readbits(3, &crap) + 1;
+					val = readbits(3, &crap) + 1;
 					bitwidth = (val < bitwidth) ? val : val + 1;
 					continue;
 				}
@@ -178,14 +175,14 @@ static int decompress8(DUMBFILE *f, signed char *data, int len, int cmwt)
 
 			//Expand the value to signed byte:
 			{
-				char v; //The sample value:
+				signed char v; //The sample value:
 				if (bitwidth < 8) {
 					byte shift = 8 - bitwidth;
 					v = (val << shift);
 					v >>= shift;
 				}
 				else
-					v = (char)val;
+					v = (signed char)val;
 
 				//And integrate the sample value
 				//(It always has to end with integration doesn't it ? ;-)
@@ -670,7 +667,7 @@ static long it_read_sample_data(int cmwt, IT_SAMPLE *sample, unsigned char conve
 	long datasize = sample->length;
 	if (sample->flags & IT_SAMPLE_STEREO) datasize <<= 1;
 
-	sample->data = malloc(datasize * (sample->flags & IT_SAMPLE_16BIT ? 2 : 1));
+	sample->data = malloc(datasize * ((sample->flags & IT_SAMPLE_16BIT) ? 2 : 1));
 	if (!sample->data)
 		return -1;
 
@@ -692,8 +689,9 @@ static long it_read_sample_data(int cmwt, IT_SAMPLE *sample, unsigned char conve
 */
 		if (sample->flags & IT_SAMPLE_16BIT)
 			decompress16(f, sample->data, datasize, ((cmwt >= 0x215) && (convert & 4)));
-		else
+		else {
 			decompress8(f, sample->data, datasize, ((cmwt >= 0x215) && (convert & 4)));
+        }
  	} else if (sample->flags & IT_SAMPLE_16BIT) {
  		if (convert & 2)
 			for (n = 0; n < datasize; n++)

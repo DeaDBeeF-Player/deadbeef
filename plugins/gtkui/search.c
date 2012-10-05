@@ -50,14 +50,28 @@ extern DB_functions_t *deadbeef; // defined in gtkui.c
 extern GtkWidget *searchwin;
 extern GtkWidget *mainwin;
 
+static gboolean
+unlock_search_columns_cb (void *ctx) {
+    ddb_listview_lock_columns (DDB_LISTVIEW (lookup_widget (searchwin, "searchlist")), 0);
+    return FALSE;
+}
+
 void
 search_start (void) {
+    ddb_listview_lock_columns (DDB_LISTVIEW (lookup_widget (searchwin, "searchlist")), 1);
     wingeom_restore (searchwin, "searchwin", -1, -1, 450, 150, 0);
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (searchwin, "searchentry")), "");
     gtk_widget_show (searchwin);
     gtk_window_present (GTK_WINDOW (searchwin));
+    g_idle_add (unlock_search_columns_cb, NULL);
     search_refresh ();
     main_refresh ();
+}
+
+void
+search_destroy (void) {
+    gtk_widget_destroy (searchwin);
+    searchwin = NULL;
 }
 
 void
@@ -86,6 +100,14 @@ search_refresh (void) {
         GtkEntry *entry = GTK_ENTRY (lookup_widget (searchwin, "searchentry"));
         const gchar *text = gtk_entry_get_text (entry);
         search_process (text);
+        GtkWidget *pl = lookup_widget (searchwin, "searchlist");
+        ddb_listview_refresh (DDB_LISTVIEW (pl), DDB_REFRESH_VSCROLL | DDB_REFRESH_LIST | DDB_LIST_CHANGED);
+    }
+}
+
+void
+search_redraw (void) {
+    if (searchwin && gtk_widget_get_visible (searchwin)) {
         GtkWidget *pl = lookup_widget (searchwin, "searchlist");
         ddb_listview_refresh (DDB_LISTVIEW (pl), DDB_REFRESH_VSCROLL | DDB_REFRESH_LIST | DDB_LIST_CHANGED);
     }
@@ -403,4 +425,3 @@ search_playlist_init (GtkWidget *widget) {
     }
     lock_column_config = 0;
 }
-

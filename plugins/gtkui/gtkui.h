@@ -29,10 +29,6 @@
 #include "../../config.h"
 #endif
 
-//#if defined(ULTRA_COMPATIBLE)
-//#warning compiling for compatibility with gtk <2.14
-//#endif
-
 #include "../../deadbeef.h"
 
 extern DB_functions_t *deadbeef;

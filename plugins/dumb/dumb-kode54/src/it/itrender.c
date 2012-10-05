@@ -17,6 +17,10 @@
  *                                                       \__/
  */
 
+#ifdef HAVE_CONFIG_H
+#include "../../../../../config.h"
+#endif
+
 #include <math.h>
 #include <stdlib.h>
 
@@ -3558,8 +3562,8 @@ static void process_playing(DUMB_IT_SIGRENDERER *sigrenderer, IT_PLAYING *playin
 	playing->sample_vibrato_time += playing->sample->vibrato_speed;
 }
 
-#if !(_XOPEN_SOURCE >= 600 || _ISOC99_SOURCE || _POSIX_C_SOURCE >= 200112L)
-static inline float log2(float x) {return (float)log(x)/(float)log(2.0f);}
+#ifndef HAVE_LOG2
+static inline float log2(float x) {return (float)log(x)/M_LN2;}
 #endif
 
 static int delta_to_note(float delta, int base)

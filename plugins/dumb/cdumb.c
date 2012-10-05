@@ -64,13 +64,18 @@ cdumb_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     int start_order = 0;
 	int is_dos, is_it;
-    const char *ext = deadbeef->pl_find_meta (it, ":URI") + strlen (deadbeef->pl_find_meta (it, ":URI")) - 1;
-    while (*ext != '.' && ext > deadbeef->pl_find_meta (it, ":URI")) {
-        ext--;
+	deadbeef->pl_lock ();
+    {
+        const char *uri = deadbeef->pl_find_meta (it, ":URI");
+        const char *ext = uri + strlen (uri) - 1;
+        while (*ext != '.' && ext > uri) {
+            ext--;
+        }
+        ext++;
+        const char *ftype;
+        info->duh = open_module (uri, ext, &start_order, &is_it, &is_dos, &ftype);
     }
-    ext++;
-    const char *ftype;
-    info->duh = open_module(deadbeef->pl_find_meta (it, ":URI"), ext, &start_order, &is_it, &is_dos, &ftype);
+    deadbeef->pl_unlock ();
 
     dumb_it_do_initial_runthrough (info->duh);
 
@@ -766,19 +771,25 @@ read_metadata_internal (DB_playItem_t *it, DUMB_IT_SIGDATA *itsd) {
 
 static int
 cdumb_read_metadata (DB_playItem_t *it) {
-    const char *fname = deadbeef->pl_find_meta (it, ":URI");
-    const char *ext = strrchr (fname, '.');
-    if (ext) {
-        ext++;
-    }
-    else {
-        ext = "";
-    }
+    DUH* duh = NULL;
     int start_order = 0;
     int is_it;
     int is_dos;
     const char *ftype;
-    DUH* duh = open_module(fname, ext, &start_order, &is_it, &is_dos, &ftype);
+
+    deadbeef->pl_lock ();
+    {
+        const char *fname = deadbeef->pl_find_meta (it, ":URI");
+        const char *ext = strrchr (fname, '.');
+        if (ext) {
+            ext++;
+        }
+        else {
+            ext = "";
+        }
+        duh = open_module(fname, ext, &start_order, &is_it, &is_dos, &ftype);
+    }
+    deadbeef->pl_unlock ();
     if (!duh) {
         unload_duh (duh);
         return -1;

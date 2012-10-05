@@ -4,7 +4,7 @@ AC_INIT([deadbeef], [devel])
 AC_CONFIG_HEADER(config.h)
 
 AM_INIT_AUTOMAKE([1.11 dist-bzip2])
-AM_SILENT_RULES([yes])
+dnl AM_SILENT_RULES([yes])
 AM_MAINTAINER_MODE()
 
 AC_USE_SYSTEM_EXTENSIONS
@@ -13,7 +13,7 @@ AC_PROG_CC
 AC_PROG_CXX
 AC_STDC_HEADERS
 AC_PROG_INSTALL
-#AC_PROG_LIBTOOL
+dnl AC_PROG_LIBTOOL
 AC_CONFIG_MACRO_DIR([m4])
 AC_C_BIGENDIAN
 AM_GNU_GETTEXT
@@ -71,7 +71,7 @@ AC_ARG_ENABLE(alsa,     [AS_HELP_STRING([--disable-alsa    ], [disable ALSA outp
 AC_ARG_ENABLE(oss,      [AS_HELP_STRING([--disable-oss     ], [disable Open Sound System output plugin (default: enabled)])], [enable_oss=$enableval], [enable_oss=yes])
 AC_ARG_ENABLE(pulse,    [AS_HELP_STRING([--disable-pulse   ], [disable PulseAudio output plugin (default: enabled)])], [enable_pulse=$enableval], [enable_pulse=yes])
 AC_ARG_ENABLE(gtkui,    [AS_HELP_STRING([--disable-gtkui   ], [disable standard GTK+ user interface plugin (default: enabled)])], [enable_gtkui=$enableval], [enable_gtkui=yes])
-AC_ARG_ENABLE(gtk3,     [AS_HELP_STRING([--enable-gtk3     ], [build GTK3 version of gtkui plugin (default: disabled)])], [enable_gtk3=$enableval], [enable_gtk3=no])
+AC_ARG_ENABLE(gtk3,     [AS_HELP_STRING([--enable-gtk3     ], [build GTK3 version of gtkui plugin (default: enabled)])], [enable_gtk3=$enableval], [enable_gtk3=yes])
 AC_ARG_ENABLE(gtk2,     [AS_HELP_STRING([--disable-gtk2     ], [build GTK2 version of gtkui plugin (default: enabled)])], [enable_gtk2=$enableval], [enable_gtk2=yes])
 AC_ARG_ENABLE(vfs_curl, [AS_HELP_STRING([--disable-vfs-curl], [disable HTTP streaming vfs plugin (default: enabled)])], [enable_vfs_curl=$enableval], [enable_vfs_curl=yes])
 AC_ARG_ENABLE(lfm,      [AS_HELP_STRING([--disable-lfm     ], [disable last.fm/libre.fm scrobbler plugin (default: enabled)])], [enable_lfm=$enableval], [enable_lfm=yes])
@@ -84,7 +84,7 @@ AC_ARG_ENABLE(vtx,      [AS_HELP_STRING([--disable-vtx     ], [disable libayemy 
 AC_ARG_ENABLE(adplug,   [AS_HELP_STRING([--disable-adplug  ], [disable adplug plugin (default: enabled)])], [enable_adplug=$enableval], [enable_adplug=yes])
 AC_ARG_ENABLE(hotkeys,  [AS_HELP_STRING([--disable-hotkeys ], [disable global hotkeys plugin (default: enabled)])], [enable_hotkeys=$enableval], [enable_hotkeys=yes])
 AC_ARG_ENABLE(vorbis,   [AS_HELP_STRING([--disable-vorbis  ], [disable Ogg Vorbis player plugin (default: enabled)])], [enable_vorbis=$enableval], [enable_vorbis=yes])
-AC_ARG_ENABLE(ffmpeg,   [AS_HELP_STRING([--disable-ffmpeg  ], [disable FFMPEG plugin for WMA, MPC, TTA, etc (default: enabled)])], [enable_ffmpeg=$enableval], [enable_ffmpeg=yes])
+AC_ARG_ENABLE(ffmpeg,   [AS_HELP_STRING([--disable-ffmpeg  ], [disable FFMPEG plugin for WMA, AMR, etc (default: disabled)])], [enable_ffmpeg=$enableval], [enable_ffmpeg=no])
 AC_ARG_ENABLE(flac,     [AS_HELP_STRING([--disable-flac    ], [disable FLAC player plugin (default: enabled)])], [enable_flac=$enableval], [enable_flac=yes])
 AC_ARG_ENABLE(sndfile,  [AS_HELP_STRING([--disable-sndfile ], [disable libsndfile plugin for PCM wave files (default: enabled)])], [enable_sndfile=$enableval], [enable_sndfile=yes])
 AC_ARG_ENABLE(wavpack,  [AS_HELP_STRING([--disable-wavpack ], [disable wavpack plugin (default: enabled)])], [enable_wavpack=$enableval], [enable_wavpack=yes])
@@ -110,6 +110,8 @@ AC_ARG_ENABLE(dumb,      [AS_HELP_STRING([--enable-dumb      ], [build DUMB plug
 AC_ARG_ENABLE(shn,      [AS_HELP_STRING([--enable-shn      ], [build SHN plugin (default: auto)])], [enable_shn=$enableval], [enable_shn=yes])
 AC_ARG_ENABLE(psf,      [AS_HELP_STRING([--enable-psf      ], [build AOSDK-based PSF(,QSF,SSF,DSF) plugin (default: auto)])], [enable_psf=$enableval], [enable_psf=yes])
 AC_ARG_ENABLE(mono2stereo,      [AS_HELP_STRING([--enable-mono2stereo      ], [build mono2stereo DSP plugin (default: auto)])], [enable_mono2stereo=$enableval], [enable_mono2stereo=yes])
+AC_ARG_ENABLE(shellexecui, [AS_HELP_STRING([--enable-shellexecui      ], [build shellexec GTK UI plugin (default: auto)])], [enable_shellexecui=$enableval], [enable_shellexecui=yes])
+AC_ARG_ENABLE(alac, [AS_HELP_STRING([--enable-alac      ], [build ALAC plugin (default: auto)])], [enable_alac=$enableval], [enable_alac=yes])
 
 if test "x$enable_staticlink" != "xno" ; then
     AC_DEFINE_UNQUOTED([STATICLINK], [1], [Define if building static version])
@@ -119,6 +121,9 @@ fi
 dnl check for yasm
 AC_CHECK_PROG(HAVE_YASM, yasm, yes, no)
 
+dnl check for log2
+AC_CHECK_LIB([m], [log2], AC_DEFINE([HAVE_LOG2], [], [Define to 1 if the system has log2 in libm]))
+
 dnl check for libdl
 AC_CHECK_LIB([dl], [main], [HAVE_DL=yes;DL_LIBS="-ldl";AC_SUBST(DL_LIBS)])
 
@@ -126,6 +131,9 @@ dnl check libsocket (OpenIndiana)
 AC_CHECK_LIB([socket], [main], [HAVE_SOCKET=yes;DL_LIBS="-lsocket";AC_SUBST(DL_LIBS)])
 dnl check for seperate alloca.h (OpenIndiana)
 AC_CHECK_HEADER([alloca.h],[],[alloca.h not found.])
+dnl check for syslimits.h (BSD)
+AC_CHECK_HEADERS([sys/syslimits.h])
+AC_CHECK_HEADERS([sys/cdefs.h])
 
 if test "x$enable_portable" != "xno" && test "x$enable_staticlink" != "xno" ; then
     AC_DEFINE_UNQUOTED([PORTABLE], [1], [Define if building portable version])
@@ -165,12 +173,16 @@ AC_SUBST(ZIP_LIBS)
 
 if test "x$enable_gtk3" == "xyes" ; then
     PKG_CHECK_MODULES(GTK3_DEPS, gtk+-3.0 >= 3.0 gthread-2.0 glib-2.0, HAVE_GTK3=yes, HAVE_GTK3=no)
+    AC_CHECK_LIB([SM], [main], [HAVE_SM=yes;SM_LIBS="-lSM";AC_SUBST(SM_LIBS)])
+    AC_CHECK_LIB([ICE], [main], [HAVE_ICE=yes;ICE_LIBS="-lICE";AC_SUBST(ICE_LIBS)])
 else
     HAVE_GTK3=no
 fi
 
 if test "x$enable_gtk2" == "xyes" ; then
     PKG_CHECK_MODULES(GTK2_DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0 gtkglext-1.0, HAVE_GTK2=yes, HAVE_GTK2=no)
+    AC_CHECK_LIB([SM], [main], [HAVE_SM=yes;SM_LIBS="-lSM";AC_SUBST(SM_LIBS)])
+    AC_CHECK_LIB([ICE], [main], [HAVE_ICE=yes;ICE_LIBS="-lICE";AC_SUBST(ICE_LIBS)])
 else
     HAVE_GTK2=no
 fi
@@ -181,11 +193,15 @@ fi
 
 if test "x$enable_ffmpeg" != "xno" ; then
 if test "x$enable_staticlink" != "xno" ; then
-    FFMPEG_DEPS_LIBS="../../$LIB/lib/libavcodec.a -lpthread ../../$LIB/lib/libavformat.a ../../$LIB/lib/libavcodec.a ../../$LIB/lib/libavutil.a ../../$LIB/lib/libavcore.a -lm ../../$LIB/lib/libz.a "
+    echo "static ffmpeg"
+    FFMPEG_DEPS_CFLAGS="-I../../$LIB/include"
+    FFMPEG_DEPS_LIBS="../../$LIB/lib/libavcodec.a -lpthread ../../$LIB/lib/libavformat.a ../../$LIB/lib/libavcodec.a ../../$LIB/lib/libavutil.a ../../$LIB/lib/libavcore.a -lm ../../$LIB/lib/libz.a"
+    AC_SUBST(FFMPEG_DEPS_CFLAGS)
     AC_SUBST(FFMPEG_DEPS_LIBS)
     HAVE_FFMPEG=yes
 else
     PKG_CHECK_MODULES(FFMPEG_DEPS, libavcodec >= 51.0.0 libavutil libavformat >= 52.0.0, HAVE_FFMPEG=yes, HAVE_FFMPEG=no)
+dnl    PKG_CHECK_MODULES(FFMPEG_DEPS, libavcodec libavutil libavformat < 54.6.0, HAVE_FFMPEG=yes, HAVE_FFMPEG=no)
 fi
 fi
 
@@ -553,8 +569,15 @@ if test "x$enable_converter" != "xno" ; then
     fi
 fi
 
+<<<<<<< HEAD
 if test "x$enable_medialib" != "xno" ; then
     HAVE_MEDIALIB=yes
+fi
+
+if test "x$enable_shellexecui" != "xno" ; then
+    if test "x$HAVE_GTK2" = "xyes" || test "x$HAVE_GTK3" = "xyes" ; then
+        HAVE_SHELLEXECUI=yes
+    fi
 fi
 
 if test "x$enable_dumb" != "xno" ; then
@@ -573,7 +596,11 @@ if test "x$enable_mono2stereo" != "xno" ; then
     HAVE_MONO2STEREO=yes
 fi
 
-PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/ao plugins/mono2stereo plugins/medialib"
+if test "x$enable_alac" != "xno" ; then
+    HAVE_ALAC=yes
+fi
+
+PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/ao plugins/mono2stereo plugins/shellexecui plugins/alac plugins/medialib"
 
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_FLAC, test "x$HAVE_FLACPLUGIN" = "xyes")
@@ -623,6 +650,10 @@ AM_CONDITIONAL(HAVE_DUMB, test "x$HAVE_DUMB" = "xyes")
 AM_CONDITIONAL(HAVE_PSF, test "x$HAVE_PSF" = "xyes")
 AM_CONDITIONAL(HAVE_SHN, test "x$HAVE_SHN" = "xyes")
 AM_CONDITIONAL(HAVE_MONO2STEREO, test "x$HAVE_MONO2STEREO" = "xyes")
+AM_CONDITIONAL(HAVE_SHELLEXECUI, test "x$HAVE_SHELLEXECUI" = "xyes")
+AM_CONDITIONAL(HAVE_SM, test "x$HAVE_SM" = "xyes")
+AM_CONDITIONAL(HAVE_ICE, test "x$HAVE_ICE" = "xyes")
+AM_CONDITIONAL(HAVE_ALAC, test "x$HAVE_ALAC" = "xyes")
 
 AC_SUBST(PLUGINS_DIRS)
 
@@ -664,7 +695,8 @@ PRINT_PLUGIN_INFO([vtx],[vtx file player (ay8910/12 emulation)],[test "x$HAVE_VT
 PRINT_PLUGIN_INFO([adplug],[adplug player (OPL2/OPL3 emulation)],[test "x$HAVE_ADPLUG" = "xyes"])
 PRINT_PLUGIN_INFO([vfs_curl],[http/ftp streaming support],[test "x$HAVE_VFS_CURL" = "xyes"])
 PRINT_PLUGIN_INFO([cdda],[cd audio player],[test "x$HAVE_CDDAPLUGIN" = "xyes"])
-PRINT_PLUGIN_INFO([gtkui],[GTK user interface],[test "x$HAVE_GTKUI" = "xyes"])
+PRINT_PLUGIN_INFO([gtkui],[GTK2 user interface],[test "x$HAVE_GTK2" = "xyes" && test "x$HAVE_GTKUI" = "xyes"])
+PRINT_PLUGIN_INFO([gtkui3],[GTK3 user interface],[test "x$HAVE_GTK3" = "xyes" && test "x$HAVE_GTKUI" = "xyes"])
 PRINT_PLUGIN_INFO([hotkeys],[Global hotkeys support],[test "x$HAVE_HOTKEYS" = "xyes"])
 PRINT_PLUGIN_INFO([ffmpeg],[ffmpeg codecs],[test "x$HAVE_FFMPEGPLUGIN" = "xyes"])
 PRINT_PLUGIN_INFO([oss],[oss output plugin],[test "x$HAVE_OSS" = "xyes"])
@@ -688,6 +720,8 @@ PRINT_PLUGIN_INFO([psf],[PSF format plugin, using AOSDK],[test "x$HAVE_PSF" = "x
 PRINT_PLUGIN_INFO([dumb],[DUMB module plugin, for MOD, S3M, etc],[test "x$HAVE_DUMB" = "xyes"])
 PRINT_PLUGIN_INFO([shn],[SHN plugin based on xmms-shn],[test "x$HAVE_SHN" = "xyes"])
 PRINT_PLUGIN_INFO([mono2stereo],[mono2stereo DSP plugin],[test "x$HAVE_MONO2STEREO" = "xyes"])
+PRINT_PLUGIN_INFO([shellexecui],[GTK user interface for configuring shellexec plugin],[test "x$HAVE_SHELLEXECUI" = "xyes"])
+PRINT_PLUGIN_INFO([alac],[ALAC plugin],[test "x$HAVE_ALAC" = "xyes"])
 
 echo
 
@@ -734,6 +768,8 @@ plugins/dumb/Makefile
 plugins/ao/Makefile
 plugins/shn/Makefile
 plugins/mono2stereo/Makefile
+plugins/shellexecui/Makefile
+plugins/alac/Makefile
 intl/Makefile
 po/Makefile.in
 deadbeef.desktop

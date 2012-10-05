@@ -322,7 +322,9 @@ shn_init(DB_fileinfo_t *_info, DB_playItem_t *it) {
 	char data[4];
     DB_FILE *f;
 
+    deadbeef->pl_lock ();
 	f = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+	deadbeef->pl_unlock ();
     if (!f) {
         trace ("shn: failed to open %s\n", deadbeef->pl_find_meta (it, ":URI"));
         return -1;
@@ -346,10 +348,13 @@ shn_init(DB_fileinfo_t *_info, DB_playItem_t *it) {
 		return -1;
     }
 
+    deadbeef->pl_lock ();
 	if (!(info->shnfile = load_shn(deadbeef->pl_find_meta (it, ":URI")))) {
+        deadbeef->pl_unlock ();
         trace ("shn: load_shn failed\n");
 		return -1;
     }
+    deadbeef->pl_unlock ();
 
     _info->fmt.bps = info->shnfile->wave_header.bits_per_sample;
     _info->fmt.channels = info->shnfile->wave_header.channels;

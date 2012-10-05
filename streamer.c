@@ -466,6 +466,13 @@ streamer_move_to_nextsong (int reason) {
     }
     else if (pl_order == PLAYBACK_ORDER_LINEAR) { // linear
         playItem_t *it = NULL;
+        if (!curr) {
+            int cur = plt_get_cursor (streamer_playlist, PL_MAIN);
+            if (cur != -1) {
+                curr = plt_get_item_for_idx (streamer_playlist, cur, PL_MAIN);
+                pl_item_unref (curr);
+            }
+        }
         if (curr) {
             it = curr->next[PL_MAIN];
         }
@@ -583,6 +590,13 @@ streamer_move_to_prevsong (void) {
     }
     else if (pl_order == PLAYBACK_ORDER_LINEAR) { // linear
         playItem_t *it = NULL;
+        if (!playlist_track) {
+            int cur = plt_get_cursor (streamer_playlist, PL_MAIN);
+            if (cur != -1) {
+                playlist_track = plt_get_item_for_idx (streamer_playlist, cur, PL_MAIN);
+                pl_item_unref (playlist_track);
+            }
+        }
         if (playlist_track) {
             it = playlist_track->prev[PL_MAIN];
         }
@@ -713,7 +727,9 @@ streamer_set_current (playItem_t *it) {
         // try to get content-type
         mutex_lock (decodemutex);
         trace ("\033[0;34mopening file %s\033[37;0m\n", pl_find_meta (it, ":URI"));
+        pl_lock ();
         DB_FILE *fp = streamer_file = vfs_fopen (pl_find_meta (it, ":URI"));
+        pl_unlock ();
         mutex_unlock (decodemutex);
         const char *plug = NULL;
         trace ("\033[0;34mgetting content-type\033[37;0m\n");
@@ -760,8 +776,9 @@ streamer_set_current (playItem_t *it) {
                 trace ("failed to alloc %d bytes for playlist buffer\n");
                 goto m3u_error;
             }
+            trace ("reading %d bytes\n", size);
             int rd = vfs_fread (buf, 1, size, fp);
-            if (rd != size) {
+            if (rd <= 0) {
                 trace ("failed to download %d bytes (got %d bytes)\n", size, rd);
                 goto m3u_error;
             }
@@ -777,13 +794,14 @@ streamer_set_current (playItem_t *it) {
                 trace ("failed to open temp file %s\n", tempfile);
                 goto m3u_error;
             }
+            trace ("writing to %s\n", tempfile);
             out = fdopen (fd, "w+b");
             if (!out) {
                 trace ("fdopen failed for %s\n", tempfile);
                 goto m3u_error;
             }
-            int rw = fwrite (buf, 1, size, out);
-            if (rw != size) {
+            int rw = fwrite (buf, 1, rd, out);
+            if (rw != rd) {
                 trace ("failed to write %d bytes into file %s\n", size, tempfile);
                 goto m3u_error;
             }
@@ -791,6 +809,7 @@ streamer_set_current (playItem_t *it) {
             fd = -1;
             out = NULL;
 
+            trace ("loading playlist from %s\n", tempfile);
             // load playlist
             playlist_t *plt = plt_alloc ("temp");
             DB_playlist_t **plug = plug_get_playlist_list ();
@@ -815,7 +834,9 @@ streamer_set_current (playItem_t *it) {
             pl_item_ref (i);
             int res = -1;
             while (i) {
+                pl_lock ();
                 pl_replace_meta (it, "!URI", pl_find_meta_raw (i, ":URI"));
+                pl_unlock ();
                 res = streamer_set_current (it);
                 if (!res) {
                     pl_item_unref (i);
@@ -840,6 +861,7 @@ streamer_set_current (playItem_t *it) {
             unlink (tempfile);
 
 m3u_error:
+            err = -1;
             if (buf) {
                 free (buf);
             }
@@ -877,6 +899,7 @@ m3u_error:
         dec = plug_get_decoder_for_id (decoder_id);
         if (!dec) {
             // find new decoder by file extension
+            pl_lock ();
             const char *fname = pl_find_meta (it, ":URI");
             const char *ext = strrchr (fname, '.');
             if (ext) {
@@ -897,6 +920,7 @@ m3u_error:
                     }
                 }
             }
+            pl_unlock ();
         }
         if (dec) {
             trace ("\033[0;33minit decoder for %s (%s)\033[37;0m\n", pl_find_meta (it, ":URI"), decoder_id);
@@ -1201,7 +1225,6 @@ streamer_thread (void *ctx) {
             bytes_until_next_song = -1;
             trace ("nextsong=-2\n");
             nextsong = -1;
-            output->stop ();
             if (playing_track) {
                 trace ("sending songfinished to plugins [1]\n");
                 send_songfinished (playing_track);
@@ -1219,6 +1242,7 @@ streamer_thread (void *ctx) {
                 pl_item_unref (from);
             }
             streamer_unlock ();
+            output->stop ();
             continue;
         }
         else if (output->state () == OUTPUT_STATE_STOPPED) {
@@ -1411,6 +1435,9 @@ streamer_thread (void *ctx) {
             do {
                 int prev_buns = bytes_until_next_song;
                 int nb = streamer_read_async (readbuffer+bytesread,sz-bytesread);
+                if (nb <= 0) {
+                    break;
+                }
                 bytesread += nb;
                 struct timeval tm2;
                 gettimeofday (&tm2, NULL);
@@ -1555,29 +1582,47 @@ error:
 
 int
 streamer_dsp_chain_save_internal (const char *fname, ddb_dsp_context_t *chain) {
-    FILE *fp = fopen (fname, "w+t");
+    char tempfile[PATH_MAX];
+    snprintf (tempfile, sizeof (tempfile), "%s.tmp", fname);
+    FILE *fp = fopen (tempfile, "w+t");
     if (!fp) {
         return -1;
     }
 
     ddb_dsp_context_t *ctx = chain;
     while (ctx) {
-        fprintf (fp, "%s %d {\n", ctx->plugin->plugin.id, (int)ctx->enabled);
+        if (fprintf (fp, "%s %d {\n", ctx->plugin->plugin.id, (int)ctx->enabled) < 0) {
+            fprintf (stderr, "write to %s failed (%s)\n", tempfile, strerror (errno));
+            goto error;
+        }
         if (ctx->plugin->num_params) {
             int n = ctx->plugin->num_params ();
             int i;
             for (i = 0; i < n; i++) {
                 char v[1000];
                 ctx->plugin->get_param (ctx, i, v, sizeof (v));
-                fprintf (fp, "\t%s\n", v);
+                if (fprintf (fp, "\t%s\n", v) < 0) {
+                    fprintf (stderr, "write to %s failed (%s)\n", tempfile, strerror (errno));
+                    goto error;
+                }
             }
         }
-        fprintf (fp, "}\n");
+        if (fprintf (fp, "}\n") < 0) {
+            fprintf (stderr, "write to %s failed (%s)\n", tempfile, strerror (errno));
+            goto error;
+        }
         ctx = ctx->next;
     }
 
     fclose (fp);
+    if (rename (tempfile, fname) != 0) {
+        fprintf (stderr, "dspconfig rename %s -> %s failed: %s\n", tempfile, fname, strerror (errno));
+        return -1;
+    }
     return 0;
+error:
+    fclose (fp);
+    return -1;
 }
 
 int
@@ -2267,6 +2312,7 @@ streamer_set_dsp_chain (ddb_dsp_context_t *chain) {
     if (playing_track && output->state () != OUTPUT_STATE_STOPPED) {
         streamer_set_seek (playpos);
     }
+    messagepump_push (DB_EV_DSPCHAINCHANGED, 0, 0, 0);
 }
 
 void
@@ -2281,6 +2327,7 @@ streamer_notify_order_changed (int prev_order, int new_order) {
         playItem_t *curr = playing_track;
         if (curr) {
 
+            pl_lock ();
             const char *alb = pl_find_meta_raw (curr, "album");
             const char *art = pl_find_meta_raw (curr, "artist");
             playItem_t *next = curr->prev[PL_MAIN];
@@ -2293,6 +2340,7 @@ streamer_notify_order_changed (int prev_order, int new_order) {
                     break;
                 }
             }
+            pl_unlock ();
         }
         streamer_unlock ();
     }

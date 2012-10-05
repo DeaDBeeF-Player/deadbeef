@@ -39,7 +39,7 @@
         local - command allowed for local files
         remote - command allowed for non-local files
         playlist - command allowed for playlist tabs
-        disabled - ignore command
+        common - command appears in main menu bar
 */
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
@@ -83,6 +83,11 @@ trim (char* s)
 static int
 shx_callback (Shx_action_t *action, DB_playItem_t *it)
 {
+    if (action->parent.flags&(DB_ACTION_PLAYLIST|DB_ACTION_COMMON)) {
+        trace ("%s\n", action->shcommand);
+        system (action->shcommand);
+        return 0;
+    }
     char cmd[_POSIX_ARG_MAX];
     int res = deadbeef->pl_format_title_escaped (it, -1, cmd, sizeof (cmd) - 2, -1, action->shcommand);
     if (res < 0) {
@@ -98,7 +103,9 @@ shx_callback (Shx_action_t *action, DB_playItem_t *it)
 static DB_plugin_action_t *
 shx_get_plugin_actions (DB_playItem_t *it)
 {
+    deadbeef->pl_lock ();
     int is_local = it ? deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI")) : 1;
+    deadbeef->pl_unlock ();
 
     Shx_action_t *action;
     for (action = actions; action; action = (Shx_action_t *)action->parent.next)
@@ -127,10 +134,10 @@ shx_find_sep (char *str) {
 }
 
 void
-shx_save_actions(Shx_action_t *action_list)
+shx_save_actions (void)
 {
     deadbeef->conf_remove_items("shellexec.");
-    Shx_action_t *action = action_list;
+    Shx_action_t *action = actions;
     int i = 0;
     while(action) {
         // build config line
@@ -160,8 +167,8 @@ shx_save_actions(Shx_action_t *action_list)
         if(action->parent.flags & DB_ACTION_ALLOW_MULTIPLE_TRACKS) {
             strcat(conf_line, "multiple,");
         }
-        if(action->parent.flags & DB_ACTION_DISABLED) {
-            strcat(conf_line, "disabled,");
+        if(action->parent.flags & DB_ACTION_COMMON) {
+            strcat(conf_line, "common,");
         }
         deadbeef->conf_set_str(conf_key, conf_line);
         action = (Shx_action_t*)action->parent.next;
@@ -171,7 +178,7 @@ shx_save_actions(Shx_action_t *action_list)
 }
 
 Shx_action_t*
-shx_get_actions (DB_plugin_action_callback_t callback, int omit_disabled)
+shx_get_actions (DB_plugin_action_callback_t callback)
 {
     Shx_action_t *action_list = NULL;
     Shx_action_t *prev = NULL;
@@ -214,11 +221,6 @@ shx_get_actions (DB_plugin_action_callback_t callback, int omit_disabled)
             flags = "local,single";
         }
 
-        if (strstr (flags, "disabled") && omit_disabled) {
-            item = deadbeef->conf_find ("shellexec.", item);
-            continue;
-        }
-
         Shx_action_t *action = calloc (sizeof (Shx_action_t), 1);
 
         action->parent.title = strdup (title);
@@ -244,9 +246,8 @@ shx_get_actions (DB_plugin_action_callback_t callback, int omit_disabled)
         if (strstr (flags, "playlist"))
             action->parent.flags |= DB_ACTION_PLAYLIST;
 
-        if (strstr (flags, "disabled")) {
-            action->parent.flags |= DB_ACTION_DISABLED;
-        }
+        if (strstr (flags, "common"))
+            action->parent.flags |= DB_ACTION_COMMON;
 
         if (prev)
             prev->parent.next = (DB_plugin_action_t *)action;
@@ -260,10 +261,82 @@ shx_get_actions (DB_plugin_action_callback_t callback, int omit_disabled)
     return action_list;
 }
 
+Shx_action_t*
+shx_action_add (void) {
+    Shx_action_t *a = calloc (sizeof (Shx_action_t), 1);
+    a->parent.callback = (DB_plugin_action_callback_t)shx_callback;
+    if (!actions) {
+        actions = a;
+    }
+    else {
+        for (Shx_action_t *last = actions; last; last = (Shx_action_t *)last->parent.next) {
+            if (!last->parent.next) {
+                last->parent.next = (DB_plugin_action_t *)a;
+                break;
+            }
+        }
+    }
+    return a;
+}
+
+void
+shx_action_free (Shx_action_t *a) {
+    if (a->shcommand) {
+        free ((char *)a->shcommand);
+    }
+    if (a->parent.title) {
+        free ((char *)a->parent.title);
+    }
+    if (a->parent.name) {
+        free ((char *)a->parent.name);
+    }
+    free (a);
+}
+
+void
+shx_action_remove (Shx_action_t *action) {
+    Shx_action_t *prev = NULL;
+    for (Shx_action_t *a = actions; a; a = (Shx_action_t *)a->parent.next) {
+        if (a == action) {
+            if (prev) {
+                prev->parent.next = a->parent.next;
+            }
+            else {
+                actions = (Shx_action_t *)a->parent.next;
+            }
+            break;
+        }
+        prev = a;
+    }
+    shx_action_free (action);
+}
+
 static int
 shx_start ()
 {
-    actions = shx_get_actions((DB_plugin_action_callback_t)shx_callback, 1);
+    actions = shx_get_actions((DB_plugin_action_callback_t)shx_callback);
+    return 0;
+}
+
+static int
+shx_stop ()
+{
+    Shx_action_t *a = actions;
+    while (a) {
+        Shx_action_t *next = (Shx_action_t *)a->parent.next;
+        if (a->shcommand) {
+            free ((char *)a->shcommand);
+        }
+        if (a->parent.title) {
+            free ((char *)a->parent.title);
+        }
+        if (a->parent.name) {
+            free ((char *)a->parent.name);
+        }
+        free (a);
+        a = next;
+    }
+    actions = NULL;
     return 0;
 }
 
@@ -288,7 +361,6 @@ static Shx_plugin_t plugin = {
     "    single - command allowed only for single track\n"
     "    local - command allowed only for local files\n"
     "    remote - command allowed only for non-local files\n"
-    "    disabled - ignore command\n\n"
     "EXAMPLE: shellexec.00 notify-send \"%a - %t\":Show selected track:notify:single\n"
     "this would show the name of selected track in notification popup"
     ,
@@ -314,8 +386,11 @@ static Shx_plugin_t plugin = {
     ,
     .misc.plugin.website = "http://deadbeef.sf.net",
     .misc.plugin.start = shx_start,
+    .misc.plugin.stop = shx_stop,
     .misc.plugin.get_actions = shx_get_plugin_actions,
-    .shx_get_actions = shx_get_actions,
-    .shx_save_actions = shx_save_actions
+    .save_actions = shx_save_actions,
+    .action_add = shx_action_add,
+    .action_remove = shx_action_remove,
+    .action_free = shx_action_free,
 };
 

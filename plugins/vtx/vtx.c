@@ -61,7 +61,9 @@ vtx_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     size_t sz = 0;
     char *buf = NULL;
 
+    deadbeef->pl_lock ();
     DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    deadbeef->pl_unlock ();
     if (!fp) {
         trace ("vtx: failed to open file %s\n", deadbeef->pl_find_meta (it, ":URI"));
         return -1;

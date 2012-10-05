@@ -97,7 +97,9 @@ musepack_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->reader.get_size = musepack_vfs_get_size;
     info->reader.canseek = musepack_vfs_canseek;
 
+    deadbeef->pl_lock ();
     DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    deadbeef->pl_unlock ();
     if (!fp) {
         return -1;
     }
@@ -483,7 +485,9 @@ musepack_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 }
 
 static int musepack_read_metadata (DB_playItem_t *it) {
+    deadbeef->pl_lock ();
     DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    deadbeef->pl_unlock ();
     if (!fp) {
         return -1;
     }

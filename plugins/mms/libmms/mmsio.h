@@ -19,7 +19,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 typedef mms_off_t (*mms_io_write_func)(void *data, int socket, char *buf, mms_off_t num);
-typedef mms_off_t (*mms_io_read_func)(void *data, int socket, char *buf, mms_off_t num);
+typedef mms_off_t (*mms_io_read_func)(void *data, int socket, char *buf, mms_off_t num, int *need_abort);
 
 /* select states */
 #define MMS_IO_READ_READY    1

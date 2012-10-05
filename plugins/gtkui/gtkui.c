@@ -48,6 +48,9 @@
 #include "wingeom.h"
 #include "widgets.h"
 #include "X11/Xlib.h"
+#ifdef EGG_SM_CLIENT_BACKEND_XSMP
+#include "smclient/eggsmclient.h"
+#endif
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -192,9 +195,9 @@ update_songinfo (gpointer ctx) {
             }
         }
         const char *spaused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED ? _("Paused | ") : "";
-        const char *filetype = deadbeef->pl_find_meta (track, ":FILETYPE");
-        if (!filetype) {
-            filetype = "-";
+        char filetype[20];
+        if (!deadbeef->pl_get_meta (track, ":FILETYPE", filetype, sizeof (filetype))) {
+            strcpy (filetype, "-");
         }
         snprintf (sbtext_new, sizeof (sbtext_new), _("%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"), spaused, filetype, sbitrate, samplerate, bitspersample, mode, minpos, secpos, t, deadbeef->pl_getcount (PL_MAIN), totaltime_str);
     }
@@ -234,7 +237,7 @@ update_songinfo (gpointer ctx) {
 void
 set_tray_tooltip (const char *text) {
     if (trayicon) {
-#if !GTK_CHECK_VERSION(2,16,0) || defined(ULTRA_COMPATIBLE)
+#if !GTK_CHECK_VERSION(2,16,0)
         gtk_status_icon_set_tooltip (trayicon, text);
 #else
         gtk_status_icon_set_tooltip_text (trayicon, text);
@@ -305,8 +308,7 @@ mainwin_toggle_visible (void) {
     }
 }
 
-#if !GTK_CHECK_VERSION(2,14,0) || defined(ULTRA_COMPATIBLE)
-
+#if !GTK_CHECK_VERSION(2,14,0)
 gboolean
 on_trayicon_activate (GtkWidget       *widget,
                                         gpointer         user_data)
@@ -541,9 +543,10 @@ gtkui_update_status_icon (gpointer unused) {
         g_object_set (trayicon, "visible", FALSE, NULL);
     }
 
-#if !GTK_CHECK_VERSION(2,14,0) || defined(ULTRA_COMPATIBLE)
+#if !GTK_CHECK_VERSION(2,14,0)
     g_signal_connect ((gpointer)trayicon, "activate", G_CALLBACK (on_trayicon_activate), NULL);
 #else
+    printf ("connecting button tray signals\n");
     g_signal_connect ((gpointer)trayicon, "scroll_event", G_CALLBACK (on_trayicon_scroll_event), NULL);
     g_signal_connect ((gpointer)trayicon, "button_press_event", G_CALLBACK (on_trayicon_button_press_event), NULL);
 #endif
@@ -930,6 +933,12 @@ send_messages_to_widgets (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uin
     }
 }
 
+gboolean
+add_mainmenu_actions_cb (void *data) {
+    add_mainmenu_actions ();
+    return FALSE;
+}
+
 int
 gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     ddb_gtkui_widget_t *rootwidget = w_get_rootwidget ();
@@ -973,8 +982,40 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     case DB_EV_PLAYLISTSWITCHED:
         g_idle_add (playlistswitch_cb, NULL);
         break;
+    case DB_EV_ACTIONSCHANGED:
+        g_idle_add (add_mainmenu_actions_cb, NULL);
+        break;
+    case DB_EV_DSPCHAINCHANGED:
+        eq_refresh ();
+        break;
     }
     return 0;
+}
+
+#ifdef EGG_SM_CLIENT_BACKEND_XSMP
+static void
+smclient_quit_requested (EggSMClient *client, gpointer user_data) {
+    egg_sm_client_will_quit (client, TRUE);
+}
+
+static void
+smclient_quit_cancelled (EggSMClient *client, gpointer user_data) {
+}
+
+static void
+smclient_quit (EggSMClient *client, gpointer user_data) {
+    deadbeef->sendmessage (DB_EV_TERMINATE, 0, 0, 0);
+}
+
+static void
+smclient_save_state (EggSMClient *client, const char *state_dir, gpointer user_data) {
+}
+#endif
+
+static gboolean
+unlock_playlist_columns_cb (void *ctx) {
+    ddb_listview_lock_columns (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), 0);
+    return FALSE;
 }
 
 void
@@ -995,7 +1036,37 @@ gtkui_thread (void *ctx) {
     if (!deadbeef->conf_get_int ("gtkui.sync", 0)) {
         argc = 1;
     }
+
     gtk_disable_setlocale ();
+#ifdef EGG_SM_CLIENT_BACKEND_XSMP
+    g_type_init ();
+    GOptionContext *goption_context;
+    GError *err = NULL;
+    goption_context = g_option_context_new (_("- Test logout functionality"));
+    g_option_context_add_group (goption_context, gtk_get_option_group (TRUE));
+    g_option_context_add_group (goption_context, egg_sm_client_get_option_group ());
+
+    if (!g_option_context_parse (goption_context, &argc, (char ***)&argv, &err))
+    {
+        g_printerr ("Could not parse arguments: %s\n", err->message);
+        g_error_free (err);
+    }
+    else {
+        EggSMClient *client = egg_sm_client_get ();
+        g_signal_connect (client, "quit-requested", G_CALLBACK (smclient_quit_requested), NULL);
+        g_signal_connect (client, "quit-cancelled", G_CALLBACK (smclient_quit_cancelled), NULL);
+        g_signal_connect (client, "quit", G_CALLBACK (smclient_quit), NULL);
+        g_signal_connect (client, "save-state", G_CALLBACK (smclient_save_state), NULL);
+    }
+#endif
+
+    // let's start some gtk
+    g_thread_init (NULL);
+//    add_pixmap_directory (PREFIX "/share/deadbeef/pixmaps");
+    add_pixmap_directory (deadbeef->get_pixmap_dir ());
+    gdk_threads_init ();
+    gdk_threads_enter ();
+
     gtk_init (&argc, (char ***)&argv);
 
     // register widget types
@@ -1037,6 +1108,9 @@ gtkui_thread (void *ctx) {
             w_append (rootwidget, w);
         }
     }
+#if GTK_CHECK_VERSION(3,0,0)
+    gtk_widget_set_events (GTK_WIDGET (mainwin), gtk_widget_get_events (GTK_WIDGET (mainwin)) | GDK_SCROLL_MASK);
+#endif
 
     gtkpl_init ();
 
@@ -1093,7 +1167,6 @@ gtkui_thread (void *ctx) {
 
     progress_init ();
     cover_art_init ();
-    add_mainmenu_actions (lookup_widget (mainwin, "menubar1"));
 
     gtk_widget_show (mainwin);
 
@@ -1105,6 +1178,8 @@ gtkui_thread (void *ctx) {
     deadbeef->pl_format_title (NULL, -1, str, sizeof (str), -1, fmt);
     gtk_window_set_title (GTK_WINDOW (mainwin), str);
     gtk_initialized = 1;
+
+    g_idle_add (unlock_playlist_columns_cb, NULL);
 
     gtk_main ();
 
@@ -1119,7 +1194,7 @@ gtkui_thread (void *ctx) {
     trkproperties_destroy ();
     progress_destroy ();
     gtkui_hide_status_icon ();
-    draw_free ();
+//    draw_free ();
     if (theme_treeview) {
         gtk_widget_destroy (theme_treeview);
         theme_treeview = NULL;
@@ -1266,6 +1341,7 @@ gtkui_connect_cb (void *none) {
         }
     }
     gtkui_playlist_changed ();
+    add_mainmenu_actions ();
     return FALSE;
 }
 
@@ -1289,6 +1365,10 @@ gtkui_disconnect (void) {
 
 static gboolean
 quit_gtk_cb (gpointer nothing) {
+    extern int trkproperties_modified;
+    trkproperties_modified = 0;
+    trkproperties_destroy ();
+    search_destroy ();
     gtk_main_quit ();
     return FALSE;
 }
@@ -1342,7 +1422,7 @@ static const char settings_dlg[] =
 // define plugin interface
 static ddb_gtkui_t plugin = {
     .gui.plugin.api_vmajor = 1,
-    .gui.plugin.api_vminor = 0,
+    .gui.plugin.api_vminor = 4,
     .gui.plugin.version_major = 1,
     .gui.plugin.version_minor = 0,
     .gui.plugin.type = DB_PLUGIN_MISC,

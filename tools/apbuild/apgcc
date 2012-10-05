@@ -19,7 +19,6 @@ use Apbuild::Utils;
 # Don't forget to bump the version in Makefile too.
 our $APBUILD_VERSION = "2.0.9";
 
-
 ######## Initialization ########
 
 # In C mode:
@@ -75,7 +74,7 @@ if (!defined $appath) {
 	$appath =~ s/\/*$//g;
 	$appath =~ s/^(.*)\/.*?$/$1/;
 	$appath .= '/include/apbuild';
-	if (! -f "$appath/apsymbols.h" && -f "$FindBin::Bin/apsymbols.h") {
+	if (! -f "$appath/apsymbols.h.i686" && -f "$FindBin::Bin/apsymbols.h.i686") {
 		$appath = $FindBin::Bin;
 	}
 }

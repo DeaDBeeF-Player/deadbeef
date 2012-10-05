@@ -33,15 +33,18 @@
 struct mmsx_s {
   mms_t *connection;
   mmsh_t *connection_h;
+  int *need_abort;
 };
 
-mmsx_t *mmsx_connect(mms_io_t *io, void *data, const char *url, int bandwidth)
+mmsx_t *mmsx_connect(mms_io_t *io, void *data, const char *url, int bandwidth, int *need_abort)
 {
   mmsx_t *mmsx = calloc(1, sizeof(mmsx_t));
   char *try_mms_first = getenv("LIBMMS_TRY_MMS_FIRST");
   
   if (!mmsx)
     return mmsx;
+
+    mmsx->need_abort = need_abort;
 
   /* Normally we try mmsh first, as mms: is a rollover protocol identifier
      according to microsoft and recent mediaplayer versions will try
@@ -72,9 +75,9 @@ mmsx_t *mmsx_connect(mms_io_t *io, void *data, const char *url, int bandwidth)
 int mmsx_read (mms_io_t *io, mmsx_t *mmsx, char *data, int len)
 {
   if(mmsx->connection)
-    return mms_read(io, mmsx->connection, data, len);
+    return mms_read(io, mmsx->connection, data, len, mmsx->need_abort);
   else
-    return mmsh_read(io, mmsx->connection_h, data, len);
+    return mmsh_read(io, mmsx->connection_h, data, len, mmsx->need_abort);
 }
 
 int mmsx_time_seek (mms_io_t *io, mmsx_t *mmsx, double time_sec)
