@@ -108,7 +108,9 @@ adplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             info->opl = new CKemuopl (samplerate, bps == 16, channels == 2);
         }
     }
+    deadbeef->pl_lock ();
     info->decoder = CAdPlug::factory (deadbeef->pl_find_meta (it, ":URI"), info->opl, CAdPlug::players);
+    deadbeef->pl_unlock ();
     if (!info->decoder) {
         trace ("adplug: failed to open %s\n", deadbeef->pl_find_meta (it, ":URI"));
         return -1;

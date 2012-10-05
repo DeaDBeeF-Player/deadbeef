@@ -142,6 +142,8 @@ struct mms_s {
   int           seekable;
   off_t         current_pos;
   int           eos;
+
+  int *need_abort;
 };
 
 static int fallback_io_select(void *data, int socket, int state, int timeout_msec)
@@ -154,12 +156,13 @@ static int fallback_io_select(void *data, int socket, int state, int timeout_mse
                    (state == MMS_IO_WRITE_READY) ? &set : NULL, NULL, &tv);
 }
 
-static off_t fallback_io_read(void *data, int socket, char *buf, off_t num)
+static off_t fallback_io_read(void *data, int socket, char *buf, off_t num, int *need_abort)
 {
   off_t len = 0, ret;
 /*   lprintf("%d\n", fallback_io_select(data, socket, MMS_IO_READ_READY, 1000)); */
   errno = 0;
-  while (len < num)
+  int nretry = 200;
+  while (len < num && nretry > 0)
   {
     ret = (off_t)read(socket, buf + len, num - len);
     if(ret == 0)
@@ -170,6 +173,8 @@ static off_t fallback_io_read(void *data, int socket, char *buf, off_t num)
       switch(errno)
       {
           case EAGAIN:
+              usleep (30000); // sleeping 30ms 200 times will give us about 6 sec of time to complete the request
+              nretry--;
             continue;
           default:
             /* if already read something, return it, we will fail next time */
@@ -499,7 +504,7 @@ static int get_packet_header (mms_io_t *io, mms_t *this, mms_packet_header_t *he
   header->packet_seq     = 0;
   header->flags          = 0;
   header->packet_id_type = 0;
-  len = io_read(io,  this->s, this->buf, 8);
+  len = io_read(io,  this->s, this->buf, 8, this->need_abort);
   this->buf_packet_seq_offset = -1;
   if (len != 8)
     goto error;
@@ -507,7 +512,7 @@ static int get_packet_header (mms_io_t *io, mms_t *this, mms_packet_header_t *he
   if (LE_32(this->buf + 4) == 0xb00bface) {
     /* command packet */
     header->flags = this->buf[3];
-    len = io_read(io,  this->s, this->buf + 8, 4);
+    len = io_read(io,  this->s, this->buf + 8, 4, this->need_abort);
     if (len != 4)
       goto error;
     
@@ -544,7 +549,7 @@ static int get_packet_command (mms_io_t *io, mms_t *this, uint32_t packet_len) {
   int  command = 0;
   size_t len;
   
-  len = io_read(io,  this->s, this->buf + 12, packet_len) ;
+  len = io_read(io,  this->s, this->buf + 12, packet_len, this->need_abort) ;
   //this->buf_packet_seq_offset = -1; // already set in get_packet_header
   if (len != packet_len) {
     lprintf("mms: error reading command packet\n");
@@ -638,7 +643,7 @@ static int get_asf_header (mms_io_t *io, mms_t *this) {
             return 0;
         }
         len = io_read(io,  this->s,
-                              this->asf_header + this->asf_header_len, header.packet_len);
+                              this->asf_header + this->asf_header_len, header.packet_len, this->need_abort);
         if (len != header.packet_len) {
            lprintf("mms: error reading asf header\n");
            return 0;
@@ -1434,7 +1439,7 @@ static int get_media_packet (mms_io_t *io, mms_t *this) {
         this->current_pos = (off_t)this->asf_header_len +
           ((off_t)header.packet_seq - this->start_packet_seq) * (off_t)this->asf_packet_len;
 
-        len = io_read(io,  this->s, this->buf, header.packet_len);
+        len = io_read(io,  this->s, this->buf, header.packet_len, this->need_abort);
         if (len != header.packet_len) {
           lprintf("mms: error reading asf packet\n");
           return 0;
@@ -1472,11 +1477,11 @@ int mms_peek_header (mms_t *this, char *data, int maxsize) {
   return len;
 }
 
-int mms_read (mms_io_t *io, mms_t *this, char *data, int len) {
+int mms_read (mms_io_t *io, mms_t *this, char *data, int len, int *need_abort) {
   int total;
 
   total = 0;
-  while (total < len && !this->eos) {
+  while (total < len && !this->eos && (!need_abort || !(*need_abort))) {
 
     if (this->asf_header_read < this->asf_header_len) {
       int n, bytes_left;

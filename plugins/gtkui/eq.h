@@ -35,4 +35,7 @@ get_supereq (void);
 void
 eq_redraw (void);
 
+void
+eq_refresh (void);
+
 #endif

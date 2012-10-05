@@ -1,3 +1,65 @@
+version 0.5.5
+	fixed converter GUI plugin crash if the converter plugin not found
+	fixed compiling on FreeBSD
+	fixed race condition bug in streamer
+	fixed flac embedded cover loading bug
+	fixed multiline tag field editing
+	fixed vorbis streaming audio bug
+	fixed numlock handling in global hotkeys setup
+	fixed KP_Return not working
+	fixed filename being ignored in the search window
+	fixed session saving on reboot/logout using XSMP via eggsmclient
+	fixed few missing translation strings
+	fixed many instability issues caused by improper use of pl_find_meta[_raw] calls
+	fixed improper use of GtkStyle in playlist and tabs widgets
+	fixed prev/next handling when playback is stopped
+	fixed random playback bug caused by libsidplay2 calling srand(time(NULL))
+	fixed crash in adplug when playing ADL files
+	fixed crash in aac reload metadata
+	fixed Grandia - Parallel Trippers.gbs crash in GME plugin
+	fixed crash in GME plugin when a file doesn't exist 
+	fixed integer overflow bug in float32->int32 conversion
+	fixed m3u parser string copy bug
+	fixed several dsp bugs in the converter
+	fixed up/down buttons in the converter's dsp preset editor 
+	fixed selected row bugs in dsp preset editors in gtkui preferences and converter
+	fixed parent window of dsp plugin configure window
+	fixed all known issues in gtk3 plugin -- it should be fully working now
+
+version 0.5.4
+	fixed starting the player using "deadbeef" command without path
+	fixed missing ; in deadbeef.desktop
+	fixed big-endian support in sndfile plugin
+
+version 0.5.3
+	m3u: fixed few parser bugs; added audio/x-scpls mime-type support; fixed m3uext support
+	adplug: upgraded to 2.2.1, added fake-surround support and emu selection
+	added ShellExec GUI configuration support (thanks to Azeem Arshad)
+	fixed id3v2 parser whitespace trimming bug
+	"Stop after current" can be reconfigured to be auto-reset each time
+	auto-save EQ state on every change
+	gcc 4.7 compile fix in SID plugin
+	added new Sort->Random feature, to randomize the playlist (thanks to Defusix)
+	converter: fixed writing wav files sized over 2 gigs
+	converter: added support for reconstructing of the folder structrure based on longest common root folder
+	converter: added support for writing files to the source track folders
+	fixed possible hang caused by race condition in the alsa/streamer interaction
+	wildmidi: fixed possible linking errors
+	fixed ignoring cuesheet and log fields in search
+	added support for TXX DATE field as written by FB2K
+	bogus "plugin.so file not found" errors are no longer printed
+	fixed bug in search window causing all tracks to become selected on some actions
+	fixed possible crash when loading corrupted playlist files
+	EQ window will reflect changes in the DSP chain configuration
+	fixed excessive CPU load while streamer is waiting for the last track to finish
+	alsa: fixed sleep time bug, which should improve CPU load (thanks to Martin Panter)
+	alsa: fixed buffer underrun handling problem which was causing sound jittering on slow media like sshfs, cd, etc (thanks to Martin Panter)
+	mp3: added option to disable gapless playback, but improve speed (thanks to Martin Panter)
+	aac: fix to potential reading past the end of array (thanks to Martin Panter)
+	new default cover-art image by TheSame
+	fixed loading m3u/pls over http when the file size is unknown
+	added m3u and pls url mime types (audio/x-mpegurl;audio/x-scpls) to deadbeef.desktop
+
 version 0.5.2
 	fixed reading id3v2 and apev2 tags from raw AAC files
 	fixed proxy authentication bug in vfs_curl plugin

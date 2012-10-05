@@ -104,7 +104,7 @@ void gtk_combo_box_text_prepend_text (GtkComboBoxText *combo_box, const gchar *t
 gchar *gtk_combo_box_text_get_active_text  (GtkComboBoxText *combo_box);
 #endif
 
-#if !GTK_CHECK_VERSION(2,14,0) || defined(ULTRA_COMPATIBLE)
+#if !GTK_CHECK_VERSION(2,14,0)
 #define gtk_widget_get_window(widget) ((widget)->window)
 #define gtk_selection_data_get_target(data) (data->target)
 #define gtk_dialog_get_content_area(dialog) (dialog->vbox)
@@ -116,7 +116,7 @@ gchar *gtk_combo_box_text_get_active_text  (GtkComboBoxText *combo_box);
 #define gtk_adjustment_get_upper(adj) (adj->upper)
 #endif
 
-#if !GTK_CHECK_VERSION(2,18,0) || defined(ULTRA_COMPATIBLE)
+#if !GTK_CHECK_VERSION(2,18,0)
 #define gtk_widget_set_has_window(widget, has_window) \
   if (has_window) GTK_WIDGET_UNSET_FLAGS (widget, GTK_NO_WINDOW); \
   else GTK_WIDGET_SET_FLAGS (widget, GTK_NO_WINDOW);
@@ -127,7 +127,7 @@ void gtk_widget_set_window(GtkWidget *widget, GdkWindow *window);
 #endif
 
 
-#if !GTK_CHECK_VERSION(2,18,0) || defined(ULTRA_COMPATIBLE)
+#if !GTK_CHECK_VERSION(2,18,0)
 void                gtk_widget_set_allocation           (GtkWidget *widget,
                                                          const GtkAllocation *allocation);
 

@@ -95,8 +95,23 @@ cmd_invoke_plugin_command (DB_plugin_action_t *action)
 {
     trace ("We're here to invoke action %s / %s\n", action->title, action->name);
 
-    DB_plugin_t **plugins = deadbeef->plug_get_list();
-    int i;
+    // common action
+    if (action->flags & DB_ACTION_COMMON)
+    {
+        action->callback (action, NULL);
+        return;
+    }
+
+    // playlist action
+    if (action->flags & DB_ACTION_PLAYLIST)
+    {
+        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+        if (plt) {
+            action->callback (action, plt);
+            deadbeef->plt_unref (plt);
+        }
+        return;
+    }
 
     int selected_count = 0;
     DB_playItem_t *pit = deadbeef->pl_get_first (PL_MAIN);
@@ -113,13 +128,6 @@ cmd_invoke_plugin_command (DB_plugin_action_t *action)
         pit = next;
     }
 
-
-    if (action->flags & DB_ACTION_COMMON)
-    {
-        //Simply call common action
-        action->callback (action, NULL);
-        return;
-    }
     //Now we're checking if action is applicable:
 
     if (selected_count == 0)

@@ -1,6 +1,6 @@
 // this file should list extra translatable strings that are not referenced
 // directly in source code, e.g. scripted plugin configuration strings
-_("Add Audio CD")
+_("Add audio CD")
 _("Lookup on Last.fm")
 // ALSA output plugin
 _("Use ALSA resampling")
@@ -13,6 +13,7 @@ _("Disable nowplaying")
 _("Username")
 _("Password")
 _("Scrobble URL")
+_("Prefer Album Artist over Artist field")
 // OSS output plugin
 _("Device file")
 _("OSS4 samplerate bug workaround")
@@ -33,8 +34,11 @@ _("Prefer CDDB protocol over HTTP")
 _("Enable NRG image support")
 // DUMB module player plugin
 _("Resampling quality (0..2, higher is better)")
+_("8-bit output (default is 16)")
 // Game_Music_Emu decoder plugin
 _("Max song length (in minutes)")
+_("Fadeout length (seconds)")
+_("Play loops nr. of times (if available)")
 // Standard GTK2 user interface plugin
 _("Ask confirmation to delete files from disk")
 _("Status icon volume control sensitivity")
@@ -87,5 +91,12 @@ _("File Extensions (separate with ';')")
 _("Convert")
 // Resampler (Secret Rabbit Code)
 _("Target Samplerate")
-_("Quality / Algorythm")
+_("Quality / Algorithm")
 _("Automatic Samplerate (overrides Target Samplerate)")
+// shellexecui
+_("Configure custom shell commands")
+// mpgmad
+_("Disable gapless playback (faster scanning)")
+// adplug
+_("Prefer Ken emu over Satoh (surround won't work)")
+_("Enable surround")

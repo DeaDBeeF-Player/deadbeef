@@ -151,7 +151,6 @@ on_hk_slot_edited (GtkCellRendererText *renderer, gchar *path, gchar *new_text, 
 
 void
 on_hk_slot_changed (GtkCellRendererCombo *combo, gchar *path, GtkTreeIter *new_iter, gpointer user_data) {
-
     GtkTreeModel *combo_model = NULL;
     g_object_get (combo, "model", &combo_model, NULL);
     GValue gtitle = {0,}, gname = {0,};
@@ -195,6 +194,37 @@ on_hk_binding_edited (GtkCellRendererAccel *accel, gchar *path, guint accel_key,
     }
     if (accel_mods & GDK_MOD1_MASK) {
         strcat (new_value, "Alt ");
+    }
+
+    // translate numlock keycodes into non-numlock codes
+    switch (accel_key) {
+    case GDK_KP_0:
+        accel_key = GDK_KP_Insert;
+        break;
+    case GDK_KP_1:
+        accel_key = GDK_KP_End;
+        break;
+    case GDK_KP_2:
+        accel_key = GDK_KP_Down;
+        break;
+    case GDK_KP_3:
+        accel_key = GDK_KP_Page_Down;
+        break;
+    case GDK_KP_4:
+        accel_key = GDK_KP_Left;
+        break;
+    case GDK_KP_6:
+        accel_key = GDK_KP_Right;
+        break;
+    case GDK_KP_7:
+        accel_key = GDK_KP_Home;
+        break;
+    case GDK_KP_8:
+        accel_key = GDK_KP_Up;
+        break;
+    case GDK_KP_9:
+        accel_key = GDK_KP_Page_Up;
+        break;
     }
 
     // find key name from hotkeys plugin
@@ -334,12 +364,11 @@ prefwin_add_hotkeys_tab (GtkWidget *prefwin) {
     GLADE_HOOKUP_OBJECT (prefwin, addhotkey, "addhotkey");
     GLADE_HOOKUP_OBJECT (prefwin, removehotkey, "removehotkey");
 
-    GtkTreeView *hktree = GTK_TREE_VIEW (lookup_widget (prefwin, "hotkeystree"));
     GtkListStore *hkstore = gtk_list_store_new (3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
     GtkCellRenderer *rend_hk_slot = gtk_cell_renderer_combo_new ();
 
     g_signal_connect ((gpointer)addhotkey, "clicked", G_CALLBACK (on_addhotkey_clicked), hkstore);
-    g_signal_connect ((gpointer)removehotkey, "clicked", G_CALLBACK (on_removehotkey_clicked), hktree);
+    g_signal_connect ((gpointer)removehotkey, "clicked", G_CALLBACK (on_removehotkey_clicked), GTK_TREE_VIEW (hotkeystree));
 
     GtkListStore *slots_store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
     // traverse all plugins and collect all exported actions to dropdown
@@ -372,9 +401,6 @@ prefwin_add_hotkeys_tab (GtkWidget *prefwin) {
     g_object_set (G_OBJECT (rend_hk_slot), "model", slots_store, NULL);
     g_object_set (G_OBJECT (rend_hk_slot), "editable", TRUE, NULL);
 
-//    g_signal_connect ((gpointer)rend_hk_slot, "edited",
-//            G_CALLBACK (on_hk_slot_edited),
-//            hkstore);
     g_signal_connect ((gpointer)rend_hk_slot, "changed",
             G_CALLBACK (on_hk_slot_changed),
             hkstore);
@@ -387,10 +413,10 @@ prefwin_add_hotkeys_tab (GtkWidget *prefwin) {
             hkstore);
 
 
-    GtkTreeViewColumn *hk_col1 = gtk_tree_view_column_new_with_attributes (_("Slot"), rend_hk_slot, "text", 0, NULL);
+    GtkTreeViewColumn *hk_col1 = gtk_tree_view_column_new_with_attributes (_("Action"), rend_hk_slot, "text", 0, NULL);
     GtkTreeViewColumn *hk_col2 = gtk_tree_view_column_new_with_attributes (_("Key combination"), rend_hk_binding, "text", 1, NULL);
-    gtk_tree_view_append_column (hktree, hk_col1);
-    gtk_tree_view_append_column (hktree, hk_col2);
+    gtk_tree_view_append_column (GTK_TREE_VIEW (hotkeystree), hk_col1);
+    gtk_tree_view_append_column (GTK_TREE_VIEW (hotkeystree), hk_col2);
 
     // fetch hotkeys from config, and add them to list
     // model:
@@ -450,7 +476,7 @@ prefwin_add_hotkeys_tab (GtkWidget *prefwin) {
             item = deadbeef->conf_find ("hotkeys.", item);
         }
     }
-    gtk_tree_view_set_model (hktree, GTK_TREE_MODEL (hkstore));
+    gtk_tree_view_set_model (GTK_TREE_VIEW (hotkeystree), GTK_TREE_MODEL (hkstore));
 
 }
 
@@ -550,6 +576,13 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     // resume last session
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "resume_last_session")), deadbeef->conf_get_int ("resume_last_session", 0));
 
+    // enable cp1251 recoding
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "enable_cp1251_recoding")), deadbeef->conf_get_int ("junk.enable_cp1251_detection", 1));
+
+    // enable cp936 recoding
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "enable_cp936_recoding")), deadbeef->conf_get_int ("junk.enable_cp936_detection", 0));
+
+
     // fill gui plugin list
     combobox = GTK_COMBO_BOX (lookup_widget (w, "gui_plugin"));
     const char **names = deadbeef->plug_get_gui_names ();
@@ -604,6 +637,10 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     }
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "proxyuser")), deadbeef->conf_get_str_fast ("network.proxy.username", ""));
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "proxypassword")), deadbeef->conf_get_str_fast ("network.proxy.password", ""));
+
+    char ua[100];
+    deadbeef->conf_get_str ("network.http_user_agent", "deadbeef", ua, sizeof (ua));
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "useragent")), ua);
 
     // list of plugins
     GtkTreeView *tree = GTK_TREE_VIEW (lookup_widget (w, "pref_pluginlist"));
@@ -1253,6 +1290,25 @@ on_resume_last_session_toggled         (GtkToggleButton *togglebutton,
     deadbeef->conf_set_int ("resume_last_session", active);
 }
 
+void
+on_enable_cp1251_recoding_toggled      (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
+    deadbeef->conf_set_int ("junk.enable_cp1251_detection", active);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+
+void
+on_enable_cp936_recoding_toggled       (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
+    deadbeef->conf_set_int ("junk.enable_cp936_detection", active);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
 
 void
 on_auto_name_playlist_from_folder_toggled
@@ -1379,6 +1435,16 @@ on_convert8to16_toggled                (GtkToggleButton *togglebutton,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("streamer.8_to_16", gtk_toggle_button_get_active (togglebutton));
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+
+
+void
+on_useragent_changed                   (GtkEditable     *editable,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_str ("network.http_user_agent", gtk_entry_get_text (GTK_ENTRY (editable)));
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 

@@ -16,6 +16,15 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
+#ifdef HAVE_CONFIG_H
+#  include "../../config.h"
+#endif
+#if HAVE_SYS_CDEFS_H
+#include <sys/cdefs.h>
+#endif
+#if HAVE_SYS_SYSLIMITS_H
+#include <sys/syslimits.h>
+#endif
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -26,10 +35,6 @@
 #include "support.h"
 #include "interface.h"
 #include "../gtkui/gtkui_api.h"
-
-#ifndef PATH_MAX
-#define PATH_MAX    1024    /* max # of characters in a path name */
-#endif
 
 DB_functions_t *deadbeef;
 
@@ -130,7 +135,7 @@ converter_worker (void *ctx) {
     // prepare for preserving folder struct
     if (conv->preserve_folder_structure && conv->convert_items_count >= 1) {
         // start with the 1st track path
-        strncpy (root, deadbeef->pl_find_meta (conv->convert_items[0], ":URI"), sizeof (root));
+        deadbeef->pl_get_meta (conv->convert_items[0], ":URI", root, sizeof (root));
         char *sep = strrchr (root, '/');
         if (sep) {
             *sep = 0;
@@ -138,6 +143,7 @@ converter_worker (void *ctx) {
         // reduce
         rootlen = strlen (root);
         for (int n = 1; n < conv->convert_items_count; n++) {
+            deadbeef->pl_lock ();
             const char *path = deadbeef->pl_find_meta (conv->convert_items[n], ":URI");
             if (strncmp (path, root, rootlen)) {
                 // find where path splits
@@ -156,6 +162,7 @@ converter_worker (void *ctx) {
                     r++;
                 }
             }
+            deadbeef->pl_unlock ();
         }
         fprintf (stderr, "common root path: %s\n", root);
     }
@@ -164,7 +171,9 @@ converter_worker (void *ctx) {
         update_progress_info_t *info = malloc (sizeof (update_progress_info_t));
         info->entry = conv->progress_entry;
         g_object_ref (info->entry);
+        deadbeef->pl_lock ();
         info->text = strdup (deadbeef->pl_find_meta (conv->convert_items[n], ":URI"));
+        deadbeef->pl_unlock ();
         g_idle_add (update_progress_cb, info);
 
         char outpath[2000];
@@ -863,6 +872,21 @@ fill_dsp_preset_chain (GtkListStore *mdl) {
     }
 }
 
+static int
+listview_get_index (GtkWidget *list) {
+    GtkTreePath *path;
+    GtkTreeViewColumn *col;
+    gtk_tree_view_get_cursor (GTK_TREE_VIEW (list), &path, &col);
+    if (!path) {
+        // nothing selected
+        return -1;
+    }
+    int *indices = gtk_tree_path_get_indices (path);
+    int idx = *indices;
+    g_free (indices);
+    return idx;
+}
+
 void
 on_dsp_preset_add_plugin_clicked       (GtkButton       *button,
                                         gpointer         user_data)
@@ -908,8 +932,12 @@ on_dsp_preset_add_plugin_clicked       (GtkButton       *button,
             // reinit list of instances
             GtkWidget *list = lookup_widget (toplevel, "plugins");
             GtkListStore *mdl = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW(list)));
+            int idx = listview_get_index (list);
             gtk_list_store_clear (mdl);
             fill_dsp_preset_chain (mdl);
+            GtkTreePath *path = gtk_tree_path_new_from_indices (idx, -1);
+            gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, NULL, FALSE);
+            gtk_tree_path_free (path);
         }
         else {
             fprintf (stderr, "converter: failed to add DSP plugin to chain\n");
@@ -982,16 +1010,7 @@ on_dsp_preset_plugin_configure_clicked (GtkButton       *button,
 {
     GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (button));
     GtkWidget *list = lookup_widget (toplevel, "plugins");
-    GtkTreePath *path;
-    GtkTreeViewColumn *col;
-    gtk_tree_view_get_cursor (GTK_TREE_VIEW (list), &path, &col);
-    if (!path || !col) {
-        // nothing selected
-        return;
-    }
-    int *indices = gtk_tree_path_get_indices (path);
-    int idx = *indices;
-    g_free (indices);
+    int idx = listview_get_index (list);
     if (idx == -1) {
         return;
     }
@@ -1009,16 +1028,69 @@ on_dsp_preset_plugin_configure_clicked (GtkButton       *button,
         .layout = p->plugin->configdialog,
         .set_param = dsp_ctx_set_param,
         .get_param = dsp_ctx_get_param,
+        .parent = toplevel
     };
     gtkui_plugin->gui.run_dialog (&conf, 0, NULL, NULL);
     current_dsp_context = NULL;
+}
+
+static int
+swap_items (GtkWidget *list, int idx) {
+    ddb_dsp_context_t *prev = NULL;
+    ddb_dsp_context_t *p = current_ctx->current_dsp_preset->chain;
+
+    int n = idx;
+    while (n > 0 && p) {
+        prev = p;
+        p = p->next;
+        n--;
+    }
+
+    if (!p || !p->next) {
+        return -1;
+    }
+
+    ddb_dsp_context_t *moved = p->next;
+
+    if (!moved) {
+        return -1;
+    }
+
+    ddb_dsp_context_t *last = moved ? moved->next : NULL;
+
+    if (prev) {
+        p->next = last;
+        prev->next = moved;
+        moved->next = p;
+    }
+    else {
+        p->next = last;
+        current_ctx->current_dsp_preset->chain = moved;
+        moved->next = p;
+    }
+    GtkListStore *mdl = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW(list)));
+    gtk_list_store_clear (mdl);
+    fill_dsp_preset_chain (mdl);
+    return 0;
 }
 
 void
 on_dsp_preset_plugin_up_clicked        (GtkButton       *button,
                                         gpointer         user_data)
 {
+    GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (button));
+    GtkWidget *list = lookup_widget (toplevel, "plugins");
+    int idx = listview_get_index (list);
+    if (idx <= 0) {
+        return;
+    }
 
+    if (-1 == swap_items (list, idx-1)) {
+        return;
+    }
+    GtkTreePath *path = gtk_tree_path_new_from_indices (idx-1, -1);
+    gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, NULL, FALSE);
+    gtk_tree_path_free (path);
 }
 
 
@@ -1026,7 +1098,19 @@ void
 on_dsp_preset_plugin_down_clicked      (GtkButton       *button,
                                         gpointer         user_data)
 {
+    GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (button));
+    GtkWidget *list = lookup_widget (toplevel, "plugins");
+    int idx = listview_get_index (list);
+    if (idx == -1) {
+        return;
+    }
 
+    if (-1 == swap_items (list, idx)) {
+        return;
+    }
+    GtkTreePath *path = gtk_tree_path_new_from_indices (idx+1, -1);
+    gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, NULL, FALSE);
+    gtk_tree_path_free (path);
 }
 
 
@@ -1054,6 +1138,9 @@ edit_dsp_preset (const char *title, GtkWidget *toplevel, int overwrite) {
         gtk_tree_view_set_model (GTK_TREE_VIEW (list), GTK_TREE_MODEL (mdl));
 
         fill_dsp_preset_chain (mdl);
+        GtkTreePath *path = gtk_tree_path_new_from_indices (0, -1);
+        gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, NULL, FALSE);
+        gtk_tree_path_free (path);
     }
 
     for (;;) {
@@ -1312,6 +1399,7 @@ convgui_connect (void) {
     }
     if (!converter_plugin) {
         fprintf (stderr, "convgui: converter plugin not found\n");
+        return -1;
     }
     if (converter_plugin->misc.plugin.version_major != 1 || converter_plugin->misc.plugin.version_minor < 2) {
         fprintf (stderr, "convgui: need converter>=1.2, but found %d.%d\n", converter_plugin->misc.plugin.version_major, converter_plugin->misc.plugin.version_minor);
@@ -1322,20 +1410,20 @@ convgui_connect (void) {
 
 DB_misc_t plugin = {
     .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
+    .plugin.api_vminor = 4,
     .plugin.version_major = 1,
     .plugin.version_minor = 1,
     .plugin.type = DB_PLUGIN_MISC,
-    .plugin.name = "Converter GTK UI",
-    .plugin.descr = "GTK2 User interface for the Converter plugin\n"
+#if GTK_CHECK_VERSION(3,0,0)
+    .plugin.name = "Converter GTK3 UI",
+#else
+    .plugin.name = "Converter GTK2 UI",
+#endif
+    .plugin.descr = "GTK User interface for the Converter plugin\n"
         "Usage:\n"
         "· select some tracks in playlist\n"
         "· right click\n"
-        "· select «Convert»\n\n"
-        "ChangeLog:\n"
-        "version 1.1\n"
-        "    Reload DSP and encoder presets on every converter access\n"
-        "    Write 0 wave data size into waveheader when using pipe, for oggenc compatibility\n",
+        "· select «Convert»\n",
     .plugin.copyright = 
         "Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"

@@ -405,7 +405,9 @@ static int
 dts_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     ddb_dca_state_t *info = (ddb_dca_state_t *)_info;
 
+    deadbeef->pl_lock ();
     info->file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    deadbeef->pl_unlock ();
     if (!info->file) {
         trace ("dca: failed to open %s\n", deadbeef->pl_find_meta (it, ":URI"));
         return -1;

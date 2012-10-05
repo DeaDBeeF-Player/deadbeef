@@ -142,6 +142,9 @@ dsp_setup_init (GtkWidget *_prefwin) {
     gtk_tree_view_set_model (GTK_TREE_VIEW (listview), GTK_TREE_MODEL (mdl));
 
     fill_dsp_chain (mdl);
+    GtkTreePath *path = gtk_tree_path_new_from_indices (0, -1);
+    gtk_tree_view_set_cursor (GTK_TREE_VIEW (listview), path, NULL, FALSE);
+    gtk_tree_path_free (path);
 
     GtkWidget *combobox = lookup_widget (prefwin, "dsp_preset");
     dsp_fill_preset_list (combobox);
@@ -234,9 +237,9 @@ listview_get_index (GtkWidget *list) {
     GtkTreePath *path;
     GtkTreeViewColumn *col;
     gtk_tree_view_get_cursor (GTK_TREE_VIEW (list), &path, &col);
-    if (!path || !col) {
+    if (!path) {
         // nothing selected
-        return - 1;
+        return -1;
     }
     int *indices = gtk_tree_path_get_indices (path);
     int idx = *indices;
@@ -305,16 +308,7 @@ on_dsp_configure_clicked               (GtkButton       *button,
                                         gpointer         user_data)
 {
     GtkWidget *list = lookup_widget (prefwin, "dsp_listview");
-    GtkTreePath *path;
-    GtkTreeViewColumn *col;
-    gtk_tree_view_get_cursor (GTK_TREE_VIEW (list), &path, &col);
-    if (!path || !col) {
-        // nothing selected
-        return;
-    }
-    int *indices = gtk_tree_path_get_indices (path);
-    int idx = *indices;
-    g_free (indices);
+    int idx = listview_get_index (list);
     if (idx == -1) {
         return;
     }

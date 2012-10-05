@@ -61,6 +61,7 @@ extern "C" {
 
 // api version history:
 // 9.9 -- devel
+// 1.4 -- deadbeef-0.5.5
 // 1.3 -- deadbeef-0.5.3
 // 1.2 -- deadbeef-0.5.2
 // 1.1 -- deadbeef-0.5.1
@@ -78,7 +79,7 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 1
-#define DB_API_VERSION_MINOR 3
+#define DB_API_VERSION_MINOR 4
 
 #define DDB_PLUGIN_SET_API_VERSION\
     .plugin.api_vmajor = DB_API_VERSION_MAJOR,\
@@ -115,8 +116,9 @@ enum {
     DDB_TAG_VORBISCOMMENTS = (1<<13),
     DDB_TAG_CUESHEET = (1<<14),
     DDB_TAG_ICY = (1<<15),
+    DDB_TAG_ITUNES = (1<<16),
 
-    DDB_TAG_MASK = 0x0000ff00
+    DDB_TAG_MASK = 0x000fff00
 };
 
 // playlist item
@@ -268,6 +270,8 @@ enum {
     DB_EV_OUTPUTCHANGED = 17, // sound output plugin changed
     DB_EV_PLAYLISTSWITCHED = 18, // playlist switch occured
     DB_EV_SEEK = 19, // seek current track to position p1 (ms)
+    DB_EV_ACTIONSCHANGED = 20, // plugin actions were changed, e.g. for reinitializing gui
+    DB_EV_DSPCHAINCHANGED = 21, // emitted when any parameter of the main dsp chain has been changed
 
     // new in 1.2
     DB_EV_SELCHANGED = 20, // selection changed in playlist p1 iter p2
@@ -289,7 +293,6 @@ enum pl_column_t {
     DB_COLUMN_FILENUMBER = 0,
     DB_COLUMN_PLAYING = 1,
     DB_COLUMN_ALBUM_ART = 8,
-    DB_COLUMN_ID_MAX
 };
 
 // replaygain constants
@@ -468,6 +471,8 @@ typedef struct {
     void (*plt_append_meta) (ddb_playlist_t *handle, const char *key, const char *value);
     void (*plt_set_meta_int) (ddb_playlist_t *handle, const char *key, int value);
     void (*plt_set_meta_float) (ddb_playlist_t *handle, const char *key, float value);
+
+    // plt_find_meta must always be used in the pl_lock/unlock block
     const char *(*plt_find_meta) (ddb_playlist_t *handle, const char *key);
     DB_metaInfo_t * (*plt_get_metadata_head) (ddb_playlist_t *handle); // returns head of metadata linked list
     void (*plt_delete_metadata) (ddb_playlist_t *handle, DB_metaInfo_t *meta);
@@ -761,16 +766,28 @@ typedef struct {
     void (*metacache_unref) (const char *str);
 
     // this function must return original un-overriden value (ignoring the keys prefixed with '!')
+    // it's not thread-safe, and must be used under the same conditions as the
+    // pl_find_meta
     const char *(*pl_find_meta_raw) (DB_playItem_t *it, const char *key);
 
     // ******* new 1.3 APIs ********
     int (*streamer_dsp_chain_save) (void);
 
+    // ******* new 1.4 APIs ********
+    int (*pl_get_meta) (DB_playItem_t *it, const char *key, char *val, int size);
+    int (*pl_get_meta_raw) (DB_playItem_t *it, const char *key, char *val, int size);
+    int (*plt_get_meta) (ddb_playlist_t *handle, const char *key, char *val, int size);
+
+    // fast way to test if a field exists in playitem
+    int (*pl_meta_exists) (DB_playItem_t *it, const char *key);
+
+    // FIXME ******* devel branch only *******
     // access real-time audio data (e.g. for visualization)
     // returns data size in bytes
     // fmt and data will be filled with last bytes that came to the output plugin
     // data size must be float[DDB_AUDIO_MEMORY_FRAMES]
     void (*audio_get_waveform_data) (int type, float *data);
+
 } DB_functions_t;
 
 // NOTE: an item placement must be selected like this
@@ -878,7 +895,8 @@ typedef struct DB_plugin_s {
     // cmdline_size is number of bytes pointed by cmdline
     int (*exec_cmdline) (const char *cmdline, int cmdline_size);
     
-    // @returns linked list of actions
+    // @returns linked list of actions for the specified track
+    // when it is NULL -- the plugin must return list of all actions
     DB_plugin_action_t* (*get_actions) (DB_playItem_t *it);
 
     // mainloop will call this function for every plugin
@@ -1117,6 +1135,9 @@ typedef struct {
     const char *layout;
     void (*set_param) (const char *key, const char *value);
     void (*get_param) (const char *key, char *value, int len, const char *def);
+
+    // parent was added in 1.4 API
+    void *parent;
 } ddb_dialog_t;
 
 enum {

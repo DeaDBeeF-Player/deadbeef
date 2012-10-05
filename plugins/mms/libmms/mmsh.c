@@ -202,6 +202,8 @@ struct mmsh_s {
 
   off_t         current_pos;
   int           user_bandwidth;
+
+  int *need_abort;
 };
 
 static int fallback_io_select(void *data, int socket, int state, int timeout_msec)
@@ -214,7 +216,7 @@ static int fallback_io_select(void *data, int socket, int state, int timeout_mse
                    (state == MMS_IO_WRITE_READY) ? &set : NULL, NULL, &tv);
 }
 
-static off_t fallback_io_read(void *data, int socket, char *buf, off_t num)
+static off_t fallback_io_read(void *data, int socket, char *buf, off_t num, int *need_abort)
 {
   off_t len = 0, ret;
 /*   lprintf("%d\n", fallback_io_select(data, socket, MMS_IO_READ_READY, 1000)); */
@@ -367,7 +369,7 @@ static int get_answer (mms_io_t *io, mmsh_t *this) {
 
   while (!done) {
 
-    if (io_read(io, this->s, &(this->buf[len]), 1) != 1) {
+    if (io_read(io, this->s, &(this->buf[len]), 1, this->need_abort) != 1) {
       lprintf ("mmsh: alart: end of stream\n");
       return 0;
     }
@@ -454,7 +456,7 @@ static int get_chunk_header (mms_io_t *io, mmsh_t *this) {
   int ext_header_len;
 
   /* read chunk header */
-  read_len = io_read(io, this->s, chunk_header, CHUNK_HEADER_LENGTH);
+  read_len = io_read(io, this->s, chunk_header, CHUNK_HEADER_LENGTH, this->need_abort);
   if (read_len != CHUNK_HEADER_LENGTH) {
     if (read_len == 0)
       return EOS;
@@ -482,7 +484,7 @@ static int get_chunk_header (mms_io_t *io, mmsh_t *this) {
   }
   /* read extended header */
   if (ext_header_len > 0) {
-    read_len = io_read (io, this->s, ext_header, ext_header_len);
+    read_len = io_read (io, this->s, ext_header, ext_header_len, this->need_abort);
     if (read_len != ext_header_len) {
       lprintf("mmsh: extended header read failed. %d != %d\n", read_len, ext_header_len);
       return ERROR;
@@ -546,7 +548,7 @@ static int get_header (mms_io_t *io, mmsh_t *this) {
           return ERROR;
         } else {
           len = io_read(io, this->s, this->asf_header + this->asf_header_len,
-                        this->chunk_length);
+                        this->chunk_length, this->need_abort);
           if (len > 0)
             this->asf_header_len += len;
           if (len != this->chunk_length) {
@@ -567,7 +569,7 @@ static int get_header (mms_io_t *io, mmsh_t *this) {
 
   if (this->chunk_type == CHUNK_TYPE_DATA) {
     /* read the first data chunk */
-    len = io_read (io, this->s, this->buf, this->chunk_length);
+    len = io_read (io, this->s, this->buf, this->chunk_length, this->need_abort);
 
     if (len != this->chunk_length) {
       lprintf ("mmsh: asf data chunk read failed, %d != %d\n", len,
@@ -1216,7 +1218,7 @@ static int get_media_packet (mms_io_t *io, mmsh_t *this) {
         return ERROR;
     }
 
-    len = io_read (io, this->s, this->buf, this->chunk_length);
+    len = io_read (io, this->s, this->buf, this->chunk_length, this->need_abort);
       
     if (len == this->chunk_length) {
       /* explicit padding with 0 */
@@ -1253,7 +1255,7 @@ int mmsh_peek_header (mmsh_t *this, char *data, int maxsize) {
   return len;
 }
 
-int mmsh_read (mms_io_t *io, mmsh_t *this, char *data, int len) {
+int mmsh_read (mms_io_t *io, mmsh_t *this, char *data, int len, int *need_abort) {
   int total;
 
   total = 0;
@@ -1262,7 +1264,7 @@ int mmsh_read (mms_io_t *io, mmsh_t *this, char *data, int len) {
   if (this->s == -1)
     return total;
 
-  while (total < len) {
+  while (total < len && (!need_abort || !(*need_abort))) {
 
     if (this->asf_header_read < this->asf_header_len) {
       int n, bytes_left ;

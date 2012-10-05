@@ -27,6 +27,7 @@ gtkpl_adddir_cb (gpointer data, gpointer userdata) {
 void
 gtkpl_add_dirs (GSList *lst) {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    int empty = 0 == deadbeef->plt_get_item_count (plt, PL_MAIN);
     if (deadbeef->pl_add_files_begin (plt) < 0) {
         deadbeef->plt_unref (plt);
         g_slist_free (lst);
@@ -38,7 +39,7 @@ gtkpl_add_dirs (GSList *lst) {
         char t[1000];
         if (!deadbeef->plt_get_title (plt, t, sizeof (t))) {
             char *def = _("New Playlist");
-            if (!strncmp (t, def, strlen (def))) {
+            if (!strncmp (t, def, strlen (def)) || empty) {
                 const char *folder = strrchr ((char*)lst->data, '/');
                 if (!folder) {
                     folder = lst->data;

@@ -64,6 +64,7 @@ plt_add_meta (playlist_t *it, const char *key, const char *value) {
 
 void
 plt_append_meta (playlist_t *it, const char *key, const char *value) {
+    pl_lock ();
     const char *old = plt_find_meta (it, key);
     size_t newlen = strlen (value);
     if (!old) {
@@ -85,6 +86,7 @@ plt_append_meta (playlist_t *it, const char *key, const char *value) {
             }
 
             if (len == newlen && !memcmp (str, value, len)) {
+                pl_unlock ();
                 return;
             }
 
@@ -95,6 +97,7 @@ plt_append_meta (playlist_t *it, const char *key, const char *value) {
         snprintf (out, sz, "%s\n%s", old, value);
         plt_replace_meta (it, key, out);
     }
+    pl_unlock ();
 }
 
 void
@@ -170,14 +173,20 @@ plt_find_meta (playlist_t *it, const char *key) {
 
 int
 plt_find_meta_int (playlist_t *it, const char *key, int def) {
+    pl_lock ();
     const char *val = plt_find_meta (it, key);
-    return val ? atoi (val) : def;
+    int res = val ? atoi (val) : def;
+    pl_unlock ();
+    return res;
 }
 
 float
 plt_find_meta_float (playlist_t *it, const char *key, float def) {
+    pl_lock ();
     const char *val = plt_find_meta (it, key);
-    return val ? atof (val) : def;
+    float res = val ? atof (val) : def;
+    pl_unlock ();
+    return res;
 }
 
 DB_metaInfo_t *
@@ -234,3 +243,16 @@ plt_delete_all_meta (playlist_t *it) {
     UNLOCK;
 }
 
+int
+plt_get_meta (playlist_t *handle, const char *key, char *val, int size) {
+    *val = 0;
+    LOCK;
+    const char *v = plt_find_meta (handle, key);
+    if (!v) {
+        UNLOCK;
+        return 0;
+    }
+    strncpy (val, v, size);
+    UNLOCK;
+    return 1;
+}

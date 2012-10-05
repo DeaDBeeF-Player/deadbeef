@@ -21,6 +21,7 @@
 #include <gtk/gtk.h>
 #include <sys/time.h>
 #include <stdint.h>
+#include "drawing.h"
 
 // drag and drop targets
 enum {
@@ -141,6 +142,8 @@ struct _DdbListview {
     int header_width; // previous width before resize
 
     struct _DdbListviewColumn *columns;
+    gboolean lock_columns;
+
     struct _DdbListviewGroup *groups;
     int groups_build_idx; // must be the same as playlist modification idx
     int fullheight;
@@ -153,6 +156,10 @@ struct _DdbListview {
 
     GdkCursor *cursor_sz;
     GdkCursor *cursor_drag;
+
+    // drawing contexts
+    drawctx_t listctx;
+    drawctx_t hdrctx;
 };
 
 struct _DdbListviewClass {
@@ -255,6 +262,9 @@ ddb_listview_list_drag_end                   (GtkWidget       *widget,
 
 void
 ddb_listview_clear_sort (DdbListview *listview);
+
+void
+ddb_listview_lock_columns (DdbListview *lv, gboolean lock);
 
 G_END_DECLS
 

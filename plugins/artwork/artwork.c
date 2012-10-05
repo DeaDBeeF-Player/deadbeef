@@ -1,5 +1,5 @@
 #ifdef HAVE_CONFIG_H
-#  include <config.h>
+#  include "../../config.h"
 #endif
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,6 +10,12 @@
 #include <unistd.h>
 #include <fnmatch.h>
 #include <inttypes.h>
+#if HAVE_SYS_CDEFS_H
+#include <sys/cdefs.h>
+#endif
+#if HAVE_SYS_SYSLIMITS_H
+#include <sys/syslimits.h>
+#endif
 #include "../../deadbeef.h"
 #include "artwork.h"
 #include "lastfm.h"
@@ -981,74 +987,70 @@ fetcher_thread (void *none)
 
 #ifdef USE_METAFLAC
                     // try to load embedded from flac metadata
+                    for (;;)
                     {
-                        FLAC__StreamMetadata *meta = NULL;
-                        do {
-                            trace ("trying to load artwork flac metadata for %s\n", param->fname);
-
-                            if (!FLAC__metadata_get_picture (
-                                param->fname,                  // filename
-                                &meta,                         // picture
-                                FLAC__STREAM_METADATA_PICTURE_TYPE_FRONT_COVER,                            // type
-                                NULL,                          // mime_type
-                                NULL,                          // description
-                                (unsigned)(-1),                // max_width
-                                (unsigned)(-1),                // max_height
-                                (unsigned)(-1),                // max_depth
-                                (unsigned)(-1)                 // max_colors
-                                )){
-                                    trace ("%s don't have an embedded cover\n",param->fname);
-
-                                if (!FLAC__metadata_get_picture (
-                                    param->fname,                  // filename
-                                    &meta,                         // picture
-                                    -1,                            // type
-                                    NULL,                          // mime_type
-                                    NULL,                          // description
-                                    (unsigned)(-1),                // max_width
-                                    (unsigned)(-1),                // max_height
-                                    (unsigned)(-1),                // max_depth
-                                    (unsigned)(-1)                 // max_colors
-                                    )){
-                                        trace ("%s don't have an embedded album art\n",param->fname);
-                                        break;
-                                }
-
-                            }
-                            FLAC__StreamMetadata_Picture *pic = &meta->data.picture;
-
-                            trace ("found flac cover art of %d bytes (%s)\n", pic->data_length, pic->description);
-                            char tmp_path[1024];
-                            char cache_path[1024];
-                            make_cache_path (cache_path, sizeof (cache_path), param->album, param->artist, -1);
-                            trace ("will write flac cover art into %s\n", cache_path);
-                            snprintf (tmp_path, sizeof (tmp_path), "%s.part", cache_path);
-                            FILE *out = fopen (tmp_path, "w+b");
-                            if (!out) {
-                                trace ("artwork: failed to open %s for writing\n", tmp_path);
-                                break;
-                            }
-                            if (fwrite (pic->data, 1, pic->data_length, out) != pic->data_length) {
-                                trace ("artwork: failed to write flac picture into %s\n", tmp_path);
-                                fclose (out);
-                                unlink (tmp_path);
-                                break;
-                            }
-                            fclose (out);
-                            int err = rename (tmp_path, cache_path);
-                            if (err != 0) {
-                                trace ("Failed not move %s to %s: %s\n", tmp_path, cache_path, strerror (err));
-                                unlink (tmp_path);
-                                break;
-                            }
-                            unlink (tmp_path);
-                            got_pic = 1;
-                        } while (0);
-
-                        if (meta != NULL) {
-                            trace ("release flac metadata block\n");
-                            FLAC__metadata_object_delete (meta);
+                        const char *filename = param->fname;
+                        FLAC__Metadata_Chain *chain = FLAC__metadata_chain_new();
+                        int is_ogg = 0;
+                        if(strlen(filename) >= 4 && (0 == strcmp(filename+strlen(filename)-4, ".oga") || 0 == strcasecmp(filename+strlen(filename)-4, ".ogg"))) {
+                            is_ogg = 1;
                         }
+
+                        if(! (is_ogg? FLAC__metadata_chain_read_ogg(chain, filename) : FLAC__metadata_chain_read(chain, filename)) ) {
+                            trace ("%s: ERROR: reading metadata", filename);
+                            FLAC__metadata_chain_delete(chain);
+                            break;
+                        }
+                        FLAC__StreamMetadata *picture = 0;
+                        FLAC__Metadata_Iterator *iterator = FLAC__metadata_iterator_new();
+                        FLAC__metadata_iterator_init(iterator, chain);
+
+                        do {
+                            FLAC__StreamMetadata *block = FLAC__metadata_iterator_get_block(iterator);
+                            if(block->type == FLAC__METADATA_TYPE_PICTURE) {
+                                picture = block;
+                            }
+                        } while(FLAC__metadata_iterator_next(iterator) && 0 == picture);
+
+                        if (!picture) {
+                            trace ("%s doesn't have an embedded cover\n", param->fname);
+                            break;
+                        }
+                        FLAC__StreamMetadata_Picture *pic = &picture->data.picture;
+                        trace ("found flac cover art of %d bytes (%s)\n", pic->data_length, pic->description);
+                        char tmp_path[1024];
+                        char cache_path[1024];
+                        make_cache_path (cache_path, sizeof (cache_path), param->album, param->artist, -1);
+                        trace ("will write flac cover art into %s\n", cache_path);
+                        snprintf (tmp_path, sizeof (tmp_path), "%s.part", cache_path);
+                        FILE *out = fopen (tmp_path, "w+b");
+                        if (!out) {
+                            trace ("artwork: failed to open %s for writing\n", tmp_path);
+                            break;
+                        }
+                        if (fwrite (pic->data, 1, pic->data_length, out) != pic->data_length) {
+                            trace ("artwork: failed to write flac picture into %s\n", tmp_path);
+                            fclose (out);
+                            unlink (tmp_path);
+                            break;
+                        }
+                        fclose (out);
+                        int err = rename (tmp_path, cache_path);
+                        if (err != 0) {
+                            trace ("Failed not move %s to %s: %s\n", tmp_path, cache_path, strerror (err));
+                            unlink (tmp_path);
+                            break;
+                        }
+                        unlink (tmp_path);
+                        got_pic = 1;
+
+                        if (chain) {
+                            FLAC__metadata_chain_delete(chain);
+                        }
+                        if (iterator) {
+                            FLAC__metadata_iterator_delete(iterator);
+                        }
+                        break;
                     }
 #endif
                 }
@@ -1084,7 +1086,7 @@ fetcher_thread (void *none)
                         p = e;
                     }
                     if (files_count == 0) {
-                        files_count = scandir (path, &files, filter_jpg, NULL);
+                        files_count = scandir (path, &files, filter_jpg, alphasort);
                     }
 
                     if (files_count > 0) {
@@ -1353,7 +1355,7 @@ artwork_plugin_start (void)
 
     const char *def_art = deadbeef->conf_get_str_fast ("gtkui.nocover_pixmap", NULL);
     if (!def_art) {
-        snprintf (default_cover, sizeof (default_cover), "%s/noartwork.jpg", deadbeef->get_pixmap_dir ());
+        snprintf (default_cover, sizeof (default_cover), "%s/noartwork.png", deadbeef->get_pixmap_dir ());
     }
     else {
         strcpy (default_cover, def_art);

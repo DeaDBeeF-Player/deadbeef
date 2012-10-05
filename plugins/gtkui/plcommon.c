@@ -30,6 +30,7 @@
 #include "interface.h"
 #include "parser.h"
 #include "actions.h"
+#include "search.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -189,20 +190,20 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
             }
         }
         float fg[3] = {(float)color->red/0xffff, (float)color->green/0xffff, (float)color->blue/0xffff};
-        draw_set_fg_color (fg);
+        draw_set_fg_color (&listview->listctx, fg);
 
-        draw_init_font (gtk_widget_get_style (GTK_WIDGET (listview)));
+        draw_init_font (&listview->listctx, gtk_widget_get_style (GTK_WIDGET (listview)));
         if (gtkui_embolden_current_track && it && it == playing_track) {
-            draw_init_font_bold ();
+            draw_init_font_bold (&listview->listctx);
         }
         if (calign_right) {
-            draw_text (x+5, y + 3, cwidth-10, 1, text);
+            draw_text (&listview->listctx, x+5, y + 3, cwidth-10, 1, text);
         }
         else {
-            draw_text (x + 5, y + 3, cwidth-10, 0, text);
+            draw_text (&listview->listctx, x + 5, y + 3, cwidth-10, 0, text);
         }
         if (gtkui_embolden_current_track && it && it == playing_track) {
-            draw_init_font_normal ();
+            draw_init_font_normal (&listview->listctx);
         }
     }
     if (playing_track) {
@@ -224,7 +225,8 @@ main_add_to_playback_queue_activate     (GtkMenuItem     *menuitem,
         deadbeef->pl_item_unref (it);
         it = next;
     }
-    playlist_refresh ();
+    main_refresh ();
+    search_redraw ();
 }
 
 void
@@ -242,7 +244,8 @@ main_remove_from_playback_queue_activate
         deadbeef->pl_item_unref (it);
         it = next;
     }
-    playlist_refresh ();
+    main_refresh ();
+    search_redraw ();
 }
 
 void
@@ -253,8 +256,16 @@ main_reload_metadata_activate
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (menuitem), "ps"));
     DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
     while (it) {
-        const char *decoder_id = deadbeef->pl_find_meta (it, ":DECODER");
-        if (deadbeef->pl_is_selected (it) && deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI")) && decoder_id) {
+        deadbeef->pl_lock ();
+        char decoder_id[100];
+        const char *dec = deadbeef->pl_find_meta (it, ":DECODER");
+        if (dec) {
+            strncpy (decoder_id, dec, sizeof (decoder_id));
+        }
+        int match = deadbeef->pl_is_selected (it) && deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI")) && dec;
+        deadbeef->pl_unlock ();
+
+        if (match) {
             uint32_t f = deadbeef->pl_get_item_flags (it);
             if (!(f & DDB_IS_SUBTRACK)) {
                 f &= ~DDB_TAG_MASK;
@@ -274,7 +285,8 @@ main_reload_metadata_activate
         deadbeef->pl_item_unref (it);
         it = next;
     }
-    playlist_refresh ();
+    main_refresh ();
+    search_redraw ();
     trkproperties_fill_metadata ();
 }
 
@@ -344,8 +356,9 @@ on_remove_from_disk_activate                    (GtkMenuItem     *menuitem,
 
     DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
     while (it) {
-        if (deadbeef->pl_is_selected (it) && deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI"))) {
-            unlink (deadbeef->pl_find_meta (it, ":URI"));
+        const char *uri = deadbeef->pl_find_meta (it, ":URI");
+        if (deadbeef->pl_is_selected (it) && deadbeef->is_local_file (uri)) {
+            unlink (uri);
         }
         DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
         deadbeef->pl_item_unref (it);
@@ -848,11 +861,13 @@ init_column (col_info_t *inf, int id, const char *format) {
     }
 }
 
+int editcolumn_title_changed = 0;
 
 void
 on_add_column_activate                 (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
+    editcolumn_title_changed = 0;
     GtkWidget *dlg = create_editcolumndlg ();
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
     gtk_window_set_title (GTK_WINDOW (dlg), _("Add column"));
@@ -899,6 +914,7 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
     }
 
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "title")), title);
+    editcolumn_title_changed = 0;
     int idx = 10;
     if (inf->id == -1) {
         if (inf->format) {

@@ -24,7 +24,7 @@ convdata_DATA = \
 	presets/TTA.txt\
 	presets/WavPack.txt
 
-EXTRA_DIST = $(convdata_DATA)
+EXTRA_DIST = $(convdata_DATA) converter.glade
 
 AM_CFLAGS = $(CFLAGS) -std=c99 -fPIC
 

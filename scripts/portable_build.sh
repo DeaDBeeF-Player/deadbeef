@@ -1,9 +1,10 @@
 #!/bin/sh
 VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print'`
 ORIGIN=`pwd | perl -ne 'chomp and print'`
-AP=$HOME/bin/autopackage
-export CC=$AP/apbuild/apgcc
-export CXX=$AP/apbuild/apgcc 
+AP=$ORIGIN/tools/apbuild
+export CC=$AP/apgcc
+export CXX=$AP/apgcc 
+
 export APBUILD_STATIC_LIBGCC=1
 
 ./autogen.sh
@@ -21,6 +22,4 @@ echo "building pluginfo tool..."
 cd tools/pluginfo
 make
 cd ../../
-
-./scripts/portable_postbuild.sh
 

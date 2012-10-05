@@ -21,8 +21,8 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-//#include <alloca.h>
 #include <string.h>
+#include <sys/stat.h>
 #ifndef __linux__
 #define _POSIX_C_SOURCE 1
 #endif
@@ -49,10 +49,6 @@
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
-
-#ifndef PATH_MAX
-#define PATH_MAX    1024    /* max # of characters in a path name */
-#endif
 
 //#define DISABLE_VERSIONCHECK 1
 
@@ -331,6 +327,12 @@ static DB_functions_t deadbeef_api = {
     .pl_find_meta_raw = (const char *(*) (DB_playItem_t *it, const char *key))pl_find_meta_raw,
     // ******* new 1.3 APIs ********
     .streamer_dsp_chain_save = streamer_dsp_chain_save,
+    // ******* new 1.4 APIs ********
+    .pl_get_meta = (int (*) (DB_playItem_t *it, const char *key, char *val, int size))pl_get_meta,
+    .pl_get_meta_raw = (int (*) (DB_playItem_t *it, const char *key, char *val, int size))pl_get_meta_raw,
+    .plt_get_meta = (int (*) (ddb_playlist_t *handle, const char *key, char *val, int size))plt_get_meta,
+    .pl_meta_exists = (int (*) (DB_playItem_t *it, const char *key))pl_meta_exists,
+    // FIXME ******* devel branch only *******
     .audio_get_waveform_data = audio_get_waveform_data,
 };
 
@@ -568,6 +570,13 @@ static int
 load_plugin (const char *plugdir, char *d_name, int l) {
     char fullname[PATH_MAX];
     snprintf (fullname, PATH_MAX, "%s/%s", plugdir, d_name);
+
+    // check if the file exists, to avoid printing bogus errors
+    struct stat s;
+    if (0 != stat (fullname, &s)) {
+        return -1;
+    }
+
     trace ("loading plugin %s/%s\n", plugdir, d_name);
     void *handle = dlopen (fullname, RTLD_NOW);
     if (!handle) {

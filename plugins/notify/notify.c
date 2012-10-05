@@ -224,9 +224,12 @@ static void show_notification (DB_playItem_t *track) {
     dbus_uint32_t v_id = 0;
     char *v_iconname = NULL;
     if (deadbeef->conf_get_int("notify.albumart", 0) && artwork_plugin) {
+        deadbeef->pl_lock ();
         const char *album = deadbeef->pl_find_meta (track, "album");
         const char *artist = deadbeef->pl_find_meta (track, "artist");
-        v_iconname = artwork_plugin->get_album_art (deadbeef->pl_find_meta (track, ":URI"), artist, album, deadbeef->conf_get_int ("notify.albumart_size", 64), cover_avail_callback, NULL);
+        const char *fname = deadbeef->pl_find_meta (track, ":URI");
+        v_iconname = artwork_plugin->get_album_art (fname, artist, album, deadbeef->conf_get_int ("notify.albumart_size", 64), cover_avail_callback, NULL);
+        deadbeef->pl_unlock ();
     }
     if (!v_iconname) {
         v_iconname = strdup ("deadbeef");

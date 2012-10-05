@@ -6,12 +6,12 @@
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2
     of the License, or (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -46,7 +46,7 @@ static GtkWidget *trackproperties;
 static GtkCellRenderer *rend_text2;
 static GtkListStore *store;
 static GtkListStore *propstore;
-static int trkproperties_modified;
+int trkproperties_modified;
 static DB_playItem_t **tracks;
 static int numtracks;
 static GtkWidget *progressdlg;
@@ -107,6 +107,7 @@ get_field_value (char *out, int size, const char *key, const char *(*getter)(DB_
         return 0;
     }
     char *p = out;
+    deadbeef->pl_lock ();
     const char **prev = malloc (sizeof (const char *) * numtracks);
     memset (prev, 0, sizeof (const char *) * numtracks);
     for (int i = 0; i < numtracks; i++) {
@@ -142,6 +143,7 @@ get_field_value (char *out, int size, const char *key, const char *(*getter)(DB_
             break;
         }
     }
+    deadbeef->pl_unlock ();
     if (size <= 1) {
         gchar *prev = g_utf8_prev_char (out-4);
         strcpy (prev, "...");
@@ -181,13 +183,35 @@ on_trackproperties_delete_event        (GtkWidget       *widget,
     return TRUE;
 }
 
+void
+on_remove_field_activate                 (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_add_field_activate                 (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+int trkproperties_block_keyhandler = 0;
+
+
 gboolean
 on_trackproperties_key_press_event     (GtkWidget       *widget,
                                         GdkEventKey     *event,
                                         gpointer         user_data)
 {
+    if (trkproperties_block_keyhandler) {
+        return FALSE;
+    }
     if (event->keyval == GDK_Escape) {
         on_trackproperties_delete_event (trackproperties, NULL, NULL);
+        return TRUE;
+    }
+    else if (event->keyval == GDK_Delete) {
+        on_remove_field_activate (NULL, NULL);
+        return TRUE;
+    }
+    else if (event->keyval == GDK_Insert) {
+        on_add_field_activate (NULL, NULL);
         return TRUE;
     }
     return FALSE;
@@ -221,6 +245,7 @@ on_metadata_edited (GtkCellRendererText *renderer, gchar *path, gchar *new_text,
         gtk_list_store_set (store, &iter, 1, new_text, 3, 0, -1);
         trkproperties_modified = 1;
     }
+    trkproperties_block_keyhandler = 0;
 }
 
 // full metadata
@@ -500,8 +525,9 @@ static gboolean
 set_progress_cb (void *ctx) {
     DB_playItem_t *track = ctx;
     GtkWidget *progressitem = lookup_widget (progressdlg, "progresstitle");
-    const char *fname = deadbeef->pl_find_meta_raw (track, ":URI");
-    gtk_entry_set_text (GTK_ENTRY (progressitem), fname);
+    deadbeef->pl_lock ();
+    gtk_entry_set_text (GTK_ENTRY (progressitem), deadbeef->pl_find_meta_raw (track, ":URI"));
+    deadbeef->pl_unlock ();
     deadbeef->pl_item_unref (track);
     return FALSE;
 }
@@ -513,8 +539,15 @@ write_meta_worker (void *ctx) {
             break;
         }
         DB_playItem_t *track = tracks[t];
-        const char *decoder_id = deadbeef->pl_find_meta_raw (track, ":DECODER");
-        if (track && decoder_id) {
+        deadbeef->pl_lock ();
+        const char *dec = deadbeef->pl_find_meta_raw (track, ":DECODER");
+        char decoder_id[100];
+        if (dec) {
+            strncpy (decoder_id, dec, sizeof (decoder_id));
+        }
+        int match = track && dec;
+        deadbeef->pl_unlock ();
+        if (match) {
             int is_subtrack = deadbeef->pl_get_item_flags (track) & DDB_IS_SUBTRACK;
             if (is_subtrack) {
                 continue;
@@ -625,9 +658,14 @@ on_write_tags_clicked                  (GtkButton       *button,
 void
 on_add_field_activate                 (GtkMenuItem     *menuitem,
                                         gpointer         user_data) {
+    GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
+    if (!gtk_widget_is_focus(GTK_WIDGET (treeview))) {
+        return; // do not add field if Metadata tab is not focused
+    }
     GtkWidget *dlg = create_entrydialog ();
+    gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (trackproperties));
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
-    gtk_window_set_title (GTK_WINDOW (dlg), _("Edit playlist"));
+    gtk_window_set_title (GTK_WINDOW (dlg), _("Field name"));
     GtkWidget *e;
     e = lookup_widget (dlg, "title_label");
     gtk_label_set_text (GTK_LABEL(e), _("Name:"));
@@ -635,9 +673,9 @@ on_add_field_activate                 (GtkMenuItem     *menuitem,
         int res = gtk_dialog_run (GTK_DIALOG (dlg));
         if (res == GTK_RESPONSE_OK) {
             e = lookup_widget (dlg, "title");
-            
+
             const char *text = gtk_entry_get_text (GTK_ENTRY(e));
-            
+
             GtkTreeIter iter;
 
             // check for _ and :
@@ -673,6 +711,11 @@ on_add_field_activate                 (GtkMenuItem     *menuitem,
 
                 gtk_list_store_append (store, &iter);
                 gtk_list_store_set (store, &iter, 0, title, 1, value, 2, key, -1);
+                GtkTreePath *path;
+                gint rows = gtk_tree_model_iter_n_children (GTK_TREE_MODEL (store), NULL);
+                path = gtk_tree_path_new_from_indices (rows - 1, -1);
+                gtk_tree_view_set_cursor (treeview, path, NULL, TRUE); // set cursor onto new field
+                gtk_tree_path_free(path);
                 trkproperties_modified = 1;
             }
             else {
@@ -687,26 +730,21 @@ on_add_field_activate                 (GtkMenuItem     *menuitem,
         break;
     }
     gtk_widget_destroy (dlg);
+    gtk_window_present (GTK_WINDOW (trackproperties));
 }
 
 void
 on_remove_field_activate                 (GtkMenuItem     *menuitem,
                                         gpointer         user_data) {
 
+    GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
+    if (!gtk_widget_is_focus(GTK_WIDGET (treeview))) {
+        return; // do not remove field if Metadata tab is not focused
+    }
     GtkTreePath *path;
     GtkTreeViewColumn *col;
-    GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
     gtk_tree_view_get_cursor (treeview, &path, &col);
     if (!path || !col) {
-        return;
-    }
-
-    GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (trackproperties), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("Really remove selected field?"));
-    gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
-
-    int response = gtk_dialog_run (GTK_DIALOG (dlg));
-    gtk_widget_destroy (dlg);
-    if (response != GTK_RESPONSE_YES) {
         return;
     }
 
@@ -729,6 +767,7 @@ on_remove_field_activate                 (GtkMenuItem     *menuitem,
     else {
         gtk_list_store_remove (store, &iter);
     }
+    gtk_tree_view_set_cursor (treeview, path, NULL, FALSE); // restore cursor after deletion
     gtk_tree_path_free (path);
     trkproperties_modified = 1;
 }

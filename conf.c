@@ -15,11 +15,22 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifdef HAVE_CONFIG_H
+#  include "config.h"
+#endif
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
 #include <inttypes.h>
+#include <errno.h>
+#include <unistd.h>
+#if HAVE_SYS_CDEFS_H
+#include <sys/cdefs.h>
+#endif
+#if HAVE_SYS_SYSLIMITS_H
+#include <sys/syslimits.h>
+#endif
 #include "conf.h"
 #include "threading.h"
 
@@ -107,19 +118,33 @@ conf_load (void) {
 int
 conf_save (void) {
     extern char dbconfdir[1024]; // $HOME/.config/deadbeef
-    char str[1024];
-    snprintf (str, 1024, "%s/config", dbconfdir);
-    FILE *fp = fopen (str, "w+t");
+
+    char tempfile[PATH_MAX];
+    snprintf (tempfile, sizeof (tempfile), "%s/config.tmp", dbconfdir);
+
+    char str[PATH_MAX];
+    snprintf (str, sizeof (str), "%s/config", dbconfdir);
+
+    FILE *fp = fopen (tempfile, "w+t");
     if (!fp) {
         fprintf (stderr, "failed to open config file for writing\n");
         return -1;
     }
     conf_lock ();
     for (DB_conf_item_t *it = conf_items; it; it = it->next) {
-        fprintf (fp, "%s %s\n", it->key, it->value);
+        if (fprintf (fp, "%s %s\n", it->key, it->value) < 0) {
+            fprintf (stderr, "failed to write to file %s (%s)\n", tempfile, strerror (errno));
+            fclose (fp);
+            conf_unlock ();
+            return -1;
+        }
     }
     fclose (fp);
     conf_unlock ();
+    int err = rename (tempfile, str);
+    if (err != 0) {
+        fprintf (stderr, "config rename %s -> %s failed: %s\n", tempfile, str, strerror (errno));
+    }
     return 0;
 }
 

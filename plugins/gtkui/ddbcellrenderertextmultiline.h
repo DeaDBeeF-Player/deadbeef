@@ -35,7 +35,6 @@ typedef struct _DdbCellRendererTextMultilinePrivate DdbCellRendererTextMultiline
 struct _DdbCellEditableTextView {
 	GtkTextView parent_instance;
 	DdbCellEditableTextViewPrivate * priv;
-	gboolean editing_canceled;
 	gchar* tree_path;
 };
 

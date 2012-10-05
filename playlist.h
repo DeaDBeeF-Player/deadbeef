@@ -454,4 +454,19 @@ plt_set_fast_mode (playlist_t *plt, int fast);
 int
 plt_is_fast_mode (playlist_t *plt);
 
+void
+pl_ensure_lock (void);
+
+int
+pl_get_meta (playItem_t *it, const char *key, char *val, int size);
+
+int
+pl_get_meta_raw (playItem_t *it, const char *key, char *val, int size);
+
+int
+pl_meta_exists (playItem_t *it, const char *key);
+
+int
+plt_get_meta (playlist_t *handle, const char *key, char *val, int size);
+
 #endif // __PLAYLIST_H

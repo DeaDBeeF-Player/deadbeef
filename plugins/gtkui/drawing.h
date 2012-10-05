@@ -21,50 +21,63 @@
 
 #include <stdint.h>
 
+typedef struct {
+    cairo_t *drawable;
+    GdkColor clrfg;
+    GdkColor clrbg;
+    int pango_ready;
+    PangoContext *pangoctx;
+    PangoLayout *pangolayout;
+    GtkStyle *font_style;
+    PangoWeight font_weight;
+} drawctx_t;
+
 // abstract api for drawing primitives
 
 void
-draw_init (void);
+drawctx_init (drawctx_t *ctx);
 
 void
-draw_free (void);
+draw_begin (drawctx_t *ctx, cairo_t *cr);
 
 void
-draw_begin (cairo_t *cr);
+draw_end (drawctx_t *ctx);
 
 void
-draw_end (void);
+draw_free (drawctx_t *ctx);
 
 void
-draw_set_fg_color (float *rgb);
+draw_set_fg_color (drawctx_t *ctx, float *rgb);
 
 void
-draw_line (float x1, float y1, float x2, float y2);
+draw_line (drawctx_t *ctx, float x1, float y1, float x2, float y2);
 
 void
-draw_rect (float x, float y, float w, float h, int fill);
+draw_rect (drawctx_t *ctx, float x, float y, float w, float h, int fill);
 
 float
-draw_get_font_size (void);
+draw_get_font_size (drawctx_t *ctx);
 
 void
-draw_init_font (GtkStyle *style);
+draw_init_font (drawctx_t *ctx, GtkStyle *style);
 
 void
-draw_init_font_bold (void);
+draw_init_font_bold (drawctx_t *ctx);
 
 void
-draw_init_font_normal (void);
+draw_init_font_normal (drawctx_t *ctx);
 
 void
-draw_text (float x, float y, int width, int align, const char *text);
+draw_text (drawctx_t *ctx, float x, float y, int width, int align, const char *text);
 
 void
-draw_text_with_colors (float x, float y, int width, int align, const char *text);
+draw_text_with_colors (drawctx_t *ctx, float x, float y, int width, int align, const char *text);
 
 void
-draw_get_text_extents (const char *text, int len, int *w, int *h);
+draw_get_text_extents (drawctx_t *ctx, const char *text, int len, int *w, int *h);
 
+int
+draw_get_listview_rowheight (drawctx_t *ctx);
 
 void
 gtkui_get_bar_foreground_color (GdkColor *clr);
@@ -116,8 +129,5 @@ gtkui_override_bar_colors (void);
 
 int
 gtkui_override_tabstrip_colors (void);
-
-int
-draw_get_listview_rowheight (void);
 
 #endif // __DRAWING_H

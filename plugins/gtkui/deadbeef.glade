@@ -62,7 +62,7 @@
 		      <accelerator key="O" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image563">
+			<widget class="GtkImage" id="image587">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-open</property>
 			  <property name="icon_size">1</property>
@@ -89,7 +89,7 @@
 		      <signal name="activate" handler="on_add_files_activate" last_modification_time="Sat, 04 Jul 2009 13:04:01 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image564">
+			<widget class="GtkImage" id="image588">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-add</property>
 			  <property name="icon_size">1</property>
@@ -110,7 +110,7 @@
 		      <signal name="activate" handler="on_add_folders_activate" last_modification_time="Sun, 06 Sep 2009 17:51:40 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image565">
+			<widget class="GtkImage" id="image589">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-add</property>
 			  <property name="icon_size">1</property>
@@ -181,7 +181,7 @@
 		      <accelerator key="Q" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image566">
+			<widget class="GtkImage" id="image590">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-quit</property>
 			  <property name="icon_size">1</property>
@@ -215,7 +215,7 @@
 		      <signal name="activate" handler="on_clear1_activate" last_modification_time="Sun, 06 Sep 2009 18:30:03 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image567">
+			<widget class="GtkImage" id="image591">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-clear</property>
 			  <property name="icon_size">1</property>
@@ -274,7 +274,7 @@
 			      <signal name="activate" handler="on_remove1_activate" last_modification_time="Sun, 06 Sep 2009 18:30:03 GMT"/>
 
 			      <child internal-child="image">
-				<widget class="GtkImage" id="image568">
+				<widget class="GtkImage" id="image592">
 				  <property name="visible">True</property>
 				  <property name="stock">gtk-remove</property>
 				  <property name="icon_size">1</property>
@@ -313,7 +313,7 @@
 		  <child>
 		    <widget class="GtkMenuItem" id="sort_by1">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Sort By</property>
+		      <property name="label" translatable="yes">Sort by</property>
 		      <property name="use_underline">True</property>
 
 		      <child>
@@ -545,7 +545,7 @@
 			  <child>
 			    <widget class="GtkRadioMenuItem" id="loop_all">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Loop All</property>
+			      <property name="label" translatable="yes">Loop all</property>
 			      <property name="use_underline">True</property>
 			      <property name="active">True</property>
 			      <signal name="activate" handler="on_loop_all_activate" last_modification_time="Sat, 08 Aug 2009 12:26:33 GMT"/>
@@ -555,7 +555,7 @@
 			  <child>
 			    <widget class="GtkRadioMenuItem" id="loop_single">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Loop Single Song</property>
+			      <property name="label" translatable="yes">Loop single song</property>
 			      <property name="use_underline">True</property>
 			      <property name="active">True</property>
 			      <property name="group">loop_all</property>
@@ -566,7 +566,7 @@
 			  <child>
 			    <widget class="GtkRadioMenuItem" id="loop_disable">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Don't Loop</property>
+			      <property name="label" translatable="yes">Don't loop</property>
 			      <property name="use_underline">True</property>
 			      <property name="active">True</property>
 			      <property name="group">loop_all</property>
@@ -646,7 +646,7 @@
 		      <signal name="activate" handler="on_help1_activate" last_modification_time="Tue, 08 Sep 2009 17:32:06 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image569">
+			<widget class="GtkImage" id="image593">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-help</property>
 			  <property name="icon_size">1</property>
@@ -706,7 +706,7 @@
 		      <signal name="activate" handler="on_about1_activate" last_modification_time="Sat, 04 Jul 2009 12:57:58 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image570">
+			<widget class="GtkImage" id="image594">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-about</property>
 			  <property name="icon_size">1</property>
@@ -727,7 +727,7 @@
 		      <signal name="activate" handler="on_translators1_activate" last_modification_time="Sun, 19 Sep 2010 13:38:07 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image571">
+			<widget class="GtkImage" id="image595">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-about</property>
 			  <property name="icon_size">1</property>
@@ -798,6 +798,7 @@
 		  <signal name="clicked" handler="on_playbtn_clicked" last_modification_time="Sun, 05 Jul 2009 10:48:53 GMT"/>
 		  <accelerator key="x" modifiers="0" signal="activate"/>
 		  <accelerator key="Return" modifiers="0" signal="activate"/>
+		  <accelerator key="KP_Enter" modifiers="0" signal="activate"/>
 
 		  <child>
 		    <widget class="GtkImage" id="image2">
@@ -1001,10 +1002,9 @@
 
   <child>
     <widget class="GtkVBox" id="vbox4">
-      <property name="border_width">4</property>
       <property name="visible">True</property>
       <property name="homogeneous">False</property>
-      <property name="spacing">0</property>
+      <property name="spacing">4</property>
 
       <child>
 	<widget class="GtkEntry" id="searchentry">
@@ -1027,21 +1027,12 @@
       </child>
 
       <child>
-	<widget class="GtkFrame" id="frame2">
+	<widget class="Custom" id="searchlist">
 	  <property name="visible">True</property>
-	  <property name="label_xalign">0</property>
-	  <property name="label_yalign">0.5</property>
-	  <property name="shadow_type">GTK_SHADOW_ETCHED_IN</property>
-
-	  <child>
-	    <widget class="Custom" id="searchlist">
-	      <property name="visible">True</property>
-	      <property name="creation_function">create_ddb_listview_widget</property>
-	      <property name="int1">0</property>
-	      <property name="int2">0</property>
-	      <property name="last_modification_time">Sat, 13 Feb 2010 20:26:18 GMT</property>
-	    </widget>
-	  </child>
+	  <property name="creation_function">create_ddb_listview_widget</property>
+	  <property name="int1">0</property>
+	  <property name="int2">0</property>
+	  <property name="last_modification_time">Sat, 13 Feb 2010 20:26:18 GMT</property>
 	</widget>
 	<packing>
 	  <property name="padding">0</property>
@@ -2121,6 +2112,7 @@
 		  <property name="has_frame">True</property>
 		  <property name="invisible_char">●</property>
 		  <property name="activates_default">True</property>
+		  <signal name="changed" handler="on_editcolumn_title_changed" last_modification_time="Sun, 05 Aug 2012 10:23:04 GMT"/>
 		</widget>
 		<packing>
 		  <property name="padding">0</property>
@@ -3438,6 +3430,46 @@ Album</property>
 	      </child>
 
 	      <child>
+		<widget class="GtkCheckButton" id="enable_cp1251_recoding">
+		  <property name="visible">True</property>
+		  <property name="can_focus">True</property>
+		  <property name="label" translatable="yes">Enable Russian CP1251 detection and recoding</property>
+		  <property name="use_underline">True</property>
+		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="focus_on_click">True</property>
+		  <property name="active">False</property>
+		  <property name="inconsistent">False</property>
+		  <property name="draw_indicator">True</property>
+		  <signal name="toggled" handler="on_enable_cp1251_recoding_toggled" last_modification_time="Mon, 03 Sep 2012 16:36:19 GMT"/>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">False</property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkCheckButton" id="enable_cp936_recoding">
+		  <property name="visible">True</property>
+		  <property name="can_focus">True</property>
+		  <property name="label" translatable="yes">Enable Chinese CP936 detection and recoding</property>
+		  <property name="use_underline">True</property>
+		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="focus_on_click">True</property>
+		  <property name="active">False</property>
+		  <property name="inconsistent">False</property>
+		  <property name="draw_indicator">True</property>
+		  <signal name="toggled" handler="on_enable_cp936_recoding_toggled" last_modification_time="Mon, 03 Sep 2012 16:36:16 GMT"/>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">False</property>
+		</packing>
+	      </child>
+
+	      <child>
 		<widget class="GtkHBox" id="hbox102">
 		  <property name="visible">True</property>
 		  <property name="homogeneous">False</property>
@@ -3671,7 +3703,7 @@ Album</property>
 	  <child>
 	    <widget class="GtkLabel" id="label2">
 	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">GUI</property>
+	      <property name="label" translatable="yes">GUI/Misc</property>
 	      <property name="use_underline">False</property>
 	      <property name="use_markup">False</property>
 	      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -4861,6 +4893,75 @@ SOCKS5_HOSTNAME</property>
 		  <property name="fill">False</property>
 		</packing>
 	      </child>
+
+	      <child>
+		<widget class="GtkHSeparator" id="hseparator1">
+		  <property name="visible">True</property>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">True</property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkHBox" id="hbox104">
+		  <property name="visible">True</property>
+		  <property name="homogeneous">False</property>
+		  <property name="spacing">8</property>
+
+		  <child>
+		    <widget class="GtkLabel" id="label131">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">HTTP User Agent:</property>
+		      <property name="use_underline">False</property>
+		      <property name="use_markup">False</property>
+		      <property name="justify">GTK_JUSTIFY_LEFT</property>
+		      <property name="wrap">False</property>
+		      <property name="selectable">False</property>
+		      <property name="xalign">0.5</property>
+		      <property name="yalign">0.5</property>
+		      <property name="xpad">0</property>
+		      <property name="ypad">0</property>
+		      <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
+		      <property name="width_chars">-1</property>
+		      <property name="single_line_mode">False</property>
+		      <property name="angle">0</property>
+		    </widget>
+		    <packing>
+		      <property name="padding">0</property>
+		      <property name="expand">False</property>
+		      <property name="fill">False</property>
+		    </packing>
+		  </child>
+
+		  <child>
+		    <widget class="GtkEntry" id="useragent">
+		      <property name="visible">True</property>
+		      <property name="can_focus">True</property>
+		      <property name="editable">True</property>
+		      <property name="visibility">True</property>
+		      <property name="max_length">0</property>
+		      <property name="text" translatable="yes"></property>
+		      <property name="has_frame">True</property>
+		      <property name="invisible_char">•</property>
+		      <property name="activates_default">False</property>
+		      <signal name="changed" handler="on_useragent_changed" last_modification_time="Thu, 16 Aug 2012 18:24:48 GMT"/>
+		    </widget>
+		    <packing>
+		      <property name="padding">0</property>
+		      <property name="expand">True</property>
+		      <property name="fill">True</property>
+		    </packing>
+		  </child>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">True</property>
+		</packing>
+	      </child>
 	    </widget>
 	    <packing>
 	      <property name="tab_expand">False</property>
@@ -5774,7 +5875,7 @@ SOCKS5_HOSTNAME</property>
 
 <widget class="GtkDialog" id="groupbydlg">
   <property name="visible">True</property>
-  <property name="title" translatable="yes">Group By</property>
+  <property name="title" translatable="yes">Group By ...</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
@@ -6062,7 +6163,7 @@ SOCKS5_HOSTNAME</property>
 
 <widget class="GtkDialog" id="sortbydlg">
   <property name="visible">True</property>
-  <property name="title" translatable="yes">Sort by...</property>
+  <property name="title" translatable="yes">Sort by ...</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">True</property>

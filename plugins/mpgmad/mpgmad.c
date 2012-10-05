@@ -793,7 +793,9 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     mpgmad_info_t *info = (mpgmad_info_t *)_info;
     _info->plugin = &plugin;
     memset (&info->buffer, 0, sizeof (info->buffer));
+    deadbeef->pl_lock ();
     info->buffer.file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    deadbeef->pl_unlock ();
     if (!info->buffer.file) {
         return -1;
     }
@@ -807,7 +809,7 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             trace ("mpgmad: skipping %d(%xH) bytes of junk\n", skip, skip);
             deadbeef->fseek (info->buffer.file, skip, SEEK_SET);
         }
-        int res = cmp3_scan_stream (&info->buffer, -1);
+        int res = cmp3_scan_stream (&info->buffer, deadbeef->conf_get_int ("mp3.disable_gapless", 0) ? 0 : -1);
         if (res < 0) {
             trace ("mpgmad: cmp3_init: initial cmp3_scan_stream failed\n");
             return -1;
@@ -1357,15 +1359,20 @@ cmp3_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     deadbeef->plt_set_item_duration (plt, it, buffer.duration);
     deadbeef->fclose (fp);
 
-    const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
-    if (cuesheet) {
-        DB_playItem_t *last = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), buffer.totalsamples-buffer.delay-buffer.padding, buffer.samplerate);
-        if (last) {
-            deadbeef->pl_item_unref (it);
-            deadbeef->pl_item_unref (last);
-            return last;
+    deadbeef->pl_lock ();
+    {
+        const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
+        if (cuesheet) {
+            DB_playItem_t *last = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), buffer.totalsamples-buffer.delay-buffer.padding, buffer.samplerate);
+            if (last) {
+                deadbeef->pl_item_unref (it);
+                deadbeef->pl_item_unref (last);
+                deadbeef->pl_unlock ();
+                return last;
+            }
         }
     }
+    deadbeef->pl_unlock ();
 
 
     // FIXME! bad numsamples passed to cue
@@ -1383,7 +1390,9 @@ cmp3_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
 int
 cmp3_read_metadata (DB_playItem_t *it) {
+    deadbeef->pl_lock ();
     DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    deadbeef->pl_unlock ();
     if (!fp) {
         return -1;
     }
@@ -1440,6 +1449,10 @@ static const char *exts[] = {
 	"mp1", "mp2", "mp3", NULL
 };
 
+static const char settings_dlg[] =
+    "property \"Disable gapless playback (faster scanning)\" checkbox mp3.disable_gapless 0;\n"
+;
+
 // define plugin interface
 static DB_decoder_t plugin = {
     .plugin.api_vmajor = 1,
@@ -1468,6 +1481,7 @@ static DB_decoder_t plugin = {
         "Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.\n"
     ,
     .plugin.website = "http://deadbeef.sf.net",
+    .plugin.configdialog = settings_dlg,
     .open = cmp3_open,
     .init = cmp3_init,
     .free = cmp3_free,

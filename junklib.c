@@ -1,19 +1,25 @@
-/*
-    DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
+/* junklib -- library for reading tags from various audio files for deadbeef player
+  http://deadbeef.sourceforge.net
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 2 of the License, or
-    (at your option) any later version.
+  Copyright (C) 2009-2012 Alexey Yakovenko
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+
+  Alexey Yakovenko waker@users.sourceforge.net
 */
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -44,6 +50,10 @@ uint16_t sj_to_unicode[] = {
 #include "playlist.h"
 #include "utf8.h"
 #include "plugins.h"
+#include "conf.h"
+
+int enable_cp1251_detection = 1;
+int enable_cp936_detection = 0;
 
 #define MAX_TEXT_FRAME_SIZE 1024
 #define MAX_CUESHEET_FRAME_SIZE 10000
@@ -167,6 +177,7 @@ extract_i32_le (unsigned char *buf)
 
     return x;
 }
+
 static inline uint16_t
 extract_i16 (const uint8_t *buf)
 {
@@ -176,7 +187,6 @@ extract_i16 (const uint8_t *buf)
     x = buf[0];
     x <<= 8;
     x |= buf[1];
-    x <<= 8;
 
     return x;
 }
@@ -645,6 +655,9 @@ static const char *junk_genretbl[] = {
 
 static int
 can_be_russian (const signed char *str) {
+    if (!enable_cp1251_detection) {
+        return 0;
+    }
     int latin = 0;
     int rus = 0;
     int rus_in_row = 0;
@@ -669,6 +682,30 @@ can_be_russian (const signed char *str) {
     return 0;
 }
 
+static int
+can_be_chinese (const uint8_t *str) {
+    if (!enable_cp936_detection) {
+        return 0;
+    }
+    int len = strlen (str);
+    for (int i = 0; *str; str++, i++) {
+        if (i < len-3
+                && (*str >= 0x81 && *str <= 0xFE )
+                && (*(str+1) >= 0x30 && *(str+1) <= 0x39)
+                && (*(str+2) >= 0x81 && *(str+2) <= 0xFE)
+                && (*(str+3) >= 0x30 && *(str+3) <= 0x39)) {
+            return 1;
+        }
+        if (i < len - 1
+                && (*str >= 0x81 && *str <= 0xFE )
+                && ((*(str+1) >= 0x40 && *(str+1) <= 0x7E)
+                    || (*(str+1) >= 0x80 && *(str+1) <= 0xFE))) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 static char *
 convstr_id3v2 (int version, uint8_t encoding, const unsigned char* str, int sz) {
     char out[2048] = "";
@@ -682,8 +719,12 @@ convstr_id3v2 (int version, uint8_t encoding, const unsigned char* str, int sz) 
         enc = UTF8_STR;
     }
     else if (encoding == 0) {
-        // hack to add limited cp1251 recoding support
-        if (can_be_russian (str)) {
+        if (can_be_chinese (str)) {
+            // hack to add cp936 support
+            enc = "cp936";
+        }
+        else if (can_be_russian (str)) {
+            // hack to add limited cp1251 recoding support
             enc = "cp1251";
         }
         else {
@@ -766,7 +807,12 @@ convstr_id3v1 (const char* str, int sz) {
         return str;
     }
     const char *enc = "iso8859-1";
-    if (can_be_russian (str)) {
+    if (can_be_chinese (str)) {
+        // hack to add cp936 support
+        enc = "cp936";
+    }
+    else if (can_be_russian (str)) {
+        // hack to add limited cp1251 recoding support
         enc = "cp1251";
     }
 
@@ -889,6 +935,8 @@ junk_id3v1_write (FILE *fp, playItem_t *it, const char *enc) {
 
     const char *meta;
 
+    pl_lock ();
+
 #define conv(name, store) {\
     memset (store, 0x20, sizeof (store));\
     meta = pl_find_meta (it, name);\
@@ -932,6 +980,8 @@ junk_id3v1_write (FILE *fp, playItem_t *it, const char *enc) {
             }
         }
     }
+
+    pl_unlock ();
 
     if (fwrite ("TAG", 1, 3, fp) != 3) {
         trace ("junk_id3v1_write: failed to write signature\n");
@@ -1196,6 +1246,15 @@ junk_apev2_read_full_mem (playItem_t *it, DB_apev2_tag_t *tag_store, char *mem, 
             memcpy (value, mem, itemsize);
             value[itemsize] = 0;
 
+            // replace 0s with \n
+            uint8_t *p = value;
+            while (p < value + itemsize - 1) {
+                if (*p == 0) {
+                    *p = '\n';
+                }
+                p++;
+            }
+
             junk_apev2_add_frame (it, tag_store, &tail, itemsize, itemflags, key, value);
 
             free (value);
@@ -1300,6 +1359,15 @@ junk_apev2_read_full (playItem_t *it, DB_apev2_tag_t *tag_store, DB_FILE *fp) {
                 return -1;
             }
             value[itemsize] = 0;
+
+            // replace 0s with \n
+            uint8_t *p = value;
+            while (p < value + itemsize - 1) {
+                if (*p == 0) {
+                    *p = '\n';
+                }
+                p++;
+            }
 
             junk_apev2_add_frame (it, tag_store, &tail, itemsize, itemflags, key, value);
             free (value);
@@ -2877,6 +2945,9 @@ junk_id3v2_load_txx (int version_major, playItem_t *it, uint8_t *readptr, int sy
         else if (!strcasecmp (txx, "replaygain_track_peak")) {
             pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, atof (val));
         }
+        else if (!strcasecmp (txx, "date")) { // HACK: fb2k date support
+            pl_append_meta (it, "year", val);
+        }
         else {
             pl_append_meta (it, txx, val);
         }
@@ -3385,6 +3456,10 @@ junk_detect_charset (const char *s) {
     if (u8_valid (s, strlen (s), NULL)) {
         return NULL; // means no recoding required
     }
+    // hack to add cp936 support
+    if (can_be_chinese (s)) {
+       return "cp936";
+    }
     // check if that could be non-latin1 (too many nonascii chars)
     if (can_be_russian (s)) {
         return "cp1251";
@@ -3415,8 +3490,11 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
     int write_id3v1 = junk_flags & JUNK_WRITE_ID3V1;
     int write_apev2 = junk_flags & JUNK_WRITE_APEV2;
 
+    char tmppath[PATH_MAX];
     // find the beginning and the end of audio data
-    const char *fname = pl_find_meta (it, ":URI");
+    char fname[PATH_MAX];
+    pl_get_meta (it, ":URI", fname, sizeof (fname));
+    snprintf (tmppath, sizeof (tmppath), "%s.temp", fname);
     fp = deadbeef->fopen (fname);
     if (!fp) {
         trace ("file not found %s\n", fname);
@@ -3467,8 +3545,6 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
 
     // open output file
     out = NULL;
-    char tmppath[PATH_MAX];
-    snprintf (tmppath, sizeof (tmppath), "%s.temp", pl_find_meta (it, ":URI"));
 
     out = fopen (tmppath, "w+b");
     trace ("will write tags into %s\n", tmppath);
@@ -3546,11 +3622,15 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
 
         // COMM
         junk_id3v2_remove_frames (&id3v2, "COMM");
-        const char *val = pl_find_meta (it, "comment");
-        if (val && *val) {
-            junk_id3v2_remove_frames (&id3v2, "COMM");
-            junk_id3v2_add_comment_frame (&id3v2, "eng", "", val);
+        pl_lock ();
+        {
+            const char *val = pl_find_meta (it, "comment");
+            if (val && *val) {
+                junk_id3v2_remove_frames (&id3v2, "COMM");
+                junk_id3v2_add_comment_frame (&id3v2, "eng", "", val);
+            }
         }
+        pl_unlock ();
 
         // remove all known normal frames (they will be refilled from track metadata)
         int idx = id3v2.version[0] == 3 ? MAP_ID3V23 : MAP_ID3V24;
@@ -3591,18 +3671,22 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
         }
 
         // add tracknumber/totaltracks
-        const char *track = pl_find_meta (it, "track");
-        const char *totaltracks = pl_find_meta (it, "numtracks");
-        if (track && totaltracks) {
-            char s[100];
-            snprintf (s, sizeof (s), "%s/%s", track, totaltracks);
-            junk_id3v2_remove_frames (&id3v2, "TRCK");
-            junk_id3v2_add_text_frame (&id3v2, "TRCK", s);
+        pl_lock ();
+        {
+            const char *track = pl_find_meta (it, "track");
+            const char *totaltracks = pl_find_meta (it, "numtracks");
+            if (track && totaltracks) {
+                char s[100];
+                snprintf (s, sizeof (s), "%s/%s", track, totaltracks);
+                junk_id3v2_remove_frames (&id3v2, "TRCK");
+                junk_id3v2_add_text_frame (&id3v2, "TRCK", s);
+            }
+            else if (track) {
+                junk_id3v2_remove_frames (&id3v2, "TRCK");
+                junk_id3v2_add_text_frame (&id3v2, "TRCK", track);
+            }
         }
-        else if (track) {
-            junk_id3v2_remove_frames (&id3v2, "TRCK");
-            junk_id3v2_add_text_frame (&id3v2, "TRCK", track);
-        }
+        pl_unlock ();
 
         // write tag
         if (junk_id3v2_write (out, &id3v2) != 0) {
@@ -3695,18 +3779,22 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
         }
 
         // add tracknumber/totaltracks
-        const char *track = pl_find_meta (it, "track");
-        const char *totaltracks = pl_find_meta (it, "numtracks");
-        if (track && totaltracks) {
-            char s[100];
-            snprintf (s, sizeof (s), "%s/%s", track, totaltracks);
-            junk_apev2_remove_frames (&apev2, "Track");
-            junk_apev2_add_text_frame (&apev2, "Track", s);
+        pl_lock ();
+        {
+            const char *track = pl_find_meta (it, "track");
+            const char *totaltracks = pl_find_meta (it, "numtracks");
+            if (track && totaltracks) {
+                char s[100];
+                snprintf (s, sizeof (s), "%s/%s", track, totaltracks);
+                junk_apev2_remove_frames (&apev2, "Track");
+                junk_apev2_add_text_frame (&apev2, "Track", s);
+            }
+            else if (track) {
+                junk_apev2_remove_frames (&apev2, "Track");
+                junk_apev2_add_text_frame (&apev2, "Track", track);
+            }
         }
-        else if (track) {
-            junk_apev2_remove_frames (&apev2, "Track");
-            junk_apev2_add_text_frame (&apev2, "Track", track);
-        }
+        pl_unlock ();
 
         // write tag
         if (deadbeef->junk_apev2_write (out, &apev2, 0, 1) != 0) {
@@ -3773,7 +3861,9 @@ error:
         free (buffer);
     }
     if (!err) {
-        rename (tmppath, pl_find_meta (it, ":URI"));
+        pl_lock ();
+        rename (tmppath, fname);
+        pl_unlock ();
     }
     else {
         unlink (tmppath);
@@ -3781,3 +3871,20 @@ error:
     return err;
 }
 
+void
+junk_enable_cp1251_detection (int enable) {
+    enable_cp1251_detection = enable;
+}
+
+void
+junk_enable_cp936_detection (int enable) {
+    enable_cp936_detection = enable;
+}
+
+void
+junk_configchanged (void) {
+    int cp1251 = conf_get_int ("junk.enable_cp1251_detection", 1);
+    int cp936 = conf_get_int ("junk.enable_cp936_detection", 0);
+    junk_enable_cp1251_detection (cp1251);
+    junk_enable_cp936_detection (cp936);
+}
