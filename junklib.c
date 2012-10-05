@@ -2906,6 +2906,48 @@ junk_load_comm_frame (int version_major, playItem_t *it, uint8_t *readptr, int s
     return 0;
 }
 
+/* Parse RVA2 tag */
+/* Currently only supports tags wich set master volume and are labeled "track"
+ * or "album". Also only supports peak value if stored as 16 bits. */
+static int junk_id3v2_load_rva2 (int version_major, playItem_t *it, uint8_t *readptr, int synched_size) {
+    char *rva_desc = readptr;
+    unsigned rva_desc_len = strnlen(rva_desc, synched_size);
+
+    if(rva_desc_len == synched_size) { /* tag too short */
+        return -1;
+    }
+    if(rva_desc_len != 5) { /* only support track or album labeled ones */
+        return 0;
+    }
+
+    if(synched_size < rva_desc_len + 1 + 4) return -1; /* at least 4 bytes after zero-terminated label */
+
+    uint8_t *rva_data = rva_desc + rva_desc_len + 1;
+
+    uint8_t vol_type = rva_data[0];
+
+    if(vol_type != 1) return 0;
+
+    int16_t volume_adjust = (int16_t)(((int16_t)rva_data[1] << 8) | rva_data[2]); /* this is little-endian safe :) */
+    uint8_t peak_bits = rva_data[3];
+    uint16_t peak_val = 0;
+
+    if(peak_bits == 16 && synched_size >= rva_desc_len + 1 + 6) {
+        peak_val = (uint16_t)((rva_data[4] << 8) | rva_data[5]);
+    }
+
+    if (!strcasecmp (rva_desc, "album")) {
+        pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, (float)volume_adjust / 512.0);
+        if(peak_val) pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, (float)peak_val / 32767.0); /* NOTE: this is a guess based on mp3gain 1.5.2 written tags */
+    }
+    else if (!strcasecmp (rva_desc, "track")) {
+        pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, (float)volume_adjust / 512.0);
+        if(peak_val) pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, (float)peak_val / 32767.0);
+    }
+
+    return 0;
+}
+
 int
 junk_id3v2_load_txx (int version_major, playItem_t *it, uint8_t *readptr, int synched_size) {
     char *txx = convstr_id3v2 (version_major, *readptr, readptr+1, synched_size-1);
@@ -3295,6 +3337,15 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                     }
 
                     /*int res = */junk_load_comm_frame (version_major, it, readptr, synched_size);
+                }
+                else if (it && !strcmp (frameid, "RVA2")) {
+                    if (synched_size < 5) {
+                        trace ("RVA2 frame is too short, skipped\n");
+                        readptr += sz; // bad tag
+                        continue;
+                    }
+
+                    /*int res = */junk_id3v2_load_rva2(version_major, it, readptr, synched_size);
                 }
                 else if (it && !strcmp (frameid, "TXXX")) {
                     if (synched_size < 2) {
