@@ -1014,7 +1014,7 @@ smclient_save_state (EggSMClient *client, const char *state_dir, gpointer user_d
 
 static gboolean
 unlock_playlist_columns_cb (void *ctx) {
-    ddb_listview_lock_columns (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), 0);
+//    ddb_listview_lock_columns (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), 0);
     return FALSE;
 }
 

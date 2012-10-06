@@ -569,7 +569,6 @@ if test "x$enable_converter" != "xno" ; then
     fi
 fi
 
-<<<<<<< HEAD
 if test "x$enable_medialib" != "xno" ; then
     HAVE_MEDIALIB=yes
 fi
