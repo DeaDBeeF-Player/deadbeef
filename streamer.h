@@ -130,4 +130,7 @@ streamer_dsp_chain_save (void);
 void
 streamer_notify_order_changed (int prev_order, int new_order);
 
+void
+streamer_set_streamer_playlist (playlist_t *plt);
+
 #endif // __STREAMER_H

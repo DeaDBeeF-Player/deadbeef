@@ -2299,3 +2299,14 @@ streamer_notify_order_changed (int prev_order, int new_order) {
         streamer_unlock ();
     }
 }
+
+void
+streamer_set_streamer_playlist (playlist_t *plt) {
+    if (streamer_playlist) {
+        plt_unref (streamer_playlist);
+    }
+    streamer_playlist = plt;
+    if (streamer_playlist) {
+        plt_ref (streamer_playlist);
+    }
+}
