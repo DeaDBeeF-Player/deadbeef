@@ -3473,9 +3473,14 @@ plt_move_items (playlist_t *to, int iter, playlist_t *from, playItem_t *drop_bef
         drop_after = to->tail[iter];
     }
 
+    playItem_t *playing = streamer_get_playing_track ();
+
     for (playItem_t *it = from->head[iter]; it && processed < count; it = next, idx++) {
         next = it->next[iter];
         if (idx == indexes[processed]) {
+            if (it == playing && to != from) {
+                streamer_set_streamer_playlist (to);
+            }
             pl_item_ref (it);
             if (drop_after == it) {
                 drop_after = it->prev[PL_MAIN];
@@ -3487,6 +3492,12 @@ plt_move_items (playlist_t *to, int iter, playlist_t *from, playItem_t *drop_bef
             processed++;
         }
     }
+
+    if (playing) {
+        pl_item_unref (playing);
+    }
+
+
     no_remove_notify = 0;
     UNLOCK;
 }
