@@ -61,10 +61,6 @@
 #error PREFIX must be defined
 #endif
 
-#ifdef __linux__
-#define USE_ABSTRACT_NAME 0
-#endif
-
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
@@ -342,7 +338,7 @@ static struct sockaddr_un srv_local;
 static struct sockaddr_un srv_remote;
 static unsigned srv_socket;
 
-#if USE_ABSTRACT_NAME
+#if USE_ABSTRACT_SOCKET_NAME
 static char server_id[] = "\0deadbeefplayer";
 #endif
 
@@ -363,7 +359,7 @@ server_start (void) {
     memset (&srv_local, 0, sizeof (srv_local));
     srv_local.sun_family = AF_UNIX;
 
-#if USE_ABSTRACT_NAME
+#if USE_ABSTRACT_SOCKET_NAME
     memcpy (srv_local.sun_path, server_id, sizeof (server_id));
     int len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id)-1;
 #else
@@ -859,7 +855,7 @@ main (int argc, char *argv[]) {
 
     memset (&remote, 0, sizeof (remote));
     remote.sun_family = AF_UNIX;
-#if USE_ABSTRACT_NAME
+#if USE_ABSTRACT_SOCKET_NAME
     memcpy (remote.sun_path, server_id, sizeof (server_id));
     len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id)-1;
 #else

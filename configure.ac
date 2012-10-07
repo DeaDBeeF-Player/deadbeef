@@ -111,10 +111,16 @@ AC_ARG_ENABLE(psf,      [AS_HELP_STRING([--enable-psf      ], [build AOSDK-based
 AC_ARG_ENABLE(mono2stereo,      [AS_HELP_STRING([--enable-mono2stereo      ], [build mono2stereo DSP plugin (default: auto)])], [enable_mono2stereo=$enableval], [enable_mono2stereo=yes])
 AC_ARG_ENABLE(shellexecui, [AS_HELP_STRING([--enable-shellexecui      ], [build shellexec GTK UI plugin (default: auto)])], [enable_shellexecui=$enableval], [enable_shellexecui=yes])
 AC_ARG_ENABLE(alac, [AS_HELP_STRING([--enable-alac      ], [build ALAC plugin (default: auto)])], [enable_alac=$enableval], [enable_alac=yes])
+AC_ARG_ENABLE(abstract_socket, [AS_HELP_STRING([--enable-abstract-socket      ], [use abstract socket (default: enabled)])], [enable_alac=$enableval], [enable_abstract_socket=yes])
 
 if test "x$enable_staticlink" != "xno" ; then
     AC_DEFINE_UNQUOTED([STATICLINK], [1], [Define if building static version])
     STATICLINK=yes
+fi
+
+if test "x$enable_abstract_socket" != "xno" ; then
+    AC_DEFINE_UNQUOTED([USE_ABSTRACT_SOCKET_NAME], [1], [Define to use abstract socket name, without file])
+    USE_ABSTRACT_SOCKET_NAME=yes
 fi
 
 dnl check for yasm
@@ -629,9 +635,6 @@ AM_CONDITIONAL(HAVE_TTA, test "x$HAVE_TTA" = "xyes")
 AM_CONDITIONAL(HAVE_DCA, test "x$HAVE_DCA" = "xyes")
 AM_CONDITIONAL(HAVE_AAC, test "x$HAVE_AAC" = "xyes")
 AM_CONDITIONAL(HAVE_MMS, test "x$HAVE_MMS" = "xyes")
-AM_CONDITIONAL(STATICLINK, test "x$STATICLINK" = "xyes")
-AM_CONDITIONAL(PORTABLE, test "x$PORTABLE" = "xyes")
-AM_CONDITIONAL(PORTABLE_FULL, test "x$PORTABLE_FULL" = "xyes")
 AM_CONDITIONAL(HAVE_DSP_SRC, test "x$HAVE_DSP_SRC" = "xyes")
 AM_CONDITIONAL(HAVE_M3U, test "x$HAVE_M3U" = "xyes")
 AM_CONDITIONAL(HAVE_VFS_ZIP, test "x$HAVE_VFS_ZIP" = "xyes")
@@ -648,6 +651,10 @@ AM_CONDITIONAL(HAVE_SHELLEXECUI, test "x$HAVE_SHELLEXECUI" = "xyes")
 AM_CONDITIONAL(HAVE_SM, test "x$HAVE_SM" = "xyes")
 AM_CONDITIONAL(HAVE_ICE, test "x$HAVE_ICE" = "xyes")
 AM_CONDITIONAL(HAVE_ALAC, test "x$HAVE_ALAC" = "xyes")
+AM_CONDITIONAL(STATICLINK, test "x$STATICLINK" = "xyes")
+AM_CONDITIONAL(PORTABLE, test "x$PORTABLE" = "xyes")
+AM_CONDITIONAL(PORTABLE_FULL, test "x$PORTABLE_FULL" = "xyes")
+AM_CONDITIONAL(USE_ABSTRACT_SOCKET_NAME, test "x$USE_ABSTRACT_SOCKET_NAME" = "xyes")
 
 AC_SUBST(PLUGINS_DIRS)
 
