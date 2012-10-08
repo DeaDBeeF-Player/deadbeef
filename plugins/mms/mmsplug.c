@@ -59,7 +59,7 @@ mms_open (const char *fname) {
 
 static void
 mms_close (DB_FILE *stream) {
-//    fprintf (stderr, "\033[0;32mmms_close was called\033[37;0m\n");
+    //fprintf (stderr, "\033[0;32mmms_close was called\033[37;0m\n");
     assert (stream);
     MMS_FILE *fp = (MMS_FILE *)stream;
     if (fp->stream) {
@@ -156,6 +156,7 @@ mms_is_streaming (void) {
 
 static void
 mms_abort (DB_FILE *fp) {
+    //fprintf (stderr, "\033[0;35mabort called\033[37;0m\n");
     ((MMS_FILE *)fp)->need_abort = 1;
 }
 
