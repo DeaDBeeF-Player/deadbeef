@@ -26,6 +26,7 @@
 static DB_functions_t *deadbeef;
 typedef struct {
     DB_vfs_t *vfs;
+    char *fname;
     mmsx_t *stream;
     const mms_io_t *io;
     int need_abort;
@@ -49,35 +50,61 @@ const char * mms_bandwidth_strs[]={"14.4 Kbps (Modem)", "19.2 Kbps (Modem)",
 static DB_FILE *
 mms_open (const char *fname) {
     MMS_FILE *fp = malloc (sizeof (MMS_FILE));
+    memset (fp, 0, sizeof (MMS_FILE));
     fp->io = mms_get_default_io_impl();
-    fp->stream = mmsx_connect ((mms_io_t *)fp->io, fp, fname, 1544000, &fp->need_abort);
-    if (!fp->stream) {
-        free (fp);
-        return NULL;
-    }
+    fp->fname = strdup (fname);
     fp->vfs = &plugin;
     return (DB_FILE*)fp;
 }
 
 static void
 mms_close (DB_FILE *stream) {
+//    fprintf (stderr, "\033[0;32mmms_close was called\033[37;0m\n");
     assert (stream);
-    mmsx_close (((MMS_FILE *)stream)->stream);
+    MMS_FILE *fp = (MMS_FILE *)stream;
+    if (fp->stream) {
+        mmsx_close (fp->stream);
+    }
+    if (fp->fname) {
+        free (fp->fname);
+    }
     free (stream);
+}
+
+static int
+mms_ensure_connected (MMS_FILE *fp) {
+    if (!fp->stream) {
+        fp->stream = mmsx_connect ((mms_io_t *)fp->io, fp, fp->fname, 1544000, &fp->need_abort);
+        if (!fp->stream) {
+            return -1;
+        }
+    }
+    return 0;
 }
 
 static size_t
 mms_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
     assert (stream);
     assert (ptr);
+    int connect_err = mms_ensure_connected ((MMS_FILE *)stream);
+    if (connect_err < 0) {
+        return connect_err;
+    }
     MMS_FILE *fp = (MMS_FILE *)stream;
     int res = mmsx_read ((mms_io_t *)fp->io, fp->stream, ptr, size * nmemb);
+    if (fp->need_abort) {
+        return -1;
+    }
     return res;
 }
 
 static int
 mms_seek (DB_FILE *stream, int64_t offset, int whence) {
     assert (stream);
+    int connect_err = mms_ensure_connected ((MMS_FILE *)stream);
+    if (connect_err < 0) {
+        return connect_err;
+    }
     MMS_FILE *fp = (MMS_FILE *)stream;
     return mmsx_seek ((mms_io_t *)fp->io, fp->stream, offset, whence);
 }
@@ -85,6 +112,10 @@ mms_seek (DB_FILE *stream, int64_t offset, int whence) {
 static int64_t
 mms_tell (DB_FILE *stream) {
     assert (stream);
+    int connect_err = mms_ensure_connected ((MMS_FILE *)stream);
+    if (connect_err < 0) {
+        return connect_err;
+    }
     return mmsx_get_current_pos (((MMS_FILE *)stream)->stream);
 }
 
@@ -98,6 +129,10 @@ mms_rewind (DB_FILE *stream) {
 static int64_t
 mms_getlength (DB_FILE *stream) {
     assert (stream);
+    int connect_err = mms_ensure_connected ((MMS_FILE *)stream);
+    if (connect_err < 0) {
+        return connect_err;
+    }
     MMS_FILE *f = (MMS_FILE *)stream;
     return mmsx_get_length (f->stream);
 }
