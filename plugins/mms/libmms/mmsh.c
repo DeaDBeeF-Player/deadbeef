@@ -1017,7 +1017,7 @@ fail:
   return 0;
 }
 
-mmsh_t *mmsh_connect (mms_io_t *io, void *data, const char *url, int bandwidth) {
+mmsh_t *mmsh_connect (mms_io_t *io, void *data, const char *url, int bandwidth, int *need_abort) {
   mmsh_t *this;
   GURI  *uri = NULL;
   GURI  *proxy_uri = NULL;
@@ -1041,6 +1041,7 @@ mmsh_t *mmsh_connect (mms_io_t *io, void *data, const char *url, int bandwidth) 
   this->host_user = NULL;
   this->host_password = NULL;
   this->uri = NULL;
+  this->need_abort = need_abort;
 
   this->url             = strdup(url);
   if ((proxy_env = getenv("http_proxy")) != NULL)

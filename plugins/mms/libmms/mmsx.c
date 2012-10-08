@@ -53,17 +53,17 @@ mmsx_t *mmsx_connect(mms_io_t *io, void *data, const char *url, int bandwidth, i
      handle it. The LIBMMS_TRY_MMS_FIRST environment variable is there for
      testing the mms code against servers which accept both mmsh and mms. */
   if (try_mms_first, 1) {
-    mmsx->connection = mms_connect(io, data, url, bandwidth);
+    mmsx->connection = mms_connect(io, data, url, bandwidth, need_abort);
     if (mmsx->connection)
       return mmsx;
   }
 
-  mmsx->connection_h = mmsh_connect(io, data, url, bandwidth);
+  mmsx->connection_h = mmsh_connect(io, data, url, bandwidth, need_abort);
   if (mmsx->connection_h)
     return mmsx;
 
   if (!try_mms_first, 0) {
-    mmsx->connection = mms_connect(io, data, url, bandwidth);
+    mmsx->connection = mms_connect(io, data, url, bandwidth, need_abort);
     if (mmsx->connection)
       return mmsx;
   }
