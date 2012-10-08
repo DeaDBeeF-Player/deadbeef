@@ -66,7 +66,7 @@ typedef int (*mms_io_select_func)(void *data, int fd, int state, int timeout_mse
  *
  * returns a socket descriptor or -1 if an error occured
  */
-typedef int (*mms_io_tcp_connect_func)(void *data, const char *host, int port);
+typedef int (*mms_io_tcp_connect_func)(void *data, const char *host, int port, int *need_abort);
 
 typedef struct
 {

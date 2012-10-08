@@ -192,7 +192,7 @@ static off_t fallback_io_write(void *data, int socket, char *buf, off_t num)
   return (off_t)write(socket, buf, num);
 }
 
-static int fallback_io_tcp_connect(void *data, const char *host, int port)
+static int fallback_io_tcp_connect(void *data, const char *host, int port, int *need_abort)
 {
   
   struct hostent *h;
@@ -226,7 +226,7 @@ static int fallback_io_tcp_connect(void *data, const char *host, int port)
     
     time_t t = time (NULL);
     int error = 0;
-    for (;;) {
+    while (!need_abort || !(*need_abort)) {
         int res = connect(s, (struct sockaddr *)&sin, sizeof(sin));
         if (res == -1 && (errno == EINPROGRESS || errno == EALREADY)) {
             if (time (NULL) - t > 3) {
@@ -882,7 +882,7 @@ static int mms_tcp_connect(mms_io_t *io, mms_t *this) {
    * try to connect 
    */
   lprintf("mms: trying to connect to %s on port %d\n", this->host, this->port);
-  this->s = io_connect(io,  this->host, this->port);
+  this->s = io_connect(io,  this->host, this->port, this->need_abort);
   if (this->s == -1) {
     lprintf("mms: failed to connect to %s\n", this->host);
     return 1;
