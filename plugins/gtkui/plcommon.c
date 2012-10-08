@@ -438,6 +438,38 @@ find_popup                          (GtkWidget       *widget,
   return found_widget;
 }
 
+#if 0
+// experimental code to position the popup at the item
+static void
+popup_menu_position_func (GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gpointer user_data) {
+    // find 1st selected item
+    DdbListview *lv = user_data;
+    int winx, winy;
+    gdk_window_get_position (gtk_widget_get_window (GTK_WIDGET (lv->list)), &winx, &winy);
+    DdbListviewIter it = lv->binding->head ();
+    int idx = 0;
+    while (it) {
+        if (lv->binding->is_selected (it)) {
+            break;
+        }
+        DdbListviewIter next = lv->binding->next (it);
+        lv->binding->unref (it);
+        it = next;
+        idx++;
+    }
+    if (it) {
+        // get Y position
+        *y = ddb_listview_get_row_pos (lv, idx) + winy;
+        lv->binding->unref (it);
+    }
+    else {
+        *y = winy; // mouse_y
+    }
+    *x = winx; // mouse_x
+    *push_in = TRUE;
+}
+#endif
+
 void
 list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     clicked_idx = deadbeef->pl_get_idx_of (it);
@@ -652,7 +684,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     g_signal_connect ((gpointer) properties1, "activate",
             G_CALLBACK (main_properties_activate),
             NULL);
-    gtk_menu_popup (GTK_MENU (playlist_menu), NULL, NULL, NULL, listview, 0, gtk_get_current_event_time());
+    gtk_menu_popup (GTK_MENU (playlist_menu), NULL, NULL, NULL/*popup_menu_position_func*/, listview, 0, gtk_get_current_event_time());
 }
 
 void
