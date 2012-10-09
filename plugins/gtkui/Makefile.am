@@ -1,4 +1,3 @@
-if HAVE_GTKUI
 gtkuidir = $(libdir)/$(PACKAGE)
 
 if HAVE_SM
@@ -101,4 +100,3 @@ ddb_gui_GTK2_fallback_la_CFLAGS = -std=c99 -I $(GTK_ROOT)/include -I $(GTK_ROOT)
 
 endif
 
-endif
