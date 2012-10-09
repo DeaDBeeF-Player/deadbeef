@@ -316,6 +316,9 @@ cvorbis_read (DB_fileinfo_t *_info, char *bytes, int size) {
     ogg_info_t *info = (ogg_info_t *)_info;
 //    trace ("cvorbis_read %d bytes\n", size);
 
+    _info->fmt.channels = info->vi->channels;
+    _info->fmt.samplerate = info->vi->rate;
+
     int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
 
     if (!info->info.file->vfs->is_streaming ()) {
