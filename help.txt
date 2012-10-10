@@ -56,9 +56,14 @@ help file for deadbeef player
 
 * KNOWN ISSUES
 
-    global hotkeys configuration is buggy when using GTK3, this is a GTK3 bug:
-    https://bugzilla.gnome.org/show_bug.cgi?id=682826
+    GLOBAL HOTKEYS
 
-    ffmpeg devs have been breaking their APIs way too frequently, so i decided to wait until they stop.
-    currently, if you need WMA playback, please use statically-built ffmpeg plugin.
-    you should be able to find it in one of the static builds on the official deadbeef website.
+    configuration is buggy when using GTK3, this is a GTK3 bug:
+    https://bugzilla.gnome.org/show_bug.cgi?id=682826
+    there's a work-around: if the key combination field doesn't work, change to a different tab in the preferences dialog, and then back -- it should start working again.
+
+    FFMPEG
+
+    the ffmpeg developers have been breaking their APIs many times before, and we were fixing the plugin again ang again, but this time (ffmpeg-0.11) they broke it in a way which makes it impossible to use together with deadbeef libmms plugin.
+    currently, if you need MMS+WMA playback (or any other functionality that requires ffmpeg), you can compile deadbeef manually with --enable-ffmpeg, if you have ffmpeg<=0.10 installed.
+    or you can use the statically-linked ffmpeg plugin, which can be found in any of the static builds provided on the official deadbeef website.
