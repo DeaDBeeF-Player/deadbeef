@@ -110,7 +110,7 @@ AC_ARG_ENABLE(psf,      [AS_HELP_STRING([--enable-psf      ], [build AOSDK-based
 AC_ARG_ENABLE(mono2stereo,      [AS_HELP_STRING([--enable-mono2stereo      ], [build mono2stereo DSP plugin (default: auto)])], [enable_mono2stereo=$enableval], [enable_mono2stereo=yes])
 AC_ARG_ENABLE(shellexecui, [AS_HELP_STRING([--enable-shellexecui      ], [build shellexec GTK UI plugin (default: auto)])], [enable_shellexecui=$enableval], [enable_shellexecui=yes])
 AC_ARG_ENABLE(alac, [AS_HELP_STRING([--enable-alac      ], [build ALAC plugin (default: auto)])], [enable_alac=$enableval], [enable_alac=yes])
-AC_ARG_ENABLE(abstract_socket, [AS_HELP_STRING([--enable-abstract-socket      ], [use abstract socket (default: enabled)])], [enable_alac=$enableval], [enable_abstract_socket=yes])
+AC_ARG_ENABLE(abstract_socket, [AS_HELP_STRING([--enable-abstract-socket      ], [use abstract socket (default: enabled)])], [enable_abstract_socket=$enableval], [enable_abstract_socket=yes])
 
 if test "x$enable_staticlink" != "xno" ; then
     AC_DEFINE_UNQUOTED([STATICLINK], [1], [Define if building static version])
@@ -197,7 +197,6 @@ fi
 
 if test "x$enable_ffmpeg" != "xno" ; then
 if test "x$enable_staticlink" != "xno" ; then
-    echo "static ffmpeg"
     FFMPEG_DEPS_CFLAGS="-I../../$LIB/include"
     FFMPEG_DEPS_LIBS="../../$LIB/lib/libavcodec.a -lpthread ../../$LIB/lib/libavformat.a ../../$LIB/lib/libavcodec.a ../../$LIB/lib/libavutil.a ../../$LIB/lib/libavcore.a -lm ../../$LIB/lib/libz.a"
     AC_SUBST(FFMPEG_DEPS_CFLAGS)
