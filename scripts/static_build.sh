@@ -13,6 +13,7 @@ cd ../../
 export APBUILD_STATIC_LIBGCC=1
 CC=$AP/apgcc CXX=$AP/apgcc ./configure --enable-staticlink --disable-artwork-imlib2 --enable-ffmpeg --prefix=/opt/deadbeef
 sed -i 's/-lstdc++ -lm -lgcc_s -lc -lgcc_s/-lm -lc/g' libtool
+sed -i 's/hardcode_into_libs=yes/hardcode_into_libs=no/g' libtool
 make clean
 make DESTDIR=`pwd`/static/$ARCH/deadbeef-$VERSION -j8 install
 
