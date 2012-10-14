@@ -32,6 +32,7 @@ tar jcvf ../../portable_out/build/$OUTNAME\
     $PLUGDIR/dca.so\
     $PLUGDIR/ddb_gui_GTK2.fallback.so\
     $PLUGDIR/ddb_gui_GTK2.so\
+    $PLUGDIR/ddb_gui_GTK3.so\
     $PLUGDIR/ffap.so\
     $PLUGDIR/ffmpeg.so\
     $PLUGDIR/flac.so\
@@ -66,6 +67,7 @@ tar jcvf ../../portable_out/build/$OUTNAME\
     $PLUGDIR/pulse.so\
     $PLUGDIR/dsp_libsrc.so\
     $PLUGDIR/ddb_mono2stereo.so\
+    $PLUGDIR/alac.so\
     $PIXMAPDIR\
     $SRCDIR/locale
 cd ../..

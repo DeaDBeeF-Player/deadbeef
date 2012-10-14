@@ -18,7 +18,7 @@ cp ./deadbeef $OUTDIR
 
 for i in nullout cdda flac alsa mpgmad hotkeys vtx \
 	 ffap ffmpeg wavpack vorbis oss vfs_curl \
-	 lastfm sid adplug sndfile artwork \
+	 lastfm sid adplug sndfile artwork alac \
 	 supereq gme dumb notify musepack wildmidi \
 	 tta dca aac mms shn ao shellexec shellexecui vfs_zip \
 	 m3u converter pulse dsp_libsrc mono2stereo ; do
@@ -51,6 +51,12 @@ else
 fi
 if [ -f ./plugins/gtkui/.libs/ddb_gui_GTK2.fallback.so ]; then
     cp ./plugins/gtkui/.libs/ddb_gui_GTK2.fallback.so $PLUGDIR/
+fi
+
+if [ -f ./plugins/gtkui/.libs/ddb_gui_GTK3.so ]; then
+    cp ./plugins/gtkui/.libs/ddb_gui_GTK3.so $PLUGDIR/
+else
+    echo ./plugins/gtkui/.libs/ddb_gui_GTK3.so not found
 fi
 
 #pixmaps
