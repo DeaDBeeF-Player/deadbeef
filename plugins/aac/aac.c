@@ -1196,6 +1196,10 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             if (i < ntracks) {
                 return after;
             }
+            if (ntracks > 0) {
+                // mp4 container found, but no valid aac tracks in it
+                return NULL;
+            }
         }
     }
     trace ("aac: mp4 container failed, trying raw aac\n");
