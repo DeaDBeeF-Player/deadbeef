@@ -47,7 +47,17 @@ sdk_HEADERS = gtkui_api.h
 EXTRA_DIST = deadbeef.glade
 
 if STATICLINK
+if HAVE_GTK2
+if HAVE_GTK3
+pkglib_LTLIBRARIES = ddb_gui_GTK2.la ddb_gui_GTK2.fallback.la ddb_gui_GTK3.la
+else
 pkglib_LTLIBRARIES = ddb_gui_GTK2.la ddb_gui_GTK2.fallback.la
+endif
+else
+if HAVE_GTK3
+pkglib_LTLIBRARIES = ddb_gui_GTK3.la
+endif
+endif
 else
 if HAVE_GTK2
 if HAVE_GTK3
@@ -80,11 +90,21 @@ ddb_gui_GTK2_la_CFLAGS = -std=c99 $(GTK2_DEPS_CFLAGS) $(SM_CFLAGS)
 endif
 
 endif
+
 if HAVE_GTK3
 ddb_gui_GTK3_la_SOURCES = $(GTKUI_SOURCES)
 ddb_gui_GTK3_la_LDFLAGS = -module
+if STATICLINK
+GTK_ROOT_300=@top_srcdir@/$(LIB)/gtk-3.0.0
+
+ddb_gui_GTK3_la_LIBADD = $(LDADD) -L$(GTK_ROOT_300)/lib -lgtk-3 -lgdk-3 -latk-1.0 -lgio-2.0 -lpangocairo-1.0 -lgdk_pixbuf-2.0 -lcairo-gobject -lpango-1.0 -lcairo -lgobject-2.0 -lglib-2.0 -lfreetype -lfontconfig $(SM_LIBADD)
+
+ddb_gui_GTK3_la_CFLAGS = -std=c99 -I$(GTK_ROOT_300)/include/gtk-3.0 -I$(GTK_ROOT_300)/include/pango-1.0 -I$(GTK_ROOT_300)/include/gio-unix-2.0/ -I$(GTK_ROOT_300)/include/atk-1.0 -I$(GTK_ROOT_300)/include/cairo -I$(GTK_ROOT_300)/include/gdk-pixbuf-2.0 -I$(GTK_ROOT_300)/include/freetype2 -I$(GTK_ROOT_300)/include/glib-2.0 -I$(GTK_ROOT_300)/lib/glib-2.0/include $(SM_CFLAGS)
+
+else
 ddb_gui_GTK3_la_LIBADD = $(LDADD) $(GTK3_DEPS_LIBS) $(SM_LIBADD)
 ddb_gui_GTK3_la_CFLAGS = -std=c99 $(GTK3_DEPS_CFLAGS) $(SM_CFLAGS)
+endif
 endif
 
 # fallback lib
