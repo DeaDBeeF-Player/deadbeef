@@ -1,3 +1,33 @@
+version 0.5.6
+	wavpack: fixed reload_metadata not clearing old data
+	sndfile: fixed big/little endian byte swap buffer overrun
+	gme: fixed loopcount bugs
+	alsa: fixed race condition bug leading to freezes
+	alac: added new ALAC plugin with proper gapless playback support, audiobook chapters, and other goods
+	aac: lots of bugfixes and improvements, as usual, including half/double duration bugfix, and custom metadata fields support, and audiobook chapters
+	cue and m3u parsers can now skip utf8 BOM
+	automatically fill new/edited column title from the selected column type
+	removed the frame widget around playlist to make scroll bar more accessible in maximized windows
+	restored old GDK drawing in GTK2 plugin, because cairo produces weird shit on older GTK2 versions -- that means, tabs and playlist now look correct again with gtk2.20 and below
+	gtk3 compiling is now enabled by default, if gtk3 sdk is installed
+	--enable/disable-gtkui configure option is removed, now there are only --enable/disable-gtk2 and --enable/disable-gtk3
+	added Menu key support
+	always auto-name playlist by folder name when empty, even if the playlist title is non-default
+	insert/delete key support in track properties (Ruslan Khusnullin)
+	fixed Enter and Esc keys in track properties
+	fixed playlist column auto-resizing in maximized window
+	added user-agent configuration for last.fm, vfs_curl, etc
+	added cp936 charset detection support. it breaks cp1251 detection, so it's done as an option -- look in the preferences (Joey Zheng)
+	show blank instead of "?" when a metadata field is absent
+	fixed local album cover files search order, it's alphabetical now
+	alsa: added a hack/work-around to prevent releasing sound device when a user switches between tracks
+	m3u: improved handling of relative file pathes
+	converter: fixed handling "/" in filenames; fixed tag-writing to files which have special characters
+	fixed resuming last session in shuffle albums mode
+	fixed several libmms freeze/hang/crash bugs
+	vorbis: update waveformat dynamically, so now it's possible to listen the radious which switch between mono and stereo dynamically
+	mp3: fixed samplerate shown in the track properties
+
 version 0.5.5
 	fixed converter GUI plugin crash if the converter plugin not found
 	fixed compiling on FreeBSD
