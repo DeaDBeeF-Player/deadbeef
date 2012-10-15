@@ -1,5 +1,8 @@
-/* junklib -- library for reading tags from various audio files for deadbeef player
+/*
+  This file is part of Deadbeef Player source code
   http://deadbeef.sourceforge.net
+
+  library for reading tags from various audio files
 
   Copyright (C) 2009-2012 Alexey Yakovenko
 
