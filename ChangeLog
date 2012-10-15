@@ -3,7 +3,7 @@ version 0.5.6
 	sndfile: fixed big/little endian byte swap buffer overrun
 	gme: fixed loopcount bugs
 	alsa: fixed race condition bug leading to freezes
-	alac: added new ALAC plugin with proper gapless playback support, audiobook chapters, and other goods
+	alac: added new ALAC plugin with proper gapless playback support and other goods
 	aac: lots of bugfixes and improvements, as usual, including half/double duration bugfix, and custom metadata fields support, and audiobook chapters
 	cue and m3u parsers can now skip utf8 BOM
 	automatically fill new/edited column title from the selected column type
