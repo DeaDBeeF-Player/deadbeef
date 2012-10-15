@@ -48,6 +48,7 @@ tar jcvf ../../portable_out/build/$OUTNAME\
     $PLUGDIR/oss.so\
     $PLUGDIR/shellexec.so\
     $PLUGDIR/shellexecui_gtk2.so\
+    $PLUGDIR/shellexecui_gtk3.so\
     $PLUGDIR/sid.so\
     $PLUGDIR/sndfile.so\
     $PLUGDIR/supereq.so\
@@ -63,6 +64,7 @@ tar jcvf ../../portable_out/build/$OUTNAME\
     $PLUGDIR/ddb_dumb.so\
     $PLUGDIR/converter.so\
     $PLUGDIR/converter_gtk2.so\
+    $PLUGDIR/converter_gtk3.so\
     $PLUGDIR/convpresets\
     $PLUGDIR/pulse.so\
     $PLUGDIR/dsp_libsrc.so\
