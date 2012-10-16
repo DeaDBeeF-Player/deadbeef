@@ -1498,6 +1498,7 @@ pl_add_files_end (void) {
     }
     addfiles_playlist = NULL;
     pl_unlock ();
+    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
 int
