@@ -25,7 +25,7 @@ version 0.5.6
 	converter: fixed handling "/" in filenames; fixed tag-writing to files which have special characters
 	fixed resuming last session in shuffle albums mode
 	fixed several libmms freeze/hang/crash bugs
-	vorbis: update waveformat dynamically, so now it's possible to listen the radious which switch between mono and stereo dynamically
+	vorbis: update waveformat dynamically, so now it's possible to listen the radios which switch between mono and stereo dynamically
 	mp3: fixed samplerate shown in the track properties
 
 version 0.5.5
