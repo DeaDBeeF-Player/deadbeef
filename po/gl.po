@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lxde.deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-23 14:33+0200\n"
-"PO-Revision-Date: 2011-12-24 13:48+0200\n"
+"PO-Revision-Date: 2012-10-16 09:26+0200\n"
 "Last-Translator: mbouzada <mbouzada@gmail.com>\n"
 "Language-Team: Galician <proxecto@trasno.net>\n"
 "Language: gl\n"
@@ -224,7 +224,7 @@ msgstr "Nova lista de reprodución (%d)"
 
 #: ../plugins/gtkui/gtkui.c:1085
 msgid "- Test logout functionality"
-msgstr ""
+msgstr "- Probar a función «Saír da sesión»"
 
 #: ../plugins/gtkui/interface.c:150 ../plugins/gtkui/deadbeef.glade.h:1
 msgid "_File"
@@ -305,7 +305,6 @@ msgid "_Find"
 msgstr "_Buscar"
 
 #: ../plugins/gtkui/interface.c:288 ../plugins/gtkui/deadbeef.glade.h:19
-#, fuzzy
 msgid "Sort by"
 msgstr "Ordenar por"
 
@@ -402,17 +401,14 @@ msgid "Looping"
 msgstr "Repetir"
 
 #: ../plugins/gtkui/interface.c:400 ../plugins/gtkui/deadbeef.glade.h:39
-#, fuzzy
 msgid "Loop all"
 msgstr "Repetir todo"
 
 #: ../plugins/gtkui/interface.c:406 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "Loop single song"
 msgstr "Repetir unha canción"
 
 #: ../plugins/gtkui/interface.c:412 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "Don't loop"
 msgstr "Non repetir"
 
@@ -651,9 +647,8 @@ msgid "Don't add from archives when adding folders"
 msgstr "Non engadir desde ficheiros cando se engaden cartafoles"
 
 #: ../plugins/gtkui/interface.c:1974 ../plugins/gtkui/deadbeef.glade.h:104
-#, fuzzy
 msgid "Auto-reset \"Stop after current\""
-msgstr "Deter ao rematar a pista actual"
+msgstr "Restaurar automaticamente «Deter ao rematar a pista actual»"
 
 #: ../plugins/gtkui/interface.c:1978 ../plugins/gtkui/deadbeef.glade.h:105
 msgid "Playback"
@@ -704,11 +699,11 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2083 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Enable Russian CP1251 detection and recoding"
-msgstr ""
+msgstr "Activar detección e gravación do ruso CP1251"
 
 #: ../plugins/gtkui/interface.c:2087 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Enable Chinese CP936 detection and recoding"
-msgstr ""
+msgstr "Activar detección e gravación do chinés CP936"
 
 #: ../plugins/gtkui/interface.c:2095 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Interface refresh rate (times per second):"
@@ -728,7 +723,7 @@ msgstr "Engadido de interface de usuario (require reiniciar):"
 
 #: ../plugins/gtkui/interface.c:2145 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "GUI/Misc"
-msgstr ""
+msgstr "Interface/Varios"
 
 #: ../plugins/gtkui/interface.c:2160 ../plugins/gtkui/interface.c:2204
 #: ../plugins/gtkui/deadbeef.glade.h:123
@@ -830,7 +825,7 @@ msgstr "Contrasinal do proxy:"
 
 #: ../plugins/gtkui/interface.c:2473 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "HTTP User Agent:"
-msgstr ""
+msgstr "Axente HTTP:"
 
 #: ../plugins/gtkui/interface.c:2482 ../plugins/gtkui/deadbeef.glade.h:148
 msgid "Network"
@@ -854,14 +849,12 @@ msgid "URL:"
 msgstr "URL:"
 
 #: ../plugins/gtkui/interface.c:3196 ../plugins/gtkui/deadbeef.glade.h:153
-#, fuzzy
 msgid "Group By ..."
-msgstr "Agrupar por"
+msgstr "Agrupar por ..."
 
 #: ../plugins/gtkui/interface.c:3320 ../plugins/gtkui/deadbeef.glade.h:154
-#, fuzzy
 msgid "Sort by ..."
-msgstr "Ordenar por"
+msgstr "Ordenar por ..."
 
 #: ../plugins/gtkui/interface.c:3336 ../plugins/gtkui/deadbeef.glade.h:155
 msgid "Format"
@@ -1030,9 +1023,8 @@ msgid "Global Hotkeys"
 msgstr "Teclas rápidas globais"
 
 #: ../plugins/gtkui/prefwin.c:416
-#, fuzzy
 msgid "Action"
-msgstr "Lugar"
+msgstr "Acción"
 
 #: ../plugins/gtkui/prefwin.c:417
 msgid "Key combination"
@@ -1073,7 +1065,7 @@ msgstr "Escribindo etiquetas"
 
 #: ../plugins/gtkui/trkproperties.c:659
 msgid "Field name"
-msgstr ""
+msgstr "Nome do campo"
 
 #: ../plugins/gtkui/trkproperties.c:662
 msgid "Name:"
@@ -1100,9 +1092,9 @@ msgid "Remove field"
 msgstr "Retirar campo"
 
 #: ../main.c:84
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: deadbeef [options] [--] [file(s)]\n"
-msgstr "Uso: deadbeef [opcións] [ficheiro(s)]\n"
+msgstr "Uso: deadbeef [opcións] [--] [ficheiro(s)]\n"
 
 #: ../main.c:85
 #, c-format
@@ -1177,7 +1169,8 @@ msgstr ""
 #, c-format
 msgid ""
 "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
-msgstr ""
+msgstr "   --gui PLUGIN       Indica a interface a utilizar, a predeterminada é "
+"«GTK2»\n"
 
 #: ../main.c:99
 #, c-format
@@ -1305,7 +1298,6 @@ msgstr ""
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
-#, fuzzy
 msgid "Add audio CD"
 msgstr "Engadir CD de son"
 
@@ -1353,7 +1345,7 @@ msgstr "URL de «Compartir escoitas»"
 
 #: ../translation/extra.c:16
 msgid "Prefer Album Artist over Artist field"
-msgstr ""
+msgstr "Utilizar interprete do álbum no canto do campo interprete"
 
 #. OSS output plugin
 #: ../translation/extra.c:18
@@ -1425,7 +1417,7 @@ msgstr "Calidade de sobremostraxe (0..2, maior é mellor)"
 
 #: ../translation/extra.c:37
 msgid "8-bit output (default is 16)"
-msgstr ""
+msgstr "Saída 8 bits (o predeterminado é 16)"
 
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:39
@@ -1433,13 +1425,12 @@ msgid "Max song length (in minutes)"
 msgstr "Duración máxima da canción (en minutos)"
 
 #: ../translation/extra.c:40
-#, fuzzy
 msgid "Fadeout length (seconds)"
-msgstr "Duración predeterminada da canción (segs.)"
+msgstr "Duración do esvaecemento (segs.)"
 
 #: ../translation/extra.c:41
 msgid "Play loops nr. of times (if available)"
-msgstr ""
+msgstr "Repetir este número de veces (se está dispoñíbel)"
 
 #. Standard GTK2 user interface plugin
 #: ../translation/extra.c:43
@@ -1592,7 +1583,6 @@ msgid "Target Samplerate"
 msgstr "Destino da mostraxe"
 
 #: ../translation/extra.c:94
-#, fuzzy
 msgid "Quality / Algorithm"
 msgstr "Calidade / Algoritmo"
 
@@ -1603,22 +1593,23 @@ msgstr "Mostraxe automática (sobrescribe o destinos das mostraxes)"
 #. shellexecui
 #: ../translation/extra.c:97
 msgid "Configure custom shell commands"
-msgstr ""
+msgstr "Configurar ordes de consola personalizadas"
 
 #. mpgmad
 #: ../translation/extra.c:99
 msgid "Disable gapless playback (faster scanning)"
 msgstr ""
+"Desactivar a reprodución sen silencios entre pistas (análise mais rápida)"
 
 #. adplug
 #: ../translation/extra.c:101
 msgid "Prefer Ken emu over Satoh (surround won't work)"
 msgstr ""
+"Utilizar «Ken emu» no canto de «Satoh» (non funcionará o son envolvente)"
 
 #: ../translation/extra.c:102
-#, fuzzy
 msgid "Enable surround"
-msgstr "Activar «Compartir escoitas»"
+msgstr "Activar o son envolvente"
 
 #: ../plugins/converter/convgui.c:117
 msgid "The file already exists. Overwrite?"
@@ -1712,13 +1703,12 @@ msgstr "Cartafol de saída:"
 #: ../plugins/converter/interface.c:109
 #: ../plugins/converter/converter.glade.h:2
 msgid "Write to source track folder"
-msgstr ""
+msgstr "Gravar no cartafol orixe da pista"
 
 #: ../plugins/converter/interface.c:113
 #: ../plugins/converter/converter.glade.h:3
-#, fuzzy
 msgid "Preserve folder structure"
-msgstr "Preservar a estrutura de cartafoles, a partir de:"
+msgstr "Preservar a estrutura de cartafoles"
 
 #: ../plugins/converter/interface.c:121
 #: ../plugins/converter/converter.glade.h:4
@@ -1900,49 +1890,53 @@ msgid ""
 "32 bit signed int\n"
 "32 bit float"
 msgstr ""
+"Manter o formato orixinal\n"
+"Enteiro 8 bits\n"
+"Enteiro 16 bits\n"
+"Enteiro 24 bits\n"
+"Enteiro 32 bits\n"
+"Flotante 32 bits"
 
 #: ../plugins/converter/converter.glade.h:19
-#, fuzzy
 msgid ""
 "Prompt\n"
 "Overwrite"
-msgstr "Sobrescribir"
+msgstr ""
+"Preguntar\n"
+"Substituír"
 
 #: ../plugins/converter/converter.glade.h:34
-#, fuzzy
 msgid ""
 "Pipe\n"
 "Temporary file"
-msgstr "Ficheiro temporal"
+msgstr ""
+"Canalización\n"
+"Ficheiro temporal"
 
 #: ../plugins/shellexecui/interface.c:46
 #: ../plugins/shellexecui/shellexec.glade.h:1
 msgid "Custom Shell Commands"
-msgstr ""
+msgstr "Ordes de consola personalizadas"
 
 #: ../plugins/shellexecui/interface.c:69
 #: ../plugins/shellexecui/shellexec.glade.h:5
-#, fuzzy
 msgid "Edit"
-msgstr "_Editar"
+msgstr "Editar"
 
 #: ../plugins/shellexecui/interface.c:87
 #: ../plugins/shellexecui/shellexec.glade.h:2
-#, fuzzy
 msgid "Close"
-msgstr "_Pechar"
+msgstr "Pechar"
 
 #: ../plugins/shellexecui/interface.c:145
 #: ../plugins/shellexecui/shellexec.glade.h:6
-#, fuzzy
 msgid "Edit Command"
-msgstr "Editar columna"
+msgstr "Editar orde"
 
 #: ../plugins/shellexecui/interface.c:166
 #: ../plugins/shellexecui/shellexec.glade.h:8
-#, fuzzy
 msgid "Command:"
-msgstr "Liña de ordes:"
+msgstr "Orde:"
 
 #: ../plugins/shellexecui/interface.c:178
 #: ../plugins/shellexecui/shellexec.glade.h:10
@@ -1952,16 +1946,19 @@ msgid ""
 "main application was started from. Title formatting can be used. Example: "
 "xdg-open %D"
 msgstr ""
+"Orde arbitraria de consola. Executase no contexto de consola no que se "
+"iniciou o aplicativo principal. Poden empregarse ordes con formato. Exemplo: "
+"xdg-open %D"
 
 #: ../plugins/shellexecui/interface.c:181
 #: ../plugins/shellexecui/shellexec.glade.h:11
 msgid "ID:"
-msgstr ""
+msgstr "ID:"
 
 #: ../plugins/shellexecui/interface.c:193
 #: ../plugins/shellexecui/shellexec.glade.h:12
 msgid "Free-form name, for example \"My Shell Command\""
-msgstr ""
+msgstr "Nome da orde. Por exemplo «A miña orde»"
 
 #: ../plugins/shellexecui/interface.c:201
 #: ../plugins/shellexecui/shellexec.glade.h:13
@@ -1969,113 +1966,107 @@ msgid ""
 "Command ID, normally it should be something short, for example \"youtube_open"
 "\". It must be unique."
 msgstr ""
+"O ID da orde, xeralmente curta. Por exemplo «youtube_open». Debe ser única."
 
 #: ../plugins/shellexecui/interface.c:204
 #: ../plugins/shellexecui/shellexec.glade.h:15
-#, fuzzy
 msgid "Single Tracks"
-msgstr "Barallar pistas"
+msgstr "Pista única"
 
 #: ../plugins/shellexecui/interface.c:207
 #: ../plugins/shellexecui/shellexec.glade.h:14
 msgid "Works on single track."
-msgstr ""
+msgstr "Traballa nunha pista única."
 
 #: ../plugins/shellexecui/interface.c:209
 #: ../plugins/shellexecui/shellexec.glade.h:17
-#, fuzzy
 msgid "Multiple Tracks"
-msgstr "[Valores múltiples] "
+msgstr "Múltiplas pistas"
 
 #: ../plugins/shellexecui/interface.c:212
 #: ../plugins/shellexecui/shellexec.glade.h:16
 msgid "Works on multiple tracks."
-msgstr ""
+msgstr "Traballa en múltiplas pistas."
 
 #: ../plugins/shellexecui/interface.c:214
 #: ../plugins/shellexecui/shellexec.glade.h:19
-#, fuzzy
 msgid "Local"
-msgstr "Lugar"
+msgstr "Locais"
 
 #: ../plugins/shellexecui/interface.c:217
 #: ../plugins/shellexecui/shellexec.glade.h:18
 msgid "Works on local files."
-msgstr ""
+msgstr "Traballa en ficheiros locais"
 
 #: ../plugins/shellexecui/interface.c:219
 #: ../plugins/shellexecui/shellexec.glade.h:21
-#, fuzzy
 msgid "Remote"
-msgstr "Retirar"
+msgstr "Remotos"
 
 #: ../plugins/shellexecui/interface.c:222
 #: ../plugins/shellexecui/shellexec.glade.h:20
 msgid "Works on remote files (e.g. http:// streams)"
-msgstr ""
+msgstr "Traballa en ficheiros remotos (p.ex. http:// fluxos)"
 
 #: ../plugins/shellexecui/interface.c:224
 #: ../plugins/shellexecui/shellexec.glade.h:23
-#, fuzzy
 msgid "Playlist"
-msgstr "Nova lista de reprodución"
+msgstr "Lista de reprodución"
 
 #: ../plugins/shellexecui/interface.c:227
 #: ../plugins/shellexecui/shellexec.glade.h:22
 msgid "Item should appear on the playlist tab context menu"
 msgstr ""
+"O elemento debe aparecer na lapela da lista de reprodución do menú "
+"contextual"
 
 #: ../plugins/shellexecui/interface.c:229
 #: ../plugins/shellexecui/shellexec.glade.h:25
-#, fuzzy
 msgid "Common"
-msgstr "Comentario"
+msgstr "Común"
 
 #: ../plugins/shellexecui/interface.c:232
 #: ../plugins/shellexecui/shellexec.glade.h:24
 msgid "Item should appear in the main menu"
-msgstr ""
+msgstr "O elemento debe aparecer no menú principal"
 
 #: ../plugins/shellexecui/shellexecui.c:94
-#, fuzzy
 msgid "Add Command"
-msgstr "Engadir columna"
+msgstr "Engadir orde"
 
 #: ../plugins/shellexecui/shellexecui.c:137
 msgid "Delete"
-msgstr ""
+msgstr "Eliminar"
 
 #: ../plugins/shellexecui/shellexecui.c:139
-#, fuzzy
 msgid "This action will delete the selected shell command. Are you sure?"
-msgstr "Esta acción elimina o axuste seleccionado. Está vostede seguro?"
+msgstr "Esta acción elimina a orde de consola seleccionada. Quere confirmalo?"
 
 #: ../plugins/shellexecui/shellexecui.c:141
-#, fuzzy
 msgid "Confirm Remove"
-msgstr "Configurar"
+msgstr "Confirmar a retirada"
 
 #: ../plugins/shellexecui/shellexecui.c:230
 msgid "ID must be non-empty and unique.\n"
-msgstr ""
+msgstr "O ID non pode estar baleiro e debe ser único.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:236
 msgid "Title must be non-empty.\n"
-msgstr ""
+msgstr "O título non pode estar baleiro.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:242
 msgid "Shell Command must be non-empty.\n"
-msgstr ""
+msgstr "A orde de consola non pode estar baleira.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:249
 #: ../plugins/shellexecui/shellexecui.c:253
 msgid "Invalid Values"
-msgstr ""
+msgstr "Valores incorrectos"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:165
 #, c-format
 msgid "File is not a valid .desktop file"
-msgstr ""
+msgstr "O ficheiro non é un .desktop correcto"
 
 #. translators: 'Version' is from a desktop file, and
 #. * should not be translated. '%s' would probably be a
@@ -2083,12 +2074,12 @@ msgstr ""
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:191
 #, c-format
 msgid "Unrecognized desktop file Version '%s'"
-msgstr ""
+msgstr "Ficheiro .desktop descoñecido. Versión «%s»"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:974
-#, fuzzy, c-format
+#, c-format
 msgid "Starting %s"
-msgstr "Configuración"
+msgstr "Iniciando %s"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1116
 #, c-format
