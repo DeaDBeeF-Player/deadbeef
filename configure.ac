@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([deadbeef], [devel])
+AC_INIT([deadbeef], [0.5.6-rc3])
 
 AC_CONFIG_HEADER(config.h)
 
@@ -450,9 +450,13 @@ if test "x$enable_artwork" != "xno" ; then
     if test "x$enable_staticlink" != "xno" ; then
         HAVE_JPEG=yes
         JPEG_DEPS_LIBS="../../$LIB/lib/libjpeg.a"
+        JPEG_DEPS_CFLAGS="-I../../$LIB/include"
+        AC_SUBST(JPEG_DEPS_CFLAGS)
         AC_SUBST(JPEG_DEPS_LIBS)
         HAVE_PNG=yes
+        PNG_DEPS_CFLAGS="-I../../$LIB/include/libpng15"
         PNG_DEPS_LIBS="../../$LIB/lib/libpng.a ../../$LIB/lib/libz.a"
+        AC_SUBST(PNG_DEPS_CFLAGS)
         AC_SUBST(PNG_DEPS_LIBS)
         HAVE_IMLIB2=no
     else
