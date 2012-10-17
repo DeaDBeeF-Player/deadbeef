@@ -1363,13 +1363,15 @@ junk_apev2_read_full (playItem_t *it, DB_apev2_tag_t *tag_store, DB_FILE *fp) {
             }
             value[itemsize] = 0;
 
-            // replace 0s with \n
-            uint8_t *p = value;
-            while (p < value + itemsize - 1) {
-                if (*p == 0) {
-                    *p = '\n';
+            if ((flags&6) == 0 && strncasecmp (key, "cover art ", 10)) {
+                // replace 0s with \n
+                uint8_t *p = value;
+                while (p < value + itemsize - 1) {
+                    if (*p == 0) {
+                        *p = '\n';
+                    }
+                    p++;
                 }
-                p++;
             }
 
             junk_apev2_add_frame (it, tag_store, &tail, itemsize, itemflags, key, value);
