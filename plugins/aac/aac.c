@@ -142,9 +142,6 @@ parse_aac_stream(DB_FILE *fp, int *psamplerate, int *pchannels, float *pduration
 
     int frame = 0;
     int scanframes = 1000;
-
-    int nfail = 0;
-
     if (fp->vfs->is_streaming ()) {
         scanframes = 1;
     }
@@ -163,11 +160,6 @@ parse_aac_stream(DB_FILE *fp, int *psamplerate, int *pchannels, float *pduration
             memmove (buf, buf+1, sizeof (buf)-1);
             bufsize--;
 //            trace ("aac_sync fail, framepos: %d\n", framepos);
-            nfail++;
-            if (nfail > 100) {
-                trace ("aac: many failed sync attemps, aborted\n");
-                return -1;
-            }
             if (deadbeef->ftell (fp) - initfpos > 2000) { // how many is enough to make sure?
                 break;
             }
@@ -176,7 +168,6 @@ parse_aac_stream(DB_FILE *fp, int *psamplerate, int *pchannels, float *pduration
         }
         else {
 //            trace ("aac: frame #%d sync: %dch %d %d %d %d\n", frame, channels, samplerate, bitrate, samples, size);
-            nfail = 0;
             frame++;
             nsamples += samples;
             if (!stream_sr) {
