@@ -221,9 +221,8 @@ msgstr "新規プレイリスト"
 msgid "New Playlist (%d)"
 msgstr "新規プレイリスト (%d)"
 
-#: ../plugins/gtkui/gtkui.c:1085
-msgid "- Test logout functionality"
-msgstr ""
+#~ msgid "- Test logout functionality"
+#~ msgstr ""
 
 #: ../plugins/gtkui/interface.c:150 ../plugins/gtkui/deadbeef.glade.h:1
 msgid "_File"
@@ -303,10 +302,9 @@ msgstr "選択以外を取り除く"
 msgid "_Find"
 msgstr "検索(_F)"
 
-#: ../plugins/gtkui/interface.c:288 ../plugins/gtkui/deadbeef.glade.h:19
 #, fuzzy
-msgid "Sort by"
-msgstr "ソートする："
+#~ msgid "Sort by"
+#~ msgstr "ソートする："
 
 #: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1519
 #: ../plugins/gtkui/mainplaylist.c:320 ../plugins/gtkui/prefwin.c:667
@@ -400,20 +398,17 @@ msgstr "アルバムをシャッフル"
 msgid "Looping"
 msgstr "ループ"
 
-#: ../plugins/gtkui/interface.c:400 ../plugins/gtkui/deadbeef.glade.h:39
 #, fuzzy
-msgid "Loop all"
-msgstr "全体をループ"
+#~ msgid "Loop all"
+#~ msgstr "全体をループ"
 
-#: ../plugins/gtkui/interface.c:406 ../plugins/gtkui/deadbeef.glade.h:40
 #, fuzzy
-msgid "Loop single song"
-msgstr "一つの曲をループ"
+#~ msgid "Loop single song"
+#~ msgstr "一つの曲をループ"
 
-#: ../plugins/gtkui/interface.c:412 ../plugins/gtkui/deadbeef.glade.h:41
 #, fuzzy
-msgid "Don't loop"
-msgstr "ループしない"
+#~ msgid "Don't loop"
+#~ msgstr "ループしない"
 
 #: ../plugins/gtkui/interface.c:418 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
@@ -699,13 +694,11 @@ msgstr "コンテキストメニューの \"ディスクから削除\" を隠す
 msgid "Auto-name playlists when adding a single folder"
 msgstr "一つのフォルダから追加するときはプレイリストの名前を自動でつける"
 
-#: ../plugins/gtkui/interface.c:2083 ../plugins/gtkui/deadbeef.glade.h:116
-msgid "Enable Russian CP1251 detection and recoding"
-msgstr ""
+#~ msgid "Enable Russian CP1251 detection and recoding"
+#~ msgstr ""
 
-#: ../plugins/gtkui/interface.c:2087 ../plugins/gtkui/deadbeef.glade.h:117
-msgid "Enable Chinese CP936 detection and recoding"
-msgstr ""
+#~ msgid "Enable Chinese CP936 detection and recoding"
+#~ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2095 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Interface refresh rate (times per second):"
@@ -723,9 +716,8 @@ msgstr "停止中の文字列:"
 msgid "GUI Plugin (changing requires restart):"
 msgstr "GUI プラグイン (再スタートが必要です):"
 
-#: ../plugins/gtkui/interface.c:2145 ../plugins/gtkui/deadbeef.glade.h:122
-msgid "GUI/Misc"
-msgstr ""
+#~ msgid "GUI/Misc"
+#~ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2160 ../plugins/gtkui/interface.c:2204
 #: ../plugins/gtkui/deadbeef.glade.h:123
@@ -826,9 +818,8 @@ msgstr "プロクシのユーザ名:"
 msgid "Proxy Password:"
 msgstr "プロクシのパスワード:"
 
-#: ../plugins/gtkui/interface.c:2473 ../plugins/gtkui/deadbeef.glade.h:147
-msgid "HTTP User Agent:"
-msgstr ""
+#~ msgid "HTTP User Agent:"
+#~ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2482 ../plugins/gtkui/deadbeef.glade.h:148
 msgid "Network"
@@ -851,15 +842,13 @@ msgstr "プラグイン"
 msgid "URL:"
 msgstr "URL:"
 
-#: ../plugins/gtkui/interface.c:3196 ../plugins/gtkui/deadbeef.glade.h:153
 #, fuzzy
-msgid "Group By ..."
-msgstr "グループ化"
+#~ msgid "Group By ..."
+#~ msgstr "グループ化"
 
-#: ../plugins/gtkui/interface.c:3320 ../plugins/gtkui/deadbeef.glade.h:154
 #, fuzzy
-msgid "Sort by ..."
-msgstr "ソート"
+#~ msgid "Sort by ..."
+#~ msgstr "ソート"
 
 #: ../plugins/gtkui/interface.c:3336 ../plugins/gtkui/deadbeef.glade.h:155
 msgid "Format"
@@ -1027,10 +1016,9 @@ msgstr "追加"
 msgid "Global Hotkeys"
 msgstr "グローバルホットキー"
 
-#: ../plugins/gtkui/prefwin.c:416
 #, fuzzy
-msgid "Action"
-msgstr "場所"
+#~ msgid "Action"
+#~ msgstr "場所"
 
 #: ../plugins/gtkui/prefwin.c:417
 msgid "Key combination"
@@ -1069,9 +1057,8 @@ msgstr "値"
 msgid "Writing tags..."
 msgstr "タグの書き出し中..."
 
-#: ../plugins/gtkui/trkproperties.c:659
-msgid "Field name"
-msgstr ""
+#~ msgid "Field name"
+#~ msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:662
 msgid "Name:"
@@ -1300,12 +1287,9 @@ msgstr ""
 "をインストールするか、freepats.cfg へのパスをプラグインの設定で指定してくださ"
 "い。"
 
-#. this file should list extra translatable strings that are not referenced
-#. directly in source code, e.g. scripted plugin configuration strings
-#: ../translation/extra.c:3
 #, fuzzy
-msgid "Add audio CD"
-msgstr "音楽 CD を追加"
+#~ msgid "Add audio CD"
+#~ msgstr "音楽 CD を追加"
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
@@ -1349,9 +1333,8 @@ msgstr "パスワード:"
 msgid "Scrobble URL"
 msgstr "Scrobble URL"
 
-#: ../translation/extra.c:16
-msgid "Prefer Album Artist over Artist field"
-msgstr ""
+#~ msgid "Prefer Album Artist over Artist field"
+#~ msgstr ""
 
 #. OSS output plugin
 #: ../translation/extra.c:18
@@ -1421,23 +1404,20 @@ msgstr "NRG イメージのサポートを有効にする"
 msgid "Resampling quality (0..2, higher is better)"
 msgstr "リサンプリングを品質 (0..2, 大きい方が高品質)"
 
-#: ../translation/extra.c:37
-msgid "8-bit output (default is 16)"
-msgstr ""
+#~ msgid "8-bit output (default is 16)"
+#~ msgstr ""
 
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:39
 msgid "Max song length (in minutes)"
 msgstr "最大の曲長 (分)"
 
-#: ../translation/extra.c:40
 #, fuzzy
-msgid "Fadeout length (seconds)"
-msgstr "デフォルトの曲の長さ (秒)"
+#~ msgid "Fadeout length (seconds)"
+#~ msgstr "デフォルトの曲の長さ (秒)"
 
-#: ../translation/extra.c:41
-msgid "Play loops nr. of times (if available)"
-msgstr ""
+#~ msgid "Play loops nr. of times (if available)"
+#~ msgstr ""
 
 #. Standard GTK2 user interface plugin
 #: ../translation/extra.c:43
@@ -1588,35 +1568,27 @@ msgstr "変換する"
 msgid "Target Samplerate"
 msgstr "サンプルレートの指定"
 
-#: ../translation/extra.c:94
 #, fuzzy
-msgid "Quality / Algorithm"
-msgstr "音質 / アルゴリズム"
+#~ msgid "Quality / Algorithm"
+#~ msgstr "音質 / アルゴリズム"
 
 #: ../translation/extra.c:95
 msgid "Automatic Samplerate (overrides Target Samplerate)"
 msgstr "サンプルレートの自動設定 (指定したサンプルレートを上書きします)"
 
-#. shellexecui
-#: ../translation/extra.c:97
 #, fuzzy
-msgid "Configure custom shell commands"
-msgstr "シェルコマンドの編集と設定"
+#~ msgid "Configure custom shell commands"
+#~ msgstr "シェルコマンドの編集と設定"
 
-#. mpgmad
-#: ../translation/extra.c:99
-msgid "Disable gapless playback (faster scanning)"
-msgstr ""
+#~ msgid "Disable gapless playback (faster scanning)"
+#~ msgstr ""
 
-#. adplug
-#: ../translation/extra.c:101
-msgid "Prefer Ken emu over Satoh (surround won't work)"
-msgstr ""
+#~ msgid "Prefer Ken emu over Satoh (surround won't work)"
+#~ msgstr ""
 
-#: ../translation/extra.c:102
 #, fuzzy
-msgid "Enable surround"
-msgstr "Scrobber を有効にする"
+#~ msgid "Enable surround"
+#~ msgstr "Scrobber を有効にする"
 
 #: ../plugins/converter/convgui.c:117
 msgid "The file already exists. Overwrite?"
@@ -2065,74 +2037,55 @@ msgstr "シェルのコマンドは空にできません\n"
 msgid "Invalid Values"
 msgstr "不正な値"
 
-#: ../plugins/gtkui/smclient/eggdesktopfile.c:165
 #, c-format
-msgid "File is not a valid .desktop file"
-msgstr ""
+#~ msgid "File is not a valid .desktop file"
+#~ msgstr ""
 
-#. translators: 'Version' is from a desktop file, and
-#. * should not be translated. '%s' would probably be a
-#. * version number.
-#: ../plugins/gtkui/smclient/eggdesktopfile.c:191
 #, c-format
-msgid "Unrecognized desktop file Version '%s'"
-msgstr ""
+#~ msgid "Unrecognized desktop file Version '%s'"
+#~ msgstr ""
 
-#: ../plugins/gtkui/smclient/eggdesktopfile.c:974
 #, fuzzy, c-format
-msgid "Starting %s"
-msgstr "設定"
+#~ msgid "Starting %s"
+#~ msgstr "設定"
 
-#: ../plugins/gtkui/smclient/eggdesktopfile.c:1116
 #, c-format
-msgid "Application does not accept documents on command line"
-msgstr ""
+#~ msgid "Application does not accept documents on command line"
+#~ msgstr ""
 
-#: ../plugins/gtkui/smclient/eggdesktopfile.c:1184
 #, c-format
-msgid "Unrecognized launch option: %d"
-msgstr ""
+#~ msgid "Unrecognized launch option: %d"
+#~ msgstr ""
 
-#. translators: The 'Type=Link' string is found in a
-#. * desktop file, and should not be translated.
-#: ../plugins/gtkui/smclient/eggdesktopfile.c:1391
 #, c-format
-msgid "Can't pass document URIs to a 'Type=Link' desktop entry"
-msgstr ""
+#~ msgid "Can't pass document URIs to a 'Type=Link' desktop entry"
+#~ msgstr ""
 
-#: ../plugins/gtkui/smclient/eggdesktopfile.c:1412
 #, c-format
-msgid "Not a launchable item"
-msgstr ""
+#~ msgid "Not a launchable item"
+#~ msgstr ""
 
-#: ../plugins/gtkui/smclient/eggsmclient.c:226
-msgid "Disable connection to session manager"
-msgstr ""
+#~ msgid "Disable connection to session manager"
+#~ msgstr ""
 
-#: ../plugins/gtkui/smclient/eggsmclient.c:229
-msgid "Specify file containing saved configuration"
-msgstr ""
+#~ msgid "Specify file containing saved configuration"
+#~ msgstr ""
 
-#: ../plugins/gtkui/smclient/eggsmclient.c:229
-msgid "FILE"
-msgstr ""
+#~ msgid "FILE"
+#~ msgstr ""
 
-#: ../plugins/gtkui/smclient/eggsmclient.c:232
-msgid "Specify session management ID"
-msgstr ""
+#~ msgid "Specify session management ID"
+#~ msgstr ""
 
-#: ../plugins/gtkui/smclient/eggsmclient.c:232
 #, fuzzy
-msgid "ID"
-msgstr "ID:"
+#~ msgid "ID"
+#~ msgstr "ID:"
 
-#: ../plugins/gtkui/smclient/eggsmclient.c:253
-msgid "Session management options:"
-msgstr ""
+#~ msgid "Session management options:"
+#~ msgstr ""
 
-#: ../plugins/gtkui/smclient/eggsmclient.c:254
-msgid "Show session management options"
-msgstr ""
+#~ msgid "Show session management options"
+#~ msgstr ""
 
 #~ msgid "GUI"
 #~ msgstr "GUI"
