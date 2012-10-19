@@ -2363,6 +2363,7 @@ audio_get_waveform_data (int type, float *data) {
     mutex_lock (audio_mem_mutex);
     memcpy (data, type == DDB_AUDIO_WAVEFORM ? audio_data : freq_data, sizeof (audio_data));
     mutex_unlock (audio_mem_mutex);
+}
 
 void
 streamer_set_streamer_playlist (playlist_t *plt) {
