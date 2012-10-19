@@ -266,6 +266,9 @@ ddb_listview_clear_sort (DdbListview *listview);
 void
 ddb_listview_lock_columns (DdbListview *lv, gboolean lock);
 
+int
+ddb_listview_get_row_pos (DdbListview *listview, int row_idx);
+
 G_END_DECLS
 
 #endif // __DDBLISTVIEW_H

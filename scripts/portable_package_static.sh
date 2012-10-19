@@ -32,6 +32,7 @@ tar jcvf ../../portable_out/build/$OUTNAME\
     $PLUGDIR/dca.so\
     $PLUGDIR/ddb_gui_GTK2.fallback.so\
     $PLUGDIR/ddb_gui_GTK2.so\
+    $PLUGDIR/ddb_gui_GTK3.so\
     $PLUGDIR/ffap.so\
     $PLUGDIR/ffmpeg.so\
     $PLUGDIR/flac.so\
@@ -47,6 +48,7 @@ tar jcvf ../../portable_out/build/$OUTNAME\
     $PLUGDIR/oss.so\
     $PLUGDIR/shellexec.so\
     $PLUGDIR/shellexecui_gtk2.so\
+    $PLUGDIR/shellexecui_gtk3.so\
     $PLUGDIR/sid.so\
     $PLUGDIR/sndfile.so\
     $PLUGDIR/supereq.so\
@@ -62,10 +64,12 @@ tar jcvf ../../portable_out/build/$OUTNAME\
     $PLUGDIR/ddb_dumb.so\
     $PLUGDIR/converter.so\
     $PLUGDIR/converter_gtk2.so\
+    $PLUGDIR/converter_gtk3.so\
     $PLUGDIR/convpresets\
     $PLUGDIR/pulse.so\
     $PLUGDIR/dsp_libsrc.so\
     $PLUGDIR/ddb_mono2stereo.so\
+    $PLUGDIR/alac.so\
     $PIXMAPDIR\
     $SRCDIR/locale
 cd ../..

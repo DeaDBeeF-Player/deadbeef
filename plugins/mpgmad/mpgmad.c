@@ -579,8 +579,6 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                 }
             }
             if (sample == 0) {
-                trace ("cmp3_scan_stream: trying to figure out duration from file size\n");
-                buffer->samplerate = samplerate;
                 if (buffer->file->vfs->is_streaming ()) {
                     // only suitable for cbr files, used if streaming
                     int sz = deadbeef->fgetlength (buffer->file);

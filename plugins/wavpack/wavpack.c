@@ -162,7 +162,15 @@ wv_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->fmt.channels = WavpackGetNumChannels (info->ctx);
     _info->fmt.samplerate = WavpackGetSampleRate (info->ctx);
     _info->fmt.is_float = (WavpackGetMode (info->ctx) & MODE_FLOAT) ? 1 : 0;
-    _info->fmt.channelmask = WavpackGetChannelMask (info->ctx);
+
+    // FIXME: streamer and maybe output plugins need to be fixed to support
+    // arbitrary channelmask
+
+    // _info->fmt.channelmask = WavpackGetChannelMask (info->ctx);
+
+    for (int i = 0; i < _info->fmt.channels; i++) {
+        _info->fmt.channelmask |= 1 << i;
+    }
     _info->readpos = 0;
     if (it->endsample > 0) {
         info->startsample = it->startsample;

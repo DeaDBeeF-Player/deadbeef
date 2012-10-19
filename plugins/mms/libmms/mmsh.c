@@ -248,7 +248,7 @@ static off_t fallback_io_write(void *data, int socket, char *buf, off_t num)
   return (off_t)write(socket, buf, num);
 }
 
-static int fallback_io_tcp_connect(void *data, const char *host, int port)
+static int fallback_io_tcp_connect(void *data, const char *host, int port, int *need_abort)
 {
   
   struct hostent *h;
@@ -822,7 +822,7 @@ static int mmsh_tcp_connect(mms_io_t *io, mmsh_t *this) {
    */
   lprintf("mmsh: try to connect to %s on port %d \n", this->connect_host, this->connect_port);
 
-  this->s = io_connect (io, this->connect_host, this->connect_port);
+  this->s = io_connect (io, this->connect_host, this->connect_port, this->need_abort);
 
   if (this->s == -1) {
     lprintf("mmsh: failed to connect '%s'\n", this->connect_host);
@@ -1017,7 +1017,7 @@ fail:
   return 0;
 }
 
-mmsh_t *mmsh_connect (mms_io_t *io, void *data, const char *url, int bandwidth) {
+mmsh_t *mmsh_connect (mms_io_t *io, void *data, const char *url, int bandwidth, int *need_abort) {
   mmsh_t *this;
   GURI  *uri = NULL;
   GURI  *proxy_uri = NULL;
@@ -1041,6 +1041,7 @@ mmsh_t *mmsh_connect (mms_io_t *io, void *data, const char *url, int bandwidth) 
   this->host_user = NULL;
   this->host_password = NULL;
   this->uri = NULL;
+  this->need_abort = need_abort;
 
   this->url             = strdup(url);
   if ((proxy_env = getenv("http_proxy")) != NULL)

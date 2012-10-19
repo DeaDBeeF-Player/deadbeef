@@ -161,8 +161,9 @@ static off_t fallback_io_read(void *data, int socket, char *buf, off_t num, int 
   off_t len = 0, ret;
 /*   lprintf("%d\n", fallback_io_select(data, socket, MMS_IO_READ_READY, 1000)); */
   errno = 0;
-  int nretry = 200;
-  while (len < num && nretry > 0)
+  int nretry = 600;
+  lprintf ("mms: fallback_io_read: need_abort ptr = %p\n", need_abort);
+  while (len < num && nretry > 0 && (!need_abort || !(*need_abort)))
   {
     ret = (off_t)read(socket, buf + len, num - len);
     if(ret == 0)
@@ -191,7 +192,7 @@ static off_t fallback_io_write(void *data, int socket, char *buf, off_t num)
   return (off_t)write(socket, buf, num);
 }
 
-static int fallback_io_tcp_connect(void *data, const char *host, int port)
+static int fallback_io_tcp_connect(void *data, const char *host, int port, int *need_abort)
 {
   
   struct hostent *h;
@@ -225,7 +226,7 @@ static int fallback_io_tcp_connect(void *data, const char *host, int port)
     
     time_t t = time (NULL);
     int error = 0;
-    for (;;) {
+    while (!need_abort || !(*need_abort)) {
         int res = connect(s, (struct sockaddr *)&sin, sizeof(sin));
         if (res == -1 && (errno == EINPROGRESS || errno == EALREADY)) {
             if (time (NULL) - t > 3) {
@@ -499,6 +500,7 @@ static int string_utf16(iconv_t url_conv, char *dest, char *src, int dest_len)
 static int get_packet_header (mms_io_t *io, mms_t *this, mms_packet_header_t *header) {
   size_t len;
   int packet_type;
+  lprintf ("mms: get_packet_header: need_abort ptr = %p\n", this->need_abort);
 
   header->packet_len     = 0;
   header->packet_seq     = 0;
@@ -576,6 +578,7 @@ static int get_answer (mms_io_t *io, mms_t *this) {
   int command = 0;
   mms_packet_header_t header;
 
+  lprintf ("mms: get_answer: need_abort ptr = %p\n", this->need_abort);
   switch (get_packet_header (io, this, &header)) {
     case MMS_PACKET_ERR:
       break;
@@ -879,7 +882,7 @@ static int mms_tcp_connect(mms_io_t *io, mms_t *this) {
    * try to connect 
    */
   lprintf("mms: trying to connect to %s on port %d\n", this->host, this->port);
-  this->s = io_connect(io,  this->host, this->port);
+  this->s = io_connect(io,  this->host, this->port, this->need_abort);
   if (this->s == -1) {
     lprintf("mms: failed to connect to %s\n", this->host);
     return 1;
@@ -1039,7 +1042,7 @@ int static mms_choose_best_streams(mms_io_t *io, mms_t *this) {
  *       network timing request
  */
 /* FIXME: got somewhat broken during xine_stream_t->(void*) conversion */
-mms_t *mms_connect (mms_io_t *io, void *data, const char *url, int bandwidth) {
+mms_t *mms_connect (mms_io_t *io, void *data, const char *url, int bandwidth, int *need_abort) {
   iconv_t url_conv = (iconv_t)-1;
   mms_t  *this;
   int     res;
@@ -1070,6 +1073,7 @@ mms_t *mms_connect (mms_io_t *io, void *data, const char *url, int bandwidth) {
   this->bandwidth       = bandwidth;
   this->current_pos     = 0;
   this->eos             = 0;
+  this->need_abort      = need_abort;
 
   this->guri = gnet_uri_new(this->url);
   if(!this->guri) {

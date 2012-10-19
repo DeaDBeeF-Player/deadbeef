@@ -1185,7 +1185,13 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             }
             mp4ff_close (mp4);
             if (i < ntracks) {
+                deadbeef->fclose (fp);
                 return after;
+            }
+            if (ntracks > 0) {
+                // mp4 container found, but no valid aac tracks in it
+                deadbeef->fclose (fp);
+                return NULL;
             }
         }
     }

@@ -4,7 +4,7 @@ AC_INIT([deadbeef], [devel])
 AC_CONFIG_HEADER(config.h)
 
 AM_INIT_AUTOMAKE([1.11 dist-bzip2])
-dnl AM_SILENT_RULES([yes])
+AM_SILENT_RULES([yes])
 AM_MAINTAINER_MODE()
 
 AC_USE_SYSTEM_EXTENSIONS
@@ -70,7 +70,6 @@ AC_ARG_ENABLE(nullout,  [AS_HELP_STRING([--disable-nullout ], [disable NULL outp
 AC_ARG_ENABLE(alsa,     [AS_HELP_STRING([--disable-alsa    ], [disable ALSA output plugin (default: enabled)])], [enable_alsa=$enableval], [enable_alsa=yes])
 AC_ARG_ENABLE(oss,      [AS_HELP_STRING([--disable-oss     ], [disable Open Sound System output plugin (default: enabled)])], [enable_oss=$enableval], [enable_oss=yes])
 AC_ARG_ENABLE(pulse,    [AS_HELP_STRING([--disable-pulse   ], [disable PulseAudio output plugin (default: enabled)])], [enable_pulse=$enableval], [enable_pulse=yes])
-AC_ARG_ENABLE(gtkui,    [AS_HELP_STRING([--disable-gtkui   ], [disable standard GTK+ user interface plugin (default: enabled)])], [enable_gtkui=$enableval], [enable_gtkui=yes])
 AC_ARG_ENABLE(gtk3,     [AS_HELP_STRING([--enable-gtk3     ], [build GTK3 version of gtkui plugin (default: enabled)])], [enable_gtk3=$enableval], [enable_gtk3=yes])
 AC_ARG_ENABLE(gtk2,     [AS_HELP_STRING([--disable-gtk2     ], [build GTK2 version of gtkui plugin (default: enabled)])], [enable_gtk2=$enableval], [enable_gtk2=yes])
 AC_ARG_ENABLE(vfs_curl, [AS_HELP_STRING([--disable-vfs-curl], [disable HTTP streaming vfs plugin (default: enabled)])], [enable_vfs_curl=$enableval], [enable_vfs_curl=yes])
@@ -112,10 +111,16 @@ AC_ARG_ENABLE(psf,      [AS_HELP_STRING([--enable-psf      ], [build AOSDK-based
 AC_ARG_ENABLE(mono2stereo,      [AS_HELP_STRING([--enable-mono2stereo      ], [build mono2stereo DSP plugin (default: auto)])], [enable_mono2stereo=$enableval], [enable_mono2stereo=yes])
 AC_ARG_ENABLE(shellexecui, [AS_HELP_STRING([--enable-shellexecui      ], [build shellexec GTK UI plugin (default: auto)])], [enable_shellexecui=$enableval], [enable_shellexecui=yes])
 AC_ARG_ENABLE(alac, [AS_HELP_STRING([--enable-alac      ], [build ALAC plugin (default: auto)])], [enable_alac=$enableval], [enable_alac=yes])
+AC_ARG_ENABLE(abstract_socket, [AS_HELP_STRING([--enable-abstract-socket      ], [use abstract socket (default: enabled)])], [enable_abstract_socket=$enableval], [enable_abstract_socket=yes])
 
 if test "x$enable_staticlink" != "xno" ; then
     AC_DEFINE_UNQUOTED([STATICLINK], [1], [Define if building static version])
     STATICLINK=yes
+fi
+
+if test "x$enable_abstract_socket" != "xno" ; then
+    AC_DEFINE_UNQUOTED([USE_ABSTRACT_SOCKET_NAME], [1], [Define to use abstract socket name, without file])
+    USE_ABSTRACT_SOCKET_NAME=yes
 fi
 
 dnl check for yasm
@@ -172,7 +177,11 @@ fi
 AC_SUBST(ZIP_LIBS)
 
 if test "x$enable_gtk3" == "xyes" ; then
-    PKG_CHECK_MODULES(GTK3_DEPS, gtk+-3.0 >= 3.0 gthread-2.0 glib-2.0, HAVE_GTK3=yes, HAVE_GTK3=no)
+    if test "x$enable_staticlink" != "xno" ; then
+        HAVE_GTK3=yes
+    else
+       PKG_CHECK_MODULES(GTK3_DEPS, gtk+-3.0 >= 3.0 gthread-2.0 glib-2.0, HAVE_GTK3=yes, HAVE_GTK3=no)
+    fi
     AC_CHECK_LIB([SM], [main], [HAVE_SM=yes;SM_LIBS="-lSM";AC_SUBST(SM_LIBS)])
     AC_CHECK_LIB([ICE], [main], [HAVE_ICE=yes;ICE_LIBS="-lICE";AC_SUBST(ICE_LIBS)])
 else
@@ -180,7 +189,11 @@ else
 fi
 
 if test "x$enable_gtk2" == "xyes" ; then
-    PKG_CHECK_MODULES(GTK2_DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0 gtkglext-1.0, HAVE_GTK2=yes, HAVE_GTK2=no)
+    if test "x$enable_staticlink" != "xno" ; then
+        HAVE_GTK2=yes
+    else
+        PKG_CHECK_MODULES(GTK2_DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0 gtkglext-1.0, HAVE_GTK2=yes, HAVE_GTK2=no)
+    fi
     AC_CHECK_LIB([SM], [main], [HAVE_SM=yes;SM_LIBS="-lSM";AC_SUBST(SM_LIBS)])
     AC_CHECK_LIB([ICE], [main], [HAVE_ICE=yes;ICE_LIBS="-lICE";AC_SUBST(ICE_LIBS)])
 else
@@ -193,7 +206,6 @@ fi
 
 if test "x$enable_ffmpeg" != "xno" ; then
 if test "x$enable_staticlink" != "xno" ; then
-    echo "static ffmpeg"
     FFMPEG_DEPS_CFLAGS="-I../../$LIB/include"
     FFMPEG_DEPS_LIBS="../../$LIB/lib/libavcodec.a -lpthread ../../$LIB/lib/libavformat.a ../../$LIB/lib/libavcodec.a ../../$LIB/lib/libavutil.a ../../$LIB/lib/libavcore.a -lm ../../$LIB/lib/libz.a"
     AC_SUBST(FFMPEG_DEPS_CFLAGS)
@@ -351,13 +363,6 @@ else
 fi
 fi
 
-dnl gtkui plugin
-if test "x$enable_gtkui" != "xno" ; then
-    if test "x$HAVE_GTK2" == "xyes" || test "x$HAVE_GTK3" == "xyes" ; then
-        HAVE_GTKUI=yes
-    fi
-fi
-
 if test "x$enable_alsa" != "xno" ; then
     if test "x$HAVE_ALSA" = "xyes" ; then
         HAVE_ALSAPLUGIN=yes
@@ -446,9 +451,13 @@ if test "x$enable_artwork" != "xno" ; then
     if test "x$enable_staticlink" != "xno" ; then
         HAVE_JPEG=yes
         JPEG_DEPS_LIBS="../../$LIB/lib/libjpeg.a"
+        JPEG_DEPS_CFLAGS="-I../../$LIB/include"
+        AC_SUBST(JPEG_DEPS_CFLAGS)
         AC_SUBST(JPEG_DEPS_LIBS)
         HAVE_PNG=yes
+        PNG_DEPS_CFLAGS="-I../../$LIB/include/libpng15"
         PNG_DEPS_LIBS="../../$LIB/lib/libpng.a ../../$LIB/lib/libz.a"
+        AC_SUBST(PNG_DEPS_CFLAGS)
         AC_SUBST(PNG_DEPS_LIBS)
         HAVE_IMLIB2=no
     else
@@ -606,7 +615,6 @@ AM_CONDITIONAL(HAVE_FLAC, test "x$HAVE_FLACPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_WAVPACK, test "x$HAVE_WAVPACKPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_SNDFILE, test "x$HAVE_SNDFILEPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_CDDA, test "x$HAVE_CDDAPLUGIN" = "xyes")
-AM_CONDITIONAL(HAVE_GTKUI, test "x$HAVE_GTKUI" = "xyes")
 AM_CONDITIONAL(HAVE_GTK2, test "x$HAVE_GTK2" = "xyes")
 AM_CONDITIONAL(HAVE_GTK3, test "x$HAVE_GTK3" = "xyes")
 AM_CONDITIONAL(HAVE_ALSA, test "x$HAVE_ALSAPLUGIN" = "xyes")
@@ -633,9 +641,6 @@ AM_CONDITIONAL(HAVE_TTA, test "x$HAVE_TTA" = "xyes")
 AM_CONDITIONAL(HAVE_DCA, test "x$HAVE_DCA" = "xyes")
 AM_CONDITIONAL(HAVE_AAC, test "x$HAVE_AAC" = "xyes")
 AM_CONDITIONAL(HAVE_MMS, test "x$HAVE_MMS" = "xyes")
-AM_CONDITIONAL(STATICLINK, test "x$STATICLINK" = "xyes")
-AM_CONDITIONAL(PORTABLE, test "x$PORTABLE" = "xyes")
-AM_CONDITIONAL(PORTABLE_FULL, test "x$PORTABLE_FULL" = "xyes")
 AM_CONDITIONAL(HAVE_DSP_SRC, test "x$HAVE_DSP_SRC" = "xyes")
 AM_CONDITIONAL(HAVE_M3U, test "x$HAVE_M3U" = "xyes")
 AM_CONDITIONAL(HAVE_VFS_ZIP, test "x$HAVE_VFS_ZIP" = "xyes")
@@ -653,6 +658,10 @@ AM_CONDITIONAL(HAVE_SHELLEXECUI, test "x$HAVE_SHELLEXECUI" = "xyes")
 AM_CONDITIONAL(HAVE_SM, test "x$HAVE_SM" = "xyes")
 AM_CONDITIONAL(HAVE_ICE, test "x$HAVE_ICE" = "xyes")
 AM_CONDITIONAL(HAVE_ALAC, test "x$HAVE_ALAC" = "xyes")
+AM_CONDITIONAL(STATICLINK, test "x$STATICLINK" = "xyes")
+AM_CONDITIONAL(PORTABLE, test "x$PORTABLE" = "xyes")
+AM_CONDITIONAL(PORTABLE_FULL, test "x$PORTABLE_FULL" = "xyes")
+AM_CONDITIONAL(USE_ABSTRACT_SOCKET_NAME, test "x$USE_ABSTRACT_SOCKET_NAME" = "xyes")
 
 AC_SUBST(PLUGINS_DIRS)
 
@@ -694,8 +703,8 @@ PRINT_PLUGIN_INFO([vtx],[vtx file player (ay8910/12 emulation)],[test "x$HAVE_VT
 PRINT_PLUGIN_INFO([adplug],[adplug player (OPL2/OPL3 emulation)],[test "x$HAVE_ADPLUG" = "xyes"])
 PRINT_PLUGIN_INFO([vfs_curl],[http/ftp streaming support],[test "x$HAVE_VFS_CURL" = "xyes"])
 PRINT_PLUGIN_INFO([cdda],[cd audio player],[test "x$HAVE_CDDAPLUGIN" = "xyes"])
-PRINT_PLUGIN_INFO([gtkui],[GTK2 user interface],[test "x$HAVE_GTK2" = "xyes" && test "x$HAVE_GTKUI" = "xyes"])
-PRINT_PLUGIN_INFO([gtkui3],[GTK3 user interface],[test "x$HAVE_GTK3" = "xyes" && test "x$HAVE_GTKUI" = "xyes"])
+PRINT_PLUGIN_INFO([gtkui],[GTK2 user interface],[test "x$HAVE_GTK2" = "xyes"])
+PRINT_PLUGIN_INFO([gtkui3],[GTK3 user interface],[test "x$HAVE_GTK3" = "xyes"])
 PRINT_PLUGIN_INFO([hotkeys],[Global hotkeys support],[test "x$HAVE_HOTKEYS" = "xyes"])
 PRINT_PLUGIN_INFO([ffmpeg],[ffmpeg codecs],[test "x$HAVE_FFMPEGPLUGIN" = "xyes"])
 PRINT_PLUGIN_INFO([oss],[oss output plugin],[test "x$HAVE_OSS" = "xyes"])

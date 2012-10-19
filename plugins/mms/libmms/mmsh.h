@@ -37,7 +37,7 @@ extern "C" {
 typedef struct mmsh_s mmsh_t;
 
 char*    mmsh_connect_common(int *s ,int *port, char *url, char **host, char **path, char **file);
-mmsh_t*   mmsh_connect (mms_io_t *io, void *data, const char *url_, int bandwidth);
+mmsh_t*   mmsh_connect (mms_io_t *io, void *data, const char *url_, int bandwidth, int *need_abort);
 
 int      mmsh_read (mms_io_t *io, mmsh_t *instance, char *data, int len, int *need_abort);
 int      mmsh_time_seek (mms_io_t *io, mmsh_t *instance, double time_sec);
