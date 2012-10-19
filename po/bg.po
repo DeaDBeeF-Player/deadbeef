@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-10 20:26+0200\n"
+"POT-Creation-Date: 2012-10-15 21:27+0200\n"
 "PO-Revision-Date: 2012-04-08 23:49+0200\n"
 "Last-Translator: Радослав <reckku@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -55,8 +55,8 @@ msgid "help.txt"
 msgstr "help.txt"
 
 #: ../plugins/gtkui/callbacks.c:737 ../plugins/gtkui/interface.c:1158
-#: ../plugins/gtkui/deadbeef.glade.h:61 ../plugins/converter/convgui.c:1362
-#: ../plugins/converter/convgui.c:1370
+#: ../plugins/gtkui/deadbeef.glade.h:61 ../plugins/converter/convgui.c:1376
+#: ../plugins/converter/convgui.c:1384
 msgid "Help"
 msgstr "Помощ"
 
@@ -172,11 +172,11 @@ msgstr "%d дена %d:%02d:%02d"
 msgid "Stopped | %d tracks | %s total playtime"
 msgstr "Спрян | %d песни | %s времетраене"
 
-#: ../plugins/gtkui/gtkui.c:165 ../playlist.c:3036
+#: ../plugins/gtkui/gtkui.c:165 ../playlist.c:3046
 msgid "Mono"
 msgstr "Моно"
 
-#: ../plugins/gtkui/gtkui.c:165 ../playlist.c:3036
+#: ../plugins/gtkui/gtkui.c:165 ../playlist.c:3046
 msgid "Stereo"
 msgstr "Стерео"
 
@@ -285,7 +285,7 @@ msgstr "Обръщане на избора"
 msgid "Selection"
 msgstr "Подбиране"
 
-#: ../plugins/gtkui/interface.c:269 ../plugins/gtkui/plcommon.c:480
+#: ../plugins/gtkui/interface.c:269 ../plugins/gtkui/plcommon.c:512
 #: ../plugins/gtkui/prefwin.c:353 ../plugins/gtkui/deadbeef.glade.h:16
 #: ../plugins/converter/interface.c:628
 #: ../plugins/converter/converter.glade.h:46
@@ -310,7 +310,7 @@ msgstr "Сортиране по"
 #: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1519
 #: ../plugins/gtkui/mainplaylist.c:320 ../plugins/gtkui/prefwin.c:667
 #: ../plugins/gtkui/search.c:415 ../plugins/gtkui/deadbeef.glade.h:20
-#: ../plugins/converter/convgui.c:834 ../plugins/converter/convgui.c:1333
+#: ../plugins/converter/convgui.c:848 ../plugins/converter/convgui.c:1347
 #: ../plugins/converter/interface.c:605
 #: ../plugins/converter/converter.glade.h:43
 #: ../plugins/shellexecui/shellexecui.c:327
@@ -329,7 +329,7 @@ msgstr "Албум"
 
 #. Track properties dialog
 #: ../plugins/gtkui/interface.c:307 ../plugins/gtkui/interface.c:1517
-#: ../plugins/gtkui/plcommon.c:1028 ../plugins/gtkui/deadbeef.glade.h:23
+#: ../plugins/gtkui/plcommon.c:1060 ../plugins/gtkui/deadbeef.glade.h:23
 #: ../translation/extra.c:69
 msgid "Artist"
 msgstr "Изпълнител"
@@ -345,7 +345,7 @@ msgid "Random"
 msgstr "Произволно"
 
 #: ../plugins/gtkui/interface.c:319 ../plugins/gtkui/interface.c:1523
-#: ../plugins/gtkui/plcommon.c:1032 ../plugins/gtkui/deadbeef.glade.h:26
+#: ../plugins/gtkui/plcommon.c:1064 ../plugins/gtkui/deadbeef.glade.h:26
 msgid "Custom"
 msgstr "Предпочитани"
 
@@ -512,7 +512,7 @@ msgstr "_Затваряне"
 msgid "Metadata"
 msgstr "Метаданни"
 
-#: ../plugins/gtkui/interface.c:1370 ../plugins/gtkui/plcommon.c:630
+#: ../plugins/gtkui/interface.c:1370 ../plugins/gtkui/plcommon.c:662
 #: ../plugins/gtkui/deadbeef.glade.h:67
 msgid "Properties"
 msgstr "Свойства"
@@ -881,7 +881,7 @@ msgid "Select DSP Plugin"
 msgstr "Избор на приставка за DSP (разпределение на цифровите сигнали)"
 
 #: ../plugins/gtkui/interface.c:3436 ../plugins/gtkui/deadbeef.glade.h:159
-#: ../plugins/converter/convgui.c:1135 ../plugins/converter/interface.c:749
+#: ../plugins/converter/convgui.c:1149 ../plugins/converter/interface.c:749
 #: ../plugins/gtkui/dspconfig.c:139 ../plugins/converter/converter.glade.h:49
 msgid "Plugin"
 msgstr "Приставка"
@@ -961,47 +961,47 @@ msgstr ""
 "на приставката за Графичния вид)"
 
 #: ../plugins/gtkui/plcommon.c:351 ../plugins/gtkui/trkproperties.c:164
-#: ../plugins/converter/convgui.c:803 ../plugins/converter/convgui.c:1258
+#: ../plugins/converter/convgui.c:817 ../plugins/converter/convgui.c:1272
 msgid "Warning"
 msgstr "Предупреждение"
 
-#: ../plugins/gtkui/plcommon.c:456
+#: ../plugins/gtkui/plcommon.c:488
 msgid "Add to playback queue"
 msgstr "Добави в опашката за изпълнение"
 
-#: ../plugins/gtkui/plcommon.c:461
+#: ../plugins/gtkui/plcommon.c:493
 msgid "Remove from playback queue"
 msgstr "Премахни от опашката за изпълнение"
 
-#: ../plugins/gtkui/plcommon.c:469
+#: ../plugins/gtkui/plcommon.c:501
 msgid "Reload metadata"
 msgstr "Презареди метаданните"
 
-#: ../plugins/gtkui/plcommon.c:488
+#: ../plugins/gtkui/plcommon.c:520
 msgid "Remove from disk"
 msgstr "Прехани от носителя"
 
-#: ../plugins/gtkui/plcommon.c:869 ../plugins/gtkui/plcommon.c:995
+#: ../plugins/gtkui/plcommon.c:901 ../plugins/gtkui/plcommon.c:1027
 msgid "Add column"
 msgstr "Добавяне на Колона"
 
-#: ../plugins/gtkui/plcommon.c:899 ../plugins/gtkui/plcommon.c:999
+#: ../plugins/gtkui/plcommon.c:931 ../plugins/gtkui/plcommon.c:1031
 msgid "Edit column"
 msgstr "Редактиране на Колона"
 
-#: ../plugins/gtkui/plcommon.c:1003
+#: ../plugins/gtkui/plcommon.c:1035
 msgid "Remove column"
 msgstr "Премахване на Колона"
 
-#: ../plugins/gtkui/plcommon.c:1013
+#: ../plugins/gtkui/plcommon.c:1045
 msgid "Group by"
 msgstr "Групиране по"
 
-#: ../plugins/gtkui/plcommon.c:1020
+#: ../plugins/gtkui/plcommon.c:1052
 msgid "None"
 msgstr "Нищо"
 
-#: ../plugins/gtkui/plcommon.c:1024
+#: ../plugins/gtkui/plcommon.c:1056
 msgid "Artist/Date/Album"
 msgstr "Изпълнител/Дата/Албум"
 
@@ -1055,96 +1055,96 @@ msgid "Really close the window?"
 msgstr "Да се затвори ли прозореца?"
 
 #. get value to edit
-#: ../plugins/gtkui/trkproperties.c:272
+#: ../plugins/gtkui/trkproperties.c:279
 msgid "[Multiple values] "
 msgstr "[Множество стойности]"
 
-#: ../plugins/gtkui/trkproperties.c:425 ../plugins/gtkui/trkproperties.c:437
+#: ../plugins/gtkui/trkproperties.c:432 ../plugins/gtkui/trkproperties.c:444
 msgid "Key"
 msgstr "Ключ"
 
-#: ../plugins/gtkui/trkproperties.c:426 ../plugins/gtkui/trkproperties.c:438
+#: ../plugins/gtkui/trkproperties.c:433 ../plugins/gtkui/trkproperties.c:445
 msgid "Value"
 msgstr "Стойност"
 
-#: ../plugins/gtkui/trkproperties.c:623
+#: ../plugins/gtkui/trkproperties.c:630
 msgid "Writing tags..."
 msgstr "Записване на етикетите..."
 
-#: ../plugins/gtkui/trkproperties.c:651
+#: ../plugins/gtkui/trkproperties.c:659
 msgid "Field name"
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:654
+#: ../plugins/gtkui/trkproperties.c:662
 msgid "Name:"
 msgstr "Име:"
 
-#: ../plugins/gtkui/trkproperties.c:666
+#: ../plugins/gtkui/trkproperties.c:674
 msgid "Field names must not start with : or _"
 msgstr "Имената на полетата не могат да започват с \":\" или \"_\""
 
-#: ../plugins/gtkui/trkproperties.c:667 ../plugins/gtkui/trkproperties.c:706
+#: ../plugins/gtkui/trkproperties.c:675 ../plugins/gtkui/trkproperties.c:714
 msgid "Cannot add field"
 msgstr "Не може да бъде добавено поле"
 
-#: ../plugins/gtkui/trkproperties.c:705
+#: ../plugins/gtkui/trkproperties.c:713
 msgid "Field with such name already exists, please try different name."
 msgstr "Вече съществува поле със същото име, моля пробвайте с друго!"
 
-#: ../plugins/gtkui/trkproperties.c:767
+#: ../plugins/gtkui/trkproperties.c:776
 msgid "Add field"
 msgstr "Добавяне на поле"
 
-#: ../plugins/gtkui/trkproperties.c:770
+#: ../plugins/gtkui/trkproperties.c:779
 msgid "Remove field"
 msgstr "Премахване на поле"
 
-#: ../main.c:84
+#: ../main.c:89
 #, fuzzy, c-format
 msgid "Usage: deadbeef [options] [--] [file(s)]\n"
 msgstr "Употреба: deadbeef [опции] [файл(ове)]\n"
 
-#: ../main.c:85
+#: ../main.c:90
 #, c-format
 msgid "Options:\n"
 msgstr "Опции:\n"
 
-#: ../main.c:86
+#: ../main.c:91
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
 msgstr "--help или -h Изписва помощ (това съобщение) и излиза\n"
 
-#: ../main.c:87
+#: ../main.c:92
 #, c-format
 msgid "   --quit             Quit player\n"
 msgstr "--quit Изход от Плейъра\n"
 
-#: ../main.c:88
+#: ../main.c:93
 #, c-format
 msgid "   --version          Print version info and exit\n"
 msgstr "--version Изписва информация за версията и излиза\n"
 
-#: ../main.c:89
+#: ../main.c:94
 #, c-format
 msgid "   --play             Start playback\n"
 msgstr "--play Възпроизвеждане\n"
 
-#: ../main.c:90
+#: ../main.c:95
 #, c-format
 msgid "   --stop             Stop playback\n"
 msgstr "--stop Спиране\n"
 
-#: ../main.c:91
+#: ../main.c:96
 #, c-format
 msgid "   --pause            Pause playback\n"
 msgstr "--pause Паузиране\n"
 
-#: ../main.c:92
+#: ../main.c:97
 #, c-format
 msgid "   --toggle-pause     Toggle pause\n"
 msgstr "--toggle-pause Превключване в\\от режим на пауза\n"
 
-#: ../main.c:93
+#: ../main.c:98
 #, c-format
 msgid ""
 "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
@@ -1152,38 +1152,38 @@ msgstr ""
 "--play-pause Започване на възпроизвеждане, ако е спряно или излизане от "
 "режим на пауза\n"
 
-#: ../main.c:94
+#: ../main.c:99
 #, c-format
 msgid "   --next             Next song in playlist\n"
 msgstr "--next Следващата песен в листа\n"
 
-#: ../main.c:95
+#: ../main.c:100
 #, c-format
 msgid "   --prev             Previous song in playlist\n"
 msgstr "--prev Предишната песен в листа\n"
 
-#: ../main.c:96
+#: ../main.c:101
 #, c-format
 msgid "   --random           Random song in playlist\n"
 msgstr "--random Произволна песен от листа\n"
 
-#: ../main.c:97
+#: ../main.c:102
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
 msgstr "--queue Прибавяне на файл(ове) в съществуващия лист\n"
 
-#: ../main.c:98
+#: ../main.c:103
 #, c-format
 msgid ""
 "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
 msgstr ""
 
-#: ../main.c:99
+#: ../main.c:104
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
 msgstr "--nowplaying \"Формат\" Изписва Форматирано име\n"
 
-#: ../main.c:100
+#: ../main.c:105
 #, c-format
 msgid ""
 "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
@@ -1194,14 +1194,14 @@ msgstr ""
 "[b]-Албум, [l]-Времетраене, [n]-Номер на песента,\n"
 "[y]-Година, [c]-Коментар, [r]-Авторски права, [e]-Изминали\n"
 
-#: ../main.c:103
+#: ../main.c:108
 #, c-format
 msgid ""
 "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
 "- title\"\n"
 msgstr "пр.: --nowplaying \"%%a - %%t\" ще изведе \"изпълнител - песен\"\n"
 
-#: ../main.c:104
+#: ../main.c:109
 #, c-format
 msgid ""
 "                      for more info, see http://sourceforge.net/apps/"
@@ -1210,15 +1210,15 @@ msgstr ""
 "За повече информация: http://sourceforge.net/apps/mediawiki/deadbeef/index."
 "php?title=Title_Formatting\n"
 
-#: ../playlist.c:454 ../playlist.c:2418
+#: ../playlist.c:463 ../playlist.c:2428
 msgid "Default"
 msgstr "По подразбиране"
 
-#: ../playlist.c:3793
+#: ../playlist.c:3814
 msgid "Yes"
 msgstr "Да"
 
-#: ../playlist.c:3793
+#: ../playlist.c:3814
 msgid "No"
 msgstr "Не"
 
@@ -1625,27 +1625,27 @@ msgstr "Файлът вече съществува. Презипасване?"
 msgid "Converter warning"
 msgstr "Внимание при превръщане"
 
-#: ../plugins/converter/convgui.c:271
+#: ../plugins/converter/convgui.c:285
 msgid "Please select encoder"
 msgstr "Моля изберете кодиране"
 
-#: ../plugins/converter/convgui.c:273
+#: ../plugins/converter/convgui.c:287
 msgid "Converter error"
 msgstr "Грешка при превръщане"
 
-#: ../plugins/converter/convgui.c:297
+#: ../plugins/converter/convgui.c:311
 msgid "Converting..."
 msgstr "Превръщане..."
 
-#: ../plugins/converter/convgui.c:459
+#: ../plugins/converter/convgui.c:473
 msgid "Select folder..."
 msgstr "Избор на директория..."
 
-#: ../plugins/converter/convgui.c:681
+#: ../plugins/converter/convgui.c:695
 msgid "Failed to save encoder preset"
 msgstr "Неуспех при записване за избраното кодиране"
 
-#: ../plugins/converter/convgui.c:683 ../plugins/converter/convgui.c:1157
+#: ../plugins/converter/convgui.c:697 ../plugins/converter/convgui.c:1171
 msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
@@ -1653,51 +1653,51 @@ msgstr ""
 "Проверете правата за избраната папка, пробвайте да изберете друго име на "
 "файла или освободете място на диска."
 
-#: ../plugins/converter/convgui.c:683 ../plugins/converter/convgui.c:1157
+#: ../plugins/converter/convgui.c:697 ../plugins/converter/convgui.c:1171
 msgid "Preset with the same name already exists. Try to pick another title."
 msgstr "Дублират се имената. Пробвайте да изберете друго име."
 
-#: ../plugins/converter/convgui.c:684 ../plugins/converter/convgui.c:1158
+#: ../plugins/converter/convgui.c:698 ../plugins/converter/convgui.c:1172
 msgid "Error"
 msgstr "Грешка"
 
-#: ../plugins/converter/convgui.c:738
+#: ../plugins/converter/convgui.c:752
 msgid "Add new encoder"
 msgstr "Добави ново кодиране"
 
-#: ../plugins/converter/convgui.c:768
+#: ../plugins/converter/convgui.c:782
 msgid "Edit encoder"
 msgstr "Редактиране на кодирането"
 
-#: ../plugins/converter/convgui.c:800 ../plugins/converter/convgui.c:1255
+#: ../plugins/converter/convgui.c:814 ../plugins/converter/convgui.c:1269
 msgid "Remove preset"
 msgstr "Премахни зададеното"
 
-#: ../plugins/converter/convgui.c:802 ../plugins/converter/convgui.c:1257
+#: ../plugins/converter/convgui.c:816 ../plugins/converter/convgui.c:1271
 msgid "This action will delete the selected preset. Are you sure?"
 msgstr "Това ще премахне зададения профил. Сигурни ли сте?"
 
-#: ../plugins/converter/convgui.c:826
+#: ../plugins/converter/convgui.c:840
 msgid "Encoders"
 msgstr "Планове за кодиране"
 
-#: ../plugins/converter/convgui.c:897 ../plugins/gtkui/dspconfig.c:186
+#: ../plugins/converter/convgui.c:911 ../plugins/gtkui/dspconfig.c:186
 msgid "Add plugin to DSP chain"
 msgstr "Слагане на добавка в DSP канала"
 
-#: ../plugins/converter/convgui.c:1156
+#: ../plugins/converter/convgui.c:1170
 msgid "Failed to save DSP preset"
 msgstr "Неуспех при запаметяване на DSP профила"
 
-#: ../plugins/converter/convgui.c:1220
+#: ../plugins/converter/convgui.c:1234
 msgid "New DSP Preset"
 msgstr "Нов DSP профил"
 
-#: ../plugins/converter/convgui.c:1305
+#: ../plugins/converter/convgui.c:1319
 msgid "Edit DSP Preset"
 msgstr "Редактирай DSP профила"
 
-#: ../plugins/converter/convgui.c:1325
+#: ../plugins/converter/convgui.c:1339
 msgid "DSP Presets"
 msgstr "DSP профили"
 

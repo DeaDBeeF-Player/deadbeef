@@ -1,19 +1,28 @@
 /*
-    DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
+  This file is part of Deadbeef Player source code
+  http://deadbeef.sourceforge.net
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 2 of the License, or
-    (at your option) any later version.
+  application launcher, compatible with GNU/Linux and most other POSIX systems
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+  Copyright (C) 2009-2012 Alexey Yakovenko
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+
+  Alexey Yakovenko waker@users.sourceforge.net
 */
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
@@ -59,10 +68,6 @@
 
 #ifndef PREFIX
 #error PREFIX must be defined
-#endif
-
-#ifdef __linux__
-#define USE_ABSTRACT_NAME 0
 #endif
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -342,7 +347,7 @@ static struct sockaddr_un srv_local;
 static struct sockaddr_un srv_remote;
 static unsigned srv_socket;
 
-#if USE_ABSTRACT_NAME
+#if USE_ABSTRACT_SOCKET_NAME
 static char server_id[] = "\0deadbeefplayer";
 #endif
 
@@ -363,7 +368,7 @@ server_start (void) {
     memset (&srv_local, 0, sizeof (srv_local));
     srv_local.sun_family = AF_UNIX;
 
-#if USE_ABSTRACT_NAME
+#if USE_ABSTRACT_SOCKET_NAME
     memcpy (srv_local.sun_path, server_id, sizeof (server_id));
     int len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id)-1;
 #else
@@ -859,7 +864,7 @@ main (int argc, char *argv[]) {
 
     memset (&remote, 0, sizeof (remote));
     remote.sun_family = AF_UNIX;
-#if USE_ABSTRACT_NAME
+#if USE_ABSTRACT_SOCKET_NAME
     memcpy (remote.sun_path, server_id, sizeof (server_id));
     len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id)-1;
 #else

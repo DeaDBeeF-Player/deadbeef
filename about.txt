@@ -31,7 +31,7 @@ Contributors:
     Sofias <sofias@radikalismus.com>
         Icon
 
-    starws
+    starws <starws.box@gmail.com>
         The best QA dude in the world
 
     Stas Akimushkin <uncle.lag@gmail.com>
