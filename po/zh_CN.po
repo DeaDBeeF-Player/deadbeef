@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-23 14:33+0200\n"
-"PO-Revision-Date: 2011-11-24 05:01+0200\n"
-"Last-Translator: Yinghua_Wang <wantinghard@gmail.com>\n"
+"PO-Revision-Date: 2012-10-20 14:28+0200\n"
+"Last-Translator: Wylmer <wantinghard@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
@@ -183,7 +183,7 @@ msgstr "立体声"
 #: ../plugins/gtkui/gtkui.c:190
 #, c-format
 msgid "| %4d kbps "
-msgstr "| %4d kbps "
+msgstr "| %4d kb/秒"
 
 #: ../plugins/gtkui/gtkui.c:196
 msgid "Paused | "
@@ -222,7 +222,7 @@ msgstr "新播放列表(%d)"
 
 #: ../plugins/gtkui/gtkui.c:1085
 msgid "- Test logout functionality"
-msgstr ""
+msgstr "- 测试注销功能"
 
 #: ../plugins/gtkui/interface.c:150 ../plugins/gtkui/deadbeef.glade.h:1
 msgid "_File"
@@ -303,7 +303,6 @@ msgid "_Find"
 msgstr "查找(_F)"
 
 #: ../plugins/gtkui/interface.c:288 ../plugins/gtkui/deadbeef.glade.h:19
-#, fuzzy
 msgid "Sort by"
 msgstr "排序依据"
 
@@ -400,17 +399,14 @@ msgid "Looping"
 msgstr "循环"
 
 #: ../plugins/gtkui/interface.c:400 ../plugins/gtkui/deadbeef.glade.h:39
-#, fuzzy
 msgid "Loop all"
 msgstr "全部循环"
 
 #: ../plugins/gtkui/interface.c:406 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "Loop single song"
 msgstr "单曲循环"
 
 #: ../plugins/gtkui/interface.c:412 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "Don't loop"
 msgstr "不循环"
 
@@ -647,9 +643,8 @@ msgid "Don't add from archives when adding folders"
 msgstr "在添加文件夹时排除归档"
 
 #: ../plugins/gtkui/interface.c:1974 ../plugins/gtkui/deadbeef.glade.h:104
-#, fuzzy
 msgid "Auto-reset \"Stop after current\""
-msgstr "当前曲目后停止"
+msgstr "自动重置“当前曲目后停止”"
 
 #: ../plugins/gtkui/interface.c:1978 ../plugins/gtkui/deadbeef.glade.h:105
 msgid "Playback"
@@ -699,11 +694,11 @@ msgstr "在添加单个文件夹时自动命名播放列表"
 
 #: ../plugins/gtkui/interface.c:2083 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Enable Russian CP1251 detection and recoding"
-msgstr ""
+msgstr "启用俄语 CP1251 编码检测和转码功能"
 
 #: ../plugins/gtkui/interface.c:2087 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Enable Chinese CP936 detection and recoding"
-msgstr ""
+msgstr "启用中文 CP936 编码检测和转码功能"
 
 #: ../plugins/gtkui/interface.c:2095 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Interface refresh rate (times per second):"
@@ -723,7 +718,7 @@ msgstr "图形用户界面插件(更改后需重启程序)："
 
 #: ../plugins/gtkui/interface.c:2145 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "GUI/Misc"
-msgstr ""
+msgstr "界面/杂项"
 
 #: ../plugins/gtkui/interface.c:2160 ../plugins/gtkui/interface.c:2204
 #: ../plugins/gtkui/deadbeef.glade.h:123
@@ -825,7 +820,7 @@ msgstr "代理密码："
 
 #: ../plugins/gtkui/interface.c:2473 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "HTTP User Agent:"
-msgstr ""
+msgstr "HTTP 用户代理："
 
 #: ../plugins/gtkui/interface.c:2482 ../plugins/gtkui/deadbeef.glade.h:148
 msgid "Network"
@@ -849,12 +844,10 @@ msgid "URL:"
 msgstr "URL："
 
 #: ../plugins/gtkui/interface.c:3196 ../plugins/gtkui/deadbeef.glade.h:153
-#, fuzzy
 msgid "Group By ..."
-msgstr "分组依据"
+msgstr "分组依据..."
 
 #: ../plugins/gtkui/interface.c:3320 ../plugins/gtkui/deadbeef.glade.h:154
-#, fuzzy
 msgid "Sort by ..."
 msgstr "排序依据..."
 
@@ -1025,9 +1018,8 @@ msgid "Global Hotkeys"
 msgstr "全局热键"
 
 #: ../plugins/gtkui/prefwin.c:416
-#, fuzzy
 msgid "Action"
-msgstr "位置"
+msgstr "操作"
 
 #: ../plugins/gtkui/prefwin.c:417
 msgid "Key combination"
@@ -1068,7 +1060,7 @@ msgstr "正在写入标签..."
 
 #: ../plugins/gtkui/trkproperties.c:659
 msgid "Field name"
-msgstr ""
+msgstr "字段名"
 
 #: ../plugins/gtkui/trkproperties.c:662
 msgid "Name:"
@@ -1095,9 +1087,9 @@ msgid "Remove field"
 msgstr "移除字段"
 
 #: ../main.c:84
-#, fuzzy, c-format
+#, c-format, c-format
 msgid "Usage: deadbeef [options] [--] [file(s)]\n"
-msgstr "用法：deadbeef [选项] [文件]\n"
+msgstr "用法：deadbeef [选项] [--] [文件]\n"
 
 #: ../main.c:85
 #, c-format
@@ -1169,7 +1161,7 @@ msgstr "   --queue            向现有的播放列表中追加文件\n"
 #, c-format
 msgid ""
 "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
-msgstr ""
+msgstr "   --gui PLUGIN       指定使用哪个用户界面插件，默认为“GTK2”\n"
 
 #: ../main.c:99
 #, c-format
@@ -1295,7 +1287,6 @@ msgstr ""
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
-#, fuzzy
 msgid "Add audio CD"
 msgstr "添加音频 CD"
 
@@ -1343,7 +1334,7 @@ msgstr "Scrobble URL"
 
 #: ../translation/extra.c:16
 msgid "Prefer Album Artist over Artist field"
-msgstr ""
+msgstr "优先使用“专辑艺人”字段而非“艺人”字段"
 
 #. OSS output plugin
 #: ../translation/extra.c:18
@@ -1415,7 +1406,7 @@ msgstr "重采样品质(0~2，越大品质越好)"
 
 #: ../translation/extra.c:37
 msgid "8-bit output (default is 16)"
-msgstr ""
+msgstr "8 位输出(默认为 16 位)"
 
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:39
@@ -1423,13 +1414,12 @@ msgid "Max song length (in minutes)"
 msgstr "最大歌曲长度(分钟)"
 
 #: ../translation/extra.c:40
-#, fuzzy
 msgid "Fadeout length (seconds)"
-msgstr "默认歌曲长度(秒)"
+msgstr "淡出时长(秒)"
 
 #: ../translation/extra.c:41
 msgid "Play loops nr. of times (if available)"
-msgstr ""
+msgstr "循环播放若干次(如果可以)"
 
 #. Standard GTK2 user interface plugin
 #: ../translation/extra.c:43
@@ -1581,7 +1571,6 @@ msgid "Target Samplerate"
 msgstr "目标采样率"
 
 #: ../translation/extra.c:94
-#, fuzzy
 msgid "Quality / Algorithm"
 msgstr "品质 / 算法"
 
@@ -1592,22 +1581,21 @@ msgstr "自动采样率(替代目标采样率)"
 #. shellexecui
 #: ../translation/extra.c:97
 msgid "Configure custom shell commands"
-msgstr ""
+msgstr "配置自定义 shell 命令"
 
 #. mpgmad
 #: ../translation/extra.c:99
 msgid "Disable gapless playback (faster scanning)"
-msgstr ""
+msgstr "禁止无缝播放(可加快扫描)"
 
 #. adplug
 #: ../translation/extra.c:101
 msgid "Prefer Ken emu over Satoh (surround won't work)"
-msgstr ""
+msgstr "优先使用 Ken emu 而非 Satoh(环绕将不工作)"
 
 #: ../translation/extra.c:102
-#, fuzzy
 msgid "Enable surround"
-msgstr "启用 scrobbler"
+msgstr "启用环绕"
 
 #: ../plugins/converter/convgui.c:117
 msgid "The file already exists. Overwrite?"
@@ -1699,13 +1687,12 @@ msgstr "输出文件夹："
 #: ../plugins/converter/interface.c:109
 #: ../plugins/converter/converter.glade.h:2
 msgid "Write to source track folder"
-msgstr ""
+msgstr "写入源音轨文件夹"
 
 #: ../plugins/converter/interface.c:113
 #: ../plugins/converter/converter.glade.h:3
-#, fuzzy
 msgid "Preserve folder structure"
-msgstr "保持文件夹结构，开始于："
+msgstr "保持文件夹结构"
 
 #: ../plugins/converter/interface.c:121
 #: ../plugins/converter/converter.glade.h:4
@@ -1886,49 +1873,53 @@ msgid ""
 "32 bit signed int\n"
 "32 bit float"
 msgstr ""
+"保持源格式\n"
+"8 位有符号整型\n"
+"16 位有符号整型\n"
+"24 位有符号整型\n"
+"32 位有符号整型\n"
+"32 位浮点型"
 
 #: ../plugins/converter/converter.glade.h:19
-#, fuzzy
 msgid ""
 "Prompt\n"
 "Overwrite"
-msgstr "覆盖"
+msgstr ""
+"提示\n"
+"覆盖"
 
 #: ../plugins/converter/converter.glade.h:34
-#, fuzzy
 msgid ""
 "Pipe\n"
 "Temporary file"
-msgstr "临时文件"
+msgstr ""
+"管道\n"
+"临时文件"
 
 #: ../plugins/shellexecui/interface.c:46
 #: ../plugins/shellexecui/shellexec.glade.h:1
 msgid "Custom Shell Commands"
-msgstr ""
+msgstr "自定义 Shell 命令"
 
 #: ../plugins/shellexecui/interface.c:69
 #: ../plugins/shellexecui/shellexec.glade.h:5
-#, fuzzy
 msgid "Edit"
-msgstr "编辑(_E)"
+msgstr "编辑"
 
 #: ../plugins/shellexecui/interface.c:87
 #: ../plugins/shellexecui/shellexec.glade.h:2
-#, fuzzy
 msgid "Close"
-msgstr "关闭(_C)"
+msgstr "关闭"
 
 #: ../plugins/shellexecui/interface.c:145
 #: ../plugins/shellexecui/shellexec.glade.h:6
-#, fuzzy
 msgid "Edit Command"
-msgstr "编辑列"
+msgstr "编辑命令"
 
 #: ../plugins/shellexecui/interface.c:166
 #: ../plugins/shellexecui/shellexec.glade.h:8
-#, fuzzy
 msgid "Command:"
-msgstr "命令行："
+msgstr "命令："
 
 #: ../plugins/shellexecui/interface.c:178
 #: ../plugins/shellexecui/shellexec.glade.h:10
@@ -1937,131 +1928,122 @@ msgid ""
 "Arbitrary shell command. Will be executed in the shell context which the "
 "main application was started from. Title formatting can be used. Example: "
 "xdg-open %D"
-msgstr ""
+msgstr "任意 shell 命令。它将会在主程序启动时的 shell 环境中执行。可以使用标题格式化代码。例如：xdg-open %D"
 
 #: ../plugins/shellexecui/interface.c:181
 #: ../plugins/shellexecui/shellexec.glade.h:11
 msgid "ID:"
-msgstr ""
+msgstr "标识："
 
 #: ../plugins/shellexecui/interface.c:193
 #: ../plugins/shellexecui/shellexec.glade.h:12
 msgid "Free-form name, for example \"My Shell Command\""
-msgstr ""
+msgstr "任意形式的名字，如“我的 shell 命令”"
 
 #: ../plugins/shellexecui/interface.c:201
 #: ../plugins/shellexecui/shellexec.glade.h:13
 msgid ""
 "Command ID, normally it should be something short, for example \"youtube_open"
 "\". It must be unique."
-msgstr ""
+msgstr "命令标识，一般应简短，例如“youtube_open”。名字应惟一。"
 
 #: ../plugins/shellexecui/interface.c:204
 #: ../plugins/shellexecui/shellexec.glade.h:15
-#, fuzzy
 msgid "Single Tracks"
-msgstr "打乱音轨"
+msgstr "单条音轨"
 
 #: ../plugins/shellexecui/interface.c:207
 #: ../plugins/shellexecui/shellexec.glade.h:14
 msgid "Works on single track."
-msgstr ""
+msgstr "在单条音轨上起作用。"
 
 #: ../plugins/shellexecui/interface.c:209
 #: ../plugins/shellexecui/shellexec.glade.h:17
-#, fuzzy
 msgid "Multiple Tracks"
-msgstr "[多个值] "
+msgstr "多条音轨"
 
 #: ../plugins/shellexecui/interface.c:212
 #: ../plugins/shellexecui/shellexec.glade.h:16
 msgid "Works on multiple tracks."
-msgstr ""
+msgstr "在多条音轨上起作用。"
 
 #: ../plugins/shellexecui/interface.c:214
 #: ../plugins/shellexecui/shellexec.glade.h:19
-#, fuzzy
 msgid "Local"
-msgstr "位置"
+msgstr "本地"
 
 #: ../plugins/shellexecui/interface.c:217
 #: ../plugins/shellexecui/shellexec.glade.h:18
 msgid "Works on local files."
-msgstr ""
+msgstr "在本地文件上起作用。"
 
 #: ../plugins/shellexecui/interface.c:219
 #: ../plugins/shellexecui/shellexec.glade.h:21
-#, fuzzy
 msgid "Remote"
-msgstr "移除"
+msgstr "远程"
 
 #: ../plugins/shellexecui/interface.c:222
 #: ../plugins/shellexecui/shellexec.glade.h:20
 msgid "Works on remote files (e.g. http:// streams)"
-msgstr ""
+msgstr "在远程文件(如 http:// 流)上起作用"
 
 #: ../plugins/shellexecui/interface.c:224
 #: ../plugins/shellexecui/shellexec.glade.h:23
-#, fuzzy
 msgid "Playlist"
-msgstr "新播放列表"
+msgstr "播放列表"
 
 #: ../plugins/shellexecui/interface.c:227
 #: ../plugins/shellexecui/shellexec.glade.h:22
 msgid "Item should appear on the playlist tab context menu"
-msgstr ""
+msgstr "项目会出现在播放列表标签的右键菜单上"
 
 #: ../plugins/shellexecui/interface.c:229
 #: ../plugins/shellexecui/shellexec.glade.h:25
-#, fuzzy
 msgid "Common"
-msgstr "注释"
+msgstr "常用"
 
 #: ../plugins/shellexecui/interface.c:232
 #: ../plugins/shellexecui/shellexec.glade.h:24
 msgid "Item should appear in the main menu"
-msgstr ""
+msgstr "项目会出现在主菜单上"
 
 #: ../plugins/shellexecui/shellexecui.c:94
-#, fuzzy
 msgid "Add Command"
-msgstr "添加列"
+msgstr "添加命令"
 
 #: ../plugins/shellexecui/shellexecui.c:137
 msgid "Delete"
-msgstr ""
+msgstr "删除"
 
 #: ../plugins/shellexecui/shellexecui.c:139
-#, fuzzy
 msgid "This action will delete the selected shell command. Are you sure?"
-msgstr "此操作将删除所选的预设置。您确定吗？"
+msgstr "此操作将删除所选的 shell 命令。您确定吗？"
 
 #: ../plugins/shellexecui/shellexecui.c:141
-#, fuzzy
 msgid "Confirm Remove"
-msgstr "配置"
+msgstr "确认移除"
 
 #: ../plugins/shellexecui/shellexecui.c:230
 msgid "ID must be non-empty and unique.\n"
-msgstr ""
+msgstr "标识不能为空，且必须惟一。\n"
 
 #: ../plugins/shellexecui/shellexecui.c:236
 msgid "Title must be non-empty.\n"
-msgstr ""
+msgstr "标题不能为空。\n"
 
 #: ../plugins/shellexecui/shellexecui.c:242
 msgid "Shell Command must be non-empty.\n"
-msgstr ""
+msgstr "Shell 命令不能为空。\n"
 
 #: ../plugins/shellexecui/shellexecui.c:249
 #: ../plugins/shellexecui/shellexecui.c:253
 msgid "Invalid Values"
-msgstr ""
+msgstr "无效值"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:165
 #, c-format
 msgid "File is not a valid .desktop file"
-msgstr ""
+msgstr "文件不是有效的 .desktop 文件"
 
 #. translators: 'Version' is from a desktop file, and
 #. * should not be translated. '%s' would probably be a
@@ -2069,62 +2051,62 @@ msgstr ""
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:191
 #, c-format
 msgid "Unrecognized desktop file Version '%s'"
-msgstr ""
+msgstr "无法识别的桌面文件版本“%s”"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:974
-#, fuzzy, c-format
+#, c-format, c-format
 msgid "Starting %s"
-msgstr "设置"
+msgstr "正在启动 %s"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1116
 #, c-format
 msgid "Application does not accept documents on command line"
-msgstr ""
+msgstr "应用程序命在令行中不接受文档参数"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1184
 #, c-format
 msgid "Unrecognized launch option: %d"
-msgstr ""
+msgstr "无法识别的启动选项：%d"
 
 #. translators: The 'Type=Link' string is found in a
 #. * desktop file, and should not be translated.
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1391
 #, c-format
 msgid "Can't pass document URIs to a 'Type=Link' desktop entry"
-msgstr ""
+msgstr "无法将文档 URI 传递给一个“Type=Link”桌面记录"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1412
 #, c-format
 msgid "Not a launchable item"
-msgstr ""
+msgstr "不是可启用的项"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:226
 msgid "Disable connection to session manager"
-msgstr ""
+msgstr "禁止连接到会话管理器"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:229
 msgid "Specify file containing saved configuration"
-msgstr ""
+msgstr "指定包含已保存配置的文件"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:229
 msgid "FILE"
-msgstr ""
+msgstr "文件"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:232
 msgid "Specify session management ID"
-msgstr ""
+msgstr "指定会话管理标识"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:232
 msgid "ID"
-msgstr ""
+msgstr "标识"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:253
 msgid "Session management options:"
-msgstr ""
+msgstr "会话管理选项："
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:254
 msgid "Show session management options"
-msgstr ""
+msgstr "显示会话管理选项"
 
 #~ msgid "GUI"
 #~ msgstr "用户界面"
