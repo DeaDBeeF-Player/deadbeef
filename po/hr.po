@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-23 14:33+0200\n"
-"PO-Revision-Date: 2012-10-21 22:46+0200\n"
+"PO-Revision-Date: 2012-10-22 00:55+0200\n"
 "Last-Translator: zvacet <ikoli@yahoo.com>\n"
 "Language-Team: Croatian <>\n"
 "Language: hr\n"
@@ -862,11 +862,11 @@ msgstr "Format"
 
 #: ../plugins/gtkui/interface.c:3366
 msgid "Ascending"
-msgstr ""
+msgstr "Uzlazno"
 
 #: ../plugins/gtkui/interface.c:3367
 msgid "Descending"
-msgstr ""
+msgstr "Silazno"
 
 #: ../plugins/gtkui/interface.c:3420 ../plugins/gtkui/deadbeef.glade.h:158
 #: ../plugins/converter/interface.c:733
@@ -1040,7 +1040,7 @@ msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:161
 msgid "You've modified data for this track."
-msgstr ""
+msgstr "Promjenili ste podatke za ovaj zapis."
 
 #: ../plugins/gtkui/trkproperties.c:163
 msgid "Really close the window?"
@@ -1065,7 +1065,7 @@ msgstr ""
 
 #: ../plugins/gtkui/trkproperties.c:659
 msgid "Field name"
-msgstr ""
+msgstr "Ime polja"
 
 #: ../plugins/gtkui/trkproperties.c:662
 msgid "Name:"
@@ -1258,6 +1258,8 @@ msgid ""
 "Ascending\n"
 "Descending"
 msgstr ""
+"Uzlazno\n"
+"Silazno"
 
 #: ../plugins/gtkui/deadbeef.glade.h:168
 msgid ""
@@ -1336,7 +1338,7 @@ msgstr ""
 #. OSS output plugin
 #: ../translation/extra.c:18
 msgid "Device file"
-msgstr ""
+msgstr "Datoteka uređaja"
 
 #: ../translation/extra.c:19
 msgid "OSS4 samplerate bug workaround"
@@ -1394,7 +1396,7 @@ msgstr ""
 
 #: ../translation/extra.c:34
 msgid "Enable NRG image support"
-msgstr ""
+msgstr "Omogući podršku za NRG sliku"
 
 #. DUMB module player plugin
 #: ../translation/extra.c:36
@@ -1442,11 +1444,11 @@ msgstr ""
 #. OSD Notify plugin
 #: ../translation/extra.c:49
 msgid "Notification title format"
-msgstr ""
+msgstr "Format naslova obavijesti"
 
 #: ../translation/extra.c:50
 msgid "Notification content format"
-msgstr ""
+msgstr "Format sadržaja obavijesti"
 
 #: ../translation/extra.c:51
 msgid "Show album art"
@@ -1493,7 +1495,7 @@ msgstr ""
 
 #: ../translation/extra.c:65
 msgid "Default song length (sec)"
-msgstr ""
+msgstr "Zadana duljina pjesme (sek)"
 
 #. WildMidi player plugin
 #: ../translation/extra.c:67
@@ -1596,11 +1598,11 @@ msgstr ""
 
 #: ../plugins/converter/convgui.c:117
 msgid "The file already exists. Overwrite?"
-msgstr ""
+msgstr "Datoteka već postoji.Prebrisati?"
 
 #: ../plugins/converter/convgui.c:119
 msgid "Converter warning"
-msgstr ""
+msgstr "Upozorenje pretvarača"
 
 #: ../plugins/converter/convgui.c:271
 msgid "Please select encoder"
@@ -1612,7 +1614,7 @@ msgstr ""
 
 #: ../plugins/converter/convgui.c:297
 msgid "Converting..."
-msgstr ""
+msgstr "Pretvaram..."
 
 #: ../plugins/converter/convgui.c:459
 msgid "Select folder..."
@@ -1981,7 +1983,7 @@ msgstr ""
 #: ../plugins/shellexecui/interface.c:229
 #: ../plugins/shellexecui/shellexec.glade.h:25
 msgid "Common"
-msgstr ""
+msgstr "Uobičajeno"
 
 #: ../plugins/shellexecui/interface.c:232
 #: ../plugins/shellexecui/shellexec.glade.h:24
@@ -2032,7 +2034,7 @@ msgstr ""
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:191
 #, c-format
 msgid "Unrecognized desktop file Version '%s'"
-msgstr ""
+msgstr "Neprepoznata verzija datoteke radne površine '%s'"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:974
 #, c-format
@@ -2083,11 +2085,11 @@ msgstr ""
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:253
 msgid "Session management options:"
-msgstr ""
+msgstr "Opcije upravljanja sesijama"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:254
 msgid "Show session management options"
-msgstr ""
+msgstr "Pokaži opcije upravljanja sesijama"
 
 #~ msgid "GUI"
 #~ msgstr "Grafičko sučelje"
