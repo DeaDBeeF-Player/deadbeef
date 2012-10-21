@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: deadbeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-23 14:33+0200\n"
-"PO-Revision-Date: 2012-10-01 01:28+0200\n"
+"PO-Revision-Date: 2012-10-21 22:46+0200\n"
 "Last-Translator: zvacet <ikoli@yahoo.com>\n"
 "Language-Team: Croatian <>\n"
 "Language: hr\n"
@@ -225,7 +225,7 @@ msgstr "Nova lista izvođenja (%d)"
 
 #: ../plugins/gtkui/gtkui.c:1085
 msgid "- Test logout functionality"
-msgstr ""
+msgstr "- Testiraj finkcionalnost odjave"
 
 #: ../plugins/gtkui/interface.c:150 ../plugins/gtkui/deadbeef.glade.h:1
 msgid "_File"
@@ -452,7 +452,7 @@ msgstr "_O programu"
 
 #: ../plugins/gtkui/interface.c:491 ../plugins/gtkui/deadbeef.glade.h:51
 msgid "_Translators"
-msgstr ""
+msgstr "_Prevoditelji"
 
 #: ../plugins/gtkui/interface.c:907 ../plugins/gtkui/deadbeef.glade.h:52
 msgid "Search"
@@ -526,7 +526,7 @@ msgstr "Tip:"
 
 #: ../plugins/gtkui/interface.c:1513
 msgid "Item Index"
-msgstr ""
+msgstr "Indeks stavki"
 
 #. create default set of columns
 #: ../plugins/gtkui/interface.c:1514 ../plugins/gtkui/mainplaylist.c:317
@@ -618,12 +618,12 @@ msgstr ""
 #: ../plugins/gtkui/interface.c:1905 ../plugins/gtkui/interface.c:1939
 #: ../plugins/gtkui/deadbeef.glade.h:97
 msgid "-12 dB"
-msgstr ""
+msgstr "-12 dB"
 
 #: ../plugins/gtkui/interface.c:1915 ../plugins/gtkui/interface.c:1949
 #: ../plugins/gtkui/deadbeef.glade.h:98
 msgid "+12 dB"
-msgstr ""
+msgstr "+12 dB"
 
 #: ../plugins/gtkui/interface.c:1919 ../plugins/gtkui/deadbeef.glade.h:99
 msgid "Replaygain preamp:"
@@ -641,11 +641,11 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1966 ../plugins/gtkui/deadbeef.glade.h:102
 msgid "Resume previous session on startup"
-msgstr ""
+msgstr "Nastavi prethodnu sesiju pri pokretanju"
 
 #: ../plugins/gtkui/interface.c:1970 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Don't add from archives when adding folders"
-msgstr ""
+msgstr "Ne dodaji iz arhiva kada dodaješ mape"
 
 #: ../plugins/gtkui/interface.c:1974 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Auto-reset \"Stop after current\""
@@ -732,7 +732,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2169 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "Foreground"
-msgstr ""
+msgstr "Prednji plan"
 
 #: ../plugins/gtkui/interface.c:2176 ../plugins/gtkui/deadbeef.glade.h:125
 msgid "Background"
@@ -1024,11 +1024,11 @@ msgstr ""
 
 #: ../plugins/gtkui/prefwin.c:416
 msgid "Action"
-msgstr ""
+msgstr "Akcija"
 
 #: ../plugins/gtkui/prefwin.c:417
 msgid "Key combination"
-msgstr ""
+msgstr "Kombinacija tipki"
 
 #: ../plugins/gtkui/progress.c:56
 msgid "Adding files..."
@@ -1225,7 +1225,7 @@ msgid ""
 msgstr ""
 "Indeks stavke\n"
 "Svira\n"
-"Album Umjet\n"
+"Album Umjetnik\n"
 "Umjetnik-Album\n"
 "Umjetnik\n"
 "Album\n"
@@ -1249,6 +1249,9 @@ msgid ""
 "Track\n"
 "Album"
 msgstr ""
+"Onemogući\n"
+"Zapis\n"
+"Album"
 
 #: ../plugins/gtkui/deadbeef.glade.h:156
 msgid ""
@@ -1405,7 +1408,7 @@ msgstr ""
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:39
 msgid "Max song length (in minutes)"
-msgstr ""
+msgstr "Maksimalna duljina pjesme (u minutama)"
 
 #: ../translation/extra.c:40
 msgid "Fadeout length (seconds)"
@@ -1426,7 +1429,7 @@ msgstr ""
 
 #: ../translation/extra.c:45
 msgid "Custom status icon"
-msgstr ""
+msgstr "Prilagođena statusna ikona"
 
 #: ../translation/extra.c:46
 msgid "Run gtk_init with --sync (debug mode)"
@@ -1456,7 +1459,7 @@ msgstr ""
 #. PulseAudio output plugin
 #: ../translation/extra.c:54
 msgid "PulseAudio server"
-msgstr ""
+msgstr "PulseAudio poslužitelj"
 
 #: ../translation/extra.c:56
 msgid "Samplerate"
@@ -1511,11 +1514,11 @@ msgstr "Ukupno zapisa"
 
 #: ../translation/extra.c:77
 msgid "Genre"
-msgstr ""
+msgstr "Žanr"
 
 #: ../translation/extra.c:78
 msgid "Composer"
-msgstr ""
+msgstr "Skladatelj"
 
 #: ../translation/extra.c:79
 msgid "Disc Number"
@@ -1566,7 +1569,7 @@ msgstr ""
 
 #: ../translation/extra.c:94
 msgid "Quality / Algorithm"
-msgstr ""
+msgstr "Kvaliteta / Algoritam"
 
 #: ../translation/extra.c:95
 msgid "Automatic Samplerate (overrides Target Samplerate)"
@@ -1748,7 +1751,7 @@ msgstr ""
 #: ../plugins/converter/interface.c:223
 #: ../plugins/converter/converter.glade.h:18
 msgid "When file exists:"
-msgstr ""
+msgstr "Kada datoteka postoji:"
 
 #: ../plugins/converter/interface.c:230
 msgid "Prompt"
@@ -1938,7 +1941,7 @@ msgstr ""
 #: ../plugins/shellexecui/interface.c:209
 #: ../plugins/shellexecui/shellexec.glade.h:17
 msgid "Multiple Tracks"
-msgstr ""
+msgstr "Višestruki zapisi"
 
 #: ../plugins/shellexecui/interface.c:212
 #: ../plugins/shellexecui/shellexec.glade.h:16
@@ -1991,7 +1994,7 @@ msgstr "Dodaj naredbu"
 
 #: ../plugins/shellexecui/shellexecui.c:137
 msgid "Delete"
-msgstr ""
+msgstr "Obriši"
 
 #: ../plugins/shellexecui/shellexecui.c:139
 msgid "This action will delete the selected shell command. Are you sure?"
@@ -2016,7 +2019,7 @@ msgstr ""
 #: ../plugins/shellexecui/shellexecui.c:249
 #: ../plugins/shellexecui/shellexecui.c:253
 msgid "Invalid Values"
-msgstr ""
+msgstr "Neispravne vrijednosti"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:165
 #, c-format
@@ -2034,7 +2037,7 @@ msgstr ""
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:974
 #, c-format
 msgid "Starting %s"
-msgstr ""
+msgstr "Pokrećem %s"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1116
 #, c-format
@@ -2044,7 +2047,7 @@ msgstr ""
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1184
 #, c-format
 msgid "Unrecognized launch option: %d"
-msgstr ""
+msgstr "Neprepoznata opcija pokretanja: %d"
 
 #. translators: The 'Type=Link' string is found in a
 #. * desktop file, and should not be translated.
@@ -2068,7 +2071,7 @@ msgstr ""
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:229
 msgid "FILE"
-msgstr ""
+msgstr "DATOTEKA"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:232
 msgid "Specify session management ID"
