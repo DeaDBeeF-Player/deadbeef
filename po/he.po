@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-23 14:33+0200\n"
-"PO-Revision-Date: 2012-09-12 15:47+0200\n"
+"PO-Revision-Date: 2012-10-23 22:28+0200\n"
 "Last-Translator: Yaron <sh.yaron@gmail.com>\n"
 "Language-Team: Gezer <sh.yaron@gmail.com>\n"
 "Language: he\n"
@@ -190,7 +190,7 @@ msgstr "| %4d קסל״ש "
 
 #: ../plugins/gtkui/gtkui.c:196
 msgid "Paused | "
-msgstr "מושהה |"
+msgstr "מושהה | "
 
 #: ../plugins/gtkui/gtkui.c:201
 #, c-format
@@ -206,7 +206,7 @@ msgstr "שמירת רשימת ההשמעה בשם"
 
 #: ../plugins/gtkui/gtkui.c:658
 msgid "DeaDBeeF playlist files (*.dbpl)"
-msgstr "קובצי רשימת השמעה של DeaDBeeF‏ (*.dbpl)"
+msgstr "קובצי רשימת השמעה של DeaDBeeF‏ (‎*.dbpl)"
 
 #: ../plugins/gtkui/gtkui.c:776
 msgid "Load Playlist"
@@ -833,7 +833,7 @@ msgstr "רשת"
 
 #: ../plugins/gtkui/interface.c:2513 ../plugins/gtkui/deadbeef.glade.h:149
 msgid "Version: "
-msgstr "גרסה:"
+msgstr "גרסה: "
 
 #: ../plugins/gtkui/interface.c:2577 ../plugins/gtkui/deadbeef.glade.h:150
 #: ../translation/extra.c:82
@@ -1049,7 +1049,7 @@ msgstr "האם באמת לסגור את החלון?"
 #. get value to edit
 #: ../plugins/gtkui/trkproperties.c:279
 msgid "[Multiple values] "
-msgstr "[ערכים מרובים]"
+msgstr "[ערכים מרובים] "
 
 #: ../plugins/gtkui/trkproperties.c:432 ../plugins/gtkui/trkproperties.c:444
 msgid "Key"
@@ -1423,7 +1423,7 @@ msgstr "אורך השיר המרבי (בדקות)"
 
 #: ../translation/extra.c:40
 msgid "Fadeout length (seconds)"
-msgstr " משך העמעום (שניות)"
+msgstr "משך העמעום (שניות)"
 
 #: ../translation/extra.c:41
 msgid "Play loops nr. of times (if available)"
