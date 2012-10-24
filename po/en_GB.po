@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: 0xDeadBeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-23 14:33+0200\n"
-"PO-Revision-Date: 2012-01-25 00:29+0200\n"
+"PO-Revision-Date: 2012-10-24 23:12+0200\n"
 "Last-Translator: Steve <yorvik.ubunto@gmail.com>\n"
 "Language-Team: English (United Kingdom) <yorvik.ubunto@gmail.com>\n"
 "Language: en_GB\n"
@@ -222,7 +222,7 @@ msgstr "New Playlist (%d)"
 
 #: ../plugins/gtkui/gtkui.c:1085
 msgid "- Test logout functionality"
-msgstr ""
+msgstr "- Test logout functionality"
 
 #: ../plugins/gtkui/interface.c:150 ../plugins/gtkui/deadbeef.glade.h:1
 msgid "_File"
@@ -303,9 +303,8 @@ msgid "_Find"
 msgstr "_Find"
 
 #: ../plugins/gtkui/interface.c:288 ../plugins/gtkui/deadbeef.glade.h:19
-#, fuzzy
 msgid "Sort by"
-msgstr "Sort By"
+msgstr "Sort by"
 
 #: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1519
 #: ../plugins/gtkui/mainplaylist.c:320 ../plugins/gtkui/prefwin.c:667
@@ -400,19 +399,16 @@ msgid "Looping"
 msgstr "Looping"
 
 #: ../plugins/gtkui/interface.c:400 ../plugins/gtkui/deadbeef.glade.h:39
-#, fuzzy
 msgid "Loop all"
-msgstr "Loop All"
+msgstr "Loop all"
 
 #: ../plugins/gtkui/interface.c:406 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "Loop single song"
-msgstr "Loop Single Song"
+msgstr "Loop single song"
 
 #: ../plugins/gtkui/interface.c:412 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "Don't loop"
-msgstr "Don’t Loop"
+msgstr "Don't loop"
 
 #: ../plugins/gtkui/interface.c:418 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Scroll follows playback"
@@ -647,9 +643,8 @@ msgid "Don't add from archives when adding folders"
 msgstr "Don't add from archives when adding folders"
 
 #: ../plugins/gtkui/interface.c:1974 ../plugins/gtkui/deadbeef.glade.h:104
-#, fuzzy
 msgid "Auto-reset \"Stop after current\""
-msgstr "Stop after current"
+msgstr "Auto-reset \"Stop after current\""
 
 #: ../plugins/gtkui/interface.c:1978 ../plugins/gtkui/deadbeef.glade.h:105
 msgid "Playback"
@@ -699,11 +694,11 @@ msgstr "Auto-name playlists when adding a single folder"
 
 #: ../plugins/gtkui/interface.c:2083 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Enable Russian CP1251 detection and recoding"
-msgstr ""
+msgstr "Enable Russian CP1251 detection and recoding"
 
 #: ../plugins/gtkui/interface.c:2087 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Enable Chinese CP936 detection and recoding"
-msgstr ""
+msgstr "Enable Chinese CP936 detection and recoding"
 
 #: ../plugins/gtkui/interface.c:2095 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Interface refresh rate (times per second):"
@@ -723,7 +718,7 @@ msgstr "GUI Plugin (changing requires restart):"
 
 #: ../plugins/gtkui/interface.c:2145 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "GUI/Misc"
-msgstr ""
+msgstr "GUI/Misc"
 
 #: ../plugins/gtkui/interface.c:2160 ../plugins/gtkui/interface.c:2204
 #: ../plugins/gtkui/deadbeef.glade.h:123
@@ -825,7 +820,7 @@ msgstr "Proxy Password:"
 
 #: ../plugins/gtkui/interface.c:2473 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "HTTP User Agent:"
-msgstr ""
+msgstr "HTTP User Agent:"
 
 #: ../plugins/gtkui/interface.c:2482 ../plugins/gtkui/deadbeef.glade.h:148
 msgid "Network"
@@ -849,14 +844,12 @@ msgid "URL:"
 msgstr "URL:"
 
 #: ../plugins/gtkui/interface.c:3196 ../plugins/gtkui/deadbeef.glade.h:153
-#, fuzzy
 msgid "Group By ..."
-msgstr "Group By"
+msgstr "Group By ..."
 
 #: ../plugins/gtkui/interface.c:3320 ../plugins/gtkui/deadbeef.glade.h:154
-#, fuzzy
 msgid "Sort by ..."
-msgstr "Sort by..."
+msgstr "Sort by ..."
 
 #: ../plugins/gtkui/interface.c:3336 ../plugins/gtkui/deadbeef.glade.h:155
 msgid "Format"
@@ -1025,9 +1018,8 @@ msgid "Global Hotkeys"
 msgstr "Global Hot-keys"
 
 #: ../plugins/gtkui/prefwin.c:416
-#, fuzzy
 msgid "Action"
-msgstr "Location"
+msgstr "Action"
 
 #: ../plugins/gtkui/prefwin.c:417
 msgid "Key combination"
@@ -1068,7 +1060,7 @@ msgstr "Writing tags..."
 
 #: ../plugins/gtkui/trkproperties.c:659
 msgid "Field name"
-msgstr ""
+msgstr "Field name"
 
 #: ../plugins/gtkui/trkproperties.c:662
 msgid "Name:"
@@ -1095,9 +1087,9 @@ msgid "Remove field"
 msgstr "Remove field"
 
 #: ../main.c:84
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: deadbeef [options] [--] [file(s)]\n"
-msgstr "Usage: deadbeef [options] [file(s)]\n"
+msgstr "Usage: deadbeef [options] [--] [file(s)]\n"
 
 #: ../main.c:85
 #, c-format
@@ -1170,7 +1162,7 @@ msgstr "   --queue            Append file(s) to existing playlist\n"
 #, c-format
 msgid ""
 "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
-msgstr ""
+msgstr "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
 
 #: ../main.c:99
 #, c-format
@@ -1289,9 +1281,8 @@ msgstr ""
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
-#, fuzzy
 msgid "Add audio CD"
-msgstr "Add Audio CD"
+msgstr "Add audio CD"
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
@@ -1337,7 +1328,7 @@ msgstr "Scrobble URL"
 
 #: ../translation/extra.c:16
 msgid "Prefer Album Artist over Artist field"
-msgstr ""
+msgstr "Prefer Album Artist over Artist field"
 
 #. OSS output plugin
 #: ../translation/extra.c:18
@@ -1409,7 +1400,7 @@ msgstr "Re-sampling quality (0..2, higher is better)"
 
 #: ../translation/extra.c:37
 msgid "8-bit output (default is 16)"
-msgstr ""
+msgstr "8-bit output (default is 16)"
 
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:39
@@ -1417,13 +1408,12 @@ msgid "Max song length (in minutes)"
 msgstr "Maximum song length (in minutes)"
 
 #: ../translation/extra.c:40
-#, fuzzy
 msgid "Fadeout length (seconds)"
-msgstr "Default song length (sec)"
+msgstr "Fadeout length (seconds)"
 
 #: ../translation/extra.c:41
 msgid "Play loops nr. of times (if available)"
-msgstr ""
+msgstr "Play loops nr. of times (if available)"
 
 #. Standard GTK2 user interface plugin
 #: ../translation/extra.c:43
@@ -1575,7 +1565,6 @@ msgid "Target Samplerate"
 msgstr "Target sample rate"
 
 #: ../translation/extra.c:94
-#, fuzzy
 msgid "Quality / Algorithm"
 msgstr "Quality / Algorithm"
 
@@ -1586,22 +1575,21 @@ msgstr "Automatic sample rate (overrides Target sample rate)"
 #. shellexecui
 #: ../translation/extra.c:97
 msgid "Configure custom shell commands"
-msgstr ""
+msgstr "Configure custom shell commands"
 
 #. mpgmad
 #: ../translation/extra.c:99
 msgid "Disable gapless playback (faster scanning)"
-msgstr ""
+msgstr "Disable gap-less playback (faster scanning)"
 
 #. adplug
 #: ../translation/extra.c:101
 msgid "Prefer Ken emu over Satoh (surround won't work)"
-msgstr ""
+msgstr "Prefer Ken emu over Satoh (surround won't work)"
 
 #: ../translation/extra.c:102
-#, fuzzy
 msgid "Enable surround"
-msgstr "Enable scrobbler"
+msgstr "Enable surround"
 
 #: ../plugins/converter/convgui.c:117
 msgid "The file already exists. Overwrite?"
@@ -1695,13 +1683,12 @@ msgstr "Output folder:"
 #: ../plugins/converter/interface.c:109
 #: ../plugins/converter/converter.glade.h:2
 msgid "Write to source track folder"
-msgstr ""
+msgstr "Write to source track folder"
 
 #: ../plugins/converter/interface.c:113
 #: ../plugins/converter/converter.glade.h:3
-#, fuzzy
 msgid "Preserve folder structure"
-msgstr "Preserve folder structure, starting from:"
+msgstr "Preserve folder structure"
 
 #: ../plugins/converter/interface.c:121
 #: ../plugins/converter/converter.glade.h:4
@@ -1882,49 +1869,53 @@ msgid ""
 "32 bit signed int\n"
 "32 bit float"
 msgstr ""
+"Keep source format\n"
+"8 bit signed int\n"
+"16 bit signed int\n"
+"24 bit signed int\n"
+"32 bit signed int\n"
+"32 bit float"
 
 #: ../plugins/converter/converter.glade.h:19
-#, fuzzy
 msgid ""
 "Prompt\n"
 "Overwrite"
-msgstr "Overwrite"
+msgstr ""
+"Prompt\n"
+"Overwrite"
 
 #: ../plugins/converter/converter.glade.h:34
-#, fuzzy
 msgid ""
 "Pipe\n"
 "Temporary file"
-msgstr "Temporary file"
+msgstr ""
+"Pipe\n"
+"Temporary file"
 
 #: ../plugins/shellexecui/interface.c:46
 #: ../plugins/shellexecui/shellexec.glade.h:1
 msgid "Custom Shell Commands"
-msgstr ""
+msgstr "Custom Shell Commands"
 
 #: ../plugins/shellexecui/interface.c:69
 #: ../plugins/shellexecui/shellexec.glade.h:5
-#, fuzzy
 msgid "Edit"
-msgstr "_Edit"
+msgstr "Edit"
 
 #: ../plugins/shellexecui/interface.c:87
 #: ../plugins/shellexecui/shellexec.glade.h:2
-#, fuzzy
 msgid "Close"
-msgstr "_Close"
+msgstr "Close"
 
 #: ../plugins/shellexecui/interface.c:145
 #: ../plugins/shellexecui/shellexec.glade.h:6
-#, fuzzy
 msgid "Edit Command"
-msgstr "Edit column"
+msgstr "Edit Command"
 
 #: ../plugins/shellexecui/interface.c:166
 #: ../plugins/shellexecui/shellexec.glade.h:8
-#, fuzzy
 msgid "Command:"
-msgstr "Command line:"
+msgstr "Command:"
 
 #: ../plugins/shellexecui/interface.c:178
 #: ../plugins/shellexecui/shellexec.glade.h:10
@@ -1934,16 +1925,19 @@ msgid ""
 "main application was started from. Title formatting can be used. Example: "
 "xdg-open %D"
 msgstr ""
+"Arbitrary shell command. Will be executed in the shell context which the "
+"main application was started from. Title formatting can be used. Example: "
+"xdg-open %D"
 
 #: ../plugins/shellexecui/interface.c:181
 #: ../plugins/shellexecui/shellexec.glade.h:11
 msgid "ID:"
-msgstr ""
+msgstr "ID:"
 
 #: ../plugins/shellexecui/interface.c:193
 #: ../plugins/shellexecui/shellexec.glade.h:12
 msgid "Free-form name, for example \"My Shell Command\""
-msgstr ""
+msgstr "Free-form name, for example \"My Shell Command\""
 
 #: ../plugins/shellexecui/interface.c:201
 #: ../plugins/shellexecui/shellexec.glade.h:13
@@ -1951,39 +1945,38 @@ msgid ""
 "Command ID, normally it should be something short, for example \"youtube_open"
 "\". It must be unique."
 msgstr ""
+"Command ID, normally it should be something short, for example "
+"\"youtube_open\". It must be unique."
 
 #: ../plugins/shellexecui/interface.c:204
 #: ../plugins/shellexecui/shellexec.glade.h:15
-#, fuzzy
 msgid "Single Tracks"
-msgstr "Shuffle tracks"
+msgstr "Single Tracks"
 
 #: ../plugins/shellexecui/interface.c:207
 #: ../plugins/shellexecui/shellexec.glade.h:14
 msgid "Works on single track."
-msgstr ""
+msgstr "Works on single track."
 
 #: ../plugins/shellexecui/interface.c:209
 #: ../plugins/shellexecui/shellexec.glade.h:17
-#, fuzzy
 msgid "Multiple Tracks"
-msgstr "[Multiple values] "
+msgstr "Multiple Tracks"
 
 #: ../plugins/shellexecui/interface.c:212
 #: ../plugins/shellexecui/shellexec.glade.h:16
 msgid "Works on multiple tracks."
-msgstr ""
+msgstr "Works on multiple tracks."
 
 #: ../plugins/shellexecui/interface.c:214
 #: ../plugins/shellexecui/shellexec.glade.h:19
-#, fuzzy
 msgid "Local"
-msgstr "Location"
+msgstr "Local"
 
 #: ../plugins/shellexecui/interface.c:217
 #: ../plugins/shellexecui/shellexec.glade.h:18
 msgid "Works on local files."
-msgstr ""
+msgstr "Works on local files."
 
 #: ../plugins/shellexecui/interface.c:219
 #: ../plugins/shellexecui/shellexec.glade.h:21
