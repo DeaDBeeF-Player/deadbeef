@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: 0xDeadBeef\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-23 14:33+0200\n"
-"PO-Revision-Date: 2012-10-24 23:12+0200\n"
+"PO-Revision-Date: 2012-10-24 23:27+0200\n"
 "Last-Translator: Steve <yorvik.ubunto@gmail.com>\n"
 "Language-Team: English (United Kingdom) <yorvik.ubunto@gmail.com>\n"
 "Language: en_GB\n"
@@ -1980,77 +1980,71 @@ msgstr "Works on local files."
 
 #: ../plugins/shellexecui/interface.c:219
 #: ../plugins/shellexecui/shellexec.glade.h:21
-#, fuzzy
 msgid "Remote"
-msgstr "Remove"
+msgstr "Remote"
 
 #: ../plugins/shellexecui/interface.c:222
 #: ../plugins/shellexecui/shellexec.glade.h:20
 msgid "Works on remote files (e.g. http:// streams)"
-msgstr ""
+msgstr "Works on remote files (e.g. http:// streams)"
 
 #: ../plugins/shellexecui/interface.c:224
 #: ../plugins/shellexecui/shellexec.glade.h:23
-#, fuzzy
 msgid "Playlist"
-msgstr "New Playlist"
+msgstr "Play-list"
 
 #: ../plugins/shellexecui/interface.c:227
 #: ../plugins/shellexecui/shellexec.glade.h:22
 msgid "Item should appear on the playlist tab context menu"
-msgstr ""
+msgstr "Item should appear on the play-list tab context menu"
 
 #: ../plugins/shellexecui/interface.c:229
 #: ../plugins/shellexecui/shellexec.glade.h:25
-#, fuzzy
 msgid "Common"
-msgstr "Comment"
+msgstr "Common"
 
 #: ../plugins/shellexecui/interface.c:232
 #: ../plugins/shellexecui/shellexec.glade.h:24
 msgid "Item should appear in the main menu"
-msgstr ""
+msgstr "Item should appear in the main menu"
 
 #: ../plugins/shellexecui/shellexecui.c:94
-#, fuzzy
 msgid "Add Command"
-msgstr "Add column"
+msgstr "Add Command"
 
 #: ../plugins/shellexecui/shellexecui.c:137
 msgid "Delete"
-msgstr ""
+msgstr "Delete"
 
 #: ../plugins/shellexecui/shellexecui.c:139
-#, fuzzy
 msgid "This action will delete the selected shell command. Are you sure?"
-msgstr "This action will delete the selected preset. Are you sure?"
+msgstr "This action will delete the selected shell command. Are you sure?"
 
 #: ../plugins/shellexecui/shellexecui.c:141
-#, fuzzy
 msgid "Confirm Remove"
-msgstr "Configure"
+msgstr "Confirm Remove"
 
 #: ../plugins/shellexecui/shellexecui.c:230
 msgid "ID must be non-empty and unique.\n"
-msgstr ""
+msgstr "ID must be non-empty and unique.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:236
 msgid "Title must be non-empty.\n"
-msgstr ""
+msgstr "Title must be non-empty.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:242
 msgid "Shell Command must be non-empty.\n"
-msgstr ""
+msgstr "Shell Command must be non-empty.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:249
 #: ../plugins/shellexecui/shellexecui.c:253
 msgid "Invalid Values"
-msgstr ""
+msgstr "Invalid Values"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:165
 #, c-format
 msgid "File is not a valid .desktop file"
-msgstr ""
+msgstr "File is not a valid .desktop file"
 
 #. translators: 'Version' is from a desktop file, and
 #. * should not be translated. '%s' would probably be a
@@ -2058,62 +2052,62 @@ msgstr ""
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:191
 #, c-format
 msgid "Unrecognized desktop file Version '%s'"
-msgstr ""
+msgstr "Unrecognised desktop file Version '%s'"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:974
-#, fuzzy, c-format
+#, c-format
 msgid "Starting %s"
-msgstr "Settings"
+msgstr "Starting %s"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1116
 #, c-format
 msgid "Application does not accept documents on command line"
-msgstr ""
+msgstr "Application does not accept documents on command line"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1184
 #, c-format
 msgid "Unrecognized launch option: %d"
-msgstr ""
+msgstr "Unrecognised launch option: %d"
 
 #. translators: The 'Type=Link' string is found in a
 #. * desktop file, and should not be translated.
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1391
 #, c-format
 msgid "Can't pass document URIs to a 'Type=Link' desktop entry"
-msgstr ""
+msgstr "Can't pass document URIs to a 'Type=Link' desktop entry"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1412
 #, c-format
 msgid "Not a launchable item"
-msgstr ""
+msgstr "Not a launchable item"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:226
 msgid "Disable connection to session manager"
-msgstr ""
+msgstr "Disable connection to session manager"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:229
 msgid "Specify file containing saved configuration"
-msgstr ""
+msgstr "Specify file containing saved configuration"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:229
 msgid "FILE"
-msgstr ""
+msgstr "FILE"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:232
 msgid "Specify session management ID"
-msgstr ""
+msgstr "Specify session management ID"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:232
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:253
 msgid "Session management options:"
-msgstr ""
+msgstr "Session management options:"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:254
 msgid "Show session management options"
-msgstr ""
+msgstr "Show session management options"
 
 #~ msgid "GUI"
 #~ msgstr "GUI"
