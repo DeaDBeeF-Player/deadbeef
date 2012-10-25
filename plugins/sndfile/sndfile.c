@@ -207,13 +207,17 @@ sndfile_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->fmt.channels = inf.channels;
     _info->fmt.samplerate = inf.samplerate;
 
-    int channel_map [inf.channels];
-    int cmdres = sf_command (info->ctx, SFC_GET_CHANNEL_MAP_INFO, channel_map, sizeof (channel_map)) ;
-    if (cmdres != SF_FALSE) {
-        // channel map found, convert to channel mask
-        _info->fmt.channelmask = wavex_gen_channel_mask (channel_map, inf.channels);
-    }
-    else {
+// FIXME: streamer and maybe output plugins need to be fixed to support
+// arbitrary channelmask
+//
+//    int channel_map [inf.channels];
+//    int cmdres = sf_command (info->ctx, SFC_GET_CHANNEL_MAP_INFO, channel_map, sizeof (channel_map)) ;
+//    if (cmdres != SF_FALSE) {
+//        // channel map found, convert to channel mask
+//        _info->fmt.channelmask = wavex_gen_channel_mask (channel_map, inf.channels);
+//    }
+//    else
+    {
         // channel map not found, generate from channel number
         for (int i = 0; i < inf.channels; i++) {
             _info->fmt.channelmask |= 1 << i;
