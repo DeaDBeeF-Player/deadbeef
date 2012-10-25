@@ -577,6 +577,30 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
     cairo_fill (cr);
     cairo_reset_clip (cr);
 
+    if (seekbar_moving && trk) {
+        float dur = deadbeef->pl_get_item_duration (trk);
+        float time = seekbar_move_x * dur / (a.width);
+        if (time < 0) {
+            time = 0;
+        }
+        if (time > dur) {
+            time = dur;
+        }
+        char s[1000];
+        int hr = time/360;
+        int mn = (time-hr*360)/60;
+        int sc = time-hr*360-mn*60;
+        snprintf (s, sizeof (s), "%02d:%02d:%02d", hr, mn, sc);
+
+        cairo_set_source_rgba (cr, 0, 0, 0, 0.5);
+        cairo_rectangle (cr, ax, ay, 100, ah);
+        cairo_fill (cr);
+        cairo_move_to (cr, ax, ay+20);
+        cairo_set_source_rgb (cr, 1, 1, 1);
+        cairo_show_text (cr, s);
+    }
+
+
     if (trk) {
         deadbeef->pl_item_unref (trk);
     }
