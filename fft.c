@@ -16,6 +16,10 @@
  * implied. In no event shall the authors be liable for any damages arising from
  * the use of this software.
  */
+
+// this version has few changes compared to the original audacious fft.c
+// please find the original file in audacious
+
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
