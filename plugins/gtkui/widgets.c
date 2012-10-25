@@ -1655,18 +1655,14 @@ w_tabbed_playlist_create (void) {
     GtkWidget *list = ddb_listview_new ();
     w->list = (DdbListview *)list;
     gtk_widget_show (list);
-    GtkWidget *frame = gtk_frame_new (NULL);
-    gtk_widget_show (frame);
 
     gtk_box_pack_start (GTK_BOX (vbox), tabstrip, FALSE, TRUE, 0);
     gtk_widget_set_size_request (tabstrip, -1, 24);
     gtk_widget_set_can_focus (tabstrip, FALSE);
     gtk_widget_set_can_default (tabstrip, FALSE);
 
-    gtk_box_pack_start (GTK_BOX (vbox), frame, TRUE, TRUE, 0);
-    gtk_container_set_border_width (GTK_CONTAINER (frame), 1);
+    gtk_box_pack_start (GTK_BOX (vbox), list, TRUE, TRUE, 0);
 
-    gtk_container_add (GTK_CONTAINER (frame), list);
     main_playlist_init (list);
     if (deadbeef->conf_get_int ("gtkui.headers.visible", 1)) {
         ddb_listview_show_header (w->list, 1);
