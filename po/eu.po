@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-23 14:33+0200\n"
-"PO-Revision-Date: 2012-08-17 02:20+0200\n"
-"Last-Translator: Asier_Iturralde_Sarasola <asier.iturralde@gmail.com>\n"
+"PO-Revision-Date: 2012-10-27 22:22+0200\n"
+"Last-Translator: Asier <asier.iturralde@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: eu\n"
 "MIME-Version: 1.0\n"
@@ -305,7 +305,6 @@ msgid "_Find"
 msgstr "_Aurkitu"
 
 #: ../plugins/gtkui/interface.c:288 ../plugins/gtkui/deadbeef.glade.h:19
-#, fuzzy
 msgid "Sort by"
 msgstr "Ordenatu honela"
 
@@ -402,17 +401,14 @@ msgid "Looping"
 msgstr "Errepikapenak"
 
 #: ../plugins/gtkui/interface.c:400 ../plugins/gtkui/deadbeef.glade.h:39
-#, fuzzy
 msgid "Loop all"
 msgstr "Errepikatu guztiak"
 
 #: ../plugins/gtkui/interface.c:406 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "Loop single song"
 msgstr "Errepikatu kanta bat"
 
 #: ../plugins/gtkui/interface.c:412 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "Don't loop"
 msgstr "Ez errepikatu"
 
@@ -651,9 +647,8 @@ msgid "Don't add from archives when adding folders"
 msgstr "Ez gehitu fitxategietatik karpetak gehitzean"
 
 #: ../plugins/gtkui/interface.c:1974 ../plugins/gtkui/deadbeef.glade.h:104
-#, fuzzy
 msgid "Auto-reset \"Stop after current\""
-msgstr "Gelditu unekoaren ondoren"
+msgstr "Berrezarri automatikoki 'Gelditu unekoaren ondoren'"
 
 #: ../plugins/gtkui/interface.c:1978 ../plugins/gtkui/deadbeef.glade.h:105
 msgid "Playback"
@@ -832,7 +827,7 @@ msgstr "Proxy pasahitza:"
 
 #: ../plugins/gtkui/interface.c:2473 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "HTTP User Agent:"
-msgstr ""
+msgstr "HTTP erabiltzaile-agentea:"
 
 #: ../plugins/gtkui/interface.c:2482 ../plugins/gtkui/deadbeef.glade.h:148
 msgid "Network"
@@ -856,12 +851,10 @@ msgid "URL:"
 msgstr "URLa:"
 
 #: ../plugins/gtkui/interface.c:3196 ../plugins/gtkui/deadbeef.glade.h:153
-#, fuzzy
 msgid "Group By ..."
-msgstr "Taldekatzeko irizpidea"
+msgstr "Taldekatzeko irizpidea..."
 
 #: ../plugins/gtkui/interface.c:3320 ../plugins/gtkui/deadbeef.glade.h:154
-#, fuzzy
 msgid "Sort by ..."
 msgstr "Ordenatzeko irizpidea..."
 
@@ -1032,9 +1025,8 @@ msgid "Global Hotkeys"
 msgstr "Laster-tekla orokorrak"
 
 #: ../plugins/gtkui/prefwin.c:416
-#, fuzzy
 msgid "Action"
-msgstr "Kokapena"
+msgstr "Ekintza"
 
 #: ../plugins/gtkui/prefwin.c:417
 msgid "Key combination"
@@ -1075,7 +1067,7 @@ msgstr "Etiketak idazten..."
 
 #: ../plugins/gtkui/trkproperties.c:659
 msgid "Field name"
-msgstr ""
+msgstr "Eremuaren izena"
 
 #: ../plugins/gtkui/trkproperties.c:662
 msgid "Name:"
@@ -1104,9 +1096,9 @@ msgid "Remove field"
 msgstr "Kendu eremua"
 
 #: ../main.c:84
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: deadbeef [options] [--] [file(s)]\n"
-msgstr "Erabilera: deadbeef [aukerak] [fitxategia(k)]\n"
+msgstr "Erabilera: deadbeef [aukerak] [--] [fitxategia(k)]\n"
 
 #: ../main.c:85
 #, c-format
@@ -1182,7 +1174,8 @@ msgstr ""
 #, c-format
 msgid ""
 "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
-msgstr ""
+msgstr "   --gui PLUGINA       Erabili beharreko GUI plugina zehazten du, lehenetsia "
+"\"GTK2\" da\n"
 
 #: ../main.c:99
 #, c-format
@@ -1312,7 +1305,6 @@ msgstr ""
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
-#, fuzzy
 msgid "Add audio CD"
 msgstr "Gehitu audio CDa"
 
@@ -1432,7 +1424,7 @@ msgstr "Birlaginketa kalitatea (0..2, altuagoa hobea da)"
 
 #: ../translation/extra.c:37
 msgid "8-bit output (default is 16)"
-msgstr ""
+msgstr "8 biteko irteera (lehenetsia 16 da)"
 
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:39
@@ -1600,7 +1592,6 @@ msgid "Target Samplerate"
 msgstr "Helburuko lagintze-maiztasuna"
 
 #: ../translation/extra.c:94
-#, fuzzy
 msgid "Quality / Algorithm"
 msgstr "Kalitatea / Algoritmoa"
 
@@ -1613,7 +1604,7 @@ msgstr ""
 #. shellexecui
 #: ../translation/extra.c:97
 msgid "Configure custom shell commands"
-msgstr ""
+msgstr "Konfiguratu shell komando pertsonalizatuak"
 
 #. mpgmad
 #: ../translation/extra.c:99
@@ -1728,9 +1719,8 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:113
 #: ../plugins/converter/converter.glade.h:3
-#, fuzzy
 msgid "Preserve folder structure"
-msgstr "Mantendu karpeta-egitura, hemendik hasita:"
+msgstr "Mantendu karpeta-egitura"
 
 #: ../plugins/converter/interface.c:121
 #: ../plugins/converter/converter.glade.h:4
@@ -1930,31 +1920,27 @@ msgstr "Aldi baterako fitxategia"
 #: ../plugins/shellexecui/interface.c:46
 #: ../plugins/shellexecui/shellexec.glade.h:1
 msgid "Custom Shell Commands"
-msgstr ""
+msgstr "Shell komando pertsonalizatuak"
 
 #: ../plugins/shellexecui/interface.c:69
 #: ../plugins/shellexecui/shellexec.glade.h:5
-#, fuzzy
 msgid "Edit"
-msgstr "_Editatu"
+msgstr "Editatu"
 
 #: ../plugins/shellexecui/interface.c:87
 #: ../plugins/shellexecui/shellexec.glade.h:2
-#, fuzzy
 msgid "Close"
-msgstr "_Itxi"
+msgstr "Itxi"
 
 #: ../plugins/shellexecui/interface.c:145
 #: ../plugins/shellexecui/shellexec.glade.h:6
-#, fuzzy
 msgid "Edit Command"
-msgstr "Editatu zutabea"
+msgstr "Editatu komandoa"
 
 #: ../plugins/shellexecui/interface.c:166
 #: ../plugins/shellexecui/shellexec.glade.h:8
-#, fuzzy
 msgid "Command:"
-msgstr "Komando-lerroa:"
+msgstr "Komandoa:"
 
 #: ../plugins/shellexecui/interface.c:178
 #: ../plugins/shellexecui/shellexec.glade.h:10
@@ -1968,7 +1954,7 @@ msgstr ""
 #: ../plugins/shellexecui/interface.c:181
 #: ../plugins/shellexecui/shellexec.glade.h:11
 msgid "ID:"
-msgstr ""
+msgstr "IDa:"
 
 #: ../plugins/shellexecui/interface.c:193
 #: ../plugins/shellexecui/shellexec.glade.h:12
@@ -1986,7 +1972,7 @@ msgstr ""
 #: ../plugins/shellexecui/shellexec.glade.h:15
 #, fuzzy
 msgid "Single Tracks"
-msgstr "Nahastu pistak"
+msgstr "Pista bakunak"
 
 #: ../plugins/shellexecui/interface.c:207
 #: ../plugins/shellexecui/shellexec.glade.h:14
@@ -2006,9 +1992,8 @@ msgstr ""
 
 #: ../plugins/shellexecui/interface.c:214
 #: ../plugins/shellexecui/shellexec.glade.h:19
-#, fuzzy
 msgid "Local"
-msgstr "Kokapena"
+msgstr "Lokala"
 
 #: ../plugins/shellexecui/interface.c:217
 #: ../plugins/shellexecui/shellexec.glade.h:18
@@ -2017,9 +2002,8 @@ msgstr ""
 
 #: ../plugins/shellexecui/interface.c:219
 #: ../plugins/shellexecui/shellexec.glade.h:21
-#, fuzzy
 msgid "Remote"
-msgstr "Kendu"
+msgstr "Urrunekoa"
 
 #: ../plugins/shellexecui/interface.c:222
 #: ../plugins/shellexecui/shellexec.glade.h:20
@@ -2028,9 +2012,8 @@ msgstr ""
 
 #: ../plugins/shellexecui/interface.c:224
 #: ../plugins/shellexecui/shellexec.glade.h:23
-#, fuzzy
 msgid "Playlist"
-msgstr "Erreprodukzio-zerrenda berria"
+msgstr "Erreprodukzio-zerrenda"
 
 #: ../plugins/shellexecui/interface.c:227
 #: ../plugins/shellexecui/shellexec.glade.h:22
@@ -2049,45 +2032,42 @@ msgid "Item should appear in the main menu"
 msgstr ""
 
 #: ../plugins/shellexecui/shellexecui.c:94
-#, fuzzy
 msgid "Add Command"
-msgstr "Gehitu zutabea"
+msgstr "Gehitu komandoa"
 
 #: ../plugins/shellexecui/shellexecui.c:137
 msgid "Delete"
-msgstr ""
+msgstr "Ezabatu"
 
 #: ../plugins/shellexecui/shellexecui.c:139
-#, fuzzy
 msgid "This action will delete the selected shell command. Are you sure?"
-msgstr "Ekintza honek hautatutako aurrezarpena ezabatuko du. Ziur zaude?"
+msgstr "Ekintza honek hautatutako shell komandoa ezabatuko du. Ziur zaude?"
 
 #: ../plugins/shellexecui/shellexecui.c:141
-#, fuzzy
 msgid "Confirm Remove"
-msgstr "Konfiguratu"
+msgstr "Berretsi kentzea"
 
 #: ../plugins/shellexecui/shellexecui.c:230
 msgid "ID must be non-empty and unique.\n"
-msgstr ""
+msgstr "IDak ezin du hutsik egon eta bakarra izan behar du.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:236
 msgid "Title must be non-empty.\n"
-msgstr ""
+msgstr "Izenburuak ezin du hutsik egon.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:242
 msgid "Shell Command must be non-empty.\n"
-msgstr ""
+msgstr "Shell komandoak ezin du hutsik egon.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:249
 #: ../plugins/shellexecui/shellexecui.c:253
 msgid "Invalid Values"
-msgstr ""
+msgstr "Balio baliogabeak"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:165
 #, c-format
 msgid "File is not a valid .desktop file"
-msgstr ""
+msgstr "Fitxategia ez da baliozko .desktop fitxategi bat"
 
 #. translators: 'Version' is from a desktop file, and
 #. * should not be translated. '%s' would probably be a
@@ -2098,14 +2078,14 @@ msgid "Unrecognized desktop file Version '%s'"
 msgstr ""
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:974
-#, fuzzy, c-format
+#, c-format
 msgid "Starting %s"
-msgstr "Ezarpenak"
+msgstr "%s hasten"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1116
 #, c-format
 msgid "Application does not accept documents on command line"
-msgstr ""
+msgstr "Aplikazioak ez ditu onartzen dokumentuak komando-lerroan"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1184
 #, c-format
@@ -2130,11 +2110,11 @@ msgstr ""
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:229
 msgid "Specify file containing saved configuration"
-msgstr ""
+msgstr "Zehaztu gordetako konfigurazioa duen fitxategia"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:229
 msgid "FILE"
-msgstr ""
+msgstr "FITXATEGIA"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:232
 msgid "Specify session management ID"
@@ -2142,7 +2122,7 @@ msgstr ""
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:232
 msgid "ID"
-msgstr ""
+msgstr "IDa"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:253
 msgid "Session management options:"
