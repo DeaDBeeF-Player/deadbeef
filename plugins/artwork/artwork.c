@@ -20,6 +20,7 @@
 #include "artwork.h"
 #include "lastfm.h"
 #include "albumartorg.h"
+#include "wos.h"
 
 #ifdef USE_IMLIB2
 #include <Imlib2.h>
@@ -75,6 +76,7 @@ static int artwork_enable_embedded;
 static int artwork_enable_local;
 static int artwork_enable_lfm;
 static int artwork_enable_aao;
+static int artwork_enable_wos;
 static time_t artwork_reset_time;
 static char artwork_filemask[200];
 
@@ -1115,10 +1117,17 @@ fetcher_thread (void *none)
             }
 
             if (!got_pic) {
-                if (artwork_enable_lfm && !fetch_from_lastfm (param->artist, param->album, cache_path)) {
+                if (artwork_enable_wos) {
+
+                    char *dot = strrchr (param->fname, '.');
+                    if (dot && !strcasecmp (dot, ".ay") && !fetch_from_wos (param->album, cache_path)) {
+                        got_pic = 1;
+                    }
+                }
+                if (!got_pic && artwork_enable_lfm && !fetch_from_lastfm (param->artist, param->album, cache_path)) {
                     got_pic = 1;
                 }
-                else if (artwork_enable_aao && !fetch_from_albumart_org (param->artist, param->album, cache_path)) {
+                else if (!got_pic && artwork_enable_aao && !fetch_from_albumart_org (param->artist, param->album, cache_path)) {
                     got_pic = 1;
                 }
             }
@@ -1181,7 +1190,7 @@ find_image (const char *path) {
 char*
 get_album_art (const char *fname, const char *artist, const char *album, int size, artwork_callback callback, void *user_data)
 {
-//    trace ("get_album_art: %s (%s - %s)\n", fname, artist, album);
+    trace ("get_album_art: %s (%s - %s)\n", fname, artist, album);
     char path [1024];
 
     if (!album) {
@@ -1193,6 +1202,7 @@ get_album_art (const char *fname, const char *artist, const char *album, int siz
 
     if (!*artist || !*album)
     {
+        trace ("artist or album is empty, give up\n");
         //give up
         if (callback) {
             callback (NULL, NULL, NULL, user_data);
@@ -1314,6 +1324,7 @@ artwork_configchanged (void) {
     int new_artwork_enable_local = deadbeef->conf_get_int ("artwork.enable_localfolder", 1);
     int new_artwork_enable_lfm = deadbeef->conf_get_int ("artwork.enable_lastfm", 0);
     int new_artwork_enable_aao = deadbeef->conf_get_int ("artwork.enable_albumartorg", 0);
+    int new_artwork_enable_wos = deadbeef->conf_get_int ("artwork.enable_wos", 0);
 
     char new_artwork_filemask[200];
     deadbeef->conf_get_str ("artwork.filemask", DEFAULT_FILEMASK, new_artwork_filemask, sizeof (new_artwork_filemask));
@@ -1322,12 +1333,14 @@ artwork_configchanged (void) {
             || new_artwork_enable_local != artwork_enable_local
             || new_artwork_enable_lfm != artwork_enable_lfm
             || new_artwork_enable_aao != artwork_enable_aao
+            || new_artwork_enable_wos != artwork_enable_wos
             || strcmp (new_artwork_filemask, artwork_filemask)) {
         trace ("artwork config changed, invalidating cache...\n");
         artwork_enable_embedded = new_artwork_enable_embedded;
         artwork_enable_local = new_artwork_enable_local;
         artwork_enable_lfm = new_artwork_enable_lfm;
         artwork_enable_aao = new_artwork_enable_aao;
+        artwork_enable_wos = new_artwork_enable_wos;
         artwork_reset_time = time (NULL);
         strcpy (artwork_filemask, new_artwork_filemask);
         deadbeef->conf_set_int64 ("artwork.cache_reset_time", artwork_reset_time);
@@ -1424,6 +1437,7 @@ static const char settings_dlg[] =
     "property \"Local cover file mask\" entry artwork.filemask \"" DEFAULT_FILEMASK "\";\n"
     "property \"Fetch from last.fm\" checkbox artwork.enable_lastfm 0;\n"
     "property \"Fetch from albumart.org\" checkbox artwork.enable_albumartorg 0;\n"
+    "property \"Fetch from worldofspectrum.org (AY only)\" checkbox artwork.enable_wos 0;\n"
     "property \"Scale artwork towards longer side\" checkbox artwork.scale_towards_longer 1;\n"
 ;
 

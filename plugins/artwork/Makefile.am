@@ -1,7 +1,7 @@
 if HAVE_ARTWORK
 artworkdir = $(libdir)/$(PACKAGE)
 pkglib_LTLIBRARIES = artwork.la
-artwork_la_SOURCES = artwork.c artwork.h albumartorg.c albumartorg.h lastfm.c lastfm.h escape.c escape.h
+artwork_la_SOURCES = artwork.c artwork.h albumartorg.c albumartorg.h lastfm.c lastfm.h wos.c wos.h escape.c escape.h
 
 artwork_la_LDFLAGS = -module
 
