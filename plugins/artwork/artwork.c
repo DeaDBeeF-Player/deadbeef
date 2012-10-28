@@ -1127,7 +1127,7 @@ fetcher_thread (void *none)
                 if (!got_pic && artwork_enable_lfm && !fetch_from_lastfm (param->artist, param->album, cache_path)) {
                     got_pic = 1;
                 }
-                else if (!got_pic && artwork_enable_aao && !fetch_from_albumart_org (param->artist, param->album, cache_path)) {
+                if (!got_pic && artwork_enable_aao && !fetch_from_albumart_org (param->artist, param->album, cache_path)) {
                     got_pic = 1;
                 }
             }

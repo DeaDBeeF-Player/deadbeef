@@ -148,24 +148,20 @@ loading_thread (void *none) {
             if (stat (queue->fname, &stat_buf) < 0) {
                 trace ("failed to stat file %s\n", queue->fname);
             }
-            trace ("covercache: caching pixbuf for %s\n", queue->fname);
             GdkPixbuf *pixbuf = NULL;
             GError *error = NULL;
             pixbuf = gdk_pixbuf_new_from_file_at_scale (queue->fname, queue->width, queue->width, TRUE, &error);
             if (!pixbuf) {
                 unlink (queue->fname);
-                fprintf (stderr, "gdk_pixbuf_new_from_file_at_scale %s %d failed, error: %s\n", queue->fname, queue->width, error->message);
+                fprintf (stderr, "gdk_pixbuf_new_from_file_at_scale %s %d failed, error: %s\n", queue->fname, queue->width, error ? error->message : "n/a");
                 if (error) {
                     g_error_free (error);
                     error = NULL;
                 }
                 const char *defpath = coverart_plugin->get_default_cover ();
-                if (stat (defpath, &stat_buf) < 0) {
-                    trace ("failed to stat file %s\n", queue->fname);
-                }
                 pixbuf = gdk_pixbuf_new_from_file_at_scale (defpath, queue->width, queue->width, TRUE, &error);
                 if (!pixbuf) {
-                    fprintf (stderr, "gdk_pixbuf_new_from_file_at_scale %s %d failed, error: %s\n", defpath, queue->width, error->message);
+                    fprintf (stderr, "default cover: gdk_pixbuf_new_from_file_at_scale %s %d failed, error: %s\n", defpath, queue->width, error->message);
                 }
             }
             if (error) {
@@ -192,7 +188,6 @@ loading_thread (void *none) {
                 queue->callback (queue->user_data);
             }
             queue_pop ();
-            //g_idle_add (redraw_playlist_cb, NULL);
         }
         if (terminate) {
             break;
