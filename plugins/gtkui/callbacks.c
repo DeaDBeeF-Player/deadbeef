@@ -379,6 +379,7 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
     if ((maskedstate == GDK_MOD1_MASK || maskedstate == 0) && event->keyval == GDK_n) {
         // button for that one is not in toolbar anymore, so handle it manually
         deadbeef->sendmessage (DB_EV_PLAY_RANDOM, 0, 0, 0);
+        return TRUE;
     }
     else if ((maskedstate == GDK_MOD1_MASK || maskedstate == 0) && event->keyval >= GDK_1 && event->keyval <= GDK_9) {
         int pl = event->keyval - GDK_1;
@@ -386,6 +387,7 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
             deadbeef->plt_set_curr_idx (pl);
             deadbeef->conf_set_int ("playlist.current", pl);
         }
+        return TRUE;
     }
     return FALSE;
 }
