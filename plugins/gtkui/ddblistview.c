@@ -278,12 +278,6 @@ ddb_listview_motion_notify_event        (GtkWidget       *widget,
 gboolean
 ddb_listview_list_key_press_event (GtkWidget *widget, GdkEventKey *event, gpointer user_data);
 
-gboolean
-ddb_listview_list_focus_in_event (GtkWidget *widget, GdkEvent *event, gpointer user_data);
-
-gboolean
-ddb_listview_list_focus_out_event (GtkWidget *widget, GdkEvent *event, gpointer user_data);
-
 static void
 ddb_listview_class_init(DdbListviewClass *class)
 {
@@ -482,8 +476,6 @@ ddb_listview_init(DdbListview *listview)
             NULL);
 
     g_signal_connect ((gpointer)listview->list, "key_press_event", G_CALLBACK (ddb_listview_list_key_press_event), NULL);
-    g_signal_connect ((gpointer)listview->list, "focus_in_event", G_CALLBACK (ddb_listview_list_focus_in_event), NULL);
-    g_signal_connect ((gpointer)listview->list, "focus_out_event", G_CALLBACK (ddb_listview_list_focus_out_event), NULL);
 }
 
 GtkWidget * ddb_listview_new()
@@ -1285,7 +1277,6 @@ ddb_listview_list_render_row_background (DdbListview *ps, cairo_t *cr, DdbListvi
         if (gtk_widget_get_style (treeview)->depth == -1) {
             return; // drawing was called too early
         }
-        gtk_widget_set_can_focus (GTK_WIDGET (treeview), TRUE);
 #endif
     }
     int sel = it && ps->binding->is_selected (it);
@@ -1313,6 +1304,9 @@ ddb_listview_list_render_row_background (DdbListview *ps, cairo_t *cr, DdbListvi
             gtk_paint_flat_box (gtk_widget_get_style (treeview), cr, GTK_STATE_SELECTED, GTK_SHADOW_NONE, treeview, even ? "cell_even_ruled" : "cell_odd_ruled", x-1, y-1, w+1, h+1);
 #else
             gtk_paint_flat_box (gtk_widget_get_style (treeview), ps->list->window, GTK_STATE_SELECTED, GTK_SHADOW_NONE, NULL, treeview, even ? "cell_even_ruled" : "cell_odd_ruled", x, y, w, h);
+//            if (GTK_WIDGET_HAS_FOCUS (ps->list)) {
+//                gtk_paint_focus (gtk_widget_get_style (treeview), ps->list->window, GTK_STATE_SELECTED, NULL, treeview, "treeview", x, y, w, h);
+//            }
 #endif
         }
         else {
@@ -1331,7 +1325,7 @@ ddb_listview_list_render_row_background (DdbListview *ps, cairo_t *cr, DdbListvi
 #endif
         }
     }
-	if (cursor) {
+	if (cursor && GTK_WIDGET_HAS_FOCUS (ps->list)) {
         // not all gtk engines/themes render focus rectangle in treeviews
         // but we want it anyway
         //treeview->style->fg_gc[GTK_STATE_NORMAL]
@@ -3163,14 +3157,3 @@ ddb_listview_list_key_press_event (GtkWidget *widget, GdkEventKey *event, gpoint
 
 }
 
-gboolean
-ddb_listview_list_focus_in_event (GtkWidget *widget, GdkEvent *event, gpointer user_data) {
-    gtk_widget_set_can_focus (widget, TRUE);
-    return FALSE;
-}
-
-gboolean
-ddb_listview_list_focus_out_event (GtkWidget *widget, GdkEvent *event, gpointer user_data) {
-    gtk_widget_set_can_focus (widget, FALSE);
-    return FALSE;
-}
