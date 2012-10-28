@@ -810,6 +810,7 @@ w_splitter_unlock (w_splitter_t *w) {
     int vert = w->base.type == "vsplitter";
     // convert back to vpaned
     GtkWidget *paned = vert ? gtk_vpaned_new () : gtk_hpaned_new ();
+    gtk_widget_set_can_focus (paned, FALSE);
     gtk_widget_show (paned);
 
     GList *lst = gtk_container_get_children (GTK_CONTAINER (w->box));
@@ -947,6 +948,7 @@ w_vsplitter_create (void) {
     memset (w, 0, sizeof (w_splitter_t));
     w->position = -1;
     w->base.widget = gtk_vpaned_new ();
+    gtk_widget_set_can_focus (w->base.widget, FALSE);
     w->base.append = w_splitter_add;
     w->base.remove = w_splitter_remove;
     w->base.replace = w_splitter_replace;
@@ -1001,6 +1003,7 @@ w_hsplitter_create (void) {
     memset (w, 0, sizeof (w_splitter_t));
     w->position = -1;
     w->base.widget = gtk_hpaned_new ();
+    gtk_widget_set_can_focus (w->base.widget, FALSE);
     w->base.append = w_splitter_add;
     w->base.remove = w_splitter_remove;
     w->base.replace = w_splitter_replace;
@@ -1766,6 +1769,7 @@ w_selproperties_create (void) {
     memset (w, 0, sizeof (w_selproperties_t));
 
     w->base.widget = gtk_scrolled_window_new (NULL, NULL);
+    gtk_widget_set_can_focus (w->base.widget, FALSE);
     gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (w->base.widget), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     w->tree = gtk_tree_view_new ();
     gtk_widget_show (w->tree);
