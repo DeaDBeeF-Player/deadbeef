@@ -624,7 +624,7 @@ cflac_insert_with_embedded_cue (ddb_playlist_t *plt, DB_playItem_t *after, DB_pl
 
         DB_playItem_t *it = deadbeef->pl_item_alloc_init (uri, dec);
         deadbeef->pl_set_meta_int (it, ":TRACKNUM", i+1);
-        deadbeef->pl_set_meta_int (it, "TRACK", i);
+        deadbeef->pl_set_meta_int (it, "TRACK", i+1);
         char id[100];
         snprintf (id, sizeof (id), "TITLE[%d]", i+1);
         deadbeef->pl_add_meta (it, "title", deadbeef->pl_find_meta (origin, id));
