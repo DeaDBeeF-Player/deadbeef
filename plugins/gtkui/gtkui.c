@@ -48,6 +48,7 @@
 #include "wingeom.h"
 #include "widgets.h"
 #include "X11/Xlib.h"
+#undef EGG_SM_CLIENT_BACKEND_XSMP
 #ifdef EGG_SM_CLIENT_BACKEND_XSMP
 #include "smclient/eggsmclient.h"
 #endif
