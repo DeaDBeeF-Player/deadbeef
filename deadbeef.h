@@ -61,6 +61,7 @@ extern "C" {
 
 // api version history:
 // 9.9 -- devel
+// 1.5 -- deadbeef-0.6
 // 1.4 -- deadbeef-0.5.5
 // 1.3 -- deadbeef-0.5.3
 // 1.2 -- deadbeef-0.5.2
@@ -79,7 +80,7 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 1
-#define DB_API_VERSION_MINOR 4
+#define DB_API_VERSION_MINOR 5
 
 #define DDB_PLUGIN_SET_API_VERSION\
     .plugin.api_vmajor = DB_API_VERSION_MAJOR,\
@@ -273,8 +274,11 @@ enum {
     DB_EV_ACTIONSCHANGED = 20, // plugin actions were changed, e.g. for reinitializing gui
     DB_EV_DSPCHAINCHANGED = 21, // emitted when any parameter of the main dsp chain has been changed
 
-    // new in 1.2
+    // new in 1.5
     DB_EV_SELCHANGED = 22, // selection changed in playlist p1 iter p2
+
+    // -----------------
+    // structured events
 
     DB_EV_FIRST = 1000,
     DB_EV_SONGCHANGED = 1000, // current song changed from one to another, ctx=ddb_event_trackchange_t
@@ -282,8 +286,10 @@ enum {
     DB_EV_SONGFINISHED = 1002, // song finished playing, ctx=ddb_event_track_t
     DB_EV_TRACKINFOCHANGED = 1004, // trackinfo was changed (included medatata and playback status), ctx=ddb_event_track_t
     DB_EV_SEEKED = 1005, // seek happened, ctx=ddb_event_playpos_t
+
     // new in 1.4
     DB_EV_TRACKFOCUSCURRENT = 1006, // user wants to highlight/find the current playing track
+
     DB_EV_MAX
 };
 
@@ -310,12 +316,14 @@ enum ddb_sort_order_t {
     DDB_SORT_RANDOM, // available since API 1.3
 };
 
+// since 1.5
 enum ddb_audio_data_type_t {
     DDB_AUDIO_WAVEFORM,
     DDB_AUDIO_FREQ,
 };
 
 // audio memory constants
+// since 1.5
 #define DDB_AUDIO_MEMORY_FRAMES 512
 
 // typecasting macros
@@ -781,7 +789,7 @@ typedef struct {
     // fast way to test if a field exists in playitem
     int (*pl_meta_exists) (DB_playItem_t *it, const char *key);
 
-    // FIXME ******* devel branch only *******
+    // ******* new 1.5 APIs *******
     // access real-time audio data (e.g. for visualization)
     // returns data size in bytes
     // fmt and data will be filled with last bytes that came to the output plugin
@@ -846,6 +854,37 @@ typedef struct DB_plugin_action_s {
     //we have linked list here
     struct DB_plugin_action_s *next;
 } DB_plugin_action_t;
+
+// hotkey contexts
+// since 1.5
+enum {
+    DDB_HOTKEY_MAIN,
+    DDB_HOTKEY_SELECTION,
+    DDB_HOTKEY_PLAYLIST,
+    DDB_HOTKEY_NOWPLAYING,
+};
+
+// deadbeef core doesn't have any special hotkeys code,
+// but we need some common hotkey definition to share between plugins
+// so here is the example structure to use when implementing hotkeys support
+/*
+// corresponding line in the config file:
+// hotkey.keyX "key combination" CONTEXT IS_GLOBAL ACTION_ID
+//
+// example:
+// hotkey.key1 "Super n" main 1 playback_random
+// this would mean "execute playback_random action when Super+n is pressed globally"
+//
+// context can be main, selection, playlist or nowplaying
+// TODO: do we need anything else, like widget contexts?..
+typedef struct
+{
+    char *key_combination;
+    int context; // NULL, selection, playlist, nowplaying
+    DB_plugin_action_t *action;
+    unsigned is_global : 1;
+} ddb_hotkey_t;
+*/
 
 // base plugin interface
 typedef struct DB_plugin_s {
