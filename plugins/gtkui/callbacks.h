@@ -1183,3 +1183,33 @@ on_enable_cp1251_recoding_toggled      (GtkToggleButton *togglebutton,
 void
 on_enable_cp936_recoding_toggled       (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
+
+void
+on_hotkeys_list_cursor_changed         (GtkTreeView     *treeview,
+                                        gpointer         user_data);
+
+void
+on_hotkey_add_clicked                  (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_hotkey_remove_clicked               (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_hotkeys_actions_cursor_changed      (GtkTreeView     *treeview,
+                                        gpointer         user_data);
+
+void
+on_hotkey_keycombo_changed             (GtkEditable     *editable,
+                                        gpointer         user_data);
+
+void
+on_hotkey_is_global_toggled            (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+
+gboolean
+on_hotkey_keycombo_key_press_event     (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data);

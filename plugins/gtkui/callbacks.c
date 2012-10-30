@@ -1312,3 +1312,5 @@ on_design_mode1_activate               (GtkMenuItem     *menuitem,
     w_set_design_mode (act ? 1 : 0);
 }
 
+
+
