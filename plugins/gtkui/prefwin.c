@@ -31,12 +31,12 @@
 #include "callbacks.h"
 #include "drawing.h"
 #include "../hotkeys/hotkeys.h"
-#include "support.h"
 #include "eq.h"
 #include "ddblistview.h"
 #include "pluginconf.h"
 #include "dspconfig.h"
 #include "wingeom.h"
+#include "hotkeys.h"
 
 #define GLADE_HOOKUP_OBJECT(component,widget,name) \
   g_object_set_data_full (G_OBJECT (component), name, \
@@ -679,10 +679,11 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     gtk_widget_set_sensitive (lookup_widget (prefwin, "configure_plugin"), FALSE);
 
     // hotkeys
-    DB_plugin_t *hotkeys = deadbeef->plug_get_for_id ("hotkeys");
-    if (hotkeys) {
-        prefwin_add_hotkeys_tab (prefwin);
-    }
+//    DB_plugin_t *hotkeys = deadbeef->plug_get_for_id ("hotkeys");
+//    if (hotkeys) {
+//        prefwin_add_hotkeys_tab (prefwin);
+//    }
+    prefwin_init_hotkeys (prefwin);
 
     deadbeef->conf_unlock ();
     gtk_dialog_run (GTK_DIALOG (prefwin));
