@@ -1365,9 +1365,9 @@ tabbed_refresh_cb (gpointer p) {
 
 static gboolean
 refresh_cb (gpointer data) {
-    w_playlist_t *p = (w_playlist_t *)data;
-    ddb_listview_clear_sort (DDB_LISTVIEW (p->list));
-    ddb_listview_refresh (DDB_LISTVIEW (p->list), DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL);
+    DdbListview *p = DDB_LISTVIEW (data);
+    ddb_listview_clear_sort (p);
+    ddb_listview_refresh (DDB_LISTVIEW (p), DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL);
     return FALSE;
 }
 
@@ -1592,6 +1592,11 @@ w_tabbed_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, ui
     case DB_EV_TRACKFOCUSCURRENT:
         g_idle_add (tabbed_trackfocus_cb, w);
         break;
+    case DB_EV_SELCHANGED:
+        if (p2 == PL_SEARCH && p1 == deadbeef->plt_get_curr_idx ()) {
+            g_idle_add (refresh_cb, tp->list);
+        }
+        break;
     }
     return 0;
 }
@@ -1632,13 +1637,18 @@ w_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
         g_idle_add (paused_cb, w);
         break;
     case DB_EV_PLAYLISTCHANGED:
-        g_idle_add (refresh_cb, w);
+        g_idle_add (refresh_cb, p->list);
         break;
     case DB_EV_PLAYLISTSWITCHED:
         g_idle_add (playlistswitch_cb, w);
         break;
     case DB_EV_TRACKFOCUSCURRENT:
         g_idle_add (trackfocus_cb, w);
+        break;
+    case DB_EV_SELCHANGED:
+        if (p2 == PL_SEARCH && p1 == deadbeef->plt_get_curr_idx ()) {
+            g_idle_add (refresh_cb, p->list);
+        }
         break;
     }
     return 0;
