@@ -1381,7 +1381,7 @@ ddb_listview_select_single (DdbListview *ps, int sel) {
     int nchanged = 0;
     deadbeef->pl_lock ();
 
-    DB_playItem_t *sel_it = ps->binding->get_for_idx (sel);
+    DdbListviewIter sel_it = ps->binding->get_for_idx (sel);
     if (!sel_it) {
         deadbeef->pl_unlock ();
         return;
@@ -1390,12 +1390,7 @@ ddb_listview_select_single (DdbListview *ps, int sel) {
     DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
     while (it) {
         int selected = deadbeef->pl_is_selected (it);
-        if (it == sel_it) {
-            if (!selected) {
-                deadbeef->pl_set_selected (it, 1);
-            }
-        }
-        else if (selected) {
+        if (selected) {
             deadbeef->pl_set_selected (it, 0);
         }
         DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
@@ -1403,6 +1398,9 @@ ddb_listview_select_single (DdbListview *ps, int sel) {
         it = next;
     }
     UNREF (it);
+
+    ps->binding->select (sel_it, 1);
+
     UNREF (sel_it);
     deadbeef->pl_unlock ();
 
@@ -1481,7 +1479,6 @@ ddb_listview_click_selection (DdbListview *ps, int ex, int ey, DdbListviewGroup 
         UNREF (it);
     }
     deadbeef->pl_unlock ();
-    deadbeef->sendmessage (DB_EV_SELCHANGED, 0, deadbeef->plt_get_curr_idx (), PL_MAIN);
 }
 
 // {{{ expected behaviour for mouse1 without modifiers:

@@ -289,6 +289,7 @@ search_is_selected (DdbListviewIter it) {
 void
 search_select (DdbListviewIter it, int sel) {
     deadbeef->pl_set_selected ((DB_playItem_t *)it, sel);
+    deadbeef->sendmessage (DB_EV_SELCHANGED, 0, deadbeef->plt_get_curr_idx (), PL_SEARCH);
 }
 
 int

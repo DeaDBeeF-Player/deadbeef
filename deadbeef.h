@@ -274,7 +274,7 @@ enum {
     DB_EV_DSPCHAINCHANGED = 21, // emitted when any parameter of the main dsp chain has been changed
 
     // new in 1.2
-    DB_EV_SELCHANGED = 20, // selection changed in playlist p1 iter p2
+    DB_EV_SELCHANGED = 22, // selection changed in playlist p1 iter p2
 
     DB_EV_FIRST = 1000,
     DB_EV_SONGCHANGED = 1000, // current song changed from one to another, ctx=ddb_event_trackchange_t
