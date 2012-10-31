@@ -2,7 +2,7 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # Gheyret Kenji <gheyret@gmail.com>, 2011.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: deadbeef\n"
@@ -155,7 +155,7 @@ msgstr "بەلۋاغلارنى نۆل قىلىش"
 #: ../plugins/gtkui/eq.c:392 ../plugins/converter/interface.c:803
 #: ../plugins/converter/converter.glade.h:50
 msgid "Presets"
-msgstr "ئالدىن تەڭشەشلەر"
+msgstr "ئالدىن تەڭشەش"
 
 #: ../plugins/gtkui/gtkui.c:140
 #, c-format
@@ -193,9 +193,7 @@ msgstr "ۋاقىتلىق توختىدى | "
 #, c-format
 msgid ""
 "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
-msgstr ""
-"%s%s %s| %d گېرتس | %d بىت | %s | %d:%02d / %s | %d نەغمە | %s جەمئىي قويۇش "
-"ۋاقتى"
+msgstr "%s%s %s| %d گېرتس | %d بىت | %s | %d:%02d / %s | %d نەغمە | %s جەمئىي قويۇش ۋاقتى"
 
 #: ../plugins/gtkui/gtkui.c:647
 msgid "Save Playlist As"
@@ -257,11 +255,11 @@ msgstr "قويۇش تىزىمىنى ئوقۇش"
 
 #: ../plugins/gtkui/interface.c:209 ../plugins/gtkui/deadbeef.glade.h:8
 msgid "Save playlist"
-msgstr "قويۇش تىزىمىنى ساقلاش"
+msgstr "قويۇش تىزىملىكى ساقلا"
 
 #: ../plugins/gtkui/interface.c:218 ../plugins/gtkui/deadbeef.glade.h:9
 msgid "_Quit"
-msgstr "چېكىن(_Q)"
+msgstr "ئاخىرلاشتۇر(_Q)"
 
 #: ../plugins/gtkui/interface.c:229 ../plugins/gtkui/deadbeef.glade.h:10
 msgid "_Edit"
@@ -294,7 +292,7 @@ msgstr "تاللانما"
 #: ../plugins/shellexecui/interface.c:65
 #: ../plugins/shellexecui/shellexec.glade.h:4
 msgid "Remove"
-msgstr "چىقىرىۋەت"
+msgstr "ئۆچۈر"
 
 #: ../plugins/gtkui/interface.c:277 ../plugins/gtkui/deadbeef.glade.h:17
 msgid "Crop"
@@ -343,7 +341,7 @@ msgstr "چېسلا"
 #: ../plugins/gtkui/interface.c:315 ../plugins/gtkui/interface.c:387
 #: ../plugins/gtkui/deadbeef.glade.h:25
 msgid "Random"
-msgstr "قالايمىقان"
+msgstr "ئىختىيارىي"
 
 #: ../plugins/gtkui/interface.c:319 ../plugins/gtkui/interface.c:1523
 #: ../plugins/gtkui/plcommon.c:1032 ../plugins/gtkui/deadbeef.glade.h:26
@@ -353,7 +351,7 @@ msgstr "ئىختىيارى"
 #: ../plugins/gtkui/interface.c:328 ../plugins/gtkui/interface.c:1817
 #: ../plugins/gtkui/deadbeef.glade.h:27
 msgid "Preferences"
-msgstr "مايىللىق"
+msgstr "تەڭشەكلەر"
 
 #: ../plugins/gtkui/interface.c:332 ../plugins/gtkui/deadbeef.glade.h:28
 msgid "_View"
@@ -487,7 +485,7 @@ msgstr "ھەققىدە"
 
 #: ../plugins/gtkui/interface.c:1038 ../plugins/gtkui/deadbeef.glade.h:60
 msgid "Quit"
-msgstr "ئاخىرلاشتۇرۇش"
+msgstr "ئاخىرلاشتۇر"
 
 #: ../plugins/gtkui/interface.c:1228 ../plugins/gtkui/deadbeef.glade.h:62
 msgid "Track Properties"
@@ -504,7 +502,7 @@ msgstr "قوللان(_A)"
 #: ../plugins/gtkui/interface.c:1320 ../plugins/gtkui/interface.c:1366
 #: ../plugins/gtkui/deadbeef.glade.h:65
 msgid "_Close"
-msgstr "ياپ(_C)"
+msgstr "تاقا(_C)"
 
 #: ../plugins/gtkui/interface.c:1324 ../plugins/gtkui/deadbeef.glade.h:66
 msgid "Metadata"
@@ -574,7 +572,7 @@ msgstr "ئوڭ"
 #: ../plugins/gtkui/interface.c:3126 ../plugins/gtkui/interface.c:3252
 #: ../plugins/gtkui/deadbeef.glade.h:68
 msgid "_Cancel"
-msgstr "ئەمەلدىن قالدۇر(_C)"
+msgstr "ۋاز كەچ(_C)"
 
 #: ../plugins/gtkui/interface.c:1607 ../plugins/gtkui/interface.c:3035
 #: ../plugins/gtkui/interface.c:3147 ../plugins/gtkui/interface.c:3273
@@ -634,9 +632,7 @@ msgstr "ئومۇمىي ئالدىن كۈچەيتىش:"
 
 #: ../plugins/gtkui/interface.c:1957 ../plugins/gtkui/deadbeef.glade.h:101
 msgid "Add files from command line (or file manager) to this playlist:"
-msgstr ""
-"بۇيرۇق قۇرىدىن(ياكى ھۆججەت باشقۇرغۇدىن) ھۆججەت(لەر)نى بۇ قويۇش تىزىمىغا "
-"قوشۇش:"
+msgstr "بۇيرۇق قۇرىدىن(ياكى ھۆججەت باشقۇرغۇدىن) ھۆججەت(لەر)نى بۇ قويۇش تىزىمىغا قوشۇش:"
 
 #: ../plugins/gtkui/interface.c:1966 ../plugins/gtkui/deadbeef.glade.h:102
 msgid "Resume previous session on startup"
@@ -678,7 +674,7 @@ msgstr "كۆزنەك يېپىلغاندا سىستېما قوندىقىغا كى
 
 #: ../plugins/gtkui/interface.c:2063 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "Middle mouse button closes playlist"
-msgstr "چاشقىنەك ئوتتۇرا توپچىسى قويۇش تىزىمىنى ياپسۇن "
+msgstr "چاشقىنەك ئوتتۇرا توپچىسى قويۇش تىزىمىنى ياپسۇن"
 
 #: ../plugins/gtkui/interface.c:2067 ../plugins/gtkui/deadbeef.glade.h:112
 msgid "Hide system tray icon"
@@ -768,9 +764,7 @@ msgstr "بەتكۈچنىڭ رەڭگى"
 
 #: ../plugins/gtkui/interface.c:2287 ../plugins/gtkui/deadbeef.glade.h:133
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
-msgstr ""
-"قاپلاش(GTK نىڭ دەرەخسىمان كۆرۈنۈشىنىڭ ئۆرنىكى يوقىلىدۇ، بىراق سىزىش تېزلىكى "
-"تېزلىشىدۇ)"
+msgstr "قاپلاش(GTK نىڭ دەرەخسىمان كۆرۈنۈشىنىڭ ئۆرنىكى يوقىلىدۇ، بىراق سىزىش تېزلىكى تېزلىشىدۇ)"
 
 #: ../plugins/gtkui/interface.c:2296 ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Even row"
@@ -798,7 +792,7 @@ msgstr "قويۇش تىزىمىنىڭ رەڭلىرى"
 
 #: ../plugins/gtkui/interface.c:2378 ../plugins/gtkui/deadbeef.glade.h:140
 msgid "Colors"
-msgstr "رەڭلەر"
+msgstr "رەڭ"
 
 #: ../plugins/gtkui/interface.c:2387 ../plugins/gtkui/deadbeef.glade.h:141
 msgid "Enable Proxy Server"
@@ -851,10 +845,9 @@ msgstr "URL:"
 
 #: ../plugins/gtkui/interface.c:3196 ../plugins/gtkui/deadbeef.glade.h:153
 msgid "Group By ..."
-msgstr "گۇرۇپپىلاش"
+msgstr "گۇرۇپپىلاش…"
 
 #: ../plugins/gtkui/interface.c:3320 ../plugins/gtkui/deadbeef.glade.h:154
-#, fuzzy
 msgid "Sort by ..."
 msgstr "تەرتىپلەش…"
 
@@ -951,14 +944,13 @@ msgstr "دىسكىدىن ھۆججەت ئۆچۈرۈش"
 msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr ""
-"ھۆججەتلەر يوقىلىپ كېتىدۇ. داۋاملاشتۇرسۇنمۇ؟\n"
+msgstr "ھۆججەتلەر يوقىلىپ كېتىدۇ. داۋاملاشتۇرسۇنمۇ؟\n"
 "(بۇ سۆزلەشكۈ GTKUI قىستۇرما تەڭشىكىدە ئۆچمەيدۇ)"
 
 #: ../plugins/gtkui/plcommon.c:351 ../plugins/gtkui/trkproperties.c:164
 #: ../plugins/converter/convgui.c:803 ../plugins/converter/convgui.c:1258
 msgid "Warning"
-msgstr "ئاگاھلاندۇرۇش"
+msgstr "دىققەت"
 
 #: ../plugins/gtkui/plcommon.c:456
 msgid "Add to playback queue"
@@ -1025,9 +1017,8 @@ msgid "Global Hotkeys"
 msgstr "پۈتۈن دائىرىلىك ئىسسىق كۇنۇپكا"
 
 #: ../plugins/gtkui/prefwin.c:416
-#, fuzzy
 msgid "Action"
-msgstr "ئورنى"
+msgstr "مەشغۇلات"
 
 #: ../plugins/gtkui/prefwin.c:417
 msgid "Key combination"
@@ -1143,9 +1134,7 @@ msgstr "   --toggle-pause     ۋاقىتلىق توختىتىشنى ئالماش
 #, c-format
 msgid ""
 "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
-msgstr ""
-"   --play-pause       قويۇۋاتقان بولسا ۋاقىتلىق توختىتىدۇ، باشقا ھالەتنىمۇ "
-"ۋاقىتلىق توختىتىدۇ\n"
+msgstr "   --play-pause       قويۇۋاتقان بولسا ۋاقىتلىق توختىتىدۇ، باشقا ھالەتنىمۇ ۋاقىتلىق توختىتىدۇ\n"
 
 #: ../main.c:94
 #, c-format
@@ -1176,9 +1165,7 @@ msgstr ""
 #: ../main.c:99
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr ""
-"   --nowplaying FMT   پىچىلغان نەغمە ئاتىنى ئۆلچەملىك چىقىرىش ئۈسكۈنىسى"
-"(stdout) غا چىقىرىدۇ\n"
+msgstr "   --nowplaying FMT   پىچىلغان نەغمە ئاتىنى ئۆلچەملىك چىقىرىش ئۈسكۈنىسى(stdout) غا چىقىرىدۇ\n"
 
 #: ../main.c:100
 #, c-format
@@ -1186,8 +1173,7 @@ msgid ""
 "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
 "                      copy[r]ight, [e]lapsed\n"
-msgstr ""
-"                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
+msgstr "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
 "                      copy[r]ight, [e]lapsed\n"
 
@@ -1196,18 +1182,14 @@ msgstr ""
 msgid ""
 "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
 "- title\"\n"
-msgstr ""
-"                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
-"- title\"\n"
+msgstr "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"
 
 #: ../main.c:104
 #, c-format
 msgid ""
 "                      for more info, see http://sourceforge.net/apps/"
 "mediawiki/deadbeef/index.php?title=Title_Formatting\n"
-msgstr ""
-"                      تېخىمۇ كوپ ئۇچۇرلار ئۈچۈن http://sourceforge.net/apps/"
-"mediawiki/deadbeef/index.php?title=Title_Formatting گە قاراڭ\n"
+msgstr "                      تېخىمۇ كوپ ئۇچۇرلار ئۈچۈن http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting گە قاراڭ\n"
 
 #: ../playlist.c:454 ../playlist.c:2419
 msgid "Default"
@@ -1234,8 +1216,7 @@ msgid ""
 "Track Number\n"
 "Band / Album Artist\n"
 "Custom"
-msgstr ""
-"تۈر ئىندېكسى\n"
+msgstr "تۈر ئىندېكسى\n"
 "قويۇۋاتىدۇ\n"
 "ئالبوم مۇقاۋىسى\n"
 "ئورۇنلىغۇچى - ئالبوم\n"
@@ -1251,8 +1232,7 @@ msgstr ""
 msgid ""
 "Left\n"
 "Right"
-msgstr ""
-"سول\n"
+msgstr "سول\n"
 "ئوڭ"
 
 #: ../plugins/gtkui/deadbeef.glade.h:93
@@ -1260,8 +1240,7 @@ msgid ""
 "Disable\n"
 "Track\n"
 "Album"
-msgstr ""
-"ئىناۋەتسىز\n"
+msgstr "ئىناۋەتسىز\n"
 "نەغمە\n"
 "ئالبوم"
 
@@ -1275,8 +1254,7 @@ msgstr "چوڭىيىش/كىچىكلەش"
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
-msgstr ""
-"2.3 (تەۋسىيە قىلىنىدۇ)\n"
+msgstr "2.3 (تەۋسىيە قىلىنىدۇ)\n"
 "2.4"
 
 #: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
@@ -1284,17 +1262,14 @@ msgstr ""
 #: ../plugins/shellexecui/support.c:90 ../plugins/shellexecui/support.c:114
 #, c-format
 msgid "Couldn't find pixmap file: %s"
-msgstr "pixmap ھۆججىتىنى تاپقىلى بولمىدى: %s"
+msgstr "Pixmap ھۆججىتى تېپىلمىدى: %s"
 
 #: ../plugins/wildmidi/wildmidiplug.c:164
 #, c-format
 msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings."
-msgstr ""
-"سەپلىمە ھۆججەت(wildmidi: freepats دېگەن) تېپىلمىدى. timidity-freepats "
-"بوغچىسىنى ئورنىتىڭ ياكى freepats.cfg نىڭ يولىنى قىستۇرما تەڭشىكىدە كۆرسىتىپ "
-"بېرىڭ."
+msgstr "سەپلىمە ھۆججەت(wildmidi: freepats دېگەن) تېپىلمىدى. timidity-freepats بوغچىسىنى ئورنىتىڭ ياكى freepats.cfg نىڭ يولىنى قىستۇرما تەڭشىكىدە كۆرسىتىپ بېرىڭ."
 
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
@@ -1426,9 +1401,8 @@ msgid "Max song length (in minutes)"
 msgstr "ئەڭ چوڭ ناخشا ئۇزۇنلۇقى( مىنۇت)"
 
 #: ../translation/extra.c:40
-#, fuzzy
 msgid "Fadeout length (seconds)"
-msgstr "كۆڭۈلدىكى ناخشا ئۇزۇنلۇقى (سېكۇنت)"
+msgstr ""
 
 #: ../translation/extra.c:41
 msgid "Play loops nr. of times (if available)"
@@ -1492,8 +1466,7 @@ msgstr "مۇتلەق ئىزدەش جەدۋىلىنىڭ يولى"
 
 #: ../translation/extra.c:60
 msgid "Swap audio bytes (toggle if all you hear is static)"
-msgstr ""
-"ئۈن بايتلىرىنى ئالماشتۇرۇش (ئەگەر ئۆزگىرىش بولمىسا ئەسلىگە كەلتۈرسە بولىدۇ)"
+msgstr "ئۈن بايتلىرىنى ئالماشتۇرۇش (ئەگەر ئۆزگىرىش بولمىسا ئەسلىگە كەلتۈرسە بولىدۇ)"
 
 #. SID decoder plugin
 #: ../translation/extra.c:62
@@ -1585,9 +1558,8 @@ msgid "Target Samplerate"
 msgstr "نىشان ئەۋرىشكە تېزلىكى"
 
 #: ../translation/extra.c:94
-#, fuzzy
 msgid "Quality / Algorithm"
-msgstr "سۈپەت / ئالگورىزىم"
+msgstr ""
 
 #: ../translation/extra.c:95
 msgid "Automatic Samplerate (overrides Target Samplerate)"
@@ -1609,9 +1581,8 @@ msgid "Prefer Ken emu over Satoh (surround won't work)"
 msgstr ""
 
 #: ../translation/extra.c:102
-#, fuzzy
 msgid "Enable surround"
-msgstr "scrobbler نى ئىناۋەتلىك قىلىش"
+msgstr ""
 
 #: ../plugins/converter/convgui.c:117
 msgid "The file already exists. Overwrite?"
@@ -1645,9 +1616,7 @@ msgstr "كودلىغۇچ ئالدىن تەڭشىشىنى ساقلاش مەغلۇ
 msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
-msgstr ""
-"ئالدىن تەڭشەش قىسقۇچىنىڭ ئىمتىيازلىرىنى تەكشۈرۈڭ، باشقا ماۋزۇ تاللاڭ ياكى "
-"دىسكىنى ئازراق بىكارلاڭ"
+msgstr "ئالدىن تەڭشەش قىسقۇچىنىڭ ئىمتىيازلىرىنى تەكشۈرۈڭ، باشقا ماۋزۇ تاللاڭ ياكى دىسكىنى ئازراق بىكارلاڭ"
 
 #: ../plugins/converter/convgui.c:683 ../plugins/converter/convgui.c:1157
 msgid "Preset with the same name already exists. Try to pick another title."
@@ -1709,9 +1678,8 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:113
 #: ../plugins/converter/converter.glade.h:3
-#, fuzzy
 msgid "Preserve folder structure"
-msgstr "بۇ يەردىن باشلانغان قىسقۇچ قۇرۇلمىسىنى ساقلاپ قېلىش:"
+msgstr ""
 
 #: ../plugins/converter/interface.c:121
 #: ../plugins/converter/converter.glade.h:4
@@ -1724,8 +1692,7 @@ msgstr "چىقىرىش ھۆججىتىنىڭ ئاتى:"
 msgid ""
 "Extension (e.g. .mp3) will be appended automatically.\n"
 "Leave the field empty for default (%a - %t)."
-msgstr ""
-"كېڭەيتىلمە ئاتى (.mp3 دېگەندەك) ئاپتوماتىك قوشۇلىدۇ.\n"
+msgstr "كېڭەيتىلمە ئاتى (.mp3 دېگەندەك) ئاپتوماتىك قوشۇلىدۇ.\n"
 "قۇرۇق بولسا كۆڭۈلدىكىسى ئىشلىتىلىدۇ (%a - %t)."
 
 #: ../plugins/converter/interface.c:145
@@ -1816,8 +1783,7 @@ msgstr "بۇيرۇق قۇرى:"
 msgid ""
 "Example: lame - %o\n"
 "%i for input file, %o for output file, - for stdin"
-msgstr ""
-"مىسال: lame - %o\n"
+msgstr "مىسال: lame - %o\n"
 "%i كىرىش ھۆججىتى، %o چىقىرىش ھۆججىتى, - for stdin"
 
 #: ../plugins/converter/interface.c:429
@@ -1826,8 +1792,7 @@ msgstr ""
 msgid ""
 "<small>%o - output file name\n"
 "%i - temporary input file name</small>"
-msgstr ""
-"<small>%o - چىقىرىش ھۆججىتىنىڭ ئاتى\n"
+msgstr "<small>%o - چىقىرىش ھۆججىتىنىڭ ئاتى\n"
 "%i - ۋاقىتلىق كىرگۈزۈش ھۆججىتىنىڭ ئاتى</small>"
 
 #: ../plugins/converter/interface.c:438
@@ -1891,8 +1856,7 @@ msgid ""
 "24 bit signed int\n"
 "32 bit signed int\n"
 "32 bit float"
-msgstr ""
-"مەنبە پىچىمى ئۆزگەرمىسۇن\n"
+msgstr "مەنبە پىچىمى ئۆزگەرمىسۇن\n"
 "8 بىتلىق ئالامەتلىك پۈتۈن سان\n"
 "16 بىتلىق ئالامەتلىك پۈتۈن سان\n"
 "24 بىتلىق ئالامەتلىك پۈتۈن سان\n"
@@ -1903,46 +1867,40 @@ msgstr ""
 msgid ""
 "Prompt\n"
 "Overwrite"
-msgstr ""
-"ئەسكەرتىش\n"
+msgstr "ئەسكەرتىش\n"
 "قاپلاش"
 
 #: ../plugins/converter/converter.glade.h:34
 msgid ""
 "Pipe\n"
 "Temporary file"
-msgstr ""
-"نەيچە\n"
+msgstr "نەيچە\n"
 "ۋاقىتلىق ھۆججەت"
 
 #: ../plugins/shellexecui/interface.c:46
 #: ../plugins/shellexecui/shellexec.glade.h:1
 msgid "Custom Shell Commands"
-msgstr ""
+msgstr "ئىختىيارى Shell  بۇيرۇقلىرى"
 
 #: ../plugins/shellexecui/interface.c:69
 #: ../plugins/shellexecui/shellexec.glade.h:5
-#, fuzzy
 msgid "Edit"
-msgstr "تەھرىر(_E)"
+msgstr "تەھرىر"
 
 #: ../plugins/shellexecui/interface.c:87
 #: ../plugins/shellexecui/shellexec.glade.h:2
-#, fuzzy
 msgid "Close"
-msgstr "ياپ(_C)"
+msgstr "تاقا"
 
 #: ../plugins/shellexecui/interface.c:145
 #: ../plugins/shellexecui/shellexec.glade.h:6
-#, fuzzy
 msgid "Edit Command"
-msgstr "ئىستون تەھرىرلەش"
+msgstr ""
 
 #: ../plugins/shellexecui/interface.c:166
 #: ../plugins/shellexecui/shellexec.glade.h:8
-#, fuzzy
 msgid "Command:"
-msgstr "بۇيرۇق قۇرى:"
+msgstr "بۇيرۇق:"
 
 #: ../plugins/shellexecui/interface.c:178
 #: ../plugins/shellexecui/shellexec.glade.h:10
@@ -1956,7 +1914,7 @@ msgstr ""
 #: ../plugins/shellexecui/interface.c:181
 #: ../plugins/shellexecui/shellexec.glade.h:11
 msgid "ID:"
-msgstr ""
+msgstr "ID:"
 
 #: ../plugins/shellexecui/interface.c:193
 #: ../plugins/shellexecui/shellexec.glade.h:12
@@ -1972,9 +1930,8 @@ msgstr ""
 
 #: ../plugins/shellexecui/interface.c:204
 #: ../plugins/shellexecui/shellexec.glade.h:15
-#, fuzzy
 msgid "Single Tracks"
-msgstr "نەغمىنى تەرتىپسىز قويۇش"
+msgstr ""
 
 #: ../plugins/shellexecui/interface.c:207
 #: ../plugins/shellexecui/shellexec.glade.h:14
@@ -1983,9 +1940,8 @@ msgstr ""
 
 #: ../plugins/shellexecui/interface.c:209
 #: ../plugins/shellexecui/shellexec.glade.h:17
-#, fuzzy
 msgid "Multiple Tracks"
-msgstr "[بىر قانچە قىممەت] "
+msgstr ""
 
 #: ../plugins/shellexecui/interface.c:212
 #: ../plugins/shellexecui/shellexec.glade.h:16
@@ -1994,9 +1950,8 @@ msgstr ""
 
 #: ../plugins/shellexecui/interface.c:214
 #: ../plugins/shellexecui/shellexec.glade.h:19
-#, fuzzy
 msgid "Local"
-msgstr "ئورنى"
+msgstr "يەرلىك"
 
 #: ../plugins/shellexecui/interface.c:217
 #: ../plugins/shellexecui/shellexec.glade.h:18
@@ -2005,9 +1960,8 @@ msgstr ""
 
 #: ../plugins/shellexecui/interface.c:219
 #: ../plugins/shellexecui/shellexec.glade.h:21
-#, fuzzy
 msgid "Remote"
-msgstr "چىقىرىۋەت"
+msgstr "يىراق"
 
 #: ../plugins/shellexecui/interface.c:222
 #: ../plugins/shellexecui/shellexec.glade.h:20
@@ -2016,9 +1970,8 @@ msgstr ""
 
 #: ../plugins/shellexecui/interface.c:224
 #: ../plugins/shellexecui/shellexec.glade.h:23
-#, fuzzy
 msgid "Playlist"
-msgstr "يېڭى قويۇش تىزىمى"
+msgstr "قويۇش تىزىمى"
 
 #: ../plugins/shellexecui/interface.c:227
 #: ../plugins/shellexecui/shellexec.glade.h:22
@@ -2027,9 +1980,8 @@ msgstr ""
 
 #: ../plugins/shellexecui/interface.c:229
 #: ../plugins/shellexecui/shellexec.glade.h:25
-#, fuzzy
 msgid "Common"
-msgstr "ئىزاھات"
+msgstr "ئورتاق"
 
 #: ../plugins/shellexecui/interface.c:232
 #: ../plugins/shellexecui/shellexec.glade.h:24
@@ -2037,23 +1989,20 @@ msgid "Item should appear in the main menu"
 msgstr ""
 
 #: ../plugins/shellexecui/shellexecui.c:94
-#, fuzzy
 msgid "Add Command"
-msgstr "ئىستون قوشۇش"
+msgstr "بۇيرۇق قوش"
 
 #: ../plugins/shellexecui/shellexecui.c:137
 msgid "Delete"
-msgstr ""
+msgstr "ئۆچۈر"
 
 #: ../plugins/shellexecui/shellexecui.c:139
-#, fuzzy
 msgid "This action will delete the selected shell command. Are you sure?"
-msgstr "بۇ مەشغۇلاتتا تاللانغان ئالدىن تەڭشەش ئۆچۈرۈلىدۇ. راستلا ئۆچۈرەمسىز؟"
+msgstr ""
 
 #: ../plugins/shellexecui/shellexecui.c:141
-#, fuzzy
 msgid "Confirm Remove"
-msgstr "سەپلە"
+msgstr "چىقىرىۋېتىشنى جەزملە"
 
 #: ../plugins/shellexecui/shellexecui.c:230
 msgid "ID must be non-empty and unique.\n"
@@ -2070,12 +2019,12 @@ msgstr ""
 #: ../plugins/shellexecui/shellexecui.c:249
 #: ../plugins/shellexecui/shellexecui.c:253
 msgid "Invalid Values"
-msgstr ""
+msgstr "ئىناۋەتسىز قىممەتلەر"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:165
 #, c-format
 msgid "File is not a valid .desktop file"
-msgstr ""
+msgstr "ھۆججەت ئىناۋەتلىك .desktop ھۆججىتى ئەمەس."
 
 #. translators: 'Version' is from a desktop file, and
 #. * should not be translated. '%s' would probably be a
@@ -2083,62 +2032,62 @@ msgstr ""
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:191
 #, c-format
 msgid "Unrecognized desktop file Version '%s'"
-msgstr ""
+msgstr "تونۇيالمىغان ئۈستەلئۈستى ھۆججەت نەشرى '%s'"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:974
-#, fuzzy, c-format
+#, c-format
 msgid "Starting %s"
-msgstr "تەڭشەكلەر"
+msgstr "%s نى قوزغىتىۋاتىدۇ"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1116
 #, c-format
 msgid "Application does not accept documents on command line"
-msgstr ""
+msgstr "پروگرامما بۇيرۇق قۇرىدا پۈتۈكنى قوبۇل قىلالمايدۇ"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1184
 #, c-format
 msgid "Unrecognized launch option: %d"
-msgstr ""
+msgstr "تونۇمايدىغان ئىجرا تاللانمىسى: %d"
 
 #. translators: The 'Type=Link' string is found in a
 #. * desktop file, and should not be translated.
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1391
 #, c-format
 msgid "Can't pass document URIs to a 'Type=Link' desktop entry"
-msgstr ""
+msgstr "URI پۈتۈكنى 'Type=Link' ئۈستەلئۈستى تۈرىگە يوللىيالمىدى."
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1412
 #, c-format
 msgid "Not a launchable item"
-msgstr ""
+msgstr "ئىجراچان تۈر ئەمەس"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:226
 msgid "Disable connection to session manager"
-msgstr ""
+msgstr "ئەڭگىمە باشقۇرغۇچقا باغلىنىشنى چەكلە"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:229
 msgid "Specify file containing saved configuration"
-msgstr ""
+msgstr "سەپلىمە ساقلانغان ھۆججەتنى بەلگىلە"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:229
 msgid "FILE"
-msgstr ""
+msgstr "FILE"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:232
 msgid "Specify session management ID"
-msgstr ""
+msgstr "ئەڭگىمە باشقۇرغۇ ID سېنى بەلگىلە"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:232
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:253
 msgid "Session management options:"
-msgstr ""
+msgstr "ئەڭگىمە باشقۇرغۇ تاللانمىلىرى:"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:254
 msgid "Show session management options"
-msgstr ""
+msgstr "ئەڭگىمە باشقۇرۇش تاللانمىلىرىنى كۆرسەت"
 
 #~ msgid "GUI"
 #~ msgstr "GUI"

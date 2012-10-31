@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: 0.4.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-23 14:33+0200\n"
-"PO-Revision-Date: 2012-09-14 17:14+0200\n"
-"Last-Translator: Max <mpui@tut.by>\n"
+"PO-Revision-Date: 2012-10-02 20:00+0200\n"
+"Last-Translator: Alexander <kazancas@gmail.com>\n"
 "Language-Team: ru <slpiv@mail.ru>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
+"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Pootle 2.0.5\n"
 
 #: ../plugins/gtkui/callbacks.c:123
@@ -127,11 +127,11 @@ msgstr "Предустановки эквалайзера Foobar2000 (*.feq)"
 
 #: ../plugins/gtkui/eq.c:321
 msgid "Save Preset"
-msgstr "Сохранить"
+msgstr "Сохранить предустановки"
 
 #: ../plugins/gtkui/eq.c:329
 msgid "Load Preset"
-msgstr "Загрузить"
+msgstr "Загрузить предустановки"
 
 #: ../plugins/gtkui/eq.c:337
 msgid "Import Foobar2000 Preset"
@@ -1447,7 +1447,6 @@ msgstr "Длительность затухания (сек)"
 
 # loop может иметь значение "сэмпл", хотя здесь вряд-ли так
 #: ../translation/extra.c:41
-#, fuzzy
 msgid "Play loops nr. of times (if available)"
 msgstr "Количество проигрываний повторов (если доступно)"
 
@@ -1612,28 +1611,26 @@ msgstr ""
 # тафталогия...
 #. shellexecui
 #: ../translation/extra.c:97
-#, fuzzy
 msgid "Configure custom shell commands"
 msgstr "Параметры вызова команд командной строки"
 
 # хотелось бы покороче
 #. mpgmad
 #: ../translation/extra.c:99
-#, fuzzy
 msgid "Disable gapless playback (faster scanning)"
 msgstr ""
-"Выключить утсранение тишины между дорожками при проигрывание (ускоряет "
+"Выключить устранение тишины между дорожками при проигрывание (ускоряет "
 "сканирование файлов)"
 
 #. adplug
 #: ../translation/extra.c:101
+#, fuzzy
 msgid "Prefer Ken emu over Satoh (surround won't work)"
-msgstr ""
+msgstr "Предпочесть Ken emu перед Satoh (surround не будет работать)"
 
 #: ../translation/extra.c:102
-#, fuzzy
 msgid "Enable surround"
-msgstr "Включить скробблер"
+msgstr "Включить surround"
 
 #: ../plugins/converter/convgui.c:117
 msgid "The file already exists. Overwrite?"
@@ -1731,9 +1728,8 @@ msgstr "Записать в каталог исходной дорожки"
 
 #: ../plugins/converter/interface.c:113
 #: ../plugins/converter/converter.glade.h:3
-#, fuzzy
 msgid "Preserve folder structure"
-msgstr "Сохранить структуру папок, начиная с:"
+msgstr "Сохранить структуру папок:"
 
 #: ../plugins/converter/interface.c:121
 #: ../plugins/converter/converter.glade.h:4
@@ -1930,18 +1926,18 @@ msgstr ""
 "о перезаписи"
 
 #: ../plugins/converter/converter.glade.h:34
-#, fuzzy
 msgid ""
 "Pipe\n"
 "Temporary file"
-msgstr "Временный файл"
+msgstr ""
+"Цепочка\n"
+"Временный файл"
 
 # или "командной строки"
 #: ../plugins/shellexecui/interface.c:46
 #: ../plugins/shellexecui/shellexec.glade.h:1
-#, fuzzy
 msgid "Custom Shell Commands"
-msgstr "Настроить вызовы команд оболочки"
+msgstr "Команды оболочки пользователя"
 
 #: ../plugins/shellexecui/interface.c:69
 #: ../plugins/shellexecui/shellexec.glade.h:5
@@ -2083,80 +2079,80 @@ msgstr "Название должно быть непустым\n"
 
 #: ../plugins/shellexecui/shellexecui.c:242
 msgid "Shell Command must be non-empty.\n"
-msgstr ""
+msgstr "Команды оболочки не должны быть пустыми.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:249
 #: ../plugins/shellexecui/shellexecui.c:253
 msgid "Invalid Values"
-msgstr ""
+msgstr "Неверные значения"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:165
 #, c-format
 msgid "File is not a valid .desktop file"
-msgstr ""
+msgstr "Файл не является верным файлом .desktop"
 
 #. translators: 'Version' is from a desktop file, and
 #. * should not be translated. '%s' would probably be a
 #. * version number.
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:191
-#, c-format
+#, c-format, fuzzy
 msgid "Unrecognized desktop file Version '%s'"
-msgstr ""
+msgstr "Не распознанный файл ярлыка Версии '%s'"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:974
 #, fuzzy, c-format
 msgid "Starting %s"
-msgstr "Настройки"
+msgstr "Начиная %s"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1116
 #, c-format
 msgid "Application does not accept documents on command line"
-msgstr ""
+msgstr "Приложение не принимает документы из командной строки"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1184
 #, c-format
 msgid "Unrecognized launch option: %d"
-msgstr ""
+msgstr "Не распознанный параметр запуска: %s"
 
 #. translators: The 'Type=Link' string is found in a
 #. * desktop file, and should not be translated.
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1391
 #, c-format
 msgid "Can't pass document URIs to a 'Type=Link' desktop entry"
-msgstr ""
+msgstr "Невозможно передать URI документа в в 'Type=Link' файла ярлыка"
 
 #: ../plugins/gtkui/smclient/eggdesktopfile.c:1412
 #, c-format
 msgid "Not a launchable item"
-msgstr ""
+msgstr "Не запускаемый элемент"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:226
 msgid "Disable connection to session manager"
-msgstr ""
+msgstr "Выключить соединение с менеджером сесии"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:229
 msgid "Specify file containing saved configuration"
-msgstr ""
+msgstr "Задать файл с конфигурацией"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:229
 msgid "FILE"
-msgstr ""
+msgstr "FILE"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:232
 msgid "Specify session management ID"
-msgstr ""
+msgstr "Задать ID менеджера сессий"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:232
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:253
 msgid "Session management options:"
-msgstr ""
+msgstr "Параметры менеджера сессий:"
 
 #: ../plugins/gtkui/smclient/eggsmclient.c:254
 msgid "Show session management options"
-msgstr ""
+msgstr "Показать параметры менеджера сессий"
 
 #~ msgid "GUI"
 #~ msgstr "Интерфейс"
