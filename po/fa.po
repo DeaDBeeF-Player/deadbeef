@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-23 14:33+0200\n"
-"PO-Revision-Date: 2010-10-18 07:33+0200\n"
+"PO-Revision-Date: 2012-10-25 00:35+0200\n"
 "Last-Translator: Ali <aysabzevar@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: fa\n"
@@ -23,9 +23,8 @@ msgid "Supported sound formats"
 msgstr "قالب‌های صوتی پشتیبانی شده"
 
 #: ../plugins/gtkui/callbacks.c:134
-#, fuzzy
 msgid "All files (*)"
-msgstr "دیگر پرونده‌ها (*)"
+msgstr "تمامی پرونده‌ها (*)"
 
 #: ../plugins/gtkui/callbacks.c:144
 msgid "Open file(s)..."
@@ -53,7 +52,7 @@ msgstr "شکست در بارگذاری فایل کمک"
 
 #: ../plugins/gtkui/callbacks.c:736
 msgid "help.txt"
-msgstr ""
+msgstr "help.txt"
 
 #: ../plugins/gtkui/callbacks.c:737 ../plugins/gtkui/interface.c:1158
 #: ../plugins/gtkui/deadbeef.glade.h:61 ../plugins/converter/convgui.c:1362
@@ -72,9 +71,9 @@ msgid "DeaDBeeF %s ChangeLog"
 msgstr "گزارش تغییرات %s DeaDBeeF"
 
 #: ../plugins/gtkui/callbacks.c:1134
-#, fuzzy, c-format
+#, c-format
 msgid "DeaDBeeF Translators"
-msgstr "DeaDBeeF هم اکنون در حال پخش است"
+msgstr "مترجمان DeaDBeeF"
 
 #: ../plugins/gtkui/ddbtabstrip.c:842
 msgid "Edit playlist"
@@ -155,9 +154,8 @@ msgstr "نوارهای صفر"
 
 #: ../plugins/gtkui/eq.c:392 ../plugins/converter/interface.c:803
 #: ../plugins/converter/converter.glade.h:50
-#, fuzzy
 msgid "Presets"
-msgstr "ذخیره از پیش تنظیم شده"
+msgstr "از پیش تنظیم شده‌ها"
 
 #: ../plugins/gtkui/gtkui.c:140
 #, c-format
@@ -225,7 +223,7 @@ msgstr "لیست پخش جدید (%d)"
 
 #: ../plugins/gtkui/gtkui.c:1085
 msgid "- Test logout functionality"
-msgstr ""
+msgstr "- تست قابلیت خروج"
 
 #: ../plugins/gtkui/interface.c:150 ../plugins/gtkui/deadbeef.glade.h:1
 msgid "_File"
@@ -307,7 +305,7 @@ msgstr "_یافتن"
 
 #: ../plugins/gtkui/interface.c:288 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Sort by"
-msgstr ""
+msgstr "مرتب شدن به ترتیب"
 
 #: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1519
 #: ../plugins/gtkui/mainplaylist.c:320 ../plugins/gtkui/prefwin.c:667
@@ -320,9 +318,8 @@ msgid "Title"
 msgstr "عنوان"
 
 #: ../plugins/gtkui/interface.c:299 ../plugins/gtkui/deadbeef.glade.h:21
-#, fuzzy
 msgid "Track number"
-msgstr "شماره پرونده"
+msgstr "شماره ترک"
 
 #: ../plugins/gtkui/interface.c:303 ../plugins/gtkui/interface.c:1518
 #: ../plugins/gtkui/interface.c:1888 ../plugins/gtkui/deadbeef.glade.h:22
@@ -340,7 +337,7 @@ msgstr "هنرمند"
 #: ../plugins/gtkui/interface.c:311 ../plugins/gtkui/deadbeef.glade.h:24
 #: ../translation/extra.c:74
 msgid "Date"
-msgstr ""
+msgstr "تاریخ"
 
 #: ../plugins/gtkui/interface.c:315 ../plugins/gtkui/interface.c:387
 #: ../plugins/gtkui/deadbeef.glade.h:25
@@ -391,31 +388,26 @@ msgid "Linear"
 msgstr "خطی"
 
 #: ../plugins/gtkui/interface.c:375 ../plugins/gtkui/deadbeef.glade.h:36
-#, fuzzy
 msgid "Shuffle tracks"
-msgstr "بُر زنی"
+msgstr "بُرزنی ترک‌ها"
 
 #: ../plugins/gtkui/interface.c:381 ../plugins/gtkui/deadbeef.glade.h:37
-#, fuzzy
 msgid "Shuffle albums"
-msgstr "بُر زنی"
+msgstr "بُر زنی آلبوم‌ها"
 
 #: ../plugins/gtkui/interface.c:393 ../plugins/gtkui/deadbeef.glade.h:38
 msgid "Looping"
 msgstr "حلقه‌ زنی"
 
 #: ../plugins/gtkui/interface.c:400 ../plugins/gtkui/deadbeef.glade.h:39
-#, fuzzy
 msgid "Loop all"
 msgstr "حلقه زنی همگی"
 
 #: ../plugins/gtkui/interface.c:406 ../plugins/gtkui/deadbeef.glade.h:40
-#, fuzzy
 msgid "Loop single song"
 msgstr "حلقه زنی تک آهنگ"
 
 #: ../plugins/gtkui/interface.c:412 ../plugins/gtkui/deadbeef.glade.h:41
-#, fuzzy
 msgid "Don't loop"
 msgstr "حلقه‌ نکن"
 
@@ -433,7 +425,7 @@ msgstr "توقف پس از کنونی"
 
 #: ../plugins/gtkui/interface.c:439 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "Jump to current track"
-msgstr ""
+msgstr "پرش به ترک کنونی"
 
 #: ../plugins/gtkui/interface.c:446 ../plugins/gtkui/interface.c:453
 #: ../plugins/gtkui/deadbeef.glade.h:46
@@ -446,11 +438,11 @@ msgstr "_تغییرات"
 
 #: ../plugins/gtkui/interface.c:470 ../plugins/gtkui/deadbeef.glade.h:48
 msgid "_GPLv2"
-msgstr ""
+msgstr "_GPLv2"
 
 #: ../plugins/gtkui/interface.c:474 ../plugins/gtkui/deadbeef.glade.h:49
 msgid "_LGPLv2.1"
-msgstr ""
+msgstr "_LGPLv2.1"
 
 #: ../plugins/gtkui/interface.c:483 ../plugins/gtkui/deadbeef.glade.h:50
 msgid "_About"
@@ -458,7 +450,7 @@ msgstr "_درباره"
 
 #: ../plugins/gtkui/interface.c:491 ../plugins/gtkui/deadbeef.glade.h:51
 msgid "_Translators"
-msgstr ""
+msgstr "ـمترجمان"
 
 #: ../plugins/gtkui/interface.c:907 ../plugins/gtkui/deadbeef.glade.h:52
 msgid "Search"
@@ -502,7 +494,7 @@ msgstr "ویژگی آهنگ"
 
 #: ../plugins/gtkui/interface.c:1273 ../plugins/gtkui/deadbeef.glade.h:63
 msgid "Settings"
-msgstr ""
+msgstr "تنظیمات"
 
 #: ../plugins/gtkui/interface.c:1299 ../plugins/gtkui/deadbeef.glade.h:64
 msgid "_Apply"
@@ -532,7 +524,7 @@ msgstr "نوع:"
 
 #: ../plugins/gtkui/interface.c:1513
 msgid "Item Index"
-msgstr ""
+msgstr "فهرست موارد"
 
 #. create default set of columns
 #: ../plugins/gtkui/interface.c:1514 ../plugins/gtkui/mainplaylist.c:317
@@ -553,9 +545,8 @@ msgid "Duration"
 msgstr "مدت زمان"
 
 #: ../plugins/gtkui/interface.c:1521 ../translation/extra.c:75
-#, fuzzy
 msgid "Track Number"
-msgstr "شماره آهنگ"
+msgstr "شماره ترک"
 
 #: ../plugins/gtkui/interface.c:1522 ../translation/extra.c:72
 msgid "Band / Album Artist"
@@ -600,7 +591,7 @@ msgstr "دستگاه خروجی:"
 
 #: ../plugins/gtkui/interface.c:1860 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Always convert 8 bit audio to 16 bit"
-msgstr ""
+msgstr "همیشه صوت ۸بیتی را به ۱۶بیتی تبدیل کن"
 
 #: ../plugins/gtkui/interface.c:1864 ../plugins/gtkui/deadbeef.glade.h:91
 msgid "Sound"
@@ -625,12 +616,12 @@ msgstr "پخش مجدد مقیاس قله"
 #: ../plugins/gtkui/interface.c:1905 ../plugins/gtkui/interface.c:1939
 #: ../plugins/gtkui/deadbeef.glade.h:97
 msgid "-12 dB"
-msgstr ""
+msgstr "-12 dB"
 
 #: ../plugins/gtkui/interface.c:1915 ../plugins/gtkui/interface.c:1949
 #: ../plugins/gtkui/deadbeef.glade.h:98
 msgid "+12 dB"
-msgstr ""
+msgstr "+12 dB"
 
 #: ../plugins/gtkui/interface.c:1919 ../plugins/gtkui/deadbeef.glade.h:99
 #, fuzzy
@@ -639,7 +630,7 @@ msgstr "حالت پخش مجدد:"
 
 #: ../plugins/gtkui/interface.c:1926 ../plugins/gtkui/deadbeef.glade.h:100
 msgid "Global preamp:"
-msgstr ""
+msgstr "پیش تقویت کننده عمومی:"
 
 #: ../plugins/gtkui/interface.c:1957 ../plugins/gtkui/deadbeef.glade.h:101
 msgid "Add files from command line (or file manager) to this playlist:"
