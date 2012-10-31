@@ -70,7 +70,7 @@ AC_ARG_ENABLE(nullout,  [AS_HELP_STRING([--disable-nullout ], [disable NULL outp
 AC_ARG_ENABLE(alsa,     [AS_HELP_STRING([--disable-alsa    ], [disable ALSA output plugin (default: enabled)])], [enable_alsa=$enableval], [enable_alsa=yes])
 AC_ARG_ENABLE(oss,      [AS_HELP_STRING([--disable-oss     ], [disable Open Sound System output plugin (default: enabled)])], [enable_oss=$enableval], [enable_oss=yes])
 AC_ARG_ENABLE(pulse,    [AS_HELP_STRING([--disable-pulse   ], [disable PulseAudio output plugin (default: enabled)])], [enable_pulse=$enableval], [enable_pulse=yes])
-AC_ARG_ENABLE(gtk3,     [AS_HELP_STRING([--enable-gtk3     ], [build GTK3 version of gtkui plugin (default: enabled)])], [enable_gtk3=$enableval], [enable_gtk3=yes])
+AC_ARG_ENABLE(gtk3,     [AS_HELP_STRING([--disable-gtk3     ], [build GTK3 version of gtkui plugin (default: enabled)])], [enable_gtk3=$enableval], [enable_gtk3=yes])
 AC_ARG_ENABLE(gtk2,     [AS_HELP_STRING([--disable-gtk2     ], [build GTK2 version of gtkui plugin (default: enabled)])], [enable_gtk2=$enableval], [enable_gtk2=yes])
 AC_ARG_ENABLE(vfs_curl, [AS_HELP_STRING([--disable-vfs-curl], [disable HTTP streaming vfs plugin (default: enabled)])], [enable_vfs_curl=$enableval], [enable_vfs_curl=yes])
 AC_ARG_ENABLE(lfm,      [AS_HELP_STRING([--disable-lfm     ], [disable last.fm/libre.fm scrobbler plugin (default: enabled)])], [enable_lfm=$enableval], [enable_lfm=yes])
