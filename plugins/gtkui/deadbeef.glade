@@ -5255,6 +5255,7 @@ SOCKS5_HOSTNAME</property>
 
 		  <child>
 		    <widget class="GtkEntry" id="hotkey_keycombo">
+		      <property name="width_request">284</property>
 		      <property name="visible">True</property>
 		      <property name="can_focus">True</property>
 		      <property name="editable">True</property>
@@ -5264,8 +5265,11 @@ SOCKS5_HOSTNAME</property>
 		      <property name="has_frame">True</property>
 		      <property name="invisible_char">•</property>
 		      <property name="activates_default">False</property>
-		      <signal name="changed" handler="on_hotkey_keycombo_changed" last_modification_time="Tue, 30 Oct 2012 20:39:32 GMT"/>
 		      <signal name="key_press_event" handler="on_hotkey_keycombo_key_press_event" last_modification_time="Tue, 30 Oct 2012 20:56:34 GMT"/>
+		      <signal name="button_press_event" handler="on_hotkey_keycombo_button_press_event" last_modification_time="Thu, 01 Nov 2012 20:13:45 GMT"/>
+		      <signal name="motion_notify_event" handler="on_hotkey_keycombo_motion_notify_event" last_modification_time="Thu, 01 Nov 2012 20:23:31 GMT"/>
+		      <signal name="button_release_event" handler="on_hotkey_keycombo_button_release_event" last_modification_time="Thu, 01 Nov 2012 20:23:36 GMT"/>
+		      <signal name="focus_in_event" handler="on_hotkey_keycombo_focus_in_event" last_modification_time="Thu, 01 Nov 2012 20:30:12 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="padding">0</property>

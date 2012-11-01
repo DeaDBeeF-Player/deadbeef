@@ -62,6 +62,15 @@ prefwin_init_hotkeys (GtkWidget *prefwin) {
     gtk_tree_view_append_column (GTK_TREE_VIEW (hotkeys), hk_col3);
     gtk_tree_view_append_column (GTK_TREE_VIEW (hotkeys), hk_col4);
     GtkListStore *hkstore = gtk_list_store_new (4, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+
+    DB_conf_item_t *item = deadbeef->conf_find ("hotkeys.", NULL);
+    while (item) {
+        GtkTreeIter iter;
+        gtk_list_store_append (hkstore, &iter);
+        gtk_list_store_set (hkstore, &iter, 0, "key", 1, "action", 2, "context", 3, "global", -1);
+        item = deadbeef->conf_find ("hotkeys.", item);
+    }
+
     gtk_tree_view_set_model (GTK_TREE_VIEW (hotkeys), GTK_TREE_MODEL (hkstore));
 
     // setup action tree
@@ -153,26 +162,161 @@ on_hotkeys_actions_cursor_changed      (GtkTreeView     *treeview,
 
 
 void
-on_hotkey_keycombo_changed             (GtkEditable     *editable,
-                                        gpointer         user_data)
-{
-
-}
-
-
-void
 on_hotkey_is_global_toggled            (GtkToggleButton *togglebutton,
                                         gpointer         user_data)
 {
 
 }
 
+int grabbed = 0;
+guint last_accel_key = 0;
+guint last_accel_mask = 0;
+
 gboolean
 on_hotkey_keycombo_key_press_event     (GtkWidget       *widget,
                                         GdkEventKey     *event,
                                         gpointer         user_data)
 {
+    GdkModifierType accel_mods = 0;
+    guint accel_key;
+    gchar *path;
+    gboolean edited;
+    gboolean cleared;
+    GdkModifierType consumed_modifiers;
+    GdkDisplay *display;
 
-  return FALSE;
+    if (!grabbed) {
+        return TRUE;
+    }
+
+    display = gtk_widget_get_display (widget);
+
+    if (event->is_modifier)
+        return TRUE;
+
+    edited = FALSE;
+    cleared = FALSE;
+
+    gdk_keymap_translate_keyboard_state (gdk_keymap_get_for_display (display),
+            event->hardware_keycode,
+            event->state,
+            event->group,
+            NULL, NULL, NULL, &consumed_modifiers);
+
+    accel_key = gdk_keyval_to_lower (event->keyval);
+    if (accel_key == GDK_ISO_Left_Tab) 
+        accel_key = GDK_Tab;
+
+    accel_mods = event->state & gtk_accelerator_get_default_mod_mask ();
+
+    /* Filter consumed modifiers 
+    */
+    accel_mods &= ~consumed_modifiers;
+
+    /* Put shift back if it changed the case of the key, not otherwise.
+    */
+    if (accel_key != event->keyval)
+        accel_mods |= GDK_SHIFT_MASK;
+
+    gtk_entry_set_text (GTK_ENTRY (widget), _(""));
+    if (accel_mods == 0)
+    {
+        switch (event->keyval)
+        {
+        case GDK_Escape:
+            {
+            gchar *name = gtk_accelerator_get_label (last_accel_key, last_accel_mask);
+            gtk_entry_set_text (GTK_ENTRY (widget), name);
+            g_free (name);
+            }
+            goto out; /* cancel */
+        case GDK_BackSpace:
+            gtk_entry_set_text (GTK_ENTRY (widget), "");
+            last_accel_key = 0;
+            last_accel_mask = 0;
+            /* clear the accelerator on Backspace */
+            cleared = TRUE;
+            goto out;
+        default:
+            break;
+        }
+    }
+
+    if (!gtk_accelerator_valid (accel_key, accel_mods))
+    {
+        gtk_widget_error_bell (widget);
+
+        return TRUE;
+    }
+    last_accel_key = accel_key;
+    last_accel_mask = accel_mods;
+    gchar *name = gtk_accelerator_get_label (accel_key, accel_mods);
+    gtk_entry_set_text (GTK_ENTRY (widget), name);
+    g_free (name);
+
+out:
+    gdk_display_keyboard_ungrab (display, GDK_CURRENT_TIME);
+    gdk_display_pointer_ungrab (display, GDK_CURRENT_TIME);
+    grabbed = 0;
+    return TRUE;
+}
+
+static void
+hotkey_grab_focus (GtkWidget *widget, GdkEvent *event) {
+    GdkDisplay *display = gtk_widget_get_display (widget);
+    if (grabbed) {
+        return;
+    }
+    grabbed = 0;
+    if (GDK_GRAB_SUCCESS != gdk_keyboard_grab (gtk_widget_get_window (widget), FALSE, gdk_event_get_time ((GdkEvent*)event))) {
+        return;
+    }
+
+    if (gdk_pointer_grab (gtk_widget_get_window (widget), FALSE,
+                GDK_BUTTON_PRESS_MASK,
+                NULL, NULL,
+                gdk_event_get_time ((GdkEvent *)event)) != GDK_GRAB_SUCCESS)
+    {
+        gdk_display_keyboard_ungrab (display, gdk_event_get_time ((GdkEvent *)event));
+        return;
+    }
+    gtk_entry_set_text (GTK_ENTRY (widget), _("New key combination..."));
+    grabbed = 1;
+}
+
+gboolean
+on_hotkey_keycombo_focus_in_event      (GtkWidget       *widget,
+                                        GdkEventFocus   *event,
+                                        gpointer         user_data)
+{
+    hotkey_grab_focus (widget, (GdkEvent *)event);
+    return TRUE;
+}
+
+gboolean
+on_hotkey_keycombo_button_press_event  (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data)
+{
+    hotkey_grab_focus (widget, (GdkEvent *)event);
+    return FALSE;
+}
+
+gboolean
+on_hotkey_keycombo_motion_notify_event (GtkWidget       *widget,
+                                        GdkEventMotion  *event,
+                                        gpointer         user_data)
+{
+    return TRUE;
+}
+
+
+gboolean
+on_hotkey_keycombo_button_release_event
+                                        (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data)
+{
+    return TRUE;
 }
 
