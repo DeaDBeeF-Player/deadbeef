@@ -1213,3 +1213,29 @@ gboolean
 on_hotkey_keycombo_key_press_event     (GtkWidget       *widget,
                                         GdkEventKey     *event,
                                         gpointer         user_data);
+
+gboolean
+on_hotkey_keycombo_focus_in_event      (GtkWidget       *widget,
+                                        GdkEventFocus   *event,
+                                        gpointer         user_data);
+
+gboolean
+on_hotkey_keycombo_button_press_event  (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data);
+
+gboolean
+on_hotkey_keycombo_motion_notify_event (GtkWidget       *widget,
+                                        GdkEventMotion  *event,
+                                        gpointer         user_data);
+
+gboolean
+on_hotkey_keycombo_button_release_event
+                                        (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data);
+
+gboolean
+on_hotkey_keycombo_focus_in_event      (GtkWidget       *widget,
+                                        GdkEventFocus   *event,
+                                        gpointer         user_data);

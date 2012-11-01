@@ -2583,6 +2583,7 @@ create_prefwin (void)
   hotkey_keycombo = gtk_entry_new ();
   gtk_widget_show (hotkey_keycombo);
   gtk_box_pack_start (GTK_BOX (hbox107), hotkey_keycombo, FALSE, TRUE, 0);
+  gtk_widget_set_size_request (hotkey_keycombo, 284, -1);
   gtk_entry_set_invisible_char (GTK_ENTRY (hotkey_keycombo), 8226);
 
   hotkey_is_global = gtk_check_button_new_with_mnemonic (_("Global hotkey"));
@@ -2888,11 +2889,20 @@ create_prefwin (void)
   g_signal_connect ((gpointer) hotkeys_actions, "cursor_changed",
                     G_CALLBACK (on_hotkeys_actions_cursor_changed),
                     NULL);
-  g_signal_connect ((gpointer) hotkey_keycombo, "changed",
-                    G_CALLBACK (on_hotkey_keycombo_changed),
-                    NULL);
   g_signal_connect ((gpointer) hotkey_keycombo, "key_press_event",
                     G_CALLBACK (on_hotkey_keycombo_key_press_event),
+                    NULL);
+  g_signal_connect ((gpointer) hotkey_keycombo, "button_press_event",
+                    G_CALLBACK (on_hotkey_keycombo_button_press_event),
+                    NULL);
+  g_signal_connect ((gpointer) hotkey_keycombo, "motion_notify_event",
+                    G_CALLBACK (on_hotkey_keycombo_motion_notify_event),
+                    NULL);
+  g_signal_connect ((gpointer) hotkey_keycombo, "button_release_event",
+                    G_CALLBACK (on_hotkey_keycombo_button_release_event),
+                    NULL);
+  g_signal_connect ((gpointer) hotkey_keycombo, "focus_in_event",
+                    G_CALLBACK (on_hotkey_keycombo_focus_in_event),
                     NULL);
   g_signal_connect ((gpointer) hotkey_is_global, "toggled",
                     G_CALLBACK (on_hotkey_is_global_toggled),
