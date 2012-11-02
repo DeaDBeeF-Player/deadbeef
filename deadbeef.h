@@ -855,36 +855,15 @@ typedef struct DB_plugin_action_s {
     struct DB_plugin_action_s *next;
 } DB_plugin_action_t;
 
-// hotkey contexts
+// action contexts
 // since 1.5
 enum {
-    DDB_HOTKEY_MAIN,
-    DDB_HOTKEY_SELECTION,
-    DDB_HOTKEY_PLAYLIST,
-    DDB_HOTKEY_NOWPLAYING,
+    DDB_ACTION_CTX_MAIN,
+    DDB_ACTION_CTX_SELECTION,
+    DDB_ACTION_CTX_PLAYLIST,
+    DDB_ACTION_CTX_NOWPLAYING,
+    DDB_ACTION_CTX_COUNT
 };
-
-// deadbeef core doesn't have any special hotkeys code,
-// but we need some common hotkey definition to share between plugins
-// so here is the example structure to use when implementing hotkeys support
-/*
-// corresponding line in the config file:
-// hotkey.keyX "key combination" CONTEXT IS_GLOBAL ACTION_ID
-//
-// example:
-// hotkey.key1 "Super n" main 1 playback_random
-// this would mean "execute playback_random action when Super+n is pressed globally"
-//
-// context can be main, selection, playlist or nowplaying
-// TODO: do we need anything else, like widget contexts?..
-typedef struct
-{
-    char *key_combination;
-    int context; // NULL, selection, playlist, nowplaying
-    DB_plugin_action_t *action;
-    unsigned is_global : 1;
-} ddb_hotkey_t;
-*/
 
 // base plugin interface
 typedef struct DB_plugin_s {
