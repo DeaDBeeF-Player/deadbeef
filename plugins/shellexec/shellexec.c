@@ -83,7 +83,7 @@ trim (char* s)
 static int
 shx_callback (Shx_action_t *action, DB_playItem_t *it)
 {
-    if (action->parent.flags&(DB_ACTION_PLAYLIST|DB_ACTION_COMMON)) {
+    if (action->parent.flags&(DB_ACTION_COMMON)) {
         trace ("%s\n", action->shcommand);
         system (action->shcommand);
         return 0;
@@ -158,13 +158,10 @@ shx_save_actions (void)
         if(action->shx_flags & SHX_ACTION_LOCAL_ONLY) {
             strcat(conf_line, "local,");
         }
-        if(action->parent.flags & DB_ACTION_PLAYLIST) {
-            strcat(conf_line, "playlist,");
-        }
         if(action->parent.flags & DB_ACTION_SINGLE_TRACK) {
             strcat(conf_line, "single,");
         }
-        if(action->parent.flags & DB_ACTION_ALLOW_MULTIPLE_TRACKS) {
+        if(action->parent.flags & DB_ACTION_MULTIPLE_TRACKS) {
             strcat(conf_line, "multiple,");
         }
         if(action->parent.flags & DB_ACTION_COMMON) {
@@ -241,10 +238,7 @@ shx_get_actions (DB_plugin_action_callback_t callback)
             action->parent.flags |= DB_ACTION_SINGLE_TRACK;
 
         if (strstr (flags, "multiple"))
-            action->parent.flags |= DB_ACTION_ALLOW_MULTIPLE_TRACKS;
-
-        if (strstr (flags, "playlist"))
-            action->parent.flags |= DB_ACTION_PLAYLIST;
+            action->parent.flags |= DB_ACTION_MULTIPLE_TRACKS;
 
         if (strstr (flags, "common"))
             action->parent.flags |= DB_ACTION_COMMON;
