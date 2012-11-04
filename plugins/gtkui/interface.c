@@ -2508,7 +2508,7 @@ create_prefwin (void)
   gtk_widget_show (hbox108);
   gtk_box_pack_start (GTK_BOX (vbox36), hbox108, FALSE, TRUE, 0);
 
-  label135 = gtk_label_new (_("<b>List of hotkeys</b>"));
+  label135 = gtk_label_new (_("<b>Assigned hotkeys</b>"));
   gtk_widget_show (label135);
   gtk_box_pack_start (GTK_BOX (hbox108), label135, FALSE, FALSE, 0);
   gtk_label_set_use_markup (GTK_LABEL (label135), TRUE);
@@ -2519,7 +2519,7 @@ create_prefwin (void)
 
   scrolledwindow9 = gtk_scrolled_window_new (NULL, NULL);
   gtk_widget_show (scrolledwindow9);
-  gtk_box_pack_start (GTK_BOX (vbox36), scrolledwindow9, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox36), scrolledwindow9, FALSE, TRUE, 0);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow9), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow9), GTK_SHADOW_IN);
 
@@ -2566,6 +2566,7 @@ create_prefwin (void)
   hotkeys_actions = gtk_tree_view_new ();
   gtk_widget_show (hotkeys_actions);
   gtk_container_add (GTK_CONTAINER (scrolledwindow10), hotkeys_actions);
+  gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (hotkeys_actions), FALSE);
 
   hbox106 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox106);
@@ -2596,7 +2597,7 @@ create_prefwin (void)
 
   hbuttonbox4 = gtk_hbutton_box_new ();
   gtk_widget_show (hbuttonbox4);
-  gtk_box_pack_start (GTK_BOX (vbox36), hbuttonbox4, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox36), hbuttonbox4, FALSE, TRUE, 0);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox4), GTK_BUTTONBOX_END);
   gtk_box_set_spacing (GTK_BOX (hbuttonbox4), 8);
 

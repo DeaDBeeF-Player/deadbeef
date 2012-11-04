@@ -5008,7 +5008,7 @@ SOCKS5_HOSTNAME</property>
 		  <child>
 		    <widget class="GtkLabel" id="label135">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">&lt;b&gt;List of hotkeys&lt;/b&gt;</property>
+		      <property name="label" translatable="yes">&lt;b&gt;Assigned hotkeys&lt;/b&gt;</property>
 		      <property name="use_underline">False</property>
 		      <property name="use_markup">True</property>
 		      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -5074,7 +5074,7 @@ SOCKS5_HOSTNAME</property>
 		</widget>
 		<packing>
 		  <property name="padding">0</property>
-		  <property name="expand">True</property>
+		  <property name="expand">False</property>
 		  <property name="fill">True</property>
 		</packing>
 	      </child>
@@ -5180,7 +5180,7 @@ SOCKS5_HOSTNAME</property>
 		    <widget class="GtkTreeView" id="hotkeys_actions">
 		      <property name="visible">True</property>
 		      <property name="can_focus">True</property>
-		      <property name="headers_visible">True</property>
+		      <property name="headers_visible">False</property>
 		      <property name="rules_hint">False</property>
 		      <property name="reorderable">False</property>
 		      <property name="enable_search">True</property>
@@ -5339,7 +5339,7 @@ SOCKS5_HOSTNAME</property>
 		</widget>
 		<packing>
 		  <property name="padding">0</property>
-		  <property name="expand">True</property>
+		  <property name="expand">False</property>
 		  <property name="fill">True</property>
 		</packing>
 	      </child>
