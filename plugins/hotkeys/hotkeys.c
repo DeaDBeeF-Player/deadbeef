@@ -276,6 +276,7 @@ out:
             if (f & 8) {
                 flags |= Mod5Mask;
             }
+            trace ("XGrabKey %d %x\n", commands[i].keycode, commands[i].modifier | flags);
             XGrabKey (disp, commands[i].keycode, commands[i].modifier | flags, DefaultRootWindow (disp), False, GrabModeAsync, GrabModeAsync);
         }
     }
@@ -297,10 +298,12 @@ cleanup () {
 
 static int
 x_err_handler (Display *d, XErrorEvent *evt) {
+#if 0
+    // this code crashes if gtk plugin is active
     char buffer[1024];
     XGetErrorText (d, evt->error_code, buffer, sizeof (buffer));
     trace ("hotkeys: xlib error: %s\n", buffer);
-
+#endif
     return 0;
 }
 
