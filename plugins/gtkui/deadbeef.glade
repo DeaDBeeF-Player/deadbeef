@@ -5083,15 +5083,15 @@ SOCKS5_HOSTNAME</property>
 		<widget class="GtkHButtonBox" id="hbuttonbox3">
 		  <property name="visible">True</property>
 		  <property name="layout_style">GTK_BUTTONBOX_END</property>
-		  <property name="spacing">0</property>
+		  <property name="spacing">8</property>
 
 		  <child>
 		    <widget class="GtkButton" id="hotkey_add">
 		      <property name="visible">True</property>
 		      <property name="can_default">True</property>
 		      <property name="can_focus">True</property>
-		      <property name="label" translatable="yes">Add</property>
-		      <property name="use_underline">True</property>
+		      <property name="label">gtk-add</property>
+		      <property name="use_stock">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
 		      <property name="focus_on_click">True</property>
 		      <signal name="clicked" handler="on_hotkey_add_clicked" last_modification_time="Tue, 30 Oct 2012 20:39:18 GMT"/>
@@ -5103,8 +5103,8 @@ SOCKS5_HOSTNAME</property>
 		      <property name="visible">True</property>
 		      <property name="can_default">True</property>
 		      <property name="can_focus">True</property>
-		      <property name="label" translatable="yes">Remove</property>
-		      <property name="use_underline">True</property>
+		      <property name="label">gtk-remove</property>
+		      <property name="use_stock">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
 		      <property name="focus_on_click">True</property>
 		      <signal name="clicked" handler="on_hotkey_remove_clicked" last_modification_time="Tue, 30 Oct 2012 20:39:23 GMT"/>
@@ -5301,6 +5301,45 @@ SOCKS5_HOSTNAME</property>
 		<packing>
 		  <property name="padding">0</property>
 		  <property name="expand">False</property>
+		  <property name="fill">True</property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkHButtonBox" id="hbuttonbox4">
+		  <property name="visible">True</property>
+		  <property name="layout_style">GTK_BUTTONBOX_END</property>
+		  <property name="spacing">8</property>
+
+		  <child>
+		    <widget class="GtkButton" id="hotkeys_apply">
+		      <property name="visible">True</property>
+		      <property name="can_default">True</property>
+		      <property name="can_focus">True</property>
+		      <property name="label">gtk-apply</property>
+		      <property name="use_stock">True</property>
+		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <property name="focus_on_click">True</property>
+		      <signal name="clicked" handler="on_hotkeys_apply_clicked" last_modification_time="Sun, 04 Nov 2012 14:52:51 GMT"/>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkButton" id="hotkeys_revert">
+		      <property name="visible">True</property>
+		      <property name="can_default">True</property>
+		      <property name="can_focus">True</property>
+		      <property name="label">gtk-revert-to-saved</property>
+		      <property name="use_stock">True</property>
+		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <property name="focus_on_click">True</property>
+		      <signal name="clicked" handler="on_hotkeys_revert_clicked" last_modification_time="Sun, 04 Nov 2012 14:53:09 GMT"/>
+		    </widget>
+		  </child>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">True</property>
 		  <property name="fill">True</property>
 		</packing>
 	      </child>
