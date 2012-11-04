@@ -140,7 +140,14 @@ hotkeys_load (void) {
         GtkTreeIter iter;
         gtk_list_store_append (hkstore, &iter);
 
-        gtk_list_store_set (hkstore, &iter, 0, keycombo, 1, action->title, 2, ctx_names[ctx], 3, isglobal, 4, action->name, 5, ctx, -1);
+        const char *t = strrchr (action->title, '/');
+        if (t) {
+            t++;
+        }
+        else {
+            t = action->title;
+        }
+        gtk_list_store_set (hkstore, &iter, 0, keycombo, 1, t, 2, ctx_names[ctx], 3, isglobal, 4, action->name, 5, ctx, -1);
         has_items = 1;
 
 out:
@@ -173,10 +180,51 @@ hotkeys_save (void) {
         res = gtk_tree_model_iter_next (GTK_TREE_MODEL (hkstore), &iter);
         i++;
     }
+    // FIXME: should be done in a more generic sendmessage
+    DB_plugin_t *hkplug = deadbeef->plug_get_for_id ("hotkeys");
+    if (hkplug) {
+        ((DB_hotkeys_plugin_t *)hkplug)->reset ();
+    }
+}
+
+const char *
+action_tree_append (const char *title, GtkTreeStore *store, GtkTreeIter *root_iter, GtkTreeIter *iter) {
+    char *t = strdupa (title);
+    char *p = t;
+    GtkTreeIter i;
+    int got_iter = 0;
+    for (;;) {
+        char *s = strchr (p, '/');
+        if (!s) {
+            break;
+        }
+        *s = 0;
+        // find iter in the current root with name==p
+        gboolean res = gtk_tree_model_iter_children (GTK_TREE_MODEL (store), &i, root_iter);
+        if (!res) {
+            gtk_tree_store_append (store, &i, root_iter);
+            gtk_tree_store_set (store, &i, 0, p, 1, NULL, 2, -1, -1);
+            root_iter = &i;
+        }
+        else {
+            do {
+                GValue val = {0,};
+                gtk_tree_model_get_value (GTK_TREE_MODEL (store), &i, 0, &val);
+                const char *n = g_value_get_string (&val);
+                if (n && !strcmp (n, p)) {
+                    root_iter = &i;
+                    break;
+                }
+            } while (gtk_tree_model_iter_next (GTK_TREE_MODEL (store), &i));
+        }
+
+        p = s+1;
+    }
+    gtk_tree_store_append (store, iter, root_iter);
+    return title + (int)(p-t);
 }
 
 void
-
 prefwin_init_hotkeys (GtkWidget *_prefwin) {
     ctx_names[DDB_ACTION_CTX_MAIN] = _("Main");
     ctx_names[DDB_ACTION_CTX_SELECTION] = _("Selection");
@@ -249,16 +297,17 @@ prefwin_init_hotkeys (GtkWidget *_prefwin) {
                     unescape_forward_slash (actions->title, title, sizeof (title));
 
                     GtkTreeIter iter;
+                    const char *t;
                     if (actions->flags & DB_ACTION_COMMON) {
-                        gtk_tree_store_append (actions_store, &iter, &action_main_iter);
-                        gtk_tree_store_set (actions_store, &iter, 0, title, 1, actions->name, 2, DDB_ACTION_CTX_MAIN, -1);
+                        t = action_tree_append (title, actions_store, &action_main_iter, &iter);
+                        gtk_tree_store_set (actions_store, &iter, 0, t, 1, actions->name, 2, DDB_ACTION_CTX_MAIN, -1);
                     }
                     if (actions->flags & (DB_ACTION_SINGLE_TRACK | DB_ACTION_MULTIPLE_TRACKS)) {
-                        gtk_tree_store_append (actions_store, &iter, &action_selection_iter);
-                        gtk_tree_store_set (actions_store, &iter, 0, title, 1, actions->name, 2, DDB_ACTION_CTX_SELECTION, -1);
-                        gtk_tree_store_append (actions_store, &iter, &action_playlist_iter);
-                        gtk_tree_store_set (actions_store, &iter, 0, title, 1, actions->name, 2, DDB_ACTION_CTX_PLAYLIST, -1);
-                        gtk_tree_store_append (actions_store, &iter, &action_nowplaying_iter);
+                        t = action_tree_append (title, actions_store, &action_selection_iter, &iter);
+                        gtk_tree_store_set (actions_store, &iter, 0, t, 1, actions->name, 2, DDB_ACTION_CTX_SELECTION, -1);
+                        t = action_tree_append (title, actions_store, &action_playlist_iter, &iter);
+                        gtk_tree_store_set (actions_store, &iter, 0, t, 1, actions->name, 2, DDB_ACTION_CTX_PLAYLIST, -1);
+                        t = action_tree_append (title, actions_store, &action_nowplaying_iter, &iter);
                         gtk_tree_store_set (actions_store, &iter, 0, title, 1, actions->name, 2, DDB_ACTION_CTX_NOWPLAYING, -1);
                     }
                 }
@@ -400,10 +449,17 @@ on_hotkeys_actions_cursor_changed      (GtkTreeView     *treeview,
             GtkTreeIter iter;
             if (path && gtk_tree_model_get_iter (model, &iter, path)) {
                 if (action) {
-                    gtk_list_store_set (GTK_LIST_STORE (model), &iter, 1, action->title, 4, action->name, 5, ctx, 2, ctx_names[ctx], -1);
+                    const char *t = strrchr (action->title, '/');
+                    if (t) {
+                        t++;
+                    }
+                    else {
+                        t = action->title;
+                    }
+                    gtk_list_store_set (GTK_LIST_STORE (model), &iter, 1, t, 4, action->name, 5, ctx, 2, ctx_names[ctx], -1);
                 }
                 else {
-                    gtk_list_store_set (GTK_LIST_STORE (model), &iter, 1, NULL, 4, NULL, 2, 0, -1);
+                    gtk_list_store_set (GTK_LIST_STORE (model), &iter, 1, _("<Not set>"), 4, NULL, 2, _("<Not set>"), -1);
                 }
             }
         }
