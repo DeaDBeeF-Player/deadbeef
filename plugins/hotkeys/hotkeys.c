@@ -53,6 +53,7 @@ typedef struct command_s {
     int keycode;
     int modifier;
     int ctx;
+    int isglobal;
     DB_plugin_action_t *action;
 } command_t;
 
@@ -165,7 +166,6 @@ read_config (Display *disp)
 
         char token[MAX_TOKEN];
         char keycombo[MAX_TOKEN];
-        int isglobal;
         const char *script = item->value;
         if ((script = gettoken (script, keycombo)) == 0) {
             trace ("hotkeys: unexpected eol (keycombo)\n");
@@ -184,11 +184,7 @@ read_config (Display *disp)
             trace ("hotkeys: unexpected eol (isglobal)\n");
             goto out;
         }
-        isglobal = atoi (token);
-        if (!isglobal) {
-            trace ("hotkeys: isglobal=0, skip\n");
-            goto out; // ignore non-global hotkeys
-        }
+        cmd_entry->isglobal = atoi (token);
         if ((script = gettoken (script, token)) == 0) {
             trace ("hotkeys: unexpected eol (action)\n");
             goto out;
@@ -262,6 +258,9 @@ out:
     // need to grab it here to prevent gdk_x_error from being called while we're
     // doing it on other thread
     for (i = 0; i < command_count; i++) {
+        if (!commands[i].isglobal) {
+            continue;
+        }
         for (int f = 0; f < 16; f++) {
             uint32_t flags = 0;
             if (f & 1) {
@@ -403,6 +402,18 @@ hotkeys_get_name_for_keycode (int keycode) {
     for (int i = 0; keys[i].name; i++) {
         if (keycode == keys[i].keysym) {
             return keys[i].name;
+        }
+    }
+    return NULL;
+}
+
+
+DB_plugin_action_t*
+hotkeys_get_action_for_keycombo (int key, int mods, int isglobal, int *ctx) {
+    for (int i = 0; i < command_count; i++) {
+        if (commands[i].keycode == key && commands[i].modifier == mods && commands[i].isglobal == isglobal) {
+            *ctx = commands[i].ctx;
+            return commands[i].action;
         }
     }
     return NULL;
@@ -600,9 +611,9 @@ hotkeys_get_actions (DB_playItem_t *it)
 // define plugin interface
 static DB_hotkeys_plugin_t plugin = {
     .misc.plugin.api_vmajor = 1,
-    .misc.plugin.api_vminor = 0,
+    .misc.plugin.api_vminor = 5,
     .misc.plugin.version_major = 1,
-    .misc.plugin.version_minor = 0,
+    .misc.plugin.version_minor = 1,
     .misc.plugin.type = DB_PLUGIN_MISC,
     .misc.plugin.id = "hotkeys",
     .misc.plugin.name = "Global hotkeys support",
@@ -630,6 +641,7 @@ static DB_hotkeys_plugin_t plugin = {
     .misc.plugin.start = hotkeys_connect,
     .misc.plugin.stop = hotkeys_disconnect,
     .get_name_for_keycode = hotkeys_get_name_for_keycode,
+    .get_action_for_keycombo = hotkeys_get_action_for_keycombo,
     .reset = hotkeys_reset,
 };
 
