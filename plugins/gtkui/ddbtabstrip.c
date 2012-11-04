@@ -890,7 +890,7 @@ on_actionitem_activate (GtkMenuItem     *menuitem,
     if (tab_clicked != -1) {
         plt = deadbeef->plt_get_for_idx (tab_clicked);
     }
-    action->callback (action, plt);
+    action->callback (action, NULL, DDB_ACTION_CTX_PLAYLIST);
     deadbeef->plt_unref (plt);
 }
 
@@ -936,7 +936,7 @@ add_tab_actions (GtkWidget *menu) {
         for (action = actions; action; action = action->next)
         {
             char *tmp = NULL;
-            if (!(action->flags & DB_ACTION_PLAYLIST))
+            if (!(action->flags & DB_ACTION_MULTIPLE_TRACKS))
                 continue;
 
             // create submenus (separated with '/')

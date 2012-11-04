@@ -253,7 +253,7 @@ prefwin_init_hotkeys (GtkWidget *_prefwin) {
                         gtk_tree_store_append (actions_store, &iter, &action_main_iter);
                         gtk_tree_store_set (actions_store, &iter, 0, title, 1, actions->name, 2, DDB_ACTION_CTX_MAIN, -1);
                     }
-                    if (actions->flags & (DB_ACTION_SINGLE_TRACK | DB_ACTION_ALLOW_MULTIPLE_TRACKS | DB_ACTION_CAN_MULTIPLE_TRACKS)) {
+                    if (actions->flags & (DB_ACTION_SINGLE_TRACK | DB_ACTION_MULTIPLE_TRACKS)) {
                         gtk_tree_store_append (actions_store, &iter, &action_selection_iter);
                         gtk_tree_store_set (actions_store, &iter, 0, title, 1, actions->name, 2, DDB_ACTION_CTX_SELECTION, -1);
                         gtk_tree_store_append (actions_store, &iter, &action_playlist_iter);

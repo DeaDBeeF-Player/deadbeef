@@ -376,31 +376,7 @@ void
 actionitem_activate (GtkMenuItem     *menuitem,
                      DB_plugin_action_t *action)
 {
-    // Plugin can handle all tracks by itself
-    if (action->flags & DB_ACTION_CAN_MULTIPLE_TRACKS)
-    {
-        action->callback (action, NULL);
-        return;
-    }
-
-    // For single-track actions just invoke it with first selected track
-    if (!(action->flags & DB_ACTION_ALLOW_MULTIPLE_TRACKS))
-    {
-        DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (clicked_idx, PL_MAIN);
-        action->callback (action, it);
-        deadbeef->pl_item_unref (it);
-        return;
-    }
-    
-    //We end up here if plugin won't traverse tracks and we have to do it ourselves
-    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
-    while (it) {
-        if (deadbeef->pl_is_selected (it))
-            action->callback (action, it);
-        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
-        deadbeef->pl_item_unref (it);
-        it = next;
-    }
+    action->callback (action, NULL, DDB_ACTION_CTX_SELECTION);
 }
 
 #define HOOKUP_OBJECT(component,widget,name) \
@@ -551,7 +527,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
         int count = 0;
         for (action = actions; action; action = action->next)
         {
-            if (action->flags & (DB_ACTION_COMMON | DB_ACTION_PLAYLIST))
+            if (action->flags & DB_ACTION_COMMON)
                 continue;
             
             // create submenus (separated with '/')
@@ -629,9 +605,9 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
                     action);
             if (!(
                 ((selected_count == 1) && (action->flags & DB_ACTION_SINGLE_TRACK)) ||
-                ((selected_count > 1) && (action->flags & DB_ACTION_ALLOW_MULTIPLE_TRACKS))
+                ((selected_count > 1) && (action->flags & DB_ACTION_MULTIPLE_TRACKS))
                 ) ||
-                action->flags & DB_ACTION_DISABLED)
+                (action->flags & DB_ACTION_DISABLED))
             {
                 gtk_widget_set_sensitive (GTK_WIDGET (actionitem), FALSE);
             }

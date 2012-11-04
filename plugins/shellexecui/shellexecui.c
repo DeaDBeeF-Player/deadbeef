@@ -196,10 +196,7 @@ on_edit_button_clicked(GtkButton *button, gpointer user_data) {
             current_action->parent.flags & DB_ACTION_SINGLE_TRACK);
         gtk_toggle_button_set_active(
             GTK_TOGGLE_BUTTON(lookup_widget(edit_dlg, "multiple_check")),
-            current_action->parent.flags & DB_ACTION_ALLOW_MULTIPLE_TRACKS);
-        gtk_toggle_button_set_active(
-            GTK_TOGGLE_BUTTON(lookup_widget(edit_dlg, "playlist_check")),
-            current_action->parent.flags & DB_ACTION_PLAYLIST);
+            current_action->parent.flags & DB_ACTION_MULTIPLE_TRACKS);
         gtk_toggle_button_set_active(
             GTK_TOGGLE_BUTTON(lookup_widget(edit_dlg, "local_check")),
             current_action->shx_flags & SHX_ACTION_LOCAL_ONLY);
@@ -294,9 +291,7 @@ on_edit_ok_button_clicked (GtkButton *button, gpointer user_data) {
     active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(lookup_widget(edit_dlg, "single_check")));
     flags = (flags & ~DB_ACTION_SINGLE_TRACK) | (active?DB_ACTION_SINGLE_TRACK:0);
     active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(lookup_widget(edit_dlg, "multiple_check")));
-    flags = (flags & ~DB_ACTION_ALLOW_MULTIPLE_TRACKS) | (active?DB_ACTION_ALLOW_MULTIPLE_TRACKS:0);
-    active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(lookup_widget(edit_dlg, "playlist_check")));
-    flags = (flags & ~DB_ACTION_PLAYLIST) | (active?DB_ACTION_PLAYLIST:0);
+    flags = (flags & ~DB_ACTION_MULTIPLE_TRACKS) | (active?DB_ACTION_MULTIPLE_TRACKS:0);
     active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(lookup_widget(edit_dlg, "local_check")));
     shx_flags = (shx_flags & ~SHX_ACTION_LOCAL_ONLY) | (active?SHX_ACTION_LOCAL_ONLY:0);
     active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(lookup_widget(edit_dlg, "remote_check")));
@@ -362,7 +357,7 @@ shellexecui_action_gtk (void *data)
 
 static int
 shellexecui_action_callback(DB_plugin_action_t *action,
-                                void *user_data) {
+                                void *user_data, int ctx) {
     g_idle_add (shellexecui_action_gtk, NULL);
     return 0;
 }

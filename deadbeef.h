@@ -811,31 +811,39 @@ enum {
     /* Action in main menu (or whereever ui prefers) */
     DB_ACTION_COMMON = 1 << 0,
 
-    /* Action allowed for single track */
+    /* Can handle single track */
     DB_ACTION_SINGLE_TRACK = 1 << 1,
 
-    /* Action allowed for multiple tracks at once */
-    DB_ACTION_ALLOW_MULTIPLE_TRACKS = 1 << 2,
+    /* Can handle multiple tracks */
+    DB_ACTION_MULTIPLE_TRACKS = 1 << 2,
 
-    /* Action can (and prefer) traverse multiple tracks by itself */
-    DB_ACTION_CAN_MULTIPLE_TRACKS = 1 << 3,
+    /* deprecated in API 1.5 */
+    DB_ACTION_CAN_MULTIPLE_TRACKS__DEPRECATED = 1 << 3,
     
     /* Action is inactive */
     DB_ACTION_DISABLED = 1 << 4,
 
-    /* Action for the playlist (tab) */
-    /* this is new in 0.5.2 (API v1.2) */
-    DB_ACTION_PLAYLIST = 1 << 5,
+    /* deprecated in API 1.5 */
+    DB_ACTION_PLAYLIST__DEPRECATED = 1 << 5,
+};
+
+// action contexts
+// since 1.5
+enum {
+    DDB_ACTION_CTX_MAIN,
+    DDB_ACTION_CTX_SELECTION,
+    DDB_ACTION_CTX_PLAYLIST,
+    DDB_ACTION_CTX_NOWPLAYING,
+    DDB_ACTION_CTX_COUNT
 };
 
 struct DB_plugin_action_s;
 
-// userdata type depends on type of action
-// it must be NULL for DB_ACTION_COMMON
-// or ddb_playlist_t * for DB_ACTION_PLAYLIST
-// or ddb_playItem_t * for none of the above (track context menu)
-typedef int (*DB_plugin_action_callback_t) (struct DB_plugin_action_s *action, void *userdata);
-#define DDB_ACTION_CALLBACK(x)((int (*)(struct DB_plugin_action_s *action, void *userdata))x)
+// userdata is kept for compatibility with API 1.4 and below
+// should not be used in newly written actions;
+// ctx is one of the above DDB_ACTION_CTX constants
+typedef int (*DB_plugin_action_callback_t) (struct DB_plugin_action_s *action, void *userdata, int ctx);
+#define DDB_ACTION_CALLBACK(x)((int (*)(struct DB_plugin_action_s *action, void *userdata, int ctx))x)
 
 typedef struct DB_plugin_action_s {
     const char *title;
@@ -854,16 +862,6 @@ typedef struct DB_plugin_action_s {
     //we have linked list here
     struct DB_plugin_action_s *next;
 } DB_plugin_action_t;
-
-// action contexts
-// since 1.5
-enum {
-    DDB_ACTION_CTX_MAIN,
-    DDB_ACTION_CTX_SELECTION,
-    DDB_ACTION_CTX_PLAYLIST,
-    DDB_ACTION_CTX_NOWPLAYING,
-    DDB_ACTION_CTX_COUNT
-};
 
 // base plugin interface
 typedef struct DB_plugin_s {

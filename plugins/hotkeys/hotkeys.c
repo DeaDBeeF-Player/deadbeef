@@ -94,79 +94,9 @@ trim (char* s)
     and it does full traverse of playlist twice
 */
 static void
-cmd_invoke_plugin_command (DB_plugin_action_t *action)
+cmd_invoke_plugin_command (DB_plugin_action_t *action, int ctx)
 {
-    trace ("We're here to invoke action %s / %s\n", action->title, action->name);
-
-    // common action
-    if (action->flags & DB_ACTION_COMMON)
-    {
-        action->callback (action, NULL);
-        return;
-    }
-
-    // playlist action
-    if (action->flags & DB_ACTION_PLAYLIST)
-    {
-        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-        if (plt) {
-            action->callback (action, plt);
-            deadbeef->plt_unref (plt);
-        }
-        return;
-    }
-
-    int selected_count = 0;
-    DB_playItem_t *pit = deadbeef->pl_get_first (PL_MAIN);
-    DB_playItem_t *selected = NULL;
-    while (pit) {
-        if (deadbeef->pl_is_selected (pit))
-        {
-            if (!selected)
-                selected = pit;
-            selected_count++;
-        }
-        DB_playItem_t *next = deadbeef->pl_get_next (pit, PL_MAIN);
-        deadbeef->pl_item_unref (pit);
-        pit = next;
-    }
-
-    //Now we're checking if action is applicable:
-
-    if (selected_count == 0)
-    {
-        trace ("No tracks selected\n");
-        return;
-    }
-    if ((selected_count == 1) && (!(action->flags & DB_ACTION_SINGLE_TRACK)))
-    {
-        trace ("Hotkeys: action %s not allowed for single track\n", action->name);
-        return;
-    }
-    if ((selected_count > 1) && (!(action->flags & DB_ACTION_ALLOW_MULTIPLE_TRACKS)))
-    {
-        trace ("Hotkeys: action %s not allowed for multiple tracks\n", action->name);
-        return;
-    }
-
-    //So, action is allowed, do it.
-
-    if (action->flags & DB_ACTION_CAN_MULTIPLE_TRACKS)
-    {
-        action->callback (action, NULL);
-        return;
-    }
-
-    pit = deadbeef->pl_get_first (PL_MAIN);
-    while (pit) {
-        if (deadbeef->pl_is_selected (pit))
-        {
-            action->callback (action, pit);
-        }
-        DB_playItem_t *next = deadbeef->pl_get_next (pit, PL_MAIN);
-        deadbeef->pl_item_unref (pit);
-        pit = next;
-    }
+    action->callback (action, NULL, ctx);
 }
 
 static DB_plugin_action_t *
@@ -423,7 +353,7 @@ hotkeys_event_loop (void *unused) {
                          (state == commands[ i ].modifier))
                     {
                         trace ("matches to commands[%d]!\n", i);
-                        cmd_invoke_plugin_command (commands[i].action);
+                        cmd_invoke_plugin_command (commands[i].action, commands[i].ctx);
                         break;
                     }
                 }

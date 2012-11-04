@@ -36,7 +36,7 @@ static void
 on_actionitem_activate (GtkMenuItem     *menuitem,
                            DB_plugin_action_t *action)
 {
-    action->callback (action, NULL);
+    action->callback (action, NULL, DDB_ACTION_CTX_MAIN);
 }
 
 void
