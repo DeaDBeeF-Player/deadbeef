@@ -21,6 +21,7 @@
 #include <unistd.h>
 #include <X11/Xlib.h>
 #include <ctype.h>
+#include "parser.h"
 
 #include "hotkeys.h"
 #include "../../deadbeef.h"
@@ -51,6 +52,7 @@ static const xkey_t keys[] = {
 typedef struct command_s {
     int keycode;
     int modifier;
+    int ctx;
     DB_plugin_action_t *action;
 } command_t;
 
@@ -59,6 +61,7 @@ static int command_count = 0;
 
 static int
 get_keycode (Display *disp, const char* name, KeySym *syms, int first_kk, int last_kk, int ks_per_kk) {
+    trace ("get_keycode %s\n", name);
     int i, ks;
 
     for (i = 0; i < last_kk-first_kk; i++)
@@ -186,6 +189,29 @@ get_action (const char* command)
     return NULL;
 }
 
+static DB_plugin_action_t *
+find_action_by_name (const char *command) {
+    // find action with this name, and add to list
+    DB_plugin_action_t *actions = NULL;
+    DB_plugin_t **plugins = deadbeef->plug_get_list ();
+    for (int i = 0; plugins[i]; i++) {
+        DB_plugin_t *p = plugins[i];
+        if (p->get_actions) {
+            actions = p->get_actions (NULL);
+            while (actions) {
+                if (actions->name && actions->title && !strcasecmp (actions->name, command)) {
+                    break; // found
+                }
+                actions = actions->next;
+            }
+            if (actions) {
+                break;
+            }
+        }
+    }
+    return actions;
+}
+
 static int
 read_config (Display *disp)
 {
@@ -196,7 +222,7 @@ read_config (Display *disp)
     XDisplayKeycodes (disp, &first_kk, &last_kk);
     syms = XGetKeyboardMapping (disp, first_kk, last_kk - first_kk, &ks_per_kk);
 
-    DB_conf_item_t *item = deadbeef->conf_find ("hotkeys.", NULL);
+    DB_conf_item_t *item = deadbeef->conf_find ("hotkey.", NULL);
     while (item) {
         if (command_count == MAX_COMMAND_COUNT)
         {
@@ -205,30 +231,55 @@ read_config (Display *disp)
         }
 
         command_t *cmd_entry = &commands[ command_count ];
-        cmd_entry->modifier = 0;
-        cmd_entry->keycode = 0;
+        memset (cmd_entry, 0, sizeof (command_t));
 
-        size_t l = strlen (item->value);
-        char param[l+1];
-        memcpy (param, item->value, l+1);
-        
-        char* colon = strchr (param, ':');
-        if (!colon)
-        {
-            fprintf (stderr, "hotkeys: bad config option %s %s\n", item->key, item->value);
-            continue;
+        char token[MAX_TOKEN];
+        char keycombo[MAX_TOKEN];
+        int isglobal;
+        const char *script = item->value;
+        if ((script = gettoken (script, keycombo)) == 0) {
+            trace ("hotkeys: unexpected eol (keycombo)\n");
+            goto out;
         }
-        char* command = colon+1;
-        *colon = 0;
+        if ((script = gettoken (script, token)) == 0) {
+            trace ("hotkeys: unexpected eol (ctx)\n");
+            goto out;
+        }
+        cmd_entry->ctx = atoi (token);
+        if (cmd_entry->ctx < 0 || cmd_entry->ctx >= DDB_ACTION_CTX_COUNT) {
+            trace ("hotkeys: invalid ctx %d\n");
+            goto out;
+        }
+        if ((script = gettoken (script, token)) == 0) {
+            trace ("hotkeys: unexpected eol (isglobal)\n");
+            goto out;
+        }
+        isglobal = atoi (token);
+        if (!isglobal) {
+            trace ("hotkeys: isglobal=0, skip\n");
+            goto out; // ignore non-global hotkeys
+        }
+        if ((script = gettoken (script, token)) == 0) {
+            trace ("hotkeys: unexpected eol (action)\n");
+            goto out;
+        }
+        cmd_entry->action = find_action_by_name (token);
+        if (!cmd_entry->action) {
+            trace ("hotkeys: action not found %s\n", token);
+            goto out;
+        }
 
+        // parse key combo
         int done = 0;
         char* p;
-        char* space = param - 1;
+        char* space = keycombo;
         do {
-            p = space+1;
+            p = space;
             space = strchr (p, ' ');
-            if (space)
+            if (space) {
                 *space = 0;
+                space++;
+            }
             else
                 done = 1;
 
@@ -270,18 +321,11 @@ read_config (Display *disp)
                 trace ("hotkeys: Key not found while parsing %s %s\n", item->key, item->value);
             }
             else {
-                command = trim (command);
-                cmd_entry->action = get_action (command);
-                if (!cmd_entry->action)
-                {
-                    trace ("hotkeys: Unknown command <%s> while parsing %s %s\n", command,  item->key, item->value);
-                }
-                else {
-                    command_count++;
-                }
+                command_count++;
             }
         }
-        item = deadbeef->conf_find ("hotkeys.", item);
+out:
+        item = deadbeef->conf_find ("hotkey.", item);
     }
     XFree (syms);
     int i;
