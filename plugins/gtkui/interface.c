@@ -1799,6 +1799,9 @@ create_prefwin (void)
   GtkWidget *hbox107;
   GtkWidget *hotkey_keycombo;
   GtkWidget *hotkey_is_global;
+  GtkWidget *hbuttonbox4;
+  GtkWidget *hotkeys_apply;
+  GtkWidget *hotkeys_revert;
   GtkWidget *label132;
   GtkWidget *hpaned1;
   GtkWidget *scrolledwindow2;
@@ -2529,13 +2532,14 @@ create_prefwin (void)
   gtk_widget_show (hbuttonbox3);
   gtk_box_pack_start (GTK_BOX (vbox36), hbuttonbox3, FALSE, TRUE, 0);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox3), GTK_BUTTONBOX_END);
+  gtk_box_set_spacing (GTK_BOX (hbuttonbox3), 8);
 
-  hotkey_add = gtk_button_new_with_mnemonic (_("Add"));
+  hotkey_add = gtk_button_new_from_stock ("gtk-add");
   gtk_widget_show (hotkey_add);
   gtk_container_add (GTK_CONTAINER (hbuttonbox3), hotkey_add);
   gtk_widget_set_can_default(hotkey_add, TRUE);
 
-  hotkey_remove = gtk_button_new_with_mnemonic (_("Remove"));
+  hotkey_remove = gtk_button_new_from_stock ("gtk-remove");
   gtk_widget_show (hotkey_remove);
   gtk_container_add (GTK_CONTAINER (hbuttonbox3), hotkey_remove);
   gtk_widget_set_can_default(hotkey_remove, TRUE);
@@ -2589,6 +2593,22 @@ create_prefwin (void)
   hotkey_is_global = gtk_check_button_new_with_mnemonic (_("Global hotkey"));
   gtk_widget_show (hotkey_is_global);
   gtk_box_pack_start (GTK_BOX (hbox107), hotkey_is_global, FALSE, FALSE, 0);
+
+  hbuttonbox4 = gtk_hbutton_box_new ();
+  gtk_widget_show (hbuttonbox4);
+  gtk_box_pack_start (GTK_BOX (vbox36), hbuttonbox4, TRUE, TRUE, 0);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox4), GTK_BUTTONBOX_END);
+  gtk_box_set_spacing (GTK_BOX (hbuttonbox4), 8);
+
+  hotkeys_apply = gtk_button_new_from_stock ("gtk-apply");
+  gtk_widget_show (hotkeys_apply);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox4), hotkeys_apply);
+  gtk_widget_set_can_default(hotkeys_apply, TRUE);
+
+  hotkeys_revert = gtk_button_new_from_stock ("gtk-revert-to-saved");
+  gtk_widget_show (hotkeys_revert);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox4), hotkeys_revert);
+  gtk_widget_set_can_default(hotkeys_revert, TRUE);
 
   label132 = gtk_label_new (_("Hotkeys"));
   gtk_widget_show (label132);
@@ -2907,6 +2927,12 @@ create_prefwin (void)
   g_signal_connect ((gpointer) hotkey_is_global, "toggled",
                     G_CALLBACK (on_hotkey_is_global_toggled),
                     NULL);
+  g_signal_connect ((gpointer) hotkeys_apply, "clicked",
+                    G_CALLBACK (on_hotkeys_apply_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) hotkeys_revert, "clicked",
+                    G_CALLBACK (on_hotkeys_revert_clicked),
+                    NULL);
   g_signal_connect ((gpointer) pref_pluginlist, "cursor_changed",
                     G_CALLBACK (on_pref_pluginlist_cursor_changed),
                     NULL);
@@ -3074,6 +3100,9 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, hbox107, "hbox107");
   GLADE_HOOKUP_OBJECT (prefwin, hotkey_keycombo, "hotkey_keycombo");
   GLADE_HOOKUP_OBJECT (prefwin, hotkey_is_global, "hotkey_is_global");
+  GLADE_HOOKUP_OBJECT (prefwin, hbuttonbox4, "hbuttonbox4");
+  GLADE_HOOKUP_OBJECT (prefwin, hotkeys_apply, "hotkeys_apply");
+  GLADE_HOOKUP_OBJECT (prefwin, hotkeys_revert, "hotkeys_revert");
   GLADE_HOOKUP_OBJECT (prefwin, label132, "label132");
   GLADE_HOOKUP_OBJECT (prefwin, hpaned1, "hpaned1");
   GLADE_HOOKUP_OBJECT (prefwin, scrolledwindow2, "scrolledwindow2");

@@ -1239,3 +1239,11 @@ gboolean
 on_hotkey_keycombo_focus_in_event      (GtkWidget       *widget,
                                         GdkEventFocus   *event,
                                         gpointer         user_data);
+
+void
+on_hotkeys_apply_clicked               (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_hotkeys_revert_clicked              (GtkButton       *button,
+                                        gpointer         user_data);
