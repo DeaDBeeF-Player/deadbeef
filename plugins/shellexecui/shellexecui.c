@@ -356,8 +356,7 @@ shellexecui_action_gtk (void *data)
 }
 
 static int
-shellexecui_action_callback(DB_plugin_action_t *action,
-                                void *user_data, int ctx) {
+shellexecui_action_callback(DB_plugin_action_t *action, int ctx) {
     g_idle_add (shellexecui_action_gtk, NULL);
     return 0;
 }
