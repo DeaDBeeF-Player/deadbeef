@@ -719,9 +719,11 @@ static DB_hotkeys_plugin_t plugin = {
     .misc.plugin.version_minor = 1,
     .misc.plugin.type = DB_PLUGIN_MISC,
     .misc.plugin.id = "hotkeys",
-    .misc.plugin.name = "Global hotkeys support",
+    .misc.plugin.name = "Hotkey manager",
     .misc.plugin.descr =
-        "Allows one to control player with hotkeys\n"
+        "Manages local and global hotkeys, and executes actions when the assigned key combinations are pressed\n\n"
+        "This plugin has its own API, to allow 3rd party GUI plugins to reuse the code.\n"
+        "Check the plugins/hotkeys/hotkeys.h in the source tree if you need this.\n\n"
         "Changes in version 1.1\n"
         "    * adaptation to new deadbeef 0.6 plugin API\n"
         "    * added local hotkeys support\n"
