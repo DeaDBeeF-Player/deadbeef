@@ -36,7 +36,10 @@ static void
 on_actionitem_activate (GtkMenuItem     *menuitem,
                            DB_plugin_action_t *action)
 {
-    action->callback (action, NULL, DDB_ACTION_CTX_MAIN);
+    // these actions are always in the MAIN context, or they are coming from new
+    // plugins, so we don't have to care about the user data for <=1.4 plugins.
+    // aren't we?..
+    action->callback (action, DDB_ACTION_CTX_MAIN);
 }
 
 void

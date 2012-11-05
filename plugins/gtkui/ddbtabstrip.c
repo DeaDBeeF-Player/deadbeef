@@ -886,12 +886,20 @@ static void
 on_actionitem_activate (GtkMenuItem     *menuitem,
                            DB_plugin_action_t *action)
 {
-    ddb_playlist_t *plt = NULL;
-    if (tab_clicked != -1) {
-        plt = deadbeef->plt_get_for_idx (tab_clicked);
+    if (action->flags & DB_ACTION_USING_API_14) {
+        ddb_playlist_t *plt = NULL;
+        if (tab_clicked != -1) {
+            plt = deadbeef->plt_get_for_idx (tab_clicked);
+        }
+        typedef int (*action_callback_14_t)(struct DB_plugin_action_s *action, void *userdata);
+        ((action_callback_14_t)action->callback) (action, plt);
+        if (plt) {
+            deadbeef->plt_unref (plt);
+        }
     }
-    action->callback (action, NULL, DDB_ACTION_CTX_PLAYLIST);
-    deadbeef->plt_unref (plt);
+    else {
+        action->callback (action, DDB_ACTION_CTX_PLAYLIST);
+    }
 }
 
 static GtkWidget*

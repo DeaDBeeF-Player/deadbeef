@@ -332,31 +332,43 @@ on_write_to_source_folder_toggled      (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
 
 static gboolean
-converter_show_cb (void *ctx) {
+converter_show_cb (void *data) {
+    int ctx = (int)data;
     converter_ctx_t *conv = malloc (sizeof (converter_ctx_t));
     current_ctx = conv;
     memset (conv, 0, sizeof (converter_ctx_t));
 
     deadbeef->pl_lock ();
-    // copy list
-    int nsel = deadbeef->pl_getselcount ();
-    conv->convert_items_count = nsel;
-    if (0 < nsel) {
-        conv->convert_items = malloc (sizeof (DB_playItem_t *) * nsel);
-        if (conv->convert_items) {
-            int n = 0;
-            DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
-            while (it) {
-                if (deadbeef->pl_is_selected (it)) {
-                    assert (n < nsel);
-                    deadbeef->pl_item_ref (it);
-                    conv->convert_items[n++] = it;
+    switch (ctx) {
+    case DDB_ACTION_CTX_MAIN:
+    case DDB_ACTION_CTX_SELECTION:
+        {
+            // copy list
+            int nsel = deadbeef->pl_getselcount ();
+            conv->convert_items_count = nsel;
+            if (0 < nsel) {
+                conv->convert_items = malloc (sizeof (DB_playItem_t *) * nsel);
+                if (conv->convert_items) {
+                    int n = 0;
+                    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+                    while (it) {
+                        if (deadbeef->pl_is_selected (it)) {
+                            assert (n < nsel);
+                            deadbeef->pl_item_ref (it);
+                            conv->convert_items[n++] = it;
+                        }
+                        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+                        deadbeef->pl_item_unref (it);
+                        it = next;
+                    }
                 }
-                DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
-                deadbeef->pl_item_unref (it);
-                it = next;
             }
+            break;
         }
+    case DDB_ACTION_CTX_PLAYLIST:
+    case DDB_ACTION_CTX_NOWPLAYING:
+        // TODO: other contexts
+        break;
     }
     deadbeef->pl_unlock ();
 
@@ -433,7 +445,7 @@ converter_show_cb (void *ctx) {
 }
 
 static int
-converter_show (DB_plugin_action_t *act, DB_playItem_t *it) {
+converter_show (DB_plugin_action_t *act, int ctx) {
     if (converter_plugin->misc.plugin.version_minor >= 1) {
         // reload all presets
         converter_plugin->free_encoder_presets ();
@@ -442,7 +454,7 @@ converter_show (DB_plugin_action_t *act, DB_playItem_t *it) {
         converter_plugin->load_dsp_presets ();
     }
     // this can be called from non-gtk thread
-    gdk_threads_add_idle (converter_show_cb, NULL);
+    gdk_threads_add_idle (converter_show_cb, (void *)ctx);
     return 0;
 }
 
@@ -1424,9 +1436,9 @@ convgui_connect (void) {
 
 DB_misc_t plugin = {
     .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 4,
+    .plugin.api_vminor = 5,
     .plugin.version_major = 1,
-    .plugin.version_minor = 1,
+    .plugin.version_minor = 2,
     .plugin.type = DB_PLUGIN_MISC,
 #if GTK_CHECK_VERSION(3,0,0)
     .plugin.name = "Converter GTK3 UI",

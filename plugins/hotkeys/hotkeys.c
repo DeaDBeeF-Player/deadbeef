@@ -54,6 +54,7 @@ typedef struct command_s {
     int modifier;
     int ctx;
     int isglobal;
+    int is_14_action; // means action is coming from plugin using API 1.4 or less
     DB_plugin_action_t *action;
 } command_t;
 
@@ -90,39 +91,95 @@ trim (char* s)
     return h;
 }
 
-/*
-    FIXME: This function has many common code with plcommon.c
-    and it does full traverse of playlist twice
-*/
-static void
-cmd_invoke_plugin_command (DB_plugin_action_t *action, int ctx)
-{
-    action->callback (action, NULL, ctx);
-}
+typedef int (*action_callback_14_t)(struct DB_plugin_action_s *action, void *userdata);
 
-static DB_plugin_action_t *
-get_action (const char* command)
+static void
+cmd_invoke_plugin_command (DB_plugin_action_t *action, int ctx, int is_14_action)
 {
-    DB_plugin_t **plugins = deadbeef->plug_get_list ();
-    for (int i = 0; plugins[i]; i++) {
-        DB_plugin_t *p = plugins[i];
-        if (p->get_actions) {
-            DB_plugin_action_t *actions = p->get_actions (NULL);
-            while (actions) {
-                if (actions->name && !strcasecmp (command, actions->name)) {
-                    return actions;
+    if (is_14_action) {
+        if (ctx == DDB_ACTION_CTX_MAIN) {
+            // collect stuff for 1.4 user data
+
+            // common action
+            if (action->flags & DB_ACTION_COMMON)
+            {
+                ((action_callback_14_t)action->callback) (action, NULL);
+                return;
+            }
+
+            // playlist action
+            if (action->flags & DB_ACTION_PLAYLIST__DEPRECATED)
+            {
+                ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+                if (plt) {
+                    ((action_callback_14_t)action->callback) (action, plt);
+                    deadbeef->plt_unref (plt);
                 }
-                actions = actions->next;
+                return;
+            }
+
+            int selected_count = 0;
+            DB_playItem_t *pit = deadbeef->pl_get_first (PL_MAIN);
+            DB_playItem_t *selected = NULL;
+            while (pit) {
+                if (deadbeef->pl_is_selected (pit))
+                {
+                    if (!selected)
+                        selected = pit;
+                    selected_count++;
+                }
+                DB_playItem_t *next = deadbeef->pl_get_next (pit, PL_MAIN);
+                deadbeef->pl_item_unref (pit);
+                pit = next;
+            }
+
+            //Now we're checking if action is applicable:
+
+            if (selected_count == 0)
+            {
+                trace ("No tracks selected\n");
+                return;
+            }
+            if ((selected_count == 1) && (!(action->flags & DB_ACTION_SINGLE_TRACK)))
+            {
+                trace ("Hotkeys: action %s not allowed for single track\n", action->name);
+                return;
+            }
+            if ((selected_count > 1) && (!(action->flags & DB_ACTION_MULTIPLE_TRACKS)))
+            {
+                trace ("Hotkeys: action %s not allowed for multiple tracks\n", action->name);
+                return;
+            }
+
+            //So, action is allowed, do it.
+
+            if (action->flags & DB_ACTION_CAN_MULTIPLE_TRACKS__DEPRECATED)
+            {
+                ((action_callback_14_t)action->callback) (action, NULL);
+            }
+            else {
+                pit = deadbeef->pl_get_first (PL_MAIN);
+                while (pit) {
+                    if (deadbeef->pl_is_selected (pit))
+                    {
+                        ((action_callback_14_t)action->callback) (action, pit);
+                    }
+                    DB_playItem_t *next = deadbeef->pl_get_next (pit, PL_MAIN);
+                    deadbeef->pl_item_unref (pit);
+                    pit = next;
+                }
             }
         }
     }
-
-    return NULL;
+    else {
+        action->callback (action, ctx);
+    }
 }
 
 static DB_plugin_action_t *
-find_action_by_name (const char *command) {
+find_action_by_name (const char *command, int *is_14_action) {
     // find action with this name, and add to list
+    *is_14_action = 0;
     DB_plugin_action_t *actions = NULL;
     DB_plugin_t **plugins = deadbeef->plug_get_list ();
     for (int i = 0; plugins[i]; i++) {
@@ -131,6 +188,9 @@ find_action_by_name (const char *command) {
             actions = p->get_actions (NULL);
             while (actions) {
                 if (actions->name && actions->title && !strcasecmp (actions->name, command)) {
+                    if (p->api_vminor < 5) {
+                        *is_14_action = 1;
+                    }
                     break; // found
                 }
                 actions = actions->next;
@@ -189,7 +249,7 @@ read_config (Display *disp)
             trace ("hotkeys: unexpected eol (action)\n");
             goto out;
         }
-        cmd_entry->action = find_action_by_name (token);
+        cmd_entry->action = find_action_by_name (token, &cmd_entry->is_14_action);
         if (!cmd_entry->action) {
             trace ("hotkeys: action not found %s\n", token);
             goto out;
@@ -355,7 +415,7 @@ hotkeys_event_loop (void *unused) {
                          (state == commands[ i ].modifier))
                     {
                         trace ("matches to commands[%d]!\n", i);
-                        cmd_invoke_plugin_command (commands[i].action, commands[i].ctx);
+                        cmd_invoke_plugin_command (commands[i].action, commands[i].ctx, commands->is_14_action);
                         break;
                     }
                 }

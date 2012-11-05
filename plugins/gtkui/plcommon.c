@@ -376,7 +376,38 @@ void
 actionitem_activate (GtkMenuItem     *menuitem,
                      DB_plugin_action_t *action)
 {
-    action->callback (action, NULL, DDB_ACTION_CTX_SELECTION);
+    if (action->flags & DB_ACTION_USING_API_14) {
+        typedef int (*action_callback_14_t)(struct DB_plugin_action_s *action, void *userdata);
+        // Plugin can handle all tracks by itself
+        if (action->flags & DB_ACTION_CAN_MULTIPLE_TRACKS__DEPRECATED)
+        {
+            ((action_callback_14_t)action->callback) (action, NULL);
+            return;
+        }
+
+        // For single-track actions just invoke it with first selected track
+        if (!(action->flags & DB_ACTION_MULTIPLE_TRACKS))
+        {
+            DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (clicked_idx, PL_MAIN);
+            ((action_callback_14_t)action->callback) (action, it);
+            deadbeef->pl_item_unref (it);
+            return;
+        }
+
+        //We end up here if plugin won't traverse tracks and we have to do it ourselves
+        DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+        while (it) {
+            if (deadbeef->pl_is_selected (it)) {
+                ((action_callback_14_t)action->callback) (action, it);
+            }
+            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+            deadbeef->pl_item_unref (it);
+            it = next;
+        }
+    }
+    else {
+        action->callback (action, DDB_ACTION_CTX_SELECTION);
+    }
 }
 
 #define HOOKUP_OBJECT(component,widget,name) \
