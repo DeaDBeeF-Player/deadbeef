@@ -344,22 +344,24 @@ converter_show_cb (void *data) {
     case DDB_ACTION_CTX_SELECTION:
         {
             // copy list
-            int nsel = deadbeef->pl_getselcount ();
-            conv->convert_items_count = nsel;
-            if (0 < nsel) {
-                conv->convert_items = malloc (sizeof (DB_playItem_t *) * nsel);
-                if (conv->convert_items) {
-                    int n = 0;
-                    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
-                    while (it) {
-                        if (deadbeef->pl_is_selected (it)) {
-                            assert (n < nsel);
-                            deadbeef->pl_item_ref (it);
-                            conv->convert_items[n++] = it;
+            ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+            if (plt) {
+                conv->convert_items_count = deadbeef->plt_getselcount (plt);
+                if (0 < conv->convert_items_count) {
+                    conv->convert_items = malloc (sizeof (DB_playItem_t *) * conv->convert_items_count);
+                    if (conv->convert_items) {
+                        int n = 0;
+                        DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+                        while (it) {
+                            if (deadbeef->pl_is_selected (it)) {
+                                assert (n < conv->convert_items_count);
+                                deadbeef->pl_item_ref (it);
+                                conv->convert_items[n++] = it;
+                            }
+                            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+                            deadbeef->pl_item_unref (it);
+                            it = next;
                         }
-                        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
-                        deadbeef->pl_item_unref (it);
-                        it = next;
                     }
                 }
             }
@@ -377,11 +379,8 @@ converter_show_cb (void *data) {
                         int n = 0;
                         DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
                         while (it) {
-                            deadbeef->pl_item_ref (it);
                             conv->convert_items[n++] = it;
-                            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
-                            deadbeef->pl_item_unref (it);
-                            it = next;
+                            it = deadbeef->pl_get_next (it, PL_MAIN);
                         }
                     }
                 }

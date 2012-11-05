@@ -869,31 +869,68 @@ lastfm_stop (void) {
 }
 
 static int
-lfm_action_lookup (DB_plugin_action_t *action, DB_playItem_t *it)
+lfm_action_lookup (DB_plugin_action_t *action, int ctx)
 {
-    char artist[META_FIELD_SIZE];
-    if (!deadbeef->pl_get_meta (it, "artist", artist, sizeof (artist))) {
-        return 0;
-    }
-    char title[META_FIELD_SIZE];
-    if (!deadbeef->pl_get_meta (it, "title", title, sizeof (title))) {
-        return 0;
-    }
-
-    char eartist [strlen (artist) * 3 + 1];
-    char etitle [strlen (title) * 3 + 1];
-
-    if (-1 == lfm_uri_encode (eartist, sizeof (eartist), artist))
-        return 0;
-
-    if (-1 == lfm_uri_encode (etitle, sizeof (etitle), title))
-        return 0;
-
     char *command = NULL;
-    if (-1 == asprintf (&command, "xdg-open 'http://www.last.fm/music/%s/_/%s' &", eartist, etitle))
-        return 0;
+    DB_playItem_t *it = NULL;
+    char artist[META_FIELD_SIZE];
+    char title[META_FIELD_SIZE];
+
+    if (ctx == DDB_ACTION_CTX_SELECTION) {
+        // find first selected
+        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+        if (plt) {
+            it = deadbeef->plt_get_first (plt, PL_MAIN);
+            while (it) {
+                if (deadbeef->pl_is_selected (it)) {
+                    break;
+                }
+                DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+                deadbeef->pl_item_unref (it);
+                it = next;
+            }
+            deadbeef->plt_unref (plt);
+        }
+    }
+    else if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
+        it = deadbeef->streamer_get_playing_track ();
+    }
+    if (!it) {
+        goto out;
+    }
+
+    if (!deadbeef->pl_get_meta (it, "artist", artist, sizeof (artist))) {
+        goto out;
+    }
+    if (!deadbeef->pl_get_meta (it, "title", title, sizeof (title))) {
+        goto out;
+    }
+
+    int la = strlen (artist) * 3 + 1;
+    int lt = strlen (title) * 3 + 1;
+    char *eartist = alloca (la);
+    char *etitle = alloca (lt);
+
+    if (-1 == lfm_uri_encode (eartist, la, artist)) {
+        goto out;
+    }
+
+    if (-1 == lfm_uri_encode (etitle, lt, title)) {
+        goto out;
+    }
+
+    if (-1 == asprintf (&command, "xdg-open 'http://www.last.fm/music/%s/_/%s' &", eartist, etitle)) {
+        goto out;
+    }
+
     system (command);
-    free (command);
+out:
+    if (it) {
+        deadbeef->pl_item_unref (it);
+    }
+    if (command) {
+        free (command);
+    }
     return 0;
 }
 
@@ -952,7 +989,7 @@ static const char settings_dlg[] =
 // define plugin interface
 static DB_misc_t plugin = {
     .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
+    .plugin.api_vminor = 5,
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_MISC,
