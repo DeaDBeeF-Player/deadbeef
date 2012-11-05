@@ -844,7 +844,6 @@ enum {
 struct DB_plugin_action_s;
 
 typedef int (*DB_plugin_action_callback_t) (struct DB_plugin_action_s *action, int ctx);
-#define DDB_ACTION_CALLBACK(x)((int (*)(struct DB_plugin_action_s *action, int ctx))x)
 
 typedef struct DB_plugin_action_s {
     const char *title;
