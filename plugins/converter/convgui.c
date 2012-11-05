@@ -1432,7 +1432,7 @@ static DB_plugin_action_t convert_action = {
     .title = "Convert",
     .name = "convert",
     .flags = DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_SINGLE_TRACK,
-    .callback = DDB_ACTION_CALLBACK(converter_show),
+    .callback = converter_show,
     .next = NULL
 };
 
