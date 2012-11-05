@@ -27,6 +27,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <gdk/gdkkeysyms.h>
+#include <X11/Xlib.h>
 #include "../../gettext.h"
 
 #include "callbacks.h"
@@ -45,6 +46,7 @@
 #include "eq.h"
 #include "wingeom.h"
 #include "widgets.h"
+#include "../hotkeys/hotkeys.h"
 
 //#define trace(...) { fprintf (stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -375,6 +377,35 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
                                         GdkEventKey     *event,
                                         gpointer         user_data)
 {
+    // local hotkeys
+    // first translate gdk modifiers into X11 constants
+    int mods = 0;
+    if (event->state & GDK_CONTROL_MASK) {
+        mods |= ControlMask;
+    }
+    if (event->state & GDK_MOD1_MASK) {
+        mods |= Mod1Mask;
+    }
+    if (event->state & GDK_SHIFT_MASK) {
+        mods |= ShiftMask;
+    }
+    if (event->state & GDK_MOD4_MASK) {
+        mods |= Mod4Mask;
+    }
+    trace ("keycode: %x, mods %x\n", event->keyval, mods);
+    DB_plugin_t *hkplug = deadbeef->plug_get_for_id ("hotkeys");
+    if (hkplug) {
+        int ctx;
+        DB_plugin_action_t *act = ((DB_hotkeys_plugin_t *)hkplug)->get_action_for_keycombo (event->keyval, mods, 0, &ctx);
+        if (act && act->callback) {
+            trace ("executing action %s in ctx %d\n", act->name, ctx);
+            act->callback (act, ctx);
+            return TRUE;
+        }
+    }
+
+
+
     uint32_t maskedstate = (event->state &~ (GDK_LOCK_MASK | GDK_MOD2_MASK | GDK_MOD3_MASK | GDK_MOD5_MASK)) & 0xfff;
     if ((maskedstate == GDK_MOD1_MASK || maskedstate == 0) && event->keyval == GDK_n) {
         // button for that one is not in toolbar anymore, so handle it manually
