@@ -366,8 +366,40 @@ converter_show_cb (void *data) {
             break;
         }
     case DDB_ACTION_CTX_PLAYLIST:
+        {
+            // copy list
+            ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+            if (plt) {
+                conv->convert_items_count = deadbeef->plt_get_item_count (plt, PL_MAIN);
+                if (0 < conv->convert_items_count) {
+                    conv->convert_items = malloc (sizeof (DB_playItem_t *) * conv->convert_items_count);
+                    if (conv->convert_items) {
+                        int n = 0;
+                        DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+                        while (it) {
+                            deadbeef->pl_item_ref (it);
+                            conv->convert_items[n++] = it;
+                            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+                            deadbeef->pl_item_unref (it);
+                            it = next;
+                        }
+                    }
+                }
+                deadbeef->plt_unref (plt);
+            }
+            break;
+        }
     case DDB_ACTION_CTX_NOWPLAYING:
-        // TODO: other contexts
+        {
+            DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+            if (it) {
+                conv->convert_items_count = 1;
+                conv->convert_items = malloc (sizeof (DB_playItem_t *) * conv->convert_items_count);
+                if (conv->convert_items) {
+                    conv->convert_items[1] = it;
+                }
+            }
+        }
         break;
     }
     deadbeef->pl_unlock ();
