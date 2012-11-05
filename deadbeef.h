@@ -825,6 +825,10 @@ enum {
 
     /* deprecated in API 1.5 */
     DB_ACTION_PLAYLIST__DEPRECATED = 1 << 5,
+
+    /* this flag is added automatically, and means that the plugin was compiled
+     * with API <=1.4, and work-around must be used to make it work */
+    DB_ACTION_USING_API_14 = 1 << 6,
 };
 
 // action contexts
@@ -839,11 +843,8 @@ enum {
 
 struct DB_plugin_action_s;
 
-// userdata is kept for compatibility with API 1.4 and below
-// should not be used in newly written actions;
-// ctx is one of the above DDB_ACTION_CTX constants
-typedef int (*DB_plugin_action_callback_t) (struct DB_plugin_action_s *action, void *userdata, int ctx);
-#define DDB_ACTION_CALLBACK(x)((int (*)(struct DB_plugin_action_s *action, void *userdata, int ctx))x)
+typedef int (*DB_plugin_action_callback_t) (struct DB_plugin_action_s *action, int ctx);
+#define DDB_ACTION_CALLBACK(x)((int (*)(struct DB_plugin_action_s *action, int ctx))x)
 
 typedef struct DB_plugin_action_s {
     const char *title;
