@@ -628,7 +628,7 @@ cda_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 }
 
 static int
-cda_action_add_cd (DB_plugin_action_t *act, DB_playItem_t *it)
+cda_action_add_cd (DB_plugin_action_t *act, int ctx)
 {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {
@@ -646,7 +646,7 @@ static DB_plugin_action_t add_cd_action = {
     .name = "cd_add",
     .title = "File/Add audio CD",
     .flags = DB_ACTION_COMMON,
-    .callback = DDB_ACTION_CALLBACK(cda_action_add_cd),
+    .callback = cda_action_add_cd,
     .next = NULL
 };
 
