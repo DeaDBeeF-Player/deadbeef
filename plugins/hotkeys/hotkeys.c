@@ -41,11 +41,12 @@ static int need_reset = 0;
 typedef struct {
     const char *name;
     KeySym keysym;
+    int keycode; // after mapping
 } xkey_t;
 
-#define KEY(kname, kcode) { .name=kname, .keysym=kcode },
+#define KEY(kname, kcode) { .name=kname, .keysym=kcode},
 
-static const xkey_t keys[] = {
+static xkey_t keys[] = {
     #include "keysyms.inc"
 };
 
@@ -60,6 +61,22 @@ typedef struct command_s {
 
 static command_t commands [MAX_COMMAND_COUNT];
 static int command_count = 0;
+
+static void
+init_mapped_keycodes (Display *disp, KeySym *syms, int first_kk, int last_kk, int ks_per_kk) {
+    int i, ks;
+    for (i = 0; i < last_kk-first_kk; i++)
+    {
+        KeySym sym = * (syms + i*ks_per_kk);
+        for (ks = 0; keys[ks].name; ks++)
+        {
+            if (keys[ ks ].keysym == sym)
+            {
+                keys[ks].keycode = i+first_kk;
+            }
+        }
+    }
+}
 
 static int
 get_keycode (Display *disp, const char* name, KeySym *syms, int first_kk, int last_kk, int ks_per_kk) {
@@ -441,6 +458,14 @@ hotkeys_connect (void) {
     XSetErrorHandler (x_err_handler);
 
     read_config (disp);
+
+    int ks_per_kk;
+    int first_kk, last_kk;
+    KeySym* syms;
+    XDisplayKeycodes (disp, &first_kk, &last_kk);
+    syms = XGetKeyboardMapping (disp, first_kk, last_kk - first_kk, &ks_per_kk);
+    init_mapped_keycodes (disp, syms, first_kk, last_kk, ks_per_kk);
+    XFree (syms);
     XSync (disp, 0);
     loop_tid = deadbeef->thread_start (hotkeys_event_loop, 0);
     return 0;
@@ -470,8 +495,26 @@ hotkeys_get_name_for_keycode (int keycode) {
 
 DB_plugin_action_t*
 hotkeys_get_action_for_keycombo (int key, int mods, int isglobal, int *ctx) {
-    for (int i = 0; i < command_count; i++) {
-        if (commands[i].keycode == key && commands[i].modifier == mods && commands[i].isglobal == isglobal) {
+    int i;
+    // find mapped keycode
+    int keycode = 0;
+    for (i = 0; keys[i].name; i++) {
+        if (key == keys[i].keysym) {
+            keycode = keys[i].keycode;
+            break;
+        }
+    }
+    if (!keys[i].name) {
+        trace ("hotkeys: unknown keysym 0x%X\n", key);
+        return NULL;
+    }
+
+    trace ("hotkeys: keysym 0x%X mapped to 0x%X\n", key, keycode);
+
+
+    for (i = 0; i < command_count; i++) {
+        trace ("hotkeys: command %s keycode %x mods %x\n", commands[i].action->name, commands[i].keycode, commands[i].modifier);
+        if (commands[i].keycode == keycode && commands[i].modifier == mods && commands[i].isglobal == isglobal) {
             *ctx = commands[i].ctx;
             return commands[i].action;
         }
@@ -677,7 +720,12 @@ static DB_hotkeys_plugin_t plugin = {
     .misc.plugin.type = DB_PLUGIN_MISC,
     .misc.plugin.id = "hotkeys",
     .misc.plugin.name = "Global hotkeys support",
-    .misc.plugin.descr = "Allows one to control player with global hotkeys",
+    .misc.plugin.descr =
+        "Allows one to control player with hotkeys\n"
+        "Changes in version 1.1\n"
+        "    * adaptation to new deadbeef 0.6 plugin API\n"
+        "    * added local hotkeys support\n"
+    ,
     .misc.plugin.copyright = 
         "Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "Copyright (C) 2009-2011 Viktor Semykin <thesame.ml@gmail.com>\n"
