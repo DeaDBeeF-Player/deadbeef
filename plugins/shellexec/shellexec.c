@@ -48,7 +48,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <limits.h>
-
+#include <assert.h>
 #include "../../deadbeef.h"
 #include "shellexec.h"
 
@@ -80,14 +80,7 @@ trim (char* s)
     return h;
 }
 
-static int
-shx_callback (Shx_action_t *action, DB_playItem_t *it)
-{
-    if (action->parent.flags&(DB_ACTION_COMMON)) {
-        trace ("%s\n", action->shcommand);
-        system (action->shcommand);
-        return 0;
-    }
+static int shx_exec_track_cmd (Shx_action_t *action, DB_playItem_t *it) {
     char cmd[_POSIX_ARG_MAX];
     int res = deadbeef->pl_format_title_escaped (it, -1, cmd, sizeof (cmd) - 2, -1, action->shcommand);
     if (res < 0) {
@@ -97,7 +90,94 @@ shx_callback (Shx_action_t *action, DB_playItem_t *it)
     strcat (cmd, "&");
     trace ("%s\n", cmd);
     system (cmd);
-    return 0;
+}
+
+static int
+shx_callback (Shx_action_t *action, int ctx)
+{
+    int res = 0;
+    switch (ctx) {
+    case DDB_ACTION_CTX_MAIN:
+        trace ("%s\n", action->shcommand);
+        system (action->shcommand);
+        break;
+    case DDB_ACTION_CTX_SELECTION:
+        {
+            deadbeef->pl_lock ();
+            ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+            if (plt) {
+                DB_playItem_t **items;
+                int items_count = deadbeef->plt_getselcount (plt);
+                if (0 < items_count) {
+                    items = malloc (sizeof (DB_playItem_t *) * items_count);
+                    if (items) {
+                        int n = 0;
+                        DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+                        while (it) {
+                            if (deadbeef->pl_is_selected (it)) {
+                                assert (n < items_count);
+                                deadbeef->pl_item_ref (it);
+                                items[n++] = it;
+                            }
+                            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+                            deadbeef->pl_item_unref (it);
+                            it = next;
+                        }
+                    }
+                }
+                deadbeef->pl_unlock ();
+                if (items) {
+                    for (int i = 0; i < items_count; i++) {
+                        res = shx_exec_track_cmd (action, items[i]);
+                        deadbeef->pl_item_unref (items[i]);
+                    }
+                    free (items);
+                }
+                deadbeef->plt_unref (plt);
+            }
+        }
+        break;
+    case DDB_ACTION_CTX_PLAYLIST:
+        {
+            ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+            if (plt) {
+                deadbeef->pl_lock ();
+                DB_playItem_t **items;
+                int items_count = deadbeef->plt_get_item_count (plt, PL_MAIN);
+                if (0 < items_count) {
+                    items = malloc (sizeof (DB_playItem_t *) * items_count);
+                    if (items) {
+                        int n = 0;
+                        DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+                        while (it) {
+                            items[n++] = it;
+                            it = deadbeef->pl_get_next (it, PL_MAIN);
+                        }
+                    }
+                }
+                deadbeef->pl_unlock ();
+                if (items) {
+                    for (int i = 0; i < items_count; i++) {
+                        res = shx_exec_track_cmd (action, items[i]);
+                        deadbeef->pl_item_unref (items[i]);
+                    }
+                    free (items);
+                }
+                deadbeef->plt_unref (plt);
+            }
+        }
+        break;
+    case DDB_ACTION_CTX_NOWPLAYING:
+        {
+            DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+            if (it) {
+                res = shx_exec_track_cmd (action, it);
+                deadbeef->pl_item_unref (it);
+            }
+        }
+        break;
+    }
+    return res;
 }
 
 static DB_plugin_action_t *
@@ -337,7 +417,7 @@ shx_stop ()
 // define plugin interface
 static Shx_plugin_t plugin = {
     .misc.plugin.api_vmajor = 1,
-    .misc.plugin.api_vminor = 0,
+    .misc.plugin.api_vminor = 5,
     .misc.plugin.version_major = 1,
     .misc.plugin.version_minor = 1,
     .misc.plugin.type = DB_PLUGIN_MISC,
