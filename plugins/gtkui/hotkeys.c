@@ -101,12 +101,12 @@ find_action_by_name (const char *command) {
     return actions;
 }
 
-static void
+static int
 hotkeys_load (void) {
     GtkWidget *hotkeys = lookup_widget (prefwin, "hotkeys_list");
     GtkListStore *hkstore = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (hotkeys)));
     gtk_list_store_clear (hkstore);
-    int has_items = 0;
+    int n_items = 0;
     DB_conf_item_t *item = deadbeef->conf_find ("hotkey.", NULL);
     while (item) {
         char token[MAX_TOKEN];
@@ -148,11 +148,12 @@ hotkeys_load (void) {
             t = action->title;
         }
         gtk_list_store_set (hkstore, &iter, 0, keycombo, 1, t, 2, ctx_names[ctx], 3, isglobal, 4, action->name, 5, ctx, -1);
-        has_items = 1;
+        n_items++;
 
 out:
         item = deadbeef->conf_find ("hotkey.", item);
     }
+    return n_items;
 }
 
 static void
@@ -262,7 +263,7 @@ prefwin_init_hotkeys (GtkWidget *_prefwin) {
 
     gtk_tree_view_set_model (GTK_TREE_VIEW (hotkeys), GTK_TREE_MODEL (hkstore));
 
-    hotkeys_load ();
+    int n_hotkeys = hotkeys_load ();
 
     // setup action tree
     GtkTreeViewColumn *hk_act_col1 = gtk_tree_view_column_new_with_attributes (_("Action"), gtk_cell_renderer_text_new (), "text", 0, NULL);
@@ -321,9 +322,11 @@ prefwin_init_hotkeys (GtkWidget *_prefwin) {
 
     gtk_tree_view_set_model (GTK_TREE_VIEW (actions), GTK_TREE_MODEL (actions_store));
 
-    GtkTreePath *path = gtk_tree_path_new_first ();
-    gtk_tree_view_set_cursor (GTK_TREE_VIEW (hotkeys), path, NULL, FALSE);
-    gtk_tree_path_free (path);
+    if (n_hotkeys > 0) {
+        GtkTreePath *path = gtk_tree_path_new_first ();
+        gtk_tree_view_set_cursor (GTK_TREE_VIEW (hotkeys), path, NULL, FALSE);
+        gtk_tree_path_free (path);
+    }
 }
 
 typedef struct {
