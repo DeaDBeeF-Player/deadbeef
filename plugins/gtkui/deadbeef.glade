@@ -5254,27 +5254,20 @@ SOCKS5_HOSTNAME</property>
 		  <property name="spacing">8</property>
 
 		  <child>
-		    <widget class="GtkEntry" id="hotkey_keycombo">
-		      <property name="width_request">284</property>
+		    <widget class="GtkButton" id="hotkeys_set_key">
 		      <property name="visible">True</property>
 		      <property name="can_focus">True</property>
-		      <property name="editable">True</property>
-		      <property name="visibility">True</property>
-		      <property name="max_length">0</property>
-		      <property name="text" translatable="yes"></property>
-		      <property name="has_frame">True</property>
-		      <property name="invisible_char">•</property>
-		      <property name="activates_default">False</property>
-		      <signal name="key_press_event" handler="on_hotkey_keycombo_key_press_event" last_modification_time="Tue, 30 Oct 2012 20:56:34 GMT"/>
-		      <signal name="button_press_event" handler="on_hotkey_keycombo_button_press_event" last_modification_time="Thu, 01 Nov 2012 20:13:45 GMT"/>
-		      <signal name="motion_notify_event" handler="on_hotkey_keycombo_motion_notify_event" last_modification_time="Thu, 01 Nov 2012 20:23:31 GMT"/>
-		      <signal name="button_release_event" handler="on_hotkey_keycombo_button_release_event" last_modification_time="Thu, 01 Nov 2012 20:23:36 GMT"/>
-		      <signal name="focus_in_event" handler="on_hotkey_keycombo_focus_in_event" last_modification_time="Thu, 01 Nov 2012 20:30:12 GMT"/>
+		      <property name="label" translatable="yes">&lt;Not set&gt;</property>
+		      <property name="use_underline">True</property>
+		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <property name="focus_on_click">True</property>
+		      <signal name="clicked" handler="on_hotkeys_set_key_clicked" last_modification_time="Tue, 06 Nov 2012 20:30:58 GMT"/>
+		      <signal name="key_press_event" handler="on_hotkeys_set_key_key_press_event" last_modification_time="Tue, 06 Nov 2012 20:44:01 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="padding">0</property>
 		      <property name="expand">False</property>
-		      <property name="fill">True</property>
+		      <property name="fill">False</property>
 		    </packing>
 		  </child>
 
