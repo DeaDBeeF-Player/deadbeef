@@ -1342,3 +1342,6 @@ on_design_mode1_activate               (GtkMenuItem     *menuitem,
     gboolean act = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem));
     w_set_design_mode (act ? 1 : 0);
 }
+
+
+

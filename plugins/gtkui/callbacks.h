@@ -1247,3 +1247,22 @@ on_hotkeys_apply_clicked               (GtkButton       *button,
 void
 on_hotkeys_revert_clicked              (GtkButton       *button,
                                         gpointer         user_data);
+
+gboolean
+on_hotkey_keycombo_focus_out_event     (GtkWidget       *widget,
+                                        GdkEventFocus   *event,
+                                        gpointer         user_data);
+
+void
+on_hotkeys_set_key_clicked             (GtkButton       *button,
+                                        gpointer         user_data);
+
+gboolean
+on_hotkeys_set_key_button_press_event  (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data);
+
+gboolean
+on_hotkeys_set_key_key_press_event     (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data);

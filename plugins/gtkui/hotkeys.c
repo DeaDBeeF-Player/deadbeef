@@ -259,7 +259,7 @@ prefwin_init_hotkeys (GtkWidget *_prefwin) {
 
     gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkeys_actions"), FALSE);
     gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkey_is_global"), FALSE);
-    gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkey_keycombo"), FALSE);
+    gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkeys_set_key"), FALSE);
 
     gtk_tree_view_set_model (GTK_TREE_VIEW (hotkeys), GTK_TREE_MODEL (hkstore));
 
@@ -377,19 +377,19 @@ on_hotkeys_list_cursor_changed         (GtkTreeView     *treeview,
         GValue val_isglobal = {0,};
         gtk_tree_model_get_value (model, &iter, 3, &val_isglobal);
         gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "hotkey_is_global")), g_value_get_boolean (&val_isglobal));
-        gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkey_keycombo"), TRUE);
+        gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkeys_set_key"), TRUE);
         GValue val_keycombo = {0,};
         gtk_tree_model_get_value (model, &iter, 0, &val_keycombo);
         const char *keycombo = g_value_get_string (&val_keycombo);
-        gtk_entry_set_text (GTK_ENTRY (lookup_widget (prefwin, "hotkey_keycombo")), keycombo ? keycombo : "");
+        gtk_button_set_label (GTK_BUTTON (lookup_widget (prefwin, "hotkeys_set_key")), keycombo ? keycombo : "");
     }
     else {
         gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkeys_actions"), FALSE);
         gtk_tree_view_set_cursor (GTK_TREE_VIEW (lookup_widget (prefwin, "hotkeys_actions")), NULL, NULL, FALSE);
         gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkey_is_global"), FALSE);
         gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "hotkey_is_global")), FALSE);
-        gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkey_keycombo"), FALSE);
-        gtk_entry_set_text (GTK_ENTRY (lookup_widget (prefwin, "hotkey_keycombo")), "");
+        gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkeys_set_key"), FALSE);
+        gtk_button_set_label (GTK_BUTTON (lookup_widget (prefwin, "hotkeys_set_key")), _("<Not set>"));
     }
     if (path) {
         gtk_tree_path_free (path);
@@ -515,6 +515,10 @@ static void
 get_keycombo_string (guint accel_key, GdkModifierType accel_mods, char *new_value) {
     // build value
     new_value[0] = 0;
+    if (!accel_key) {
+        strcpy (new_value, _("<Not set>"));
+        return;
+    }
     if (accel_mods & GDK_SHIFT_MASK) {
         strcat (new_value, "Shift ");
     }
@@ -560,14 +564,23 @@ get_keycombo_string (guint accel_key, GdkModifierType accel_mods, char *new_valu
     }
 
     const char *name = get_name_for_keycode (accel_key);
+    if (!name) {
+        strcpy (new_value, _("<Not set>"));
+        return;
+    }
     strcat (new_value, name);
 }
 
 gboolean
-on_hotkey_keycombo_key_press_event     (GtkWidget       *widget,
+on_hotkeys_set_key_key_press_event     (GtkWidget       *widget,
                                         GdkEventKey     *event,
                                         gpointer         user_data)
 {
+    if (!grabbed) {
+        printf ("was not grabbed\n");
+        return FALSE;
+    }
+
     GdkModifierType accel_mods = 0;
     guint accel_key;
     gchar *path;
@@ -576,9 +589,7 @@ on_hotkey_keycombo_key_press_event     (GtkWidget       *widget,
     GdkModifierType consumed_modifiers;
     GdkDisplay *display;
 
-    if (!grabbed) {
-        return TRUE;
-    }
+    printf ("was grabbed\n");
 
     display = gtk_widget_get_display (widget);
 
@@ -610,17 +621,17 @@ on_hotkey_keycombo_key_press_event     (GtkWidget       *widget,
         accel_mods |= GDK_SHIFT_MASK;
 
     char name[1000];
-    gtk_entry_set_text (GTK_ENTRY (widget), _(""));
+    gtk_button_set_label (GTK_BUTTON (widget), _(""));
     if (accel_mods == 0)
     {
         switch (event->keyval)
         {
         case GDK_Escape:
             get_keycombo_string (last_accel_key, last_accel_mask, name);
-            gtk_entry_set_text (GTK_ENTRY (widget), name);
+            gtk_button_set_label (GTK_BUTTON (widget), name);
             goto out; /* cancel */
         case GDK_BackSpace:
-            gtk_entry_set_text (GTK_ENTRY (widget), "");
+            gtk_button_set_label (GTK_BUTTON (widget), _("<Not set>"));
             last_accel_key = 0;
             last_accel_mask = 0;
             /* clear the accelerator on Backspace */
@@ -633,6 +644,7 @@ on_hotkey_keycombo_key_press_event     (GtkWidget       *widget,
 
     if (!gtk_accelerator_valid (accel_key, accel_mods))
     {
+        gtk_button_set_label (GTK_BUTTON (widget), _("Invalid button! try again!"));
         gtk_widget_error_bell (widget);
 
         return TRUE;
@@ -640,7 +652,7 @@ on_hotkey_keycombo_key_press_event     (GtkWidget       *widget,
     last_accel_key = accel_key;
     last_accel_mask = accel_mods;
     get_keycombo_string (last_accel_key, last_accel_mask, name);
-    gtk_entry_set_text (GTK_ENTRY (widget), name);
+    gtk_button_set_label (GTK_BUTTON (widget), name);
 
     // update the tree
     {
@@ -662,64 +674,35 @@ out:
 }
 
 static void
-hotkey_grab_focus (GtkWidget *widget, GdkEvent *event) {
+hotkey_grab_focus (GtkWidget *widget) {
     GdkDisplay *display = gtk_widget_get_display (widget);
     if (grabbed) {
         return;
     }
     grabbed = 0;
-    if (GDK_GRAB_SUCCESS != gdk_keyboard_grab (gtk_widget_get_window (widget), FALSE, gdk_event_get_time ((GdkEvent*)event))) {
+    if (GDK_GRAB_SUCCESS != gdk_keyboard_grab (gtk_widget_get_window (widget), FALSE, GDK_CURRENT_TIME)) {
         return;
     }
 
     if (gdk_pointer_grab (gtk_widget_get_window (widget), FALSE,
                 GDK_BUTTON_PRESS_MASK,
                 NULL, NULL,
-                gdk_event_get_time ((GdkEvent *)event)) != GDK_GRAB_SUCCESS)
+                GDK_CURRENT_TIME) != GDK_GRAB_SUCCESS)
     {
-        gdk_display_keyboard_ungrab (display, gdk_event_get_time ((GdkEvent *)event));
+        gdk_display_keyboard_ungrab (display, GDK_CURRENT_TIME);
         return;
     }
-    gtk_entry_set_text (GTK_ENTRY (widget), _("New key combination..."));
+    gtk_button_set_label (GTK_BUTTON (widget), _("New key combination..."));
     grabbed = 1;
+    printf ("successfully grabbed\n");
 }
 
-gboolean
-on_hotkey_keycombo_focus_in_event      (GtkWidget       *widget,
-                                        GdkEventFocus   *event,
+void
+on_hotkeys_set_key_clicked             (GtkButton       *button,
                                         gpointer         user_data)
 {
-    hotkey_grab_focus (widget, (GdkEvent *)event);
-    return TRUE;
+    hotkey_grab_focus (GTK_WIDGET (button));
 }
-
-gboolean
-on_hotkey_keycombo_button_press_event  (GtkWidget       *widget,
-                                        GdkEventButton  *event,
-                                        gpointer         user_data)
-{
-    hotkey_grab_focus (widget, (GdkEvent *)event);
-    return FALSE;
-}
-
-gboolean
-on_hotkey_keycombo_motion_notify_event (GtkWidget       *widget,
-                                        GdkEventMotion  *event,
-                                        gpointer         user_data)
-{
-    return TRUE;
-}
-
-
-gboolean
-on_hotkey_keycombo_button_release_event
-                                        (GtkWidget       *widget,
-                                        GdkEventButton  *event,
-                                        gpointer         user_data)
-{
-    return TRUE;
-}
-
 
 void
 on_hotkeys_apply_clicked               (GtkButton       *button,

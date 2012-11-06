@@ -1797,7 +1797,7 @@ create_prefwin (void)
   GtkWidget *label134;
   GtkWidget *hseparator3;
   GtkWidget *hbox107;
-  GtkWidget *hotkey_keycombo;
+  GtkWidget *hotkeys_set_key;
   GtkWidget *hotkey_is_global;
   GtkWidget *hbuttonbox4;
   GtkWidget *hotkeys_apply;
@@ -2585,11 +2585,9 @@ create_prefwin (void)
   gtk_widget_show (hbox107);
   gtk_box_pack_start (GTK_BOX (vbox36), hbox107, FALSE, TRUE, 0);
 
-  hotkey_keycombo = gtk_entry_new ();
-  gtk_widget_show (hotkey_keycombo);
-  gtk_box_pack_start (GTK_BOX (hbox107), hotkey_keycombo, FALSE, TRUE, 0);
-  gtk_widget_set_size_request (hotkey_keycombo, 284, -1);
-  gtk_entry_set_invisible_char (GTK_ENTRY (hotkey_keycombo), 8226);
+  hotkeys_set_key = gtk_button_new_with_mnemonic (_("<Not set>"));
+  gtk_widget_show (hotkeys_set_key);
+  gtk_box_pack_start (GTK_BOX (hbox107), hotkeys_set_key, FALSE, FALSE, 0);
 
   hotkey_is_global = gtk_check_button_new_with_mnemonic (_("Global hotkey"));
   gtk_widget_show (hotkey_is_global);
@@ -2910,20 +2908,11 @@ create_prefwin (void)
   g_signal_connect ((gpointer) hotkeys_actions, "cursor_changed",
                     G_CALLBACK (on_hotkeys_actions_cursor_changed),
                     NULL);
-  g_signal_connect ((gpointer) hotkey_keycombo, "key_press_event",
-                    G_CALLBACK (on_hotkey_keycombo_key_press_event),
+  g_signal_connect ((gpointer) hotkeys_set_key, "clicked",
+                    G_CALLBACK (on_hotkeys_set_key_clicked),
                     NULL);
-  g_signal_connect ((gpointer) hotkey_keycombo, "button_press_event",
-                    G_CALLBACK (on_hotkey_keycombo_button_press_event),
-                    NULL);
-  g_signal_connect ((gpointer) hotkey_keycombo, "motion_notify_event",
-                    G_CALLBACK (on_hotkey_keycombo_motion_notify_event),
-                    NULL);
-  g_signal_connect ((gpointer) hotkey_keycombo, "button_release_event",
-                    G_CALLBACK (on_hotkey_keycombo_button_release_event),
-                    NULL);
-  g_signal_connect ((gpointer) hotkey_keycombo, "focus_in_event",
-                    G_CALLBACK (on_hotkey_keycombo_focus_in_event),
+  g_signal_connect ((gpointer) hotkeys_set_key, "key_press_event",
+                    G_CALLBACK (on_hotkeys_set_key_key_press_event),
                     NULL);
   g_signal_connect ((gpointer) hotkey_is_global, "toggled",
                     G_CALLBACK (on_hotkey_is_global_toggled),
@@ -3099,7 +3088,7 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, label134, "label134");
   GLADE_HOOKUP_OBJECT (prefwin, hseparator3, "hseparator3");
   GLADE_HOOKUP_OBJECT (prefwin, hbox107, "hbox107");
-  GLADE_HOOKUP_OBJECT (prefwin, hotkey_keycombo, "hotkey_keycombo");
+  GLADE_HOOKUP_OBJECT (prefwin, hotkeys_set_key, "hotkeys_set_key");
   GLADE_HOOKUP_OBJECT (prefwin, hotkey_is_global, "hotkey_is_global");
   GLADE_HOOKUP_OBJECT (prefwin, hbuttonbox4, "hbuttonbox4");
   GLADE_HOOKUP_OBJECT (prefwin, hotkeys_apply, "hotkeys_apply");
