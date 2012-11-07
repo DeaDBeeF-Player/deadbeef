@@ -2904,8 +2904,17 @@ junk_load_comm_frame (int version_major, playItem_t *it, uint8_t *readptr, int s
     else {
         strcpy (comment, value);
     }
+
     trace ("COMM combined: %s\n", comment);
-    pl_append_meta (it, "comment", comment);
+    // skip utf8 BOM (can be produced by iconv FEFF/FFFE)
+    int l = strlen (comment);
+    uint8_t bom[] = { 0xEF, 0xBB, 0xBF };
+    if (l >= 3 && !memcmp (comment, bom, 3)) {
+        pl_append_meta (it, "comment", comment+3);
+    }
+    else {
+        pl_append_meta (it, "comment", comment);
+    }
 
     free (descr);
     return 0;
