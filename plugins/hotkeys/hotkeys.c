@@ -609,16 +609,209 @@ action_toggle_stop_after_current_cb (struct DB_plugin_action_s *action, int ctx)
     return 0;
 }
 
-static DB_plugin_action_t action_play = {
-    .title = "Play",
-    .name = "play",
+static DB_plugin_action_t action_toggle_menu = {
+    .title = "View/[stub] Show\\/Hide menu",
+    .name = "toggle_menu",
     .flags = DB_ACTION_COMMON,
-    .callback = action_play_cb,
+    .callback = NULL,
     .next = NULL
 };
 
+static DB_plugin_action_t action_toggle_column_headers = {
+    .title = "View/[stub] Show\\/Hide playlist column headers",
+    .name = "toggle_headers",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_toggle_menu
+};
+
+static DB_plugin_action_t action_toggle_statusbar = {
+    .title = "View/[stub] Show\\/Hide statusbar",
+    .name = "toggle_statusbar",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_toggle_column_headers
+};
+
+static DB_plugin_action_t action_next_playlist = {
+    .title = "Edit/[stub] Next playlist",
+    .name = "sort_next_playlist",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_toggle_statusbar
+};
+
+static DB_plugin_action_t action_prev_playlist = {
+    .title = "Edit/[stub] Prev playlist",
+    .name = "sort_prev_playlist",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_next_playlist
+};
+
+static DB_plugin_action_t action_sort_randomize = {
+    .title = "Edit/[stub] Sort Randomize",
+    .name = "sort_randomize",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_prev_playlist
+};
+
+static DB_plugin_action_t action_sort_by_date = {
+    .title = "Edit/[stub] Sort by date",
+    .name = "sort_date",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_sort_randomize
+};
+
+static DB_plugin_action_t action_sort_by_artist = {
+    .title = "Edit/[stub] Sort by artist",
+    .name = "sort_artist",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_sort_by_date
+};
+
+
+static DB_plugin_action_t action_sort_by_album = {
+    .title = "Edit/[stub] Sort by album",
+    .name = "sort_album",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_sort_by_artist
+};
+
+static DB_plugin_action_t action_sort_by_tracknr = {
+    .title = "Edit/[stub] Sort by track number",
+    .name = "sort_tracknr",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_sort_by_album
+};
+
+static DB_plugin_action_t action_sort_by_title = {
+    .title = "Edit/[stub] Sort by title",
+    .name = "sort_title",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_sort_by_tracknr
+};
+
+static DB_plugin_action_t action_crop_selected = {
+    .title = "Edit/[stub] Crop Selected",
+    .name = "crop_selected",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_sort_by_title
+};
+
+static DB_plugin_action_t action_remove_selected = {
+    .title = "Edit/[stub] Remove Selected",
+    .name = "remove_selected",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_crop_selected
+};
+
+static DB_plugin_action_t action_invert_selection = {
+    .title = "Edit/[stub] Invert Selection",
+    .name = "invert_selection",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_remove_selected
+};
+
+static DB_plugin_action_t action_deselect_all = {
+    .title = "Edit/[stub] Deselect All",
+    .name = "deselect_all",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_invert_selection
+};
+
+static DB_plugin_action_t action_select_all = {
+    .title = "Edit/[stub] Select All",
+    .name = "select_all",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_deselect_all
+};
+
+static DB_plugin_action_t action_clear_playlist = {
+    .title = "Edit/[stub] Clear playlist",
+    .name = "clear_playlist",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_select_all
+};
+
+static DB_plugin_action_t action_quit = {
+    .title = "[stub] Quit",
+    .name = "quit",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_clear_playlist
+};
+
+static DB_plugin_action_t action_delete_from_disk = {
+    .title = "[stub] Delete From Disk",
+    .name = "delete_from_disk",
+    .flags = DB_ACTION_SINGLE_TRACK | DB_ACTION_MULTIPLE_TRACKS,
+    .callback = NULL,
+    .next = &action_quit
+};
+
+static DB_plugin_action_t action_add_location = {
+    .title = "File/[stub] Add Location",
+    .name = "add_location",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_delete_from_disk
+};
+
+static DB_plugin_action_t action_add_folders = {
+    .title = "File/[stub] Add Folder(s)",
+    .name = "add_folders",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_add_location
+};
+
+static DB_plugin_action_t action_add_files = {
+    .title = "File/[stub] Add File(s)",
+    .name = "add_files",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_add_folders
+};
+
+static DB_plugin_action_t action_add_to_playqueue = {
+    .title = "Playback/[stub] Add To Playback Queue",
+    .name = "add_to_playback_queue",
+    .flags = DB_ACTION_MULTIPLE_TRACKS,
+    .callback = NULL,
+    .next = &action_add_files
+};
+
+static DB_plugin_action_t action_toggle_mute = {
+    .title = "Playback/[stub] Toggle Mute",
+    .name = "toggle_mute",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_add_to_playqueue
+};
+
+static DB_plugin_action_t action_play = {
+    .title = "Playback/Play",
+    .name = "play",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_play_cb,
+    .next = &action_toggle_mute
+};
+
 static DB_plugin_action_t action_stop = {
-    .title = "Stop",
+    .title = "Playback/Stop",
     .name = "stop",
     .flags = DB_ACTION_COMMON,
     .callback = action_stop_cb,
@@ -626,7 +819,7 @@ static DB_plugin_action_t action_stop = {
 };
 
 static DB_plugin_action_t action_prev = {
-    .title = "Previous",
+    .title = "Playback/Previous",
     .name = "prev",
     .flags = DB_ACTION_COMMON,
     .callback = action_prev_cb,
@@ -634,7 +827,7 @@ static DB_plugin_action_t action_prev = {
 };
 
 static DB_plugin_action_t action_next = {
-    .title = "Next",
+    .title = "Playback/Next",
     .name = "next",
     .flags = DB_ACTION_COMMON,
     .callback = action_next_cb,
@@ -642,7 +835,7 @@ static DB_plugin_action_t action_next = {
 };
 
 static DB_plugin_action_t action_toggle_pause = {
-    .title = "Toggle Pause",
+    .title = "Playback/Toggle Pause",
     .name = "toggle_pause",
     .flags = DB_ACTION_COMMON,
     .callback = action_toggle_pause_cb,
@@ -650,7 +843,7 @@ static DB_plugin_action_t action_toggle_pause = {
 };
 
 static DB_plugin_action_t action_play_pause = {
-    .title = "Play\\/Pause",
+    .title = "Playback/Play\\/Pause",
     .name = "play_pause",
     .flags = DB_ACTION_COMMON,
     .callback = action_play_pause_cb,
@@ -658,7 +851,7 @@ static DB_plugin_action_t action_play_pause = {
 };
 
 static DB_plugin_action_t action_play_random = {
-    .title = "Play Random",
+    .title = "Playback/Play Random",
     .name = "playback_random",
     .flags = DB_ACTION_COMMON,
     .callback = action_play_random_cb,
@@ -666,7 +859,7 @@ static DB_plugin_action_t action_play_random = {
 };
 
 static DB_plugin_action_t action_seek_forward = {
-    .title = "Seek Forward",
+    .title = "Playback/Seek Forward",
     .name = "seek_fwd",
     .flags = DB_ACTION_COMMON,
     .callback = action_seek_forward_cb,
@@ -674,7 +867,7 @@ static DB_plugin_action_t action_seek_forward = {
 };
 
 static DB_plugin_action_t action_seek_backward = {
-    .title = "Seek Backward",
+    .title = "Playback/Seek Backward",
     .name = "seek_back",
     .flags = DB_ACTION_COMMON,
     .callback = action_seek_backward_cb,
@@ -682,7 +875,7 @@ static DB_plugin_action_t action_seek_backward = {
 };
 
 static DB_plugin_action_t action_volume_up = {
-    .title = "Volume Up",
+    .title = "Playback/Volume Up",
     .name = "volume_up",
     .flags = DB_ACTION_COMMON,
     .callback = action_volume_up_cb,
@@ -690,7 +883,7 @@ static DB_plugin_action_t action_volume_up = {
 };
 
 static DB_plugin_action_t action_volume_down = {
-    .title = "Volume Down",
+    .title = "Playback/Volume Down",
     .name = "volume_down",
     .flags = DB_ACTION_COMMON,
     .callback = action_volume_down_cb,
@@ -698,7 +891,7 @@ static DB_plugin_action_t action_volume_down = {
 };
 
 static DB_plugin_action_t action_toggle_stop_after_current = {
-    .title = "Toggle Stop After Current",
+    .title = "Playback/Toggle Stop After Current",
     .name = "toggle_stop_after_current",
     .flags = DB_ACTION_COMMON,
     .callback = action_toggle_stop_after_current_cb,

@@ -1431,7 +1431,7 @@ encoder_cmdline_help_link_create (gchar *widget_name, gchar *string1, gchar *str
 static DB_plugin_action_t convert_action = {
     .title = "Convert",
     .name = "convert",
-    .flags = DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_SINGLE_TRACK,
+    .flags = DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_SINGLE_TRACK | DB_ACTION_ADD_MENU,
     .callback = converter_show,
     .next = NULL
 };
