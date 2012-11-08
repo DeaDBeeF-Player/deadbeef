@@ -78,6 +78,21 @@ unescape_forward_slash (const char *src, char *dst, int size) {
     *dst = 0;
 }
 
+
+static const char *
+get_display_action_title (const char *title) {
+    const char *t = title + strlen (title) - 1;
+    while (t > title) {
+        if (*t != '/' || *(t-1) == '\\') {
+            t--;
+            continue;
+        }
+        t++;
+        break;
+    }
+    return t;
+}
+
 static DB_plugin_action_t *
 find_action_by_name (const char *command) {
     // find action with this name, and add to list
@@ -140,14 +155,10 @@ hotkeys_load (void) {
         GtkTreeIter iter;
         gtk_list_store_append (hkstore, &iter);
 
-        const char *t = strrchr (action->title, '/');
-        if (t) {
-            t++;
-        }
-        else {
-            t = action->title;
-        }
-        gtk_list_store_set (hkstore, &iter, 0, keycombo, 1, t, 2, ctx_names[ctx], 3, isglobal, 4, action->name, 5, ctx, -1);
+        const char *t = get_display_action_title (action->title);
+        char title[100];
+        unescape_forward_slash (t, title, sizeof (title));
+        gtk_list_store_set (hkstore, &iter, 0, keycombo, 1, title, 2, ctx_names[ctx], 3, isglobal, 4, action->name, 5, ctx, -1);
         n_items++;
 
 out:
@@ -196,6 +207,15 @@ action_tree_append (const char *title, GtkTreeStore *store, GtkTreeIter *root_it
     int got_iter = 0;
     for (;;) {
         char *s = strchr (p, '/');
+        // find unescaped forward slash
+        if (s == p) {
+            p++;
+            continue;
+        }
+        if (s && s > p && *(s-1) == '\\') {
+            p = s + 1;
+            continue;
+        }
         if (!s) {
             break;
         }
@@ -208,21 +228,28 @@ action_tree_append (const char *title, GtkTreeStore *store, GtkTreeIter *root_it
             root_iter = &i;
         }
         else {
+            int found = 0;
             do {
                 GValue val = {0,};
                 gtk_tree_model_get_value (GTK_TREE_MODEL (store), &i, 0, &val);
                 const char *n = g_value_get_string (&val);
                 if (n && !strcmp (n, p)) {
                     root_iter = &i;
+                    found = 1;
                     break;
                 }
             } while (gtk_tree_model_iter_next (GTK_TREE_MODEL (store), &i));
+            if (!found) {
+                gtk_tree_store_append (store, &i, root_iter);
+                gtk_tree_store_set (store, &i, 0, p, 1, NULL, 2, -1, -1);
+                root_iter = &i;
+            }
         }
 
         p = s+1;
     }
     gtk_tree_store_append (store, iter, root_iter);
-    return title + (int)(p-t);
+    return get_display_action_title (title);
 }
 
 void
@@ -295,20 +322,23 @@ prefwin_init_hotkeys (GtkWidget *_prefwin) {
             while (actions) {
                 if (actions->name && actions->title) { // only add actions with both the name and the title
                     char title[100];
-                    unescape_forward_slash (actions->title, title, sizeof (title));
 
                     GtkTreeIter iter;
                     const char *t;
                     if (actions->flags & DB_ACTION_COMMON) {
-                        t = action_tree_append (title, actions_store, &action_main_iter, &iter);
-                        gtk_tree_store_set (actions_store, &iter, 0, t, 1, actions->name, 2, DDB_ACTION_CTX_MAIN, -1);
+                        t = action_tree_append (actions->title, actions_store, &action_main_iter, &iter);
+                        unescape_forward_slash (t, title, sizeof (title));
+                        gtk_tree_store_set (actions_store, &iter, 0, title, 1, actions->name, 2, DDB_ACTION_CTX_MAIN, -1);
                     }
                     if (actions->flags & (DB_ACTION_SINGLE_TRACK | DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_CAN_MULTIPLE_TRACKS__DEPRECATED)) {
-                        t = action_tree_append (title, actions_store, &action_selection_iter, &iter);
-                        gtk_tree_store_set (actions_store, &iter, 0, t, 1, actions->name, 2, DDB_ACTION_CTX_SELECTION, -1);
-                        t = action_tree_append (title, actions_store, &action_playlist_iter, &iter);
-                        gtk_tree_store_set (actions_store, &iter, 0, t, 1, actions->name, 2, DDB_ACTION_CTX_PLAYLIST, -1);
-                        t = action_tree_append (title, actions_store, &action_nowplaying_iter, &iter);
+                        t = action_tree_append (actions->title, actions_store, &action_selection_iter, &iter);
+                        unescape_forward_slash (t, title, sizeof (title));
+                        gtk_tree_store_set (actions_store, &iter, 0, title, 1, actions->name, 2, DDB_ACTION_CTX_SELECTION, -1);
+                        t = action_tree_append (actions->title, actions_store, &action_playlist_iter, &iter);
+                        unescape_forward_slash (t, title, sizeof (title));
+                        gtk_tree_store_set (actions_store, &iter, 0, title, 1, actions->name, 2, DDB_ACTION_CTX_PLAYLIST, -1);
+                        t = action_tree_append (actions->title, actions_store, &action_nowplaying_iter, &iter);
+                        unescape_forward_slash (t, title, sizeof (title));
                         gtk_tree_store_set (actions_store, &iter, 0, title, 1, actions->name, 2, DDB_ACTION_CTX_NOWPLAYING, -1);
                     }
                 }
@@ -452,14 +482,10 @@ on_hotkeys_actions_cursor_changed      (GtkTreeView     *treeview,
             GtkTreeIter iter;
             if (path && gtk_tree_model_get_iter (model, &iter, path)) {
                 if (action) {
-                    const char *t = strrchr (action->title, '/');
-                    if (t) {
-                        t++;
-                    }
-                    else {
-                        t = action->title;
-                    }
-                    gtk_list_store_set (GTK_LIST_STORE (model), &iter, 1, t, 4, action->name, 5, ctx, 2, ctx_names[ctx], -1);
+                    const char *t = get_display_action_title (action->title);
+                    char title[100];
+                    unescape_forward_slash (t, title, sizeof (title));
+                    gtk_list_store_set (GTK_LIST_STORE (model), &iter, 1, title, 4, action->name, 5, ctx, 2, ctx_names[ctx], -1);
                 }
                 else {
                     gtk_list_store_set (GTK_LIST_STORE (model), &iter, 1, _("<Not set>"), 4, NULL, 2, _("<Not set>"), -1);

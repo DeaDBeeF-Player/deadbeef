@@ -305,6 +305,7 @@ shx_get_actions (DB_plugin_action_callback_t callback)
         action->shcommand = strdup (command);
         action->parent.callback = callback;
         action->parent.next = NULL;
+        action->parent.flags |= DB_ACTION_ADD_MENU;
 
         action->shx_flags = 0;
 

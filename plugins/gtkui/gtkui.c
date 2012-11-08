@@ -1396,6 +1396,108 @@ gtkui_get_mainwin (void) {
     return mainwin;
 }
 
+static DB_plugin_action_t action_preferences = {
+    .title = "Edit/[stub] Preferences",
+    .name = "preferences",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = NULL
+};
+
+static DB_plugin_action_t action_sort_custom = {
+    .title = "Edit/[stub] Sort Custom",
+    .name = "sort_custom",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_preferences
+};
+
+static DB_plugin_action_t action_save_playlist = {
+    .title = "File/[stub] Save Playlist",
+    .name = "save_playlist",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_sort_custom
+};
+
+static DB_plugin_action_t action_load_playlist = {
+    .title = "File/[stub] Load Playlist",
+    .name = "load_playlist",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_save_playlist
+};
+
+static DB_plugin_action_t action_new_playlist = {
+    .title = "File/[stub] New Playlist",
+    .name = "new_playlist",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_load_playlist
+};
+
+static DB_plugin_action_t action_toggle_eq = {
+    .title = "[stub] Show\\/Hide Equalizer",
+    .name = "toggle_eq",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_new_playlist
+};
+
+static DB_plugin_action_t action_hide_eq = {
+    .title = "[stub] Hide Equalizer",
+    .name = "hide_eq",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_toggle_eq
+};
+
+static DB_plugin_action_t action_show_eq = {
+    .title = "[stub] Show Equalizer",
+    .name = "show_eq",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_hide_eq
+};
+
+static DB_plugin_action_t action_toggle_mainwin = {
+    .title = "[stub] Show\\/Hide Player Window",
+    .name = "toggle_player_window",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_show_eq
+};
+
+static DB_plugin_action_t action_hide_mainwin = {
+    .title = "[stub] Hide Player Window",
+    .name = "hide_player_window",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_toggle_mainwin
+};
+
+static DB_plugin_action_t action_show_mainwin = {
+    .title = "[stub] Show Player Window",
+    .name = "show_player_window",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_hide_mainwin
+};
+
+static DB_plugin_action_t action_find = {
+    .title = "Edit/[stub] Find",
+    .name = "find",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_show_mainwin
+};
+
+static DB_plugin_action_t *
+gtkui_get_actions (DB_playItem_t *it)
+{
+    return &action_find;
+}
+
 #if !GTK_CHECK_VERSION(3,0,0)
 DB_plugin_t *
 ddb_gui_GTK2_load (DB_functions_t *api) {
@@ -1461,6 +1563,7 @@ static ddb_gtkui_t plugin = {
     .gui.plugin.configdialog = settings_dlg,
     .gui.plugin.message = gtkui_message,
     .gui.run_dialog = gtkui_run_dialog_root,
+    .gui.plugin.get_actions = gtkui_get_actions,
     .get_mainwin = gtkui_get_mainwin,
     .w_reg_widget = w_reg_widget,
     .w_unreg_widget = w_unreg_widget,

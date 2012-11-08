@@ -952,7 +952,7 @@ static DB_plugin_action_t love_action = {
 static DB_plugin_action_t lookup_action = {
     .title = "Lookup on Last.fm",
     .name = "lfm_lookup",
-    .flags = DB_ACTION_SINGLE_TRACK,
+    .flags = DB_ACTION_SINGLE_TRACK | DB_ACTION_ADD_MENU,
     .callback = lfm_action_lookup,
     .next = NULL// &love_action
 };

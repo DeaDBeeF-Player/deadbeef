@@ -829,6 +829,9 @@ enum {
     /* this flag is added automatically, and means that the plugin was compiled
      * with API <=1.4, and work-around must be used to make it work */
     DB_ACTION_USING_API_14 = 1 << 6,
+
+    /* add item to menu(s), if contains slash symbol(s) */
+    DB_ACTION_ADD_MENU = 1 << 7
 };
 
 // action contexts
