@@ -160,7 +160,7 @@ parse_aac_stream(DB_FILE *fp, int *psamplerate, int *pchannels, float *pduration
             memmove (buf, buf+1, sizeof (buf)-1);
             bufsize--;
 //            trace ("aac_sync fail, framepos: %d\n", framepos);
-            if (deadbeef->ftell (fp) - initfpos > 2000) { // how many is enough to make sure?
+            if (deadbeef->ftell (fp) - initfpos > 4000) { // how many is enough to make sure?
                 break;
             }
             framepos++;
