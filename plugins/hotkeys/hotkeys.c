@@ -609,28 +609,76 @@ action_toggle_stop_after_current_cb (struct DB_plugin_action_s *action, int ctx)
     return 0;
 }
 
-static DB_plugin_action_t action_toggle_menu = {
-    .title = "View/[stub] Show\\/Hide menu",
-    .name = "toggle_menu",
+static DB_plugin_action_t action_jump_to_current = {
+    .title = "Playback/[stub] Jump to currently playing track",
+    .name = "jump_to_current_track",
     .flags = DB_ACTION_COMMON,
     .callback = NULL,
     .next = NULL
 };
 
-static DB_plugin_action_t action_toggle_column_headers = {
-    .title = "View/[stub] Show\\/Hide playlist column headers",
-    .name = "toggle_headers",
+static DB_plugin_action_t action_toggle_cursor_follows_playback = {
+    .title = "Playback/[stub] Cursor follows playback toggle",
+    .name = "toggle_cursor_follows_playback",
     .flags = DB_ACTION_COMMON,
     .callback = NULL,
-    .next = &action_toggle_menu
+    .next = &action_jump_to_current
 };
 
-static DB_plugin_action_t action_toggle_statusbar = {
-    .title = "View/[stub] Show\\/Hide statusbar",
-    .name = "toggle_statusbar",
+static DB_plugin_action_t action_playback_loop_off = {
+    .title = "Playback/[stub] Playback looping - Don't loop",
+    .name = "loop_off",
     .flags = DB_ACTION_COMMON,
     .callback = NULL,
-    .next = &action_toggle_column_headers
+    .next = &action_toggle_cursor_follows_playback
+};
+
+static DB_plugin_action_t action_playback_loop_single = {
+    .title = "Playback/[stub] Playback looping - Single track",
+    .name = "loop_track",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_playback_loop_off
+};
+
+static DB_plugin_action_t action_playback_loop_all = {
+    .title = "Playback/[stub] Playback looping - All",
+    .name = "loop_all",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_playback_loop_single
+};
+
+static DB_plugin_action_t action_playback_order_random = {
+    .title = "Playback/[stub] Playback order - Random",
+    .name = "order_random",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_playback_loop_all
+};
+
+static DB_plugin_action_t action_playback_order_shuffle_albums = {
+    .title = "Playback/[stub] Playback order - Shuffle albums",
+    .name = "order_shuffle_albums",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_playback_order_random
+};
+
+static DB_plugin_action_t action_playback_order_shuffle = {
+    .title = "Playback/[stub] Playback order - Shuffle tracks",
+    .name = "order_shuffle",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_playback_order_shuffle_albums
+};
+
+static DB_plugin_action_t action_playback_order_linear = {
+    .title = "Playback/[stub] Playback order - Linear",
+    .name = "order_linear",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_playback_order_shuffle
 };
 
 static DB_plugin_action_t action_next_playlist = {
@@ -638,7 +686,7 @@ static DB_plugin_action_t action_next_playlist = {
     .name = "sort_next_playlist",
     .flags = DB_ACTION_COMMON,
     .callback = NULL,
-    .next = &action_toggle_statusbar
+    .next = &action_playback_order_linear
 };
 
 static DB_plugin_action_t action_prev_playlist = {

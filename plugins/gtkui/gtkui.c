@@ -1396,12 +1396,60 @@ gtkui_get_mainwin (void) {
     return mainwin;
 }
 
+static DB_plugin_action_t action_show_help = {
+    .title = "Help/[stub] Show help page",
+    .name = "help",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = NULL
+};
+
+static DB_plugin_action_t action_scroll_follows_playback = {
+    .title = "Playback/[stub] Scroll follows playback toggle",
+    .name = "toggle_scroll_follows_playback",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_show_help
+};
+
+static DB_plugin_action_t action_toggle_menu = {
+    .title = "View/[stub] Show\\/Hide menu",
+    .name = "toggle_menu",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_scroll_follows_playback
+};
+
+static DB_plugin_action_t action_toggle_column_headers = {
+    .title = "View/[stub] Show\\/Hide playlist column headers",
+    .name = "toggle_headers",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_toggle_menu
+};
+
+static DB_plugin_action_t action_toggle_statusbar = {
+    .title = "View/[stub] Show\\/Hide statusbar",
+    .name = "toggle_statusbar",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_toggle_column_headers
+};
+
+static DB_plugin_action_t action_toggle_designmode = {
+    .title = "Edit/[stub] Toggle design mode",
+    .name = "toggle_design_mode",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_toggle_statusbar
+};
+
 static DB_plugin_action_t action_preferences = {
     .title = "Edit/[stub] Preferences",
     .name = "preferences",
     .flags = DB_ACTION_COMMON,
     .callback = NULL,
-    .next = NULL
+    .next = &action_toggle_designmode
 };
 
 static DB_plugin_action_t action_sort_custom = {
