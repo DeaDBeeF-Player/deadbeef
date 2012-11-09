@@ -3043,12 +3043,14 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
             }
             else if (*fmt == 'Z') {
                 DB_fileinfo_t *c = deadbeef->streamer_get_current_fileinfo (); // FIXME: might crash streamer
-                if (c->fmt.channels <= 2) {
-                    meta = c->fmt.channels == 1 ? _("Mono") : _("Stereo");
-                }
-                else {
-                    snprintf (tmp, sizeof (tmp), "%dch Multichannel", c->fmt.channels);
-                    meta = tmp;
+                if (c) {
+                    if (c->fmt.channels <= 2) {
+                        meta = c->fmt.channels == 1 ? _("Mono") : _("Stereo");
+                    }
+                    else {
+                        snprintf (tmp, sizeof (tmp), "%dch Multichannel", c->fmt.channels);
+                        meta = tmp;
+                    }
                 }
             }
             else if (*fmt == 'V') {
