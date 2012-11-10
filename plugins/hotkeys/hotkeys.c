@@ -609,6 +609,14 @@ action_toggle_stop_after_current_cb (struct DB_plugin_action_s *action, int ctx)
     return 0;
 }
 
+static DB_plugin_action_t action_reload_metadata = {
+    .title = "[stub] Reload metadata",
+    .name = "reload_metadata",
+    .flags = DB_ACTION_MULTIPLE_TRACKS,
+    .callback = NULL,
+    .next = NULL
+};
+
 static DB_plugin_action_t action_jump_to_current = {
     .title = "Playback/[stub] Jump to currently playing track",
     .name = "jump_to_current_track",
@@ -754,10 +762,10 @@ static DB_plugin_action_t action_crop_selected = {
     .next = &action_sort_by_title
 };
 
-static DB_plugin_action_t action_remove_selected = {
-    .title = "Edit/[stub] Remove Selected",
-    .name = "remove_selected",
-    .flags = DB_ACTION_COMMON,
+static DB_plugin_action_t action_remove_from_playlist = {
+    .title = "[stub] Remove from playlist",
+    .name = "remove_from_playlist",
+    .flags = DB_ACTION_MULTIPLE_TRACKS,
     .callback = NULL,
     .next = &action_crop_selected
 };
@@ -767,7 +775,7 @@ static DB_plugin_action_t action_invert_selection = {
     .name = "invert_selection",
     .flags = DB_ACTION_COMMON,
     .callback = NULL,
-    .next = &action_remove_selected
+    .next = &action_remove_from_playlist
 };
 
 static DB_plugin_action_t action_deselect_all = {
@@ -834,12 +842,20 @@ static DB_plugin_action_t action_add_files = {
     .next = &action_add_folders
 };
 
+static DB_plugin_action_t action_remove_from_playqueue = {
+    .title = "Playback/[stub] Add To Playback Queue",
+    .name = "remove_from_playback_queue",
+    .flags = DB_ACTION_MULTIPLE_TRACKS,
+    .callback = NULL,
+    .next = &action_add_files
+};
+
 static DB_plugin_action_t action_add_to_playqueue = {
     .title = "Playback/[stub] Add To Playback Queue",
     .name = "add_to_playback_queue",
     .flags = DB_ACTION_MULTIPLE_TRACKS,
     .callback = NULL,
-    .next = &action_add_files
+    .next = &action_remove_from_playqueue
 };
 
 static DB_plugin_action_t action_toggle_mute = {
