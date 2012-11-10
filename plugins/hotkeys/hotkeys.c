@@ -1,6 +1,7 @@
 /*
     Hotkeys plugin for DeaDBeeF
     Copyright (C) 2009 Viktor Semykin <thesame.ml@gmail.com>
+    Copyright (C) 2012 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,6 +26,7 @@
 
 #include "hotkeys.h"
 #include "../../deadbeef.h"
+#include "actionhandlers.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -778,68 +780,12 @@ static DB_plugin_action_t action_invert_selection = {
     .next = &action_remove_from_playlist
 };
 
-static DB_plugin_action_t action_deselect_all = {
-    .title = "Edit/[stub] Deselect All",
-    .name = "deselect_all",
-    .flags = DB_ACTION_COMMON,
-    .callback = NULL,
-    .next = &action_invert_selection
-};
-
-static DB_plugin_action_t action_select_all = {
-    .title = "Edit/[stub] Select All",
-    .name = "select_all",
-    .flags = DB_ACTION_COMMON,
-    .callback = NULL,
-    .next = &action_deselect_all
-};
-
 static DB_plugin_action_t action_clear_playlist = {
     .title = "Edit/[stub] Clear playlist",
     .name = "clear_playlist",
     .flags = DB_ACTION_COMMON,
     .callback = NULL,
-    .next = &action_select_all
-};
-
-static DB_plugin_action_t action_quit = {
-    .title = "[stub] Quit",
-    .name = "quit",
-    .flags = DB_ACTION_COMMON,
-    .callback = NULL,
-    .next = &action_clear_playlist
-};
-
-static DB_plugin_action_t action_delete_from_disk = {
-    .title = "[stub] Delete From Disk",
-    .name = "delete_from_disk",
-    .flags = DB_ACTION_SINGLE_TRACK | DB_ACTION_MULTIPLE_TRACKS,
-    .callback = NULL,
-    .next = &action_quit
-};
-
-static DB_plugin_action_t action_add_location = {
-    .title = "File/[stub] Add Location",
-    .name = "add_location",
-    .flags = DB_ACTION_COMMON,
-    .callback = NULL,
-    .next = &action_delete_from_disk
-};
-
-static DB_plugin_action_t action_add_folders = {
-    .title = "File/[stub] Add Folder(s)",
-    .name = "add_folders",
-    .flags = DB_ACTION_COMMON,
-    .callback = NULL,
-    .next = &action_add_location
-};
-
-static DB_plugin_action_t action_add_files = {
-    .title = "File/[stub] Add File(s)",
-    .name = "add_files",
-    .flags = DB_ACTION_COMMON,
-    .callback = NULL,
-    .next = &action_add_folders
+    .next = &action_invert_selection
 };
 
 static DB_plugin_action_t action_remove_from_playqueue = {
@@ -847,7 +793,7 @@ static DB_plugin_action_t action_remove_from_playqueue = {
     .name = "remove_from_playback_queue",
     .flags = DB_ACTION_MULTIPLE_TRACKS,
     .callback = NULL,
-    .next = &action_add_files
+    .next = &action_clear_playlist
 };
 
 static DB_plugin_action_t action_add_to_playqueue = {

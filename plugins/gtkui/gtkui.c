@@ -26,6 +26,7 @@
 #include <math.h>
 #include <sys/time.h>
 #include <unistd.h>
+#include <sys/stat.h>
 #include "../../gettext.h"
 #include "gtkui.h"
 #include "ddblistview.h"
@@ -52,6 +53,7 @@
 #ifdef EGG_SM_CLIENT_BACKEND_XSMP
 #include "smclient/eggsmclient.h"
 #endif
+#include "actionhandlers.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -1086,6 +1088,22 @@ gtkui_thread (void *ctx) {
 
     mainwin = create_mainwin ();
 
+    // initialize default hotkey mapping
+    struct stat st;
+    char checkpath[PATH_MAX];
+    snprintf (checkpath, sizeof (checkpath), "%s/config", deadbeef->get_config_dir ());
+    if (stat (checkpath, &st)) {
+        printf ("file %s doesn't exist\n", checkpath);
+        deadbeef->conf_set_str ("hotkey.key1", "\"Ctrl f\" 0 0 find");
+        deadbeef->conf_set_str ("hotkey.key2", "\"Ctrl o\" 0 0 open_files");
+        deadbeef->conf_set_str ("hotkey.key3", "\"Ctrl q\" 0 0 quit");
+        deadbeef->conf_set_str ("hotkey.key4", "\"Ctrl n\" 0 0 new_playlist");
+        deadbeef->conf_set_str ("hotkey.key5", "\"Ctrl a\" 0 0 select_all");
+        deadbeef->conf_set_str ("hotkey.key6", "\"Escape\" 0 0 deselect_all");
+        deadbeef->conf_set_str ("hotkey.key7", "\"Ctrl m\" 0 0 toggle_stop_after_current");
+        deadbeef->conf_set_str ("hotkey.key8", "\"Ctrl j\" 0 0 jump_to_current_track");
+    }
+
     // construct mainwindow widgets
     {
 
@@ -1096,7 +1114,7 @@ gtkui_thread (void *ctx) {
 
         // load layout
         char layout[4000];
-        deadbeef->conf_get_str ("gtkui.layout", "tabbed_playlist { }", layout, sizeof (layout));
+        deadbeef->conf_get_str ("gtkui.layout", "tabbed_playlist \"\" { }", layout, sizeof (layout));
 
         ddb_gtkui_widget_t *w = NULL;
         w_create_from_string (layout, &w);
@@ -1396,12 +1414,77 @@ gtkui_get_mainwin (void) {
     return mainwin;
 }
 
+static DB_plugin_action_t action_deselect_all = {
+    .title = "Edit/Deselect All",
+    .name = "deselect_all",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_deselect_all_handler,
+    .next = NULL
+};
+
+static DB_plugin_action_t action_select_all = {
+    .title = "Edit/Select All",
+    .name = "select_all",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_select_all_handler,
+    .next = &action_deselect_all
+};
+
+static DB_plugin_action_t action_quit = {
+    .title = "Quit",
+    .name = "quit",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_quit_handler,
+    .next = &action_select_all
+};
+
+static DB_plugin_action_t action_delete_from_disk = {
+    .title = "[stub] Delete From Disk",
+    .name = "delete_from_disk",
+    .flags = DB_ACTION_SINGLE_TRACK | DB_ACTION_MULTIPLE_TRACKS,
+    .callback = action_quit_handler,
+    .next = &action_quit
+};
+
+static DB_plugin_action_t action_add_location = {
+    .title = "File/[stub] Add Location",
+    .name = "add_location",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_delete_from_disk
+};
+
+static DB_plugin_action_t action_add_folders = {
+    .title = "File/Add Folder(s)",
+    .name = "add_folders",
+    .flags = DB_ACTION_COMMON,
+    .callback = add_folders_handler,
+    .next = &action_add_location
+};
+
+static DB_plugin_action_t action_add_files = {
+    .title = "File/Add File(s)",
+    .name = "add_files",
+    .flags = DB_ACTION_COMMON,
+    .callback = add_files_handler,
+    .next = &action_add_folders
+};
+
+static DB_plugin_action_t action_open_files = {
+    .title = "File/Open File(s)",
+    .name = "open_files",
+    .flags = DB_ACTION_COMMON,
+    .callback = open_files_handler,
+    .next = &action_add_files
+};
+
+
 static DB_plugin_action_t action_track_properties = {
     .title = "[stub] Track properties",
     .name = "track_properties",
     .flags = DB_ACTION_MULTIPLE_TRACKS,
     .callback = NULL,
-    .next = NULL
+    .next = &action_open_files
 };
 
 static DB_plugin_action_t action_show_help = {
