@@ -1396,12 +1396,20 @@ gtkui_get_mainwin (void) {
     return mainwin;
 }
 
+static DB_plugin_action_t action_track_properties = {
+    .title = "[stub] Track properties",
+    .name = "track_properties",
+    .flags = DB_ACTION_MULTIPLE_TRACKS,
+    .callback = NULL,
+    .next = NULL
+};
+
 static DB_plugin_action_t action_show_help = {
     .title = "Help/[stub] Show help page",
     .name = "help",
     .flags = DB_ACTION_COMMON,
     .callback = NULL,
-    .next = NULL
+    .next = &action_track_properties
 };
 
 static DB_plugin_action_t action_scroll_follows_playback = {
