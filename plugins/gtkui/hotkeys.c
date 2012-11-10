@@ -652,10 +652,10 @@ on_hotkeys_set_key_key_press_event     (GtkWidget       *widget,
     {
         switch (event->keyval)
         {
-        case GDK_Escape:
-            get_keycombo_string (last_accel_key, last_accel_mask, name);
-            gtk_button_set_label (GTK_BUTTON (widget), name);
-            goto out; /* cancel */
+//        case GDK_Escape:
+//            get_keycombo_string (last_accel_key, last_accel_mask, name);
+//            gtk_button_set_label (GTK_BUTTON (widget), name);
+//            goto out; /* cancel */
         case GDK_BackSpace:
             gtk_button_set_label (GTK_BUTTON (widget), _("<Not set>"));
             last_accel_key = 0;

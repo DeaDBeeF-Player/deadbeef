@@ -40,6 +40,7 @@ GTKUI_SOURCES =    gtkui.c gtkui.h\
 				   ddbseekbar.c ddbequalizer.c ddbcellrenderertextmultiline.c\
 				   gtkuigl.c gtkuigl.h\
                    hotkeys.c hotkeys.h\
+                   actionhandlers.c actionhandlers.h\
 				   $(SM_SOURCES)
 
 sdkdir = $(pkgincludedir)
