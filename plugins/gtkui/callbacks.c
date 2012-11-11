@@ -65,7 +65,7 @@ void
 on_open_activate                       (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    open_files_handler (NULL, 0);
+    action_open_files_handler_cb (NULL);
 }
 
 
@@ -73,14 +73,14 @@ void
 on_add_files_activate                  (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    add_files_handler (NULL, 0);
+    action_add_files_handler_cb (NULL);
 }
 
 void
 on_add_folders_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    add_folders_handler (NULL, 0);
+    action_add_folders_handler_cb (NULL);
 }
 
 
@@ -95,7 +95,7 @@ void
 on_quit_activate                      (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    action_quit_handler (NULL, 0);
+    action_quit_handler_cb (NULL);
 }
 
 
@@ -104,7 +104,7 @@ void
 on_select_all1_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    action_select_all_handler (NULL, 0);
+    action_select_all_handler_cb (NULL);
 }
 
 
@@ -549,60 +549,10 @@ on_find_activate                       (GtkMenuItem     *menuitem,
 }
 
 void
-on_info_window_delete (GtkWidget *widget, GtkTextDirection previous_direction, GtkWidget **pwindow) {
-    *pwindow = NULL;
-    gtk_widget_hide (widget);
-    gtk_widget_destroy (widget);
-}
-
-static void
-show_info_window (const char *fname, const char *title, GtkWidget **pwindow) {
-    if (*pwindow) {
-        return;
-    }
-    GtkWidget *widget = *pwindow = create_helpwindow ();
-    g_object_set_data (G_OBJECT (widget), "pointer", pwindow);
-    g_signal_connect (widget, "delete_event", G_CALLBACK (on_info_window_delete), pwindow);
-    gtk_window_set_title (GTK_WINDOW (widget), title);
-    gtk_window_set_transient_for (GTK_WINDOW (widget), GTK_WINDOW (mainwin));
-    GtkWidget *txt = lookup_widget (widget, "helptext");
-    GtkTextBuffer *buffer = gtk_text_buffer_new (NULL);
-
-    FILE *fp = fopen (fname, "rb");
-    if (fp) {
-        fseek (fp, 0, SEEK_END);
-        size_t s = ftell (fp);
-        rewind (fp);
-        char buf[s+1];
-        if (fread (buf, 1, s, fp) != s) {
-            fprintf (stderr, "error reading help file contents\n");
-            const char *error = _("Failed while reading help file");
-            gtk_text_buffer_set_text (buffer, error, strlen (error));
-        }
-        else {
-            buf[s] = 0;
-            gtk_text_buffer_set_text (buffer, buf, s);
-        }
-        fclose (fp);
-    }
-    else {
-        const char *error = _("Failed to load help file");
-        gtk_text_buffer_set_text (buffer, error, strlen (error));
-    }
-    gtk_text_view_set_buffer (GTK_TEXT_VIEW (txt), buffer);
-    g_object_unref (buffer);
-    gtk_widget_show (widget);
-}
-
-static GtkWidget *helpwindow;
-
-void
 on_help1_activate                      (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    char fname[PATH_MAX];
-    snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_doc_dir (), _("help.txt"));
-    show_info_window (fname, _("Help"), &helpwindow);
+    action_show_help_handler_cb (NULL);
 }
 
 static GtkWidget *aboutwindow;
@@ -615,7 +565,7 @@ on_about1_activate                     (GtkMenuItem     *menuitem,
     snprintf (s, sizeof (s), _("About DeaDBeeF %s"), VERSION);
     char fname[PATH_MAX];
     snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_doc_dir (), "about.txt");
-    show_info_window (fname, s, &aboutwindow);
+    gtkui_show_info_window (fname, s, &aboutwindow);
 }
 
 static GtkWidget *changelogwindow;
@@ -628,7 +578,7 @@ on_changelog1_activate                 (GtkMenuItem     *menuitem,
     snprintf (s, sizeof (s), _("DeaDBeeF %s ChangeLog"), VERSION);
     char fname[PATH_MAX];
     snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_doc_dir (), "ChangeLog");
-    show_info_window (fname, s, &changelogwindow);
+    gtkui_show_info_window (fname, s, &changelogwindow);
 }
 
 static GtkWidget *gplwindow;
@@ -639,7 +589,7 @@ on_gpl1_activate                       (GtkMenuItem     *menuitem,
 {
     char fname[PATH_MAX];
     snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_doc_dir (), "COPYING.GPLv2");
-    show_info_window (fname, "GNU GENERAL PUBLIC LICENSE Version 2", &gplwindow);
+    gtkui_show_info_window (fname, "GNU GENERAL PUBLIC LICENSE Version 2", &gplwindow);
 }
 
 static GtkWidget *lgplwindow;
@@ -650,7 +600,7 @@ on_lgpl1_activate                      (GtkMenuItem     *menuitem,
 {
     char fname[PATH_MAX];
     snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_doc_dir (), "COPYING.LGPLv2.1");
-    show_info_window (fname, "GNU LESSER GENERAL PUBLIC LICENSE Version 2.1", &lgplwindow);
+    gtkui_show_info_window (fname, "GNU LESSER GENERAL PUBLIC LICENSE Version 2.1", &lgplwindow);
 }
 
 gboolean
@@ -842,7 +792,7 @@ void
 on_deselect_all1_activate              (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    action_deselect_all_handler (NULL, 0);
+    action_deselect_all_handler_cb (NULL);
 }
 
 
@@ -872,11 +822,7 @@ void
 on_new_playlist1_activate              (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    int pl = gtkui_add_new_playlist ();
-    if (pl != -1) {
-        deadbeef->plt_set_curr_idx (pl);
-        deadbeef->conf_set_int ("playlist.current", pl);
-    }
+    action_new_playlist_handler_cb (NULL);
 }
 
 
@@ -989,7 +935,7 @@ on_translators1_activate               (GtkMenuItem     *menuitem,
     snprintf (s, sizeof (s), _("DeaDBeeF Translators"));
     char fname[PATH_MAX];
     snprintf (fname, sizeof (fname), "%s/%s", deadbeef->get_doc_dir (), "translators.txt");
-    show_info_window (fname, s, &translatorswindow);
+    gtkui_show_info_window (fname, s, &translatorswindow);
 }
 
 
