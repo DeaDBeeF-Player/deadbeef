@@ -971,9 +971,6 @@ on_auto_name_playlist_from_folder_toggled
     deadbeef->conf_set_int ("gtkui.name_playlist_from_folder", active);
 }
 
-void
-on_info_window_delete (GtkWidget *widget, GtkTextDirection previous_direction, GtkWidget **pwindow);
-
 static void
 show_copyright_window (const char *text, const char *title, GtkWidget **pwindow) {
     if (*pwindow) {
@@ -981,7 +978,7 @@ show_copyright_window (const char *text, const char *title, GtkWidget **pwindow)
     }
     GtkWidget *widget = *pwindow = create_helpwindow ();
     g_object_set_data (G_OBJECT (widget), "pointer", pwindow);
-    g_signal_connect (widget, "delete_event", G_CALLBACK (on_info_window_delete), pwindow);
+    g_signal_connect (widget, "delete_event", G_CALLBACK (on_gtkui_info_window_delete), pwindow);
     gtk_window_set_title (GTK_WINDOW (widget), title);
     gtk_window_set_transient_for (GTK_WINDOW (widget), GTK_WINDOW (prefwin));
     GtkWidget *txt = lookup_widget (widget, "helptext");

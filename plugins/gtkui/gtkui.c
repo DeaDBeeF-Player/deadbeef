@@ -794,27 +794,7 @@ void
 on_add_location_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    GtkWidget *dlg = create_addlocationdlg ();
-    gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
-    int res = gtk_dialog_run (GTK_DIALOG (dlg));
-    if (res == GTK_RESPONSE_OK) {
-        GtkEntry *entry = GTK_ENTRY (lookup_widget (dlg, "addlocation_entry"));
-        if (entry) {
-            const char *text = gtk_entry_get_text (entry);
-            if (text) {
-                ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-                if (!deadbeef->pl_add_files_begin (plt)) {
-                    deadbeef->plt_add_file (plt, text, NULL, NULL);
-                    deadbeef->pl_add_files_end ();
-                    playlist_refresh ();
-                }
-                if (plt) {
-                    deadbeef->plt_unref (plt);
-                }
-            }
-        }
-    }
-    gtk_widget_destroy (dlg);
+    action_add_location_handler_cb (NULL);
 }
 
 static gboolean
@@ -1102,6 +1082,7 @@ gtkui_thread (void *ctx) {
         deadbeef->conf_set_str ("hotkey.key6", "\"Escape\" 0 0 deselect_all");
         deadbeef->conf_set_str ("hotkey.key7", "\"Ctrl m\" 0 0 toggle_stop_after_current");
         deadbeef->conf_set_str ("hotkey.key8", "\"Ctrl j\" 0 0 jump_to_current_track");
+        deadbeef->conf_set_str ("hotkey.key9", "\"F1\" 0 0 help");
     }
 
     // construct mainwindow widgets
@@ -1299,6 +1280,53 @@ gtkui_playlist_set_curr (int playlist) {
     deadbeef->conf_set_int ("playlist.current", playlist);
 }
 
+void
+on_gtkui_info_window_delete (GtkWidget *widget, GtkTextDirection previous_direction, GtkWidget **pwindow) {
+    *pwindow = NULL;
+    gtk_widget_hide (widget);
+    gtk_widget_destroy (widget);
+}
+
+void
+gtkui_show_info_window (const char *fname, const char *title, GtkWidget **pwindow) {
+    if (*pwindow) {
+        return;
+    }
+    GtkWidget *widget = *pwindow = create_helpwindow ();
+    g_object_set_data (G_OBJECT (widget), "pointer", pwindow);
+    g_signal_connect (widget, "delete_event", G_CALLBACK (on_gtkui_info_window_delete), pwindow);
+    gtk_window_set_title (GTK_WINDOW (widget), title);
+    gtk_window_set_transient_for (GTK_WINDOW (widget), GTK_WINDOW (mainwin));
+    GtkWidget *txt = lookup_widget (widget, "helptext");
+    GtkTextBuffer *buffer = gtk_text_buffer_new (NULL);
+
+    FILE *fp = fopen (fname, "rb");
+    if (fp) {
+        fseek (fp, 0, SEEK_END);
+        size_t s = ftell (fp);
+        rewind (fp);
+        char buf[s+1];
+        if (fread (buf, 1, s, fp) != s) {
+            fprintf (stderr, "error reading help file contents\n");
+            const char *error = _("Failed while reading help file");
+            gtk_text_buffer_set_text (buffer, error, strlen (error));
+        }
+        else {
+            buf[s] = 0;
+            gtk_text_buffer_set_text (buffer, buf, s);
+        }
+        fclose (fp);
+    }
+    else {
+        const char *error = _("Failed to load help file");
+        gtk_text_buffer_set_text (buffer, error, strlen (error));
+    }
+    gtk_text_view_set_buffer (GTK_TEXT_VIEW (txt), buffer);
+    g_object_unref (buffer);
+    gtk_widget_show (widget);
+}
+
+
 static int
 gtkui_start (void) {
     fprintf (stderr, "gtkui plugin compiled for gtk version: %d.%d.%d\n", GTK_MAJOR_VERSION, GTK_MINOR_VERSION, GTK_MICRO_VERSION);
@@ -1447,10 +1475,10 @@ static DB_plugin_action_t action_delete_from_disk = {
 };
 
 static DB_plugin_action_t action_add_location = {
-    .title = "File/[stub] Add Location",
+    .title = "File/Add Location",
     .name = "add_location",
     .flags = DB_ACTION_COMMON,
-    .callback = NULL,
+    .callback = action_add_location_handler,
     .next = &action_delete_from_disk
 };
 
@@ -1458,7 +1486,7 @@ static DB_plugin_action_t action_add_folders = {
     .title = "File/Add Folder(s)",
     .name = "add_folders",
     .flags = DB_ACTION_COMMON,
-    .callback = add_folders_handler,
+    .callback = action_add_folders_handler,
     .next = &action_add_location
 };
 
@@ -1466,7 +1494,7 @@ static DB_plugin_action_t action_add_files = {
     .title = "File/Add File(s)",
     .name = "add_files",
     .flags = DB_ACTION_COMMON,
-    .callback = add_files_handler,
+    .callback = action_add_files_handler,
     .next = &action_add_folders
 };
 
@@ -1474,7 +1502,7 @@ static DB_plugin_action_t action_open_files = {
     .title = "File/Open File(s)",
     .name = "open_files",
     .flags = DB_ACTION_COMMON,
-    .callback = open_files_handler,
+    .callback = action_open_files_handler,
     .next = &action_add_files
 };
 
@@ -1488,10 +1516,10 @@ static DB_plugin_action_t action_track_properties = {
 };
 
 static DB_plugin_action_t action_show_help = {
-    .title = "Help/[stub] Show help page",
+    .title = "Help/Show help page",
     .name = "help",
     .flags = DB_ACTION_COMMON,
-    .callback = NULL,
+    .callback = action_show_help_handler,
     .next = &action_track_properties
 };
 
@@ -1567,12 +1595,21 @@ static DB_plugin_action_t action_load_playlist = {
     .next = &action_save_playlist
 };
 
+static DB_plugin_action_t action_remove_current_playlist = {
+    .title = "File/Remove current playlist",
+    .name = "remove_current_playlist",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_remove_current_playlist_handler,
+    .next = &action_load_playlist
+};
+
+
 static DB_plugin_action_t action_new_playlist = {
-    .title = "File/[stub] New Playlist",
+    .title = "File/New Playlist",
     .name = "new_playlist",
     .flags = DB_ACTION_COMMON,
-    .callback = NULL,
-    .next = &action_load_playlist
+    .callback = action_new_playlist_handler,
+    .next = &action_remove_current_playlist
 };
 
 static DB_plugin_action_t action_toggle_eq = {
@@ -1600,26 +1637,26 @@ static DB_plugin_action_t action_show_eq = {
 };
 
 static DB_plugin_action_t action_toggle_mainwin = {
-    .title = "[stub] Show\\/Hide Player Window",
+    .title = "Show\\/Hide Player Window",
     .name = "toggle_player_window",
     .flags = DB_ACTION_COMMON,
-    .callback = NULL,
+    .callback = action_toggle_mainwin_handler,
     .next = &action_show_eq
 };
 
 static DB_plugin_action_t action_hide_mainwin = {
-    .title = "[stub] Hide Player Window",
+    .title = "Hide Player Window",
     .name = "hide_player_window",
     .flags = DB_ACTION_COMMON,
-    .callback = NULL,
+    .callback = action_hide_mainwin_handler,
     .next = &action_toggle_mainwin
 };
 
 static DB_plugin_action_t action_show_mainwin = {
-    .title = "[stub] Show Player Window",
+    .title = "Show Player Window",
     .name = "show_player_window",
     .flags = DB_ACTION_COMMON,
-    .callback = NULL,
+    .callback = action_show_mainwin_handler,
     .next = &action_hide_mainwin
 };
 

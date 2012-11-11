@@ -152,4 +152,13 @@ redraw_queued_tracks_cb (gpointer plt);
 
 extern DB_playItem_t * (*gtkui_original_plt_load) (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 
+void
+mainwin_toggle_visible (void);
+
+void
+gtkui_show_info_window (const char *fname, const char *title, GtkWidget **pwindow);
+
+void
+on_gtkui_info_window_delete (GtkWidget *widget, GtkTextDirection previous_direction, GtkWidget **pwindow);
+
 #endif
