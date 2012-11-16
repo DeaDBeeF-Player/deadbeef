@@ -1987,10 +1987,6 @@ ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state) {
         cursor = 0;
         gtk_range_set_value (GTK_RANGE (range), gtk_adjustment_get_lower (adj));
     }
-    else if (keyval == GDK_Delete) {
-        ps->binding->delete_selected ();
-        cursor = ps->binding->cursor ();
-    }
     else if (keyval == GDK_Menu) {
         DdbListviewIter it = ps->binding->head ();
         while (it && !ps->binding->is_selected (it)) {

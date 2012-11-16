@@ -31,6 +31,7 @@
 #include "parser.h"
 #include "actions.h"
 #include "search.h"
+#include "actionhandlers.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -310,9 +311,7 @@ void
 on_remove1_activate                    (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    int cursor = deadbeef->pl_delete_selected ();
-    deadbeef->pl_save_all ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    action_remove_from_playlist_handler (NULL, DDB_ACTION_CTX_SELECTION);
 }
 
 
