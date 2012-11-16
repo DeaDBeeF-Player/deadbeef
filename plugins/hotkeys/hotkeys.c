@@ -756,28 +756,12 @@ static DB_plugin_action_t action_sort_by_title = {
     .next = &action_sort_by_tracknr
 };
 
-static DB_plugin_action_t action_crop_selected = {
-    .title = "Edit/[stub] Crop Selected",
-    .name = "crop_selected",
-    .flags = DB_ACTION_COMMON,
-    .callback = NULL,
-    .next = &action_sort_by_title
-};
-
-static DB_plugin_action_t action_remove_from_playlist = {
-    .title = "[stub] Remove from playlist",
-    .name = "remove_from_playlist",
-    .flags = DB_ACTION_MULTIPLE_TRACKS,
-    .callback = NULL,
-    .next = &action_crop_selected
-};
-
 static DB_plugin_action_t action_invert_selection = {
     .title = "Edit/[stub] Invert Selection",
     .name = "invert_selection",
     .flags = DB_ACTION_COMMON,
     .callback = NULL,
-    .next = &action_remove_from_playlist
+    .next = &action_sort_by_tracknr
 };
 
 static DB_plugin_action_t action_clear_playlist = {

@@ -1083,6 +1083,7 @@ gtkui_thread (void *ctx) {
         deadbeef->conf_set_str ("hotkey.key7", "\"Ctrl m\" 0 0 toggle_stop_after_current");
         deadbeef->conf_set_str ("hotkey.key8", "\"Ctrl j\" 0 0 jump_to_current_track");
         deadbeef->conf_set_str ("hotkey.key9", "\"F1\" 0 0 help");
+        deadbeef->conf_set_str ("hotkey.key11", "\"Delete\" 1 0 remove_from_playlist");
     }
 
     // construct mainwindow widgets
@@ -1579,12 +1580,29 @@ static DB_plugin_action_t action_sort_custom = {
     .next = &action_preferences
 };
 
+static DB_plugin_action_t action_crop_selected = {
+    .title = "Edit/[stub] Crop Selected",
+    .name = "crop_selected",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_sort_custom
+};
+
+static DB_plugin_action_t action_remove_from_playlist = {
+    .title = "Edit/Remove from current playlist",
+    .name = "remove_from_playlist",
+    .flags = DB_ACTION_MULTIPLE_TRACKS,
+    .callback = action_remove_from_playlist_handler,
+    .next = &action_crop_selected
+};
+
+
 static DB_plugin_action_t action_save_playlist = {
     .title = "File/[stub] Save Playlist",
     .name = "save_playlist",
     .flags = DB_ACTION_COMMON,
     .callback = NULL,
-    .next = &action_sort_custom
+    .next = &action_remove_from_playlist
 };
 
 static DB_plugin_action_t action_load_playlist = {
