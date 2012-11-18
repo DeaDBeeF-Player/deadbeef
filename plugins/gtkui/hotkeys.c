@@ -184,7 +184,7 @@ hotkeys_save (void) {
         gtk_tree_model_get_value (GTK_TREE_MODEL (hkstore), &iter, 5, &context);
         gtk_tree_model_get_value (GTK_TREE_MODEL (hkstore), &iter, 3, &global);
         char key[100];
-        snprintf (key, sizeof (key), "hotkey.key%d", i);
+        snprintf (key, sizeof (key), "hotkey.key%02d", i);
         char value[1000];
         snprintf (value, sizeof (value), "\"%s\" %d %d %s", g_value_get_string (&keycombo), g_value_get_int (&context), g_value_get_boolean (&global), g_value_get_string (&action));
         deadbeef->conf_set_str (key, value);
