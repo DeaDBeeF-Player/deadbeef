@@ -706,20 +706,12 @@ static DB_plugin_action_t action_jump_to_current = {
     .next = &action_reload_metadata
 };
 
-static DB_plugin_action_t action_toggle_cursor_follows_playback = {
-    .title = "Playback/[stub] Cursor follows playback toggle",
-    .name = "toggle_cursor_follows_playback",
-    .flags = DB_ACTION_COMMON,
-    .callback = NULL,
-    .next = &action_jump_to_current
-};
-
 static DB_plugin_action_t action_playback_loop_off = {
     .title = "Playback/[stub] Playback looping - Don't loop",
     .name = "loop_off",
     .flags = DB_ACTION_COMMON,
     .callback = NULL,
-    .next = &action_toggle_cursor_follows_playback
+    .next = &action_jump_to_current
 };
 
 static DB_plugin_action_t action_playback_loop_single = {
