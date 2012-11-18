@@ -773,3 +773,18 @@ action_save_playlist_handler (DB_plugin_action_t *act, int ctx) {
     return 0;
 }
 
+gboolean
+action_toggle_menu_handler_cb (void *data) {
+    GtkWidget *menu = lookup_widget (mainwin, "menubar");
+    int val = 1-deadbeef->conf_get_int ("gtkui.show_menu", 1);
+    val ? gtk_widget_show (menu) : gtk_widget_hide (menu);
+    deadbeef->conf_set_int ("gtkui.show_menu", val);
+    return FALSE;
+}
+
+int
+action_toggle_menu_handler (DB_plugin_action_t *act, int ctx) {
+    g_idle_add (action_toggle_menu_handler_cb, NULL);
+    return 0;
+}
+

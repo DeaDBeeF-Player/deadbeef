@@ -92,6 +92,7 @@ get_keycode (Display *disp, const char* name, KeySym *syms, int first_kk, int la
         {
             if ( (keys[ ks ].keysym == sym) && (0 == strcmp (name, keys[ ks ].name)))
             {
+                printf ("%x\n", i+first_kk);
                 return i+first_kk;
             }
         }
@@ -499,6 +500,11 @@ DB_plugin_action_t*
 hotkeys_get_action_for_keycombo (int key, int mods, int isglobal, int *ctx) {
     int i;
     // find mapped keycode
+
+    if (isupper (key)) {
+        key = tolower (key);
+    }
+
     int keycode = 0;
     for (i = 0; keys[i].name; i++) {
         if (key == keys[i].keysym) {

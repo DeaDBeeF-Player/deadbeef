@@ -1406,10 +1406,10 @@ static DB_plugin_action_t action_scroll_follows_playback = {
 };
 
 static DB_plugin_action_t action_toggle_menu = {
-    .title = "View/[stub] Show\\/Hide menu",
+    .title = "View/Show\\/Hide menu",
     .name = "toggle_menu",
     .flags = DB_ACTION_COMMON,
-    .callback = NULL,
+    .callback = action_toggle_menu_handler,
     .next = &action_scroll_follows_playback
 };
 

@@ -67,7 +67,7 @@ remove_actions (GtkWidget *widget, void *data) {
 void
 add_mainmenu_actions (void)
 {
-    GtkWidget *menubar = lookup_widget (mainwin, "menubar1");
+    GtkWidget *menubar = lookup_widget (mainwin, "menubar");
     // remove all plugaction_*** menu items and empty submenus
     gtk_container_foreach (GTK_CONTAINER (menubar), remove_actions, menubar);
 

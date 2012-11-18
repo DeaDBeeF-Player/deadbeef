@@ -217,8 +217,7 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
             return TRUE;
         }
     }
-
-
+    trace ("action not found\n");
 
     uint32_t maskedstate = (event->state &~ (GDK_LOCK_MASK | GDK_MOD2_MASK | GDK_MOD3_MASK | GDK_MOD5_MASK)) & 0xfff;
     if ((maskedstate == GDK_MOD1_MASK || maskedstate == 0) && event->keyval == GDK_n) {
@@ -1089,4 +1088,12 @@ on_design_mode1_activate               (GtkMenuItem     *menuitem,
 }
 
 
+
+
+void
+on_menu_bar1_activate                  (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    action_toggle_menu_handler_cb (NULL);
+}
 

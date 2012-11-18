@@ -1266,3 +1266,7 @@ gboolean
 on_hotkeys_set_key_key_press_event     (GtkWidget       *widget,
                                         GdkEventKey     *event,
                                         gpointer         user_data);
+
+void
+on_menu_bar1_activate                  (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
