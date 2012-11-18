@@ -35,6 +35,10 @@
 struct _DdbCellRendererTextMultilinePrivate {
 	DdbCellEditableTextView* entry;
 	gulong focus_out_id;
+
+    gulong populate_popup_id;
+    gulong entry_menu_popdown_timeout;
+    gboolean in_entry_menu;
 };
 
 struct _DdbCellEditableTextViewPrivate {
@@ -286,6 +290,21 @@ static void ddb_cell_renderer_text_multiline_gtk_cell_renderer_text_editing_done
 	_tmp1_ = _self_;
 	_tmp2_ = _tmp1_->priv->focus_out_id;
 	g_signal_handler_disconnect ((GObject*) _tmp0_, _tmp2_);
+
+    if (_tmp1_->priv->populate_popup_id > 0)
+    {
+        g_signal_handler_disconnect (entry, _tmp1_->priv->populate_popup_id);
+        _tmp1_->priv->populate_popup_id = 0;
+    }
+
+    if (_tmp1_->priv->entry_menu_popdown_timeout)
+    {
+        g_source_remove (_tmp1_->priv->entry_menu_popdown_timeout);
+        _tmp1_->priv->entry_menu_popdown_timeout = 0;
+    }
+
+
+
 	_tmp3_ = _self_;
 	_tmp4_ = entry;
 	_tmp5_ = _tmp4_->priv->editing_canceled;
@@ -317,12 +336,74 @@ static gboolean ddb_cell_renderer_text_multiline_gtk_cell_renderer_focus_out_eve
 	g_return_val_if_fail (entry != NULL, FALSE);
 	g_return_val_if_fail (event != NULL, FALSE);
 	g_return_val_if_fail (_self_ != NULL, FALSE);
+
+    DdbCellRendererTextMultilinePrivate *priv;
+
+    priv = DDB_CELL_RENDERER_TEXT_MULTILINE_GET_PRIVATE (_self_);
+
 	entry->priv->editing_canceled = TRUE;
-	gtk_cell_editable_remove_widget ((GtkCellEditable*) entry);
+	if (priv->in_entry_menu)
+	    return FALSE;
+
+    gtk_cell_editable_editing_done (GTK_CELL_EDITABLE (entry));
+	gtk_cell_editable_remove_widget (GTK_CELL_EDITABLE (entry));
 	result = FALSE;
 	return result;
 }
 
+static gboolean
+popdown_timeout (gpointer data)
+{
+    DdbCellRendererTextMultilinePrivate *priv;
+
+    priv = DDB_CELL_RENDERER_TEXT_MULTILINE_GET_PRIVATE (data);
+
+    priv->entry_menu_popdown_timeout = 0;
+
+    if (!GTK_WIDGET_HAS_FOCUS (priv->entry))
+        ddb_cell_renderer_text_multiline_gtk_cell_renderer_text_editing_done (priv->entry, data);
+
+    return FALSE;
+}
+
+static void
+ddb_cell_renderer_text_multiline_popup_unmap (GtkMenu *menu,
+                                    gpointer data)
+{
+    DdbCellRendererTextMultilinePrivate *priv;
+
+    priv = DDB_CELL_RENDERER_TEXT_MULTILINE_GET_PRIVATE (data);
+
+    priv->in_entry_menu = FALSE;
+
+    if (priv->entry_menu_popdown_timeout)
+        return;
+
+    priv->entry_menu_popdown_timeout = gdk_threads_add_timeout (500, popdown_timeout,
+            data);
+}
+
+
+static void
+ddb_cell_renderer_text_multiline_populate_popup (GtkEntry *entry,
+                                       GtkMenu  *menu,
+                                       gpointer  data)
+{
+    DdbCellRendererTextMultilinePrivate *priv;
+
+    priv = DDB_CELL_RENDERER_TEXT_MULTILINE_GET_PRIVATE (data);
+
+    if (priv->entry_menu_popdown_timeout)
+    {
+        g_source_remove (priv->entry_menu_popdown_timeout);
+        priv->entry_menu_popdown_timeout = 0;
+    }
+
+    priv->in_entry_menu = TRUE;
+
+    g_signal_connect (menu, "unmap",
+            G_CALLBACK (ddb_cell_renderer_text_multiline_popup_unmap), data);
+}
 
 static GtkCellEditable* ddb_cell_renderer_text_multiline_real_start_editing (GtkCellRenderer* base, GdkEvent* event, GtkWidget* widget, const gchar* path, GdkRectangle* background_area, GdkRectangle* cell_area, GtkCellRendererState flags) {
 	DdbCellRendererTextMultiline * self;
@@ -441,9 +522,23 @@ static GtkCellEditable* ddb_cell_renderer_text_multiline_real_start_editing (Gtk
 	_tmp32_ = buf;
 	gtk_text_view_set_buffer ((GtkTextView*) _tmp31_, _tmp32_);
 	_tmp33_ = self->priv->entry;
+
+    self->priv->in_entry_menu = FALSE;
+    if (self->priv->entry_menu_popdown_timeout)
+    {
+        g_source_remove (self->priv->entry_menu_popdown_timeout);
+        self->priv->entry_menu_popdown_timeout = 0;
+    }
+
 	g_signal_connect (_tmp33_, "editing-done", (GCallback) ddb_cell_renderer_text_multiline_gtk_cell_renderer_text_editing_done, self);
 	_tmp34_ = self->priv->entry;
 	_tmp35_ = g_signal_connect_after (_tmp34_, "focus-out-event", (GCallback) ddb_cell_renderer_text_multiline_gtk_cell_renderer_focus_out_event, self);
+
+    self->priv->populate_popup_id =
+        g_signal_connect (self->priv->entry, "populate-popup",
+                G_CALLBACK (ddb_cell_renderer_text_multiline_populate_popup),
+                self);
+
 	self->priv->focus_out_id = _tmp35_;
 	_tmp36_ = self->priv->entry;
 	_tmp37_ = *cell_area;
