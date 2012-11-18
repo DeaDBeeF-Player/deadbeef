@@ -761,7 +761,6 @@
 		  <property name="relief">GTK_RELIEF_NONE</property>
 		  <property name="focus_on_click">True</property>
 		  <signal name="clicked" handler="on_stopbtn_clicked" last_modification_time="Sun, 05 Jul 2009 10:48:41 GMT"/>
-		  <accelerator key="v" modifiers="0" signal="activate"/>
 
 		  <child>
 		    <widget class="GtkImage" id="image128">
@@ -788,9 +787,6 @@
 		  <property name="relief">GTK_RELIEF_NONE</property>
 		  <property name="focus_on_click">True</property>
 		  <signal name="clicked" handler="on_playbtn_clicked" last_modification_time="Sun, 05 Jul 2009 10:48:53 GMT"/>
-		  <accelerator key="x" modifiers="0" signal="activate"/>
-		  <accelerator key="Return" modifiers="0" signal="activate"/>
-		  <accelerator key="KP_Enter" modifiers="0" signal="activate"/>
 
 		  <child>
 		    <widget class="GtkImage" id="image2">
@@ -817,8 +813,6 @@
 		  <property name="relief">GTK_RELIEF_NONE</property>
 		  <property name="focus_on_click">True</property>
 		  <signal name="clicked" handler="on_pausebtn_clicked" last_modification_time="Sun, 05 Jul 2009 10:49:01 GMT"/>
-		  <accelerator key="c" modifiers="0" signal="activate"/>
-		  <accelerator key="p" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		  <child>
 		    <widget class="GtkImage" id="image3">
@@ -845,7 +839,6 @@
 		  <property name="relief">GTK_RELIEF_NONE</property>
 		  <property name="focus_on_click">True</property>
 		  <signal name="clicked" handler="on_prevbtn_clicked" last_modification_time="Sun, 05 Jul 2009 10:49:08 GMT"/>
-		  <accelerator key="z" modifiers="0" signal="activate"/>
 
 		  <child>
 		    <widget class="GtkImage" id="image4">
@@ -872,7 +865,6 @@
 		  <property name="relief">GTK_RELIEF_NONE</property>
 		  <property name="focus_on_click">True</property>
 		  <signal name="clicked" handler="on_nextbtn_clicked" last_modification_time="Sun, 05 Jul 2009 10:49:12 GMT"/>
-		  <accelerator key="b" modifiers="0" signal="activate"/>
 
 		  <child>
 		    <widget class="GtkImage" id="image5">
@@ -4988,7 +4980,6 @@ SOCKS5_HOSTNAME</property>
 	    <widget class="GtkVPaned" id="vpaned1">
 	      <property name="visible">True</property>
 	      <property name="can_focus">True</property>
-	      <property name="position">0</property>
 
 	      <child>
 		<widget class="GtkVBox" id="vbox36">
