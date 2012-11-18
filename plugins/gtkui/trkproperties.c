@@ -51,6 +51,7 @@ static DB_playItem_t **tracks;
 static int numtracks;
 static GtkWidget *progressdlg;
 static int progress_aborted;
+static int last_ctx;
 
 int
 build_key_list (const char ***pkeys, int props, DB_playItem_t **tracks, int numtracks) {
@@ -383,9 +384,8 @@ trkproperties_fill_metadata (void) {
 }
 
 void
-show_track_properties_dlg (void) {
-
-    deadbeef->pl_lock ();
+show_track_properties_dlg (int ctx) {
+    last_ctx = ctx;
 
     if (tracks) {
         for (int i = 0; i < numtracks; i++) {
@@ -396,29 +396,59 @@ show_track_properties_dlg (void) {
         numtracks = 0;
     }
 
-    int nsel = deadbeef->pl_getselcount ();
-    if (0 < nsel) {
-        tracks = malloc (sizeof (DB_playItem_t *) * nsel);
-        if (tracks) {
-            int n = 0;
-            DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
-            while (it) {
-                if (deadbeef->pl_is_selected (it)) {
-                    assert (n < nsel);
-                    deadbeef->pl_item_ref (it);
-                    tracks[n++] = it;
-                }
-                DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
-                deadbeef->pl_item_unref (it);
-                it = next;
-            }
-            numtracks = nsel;
-        }
-        else {
+    deadbeef->pl_lock ();
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (!plt) {
+        deadbeef->pl_unlock ();
+        return;
+    }
+    int num = 0;
+    if (ctx == DDB_ACTION_CTX_SELECTION) {
+        num = deadbeef->plt_getselcount (plt);
+    }
+    else if (ctx == DDB_ACTION_CTX_PLAYLIST) {
+        num = deadbeef->plt_get_item_count (plt, PL_MAIN);
+    }
+    else if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
+        num = 1;
+    }
+    if (num <= 0) {
+        deadbeef->pl_unlock ();
+        return;
+    }
+
+    tracks = malloc (sizeof (DB_playItem_t *) * num);
+    if (!tracks) {
+        fprintf (stderr, "gtkui: failed to alloc %d bytes to store selected tracks\n", num * sizeof (void *));
+        deadbeef->pl_unlock ();
+        return;
+    }
+
+    if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
+        DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+        if (!it) {
+            free (tracks);
+            tracks = NULL;
             deadbeef->pl_unlock ();
             return;
         }
+        tracks[0] = it;
     }
+    else {
+        int n = 0;
+        DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+        while (it) {
+            if (ctx == DDB_ACTION_CTX_PLAYLIST || deadbeef->pl_is_selected (it)) {
+                assert (n < num);
+                deadbeef->pl_item_ref (it);
+                tracks[n++] = it;
+            }
+            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+            deadbeef->pl_item_unref (it);
+            it = next;
+        }
+    }
+    numtracks = num;
 
     deadbeef->pl_unlock ();
 
@@ -516,7 +546,7 @@ write_finished_cb (void *ctx) {
     main_refresh ();
     search_refresh ();
     trkproperties_modified = 0;
-    show_track_properties_dlg ();
+    show_track_properties_dlg (last_ctx);
 
     return FALSE;
 }

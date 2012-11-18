@@ -24,7 +24,7 @@
 struct DB_playItem_s;
 
 void
-show_track_properties_dlg (void);
+show_track_properties_dlg (int ctx);
 
 void
 trkproperties_destroy (void);
