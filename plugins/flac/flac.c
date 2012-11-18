@@ -633,7 +633,6 @@ cflac_insert_with_embedded_cue (ddb_playlist_t *plt, DB_playItem_t *after, DB_pl
         deadbeef->pl_add_meta (it, "band", deadbeef->pl_find_meta (origin, "artist"));
         it->startsample = cuesheet->tracks[i].offset;
         it->endsample = cuesheet->tracks[i+1].offset-1;
-        printf ("track %d, startsample: %d, endsample: %d\n", i, it->startsample, it->endsample);
         deadbeef->pl_replace_meta (it, ":FILETYPE", ftype);
         deadbeef->plt_set_item_duration (plt, it, (float)(it->endsample - it->startsample + 1) / samplerate);
         after = deadbeef->plt_insert_item (plt, after, it);
