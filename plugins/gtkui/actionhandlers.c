@@ -572,3 +572,204 @@ action_show_track_properties_handler (DB_plugin_action_t *act, int ctx) {
     gdk_threads_add_idle (action_show_track_properties_handler_cb, (void *)(intptr_t)ctx);
     return 0;
 }
+
+gboolean
+action_find_handler_cb (void *data) {
+    search_start ();       
+    return FALSE;
+}
+
+int
+action_find_handler (DB_plugin_action_t *act, int ctx) {
+    gdk_threads_add_idle (action_find_handler_cb, NULL);
+    return 0;
+}
+
+gboolean
+action_scroll_follows_playback_handler_cb (void *data) {
+    int val = 1 - deadbeef->conf_get_int ("playlist.scroll.followplayback", 0);
+    deadbeef->conf_set_int ("playlist.scroll.followplayback", val);
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "scroll_follows_playback")), val);
+    return FALSE;
+}
+
+int
+action_scroll_follows_playback_handler (DB_plugin_action_t *act, int ctx) {
+    g_idle_add (action_scroll_follows_playback_handler_cb, NULL);
+    return 0;
+}
+
+gboolean
+action_cursor_follows_playback_handler_cb (void *data) {
+    int val = 1 - deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 0);
+    deadbeef->conf_set_int ("playlist.scroll.cursorfollowplayback", val);
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "cursor_follows_playback")), val);
+    return FALSE;
+}
+
+int
+action_cursor_follows_playback_handler (DB_plugin_action_t *act, int ctx) {
+    g_idle_add (action_cursor_follows_playback_handler_cb, NULL);
+    return 0;
+}
+
+static gboolean
+playlist_filter_func (const GtkFileFilterInfo *filter_info, gpointer data) {
+    // get ext
+    const char *p = strrchr (filter_info->filename, '.');
+    if (!p) {
+        return FALSE;
+    }
+    p++;
+    DB_playlist_t **plug = deadbeef->plug_get_playlist_list ();
+    for (int i = 0; plug[i]; i++) {
+        if (plug[i]->extensions && plug[i]->load) {
+            const char **exts = plug[i]->extensions;
+            if (exts) {
+                for (int e = 0; exts[e]; e++) {
+                    if (!strcasecmp (exts[e], p)) {
+                        return TRUE;
+                    }
+                }
+            }
+        }
+    }
+    return FALSE;
+}
+
+static void
+load_playlist_thread (void *data) {
+    char *fname = data;
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_clear (plt);
+        int abort = 0;
+        DB_playItem_t *it = deadbeef->plt_load (plt, NULL, fname, &abort, NULL, NULL);
+        if (it) {
+            deadbeef->pl_item_unref (it);
+        }
+        deadbeef->plt_unref (plt);
+    }
+    g_free (fname);
+    gtkui_playlist_changed ();
+}
+
+
+gboolean
+action_load_playlist_handler_cb (void *data) {
+    GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Load Playlist"), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+
+    // restore folder
+    deadbeef->conf_lock ();
+    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), deadbeef->conf_get_str_fast ("filechooser.playlist.lastdir", ""));
+    deadbeef->conf_unlock ();
+
+    GtkFileFilter* flt;
+    flt = gtk_file_filter_new ();
+    gtk_file_filter_set_name (flt, "Supported playlist formats");
+    gtk_file_filter_add_custom (flt, GTK_FILE_FILTER_FILENAME, playlist_filter_func, NULL, NULL);
+    gtk_file_filter_add_pattern (flt, "*.dbpl");
+    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
+    gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dlg), flt);
+    flt = gtk_file_filter_new ();
+    gtk_file_filter_set_name (flt, _("Other files (*)"));
+    gtk_file_filter_add_pattern (flt, "*");
+    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
+    
+    int res = gtk_dialog_run (GTK_DIALOG (dlg));
+    // store folder
+    gchar *folder = gtk_file_chooser_get_current_folder_uri (GTK_FILE_CHOOSER (dlg));
+    if (folder) {
+        deadbeef->conf_set_str ("filechooser.playlist.lastdir", folder);
+        g_free (folder);
+    }
+    if (res == GTK_RESPONSE_OK)
+    {
+        gchar *fname = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
+        gtk_widget_destroy (dlg);
+        if (fname) {
+            uintptr_t tid = deadbeef->thread_start (load_playlist_thread, fname);
+            deadbeef->thread_detach (tid);
+        }
+    }
+    else {
+        gtk_widget_destroy (dlg);
+    }
+    return FALSE;
+}
+
+int
+action_load_playlist_handler (DB_plugin_action_t *act, int ctx) {
+    gdk_threads_add_idle (action_load_playlist_handler_cb, NULL);
+    return 0;
+}
+
+gboolean
+action_save_playlist_handler_cb (void *data) {
+    GtkWidget *dlg = gtk_file_chooser_dialog_new (_("Save Playlist As"), GTK_WINDOW (mainwin), GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_OK, NULL);
+
+    gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (dlg), TRUE);
+    gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dlg), "untitled.dbpl");
+    // restore folder
+    deadbeef->conf_lock ();
+    gtk_file_chooser_set_current_folder_uri (GTK_FILE_CHOOSER (dlg), deadbeef->conf_get_str_fast ("filechooser.playlist.lastdir", ""));
+    deadbeef->conf_unlock ();
+
+    GtkFileFilter* flt;
+    flt = gtk_file_filter_new ();
+    gtk_file_filter_set_name (flt, _("DeaDBeeF playlist files (*.dbpl)"));
+    gtk_file_filter_add_pattern (flt, "*.dbpl");
+    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
+    DB_playlist_t **plug = deadbeef->plug_get_playlist_list ();
+    for (int i = 0; plug[i]; i++) {
+        if (plug[i]->extensions && plug[i]->load) {
+            const char **exts = plug[i]->extensions;
+            if (exts && plug[i]->save) {
+                for (int e = 0; exts[e]; e++) {
+                    char s[100];
+                    flt = gtk_file_filter_new ();
+                    gtk_file_filter_set_name (flt, exts[e]);
+                    snprintf (s, sizeof (s), "*.%s", exts[e]);
+                    gtk_file_filter_add_pattern (flt, s);
+                    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dlg), flt);
+                }
+            }
+        }
+    }
+
+    int res = gtk_dialog_run (GTK_DIALOG (dlg));
+    // store folder
+    gchar *folder = gtk_file_chooser_get_current_folder_uri (GTK_FILE_CHOOSER (dlg));
+    if (folder) {
+        deadbeef->conf_set_str ("filechooser.playlist.lastdir", folder);
+        g_free (folder);
+    }
+    if (res == GTK_RESPONSE_OK)
+    {
+        gchar *fname = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dlg));
+        gtk_widget_destroy (dlg);
+
+        if (fname) {
+            ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+            if (plt) {
+                int res = deadbeef->plt_save (plt, NULL, NULL, fname, NULL, NULL, NULL);
+                if (res >= 0 && strlen (fname) < 1024) {
+                    deadbeef->conf_set_str ("gtkui.last_playlist_save_name", fname);
+                }
+                deadbeef->plt_unref (plt);
+            }
+            g_free (fname);
+        }
+    }
+    else {
+        gtk_widget_destroy (dlg);
+    }
+    return FALSE;
+}
+
+int
+action_save_playlist_handler (DB_plugin_action_t *act, int ctx) {
+    gdk_threads_add_idle (action_save_playlist_handler_cb, NULL);
+    return 0;
+}
+

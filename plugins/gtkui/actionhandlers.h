@@ -114,4 +114,34 @@ action_show_track_properties_handler_cb (void *data);
 int
 action_show_track_properties_handler (DB_plugin_action_t *act, int ctx);
 
+gboolean
+action_find_handler_cb (void *data);
+
+int
+action_find_handler (DB_plugin_action_t *act, int ctx);
+
+gboolean
+action_scroll_follows_playback_handler_cb (void *data);
+
+int
+action_scroll_follows_playback_handler (DB_plugin_action_t *act, int ctx);
+
+gboolean
+action_cursor_follows_playback_handler_cb (void *data);
+
+int
+action_cursor_follows_playback_handler (DB_plugin_action_t *act, int ctx);
+
+gboolean
+action_load_playlist_handler_cb (void *data);
+
+int
+action_load_playlist_handler (DB_plugin_action_t *act, int ctx);
+
+gboolean
+action_save_playlist_handler_cb (void *data);
+
+int
+action_save_playlist_handler (DB_plugin_action_t *act, int ctx);
+
 #endif
