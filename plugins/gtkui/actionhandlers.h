@@ -102,4 +102,10 @@ action_show_help_handler (DB_plugin_action_t *act, int ctx);
 int
 action_remove_from_playlist_handler (DB_plugin_action_t *act, int ctx);
 
+gboolean
+action_delete_from_disk_handler_cb (void *data);
+
+int
+action_delete_from_disk_handler (DB_plugin_action_t *act, int ctx);
+
 #endif

@@ -1006,7 +1006,6 @@ gtkui_thread (void *ctx) {
     XInitThreads (); // gtkglext/xcb doesn't work without this
     // let's start some gtk
     g_thread_init (NULL);
-//    add_pixmap_directory (PREFIX "/share/deadbeef/pixmaps");
     add_pixmap_directory (deadbeef->get_pixmap_dir ());
     gdk_threads_init ();
     gdk_threads_enter ();
@@ -1042,13 +1041,6 @@ gtkui_thread (void *ctx) {
         g_signal_connect (client, "save-state", G_CALLBACK (smclient_save_state), NULL);
     }
 #endif
-
-    // let's start some gtk
-    g_thread_init (NULL);
-//    add_pixmap_directory (PREFIX "/share/deadbeef/pixmaps");
-    add_pixmap_directory (deadbeef->get_pixmap_dir ());
-    gdk_threads_init ();
-    gdk_threads_enter ();
 
     gtk_init (&argc, (char ***)&argv);
 
@@ -1468,10 +1460,10 @@ static DB_plugin_action_t action_quit = {
 };
 
 static DB_plugin_action_t action_delete_from_disk = {
-    .title = "[stub] Delete From Disk",
+    .title = "Delete From Disk",
     .name = "delete_from_disk",
     .flags = DB_ACTION_SINGLE_TRACK | DB_ACTION_MULTIPLE_TRACKS,
-    .callback = action_quit_handler,
+    .callback = action_delete_from_disk_handler,
     .next = &action_quit
 };
 

@@ -154,7 +154,7 @@ action_open_files_handler_cb (void *userdata) {
 
 int
 action_open_files_handler (struct DB_plugin_action_s *action, int ctx) {
-    g_idle_add (action_open_files_handler_cb, NULL);
+    gdk_threads_add_idle (action_open_files_handler_cb, NULL);
     return 0;
 }
 
@@ -193,7 +193,7 @@ action_add_files_handler_cb (void *user_data) {
 
 int
 action_add_files_handler (struct DB_plugin_action_s *action, int ctx) {
-    g_idle_add (action_add_files_handler_cb, NULL);
+    gdk_threads_add_idle (action_add_files_handler_cb, NULL);
     return 0;
 }
 
@@ -252,7 +252,7 @@ action_add_folders_handler_cb (void *user_data) {
 
 int
 action_add_folders_handler (struct DB_plugin_action_s *action, int ctx) {
-    g_idle_add (action_add_folders_handler_cb, NULL);
+    gdk_threads_add_idle (action_add_folders_handler_cb, NULL);
     return 0;
 }
 
@@ -325,7 +325,7 @@ action_new_playlist_handler_cb (void *user_data) {
 
 int
 action_new_playlist_handler (struct DB_plugin_action_s *action, int ctx) {
-    g_idle_add (action_new_playlist_handler_cb, NULL);
+    gdk_threads_add_idle (action_new_playlist_handler_cb, NULL);
     return 0;
 }
 
@@ -414,7 +414,7 @@ action_add_location_handler_cb (void *user_data) {
 
 int
 action_add_location_handler (DB_plugin_action_t *act, int ctx) {
-    g_idle_add (action_add_location_handler_cb, NULL);
+    gdk_threads_add_idle (action_add_location_handler_cb, NULL);
     return 0;
 }
 
@@ -430,7 +430,7 @@ action_show_help_handler_cb (void *user_data) {
 
 int
 action_show_help_handler (DB_plugin_action_t *act, int ctx) {
-    g_idle_add (action_show_help_handler_cb, NULL);
+    gdk_threads_add_idle (action_show_help_handler_cb, NULL);
     return 0;
 }
 
@@ -479,5 +479,83 @@ action_remove_from_playlist_handler (DB_plugin_action_t *act, int ctx) {
             deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
         }
     }
+    return 0;
+}
+
+gboolean
+action_delete_from_disk_handler_cb (void *data) {
+    int ctx = (intptr_t)data;
+    if (deadbeef->conf_get_int ("gtkui.delete_files_ask", 1)) {
+        GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("Delete files from disk"));
+        gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), _("Files will be lost. Proceed?\n(This dialog can be turned off in GTKUI plugin settings)"));
+        gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
+
+        int response = gtk_dialog_run (GTK_DIALOG (dlg));
+        gtk_widget_destroy (dlg);
+        if (response != GTK_RESPONSE_YES) {
+            return FALSE;
+        }
+    }
+
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (!plt) {
+        return FALSE;
+    }
+    deadbeef->pl_lock ();
+
+    if (ctx == DDB_ACTION_CTX_SELECTION) {
+        DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
+        while (it) {
+            const char *uri = deadbeef->pl_find_meta (it, ":URI");
+            if (deadbeef->pl_is_selected (it) && deadbeef->is_local_file (uri)) {
+                unlink (uri);
+                deadbeef->plt_remove_item (plt, it);
+            }
+            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+            deadbeef->pl_item_unref (it);
+            it = next;
+        }
+
+        deadbeef->pl_save_all ();
+    }
+    else if (ctx == DDB_ACTION_CTX_PLAYLIST) {
+        DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
+        while (it) {
+            const char *uri = deadbeef->pl_find_meta (it, ":URI");
+            if (deadbeef->is_local_file (uri)) {
+                unlink (uri);
+                deadbeef->plt_remove_item (plt, it);
+            }
+            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+            deadbeef->pl_item_unref (it);
+            it = next;
+        }
+
+        deadbeef->pl_save_all ();
+    }
+    else if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
+        DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+        if (it) {
+            const char *uri = deadbeef->pl_find_meta (it, ":URI");
+            if (deadbeef->is_local_file (uri)) {
+                int idx = deadbeef->plt_get_item_idx (plt, it, PL_MAIN);
+                if (idx != -1) {
+                    unlink (uri);
+                    deadbeef->plt_remove_item (plt, it);
+                }
+            }
+            deadbeef->pl_item_unref (it);
+        }
+    }
+    deadbeef->pl_unlock ();
+    deadbeef->plt_unref (plt);
+
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    return FALSE;
+}
+
+int
+action_delete_from_disk_handler (DB_plugin_action_t *act, int ctx) {
+    gdk_threads_add_idle (action_delete_from_disk_handler_cb, (void *)(intptr_t)ctx);
     return 0;
 }
