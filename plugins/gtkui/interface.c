@@ -129,9 +129,6 @@ create_mainwin (void)
   GtkWidget *volumebar;
   GtkWidget *plugins_bottom_vbox;
   GtkWidget *statusbar;
-  GtkAccelGroup *accel_group;
-
-  accel_group = gtk_accel_group_new ();
 
   mainwin = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_widget_set_events (mainwin, GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_KEY_PRESS_MASK);
@@ -487,9 +484,6 @@ create_mainwin (void)
   gtk_widget_show (stopbtn);
   gtk_box_pack_start (GTK_BOX (hbox3), stopbtn, FALSE, FALSE, 0);
   gtk_widget_set_can_focus(stopbtn, FALSE);
-  gtk_widget_add_accelerator (stopbtn, "activate", accel_group,
-                              GDK_v, (GdkModifierType) 0,
-                              GTK_ACCEL_VISIBLE);
   gtk_button_set_relief (GTK_BUTTON (stopbtn), GTK_RELIEF_NONE);
 
   image128 = gtk_image_new_from_stock ("gtk-media-stop", GTK_ICON_SIZE_BUTTON);
@@ -500,15 +494,6 @@ create_mainwin (void)
   gtk_widget_show (playbtn);
   gtk_box_pack_start (GTK_BOX (hbox3), playbtn, FALSE, FALSE, 0);
   gtk_widget_set_can_focus(playbtn, FALSE);
-  gtk_widget_add_accelerator (playbtn, "activate", accel_group,
-                              GDK_x, (GdkModifierType) 0,
-                              GTK_ACCEL_VISIBLE);
-  gtk_widget_add_accelerator (playbtn, "activate", accel_group,
-                              GDK_Return, (GdkModifierType) 0,
-                              GTK_ACCEL_VISIBLE);
-  gtk_widget_add_accelerator (playbtn, "activate", accel_group,
-                              GDK_KP_Enter, (GdkModifierType) 0,
-                              GTK_ACCEL_VISIBLE);
   gtk_button_set_relief (GTK_BUTTON (playbtn), GTK_RELIEF_NONE);
 
   image2 = gtk_image_new_from_stock ("gtk-media-play", GTK_ICON_SIZE_BUTTON);
@@ -519,12 +504,6 @@ create_mainwin (void)
   gtk_widget_show (pausebtn);
   gtk_box_pack_start (GTK_BOX (hbox3), pausebtn, FALSE, FALSE, 0);
   gtk_widget_set_can_focus(pausebtn, FALSE);
-  gtk_widget_add_accelerator (pausebtn, "activate", accel_group,
-                              GDK_c, (GdkModifierType) 0,
-                              GTK_ACCEL_VISIBLE);
-  gtk_widget_add_accelerator (pausebtn, "activate", accel_group,
-                              GDK_p, (GdkModifierType) GDK_CONTROL_MASK,
-                              GTK_ACCEL_VISIBLE);
   gtk_button_set_relief (GTK_BUTTON (pausebtn), GTK_RELIEF_NONE);
 
   image3 = gtk_image_new_from_stock ("gtk-media-pause", GTK_ICON_SIZE_BUTTON);
@@ -535,9 +514,6 @@ create_mainwin (void)
   gtk_widget_show (prevbtn);
   gtk_box_pack_start (GTK_BOX (hbox3), prevbtn, FALSE, FALSE, 0);
   gtk_widget_set_can_focus(prevbtn, FALSE);
-  gtk_widget_add_accelerator (prevbtn, "activate", accel_group,
-                              GDK_z, (GdkModifierType) 0,
-                              GTK_ACCEL_VISIBLE);
   gtk_button_set_relief (GTK_BUTTON (prevbtn), GTK_RELIEF_NONE);
 
   image4 = gtk_image_new_from_stock ("gtk-media-previous", GTK_ICON_SIZE_BUTTON);
@@ -548,9 +524,6 @@ create_mainwin (void)
   gtk_widget_show (nextbtn);
   gtk_box_pack_start (GTK_BOX (hbox3), nextbtn, FALSE, FALSE, 0);
   gtk_widget_set_can_focus(nextbtn, FALSE);
-  gtk_widget_add_accelerator (nextbtn, "activate", accel_group,
-                              GDK_b, (GdkModifierType) 0,
-                              GTK_ACCEL_VISIBLE);
   gtk_button_set_relief (GTK_BUTTON (nextbtn), GTK_RELIEF_NONE);
 
   image5 = gtk_image_new_from_stock ("gtk-media-next", GTK_ICON_SIZE_BUTTON);
@@ -856,8 +829,6 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, volumebar, "volumebar");
   GLADE_HOOKUP_OBJECT (mainwin, plugins_bottom_vbox, "plugins_bottom_vbox");
   GLADE_HOOKUP_OBJECT (mainwin, statusbar, "statusbar");
-
-  gtk_window_add_accel_group (GTK_WINDOW (mainwin), accel_group);
 
   return mainwin;
 }
@@ -2480,7 +2451,6 @@ create_prefwin (void)
   vpaned1 = gtk_vpaned_new ();
   gtk_widget_show (vpaned1);
   gtk_container_add (GTK_CONTAINER (notebook), vpaned1);
-  gtk_paned_set_position (GTK_PANED (vpaned1), 0);
 
   vbox36 = gtk_vbox_new (FALSE, 8);
   gtk_widget_show (vbox36);

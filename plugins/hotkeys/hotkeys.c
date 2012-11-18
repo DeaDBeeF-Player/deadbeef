@@ -532,7 +532,34 @@ hotkeys_reset (void) {
 
 int
 action_play_cb (struct DB_plugin_action_s *action, int ctx) {
-    deadbeef->sendmessage (DB_EV_PLAY_CURRENT, 0, 0, 0);
+    DB_output_t *output = deadbeef->get_output ();
+    if (output->state () == OUTPUT_STATE_PAUSED) {
+        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+        int cur = deadbeef->plt_get_cursor (plt, PL_MAIN);
+        if (cur != -1) {
+            ddb_playItem_t *it = deadbeef->plt_get_item_for_idx (plt, cur, PL_MAIN);
+            ddb_playItem_t *it_playing = deadbeef->streamer_get_playing_track ();
+            if (it) {
+                deadbeef->pl_item_unref (it);
+            }
+            if (it_playing) {
+                deadbeef->pl_item_unref (it_playing);
+            }
+            if (it != it_playing) {
+                deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, cur, 0);
+            }
+            else {
+                deadbeef->sendmessage (DB_EV_PLAY_CURRENT, 0, 0, 0);
+            }
+        }
+        else {
+            deadbeef->sendmessage (DB_EV_PLAY_CURRENT, 0, 0, 0);
+        }
+        deadbeef->plt_unref (plt);
+    }
+    else {
+        deadbeef->sendmessage (DB_EV_PLAY_CURRENT, 0, 0, 0);
+    }
     return 0;
 }
 

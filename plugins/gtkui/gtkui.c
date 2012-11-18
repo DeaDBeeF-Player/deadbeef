@@ -1077,6 +1077,10 @@ gtkui_thread (void *ctx) {
         deadbeef->conf_set_str ("hotkey.key9", "\"F1\" 0 0 help");
         deadbeef->conf_set_str ("hotkey.key10", "\"Delete\" 1 0 remove_from_playlist");
         deadbeef->conf_set_str ("hotkey.key11", "\"Ctrl w\" 0 0 remove_current_playlist");
+        deadbeef->conf_set_str ("hotkey.key11", "\"Ctrl w\" 0 0 remove_current_playlist");
+        deadbeef->conf_set_str ("hotkey.key11", "\"Ctrl w\" 0 0 remove_current_playlist");
+        deadbeef->conf_set_str ("hotkey.key14", "\"Return\" 0 0 play");
+        deadbeef->conf_set_str ("hotkey.key15", "\"Ctrl p\" 0 0 toggle_pause");
     }
 
     // construct mainwindow widgets
