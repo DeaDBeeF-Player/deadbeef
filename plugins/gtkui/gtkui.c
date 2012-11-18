@@ -1075,7 +1075,8 @@ gtkui_thread (void *ctx) {
         deadbeef->conf_set_str ("hotkey.key7", "\"Ctrl m\" 0 0 toggle_stop_after_current");
         deadbeef->conf_set_str ("hotkey.key8", "\"Ctrl j\" 0 0 jump_to_current_track");
         deadbeef->conf_set_str ("hotkey.key9", "\"F1\" 0 0 help");
-        deadbeef->conf_set_str ("hotkey.key11", "\"Delete\" 1 0 remove_from_playlist");
+        deadbeef->conf_set_str ("hotkey.key10", "\"Delete\" 1 0 remove_from_playlist");
+        deadbeef->conf_set_str ("hotkey.key11", "\"Ctrl w\" 0 0 remove_current_playlist");
     }
 
     // construct mainwindow widgets
