@@ -22,4 +22,4 @@
 */
 
 int
-action_deselect_all_handler (struct DB_plugin_action_s *action, int ctx);
+action_jump_to_current_handler (DB_plugin_action_t *act, int ctx);

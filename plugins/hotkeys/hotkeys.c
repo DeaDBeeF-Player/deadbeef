@@ -32,7 +32,7 @@
 #define trace(fmt,...)
 
 static DB_hotkeys_plugin_t plugin;
-static DB_functions_t *deadbeef;
+DB_functions_t *deadbeef;
 static int finished;
 static Display *disp;
 static intptr_t loop_tid;
@@ -699,11 +699,11 @@ static DB_plugin_action_t action_reload_metadata = {
 };
 
 static DB_plugin_action_t action_jump_to_current = {
-    .title = "Playback/[stub] Jump to currently playing track",
+    .title = "Playback/Jump to currently playing track",
     .name = "jump_to_current_track",
     .flags = DB_ACTION_COMMON,
-    .callback = NULL,
-    .next = NULL
+    .callback = action_jump_to_current_handler,
+    .next = &action_reload_metadata
 };
 
 static DB_plugin_action_t action_toggle_cursor_follows_playback = {
