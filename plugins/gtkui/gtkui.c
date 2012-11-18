@@ -1066,15 +1066,15 @@ gtkui_thread (void *ctx) {
     snprintf (checkpath, sizeof (checkpath), "%s/config", deadbeef->get_config_dir ());
     if (stat (checkpath, &st)) {
         printf ("file %s doesn't exist\n", checkpath);
-        deadbeef->conf_set_str ("hotkey.key1", "\"Ctrl f\" 0 0 find");
-        deadbeef->conf_set_str ("hotkey.key2", "\"Ctrl o\" 0 0 open_files");
-        deadbeef->conf_set_str ("hotkey.key3", "\"Ctrl q\" 0 0 quit");
-        deadbeef->conf_set_str ("hotkey.key4", "\"Ctrl n\" 0 0 new_playlist");
-        deadbeef->conf_set_str ("hotkey.key5", "\"Ctrl a\" 0 0 select_all");
-        deadbeef->conf_set_str ("hotkey.key6", "\"Escape\" 0 0 deselect_all");
-        deadbeef->conf_set_str ("hotkey.key7", "\"Ctrl m\" 0 0 toggle_stop_after_current");
-        deadbeef->conf_set_str ("hotkey.key8", "\"Ctrl j\" 0 0 jump_to_current_track");
-        deadbeef->conf_set_str ("hotkey.key9", "\"F1\" 0 0 help");
+        deadbeef->conf_set_str ("hotkey.key01", "\"Ctrl f\" 0 0 find");
+        deadbeef->conf_set_str ("hotkey.key02", "\"Ctrl o\" 0 0 open_files");
+        deadbeef->conf_set_str ("hotkey.key03", "\"Ctrl q\" 0 0 quit");
+        deadbeef->conf_set_str ("hotkey.key04", "\"Ctrl n\" 0 0 new_playlist");
+        deadbeef->conf_set_str ("hotkey.key05", "\"Ctrl a\" 0 0 select_all");
+        deadbeef->conf_set_str ("hotkey.key06", "\"Escape\" 0 0 deselect_all");
+        deadbeef->conf_set_str ("hotkey.key07", "\"Ctrl m\" 0 0 toggle_stop_after_current");
+        deadbeef->conf_set_str ("hotkey.key08", "\"Ctrl j\" 0 0 jump_to_current_track");
+        deadbeef->conf_set_str ("hotkey.key09", "\"F1\" 0 0 help");
         deadbeef->conf_set_str ("hotkey.key10", "\"Delete\" 1 0 remove_from_playlist");
         deadbeef->conf_set_str ("hotkey.key11", "\"Ctrl w\" 0 0 remove_current_playlist");
         deadbeef->conf_set_str ("hotkey.key11", "\"Ctrl w\" 0 0 remove_current_playlist");
