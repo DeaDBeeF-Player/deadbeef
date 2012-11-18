@@ -108,4 +108,10 @@ action_delete_from_disk_handler_cb (void *data);
 int
 action_delete_from_disk_handler (DB_plugin_action_t *act, int ctx);
 
+gboolean
+action_show_track_properties_handler_cb (void *data);
+
+int
+action_show_track_properties_handler (DB_plugin_action_t *act, int ctx);
+
 #endif

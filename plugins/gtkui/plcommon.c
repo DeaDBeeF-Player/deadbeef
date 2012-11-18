@@ -295,7 +295,7 @@ void
 main_properties_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    show_track_properties_dlg ();
+    action_show_track_properties_handler_cb ((void *)(intptr_t)DDB_ACTION_CTX_SELECTION);
 }
 
 void

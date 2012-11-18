@@ -1463,7 +1463,7 @@ static DB_plugin_action_t action_quit = {
 static DB_plugin_action_t action_delete_from_disk = {
     .title = "Delete From Disk",
     .name = "delete_from_disk",
-    .flags = DB_ACTION_SINGLE_TRACK | DB_ACTION_MULTIPLE_TRACKS,
+    .flags = DB_ACTION_MULTIPLE_TRACKS,
     .callback = action_delete_from_disk_handler,
     .next = &action_quit
 };
@@ -1502,10 +1502,10 @@ static DB_plugin_action_t action_open_files = {
 
 
 static DB_plugin_action_t action_track_properties = {
-    .title = "[stub] Track properties",
+    .title = "Track properties",
     .name = "track_properties",
     .flags = DB_ACTION_MULTIPLE_TRACKS,
-    .callback = NULL,
+    .callback = action_show_track_properties_handler,
     .next = &action_open_files
 };
 

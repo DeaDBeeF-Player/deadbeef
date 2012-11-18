@@ -35,6 +35,7 @@
 #include "support.h"
 #include "wingeom.h"
 #include "interface.h"
+#include "trkproperties.h"
 
 extern GtkWidget *mainwin;
 extern DB_functions_t *deadbeef;
@@ -557,5 +558,17 @@ action_delete_from_disk_handler_cb (void *data) {
 int
 action_delete_from_disk_handler (DB_plugin_action_t *act, int ctx) {
     gdk_threads_add_idle (action_delete_from_disk_handler_cb, (void *)(intptr_t)ctx);
+    return 0;
+}
+
+gboolean
+action_show_track_properties_handler_cb (void *data) {
+    show_track_properties_dlg ((intptr_t)data);
+    return FALSE;
+}
+
+int
+action_show_track_properties_handler (DB_plugin_action_t *act, int ctx) {
+    gdk_threads_add_idle (action_show_track_properties_handler_cb, (void *)(intptr_t)ctx);
     return 0;
 }
