@@ -20,4 +20,17 @@
 
     3. This notice may not be removed or altered from any source distribution.
 */
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
 
+#include <string.h>
+#include "../../gettext.h"
+#include "../../deadbeef.h"
+
+extern DB_functions_t *deadbeef;
+
+int
+action_jump_to_current_handler (DB_plugin_action_t *act, int ctx) {
+    deadbeef->sendmessage (DB_EV_TRACKFOCUSCURRENT, 0, 0, 0);
+}
