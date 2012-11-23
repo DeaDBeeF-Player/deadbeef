@@ -876,3 +876,11 @@ action_sort_custom_handler (DB_plugin_action_t *act, int ctx) {
     gdk_threads_add_idle (action_sort_custom_handler_cb, NULL);
     return 0;
 }
+
+int
+action_crop_selected_handler (DB_plugin_action_t *act, int ctx) {
+    deadbeef->pl_crop_selected ();
+    deadbeef->pl_save_all ();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    return 0;
+}

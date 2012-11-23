@@ -319,9 +319,7 @@ void
 on_crop1_activate                      (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    deadbeef->pl_crop_selected ();
-    deadbeef->pl_save_all ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    action_crop_selected_handler (NULL, 0);
 }
 
 void
