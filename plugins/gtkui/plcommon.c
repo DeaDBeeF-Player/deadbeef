@@ -249,12 +249,12 @@ main_remove_from_playback_queue_activate
     search_redraw ();
 }
 
+#if 0
 void
 main_reload_metadata_activate
                                         (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (menuitem), "ps"));
     DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
     while (it) {
         deadbeef->pl_lock ();
@@ -290,6 +290,7 @@ main_reload_metadata_activate
     search_redraw ();
     trkproperties_fill_metadata ();
 }
+#endif
 
 void
 main_properties_activate                (GtkMenuItem     *menuitem,
@@ -465,11 +466,12 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     gtk_container_add (GTK_CONTAINER (playlist_menu), remove_from_playback_queue1);
     g_object_set_data (G_OBJECT (remove_from_playback_queue1), "ps", listview);
 
+#if 0
     reload_metadata = gtk_menu_item_new_with_mnemonic (_("Reload metadata"));
     gtk_widget_show (reload_metadata);
     gtk_container_add (GTK_CONTAINER (playlist_menu), reload_metadata);
     g_object_set_data (G_OBJECT (reload_metadata), "ps", listview);
-
+#endif
 
     separator9 = gtk_separator_menu_item_new ();
     gtk_widget_show (separator9);
@@ -600,10 +602,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
             g_signal_connect ((gpointer) actionitem, "activate",
                     G_CALLBACK (actionitem_activate),
                     action);
-            if (!(
-                ((selected_count == 1) && (action->flags & DB_ACTION_SINGLE_TRACK)) ||
-                ((selected_count > 1) && (action->flags & DB_ACTION_MULTIPLE_TRACKS))
-                ) ||
+            if ((selected_count > 1 && !(action->flags & DB_ACTION_MULTIPLE_TRACKS)) ||
                 (action->flags & DB_ACTION_DISABLED))
             {
                 gtk_widget_set_sensitive (GTK_WIDGET (actionitem), FALSE);
@@ -637,9 +636,11 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     g_signal_connect ((gpointer) remove_from_playback_queue1, "activate",
             G_CALLBACK (main_remove_from_playback_queue_activate),
             NULL);
+#if 0
     g_signal_connect ((gpointer) reload_metadata, "activate",
             G_CALLBACK (main_reload_metadata_activate),
             NULL);
+#endif
     g_signal_connect ((gpointer) remove2, "activate",
             G_CALLBACK (on_remove2_activate),
             NULL);
