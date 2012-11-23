@@ -1430,10 +1430,10 @@ static DB_plugin_action_t action_toggle_designmode = {
 };
 
 static DB_plugin_action_t action_preferences = {
-    .title = "Edit/[stub] Preferences",
+    .title = "Edit/Preferences",
     .name = "preferences",
     .flags = DB_ACTION_COMMON,
-    .callback = NULL,
+    .callback = action_preferences_handler,
     .next = &action_toggle_designmode
 };
 
