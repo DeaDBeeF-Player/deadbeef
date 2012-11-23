@@ -1039,37 +1039,7 @@ void
 on_sort_by_custom_activate             (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    GtkWidget *dlg = create_sortbydlg ();
-    gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
-    
-    GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (dlg, "sortorder"));
-    GtkEntry *entry = GTK_ENTRY (lookup_widget (dlg, "sortfmt"));
-    
-    gtk_combo_box_set_active (combo, deadbeef->conf_get_int ("gtkui.sortby_order", 0));
-    deadbeef->conf_lock ();
-    gtk_entry_set_text (entry, deadbeef->conf_get_str_fast ("gtkui.sortby_fmt", ""));
-    deadbeef->conf_unlock ();
-
-    int r = gtk_dialog_run (GTK_DIALOG (dlg));
-
-    if (r == GTK_RESPONSE_OK) {
-        GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (dlg, "sortorder"));
-        GtkEntry *entry = GTK_ENTRY (lookup_widget (dlg, "sortfmt"));
-        int order = gtk_combo_box_get_active (combo);
-        const char *fmt = gtk_entry_get_text (entry);
-
-        deadbeef->conf_set_int ("gtkui.sortby_order", order);
-        deadbeef->conf_set_str ("gtkui.sortby_fmt", fmt);
-
-        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-        deadbeef->plt_sort (plt, PL_MAIN, -1, fmt, order == 0 ? DDB_SORT_ASCENDING : DDB_SORT_DESCENDING);
-        deadbeef->plt_unref (plt);
-
-        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
-    }
-
-    gtk_widget_destroy (dlg);
-    dlg = NULL;
+    action_sort_custom_handler_cb (NULL);
 }
 
 void

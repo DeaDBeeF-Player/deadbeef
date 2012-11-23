@@ -168,4 +168,10 @@ action_preferences_handler_cb (void *data);
 int
 action_preferences_handler (DB_plugin_action_t *act, int ctx);
 
+gboolean
+action_sort_custom_handler_cb (void *data);
+
+int
+action_sort_custom_handler (DB_plugin_action_t *act, int ctx);
+
 #endif
