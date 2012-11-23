@@ -183,7 +183,6 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
                                         GdkEventKey     *event,
                                         gpointer         user_data)
 {
-    printf ("mainwin keypress\n");
     // local hotkeys
     // first translate gdk modifiers into X11 constants
     int mods = 0;
