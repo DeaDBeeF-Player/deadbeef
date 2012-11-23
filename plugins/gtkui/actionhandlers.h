@@ -177,4 +177,13 @@ action_sort_custom_handler (DB_plugin_action_t *act, int ctx);
 int
 action_crop_selected_handler (DB_plugin_action_t *act, int ctx);
 
+int
+action_toggle_eq_handler (DB_plugin_action_t *act, int ctx);
+
+int
+action_show_eq_handler(DB_plugin_action_t *act, int ctx);
+
+int
+action_hide_eq_handler(DB_plugin_action_t *act, int ctx);
+
 #endif
