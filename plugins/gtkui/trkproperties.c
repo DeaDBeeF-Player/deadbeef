@@ -494,6 +494,15 @@ show_track_properties_dlg (int ctx) {
         gtk_list_store_clear (propstore);
     }
 
+    if (numtracks == 1) {
+        deadbeef->pl_lock ();
+        gtk_entry_set_text (GTK_ENTRY (lookup_widget (trackproperties, "filename")), deadbeef->pl_find_meta_raw (tracks[0], ":URI"));
+        deadbeef->pl_unlock ();
+    }
+    else {
+        gtk_entry_set_text (GTK_ENTRY (lookup_widget (trackproperties, "filename")), _("[Multiple values]"));
+    }
+
     g_object_set (G_OBJECT (rend_text2), "editable", TRUE, NULL);
 
     GtkWidget *widget = trackproperties;
