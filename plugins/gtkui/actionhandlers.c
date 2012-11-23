@@ -807,4 +807,19 @@ action_toggle_statusbar_handler (DB_plugin_action_t *act, int ctx) {
     return 0;
 }
 
+gboolean
+action_toggle_designmode_handler_cb (void *data) {
+    GtkWidget *menuitem = lookup_widget (mainwin, "design_mode1");
+    gboolean act = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem));
+    act = !act;
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (menuitem), act);
+    return FALSE;
+}
+
+int
+action_toggle_designmode_handler (DB_plugin_action_t *act, int ctx) {
+    g_idle_add (action_toggle_designmode_handler_cb, NULL);
+    return 0;
+}
+
 

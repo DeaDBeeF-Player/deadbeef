@@ -1422,10 +1422,10 @@ static DB_plugin_action_t action_toggle_statusbar = {
 };
 
 static DB_plugin_action_t action_toggle_designmode = {
-    .title = "Edit/[stub] Toggle design mode",
+    .title = "Edit/Toggle design mode",
     .name = "toggle_design_mode",
     .flags = DB_ACTION_COMMON,
-    .callback = NULL,
+    .callback = action_toggle_designmode_handler,
     .next = &action_toggle_statusbar
 };
 
