@@ -150,4 +150,10 @@ action_toggle_menu_handler_cb (void *data);
 int
 action_toggle_menu_handler (DB_plugin_action_t *act, int ctx);
 
+gboolean
+action_toggle_statusbar_handler_cb (void *data);
+
+int
+action_toggle_statusbar_handler (DB_plugin_action_t *act, int ctx);
+
 #endif

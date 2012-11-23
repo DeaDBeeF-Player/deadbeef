@@ -1413,20 +1413,12 @@ static DB_plugin_action_t action_toggle_menu = {
     .next = &action_scroll_follows_playback
 };
 
-static DB_plugin_action_t action_toggle_column_headers = {
-    .title = "View/[stub] Show\\/Hide playlist column headers",
-    .name = "toggle_headers",
-    .flags = DB_ACTION_COMMON,
-    .callback = NULL,
-    .next = &action_toggle_menu
-};
-
 static DB_plugin_action_t action_toggle_statusbar = {
-    .title = "View/[stub] Show\\/Hide statusbar",
+    .title = "View/Show\\/Hide statusbar",
     .name = "toggle_statusbar",
     .flags = DB_ACTION_COMMON,
-    .callback = NULL,
-    .next = &action_toggle_column_headers
+    .callback = action_toggle_statusbar_handler,
+    .next = &action_toggle_menu
 };
 
 static DB_plugin_action_t action_toggle_designmode = {
