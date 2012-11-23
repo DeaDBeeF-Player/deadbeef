@@ -36,6 +36,7 @@
 #include "wingeom.h"
 #include "interface.h"
 #include "trkproperties.h"
+#include "callbacks.h"
 
 extern GtkWidget *mainwin;
 extern DB_functions_t *deadbeef;
@@ -819,6 +820,18 @@ action_toggle_designmode_handler_cb (void *data) {
 int
 action_toggle_designmode_handler (DB_plugin_action_t *act, int ctx) {
     g_idle_add (action_toggle_designmode_handler_cb, NULL);
+    return 0;
+}
+
+gboolean
+action_preferences_handler_cb (void *data) {
+    on_preferences_activate (NULL, NULL);
+    return FALSE;
+}
+
+int
+action_preferences_handler (DB_plugin_action_t *act, int ctx) {
+    gdk_threads_add_idle (action_preferences_handler_cb, NULL);
     return 0;
 }
 
