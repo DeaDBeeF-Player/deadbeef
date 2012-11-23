@@ -174,4 +174,7 @@ action_sort_custom_handler_cb (void *data);
 int
 action_sort_custom_handler (DB_plugin_action_t *act, int ctx);
 
+int
+action_crop_selected_handler (DB_plugin_action_t *act, int ctx);
+
 #endif

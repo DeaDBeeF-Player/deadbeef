@@ -1446,10 +1446,10 @@ static DB_plugin_action_t action_sort_custom = {
 };
 
 static DB_plugin_action_t action_crop_selected = {
-    .title = "Edit/[stub] Crop Selected",
+    .title = "Edit/Crop Selected",
     .name = "crop_selected",
     .flags = DB_ACTION_COMMON,
-    .callback = NULL,
+    .callback = action_crop_selected_handler,
     .next = &action_sort_custom
 };
 
