@@ -92,7 +92,6 @@ get_keycode (Display *disp, const char* name, KeySym *syms, int first_kk, int la
         {
             if ( (keys[ ks ].keysym == sym) && (0 == strcmp (name, keys[ ks ].name)))
             {
-                printf ("%x\n", i+first_kk);
                 return i+first_kk;
             }
         }
