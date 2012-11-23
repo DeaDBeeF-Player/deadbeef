@@ -21,5 +21,13 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#ifndef __HOTKEYS_ACTIONHANDLERS_H
+#define __HOTKEYS_ACTIONHANDLERS_H
+
 int
 action_jump_to_current_handler (DB_plugin_action_t *act, int ctx);
+
+int
+action_reload_metadata_handler (DB_plugin_action_t *act, int ctx);
+
+#endif

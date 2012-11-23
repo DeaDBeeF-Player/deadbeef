@@ -696,10 +696,10 @@ action_toggle_stop_after_current_cb (struct DB_plugin_action_s *action, int ctx)
 }
 
 static DB_plugin_action_t action_reload_metadata = {
-    .title = "[stub] Reload metadata",
+    .title = "Reload metadata",
     .name = "reload_metadata",
-    .flags = DB_ACTION_MULTIPLE_TRACKS,
-    .callback = NULL,
+    .flags = DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_ADD_MENU,
+    .callback = action_reload_metadata_handler,
     .next = NULL
 };
 

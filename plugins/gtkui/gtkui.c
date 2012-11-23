@@ -469,6 +469,7 @@ playlist_refresh (void) {
 //    DdbListview *ps = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
 //    ddb_listview_refresh (ps, DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL);
     search_refresh ();
+    trkproperties_fill_metadata ();
 }
 
 static gboolean
