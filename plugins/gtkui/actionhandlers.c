@@ -884,3 +884,51 @@ action_crop_selected_handler (DB_plugin_action_t *act, int ctx) {
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
     return 0;
 }
+
+gboolean
+action_toggle_eq_handler_cb (void *data) {
+    GtkWidget *menuitem = lookup_widget (mainwin, "view_eq");
+    gboolean act = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem));
+    act = !act;
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (menuitem), act);
+    return FALSE;
+}
+
+int
+action_toggle_eq_handler (DB_plugin_action_t *act, int ctx) {
+    g_idle_add (action_toggle_eq_handler_cb, NULL);
+    return 0;
+}
+
+gboolean
+action_show_eq_handler_cb (void *data) {
+    GtkWidget *menuitem = lookup_widget (mainwin, "view_eq");
+    gboolean act = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem));
+    if (!act) {
+        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (menuitem), 1);
+    }
+    return FALSE;
+}
+
+int
+action_show_eq_handler(DB_plugin_action_t *act, int ctx) {
+    g_idle_add (action_show_eq_handler_cb, NULL);
+    return 0;
+}
+
+gboolean
+action_hide_eq_handler_cb (void *data) {
+    GtkWidget *menuitem = lookup_widget (mainwin, "view_eq");
+    gboolean act = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem));
+    if (act) {
+        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (menuitem), 0);
+    }
+    return FALSE;
+}
+
+int
+action_hide_eq_handler(DB_plugin_action_t *act, int ctx) {
+    g_idle_add (action_hide_eq_handler_cb, NULL);
+    return 0;
+}
+

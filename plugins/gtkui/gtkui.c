@@ -1495,31 +1495,31 @@ static DB_plugin_action_t action_new_playlist = {
 };
 
 static DB_plugin_action_t action_toggle_eq = {
-    .title = "[stub] Show\\/Hide Equalizer",
+    .title = "View/Show\\/Hide Equalizer",
     .name = "toggle_eq",
     .flags = DB_ACTION_COMMON,
-    .callback = NULL,
+    .callback = action_toggle_eq_handler,
     .next = &action_new_playlist
 };
 
 static DB_plugin_action_t action_hide_eq = {
-    .title = "[stub] Hide Equalizer",
+    .title = "View/Hide Equalizer",
     .name = "hide_eq",
     .flags = DB_ACTION_COMMON,
-    .callback = NULL,
+    .callback = action_hide_eq_handler,
     .next = &action_toggle_eq
 };
 
 static DB_plugin_action_t action_show_eq = {
-    .title = "[stub] Show Equalizer",
+    .title = "View/Show Equalizer",
     .name = "show_eq",
     .flags = DB_ACTION_COMMON,
-    .callback = NULL,
+    .callback = action_show_eq_handler,
     .next = &action_hide_eq
 };
 
 static DB_plugin_action_t action_toggle_mainwin = {
-    .title = "Show\\/Hide Player Window",
+    .title = "View/Show\\/Hide Player Window",
     .name = "toggle_player_window",
     .flags = DB_ACTION_COMMON,
     .callback = action_toggle_mainwin_handler,
@@ -1527,7 +1527,7 @@ static DB_plugin_action_t action_toggle_mainwin = {
 };
 
 static DB_plugin_action_t action_hide_mainwin = {
-    .title = "Hide Player Window",
+    .title = "View/Hide Player Window",
     .name = "hide_player_window",
     .flags = DB_ACTION_COMMON,
     .callback = action_hide_mainwin_handler,
@@ -1535,7 +1535,7 @@ static DB_plugin_action_t action_hide_mainwin = {
 };
 
 static DB_plugin_action_t action_show_mainwin = {
-    .title = "Show Player Window",
+    .title = "View/Show Player Window",
     .name = "show_player_window",
     .flags = DB_ACTION_COMMON,
     .callback = action_show_mainwin_handler,
