@@ -66,4 +66,21 @@ action_playlist9_handler (DB_plugin_action_t *act, int ctx);
 int
 action_playlist10_handler (DB_plugin_action_t *act, int ctx);
 
+int
+action_sort_randomize_handler (DB_plugin_action_t *act, int ctx);
+
+int
+action_sort_by_date_handler (DB_plugin_action_t *act, int ctx);
+
+int
+action_sort_by_artist_handler (DB_plugin_action_t *act, int ctx);
+
+int
+action_sort_by_album_handler (DB_plugin_action_t *act, int ctx);
+
+int
+action_sort_by_tracknr_handler (DB_plugin_action_t *act, int ctx);
+
+int
+action_sort_by_title_handler (DB_plugin_action_t *act, int ctx);
 #endif
