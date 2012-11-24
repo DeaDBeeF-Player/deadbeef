@@ -186,4 +186,13 @@ action_show_eq_handler(DB_plugin_action_t *act, int ctx);
 int
 action_hide_eq_handler(DB_plugin_action_t *act, int ctx);
 
+int
+action_playback_loop_off_handler(DB_plugin_action_t *act, int ctx);
+
+int
+action_playback_loop_single_handler(DB_plugin_action_t *act, int ctx);
+
+int
+action_playback_loop_all_handler(DB_plugin_action_t *act, int ctx);
+
 #endif
