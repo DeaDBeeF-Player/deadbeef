@@ -1389,12 +1389,20 @@ static DB_plugin_action_t action_show_help = {
     .next = &action_track_properties
 };
 
+static DB_plugin_action_t action_playback_loop_cycle = {
+    .title = "Playback/Cycle playback looping mode",
+    .name = "loop_cycle",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_playback_loop_cycle_handler,
+    .next = &action_show_help
+};
+
 static DB_plugin_action_t action_playback_loop_off = {
     .title = "Playback/Playback looping - Don't loop",
     .name = "loop_off",
     .flags = DB_ACTION_COMMON,
     .callback = action_playback_loop_off_handler,
-    .next = &action_show_help
+    .next = &action_playback_loop_cycle
 };
 
 static DB_plugin_action_t action_playback_loop_single = {
