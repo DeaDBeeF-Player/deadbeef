@@ -195,4 +195,16 @@ action_playback_loop_single_handler(DB_plugin_action_t *act, int ctx);
 int
 action_playback_loop_all_handler(DB_plugin_action_t *act, int ctx);
 
+int
+action_playback_order_random_handler(DB_plugin_action_t *act, int ctx);
+
+int
+action_playback_order_shuffle_albums_handler(DB_plugin_action_t *act, int ctx);
+
+int
+action_playback_order_shuffle_handler(DB_plugin_action_t *act, int ctx);
+
+int
+action_playback_order_linear_handler(DB_plugin_action_t *act, int ctx);
+
 #endif

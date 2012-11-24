@@ -1414,34 +1414,34 @@ static DB_plugin_action_t action_playback_loop_all = {
 };
 
 static DB_plugin_action_t action_playback_order_random = {
-    .title = "Playback/[stub] Playback order - Random",
+    .title = "Playback/Playback order - Random",
     .name = "order_random",
     .flags = DB_ACTION_COMMON,
-    .callback = NULL,
+    .callback = action_playback_order_random_handler,
     .next = &action_playback_loop_all
 };
 
 static DB_plugin_action_t action_playback_order_shuffle_albums = {
-    .title = "Playback/[stub] Playback order - Shuffle albums",
+    .title = "Playback/Playback order - Shuffle albums",
     .name = "order_shuffle_albums",
     .flags = DB_ACTION_COMMON,
-    .callback = NULL,
+    .callback = action_playback_order_shuffle_albums_handler,
     .next = &action_playback_order_random
 };
 
 static DB_plugin_action_t action_playback_order_shuffle = {
-    .title = "Playback/[stub] Playback order - Shuffle tracks",
+    .title = "Playback/Playback order - Shuffle tracks",
     .name = "order_shuffle",
     .flags = DB_ACTION_COMMON,
-    .callback = NULL,
+    .callback = action_playback_order_shuffle_handler,
     .next = &action_playback_order_shuffle_albums
 };
 
 static DB_plugin_action_t action_playback_order_linear = {
-    .title = "Playback/[stub] Playback order - Linear",
+    .title = "Playback/Playback order - Linear",
     .name = "order_linear",
     .flags = DB_ACTION_COMMON,
-    .callback = NULL,
+    .callback = action_playback_order_linear_handler,
     .next = &action_playback_order_shuffle
 };
 
