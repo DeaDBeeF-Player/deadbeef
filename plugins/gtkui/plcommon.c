@@ -304,7 +304,7 @@ on_clear1_activate                     (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     deadbeef->pl_clear ();
-    deadbeef->pl_save_all ();
+    deadbeef->pl_save_current ();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 

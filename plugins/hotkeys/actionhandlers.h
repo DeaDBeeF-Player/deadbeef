@@ -83,4 +83,11 @@ action_sort_by_tracknr_handler (DB_plugin_action_t *act, int ctx);
 
 int
 action_sort_by_title_handler (DB_plugin_action_t *act, int ctx);
+
+int
+action_invert_selection_handler (DB_plugin_action_t *act, int ctx);
+
+int
+action_clear_playlist_handler (DB_plugin_action_t *act, int ctx);
+
 #endif
