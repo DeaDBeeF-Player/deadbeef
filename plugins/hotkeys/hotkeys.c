@@ -808,51 +808,51 @@ static DB_plugin_action_t action_playlist1 = {
 };
 
 static DB_plugin_action_t action_sort_randomize = {
-    .title = "Edit/[stub] Sort Randomize",
+    .title = "Edit/Sort Randomize",
     .name = "sort_randomize",
     .flags = DB_ACTION_COMMON,
-    .callback = NULL,
+    .callback = action_sort_randomize_handler,
     .next = &action_playlist1
 };
 
 static DB_plugin_action_t action_sort_by_date = {
-    .title = "Edit/[stub] Sort by date",
+    .title = "Edit/Sort by date",
     .name = "sort_date",
     .flags = DB_ACTION_COMMON,
-    .callback = NULL,
+    .callback = action_sort_by_date_handler,
     .next = &action_sort_randomize
 };
 
 static DB_plugin_action_t action_sort_by_artist = {
-    .title = "Edit/[stub] Sort by artist",
+    .title = "Edit/Sort by artist",
     .name = "sort_artist",
     .flags = DB_ACTION_COMMON,
-    .callback = NULL,
+    .callback = action_sort_by_artist_handler,
     .next = &action_sort_by_date
 };
 
 
 static DB_plugin_action_t action_sort_by_album = {
-    .title = "Edit/[stub] Sort by album",
+    .title = "Edit/Sort by album",
     .name = "sort_album",
     .flags = DB_ACTION_COMMON,
-    .callback = NULL,
+    .callback = action_sort_by_album_handler,
     .next = &action_sort_by_artist
 };
 
 static DB_plugin_action_t action_sort_by_tracknr = {
-    .title = "Edit/[stub] Sort by track number",
+    .title = "Edit/Sort by track number",
     .name = "sort_tracknr",
     .flags = DB_ACTION_COMMON,
-    .callback = NULL,
+    .callback = action_sort_by_tracknr_handler,
     .next = &action_sort_by_album
 };
 
 static DB_plugin_action_t action_sort_by_title = {
-    .title = "Edit/[stub] Sort by title",
+    .title = "Edit/Sort by title",
     .name = "sort_title",
     .flags = DB_ACTION_COMMON,
-    .callback = NULL,
+    .callback = action_sort_by_title_handler,
     .next = &action_sort_by_tracknr
 };
 

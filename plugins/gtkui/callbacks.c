@@ -1000,10 +1000,7 @@ on_sort_by_date_activate               (GtkMenuItem     *menuitem,
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     deadbeef->plt_sort (plt, PL_MAIN, -1, "%y", DDB_SORT_ASCENDING);
     deadbeef->plt_unref (plt);
-
-    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-    ddb_listview_clear_sort (pl);
-    ddb_listview_refresh (pl, DDB_REFRESH_LIST | DDB_LIST_CHANGED);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
 
