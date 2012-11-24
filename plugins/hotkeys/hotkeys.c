@@ -857,18 +857,18 @@ static DB_plugin_action_t action_sort_by_title = {
 };
 
 static DB_plugin_action_t action_invert_selection = {
-    .title = "Edit/[stub] Invert Selection",
+    .title = "Edit/Invert Selection",
     .name = "invert_selection",
     .flags = DB_ACTION_COMMON,
-    .callback = NULL,
+    .callback = action_invert_selection_handler,
     .next = &action_sort_by_tracknr
 };
 
 static DB_plugin_action_t action_clear_playlist = {
-    .title = "Edit/[stub] Clear playlist",
+    .title = "Edit/Clear playlist",
     .name = "clear_playlist",
     .flags = DB_ACTION_COMMON,
-    .callback = NULL,
+    .callback = action_clear_playlist_handler,
     .next = &action_invert_selection
 };
 
