@@ -211,20 +211,6 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
     }
     trace ("action not found\n");
 
-    uint32_t maskedstate = (event->state &~ (GDK_LOCK_MASK | GDK_MOD2_MASK | GDK_MOD3_MASK | GDK_MOD5_MASK)) & 0xfff;
-    if ((maskedstate == GDK_MOD1_MASK || maskedstate == 0) && event->keyval == GDK_n) {
-        // button for that one is not in toolbar anymore, so handle it manually
-        deadbeef->sendmessage (DB_EV_PLAY_RANDOM, 0, 0, 0);
-        return TRUE;
-    }
-    else if ((maskedstate == GDK_MOD1_MASK || maskedstate == 0) && event->keyval >= GDK_1 && event->keyval <= GDK_9) {
-        int pl = event->keyval - GDK_1;
-        if (pl >= 0 && pl < deadbeef->plt_get_count ()) {
-            deadbeef->plt_set_curr_idx (pl);
-            deadbeef->conf_set_int ("playlist.current", pl);
-        }
-        return TRUE;
-    }
     return FALSE;
 }
 

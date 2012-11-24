@@ -713,7 +713,7 @@ static DB_plugin_action_t action_jump_to_current = {
 
 static DB_plugin_action_t action_next_playlist = {
     .title = "Edit/Next playlist",
-    .name = "sort_next_playlist",
+    .name = "next_playlist",
     .flags = DB_ACTION_COMMON,
     .callback = action_next_playlist_handler,
     .next = &action_jump_to_current
@@ -721,10 +721,90 @@ static DB_plugin_action_t action_next_playlist = {
 
 static DB_plugin_action_t action_prev_playlist = {
     .title = "Edit/Prev playlist",
-    .name = "sort_prev_playlist",
+    .name = "prev_playlist",
     .flags = DB_ACTION_COMMON,
     .callback = action_prev_playlist_handler,
     .next = &action_next_playlist
+};
+
+static DB_plugin_action_t action_playlist10 = {
+    .title = "Edit/Switch to playlist 10",
+    .name = "playlist10",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_playlist10_handler,
+    .next = &action_prev_playlist
+};
+
+static DB_plugin_action_t action_playlist9 = {
+    .title = "Edit/Switch to playlist 9",
+    .name = "playlist9",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_playlist9_handler,
+    .next = &action_playlist10
+};
+
+static DB_plugin_action_t action_playlist8 = {
+    .title = "Edit/Switch to playlist 8",
+    .name = "playlist8",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_playlist8_handler,
+    .next = &action_playlist9
+};
+
+static DB_plugin_action_t action_playlist7 = {
+    .title = "Edit/Switch to playlist 7",
+    .name = "playlist7",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_playlist7_handler,
+    .next = &action_playlist8
+};
+
+static DB_plugin_action_t action_playlist6 = {
+    .title = "Edit/Switch to playlist 6",
+    .name = "playlist6",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_playlist6_handler,
+    .next = &action_playlist7
+};
+
+static DB_plugin_action_t action_playlist5 = {
+    .title = "Edit/Switch to playlist 5",
+    .name = "playlist5",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_playlist5_handler,
+    .next = &action_playlist6
+};
+
+static DB_plugin_action_t action_playlist4 = {
+    .title = "Edit/Switch to playlist 4",
+    .name = "playlist4",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_playlist4_handler,
+    .next = &action_playlist5
+};
+
+static DB_plugin_action_t action_playlist3 = {
+    .title = "Edit/Switch to playlist 3",
+    .name = "playlist3",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_playlist3_handler,
+    .next = &action_playlist4
+};
+
+static DB_plugin_action_t action_playlist2 = {
+    .title = "Edit/Switch to playlist 2",
+    .name = "playlist2",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_playlist2_handler,
+    .next = &action_playlist3
+};
+
+static DB_plugin_action_t action_playlist1 = {
+    .title = "Edit/Switch to playlist 1",
+    .name = "playlist1",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_playlist1_handler,
+    .next = &action_playlist2
 };
 
 static DB_plugin_action_t action_sort_randomize = {
@@ -732,7 +812,7 @@ static DB_plugin_action_t action_sort_randomize = {
     .name = "sort_randomize",
     .flags = DB_ACTION_COMMON,
     .callback = NULL,
-    .next = &action_prev_playlist
+    .next = &action_playlist1
 };
 
 static DB_plugin_action_t action_sort_by_date = {
