@@ -72,3 +72,25 @@ action_reload_metadata_handler (DB_plugin_action_t *act, int ctx) {
     deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
     return 0;
 }
+
+int
+action_next_playlist_handler (DB_plugin_action_t *act, int ctx) {
+    int tab = deadbeef->plt_get_curr_idx ();
+    if (tab < deadbeef->plt_get_count ()-1) {
+        tab++;
+        deadbeef->plt_set_curr_idx (tab);
+        deadbeef->conf_set_int ("playlist.current", tab);
+    }
+    return 0;
+}
+
+int
+action_prev_playlist_handler (DB_plugin_action_t *act, int ctx) {
+    int tab = deadbeef->plt_get_curr_idx ();
+    if (tab > 0) {
+        tab--;
+        deadbeef->plt_set_curr_idx (tab);
+        deadbeef->conf_set_int ("playlist.current", tab);
+    }
+    return 0;
+}

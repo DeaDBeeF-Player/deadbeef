@@ -30,4 +30,10 @@ action_jump_to_current_handler (DB_plugin_action_t *act, int ctx);
 int
 action_reload_metadata_handler (DB_plugin_action_t *act, int ctx);
 
+int
+action_next_playlist_handler (DB_plugin_action_t *act, int ctx);
+
+int
+action_prev_playlist_handler (DB_plugin_action_t *act, int ctx);
+
 #endif
