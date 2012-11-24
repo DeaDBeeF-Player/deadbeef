@@ -1413,12 +1413,20 @@ static DB_plugin_action_t action_playback_loop_all = {
     .next = &action_playback_loop_single
 };
 
+static DB_plugin_action_t action_playback_order_cycle = {
+    .title = "Playback/Cycle playback order",
+    .name = "order_cycle",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_playback_order_cycle_handler,
+    .next = &action_playback_loop_all
+};
+
 static DB_plugin_action_t action_playback_order_random = {
     .title = "Playback/Playback order - Random",
     .name = "order_random",
     .flags = DB_ACTION_COMMON,
     .callback = action_playback_order_random_handler,
-    .next = &action_playback_loop_all
+    .next = &action_playback_order_cycle
 };
 
 static DB_plugin_action_t action_playback_order_shuffle_albums = {

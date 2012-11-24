@@ -1008,3 +1008,29 @@ action_playback_order_linear_handler(DB_plugin_action_t *act, int ctx) {
     g_idle_add (action_playback_order_linear_handler_cb, NULL);
     return 0;
 }
+
+//deadbeef->conf_get_int ("playback.loop", PLAYBACK_MODE_LOOP_ALL)
+gboolean
+action_playback_order_cycle_handler_cb (void *data) {
+    int ord = deadbeef->conf_get_int ("playback.order", PLAYBACK_ORDER_LINEAR);
+    switch (ord) {
+    case PLAYBACK_ORDER_LINEAR:
+        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "order_shuffle")), 1);
+        break;
+    case PLAYBACK_ORDER_SHUFFLE_TRACKS:
+        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "order_shuffle_albums")), 1);
+        break;
+    case PLAYBACK_ORDER_SHUFFLE_ALBUMS:
+        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "order_random")), 1);
+        break;
+    case PLAYBACK_ORDER_RANDOM:
+        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "order_linear")), 1);
+        break;
+    }
+}
+
+int
+action_playback_order_cycle_handler(DB_plugin_action_t *act, int ctx) {
+    g_idle_add (action_playback_order_cycle_handler_cb, NULL);
+    return 0;
+}
