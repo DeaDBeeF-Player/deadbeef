@@ -36,4 +36,34 @@ action_next_playlist_handler (DB_plugin_action_t *act, int ctx);
 int
 action_prev_playlist_handler (DB_plugin_action_t *act, int ctx);
 
+int
+action_playlist1_handler (DB_plugin_action_t *act, int ctx);
+
+int
+action_playlist2_handler (DB_plugin_action_t *act, int ctx);
+
+int
+action_playlist3_handler (DB_plugin_action_t *act, int ctx);
+
+int
+action_playlist4_handler (DB_plugin_action_t *act, int ctx);
+
+int
+action_playlist5_handler (DB_plugin_action_t *act, int ctx);
+
+int
+action_playlist6_handler (DB_plugin_action_t *act, int ctx);
+
+int
+action_playlist7_handler (DB_plugin_action_t *act, int ctx);
+
+int
+action_playlist8_handler (DB_plugin_action_t *act, int ctx);
+
+int
+action_playlist9_handler (DB_plugin_action_t *act, int ctx);
+
+int
+action_playlist10_handler (DB_plugin_action_t *act, int ctx);
+
 #endif

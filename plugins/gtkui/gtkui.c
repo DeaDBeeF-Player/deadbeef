@@ -949,6 +949,16 @@ gtkui_thread (void *ctx) {
         deadbeef->conf_set_str ("hotkey.key11", "\"Ctrl w\" 0 0 remove_current_playlist");
         deadbeef->conf_set_str ("hotkey.key14", "\"Return\" 0 0 play");
         deadbeef->conf_set_str ("hotkey.key15", "\"Ctrl p\" 0 0 toggle_pause");
+        deadbeef->conf_set_str ("hotkey.key16", "\"Alt 1\" 0 0 playlist1");
+        deadbeef->conf_set_str ("hotkey.key17", "\"Alt 2\" 0 0 playlist2");
+        deadbeef->conf_set_str ("hotkey.key18", "\"Alt 3\" 0 0 playlist3");
+        deadbeef->conf_set_str ("hotkey.key19", "\"Alt 4\" 0 0 playlist4");
+        deadbeef->conf_set_str ("hotkey.key20", "\"Alt 5\" 0 0 playlist5");
+        deadbeef->conf_set_str ("hotkey.key21", "\"Alt 6\" 0 0 playlist6");
+        deadbeef->conf_set_str ("hotkey.key22", "\"Alt 7\" 0 0 playlist7");
+        deadbeef->conf_set_str ("hotkey.key23", "\"Alt 8\" 0 0 playlist8");
+        deadbeef->conf_set_str ("hotkey.key24", "\"Alt 9\" 0 0 playlist9");
+        deadbeef->conf_set_str ("hotkey.key25", "\"Alt 0\" 0 0 playlist10");
     }
 
     // construct mainwindow widgets
