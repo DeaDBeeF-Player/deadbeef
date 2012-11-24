@@ -712,18 +712,18 @@ static DB_plugin_action_t action_jump_to_current = {
 };
 
 static DB_plugin_action_t action_next_playlist = {
-    .title = "Edit/[stub] Next playlist",
+    .title = "Edit/Next playlist",
     .name = "sort_next_playlist",
     .flags = DB_ACTION_COMMON,
-    .callback = NULL,
+    .callback = action_next_playlist_handler,
     .next = &action_jump_to_current
 };
 
 static DB_plugin_action_t action_prev_playlist = {
-    .title = "Edit/[stub] Prev playlist",
+    .title = "Edit/Prev playlist",
     .name = "sort_prev_playlist",
     .flags = DB_ACTION_COMMON,
-    .callback = NULL,
+    .callback = action_prev_playlist_handler,
     .next = &action_next_playlist
 };
 
