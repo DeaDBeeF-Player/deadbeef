@@ -1389,12 +1389,69 @@ static DB_plugin_action_t action_show_help = {
     .next = &action_track_properties
 };
 
+static DB_plugin_action_t action_playback_loop_off = {
+    .title = "Playback/Playback looping - Don't loop",
+    .name = "loop_off",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_playback_loop_off_handler,
+    .next = &action_show_help
+};
+
+static DB_plugin_action_t action_playback_loop_single = {
+    .title = "Playback/Playback looping - Single track",
+    .name = "loop_track",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_playback_loop_single_handler,
+    .next = &action_playback_loop_off
+};
+
+static DB_plugin_action_t action_playback_loop_all = {
+    .title = "Playback/Playback looping - All",
+    .name = "loop_all",
+    .flags = DB_ACTION_COMMON,
+    .callback = action_playback_loop_all_handler,
+    .next = &action_playback_loop_single
+};
+
+static DB_plugin_action_t action_playback_order_random = {
+    .title = "Playback/[stub] Playback order - Random",
+    .name = "order_random",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_playback_loop_all
+};
+
+static DB_plugin_action_t action_playback_order_shuffle_albums = {
+    .title = "Playback/[stub] Playback order - Shuffle albums",
+    .name = "order_shuffle_albums",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_playback_order_random
+};
+
+static DB_plugin_action_t action_playback_order_shuffle = {
+    .title = "Playback/[stub] Playback order - Shuffle tracks",
+    .name = "order_shuffle",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_playback_order_shuffle_albums
+};
+
+static DB_plugin_action_t action_playback_order_linear = {
+    .title = "Playback/[stub] Playback order - Linear",
+    .name = "order_linear",
+    .flags = DB_ACTION_COMMON,
+    .callback = NULL,
+    .next = &action_playback_order_shuffle
+};
+
+
 static DB_plugin_action_t action_cursor_follows_playback = {
     .title = "Playback/Cursor follows playback toggle",
     .name = "toggle_cursor_follows_playback",
     .flags = DB_ACTION_COMMON,
     .callback = action_cursor_follows_playback_handler,
-    .next = &action_show_help
+    .next = &action_playback_order_linear
 };
 
 
