@@ -277,4 +277,32 @@ action_clear_playlist_handler (DB_plugin_action_t *act, int ctx) {
     return 0;
 }
 
+int
+action_add_to_playqueue_handler (DB_plugin_action_t *act, int ctx) {
+    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+    while (it) {
+        if (deadbeef->pl_is_selected (it)) {
+            deadbeef->pl_playqueue_push (it);
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+    deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
+    return 0;
+}
 
+int
+action_remove_from_playqueue_handler (DB_plugin_action_t *act, int ctx) {
+    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+    while (it) {
+        if (deadbeef->pl_is_selected (it)) {
+            deadbeef->pl_playqueue_remove (it);
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+    deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
+    return 0;
+}

@@ -90,4 +90,10 @@ action_invert_selection_handler (DB_plugin_action_t *act, int ctx);
 int
 action_clear_playlist_handler (DB_plugin_action_t *act, int ctx);
 
+int
+action_add_to_playqueue_handler (DB_plugin_action_t *act, int ctx);
+
+int
+action_remove_from_playqueue_handler (DB_plugin_action_t *act, int ctx);
+
 #endif
