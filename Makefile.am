@@ -37,7 +37,8 @@ deadbeef_SOURCES =\
 	ringbuf.c ringbuf.h\
 	dsppreset.c dsppreset.h\
 	replaygain.c replaygain.h\
-	fft.c fft.h
+	fft.c fft.h\
+	handler.c handler.h
 	
 #	ConvertUTF/ConvertUTF.c ConvertUTF/ConvertUTF.h
 
