@@ -48,4 +48,10 @@ amp_to_db (float amp);
 float
 volume_get_min_db (void);
 
+void
+audio_set_mute (int mute);
+
+int
+audio_is_mute (void);
+
 #endif // __VOLUME_H

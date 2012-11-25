@@ -33,6 +33,7 @@
 
 static float volume_db = 0; // in dB
 static float volume_amp = 1; // amplitude [0..1]
+static int audio_mute = 0;
 
 void
 volume_set_db (float dB) {
@@ -45,6 +46,7 @@ volume_set_db (float dB) {
     conf_set_float ("playback.volume", dB);
     volume_db = dB;
     volume_amp = dB > VOLUME_MIN ? db_to_amp (dB) : 0;
+    audio_mute = 0;
 }
 
 float
@@ -63,6 +65,7 @@ volume_set_amp (float amp) {
     volume_amp = amp;
     volume_db = amp > 0 ? amp_to_db (amp) : VOLUME_MIN;
     conf_set_float ("playback.volume", volume_db);
+    audio_mute = 0;
 }
 
 float
@@ -86,4 +89,14 @@ amp_to_db (float amp) {
 float
 volume_get_min_db (void) {
     return VOLUME_MIN;
+}
+
+void
+audio_set_mute (int mute) {
+    audio_mute = mute;
+}
+
+int
+audio_is_mute (void) {
+    return audio_mute;
 }

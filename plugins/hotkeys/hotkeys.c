@@ -889,10 +889,10 @@ static DB_plugin_action_t action_add_to_playqueue = {
 };
 
 static DB_plugin_action_t action_toggle_mute = {
-    .title = "Playback/[stub] Toggle Mute",
+    .title = "Playback/Toggle Mute",
     .name = "toggle_mute",
     .flags = DB_ACTION_COMMON,
-    .callback = NULL,
+    .callback = action_toggle_mute_handler,
     .next = &action_add_to_playqueue
 };
 
