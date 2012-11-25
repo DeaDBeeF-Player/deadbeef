@@ -96,4 +96,7 @@ action_add_to_playqueue_handler (DB_plugin_action_t *act, int ctx);
 int
 action_remove_from_playqueue_handler (DB_plugin_action_t *act, int ctx);
 
+int
+action_toggle_mute_handler (DB_plugin_action_t *act, int ctx);
+
 #endif

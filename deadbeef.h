@@ -796,6 +796,9 @@ typedef struct {
     // data size must be float[DDB_AUDIO_MEMORY_FRAMES]
     void (*audio_get_waveform_data) (int type, float *data);
 
+    void (*audio_set_mute) (int mute);
+    int (*audio_is_mute) (void);
+
 } DB_functions_t;
 
 // NOTE: an item placement must be selected like this

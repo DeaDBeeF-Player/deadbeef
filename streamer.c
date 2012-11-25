@@ -2092,7 +2092,7 @@ streamer_read (char *bytes, int size) {
         char *stream = bytes;
         int bytesread = sz;
         if (output->fmt.bps == 16) {
-            int16_t ivolume = volume_get_amp () * 1000;
+            int16_t ivolume = volume_get_amp () * (1-audio_is_mute ()) * 1000;
             for (int i = 0; i < bytesread/2; i++) {
                 int16_t sample = *((int16_t*)stream);
                 *((int16_t*)stream) = (int16_t)(((int32_t)sample) * ivolume / 1000);
@@ -2100,14 +2100,14 @@ streamer_read (char *bytes, int size) {
             }
         }
         else if (output->fmt.bps == 8) {
-            int16_t ivolume = volume_get_amp () * 255;
+            int16_t ivolume = volume_get_amp () * (1-audio_is_mute ()) * 255;
             for (int i = 0; i < bytesread; i++) {
                 *stream = (int8_t)(((int32_t)(*stream)) * ivolume / 1000);
                 stream++;
             }
         }
         else if (output->fmt.bps == 24) {
-            int16_t ivolume = volume_get_amp () * 1000;
+            int16_t ivolume = volume_get_amp () * (1-audio_is_mute ()) * 1000;
             for (int i = 0; i < bytesread/3; i++) {
                 int32_t sample = ((unsigned char)stream[0]) | ((unsigned char)stream[1]<<8) | (stream[2]<<16);
                 int32_t newsample = (int64_t)sample * ivolume / 1000;
@@ -2118,7 +2118,7 @@ streamer_read (char *bytes, int size) {
             }
         }
         else if (output->fmt.bps == 32 && !output->fmt.is_float) {
-            int16_t ivolume = volume_get_amp () * 1000;
+            int16_t ivolume = volume_get_amp () * (1-audio_is_mute ()) * 1000;
             for (int i = 0; i < bytesread/4; i++) {
                 int32_t sample = *((int32_t*)stream);
                 int32_t newsample = (int64_t)sample * ivolume / 1000;
@@ -2127,7 +2127,7 @@ streamer_read (char *bytes, int size) {
             }
         }
         else if (output->fmt.bps == 32 && output->fmt.is_float) {
-            float fvolume = volume_get_amp ();
+            float fvolume = volume_get_amp () * (1-audio_is_mute ());
             for (int i = 0; i < bytesread/4; i++) {
                 *((float*)stream) = (*((float*)stream)) * fvolume;
                 stream += 4;
@@ -2361,3 +2361,4 @@ streamer_set_streamer_playlist (playlist_t *plt) {
         plt_ref (streamer_playlist);
     }
 }
+

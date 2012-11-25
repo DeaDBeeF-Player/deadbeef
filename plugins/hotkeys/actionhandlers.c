@@ -306,3 +306,10 @@ action_remove_from_playqueue_handler (DB_plugin_action_t *act, int ctx) {
     deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
     return 0;
 }
+
+int
+action_toggle_mute_handler (DB_plugin_action_t *act, int ctx) {
+    int mute = 1-deadbeef->audio_is_mute ();
+    deadbeef->audio_set_mute (mute);
+    return 0;
+}

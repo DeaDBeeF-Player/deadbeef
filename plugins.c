@@ -340,8 +340,10 @@ static DB_functions_t deadbeef_api = {
     .pl_get_meta_raw = (int (*) (DB_playItem_t *it, const char *key, char *val, int size))pl_get_meta_raw,
     .plt_get_meta = (int (*) (ddb_playlist_t *handle, const char *key, char *val, int size))plt_get_meta,
     .pl_meta_exists = (int (*) (DB_playItem_t *it, const char *key))pl_meta_exists,
-    // FIXME ******* devel branch only *******
+    // ******* new 1.5 APIs ********
     .audio_get_waveform_data = audio_get_waveform_data,
+    .audio_set_mute = audio_set_mute,
+    .audio_is_mute = audio_is_mute,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;
