@@ -1076,77 +1076,6 @@ ddb_listview_get_hscroll_pos (DdbListview *listview) {
 #define MIN_COLUMN_WIDTH 16
 #define COLHDR_ANIM_TIME 0.2f
 
-#if 0
-typedef struct {
-    int c1;
-    int c2;
-    int x1, x2;
-    int dx1, dx2;
-    // animated values
-    int ax1, ax2;
-    timeline_t *timeline;
-    int anim_active;
-    DdbListview *pl;
-} colhdr_animator_t;
-
-static colhdr_animator_t colhdr_anim;
-
-static gboolean
-redraw_header (void *data) {
-    colhdr_animator_t *anim = (colhdr_animator_t *)data;
-    ddb_listview_header_render (anim->pl);
-    ddb_listview_header_expose (anim->pl, 0, 0, anim->pl->header->allocation.width, anim->pl->header->allocation.height);
-    return FALSE;
-}
-
-static int
-colhdr_anim_cb (float _progress, int _last, void *_ctx) {
-    colhdr_animator_t *anim = (colhdr_animator_t *)_ctx;
-    anim->ax1 = anim->x1 + (float)(anim->dx1 - anim->x1) * _progress;
-    anim->ax2 = anim->x2 + (float)(anim->dx2 - anim->x2) * _progress;
-//    printf ("%f %d %d\n", _progress, anim->ax1, anim->ax2);
-    g_idle_add (redraw_header, anim);
-    if (_last) {
-        anim->anim_active = 0;
-    }
-    return 0;
-}
-
-static void
-colhdr_anim_swap (DdbListview *pl, int c1, int c2, int x1, int x2) {
-    // interrupt previous anim
-    if (!colhdr_anim.timeline) {
-        colhdr_anim.timeline = timeline_create ();
-    }
-    colhdr_anim.pl = pl;
-
-    colhdr_anim.c1 = c1;
-    colhdr_anim.c2 = c2;
-
-    // find c1 and c2 in column list and setup coords
-    // note: columns are already swapped, so their coords must be reversed,
-    // as if before swap
-    DdbListviewColumn *c;
-    int idx = 0;
-    int x = 0;
-    for (c = pl->columns; c; c = c->next, idx++) {
-        if (idx == c1) {
-            colhdr_anim.x1 = x1;
-            colhdr_anim.dx2 = x;
-        }
-        else if (idx == c2) {
-            colhdr_anim.x2 = x2;
-            colhdr_anim.dx1 = x;
-        }
-        x += c->width;
-    }
-    colhdr_anim.anim_active = 1;
-    timeline_stop (colhdr_anim.timeline, 0);
-    timeline_init (colhdr_anim.timeline, COLHDR_ANIM_TIME, 100, colhdr_anim_cb, &colhdr_anim);
-    timeline_start (colhdr_anim.timeline);
-}
-#endif
-
 void
 ddb_listview_list_setup_vscroll (DdbListview *ps) {
     ddb_listview_groupcheck (ps);
@@ -2250,9 +2179,9 @@ ddb_listview_header_render (DdbListview *ps, cairo_t *cr) {
                 cairo_stroke (cr);
 #else
 #if GTK_CHECK_VERSION(3,0,0)
-                gtk_paint_vline (gtk_widget_get_style (widget), cr, GTK_STATE_NORMAL, widget, NULL, 2, h-4, xx+w - 2);
+                gtk_paint_vline (gtk_widget_get_style (widget), cr, GTK_STATE_NORMAL, widget, NULL, 2, h-4, xx+w - 3);
 #else
-                gtk_paint_vline (widget->style, ps->header->window, GTK_STATE_NORMAL, NULL, widget, NULL, 2, h-4, xx+w - 2);
+                gtk_paint_vline (widget->style, ps->header->window, GTK_STATE_NORMAL, NULL, widget, NULL, 2, h-4, xx+w - 3);
 #endif
 #endif
                 GdkColor *gdkfg = &gtk_widget_get_style (theme_button)->fg[0];
@@ -2420,16 +2349,6 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
     int ev_x, ev_y;
     GdkModifierType ev_state;
 
-#if 0
-    if (event->is_hint)
-        gdk_window_get_pointer (event->window, &ev_x, &ev_y, &ev_state);
-    else
-    {
-        ev_x = event->x;
-        ev_y = event->y;
-        ev_state = event->state;
-    }
-#endif
     ev_x = event->x;
     ev_y = event->y;
     ev_state = event->state;
@@ -2509,7 +2428,7 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
         for (c = ps->columns; c; c = c->next) {
             int w = c->width;
             if (w > 0) { // ignore collapsed columns (hack for search window)
-                if (ev_x >= x + w - 2 && ev_x <= x + w) {
+                if (ev_x >= x + w - 4 && ev_x <= x + w) {
                     gdk_window_set_cursor (gtk_widget_get_window (widget), ps->cursor_sz);
                     break;
                 }
@@ -2559,12 +2478,12 @@ ddb_listview_header_button_press_event           (GtkWidget       *widget,
         DdbListviewColumn *c;
         for (c = ps->columns; c; c = c->next, i++) {
             int w = c->width;
-            if (event->x >= x + w - 2 && event->x <= x + w) {
+            if (event->x >= x + w - 4 && event->x <= x + w) {
                 ps->header_sizing = i;
                 ps->header_dragging = -1;
                 break;
             }
-            else if (event->x > x + 2 && event->x < x + w - 2) {
+            else if (event->x > x && event->x < x + w - 4) {
                 // prepare to drag or sort
                 ps->header_dragpt[0] = event->x - x;
                 ps->header_prepare = 1;
