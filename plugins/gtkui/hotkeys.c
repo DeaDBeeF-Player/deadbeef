@@ -436,6 +436,10 @@ on_hotkey_add_clicked                  (GtkButton       *button,
     GtkTreeIter iter;
     gtk_list_store_append (hkstore, &iter);
     gtk_list_store_set (hkstore, &iter, 0, _("<Not set>"), 1, _("<Not set>"), 2, _("<Not set>"), 3, 0, 4, NULL, 5, -1, -1);
+    GtkTreePath *path = gtk_tree_model_get_path (GTK_TREE_MODEL (hkstore), &iter);
+    gtk_tree_view_set_cursor (GTK_TREE_VIEW (hotkeys), path, NULL, FALSE);
+    gtk_tree_path_free (path);
+    gtk_widget_grab_focus (hotkeys);
 }
 
 
