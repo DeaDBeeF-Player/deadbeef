@@ -698,7 +698,7 @@ action_toggle_stop_after_current_cb (struct DB_plugin_action_s *action, int ctx)
 static DB_plugin_action_t action_reload_metadata = {
     .title = "Reload metadata",
     .name = "reload_metadata",
-    .flags = DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_ADD_MENU,
+    .flags = DB_ACTION_MULTIPLE_TRACKS,
     .callback = action_reload_metadata_handler,
     .next = NULL
 };
@@ -873,18 +873,18 @@ static DB_plugin_action_t action_clear_playlist = {
 };
 
 static DB_plugin_action_t action_remove_from_playqueue = {
-    .title = "Playback/[stub] Add To Playback Queue",
+    .title = "Playback/Remove from playback queue",
     .name = "remove_from_playback_queue",
     .flags = DB_ACTION_MULTIPLE_TRACKS,
-    .callback = NULL,
+    .callback = action_remove_from_playqueue_handler,
     .next = &action_clear_playlist
 };
 
 static DB_plugin_action_t action_add_to_playqueue = {
-    .title = "Playback/[stub] Add To Playback Queue",
+    .title = "Playback/Add to playback queue",
     .name = "add_to_playback_queue",
     .flags = DB_ACTION_MULTIPLE_TRACKS,
-    .callback = NULL,
+    .callback = action_add_to_playqueue_handler,
     .next = &action_remove_from_playqueue
 };
 
