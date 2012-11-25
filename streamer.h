@@ -145,4 +145,7 @@ audio_get_waveform_data (int type, float *data);
 void
 streamer_set_streamer_playlist (playlist_t *plt);
 
+struct handler_s *
+streamer_get_handler (void);
+
 #endif // __STREAMER_H

@@ -48,6 +48,7 @@
 #include "ringbuf.h"
 #include "replaygain.h"
 #include "fft.h"
+#include "handler.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -133,6 +134,9 @@ static DB_FILE *streamer_file;
 // for vis plugins
 static float freq_data[DDB_AUDIO_MEMORY_FRAMES];
 static float audio_data[DDB_AUDIO_MEMORY_FRAMES];
+
+// message queue
+static struct handler_s *handler;
 
 #if DETECT_PL_LOCK_RC
 volatile pthread_t streamer_lock_tid = 0;
@@ -1748,6 +1752,7 @@ streamer_dsp_init (void) {
 int
 streamer_init (void) {
     streaming_terminate = 0;
+    handler = handler_alloc (100);
 #if WRITE_DUMP
     out = fopen ("out.raw", "w+b");
 #endif
@@ -1805,6 +1810,11 @@ streamer_free (void) {
 
     eqplug = NULL;
     eq = NULL;
+
+    if (handler) {
+        handler_free (handler);
+        handler = NULL;
+    }
 }
 
 void
@@ -2362,3 +2372,7 @@ streamer_set_streamer_playlist (playlist_t *plt) {
     }
 }
 
+struct handler_s *
+streamer_get_handler (void) {
+    return handler;
+}
