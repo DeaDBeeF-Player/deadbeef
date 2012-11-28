@@ -108,4 +108,7 @@ w_hbox_create (void);
 ddb_gtkui_widget_t *
 w_vbox_create (void);
 
+ddb_gtkui_widget_t *
+w_button_create (void);
+
 #endif

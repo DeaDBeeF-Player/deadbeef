@@ -927,6 +927,7 @@ gtkui_thread (void *ctx) {
     w_reg_widget ("spectrum", _("Spectrum"), w_spectrum_create);
     w_reg_widget ("hbox", _("HBox"), w_hbox_create);
     w_reg_widget ("vbox", _("VBox"), w_vbox_create);
+    w_reg_widget ("button", _("Button"), w_button_create);
 
     mainwin = create_mainwin ();
 

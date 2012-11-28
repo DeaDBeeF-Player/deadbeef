@@ -109,6 +109,11 @@ typedef struct {
     GtkWidget *box;
 } w_hvbox_t;
 
+typedef struct {
+    ddb_gtkui_widget_t base;
+    GtkWidget *button;
+} w_button_t;
+
 static int design_mode;
 static ddb_gtkui_widget_t *rootwidget;
 
@@ -2357,6 +2362,19 @@ w_vbox_create (void) {
     w_append ((ddb_gtkui_widget_t*)w, w_create ("placeholder"));
     w_append ((ddb_gtkui_widget_t*)w, w_create ("placeholder"));
 
+    w_override_signals (w->base.widget, w);
+    return (ddb_gtkui_widget_t *)w;
+}
+
+// button widget
+ddb_gtkui_widget_t *
+w_button_create (void) {
+    w_button_t *w = malloc (sizeof (w_button_t));
+    memset (w, 0, sizeof (w_button_t));
+    w->base.widget = gtk_event_box_new ();
+    w->button = gtk_button_new_with_label (_("☠"));
+    gtk_widget_show (w->button);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), w->button);
     w_override_signals (w->base.widget, w);
     return (ddb_gtkui_widget_t *)w;
 }
