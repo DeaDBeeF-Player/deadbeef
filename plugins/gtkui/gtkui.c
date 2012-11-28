@@ -925,6 +925,8 @@ gtkui_thread (void *ctx) {
     w_reg_widget ("coverart", _("Album art display"), w_coverart_create);
     w_reg_widget ("scope", _("Scope"), w_scope_create);
     w_reg_widget ("spectrum", _("Spectrum"), w_spectrum_create);
+    w_reg_widget ("hbox", _("HBox"), w_hbox_create);
+    w_reg_widget ("vbox", _("VBox"), w_vbox_create);
 
     mainwin = create_mainwin ();
 

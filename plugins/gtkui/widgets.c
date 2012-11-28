@@ -104,6 +104,11 @@ typedef struct {
     GdkGLContext *glcontext;
 } w_spectrum_t;
 
+typedef struct {
+    ddb_gtkui_widget_t base;
+    GtkWidget *box;
+} w_hvbox_t;
+
 static int design_mode;
 static ddb_gtkui_widget_t *rootwidget;
 
@@ -2234,3 +2239,124 @@ w_spectrum_create (void) {
     return (ddb_gtkui_widget_t *)w;
 }
 
+// hbox and vbox
+static void
+w_hvbox_append (struct ddb_gtkui_widget_s *container, struct ddb_gtkui_widget_s *child) {
+    w_hvbox_t *b = (w_hvbox_t *)container;
+    gtk_box_pack_start (GTK_BOX (b->box), child->widget, TRUE, TRUE, 0);
+    gtk_widget_show (child->widget);
+}
+
+static void
+w_hvbox_remove (struct ddb_gtkui_widget_s *container, struct ddb_gtkui_widget_s *child) {
+    w_hvbox_t *b = (w_hvbox_t *)container;
+    gtk_container_remove (GTK_CONTAINER (b->box), child->widget);
+}
+
+static void
+w_hvbox_replace (struct ddb_gtkui_widget_s *container, struct ddb_gtkui_widget_s *child, struct ddb_gtkui_widget_s *newchild) {
+    w_hvbox_t *b = (w_hvbox_t *)container;
+    ddb_gtkui_widget_t *c;
+    ddb_gtkui_widget_t *prev = NULL;
+    int n = 0;
+    for (c = container->children; c; prev = c, c = c->next, n++) {
+        if (c == child) {
+            break;
+        }
+    }
+
+    if (!c) {
+        return;
+    }
+
+    if (prev) {
+        prev->next = newchild;
+    }
+    else {
+        container->children = newchild;
+    }
+    newchild->next = c->next;
+
+    gtk_container_remove (GTK_CONTAINER(b->box), c->widget);
+    c->widget = NULL;
+    w_destroy (c);
+
+    gtk_box_pack_start (GTK_BOX (b->box), newchild->widget, TRUE, TRUE, 0);
+    gtk_widget_show (newchild->widget);
+    gtk_box_reorder_child (GTK_BOX (b->box), newchild->widget, n);
+
+}
+
+static void
+on_hvbox_expand (GtkMenuItem *menuitem, gpointer user_data) {
+    w_append ((ddb_gtkui_widget_t*)user_data, w_create ("placeholder"));
+}
+
+static void
+on_hvbox_shrink (GtkMenuItem *menuitem, gpointer user_data) {
+    ddb_gtkui_widget_t *w = (ddb_gtkui_widget_t *)user_data;
+    ddb_gtkui_widget_t *c;
+    for (c = w->children; c && c->next; c = c->next);
+    if (c) {
+        w_remove (w, c);
+    }
+    if (!w->children) {
+        w_append (w, w_create ("placeholder"));
+    }
+}
+
+static void
+w_hvbox_initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
+    GtkWidget *item;
+    item = gtk_menu_item_new_with_mnemonic (_("Expand the box by 1 item"));
+    gtk_widget_show (item);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "activate", G_CALLBACK (on_hvbox_expand), w);
+    
+    item = gtk_menu_item_new_with_mnemonic (_("Shrink the box by 1 item"));
+    gtk_widget_show (item);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "activate", G_CALLBACK (on_hvbox_shrink), w);
+}
+
+ddb_gtkui_widget_t *
+w_hbox_create (void) {
+    w_hvbox_t *w = malloc (sizeof (w_hvbox_t));
+    memset (w, 0, sizeof (w_hvbox_t));
+    w->base.widget = gtk_event_box_new ();
+    w->base.append = w_hvbox_append;
+    w->base.remove = w_hvbox_remove;
+    w->base.replace = w_hvbox_replace;
+    w->base.initmenu = w_hvbox_initmenu;
+    w->box = gtk_hbox_new (TRUE, 3);
+    gtk_widget_show (w->box);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), w->box);
+
+    w_append ((ddb_gtkui_widget_t*)w, w_create ("placeholder"));
+    w_append ((ddb_gtkui_widget_t*)w, w_create ("placeholder"));
+    w_append ((ddb_gtkui_widget_t*)w, w_create ("placeholder"));
+
+    w_override_signals (w->base.widget, w);
+    return (ddb_gtkui_widget_t *)w;
+}
+
+ddb_gtkui_widget_t *
+w_vbox_create (void) {
+    w_hvbox_t *w = malloc (sizeof (w_hvbox_t));
+    memset (w, 0, sizeof (w_hvbox_t));
+    w->base.widget = gtk_event_box_new ();
+    w->base.append = w_hvbox_append;
+    w->base.remove = w_hvbox_remove;
+    w->base.replace = w_hvbox_replace;
+    w->base.initmenu = w_hvbox_initmenu;
+    w->box = gtk_vbox_new (TRUE, 3);
+    gtk_widget_show (w->box);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), w->box);
+
+    w_append ((ddb_gtkui_widget_t*)w, w_create ("placeholder"));
+    w_append ((ddb_gtkui_widget_t*)w, w_create ("placeholder"));
+    w_append ((ddb_gtkui_widget_t*)w, w_create ("placeholder"));
+
+    w_override_signals (w->base.widget, w);
+    return (ddb_gtkui_widget_t *)w;
+}
