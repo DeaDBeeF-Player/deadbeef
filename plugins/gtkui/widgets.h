@@ -102,4 +102,10 @@ w_scope_create (void);
 ddb_gtkui_widget_t *
 w_spectrum_create (void);
 
+ddb_gtkui_widget_t *
+w_hbox_create (void);
+
+ddb_gtkui_widget_t *
+w_vbox_create (void);
+
 #endif
