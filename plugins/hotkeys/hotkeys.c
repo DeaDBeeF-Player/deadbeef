@@ -22,8 +22,11 @@
 #include <unistd.h>
 #include <X11/Xlib.h>
 #include <ctype.h>
-#include "parser.h"
+#ifdef __linux__
+#include <sys/prctl.h>
+#endif
 
+#include "parser.h"
 #include "hotkeys.h"
 #include "../../deadbeef.h"
 #include "actionhandlers.h"
@@ -388,6 +391,9 @@ x_err_handler (Display *d, XErrorEvent *evt) {
 static void
 hotkeys_event_loop (void *unused) {
     int i;
+#ifdef __linux__
+    prctl (PR_SET_NAME, "deadbeef-hotkeys", 0, 0, 0, 0);
+#endif
 
     while (!finished) {
         if (need_reset) {

@@ -27,6 +27,9 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#ifdef __linux__
+#include <sys/prctl.h>
+#endif
 #include "../../gettext.h"
 #include "gtkui.h"
 #include "ddblistview.h"
@@ -871,6 +874,9 @@ unlock_playlist_columns_cb (void *ctx) {
 
 void
 gtkui_thread (void *ctx) {
+#ifdef __linux__
+    prctl (PR_SET_NAME, "deadbeef-gtkui", 0, 0, 0, 0);
+#endif
     XInitThreads (); // gtkglext/xcb doesn't work without this
     // let's start some gtk
     g_thread_init (NULL);

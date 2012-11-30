@@ -22,6 +22,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#ifdef __linux__
+#include <sys/prctl.h>
+#endif
 #include "coverart.h"
 #include "../artwork/artwork.h"
 #include "gtkui.h"
@@ -109,6 +112,9 @@ redraw_playlist_cb (gpointer dt) {
 
 void
 loading_thread (void *none) {
+#ifdef __linux__
+    prctl (PR_SET_NAME, "deadbeef-gtkui-artwork", 0, 0, 0, 0);
+#endif
     for (;;) {
         trace ("covercache: waiting for signal\n");
         deadbeef->cond_wait (cond, mutex);

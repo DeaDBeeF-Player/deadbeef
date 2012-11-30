@@ -5,6 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#ifdef __linux__
+#include <sys/prctl.h>
+#endif
 #include <errno.h>
 #include <dirent.h>
 #include <unistd.h>
@@ -799,6 +802,9 @@ id3v2_skip_str (int enc, uint8_t *ptr, uint8_t *end) {
 static void
 fetcher_thread (void *none)
 {
+#ifdef __linux__
+    prctl (PR_SET_NAME, "deadbeef-artwork", 0, 0, 0, 0);
+#endif
     for (;;) {
         trace ("artwork: waiting for signal\n");
         deadbeef->cond_wait (cond, mutex);
