@@ -324,7 +324,7 @@ enum ddb_audio_data_type_t {
 
 // audio memory constants
 // since 1.5
-#define DDB_AUDIO_MEMORY_FRAMES 512
+#define DDB_AUDIO_MEMORY_FRAMES 256
 
 // typecasting macros
 #define DB_PLUGIN(x) ((DB_plugin_t *)(x))

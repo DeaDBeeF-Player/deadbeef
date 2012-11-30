@@ -481,6 +481,9 @@ static int server_terminate;
 
 void
 server_loop (void *ctx) {
+#ifdef __linux__
+    prctl (PR_SET_NAME, "deadbeef-server", 0, 0, 0, 0);
+#endif
     fd_set rds;
     int ret;
     struct timeval timeout = {0, 0};
