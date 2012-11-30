@@ -113,15 +113,15 @@ AC_ARG_ENABLE(shellexecui, [AS_HELP_STRING([--enable-shellexecui      ], [build 
 AC_ARG_ENABLE(alac, [AS_HELP_STRING([--enable-alac      ], [build ALAC plugin (default: auto)])], [enable_alac=$enableval], [enable_alac=yes])
 AC_ARG_ENABLE(abstract_socket, [AS_HELP_STRING([--enable-abstract-socket      ], [use abstract socket (default: enabled)])], [enable_abstract_socket=$enableval], [enable_abstract_socket=yes])
 
-if test "x$enable_staticlink" != "xno" ; then
+AS_IF([test "${enable_staticlink}" != "no"], [
     AC_DEFINE_UNQUOTED([STATICLINK], [1], [Define if building static version])
     STATICLINK=yes
-fi
+])
 
-if test "x$enable_abstract_socket" != "xno" ; then
+AS_IF([test "${enable_abstract_socket}" != "no"], [
     AC_DEFINE_UNQUOTED([USE_ABSTRACT_SOCKET_NAME], [1], [Define to use abstract socket name, without file])
     USE_ABSTRACT_SOCKET_NAME=yes
-fi
+])
 
 dnl check for yasm
 AC_CHECK_PROG(HAVE_YASM, yasm, yes, no)
@@ -140,315 +140,313 @@ dnl check for syslimits.h (BSD)
 AC_CHECK_HEADERS([sys/syslimits.h])
 AC_CHECK_HEADERS([sys/cdefs.h])
 
-if test "x$enable_portable" != "xno" && test "x$enable_staticlink" != "xno" ; then
+AS_IF([test "${enable_portable}" != "no" -a "${enable_staticlink}" != "no"], [
     AC_DEFINE_UNQUOTED([PORTABLE], [1], [Define if building portable version])
     PORTABLE=yes
 
 
-    if test "x$enable_portable" == "xfull" ; then
+    AS_IF([test "${enable_portable}" = "full"], [
         AC_DEFINE_UNQUOTED([PORTABLE_FULL], [1], [Define if portable version should keep configs in app folder])
         PORTABLE_FULL=yes
-    fi
+    ])
 
     PREFIXFLAGS="-DPREFIX=donotuse -DLIBDIR=donotuse -DDOCDIR=donotuse -I./$LIB/include -I../../$LIB/include"
-else
+], [
     PREFIXFLAGS=" -DLIBDIR=\\\"$libdir\\\" -DPREFIX=\\\"$prefix\\\" -DDOCDIR=\\\"$docdir\\\""
-fi
+])
 
 CXXFLAGS="$CXXFLAGS $INSANE_CXXFLAGS -D_GNU_SOURCE $PREFIXFLAGS"
 CFLAGS="$CFLAGS $INSANE_CFLAGS -D_GNU_SOURCE $PREFIXFLAGS"
 
-if test "x$enable_staticlink" != "xno" ; then
+AS_IF([test "${enable_staticlink}" != "no"], [
     HAVE_ZLIB=yes
     ZLIB_LIBS="../../$LIB/lib/libz.a"
-else
+], [
     AC_CHECK_LIB([z], [main], [HAVE_ZLIB=yes])
     ZLIB_LIBS="-lz"
-fi
+])
 AC_SUBST(ZLIB_LIBS)
 
-if test "x$enable_staticlink" != "xno" ; then
+AS_IF([test "${enable_staticlink}" != "no"], [
     HAVE_ZIP=yes
     ZIP_LIBS="../../$LIB/lib/libzip.a ../../$LIB/lib/libz.a"
-else
+], [
     AC_CHECK_LIB([zip], [main], [HAVE_ZIP=yes])
     ZIP_LIBS="-lzip"
-fi
+])
 AC_SUBST(ZIP_LIBS)
 
-if test "x$enable_gtk3" == "xyes" ; then
-    if test "x$enable_staticlink" != "xno" ; then
+AS_IF([test "${enable_gtk3}" = "yes"], [
+    AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_GTK3=yes
-    else
+    ], [
        PKG_CHECK_MODULES(GTK3_DEPS, gtk+-3.0 >= 3.0 gthread-2.0 glib-2.0, HAVE_GTK3=yes, HAVE_GTK3=no)
-    fi
+    ])
     AC_CHECK_LIB([SM], [main], [HAVE_SM=yes;SM_LIBS="-lSM";AC_SUBST(SM_LIBS)])
     AC_CHECK_LIB([ICE], [main], [HAVE_ICE=yes;ICE_LIBS="-lICE";AC_SUBST(ICE_LIBS)])
-else
+], [
     HAVE_GTK3=no
-fi
+])
 
-if test "x$enable_gtk2" == "xyes" ; then
-    if test "x$enable_staticlink" != "xno" ; then
+AS_IF([test "${enable_gtk2}" = "yes"], [
+    AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_GTK2=yes
-    else
+    ], [
         PKG_CHECK_MODULES(GTK2_DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0 gtkglext-1.0, HAVE_GTK2=yes, HAVE_GTK2=no)
-    fi
+    ])
     AC_CHECK_LIB([SM], [main], [HAVE_SM=yes;SM_LIBS="-lSM";AC_SUBST(SM_LIBS)])
     AC_CHECK_LIB([ICE], [main], [HAVE_ICE=yes;ICE_LIBS="-lICE";AC_SUBST(ICE_LIBS)])
-else
+], [
     HAVE_GTK2=no
-fi
+])
 
-if test "x$enable_alsa" != "xno" ; then
+AS_IF([test "${enable_alsa}" != "no"], [
     PKG_CHECK_MODULES(ALSA_DEPS, alsa, HAVE_ALSA=yes, HAVE_ALSA=no)
-fi
+])
 
-if test "x$enable_ffmpeg" != "xno" ; then
-if test "x$enable_staticlink" != "xno" ; then
-    FFMPEG_DEPS_CFLAGS="-I../../$LIB/include"
-    FFMPEG_DEPS_LIBS="../../$LIB/lib/libavcodec.a -lpthread ../../$LIB/lib/libavformat.a ../../$LIB/lib/libavcodec.a ../../$LIB/lib/libavutil.a ../../$LIB/lib/libavcore.a -lm ../../$LIB/lib/libz.a"
-    AC_SUBST(FFMPEG_DEPS_CFLAGS)
-    AC_SUBST(FFMPEG_DEPS_LIBS)
-    HAVE_FFMPEG=yes
-else
-    PKG_CHECK_MODULES(FFMPEG_DEPS, libavcodec >= 51.0.0 libavutil libavformat >= 52.0.0, HAVE_FFMPEG=yes, HAVE_FFMPEG=no)
-dnl    PKG_CHECK_MODULES(FFMPEG_DEPS, libavcodec libavutil libavformat < 54.6.0, HAVE_FFMPEG=yes, HAVE_FFMPEG=no)
-fi
-fi
+AS_IF([test "${enable_ffmpeg}" != "no"], [
+    AS_IF([test "${enable_staticlink}" != "no"], [
+        FFMPEG_DEPS_CFLAGS="-I../../$LIB/include"
+        FFMPEG_DEPS_LIBS="../../$LIB/lib/libavcodec.a -lpthread ../../$LIB/lib/libavformat.a ../../$LIB/lib/libavcodec.a ../../$LIB/lib/libavutil.a ../../$LIB/lib/libavcore.a -lm ../../$LIB/lib/libz.a"
+        AC_SUBST(FFMPEG_DEPS_CFLAGS)
+        AC_SUBST(FFMPEG_DEPS_LIBS)
+        HAVE_FFMPEG=yes
+    ], [
+        PKG_CHECK_MODULES(FFMPEG_DEPS, libavcodec >= 51.0.0 libavutil libavformat >= 52.0.0, HAVE_FFMPEG=yes, HAVE_FFMPEG=no)
+    dnl    PKG_CHECK_MODULES(FFMPEG_DEPS, libavcodec libavutil libavformat < 54.6.0, HAVE_FFMPEG=yes, HAVE_FFMPEG=no)
+    ])
+])
 
-if test "x$enable_staticlink" != "xno" ; then
+AS_IF([test "${enable_staticlink}" != "no"], [
     HAVE_DBUS=yes
     DBUS_DEPS_LIBS="../../$LIB/lib/libdbus-1.a ../../$LIB/lib/libexpat.a -lrt"
     DBUS_DEPS_CFLAGS="-I../../$LIB/include/dbus-1"
     AC_SUBST(DBUS_DEPS_LIBS)
-else
+], [
     PKG_CHECK_MODULES(DBUS_DEPS, dbus-1, HAVE_DBUS=yes, HAVE_DBUS=no)
-fi
+])
 
-if test "x$enable_pulse" != "xno" ; then
+AS_IF([test "${enable_pulse}" != "no"], [
     PKG_CHECK_MODULES(PULSE_DEPS, libpulse-simple, HAVE_PULSE=yes, HAVE_PULSE=no)
-fi
+])
 
 AC_CHECK_HEADER([iconv.h],[],[iconv.h not found.])
 
 AC_CHECK_LIB([iconv], [main], [have_iconv=yes], [have_iconv=no])
-if test "x${have_iconv}" = "xyes" ; then
+AS_IF([test "${have_iconv}" = "yes"], [
     ICONV_LIB="-liconv"
     AC_SUBST(ICONV_LIB)
     AC_DEFINE(HAVE_LIBICONV,1,[Use libiconv instead of glibc iconv])
-fi
+])
 
 AX_CHECK_COMPILER_FLAGS(-msse2, HAVE_SSE2=1, [])
-if test ${HAVE_SSE2}; then
+AS_IF([test "${HAVE_SSE2}"], [
     AC_DEFINE(HAVE_SSE2,1,[Support SSE2 instructions])
-fi
+])
 
 dnl curl lib
-if test "x$enable_staticlink" != "xno" ; then
+AS_IF([test "${enable_staticlink}" != "no"], [
     HAVE_CURL=yes
     CURL_LIBS="../../$LIB/lib/libcurl.a -lrt"
     AC_SUBST(CURL_LIBS)
-else
+], [
     AC_CHECK_LIB([curl], [main], [HAVE_CURL=yes])
     CURL_LIBS="-lcurl"
     AC_SUBST(CURL_LIBS)
-fi
+])
 
 dnl mpgmad plugin
 
-if test "x$enable_mpgmad" != "xno" ; then
-if test "x$enable_staticlink" != "xno" ; then
-    HAVE_MPGMAD=yes
-    MAD_LIBS="../../$LIB/lib/libmad.a"
-    AC_SUBST(MAD_LIBS)
-else
-    AC_CHECK_LIB([mad], [main], [HAVE_LIBMAD=yes])
-    if test "x$HAVE_LIBMAD" = "xyes" ; then
+AS_IF([test "${enable_mpgmad}" != "no"], [
+    AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_MPGMAD=yes
-        MAD_LIBS="-lmad"
+        MAD_LIBS="../../$LIB/lib/libmad.a"
         AC_SUBST(MAD_LIBS)
-    fi
-fi
-fi
+    ], [
+        AC_CHECK_LIB([mad], [main], [HAVE_LIBMAD=yes])
+        AS_IF([test "${HAVE_LIBMAD}" = "yes"], [
+            HAVE_MPGMAD=yes
+            MAD_LIBS="-lmad"
+            AC_SUBST(MAD_LIBS)
+        ])
+    ])
+])
 
 dnl vorbis plugin
-if test "x$enable_vorbis" != "xno" ; then
-if test "x$enable_staticlink" != "xno" ; then
-    HAVE_VORBISPLUGIN=yes
-    VORBIS_LIBS="../../$LIB/lib/libogg.a ../../$LIB/lib/libvorbis.a ../../$LIB/lib/libvorbisenc.a ../../$LIB/lib/libvorbisfile.a"
-    AC_SUBST(VORBIS_LIBS)
-else
-    AC_CHECK_LIB([vorbis], [main], [HAVE_VORBIS=yes])
-    AC_CHECK_LIB([vorbisfile], [main], [HAVE_VORBISFILE=yes])
-    if test "x$HAVE_VORBIS" = "xyes" && test "x$HAVE_VORBISFILE" = "xyes" ; then
+AS_IF([test "${enable_vorbis}" != "no"], [
+    AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_VORBISPLUGIN=yes
-        VORBIS_LIBS="-lvorbis -lvorbisfile"
+        VORBIS_LIBS="../../$LIB/lib/libogg.a ../../$LIB/lib/libvorbis.a ../../$LIB/lib/libvorbisenc.a ../../$LIB/lib/libvorbisfile.a"
         AC_SUBST(VORBIS_LIBS)
-    fi
-fi
-fi
+    ], [
+        AC_CHECK_LIB([vorbis], [main], [HAVE_VORBIS=yes])
+        AC_CHECK_LIB([vorbisfile], [main], [HAVE_VORBISFILE=yes])
+        AS_IF([test "$HAVE_VORBIS" = "yes" -a "${HAVE_VORBISFILE}" = "yes"], [
+            HAVE_VORBISPLUGIN=yes
+            VORBIS_LIBS="-lvorbis -lvorbisfile"
+            AC_SUBST(VORBIS_LIBS)
+        ])
+    ])
+])
 
 dnl flac plugin
-if test "x$enable_flac" != "xno" ; then
-if test "x$enable_staticlink" != "xno" ; then
-    HAVE_FLACPLUGIN=yes
-    FLAC_LIBS="../../$LIB/lib/libFLAC.a ../../$LIB/lib/libogg.a"
-    AC_SUBST(FLAC_LIBS)
-else
-    AC_CHECK_LIB([FLAC], [main], [HAVE_FLAC=yes])
-    if test "x$HAVE_FLAC" = "xyes" ; then
+AS_IF([test "${enable_flac}" != "no"], [
+    AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_FLACPLUGIN=yes
-        FLAC_LIBS="-lFLAC"
+        FLAC_LIBS="../../$LIB/lib/libFLAC.a ../../$LIB/lib/libogg.a"
         AC_SUBST(FLAC_LIBS)
-    fi
-fi
-fi
+    ], [
+        AC_CHECK_LIB([FLAC], [main], [HAVE_FLAC=yes])
+        AS_IF([test "${HAVE_FLAC}" = "yes"], [
+            HAVE_FLACPLUGIN=yes
+            FLAC_LIBS="-lFLAC"
+            AC_SUBST(FLAC_LIBS)
+        ])
+    ])
+])
 
 dnl wavpack plugin
-if test "x$enable_wavpack" != "xno" ; then
-if test "x$enable_staticlink" != "xno" ; then
-    HAVE_WAVPACKPLUGIN=yes
-    WAVPACK_LIBS="../../$LIB/lib/libwavpack.a"
-    AC_SUBST(WAVPACK_LIBS)
-else
-    AC_CHECK_LIB([wavpack], [main], [HAVE_WAVPACK=yes])
-    if test "x$HAVE_WAVPACK" = "xyes" ; then
+AS_IF([test "${enable_wavpack}" != "no"], [
+    AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_WAVPACKPLUGIN=yes
-        WAVPACK_LIBS="-lwavpack"
+        WAVPACK_LIBS="../../$LIB/lib/libwavpack.a"
         AC_SUBST(WAVPACK_LIBS)
-    fi
-fi
-fi
+    ], [
+        AC_CHECK_LIB([wavpack], [main], [HAVE_WAVPACK=yes])
+        AS_IF([test "${HAVE_WAVPACK}" = "yes"], [
+            HAVE_WAVPACKPLUGIN=yes
+            WAVPACK_LIBS="-lwavpack"
+            AC_SUBST(WAVPACK_LIBS)
+        ])
+    ])
+])
 
 dnl libsndfile plugin
-if test "x$enable_sndfile" != "xno" ; then
-if test "x$enable_staticlink" != "xno" ; then
-    HAVE_SNDFILEPLUGIN=yes
-    SNDFILE_LIBS="../../$LIB/lib/libsndfile.a"
-    AC_SUBST(SNDFILE_LIBS)
-else
-    AC_CHECK_LIB([sndfile], [main], [HAVE_SNDFILE=yes])
-    if test "x$HAVE_SNDFILE" = "xyes" ; then
+AS_IF([test "${enable_sndfile}" != "no"], [
+    AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_SNDFILEPLUGIN=yes
-        SNDFILE_LIBS="-lsndfile"
+        SNDFILE_LIBS="../../$LIB/lib/libsndfile.a"
         AC_SUBST(SNDFILE_LIBS)
-    fi
-fi
-fi
+    ], [
+        AC_CHECK_LIB([sndfile], [main], [HAVE_SNDFILE=yes])
+        AS_IF([test "${HAVE_SNDFILE}" = "yes"], [
+            HAVE_SNDFILEPLUGIN=yes
+            SNDFILE_LIBS="-lsndfile"
+            AC_SUBST(SNDFILE_LIBS)
+        ])
+    ])
+])
 
 dnl vfs_curl plugin
-if test "x$enable_vfs_curl" != "xno" ; then
-    if test "x$HAVE_CURL" = "xyes" ; then
+AS_IF([test "${enable_vfs_curl}" != "no"], [
+    AS_IF([test "${HAVE_CURL}" = "yes"], [
         HAVE_VFS_CURL=yes
         VFS_CURL_LIBS="$CURL_LIBS"
         AC_SUBST(VFS_CURL_LIBS)
-    fi
-fi
+    ])
+])
 
 dnl cdda plugin
-if test "x$enable_cdda" != "xno" ; then
-if test "x$enable_staticlink" != "xno" ; then
-    HAVE_CDDAPLUGIN=yes
-    CDDA_LIBS="../../$LIB/lib/libcdio.a ../../$LIB/lib/libudf.a ../../$LIB/lib/libiso9660.a ../../$LIB/lib/libcddb.a"
-    AC_SUBST(CDDA_LIBS)
-else
-    AC_CHECK_LIB([cdio], [main], [HAVE_CDIO=yes])
-    AC_CHECK_LIB([cddb], [main], [HAVE_CDDB=yes])
-    if test "x$HAVE_CDIO" = "xyes" && test "x$HAVE_CDDB" = "xyes" ; then
+AS_IF([test "${enable_cdda}" != "no"], [
+    AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_CDDAPLUGIN=yes
-        CDDA_LIBS="-lcdio -lcddb"
+        CDDA_LIBS="../../$LIB/lib/libcdio.a ../../$LIB/lib/libudf.a ../../$LIB/lib/libiso9660.a ../../$LIB/lib/libcddb.a"
         AC_SUBST(CDDA_LIBS)
-    fi
-fi
-fi
+    ], [
+        AC_CHECK_LIB([cdio], [main], [HAVE_CDIO=yes])
+        AC_CHECK_LIB([cddb], [main], [HAVE_CDDB=yes])
+        AS_IF([test "${HAVE_CDIO}" = "yes" -a "${HAVE_CDDB}" = "yes"], [
+            HAVE_CDDAPLUGIN=yes
+            CDDA_LIBS="-lcdio -lcddb"
+            AC_SUBST(CDDA_LIBS)
+        ])
+    ])
+])
 
-if test "x$enable_alsa" != "xno" ; then
-    if test "x$HAVE_ALSA" = "xyes" ; then
-        HAVE_ALSAPLUGIN=yes
-    fi
-fi
+AS_IF([test "${enable_alsa}" != "no" -a "${HAVE_ALSA}" = "yes"], [
+    HAVE_ALSAPLUGIN=yes
+])
 
-if test "x$enable_ffmpeg" != "xno" ; then
-if test "x$enable_staticlink" = "xno" ; then
-    if test "x$HAVE_FFMPEG" = "xyes" ; then
+AS_IF([test "${enable_ffmpeg}" != "no"], [
+    AS_IF([test "${enable_staticlink}" = "no"], [
+        AS_IF([test "${HAVE_FFMPEG}" = "yes"], [
+            HAVE_FFMPEGPLUGIN=yes
+            AC_CHECK_HEADER([ffmpeg/avformat.h], FFMPEG_DEPS_CFLAGS="$FFMPEG_DEPS_CFLAGS -D FFMPEG_OLD")
+        ])
+    ], [
         HAVE_FFMPEGPLUGIN=yes
-        AC_CHECK_HEADER([ffmpeg/avformat.h], FFMPEG_DEPS_CFLAGS="$FFMPEG_DEPS_CFLAGS -D FFMPEG_OLD")
-    fi
-else
-    HAVE_FFMPEGPLUGIN=yes
-fi
-fi
+    ])
+])
 
-if test "x$enable_hotkeys" != "xno" ; then
+AS_IF([test "${enable_hotkeys}" != "no"], [
     AC_CHECK_HEADER([X11/Xlib.h], HAVE_XLIB_H=yes)
-    if test "x$HAVE_XLIB_H" = "xyes" ; then
+    AS_IF([test "${HAVE_XLIB_H}" = "yes"], [
         HAVE_HOTKEYS=yes
         HOTKEYS_LIBS="-lX11"
         AC_SUBST(HOTKEYS_LIBS)
-    fi
-fi
+    ])
+])
 
 dnl *** OSS output (partly stolen from audacious)
-if test "x$enable_oss" != "xno"; then
+AS_IF([test "${enable_oss}" != "no"], [
     have_oss=no
 
     AC_MSG_CHECKING(for OSS include dir)
     OSS_CFLAGS=""
-    if test -f "/etc/oss.conf" ; then
+    AS_IF([test -f "/etc/oss.conf"], [
         for i in `cat /etc/oss.conf`; do
             t=`echo $i | sed -e 's/OSSLIBDIR=//'`
-            if test "x$i" != "x$t" ; then
-                if test -f "$t/include/sys/soundcard.h" -o -f "$i/include/soundcard.h" ; then
+            AS_IF([test "${i}" != "${t}"], [
+                AS_IF([test -f "${t}/include/sys/soundcard.h" -o -f "${i}/include/soundcard.h"], [
                     OSS_CFLAGS="-I$t/include/sys"
                     AC_MSG_RESULT([$OSS_CFLAGS])
                     have_oss=yes
-                fi
-            fi
+                ])
+            ])
         done
-    else
+    ], [
         AC_MSG_RESULT([not found])
-    fi
+    ])
 
-    if test "x$have_oss" != "xyes"; then
+    AS_IF([test "${have_oss}" != "yes"], [
         AC_MSG_CHECKING(for sys/soundcard.h)
         AC_CHECK_HEADERS(sys/soundcard.h)
-        if test "x${ac_cv_header_sys_soundcard_h}" = "xyes" ; then
+        AS_IF([test "${ac_cv_header_sys_soundcard_h}" = "yes"], [
             have_oss=yes
             AC_MSG_RESULT([found])
-        else
+        ], [
             AC_MSG_RESULT([not found])
-        fi
-    fi
+        ])
+    ])
 
 
-    if test "x$have_oss" = "xyes"; then
+    AS_IF([test "${have_oss}" = "yes"], [
         HAVE_OSS=yes
         AC_SUBST(OSS_CFLAGS)
-    fi
-fi
+    ])
+])
 
-if test "x$enable_pulseaudio" != "xno"; then
-    if test "x$HAVE_PULSE" = "xyes"; then
+AS_IF([test "${enable_pulseaudio}" != "no"], [
+    AS_IF([test "${HAVE_PULSE}" = "yes"], [
         HAVE_PULSEPLUGIN=yes
-    fi
-fi
+    ])
+])
 
 dnl lastfm plugin
-if test "x$enable_lfm" != "xno" ; then
-    if test "x$HAVE_CURL" = "xyes" && test "x$enable_lastfm" != "xno" ; then
+AS_IF([test "${enable_lfm}" != "no"], [
+    AS_IF([test "${HAVE_CURL}" = "yes" -a "${enable_lastfm}" != "no"], [
         HAVE_LASTFM=yes
-    fi
-fi
+    ])
+])
 
 dnl shellexec plugin
-if test "x$enable_shellexec" != "xno" ; then
+AS_IF([test "${enable_shellexec}" != "no"], [
     HAVE_SHELLEXEC=yes
-fi
+])
 
 
-if test "x$enable_artwork" != "xno" ; then
-    if test "x$enable_staticlink" != "xno" ; then
+AS_IF([test "${enable_artwork}" != "no"], [
+    AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_JPEG=yes
         JPEG_DEPS_LIBS="../../$LIB/lib/libjpeg.a"
         JPEG_DEPS_CFLAGS="-I../../$LIB/include"
@@ -460,153 +458,157 @@ if test "x$enable_artwork" != "xno" ; then
         AC_SUBST(PNG_DEPS_CFLAGS)
         AC_SUBST(PNG_DEPS_LIBS)
         HAVE_IMLIB2=no
-    else
-        if test "x$enable_artwork_imlib2" != "xno" ; then
+    ], [
+        AS_IF([test "${enable_artwork_imlib2}" != "no"], [
             PKG_CHECK_MODULES(IMLIB2_DEPS, imlib2, HAVE_IMLIB2=yes, HAVE_IMLIB2=no)
-        fi
+        ])
 
-        if test "x$enable_artwork_imlib2" == "xno" || test "x$HAVE_IMLIB2" == "xno" ; then
+        AS_IF([test "${enable_artwork_imlib2}" = "no" -o "${HAVE_IMLIB2}" = "no"], [
             AC_CHECK_LIB([jpeg], [main], [HAVE_JPEG=yes;JPEG_DEPS_LIBS="-ljpeg";AC_SUBST(JPEG_DEPS_LIBS)])
             AC_CHECK_LIB([png], [main], [HAVE_PNG=yes;PNG_DEPS_LIBS="-lpng -lz";AC_SUBST(PNG_DEPS_LIBS)])
-        fi
-    fi
+        ])
+    ])
 
-    if test "x$HAVE_VFS_CURL" = "xyes" && ( test "x$HAVE_JPEG" == "xyes" || test "x$HAVE_IMLIB2" == "xyes" ) ; then
-        HAVE_ARTWORK=yes
-    fi
-fi
+    AS_IF([test "${HAVE_VFS_CURL}" = "yes"], [
+        AS_IF([test "${HAVE_JPEG}" = "yes" -o "${HAVE_IMLIB2}" == "yes"], [
+            HAVE_ARTWORK=yes
+        ])
+    ])
+])
 
-if test "x$enable_adplug" != "xno" ; then
+AS_IF([test "${enable_adplug}" != "no"], [
     HAVE_ADPLUG=yes
-fi
+])
 
-if test "x$enable_ffap" != "xno" && ( test "x$HAVE_YASM" == "xyes" || test "x$APE_USE_YASM" != "xyes" ) ; then
-    HAVE_FFAP=yes
-fi
+AS_IF([test "${enable_ffap}" != "no"], [
+    AS_IF([test "${HAVE_YASM}" = "yes" -o "${APE_USE_YASM}" != "yes"], [
+        HAVE_FFAP=yes
+    ])
+])
 
-if test "x$enable_sid" != "xno" ; then
+AS_IF([test "${enable_sid}" != "no"], [
     HAVE_SID=yes
-fi
+])
 
-if test "x$enable_nullout" != "xno" ; then
+AS_IF([test "${enable_nullout}" != "no"], [
     HAVE_NULLOUT=yes
-fi
+])
 
-if test "x$enable_src" != "xno" ; then
-if test "x$enable_staticlink" != "xno" ; then
-    LIBSAMPLERATE_DEPS_LIBS="../../$LIB/lib/libsamplerate.a -lpthread ${DL_LIBS}"
-    AC_SUBST(LIBSAMPLERATE_DEPS_LIBS)
-    HAVE_DSP_SRC=yes
-else
-    PKG_CHECK_MODULES(LIBSAMPLERATE_DEPS, samplerate, HAVE_LIBSAMPLERATE=yes, HAVE_LIBSAMPLERATE=no)
-    if test "x$HAVE_LIBSAMPLERATE" = "xyes" ; then
+AS_IF([test "${enable_src}" != "no"], [
+    AS_IF([test "${enable_staticlink}" != "no"], [
+        LIBSAMPLERATE_DEPS_LIBS="../../$LIB/lib/libsamplerate.a -lpthread ${DL_LIBS}"
+        AC_SUBST(LIBSAMPLERATE_DEPS_LIBS)
         HAVE_DSP_SRC=yes
-    fi
-fi
-fi
+    ], [
+        PKG_CHECK_MODULES(LIBSAMPLERATE_DEPS, samplerate, HAVE_LIBSAMPLERATE=yes, HAVE_LIBSAMPLERATE=no)
+        AS_IF([test "${HAVE_LIBSAMPLERATE}" = "yes"], [
+            HAVE_DSP_SRC=yes
+        ])
+    ])
+])
 
-if test "x$enable_supereq" != "xno" ; then
+AS_IF([test "${enable_supereq}" != "no"], [
     HAVE_SUPEREQ=yes
-fi
+])
 
-if test "x$enable_vtx" != "xno" ; then
+AS_IF([test "${enable_vtx}" = "no"], [
     HAVE_VTX=yes
-fi
+])
 
-if test "x$enable_gme" != "xno" ; then
+AS_IF([test "${enable_gme}" != "no"], [
     HAVE_GME=yes
-fi
+])
 
-if test "x$HAVE_DBUS" = "xyes" && test "x$enable_notify" != "xno" ; then
+AS_IF([test "${HAVE_DBUS}" = "yes" -a "${enable_notify}" != "no"], [
     HAVE_NOTIFY=yes
     NOTIFY_LIBS="$DBUS_DEPS_LIBS"
     NOTIFY_CFLAGS="$DBUS_DEPS_CFLAGS"
     AC_SUBST(NOTIFY_LIBS)
     AC_SUBST(NOTIFY_CFLAGS)
-fi
+])
 
-if test "x$enable_musepack" != "xno" ; then
+AS_IF([test "${enable_musepack}" != "no"], [
     HAVE_MUSEPACK=yes
-fi
+])
 
-if test "x$enable_wildmidi" != "xno" ; then
+AS_IF([test "${enable_wildmidi}" != "no"], [
     HAVE_WILDMIDI=yes
-fi
+])
 
-if test "x$enable_tta" != "xno" ; then
+AS_IF([test "${enable_tta}" != "no"], [
     HAVE_TTA=yes
-fi
+])
 
-if test "x$enable_dca" != "xno" ; then
+AS_IF([test "${enable_dca}" != "no"], [
     HAVE_DCA=yes
-fi
+])
 
-if test "x$enable_aac" != "xno" ; then
-if test "x$enable_staticlink" != "xno" ; then
-    FAAD2_LIBS="../../$LIB/lib/libfaad.a"
-    AC_SUBST(FAAD2_LIBS)
-    HAVE_AAC=yes
-else
-    AC_CHECK_LIB([faad], [main], [HAVE_FAAD=1])
-    if test ${HAVE_FAAD} ; then
-        FAAD2_LIBS="-lfaad"
+AS_IF([test "${enable_aac}" != "no"], [
+    AS_IF([test "${enable_staticlink}" != "no"], [
+        FAAD2_LIBS="../../$LIB/lib/libfaad.a"
         AC_SUBST(FAAD2_LIBS)
         HAVE_AAC=yes
-    fi
-fi
-fi
+    ], [
+        AC_CHECK_LIB([faad], [main], [HAVE_FAAD=1])
+        AS_IF([test "${HAVE_FAAD}"], [
+            FAAD2_LIBS="-lfaad"
+            AC_SUBST(FAAD2_LIBS)
+            HAVE_AAC=yes
+        ])
+    ])
+])
 
-if test "x$enable_mms" != "xno" ; then
+AS_IF([test "${enable_mms}" != "no"], [
     LIBMMS_LIBS=""
     AC_SUBST(LIBMMS_LIBS)
     HAVE_MMS=yes
-fi
+])
 
-if test "x$enable_m3u" != "xno" ; then
+AS_IF([test "${enable_m3u}" != "no"], [
     HAVE_M3U=yes
-fi
+])
 
-if test "x$enable_vfs_zip" != "xno" ; then
-    if test "x$HAVE_ZLIB" = "xyes" && test "x$HAVE_ZIP" = "xyes" ; then
+AS_IF([test "${enable_vfs_zip}" != "no"], [
+    AS_IF([test "${HAVE_ZLIB}" = "yes" -a "${HAVE_ZIP}" = "yes"], [
         HAVE_VFS_ZIP=yes
-    fi
-fi
+    ])
+])
 
-if test "x$enable_converter" != "xno" ; then
-    if test "x$HAVE_GTK2" = "xyes" || test "x$HAVE_GTK3" = "xyes" ; then
+AS_IF([test "${enable_converter}" != "no"], [
+    AS_IF([test "${HAVE_GTK2}" = "yes" -o "${HAVE_GTK3}" = "yes"], [
         HAVE_CONVERTER=yes
-    fi
-fi
+    ])
+])
 
-if test "x$enable_medialib" != "xno" ; then
+AS_IF([test "${enable_medialib}" != "no"], [
     HAVE_MEDIALIB=yes
-fi
+])
 
-if test "x$enable_shellexecui" != "xno" ; then
-    if test "x$HAVE_GTK2" = "xyes" || test "x$HAVE_GTK3" = "xyes" ; then
+AS_IF([test "${enable_shellexecui}" != "no"], [
+    AS_IF([test "${HAVE_GTK2}" = "yes" -o "${HAVE_GTK3}" = "yes"], [
         HAVE_SHELLEXECUI=yes
-    fi
-fi
+    ])
+])
 
-if test "x$enable_dumb" != "xno" ; then
+AS_IF([test "${enable_dumb}" != "no"], [
     HAVE_DUMB=yes
-fi
+])
 
-if test "x$enable_shn" != "xno" ; then
+AS_IF([test "${enable_shn}" != "no"], [
     HAVE_SHN=yes
-fi
+])
 
-if test "x$enable_psf" != "xno" ; then
+AS_IF([test "${enable_psf}" != "no"], [
     HAVE_PSF=yes
-fi
+])
 
-if test "x$enable_mono2stereo" != "xno" ; then
+AS_IF([test "${enable_mono2stereo}" != "no"], [
     HAVE_MONO2STEREO=yes
-fi
+])
 
-if test "x$enable_alac" != "xno" ; then
+AS_IF([test "${enable_alac}" != "no"], [
     HAVE_ALAC=yes
-fi
+])
 
 PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/ao plugins/mono2stereo plugins/shellexecui plugins/alac plugins/medialib"
 
@@ -665,12 +667,12 @@ AM_CONDITIONAL(USE_ABSTRACT_SOCKET_NAME, test "x$USE_ABSTRACT_SOCKET_NAME" = "xy
 
 AC_SUBST(PLUGINS_DIRS)
 
-if test "x$USE_MAINTAINER_MODE" = "xyes" ; then
+AS_IF([test "${USE_MAINTAINER_MODE}" = "yes"], [
 echo
 echo "Build Configuration:"
 echo
 echo "* Maintainer Mode:        $USE_MAINTAINER_MODE"
-fi
+])
 
 dnl print summary
 echo
