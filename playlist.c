@@ -840,10 +840,15 @@ pl_get_qvalue_from_cue (const uint8_t *p, int sz, char *out) {
         *out = 0;
     }
     else {
-        while (*p && *p > 0x20) {
+        while (*p && *p >= 0x20) {
             sz--;
             *out++ = *p++;
         }
+        out--;
+        while (out > str && *out == 0x20) {
+            out--;
+        }
+        out++;
         *out = 0;
     }
     const char *charset = junk_detect_charset (str);
