@@ -2275,6 +2275,8 @@ w_hvbox_replace (struct ddb_gtkui_widget_s *container, struct ddb_gtkui_widget_s
         return;
     }
 
+    w_remove (container, c);
+    w_destroy (c);
     if (prev) {
         prev->next = newchild;
     }
@@ -2282,10 +2284,7 @@ w_hvbox_replace (struct ddb_gtkui_widget_s *container, struct ddb_gtkui_widget_s
         container->children = newchild;
     }
     newchild->next = c->next;
-
-    gtk_container_remove (GTK_CONTAINER(b->box), c->widget);
-    c->widget = NULL;
-    w_destroy (c);
+    newchild->parent = container;
 
     gtk_box_pack_start (GTK_BOX (b->box), newchild->widget, TRUE, TRUE, 0);
     gtk_widget_show (newchild->widget);
