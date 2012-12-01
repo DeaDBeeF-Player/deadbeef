@@ -30,7 +30,7 @@
 #include "parser.h"
 #include "trkproperties.h"
 #include "coverart.h"
-#define USE_OPENGL 1
+//#define USE_OPENGL 1
 #if USE_OPENGL
 #include "gtkuigl.h"
 #endif
@@ -2110,12 +2110,12 @@ w_spectrum_draw_cb (void *data) {
 
 // spectrum analyzer based on cairo-spectrum from audacious
 // Copyright (c) 2011 William Pitcock <nenolod@dereferenced.org>
-#define MAX_BANDS 256
+#define MAX_BANDS DDB_AUDIO_MEMORY_FRAMES
 #define VIS_DELAY 1
 #define VIS_DELAY_PEAK 10
-#define VIS_FALLOFF 3
+#define VIS_FALLOFF 1
 #define VIS_FALLOFF_PEAK 1
-#define BAND_WIDTH 5
+#define BAND_WIDTH 20
 static float xscale[MAX_BANDS + 1];
 static int bars[MAX_BANDS + 1];
 static int delay[MAX_BANDS + 1];
@@ -2127,7 +2127,7 @@ static void calculate_bands(int bands)
 	int i;
 
 	for (i = 0; i < bands; i++)
-		xscale[i] = powf(257., ((float) i / (float) bands)) - 1;
+		xscale[i] = powf((float)(MAX_BANDS+1), ((float) i / (float) bands)) - 1;
 }
 
 
@@ -2162,12 +2162,12 @@ spectrum_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_d
 				n += freq[a - 1] * (a - xscale[i]);
 			for (; a < b; a ++)
 				n += freq[a];
-			if (b < 256)
+			if (b < MAX_BANDS)
 				n += freq[b] * (xscale[i + 1] - b);
 		}
 
 		/* 40 dB range */
-		int x = 20 * log10 (n * 100);
+		int x = 20 * log10 (n * 200);
 		x = CLAMP (x, 0, 40);
 
 		bars[i] -= MAX (0, VIS_FALLOFF - delay[i]);
@@ -2186,6 +2186,9 @@ spectrum_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_d
 		if (x > peaks[i]) {
             peaks[i] = x;
             delay_peak[i] = VIS_DELAY_PEAK;
+        }
+        if (peaks[i] < bars[i]) {
+            peaks[i] = bars[i];
         }
 	}
 
@@ -2230,21 +2233,24 @@ spectrum_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_d
 	float base_s = (height / 40.f);
 
 	cairo_set_source_rgb (cr, 0, 0, 0);
-	cairo_rectangle (cr, 0, 0, a.width, a.height);
-	cairo_fill (cr);
+	cairo_paint (cr);
 
 	for (gint i = 0; i <= bands; i++)
 	{
-		gint x = ((width / bands) * i) + 2;
+		int x = ((width / bands) * i) + 2;
         int y = a.height - bars[i] * base_s;
         cairo_set_source_rgb (cr, 0, 0.5, 1);
         cairo_rectangle (cr, x+1, y, (width / bands) - 1, a.height);
-        cairo_fill (cr);
-        cairo_set_source_rgb (cr, 1, 1, 1);
-        y = a.height - peaks[i] * base_s;
-        cairo_rectangle (cr, x + 1, y, (width / bands) - 1, 1);
-        cairo_fill (cr);
 	}
+    cairo_fill (cr);
+	for (gint i = 0; i <= bands; i++)
+	{
+		int x = ((width / bands) * i) + 2;
+        int y = a.height - peaks[i] * base_s;
+        cairo_set_source_rgb (cr, 1, 1, 1);
+        cairo_rectangle (cr, x + 1, y, (width / bands) - 1, 2);
+    }
+    cairo_fill (cr);
 
     cairo_destroy (cr);
 #endif
