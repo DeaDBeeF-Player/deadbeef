@@ -84,6 +84,10 @@ typedef struct ddb_gtkui_widget_s {
     // this will be called to setup the menu widget in design mode
     void (*initmenu) (struct ddb_gtkui_widget_s *w, GtkWidget *menu);
 
+    // this will be called to setup the child menu widget in design mode
+    // for example, to add "expand"/"fill" options for hbox/vbox children
+    void (*initchildmenu) (struct ddb_gtkui_widget_s *w, GtkWidget *menu);
+
     // you shouldn't touch this list normally, the system takes care of it
     struct ddb_gtkui_widget_s *children;
     struct ddb_gtkui_widget_s *next; // points to next widget in the same container
