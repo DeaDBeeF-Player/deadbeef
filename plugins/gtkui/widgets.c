@@ -549,6 +549,9 @@ w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_da
     if (current_widget->initmenu) {
         current_widget->initmenu (current_widget, menu);
     }
+    if (current_widget->parent && current_widget->parent->initchildmenu) {
+        current_widget->parent->initchildmenu (current_widget, menu);
+    }
 
     g_signal_connect ((gpointer) menu, "deactivate", G_CALLBACK (w_menu_deactivate), user_data);
     gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
@@ -2376,6 +2379,14 @@ on_hvbox_shrink (GtkMenuItem *menuitem, gpointer user_data) {
 }
 
 static void
+on_hvbox_toggle_homogeneous (GtkCheckMenuItem *checkmenuitem, gpointer user_data) {
+    w_hvbox_t *w = user_data;
+    gboolean hmg = gtk_box_get_homogeneous (GTK_BOX (((w_hvbox_t *)w)->box));
+    gtk_box_set_homogeneous (GTK_BOX (((w_hvbox_t *)w->box)), hmg ? FALSE : TRUE);
+}
+
+
+static void
 w_hvbox_initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
     GtkWidget *item;
     item = gtk_menu_item_new_with_mnemonic (_("Expand the box by 1 item"));
@@ -2387,6 +2398,62 @@ w_hvbox_initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
     gtk_widget_show (item);
     gtk_container_add (GTK_CONTAINER (menu), item);
     g_signal_connect ((gpointer) item, "activate", G_CALLBACK (on_hvbox_shrink), w);
+
+    item = gtk_check_menu_item_new_with_mnemonic (_("Homogeneous"));
+    gtk_widget_show (item);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), gtk_box_get_homogeneous (GTK_BOX (((w_hvbox_t *)w)->box)));
+    g_signal_connect ((gpointer) item, "toggled", G_CALLBACK (on_hvbox_toggle_homogeneous), w);
+}
+
+static void
+on_hvbox_child_toggle_expand (GtkCheckMenuItem *checkmenuitem, gpointer user_data) {
+    ddb_gtkui_widget_t *w = user_data;
+    w_hvbox_t *box = (w_hvbox_t *)w->parent;
+    gboolean expand, fill;
+    guint padding;
+    GtkPackType packtype;
+    gtk_box_query_child_packing (GTK_BOX (box->box), w->widget, &expand, &fill, &padding, &packtype);
+    gtk_box_set_child_packing (GTK_BOX (box->box), w->widget, !expand, fill, padding, packtype);
+}
+
+static void
+on_hvbox_child_toggle_fill (GtkCheckMenuItem *checkmenuitem, gpointer user_data) {
+    ddb_gtkui_widget_t *w = user_data;
+    w_hvbox_t *box = (w_hvbox_t *)w->parent;
+    gboolean expand, fill;
+    guint padding;
+    GtkPackType packtype;
+    gtk_box_query_child_packing (GTK_BOX (box->box), w->widget, &expand, &fill, &padding, &packtype);
+    gtk_box_set_child_packing (GTK_BOX (box->box), w->widget, expand, !fill, padding, packtype);
+}
+
+static void
+w_hvbox_initchildmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
+    w_hvbox_t *box = (w_hvbox_t *)w->parent;
+
+    gboolean expand, fill;
+    guint padding;
+    GtkPackType packtype;
+    gtk_box_query_child_packing (GTK_BOX (box->box), w->widget, &expand, &fill, &padding, &packtype);
+
+    GtkWidget *item;
+
+    item = gtk_check_menu_item_new_with_mnemonic (_("Expand"));
+    gtk_widget_show (item);
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), expand);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "toggled",
+            G_CALLBACK (on_hvbox_child_toggle_expand),
+            w);
+
+    item = gtk_check_menu_item_new_with_mnemonic (_("Fill"));
+    gtk_widget_show (item);
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), fill);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "toggled",
+            G_CALLBACK (on_hvbox_child_toggle_fill),
+            w);
 }
 
 ddb_gtkui_widget_t *
@@ -2398,6 +2465,7 @@ w_hbox_create (void) {
     w->base.remove = w_hvbox_remove;
     w->base.replace = w_hvbox_replace;
     w->base.initmenu = w_hvbox_initmenu;
+    w->base.initchildmenu = w_hvbox_initchildmenu;
     w->box = gtk_hbox_new (TRUE, 3);
     gtk_widget_show (w->box);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->box);
