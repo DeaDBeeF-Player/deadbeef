@@ -30,7 +30,10 @@
 #include "parser.h"
 #include "trkproperties.h"
 #include "coverart.h"
+#undef USE_OPENGL
+#if USE_OPENGL
 #include "gtkuigl.h"
+#endif
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -94,14 +97,18 @@ typedef struct {
     ddb_gtkui_widget_t base;
     GtkWidget *drawarea;
     guint drawtimer;
+#if USE_OPENGL
     GdkGLContext *glcontext;
+#endif
 } w_scope_t;
 
 typedef struct {
     ddb_gtkui_widget_t base;
     GtkWidget *drawarea;
     guint drawtimer;
+#if USE_OPENGL
     GdkGLContext *glcontext;
+#endif
 } w_spectrum_t;
 
 typedef struct {
@@ -1916,10 +1923,12 @@ w_scope_destroy (ddb_gtkui_widget_t *w) {
         g_source_remove (s->drawtimer);
         s->drawtimer = 0;
     }
+#if USE_OPENGL
     if (s->glcontext) {
         gdk_gl_context_destroy (s->glcontext);
         s->glcontext = NULL;
     }
+#endif
 }
 
 gboolean
@@ -1934,17 +1943,20 @@ scope_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     ddb_waveformat_t fmt;
     float data[DDB_AUDIO_MEMORY_FRAMES];
     deadbeef->audio_get_waveform_data (DDB_AUDIO_WAVEFORM, data);
-    cairo_set_source_rgb (cr, 0, 0, 0);
-    cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
-    cairo_set_line_width (cr, 1);
     GtkAllocation a;
     gtk_widget_get_allocation (widget, &a);
+    cairo_set_source_rgb (cr, 0, 0, 0);
+    cairo_rectangle (cr, 0, 0, a.width, a.height);
+    cairo_fill (cr);
+    cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
+    cairo_set_line_width (cr, 1);
+    cairo_set_source_rgb (cr, 1, 1, 1);
 
-    float incr = (float)DDB_AUDIO_MEMORY_FRAMES / a.width;
+    float incr = a.width / (float)DDB_AUDIO_MEMORY_FRAMES;
     float pos = 0;
-    for (int x = 0; x < a.width; x++, pos += incr) {
+    for (float x = 0; x < a.width && pos < DDB_AUDIO_MEMORY_FRAMES; x += incr, pos ++) {
         float s = data[(int)pos];
-        cairo_line_to (cr, x, s * a.height/2 / 0x7fff + a.height/2);
+        cairo_line_to (cr, x, s * a.height/2 + a.height/2);
     }
     cairo_stroke (cr);
 
@@ -1953,6 +1965,7 @@ scope_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 
 gboolean
 scope_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
+#if USE_OPENGL
     w_scope_t *w = user_data;
     float data[DDB_AUDIO_MEMORY_FRAMES];
     deadbeef->audio_get_waveform_data (DDB_AUDIO_WAVEFORM, data);
@@ -2009,12 +2022,12 @@ scope_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data
 
     gdk_gl_drawable_gl_end (d);
 
-    return FALSE;
-
+#else
     cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
     gboolean res = scope_draw (widget, cr, user_data);
     cairo_destroy (cr);
-    return res;
+#endif
+    return FALSE;
 }
 
 void
@@ -2024,15 +2037,21 @@ w_scope_init (ddb_gtkui_widget_t *w) {
         g_source_remove (s->drawtimer);
         s->drawtimer = 0;
     }
+#if USE_OPENGL
     if (!gtkui_gl_init ()) {
         s->drawtimer = g_timeout_add (33, w_scope_draw_cb, w);
     }
+#else
+    s->drawtimer = g_timeout_add (33, w_scope_draw_cb, w);
+#endif
 }
 
 void
 scope_realize (GtkWidget *widget, gpointer data) {
     w_scope_t *w = data;
+#if USE_OPENGL
     w->glcontext = gtk_widget_create_gl_context (w->drawarea, NULL, TRUE, GDK_GL_RGBA_TYPE);
+#endif
 }
 
 ddb_gtkui_widget_t *
@@ -2044,10 +2063,12 @@ w_scope_create (void) {
     w->base.init = w_scope_init;
     w->base.destroy  = w_scope_destroy;
     w->drawarea = gtk_drawing_area_new ();
+#if USE_OPENGL
     int attrlist[] = {GDK_GL_ATTRIB_LIST_NONE};
     GdkGLConfig *conf = gdk_gl_config_new_by_mode ((GdkGLConfigMode)(GDK_GL_MODE_RGB |
                         GDK_GL_MODE_DOUBLE));
     gboolean cap = gtk_widget_set_gl_capability (w->drawarea, conf, NULL, TRUE, GDK_GL_RGBA_TYPE);
+#endif
     gtk_widget_show (w->drawarea);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->drawarea);
 #if !GTK_CHECK_VERSION(3,0,0)
@@ -2068,10 +2089,12 @@ w_spectrum_destroy (ddb_gtkui_widget_t *w) {
         g_source_remove (s->drawtimer);
         s->drawtimer = 0;
     }
+#if USE_OPENGL
     if (s->glcontext) {
         gdk_gl_context_destroy (s->glcontext);
         s->glcontext = NULL;
     }
+#endif
 }
 
 gboolean
@@ -2162,6 +2185,7 @@ spectrum_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_d
         }
 	}
 
+#if USE_OPENGL
     GdkGLDrawable *d = gtk_widget_get_gl_drawable (widget);
     gdk_gl_drawable_gl_begin (d, w->glcontext);
 
@@ -2197,6 +2221,29 @@ spectrum_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_d
     gdk_gl_drawable_swap_buffers (d);
 
     gdk_gl_drawable_gl_end (d);
+#else
+    cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
+	float base_s = (height / 40.f);
+
+	cairo_set_source_rgb (cr, 0, 0, 0);
+	cairo_rectangle (cr, 0, 0, a.width, a.height);
+	cairo_fill (cr);
+
+	for (gint i = 0; i <= bands; i++)
+	{
+		gint x = ((width / bands) * i) + 2;
+        int y = a.height - bars[i] * base_s;
+        cairo_set_source_rgb (cr, 0, 0.5, 1);
+        cairo_rectangle (cr, x+1, y, (width / bands) - 1, a.height);
+        cairo_fill (cr);
+        cairo_set_source_rgb (cr, 1, 1, 1);
+        y = a.height - peaks[i] * base_s;
+        cairo_rectangle (cr, x + 1, y, (width / bands) - 1, 1);
+        cairo_fill (cr);
+	}
+
+    cairo_destroy (cr);
+#endif
 
     return FALSE;
 }
@@ -2204,6 +2251,7 @@ spectrum_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_d
 void
 w_spectrum_init (ddb_gtkui_widget_t *w) {
     w_spectrum_t *s = (w_spectrum_t *)w;
+#if USE_OPENGL
     gtkui_gl_init ();
     if (s->drawtimer) {
         g_source_remove (s->drawtimer);
@@ -2212,12 +2260,17 @@ w_spectrum_init (ddb_gtkui_widget_t *w) {
     if (!gtkui_gl_init ()) {
         s->drawtimer = g_timeout_add (33, w_spectrum_draw_cb, w);
     }
+#else
+    s->drawtimer = g_timeout_add (33, w_spectrum_draw_cb, w);
+#endif
 }
 
 void
 spectrum_realize (GtkWidget *widget, gpointer data) {
     w_spectrum_t *w = data;
+#if USE_OPENGL
     w->glcontext = gtk_widget_create_gl_context (w->drawarea, NULL, TRUE, GDK_GL_RGBA_TYPE);
+#endif
 }
 
 ddb_gtkui_widget_t *
@@ -2229,10 +2282,12 @@ w_spectrum_create (void) {
     w->base.init = w_spectrum_init;
     w->base.destroy  = w_spectrum_destroy;
     w->drawarea = gtk_drawing_area_new ();
+#if USE_OPENGL
     int attrlist[] = {GDK_GL_ATTRIB_LIST_NONE};
     GdkGLConfig *conf = gdk_gl_config_new_by_mode ((GdkGLConfigMode)(GDK_GL_MODE_RGB |
                         GDK_GL_MODE_DOUBLE));
     gboolean cap = gtk_widget_set_gl_capability (w->drawarea, conf, NULL, TRUE, GDK_GL_RGBA_TYPE);
+#endif
     gtk_widget_show (w->drawarea);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->drawarea);
 #if !GTK_CHECK_VERSION(3,0,0)
