@@ -30,7 +30,7 @@
 #include "parser.h"
 #include "trkproperties.h"
 #include "coverart.h"
-#undef USE_OPENGL
+#define USE_OPENGL 1
 #if USE_OPENGL
 #include "gtkuigl.h"
 #endif
@@ -898,10 +898,14 @@ w_splitter_replace (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child, ddb_gtk
                 cont->children = newchild;
             }
             newchild->parent = cont;
+            w_remove (cont, child);
+            w_destroy (child);
             GtkWidget *container = ((w_splitter_t *)cont)->locked ? ((w_splitter_t *)cont)->box : cont->widget;
+#if 0
             gtk_container_remove (GTK_CONTAINER(container), c->widget);
             c->widget = NULL;
             w_destroy (c);
+#endif
             gtk_widget_show (newchild->widget);
             if (((w_splitter_t *)cont)->locked) {
                 if (ntab == 0) {
