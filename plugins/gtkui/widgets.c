@@ -178,6 +178,13 @@ w_append (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
 
 void
 w_remove (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
+    // recurse
+    while (child->children) {
+        ddb_gtkui_widget_t *c = child->children;
+        w_remove (child, c);
+        w_destroy (c);
+    }
+
     if (cont->remove) {
         cont->remove (cont, child);
     }
@@ -913,14 +920,8 @@ w_splitter_replace (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child, ddb_gtk
 
 void
 w_splitter_remove (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
-    GtkWidget *container = NULL;
+    GtkWidget *container = ((w_splitter_t *)cont)->locked ? ((w_splitter_t *)cont)->box : cont->widget;
     w_splitter_t *w = (w_splitter_t *)cont;
-    if (w->locked) {
-        container = w->box;
-    }
-    else {
-        container = cont->widget;
-    }
     gtk_container_remove (GTK_CONTAINER (container), child->widget);
 }
 
