@@ -25,16 +25,11 @@
 // this function puts request for cover art into queue, or returns default image
 // of specific size
 //
-// if the image is not available immediately -- callback will be called later,
-// which will redraw all tracks matching the query
+// if the image is not available immediately -- callback will be called later
 //
 // if cover art loader plugin is not available -- NULL will be returned
 GdkPixbuf *
-get_cover_art (const char *fname, const char *artist, const char *album, int width);
-
-GdkPixbuf *
-get_cover_art_callb (const char *fname, const char *artist, const char *album, int width, void
-(*cover_avail_callback) (void *user_data), void *user_data);
+get_cover_art_callb (const char *fname, const char *artist, const char *album, int width, void (*cover_avail_callback) (void *user_data), void *user_data);
 
 void
 coverart_reset_queue (void);

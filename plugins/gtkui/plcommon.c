@@ -73,6 +73,19 @@ rewrite_column_config (DdbListview *listview, const char *name) {
     }
 }
 
+static gboolean
+redraw_playlist_cb (gpointer dt) {
+    void main_refresh (void);
+    main_refresh ();
+    return FALSE;
+}
+
+static void
+redraw_playlist (void *user_data) {
+    g_idle_add (redraw_playlist_cb, NULL);
+}
+
+
 #define ART_PADDING_HORZ 8
 #define ART_PADDING_VERT 0
 
@@ -134,7 +147,7 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
                 if (!album || !*album) {
                     album = deadbeef->pl_find_meta (group_it, "title");
                 }
-                GdkPixbuf *pixbuf = get_cover_art (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, art_width);
+                GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, art_width, redraw_playlist, NULL);
                 if (pixbuf) {
                     int pw = gdk_pixbuf_get_width (pixbuf);
                     int ph = gdk_pixbuf_get_height (pixbuf);

@@ -1274,6 +1274,8 @@ gtkui_connect_cb (void *none) {
     }
     gtkui_playlist_changed ();
     add_mainmenu_actions ();
+    ddb_event_t *e = deadbeef->event_alloc (DB_EV_TRACKINFOCHANGED);
+    deadbeef->event_send(e, 0, 0);
     return FALSE;
 }
 

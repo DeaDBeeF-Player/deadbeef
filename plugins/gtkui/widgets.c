@@ -1798,19 +1798,26 @@ selproperties_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32
     return 0;
 }
 
+static void
+w_selproperties_init (struct ddb_gtkui_widget_s *w) {
+    fill_selproperties_cb (w);
+}
+
 ddb_gtkui_widget_t *
 w_selproperties_create (void) {
     w_selproperties_t *w = malloc (sizeof (w_selproperties_t));
     memset (w, 0, sizeof (w_selproperties_t));
 
     w->base.widget = gtk_scrolled_window_new (NULL, NULL);
+    w->base.init = w_selproperties_init;
+    w->base.message = selproperties_message;
+
     gtk_widget_set_can_focus (w->base.widget, FALSE);
     gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (w->base.widget), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     w->tree = gtk_tree_view_new ();
     gtk_widget_show (w->tree);
     gtk_tree_view_set_enable_search (GTK_TREE_VIEW (w->tree), FALSE);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->tree);
-    w->base.message = selproperties_message;
 
     GtkListStore *store = gtk_list_store_new (4, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT);
     gtk_tree_view_set_model (GTK_TREE_VIEW (w->tree), GTK_TREE_MODEL (store));
@@ -1833,38 +1840,46 @@ w_selproperties_create (void) {
 }
 
 ///// cover art display
-void
-coverart_avail_callback (void *user_data) {
+static gboolean
+coverart_redraw_cb (void *user_data) {
     w_coverart_t *w = user_data;
     gtk_widget_queue_draw (w->drawarea);
+    return FALSE;
+}
+
+void
+coverart_avail_callback (void *user_data) {
+    g_idle_add (coverart_redraw_cb, user_data);
 }
 
 static gboolean
 coverart_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
-    if (!it) {
-        return FALSE;
-    }
     GtkAllocation a;
     gtk_widget_get_allocation (widget, &a);
     int width = a.width;
     int height = a.height;
-    const char *album = deadbeef->pl_find_meta (it, "album");
-    const char *artist = deadbeef->pl_find_meta (it, "artist");
-    if (!album || !*album) {
-        album = deadbeef->pl_find_meta (it, "title");
+    const char *album = NULL, *artist = NULL;
+    if (it) {
+        album = deadbeef->pl_find_meta (it, "album");
+        artist = deadbeef->pl_find_meta (it, "artist");
+        if (!album || !*album) {
+            album = deadbeef->pl_find_meta (it, "title");
+        }
     }
-    GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta ((it), ":URI"), artist, album, min(width,height), coverart_avail_callback, user_data);
+    GdkPixbuf *pixbuf = get_cover_art_callb (it ? deadbeef->pl_find_meta ((it), ":URI") : NULL, artist, album, min(width,height), coverart_avail_callback, user_data);
+
     if (pixbuf) {
         int pw = gdk_pixbuf_get_width (pixbuf);
         int ph = gdk_pixbuf_get_height (pixbuf);
         gdk_cairo_set_source_pixbuf (cr, pixbuf, 0, 0);
         cairo_rectangle (cr, 0, 0, pw, ph);
         cairo_fill (cr);
-//        gdk_draw_pixbuf (gtk_widget_get_window (widget), widget->style->white_gc, pixbuf, 0, 0, a.width/2-pw/2, a.height/2-ph/2, pw, ph, GDK_RGB_DITHER_NONE, 0, 0);
         g_object_unref (pixbuf);
     }
-    deadbeef->pl_item_unref (it);
+    if (it) {
+        deadbeef->pl_item_unref (it);
+    }
     return TRUE;
 }
 
@@ -1874,13 +1889,6 @@ coverart_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_d
     gboolean res = coverart_draw (widget, cr, user_data);
     cairo_destroy (cr);
     return res;
-}
-
-static gboolean
-coverart_redraw_cb (void *user_data) {
-    w_coverart_t *w = user_data;
-    gtk_widget_queue_draw (w->drawarea);
-    return FALSE;
 }
 
 static int

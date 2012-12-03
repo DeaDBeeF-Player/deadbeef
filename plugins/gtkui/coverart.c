@@ -103,13 +103,6 @@ queue_pop (void) {
     deadbeef->mutex_unlock (mutex);
 }
 
-gboolean
-redraw_playlist_cb (gpointer dt) {
-    void main_refresh (void);
-    main_refresh ();
-    return FALSE;
-}
-
 void
 loading_thread (void *none) {
 #ifdef __linux__
@@ -154,6 +147,7 @@ loading_thread (void *none) {
             if (stat (queue->fname, &stat_buf) < 0) {
                 trace ("failed to stat file %s\n", queue->fname);
             }
+
             GdkPixbuf *pixbuf = NULL;
             GError *error = NULL;
             pixbuf = gdk_pixbuf_new_from_file_at_scale (queue->fname, queue->width, queue->width, TRUE, &error);
@@ -256,28 +250,6 @@ get_pixbuf (const char *fname, int width, void (*callback)(void *user_data), voi
     return NULL;
 }
 
-static void
-redraw_playlist (void *user_data) {
-    g_idle_add (redraw_playlist_cb, NULL);
-}
-
-GdkPixbuf *
-get_cover_art (const char *fname, const char *artist, const char *album, int width) {
-    if (!coverart_plugin) {
-        return NULL;
-    }
-    cover_avail_info_t *dt = malloc (sizeof (cover_avail_info_t));
-    dt->width = width;
-    dt->callback = redraw_playlist;
-    dt->user_data = NULL;
-    char *image_fname = coverart_plugin->get_album_art (fname, artist, album, -1, cover_avail_callback, (void*)dt);
-    if (image_fname) {
-        GdkPixbuf *pb = get_pixbuf (image_fname, width, redraw_playlist, NULL);
-        free (image_fname);
-        return pb;
-    }
-    return NULL;
-}
 
 GdkPixbuf *
 get_cover_art_callb (const char *fname, const char *artist, const char *album, int width, void (*callback) (void *user_data), void *user_data) {
