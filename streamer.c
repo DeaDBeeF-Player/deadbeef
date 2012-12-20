@@ -1221,6 +1221,7 @@ streamer_thread (void *ctx) {
         struct timeval tm1;
         DB_output_t *output = plug_get_output ();
         gettimeofday (&tm1, NULL);
+
         if (nextsong >= 0) { // start streaming next song
             trace ("\033[0;34mnextsong=%d\033[37;0m\n", nextsong);
             if (playing_track) {
@@ -1411,7 +1412,7 @@ streamer_thread (void *ctx) {
         int channels = output->fmt.channels;
         int bytes_in_one_second = rate * (output->fmt.bps>>3) * channels;
         const int blocksize = MIN_BLOCK_SIZE;
-        int alloc_time = 1000 / (bytes_in_one_second / blocksize);
+        int alloc_time = 1000 * blocksize / bytes_in_one_second;
         alloc_time /= 1.2;
 
         int skip = 0;
@@ -1444,7 +1445,6 @@ streamer_thread (void *ctx) {
             if (sz % samplesize) {
                 sz -= (sz % samplesize);
             }
-
             int bytesread = 0;
             do {
                 int prev_buns = bytes_until_next_song;
@@ -1977,6 +1977,16 @@ streamer_read_async (char *bytes, int size) {
             }
         }
         else {
+#ifdef ANDROID
+            if (fileinfo->fmt.samplerate != output->fmt.samplerate) {
+                if ((fileinfo->fmt.samplerate / output->fmt.samplerate) == 2 && (fileinfo->fmt.samplerate % output->fmt.samplerate) == 0) {
+                    size <<= 1;
+                }
+                else if ((fileinfo->fmt.samplerate / output->fmt.samplerate) == 4 && (fileinfo->fmt.samplerate % output->fmt.samplerate) == 0) {
+                    size <<= 2;
+                }
+            }
+#endif
             // convert from input fmt to output fmt
             int inputsize = size/outputsamplesize*inputsamplesize;
             char input[inputsize];
@@ -1987,6 +1997,40 @@ streamer_read_async (char *bytes, int size) {
             }
             inputsize = nb;
             bytesread = pcm_convert (&fileinfo->fmt, input, &output->fmt, bytes, inputsize);
+
+#ifdef ANDROID
+            // downsample
+            if (fileinfo->fmt.samplerate != output->fmt.samplerate) {
+                if ((fileinfo->fmt.samplerate / output->fmt.samplerate) == 2 && (fileinfo->fmt.samplerate % output->fmt.samplerate) == 0) {
+                    // 2x downsample
+                    int nframes = bytesread / (output->fmt.bps >> 3) / output->fmt.channels;
+                    int16_t *in = (int16_t *)bytes;
+                    int16_t *out = in;
+                    for (int f = 0; f < nframes/2; f++) {
+                        for (int c = 0; c < output->fmt.channels; c++) {
+                            out[f*output->fmt.channels+c] = (in[f*2*output->fmt.channels+c] + in[(f*2+1)*output->fmt.channels+c]) >> 1;
+                        }
+                    }
+                    bytesread >>= 1;
+                }
+                else if ((fileinfo->fmt.samplerate / output->fmt.samplerate) == 4 && (fileinfo->fmt.samplerate % output->fmt.samplerate) == 0) {
+                    // 4x downsample
+                    int nframes = bytesread / (output->fmt.bps >> 3) / output->fmt.channels;
+                    assert (bytesread % ((output->fmt.bps >> 3) * output->fmt.channels) == 0);
+                    int16_t *in = (int16_t *)bytes;
+                    for (int f = 0; f < nframes/4; f++) {
+                        for (int c = 0; c < output->fmt.channels; c++) {
+                            in[f*output->fmt.channels+c] = (in[f*4*output->fmt.channels+c]
+                                    + in[(f*4+1)*output->fmt.channels+c]
+                                    + in[(f*4+2)*output->fmt.channels+c]
+                                    + in[(f*4+3)*output->fmt.channels+c]) >> 2;
+                        }
+                    }
+                    bytesread >>= 2;
+                }
+            }
+#endif
+
         }
 #if WRITE_DUMP
         if (bytesread) {
