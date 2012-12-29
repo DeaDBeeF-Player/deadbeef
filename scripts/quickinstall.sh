@@ -47,3 +47,4 @@ cp ./plugins/soundtouch/ddb_soundtouch.so /usr/local/lib/deadbeef/
 cp ./plugins/vfs_zip/.libs/vfs_zip.so /usr/local/lib/deadbeef/
 cp ./plugins/mono2stereo/.libs/ddb_mono2stereo.so /usr/local/lib/deadbeef/
 cp ./plugins/alac/.libs/alac.so /usr/local/lib/deadbeef/
+cp ./plugins/wma/.libs/wma.so /usr/local/lib/deadbeef/
