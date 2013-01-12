@@ -436,6 +436,8 @@ cgme_mutevoice (int voice, int mute) {
 
 static int
 cgme_start (void) {
+    conf_fadeout = deadbeef->conf_get_int ("gme.fadeout", 10);
+    conf_loopcount = deadbeef->conf_get_int ("gme.loopcount", 2);
     return 0;
 }
 
