@@ -477,7 +477,7 @@ ddb_tabstrip_draw_tab (GtkWidget *widget, cairo_t *cr, int idx, int selected, in
 int
 ddb_tabstrip_get_tab_width (DdbTabStrip *ts, int tab) {
     int width;
-    char title[100];
+    char title[1000];
     plt_get_title_wrapper (tab, title, sizeof (title));
     int h = 0;
     draw_get_text_extents (&ts->drawctx, title, strlen (title), &width, &h);
@@ -670,7 +670,7 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
     int idx;
     int widths[cnt];
     for (idx = 0; idx < cnt; idx++) {
-        char title[100];
+        char title[1000];
         plt_get_title_wrapper (idx, title, sizeof (title));
         int h = 0;
         draw_get_text_extents (&ts->drawctx, title, strlen (title), &widths[idx], &h);
@@ -698,11 +698,11 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
 #else
             ddb_tabstrip_draw_tab (widget, cr, idx, idx == tab_selected, x, y, w, h);
 #endif
-            char tab_title[100];
+            char tab_title[1000];
             plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
 
             set_tab_text_color (ts, idx, tab_selected);
-            draw_text (&ts->drawctx, x + text_left_padding, y - text_vert_offset, w - (text_left_padding + text_right_padding), 0, tab_title);
+            draw_text (&ts->drawctx, x + text_left_padding, y - text_vert_offset, w - (text_left_padding + text_right_padding - 1), 0, tab_title);
         }
         x += w - tab_overlap_size;
     }
@@ -741,10 +741,10 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
 #else
         ddb_tabstrip_draw_tab (widget, cr, idx, 1, x, y, w, h);
 #endif
-        char tab_title[100];
+        char tab_title[1000];
         plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
         set_tab_text_color (ts, idx, tab_selected);
-        draw_text (&ts->drawctx, x + text_left_padding, y - text_vert_offset, w - (text_left_padding + text_right_padding), 0, tab_title);
+        draw_text (&ts->drawctx, x + text_left_padding, y - text_vert_offset, w - (text_left_padding + text_right_padding - 1), 0, tab_title);
     }
     else {
         need_draw_moving = 1;
@@ -764,10 +764,10 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
 #else
                     ddb_tabstrip_draw_tab (widget, cr, idx, 1, x, y, w, h);
 #endif
-                    char tab_title[100];
+                    char tab_title[1000];
                     plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
                     set_tab_text_color (ts, idx, tab_selected);
-                    draw_text (&ts->drawctx, x + text_left_padding, y - text_vert_offset, w - (text_left_padding + text_right_padding), 0, tab_title);
+                    draw_text (&ts->drawctx, x + text_left_padding, y - text_vert_offset, w - (text_left_padding + text_right_padding - 1), 0, tab_title);
                 }
                 break;
             }
@@ -822,7 +822,7 @@ get_tab_under_cursor (DdbTabStrip *ts, int x) {
     int fw = tabs_left_margin - hscroll;
     int tab_selected = deadbeef->plt_get_curr_idx ();
     for (idx = 0; idx < cnt; idx++) {
-        char title[100];
+        char title[1000];
         plt_get_title_wrapper (idx, title, sizeof (title));
         int w = 0;
         int h = 0;
@@ -854,7 +854,7 @@ on_rename_playlist1_activate           (GtkMenuItem     *menuitem,
     e = lookup_widget (dlg, "title_label");
     gtk_label_set_text (GTK_LABEL(e), _("Title:"));
     e = lookup_widget (dlg, "title");
-    char t[100];
+    char t[1000];
     plt_get_title_wrapper (tab_clicked, t, sizeof (t));
     gtk_entry_set_text (GTK_ENTRY (e), t);
     int res = gtk_dialog_run (GTK_DIALOG (dlg));
@@ -1352,6 +1352,28 @@ on_tabstrip_motion_notify_event          (GtkWidget       *widget,
             deadbeef->conf_set_int ("playlist.current", ts->dragging);
         }
         gtk_widget_queue_draw (widget);
+    }
+    else {
+        int tab = get_tab_under_cursor (DDB_TABSTRIP (widget), event->x);
+        if (tab >= 0) {
+            char s[1000];
+            plt_get_title_wrapper (tab, s, sizeof (s));
+
+            int width;
+            int height;
+            draw_get_text_extents (&ts->drawctx, s, strlen (s), &width, &height);
+            width += text_left_padding + text_right_padding;
+            if (width > max_tab_size) {
+                gtk_widget_set_tooltip_text (widget, s);
+                gtk_widget_set_has_tooltip (widget, TRUE);
+            }
+            else {
+                gtk_widget_set_has_tooltip (widget, FALSE);
+            }
+        }
+        else {
+            gtk_widget_set_has_tooltip (widget, FALSE);
+        }
     }
     return FALSE;
 }
