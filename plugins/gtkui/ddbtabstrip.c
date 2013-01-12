@@ -340,6 +340,7 @@ static int text_vert_offset = -2;
 static int tab_overlap_size = 0; // widget_height/2
 static int tabs_left_margin = 4;
 static int min_tab_size = 80;
+static int max_tab_size = 200;
 
 static int tab_moved = 0;
 
@@ -483,6 +484,9 @@ ddb_tabstrip_get_tab_width (DdbTabStrip *ts, int tab) {
     width += text_left_padding + text_right_padding;
     if (width < min_tab_size) {
         width = min_tab_size;
+    }
+    else if (width > max_tab_size) {
+        width = max_tab_size;
     }
     return width;
 }
@@ -674,6 +678,9 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
         if (widths[idx] < min_tab_size) {
             widths[idx] = min_tab_size;
         }
+        else if (widths[idx] > max_tab_size) {
+            widths[idx] = max_tab_size;
+        }
     }
 
     x = -hscroll + tabs_left_margin;
@@ -695,7 +702,7 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
             plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
 
             set_tab_text_color (ts, idx, tab_selected);
-            draw_text (&ts->drawctx, x + text_left_padding, y - text_vert_offset, w, 0, tab_title);
+            draw_text (&ts->drawctx, x + text_left_padding, y - text_vert_offset, w - (text_left_padding + text_right_padding), 0, tab_title);
         }
         x += w - tab_overlap_size;
     }
@@ -737,7 +744,7 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
         char tab_title[100];
         plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
         set_tab_text_color (ts, idx, tab_selected);
-        draw_text (&ts->drawctx, x + text_left_padding, y - text_vert_offset, w, 0, tab_title);
+        draw_text (&ts->drawctx, x + text_left_padding, y - text_vert_offset, w - (text_left_padding + text_right_padding), 0, tab_title);
     }
     else {
         need_draw_moving = 1;
@@ -760,7 +767,7 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
                     char tab_title[100];
                     plt_get_title_wrapper (idx, tab_title, sizeof (tab_title));
                     set_tab_text_color (ts, idx, tab_selected);
-                    draw_text (&ts->drawctx, x + text_left_padding, y - text_vert_offset, w, 0, tab_title);
+                    draw_text (&ts->drawctx, x + text_left_padding, y - text_vert_offset, w - (text_left_padding + text_right_padding), 0, tab_title);
                 }
                 break;
             }
@@ -823,6 +830,9 @@ get_tab_under_cursor (DdbTabStrip *ts, int x) {
         w += text_left_padding + text_right_padding;
         if (w < min_tab_size) {
             w = min_tab_size;
+        }
+        else if (w > max_tab_size) {
+            w = max_tab_size;
         }
         fw += w;
         fw -= tab_overlap_size;
