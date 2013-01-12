@@ -564,8 +564,6 @@ on_tabstrip_light_color_set            (GtkColorButton  *colorbutton,
     deadbeef->conf_set_str ("gtkui.color.tabstrip_light", str);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
-//    redraw_headers ();
-//    tabstrip_redraw ();
     gtk_widget_queue_draw (mainwin);
 }
 
@@ -581,8 +579,6 @@ on_tabstrip_mid_color_set              (GtkColorButton  *colorbutton,
     deadbeef->conf_set_str ("gtkui.color.tabstrip_mid", str);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
-//    redraw_headers ();
-//    tabstrip_redraw ();
     gtk_widget_queue_draw (mainwin);
 }
 
@@ -598,8 +594,6 @@ on_tabstrip_dark_color_set             (GtkColorButton  *colorbutton,
     deadbeef->conf_set_str ("gtkui.color.tabstrip_dark", str);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
-//    redraw_headers ();
-//    tabstrip_redraw ();
     gtk_widget_queue_draw (mainwin);
 }
 
@@ -614,8 +608,6 @@ on_tabstrip_base_color_set             (GtkColorButton  *colorbutton,
     deadbeef->conf_set_str ("gtkui.color.tabstrip_base", str);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
-//    redraw_headers ();
-//    tabstrip_redraw ();
     gtk_widget_queue_draw (mainwin);
 }
 
@@ -630,8 +622,6 @@ on_tabstrip_text_color_set             (GtkColorButton  *colorbutton,
     deadbeef->conf_set_str ("gtkui.color.tabstrip_text", str);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
-//    redraw_headers ();
-//    tabstrip_redraw ();
     gtk_widget_queue_draw (mainwin);
 }
 
@@ -646,9 +636,7 @@ on_bar_foreground_color_set            (GtkColorButton  *colorbutton,
     deadbeef->conf_set_str ("gtkui.color.bar_foreground", str);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
-    seekbar_redraw ();
-    volumebar_redraw ();
-    eq_redraw ();
+    gtk_widget_queue_draw (mainwin);
 }
 
 
@@ -663,9 +651,7 @@ on_bar_background_color_set            (GtkColorButton  *colorbutton,
     deadbeef->conf_set_str ("gtkui.color.bar_background", str);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
-    seekbar_redraw ();
-    volumebar_redraw ();
-    eq_redraw ();
+    gtk_widget_queue_draw (mainwin);
 }
 
 void
@@ -679,6 +665,7 @@ on_override_listview_colors_toggled    (GtkToggleButton *togglebutton,
     gtkui_init_theme_colors ();
     prefwin_init_theme_colors ();
     playlist_refresh ();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
 
@@ -694,6 +681,7 @@ on_listview_even_row_color_set         (GtkColorButton  *colorbutton,
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
     playlist_refresh ();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
 void
@@ -708,6 +696,7 @@ on_listview_odd_row_color_set          (GtkColorButton  *colorbutton,
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
     playlist_refresh ();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
 void
@@ -722,6 +711,7 @@ on_listview_selected_row_color_set     (GtkColorButton  *colorbutton,
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
     playlist_refresh ();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
 void
@@ -736,6 +726,7 @@ on_listview_text_color_set             (GtkColorButton  *colorbutton,
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
     playlist_refresh ();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
 
@@ -751,6 +742,7 @@ on_listview_selected_text_color_set    (GtkColorButton  *colorbutton,
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
     playlist_refresh ();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
 void
@@ -765,6 +757,7 @@ on_listview_cursor_color_set           (GtkColorButton  *colorbutton,
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
     playlist_refresh ();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
 
@@ -793,8 +786,6 @@ on_override_tabstrip_colors_toggled    (GtkToggleButton *togglebutton,
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
     prefwin_init_theme_colors ();
-//    redraw_headers ();
-//    tabstrip_redraw ();
     gtk_widget_queue_draw (mainwin);
 }
 
