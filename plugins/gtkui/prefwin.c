@@ -202,7 +202,7 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "hide_delete_from_disk")), deadbeef->conf_get_int ("gtkui.hide_remove_from_disk", 0));
 
     // auto-rename playlist from folder name
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "auto_name_playlist_from_folder")), deadbeef->conf_get_int ("gtkui.name_playlist_from_folder", 0));
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "auto_name_playlist_from_folder")), deadbeef->conf_get_int ("gtkui.name_playlist_from_folder", 1));
 
     // refresh rate
     int val = deadbeef->conf_get_int ("gtkui.refresh_rate", 10);
