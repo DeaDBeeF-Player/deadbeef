@@ -411,9 +411,9 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
             time = dur;
         }
         char s[1000];
-        int hr = time/360;
-        int mn = (time-hr*360)/60;
-        int sc = time-hr*360-mn*60;
+        int hr = time/3600;
+        int mn = (time-hr*3600)/60;
+        int sc = time-hr*3600-mn*60;
         snprintf (s, sizeof (s), "%02d:%02d:%02d", hr, mn, sc);
 
         cairo_set_source_rgba (cr, 0, 0, 0, 0.5);
