@@ -105,7 +105,6 @@ wmaplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
 #endif
 
-    info->currentsample = 0;
     info->startsample = it->startsample;
     info->endsample = it->endsample;
     _info->plugin = &plugin;
@@ -115,6 +114,15 @@ wmaplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     for (int i = 0; i < _info->fmt.channels; i++) {
         _info->fmt.channelmask |= 1 << i;
     }
+
+    if (!info->fp->vfs->is_streaming ()) {
+        if (it->endsample > 0) {
+            info->startsample = it->startsample;
+            info->endsample = it->endsample;
+            plugin.seek_sample (_info, 0);
+        }
+    }
+
     return 0;
 }
 
@@ -268,6 +276,7 @@ wmaplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
 #endif
 // }}}
 
+    info->currentsample += (initsize-size) / samplesize;
     return initsize-size;
 }
 
@@ -277,31 +286,21 @@ wmaplug_seek_sample (DB_fileinfo_t *_info, int sample) {
     
     sample += info->startsample;
 
-//    sample = 6703200;
-    trace ("seek sample: %d\n", sample);
-
-    /*flush the wma decoder state*/
     info->remaining = 0;
     info->wmadec.last_superframe_len = 0;
     info->wmadec.last_bitoffset = 0;
 
-    /*zero the frame out buffer so we don't overlap with a 
-      stale samples*/
-    memset(info->wmadec.frame_out, 0,
-            sizeof(fixed32) * MAX_CHANNELS * BLOCK_MAX_SIZE * 2);
+    memset(info->wmadec.frame_out, 0, sizeof(fixed32) * MAX_CHANNELS * BLOCK_MAX_SIZE * 2);
 
     int n_subframes = info->wfx.packet_size / info->wfx.blockalign;
 
     int frame = sample / (info->wmadec.frame_len * n_subframes);
     int64_t offs = frame * info->wfx.packet_size + info->first_frame_offset;
-//    trace ("frame: %d/%d (%d), offs: %lld/%lld\n", frame, (int)((deadbeef->fgetlength (info->fp)-info->first_frame_offset) / info->wfx.packet_size - 1), info->wmadec.frame_len, offs, deadbeef->fgetlength (info->fp));
     deadbeef->fseek (info->fp, offs, SEEK_SET);
 
-    // seek successful
     info->currentsample = sample;
     info->skipsamples = sample - frame * info->wmadec.frame_len * n_subframes;
     _info->readpos = (float)(info->currentsample - info->startsample)/_info->fmt.samplerate;
-//    trace ("seek success, sample=%d, pos=%f\n", info->currentsample, _info->readpos);
 
     return 0;
 }
@@ -333,8 +332,11 @@ wmaplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     //trace ("datalen %d, channels %d, bps %d, rate %d\n", wfx.datalen, wfx.channels, wfx.bitspersample, wfx.rate);
 
     deadbeef->fseek (fp, first_frame_offset, SEEK_SET);
+    int64_t l = deadbeef->fgetlength (fp);
+    deadbeef->fclose (fp);
 
-    int64_t i_count = (deadbeef->fgetlength (fp) - first_frame_offset) / wfx.packet_size;
+    int64_t i_count = (l - first_frame_offset) / wfx.packet_size;
+
     int64_t i_length = wfx.play_duration / 10 *
         i_count / wfx.numpackets - wfx.preroll * 1000;
 
@@ -347,9 +349,31 @@ wmaplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     it->startsample = 0;
     it->endsample = totalsamples-1;
 
+    deadbeef->pl_lock ();
+    const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
+    DB_playItem_t *cue = NULL;
+
+    if (cuesheet) {
+        cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), totalsamples, wfx.rate);
+        if (cue) {
+            deadbeef->pl_item_unref (it);
+            deadbeef->pl_item_unref (cue);
+            deadbeef->pl_unlock ();
+            return cue;
+        }
+    }
+    deadbeef->pl_unlock ();
+
+    cue  = deadbeef->plt_insert_cue (plt, after, it, totalsamples, wfx.rate);
+    if (cue) {
+        deadbeef->pl_item_unref (it);
+        deadbeef->pl_item_unref (cue);
+        return cue;
+    }
+
+
     after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
-    deadbeef->fclose (fp);
     return after;
 }
 
