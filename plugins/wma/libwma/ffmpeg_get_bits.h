@@ -26,9 +26,11 @@
 #ifndef AVCODEC_GET_BITS_H
 #define AVCODEC_GET_BITS_H
 
-//#include <stdint.h>
-//#include <stdlib.h>
-#include "platform.h"
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+//#include "platform.h"
 #include "ffmpeg_intreadwrite.h"
 //#include <assert.h>
 //#include "libavutil/bswap.h"
