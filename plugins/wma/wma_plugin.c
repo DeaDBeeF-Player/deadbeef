@@ -36,8 +36,8 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 static DB_decoder_t plugin;
 DB_functions_t *deadbeef;
@@ -57,6 +57,7 @@ typedef struct {
     int currentsample;
     int startsample;
     int endsample;
+    int skipsamples;
     char buffer[MAX_PACKET_SIZE];
     int remaining;
 } wmaplug_info_t;
@@ -91,7 +92,7 @@ wmaplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->wmadec.bit_rate = info->wfx.bitrate;
     info->wmadec.block_align = info->wfx.blockalign;
     info->wmadec.codec_id = info->wfx.codec_id;
-    printf ("codec id: %x\n",  info->wmadec.codec_id);
+    trace ("codec id: %x\n",  info->wmadec.codec_id);
     info->wmadec.extradata = info->wfx.data;
     if (wma_decode_init (&info->wmadec)) {
         trace ("wma_decode_init fail\n");
@@ -160,7 +161,7 @@ wmaplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
             int pos = deadbeef->ftell (info->fp);
             res = asf_read_packet(&audiobuf, &audiobufsize, &packetlength, &info->wfx, info->fp);
             int endpos = deadbeef->ftell (info->fp);
-//            printf ("packet pos: %d, packet size: %d, data size: %d, blockalign: %d\n", pos, endpos-pos, packetlength, info->wfx.blockalign);
+            trace ("packet pos: %d, packet size: %d, data size: %d, blockalign: %d\n", pos, endpos-pos, packetlength, info->wfx.blockalign);
             }
             if (res > 0) {
                 int nb = audiobufsize / info->wfx.blockalign;
@@ -197,16 +198,27 @@ wmaplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
             }
         }
 
-        int sz = min (size, info->remaining);
-        if (sz == 0) {
-            break;
+//        if (info->skipsamples > 0) {
+//            int skip = info->skipsamples * samplesize;
+//            skip = min (info->remaining, skip);
+//            if (skip < info->remaining) {
+//                memmove (info->buffer, info->buffer + skip, info->remaining - skip);
+//            }
+//            info->remaining -= skip;
+//            info->skipsamples -= skip / samplesize;
+//        }
+        if (info->remaining > 0) {
+            int sz = min (size, info->remaining);
+            if (sz == 0) {
+                break;
+            }
+            memcpy (bytes, info->buffer, sz);
+            if (info->remaining != sz) {
+                memmove (info->buffer, info->buffer+sz, info->remaining-sz);
+            }
+            info->remaining -= sz;
+            size -= sz;
         }
-        memcpy (bytes, info->buffer, sz);
-        if (info->remaining != sz) {
-            memmove (info->buffer, info->buffer+sz, info->remaining-sz);
-        }
-        info->remaining -= sz;
-        size -= sz;
     }
 #else
 // {{{ ffmpeg
@@ -224,7 +236,7 @@ wmaplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
             int pos = deadbeef->ftell (info->fp);
             res = asf_read_packet(&audiobuf, &audiobufsize, &packetlength, &info->wfx, info->fp);
             int endpos = deadbeef->ftell (info->fp);
-            printf ("packet pos: %d, packet size: %d, data size: %d\n", pos, endpos-pos, packetlength);
+            trace ("packet pos: %d, packet size: %d, data size: %d\n", pos, endpos-pos, packetlength);
             }
             if (res > 0) {
                 int nblocks = audiobufsize / info->wfx.blockalign;
@@ -232,7 +244,7 @@ wmaplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
                     int got_frame_ptr = 0;
                     char *data;
                     int bufsize = wma_decode_superframe (&info->wmadec, &got_frame_ptr, audiobuf + i * info->wfx.blockalign, info->wfx.blockalign);
-                    printf ("got frame ptr: %d, bufsize: %d\n", got_frame_ptr, info->wmadec.nb_samples * 4);
+                    trace ("got frame ptr: %d, bufsize: %d\n", got_frame_ptr, info->wmadec.nb_samples * 4);
 
                     int16_t *p = (int16_t *)&info->buffer[info->remaining];
                     memcpy (p, info->wmadec.output_buffer, info->wmadec.nb_samples * 4);
@@ -243,7 +255,7 @@ wmaplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
 
         int sz = min (size, info->remaining);
         if (sz == 0) {
-            printf ("buffer is empty\n");
+            trace ("buffer is empty\n");
             break;
         }
         memcpy (bytes, info->buffer, sz);
@@ -265,7 +277,11 @@ wmaplug_seek_sample (DB_fileinfo_t *_info, int sample) {
     
     sample += info->startsample;
 
+//    sample = 6703200;
+    trace ("seek sample: %d\n", sample);
+
     /*flush the wma decoder state*/
+    info->remaining = 0;
     info->wmadec.last_superframe_len = 0;
     info->wmadec.last_bitoffset = 0;
 
@@ -274,18 +290,18 @@ wmaplug_seek_sample (DB_fileinfo_t *_info, int sample) {
     memset(info->wmadec.frame_out, 0,
             sizeof(fixed32) * MAX_CHANNELS * BLOCK_MAX_SIZE * 2);
 
-    int elapsedtime = asf_seek(sample * 1000 / _info->fmt.samplerate, &info->wfx, info->fp, info->first_frame_offset);
-    if (elapsedtime <= 0) {
-        // restart track
-        info->currentsample = 0;
-        printf ("seek failed\n");
-    }
-    else {
-        // seek successful
-        info->currentsample = elapsedtime * _info->fmt.samplerate / 1000;
-        _info->readpos = (float)(info->currentsample - info->startsample)/_info->fmt.samplerate;
-        printf ("seek success, sample=%d, pos=%f\n", info->currentsample, _info->readpos);
-    }
+    int n_subframes = info->wfx.packet_size / info->wfx.blockalign;
+
+    int frame = sample / (info->wmadec.frame_len * n_subframes);
+    int64_t offs = frame * info->wfx.packet_size + info->first_frame_offset;
+//    trace ("frame: %d/%d (%d), offs: %lld/%lld\n", frame, (int)((deadbeef->fgetlength (info->fp)-info->first_frame_offset) / info->wfx.packet_size - 1), info->wmadec.frame_len, offs, deadbeef->fgetlength (info->fp));
+    deadbeef->fseek (info->fp, offs, SEEK_SET);
+
+    // seek successful
+    info->currentsample = sample;
+    info->skipsamples = sample - frame * info->wmadec.frame_len * n_subframes;
+    _info->readpos = (float)(info->currentsample - info->startsample)/_info->fmt.samplerate;
+//    trace ("seek success, sample=%d, pos=%f\n", info->currentsample, _info->readpos);
 
     return 0;
 }
@@ -314,7 +330,7 @@ wmaplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
 
     get_asf_metadata (fp, it, &wfx, &first_frame_offset);
-    //printf ("datalen %d, channels %d, bps %d, rate %d\n", wfx.datalen, wfx.channels, wfx.bitspersample, wfx.rate);
+    //trace ("datalen %d, channels %d, bps %d, rate %d\n", wfx.datalen, wfx.channels, wfx.bitspersample, wfx.rate);
 
     deadbeef->fseek (fp, first_frame_offset, SEEK_SET);
 
@@ -323,7 +339,7 @@ wmaplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         i_count / wfx.numpackets - wfx.preroll * 1000;
 
     int64_t totalsamples = i_length / 1000 * wfx.rate / 1000;
-//    printf ("totalsamples: %lld\n", totalsamples);
+//    trace ("totalsamples: %lld\n", totalsamples);
 
     deadbeef->plt_set_item_duration (plt, it, totalsamples / (float)wfx.rate);
     deadbeef->pl_append_meta (it, ":FILETYPE", "WMA");
