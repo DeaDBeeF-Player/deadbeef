@@ -57,7 +57,7 @@ typedef struct {
     int startsample;
     int endsample;
     int skipsamples;
-    char *buffer;
+    char buffer[100000]; // can't predict its size, so set to max
     int remaining;
 } wmaplug_info_t;
 
@@ -112,14 +112,6 @@ wmaplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
 
-    int n_subframes = info->wfx.packet_size / info->wfx.blockalign;
-    int bufsize = info->wmadec.frame_len * (info->wfx.bitspersample / 8) * info->wfx.channels * n_subframes;
-    info->buffer = malloc (bufsize);
-    if (!info->buffer) {
-        trace ("wma error: failed to malloc a buffer for %d samples\n", info->wmadec.frame_len);
-        return -1;
-    }
-
     info->startsample = it->startsample;
     info->endsample = it->endsample;
     _info->plugin = &plugin;
@@ -148,10 +140,6 @@ wmaplug_free (DB_fileinfo_t *_info) {
 #if USE_FFMPEG
         ff_wma_end (&info->wmadec);
 #endif
-        if (info->buffer) {
-            free (info->buffer);
-            info->buffer = NULL;
-        }
         if (info->fp) {
             deadbeef->fclose (info->fp);
             info->fp = NULL;
@@ -224,6 +212,11 @@ wmaplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
                     }
                 }
             }
+        }
+
+        if (info->remaining == 0) {
+            // error
+            break;
         }
 
         if (info->skipsamples > 0) {
