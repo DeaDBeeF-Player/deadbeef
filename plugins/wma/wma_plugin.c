@@ -43,8 +43,6 @@
 static DB_decoder_t plugin;
 DB_functions_t *deadbeef;
 
-#define MAX_PACKET_SIZE 100000
-
 typedef struct {
     DB_fileinfo_t info;
     asf_waveformatex_t wfx;
@@ -59,7 +57,7 @@ typedef struct {
     int startsample;
     int endsample;
     int skipsamples;
-    char buffer[MAX_PACKET_SIZE];
+    char *buffer;
     int remaining;
 } wmaplug_info_t;
 
@@ -109,6 +107,19 @@ wmaplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
 #endif
 
+    if (info->wmadec.frame_len <= 0) {
+        trace ("wma error: frame_len = %d\n", info->wmadec.frame_len);
+        return -1;
+    }
+
+    int n_subframes = info->wfx.packet_size / info->wfx.blockalign;
+    int bufsize = info->wmadec.frame_len * (info->wfx.bitspersample / 8) * info->wfx.channels * n_subframes;
+    info->buffer = malloc (bufsize);
+    if (!info->buffer) {
+        trace ("wma error: failed to malloc a buffer for %d samples\n", info->wmadec.frame_len);
+        return -1;
+    }
+
     info->startsample = it->startsample;
     info->endsample = it->endsample;
     _info->plugin = &plugin;
@@ -137,8 +148,13 @@ wmaplug_free (DB_fileinfo_t *_info) {
 #if USE_FFMPEG
         ff_wma_end (&info->wmadec);
 #endif
+        if (info->buffer) {
+            free (info->buffer);
+            info->buffer = NULL;
+        }
         if (info->fp) {
             deadbeef->fclose (info->fp);
+            info->fp = NULL;
         }
         free (info);
     }
@@ -164,7 +180,7 @@ wmaplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
         if (info->remaining == 0) {
             int errcount = 0;
             int res = 0;
-            uint8_t audiobuf_mem[40000];
+            uint8_t audiobuf_mem[info->wfx.packet_size]; // FIXME: it's not a good idea to allocate that much on stack
             uint8_t* audiobuf = audiobuf_mem;
             int audiobufsize = 0;
             int packetlength = 0;
@@ -173,7 +189,7 @@ wmaplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
                 int pos = deadbeef->ftell (info->fp);
                 res = asf_read_packet(&audiobuf, &audiobufsize, &packetlength, &info->wfx, info->fp);
                 int endpos = deadbeef->ftell (info->fp);
-                //trace ("packet pos: %d, packet size: %d, data size: %d, blockalign: %d\n", pos, endpos-pos, packetlength, info->wfx.blockalign);
+                trace ("packet pos: %d, packet size: %d (%d), data size: %d, blockalign: %d\n", pos, endpos-pos, info->wfx.packet_size, packetlength, info->wfx.blockalign);
             }
             if (res > 0) {
                 int nb = audiobufsize / info->wfx.blockalign;
