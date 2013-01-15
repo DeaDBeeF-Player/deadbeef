@@ -1,6 +1,8 @@
 /*
     WMA plugin for deadbeef
+
     Copyright (C) 2013 Alexey Yakovenko <waker@users.sourceforge.net>
+    WMA and ASF libraries (C) RockBox & FFMPEG developers
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -407,9 +409,9 @@ static DB_decoder_t plugin = {
     .plugin.descr = "plays WMA files",
     .plugin.copyright = 
         "WMA plugin for deadbeef\n"
-        "Based on WMA and ASF code from RockBox (C) RockBox developers\n"
         "\n"
         "Copyright (C) 2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "WMA and ASF libraries (C) RockBox & FFMPEG developers\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
         "modify it under the terms of the GNU General Public License\n"
