@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <assert.h>
 #include "libasf/asf.h"
 
 //#define USE_FFMPEG 1
@@ -82,8 +83,10 @@ wmaplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
 
+    trace ("opened %s\n", deadbeef->pl_find_meta (it, ":URI"));
 
-    get_asf_metadata (info->fp, NULL, &info->wfx, &info->first_frame_offset);
+    int res = get_asf_metadata (info->fp, NULL, &info->wfx, &info->first_frame_offset);
+    trace ("get_asf_metadata returned %d\n", res);
     deadbeef->fseek (info->fp, info->first_frame_offset, SEEK_SET);
 #if USE_FFMPEG
     info->wmadec.sample_rate = info->wfx.rate;
@@ -101,6 +104,7 @@ wmaplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     trace ("wma_decode_init success\n");
 #else
     if (wma_decode_init(&info->wmadec,&info->wfx) < 0) {
+        trace ("wma_decode_init returned -1\n");
         return -1;
     }
 #endif
@@ -166,10 +170,10 @@ wmaplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
             int packetlength = 0;
     new_packet:
             {
-            int pos = deadbeef->ftell (info->fp);
-            res = asf_read_packet(&audiobuf, &audiobufsize, &packetlength, &info->wfx, info->fp);
-            int endpos = deadbeef->ftell (info->fp);
-            trace ("packet pos: %d, packet size: %d, data size: %d, blockalign: %d\n", pos, endpos-pos, packetlength, info->wfx.blockalign);
+                int pos = deadbeef->ftell (info->fp);
+                res = asf_read_packet(&audiobuf, &audiobufsize, &packetlength, &info->wfx, info->fp);
+                int endpos = deadbeef->ftell (info->fp);
+                //trace ("packet pos: %d, packet size: %d, data size: %d, blockalign: %d\n", pos, endpos-pos, packetlength, info->wfx.blockalign);
             }
             if (res > 0) {
                 int nb = audiobufsize / info->wfx.blockalign;
@@ -206,15 +210,15 @@ wmaplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
             }
         }
 
-//        if (info->skipsamples > 0) {
-//            int skip = info->skipsamples * samplesize;
-//            skip = min (info->remaining, skip);
-//            if (skip < info->remaining) {
-//                memmove (info->buffer, info->buffer + skip, info->remaining - skip);
-//            }
-//            info->remaining -= skip;
-//            info->skipsamples -= skip / samplesize;
-//        }
+        if (info->skipsamples > 0) {
+            int skip = info->skipsamples * samplesize;
+            skip = min (info->remaining, skip);
+            if (skip != info->remaining) {
+                memmove (info->buffer, info->buffer + skip, info->remaining - skip);
+            }
+            info->remaining -= skip;
+            info->skipsamples -= skip / samplesize;
+        }
         if (info->remaining > 0) {
             int sz = min (size, info->remaining);
             if (sz == 0) {
@@ -226,6 +230,7 @@ wmaplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
             }
             info->remaining -= sz;
             size -= sz;
+            bytes += sz;
         }
     }
 #else
@@ -283,8 +288,10 @@ wmaplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
 static int
 wmaplug_seek_sample (DB_fileinfo_t *_info, int sample) {
     wmaplug_info_t *info = (wmaplug_info_t *)_info;
-    
+
     sample += info->startsample;
+
+    trace ("seek to sample %d\n", sample);
 
     info->remaining = 0;
     info->wmadec.last_superframe_len = 0;
