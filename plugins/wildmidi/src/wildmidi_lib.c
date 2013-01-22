@@ -763,7 +763,7 @@ WM_LoadConfig (const char *config_file, const char *top_config_dir) {
 	if (!config_dir) {
         dir_end = strrchr(config_file,'/');
         if (dir_end != NULL) {
-            config_dir = malloc((dir_end - config_file + 2));
+            config_dir = malloc((dir_end - config_file + 2) + 4);
             if (config_dir == NULL) {
                 WM_ERROR(__FUNCTION__, __LINE__, WM_ERR_MEM, "to parse config", errno);
                 WM_ERROR(__FUNCTION__, __LINE__, WM_ERR_LOAD, config_file, 0);
@@ -806,7 +806,7 @@ WM_LoadConfig (const char *config_file, const char *top_config_dir) {
 		}
 			
 		// copy line into a workable buffer
-		line_buffer = realloc(line_buffer, (config_ptr - line_start_ptr + 1));
+		line_buffer = realloc(line_buffer, (config_ptr - line_start_ptr + 1) + 4);
 		if (line_buffer == NULL) {
 			WM_ERROR(__FUNCTION__, __LINE__, WM_ERR_MEM, "to parse config", errno);
 			WM_ERROR(__FUNCTION__, __LINE__, WM_ERR_LOAD, config_file, 0);
@@ -837,7 +837,7 @@ WM_LoadConfig (const char *config_file, const char *top_config_dir) {
 		// now parse line
 		if (strncasecmp(line_buffer, "dir ", 4) == 0) {
 			if (line_buffer[strlen(line_buffer) - 1] == '/') {
-				config_dir = realloc(config_dir, strlen(&line_buffer[4]) + 1);
+				config_dir = realloc(config_dir, strlen(&line_buffer[4]) + 1 + 4);
 				if (config_dir == NULL) {
 					WM_ERROR(__FUNCTION__, __LINE__, WM_ERR_MEM, "to parse config", errno);
 					WM_ERROR(__FUNCTION__, __LINE__, WM_ERR_LOAD, config_file, 0);
@@ -848,7 +848,7 @@ WM_LoadConfig (const char *config_file, const char *top_config_dir) {
 				}
 				strcpy(config_dir, &line_buffer[4]);
 			} else {
-				config_dir = realloc(config_dir, strlen(&line_buffer[4]) + 2);
+				config_dir = realloc(config_dir, strlen(&line_buffer[4]) + 2 + 4);
 				if (config_dir == NULL) {
 					WM_ERROR(__FUNCTION__, __LINE__, WM_ERR_MEM, "to parse config", errno);
 					WM_ERROR(__FUNCTION__, __LINE__, WM_ERR_LOAD, config_file, 0);
@@ -863,7 +863,7 @@ WM_LoadConfig (const char *config_file, const char *top_config_dir) {
 			continue;
 		} else if (strncasecmp(line_buffer, "source ", 7) == 0) {
 			if (config_dir != NULL && line_buffer[7] != '/') {
-				new_config = malloc(strlen(config_dir) + strlen(&line_buffer[7]) + 1);
+				new_config = malloc(strlen(config_dir) + strlen(&line_buffer[7]) + 1 + 4);
 				if (new_config == NULL) {
 					WM_ERROR(__FUNCTION__, __LINE__, WM_ERR_MEM, "to parse config", errno);
 					WM_ERROR(__FUNCTION__, __LINE__, WM_ERR_LOAD, config_file, 0);
@@ -876,7 +876,7 @@ WM_LoadConfig (const char *config_file, const char *top_config_dir) {
 				strcpy(new_config,config_dir);
 				strcpy(&new_config[strlen(config_dir)], &line_buffer[7]);
 			} else {
-				new_config = malloc(strlen(&line_buffer[7]) + 1);
+				new_config = malloc(strlen(&line_buffer[7]) + 1 + 4);
 				if (new_config == NULL) {
 					WM_ERROR(__FUNCTION__, __LINE__, WM_ERR_MEM, "to parse config", errno);
 					WM_ERROR(__FUNCTION__, __LINE__, WM_ERR_LOAD, config_file, 0);
