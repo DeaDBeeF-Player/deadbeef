@@ -187,6 +187,7 @@ wmaplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
                     wma_decode_superframe_init(&info->wmadec, audiobuf + b * info->wfx.blockalign, info->wfx.blockalign);
 
                     int n = 0;
+                    trace ("subframes: %d\n", info->wmadec.nb_frames);
                     for (int i=0; i < info->wmadec.nb_frames; i++)
                     {
                         int wmares = wma_decode_superframe_frame(&info->wmadec,
@@ -310,14 +311,22 @@ wmaplug_seek_sample (DB_fileinfo_t *_info, int sample) {
 
     memset(info->wmadec.frame_out, 0, sizeof(fixed32) * MAX_CHANNELS * BLOCK_MAX_SIZE * 2);
 
+#if 0
+    // this only works for CBR wma
     int n_subframes = info->wfx.packet_size / info->wfx.blockalign;
 
     int frame = sample / (info->wmadec.frame_len * n_subframes);
     int64_t offs = frame * info->wfx.packet_size + info->first_frame_offset;
     deadbeef->fseek (info->fp, offs, SEEK_SET);
-
-    info->currentsample = sample;
     info->skipsamples = sample - frame * info->wmadec.frame_len * n_subframes;
+    info->currentsample = sample;
+#else
+    int res = asf_seek ((int64_t)sample * 1000 / info->wfx.rate, &info->wfx, info->fp, info->first_frame_offset);
+    info->skipsamples = 0;
+    info->currentsample = (int64_t)res * info->wfx.rate / 1000;
+#endif
+
+
     _info->readpos = (float)(info->currentsample - info->startsample)/_info->fmt.samplerate;
 
     return 0;
@@ -348,6 +357,7 @@ wmaplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     get_asf_metadata (fp, it, &wfx, &first_frame_offset);
     //trace ("datalen %d, channels %d, bps %d, rate %d\n", wfx.datalen, wfx.channels, wfx.bitspersample, wfx.rate);
+    trace ("packet_size: %d, max_packet_size: %d\n", wfx.packet_size, wfx.max_packet_size);
 
     deadbeef->fseek (fp, first_frame_offset, SEEK_SET);
     int64_t l = deadbeef->fgetlength (fp);
