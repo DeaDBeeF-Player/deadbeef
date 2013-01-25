@@ -39,8 +39,8 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 static DB_decoder_t plugin;
 DB_functions_t *deadbeef;
@@ -321,9 +321,17 @@ wmaplug_seek_sample (DB_fileinfo_t *_info, int sample) {
     info->skipsamples = sample - frame * info->wmadec.frame_len * n_subframes;
     info->currentsample = sample;
 #else
-    int res = asf_seek ((int64_t)sample * 1000 / info->wfx.rate, &info->wfx, info->fp, info->first_frame_offset);
-    info->skipsamples = 0;
-    info->currentsample = (int64_t)res * info->wfx.rate / 1000;
+    int skip_ms;
+    int res = asf_seek ((int64_t)sample * 1000 / info->wfx.rate, &info->wfx, info->fp, info->first_frame_offset, &skip_ms);
+    if (res < 0) {
+        info->skipsamples = 0;
+        info->currentsample = 0;
+    }
+    else {
+        printf ("skip_samples: %d\n", (int)((int64_t)skip_ms * info->wfx.rate / 1000));
+        info->skipsamples = (int64_t)skip_ms * info->wfx.rate / 1000;
+        info->currentsample = sample;
+    }
 #endif
 
 
