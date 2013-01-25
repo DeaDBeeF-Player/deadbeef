@@ -404,7 +404,7 @@ int asf_get_timestamp(int *duration, DB_FILE *fp)
 }
 
 /*entry point for seeks*/
-int asf_seek(int ms, asf_waveformatex_t* wfx, DB_FILE *fp, int64_t first_frame_offset)
+int asf_seek(int ms, asf_waveformatex_t* wfx, DB_FILE *fp, int64_t first_frame_offset, int *skip_ms)
 {
     int time, duration, delta, temp, count=0;
 
@@ -437,22 +437,24 @@ int asf_seek(int ms, asf_waveformatex_t* wfx, DB_FILE *fp, int64_t first_frame_o
 
         /*check the time stamp of our packet*/
         time = asf_get_timestamp(&duration, fp);
-        DEBUGF("time %d ms with duration %d\n", time, duration);
+//        DEBUGF("time %d ms with duration %d\n", time, duration);
 
         if (time < 0) {
             /*unknown error, try to recover*/
             DEBUGF("UKNOWN SEEK ERROR\n");
             deadbeef->fseek (fp, first_frame_offset+initial_packet*wfx->packet_size, SEEK_SET);
+            *skip_ms = 0;
             /*seek failed so return time stamp of the initial packet*/
-            return asf_get_timestamp(&duration, fp);
+            return -1;//asf_get_timestamp(&duration, fp);
         }
 
+        DEBUGF("time: %d, duration: %d (ms: %d)\n", time, duration, ms);
         if ((time+duration>=ms && time<=ms) || count > 10) {
-            DEBUGF("Found our packet! Now at %d packet\n", packet_num);
+            DEBUGF("Found our packet! Now at %d packet, time %d, requested %d\n", packet_num, time, ms);
             deadbeef->fseek (fp, pos, SEEK_SET);
+            *skip_ms = ms - time;
             return time;
         } else {
-            DEBUGF("Seek again\n", packet_num);
             /*seek again*/
             delta = ms-time;
             /*estimate new packet number from bitrate and our current position*/
