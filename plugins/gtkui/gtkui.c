@@ -880,7 +880,6 @@ gtkui_thread (void *ctx) {
     g_thread_init (NULL);
     add_pixmap_directory (deadbeef->get_pixmap_dir ());
     gdk_threads_init ();
-    gdk_threads_enter ();
 
     int argc = 2;
     const char **argv = alloca (sizeof (char *) * argc);
@@ -1090,7 +1089,6 @@ gtkui_thread (void *ctx) {
         gtk_widget_destroy (searchwin);
         searchwin = NULL;
     }
-    gdk_threads_leave ();
 }
 
 gboolean
