@@ -775,7 +775,7 @@ streamer_set_current (playItem_t *it) {
         else if (!strcmp (ct, "audio/wma")) {
             plug = "ffmpeg";
         }
-        else if (!strcmp (ct, "audio/x-mpegurl") || !strncmp (ct, "text/html", 9) || !strncmp (ct, "audio/x-scpls", 13)) {
+        else if (!strcmp (ct, "audio/x-mpegurl") || !strncmp (ct, "text/html", 9) || !strncmp (ct, "audio/x-scpls", 13) || !strncmp (ct, "application/octet-stream", 9)) {
             // download playlist into temp file
             char *buf = NULL;
             int fd = -1;
