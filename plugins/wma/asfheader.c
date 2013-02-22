@@ -417,6 +417,7 @@ static int asf_parse_header(DB_FILE *fd, asf_waveformatex_t* wfx, DB_playItem_t 
 
         /* TODO: Check that we have datalen bytes left in the file */
         datalen = header.datalen;
+        DEBUGF("datalen: %d\n", datalen);
 
         for (i=0; i<(int)subobjects; i++) {
             DEBUGF("Parsing header object %d - datalen=%d\n",i,(int)datalen);
@@ -428,7 +429,7 @@ static int asf_parse_header(DB_FILE *fd, asf_waveformatex_t* wfx, DB_playItem_t 
             asf_read_object_header(&current, fd);
 
             if (current.size > datalen || current.size < 24) {
-                DEBUGF("invalid object size - current.size=%d, datalen=%d\n",(int)current.size,(int)datalen);
+                DEBUGF("invalid object size - current.size=%lld, datalen=%lld\n",current.size,datalen);
                 break;
             }
 
