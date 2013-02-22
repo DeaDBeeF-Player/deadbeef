@@ -86,7 +86,7 @@ wmaplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     trace ("opened %s\n", deadbeef->pl_find_meta (it, ":URI"));
 
     int res = get_asf_metadata (info->fp, NULL, &info->wfx, &info->first_frame_offset);
-    trace ("get_asf_metadata returned %d\n", res);
+    trace ("get_asf_metadata returned %d, first_frame_offset: %lld\n", res, info->first_frame_offset);
     deadbeef->fseek (info->fp, info->first_frame_offset, SEEK_SET);
 #if USE_FFMPEG
     info->wmadec.sample_rate = info->wfx.rate;
