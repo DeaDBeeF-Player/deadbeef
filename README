@@ -11,7 +11,7 @@ TABLE OF CONTENTS
 
 * you will need intltool to be installed. if you don't need translations -- run ./configure --disable-nls (in this case you won't need to install intltool, as long as the configure script is already generated)
 
-* if you want to build from git - install autotools and intltool, and run ./autogen.sh to bootstrap
+* if you want to build from git - install autoconf, automake, libtool, intltool, autopoint, then run ./autogen.sh to bootstrap
 
 * run "./configure --help", and read it.
 
