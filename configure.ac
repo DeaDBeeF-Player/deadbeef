@@ -512,7 +512,7 @@ AS_IF([test "${enable_supereq}" != "no"], [
     HAVE_SUPEREQ=yes
 ])
 
-AS_IF([test "${enable_vtx}" = "no"], [
+AS_IF([test "${enable_vtx}" != "no"], [
     HAVE_VTX=yes
 ])
 
