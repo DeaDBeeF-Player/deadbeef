@@ -760,23 +760,29 @@ streamer_set_current (playItem_t *it) {
             goto error;
         }
         trace ("got content-type: %s\n", ct);
-        if (!strcmp (ct, "audio/mpeg")) {
+        char *cct = strdupa (ct);
+        char *sc = strchr (cct, ';');
+        if (sc) {
+            *sc = 0;
+        }
+        if (!strcmp (cct, "audio/mpeg")) {
             plug = "stdmpg";
         }
-        else if (!strcmp (ct, "application/ogg") || !strcmp (ct, "audio/ogg")) {
+        else if (!strcmp (cct, "application/ogg") || !strcmp (cct, "audio/ogg")) {
             plug = "stdogg";
         }
-        else if (!strcmp (ct, "audio/aacp")) {
+        else if (!strcmp (cct, "audio/aacp")) {
             plug = "aac";
         }
-        else if (!strcmp (ct, "audio/aac")) {
+        else if (!strcmp (cct, "audio/aac")) {
             plug = "aac";
         }
-        else if (!strcmp (ct, "audio/wma")) {
+        else if (!strcmp (cct, "audio/wma")) {
             plug = "ffmpeg";
         }
-        else if (!strcmp (ct, "audio/x-mpegurl") || !strncmp (ct, "text/html", 9) || !strncmp (ct, "audio/x-scpls", 13) || !strncmp (ct, "application/octet-stream", 9)) {
+        else if (!strcmp (cct, "audio/x-mpegurl") || !strncmp (cct, "text/html", 9) || !strncmp (cct, "audio/x-scpls", 13) || !strncmp (cct, "application/octet-stream", 9)) {
             // download playlist into temp file
+            trace ("downloading playlist into temp file...\n");
             char *buf = NULL;
             int fd = -1;
             FILE *out = NULL;
@@ -787,7 +793,7 @@ streamer_set_current (playItem_t *it) {
             }
             buf = malloc (size);
             if (!buf) {
-                trace ("failed to alloc %d bytes for playlist buffer\n");
+                trace ("failed to alloc %d bytes for playlist buffer\n", size);
                 goto m3u_error;
             }
             trace ("reading %d bytes\n", size);
@@ -842,6 +848,9 @@ streamer_set_current (playItem_t *it) {
                 plt_free (plt);
                 goto m3u_error;
             }
+
+            // hack: need to sleep here, some servers like to reject frequent connections
+            usleep(conf_get_int ("streamer.wait_ms_after_m3u_link", 400000));
 
             // for every playlist uri: override stream uri with the one from playlist, and try to play it
             playItem_t *i = (playItem_t *)m3u;
@@ -956,7 +965,7 @@ m3u_error:
             trace ("decoder->init returned %p\n", new_fileinfo);
             streamer_buffering = 0;
             if (playlist_track == it) {
-                trace ("redraw track %d; playing_track=%p; playlist_track=%p\n", to, playing_track, playlist_track);
+                trace ("redraw track %p; playing_track=%p; playlist_track=%p\n", to, playing_track, playlist_track);
                 send_trackinfochanged (to);
             }
             err = -1;
@@ -1312,7 +1321,7 @@ streamer_thread (void *ctx) {
         if (seek >= 0) {
             playpos = seek;
             seekpos = -1;
-            trace ("seeking to %f\n", seek);
+            trace ("seeking to %d\n", seek);
             float pos = seek;
 
             if (playing_track != streaming_track) {
