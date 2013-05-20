@@ -188,7 +188,7 @@ extract_f32 (unsigned char *buf) {
 // return value: -1 on error
 static int
 cmp3_scan_stream (buffer_t *buffer, int sample) {
-    trace ("cmp3_scan_stream %d\n", sample);
+    trace ("cmp3_scan_stream %d (offs: %lld)\n", sample, deadbeef->ftell (buffer->file));
 
 // {{{ prepare for scan - seek, reset averages, etc
     int initpos = deadbeef->ftell (buffer->file);
@@ -882,7 +882,7 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         trace ("duration=%f, endsample=%d, totalsamples=%d\n", info->buffer.duration, info->buffer.endsample, info->buffer.totalsamples);
     }
     if (info->buffer.samplerate == 0) {
-        trace ("bad mpeg file: %f\n", deadbeef->pl_find_meta (it, ":URI"));
+        trace ("bad mpeg file: %s\n", deadbeef->pl_find_meta (it, ":URI"));
         return -1;
     }
     _info->fmt.bps = info->buffer.bitspersample;
@@ -1259,7 +1259,7 @@ cmp3_seek_sample (DB_fileinfo_t *_info, int sample) {
             trace ("seek failed!\n");
             return -1;
         }
-        trace ("seek is impossible (avg_samples_per_frame=%d, avg_packetlength=%d)!\n", info->buffer.avg_samples_per_frame, info->buffer.avg_packetlength);
+        trace ("seek is impossible (avg_samples_per_frame=%d, avg_packetlength=%f)!\n", info->buffer.avg_samples_per_frame, info->buffer.avg_packetlength);
         return 0;
     }
 // }}}
