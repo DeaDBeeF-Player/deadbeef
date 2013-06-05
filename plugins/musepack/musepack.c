@@ -311,7 +311,7 @@ mpc_set_trk_properties (DB_playItem_t *it, mpc_streaminfo *si, int64_t fsize) {
     deadbeef->pl_add_meta (it, ":MPC_ENCODER_VERSION", s);
     deadbeef->pl_add_meta (it, ":MPC_PNS_USED", si->pns ? "1" : "0");
     deadbeef->pl_add_meta (it, ":MPC_TRUE_GAPLESS", si->is_true_gapless ? "1" : "0");
-    snprintf (s, sizeof (s), "%d", si->beg_silence);
+    snprintf (s, sizeof (s), "%lld", (int64_t)si->beg_silence);
     deadbeef->pl_add_meta (it, ":MPC_BEG_SILENCE", s);
     snprintf (s, sizeof (s), "%d", si->stream_version);
     deadbeef->pl_add_meta (it, ":MPC_STREAM_VERSION", s);
