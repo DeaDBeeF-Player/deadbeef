@@ -423,11 +423,11 @@ open_error:
 int
 palsa_setformat (ddb_waveformat_t *fmt) {
     memcpy (&requested_fmt, fmt, sizeof (ddb_waveformat_t));
-    trace ("palsa_setformat %dbit %s %dch %dHz channelmask=%X\n", fmt->bps, fmt->is_float ? "float" : "int", fmt->channels, fmt->samplerate, fmt->channelmask);
+    trace ("palsa_setformat %dbit %s %dch %dHz channelmask=%X\n", requested_fmt.bps, fmt->is_float ? "float" : "int", fmt->channels, fmt->samplerate, fmt->channelmask);
     if (!audio) {
         return -1;
     }
-    if (!memcmp (fmt, &plugin.fmt, sizeof (ddb_waveformat_t))) {
+    if (!memcmp (&requested_fmt, &plugin.fmt, sizeof (ddb_waveformat_t))) {
         trace ("palsa_setformat ignored\n");
         return 0;
     }
@@ -453,11 +453,11 @@ palsa_setformat (ddb_waveformat_t *fmt) {
     int s = state;
     state = OUTPUT_STATE_STOPPED;
     snd_pcm_drop (audio);
-    int ret = palsa_set_hw_params (fmt);
+    int ret = palsa_set_hw_params (&requested_fmt);
     if (ret < 0) {
         trace ("palsa_setformat: impossible to set requested format\n");
         // even if it failed -- copy the format
-        memcpy (&plugin.fmt, fmt, sizeof (ddb_waveformat_t));
+        memcpy (&plugin.fmt, &requested_fmt, sizeof (ddb_waveformat_t));
         UNLOCK;
         return -1;
     }
