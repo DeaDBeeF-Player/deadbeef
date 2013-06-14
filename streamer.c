@@ -1421,8 +1421,7 @@ streamer_thread (void *ctx) {
         int channels = output->fmt.channels;
         int bytes_in_one_second = rate * (output->fmt.bps>>3) * channels;
         const int blocksize = MIN_BLOCK_SIZE;
-        int alloc_time = 1000 * blocksize / bytes_in_one_second;
-        alloc_time /= 1.2;
+        int alloc_time = 1000 / (bytes_in_one_second / blocksize);
 
         int skip = 0;
         if (bytes_until_next_song >= 0) {
@@ -1987,6 +1986,7 @@ streamer_read_async (char *bytes, int size) {
         }
         else {
 #ifdef ANDROID
+            // if we not compensate here, the streamer loop will go crazy
             if (fileinfo->fmt.samplerate != output->fmt.samplerate) {
                 if ((fileinfo->fmt.samplerate / output->fmt.samplerate) == 2 && (fileinfo->fmt.samplerate % output->fmt.samplerate) == 0) {
                     size <<= 1;
@@ -2011,6 +2011,13 @@ streamer_read_async (char *bytes, int size) {
             // downsample
             if (fileinfo->fmt.samplerate != output->fmt.samplerate) {
                 if ((fileinfo->fmt.samplerate / output->fmt.samplerate) == 2 && (fileinfo->fmt.samplerate % output->fmt.samplerate) == 0) {
+                    // clip to multiple of 2 samples
+                    int outsamplesize = output->fmt.channels * (output->fmt.bps>>3) * 2;
+                    if ((bytesread % outsamplesize) != 0) {
+                        bytesread -= (bytesread % outsamplesize);
+                    }
+
+
                     // 2x downsample
                     int nframes = bytesread / (output->fmt.bps >> 3) / output->fmt.channels;
                     int16_t *in = (int16_t *)bytes;
@@ -2023,6 +2030,13 @@ streamer_read_async (char *bytes, int size) {
                     bytesread >>= 1;
                 }
                 else if ((fileinfo->fmt.samplerate / output->fmt.samplerate) == 4 && (fileinfo->fmt.samplerate % output->fmt.samplerate) == 0) {
+                    // clip to multiple of 4 samples
+                    int outsamplesize = output->fmt.channels * (output->fmt.bps>>3) * 4;
+                    if ((bytesread % outsamplesize) != 0) {
+                        bytesread -= (bytesread % outsamplesize);
+                    }
+
+
                     // 4x downsample
                     int nframes = bytesread / (output->fmt.bps >> 3) / output->fmt.channels;
                     assert (bytesread % ((output->fmt.bps >> 3) * output->fmt.channels) == 0);
@@ -2038,6 +2052,7 @@ streamer_read_async (char *bytes, int size) {
                     bytesread >>= 2;
                 }
             }
+            assert ((bytesread%2) == 0);
 #endif
 
         }
