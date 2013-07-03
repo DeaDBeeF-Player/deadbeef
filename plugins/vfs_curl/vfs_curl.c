@@ -521,7 +521,7 @@ http_curl_control (void *stream, double dltotal, double dlnow, double ultotal, d
     float sec = tm.tv_sec - fp->last_read_time.tv_sec;
     long response;
     CURLcode code = curl_easy_getinfo (fp->curl, CURLINFO_RESPONSE_CODE, &response);
-    trace ("http_curl_control: status = %d, response = %d, interval: %f seconds\n", fp ? fp->status : -1, response, sec);
+    trace ("http_curl_control: status = %d, response = %d, interval: %f seconds\n", fp ? fp->status : -1, (int)response, sec);
     if (fp->status == STATUS_READING && sec > TIMEOUT) {
         trace ("http_curl_control: timed out, restarting read\n");
         memcpy (&fp->last_read_time, &tm, sizeof (struct timeval));
@@ -682,7 +682,7 @@ http_thread_func (void *ctx) {
             trace ("vfs_curl: restart loop\n");
             fp->skipbytes = 0;
             fp->status = STATUS_INITIAL;
-            trace ("seeking to %d\n", fp->pos);
+            trace ("seeking to %lld\n", fp->pos);
             if (fp->length < 0) {
                 // icy -- need full restart
                 fp->pos = 0;
@@ -857,7 +857,7 @@ http_seek (DB_FILE *stream, int64_t offset, int whence) {
             return 0;
         }
         else {
-            trace ("vfs_curl: cannot do seek(%d,%d)\n", offset, whence);
+            trace ("vfs_curl: cannot do seek(%lld,%d)\n", offset, whence);
             return -1;
         }
     }
@@ -933,7 +933,7 @@ http_getlength (DB_FILE *stream) {
     while (fp->status == STATUS_INITIAL) {
         usleep (3000);
     }
-    trace ("length: %d\n", fp->length);
+    trace ("length: %lld\n", fp->length);
     return fp->length;
 }
 
