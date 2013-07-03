@@ -755,7 +755,7 @@ streamer_set_current (playItem_t *it) {
         if (sc) {
             *sc = 0;
         }
-        if (!strcmp (cct, "audio/mpeg")) {
+        if (!strcmp (cct, "audio/mpeg") || !strcmp (cct, "audio/x-mpeg")) {
             plug = "stdmpg";
         }
         else if (!strcmp (cct, "application/ogg") || !strcmp (cct, "audio/ogg")) {
