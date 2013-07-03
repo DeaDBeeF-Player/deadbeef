@@ -259,7 +259,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             sync = fb[1];
             if ((sync >> 5) != 7) {
                 lastframe_valid = 0;
-  //              trace ("[2]frame %d didn't seek to frame end\n", nframe);
+//                trace ("[2]frame %d didn't seek to frame end\n", nframe);
                 continue;
             }
         }
@@ -410,7 +410,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         valid_frames++;
 
 // {{{ update stream parameters, only when sample!=0 or 1st frame
-//        trace ("have_info: %d, lastframe_valid=%d\n", have_info, lastframe_valid);
+        trace ("have_info: %d, lastframe_valid=%d\n", have_info, lastframe_valid);
         if (!have_info && lastframe_valid)
         {
             // don't get parameters from frames coming after any bad frame
@@ -601,8 +601,8 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                     trace ("totalsamples: %d, samplesperframe: %d, fsize=%lld\n", buffer->totalsamples, samples_per_frame, fsize);
 //                    trace ("bitrate=%d, layer=%d, packetlength=%d, fsize=%d, nframes=%d, samples_per_frame=%d, samplerate=%d, duration=%f, totalsamples=%d\n", bitrate, layer, packetlength, sz, nframe, samples_per_frame, samplerate, buffer->duration, buffer->totalsamples);
 
-                    if (sample == 0) {
-                        deadbeef->fseek (buffer->file, framepos, SEEK_SET);
+                    deadbeef->fseek (buffer->file, framepos, SEEK_SET);
+                    if (sample == 0 && have_info) {
                         trace ("scan finished\n");
                         return 0;
                     }
