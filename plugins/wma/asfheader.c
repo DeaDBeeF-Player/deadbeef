@@ -41,6 +41,13 @@
 #define trace(fmt,...)
 #define DEBUGF trace
 
+#define SKIP_BYTES(fd,x) {\
+    if (x > 0) {\
+        char buf[x];\
+        deadbeef->fread (buf, x, 1, fd);\
+    }\
+}
+
 extern DB_functions_t *deadbeef;
 
 enum {
@@ -271,15 +278,15 @@ static int asf_intdecode(DB_FILE *fd, int type, int length)
 
     if (type == 3) {
         read_uint32le(fd, &tmp32);
-        deadbeef->fseek(fd,length - 4,SEEK_CUR);
+        SKIP_BYTES(fd,length - 4);
         return (int)tmp32;
     } else if (type == 4) {
         read_uint64le(fd, &tmp64);
-        deadbeef->fseek(fd,length - 8,SEEK_CUR);
+        SKIP_BYTES(fd,length - 8);
         return (int)tmp64;
     } else if (type == 5) {
         read_uint16le(fd, &tmp16);
-        deadbeef->fseek(fd,length - 2,SEEK_CUR);
+        SKIP_BYTES(fd,length - 2);
         return (int)tmp16;
     }
 
@@ -376,7 +383,7 @@ static void asf_utf16LEdecode(DB_FILE *fd,
 
     if (utf16bytes > 0) {
         /* Skip any remaining bytes */
-        deadbeef->fseek(fd, utf16bytes, SEEK_CUR);
+        SKIP_BYTES(fd, utf16bytes);
     }
     return;
 }
@@ -408,7 +415,7 @@ static int asf_parse_header(DB_FILE *fd, asf_waveformatex_t* wfx, DB_playItem_t 
     read_uint32le(fd, &subobjects);
 
     /* Two reserved bytes - do we need to read them? */
-    deadbeef->fseek(fd, 2, SEEK_CUR);
+    SKIP_BYTES(fd, 2);
 
     DEBUGF("Read header - size=%d, subobjects=%d\n",(int)header.size, (int)subobjects);
 
@@ -446,7 +453,7 @@ static int asf_parse_header(DB_FILE *fd, asf_waveformatex_t* wfx, DB_playItem_t 
                     
                     /* Get the number of logical packets - uint64_t at offset 32
                      * (Big endian byte order) */
-                    deadbeef->fseek(fd, 32, SEEK_CUR);
+                    SKIP_BYTES(fd, 32);
                     read_uint64le(fd, &wfx->numpackets);
                     read_uint64le(fd, &wfx->play_duration);
                     read_uint64le(fd, &wfx->send_duration);
@@ -456,12 +463,12 @@ static int asf_parse_header(DB_FILE *fd, asf_waveformatex_t* wfx, DB_playItem_t 
 //                    DEBUGF("****** length = %lld\n", wfx->play_duration);
 
                     /* Read the packet size - uint32_t at offset 68 */
-//                    deadbeef->fseek(fd, 20, SEEK_CUR);
+//                    SKIP_BYTES(fd, 20);
                     read_uint32le(fd, &wfx->packet_size);
                     read_uint32le(fd, &wfx->max_packet_size);
 
                     /* Skip bytes remaining in object */
-                    deadbeef->fseek(fd, current.size - 24 - 72 - 4, SEEK_CUR);
+                    SKIP_BYTES(fd, current.size - 24 - 72 - 4);
             } else if (asf_guid_match(&current.guid, &asf_guid_stream_properties)) {
                     guid_t guid;
                     uint32_t propdatalen;
@@ -477,16 +484,16 @@ static int asf_parse_header(DB_FILE *fd, asf_waveformatex_t* wfx, DB_playItem_t 
 
                     asf_readGUID(fd, &guid);
 
-                    deadbeef->fseek(fd, 24, SEEK_CUR);
+                    SKIP_BYTES(fd, 24);
                     read_uint32le(fd, &propdatalen);
-                    deadbeef->fseek(fd, 4, SEEK_CUR);
+                    SKIP_BYTES(fd, 4);
                     read_uint16le(fd, &flags);
 
                     if (!asf_guid_match(&guid, &asf_guid_stream_type_audio)) {
                         DEBUGF("Found stream properties for non audio stream, skipping\n");
-                        deadbeef->fseek(fd,current.size - 24 - 50,SEEK_CUR);
+                        SKIP_BYTES(fd,current.size - 24 - 50);
                     } else if (wfx->audiostream == -1) {
-                        deadbeef->fseek(fd, 4, SEEK_CUR);
+                        SKIP_BYTES(fd, 4);
                         DEBUGF("Found stream properties for audio stream %d\n",flags&0x7f);
 
                         if (propdatalen < 18) {
@@ -509,27 +516,27 @@ static int asf_parse_header(DB_FILE *fd, asf_waveformatex_t* wfx, DB_playItem_t 
 
                         if (wfx->codec_id == ASF_CODEC_ID_WMAV1) {
                             deadbeef->fread(wfx->data, 4, 1, fd);
-                            deadbeef->fseek(fd,current.size - 24 - 72 - 4,SEEK_CUR);
+                            SKIP_BYTES(fd,current.size - 24 - 72 - 4);
                             wfx->audiostream = flags&0x7f;
                         } else if (wfx->codec_id == ASF_CODEC_ID_WMAV2) {
                             deadbeef->fread(wfx->data, 6, 1, fd);
-                            deadbeef->fseek(fd,current.size - 24 - 72 - 6,SEEK_CUR);
+                            SKIP_BYTES(fd,current.size - 24 - 72 - 6);
                             wfx->audiostream = flags&0x7f;
                         } else if (wfx->codec_id == ASF_CODEC_ID_WMAPRO) {
                             /* wma pro decoder needs the extra-data */
                             deadbeef->fread(wfx->data, wfx->datalen, 1, fd);
-                            deadbeef->fseek(fd,current.size - 24 - 72 - wfx->datalen,SEEK_CUR);
+                            SKIP_BYTES(fd,current.size - 24 - 72 - wfx->datalen);
                             wfx->audiostream = flags&0x7f;
                             /* Correct codectype to redirect playback to the proper .codec */
                             codectype = AFMT_WMAPRO;
                         } else if (wfx->codec_id == ASF_CODEC_ID_WMAVOICE) {
                             deadbeef->fread(wfx->data, wfx->datalen, 1, fd);
-                            deadbeef->fseek(fd,current.size - 24 - 72 - wfx->datalen,SEEK_CUR);
+                            SKIP_BYTES(fd,current.size - 24 - 72 - wfx->datalen);
                             wfx->audiostream = flags&0x7f;
                             codectype = AFMT_WMAVOICE;
                         } else {
                             trace("Unsupported WMA codec (Lossless, Voice, etc)\n");
-                            deadbeef->fseek(fd,current.size - 24 - 72,SEEK_CUR);
+                            SKIP_BYTES(fd,current.size - 24 - 72);
                         }
                     }
             } else if (it && asf_guid_match(&current.guid, &asf_guid_content_description)) {
@@ -559,7 +566,7 @@ static int asf_parse_header(DB_FILE *fd, asf_waveformatex_t* wfx, DB_playItem_t 
                         deadbeef->pl_append_meta (it, "artist", s);
                     }
 
-                    deadbeef->fseek(fd, strlength[2], SEEK_CUR); /* 2 - copyright */
+                    SKIP_BYTES(fd, strlength[2]); /* 2 - copyright */
 
                     if (strlength[3] > 0) {  /* 3 - description */
                         unsigned char *s = id3buf;
@@ -567,7 +574,7 @@ static int asf_parse_header(DB_FILE *fd, asf_waveformatex_t* wfx, DB_playItem_t 
                         deadbeef->pl_append_meta (it, "comment", s);
                     }
 
-                    deadbeef->fseek(fd, strlength[4], SEEK_CUR); /* 4 - rating */
+                    SKIP_BYTES(fd, strlength[4]); /* 4 - rating */
             } else if (it && asf_guid_match(&current.guid, &asf_guid_extended_content_description)) {
                     uint16_t count;
                     int i;
@@ -602,7 +609,7 @@ static int asf_parse_header(DB_FILE *fd, asf_waveformatex_t* wfx, DB_playItem_t 
                                 snprintf (n, sizeof (n), "%d", tracknum);
                                 deadbeef->pl_append_meta (it, "track", n);
                             } else {
-                                deadbeef->fseek(fd, length, SEEK_CUR);
+                                SKIP_BYTES(fd, length);
                             }
                         } else if (!strcmp("TotalTracks",utf8buf)) {
                             if (type == 0) {
@@ -615,7 +622,7 @@ static int asf_parse_header(DB_FILE *fd, asf_waveformatex_t* wfx, DB_playItem_t 
                                 snprintf (n, sizeof (n), "%d", tracknum);
                                 deadbeef->pl_append_meta (it, "numtracks", n);
                             } else {
-                                deadbeef->fseek(fd, length, SEEK_CUR);
+                                SKIP_BYTES(fd, length);
                             }
                         } else if (!strcmp("WM/PartOfSet",utf8buf)) {
                             if (type == 0) {
@@ -628,7 +635,7 @@ static int asf_parse_header(DB_FILE *fd, asf_waveformatex_t* wfx, DB_playItem_t 
                                 snprintf (n, sizeof (n), "%d", tracknum);
                                 deadbeef->pl_append_meta (it, "disc", n);
                             } else {
-                                deadbeef->fseek(fd, length, SEEK_CUR);
+                                SKIP_BYTES(fd, length);
                             }
                         } else if ((!strcmp("WM/Genre", utf8buf)) && (type == 0)) {
                             unsigned char *s = id3buf;
@@ -657,7 +664,7 @@ static int asf_parse_header(DB_FILE *fd, asf_waveformatex_t* wfx, DB_playItem_t 
                                 snprintf (n, sizeof (n), "%d", year);
                                 deadbeef->pl_append_meta (it, "year", n);
                             } else {
-                                deadbeef->fseek(fd, length, SEEK_CUR);
+                                SKIP_BYTES(fd, length);
                             }
                         } else if (!strncmp("replaygain_", utf8buf, 11)) {
                             char *s = utf8buf;
@@ -687,10 +694,10 @@ static int asf_parse_header(DB_FILE *fd, asf_waveformatex_t* wfx, DB_playItem_t 
                              * "03 yy yy yy yy". xx is the size of the WM/Picture 
                              * container in bytes. yy equals the raw data length of 
                              * the embedded image. */
-                            deadbeef->fseek(fd, -4, SEEK_CUR);
+                            SKIP_BYTES(fd, -4);
                             deadbeef->fread(&type, 1, 1, fd);
                             if (type == 1) {
-                                deadbeef->fseek(fd, 3, SEEK_CUR);
+                                SKIP_BYTES(fd, 3);
                                 deadbeef->fread(&type, 1, 1, fd);
                                 /* In case the parsing will fail in the next step we 
                                  * might at least be able to skip the whole section. */
@@ -708,7 +715,7 @@ static int asf_parse_header(DB_FILE *fd, asf_waveformatex_t* wfx, DB_playItem_t 
                                  * double zero-termination. */
                                 asf_utf16LEdecode(fd, 32, &utf8, &utf8length);
                                 strlength = (strlen(utf8buf) + 2) * 2;
-                                deadbeef->fseek(fd, strlength-32, SEEK_CUR);
+                                SKIP_BYTES(fd, strlength-32);
                                 if (!strcmp("image/jpeg", utf8buf)) {
                                     id3->albumart.type = AA_TYPE_JPG;
                                 } else if (!strcmp("image/jpg", utf8buf)) {
@@ -723,13 +730,13 @@ static int asf_parse_header(DB_FILE *fd, asf_waveformatex_t* wfx, DB_playItem_t 
 
                                 /* Set the album art size and position. */
                                 if (id3->albumart.type != AA_TYPE_UNKNOWN) {
-                                    id3->albumart.pos  = deadbeef->fseek(fd, 0, SEEK_CUR);
+                                    id3->albumart.pos  = SKIP_BYTES(fd, 0);
                                     id3->albumart.size = datalength;
                                     id3->has_embedded_albumart = true;
                                 }
                             }
                             
-                            deadbeef->fseek(fd, datalength, SEEK_CUR);
+                            SKIP_BYTES(fd, datalength);
 #endif
                         } else {
                             if (type == 0) { // FIXME: custom fields -- after others work
@@ -738,20 +745,20 @@ static int asf_parse_header(DB_FILE *fd, asf_waveformatex_t* wfx, DB_playItem_t 
                                 deadbeef->pl_append_meta (it, utf8buf, s);
                             }
                             else {
-                                deadbeef->fseek(fd, length, SEEK_CUR);
+                                SKIP_BYTES(fd, length);
                             }
                         }
                         bytesleft -= 4 + length;
                     }
 
-                    deadbeef->fseek(fd, bytesleft, SEEK_CUR);
+                    SKIP_BYTES(fd, bytesleft);
             } else if (asf_guid_match(&current.guid, &asf_guid_content_encryption)
                 || asf_guid_match(&current.guid, &asf_guid_extended_content_encryption)) {
                 DEBUGF("File is encrypted\n");
                 return ASF_ERROR_ENCRYPTED;
             } else {
                 DEBUGF("Skipping %d bytes of object\n",(int)(current.size - 24));
-                deadbeef->fseek(fd,current.size - 24,SEEK_CUR);
+                SKIP_BYTES(fd,current.size - 24);
             }
 
             DEBUGF("Parsed object - size = %d\n",(int)current.size);

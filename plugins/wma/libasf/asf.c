@@ -33,6 +33,13 @@ extern DB_functions_t *deadbeef;
 #define trace(fmt,...)
 #define DEBUGF trace
 
+#define SKIP_BYTES(fd,x) {\
+    if (x > 0) {\
+        char buf[x];\
+        deadbeef->fread (buf, x, 1, fd);\
+    }\
+}
+
 /* Read an unaligned 32-bit little endian long from buffer. */
 static unsigned long get_long_le(void* buf)
 {
@@ -108,7 +115,7 @@ int asf_read_packet(uint8_t** audiobuf, int* audiobufsize, int* packetlength,
        }
 
        /* Skip ec_data */
-       deadbeef->fseek(fp, ec_length, SEEK_CUR);
+       SKIP_BYTES(fp, ec_length);
        bytesread += ec_length;
     } else {
         ec_length = 0;
@@ -355,7 +362,7 @@ int asf_get_timestamp(int *duration, DB_FILE *fp)
         }
 
         /* Skip ec_data */
-        deadbeef->fseek (fp, ec_length, SEEK_CUR);
+        SKIP_BYTES(fp, ec_length);
         bytesread += ec_length;
     } else {
         ec_length = 0;
@@ -398,7 +405,7 @@ int asf_get_timestamp(int *duration, DB_FILE *fp)
 
     /*the asf_get_timestamp function advances us 12-13 bytes past the packet start,
       need to undo this here so that we stay synced with the packet*/
-    deadbeef->fseek(fp, -bytesread, SEEK_CUR);
+    deadbeef->fseek (fp, -bytesread, SEEK_CUR);
 
     return send_time;
 }
