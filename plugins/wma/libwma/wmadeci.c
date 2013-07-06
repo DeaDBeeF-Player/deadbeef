@@ -226,6 +226,7 @@ int wma_decode_init(WMADecodeContext* s, asf_waveformatex_t *wfx)
     s->nb_channels = wfx->channels;
     s->bit_rate = wfx->bitrate;
     s->block_align = wfx->blockalign;
+    trace ("wma samplerate: %d\n", wfx->rate);
 
     if (wfx->codec_id == ASF_CODEC_ID_WMAV1) {
         s->version = 1;
@@ -233,8 +234,11 @@ int wma_decode_init(WMADecodeContext* s, asf_waveformatex_t *wfx)
         s->version = 2;
     } else {
         /*one of those other wma flavors that don't have GPLed decoders */
+        trace ("invalid wma codec id: %d\n", wfx->codec_id);
         return -1;
     }
+
+    trace ("wma version: %d\n", s->version);
 
     /* extract flag infos */
     flags2 = 0;
