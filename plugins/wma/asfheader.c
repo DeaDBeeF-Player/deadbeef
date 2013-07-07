@@ -653,6 +653,10 @@ static int asf_parse_header(DB_FILE *fd, asf_waveformatex_t* wfx, DB_playItem_t 
                             unsigned char *s = id3buf;
                             asf_utf16LEdecode(fd, length, &id3buf, &id3buf_remaining);
                             deadbeef->pl_append_meta (it, "composer", s);
+                        } else if ((!strcasecmp("foobar2000/cuesheet", utf8buf)) && (type == 0)) {
+                            unsigned char *s = id3buf;
+                            asf_utf16LEdecode(fd, length, &id3buf, &id3buf_remaining);
+                            deadbeef->pl_append_meta (it, "cuesheet", s);
                         } else if (!strcmp("WM/Year", utf8buf)) {
                             if (type == 0) {
                                 unsigned char *s = id3buf;
