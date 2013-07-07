@@ -357,6 +357,15 @@ wmaplug_seek (DB_fileinfo_t *_info, float t) {
 
 static int
 wmaplug_read_metadata (DB_playItem_t *it) {
+    deadbeef->pl_delete_all_meta (it);
+    DB_FILE *fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    if (!fp) {
+        return -1;
+    }
+    asf_waveformatex_t wfx;
+    int64_t first_frame_offset;
+    get_asf_metadata (fp, it, &wfx, &first_frame_offset);
+    deadbeef->fclose (fp);
     return 0;
 }
 
