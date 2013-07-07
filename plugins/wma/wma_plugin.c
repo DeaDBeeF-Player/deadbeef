@@ -340,7 +340,6 @@ wmaplug_seek_sample (DB_fileinfo_t *_info, int sample) {
         info->currentsample = 0;
     }
     else {
-        printf ("skip_samples: %d\n", (int)((int64_t)skip_ms * info->wfx.rate / 1000));
         info->skipsamples = (int64_t)skip_ms * info->wfx.rate / 1000;
         info->currentsample = sample;
     }

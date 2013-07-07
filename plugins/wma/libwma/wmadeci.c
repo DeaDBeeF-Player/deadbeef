@@ -27,8 +27,8 @@
 #include "wmafixed.h"
 #include "wmadata.h"
 
-#define trace(...) { fprintf (stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf (stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 #define DEBUGF trace
 
 static void wma_lsp_to_curve_init(WMADecodeContext *s, int frame_len);
