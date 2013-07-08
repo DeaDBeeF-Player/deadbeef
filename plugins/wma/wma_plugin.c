@@ -386,17 +386,16 @@ wmaplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     //trace ("datalen %d, channels %d, bps %d, rate %d\n", wfx.datalen, wfx.channels, wfx.bitspersample, wfx.rate);
     trace ("packet_size: %d, max_packet_size: %d\n", wfx.packet_size, wfx.max_packet_size);
 
-    deadbeef->fseek (fp, first_frame_offset, SEEK_SET);
     int64_t l = deadbeef->fgetlength (fp);
     deadbeef->fclose (fp);
 
     int64_t i_count = (l - first_frame_offset) / wfx.packet_size;
 
-    int64_t i_length = wfx.play_duration / 10 *
-        i_count / wfx.numpackets - wfx.preroll * 1000;
+    int64_t i_length = wfx.play_duration / 10 * i_count / wfx.numpackets - wfx.preroll * 1000;
+    trace ("i_length: %lld (%lld / 10 * %lld / %lld - %lld * 1000)\n", i_length, wfx.play_duration, i_count, wfx.numpackets, wfx.preroll);
 
     int64_t totalsamples = i_length / 1000 * wfx.rate / 1000;
-//    trace ("totalsamples: %lld\n", totalsamples);
+    trace ("totalsamples: %lld (%lld / %d)\n", totalsamples, i_length, wfx.rate);
 
     deadbeef->plt_set_item_duration (plt, it, totalsamples / (float)wfx.rate);
     deadbeef->pl_append_meta (it, ":FILETYPE", "WMA");
