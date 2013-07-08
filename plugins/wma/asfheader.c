@@ -822,5 +822,37 @@ int get_asf_metadata(DB_FILE *fd, DB_playItem_t *it, asf_waveformatex_t *wfx, in
      */
     *first_frame_offset = deadbeef->ftell(fd) + 26;
 
+    if (!fd->vfs->is_streaming ()) {
+        // check if we got a fragment
+        if (0 != deadbeef->fseek (fd, 26, SEEK_CUR)) {
+            DEBUGF("ASF: failed to seek to 1st frame\n");
+            return 0;
+        }
+        int duration = 0;
+        int time = asf_get_timestamp(&duration, fd);
+        if (time != 0) {
+            wfx->first_frame_timestamp = time;
+            // need to scan entire file to find out the duration
+            int pmn = (int)(time * 0.001f / 60);
+            int psc = time * 0.001f - pmn * 60;
+            trace ("wma: the file is a fragment, start time: %d:%02d\n", pmn, psc);
+            trace ("play_duration %lld, numpackets %lld, packet_size %d\n",  wfx->play_duration, wfx->numpackets, wfx->packet_size);
+        }
+        if (wfx->play_duration == 0) {
+            wfx->preroll = 0;
+            wfx->numpackets = 1;
+            // calc duration from packets (scan the file)
+            wfx->play_duration += duration * 10000;
+            while (0 == deadbeef->fseek (fd, *first_frame_offset + wfx->packet_size * wfx->numpackets, SEEK_SET)) {
+                time = asf_get_timestamp(&duration, fd);
+                if (time < 0) {
+                    break;
+                }
+                wfx->play_duration += duration * 10000;
+                wfx->numpackets++;
+            }
+        }
+    }
+
     return 1;
 }

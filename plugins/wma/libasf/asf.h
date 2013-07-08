@@ -41,6 +41,7 @@ struct asf_waveformatex_s {
     uint64_t send_duration;
     uint64_t preroll;
     uint32_t flags;
+    int32_t first_frame_timestamp;
 };
 typedef struct asf_waveformatex_s asf_waveformatex_t;
 

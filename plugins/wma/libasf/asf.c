@@ -443,7 +443,7 @@ int asf_seek(int ms, asf_waveformatex_t* wfx, DB_FILE *fp, int64_t first_frame_o
 
         /*check the time stamp of our packet*/
         int64_t pos = deadbeef->ftell (fp);
-        time = asf_get_timestamp(&duration, fp);
+        time = asf_get_timestamp(&duration, fp) - wfx->first_frame_timestamp;
 //        DEBUGF("time %d ms with duration %d\n", time, duration);
 
         if (time < 0) {
@@ -452,7 +452,7 @@ int asf_seek(int ms, asf_waveformatex_t* wfx, DB_FILE *fp, int64_t first_frame_o
             deadbeef->fseek (fp, first_frame_offset+initial_packet*wfx->packet_size, SEEK_SET);
             *skip_ms = 0;
             /*seek failed so return time stamp of the initial packet*/
-            return -1;//asf_get_timestamp(&duration, fp);
+            return -1;
         }
 
         DEBUGF("time: %d, duration: %d (ms: %d)\n", time, duration, ms);
@@ -476,3 +476,4 @@ int asf_seek(int ms, asf_waveformatex_t* wfx, DB_FILE *fp, int64_t first_frame_o
         }
     }
 }
+
