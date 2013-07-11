@@ -42,6 +42,9 @@ w_reg_widget (const char *type, const char *title, ddb_gtkui_widget_t *(*create_
 void
 w_unreg_widget (const char *type);
 
+void
+w_override_signals (GtkWidget *widget, gpointer user_data);
+
 int
 w_is_registered (const char *type);
 

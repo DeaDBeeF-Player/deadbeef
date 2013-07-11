@@ -976,6 +976,7 @@ main (int argc, char *argv[]) {
     streamer_init ();
 
     plug_connect_all ();
+    messagepump_push (DB_EV_PLUGINSLOADED, 0, 0, 0);
 
     if (!noloadpl) {
         restore_resume_state ();

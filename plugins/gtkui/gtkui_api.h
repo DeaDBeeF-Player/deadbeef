@@ -106,6 +106,9 @@ typedef struct {
     // unregister the widget
     void (*w_unreg_widget) (const char *type);
 
+    // this must be called from your <widget>_create for design mode support
+    void (*w_override_signals) (GtkWidget *w, gpointer user_data);
+
     // returns 1 if a widget of the specified is registered
     int (*w_is_registered) (const char *type);
 
