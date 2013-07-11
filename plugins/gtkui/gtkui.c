@@ -85,6 +85,7 @@ int (*gtkui_original_plt_add_file) (ddb_playlist_t *plt, const char *fname, int 
 int (*gtkui_original_pl_add_files_begin) (ddb_playlist_t *plt);
 void (*gtkui_original_pl_add_files_end) (void);
 
+// cached config variable
 int gtkui_embolden_current_track;
 
 #define TRAY_ICON "deadbeef_tray_icon"
@@ -1250,8 +1251,6 @@ gtkui_show_info_window (const char *fname, const char *title, GtkWidget **pwindo
     g_object_unref (buffer);
     gtk_widget_show (widget);
 }
-
-
 static int
 gtkui_start (void) {
     fprintf (stderr, "gtkui plugin compiled for gtk version: %d.%d.%d\n", GTK_MAJOR_VERSION, GTK_MINOR_VERSION, GTK_MICRO_VERSION);
@@ -1745,5 +1744,6 @@ static ddb_gtkui_t plugin = {
     .w_append = w_append,
     .w_replace = w_replace,
     .w_remove = w_remove,
+    .create_pltmenu = gtkui_create_pltmenu,
     .api_version = GTKUI_API_VERSION,
 };

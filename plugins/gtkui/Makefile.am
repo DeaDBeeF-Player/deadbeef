@@ -41,6 +41,7 @@ GTKUI_SOURCES =    gtkui.c gtkui.h\
 				   gtkuigl.c gtkuigl.h\
                    hotkeys.c hotkeys.h\
                    actionhandlers.c actionhandlers.h\
+                   pltmenu.c\
 				   $(SM_SOURCES)
 
 sdkdir = $(pkgincludedir)
