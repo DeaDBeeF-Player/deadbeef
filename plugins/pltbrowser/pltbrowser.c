@@ -79,6 +79,55 @@ w_pltbrowser_init (struct ddb_gtkui_widget_s *w) {
     fill_pltbrowser_cb (w);
 }
 
+void
+on_pltbrowser_cursor_changed (GtkTreeView *treeview, gpointer user_data)
+{
+    GtkTreePath *path;
+    GtkTreeViewColumn *col;
+    gtk_tree_view_get_cursor (treeview, &path, &col);
+    if (!path || !col) {
+        // reset
+        return;
+    }
+    int *indices = gtk_tree_path_get_indices (path);
+    if (indices) {
+        if (indices[0] >= 0) {
+            deadbeef->plt_set_curr_idx (indices[0]);
+            deadbeef->conf_set_int ("playlist.current", indices[0]);
+        }
+        g_free (indices);
+    }
+}
+
+gboolean
+on_pltbrowser_button_press_event         (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data)
+{
+    if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
+        GtkTreePath *path;
+        GtkTreeViewColumn *col;
+        gtk_tree_view_get_cursor (GTK_TREE_VIEW(widget), &path, &col);
+        if (!path || !col) {
+            // reset
+            return FALSE;
+        }
+        int *indices = gtk_tree_path_get_indices (path);
+        int plt_idx;
+        if (indices) {
+            plt_idx = indices[0];
+            g_free (indices);
+        }
+        else {
+            return FALSE;
+        }
+
+        GtkWidget *menu = gtkui_plugin->create_pltmenu (plt_idx);
+        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, event->button, gtk_get_current_event_time());
+    }
+    return FALSE;
+}
+
 static ddb_gtkui_widget_t *
 w_pltbrowser_create (void) {
     w_pltbrowser_t *w = malloc (sizeof (w_pltbrowser_t));
@@ -88,7 +137,7 @@ w_pltbrowser_create (void) {
     w->base.init = w_pltbrowser_init;
     w->base.message = pltbrowser_message;
 
-    gtk_widget_set_can_focus (w->base.widget, FALSE);
+    gtk_widget_set_can_focus (w->base.widget, TRUE);
     gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (w->base.widget), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     w->tree = gtk_tree_view_new ();
     gtk_widget_show (w->tree);
@@ -102,7 +151,15 @@ w_pltbrowser_create (void) {
     GtkCellRenderer *rend1 = gtk_cell_renderer_text_new ();
     GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes (_("Key"), rend1, "text", 0, NULL);
     gtk_tree_view_append_column (GTK_TREE_VIEW (w->tree), col1);
-    gtk_tree_view_set_headers_clickable (GTK_TREE_VIEW (w->tree), TRUE);
+    gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (w->tree), FALSE);
+
+    g_signal_connect ((gpointer) w->tree, "cursor_changed",
+            G_CALLBACK (on_pltbrowser_cursor_changed),
+            NULL);
+    g_signal_connect ((gpointer) w->tree, "event_after",
+            G_CALLBACK (on_pltbrowser_button_press_event),
+            NULL);
+
     gtkui_plugin->w_override_signals (w->base.widget, w);
 
     return (ddb_gtkui_widget_t *)w;
