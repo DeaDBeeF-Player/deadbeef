@@ -112,6 +112,7 @@ AC_ARG_ENABLE(mono2stereo,      [AS_HELP_STRING([--enable-mono2stereo      ], [b
 AC_ARG_ENABLE(shellexecui, [AS_HELP_STRING([--enable-shellexecui      ], [build shellexec GTK UI plugin (default: auto)])], [enable_shellexecui=$enableval], [enable_shellexecui=yes])
 AC_ARG_ENABLE(alac, [AS_HELP_STRING([--enable-alac      ], [build ALAC plugin (default: auto)])], [enable_alac=$enableval], [enable_alac=yes])
 AC_ARG_ENABLE(wma, [AS_HELP_STRING([--enable-wma      ], [build WMA plugin (default: auto)])], [enable_wma=$enableval], [enable_wma=yes])
+AC_ARG_ENABLE(pltbrowser, [AS_HELP_STRING([--enable-pltbrowser      ], [build playlist browser gui plugin (default: auto)])], [enable_pltbrowser=$enableval], [enable_pltbrowser=yes])
 AC_ARG_ENABLE(abstract_socket, [AS_HELP_STRING([--enable-abstract-socket      ], [use abstract UNIX socket for IPC (default: disabled)])], [enable_abstract_socket=$enableval], [enable_abstract_socket=no])
 
 AS_IF([test "${enable_staticlink}" != "no"], [
@@ -615,7 +616,11 @@ AS_IF([test "${enable_wma}" != "no"], [
     HAVE_WMA=yes
 ])
 
-PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/ao plugins/mono2stereo plugins/shellexecui plugins/alac plugins/medialib plugins/wma"
+AS_IF([test "${enable_pltbrowser}" != "no"], [
+    HAVE_PLTBROWSER=yes
+])
+
+PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/ao plugins/mono2stereo plugins/shellexecui plugins/alac plugins/medialib plugins/wma plugins/pltbrowser"
 
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_FLAC, test "x$HAVE_FLACPLUGIN" = "xyes")
@@ -666,6 +671,7 @@ AM_CONDITIONAL(HAVE_SM, test "x$HAVE_SM" = "xyes")
 AM_CONDITIONAL(HAVE_ICE, test "x$HAVE_ICE" = "xyes")
 AM_CONDITIONAL(HAVE_ALAC, test "x$HAVE_ALAC" = "xyes")
 AM_CONDITIONAL(HAVE_WMA, test "x$HAVE_WMA" = "xyes")
+AM_CONDITIONAL(HAVE_PLTBROWSER, test "x$HAVE_PLTBROWSER" = "xyes")
 AM_CONDITIONAL(STATICLINK, test "x$STATICLINK" = "xyes")
 AM_CONDITIONAL(PORTABLE, test "x$PORTABLE" = "xyes")
 AM_CONDITIONAL(PORTABLE_FULL, test "x$PORTABLE_FULL" = "xyes")
@@ -739,6 +745,7 @@ PRINT_PLUGIN_INFO([mono2stereo],[mono2stereo DSP plugin],[test "x$HAVE_MONO2STER
 PRINT_PLUGIN_INFO([shellexecui],[GTK user interface for configuring shellexec plugin],[test "x$HAVE_SHELLEXECUI" = "xyes"])
 PRINT_PLUGIN_INFO([alac],[ALAC plugin],[test "x$HAVE_ALAC" = "xyes"])
 PRINT_PLUGIN_INFO([wma],[WMA plugin],[test "x$HAVE_WMA" = "xyes"])
+PRINT_PLUGIN_INFO([pltbrowser],[playlist browser gui plugin],[test "x$HAVE_PLTBROWSER" = "xyes"])
 
 echo
 
@@ -788,6 +795,7 @@ plugins/mono2stereo/Makefile
 plugins/shellexecui/Makefile
 plugins/alac/Makefile
 plugins/wma/Makefile
+plugins/pltbrowser/Makefile
 intl/Makefile
 po/Makefile.in
 deadbeef.desktop
