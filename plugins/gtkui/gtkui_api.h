@@ -100,22 +100,22 @@ typedef struct {
     // returns main window ptr
     GtkWidget * (*get_mainwin) (void);
 
-    // register the new widget
+    // register new widget type
     void (*w_reg_widget) (const char *type, const char *title, ddb_gtkui_widget_t *(*create_func) (void));
 
-    // unregister the widget
+    // unregister existing widget type
     void (*w_unreg_widget) (const char *type);
 
     // this must be called from your <widget>_create for design mode support
     void (*w_override_signals) (GtkWidget *w, gpointer user_data);
 
-    // returns 1 if a widget of the specified is registered
+    // returns 1 if a widget of specified type is registered
     int (*w_is_registered) (const char *type);
 
-    // returns toplevel widget
+    // returns the toplevel widget
     ddb_gtkui_widget_t * (*w_get_rootwidget) (void);
 
-    // create a widget oof specified type
+    // create a widget of specified type
     ddb_gtkui_widget_t * (*w_create) (const char *type);
 
     // set widget name
@@ -124,16 +124,17 @@ typedef struct {
     // destroy the widget
     void (*w_destroy) (ddb_gtkui_widget_t *w);
 
-    // append the widget to container
+    // append the widget to the container
     void (*w_append) (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child);
 
-    // replace existing child widget with another widget
+    // replace existing child widget in the container with another widget
     void (*w_replace) (ddb_gtkui_widget_t *w, ddb_gtkui_widget_t *from, ddb_gtkui_widget_t *to);
 
     // remove the widget from its container
     void (*w_remove) (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child);
 
-    // function to create the standard playlist context menu
+    // function to create the standard playlist context menu (the same as
+    // appears when right-clicked on playlist tab)
     GtkWidget* (*create_pltmenu) (int plt_idx);
 } ddb_gtkui_t;
 #endif
