@@ -79,6 +79,12 @@ GtkWidget *traymenu;
 GtkWidget *theme_treeview;
 GtkWidget *theme_button;
 
+// overriden API methods
+int (*gtkui_original_plt_add_dir) (ddb_playlist_t *plt, const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+int (*gtkui_original_plt_add_file) (ddb_playlist_t *plt, const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+int (*gtkui_original_pl_add_files_begin) (ddb_playlist_t *plt);
+void (*gtkui_original_pl_add_files_end) (void);
+
 int gtkui_embolden_current_track;
 
 #define TRAY_ICON "deadbeef_tray_icon"
@@ -791,6 +797,24 @@ add_mainmenu_actions_cb (void *data) {
     return FALSE;
 }
 
+void
+gtkui_thread (void *ctx);
+
+int
+gtkui_plt_add_dir (ddb_playlist_t *plt, const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+
+int
+gtkui_plt_add_file (ddb_playlist_t *plt, const char *filename, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+
+int
+gtkui_pl_add_files_begin (ddb_playlist_t *plt);
+
+void
+gtkui_pl_add_files_end (void);
+
+DB_playItem_t *
+gtkui_plt_load (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+
 int
 gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     ddb_gtkui_widget_t *rootwidget = w_get_rootwidget ();
@@ -798,6 +822,31 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
         send_messages_to_widgets (rootwidget, id, ctx, p1, p2);
     }
     switch (id) {
+    case DB_EV_PLUGINSLOADED:
+        // gtk must be running in separate thread
+        gtk_initialized = 0;
+        gtk_tid = deadbeef->thread_start (gtkui_thread, NULL);
+        // wait until gtk finishes initializing
+        while (!gtk_initialized) {
+            usleep (10000);
+        }
+
+        // override default file adding APIs to show progress bar
+        gtkui_original_plt_add_dir = deadbeef->plt_add_dir;
+        deadbeef->plt_add_dir = gtkui_plt_add_dir;
+
+        gtkui_original_plt_add_file = deadbeef->plt_add_file;
+        deadbeef->plt_add_file = gtkui_plt_add_file;
+
+        gtkui_original_pl_add_files_begin = deadbeef->pl_add_files_begin;
+        deadbeef->pl_add_files_begin = gtkui_pl_add_files_begin;
+
+        gtkui_original_pl_add_files_end = deadbeef->pl_add_files_end;
+        deadbeef->pl_add_files_end = gtkui_pl_add_files_end;
+
+        gtkui_original_plt_load = deadbeef->plt_load;
+        deadbeef->plt_load = gtkui_plt_load;
+        break;
     case DB_EV_ACTIVATED:
         g_idle_add (activate_cb, NULL);
         break;
@@ -1113,11 +1162,6 @@ gtkui_add_file_info_cb (DB_playItem_t *it, void *data) {
     return 0;
 }
 
-int (*gtkui_original_plt_add_dir) (ddb_playlist_t *plt, const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
-int (*gtkui_original_plt_add_file) (ddb_playlist_t *plt, const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
-int (*gtkui_original_pl_add_files_begin) (ddb_playlist_t *plt);
-void (*gtkui_original_pl_add_files_end) (void);
-
 DB_playItem_t * (*gtkui_original_plt_load) (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 
 int
@@ -1211,30 +1255,6 @@ gtkui_show_info_window (const char *fname, const char *title, GtkWidget **pwindo
 static int
 gtkui_start (void) {
     fprintf (stderr, "gtkui plugin compiled for gtk version: %d.%d.%d\n", GTK_MAJOR_VERSION, GTK_MINOR_VERSION, GTK_MICRO_VERSION);
-
-    // gtk must be running in separate thread
-    gtk_initialized = 0;
-    gtk_tid = deadbeef->thread_start (gtkui_thread, NULL);
-    // wait until gtk finishes initializing
-    while (!gtk_initialized) {
-        usleep (10000);
-    }
-
-    // override default file adding APIs to show progress bar
-    gtkui_original_plt_add_dir = deadbeef->plt_add_dir;
-    deadbeef->plt_add_dir = gtkui_plt_add_dir;
-
-    gtkui_original_plt_add_file = deadbeef->plt_add_file;
-    deadbeef->plt_add_file = gtkui_plt_add_file;
-
-    gtkui_original_pl_add_files_begin = deadbeef->pl_add_files_begin;
-    deadbeef->pl_add_files_begin = gtkui_pl_add_files_begin;
-
-    gtkui_original_pl_add_files_end = deadbeef->pl_add_files_end;
-    deadbeef->pl_add_files_end = gtkui_pl_add_files_end;
-
-    gtkui_original_plt_load = deadbeef->plt_load;
-    deadbeef->plt_load = gtkui_plt_load;
 
     return 0;
 }
@@ -1716,6 +1736,7 @@ static ddb_gtkui_t plugin = {
     .get_mainwin = gtkui_get_mainwin,
     .w_reg_widget = w_reg_widget,
     .w_unreg_widget = w_unreg_widget,
+    .w_override_signals = w_override_signals,
     .w_is_registered = w_is_registered,
     .w_get_rootwidget = w_get_rootwidget,
     .w_create = w_create,

@@ -244,6 +244,10 @@ w_create_from_string (const char *s, ddb_gtkui_widget_t **parent) {
         return NULL;
     }
     ddb_gtkui_widget_t *w = w_create (t);
+    if (!w) {
+        fprintf (stderr, "failed to create widget for type %s\n", t);
+        return NULL;
+    }
     // nuke all default children
     while (w->children) {
         w_remove (w, w->children);
@@ -558,7 +562,7 @@ w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_da
     return TRUE;
 }
 
-static void
+void
 w_override_signals (GtkWidget *widget, gpointer user_data) {
     g_signal_connect ((gpointer) widget, "button_press_event", G_CALLBACK (w_button_press_event), user_data);
 #if !GTK_CHECK_VERSION(3,0,0)
@@ -1786,7 +1790,6 @@ fill_selproperties_cb (gpointer data) {
 
 static int
 selproperties_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
-    w_tabbed_playlist_t *tp = (w_tabbed_playlist_t *)w;
     switch (id) {
     case DB_EV_PLAYLISTCHANGED:
     case DB_EV_SELCHANGED:
@@ -1831,8 +1834,6 @@ w_selproperties_create (void) {
     gtk_tree_view_column_set_resizable (col2, TRUE);
     gtk_tree_view_append_column (GTK_TREE_VIEW (w->tree), col1);
     gtk_tree_view_append_column (GTK_TREE_VIEW (w->tree), col2);
-    GtkCellRenderer *rend_propkey = gtk_cell_renderer_text_new ();
-    GtkCellRenderer *rend_propvalue = gtk_cell_renderer_text_new ();
     gtk_tree_view_set_headers_clickable (GTK_TREE_VIEW (w->tree), TRUE);
     w_override_signals (w->base.widget, w);
 
