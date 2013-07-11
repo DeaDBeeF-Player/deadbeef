@@ -161,4 +161,10 @@ gtkui_show_info_window (const char *fname, const char *title, GtkWidget **pwindo
 void
 on_gtkui_info_window_delete (GtkWidget *widget, GtkTextDirection previous_direction, GtkWidget **pwindow);
 
+GtkWidget*
+gtkui_create_pltmenu (int plt_idx);
+
+void
+plt_get_title_wrapper (int plt, char *buffer, int len);
+
 #endif

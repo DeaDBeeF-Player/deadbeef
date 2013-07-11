@@ -132,5 +132,8 @@ typedef struct {
 
     // remove the widget from its container
     void (*w_remove) (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child);
+
+    // function to create the standard playlist context menu
+    GtkWidget* (*create_pltmenu) (int plt_idx);
 } ddb_gtkui_t;
 #endif
