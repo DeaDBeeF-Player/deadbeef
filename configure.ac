@@ -83,7 +83,7 @@ AC_ARG_ENABLE(vtx,      [AS_HELP_STRING([--disable-vtx     ], [disable libayemy 
 AC_ARG_ENABLE(adplug,   [AS_HELP_STRING([--disable-adplug  ], [disable adplug plugin (default: enabled)])], [enable_adplug=$enableval], [enable_adplug=yes])
 AC_ARG_ENABLE(hotkeys,  [AS_HELP_STRING([--disable-hotkeys ], [disable global hotkeys plugin (default: enabled)])], [enable_hotkeys=$enableval], [enable_hotkeys=yes])
 AC_ARG_ENABLE(vorbis,   [AS_HELP_STRING([--disable-vorbis  ], [disable Ogg Vorbis player plugin (default: enabled)])], [enable_vorbis=$enableval], [enable_vorbis=yes])
-AC_ARG_ENABLE(ffmpeg,   [AS_HELP_STRING([--disable-ffmpeg  ], [disable FFMPEG plugin for WMA, AMR, etc (default: disabled)])], [enable_ffmpeg=$enableval], [enable_ffmpeg=no])
+AC_ARG_ENABLE(ffmpeg,   [AS_HELP_STRING([--disable-ffmpeg  ], [disable FFMPEG plugin for WMA, AMR, etc (default: enabled)])], [enable_ffmpeg=$enableval], [enable_ffmpeg=yes])
 AC_ARG_ENABLE(flac,     [AS_HELP_STRING([--disable-flac    ], [disable FLAC player plugin (default: enabled)])], [enable_flac=$enableval], [enable_flac=yes])
 AC_ARG_ENABLE(sndfile,  [AS_HELP_STRING([--disable-sndfile ], [disable libsndfile plugin for PCM wave files (default: enabled)])], [enable_sndfile=$enableval], [enable_sndfile=yes])
 AC_ARG_ENABLE(wavpack,  [AS_HELP_STRING([--disable-wavpack ], [disable wavpack plugin (default: enabled)])], [enable_wavpack=$enableval], [enable_wavpack=yes])
@@ -215,7 +215,6 @@ AS_IF([test "${enable_ffmpeg}" != "no"], [
         HAVE_FFMPEG=yes
     ], [
         PKG_CHECK_MODULES(FFMPEG_DEPS, libavcodec >= 51.0.0 libavutil libavformat >= 52.0.0, HAVE_FFMPEG=yes, HAVE_FFMPEG=no)
-    dnl    PKG_CHECK_MODULES(FFMPEG_DEPS, libavcodec libavutil libavformat < 54.6.0, HAVE_FFMPEG=yes, HAVE_FFMPEG=no)
     ])
 ])
 
