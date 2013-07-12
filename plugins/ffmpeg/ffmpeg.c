@@ -52,9 +52,12 @@
 #endif
 
 #if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
-#error FFMPEG-0.11 and higher is unsupported. please downgrade to an older FFMPEG version, or configure deadbeef with --disable-ffmpeg flag
-//#define av_get_bits_per_sample_format av_get_bits_per_sample_fmt
-#else
+#define AVCODEC_MAX_AUDIO_FRAME_SIZE 192000
+#define av_find_stream_info(ctx) avformat_find_stream_info(ctx,NULL)
+#define avcodec_open(ctx,codec) avcodec_open2(ctx,codec,NULL)
+#define av_get_bits_per_sample_format(fmt) (av_get_bytes_per_sample(fmt)*8)
+#define av_close_input_file(ctx) avformat_close_input(&(ctx))
+#endif
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -65,7 +68,7 @@
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 
-#define DEFAULT_EXTS "wma;aa3;oma;ac3;vqf;amr"
+#define DEFAULT_EXTS "aa3;oma;ac3;vqf;amr;opus"
 
 #define EXT_MAX 100
 
@@ -796,8 +799,6 @@ ffmpeg_start (void) {
     av_register_all ();
 #if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
 #warning FFMPEG-0.11 is no longer exposing register_protocol API, which means that it cant work with MMS and HTTP plugins. if you need this functionality, please downgrade FFMPEG, and rebuild the FFMPEG plugin
-//    ffurl_register_protocol(&vfswrapper, sizeof(vfswrapper));
-    avformat_network_init ();
 #elif LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(52, 69, 0)
     av_register_protocol2 (&vfswrapper, sizeof(vfswrapper));
 #else
@@ -943,4 +944,3 @@ ffmpeg_load (DB_functions_t *api) {
     return DB_PLUGIN (&plugin);
 }
 
-#endif
