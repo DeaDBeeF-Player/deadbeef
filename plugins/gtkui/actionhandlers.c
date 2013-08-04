@@ -588,7 +588,7 @@ action_find_handler (DB_plugin_action_t *act, int ctx) {
 
 gboolean
 action_scroll_follows_playback_handler_cb (void *data) {
-    int val = 1 - deadbeef->conf_get_int ("playlist.scroll.followplayback", 0);
+    int val = 1 - deadbeef->conf_get_int ("playlist.scroll.followplayback", 1);
     deadbeef->conf_set_int ("playlist.scroll.followplayback", val);
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "scroll_follows_playback")), val);
     return FALSE;
@@ -602,7 +602,7 @@ action_scroll_follows_playback_handler (DB_plugin_action_t *act, int ctx) {
 
 gboolean
 action_cursor_follows_playback_handler_cb (void *data) {
-    int val = 1 - deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 0);
+    int val = 1 - deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1);
     deadbeef->conf_set_int ("playlist.scroll.cursorfollowplayback", val);
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "cursor_follows_playback")), val);
     return FALSE;
