@@ -923,7 +923,7 @@ lfm_action_lookup (DB_plugin_action_t *action, int ctx)
         goto out;
     }
 
-    system (command);
+    int res = system (command);
 out:
     if (it) {
         deadbeef->pl_item_unref (it);
