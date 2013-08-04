@@ -1461,8 +1461,8 @@ tabbed_songchanged_cb (gpointer p) {
     w_tabbed_playlist_t *tp = (w_tabbed_playlist_t *)ft->w;
     int to_idx = -1;
     if (!ddb_listview_is_scrolling (tp->list) && to) {
-        int cursor_follows_playback = deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 0);
-        int scroll_follows_playback = deadbeef->conf_get_int ("playlist.scroll.followplayback", 0);
+        int cursor_follows_playback = deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1);
+        int scroll_follows_playback = deadbeef->conf_get_int ("playlist.scroll.followplayback", 1);
         int plt = deadbeef->streamer_get_current_playlist ();
         if (plt != -1) {
             if (cursor_follows_playback && plt != deadbeef->plt_get_curr_idx ()) {
@@ -1507,8 +1507,8 @@ songchanged_cb (gpointer data) {
     w_playlist_t *p = (w_playlist_t *)ft->w;
     int to_idx = -1;
     if (!ddb_listview_is_scrolling (DDB_LISTVIEW (p->list)) && to) {
-        int cursor_follows_playback = deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 0);
-        int scroll_follows_playback = deadbeef->conf_get_int ("playlist.scroll.followplayback", 0);
+        int cursor_follows_playback = deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1);
+        int scroll_follows_playback = deadbeef->conf_get_int ("playlist.scroll.followplayback", 1);
         int plt = deadbeef->streamer_get_current_playlist ();
         if (plt != -1) {
             if (cursor_follows_playback && plt != deadbeef->plt_get_curr_idx ()) {
