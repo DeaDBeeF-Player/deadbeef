@@ -495,7 +495,7 @@ on_mainwin_delete_event                (GtkWidget       *widget,
         gtk_widget_hide (widget);
     }
     else {
-        deadbeef->sendmessage (DB_EV_TERMINATE, 0, 0, 0);
+        gtkui_quit ();
     }
     return TRUE;
 }

@@ -260,8 +260,7 @@ action_add_folders_handler (struct DB_plugin_action_s *action, int ctx) {
 
 gboolean
 action_quit_handler_cb (void *user_data) {
-    progress_abort ();
-    deadbeef->sendmessage (DB_EV_TERMINATE, 0, 0, 0);
+    gtkui_quit ();
     return FALSE;
 }
 

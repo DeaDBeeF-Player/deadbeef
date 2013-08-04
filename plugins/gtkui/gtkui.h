@@ -167,4 +167,7 @@ gtkui_create_pltmenu (int plt_idx);
 void
 plt_get_title_wrapper (int plt, char *buffer, int len);
 
+void
+gtkui_quit (void);
+
 #endif
