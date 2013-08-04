@@ -906,7 +906,7 @@ smclient_quit_cancelled (EggSMClient *client, gpointer user_data) {
 
 static void
 smclient_quit (EggSMClient *client, gpointer user_data) {
-    deadbeef->sendmessage (DB_EV_TERMINATE, 0, 0, 0);
+    gtkui_quit ();
 }
 
 static void
@@ -1251,6 +1251,31 @@ gtkui_show_info_window (const char *fname, const char *title, GtkWidget **pwindo
     g_object_unref (buffer);
     gtk_widget_show (widget);
 }
+
+gboolean
+gtkui_quit_cb (void *ctx) {
+    if (deadbeef->have_background_jobs ()) {
+        GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("The player is currently running backgroud tasks. If you quit now, the tasks will be cancelled or interrupted. Data loss may result"));
+        gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (mainwin));
+        gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), _("Do you still want to quit?"));
+        gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
+
+        int response = gtk_dialog_run (GTK_DIALOG (dlg));
+        gtk_widget_destroy (dlg);
+        if (response != GTK_RESPONSE_YES) {
+            return FALSE;
+        }
+    }
+    progress_abort ();
+    deadbeef->sendmessage (DB_EV_TERMINATE, 0, 0, 0);
+    return FALSE;
+}
+
+void
+gtkui_quit (void) {
+    gdk_threads_add_idle (gtkui_quit_cb, NULL);
+}
+
 static int
 gtkui_start (void) {
     fprintf (stderr, "gtkui plugin compiled for gtk version: %d.%d.%d\n", GTK_MAJOR_VERSION, GTK_MINOR_VERSION, GTK_MICRO_VERSION);

@@ -128,6 +128,7 @@ overwrite_prompt_cb (void *ctx) {
 
 static void
 converter_worker (void *ctx) {
+    deadbeef->background_job_increment ();
     converter_ctx_t *conv = ctx;
 
     char root[2000] = "";
@@ -243,6 +244,7 @@ converter_worker (void *ctx) {
     converter_plugin->encoder_preset_free (conv->encoder_preset);
     converter_plugin->dsp_preset_free (conv->dsp_preset);
     free (conv);
+    deadbeef->background_job_decrement ();
 }
 
 int
