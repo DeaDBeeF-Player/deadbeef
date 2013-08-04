@@ -344,6 +344,9 @@ static DB_functions_t deadbeef_api = {
     .audio_get_waveform_data = audio_get_waveform_data,
     .audio_set_mute = audio_set_mute,
     .audio_is_mute = audio_is_mute,
+    .background_job_increment = background_job_increment,
+    .background_job_decrement = background_job_decrement,
+    .have_background_jobs = have_background_jobs,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;
@@ -406,6 +409,9 @@ DB_output_t *output_plugin = NULL;
 
 #define MAX_PLAYLIST_PLUGINS 10
 DB_playlist_t *g_playlist_plugins[MAX_PLAYLIST_PLUGINS+1];
+
+static uintptr_t background_jobs_mutex;
+static int num_background_jobs;
 
 void
 plug_md5 (uint8_t sig[16], const char *in, int len) {
@@ -786,6 +792,8 @@ plug_load_all (void) {
     trace ("\033[0;31mDISABLE_VERSIONCHECK=1! do not distribute!\033[0;m\n");
 #endif
 
+    background_jobs_mutex = mutex_create ();
+
     const char *dirname = deadbeef->get_plugin_dir ();
 
 #ifndef ANDROID
@@ -1062,6 +1070,10 @@ plug_unload_all (void) {
     memset (g_playlist_plugins, 0, sizeof (g_playlist_plugins));
 
     trace ("all plugins had been unloaded\n");
+    if (background_jobs_mutex) {
+        mutex_free (background_jobs_mutex);
+        background_jobs_mutex = 0;
+    }
 }
 
 void
@@ -1259,4 +1271,23 @@ plug_is_local_file (const char *fname) {
     }
 
     return 1;
+}
+
+void
+background_job_increment (void) {
+    mutex_lock (background_jobs_mutex);
+    num_background_jobs++;
+    mutex_unlock (background_jobs_mutex);
+}
+
+void
+background_job_decrement (void) {
+    mutex_lock (background_jobs_mutex);
+    num_background_jobs--;
+    mutex_unlock (background_jobs_mutex);
+}
+
+int
+have_background_jobs (void) {
+    return num_background_jobs;
 }

@@ -795,9 +795,17 @@ typedef struct {
     // data size must be float[DDB_AUDIO_MEMORY_FRAMES]
     void (*audio_get_waveform_data) (int type, float *data);
 
+    // this is useful to mute/unmute audio, and query the muted status, from
+    // plugins, without touching the volume control
     void (*audio_set_mute) (int mute);
     int (*audio_is_mute) (void);
 
+    // this is useful for prompting a user when he attempts to quit the player
+    // while something is working in background, e.g. the Converter,
+    // and let him finish or cancel the background jobs.
+    void (*background_job_increment) (void);
+    void (*background_job_decrement) (void);
+    int (*have_background_jobs) (void);
 } DB_functions_t;
 
 // NOTE: an item placement must be selected like this
