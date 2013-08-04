@@ -136,4 +136,13 @@ plug_get_gui_names (void);
 void
 plug_event_call (ddb_event_t *ev);
 
+void
+background_job_increment (void);
+
+void
+background_job_decrement (void);
+
+int
+have_background_jobs (void);
+
 #endif // __PLUGINS_H
