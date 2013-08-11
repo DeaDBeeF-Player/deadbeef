@@ -1642,7 +1642,7 @@ w_tabbed_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, ui
         g_idle_add (tabbed_trackfocus_cb, w);
         break;
     case DB_EV_SELCHANGED:
-        if (p2 == PL_SEARCH && p1 == deadbeef->plt_get_curr_idx ()) {
+        if (ctx != (uintptr_t)tp->list) {
             g_idle_add (refresh_cb, tp->list);
         }
         break;
@@ -1695,7 +1695,7 @@ w_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
         g_idle_add (trackfocus_cb, w);
         break;
     case DB_EV_SELCHANGED:
-        if (p2 == PL_SEARCH && p1 == deadbeef->plt_get_curr_idx ()) {
+        if (ctx != (uintptr_t)p->list) {
             g_idle_add (refresh_cb, p->list);
         }
         break;

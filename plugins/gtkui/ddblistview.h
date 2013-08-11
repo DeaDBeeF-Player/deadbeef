@@ -79,7 +79,7 @@ typedef struct {
     void (*list_context_menu) (DdbListview *listview, DdbListviewIter iter, int idx);
     void (*header_context_menu) (DdbListview *listview, int col);
     void (*handle_doubleclick) (DdbListview *listview, DdbListviewIter iter, int idx);
-    void (*selection_changed) (DdbListviewIter it, int idx);
+    void (*selection_changed) (DdbListview *listview, DdbListviewIter it, int idx);
     void (*delete_selected) (void);
     void (*columns_changed) (DdbListview *listview);
     void (*column_size_changed) (DdbListview *listview, int col);

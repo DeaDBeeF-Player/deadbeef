@@ -341,8 +341,8 @@ void search_handle_doubleclick (DdbListview *listview, DdbListviewIter iter, int
     deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, deadbeef->pl_get_idx_of ((DB_playItem_t *)iter), 0);
 }
 
-void search_selection_changed (DdbListviewIter it, int idx) {
-    deadbeef->sendmessage (DB_EV_SELCHANGED, 0, 0, 0);
+void search_selection_changed (DdbListview *ps, DdbListviewIter it, int idx) {
+    deadbeef->sendmessage (DB_EV_SELCHANGED, (uintptr_t)ps, -1, -1);
 }
 
 void
