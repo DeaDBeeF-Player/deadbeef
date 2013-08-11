@@ -25,13 +25,16 @@
 #ifndef __GTKUI_API_H
 #define __GTKUI_API_H
 
-#define GTKUI_API_VERSION 0
+#define DDB_GTKUI_API_VERSION 0
 
 #if GTK_CHECK_VERSION(3,0,0)
-#define GTKUI_PLUGIN_ID "gtkui3_1"
+#define DDB_GTKUI_PLUGIN_ID "gtkui3_1"
 #else
-#define GTKUI_PLUGIN_ID "gtkui_1"
+#define DDB_GTKUI_PLUGIN_ID "gtkui_1"
 #endif
+
+// this flag tells that the widget should be added to h/vboxes with expand=FALSE
+#define DDB_GTKUI_WIDGET_FLAG_NON_EXPANDABLE 0x00000001
 
 typedef struct ddb_gtkui_widget_s {
     const char *type;

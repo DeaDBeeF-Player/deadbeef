@@ -737,6 +737,7 @@ w_placeholder_create (void) {
 
     w->base.widget = gtk_event_box_new ();
     w->drawarea  = gtk_drawing_area_new ();
+    gtk_widget_set_size_request (w->drawarea, 20, 20);
     gtk_widget_show (w->drawarea);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->drawarea);
 
@@ -1325,6 +1326,7 @@ ddb_gtkui_widget_t *
 w_tabstrip_create (void) {
     w_tabstrip_t *w = malloc (sizeof (w_tabstrip_t));
     memset (w, 0, sizeof (w_tabstrip_t));
+    w->base.flags = DDB_GTKUI_WIDGET_FLAG_NON_EXPANDABLE;
     w->base.widget = gtk_event_box_new ();
     GtkWidget *ts = ddb_tabstrip_new ();
     gtk_widget_show (ts);
@@ -2344,7 +2346,7 @@ w_spectrum_create (void) {
 static void
 w_hvbox_append (struct ddb_gtkui_widget_s *container, struct ddb_gtkui_widget_s *child) {
     w_hvbox_t *b = (w_hvbox_t *)container;
-    gtk_box_pack_start (GTK_BOX (b->box), child->widget, TRUE, TRUE, 0);
+    gtk_box_pack_start (GTK_BOX (b->box), child->widget, (child->flags & DDB_GTKUI_WIDGET_FLAG_NON_EXPANDABLE) ? FALSE : TRUE, TRUE, 0);
     gtk_widget_show (child->widget);
 }
 
