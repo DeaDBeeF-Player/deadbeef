@@ -395,6 +395,7 @@ DB_plugin_t *g_plugins[MAX_PLUGINS+1];
 char *g_gui_names[MAX_GUI_PLUGINS+1];
 int g_num_gui_names;
 
+#define MAX_DECODER_PLUGINS 50
 DB_decoder_t *g_decoder_plugins[MAX_DECODER_PLUGINS+1];
 
 #define MAX_VFS_PLUGINS 10
