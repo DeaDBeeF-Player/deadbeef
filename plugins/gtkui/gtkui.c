@@ -1720,9 +1720,9 @@ static ddb_gtkui_t plugin = {
     .gui.plugin.api_vmajor = 1,
     .gui.plugin.api_vminor = 4,
     .gui.plugin.version_major = 2,
-    .gui.plugin.version_minor = GTKUI_API_VERSION,
+    .gui.plugin.version_minor = DDB_GTKUI_API_VERSION,
     .gui.plugin.type = DB_PLUGIN_MISC,
-    .gui.plugin.id = GTKUI_PLUGIN_ID,
+    .gui.plugin.id = DDB_GTKUI_PLUGIN_ID,
 #if GTK_CHECK_VERSION(3,0,0)
     .gui.plugin.name = "GTK3 user interface",
     .gui.plugin.descr = "User interface using GTK+ 3.x",

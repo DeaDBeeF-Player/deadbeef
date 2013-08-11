@@ -167,7 +167,7 @@ w_pltbrowser_create (void) {
 
 static int
 pltbrowser_connect (void) {
-    gtkui_plugin = (ddb_gtkui_t *)deadbeef->plug_get_for_id (GTKUI_PLUGIN_ID);
+    gtkui_plugin = (ddb_gtkui_t *)deadbeef->plug_get_for_id (DDB_GTKUI_PLUGIN_ID);
     if(!gtkui_plugin) {
         fprintf (stderr, "pltbrowser: can't find gtkui plugin\n");
         return -1;

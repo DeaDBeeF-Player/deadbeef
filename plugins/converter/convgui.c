@@ -1446,7 +1446,7 @@ convgui_get_actions (DB_playItem_t *it)
 
 int
 convgui_connect (void) {
-    gtkui_plugin = (ddb_gtkui_t *)deadbeef->plug_get_for_id (GTKUI_PLUGIN_ID);
+    gtkui_plugin = (ddb_gtkui_t *)deadbeef->plug_get_for_id (DDB_GTKUI_PLUGIN_ID);
     converter_plugin = (ddb_converter_t *)deadbeef->plug_get_for_id ("converter");
     if (!gtkui_plugin) {
         fprintf (stderr, "convgui: gtkui plugin not found\n");
