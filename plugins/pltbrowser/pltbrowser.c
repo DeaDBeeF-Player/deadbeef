@@ -172,7 +172,7 @@ pltbrowser_connect (void) {
         fprintf (stderr, "pltbrowser: can't find gtkui plugin\n");
         return -1;
     }
-    gtkui_plugin->w_reg_widget ("pltbrowser", _("Playlist browser"), w_pltbrowser_create);
+    gtkui_plugin->w_reg_widget (_("Playlist browser"), w_pltbrowser_create, "pltbrowser", NULL);
 
     return 0;
 }

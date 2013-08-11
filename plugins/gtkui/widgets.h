@@ -37,7 +37,7 @@ void
 w_set_design_mode (int active);
 
 void
-w_reg_widget (const char *type, const char *title, ddb_gtkui_widget_t *(*create_func) (void));
+w_reg_widget (const char *title, ddb_gtkui_widget_t *(*create_func) (void), ...);
 
 void
 w_unreg_widget (const char *type);
