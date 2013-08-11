@@ -165,31 +165,23 @@ w_pltbrowser_create (void) {
     return (ddb_gtkui_widget_t *)w;
 }
 
-static gboolean
-pltbrowser_connect_cb (void *ctx) {
-    return FALSE;
-}
-
 static int
 pltbrowser_connect (void) {
-#if GTK_CHECK_VERSION(3,0,0)
-    gtkui_plugin = (ddb_gtkui_t *)deadbeef->plug_get_for_id ("gtkui3");
-#else
-    gtkui_plugin = (ddb_gtkui_t *)deadbeef->plug_get_for_id ("gtkui");
-#endif
+    gtkui_plugin = (ddb_gtkui_t *)deadbeef->plug_get_for_id (GTKUI_PLUGIN_ID);
     if(!gtkui_plugin) {
+        fprintf (stderr, "pltbrowser: can't find gtkui plugin\n");
         return -1;
     }
     gtkui_plugin->w_reg_widget ("pltbrowser", _("Playlist browser"), w_pltbrowser_create);
-    // need to do it in gtk thread
-    g_idle_add (pltbrowser_connect_cb, NULL);
 
     return 0;
 }
 
 static int
 pltbrowser_disconnect (void) {
-    gtkui_plugin->w_unreg_widget ("pltbrowser");
+    if (gtkui_plugin) {
+        gtkui_plugin->w_unreg_widget ("pltbrowser");
+    }
     return 0;
 }
 
@@ -200,6 +192,7 @@ static DB_misc_t plugin = {
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_MISC,
     .plugin.id = "pltbrowser",
+    .plugin.name = "pltbrowser",
     .plugin.descr = "Playlist browser",
     .plugin.copyright = 
         "DeaDBeeF -- the music player\n"

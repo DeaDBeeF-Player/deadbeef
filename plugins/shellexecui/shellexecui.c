@@ -375,17 +375,19 @@ shxui_getactions(DB_playItem_t *it) {
 }
 
 int shxui_connect() {
-#if GTK_CHECK_VERSION(3,0,0)
-    gtkui_plugin = (ddb_gtkui_t *)deadbeef->plug_get_for_id ("gtkui3");
-#else
-    gtkui_plugin = (ddb_gtkui_t *)deadbeef->plug_get_for_id ("gtkui");
-#endif
-    shellexec_plugin = (Shx_plugin_t *)deadbeef->plug_get_for_id ("shellexec");
-    if(!gtkui_plugin || !shellexec_plugin) {
+    gtkui_plugin = (ddb_gtkui_t *)deadbeef->plug_get_for_id (GTKUI_PLUGIN_ID);
+    if (!gtkui_plugin) {
+        fprintf (stderr, "shellexecui: can't find gtkui plugin\n");
         return -1;
     }
-    if(shellexec_plugin->misc.plugin.version_major == 1 &&
+    shellexec_plugin = (Shx_plugin_t *)deadbeef->plug_get_for_id ("shellexec");
+    if (!shellexec_plugin) {
+        fprintf (stderr, "shellexecui: can't find shellexec plugin\n");
+        return -1;
+    }
+    if(shellexec_plugin->misc.plugin.version_major != 1 ||
        shellexec_plugin->misc.plugin.version_minor < 1) {
+        fprintf (stderr, "shellexecui: requires shellexec version 1.1 or higher\n");
         return -1;
     }
     return 0;
