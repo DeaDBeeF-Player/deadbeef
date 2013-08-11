@@ -87,11 +87,11 @@ extern "C" {
 // backwards compat macro
 #define DB_PLUGIN_SET_API_VERSION DDB_PLUGIN_SET_API_VERSION
 
+#define PLUG_TEST_COMPAT(plug,x,y) ((plug)->version_major == (x) && (plug)->version_minor >= (y))
+
 #define DDB_REQUIRE_API_VERSION(x,y)\
     .plugin.api_vmajor = x,\
     .plugin.api_vminor = y,
-
-#define MAX_DECODER_PLUGINS 50
 
 ////////////////////////////
 // playlist structures
