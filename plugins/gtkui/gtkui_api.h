@@ -58,11 +58,14 @@ typedef struct ddb_gtkui_widget_s {
     // strncat (s, "100 200", sz);
     void (*save) (struct ddb_gtkui_widget_s *w, char *s, int sz);
 
-    // this is to read custom widget parameters, e.g. width and height
+    // this is to read custom widget parameters, e.g. width and height;
     // you will be passed a string looking like "100 200 {"
     // you will need to read params, and return the new pointer, normally it
     // should be pointing to the "{"
-    const char *(*load) (struct ddb_gtkui_widget_s *w, const char *s);
+    //
+    // type string is necessary for backwards compatibility, so that load
+    // function knows which type it's loading
+    const char *(*load) (struct ddb_gtkui_widget_s *w, const char *type, const char *s);
 
     // custom destructor code
     void (*destroy) (struct ddb_gtkui_widget_s *w);
@@ -105,8 +108,13 @@ typedef struct {
     // returns main window ptr
     GtkWidget * (*get_mainwin) (void);
 
-    // register new widget type
-    void (*w_reg_widget) (const char *type, const char *title, ddb_gtkui_widget_t *(*create_func) (void));
+    // register new widget type;
+    // type strings are passed at the end of argument list terminated with NULL
+    // for example:
+    // w_reg_widget("My Visualization", my_viz_create, "my_viz_ng", "my_viz", NULL);
+    // this call will register new type "my_viz_ng", with support for another
+    // "my_viz" type string
+    void (*w_reg_widget) (const char *title, ddb_gtkui_widget_t *(*create_func) (void), ...);
 
     // unregister existing widget type
     void (*w_unreg_widget) (const char *type);

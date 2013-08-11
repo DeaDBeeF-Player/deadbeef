@@ -41,6 +41,7 @@
 typedef struct w_creator_s {
     const char *type;
     const char *title; // set to NULL to avoid exposing this widget type to user
+    int compat; // when this is set to 1 -- it's a backwards compatibility creator, and must be skipped in GUI
     ddb_gtkui_widget_t *(*create_func) (void);
     struct w_creator_s *next;
 } w_creator_t;
@@ -243,7 +244,8 @@ w_create_from_string (const char *s, ddb_gtkui_widget_t **parent) {
     if (!s) {
         return NULL;
     }
-    ddb_gtkui_widget_t *w = w_create (t);
+    char *type = strdupa (t);
+    ddb_gtkui_widget_t *w = w_create (type);
     if (!w) {
         fprintf (stderr, "failed to create widget for type %s\n", t);
         return NULL;
@@ -265,7 +267,7 @@ w_create_from_string (const char *s, ddb_gtkui_widget_t **parent) {
 
     // load widget params
     if (w->load) {
-        s = w->load (w, s);
+        s = w->load (w, type, s);
         if (!s) {
             w_destroy (w);
             return NULL;
@@ -576,21 +578,34 @@ w_override_signals (GtkWidget *widget, gpointer user_data) {
 }
 
 void
-w_reg_widget (const char *type, const char *title, ddb_gtkui_widget_t *(*create_func) (void)) {
-    w_creator_t *c;
-    for (c = w_creators; c; c = c->next) {
-        if (!strcmp (c->type, type)) {
-            fprintf (stderr, "gtkui w_reg_widget: widget type %s already registered\n", type);
-            return;
+w_reg_widget (const char *title, ddb_gtkui_widget_t *(*create_func) (void), ...) {
+    int compat = 0;
+
+    va_list vl;
+    va_start (vl, create_func);
+    for (;;) {
+        const char *type = va_arg(vl, const char *);
+        if (!type) {
+            break;
         }
+        w_creator_t *c;
+        for (c = w_creators; c; c = c->next) {
+            if (!strcmp (c->type, type)) {
+                fprintf (stderr, "gtkui w_reg_widget: widget type %s already registered\n", type);
+                return;
+            }
+        }
+        c = malloc (sizeof (w_creator_t));
+        memset (c, 0, sizeof (w_creator_t));
+        c->type = type;
+        c->title = title;
+        c->compat = compat;
+        c->create_func = create_func;
+        c->next = w_creators;
+        w_creators = c;
+        compat = 1;
     }
-    c = malloc (sizeof (w_creator_t));
-    memset (c, 0, sizeof (w_creator_t));
-    c->type = type;
-    c->title = title;
-    c->create_func = create_func;
-    c->next = w_creators;
-    w_creators = c;
+    va_end(vl);
 }
 
 void
@@ -736,7 +751,10 @@ w_placeholder_create (void) {
 
 // common splitter funcs
 const char *
-w_splitter_load (struct ddb_gtkui_widget_s *w, const char *s) {
+w_splitter_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) {
+    if (strcmp (type, "vsplitter") && strcmp (type, "hsplitter")) {
+        return NULL;
+    }
     char t[MAX_TOKEN];
     s = gettoken (s, t);
     if (!s) {
