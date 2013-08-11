@@ -1719,15 +1719,14 @@ static const char settings_dlg[] =
 static ddb_gtkui_t plugin = {
     .gui.plugin.api_vmajor = 1,
     .gui.plugin.api_vminor = 4,
-    .gui.plugin.version_major = 1,
-    .gui.plugin.version_minor = 0,
+    .gui.plugin.version_major = 2,
+    .gui.plugin.version_minor = GTKUI_API_VERSION,
     .gui.plugin.type = DB_PLUGIN_MISC,
+    .gui.plugin.id = GTKUI_PLUGIN_ID,
 #if GTK_CHECK_VERSION(3,0,0)
-    .gui.plugin.id = "gtkui3",
     .gui.plugin.name = "GTK3 user interface",
     .gui.plugin.descr = "User interface using GTK+ 3.x",
 #else
-    .gui.plugin.id = "gtkui",
     .gui.plugin.name = "GTK2 user interface",
     .gui.plugin.descr = "User interface using GTK+ 2.x",
 #endif
@@ -1770,5 +1769,4 @@ static ddb_gtkui_t plugin = {
     .w_replace = w_replace,
     .w_remove = w_remove,
     .create_pltmenu = gtkui_create_pltmenu,
-    .api_version = GTKUI_API_VERSION,
 };

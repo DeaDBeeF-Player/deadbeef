@@ -1446,11 +1446,7 @@ convgui_get_actions (DB_playItem_t *it)
 
 int
 convgui_connect (void) {
-#if GTK_CHECK_VERSION(3,0,0)
-    gtkui_plugin = (ddb_gtkui_t *)deadbeef->plug_get_for_id ("gtkui3");
-#else
-    gtkui_plugin = (ddb_gtkui_t *)deadbeef->plug_get_for_id ("gtkui");
-#endif
+    gtkui_plugin = (ddb_gtkui_t *)deadbeef->plug_get_for_id (GTKUI_PLUGIN_ID);
     converter_plugin = (ddb_converter_t *)deadbeef->plug_get_for_id ("converter");
     if (!gtkui_plugin) {
         fprintf (stderr, "convgui: gtkui plugin not found\n");
@@ -1460,7 +1456,7 @@ convgui_connect (void) {
         fprintf (stderr, "convgui: converter plugin not found\n");
         return -1;
     }
-    if (converter_plugin->misc.plugin.version_major != 1 || converter_plugin->misc.plugin.version_minor < 2) {
+    if (!PLUG_TEST_COMPAT(&converter_plugin->misc.plugin, 1, 2)) {
         fprintf (stderr, "convgui: need converter>=1.2, but found %d.%d\n", converter_plugin->misc.plugin.version_major, converter_plugin->misc.plugin.version_minor);
         return -1;
     }

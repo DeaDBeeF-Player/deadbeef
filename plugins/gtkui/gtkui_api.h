@@ -25,7 +25,13 @@
 #ifndef __GTKUI_API_H
 #define __GTKUI_API_H
 
-#define GTKUI_API_VERSION 1 // for compile-time checking
+#define GTKUI_API_VERSION 0
+
+#if GTK_CHECK_VERSION(3,0,0)
+#define GTKUI_PLUGIN_ID "gtkui3_1"
+#else
+#define GTKUI_PLUGIN_ID "gtkui_1"
+#endif
 
 typedef struct ddb_gtkui_widget_s {
     const char *type;
@@ -95,7 +101,6 @@ typedef struct ddb_gtkui_widget_s {
 
 typedef struct {
     DB_gui_t gui;
-    int api_version;
 
     // returns main window ptr
     GtkWidget * (*get_mainwin) (void);
