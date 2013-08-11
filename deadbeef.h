@@ -273,7 +273,7 @@ enum {
     DB_EV_DSPCHAINCHANGED = 21, // emitted when any parameter of the main dsp chain has been changed
 
     // new in 1.5
-    DB_EV_SELCHANGED = 22, // selection changed in playlist p1 iter p2
+    DB_EV_SELCHANGED = 22, // selection changed in playlist p1 iter p2, ctx should be a pointer to playlist viewer instance, which caused the change, or NULL
     DB_EV_PLUGINSLOADED = 23, // after all plugins have been loaded and connected
 
     // -----------------
