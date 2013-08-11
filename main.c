@@ -1008,7 +1008,7 @@ main (int argc, char *argv[]) {
     // stop receiving messages from outside
     server_close ();
 
-    // plugins might still hood references to playitems,
+    // plugins might still hold references to playitems,
     // and query configuration in background
     // so unload everything 1st before final cleanup
     plug_disconnect_all ();
