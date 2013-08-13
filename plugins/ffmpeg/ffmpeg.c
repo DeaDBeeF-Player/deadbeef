@@ -154,6 +154,7 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     current_track = it;
     current_info = _info;
 #if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
+    avformat_network_init();
     info->fctx = avformat_alloc_context ();
     if ((ret = avformat_open_input(&info->fctx, uri, NULL, NULL)) < 0) {
 #else
@@ -542,6 +543,7 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     // open file
 #if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
+    avformat_network_init();
     fctx = avformat_alloc_context ();
     if ((ret = avformat_open_input(&fctx, uri, NULL, NULL)) < 0) {
 #else
@@ -847,6 +849,7 @@ ffmpeg_read_metadata (DB_playItem_t *it) {
 
     // open file
 #if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
+    avformat_network_init();
     fctx = avformat_alloc_context ();
     if ((ret = avformat_open_input(&fctx, uri, NULL, NULL)) < 0) {
 #else
