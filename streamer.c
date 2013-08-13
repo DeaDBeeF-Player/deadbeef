@@ -682,6 +682,17 @@ streamer_song_removed_notify (playItem_t *it) {
     }
 }
 
+// map of some popular content types to decoders
+// FIXME: must be in config and in GUI settings
+const char * decmap_audio_mpeg[] = { "audio/mpeg", "stdmpg", "ffmpeg", NULL };
+const char * decmap_audio_x_mpeg[] = { "audio/x-mpeg", "stdmpg", "ffmpeg", NULL };
+const char * decmap_application_ogg[] = { "application/ogg", "stdogg", "ffmpeg", NULL };
+const char * decmap_audio_ogg[] = { "audio/ogg", "stdogg", "ffmpeg", NULL };
+const char * decmap_audio_aac[] = { "audio/aac", "aac", "ffmpeg", NULL };
+const char * decmap_audio_aacp[] = { "audio/aacp", "aac", "ffmpeg", NULL };
+const char * decmap_audio_wma[] = { "audio/wma", "wma", "ffmpeg", NULL };
+const char ** decmap[] = { decmap_audio_mpeg, decmap_audio_x_mpeg, decmap_application_ogg, decmap_audio_ogg, decmap_audio_aac, decmap_audio_aacp, decmap_audio_wma, NULL };
+
 // that must be called after last sample from str_playing_song was done reading
 static int
 streamer_set_current (playItem_t *it) {
@@ -737,6 +748,7 @@ streamer_set_current (playItem_t *it) {
         strncpy (filetype, ft, sizeof (filetype));
     }
     pl_unlock ();
+    const char **plugs = NULL;
     if (!decoder_id[0] && (!strcmp (filetype, "content") || !filetype[0])) {
         // try to get content-type
         mutex_lock (decodemutex);
@@ -745,7 +757,6 @@ streamer_set_current (playItem_t *it) {
         DB_FILE *fp = streamer_file = vfs_fopen (pl_find_meta (it, ":URI"));
         pl_unlock ();
         mutex_unlock (decodemutex);
-        const char *plug = NULL;
         trace ("\033[0;34mgetting content-type\033[37;0m\n");
         if (!fp) {
             err = -1;
@@ -765,22 +776,15 @@ streamer_set_current (playItem_t *it) {
         if (sc) {
             *sc = 0;
         }
-        if (!strcmp (cct, "audio/mpeg") || !strcmp (cct, "audio/x-mpeg")) {
-            plug = "stdmpg";
+
+        for (int map = 0; decmap[map]; map++) {
+            if (!strcmp (cct, decmap[map][0])) {
+                plugs = decmap[map];
+                break;
+            }
         }
-        else if (!strcmp (cct, "application/ogg") || !strcmp (cct, "audio/ogg")) {
-            plug = "stdogg";
-        }
-        else if (!strcmp (cct, "audio/aacp")) {
-            plug = "aac";
-        }
-        else if (!strcmp (cct, "audio/aac")) {
-            plug = "aac";
-        }
-        else if (!strcmp (cct, "audio/wma")) {
-            plug = "wma";
-        }
-        else if (!strcmp (cct, "audio/x-mpegurl") || !strncmp (cct, "text/html", 9) || !strncmp (cct, "audio/x-scpls", 13) || !strncmp (cct, "application/octet-stream", 9)) {
+
+        if (!plugs && (!strcmp (cct, "audio/x-mpegurl") || !strncmp (cct, "text/html", 9) || !strncmp (cct, "audio/x-scpls", 13) || !strncmp (cct, "application/octet-stream", 9))) {
             // download playlist into temp file
             trace ("downloading playlist into temp file...\n");
             char *buf = NULL;
@@ -900,67 +904,12 @@ m3u_error:
         streamer_file = NULL;
         vfs_fclose (fp);
         mutex_unlock (decodemutex);
-        if (plug) {
-            DB_decoder_t **decoders = plug_get_decoder_list ();
-            // match by decoder
-            for (int i = 0; decoders[i]; i++) {
-                if (!strcmp (decoders[i]->plugin.id, plug)) {
-                    pl_replace_meta (it, "!DECODER", decoders[i]->plugin.id);
-                    strncpy (decoder_id, decoders[i]->plugin.id, sizeof (decoder_id));
-                    trace ("\033[0;34mfound plugin %s\033[37;0m\n", plug);
-                    break;
-                }
-            }
-        }
-        else {
-            trace ("\033[0;34mclosed file %s (bad or interrupted)\033[37;0m\n", pl_find_meta (it, ":URI"));
-        }
     }
     playlist_track = it;
-    if (decoder_id[0]) {
-        DB_decoder_t *dec = NULL;
-        dec = plug_get_decoder_for_id (decoder_id);
-        if (!dec) {
-            // find new decoder by file extension
-            pl_lock ();
-            const char *fname = pl_find_meta (it, ":URI");
-            const char *ext = strrchr (fname, '.');
-            if (ext) {
-                ext++;
-                DB_decoder_t **decs = plug_get_decoder_list ();
-                for (int i = 0; decs[i]; i++) {
-                    const char **exts = decs[i]->exts;
-                    if (exts) {
-                        for (int j = 0; exts[j]; j++) {
-                            if (!strcasecmp (exts[j], ext)) {
-                                fprintf (stderr, "streamer: %s : changed decoder plugin to %s\n", fname, decs[i]->plugin.id);
-                                pl_replace_meta (it, "!DECODER", decs[i]->plugin.id);
-                                pl_replace_meta (it, "!FILETYPE", ext);
-                                dec = decs[i];
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            pl_unlock ();
-        }
-        if (dec) {
-            trace ("\033[0;33minit decoder for %s (%s)\033[37;0m\n", pl_find_meta (it, ":URI"), decoder_id);
-            mutex_lock (decodemutex);
-            new_fileinfo = dec->open (0);
-            mutex_unlock (decodemutex);
-            if (new_fileinfo && dec->init (new_fileinfo, DB_PLAYITEM (it)) != 0) {
-                trace ("\033[0;31mfailed to init decoder\033[37;0m\n");
-                mutex_lock (decodemutex);
-                dec->free (new_fileinfo);
-                new_fileinfo = NULL;
-                mutex_unlock (decodemutex);
-//                goto error;
-            }
-        }
 
-        if (!dec || !new_fileinfo) {
+    int plug_idx = 1;
+    for (;;) {
+        if (!decoder_id[0] && plugs && !plugs[plug_idx]) {
             it->played = 1;
             trace ("decoder->init returned %p\n", new_fileinfo);
             streamer_buffering = 0;
@@ -970,6 +919,79 @@ m3u_error:
             }
             err = -1;
             goto error;
+        }
+
+        DB_decoder_t *dec = NULL;
+
+        if (decoder_id[0]) {
+            dec = plug_get_decoder_for_id (decoder_id);
+            decoder_id[0] = 0;
+            if (!dec) {
+                // find new decoder by file extension
+                pl_lock ();
+                const char *fname = pl_find_meta (it, ":URI");
+                const char *ext = strrchr (fname, '.');
+                if (ext) {
+                    ext++;
+                    DB_decoder_t **decs = plug_get_decoder_list ();
+                    for (int i = 0; decs[i]; i++) {
+                        const char **exts = decs[i]->exts;
+                        if (exts) {
+                            for (int j = 0; exts[j]; j++) {
+                                if (!strcasecmp (exts[j], ext)) {
+                                    fprintf (stderr, "streamer: %s : changed decoder plugin to %s\n", fname, decs[i]->plugin.id);
+                                    pl_replace_meta (it, "!DECODER", decs[i]->plugin.id);
+                                    pl_replace_meta (it, "!FILETYPE", ext);
+                                    dec = decs[i];
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                pl_unlock ();
+            }
+        }
+        else if (plugs) {
+            // match by decoder
+            dec = plug_get_decoder_for_id (plugs[plug_idx]);
+            if (dec) {
+                pl_replace_meta (it, "!DECODER", dec->plugin.id);
+            }
+            plug_idx++;
+        }
+
+        if (!dec) {
+            trace ("no decoder in playitem!\n");
+            it->played = 1;
+            streamer_buffering = 0;
+            if (playlist_track == it) {
+                send_trackinfochanged (to);
+            }
+            if (from) {
+                pl_item_unref (from);
+            }
+            if (to) {
+                pl_item_unref (to);
+            }
+            return -1;
+        }
+
+        trace ("\033[0;33minit decoder for %s (%s)\033[37;0m\n", pl_find_meta (it, ":URI"), dec->plugin.id);
+        mutex_lock (decodemutex);
+        new_fileinfo = dec->open (0);
+        mutex_unlock (decodemutex);
+        if (new_fileinfo && dec->init (new_fileinfo, DB_PLAYITEM (it)) != 0) {
+            trace ("\033[0;31mfailed to init decoder\033[37;0m\n");
+            mutex_lock (decodemutex);
+            dec->free (new_fileinfo);
+            new_fileinfo = NULL;
+            mutex_unlock (decodemutex);
+        }
+
+        if (!new_fileinfo) {
+            trace ("decoder %s failed\n", dec->plugin.id);
+            continue;
         }
         else {
             mutex_lock (decodemutex);
@@ -984,22 +1006,8 @@ m3u_error:
 
             mutex_unlock (decodemutex);
             trace ("bps=%d, channels=%d, samplerate=%d\n", new_fileinfo->fmt.bps, new_fileinfo->fmt.channels, new_fileinfo->fmt.samplerate);
+            break;
         }
-    }
-    else {
-        trace ("no decoder in playitem!\n");
-        it->played = 1;
-        streamer_buffering = 0;
-        if (playlist_track == it) {
-            send_trackinfochanged (to);
-        }
-        if (from) {
-            pl_item_unref (from);
-        }
-        if (to) {
-            pl_item_unref (to);
-        }
-        return -1;
     }
 success:
     mutex_lock (decodemutex);
