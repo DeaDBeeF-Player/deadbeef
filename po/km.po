@@ -69,7 +69,7 @@ msgstr "អំពី DeaDBeeF %s"
 #: ../plugins/gtkui/callbacks.c:760
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
-msgstr "DeaDBeeF ផ្លាស់ប្តួរកំណត់ហេតុ"
+msgstr "DeaDBeeF %s ផ្លាស់ប្តួរកំណត់ហេតុ"
 
 #: ../plugins/gtkui/callbacks.c:1134
 #, c-format
