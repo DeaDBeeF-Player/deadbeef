@@ -94,6 +94,12 @@ extern "C" {
     .plugin.api_vminor = y,
 
 ////////////////////////////
+// default values for some common config variables should go here
+
+// network.ctmapping : content-type to plugin mapping
+#define DDB_DEFAULT_CTMAPPING "{audio/mpeg, stdmpg, ffmpeg}, {audio/x-mpeg, stdmpg, ffmpeg}, {application/ogg, stdogg, ffmpeg}, {audio/ogg, stdogg, ffmpeg}, {audio/aac, aac, ffmpeg}, {audio/aacp, aac, ffmpeg}, {audio/wma, wma, ffmpeg}"
+
+////////////////////////////
 // playlist structures
 
 // that's a good candidate for redesign

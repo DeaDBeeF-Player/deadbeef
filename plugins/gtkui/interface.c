@@ -1439,7 +1439,6 @@ create_editcolumndlg (void)
   GtkWidget *label85;
 
   editcolumndlg = gtk_dialog_new ();
-  gtk_container_set_border_width (GTK_CONTAINER (editcolumndlg), 12);
   gtk_window_set_title (GTK_WINDOW (editcolumndlg), "editcolumndlg");
   gtk_window_set_modal (GTK_WINDOW (editcolumndlg), TRUE);
   gtk_window_set_type_hint (GTK_WINDOW (editcolumndlg), GDK_WINDOW_TYPE_HINT_DIALOG);
@@ -1450,6 +1449,7 @@ create_editcolumndlg (void)
   vbox14 = gtk_vbox_new (FALSE, 8);
   gtk_widget_show (vbox14);
   gtk_box_pack_start (GTK_BOX (dialog_vbox1), vbox14, TRUE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox14), 12);
 
   hbox29 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox29);
@@ -1755,6 +1755,8 @@ create_prefwin (void)
   GtkWidget *hbox104;
   GtkWidget *label131;
   GtkWidget *useragent;
+  GtkWidget *hseparator5;
+  GtkWidget *edit_content_type_mapping;
   GtkWidget *label16;
   GtkWidget *vpaned1;
   GtkWidget *vbox36;
@@ -2474,6 +2476,14 @@ create_prefwin (void)
   gtk_box_pack_start (GTK_BOX (hbox104), useragent, TRUE, TRUE, 0);
   gtk_entry_set_invisible_char (GTK_ENTRY (useragent), 8226);
 
+  hseparator5 = gtk_hseparator_new ();
+  gtk_widget_show (hseparator5);
+  gtk_box_pack_start (GTK_BOX (vbox11), hseparator5, FALSE, FALSE, 0);
+
+  edit_content_type_mapping = gtk_button_new_with_mnemonic (_("Edit Content-Type Mapping"));
+  gtk_widget_show (edit_content_type_mapping);
+  gtk_box_pack_start (GTK_BOX (vbox11), edit_content_type_mapping, FALSE, FALSE, 0);
+
   label16 = gtk_label_new (_("Network"));
   gtk_widget_show (label16);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 5), label16);
@@ -2884,6 +2894,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) useragent, "changed",
                     G_CALLBACK (on_useragent_changed),
                     NULL);
+  g_signal_connect ((gpointer) edit_content_type_mapping, "clicked",
+                    G_CALLBACK (on_edit_content_type_mapping_clicked),
+                    NULL);
   g_signal_connect ((gpointer) hotkeys_list, "cursor_changed",
                     G_CALLBACK (on_hotkeys_list_cursor_changed),
                     NULL);
@@ -3057,6 +3070,8 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, hbox104, "hbox104");
   GLADE_HOOKUP_OBJECT (prefwin, label131, "label131");
   GLADE_HOOKUP_OBJECT (prefwin, useragent, "useragent");
+  GLADE_HOOKUP_OBJECT (prefwin, hseparator5, "hseparator5");
+  GLADE_HOOKUP_OBJECT (prefwin, edit_content_type_mapping, "edit_content_type_mapping");
   GLADE_HOOKUP_OBJECT (prefwin, label16, "label16");
   GLADE_HOOKUP_OBJECT (prefwin, vpaned1, "vpaned1");
   GLADE_HOOKUP_OBJECT (prefwin, vbox36, "vbox36");
@@ -3134,7 +3149,6 @@ create_entrydialog (void)
   GtkWidget *label93;
 
   entrydialog = gtk_dialog_new ();
-  gtk_container_set_border_width (GTK_CONTAINER (entrydialog), 8);
   gtk_window_set_title (GTK_WINDOW (entrydialog), "EntryDialog");
   gtk_window_set_destroy_with_parent (GTK_WINDOW (entrydialog), TRUE);
   gtk_window_set_type_hint (GTK_WINDOW (entrydialog), GDK_WINDOW_TYPE_HINT_DIALOG);
@@ -3145,7 +3159,7 @@ create_entrydialog (void)
   vbox15 = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (vbox15);
   gtk_box_pack_start (GTK_BOX (dialog_vbox3), vbox15, TRUE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (vbox15), 4);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox15), 12);
 
   hbox33 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox33);
@@ -3250,7 +3264,6 @@ create_addlocationdlg (void)
   GtkWidget *label96;
 
   addlocationdlg = gtk_dialog_new ();
-  gtk_container_set_border_width (GTK_CONTAINER (addlocationdlg), 8);
   gtk_window_set_title (GTK_WINDOW (addlocationdlg), _("Add location"));
   gtk_window_set_type_hint (GTK_WINDOW (addlocationdlg), GDK_WINDOW_TYPE_HINT_DIALOG);
 
@@ -3260,7 +3273,7 @@ create_addlocationdlg (void)
   hbox34 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox34);
   gtk_box_pack_start (GTK_BOX (dialog_vbox4), hbox34, TRUE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (hbox34), 4);
+  gtk_container_set_border_width (GTK_CONTAINER (hbox34), 12);
 
   label41 = gtk_label_new (_("URL:"));
   gtk_widget_show (label41);
@@ -3689,11 +3702,9 @@ create_tagwritersettings (void)
   GtkWidget *closebutton2;
 
   tagwritersettings = gtk_dialog_new ();
-  gtk_container_set_border_width (GTK_CONTAINER (tagwritersettings), 12);
   gtk_window_set_title (GTK_WINDOW (tagwritersettings), _("Tag Writer Settings"));
   gtk_window_set_modal (GTK_WINDOW (tagwritersettings), TRUE);
   gtk_window_set_type_hint (GTK_WINDOW (tagwritersettings), GDK_WINDOW_TYPE_HINT_DIALOG);
-  gtk_dialog_set_has_separator (GTK_DIALOG (tagwritersettings), FALSE);
 
   dialog_vbox11 = gtk_dialog_get_content_area (GTK_DIALOG (tagwritersettings));
   gtk_widget_show (dialog_vbox11);
@@ -3701,6 +3712,7 @@ create_tagwritersettings (void)
   vbox32 = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (vbox32);
   gtk_box_pack_start (GTK_BOX (dialog_vbox11), vbox32, TRUE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox32), 12);
 
   frame8 = gtk_frame_new (NULL);
   gtk_widget_show (frame8);
@@ -3978,5 +3990,99 @@ create_tagwritersettings (void)
   GLADE_HOOKUP_OBJECT (tagwritersettings, closebutton2, "closebutton2");
 
   return tagwritersettings;
+}
+
+GtkWidget*
+create_ctmappingdlg (void)
+{
+  GtkWidget *ctmappingdlg;
+  GtkWidget *dialog_vbox12;
+  GtkWidget *hbox110;
+  GtkWidget *scrolledwindow11;
+  GtkWidget *ctmappinglist;
+  GtkWidget *vbox39;
+  GtkWidget *ctmapping_add;
+  GtkWidget *ctmapping_remove;
+  GtkWidget *ctmapping_edit;
+  GtkWidget *dialog_action_area11;
+  GtkWidget *ctmapping_apply;
+  GtkWidget *ctmapping_cancel;
+  GtkWidget *ctmapping_ok;
+
+  ctmappingdlg = gtk_dialog_new ();
+  gtk_window_set_title (GTK_WINDOW (ctmappingdlg), _("Content-Type Mapping"));
+  gtk_window_set_position (GTK_WINDOW (ctmappingdlg), GTK_WIN_POS_MOUSE);
+  gtk_window_set_modal (GTK_WINDOW (ctmappingdlg), TRUE);
+  gtk_window_set_type_hint (GTK_WINDOW (ctmappingdlg), GDK_WINDOW_TYPE_HINT_DIALOG);
+
+  dialog_vbox12 = gtk_dialog_get_content_area (GTK_DIALOG (ctmappingdlg));
+  gtk_widget_show (dialog_vbox12);
+
+  hbox110 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox110);
+  gtk_box_pack_start (GTK_BOX (dialog_vbox12), hbox110, TRUE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (hbox110), 12);
+
+  scrolledwindow11 = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow11);
+  gtk_box_pack_start (GTK_BOX (hbox110), scrolledwindow11, TRUE, TRUE, 0);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow11), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow11), GTK_SHADOW_IN);
+
+  ctmappinglist = gtk_tree_view_new ();
+  gtk_widget_show (ctmappinglist);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow11), ctmappinglist);
+
+  vbox39 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox39);
+  gtk_box_pack_start (GTK_BOX (hbox110), vbox39, FALSE, TRUE, 0);
+
+  ctmapping_add = gtk_button_new_from_stock ("gtk-add");
+  gtk_widget_show (ctmapping_add);
+  gtk_box_pack_start (GTK_BOX (vbox39), ctmapping_add, FALSE, FALSE, 0);
+
+  ctmapping_remove = gtk_button_new_from_stock ("gtk-remove");
+  gtk_widget_show (ctmapping_remove);
+  gtk_box_pack_start (GTK_BOX (vbox39), ctmapping_remove, FALSE, FALSE, 0);
+
+  ctmapping_edit = gtk_button_new_from_stock ("gtk-edit");
+  gtk_widget_show (ctmapping_edit);
+  gtk_box_pack_start (GTK_BOX (vbox39), ctmapping_edit, FALSE, FALSE, 0);
+
+  dialog_action_area11 = gtk_dialog_get_action_area (GTK_DIALOG (ctmappingdlg));
+  gtk_widget_show (dialog_action_area11);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area11), GTK_BUTTONBOX_END);
+
+  ctmapping_apply = gtk_button_new_from_stock ("gtk-apply");
+  gtk_widget_show (ctmapping_apply);
+  gtk_dialog_add_action_widget (GTK_DIALOG (ctmappingdlg), ctmapping_apply, GTK_RESPONSE_APPLY);
+  gtk_widget_set_can_default(ctmapping_apply, TRUE);
+
+  ctmapping_cancel = gtk_button_new_from_stock ("gtk-cancel");
+  gtk_widget_show (ctmapping_cancel);
+  gtk_dialog_add_action_widget (GTK_DIALOG (ctmappingdlg), ctmapping_cancel, GTK_RESPONSE_CANCEL);
+  gtk_widget_set_can_default(ctmapping_cancel, TRUE);
+
+  ctmapping_ok = gtk_button_new_from_stock ("gtk-ok");
+  gtk_widget_show (ctmapping_ok);
+  gtk_dialog_add_action_widget (GTK_DIALOG (ctmappingdlg), ctmapping_ok, GTK_RESPONSE_OK);
+  gtk_widget_set_can_default(ctmapping_ok, TRUE);
+
+  /* Store pointers to all widgets, for use by lookup_widget(). */
+  GLADE_HOOKUP_OBJECT_NO_REF (ctmappingdlg, ctmappingdlg, "ctmappingdlg");
+  GLADE_HOOKUP_OBJECT_NO_REF (ctmappingdlg, dialog_vbox12, "dialog_vbox12");
+  GLADE_HOOKUP_OBJECT (ctmappingdlg, hbox110, "hbox110");
+  GLADE_HOOKUP_OBJECT (ctmappingdlg, scrolledwindow11, "scrolledwindow11");
+  GLADE_HOOKUP_OBJECT (ctmappingdlg, ctmappinglist, "ctmappinglist");
+  GLADE_HOOKUP_OBJECT (ctmappingdlg, vbox39, "vbox39");
+  GLADE_HOOKUP_OBJECT (ctmappingdlg, ctmapping_add, "ctmapping_add");
+  GLADE_HOOKUP_OBJECT (ctmappingdlg, ctmapping_remove, "ctmapping_remove");
+  GLADE_HOOKUP_OBJECT (ctmappingdlg, ctmapping_edit, "ctmapping_edit");
+  GLADE_HOOKUP_OBJECT_NO_REF (ctmappingdlg, dialog_action_area11, "dialog_action_area11");
+  GLADE_HOOKUP_OBJECT (ctmappingdlg, ctmapping_apply, "ctmapping_apply");
+  GLADE_HOOKUP_OBJECT (ctmappingdlg, ctmapping_cancel, "ctmapping_cancel");
+  GLADE_HOOKUP_OBJECT (ctmappingdlg, ctmapping_ok, "ctmapping_ok");
+
+  return ctmappingdlg;
 }
 
