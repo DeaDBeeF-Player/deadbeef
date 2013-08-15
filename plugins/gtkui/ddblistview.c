@@ -1233,7 +1233,7 @@ ddb_listview_list_render_row_background (DdbListview *ps, cairo_t *cr, DdbListvi
             gtk_paint_flat_box (gtk_widget_get_style (treeview), cr, GTK_STATE_SELECTED, GTK_SHADOW_NONE, treeview, even ? "cell_even_ruled" : "cell_odd_ruled", x-1, y-1, w+1, h+1);
 #else
             gtk_paint_flat_box (gtk_widget_get_style (treeview), ps->list->window, GTK_STATE_SELECTED, GTK_SHADOW_NONE, NULL, treeview, even ? "cell_even_ruled" : "cell_odd_ruled", x, y, w, h);
-//            if (GTK_WIDGET_HAS_FOCUS (ps->list)) {
+//            if (gtk_widget_has_focus (ps->list)) {
 //                gtk_paint_focus (gtk_widget_get_style (treeview), ps->list->window, GTK_STATE_SELECTED, NULL, treeview, "treeview", x, y, w, h);
 //            }
 #endif
@@ -1254,7 +1254,7 @@ ddb_listview_list_render_row_background (DdbListview *ps, cairo_t *cr, DdbListvi
 #endif
         }
     }
-	if (cursor && GTK_WIDGET_HAS_FOCUS (ps->list)) {
+	if (cursor && gtk_widget_has_focus (ps->list)) {
         // not all gtk engines/themes render focus rectangle in treeviews
         // but we want it anyway
         //treeview->style->fg_gc[GTK_STATE_NORMAL]
