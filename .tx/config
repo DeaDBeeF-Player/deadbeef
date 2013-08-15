@@ -1,0 +1,8 @@
+[main]
+host = https://www.transifex.com
+
+[deadbeef-player.deadbeef]
+file_filter = po/<lang>.po
+source_file = po/deadbeef.pot
+source_lang = en
+type = PO
