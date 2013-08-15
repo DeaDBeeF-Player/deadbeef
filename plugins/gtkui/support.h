@@ -136,7 +136,9 @@ void                gtk_widget_get_allocation           (GtkWidget *widget,
 
 #define gtk_widget_set_can_focus(widget, canfocus) {if (canfocus) GTK_WIDGET_SET_FLAGS (widget, GTK_CAN_FOCUS); else GTK_WIDGET_UNSET_FLAGS(widget, GTK_CAN_FOCUS);}
 
-#define gtk_widget_get_can_focus(widget) (GTK_WIDGET_CAN_FOCUS (widget));
+#define gtk_widget_get_can_focus(widget) (GTK_WIDGET_CAN_FOCUS (widget))
+
+#define gtk_widget_has_focus(widget) (GTK_WIDGET_HAS_FOCUS (widget))
 
 #define gtk_widget_set_can_default(widget, candefault) {if (candefault) GTK_WIDGET_SET_FLAGS (widget, GTK_CAN_DEFAULT); else GTK_WIDGET_UNSET_FLAGS(widget, GTK_CAN_DEFAULT);}
 

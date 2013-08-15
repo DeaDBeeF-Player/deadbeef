@@ -2335,7 +2335,7 @@ w_spectrum_create (void) {
 #if !GTK_CHECK_VERSION(3,0,0)
     g_signal_connect_after ((gpointer) w->drawarea, "expose_event", G_CALLBACK (spectrum_expose_event), w);
 #else
-    g_signal_connect_after ((gpointer) w->drawarea, "draw", G_CALLBACK (spectrum_draw), w);
+    g_signal_connect_after ((gpointer) w->drawarea, "draw", G_CALLBACK (w_spectrum_draw_cb), w);
 #endif
     g_signal_connect_after (G_OBJECT (w->drawarea), "realize", G_CALLBACK (spectrum_realize), w);
     w_override_signals (w->base.widget, w);

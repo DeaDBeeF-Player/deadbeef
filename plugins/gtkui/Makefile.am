@@ -95,18 +95,75 @@ endif
 endif
 
 if HAVE_GTK3
-ddb_gui_GTK3_la_SOURCES = $(GTKUI_SOURCES)
+GTKGLEXT_SOURCES = \
+	gtkglext-gtk3/gtk/gtkglinit.c\
+	gtkglext-gtk3/gtk/gtkglversion.c\
+	gtkglext-gtk3/gtk/gtkglwidget.c\
+	gtkglext-gtk3/gtk/gtkgldebug.h\
+	gtkglext-gtk3/gtk/gtkgldefs.h\
+	gtkglext-gtk3/gtk/gtkgl.h\
+	gtkglext-gtk3/gtk/gtkglinit.h\
+	gtkglext-gtk3/gtk/gtkglprivate.h\
+	gtkglext-gtk3/gtk/gtkglwidget.h\
+	gtkglext-gtk3/gdk/gdkglconfig.c\
+	gtkglext-gtk3/gdk/gdkglconfigimpl.c\
+	gtkglext-gtk3/gdk/gdkglcontext.c\
+	gtkglext-gtk3/gdk/gdkglcontextimpl.c\
+	gtkglext-gtk3/gdk/gdkgldrawable.c\
+	gtkglext-gtk3/gdk/gdkglinit.c\
+	gtkglext-gtk3/gdk/gdkglquery.c\
+	gtkglext-gtk3/gdk/gdkglversion.c\
+	gtkglext-gtk3/gdk/gdkglwindow.c\
+	gtkglext-gtk3/gdk/gdkglwindowimpl.c\
+	gtkglext-gtk3/gdk/gdkglconfig.h\
+	gtkglext-gtk3/gdk/gdkglconfigimpl.h\
+	gtkglext-gtk3/gdk/gdkglcontext.h\
+	gtkglext-gtk3/gdk/gdkglcontextimpl.h\
+	gtkglext-gtk3/gdk/gdkgldebug.h\
+	gtkglext-gtk3/gdk/gdkgldefs.h\
+	gtkglext-gtk3/gdk/gdkgldrawable.h\
+	gtkglext-gtk3/gdk/gdkgl.h\
+	gtkglext-gtk3/gdk/gdkglinit.h\
+	gtkglext-gtk3/gdk/gdkglprivate.h\
+	gtkglext-gtk3/gdk/gdkglquery.h\
+	gtkglext-gtk3/gdk/gdkgltokens.h\
+	gtkglext-gtk3/gdk/gdkgltypes.h\
+	gtkglext-gtk3/gdk/gdkglwindow.h\
+	gtkglext-gtk3/gdk/gdkglwindowimpl.h\
+	gtkglext-gtk3/gdk/x11/gdkglconfig-x11.c\
+	gtkglext-gtk3/gdk/x11/gdkglcontext-x11.c\
+	gtkglext-gtk3/gdk/x11/gdkglquery-x11.c\
+	gtkglext-gtk3/gdk/x11/gdkglwindow-x11.c\
+	gtkglext-gtk3/gdk/x11/gdkx11glconfig.c\
+	gtkglext-gtk3/gdk/x11/gdkx11glcontext.c\
+	gtkglext-gtk3/gdk/x11/gdkx11glwindow.c\
+	gtkglext-gtk3/gdk/x11/gdkglconfig-x11.h\
+	gtkglext-gtk3/gdk/x11/gdkglcontext-x11.h\
+	gtkglext-gtk3/gdk/x11/gdkglprivate-x11.h\
+	gtkglext-gtk3/gdk/x11/gdkglquery-x11.h\
+	gtkglext-gtk3/gdk/x11/gdkglwindow-x11.h\
+	gtkglext-gtk3/gdk/x11/gdkglx.h\
+	gtkglext-gtk3/gdk/x11/gdkx11glconfig.h\
+	gtkglext-gtk3/gdk/x11/gdkx11glcontext.h\
+	gtkglext-gtk3/gdk/x11/gdkx11glquery.h\
+	gtkglext-gtk3/gdk/x11/gdkx11glwindow.h
+
+GTKGLEXT_CFLAGS = -I@top_srcdir@/plugins/gtkui/gtkglext-gtk3 -I@top_srcdir@/plugins/gtkui/gtkglext-gtk3/gdk -DGTK_GL_COMPILATION -DGDK_GL_COMPILATION
+GTKGLEXT_LIBS = -lGL
+
+ddb_gui_GTK3_la_SOURCES = $(GTKUI_SOURCES) $(GTKGLEXT_SOURCES)
 ddb_gui_GTK3_la_LDFLAGS = -module
+
 if STATICLINK
 GTK_ROOT_300=@top_srcdir@/$(LIB)/gtk-3.0.0
 
-ddb_gui_GTK3_la_LIBADD = $(LDADD) -L$(GTK_ROOT_300)/lib -lgtk-3 -lgdk-3 -latk-1.0 -lgio-2.0 -lpangocairo-1.0 -lgdk_pixbuf-2.0 -lcairo-gobject -lpango-1.0 -lcairo -lgobject-2.0 -lgthread-2.0 -lglib-2.0 -lfreetype -lfontconfig $(SM_LIBADD)
+ddb_gui_GTK3_la_LIBADD = $(LDADD) -L$(GTK_ROOT_300)/lib -lgtk-3 -lgdk-3 -latk-1.0 -lgio-2.0 -lpangocairo-1.0 -lgdk_pixbuf-2.0 -lcairo-gobject -lpango-1.0 -lcairo -lgobject-2.0 -lgthread-2.0 -lglib-2.0 -lfreetype -lfontconfig $(SM_LIBADD) $(GTKGLEXT_LIBS)
 
-ddb_gui_GTK3_la_CFLAGS = -std=c99 -I$(GTK_ROOT_300)/include/gtk-3.0 -I$(GTK_ROOT_300)/include/pango-1.0 -I$(GTK_ROOT_300)/include/gio-unix-2.0/ -I$(GTK_ROOT_300)/include/atk-1.0 -I$(GTK_ROOT_300)/include/cairo -I$(GTK_ROOT_300)/include/gdk-pixbuf-2.0 -I$(GTK_ROOT_300)/include/freetype2 -I$(GTK_ROOT_300)/include/glib-2.0 -I$(GTK_ROOT_300)/lib/glib-2.0/include $(SM_CFLAGS)
+ddb_gui_GTK3_la_CFLAGS = -std=c99 -I$(GTK_ROOT_300)/include/gtk-3.0 -I$(GTK_ROOT_300)/include/pango-1.0 -I$(GTK_ROOT_300)/include/gio-unix-2.0/ -I$(GTK_ROOT_300)/include/atk-1.0 -I$(GTK_ROOT_300)/include/cairo -I$(GTK_ROOT_300)/include/gdk-pixbuf-2.0 -I$(GTK_ROOT_300)/include/freetype2 -I$(GTK_ROOT_300)/include/glib-2.0 -I$(GTK_ROOT_300)/lib/glib-2.0/include $(SM_CFLAGS) $(GTKGLEXT_CFLAGS)
 
 else
-ddb_gui_GTK3_la_LIBADD = $(LDADD) $(GTK3_DEPS_LIBS) $(SM_LIBADD)
-ddb_gui_GTK3_la_CFLAGS = -std=c99 $(GTK3_DEPS_CFLAGS) $(SM_CFLAGS)
+ddb_gui_GTK3_la_LIBADD = $(LDADD) $(GTK3_DEPS_LIBS) $(SM_LIBADD) $(GTKGLEXT_LIBS)
+ddb_gui_GTK3_la_CFLAGS = -std=c99 $(GTK3_DEPS_CFLAGS) $(SM_CFLAGS) $(GTKGLEXT_CFLAGS)
 endif
 endif
 
