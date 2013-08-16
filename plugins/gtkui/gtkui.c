@@ -1067,20 +1067,12 @@ gtkui_thread (void *ctx) {
     GtkWidget *sb_mi = lookup_widget (mainwin, "view_status_bar");
     GtkWidget *ts_mi = lookup_widget (mainwin, "view_tabs");
     GtkWidget *sb = lookup_widget (mainwin, "statusbar");
-    GtkWidget *ts = lookup_widget (mainwin, "tabstrip");
     if (deadbeef->conf_get_int ("gtkui.statusbar.visible", 1)) {
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (sb_mi), TRUE);
     }
     else {
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (sb_mi), FALSE);
         gtk_widget_hide (sb);
-    }
-    if (deadbeef->conf_get_int ("gtkui.tabs.visible", 1)) {
-        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (ts_mi), TRUE);
-    }
-    else {
-        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (ts_mi), FALSE);
-        gtk_widget_hide (ts);
     }
     searchwin = create_searchwin ();
     gtk_window_set_transient_for (GTK_WINDOW (searchwin), GTK_WINDOW (mainwin));

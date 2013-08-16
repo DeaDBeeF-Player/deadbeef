@@ -325,9 +325,12 @@ static int hidden = 0;
 static gboolean
 w_draw_event (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     if (hidden && user_data == current_widget) {
-        cairo_set_source_rgb (cr, 0.17f, 0, 0.83f);
         GtkAllocation allocation;
-        gtk_widget_get_allocation(widget, &allocation);
+        gtk_widget_get_allocation (widget, &allocation);
+#if GTK_CHECK_VERSION(3,0,0)
+        cairo_translate (cr, -allocation.x, -allocation.y);
+#endif
+        cairo_set_source_rgb (cr, 0.17f, 0, 0.83f);
 
         if (!gtk_widget_get_has_window (widget)) {
             cairo_reset_clip (cr);
@@ -1975,7 +1978,7 @@ w_scope_draw_cb (void *data) {
 }
 
 gboolean
-scope_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
+scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     ddb_waveformat_t fmt;
     float data[DDB_AUDIO_MEMORY_FRAMES];
     deadbeef->audio_get_waveform_data (DDB_AUDIO_WAVEFORM, data);
@@ -2000,7 +2003,7 @@ scope_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 }
 
 gboolean
-scope_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
+scope_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 #if USE_OPENGL
     w_scope_t *w = user_data;
     float data[DDB_AUDIO_MEMORY_FRAMES];
@@ -2059,11 +2062,17 @@ scope_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data
     gdk_gl_drawable_gl_end (d);
 
 #else
+    gboolean res = scope_draw_cairo (widget, cr, user_data);
+#endif
+    return FALSE;
+}
+
+gboolean
+scope_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
     cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
     gboolean res = scope_draw (widget, cr, user_data);
     cairo_destroy (cr);
-#endif
-    return FALSE;
+    return res;
 }
 
 void
@@ -2162,9 +2171,8 @@ static void calculate_bands(int bands)
 		xscale[i] = powf((float)(MAX_BANDS+1), ((float) i / (float) bands)) - 1;
 }
 
-
-gboolean
-spectrum_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
+static gboolean
+spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     w_spectrum_t *w = user_data;
     float data[DDB_AUDIO_MEMORY_FRAMES];
     float *freq = data;
@@ -2261,7 +2269,6 @@ spectrum_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_d
 
     gdk_gl_drawable_gl_end (d);
 #else
-    cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
 	float base_s = (height / 40.f);
 
 	cairo_set_source_rgb (cr, 0, 0, 0);
@@ -2284,21 +2291,27 @@ spectrum_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_d
     }
     cairo_fill (cr);
 
-    cairo_destroy (cr);
 #endif
-
     return FALSE;
 }
 
+
+gboolean
+spectrum_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
+    cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
+    gboolean res = spectrum_draw (widget, cr, user_data);
+    cairo_destroy (cr);
+    return res;
+}
 void
 w_spectrum_init (ddb_gtkui_widget_t *w) {
     w_spectrum_t *s = (w_spectrum_t *)w;
-#if USE_OPENGL
-    gtkui_gl_init ();
     if (s->drawtimer) {
         g_source_remove (s->drawtimer);
         s->drawtimer = 0;
     }
+#if USE_OPENGL
+    gtkui_gl_init ();
     if (!gtkui_gl_init ()) {
         s->drawtimer = g_timeout_add (33, w_spectrum_draw_cb, w);
     }
@@ -2335,7 +2348,7 @@ w_spectrum_create (void) {
 #if !GTK_CHECK_VERSION(3,0,0)
     g_signal_connect_after ((gpointer) w->drawarea, "expose_event", G_CALLBACK (spectrum_expose_event), w);
 #else
-    g_signal_connect_after ((gpointer) w->drawarea, "draw", G_CALLBACK (w_spectrum_draw_cb), w);
+    g_signal_connect_after ((gpointer) w->drawarea, "draw", G_CALLBACK (spectrum_draw), w);
 #endif
     g_signal_connect_after (G_OBJECT (w->drawarea), "realize", G_CALLBACK (spectrum_realize), w);
     w_override_signals (w->base.widget, w);
