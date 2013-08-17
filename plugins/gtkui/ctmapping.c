@@ -112,6 +112,7 @@ ctmapping_apply (void) {
         }
     }
     deadbeef->conf_set_str ("network.ctmapping", mapstr);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 void
