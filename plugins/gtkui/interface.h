@@ -17,3 +17,4 @@ GtkWidget* create_sortbydlg (void);
 GtkWidget* create_select_dsp_plugin (void);
 GtkWidget* create_tagwritersettings (void);
 GtkWidget* create_ctmappingdlg (void);
+GtkWidget* create_ctmappingeditdlg (void);

@@ -1262,3 +1262,23 @@ on_menu_bar1_activate                  (GtkMenuItem     *menuitem,
 void
 on_edit_content_type_mapping_clicked   (GtkButton       *button,
                                         gpointer         user_data);
+
+void
+on_ctmapping_add_clicked               (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_ctmapping_remove_clicked            (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_ctmapping_edit_clicked              (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_button3_clicked                     (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_ctmapping_reset_clicked             (GtkButton       *button,
+                                        gpointer         user_data);
