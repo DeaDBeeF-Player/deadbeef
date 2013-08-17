@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-14 18:44+0200\n"
+"POT-Creation-Date: 2013-08-17 11:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -194,26 +194,27 @@ msgstr ""
 msgid "Button"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1237
+#: ../plugins/gtkui/gtkui.c:1229
 msgid "Failed while reading help file"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1247
+#: ../plugins/gtkui/gtkui.c:1239
 msgid "Failed to load help file"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1258
+#: ../plugins/gtkui/gtkui.c:1250
 msgid ""
 "The player is currently running backgroud tasks. If you quit now, the tasks "
-"will be cancelled or interrupted. Data loss may result"
+"will be cancelled or interrupted. This may result in data loss."
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1260
+#: ../plugins/gtkui/gtkui.c:1252
 msgid "Do you still want to quit?"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1261 ../plugins/gtkui/trkproperties.c:165
+#: ../plugins/gtkui/gtkui.c:1253 ../plugins/gtkui/trkproperties.c:165
 #: ../plugins/converter/convgui.c:862 ../plugins/converter/convgui.c:1317
+#: ../plugins/gtkui/actionhandlers.c:492
 msgid "Warning"
 msgstr ""
 
@@ -485,6 +486,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1107 ../plugins/gtkui/deadbeef.glade.h:63
 #: ../plugins/converter/convgui.c:1421 ../plugins/converter/convgui.c:1429
+#: ../plugins/gtkui/actionhandlers.c:428
 msgid "Help"
 msgstr ""
 
@@ -2006,70 +2008,56 @@ msgstr ""
 msgid "Invalid Values"
 msgstr ""
 
-#: ../plugins/gtkui/smclient/eggdesktopfile.c:165
-#, c-format
-msgid "File is not a valid .desktop file"
+#: ../plugins/gtkui/actionhandlers.c:107
+msgid "Supported sound formats"
 msgstr ""
 
-#. translators: 'Version' is from a desktop file, and
-#. * should not be translated. '%s' would probably be a
-#. * version number.
-#: ../plugins/gtkui/smclient/eggdesktopfile.c:191
-#, c-format
-msgid "Unrecognized desktop file Version '%s'"
+#: ../plugins/gtkui/actionhandlers.c:118
+msgid "All files (*)"
 msgstr ""
 
-#: ../plugins/gtkui/smclient/eggdesktopfile.c:974
-#, c-format
-msgid "Starting %s"
+#: ../plugins/gtkui/actionhandlers.c:126
+msgid "Open file(s)..."
 msgstr ""
 
-#: ../plugins/gtkui/smclient/eggdesktopfile.c:1116
-#, c-format
-msgid "Application does not accept documents on command line"
+#: ../plugins/gtkui/actionhandlers.c:165
+msgid "Add file(s) to playlist..."
 msgstr ""
 
-#: ../plugins/gtkui/smclient/eggdesktopfile.c:1184
-#, c-format
-msgid "Unrecognized launch option: %d"
+#: ../plugins/gtkui/actionhandlers.c:211
+msgid "Add folder(s) to playlist..."
 msgstr ""
 
-#. translators: The 'Type=Link' string is found in a
-#. * desktop file, and should not be translated.
-#: ../plugins/gtkui/smclient/eggdesktopfile.c:1391
-#, c-format
-msgid "Can't pass document URIs to a 'Type=Link' desktop entry"
+#: ../plugins/gtkui/actionhandlers.c:216
+msgid "Follow symlinks"
 msgstr ""
 
-#: ../plugins/gtkui/smclient/eggdesktopfile.c:1412
-#, c-format
-msgid "Not a launchable item"
+#: ../plugins/gtkui/actionhandlers.c:427
+msgid "help.txt"
 msgstr ""
 
-#: ../plugins/gtkui/smclient/eggsmclient.c:226
-msgid "Disable connection to session manager"
+#: ../plugins/gtkui/actionhandlers.c:490
+msgid "Delete files from disk"
 msgstr ""
 
-#: ../plugins/gtkui/smclient/eggsmclient.c:229
-msgid "Specify file containing saved configuration"
+#: ../plugins/gtkui/actionhandlers.c:491
+msgid ""
+"Files will be lost. Proceed?\n"
+"(This dialog can be turned off in GTKUI plugin settings)"
 msgstr ""
 
-#: ../plugins/gtkui/smclient/eggsmclient.c:229
-msgid "FILE"
+#: ../plugins/gtkui/actionhandlers.c:660
+msgid "Load Playlist"
 msgstr ""
 
-#: ../plugins/gtkui/smclient/eggsmclient.c:232
-msgid "Specify session management ID"
+#: ../plugins/gtkui/actionhandlers.c:675
+msgid "Other files (*)"
 msgstr ""
 
-#: ../plugins/gtkui/smclient/eggsmclient.c:232
-msgid "ID"
+#: ../plugins/gtkui/actionhandlers.c:709
+msgid "Save Playlist As"
 msgstr ""
 
-#: ../plugins/gtkui/smclient/eggsmclient.c:253
-msgid "Session management options:"
-msgstr ""
-
-#: ../plugins/gtkui/smclient/eggsmclient.c:254
-msgid "Show session management options"
+#: ../plugins/gtkui/actionhandlers.c:720
+msgid "DeaDBeeF playlist files (*.dbpl)"
 msgstr ""
