@@ -1088,16 +1088,3 @@ on_useragent_changed                   (GtkEditable     *editable,
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
-void
-on_edit_content_type_mapping_clicked   (GtkButton       *button,
-                                        gpointer         user_data)
-{
-    GtkWidget *dlg = create_ctmappingdlg ();
-
-    const char mapstr[2048];
-    deadbeef->conf_get_str ("network.ctmapping", DDB_DEFAULT_CTMAPPING, mapstr, sizeof (mapstr));
-
-    int response = gtk_dialog_run (GTK_DIALOG (dlg));
-    gtk_widget_destroy (dlg);
-}
-
