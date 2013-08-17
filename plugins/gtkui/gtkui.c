@@ -1247,7 +1247,7 @@ gtkui_show_info_window (const char *fname, const char *title, GtkWidget **pwindo
 gboolean
 gtkui_quit_cb (void *ctx) {
     if (deadbeef->have_background_jobs ()) {
-        GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("The player is currently running backgroud tasks. If you quit now, the tasks will be cancelled or interrupted. Data loss may result"));
+        GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("The player is currently running backgroud tasks. If you quit now, the tasks will be cancelled or interrupted. This may result in data loss."));
         gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (mainwin));
         gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), _("Do you still want to quit?"));
         gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
