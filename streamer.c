@@ -843,6 +843,7 @@ streamer_set_current (playItem_t *it) {
             *sc = 0;
         }
 
+        // FIXME: can be race condition if config changes during this
         ctmap = streamer_ctmap;
         while (ctmap) {
             if (!strcmp (cct, ctmap->ct)) {
@@ -2333,6 +2334,9 @@ streamer_configchanged (void) {
         formatchanged = 1;
         streamer_reset (1);
     }
+
+    // FIXME: only if changed (can compare strings)
+    ctmap_init ();
 }
 
 void
