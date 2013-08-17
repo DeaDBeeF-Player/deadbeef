@@ -49,6 +49,7 @@
 #include "replaygain.h"
 #include "fft.h"
 #include "handler.h"
+#include "parser.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -682,16 +683,81 @@ streamer_song_removed_notify (playItem_t *it) {
     }
 }
 
-// map of some popular content types to decoders
-// FIXME: must be in config and in GUI settings
-const char * decmap_audio_mpeg[] = { "audio/mpeg", "stdmpg", "ffmpeg", NULL };
-const char * decmap_audio_x_mpeg[] = { "audio/x-mpeg", "stdmpg", "ffmpeg", NULL };
-const char * decmap_application_ogg[] = { "application/ogg", "stdogg", "ffmpeg", NULL };
-const char * decmap_audio_ogg[] = { "audio/ogg", "stdogg", "ffmpeg", NULL };
-const char * decmap_audio_aac[] = { "audio/aac", "aac", "ffmpeg", NULL };
-const char * decmap_audio_aacp[] = { "audio/aacp", "aac", "ffmpeg", NULL };
-const char * decmap_audio_wma[] = { "audio/wma", "wma", "ffmpeg", NULL };
-const char ** decmap[] = { decmap_audio_mpeg, decmap_audio_x_mpeg, decmap_application_ogg, decmap_audio_ogg, decmap_audio_aac, decmap_audio_aacp, decmap_audio_wma, NULL };
+#define CTMAP_MAX_PLUGINS 5
+
+typedef struct ctmap_s {
+    char *ct;
+    char *plugins[CTMAP_MAX_PLUGINS];
+    struct ctmap_s *next;
+} ctmap_t;
+
+ctmap_t *streamer_ctmap;
+
+static void
+ctmap_free (void) {
+    while (streamer_ctmap) {
+        ctmap_t *ct = streamer_ctmap;
+        free (ct->ct);
+        for (int i = 0; ct->plugins[i]; i++) {
+            free (ct->plugins[i]);
+        }
+        streamer_ctmap = ct->next;
+        free (ct);
+    }
+}
+
+static void
+ctmap_init (void) {
+    ctmap_free ();
+    char mapstr[2048];
+    deadbeef->conf_get_str ("network.ctmapping", DDB_DEFAULT_CTMAPPING, mapstr, sizeof (mapstr));
+
+    const char *p = mapstr;
+    char t[MAX_TOKEN];
+    char ct[MAX_TOKEN];
+    char plugins[MAX_TOKEN*5];
+
+    ctmap_t *tail = NULL;
+
+    for (;;) {
+        p = gettoken (p, t);
+
+        if (!p) {
+            break;
+        }
+
+        ctmap_t *ctmap = malloc (sizeof (ctmap_t));
+        memset (ctmap, 0, sizeof (ctmap_t));
+        ctmap->ct = strdup (t);
+
+        int n = 0;
+
+        p = gettoken (p, t);
+        if (!p || strcmp (t, "{")) {
+            free (ctmap->ct);
+            free (ctmap);
+            break;
+        }
+
+        plugins[0] = 0;
+        for (;;) {
+            p = gettoken (p, t);
+            if (!p || !strcmp (t, "}") || n >= CTMAP_MAX_PLUGINS-1) {
+                break;
+            }
+
+            ctmap->plugins[n++] = strdup (t);
+        }
+        ctmap->plugins[n] = NULL;
+        if (tail) {
+            tail->next = ctmap;
+        }
+        tail = ctmap;
+        if (!streamer_ctmap) {
+            streamer_ctmap = ctmap;
+        }
+    }
+}
 
 // that must be called after last sample from str_playing_song was done reading
 static int
@@ -748,7 +814,7 @@ streamer_set_current (playItem_t *it) {
         strncpy (filetype, ft, sizeof (filetype));
     }
     pl_unlock ();
-    const char **plugs = NULL;
+    ctmap_t *ctmap = NULL;
     if (!decoder_id[0] && (!strcmp (filetype, "content") || !filetype[0])) {
         // try to get content-type
         mutex_lock (decodemutex);
@@ -777,14 +843,15 @@ streamer_set_current (playItem_t *it) {
             *sc = 0;
         }
 
-        for (int map = 0; decmap[map]; map++) {
-            if (!strcmp (cct, decmap[map][0])) {
-                plugs = decmap[map];
+        ctmap = streamer_ctmap;
+        while (ctmap) {
+            if (!strcmp (cct, ctmap->ct)) {
                 break;
             }
+            ctmap = ctmap->next;
         }
 
-        if (!plugs && (!strcmp (cct, "audio/x-mpegurl") || !strncmp (cct, "text/html", 9) || !strncmp (cct, "audio/x-scpls", 13) || !strncmp (cct, "application/octet-stream", 9))) {
+        if (!ctmap && (!strcmp (cct, "audio/x-mpegurl") || !strncmp (cct, "text/html", 9) || !strncmp (cct, "audio/x-scpls", 13) || !strncmp (cct, "application/octet-stream", 9))) {
             // download playlist into temp file
             trace ("downloading playlist into temp file...\n");
             char *buf = NULL;
@@ -907,9 +974,9 @@ m3u_error:
     }
     playlist_track = it;
 
-    int plug_idx = 1;
+    int plug_idx = 0;
     for (;;) {
-        if (!decoder_id[0] && plugs && !plugs[plug_idx]) {
+        if (!decoder_id[0] && ctmap && !ctmap->plugins[plug_idx]) {
             it->played = 1;
             trace ("decoder->init returned %p\n", new_fileinfo);
             streamer_buffering = 0;
@@ -952,9 +1019,9 @@ m3u_error:
                 pl_unlock ();
             }
         }
-        else if (plugs) {
+        else if (ctmap) {
             // match by decoder
-            dec = plug_get_decoder_for_id (plugs[plug_idx]);
+            dec = plug_get_decoder_for_id (ctmap->plugins[plug_idx]);
             if (dec) {
                 pl_replace_meta (it, "!DECODER", dec->plugin.id);
             }
@@ -1783,6 +1850,9 @@ streamer_init (void) {
     streamer_dsp_init ();
     
     replaygain_set (conf_get_int ("replaygain_mode", 0), conf_get_int ("replaygain_scale", 1), conf_get_float ("replaygain_preamp", 0), conf_get_float ("global_preamp", 0));
+
+    ctmap_init ();
+
     streamer_tid = thread_start (streamer_thread, NULL);
     return 0;
 }
