@@ -425,8 +425,8 @@ static Shx_plugin_t plugin = {
     .misc.plugin.id = "shellexec",
     .misc.plugin.name = "Shell commands",
     .misc.plugin.descr = "Executes configurable shell commands for tracks\n"
-    "This plugin doesn't have GUI configuration yet. Please setup manually in config file\n"
-    "Syntax:\n"
+    "If you don't have shellexecui installed,\n"
+    "you can still use the following syntax in the config file:\n\n"
     "shellexec.NN shcmd:title:name:flag1,flag2,flag3,...\n\n"
     "NN is any (unique) number, e.g. 01, 02, 03, etc\n\n"
     "shcmd is the command to execute, supports title formatting\n\n"
