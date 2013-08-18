@@ -39,7 +39,7 @@ deadbeef_SOURCES =\
 	replaygain.c replaygain.h\
 	fft.c fft.h\
 	handler.c handler.h\
-	parser.c parser.h
+	plugins/libparser/parser.c plugins/libparser/parser.h
 	
 #	ConvertUTF/ConvertUTF.c ConvertUTF/ConvertUTF.h
 

@@ -28,7 +28,7 @@
 #include "mainplaylist.h"
 #include "support.h"
 #include "interface.h"
-#include "parser.h"
+#include "../libparser/parser.h"
 #include "actions.h"
 #include "search.h"
 #include "actionhandlers.h"

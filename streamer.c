@@ -49,7 +49,7 @@
 #include "replaygain.h"
 #include "fft.h"
 #include "handler.h"
-#include "parser.h"
+#include "plugins/libparser/parser.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)

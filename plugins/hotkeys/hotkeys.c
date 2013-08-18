@@ -26,7 +26,7 @@
 #include <sys/prctl.h>
 #endif
 
-#include "parser.h"
+#include "../libparser/parser.h"
 #include "hotkeys.h"
 #include "../../deadbeef.h"
 #include "actionhandlers.h"

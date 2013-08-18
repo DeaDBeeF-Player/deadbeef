@@ -38,7 +38,7 @@
 #include "interface.h"
 #include "callbacks.h"
 #include "support.h"
-#include "parser.h"
+#include "../libparser/parser.h"
 #include "drawing.h"
 #include "trkproperties.h"
 #include "../artwork/artwork.h"

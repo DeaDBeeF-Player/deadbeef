@@ -54,7 +54,7 @@ typedef struct
 #include "../../gettext.h"
 #include "support.h"
 #include "gtkui.h"
-#include "parser.h"
+#include "../libparser/parser.h"
 #include "../hotkeys/hotkeys.h"
 #include <X11/Xlib.h> // only for the KeySym type
 
