@@ -161,6 +161,11 @@ w_set_design_mode (int active) {
     set_design_mode (rootwidget);
 }
 
+int
+w_get_design_mode (void) {
+    return design_mode;
+}
+
 void
 w_append (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
     child->parent = cont;

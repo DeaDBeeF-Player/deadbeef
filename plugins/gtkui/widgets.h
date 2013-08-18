@@ -36,6 +36,9 @@ w_get_rootwidget (void);
 void
 w_set_design_mode (int active);
 
+int
+w_get_design_mode (void);
+
 void
 w_reg_widget (const char *title, ddb_gtkui_widget_t *(*create_func) (void), ...);
 

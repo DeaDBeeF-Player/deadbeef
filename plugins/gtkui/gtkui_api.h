@@ -138,11 +138,14 @@ typedef struct {
     // returns the toplevel widget
     ddb_gtkui_widget_t * (*w_get_rootwidget) (void);
 
+    // enter/exit design mode
+    void (*w_set_design_mode) (int active);
+
+    // check whether we are in design mode
+    int (*w_get_design_mode) (void);
+
     // create a widget of specified type
     ddb_gtkui_widget_t * (*w_create) (const char *type);
-
-    // set widget name
-    void (*w_set_name) (ddb_gtkui_widget_t *w, const char *name);
 
     // destroy the widget
     void (*w_destroy) (ddb_gtkui_widget_t *w);
