@@ -22,7 +22,7 @@ GTKUI_SOURCES =    gtkui.c gtkui.h\
 				   search.c search.h\
 				   fileman.c\
 				   pluginconf.c\
-				   parser.c parser.h\
+				   ../libparser/parser.c ../libparser/parser.h\
 				   ddbtabstrip.c ddbtabstrip.h\
 				   ddbvolumebar.c ddbvolumebar.h\
 				   trkproperties.c trkproperties.h\

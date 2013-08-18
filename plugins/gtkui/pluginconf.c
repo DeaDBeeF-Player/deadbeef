@@ -28,7 +28,7 @@
 #include "../../gettext.h"
 #include "../../deadbeef.h"
 #include "gtkui.h"
-#include "parser.h"
+#include "../libparser/parser.h"
 #include "support.h"
 #include "pluginconf.h"
 

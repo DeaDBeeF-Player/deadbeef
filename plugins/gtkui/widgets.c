@@ -27,7 +27,7 @@
 #include "ddblistview.h"
 #include "mainplaylist.h"
 #include "../../gettext.h"
-#include "parser.h"
+#include "../libparser/parser.h"
 #include "trkproperties.h"
 #include "coverart.h"
 //#define USE_OPENGL 1

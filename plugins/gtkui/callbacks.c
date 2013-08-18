@@ -41,7 +41,7 @@
 #include "search.h"
 #include "progress.h"
 #include "gtkui.h"
-#include "parser.h"
+#include "../libparser/parser.h"
 #include "drawing.h"
 #include "eq.h"
 #include "wingeom.h"

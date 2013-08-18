@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../../gettext.h"
-#include "parser.h"
+#include "../libparser/parser.h"
 #include "gtkui.h"
 #include "ddblistview.h"
 #include "mainplaylist.h"

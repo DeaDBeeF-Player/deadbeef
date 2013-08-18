@@ -21,6 +21,9 @@
 
 #include "gtkui_api.h"
 
+// widget config string must look like that:
+// type key1=value1 key2=value2... { child widgets }
+
 void
 w_init (void);
 
