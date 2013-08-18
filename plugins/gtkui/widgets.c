@@ -255,16 +255,6 @@ w_create_from_string (const char *s, ddb_gtkui_widget_t **parent) {
         w_remove (w, w->children);
     }
 
-    // name
-    s = gettoken (s, t);
-    if (!s) {
-        w_destroy (w);
-        return NULL;
-    }
-    if (t[0]) {
-        w_set_name (w, t);
-    }
-
     // load widget params
     if (w->load) {
         s = w->load (w, type, s);
@@ -273,18 +263,34 @@ w_create_from_string (const char *s, ddb_gtkui_widget_t **parent) {
             return NULL;
         }
     }
-
-    // {
-    s = gettoken (s, t);
-    if (!s) {
-        w_destroy (w);
-        return NULL;
+    else {
+        // skip all params (if any)
+        for (;;) {
+            s = gettoken_ext (s, t, "={}();");
+            if (!s) {
+                w_destroy (w);
+                return NULL;
+            }
+            if (!strcmp (t, "{")) {
+                break;
+            }
+            // match '='
+            char eq[MAX_TOKEN];
+            char val[MAX_TOKEN];
+            s = gettoken_ext (s, eq, "={}();");
+            if (!s || strcmp (eq, "=")) {
+                w_destroy (w);
+                return NULL;
+            }
+            s = gettoken_ext (s, eq, "={}();");
+            if (!s) {
+                w_destroy (w);
+                return NULL;
+            }
+        }
     }
-    if (strcmp (t, "{")) {
-        w_destroy (w);
-        return NULL;
-    }
 
+    // we don't need to match '{' here, it's already done above
     const char *back = s;
     s = gettoken (s, t);
     if (!s) {
@@ -358,9 +364,6 @@ static char paste_buffer[1000];
 void
 save_widget_to_string (char *str, int sz, ddb_gtkui_widget_t *w) {
     strcat (str, w->type);
-    strcat (str, " \"");
-    strcat (str, w->name ? w->name : "");
-    strcat (str, "\"");
     if (w->save) {
         w->save (w, str, sz);
     }
@@ -650,26 +653,12 @@ w_create (const char *type) {
 }
 
 void
-w_set_name (ddb_gtkui_widget_t *w, const char *name) {
-    if (w->name) {
-        free (w->name);
-        w->name = NULL;
-    }
-    if (name) {
-        w->name = strdup (name);
-    }
-}
-
-void
 w_destroy (ddb_gtkui_widget_t *w) {
     if (w->destroy) {
         w->destroy (w);
     }
     if (w->widget) {
         gtk_widget_destroy (w->widget);
-    }
-    if (w->name) {
-        free (w->name);
     }
     free (w);
 }
@@ -759,25 +748,44 @@ w_splitter_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) 
     if (strcmp (type, "vsplitter") && strcmp (type, "hsplitter")) {
         return NULL;
     }
+    printf ("loading splitter\n");
     char t[MAX_TOKEN];
-    s = gettoken (s, t);
-    if (!s) {
-        return NULL;
+    for (;;) {
+        s = gettoken_ext (s, t, "={}();");
+        if (!s) {
+            return NULL;
+        }
+
+        if (!strcmp (t, "{")) {
+            break;
+        }
+
+        char val[MAX_TOKEN];
+        s = gettoken_ext (s, val, "={}();");
+        if (!s || strcmp (val, "=")) {
+            return NULL;
+        }
+        s = gettoken_ext (s, val, "={}();");
+        if (!s) {
+            return NULL;
+        }
+
+        if (!strcmp (t, "pos")) {
+            ((w_splitter_t *)w)->position = atoi (val);
+        }
+        else if (!strcmp (t, "locked")) {
+            ((w_splitter_t *)w)->locked = atoi (val);
+        }
     }
-    ((w_splitter_t *)w)->position = atoi (t);
-    s = gettoken (s, t);
-    if (!s) {
-        return NULL;
-    }
-    ((w_splitter_t *)w)->locked = atoi (t);
+
     return s;
 }
 
 void
 w_splitter_save (struct ddb_gtkui_widget_s *w, char *s, int sz) {
     int pos = ((w_splitter_t *)w)->box ? ((w_splitter_t *)w)->position : gtk_paned_get_position (GTK_PANED(w->widget));
-    char spos[10];
-    snprintf (spos, sizeof (spos), " %d %d", pos, ((w_splitter_t *)w)->locked);
+    char spos[100];
+    snprintf (spos, sizeof (spos), " pos=%d locked=%d", pos, ((w_splitter_t *)w)->locked);
     strncat (s, spos, sz);
 }
 

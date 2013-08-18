@@ -1755,7 +1755,6 @@ static ddb_gtkui_t plugin = {
     .w_is_registered = w_is_registered,
     .w_get_rootwidget = w_get_rootwidget,
     .w_create = w_create,
-    .w_set_name = w_set_name,
     .w_destroy = w_destroy,
     .w_append = w_append,
     .w_replace = w_replace,

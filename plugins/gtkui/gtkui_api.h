@@ -36,9 +36,16 @@
 // this flag tells that the widget should be added to h/vboxes with expand=FALSE
 #define DDB_GTKUI_WIDGET_FLAG_NON_EXPANDABLE 0x00000001
 
+// widget config string must look like that:
+// type key1=value1 key2=value2... { child widgets }
+//
+// the default widget loader will ignore all key-value pairs,
+// so it's your custom loader's responsibility to handle them
+// you can find out how to write custom loaders in gtkui sources,
+// look e.g. for the "w_splitter_load"
+
 typedef struct ddb_gtkui_widget_s {
     const char *type;
-    char *name;
 
     struct ddb_gtkui_widget_s *parent;
 
