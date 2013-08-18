@@ -12,6 +12,7 @@ Categories=AudioVideo;Player;GTK;
 Terminal=false
 Type=Application
 Icon=deadbeef
+X-PulseAudio-Properties=media.role=music
 
 X-Ayatana-Desktop-Shortcuts=Play;Pause;Stop;Next;Prev
 [Play Shortcut Group]
