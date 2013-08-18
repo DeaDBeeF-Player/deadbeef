@@ -982,6 +982,7 @@ on_tabstrip_button_release_event         (GtkWidget       *widget,
     if (event->button == 1) {
         if (ts->scroll_timer > 0) {
             ts->scroll_direction = 0;
+            g_source_remove (ts->scroll_timer);
             ts->scroll_timer = 0;
         }
         if (ts->prepare || ts->dragging >= 0) {
