@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-17 11:49+0200\n"
+"POT-Creation-Date: 2013-08-18 10:28+0200\n"
 "PO-Revision-Date: 2013-08-17 09:20+0000\n"
 "Last-Translator: waker <wakeroid@gmail.com>\n"
 "Language-Team: Indonesian (http://www.transifex.com/projects/p/deadbeef-"
@@ -840,7 +840,8 @@ msgstr "Sandi Proksi:"
 msgid "HTTP User Agent:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2483 ../plugins/gtkui/deadbeef.glade.h:151
+#: ../plugins/gtkui/interface.c:2483 ../plugins/gtkui/interface.c:4171
+#: ../plugins/gtkui/deadbeef.glade.h:151
 msgid "Edit Content-Type Mapping"
 msgstr ""
 
@@ -882,6 +883,7 @@ msgid "Copyright"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:2715 ../plugins/gtkui/deadbeef.glade.h:161
+#: ../plugins/gtkui/ctmapping.c:131
 msgid "Plugins"
 msgstr ""
 
@@ -974,8 +976,28 @@ msgstr ""
 msgid "Write ID3v2.4"
 msgstr "Tulis ID3v2.4"
 
-#: ../plugins/gtkui/interface.c:4013 ../plugins/gtkui/deadbeef.glade.h:182
+#: ../plugins/gtkui/interface.c:4021 ../plugins/gtkui/deadbeef.glade.h:182
 msgid "Content-Type Mapping"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:4044 ../plugins/gtkui/deadbeef.glade.h:183
+msgid ""
+"This table defines the binding between network stream content types and "
+"DeaDBeeF decoder plugins. For example, mp3 files can have content type "
+"\"audio/x-mpeg\", and need to be decoded by DeaDBeeF's own \"stdmpg\" "
+"plugin, or \"ffmpeg\" plugin."
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:4092 ../plugins/gtkui/deadbeef.glade.h:184
+msgid "Reset to defaults"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:4187 ../plugins/gtkui/deadbeef.glade.h:185
+msgid "Content-Type:"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:4200 ../plugins/gtkui/deadbeef.glade.h:186
+msgid "Plugins:"
 msgstr ""
 
 #: ../plugins/gtkui/mainplaylist.c:328 ../plugins/gtkui/search.c:416
@@ -1631,6 +1653,8 @@ msgid "Preset with the same name already exists. Try to pick another title."
 msgstr ""
 
 #: ../plugins/converter/convgui.c:743 ../plugins/converter/convgui.c:1217
+#: ../plugins/gtkui/ctmapping.c:202 ../plugins/gtkui/ctmapping.c:230
+#: ../plugins/gtkui/ctmapping.c:262
 msgid "Error"
 msgstr ""
 
@@ -2068,4 +2092,27 @@ msgstr ""
 
 #: ../plugins/gtkui/actionhandlers.c:720
 msgid "DeaDBeeF playlist files (*.dbpl)"
+msgstr ""
+
+#: ../plugins/gtkui/ctmapping.c:129
+msgid "Content-Type"
+msgstr ""
+
+#: ../plugins/gtkui/ctmapping.c:199
+msgid "Invalid value(s)."
+msgstr ""
+
+#: ../plugins/gtkui/ctmapping.c:200
+msgid ""
+"Content-type and Plugins fields must be non-empty, and comply with the "
+"rules.\n"
+"Example content-type: 'audio/mpeg'.\n"
+"Example plugin ids: 'stdmpg ffmpeg'.\n"
+"Spaces must be used as separators in plugin ids list.\n"
+"Content type should be only letters, numbers and '-' sign.\n"
+"Plugin id can contain only letters and numbers."
+msgstr ""
+
+#: ../plugins/gtkui/ctmapping.c:228 ../plugins/gtkui/ctmapping.c:260
+msgid "Nothing is selected."
 msgstr ""
