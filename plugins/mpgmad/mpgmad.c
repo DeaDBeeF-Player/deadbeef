@@ -584,7 +584,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                         // unable to determine duration
                         buffer->duration = -1;
                         buffer->totalsamples = -1;
-                        if (sample == 0) {
+                        if (sample == 0 && !have_info) {
                             trace ("check validity of the next frame...\n");
                             deadbeef->fseek (buffer->file, framepos+packetlength, SEEK_SET);
                             continue;
