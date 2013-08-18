@@ -2549,6 +2549,7 @@ streamer_notify_order_changed (int prev_order, int new_order) {
 void
 audio_get_waveform_data (int type, float *data) {
     if (!audio_mem_mutex) {
+        memset (data, 0, sizeof (audio_data));
         return;
     }
     mutex_lock (audio_mem_mutex);
