@@ -104,6 +104,9 @@ on_pltbrowser_button_press_event         (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
+    if (gtkui_plugin->w_get_design_mode ()) {
+        return FALSE;
+    }
     if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
         GtkTreePath *path;
         GtkTreeViewColumn *col;
