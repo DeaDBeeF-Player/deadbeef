@@ -691,7 +691,32 @@ typedef struct ctmap_s {
     struct ctmap_s *next;
 } ctmap_t;
 
-ctmap_t *streamer_ctmap;
+static ctmap_t *streamer_ctmap;
+static char conf_network_ctmapping[2048];
+static uintptr_t ctmap_mutex;
+
+static void
+ctmap_init_mutex (void) {
+    ctmap_mutex = mutex_create ();
+}
+
+static void
+ctmap_free_mutex (void) {
+    if (ctmap_mutex) {
+        mutex_free (ctmap_mutex);
+        ctmap_mutex = 0;
+    }
+}
+
+static void
+ctmap_lock (void) {
+    mutex_lock (ctmap_mutex);
+}
+
+static void
+ctmap_unlock (void) {
+    mutex_unlock (ctmap_mutex);
+}
 
 static void
 ctmap_free (void) {
@@ -709,8 +734,7 @@ ctmap_free (void) {
 static void
 ctmap_init (void) {
     ctmap_free ();
-    char mapstr[2048];
-    deadbeef->conf_get_str ("network.ctmapping", DDB_DEFAULT_CTMAPPING, mapstr, sizeof (mapstr));
+    char *mapstr = conf_network_ctmapping;
 
     const char *p = mapstr;
     char t[MAX_TOKEN];
@@ -814,7 +838,7 @@ streamer_set_current (playItem_t *it) {
         strncpy (filetype, ft, sizeof (filetype));
     }
     pl_unlock ();
-    ctmap_t *ctmap = NULL;
+    char *plugs[CTMAP_MAX_PLUGINS] = {NULL};
     if (!decoder_id[0] && (!strcmp (filetype, "content") || !filetype[0])) {
         // try to get content-type
         mutex_lock (decodemutex);
@@ -843,16 +867,24 @@ streamer_set_current (playItem_t *it) {
             *sc = 0;
         }
 
-        // FIXME: can be race condition if config changes during this
-        ctmap = streamer_ctmap;
+        ctmap_lock ();
+        ctmap_t *ctmap = streamer_ctmap;
         while (ctmap) {
             if (!strcmp (cct, ctmap->ct)) {
                 break;
             }
             ctmap = ctmap->next;
         }
+        if (ctmap) {
+            int i;
+            for (i = 0; ctmap->plugins[i]; i++) {
+                plugs[i] = strdupa (ctmap->plugins[i]);
+            }
+            plugs[i] = NULL;
+        }
+        ctmap_unlock ();
 
-        if (!ctmap && (!strcmp (cct, "audio/x-mpegurl") || !strncmp (cct, "text/html", 9) || !strncmp (cct, "audio/x-scpls", 13) || !strncmp (cct, "application/octet-stream", 9))) {
+        if (!plugs[0] && (!strcmp (cct, "audio/x-mpegurl") || !strncmp (cct, "text/html", 9) || !strncmp (cct, "audio/x-scpls", 13) || !strncmp (cct, "application/octet-stream", 9))) {
             // download playlist into temp file
             trace ("downloading playlist into temp file...\n");
             char *buf = NULL;
@@ -977,7 +1009,7 @@ m3u_error:
 
     int plug_idx = 0;
     for (;;) {
-        if (!decoder_id[0] && ctmap && !ctmap->plugins[plug_idx]) {
+        if (!decoder_id[0] && plugs[0] && !plugs[plug_idx]) {
             it->played = 1;
             trace ("decoder->init returned %p\n", new_fileinfo);
             streamer_buffering = 0;
@@ -1020,9 +1052,9 @@ m3u_error:
                 pl_unlock ();
             }
         }
-        else if (ctmap) {
+        else if (plugs[0]) {
             // match by decoder
-            dec = plug_get_decoder_for_id (ctmap->plugins[plug_idx]);
+            dec = plug_get_decoder_for_id (plugs[plug_idx]);
             if (dec) {
                 pl_replace_meta (it, "!DECODER", dec->plugin.id);
             }
@@ -1852,6 +1884,8 @@ streamer_init (void) {
     
     replaygain_set (conf_get_int ("replaygain_mode", 0), conf_get_int ("replaygain_scale", 1), conf_get_float ("replaygain_preamp", 0), conf_get_float ("global_preamp", 0));
 
+    ctmap_init_mutex ();
+    deadbeef->conf_get_str ("network.ctmapping", DDB_DEFAULT_CTMAPPING, conf_network_ctmapping, sizeof (conf_network_ctmapping));
     ctmap_init ();
 
     streamer_tid = thread_start (streamer_thread, NULL);
@@ -1883,6 +1917,9 @@ streamer_free (void) {
         plt_unref (streamer_playlist);
         streamer_playlist = NULL;
     }
+
+    ctmap_free ();
+    ctmap_free_mutex ();
 
     decodemutex = 0;
     mutex_free (mutex);
@@ -2335,8 +2372,11 @@ streamer_configchanged (void) {
         streamer_reset (1);
     }
 
-    // FIXME: only if changed (can compare strings)
-    ctmap_init ();
+    char mapstr[2048];
+    deadbeef->conf_get_str ("network.ctmapping", DDB_DEFAULT_CTMAPPING, mapstr, sizeof (mapstr));
+    if (strcmp (mapstr, conf_network_ctmapping)) {
+        ctmap_init ();
+    }
 }
 
 void
