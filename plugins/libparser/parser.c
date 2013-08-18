@@ -46,12 +46,11 @@ skipws (const char *p) {
 }
 
 const char *
-gettoken (const char *p, char *tok) {
+gettoken_ext (const char *p, char *tok, const char *specialchars) {
     const char *c;
     assert (p);
     assert (tok);
     int n = MAX_TOKEN-1;
-    char specialchars[] = "{}();";
     if (!(p = skipws (p))) {
         return NULL;
     }
@@ -86,6 +85,26 @@ gettoken (const char *p, char *tok) {
 }
 
 const char *
+gettoken (const char *p, char *tok) {
+    char specialchars[] = "{}();";
+    return gettoken_ext (p, tok, specialchars);
+}
+
+const char *
+gettoken_keyvalue (const char *p, char *key, char *val) {
+    char specialchars[] = "{}();=";
+    p = gettoken_ext (p, key, specialchars);
+    if (!p) {
+        return NULL;
+    }
+    p = gettoken_ext (p, val, specialchars);
+    if (!p || *val != '=') {
+        return NULL;
+    }
+    return gettoken_ext (p, val, specialchars);
+}
+
+const char *
 gettoken_warn_eof (const char *p, char *tok) {
     p = gettoken (p, tok);
     if (!p) {
@@ -103,5 +122,4 @@ gettoken_err_eof (const char *p, char *tok) {
     }
     return p;
 }
-
 

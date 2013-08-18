@@ -21,9 +21,6 @@
 
 #include "gtkui_api.h"
 
-// widget config string must look like that:
-// type key1=value1 key2=value2... { child widgets }
-
 void
 w_init (void);
 
@@ -53,9 +50,6 @@ w_is_registered (const char *type);
 
 ddb_gtkui_widget_t *
 w_create (const char *type);
-
-void
-w_set_name (ddb_gtkui_widget_t *w, const char *name);
 
 const char *
 w_create_from_string (const char *s, ddb_gtkui_widget_t **parent);

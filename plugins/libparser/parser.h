@@ -31,6 +31,12 @@ const char *
 gettoken (const char *p, char *tok);
 
 const char *
+gettoken_ext (const char *p, char *tok, const char *specialchars);
+
+const char *
+gettoken_keyvalue (const char *p, char *key, char *val);
+
+const char *
 gettoken_warn_eof (const char *p, char *tok);
 
 const char *
