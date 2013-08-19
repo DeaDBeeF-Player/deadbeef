@@ -1016,30 +1016,6 @@ gtkui_thread (void *ctx) {
         deadbeef->conf_set_str ("hotkey.key24", "\"Alt 9\" 0 0 playlist9");
         deadbeef->conf_set_str ("hotkey.key25", "\"Alt 0\" 0 0 playlist10");
     }
-
-    // construct mainwindow widgets
-    {
-
-        w_init ();
-        ddb_gtkui_widget_t *rootwidget = w_get_rootwidget ();
-        gtk_widget_show (rootwidget->widget);
-        gtk_box_pack_start (GTK_BOX(lookup_widget(mainwin, "plugins_bottom_vbox")), rootwidget->widget, TRUE, TRUE, 0);
-
-        // load layout
-        char layout[4000];
-        deadbeef->conf_get_str ("gtkui.layout", "tabbed_playlist \"\" { }", layout, sizeof (layout));
-
-        ddb_gtkui_widget_t *w = NULL;
-        w_create_from_string (layout, &w);
-        if (!w) {
-            ddb_gtkui_widget_t *plt = w_create ("tabbed_playlist");
-            w_append (rootwidget, plt);
-            gtk_widget_show (plt->widget);
-        }
-        else {
-            w_append (rootwidget, w);
-        }
-    }
 #if GTK_CHECK_VERSION(3,0,0)
     gtk_widget_set_events (GTK_WIDGET (mainwin), gtk_widget_get_events (GTK_WIDGET (mainwin)) | GDK_SCROLL_MASK);
 #endif
@@ -1093,6 +1069,30 @@ gtkui_thread (void *ctx) {
     cover_art_init ();
 
     gtk_widget_show (mainwin);
+
+    // construct mainwindow widgets
+    {
+
+        w_init ();
+        ddb_gtkui_widget_t *rootwidget = w_get_rootwidget ();
+        gtk_widget_show (rootwidget->widget);
+        gtk_box_pack_start (GTK_BOX(lookup_widget(mainwin, "plugins_bottom_vbox")), rootwidget->widget, TRUE, TRUE, 0);
+
+        // load layout
+        char layout[4000];
+        deadbeef->conf_get_str ("gtkui.layout", "tabbed_playlist \"\" { }", layout, sizeof (layout));
+
+        ddb_gtkui_widget_t *w = NULL;
+        w_create_from_string (layout, &w);
+        if (!w) {
+            ddb_gtkui_widget_t *plt = w_create ("tabbed_playlist");
+            w_append (rootwidget, plt);
+            gtk_widget_show (plt->widget);
+        }
+        else {
+            w_append (rootwidget, w);
+        }
+    }
 
     gtkui_setup_gui_refresh ();
 
