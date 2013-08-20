@@ -828,28 +828,38 @@ ddb_listview_vscroll_event               (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
+
 	GdkEventScroll *ev = (GdkEventScroll*)event;
-    GtkWidget *range = ps->scrollbar;
-    GtkWidget *list = ps->list;
-#if GTK_CHECK_VERSION(3,4,0)
-    if (((GdkEventScroll *)event)->direction == GDK_SCROLL_SMOOTH) {
-        gdouble x, y;
-        gboolean res = gdk_event_get_scroll_deltas(event, &x, &y);
-        trace ("scroll delta %f\n", (float)y);
-    }
-    else {
-        trace ("scrolldir: %d\n", (int)((GdkEventScroll *)event)->direction);
-    }
-#endif
+
+    GtkWidget *rangeh = ps->hscrollbar;
+    GtkWidget *rangev = ps->scrollbar;
+
+    gdouble deltah = SCROLL_STEP * 2;
+    gdouble deltav = SCROLL_STEP * 2;
+    gdouble scrollh = gtk_range_get_value (GTK_RANGE (rangeh));
+    gdouble scrollv = gtk_range_get_value (GTK_RANGE (rangev));
     // pass event to scrollbar
-    int newscroll = gtk_range_get_value (GTK_RANGE (range));
     if (ev->direction == GDK_SCROLL_UP) {
-        newscroll -= SCROLL_STEP * 2;
+        gtk_range_set_value (GTK_RANGE (rangev), scrollv - deltav);
     }
     else if (ev->direction == GDK_SCROLL_DOWN) {
-        newscroll += SCROLL_STEP * 2;
+        gtk_range_set_value (GTK_RANGE (rangev), scrollv + deltav);
     }
-    gtk_range_set_value (GTK_RANGE (range), newscroll);
+    else if (ev->direction == GDK_SCROLL_LEFT) {
+        gtk_range_set_value (GTK_RANGE (rangeh), scrollh - deltah);
+    }
+    else if (ev->direction == GDK_SCROLL_RIGHT) {
+        gtk_range_set_value (GTK_RANGE (rangeh), scrollh + deltah);
+    }
+#if GTK_CHECK_VERSION(3,4,0)
+    else if (ev->direction == GDK_SCROLL_SMOOTH) {
+        gdouble x, y;
+        if (gdk_event_get_scroll_deltas(event, &x, &y)) {
+            gtk_range_set_value (GTK_RANGE (rangeh), scrollh + deltah * x);
+            gtk_range_set_value (GTK_RANGE (rangev), scrollv + deltav * y);
+        }
+    }
+#endif
 
     return FALSE;
 }
