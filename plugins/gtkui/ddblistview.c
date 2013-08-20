@@ -378,6 +378,9 @@ ddb_listview_init(DdbListview *listview)
 #if GTK_CHECK_VERSION(3,0,0)
     events |= GDK_SCROLL_MASK;
 #endif
+#if GTK_CHECK_VERSION(3,4,0)
+    events |= GDK_SMOOTH_SCROLL_MASK;
+#endif
     gtk_widget_set_events (listview->list, events);
 
     listview->hscrollbar = gtk_hscrollbar_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 0, 0, 0, 0)));
@@ -828,6 +831,16 @@ ddb_listview_vscroll_event               (GtkWidget       *widget,
 	GdkEventScroll *ev = (GdkEventScroll*)event;
     GtkWidget *range = ps->scrollbar;
     GtkWidget *list = ps->list;
+#if GTK_CHECK_VERSION(3,4,0)
+    if (((GdkEventScroll *)event)->direction == GDK_SCROLL_SMOOTH) {
+        gdouble x, y;
+        gboolean res = gdk_event_get_scroll_deltas(event, &x, &y);
+        trace ("scroll delta %f\n", (float)y);
+    }
+    else {
+        trace ("scrolldir: %d\n", (int)((GdkEventScroll *)event)->direction);
+    }
+#endif
     // pass event to scrollbar
     int newscroll = gtk_range_get_value (GTK_RANGE (range));
     if (ev->direction == GDK_SCROLL_UP) {
