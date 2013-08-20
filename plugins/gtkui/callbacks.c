@@ -662,26 +662,6 @@ on_toggle_status_bar_activate          (GtkMenuItem     *menuitem,
 }
 
 void
-on_toggle_column_headers_activate      (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    // FIXME!
-    return;
-    GtkWidget *playlist = lookup_widget (mainwin, "playlist");
-    if (playlist) {
-        if (!gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem))) {
-            deadbeef->conf_set_int ("gtkui.headers.visible", 0);
-            ddb_listview_show_header (DDB_LISTVIEW (playlist), 0);
-        }
-        else {
-            deadbeef->conf_set_int ("gtkui.headers.visible", 1);
-            ddb_listview_show_header (DDB_LISTVIEW (playlist), 1);
-        }
-    }
-    deadbeef->conf_save ();
-}
-
-void
 on_stop_after_current_activate         (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {

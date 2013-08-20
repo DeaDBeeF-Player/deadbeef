@@ -65,14 +65,14 @@ typedef struct {
 
 typedef struct {
     ddb_gtkui_widget_t base;
-    DdbTabStrip *tabstrip;
     DdbListview *list;
-} w_tabbed_playlist_t;
+    int hideheaders;
+} w_playlist_t;
 
 typedef struct {
-    ddb_gtkui_widget_t base;
-    DdbListview *list;
-} w_playlist_t;
+    w_playlist_t plt;
+    DdbTabStrip *tabstrip;
+} w_tabbed_playlist_t;
 
 typedef struct {
     ddb_gtkui_widget_t base;
@@ -753,7 +753,6 @@ w_splitter_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) 
     if (strcmp (type, "vsplitter") && strcmp (type, "hsplitter")) {
         return NULL;
     }
-    printf ("loading splitter\n");
     char t[MAX_TOKEN];
     for (;;) {
         s = gettoken_ext (s, t, "={}();");
@@ -1361,7 +1360,7 @@ typedef struct {
 static gboolean
 tabbed_trackinfochanged_cb (gpointer p) {
     w_trackdata_t *d = p;
-    w_tabbed_playlist_t *tp = (w_tabbed_playlist_t *)d->w;
+    w_playlist_t *tp = (w_playlist_t *)d->w;
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {
         int idx = deadbeef->plt_get_item_idx (plt, (DB_playItem_t *)d->trk, PL_MAIN);
@@ -1398,7 +1397,7 @@ trackinfochanged_cb (gpointer data) {
 
 static gboolean
 tabbed_paused_cb (gpointer p) {
-    w_tabbed_playlist_t *tp = (w_tabbed_playlist_t *)p;
+    w_playlist_t *tp = (w_playlist_t *)p;
     DB_playItem_t *curr = deadbeef->streamer_get_playing_track ();
     if (curr) {
         int idx = deadbeef->pl_get_idx_of (curr);
@@ -1422,7 +1421,7 @@ paused_cb (gpointer data) {
 
 static gboolean
 tabbed_refresh_cb (gpointer p) {
-    w_tabbed_playlist_t *tp = (w_tabbed_playlist_t *)p;
+    w_playlist_t *tp = (w_playlist_t *)p;
     ddb_listview_clear_sort (tp->list);
     ddb_listview_refresh (tp->list, DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL);
     return FALSE;
@@ -1438,14 +1437,14 @@ refresh_cb (gpointer data) {
 
 static gboolean
 tabbed_playlistswitch_cb (gpointer p) {
-    w_tabbed_playlist_t *tp = (w_tabbed_playlist_t *)p;
+    w_playlist_t *tp = (w_playlist_t *)p;
     int curr = deadbeef->plt_get_curr_idx ();
     char conf[100];
     snprintf (conf, sizeof (conf), "playlist.scroll.%d", curr);
     int scroll = deadbeef->conf_get_int (conf, 0);
     snprintf (conf, sizeof (conf), "playlist.cursor.%d", curr);
     int cursor = deadbeef->conf_get_int (conf, -1);
-    ddb_tabstrip_refresh (tp->tabstrip);
+    ddb_tabstrip_refresh (((w_tabbed_playlist_t *)tp)->tabstrip);
     deadbeef->pl_set_cursor (PL_MAIN, cursor);
     if (cursor != -1) {
         DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (cursor, PL_MAIN);
@@ -1494,7 +1493,7 @@ tabbed_songchanged_cb (gpointer p) {
     struct fromto_t *ft = p;
     DB_playItem_t *from = ft->from;
     DB_playItem_t *to = ft->to;
-    w_tabbed_playlist_t *tp = (w_tabbed_playlist_t *)ft->w;
+    w_playlist_t *tp = (w_playlist_t *)ft->w;
     int to_idx = -1;
     if (!ddb_listview_is_scrolling (tp->list) && to) {
         int cursor_follows_playback = deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1);
@@ -1583,7 +1582,7 @@ songchanged_cb (gpointer data) {
 
 static gboolean
 tabbed_trackfocus_cb (gpointer p) {
-    w_tabbed_playlist_t *tp = p;
+    w_playlist_t *tp = p;
     DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
     if (it) {
         int idx = deadbeef->pl_get_idx_of (it);
@@ -1615,7 +1614,7 @@ trackfocus_cb (gpointer p) {
 
 static int
 w_tabbed_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
-    w_tabbed_playlist_t *tp = (w_tabbed_playlist_t *)w;
+    w_playlist_t *tp = (w_playlist_t *)w;
     switch (id) {
     case DB_EV_SONGCHANGED:
         g_idle_add (redraw_queued_tracks_cb, tp->list);
@@ -1718,20 +1717,91 @@ w_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
     }
     return 0;
 }
+
+static const char *
+w_playlist_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) {
+    if (strcmp (type, "playlist") && strcmp (type, "tabbed_playlist")) {
+        return NULL;
+    }
+    char t[MAX_TOKEN];
+    for (;;) {
+        s = gettoken_ext (s, t, "={}();");
+        if (!s) {
+            return NULL;
+        }
+
+        if (!strcmp (t, "{")) {
+            break;
+        }
+
+        char val[MAX_TOKEN];
+        s = gettoken_ext (s, val, "={}();");
+        if (!s || strcmp (val, "=")) {
+            return NULL;
+        }
+        s = gettoken_ext (s, val, "={}();");
+        if (!s) {
+            return NULL;
+        }
+
+        if (!strcmp (t, "hideheaders")) {
+            ((w_playlist_t *)w)->hideheaders = atoi (val);
+        }
+    }
+
+    return s;
+}
+
+static void
+w_playlist_save (struct ddb_gtkui_widget_s *w, char *s, int sz) {
+    char save[100];
+    snprintf (save, sizeof (save), " hideheaders=%d", ((w_playlist_t *)w)->hideheaders);
+    strncat (s, save, sz);
+}
+
+static void
+w_playlist_init (ddb_gtkui_widget_t *base) {
+    w_playlist_t *w = (w_playlist_t *)base;
+    ddb_listview_show_header (w->list, !w->hideheaders);
+}
+
+static void
+on_playlist_showheaders_toggled (GtkCheckMenuItem *checkmenuitem, gpointer          user_data) {
+    w_playlist_t *w = user_data;
+    w->hideheaders = !gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (checkmenuitem));
+    ddb_listview_show_header (DDB_LISTVIEW (w->list), !w->hideheaders);
+}
+
+static void
+w_playlist_initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
+    GtkWidget *item;
+    item = gtk_check_menu_item_new_with_mnemonic (_("Show Column Headers"));
+    gtk_widget_show (item);
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), !((w_playlist_t *)w)->hideheaders);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "toggled",
+            G_CALLBACK (on_playlist_showheaders_toggled),
+            w);
+}
+
 ddb_gtkui_widget_t *
 w_tabbed_playlist_create (void) {
     w_tabbed_playlist_t *w = malloc (sizeof (w_tabbed_playlist_t));
     memset (w, 0, sizeof (w_tabbed_playlist_t));
 
     GtkWidget *vbox = gtk_vbox_new (FALSE, 0);
-    w->base.widget = vbox;
+    w->plt.base.widget = vbox;
+    w->plt.base.save = w_playlist_save;
+    w->plt.base.load = w_playlist_load;
+    w->plt.base.init = w_playlist_init;
+    w->plt.base.initmenu = w_playlist_initmenu;
     gtk_widget_show (vbox);
 
     GtkWidget *tabstrip = ddb_tabstrip_new ();
     w->tabstrip = (DdbTabStrip *)tabstrip;
     gtk_widget_show (tabstrip);
     GtkWidget *list = ddb_listview_new ();
-    w->list = (DdbListview *)list;
+    w->plt.list = (DdbListview *)list;
     gtk_widget_show (list);
 
     gtk_box_pack_start (GTK_BOX (vbox), tabstrip, FALSE, TRUE, 0);
@@ -1742,17 +1812,11 @@ w_tabbed_playlist_create (void) {
     gtk_box_pack_start (GTK_BOX (vbox), list, TRUE, TRUE, 0);
 
     main_playlist_init (list);
-    if (deadbeef->conf_get_int ("gtkui.headers.visible", 1)) {
-        ddb_listview_show_header (w->list, 1);
-    }
-    else {
-        ddb_listview_show_header (w->list, 0);
-    }
 
 //    gtk_container_forall (GTK_CONTAINER (w->base.widget), w_override_signals, w);
-    w_override_signals (w->base.widget, w);
+    w_override_signals (w->plt.base.widget, w);
 
-    w->base.message = w_tabbed_playlist_message;
+    w->plt.base.message = w_tabbed_playlist_message;
     return (ddb_gtkui_widget_t*)w;
 }
 
@@ -1764,6 +1828,10 @@ w_playlist_create (void) {
     memset (w, 0, sizeof (w_playlist_t));
     w->base.widget = gtk_event_box_new ();
     w->list = DDB_LISTVIEW (ddb_listview_new ());
+    w->base.save = w_playlist_save;
+    w->base.load = w_playlist_load;
+    w->base.init = w_playlist_init;
+    w->base.initmenu = w_playlist_initmenu;
     gtk_widget_show (GTK_WIDGET (w->list));
     main_playlist_init (GTK_WIDGET (w->list));
     if (deadbeef->conf_get_int ("gtkui.headers.visible", 1)) {
