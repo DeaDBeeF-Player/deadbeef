@@ -38,6 +38,22 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
+// utility code for parsing keyvalues
+#define get_keyvalue(s,key,val) {\
+    s = gettoken_ext (s, key, "={}();");\
+    if (s && !strcmp (key, "{")) {\
+        break;\
+    }\
+    s = gettoken_ext (s, val, "={}();");\
+    if (!s || strcmp (val, "=")) {\
+        return NULL;\
+    }\
+    s = gettoken_ext (s, val, "={}();");\
+    if (!s) {\
+        return NULL;\
+    }\
+}
+
 typedef struct w_creator_s {
     const char *type;
     const char *title; // set to NULL to avoid exposing this widget type to user
@@ -120,6 +136,16 @@ typedef struct {
 typedef struct {
     ddb_gtkui_widget_t base;
     GtkWidget *button;
+    GdkColor color;
+    int stock_icon;
+    char *custom_icon;
+    char *label;
+    char *action;
+    int action_ctx;
+    unsigned type : 1; // push/toggle
+    unsigned use_color : 1;
+    unsigned use_icon : 1;
+    unsigned use_label : 1;
 } w_button_t;
 
 static int design_mode;
@@ -281,7 +307,6 @@ w_create_from_string (const char *s, ddb_gtkui_widget_t **parent) {
             }
             // match '='
             char eq[MAX_TOKEN];
-            char val[MAX_TOKEN];
             s = gettoken_ext (s, eq, "={}();");
             if (!s || strcmp (eq, "=")) {
                 w_destroy (w);
@@ -753,31 +778,14 @@ w_splitter_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) 
     if (strcmp (type, "vsplitter") && strcmp (type, "hsplitter")) {
         return NULL;
     }
-    char t[MAX_TOKEN];
+    char key[MAX_TOKEN], val[MAX_TOKEN];
     for (;;) {
-        s = gettoken_ext (s, t, "={}();");
-        if (!s) {
-            return NULL;
-        }
+        get_keyvalue (s,key,val);
 
-        if (!strcmp (t, "{")) {
-            break;
-        }
-
-        char val[MAX_TOKEN];
-        s = gettoken_ext (s, val, "={}();");
-        if (!s || strcmp (val, "=")) {
-            return NULL;
-        }
-        s = gettoken_ext (s, val, "={}();");
-        if (!s) {
-            return NULL;
-        }
-
-        if (!strcmp (t, "pos")) {
+        if (!strcmp (key, "pos")) {
             ((w_splitter_t *)w)->position = atoi (val);
         }
-        else if (!strcmp (t, "locked")) {
+        else if (!strcmp (key, "locked")) {
             ((w_splitter_t *)w)->locked = atoi (val);
         }
     }
@@ -1723,28 +1731,10 @@ w_playlist_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) 
     if (strcmp (type, "playlist") && strcmp (type, "tabbed_playlist")) {
         return NULL;
     }
-    char t[MAX_TOKEN];
+    char key[MAX_TOKEN], val[MAX_TOKEN];
     for (;;) {
-        s = gettoken_ext (s, t, "={}();");
-        if (!s) {
-            return NULL;
-        }
-
-        if (!strcmp (t, "{")) {
-            break;
-        }
-
-        char val[MAX_TOKEN];
-        s = gettoken_ext (s, val, "={}();");
-        if (!s || strcmp (val, "=")) {
-            return NULL;
-        }
-        s = gettoken_ext (s, val, "={}();");
-        if (!s) {
-            return NULL;
-        }
-
-        if (!strcmp (t, "hideheaders")) {
+        get_keyvalue (s, key, val);
+        if (!strcmp (key, "hideheaders")) {
             ((w_playlist_t *)w)->hideheaders = atoi (val);
         }
     }
