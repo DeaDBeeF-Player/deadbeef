@@ -1711,7 +1711,7 @@ static const char settings_dlg[] =
 // define plugin interface
 static ddb_gtkui_t plugin = {
     .gui.plugin.api_vmajor = 1,
-    .gui.plugin.api_vminor = 4,
+    .gui.plugin.api_vminor = 5,
     .gui.plugin.version_major = 2,
     .gui.plugin.version_minor = DDB_GTKUI_API_VERSION,
     .gui.plugin.type = DB_PLUGIN_MISC,
