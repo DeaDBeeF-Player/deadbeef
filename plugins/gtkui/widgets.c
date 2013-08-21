@@ -137,15 +137,12 @@ typedef struct {
     ddb_gtkui_widget_t base;
     GtkWidget *button;
     GdkColor color;
-    int stock_icon;
-    char *custom_icon;
+    char *stock_icon;
+    char *icon;
     char *label;
     char *action;
     int action_ctx;
-    unsigned type : 1; // push/toggle
     unsigned use_color : 1;
-    unsigned use_icon : 1;
-    unsigned use_label : 1;
 } w_button_t;
 
 static int design_mode;
@@ -2613,12 +2610,175 @@ w_vbox_create (void) {
 }
 
 // button widget
+static const char *
+w_button_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) {
+    if (strcmp (type, "button")) {
+        return NULL;
+    }
+    w_button_t *b = (w_button_t *)w;
+    char key[MAX_TOKEN], val[MAX_TOKEN];
+    for (;;) {
+        get_keyvalue (s, key, val);
+        if (!strcmp (key, "color")) {
+            int red, green, blue;
+            if (3 == sscanf (val, "#%02x%02x%02x", &red, &green, &blue)) {
+                b->color.red = red << 8;
+                b->color.green = green << 8;
+                b->color.blue = blue << 8;
+            }
+        }
+        else if (!strcmp (key, "stock_icon")) {
+            b->stock_icon = val[0] ? strdup (val) : NULL;
+        }
+        else if (!strcmp (key, "icon")) {
+            b->icon = val[0] ? strdup (val) : NULL;
+        }
+        else if (!strcmp (key, "label")) {
+            b->label = val[0] ? strdup (val) : NULL;
+        }
+        else if (!strcmp (key, "action")) {
+            b->action = val[0] ? strdup (val) : NULL;
+        }
+        else if (!strcmp (key, "action_ctx")) {
+            b->action_ctx = atoi (val);
+        }
+        else if (!strcmp (key, "use_color")) {
+            b->use_color = atoi (val);
+        }
+    }
+
+    return s;
+}
+
+static void
+w_button_save (struct ddb_gtkui_widget_s *w, char *s, int sz) {
+    char save[1000] = "";
+    char *pp = save;
+    int ss = sizeof (save);
+    int n;
+
+    w_button_t *b = (w_button_t *)w;
+    n = snprintf (pp, ss, " color=\"#%02x%02x%02x\"", b->color.red>>8, b->color.green>>8, b->color.blue>>8);
+    ss -= n;
+    pp += n;
+    if (b->stock_icon) {
+        n = snprintf (pp, ss, " stock_icon=\"%s\"", b->stock_icon);
+        ss -= n;
+        pp += n;
+    }
+    if (b->icon) {
+        n = snprintf (pp, ss, " icon=\"%s\"", b->icon);
+        ss -= n;
+        pp += n;
+    }
+    if (b->label) {
+        n = snprintf (pp, ss, " label=\"%s\"", b->label);
+        ss -= n;
+        pp += n;
+    }
+    if (b->action) {
+        n = snprintf (pp, ss, " action=\"%s\"", b->action);
+        ss -= n;
+        pp += n;
+    }
+    if (b->action_ctx) {
+        n = snprintf (pp, ss, " action_ctx=%d", (int)b->action_ctx);
+        ss -= n;
+        pp += n;
+    }
+
+    n = snprintf (pp, ss, " use_color=%d", (int)b->use_color);
+    ss -= n;
+    pp += n;
+
+    strncat (s, save, sz);
+}
+
+static void
+on_button_clicked               (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    w_button_t *w = user_data;
+    DB_plugin_t **plugins = deadbeef->plug_get_list();
+    int i;
+    int added_entries = 0;
+    for (i = 0; plugins[i]; i++) {
+        if (!plugins[i]->get_actions) {
+            continue;
+        }
+        DB_plugin_action_t *acts = plugins[i]->get_actions (NULL);
+        while (acts) {
+            if (!strcmp (acts->name, w->action)) {
+                acts->callback (acts, w->action_ctx);
+                return;
+            }
+            acts = acts->next;
+        }
+    }
+}
+
+static void
+w_button_init (ddb_gtkui_widget_t *ww) {
+    w_button_t *w = ww;
+    GtkWidget *alignment = gtk_alignment_new (0.5, 0.5, 0, 0);
+    gtk_widget_show (alignment);
+    gtk_container_add (GTK_CONTAINER (w->button), alignment);
+
+    GtkWidget *hbox = gtk_hbox_new (FALSE, 2);
+    gtk_widget_show (hbox);
+    gtk_container_add (GTK_CONTAINER (alignment), hbox);
+
+    if (w->stock_icon || w->icon) {
+        GtkWidget *image = gtk_image_new_from_stock (w->stock_icon ? w->stock_icon : w->icon, GTK_ICON_SIZE_BUTTON);
+        gtk_widget_show (image);
+        gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
+    }
+
+    if (w->label) {
+        GtkWidget *label = gtk_label_new_with_mnemonic (w->label);
+        gtk_widget_show (label);
+        gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+    }
+
+    if (w->use_color) {
+        gtk_widget_modify_bg (w->button, GTK_STATE_NORMAL, &w->color);
+    }
+
+    if (w->action) {
+        g_signal_connect ((gpointer) w->button, "clicked",
+                G_CALLBACK (on_button_clicked),
+                w);
+    }
+}
+
+static void
+w_button_destroy (ddb_gtkui_widget_t *w) {
+    w_button_t *b = w;
+    if (b->stock_icon) {
+        free (b->stock_icon);
+    }
+    if (b->icon) {
+        free (b->icon);
+    }
+    if (b->label) {
+        free (b->label);
+    }
+    if (b->action) {
+        free (b->action);
+    }
+}
+
 ddb_gtkui_widget_t *
 w_button_create (void) {
     w_button_t *w = malloc (sizeof (w_button_t));
     memset (w, 0, sizeof (w_button_t));
     w->base.widget = gtk_event_box_new ();
-    w->button = gtk_button_new_with_label (_("☠"));
+    w->base.load = w_button_load;
+    w->base.save = w_button_save;
+    w->base.init = w_button_init;
+    w->base.destroy = w_button_destroy;
+//    w->base.initmenu = w_button_initmenu;
+    w->button = gtk_button_new ();//gtk_button_new_with_label (_("☠"));
     gtk_widget_show (w->button);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->button);
     w_override_signals (w->base.widget, w);
