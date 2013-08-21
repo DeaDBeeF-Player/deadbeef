@@ -281,7 +281,7 @@ int
 action_add_to_playqueue_handler (DB_plugin_action_t *act, int ctx) {
     DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
     while (it) {
-        if (deadbeef->pl_is_selected (it)) {
+        if (ctx == DDB_ACTION_CTX_PLAYLIST || (ctx == DDB_ACTION_CTX_SELECTION && deadbeef->pl_is_selected (it))) {
             deadbeef->pl_playqueue_push (it);
         }
         DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
@@ -296,7 +296,7 @@ int
 action_remove_from_playqueue_handler (DB_plugin_action_t *act, int ctx) {
     DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
     while (it) {
-        if (deadbeef->pl_is_selected (it)) {
+        if (ctx == DDB_ACTION_CTX_PLAYLIST || (ctx == DDB_ACTION_CTX_SELECTION && deadbeef->pl_is_selected (it))) {
             deadbeef->pl_playqueue_remove (it);
         }
         DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
