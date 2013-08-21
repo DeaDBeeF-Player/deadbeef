@@ -32,6 +32,9 @@
 #include "interface.h"
 #include "support.h"
 
+#define GLADE_HOOKUP_OBJECT_NO_REF(component,widget,name) \
+  g_object_set_data (G_OBJECT (component), name, widget)
+
 // selected playlist for the context menu
 static int pltmenu_idx;
 
@@ -198,7 +201,7 @@ add_tab_actions (GtkWidget *menu) {
                         gtk_widget_show (item);
                         gtk_container_add (GTK_CONTAINER (prev_menu), item);
                         popup = gtk_menu_new ();
-                        //HOOKUP_OBJECT (prev_menu, popup, name);
+                        GLADE_HOOKUP_OBJECT_NO_REF (prev_menu, popup, name);
                         gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), popup);
                     }
                 }
