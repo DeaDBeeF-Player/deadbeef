@@ -8,6 +8,7 @@
 #include <gtk/gtk.h>
 #if GTK_CHECK_VERSION(3,0,0)
 #include <gdk/gdkkeysyms-compat.h>
+#define gdk_cursor_unref(cursor) g_object_unref(cursor)
 #else
 #include <gdk/gdkkeysyms.h>
 #endif
@@ -145,4 +146,20 @@ void                gtk_widget_get_allocation           (GtkWidget *widget,
 #define gtk_widget_get_can_default(widget) (GTK_WIDGET_CAN_DEFAULT (widget));
 #endif
 
+#endif
+
+
+#if GTK_CHECK_VERSION(3,2,0)
+#define gtk_vbox_new(homogeneous,spacing) ({GtkWidget *__box=gtk_box_new(GTK_ORIENTATION_VERTICAL,spacing);gtk_box_set_homogeneous(GTK_BOX(__box),homogeneous);__box;})
+#define gtk_hbox_new(homogeneous,spacing) ({GtkWidget *__box=gtk_box_new(GTK_ORIENTATION_HORIZONTAL,spacing);gtk_box_set_homogeneous(GTK_BOX(__box),homogeneous);__box;})
+#define gtk_hpaned_new() gtk_paned_new(GTK_ORIENTATION_HORIZONTAL)
+#define gtk_vpaned_new() gtk_paned_new(GTK_ORIENTATION_VERTICAL)
+#define gtk_hbutton_box_new() gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL)
+#define gtk_vbutton_box_new() gtk_button_box_new(GTK_ORIENTATION_VERTICAL)
+#define gtk_hscale_new(adj) gtk_scale_new(GTK_ORIENTATION_HORIZONTAL,adj)
+#define gtk_vscale_new(adj) gtk_scale_new(GTK_ORIENTATION_VERTICAL,adj)
+#define gtk_hseparator_new() gtk_separator_new(GTK_ORIENTATION_HORIZONTAL)
+#define gtk_vseparator_new() gtk_separator_new(GTK_ORIENTATION_VERTICAL)
+#define gtk_hscrollbar_new(adj) gtk_scrollbar_new(GTK_ORIENTATION_HORIZONTAL,adj)
+#define gtk_vscrollbar_new(adj) gtk_scrollbar_new(GTK_ORIENTATION_VERTICAL,adj)
 #endif
