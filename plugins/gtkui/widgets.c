@@ -22,11 +22,11 @@
 #include <assert.h>
 #include <math.h>
 #include "gtkui.h"
+#include "support.h"
 #include "widgets.h"
 #include "ddbtabstrip.h"
 #include "ddblistview.h"
 #include "mainplaylist.h"
-#include "../../gettext.h"
 #include "../libparser/parser.h"
 #include "trkproperties.h"
 #include "coverart.h"
@@ -2434,6 +2434,61 @@ w_spectrum_create (void) {
 }
 
 // hbox and vbox
+static const char *
+w_hvbox_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) {
+    if (strcmp (type, "hbox") && strcmp (type, "vbox")) {
+        return NULL;
+    }
+    char key[MAX_TOKEN], val[MAX_TOKEN];
+    for (;;) {
+        get_keyvalue (s,key,val);
+
+        if (!strcmp (key, "expand")) {
+            const char *s = val;
+        }
+        else if (!strcmp (key, "fill")) {
+            const char *s = val;
+        }
+    }
+
+    return s;
+}
+
+typedef struct {
+    GtkWidget *hvbox;
+    char expand[150];
+    char fill[150];
+} w_hvbox_save_info_t;
+
+static void
+save_hvbox_packing (GtkWidget *child, gpointer user_data) {
+    w_hvbox_save_info_t *info = user_data;
+    gboolean expand;
+    gboolean fill;
+    guint padding;
+    GtkPackType pack_type;
+    gtk_box_query_child_packing (GTK_BOX (info->hvbox), child, &expand, &fill, &padding, &pack_type);
+    char s[10];
+    snprintf (s, sizeof (s), info->expand[0] ? " %d" : "%d", expand);
+    strncat (info->expand, s, sizeof (info->expand) - strlen (info->expand));
+
+    snprintf (s, sizeof (s), info->fill[0] ? " %d" : "%d", fill);
+    strncat (info->fill, s, sizeof (info->fill) - strlen (info->fill));
+}
+
+static void
+w_hvbox_save (struct ddb_gtkui_widget_s *w, char *s, int sz) {
+    char save[300];
+
+    w_hvbox_save_info_t info;
+    memset (&info, 0, sizeof (info));
+    info.hvbox = ((w_hvbox_t *)w)->box;
+    gtk_container_foreach (GTK_CONTAINER (((w_hvbox_t *)w)->box), save_hvbox_packing, &info);
+    gboolean homogeneous = gtk_box_get_homogeneous (GTK_BOX (((w_hvbox_t *)w)->box));
+
+    snprintf (save, sizeof (save), " expand=\"%s\" fill=\"%s\" homogeneous=%d", info.expand, info.fill, homogeneous);
+    strncat (s, save, sz);
+}
 static void
 w_hvbox_append (struct ddb_gtkui_widget_s *container, struct ddb_gtkui_widget_s *child) {
     w_hvbox_t *b = (w_hvbox_t *)container;
@@ -2586,6 +2641,7 @@ w_hbox_create (void) {
     w->base.replace = w_hvbox_replace;
     w->base.initmenu = w_hvbox_initmenu;
     w->base.initchildmenu = w_hvbox_initchildmenu;
+    w->base.save = w_hvbox_save;
     w->box = gtk_hbox_new (TRUE, 3);
     gtk_widget_show (w->box);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->box);
@@ -2607,6 +2663,8 @@ w_vbox_create (void) {
     w->base.remove = w_hvbox_remove;
     w->base.replace = w_hvbox_replace;
     w->base.initmenu = w_hvbox_initmenu;
+//    w->base.load = w_hvbox_load;
+    w->base.save = w_hvbox_save;
     w->box = gtk_vbox_new (TRUE, 3);
     gtk_widget_show (w->box);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->box);
@@ -2729,7 +2787,7 @@ on_button_clicked               (GtkButton       *button,
 
 static void
 w_button_init (ddb_gtkui_widget_t *ww) {
-    w_button_t *w = ww;
+    w_button_t *w = (w_button_t *)ww;
     GtkWidget *alignment = gtk_alignment_new (0.5, 0.5, 0, 0);
     gtk_widget_show (alignment);
     gtk_container_add (GTK_CONTAINER (w->button), alignment);
@@ -2761,7 +2819,7 @@ w_button_init (ddb_gtkui_widget_t *ww) {
 
 static void
 w_button_destroy (ddb_gtkui_widget_t *w) {
-    w_button_t *b = w;
+    w_button_t *b = (w_button_t *)w;
     if (b->stock_icon) {
         free (b->stock_icon);
     }
