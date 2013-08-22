@@ -494,6 +494,10 @@ on_paste_activate (GtkMenuItem *menuitem, gpointer user_data) {
 
 void
 hide_widget (GtkWidget *widget, gpointer data) {
+    if (data) {
+        GtkAllocation *a = data;
+        gtk_widget_get_allocation (widget, a);
+    }
     gtk_widget_hide (widget);
 }
 
@@ -507,6 +511,7 @@ w_menu_deactivate (GtkMenuShell *menushell, gpointer user_data) {
     hidden = 0;
     ddb_gtkui_widget_t *w = user_data;
     if (GTK_IS_CONTAINER (w->widget)) {
+        gtk_widget_set_size_request (w->widget, -1, -1);
         gtk_container_foreach (GTK_CONTAINER (w->widget), show_widget, NULL);
     }
     gtk_widget_set_app_paintable (w->widget, FALSE);
@@ -523,7 +528,12 @@ w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_da
     widget = current_widget->widget;
     hidden = 1;
     if (GTK_IS_CONTAINER (widget)) {
-        gtk_container_foreach (GTK_CONTAINER (widget), hide_widget, NULL);
+        // remember size of the 1st child
+        GtkAllocation a;
+        // hide all children
+        gtk_container_foreach (GTK_CONTAINER (widget), hide_widget, &a);
+
+        gtk_widget_set_size_request (widget, a.width, a.height);
     }
     gtk_widget_set_app_paintable (widget, TRUE);
     gtk_widget_queue_draw (((ddb_gtkui_widget_t *)user_data)->widget);
@@ -2734,11 +2744,9 @@ w_button_init (ddb_gtkui_widget_t *ww) {
         gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
     }
 
-    if (w->label) {
-        GtkWidget *label = gtk_label_new_with_mnemonic (w->label);
-        gtk_widget_show (label);
-        gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
-    }
+    GtkWidget *label = gtk_label_new_with_mnemonic (w->label ? w->label : _("Button"));
+    gtk_widget_show (label);
+    gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
 
     if (w->use_color) {
         gtk_widget_modify_bg (w->button, GTK_STATE_NORMAL, &w->color);
@@ -2778,7 +2786,7 @@ w_button_create (void) {
     w->base.init = w_button_init;
     w->base.destroy = w_button_destroy;
 //    w->base.initmenu = w_button_initmenu;
-    w->button = gtk_button_new ();//gtk_button_new_with_label (_("☠"));
+    w->button = gtk_button_new ();
     gtk_widget_show (w->button);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->button);
     w_override_signals (w->base.widget, w);
