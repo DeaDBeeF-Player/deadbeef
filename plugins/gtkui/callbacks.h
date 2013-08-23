@@ -1153,6 +1153,10 @@ on_design_mode1_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
 
 void
+on_convert16to24_toggled                (GtkToggleButton *togglebutton,
+                                         gpointer       user_data);
+
+void
 on_reset_autostop_toggled              (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
 
