@@ -77,6 +77,8 @@ static int dsp_on = 0;
 
 static int autoconv_8_to_16 = 1;
 
+static int autoconv_16_to_24 = 0;
+
 static int streaming_terminate;
 
 // buffer up to 3 seconds at 44100Hz stereo
@@ -1842,6 +1844,11 @@ streamer_set_output_format (void) {
             fmt.bps = 16;
         }
     }
+    if (autoconv_16_to_24) {
+        if (fmt.bps == 16) {
+            fmt.bps = 24;
+        }
+    }
     output->setformat (&fmt);
     streamer_buffering = 1;
     if (playing && output->state () != OUTPUT_STATE_PLAYING) {
@@ -2146,6 +2153,12 @@ streamer_configchanged (void) {
     int conf_autoconv_8_to_16 = conf_get_int ("streamer.8_to_16", 1);
     if (conf_autoconv_8_to_16 != autoconv_8_to_16) {
         autoconv_8_to_16 = conf_autoconv_8_to_16;
+        formatchanged = 1;
+        streamer_reset (1);
+    }
+    int conf_autoconv_16_to_24 = conf_get_int ("streamer.16_to_24",0);
+    if (conf_autoconv_16_to_24 != autoconv_16_to_24) {
+        autoconv_16_to_24 = conf_autoconv_16_to_24;
         formatchanged = 1;
         streamer_reset (1);
     }

@@ -1662,6 +1662,7 @@ create_prefwin (void)
   GtkWidget *label4;
   GtkWidget *pref_soundcard;
   GtkWidget *convert8to16;
+  GtkWidget *convert16to24;
   GtkWidget *Sound;
   GtkWidget *vbox8;
   GtkWidget *hbox10;
@@ -1860,6 +1861,10 @@ create_prefwin (void)
   convert8to16 = gtk_check_button_new_with_mnemonic (_("Always convert 8 bit audio to 16 bit"));
   gtk_widget_show (convert8to16);
   gtk_box_pack_start (GTK_BOX (vbox10), convert8to16, FALSE, FALSE, 0);
+
+  convert16to24 = gtk_check_button_new_with_mnemonic (_("Always convert 16 bit audio to 24 bit"));
+  gtk_widget_show (convert16to24);
+  gtk_box_pack_start (GTK_BOX (vbox10), convert16to24, FALSE, FALSE, 0);
 
   Sound = gtk_label_new (_("Sound"));
   gtk_widget_show (Sound);
@@ -2610,6 +2615,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) convert8to16, "toggled",
                     G_CALLBACK (on_convert8to16_toggled),
                     NULL);
+  g_signal_connect ((gpointer) convert16to24, "toggled",
+                    G_CALLBACK (on_convert16to24_toggled),
+                    NULL);
   g_signal_connect ((gpointer) pref_replaygain_mode, "changed",
                     G_CALLBACK (on_pref_replaygain_mode_changed),
                     NULL);
@@ -2788,6 +2796,7 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, label4, "label4");
   GLADE_HOOKUP_OBJECT (prefwin, pref_soundcard, "pref_soundcard");
   GLADE_HOOKUP_OBJECT (prefwin, convert8to16, "convert8to16");
+  GLADE_HOOKUP_OBJECT (prefwin, convert16to24, "convert16to24");
   GLADE_HOOKUP_OBJECT (prefwin, Sound, "Sound");
   GLADE_HOOKUP_OBJECT (prefwin, vbox8, "vbox8");
   GLADE_HOOKUP_OBJECT (prefwin, hbox10, "hbox10");
