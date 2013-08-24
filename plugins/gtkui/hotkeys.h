@@ -27,5 +27,11 @@
 void
 prefwin_init_hotkeys (GtkWidget *prefwin);
 
+void
+init_action_tree (GtkWidget *actions, const char *act, int ctx);
+
+DB_plugin_action_t *
+find_action_by_name (const char *command);
+
 #endif // __GTKUI_HOTKEYS_H
 

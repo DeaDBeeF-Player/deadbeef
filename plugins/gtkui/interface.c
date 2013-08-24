@@ -4309,7 +4309,7 @@ create_button_properties (void)
   gtk_widget_show (label143);
   gtk_box_pack_start (GTK_BOX (hbox117), label143, FALSE, FALSE, 0);
 
-  action = gtk_combo_box_text_new ();
+  action = gtk_button_new_with_mnemonic (_("<Not set>"));
   gtk_widget_show (action);
   gtk_box_pack_start (GTK_BOX (hbox117), action, TRUE, TRUE, 0);
 
@@ -4354,5 +4354,66 @@ create_button_properties (void)
   GLADE_HOOKUP_OBJECT (button_properties, okbutton9, "okbutton9");
 
   return button_properties;
+}
+
+GtkWidget*
+create_select_action (void)
+{
+  GtkWidget *select_action;
+  GtkWidget *dialog_vbox15;
+  GtkWidget *vbox43;
+  GtkWidget *scrolledwindow12;
+  GtkWidget *actions;
+  GtkWidget *dialog_action_area14;
+  GtkWidget *cancelbutton10;
+  GtkWidget *okbutton10;
+
+  select_action = gtk_dialog_new ();
+  gtk_widget_set_size_request (select_action, 494, 349);
+  gtk_window_set_title (GTK_WINDOW (select_action), _("Select action"));
+  gtk_window_set_type_hint (GTK_WINDOW (select_action), GDK_WINDOW_TYPE_HINT_DIALOG);
+
+  dialog_vbox15 = gtk_dialog_get_content_area (GTK_DIALOG (select_action));
+  gtk_widget_show (dialog_vbox15);
+
+  vbox43 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox43);
+  gtk_box_pack_start (GTK_BOX (dialog_vbox15), vbox43, TRUE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox43), 12);
+
+  scrolledwindow12 = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow12);
+  gtk_box_pack_start (GTK_BOX (vbox43), scrolledwindow12, TRUE, TRUE, 0);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow12), GTK_SHADOW_IN);
+
+  actions = gtk_tree_view_new ();
+  gtk_widget_show (actions);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow12), actions);
+
+  dialog_action_area14 = gtk_dialog_get_action_area (GTK_DIALOG (select_action));
+  gtk_widget_show (dialog_action_area14);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area14), GTK_BUTTONBOX_END);
+
+  cancelbutton10 = gtk_button_new_from_stock ("gtk-cancel");
+  gtk_widget_show (cancelbutton10);
+  gtk_dialog_add_action_widget (GTK_DIALOG (select_action), cancelbutton10, GTK_RESPONSE_CANCEL);
+  gtk_widget_set_can_default(cancelbutton10, TRUE);
+
+  okbutton10 = gtk_button_new_from_stock ("gtk-ok");
+  gtk_widget_show (okbutton10);
+  gtk_dialog_add_action_widget (GTK_DIALOG (select_action), okbutton10, GTK_RESPONSE_OK);
+  gtk_widget_set_can_default(okbutton10, TRUE);
+
+  /* Store pointers to all widgets, for use by lookup_widget(). */
+  GLADE_HOOKUP_OBJECT_NO_REF (select_action, select_action, "select_action");
+  GLADE_HOOKUP_OBJECT_NO_REF (select_action, dialog_vbox15, "dialog_vbox15");
+  GLADE_HOOKUP_OBJECT (select_action, vbox43, "vbox43");
+  GLADE_HOOKUP_OBJECT (select_action, scrolledwindow12, "scrolledwindow12");
+  GLADE_HOOKUP_OBJECT (select_action, actions, "actions");
+  GLADE_HOOKUP_OBJECT_NO_REF (select_action, dialog_action_area14, "dialog_action_area14");
+  GLADE_HOOKUP_OBJECT (select_action, cancelbutton10, "cancelbutton10");
+  GLADE_HOOKUP_OBJECT (select_action, okbutton10, "okbutton10");
+
+  return select_action;
 }
 

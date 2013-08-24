@@ -93,7 +93,7 @@ get_display_action_title (const char *title) {
     return t;
 }
 
-static DB_plugin_action_t *
+DB_plugin_action_t *
 find_action_by_name (const char *command) {
     // find action with this name, and add to list
     DB_plugin_action_t *actions = NULL;
@@ -252,51 +252,33 @@ action_tree_append (const char *title, GtkTreeStore *store, GtkTreeIter *root_it
     return get_display_action_title (title);
 }
 
+typedef struct {
+    const char *name;
+    int ctx;
+    GtkWidget *treeview;
+} actionbinding_t;
+
+static gboolean
+set_current_action (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data) {
+    GValue val = {0,}, ctx_val = {0,};
+    gtk_tree_model_get_value (model, iter, 1, &val);
+    gtk_tree_model_get_value (model, iter, 2, &ctx_val);
+    actionbinding_t *binding = data;
+    const char *name = g_value_get_string (&val);
+    if (name && binding->name && !strcmp (binding->name, name) && binding->ctx == g_value_get_int (&ctx_val)) {
+        gtk_tree_view_expand_to_path (GTK_TREE_VIEW (binding->treeview), path);
+        gtk_tree_view_set_cursor (GTK_TREE_VIEW (GTK_TREE_VIEW (binding->treeview)), path, NULL, FALSE);
+        return TRUE;
+    }
+    return FALSE;
+}
+
 void
-prefwin_init_hotkeys (GtkWidget *_prefwin) {
-    ctx_names[DDB_ACTION_CTX_MAIN] = _("Main");
-    ctx_names[DDB_ACTION_CTX_SELECTION] = _("Selection");
-    ctx_names[DDB_ACTION_CTX_PLAYLIST] = _("Playlist");
-    ctx_names[DDB_ACTION_CTX_NOWPLAYING] = _("Now playing");
-
-    prefwin = _prefwin;
-    GtkWidget *hotkeys = lookup_widget (prefwin, "hotkeys_list");
-    GtkWidget *actions = lookup_widget (prefwin, "hotkeys_actions");
-
-    // setup hotkeys list
-    GtkTreeViewColumn *hk_col1 = gtk_tree_view_column_new_with_attributes (_("Key combination"), gtk_cell_renderer_text_new (), "text", 0, NULL);
-    gtk_tree_view_column_set_resizable (hk_col1, TRUE);
-    GtkTreeViewColumn *hk_col2 = gtk_tree_view_column_new_with_attributes (_("Action"), gtk_cell_renderer_text_new (), "text", 1, NULL);
-    gtk_tree_view_column_set_resizable (hk_col2, TRUE);
-    GtkTreeViewColumn *hk_col3 = gtk_tree_view_column_new_with_attributes (_("Context"), gtk_cell_renderer_text_new (), "text", 2, NULL);
-    gtk_tree_view_column_set_resizable (hk_col3, TRUE);
-    GtkTreeViewColumn *hk_col4 = gtk_tree_view_column_new_with_attributes (_("Is global"), gtk_cell_renderer_text_new (), "text", 3, NULL);
-    gtk_tree_view_column_set_resizable (hk_col4, TRUE);
-    gtk_tree_view_append_column (GTK_TREE_VIEW (hotkeys), hk_col1);
-    gtk_tree_view_append_column (GTK_TREE_VIEW (hotkeys), hk_col2);
-    gtk_tree_view_append_column (GTK_TREE_VIEW (hotkeys), hk_col3);
-    gtk_tree_view_append_column (GTK_TREE_VIEW (hotkeys), hk_col4);
-    // column0: keycombo string
-    // column1: action title
-    // column2: context title
-    // column3: is_global
-    // column4: action title id (hidden)
-    // column5: context id (hidden)
-    GtkListStore *hkstore = gtk_list_store_new (6, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_INT);
-
-    gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkeys_actions"), FALSE);
-    gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkey_is_global"), FALSE);
-    gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkeys_set_key"), FALSE);
-
-    gtk_tree_view_set_model (GTK_TREE_VIEW (hotkeys), GTK_TREE_MODEL (hkstore));
-
-    int n_hotkeys = hotkeys_load ();
-
-    // setup action tree
+init_action_tree (GtkWidget *actions, const char *act, int ctx) {
     GtkTreeViewColumn *hk_act_col1 = gtk_tree_view_column_new_with_attributes (_("Action"), gtk_cell_renderer_text_new (), "text", 0, NULL);
     gtk_tree_view_append_column (GTK_TREE_VIEW (actions), hk_act_col1);
 
-    // traverse all plugins and collect all exported actions to dropdown
+    // traverse all plugins and collect all exported actions to treeview
     // column0: title
     // column1: ID (invisible)
     // column2: ctx (invisible
@@ -352,31 +334,63 @@ prefwin_init_hotkeys (GtkWidget *_prefwin) {
 
     gtk_tree_view_set_model (GTK_TREE_VIEW (actions), GTK_TREE_MODEL (actions_store));
 
+    if (act && ctx != -1) {
+        actionbinding_t binding = {
+            .name = act,
+            .ctx = ctx,
+            .treeview = actions
+        };
+        gtk_tree_model_foreach (GTK_TREE_MODEL (actions_store), set_current_action, (void*)&binding);
+    }
+}
+
+void
+prefwin_init_hotkeys (GtkWidget *_prefwin) {
+    ctx_names[DDB_ACTION_CTX_MAIN] = _("Main");
+    ctx_names[DDB_ACTION_CTX_SELECTION] = _("Selection");
+    ctx_names[DDB_ACTION_CTX_PLAYLIST] = _("Playlist");
+    ctx_names[DDB_ACTION_CTX_NOWPLAYING] = _("Now playing");
+
+    prefwin = _prefwin;
+    GtkWidget *hotkeys = lookup_widget (prefwin, "hotkeys_list");
+    GtkWidget *actions = lookup_widget (prefwin, "hotkeys_actions");
+
+    // setup hotkeys list
+    GtkTreeViewColumn *hk_col1 = gtk_tree_view_column_new_with_attributes (_("Key combination"), gtk_cell_renderer_text_new (), "text", 0, NULL);
+    gtk_tree_view_column_set_resizable (hk_col1, TRUE);
+    GtkTreeViewColumn *hk_col2 = gtk_tree_view_column_new_with_attributes (_("Action"), gtk_cell_renderer_text_new (), "text", 1, NULL);
+    gtk_tree_view_column_set_resizable (hk_col2, TRUE);
+    GtkTreeViewColumn *hk_col3 = gtk_tree_view_column_new_with_attributes (_("Context"), gtk_cell_renderer_text_new (), "text", 2, NULL);
+    gtk_tree_view_column_set_resizable (hk_col3, TRUE);
+    GtkTreeViewColumn *hk_col4 = gtk_tree_view_column_new_with_attributes (_("Is global"), gtk_cell_renderer_text_new (), "text", 3, NULL);
+    gtk_tree_view_column_set_resizable (hk_col4, TRUE);
+    gtk_tree_view_append_column (GTK_TREE_VIEW (hotkeys), hk_col1);
+    gtk_tree_view_append_column (GTK_TREE_VIEW (hotkeys), hk_col2);
+    gtk_tree_view_append_column (GTK_TREE_VIEW (hotkeys), hk_col3);
+    gtk_tree_view_append_column (GTK_TREE_VIEW (hotkeys), hk_col4);
+    // column0: keycombo string
+    // column1: action title
+    // column2: context title
+    // column3: is_global
+    // column4: action title id (hidden)
+    // column5: context id (hidden)
+    GtkListStore *hkstore = gtk_list_store_new (6, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_INT);
+
+    gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkeys_actions"), FALSE);
+    gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkey_is_global"), FALSE);
+    gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkeys_set_key"), FALSE);
+
+    gtk_tree_view_set_model (GTK_TREE_VIEW (hotkeys), GTK_TREE_MODEL (hkstore));
+
+    int n_hotkeys = hotkeys_load ();
+
+    // setup action tree
+    init_action_tree (actions, NULL, -1);
     if (n_hotkeys > 0) {
         GtkTreePath *path = gtk_tree_path_new_first ();
         gtk_tree_view_set_cursor (GTK_TREE_VIEW (hotkeys), path, NULL, FALSE);
         gtk_tree_path_free (path);
     }
-}
-
-typedef struct {
-    const char *name;
-    int ctx;
-} actionbinding_t;
-
-static gboolean
-set_current_action (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data) {
-    GValue val = {0,}, ctx_val = {0,};
-    gtk_tree_model_get_value (model, iter, 1, &val);
-    gtk_tree_model_get_value (model, iter, 2, &ctx_val);
-    actionbinding_t *binding = data;
-    const char *name = g_value_get_string (&val);
-    if (name && binding->name && !strcmp (binding->name, name) && binding->ctx == g_value_get_int (&ctx_val)) {
-        gtk_tree_view_expand_to_path (GTK_TREE_VIEW (lookup_widget (prefwin, "hotkeys_actions")), path);
-        gtk_tree_view_set_cursor (GTK_TREE_VIEW (lookup_widget (prefwin, "hotkeys_actions")), path, NULL, FALSE);
-        return TRUE;
-    }
-    return FALSE;
 }
 
 void
@@ -399,7 +413,8 @@ on_hotkeys_list_cursor_changed         (GtkTreeView     *treeview,
         GtkTreeModel *actmodel = gtk_tree_view_get_model (GTK_TREE_VIEW (actions));
         actionbinding_t binding = {
             .name = name,
-            .ctx = g_value_get_int (&val_ctx)
+            .ctx = g_value_get_int (&val_ctx),
+            .treeview = actions
         };
         gtk_tree_model_foreach (actmodel, set_current_action, (void*)&binding);
 

@@ -36,6 +36,7 @@
 #include "gtkuigl.h"
 #endif
 #include "namedicons.h"
+#include "hotkeys.h" // for building action treeview
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -2905,6 +2906,71 @@ w_button_destroy (ddb_gtkui_widget_t *w) {
 }
 
 static void
+set_button_action_label (w_button_t *b, GtkWidget *button) {
+    if (b->action && b->action_ctx >= 0) {
+        DB_plugin_action_t *action = find_action_by_name (b->action);
+        if (action) {
+            const char *ctx_str = NULL;
+            switch (b->action_ctx) {
+            case DDB_ACTION_CTX_MAIN:
+                break;
+            case DDB_ACTION_CTX_SELECTION:
+                ctx_str = _("Selected tracks");
+                break;
+            case DDB_ACTION_CTX_PLAYLIST:
+                ctx_str = _("Tracks in current playlist");
+                break;
+            case DDB_ACTION_CTX_NOWPLAYING:
+                ctx_str = _("Currently playing track");
+                break;
+            }
+            char s[200];
+            snprintf (s, sizeof (s), "%s%s%s", ctx_str ? ctx_str : "", ctx_str ? " ⇒ ": "", action->title);
+            gtk_button_set_label (GTK_BUTTON (button), s);
+            return;
+        }
+    }
+
+    gtk_button_set_label (GTK_BUTTON (button), _("<Not set>"));
+}
+
+static void
+on_button_set_action_clicked           (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    w_button_t *b = user_data;
+    GtkWidget *dlg = create_select_action ();
+    GtkWidget *treeview = lookup_widget (dlg, "actions");
+    init_action_tree (treeview, b->action, b->action_ctx);
+    int response = gtk_dialog_run (GTK_DIALOG (dlg));
+    if (response == GTK_RESPONSE_OK) {
+        if (b->action) {
+            free (b->action);
+            b->action = NULL;
+        }
+        b->action_ctx = -1;
+        GtkTreePath *path;
+        gtk_tree_view_get_cursor (GTK_TREE_VIEW (treeview), &path, NULL);
+        GtkTreeModel *model = gtk_tree_view_get_model (GTK_TREE_VIEW (treeview));
+        GtkTreeIter iter;
+        if (path && gtk_tree_model_get_iter (model, &iter, path)) {
+            GValue val = {0,};
+            gtk_tree_model_get_value (model, &iter, 1, &val);
+            const gchar *name = g_value_get_string (&val);
+            GValue val_ctx = {0,};
+            gtk_tree_model_get_value (model, &iter, 2, &val_ctx);
+            int ctx = g_value_get_int (&val_ctx);
+            if (name && ctx >= 0) {
+                b->action = strdup (name);
+                b->action_ctx = ctx;
+            }
+        }
+        set_button_action_label (b, GTK_WIDGET (button));
+    }
+    gtk_widget_destroy (dlg);
+}
+
+static void
 on_button_config (GtkMenuItem *menuitem, gpointer user_data) {
     w_button_t *b = user_data;
     GtkWidget *dlg = create_button_properties ();
@@ -2916,6 +2982,10 @@ on_button_config (GtkMenuItem *menuitem, gpointer user_data) {
     gtk_color_button_set_color (GTK_COLOR_BUTTON (color), &b->color);
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (use_color), b->use_color);
     gtk_entry_set_text (GTK_ENTRY (label), b->label ? b->label : "");
+    set_button_action_label (b, action);
+    g_signal_connect ((gpointer) action, "clicked",
+            G_CALLBACK (on_button_set_action_clicked),
+            user_data);
 
     GtkListStore *store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
 
