@@ -33,5 +33,8 @@ init_action_tree (GtkWidget *actions, const char *act, int ctx);
 DB_plugin_action_t *
 find_action_by_name (const char *command);
 
+void
+set_button_action_label (const char *act, int action_ctx, GtkWidget *button);
+
 #endif // __GTKUI_HOTKEYS_H
 

@@ -1282,3 +1282,8 @@ on_button3_clicked                     (GtkButton       *button,
 void
 on_ctmapping_reset_clicked             (GtkButton       *button,
                                         gpointer         user_data);
+
+
+void
+on_hotkeys_actions_clicked             (GtkButton       *button,
+                                        gpointer         user_data);

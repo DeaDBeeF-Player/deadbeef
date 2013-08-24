@@ -54,9 +54,14 @@ typedef struct
 #include "../../gettext.h"
 #include "support.h"
 #include "gtkui.h"
+#include "interface.h"
 #include "../libparser/parser.h"
 #include "../hotkeys/hotkeys.h"
 #include <X11/Xlib.h> // only for the KeySym type
+
+void
+on_hotkeys_actions_cursor_changed      (GtkTreeView     *treeview,
+                                        gpointer         user_data);
 
 static GtkWidget *prefwin;
 static guint last_accel_key = 0;
@@ -345,6 +350,52 @@ init_action_tree (GtkWidget *actions, const char *act, int ctx) {
 }
 
 void
+on_hotkeys_actions_clicked             (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    GtkTreePath *path;
+    GtkWidget *hotkeys = lookup_widget (prefwin, "hotkeys_list");
+    gtk_tree_view_get_cursor (GTK_TREE_VIEW (hotkeys), &path, NULL);
+    GtkTreeModel *model = gtk_tree_view_get_model (GTK_TREE_VIEW (hotkeys));
+    GtkTreeIter iter;
+    if (!path || !gtk_tree_model_get_iter (model, &iter, path)) {
+        return;
+    }
+    // get action name from iter
+    GValue val_name = {0,}, val_ctx = {0,};
+    gtk_tree_model_get_value (model, &iter, 4, &val_name);
+    gtk_tree_model_get_value (model, &iter, 5, &val_ctx);
+    const char *act = g_value_get_string (&val_name);
+    int ctx = g_value_get_int (&val_ctx);
+
+    GtkWidget *dlg = create_select_action ();
+    GtkWidget *treeview = lookup_widget (dlg, "actions");
+    init_action_tree (treeview, act, ctx);
+    int response = gtk_dialog_run (GTK_DIALOG (dlg));
+    if (response == GTK_RESPONSE_OK) {
+        on_hotkeys_actions_cursor_changed (treeview, NULL);
+
+        GtkTreePath *path;
+        gtk_tree_view_get_cursor (GTK_TREE_VIEW (treeview), &path, NULL);
+        GtkTreeModel *model = gtk_tree_view_get_model (GTK_TREE_VIEW (treeview));
+        GtkTreeIter iter;
+        const char *name = NULL;
+        int ctx = -1;
+        if (path && gtk_tree_model_get_iter (model, &iter, path)) {
+            GValue val = {0,};
+            gtk_tree_model_get_value (model, &iter, 1, &val);
+            name = g_value_get_string (&val);
+            GValue val_ctx = {0,};
+            gtk_tree_model_get_value (model, &iter, 2, &val_ctx);
+            ctx = g_value_get_int (&val_ctx);
+        }
+        set_button_action_label (name, ctx, lookup_widget (prefwin, "hotkeys_actions"));
+    }
+    gtk_widget_destroy (dlg);
+}
+
+
+void
 prefwin_init_hotkeys (GtkWidget *_prefwin) {
     ctx_names[DDB_ACTION_CTX_MAIN] = _("Main");
     ctx_names[DDB_ACTION_CTX_SELECTION] = _("Selection");
@@ -353,7 +404,6 @@ prefwin_init_hotkeys (GtkWidget *_prefwin) {
 
     prefwin = _prefwin;
     GtkWidget *hotkeys = lookup_widget (prefwin, "hotkeys_list");
-    GtkWidget *actions = lookup_widget (prefwin, "hotkeys_actions");
 
     // setup hotkeys list
     GtkTreeViewColumn *hk_col1 = gtk_tree_view_column_new_with_attributes (_("Key combination"), gtk_cell_renderer_text_new (), "text", 0, NULL);
@@ -383,15 +433,37 @@ prefwin_init_hotkeys (GtkWidget *_prefwin) {
     gtk_tree_view_set_model (GTK_TREE_VIEW (hotkeys), GTK_TREE_MODEL (hkstore));
 
     int n_hotkeys = hotkeys_load ();
-
-    // setup action tree
-    init_action_tree (actions, NULL, -1);
-    if (n_hotkeys > 0) {
-        GtkTreePath *path = gtk_tree_path_new_first ();
-        gtk_tree_view_set_cursor (GTK_TREE_VIEW (hotkeys), path, NULL, FALSE);
-        gtk_tree_path_free (path);
-    }
 }
+
+void
+set_button_action_label (const char *act, int action_ctx, GtkWidget *button) {
+    if (act && action_ctx >= 0) {
+        DB_plugin_action_t *action = find_action_by_name (act);
+        if (action) {
+            const char *ctx_str = NULL;
+            switch (action_ctx) {
+            case DDB_ACTION_CTX_MAIN:
+                break;
+            case DDB_ACTION_CTX_SELECTION:
+                ctx_str = _("Selected tracks");
+                break;
+            case DDB_ACTION_CTX_PLAYLIST:
+                ctx_str = _("Tracks in current playlist");
+                break;
+            case DDB_ACTION_CTX_NOWPLAYING:
+                ctx_str = _("Currently playing track");
+                break;
+            }
+            char s[200];
+            snprintf (s, sizeof (s), "%s%s%s", ctx_str ? ctx_str : "", ctx_str ? " ⇒ ": "", action->title);
+            gtk_button_set_label (GTK_BUTTON (button), s);
+            return;
+        }
+    }
+
+    gtk_button_set_label (GTK_BUTTON (button), _("<Not set>"));
+}
+
 
 void
 on_hotkeys_list_cursor_changed         (GtkTreeView     *treeview,
@@ -409,14 +481,8 @@ on_hotkeys_list_cursor_changed         (GtkTreeView     *treeview,
         gtk_tree_model_get_value (model, &iter, 4, &val_name);
         gtk_tree_model_get_value (model, &iter, 5, &val_ctx);
         const char *name = g_value_get_string (&val_name);
-        // find in the action list and set as current
-        GtkTreeModel *actmodel = gtk_tree_view_get_model (GTK_TREE_VIEW (actions));
-        actionbinding_t binding = {
-            .name = name,
-            .ctx = g_value_get_int (&val_ctx),
-            .treeview = actions
-        };
-        gtk_tree_model_foreach (actmodel, set_current_action, (void*)&binding);
+
+        set_button_action_label (name, g_value_get_int (&val_ctx), actions);
 
         gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkey_is_global"), TRUE);
         GValue val_isglobal = {0,};

@@ -2930,35 +2930,6 @@ w_button_destroy (ddb_gtkui_widget_t *w) {
 }
 
 static void
-set_button_action_label (w_button_t *b, GtkWidget *button) {
-    if (b->action && b->action_ctx >= 0) {
-        DB_plugin_action_t *action = find_action_by_name (b->action);
-        if (action) {
-            const char *ctx_str = NULL;
-            switch (b->action_ctx) {
-            case DDB_ACTION_CTX_MAIN:
-                break;
-            case DDB_ACTION_CTX_SELECTION:
-                ctx_str = _("Selected tracks");
-                break;
-            case DDB_ACTION_CTX_PLAYLIST:
-                ctx_str = _("Tracks in current playlist");
-                break;
-            case DDB_ACTION_CTX_NOWPLAYING:
-                ctx_str = _("Currently playing track");
-                break;
-            }
-            char s[200];
-            snprintf (s, sizeof (s), "%s%s%s", ctx_str ? ctx_str : "", ctx_str ? " ⇒ ": "", action->title);
-            gtk_button_set_label (GTK_BUTTON (button), s);
-            return;
-        }
-    }
-
-    gtk_button_set_label (GTK_BUTTON (button), _("<Not set>"));
-}
-
-static void
 on_button_set_action_clicked           (GtkButton       *button,
                                         gpointer         user_data)
 {
@@ -2989,7 +2960,7 @@ on_button_set_action_clicked           (GtkButton       *button,
                 b->action_ctx = ctx;
             }
         }
-        set_button_action_label (b, GTK_WIDGET (button));
+        set_button_action_label (b->action, b->action_ctx, GTK_WIDGET (button));
     }
     gtk_widget_destroy (dlg);
 }
@@ -3010,7 +2981,7 @@ on_button_config (GtkMenuItem *menuitem, gpointer user_data) {
     gtk_color_button_set_color (GTK_COLOR_BUTTON (textcolor), &b->textcolor);
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (use_textcolor), b->use_textcolor);
     gtk_entry_set_text (GTK_ENTRY (label), b->label ? b->label : "");
-    set_button_action_label (b, action);
+    set_button_action_label (b->action, b->action_ctx, action);
     g_signal_connect ((gpointer) action, "clicked",
             G_CALLBACK (on_button_set_action_clicked),
             user_data);
