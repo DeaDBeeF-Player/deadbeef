@@ -4228,3 +4228,131 @@ create_ctmappingeditdlg (void)
   return ctmappingeditdlg;
 }
 
+GtkWidget*
+create_button_properties (void)
+{
+  GtkWidget *button_properties;
+  GtkWidget *dialog_vbox14;
+  GtkWidget *vbox42;
+  GtkWidget *hbox114;
+  GtkWidget *use_color;
+  GtkWidget *color;
+  GtkWidget *hbox115;
+  GtkWidget *label141;
+  GtkWidget *icon;
+  GtkWidget *hbox116;
+  GtkWidget *label142;
+  GtkWidget *label;
+  GtkWidget *hbox117;
+  GtkWidget *label143;
+  GtkWidget *action;
+  GtkWidget *dialog_action_area13;
+  GtkWidget *applybutton1;
+  GtkWidget *cancelbutton9;
+  GtkWidget *okbutton9;
+
+  button_properties = gtk_dialog_new ();
+  gtk_widget_set_size_request (button_properties, -1, 210);
+  gtk_window_set_title (GTK_WINDOW (button_properties), _("Button properties"));
+  gtk_window_set_type_hint (GTK_WINDOW (button_properties), GDK_WINDOW_TYPE_HINT_DIALOG);
+
+  dialog_vbox14 = gtk_dialog_get_content_area (GTK_DIALOG (button_properties));
+  gtk_widget_show (dialog_vbox14);
+
+  vbox42 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox42);
+  gtk_box_pack_start (GTK_BOX (dialog_vbox14), vbox42, TRUE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox42), 12);
+
+  hbox114 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox114);
+  gtk_box_pack_start (GTK_BOX (vbox42), hbox114, FALSE, FALSE, 0);
+
+  use_color = gtk_check_button_new_with_mnemonic (_("Color:"));
+  gtk_widget_show (use_color);
+  gtk_box_pack_start (GTK_BOX (hbox114), use_color, FALSE, FALSE, 0);
+
+  color = gtk_color_button_new ();
+  gtk_widget_show (color);
+  gtk_box_pack_start (GTK_BOX (hbox114), color, FALSE, FALSE, 0);
+
+  hbox115 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox115);
+  gtk_box_pack_start (GTK_BOX (vbox42), hbox115, FALSE, TRUE, 0);
+
+  label141 = gtk_label_new (_("Icon:"));
+  gtk_widget_show (label141);
+  gtk_box_pack_start (GTK_BOX (hbox115), label141, FALSE, FALSE, 0);
+
+  icon = gtk_combo_box_text_new ();
+  gtk_widget_show (icon);
+  gtk_box_pack_start (GTK_BOX (hbox115), icon, TRUE, TRUE, 0);
+
+  hbox116 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox116);
+  gtk_box_pack_start (GTK_BOX (vbox42), hbox116, FALSE, TRUE, 0);
+
+  label142 = gtk_label_new (_("Label:"));
+  gtk_widget_show (label142);
+  gtk_box_pack_start (GTK_BOX (hbox116), label142, FALSE, FALSE, 0);
+
+  label = gtk_entry_new ();
+  gtk_widget_show (label);
+  gtk_box_pack_start (GTK_BOX (hbox116), label, TRUE, TRUE, 0);
+  gtk_entry_set_invisible_char (GTK_ENTRY (label), 8226);
+
+  hbox117 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox117);
+  gtk_box_pack_start (GTK_BOX (vbox42), hbox117, FALSE, TRUE, 0);
+
+  label143 = gtk_label_new (_("Action:"));
+  gtk_widget_show (label143);
+  gtk_box_pack_start (GTK_BOX (hbox117), label143, FALSE, FALSE, 0);
+
+  action = gtk_combo_box_text_new ();
+  gtk_widget_show (action);
+  gtk_box_pack_start (GTK_BOX (hbox117), action, TRUE, TRUE, 0);
+
+  dialog_action_area13 = gtk_dialog_get_action_area (GTK_DIALOG (button_properties));
+  gtk_widget_show (dialog_action_area13);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area13), GTK_BUTTONBOX_END);
+
+  applybutton1 = gtk_button_new_from_stock ("gtk-apply");
+  gtk_widget_show (applybutton1);
+  gtk_dialog_add_action_widget (GTK_DIALOG (button_properties), applybutton1, GTK_RESPONSE_APPLY);
+  gtk_widget_set_can_default(applybutton1, TRUE);
+
+  cancelbutton9 = gtk_button_new_from_stock ("gtk-cancel");
+  gtk_widget_show (cancelbutton9);
+  gtk_dialog_add_action_widget (GTK_DIALOG (button_properties), cancelbutton9, GTK_RESPONSE_CANCEL);
+  gtk_widget_set_can_default(cancelbutton9, TRUE);
+
+  okbutton9 = gtk_button_new_from_stock ("gtk-ok");
+  gtk_widget_show (okbutton9);
+  gtk_dialog_add_action_widget (GTK_DIALOG (button_properties), okbutton9, GTK_RESPONSE_OK);
+  gtk_widget_set_can_default(okbutton9, TRUE);
+
+  /* Store pointers to all widgets, for use by lookup_widget(). */
+  GLADE_HOOKUP_OBJECT_NO_REF (button_properties, button_properties, "button_properties");
+  GLADE_HOOKUP_OBJECT_NO_REF (button_properties, dialog_vbox14, "dialog_vbox14");
+  GLADE_HOOKUP_OBJECT (button_properties, vbox42, "vbox42");
+  GLADE_HOOKUP_OBJECT (button_properties, hbox114, "hbox114");
+  GLADE_HOOKUP_OBJECT (button_properties, use_color, "use_color");
+  GLADE_HOOKUP_OBJECT (button_properties, color, "color");
+  GLADE_HOOKUP_OBJECT (button_properties, hbox115, "hbox115");
+  GLADE_HOOKUP_OBJECT (button_properties, label141, "label141");
+  GLADE_HOOKUP_OBJECT (button_properties, icon, "icon");
+  GLADE_HOOKUP_OBJECT (button_properties, hbox116, "hbox116");
+  GLADE_HOOKUP_OBJECT (button_properties, label142, "label142");
+  GLADE_HOOKUP_OBJECT (button_properties, label, "label");
+  GLADE_HOOKUP_OBJECT (button_properties, hbox117, "hbox117");
+  GLADE_HOOKUP_OBJECT (button_properties, label143, "label143");
+  GLADE_HOOKUP_OBJECT (button_properties, action, "action");
+  GLADE_HOOKUP_OBJECT_NO_REF (button_properties, dialog_action_area13, "dialog_action_area13");
+  GLADE_HOOKUP_OBJECT (button_properties, applybutton1, "applybutton1");
+  GLADE_HOOKUP_OBJECT (button_properties, cancelbutton9, "cancelbutton9");
+  GLADE_HOOKUP_OBJECT (button_properties, okbutton9, "okbutton9");
+
+  return button_properties;
+}
+

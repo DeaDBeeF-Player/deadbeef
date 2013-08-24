@@ -22,6 +22,7 @@
 #include <assert.h>
 #include <math.h>
 #include "gtkui.h"
+#include "interface.h"
 #include "support.h"
 #include "widgets.h"
 #include "ddbtabstrip.h"
@@ -34,6 +35,7 @@
 #if USE_OPENGL
 #include "gtkuigl.h"
 #endif
+#include "namedicons.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -139,8 +141,8 @@ typedef struct {
 typedef struct {
     ddb_gtkui_widget_t base;
     GtkWidget *button;
+    GtkWidget *alignment;
     GdkColor color;
-    char *stock_icon;
     char *icon;
     char *label;
     char *action;
@@ -2761,10 +2763,7 @@ w_button_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) {
                 b->color.blue = blue << 8;
             }
         }
-        else if (!strcmp (key, "stock_icon")) {
-            b->stock_icon = val[0] ? strdup (val) : NULL;
-        }
-        else if (!strcmp (key, "icon")) {
+        if (!strcmp (key, "icon")) {
             b->icon = val[0] ? strdup (val) : NULL;
         }
         else if (!strcmp (key, "label")) {
@@ -2795,11 +2794,6 @@ w_button_save (struct ddb_gtkui_widget_s *w, char *s, int sz) {
     n = snprintf (pp, ss, " color=\"#%02x%02x%02x\"", b->color.red>>8, b->color.green>>8, b->color.blue>>8);
     ss -= n;
     pp += n;
-    if (b->stock_icon) {
-        n = snprintf (pp, ss, " stock_icon=\"%s\"", b->stock_icon);
-        ss -= n;
-        pp += n;
-    }
     if (b->icon) {
         n = snprintf (pp, ss, " icon=\"%s\"", b->icon);
         ss -= n;
@@ -2854,6 +2848,17 @@ on_button_clicked               (GtkButton       *button,
 static void
 w_button_init (ddb_gtkui_widget_t *ww) {
     w_button_t *w = (w_button_t *)ww;
+
+    // clean before re-creating
+    if (w->button) {
+        gtk_widget_destroy (w->button);
+        w->button = NULL;
+    }
+
+    w->button = gtk_button_new ();
+    gtk_widget_show (w->button);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), w->button);
+
     GtkWidget *alignment = gtk_alignment_new (0.5, 0.5, 0, 0);
     gtk_widget_show (alignment);
     gtk_container_add (GTK_CONTAINER (w->button), alignment);
@@ -2862,8 +2867,8 @@ w_button_init (ddb_gtkui_widget_t *ww) {
     gtk_widget_show (hbox);
     gtk_container_add (GTK_CONTAINER (alignment), hbox);
 
-    if (w->stock_icon || w->icon) {
-        GtkWidget *image = gtk_image_new_from_stock (w->stock_icon ? w->stock_icon : w->icon, GTK_ICON_SIZE_BUTTON);
+    if (w->icon) {
+        GtkWidget *image = gtk_image_new_from_stock (w->icon, GTK_ICON_SIZE_BUTTON);
         gtk_widget_show (image);
         gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
     }
@@ -2881,14 +2886,13 @@ w_button_init (ddb_gtkui_widget_t *ww) {
                 G_CALLBACK (on_button_clicked),
                 w);
     }
+
+    w_override_signals (w->button, w);
 }
 
 static void
 w_button_destroy (ddb_gtkui_widget_t *w) {
     w_button_t *b = (w_button_t *)w;
-    if (b->stock_icon) {
-        free (b->stock_icon);
-    }
     if (b->icon) {
         free (b->icon);
     }
@@ -2900,6 +2904,110 @@ w_button_destroy (ddb_gtkui_widget_t *w) {
     }
 }
 
+static void
+on_button_config (GtkMenuItem *menuitem, gpointer user_data) {
+    w_button_t *b = user_data;
+    GtkWidget *dlg = create_button_properties ();
+    GtkWidget *color = lookup_widget (dlg, "color");
+    GtkWidget *use_color = lookup_widget (dlg, "use_color");
+    GtkWidget *label = lookup_widget (dlg, "label");
+    GtkWidget *action = lookup_widget (dlg, "action");
+    GtkWidget *icon = lookup_widget (dlg, "icon");
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (color), &b->color);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (use_color), b->use_color);
+    gtk_entry_set_text (GTK_ENTRY (label), b->label ? b->label : "");
+
+    GtkListStore *store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
+
+    GtkTreeIter iter;
+    gtk_list_store_append (store, &iter);
+    gtk_list_store_set (store, &iter, 0, NULL, 1, _("None"), -1);
+    int sel = 0;
+    for (int n = 0; GtkNamedIcons[n]; n++) {
+        gtk_list_store_append (store, &iter);
+
+        GtkStockItem it;
+        if (gtk_stock_lookup (GtkNamedIcons[n], &it)) {
+            char *s = strdupa (it.label);
+            for (char *c = s; *c; c++) {
+                if (*c == '_') {
+                    memmove (c, c+1, strlen (c));
+                    c--;
+                }
+            }
+            gtk_list_store_set (store, &iter, 0, GtkNamedIcons[n], 1, s, -1);
+        }
+        else {
+            gtk_list_store_set (store, &iter, 0, GtkNamedIcons[n], 1, GtkNamedIcons[n], -1);
+        }
+
+        if (b->icon && !strcmp (GtkNamedIcons[n], b->icon)) {
+            sel = n+1;
+        }
+    }
+
+    gtk_cell_layout_clear (GTK_CELL_LAYOUT (icon));
+    GtkCellRenderer *renderer;
+    renderer = gtk_cell_renderer_pixbuf_new ();
+    gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (icon), renderer, FALSE );
+    gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (icon), renderer, "stock-id", 0, NULL );
+
+    renderer = gtk_cell_renderer_text_new ();
+    gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (icon), renderer, FALSE );
+    gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (icon), renderer, "text", 1, NULL );
+
+
+    gtk_combo_box_set_model (GTK_COMBO_BOX (icon), GTK_TREE_MODEL (store));
+
+    gtk_combo_box_set_active (GTK_COMBO_BOX (icon), sel);
+
+    for (;;) {
+        int response = gtk_dialog_run (GTK_DIALOG (dlg));
+        if (response == GTK_RESPONSE_OK || response == GTK_RESPONSE_APPLY) {
+            gtk_color_button_get_color (GTK_COLOR_BUTTON (color), &b->color);
+            b->use_color = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (use_color));
+            const char *l = gtk_entry_get_text (GTK_ENTRY (label));
+            if (b->label) {
+                free (b->label);
+                b->label = NULL;
+            }
+            if (l[0]) {
+                b->label = strdup (l);
+            }
+
+            const char *ic = NULL;
+            int sel = gtk_combo_box_get_active (GTK_COMBO_BOX (icon));
+            if (sel >= 1) {
+                ic = GtkNamedIcons[sel-1];
+            }
+            if (b->icon) {
+                free (b->icon);
+                b->icon = NULL;
+            }
+            if (ic) {
+                b->icon = strdup (ic);
+            }
+
+            w_button_init (user_data);
+        }
+        if (response == GTK_RESPONSE_APPLY) {
+            continue;
+        }
+        break;
+    }
+    gtk_widget_destroy (dlg);
+}
+
+static void
+w_button_initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
+    GtkWidget *item;
+    item = gtk_menu_item_new_with_mnemonic (_("Configure button"));
+    gtk_widget_show (item);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "activate", G_CALLBACK (on_button_config), w);
+}
+
+
 ddb_gtkui_widget_t *
 w_button_create (void) {
     w_button_t *w = malloc (sizeof (w_button_t));
@@ -2909,10 +3017,7 @@ w_button_create (void) {
     w->base.save = w_button_save;
     w->base.init = w_button_init;
     w->base.destroy = w_button_destroy;
-//    w->base.initmenu = w_button_initmenu;
-    w->button = gtk_button_new ();
-    gtk_widget_show (w->button);
-    gtk_container_add (GTK_CONTAINER (w->base.widget), w->button);
+    w->base.initmenu = w_button_initmenu;
     w_override_signals (w->base.widget, w);
     return (ddb_gtkui_widget_t *)w;
 }

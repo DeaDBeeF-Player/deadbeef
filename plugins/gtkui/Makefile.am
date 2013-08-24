@@ -43,6 +43,7 @@ GTKUI_SOURCES =    gtkui.c gtkui.h\
                    actionhandlers.c actionhandlers.h\
                    pltmenu.c\
                    ctmapping.c ctmapping.h\
+                   namedicons.c namedicons.h\
 				   $(SM_SOURCES)
 
 sdkdir = $(pkgincludedir)
