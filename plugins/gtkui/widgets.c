@@ -131,6 +131,9 @@ typedef struct {
 typedef struct {
     ddb_gtkui_widget_t base;
     GtkWidget *box;
+    uint64_t expand;
+    uint64_t fill;
+    unsigned homogeneous : 1;
 } w_hvbox_t;
 
 typedef struct {
@@ -2439,15 +2442,44 @@ w_hvbox_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) {
     if (strcmp (type, "hbox") && strcmp (type, "vbox")) {
         return NULL;
     }
+    w_hvbox_t *hvbox = (w_hvbox_t *)w;
+
     char key[MAX_TOKEN], val[MAX_TOKEN];
     for (;;) {
         get_keyvalue (s,key,val);
 
         if (!strcmp (key, "expand")) {
             const char *s = val;
+            int n = 0;
+            char t[MAX_TOKEN];
+            while (n < 64) {
+                s = gettoken (s, t);
+                if (!s) {
+                    break;
+                }
+                if (atoi (t)) {
+                    hvbox->expand |= (1ULL << n);
+                }
+                n++;
+            }
         }
         else if (!strcmp (key, "fill")) {
             const char *s = val;
+            int n = 0;
+            char t[MAX_TOKEN];
+            while (n < 64) {
+                s = gettoken (s, t);
+                if (!s) {
+                    break;
+                }
+                if (atoi (t)) {
+                    hvbox->fill |= (1ULL << n);
+                }
+                n++;
+            }
+        }
+        else if (!strcmp (key, "homogeneous")) {
+            hvbox->homogeneous = atoi (val) ? 1 : 0;
         }
     }
 
@@ -2489,6 +2521,36 @@ w_hvbox_save (struct ddb_gtkui_widget_s *w, char *s, int sz) {
     snprintf (save, sizeof (save), " expand=\"%s\" fill=\"%s\" homogeneous=%d", info.expand, info.fill, homogeneous);
     strncat (s, save, sz);
 }
+
+typedef struct {
+    w_hvbox_t *w;
+    int n;
+} hwbox_init_info_t;
+
+static void
+hvbox_init_child (GtkWidget *child, void *user_data) {
+    hwbox_init_info_t *info = user_data;
+    gboolean expand;
+    gboolean fill;
+    guint padding;
+    GtkPackType pack_type;
+    gtk_box_query_child_packing (GTK_BOX (info->w->box), child, &expand, &fill, &padding, &pack_type);
+    expand = (info->w->expand & (1<<info->n)) ? TRUE : FALSE;
+    fill = (info->w->fill & (1<<info->n)) ? TRUE : FALSE;
+    gtk_box_set_child_packing (GTK_BOX (info->w->box), child, expand, fill, padding, pack_type);
+    info->n++;
+}
+
+static void
+w_hvbox_init (struct ddb_gtkui_widget_s *w) {
+    w_hvbox_t *hvbox = (w_hvbox_t *)w;
+    hwbox_init_info_t info;
+    info.w = hvbox;
+    info.n = 0;
+    gtk_container_foreach (GTK_CONTAINER (hvbox->box), hvbox_init_child, &info);
+    gtk_box_set_homogeneous (GTK_BOX (hvbox->box), hvbox->homogeneous ? TRUE : FALSE);
+}
+
 static void
 w_hvbox_append (struct ddb_gtkui_widget_s *container, struct ddb_gtkui_widget_s *child) {
     w_hvbox_t *b = (w_hvbox_t *)container;
@@ -2641,7 +2703,9 @@ w_hbox_create (void) {
     w->base.replace = w_hvbox_replace;
     w->base.initmenu = w_hvbox_initmenu;
     w->base.initchildmenu = w_hvbox_initchildmenu;
+    w->base.load = w_hvbox_load;
     w->base.save = w_hvbox_save;
+    w->base.init = w_hvbox_init;
     w->box = gtk_hbox_new (TRUE, 3);
     gtk_widget_show (w->box);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->box);
@@ -2663,8 +2727,10 @@ w_vbox_create (void) {
     w->base.remove = w_hvbox_remove;
     w->base.replace = w_hvbox_replace;
     w->base.initmenu = w_hvbox_initmenu;
-//    w->base.load = w_hvbox_load;
+    w->base.initchildmenu = w_hvbox_initchildmenu;
+    w->base.load = w_hvbox_load;
     w->base.save = w_hvbox_save;
+    w->base.init = w_hvbox_init;
     w->box = gtk_vbox_new (TRUE, 3);
     gtk_widget_show (w->box);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->box);
