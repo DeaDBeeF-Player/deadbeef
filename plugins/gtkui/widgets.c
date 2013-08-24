@@ -591,7 +591,7 @@ w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_da
                 G_CALLBACK (on_copy_activate),
                 NULL);
     }
-    item = gtk_menu_item_new_with_mnemonic ("Paste");
+    item = gtk_menu_item_new_with_mnemonic (_("Paste"));
     gtk_widget_show (item);
     gtk_container_add (GTK_CONTAINER (menu), item);
     g_signal_connect ((gpointer) item, "activate",
