@@ -144,11 +144,13 @@ typedef struct {
     GtkWidget *button;
     GtkWidget *alignment;
     GdkColor color;
+    GdkColor textcolor;
     char *icon;
     char *label;
     char *action;
     int action_ctx;
     unsigned use_color : 1;
+    unsigned use_textcolor : 1;
 } w_button_t;
 
 static int design_mode;
@@ -2764,7 +2766,15 @@ w_button_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) {
                 b->color.blue = blue << 8;
             }
         }
-        if (!strcmp (key, "icon")) {
+        else if (!strcmp (key, "textcolor")) {
+            int red, green, blue;
+            if (3 == sscanf (val, "#%02x%02x%02x", &red, &green, &blue)) {
+                b->textcolor.red = red << 8;
+                b->textcolor.green = green << 8;
+                b->textcolor.blue = blue << 8;
+            }
+        }
+        else if (!strcmp (key, "icon")) {
             b->icon = val[0] ? strdup (val) : NULL;
         }
         else if (!strcmp (key, "label")) {
@@ -2778,6 +2788,9 @@ w_button_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) {
         }
         else if (!strcmp (key, "use_color")) {
             b->use_color = atoi (val);
+        }
+        else if (!strcmp (key, "use_textcolor")) {
+            b->use_textcolor = atoi (val);
         }
     }
 
@@ -2793,6 +2806,9 @@ w_button_save (struct ddb_gtkui_widget_s *w, char *s, int sz) {
 
     w_button_t *b = (w_button_t *)w;
     n = snprintf (pp, ss, " color=\"#%02x%02x%02x\"", b->color.red>>8, b->color.green>>8, b->color.blue>>8);
+    ss -= n;
+    pp += n;
+    n = snprintf (pp, ss, " textcolor=\"#%02x%02x%02x\"", b->textcolor.red>>8, b->textcolor.green>>8, b->textcolor.blue>>8);
     ss -= n;
     pp += n;
     if (b->icon) {
@@ -2817,6 +2833,10 @@ w_button_save (struct ddb_gtkui_widget_s *w, char *s, int sz) {
     }
 
     n = snprintf (pp, ss, " use_color=%d", (int)b->use_color);
+    ss -= n;
+    pp += n;
+
+    n = snprintf (pp, ss, " use_textcolor=%d", (int)b->use_textcolor);
     ss -= n;
     pp += n;
 
@@ -2880,6 +2900,10 @@ w_button_init (ddb_gtkui_widget_t *ww) {
 
     if (w->use_color) {
         gtk_widget_modify_bg (w->button, GTK_STATE_NORMAL, &w->color);
+    }
+
+    if (w->use_textcolor) {
+        gtk_widget_modify_fg (label, GTK_STATE_NORMAL, &w->textcolor);
     }
 
     if (w->action) {
@@ -2976,11 +3000,15 @@ on_button_config (GtkMenuItem *menuitem, gpointer user_data) {
     GtkWidget *dlg = create_button_properties ();
     GtkWidget *color = lookup_widget (dlg, "color");
     GtkWidget *use_color = lookup_widget (dlg, "use_color");
+    GtkWidget *textcolor = lookup_widget (dlg, "textcolor");
+    GtkWidget *use_textcolor = lookup_widget (dlg, "use_textcolor");
     GtkWidget *label = lookup_widget (dlg, "label");
     GtkWidget *action = lookup_widget (dlg, "action");
     GtkWidget *icon = lookup_widget (dlg, "icon");
     gtk_color_button_set_color (GTK_COLOR_BUTTON (color), &b->color);
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (use_color), b->use_color);
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (textcolor), &b->textcolor);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (use_textcolor), b->use_textcolor);
     gtk_entry_set_text (GTK_ENTRY (label), b->label ? b->label : "");
     set_button_action_label (b, action);
     g_signal_connect ((gpointer) action, "clicked",
@@ -3036,6 +3064,8 @@ on_button_config (GtkMenuItem *menuitem, gpointer user_data) {
         if (response == GTK_RESPONSE_OK || response == GTK_RESPONSE_APPLY) {
             gtk_color_button_get_color (GTK_COLOR_BUTTON (color), &b->color);
             b->use_color = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (use_color));
+            gtk_color_button_get_color (GTK_COLOR_BUTTON (textcolor), &b->textcolor);
+            b->use_textcolor = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (use_textcolor));
             const char *l = gtk_entry_get_text (GTK_ENTRY (label));
             if (b->label) {
                 free (b->label);

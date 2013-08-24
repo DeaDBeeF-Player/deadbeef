@@ -4237,6 +4237,9 @@ create_button_properties (void)
   GtkWidget *hbox114;
   GtkWidget *use_color;
   GtkWidget *color;
+  GtkWidget *hbox118;
+  GtkWidget *use_textcolor;
+  GtkWidget *textcolor;
   GtkWidget *hbox115;
   GtkWidget *label141;
   GtkWidget *icon;
@@ -4252,7 +4255,7 @@ create_button_properties (void)
   GtkWidget *okbutton9;
 
   button_properties = gtk_dialog_new ();
-  gtk_widget_set_size_request (button_properties, -1, 210);
+  gtk_widget_set_size_request (button_properties, -1, 250);
   gtk_window_set_title (GTK_WINDOW (button_properties), _("Button properties"));
   gtk_window_set_type_hint (GTK_WINDOW (button_properties), GDK_WINDOW_TYPE_HINT_DIALOG);
 
@@ -4275,6 +4278,18 @@ create_button_properties (void)
   color = gtk_color_button_new ();
   gtk_widget_show (color);
   gtk_box_pack_start (GTK_BOX (hbox114), color, FALSE, FALSE, 0);
+
+  hbox118 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox118);
+  gtk_box_pack_start (GTK_BOX (vbox42), hbox118, FALSE, FALSE, 0);
+
+  use_textcolor = gtk_check_button_new_with_mnemonic (_("Text color"));
+  gtk_widget_show (use_textcolor);
+  gtk_box_pack_start (GTK_BOX (hbox118), use_textcolor, FALSE, FALSE, 0);
+
+  textcolor = gtk_color_button_new ();
+  gtk_widget_show (textcolor);
+  gtk_box_pack_start (GTK_BOX (hbox118), textcolor, FALSE, FALSE, 0);
 
   hbox115 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox115);
@@ -4339,6 +4354,9 @@ create_button_properties (void)
   GLADE_HOOKUP_OBJECT (button_properties, hbox114, "hbox114");
   GLADE_HOOKUP_OBJECT (button_properties, use_color, "use_color");
   GLADE_HOOKUP_OBJECT (button_properties, color, "color");
+  GLADE_HOOKUP_OBJECT (button_properties, hbox118, "hbox118");
+  GLADE_HOOKUP_OBJECT (button_properties, use_textcolor, "use_textcolor");
+  GLADE_HOOKUP_OBJECT (button_properties, textcolor, "textcolor");
   GLADE_HOOKUP_OBJECT (button_properties, hbox115, "hbox115");
   GLADE_HOOKUP_OBJECT (button_properties, label141, "label141");
   GLADE_HOOKUP_OBJECT (button_properties, icon, "icon");
