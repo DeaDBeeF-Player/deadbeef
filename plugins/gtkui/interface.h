@@ -19,3 +19,4 @@ GtkWidget* create_tagwritersettings (void);
 GtkWidget* create_ctmappingdlg (void);
 GtkWidget* create_ctmappingeditdlg (void);
 GtkWidget* create_button_properties (void);
+GtkWidget* create_select_action (void);
