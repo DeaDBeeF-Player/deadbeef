@@ -187,6 +187,10 @@ on_pltbrowser_row_inserted (GtkTreeModel *tree_model, GtkTreePath *path, GtkTree
     deadbeef->sendmessage (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
 }
 
+static void
+on_pltbrowser_row_activated (GtkTreeView *tree_view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer user_data) {
+    deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, 0, 0);
+}
 
 static ddb_gtkui_widget_t *
 w_pltbrowser_create (void) {
@@ -224,6 +228,9 @@ w_pltbrowser_create (void) {
             w);
     g_signal_connect ((gpointer) w->tree, "event_after",
             G_CALLBACK (on_pltbrowser_button_press_event),
+            w);
+    g_signal_connect ((gpointer) w->tree, "row_activated",
+            G_CALLBACK (on_pltbrowser_row_activated),
             w);
 
     gtkui_plugin->w_override_signals (w->base.widget, w);
