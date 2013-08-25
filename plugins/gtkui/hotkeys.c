@@ -58,6 +58,7 @@ typedef struct
 #include "../libparser/parser.h"
 #include "../hotkeys/hotkeys.h"
 #include <X11/Xlib.h> // only for the KeySym type
+#include "hotkeys.h"
 
 void
 on_hotkeys_actions_cursor_changed      (GtkTreeView     *treeview,
@@ -373,7 +374,7 @@ on_hotkeys_actions_clicked             (GtkButton       *button,
     init_action_tree (treeview, act, ctx);
     int response = gtk_dialog_run (GTK_DIALOG (dlg));
     if (response == GTK_RESPONSE_OK) {
-        on_hotkeys_actions_cursor_changed (treeview, NULL);
+        on_hotkeys_actions_cursor_changed (GTK_TREE_VIEW (treeview), NULL);
 
         GtkTreePath *path;
         gtk_tree_view_get_cursor (GTK_TREE_VIEW (treeview), &path, NULL);
