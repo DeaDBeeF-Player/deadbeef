@@ -199,6 +199,26 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
         mods |= Mod4Mask;
     }
     trace ("keycode: %x, mods %x\n", event->keyval, mods);
+
+#if 0
+    // only execute actions if one of playlist widgets is in focus, or none
+    GtkWidget *focus = gtk_window_get_focus (GTK_WINDOW (mainwin));
+    if (focus) {
+        GtkWidget *parent = gtk_widget_get_parent (focus);
+        if (!parent) {
+            return FALSE;
+        }
+        parent = gtk_widget_get_parent (parent);
+        if (!parent) {
+            return FALSE;
+        }
+        parent = gtk_widget_get_parent (parent);
+        if (!parent || !DDB_IS_LISTVIEW (parent)) {
+            return FALSE;
+        }
+    }
+#endif
+
     DB_plugin_t *hkplug = deadbeef->plug_get_for_id ("hotkeys");
     if (hkplug) {
         int ctx;

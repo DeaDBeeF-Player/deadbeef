@@ -14,9 +14,7 @@ help file for deadbeef player
     playlist can be navigated with arrow keys, as well as PgUp, PgDn, Home, End, etc.
     use above with Shift key to select multiple tracks.
 
-    you can change, remove or add any key mappings in the Edit->Preferences->Hotkeys tab.
-
-    since version 0.6, the Winamp™-style hotkeys are no longer assigned by default, because it may cause issues with widgets that expect input using these keys.
+    you can view, change, remove or add any key mappings in the Edit->Preferences->Hotkeys tab.
 
 * CONFIGURATION
 
