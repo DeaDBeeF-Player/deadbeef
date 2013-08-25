@@ -5092,7 +5092,7 @@ SOCKS5_HOSTNAME</property>
 		<widget class="GtkHBox" id="hbox119">
 		  <property name="visible">True</property>
 		  <property name="homogeneous">False</property>
-		  <property name="spacing">0</property>
+		  <property name="spacing">8</property>
 
 		  <child>
 		    <widget class="GtkLabel" id="label144">
@@ -5342,7 +5342,7 @@ SOCKS5_HOSTNAME</property>
 		<widget class="GtkHBox" id="hbox120">
 		  <property name="visible">True</property>
 		  <property name="homogeneous">False</property>
-		  <property name="spacing">0</property>
+		  <property name="spacing">8</property>
 
 		  <child>
 		    <widget class="GtkLabel" id="label145">

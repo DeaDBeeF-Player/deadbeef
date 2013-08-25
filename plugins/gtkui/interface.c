@@ -2485,7 +2485,7 @@ create_prefwin (void)
   gtk_container_add (GTK_CONTAINER (notebook), vbox36);
   gtk_container_set_border_width (GTK_CONTAINER (vbox36), 12);
 
-  hbox119 = gtk_hbox_new (FALSE, 0);
+  hbox119 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox119);
   gtk_box_pack_start (GTK_BOX (vbox36), hbox119, FALSE, FALSE, 0);
 
@@ -2554,7 +2554,7 @@ create_prefwin (void)
   gtk_widget_show (hseparator6);
   gtk_box_pack_start (GTK_BOX (vbox36), hseparator6, FALSE, FALSE, 0);
 
-  hbox120 = gtk_hbox_new (FALSE, 0);
+  hbox120 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox120);
   gtk_box_pack_start (GTK_BOX (vbox36), hbox120, FALSE, FALSE, 0);
 
