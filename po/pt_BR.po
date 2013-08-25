@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-25 11:25+0200\n"
-"PO-Revision-Date: 2013-08-25 09:33+0000\n"
+"POT-Creation-Date: 2013-08-25 11:44+0200\n"
+"PO-Revision-Date: 2013-08-25 09:45+0000\n"
 "Last-Translator: waker <wakeroid@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) (http://www.transifex.com/projects/p/deadbeef-player/language/pt_BR/)\n"
 "MIME-Version: 1.0\n"
@@ -193,7 +193,7 @@ msgstr ""
 msgid "VBox"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1006
+#: ../plugins/gtkui/gtkui.c:1006 ../plugins/gtkui/widgets.c:2897
 msgid "Button"
 msgstr ""
 
@@ -1066,7 +1066,7 @@ msgstr "Remover coluna"
 msgid "Group by"
 msgstr "Agrupar por"
 
-#: ../plugins/gtkui/plcommon.c:1036
+#: ../plugins/gtkui/plcommon.c:1036 ../plugins/gtkui/widgets.c:2993
 msgid "None"
 msgstr "Nenhum"
 
@@ -1109,10 +1109,12 @@ msgid "[Multiple values] "
 msgstr "[Valores múltiplos]"
 
 #: ../plugins/gtkui/trkproperties.c:471 ../plugins/gtkui/trkproperties.c:483
+#: ../plugins/gtkui/widgets.c:1940
 msgid "Key"
 msgstr "Chave"
 
 #: ../plugins/gtkui/trkproperties.c:472 ../plugins/gtkui/trkproperties.c:484
+#: ../plugins/gtkui/widgets.c:1942
 msgid "Value"
 msgstr "Valor"
 
@@ -2031,7 +2033,7 @@ msgstr ""
 msgid "Add Command"
 msgstr ""
 
-#: ../plugins/shellexecui/shellexecui.c:137
+#: ../plugins/shellexecui/shellexecui.c:137 ../plugins/gtkui/widgets.c:578
 msgid "Delete"
 msgstr ""
 
@@ -2134,4 +2136,76 @@ msgstr ""
 
 #: ../plugins/gtkui/ctmapping.c:228 ../plugins/gtkui/ctmapping.c:260
 msgid "Nothing is selected."
+msgstr ""
+
+#: ../plugins/gtkui/widgets.c:553
+msgid "Replace with..."
+msgstr ""
+
+#: ../plugins/gtkui/widgets.c:558
+msgid "Insert..."
+msgstr ""
+
+#: ../plugins/gtkui/widgets.c:585
+msgid "Cut"
+msgstr ""
+
+#: ../plugins/gtkui/widgets.c:592
+msgid "Copy"
+msgstr ""
+
+#: ../plugins/gtkui/widgets.c:599
+msgid "Paste"
+msgstr ""
+
+#: ../plugins/gtkui/widgets.c:942
+msgid "Lock movement"
+msgstr ""
+
+#: ../plugins/gtkui/widgets.c:1227
+msgid "Move tab left"
+msgstr ""
+
+#: ../plugins/gtkui/widgets.c:1234
+msgid "Move tab right"
+msgstr ""
+
+#: ../plugins/gtkui/widgets.c:1241
+msgid "Remove tab"
+msgstr ""
+
+#: ../plugins/gtkui/widgets.c:1248
+msgid "Rename tab"
+msgstr ""
+
+#: ../plugins/gtkui/widgets.c:1309
+msgid "Add new tab"
+msgstr ""
+
+#: ../plugins/gtkui/widgets.c:1783
+msgid "Show Column Headers"
+msgstr ""
+
+#: ../plugins/gtkui/widgets.c:2634
+msgid "Expand the box by 1 item"
+msgstr ""
+
+#: ../plugins/gtkui/widgets.c:2639
+msgid "Shrink the box by 1 item"
+msgstr ""
+
+#: ../plugins/gtkui/widgets.c:2644
+msgid "Homogeneous"
+msgstr ""
+
+#: ../plugins/gtkui/widgets.c:2684
+msgid "Expand"
+msgstr ""
+
+#: ../plugins/gtkui/widgets.c:2692
+msgid "Fill"
+msgstr ""
+
+#: ../plugins/gtkui/widgets.c:3075
+msgid "Configure button"
 msgstr ""

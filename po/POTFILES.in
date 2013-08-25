@@ -32,3 +32,4 @@ plugins/shellexecui/support.c
 plugins/shellexecui/shellexec.glade
 plugins/gtkui/actionhandlers.c
 plugins/gtkui/ctmapping.c
+plugins/gtkui/widgets.c

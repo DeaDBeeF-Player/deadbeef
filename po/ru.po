@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-25 11:25+0200\n"
-"PO-Revision-Date: 2013-08-25 09:33+0000\n"
+"POT-Creation-Date: 2013-08-25 11:44+0200\n"
+"PO-Revision-Date: 2013-08-25 09:50+0000\n"
 "Last-Translator: waker <wakeroid@gmail.com>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/deadbeef-player/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -193,7 +193,7 @@ msgstr "HBox"
 msgid "VBox"
 msgstr "VBox"
 
-#: ../plugins/gtkui/gtkui.c:1006
+#: ../plugins/gtkui/gtkui.c:1006 ../plugins/gtkui/widgets.c:2897
 msgid "Button"
 msgstr "Кнопка"
 
@@ -1066,7 +1066,7 @@ msgstr "Удалить столбец"
 msgid "Group by"
 msgstr "Группировать по"
 
-#: ../plugins/gtkui/plcommon.c:1036
+#: ../plugins/gtkui/plcommon.c:1036 ../plugins/gtkui/widgets.c:2993
 msgid "None"
 msgstr "Отсутствует"
 
@@ -1109,10 +1109,12 @@ msgid "[Multiple values] "
 msgstr "[Несколько значений] "
 
 #: ../plugins/gtkui/trkproperties.c:471 ../plugins/gtkui/trkproperties.c:483
+#: ../plugins/gtkui/widgets.c:1940
 msgid "Key"
 msgstr "Ключ"
 
 #: ../plugins/gtkui/trkproperties.c:472 ../plugins/gtkui/trkproperties.c:484
+#: ../plugins/gtkui/widgets.c:1942
 msgid "Value"
 msgstr "Значение"
 
@@ -2031,7 +2033,7 @@ msgstr "Команда появится в главном меню"
 msgid "Add Command"
 msgstr "Добавить команду"
 
-#: ../plugins/shellexecui/shellexecui.c:137
+#: ../plugins/shellexecui/shellexecui.c:137 ../plugins/gtkui/widgets.c:578
 msgid "Delete"
 msgstr "Удалить"
 
@@ -2135,3 +2137,75 @@ msgstr "Поля Content-type и Плагины должны быть непус
 #: ../plugins/gtkui/ctmapping.c:228 ../plugins/gtkui/ctmapping.c:260
 msgid "Nothing is selected."
 msgstr "Ничего не выбрано."
+
+#: ../plugins/gtkui/widgets.c:553
+msgid "Replace with..."
+msgstr "Заменить на..."
+
+#: ../plugins/gtkui/widgets.c:558
+msgid "Insert..."
+msgstr "Вставить..."
+
+#: ../plugins/gtkui/widgets.c:585
+msgid "Cut"
+msgstr "Вырезать"
+
+#: ../plugins/gtkui/widgets.c:592
+msgid "Copy"
+msgstr "Скопировать"
+
+#: ../plugins/gtkui/widgets.c:599
+msgid "Paste"
+msgstr "Вставить"
+
+#: ../plugins/gtkui/widgets.c:942
+msgid "Lock movement"
+msgstr "Заблокировать перемещение"
+
+#: ../plugins/gtkui/widgets.c:1227
+msgid "Move tab left"
+msgstr "Передвинуть вкладку влево"
+
+#: ../plugins/gtkui/widgets.c:1234
+msgid "Move tab right"
+msgstr "Передвинуть вкладку вправо"
+
+#: ../plugins/gtkui/widgets.c:1241
+msgid "Remove tab"
+msgstr "Удалить вкладку"
+
+#: ../plugins/gtkui/widgets.c:1248
+msgid "Rename tab"
+msgstr "Переименовать вкладку"
+
+#: ../plugins/gtkui/widgets.c:1309
+msgid "Add new tab"
+msgstr "Добавить новую вкладку"
+
+#: ../plugins/gtkui/widgets.c:1783
+msgid "Show Column Headers"
+msgstr "Показывать заголовки колонок"
+
+#: ../plugins/gtkui/widgets.c:2634
+msgid "Expand the box by 1 item"
+msgstr "Расширить этот бокс на 1 элемент"
+
+#: ../plugins/gtkui/widgets.c:2639
+msgid "Shrink the box by 1 item"
+msgstr "Сузить этот бокс на 1 элемент"
+
+#: ../plugins/gtkui/widgets.c:2644
+msgid "Homogeneous"
+msgstr "Равномерный"
+
+#: ../plugins/gtkui/widgets.c:2684
+msgid "Expand"
+msgstr "Расширять"
+
+#: ../plugins/gtkui/widgets.c:2692
+msgid "Fill"
+msgstr "Заполнять"
+
+#: ../plugins/gtkui/widgets.c:3075
+msgid "Configure button"
+msgstr "Настроить кнопку"
