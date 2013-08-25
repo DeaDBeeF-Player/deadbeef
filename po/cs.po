@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 # pcpepik <pcpepik0@gmail.com>, 2013
 # pcpepik <pcpepik0@gmail.com>, 2013
@@ -10,14 +10,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-25 11:44+0200\n"
+"POT-Creation-Date: 2013-08-25 12:15+0200\n"
 "PO-Revision-Date: 2013-08-25 09:45+0000\n"
 "Last-Translator: waker <wakeroid@gmail.com>\n"
-"Language-Team: Czech (http://www.transifex.com/projects/p/deadbeef-player/language/cs/)\n"
+"Language-Team: Czech (http://www.transifex.com/projects/p/deadbeef-player/"
+"language/cs/)\n"
+"Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: cs\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
 #: ../plugins/gtkui/callbacks.c:542
@@ -128,7 +129,9 @@ msgstr "Zastaveno | "
 #, c-format
 msgid ""
 "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
-msgstr "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d skladeb | %s celkový čas přehrávání"
+msgstr ""
+"%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d skladeb | %s celkový čas "
+"přehrávání"
 
 #: ../plugins/gtkui/gtkui.c:726 ../plugins/gtkui/fileman.c:41
 msgid "New Playlist"
@@ -209,7 +212,9 @@ msgstr "Selhalo načtení souboru nápovědy"
 msgid ""
 "The player is currently running backgroud tasks. If you quit now, the tasks "
 "will be cancelled or interrupted. This may result in data loss."
-msgstr "Přehrávač momentálně provádí úlohy na pozadí. Pokud jej nyní ukončíte, úlohy budou ukončeny či přerušeny. Toto může způsobit ztrátu dat."
+msgstr ""
+"Přehrávač momentálně provádí úlohy na pozadí. Pokud jej nyní ukončíte, úlohy "
+"budou ukončeny či přerušeny. Toto může způsobit ztrátu dat."
 
 #: ../plugins/gtkui/gtkui.c:1243
 msgid "Do you still want to quit?"
@@ -237,7 +242,7 @@ msgstr "Přidat soubor(y)"
 msgid "Add folder(s)"
 msgstr "Přidat složku(y)"
 
-#: ../plugins/gtkui/interface.c:182 ../plugins/gtkui/interface.c:3227
+#: ../plugins/gtkui/interface.c:182 ../plugins/gtkui/interface.c:3238
 #: ../plugins/gtkui/deadbeef.glade.h:5
 msgid "Add location"
 msgstr "Přidat umístění"
@@ -317,7 +322,7 @@ msgid "Track number"
 msgstr "Číslo stopy"
 
 #: ../plugins/gtkui/interface.c:281 ../plugins/gtkui/interface.c:1478
-#: ../plugins/gtkui/interface.c:1875 ../plugins/gtkui/deadbeef.glade.h:22
+#: ../plugins/gtkui/interface.c:1877 ../plugins/gtkui/deadbeef.glade.h:22
 #: ../translation/extra.c:73
 msgid "Album"
 msgstr "Album"
@@ -344,7 +349,7 @@ msgstr "Náhodně"
 msgid "Custom"
 msgstr "Vlastní"
 
-#: ../plugins/gtkui/interface.c:306 ../plugins/gtkui/interface.c:1800
+#: ../plugins/gtkui/interface.c:306 ../plugins/gtkui/interface.c:1802
 #: ../plugins/gtkui/deadbeef.glade.h:27
 msgid "Preferences"
 msgstr "Nastavení"
@@ -373,7 +378,7 @@ msgstr "Režim návrhu"
 msgid "_Playback"
 msgstr "_Přehrát"
 
-#: ../plugins/gtkui/interface.c:345 ../plugins/gtkui/interface.c:3503
+#: ../plugins/gtkui/interface.c:345 ../plugins/gtkui/interface.c:3514
 #: ../plugins/gtkui/deadbeef.glade.h:35
 msgid "Order"
 msgstr "Pořadí"
@@ -519,7 +524,7 @@ msgstr "Metadata"
 msgid "Properties"
 msgstr "Vlastnosti"
 
-#: ../plugins/gtkui/interface.c:1449 ../plugins/gtkui/interface.c:3128
+#: ../plugins/gtkui/interface.c:1449 ../plugins/gtkui/interface.c:3139
 #: ../plugins/gtkui/deadbeef.glade.h:72 ../plugins/converter/interface.c:378
 #: ../plugins/converter/converter.glade.h:22
 #: ../plugins/shellexecui/interface.c:158
@@ -565,7 +570,7 @@ msgstr "Číslo stopy"
 msgid "Band / Album Artist"
 msgstr "Skupina / Skladatel"
 
-#: ../plugins/gtkui/interface.c:1489 ../plugins/gtkui/interface.c:3355
+#: ../plugins/gtkui/interface.c:1489 ../plugins/gtkui/interface.c:3366
 #: ../plugins/gtkui/deadbeef.glade.h:86
 msgid "Format:"
 msgstr "Formát:"
@@ -582,447 +587,461 @@ msgstr "Vlevo"
 msgid "Right"
 msgstr "Vpravo"
 
-#: ../plugins/gtkui/interface.c:1546 ../plugins/gtkui/interface.c:3159
-#: ../plugins/gtkui/interface.c:3270 ../plugins/gtkui/interface.c:3396
+#: ../plugins/gtkui/interface.c:1546 ../plugins/gtkui/interface.c:3170
+#: ../plugins/gtkui/interface.c:3281 ../plugins/gtkui/interface.c:3407
 #: ../plugins/gtkui/deadbeef.glade.h:70
 msgid "_Cancel"
 msgstr "_Zrušit"
 
-#: ../plugins/gtkui/interface.c:1567 ../plugins/gtkui/interface.c:3180
-#: ../plugins/gtkui/interface.c:3291 ../plugins/gtkui/interface.c:3417
+#: ../plugins/gtkui/interface.c:1567 ../plugins/gtkui/interface.c:3191
+#: ../plugins/gtkui/interface.c:3302 ../plugins/gtkui/interface.c:3428
 #: ../plugins/gtkui/deadbeef.glade.h:71
 msgid "_OK"
 msgstr "_OK"
 
-#: ../plugins/gtkui/interface.c:1821 ../plugins/gtkui/deadbeef.glade.h:90
+#: ../plugins/gtkui/interface.c:1823 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Output plugin:"
 msgstr "Výstupní zásuvné moduly:"
 
-#: ../plugins/gtkui/interface.c:1834 ../plugins/gtkui/deadbeef.glade.h:91
+#: ../plugins/gtkui/interface.c:1836 ../plugins/gtkui/deadbeef.glade.h:91
 msgid "Output device:"
 msgstr "Výstupní zařízení:"
 
-#: ../plugins/gtkui/interface.c:1843 ../plugins/gtkui/deadbeef.glade.h:92
+#: ../plugins/gtkui/interface.c:1845 ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Always convert 8 bit audio to 16 bit"
 msgstr "Vždy převést 8 bit audio na 16 bit"
 
-#: ../plugins/gtkui/interface.c:1847 ../plugins/gtkui/deadbeef.glade.h:93
+#: ../plugins/gtkui/interface.c:1849 ../plugins/gtkui/deadbeef.glade.h:93
 msgid "Always convert 16 bit audio to 24 bit"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1851 ../plugins/gtkui/deadbeef.glade.h:94
+#: ../plugins/gtkui/interface.c:1853 ../plugins/gtkui/deadbeef.glade.h:94
 msgid "Sound"
 msgstr "Zvuk"
 
-#: ../plugins/gtkui/interface.c:1864 ../plugins/gtkui/deadbeef.glade.h:95
+#: ../plugins/gtkui/interface.c:1866 ../plugins/gtkui/deadbeef.glade.h:95
 msgid "Replaygain mode:"
 msgstr "Režim replaygain:"
 
-#: ../plugins/gtkui/interface.c:1873
+#: ../plugins/gtkui/interface.c:1875
 msgid "Disable"
 msgstr "Zakázat"
 
-#: ../plugins/gtkui/interface.c:1874
+#: ../plugins/gtkui/interface.c:1876
 msgid "Track"
 msgstr "Skladba"
 
-#: ../plugins/gtkui/interface.c:1877 ../plugins/gtkui/deadbeef.glade.h:99
+#: ../plugins/gtkui/interface.c:1879 ../plugins/gtkui/deadbeef.glade.h:99
 msgid "Replaygain peak scale"
 msgstr "Měřítko vrcholu replaygain"
 
-#: ../plugins/gtkui/interface.c:1892 ../plugins/gtkui/interface.c:1926
+#: ../plugins/gtkui/interface.c:1894 ../plugins/gtkui/interface.c:1928
 #: ../plugins/gtkui/deadbeef.glade.h:100
 msgid "-12 dB"
 msgstr "-12 dB"
 
-#: ../plugins/gtkui/interface.c:1902 ../plugins/gtkui/interface.c:1936
+#: ../plugins/gtkui/interface.c:1904 ../plugins/gtkui/interface.c:1938
 #: ../plugins/gtkui/deadbeef.glade.h:101
 msgid "+12 dB"
 msgstr "+12 dB"
 
-#: ../plugins/gtkui/interface.c:1906 ../plugins/gtkui/deadbeef.glade.h:102
+#: ../plugins/gtkui/interface.c:1908 ../plugins/gtkui/deadbeef.glade.h:102
 msgid "Replaygain preamp:"
 msgstr "Předzesilovač replaygain:"
 
-#: ../plugins/gtkui/interface.c:1913 ../plugins/gtkui/deadbeef.glade.h:103
+#: ../plugins/gtkui/interface.c:1915 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Global preamp:"
 msgstr "Globální předzesilovač (preamp):"
 
-#: ../plugins/gtkui/interface.c:1944 ../plugins/gtkui/deadbeef.glade.h:104
+#: ../plugins/gtkui/interface.c:1946 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Add files from command line (or file manager) to this playlist:"
-msgstr "Přidat soubory z příkazové řádky (nebo souborového manažeru) do tohoto playlistu:"
+msgstr ""
+"Přidat soubory z příkazové řádky (nebo souborového manažeru) do tohoto "
+"playlistu:"
 
-#: ../plugins/gtkui/interface.c:1953 ../plugins/gtkui/deadbeef.glade.h:105
+#: ../plugins/gtkui/interface.c:1955 ../plugins/gtkui/deadbeef.glade.h:105
 msgid "Resume previous session on startup"
 msgstr "Při startu obnovit předchozí sezení"
 
-#: ../plugins/gtkui/interface.c:1957 ../plugins/gtkui/deadbeef.glade.h:106
+#: ../plugins/gtkui/interface.c:1959 ../plugins/gtkui/deadbeef.glade.h:106
 msgid "Don't add from archives when adding folders"
 msgstr "Ignorovat archivy během přidávání adresářů"
 
-#: ../plugins/gtkui/interface.c:1961 ../plugins/gtkui/deadbeef.glade.h:107
+#: ../plugins/gtkui/interface.c:1963 ../plugins/gtkui/deadbeef.glade.h:107
 msgid "Auto-reset \"Stop after current\""
 msgstr "Automaticky vynulovat \"Zastavit po aktuální\""
 
-#: ../plugins/gtkui/interface.c:1965 ../plugins/gtkui/deadbeef.glade.h:108
+#: ../plugins/gtkui/interface.c:1967 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Playback"
 msgstr "Přehrát"
 
-#: ../plugins/gtkui/interface.c:1986 ../plugins/gtkui/interface.c:2646
+#: ../plugins/gtkui/interface.c:1988 ../plugins/gtkui/interface.c:2655
 #: ../plugins/gtkui/deadbeef.glade.h:109 ../plugins/converter/interface.c:632
 #: ../plugins/converter/converter.glade.h:47
 msgid "Configure"
 msgstr "Nastavit"
 
-#: ../plugins/gtkui/interface.c:2021 ../plugins/gtkui/deadbeef.glade.h:110
+#: ../plugins/gtkui/interface.c:2023 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "DSP Chain Preset"
 msgstr "Předvolba DSP"
 
-#: ../plugins/gtkui/interface.c:2033 ../plugins/gtkui/deadbeef.glade.h:111
+#: ../plugins/gtkui/interface.c:2035 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "_Load"
 msgstr "_Načíst"
 
-#: ../plugins/gtkui/interface.c:2037 ../plugins/gtkui/deadbeef.glade.h:112
+#: ../plugins/gtkui/interface.c:2039 ../plugins/gtkui/deadbeef.glade.h:112
 msgid "DSP"
 msgstr "DSP"
 
-#: ../plugins/gtkui/interface.c:2046 ../plugins/gtkui/deadbeef.glade.h:113
+#: ../plugins/gtkui/interface.c:2048 ../plugins/gtkui/deadbeef.glade.h:113
 msgid "Close minimizes to tray"
 msgstr "Zavřít do traye"
 
-#: ../plugins/gtkui/interface.c:2050 ../plugins/gtkui/deadbeef.glade.h:114
+#: ../plugins/gtkui/interface.c:2052 ../plugins/gtkui/deadbeef.glade.h:114
 msgid "Middle mouse button closes playlist"
 msgstr "Zavřít playlist prostředním tlačítkem myši"
 
-#: ../plugins/gtkui/interface.c:2054 ../plugins/gtkui/deadbeef.glade.h:115
+#: ../plugins/gtkui/interface.c:2056 ../plugins/gtkui/deadbeef.glade.h:115
 msgid "Hide system tray icon"
 msgstr "Skrýt ikonu v trayi"
 
-#: ../plugins/gtkui/interface.c:2058 ../plugins/gtkui/deadbeef.glade.h:116
+#: ../plugins/gtkui/interface.c:2060 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Use bold font for currently playing track"
 msgstr "Použít tučný font pro přehrávanou skladbu"
 
-#: ../plugins/gtkui/interface.c:2062 ../plugins/gtkui/deadbeef.glade.h:117
+#: ../plugins/gtkui/interface.c:2064 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Hide \"Delete from disk\" context menu item"
 msgstr "Skrýt položku \"Smazat z disku\" z kontextového menu"
 
-#: ../plugins/gtkui/interface.c:2066 ../plugins/gtkui/deadbeef.glade.h:118
+#: ../plugins/gtkui/interface.c:2068 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Auto-name playlists when adding a single folder"
 msgstr "Automaticky pojmenovat přidaný adresář"
 
-#: ../plugins/gtkui/interface.c:2070 ../plugins/gtkui/deadbeef.glade.h:119
+#: ../plugins/gtkui/interface.c:2072 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Enable Russian CP1251 detection and recoding"
 msgstr "Povolit detekci a záznam ruského CP1251"
 
-#: ../plugins/gtkui/interface.c:2074 ../plugins/gtkui/deadbeef.glade.h:120
+#: ../plugins/gtkui/interface.c:2076 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Enable Chinese CP936 detection and recoding"
 msgstr "Povolit detekci a záznam čínského CP936"
 
-#: ../plugins/gtkui/interface.c:2082 ../plugins/gtkui/deadbeef.glade.h:121
+#: ../plugins/gtkui/interface.c:2084 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Interface refresh rate (times per second):"
 msgstr "Četnost obnovení rozhraní (za vteřinu):"
 
-#: ../plugins/gtkui/interface.c:2096 ../plugins/gtkui/deadbeef.glade.h:122
+#: ../plugins/gtkui/interface.c:2098 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Titlebar text while playing:"
 msgstr "Titulní text během přehrávání:"
 
-#: ../plugins/gtkui/interface.c:2110 ../plugins/gtkui/deadbeef.glade.h:123
+#: ../plugins/gtkui/interface.c:2112 ../plugins/gtkui/deadbeef.glade.h:123
 msgid "Titlebar text while stopped:"
 msgstr "Titulní text během zastavení:"
 
-#: ../plugins/gtkui/interface.c:2124 ../plugins/gtkui/deadbeef.glade.h:124
+#: ../plugins/gtkui/interface.c:2126 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "GUI Plugin (changing requires restart):"
 msgstr "Zásuvný modul GUI (změny vyžadují restart):"
 
-#: ../plugins/gtkui/interface.c:2132 ../plugins/gtkui/deadbeef.glade.h:125
+#: ../plugins/gtkui/interface.c:2134 ../plugins/gtkui/deadbeef.glade.h:125
 msgid "GUI/Misc"
 msgstr "GUI/Různé"
 
-#: ../plugins/gtkui/interface.c:2147 ../plugins/gtkui/interface.c:2191
+#: ../plugins/gtkui/interface.c:2149 ../plugins/gtkui/interface.c:2193
 #: ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Override"
 msgstr "Předefinovat"
 
-#: ../plugins/gtkui/interface.c:2156 ../plugins/gtkui/deadbeef.glade.h:127
+#: ../plugins/gtkui/interface.c:2158 ../plugins/gtkui/deadbeef.glade.h:127
 msgid "Foreground"
 msgstr "Popředí"
 
-#: ../plugins/gtkui/interface.c:2163 ../plugins/gtkui/deadbeef.glade.h:128
+#: ../plugins/gtkui/interface.c:2165 ../plugins/gtkui/deadbeef.glade.h:128
 msgid "Background"
 msgstr "Pozadí"
 
-#: ../plugins/gtkui/interface.c:2182 ../plugins/gtkui/deadbeef.glade.h:129
+#: ../plugins/gtkui/interface.c:2184 ../plugins/gtkui/deadbeef.glade.h:129
 msgid "Seekbar/Volumebar colors"
 msgstr "Barvy průběhu hledání/hlasitosti"
 
-#: ../plugins/gtkui/interface.c:2200 ../plugins/gtkui/deadbeef.glade.h:130
+#: ../plugins/gtkui/interface.c:2202 ../plugins/gtkui/deadbeef.glade.h:130
 msgid "Middle"
 msgstr "Střední"
 
-#: ../plugins/gtkui/interface.c:2207 ../plugins/gtkui/deadbeef.glade.h:131
+#: ../plugins/gtkui/interface.c:2209 ../plugins/gtkui/deadbeef.glade.h:131
 msgid "Light"
 msgstr "Světlé"
 
-#: ../plugins/gtkui/interface.c:2214 ../plugins/gtkui/deadbeef.glade.h:132
+#: ../plugins/gtkui/interface.c:2216 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Dark"
 msgstr "Tmavé"
 
-#: ../plugins/gtkui/interface.c:2245 ../plugins/gtkui/deadbeef.glade.h:133
+#: ../plugins/gtkui/interface.c:2247 ../plugins/gtkui/deadbeef.glade.h:133
 msgid "Base"
 msgstr "Základní"
 
-#: ../plugins/gtkui/interface.c:2252 ../plugins/gtkui/interface.c:2309
+#: ../plugins/gtkui/interface.c:2254 ../plugins/gtkui/interface.c:2311
 #: ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Text"
 msgstr "Text"
 
-#: ../plugins/gtkui/interface.c:2265 ../plugins/gtkui/deadbeef.glade.h:135
+#: ../plugins/gtkui/interface.c:2267 ../plugins/gtkui/deadbeef.glade.h:135
 msgid "Tab strip colors"
 msgstr "Barvy lišty záložek"
 
-#: ../plugins/gtkui/interface.c:2274 ../plugins/gtkui/deadbeef.glade.h:136
+#: ../plugins/gtkui/interface.c:2276 ../plugins/gtkui/deadbeef.glade.h:136
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
 msgstr "Předefinovat (ztratí GTK téma, ale zrychlí vykreslování)"
 
-#: ../plugins/gtkui/interface.c:2283 ../plugins/gtkui/deadbeef.glade.h:137
+#: ../plugins/gtkui/interface.c:2285 ../plugins/gtkui/deadbeef.glade.h:137
 msgid "Even row"
 msgstr "Sudý řádek"
 
-#: ../plugins/gtkui/interface.c:2290 ../plugins/gtkui/deadbeef.glade.h:138
+#: ../plugins/gtkui/interface.c:2292 ../plugins/gtkui/deadbeef.glade.h:138
 msgid "Odd row"
 msgstr "Lichý řádek"
 
-#: ../plugins/gtkui/interface.c:2316 ../plugins/gtkui/deadbeef.glade.h:139
+#: ../plugins/gtkui/interface.c:2318 ../plugins/gtkui/deadbeef.glade.h:139
 msgid "Selected row"
 msgstr "Vybraný řádek"
 
-#: ../plugins/gtkui/interface.c:2335 ../plugins/gtkui/deadbeef.glade.h:140
+#: ../plugins/gtkui/interface.c:2337 ../plugins/gtkui/deadbeef.glade.h:140
 msgid "Selected text"
 msgstr "Vybraný text"
 
-#: ../plugins/gtkui/interface.c:2348 ../plugins/gtkui/deadbeef.glade.h:141
+#: ../plugins/gtkui/interface.c:2350 ../plugins/gtkui/deadbeef.glade.h:141
 msgid "Cursor"
 msgstr "Kurzor"
 
-#: ../plugins/gtkui/interface.c:2361 ../plugins/gtkui/deadbeef.glade.h:142
+#: ../plugins/gtkui/interface.c:2363 ../plugins/gtkui/deadbeef.glade.h:142
 msgid "Playlist colors"
 msgstr "Barvy playlistu"
 
-#: ../plugins/gtkui/interface.c:2365 ../plugins/gtkui/deadbeef.glade.h:143
+#: ../plugins/gtkui/interface.c:2367 ../plugins/gtkui/deadbeef.glade.h:143
 msgid "Colors"
 msgstr "Barvy"
 
-#: ../plugins/gtkui/interface.c:2374 ../plugins/gtkui/deadbeef.glade.h:144
+#: ../plugins/gtkui/interface.c:2376 ../plugins/gtkui/deadbeef.glade.h:144
 msgid "Enable Proxy Server"
 msgstr "Povolit server Proxy"
 
-#: ../plugins/gtkui/interface.c:2382 ../plugins/gtkui/deadbeef.glade.h:145
+#: ../plugins/gtkui/interface.c:2384 ../plugins/gtkui/deadbeef.glade.h:145
 msgid "Proxy Server Address:"
 msgstr "Adresa Proxy serveru:"
 
-#: ../plugins/gtkui/interface.c:2396 ../plugins/gtkui/deadbeef.glade.h:146
+#: ../plugins/gtkui/interface.c:2398 ../plugins/gtkui/deadbeef.glade.h:146
 msgid "Proxy Server Port:"
 msgstr "Port Proxy serveru:"
 
-#: ../plugins/gtkui/interface.c:2410 ../plugins/gtkui/deadbeef.glade.h:147
+#: ../plugins/gtkui/interface.c:2412 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "Proxy Type:"
 msgstr "Typ Proxy:"
 
-#: ../plugins/gtkui/interface.c:2429 ../plugins/gtkui/deadbeef.glade.h:148
+#: ../plugins/gtkui/interface.c:2431 ../plugins/gtkui/deadbeef.glade.h:148
 msgid "Proxy Username:"
 msgstr "Uživatelské jméno Proxy:"
 
-#: ../plugins/gtkui/interface.c:2442 ../plugins/gtkui/deadbeef.glade.h:149
+#: ../plugins/gtkui/interface.c:2444 ../plugins/gtkui/deadbeef.glade.h:149
 msgid "Proxy Password:"
 msgstr "Heslo Proxy:"
 
-#: ../plugins/gtkui/interface.c:2460 ../plugins/gtkui/deadbeef.glade.h:150
+#: ../plugins/gtkui/interface.c:2462 ../plugins/gtkui/deadbeef.glade.h:150
 msgid "HTTP User Agent:"
 msgstr "HTTP User Agent:"
 
-#: ../plugins/gtkui/interface.c:2473 ../plugins/gtkui/interface.c:4131
+#: ../plugins/gtkui/interface.c:2475 ../plugins/gtkui/interface.c:4142
 #: ../plugins/gtkui/deadbeef.glade.h:151
 msgid "Edit Content-Type Mapping"
 msgstr "Upravit mapování Typu-Obsahu"
 
-#: ../plugins/gtkui/interface.c:2477 ../plugins/gtkui/deadbeef.glade.h:152
+#: ../plugins/gtkui/interface.c:2479 ../plugins/gtkui/deadbeef.glade.h:152
 msgid "Network"
 msgstr "Síť"
 
-#: ../plugins/gtkui/interface.c:2490 ../plugins/gtkui/deadbeef.glade.h:153
-msgid "<b>Assigned hotkeys</b>"
+#: ../plugins/gtkui/interface.c:2492 ../plugins/gtkui/deadbeef.glade.h:153
+#, fuzzy
+msgid "Assigned Hotkeys:"
 msgstr "<b>Přiřazené klávesové zkratky</b>"
 
-#: ../plugins/gtkui/interface.c:2530 ../plugins/gtkui/interface.c:4292
+#: ../plugins/gtkui/interface.c:2527 ../plugins/gtkui/interface.c:4303
 #: ../plugins/gtkui/deadbeef.glade.h:154
 msgid "Action:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2535 ../plugins/gtkui/interface.c:2548
-#: ../plugins/gtkui/interface.c:4296 ../plugins/gtkui/deadbeef.glade.h:155
+#: ../plugins/gtkui/interface.c:2532 ../plugins/gtkui/interface.c:2545
+#: ../plugins/gtkui/interface.c:4307 ../plugins/gtkui/deadbeef.glade.h:155
 msgid "<Not set>"
 msgstr "<Nenastaveno>"
 
-#: ../plugins/gtkui/interface.c:2543 ../plugins/gtkui/deadbeef.glade.h:156
-msgid "Key:"
+#: ../plugins/gtkui/interface.c:2540 ../plugins/gtkui/deadbeef.glade.h:156
+msgid "Key combination:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2552 ../plugins/gtkui/deadbeef.glade.h:157
+#: ../plugins/gtkui/interface.c:2549 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "Global hotkey"
 msgstr "Globální klávesová zkratka"
 
-#: ../plugins/gtkui/interface.c:2572 ../plugins/gtkui/deadbeef.glade.h:158
+#: ../plugins/gtkui/interface.c:2561 ../plugins/gtkui/deadbeef.glade.h:158
+msgid ""
+"Use the Apply button to save your changes,\n"
+"or the Revert button to undo your changes.\n"
+"The changes will NOT be saved if you don't press Apply."
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:2581 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "Hotkeys"
 msgstr "Klávesové zkratky"
 
-#: ../plugins/gtkui/interface.c:2603 ../plugins/gtkui/deadbeef.glade.h:159
+#: ../plugins/gtkui/interface.c:2612 ../plugins/gtkui/deadbeef.glade.h:162
 msgid "Version: "
 msgstr "Verze: "
 
-#: ../plugins/gtkui/interface.c:2667 ../plugins/gtkui/deadbeef.glade.h:160
+#: ../plugins/gtkui/interface.c:2676 ../plugins/gtkui/deadbeef.glade.h:163
 #: ../translation/extra.c:82
 msgid "Copyright"
 msgstr "Copyright"
 
-#: ../plugins/gtkui/interface.c:2677 ../plugins/gtkui/deadbeef.glade.h:161
+#: ../plugins/gtkui/interface.c:2686 ../plugins/gtkui/deadbeef.glade.h:164
 #: ../plugins/gtkui/ctmapping.c:131
 msgid "Plugins"
 msgstr "Zásuvné moduly"
 
-#: ../plugins/gtkui/interface.c:3238 ../plugins/gtkui/deadbeef.glade.h:162
+#: ../plugins/gtkui/interface.c:3249 ../plugins/gtkui/deadbeef.glade.h:165
 msgid "URL:"
 msgstr "URL:"
 
-#: ../plugins/gtkui/interface.c:3340 ../plugins/gtkui/deadbeef.glade.h:163
+#: ../plugins/gtkui/interface.c:3351 ../plugins/gtkui/deadbeef.glade.h:166
 msgid "Group By ..."
 msgstr "Seskupit dle ..."
 
-#: ../plugins/gtkui/interface.c:3464 ../plugins/gtkui/deadbeef.glade.h:164
+#: ../plugins/gtkui/interface.c:3475 ../plugins/gtkui/deadbeef.glade.h:167
 msgid "Sort by ..."
 msgstr "Třídit dle ..."
 
-#: ../plugins/gtkui/interface.c:3480 ../plugins/gtkui/deadbeef.glade.h:165
+#: ../plugins/gtkui/interface.c:3491 ../plugins/gtkui/deadbeef.glade.h:168
 msgid "Format"
 msgstr "Formát"
 
-#: ../plugins/gtkui/interface.c:3510
+#: ../plugins/gtkui/interface.c:3521
 msgid "Ascending"
 msgstr "Vzestupně"
 
-#: ../plugins/gtkui/interface.c:3511
+#: ../plugins/gtkui/interface.c:3522
 msgid "Descending"
 msgstr "Sestupně"
 
-#: ../plugins/gtkui/interface.c:3564 ../plugins/gtkui/deadbeef.glade.h:168
+#: ../plugins/gtkui/interface.c:3575 ../plugins/gtkui/deadbeef.glade.h:171
 #: ../plugins/converter/interface.c:733
 #: ../plugins/converter/converter.glade.h:48
 msgid "Select DSP Plugin"
 msgstr "Vybrat zásuvný modul DSP"
 
-#: ../plugins/gtkui/interface.c:3580 ../plugins/gtkui/deadbeef.glade.h:169
+#: ../plugins/gtkui/interface.c:3591 ../plugins/gtkui/deadbeef.glade.h:172
 #: ../plugins/converter/convgui.c:1194 ../plugins/converter/interface.c:749
 #: ../plugins/gtkui/dspconfig.c:139 ../plugins/converter/converter.glade.h:49
 msgid "Plugin"
 msgstr "Zásuvný modul"
 
-#: ../plugins/gtkui/interface.c:3665 ../plugins/gtkui/deadbeef.glade.h:170
+#: ../plugins/gtkui/interface.c:3676 ../plugins/gtkui/deadbeef.glade.h:173
 msgid "Tag Writer Settings"
 msgstr "Nastavení autora popisku"
 
-#: ../plugins/gtkui/interface.c:3696 ../plugins/gtkui/deadbeef.glade.h:171
+#: ../plugins/gtkui/interface.c:3707 ../plugins/gtkui/deadbeef.glade.h:174
 msgid "Write ID3v2"
 msgstr "Zapsat ID3v2"
 
-#: ../plugins/gtkui/interface.c:3700 ../plugins/gtkui/interface.c:3827
-#: ../plugins/gtkui/deadbeef.glade.h:172
+#: ../plugins/gtkui/interface.c:3711 ../plugins/gtkui/interface.c:3838
+#: ../plugins/gtkui/deadbeef.glade.h:175
 msgid "Write ID3v1"
 msgstr "Zapsat ID3v1"
 
-#: ../plugins/gtkui/interface.c:3704 ../plugins/gtkui/interface.c:3783
-#: ../plugins/gtkui/interface.c:3823 ../plugins/gtkui/deadbeef.glade.h:173
+#: ../plugins/gtkui/interface.c:3715 ../plugins/gtkui/interface.c:3794
+#: ../plugins/gtkui/interface.c:3834 ../plugins/gtkui/deadbeef.glade.h:176
 msgid "Write APEv2"
 msgstr "Zapsat APEv2"
 
-#: ../plugins/gtkui/interface.c:3712 ../plugins/gtkui/interface.c:3791
-#: ../plugins/gtkui/deadbeef.glade.h:174
+#: ../plugins/gtkui/interface.c:3723 ../plugins/gtkui/interface.c:3802
+#: ../plugins/gtkui/deadbeef.glade.h:177
 msgid "Strip ID3v2"
 msgstr "Odstranit ID3v2"
 
-#: ../plugins/gtkui/interface.c:3716 ../plugins/gtkui/interface.c:3839
-#: ../plugins/gtkui/deadbeef.glade.h:175
+#: ../plugins/gtkui/interface.c:3727 ../plugins/gtkui/interface.c:3850
+#: ../plugins/gtkui/deadbeef.glade.h:178
 msgid "Strip ID3v1"
 msgstr "Odstranit ID3v1"
 
-#: ../plugins/gtkui/interface.c:3720 ../plugins/gtkui/interface.c:3795
-#: ../plugins/gtkui/interface.c:3835 ../plugins/gtkui/deadbeef.glade.h:176
+#: ../plugins/gtkui/interface.c:3731 ../plugins/gtkui/interface.c:3806
+#: ../plugins/gtkui/interface.c:3846 ../plugins/gtkui/deadbeef.glade.h:179
 msgid "Strip APEv2"
 msgstr "Odstranit APEv2"
 
-#: ../plugins/gtkui/interface.c:3728 ../plugins/gtkui/deadbeef.glade.h:177
+#: ../plugins/gtkui/interface.c:3739 ../plugins/gtkui/deadbeef.glade.h:180
 msgid "ID3v2 version"
 msgstr "Verze ID3v2"
 
-#: ../plugins/gtkui/interface.c:3735
+#: ../plugins/gtkui/interface.c:3746
 msgid "2.3 (Recommended)"
 msgstr "2.3 (Doporučeno)"
 
-#: ../plugins/gtkui/interface.c:3736
+#: ../plugins/gtkui/interface.c:3747
 msgid "2.4"
 msgstr "2.4"
 
-#: ../plugins/gtkui/interface.c:3742 ../plugins/gtkui/deadbeef.glade.h:180
+#: ../plugins/gtkui/interface.c:3753 ../plugins/gtkui/deadbeef.glade.h:183
 msgid "ID3v1 character encoding (default is iso8859-1)"
 msgstr "Kódování znaků ID3v1 (výchozí je iso8859-1)"
 
-#: ../plugins/gtkui/interface.c:3779 ../plugins/gtkui/deadbeef.glade.h:181
+#: ../plugins/gtkui/interface.c:3790 ../plugins/gtkui/deadbeef.glade.h:184
 msgid "Write ID3v2.4"
 msgstr "Zapsat ID3v2.4"
 
-#: ../plugins/gtkui/interface.c:3981 ../plugins/gtkui/deadbeef.glade.h:182
+#: ../plugins/gtkui/interface.c:3992 ../plugins/gtkui/deadbeef.glade.h:185
 msgid "Content-Type Mapping"
 msgstr "Mapování Typu-Obsahu"
 
-#: ../plugins/gtkui/interface.c:4004 ../plugins/gtkui/deadbeef.glade.h:183
+#: ../plugins/gtkui/interface.c:4015 ../plugins/gtkui/deadbeef.glade.h:186
 msgid ""
 "This table defines the binding between network stream content types and "
 "DeaDBeeF decoder plugins. For example, mp3 files can have content type "
 "\"audio/x-mpeg\", and need to be decoded by DeaDBeeF's own \"stdmpg\" "
 "plugin, or \"ffmpeg\" plugin."
-msgstr "Tato tabulka definuje vazby mezi jednotlivými typy obsahu síťových streamů a dekódovacích zásuvných modulů DeaDBeeF. Například, soubory mp3 mohou mít typ obsahu \"audio/x-mpeg\" a vyžadovat dekódování DeaDBeeF zásuvným modulem \"stdmpg\" nebo \"ffmpeg\"."
+msgstr ""
+"Tato tabulka definuje vazby mezi jednotlivými typy obsahu síťových streamů a "
+"dekódovacích zásuvných modulů DeaDBeeF. Například, soubory mp3 mohou mít typ "
+"obsahu \"audio/x-mpeg\" a vyžadovat dekódování DeaDBeeF zásuvným modulem "
+"\"stdmpg\" nebo \"ffmpeg\"."
 
-#: ../plugins/gtkui/interface.c:4052 ../plugins/gtkui/deadbeef.glade.h:184
+#: ../plugins/gtkui/interface.c:4063 ../plugins/gtkui/deadbeef.glade.h:187
 msgid "Reset to defaults"
 msgstr "Obnovit výchozí"
 
-#: ../plugins/gtkui/interface.c:4147 ../plugins/gtkui/deadbeef.glade.h:185
+#: ../plugins/gtkui/interface.c:4158 ../plugins/gtkui/deadbeef.glade.h:188
 msgid "Content-Type:"
 msgstr "Typ-Obsahu:"
 
-#: ../plugins/gtkui/interface.c:4160 ../plugins/gtkui/deadbeef.glade.h:186
+#: ../plugins/gtkui/interface.c:4171 ../plugins/gtkui/deadbeef.glade.h:189
 msgid "Plugins:"
 msgstr "Zásuvné moduly:"
 
-#: ../plugins/gtkui/interface.c:4228 ../plugins/gtkui/deadbeef.glade.h:187
+#: ../plugins/gtkui/interface.c:4239 ../plugins/gtkui/deadbeef.glade.h:190
 msgid "Button properties"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:4243 ../plugins/gtkui/deadbeef.glade.h:188
+#: ../plugins/gtkui/interface.c:4254 ../plugins/gtkui/deadbeef.glade.h:191
 msgid "Color:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:4255 ../plugins/gtkui/deadbeef.glade.h:189
+#: ../plugins/gtkui/interface.c:4266 ../plugins/gtkui/deadbeef.glade.h:192
 msgid "Text color:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:4267 ../plugins/gtkui/deadbeef.glade.h:190
+#: ../plugins/gtkui/interface.c:4278 ../plugins/gtkui/deadbeef.glade.h:193
 msgid "Icon:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:4279 ../plugins/gtkui/deadbeef.glade.h:191
+#: ../plugins/gtkui/interface.c:4290 ../plugins/gtkui/deadbeef.glade.h:194
 msgid "Label:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:4360 ../plugins/gtkui/deadbeef.glade.h:192
+#: ../plugins/gtkui/interface.c:4371 ../plugins/gtkui/deadbeef.glade.h:195
 msgid "Select action"
 msgstr ""
 
@@ -1203,7 +1222,9 @@ msgstr "   --toggle-pause     Přepnout pauzu\n"
 #, c-format
 msgid ""
 "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
-msgstr "   --play-pause       Spustit přehrávání, pokud je zastaveno, jinak přepnout pauzu\n"
+msgstr ""
+"   --play-pause       Spustit přehrávání, pokud je zastaveno, jinak přepnout "
+"pauzu\n"
 
 #: ../main.c:99
 #, c-format
@@ -1227,8 +1248,10 @@ msgstr "   --queue            Připojit soubor(y) do existujícího playlistu\n"
 
 #: ../main.c:103
 #, c-format
-msgid "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
-msgstr "--gui PLUGIN Určí, který zásuvný modul GUI bude použit, výchozí je \"GTK2\"\n"
+msgid ""
+"   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
+msgstr ""
+"--gui PLUGIN Určí, který zásuvný modul GUI bude použit, výchozí je \"GTK2\"\n"
 
 #: ../main.c:104
 #, c-format
@@ -1241,21 +1264,28 @@ msgid ""
 "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
 "                      copy[r]ight, [e]lapsed\n"
-msgstr "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n                      [l]ength, track[n]umber, [y]ear, [c]omment,\n                      copy[r]ight, [e]lapsed\n"
+msgstr ""
+"                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
+"                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
+"                      copy[r]ight, [e]lapsed\n"
 
 #: ../main.c:108
 #, c-format
 msgid ""
-"                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist"
-" - title\"\n"
-msgstr "                      např.: --nowplaying \"%%a - %%t\" zapíše \"umělec - název\"\n"
+"                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
+"- title\"\n"
+msgstr ""
+"                      např.: --nowplaying \"%%a - %%t\" zapíše \"umělec - "
+"název\"\n"
 
 #: ../main.c:109
 #, c-format
 msgid ""
-"                      for more info, see "
-"http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"
-msgstr "                      pro další informace navštivte http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"
+"                      for more info, see http://sourceforge.net/apps/"
+"mediawiki/deadbeef/index.php?title=Title_Formatting\n"
+msgstr ""
+"                      pro další informace navštivte http://sourceforge.net/"
+"apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"
 
 #: ../playlist.c:463 ../playlist.c:2434
 msgid "Default"
@@ -1282,32 +1312,51 @@ msgid ""
 "Track Number\n"
 "Band / Album Artist\n"
 "Custom"
-msgstr "Rejstřík\nPřehrávání\nObal alba\nUmělec - Album\nUmělec\nNázev\nTrvání\nČíslo stopy\nSkupina / umělec alba\nVlastní"
+msgstr ""
+"Rejstřík\n"
+"Přehrávání\n"
+"Obal alba\n"
+"Umělec - Album\n"
+"Umělec\n"
+"Název\n"
+"Trvání\n"
+"Číslo stopy\n"
+"Skupina / umělec alba\n"
+"Vlastní"
 
 #: ../plugins/gtkui/deadbeef.glade.h:88
 msgid ""
 "Left\n"
 "Right"
-msgstr "Vlevo\nVpravo"
+msgstr ""
+"Vlevo\n"
+"Vpravo"
 
 #: ../plugins/gtkui/deadbeef.glade.h:96
 msgid ""
 "Disable\n"
 "Track\n"
 "Album"
-msgstr "Zakázat\nSkladba\nAlbum"
+msgstr ""
+"Zakázat\n"
+"Skladba\n"
+"Album"
 
-#: ../plugins/gtkui/deadbeef.glade.h:166
+#: ../plugins/gtkui/deadbeef.glade.h:169
 msgid ""
 "Ascending\n"
 "Descending"
-msgstr "Vzestupně\nSestupně"
+msgstr ""
+"Vzestupně\n"
+"Sestupně"
 
-#: ../plugins/gtkui/deadbeef.glade.h:178
+#: ../plugins/gtkui/deadbeef.glade.h:181
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
-msgstr "2.3 (Doporučeno)\n2.4"
+msgstr ""
+"2.3 (Doporučeno)\n"
+"2.4"
 
 #: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
 #: ../plugins/converter/support.c:90 ../plugins/converter/support.c:114
@@ -1321,7 +1370,10 @@ msgstr "Nelze najít pixmap soubor: %s"
 msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings."
-msgstr "wilmidi: konfigurační soubor freepats nenalezen. Instalujte balíček timidity-freepats nebo v nastavení zásuvného modulu nastavte cestu k souboru freepats.cfg."
+msgstr ""
+"wilmidi: konfigurační soubor freepats nenalezen. Instalujte balíček timidity-"
+"freepats nebo v nastavení zásuvného modulu nastavte cestu k souboru freepats."
+"cfg."
 
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
@@ -1615,7 +1667,8 @@ msgstr "Kvalita / Algoritmus"
 
 #: ../translation/extra.c:95
 msgid "Automatic Samplerate (overrides Target Samplerate)"
-msgstr "Automatická vzorkovací frekvence (přepíše cílovou vzorkovací frekvenci)"
+msgstr ""
+"Automatická vzorkovací frekvence (přepíše cílovou vzorkovací frekvenci)"
 
 #. shellexecui
 #: ../translation/extra.c:97
@@ -1668,7 +1721,9 @@ msgstr "Selhalo ukládání předvolby enkodéru"
 msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
-msgstr "Ověřte oprávnění k adresáři předvolby, zvolte jiný název nebo uvolněte místo na disku"
+msgstr ""
+"Ověřte oprávnění k adresáři předvolby, zvolte jiný název nebo uvolněte místo "
+"na disku"
 
 #: ../plugins/converter/convgui.c:742 ../plugins/converter/convgui.c:1216
 msgid "Preset with the same name already exists. Try to pick another title."
@@ -1746,7 +1801,9 @@ msgstr "Název výstupního souboru:"
 msgid ""
 "Extension (e.g. .mp3) will be appended automatically.\n"
 "Leave the field empty for default (%a - %t)."
-msgstr "Přípona (např. .mp3) bude připojena automaticky.\nPonechte pole prázdné pro výchozí (%a - %t)."
+msgstr ""
+"Přípona (např. .mp3) bude připojena automaticky.\n"
+"Ponechte pole prázdné pro výchozí (%a - %t)."
 
 #: ../plugins/converter/interface.c:145
 #: ../plugins/converter/converter.glade.h:8
@@ -1836,7 +1893,9 @@ msgstr "Příkazový řádek:"
 msgid ""
 "Example: lame - %o\n"
 "%i for input file, %o for output file, - for stdin"
-msgstr "Příklad: lame - %o\n%i pro vstupní soubor, %o pro výstupní soubor, - pro stdin"
+msgstr ""
+"Příklad: lame - %o\n"
+"%i pro vstupní soubor, %o pro výstupní soubor, - pro stdin"
 
 #: ../plugins/converter/interface.c:429
 #: ../plugins/converter/converter.glade.h:31
@@ -1844,7 +1903,9 @@ msgstr "Příklad: lame - %o\n%i pro vstupní soubor, %o pro výstupní soubor, 
 msgid ""
 "<small>%o - output file name\n"
 "%i - temporary input file name</small>"
-msgstr "<small>%o - název výstupního souboru\n%i - název dočasného vstupního souboru</small>"
+msgstr ""
+"<small>%o - název výstupního souboru\n"
+"%i - název dočasného vstupního souboru</small>"
 
 #: ../plugins/converter/interface.c:438
 #: ../plugins/converter/converter.glade.h:33
@@ -1914,19 +1975,29 @@ msgid ""
 "24 bit signed int\n"
 "32 bit signed int\n"
 "32 bit float"
-msgstr "Zachovat zdrojový formát\n8 bit podepsaný int\n16 bit podepsaný int\n24 bit podepsaný int\n32 bit podepsaný int\n32 bit plovoucí"
+msgstr ""
+"Zachovat zdrojový formát\n"
+"8 bit podepsaný int\n"
+"16 bit podepsaný int\n"
+"24 bit podepsaný int\n"
+"32 bit podepsaný int\n"
+"32 bit plovoucí"
 
 #: ../plugins/converter/converter.glade.h:19
 msgid ""
 "Prompt\n"
 "Overwrite"
-msgstr "Prompt\nPřepsat"
+msgstr ""
+"Prompt\n"
+"Přepsat"
 
 #: ../plugins/converter/converter.glade.h:34
 msgid ""
 "Pipe\n"
 "Temporary file"
-msgstr "Roura\nDočasný soubor"
+msgstr ""
+"Roura\n"
+"Dočasný soubor"
 
 #: ../plugins/shellexecui/interface.c:46
 #: ../plugins/shellexecui/shellexec.glade.h:1
@@ -1960,7 +2031,10 @@ msgid ""
 "Arbitrary shell command. Will be executed in the shell context which the "
 "main application was started from. Title formatting can be used. Example: "
 "xdg-open %D"
-msgstr "Libovolný příkaz shellu. Bude spuštěn v kontextu shellu, ze kterého byla spuštěna hlavní aplikace. Může být použito formátování názvu. Příklad: xdg-open %D"
+msgstr ""
+"Libovolný příkaz shellu. Bude spuštěn v kontextu shellu, ze kterého byla "
+"spuštěna hlavní aplikace. Může být použito formátování názvu. Příklad: xdg-"
+"open %D"
 
 #: ../plugins/shellexecui/interface.c:180
 #: ../plugins/shellexecui/shellexec.glade.h:11
@@ -1975,9 +2049,11 @@ msgstr "Jakýkoliv název, například \"Můj příkaz shellu\""
 #: ../plugins/shellexecui/interface.c:200
 #: ../plugins/shellexecui/shellexec.glade.h:13
 msgid ""
-"Command ID, normally it should be something short, for example "
-"\"youtube_open\". It must be unique."
-msgstr "ID příkazu, mělo by to být něco krátkého, například \"youtube_otevřít\". Musí být unikátní."
+"Command ID, normally it should be something short, for example \"youtube_open"
+"\". It must be unique."
+msgstr ""
+"ID příkazu, mělo by to být něco krátkého, například \"youtube_otevřít\". "
+"Musí být unikátní."
 
 #: ../plugins/shellexecui/interface.c:203
 #: ../plugins/shellexecui/shellexec.glade.h:15
@@ -2098,7 +2174,9 @@ msgstr "Smazat soubory z disku"
 msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr "Soubory budou ztraceny. Pokračovat?\n(Tento dialog lze vypnout v nastavení zásuvného modulu GTKUI)"
+msgstr ""
+"Soubory budou ztraceny. Pokračovat?\n"
+"(Tento dialog lze vypnout v nastavení zásuvného modulu GTKUI)"
 
 #: ../plugins/gtkui/actionhandlers.c:660
 msgid "Load Playlist"
@@ -2126,13 +2204,21 @@ msgstr "Neplatná hodnota(y)"
 
 #: ../plugins/gtkui/ctmapping.c:200
 msgid ""
-"Content-type and Plugins fields must be non-empty, and comply with the rules.\n"
+"Content-type and Plugins fields must be non-empty, and comply with the "
+"rules.\n"
 "Example content-type: 'audio/mpeg'.\n"
 "Example plugin ids: 'stdmpg ffmpeg'.\n"
 "Spaces must be used as separators in plugin ids list.\n"
 "Content type should be only letters, numbers and '-' sign.\n"
 "Plugin id can contain only letters and numbers."
-msgstr "Pole Typ-obsahu a Zásuvné moduly nesmí zůstat prázdné a musí vyhovovat pravidlům.\nPříklad typu-obsahu: 'audio/mpeg'.\nPříklad id zásuvného modulu: 'stdmpg ffmpeg'.\nMezery slouží jako oddělovače jednotlivých id zásuvných modulů.\nTyp obsahu by se měl skládat pouze z písmen, číslic a znaku \"-\".\nId zásuvných modulů může obsahovat pouze písmena a číslice."
+msgstr ""
+"Pole Typ-obsahu a Zásuvné moduly nesmí zůstat prázdné a musí vyhovovat "
+"pravidlům.\n"
+"Příklad typu-obsahu: 'audio/mpeg'.\n"
+"Příklad id zásuvného modulu: 'stdmpg ffmpeg'.\n"
+"Mezery slouží jako oddělovače jednotlivých id zásuvných modulů.\n"
+"Typ obsahu by se měl skládat pouze z písmen, číslic a znaku \"-\".\n"
+"Id zásuvných modulů může obsahovat pouze písmena a číslice."
 
 #: ../plugins/gtkui/ctmapping.c:228 ../plugins/gtkui/ctmapping.c:260
 msgid "Nothing is selected."
