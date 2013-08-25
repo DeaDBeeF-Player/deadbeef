@@ -2456,6 +2456,7 @@ w_hvbox_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) {
         if (!strcmp (key, "expand")) {
             const char *s = val;
             int n = 0;
+            hvbox->expand = 0;
             char t[MAX_TOKEN];
             while (n < 64) {
                 s = gettoken (s, t);
@@ -2471,6 +2472,7 @@ w_hvbox_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) {
         else if (!strcmp (key, "fill")) {
             const char *s = val;
             int n = 0;
+            hvbox->fill = 0;
             char t[MAX_TOKEN];
             while (n < 64) {
                 s = gettoken (s, t);
@@ -2712,6 +2714,9 @@ w_hbox_create (void) {
     w->base.save = w_hvbox_save;
     w->base.init = w_hvbox_init;
     w->box = gtk_hbox_new (TRUE, 3);
+    w->homogeneous = 1;
+    w->expand = -1;
+    w->fill = -1;
     gtk_widget_show (w->box);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->box);
 
@@ -2737,6 +2742,9 @@ w_vbox_create (void) {
     w->base.save = w_hvbox_save;
     w->base.init = w_hvbox_init;
     w->box = gtk_vbox_new (TRUE, 3);
+    w->homogeneous = 1;
+    w->expand = -1;
+    w->fill = -1;
     gtk_widget_show (w->box);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->box);
 
