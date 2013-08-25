@@ -36,6 +36,7 @@ static ddb_gtkui_t *gtkui_plugin;
 typedef struct {
     ddb_gtkui_widget_t base;
     GtkWidget *tree;
+    int disable_handler;
 } w_pltbrowser_t;
 
 static gboolean
@@ -60,6 +61,7 @@ fill_pltbrowser_cb (gpointer data) {
         gtk_tree_path_free (path);
     }
     deadbeef->pl_unlock ();
+    w->disable_handler = 0;
     return FALSE;
 }
 
@@ -67,6 +69,7 @@ static int
 pltbrowser_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     switch (id) {
     case DB_EV_PLAYLISTSWITCHED:
+        ((w_pltbrowser_t *)w)->disable_handler = 1;
         g_idle_add (fill_pltbrowser_cb, w);
         break;
     }
@@ -82,6 +85,10 @@ w_pltbrowser_init (struct ddb_gtkui_widget_s *w) {
 void
 on_pltbrowser_cursor_changed (GtkTreeView *treeview, gpointer user_data)
 {
+    w_pltbrowser_t *w = user_data;
+    if (w->disable_handler) {
+        return;
+    }
     GtkTreePath *path;
     GtkTreeViewColumn *col;
     gtk_tree_view_get_cursor (treeview, &path, &col);
@@ -158,10 +165,10 @@ w_pltbrowser_create (void) {
 
     g_signal_connect ((gpointer) w->tree, "cursor_changed",
             G_CALLBACK (on_pltbrowser_cursor_changed),
-            NULL);
+            w);
     g_signal_connect ((gpointer) w->tree, "event_after",
             G_CALLBACK (on_pltbrowser_button_press_event),
-            NULL);
+            w);
 
     gtkui_plugin->w_override_signals (w->base.widget, w);
 
