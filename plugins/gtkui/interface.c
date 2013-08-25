@@ -1751,14 +1751,13 @@ create_prefwin (void)
   GtkWidget *edit_content_type_mapping;
   GtkWidget *label16;
   GtkWidget *vbox36;
-  GtkWidget *hbox108;
-  GtkWidget *label135;
-  GtkWidget *hseparator4;
-  GtkWidget *scrolledwindow9;
-  GtkWidget *hotkeys_list;
+  GtkWidget *hbox119;
+  GtkWidget *label144;
   GtkWidget *hbuttonbox3;
   GtkWidget *hotkey_add;
   GtkWidget *hotkey_remove;
+  GtkWidget *scrolledwindow9;
+  GtkWidget *hotkeys_list;
   GtkWidget *hbox105;
   GtkWidget *label133;
   GtkWidget *hotkeys_actions;
@@ -1766,6 +1765,9 @@ create_prefwin (void)
   GtkWidget *label134;
   GtkWidget *hotkeys_set_key;
   GtkWidget *hotkey_is_global;
+  GtkWidget *hseparator6;
+  GtkWidget *hbox120;
+  GtkWidget *label145;
   GtkWidget *hbuttonbox4;
   GtkWidget *hotkeys_apply;
   GtkWidget *hotkeys_revert;
@@ -2483,33 +2485,17 @@ create_prefwin (void)
   gtk_container_add (GTK_CONTAINER (notebook), vbox36);
   gtk_container_set_border_width (GTK_CONTAINER (vbox36), 12);
 
-  hbox108 = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox108);
-  gtk_box_pack_start (GTK_BOX (vbox36), hbox108, FALSE, TRUE, 0);
+  hbox119 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox119);
+  gtk_box_pack_start (GTK_BOX (vbox36), hbox119, FALSE, FALSE, 0);
 
-  label135 = gtk_label_new (_("<b>Assigned hotkeys</b>"));
-  gtk_widget_show (label135);
-  gtk_box_pack_start (GTK_BOX (hbox108), label135, FALSE, FALSE, 0);
-  gtk_label_set_use_markup (GTK_LABEL (label135), TRUE);
-
-  hseparator4 = gtk_hseparator_new ();
-  gtk_widget_show (hseparator4);
-  gtk_box_pack_start (GTK_BOX (hbox108), hseparator4, TRUE, TRUE, 0);
-
-  scrolledwindow9 = gtk_scrolled_window_new (NULL, NULL);
-  gtk_widget_show (scrolledwindow9);
-  gtk_box_pack_start (GTK_BOX (vbox36), scrolledwindow9, TRUE, TRUE, 0);
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow9), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow9), GTK_SHADOW_IN);
-
-  hotkeys_list = gtk_tree_view_new ();
-  gtk_widget_show (hotkeys_list);
-  gtk_container_add (GTK_CONTAINER (scrolledwindow9), hotkeys_list);
-  gtk_tree_view_set_enable_search (GTK_TREE_VIEW (hotkeys_list), FALSE);
+  label144 = gtk_label_new (_("Assigned Hotkeys:"));
+  gtk_widget_show (label144);
+  gtk_box_pack_start (GTK_BOX (hbox119), label144, FALSE, FALSE, 0);
 
   hbuttonbox3 = gtk_hbutton_box_new ();
   gtk_widget_show (hbuttonbox3);
-  gtk_box_pack_start (GTK_BOX (vbox36), hbuttonbox3, FALSE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox119), hbuttonbox3, TRUE, TRUE, 0);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox3), GTK_BUTTONBOX_END);
   gtk_box_set_spacing (GTK_BOX (hbuttonbox3), 8);
 
@@ -2522,6 +2508,17 @@ create_prefwin (void)
   gtk_widget_show (hotkey_remove);
   gtk_container_add (GTK_CONTAINER (hbuttonbox3), hotkey_remove);
   gtk_widget_set_can_default(hotkey_remove, TRUE);
+
+  scrolledwindow9 = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (scrolledwindow9);
+  gtk_box_pack_start (GTK_BOX (vbox36), scrolledwindow9, TRUE, TRUE, 0);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow9), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow9), GTK_SHADOW_IN);
+
+  hotkeys_list = gtk_tree_view_new ();
+  gtk_widget_show (hotkeys_list);
+  gtk_container_add (GTK_CONTAINER (scrolledwindow9), hotkeys_list);
+  gtk_tree_view_set_enable_search (GTK_TREE_VIEW (hotkeys_list), FALSE);
 
   hbox105 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox105);
@@ -2540,7 +2537,7 @@ create_prefwin (void)
   gtk_widget_show (hbox106);
   gtk_box_pack_start (GTK_BOX (vbox36), hbox106, FALSE, FALSE, 0);
 
-  label134 = gtk_label_new (_("Key:"));
+  label134 = gtk_label_new (_("Key combination:"));
   gtk_widget_show (label134);
   gtk_box_pack_start (GTK_BOX (hbox106), label134, FALSE, FALSE, 0);
   gtk_label_set_use_markup (GTK_LABEL (label134), TRUE);
@@ -2553,9 +2550,21 @@ create_prefwin (void)
   gtk_widget_show (hotkey_is_global);
   gtk_box_pack_start (GTK_BOX (hbox106), hotkey_is_global, FALSE, FALSE, 0);
 
+  hseparator6 = gtk_hseparator_new ();
+  gtk_widget_show (hseparator6);
+  gtk_box_pack_start (GTK_BOX (vbox36), hseparator6, FALSE, FALSE, 0);
+
+  hbox120 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox120);
+  gtk_box_pack_start (GTK_BOX (vbox36), hbox120, FALSE, FALSE, 0);
+
+  label145 = gtk_label_new (_("Use the Apply button to save your changes,\nor the Revert button to undo your changes.\nThe changes will NOT be saved if you don't press Apply."));
+  gtk_widget_show (label145);
+  gtk_box_pack_start (GTK_BOX (hbox120), label145, FALSE, FALSE, 0);
+
   hbuttonbox4 = gtk_hbutton_box_new ();
   gtk_widget_show (hbuttonbox4);
-  gtk_box_pack_start (GTK_BOX (vbox36), hbuttonbox4, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox120), hbuttonbox4, TRUE, TRUE, 0);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox4), GTK_BUTTONBOX_END);
   gtk_box_set_spacing (GTK_BOX (hbuttonbox4), 8);
 
@@ -2862,14 +2871,14 @@ create_prefwin (void)
   g_signal_connect ((gpointer) edit_content_type_mapping, "clicked",
                     G_CALLBACK (on_edit_content_type_mapping_clicked),
                     NULL);
-  g_signal_connect ((gpointer) hotkeys_list, "cursor_changed",
-                    G_CALLBACK (on_hotkeys_list_cursor_changed),
-                    NULL);
   g_signal_connect ((gpointer) hotkey_add, "clicked",
                     G_CALLBACK (on_hotkey_add_clicked),
                     NULL);
   g_signal_connect ((gpointer) hotkey_remove, "clicked",
                     G_CALLBACK (on_hotkey_remove_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) hotkeys_list, "cursor_changed",
+                    G_CALLBACK (on_hotkeys_list_cursor_changed),
                     NULL);
   g_signal_connect ((gpointer) hotkeys_actions, "clicked",
                     G_CALLBACK (on_hotkeys_actions_clicked),
@@ -3040,14 +3049,13 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, edit_content_type_mapping, "edit_content_type_mapping");
   GLADE_HOOKUP_OBJECT (prefwin, label16, "label16");
   GLADE_HOOKUP_OBJECT (prefwin, vbox36, "vbox36");
-  GLADE_HOOKUP_OBJECT (prefwin, hbox108, "hbox108");
-  GLADE_HOOKUP_OBJECT (prefwin, label135, "label135");
-  GLADE_HOOKUP_OBJECT (prefwin, hseparator4, "hseparator4");
-  GLADE_HOOKUP_OBJECT (prefwin, scrolledwindow9, "scrolledwindow9");
-  GLADE_HOOKUP_OBJECT (prefwin, hotkeys_list, "hotkeys_list");
+  GLADE_HOOKUP_OBJECT (prefwin, hbox119, "hbox119");
+  GLADE_HOOKUP_OBJECT (prefwin, label144, "label144");
   GLADE_HOOKUP_OBJECT (prefwin, hbuttonbox3, "hbuttonbox3");
   GLADE_HOOKUP_OBJECT (prefwin, hotkey_add, "hotkey_add");
   GLADE_HOOKUP_OBJECT (prefwin, hotkey_remove, "hotkey_remove");
+  GLADE_HOOKUP_OBJECT (prefwin, scrolledwindow9, "scrolledwindow9");
+  GLADE_HOOKUP_OBJECT (prefwin, hotkeys_list, "hotkeys_list");
   GLADE_HOOKUP_OBJECT (prefwin, hbox105, "hbox105");
   GLADE_HOOKUP_OBJECT (prefwin, label133, "label133");
   GLADE_HOOKUP_OBJECT (prefwin, hotkeys_actions, "hotkeys_actions");
@@ -3055,6 +3063,9 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, label134, "label134");
   GLADE_HOOKUP_OBJECT (prefwin, hotkeys_set_key, "hotkeys_set_key");
   GLADE_HOOKUP_OBJECT (prefwin, hotkey_is_global, "hotkey_is_global");
+  GLADE_HOOKUP_OBJECT (prefwin, hseparator6, "hseparator6");
+  GLADE_HOOKUP_OBJECT (prefwin, hbox120, "hbox120");
+  GLADE_HOOKUP_OBJECT (prefwin, label145, "label145");
   GLADE_HOOKUP_OBJECT (prefwin, hbuttonbox4, "hbuttonbox4");
   GLADE_HOOKUP_OBJECT (prefwin, hotkeys_apply, "hotkeys_apply");
   GLADE_HOOKUP_OBJECT (prefwin, hotkeys_revert, "hotkeys_revert");
