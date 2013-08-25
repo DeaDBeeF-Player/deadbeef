@@ -1046,6 +1046,12 @@ gtkui_thread (void *ctx) {
         deadbeef->conf_set_str ("hotkey.key23", "\"Alt 8\" 0 0 playlist8");
         deadbeef->conf_set_str ("hotkey.key24", "\"Alt 9\" 0 0 playlist9");
         deadbeef->conf_set_str ("hotkey.key25", "\"Alt 0\" 0 0 playlist10");
+        deadbeef->conf_set_str ("hotkey.key26", "z 0 0 prev");
+        deadbeef->conf_set_str ("hotkey.key27", "x 0 0 play");
+        deadbeef->conf_set_str ("hotkey.key28", "c 0 0 toggle_pause");
+        deadbeef->conf_set_str ("hotkey.key29", "v 0 0 stop");
+        deadbeef->conf_set_str ("hotkey.key30", "b 0 0 next");
+        deadbeef->conf_set_str ("hotkey.key31", "n 0 0 playback_random");
     }
 #if GTK_CHECK_VERSION(3,0,0)
     gtk_widget_set_events (GTK_WIDGET (mainwin), gtk_widget_get_events (GTK_WIDGET (mainwin)) | GDK_SCROLL_MASK);
