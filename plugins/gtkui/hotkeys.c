@@ -273,7 +273,7 @@ set_current_action (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, g
     const char *name = g_value_get_string (&val);
     if (name && binding->name && !strcmp (binding->name, name) && binding->ctx == g_value_get_int (&ctx_val)) {
         gtk_tree_view_expand_to_path (GTK_TREE_VIEW (binding->treeview), path);
-        gtk_tree_view_set_cursor (GTK_TREE_VIEW (GTK_TREE_VIEW (binding->treeview)), path, NULL, FALSE);
+        gtk_tree_view_set_cursor (GTK_TREE_VIEW (binding->treeview), path, NULL, FALSE);
         return TRUE;
     }
     return FALSE;
