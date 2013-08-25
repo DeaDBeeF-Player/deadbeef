@@ -9,19 +9,14 @@ help file for deadbeef player
 
 * USEFUL HOTKEYS
 
-    you can navigate playlist with arrow keys.
+    when you run the player for the first time, a number of hotkeys will be automatically assigned.
 
-    PgUp, PgDn, Home, End also work.
-
+    playlist can be navigated with arrow keys, as well as PgUp, PgDn, Home, End, etc.
     use above with Shift key to select multiple tracks.
 
-    playback is controlled Winamp™-style.
-    Z, X, C, V, B, N keys are mapped to following actions:
-    previous, play, pause, stop, next, random.
+    you can change, remove or add any key mappings in the Edit->Preferences->Hotkeys tab.
 
-    also notice hotkey hints in the menus.
-
-    it is not (yet?) possible to remap keys.
+    since version 0.6, the Winamp™-style hotkeys are no longer assigned by default, because it may cause issues with widgets that expect input using these keys.
 
 * CONFIGURATION
 
@@ -54,16 +49,3 @@ help file for deadbeef player
     Unknown Artist - Unknown Album.flac <---- open this file
     Unknown Artist - Unknown Album.cue  <---- this file will be used automatically
 
-* KNOWN ISSUES
-
-    GLOBAL HOTKEYS
-
-    configuration is buggy when using GTK3, this is a GTK3 bug:
-    https://bugzilla.gnome.org/show_bug.cgi?id=682826
-    there's a work-around: if the key combination field doesn't work, change to a different tab in the preferences dialog, and then back -- it should start working again.
-
-    FFMPEG
-
-    the ffmpeg developers have been breaking their APIs many times before, and we were fixing the plugin again ang again, but this time (ffmpeg-0.11) they broke it in a way which makes it impossible to use together with deadbeef libmms plugin.
-    currently, if you need MMS+WMA playback (or any other functionality that requires ffmpeg), you can compile deadbeef manually with --enable-ffmpeg, if you have ffmpeg<=0.10 installed.
-    or you can use the statically-linked ffmpeg plugin, which can be found in any of the static builds provided on the official deadbeef website.
