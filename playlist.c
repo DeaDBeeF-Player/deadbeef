@@ -646,6 +646,7 @@ plt_free (playlist_t *plt) {
 
 void
 plt_move (int from, int to) {
+    trace ("%d -> %d\n", from, to);
     if (from == to) {
         return;
     }
@@ -672,7 +673,7 @@ plt_move (int from, int to) {
         return;
     }
 
-    trace ("will rename %s->%s\n", path1, temp);
+//    trace ("will rename %s->%s\n", path1, temp);
     struct stat st;
     int err = stat (path1, &st);
     if (!err) {
@@ -713,7 +714,7 @@ plt_move (int from, int to) {
             fprintf (stderr, "error: failed to make path string for playlist file\n");
             continue;
         }
-        trace ("will rename %s->%s\n", path2, path1);
+//        trace ("will rename %s->%s\n", path2, path1);
         int err = stat (path2, &st);
         if (!err) {
             trace ("rename %s->%s\n", path2, path1);
@@ -1490,7 +1491,7 @@ pl_add_files_begin (playlist_t *plt) {
         plt_ref (addfiles_playlist);
     }
     pl_unlock ();
-    trace ("adding to playlist %d (%s)\n", plt, addfiles_playlist->title);
+    trace ("adding to playlist %p (%s)\n", plt, addfiles_playlist->title);
     return 0;
 }
 
