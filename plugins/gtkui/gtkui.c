@@ -1007,6 +1007,14 @@ gtkui_thread (void *ctx) {
 
     mainwin = create_mainwin ();
 
+    // gtk adds default keybindings to GtkWindow, remove them
+    GtkBindingSet *binding_set = gtk_binding_set_by_class (GTK_WINDOW_GET_CLASS(mainwin));
+    gtk_binding_entry_remove (binding_set, GDK_KEY_space, 0);
+    gtk_binding_entry_remove (binding_set, GDK_KEY_KP_Space, 0);
+    gtk_binding_entry_remove (binding_set, GDK_KEY_Return, 0);
+    gtk_binding_entry_remove (binding_set, GDK_KEY_ISO_Enter, 0);
+    gtk_binding_entry_remove (binding_set, GDK_KEY_KP_Enter, 0);
+
     // initialize default hotkey mapping
     struct stat st;
     char checkpath[PATH_MAX];
