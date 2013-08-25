@@ -50,3 +50,4 @@ cp ./plugins/mono2stereo/.libs/ddb_mono2stereo.so /usr/local/lib/deadbeef/
 cp ./plugins/alac/.libs/alac.so /usr/local/lib/deadbeef/
 cp ./plugins/wma/.libs/wma.so /usr/local/lib/deadbeef/
 cp ./plugins/pltbrowser/.libs/pltbrowser_gtk2.so /usr/local/lib/deadbeef/
+cp ./plugins/pltbrowser/.libs/pltbrowser_gtk3.so /usr/local/lib/deadbeef/

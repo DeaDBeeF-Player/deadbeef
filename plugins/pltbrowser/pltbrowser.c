@@ -194,7 +194,11 @@ static DB_misc_t plugin = {
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_MISC,
-    .plugin.id = "pltbrowser",
+#if GTK_CHECK_VERSION(3,0,0)
+    .plugin.id = "pltbrowser_gtk3",
+#else
+    .plugin.id = "pltbrowser_gtk2",
+#endif
     .plugin.name = "pltbrowser",
     .plugin.descr = "Playlist browser",
     .plugin.copyright = 
