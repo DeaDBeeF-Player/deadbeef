@@ -150,8 +150,8 @@ void                gtk_widget_get_allocation           (GtkWidget *widget,
 
 
 #if GTK_CHECK_VERSION(3,2,0)
-#define gtk_vbox_new(homogeneous,spacing) ({GtkWidget *__box=gtk_box_new(GTK_ORIENTATION_VERTICAL,spacing);gtk_box_set_homogeneous(GTK_BOX(__box),homogeneous);__box;})
-#define gtk_hbox_new(homogeneous,spacing) ({GtkWidget *__box=gtk_box_new(GTK_ORIENTATION_HORIZONTAL,spacing);gtk_box_set_homogeneous(GTK_BOX(__box),homogeneous);__box;})
+#define gtk_vbox_new(homogeneous,spacing) g_object_new(GTK_TYPE_VBOX,"spacing",spacing,"homogeneous",homogeneous?TRUE:FALSE,NULL)
+#define gtk_hbox_new(homogeneous,spacing) g_object_new(GTK_TYPE_HBOX,"spacing",spacing,"homogeneous",homogeneous?TRUE:FALSE,NULL)
 #define gtk_hpaned_new() gtk_paned_new(GTK_ORIENTATION_HORIZONTAL)
 #define gtk_vpaned_new() gtk_paned_new(GTK_ORIENTATION_VERTICAL)
 #define gtk_hbutton_box_new() gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL)
