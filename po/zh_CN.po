@@ -1,21 +1,21 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-#
+# 
 # Translators:
+# Wylmer Wang <wantinghard@gmail.com>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-18 10:28+0200\n"
-"PO-Revision-Date: 2013-08-17 09:20+0000\n"
+"POT-Creation-Date: 2013-08-25 11:25+0200\n"
+"PO-Revision-Date: 2013-08-25 09:33+0000\n"
 "Last-Translator: waker <wakeroid@gmail.com>\n"
-"Language-Team: Chinese (China) (http://www.transifex.com/projects/p/deadbeef-"
-"player/language/zh_CN/)\n"
-"Language: zh_CN\n"
+"Language-Team: Chinese (China) (http://www.transifex.com/projects/p/deadbeef-player/language/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: zh_CN\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #: ../plugins/gtkui/callbacks.c:542
@@ -28,7 +28,7 @@ msgstr "关于 DeaDBeeF %s"
 msgid "DeaDBeeF %s ChangeLog"
 msgstr "DeaDBeeF %s 更新记录"
 
-#: ../plugins/gtkui/callbacks.c:912
+#: ../plugins/gtkui/callbacks.c:892
 #, c-format
 msgid "DeaDBeeF Translators"
 msgstr "DeaDBeeF 翻译者"
@@ -137,150 +137,150 @@ msgstr "新播放列表"
 msgid "New Playlist (%d)"
 msgstr "新播放列表(%d)"
 
-#: ../plugins/gtkui/gtkui.c:948
+#: ../plugins/gtkui/gtkui.c:971
 msgid "- Test logout functionality"
-msgstr ""
+msgstr "- 测试注销功能"
 
 #. register widget types
-#: ../plugins/gtkui/gtkui.c:969
+#: ../plugins/gtkui/gtkui.c:992
 msgid "Playlist with tabs"
-msgstr ""
+msgstr "标签页式播放列表"
 
-#: ../plugins/gtkui/gtkui.c:971
+#: ../plugins/gtkui/gtkui.c:994
 msgid "Splitter (top and bottom)"
-msgstr ""
+msgstr "分割线(顶部和底部)"
 
-#: ../plugins/gtkui/gtkui.c:972
+#: ../plugins/gtkui/gtkui.c:995
 msgid "Splitter (left and right)"
-msgstr ""
+msgstr "分割线(左侧和右侧)"
 
-#: ../plugins/gtkui/gtkui.c:974 ../plugins/gtkui/interface.c:331
-#: ../plugins/gtkui/deadbeef.glade.h:32
+#: ../plugins/gtkui/gtkui.c:997 ../plugins/gtkui/interface.c:326
+#: ../plugins/gtkui/deadbeef.glade.h:31
 msgid "Tabs"
 msgstr "标签"
 
-#: ../plugins/gtkui/gtkui.c:975
+#: ../plugins/gtkui/gtkui.c:998
 msgid "Playlist tabs"
-msgstr ""
+msgstr "播放列表标签页"
 
-#: ../plugins/gtkui/gtkui.c:976
+#: ../plugins/gtkui/gtkui.c:999
 msgid "Playlist"
-msgstr ""
+msgstr "播放列表"
 
-#: ../plugins/gtkui/gtkui.c:977
+#: ../plugins/gtkui/gtkui.c:1000
 msgid "Selection properties"
-msgstr ""
+msgstr "所选项目属性"
 
-#: ../plugins/gtkui/gtkui.c:978
+#: ../plugins/gtkui/gtkui.c:1001
 msgid "Album art display"
-msgstr ""
+msgstr "专辑封面显示"
 
-#: ../plugins/gtkui/gtkui.c:979
+#: ../plugins/gtkui/gtkui.c:1002
 msgid "Scope"
-msgstr ""
+msgstr "范围"
 
-#: ../plugins/gtkui/gtkui.c:980
+#: ../plugins/gtkui/gtkui.c:1003
 msgid "Spectrum"
-msgstr ""
+msgstr "频谱"
 
-#: ../plugins/gtkui/gtkui.c:981
+#: ../plugins/gtkui/gtkui.c:1004
 msgid "HBox"
-msgstr ""
+msgstr "水平框"
 
-#: ../plugins/gtkui/gtkui.c:982
+#: ../plugins/gtkui/gtkui.c:1005
 msgid "VBox"
-msgstr ""
+msgstr "垂直框"
 
-#: ../plugins/gtkui/gtkui.c:983
+#: ../plugins/gtkui/gtkui.c:1006
 msgid "Button"
-msgstr ""
+msgstr "按钮"
 
-#: ../plugins/gtkui/gtkui.c:1229
+#: ../plugins/gtkui/gtkui.c:1220
 msgid "Failed while reading help file"
 msgstr "读取帮助文件时出错"
 
-#: ../plugins/gtkui/gtkui.c:1239
+#: ../plugins/gtkui/gtkui.c:1230
 msgid "Failed to load help file"
 msgstr "加入帮助文件失败"
 
-#: ../plugins/gtkui/gtkui.c:1250
+#: ../plugins/gtkui/gtkui.c:1241
 msgid ""
 "The player is currently running backgroud tasks. If you quit now, the tasks "
 "will be cancelled or interrupted. This may result in data loss."
-msgstr ""
+msgstr "播放器正在执行后台任务。如果您现在退出，任务会取消或中断；这可能造成数据损失。"
 
-#: ../plugins/gtkui/gtkui.c:1252
+#: ../plugins/gtkui/gtkui.c:1243
 msgid "Do you still want to quit?"
-msgstr ""
+msgstr "您依然要退出吗？"
 
-#: ../plugins/gtkui/gtkui.c:1253 ../plugins/gtkui/trkproperties.c:165
+#: ../plugins/gtkui/gtkui.c:1244 ../plugins/gtkui/trkproperties.c:165
 #: ../plugins/converter/convgui.c:862 ../plugins/converter/convgui.c:1317
 #: ../plugins/gtkui/actionhandlers.c:492
 msgid "Warning"
 msgstr "警告"
 
-#: ../plugins/gtkui/interface.c:147 ../plugins/gtkui/deadbeef.glade.h:1
+#: ../plugins/gtkui/interface.c:146 ../plugins/gtkui/deadbeef.glade.h:1
 msgid "_File"
 msgstr "文件(_F)"
 
-#: ../plugins/gtkui/interface.c:154 ../plugins/gtkui/deadbeef.glade.h:2
+#: ../plugins/gtkui/interface.c:153 ../plugins/gtkui/deadbeef.glade.h:2
 msgid "_Open file(s)"
 msgstr "打开文件(_O)"
 
-#: ../plugins/gtkui/interface.c:167 ../plugins/gtkui/deadbeef.glade.h:3
+#: ../plugins/gtkui/interface.c:166 ../plugins/gtkui/deadbeef.glade.h:3
 msgid "Add file(s)"
 msgstr "添加文件"
 
-#: ../plugins/gtkui/interface.c:175 ../plugins/gtkui/deadbeef.glade.h:4
+#: ../plugins/gtkui/interface.c:174 ../plugins/gtkui/deadbeef.glade.h:4
 msgid "Add folder(s)"
 msgstr "添加文件夹"
 
-#: ../plugins/gtkui/interface.c:183 ../plugins/gtkui/interface.c:3267
+#: ../plugins/gtkui/interface.c:182 ../plugins/gtkui/interface.c:3227
 #: ../plugins/gtkui/deadbeef.glade.h:5
 msgid "Add location"
 msgstr "添加位置"
 
-#: ../plugins/gtkui/interface.c:192 ../plugins/gtkui/deadbeef.glade.h:6
+#: ../plugins/gtkui/interface.c:191 ../plugins/gtkui/deadbeef.glade.h:6
 msgid "New playlist"
 msgstr "新播放列表"
 
-#: ../plugins/gtkui/interface.c:196 ../plugins/gtkui/deadbeef.glade.h:7
+#: ../plugins/gtkui/interface.c:195 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Load playlist"
 msgstr "加载播放列表"
 
-#: ../plugins/gtkui/interface.c:200 ../plugins/gtkui/deadbeef.glade.h:8
+#: ../plugins/gtkui/interface.c:199 ../plugins/gtkui/deadbeef.glade.h:8
 msgid "Save playlist"
 msgstr "保存播放列表"
 
-#: ../plugins/gtkui/interface.c:209 ../plugins/gtkui/deadbeef.glade.h:9
+#: ../plugins/gtkui/interface.c:208 ../plugins/gtkui/deadbeef.glade.h:9
 msgid "_Quit"
 msgstr "退出(_Q)"
 
-#: ../plugins/gtkui/interface.c:217 ../plugins/gtkui/deadbeef.glade.h:10
+#: ../plugins/gtkui/interface.c:216 ../plugins/gtkui/deadbeef.glade.h:10
 msgid "_Edit"
 msgstr "编辑(_E)"
 
-#: ../plugins/gtkui/interface.c:224 ../plugins/gtkui/deadbeef.glade.h:11
+#: ../plugins/gtkui/interface.c:223 ../plugins/gtkui/deadbeef.glade.h:11
 msgid "_Clear"
 msgstr "清除(_C)"
 
-#: ../plugins/gtkui/interface.c:232 ../plugins/gtkui/deadbeef.glade.h:12
+#: ../plugins/gtkui/interface.c:231 ../plugins/gtkui/deadbeef.glade.h:12
 msgid "Select all"
 msgstr "选择所有"
 
-#: ../plugins/gtkui/interface.c:236 ../plugins/gtkui/deadbeef.glade.h:13
+#: ../plugins/gtkui/interface.c:235 ../plugins/gtkui/deadbeef.glade.h:13
 msgid "Deselect all"
 msgstr "去选所有"
 
-#: ../plugins/gtkui/interface.c:240 ../plugins/gtkui/deadbeef.glade.h:14
+#: ../plugins/gtkui/interface.c:239 ../plugins/gtkui/deadbeef.glade.h:14
 msgid "Invert selection"
 msgstr "反转选择"
 
-#: ../plugins/gtkui/interface.c:244 ../plugins/gtkui/deadbeef.glade.h:15
+#: ../plugins/gtkui/interface.c:243 ../plugins/gtkui/deadbeef.glade.h:15
 msgid "Selection"
 msgstr "选择"
 
-#: ../plugins/gtkui/interface.c:251 ../plugins/gtkui/plcommon.c:489
+#: ../plugins/gtkui/interface.c:250 ../plugins/gtkui/plcommon.c:489
 #: ../plugins/gtkui/deadbeef.glade.h:16 ../plugins/converter/interface.c:628
 #: ../plugins/converter/converter.glade.h:46
 #: ../plugins/shellexecui/interface.c:65
@@ -288,20 +288,20 @@ msgstr "选择"
 msgid "Remove"
 msgstr "移除"
 
-#: ../plugins/gtkui/interface.c:259 ../plugins/gtkui/deadbeef.glade.h:17
+#: ../plugins/gtkui/interface.c:258 ../plugins/gtkui/deadbeef.glade.h:17
 msgid "Crop"
 msgstr "剪切"
 
-#: ../plugins/gtkui/interface.c:263 ../plugins/gtkui/deadbeef.glade.h:18
+#: ../plugins/gtkui/interface.c:262 ../plugins/gtkui/deadbeef.glade.h:18
 msgid "_Find"
 msgstr "查找(_F)"
 
-#: ../plugins/gtkui/interface.c:267 ../plugins/gtkui/deadbeef.glade.h:19
+#: ../plugins/gtkui/interface.c:266 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Sort by"
-msgstr ""
+msgstr "排序依据"
 
-#: ../plugins/gtkui/interface.c:274 ../plugins/gtkui/interface.c:1488
-#: ../plugins/gtkui/mainplaylist.c:330 ../plugins/gtkui/prefwin.c:318
+#: ../plugins/gtkui/interface.c:273 ../plugins/gtkui/interface.c:1479
+#: ../plugins/gtkui/mainplaylist.c:330 ../plugins/gtkui/prefwin.c:321
 #: ../plugins/gtkui/search.c:418 ../plugins/gtkui/deadbeef.glade.h:20
 #: ../plugins/converter/convgui.c:893 ../plugins/converter/convgui.c:1392
 #: ../plugins/converter/interface.c:605
@@ -310,694 +310,719 @@ msgstr ""
 msgid "Title"
 msgstr "标题"
 
-#: ../plugins/gtkui/interface.c:278 ../plugins/gtkui/deadbeef.glade.h:21
+#: ../plugins/gtkui/interface.c:277 ../plugins/gtkui/deadbeef.glade.h:21
 msgid "Track number"
 msgstr "音轨号"
 
-#: ../plugins/gtkui/interface.c:282 ../plugins/gtkui/interface.c:1487
-#: ../plugins/gtkui/interface.c:1885 ../plugins/gtkui/deadbeef.glade.h:22
+#: ../plugins/gtkui/interface.c:281 ../plugins/gtkui/interface.c:1478
+#: ../plugins/gtkui/interface.c:1875 ../plugins/gtkui/deadbeef.glade.h:22
 #: ../translation/extra.c:73
 msgid "Album"
 msgstr "专辑"
 
 #. Track properties dialog
-#: ../plugins/gtkui/interface.c:286 ../plugins/gtkui/interface.c:1486
+#: ../plugins/gtkui/interface.c:285 ../plugins/gtkui/interface.c:1477
 #: ../plugins/gtkui/plcommon.c:1044 ../plugins/gtkui/deadbeef.glade.h:23
 #: ../translation/extra.c:69
 msgid "Artist"
 msgstr "艺人"
 
-#: ../plugins/gtkui/interface.c:290 ../plugins/gtkui/deadbeef.glade.h:24
+#: ../plugins/gtkui/interface.c:289 ../plugins/gtkui/deadbeef.glade.h:24
 #: ../translation/extra.c:74
 msgid "Date"
 msgstr "日期"
 
-#: ../plugins/gtkui/interface.c:294 ../plugins/gtkui/interface.c:375
+#: ../plugins/gtkui/interface.c:293 ../plugins/gtkui/interface.c:370
 #: ../plugins/gtkui/deadbeef.glade.h:25
 msgid "Random"
 msgstr "随机"
 
-#: ../plugins/gtkui/interface.c:298 ../plugins/gtkui/interface.c:1492
+#: ../plugins/gtkui/interface.c:297 ../plugins/gtkui/interface.c:1483
 #: ../plugins/gtkui/plcommon.c:1048 ../plugins/gtkui/deadbeef.glade.h:26
 msgid "Custom"
 msgstr "自定义"
 
-#: ../plugins/gtkui/interface.c:307 ../plugins/gtkui/interface.c:1814
+#: ../plugins/gtkui/interface.c:306 ../plugins/gtkui/interface.c:1800
 #: ../plugins/gtkui/deadbeef.glade.h:27
 msgid "Preferences"
 msgstr "偏好设置"
 
-#: ../plugins/gtkui/interface.c:311 ../plugins/gtkui/deadbeef.glade.h:28
+#: ../plugins/gtkui/interface.c:310 ../plugins/gtkui/deadbeef.glade.h:28
 msgid "_View"
 msgstr "查看(_V)"
 
-#: ../plugins/gtkui/interface.c:318 ../plugins/gtkui/deadbeef.glade.h:29
+#: ../plugins/gtkui/interface.c:317 ../plugins/gtkui/deadbeef.glade.h:29
 msgid "Status bar"
 msgstr "状态栏"
 
-#: ../plugins/gtkui/interface.c:322 ../plugins/gtkui/deadbeef.glade.h:30
-msgid "Column headers"
-msgstr "列标题"
-
-#: ../plugins/gtkui/interface.c:326 ../plugins/gtkui/deadbeef.glade.h:31
+#: ../plugins/gtkui/interface.c:321 ../plugins/gtkui/deadbeef.glade.h:30
 msgid "Menu bar"
-msgstr ""
+msgstr "菜单栏"
 
-#: ../plugins/gtkui/interface.c:335 ../plugins/gtkui/deadbeef.glade.h:33
+#: ../plugins/gtkui/interface.c:330 ../plugins/gtkui/deadbeef.glade.h:32
 msgid "Equalizer"
 msgstr "均衡器"
 
-#: ../plugins/gtkui/interface.c:339 ../plugins/gtkui/deadbeef.glade.h:34
+#: ../plugins/gtkui/interface.c:334 ../plugins/gtkui/deadbeef.glade.h:33
 msgid "Design mode"
-msgstr ""
+msgstr "设计模式"
 
-#: ../plugins/gtkui/interface.c:343 ../plugins/gtkui/deadbeef.glade.h:35
+#: ../plugins/gtkui/interface.c:338 ../plugins/gtkui/deadbeef.glade.h:34
 msgid "_Playback"
 msgstr "播放(_P)"
 
-#: ../plugins/gtkui/interface.c:350 ../plugins/gtkui/interface.c:3543
-#: ../plugins/gtkui/deadbeef.glade.h:36
+#: ../plugins/gtkui/interface.c:345 ../plugins/gtkui/interface.c:3503
+#: ../plugins/gtkui/deadbeef.glade.h:35
 msgid "Order"
 msgstr "顺序"
 
-#: ../plugins/gtkui/interface.c:357 ../plugins/gtkui/deadbeef.glade.h:37
+#: ../plugins/gtkui/interface.c:352 ../plugins/gtkui/deadbeef.glade.h:36
 msgid "Linear"
 msgstr "线性"
 
-#: ../plugins/gtkui/interface.c:363 ../plugins/gtkui/deadbeef.glade.h:38
+#: ../plugins/gtkui/interface.c:358 ../plugins/gtkui/deadbeef.glade.h:37
 msgid "Shuffle tracks"
 msgstr "打乱音轨"
 
-#: ../plugins/gtkui/interface.c:369 ../plugins/gtkui/deadbeef.glade.h:39
+#: ../plugins/gtkui/interface.c:364 ../plugins/gtkui/deadbeef.glade.h:38
 msgid "Shuffle albums"
 msgstr "打乱专辑"
 
-#: ../plugins/gtkui/interface.c:381 ../plugins/gtkui/deadbeef.glade.h:40
+#: ../plugins/gtkui/interface.c:376 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Looping"
 msgstr "循环"
 
-#: ../plugins/gtkui/interface.c:388 ../plugins/gtkui/deadbeef.glade.h:41
+#: ../plugins/gtkui/interface.c:383 ../plugins/gtkui/deadbeef.glade.h:40
 msgid "Loop all"
-msgstr ""
+msgstr "全部循环"
 
-#: ../plugins/gtkui/interface.c:394 ../plugins/gtkui/deadbeef.glade.h:42
+#: ../plugins/gtkui/interface.c:389 ../plugins/gtkui/deadbeef.glade.h:41
 msgid "Loop single song"
-msgstr ""
+msgstr "单曲循环"
 
-#: ../plugins/gtkui/interface.c:400 ../plugins/gtkui/deadbeef.glade.h:43
+#: ../plugins/gtkui/interface.c:395 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Don't loop"
-msgstr ""
+msgstr "不循环"
 
-#: ../plugins/gtkui/interface.c:406 ../plugins/gtkui/deadbeef.glade.h:44
+#: ../plugins/gtkui/interface.c:401 ../plugins/gtkui/deadbeef.glade.h:43
 msgid "Scroll follows playback"
 msgstr "随播放滚动列表"
 
-#: ../plugins/gtkui/interface.c:411 ../plugins/gtkui/deadbeef.glade.h:45
+#: ../plugins/gtkui/interface.c:406 ../plugins/gtkui/deadbeef.glade.h:44
 msgid "Cursor follows playback"
 msgstr "光标定位在播放的曲目"
 
-#: ../plugins/gtkui/interface.c:415 ../plugins/gtkui/deadbeef.glade.h:46
+#: ../plugins/gtkui/interface.c:410 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "Stop after current"
 msgstr "当前曲目后停止"
 
-#: ../plugins/gtkui/interface.c:424 ../plugins/gtkui/deadbeef.glade.h:47
+#: ../plugins/gtkui/interface.c:419 ../plugins/gtkui/deadbeef.glade.h:46
 msgid "Jump to current track"
 msgstr "跳到当前音轨"
 
-#: ../plugins/gtkui/interface.c:428 ../plugins/gtkui/interface.c:435
-#: ../plugins/gtkui/deadbeef.glade.h:48
+#: ../plugins/gtkui/interface.c:423 ../plugins/gtkui/interface.c:430
+#: ../plugins/gtkui/deadbeef.glade.h:47
 msgid "_Help"
 msgstr "帮助(_H)"
 
-#: ../plugins/gtkui/interface.c:443 ../plugins/gtkui/deadbeef.glade.h:49
+#: ../plugins/gtkui/interface.c:438 ../plugins/gtkui/deadbeef.glade.h:48
 msgid "_ChangeLog"
 msgstr "更新记录(_C)"
 
-#: ../plugins/gtkui/interface.c:452 ../plugins/gtkui/deadbeef.glade.h:50
+#: ../plugins/gtkui/interface.c:447 ../plugins/gtkui/deadbeef.glade.h:49
 msgid "_GPLv2"
 msgstr "_GPLv2"
 
-#: ../plugins/gtkui/interface.c:456 ../plugins/gtkui/deadbeef.glade.h:51
+#: ../plugins/gtkui/interface.c:451 ../plugins/gtkui/deadbeef.glade.h:50
 msgid "_LGPLv2.1"
 msgstr "_LGPLv2.1"
 
-#: ../plugins/gtkui/interface.c:465 ../plugins/gtkui/deadbeef.glade.h:52
+#: ../plugins/gtkui/interface.c:460 ../plugins/gtkui/deadbeef.glade.h:51
 msgid "_About"
 msgstr "关于(_A)"
 
-#: ../plugins/gtkui/interface.c:473 ../plugins/gtkui/deadbeef.glade.h:53
+#: ../plugins/gtkui/interface.c:468 ../plugins/gtkui/deadbeef.glade.h:52
 msgid "_Translators"
 msgstr "翻译者(_T)"
 
-#: ../plugins/gtkui/interface.c:856 ../plugins/gtkui/deadbeef.glade.h:54
+#: ../plugins/gtkui/interface.c:847 ../plugins/gtkui/deadbeef.glade.h:53
 msgid "Search"
 msgstr "搜索"
 
-#: ../plugins/gtkui/interface.c:925 ../plugins/gtkui/deadbeef.glade.h:55
+#: ../plugins/gtkui/interface.c:916 ../plugins/gtkui/deadbeef.glade.h:54
 msgid "Stop"
 msgstr "停止"
 
-#: ../plugins/gtkui/interface.c:933 ../plugins/gtkui/deadbeef.glade.h:56
+#: ../plugins/gtkui/interface.c:924 ../plugins/gtkui/deadbeef.glade.h:55
 msgid "Play"
 msgstr "播放"
 
-#: ../plugins/gtkui/interface.c:941 ../plugins/gtkui/deadbeef.glade.h:57
+#: ../plugins/gtkui/interface.c:932 ../plugins/gtkui/deadbeef.glade.h:56
 msgid "Pause"
 msgstr "暂停"
 
-#: ../plugins/gtkui/interface.c:949 ../plugins/gtkui/deadbeef.glade.h:58
+#: ../plugins/gtkui/interface.c:940 ../plugins/gtkui/deadbeef.glade.h:57
 msgid "Previous"
 msgstr "上一曲"
 
-#: ../plugins/gtkui/interface.c:957 ../plugins/gtkui/deadbeef.glade.h:59
+#: ../plugins/gtkui/interface.c:948 ../plugins/gtkui/deadbeef.glade.h:58
 msgid "Next"
 msgstr "下一曲"
 
-#: ../plugins/gtkui/interface.c:965 ../plugins/gtkui/deadbeef.glade.h:60
+#: ../plugins/gtkui/interface.c:956 ../plugins/gtkui/deadbeef.glade.h:59
 msgid "Play Random"
 msgstr "随机播放"
 
-#: ../plugins/gtkui/interface.c:974 ../plugins/gtkui/deadbeef.glade.h:61
+#: ../plugins/gtkui/interface.c:965 ../plugins/gtkui/deadbeef.glade.h:60
 msgid "About"
 msgstr "关于"
 
-#: ../plugins/gtkui/interface.c:987 ../plugins/gtkui/deadbeef.glade.h:62
+#: ../plugins/gtkui/interface.c:978 ../plugins/gtkui/deadbeef.glade.h:61
 msgid "Quit"
 msgstr "退出"
 
-#: ../plugins/gtkui/interface.c:1107 ../plugins/gtkui/deadbeef.glade.h:63
+#: ../plugins/gtkui/interface.c:1098 ../plugins/gtkui/deadbeef.glade.h:62
 #: ../plugins/converter/convgui.c:1421 ../plugins/converter/convgui.c:1429
 #: ../plugins/gtkui/actionhandlers.c:428
 msgid "Help"
 msgstr "帮助"
 
-#: ../plugins/gtkui/interface.c:1180 ../plugins/gtkui/deadbeef.glade.h:64
+#: ../plugins/gtkui/interface.c:1171 ../plugins/gtkui/deadbeef.glade.h:63
 msgid "Track Properties"
 msgstr "音轨属性"
 
-#: ../plugins/gtkui/interface.c:1198 ../plugins/gtkui/deadbeef.glade.h:65
+#: ../plugins/gtkui/interface.c:1189 ../plugins/gtkui/deadbeef.glade.h:64
 msgid "Location:"
-msgstr ""
+msgstr "位置："
 
-#: ../plugins/gtkui/interface.c:1239 ../plugins/gtkui/deadbeef.glade.h:66
+#: ../plugins/gtkui/interface.c:1230 ../plugins/gtkui/deadbeef.glade.h:65
 msgid "Settings"
 msgstr "设置"
 
-#: ../plugins/gtkui/interface.c:1265 ../plugins/gtkui/deadbeef.glade.h:67
+#: ../plugins/gtkui/interface.c:1256 ../plugins/gtkui/deadbeef.glade.h:66
 msgid "_Apply"
 msgstr "应用(_A)"
 
-#: ../plugins/gtkui/interface.c:1286 ../plugins/gtkui/interface.c:1332
-#: ../plugins/gtkui/deadbeef.glade.h:68
+#: ../plugins/gtkui/interface.c:1277 ../plugins/gtkui/interface.c:1323
+#: ../plugins/gtkui/deadbeef.glade.h:67
 msgid "_Close"
 msgstr "关闭(_C)"
 
-#: ../plugins/gtkui/interface.c:1290 ../plugins/gtkui/deadbeef.glade.h:69
+#: ../plugins/gtkui/interface.c:1281 ../plugins/gtkui/deadbeef.glade.h:68
 msgid "Metadata"
 msgstr "元数据"
 
-#: ../plugins/gtkui/interface.c:1336 ../plugins/gtkui/plcommon.c:636
-#: ../plugins/gtkui/deadbeef.glade.h:70
+#: ../plugins/gtkui/interface.c:1327 ../plugins/gtkui/plcommon.c:636
+#: ../plugins/gtkui/deadbeef.glade.h:69
 msgid "Properties"
 msgstr "属性"
 
-#: ../plugins/gtkui/interface.c:1458 ../plugins/gtkui/interface.c:3168
-#: ../plugins/gtkui/deadbeef.glade.h:73 ../plugins/converter/interface.c:378
+#: ../plugins/gtkui/interface.c:1449 ../plugins/gtkui/interface.c:3128
+#: ../plugins/gtkui/deadbeef.glade.h:72 ../plugins/converter/interface.c:378
 #: ../plugins/converter/converter.glade.h:22
 #: ../plugins/shellexecui/interface.c:158
 #: ../plugins/shellexecui/shellexec.glade.h:7
 msgid "Title:"
 msgstr "标题："
 
-#: ../plugins/gtkui/interface.c:1466 ../plugins/gtkui/deadbeef.glade.h:74
+#: ../plugins/gtkui/interface.c:1457 ../plugins/gtkui/deadbeef.glade.h:73
 msgid "Enter new column title here"
 msgstr "在此输入新的列标题"
 
-#: ../plugins/gtkui/interface.c:1474 ../plugins/gtkui/deadbeef.glade.h:75
+#: ../plugins/gtkui/interface.c:1465 ../plugins/gtkui/deadbeef.glade.h:74
 msgid "Type:"
 msgstr "类型："
 
-#: ../plugins/gtkui/interface.c:1482
+#: ../plugins/gtkui/interface.c:1473
 msgid "Item Index"
 msgstr "项目索引"
 
 #. create default set of columns
-#: ../plugins/gtkui/interface.c:1483 ../plugins/gtkui/mainplaylist.c:327
+#: ../plugins/gtkui/interface.c:1474 ../plugins/gtkui/mainplaylist.c:327
 msgid "Playing"
 msgstr "正在播放"
 
-#: ../plugins/gtkui/interface.c:1484
+#: ../plugins/gtkui/interface.c:1475
 msgid "Album Art"
 msgstr "专辑封面"
 
-#: ../plugins/gtkui/interface.c:1485
+#: ../plugins/gtkui/interface.c:1476
 msgid "Artist - Album"
 msgstr "艺人 - 专辑"
 
-#: ../plugins/gtkui/interface.c:1489 ../plugins/gtkui/mainplaylist.c:331
+#: ../plugins/gtkui/interface.c:1480 ../plugins/gtkui/mainplaylist.c:331
 #: ../plugins/gtkui/search.c:419
 msgid "Duration"
 msgstr "时长"
 
-#: ../plugins/gtkui/interface.c:1490 ../translation/extra.c:75
+#: ../plugins/gtkui/interface.c:1481 ../translation/extra.c:75
 msgid "Track Number"
 msgstr "音轨号"
 
-#: ../plugins/gtkui/interface.c:1491 ../translation/extra.c:72
+#: ../plugins/gtkui/interface.c:1482 ../translation/extra.c:72
 msgid "Band / Album Artist"
 msgstr "乐队 / 专辑艺人"
 
-#: ../plugins/gtkui/interface.c:1498 ../plugins/gtkui/interface.c:3395
-#: ../plugins/gtkui/deadbeef.glade.h:87
+#: ../plugins/gtkui/interface.c:1489 ../plugins/gtkui/interface.c:3355
+#: ../plugins/gtkui/deadbeef.glade.h:86
 msgid "Format:"
 msgstr "格式："
 
-#: ../plugins/gtkui/interface.c:1523 ../plugins/gtkui/deadbeef.glade.h:88
+#: ../plugins/gtkui/interface.c:1514 ../plugins/gtkui/deadbeef.glade.h:87
 msgid "Alignment:"
 msgstr "对齐："
 
-#: ../plugins/gtkui/interface.c:1531
+#: ../plugins/gtkui/interface.c:1522
 msgid "Left"
 msgstr "左"
 
-#: ../plugins/gtkui/interface.c:1532
+#: ../plugins/gtkui/interface.c:1523
 msgid "Right"
 msgstr "右"
 
-#: ../plugins/gtkui/interface.c:1555 ../plugins/gtkui/interface.c:3199
-#: ../plugins/gtkui/interface.c:3310 ../plugins/gtkui/interface.c:3436
-#: ../plugins/gtkui/deadbeef.glade.h:71
+#: ../plugins/gtkui/interface.c:1546 ../plugins/gtkui/interface.c:3159
+#: ../plugins/gtkui/interface.c:3270 ../plugins/gtkui/interface.c:3396
+#: ../plugins/gtkui/deadbeef.glade.h:70
 msgid "_Cancel"
 msgstr "取消(_C)"
 
-#: ../plugins/gtkui/interface.c:1576 ../plugins/gtkui/interface.c:3220
-#: ../plugins/gtkui/interface.c:3331 ../plugins/gtkui/interface.c:3457
-#: ../plugins/gtkui/deadbeef.glade.h:72
+#: ../plugins/gtkui/interface.c:1567 ../plugins/gtkui/interface.c:3180
+#: ../plugins/gtkui/interface.c:3291 ../plugins/gtkui/interface.c:3417
+#: ../plugins/gtkui/deadbeef.glade.h:71
 msgid "_OK"
 msgstr "确定(_O)"
 
-#: ../plugins/gtkui/interface.c:1835 ../plugins/gtkui/deadbeef.glade.h:91
+#: ../plugins/gtkui/interface.c:1821 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Output plugin:"
 msgstr "输出插件："
 
-#: ../plugins/gtkui/interface.c:1848 ../plugins/gtkui/deadbeef.glade.h:92
+#: ../plugins/gtkui/interface.c:1834 ../plugins/gtkui/deadbeef.glade.h:91
 msgid "Output device:"
 msgstr "输出设备："
 
-#: ../plugins/gtkui/interface.c:1857 ../plugins/gtkui/deadbeef.glade.h:93
+#: ../plugins/gtkui/interface.c:1843 ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Always convert 8 bit audio to 16 bit"
 msgstr "总是将 8 位音频转换为 16 位"
 
-#: ../plugins/gtkui/interface.c:1861 ../plugins/gtkui/deadbeef.glade.h:94
+#: ../plugins/gtkui/interface.c:1847 ../plugins/gtkui/deadbeef.glade.h:93
+msgid "Always convert 16 bit audio to 24 bit"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1851 ../plugins/gtkui/deadbeef.glade.h:94
 msgid "Sound"
 msgstr "声音"
 
-#: ../plugins/gtkui/interface.c:1874 ../plugins/gtkui/deadbeef.glade.h:95
+#: ../plugins/gtkui/interface.c:1864 ../plugins/gtkui/deadbeef.glade.h:95
 msgid "Replaygain mode:"
 msgstr "回放增益方式："
 
-#: ../plugins/gtkui/interface.c:1883
+#: ../plugins/gtkui/interface.c:1873
 msgid "Disable"
 msgstr "禁用"
 
-#: ../plugins/gtkui/interface.c:1884
+#: ../plugins/gtkui/interface.c:1874
 msgid "Track"
 msgstr "音轨"
 
-#: ../plugins/gtkui/interface.c:1887 ../plugins/gtkui/deadbeef.glade.h:99
+#: ../plugins/gtkui/interface.c:1877 ../plugins/gtkui/deadbeef.glade.h:99
 msgid "Replaygain peak scale"
 msgstr "回放增益峰值均衡"
 
-#: ../plugins/gtkui/interface.c:1902 ../plugins/gtkui/interface.c:1936
+#: ../plugins/gtkui/interface.c:1892 ../plugins/gtkui/interface.c:1926
 #: ../plugins/gtkui/deadbeef.glade.h:100
 msgid "-12 dB"
 msgstr "-12 dB"
 
-#: ../plugins/gtkui/interface.c:1912 ../plugins/gtkui/interface.c:1946
+#: ../plugins/gtkui/interface.c:1902 ../plugins/gtkui/interface.c:1936
 #: ../plugins/gtkui/deadbeef.glade.h:101
 msgid "+12 dB"
 msgstr "+12 dB"
 
-#: ../plugins/gtkui/interface.c:1916 ../plugins/gtkui/deadbeef.glade.h:102
+#: ../plugins/gtkui/interface.c:1906 ../plugins/gtkui/deadbeef.glade.h:102
 msgid "Replaygain preamp:"
 msgstr "回放预增益："
 
-#: ../plugins/gtkui/interface.c:1923 ../plugins/gtkui/deadbeef.glade.h:103
+#: ../plugins/gtkui/interface.c:1913 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Global preamp:"
 msgstr "全局预增益："
 
-#: ../plugins/gtkui/interface.c:1954 ../plugins/gtkui/deadbeef.glade.h:104
+#: ../plugins/gtkui/interface.c:1944 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Add files from command line (or file manager) to this playlist:"
 msgstr "通过命令行(或文件管理器)向此播放列表添加文件："
 
-#: ../plugins/gtkui/interface.c:1963 ../plugins/gtkui/deadbeef.glade.h:105
+#: ../plugins/gtkui/interface.c:1953 ../plugins/gtkui/deadbeef.glade.h:105
 msgid "Resume previous session on startup"
 msgstr "启动时恢复上一次会话"
 
-#: ../plugins/gtkui/interface.c:1967 ../plugins/gtkui/deadbeef.glade.h:106
+#: ../plugins/gtkui/interface.c:1957 ../plugins/gtkui/deadbeef.glade.h:106
 msgid "Don't add from archives when adding folders"
 msgstr "在添加文件夹时排除归档"
 
-#: ../plugins/gtkui/interface.c:1971 ../plugins/gtkui/deadbeef.glade.h:107
+#: ../plugins/gtkui/interface.c:1961 ../plugins/gtkui/deadbeef.glade.h:107
 msgid "Auto-reset \"Stop after current\""
-msgstr ""
+msgstr "自动复位“当前曲目后停止”"
 
-#: ../plugins/gtkui/interface.c:1975 ../plugins/gtkui/deadbeef.glade.h:108
+#: ../plugins/gtkui/interface.c:1965 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Playback"
 msgstr "回放"
 
-#: ../plugins/gtkui/interface.c:1996 ../plugins/gtkui/interface.c:2684
+#: ../plugins/gtkui/interface.c:1986 ../plugins/gtkui/interface.c:2646
 #: ../plugins/gtkui/deadbeef.glade.h:109 ../plugins/converter/interface.c:632
 #: ../plugins/converter/converter.glade.h:47
 msgid "Configure"
 msgstr "配置"
 
-#: ../plugins/gtkui/interface.c:2031 ../plugins/gtkui/deadbeef.glade.h:110
+#: ../plugins/gtkui/interface.c:2021 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "DSP Chain Preset"
 msgstr "DSP 链预设置"
 
-#: ../plugins/gtkui/interface.c:2043 ../plugins/gtkui/deadbeef.glade.h:111
+#: ../plugins/gtkui/interface.c:2033 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "_Load"
 msgstr "加载(_L)"
 
-#: ../plugins/gtkui/interface.c:2047 ../plugins/gtkui/deadbeef.glade.h:112
+#: ../plugins/gtkui/interface.c:2037 ../plugins/gtkui/deadbeef.glade.h:112
 msgid "DSP"
 msgstr "DSP(数字信号处理)"
 
-#: ../plugins/gtkui/interface.c:2056 ../plugins/gtkui/deadbeef.glade.h:113
+#: ../plugins/gtkui/interface.c:2046 ../plugins/gtkui/deadbeef.glade.h:113
 msgid "Close minimizes to tray"
 msgstr "点击关闭时最小化到托盘"
 
-#: ../plugins/gtkui/interface.c:2060 ../plugins/gtkui/deadbeef.glade.h:114
+#: ../plugins/gtkui/interface.c:2050 ../plugins/gtkui/deadbeef.glade.h:114
 msgid "Middle mouse button closes playlist"
-msgstr "鼠标中键关闭播放列表"
+msgstr "用鼠标中键关闭播放列表"
 
-#: ../plugins/gtkui/interface.c:2064 ../plugins/gtkui/deadbeef.glade.h:115
+#: ../plugins/gtkui/interface.c:2054 ../plugins/gtkui/deadbeef.glade.h:115
 msgid "Hide system tray icon"
 msgstr "隐藏系统托盘图标"
 
-#: ../plugins/gtkui/interface.c:2068 ../plugins/gtkui/deadbeef.glade.h:116
+#: ../plugins/gtkui/interface.c:2058 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Use bold font for currently playing track"
 msgstr "用粗体显示当前正在播放的音轨"
 
-#: ../plugins/gtkui/interface.c:2072 ../plugins/gtkui/deadbeef.glade.h:117
+#: ../plugins/gtkui/interface.c:2062 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Hide \"Delete from disk\" context menu item"
 msgstr "隐藏“从磁盘删除”右键菜单项"
 
-#: ../plugins/gtkui/interface.c:2076 ../plugins/gtkui/deadbeef.glade.h:118
+#: ../plugins/gtkui/interface.c:2066 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Auto-name playlists when adding a single folder"
 msgstr "在添加单个文件夹时自动命名播放列表"
 
-#: ../plugins/gtkui/interface.c:2080 ../plugins/gtkui/deadbeef.glade.h:119
+#: ../plugins/gtkui/interface.c:2070 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Enable Russian CP1251 detection and recoding"
-msgstr ""
+msgstr "启用俄语 CP1251 字符集检测和重新编码"
 
-#: ../plugins/gtkui/interface.c:2084 ../plugins/gtkui/deadbeef.glade.h:120
+#: ../plugins/gtkui/interface.c:2074 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Enable Chinese CP936 detection and recoding"
-msgstr ""
+msgstr "启用中文 Chinese CP936 编码检测和重新编码"
 
-#: ../plugins/gtkui/interface.c:2092 ../plugins/gtkui/deadbeef.glade.h:121
+#: ../plugins/gtkui/interface.c:2082 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Interface refresh rate (times per second):"
 msgstr "界面刷新频率(每秒的次数)："
 
-#: ../plugins/gtkui/interface.c:2106 ../plugins/gtkui/deadbeef.glade.h:122
+#: ../plugins/gtkui/interface.c:2096 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Titlebar text while playing:"
 msgstr "播放时的标题栏文本："
 
-#: ../plugins/gtkui/interface.c:2120 ../plugins/gtkui/deadbeef.glade.h:123
+#: ../plugins/gtkui/interface.c:2110 ../plugins/gtkui/deadbeef.glade.h:123
 msgid "Titlebar text while stopped:"
 msgstr "停止时的标题栏文本："
 
-#: ../plugins/gtkui/interface.c:2134 ../plugins/gtkui/deadbeef.glade.h:124
+#: ../plugins/gtkui/interface.c:2124 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "GUI Plugin (changing requires restart):"
 msgstr "图形用户界面插件(更改后需重启程序)："
 
-#: ../plugins/gtkui/interface.c:2142 ../plugins/gtkui/deadbeef.glade.h:125
+#: ../plugins/gtkui/interface.c:2132 ../plugins/gtkui/deadbeef.glade.h:125
 msgid "GUI/Misc"
-msgstr ""
+msgstr "用户界面/杂项"
 
-#: ../plugins/gtkui/interface.c:2157 ../plugins/gtkui/interface.c:2201
+#: ../plugins/gtkui/interface.c:2147 ../plugins/gtkui/interface.c:2191
 #: ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Override"
 msgstr "覆盖"
 
-#: ../plugins/gtkui/interface.c:2166 ../plugins/gtkui/deadbeef.glade.h:127
+#: ../plugins/gtkui/interface.c:2156 ../plugins/gtkui/deadbeef.glade.h:127
 msgid "Foreground"
 msgstr "前景色"
 
-#: ../plugins/gtkui/interface.c:2173 ../plugins/gtkui/deadbeef.glade.h:128
+#: ../plugins/gtkui/interface.c:2163 ../plugins/gtkui/deadbeef.glade.h:128
 msgid "Background"
 msgstr "背景色"
 
-#: ../plugins/gtkui/interface.c:2192 ../plugins/gtkui/deadbeef.glade.h:129
+#: ../plugins/gtkui/interface.c:2182 ../plugins/gtkui/deadbeef.glade.h:129
 msgid "Seekbar/Volumebar colors"
 msgstr "搜索条/音量条颜色"
 
-#: ../plugins/gtkui/interface.c:2210 ../plugins/gtkui/deadbeef.glade.h:130
+#: ../plugins/gtkui/interface.c:2200 ../plugins/gtkui/deadbeef.glade.h:130
 msgid "Middle"
 msgstr "中"
 
-#: ../plugins/gtkui/interface.c:2217 ../plugins/gtkui/deadbeef.glade.h:131
+#: ../plugins/gtkui/interface.c:2207 ../plugins/gtkui/deadbeef.glade.h:131
 msgid "Light"
 msgstr "右"
 
-#: ../plugins/gtkui/interface.c:2224 ../plugins/gtkui/deadbeef.glade.h:132
+#: ../plugins/gtkui/interface.c:2214 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Dark"
 msgstr "暗"
 
-#: ../plugins/gtkui/interface.c:2255 ../plugins/gtkui/deadbeef.glade.h:133
+#: ../plugins/gtkui/interface.c:2245 ../plugins/gtkui/deadbeef.glade.h:133
 msgid "Base"
 msgstr "基础"
 
-#: ../plugins/gtkui/interface.c:2262 ../plugins/gtkui/interface.c:2319
+#: ../plugins/gtkui/interface.c:2252 ../plugins/gtkui/interface.c:2309
 #: ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Text"
 msgstr "文本"
 
-#: ../plugins/gtkui/interface.c:2275 ../plugins/gtkui/deadbeef.glade.h:135
+#: ../plugins/gtkui/interface.c:2265 ../plugins/gtkui/deadbeef.glade.h:135
 msgid "Tab strip colors"
 msgstr "标签条颜色"
 
-#: ../plugins/gtkui/interface.c:2284 ../plugins/gtkui/deadbeef.glade.h:136
+#: ../plugins/gtkui/interface.c:2274 ../plugins/gtkui/deadbeef.glade.h:136
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
 msgstr "覆盖(不同于 GTK 树状视图风格，但渲染更快)"
 
-#: ../plugins/gtkui/interface.c:2293 ../plugins/gtkui/deadbeef.glade.h:137
+#: ../plugins/gtkui/interface.c:2283 ../plugins/gtkui/deadbeef.glade.h:137
 msgid "Even row"
 msgstr "偶数行"
 
-#: ../plugins/gtkui/interface.c:2300 ../plugins/gtkui/deadbeef.glade.h:138
+#: ../plugins/gtkui/interface.c:2290 ../plugins/gtkui/deadbeef.glade.h:138
 msgid "Odd row"
 msgstr "奇数行"
 
-#: ../plugins/gtkui/interface.c:2326 ../plugins/gtkui/deadbeef.glade.h:139
+#: ../plugins/gtkui/interface.c:2316 ../plugins/gtkui/deadbeef.glade.h:139
 msgid "Selected row"
 msgstr "选择的行"
 
-#: ../plugins/gtkui/interface.c:2345 ../plugins/gtkui/deadbeef.glade.h:140
+#: ../plugins/gtkui/interface.c:2335 ../plugins/gtkui/deadbeef.glade.h:140
 msgid "Selected text"
 msgstr "选择的文本"
 
-#: ../plugins/gtkui/interface.c:2358 ../plugins/gtkui/deadbeef.glade.h:141
+#: ../plugins/gtkui/interface.c:2348 ../plugins/gtkui/deadbeef.glade.h:141
 msgid "Cursor"
 msgstr "光标"
 
-#: ../plugins/gtkui/interface.c:2371 ../plugins/gtkui/deadbeef.glade.h:142
+#: ../plugins/gtkui/interface.c:2361 ../plugins/gtkui/deadbeef.glade.h:142
 msgid "Playlist colors"
 msgstr "播放列表颜色"
 
-#: ../plugins/gtkui/interface.c:2375 ../plugins/gtkui/deadbeef.glade.h:143
+#: ../plugins/gtkui/interface.c:2365 ../plugins/gtkui/deadbeef.glade.h:143
 msgid "Colors"
 msgstr "颜色"
 
-#: ../plugins/gtkui/interface.c:2384 ../plugins/gtkui/deadbeef.glade.h:144
+#: ../plugins/gtkui/interface.c:2374 ../plugins/gtkui/deadbeef.glade.h:144
 msgid "Enable Proxy Server"
 msgstr "启用代理服务器"
 
-#: ../plugins/gtkui/interface.c:2392 ../plugins/gtkui/deadbeef.glade.h:145
+#: ../plugins/gtkui/interface.c:2382 ../plugins/gtkui/deadbeef.glade.h:145
 msgid "Proxy Server Address:"
 msgstr "代理服务器地址："
 
-#: ../plugins/gtkui/interface.c:2406 ../plugins/gtkui/deadbeef.glade.h:146
+#: ../plugins/gtkui/interface.c:2396 ../plugins/gtkui/deadbeef.glade.h:146
 msgid "Proxy Server Port:"
 msgstr "代理服务器端口："
 
-#: ../plugins/gtkui/interface.c:2420 ../plugins/gtkui/deadbeef.glade.h:147
+#: ../plugins/gtkui/interface.c:2410 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "Proxy Type:"
 msgstr "代理类型："
 
-#: ../plugins/gtkui/interface.c:2439 ../plugins/gtkui/deadbeef.glade.h:148
+#: ../plugins/gtkui/interface.c:2429 ../plugins/gtkui/deadbeef.glade.h:148
 msgid "Proxy Username:"
 msgstr "代理用户名："
 
-#: ../plugins/gtkui/interface.c:2452 ../plugins/gtkui/deadbeef.glade.h:149
+#: ../plugins/gtkui/interface.c:2442 ../plugins/gtkui/deadbeef.glade.h:149
 msgid "Proxy Password:"
 msgstr "代理密码："
 
-#: ../plugins/gtkui/interface.c:2470 ../plugins/gtkui/deadbeef.glade.h:150
+#: ../plugins/gtkui/interface.c:2460 ../plugins/gtkui/deadbeef.glade.h:150
 msgid "HTTP User Agent:"
-msgstr ""
+msgstr "HTTP 用户代理："
 
-#: ../plugins/gtkui/interface.c:2483 ../plugins/gtkui/interface.c:4171
+#: ../plugins/gtkui/interface.c:2473 ../plugins/gtkui/interface.c:4131
 #: ../plugins/gtkui/deadbeef.glade.h:151
 msgid "Edit Content-Type Mapping"
-msgstr ""
+msgstr "编辑 内容-类型 映射"
 
-#: ../plugins/gtkui/interface.c:2487 ../plugins/gtkui/deadbeef.glade.h:152
+#: ../plugins/gtkui/interface.c:2477 ../plugins/gtkui/deadbeef.glade.h:152
 msgid "Network"
 msgstr "网络"
 
-#: ../plugins/gtkui/interface.c:2504 ../plugins/gtkui/deadbeef.glade.h:153
+#: ../plugins/gtkui/interface.c:2490 ../plugins/gtkui/deadbeef.glade.h:153
 msgid "<b>Assigned hotkeys</b>"
+msgstr "<b>已分配的快捷键</b>"
+
+#: ../plugins/gtkui/interface.c:2530 ../plugins/gtkui/interface.c:4292
+#: ../plugins/gtkui/deadbeef.glade.h:154
+msgid "Action:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2549 ../plugins/gtkui/deadbeef.glade.h:154
-msgid "<b>Action</b>"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:2573 ../plugins/gtkui/deadbeef.glade.h:155
-msgid "<b>Key</b>"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:2586 ../plugins/gtkui/deadbeef.glade.h:156
+#: ../plugins/gtkui/interface.c:2535 ../plugins/gtkui/interface.c:2548
+#: ../plugins/gtkui/interface.c:4296 ../plugins/gtkui/deadbeef.glade.h:155
 msgid "<Not set>"
+msgstr "<未设置>"
+
+#: ../plugins/gtkui/interface.c:2543 ../plugins/gtkui/deadbeef.glade.h:156
+msgid "Key:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2590 ../plugins/gtkui/deadbeef.glade.h:157
+#: ../plugins/gtkui/interface.c:2552 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "Global hotkey"
-msgstr ""
+msgstr "全局快捷键"
 
-#: ../plugins/gtkui/interface.c:2610 ../plugins/gtkui/deadbeef.glade.h:158
+#: ../plugins/gtkui/interface.c:2572 ../plugins/gtkui/deadbeef.glade.h:158
 msgid "Hotkeys"
-msgstr ""
+msgstr "快捷键"
 
-#: ../plugins/gtkui/interface.c:2641 ../plugins/gtkui/deadbeef.glade.h:159
+#: ../plugins/gtkui/interface.c:2603 ../plugins/gtkui/deadbeef.glade.h:159
 msgid "Version: "
 msgstr "版本："
 
-#: ../plugins/gtkui/interface.c:2705 ../plugins/gtkui/deadbeef.glade.h:160
+#: ../plugins/gtkui/interface.c:2667 ../plugins/gtkui/deadbeef.glade.h:160
 #: ../translation/extra.c:82
 msgid "Copyright"
 msgstr "版权"
 
-#: ../plugins/gtkui/interface.c:2715 ../plugins/gtkui/deadbeef.glade.h:161
+#: ../plugins/gtkui/interface.c:2677 ../plugins/gtkui/deadbeef.glade.h:161
 #: ../plugins/gtkui/ctmapping.c:131
 msgid "Plugins"
 msgstr "插件"
 
-#: ../plugins/gtkui/interface.c:3278 ../plugins/gtkui/deadbeef.glade.h:162
+#: ../plugins/gtkui/interface.c:3238 ../plugins/gtkui/deadbeef.glade.h:162
 msgid "URL:"
 msgstr "URL："
 
-#: ../plugins/gtkui/interface.c:3380 ../plugins/gtkui/deadbeef.glade.h:163
+#: ../plugins/gtkui/interface.c:3340 ../plugins/gtkui/deadbeef.glade.h:163
 msgid "Group By ..."
-msgstr ""
+msgstr "分组依据..."
 
-#: ../plugins/gtkui/interface.c:3504 ../plugins/gtkui/deadbeef.glade.h:164
+#: ../plugins/gtkui/interface.c:3464 ../plugins/gtkui/deadbeef.glade.h:164
 msgid "Sort by ..."
-msgstr ""
+msgstr "排序依据..."
 
-#: ../plugins/gtkui/interface.c:3520 ../plugins/gtkui/deadbeef.glade.h:165
+#: ../plugins/gtkui/interface.c:3480 ../plugins/gtkui/deadbeef.glade.h:165
 msgid "Format"
 msgstr "格式"
 
-#: ../plugins/gtkui/interface.c:3550
+#: ../plugins/gtkui/interface.c:3510
 msgid "Ascending"
 msgstr "升序"
 
-#: ../plugins/gtkui/interface.c:3551
+#: ../plugins/gtkui/interface.c:3511
 msgid "Descending"
 msgstr "降序"
 
-#: ../plugins/gtkui/interface.c:3604 ../plugins/gtkui/deadbeef.glade.h:168
+#: ../plugins/gtkui/interface.c:3564 ../plugins/gtkui/deadbeef.glade.h:168
 #: ../plugins/converter/interface.c:733
 #: ../plugins/converter/converter.glade.h:48
 msgid "Select DSP Plugin"
 msgstr "选择 DSP 插件"
 
-#: ../plugins/gtkui/interface.c:3620 ../plugins/gtkui/deadbeef.glade.h:169
+#: ../plugins/gtkui/interface.c:3580 ../plugins/gtkui/deadbeef.glade.h:169
 #: ../plugins/converter/convgui.c:1194 ../plugins/converter/interface.c:749
 #: ../plugins/gtkui/dspconfig.c:139 ../plugins/converter/converter.glade.h:49
 msgid "Plugin"
 msgstr "插件"
 
-#: ../plugins/gtkui/interface.c:3705 ../plugins/gtkui/deadbeef.glade.h:170
+#: ../plugins/gtkui/interface.c:3665 ../plugins/gtkui/deadbeef.glade.h:170
 msgid "Tag Writer Settings"
 msgstr "标签编辑器设置"
 
-#: ../plugins/gtkui/interface.c:3736 ../plugins/gtkui/deadbeef.glade.h:171
+#: ../plugins/gtkui/interface.c:3696 ../plugins/gtkui/deadbeef.glade.h:171
 msgid "Write ID3v2"
 msgstr "写 ID3v2"
 
-#: ../plugins/gtkui/interface.c:3740 ../plugins/gtkui/interface.c:3867
+#: ../plugins/gtkui/interface.c:3700 ../plugins/gtkui/interface.c:3827
 #: ../plugins/gtkui/deadbeef.glade.h:172
 msgid "Write ID3v1"
 msgstr "写 ID3v1"
 
-#: ../plugins/gtkui/interface.c:3744 ../plugins/gtkui/interface.c:3823
-#: ../plugins/gtkui/interface.c:3863 ../plugins/gtkui/deadbeef.glade.h:173
+#: ../plugins/gtkui/interface.c:3704 ../plugins/gtkui/interface.c:3783
+#: ../plugins/gtkui/interface.c:3823 ../plugins/gtkui/deadbeef.glade.h:173
 msgid "Write APEv2"
 msgstr "写 APEv2"
 
-#: ../plugins/gtkui/interface.c:3752 ../plugins/gtkui/interface.c:3831
+#: ../plugins/gtkui/interface.c:3712 ../plugins/gtkui/interface.c:3791
 #: ../plugins/gtkui/deadbeef.glade.h:174
 msgid "Strip ID3v2"
 msgstr "清除 ID3v2"
 
-#: ../plugins/gtkui/interface.c:3756 ../plugins/gtkui/interface.c:3879
+#: ../plugins/gtkui/interface.c:3716 ../plugins/gtkui/interface.c:3839
 #: ../plugins/gtkui/deadbeef.glade.h:175
 msgid "Strip ID3v1"
 msgstr "清除 ID3v1"
 
-#: ../plugins/gtkui/interface.c:3760 ../plugins/gtkui/interface.c:3835
-#: ../plugins/gtkui/interface.c:3875 ../plugins/gtkui/deadbeef.glade.h:176
+#: ../plugins/gtkui/interface.c:3720 ../plugins/gtkui/interface.c:3795
+#: ../plugins/gtkui/interface.c:3835 ../plugins/gtkui/deadbeef.glade.h:176
 msgid "Strip APEv2"
 msgstr "清除 APEv2"
 
-#: ../plugins/gtkui/interface.c:3768 ../plugins/gtkui/deadbeef.glade.h:177
+#: ../plugins/gtkui/interface.c:3728 ../plugins/gtkui/deadbeef.glade.h:177
 msgid "ID3v2 version"
 msgstr "ID3v2 版本"
 
-#: ../plugins/gtkui/interface.c:3775
+#: ../plugins/gtkui/interface.c:3735
 msgid "2.3 (Recommended)"
 msgstr "2.3 (推荐)"
 
-#: ../plugins/gtkui/interface.c:3776
+#: ../plugins/gtkui/interface.c:3736
 msgid "2.4"
 msgstr "2.4"
 
-#: ../plugins/gtkui/interface.c:3782 ../plugins/gtkui/deadbeef.glade.h:180
+#: ../plugins/gtkui/interface.c:3742 ../plugins/gtkui/deadbeef.glade.h:180
 msgid "ID3v1 character encoding (default is iso8859-1)"
 msgstr "ID3v1 字符编码(默认为 iso8859-1)"
 
-#: ../plugins/gtkui/interface.c:3819 ../plugins/gtkui/deadbeef.glade.h:181
+#: ../plugins/gtkui/interface.c:3779 ../plugins/gtkui/deadbeef.glade.h:181
 msgid "Write ID3v2.4"
 msgstr "写 ID3v2.4"
 
-#: ../plugins/gtkui/interface.c:4021 ../plugins/gtkui/deadbeef.glade.h:182
+#: ../plugins/gtkui/interface.c:3981 ../plugins/gtkui/deadbeef.glade.h:182
 msgid "Content-Type Mapping"
-msgstr ""
+msgstr "内容-类型 映射"
 
-#: ../plugins/gtkui/interface.c:4044 ../plugins/gtkui/deadbeef.glade.h:183
+#: ../plugins/gtkui/interface.c:4004 ../plugins/gtkui/deadbeef.glade.h:183
 msgid ""
 "This table defines the binding between network stream content types and "
 "DeaDBeeF decoder plugins. For example, mp3 files can have content type "
 "\"audio/x-mpeg\", and need to be decoded by DeaDBeeF's own \"stdmpg\" "
 "plugin, or \"ffmpeg\" plugin."
-msgstr ""
+msgstr "这个表格定义了网络流媒体内容类型与 DeaDBeeF 解码器插件之间的绑定。例如，mp3 文件的内容类型会是“audio/x-mpeg”，它需要通过 DeaDBeeF 自己的“stdmpg”插件或“ffmpeg”插件解码。"
 
-#: ../plugins/gtkui/interface.c:4092 ../plugins/gtkui/deadbeef.glade.h:184
+#: ../plugins/gtkui/interface.c:4052 ../plugins/gtkui/deadbeef.glade.h:184
 msgid "Reset to defaults"
-msgstr ""
+msgstr "复位为默认值"
 
-#: ../plugins/gtkui/interface.c:4187 ../plugins/gtkui/deadbeef.glade.h:185
+#: ../plugins/gtkui/interface.c:4147 ../plugins/gtkui/deadbeef.glade.h:185
 msgid "Content-Type:"
+msgstr "内容-类型："
+
+#: ../plugins/gtkui/interface.c:4160 ../plugins/gtkui/deadbeef.glade.h:186
+msgid "Plugins:"
+msgstr "插件："
+
+#: ../plugins/gtkui/interface.c:4228 ../plugins/gtkui/deadbeef.glade.h:187
+msgid "Button properties"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:4200 ../plugins/gtkui/deadbeef.glade.h:186
-#, fuzzy
-msgid "Plugins:"
-msgstr "插件"
+#: ../plugins/gtkui/interface.c:4243 ../plugins/gtkui/deadbeef.glade.h:188
+msgid "Color:"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:4255 ../plugins/gtkui/deadbeef.glade.h:189
+msgid "Text color:"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:4267 ../plugins/gtkui/deadbeef.glade.h:190
+msgid "Icon:"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:4279 ../plugins/gtkui/deadbeef.glade.h:191
+msgid "Label:"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:4360 ../plugins/gtkui/deadbeef.glade.h:192
+msgid "Select action"
+msgstr ""
 
 #: ../plugins/gtkui/mainplaylist.c:328 ../plugins/gtkui/search.c:416
 msgid "Artist / Album"
@@ -1091,7 +1116,7 @@ msgstr "值"
 
 #: ../plugins/gtkui/trkproperties.c:503
 msgid "[Multiple values]"
-msgstr ""
+msgstr "[多个值] "
 
 #: ../plugins/gtkui/trkproperties.c:678
 msgid "Writing tags..."
@@ -1099,7 +1124,7 @@ msgstr "正在写入标签..."
 
 #: ../plugins/gtkui/trkproperties.c:707
 msgid "Field name"
-msgstr ""
+msgstr "字段名"
 
 #: ../plugins/gtkui/trkproperties.c:710
 msgid "Name:"
@@ -1128,7 +1153,7 @@ msgstr "移除字段"
 #: ../main.c:89
 #, c-format
 msgid "Usage: deadbeef [options] [--] [file(s)]\n"
-msgstr ""
+msgstr "用法：deadbeef [选项] [--] [文件]\n"
 
 #: ../main.c:90
 #, c-format
@@ -1198,9 +1223,8 @@ msgstr "   --queue            向现有的播放列表中追加文件\n"
 
 #: ../main.c:103
 #, c-format
-msgid ""
-"   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
-msgstr ""
+msgid "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
+msgstr "   --gui PLUGIN       指定要使用的用户界面插件，默认为“GTK2”\n"
 
 #: ../main.c:104
 #, c-format
@@ -1213,27 +1237,21 @@ msgid ""
 "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
 "                      copy[r]ight, [e]lapsed\n"
-msgstr ""
-"                      FMT %%-语法: [a]艺人, [t]标题, [b]专辑,\n"
-"                      [l]时长, [n]音轨号, [y]年代, [c]注释,\n"
-"                      [r]版权, [e]已播放时间\n"
+msgstr "                      FMT %%-语法: [a]艺人, [t]标题, [b]专辑,\n                      [l]时长, [n]音轨号, [y]年代, [c]注释,\n                      [r]版权, [e]已播放时间\n"
 
 #: ../main.c:108
 #, c-format
 msgid ""
-"                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
-"- title\"\n"
-msgstr ""
-"                      例：--nowplaying \"%%a - %%t\" 将打印“艺人 - 标题”\n"
+"                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist"
+" - title\"\n"
+msgstr "                      例：--nowplaying \"%%a - %%t\" 将打印“艺人 - 标题”\n"
 
 #: ../main.c:109
 #, c-format
 msgid ""
-"                      for more info, see http://sourceforge.net/apps/"
-"mediawiki/deadbeef/index.php?title=Title_Formatting\n"
-msgstr ""
-"                      更多信息请参阅 http://sourceforge.net/apps/mediawiki/"
-"deadbeef/index.php?title=Title_Formatting\n"
+"                      for more info, see "
+"http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"
+msgstr "                      更多信息请参阅 http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"
 
 #: ../playlist.c:463 ../playlist.c:2434
 msgid "Default"
@@ -1247,7 +1265,7 @@ msgstr "是"
 msgid "No"
 msgstr "否"
 
-#: ../plugins/gtkui/deadbeef.glade.h:76
+#: ../plugins/gtkui/deadbeef.glade.h:75
 msgid ""
 "Item Index\n"
 "Playing\n"
@@ -1260,52 +1278,32 @@ msgid ""
 "Track Number\n"
 "Band / Album Artist\n"
 "Custom"
-msgstr ""
-"项目序号\n"
-"正在播放\n"
-"专辑封面\n"
-"艺人 - 专辑\n"
-"艺人\n"
-"专辑\n"
-"标题\n"
-"时长\n"
-"音轨号\n"
-"乐队 / 专辑艺人\n"
-"自定义"
+msgstr "项目序号\n正在播放\n专辑封面\n艺人 - 专辑\n艺人\n专辑\n标题\n时长\n音轨号\n乐队 / 专辑艺人\n自定义"
 
-#: ../plugins/gtkui/deadbeef.glade.h:89
+#: ../plugins/gtkui/deadbeef.glade.h:88
 msgid ""
 "Left\n"
 "Right"
-msgstr ""
-"左\n"
-"右"
+msgstr "左\n右"
 
 #: ../plugins/gtkui/deadbeef.glade.h:96
 msgid ""
 "Disable\n"
 "Track\n"
 "Album"
-msgstr ""
-"禁用\n"
-"音轨\n"
-"专辑"
+msgstr "禁用\n音轨\n专辑"
 
 #: ../plugins/gtkui/deadbeef.glade.h:166
 msgid ""
 "Ascending\n"
 "Descending"
-msgstr ""
-"升序\n"
-"降序"
+msgstr "升序\n降序"
 
 #: ../plugins/gtkui/deadbeef.glade.h:178
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
-msgstr ""
-"2.3 (推荐)\n"
-"2.4"
+msgstr "2.3 (推荐)\n2.4"
 
 #: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
 #: ../plugins/converter/support.c:90 ../plugins/converter/support.c:114
@@ -1319,15 +1317,13 @@ msgstr "找不到位图文件：%s"
 msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings."
-msgstr ""
-"wildmidi：找不到 freepats 配置文件。请安装 timidity-freepats 软件包，或在插件"
-"设置中指定 freepats.cfg 的路径。"
+msgstr "wildmidi：找不到 freepats 配置文件。请安装 timidity-freepats 软件包，或在插件设置中指定 freepats.cfg 的路径。"
 
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
 msgid "Add audio CD"
-msgstr ""
+msgstr "添加音频 CD"
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
@@ -1373,7 +1369,7 @@ msgstr "Scrobble URL"
 
 #: ../translation/extra.c:16
 msgid "Prefer Album Artist over Artist field"
-msgstr ""
+msgstr "优先使用专辑艺人而不是艺人字段"
 
 #. OSS output plugin
 #: ../translation/extra.c:18
@@ -1445,7 +1441,7 @@ msgstr "重采样品质(0~2，越大品质越好)"
 
 #: ../translation/extra.c:37
 msgid "8-bit output (default is 16)"
-msgstr ""
+msgstr "8位输出(默认为16位)"
 
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:39
@@ -1454,11 +1450,11 @@ msgstr "最大歌曲长度(分钟)"
 
 #: ../translation/extra.c:40
 msgid "Fadeout length (seconds)"
-msgstr ""
+msgstr "淡出时长(秒)"
 
 #: ../translation/extra.c:41
 msgid "Play loops nr. of times (if available)"
-msgstr ""
+msgstr "播放循环次数(如果可用)"
 
 #. Standard GTK2 user interface plugin
 #: ../translation/extra.c:43
@@ -1611,7 +1607,7 @@ msgstr "目标采样率"
 
 #: ../translation/extra.c:94
 msgid "Quality / Algorithm"
-msgstr ""
+msgstr "品质 / 算法"
 
 #: ../translation/extra.c:95
 msgid "Automatic Samplerate (overrides Target Samplerate)"
@@ -1620,21 +1616,21 @@ msgstr "自动采样率(替代目标采样率)"
 #. shellexecui
 #: ../translation/extra.c:97
 msgid "Configure custom shell commands"
-msgstr ""
+msgstr "配置自定义的 shell 命令"
 
 #. mpgmad
 #: ../translation/extra.c:99
 msgid "Disable gapless playback (faster scanning)"
-msgstr ""
+msgstr "禁用无缝播放(可加快扫描)"
 
 #. adplug
 #: ../translation/extra.c:101
 msgid "Prefer Ken emu over Satoh (surround won't work)"
-msgstr ""
+msgstr "优先使用 Ken 模拟器而非 Satoh (环绕效果将无法使用)"
 
 #: ../translation/extra.c:102
 msgid "Enable surround"
-msgstr ""
+msgstr "启用环绕效果"
 
 #: ../plugins/converter/convgui.c:117
 msgid "The file already exists. Overwrite?"
@@ -1728,12 +1724,12 @@ msgstr "输出文件夹："
 #: ../plugins/converter/interface.c:109
 #: ../plugins/converter/converter.glade.h:2
 msgid "Write to source track folder"
-msgstr ""
+msgstr "写入源音轨文件夹"
 
 #: ../plugins/converter/interface.c:113
 #: ../plugins/converter/converter.glade.h:3
 msgid "Preserve folder structure"
-msgstr ""
+msgstr "保持文件夹结构"
 
 #: ../plugins/converter/interface.c:121
 #: ../plugins/converter/converter.glade.h:4
@@ -1746,9 +1742,7 @@ msgstr "输出文件名："
 msgid ""
 "Extension (e.g. .mp3) will be appended automatically.\n"
 "Leave the field empty for default (%a - %t)."
-msgstr ""
-"扩展名(如 .mp3)会自动追加。\n"
-"不填则使用默认(%a - %t)。"
+msgstr "扩展名(如 .mp3)会自动追加。\n不填则使用默认(%a - %t)。"
 
 #: ../plugins/converter/interface.c:145
 #: ../plugins/converter/converter.glade.h:8
@@ -1838,9 +1832,7 @@ msgstr "命令行："
 msgid ""
 "Example: lame - %o\n"
 "%i for input file, %o for output file, - for stdin"
-msgstr ""
-"例如：lame - %o\n"
-"%i 为输入文件，%o 为输出文件，- 为标准输入"
+msgstr "例如：lame - %o\n%i 为输入文件，%o 为输出文件，- 为标准输入"
 
 #: ../plugins/converter/interface.c:429
 #: ../plugins/converter/converter.glade.h:31
@@ -1848,9 +1840,7 @@ msgstr ""
 msgid ""
 "<small>%o - output file name\n"
 "%i - temporary input file name</small>"
-msgstr ""
-"<small>%o - 输出文件名\n"
-"%i - 临时输入文件名</small>"
+msgstr "<small>%o - 输出文件名\n%i - 临时输入文件名</small>"
 
 #: ../plugins/converter/interface.c:438
 #: ../plugins/converter/converter.glade.h:33
@@ -1920,44 +1910,44 @@ msgid ""
 "24 bit signed int\n"
 "32 bit signed int\n"
 "32 bit float"
-msgstr ""
+msgstr "保持源格式\n8 位有符号整型\n16 位有符号整型\n24 位有符号整型\n32 位有符号整型\n32 位浮点型"
 
 #: ../plugins/converter/converter.glade.h:19
 msgid ""
 "Prompt\n"
 "Overwrite"
-msgstr ""
+msgstr "覆盖前\n提示"
 
 #: ../plugins/converter/converter.glade.h:34
 msgid ""
 "Pipe\n"
 "Temporary file"
-msgstr ""
+msgstr "对临时文件\n进行管道定向"
 
 #: ../plugins/shellexecui/interface.c:46
 #: ../plugins/shellexecui/shellexec.glade.h:1
 msgid "Custom Shell Commands"
-msgstr ""
+msgstr "自定义 shell 命令"
 
 #: ../plugins/shellexecui/interface.c:69
 #: ../plugins/shellexecui/shellexec.glade.h:5
 msgid "Edit"
-msgstr ""
+msgstr "编辑"
 
 #: ../plugins/shellexecui/interface.c:87
 #: ../plugins/shellexecui/shellexec.glade.h:2
 msgid "Close"
-msgstr ""
+msgstr "关闭"
 
 #: ../plugins/shellexecui/interface.c:144
 #: ../plugins/shellexecui/shellexec.glade.h:6
 msgid "Edit Command"
-msgstr ""
+msgstr "编辑命令"
 
 #: ../plugins/shellexecui/interface.c:165
 #: ../plugins/shellexecui/shellexec.glade.h:8
 msgid "Command:"
-msgstr ""
+msgstr "命令："
 
 #: ../plugins/shellexecui/interface.c:177
 #: ../plugins/shellexecui/shellexec.glade.h:10
@@ -1966,181 +1956,180 @@ msgid ""
 "Arbitrary shell command. Will be executed in the shell context which the "
 "main application was started from. Title formatting can be used. Example: "
 "xdg-open %D"
-msgstr ""
+msgstr "任意 shell 命令。命令将在主应用程序启动的 shell 环境中执行。可以使用标题格式化代码。例如：xdg-open %D"
 
 #: ../plugins/shellexecui/interface.c:180
 #: ../plugins/shellexecui/shellexec.glade.h:11
 msgid "ID:"
-msgstr ""
+msgstr "标识："
 
 #: ../plugins/shellexecui/interface.c:192
 #: ../plugins/shellexecui/shellexec.glade.h:12
 msgid "Free-form name, for example \"My Shell Command\""
-msgstr ""
+msgstr "一个名字，形式不限，如“我的 shell 命令”"
 
 #: ../plugins/shellexecui/interface.c:200
 #: ../plugins/shellexecui/shellexec.glade.h:13
 msgid ""
-"Command ID, normally it should be something short, for example \"youtube_open"
-"\". It must be unique."
-msgstr ""
+"Command ID, normally it should be something short, for example "
+"\"youtube_open\". It must be unique."
+msgstr "命令标识，通常应简短，如“youtube_open”。此标识应唯一。"
 
 #: ../plugins/shellexecui/interface.c:203
 #: ../plugins/shellexecui/shellexec.glade.h:15
 msgid "Single Tracks"
-msgstr ""
+msgstr "单条音轨"
 
 #: ../plugins/shellexecui/interface.c:206
 #: ../plugins/shellexecui/shellexec.glade.h:14
 msgid "Works on single track."
-msgstr ""
+msgstr "作用于单条音轨。"
 
 #: ../plugins/shellexecui/interface.c:208
 #: ../plugins/shellexecui/shellexec.glade.h:17
 msgid "Multiple Tracks"
-msgstr ""
+msgstr "多条音轨。"
 
 #: ../plugins/shellexecui/interface.c:211
 #: ../plugins/shellexecui/shellexec.glade.h:16
 msgid "Works on multiple tracks."
-msgstr ""
+msgstr "作用于多条音轨。"
 
 #: ../plugins/shellexecui/interface.c:213
 #: ../plugins/shellexecui/shellexec.glade.h:19
 msgid "Local"
-msgstr ""
+msgstr "本地"
 
 #: ../plugins/shellexecui/interface.c:216
 #: ../plugins/shellexecui/shellexec.glade.h:18
 msgid "Works on local files."
-msgstr ""
+msgstr "作用于本地文件。"
 
 #: ../plugins/shellexecui/interface.c:218
 #: ../plugins/shellexecui/shellexec.glade.h:21
 msgid "Remote"
-msgstr ""
+msgstr "远程"
 
 #: ../plugins/shellexecui/interface.c:221
 #: ../plugins/shellexecui/shellexec.glade.h:20
 msgid "Works on remote files (e.g. http:// streams)"
-msgstr ""
+msgstr "作用于远程文件(如 http:// 流)"
 
 #: ../plugins/shellexecui/interface.c:223
 #: ../plugins/shellexecui/shellexec.glade.h:23
 msgid "Common"
-msgstr ""
+msgstr "常见"
 
 #: ../plugins/shellexecui/interface.c:226
 #: ../plugins/shellexecui/shellexec.glade.h:22
 msgid "Item should appear in the main menu"
-msgstr ""
+msgstr "项目应显示在主菜单中"
 
 #: ../plugins/shellexecui/shellexecui.c:94
 msgid "Add Command"
-msgstr ""
+msgstr "添加命令"
 
 #: ../plugins/shellexecui/shellexecui.c:137
 msgid "Delete"
-msgstr ""
+msgstr "删除"
 
 #: ../plugins/shellexecui/shellexecui.c:139
 msgid "This action will delete the selected shell command. Are you sure?"
-msgstr ""
+msgstr "此操作将删除所选的 shell 命令。您确定吗？"
 
 #: ../plugins/shellexecui/shellexecui.c:141
 msgid "Confirm Remove"
-msgstr ""
+msgstr "确认移除"
 
 #: ../plugins/shellexecui/shellexecui.c:227
 msgid "ID must be non-empty and unique.\n"
-msgstr ""
+msgstr "标识不能为空，且必须唯一。\n"
 
 #: ../plugins/shellexecui/shellexecui.c:233
 msgid "Title must be non-empty.\n"
-msgstr ""
+msgstr "标题不能为空。\n"
 
 #: ../plugins/shellexecui/shellexecui.c:239
 msgid "Shell Command must be non-empty.\n"
-msgstr ""
+msgstr "shell 命令不能为空。\n"
 
 #: ../plugins/shellexecui/shellexecui.c:246
 #: ../plugins/shellexecui/shellexecui.c:250
 msgid "Invalid Values"
-msgstr ""
+msgstr "无效的值"
 
 #: ../plugins/gtkui/actionhandlers.c:107
 msgid "Supported sound formats"
-msgstr ""
+msgstr "支持的声音格式"
 
 #: ../plugins/gtkui/actionhandlers.c:118
 msgid "All files (*)"
-msgstr ""
+msgstr "所有文件;(*)"
 
 #: ../plugins/gtkui/actionhandlers.c:126
 msgid "Open file(s)..."
-msgstr ""
+msgstr "打开文件;..."
 
 #: ../plugins/gtkui/actionhandlers.c:165
 msgid "Add file(s) to playlist..."
-msgstr ""
+msgstr "向播放列表添加文件;..."
 
 #: ../plugins/gtkui/actionhandlers.c:211
 msgid "Add folder(s) to playlist..."
-msgstr ""
+msgstr "向播放列表添加文件夹;..."
 
 #: ../plugins/gtkui/actionhandlers.c:216
 msgid "Follow symlinks"
-msgstr ""
+msgstr "跟随符号链接"
 
 #: ../plugins/gtkui/actionhandlers.c:427
 msgid "help.txt"
-msgstr ""
+msgstr "帮助.txt"
 
 #: ../plugins/gtkui/actionhandlers.c:490
 msgid "Delete files from disk"
-msgstr ""
+msgstr "从磁盘中删除文件"
 
 #: ../plugins/gtkui/actionhandlers.c:491
 msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr ""
+msgstr "文件将消失。继续吗？\n(可以在 GTKUI 插件设置中关掉这个对话框)"
 
 #: ../plugins/gtkui/actionhandlers.c:660
 msgid "Load Playlist"
-msgstr ""
+msgstr "加载播放列表"
 
 #: ../plugins/gtkui/actionhandlers.c:675
 msgid "Other files (*)"
-msgstr ""
+msgstr "其他文件;(*)"
 
 #: ../plugins/gtkui/actionhandlers.c:709
 msgid "Save Playlist As"
-msgstr ""
+msgstr "播放列表另存为"
 
 #: ../plugins/gtkui/actionhandlers.c:720
 msgid "DeaDBeeF playlist files (*.dbpl)"
-msgstr ""
+msgstr "DeaDBeeF 播放列表文件(*.dbpl)"
 
 #: ../plugins/gtkui/ctmapping.c:129
 msgid "Content-Type"
-msgstr ""
+msgstr "内容-类型"
 
 #: ../plugins/gtkui/ctmapping.c:199
 msgid "Invalid value(s)."
-msgstr ""
+msgstr "无效的值。"
 
 #: ../plugins/gtkui/ctmapping.c:200
 msgid ""
-"Content-type and Plugins fields must be non-empty, and comply with the "
-"rules.\n"
+"Content-type and Plugins fields must be non-empty, and comply with the rules.\n"
 "Example content-type: 'audio/mpeg'.\n"
 "Example plugin ids: 'stdmpg ffmpeg'.\n"
 "Spaces must be used as separators in plugin ids list.\n"
 "Content type should be only letters, numbers and '-' sign.\n"
 "Plugin id can contain only letters and numbers."
-msgstr ""
+msgstr "内容-类型 和 插件 字段不能为空，并且要符合规则。\n内容-类型 示例：'audio/mpeg'\n插件标识 示例：'stdmpg ffmpeg'\n插件标识列表中必须使用空格分隔。\n内容类型 只能包含字母、数字和“-”号。\n插件标识只能包含字母和数字。"
 
 #: ../plugins/gtkui/ctmapping.c:228 ../plugins/gtkui/ctmapping.c:260
 msgid "Nothing is selected."
-msgstr ""
+msgstr "没有选择项目。"

@@ -4252,7 +4252,7 @@ create_button_properties (void)
   gtk_widget_show (hbox118);
   gtk_box_pack_start (GTK_BOX (vbox42), hbox118, FALSE, FALSE, 0);
 
-  use_textcolor = gtk_check_button_new_with_mnemonic (_("Text color"));
+  use_textcolor = gtk_check_button_new_with_mnemonic (_("Text color:"));
   gtk_widget_show (use_textcolor);
   gtk_box_pack_start (GTK_BOX (hbox118), use_textcolor, FALSE, FALSE, 0);
 
