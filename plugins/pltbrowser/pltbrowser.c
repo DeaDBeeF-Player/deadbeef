@@ -144,7 +144,7 @@ w_pltbrowser_create (void) {
     gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (w->base.widget), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     w->tree = gtk_tree_view_new ();
     gtk_widget_show (w->tree);
-    gtk_tree_view_set_enable_search (GTK_TREE_VIEW (w->tree), FALSE);
+    gtk_tree_view_set_enable_search (GTK_TREE_VIEW (w->tree), TRUE);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->tree);
 
     GtkListStore *store = gtk_list_store_new (1, G_TYPE_STRING);
