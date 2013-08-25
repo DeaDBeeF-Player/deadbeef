@@ -1873,7 +1873,7 @@ ddb_listview_list_set_hscroll (DdbListview *ps, int newscroll) {
     }
 }
 
-int
+gboolean
 ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state) {
     int prev = ps->binding->cursor ();
     int cursor = prev;
@@ -1951,10 +1951,10 @@ ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state) {
             ps->binding->list_context_menu (ps, it, sel);
             ps->binding->unref (it);
         }
-        return 0;
+        return TRUE;
     }
     else {
-        return 0;
+        return FALSE;
     }
 
     if (state & GDK_SHIFT_MASK) {
@@ -2017,7 +2017,7 @@ ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state) {
         ps->shift_sel_anchor = cursor;
         ddb_listview_set_cursor (ps, cursor);
     }
-    return 1;
+    return TRUE;
 }
 
 int
@@ -3087,8 +3087,7 @@ ddb_listview_clear_sort (DdbListview *listview) {
 gboolean
 ddb_listview_list_key_press_event (GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
     DdbListview *listview = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
-    ddb_listview_handle_keypress (listview, event->keyval, event->state);
-    return FALSE;
+    return ddb_listview_handle_keypress (listview, event->keyval, event->state);
 
 }
 

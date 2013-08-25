@@ -497,7 +497,6 @@ on_hotkeys_list_cursor_changed         (GtkTreeView     *treeview,
     }
     else {
         gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkeys_actions"), FALSE);
-        gtk_tree_view_set_cursor (GTK_TREE_VIEW (lookup_widget (prefwin, "hotkeys_actions")), NULL, NULL, FALSE);
         gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkey_is_global"), FALSE);
         gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "hotkey_is_global")), FALSE);
         gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkeys_set_key"), FALSE);
