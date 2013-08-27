@@ -27,7 +27,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <gdk/gdkkeysyms.h>
-#include <X11/Xlib.h>
+//#include <X11/Xlib.h>
 #include "../../gettext.h"
 
 #include "callbacks.h"
@@ -183,6 +183,7 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
                                         GdkEventKey     *event,
                                         gpointer         user_data)
 {
+#if 0
     // local hotkeys
     // first translate gdk modifiers into X11 constants
     int mods = 0;
@@ -230,7 +231,7 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
         }
     }
     trace ("action not found\n");
-
+#endif
     return FALSE;
 }
 

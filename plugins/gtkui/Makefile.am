@@ -150,10 +150,10 @@ GTKGLEXT_SOURCES = \
 	gtkglext-gtk3/gdk/x11/gdkx11glquery.h\
 	gtkglext-gtk3/gdk/x11/gdkx11glwindow.h
 
-GTKGLEXT_CFLAGS = -I@top_srcdir@/plugins/gtkui/gtkglext-gtk3 -I@top_srcdir@/plugins/gtkui/gtkglext-gtk3/gdk -DGTK_GL_COMPILATION -DGDK_GL_COMPILATION
-GTKGLEXT_LIBS = -lGL
+GTKGLEXT_CFLAGS = 
+GTKGLEXT_LIBS = 
 
-ddb_gui_GTK3_la_SOURCES = $(GTKUI_SOURCES) $(GTKGLEXT_SOURCES)
+ddb_gui_GTK3_la_SOURCES = $(GTKUI_SOURCES)
 ddb_gui_GTK3_la_LDFLAGS = -module
 
 if STATICLINK
