@@ -597,6 +597,9 @@ plug_remove_plugin (void *p) {
 // l must be strlen(d_name)
 static int
 load_plugin (const char *plugdir, char *d_name, int l) {
+    if (strstr (d_name, ".0.")) {
+        return -1;
+    }
     char fullname[PATH_MAX];
     snprintf (fullname, PATH_MAX, "%s/%s", plugdir, d_name);
 

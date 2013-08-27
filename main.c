@@ -712,14 +712,6 @@ plugloader (void *ctx) {
     char **argv = args->argv;
     char *cmdline = args->cmdline;
     int size = args->size;
-
-    messagepump_init (); // required to push messages while handling commandline
-    if (plug_load_all ()) { // required to add files to playlist from commandline
-        exit (-1);
-    }
-
-    cond_signal (gui_cond);
-
     pl_load_all ();
     plt_set_curr_idx (conf_get_int ("playlist.current", 0));
 
@@ -752,7 +744,9 @@ plugloader (void *ctx) {
     streamer_init ();
 
     plug_connect_all ();
-    messagepump_push (DB_EV_PLUGINSLOADED, 0, 0, 0);
+    //messagepump_push (DB_EV_PLUGINSLOADED, 0, 0, 0);
+    cond_signal (gui_cond);
+
 
     if (!noloadpl) {
         restore_resume_state ();
@@ -1043,12 +1037,18 @@ main (int argc, char *argv[]) {
     conf_set_str ("deadbeef_version", VERSION);
 
     volume_set_db (conf_get_float ("playback.volume", 0)); // volume need to be initialized before plugins start
+
+    messagepump_init (); // required to push messages while handling commandline
+    if (plug_load_all ()) { // required to add files to playlist from commandline
+        exit (-1);
+    }
+
     
 
     gui_cond = cond_create ();
     gui_mutex = mutex_create ();
     main_args_t args = {argc,argv,cmdline,size};
-    thread_start (plugloader, NULL);
+    thread_start (plugloader, &args);
     printf ("waiting for GUI\n");
     cond_wait (gui_cond, gui_mutex);
     
