@@ -57,6 +57,16 @@
 //#define WRITE_DUMP 1
 //#define DETECT_PL_LOCK_RC 1
 
+#ifndef strdupa
+# define strdupa(s)							      \
+    ({									      \
+      const char *old = (s);					      \
+      size_t len = strlen (old) + 1;				      \
+      char *new = (char *) alloca (len);			      \
+      (char *) memcpy (new, old, len);				      \
+    })
+#endif
+
 #if WRITE_DUMP
 FILE *out;
 #endif

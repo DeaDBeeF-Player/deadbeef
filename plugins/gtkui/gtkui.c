@@ -51,7 +51,7 @@
 #include "gtkui_api.h"
 #include "wingeom.h"
 #include "widgets.h"
-#include "X11/Xlib.h"
+//#include "X11/Xlib.h"
 #undef EGG_SM_CLIENT_BACKEND_XSMP
 #ifdef EGG_SM_CLIENT_BACKEND_XSMP
 #include "smclient/eggsmclient.h"
@@ -817,6 +817,12 @@ DB_playItem_t *
 gtkui_plt_load (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 
 int
+gtkui_command (int n, ...) {
+    gtkui_thread (NULL);
+    return 0;
+}
+
+int
 gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     ddb_gtkui_widget_t *rootwidget = w_get_rootwidget ();
     if (rootwidget) {
@@ -824,6 +830,7 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     }
     switch (id) {
     case DB_EV_PLUGINSLOADED:
+        break;
         // gtk must be running in separate thread
         gtk_initialized = 0;
         gtk_tid = deadbeef->thread_start (gtkui_thread, NULL);
@@ -832,21 +839,6 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
             usleep (10000);
         }
 
-        // override default file adding APIs to show progress bar
-        gtkui_original_plt_add_dir = deadbeef->plt_add_dir;
-        deadbeef->plt_add_dir = gtkui_plt_add_dir;
-
-        gtkui_original_plt_add_file = deadbeef->plt_add_file;
-        deadbeef->plt_add_file = gtkui_plt_add_file;
-
-        gtkui_original_pl_add_files_begin = deadbeef->pl_add_files_begin;
-        deadbeef->pl_add_files_begin = gtkui_pl_add_files_begin;
-
-        gtkui_original_pl_add_files_end = deadbeef->pl_add_files_end;
-        deadbeef->pl_add_files_end = gtkui_pl_add_files_end;
-
-        gtkui_original_plt_load = deadbeef->plt_load;
-        deadbeef->plt_load = gtkui_plt_load;
         break;
     case DB_EV_ACTIVATED:
         g_idle_add (activate_cb, NULL);
@@ -948,7 +940,7 @@ gtkui_thread (void *ctx) {
 #ifdef __linux__
     prctl (PR_SET_NAME, "deadbeef-gtkui", 0, 0, 0, 0);
 #endif
-    XInitThreads (); // gtkglext/xcb doesn't work without this
+    //XInitThreads (); // gtkglext/xcb doesn't work without this
     // let's start some gtk
     g_thread_init (NULL);
     add_pixmap_directory (deadbeef->get_pixmap_dir ());
@@ -1109,6 +1101,22 @@ gtkui_thread (void *ctx) {
     gtk_initialized = 1;
 
     g_idle_add (unlock_playlist_columns_cb, NULL);
+
+    // override default file adding APIs to show progress bar
+    gtkui_original_plt_add_dir = deadbeef->plt_add_dir;
+    deadbeef->plt_add_dir = gtkui_plt_add_dir;
+
+    gtkui_original_plt_add_file = deadbeef->plt_add_file;
+    deadbeef->plt_add_file = gtkui_plt_add_file;
+
+    gtkui_original_pl_add_files_begin = deadbeef->pl_add_files_begin;
+    deadbeef->pl_add_files_begin = gtkui_pl_add_files_begin;
+
+    gtkui_original_pl_add_files_end = deadbeef->pl_add_files_end;
+    deadbeef->pl_add_files_end = gtkui_pl_add_files_end;
+
+    gtkui_original_plt_load = deadbeef->plt_load;
+    deadbeef->plt_load = gtkui_plt_load;
 
     gtk_main ();
 
@@ -1766,5 +1774,6 @@ static ddb_gtkui_t plugin = {
     .w_append = w_append,
     .w_replace = w_replace,
     .w_remove = w_remove,
+    .gui.plugin.command = gtkui_command,
     .create_pltmenu = gtkui_create_pltmenu,
 };

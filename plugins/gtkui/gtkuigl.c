@@ -21,6 +21,7 @@
 #include "support.h"
 #include "gtkuigl.h"
 
+#if 0
 static int gl_initialized;
 static int gl_init_state;
 //PFNGLXSWAPINTERVALSGIPROC glXSwapIntervalSGI;
@@ -50,3 +51,4 @@ void
 gtkui_gl_free (void) {
     // ???
 }
+#endif

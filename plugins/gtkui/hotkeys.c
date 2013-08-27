@@ -57,8 +57,18 @@ typedef struct
 #include "interface.h"
 #include "../libparser/parser.h"
 #include "../hotkeys/hotkeys.h"
-#include <X11/Xlib.h> // only for the KeySym type
+//#include <X11/Xlib.h> // only for the KeySym type
 #include "hotkeys.h"
+
+#ifndef strdupa
+# define strdupa(s)							      \
+    ({									      \
+      const char *old = (s);					      \
+      size_t len = strlen (old) + 1;				      \
+      char *new = (char *) alloca (len);			      \
+      (char *) memcpy (new, old, len);				      \
+    })
+#endif
 
 void
 on_hotkeys_actions_cursor_changed      (GtkTreeView     *treeview,
@@ -600,13 +610,13 @@ on_hotkey_is_global_toggled            (GtkToggleButton *togglebutton,
 
 typedef struct {
     const char *name;
-    KeySym keysym;
+    int keysym;
 } xkey_t;
 
 #define KEY(kname, kcode) { .name=kname, .keysym=kcode },
 
 static const xkey_t keys[] = {
-    #include "../hotkeys/keysyms.inc"
+//    #include "../hotkeys/keysyms.inc"
 };
 
 static const char *

@@ -19,6 +19,7 @@
 #ifndef __GTKUIGL_H
 #define __GTKUIGL_H
 
+#if 0
 #include <gtk/gtkgl.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -32,5 +33,5 @@
 
 int
 gtkui_gl_init (void);
-
+#endif
 #endif

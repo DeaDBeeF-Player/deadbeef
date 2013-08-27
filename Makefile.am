@@ -46,7 +46,7 @@ deadbeef_SOURCES =\
 sdkdir = $(pkgincludedir)
 sdk_HEADERS = deadbeef.h
 
-deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) $(ICONV_LIB) $(DL_LIBS) -lm -lpthread 
+deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) $(ICONV_LIB) $(DL_LIBS) -lm -lpthread
 
 AM_CFLAGS = $(DEPS_CFLAGS) -std=c99
 AM_CPPFLAGS = $(DEPS_CFLAGS)
