@@ -2317,7 +2317,7 @@ ddb_listview_header_configure_event              (GtkWidget       *widget,
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     draw_init_font (&ps->hdrctx, gtk_widget_get_style (widget));
-    int height = draw_get_listview_rowheight (&ps->hdrctx);
+    int height = draw_get_listview_rowheight (&ps->hdrctx) + 4;
     GtkAllocation a;
     gtk_widget_get_allocation (widget, &a);
     if (height != a.height) {
@@ -2357,8 +2357,6 @@ ddb_listview_header_realize                      (GtkWidget       *widget,
 {
     // create cursor for sizing headers
     DdbListview *listview = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
-    int h = draw_get_font_size (&listview->hdrctx);
-    gtk_widget_set_size_request (widget, -1, h + 10);
     listview->cursor_sz = gdk_cursor_new (GDK_SB_H_DOUBLE_ARROW);
     listview->cursor_drag = gdk_cursor_new (GDK_FLEUR);
 }
