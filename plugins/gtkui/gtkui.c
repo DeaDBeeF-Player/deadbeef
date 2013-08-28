@@ -816,12 +816,6 @@ DB_playItem_t *
 gtkui_plt_load (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 
 int
-gtkui_command (int n, ...) {
-    gtkui_thread (NULL);
-    return 0;
-}
-
-int
 gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     ddb_gtkui_widget_t *rootwidget = w_get_rootwidget ();
     if (rootwidget) {
@@ -1273,6 +1267,7 @@ gtkui_quit (void) {
 static int
 gtkui_start (void) {
     fprintf (stderr, "gtkui plugin compiled for gtk version: %d.%d.%d\n", GTK_MAJOR_VERSION, GTK_MINOR_VERSION, GTK_MICRO_VERSION);
+    gtkui_thread (NULL);
 
     return 0;
 }
@@ -1710,7 +1705,7 @@ static ddb_gtkui_t plugin = {
     .gui.plugin.api_vminor = 5,
     .gui.plugin.version_major = 2,
     .gui.plugin.version_minor = DDB_GTKUI_API_VERSION,
-    .gui.plugin.type = DB_PLUGIN_MISC,
+    .gui.plugin.type = DB_PLUGIN_GUI,
     .gui.plugin.id = DDB_GTKUI_PLUGIN_ID,
 #if GTK_CHECK_VERSION(3,0,0)
     .gui.plugin.name = "GTK3 user interface",
@@ -1758,6 +1753,5 @@ static ddb_gtkui_t plugin = {
     .w_append = w_append,
     .w_replace = w_replace,
     .w_remove = w_remove,
-    .gui.plugin.command = gtkui_command,
     .create_pltmenu = gtkui_create_pltmenu,
 };

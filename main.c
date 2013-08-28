@@ -697,31 +697,29 @@ restore_resume_state (void) {
     }
 }
 
-typedef struct {
-    int argc;
-    char **argv;
-    char *cmdline;
-    int size;
-} main_args_t;
-
-//uintptr_t gui_cond, gui_mutex;
 uintptr_t mainloop_tid;
+
+DB_plugin_t *
+plug_get_gui (void) {
+    struct DB_plugin_s **plugs = plug_get_list ();
+    for (int i = 0; plugs[i]; i++) {
+        if (plugs[i]->type == DB_PLUGIN_GUI) {
+            return plugs[i];
+        }
+    }
+    return NULL;
+}
 
 static void
 mainloop_thread (void *ctx) {
-    main_args_t *args = ctx;
-    int argc = args->argc;
-    char **argv = args->argv;
-    char *cmdline = args->cmdline;
-    int size = args->size;
-
     // this runs until DB_EV_TERMINATE is sent (blocks right here)
     player_mainloop ();
 
     // tell the gui thread to finish
-    DB_plugin_t *gui = plug_get_for_id ("gtkui3_1");
-    gui->stop ();
-    //cond_signal (gui_cond);
+    DB_plugin_t *gui = plug_get_gui ();
+    if (gui) {
+        gui->stop ();
+    }
     return;
 }
 
@@ -1014,16 +1012,12 @@ main (int argc, char *argv[]) {
 
     server_tid = thread_start (server_loop, NULL);
 
-    //gui_cond = cond_create ();
-    //gui_mutex = mutex_create ();
-    main_args_t args = {argc,argv,cmdline,size};
-    mainloop_tid = thread_start (mainloop_thread, &args);
-//    fprintf (stderr, "waiting for GUI\n");
-//    cond_wait (gui_cond, gui_mutex);
-//    mutex_unlock (gui_mutex);
+    mainloop_tid = thread_start (mainloop_thread, NULL);
 
-    DB_plugin_t *gui = plug_get_for_id ("gtkui3_1");
-    gui->command (10, 0);
+    DB_plugin_t *gui = plug_get_gui ();
+    if (gui) {
+        gui->start ();
+    }
 
     fprintf (stderr, "gui plugin has quit; waiting for mainloop thread to finish\n");
     thread_join (mainloop_tid);

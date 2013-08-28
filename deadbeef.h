@@ -190,6 +190,7 @@ enum {
     DB_PLUGIN_MISC    = 4,
     DB_PLUGIN_VFS     = 5,
     DB_PLUGIN_PLAYLIST = 6,
+    DB_PLUGIN_GUI = 7,
 };
 
 // output plugin states
