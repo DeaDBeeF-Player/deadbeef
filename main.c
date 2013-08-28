@@ -704,93 +704,24 @@ typedef struct {
     int size;
 } main_args_t;
 
-uintptr_t gui_cond, gui_mutex;
-void
-plugloader (void *ctx) {
+//uintptr_t gui_cond, gui_mutex;
+uintptr_t mainloop_tid;
+
+static void
+mainloop_thread (void *ctx) {
     main_args_t *args = ctx;
     int argc = args->argc;
     char **argv = args->argv;
     char *cmdline = args->cmdline;
     int size = args->size;
-    pl_load_all ();
-    plt_set_curr_idx (conf_get_int ("playlist.current", 0));
 
-    // execute server commands in local context
-    int noloadpl = 0;
-    if (argc > 1) {
-        int res = server_exec_command_line (cmdline, size, NULL, 0);
-        // some of the server commands ran on 1st instance should terminate it
-        if (res == 2) {
-            noloadpl = 1;
-        }
-        else if (res > 0) {
-            exit (0);
-        }
-        else if (res < 0) {
-            exit (-1);
-        }
-    }
-
-    free (cmdline);
-
-#if 0
-    signal (SIGTERM, sigterm_handler);
-    atexit (atexit_handler); // helps to save in simple cases
-#endif
-
-    // start all subsystems
-    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
-
-    streamer_init ();
-
-    plug_connect_all ();
-    //messagepump_push (DB_EV_PLUGINSLOADED, 0, 0, 0);
-    cond_signal (gui_cond);
-
-
-    if (!noloadpl) {
-        restore_resume_state ();
-    }
-
-    server_tid = thread_start (server_loop, NULL);
-    // this runs in main thread (blocks right here)
+    // this runs until DB_EV_TERMINATE is sent (blocks right here)
     player_mainloop ();
 
-    // terminate server and wait for completion
-    if (server_tid) {
-        server_terminate = 1;
-        thread_join (server_tid);
-        server_tid = 0;
-    }
-
-    // save config
-    pl_save_all ();
-    conf_save ();
-
-    // delete legacy session file
-    {
-        char sessfile[1024]; // $HOME/.config/deadbeef/session
-        if (snprintf (sessfile, sizeof (sessfile), "%s/deadbeef/session", confdir) < sizeof (sessfile)) {
-            unlink (sessfile);
-        }
-    }
-
-    // stop receiving messages from outside
-    server_close ();
-
-    // plugins might still hold references to playitems,
-    // and query configuration in background
-    // so unload everything 1st before final cleanup
-    plug_disconnect_all ();
-    plug_unload_all ();
-
-    // at this point we can simply do exit(0), but let's clean up for debugging
-    pl_free (); // may access conf_*
-    conf_free ();
-    messagepump_free ();
-    plug_cleanup ();
-
-    fprintf (stderr, "hej-hej!\n");
+    // tell the gui thread to finish
+    DB_plugin_t *gui = plug_get_for_id ("gtkui3_1");
+    gui->stop ();
+    //cond_signal (gui_cond);
     return;
 }
 
@@ -1042,18 +973,99 @@ main (int argc, char *argv[]) {
     if (plug_load_all ()) { // required to add files to playlist from commandline
         exit (-1);
     }
+    pl_load_all ();
+    plt_set_curr_idx (conf_get_int ("playlist.current", 0));
 
-    
+    // execute server commands in local context
+    int noloadpl = 0;
+    if (argc > 1) {
+        int res = server_exec_command_line (cmdline, size, NULL, 0);
+        // some of the server commands ran on 1st instance should terminate it
+        if (res == 2) {
+            noloadpl = 1;
+        }
+        else if (res > 0) {
+            exit (0);
+        }
+        else if (res < 0) {
+            exit (-1);
+        }
+    }
 
-    gui_cond = cond_create ();
-    gui_mutex = mutex_create ();
+    free (cmdline);
+
+#if 0
+    signal (SIGTERM, sigterm_handler);
+    atexit (atexit_handler); // helps to save in simple cases
+#endif
+
+    // start all subsystems
+    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+
+    streamer_init ();
+
+    plug_connect_all ();
+    //messagepump_push (DB_EV_PLUGINSLOADED, 0, 0, 0);
+    //cond_signal (gui_cond);
+
+    if (!noloadpl) {
+        restore_resume_state ();
+    }
+
+    server_tid = thread_start (server_loop, NULL);
+
+    //gui_cond = cond_create ();
+    //gui_mutex = mutex_create ();
     main_args_t args = {argc,argv,cmdline,size};
-    thread_start (plugloader, &args);
-    printf ("waiting for GUI\n");
-    cond_wait (gui_cond, gui_mutex);
-    
+    mainloop_tid = thread_start (mainloop_thread, &args);
+//    fprintf (stderr, "waiting for GUI\n");
+//    cond_wait (gui_cond, gui_mutex);
+//    mutex_unlock (gui_mutex);
+
     DB_plugin_t *gui = plug_get_for_id ("gtkui3_1");
     gui->command (10, 0);
+
+    fprintf (stderr, "gui plugin has quit; waiting for mainloop thread to finish\n");
+    thread_join (mainloop_tid);
+
+    // terminate server and wait for completion
+    if (server_tid) {
+        server_terminate = 1;
+        thread_join (server_tid);
+        server_tid = 0;
+    }
+
+    // save config
+    pl_save_all ();
+    conf_save ();
+
+    // delete legacy session file
+    {
+        char sessfile[1024]; // $HOME/.config/deadbeef/session
+        if (snprintf (sessfile, sizeof (sessfile), "%s/deadbeef/session", confdir) < sizeof (sessfile)) {
+            unlink (sessfile);
+        }
+    }
+
+    // stop receiving messages from outside
+    server_close ();
+
+    // plugins might still hold references to playitems,
+    // and query configuration in background
+    // so unload everything 1st before final cleanup
+    plug_disconnect_all ();
+    plug_unload_all ();
+
+    // at this point we can simply do exit(0), but let's clean up for debugging
+    pl_free (); // may access conf_*
+    conf_free ();
+
+    fprintf (stderr, "messagepump_free\n");
+    messagepump_free ();
+    fprintf (stderr, "plug_cleanup\n");
+    plug_cleanup ();
+
+    fprintf (stderr, "hej-hej!\n");
 
     return 0;
 }

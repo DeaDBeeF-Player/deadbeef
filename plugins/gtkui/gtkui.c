@@ -66,8 +66,6 @@
 static ddb_gtkui_t plugin;
 DB_functions_t *deadbeef;
 
-static intptr_t gtk_tid;
-
 // cover art loading plugin
 DB_artwork_plugin_t *coverart_plugin = NULL;
 
@@ -761,7 +759,6 @@ volumebar_redraw (void) {
 //    ddb_tabstrip_refresh (DDB_TABSTRIP (ts));
 //}
 
-static int gtk_initialized = 0;
 static gint refresh_timeout = 0;
 
 void
@@ -831,17 +828,6 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
         send_messages_to_widgets (rootwidget, id, ctx, p1, p2);
     }
     switch (id) {
-    case DB_EV_PLUGINSLOADED:
-        break;
-        // gtk must be running in separate thread
-        gtk_initialized = 0;
-        gtk_tid = deadbeef->thread_start (gtkui_thread, NULL);
-        // wait until gtk finishes initializing
-        while (!gtk_initialized) {
-            usleep (10000);
-        }
-
-        break;
     case DB_EV_ACTIVATED:
         g_idle_add (activate_cb, NULL);
         break;
@@ -1102,7 +1088,6 @@ gtkui_thread (void *ctx) {
     deadbeef->conf_get_str ("gtkui.titlebar_stopped", "DeaDBeeF-%V", fmt, sizeof (fmt));
     deadbeef->pl_format_title (NULL, -1, str, sizeof (str), -1, fmt);
     gtk_window_set_title (GTK_WINDOW (mainwin), str);
-    gtk_initialized = 1;
 
     g_idle_add (unlock_playlist_columns_cb, NULL);
 
@@ -1364,11 +1349,6 @@ gtkui_stop (void) {
     }
     trace ("quitting gtk\n");
     g_idle_add (quit_gtk_cb, NULL);
-    trace ("waiting for gtk thread to finish\n");
-    deadbeef->thread_join (gtk_tid);
-    trace ("gtk thread finished\n");
-    gtk_tid = 0;
-    //main_playlist_free ();
     trace ("gtkui_stop completed\n");
     return 0;
 }
