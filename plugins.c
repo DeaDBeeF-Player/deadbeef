@@ -942,7 +942,7 @@ plug_load_all (void) {
     // start plugins
     plugin_t *prev = NULL;
     for (plug = plugins; plug;) {
-        if (plug->plugin->start) {
+        if (plug->plugin->type != DB_PLUGIN_GUI && plug->plugin->start) {
             if (plug->plugin->start () < 0) {
                 fprintf (stderr, "plugin %s failed to start, deactivated.\n", plug->plugin->name);
                 if (plug->plugin->stop) {
@@ -995,7 +995,7 @@ plug_connect_all (void) {
                 if (plug->plugin->disconnect) {
                     plug->plugin->disconnect ();
                 }
-                if (plug->plugin->stop) {
+                if (plug->plugin->type != DB_PLUGIN_GUI && plug->plugin->stop) {
                     plug->plugin->stop ();
                 }
                 if (plug->handle) {
