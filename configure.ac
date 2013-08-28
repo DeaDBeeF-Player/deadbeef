@@ -125,6 +125,8 @@ AS_IF([test "${enable_abstract_socket}" != "no"], [
     USE_ABSTRACT_SOCKET_NAME=yes
 ])
 
+AC_CHECK_LIB([intl], [main], [INTL_LIBS="-lintl";AC_SUBST(INTL_LIBS)])
+
 dnl check for yasm
 AC_CHECK_PROG(HAVE_YASM, yasm, yes, no)
 
