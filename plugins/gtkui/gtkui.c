@@ -51,7 +51,9 @@
 #include "gtkui_api.h"
 #include "wingeom.h"
 #include "widgets.h"
-//#include "X11/Xlib.h"
+#ifndef __APPLE__
+#include "X11/Xlib.h"
+#endif
 #undef EGG_SM_CLIENT_BACKEND_XSMP
 #ifdef EGG_SM_CLIENT_BACKEND_XSMP
 #include "smclient/eggsmclient.h"
@@ -940,7 +942,9 @@ gtkui_thread (void *ctx) {
 #ifdef __linux__
     prctl (PR_SET_NAME, "deadbeef-gtkui", 0, 0, 0, 0);
 #endif
-    //XInitThreads (); // gtkglext/xcb doesn't work without this
+#ifndef __APPLE__
+    XInitThreads (); // gtkglext/xcb doesn't work without this
+#endif
     // let's start some gtk
     g_thread_init (NULL);
     add_pixmap_directory (deadbeef->get_pixmap_dir ());

@@ -57,7 +57,9 @@ typedef struct
 #include "interface.h"
 #include "../libparser/parser.h"
 #include "../hotkeys/hotkeys.h"
-//#include <X11/Xlib.h> // only for the KeySym type
+#ifndef __APPLE__
+#include <X11/Xlib.h> // only for the KeySym type
+#endif
 #include "hotkeys.h"
 
 #ifndef strdupa
@@ -616,7 +618,11 @@ typedef struct {
 #define KEY(kname, kcode) { .name=kname, .keysym=kcode },
 
 static const xkey_t keys[] = {
-//    #include "../hotkeys/keysyms.inc"
+#ifndef __APPLE__
+    #include "../hotkeys/keysyms.inc"
+#else
+    { .name=NULL, .keysym=0 }
+#endif
 };
 
 static const char *

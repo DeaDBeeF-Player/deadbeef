@@ -27,7 +27,9 @@
 #include <assert.h>
 #include <ctype.h>
 #include <gdk/gdkkeysyms.h>
-//#include <X11/Xlib.h>
+#ifndef __APPLE__
+#include <X11/Xlib.h>
+#endif
 #include "../../gettext.h"
 
 #include "callbacks.h"
@@ -183,7 +185,7 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
                                         GdkEventKey     *event,
                                         gpointer         user_data)
 {
-#if 0
+#ifndef __APPLE__
     // local hotkeys
     // first translate gdk modifiers into X11 constants
     int mods = 0;
