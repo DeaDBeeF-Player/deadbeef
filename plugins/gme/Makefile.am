@@ -398,7 +398,7 @@ gme_la_SOURCES = cgme.c\
 #	$(gmeversion)/gme/Spc_Filter.cpp\
 #	$(gmeversion)/gme/Spc_Filter.h
 
-gme_la_LDFLAGS = -module -nostdlib -lsupc++
+gme_la_LDFLAGS = -module $(NOCPPLIB)
 gme_la_LIBADD = $(ZLIB_LIBS)
 
 AM_CFLAGS = $(CFLAGS) $(ZLIB_CFLAGS) -I$(gmepath) -std=c99 -DGME_VERSION_055
