@@ -18,6 +18,9 @@
 */
 #include "../../deadbeef.h"
 #include <gtk/gtk.h>
+#ifdef __APPLE__
+#include "gtkosxapplication.h"
+#endif
 #ifdef HAVE_CONFIG_H
 #include "../../config.h"
 #endif
@@ -1070,6 +1073,15 @@ gtkui_thread (void *ctx) {
 
     progress_init ();
     cover_art_init ();
+
+#ifdef __APPLE__
+#if 0
+    GtkWidget *menubar = lookup_widget (mainwin, "menubar");
+    gtk_widget_hide (menubar);
+    GtkosxApplication *theApp = g_object_new(GTKOSX_TYPE_APPLICATION, NULL);
+    gtkosx_application_set_menu_bar(theApp, GTK_MENU_SHELL(menubar));
+#endif
+#endif
 
     gtk_widget_show (mainwin);
 
