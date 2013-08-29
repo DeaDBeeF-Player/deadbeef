@@ -27,21 +27,31 @@ test "$prefix" = NONE && prefix=/usr/local
 AC_DEFINE_UNQUOTED(LOCALEDIR, "${prefix}/${DATADIRNAME}/locale", [Name of gettext locale directory])
 
 case "$host" in
+  *-*-gnu)
+    NOCPPLIB="-nostdlib -lsupc++";;
+esac
+
+case "$host" in
   i386-*-* | i486-*-* | i586-*-* | i686-*-* | i86pc-*-*)
     AC_DEFINE(ARCH_X86_32, 1, [architecture is x86])
     LIB="../deadbeef-deps/lib-x86-32"
     YASM_FLAGS="-f elf -D ARCH_X86_32 -m x86"
     APE_USE_YASM=yes
     ;;
-  x86_64-apple-*)
-    AC_DEFINE(ARCH_X86_64_OSX, 1, [architecture is x86_64 for OSX])
-    LIB="../deadbeef-deps/lib-x86-64-osx"
-    ;;
   x86_64-*-* | amd64-*-*)
     AC_DEFINE(ARCH_X86_64, 1, [architecture is x86_64])
     LIB="../deadbeef-deps/lib-x86-64"
     YASM_FLAGS="-f elf -D ARCH_X86_64 -m amd64"
     APE_USE_YASM=yes
+    KILLCPPFLAGS="-nostdlib -lsupc++"
+    ;;
+  i686-apple-*)
+    AC_DEFINE(ARCH_X86_32_OSX, 1, [architecture is x86])
+    LIB="../deadbeef-deps/lib-x86-32-apple"
+    ;;
+  x86_64-apple-*)
+    AC_DEFINE(ARCH_X86_64_OSX, 1, [architecture is x86_64 for OSX])
+    LIB="../deadbeef-deps/lib-x86-64-osx"
     ;;
   powerpc-*-* )
     AC_DEFINE(ARCH_PPC_32, 1, [architecture is ppc32])
@@ -188,6 +198,13 @@ AS_IF([test "${enable_gtk3}" = "yes"], [
     ])
     AC_CHECK_LIB([SM], [main], [HAVE_SM=yes;SM_LIBS="-lSM";AC_SUBST(SM_LIBS)])
     AC_CHECK_LIB([ICE], [main], [HAVE_ICE=yes;ICE_LIBS="-lICE";AC_SUBST(ICE_LIBS)])
+    GTK_CHECK_BACKEND([quartz], [3.0], [os_osx=yes], [os_osx=no])
+    if test "$os_osx" = "yes"; then
+        PKG_CHECK_MODULES(GTK_MAC, gtk-mac-integration)
+        AC_SUBST(GTK_MAC_LIBS)
+        AC_SUBST(GTK_MAC_CFLAGS)
+    fi
+
 ], [
     HAVE_GTK3=no
 ])
