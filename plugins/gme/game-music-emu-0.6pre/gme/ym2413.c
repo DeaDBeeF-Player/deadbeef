@@ -43,7 +43,7 @@ to do:
 #include <string.h>
 #include "ym2413.h"
 
-#define INLINE __inline
+#define INLINE static __inline
 #ifndef NULL
 	#define NULL ((void *)0)
 #endif
