@@ -329,23 +329,29 @@ static int max_tab_size = 200;
 
 static int tab_moved = 0;
 
+typedef struct {
+#if GTK_CHECK_VERSION(3,0,0)
+    float x, y;
+#else
+    int x, y;
+#endif
+} coord_t;
+
 static void
-cairo_draw_lines (cairo_t *cr, GdkPoint *pts, int cnt) {
+cairo_draw_lines (cairo_t *cr, coord_t *pts, int cnt) {
+    cairo_move_to (cr, pts[0].x+1, pts[0].y+1);
     for (int i = 1; i < cnt; i++) {
-        cairo_move_to (cr, pts[i-1].x+1, pts[i-1].y+1);
         cairo_line_to (cr, pts[i].x+1, pts[i].y+1);
     }
 }
 
 static void
-cairo_draw_poly (cairo_t *cr, GdkPoint *pts, int cnt) {
+cairo_draw_poly (cairo_t *cr, coord_t *pts, int cnt) {
     cairo_move_to (cr, pts[0].x, pts[0].y);
     for (int i = 1; i < cnt; i++) {
         cairo_line_to (cr, pts[i].x, pts[i].y);
     }
 }
-
-
 
 void
 #if !GTK_CHECK_VERSION(3,0,0)
@@ -353,36 +359,30 @@ ddb_tabstrip_draw_tab (GtkWidget *widget, GdkDrawable *drawable, int idx, int se
 #else
 ddb_tabstrip_draw_tab (GtkWidget *widget, cairo_t *cr, int idx, int selected, int x, int y, int w, int h) {
 #endif
-    GdkPoint points_filled[] = {
+    coord_t points_filled[] = {
         { x+2, y + h },
         { x+2, y + 2 },
         { x + w - h + 1, y + 2 },
         { x + w - 1 + 1, y + h }
     };
-    GdkPoint points_frame1[] = {
+    coord_t points_frame1[] = {
         { x, y + h-2 },
-#if !GTK_CHECK_VERSION(3,0,0)
+#if GTK_CHECK_VERSION(3,0,0)
+        { x, y + 0.5 },
+        { x + 0.5, y },
+#else
         { x, y + 1 },
-#else
-        { x, y + 0 },
+        { x + 1, y },
 #endif
-        { x + 1, y + 0 },
-        { x + w - h - 1, y + 0 },
-        { x + w - h, y + 1 },
+        { x + w - h - 1, y },
         { x + w - h + 1, y + 1 },
-        { x + w - 2, y + h - 2 },
-        { x + w - 1, y + h - 2 },
-        { x + w-2, y + h - 3 }
+        { x + w - 2, y + h - 2 },  
+        { x + w - 2, y + h - 3 },
     };
-    GdkPoint points_frame2[] = {
+    coord_t points_frame2[] = {
         { x + 1, y + h + 1 },
-#if !GTK_CHECK_VERSION(3,0,0)
         { x + 1, y + 1 },
-#else
-        { x + 1, y + 0 },
-#endif
         { x + w - h - 1, y + 1 },
-        { x + w - h, y + 2 },
         { x + w - h + 1, y + 2 },
         { x + w-3, y + h - 2 },
         { x + w-2, y + h - 2 },
@@ -438,23 +438,23 @@ ddb_tabstrip_draw_tab (GtkWidget *widget, cairo_t *cr, int idx, int selected, in
 #endif
     }
 #if !GTK_CHECK_VERSION(3,0,0)
-    gdk_draw_polygon (drawable, bg, TRUE, points_filled, 4);
-    gdk_draw_lines (drawable, outer_frame, points_frame1, 9);
-    gdk_draw_lines (drawable, inner_frame, points_frame2, 7);
+    gdk_draw_polygon (drawable, bg, TRUE, points_filled, sizeof (points_filled)/sizeof(coord_t));
+    gdk_draw_lines (drawable, outer_frame, points_frame1, sizeof (points_frame1)/sizeof(coord_t));
+    gdk_draw_lines (drawable, inner_frame, points_frame2, sizeof (points_frame2)/sizeof(coord_t));
     g_object_unref (bg);
     g_object_unref (outer_frame);
     g_object_unref (inner_frame);
 #else
     cairo_set_source_rgb (cr, clr_bg.red/65535.f, clr_bg.green/65535.f, clr_bg.blue/65535.0);
     cairo_new_path (cr);
-    cairo_draw_poly (cr, points_filled, 4);
+    cairo_draw_poly (cr, points_filled, sizeof (points_filled)/sizeof(coord_t));
     cairo_close_path (cr);
     cairo_fill (cr);
     cairo_set_source_rgb (cr, clr_outer_frame.red/65535.f, clr_outer_frame.green/65535.f, clr_outer_frame.blue/65535.0);
-    cairo_draw_lines (cr, points_frame1, 9);
+    cairo_draw_lines (cr, points_frame1, sizeof (points_frame1)/sizeof(coord_t));
     cairo_stroke (cr);
     cairo_set_source_rgb (cr, clr_inner_frame.red/65535.f, clr_inner_frame.green/65535.f, clr_inner_frame.blue/65535.0);
-    cairo_draw_lines (cr, points_frame2, 7);
+    cairo_draw_lines (cr, points_frame2, sizeof (points_frame2)/sizeof(coord_t));
     cairo_stroke (cr);
 #endif
 }
