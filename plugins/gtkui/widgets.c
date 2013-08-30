@@ -37,19 +37,11 @@
 #endif
 #include "namedicons.h"
 #include "hotkeys.h" // for building action treeview
+#include "../../strdupa.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
-#ifndef strdupa
-# define strdupa(s)							      \
-    ({									      \
-      const char *old = (s);					      \
-      size_t len = strlen (old) + 1;				      \
-      char *new = (char *) alloca (len);			      \
-      (char *) memcpy (new, old, len);				      \
-    })
-#endif
 
 // utility code for parsing keyvalues
 #define get_keyvalue(s,key,val) {\

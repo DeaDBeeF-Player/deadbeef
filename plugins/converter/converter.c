@@ -34,16 +34,7 @@
 #include <unistd.h>
 #include "converter.h"
 #include "../../deadbeef.h"
-
-#ifndef strdupa
-# define strdupa(s)							      \
-    ({									      \
-      const char *old = (s);					      \
-      size_t len = strlen (old) + 1;				      \
-      char *new = (char *) alloca (len);			      \
-      (char *) memcpy (new, old, len);				      \
-    })
-#endif
+#include "../../strdupa.h"
 
 #ifndef __linux__
 #define O_LARGEFILE 0

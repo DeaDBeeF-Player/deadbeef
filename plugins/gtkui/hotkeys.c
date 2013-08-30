@@ -61,16 +61,7 @@ typedef struct
 #include <X11/Xlib.h> // only for the KeySym type
 #endif
 #include "hotkeys.h"
-
-#ifndef strdupa
-# define strdupa(s)							      \
-    ({									      \
-      const char *old = (s);					      \
-      size_t len = strlen (old) + 1;				      \
-      char *new = (char *) alloca (len);			      \
-      (char *) memcpy (new, old, len);				      \
-    })
-#endif
+#include "../../strdupa.h"
 
 void
 on_hotkeys_actions_cursor_changed      (GtkTreeView     *treeview,

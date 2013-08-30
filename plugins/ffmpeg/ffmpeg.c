@@ -24,6 +24,7 @@
 #include <errno.h>
 
 #include "../../deadbeef.h"
+#include "../../strdupa.h"
 
 #if !FFMPEG_OLD
 
