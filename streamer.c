@@ -50,22 +50,13 @@
 #include "fft.h"
 #include "handler.h"
 #include "plugins/libparser/parser.h"
+#include "strdupa.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
 //#define WRITE_DUMP 1
 //#define DETECT_PL_LOCK_RC 1
-
-#ifndef strdupa
-# define strdupa(s)							      \
-    ({									      \
-      const char *old = (s);					      \
-      size_t len = strlen (old) + 1;				      \
-      char *new = (char *) alloca (len);			      \
-      (char *) memcpy (new, old, len);				      \
-    })
-#endif
 
 #if WRITE_DUMP
 FILE *out;
