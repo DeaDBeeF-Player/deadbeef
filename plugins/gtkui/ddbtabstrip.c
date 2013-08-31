@@ -376,16 +376,16 @@ ddb_tabstrip_draw_tab (GtkWidget *widget, cairo_t *cr, int idx, int selected, in
 #endif
         { x + w - h - 1, y },
         { x + w - h + 1, y + 1 },
-        { x + w - 2, y + h - 2 },  
-        { x + w - 2, y + h - 3 },
+        { x + w - 3, y + h - 3 },
+        { x + w - 0, y + h - 2 },
     };
     coord_t points_frame2[] = {
         { x + 1, y + h + 1 },
         { x + 1, y + 1 },
         { x + w - h - 1, y + 1 },
         { x + w - h + 1, y + 2 },
-        { x + w-3, y + h - 2 },
-        { x + w-2, y + h - 2 },
+        { x + w - 3, y + h - 2 },
+        { x + w - 0, y + h - 1 },
     };
 #if !GTK_CHECK_VERSION(3,0,0)
     GdkGC *bg = gdk_gc_new (drawable);
@@ -601,8 +601,11 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
 
     tabstrip_adjust_hscroll (ts);
     cairo_set_line_width (cr, 1);
+#ifdef __APPLE__
+    cairo_set_antialias (cr, CAIRO_ANTIALIAS_GRAY);
+#else
     cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
-
+#endif
     int cnt = deadbeef->plt_get_count ();
     int hscroll = ts->hscrollpos;
 
