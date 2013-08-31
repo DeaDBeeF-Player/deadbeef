@@ -3,7 +3,6 @@
 
 #include <string.h>
 
-#ifndef _GNU_SOURCE
 #ifndef strdupa
 # define strdupa(s)							      \
     ({									      \
@@ -12,7 +11,6 @@
       char *new = (char *) alloca (len);			      \
       (char *) memcpy (new, old, len);				      \
     })
-#endif
 #endif
 
 #endif
