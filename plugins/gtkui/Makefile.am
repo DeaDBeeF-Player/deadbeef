@@ -97,6 +97,9 @@ endif
 endif
 
 if HAVE_GTK3
+if OS_OSX
+GTKGLEXT_SOURCES =
+else
 GTKGLEXT_SOURCES = \
 	gtkglext-gtk3/gtk/gtkglinit.c\
 	gtkglext-gtk3/gtk/gtkglversion.c\
@@ -149,11 +152,12 @@ GTKGLEXT_SOURCES = \
 	gtkglext-gtk3/gdk/x11/gdkx11glcontext.h\
 	gtkglext-gtk3/gdk/x11/gdkx11glquery.h\
 	gtkglext-gtk3/gdk/x11/gdkx11glwindow.h
+endif
 
-GTKGLEXT_CFLAGS = 
-GTKGLEXT_LIBS = 
+GTKGLEXT_CFLAGS = -I@top_srcdir@/plugins/gtkui/gtkglext-gtk3 -I@top_srcdir@/plugins/gtkui/gtkglext-gtk3/gdk -DGTK_GL_COMPILATION -DGDK_GL_COMPILATION
+GTKGLEXT_LIBS = -lGL
 
-ddb_gui_GTK3_la_SOURCES = $(GTKUI_SOURCES)
+ddb_gui_GTK3_la_SOURCES = $(GTKUI_SOURCES) $(GTKGLEXT_SOURCES)
 ddb_gui_GTK3_la_LDFLAGS = -module
 
 if STATICLINK

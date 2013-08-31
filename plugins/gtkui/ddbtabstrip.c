@@ -438,9 +438,9 @@ ddb_tabstrip_draw_tab (GtkWidget *widget, cairo_t *cr, int idx, int selected, in
 #endif
     }
 #if !GTK_CHECK_VERSION(3,0,0)
-    gdk_draw_polygon (drawable, bg, TRUE, points_filled, sizeof (points_filled)/sizeof(coord_t));
-    gdk_draw_lines (drawable, outer_frame, points_frame1, sizeof (points_frame1)/sizeof(coord_t));
-    gdk_draw_lines (drawable, inner_frame, points_frame2, sizeof (points_frame2)/sizeof(coord_t));
+    gdk_draw_polygon (drawable, bg, TRUE, (GdkPoint*)points_filled, sizeof (points_filled)/sizeof(coord_t));
+    gdk_draw_lines (drawable, outer_frame, (GdkPoint*)points_frame1, sizeof (points_frame1)/sizeof(coord_t));
+    gdk_draw_lines (drawable, inner_frame, (GdkPoint*)points_frame2, sizeof (points_frame2)/sizeof(coord_t));
     g_object_unref (bg);
     g_object_unref (outer_frame);
     g_object_unref (inner_frame);

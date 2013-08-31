@@ -2317,7 +2317,7 @@ ddb_listview_header_configure_event              (GtkWidget       *widget,
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     draw_init_font (&ps->hdrctx, gtk_widget_get_style (widget));
-    int height = draw_get_listview_rowheight (&ps->hdrctx) + 4;
+    int height = draw_get_listview_rowheight (&ps->hdrctx);
     GtkAllocation a;
     gtk_widget_get_allocation (widget, &a);
     if (height != a.height) {
