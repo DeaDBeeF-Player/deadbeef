@@ -46,12 +46,12 @@ case "$host" in
     KILLCPPFLAGS="-nostdlib -lsupc++"
     ;;
   i686-apple-*)
-    AC_DEFINE(ARCH_X86_32_OSX, 1, [architecture is x86])
+    AC_DEFINE(ARCH_X86_32_OSX, 1, [architecture is x86 on OSX])
     LIB="../deadbeef-deps/lib-x86-32-apple"
     ;;
   x86_64-apple-*)
-    AC_DEFINE(ARCH_X86_64_OSX, 1, [architecture is x86_64 for OSX])
-    LIB="../deadbeef-deps/lib-x86-64-osx"
+    AC_DEFINE(ARCH_X86_64_OSX, 1, [architecture is x86_64 on OSX])
+    LIB="../deadbeef-deps/lib-x86-64-apple"
     ;;
   powerpc-*-* )
     AC_DEFINE(ARCH_PPC_32, 1, [architecture is ppc32])
@@ -198,13 +198,13 @@ AS_IF([test "${enable_gtk3}" = "yes"], [
     ])
     AC_CHECK_LIB([SM], [main], [HAVE_SM=yes;SM_LIBS="-lSM";AC_SUBST(SM_LIBS)])
     AC_CHECK_LIB([ICE], [main], [HAVE_ICE=yes;ICE_LIBS="-lICE";AC_SUBST(ICE_LIBS)])
-    GTK_CHECK_BACKEND([quartz], [3.0], [os_osx=yes], [os_osx=no])
-    if test "$os_osx" = "yes"; then
+    GTK_CHECK_BACKEND([quartz], [3.0], [OS_OSX=yes], [OS_OSX=no])
+    if test "$OS_OSX" = "yes"; then
         PKG_CHECK_MODULES(GTK_MAC, gtk-mac-integration)
         AC_SUBST(GTK_MAC_LIBS)
         AC_SUBST(GTK_MAC_CFLAGS)
     fi
-
+    AM_CONDITIONAL(OS_OSX, test "x$OS_OSX" = "xyes")
 ], [
     HAVE_GTK3=no
 ])

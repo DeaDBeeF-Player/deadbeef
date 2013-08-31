@@ -597,7 +597,8 @@ plug_remove_plugin (void *p) {
 // l must be strlen(d_name)
 static int
 load_plugin (const char *plugdir, char *d_name, int l) {
-    if (strstr (d_name, ".0.")) {
+    // hack for osx to skip *.0.so files
+    if (strstr (d_name, ".0.so")) {
         return -1;
     }
     char fullname[PATH_MAX];

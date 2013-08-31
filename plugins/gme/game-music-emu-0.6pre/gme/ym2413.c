@@ -2104,3 +2104,4 @@ void ym2413_set_mask(void *_chip, UINT32 mask)
 
 	chip->mask = mask;
 }
+

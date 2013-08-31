@@ -19,7 +19,7 @@
 #ifndef __GTKUIGL_H
 #define __GTKUIGL_H
 
-#if 0
+#ifndef __APPLE__
 #include <gtk/gtkgl.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
