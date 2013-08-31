@@ -410,7 +410,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         valid_frames++;
 
 // {{{ update stream parameters, only when sample!=0 or 1st frame
-        trace ("have_info: %d, lastframe_valid=%d\n", have_info, lastframe_valid);
+        trace ("valid_frames: %d, have_info: %d, lastframe_valid=%d\n", valid_frames, have_info, lastframe_valid);
         if (!have_info && lastframe_valid)
         {
             // don't get parameters from frames coming after any bad frame
