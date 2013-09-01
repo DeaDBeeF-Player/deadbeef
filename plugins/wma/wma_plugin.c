@@ -53,7 +53,6 @@ typedef struct {
 #else
     WMADecodeContext wmadec;
 #endif
-    DB_FILE *fp;
     int64_t first_frame_offset;
     int currentsample;
     int startsample;
@@ -78,27 +77,27 @@ static int
 wmaplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     wmaplug_info_t *info = (wmaplug_info_t *)_info;
 
-    info->fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
-    if (!info->fp) {
+    info->info.file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    if (!info->info.file) {
         return -1;
     }
 
     trace ("opened %s\n", deadbeef->pl_find_meta (it, ":URI"));
 
 //    char *buffer = malloc (2000000);
-//    deadbeef->fread (buffer, 200000, 1, info->fp);
+//    deadbeef->fread (buffer, 200000, 1, info->info.file);
 //    FILE *out = fopen ("out.wma", "w+b");
 //    fwrite (buffer, 200000, 1, out);
 //    exit (0);
 
-    int res = get_asf_metadata (info->fp, NULL, &info->wfx, &info->first_frame_offset);
+    int res = get_asf_metadata (info->info.file, NULL, &info->wfx, &info->first_frame_offset);
     trace ("get_asf_metadata returned %d, first_frame_offset: %lld\n", res, info->first_frame_offset);
-    int64_t pos = deadbeef->ftell (info->fp);
+    int64_t pos = deadbeef->ftell (info->info.file);
     trace ("curr offs: %lld\n", pos);
     if (info->first_frame_offset > pos) {
         char buf[info->first_frame_offset-pos];
         trace ("skipping %d bytes\n", sizeof (buf));
-        deadbeef->fread (buf, sizeof (buf), 1, info->fp);
+        deadbeef->fread (buf, sizeof (buf), 1, info->info.file);
     }
 #if USE_FFMPEG
     info->wmadec.sample_rate = info->wfx.rate;
@@ -136,12 +135,15 @@ wmaplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         _info->fmt.channelmask |= 1 << i;
     }
 
-    if (!info->fp->vfs->is_streaming ()) {
+    if (!info->info.file->vfs->is_streaming ()) {
         if (it->endsample > 0) {
             info->startsample = it->startsample;
             info->endsample = it->endsample;
             plugin.seek_sample (_info, 0);
         }
+    }
+    if (info->info.file->vfs->is_streaming ()) {
+        deadbeef->pl_replace_meta (it, "!FILETYPE", "WMA");
     }
 
     return 0;
@@ -154,9 +156,9 @@ wmaplug_free (DB_fileinfo_t *_info) {
 #if USE_FFMPEG
         ff_wma_end (&info->wmadec);
 #endif
-        if (info->fp) {
-            deadbeef->fclose (info->fp);
-            info->fp = NULL;
+        if (info->info.file) {
+            deadbeef->fclose (info->info.file);
+            info->info.file = NULL;
         }
         free (info);
     }
@@ -166,7 +168,7 @@ static int
 wmaplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
     wmaplug_info_t *info = (wmaplug_info_t *)_info;
     int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
-    if (!info->fp->vfs->is_streaming () && info->endsample > info->startsample) {
+    if (!info->info.file->vfs->is_streaming () && info->endsample > info->startsample) {
         if (info->currentsample + size / samplesize > info->endsample) {
             size = (info->endsample - info->currentsample + 1) * samplesize;
             if (size <= 0) {
@@ -188,9 +190,9 @@ wmaplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
             int packetlength = 0;
     new_packet:
             {
-                int pos = deadbeef->ftell (info->fp);
-                res = asf_read_packet(&audiobuf, &audiobufsize, &packetlength, &info->wfx, info->fp);
-                int endpos = deadbeef->ftell (info->fp);
+                int pos = deadbeef->ftell (info->info.file);
+                res = asf_read_packet(&audiobuf, &audiobufsize, &packetlength, &info->wfx, info->info.file);
+                int endpos = deadbeef->ftell (info->info.file);
                 trace ("[1] packet pos: %d, packet size: %d (%d), data size: %d, blockalign: %d, audiobufsize: %d\n", pos, endpos-pos, info->wfx.packet_size, packetlength, info->wfx.blockalign, audiobufsize);
             }
             if (res > 0) {
@@ -269,9 +271,9 @@ wmaplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
             int packetlength = 0;
     new_packet:
             {
-            int pos = deadbeef->ftell (info->fp);
-            res = asf_read_packet(&audiobuf, &audiobufsize, &packetlength, &info->wfx, info->fp);
-            int endpos = deadbeef->ftell (info->fp);
+            int pos = deadbeef->ftell (info->info.file);
+            res = asf_read_packet(&audiobuf, &audiobufsize, &packetlength, &info->wfx, info->info.file);
+            int endpos = deadbeef->ftell (info->info.file);
             trace ("[2] packet pos: %d, packet size: %d, data size: %d\n", pos, endpos-pos, packetlength);
             }
             if (res > 0) {
@@ -329,12 +331,12 @@ wmaplug_seek_sample (DB_fileinfo_t *_info, int sample) {
 
     int frame = sample / (info->wmadec.frame_len * n_subframes);
     int64_t offs = frame * info->wfx.packet_size + info->first_frame_offset;
-    deadbeef->fseek (info->fp, offs, SEEK_SET);
+    deadbeef->fseek (info->info.file, offs, SEEK_SET);
     info->skipsamples = sample - frame * info->wmadec.frame_len * n_subframes;
     info->currentsample = sample;
 #else
     int skip_ms;
-    int res = asf_seek ((int64_t)sample * 1000 / info->wfx.rate, &info->wfx, info->fp, info->first_frame_offset, &skip_ms);
+    int res = asf_seek ((int64_t)sample * 1000 / info->wfx.rate, &info->wfx, info->info.file, info->first_frame_offset, &skip_ms);
     if (res < 0) {
         info->skipsamples = 0;
         info->currentsample = 0;
