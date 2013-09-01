@@ -287,7 +287,7 @@
 #define LE_32(val) (GINT32_FROM_LE (*((u_int32_t*)(val))))
 #define BE_32(val) (GINT32_FROM_BE (*((u_int32_t*)(val))))
 
-#define LE_64(val) (GINT64_FROM_LE (*((u_int64_t*)(val))))
-#define BE_64(val) (GINT64_FROM_BE (*((u_int64_t*)(val))))
+#define LE_64(val) ({u_int64_t v; memcpy (&v, (val), sizeof (v)); GINT64_FROM_LE (v);})
+#define BE_64(val) ({u_int64_t v; memcpy (&v, (val), sizeof (v)); GINT64_FROM_BE (v);})
 
 #endif /* BSWAP_H_INCLUDED */
