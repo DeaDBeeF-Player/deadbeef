@@ -40,7 +40,16 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <time.h>
+
+//#define USE_ICONV
+
+#ifdef USE_ICONV
 #include <iconv.h>
+#else
+// use deadbeef's charset conversion instead of iconv
+#include "../../../deadbeef.h"
+extern DB_functions_t *deadbeef;
+#endif
 
 /********** logging **********/
 #define lprintf(...) if (getenv("LIBMMS_DEBUG")) fprintf(stderr, __VA_ARGS__)
@@ -476,22 +485,41 @@ static int send_command (mms_io_t *io, mms_t *this, int command,
   return 1;
 }
 
-static int string_utf16(iconv_t url_conv, char *dest, char *src, int dest_len)
+static int string_utf16(char *dest, char *src, int dest_len)
 {
+#ifdef USE_ICONV
   char *ip = src, *op = dest;
   size_t ip_len = strlen(src);
   size_t op_len = dest_len - 2; /* reserve 2 bytes for 0 termination */
 
+  iconv_t url_conv = iconv_open("UTF-16LE", "UTF-8");
   if (iconv(url_conv, &ip, &ip_len, &op, &op_len) == (size_t)-1) {
+      iconv_close(url_conv);
     lprintf("mms: Error converting uri to unicode: %s\n", strerror(errno));
     return 0;
   }
-  
+  iconv_close(url_conv);
   /* 0 terminate the string */
   *op++ = 0;
   *op++ = 0;
 
   return op - dest;
+#else
+  char *ip = src, *op = dest;
+  size_t ip_len = strlen(src);
+  size_t op_len = dest_len - 2;
+
+  int res = deadbeef->junk_iconv (ip, ip_len, op, ip_len * 2, "UTF-8", "UTF-16LE");
+  if (res == -1) {
+    lprintf("mms: Error converting uri to unicode: %s\n", strerror(errno));
+    return 0;
+  }
+  op += res;
+  *op++ = 0;
+  *op++ = 0;
+
+  return op - dest;
+#endif
 }
 
 /*
@@ -1043,7 +1071,6 @@ int static mms_choose_best_streams(mms_io_t *io, mms_t *this) {
  */
 /* FIXME: got somewhat broken during xine_stream_t->(void*) conversion */
 mms_t *mms_connect (mms_io_t *io, void *data, const char *url, int bandwidth, int *need_abort) {
-  iconv_t url_conv = (iconv_t)-1;
   mms_t  *this;
   int     res;
   uint32_t openid;
@@ -1103,12 +1130,6 @@ mms_t *mms_connect (mms_io_t *io, void *data, const char *url, int bandwidth, in
     goto fail;
   }
   
-  url_conv = iconv_open("UTF-16LE", "UTF-8");
-  if (url_conv == (iconv_t)-1) {
-    lprintf("mms: could not get iconv handle to convert url to unicode\n");
-    goto fail;
-  }
-
   /*
    * let the negotiations begin...
    */
@@ -1120,8 +1141,9 @@ mms_t *mms_connect (mms_io_t *io, void *data, const char *url, int bandwidth, in
   mms_gen_guid(this->guid);
   sprintf(this->str, "NSPlayer/7.0.0.1956; {%s}; Host: %s", this->guid,
           this->host);
-  res = string_utf16(url_conv, this->scmd_body + command_buffer.pos, this->str,
+  res = string_utf16(this->scmd_body + command_buffer.pos, this->str,
                      CMD_BODY_LEN - command_buffer.pos);
+
   if(!res)
     goto fail;
 
@@ -1149,7 +1171,7 @@ mms_t *mms_connect (mms_io_t *io, void *data, const char *url, int bandwidth, in
   mms_buffer_put_32 (&command_buffer, 0x00000000);
   mms_buffer_put_32 (&command_buffer, 0x00989680);
   mms_buffer_put_32 (&command_buffer, 0x00000002);
-  res = string_utf16(url_conv, this->scmd_body + command_buffer.pos,
+  res = string_utf16(this->scmd_body + command_buffer.pos,
                      "\\\\192.168.0.129\\TCP\\1037",
                      CMD_BODY_LEN - command_buffer.pos);
   if(!res)
@@ -1188,7 +1210,7 @@ mms_t *mms_connect (mms_io_t *io, void *data, const char *url, int bandwidth, in
     mms_buffer_put_32 (&command_buffer, 0x00000000); /* ?? */
     mms_buffer_put_32 (&command_buffer, 0x00000000); /* ?? */
 
-    res = string_utf16(url_conv, this->scmd_body + command_buffer.pos,
+    res = string_utf16(this->scmd_body + command_buffer.pos,
                        this->uri, CMD_BODY_LEN - command_buffer.pos);
     if(!res)
       goto fail;
@@ -1298,7 +1320,6 @@ mms_t *mms_connect (mms_io_t *io, void *data, const char *url, int bandwidth, in
     }
   }
 
-  iconv_close(url_conv);
   lprintf("mms: connect: passed\n");
  
   return this;
@@ -1312,8 +1333,6 @@ fail:
     gnet_uri_delete(this->guri);
   if (this->uri)
     free(this->uri);
-  if (url_conv != (iconv_t)-1)
-    iconv_close(url_conv);
 
   free (this);
   return NULL;

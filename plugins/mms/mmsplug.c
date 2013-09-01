@@ -23,7 +23,7 @@
 #include <string.h>
 #include <libmms/mmsx.h>
 
-static DB_functions_t *deadbeef;
+DB_functions_t *deadbeef;
 typedef struct {
     DB_vfs_t *vfs;
     char *fname;
