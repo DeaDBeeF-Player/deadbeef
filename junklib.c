@@ -331,8 +331,8 @@ int ddb_iconv (const char *cs_out, const char *cs_in, char *out, int outlen, con
         return 0;
     }
     // to utf8 branch
-    if (!strcmp (cs_out, UTF8_STR)) {
-        if (!strcmp (cs_in, UTF8_STR)) {
+    if (!strcasecmp (cs_out, UTF8_STR)) {
+        if (!strcasecmp (cs_in, UTF8_STR)) {
             memcpy (out, in, inlen);
             out[inlen] = 0;
             int valid = u8_valid (out, inlen, NULL);
@@ -423,7 +423,7 @@ int ddb_iconv (const char *cs_out, const char *cs_in, char *out, int outlen, con
             fprintf (stderr, "invalid conversion request: %s -> %s\n", cs_in, cs_out);
         }
     }
-    else if (!strcmp (cs_in, UTF8_STR)) {
+    else if (!strcasecmp (cs_in, UTF8_STR)) {
         if (!strcasecmp (cs_out, "UTF-16LE") || !strcasecmp (cs_out, "UCS-2LE")) {
             char *target = out;
             ConversionResult result = ConvertUTF8toUTF16 ((const UTF8**)&in, (const UTF8*)(in + inlen), (UTF16**)&target, (UTF16*)(out + outlen), strictConversion);
