@@ -478,7 +478,6 @@ junk_iconv (const char *in, int inlen, char *out, int outlen, const char *cs_in,
     size_t outbytesleft = outlen;
 
     char *pout = out;
-    memset (out, 0, outbytesleft);
 
     size_t res = iconv (cd, &pin, &inbytesleft, &pout, &outbytesleft);
     int err = errno;
