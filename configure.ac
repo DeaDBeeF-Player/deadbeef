@@ -204,10 +204,12 @@ AS_IF([test "${enable_gtk3}" = "yes"], [
         AC_SUBST(GTK_MAC_LIBS)
         AC_SUBST(GTK_MAC_CFLAGS)
     fi
-    AM_CONDITIONAL(OS_OSX, test "x$OS_OSX" = "xyes")
-], [
+    
+    ], [
     HAVE_GTK3=no
+    OS_OSX=no
 ])
+AM_CONDITIONAL(OS_OSX, test "x$OS_OSX" = "xyes")
 
 AS_IF([test "${enable_gtk2}" = "yes"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
