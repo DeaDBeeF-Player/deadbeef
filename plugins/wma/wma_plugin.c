@@ -58,7 +58,7 @@ typedef struct {
     int startsample;
     int endsample;
     int skipsamples;
-    char buffer[100000]; // can't predict its size, so set to max
+    char buffer[200000]; // can't predict its size, so set to max
     int remaining;
 } wmaplug_info_t;
 
@@ -193,7 +193,7 @@ wmaplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
                 int pos = deadbeef->ftell (info->info.file);
                 res = asf_read_packet(&audiobuf, &audiobufsize, &packetlength, &info->wfx, info->info.file);
                 int endpos = deadbeef->ftell (info->info.file);
-                trace ("[1] packet pos: %d, packet size: %d (%d), data size: %d, blockalign: %d, audiobufsize: %d\n", pos, endpos-pos, info->wfx.packet_size, packetlength, info->wfx.blockalign, audiobufsize);
+//                trace ("[1] packet pos: %d, packet size: %d (%d), data size: %d, blockalign: %d, audiobufsize: %d\n", pos, endpos-pos, info->wfx.packet_size, packetlength, info->wfx.blockalign, audiobufsize);
             }
             if (res > 0) {
                 int nb = audiobufsize / info->wfx.blockalign;
@@ -201,11 +201,17 @@ wmaplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
                     wma_decode_superframe_init(&info->wmadec, audiobuf + b * info->wfx.blockalign, info->wfx.blockalign);
 
                     int n = 0;
-                    trace ("subframes: %d\n", info->wmadec.nb_frames);
+//                    trace ("subframes: %d\n", info->wmadec.nb_frames);
                     for (int i=0; i < info->wmadec.nb_frames; i++)
                     {
                         int wmares = wma_decode_superframe_frame(&info->wmadec,
                                 audiobuf + b * info->wfx.blockalign, info->wfx.blockalign);
+
+
+                        if (wmares * info->wfx.channels * info->wfx.bitspersample / 8 > sizeof (info->buffer) - info->remaining) {
+                            fprintf (stderr, "WMA: decoding buffer is too small\n");
+                            break;
+                        }
 
                         if (wmares < 0) {
                             /* Do the above, but for errors in decode. */
@@ -217,7 +223,7 @@ wmaplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
                                 goto new_packet;
                             }
                         } else if (wmares > 0) {
-                            int16_t *p = (int16_t *)&info->buffer[info->remaining];
+                            int16_t *p = (int16_t *)&(info->buffer[info->remaining]);
                             for (int s = 0; s < wmares; s++) {
                                 for (int ch = 0; ch < info->wfx.channels; ch++) {
                                     fixed32 *chan = info->wmadec.frame_out[ch];
@@ -307,7 +313,7 @@ wmaplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
 // }}}
 
     info->currentsample += (initsize-size) / samplesize;
-    trace ("read ret: %d, (initsize: %d)\n", initsize-size, initsize);
+//    trace ("read ret: %d, (initsize: %d)\n", initsize-size, initsize);
     return initsize-size;
 }
 
