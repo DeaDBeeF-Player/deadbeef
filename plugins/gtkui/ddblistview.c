@@ -1503,11 +1503,16 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, Gd
         ps->shift_sel_anchor = ps->binding->cursor ();
     }
     // handle multiple selection
-    if (!(state & (GDK_CONTROL_MASK|GDK_SHIFT_MASK)))
+#ifndef __APPLE__
+    int selmask = GDK_CONTROL_MASK;
+#else
+    int selmask = GDK_MOD2_MASK;
+#endif
+    if (!(state & (selmask|GDK_SHIFT_MASK)))
     {
         ddb_listview_click_selection (ps, ex, ey, grp, grp_index, sel, 1, 1);
     }
-    else if (state & GDK_CONTROL_MASK) {
+    else if (state & selmask) {
         // toggle selection
         if (sel != -1) {
             DdbListviewIter it = ps->binding->get_for_idx (sel);
@@ -1880,7 +1885,7 @@ ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state) {
     GtkWidget *range = ps->scrollbar;
     GtkAdjustment *adj = gtk_range_get_adjustment (GTK_RANGE (range));
 
-    state &= (GDK_SHIFT_MASK|GDK_CONTROL_MASK|GDK_MOD1_MASK|GDK_MOD4_MASK);
+    state &= (GDK_SHIFT_MASK|GDK_CONTROL_MASK|GDK_MOD1_MASK|GDK_MOD2_MASK|GDK_MOD4_MASK);
 
     if (state & ~GDK_SHIFT_MASK) {
         return 0;
@@ -2488,7 +2493,7 @@ ddb_listview_header_button_press_event           (GtkWidget       *widget,
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
 //    ps->active_column = ddb_listview_header_get_column_for_coord (ps, event->x);
-    if (event->button == 1) {
+    if (TEST_LEFT_CLICK (event)) {
         // start sizing/dragging
         ps->header_dragging = -1;
         ps->header_sizing = -1;
@@ -2516,7 +2521,7 @@ ddb_listview_header_button_press_event           (GtkWidget       *widget,
             x += w;
         }
     }
-    else if (event->button == 3) {
+    else if (TEST_RIGHT_CLICK (event)) {
         int idx = ddb_listview_header_get_column_idx_for_coord (ps, event->x);
         ps->binding->header_context_menu (ps, idx);
     }
@@ -2674,10 +2679,10 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
 {
     gtk_widget_grab_focus (widget);
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
-    if (event->button == 1) {
+    if (TEST_LEFT_CLICK (event)) {
         ddb_listview_list_mouse1_pressed (ps, event->state, event->x, event->y, event->type);
     }
-    else if (event->button == 3) {
+    else if (TEST_RIGHT_CLICK(event)) {
         // get item under cursor
         DdbListviewGroup *grp;
         int grp_index;
