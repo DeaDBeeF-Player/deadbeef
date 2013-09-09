@@ -100,6 +100,7 @@ if HAVE_GTK3
 if OS_OSX
 GTKGLEXT_SOURCES =
 else
+GTKGLEXT_LIBS = -lGL
 GTKGLEXT_SOURCES = \
 	gtkglext-gtk3/gtk/gtkglinit.c\
 	gtkglext-gtk3/gtk/gtkglversion.c\
@@ -155,7 +156,6 @@ GTKGLEXT_SOURCES = \
 endif
 
 GTKGLEXT_CFLAGS = -I@top_srcdir@/plugins/gtkui/gtkglext-gtk3 -I@top_srcdir@/plugins/gtkui/gtkglext-gtk3/gdk -DGTK_GL_COMPILATION -DGDK_GL_COMPILATION
-GTKGLEXT_LIBS = -lGL
 
 ddb_gui_GTK3_la_SOURCES = $(GTKUI_SOURCES) $(GTKGLEXT_SOURCES)
 ddb_gui_GTK3_la_LDFLAGS = -module
