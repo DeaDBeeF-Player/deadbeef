@@ -42,6 +42,8 @@
 #undef  slong
 #undef  sshort
 #undef  schar
+#undef  uint
+#define uint    uint32_t
 #define ulong   uint32_t
 #define ushort  uint16_t
 #define uchar   uint8_t
