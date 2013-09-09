@@ -18,7 +18,7 @@
  
  */
 
-#include "deadbeef.h"
+#include "../../deadbeef.h"
 
 #include <AudioUnit/AudioUnit.h>        // AudioUnit
 #include <CoreAudio/CoreAudio.h>		// AudioDeviceID
