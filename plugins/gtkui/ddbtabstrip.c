@@ -890,8 +890,7 @@ on_tabstrip_button_press_event(GtkWidget      *widget,
 {
     DdbTabStrip *ts = DDB_TABSTRIP (widget);
     tab_clicked = get_tab_under_cursor (ts, event->x);
-    if (event->button == 1)
-    {
+    if (TEST_LEFT_CLICK(event)) {
         int need_arrows = tabstrip_need_arrows (ts);
         if (need_arrows) {
             GtkAllocation a;
@@ -950,7 +949,7 @@ on_tabstrip_button_press_event(GtkWidget      *widget,
         ts->prev_x = event->x;
         tab_moved = 0;
     }
-    else if (event->button == 3) {
+    else if (TEST_RIGHT_CLICK(event)) {
         GtkWidget *menu = gtkui_create_pltmenu (tab_clicked);
         gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
     }

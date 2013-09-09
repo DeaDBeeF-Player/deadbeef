@@ -181,3 +181,11 @@ void                gtk_widget_get_allocation           (GtkWidget *widget,
 #define gtk_hscrollbar_new(adj) gtk_scrollbar_new(GTK_ORIENTATION_HORIZONTAL,adj)
 #define gtk_vscrollbar_new(adj) gtk_scrollbar_new(GTK_ORIENTATION_VERTICAL,adj)
 #endif
+
+#ifdef __APPLE__
+#define TEST_LEFT_CLICK(ev) (ev->button==1 && !TEST_RIGHT_CLICK(ev))
+#define TEST_RIGHT_CLICK(ev) (ev->button==3 || (ev->button==1 && (ev->state&(GDK_CONTROL_MASK|GDK_BUTTON3_MASK))))
+#else
+#define TEST_LEFT_CLICK(ev) (ev->button==1)
+#define TEST_RIGHT_CLICK(ev) (ev->button==3)
+#endif
