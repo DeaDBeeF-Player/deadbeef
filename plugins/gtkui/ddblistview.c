@@ -568,6 +568,7 @@ ddb_listview_list_configure_event            (GtkWidget       *widget,
     int height = draw_get_listview_rowheight (&ps->listctx);
     if (height != ps->rowheight) {
         ps->rowheight = height;
+        ps->grouptitle_height = height * 1.2;
         ddb_listview_build_groups (ps);
     }
 
@@ -3006,7 +3007,6 @@ ddb_listview_build_groups (DdbListview *listview) {
         }
     }
 
-    listview->grouptitle_height = DEFAULT_GROUP_TITLE_HEIGHT;
     DdbListviewIter it = listview->binding->head ();
     while (it) {
         int res = listview->binding->get_group (it, curr, sizeof (curr));
