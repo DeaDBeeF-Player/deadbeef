@@ -223,7 +223,8 @@ action_add_folders_handler_cb (void *user_data) {
 
     gtk_file_chooser_set_extra_widget (GTK_FILE_CHOOSER (dlg), box);
 
-    set_file_filter (dlg, NULL);
+// gtk devs broke this in 3.6 - thanks guys
+//  set_file_filter (dlg, NULL);
 
     gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dlg), TRUE);
     // restore folder
