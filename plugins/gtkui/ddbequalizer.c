@@ -115,7 +115,6 @@ static gboolean ddb_equalizer_real_configure_event (GtkWidget* base, GdkEventCon
 	gdouble _tmp3_ = 0.0;
 	GdkScreen* _tmp4_ = NULL;
 	gdouble _tmp5_ = 0.0;
-	gint _tmp6_;
 
 	_tmp0_ = gtk_widget_get_style ((GtkWidget*) self);
 	_tmp1_ = _tmp0_->font_desc;
@@ -123,9 +122,8 @@ static gboolean ddb_equalizer_real_configure_event (GtkWidget* base, GdkEventCon
 	_tmp3_ = pango_units_to_double (_tmp2_);
 	_tmp4_ = gdk_screen_get_default ();
 	_tmp5_ = gdk_screen_get_resolution (_tmp4_);
-	self->priv->eq_margin_bottom = (gint) (((_tmp3_ * _tmp5_) / 72) + 4);
-	_tmp6_ = self->priv->eq_margin_bottom;
-	self->priv->eq_margin_left = _tmp6_ * 4;
+	self->priv->eq_margin_bottom = (gint) (_tmp3_ + 4);
+	self->priv->eq_margin_left = (gint) (_tmp3_ + 4) * 4;
 	result = FALSE;
 	return result;
 }
