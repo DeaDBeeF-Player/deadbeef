@@ -32,6 +32,18 @@ case "$host" in
 esac
 
 case "$host" in
+  i686-apple-*)
+    AC_DEFINE(ARCH_X86_32, 1, [architecture is x86 on OSX])
+    LIB="../deadbeef-deps/lib-x86-32-apple"
+    YASM_FLAGS="-f macho32 -D ARCH_X86_32 -m x86 -DPREFIX"
+    APE_USE_YASM=yes
+    ;;
+  x86_64-apple-*)
+    AC_DEFINE(ARCH_X86_64, 1, [architecture is x86_64 on OSX])
+    LIB="../deadbeef-deps/lib-x86-64-apple"
+    YASM_FLAGS="-f macho64 -D ARCH_X86_64 -m amd64 -DPIC -DPREFIX"
+    APE_USE_YASM=yes
+    ;;
   i386-*-* | i486-*-* | i586-*-* | i686-*-* | i86pc-*-*)
     AC_DEFINE(ARCH_X86_32, 1, [architecture is x86])
     LIB="../deadbeef-deps/lib-x86-32"
@@ -44,14 +56,6 @@ case "$host" in
     YASM_FLAGS="-f elf -D ARCH_X86_64 -m amd64"
     APE_USE_YASM=yes
     KILLCPPFLAGS="-nostdlib -lsupc++"
-    ;;
-  i686-apple-*)
-    AC_DEFINE(ARCH_X86_32_OSX, 1, [architecture is x86 on OSX])
-    LIB="../deadbeef-deps/lib-x86-32-apple"
-    ;;
-  x86_64-apple-*)
-    AC_DEFINE(ARCH_X86_64_OSX, 1, [architecture is x86_64 on OSX])
-    LIB="../deadbeef-deps/lib-x86-64-apple"
     ;;
   powerpc-*-* )
     AC_DEFINE(ARCH_PPC_32, 1, [architecture is ppc32])
@@ -653,6 +657,7 @@ AS_IF([test "${enable_pltbrowser}" != "no"], [
 
 PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/ao plugins/mono2stereo plugins/shellexecui plugins/alac plugins/medialib plugins/wma plugins/pltbrowser plugins/coreaudio"
 
+AM_CONDITIONAL(APE_USE_YASM, test "x$APE_USE_YASM" = "xyes")
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_FLAC, test "x$HAVE_FLACPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_WAVPACK, test "x$HAVE_WAVPACKPLUGIN" = "xyes")
