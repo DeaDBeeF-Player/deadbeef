@@ -185,42 +185,22 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
                                         GdkEventKey     *event,
                                         gpointer         user_data)
 {
-#ifndef __APPLE__
     // local hotkeys
     // first translate gdk modifiers into X11 constants
     int mods = 0;
     if (event->state & GDK_CONTROL_MASK) {
-        mods |= ControlMask;
+        mods |= GDK_CONTROL_MASK;
     }
     if (event->state & GDK_MOD1_MASK) {
-        mods |= Mod1Mask;
+        mods |= GDK_MOD1_MASK;
     }
     if (event->state & GDK_SHIFT_MASK) {
-        mods |= ShiftMask;
+        mods |= GDK_SHIFT_MASK;
     }
     if (event->state & GDK_MOD4_MASK) {
-        mods |= Mod4Mask;
+        mods |= GDK_MOD4_MASK;
     }
-    trace ("keycode: %x, mods %x\n", event->keyval, mods);
-
-#if 0
-    // only execute actions if one of playlist widgets is in focus, or none
-    GtkWidget *focus = gtk_window_get_focus (GTK_WINDOW (mainwin));
-    if (focus) {
-        GtkWidget *parent = gtk_widget_get_parent (focus);
-        if (!parent) {
-            return FALSE;
-        }
-        parent = gtk_widget_get_parent (parent);
-        if (!parent) {
-            return FALSE;
-        }
-        parent = gtk_widget_get_parent (parent);
-        if (!parent || !DDB_IS_LISTVIEW (parent)) {
-            return FALSE;
-        }
-    }
-#endif
+    trace ("pressed: keycode: %x, mods %x\n", event->keyval, mods);
 
     DB_plugin_t *hkplug = deadbeef->plug_get_for_id ("hotkeys");
     if (hkplug) {
@@ -233,7 +213,6 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
         }
     }
     trace ("action not found\n");
-#endif
     return FALSE;
 }
 
