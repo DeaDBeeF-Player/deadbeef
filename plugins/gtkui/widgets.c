@@ -530,7 +530,7 @@ w_menu_deactivate (GtkMenuShell *menushell, gpointer user_data) {
 
 gboolean
 w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_data) {
-    if (!design_mode || event->button != 3) {
+    if (!design_mode || !TEST_RIGHT_CLICK(event)) {
         return FALSE;
     }
 
