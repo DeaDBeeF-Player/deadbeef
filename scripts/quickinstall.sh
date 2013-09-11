@@ -52,3 +52,4 @@ cp ./plugins/alac/.libs/alac.so $PREFIX/lib/deadbeef/
 cp ./plugins/wma/.libs/wma.so $PREFIX/lib/deadbeef/
 cp ./plugins/pltbrowser/.libs/pltbrowser_gtk2.so $PREFIX/lib/deadbeef/
 cp ./plugins/pltbrowser/.libs/pltbrowser_gtk3.so $PREFIX/lib/deadbeef/
+cp ./plugins/coreaudio/.libs/coreaudio.so $PREFIX/lib/deadbeef/
