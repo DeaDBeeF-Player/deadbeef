@@ -609,11 +609,7 @@ typedef struct {
 #define KEY(kname, kcode) { .name=kname, .keysym=kcode },
 
 static const xkey_t keys[] = {
-#ifndef __APPLE__
     #include "../hotkeys/keysyms.inc"
-#else
-    { .name=NULL, .keysym=0 }
-#endif
 };
 
 static const char *

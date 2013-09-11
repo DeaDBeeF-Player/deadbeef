@@ -20,7 +20,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#ifndef __APPLE__
 #include <X11/Xlib.h>
+#endif
 #include <ctype.h>
 #ifdef __linux__
 #include <sys/prctl.h>
@@ -36,17 +38,22 @@
 
 static DB_hotkeys_plugin_t plugin;
 DB_functions_t *deadbeef;
+
+#ifndef __APPLE__
 static int finished;
 static Display *disp;
 static intptr_t loop_tid;
 static int need_reset = 0;
+#endif
 
 #define MAX_COMMAND_COUNT 256
 
 typedef struct {
     const char *name;
-    KeySym keysym;
+    int keysym;
+#ifndef __APPLE__
     int keycode; // after mapping
+#endif
 } xkey_t;
 
 #define KEY(kname, kcode) { .name=kname, .keysym=kcode},
@@ -67,12 +74,13 @@ typedef struct command_s {
 static command_t commands [MAX_COMMAND_COUNT];
 static int command_count = 0;
 
+#ifndef __APPLE__
 static void
-init_mapped_keycodes (Display *disp, KeySym *syms, int first_kk, int last_kk, int ks_per_kk) {
+init_mapped_keycodes (Display *disp, int *syms, int first_kk, int last_kk, int ks_per_kk) {
     int i, ks;
     for (i = 0; i < last_kk-first_kk; i++)
     {
-        KeySym sym = * (syms + i*ks_per_kk);
+        int sym = * (syms + i*ks_per_kk);
         for (ks = 0; keys[ks].name; ks++)
         {
             if (keys[ ks ].keysym == sym)
@@ -82,15 +90,17 @@ init_mapped_keycodes (Display *disp, KeySym *syms, int first_kk, int last_kk, in
         }
     }
 }
+#endif
 
 static int
-get_keycode (Display *disp, const char* name, KeySym *syms, int first_kk, int last_kk, int ks_per_kk) {
+get_keycode (const char* name, int *syms, int first_kk, int last_kk, int ks_per_kk) {
+#ifndef __APPLE__
     trace ("get_keycode %s\n", name);
     int i, ks;
 
     for (i = 0; i < last_kk-first_kk; i++)
     {
-        KeySym sym = * (syms + i*ks_per_kk);
+        int sym = * (syms + i*ks_per_kk);
         for (ks = 0; keys[ks].name; ks++)
         {
             if ( (keys[ ks ].keysym == sym) && (0 == strcmp (name, keys[ ks ].name)))
@@ -99,6 +109,14 @@ get_keycode (Display *disp, const char* name, KeySym *syms, int first_kk, int la
             }
         }
     }
+#else
+    for (int i = 0; keys[i].name; i++) {
+        if (!strcmp (name, keys[i].name)) {
+            trace ("init: key %s code %x\n", name, keys[i].keysym);
+            return keys[i].keysym;
+        }
+    }
+#endif
     return 0;
 }
 
@@ -225,16 +243,30 @@ find_action_by_name (const char *command, int *is_14_action) {
     return actions;
 }
 
+#ifndef __APPLE__
 static int
-read_config (Display *disp)
-{
+read_config (Display *disp) {
     int ks_per_kk;
     int first_kk, last_kk;
-    KeySym* syms;
+    int* syms;
 
     XDisplayKeycodes (disp, &first_kk, &last_kk);
     syms = XGetKeyboardMapping (disp, first_kk, last_kk - first_kk, &ks_per_kk);
-
+#else
+#define ShiftMask       (1<<0)
+#define LockMask        (1<<1)
+#define ControlMask     (1<<2)
+#define Mod1Mask        (1<<3)
+#define Mod2Mask        (1<<4)
+#define Mod3Mask        (1<<5)
+#define Mod4Mask        (1<<6)
+#define Mod5Mask        (1<<7)
+    int ks_per_kk = -1;
+    int first_kk = -1, last_kk = -1;
+    int* syms = NULL;
+static int
+read_config (void) {
+#endif
     DB_conf_item_t *item = deadbeef->conf_find ("hotkey.", NULL);
     while (item) {
         if (command_count == MAX_COMMAND_COUNT)
@@ -259,7 +291,7 @@ read_config (Display *disp)
         }
         cmd_entry->ctx = atoi (token);
         if (cmd_entry->ctx < 0 || cmd_entry->ctx >= DDB_ACTION_CTX_COUNT) {
-            trace ("hotkeys: invalid ctx %d\n");
+            trace ("hotkeys: invalid ctx %d\n", cmd_entry->ctx);
             goto out;
         }
         if ((script = gettoken (script, token)) == 0) {
@@ -314,7 +346,7 @@ read_config (Display *disp)
                 }
                 else {
                     // lookup name table
-                    cmd_entry->keycode = get_keycode (disp, p, syms, first_kk, last_kk, ks_per_kk);
+                    cmd_entry->keycode = get_keycode (p, syms, first_kk, last_kk, ks_per_kk);
                 }
                 if (!cmd_entry->keycode)
                 {
@@ -335,6 +367,7 @@ read_config (Display *disp)
 out:
         item = deadbeef->conf_find ("hotkey.", item);
     }
+#ifndef __APPLE__
     XFree (syms);
     int i;
     // need to grab it here to prevent gdk_x_error from being called while we're
@@ -361,6 +394,7 @@ out:
             XGrabKey (disp, commands[i].keycode, commands[i].modifier | flags, DefaultRootWindow (disp), False, GrabModeAsync, GrabModeAsync);
         }
     }
+#endif
 
     return 0;
 }
@@ -374,9 +408,12 @@ hotkeys_load (DB_functions_t *api) {
 static void
 cleanup () {
     command_count = 0;
+#ifndef __APPLE__
     XCloseDisplay (disp);
+#endif
 }
 
+#ifndef __APPLE__
 static int
 x_err_handler (Display *d, XErrorEvent *evt) {
 #if 0
@@ -452,9 +489,11 @@ hotkeys_event_loop (void *unused) {
         usleep (200 * 1000);
     }
 }
+#endif
 
 static int
 hotkeys_connect (void) {
+#ifndef __APPLE__
     finished = 0;
     loop_tid = 0;
     disp = XOpenDisplay (NULL);
@@ -469,24 +508,28 @@ hotkeys_connect (void) {
 
     int ks_per_kk;
     int first_kk, last_kk;
-    KeySym* syms;
+    int* syms;
     XDisplayKeycodes (disp, &first_kk, &last_kk);
     syms = XGetKeyboardMapping (disp, first_kk, last_kk - first_kk, &ks_per_kk);
     init_mapped_keycodes (disp, syms, first_kk, last_kk, ks_per_kk);
     XFree (syms);
     XSync (disp, 0);
     loop_tid = deadbeef->thread_start (hotkeys_event_loop, 0);
+#else
+    read_config ();
+#endif
     return 0;
 }
 
 static int
 hotkeys_disconnect (void) {
+#ifndef __APPLE__
     if (loop_tid) {
         finished = 1;
         deadbeef->thread_join (loop_tid);
-        cleanup ();
     }
-
+#endif
+    cleanup ();
     return 0;
 }
 
@@ -510,6 +553,7 @@ hotkeys_get_action_for_keycombo (int key, int mods, int isglobal, int *ctx) {
         key = tolower (key);
     }
 
+#ifndef __APPLE__
     int keycode = 0;
     for (i = 0; keys[i].name; i++) {
         if (key == keys[i].keysym) {
@@ -521,6 +565,9 @@ hotkeys_get_action_for_keycombo (int key, int mods, int isglobal, int *ctx) {
         trace ("hotkeys: unknown keysym 0x%X\n", key);
         return NULL;
     }
+#else
+    int keycode = key;
+#endif
 
     trace ("hotkeys: keysym 0x%X mapped to 0x%X\n", key, keycode);
 
@@ -537,8 +584,10 @@ hotkeys_get_action_for_keycombo (int key, int mods, int isglobal, int *ctx) {
 
 void
 hotkeys_reset (void) {
+#ifndef __APPLE__
     need_reset = 1;
     trace ("hotkeys: reset flagged\n");
+#endif
 }
 
 int
