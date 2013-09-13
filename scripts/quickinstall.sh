@@ -1,6 +1,6 @@
 #!/bin/bash
 . .install
-rm $PREFIX/lib/deadbeef/*.so
+rm -f $PREFIX/lib/deadbeef/*.so
 cp ./deadbeef $PREFIX/bin/
 cp ./plugins/nullout/.libs/nullout.so $PREFIX/lib/deadbeef/
 cp ./plugins/cdda/.libs/cdda.so $PREFIX/lib/deadbeef/

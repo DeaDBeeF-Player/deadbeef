@@ -572,6 +572,19 @@ ddb_listview_list_configure_event            (GtkWidget       *widget,
         ddb_listview_build_groups (ps);
     }
 
+    GtkAllocation a;
+    gtk_widget_get_allocation (ps->list, &a);
+    int w = a.width;
+    int size = 0;
+    DdbListviewColumn *c;
+    for (c = ps->columns; c; c = c->next) {
+        size += c->width;
+    }
+    ps->totalwidth = size;
+    if (ps->totalwidth < a.width) {
+        ps->totalwidth = a.width;
+    }
+
     g_idle_add (ddb_listview_reconf_scrolling, ps);
 
     return FALSE;
@@ -1136,24 +1149,17 @@ ddb_listview_list_setup_hscroll (DdbListview *ps) {
     for (c = ps->columns; c; c = c->next) {
         size += c->width;
     }
-    ps->totalwidth = size;
-    if (ps->totalwidth < a.width) {
-        ps->totalwidth = a.width;
-    }
-    if (w >= size) {
-        size = 0;
-    }
     GtkWidget *scroll = ps->hscrollbar;
-    if (ps->hscrollpos >= size-w) {
-        int n = size-w-1;
-        ps->hscrollpos = max (0, n);
-        gtk_range_set_value (GTK_RANGE (scroll), ps->hscrollpos);
-    }
-    if (size == 0) {
+    if (w >= size) {
         gtk_widget_hide (scroll);
         gtk_widget_queue_draw (ps->list);
     }
     else {
+        if (ps->hscrollpos >= size-w) {
+            int n = size-w-1;
+            ps->hscrollpos = max (0, n);
+            gtk_range_set_value (GTK_RANGE (scroll), ps->hscrollpos);
+        }
         GtkAdjustment *adj = (GtkAdjustment*)gtk_adjustment_new (gtk_range_get_value (GTK_RANGE (scroll)), 0, size, 1, w, w);
         gtk_range_set_adjustment (GTK_RANGE (scroll), adj);
         gtk_widget_show (scroll);
