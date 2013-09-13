@@ -149,6 +149,7 @@ struct _DdbListview {
     int fullheight;
     int block_redraw_on_scroll;
     int grouptitle_height;
+    int calculated_grouptitle_height;
 
     // previous area selection range
     int area_selection_start;
