@@ -920,6 +920,8 @@ init_widget_layout (void) {
     }
 }
 
+static DB_plugin_t *supereq_plugin;
+
 void
 gtkui_thread (void *ctx) {
 #ifdef __linux__
@@ -1113,6 +1115,11 @@ gtkui_thread (void *ctx) {
     gtkui_original_plt_load = deadbeef->plt_load;
     deadbeef->plt_load = gtkui_plt_load;
 
+    supereq_plugin = deadbeef->plug_get_for_id ("supereq");
+    // need to do it in gtk thread
+    gtkui_connect_cb (NULL);
+
+
     gtk_main ();
 
     w_free ();
@@ -1284,8 +1291,6 @@ gtkui_start (void) {
     return 0;
 }
 
-static DB_plugin_t *supereq_plugin;
-
 gboolean
 gtkui_connect_cb (void *none) {
     // equalizer
@@ -1322,10 +1327,6 @@ gtkui_connect_cb (void *none) {
 
 static int
 gtkui_connect (void) {
-    supereq_plugin = deadbeef->plug_get_for_id ("supereq");
-    // need to do it in gtk thread
-    g_idle_add (gtkui_connect_cb, NULL);
-
     return 0;
 }
 
