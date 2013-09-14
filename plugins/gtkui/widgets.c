@@ -499,6 +499,9 @@ on_paste_activate (GtkMenuItem *menuitem, gpointer user_data) {
         current_widget = w;
         w_append (parent, current_widget);
     }
+    if (w->init) {
+        w->init (w);
+    }
     w_save ();
 }
 
