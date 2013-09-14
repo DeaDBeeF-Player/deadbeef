@@ -255,8 +255,6 @@ on_tabstrip_drag_data_received         (GtkWidget       *widget,
                                         guint            target_type,
                                         guint            time)
 {
-    DdbListview *ps = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-
     gchar *ptr=(char*)gtk_selection_data_get_data (data);
     int len = gtk_selection_data_get_length (data);
     if (target_type == 0) { // uris
@@ -286,16 +284,12 @@ on_tabstrip_drag_leave                 (GtkWidget       *widget,
                                         GdkDragContext  *drag_context,
                                         guint            time)
 {
-//    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-//    ddb_listview_list_drag_leave (pl->list, drag_context, time, NULL);
 }
 
 void
 on_tabstrip_drag_end                   (GtkWidget       *widget,
                                         GdkDragContext  *drag_context)
 {
-//    DdbListview *pl = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-//    ddb_listview_list_drag_end (pl->list, drag_context, NULL);
 }
 
 GtkWidget * ddb_tabstrip_new() {
@@ -1136,7 +1130,6 @@ on_tabstrip_drag_motion_event          (GtkWidget       *widget,
         gtkui_playlist_set_curr (tab);
     }
 
-    GtkWidget *pl = lookup_widget (mainwin, "playlist");
     GList *targets = gdk_drag_context_list_targets (drag_context);
     int cnt = g_list_length (targets);
     int i;

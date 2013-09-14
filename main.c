@@ -997,9 +997,6 @@ main (int argc, char *argv[]) {
     atexit (atexit_handler); // helps to save in simple cases
 #endif
 
-    // start all subsystems
-    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
-
     streamer_init ();
 
     plug_connect_all ();

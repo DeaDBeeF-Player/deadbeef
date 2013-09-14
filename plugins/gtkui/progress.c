@@ -83,10 +83,6 @@ progress_settext (const char *text) {
 
 gboolean
 gtkui_progress_show_idle (gpointer data) {
-    GtkWidget *playlist = lookup_widget (mainwin, "playlist");
-    if (playlist) {
-        gtk_widget_set_sensitive (playlist, FALSE);
-    }
     progress_settext (_("Initializing..."));
     gtk_widget_show_all (progressdlg);
     gtk_window_present (GTK_WINDOW (progressdlg));
@@ -103,11 +99,6 @@ progress_show (void) {
 gboolean
 gtkui_progress_hide_idle (gpointer data) {
     gtk_widget_hide (progressdlg);
-    GtkWidget *playlist = lookup_widget (mainwin, "playlist");
-    if (playlist) {
-        gtk_widget_set_sensitive (playlist, TRUE);
-    }
-    //deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
     return FALSE;
 }
 
