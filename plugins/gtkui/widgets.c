@@ -46,6 +46,9 @@
 // utility code for parsing keyvalues
 #define get_keyvalue(s,key,val) {\
     s = gettoken_ext (s, key, "={}();");\
+    if (!s) {\
+        return NULL;\
+    }\
     if (s && !strcmp (key, "{")) {\
         break;\
     }\
@@ -371,7 +374,7 @@ w_draw_event (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
         GtkAllocation allocation;
         gtk_widget_get_allocation (widget, &allocation);
 #if GTK_CHECK_VERSION(3,0,0)
-        cairo_translate (cr, -allocation.x, -allocation.y);
+        //cairo_translate (cr, -allocation.x, -allocation.y);
 #endif
         cairo_set_source_rgb (cr, 0.17f, 0, 0.83f);
 
@@ -396,7 +399,7 @@ w_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
     return res;
 }
 
-static char paste_buffer[1000];
+static char paste_buffer[20000];
 
 void
 save_widget_to_string (char *str, int sz, ddb_gtkui_widget_t *w) {
@@ -413,7 +416,7 @@ save_widget_to_string (char *str, int sz, ddb_gtkui_widget_t *w) {
 
 void
 w_save (void) {
-    char buf[4000] = "";
+    char buf[20000] = "";
     save_widget_to_string (buf, sizeof (buf), rootwidget->children);
     deadbeef->conf_set_str ("gtkui.layout", buf);
     deadbeef->conf_save ();
@@ -1160,7 +1163,7 @@ on_move_tab_left_activate (GtkMenuItem *menuitem, gpointer user_data) {
     ddb_gtkui_widget_t *prev = NULL;
     for (ddb_gtkui_widget_t *c = w->base.children; c; c = c->next, i++) {
         if (i == w->clicked_page) {
-            char buf[4000] = "";
+            char buf[20000] = "";
             save_widget_to_string (buf, sizeof (buf), c);
             w_create_from_string (buf, &newchild);
 

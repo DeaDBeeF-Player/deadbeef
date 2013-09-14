@@ -905,7 +905,7 @@ init_widget_layout (void) {
     gtk_box_pack_start (GTK_BOX(lookup_widget(mainwin, "plugins_bottom_vbox")), rootwidget->widget, TRUE, TRUE, 0);
 
     // load layout
-    char layout[4000];
+    char layout[20000];
     deadbeef->conf_get_str ("gtkui.layout", "tabbed_playlist \"\" { }", layout, sizeof (layout));
 
     ddb_gtkui_widget_t *w = NULL;
@@ -921,6 +921,40 @@ init_widget_layout (void) {
 }
 
 static DB_plugin_t *supereq_plugin;
+
+gboolean
+gtkui_connect_cb (void *none) {
+    // equalizer
+    GtkWidget *eq_mi = lookup_widget (mainwin, "view_eq");
+    if (!supereq_plugin) {
+        gtk_widget_hide (GTK_WIDGET (eq_mi));
+    }
+    else {
+        if (deadbeef->conf_get_int ("gtkui.eq.visible", 0)) {
+            gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (eq_mi), TRUE);
+            eq_window_show ();
+        }
+        else {
+            gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (eq_mi), FALSE);
+        }
+    }
+
+    // cover_art
+    DB_plugin_t **plugins = deadbeef->plug_get_list ();
+    for (int i = 0; plugins[i]; i++) {
+        DB_plugin_t *p = plugins[i];
+        if (p->id && !strcmp (p->id, "artwork")) {
+            trace ("gtkui: found cover-art loader plugin\n");
+            coverart_plugin = (DB_artwork_plugin_t *)p;
+            break;
+        }
+    }
+    gtkui_playlist_changed ();
+    add_mainmenu_actions ();
+    ddb_event_t *e = deadbeef->event_alloc (DB_EV_TRACKINFOCHANGED);
+    deadbeef->event_send(e, 0, 0);
+    return FALSE;
+}
 
 void
 gtkui_thread (void *ctx) {
@@ -1116,9 +1150,8 @@ gtkui_thread (void *ctx) {
     deadbeef->plt_load = gtkui_plt_load;
 
     supereq_plugin = deadbeef->plug_get_for_id ("supereq");
-    // need to do it in gtk thread
-    gtkui_connect_cb (NULL);
 
+    gtkui_connect_cb (NULL);
 
     gtk_main ();
 
@@ -1289,40 +1322,6 @@ gtkui_start (void) {
     gtkui_thread (NULL);
 
     return 0;
-}
-
-gboolean
-gtkui_connect_cb (void *none) {
-    // equalizer
-    GtkWidget *eq_mi = lookup_widget (mainwin, "view_eq");
-    if (!supereq_plugin) {
-        gtk_widget_hide (GTK_WIDGET (eq_mi));
-    }
-    else {
-        if (deadbeef->conf_get_int ("gtkui.eq.visible", 0)) {
-            gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (eq_mi), TRUE);
-            eq_window_show ();
-        }
-        else {
-            gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (eq_mi), FALSE);
-        }
-    }
-
-    // cover_art
-    DB_plugin_t **plugins = deadbeef->plug_get_list ();
-    for (int i = 0; plugins[i]; i++) {
-        DB_plugin_t *p = plugins[i];
-        if (p->id && !strcmp (p->id, "artwork")) {
-            trace ("gtkui: found cover-art loader plugin\n");
-            coverart_plugin = (DB_artwork_plugin_t *)p;
-            break;
-        }
-    }
-    gtkui_playlist_changed ();
-    add_mainmenu_actions ();
-    ddb_event_t *e = deadbeef->event_alloc (DB_EV_TRACKINFOCHANGED);
-    deadbeef->event_send(e, 0, 0);
-    return FALSE;
 }
 
 static int
