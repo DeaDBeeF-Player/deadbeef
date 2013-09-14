@@ -67,6 +67,7 @@ thread_start_low_priority (void (*fn)(void *ctx), void *ctx) {
         fprintf (stderr, "pthread_attr_init failed: %s\n", strerror (s));
         return 0;
     }
+#if !STATICLINK && __GLIBC__ >= 2 && __GLIBC_MINOR__ >= 4
     int policy;
     s = pthread_attr_getschedpolicy (&attr, &policy);
     if (s != 0) {
@@ -74,13 +75,14 @@ thread_start_low_priority (void (*fn)(void *ctx), void *ctx) {
         return 0;
     }
     int minprio = sched_get_priority_min (policy);
+#endif
 
     s = pthread_create (&tid, &attr, (void *(*)(void *))fn, (void*)ctx);
     if (s != 0) {
         fprintf (stderr, "pthread_create failed: %s\n", strerror (s));
         return 0;
     }
-#if !STATICLINK
+#if !STATICLINK && __GLIBC__ >= 2 && __GLIBC_MINOR__ >= 4
     s = pthread_setschedprio (tid, minprio);
     if (s != 0) {
         fprintf (stderr, "pthread_setschedprio failed: %s\n", strerror (s));
