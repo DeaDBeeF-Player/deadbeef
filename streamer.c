@@ -2565,7 +2565,8 @@ streamer_notify_order_changed (int prev_order, int new_order) {
 
 void
 audio_get_waveform_data (int type, float *data) {
-    if (!audio_mem_mutex) {
+    DB_output_t *output = plug_get_output ();
+    if (!audio_mem_mutex || !output || output->state () == OUTPUT_STATE_STOPPED) {
         memset (data, 0, sizeof (audio_data));
         return;
     }
