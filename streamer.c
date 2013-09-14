@@ -1604,7 +1604,8 @@ streamer_thread (void *ctx) {
         //trace ("slept %dms (alloc=%dms, bytespersec=%d, chan=%d, blocksize=%d), fill: %d/%d (cursor=%d)\n", alloc_time-ms, alloc_time, bytes_in_one_second, output->fmt.channels, blocksize, streamer_ringbuf.remaining, STREAM_BUFFER_SIZE, streamer_ringbuf.cursor);
 
         // add 1ms here to compensate the rounding error
-        alloc_time -= ms+1;
+        // and another 1ms to buffer slightly faster then playing
+        alloc_time -= ms+2;
         if (!streamer_buffering && alloc_time > 0) {
             usleep (alloc_time * 1000);
         }
