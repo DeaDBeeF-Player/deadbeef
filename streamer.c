@@ -1602,7 +1602,9 @@ streamer_thread (void *ctx) {
 
         int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
         //trace ("slept %dms (alloc=%dms, bytespersec=%d, chan=%d, blocksize=%d), fill: %d/%d (cursor=%d)\n", alloc_time-ms, alloc_time, bytes_in_one_second, output->fmt.channels, blocksize, streamer_ringbuf.remaining, STREAM_BUFFER_SIZE, streamer_ringbuf.cursor);
-        alloc_time -= ms;
+
+        // add 1ms here to compensate the rounding error
+        alloc_time -= ms+1;
         if (!streamer_buffering && alloc_time > 0) {
             usleep (alloc_time * 1000);
         }
