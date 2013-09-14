@@ -1461,7 +1461,7 @@ refresh_cb (gpointer data) {
 }
 
 static gboolean
-tabbed_playlistswitch_cb (gpointer p) {
+playlistswitch_cb (gpointer p) {
     w_playlist_t *tp = (w_playlist_t *)p;
     int curr = deadbeef->plt_get_curr_idx ();
     char conf[100];
@@ -1469,8 +1469,10 @@ tabbed_playlistswitch_cb (gpointer p) {
     int scroll = deadbeef->conf_get_int (conf, 0);
     snprintf (conf, sizeof (conf), "playlist.cursor.%d", curr);
     int cursor = deadbeef->conf_get_int (conf, -1);
-    ddb_tabstrip_refresh (((w_tabbed_playlist_t *)tp)->tabstrip);
     deadbeef->pl_set_cursor (PL_MAIN, cursor);
+    if (!strcmp (tp->base.type, "tabbed_playlist")) {
+        ddb_tabstrip_refresh (((w_tabbed_playlist_t *)tp)->tabstrip);
+    }
     if (cursor != -1) {
         DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (cursor, PL_MAIN);
         if (it) {
@@ -1481,29 +1483,6 @@ tabbed_playlistswitch_cb (gpointer p) {
 
     ddb_listview_refresh (tp->list, DDB_LIST_CHANGED | DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL);
     ddb_listview_set_vscroll (tp->list, scroll);
-    return FALSE;
-}
-
-static gboolean
-playlistswitch_cb (gpointer data) {
-    w_playlist_t *p = (w_playlist_t *)data;
-    int curr = deadbeef->plt_get_curr_idx ();
-    char conf[100];
-    snprintf (conf, sizeof (conf), "playlist.scroll.%d", curr);
-    int scroll = deadbeef->conf_get_int (conf, 0);
-    snprintf (conf, sizeof (conf), "playlist.cursor.%d", curr);
-    int cursor = deadbeef->conf_get_int (conf, -1);
-    deadbeef->pl_set_cursor (PL_MAIN, cursor);
-    if (cursor != -1) {
-        DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (cursor, PL_MAIN);
-        if (it) {
-            deadbeef->pl_set_selected (it, 1);
-            deadbeef->pl_item_unref (it);
-        }
-    }
-
-    ddb_listview_refresh (DDB_LISTVIEW (p->list), DDB_LIST_CHANGED | DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL);
-    ddb_listview_set_vscroll (DDB_LISTVIEW (p->list), scroll);
     return FALSE;
 }
 
@@ -1676,7 +1655,7 @@ w_tabbed_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, ui
         g_idle_add (tabbed_refresh_cb, w);
         break;
     case DB_EV_PLAYLISTSWITCHED:
-        g_idle_add (tabbed_playlistswitch_cb, w);
+        g_idle_add (playlistswitch_cb, w);
         break;
     case DB_EV_TRACKFOCUSCURRENT:
         g_idle_add (tabbed_trackfocus_cb, w);
@@ -1770,6 +1749,8 @@ static void
 w_playlist_init (ddb_gtkui_widget_t *base) {
     w_playlist_t *w = (w_playlist_t *)base;
     ddb_listview_show_header (w->list, !w->hideheaders);
+
+    g_idle_add (playlistswitch_cb, w);
 }
 
 static void
