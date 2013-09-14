@@ -373,12 +373,12 @@ w_draw_event (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     if (hidden && user_data == current_widget) {
         GtkAllocation allocation;
         gtk_widget_get_allocation (widget, &allocation);
-#if GTK_CHECK_VERSION(3,0,0)
-        //cairo_translate (cr, -allocation.x, -allocation.y);
-#endif
         cairo_set_source_rgb (cr, 0.17f, 0, 0.83f);
 
         if (!gtk_widget_get_has_window (widget)) {
+#if GTK_CHECK_VERSION(3,0,0)
+        cairo_translate (cr, -allocation.x, -allocation.y);
+#endif
             cairo_reset_clip (cr);
             cairo_rectangle (cr, allocation.x, allocation.y, allocation.width, allocation.height);
         }
@@ -1909,16 +1909,22 @@ w_selproperties_create (void) {
     w_selproperties_t *w = malloc (sizeof (w_selproperties_t));
     memset (w, 0, sizeof (w_selproperties_t));
 
-    w->base.widget = gtk_scrolled_window_new (NULL, NULL);
+    w->base.widget = gtk_event_box_new ();
     w->base.init = w_selproperties_init;
     w->base.message = selproperties_message;
 
     gtk_widget_set_can_focus (w->base.widget, FALSE);
-    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (w->base.widget), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+
+    GtkWidget *scroll = gtk_scrolled_window_new (NULL, NULL);
+    gtk_widget_set_can_focus (scroll, FALSE);
+    gtk_widget_show (scroll);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), scroll);
+
+    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scroll), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     w->tree = gtk_tree_view_new ();
     gtk_widget_show (w->tree);
     gtk_tree_view_set_enable_search (GTK_TREE_VIEW (w->tree), FALSE);
-    gtk_container_add (GTK_CONTAINER (w->base.widget), w->tree);
+    gtk_container_add (GTK_CONTAINER (scroll), w->tree);
 
     GtkListStore *store = gtk_list_store_new (4, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT);
     gtk_tree_view_set_model (GTK_TREE_VIEW (w->tree), GTK_TREE_MODEL (store));
