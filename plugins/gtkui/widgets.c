@@ -1451,16 +1451,9 @@ paused_cb (gpointer data) {
 }
 
 static gboolean
-tabbed_refresh_cb (gpointer p) {
-    w_playlist_t *tp = (w_playlist_t *)p;
-    ddb_listview_clear_sort (tp->list);
-    ddb_listview_refresh (tp->list, DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL);
-    return FALSE;
-}
-
-static gboolean
 refresh_cb (gpointer data) {
     DdbListview *p = DDB_LISTVIEW (data);
+    ddb_listview_lock_columns (p, 0);
     ddb_listview_clear_sort (p);
     ddb_listview_refresh (DDB_LISTVIEW (p), DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL);
     return FALSE;
@@ -1658,7 +1651,7 @@ w_tabbed_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, ui
         g_idle_add (tabbed_paused_cb, w);
         break;
     case DB_EV_PLAYLISTCHANGED:
-        g_idle_add (tabbed_refresh_cb, w);
+        g_idle_add (refresh_cb, tp->list);
         break;
     case DB_EV_PLAYLISTSWITCHED:
         g_idle_add (playlistswitch_cb, w);

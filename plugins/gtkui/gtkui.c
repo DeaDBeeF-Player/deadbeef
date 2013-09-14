@@ -451,9 +451,6 @@ trackinfochanged_wrapper (DdbListview *playlist, DB_playItem_t *track, int iter)
 
 void
 gtkui_trackinfochanged (DB_playItem_t *track) {
-//    GtkWidget *playlist = lookup_widget (mainwin, "playlist");
-//    trackinfochanged_wrapper (DDB_LISTVIEW (playlist), track, PL_MAIN);
-
     if (searchwin && gtk_widget_get_visible (searchwin)) {
         GtkWidget *search = lookup_widget (searchwin, "searchlist");
         trackinfochanged_wrapper (DDB_LISTVIEW (search), track, PL_SEARCH);
@@ -1152,6 +1149,7 @@ gtkui_thread (void *ctx) {
     supereq_plugin = deadbeef->plug_get_for_id ("supereq");
 
     gtkui_connect_cb (NULL);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 
     gtk_main ();
 

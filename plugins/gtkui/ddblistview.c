@@ -557,6 +557,16 @@ ddb_listview_reconf_scrolling (void *ps) {
     return FALSE;
 }
 
+static void
+ddb_listview_list_update_total_width (DdbListview *lv, int size) {
+    GtkAllocation a;
+    gtk_widget_get_allocation (GTK_WIDGET (lv->list), &a);
+    lv->totalwidth = size;
+    if (lv->totalwidth < a.width) {
+        lv->totalwidth = a.width;
+    }
+}
+
 gboolean
 ddb_listview_list_configure_event            (GtkWidget       *widget,
         GdkEventConfigure *event,
@@ -580,11 +590,7 @@ ddb_listview_list_configure_event            (GtkWidget       *widget,
     for (c = ps->columns; c; c = c->next) {
         size += c->width;
     }
-    ps->totalwidth = size;
-    if (ps->totalwidth < a.width) {
-        ps->totalwidth = a.width;
-    }
-
+    ddb_listview_list_update_total_width (ps, size);
     g_idle_add (ddb_listview_reconf_scrolling, ps);
 
     return FALSE;
@@ -1149,6 +1155,7 @@ ddb_listview_list_setup_hscroll (DdbListview *ps) {
     for (c = ps->columns; c; c = c->next) {
         size += c->width;
     }
+    ddb_listview_list_update_total_width (ps, size);
     GtkWidget *scroll = ps->hscrollbar;
     if (w >= size) {
         gtk_widget_hide (scroll);
@@ -2437,7 +2444,11 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
         // get column start pos
         int x = -ps->hscrollpos;
         int i = 0;
+        int size = 0;
         DdbListviewColumn *c;
+        for (c = ps->columns; c; c = c->next) {
+            size += c->width;
+        }
         for (c = ps->columns; c && i < ps->header_sizing; c = c->next, i++) {
             x += c->width;
         }
@@ -2454,6 +2465,7 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
         gtk_widget_queue_draw (ps->header);
         gtk_widget_queue_draw (ps->list);
         ps->binding->column_size_changed (ps, ps->header_sizing);
+        ddb_listview_list_update_total_width (ps, size);
     }
     else {
         int x = -ps->hscrollpos;

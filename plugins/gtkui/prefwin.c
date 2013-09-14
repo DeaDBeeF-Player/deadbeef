@@ -544,18 +544,6 @@ on_configure_plugin_clicked            (GtkButton       *button,
     }
 }
 
-static void
-redraw_headers (void) {
-    DdbListview *playlist = DDB_LISTVIEW (lookup_widget (mainwin, "playlist"));
-    DdbListview *search = DDB_LISTVIEW (lookup_widget (searchwin, "searchlist"));
-    if (playlist) {
-        ddb_listview_refresh (playlist, DDB_REFRESH_COLUMNS);
-    }
-    if (search) {
-        ddb_listview_refresh (search, DDB_REFRESH_COLUMNS);
-    }
-}
-
 void
 on_tabstrip_light_color_set            (GtkColorButton  *colorbutton,
                                         gpointer         user_data)
