@@ -192,12 +192,18 @@ w_pltbrowser_create (void) {
     w_pltbrowser_t *w = malloc (sizeof (w_pltbrowser_t));
     memset (w, 0, sizeof (w_pltbrowser_t));
 
-    w->base.widget = gtk_scrolled_window_new (NULL, NULL);
+    w->base.widget = gtk_event_box_new ();
     w->base.init = w_pltbrowser_init;
     w->base.message = pltbrowser_message;
 
-    gtk_widget_set_can_focus (w->base.widget, TRUE);
-    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (w->base.widget), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+    gtk_widget_set_can_focus (w->base.widget, FALSE);
+
+    GtkWidget *scroll = gtk_scrolled_window_new (NULL, NULL);
+    gtk_widget_set_can_focus (scroll, FALSE);
+    gtk_widget_show (scroll);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), scroll);
+
+    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scroll), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     w->tree = gtk_tree_view_new ();
     gtk_tree_view_set_reorderable (GTK_TREE_VIEW (w->tree), TRUE);
     gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (w->tree), FALSE);
@@ -206,7 +212,7 @@ w_pltbrowser_create (void) {
     gtk_tree_selection_set_mode (sel, GTK_SELECTION_BROWSE);
     gtk_widget_show (w->tree);
 
-    gtk_container_add (GTK_CONTAINER (w->base.widget), w->tree);
+    gtk_container_add (GTK_CONTAINER (scroll), w->tree);
 
     GtkListStore *store = gtk_list_store_new (1, G_TYPE_STRING);
     gtk_tree_view_set_model (GTK_TREE_VIEW (w->tree), GTK_TREE_MODEL (store));
