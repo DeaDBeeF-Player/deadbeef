@@ -2925,7 +2925,11 @@ junk_load_comm_frame (int version_major, playItem_t *it, uint8_t *readptr, int s
  * or "album". Also only supports peak value if stored as 16 bits. */
 static int junk_id3v2_load_rva2 (int version_major, playItem_t *it, uint8_t *readptr, int synched_size) {
     char *rva_desc = readptr;
-    unsigned rva_desc_len = strnlen(rva_desc, synched_size);
+    unsigned rva_desc_len = 0;
+    const char *p = rva_desc;
+    while (*p++ && rva_desc_len < synched_size) {
+        rva_desc_len++;
+    }
 
     if(rva_desc_len == synched_size) { /* tag too short */
         return -1;
