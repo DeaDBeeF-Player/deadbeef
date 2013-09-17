@@ -26,6 +26,22 @@
 #include "uri.h"
 #include <string.h>
 
+#ifndef strndup
+# define strndup(s, n) ({\
+    char *out;\
+    char *c = memchr (s, n, 0);\
+    if (c) {\
+        out = strdup (s);\
+    }\
+    else {\
+        out = malloc (n+1);\
+        memcpy (out, s, n);\
+        out[n] = 0;\
+    }\
+    out;\
+})
+#endif
+
 static void   field_unescape (char *str);
 static char* field_escape (char* str, unsigned char mask);
 
