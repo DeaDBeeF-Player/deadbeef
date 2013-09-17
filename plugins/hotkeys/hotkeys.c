@@ -93,30 +93,13 @@ init_mapped_keycodes (Display *disp, int *syms, int first_kk, int last_kk, int k
 #endif
 
 static int
-get_keycode (const char* name, int *syms, int first_kk, int last_kk, int ks_per_kk) {
-#ifndef __APPLE__
-    trace ("get_keycode %s\n", name);
-    int i, ks;
-
-    for (i = 0; i < last_kk-first_kk; i++)
-    {
-        int sym = * (syms + i*ks_per_kk);
-        for (ks = 0; keys[ks].name; ks++)
-        {
-            if ( (keys[ ks ].keysym == sym) && (0 == strcmp (name, keys[ ks ].name)))
-            {
-                return i+first_kk;
-            }
-        }
-    }
-#else
+get_keycode (const char* name) {
     for (int i = 0; keys[i].name; i++) {
         if (!strcmp (name, keys[i].name)) {
             trace ("init: key %s code %x\n", name, keys[i].keysym);
             return keys[i].keysym;
         }
     }
-#endif
     return 0;
 }
 
@@ -346,7 +329,7 @@ read_config (void) {
                 }
                 else {
                     // lookup name table
-                    cmd_entry->keycode = get_keycode (p, syms, first_kk, last_kk, ks_per_kk);
+                    cmd_entry->keycode = get_keycode (p);
                 }
                 if (!cmd_entry->keycode)
                 {
@@ -553,21 +536,7 @@ hotkeys_get_action_for_keycombo (int key, int mods, int isglobal, int *ctx) {
         key = tolower (key);
     }
 
-#ifndef __APPLE__
-    int keycode = 0;
-    for (i = 0; keys[i].name; i++) {
-        if (key == keys[i].keysym) {
-            keycode = keys[i].keycode;
-            break;
-        }
-    }
-    if (!keys[i].name) {
-        trace ("hotkeys: unknown keysym 0x%X\n", key);
-        return NULL;
-    }
-#else
     int keycode = key;
-#endif
 
     trace ("hotkeys: keysym 0x%X mapped to 0x%X\n", key, keycode);
 
