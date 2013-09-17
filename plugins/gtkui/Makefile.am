@@ -98,6 +98,8 @@ endif
 
 if HAVE_GTK3
 if OS_OSX
+AM_CPPFLAGS = $(CXXFLAGS) $(GTK3_DEPS_CFLAGS)
+GTK3_OSX_SOURCES = retina.m
 GTKGLEXT_SOURCES =
 else
 GTKGLEXT_LIBS = -lGL
@@ -157,7 +159,7 @@ endif
 
 GTKGLEXT_CFLAGS = -I@top_srcdir@/plugins/gtkui/gtkglext-gtk3 -I@top_srcdir@/plugins/gtkui/gtkglext-gtk3/gdk -DGTK_GL_COMPILATION -DGDK_GL_COMPILATION
 
-ddb_gui_GTK3_la_SOURCES = $(GTKUI_SOURCES) $(GTKGLEXT_SOURCES)
+ddb_gui_GTK3_la_SOURCES = $(GTKUI_SOURCES) $(GTKGLEXT_SOURCES) $(GTK3_OSX_SOURCES)
 ddb_gui_GTK3_la_LDFLAGS = -module
 
 if STATICLINK
