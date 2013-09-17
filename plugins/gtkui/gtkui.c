@@ -56,6 +56,8 @@
 #include "widgets.h"
 #ifndef __APPLE__
 #include "X11/Xlib.h"
+#else
+#include "retina.h"
 #endif
 #undef EGG_SM_CLIENT_BACKEND_XSMP
 #ifdef EGG_SM_CLIENT_BACKEND_XSMP
@@ -90,6 +92,10 @@ void (*gtkui_original_pl_add_files_end) (void);
 
 // cached config variable
 int gtkui_embolden_current_track;
+
+#ifdef __APPLE__
+int gtkui_is_retina = 0;
+#endif
 
 #define TRAY_ICON "deadbeef_tray_icon"
 
@@ -1151,6 +1157,9 @@ gtkui_thread (void *ctx) {
     gtkui_connect_cb (NULL);
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 
+#ifdef __APPLE__
+    gtkui_is_retina = is_retina (mainwin);
+#endif
     gtk_main ();
 
     w_free ();
