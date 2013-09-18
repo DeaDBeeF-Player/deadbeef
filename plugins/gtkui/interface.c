@@ -1771,6 +1771,11 @@ create_prefwin (void)
   GtkWidget *hbuttonbox4;
   GtkWidget *hotkeys_apply;
   GtkWidget *hotkeys_revert;
+  GtkWidget *hotkeys_defaults;
+  GtkWidget *alignment26;
+  GtkWidget *hbox121;
+  GtkWidget *image638;
+  GtkWidget *label146;
   GtkWidget *label132;
   GtkWidget *hpaned1;
   GtkWidget *scrolledwindow2;
@@ -2558,7 +2563,7 @@ create_prefwin (void)
   gtk_widget_show (hbox120);
   gtk_box_pack_start (GTK_BOX (vbox36), hbox120, FALSE, FALSE, 0);
 
-  label145 = gtk_label_new (_("Use the Apply button to save your changes,\nor the Revert button to undo your changes.\nThe changes will NOT be saved if you don't press Apply."));
+  label145 = gtk_label_new (_("Use the Apply button to save your changes,\nor the Revert button to undo your changes.\nThe changes will NOT be saved\nif you don't press Apply."));
   gtk_widget_show (label145);
   gtk_box_pack_start (GTK_BOX (hbox120), label145, FALSE, FALSE, 0);
 
@@ -2577,6 +2582,27 @@ create_prefwin (void)
   gtk_widget_show (hotkeys_revert);
   gtk_container_add (GTK_CONTAINER (hbuttonbox4), hotkeys_revert);
   gtk_widget_set_can_default(hotkeys_revert, TRUE);
+
+  hotkeys_defaults = gtk_button_new ();
+  gtk_widget_show (hotkeys_defaults);
+  gtk_container_add (GTK_CONTAINER (hbuttonbox4), hotkeys_defaults);
+  gtk_widget_set_can_default(hotkeys_defaults, TRUE);
+
+  alignment26 = gtk_alignment_new (0.5, 0.5, 0, 0);
+  gtk_widget_show (alignment26);
+  gtk_container_add (GTK_CONTAINER (hotkeys_defaults), alignment26);
+
+  hbox121 = gtk_hbox_new (FALSE, 2);
+  gtk_widget_show (hbox121);
+  gtk_container_add (GTK_CONTAINER (alignment26), hbox121);
+
+  image638 = gtk_image_new_from_stock ("gtk-revert-to-saved", GTK_ICON_SIZE_BUTTON);
+  gtk_widget_show (image638);
+  gtk_box_pack_start (GTK_BOX (hbox121), image638, FALSE, FALSE, 0);
+
+  label146 = gtk_label_new_with_mnemonic (_("_Defaults"));
+  gtk_widget_show (label146);
+  gtk_box_pack_start (GTK_BOX (hbox121), label146, FALSE, FALSE, 0);
 
   label132 = gtk_label_new (_("Hotkeys"));
   gtk_widget_show (label132);
@@ -2898,6 +2924,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) hotkeys_revert, "clicked",
                     G_CALLBACK (on_hotkeys_revert_clicked),
                     NULL);
+  g_signal_connect ((gpointer) hotkeys_defaults, "clicked",
+                    G_CALLBACK (on_hotkeys_defaults_clicked),
+                    NULL);
   g_signal_connect ((gpointer) pref_pluginlist, "cursor_changed",
                     G_CALLBACK (on_pref_pluginlist_cursor_changed),
                     NULL);
@@ -3069,6 +3098,11 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, hbuttonbox4, "hbuttonbox4");
   GLADE_HOOKUP_OBJECT (prefwin, hotkeys_apply, "hotkeys_apply");
   GLADE_HOOKUP_OBJECT (prefwin, hotkeys_revert, "hotkeys_revert");
+  GLADE_HOOKUP_OBJECT (prefwin, hotkeys_defaults, "hotkeys_defaults");
+  GLADE_HOOKUP_OBJECT (prefwin, alignment26, "alignment26");
+  GLADE_HOOKUP_OBJECT (prefwin, hbox121, "hbox121");
+  GLADE_HOOKUP_OBJECT (prefwin, image638, "image638");
+  GLADE_HOOKUP_OBJECT (prefwin, label146, "label146");
   GLADE_HOOKUP_OBJECT (prefwin, label132, "label132");
   GLADE_HOOKUP_OBJECT (prefwin, hpaned1, "hpaned1");
   GLADE_HOOKUP_OBJECT (prefwin, scrolledwindow2, "scrolledwindow2");

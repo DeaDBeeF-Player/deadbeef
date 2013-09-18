@@ -38,5 +38,8 @@ find_action_by_name (const char *command);
 void
 set_button_action_label (const char *act, int action_ctx, GtkWidget *button);
 
+void
+gtkui_set_default_hotkeys (void);
+
 #endif // __GTKUI_HOTKEYS_H
 
