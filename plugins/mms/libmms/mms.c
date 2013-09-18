@@ -174,7 +174,17 @@ static off_t fallback_io_read(void *data, int socket, char *buf, off_t num, int 
   lprintf ("mms: fallback_io_read: need_abort ptr = %p\n", need_abort);
   while (len < num && nretry > 0 && (!need_abort || !(*need_abort)))
   {
-    ret = (off_t)read(socket, buf + len, num - len);
+    // original read from upstream libmms
+    //ret = (off_t)read(socket, buf + len, num - len);
+    for (;;) {
+        ret = (off_t)recv(socket, buf + len, num - len, MSG_DONTWAIT);
+        if ((ret != EAGAIN && ret != EWOULDBLOCK) || (need_abort && *need_abort)) {
+            break;
+        }
+    }
+    if (need_abort && *need_abort) {
+        return 0;
+    }
     if(ret == 0)
       break; /* EOF */
     if(ret < 0) {
@@ -252,6 +262,10 @@ static int fallback_io_tcp_connect(void *data, const char *host, int port, int *
             error = -1;
             break;
         }
+    }
+    if (need_abort && *need_abort) {
+        lprintf ("fallback_io_tcp_connect: aborted\n");
+        return -1;
     }
 //        if (connect(s, (struct sockaddr *)&sin, sizeof(sin)) ==-1 && errno != EINPROGRESS) {
 //            continue;
@@ -1547,6 +1561,11 @@ int mms_read (mms_io_t *io, mms_t *this, char *data, int len, int *need_abort) {
       this->current_pos += n;
     }
   }
+
+  if (need_abort && *need_abort) {
+      lprintf ("mms_read aborted\n");
+      return -1;
+  }
   return total;
 }
 
@@ -1698,7 +1717,7 @@ off_t mms_seek (mms_io_t *io, mms_t *this, off_t offset, int origin) {
       //}
       dest = mms_get_length (this) + offset;
     default:
-      printf ("input_mms: unknown origin in seek!\n");
+      fprintf (stderr, "input_mms: unknown origin in seek!\n");
       return this->current_pos;
   }
 
@@ -1803,7 +1822,6 @@ off_t mms_seek (mms_io_t *io, mms_t *this, off_t offset, int origin) {
 
 
 void mms_close (mms_t *this) {
-
   if (this->s != -1)
     close (this->s);
   if (this->url)
