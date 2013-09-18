@@ -63,6 +63,8 @@ typedef struct
 #include "hotkeys.h"
 #include "../../strdupa.h"
 
+int gtkui_hotkeys_changed = 0;
+
 void
 on_hotkeys_actions_cursor_changed      (GtkTreeView     *treeview,
                                         gpointer         user_data);
@@ -401,6 +403,7 @@ on_hotkeys_actions_clicked             (GtkButton       *button,
 
 void
 prefwin_init_hotkeys (GtkWidget *_prefwin) {
+    gtkui_hotkeys_changed = 0;
     ctx_names[DDB_ACTION_CTX_MAIN] = _("Main");
     ctx_names[DDB_ACTION_CTX_SELECTION] = _("Selection");
     ctx_names[DDB_ACTION_CTX_PLAYLIST] = _("Playlist");
@@ -508,6 +511,7 @@ on_hotkeys_list_cursor_changed         (GtkTreeView     *treeview,
     if (path) {
         gtk_tree_path_free (path);
     }
+    gtkui_hotkeys_changed = 1;
 }
 
 
@@ -524,6 +528,7 @@ on_hotkey_add_clicked                  (GtkButton       *button,
     gtk_tree_view_set_cursor (GTK_TREE_VIEW (hotkeys), path, NULL, FALSE);
     gtk_tree_path_free (path);
     gtk_widget_grab_focus (hotkeys);
+    gtkui_hotkeys_changed = 1;
 }
 
 
@@ -538,6 +543,7 @@ on_hotkey_remove_clicked               (GtkButton       *button,
     GtkTreeIter iter;
     gtk_tree_model_get_iter (GTK_TREE_MODEL (hkstore), &iter, path);
     gtk_list_store_remove (hkstore, &iter);
+    gtkui_hotkeys_changed = 1;
 }
 
 
@@ -589,16 +595,15 @@ on_hotkey_is_global_toggled            (GtkToggleButton *togglebutton,
                                         gpointer         user_data)
 {
     // update the tree
-    {
-        GtkWidget *hotkeys = lookup_widget (prefwin, "hotkeys_list");
-        GtkTreePath *path;
-        gtk_tree_view_get_cursor (GTK_TREE_VIEW (hotkeys), &path, NULL);
-        GtkTreeModel *model = gtk_tree_view_get_model (GTK_TREE_VIEW (hotkeys));
-        GtkTreeIter iter;
-        if (path && gtk_tree_model_get_iter (model, &iter, path)) {
-            gtk_list_store_set (GTK_LIST_STORE (model), &iter, 3, gtk_toggle_button_get_active (togglebutton), -1);
-        }
+    GtkWidget *hotkeys = lookup_widget (prefwin, "hotkeys_list");
+    GtkTreePath *path;
+    gtk_tree_view_get_cursor (GTK_TREE_VIEW (hotkeys), &path, NULL);
+    GtkTreeModel *model = gtk_tree_view_get_model (GTK_TREE_VIEW (hotkeys));
+    GtkTreeIter iter;
+    if (path && gtk_tree_model_get_iter (model, &iter, path)) {
+        gtk_list_store_set (GTK_LIST_STORE (model), &iter, 3, gtk_toggle_button_get_active (togglebutton), -1);
     }
+    gtkui_hotkeys_changed = 1;
 }
 
 typedef struct {
@@ -784,6 +789,7 @@ out:
     gdk_display_keyboard_ungrab (display, GDK_CURRENT_TIME);
     gdk_display_pointer_ungrab (display, GDK_CURRENT_TIME);
     grabbed = 0;
+    gtkui_hotkeys_changed = 1;
     return TRUE;
 }
 
@@ -823,6 +829,7 @@ on_hotkeys_apply_clicked               (GtkButton       *button,
                                         gpointer         user_data)
 {
     hotkeys_save ();
+    gtkui_hotkeys_changed = 0;
 }
 
 
@@ -831,5 +838,6 @@ on_hotkeys_revert_clicked              (GtkButton       *button,
                                         gpointer         user_data)
 {
     hotkeys_load ();
+    gtkui_hotkeys_changed = 0;
 }
 

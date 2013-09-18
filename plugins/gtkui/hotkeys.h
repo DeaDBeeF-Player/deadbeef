@@ -24,6 +24,8 @@
 #ifndef __GTKUI_HOTKEYS_H
 #define __GTKUI_HOTKEYS_H
 
+extern int gtkui_hotkeys_changed;
+
 void
 prefwin_init_hotkeys (GtkWidget *prefwin);
 
