@@ -217,11 +217,38 @@ static int fallback_io_tcp_connect(void *data, const char *host, int port, int *
   struct hostent *h;
   int i, s;
   
+#ifdef USE_GETHOSTBYNAME
   h = gethostbyname(host);
   if (h == NULL) {
     lprintf("mms: unable to resolve host: %s\n", host);
     return -1;
   }
+  char **h_addr_list = h->h_addr_list;
+#else
+  char sport[10];
+  snprintf (sport, 10, "%d", port);
+  struct addrinfo *res;
+  for (;;) {
+      int err = getaddrinfo (host, sport, NULL, &res);
+      if (need_abort && *need_abort) {
+          if (res) {
+              freeaddrinfo(res);
+          }
+          return -1;
+      }
+
+      if (err == EAI_AGAIN) {
+          lprintf ("getaddrinfo again\n");
+          continue;
+      }
+      else if (err == 0) {
+          lprintf ("getaddrinfo success\n");
+          break;
+      }
+      lprintf ("getaddrinfo err: %d\n", err);
+      return -1;
+  }
+#endif
 
   s = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);  
   if (s == -1) {
@@ -234,14 +261,22 @@ static int fallback_io_tcp_connect(void *data, const char *host, int port, int *
     return -1;
   }
 
-  for (i = 0; h->h_addr_list[i]; i++) {
+#ifdef USE_GETHOSTBYNAME
+  for (i = 0; h_addr_list[i]; i++) {
     struct in_addr ia;
     struct sockaddr_in sin;
  
-    memcpy (&ia, h->h_addr_list[i], 4);
+    memcpy (&ia, h_addr_list[i], 4);
     sin.sin_family = AF_INET;
     sin.sin_addr   = ia;
     sin.sin_port   = htons(port);
+#else
+  struct addrinfo *rp;
+  for (rp = res; rp != NULL; rp = rp->ai_next) {
+    struct sockaddr_in sin;
+    memset (&sin, 0, sizeof (sin));
+    memcpy (&sin, rp->ai_addr, rp->ai_addrlen);
+#endif
     
     time_t t = time (NULL);
     int error = 0;
@@ -265,7 +300,8 @@ static int fallback_io_tcp_connect(void *data, const char *host, int port, int *
     }
     if (need_abort && *need_abort) {
         lprintf ("fallback_io_tcp_connect: aborted\n");
-        return -1;
+        s = -1;
+        break;
     }
 //        if (connect(s, (struct sockaddr *)&sin, sizeof(sin)) ==-1 && errno != EINPROGRESS) {
 //            continue;
@@ -274,8 +310,18 @@ static int fallback_io_tcp_connect(void *data, const char *host, int port, int *
         continue;
     }
     
+#ifndef USE_GETHOSTBYNAME
+    if (res) {
+        freeaddrinfo(res);
+    }
+#endif
     return s;
   }
+#ifndef USE_GETHOSTBYNAME
+  if (res) {
+      freeaddrinfo(res);
+  }
+#endif
   close(s);
   return -1;
 }
