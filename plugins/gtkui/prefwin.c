@@ -340,7 +340,23 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     prefwin_init_hotkeys (prefwin);
 
     deadbeef->conf_unlock ();
-    gtk_dialog_run (GTK_DIALOG (prefwin));
+    for (;;) {
+        gtk_dialog_run (GTK_DIALOG (prefwin));
+        if (gtkui_hotkeys_changed) {
+            GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (prefwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("You modified the hotkeys settings, but didn't save your changes."));
+            gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (prefwin));
+            gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), _("Are you sure you want to continue without saving?"));
+            gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
+            int response = gtk_dialog_run (GTK_DIALOG (dlg));
+            gtk_widget_destroy (dlg);
+            if (response == GTK_RESPONSE_YES) {
+                break;
+            }
+        }
+        else {
+            break;
+        }
+    }
     dsp_setup_free ();
     gtk_widget_destroy (prefwin);
     deadbeef->conf_save ();
