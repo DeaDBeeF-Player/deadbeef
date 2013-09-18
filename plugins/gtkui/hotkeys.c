@@ -841,3 +841,58 @@ on_hotkeys_revert_clicked              (GtkButton       *button,
     gtkui_hotkeys_changed = 0;
 }
 
+void
+on_hotkeys_defaults_clicked            (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (prefwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("All your custom-defined hotkeys will be lost."));
+    gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (prefwin));
+    gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), _("This operation cannot be undone. Proceed?"));
+    gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
+    int response = gtk_dialog_run (GTK_DIALOG (dlg));
+    gtk_widget_destroy (dlg);
+    if (response != GTK_RESPONSE_YES) {
+        return;
+    }
+    gtkui_set_default_hotkeys ();
+}
+
+void
+gtkui_set_default_hotkeys (void) {
+    deadbeef->conf_remove_items ("hotkey.key");
+    deadbeef->conf_set_str ("hotkey.key01", "\"Ctrl f\" 0 0 find");
+    deadbeef->conf_set_str ("hotkey.key02", "\"Ctrl o\" 0 0 open_files");
+    deadbeef->conf_set_str ("hotkey.key03", "\"Ctrl q\" 0 0 quit");
+    deadbeef->conf_set_str ("hotkey.key04", "\"Ctrl n\" 0 0 new_playlist");
+    deadbeef->conf_set_str ("hotkey.key05", "\"Ctrl a\" 0 0 select_all");
+    deadbeef->conf_set_str ("hotkey.key06", "\"Escape\" 0 0 deselect_all");
+    deadbeef->conf_set_str ("hotkey.key07", "\"Ctrl m\" 0 0 toggle_stop_after_current");
+    deadbeef->conf_set_str ("hotkey.key08", "\"Ctrl j\" 0 0 jump_to_current_track");
+    deadbeef->conf_set_str ("hotkey.key09", "\"F1\" 0 0 help");
+    deadbeef->conf_set_str ("hotkey.key10", "\"Delete\" 1 0 remove_from_playlist");
+    deadbeef->conf_set_str ("hotkey.key11", "\"Ctrl w\" 0 0 remove_current_playlist");
+    deadbeef->conf_set_str ("hotkey.key11", "\"Ctrl w\" 0 0 remove_current_playlist");
+    deadbeef->conf_set_str ("hotkey.key11", "\"Ctrl w\" 0 0 remove_current_playlist");
+    deadbeef->conf_set_str ("hotkey.key14", "\"Return\" 0 0 play");
+    deadbeef->conf_set_str ("hotkey.key15", "\"Ctrl p\" 0 0 toggle_pause");
+    deadbeef->conf_set_str ("hotkey.key16", "\"Alt 1\" 0 0 playlist1");
+    deadbeef->conf_set_str ("hotkey.key17", "\"Alt 2\" 0 0 playlist2");
+    deadbeef->conf_set_str ("hotkey.key18", "\"Alt 3\" 0 0 playlist3");
+    deadbeef->conf_set_str ("hotkey.key19", "\"Alt 4\" 0 0 playlist4");
+    deadbeef->conf_set_str ("hotkey.key20", "\"Alt 5\" 0 0 playlist5");
+    deadbeef->conf_set_str ("hotkey.key21", "\"Alt 6\" 0 0 playlist6");
+    deadbeef->conf_set_str ("hotkey.key22", "\"Alt 7\" 0 0 playlist7");
+    deadbeef->conf_set_str ("hotkey.key23", "\"Alt 8\" 0 0 playlist8");
+    deadbeef->conf_set_str ("hotkey.key24", "\"Alt 9\" 0 0 playlist9");
+    deadbeef->conf_set_str ("hotkey.key25", "\"Alt 0\" 0 0 playlist10");
+    deadbeef->conf_set_str ("hotkey.key26", "z 0 0 prev");
+    deadbeef->conf_set_str ("hotkey.key27", "x 0 0 play");
+    deadbeef->conf_set_str ("hotkey.key28", "c 0 0 toggle_pause");
+    deadbeef->conf_set_str ("hotkey.key29", "v 0 0 stop");
+    deadbeef->conf_set_str ("hotkey.key30", "b 0 0 next");
+    deadbeef->conf_set_str ("hotkey.key31", "n 0 0 playback_random");
+    deadbeef->conf_save ();
+    hotkeys_load ();
+    gtkui_hotkeys_changed = 0;
+}
+

@@ -1022,3 +1022,4 @@ on_menu_bar1_activate                  (GtkMenuItem     *menuitem,
     action_toggle_menu_handler_cb (NULL);
 }
 
+
