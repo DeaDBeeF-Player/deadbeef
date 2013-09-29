@@ -1,0 +1,6062 @@
+# English (British) translation for Glade
+# Copyright (C) 1999 Free Software Foundation, Inc.
+# Robert Brady <rwb197@ecs.soton.ac.uk>, 1999.
+# Gareth Owen <gowen72@yahoo.com>, David Lodge <dave@cirt.net>, 2004.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Glade CVS\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-09-12 22:50+0100\n"
+"PO-Revision-Date: 2006-09-12 22:51-0000\n"
+"Last-Translator: David Lodge <dave@cirt.net>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../glade-2.desktop.in.h:1
+msgid "Create or open user interface designs for GTK+ or GNOME applications"
+msgstr "Create or open user interface designs for GTK+ or GNOME applications"
+
+#: ../glade-2.desktop.in.h:2
+msgid "Glade Interface Designer"
+msgstr "Glade Interface Designer"
+
+#: ../glade/editor.c:343
+msgid "Grid Options"
+msgstr "Grid Options"
+
+#: ../glade/editor.c:357
+msgid "Horizontal Spacing:"
+msgstr "Horizontal Spacing:"
+
+#: ../glade/editor.c:372
+msgid "Vertical Spacing:"
+msgstr "Vertical Spacing:"
+
+#: ../glade/editor.c:390
+msgid "Grid Style:"
+msgstr "Grid Style:"
+
+#: ../glade/editor.c:396
+msgid "Dots"
+msgstr "Dots"
+
+#: ../glade/editor.c:405
+msgid "Lines"
+msgstr "Lines"
+
+#: ../glade/editor.c:487
+msgid "Snap Options"
+msgstr "Snap Options"
+
+#. Horizontal snapping
+#: ../glade/editor.c:502
+msgid "Horizontal Snapping:"
+msgstr "Horizontal Snapping:"
+
+#: ../glade/editor.c:508
+#: ../glade/gbwidgets/gbtextview.c:49
+msgid "Left"
+msgstr "Left"
+
+#: ../glade/editor.c:517
+#: ../glade/gbwidgets/gbtextview.c:50
+msgid "Right"
+msgstr "Right"
+
+#. Vertical snapping
+#: ../glade/editor.c:526
+msgid "Vertical Snapping:"
+msgstr "Vertical Snapping:"
+
+#: ../glade/editor.c:532
+msgid "Top"
+msgstr "Top"
+
+#: ../glade/editor.c:540
+msgid "Bottom"
+msgstr "Bottom"
+
+#: ../glade/editor.c:741
+msgid "GtkToolItem widgets can only be added to a GtkToolbar."
+msgstr "GtkToolItem widgets can only be added to a GtkToolbar."
+
+#: ../glade/editor.c:758
+msgid "Couldn't insert a GtkScrolledWindow widget."
+msgstr "Couldn't insert a GtkScrolledWindow widget."
+
+#: ../glade/editor.c:805
+msgid "Couldn't insert a GtkViewport widget."
+msgstr "Couldn't insert a GtkViewport widget."
+
+#: ../glade/editor.c:832
+msgid "Couldn't add new widget."
+msgstr "Couldn't add new widget."
+
+#: ../glade/editor.c:1230
+msgid ""
+"You can't add a widget at the selected position.\n"
+"\n"
+"Tip: GTK+ uses containers to lay out widgets.\n"
+"Try deleting the existing widget and using\n"
+"a box or table container instead.\n"
+msgstr ""
+"You can't add a widget at the selected position.\n"
+"\n"
+"Tip: GTK+ uses containers to lay out widgets.\n"
+"Try deleting the existing widget and using\n"
+"a box or table container instead.\n"
+
+#: ../glade/editor.c:3517
+msgid "Couldn't delete widget."
+msgstr "Couldn't delete widget."
+
+#: ../glade/editor.c:3541
+#: ../glade/editor.c:3545
+msgid "The widget can't be deleted"
+msgstr "The widget can't be deleted"
+
+#: ../glade/editor.c:3572
+msgid "The widget is created automatically as part of the parent widget, and it can't be deleted."
+msgstr "The widget is created automatically as part of the parent widget, and it can't be deleted."
+
+#: ../glade/gbwidget.c:697
+msgid "Border Width:"
+msgstr "Border Width:"
+
+#: ../glade/gbwidget.c:698
+msgid "The width of the border around the container"
+msgstr "The width of the border around the container"
+
+#: ../glade/gbwidget.c:1751
+msgid "Select"
+msgstr "Select"
+
+#: ../glade/gbwidget.c:1773
+msgid "Remove Scrolled Window"
+msgstr "Remove Scrolled Window"
+
+#: ../glade/gbwidget.c:1782
+msgid "Add Scrolled Window"
+msgstr "Add Scrolled Window"
+
+#: ../glade/gbwidget.c:1803
+msgid "Remove Alignment"
+msgstr "Remove Alignment"
+
+#: ../glade/gbwidget.c:1811
+msgid "Add Alignment"
+msgstr "Add Alignment"
+
+#: ../glade/gbwidget.c:1826
+msgid "Remove Event Box"
+msgstr "Remove Event Box"
+
+#: ../glade/gbwidget.c:1834
+msgid "Add Event Box"
+msgstr "Add Event Box"
+
+#: ../glade/gbwidget.c:1844
+msgid "Redisplay"
+msgstr "Redisplay"
+
+#: ../glade/gbwidget.c:1859
+msgid "Cut"
+msgstr "Cut"
+
+#: ../glade/gbwidget.c:1866
+#: ../glade/property.c:892
+#: ../glade/property.c:5141
+msgid "Copy"
+msgstr "Copy"
+
+#: ../glade/gbwidget.c:1875
+#: ../glade/property.c:904
+msgid "Paste"
+msgstr "Paste"
+
+#: ../glade/gbwidget.c:1887
+#: ../glade/property.c:1581
+#: ../glade/property.c:5132
+msgid "Delete"
+msgstr "Delete"
+
+#. N/A stands for 'Not Applicable'. It is used when a standard widget
+#. property does not apply to the current widget. e.g. widgets without
+#. windows can't use the Events property. This appears in the property
+#. editor and so should be a short abbreviation.
+#: ../glade/gbwidget.c:2414
+#: ../glade/gbwidget.c:2483
+msgid "N/A"
+msgstr "N/A"
+
+#. General code for container - has to remove all children and add back
+#. NOTE: this may not work for specialised containers.
+#. NOTE: need to ref widgets?
+#: ../glade/gbwidget.c:3213
+msgid "replacing child of container - not implemented yet\n"
+msgstr "replacing child of container - not implemented yet\n"
+
+#: ../glade/gbwidget.c:3441
+msgid "Couldn't insert GtkAlignment widget."
+msgstr "Couldn't insert GtkAlignment widget."
+
+#: ../glade/gbwidget.c:3481
+msgid "Couldn't remove GtkAlignment widget."
+msgstr "Couldn't remove GtkAlignment widget."
+
+#: ../glade/gbwidget.c:3505
+msgid "Couldn't insert GtkEventBox widget."
+msgstr "Couldn't insert GtkEventBox widget."
+
+#: ../glade/gbwidget.c:3544
+msgid "Couldn't remove GtkEventBox widget."
+msgstr "Couldn't remove GtkEventBox widget."
+
+#: ../glade/gbwidget.c:3579
+msgid "Couldn't insert GtkScrolledWindow widget."
+msgstr "Couldn't insert GtkScrolledWindow widget."
+
+#: ../glade/gbwidget.c:3618
+msgid "Couldn't remove GtkScrolledWindow widget."
+msgstr "Couldn't remove GtkScrolledWindow widget."
+
+#: ../glade/gbwidget.c:3732
+msgid "Remove Label"
+msgstr "Remove Label"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:79
+msgid "Application Name"
+msgstr "Application Name"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:103
+#: ../glade/gnome/gnomeabout.c:137
+msgid "Logo:"
+msgstr "Logo:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:103
+#: ../glade/gnome/gnomeabout.c:137
+msgid "The pixmap to use as the logo"
+msgstr "The pixmap to use as the logo"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:105
+#: ../glade/glade_project_options.c:260
+msgid "Program Name:"
+msgstr "Program Name:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:105
+msgid "The name of the application"
+msgstr "The name of the application"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:106
+#: ../glade/gnome/gnomeabout.c:139
+msgid "Comments:"
+msgstr "Comments:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:106
+msgid "Additional information, such as a description of the application"
+msgstr "Additional information, such as a description of the application"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:107
+#: ../glade/gnome/gnomeabout.c:138
+msgid "Copyright:"
+msgstr "Copyright:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:107
+#: ../glade/gnome/gnomeabout.c:138
+msgid "The copyright notice"
+msgstr "The copyright notice"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:109
+msgid "Website URL:"
+msgstr "Website URL:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:109
+msgid "The URL of the application's website"
+msgstr "The URL of the application's website"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:110
+msgid "Website Label:"
+msgstr "Website Label:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:110
+msgid "The label to display for the link to the website"
+msgstr "The label to display for the link to the website"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:112
+#: ../glade/glade_project_options.c:365
+msgid "License:"
+msgstr "License:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:112
+msgid "The license details of the application"
+msgstr "The license details of the application"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:113
+msgid "Wrap License:"
+msgstr "Wrap Licence:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:113
+msgid "If the license text should be wrapped"
+msgstr "If the licence text should be wrapped"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:115
+#: ../glade/gnome/gnomeabout.c:141
+msgid "Authors:"
+msgstr "Authors:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:115
+#: ../glade/gnome/gnomeabout.c:141
+msgid "The authors of the package, one on each line"
+msgstr "The authors of the package, one on each line"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:116
+#: ../glade/gnome/gnomeabout.c:142
+msgid "Documenters:"
+msgstr "Documenters:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:116
+#: ../glade/gnome/gnomeabout.c:142
+msgid "The documenters of the package, one on each line"
+msgstr "The documenters of the package, one on each line"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:117
+msgid "Artists:"
+msgstr "Artists:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:117
+msgid "The people who have created the artwork for the package, one on each line"
+msgstr "The people who have created the artwork for the package, one on each line"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:118
+#: ../glade/gnome/gnomeabout.c:143
+msgid "Translators:"
+msgstr "Translators:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:118
+#: ../glade/gnome/gnomeabout.c:143
+msgid "The translators of the package. This should normally be left empty so that translators can add their names in the po files"
+msgstr "The translators of the package. This should normally be left empty so that translators can add their names in the po files"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:588
+msgid "About Dialog"
+msgstr "About Dialogue"
+
+#: ../glade/gbwidgets/gbaccellabel.c:200
+msgid "Label with Accelerator"
+msgstr "Label with Accelerator"
+
+#. The GtkProgress interface is deprecated now, and GtkProgressBar doesn't
+#. have functions to set these, so I suppose we shouldn't support them.
+#: ../glade/gbwidgets/gbalignment.c:71
+#: ../glade/gbwidgets/gbarrow.c:89
+#: ../glade/gbwidgets/gbaspectframe.c:130
+#: ../glade/gbwidgets/gbimage.c:119
+#: ../glade/gbwidgets/gblabel.c:181
+#: ../glade/gbwidgets/gbprogressbar.c:162
+msgid "X Align:"
+msgstr "X Align:"
+
+#: ../glade/gbwidgets/gbalignment.c:72
+msgid "The horizontal alignment of the child widget"
+msgstr "The horizontal alignment of the child widget"
+
+#: ../glade/gbwidgets/gbalignment.c:74
+#: ../glade/gbwidgets/gbarrow.c:92
+#: ../glade/gbwidgets/gbaspectframe.c:133
+#: ../glade/gbwidgets/gbimage.c:122
+#: ../glade/gbwidgets/gblabel.c:184
+#: ../glade/gbwidgets/gbprogressbar.c:165
+msgid "Y Align:"
+msgstr "Y Align:"
+
+#: ../glade/gbwidgets/gbalignment.c:75
+msgid "The vertical alignment of the child widget"
+msgstr "The vertical alignment of the child widget"
+
+#: ../glade/gbwidgets/gbalignment.c:77
+msgid "X Scale:"
+msgstr "X Scale:"
+
+#: ../glade/gbwidgets/gbalignment.c:78
+msgid "The horizontal scale of the child widget"
+msgstr "The horizontal scale of the child widget"
+
+#: ../glade/gbwidgets/gbalignment.c:80
+msgid "Y Scale:"
+msgstr "Y Scale:"
+
+#: ../glade/gbwidgets/gbalignment.c:81
+msgid "The vertical scale of the child widget"
+msgstr "The vertical scale of the child widget"
+
+#: ../glade/gbwidgets/gbalignment.c:85
+msgid "Top Padding:"
+msgstr "Top Padding:"
+
+#: ../glade/gbwidgets/gbalignment.c:86
+msgid "Space to put above the child widget"
+msgstr "Space to put above the child widget"
+
+#: ../glade/gbwidgets/gbalignment.c:89
+msgid "Bottom Padding:"
+msgstr "Bottom Padding:"
+
+#: ../glade/gbwidgets/gbalignment.c:90
+msgid "Space to put below the child widget"
+msgstr "Space to put below the child widget"
+
+#: ../glade/gbwidgets/gbalignment.c:93
+msgid "Left Padding:"
+msgstr "Left Padding:"
+
+#: ../glade/gbwidgets/gbalignment.c:94
+msgid "Space to put to the left of the child widget"
+msgstr "Space to put to the left of the child widget"
+
+#: ../glade/gbwidgets/gbalignment.c:97
+msgid "Right Padding:"
+msgstr "Right Padding:"
+
+#: ../glade/gbwidgets/gbalignment.c:98
+msgid "Space to put to the right of the child widget"
+msgstr "Space to put to the right of the child widget"
+
+#: ../glade/gbwidgets/gbalignment.c:255
+msgid "Alignment"
+msgstr "Alignment"
+
+#: ../glade/gbwidgets/gbarrow.c:85
+msgid "Direction:"
+msgstr "Direction:"
+
+#: ../glade/gbwidgets/gbarrow.c:85
+msgid "The direction of the arrow"
+msgstr "The direction of the arrow"
+
+#: ../glade/gbwidgets/gbarrow.c:87
+#: ../glade/gbwidgets/gbaspectframe.c:128
+#: ../glade/gbwidgets/gbclist.c:247
+#: ../glade/gbwidgets/gbctree.c:253
+#: ../glade/gbwidgets/gbframe.c:123
+#: ../glade/gbwidgets/gbhandlebox.c:109
+#: ../glade/gbwidgets/gbviewport.c:104
+#: ../glade/gnome/bonobodockitem.c:176
+msgid "Shadow:"
+msgstr "Shadow:"
+
+#: ../glade/gbwidgets/gbarrow.c:87
+msgid "The shadow type of the arrow"
+msgstr "The shadow type of the arrow"
+
+#: ../glade/gbwidgets/gbarrow.c:90
+msgid "The horizontal alignment of the arrow"
+msgstr "The horizontal alignment of the arrow"
+
+#: ../glade/gbwidgets/gbarrow.c:93
+msgid "The vertical alignment of the arrow"
+msgstr "The vertical alignment of the arrow"
+
+#: ../glade/gbwidgets/gbarrow.c:95
+#: ../glade/gbwidgets/gbimage.c:125
+#: ../glade/gbwidgets/gblabel.c:187
+msgid "X Pad:"
+msgstr "X Pad:"
+
+#: ../glade/gbwidgets/gbarrow.c:95
+#: ../glade/gbwidgets/gbimage.c:125
+#: ../glade/gbwidgets/gblabel.c:187
+#: ../glade/gbwidgets/gbtable.c:382
+msgid "The horizontal padding"
+msgstr "The horizontal padding"
+
+#: ../glade/gbwidgets/gbarrow.c:97
+#: ../glade/gbwidgets/gbimage.c:127
+#: ../glade/gbwidgets/gblabel.c:189
+msgid "Y Pad:"
+msgstr "Y Pad:"
+
+#: ../glade/gbwidgets/gbarrow.c:97
+#: ../glade/gbwidgets/gbimage.c:127
+#: ../glade/gbwidgets/gblabel.c:189
+#: ../glade/gbwidgets/gbtable.c:385
+msgid "The vertical padding"
+msgstr "The vertical padding"
+
+#: ../glade/gbwidgets/gbarrow.c:299
+msgid "Arrow"
+msgstr "Arrow"
+
+#: ../glade/gbwidgets/gbaspectframe.c:122
+#: ../glade/gbwidgets/gbframe.c:117
+msgid "Label X Align:"
+msgstr "Label X Align:"
+
+#: ../glade/gbwidgets/gbaspectframe.c:123
+#: ../glade/gbwidgets/gbframe.c:118
+msgid "The horizontal alignment of the frame's label widget"
+msgstr "The horizontal alignment of the frame's label widget"
+
+#: ../glade/gbwidgets/gbaspectframe.c:125
+#: ../glade/gbwidgets/gbframe.c:120
+msgid "Label Y Align:"
+msgstr "Label Y Align:"
+
+#: ../glade/gbwidgets/gbaspectframe.c:126
+#: ../glade/gbwidgets/gbframe.c:121
+msgid "The vertical alignment of the frame's label widget"
+msgstr "The vertical alignment of the frame's label widget"
+
+#: ../glade/gbwidgets/gbaspectframe.c:128
+#: ../glade/gbwidgets/gbframe.c:123
+msgid "The type of shadow of the frame"
+msgstr "The type of shadow of the frame"
+
+#: ../glade/gbwidgets/gbaspectframe.c:131
+#: ../glade/gbwidgets/gbaspectframe.c:134
+msgid "The horizontal alignment of the frame's child"
+msgstr "The horizontal alignment of the frame's child"
+
+#: ../glade/gbwidgets/gbaspectframe.c:136
+msgid "Ratio:"
+msgstr "Ratio:"
+
+#: ../glade/gbwidgets/gbaspectframe.c:137
+msgid "The aspect ratio of the frame's child"
+msgstr "The aspect ratio of the frame's child"
+
+#: ../glade/gbwidgets/gbaspectframe.c:138
+msgid "Obey Child:"
+msgstr "Obey Child:"
+
+#: ../glade/gbwidgets/gbaspectframe.c:139
+msgid "If the aspect ratio should be determined by the child"
+msgstr "If the aspect ratio should be determined by the child"
+
+#: ../glade/gbwidgets/gbaspectframe.c:319
+msgid "Aspect Frame"
+msgstr "Aspect Frame"
+
+#: ../glade/gbwidgets/gbbutton.c:118
+#: ../glade/gbwidgets/gbcheckbutton.c:85
+#: ../glade/gbwidgets/gbmenutoolbutton.c:85
+#: ../glade/gbwidgets/gbradiobutton.c:126
+#: ../glade/gbwidgets/gbradiotoolbutton.c:133
+#: ../glade/gbwidgets/gbtogglebutton.c:88
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:90
+#: ../glade/gbwidgets/gbtoolbutton.c:104
+msgid "Stock Button:"
+msgstr "Stock Button:"
+
+#: ../glade/gbwidgets/gbbutton.c:119
+#: ../glade/gbwidgets/gbcheckbutton.c:86
+#: ../glade/gbwidgets/gbmenutoolbutton.c:86
+#: ../glade/gbwidgets/gbradiobutton.c:127
+#: ../glade/gbwidgets/gbradiotoolbutton.c:134
+#: ../glade/gbwidgets/gbtogglebutton.c:89
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:91
+#: ../glade/gbwidgets/gbtoolbutton.c:105
+msgid "The stock button to use"
+msgstr "The stock button to use"
+
+#. For now we don't support editing the menuitem properties in the property
+#. editor. The menu editor has to be used instead.
+#: ../glade/gbwidgets/gbbutton.c:121
+#: ../glade/gbwidgets/gbcheckbutton.c:88
+#: ../glade/gbwidgets/gbcheckmenuitem.c:72
+#: ../glade/gbwidgets/gbimagemenuitem.c:92
+#: ../glade/gbwidgets/gblabel.c:169
+#: ../glade/gbwidgets/gblistitem.c:73
+#: ../glade/gbwidgets/gbmenuitem.c:87
+#: ../glade/gbwidgets/gbmenutoolbutton.c:88
+#: ../glade/gbwidgets/gbradiobutton.c:129
+#: ../glade/gbwidgets/gbradiomenuitem.c:103
+#: ../glade/gbwidgets/gbradiotoolbutton.c:136
+#: ../glade/gbwidgets/gbtogglebutton.c:91
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:93
+#: ../glade/gbwidgets/gbtoolbutton.c:107
+#: ../glade/glade_menu_editor.c:748
+#: ../glade/gnome/gnomehref.c:68
+msgid "Label:"
+msgstr "Label:"
+
+#: ../glade/gbwidgets/gbbutton.c:121
+#: ../glade/gbwidgets/gbcheckbutton.c:88
+#: ../glade/gbwidgets/gbcheckmenuitem.c:72
+#: ../glade/gbwidgets/gbentry.c:100
+#: ../glade/gbwidgets/gbimagemenuitem.c:92
+#: ../glade/gbwidgets/gblabel.c:169
+#: ../glade/gbwidgets/gblistitem.c:73
+#: ../glade/gbwidgets/gbmenuitem.c:87
+#: ../glade/gbwidgets/gbmenutoolbutton.c:88
+#: ../glade/gbwidgets/gbradiobutton.c:129
+#: ../glade/gbwidgets/gbradiomenuitem.c:103
+#: ../glade/gbwidgets/gbradiotoolbutton.c:136
+#: ../glade/gbwidgets/gbtextview.c:124
+#: ../glade/gbwidgets/gbtogglebutton.c:91
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:93
+#: ../glade/gbwidgets/gbtoolbutton.c:107
+#: ../glade/gnome-db/gnomedbeditor.c:64
+msgid "The text to display"
+msgstr "The text to display"
+
+#: ../glade/gbwidgets/gbbutton.c:122
+#: ../glade/gbwidgets/gbcheckbutton.c:89
+#: ../glade/gbwidgets/gbimage.c:107
+#: ../glade/gbwidgets/gbmenutoolbutton.c:89
+#: ../glade/gbwidgets/gbradiobutton.c:130
+#: ../glade/gbwidgets/gbradiotoolbutton.c:137
+#: ../glade/gbwidgets/gbtogglebutton.c:92
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:94
+#: ../glade/gbwidgets/gbtoolbutton.c:108
+#: ../glade/gbwidgets/gbwindow.c:297
+#: ../glade/glade_menu_editor.c:814
+msgid "Icon:"
+msgstr "Icon:"
+
+#: ../glade/gbwidgets/gbbutton.c:123
+#: ../glade/gbwidgets/gbcheckbutton.c:90
+#: ../glade/gbwidgets/gbimage.c:108
+#: ../glade/gbwidgets/gbmenutoolbutton.c:90
+#: ../glade/gbwidgets/gbradiobutton.c:131
+#: ../glade/gbwidgets/gbradiotoolbutton.c:138
+#: ../glade/gbwidgets/gbtogglebutton.c:93
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:95
+#: ../glade/gbwidgets/gbtoolbutton.c:109
+msgid "The icon to display"
+msgstr "The icon to display"
+
+#: ../glade/gbwidgets/gbbutton.c:125
+#: ../glade/gbwidgets/gbcheckbutton.c:92
+#: ../glade/gbwidgets/gbradiobutton.c:133
+#: ../glade/gbwidgets/gbtogglebutton.c:95
+msgid "Button Relief:"
+msgstr "Button Relief:"
+
+#: ../glade/gbwidgets/gbbutton.c:126
+#: ../glade/gbwidgets/gbcheckbutton.c:93
+#: ../glade/gbwidgets/gbradiobutton.c:134
+#: ../glade/gbwidgets/gbtogglebutton.c:96
+msgid "The relief style of the button"
+msgstr "The relief style of the button"
+
+#: ../glade/gbwidgets/gbbutton.c:131
+msgid "Response ID:"
+msgstr "Response ID:"
+
+#: ../glade/gbwidgets/gbbutton.c:132
+msgid "The response code returned when the button is pressed. Select one of the standard responses or enter a positive integer value"
+msgstr "The response code returned when the button is pressed. Select one of the standard responses or enter a positive integer value"
+
+#: ../glade/gbwidgets/gbbutton.c:137
+#: ../glade/gbwidgets/gbcheckbutton.c:102
+#: ../glade/gbwidgets/gbcolorbutton.c:70
+#: ../glade/gbwidgets/gbcombobox.c:83
+#: ../glade/gbwidgets/gbcomboboxentry.c:82
+#: ../glade/gbwidgets/gbfontbutton.c:78
+#: ../glade/gbwidgets/gbradiobutton.c:148
+#: ../glade/gbwidgets/gbtogglebutton.c:103
+#: ../glade/gnome/gnomecolorpicker.c:76
+#: ../glade/gnome/gnomefontpicker.c:109
+#: ../glade/gnome/gnomehref.c:70
+msgid "Focus On Click:"
+msgstr "Focus On Click:"
+
+#: ../glade/gbwidgets/gbbutton.c:137
+#: ../glade/gbwidgets/gbcheckbutton.c:102
+#: ../glade/gbwidgets/gbcolorbutton.c:70
+#: ../glade/gbwidgets/gbfontbutton.c:78
+#: ../glade/gbwidgets/gbradiobutton.c:148
+#: ../glade/gbwidgets/gbtogglebutton.c:103
+#: ../glade/gnome/gnomecolorpicker.c:76
+#: ../glade/gnome/gnomefontpicker.c:109
+#: ../glade/gnome/gnomehref.c:70
+msgid "If the button grabs focus when it is clicked"
+msgstr "If the button grabs focus when it is clicked"
+
+#: ../glade/gbwidgets/gbbutton.c:1502
+msgid "Remove Button Contents"
+msgstr "Remove Button Contents"
+
+#: ../glade/gbwidgets/gbbutton.c:1600
+msgid "Button"
+msgstr "Button"
+
+#: ../glade/gbwidgets/gbcalendar.c:73
+msgid "Heading:"
+msgstr "Heading:"
+
+#: ../glade/gbwidgets/gbcalendar.c:74
+msgid "If the month and year should be shown at the top"
+msgstr "If the month and year should be shown at the top"
+
+#: ../glade/gbwidgets/gbcalendar.c:75
+msgid "Day Names:"
+msgstr "Day Names:"
+
+#: ../glade/gbwidgets/gbcalendar.c:76
+msgid "If the day names should be shown"
+msgstr "If the day names should be shown"
+
+#: ../glade/gbwidgets/gbcalendar.c:77
+msgid "Fixed Month:"
+msgstr "Fixed Month:"
+
+#: ../glade/gbwidgets/gbcalendar.c:78
+msgid "If the month and year shouldn't be changeable"
+msgstr "If the month and year shouldn't be changeable"
+
+#: ../glade/gbwidgets/gbcalendar.c:79
+msgid "Week Numbers:"
+msgstr "Week Numbers:"
+
+#: ../glade/gbwidgets/gbcalendar.c:80
+msgid "If the number of the week should be shown"
+msgstr "If the number of the week should be shown"
+
+#: ../glade/gbwidgets/gbcalendar.c:81
+#: ../glade/gnome/gnomedateedit.c:74
+msgid "Monday First:"
+msgstr "Monday First:"
+
+#: ../glade/gbwidgets/gbcalendar.c:82
+#: ../glade/gnome/gnomedateedit.c:75
+msgid "If the week should start on Monday"
+msgstr "If the week should start on Monday"
+
+#: ../glade/gbwidgets/gbcalendar.c:266
+msgid "Calendar"
+msgstr "Calendar"
+
+#: ../glade/gbwidgets/gbcellview.c:63
+#: ../glade/gnome/gnomedruidpageedge.c:102
+#: ../glade/gnome/gnomedruidpagestandard.c:91
+msgid "Back. Color:"
+msgstr "Back. Colour:"
+
+#: ../glade/gbwidgets/gbcellview.c:64
+msgid "The background color"
+msgstr "The background colour"
+
+#: ../glade/gbwidgets/gbcellview.c:192
+msgid "Cell View"
+msgstr "Cell View"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:96
+#: ../glade/gbwidgets/gbcheckmenuitem.c:73
+#: ../glade/gbwidgets/gbradiobutton.c:137
+#: ../glade/gbwidgets/gbradiomenuitem.c:104
+#: ../glade/gbwidgets/gbradiotoolbutton.c:147
+#: ../glade/gbwidgets/gbtogglebutton.c:99
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:97
+msgid "Initially On:"
+msgstr "Initially On:"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:97
+msgid "If the check button is initially on"
+msgstr "If the check button is initially on"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:98
+#: ../glade/gbwidgets/gbradiobutton.c:139
+#: ../glade/gbwidgets/gbtogglebutton.c:101
+msgid "Inconsistent:"
+msgstr "Inconsistent:"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:99
+#: ../glade/gbwidgets/gbradiobutton.c:140
+#: ../glade/gbwidgets/gbtogglebutton.c:102
+msgid "If the button is shown in an inconsistent state"
+msgstr "If the button is shown in an inconsistent state"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:100
+#: ../glade/gbwidgets/gbradiobutton.c:141
+msgid "Indicator:"
+msgstr "Indicator:"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:101
+#: ../glade/gbwidgets/gbradiobutton.c:142
+msgid "If the indicator is always drawn"
+msgstr "If the indicator is always drawn"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:211
+msgid "Check Button"
+msgstr "Check Button"
+
+#: ../glade/gbwidgets/gbcheckmenuitem.c:74
+msgid "If the check menu item is initially on"
+msgstr "If the check menu item is initially on"
+
+#: ../glade/gbwidgets/gbcheckmenuitem.c:203
+msgid "Check Menu Item"
+msgstr "Check Menu Item"
+
+#: ../glade/gbwidgets/gbclist.c:141
+msgid "New columned list"
+msgstr "New columned list"
+
+#. Columns label & entry
+#: ../glade/gbwidgets/gbclist.c:152
+#: ../glade/gbwidgets/gbctree.c:157
+#: ../glade/gbwidgets/gbhbox.c:110
+#: ../glade/gbwidgets/gbhbuttonbox.c:132
+#: ../glade/gbwidgets/gbtable.c:165
+msgid "Number of columns:"
+msgstr "Number of columns:"
+
+#: ../glade/gbwidgets/gbclist.c:242
+#: ../glade/gbwidgets/gbctree.c:248
+#: ../glade/gbwidgets/gbiconview.c:128
+#: ../glade/gbwidgets/gblist.c:77
+#: ../glade/gnome/gnomeiconlist.c:174
+msgid "Select Mode:"
+msgstr "Select Mode:"
+
+#: ../glade/gbwidgets/gbclist.c:243
+msgid "The selection mode of the columned list"
+msgstr "The selection mode of the columned list"
+
+#: ../glade/gbwidgets/gbclist.c:245
+#: ../glade/gbwidgets/gbctree.c:251
+msgid "Show Titles:"
+msgstr "Show Titles:"
+
+#: ../glade/gbwidgets/gbclist.c:246
+#: ../glade/gbwidgets/gbctree.c:252
+msgid "If the column titles are shown"
+msgstr "If the column titles are shown"
+
+#: ../glade/gbwidgets/gbclist.c:248
+msgid "The type of shadow of the columned list's border"
+msgstr "The type of shadow of the columned list's border"
+
+#: ../glade/gbwidgets/gbclist.c:594
+msgid "Columned List"
+msgstr "Columned List"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:65
+#: ../glade/gnome/gnomecolorpicker.c:70
+msgid "Use Alpha:"
+msgstr "Use Alpha:"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:66
+#: ../glade/gnome/gnomecolorpicker.c:71
+msgid "If the alpha channel should be used"
+msgstr "If the alpha channel should be used"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:68
+#: ../glade/gbwidgets/gbfilechooserbutton.c:86
+#: ../glade/gbwidgets/gbfontbutton.c:68
+#: ../glade/gbwidgets/gbwindow.c:244
+#: ../glade/gnome/gnomecolorpicker.c:73
+#: ../glade/gnome/gnomedruidpageedge.c:93
+#: ../glade/gnome/gnomedruidpagestandard.c:85
+#: ../glade/gnome/gnomefileentry.c:101
+#: ../glade/gnome/gnomefontpicker.c:95
+#: ../glade/gnome/gnomeiconentry.c:72
+#: ../glade/gnome/gnomepixmapentry.c:82
+msgid "Title:"
+msgstr "Title:"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:69
+#: ../glade/gnome/gnomecolorpicker.c:74
+msgid "The title of the color selection dialog"
+msgstr "The title of the colour selection dialog"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:91
+#: ../glade/gbwidgets/gbcolorbutton.c:119
+#: ../glade/gbwidgets/gbcolorbutton.c:162
+msgid "Pick a Color"
+msgstr "Pick a Colour"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:211
+msgid "Color Chooser Button"
+msgstr "Colour Chooser Button"
+
+#: ../glade/gbwidgets/gbcolorselection.c:62
+msgid "Opacity Control:"
+msgstr "Opacity Control:"
+
+#: ../glade/gbwidgets/gbcolorselection.c:63
+msgid "If the opacity control is shown"
+msgstr "If the opacity control is shown"
+
+#: ../glade/gbwidgets/gbcolorselection.c:64
+msgid "Palette:"
+msgstr "Palette:"
+
+#: ../glade/gbwidgets/gbcolorselection.c:65
+msgid "If the palette is shown"
+msgstr "If the palette is shown"
+
+#: ../glade/gbwidgets/gbcolorselection.c:173
+msgid "Color Selection"
+msgstr "Colour Selection"
+
+#: ../glade/gbwidgets/gbcolorselectiondialog.c:71
+msgid "Select Color"
+msgstr "Select Colour"
+
+#: ../glade/gbwidgets/gbcolorselectiondialog.c:316
+#: ../glade/property.c:1276
+msgid "Color Selection Dialog"
+msgstr "Colour Selection Dialogue"
+
+#: ../glade/gbwidgets/gbcombo.c:105
+msgid "Value In List:"
+msgstr "Value In List:"
+
+#: ../glade/gbwidgets/gbcombo.c:106
+msgid "If the value must be in the list"
+msgstr "If the value must be in the list"
+
+#: ../glade/gbwidgets/gbcombo.c:107
+msgid "OK If Empty:"
+msgstr "OK If Empty:"
+
+#: ../glade/gbwidgets/gbcombo.c:108
+msgid "If an empty value is acceptable, when 'Value In List' is set"
+msgstr "If an empty value is acceptable, when 'Value In List' is set"
+
+#: ../glade/gbwidgets/gbcombo.c:109
+msgid "Case Sensitive:"
+msgstr "Case Sensitive:"
+
+#: ../glade/gbwidgets/gbcombo.c:110
+msgid "If the searching is case sensitive"
+msgstr "If the searching is case sensitive"
+
+#: ../glade/gbwidgets/gbcombo.c:111
+msgid "Use Arrows:"
+msgstr "Use Arrows:"
+
+#: ../glade/gbwidgets/gbcombo.c:112
+msgid "If arrows can be used to change the value"
+msgstr "If arrows can be used to change the value"
+
+#: ../glade/gbwidgets/gbcombo.c:113
+msgid "Use Always:"
+msgstr "Use Always:"
+
+#: ../glade/gbwidgets/gbcombo.c:114
+msgid "If arrows work even if the value is not in the list"
+msgstr "If arrows work even if the value is not in the list"
+
+#: ../glade/gbwidgets/gbcombo.c:115
+#: ../glade/gbwidgets/gbcombobox.c:78
+#: ../glade/gbwidgets/gbcomboboxentry.c:75
+msgid "Items:"
+msgstr "Items:"
+
+#: ../glade/gbwidgets/gbcombo.c:116
+#: ../glade/gbwidgets/gbcombobox.c:79
+#: ../glade/gbwidgets/gbcomboboxentry.c:76
+msgid "The items in the combo list, one per line"
+msgstr "The items in the combo list, one per line"
+
+#: ../glade/gbwidgets/gbcombo.c:425
+#: ../glade/gbwidgets/gbcombobox.c:289
+msgid "Combo Box"
+msgstr "Combo Box"
+
+#: ../glade/gbwidgets/gbcombobox.c:81
+#: ../glade/gbwidgets/gbcomboboxentry.c:78
+msgid "Add Tearoffs:"
+msgstr "Add Tearoffs:"
+
+#: ../glade/gbwidgets/gbcombobox.c:82
+#: ../glade/gbwidgets/gbcomboboxentry.c:79
+msgid "Whether dropdowns should have a tearoff menu item"
+msgstr "Whether dropdowns should have a tearoff menu item"
+
+#: ../glade/gbwidgets/gbcombobox.c:84
+#: ../glade/gbwidgets/gbcomboboxentry.c:83
+msgid "Whether the combo box grabs focus when it is clicked"
+msgstr "Whether the combo box grabs focus when it is clicked"
+
+#: ../glade/gbwidgets/gbcomboboxentry.c:80
+#: ../glade/gbwidgets/gbentry.c:102
+msgid "Has Frame:"
+msgstr "Has Frame:"
+
+#: ../glade/gbwidgets/gbcomboboxentry.c:81
+msgid "Whether the combo box draws a frame around the child"
+msgstr "Whether the combo box draws a frame around the child"
+
+#: ../glade/gbwidgets/gbcomboboxentry.c:302
+msgid "Combo Box Entry"
+msgstr "Combo Box Entry"
+
+#: ../glade/gbwidgets/gbctree.c:146
+msgid "New columned tree"
+msgstr "New columned tree"
+
+#: ../glade/gbwidgets/gbctree.c:249
+msgid "The selection mode of the columned tree"
+msgstr "The selection mode of the columned tree"
+
+#: ../glade/gbwidgets/gbctree.c:254
+msgid "The type of shadow of the columned tree's border"
+msgstr "The type of shadow of the columned tree's border"
+
+#: ../glade/gbwidgets/gbctree.c:538
+msgid "Columned Tree"
+msgstr "Columned Tree"
+
+#: ../glade/gbwidgets/gbcurve.c:85
+#: ../glade/gbwidgets/gbwindow.c:247
+msgid "Type:"
+msgstr "Type:"
+
+#: ../glade/gbwidgets/gbcurve.c:85
+msgid "The type of the curve"
+msgstr "The type of the curve"
+
+#: ../glade/gbwidgets/gbcurve.c:87
+#: ../glade/gbwidgets/gbgammacurve.c:91
+msgid "X Min:"
+msgstr "X Min:"
+
+#: ../glade/gbwidgets/gbcurve.c:87
+#: ../glade/gbwidgets/gbgammacurve.c:91
+msgid "The minimum horizontal value"
+msgstr "The minimum horizontal value"
+
+#: ../glade/gbwidgets/gbcurve.c:88
+#: ../glade/gbwidgets/gbgammacurve.c:92
+msgid "X Max:"
+msgstr "X Max:"
+
+#: ../glade/gbwidgets/gbcurve.c:88
+#: ../glade/gbwidgets/gbgammacurve.c:92
+msgid "The maximum horizontal value"
+msgstr "The maximum horizontal value"
+
+#: ../glade/gbwidgets/gbcurve.c:89
+#: ../glade/gbwidgets/gbgammacurve.c:93
+msgid "Y Min:"
+msgstr "Y Min:"
+
+#: ../glade/gbwidgets/gbcurve.c:89
+#: ../glade/gbwidgets/gbgammacurve.c:93
+msgid "The minimum vertical value"
+msgstr "The minimum vertical value"
+
+#: ../glade/gbwidgets/gbcurve.c:90
+#: ../glade/gbwidgets/gbgammacurve.c:94
+msgid "Y Max:"
+msgstr "Y Max:"
+
+#: ../glade/gbwidgets/gbcurve.c:90
+#: ../glade/gbwidgets/gbgammacurve.c:94
+msgid "The maximum vertical value"
+msgstr "The maximum vertical value"
+
+#: ../glade/gbwidgets/gbcurve.c:250
+msgid "Curve"
+msgstr "Curve"
+
+#: ../glade/gbwidgets/gbcustom.c:154
+msgid "Creation Function:"
+msgstr "Creation Function:"
+
+#: ../glade/gbwidgets/gbcustom.c:155
+msgid "The function which creates the widget"
+msgstr "The function which creates the widget"
+
+#: ../glade/gbwidgets/gbcustom.c:157
+msgid "String1:"
+msgstr "String1:"
+
+#: ../glade/gbwidgets/gbcustom.c:158
+msgid "The first string argument to pass to the function"
+msgstr "The first string argument to pass to the function"
+
+#: ../glade/gbwidgets/gbcustom.c:159
+msgid "String2:"
+msgstr "String2:"
+
+#: ../glade/gbwidgets/gbcustom.c:160
+msgid "The second string argument to pass to the function"
+msgstr "The second string argument to pass to the function"
+
+#: ../glade/gbwidgets/gbcustom.c:161
+msgid "Int1:"
+msgstr "Int1:"
+
+#: ../glade/gbwidgets/gbcustom.c:162
+msgid "The first integer argument to pass to the function"
+msgstr "The first integer argument to pass to the function"
+
+#: ../glade/gbwidgets/gbcustom.c:163
+msgid "Int2:"
+msgstr "Int2:"
+
+#: ../glade/gbwidgets/gbcustom.c:164
+msgid "The second integer argument to pass to the function"
+msgstr "The second integer argument to pass to the function"
+
+#: ../glade/gbwidgets/gbcustom.c:380
+msgid "Custom Widget"
+msgstr "Custom Widget"
+
+#: ../glade/gbwidgets/gbdialog.c:293
+msgid "New dialog"
+msgstr "New dialogue"
+
+#: ../glade/gbwidgets/gbdialog.c:305
+msgid "Cancel, OK"
+msgstr "Cancel, OK"
+
+#: ../glade/gbwidgets/gbdialog.c:314
+#: ../glade/glade.c:367
+#: ../glade/glade_project_window.c:1322
+#: ../glade/property.c:5162
+msgid "OK"
+msgstr "OK"
+
+#: ../glade/gbwidgets/gbdialog.c:323
+msgid "Cancel, Apply, OK"
+msgstr "Cancel, Apply, OK"
+
+#: ../glade/gbwidgets/gbdialog.c:332
+msgid "Close"
+msgstr "Close"
+
+#: ../glade/gbwidgets/gbdialog.c:341
+msgid "_Standard Button Layout:"
+msgstr "_Standard Button Layout:"
+
+#: ../glade/gbwidgets/gbdialog.c:350
+msgid "_Number of Buttons:"
+msgstr "_Number of Buttons:"
+
+#: ../glade/gbwidgets/gbdialog.c:367
+msgid "Show Help Button"
+msgstr "Show Help Button"
+
+#: ../glade/gbwidgets/gbdialog.c:398
+msgid "Has Separator:"
+msgstr "Has Separator:"
+
+#: ../glade/gbwidgets/gbdialog.c:399
+msgid "If the dialog has a horizontal separator above the buttons"
+msgstr "If the dialogue has a horizontal separator above the buttons"
+
+#: ../glade/gbwidgets/gbdialog.c:606
+msgid "Dialog"
+msgstr "Dialogue"
+
+#: ../glade/gbwidgets/gbdrawingarea.c:146
+msgid "Drawing Area"
+msgstr "Drawing Area"
+
+#: ../glade/gbwidgets/gbentry.c:94
+#: ../glade/gbwidgets/gbtextview.c:115
+#: ../glade/gnome-db/gnomedbeditor.c:62
+msgid "Editable:"
+msgstr "Editable:"
+
+#: ../glade/gbwidgets/gbentry.c:94
+#: ../glade/gbwidgets/gbtextview.c:116
+#: ../glade/gnome-db/gnomedbeditor.c:62
+msgid "If the text can be edited"
+msgstr "If the text can be edited"
+
+#: ../glade/gbwidgets/gbentry.c:95
+msgid "Text Visible:"
+msgstr "Text Visible:"
+
+#: ../glade/gbwidgets/gbentry.c:96
+msgid "If the text entered by the user will be shown. When turned off, the text typed in is displayed as asterix characters, which is useful for entering passwords"
+msgstr "If the text entered by the user will be shown. When turned off, the text typed in is displayed as asterix characters, which is useful for entering passwords"
+
+#: ../glade/gbwidgets/gbentry.c:97
+msgid "Max Length:"
+msgstr "Max Length:"
+
+#: ../glade/gbwidgets/gbentry.c:98
+msgid "The maximum length of the text"
+msgstr "The maximum length of the text"
+
+#: ../glade/gbwidgets/gbentry.c:100
+#: ../glade/gbwidgets/gbprogressbar.c:143
+#: ../glade/gbwidgets/gbtextview.c:124
+#: ../glade/gnome-db/gnomedbeditor.c:64
+#: ../glade/gnome-db/gnomedbgraybar.c:59
+#: ../glade/gnome/gnomedruidpageedge.c:95
+#: ../glade/property.c:926
+msgid "Text:"
+msgstr "Text:"
+
+#: ../glade/gbwidgets/gbentry.c:102
+msgid "If the entry has a frame around it"
+msgstr "If the entry has a frame around it"
+
+#: ../glade/gbwidgets/gbentry.c:103
+msgid "Invisible Char:"
+msgstr "Invisible Char:"
+
+#: ../glade/gbwidgets/gbentry.c:103
+msgid "The character to use if the text should not visible, e.g. when entering passwords"
+msgstr "The character to use if the text should not visible, e.g. when entering passwords"
+
+#: ../glade/gbwidgets/gbentry.c:104
+msgid "Activates Default:"
+msgstr "Activates Default:"
+
+#: ../glade/gbwidgets/gbentry.c:104
+msgid "If the default widget in the window is activated when Enter is pressed"
+msgstr "If the default widget in the window is activated when Enter is pressed"
+
+#: ../glade/gbwidgets/gbentry.c:105
+msgid "Width In Chars:"
+msgstr "Width In Chars:"
+
+#: ../glade/gbwidgets/gbentry.c:105
+msgid "The number of characters to leave space for in the entry"
+msgstr "The number of characters to leave space for in the entry"
+
+#: ../glade/gbwidgets/gbentry.c:318
+msgid "Text Entry"
+msgstr "Text Entry"
+
+#: ../glade/gbwidgets/gbeventbox.c:65
+msgid "Visible Window:"
+msgstr "Visible Window:"
+
+#: ../glade/gbwidgets/gbeventbox.c:65
+msgid "If the event box uses a visible window"
+msgstr "If the event box uses a visible window"
+
+#: ../glade/gbwidgets/gbeventbox.c:66
+msgid "Above Child:"
+msgstr "Above Child:"
+
+#: ../glade/gbwidgets/gbeventbox.c:66
+msgid "If the event box window is above the child widget's window"
+msgstr "If the event box window is above the child widget's window"
+
+#: ../glade/gbwidgets/gbeventbox.c:167
+msgid "Event Box"
+msgstr "Event Box"
+
+#: ../glade/gbwidgets/gbexpander.c:54
+msgid "Initially Expanded:"
+msgstr "Initially Expanded:"
+
+#: ../glade/gbwidgets/gbexpander.c:55
+msgid "Whether the expander is initially opened to reveal the child widget"
+msgstr "Whether the expander is initially opened to reveal the child widget"
+
+#: ../glade/gbwidgets/gbexpander.c:57
+#: ../glade/gbwidgets/gbhbox.c:175
+#: ../glade/gbwidgets/gbhbuttonbox.c:199
+#: ../glade/gbwidgets/gbvbox.c:160
+msgid "Spacing:"
+msgstr "Spacing:"
+
+#: ../glade/gbwidgets/gbexpander.c:58
+msgid "Space to put between the label and the child"
+msgstr "Space to put between the label and the child"
+
+#: ../glade/gbwidgets/gbexpander.c:105
+#: ../glade/gbwidgets/gbframe.c:225
+msgid "Add Label Widget"
+msgstr "Add Label Widget"
+
+#: ../glade/gbwidgets/gbexpander.c:228
+msgid "Expander"
+msgstr "Expander"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:87
+msgid "The window title of the file chooser dialog"
+msgstr "The window title of the file chooser dialogue"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:88
+#: ../glade/gbwidgets/gbfilechooserwidget.c:86
+#: ../glade/gbwidgets/gbfilechooserdialog.c:158
+#: ../glade/gnome/gnomefileentry.c:109
+msgid "Action:"
+msgstr "Action:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:89
+#: ../glade/gbwidgets/gbfilechooserwidget.c:87
+#: ../glade/gbwidgets/gbfilechooserdialog.c:159
+#: ../glade/gnome/gnomefileentry.c:110
+msgid "The type of file operation being performed"
+msgstr "The type of file operation being performed"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:91
+#: ../glade/gbwidgets/gbfilechooserwidget.c:89
+#: ../glade/gbwidgets/gbfilechooserdialog.c:161
+msgid "Local Only:"
+msgstr "Local Only:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:92
+#: ../glade/gbwidgets/gbfilechooserwidget.c:90
+#: ../glade/gbwidgets/gbfilechooserdialog.c:162
+msgid "Whether the selected files should be limited to local files"
+msgstr "Whether the selected files should be limited to local files"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:93
+#: ../glade/gbwidgets/gbfilechooserwidget.c:93
+#: ../glade/gbwidgets/gbfilechooserdialog.c:165
+msgid "Show Hidden:"
+msgstr "Show Hidden:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:94
+#: ../glade/gbwidgets/gbfilechooserwidget.c:94
+#: ../glade/gbwidgets/gbfilechooserdialog.c:166
+msgid "Whether the hidden files and folders should be displayed"
+msgstr "Whether the hidden files and folders should be displayed"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:95
+#: ../glade/gbwidgets/gbfilechooserdialog.c:167
+msgid "Confirm:"
+msgstr "Confirm:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:96
+#: ../glade/gbwidgets/gbfilechooserdialog.c:168
+msgid "Whether a confirmation dialog will be displayed if a file will be overwritten"
+msgstr "Whether a confirmation dialogue will be displayed if a file will be overwritten"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:97
+#: ../glade/gbwidgets/gblabel.c:201
+msgid "Width in Chars:"
+msgstr "Width in Chars:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:98
+msgid "The width of the button in characters"
+msgstr "The width of the button in characters"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:296
+msgid "File Chooser Button"
+msgstr "File Chooser Button"
+
+#: ../glade/gbwidgets/gbfilechooserwidget.c:91
+#: ../glade/gbwidgets/gbfilechooserdialog.c:163
+msgid "Select Multiple:"
+msgstr "Select Multiple:"
+
+#: ../glade/gbwidgets/gbfilechooserwidget.c:92
+#: ../glade/gbwidgets/gbfilechooserdialog.c:164
+msgid "Whether to allow multiple files to be selected"
+msgstr "Whether to allow multiple files to be selected"
+
+#: ../glade/gbwidgets/gbfilechooserwidget.c:260
+msgid "File Chooser"
+msgstr "File Chooser"
+
+#: ../glade/gbwidgets/gbfilechooserdialog.c:435
+msgid "File Chooser Dialog"
+msgstr "File Chooser Dialogue"
+
+#: ../glade/gbwidgets/gbfileselection.c:72
+#: ../glade/property.c:1366
+msgid "Select File"
+msgstr "Select File"
+
+#: ../glade/gbwidgets/gbfileselection.c:114
+msgid "File Ops.:"
+msgstr "File Ops.:"
+
+#: ../glade/gbwidgets/gbfileselection.c:115
+msgid "If the file operation buttons are shown"
+msgstr "If the file operation buttons are shown"
+
+#: ../glade/gbwidgets/gbfileselection.c:293
+msgid "File Selection Dialog"
+msgstr "File Selection Dialogue"
+
+#: ../glade/gbwidgets/gbfixed.c:139
+#: ../glade/gbwidgets/gblayout.c:221
+msgid "X:"
+msgstr "X:"
+
+#: ../glade/gbwidgets/gbfixed.c:140
+msgid "The X coordinate of the widget in the GtkFixed"
+msgstr "The X coordinate of the widget in the GtkFixed"
+
+#: ../glade/gbwidgets/gbfixed.c:142
+#: ../glade/gbwidgets/gblayout.c:224
+msgid "Y:"
+msgstr "Y:"
+
+#: ../glade/gbwidgets/gbfixed.c:143
+msgid "The Y coordinate of the widget in the GtkFixed"
+msgstr "The Y coordinate of the widget in the GtkFixed"
+
+#: ../glade/gbwidgets/gbfixed.c:228
+msgid "Fixed Positions"
+msgstr "Fixed Positions"
+
+#: ../glade/gbwidgets/gbfontbutton.c:69
+#: ../glade/gnome/gnomefontpicker.c:96
+msgid "The title of the font selection dialog"
+msgstr "The title of the font selection dialogue"
+
+#: ../glade/gbwidgets/gbfontbutton.c:70
+msgid "Show Style:"
+msgstr "Show Style:"
+
+#: ../glade/gbwidgets/gbfontbutton.c:71
+msgid "If the font style is shown as part of the font information"
+msgstr "If the font style is shown as part of the font information"
+
+#: ../glade/gbwidgets/gbfontbutton.c:72
+#: ../glade/gnome/gnomefontpicker.c:102
+msgid "Show Size:"
+msgstr "Show Size:"
+
+#: ../glade/gbwidgets/gbfontbutton.c:73
+#: ../glade/gnome/gnomefontpicker.c:103
+msgid "If the font size is shown as part of the font information"
+msgstr "If the font size is shown as part of the font information"
+
+#: ../glade/gbwidgets/gbfontbutton.c:74
+#: ../glade/gnome/gnomefontpicker.c:104
+msgid "Use Font:"
+msgstr "Use Font:"
+
+#: ../glade/gbwidgets/gbfontbutton.c:75
+#: ../glade/gnome/gnomefontpicker.c:105
+msgid "If the selected font is used when displaying the font information"
+msgstr "If the selected font is used when displaying the font information"
+
+#: ../glade/gbwidgets/gbfontbutton.c:76
+#: ../glade/gnome/gnomefontpicker.c:106
+msgid "Use Size:"
+msgstr "Use Size:"
+
+#: ../glade/gbwidgets/gbfontbutton.c:77
+msgid "if the selected font size is used when displaying the font information"
+msgstr "if the selected font size is used when displaying the font information"
+
+#: ../glade/gbwidgets/gbfontbutton.c:97
+#: ../glade/gbwidgets/gbfontbutton.c:133
+#: ../glade/gbwidgets/gbfontbutton.c:191
+#: ../glade/gnome/gnomefontpicker.c:128
+#: ../glade/gnome/gnomefontpicker.c:199
+#: ../glade/gnome/gnomefontpicker.c:301
+msgid "Pick a Font"
+msgstr "Pick a Font"
+
+#: ../glade/gbwidgets/gbfontbutton.c:268
+msgid "Font Chooser Button"
+msgstr "Font Chooser Button"
+
+#: ../glade/gbwidgets/gbfontselection.c:64
+#: ../glade/gnome/gnomefontpicker.c:97
+msgid "Preview Text:"
+msgstr "Preview Text:"
+
+#: ../glade/gbwidgets/gbfontselection.c:64
+msgid "The preview text to display"
+msgstr "The preview text to display"
+
+#: ../glade/gbwidgets/gbfontselection.c:170
+msgid "Font Selection"
+msgstr "Font Selection"
+
+#: ../glade/gbwidgets/gbfontselectiondialog.c:70
+msgid "Select Font"
+msgstr "Select Font"
+
+#: ../glade/gbwidgets/gbfontselectiondialog.c:301
+msgid "Font Selection Dialog"
+msgstr "Font Selection Dialogue"
+
+#: ../glade/gbwidgets/gbframe.c:360
+msgid "Frame"
+msgstr "Frame"
+
+#: ../glade/gbwidgets/gbgammacurve.c:88
+msgid "Initial Type:"
+msgstr "Initial Type:"
+
+#: ../glade/gbwidgets/gbgammacurve.c:88
+msgid "The initial type of the curve"
+msgstr "The initial type of the curve"
+
+#: ../glade/gbwidgets/gbgammacurve.c:256
+msgid "Gamma Curve"
+msgstr "Gamma Curve"
+
+#: ../glade/gbwidgets/gbhandlebox.c:110
+msgid "The type of shadow around the handle box"
+msgstr "The type of shadow around the handle box"
+
+#: ../glade/gbwidgets/gbhandlebox.c:113
+msgid "Handle Pos:"
+msgstr "Handle Pos:"
+
+#: ../glade/gbwidgets/gbhandlebox.c:114
+msgid "The position of the handle"
+msgstr "The position of the handle"
+
+#: ../glade/gbwidgets/gbhandlebox.c:116
+msgid "Snap Edge:"
+msgstr "Snap Edge:"
+
+#: ../glade/gbwidgets/gbhandlebox.c:117
+msgid "The edge of the handle box which snaps into position"
+msgstr "The edge of the handle box which snaps into position"
+
+#: ../glade/gbwidgets/gbhandlebox.c:304
+msgid "Handle Box"
+msgstr "Handle Box"
+
+#: ../glade/gbwidgets/gbhbox.c:99
+msgid "New horizontal box"
+msgstr "New horizontal box"
+
+#: ../glade/gbwidgets/gbhbox.c:171
+#: ../glade/gbwidgets/gbhbuttonbox.c:194
+#: ../glade/gbwidgets/gbtoolbar.c:267
+#: ../glade/gbwidgets/gbvbox.c:156
+msgid "Size:"
+msgstr "Size:"
+
+#: ../glade/gbwidgets/gbhbox.c:171
+#: ../glade/gbwidgets/gbvbox.c:156
+msgid "The number of widgets in the box"
+msgstr "The number of widgets in the box"
+
+#: ../glade/gbwidgets/gbhbox.c:173
+#: ../glade/gbwidgets/gbtable.c:243
+#: ../glade/gbwidgets/gbtoolbar.c:426
+#: ../glade/gbwidgets/gbvbox.c:158
+msgid "Homogeneous:"
+msgstr "Homogeneous:"
+
+#: ../glade/gbwidgets/gbhbox.c:174
+#: ../glade/gbwidgets/gbvbox.c:159
+msgid "If the children should be the same size"
+msgstr "If the children should be the same size"
+
+#: ../glade/gbwidgets/gbhbox.c:175
+#: ../glade/gbwidgets/gbvbox.c:160
+msgid "The space between each child"
+msgstr "The space between each child"
+
+#: ../glade/gbwidgets/gbhbox.c:312
+msgid "Can't delete any children."
+msgstr "Can't delete any children."
+
+#: ../glade/gbwidgets/gbhbox.c:327
+#: ../glade/gbwidgets/gbhpaned.c:73
+#: ../glade/gbwidgets/gbhruler.c:89
+#: ../glade/gbwidgets/gbnotebook.c:669
+#: ../glade/gbwidgets/gbvpaned.c:69
+#: ../glade/gbwidgets/gbvruler.c:89
+#: ../glade/gbwidgets/gbwindow.c:256
+msgid "Position:"
+msgstr "Position:"
+
+#: ../glade/gbwidgets/gbhbox.c:328
+msgid "The widget's position relative to its siblings"
+msgstr "The widget's position relative to its siblings"
+
+#: ../glade/gbwidgets/gbhbox.c:330
+msgid "Padding:"
+msgstr "Padding:"
+
+#: ../glade/gbwidgets/gbhbox.c:331
+msgid "The widget's padding"
+msgstr "The widget's padding"
+
+#: ../glade/gbwidgets/gbhbox.c:333
+#: ../glade/gbwidgets/gbnotebook.c:672
+#: ../glade/gbwidgets/gbpreview.c:65
+#: ../glade/gbwidgets/gbtoolbar.c:424
+msgid "Expand:"
+msgstr "Expand:"
+
+#: ../glade/gbwidgets/gbhbox.c:334
+#: ../glade/gbwidgets/gbtoolbar.c:425
+msgid "Set True to let the widget expand"
+msgstr "Set True to let the widget expand"
+
+#: ../glade/gbwidgets/gbhbox.c:335
+#: ../glade/gbwidgets/gbnotebook.c:674
+msgid "Fill:"
+msgstr "Fill:"
+
+#: ../glade/gbwidgets/gbhbox.c:336
+msgid "Set True to let the widget fill its allocated area"
+msgstr "Set True to let the widget fill its allocated area"
+
+#: ../glade/gbwidgets/gbhbox.c:337
+#: ../glade/gbwidgets/gbnotebook.c:676
+msgid "Pack Start:"
+msgstr "Pack Start:"
+
+#: ../glade/gbwidgets/gbhbox.c:338
+msgid "Set True to pack the widget at the start of the box"
+msgstr "Set True to pack the widget at the start of the box"
+
+#: ../glade/gbwidgets/gbhbox.c:455
+msgid "Insert Before"
+msgstr "Insert Before"
+
+#: ../glade/gbwidgets/gbhbox.c:461
+msgid "Insert After"
+msgstr "Insert After"
+
+#: ../glade/gbwidgets/gbhbox.c:571
+msgid "Horizontal Box"
+msgstr "Horizontal Box"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:120
+msgid "New horizontal button box"
+msgstr "New horizontal button box"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:194
+msgid "The number of buttons"
+msgstr "The number of buttons"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:196
+msgid "Layout:"
+msgstr "Layout:"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:197
+msgid "The layout style of the buttons"
+msgstr "The layout style of the buttons"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:199
+msgid "The space between the buttons"
+msgstr "The space between the buttons"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:414
+msgid "Horizontal Button Box"
+msgstr "Horizontal Button Box"
+
+#: ../glade/gbwidgets/gbhpaned.c:74
+#: ../glade/gbwidgets/gbvpaned.c:70
+msgid "The position of the divider"
+msgstr "The position of the divider"
+
+#: ../glade/gbwidgets/gbhpaned.c:186
+#: ../glade/gbwidgets/gbwindow.c:285
+msgid "Shrink:"
+msgstr "Shrink:"
+
+#: ../glade/gbwidgets/gbhpaned.c:187
+msgid "Set True to let the widget shrink"
+msgstr "Set True to let the widget shrink"
+
+#: ../glade/gbwidgets/gbhpaned.c:188
+msgid "Resize:"
+msgstr "Resize:"
+
+#: ../glade/gbwidgets/gbhpaned.c:189
+msgid "Set True to let the widget resize"
+msgstr "Set True to let the widget resize"
+
+#: ../glade/gbwidgets/gbhpaned.c:315
+msgid "Horizontal Panes"
+msgstr "Horizontal Panes"
+
+#: ../glade/gbwidgets/gbhruler.c:82
+#: ../glade/gbwidgets/gbvruler.c:82
+msgid "Metric:"
+msgstr "Metric:"
+
+#: ../glade/gbwidgets/gbhruler.c:83
+#: ../glade/gbwidgets/gbvruler.c:83
+msgid "The units of the ruler"
+msgstr "The units of the ruler"
+
+#: ../glade/gbwidgets/gbhruler.c:85
+#: ../glade/gbwidgets/gbvruler.c:85
+msgid "Lower Value:"
+msgstr "Lower Value:"
+
+#: ../glade/gbwidgets/gbhruler.c:86
+#: ../glade/gbwidgets/gbvruler.c:86
+#: ../glade/gbwidgets/gbvruler.c:88
+msgid "The low value of the ruler"
+msgstr "The low value of the ruler"
+
+#: ../glade/gbwidgets/gbhruler.c:87
+#: ../glade/gbwidgets/gbvruler.c:87
+msgid "Upper Value:"
+msgstr "Upper Value:"
+
+#: ../glade/gbwidgets/gbhruler.c:88
+msgid "The high value of the ruler"
+msgstr "The high value of the ruler"
+
+#: ../glade/gbwidgets/gbhruler.c:90
+#: ../glade/gbwidgets/gbvruler.c:90
+msgid "The current position on the ruler"
+msgstr "The current position on the ruler"
+
+#: ../glade/gbwidgets/gbhruler.c:91
+#: ../glade/gbwidgets/gbvruler.c:91
+#: ../glade/property.c:4833
+msgid "Max:"
+msgstr "Max:"
+
+#: ../glade/gbwidgets/gbhruler.c:92
+#: ../glade/gbwidgets/gbvruler.c:92
+msgid "The maximum value of the ruler"
+msgstr "The maximum value of the ruler"
+
+#: ../glade/gbwidgets/gbhruler.c:247
+msgid "Horizontal Ruler"
+msgstr "Horizontal Ruler"
+
+#: ../glade/gbwidgets/gbhscale.c:107
+#: ../glade/gbwidgets/gbvscale.c:108
+msgid "Show Value:"
+msgstr "Show Value:"
+
+#: ../glade/gbwidgets/gbhscale.c:107
+#: ../glade/gbwidgets/gbvscale.c:108
+msgid "If the scale's value is shown"
+msgstr "If the scale's value is shown"
+
+#: ../glade/gbwidgets/gbhscale.c:108
+#: ../glade/gbwidgets/gbspinbutton.c:93
+#: ../glade/gbwidgets/gbvscale.c:109
+msgid "Digits:"
+msgstr "Digits:"
+
+#: ../glade/gbwidgets/gbhscale.c:108
+#: ../glade/gbwidgets/gbvscale.c:109
+msgid "The number of digits to show"
+msgstr "The number of digits to show"
+
+#: ../glade/gbwidgets/gbhscale.c:110
+#: ../glade/gbwidgets/gbvscale.c:111
+msgid "Value Pos:"
+msgstr "Value Pos:"
+
+#: ../glade/gbwidgets/gbhscale.c:111
+#: ../glade/gbwidgets/gbvscale.c:112
+msgid "The position of the value"
+msgstr "The position of the value"
+
+#: ../glade/gbwidgets/gbhscale.c:113
+#: ../glade/gbwidgets/gbhscrollbar.c:87
+#: ../glade/gbwidgets/gbvscale.c:114
+#: ../glade/gbwidgets/gbvscrollbar.c:87
+msgid "Policy:"
+msgstr "Policy:"
+
+#: ../glade/gbwidgets/gbhscale.c:114
+#: ../glade/gbwidgets/gbvscale.c:115
+msgid "The update policy of the scale"
+msgstr "The update policy of the scale"
+
+#: ../glade/gbwidgets/gbhscale.c:116
+#: ../glade/gbwidgets/gbhscrollbar.c:90
+#: ../glade/gbwidgets/gbvscale.c:117
+#: ../glade/gbwidgets/gbvscrollbar.c:90
+msgid "Inverted:"
+msgstr "Inverted:"
+
+#: ../glade/gbwidgets/gbhscale.c:116
+#: ../glade/gbwidgets/gbhscrollbar.c:90
+#: ../glade/gbwidgets/gbvscale.c:117
+#: ../glade/gbwidgets/gbvscrollbar.c:90
+msgid "If the range values are inverted"
+msgstr "If the range values are inverted"
+
+#: ../glade/gbwidgets/gbhscale.c:319
+msgid "Horizontal Scale"
+msgstr "Horizontal Scale"
+
+#: ../glade/gbwidgets/gbhscrollbar.c:88
+#: ../glade/gbwidgets/gbvscrollbar.c:88
+msgid "The update policy of the scrollbar"
+msgstr "The update policy of the scrollbar"
+
+#: ../glade/gbwidgets/gbhscrollbar.c:237
+msgid "Horizontal Scrollbar"
+msgstr "Horizontal Scrollbar"
+
+#: ../glade/gbwidgets/gbhseparator.c:144
+msgid "Horizonal Separator"
+msgstr "Horizonal Separator"
+
+#: ../glade/gbwidgets/gbiconview.c:107
+#, c-format
+msgid "Icon %i"
+msgstr "Icon %i"
+
+#: ../glade/gbwidgets/gbiconview.c:129
+msgid "The selection mode of the icon view"
+msgstr "The selection mode of the icon view"
+
+#: ../glade/gbwidgets/gbiconview.c:131
+#: ../glade/gbwidgets/gbprogressbar.c:134
+#: ../glade/gbwidgets/gbtoolbar.c:270
+#: ../glade/gnome/bonobodockitem.c:179
+msgid "Orientation:"
+msgstr "Orientation:"
+
+#: ../glade/gbwidgets/gbiconview.c:132
+msgid "The orientation of the icons"
+msgstr "The orientation of the icons"
+
+#: ../glade/gbwidgets/gbiconview.c:134
+#: ../glade/gbwidgets/gbtreeview.c:118
+msgid "Reorderable:"
+msgstr "Reorderable:"
+
+#: ../glade/gbwidgets/gbiconview.c:135
+msgid "If the view can be reordered using Drag and Drop"
+msgstr "If the view can be reordered using Drag and Drop"
+
+#: ../glade/gbwidgets/gbiconview.c:308
+msgid "Icon View"
+msgstr "Icon View"
+
+#: ../glade/gbwidgets/gbimage.c:110
+#: ../glade/gbwidgets/gbwindow.c:301
+msgid "Named Icon:"
+msgstr "Named Icon:"
+
+#: ../glade/gbwidgets/gbimage.c:111
+#: ../glade/gbwidgets/gbwindow.c:302
+msgid "The named icon to use"
+msgstr "The named icon to use"
+
+#: ../glade/gbwidgets/gbimage.c:112
+msgid "Icon Size:"
+msgstr "Icon Size:"
+
+#: ../glade/gbwidgets/gbimage.c:113
+msgid "The stock icon size"
+msgstr "The stock icon size"
+
+#: ../glade/gbwidgets/gbimage.c:115
+msgid "Pixel Size:"
+msgstr "Pixel Size:"
+
+#: ../glade/gbwidgets/gbimage.c:116
+msgid "The size of the named icon in pixels, or -1 to use the Icon Size property"
+msgstr "The size of the named icon in pixels, or -1 to use the Icon Size property"
+
+#: ../glade/gbwidgets/gbimage.c:120
+msgid "The horizontal alignment"
+msgstr "The horizontal alignment"
+
+#: ../glade/gbwidgets/gbimage.c:123
+msgid "The vertical alignment"
+msgstr "The vertical alignment"
+
+#: ../glade/gbwidgets/gbimage.c:648
+msgid "Image"
+msgstr "Image"
+
+#: ../glade/gbwidgets/gbimagemenuitem.c:255
+#: ../glade/gbwidgets/gbmenuitem.c:228
+msgid "Invalid stock menu item"
+msgstr "Invalid stock menu item"
+
+#: ../glade/gbwidgets/gbimagemenuitem.c:471
+msgid "Menu item with a pixmap"
+msgstr "Menu item with a pixmap"
+
+#: ../glade/gbwidgets/gbinputdialog.c:257
+msgid "Input Dialog"
+msgstr "Input Dialogue"
+
+#: ../glade/gbwidgets/gblabel.c:170
+msgid "Use Underline:"
+msgstr "Use Underline:"
+
+#: ../glade/gbwidgets/gblabel.c:171
+msgid "If the text includes an underlined access key"
+msgstr "If the text includes an underlined access key"
+
+#: ../glade/gbwidgets/gblabel.c:172
+msgid "Use Markup:"
+msgstr "Use Markup:"
+
+#: ../glade/gbwidgets/gblabel.c:173
+msgid "If the text includes pango markup"
+msgstr "If the text includes pango markup"
+
+#: ../glade/gbwidgets/gblabel.c:174
+msgid "Justify:"
+msgstr "Justify:"
+
+#: ../glade/gbwidgets/gblabel.c:175
+msgid "The justification of the lines of the label"
+msgstr "The justification of the lines of the label"
+
+#: ../glade/gbwidgets/gblabel.c:177
+msgid "Wrap Text:"
+msgstr "Wrap Text:"
+
+#: ../glade/gbwidgets/gblabel.c:178
+msgid "If the text is wrapped to fit within the width of the label"
+msgstr "If the text is wrapped to fit within the width of the label"
+
+#: ../glade/gbwidgets/gblabel.c:179
+msgid "Selectable:"
+msgstr "Selectable:"
+
+#: ../glade/gbwidgets/gblabel.c:180
+msgid "If the label text can be selected with the mouse"
+msgstr "If the label text can be selected with the mouse"
+
+#: ../glade/gbwidgets/gblabel.c:182
+msgid "The horizontal alignment of the entire label"
+msgstr "The horizontal alignment of the entire label"
+
+#: ../glade/gbwidgets/gblabel.c:185
+msgid "The vertical alignment of the entire label"
+msgstr "The vertical alignment of the entire label"
+
+#: ../glade/gbwidgets/gblabel.c:191
+msgid "Focus Target:"
+msgstr "Focus Target:"
+
+#: ../glade/gbwidgets/gblabel.c:192
+msgid "The widget to set the keyboard focus to when the underlined access key is used"
+msgstr "The widget to set the keyboard focus to when the underlined access key is used"
+
+#. gtk_combo_set_value_in_list (GTK_COMBO (combo), TRUE, TRUE);
+#: ../glade/gbwidgets/gblabel.c:198
+#: ../glade/gbwidgets/gbprogressbar.c:146
+msgid "Ellipsize:"
+msgstr "Ellipsise:"
+
+#: ../glade/gbwidgets/gblabel.c:199
+#: ../glade/gbwidgets/gbprogressbar.c:147
+msgid "How to ellipsize the string"
+msgstr "How to ellipsize the string"
+
+#: ../glade/gbwidgets/gblabel.c:202
+msgid "The width of the label in characters"
+msgstr "The width of the label in characters"
+
+#: ../glade/gbwidgets/gblabel.c:204
+msgid "Single Line Mode:"
+msgstr "Single Line Mode:"
+
+#: ../glade/gbwidgets/gblabel.c:205
+msgid "If the label is only given enough height for a single line"
+msgstr "If the label is only given enough height for a single line"
+
+#: ../glade/gbwidgets/gblabel.c:206
+msgid "Angle:"
+msgstr "Angle:"
+
+#: ../glade/gbwidgets/gblabel.c:207
+msgid "The angle of the label text"
+msgstr "The angle of the label text"
+
+#: ../glade/gbwidgets/gblabel.c:333
+#: ../glade/gbwidgets/gblabel.c:348
+#: ../glade/gbwidgets/gblabel.c:616
+msgid "Auto"
+msgstr "Auto"
+
+#: ../glade/gbwidgets/gblabel.c:872
+#: ../glade/glade_menu_editor.c:411
+msgid "Label"
+msgstr "Label"
+
+#: ../glade/gbwidgets/gblayout.c:96
+msgid "Area Width:"
+msgstr "Area Width:"
+
+#: ../glade/gbwidgets/gblayout.c:97
+msgid "The width of the layout area"
+msgstr "The width of the layout area"
+
+#: ../glade/gbwidgets/gblayout.c:99
+msgid "Area Height:"
+msgstr "Area Height:"
+
+#: ../glade/gbwidgets/gblayout.c:100
+msgid "The height of the layout area"
+msgstr "The height of the layout area"
+
+#: ../glade/gbwidgets/gblayout.c:222
+msgid "The X coordinate of the widget in the GtkLayout"
+msgstr "The X coordinate of the widget in the GtkLayout"
+
+#: ../glade/gbwidgets/gblayout.c:225
+msgid "The Y coordinate of the widget in the GtkLayout"
+msgstr "The Y coordinate of the widget in the GtkLayout"
+
+#: ../glade/gbwidgets/gblayout.c:380
+msgid "Layout"
+msgstr "Layout"
+
+#: ../glade/gbwidgets/gblist.c:78
+msgid "The selection mode of the list"
+msgstr "The selection mode of the list"
+
+#: ../glade/gbwidgets/gblist.c:192
+msgid "List"
+msgstr "List"
+
+#: ../glade/gbwidgets/gblistitem.c:171
+msgid "List Item"
+msgstr "List Item"
+
+#: ../glade/gbwidgets/gbmenu.c:198
+msgid "Popup Menu"
+msgstr "Popup Menu"
+
+#. FIXME: I'm not sure if we should translate the non-stock labels or not.
+#: ../glade/gbwidgets/gbmenubar.c:215
+msgid "_File"
+msgstr "_File"
+
+#. Create Edit menu
+#: ../glade/gbwidgets/gbmenubar.c:223
+#: ../glade/glade_project_window.c:692
+msgid "_Edit"
+msgstr "_Edit"
+
+#. Create View menu
+#: ../glade/gbwidgets/gbmenubar.c:229
+#: ../glade/glade_project_window.c:721
+msgid "_View"
+msgstr "_View"
+
+#. Create Help menu
+#: ../glade/gbwidgets/gbmenubar.c:231
+#: ../glade/glade_project_window.c:834
+msgid "_Help"
+msgstr "_Help"
+
+#: ../glade/gbwidgets/gbmenubar.c:232
+msgid "_About"
+msgstr "_About"
+
+#: ../glade/gbwidgets/gbmenubar.c:291
+msgid "Pack Direction:"
+msgstr "Pack Direction:"
+
+#: ../glade/gbwidgets/gbmenubar.c:292
+msgid "The pack direction of the menubar"
+msgstr "The pack direction of the menubar"
+
+#: ../glade/gbwidgets/gbmenubar.c:294
+msgid "Child Direction:"
+msgstr "Child Direction:"
+
+#: ../glade/gbwidgets/gbmenubar.c:295
+msgid "The child pack direction of the menubar"
+msgstr "The child pack direction of the menubar"
+
+#: ../glade/gbwidgets/gbmenubar.c:300
+#: ../glade/gbwidgets/gbmenubar.c:418
+#: ../glade/gbwidgets/gboptionmenu.c:139
+msgid "Edit Menus..."
+msgstr "Edit Menus..."
+
+#: ../glade/gbwidgets/gbmenubar.c:541
+msgid "Menu Bar"
+msgstr "Menu Bar"
+
+#: ../glade/gbwidgets/gbmenuitem.c:379
+msgid "Menu Item"
+msgstr "Menu Item"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:92
+#: ../glade/gbwidgets/gbradiotoolbutton.c:150
+#: ../glade/gbwidgets/gbseparatortoolitem.c:67
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:99
+#: ../glade/gbwidgets/gbtoolbutton.c:111
+#: ../glade/gbwidgets/gbtoolitem.c:65
+msgid "Show Horizontal:"
+msgstr "Show Horizontal:"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:93
+#: ../glade/gbwidgets/gbradiotoolbutton.c:151
+#: ../glade/gbwidgets/gbseparatortoolitem.c:68
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:100
+#: ../glade/gbwidgets/gbtoolbutton.c:112
+#: ../glade/gbwidgets/gbtoolitem.c:66
+msgid "If the item is visible when the toolbar is horizontal"
+msgstr "If the item is visible when the toolbar is horizontal"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:94
+#: ../glade/gbwidgets/gbradiotoolbutton.c:152
+#: ../glade/gbwidgets/gbseparatortoolitem.c:69
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:101
+#: ../glade/gbwidgets/gbtoolbutton.c:113
+#: ../glade/gbwidgets/gbtoolitem.c:67
+msgid "Show Vertical:"
+msgstr "Show Vertical:"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:95
+#: ../glade/gbwidgets/gbradiotoolbutton.c:153
+#: ../glade/gbwidgets/gbseparatortoolitem.c:70
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:102
+#: ../glade/gbwidgets/gbtoolbutton.c:114
+#: ../glade/gbwidgets/gbtoolitem.c:68
+msgid "If the item is visible when the toolbar is vertical"
+msgstr "If the item is visible when the toolbar is vertical"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:96
+#: ../glade/gbwidgets/gbradiotoolbutton.c:154
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:103
+#: ../glade/gbwidgets/gbtoolbutton.c:115
+#: ../glade/gbwidgets/gbtoolitem.c:69
+msgid "Is Important:"
+msgstr "Is Important:"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:97
+#: ../glade/gbwidgets/gbradiotoolbutton.c:155
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:104
+#: ../glade/gbwidgets/gbtoolbutton.c:116
+#: ../glade/gbwidgets/gbtoolitem.c:70
+msgid "If the item's text should be shown when the toolbar's mode is GTK_TOOLBAR_BOTH_HORIZ"
+msgstr "If the item's text should be shown when the toolbar's mode is GTK_TOOLBAR_BOTH_HORIZ"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:255
+msgid "Toolbar Button with Menu"
+msgstr "Toolbar Button with Menu"
+
+#: ../glade/gbwidgets/gbnotebook.c:191
+msgid "New notebook"
+msgstr "New notebook"
+
+#: ../glade/gbwidgets/gbnotebook.c:202
+#: ../glade/gnome/gnomepropertybox.c:125
+msgid "Number of pages:"
+msgstr "Number of pages:"
+
+#: ../glade/gbwidgets/gbnotebook.c:274
+msgid "Show Tabs:"
+msgstr "Show Tabs:"
+
+#: ../glade/gbwidgets/gbnotebook.c:274
+msgid "If the notebook tabs are shown"
+msgstr "If the notebook tabs are shown"
+
+#: ../glade/gbwidgets/gbnotebook.c:275
+msgid "Show Border:"
+msgstr "Show Border:"
+
+#: ../glade/gbwidgets/gbnotebook.c:276
+msgid "If the notebook border is shown, when the tabs are not shown"
+msgstr "If the notebook border is shown, when the tabs are not shown"
+
+#: ../glade/gbwidgets/gbnotebook.c:277
+msgid "Tab Pos:"
+msgstr "Tab Pos:"
+
+#: ../glade/gbwidgets/gbnotebook.c:278
+msgid "The position of the notebook tabs"
+msgstr "The position of the notebook tabs"
+
+#: ../glade/gbwidgets/gbnotebook.c:280
+msgid "Scrollable:"
+msgstr "Scrollable:"
+
+#: ../glade/gbwidgets/gbnotebook.c:281
+msgid "If the notebook tabs are scrollable"
+msgstr "If the notebook tabs are scrollable"
+
+#. These seem to be deprecated.
+#: ../glade/gbwidgets/gbnotebook.c:284
+msgid "Tab Horz. Border:"
+msgstr "Tab Horz. Border:"
+
+#: ../glade/gbwidgets/gbnotebook.c:285
+msgid "The size of the notebook tabs' horizontal border"
+msgstr "The size of the notebook tabs' horizontal border"
+
+#: ../glade/gbwidgets/gbnotebook.c:287
+msgid "Tab Vert. Border:"
+msgstr "Tab Vert. Border:"
+
+#: ../glade/gbwidgets/gbnotebook.c:288
+msgid "The size of the notebook tabs' vertical border"
+msgstr "The size of the notebook tabs' vertical border"
+
+#: ../glade/gbwidgets/gbnotebook.c:291
+msgid "Show Popup:"
+msgstr "Show Popup:"
+
+#: ../glade/gbwidgets/gbnotebook.c:291
+msgid "If the popup menu is enabled"
+msgstr "If the popup menu is enabled"
+
+#: ../glade/gbwidgets/gbnotebook.c:292
+#: ../glade/gnome/gnomedruid.c:102
+msgid "Number of Pages:"
+msgstr "Number of Pages:"
+
+#: ../glade/gbwidgets/gbnotebook.c:293
+msgid "The number of notebook pages"
+msgstr "The number of notebook pages"
+
+#: ../glade/gbwidgets/gbnotebook.c:540
+msgid "Previous Page"
+msgstr "Previous Page"
+
+#: ../glade/gbwidgets/gbnotebook.c:548
+msgid "Next Page"
+msgstr "Next Page"
+
+#: ../glade/gbwidgets/gbnotebook.c:556
+msgid "Delete Page"
+msgstr "Delete Page"
+
+#: ../glade/gbwidgets/gbnotebook.c:562
+msgid "Switch Next"
+msgstr "Switch Next"
+
+#: ../glade/gbwidgets/gbnotebook.c:570
+msgid "Switch Previous"
+msgstr "Switch Previous"
+
+#: ../glade/gbwidgets/gbnotebook.c:578
+#: ../glade/gnome/gnomedruid.c:298
+msgid "Insert Page After"
+msgstr "Insert Page After"
+
+#: ../glade/gbwidgets/gbnotebook.c:586
+#: ../glade/gnome/gnomedruid.c:285
+msgid "Insert Page Before"
+msgstr "Insert Page Before"
+
+#: ../glade/gbwidgets/gbnotebook.c:670
+msgid "The page's position in the list of pages"
+msgstr "The page's position in the list of pages"
+
+#: ../glade/gbwidgets/gbnotebook.c:673
+msgid "Set True to let the tab expand"
+msgstr "Set True to let the tab expand"
+
+#: ../glade/gbwidgets/gbnotebook.c:675
+msgid "Set True to let the tab fill its allocated area"
+msgstr "Set True to let the tab fill its allocated area"
+
+#: ../glade/gbwidgets/gbnotebook.c:677
+msgid "Set True to pack the tab at the start of the notebook"
+msgstr "Set True to pack the tab at the start of the notebook"
+
+#: ../glade/gbwidgets/gbnotebook.c:678
+msgid "Menu Label:"
+msgstr "Menu Label:"
+
+#: ../glade/gbwidgets/gbnotebook.c:679
+msgid "The text to display in the popup menu"
+msgstr "The text to display in the popup menu"
+
+#: ../glade/gbwidgets/gbnotebook.c:937
+msgid "Notebook"
+msgstr "Notebook"
+
+#: ../glade/gbwidgets/gboptionmenu.c:230
+#, c-format
+msgid "Cannot add a %s to a GtkOptionMenu."
+msgstr "Cannot add a %s to a GtkOptionMenu."
+
+#: ../glade/gbwidgets/gboptionmenu.c:270
+msgid "Option Menu"
+msgstr "Option Menu"
+
+#: ../glade/gbwidgets/gbpreview.c:63
+msgid "Color:"
+msgstr "Colour:"
+
+#: ../glade/gbwidgets/gbpreview.c:64
+msgid "If the preview is color or grayscale"
+msgstr "If the preview is colour or greyscale"
+
+#: ../glade/gbwidgets/gbpreview.c:66
+msgid "If the preview expands to fill its allocated area"
+msgstr "If the preview expands to fill its allocated area"
+
+#: ../glade/gbwidgets/gbpreview.c:162
+msgid "Preview"
+msgstr "Preview"
+
+#: ../glade/gbwidgets/gbprogressbar.c:135
+msgid "The orientation of the progress bar's contents"
+msgstr "The orientation of the progress bar's contents"
+
+#: ../glade/gbwidgets/gbprogressbar.c:137
+msgid "Fraction:"
+msgstr "Fraction:"
+
+#: ../glade/gbwidgets/gbprogressbar.c:138
+msgid "The fraction of work that has been completed"
+msgstr "The fraction of work that has been completed"
+
+#: ../glade/gbwidgets/gbprogressbar.c:140
+msgid "Pulse Step:"
+msgstr "Pulse Step:"
+
+#: ../glade/gbwidgets/gbprogressbar.c:141
+msgid "The fraction of the progress bar length to move the bouncing block when pulsed"
+msgstr "The fraction of the progress bar length to move the bouncing block when pulsed"
+
+#: ../glade/gbwidgets/gbprogressbar.c:144
+msgid "The text to display over the progress bar"
+msgstr "The text to display over the progress bar"
+
+#. ShowText is implicit now, if the Text property is set to anything.
+#: ../glade/gbwidgets/gbprogressbar.c:152
+msgid "Show Text:"
+msgstr "Show Text:"
+
+#: ../glade/gbwidgets/gbprogressbar.c:153
+msgid "If the text should be shown in the progress bar"
+msgstr "If the text should be shown in the progress bar"
+
+#. ActivityMode is deprecated and implicit now. The app just calls
+#. gtk_progress_bar_pulse() and it automatically goes into activity mode.
+#: ../glade/gbwidgets/gbprogressbar.c:157
+msgid "Activity Mode:"
+msgstr "Activity Mode:"
+
+#: ../glade/gbwidgets/gbprogressbar.c:158
+msgid "If the progress bar should act like the front of Kit's car"
+msgstr "If the progress bar should act like the front of Kit's car"
+
+#: ../glade/gbwidgets/gbprogressbar.c:163
+msgid "The horizontal alignment of the text"
+msgstr "The horizontal alignment of the text"
+
+#: ../glade/gbwidgets/gbprogressbar.c:166
+msgid "The vertical alignment of the text"
+msgstr "The vertical alignment of the text"
+
+#: ../glade/gbwidgets/gbprogressbar.c:421
+msgid "Progress Bar"
+msgstr "Progress Bar"
+
+#: ../glade/gbwidgets/gbradiobutton.c:138
+#: ../glade/gbwidgets/gbradiotoolbutton.c:148
+msgid "If the radio button is initially on"
+msgstr "If the radio button is initially on"
+
+#: ../glade/gbwidgets/gbradiobutton.c:143
+#: ../glade/gbwidgets/gbradiomenuitem.c:106
+#: ../glade/gbwidgets/gbradiotoolbutton.c:141
+#: ../glade/glade_menu_editor.c:1039
+msgid "Group:"
+msgstr "Group:"
+
+#: ../glade/gbwidgets/gbradiobutton.c:144
+msgid "The radio button group (the default is all radio buttons with the same parent)"
+msgstr "The radio button group (the default is all radio buttons with the same parent)"
+
+#: ../glade/gbwidgets/gbradiobutton.c:189
+#: ../glade/gbwidgets/gbradiobutton.c:350
+#: ../glade/gbwidgets/gbradiotoolbutton.c:233
+#: ../glade/gbwidgets/gbradiotoolbutton.c:322
+msgid "New Group"
+msgstr "New Group"
+
+#: ../glade/gbwidgets/gbradiobutton.c:465
+msgid "Radio Button"
+msgstr "Radio Button"
+
+#: ../glade/gbwidgets/gbradiomenuitem.c:105
+msgid "If the radio menu item is initially on"
+msgstr "If the radio menu item is initially on"
+
+#: ../glade/gbwidgets/gbradiomenuitem.c:107
+msgid "The radio menu item group (the default is all radio menu items with the same parent)"
+msgstr "The radio menu item group (the default is all radio menu items with the same parent)"
+
+#: ../glade/gbwidgets/gbradiomenuitem.c:388
+msgid "Radio Menu Item"
+msgstr "Radio Menu Item"
+
+#: ../glade/gbwidgets/gbradiotoolbutton.c:142
+msgid "The radio tool button group (the default is all radio tool buttons in the toolbar)"
+msgstr "The radio tool button group (the default is all radio tool buttons in the toolbar)"
+
+#: ../glade/gbwidgets/gbradiotoolbutton.c:530
+msgid "Toolbar Radio Button"
+msgstr "Toolbar Radio Button"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:131
+msgid "H Policy:"
+msgstr "H Policy:"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:132
+msgid "When the horizontal scrollbar will be shown"
+msgstr "When the horizontal scrollbar will be shown"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:134
+msgid "V Policy:"
+msgstr "V Policy:"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:135
+msgid "When the vertical scrollbar will be shown"
+msgstr "When the vertical scrollbar will be shown"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:137
+msgid "Window Pos:"
+msgstr "Window Pos:"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:138
+msgid "Where the child window is located with respect to the scrollbars"
+msgstr "Where the child window is located with respect to the scrollbars"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:140
+msgid "Shadow Type:"
+msgstr "Shadow Type:"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:141
+msgid "The update policy of the vertical scrollbar"
+msgstr "The update policy of the vertical scrollbar"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:353
+msgid "Scrolled Window"
+msgstr "Scrolled Window"
+
+#: ../glade/gbwidgets/gbseparatormenuitem.c:153
+msgid "Separator for Menus"
+msgstr "Separator for Menus"
+
+#: ../glade/gbwidgets/gbseparatortoolitem.c:65
+msgid "Draw:"
+msgstr "Draw:"
+
+#: ../glade/gbwidgets/gbseparatortoolitem.c:66
+msgid "If the separator is drawn, or just blank"
+msgstr "If the separator is drawn, or just blank"
+
+#: ../glade/gbwidgets/gbseparatortoolitem.c:204
+msgid "Toolbar Separator Item"
+msgstr "Toolbar Separator Item"
+
+#: ../glade/gbwidgets/gbspinbutton.c:91
+msgid "Climb Rate:"
+msgstr "Climb Rate:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:92
+msgid "The climb rate of the spinbutton, used in conjunction with the Page Increment"
+msgstr "The climb rate of the spinbutton, used in conjunction with the Page Increment"
+
+#: ../glade/gbwidgets/gbspinbutton.c:94
+msgid "The number of decimal digits to show"
+msgstr "The number of decimal digits to show"
+
+#: ../glade/gbwidgets/gbspinbutton.c:96
+msgid "Numeric:"
+msgstr "Numeric:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:97
+msgid "If only numeric entry is allowed"
+msgstr "If only numeric entry is allowed"
+
+#: ../glade/gbwidgets/gbspinbutton.c:98
+msgid "Update Policy:"
+msgstr "Update Policy:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:99
+msgid "When value_changed signals are emitted"
+msgstr "When value_changed signals are emitted"
+
+#: ../glade/gbwidgets/gbspinbutton.c:101
+msgid "Snap:"
+msgstr "Snap:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:102
+msgid "If the value is snapped to multiples of the step increment"
+msgstr "If the value is snapped to multiples of the step increment"
+
+#: ../glade/gbwidgets/gbspinbutton.c:103
+msgid "Wrap:"
+msgstr "Wrap:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:104
+msgid "If the value is wrapped at the limits"
+msgstr "If the value is wrapped at the limits"
+
+#: ../glade/gbwidgets/gbspinbutton.c:284
+msgid "Spin Button"
+msgstr "Spin Button"
+
+#: ../glade/gbwidgets/gbstatusbar.c:64
+msgid "Resize Grip:"
+msgstr "Resize Grip:"
+
+#: ../glade/gbwidgets/gbstatusbar.c:64
+msgid "If the status bar has a resize grip to resize the window"
+msgstr "If the status bar has a resize grip to resize the window"
+
+#: ../glade/gbwidgets/gbstatusbar.c:156
+msgid "Status Bar"
+msgstr "Status Bar"
+
+#: ../glade/gbwidgets/gbtable.c:137
+msgid "New table"
+msgstr "New table"
+
+#: ../glade/gbwidgets/gbtable.c:149
+#: ../glade/gbwidgets/gbvbox.c:95
+#: ../glade/gbwidgets/gbvbuttonbox.c:123
+msgid "Number of rows:"
+msgstr "Number of rows:"
+
+#: ../glade/gbwidgets/gbtable.c:237
+msgid "Rows:"
+msgstr "Rows:"
+
+#: ../glade/gbwidgets/gbtable.c:238
+msgid "The number of rows in the table"
+msgstr "The number of rows in the table"
+
+#: ../glade/gbwidgets/gbtable.c:240
+msgid "Columns:"
+msgstr "Columns:"
+
+#: ../glade/gbwidgets/gbtable.c:241
+msgid "The number of columns in the table"
+msgstr "The number of columns in the table"
+
+#: ../glade/gbwidgets/gbtable.c:244
+msgid "If the children should all be the same size"
+msgstr "If the children should all be the same size"
+
+#: ../glade/gbwidgets/gbtable.c:245
+#: ../glade/gnome/gnomeiconlist.c:180
+msgid "Row Spacing:"
+msgstr "Row Spacing:"
+
+#: ../glade/gbwidgets/gbtable.c:246
+msgid "The space between each row"
+msgstr "The space between each row"
+
+#: ../glade/gbwidgets/gbtable.c:248
+#: ../glade/gnome/gnomeiconlist.c:183
+msgid "Col Spacing:"
+msgstr "Col Spacing:"
+
+#: ../glade/gbwidgets/gbtable.c:249
+msgid "The space between each column"
+msgstr "The space between each column"
+
+#: ../glade/gbwidgets/gbtable.c:368
+msgid "Cell X:"
+msgstr "Cell X:"
+
+#: ../glade/gbwidgets/gbtable.c:369
+msgid "The left edge of the widget in the table"
+msgstr "The left edge of the widget in the table"
+
+#: ../glade/gbwidgets/gbtable.c:371
+msgid "Cell Y:"
+msgstr "Cell Y:"
+
+#: ../glade/gbwidgets/gbtable.c:372
+msgid "The top edge of the widget in the table"
+msgstr "The top edge of the widget in the table"
+
+#: ../glade/gbwidgets/gbtable.c:375
+msgid "Col Span:"
+msgstr "Col Span:"
+
+#: ../glade/gbwidgets/gbtable.c:376
+msgid "The number of columns spanned by the widget in the table"
+msgstr "The number of columns spanned by the widget in the table"
+
+#: ../glade/gbwidgets/gbtable.c:378
+msgid "Row Span:"
+msgstr "Row Span:"
+
+#: ../glade/gbwidgets/gbtable.c:379
+msgid "The number of rows spanned by the widget in the table"
+msgstr "The number of rows spanned by the widget in the table"
+
+#: ../glade/gbwidgets/gbtable.c:381
+msgid "H Padding:"
+msgstr "H Padding:"
+
+#: ../glade/gbwidgets/gbtable.c:384
+msgid "V Padding:"
+msgstr "V Padding:"
+
+#: ../glade/gbwidgets/gbtable.c:387
+msgid "X Expand:"
+msgstr "X Expand:"
+
+#: ../glade/gbwidgets/gbtable.c:388
+msgid "Set True to let the widget expand horizontally"
+msgstr "Set True to let the widget expand horizontally"
+
+#: ../glade/gbwidgets/gbtable.c:389
+msgid "Y Expand:"
+msgstr "Y Expand:"
+
+#: ../glade/gbwidgets/gbtable.c:390
+msgid "Set True to let the widget expand vertically"
+msgstr "Set True to let the widget expand vertically"
+
+#: ../glade/gbwidgets/gbtable.c:391
+msgid "X Shrink:"
+msgstr "X Shrink:"
+
+#: ../glade/gbwidgets/gbtable.c:392
+msgid "Set True to let the widget shrink horizontally"
+msgstr "Set True to let the widget shrink horizontally"
+
+#: ../glade/gbwidgets/gbtable.c:393
+msgid "Y Shrink:"
+msgstr "Y Shrink:"
+
+#: ../glade/gbwidgets/gbtable.c:394
+msgid "Set True to let the widget shrink vertically"
+msgstr "Set True to let the widget shrink vertically"
+
+#: ../glade/gbwidgets/gbtable.c:395
+msgid "X Fill:"
+msgstr "X Fill:"
+
+#: ../glade/gbwidgets/gbtable.c:396
+msgid "Set True to let the widget fill its horizontal allocated area"
+msgstr "Set True to let the widget fill its horizontal allocated area"
+
+#: ../glade/gbwidgets/gbtable.c:397
+msgid "Y Fill:"
+msgstr "Y Fill:"
+
+#: ../glade/gbwidgets/gbtable.c:398
+msgid "Set True to let the widget fill its vertical allocated area"
+msgstr "Set True to let the widget fill its vertical allocated area"
+
+#: ../glade/gbwidgets/gbtable.c:667
+msgid "Insert Row Before"
+msgstr "Insert Row Before"
+
+#: ../glade/gbwidgets/gbtable.c:674
+msgid "Insert Row After"
+msgstr "Insert Row After"
+
+#: ../glade/gbwidgets/gbtable.c:681
+msgid "Insert Column Before"
+msgstr "Insert Column Before"
+
+#: ../glade/gbwidgets/gbtable.c:688
+msgid "Insert Column After"
+msgstr "Insert Column After"
+
+#: ../glade/gbwidgets/gbtable.c:695
+msgid "Delete Row"
+msgstr "Delete Row"
+
+#: ../glade/gbwidgets/gbtable.c:701
+msgid "Delete Column"
+msgstr "Delete Column"
+
+#: ../glade/gbwidgets/gbtable.c:1208
+msgid "Table"
+msgstr "Table"
+
+#: ../glade/gbwidgets/gbtextview.c:51
+msgid "Center"
+msgstr "Centre"
+
+#: ../glade/gbwidgets/gbtextview.c:52
+msgid "Fill"
+msgstr "Fill"
+
+#. Add a "None" item first, so it is easy to reset the pixmap.
+#. If the user selects the 'None' item from the combo, we reset the
+#. text to "" and return. This callback will be called again.
+#. Add a 'None' item at the top of the list.
+#: ../glade/gbwidgets/gbtextview.c:71
+#: ../glade/glade_gnome.c:112
+#: ../glade/glade_menu_editor.c:543
+#: ../glade/glade_menu_editor.c:830
+#: ../glade/glade_menu_editor.c:1345
+#: ../glade/glade_menu_editor.c:2255
+#: ../glade/property.c:2432
+msgid "None"
+msgstr "None"
+
+#: ../glade/gbwidgets/gbtextview.c:72
+msgid "Character"
+msgstr "Character"
+
+#: ../glade/gbwidgets/gbtextview.c:73
+msgid "Word"
+msgstr "Word"
+
+#: ../glade/gbwidgets/gbtextview.c:117
+msgid "Cursor Visible:"
+msgstr "Cursor Visible:"
+
+#: ../glade/gbwidgets/gbtextview.c:118
+msgid "If the cursor is visible"
+msgstr "If the cursor is visible"
+
+#: ../glade/gbwidgets/gbtextview.c:119
+msgid "Overwrite:"
+msgstr "Overwrite:"
+
+#: ../glade/gbwidgets/gbtextview.c:120
+msgid "If entered text overwrites the existing text"
+msgstr "If entered text overwrites the existing text"
+
+#: ../glade/gbwidgets/gbtextview.c:121
+msgid "Accepts Tab:"
+msgstr "Accepts Tab:"
+
+#: ../glade/gbwidgets/gbtextview.c:122
+msgid "If tab characters can be entered"
+msgstr "If tab characters can be entered"
+
+#: ../glade/gbwidgets/gbtextview.c:126
+msgid "Justification:"
+msgstr "Justification:"
+
+#: ../glade/gbwidgets/gbtextview.c:127
+msgid "The justification of the text"
+msgstr "The justification of the text"
+
+#: ../glade/gbwidgets/gbtextview.c:129
+msgid "Wrapping:"
+msgstr "Wrapping:"
+
+#: ../glade/gbwidgets/gbtextview.c:130
+msgid "The wrapping of the text"
+msgstr "The wrapping of the text"
+
+#: ../glade/gbwidgets/gbtextview.c:133
+msgid "Space Above:"
+msgstr "Space Above:"
+
+#: ../glade/gbwidgets/gbtextview.c:134
+msgid "Pixels of blank space above paragraphs"
+msgstr "Pixels of blank space above paragraphs"
+
+#: ../glade/gbwidgets/gbtextview.c:136
+msgid "Space Below:"
+msgstr "Space Below:"
+
+#: ../glade/gbwidgets/gbtextview.c:137
+msgid "Pixels of blank space below paragraphs"
+msgstr "Pixels of blank space below paragraphs"
+
+#: ../glade/gbwidgets/gbtextview.c:139
+msgid "Space Inside:"
+msgstr "Space Inside:"
+
+#: ../glade/gbwidgets/gbtextview.c:140
+msgid "Pixels of blank space between wrapped lines in a paragraph"
+msgstr "Pixels of blank space between wrapped lines in a paragraph"
+
+#: ../glade/gbwidgets/gbtextview.c:143
+msgid "Left Margin:"
+msgstr "Left Margin:"
+
+#: ../glade/gbwidgets/gbtextview.c:144
+msgid "Width of the left margin in pixels"
+msgstr "Width of the left margin in pixels"
+
+#: ../glade/gbwidgets/gbtextview.c:146
+msgid "Right Margin:"
+msgstr "Right Margin:"
+
+#: ../glade/gbwidgets/gbtextview.c:147
+msgid "Width of the right margin in pixels"
+msgstr "Width of the right margin in pixels"
+
+#: ../glade/gbwidgets/gbtextview.c:149
+msgid "Indent:"
+msgstr "Indent:"
+
+#: ../glade/gbwidgets/gbtextview.c:150
+msgid "Amount of pixels to indent paragraphs"
+msgstr "Amount of pixels to indent paragraphs"
+
+#: ../glade/gbwidgets/gbtextview.c:463
+msgid "Text View"
+msgstr "Text View"
+
+#: ../glade/gbwidgets/gbtogglebutton.c:100
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:98
+msgid "If the toggle button is initially on"
+msgstr "If the toggle button is initially on"
+
+#: ../glade/gbwidgets/gbtogglebutton.c:199
+msgid "Toggle Button"
+msgstr "Toggle Button"
+
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:297
+msgid "Toolbar Toggle Button"
+msgstr "Toolbar Toggle Button"
+
+#: ../glade/gbwidgets/gbtoolbar.c:191
+msgid "New toolbar"
+msgstr "New toolbar"
+
+#: ../glade/gbwidgets/gbtoolbar.c:202
+msgid "Number of items:"
+msgstr "Number of items:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:268
+msgid "The number of items in the toolbar"
+msgstr "The number of items in the toolbar"
+
+#: ../glade/gbwidgets/gbtoolbar.c:271
+msgid "The toolbar orientation"
+msgstr "The toolbar orientation"
+
+#: ../glade/gbwidgets/gbtoolbar.c:273
+msgid "Style:"
+msgstr "Style:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:274
+msgid "The toolbar style"
+msgstr "The toolbar style"
+
+#: ../glade/gbwidgets/gbtoolbar.c:276
+msgid "Tooltips:"
+msgstr "Tooltips:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:276
+msgid "If tooltips are enabled"
+msgstr "If tooltips are enabled"
+
+#: ../glade/gbwidgets/gbtoolbar.c:277
+msgid "Show Arrow:"
+msgstr "Show Arrow:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:277
+msgid "If an arrow should be shown to popup a menu if the toolbar doesn't fit"
+msgstr "If an arrow should be shown to popup a menu if the toolbar doesn't fit"
+
+#: ../glade/gbwidgets/gbtoolbar.c:427
+msgid "If the item should be the same size as other homogeneous items"
+msgstr "If the item should be the same size as other homogeneous items"
+
+#. Commands for inserting new items.
+#: ../glade/gbwidgets/gbtoolbar.c:506
+msgid "Insert Item Before"
+msgstr "Insert Item Before"
+
+#: ../glade/gbwidgets/gbtoolbar.c:513
+msgid "Insert Item After"
+msgstr "Insert Item After"
+
+#: ../glade/gbwidgets/gbtoolbar.c:680
+msgid "Toolbar"
+msgstr "Toolbar"
+
+#: ../glade/gbwidgets/gbtoolbutton.c:586
+msgid "Toolbar Button"
+msgstr "Toolbar Button"
+
+#: ../glade/gbwidgets/gbtoolitem.c:201
+msgid "Toolbar Item"
+msgstr "Toolbar Item"
+
+#: ../glade/gbwidgets/gbtreeview.c:71
+msgid "Column 1"
+msgstr "Column 1"
+
+#: ../glade/gbwidgets/gbtreeview.c:79
+msgid "Column 2"
+msgstr "Column 2"
+
+#: ../glade/gbwidgets/gbtreeview.c:87
+msgid "Column 3"
+msgstr "Column 3"
+
+#: ../glade/gbwidgets/gbtreeview.c:97
+#, c-format
+msgid "Row %i"
+msgstr "Row %i"
+
+#: ../glade/gbwidgets/gbtreeview.c:114
+msgid "Headers Visible:"
+msgstr "Headers Visible:"
+
+#: ../glade/gbwidgets/gbtreeview.c:115
+msgid "If the column header buttons are shown"
+msgstr "If the column header buttons are shown"
+
+#: ../glade/gbwidgets/gbtreeview.c:116
+msgid "Rules Hint:"
+msgstr "Rules Hint:"
+
+#: ../glade/gbwidgets/gbtreeview.c:117
+msgid "If a hint is set so the theme engine should draw rows in alternating colors"
+msgstr "If a hint is set so the theme engine should draw rows in alternating colors"
+
+#: ../glade/gbwidgets/gbtreeview.c:119
+msgid "If the view is reorderable"
+msgstr "If the view is reorderable"
+
+#: ../glade/gbwidgets/gbtreeview.c:120
+msgid "Enable Search:"
+msgstr "Enable Search:"
+
+#: ../glade/gbwidgets/gbtreeview.c:121
+msgid "If the user can search through columns interactively"
+msgstr "If the user can search through columns interactively"
+
+#: ../glade/gbwidgets/gbtreeview.c:123
+msgid "Fixed Height Mode:"
+msgstr "Fixed Height Mode:"
+
+#: ../glade/gbwidgets/gbtreeview.c:124
+msgid "Sets all rows to the same height to improve performance"
+msgstr "Sets all rows to the same height to improve performance"
+
+#: ../glade/gbwidgets/gbtreeview.c:125
+msgid "Hover Selection:"
+msgstr "Hover Selection:"
+
+#: ../glade/gbwidgets/gbtreeview.c:126
+msgid "Whether the selection should follow the pointer"
+msgstr "Whether the selection should follow the pointer"
+
+#: ../glade/gbwidgets/gbtreeview.c:127
+msgid "Hover Expand:"
+msgstr "Hover Expand:"
+
+#: ../glade/gbwidgets/gbtreeview.c:128
+msgid "Whether rows should be expanded or collapsed when the pointer moves over them"
+msgstr "Whether rows should be expanded or collapsed when the pointer moves over them"
+
+#: ../glade/gbwidgets/gbtreeview.c:317
+msgid "List or Tree View"
+msgstr "List or Tree View"
+
+#: ../glade/gbwidgets/gbvbox.c:84
+msgid "New vertical box"
+msgstr "New vertical box"
+
+#: ../glade/gbwidgets/gbvbox.c:245
+msgid "Vertical Box"
+msgstr "Vertical Box"
+
+#: ../glade/gbwidgets/gbvbuttonbox.c:111
+msgid "New vertical button box"
+msgstr "New vertical button box"
+
+#: ../glade/gbwidgets/gbvbuttonbox.c:344
+msgid "Vertical Button Box"
+msgstr "Vertical Button Box"
+
+#: ../glade/gbwidgets/gbviewport.c:104
+msgid "The type of shadow of the viewport"
+msgstr "The type of shadow of the viewport"
+
+#: ../glade/gbwidgets/gbviewport.c:240
+msgid "Viewport"
+msgstr "Viewport"
+
+#: ../glade/gbwidgets/gbvpaned.c:192
+msgid "Vertical Panes"
+msgstr "Vertical Panes"
+
+#: ../glade/gbwidgets/gbvruler.c:247
+msgid "Vertical Ruler"
+msgstr "Vertical Ruler"
+
+#: ../glade/gbwidgets/gbvscale.c:319
+msgid "Vertical Scale"
+msgstr "Vertical Scale"
+
+#: ../glade/gbwidgets/gbvscrollbar.c:236
+msgid "Vertical Scrollbar"
+msgstr "Vertical Scrollbar"
+
+#: ../glade/gbwidgets/gbvseparator.c:144
+msgid "Vertical Separator"
+msgstr "Vertical Separator"
+
+#: ../glade/gbwidgets/gbwindow.c:244
+msgid "The title of the window"
+msgstr "The title of the window"
+
+#: ../glade/gbwidgets/gbwindow.c:247
+msgid "The type of the window"
+msgstr "The type of the window"
+
+#: ../glade/gbwidgets/gbwindow.c:251
+msgid "Type Hint:"
+msgstr "Type Hint:"
+
+#: ../glade/gbwidgets/gbwindow.c:252
+msgid "Tells the window manager how to treat the window"
+msgstr "Tells the window manager how to treat the window"
+
+#: ../glade/gbwidgets/gbwindow.c:257
+msgid "The initial position of the window"
+msgstr "The initial position of the window"
+
+#: ../glade/gbwidgets/gbwindow.c:261
+#: ../glade/gnome/gnomefileentry.c:105
+#: ../glade/gnome/gnomepixmapentry.c:84
+msgid "Modal:"
+msgstr "Modal:"
+
+#: ../glade/gbwidgets/gbwindow.c:261
+msgid "If the window is modal"
+msgstr "If the window is modal"
+
+#: ../glade/gbwidgets/gbwindow.c:266
+msgid "Default Width:"
+msgstr "Default Width:"
+
+#: ../glade/gbwidgets/gbwindow.c:267
+msgid "The default width of the window"
+msgstr "The default width of the window"
+
+#: ../glade/gbwidgets/gbwindow.c:271
+msgid "Default Height:"
+msgstr "Default Height:"
+
+#: ../glade/gbwidgets/gbwindow.c:272
+msgid "The default height of the window"
+msgstr "The default height of the window"
+
+#: ../glade/gbwidgets/gbwindow.c:278
+msgid "Resizable:"
+msgstr "Resizable:"
+
+#: ../glade/gbwidgets/gbwindow.c:279
+msgid "If the window can be resized"
+msgstr "If the window can be resized"
+
+#: ../glade/gbwidgets/gbwindow.c:286
+msgid "If the window can be shrunk"
+msgstr "If the window can be shrunk"
+
+#: ../glade/gbwidgets/gbwindow.c:287
+msgid "Grow:"
+msgstr "Grow:"
+
+#: ../glade/gbwidgets/gbwindow.c:288
+msgid "If the window can be enlarged"
+msgstr "If the window can be enlarged"
+
+#: ../glade/gbwidgets/gbwindow.c:293
+msgid "Auto-Destroy:"
+msgstr "Auto-Destroy:"
+
+#: ../glade/gbwidgets/gbwindow.c:294
+msgid "If the window is destroyed when its transient parent is destroyed"
+msgstr "If the window is destroyed when its transient parent is destroyed"
+
+#: ../glade/gbwidgets/gbwindow.c:298
+msgid "The icon for this window"
+msgstr "The icon for this window"
+
+#: ../glade/gbwidgets/gbwindow.c:305
+msgid "Role:"
+msgstr "Role:"
+
+#: ../glade/gbwidgets/gbwindow.c:305
+msgid "A unique identifier for the window to be used when restoring a session"
+msgstr "A unique identifier for the window to be used when restoring a session"
+
+#: ../glade/gbwidgets/gbwindow.c:308
+msgid "Decorated:"
+msgstr "Decorated:"
+
+#: ../glade/gbwidgets/gbwindow.c:309
+msgid "If the window should be decorated by the window manager"
+msgstr "If the window should be decorated by the window manager"
+
+#: ../glade/gbwidgets/gbwindow.c:312
+msgid "Skip Taskbar:"
+msgstr "Skip Taskbar:"
+
+#: ../glade/gbwidgets/gbwindow.c:313
+msgid "If the window should not appear in the task bar"
+msgstr "If the window should not appear in the task bar"
+
+#: ../glade/gbwidgets/gbwindow.c:316
+msgid "Skip Pager:"
+msgstr "Skip Pager:"
+
+#: ../glade/gbwidgets/gbwindow.c:317
+msgid "If the window should not appear in the pager"
+msgstr "If the window should not appear in the pager"
+
+#: ../glade/gbwidgets/gbwindow.c:320
+msgid "Gravity:"
+msgstr "Gravity:"
+
+#: ../glade/gbwidgets/gbwindow.c:321
+msgid "The reference point to use when the window coordinates are set"
+msgstr "The reference point to use when the window coordinates are set"
+
+#: ../glade/gbwidgets/gbwindow.c:325
+msgid "Focus On Map:"
+msgstr "Focus On Map:"
+
+#: ../glade/gbwidgets/gbwindow.c:325
+msgid "If the window should receive the input focus when it is mapped"
+msgstr "If the window should receive the input focus when it is mapped"
+
+#: ../glade/gbwidgets/gbwindow.c:328
+msgid "Urgency Hint:"
+msgstr "Urgency Hint:"
+
+#: ../glade/gbwidgets/gbwindow.c:328
+msgid "If the window should be brought to the user's attention"
+msgstr "If the window should be brought to the user's attention"
+
+#: ../glade/gbwidgets/gbwindow.c:1232
+msgid "Window"
+msgstr "Window"
+
+#: ../glade/glade.c:369
+#: ../glade/gnome-db/gnomedberrordlg.c:75
+msgid "Error"
+msgstr "Error"
+
+#: ../glade/glade.c:372
+msgid "System Error"
+msgstr "System Error"
+
+#: ../glade/glade.c:376
+msgid "Error opening file"
+msgstr "Error opening file"
+
+#: ../glade/glade.c:378
+msgid "Error reading file"
+msgstr "Error reading file"
+
+#: ../glade/glade.c:380
+msgid "Error writing file"
+msgstr "Error writing file"
+
+#: ../glade/glade.c:383
+msgid "Invalid directory"
+msgstr "Invalid directory"
+
+#: ../glade/glade.c:387
+msgid "Invalid value"
+msgstr "Invalid value"
+
+#: ../glade/glade.c:389
+msgid "Invalid XML entity"
+msgstr "Invalid XML entity"
+
+#: ../glade/glade.c:391
+msgid "Start tag expected"
+msgstr "Start tag expected"
+
+#: ../glade/glade.c:393
+msgid "End tag expected"
+msgstr "End tag expected"
+
+#: ../glade/glade.c:395
+msgid "Character data expected"
+msgstr "Character data expected"
+
+#: ../glade/glade.c:397
+msgid "Class id missing"
+msgstr "Class id missing"
+
+#: ../glade/glade.c:399
+msgid "Class unknown"
+msgstr "Class unknown"
+
+#: ../glade/glade.c:401
+msgid "Invalid component"
+msgstr "Invalid component"
+
+#: ../glade/glade.c:403
+msgid "Unexpected end of file"
+msgstr "Unexpected end of file"
+
+#: ../glade/glade.c:406
+msgid "Unknown error code"
+msgstr "Unknown error code"
+
+#: ../glade/glade_atk.c:120
+msgid "Controlled By"
+msgstr "Controlled By"
+
+#: ../glade/glade_atk.c:121
+msgid "Controller For"
+msgstr "Controller For"
+
+#: ../glade/glade_atk.c:122
+msgid "Label For"
+msgstr "Label For"
+
+#: ../glade/glade_atk.c:123
+msgid "Labelled By"
+msgstr "Labelled By"
+
+#: ../glade/glade_atk.c:124
+msgid "Member Of"
+msgstr "Member Of"
+
+#: ../glade/glade_atk.c:125
+msgid "Node Child Of"
+msgstr "Node Child Of"
+
+#: ../glade/glade_atk.c:126
+msgid "Flows To"
+msgstr "Flows To"
+
+#: ../glade/glade_atk.c:127
+msgid "Flows From"
+msgstr "Flows From"
+
+#: ../glade/glade_atk.c:128
+msgid "Subwindow Of"
+msgstr "Subwindow Of"
+
+#: ../glade/glade_atk.c:129
+msgid "Embeds"
+msgstr "Embeds"
+
+#: ../glade/glade_atk.c:130
+msgid "Embedded By"
+msgstr "Embedded By"
+
+#: ../glade/glade_atk.c:131
+msgid "Popup For"
+msgstr "Popup For"
+
+#: ../glade/glade_atk.c:132
+msgid "Parent Window Of"
+msgstr "Parent Window Of"
+
+#. I don't think we should set the transient parent as the dialog could be
+#. left open if desired.
+#: ../glade/glade_atk.c:331
+#, c-format
+msgid "Relationship: %s"
+msgstr "Relationship: %s"
+
+#. Create the pages of the main notebook
+#. NOTE: If you add/remove pages you need to change the GB_PAGE_SIGNALS
+#. value at the top of this file
+#: ../glade/glade_atk.c:375
+#: ../glade/property.c:615
+msgid "Widget"
+msgstr "Widget"
+
+#: ../glade/glade_atk.c:638
+#: ../glade/glade_menu_editor.c:773
+#: ../glade/property.c:776
+msgid "Name:"
+msgstr "Name:"
+
+#: ../glade/glade_atk.c:639
+msgid "The name of the widget to pass to assistive technologies"
+msgstr "The name of the widget to pass to assistive technologies"
+
+#: ../glade/glade_atk.c:640
+msgid "Description:"
+msgstr "Description:"
+
+#: ../glade/glade_atk.c:641
+msgid "The description of the widget to pass to assistive technologies"
+msgstr "The description of the widget to pass to assistive technologies"
+
+#: ../glade/glade_atk.c:643
+msgid "Table Caption:"
+msgstr "Table Caption:"
+
+#: ../glade/glade_atk.c:644
+msgid "The table caption to pass to assistive technologies"
+msgstr "The table caption to pass to assistive technologies"
+
+#: ../glade/glade_atk.c:681
+msgid "Select the widgets with this relationship"
+msgstr "Select the widgets with this relationship"
+
+#: ../glade/glade_atk.c:761
+msgid "Click"
+msgstr "Click"
+
+#: ../glade/glade_atk.c:762
+msgid "Press"
+msgstr "Press"
+
+#: ../glade/glade_atk.c:763
+msgid "Release"
+msgstr "Release"
+
+#: ../glade/glade_atk.c:822
+msgid "Enter the description of the action to pass to assistive technologies"
+msgstr "Enter the description of the action to pass to assistive technologies"
+
+#: ../glade/glade_clipboard.c:118
+msgid "Clipboard"
+msgstr "Clipboard"
+
+#: ../glade/glade_clipboard.c:351
+msgid "You need to select a widget to paste into"
+msgstr "You need to select a widget to paste into"
+
+#: ../glade/glade_clipboard.c:376
+msgid "You can't paste into windows or dialogs."
+msgstr "You can't paste into windows or dialogues."
+
+#: ../glade/glade_clipboard.c:399
+msgid ""
+"You can't paste into the selected widget, since\n"
+"it is created automatically by its parent."
+msgstr ""
+"You can't paste into the selected widget, since\n"
+"it is created automatically by its parent."
+
+#: ../glade/glade_clipboard.c:408
+#: ../glade/glade_clipboard.c:416
+msgid "Only menu items can be pasted into a menu or menu bar."
+msgstr "Only menu items can be pasted into a menu or menu bar."
+
+#: ../glade/glade_clipboard.c:427
+msgid "Only buttons can be pasted into a dialog action area."
+msgstr "Only buttons can be pasted into a dialogue action area."
+
+#: ../glade/glade_clipboard.c:437
+msgid "Only GnomeDockItem widgets can be pasted into a GnomeDock."
+msgstr "Only GnomeDockItem widgets can be pasted into a GnomeDock."
+
+#: ../glade/glade_clipboard.c:446
+msgid "Only GnomeDockItem widgets can be pasted over a GnomeDockItem."
+msgstr "Only GnomeDockItem widgets can be pasted over a GnomeDockItem."
+
+#: ../glade/glade_clipboard.c:449
+msgid "Sorry - pasting over a GnomeDockItem is not implemented yet."
+msgstr "Sorry - pasting over a GnomeDockItem is not implemented yet."
+
+#: ../glade/glade_clipboard.c:457
+msgid "GnomeDockItem widgets can only be pasted into a GnomeDock."
+msgstr "GnomeDockItem widgets can only be pasted into a GnomeDock."
+
+#. 3 - see GladeStockMenuItemNew above.
+#: ../glade/glade_gnome.c:121
+#: ../glade/glade_gnome.c:874
+#: ../glade/glade_project_window.c:211
+#: ../glade/glade_project_window.c:633
+msgid "_New"
+msgstr "_New"
+
+#: ../glade/glade_gnome.c:874
+msgid "Create a new file"
+msgstr "Create a new file"
+
+#. Note that glade_palette_set_show_gnome_widgets() has some of these
+#. strings hard-coded now, so keep up-to-date.
+#: ../glade/glade_gnomelib.c:116
+msgid "_Gnome"
+msgstr "_Gnome"
+
+#: ../glade/glade_gnomelib.c:117
+#: ../glade/glade_gtk12lib.c:248
+#: ../glade/glade_palette.c:315
+msgid "Dep_recated"
+msgstr "Dep_recated"
+
+#. Note that glade_palette_set_show_gnome_widgets() has some of these
+#. strings hard-coded now, so keep up-to-date.
+#: ../glade/glade_gtk12lib.c:246
+msgid "GTK+ _Basic"
+msgstr "GTK+ _Basic"
+
+#: ../glade/glade_gtk12lib.c:247
+msgid "GTK+ _Additional"
+msgstr "GTK+ _Additional"
+
+#: ../glade/glade_keys_dialog.c:94
+msgid "Select Accelerator Key"
+msgstr "Select Accelerator Key"
+
+#: ../glade/glade_keys_dialog.c:97
+msgid "Keys"
+msgstr "Keys"
+
+#: ../glade/glade_menu_editor.c:395
+msgid "Menu Editor"
+msgstr "Menu Editor"
+
+#: ../glade/glade_menu_editor.c:412
+msgid "Type"
+msgstr "Type"
+
+#: ../glade/glade_menu_editor.c:413
+msgid "Accelerator"
+msgstr "Accelerator"
+
+#: ../glade/glade_menu_editor.c:414
+msgid "Name"
+msgstr "Name"
+
+#: ../glade/glade_menu_editor.c:415
+#: ../glade/property.c:1499
+msgid "Handler"
+msgstr "Handler"
+
+#: ../glade/glade_menu_editor.c:416
+#: ../glade/property.c:102
+msgid "Active"
+msgstr "Active"
+
+#: ../glade/glade_menu_editor.c:417
+msgid "Group"
+msgstr "Group"
+
+#: ../glade/glade_menu_editor.c:418
+msgid "Icon"
+msgstr "Icon"
+
+#: ../glade/glade_menu_editor.c:459
+msgid "Move the item and its children up one place in the list"
+msgstr "Move the item and its children up one place in the list"
+
+#: ../glade/glade_menu_editor.c:471
+msgid "Move the item and its children down one place in the list"
+msgstr "Move the item and its children down one place in the list"
+
+#: ../glade/glade_menu_editor.c:483
+msgid "Move the item and its children up one level"
+msgstr "Move the item and its children up one level"
+
+#: ../glade/glade_menu_editor.c:495
+msgid "Move the item and its children down one level"
+msgstr "Move the item and its children down one level"
+
+#: ../glade/glade_menu_editor.c:525
+msgid "The stock item to use."
+msgstr "The stock item to use."
+
+#: ../glade/glade_menu_editor.c:528
+#: ../glade/glade_menu_editor.c:643
+msgid "Stock Item:"
+msgstr "Stock Item:"
+
+#: ../glade/glade_menu_editor.c:641
+msgid "The stock Gnome item to use."
+msgstr "The stock Gnome item to use."
+
+#: ../glade/glade_menu_editor.c:746
+msgid "The text of the menu item, or empty for separators."
+msgstr "The text of the menu item, or empty for separators."
+
+#: ../glade/glade_menu_editor.c:770
+#: ../glade/property.c:777
+msgid "The name of the widget"
+msgstr "The name of the widget"
+
+#: ../glade/glade_menu_editor.c:791
+msgid "The function to be called when the item is selected"
+msgstr "The function to be called when the item is selected"
+
+#: ../glade/glade_menu_editor.c:793
+#: ../glade/property.c:1547
+msgid "Handler:"
+msgstr "Handler:"
+
+#: ../glade/glade_menu_editor.c:812
+msgid "An optional icon to show on the left of the menu item."
+msgstr "An optional icon to show on the left of the menu item."
+
+#: ../glade/glade_menu_editor.c:935
+msgid "The tip to show when the mouse is over the item"
+msgstr "The tip to show when the mouse is over the item"
+
+#: ../glade/glade_menu_editor.c:937
+#: ../glade/property.c:824
+msgid "Tooltip:"
+msgstr "Tooltip:"
+
+#: ../glade/glade_menu_editor.c:958
+msgid "_Add"
+msgstr "_Add"
+
+#: ../glade/glade_menu_editor.c:963
+msgid "Add a new item below the selected item."
+msgstr "Add a new item below the selected item."
+
+#: ../glade/glade_menu_editor.c:968
+msgid "Add _Child"
+msgstr "Add _Child"
+
+#: ../glade/glade_menu_editor.c:973
+msgid "Add a new child item below the selected item."
+msgstr "Add a new child item below the selected item."
+
+#: ../glade/glade_menu_editor.c:979
+msgid "Add _Separator"
+msgstr "Add _Separator"
+
+#: ../glade/glade_menu_editor.c:984
+msgid "Add a separator below the selected item."
+msgstr "Add a separator below the selected item."
+
+#: ../glade/glade_menu_editor.c:989
+#: ../glade/glade_project_window.c:242
+msgid "_Delete"
+msgstr "_Delete"
+
+#: ../glade/glade_menu_editor.c:994
+msgid "Delete the current item"
+msgstr "Delete the current item"
+
+#. Type radio options and toggle options.
+#: ../glade/glade_menu_editor.c:1000
+msgid "Item Type:"
+msgstr "Item Type:"
+
+#: ../glade/glade_menu_editor.c:1016
+msgid "If the item is initially on."
+msgstr "If the item is initially on."
+
+#: ../glade/glade_menu_editor.c:1018
+msgid "Active:"
+msgstr "Active:"
+
+#: ../glade/glade_menu_editor.c:1023
+#: ../glade/glade_menu_editor.c:1638
+#: ../glade/property.c:2216
+#: ../glade/property.c:2226
+msgid "No"
+msgstr "No"
+
+#: ../glade/glade_menu_editor.c:1037
+msgid "The radio menu item's group"
+msgstr "The radio menu item's group"
+
+#: ../glade/glade_menu_editor.c:1054
+#: ../glade/glade_menu_editor.c:2414
+#: ../glade/glade_menu_editor.c:2554
+msgid "Radio"
+msgstr "Radio"
+
+#: ../glade/glade_menu_editor.c:1061
+#: ../glade/glade_menu_editor.c:2412
+#: ../glade/glade_menu_editor.c:2552
+msgid "Check"
+msgstr "Check"
+
+#: ../glade/glade_menu_editor.c:1068
+#: ../glade/property.c:102
+msgid "Normal"
+msgstr "Normal"
+
+#. Accelerator key options.
+#: ../glade/glade_menu_editor.c:1077
+msgid "Accelerator:"
+msgstr "Accelerator:"
+
+#: ../glade/glade_menu_editor.c:1114
+#: ../glade/property.c:1682
+msgid "Ctrl"
+msgstr "Ctrl"
+
+#: ../glade/glade_menu_editor.c:1119
+#: ../glade/property.c:1685
+msgid "Shift"
+msgstr "Shift"
+
+#: ../glade/glade_menu_editor.c:1124
+#: ../glade/property.c:1688
+msgid "Alt"
+msgstr "Alt"
+
+#: ../glade/glade_menu_editor.c:1129
+#: ../glade/property.c:1695
+msgid "Key:"
+msgstr "Key:"
+
+#: ../glade/glade_menu_editor.c:1135
+#: ../glade/property.c:1674
+msgid "Modifiers:"
+msgstr "Modifiers:"
+
+#: ../glade/glade_menu_editor.c:1638
+#: ../glade/glade_menu_editor.c:2419
+#: ../glade/glade_menu_editor.c:2562
+#: ../glade/property.c:2216
+msgid "Yes"
+msgstr "Yes"
+
+#: ../glade/glade_menu_editor.c:2008
+msgid "Select icon"
+msgstr "Select icon"
+
+#: ../glade/glade_menu_editor.c:2353
+#: ../glade/glade_menu_editor.c:2714
+msgid "separator"
+msgstr "separator"
+
+#. Add the special 'New' item to create a new group.
+#: ../glade/glade_menu_editor.c:3638
+#: ../glade/glade_project_window.c:369
+#: ../glade/property.c:5115
+msgid "New"
+msgstr "New"
+
+#: ../glade/glade_palette.c:194
+#: ../glade/glade_palette.c:196
+#: ../glade/glade_palette.c:412
+msgid "Selector"
+msgstr "Selector"
+
+#: ../glade/glade_project.c:385
+msgid ""
+"The project directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+"The project directory is not set.\n"
+"Please set it using the Project Options dialogue.\n"
+
+#: ../glade/glade_project.c:392
+msgid ""
+"The source directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+"The source directory is not set.\n"
+"Please set it using the Project Options dialogue.\n"
+
+#: ../glade/glade_project.c:402
+msgid ""
+"Invalid source directory:\n"
+"\n"
+"The source directory must be the project directory\n"
+"or a subdirectory of the project directory.\n"
+msgstr ""
+"Invalid source directory:\n"
+"\n"
+"The source directory must be the project directory\n"
+"or a subdirectory of the project directory.\n"
+
+#: ../glade/glade_project.c:410
+msgid ""
+"The pixmaps directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+"The pixmaps directory is not set.\n"
+"Please set it using the Project Options dialogue.\n"
+
+#: ../glade/glade_project.c:438
+#, c-format
+msgid "Sorry - generating source for %s is not implemented yet"
+msgstr "Sorry - generating source for %s is not implemented yet"
+
+#: ../glade/glade_project.c:509
+msgid ""
+"Your project uses deprecated widgets that Gtkmm-2\n"
+"does not support.  Check your project for these\n"
+"widgets, and use their replacements."
+msgstr ""
+"Your project uses deprecated widgets that Gtkmm-2\n"
+"does not support.  Check your project for these\n"
+"widgets, and use their replacements."
+
+#: ../glade/glade_project.c:521
+msgid ""
+"Error running glade-- to generate the C++ source code.\n"
+"Check that you have glade-- installed and that it is in your PATH.\n"
+"Then try running 'glade-- <project_file.glade>' in a terminal."
+msgstr ""
+"Error running glade-- to generate the C++ source code.\n"
+"Check that you have glade-- installed and that it is in your PATH.\n"
+"Then try running 'glade-- <project_file.glade>' in a terminal."
+
+#: ../glade/glade_project.c:548
+msgid ""
+"Error running gate to generate the Ada95 source code.\n"
+"Check that you have gate installed and that it is in your PATH.\n"
+"Then try running 'gate <project_file.glade>' in a terminal."
+msgstr ""
+"Error running gate to generate the Ada95 source code.\n"
+"Check that you have gate installed and that it is in your PATH.\n"
+"Then try running 'gate <project_file.glade>' in a terminal."
+
+#: ../glade/glade_project.c:571
+msgid ""
+"Error running glade2perl to generate the Perl source code.\n"
+"Check that you have glade2perl installed and that it is in your PATH.\n"
+"Then try running 'glade2perl <project_file.glade>' in a terminal."
+msgstr ""
+"Error running glade2perl to generate the Perl source code.\n"
+"Check that you have glade2perl installed and that it is in your PATH.\n"
+"Then try running 'glade2perl <project_file.glade>' in a terminal."
+
+#: ../glade/glade_project.c:594
+msgid ""
+"Error running eglade to generate the Eiffel source code.\n"
+"Check that you have eglade installed and that it is in your PATH.\n"
+"Then try running 'eglade <project_file.glade>' in a terminal."
+msgstr ""
+"Error running eglade to generate the Eiffel source code.\n"
+"Check that you have eglade installed and that it is in your PATH.\n"
+"Then try running 'eglade <project_file.glade>' in a terminal."
+
+#: ../glade/glade_project.c:954
+msgid ""
+"The pixmap directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+"The pixmap directory is not set.\n"
+"Please set it using the Project Options dialogue.\n"
+
+#: ../glade/glade_project.c:1772
+msgid "Error writing project XML file\n"
+msgstr "Error writing project XML file\n"
+
+#: ../glade/glade_project_options.c:157
+#: ../glade/glade_project_window.c:385
+#: ../glade/glade_project_window.c:890
+msgid "Project Options"
+msgstr "Project Options"
+
+#.
+#. * General Page.
+#.
+#: ../glade/glade_project_options.c:174
+msgid "General"
+msgstr "General"
+
+#: ../glade/glade_project_options.c:183
+msgid "Basic Options:"
+msgstr "Basic Options:"
+
+#: ../glade/glade_project_options.c:201
+msgid "The project directory"
+msgstr "The project directory"
+
+#: ../glade/glade_project_options.c:203
+msgid "Project Directory:"
+msgstr "Project Directory:"
+
+#: ../glade/glade_project_options.c:221
+msgid "Browse..."
+msgstr "Browse..."
+
+#: ../glade/glade_project_options.c:236
+msgid "The name of the current project"
+msgstr "The name of the current project"
+
+#: ../glade/glade_project_options.c:238
+msgid "Project Name:"
+msgstr "Project Name:"
+
+#: ../glade/glade_project_options.c:258
+msgid "The name of the program"
+msgstr "The name of the program"
+
+#: ../glade/glade_project_options.c:281
+msgid "The project file"
+msgstr "The project file"
+
+#: ../glade/glade_project_options.c:283
+msgid "Project File:"
+msgstr "Project File:"
+
+#. Project Source Directory.
+#: ../glade/glade_project_options.c:299
+msgid "Subdirectories:"
+msgstr "Subdirectories:"
+
+#: ../glade/glade_project_options.c:316
+msgid "The directory to save generated source code"
+msgstr "The directory to save generated source code"
+
+#: ../glade/glade_project_options.c:319
+msgid "Source Directory:"
+msgstr "Source Directory:"
+
+#: ../glade/glade_project_options.c:338
+msgid "The directory to store pixmaps"
+msgstr "The directory to store pixmaps"
+
+#: ../glade/glade_project_options.c:341
+msgid "Pixmaps Directory:"
+msgstr "Pixmaps Directory:"
+
+#: ../glade/glade_project_options.c:363
+msgid "The license which is added at the top of generated files"
+msgstr "The license which is added at the top of generated files"
+
+#. Source Language.
+#: ../glade/glade_project_options.c:385
+msgid "Language:"
+msgstr "Language:"
+
+#: ../glade/glade_project_options.c:416
+msgid "Gnome:"
+msgstr "Gnome:"
+
+#: ../glade/glade_project_options.c:424
+msgid "Enable Gnome Support"
+msgstr "Enable Gnome Support"
+
+#: ../glade/glade_project_options.c:430
+msgid "If a Gnome application is to be built"
+msgstr "If a Gnome application is to be built"
+
+#: ../glade/glade_project_options.c:433
+msgid "Enable Gnome DB Support"
+msgstr "Enable Gnome DB Support"
+
+#: ../glade/glade_project_options.c:437
+msgid "If a Gnome DB application is to be built"
+msgstr "If a Gnome DB application is to be built"
+
+#.
+#. * C Options Page.
+#.
+#: ../glade/glade_project_options.c:447
+msgid "C Options"
+msgstr "C Options"
+
+#: ../glade/glade_project_options.c:456
+msgid "<b>Note:</b> for large applications the use of libglade is recommended."
+msgstr "<b>Note:</b> for large applications the use of libglade is recommended."
+
+#: ../glade/glade_project_options.c:468
+msgid "General Options:"
+msgstr "General Options:"
+
+#. Gettext Support.
+#: ../glade/glade_project_options.c:478
+msgid "Gettext Support"
+msgstr "Gettext Support"
+
+#: ../glade/glade_project_options.c:483
+msgid "If strings are marked for translation by gettext"
+msgstr "If strings are marked for translation by gettext"
+
+#. Setting widget names.
+#: ../glade/glade_project_options.c:487
+msgid "Set Widget Names"
+msgstr "Set Widget Names"
+
+#: ../glade/glade_project_options.c:492
+msgid "If widget names are set in the source code"
+msgstr "If widget names are set in the source code"
+
+#. Backing up source files.
+#: ../glade/glade_project_options.c:496
+msgid "Backup Source Files"
+msgstr "Backup Source Files"
+
+#: ../glade/glade_project_options.c:501
+msgid "If copies of old source files are made"
+msgstr "If copies of old source files are made"
+
+#. Gnome Help System support.
+#: ../glade/glade_project_options.c:505
+msgid "Gnome Help Support"
+msgstr "Gnome Help Support"
+
+#: ../glade/glade_project_options.c:512
+msgid "If support for the Gnome Help system should be included"
+msgstr "If support for the Gnome Help system should be included"
+
+#: ../glade/glade_project_options.c:515
+msgid "File Output Options:"
+msgstr "File Output Options:"
+
+#. Outputting main file.
+#: ../glade/glade_project_options.c:525
+msgid "Output main.c File"
+msgstr "Output main.c File"
+
+#: ../glade/glade_project_options.c:530
+msgid "If a main.c file is output containing a main() function, if it doesn't already exist"
+msgstr "If a main.c file is output containing a main() function, if it doesn't already exist"
+
+#. Outputting support files.
+#: ../glade/glade_project_options.c:534
+msgid "Output Support Functions"
+msgstr "Output Support Functions"
+
+#: ../glade/glade_project_options.c:539
+msgid "If the support functions are output"
+msgstr "If the support functions are output"
+
+#. Outputting build files.
+#: ../glade/glade_project_options.c:543
+msgid "Output Build Files"
+msgstr "Output Build Files"
+
+#: ../glade/glade_project_options.c:548
+msgid "If files for building the source code are output, including Makefile.am and configure.in, if they don't already exist"
+msgstr "If files for building the source code are output, including Makefile.am and configure.in, if they don't already exist"
+
+#. Main source file.
+#: ../glade/glade_project_options.c:552
+msgid "Interface Creation Functions:"
+msgstr "Interface Creation Functions:"
+
+#: ../glade/glade_project_options.c:564
+msgid "The file in which the functions to create the interface are written"
+msgstr "The file in which the functions to create the interface are written"
+
+#: ../glade/glade_project_options.c:566
+#: ../glade/glade_project_options.c:612
+#: ../glade/glade_project_options.c:658
+#: ../glade/property.c:998
+msgid "Source File:"
+msgstr "Source File:"
+
+#: ../glade/glade_project_options.c:581
+msgid "The file in which the declarations of the functions to create the interface are written"
+msgstr "The file in which the declarations of the functions to create the interface are written"
+
+#: ../glade/glade_project_options.c:583
+#: ../glade/glade_project_options.c:629
+#: ../glade/glade_project_options.c:675
+msgid "Header File:"
+msgstr "Header File:"
+
+#: ../glade/glade_project_options.c:594
+msgid "Source file for interface creation functions"
+msgstr "Source file for interface creation functions"
+
+#: ../glade/glade_project_options.c:595
+msgid "Header file for interface creation functions"
+msgstr "Header file for interface creation functions"
+
+#. Handler source file.
+#: ../glade/glade_project_options.c:598
+msgid "Signal Handler & Callback Functions:"
+msgstr "Signal Handler & Callback Functions:"
+
+#: ../glade/glade_project_options.c:610
+msgid "The file in which the empty signal handler and callback functions are written"
+msgstr "The file in which the empty signal handler and callback functions are written"
+
+#: ../glade/glade_project_options.c:627
+msgid "The file in which the declarations of the signal handler and callback functions are written"
+msgstr "The file in which the declarations of the signal handler and callback functions are written"
+
+#: ../glade/glade_project_options.c:640
+msgid "Source file for signal handler and callback functions"
+msgstr "Source file for signal handler and callback functions"
+
+#: ../glade/glade_project_options.c:641
+msgid "Header file for signal handler and callback functions"
+msgstr "Header file for signal handler and callback functions"
+
+#. Support source file.
+#: ../glade/glade_project_options.c:644
+msgid "Support Functions:"
+msgstr "Support Functions:"
+
+#: ../glade/glade_project_options.c:656
+msgid "The file in which the support functions are written"
+msgstr "The file in which the support functions are written"
+
+#: ../glade/glade_project_options.c:673
+msgid "The file in which the declarations of the support functions are written"
+msgstr "The file in which the declarations of the support functions are written"
+
+#: ../glade/glade_project_options.c:686
+msgid "Source file for support functions"
+msgstr "Source file for support functions"
+
+#: ../glade/glade_project_options.c:687
+msgid "Header file for support functions"
+msgstr "Header file for support functions"
+
+#.
+#. * libglade Options Page.
+#.
+#: ../glade/glade_project_options.c:693
+msgid "LibGlade Options"
+msgstr "LibGlade Options"
+
+#: ../glade/glade_project_options.c:702
+msgid "Translatable Strings:"
+msgstr "Translatable Strings:"
+
+#: ../glade/glade_project_options.c:716
+msgid "<b>Note:</b> this option is deprecated - use intltool instead."
+msgstr "<b>Note:</b> this option is deprecated - use intltool instead."
+
+#. Output translatable strings.
+#: ../glade/glade_project_options.c:726
+msgid "Save Translatable Strings"
+msgstr "Save Translatable Strings"
+
+#: ../glade/glade_project_options.c:731
+msgid "If translatable strings are saved in a separate C source file, to enable translation of interfaces loaded by libglade"
+msgstr "If translatable strings are saved in a separate C source file, to enable translation of interfaces loaded by libglade"
+
+#: ../glade/glade_project_options.c:741
+msgid "The C source file to save all translatable strings in"
+msgstr "The C source file to save all translatable strings in"
+
+#: ../glade/glade_project_options.c:743
+#: ../glade/gnome/gnomepixmap.c:79
+msgid "File:"
+msgstr "File:"
+
+#: ../glade/glade_project_options.c:1202
+msgid "Select the Project Directory"
+msgstr "Select the Project Directory"
+
+#: ../glade/glade_project_options.c:1392
+#: ../glade/glade_project_options.c:1402
+#: ../glade/glade_project_options.c:1412
+msgid "You need to set the Translatable Strings File option"
+msgstr "You need to set the Translatable Strings File option"
+
+#: ../glade/glade_project_options.c:1396
+#: ../glade/glade_project_options.c:1406
+msgid "You need to set the Project Directory option"
+msgstr "You need to set the Project Directory option"
+
+#: ../glade/glade_project_options.c:1398
+#: ../glade/glade_project_options.c:1408
+msgid "You need to set the Project File option"
+msgstr "You need to set the Project File option"
+
+#: ../glade/glade_project_options.c:1414
+msgid "You need to set the Project Name option"
+msgstr "You need to set the Project Name option"
+
+#: ../glade/glade_project_options.c:1416
+msgid "You need to set the Program Name option"
+msgstr "You need to set the Program Name option"
+
+#: ../glade/glade_project_options.c:1419
+msgid "You need to set the Source Directory option"
+msgstr "You need to set the Source Directory option"
+
+#: ../glade/glade_project_options.c:1422
+msgid "You need to set the Pixmaps Directory option"
+msgstr "You need to set the Pixmaps Directory option"
+
+#: ../glade/glade_project_window.c:187
+#, c-format
+msgid ""
+"Couldn't show help file: %s.\n"
+"\n"
+"Error: %s"
+msgstr ""
+"Couldn't show help file: %s.\n"
+"\n"
+"Error: %s"
+
+#: ../glade/glade_project_window.c:211
+#: ../glade/glade_project_window.c:635
+msgid "Create a new project"
+msgstr "Create a new project"
+
+#: ../glade/glade_project_window.c:219
+#: ../glade/glade_project_window.c:655
+#: ../glade/glade_project_window.c:906
+msgid "_Build"
+msgstr "_Build"
+
+#: ../glade/glade_project_window.c:220
+#: ../glade/glade_project_window.c:666
+msgid "Output the project source code"
+msgstr "Output the project source code"
+
+#: ../glade/glade_project_window.c:226
+#: ../glade/glade_project_window.c:669
+msgid "Op_tions..."
+msgstr "Op_tions..."
+
+#: ../glade/glade_project_window.c:227
+#: ../glade/glade_project_window.c:678
+msgid "Edit the project options"
+msgstr "Edit the project options"
+
+#: ../glade/glade_project_window.c:242
+#: ../glade/glade_project_window.c:717
+msgid "Delete the selected widget"
+msgstr "Delete the selected widget"
+
+#: ../glade/glade_project_window.c:260
+#: ../glade/glade_project_window.c:728
+msgid "Show _Palette"
+msgstr "Show _Palette"
+
+#: ../glade/glade_project_window.c:260
+#: ../glade/glade_project_window.c:733
+msgid "Show the palette of widgets"
+msgstr "Show the palette of widgets"
+
+#: ../glade/glade_project_window.c:266
+#: ../glade/glade_project_window.c:738
+msgid "Show Property _Editor"
+msgstr "Show Property _Editor"
+
+#: ../glade/glade_project_window.c:267
+#: ../glade/glade_project_window.c:744
+msgid "Show the property editor"
+msgstr "Show the property editor"
+
+#: ../glade/glade_project_window.c:273
+#: ../glade/glade_project_window.c:748
+msgid "Show Widget _Tree"
+msgstr "Show Widget _Tree"
+
+#: ../glade/glade_project_window.c:274
+#: ../glade/glade_project_window.c:754
+#: ../glade/main.c:82
+#: ../glade/main.c:116
+msgid "Show the widget tree"
+msgstr "Show the widget tree"
+
+#: ../glade/glade_project_window.c:280
+#: ../glade/glade_project_window.c:758
+msgid "Show _Clipboard"
+msgstr "Show _Clipboard"
+
+#: ../glade/glade_project_window.c:281
+#: ../glade/glade_project_window.c:764
+#: ../glade/main.c:86
+#: ../glade/main.c:120
+msgid "Show the clipboard"
+msgstr "Show the clipboard"
+
+#: ../glade/glade_project_window.c:299
+msgid "Show _Grid"
+msgstr "Show _Grid"
+
+#: ../glade/glade_project_window.c:300
+#: ../glade/glade_project_window.c:800
+msgid "Show the grid (in fixed containers only)"
+msgstr "Show the grid (in fixed containers only)"
+
+#: ../glade/glade_project_window.c:306
+msgid "_Snap to Grid"
+msgstr "_Snap to Grid"
+
+#: ../glade/glade_project_window.c:307
+msgid "Snap widgets to the grid"
+msgstr "Snap widgets to the grid"
+
+#: ../glade/glade_project_window.c:313
+#: ../glade/glade_project_window.c:772
+msgid "Show _Widget Tooltips"
+msgstr "Show _Widget Tooltips"
+
+#: ../glade/glade_project_window.c:314
+#: ../glade/glade_project_window.c:780
+msgid "Show the tooltips of created widgets"
+msgstr "Show the tooltips of created widgets"
+
+#: ../glade/glade_project_window.c:323
+#: ../glade/glade_project_window.c:803
+msgid "Set Grid _Options..."
+msgstr "Set Grid _Options..."
+
+#: ../glade/glade_project_window.c:324
+msgid "Set the grid style and spacing"
+msgstr "Set the grid style and spacing"
+
+#: ../glade/glade_project_window.c:330
+#: ../glade/glade_project_window.c:824
+msgid "Set Snap O_ptions..."
+msgstr "Set Snap O_ptions..."
+
+#: ../glade/glade_project_window.c:331
+msgid "Set options for snapping to the grid"
+msgstr "Set options for snapping to the grid"
+
+#: ../glade/glade_project_window.c:343
+msgid "_FAQ"
+msgstr "_FAQ"
+
+#: ../glade/glade_project_window.c:344
+msgid "View the Glade FAQ"
+msgstr "View the Glade FAQ"
+
+#. create File menu
+#: ../glade/glade_project_window.c:358
+#: ../glade/glade_project_window.c:626
+msgid "_Project"
+msgstr "_Project"
+
+#: ../glade/glade_project_window.c:369
+#: ../glade/glade_project_window.c:873
+#: ../glade/glade_project_window.c:1055
+msgid "New Project"
+msgstr "New Project"
+
+#: ../glade/glade_project_window.c:374
+msgid "Open"
+msgstr "Open"
+
+#: ../glade/glade_project_window.c:374
+#: ../glade/glade_project_window.c:878
+#: ../glade/glade_project_window.c:1116
+msgid "Open Project"
+msgstr "Open Project"
+
+#: ../glade/glade_project_window.c:379
+msgid "Save"
+msgstr "Save"
+
+#: ../glade/glade_project_window.c:379
+#: ../glade/glade_project_window.c:882
+#: ../glade/glade_project_window.c:1481
+msgid "Save Project"
+msgstr "Save Project"
+
+#: ../glade/glade_project_window.c:385
+msgid "Options"
+msgstr "Options"
+
+#: ../glade/glade_project_window.c:390
+msgid "Build"
+msgstr "Build"
+
+#: ../glade/glade_project_window.c:390
+msgid "Build the Source Code"
+msgstr "Build the Source Code"
+
+#: ../glade/glade_project_window.c:639
+msgid "Open an existing project"
+msgstr "Open an existing project"
+
+#: ../glade/glade_project_window.c:643
+msgid "Save project"
+msgstr "Save project"
+
+#: ../glade/glade_project_window.c:688
+msgid "Quit Glade"
+msgstr "Quit Glade"
+
+#: ../glade/glade_project_window.c:702
+msgid "Cut the selected widget to the clipboard"
+msgstr "Cut the selected widget to the clipboard"
+
+#: ../glade/glade_project_window.c:707
+msgid "Copy the selected widget to the clipboard"
+msgstr "Copy the selected widget to the clipboard"
+
+#: ../glade/glade_project_window.c:712
+msgid "Paste the widget from the clipboard over the selected widget"
+msgstr "Paste the widget from the clipboard over the selected widget"
+
+#: ../glade/glade_project_window.c:784
+msgid "_Grid"
+msgstr "_Grid"
+
+#: ../glade/glade_project_window.c:792
+msgid "_Show Grid"
+msgstr "_Show Grid"
+
+#: ../glade/glade_project_window.c:809
+msgid "Set the spacing between grid lines"
+msgstr "Set the spacing between grid lines"
+
+#: ../glade/glade_project_window.c:812
+msgid "S_nap to Grid"
+msgstr "S_nap to Grid"
+
+#: ../glade/glade_project_window.c:820
+msgid "Snap widgets to the grid (in fixed containers only)"
+msgstr "Snap widgets to the grid (in fixed containers only)"
+
+#: ../glade/glade_project_window.c:830
+msgid "Set which parts of a widget snap to the grid"
+msgstr "Set which parts of a widget snap to the grid"
+
+#. Don't show these yet as we have no help pages.
+#. menuitem = gtk_menu_item_new_with_mnemonic (_("_Contents"));
+#. gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#. gtk_widget_show (menuitem);
+#.
+#. menuitem = gtk_menu_item_new_with_mnemonic (_("_Index"));
+#. gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#. gtk_widget_show (menuitem);
+#.
+#. menuitem = gtk_menu_item_new ();
+#. gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#. gtk_widget_show (menuitem);
+#.
+#: ../glade/glade_project_window.c:855
+msgid "_About..."
+msgstr "_About..."
+
+#: ../glade/glade_project_window.c:896
+msgid "Optio_ns"
+msgstr "Optio_ns"
+
+#: ../glade/glade_project_window.c:900
+msgid "Write Source Code"
+msgstr "Write Source Code"
+
+#: ../glade/glade_project_window.c:992
+#: ../glade/glade_project_window.c:1697
+#: ../glade/glade_project_window.c:1986
+msgid "Glade"
+msgstr "Glade"
+
+#: ../glade/glade_project_window.c:999
+msgid "Are you sure you want to create a new project?"
+msgstr "Are you sure you want to create a new project?"
+
+#: ../glade/glade_project_window.c:1059
+msgid "New _GTK+ Project"
+msgstr "New _GTK+ Project"
+
+#: ../glade/glade_project_window.c:1060
+msgid "New G_NOME Project"
+msgstr "New G_NOME Project"
+
+#: ../glade/glade_project_window.c:1063
+msgid "Which type of project do you want to create?"
+msgstr "Which type of project do you want to create?"
+
+#: ../glade/glade_project_window.c:1097
+msgid "New project created."
+msgstr "New project created."
+
+#: ../glade/glade_project_window.c:1187
+msgid "Project opened."
+msgstr "Project opened."
+
+#: ../glade/glade_project_window.c:1201
+msgid "Error opening project."
+msgstr "Error opening project."
+
+#: ../glade/glade_project_window.c:1265
+msgid "Errors opening project file"
+msgstr "Errors opening project file"
+
+#: ../glade/glade_project_window.c:1271
+msgid " errors opening project file:"
+msgstr " errors opening project file:"
+
+#: ../glade/glade_project_window.c:1344
+msgid ""
+"There is no project currently open.\n"
+"Create a new project with the Project/New command."
+msgstr ""
+"There is no project currently open.\n"
+"Create a new project with the Project/New command."
+
+#: ../glade/glade_project_window.c:1548
+msgid "Error saving project"
+msgstr "Error saving project"
+
+#: ../glade/glade_project_window.c:1550
+msgid "Error saving project."
+msgstr "Error saving project."
+
+#: ../glade/glade_project_window.c:1556
+msgid "Project saved."
+msgstr "Project saved."
+
+#: ../glade/glade_project_window.c:1626
+msgid "Errors writing source code"
+msgstr "Errors writing source code"
+
+#: ../glade/glade_project_window.c:1628
+msgid "Error writing source."
+msgstr "Error writing source."
+
+#: ../glade/glade_project_window.c:1634
+msgid "Source code written."
+msgstr "Source code written."
+
+#: ../glade/glade_project_window.c:1665
+msgid "System error message:"
+msgstr "System error message:"
+
+#: ../glade/glade_project_window.c:1704
+msgid "Are you sure you want to quit?"
+msgstr "Are you sure you want to quit?"
+
+#: ../glade/glade_project_window.c:1988
+#: ../glade/glade_project_window.c:2048
+msgid "(C) 1998-2002 Damon Chaplin"
+msgstr "(C) 1998-2002 Damon Chaplin"
+
+#: ../glade/glade_project_window.c:1989
+#: ../glade/glade_project_window.c:2047
+msgid "Glade is a User Interface Builder for GTK+ and GNOME."
+msgstr "Glade is a User Interface Builder for GTK+ and GNOME."
+
+#: ../glade/glade_project_window.c:2018
+msgid "About Glade"
+msgstr "About Glade"
+
+#: ../glade/glade_project_window.c:2103
+msgid "<untitled>"
+msgstr "<untitled>"
+
+#: ../glade/gnome-db/gnomedbbrowser.c:135
+msgid "Database Browser"
+msgstr "Database Browser"
+
+#: ../glade/gnome-db/gnomedbcombo.c:124
+msgid "Data-bound combo"
+msgstr "Data-bound combo"
+
+#: ../glade/gnome-db/gnomedbconnectprop.c:86
+msgid "GnomeDbConnectionProperties"
+msgstr "GnomeDbConnectionProperties"
+
+#: ../glade/gnome-db/gnomedbconnectsel.c:147
+msgid "Connection Selector"
+msgstr "Connection Selector"
+
+#: ../glade/gnome-db/gnomedbdsnconfig.c:136
+msgid "DSN Configurator"
+msgstr "DSN Configurator"
+
+#: ../glade/gnome-db/gnomedbdsndruid.c:147
+msgid "DSN Config Druid"
+msgstr "DSN Config Druid"
+
+#: ../glade/gnome-db/gnomedbeditor.c:63
+msgid "Highlight text:"
+msgstr "Highlight text:"
+
+#: ../glade/gnome-db/gnomedbeditor.c:63
+msgid "If selected, text will be highlighted inside the widget"
+msgstr "If selected, text will be highlighted inside the widget"
+
+#: ../glade/gnome-db/gnomedbeditor.c:178
+msgid "GnomeDbEditor"
+msgstr "GnomeDbEditor"
+
+#: ../glade/gnome-db/gnomedberror.c:136
+msgid "Database error viewer"
+msgstr "Database error viewer"
+
+#: ../glade/gnome-db/gnomedberrordlg.c:219
+msgid "Database error dialog"
+msgstr "Database error dialogue"
+
+#: ../glade/gnome-db/gnomedbform.c:147
+msgid "Form"
+msgstr "Form"
+
+#: ../glade/gnome-db/gnomedbgraybar.c:59
+msgid "Text inside the gray bar"
+msgstr "Text inside the grey bar"
+
+#: ../glade/gnome-db/gnomedbgraybar.c:138
+msgid "Gray Bar"
+msgstr "Grey Bar"
+
+#: ../glade/gnome-db/gnomedbgrid.c:132
+msgid "Data-bound grid"
+msgstr "Data-bound grid"
+
+#: ../glade/gnome-db/gnomedblist.c:136
+msgid "Data-bound list"
+msgstr "Data-bound list"
+
+#: ../glade/gnome-db/gnomedblogin.c:136
+msgid "Database login widget"
+msgstr "Database login widget"
+
+#: ../glade/gnome-db/gnomedblogindlg.c:78
+msgid "Login"
+msgstr "Login"
+
+#: ../glade/gnome-db/gnomedblogindlg.c:221
+msgid "Database login dialog"
+msgstr "Database login dialogue"
+
+#: ../glade/gnome-db/gnomedbprovidersel.c:147
+msgid "Provider Selector"
+msgstr "Provider Selector"
+
+#: ../glade/gnome-db/gnomedbquerybuilder.c:86
+msgid "GnomeDbQueryBuilder"
+msgstr "GnomeDbQueryBuilder"
+
+#: ../glade/gnome-db/gnomedbsourcesel.c:147
+msgid "Data Source Selector"
+msgstr "Data Source Selector"
+
+#: ../glade/gnome-db/gnomedbtableeditor.c:133
+msgid "Table Editor "
+msgstr "Table Editor "
+
+#: ../glade/gnome/bonobodock.c:231
+msgid "Allow Floating:"
+msgstr "Allow Floating:"
+
+#: ../glade/gnome/bonobodock.c:232
+msgid "If floating dock items are allowed"
+msgstr "If floating dock items are allowed"
+
+#: ../glade/gnome/bonobodock.c:278
+msgid "Add dock band on top"
+msgstr "Add dock band on top"
+
+#: ../glade/gnome/bonobodock.c:285
+msgid "Add dock band on bottom"
+msgstr "Add dock band on bottom"
+
+#: ../glade/gnome/bonobodock.c:292
+msgid "Add dock band on left"
+msgstr "Add dock band on left"
+
+#: ../glade/gnome/bonobodock.c:299
+msgid "Add dock band on right"
+msgstr "Add dock band on right"
+
+#: ../glade/gnome/bonobodock.c:306
+msgid "Add floating dock item"
+msgstr "Add floating dock item"
+
+#: ../glade/gnome/bonobodock.c:495
+msgid "Gnome Dock"
+msgstr "Gnome Dock"
+
+#: ../glade/gnome/bonobodockitem.c:165
+msgid "Locked:"
+msgstr "Locked:"
+
+#: ../glade/gnome/bonobodockitem.c:166
+msgid "If the dock item is locked in position"
+msgstr "If the dock item is locked in position"
+
+#: ../glade/gnome/bonobodockitem.c:167
+msgid "Exclusive:"
+msgstr "Exclusive:"
+
+#: ../glade/gnome/bonobodockitem.c:168
+msgid "If the dock item is always the only item in its band"
+msgstr "If the dock item is always the only item in its band"
+
+#: ../glade/gnome/bonobodockitem.c:169
+msgid "Never Floating:"
+msgstr "Never Floating:"
+
+#: ../glade/gnome/bonobodockitem.c:170
+msgid "If the dock item is never allowed to float in its own window"
+msgstr "If the dock item is never allowed to float in its own window"
+
+#: ../glade/gnome/bonobodockitem.c:171
+msgid "Never Vertical:"
+msgstr "Never Vertical:"
+
+#: ../glade/gnome/bonobodockitem.c:172
+msgid "If the dock item is never allowed to be vertical"
+msgstr "If the dock item is never allowed to be vertical"
+
+#: ../glade/gnome/bonobodockitem.c:173
+msgid "Never Horizontal:"
+msgstr "Never Horizontal:"
+
+#: ../glade/gnome/bonobodockitem.c:174
+msgid "If the dock item is never allowed to be horizontal"
+msgstr "If the dock item is never allowed to be horizontal"
+
+#: ../glade/gnome/bonobodockitem.c:177
+msgid "The type of shadow around the dock item"
+msgstr "The type of shadow around the dock item"
+
+#: ../glade/gnome/bonobodockitem.c:180
+msgid "The orientation of a floating dock item"
+msgstr "The orientation of a floating dock item"
+
+#: ../glade/gnome/bonobodockitem.c:428
+msgid "Add dock item before"
+msgstr "Add dock item before"
+
+#: ../glade/gnome/bonobodockitem.c:435
+msgid "Add dock item after"
+msgstr "Add dock item after"
+
+#: ../glade/gnome/bonobodockitem.c:771
+msgid "Gnome Dock Item"
+msgstr "Gnome Dock Item"
+
+#: ../glade/gnome/gnomeabout.c:139
+msgid "Additional information, such as a description of the package and its home page on the web"
+msgstr "Additional information, such as a description of the package and its home page on the web"
+
+#: ../glade/gnome/gnomeabout.c:539
+msgid "Gnome About Dialog"
+msgstr "Gnome About Dialogue"
+
+#: ../glade/gnome/gnomeapp.c:171
+msgid "New File"
+msgstr "New File"
+
+#: ../glade/gnome/gnomeapp.c:173
+msgid "Open File"
+msgstr "Open File"
+
+#: ../glade/gnome/gnomeapp.c:175
+msgid "Save File"
+msgstr "Save File"
+
+#: ../glade/gnome/gnomeapp.c:204
+msgid "Status Bar:"
+msgstr "Status Bar:"
+
+#: ../glade/gnome/gnomeapp.c:205
+msgid "If the window has a status bar"
+msgstr "If the window has a status bar"
+
+#: ../glade/gnome/gnomeapp.c:206
+msgid "Store Config:"
+msgstr "Store Config:"
+
+#: ../glade/gnome/gnomeapp.c:207
+msgid "If the layout is saved and restored automatically"
+msgstr "If the layout is saved and restored automatically"
+
+#: ../glade/gnome/gnomeapp.c:443
+msgid "Gnome Application Window"
+msgstr "Gnome Application Window"
+
+#: ../glade/gnome/gnomeappbar.c:56
+msgid "Status Message."
+msgstr "Status Message."
+
+#: ../glade/gnome/gnomeappbar.c:69
+msgid "Progress:"
+msgstr "Progress:"
+
+#: ../glade/gnome/gnomeappbar.c:70
+msgid "If the app bar has a progress indicator"
+msgstr "If the app bar has a progress indicator"
+
+#: ../glade/gnome/gnomeappbar.c:71
+msgid "Status:"
+msgstr "Status:"
+
+#: ../glade/gnome/gnomeappbar.c:72
+msgid "If the app bar has an area for status messages and user input"
+msgstr "If the app bar has an area for status messages and user input"
+
+#: ../glade/gnome/gnomeappbar.c:184
+msgid "Gnome Application Bar"
+msgstr "Gnome Application Bar"
+
+#: ../glade/gnome/gnomecanvas.c:68
+msgid "Anti-Aliased:"
+msgstr "Anti-Aliased:"
+
+#: ../glade/gnome/gnomecanvas.c:69
+msgid "If the canvas is anti-aliased, to smooth the edges of text and graphics"
+msgstr "If the canvas is anti-aliased, to smooth the edges of text and graphics"
+
+#: ../glade/gnome/gnomecanvas.c:70
+msgid "X1:"
+msgstr "X1:"
+
+#: ../glade/gnome/gnomecanvas.c:70
+msgid "The minimum x coordinate"
+msgstr "The minimum x coordinate"
+
+#: ../glade/gnome/gnomecanvas.c:71
+msgid "Y1:"
+msgstr "Y1:"
+
+#: ../glade/gnome/gnomecanvas.c:71
+msgid "The minimum y coordinate"
+msgstr "The minimum y coordinate"
+
+#: ../glade/gnome/gnomecanvas.c:72
+msgid "X2:"
+msgstr "X2:"
+
+#: ../glade/gnome/gnomecanvas.c:72
+msgid "The maximum x coordinate"
+msgstr "The maximum x coordinate"
+
+#: ../glade/gnome/gnomecanvas.c:73
+msgid "Y2:"
+msgstr "Y2:"
+
+#: ../glade/gnome/gnomecanvas.c:73
+msgid "The maximum y coordinate"
+msgstr "The maximum y coordinate"
+
+#: ../glade/gnome/gnomecanvas.c:75
+msgid "Pixels Per Unit:"
+msgstr "Pixels Per Unit:"
+
+#: ../glade/gnome/gnomecanvas.c:76
+msgid "The number of pixels corresponding to one unit"
+msgstr "The number of pixels corresponding to one unit"
+
+#: ../glade/gnome/gnomecanvas.c:248
+msgid "GnomeCanvas"
+msgstr "GnomeCanvas"
+
+#: ../glade/gnome/gnomecolorpicker.c:68
+msgid "Dither:"
+msgstr "Dither:"
+
+#: ../glade/gnome/gnomecolorpicker.c:69
+msgid "If the sample should use dithering to be more accurate"
+msgstr "If the sample should use dithering to be more accurate"
+
+#: ../glade/gnome/gnomecolorpicker.c:160
+msgid "Pick a color"
+msgstr "Pick a colour"
+
+#: ../glade/gnome/gnomecolorpicker.c:219
+msgid "Gnome Color Picker"
+msgstr "Gnome Colour Picker"
+
+#: ../glade/gnome/gnomecontrol.c:160
+msgid "Couldn't create the Bonobo control"
+msgstr "Couldn't create the Bonobo control"
+
+#: ../glade/gnome/gnomecontrol.c:249
+msgid "New Bonobo Control"
+msgstr "New Bonobo Control"
+
+#: ../glade/gnome/gnomecontrol.c:262
+msgid "Select a Bonobo Control"
+msgstr "Select a Bonobo Control"
+
+#: ../glade/gnome/gnomecontrol.c:290
+msgid "OAFIID"
+msgstr "OAFIID"
+
+#: ../glade/gnome/gnomecontrol.c:295
+#: ../glade/property.c:3902
+msgid "Description"
+msgstr "Description"
+
+#: ../glade/gnome/gnomecontrol.c:339
+msgid "Bonobo Control"
+msgstr "Bonobo Control"
+
+#: ../glade/gnome/gnomedateedit.c:70
+msgid "Show Time:"
+msgstr "Show Time:"
+
+#: ../glade/gnome/gnomedateedit.c:71
+msgid "If the time is shown as well as the date"
+msgstr "If the time is shown as well as the date"
+
+#: ../glade/gnome/gnomedateedit.c:72
+msgid "24 Hour Format:"
+msgstr "24 Hour Format:"
+
+#: ../glade/gnome/gnomedateedit.c:73
+msgid "If the time is shown in 24-hour format"
+msgstr "If the time is shown in 24-hour format"
+
+#: ../glade/gnome/gnomedateedit.c:76
+msgid "Lower Hour:"
+msgstr "Lower Hour:"
+
+#: ../glade/gnome/gnomedateedit.c:77
+msgid "The lowest hour to show in the popup"
+msgstr "The lowest hour to show in the popup"
+
+#: ../glade/gnome/gnomedateedit.c:79
+msgid "Upper Hour:"
+msgstr "Upper Hour:"
+
+#: ../glade/gnome/gnomedateedit.c:80
+msgid "The highest hour to show in the popup"
+msgstr "The highest hour to show in the popup"
+
+#: ../glade/gnome/gnomedateedit.c:298
+msgid "GnomeDateEdit"
+msgstr "GnomeDateEdit"
+
+#: ../glade/gnome/gnomedialog.c:153
+#: ../glade/gnome/gnomemessagebox.c:190
+msgid "Auto Close:"
+msgstr "Auto Close:"
+
+#: ../glade/gnome/gnomedialog.c:154
+#: ../glade/gnome/gnomemessagebox.c:191
+msgid "If the dialog closes when any button is clicked"
+msgstr "If the dialogue closes when any button is clicked"
+
+#: ../glade/gnome/gnomedialog.c:155
+#: ../glade/gnome/gnomemessagebox.c:192
+msgid "Hide on Close:"
+msgstr "Hide on Close:"
+
+#: ../glade/gnome/gnomedialog.c:156
+#: ../glade/gnome/gnomemessagebox.c:193
+msgid "If the dialog is hidden when it is closed, instead of being destroyed"
+msgstr "If the dialogue is hidden when it is closed, instead of being destroyed"
+
+#: ../glade/gnome/gnomedialog.c:342
+msgid "Gnome Dialog Box"
+msgstr "Gnome Dialogue Box"
+
+#: ../glade/gnome/gnomedruid.c:91
+msgid "New Gnome Druid"
+msgstr "New Gnome Druid"
+
+#: ../glade/gnome/gnomedruid.c:190
+msgid "Show Help"
+msgstr "Show Help"
+
+#: ../glade/gnome/gnomedruid.c:190
+msgid "Display the help button."
+msgstr "Display the help button."
+
+#: ../glade/gnome/gnomedruid.c:255
+msgid "Add Start Page"
+msgstr "Add Start Page"
+
+#: ../glade/gnome/gnomedruid.c:270
+msgid "Add Finish Page"
+msgstr "Add Finish Page"
+
+#: ../glade/gnome/gnomedruid.c:485
+msgid "Druid"
+msgstr "Druid"
+
+#: ../glade/gnome/gnomedruidpageedge.c:94
+#: ../glade/gnome/gnomedruidpagestandard.c:86
+msgid "The title of the page"
+msgstr "The title of the page"
+
+#: ../glade/gnome/gnomedruidpageedge.c:96
+msgid "The main text of the page, introducing people to the druid."
+msgstr "The main text of the page, introducing people to the druid."
+
+#: ../glade/gnome/gnomedruidpageedge.c:98
+#: ../glade/gnome/gnomedruidpagestandard.c:87
+msgid "Title Color:"
+msgstr "Title Colour:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:99
+#: ../glade/gnome/gnomedruidpagestandard.c:88
+msgid "The color of the title text"
+msgstr "The colour of the title text"
+
+#: ../glade/gnome/gnomedruidpageedge.c:100
+msgid "Text Color:"
+msgstr "Text Colour"
+
+#: ../glade/gnome/gnomedruidpageedge.c:101
+msgid "The color of the main text"
+msgstr "The colour of the main text"
+
+#: ../glade/gnome/gnomedruidpageedge.c:103
+#: ../glade/gnome/gnomedruidpagestandard.c:92
+msgid "The background color of the page"
+msgstr "The background colour of the page"
+
+#: ../glade/gnome/gnomedruidpageedge.c:104
+#: ../glade/gnome/gnomedruidpagestandard.c:93
+msgid "Logo Back. Color:"
+msgstr "Logo Back. Colour:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:105
+#: ../glade/gnome/gnomedruidpagestandard.c:94
+msgid "The background color around the logo"
+msgstr "The background colour around the logo"
+
+#: ../glade/gnome/gnomedruidpageedge.c:106
+msgid "Text Box Color:"
+msgstr "Text Box Colour"
+
+#: ../glade/gnome/gnomedruidpageedge.c:107
+msgid "The background color of the main text area"
+msgstr "The background colour of the main text area"
+
+#: ../glade/gnome/gnomedruidpageedge.c:108
+#: ../glade/gnome/gnomedruidpagestandard.c:95
+msgid "Logo Image:"
+msgstr "Logo Image:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:109
+#: ../glade/gnome/gnomedruidpagestandard.c:96
+msgid "The logo to display in the top-right of the page"
+msgstr "The logo to display in the top-right of the page"
+
+#: ../glade/gnome/gnomedruidpageedge.c:110
+msgid "Side Watermark:"
+msgstr "Side Watermark:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:111
+msgid "The main image to display on the side of the page."
+msgstr "The main image to display on the side of the page."
+
+#: ../glade/gnome/gnomedruidpageedge.c:112
+#: ../glade/gnome/gnomedruidpagestandard.c:97
+msgid "Top Watermark:"
+msgstr "Top Watermark:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:113
+msgid "The watermark to display at the top of the page."
+msgstr "The watermark to display at the top of the page."
+
+#: ../glade/gnome/gnomedruidpageedge.c:522
+msgid "Druid Start or Finish Page"
+msgstr "Druid Start or Finish Page"
+
+#: ../glade/gnome/gnomedruidpagestandard.c:89
+msgid "Contents Back. Color:"
+msgstr "Contents Back. Colour:"
+
+#: ../glade/gnome/gnomedruidpagestandard.c:90
+msgid "The background color around the title"
+msgstr "The background colour around the title"
+
+#: ../glade/gnome/gnomedruidpagestandard.c:98
+msgid "The image to display along the top of the page"
+msgstr "The image to display along the top of the page"
+
+#: ../glade/gnome/gnomedruidpagestandard.c:447
+msgid "Druid Standard Page"
+msgstr "Druid Standard Page"
+
+#: ../glade/gnome/gnomeentry.c:71
+#: ../glade/gnome/gnomefileentry.c:96
+#: ../glade/gnome/gnomeiconentry.c:74
+#: ../glade/gnome/gnomepixmapentry.c:77
+msgid "History ID:"
+msgstr "History ID:"
+
+#: ../glade/gnome/gnomeentry.c:72
+#: ../glade/gnome/gnomefileentry.c:97
+#: ../glade/gnome/gnomeiconentry.c:75
+#: ../glade/gnome/gnomepixmapentry.c:78
+msgid "The ID to save the history entries under"
+msgstr "The ID to save the history entries under"
+
+#: ../glade/gnome/gnomeentry.c:73
+#: ../glade/gnome/gnomefileentry.c:98
+#: ../glade/gnome/gnomeiconentry.c:76
+#: ../glade/gnome/gnomepixmapentry.c:79
+msgid "Max Saved:"
+msgstr "Max Saved:"
+
+#: ../glade/gnome/gnomeentry.c:74
+#: ../glade/gnome/gnomefileentry.c:99
+#: ../glade/gnome/gnomeiconentry.c:77
+#: ../glade/gnome/gnomepixmapentry.c:80
+msgid "The maximum number of history entries saved"
+msgstr "The maximum number of history entries saved"
+
+#: ../glade/gnome/gnomeentry.c:210
+msgid "Gnome Entry"
+msgstr "Gnome Entry"
+
+#: ../glade/gnome/gnomefileentry.c:102
+#: ../glade/gnome/gnomeiconentry.c:73
+#: ../glade/gnome/gnomepixmapentry.c:83
+msgid "The title of the file selection dialog"
+msgstr "The title of the file selection dialogue"
+
+#: ../glade/gnome/gnomefileentry.c:103
+msgid "Directory:"
+msgstr "Directory:"
+
+#: ../glade/gnome/gnomefileentry.c:104
+msgid "If a directory is needed rather than a file"
+msgstr "If a directory is needed rather than a file"
+
+#: ../glade/gnome/gnomefileentry.c:106
+#: ../glade/gnome/gnomepixmapentry.c:85
+msgid "If the file selection dialog should be modal"
+msgstr "If the file selection dialogue should be modal"
+
+#: ../glade/gnome/gnomefileentry.c:107
+#: ../glade/gnome/gnomepixmapentry.c:86
+msgid "Use FileChooser:"
+msgstr "Use FileChooser:"
+
+#: ../glade/gnome/gnomefileentry.c:108
+#: ../glade/gnome/gnomepixmapentry.c:87
+msgid "Use the new GtkFileChooser widget instead of GtkFileSelection"
+msgstr "Use the new GtkFileChooser widget instead of GtkFileSelection"
+
+#: ../glade/gnome/gnomefileentry.c:367
+msgid "Gnome File Entry"
+msgstr "Gnome File Entry"
+
+#: ../glade/gnome/gnomefontpicker.c:98
+msgid "The preview text to show in the font selection dialog"
+msgstr "The preview text to show in the font selection dialog"
+
+#: ../glade/gnome/gnomefontpicker.c:99
+msgid "Mode:"
+msgstr "Mode:"
+
+#: ../glade/gnome/gnomefontpicker.c:100
+msgid "What to display in the font picker button"
+msgstr "What to display in the font picker button"
+
+#: ../glade/gnome/gnomefontpicker.c:107
+msgid "The size of the font to use in the font picker button"
+msgstr "The size of the font to use in the font picker button"
+
+#: ../glade/gnome/gnomefontpicker.c:392
+msgid "Gnome Font Picker"
+msgstr "Gnome Font Picker"
+
+#: ../glade/gnome/gnomehref.c:66
+msgid "URL:"
+msgstr "URL:"
+
+#: ../glade/gnome/gnomehref.c:67
+msgid "The URL to display when the button is clicked"
+msgstr "The URL to display when the button is clicked"
+
+#: ../glade/gnome/gnomehref.c:69
+msgid "The text to display in the button"
+msgstr "The text to display in the button"
+
+#: ../glade/gnome/gnomehref.c:206
+msgid "Gnome HRef Link Button"
+msgstr "Gnome HRef Link Button"
+
+#: ../glade/gnome/gnomeiconentry.c:208
+msgid "Gnome Icon Entry"
+msgstr "Gnome Icon Entry"
+
+#: ../glade/gnome/gnomeiconlist.c:175
+msgid "The selection mode"
+msgstr "The selection mode"
+
+#: ../glade/gnome/gnomeiconlist.c:177
+msgid "Icon Width:"
+msgstr "Icon Width:"
+
+#: ../glade/gnome/gnomeiconlist.c:178
+msgid "The width of each icon"
+msgstr "The width of each icon"
+
+#: ../glade/gnome/gnomeiconlist.c:181
+msgid "The number of pixels between rows of icons"
+msgstr "The number of pixels between rows of icons"
+
+#: ../glade/gnome/gnomeiconlist.c:184
+msgid "The number of pixels between columns of icons"
+msgstr "The number of pixels between columns of icons"
+
+#: ../glade/gnome/gnomeiconlist.c:187
+msgid "Icon Border:"
+msgstr "Icon Border:"
+
+#: ../glade/gnome/gnomeiconlist.c:188
+msgid "The number of pixels around icons (unused?)"
+msgstr "The number of pixels around icons (unused?)"
+
+#: ../glade/gnome/gnomeiconlist.c:191
+msgid "Text Spacing:"
+msgstr "Text Spacing:"
+
+#: ../glade/gnome/gnomeiconlist.c:192
+msgid "The number of pixels between the text and the icon"
+msgstr "The number of pixels between the text and the icon"
+
+#: ../glade/gnome/gnomeiconlist.c:194
+msgid "Text Editable:"
+msgstr "Text Editable:"
+
+#: ../glade/gnome/gnomeiconlist.c:195
+msgid "If the icon text can be edited by the user"
+msgstr "If the icon text can be edited by the user"
+
+#: ../glade/gnome/gnomeiconlist.c:196
+msgid "Text Static:"
+msgstr "Text Static:"
+
+#: ../glade/gnome/gnomeiconlist.c:197
+msgid "If the icon text is static, in which case it will not be copied by the GnomeIconList"
+msgstr "If the icon text is static, in which case it will not be copied by the GnomeIconList"
+
+#: ../glade/gnome/gnomeiconlist.c:461
+msgid "Icon List"
+msgstr "Icon List"
+
+#: ../glade/gnome/gnomeiconselection.c:154
+msgid "Icon Selection"
+msgstr "Icon Selection"
+
+#: ../glade/gnome/gnomemessagebox.c:175
+msgid "Message Type:"
+msgstr "Message Type:"
+
+#: ../glade/gnome/gnomemessagebox.c:176
+msgid "The type of the message box"
+msgstr "The type of the message box"
+
+#: ../glade/gnome/gnomemessagebox.c:178
+msgid "Message:"
+msgstr "Message:"
+
+#: ../glade/gnome/gnomemessagebox.c:178
+msgid "The message to display"
+msgstr "The message to display"
+
+#: ../glade/gnome/gnomemessagebox.c:499
+msgid "Gnome Message Box"
+msgstr "Gnome Message Box"
+
+#: ../glade/gnome/gnomepixmap.c:79
+msgid "The pixmap filename"
+msgstr "The pixmap filename"
+
+#: ../glade/gnome/gnomepixmap.c:80
+msgid "Scaled:"
+msgstr "Scaled:"
+
+#: ../glade/gnome/gnomepixmap.c:80
+msgid "If the pixmap is scaled"
+msgstr "If the pixmap is scaled"
+
+#: ../glade/gnome/gnomepixmap.c:81
+msgid "Scaled Width:"
+msgstr "Scaled Width:"
+
+#: ../glade/gnome/gnomepixmap.c:82
+msgid "The width to scale the pixmap to"
+msgstr "The width to scale the pixmap to"
+
+#: ../glade/gnome/gnomepixmap.c:84
+msgid "Scaled Height:"
+msgstr "Scaled Height:"
+
+#: ../glade/gnome/gnomepixmap.c:85
+msgid "The height to scale the pixmap to"
+msgstr "The height to scale the pixmap to"
+
+#: ../glade/gnome/gnomepixmap.c:346
+msgid "Gnome Pixmap"
+msgstr "Gnome Pixmap"
+
+#: ../glade/gnome/gnomepixmapentry.c:75
+msgid "Preview:"
+msgstr "Preview:"
+
+#: ../glade/gnome/gnomepixmapentry.c:76
+msgid "If a small preview of the pixmap is displayed"
+msgstr "If a small preview of the pixmap is displayed"
+
+#: ../glade/gnome/gnomepixmapentry.c:303
+msgid "GnomePixmapEntry"
+msgstr "GnomePixmapEntry"
+
+#: ../glade/gnome/gnomepropertybox.c:113
+msgid "New GnomePropertyBox"
+msgstr "New GnomePropertyBox"
+
+#: ../glade/gnome/gnomepropertybox.c:366
+msgid "Property Dialog Box"
+msgstr "Property Dialogue Box"
+
+#: ../glade/main.c:70
+#: ../glade/main.c:104
+msgid "Write the source code and exit"
+msgstr "Write the source code and exit"
+
+#: ../glade/main.c:74
+#: ../glade/main.c:108
+msgid "Start with the palette hidden"
+msgstr "Start with the palette hidden"
+
+#: ../glade/main.c:78
+#: ../glade/main.c:112
+msgid "Start with the property editor hidden"
+msgstr "Start with the property editor hidden"
+
+#: ../glade/main.c:460
+msgid "glade: The XML file must be set for the '-w' or '--write-source' option.\n"
+msgstr "glade: The XML file must be set for the '-w' or '--write-source' option.\n"
+
+#: ../glade/main.c:474
+msgid "glade: Error loading XML file.\n"
+msgstr "glade: Error loading XML file.\n"
+
+#: ../glade/main.c:481
+msgid "glade: Error writing source.\n"
+msgstr "glade: Error writing source.\n"
+
+#: ../glade/palette.c:60
+msgid "Palette"
+msgstr "Palette"
+
+#: ../glade/property.c:73
+msgid "private"
+msgstr "private"
+
+#: ../glade/property.c:73
+msgid "protected"
+msgstr "protected"
+
+#: ../glade/property.c:73
+msgid "public"
+msgstr "public"
+
+#: ../glade/property.c:102
+msgid "Prelight"
+msgstr "Prelight"
+
+#: ../glade/property.c:103
+msgid "Selected"
+msgstr "Selected"
+
+#: ../glade/property.c:103
+msgid "Insens"
+msgstr "Insens"
+
+#: ../glade/property.c:467
+msgid "When the window needs redrawing"
+msgstr "When the window needs redrawing"
+
+#: ../glade/property.c:468
+msgid "When the mouse moves"
+msgstr "When the mouse moves"
+
+#: ../glade/property.c:469
+msgid "Mouse movement hints"
+msgstr "Mouse movement hints"
+
+#: ../glade/property.c:470
+msgid "Mouse movement with any button pressed"
+msgstr "Mouse movement with any button pressed"
+
+#: ../glade/property.c:471
+msgid "Mouse movement with button 1 pressed"
+msgstr "Mouse movement with button 1 pressed"
+
+#: ../glade/property.c:472
+msgid "Mouse movement with button 2 pressed"
+msgstr "Mouse movement with button 2 pressed"
+
+#: ../glade/property.c:473
+msgid "Mouse movement with button 3 pressed"
+msgstr "Mouse movement with button 3 pressed"
+
+#: ../glade/property.c:474
+msgid "Any mouse button pressed"
+msgstr "Any mouse button pressed"
+
+#: ../glade/property.c:475
+msgid "Any mouse button released"
+msgstr "Any mouse button released"
+
+#: ../glade/property.c:476
+msgid "Any key pressed"
+msgstr "Any key pressed"
+
+#: ../glade/property.c:477
+msgid "Any key released"
+msgstr "Any key released"
+
+#: ../glade/property.c:478
+msgid "When the mouse enters the window"
+msgstr "When the mouse enters the window"
+
+#: ../glade/property.c:479
+msgid "When the mouse leaves the window"
+msgstr "When the mouse leaves the window"
+
+#: ../glade/property.c:480
+msgid "Any change in input focus"
+msgstr "Any change in input focus"
+
+#: ../glade/property.c:481
+msgid "Any change in window structure"
+msgstr "Any change in window structure"
+
+#: ../glade/property.c:482
+msgid "Any change in X Windows property"
+msgstr "Any change in X Windows property"
+
+#: ../glade/property.c:483
+msgid "Any change in visibility"
+msgstr "Any change in visibility"
+
+#: ../glade/property.c:484
+#: ../glade/property.c:485
+msgid "For cursors in XInput-aware programs"
+msgstr "For cursors in XInput-aware programs"
+
+#: ../glade/property.c:596
+msgid "Properties"
+msgstr "Properties"
+
+#: ../glade/property.c:620
+msgid "Packing"
+msgstr "Packing"
+
+#: ../glade/property.c:625
+msgid "Common"
+msgstr "Common"
+
+#: ../glade/property.c:631
+msgid "Style"
+msgstr "Style"
+
+#: ../glade/property.c:637
+#: ../glade/property.c:4646
+msgid "Signals"
+msgstr "Signals"
+
+#: ../glade/property.c:700
+#: ../glade/property.c:721
+msgid "Properties: "
+msgstr "Properties: "
+
+#: ../glade/property.c:708
+#: ../glade/property.c:732
+msgid "Properties: <none>"
+msgstr "Properties: <none>"
+
+#: ../glade/property.c:778
+msgid "Class:"
+msgstr "Class:"
+
+#: ../glade/property.c:779
+msgid "The class of the widget"
+msgstr "The class of the widget"
+
+#: ../glade/property.c:813
+msgid "Width:"
+msgstr "Width:"
+
+#: ../glade/property.c:814
+msgid "The requested width of the widget (usually used to set the minimum width)"
+msgstr "The requested width of the widget (usually used to set the minimum width)"
+
+#: ../glade/property.c:816
+msgid "Height:"
+msgstr "Height:"
+
+#: ../glade/property.c:817
+msgid "The requested height of the widget (usually used to set the minimum height)"
+msgstr "The requested height of the widget (usually used to set the minimum height)"
+
+#: ../glade/property.c:820
+msgid "Visible:"
+msgstr "Visible:"
+
+#: ../glade/property.c:821
+msgid "If the widget is initially visible"
+msgstr "If the widget is initially visible"
+
+#: ../glade/property.c:822
+msgid "Sensitive:"
+msgstr "Sensitive:"
+
+#: ../glade/property.c:823
+msgid "If the widget responds to input"
+msgstr "If the widget responds to input"
+
+#: ../glade/property.c:825
+msgid "The tooltip to display if the mouse lingers over the widget"
+msgstr "The tooltip to display if the mouse lingers over the widget"
+
+#: ../glade/property.c:827
+msgid "Can Default:"
+msgstr "Can Default:"
+
+#: ../glade/property.c:828
+msgid "If the widget can be the default action in a dialog"
+msgstr "If the widget can be the default action in a dialogue"
+
+#: ../glade/property.c:829
+msgid "Has Default:"
+msgstr "Has Default:"
+
+#: ../glade/property.c:830
+msgid "If the widget is the default action in the dialog"
+msgstr "If the widget is the default action in the dialogue"
+
+#: ../glade/property.c:831
+msgid "Can Focus:"
+msgstr "Can Focus:"
+
+#: ../glade/property.c:832
+msgid "If the widget can accept the input focus"
+msgstr "If the widget can accept the input focus"
+
+#: ../glade/property.c:833
+msgid "Has Focus:"
+msgstr "Has Focus:"
+
+#: ../glade/property.c:834
+msgid "If the widget has the input focus"
+msgstr "If the widget has the input focus"
+
+#: ../glade/property.c:836
+msgid "Events:"
+msgstr "Events:"
+
+#: ../glade/property.c:837
+msgid "The X events that the widget receives"
+msgstr "The X events that the widget receives"
+
+#: ../glade/property.c:839
+msgid "Ext.Events:"
+msgstr "Ext.Events:"
+
+#: ../glade/property.c:840
+msgid "The X Extension events mode"
+msgstr "The X Extension events mode"
+
+#: ../glade/property.c:843
+msgid "Accelerators:"
+msgstr "Accelerators:"
+
+#: ../glade/property.c:844
+msgid "Defines the signals to emit when keys are pressed"
+msgstr "Defines the signals to emit when keys are pressed"
+
+#: ../glade/property.c:845
+msgid "Edit..."
+msgstr "Edit..."
+
+#: ../glade/property.c:867
+msgid "Propagate:"
+msgstr "Propagate:"
+
+#: ../glade/property.c:868
+msgid "Set True to propagate the style to the widget's children"
+msgstr "Set True to propagate the style to the widget's children"
+
+#: ../glade/property.c:869
+msgid "Named Style:"
+msgstr "Named Style:"
+
+#: ../glade/property.c:870
+msgid "The name of the style, which can be shared by several widgets"
+msgstr "The name of the style, which can be shared by several widgets"
+
+#: ../glade/property.c:872
+msgid "Font:"
+msgstr "Font:"
+
+#: ../glade/property.c:873
+msgid "The font to use for any text in the widget"
+msgstr "The font to use for any text in the widget"
+
+#: ../glade/property.c:898
+msgid "Copy All"
+msgstr "Copy All"
+
+#: ../glade/property.c:926
+msgid "Foreground:"
+msgstr "Foreground:"
+
+#: ../glade/property.c:926
+msgid "Background:"
+msgstr "Background:"
+
+#: ../glade/property.c:926
+msgid "Base:"
+msgstr "Base:"
+
+#: ../glade/property.c:928
+msgid "Foreground color"
+msgstr "Foreground colour"
+
+#: ../glade/property.c:928
+msgid "Background color"
+msgstr "Background colour"
+
+#: ../glade/property.c:928
+msgid "Text color"
+msgstr "Text colour"
+
+#: ../glade/property.c:929
+msgid "Base color"
+msgstr "Base colour"
+
+#: ../glade/property.c:946
+msgid "Back. Pixmap:"
+msgstr "Back. Pixmap:"
+
+#: ../glade/property.c:947
+msgid "The graphic to use as the background of the widget"
+msgstr "The graphic to use as the background of the widget"
+
+#: ../glade/property.c:999
+msgid "The file to write source code into"
+msgstr "The file to write source code into"
+
+#: ../glade/property.c:1000
+msgid "Public:"
+msgstr "Public:"
+
+#: ../glade/property.c:1001
+msgid "If the widget is added to the component's data structure"
+msgstr "If the widget is added to the component's data structure"
+
+#: ../glade/property.c:1012
+msgid "Separate Class:"
+msgstr "Separate Class:"
+
+#: ../glade/property.c:1013
+msgid "Put this widget's subtree in a separate class"
+msgstr "Put this widget's subtree in a separate class"
+
+#: ../glade/property.c:1014
+msgid "Separate File:"
+msgstr "Separate File:"
+
+#: ../glade/property.c:1015
+msgid "Put this widget in a separate source file"
+msgstr "Put this widget in a separate source file"
+
+#: ../glade/property.c:1016
+msgid "Visibility:"
+msgstr "Visibility:"
+
+#: ../glade/property.c:1017
+msgid "Visibility of widgets. Public widgets are exported to a global map."
+msgstr "Visibility of widgets. Public widgets are exported to a global map."
+
+#: ../glade/property.c:1127
+msgid "You need to select a color or background to copy"
+msgstr "You need to select a colour or background to copy"
+
+#: ../glade/property.c:1146
+msgid "Invalid selection in on_style_copy()"
+msgstr "Invalid selection in on_style_copy()"
+
+#: ../glade/property.c:1188
+msgid "You need to copy a color or background pixmap first"
+msgstr "You need to copy a colour or background pixmap first"
+
+#: ../glade/property.c:1194
+msgid "You need to select a color to paste into"
+msgstr "You need to select a colour to paste into"
+
+#: ../glade/property.c:1204
+msgid "You need to select a background pixmap to paste into"
+msgstr "You need to select a background pixmap to paste into"
+
+#: ../glade/property.c:1456
+msgid "Couldn't create pixmap from file\n"
+msgstr "Couldn't create pixmap from file\n"
+
+#. List of current signal handlers - Signal/Handler/Data/Options
+#: ../glade/property.c:1498
+msgid "Signal"
+msgstr "Signal"
+
+#: ../glade/property.c:1500
+msgid "Data"
+msgstr "Data"
+
+#: ../glade/property.c:1501
+msgid "After"
+msgstr "After"
+
+#: ../glade/property.c:1502
+msgid "Object"
+msgstr "Object"
+
+#: ../glade/property.c:1533
+#: ../glade/property.c:1697
+msgid "Signal:"
+msgstr "Signal:"
+
+#: ../glade/property.c:1534
+msgid "The signal to add a handler for"
+msgstr "The signal to add a handler for"
+
+#: ../glade/property.c:1548
+msgid "The function to handle the signal"
+msgstr "The function to handle the signal"
+
+#: ../glade/property.c:1551
+msgid "Data:"
+msgstr "Data:"
+
+#: ../glade/property.c:1552
+msgid "The data passed to the handler"
+msgstr "The data passed to the handler"
+
+#: ../glade/property.c:1553
+msgid "Object:"
+msgstr "Object:"
+
+#: ../glade/property.c:1554
+msgid "The object which receives the signal"
+msgstr "The object which receives the signal"
+
+#: ../glade/property.c:1555
+msgid "After:"
+msgstr "After:"
+
+#: ../glade/property.c:1556
+msgid "If the handler runs after the class function"
+msgstr "If the handler runs after the class function"
+
+#: ../glade/property.c:1569
+msgid "Add"
+msgstr "Add"
+
+#: ../glade/property.c:1575
+msgid "Update"
+msgstr "Update"
+
+#: ../glade/property.c:1587
+msgid "Clear"
+msgstr "Clear"
+
+#: ../glade/property.c:1637
+msgid "Accelerators"
+msgstr "Accelerators"
+
+#. List of current accelerators - Mods/Keys/Signals
+#: ../glade/property.c:1650
+msgid "Mod"
+msgstr "Mod"
+
+#: ../glade/property.c:1651
+msgid "Key"
+msgstr "Key"
+
+#: ../glade/property.c:1652
+msgid "Signal to emit"
+msgstr "Signal to emit"
+
+#: ../glade/property.c:1696
+msgid "The accelerator key"
+msgstr "The accelerator key"
+
+#: ../glade/property.c:1698
+msgid "The signal to emit when the accelerator is pressed"
+msgstr "The signal to emit when the accelerator is pressed"
+
+#: ../glade/property.c:1847
+msgid "Edit Text Property"
+msgstr "Edit Text Property"
+
+#: ../glade/property.c:1885
+msgid "<b>_Text:</b>"
+msgstr "<b>_Text:</b>"
+
+#: ../glade/property.c:1895
+msgid "T_ranslatable"
+msgstr "T_ranslatable"
+
+#: ../glade/property.c:1899
+msgid "Has Context _Prefix"
+msgstr "Has Context _Prefix"
+
+#: ../glade/property.c:1925
+msgid "<b>Co_mments For Translators:</b>"
+msgstr "<b>Co_mments For Translators:</b>"
+
+#: ../glade/property.c:3892
+msgid "Select X Events"
+msgstr "Select X Events"
+
+#: ../glade/property.c:3901
+msgid "Event Mask"
+msgstr "Event Mask"
+
+#: ../glade/property.c:4031
+#: ../glade/property.c:4080
+msgid "You need to set the accelerator key"
+msgstr "You need to set the accelerator key"
+
+#: ../glade/property.c:4038
+#: ../glade/property.c:4087
+msgid "You need to set the signal to emit"
+msgstr "You need to set the signal to emit"
+
+#: ../glade/property.c:4314
+#: ../glade/property.c:4370
+msgid "You need to set the signal name"
+msgstr "You need to set the signal name"
+
+#: ../glade/property.c:4321
+#: ../glade/property.c:4377
+msgid "You need to set the handler for the signal"
+msgstr "You need to set the handler for the signal"
+
+#. This groups the signals by class, e.g. 'GtkButton signals'.
+#: ../glade/property.c:4580
+#, c-format
+msgid "%s signals"
+msgstr "%s signals"
+
+#: ../glade/property.c:4637
+msgid "Select Signal"
+msgstr "Select Signal"
+
+#: ../glade/property.c:4833
+msgid "Value:"
+msgstr "Value:"
+
+#: ../glade/property.c:4833
+msgid "Min:"
+msgstr "Min:"
+
+#: ../glade/property.c:4833
+msgid "Step Inc:"
+msgstr "Step Inc:"
+
+#: ../glade/property.c:4834
+msgid "Page Inc:"
+msgstr "Page Inc:"
+
+#: ../glade/property.c:4834
+msgid "Page Size:"
+msgstr "Page Size:"
+
+#: ../glade/property.c:4836
+msgid "H Value:"
+msgstr "H Value:"
+
+#: ../glade/property.c:4836
+msgid "H Min:"
+msgstr "H Min:"
+
+#: ../glade/property.c:4836
+msgid "H Max:"
+msgstr "H Max:"
+
+#: ../glade/property.c:4836
+msgid "H Step Inc:"
+msgstr "H Step Inc:"
+
+#: ../glade/property.c:4837
+msgid "H Page Inc:"
+msgstr "H Page Inc:"
+
+#: ../glade/property.c:4837
+msgid "H Page Size:"
+msgstr "H Page Size:"
+
+#: ../glade/property.c:4839
+msgid "V Value:"
+msgstr "V Value:"
+
+#: ../glade/property.c:4839
+msgid "V Min:"
+msgstr "V Min:"
+
+#: ../glade/property.c:4839
+msgid "V Max:"
+msgstr "V Max:"
+
+#: ../glade/property.c:4839
+msgid "V Step Inc:"
+msgstr "V Step Inc:"
+
+#: ../glade/property.c:4840
+msgid "V Page Inc:"
+msgstr "V Page Inc:"
+
+#: ../glade/property.c:4840
+msgid "V Page Size:"
+msgstr "V Page Size:"
+
+#: ../glade/property.c:4843
+msgid "The initial value"
+msgstr "The initial value"
+
+#: ../glade/property.c:4844
+msgid "The minimum value"
+msgstr "The minimum value"
+
+#: ../glade/property.c:4845
+msgid "The maximum value"
+msgstr "The maximum value"
+
+#: ../glade/property.c:4846
+msgid "The step increment"
+msgstr "The step increment"
+
+#: ../glade/property.c:4847
+msgid "The page increment"
+msgstr "The page increment"
+
+#: ../glade/property.c:4848
+msgid "The page size"
+msgstr "The page size"
+
+#: ../glade/property.c:5003
+msgid "The requested font is not available."
+msgstr "The requested font is not available."
+
+#: ../glade/property.c:5052
+msgid "Select Named Style"
+msgstr "Select Named Style"
+
+#: ../glade/property.c:5063
+msgid "Styles"
+msgstr "Styles"
+
+#: ../glade/property.c:5122
+msgid "Rename"
+msgstr "Rename"
+
+#: ../glade/property.c:5150
+msgid "Cancel"
+msgstr "Cancel"
+
+#: ../glade/property.c:5270
+msgid "New Style:"
+msgstr "New Style:"
+
+#: ../glade/property.c:5284
+#: ../glade/property.c:5405
+msgid "Invalid style name"
+msgstr "Invalid style name"
+
+#: ../glade/property.c:5292
+#: ../glade/property.c:5415
+msgid "That style name is already in use"
+msgstr "That style name is already in use"
+
+#: ../glade/property.c:5390
+msgid "Rename Style To:"
+msgstr "Rename Style To:"
+
+#: ../glade/save.c:139
+#: ../glade/source.c:2771
+#, c-format
+msgid ""
+"Couldn't rename file:\n"
+"  %s\n"
+"to:\n"
+"  %s\n"
+msgstr ""
+"Couldn't rename file:\n"
+"  %s\n"
+"to:\n"
+"  %s\n"
+
+#: ../glade/save.c:174
+#: ../glade/save.c:225
+#: ../glade/save.c:947
+#: ../glade/source.c:358
+#: ../glade/source.c:373
+#: ../glade/source.c:391
+#: ../glade/source.c:404
+#: ../glade/source.c:815
+#: ../glade/source.c:1043
+#: ../glade/source.c:1134
+#: ../glade/source.c:1328
+#: ../glade/source.c:1423
+#: ../glade/source.c:1643
+#: ../glade/source.c:1732
+#: ../glade/source.c:1784
+#: ../glade/source.c:1848
+#: ../glade/source.c:1895
+#: ../glade/source.c:2032
+#: ../glade/utils.c:1147
+#, c-format
+msgid ""
+"Couldn't create file:\n"
+"  %s\n"
+msgstr ""
+"Couldn't create file:\n"
+"  %s\n"
+
+#: ../glade/save.c:848
+msgid "Error writing XML file\n"
+msgstr "Error writing XML file\n"
+
+#: ../glade/save.c:953
+#, c-format
+msgid ""
+"/*\n"
+" * Translatable strings file generated by Glade.\n"
+" * Add this file to your project's POTFILES.in.\n"
+" * DO NOT compile it as part of your application.\n"
+" */\n"
+"\n"
+msgstr ""
+"/*\n"
+" * Translatable strings file generated by Glade.\n"
+" * Add this file to your project's POTFILES.in.\n"
+" * DO NOT compile it as part of your application.\n"
+" */\n"
+"\n"
+
+#: ../glade/source.c:184
+#, c-format
+msgid ""
+"Invalid interface source filename: %s\n"
+"%s\n"
+msgstr ""
+"Invalid interface source filename: %s\n"
+"%s\n"
+
+#: ../glade/source.c:186
+#, c-format
+msgid ""
+"Invalid interface header filename: %s\n"
+"%s\n"
+msgstr ""
+"Invalid interface header filename: %s\n"
+"%s\n"
+
+#: ../glade/source.c:189
+#, c-format
+msgid ""
+"Invalid callbacks source filename: %s\n"
+"%s\n"
+msgstr ""
+"Invalid callbacks source filename: %s\n"
+"%s\n"
+
+#: ../glade/source.c:191
+#, c-format
+msgid ""
+"Invalid callbacks header filename: %s\n"
+"%s\n"
+msgstr ""
+"Invalid callbacks header filename: %s\n"
+"%s\n"
+
+#: ../glade/source.c:197
+#, c-format
+msgid ""
+"Invalid support source filename: %s\n"
+"%s\n"
+msgstr ""
+"Invalid support source filename: %s\n"
+"%s\n"
+
+#: ../glade/source.c:199
+#, c-format
+msgid ""
+"Invalid support header filename: %s\n"
+"%s\n"
+msgstr ""
+"Invalid support header filename: %s\n"
+"%s\n"
+
+#: ../glade/source.c:418
+#: ../glade/source.c:426
+#, c-format
+msgid ""
+"Couldn't append to file:\n"
+"  %s\n"
+msgstr ""
+"Couldn't append to file:\n"
+"  %s\n"
+
+#: ../glade/source.c:1724
+#: ../glade/utils.c:1168
+#, c-format
+msgid ""
+"Error writing to file:\n"
+"  %s\n"
+msgstr ""
+"Error writing to file:\n"
+"  %s\n"
+
+#: ../glade/source.c:2743
+msgid "The filename must be set in the Project Options dialog."
+msgstr "The filename must be set in the Project Options dialogue."
+
+#: ../glade/source.c:2746
+msgid ""
+"The filename must be a simple relative filename.\n"
+"Use the Project Options dialog to set it."
+msgstr ""
+"The filename must be a simple relative filename.\n"
+"Use the Project Options dialog to set it."
+
+#: ../glade/tree.c:78
+msgid "Widget Tree"
+msgstr "Widget Tree"
+
+#: ../glade/utils.c:900
+#: ../glade/utils.c:940
+msgid "Widget not found in box"
+msgstr "Widget not found in box"
+
+#: ../glade/utils.c:920
+msgid "Widget not found in table"
+msgstr "Widget not found in table"
+
+#: ../glade/utils.c:960
+msgid "Widget not found in fixed container"
+msgstr "Widget not found in fixed container"
+
+#: ../glade/utils.c:981
+msgid "Widget not found in packer"
+msgstr "Widget not found in packer"
+
+#: ../glade/utils.c:1118
+#, c-format
+msgid ""
+"Couldn't access file:\n"
+"  %s\n"
+msgstr ""
+"Couldn't access file:\n"
+"  %s\n"
+
+#: ../glade/utils.c:1141
+#, c-format
+msgid ""
+"Couldn't open file:\n"
+"  %s\n"
+msgstr ""
+"Couldn't open file:\n"
+"  %s\n"
+
+#: ../glade/utils.c:1158
+#, c-format
+msgid ""
+"Error reading from file:\n"
+"  %s\n"
+msgstr ""
+"Error reading from file:\n"
+"  %s\n"
+
+#. This happens under WIN32 when stat is confused by the filename, but this is
+#. harmless, since we know that the directory exists after all.
+#: ../glade/utils.c:1225
+#, c-format
+msgid ""
+"Couldn't create directory:\n"
+"  %s\n"
+msgstr ""
+"Couldn't create directory:\n"
+"  %s\n"
+
+#: ../glade/utils.c:1232
+#, c-format
+msgid ""
+"Couldn't access directory:\n"
+"  %s\n"
+msgstr ""
+"Couldn't access directory:\n"
+"  %s\n"
+
+#: ../glade/utils.c:1240
+#, c-format
+msgid ""
+"Invalid directory:\n"
+"  %s\n"
+msgstr ""
+"Invalid directory:\n"
+"  %s\n"
+
+#: ../glade/utils.c:1611
+msgid "Projects"
+msgstr "Projects"
+
+#: ../glade/utils.c:1628
+msgid "project"
+msgstr "project"
+
+#: ../glade/utils.c:1634
+#, c-format
+msgid ""
+"Couldn't open directory:\n"
+"  %s\n"
+msgstr ""
+"Couldn't open directory:\n"
+"  %s\n"
+
+#~ msgid "Design user interfaces"
+#~ msgstr "Design user interfaces"
+

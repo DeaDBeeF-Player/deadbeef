@@ -1,0 +1,33 @@
+/* XPM */
+static char *listitem_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"21 21 6 1",
+"  c Gray0",
+". c Red",
+"X c #b3cece",
+"o c Gray87",
+"O c Gray100",
+"+ c None",
+/* pixels */
+"+++++++++++++++++++++",
+"++++             ++++",
+"++++ OOOOOOOOOOO ++++",
+"++++ OOOOOOOOOOO ++++",
+"++++ OoooooooOOO ++++",
+"++++ OOOOOOOOOOO ++++",
+"++++ OOOOOOOOOOO ++++",
+"++++ O........OO ++++",
+"++++ OOOOOOOOOOO ++++",
+"++++ OOOOOOOOOOO ++++",
+"++++ OooooooooOO ++++",
+"++++ OOOOOOOOOOO ++++",
+"++++ OOOOOOOOOOO ++++",
+"++++ OooooooooOO ++++",
+"++++ OOOOOOOOOOO ++++",
+"++++ OOOOOOOOOOO ++++",
+"++++ OoooooooOOO ++++",
+"++++ OOOOOOOOOOO ++++",
+"++++ OOOOOOOOOOO ++++",
+"++++             ++++",
+"+++++++++++++++++++++"
+};

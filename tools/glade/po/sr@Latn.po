@@ -1,0 +1,5852 @@
+# Serbian translation of glade
+# Courtesy of Prevod.org team (http://prevod.org/) -- 2003, 2004.
+#
+# This file is distributed under the same license as the glade package.
+#
+# Maintainer: Saša Marić <sasha_maric@yahoo.com>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: glade\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2005-08-26 13:38+0200\n"
+"PO-Revision-Date: 2004-02-26 20:56+0100\n"
+"Last-Translator: Danilo Šegan <danilo@prevod.org>\n"
+"Language-Team: Serbian (sr) <serbiagnome-lista@nongnu.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../glade-2.desktop.in.h:1
+msgid "Design user interfaces"
+msgstr "Izrada korisničkih sučelja"
+
+#: ../glade-2.desktop.in.h:2
+msgid "Glade Interface Designer"
+msgstr "Glejd izrada sučelja"
+
+#: ../glade/editor.c:343
+msgid "Grid Options"
+msgstr "Postavke koordinatne mreže"
+
+#: ../glade/editor.c:357
+msgid "Horizontal Spacing:"
+msgstr "Vodoravni razmak:"
+
+#: ../glade/editor.c:372
+msgid "Vertical Spacing:"
+msgstr "Vertikalni razmak:"
+
+#: ../glade/editor.c:390
+msgid "Grid Style:"
+msgstr "Stil koordinatne mreže:"
+
+#: ../glade/editor.c:396
+msgid "Dots"
+msgstr "Tačkice"
+
+#: ../glade/editor.c:405
+msgid "Lines"
+msgstr "Linije"
+
+#: ../glade/editor.c:487
+msgid "Snap Options"
+msgstr "Postavke prijanjanja"
+
+#. Horizontal snapping
+#: ../glade/editor.c:502
+msgid "Horizontal Snapping:"
+msgstr "Vodoravno prijanjanje:"
+
+#: ../glade/editor.c:508 ../glade/gbwidgets/gbtextview.c:49
+msgid "Left"
+msgstr "Levo"
+
+#: ../glade/editor.c:517 ../glade/gbwidgets/gbtextview.c:50
+msgid "Right"
+msgstr "Desno"
+
+#. Vertical snapping
+#: ../glade/editor.c:526
+msgid "Vertical Snapping:"
+msgstr "Vertikalno prijanjanje:"
+
+#: ../glade/editor.c:532
+msgid "Top"
+msgstr "Vrh"
+
+#: ../glade/editor.c:540
+msgid "Bottom"
+msgstr "Dno"
+
+#: ../glade/editor.c:741
+#, fuzzy
+msgid "GtkToolItem widgets can only be added to a GtkToolbar."
+msgstr "Samo se GnomeDockItem elementi mogu prekopirati u GnomeDock."
+
+#: ../glade/editor.c:758
+msgid "Couldn't insert a GtkScrolledWindow widget."
+msgstr "Neuspešno umetanje GtkScrolledWindow elementa."
+
+#: ../glade/editor.c:805
+msgid "Couldn't insert a GtkViewport widget."
+msgstr "Neuspešno umetanje GtkViewport elementa."
+
+#: ../glade/editor.c:832
+msgid "Couldn't add new widget."
+msgstr "Ne može da doda novi element."
+
+#: ../glade/editor.c:1230
+msgid ""
+"You can't add a widget at the selected position.\n"
+"\n"
+"Tip: GTK+ uses containers to lay out widgets.\n"
+"Try deleting the existing widget and using\n"
+"a box or table container instead.\n"
+msgstr ""
+"Ne može da doda formu na odabranoj poziciji.\n"
+"\n"
+"Savet: GTK+ koristi sadržaoce za spremanje elemenata.\n"
+"Pokušajte da obrišete postojeći element koristeći\n"
+"umesto toga sadržaoce za kutiju ili tabelu.\n"
+
+#: ../glade/editor.c:3517
+msgid "Couldn't delete widget."
+msgstr "Ne može da obriše element."
+
+#: ../glade/editor.c:3541 ../glade/editor.c:3545
+msgid "The widget can't be deleted"
+msgstr "Element se ne može obrisati"
+
+#: ../glade/editor.c:3572
+msgid ""
+"The widget is created automatically as part of the parent widget, and it "
+"can't be deleted."
+msgstr ""
+"Ovaj element je napravljen automatski kao deo nadređenog elementa, i ne može "
+"se obrisati."
+
+#: ../glade/gbwidget.c:697
+msgid "Border Width:"
+msgstr "Širina Ivice:"
+
+#: ../glade/gbwidget.c:698
+msgid "The width of the border around the container"
+msgstr "Širina ivice oko sadržaoca"
+
+#: ../glade/gbwidget.c:1745
+msgid "Select"
+msgstr "Odaberite"
+
+#: ../glade/gbwidget.c:1767
+msgid "Remove Scrolled Window"
+msgstr "Ukloni prozor sa klizačem"
+
+#: ../glade/gbwidget.c:1776
+msgid "Add Scrolled Window"
+msgstr "Dodaj prozor sa klizačem"
+
+#: ../glade/gbwidget.c:1797
+msgid "Remove Alignment"
+msgstr "Ukloni poravnanje"
+
+#: ../glade/gbwidget.c:1805
+msgid "Add Alignment"
+msgstr "Dodaj poravnanje"
+
+#: ../glade/gbwidget.c:1820
+msgid "Remove Event Box"
+msgstr "Ukloni kutiju događaja"
+
+#: ../glade/gbwidget.c:1828
+msgid "Add Event Box"
+msgstr "Dodaj kutiju događaja"
+
+#: ../glade/gbwidget.c:1838
+msgid "Redisplay"
+msgstr "Prikaži ponovo"
+
+#: ../glade/gbwidget.c:1849
+msgid "Cut"
+msgstr "Iseci"
+
+#: ../glade/gbwidget.c:1856 ../glade/property.c:892 ../glade/property.c:5135
+msgid "Copy"
+msgstr "Kopiraj"
+
+#: ../glade/gbwidget.c:1865 ../glade/property.c:904
+msgid "Paste"
+msgstr "Ubaci"
+
+#: ../glade/gbwidget.c:1877 ../glade/property.c:1580 ../glade/property.c:5126
+msgid "Delete"
+msgstr "Obriši"
+
+#. N/A stands for 'Not Applicable'. It is used when a standard widget
+#. property does not apply to the current widget. e.g. widgets without
+#. windows can't use the Events property. This appears in the property
+#. editor and so should be a short abbreviation.
+#: ../glade/gbwidget.c:2403 ../glade/gbwidget.c:2472
+msgid "N/A"
+msgstr "Nije dostupno"
+
+#. General code for container - has to remove all children and add back
+#. NOTE: this may not work for specialised containers.
+#. NOTE: need to ref widgets?
+#: ../glade/gbwidget.c:3202
+msgid "replacing child of container - not implemented yet\n"
+msgstr "zamena naslednika sadržaoca - još nije sprovedeno\n"
+
+#: ../glade/gbwidget.c:3430
+msgid "Couldn't insert GtkAlignment widget."
+msgstr "Ne može da umetne GtkAlignment element."
+
+#: ../glade/gbwidget.c:3470
+msgid "Couldn't remove GtkAlignment widget."
+msgstr "Ne može da ukloni GtkAlignment element."
+
+#: ../glade/gbwidget.c:3494
+msgid "Couldn't insert GtkEventBox widget."
+msgstr "Ne može da umetne GtkEventBox element."
+
+#: ../glade/gbwidget.c:3533
+msgid "Couldn't remove GtkEventBox widget."
+msgstr "Ne može da ukloni GtkEventBox element."
+
+#: ../glade/gbwidget.c:3568
+msgid "Couldn't insert GtkScrolledWindow widget."
+msgstr "Ne može da umetne GtkScrolledWindow element."
+
+#: ../glade/gbwidget.c:3607
+msgid "Couldn't remove GtkScrolledWindow widget."
+msgstr "Ne može da ukloni GtkScrolledWindow element."
+
+#: ../glade/gbwidget.c:3721
+msgid "Remove Label"
+msgstr "Ukloni oznaku"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:78
+#, fuzzy
+msgid "Application Name"
+msgstr "Gnom programska linija"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:102 ../glade/gnome/gnomeabout.c:137
+msgid "Logo:"
+msgstr "Logo:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:102 ../glade/gnome/gnomeabout.c:137
+msgid "The pixmap to use as the logo"
+msgstr "Piksmapa koja se koristi kao logo"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:104 ../glade/glade_project_options.c:260
+msgid "Program Name:"
+msgstr "Ime programa:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:104
+#, fuzzy
+msgid "The name of the application"
+msgstr "Ime elementa"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:105 ../glade/gnome/gnomeabout.c:139
+msgid "Comments:"
+msgstr "Komentari:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:105
+#, fuzzy
+msgid "Additional information, such as a description of the application"
+msgstr ""
+"Dodatne informacije kao što su opis paketa i njegova matična stranica na vebu"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:106 ../glade/gnome/gnomeabout.c:138
+msgid "Copyright:"
+msgstr "Autorska prava:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:106 ../glade/gnome/gnomeabout.c:138
+msgid "The copyright notice"
+msgstr "Poruka o autorskim pravima"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:108
+msgid "Website URL:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:108
+#, fuzzy
+msgid "The URL of the application's website"
+msgstr "Da li će se izgraditi Gnom aplikacija"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:109
+#, fuzzy
+msgid "Website Label:"
+msgstr "Oznaka menija:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:109
+#, fuzzy
+msgid "The label to display for the link to the website"
+msgstr "Slika koja se prikazuje duž vrha strane"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:111 ../glade/glade_project_options.c:365
+msgid "License:"
+msgstr "Licenca:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:111
+#, fuzzy
+msgid "The license details of the application"
+msgstr "Stil reljefa dugmeta"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:113 ../glade/gnome/gnomeabout.c:141
+msgid "Authors:"
+msgstr "Autori:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:113 ../glade/gnome/gnomeabout.c:141
+msgid "The authors of the package, one on each line"
+msgstr "Autori paketa, po jedan na liniji"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:114 ../glade/gnome/gnomeabout.c:142
+msgid "Documenters:"
+msgstr "Pisci dokumentacije:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:114 ../glade/gnome/gnomeabout.c:142
+msgid "The documenters of the package, one on each line"
+msgstr "Pisci dokumentacije, po jedan na liniji"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:115
+msgid "Artists:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:115
+#, fuzzy
+msgid ""
+"The people who have created the artwork for the package, one on each line"
+msgstr "Autori paketa, po jedan na liniji"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:116 ../glade/gnome/gnomeabout.c:143
+msgid "Translators:"
+msgstr "Prevodioci:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:116 ../glade/gnome/gnomeabout.c:143
+msgid ""
+"The translators of the package. This should normally be left empty so that "
+"translators can add their names in the po files"
+msgstr ""
+"Prevodioci paketa. Ovde ostaviti prazan prostor da bi prevodioci mogli da "
+"dodaju svoja imena u po datotekama"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:559
+#, fuzzy
+msgid "About Dialog"
+msgstr "Gnomovo prozorče o programu"
+
+#: ../glade/gbwidgets/gbaccellabel.c:200
+msgid "Label with Accelerator"
+msgstr "Oznaka sa ubrzavačem"
+
+#. The GtkProgress interface is deprecated now, and GtkProgressBar doesn't
+#. have functions to set these, so I suppose we shouldn't support them.
+#: ../glade/gbwidgets/gbalignment.c:71 ../glade/gbwidgets/gbarrow.c:89
+#: ../glade/gbwidgets/gbaspectframe.c:130 ../glade/gbwidgets/gbimage.c:119
+#: ../glade/gbwidgets/gblabel.c:180 ../glade/gbwidgets/gbprogressbar.c:162
+msgid "X Align:"
+msgstr "X poravnanje:"
+
+#: ../glade/gbwidgets/gbalignment.c:72
+msgid "The horizontal alignment of the child widget"
+msgstr "Vodoravno poravnanje sadržanog elementa"
+
+#: ../glade/gbwidgets/gbalignment.c:74 ../glade/gbwidgets/gbarrow.c:92
+#: ../glade/gbwidgets/gbaspectframe.c:133 ../glade/gbwidgets/gbimage.c:122
+#: ../glade/gbwidgets/gblabel.c:183 ../glade/gbwidgets/gbprogressbar.c:165
+msgid "Y Align:"
+msgstr "Y poravnanje:"
+
+#: ../glade/gbwidgets/gbalignment.c:75
+msgid "The vertical alignment of the child widget"
+msgstr "Vertikalno poravnanje sadržanog elementa"
+
+#: ../glade/gbwidgets/gbalignment.c:77
+msgid "X Scale:"
+msgstr "X širina:"
+
+#: ../glade/gbwidgets/gbalignment.c:78
+msgid "The horizontal scale of the child widget"
+msgstr "Vodoravna širina sadržanog elementa"
+
+#: ../glade/gbwidgets/gbalignment.c:80
+msgid "Y Scale:"
+msgstr "Y širina:"
+
+#: ../glade/gbwidgets/gbalignment.c:81
+msgid "The vertical scale of the child widget"
+msgstr "Vertikalna širina sadržanog elementa"
+
+#: ../glade/gbwidgets/gbalignment.c:85
+msgid "Top Padding:"
+msgstr "Popunjavanje od vrha:"
+
+#: ../glade/gbwidgets/gbalignment.c:86
+msgid "Space to put above the child widget"
+msgstr "Razmak koji se ostavlja iznad sadržanog elementa"
+
+#: ../glade/gbwidgets/gbalignment.c:89
+msgid "Bottom Padding:"
+msgstr "Popunjavanje od dna:"
+
+#: ../glade/gbwidgets/gbalignment.c:90
+msgid "Space to put below the child widget"
+msgstr "Razmak koji se ostavlja ispod sadržanog elementa"
+
+#: ../glade/gbwidgets/gbalignment.c:93
+msgid "Left Padding:"
+msgstr "Levo popunjavanje:"
+
+#: ../glade/gbwidgets/gbalignment.c:94
+msgid "Space to put to the left of the child widget"
+msgstr "Razmak koji se ostavlja sa leve strane sadržanog elementa"
+
+#: ../glade/gbwidgets/gbalignment.c:97
+msgid "Right Padding:"
+msgstr "Desno popunjavanje:"
+
+#: ../glade/gbwidgets/gbalignment.c:98
+msgid "Space to put to the right of the child widget"
+msgstr "Razmak koji se ostavlja sa desne strane sadržanog elementa"
+
+#: ../glade/gbwidgets/gbalignment.c:255
+msgid "Alignment"
+msgstr "Poravnanje"
+
+#: ../glade/gbwidgets/gbarrow.c:85
+msgid "Direction:"
+msgstr "Smer:"
+
+#: ../glade/gbwidgets/gbarrow.c:85
+msgid "The direction of the arrow"
+msgstr "Smer strelice"
+
+#: ../glade/gbwidgets/gbarrow.c:87 ../glade/gbwidgets/gbaspectframe.c:128
+#: ../glade/gbwidgets/gbclist.c:247 ../glade/gbwidgets/gbctree.c:253
+#: ../glade/gbwidgets/gbframe.c:123 ../glade/gbwidgets/gbhandlebox.c:109
+#: ../glade/gbwidgets/gbviewport.c:104 ../glade/gnome/bonobodockitem.c:176
+msgid "Shadow:"
+msgstr "Senka:"
+
+#: ../glade/gbwidgets/gbarrow.c:87
+msgid "The shadow type of the arrow"
+msgstr "Vrsta senke strelice"
+
+#: ../glade/gbwidgets/gbarrow.c:90
+msgid "The horizontal alignment of the arrow"
+msgstr "Vodoravno poravnanje strelice"
+
+#: ../glade/gbwidgets/gbarrow.c:93
+msgid "The vertical alignment of the arrow"
+msgstr "Vertikalno poravnanje strelice"
+
+#: ../glade/gbwidgets/gbarrow.c:95 ../glade/gbwidgets/gbimage.c:125
+#: ../glade/gbwidgets/gblabel.c:186
+msgid "X Pad:"
+msgstr "X popuna:"
+
+#: ../glade/gbwidgets/gbarrow.c:95 ../glade/gbwidgets/gbimage.c:125
+#: ../glade/gbwidgets/gblabel.c:186 ../glade/gbwidgets/gbtable.c:382
+msgid "The horizontal padding"
+msgstr "Vodoravna popuna"
+
+#: ../glade/gbwidgets/gbarrow.c:97 ../glade/gbwidgets/gbimage.c:127
+#: ../glade/gbwidgets/gblabel.c:188
+msgid "Y Pad:"
+msgstr "Y popuna:"
+
+#: ../glade/gbwidgets/gbarrow.c:97 ../glade/gbwidgets/gbimage.c:127
+#: ../glade/gbwidgets/gblabel.c:188 ../glade/gbwidgets/gbtable.c:385
+msgid "The vertical padding"
+msgstr "Vertikalna popuna"
+
+#: ../glade/gbwidgets/gbarrow.c:299
+msgid "Arrow"
+msgstr "Strelica"
+
+#: ../glade/gbwidgets/gbaspectframe.c:122 ../glade/gbwidgets/gbframe.c:117
+msgid "Label X Align:"
+msgstr "Oznaka X poravnanja:"
+
+#: ../glade/gbwidgets/gbaspectframe.c:123 ../glade/gbwidgets/gbframe.c:118
+msgid "The horizontal alignment of the frame's label widget"
+msgstr "Vodoravno poravnanje elementa za oznaku okvira"
+
+#: ../glade/gbwidgets/gbaspectframe.c:125 ../glade/gbwidgets/gbframe.c:120
+msgid "Label Y Align:"
+msgstr "Oznaka Y poravnanja:"
+
+#: ../glade/gbwidgets/gbaspectframe.c:126 ../glade/gbwidgets/gbframe.c:121
+msgid "The vertical alignment of the frame's label widget"
+msgstr "Vertikalno poravnanje elementa oznake okvira"
+
+#: ../glade/gbwidgets/gbaspectframe.c:128 ../glade/gbwidgets/gbframe.c:123
+msgid "The type of shadow of the frame"
+msgstr "Vrsta senke okvira"
+
+#: ../glade/gbwidgets/gbaspectframe.c:131
+#: ../glade/gbwidgets/gbaspectframe.c:134
+msgid "The horizontal alignment of the frame's child"
+msgstr "Vodoravno poravnanje naslednika okvira"
+
+#: ../glade/gbwidgets/gbaspectframe.c:136
+msgid "Ratio:"
+msgstr "Odnos:"
+
+#: ../glade/gbwidgets/gbaspectframe.c:137
+msgid "The aspect ratio of the frame's child"
+msgstr "Odnos pogleda naslednika okvira"
+
+#: ../glade/gbwidgets/gbaspectframe.c:138
+msgid "Obey Child:"
+msgstr "Poštuj naslednika:"
+
+#: ../glade/gbwidgets/gbaspectframe.c:139
+msgid "If the aspect ratio should be determined by the child"
+msgstr "Da li se se odnos pogleda određuje prema nasledniku"
+
+#: ../glade/gbwidgets/gbaspectframe.c:319
+msgid "Aspect Frame"
+msgstr "Okvir pogleda"
+
+#: ../glade/gbwidgets/gbbutton.c:118 ../glade/gbwidgets/gbcheckbutton.c:85
+#: ../glade/gbwidgets/gbmenutoolbutton.c:85
+#: ../glade/gbwidgets/gbradiobutton.c:126
+#: ../glade/gbwidgets/gbradiotoolbutton.c:133
+#: ../glade/gbwidgets/gbtogglebutton.c:88
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:90
+#: ../glade/gbwidgets/gbtoolbutton.c:104
+msgid "Stock Button:"
+msgstr "Uobičajeno dugme:"
+
+#: ../glade/gbwidgets/gbbutton.c:119 ../glade/gbwidgets/gbcheckbutton.c:86
+#: ../glade/gbwidgets/gbmenutoolbutton.c:86
+#: ../glade/gbwidgets/gbradiobutton.c:127
+#: ../glade/gbwidgets/gbradiotoolbutton.c:134
+#: ../glade/gbwidgets/gbtogglebutton.c:89
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:91
+#: ../glade/gbwidgets/gbtoolbutton.c:105
+msgid "The stock button to use"
+msgstr "Uobičajeno dugme koje se koristi"
+
+#. For now we don't support editing the menuitem properties in the property
+#. editor. The menu editor has to be used instead.
+#: ../glade/gbwidgets/gbbutton.c:121 ../glade/gbwidgets/gbcheckbutton.c:88
+#: ../glade/gbwidgets/gbcheckmenuitem.c:72
+#: ../glade/gbwidgets/gbimagemenuitem.c:92 ../glade/gbwidgets/gblabel.c:168
+#: ../glade/gbwidgets/gblistitem.c:73 ../glade/gbwidgets/gbmenuitem.c:87
+#: ../glade/gbwidgets/gbmenutoolbutton.c:88
+#: ../glade/gbwidgets/gbradiobutton.c:129
+#: ../glade/gbwidgets/gbradiomenuitem.c:103
+#: ../glade/gbwidgets/gbradiotoolbutton.c:136
+#: ../glade/gbwidgets/gbtogglebutton.c:91
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:93
+#: ../glade/gbwidgets/gbtoolbutton.c:107 ../glade/glade_menu_editor.c:747
+#: ../glade/gnome/gnomehref.c:68
+msgid "Label:"
+msgstr "Oznaka:"
+
+#: ../glade/gbwidgets/gbbutton.c:121 ../glade/gbwidgets/gbcheckbutton.c:88
+#: ../glade/gbwidgets/gbcheckmenuitem.c:72 ../glade/gbwidgets/gbentry.c:100
+#: ../glade/gbwidgets/gbimagemenuitem.c:92 ../glade/gbwidgets/gblabel.c:168
+#: ../glade/gbwidgets/gblistitem.c:73 ../glade/gbwidgets/gbmenuitem.c:87
+#: ../glade/gbwidgets/gbmenutoolbutton.c:88
+#: ../glade/gbwidgets/gbradiobutton.c:129
+#: ../glade/gbwidgets/gbradiomenuitem.c:103
+#: ../glade/gbwidgets/gbradiotoolbutton.c:136
+#: ../glade/gbwidgets/gbtextview.c:124 ../glade/gbwidgets/gbtogglebutton.c:91
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:93
+#: ../glade/gbwidgets/gbtoolbutton.c:107 ../glade/gnome-db/gnomedbeditor.c:64
+msgid "The text to display"
+msgstr "Tekst za prikaz"
+
+#: ../glade/gbwidgets/gbbutton.c:122 ../glade/gbwidgets/gbcheckbutton.c:89
+#: ../glade/gbwidgets/gbimage.c:107 ../glade/gbwidgets/gbmenutoolbutton.c:89
+#: ../glade/gbwidgets/gbradiobutton.c:130
+#: ../glade/gbwidgets/gbradiotoolbutton.c:137
+#: ../glade/gbwidgets/gbtogglebutton.c:92
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:94
+#: ../glade/gbwidgets/gbtoolbutton.c:108 ../glade/gbwidgets/gbwindow.c:295
+#: ../glade/glade_menu_editor.c:813
+msgid "Icon:"
+msgstr "Ikona:"
+
+#: ../glade/gbwidgets/gbbutton.c:123 ../glade/gbwidgets/gbcheckbutton.c:90
+#: ../glade/gbwidgets/gbimage.c:108 ../glade/gbwidgets/gbmenutoolbutton.c:90
+#: ../glade/gbwidgets/gbradiobutton.c:131
+#: ../glade/gbwidgets/gbradiotoolbutton.c:138
+#: ../glade/gbwidgets/gbtogglebutton.c:93
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:95
+#: ../glade/gbwidgets/gbtoolbutton.c:109
+msgid "The icon to display"
+msgstr "Ikona za prikaz"
+
+#: ../glade/gbwidgets/gbbutton.c:125 ../glade/gbwidgets/gbcheckbutton.c:92
+#: ../glade/gbwidgets/gbradiobutton.c:133
+#: ../glade/gbwidgets/gbtogglebutton.c:95
+msgid "Button Relief:"
+msgstr "Reljef dugmeta:"
+
+#: ../glade/gbwidgets/gbbutton.c:126 ../glade/gbwidgets/gbcheckbutton.c:93
+#: ../glade/gbwidgets/gbradiobutton.c:134
+#: ../glade/gbwidgets/gbtogglebutton.c:96
+msgid "The relief style of the button"
+msgstr "Stil reljefa dugmeta"
+
+#: ../glade/gbwidgets/gbbutton.c:131
+msgid "Response ID:"
+msgstr "ID odgovora:"
+
+#: ../glade/gbwidgets/gbbutton.c:132
+msgid ""
+"The response code returned when the button is pressed. Select one of the "
+"standard responses or enter a positive integer value"
+msgstr ""
+"Šifra odgovora koji se dobija kad se pritisne dugme. Izaberite jedan od "
+"standardnih odgovora ili unesite pozitivnu celobrojnu vrednost"
+
+#: ../glade/gbwidgets/gbbutton.c:137 ../glade/gbwidgets/gbcheckbutton.c:102
+#: ../glade/gbwidgets/gbcolorbutton.c:70 ../glade/gbwidgets/gbcombobox.c:83
+#: ../glade/gbwidgets/gbcomboboxentry.c:82
+#: ../glade/gbwidgets/gbfontbutton.c:78 ../glade/gbwidgets/gbradiobutton.c:148
+#: ../glade/gbwidgets/gbtogglebutton.c:103
+#: ../glade/gnome/gnomecolorpicker.c:76 ../glade/gnome/gnomefontpicker.c:109
+#: ../glade/gnome/gnomehref.c:70
+msgid "Focus On Click:"
+msgstr "Fokusira po kliku:"
+
+#: ../glade/gbwidgets/gbbutton.c:137 ../glade/gbwidgets/gbcheckbutton.c:102
+#: ../glade/gbwidgets/gbcolorbutton.c:70 ../glade/gbwidgets/gbfontbutton.c:78
+#: ../glade/gbwidgets/gbradiobutton.c:148
+#: ../glade/gbwidgets/gbtogglebutton.c:103
+#: ../glade/gnome/gnomecolorpicker.c:76 ../glade/gnome/gnomefontpicker.c:109
+#: ../glade/gnome/gnomehref.c:70
+msgid "If the button grabs focus when it is clicked"
+msgstr "Da li dugme preuzima fokus kada se klikne"
+
+#: ../glade/gbwidgets/gbbutton.c:1502
+msgid "Remove Button Contents"
+msgstr "Uklonite sadržaj dugmeta"
+
+#: ../glade/gbwidgets/gbbutton.c:1600
+msgid "Button"
+msgstr "Dugme"
+
+#: ../glade/gbwidgets/gbcalendar.c:73
+msgid "Heading:"
+msgstr "Naslov:"
+
+#: ../glade/gbwidgets/gbcalendar.c:74
+msgid "If the month and year should be shown at the top"
+msgstr "Da li je na vrhu potrebno prikazati mesec i godinu"
+
+#: ../glade/gbwidgets/gbcalendar.c:75
+msgid "Day Names:"
+msgstr "Imena dana:"
+
+#: ../glade/gbwidgets/gbcalendar.c:76
+msgid "If the day names should be shown"
+msgstr "Da li je potrebno prikazati imena dana"
+
+#: ../glade/gbwidgets/gbcalendar.c:77
+msgid "Fixed Month:"
+msgstr "Fiksni mesec:"
+
+#: ../glade/gbwidgets/gbcalendar.c:78
+msgid "If the month and year shouldn't be changeable"
+msgstr "Da li se mesec i godina ne mogu menjati"
+
+#: ../glade/gbwidgets/gbcalendar.c:79
+msgid "Week Numbers:"
+msgstr "Brojevi sedmice:"
+
+#: ../glade/gbwidgets/gbcalendar.c:80
+msgid "If the number of the week should be shown"
+msgstr "Da li je potrebno prikazati broj sedmice"
+
+#: ../glade/gbwidgets/gbcalendar.c:81 ../glade/gnome/gnomedateedit.c:74
+msgid "Monday First:"
+msgstr "Prvo ponedeljak:"
+
+#: ../glade/gbwidgets/gbcalendar.c:82 ../glade/gnome/gnomedateedit.c:75
+msgid "If the week should start on Monday"
+msgstr "Da li sedmica počinje sa ponedeljkom"
+
+#: ../glade/gbwidgets/gbcalendar.c:266
+msgid "Calendar"
+msgstr "Kalendar"
+
+#: ../glade/gbwidgets/gbcellview.c:63 ../glade/gnome/gnomedruidpageedge.c:102
+#: ../glade/gnome/gnomedruidpagestandard.c:91
+msgid "Back. Color:"
+msgstr "Boja pozadine:"
+
+#: ../glade/gbwidgets/gbcellview.c:64
+#, fuzzy
+msgid "The background color"
+msgstr "Boja pozadine"
+
+#: ../glade/gbwidgets/gbcellview.c:192
+#, fuzzy
+msgid "Cell View"
+msgstr "Tekstualni prikaz"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:96
+#: ../glade/gbwidgets/gbcheckmenuitem.c:73
+#: ../glade/gbwidgets/gbradiobutton.c:137
+#: ../glade/gbwidgets/gbradiomenuitem.c:104
+#: ../glade/gbwidgets/gbradiotoolbutton.c:147
+#: ../glade/gbwidgets/gbtogglebutton.c:99
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:97
+msgid "Initially On:"
+msgstr "Početno uključeno:"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:97
+msgid "If the check button is initially on"
+msgstr "Da li je obeleženo dugme početno uključeno"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:98
+#: ../glade/gbwidgets/gbradiobutton.c:139
+#: ../glade/gbwidgets/gbtogglebutton.c:101
+msgid "Inconsistent:"
+msgstr "Neodređeno:"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:99
+#: ../glade/gbwidgets/gbradiobutton.c:140
+#: ../glade/gbwidgets/gbtogglebutton.c:102
+msgid "If the button is shown in an inconsistent state"
+msgstr "Da li je prikazano dugme u neodređenom stanju"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:100
+#: ../glade/gbwidgets/gbradiobutton.c:141
+msgid "Indicator:"
+msgstr "Pokazivač:"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:101
+#: ../glade/gbwidgets/gbradiobutton.c:142
+msgid "If the indicator is always drawn"
+msgstr "Da li je pokazivač uvek nacrtan"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:211
+msgid "Check Button"
+msgstr "Dugme za označavanje"
+
+#: ../glade/gbwidgets/gbcheckmenuitem.c:74
+msgid "If the check menu item is initially on"
+msgstr "Da li je oznaka stavke menija početno uključena"
+
+#: ../glade/gbwidgets/gbcheckmenuitem.c:203
+msgid "Check Menu Item"
+msgstr "Oznaka stavke menija"
+
+#: ../glade/gbwidgets/gbclist.c:141
+msgid "New columned list"
+msgstr "Nova lista sa stupcima"
+
+#. Columns label & entry
+#: ../glade/gbwidgets/gbclist.c:152 ../glade/gbwidgets/gbctree.c:157
+#: ../glade/gbwidgets/gbhbox.c:110 ../glade/gbwidgets/gbhbuttonbox.c:132
+#: ../glade/gbwidgets/gbtable.c:165
+msgid "Number of columns:"
+msgstr "Broj stubaca:"
+
+#: ../glade/gbwidgets/gbclist.c:242 ../glade/gbwidgets/gbctree.c:248
+#: ../glade/gbwidgets/gbiconview.c:127 ../glade/gbwidgets/gblist.c:77
+#: ../glade/gnome/gnomeiconlist.c:174
+msgid "Select Mode:"
+msgstr "Izaberite način:"
+
+#: ../glade/gbwidgets/gbclist.c:243
+msgid "The selection mode of the columned list"
+msgstr "Izabrani način za listu sa stupcima"
+
+#: ../glade/gbwidgets/gbclist.c:245 ../glade/gbwidgets/gbctree.c:251
+msgid "Show Titles:"
+msgstr "Prikažite naslove:"
+
+#: ../glade/gbwidgets/gbclist.c:246 ../glade/gbwidgets/gbctree.c:252
+msgid "If the column titles are shown"
+msgstr "Da li su naslovi stubaca prikazani"
+
+#: ../glade/gbwidgets/gbclist.c:248
+msgid "The type of shadow of the columned list's border"
+msgstr "Vrsta senke ivice liste sa stupcima"
+
+#: ../glade/gbwidgets/gbclist.c:594
+msgid "Columned List"
+msgstr "Lista sa stupcima"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:65 ../glade/gnome/gnomecolorpicker.c:70
+msgid "Use Alpha:"
+msgstr "Koristi Alfa:"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:66 ../glade/gnome/gnomecolorpicker.c:71
+msgid "If the alpha channel should be used"
+msgstr "Da li se koristi alfa kanal"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:68
+#: ../glade/gbwidgets/gbfilechooserbutton.c:85
+#: ../glade/gbwidgets/gbfontbutton.c:68 ../glade/gbwidgets/gbwindow.c:242
+#: ../glade/gnome/gnomecolorpicker.c:73 ../glade/gnome/gnomedruidpageedge.c:93
+#: ../glade/gnome/gnomedruidpagestandard.c:85
+#: ../glade/gnome/gnomefileentry.c:101 ../glade/gnome/gnomefontpicker.c:95
+#: ../glade/gnome/gnomeiconentry.c:72 ../glade/gnome/gnomepixmapentry.c:82
+msgid "Title:"
+msgstr "Naslov:"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:69 ../glade/gnome/gnomecolorpicker.c:74
+msgid "The title of the color selection dialog"
+msgstr "Naslov prozoročeta za izbora boje"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:91
+#: ../glade/gbwidgets/gbcolorbutton.c:119
+#: ../glade/gbwidgets/gbcolorbutton.c:162
+msgid "Pick a Color"
+msgstr "Izaberite boju"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:211
+msgid "Color Chooser Button"
+msgstr "Dugme za izbor boje"
+
+#: ../glade/gbwidgets/gbcolorselection.c:62
+msgid "Opacity Control:"
+msgstr "Opacity Control:"
+
+#: ../glade/gbwidgets/gbcolorselection.c:63
+msgid "If the opacity control is shown"
+msgstr "Da li je prikazana kontrola neprovidnosti"
+
+#: ../glade/gbwidgets/gbcolorselection.c:64
+msgid "Palette:"
+msgstr "Paleta:"
+
+#: ../glade/gbwidgets/gbcolorselection.c:65
+msgid "If the palette is shown"
+msgstr "Da li je paleta prikazana"
+
+#: ../glade/gbwidgets/gbcolorselection.c:173
+msgid "Color Selection"
+msgstr "Izbor boje"
+
+#: ../glade/gbwidgets/gbcolorselectiondialog.c:70
+msgid "Select Color"
+msgstr "Izaberite boju"
+
+#: ../glade/gbwidgets/gbcolorselectiondialog.c:315 ../glade/property.c:1275
+msgid "Color Selection Dialog"
+msgstr "Prozorče za izbor boje"
+
+#: ../glade/gbwidgets/gbcombo.c:105
+msgid "Value In List:"
+msgstr "Vrednost u listi:"
+
+#: ../glade/gbwidgets/gbcombo.c:106
+msgid "If the value must be in the list"
+msgstr "Da li vrednost mora biti u listi"
+
+#: ../glade/gbwidgets/gbcombo.c:107
+msgid "OK If Empty:"
+msgstr "OK ako je prazno:"
+
+#: ../glade/gbwidgets/gbcombo.c:108
+msgid "If an empty value is acceptable, when 'Value In List' is set"
+msgstr ""
+"Da li je prazna vrednost prihvatljiva, kad je 'Vrednost u listi' postavljena"
+
+#: ../glade/gbwidgets/gbcombo.c:109
+msgid "Case Sensitive:"
+msgstr "Osetljivo na velika i mala slova:"
+
+#: ../glade/gbwidgets/gbcombo.c:110
+msgid "If the searching is case sensitive"
+msgstr "Da li je pretraga osetljiva na velika i mala slova"
+
+#: ../glade/gbwidgets/gbcombo.c:111
+msgid "Use Arrows:"
+msgstr "Koristite strelice:"
+
+#: ../glade/gbwidgets/gbcombo.c:112
+msgid "If arrows can be used to change the value"
+msgstr "Da li se strelice mogu koristiti za promenu vrednosti"
+
+#: ../glade/gbwidgets/gbcombo.c:113
+msgid "Use Always:"
+msgstr "Uvek koristite:"
+
+#: ../glade/gbwidgets/gbcombo.c:114
+msgid "If arrows work even if the value is not in the list"
+msgstr "Da li strelice rade čak iako vrednost nije na listi"
+
+#: ../glade/gbwidgets/gbcombo.c:115 ../glade/gbwidgets/gbcombobox.c:78
+#: ../glade/gbwidgets/gbcomboboxentry.c:75
+msgid "Items:"
+msgstr "Stavke:"
+
+#: ../glade/gbwidgets/gbcombo.c:116 ../glade/gbwidgets/gbcombobox.c:79
+#: ../glade/gbwidgets/gbcomboboxentry.c:76
+msgid "The items in the combo list, one per line"
+msgstr "Stavke u kombinovanoj listi, jedna po liniji"
+
+#: ../glade/gbwidgets/gbcombo.c:425 ../glade/gbwidgets/gbcombobox.c:289
+msgid "Combo Box"
+msgstr "Kombinovana kućica"
+
+#: ../glade/gbwidgets/gbcombobox.c:81 ../glade/gbwidgets/gbcomboboxentry.c:78
+msgid "Add Tearoffs:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcombobox.c:82 ../glade/gbwidgets/gbcomboboxentry.c:79
+msgid "Whether dropdowns should have a tearoff menu item"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcombobox.c:84 ../glade/gbwidgets/gbcomboboxentry.c:83
+#, fuzzy
+msgid "Whether the combo box grabs focus when it is clicked"
+msgstr "Da li dugme preuzima fokus kada se klikne"
+
+#: ../glade/gbwidgets/gbcomboboxentry.c:80 ../glade/gbwidgets/gbentry.c:102
+msgid "Has Frame:"
+msgstr "Ima okvir:"
+
+#: ../glade/gbwidgets/gbcomboboxentry.c:81
+msgid "Whether the combo box draws a frame around the child"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcomboboxentry.c:302
+msgid "Combo Box Entry"
+msgstr "Kombinovana kućica za unos"
+
+#: ../glade/gbwidgets/gbctree.c:146
+msgid "New columned tree"
+msgstr "Novo stablo sa stupcima"
+
+#: ../glade/gbwidgets/gbctree.c:249
+msgid "The selection mode of the columned tree"
+msgstr "Način izabiranja za stablo sa stupcima"
+
+#: ../glade/gbwidgets/gbctree.c:254
+msgid "The type of shadow of the columned tree's border"
+msgstr "Vrsta senke ivice stabla sa stupcima"
+
+#: ../glade/gbwidgets/gbctree.c:538
+msgid "Columned Tree"
+msgstr "Stablo sa stupcima"
+
+#: ../glade/gbwidgets/gbcurve.c:85 ../glade/gbwidgets/gbwindow.c:245
+msgid "Type:"
+msgstr "Vrsta:"
+
+#: ../glade/gbwidgets/gbcurve.c:85
+msgid "The type of the curve"
+msgstr "Vrsta zakrivljenja"
+
+#: ../glade/gbwidgets/gbcurve.c:87 ../glade/gbwidgets/gbgammacurve.c:91
+msgid "X Min:"
+msgstr "X Min:"
+
+#: ../glade/gbwidgets/gbcurve.c:87 ../glade/gbwidgets/gbgammacurve.c:91
+msgid "The minimum horizontal value"
+msgstr "Najniža vodoravna vrednost"
+
+#: ../glade/gbwidgets/gbcurve.c:88 ../glade/gbwidgets/gbgammacurve.c:92
+msgid "X Max:"
+msgstr "X Maks:"
+
+#: ../glade/gbwidgets/gbcurve.c:88 ../glade/gbwidgets/gbgammacurve.c:92
+msgid "The maximum horizontal value"
+msgstr "Najviša vodoravna vrednost"
+
+#: ../glade/gbwidgets/gbcurve.c:89 ../glade/gbwidgets/gbgammacurve.c:93
+msgid "Y Min:"
+msgstr "Y Min:"
+
+#: ../glade/gbwidgets/gbcurve.c:89 ../glade/gbwidgets/gbgammacurve.c:93
+msgid "The minimum vertical value"
+msgstr "Najniža vertikalna vrednost"
+
+#: ../glade/gbwidgets/gbcurve.c:90 ../glade/gbwidgets/gbgammacurve.c:94
+msgid "Y Max:"
+msgstr "Y Maks:"
+
+#: ../glade/gbwidgets/gbcurve.c:90 ../glade/gbwidgets/gbgammacurve.c:94
+msgid "The maximum vertical value"
+msgstr "Najviša vertikalna vrednost"
+
+#: ../glade/gbwidgets/gbcurve.c:250
+msgid "Curve"
+msgstr "Kriva"
+
+#: ../glade/gbwidgets/gbcustom.c:154
+msgid "Creation Function:"
+msgstr "Funkcija stvaranja:"
+
+#: ../glade/gbwidgets/gbcustom.c:155
+msgid "The function which creates the widget"
+msgstr "Funkcija koja stvara formu"
+
+#: ../glade/gbwidgets/gbcustom.c:157
+msgid "String1:"
+msgstr "Niz1:"
+
+#: ../glade/gbwidgets/gbcustom.c:158
+msgid "The first string argument to pass to the function"
+msgstr "Prvi niz koji se predaje funkciji kao argument"
+
+#: ../glade/gbwidgets/gbcustom.c:159
+msgid "String2:"
+msgstr "Niz2:"
+
+#: ../glade/gbwidgets/gbcustom.c:160
+msgid "The second string argument to pass to the function"
+msgstr "Drugi niz koji se predaje funkciji kao argument"
+
+#: ../glade/gbwidgets/gbcustom.c:161
+msgid "Int1:"
+msgstr "CeoBroj1:"
+
+#: ../glade/gbwidgets/gbcustom.c:162
+msgid "The first integer argument to pass to the function"
+msgstr "Prvi ceo broj koji se predaje funkciji kao argument"
+
+#: ../glade/gbwidgets/gbcustom.c:163
+msgid "Int2:"
+msgstr "CeoBroj2:"
+
+#: ../glade/gbwidgets/gbcustom.c:164
+msgid "The second integer argument to pass to the function"
+msgstr "Drugi ceo broj koji se predaje funkciji kao argument"
+
+#: ../glade/gbwidgets/gbcustom.c:380
+msgid "Custom Widget"
+msgstr "Proizvoljni elemenet"
+
+#: ../glade/gbwidgets/gbdialog.c:292
+msgid "New dialog"
+msgstr "Novo prozorče"
+
+#: ../glade/gbwidgets/gbdialog.c:304
+msgid "Cancel, OK"
+msgstr "Odustani, U redu"
+
+#: ../glade/gbwidgets/gbdialog.c:313 ../glade/glade.c:367
+#: ../glade/glade_project_window.c:1316 ../glade/property.c:5156
+msgid "OK"
+msgstr "U redu"
+
+#: ../glade/gbwidgets/gbdialog.c:322
+msgid "Cancel, Apply, OK"
+msgstr "Odustani, Primeni, U redu"
+
+#: ../glade/gbwidgets/gbdialog.c:331
+msgid "Close"
+msgstr "Zatvori"
+
+#: ../glade/gbwidgets/gbdialog.c:340
+msgid "_Standard Button Layout:"
+msgstr "_Standardni izgled dugmeta:"
+
+#: ../glade/gbwidgets/gbdialog.c:349
+msgid "_Number of Buttons:"
+msgstr "_Broj dugmadi:"
+
+#: ../glade/gbwidgets/gbdialog.c:366
+msgid "Show Help Button"
+msgstr "Prikaži dugme za pomoć"
+
+#: ../glade/gbwidgets/gbdialog.c:397
+msgid "Has Separator:"
+msgstr "Ima razdvajač:"
+
+#: ../glade/gbwidgets/gbdialog.c:398
+msgid "If the dialog has a horizontal separator above the buttons"
+msgstr "Da li prozorče ima vodoravni razdvajač iznad dugmadi"
+
+#: ../glade/gbwidgets/gbdialog.c:605
+msgid "Dialog"
+msgstr "Prozorče"
+
+#: ../glade/gbwidgets/gbdrawingarea.c:146
+msgid "Drawing Area"
+msgstr "Oblast za crtanje"
+
+#: ../glade/gbwidgets/gbentry.c:94 ../glade/gbwidgets/gbtextview.c:115
+#: ../glade/gnome-db/gnomedbeditor.c:62
+msgid "Editable:"
+msgstr "Izmenjiv:"
+
+#: ../glade/gbwidgets/gbentry.c:94 ../glade/gbwidgets/gbtextview.c:116
+#: ../glade/gnome-db/gnomedbeditor.c:62
+msgid "If the text can be edited"
+msgstr "Da li se tekst može menjati"
+
+#: ../glade/gbwidgets/gbentry.c:95
+msgid "Text Visible:"
+msgstr "Tekst vidljiv:"
+
+#: ../glade/gbwidgets/gbentry.c:96
+msgid ""
+"If the text entered by the user will be shown. When turned off, the text "
+"typed in is displayed as asterix characters, which is useful for entering "
+"passwords"
+msgstr ""
+"Da li će se tekst koji je korisnik uneo videti. Kad je isključeno, tekst "
+"koji se unosi se prikazuje kao niz zvezdica, što je korisno za unošenje "
+"lozinki"
+
+#: ../glade/gbwidgets/gbentry.c:97
+msgid "Max Length:"
+msgstr "Najveća dužina:"
+
+#: ../glade/gbwidgets/gbentry.c:98
+msgid "The maximum length of the text"
+msgstr "Najveća dužina teksta"
+
+#: ../glade/gbwidgets/gbentry.c:100 ../glade/gbwidgets/gbprogressbar.c:143
+#: ../glade/gbwidgets/gbtextview.c:124 ../glade/gnome-db/gnomedbeditor.c:64
+#: ../glade/gnome-db/gnomedbgraybar.c:59
+#: ../glade/gnome/gnomedruidpageedge.c:95 ../glade/property.c:926
+msgid "Text:"
+msgstr "Tekst:"
+
+#: ../glade/gbwidgets/gbentry.c:102
+msgid "If the entry has a frame around it"
+msgstr "Da li unos ima oko sebe okvir"
+
+#: ../glade/gbwidgets/gbentry.c:103
+msgid "Invisible Char:"
+msgstr "Nevidljivi znak:"
+
+#: ../glade/gbwidgets/gbentry.c:103
+msgid ""
+"The character to use if the text should not visible, e.g. when entering "
+"passwords"
+msgstr ""
+"Znak koji će se koristiti ukoliko se ne želi da se tekst ne vidi, npr. "
+"prilikom unosa lozinki"
+
+#: ../glade/gbwidgets/gbentry.c:104
+msgid "Activates Default:"
+msgstr "Aktivira podrazumevano:"
+
+#: ../glade/gbwidgets/gbentry.c:104
+msgid "If the default widget in the window is activated when Enter is pressed"
+msgstr ""
+"Da li je podrazumevani element u prozoru aktiviran kad se pritisne Enter"
+
+#: ../glade/gbwidgets/gbentry.c:105
+msgid "Width In Chars:"
+msgstr "Širina (znakova):"
+
+#: ../glade/gbwidgets/gbentry.c:105
+msgid "The number of characters to leave space for in the entry"
+msgstr "Broj znakova za koje treba ostaviti mesta u unosu"
+
+#: ../glade/gbwidgets/gbentry.c:318
+msgid "Text Entry"
+msgstr "Unos teksta"
+
+#: ../glade/gbwidgets/gbeventbox.c:65
+msgid "Visible Window:"
+msgstr "Vidljivi prozor:"
+
+#: ../glade/gbwidgets/gbeventbox.c:65
+msgid "If the event box uses a visible window"
+msgstr "Da li kućica događaja koristi vidljivi prozor"
+
+#: ../glade/gbwidgets/gbeventbox.c:66
+msgid "Above Child:"
+msgstr "Iznad sadržanog:"
+
+#: ../glade/gbwidgets/gbeventbox.c:66
+msgid "If the event box window is above the child widget's window"
+msgstr "Da li je kućica događaja iznad prozora sadržanog elementa"
+
+#: ../glade/gbwidgets/gbeventbox.c:167
+msgid "Event Box"
+msgstr "Kućica događaja"
+
+#: ../glade/gbwidgets/gbexpander.c:54
+msgid "Initially Expanded:"
+msgstr "Rašireno na početku:"
+
+#: ../glade/gbwidgets/gbexpander.c:55
+msgid "Whether the expander is initially opened to reveal the child widget"
+msgstr ""
+"Da li je razgranik na početku raširen kako bi se video sadržani element"
+
+#: ../glade/gbwidgets/gbexpander.c:57 ../glade/gbwidgets/gbhbox.c:175
+#: ../glade/gbwidgets/gbhbuttonbox.c:199 ../glade/gbwidgets/gbvbox.c:160
+msgid "Spacing:"
+msgstr "Razmak:"
+
+#: ../glade/gbwidgets/gbexpander.c:58
+msgid "Space to put between the label and the child"
+msgstr "Razmak između oznake i sadržanog elementa"
+
+#: ../glade/gbwidgets/gbexpander.c:105 ../glade/gbwidgets/gbframe.c:225
+msgid "Add Label Widget"
+msgstr "Dodaj element oznake"
+
+#: ../glade/gbwidgets/gbexpander.c:228
+msgid "Expander"
+msgstr "Razgranik"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:86
+#, fuzzy
+msgid "The window title of the file chooser dialog"
+msgstr "Naslov prozorčeta za izbora datoteke"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:87
+#: ../glade/gbwidgets/gbfilechooserwidget.c:86
+#: ../glade/gbwidgets/gbfilechooserdialog.c:156
+#: ../glade/gnome/gnomefileentry.c:109
+msgid "Action:"
+msgstr "Radnja:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:88
+#: ../glade/gbwidgets/gbfilechooserwidget.c:87
+#: ../glade/gbwidgets/gbfilechooserdialog.c:157
+#: ../glade/gnome/gnomefileentry.c:110
+msgid "The type of file operation being performed"
+msgstr "Vrsta operacije nad datotekom koja se izvodi"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:90
+#: ../glade/gbwidgets/gbfilechooserwidget.c:89
+#: ../glade/gbwidgets/gbfilechooserdialog.c:159
+msgid "Local Only:"
+msgstr "Samo lokalne:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:91
+#: ../glade/gbwidgets/gbfilechooserwidget.c:90
+#: ../glade/gbwidgets/gbfilechooserdialog.c:160
+msgid "Whether the selected files should be limited to local files"
+msgstr "Da li treba ograničiti izbor datoteka na lokalne datoteke"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:92
+#: ../glade/gbwidgets/gbfilechooserwidget.c:93
+#: ../glade/gbwidgets/gbfilechooserdialog.c:163
+msgid "Show Hidden:"
+msgstr "Prikaži sakrivene:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:93
+#: ../glade/gbwidgets/gbfilechooserwidget.c:94
+#: ../glade/gbwidgets/gbfilechooserdialog.c:164
+msgid "Whether the hidden files and folders should be displayed"
+msgstr "Da li se prikazuju sakrivene datoteke i direktorijumi"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:94
+#: ../glade/gbwidgets/gblabel.c:200
+#, fuzzy
+msgid "Width in Chars:"
+msgstr "Širina (znakova):"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:95
+#, fuzzy
+msgid "The width of the button in characters"
+msgstr "Širina oblasti prikaza"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:283
+#, fuzzy
+msgid "File Chooser Button"
+msgstr "Dugme za izbor fonta"
+
+#: ../glade/gbwidgets/gbfilechooserwidget.c:91
+#: ../glade/gbwidgets/gbfilechooserdialog.c:161
+msgid "Select Multiple:"
+msgstr "Višestruki izbor:"
+
+#: ../glade/gbwidgets/gbfilechooserwidget.c:92
+#: ../glade/gbwidgets/gbfilechooserdialog.c:162
+msgid "Whether to allow multiple files to be selected"
+msgstr "Da li da dozvoli izbor više datoteka"
+
+#: ../glade/gbwidgets/gbfilechooserwidget.c:260
+msgid "File Chooser"
+msgstr "Izbor datoteke"
+
+#: ../glade/gbwidgets/gbfilechooserdialog.c:421
+msgid "File Chooser Dialog"
+msgstr "Prozorče za izbor datoteke"
+
+#: ../glade/gbwidgets/gbfileselection.c:71 ../glade/property.c:1365
+msgid "Select File"
+msgstr "Odaberi datoteku"
+
+#: ../glade/gbwidgets/gbfileselection.c:113
+msgid "File Ops.:"
+msgstr "Op. datoteke:"
+
+#: ../glade/gbwidgets/gbfileselection.c:114
+msgid "If the file operation buttons are shown"
+msgstr "Da li su prikazana dugmad za operacije sa datotekama"
+
+#: ../glade/gbwidgets/gbfileselection.c:292
+msgid "File Selection Dialog"
+msgstr "Prozorče za izbor datoteke"
+
+#: ../glade/gbwidgets/gbfixed.c:139 ../glade/gbwidgets/gblayout.c:221
+msgid "X:"
+msgstr "X:"
+
+#: ../glade/gbwidgets/gbfixed.c:140
+msgid "The X coordinate of the widget in the GtkFixed"
+msgstr "X koordinata elementa u GtkFixed"
+
+#: ../glade/gbwidgets/gbfixed.c:142 ../glade/gbwidgets/gblayout.c:224
+msgid "Y:"
+msgstr "Y:"
+
+#: ../glade/gbwidgets/gbfixed.c:143
+msgid "The Y coordinate of the widget in the GtkFixed"
+msgstr "Y koordinata elementa u GtkFixed"
+
+#: ../glade/gbwidgets/gbfixed.c:228
+msgid "Fixed Positions"
+msgstr "Utvrđeni položaji"
+
+#: ../glade/gbwidgets/gbfontbutton.c:69 ../glade/gnome/gnomefontpicker.c:96
+msgid "The title of the font selection dialog"
+msgstr "Naslov prozorčeta za izbor fonta"
+
+#: ../glade/gbwidgets/gbfontbutton.c:70
+msgid "Show Style:"
+msgstr "Prikaži stil:"
+
+#: ../glade/gbwidgets/gbfontbutton.c:71
+msgid "If the font style is shown as part of the font information"
+msgstr "Da li se stil fonta prikazuje kao deo podataka o fontu"
+
+#: ../glade/gbwidgets/gbfontbutton.c:72 ../glade/gnome/gnomefontpicker.c:102
+msgid "Show Size:"
+msgstr "Prikaži veličinu:"
+
+#: ../glade/gbwidgets/gbfontbutton.c:73 ../glade/gnome/gnomefontpicker.c:103
+msgid "If the font size is shown as part of the font information"
+msgstr "Da li se veličina fonta prikazuje kao deo podataka o fontu"
+
+#: ../glade/gbwidgets/gbfontbutton.c:74 ../glade/gnome/gnomefontpicker.c:104
+msgid "Use Font:"
+msgstr "Koristi font:"
+
+#: ../glade/gbwidgets/gbfontbutton.c:75 ../glade/gnome/gnomefontpicker.c:105
+msgid "If the selected font is used when displaying the font information"
+msgstr "Da li se izabrani font koristi prilikom prikaza podataka o fontu"
+
+#: ../glade/gbwidgets/gbfontbutton.c:76 ../glade/gnome/gnomefontpicker.c:106
+msgid "Use Size:"
+msgstr "Koristi veličinu:"
+
+# bug: "if" -> "If" (capitalization)
+#: ../glade/gbwidgets/gbfontbutton.c:77
+msgid "if the selected font size is used when displaying the font information"
+msgstr ""
+"Da li se izabrana veličina fonta koristi prilikom prikaza podataka o fontu"
+
+#: ../glade/gbwidgets/gbfontbutton.c:97 ../glade/gbwidgets/gbfontbutton.c:133
+#: ../glade/gbwidgets/gbfontbutton.c:191 ../glade/gnome/gnomefontpicker.c:128
+#: ../glade/gnome/gnomefontpicker.c:199 ../glade/gnome/gnomefontpicker.c:301
+msgid "Pick a Font"
+msgstr "Izaberi font"
+
+#: ../glade/gbwidgets/gbfontbutton.c:268
+msgid "Font Chooser Button"
+msgstr "Dugme za izbor fonta"
+
+#: ../glade/gbwidgets/gbfontselection.c:64 ../glade/gnome/gnomefontpicker.c:97
+msgid "Preview Text:"
+msgstr "Tekst za pregled:"
+
+#: ../glade/gbwidgets/gbfontselection.c:64
+msgid "The preview text to display"
+msgstr "Tekst za pregled za prikaz"
+
+#: ../glade/gbwidgets/gbfontselection.c:170
+msgid "Font Selection"
+msgstr "Izbor fonta"
+
+#: ../glade/gbwidgets/gbfontselectiondialog.c:69
+msgid "Select Font"
+msgstr "Izaberi font"
+
+#: ../glade/gbwidgets/gbfontselectiondialog.c:300
+msgid "Font Selection Dialog"
+msgstr "Prozorče za izbor fonta"
+
+#: ../glade/gbwidgets/gbframe.c:360
+msgid "Frame"
+msgstr "Okvir"
+
+#: ../glade/gbwidgets/gbgammacurve.c:88
+msgid "Initial Type:"
+msgstr "Početna vrsta:"
+
+#: ../glade/gbwidgets/gbgammacurve.c:88
+msgid "The initial type of the curve"
+msgstr "Početna vrsta zakrivljenja"
+
+#: ../glade/gbwidgets/gbgammacurve.c:256
+msgid "Gamma Curve"
+msgstr "Gama kriva"
+
+#: ../glade/gbwidgets/gbhandlebox.c:110
+msgid "The type of shadow around the handle box"
+msgstr "Vrsta senke oko kućice za rukovanje"
+
+#: ../glade/gbwidgets/gbhandlebox.c:113
+msgid "Handle Pos:"
+msgstr "Ručka (poz.):"
+
+#: ../glade/gbwidgets/gbhandlebox.c:114
+msgid "The position of the handle"
+msgstr "Pozicija ručke"
+
+#: ../glade/gbwidgets/gbhandlebox.c:116
+msgid "Snap Edge:"
+msgstr "Ivica prijanjanja:"
+
+#: ../glade/gbwidgets/gbhandlebox.c:117
+msgid "The edge of the handle box which snaps into position"
+msgstr "Ivica kućice za rukovanje koja prijanja položaju"
+
+#: ../glade/gbwidgets/gbhandlebox.c:304
+msgid "Handle Box"
+msgstr "Kućica za upravljanje"
+
+#: ../glade/gbwidgets/gbhbox.c:99
+msgid "New horizontal box"
+msgstr "Nova vodoravna kućica"
+
+#: ../glade/gbwidgets/gbhbox.c:171 ../glade/gbwidgets/gbhbuttonbox.c:194
+#: ../glade/gbwidgets/gbtoolbar.c:267 ../glade/gbwidgets/gbvbox.c:156
+msgid "Size:"
+msgstr "Veličina"
+
+#: ../glade/gbwidgets/gbhbox.c:171 ../glade/gbwidgets/gbvbox.c:156
+msgid "The number of widgets in the box"
+msgstr "Broj elemenata u kućici"
+
+#: ../glade/gbwidgets/gbhbox.c:173 ../glade/gbwidgets/gbtable.c:243
+#: ../glade/gbwidgets/gbtoolbar.c:426 ../glade/gbwidgets/gbvbox.c:158
+msgid "Homogeneous:"
+msgstr "Homogeno:"
+
+#: ../glade/gbwidgets/gbhbox.c:174 ../glade/gbwidgets/gbvbox.c:159
+msgid "If the children should be the same size"
+msgstr "Da li naslednik treba da bude iste veličine"
+
+#: ../glade/gbwidgets/gbhbox.c:175 ../glade/gbwidgets/gbvbox.c:160
+msgid "The space between each child"
+msgstr "Razmak između svakog naslednika"
+
+#: ../glade/gbwidgets/gbhbox.c:312
+msgid "Can't delete any children."
+msgstr "Ne može obrisati nijednog naslednika."
+
+#: ../glade/gbwidgets/gbhbox.c:327 ../glade/gbwidgets/gbhpaned.c:73
+#: ../glade/gbwidgets/gbhruler.c:89 ../glade/gbwidgets/gbnotebook.c:669
+#: ../glade/gbwidgets/gbvpaned.c:69 ../glade/gbwidgets/gbvruler.c:89
+#: ../glade/gbwidgets/gbwindow.c:254
+msgid "Position:"
+msgstr "Položaj:"
+
+#: ../glade/gbwidgets/gbhbox.c:328
+msgid "The widget's position relative to its siblings"
+msgstr "Položaj forme u odnosu na svoju braću"
+
+#: ../glade/gbwidgets/gbhbox.c:330
+msgid "Padding:"
+msgstr "Popuna:"
+
+#: ../glade/gbwidgets/gbhbox.c:331
+msgid "The widget's padding"
+msgstr "Popuna elementa"
+
+#: ../glade/gbwidgets/gbhbox.c:333 ../glade/gbwidgets/gbnotebook.c:672
+#: ../glade/gbwidgets/gbpreview.c:65 ../glade/gbwidgets/gbtoolbar.c:424
+msgid "Expand:"
+msgstr "Raširi:"
+
+#: ../glade/gbwidgets/gbhbox.c:334 ../glade/gbwidgets/gbtoolbar.c:425
+msgid "Set True to let the widget expand"
+msgstr "Stavi na Tačno da bi se dozvolilo elementu da se širi"
+
+#: ../glade/gbwidgets/gbhbox.c:335 ../glade/gbwidgets/gbnotebook.c:674
+msgid "Fill:"
+msgstr "Ispuni:"
+
+#: ../glade/gbwidgets/gbhbox.c:336
+msgid "Set True to let the widget fill its allocated area"
+msgstr "Stavi na Tačno da bi se dozvolilo elementu da ispuni dodeljenu oblast"
+
+#: ../glade/gbwidgets/gbhbox.c:337 ../glade/gbwidgets/gbnotebook.c:676
+msgid "Pack Start:"
+msgstr "Smesti na početak:"
+
+#: ../glade/gbwidgets/gbhbox.c:338
+msgid "Set True to pack the widget at the start of the box"
+msgstr "Stavi na Tačno da bi se element smestio na početak kućice"
+
+#: ../glade/gbwidgets/gbhbox.c:455
+msgid "Insert Before"
+msgstr "Ubaci ispred"
+
+#: ../glade/gbwidgets/gbhbox.c:461
+msgid "Insert After"
+msgstr "Ubaci iza"
+
+#: ../glade/gbwidgets/gbhbox.c:571
+msgid "Horizontal Box"
+msgstr "Vodoravna kućica"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:120
+msgid "New horizontal button box"
+msgstr "Nova vodoravna kućica sa dugmadima"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:194
+msgid "The number of buttons"
+msgstr "Broj dugmadi"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:196
+msgid "Layout:"
+msgstr "Raspored:"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:197
+msgid "The layout style of the buttons"
+msgstr "Stil rasporeda dugmadi"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:199
+msgid "The space between the buttons"
+msgstr "Razmak između dugmadi"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:414
+msgid "Horizontal Button Box"
+msgstr "Vodoravna kućica sa dugmadima"
+
+#: ../glade/gbwidgets/gbhpaned.c:74 ../glade/gbwidgets/gbvpaned.c:70
+msgid "The position of the divider"
+msgstr "Pozicija pregrade"
+
+#: ../glade/gbwidgets/gbhpaned.c:186 ../glade/gbwidgets/gbwindow.c:283
+msgid "Shrink:"
+msgstr "Skupi:"
+
+#: ../glade/gbwidgets/gbhpaned.c:187
+msgid "Set True to let the widget shrink"
+msgstr "Stavi na Tačno da bi se dozvolilo element da se skuplja"
+
+#: ../glade/gbwidgets/gbhpaned.c:188
+msgid "Resize:"
+msgstr "Promeni veličinu:"
+
+#: ../glade/gbwidgets/gbhpaned.c:189
+msgid "Set True to let the widget resize"
+msgstr "Stavi na Tačno da bi se dozvolilo elementu da menja veličinu"
+
+#: ../glade/gbwidgets/gbhpaned.c:315
+msgid "Horizontal Panes"
+msgstr "Vodoravne ravni"
+
+#: ../glade/gbwidgets/gbhruler.c:82 ../glade/gbwidgets/gbvruler.c:82
+msgid "Metric:"
+msgstr "Mere:"
+
+#: ../glade/gbwidgets/gbhruler.c:83 ../glade/gbwidgets/gbvruler.c:83
+msgid "The units of the ruler"
+msgstr "Jedinice na lenjiru"
+
+#: ../glade/gbwidgets/gbhruler.c:85 ../glade/gbwidgets/gbvruler.c:85
+msgid "Lower Value:"
+msgstr "Niža vrednost:"
+
+#: ../glade/gbwidgets/gbhruler.c:86 ../glade/gbwidgets/gbvruler.c:86
+#: ../glade/gbwidgets/gbvruler.c:88
+msgid "The low value of the ruler"
+msgstr "Niža vrednost na lenjiru"
+
+#: ../glade/gbwidgets/gbhruler.c:87 ../glade/gbwidgets/gbvruler.c:87
+msgid "Upper Value:"
+msgstr "Gornja vrednost:"
+
+#: ../glade/gbwidgets/gbhruler.c:88
+msgid "The high value of the ruler"
+msgstr "Viša vrednost lenjira"
+
+#: ../glade/gbwidgets/gbhruler.c:90 ../glade/gbwidgets/gbvruler.c:90
+msgid "The current position on the ruler"
+msgstr "Tekuća pozicija na lenjiru"
+
+#: ../glade/gbwidgets/gbhruler.c:91 ../glade/gbwidgets/gbvruler.c:91
+#: ../glade/property.c:4827
+msgid "Max:"
+msgstr "Maks:"
+
+#: ../glade/gbwidgets/gbhruler.c:92 ../glade/gbwidgets/gbvruler.c:92
+msgid "The maximum value of the ruler"
+msgstr "Najveća vrednost lenjira"
+
+#: ../glade/gbwidgets/gbhruler.c:247
+msgid "Horizontal Ruler"
+msgstr "Vodoravni lenjir"
+
+#: ../glade/gbwidgets/gbhscale.c:107 ../glade/gbwidgets/gbvscale.c:108
+msgid "Show Value:"
+msgstr "Prikaži vrednost:"
+
+#: ../glade/gbwidgets/gbhscale.c:107 ../glade/gbwidgets/gbvscale.c:108
+msgid "If the scale's value is shown"
+msgstr "Da li je vrednost skale prikazana"
+
+#: ../glade/gbwidgets/gbhscale.c:108 ../glade/gbwidgets/gbspinbutton.c:93
+#: ../glade/gbwidgets/gbvscale.c:109
+msgid "Digits:"
+msgstr "Cifre:"
+
+#: ../glade/gbwidgets/gbhscale.c:108 ../glade/gbwidgets/gbvscale.c:109
+msgid "The number of digits to show"
+msgstr "Broj cifara koji se želi da prikazati"
+
+#: ../glade/gbwidgets/gbhscale.c:110 ../glade/gbwidgets/gbvscale.c:111
+msgid "Value Pos:"
+msgstr "Vrednost (poz.):"
+
+#: ../glade/gbwidgets/gbhscale.c:111 ../glade/gbwidgets/gbvscale.c:112
+msgid "The position of the value"
+msgstr "Pozicija vrednosti"
+
+#: ../glade/gbwidgets/gbhscale.c:113 ../glade/gbwidgets/gbhscrollbar.c:87
+#: ../glade/gbwidgets/gbvscale.c:114 ../glade/gbwidgets/gbvscrollbar.c:87
+msgid "Policy:"
+msgstr "Način upotrebe:"
+
+#: ../glade/gbwidgets/gbhscale.c:114 ../glade/gbwidgets/gbvscale.c:115
+msgid "The update policy of the scale"
+msgstr "Način promene skale"
+
+#: ../glade/gbwidgets/gbhscale.c:116 ../glade/gbwidgets/gbhscrollbar.c:90
+#: ../glade/gbwidgets/gbvscale.c:117 ../glade/gbwidgets/gbvscrollbar.c:90
+msgid "Inverted:"
+msgstr "Preokrenuto:"
+
+#: ../glade/gbwidgets/gbhscale.c:116 ../glade/gbwidgets/gbhscrollbar.c:90
+#: ../glade/gbwidgets/gbvscale.c:117 ../glade/gbwidgets/gbvscrollbar.c:90
+msgid "If the range values are inverted"
+msgstr "Da li su vrednosti opsega preokrenute"
+
+#: ../glade/gbwidgets/gbhscale.c:319
+msgid "Horizontal Scale"
+msgstr "Vodoravna skala"
+
+#: ../glade/gbwidgets/gbhscrollbar.c:88 ../glade/gbwidgets/gbvscrollbar.c:88
+msgid "The update policy of the scrollbar"
+msgstr "Način promene linije sa klizačem"
+
+#: ../glade/gbwidgets/gbhscrollbar.c:237
+msgid "Horizontal Scrollbar"
+msgstr "Vodoravna linija sa klizačem"
+
+#: ../glade/gbwidgets/gbhseparator.c:144
+msgid "Horizonal Separator"
+msgstr "Vodoravni razdvajač"
+
+#: ../glade/gbwidgets/gbiconview.c:106
+#, fuzzy, c-format
+msgid "Icon %i"
+msgstr "Spisak ikona"
+
+#: ../glade/gbwidgets/gbiconview.c:128
+#, fuzzy
+msgid "The selection mode of the icon view"
+msgstr "Način izabiranja za stablo sa stupcima"
+
+#: ../glade/gbwidgets/gbiconview.c:130 ../glade/gbwidgets/gbprogressbar.c:134
+#: ../glade/gbwidgets/gbtoolbar.c:270 ../glade/gnome/bonobodockitem.c:179
+msgid "Orientation:"
+msgstr "Pravac pružanja"
+
+#: ../glade/gbwidgets/gbiconview.c:131
+#, fuzzy
+msgid "The orientation of the icons"
+msgstr "Pravac pružanja sadržaja linije napretka"
+
+#: ../glade/gbwidgets/gbiconview.c:287
+#, fuzzy
+msgid "Icon View"
+msgstr "Veličina ikone:"
+
+#: ../glade/gbwidgets/gbimage.c:110 ../glade/gbwidgets/gbwindow.c:299
+#, fuzzy
+msgid "Named Icon:"
+msgstr "Ikona:"
+
+#: ../glade/gbwidgets/gbimage.c:111 ../glade/gbwidgets/gbwindow.c:300
+#, fuzzy
+msgid "The named icon to use"
+msgstr "Uobičajeni Gnom elemenat koji se koristi."
+
+#: ../glade/gbwidgets/gbimage.c:112
+msgid "Icon Size:"
+msgstr "Veličina ikone:"
+
+#: ../glade/gbwidgets/gbimage.c:113
+msgid "The stock icon size"
+msgstr "Veličina uobičajene ikone"
+
+#: ../glade/gbwidgets/gbimage.c:115
+#, fuzzy
+msgid "Pixel Size:"
+msgstr "Veličina strane:"
+
+#: ../glade/gbwidgets/gbimage.c:116
+msgid ""
+"The size of the named icon in pixels, or -1 to use the Icon Size property"
+msgstr ""
+
+#: ../glade/gbwidgets/gbimage.c:120
+msgid "The horizontal alignment"
+msgstr "Vodoravno poravnanje"
+
+#: ../glade/gbwidgets/gbimage.c:123
+msgid "The vertical alignment"
+msgstr "Vertikalno poravnanje"
+
+#: ../glade/gbwidgets/gbimage.c:648
+msgid "Image"
+msgstr "Slika"
+
+#: ../glade/gbwidgets/gbimagemenuitem.c:255
+#: ../glade/gbwidgets/gbmenuitem.c:228
+msgid "Invalid stock menu item"
+msgstr "Nevažeća stavka baznog panela"
+
+#: ../glade/gbwidgets/gbimagemenuitem.c:471
+msgid "Menu item with a pixmap"
+msgstr "Stavka menija sa slikom"
+
+#: ../glade/gbwidgets/gbinputdialog.c:256
+msgid "Input Dialog"
+msgstr "Prozorče za unos"
+
+#: ../glade/gbwidgets/gblabel.c:169
+msgid "Use Underline:"
+msgstr "Koristi podvlačenje:"
+
+#: ../glade/gbwidgets/gblabel.c:170
+msgid "If the text includes an underlined access key"
+msgstr "Da li tekst sadrži podvučeni znak za prečicu"
+
+#: ../glade/gbwidgets/gblabel.c:171
+msgid "Use Markup:"
+msgstr "Koristi Format:"
+
+#: ../glade/gbwidgets/gblabel.c:172
+msgid "If the text includes pango markup"
+msgstr "Da li tekst sadrži pango format"
+
+#: ../glade/gbwidgets/gblabel.c:173
+msgid "Justify:"
+msgstr "Složi u blok:"
+
+#: ../glade/gbwidgets/gblabel.c:174
+msgid "The justification of the lines of the label"
+msgstr "Slaganje u blok linija oznake"
+
+#: ../glade/gbwidgets/gblabel.c:176
+msgid "Wrap Text:"
+msgstr "Prelomi tekst:"
+
+#: ../glade/gbwidgets/gblabel.c:177
+msgid "If the text is wrapped to fit within the width of the label"
+msgstr "Da li je tekst prelomljen da bi stao u širinu oznake"
+
+#: ../glade/gbwidgets/gblabel.c:178
+msgid "Selectable:"
+msgstr "Moguće obeležiti:"
+
+#: ../glade/gbwidgets/gblabel.c:179
+msgid "If the label text can be selected with the mouse"
+msgstr "Da li se tekst oznake može obeležiti mišem"
+
+#: ../glade/gbwidgets/gblabel.c:181
+msgid "The horizontal alignment of the entire label"
+msgstr "Vodoravno poravnanje cele oznake"
+
+#: ../glade/gbwidgets/gblabel.c:184
+msgid "The vertical alignment of the entire label"
+msgstr "Vertikalno poravnanje cele oznake"
+
+#: ../glade/gbwidgets/gblabel.c:190
+msgid "Focus Target:"
+msgstr "Mesto Fokusa:"
+
+#: ../glade/gbwidgets/gblabel.c:191
+msgid ""
+"The widget to set the keyboard focus to when the underlined access key is "
+"used"
+msgstr ""
+"Element za postavljanje fokusa tastature kada se koristi podvučen taster za "
+"prečicu"
+
+#. gtk_combo_set_value_in_list (GTK_COMBO (combo), TRUE, TRUE);
+#: ../glade/gbwidgets/gblabel.c:197 ../glade/gbwidgets/gbprogressbar.c:146
+#, fuzzy
+msgid "Ellipsize:"
+msgstr "Ekskluzivno:"
+
+#: ../glade/gbwidgets/gblabel.c:198 ../glade/gbwidgets/gbprogressbar.c:147
+msgid "How to ellipsize the string"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:201
+#, fuzzy
+msgid "The width of the label in characters"
+msgstr "Širina oblasti prikaza"
+
+#: ../glade/gbwidgets/gblabel.c:203
+#, fuzzy
+msgid "Single Line Mode:"
+msgstr "Izaberite način:"
+
+#: ../glade/gbwidgets/gblabel.c:204
+msgid "If the label is only given enough height for a single line"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:205
+msgid "Angle:"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:206
+#, fuzzy
+msgid "The angle of the label text"
+msgstr "Prelamanje teksta"
+
+#: ../glade/gbwidgets/gblabel.c:332 ../glade/gbwidgets/gblabel.c:347
+#: ../glade/gbwidgets/gblabel.c:614
+msgid "Auto"
+msgstr "Automatski"
+
+#: ../glade/gbwidgets/gblabel.c:870 ../glade/glade_menu_editor.c:410
+msgid "Label"
+msgstr "Oznaka"
+
+#: ../glade/gbwidgets/gblayout.c:96
+msgid "Area Width:"
+msgstr "Širina oblasti:"
+
+#: ../glade/gbwidgets/gblayout.c:97
+msgid "The width of the layout area"
+msgstr "Širina oblasti prikaza"
+
+#: ../glade/gbwidgets/gblayout.c:99
+msgid "Area Height:"
+msgstr "Visina oblasti:"
+
+#: ../glade/gbwidgets/gblayout.c:100
+msgid "The height of the layout area"
+msgstr "Visina oblasti prikaza"
+
+#: ../glade/gbwidgets/gblayout.c:222
+msgid "The X coordinate of the widget in the GtkLayout"
+msgstr "X koordinata forme u GtkLayout"
+
+#: ../glade/gbwidgets/gblayout.c:225
+msgid "The Y coordinate of the widget in the GtkLayout"
+msgstr "Y koordinata forme u GtkLayout"
+
+#: ../glade/gbwidgets/gblayout.c:380
+msgid "Layout"
+msgstr "Izgled"
+
+#: ../glade/gbwidgets/gblist.c:78
+msgid "The selection mode of the list"
+msgstr "Izabrani način za listu"
+
+#: ../glade/gbwidgets/gblist.c:192
+msgid "List"
+msgstr "Spisak"
+
+#: ../glade/gbwidgets/gblistitem.c:171
+msgid "List Item"
+msgstr "Stavka spiska"
+
+#: ../glade/gbwidgets/gbmenu.c:198
+msgid "Popup Menu"
+msgstr "Iskačući meni"
+
+#. FIXME: I'm not sure if we should translate the non-stock labels or not.
+#: ../glade/gbwidgets/gbmenubar.c:190
+msgid "_File"
+msgstr "_Datoteka"
+
+#. Create Edit menu
+#: ../glade/gbwidgets/gbmenubar.c:198 ../glade/glade_project_window.c:691
+msgid "_Edit"
+msgstr "_Uređivanje"
+
+#. Create View menu
+#: ../glade/gbwidgets/gbmenubar.c:204 ../glade/glade_project_window.c:720
+msgid "_View"
+msgstr "P_regled"
+
+#. Create Help menu
+#: ../glade/gbwidgets/gbmenubar.c:206 ../glade/glade_project_window.c:833
+msgid "_Help"
+msgstr "_Pomoć"
+
+#: ../glade/gbwidgets/gbmenubar.c:207
+msgid "_About"
+msgstr "_O programu"
+
+#: ../glade/gbwidgets/gbmenubar.c:268 ../glade/gbwidgets/gbmenubar.c:346
+#: ../glade/gbwidgets/gboptionmenu.c:139
+msgid "Edit Menus..."
+msgstr "Izmeni menije..."
+
+#: ../glade/gbwidgets/gbmenubar.c:442
+msgid "Menu Bar"
+msgstr "Meni"
+
+#: ../glade/gbwidgets/gbmenuitem.c:379
+msgid "Menu Item"
+msgstr "Stavka menija"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:92
+#: ../glade/gbwidgets/gbradiotoolbutton.c:150
+#: ../glade/gbwidgets/gbseparatortoolitem.c:67
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:99
+#: ../glade/gbwidgets/gbtoolbutton.c:111 ../glade/gbwidgets/gbtoolitem.c:65
+msgid "Show Horizontal:"
+msgstr "Prikaži vodoravno:"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:93
+#: ../glade/gbwidgets/gbradiotoolbutton.c:151
+#: ../glade/gbwidgets/gbseparatortoolitem.c:68
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:100
+#: ../glade/gbwidgets/gbtoolbutton.c:112 ../glade/gbwidgets/gbtoolitem.c:66
+msgid "If the item is visible when the toolbar is horizontal"
+msgstr "Da li je stavka vidljiva ako traka alatki vodoravna"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:94
+#: ../glade/gbwidgets/gbradiotoolbutton.c:152
+#: ../glade/gbwidgets/gbseparatortoolitem.c:69
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:101
+#: ../glade/gbwidgets/gbtoolbutton.c:113 ../glade/gbwidgets/gbtoolitem.c:67
+msgid "Show Vertical:"
+msgstr "Prikaži uspravno:"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:95
+#: ../glade/gbwidgets/gbradiotoolbutton.c:153
+#: ../glade/gbwidgets/gbseparatortoolitem.c:70
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:102
+#: ../glade/gbwidgets/gbtoolbutton.c:114 ../glade/gbwidgets/gbtoolitem.c:68
+msgid "If the item is visible when the toolbar is vertical"
+msgstr "Da li je stavka vidljiva ako traka alatki uspravna"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:96
+#: ../glade/gbwidgets/gbradiotoolbutton.c:154
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:103
+#: ../glade/gbwidgets/gbtoolbutton.c:115 ../glade/gbwidgets/gbtoolitem.c:69
+msgid "Is Important:"
+msgstr "Važna je:"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:97
+#: ../glade/gbwidgets/gbradiotoolbutton.c:155
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:104
+#: ../glade/gbwidgets/gbtoolbutton.c:116 ../glade/gbwidgets/gbtoolitem.c:70
+msgid ""
+"If the item's text should be shown when the toolbar's mode is "
+"GTK_TOOLBAR_BOTH_HORIZ"
+msgstr ""
+"Da li se tekst stavke prikazuje kada je režim trake alatki "
+"GTK_TOOLBAR_BOTH_HORIZ"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:255
+#, fuzzy
+msgid "Toolbar Button with Menu"
+msgstr "Dugme alatke"
+
+#: ../glade/gbwidgets/gbnotebook.c:191
+msgid "New notebook"
+msgstr "Nova sveska"
+
+#: ../glade/gbwidgets/gbnotebook.c:202 ../glade/gnome/gnomepropertybox.c:124
+msgid "Number of pages:"
+msgstr "Broj listova:"
+
+#: ../glade/gbwidgets/gbnotebook.c:274
+msgid "Show Tabs:"
+msgstr "Prikaži jezičke:"
+
+#: ../glade/gbwidgets/gbnotebook.c:274
+msgid "If the notebook tabs are shown"
+msgstr "Da li su jezičci sveske prikazani"
+
+#: ../glade/gbwidgets/gbnotebook.c:275
+msgid "Show Border:"
+msgstr "Prikaži ivicu:"
+
+#: ../glade/gbwidgets/gbnotebook.c:276
+msgid "If the notebook border is shown, when the tabs are not shown"
+msgstr "Da li je ivica sveske prikazana kada jezičci nisu"
+
+#: ../glade/gbwidgets/gbnotebook.c:277
+msgid "Tab Pos:"
+msgstr "Pol. jezičaka:"
+
+#: ../glade/gbwidgets/gbnotebook.c:278
+msgid "The position of the notebook tabs"
+msgstr "Pozicija jezičaka"
+
+#: ../glade/gbwidgets/gbnotebook.c:280
+msgid "Scrollable:"
+msgstr "Klizajuće:"
+
+#: ../glade/gbwidgets/gbnotebook.c:281
+msgid "If the notebook tabs are scrollable"
+msgstr "Da li su jezičci klizajući"
+
+#. These seem to be deprecated.
+#: ../glade/gbwidgets/gbnotebook.c:284
+msgid "Tab Horz. Border:"
+msgstr "Vod. ivica jezičaka:"
+
+#: ../glade/gbwidgets/gbnotebook.c:285
+msgid "The size of the notebook tabs' horizontal border"
+msgstr "Veličina vodoravne ivice jezičaka"
+
+#: ../glade/gbwidgets/gbnotebook.c:287
+msgid "Tab Vert. Border:"
+msgstr "Uspr. ivica jezičaka:"
+
+#: ../glade/gbwidgets/gbnotebook.c:288
+msgid "The size of the notebook tabs' vertical border"
+msgstr "Veličina vertikalne ivice jezičaka"
+
+#: ../glade/gbwidgets/gbnotebook.c:291
+msgid "Show Popup:"
+msgstr "Prikaži iskakajući meni:"
+
+#: ../glade/gbwidgets/gbnotebook.c:291
+msgid "If the popup menu is enabled"
+msgstr "Da li je omogućen iskakajući meni"
+
+#: ../glade/gbwidgets/gbnotebook.c:292 ../glade/gnome/gnomedruid.c:102
+msgid "Number of Pages:"
+msgstr "Broj listova:"
+
+#: ../glade/gbwidgets/gbnotebook.c:293
+msgid "The number of notebook pages"
+msgstr "Broj listova u svesci"
+
+#: ../glade/gbwidgets/gbnotebook.c:540
+msgid "Previous Page"
+msgstr "Prethodni list"
+
+#: ../glade/gbwidgets/gbnotebook.c:548
+msgid "Next Page"
+msgstr "Sledeći list"
+
+#: ../glade/gbwidgets/gbnotebook.c:556
+msgid "Delete Page"
+msgstr "Obriši list"
+
+#: ../glade/gbwidgets/gbnotebook.c:562
+msgid "Switch Next"
+msgstr "Prebaci sledeći"
+
+#: ../glade/gbwidgets/gbnotebook.c:570
+msgid "Switch Previous"
+msgstr "Prebaci prethodni"
+
+#: ../glade/gbwidgets/gbnotebook.c:578 ../glade/gnome/gnomedruid.c:298
+msgid "Insert Page After"
+msgstr "Ubaci list posle"
+
+#: ../glade/gbwidgets/gbnotebook.c:586 ../glade/gnome/gnomedruid.c:285
+msgid "Insert Page Before"
+msgstr "Ubaci list pre"
+
+#: ../glade/gbwidgets/gbnotebook.c:670
+msgid "The page's position in the list of pages"
+msgstr "Položaj lista u spisku listova"
+
+#: ../glade/gbwidgets/gbnotebook.c:673
+msgid "Set True to let the tab expand"
+msgstr "Stavi na Tačno da bi se dozvolilo jezičku da se proširi"
+
+#: ../glade/gbwidgets/gbnotebook.c:675
+msgid "Set True to let the tab fill its allocated area"
+msgstr "Stavi na Tačno da bi se dozvolilo jezičku da ispuni dodeljenu oblast"
+
+#: ../glade/gbwidgets/gbnotebook.c:677
+msgid "Set True to pack the tab at the start of the notebook"
+msgstr "Stavi na Tačno da bi se jezičak smestio na početak sveske"
+
+#: ../glade/gbwidgets/gbnotebook.c:678
+msgid "Menu Label:"
+msgstr "Oznaka menija:"
+
+#: ../glade/gbwidgets/gbnotebook.c:679
+msgid "The text to display in the popup menu"
+msgstr "Tekst koji se prikazuje u iskakajućem meniju"
+
+#: ../glade/gbwidgets/gbnotebook.c:937
+msgid "Notebook"
+msgstr "Sveska"
+
+#: ../glade/gbwidgets/gboptionmenu.c:230
+#, c-format
+msgid "Cannot add a %s to a GtkOptionMenu."
+msgstr "Ne može da doda %s u GtkOptionMenu."
+
+#: ../glade/gbwidgets/gboptionmenu.c:270
+msgid "Option Menu"
+msgstr "Meni sa opcijama"
+
+#: ../glade/gbwidgets/gbpreview.c:63
+msgid "Color:"
+msgstr "Boja:"
+
+#: ../glade/gbwidgets/gbpreview.c:64
+msgid "If the preview is color or grayscale"
+msgstr "Da li je prikaz u boji ili u nijansama sive boje"
+
+#: ../glade/gbwidgets/gbpreview.c:66
+msgid "If the preview expands to fill its allocated area"
+msgstr "Da li se prikaz širi da bi ispunio alociranu oblast"
+
+#: ../glade/gbwidgets/gbpreview.c:162
+msgid "Preview"
+msgstr "Pregled"
+
+#: ../glade/gbwidgets/gbprogressbar.c:135
+msgid "The orientation of the progress bar's contents"
+msgstr "Pravac pružanja sadržaja linije napretka"
+
+#: ../glade/gbwidgets/gbprogressbar.c:137
+msgid "Fraction:"
+msgstr "Deo:"
+
+#: ../glade/gbwidgets/gbprogressbar.c:138
+msgid "The fraction of work that has been completed"
+msgstr "Deo posla koji je završen"
+
+#: ../glade/gbwidgets/gbprogressbar.c:140
+msgid "Pulse Step:"
+msgstr "Korak impulsa:"
+
+#: ../glade/gbwidgets/gbprogressbar.c:141
+msgid ""
+"The fraction of the progress bar length to move the bouncing block when "
+"pulsed"
+msgstr ""
+"Deo dužine linije napretka za koji treba pomeriti skačući blok kad se pulsira"
+
+#: ../glade/gbwidgets/gbprogressbar.c:144
+msgid "The text to display over the progress bar"
+msgstr "Tekst koji se prikazuje iznad linije napretka"
+
+#. ShowText is implicit now, if the Text property is set to anything.
+#: ../glade/gbwidgets/gbprogressbar.c:152
+msgid "Show Text:"
+msgstr "Prikaži tekst:"
+
+#: ../glade/gbwidgets/gbprogressbar.c:153
+msgid "If the text should be shown in the progress bar"
+msgstr "Da li se tekst prikazuje u elementu napretka"
+
+#. ActivityMode is deprecated and implicit now. The app just calls
+#. gtk_progress_bar_pulse() and it automatically goes into activity mode.
+#: ../glade/gbwidgets/gbprogressbar.c:157
+msgid "Activity Mode:"
+msgstr "Način aktivnosti:"
+
+#: ../glade/gbwidgets/gbprogressbar.c:158
+msgid "If the progress bar should act like the front of Kit's car"
+msgstr "Da li se elemenat napretka ponaša kao prednji deo Perinog auta"
+
+#: ../glade/gbwidgets/gbprogressbar.c:163
+msgid "The horizontal alignment of the text"
+msgstr "Vodoravno poravnanje teksta"
+
+#: ../glade/gbwidgets/gbprogressbar.c:166
+msgid "The vertical alignment of the text"
+msgstr "Vertikalno poravnanje teksta"
+
+#: ../glade/gbwidgets/gbprogressbar.c:421
+msgid "Progress Bar"
+msgstr "Elemenat napretka"
+
+#: ../glade/gbwidgets/gbradiobutton.c:138
+#: ../glade/gbwidgets/gbradiotoolbutton.c:148
+msgid "If the radio button is initially on"
+msgstr "Da li je radio dugme početno uključeno"
+
+#: ../glade/gbwidgets/gbradiobutton.c:143
+#: ../glade/gbwidgets/gbradiomenuitem.c:106
+#: ../glade/gbwidgets/gbradiotoolbutton.c:141
+#: ../glade/glade_menu_editor.c:1038
+msgid "Group:"
+msgstr "Grupa"
+
+#: ../glade/gbwidgets/gbradiobutton.c:144
+msgid ""
+"The radio button group (the default is all radio buttons with the same "
+"parent)"
+msgstr ""
+"Grupa radio dugmadi (uobičajeno je da su to sva radio dugmad sa istim "
+"prethodnikom)"
+
+#: ../glade/gbwidgets/gbradiobutton.c:189
+#: ../glade/gbwidgets/gbradiobutton.c:350
+#: ../glade/gbwidgets/gbradiotoolbutton.c:233
+#: ../glade/gbwidgets/gbradiotoolbutton.c:322
+msgid "New Group"
+msgstr "Nova grupa"
+
+#: ../glade/gbwidgets/gbradiobutton.c:463
+msgid "Radio Button"
+msgstr "Radio dugme"
+
+#: ../glade/gbwidgets/gbradiomenuitem.c:105
+msgid "If the radio menu item is initially on"
+msgstr "Da li je radio stavka menija početno uključena"
+
+#: ../glade/gbwidgets/gbradiomenuitem.c:107
+msgid ""
+"The radio menu item group (the default is all radio menu items with the same "
+"parent)"
+msgstr ""
+"Grupa radio stavki menija (uobičajeno je da su to sve radio stavke menija sa "
+"istim prethodnikom)"
+
+#: ../glade/gbwidgets/gbradiomenuitem.c:386
+msgid "Radio Menu Item"
+msgstr "Radio stavka menija"
+
+#: ../glade/gbwidgets/gbradiotoolbutton.c:142
+msgid ""
+"The radio tool button group (the default is all radio tool buttons in the "
+"toolbar)"
+msgstr ""
+"Grupa radio dugmadi (uobičajeno je da su to sva radio dugmad među alatkama)"
+
+#: ../glade/gbwidgets/gbradiotoolbutton.c:528
+msgid "Toolbar Radio Button"
+msgstr "Radio dugme trake alatki"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:131
+msgid "H Policy:"
+msgstr "Vod. način:"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:132
+msgid "When the horizontal scrollbar will be shown"
+msgstr "Kada će se prikazivati strelice za vodoravno pomeranje sadržaja"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:134
+msgid "V Policy:"
+msgstr "Ver. način:"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:135
+msgid "When the vertical scrollbar will be shown"
+msgstr "Kada će se prikazivati strelice za okomito pomeranje sadržaja"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:137
+msgid "Window Pos:"
+msgstr "Prozor (poz.):"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:138
+msgid "Where the child window is located with respect to the scrollbars"
+msgstr "Gde se smešta nasledni prozor u odnosu na strelice za pomeranje"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:140
+msgid "Shadow Type:"
+msgstr "Vrsta senke:"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:141
+msgid "The update policy of the vertical scrollbar"
+msgstr "Način promene vertikalne linije sa klizačem"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:353
+msgid "Scrolled Window"
+msgstr "Klizajući prozor"
+
+#: ../glade/gbwidgets/gbseparatormenuitem.c:153
+msgid "Separator for Menus"
+msgstr "Razdvajač menija"
+
+#: ../glade/gbwidgets/gbseparatortoolitem.c:65
+msgid "Draw:"
+msgstr "Crtaj:"
+
+#: ../glade/gbwidgets/gbseparatortoolitem.c:66
+msgid "If the separator is drawn, or just blank"
+msgstr "Da li se razdvajač crta, ili je prazan"
+
+#: ../glade/gbwidgets/gbseparatortoolitem.c:204
+msgid "Toolbar Separator Item"
+msgstr "Vodoravni razdvajač alatki"
+
+#: ../glade/gbwidgets/gbspinbutton.c:91
+msgid "Climb Rate:"
+msgstr "Stepen uspona:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:92
+msgid ""
+"The climb rate of the spinbutton, used in conjunction with the Page Increment"
+msgstr ""
+"Stepen uspona dugmeta koje se vrti, koristi se zajedno sa povećanjem broja "
+"stranice"
+
+#: ../glade/gbwidgets/gbspinbutton.c:94
+msgid "The number of decimal digits to show"
+msgstr "Broj decimalnih cifara koji se želi prikazati"
+
+#: ../glade/gbwidgets/gbspinbutton.c:96
+msgid "Numeric:"
+msgstr "Numerički:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:97
+msgid "If only numeric entry is allowed"
+msgstr "Ukoliko je dozvoljen jedino unos brojeva"
+
+#: ../glade/gbwidgets/gbspinbutton.c:98
+msgid "Update Policy:"
+msgstr "Način izmene:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:99
+msgid "When value_changed signals are emitted"
+msgstr "Da li se emituju value_changed signali"
+
+#: ../glade/gbwidgets/gbspinbutton.c:101
+msgid "Snap:"
+msgstr "Prijanjanje:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:102
+msgid "If the value is snapped to multiples of the step increment"
+msgstr "Da li vrednost prijanja uz umnoške koraka"
+
+#: ../glade/gbwidgets/gbspinbutton.c:103
+msgid "Wrap:"
+msgstr "Prelom:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:104
+msgid "If the value is wrapped at the limits"
+msgstr "Da li se vrednost prelama na granicama"
+
+#: ../glade/gbwidgets/gbspinbutton.c:284
+msgid "Spin Button"
+msgstr "Dugme koje se okreće"
+
+#: ../glade/gbwidgets/gbstatusbar.c:64
+msgid "Resize Grip:"
+msgstr "Prostor za izmenu veličine:"
+
+#: ../glade/gbwidgets/gbstatusbar.c:64
+msgid "If the status bar has a resize grip to resize the window"
+msgstr "Da li linija stanja ima prostor za promenu veličine prozora"
+
+#: ../glade/gbwidgets/gbstatusbar.c:156
+msgid "Status Bar"
+msgstr "Linija stanja"
+
+#: ../glade/gbwidgets/gbtable.c:137
+msgid "New table"
+msgstr "Nova tabela"
+
+#: ../glade/gbwidgets/gbtable.c:149 ../glade/gbwidgets/gbvbox.c:95
+#: ../glade/gbwidgets/gbvbuttonbox.c:123
+msgid "Number of rows:"
+msgstr "Broj redova:"
+
+#: ../glade/gbwidgets/gbtable.c:237
+msgid "Rows:"
+msgstr "Redovi:"
+
+#: ../glade/gbwidgets/gbtable.c:238
+msgid "The number of rows in the table"
+msgstr "Broj redova u tabeli"
+
+#: ../glade/gbwidgets/gbtable.c:240
+msgid "Columns:"
+msgstr "Stupci:"
+
+#: ../glade/gbwidgets/gbtable.c:241
+msgid "The number of columns in the table"
+msgstr "Broj stubaca u tabeli"
+
+#: ../glade/gbwidgets/gbtable.c:244
+msgid "If the children should all be the same size"
+msgstr "Da li svi naslednici treba da budu iste veličine"
+
+#: ../glade/gbwidgets/gbtable.c:245 ../glade/gnome/gnomeiconlist.c:180
+msgid "Row Spacing:"
+msgstr "Razmak između redova:"
+
+#: ../glade/gbwidgets/gbtable.c:246
+msgid "The space between each row"
+msgstr "Razmak između svakog reda"
+
+#: ../glade/gbwidgets/gbtable.c:248 ../glade/gnome/gnomeiconlist.c:183
+msgid "Col Spacing:"
+msgstr "Razmak između stubaca:"
+
+#: ../glade/gbwidgets/gbtable.c:249
+msgid "The space between each column"
+msgstr "Razmak između svakog stupca"
+
+#: ../glade/gbwidgets/gbtable.c:368
+msgid "Cell X:"
+msgstr "Ćelija X:"
+
+#: ../glade/gbwidgets/gbtable.c:369
+msgid "The left edge of the widget in the table"
+msgstr "Leva ivica forme u tabeli"
+
+#: ../glade/gbwidgets/gbtable.c:371
+msgid "Cell Y:"
+msgstr "Ćelija Y:"
+
+#: ../glade/gbwidgets/gbtable.c:372
+msgid "The top edge of the widget in the table"
+msgstr "Gornja ivica forme u tabeli"
+
+#: ../glade/gbwidgets/gbtable.c:375
+msgid "Col Span:"
+msgstr "Prostiranje stubaca:"
+
+#: ../glade/gbwidgets/gbtable.c:376
+msgid "The number of columns spanned by the widget in the table"
+msgstr "Broj stubaca prostrtih formom u tabeli"
+
+#: ../glade/gbwidgets/gbtable.c:378
+msgid "Row Span:"
+msgstr "Prostiranje redova:"
+
+#: ../glade/gbwidgets/gbtable.c:379
+msgid "The number of rows spanned by the widget in the table"
+msgstr "Broj redova prostrtih formom u tabeli"
+
+#: ../glade/gbwidgets/gbtable.c:381
+msgid "H Padding:"
+msgstr "H Popuna:"
+
+#: ../glade/gbwidgets/gbtable.c:384
+msgid "V Padding:"
+msgstr "V Popuna:"
+
+#: ../glade/gbwidgets/gbtable.c:387
+msgid "X Expand:"
+msgstr "X Proširenje:"
+
+#: ../glade/gbwidgets/gbtable.c:388
+msgid "Set True to let the widget expand horizontally"
+msgstr "Stavi na Tačno da bi se dozvolilo elementu da se širi vodoravno"
+
+#: ../glade/gbwidgets/gbtable.c:389
+msgid "Y Expand:"
+msgstr "Y Proširenje:"
+
+#: ../glade/gbwidgets/gbtable.c:390
+msgid "Set True to let the widget expand vertically"
+msgstr "Stavi na Tačno da bi se dozvolilo elementu da se širi vertikalno"
+
+#: ../glade/gbwidgets/gbtable.c:391
+msgid "X Shrink:"
+msgstr "X Skupljanje:"
+
+#: ../glade/gbwidgets/gbtable.c:392
+msgid "Set True to let the widget shrink horizontally"
+msgstr "Stavi na Tačno da bi se dozvolilo elementu da se skuplja vodoravno"
+
+#: ../glade/gbwidgets/gbtable.c:393
+msgid "Y Shrink:"
+msgstr "Y Skupljanje:"
+
+#: ../glade/gbwidgets/gbtable.c:394
+msgid "Set True to let the widget shrink vertically"
+msgstr "Stavi na Tačno da bi se dozvolilo elementu da se skuplja vertikalno"
+
+#: ../glade/gbwidgets/gbtable.c:395
+msgid "X Fill:"
+msgstr "X Punjenje:"
+
+#: ../glade/gbwidgets/gbtable.c:396
+msgid "Set True to let the widget fill its horizontal allocated area"
+msgstr ""
+"Stavi na Tačno da bi se dozvolilo elementu da ispuni vodoravno dodeljenu "
+"oblast"
+
+#: ../glade/gbwidgets/gbtable.c:397
+msgid "Y Fill:"
+msgstr "Y Punjenje:"
+
+#: ../glade/gbwidgets/gbtable.c:398
+msgid "Set True to let the widget fill its vertical allocated area"
+msgstr ""
+"Stavi na Tačno da bi se dozvolilo elementu da ispuni vertikalnu dodeljenu "
+"oblast"
+
+#: ../glade/gbwidgets/gbtable.c:667
+msgid "Insert Row Before"
+msgstr "Ubaci red pre"
+
+#: ../glade/gbwidgets/gbtable.c:674
+msgid "Insert Row After"
+msgstr "Ubaci red posle"
+
+#: ../glade/gbwidgets/gbtable.c:681
+msgid "Insert Column Before"
+msgstr "Ubaci stubac pre"
+
+#: ../glade/gbwidgets/gbtable.c:688
+msgid "Insert Column After"
+msgstr "Ubaci stubac posle"
+
+#: ../glade/gbwidgets/gbtable.c:695
+msgid "Delete Row"
+msgstr "Obriši red"
+
+#: ../glade/gbwidgets/gbtable.c:701
+msgid "Delete Column"
+msgstr "Obriši stubac"
+
+#: ../glade/gbwidgets/gbtable.c:1208
+msgid "Table"
+msgstr "Tabela"
+
+#: ../glade/gbwidgets/gbtextview.c:51
+msgid "Center"
+msgstr "Središte"
+
+#: ../glade/gbwidgets/gbtextview.c:52
+msgid "Fill"
+msgstr "Ispuni"
+
+#. Add a "None" item first, so it is easy to reset the pixmap.
+#. If the user selects the 'None' item from the combo, we reset the
+#. text to "" and return. This callback will be called again.
+#. Add a 'None' item at the top of the list.
+#: ../glade/gbwidgets/gbtextview.c:71 ../glade/glade_gnome.c:112
+#: ../glade/glade_menu_editor.c:542 ../glade/glade_menu_editor.c:829
+#: ../glade/glade_menu_editor.c:1344 ../glade/glade_menu_editor.c:2251
+#: ../glade/property.c:2431
+msgid "None"
+msgstr "Ništa"
+
+#: ../glade/gbwidgets/gbtextview.c:72
+msgid "Character"
+msgstr "Karakter"
+
+#: ../glade/gbwidgets/gbtextview.c:73
+msgid "Word"
+msgstr "Reč"
+
+#: ../glade/gbwidgets/gbtextview.c:117
+msgid "Cursor Visible:"
+msgstr "Kurzor vidljiv:"
+
+#: ../glade/gbwidgets/gbtextview.c:118
+msgid "If the cursor is visible"
+msgstr "Da li je kurzor vidljiv"
+
+#: ../glade/gbwidgets/gbtextview.c:119
+msgid "Overwrite:"
+msgstr "Piši preko:"
+
+#: ../glade/gbwidgets/gbtextview.c:120
+msgid "If entered text overwrites the existing text"
+msgstr "Da li uneti tekst zamenjuje postojeći tekst"
+
+#: ../glade/gbwidgets/gbtextview.c:121
+msgid "Accepts Tab:"
+msgstr "Prihvati tabulator:"
+
+#: ../glade/gbwidgets/gbtextview.c:122
+msgid "If tab characters can be entered"
+msgstr "Da li se mogu uneti tabulatori"
+
+#: ../glade/gbwidgets/gbtextview.c:126
+msgid "Justification:"
+msgstr "Poravnanje:"
+
+#: ../glade/gbwidgets/gbtextview.c:127
+msgid "The justification of the text"
+msgstr "Poravnanje teksta"
+
+#: ../glade/gbwidgets/gbtextview.c:129
+msgid "Wrapping:"
+msgstr "Prelamanje:"
+
+#: ../glade/gbwidgets/gbtextview.c:130
+msgid "The wrapping of the text"
+msgstr "Prelamanje teksta"
+
+#: ../glade/gbwidgets/gbtextview.c:133
+msgid "Space Above:"
+msgstr "Prostor iznad:"
+
+#: ../glade/gbwidgets/gbtextview.c:134
+msgid "Pixels of blank space above paragraphs"
+msgstr "Broj piksela praznog prostora iznad pasusa"
+
+#: ../glade/gbwidgets/gbtextview.c:136
+msgid "Space Below:"
+msgstr "Prostor ispod:"
+
+#: ../glade/gbwidgets/gbtextview.c:137
+msgid "Pixels of blank space below paragraphs"
+msgstr "Broj piksela praznog prostora ispod pasusa"
+
+#: ../glade/gbwidgets/gbtextview.c:139
+msgid "Space Inside:"
+msgstr "Prostor unutra:"
+
+#: ../glade/gbwidgets/gbtextview.c:140
+msgid "Pixels of blank space between wrapped lines in a paragraph"
+msgstr "Broj piksela praznog prostora između prelomljenih redova u pasusu"
+
+#: ../glade/gbwidgets/gbtextview.c:143
+msgid "Left Margin:"
+msgstr "Leva margina"
+
+#: ../glade/gbwidgets/gbtextview.c:144
+msgid "Width of the left margin in pixels"
+msgstr "Širina leve margine u pikselima"
+
+#: ../glade/gbwidgets/gbtextview.c:146
+msgid "Right Margin:"
+msgstr "Desna margina"
+
+#: ../glade/gbwidgets/gbtextview.c:147
+msgid "Width of the right margin in pixels"
+msgstr "Širina desne margine u pikselima"
+
+#: ../glade/gbwidgets/gbtextview.c:149
+msgid "Indent:"
+msgstr "Uvučeno:"
+
+#: ../glade/gbwidgets/gbtextview.c:150
+msgid "Amount of pixels to indent paragraphs"
+msgstr "Broj piksela za koliko treba uvući pasuse"
+
+#: ../glade/gbwidgets/gbtextview.c:463
+msgid "Text View"
+msgstr "Tekstualni prikaz"
+
+#: ../glade/gbwidgets/gbtogglebutton.c:100
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:98
+msgid "If the toggle button is initially on"
+msgstr "Da li je prekidačko dugme početno uključeno"
+
+#: ../glade/gbwidgets/gbtogglebutton.c:199
+msgid "Toggle Button"
+msgstr "Prekidačko dugme"
+
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:297
+msgid "Toolbar Toggle Button"
+msgstr "Prekidačko dugme trake alatki"
+
+#: ../glade/gbwidgets/gbtoolbar.c:191
+msgid "New toolbar"
+msgstr "Nova traka alatki"
+
+#: ../glade/gbwidgets/gbtoolbar.c:202
+msgid "Number of items:"
+msgstr "Broj stavki:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:268
+msgid "The number of items in the toolbar"
+msgstr "Broj stavki na traci alatki"
+
+#: ../glade/gbwidgets/gbtoolbar.c:271
+msgid "The toolbar orientation"
+msgstr "Usmerenje trake alatki"
+
+#: ../glade/gbwidgets/gbtoolbar.c:273
+msgid "Style:"
+msgstr "Stil:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:274
+msgid "The toolbar style"
+msgstr "Stil trake alatki"
+
+#: ../glade/gbwidgets/gbtoolbar.c:276
+msgid "Tooltips:"
+msgstr "Predlozi:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:276
+msgid "If tooltips are enabled"
+msgstr "Da li su predlozi omogućeni"
+
+#: ../glade/gbwidgets/gbtoolbar.c:277
+msgid "Show Arrow:"
+msgstr "Prikaži strelicu:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:277
+msgid "If an arrow should be shown to popup a menu if the toolbar doesn't fit"
+msgstr ""
+"Da li se prikazuje strelica za prikaz menija ako traka alatki ne može da "
+"stane"
+
+#: ../glade/gbwidgets/gbtoolbar.c:427
+msgid "If the item should be the same size as other homogeneous items"
+msgstr "Da li je stavka iste veličine kao i ostale jednoobrazne stavke"
+
+#. Commands for inserting new items.
+#: ../glade/gbwidgets/gbtoolbar.c:506
+msgid "Insert Item Before"
+msgstr "Ubaci stavku pre"
+
+#: ../glade/gbwidgets/gbtoolbar.c:513
+msgid "Insert Item After"
+msgstr "Ubaci stavku posle"
+
+#: ../glade/gbwidgets/gbtoolbar.c:680
+msgid "Toolbar"
+msgstr "Set alatki"
+
+#: ../glade/gbwidgets/gbtoolbutton.c:586
+msgid "Toolbar Button"
+msgstr "Dugme alatke"
+
+#: ../glade/gbwidgets/gbtoolitem.c:201
+msgid "Toolbar Item"
+msgstr "Stavka alatki"
+
+#: ../glade/gbwidgets/gbtreeview.c:71
+msgid "Column 1"
+msgstr "Stubac 1"
+
+#: ../glade/gbwidgets/gbtreeview.c:79
+msgid "Column 2"
+msgstr "Stubac 2"
+
+#: ../glade/gbwidgets/gbtreeview.c:87
+#, fuzzy
+msgid "Column 3"
+msgstr "Stubac 1"
+
+#: ../glade/gbwidgets/gbtreeview.c:97
+#, c-format
+msgid "Row %i"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtreeview.c:114
+msgid "Headers Visible:"
+msgstr "Zaglavlja vidljiva:"
+
+#: ../glade/gbwidgets/gbtreeview.c:115
+msgid "If the column header buttons are shown"
+msgstr "Da li se prikazuju zaglavlja"
+
+#: ../glade/gbwidgets/gbtreeview.c:116
+msgid "Rules Hint:"
+msgstr "Predlog pravila:"
+
+#: ../glade/gbwidgets/gbtreeview.c:117
+msgid ""
+"If a hint is set so the theme engine should draw rows in alternating colors"
+msgstr ""
+"Da li je postavljen predlog tako da sklop tema crta redove u raznim bojama"
+
+#: ../glade/gbwidgets/gbtreeview.c:118
+msgid "Reorderable:"
+msgstr "Moguće presložiti:"
+
+#: ../glade/gbwidgets/gbtreeview.c:119
+msgid "If the view is reorderable"
+msgstr "Da li je moguće presložiti pogled"
+
+#: ../glade/gbwidgets/gbtreeview.c:120
+msgid "Enable Search:"
+msgstr "Omogući pretragu:"
+
+#: ../glade/gbwidgets/gbtreeview.c:121
+msgid "If the user can search through columns interactively"
+msgstr "Da li korisnik može interaktivno pretraživati kroz vrste"
+
+#: ../glade/gbwidgets/gbtreeview.c:123
+#, fuzzy
+msgid "Fixed Height Mode:"
+msgstr "Visina razmere:"
+
+#: ../glade/gbwidgets/gbtreeview.c:124
+msgid "Sets all rows to the same height to improve performance"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtreeview.c:125
+#, fuzzy
+msgid "Hover Selection:"
+msgstr "Izbor boje"
+
+#: ../glade/gbwidgets/gbtreeview.c:126
+#, fuzzy
+msgid "Whether the selection should follow the pointer"
+msgstr "Da li treba ograničiti izbor datoteka na lokalne datoteke"
+
+#: ../glade/gbwidgets/gbtreeview.c:127
+#, fuzzy
+msgid "Hover Expand:"
+msgstr "X Proširenje:"
+
+#: ../glade/gbwidgets/gbtreeview.c:128
+msgid ""
+"Whether rows should be expanded or collapsed when the pointer moves over them"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtreeview.c:317
+msgid "List or Tree View"
+msgstr "Spisak razgranatog pogleda"
+
+#: ../glade/gbwidgets/gbvbox.c:84
+msgid "New vertical box"
+msgstr "Nova vertikalna kućica"
+
+#: ../glade/gbwidgets/gbvbox.c:245
+msgid "Vertical Box"
+msgstr "Vertikalna kućica"
+
+#: ../glade/gbwidgets/gbvbuttonbox.c:111
+msgid "New vertical button box"
+msgstr "Nova vertikalna kućica sa dugmadima"
+
+#: ../glade/gbwidgets/gbvbuttonbox.c:344
+msgid "Vertical Button Box"
+msgstr "Vertikalna kućica sa dugmadima"
+
+#: ../glade/gbwidgets/gbviewport.c:104
+msgid "The type of shadow of the viewport"
+msgstr "Vrsta senke preglednog prostora"
+
+#: ../glade/gbwidgets/gbviewport.c:240
+msgid "Viewport"
+msgstr "Pregledni prostor"
+
+#: ../glade/gbwidgets/gbvpaned.c:192
+msgid "Vertical Panes"
+msgstr "Vertikalne površine"
+
+#: ../glade/gbwidgets/gbvruler.c:247
+msgid "Vertical Ruler"
+msgstr "Vertikalni lenjir"
+
+#: ../glade/gbwidgets/gbvscale.c:319
+msgid "Vertical Scale"
+msgstr "Vertikalna razmera"
+
+#: ../glade/gbwidgets/gbvscrollbar.c:236
+msgid "Vertical Scrollbar"
+msgstr "Vertikalna linija sa klizačem"
+
+#: ../glade/gbwidgets/gbvseparator.c:144
+msgid "Vertical Separator"
+msgstr "Uspravni razdvajač"
+
+#: ../glade/gbwidgets/gbwindow.c:242
+msgid "The title of the window"
+msgstr "Naslov prozora"
+
+#: ../glade/gbwidgets/gbwindow.c:245
+msgid "The type of the window"
+msgstr "Vrsta prozora"
+
+#: ../glade/gbwidgets/gbwindow.c:249
+msgid "Type Hint:"
+msgstr "Nagoveštaj vrste:"
+
+#: ../glade/gbwidgets/gbwindow.c:250
+msgid "Tells the window manager how to treat the window"
+msgstr "Govori upravljaču prozorima kako da se odnosi prema prozoru"
+
+#: ../glade/gbwidgets/gbwindow.c:255
+msgid "The initial position of the window"
+msgstr "Početna pozicija prozora"
+
+#: ../glade/gbwidgets/gbwindow.c:259 ../glade/gnome/gnomefileentry.c:105
+#: ../glade/gnome/gnomepixmapentry.c:84
+msgid "Modal:"
+msgstr "Promenljiv:"
+
+#: ../glade/gbwidgets/gbwindow.c:259
+msgid "If the window is modal"
+msgstr "Da li je prozor promenljiv"
+
+#: ../glade/gbwidgets/gbwindow.c:264
+msgid "Default Width:"
+msgstr "Podrazumevana širina:"
+
+#: ../glade/gbwidgets/gbwindow.c:265
+msgid "The default width of the window"
+msgstr "Podrazumevana širina prozora"
+
+#: ../glade/gbwidgets/gbwindow.c:269
+msgid "Default Height:"
+msgstr "Podrazumevana visina:"
+
+#: ../glade/gbwidgets/gbwindow.c:270
+msgid "The default height of the window"
+msgstr "Podrazumevana visina prozora"
+
+#: ../glade/gbwidgets/gbwindow.c:276
+msgid "Resizable:"
+msgstr "Promenljive veličine:"
+
+#: ../glade/gbwidgets/gbwindow.c:277
+msgid "If the window can be resized"
+msgstr "Da li se prozoru može menjati veličina"
+
+#: ../glade/gbwidgets/gbwindow.c:284
+msgid "If the window can be shrunk"
+msgstr "Da li se prozor može skupljati"
+
+#: ../glade/gbwidgets/gbwindow.c:285
+msgid "Grow:"
+msgstr "Rasti:"
+
+#: ../glade/gbwidgets/gbwindow.c:286
+msgid "If the window can be enlarged"
+msgstr "Da li se prozor može povećati"
+
+#: ../glade/gbwidgets/gbwindow.c:291
+msgid "Auto-Destroy:"
+msgstr "Samouništenje:"
+
+#: ../glade/gbwidgets/gbwindow.c:292
+msgid "If the window is destroyed when its transient parent is destroyed"
+msgstr "Da li se prozor zatvara kad je njegov direktni prethodnik zatvoren"
+
+#: ../glade/gbwidgets/gbwindow.c:296
+msgid "The icon for this window"
+msgstr "Ikona za ovaj prozor"
+
+#: ../glade/gbwidgets/gbwindow.c:303
+msgid "Role:"
+msgstr "Uloga:"
+
+#: ../glade/gbwidgets/gbwindow.c:303
+msgid "A unique identifier for the window to be used when restoring a session"
+msgstr ""
+"Jedinstvena identifikaciona oznaka za prozor koja se koristi pri vraćanju "
+"sesije"
+
+#: ../glade/gbwidgets/gbwindow.c:306
+msgid "Decorated:"
+msgstr "Okićen:"
+
+#: ../glade/gbwidgets/gbwindow.c:307
+msgid "If the window should be decorated by the window manager"
+msgstr "Da li upravljač prozora iscrtava oko prozora"
+
+#: ../glade/gbwidgets/gbwindow.c:310
+msgid "Skip Taskbar:"
+msgstr "Preskoči spisak poslova:"
+
+#: ../glade/gbwidgets/gbwindow.c:311
+msgid "If the window should not appear in the task bar"
+msgstr "Da li se prozor ne pojavljuje u spisku poslova"
+
+# ne valja
+#: ../glade/gbwidgets/gbwindow.c:314
+msgid "Skip Pager:"
+msgstr "Preskoči pejdžer:"
+
+# ne valja
+#: ../glade/gbwidgets/gbwindow.c:315
+msgid "If the window should not appear in the pager"
+msgstr "Da li se prozor ne pojavljuje u pejdžeru"
+
+#: ../glade/gbwidgets/gbwindow.c:318
+msgid "Gravity:"
+msgstr "Prijanjanje:"
+
+#: ../glade/gbwidgets/gbwindow.c:319
+msgid "The reference point to use when the window coordinates are set"
+msgstr "Odnosna tačka za postavljanje koordinata prozora"
+
+#: ../glade/gbwidgets/gbwindow.c:323
+#, fuzzy
+msgid "Focus On Map:"
+msgstr "Fokusira po kliku:"
+
+#: ../glade/gbwidgets/gbwindow.c:323
+#, fuzzy
+msgid "If the window should receive the input focus when it is mapped"
+msgstr "Da li upravljač prozora iscrtava oko prozora"
+
+#: ../glade/gbwidgets/gbwindow.c:1198
+msgid "Window"
+msgstr "Prozor"
+
+#: ../glade/glade.c:369 ../glade/gnome-db/gnomedberrordlg.c:74
+msgid "Error"
+msgstr "Greška"
+
+#: ../glade/glade.c:372
+msgid "System Error"
+msgstr "Sistemska greška"
+
+#: ../glade/glade.c:376
+msgid "Error opening file"
+msgstr "Greška prilikom otvaranja datoteke"
+
+#: ../glade/glade.c:378
+msgid "Error reading file"
+msgstr "Greška pri čitanju datoteke"
+
+#: ../glade/glade.c:380
+msgid "Error writing file"
+msgstr "Greška pri pisanju datoteke"
+
+#: ../glade/glade.c:383
+msgid "Invalid directory"
+msgstr "Nevažeći direktorijum"
+
+#: ../glade/glade.c:387
+msgid "Invalid value"
+msgstr "Nevažeća vrednost"
+
+#: ../glade/glade.c:389
+msgid "Invalid XML entity"
+msgstr "Nevažeći XML entitet"
+
+#: ../glade/glade.c:391
+msgid "Start tag expected"
+msgstr "Očekivana početna oznaka"
+
+#: ../glade/glade.c:393
+msgid "End tag expected"
+msgstr "Očekivana krajnja oznaka"
+
+#: ../glade/glade.c:395
+msgid "Character data expected"
+msgstr "Očekivani slovni podaci"
+
+#: ../glade/glade.c:397
+msgid "Class id missing"
+msgstr "Identifikacija klase nedostaje"
+
+#: ../glade/glade.c:399
+msgid "Class unknown"
+msgstr "Nepoznata klasa"
+
+#: ../glade/glade.c:401
+msgid "Invalid component"
+msgstr "Nevažeća komponenta"
+
+#: ../glade/glade.c:403
+msgid "Unexpected end of file"
+msgstr "Neočekivan kraj datoteke"
+
+#: ../glade/glade.c:406
+msgid "Unknown error code"
+msgstr "Nepoznati kod greške"
+
+#: ../glade/glade_atk.c:120
+msgid "Controlled By"
+msgstr "Kontrolisan od"
+
+#: ../glade/glade_atk.c:121
+msgid "Controller For"
+msgstr "Kontroler za"
+
+#: ../glade/glade_atk.c:122
+msgid "Label For"
+msgstr "Oznaka za"
+
+#: ../glade/glade_atk.c:123
+msgid "Labelled By"
+msgstr "Označeno od"
+
+#: ../glade/glade_atk.c:124
+msgid "Member Of"
+msgstr "Član"
+
+#: ../glade/glade_atk.c:125
+msgid "Node Child Of"
+msgstr "Naslednik Čvora"
+
+#: ../glade/glade_atk.c:126
+msgid "Flows To"
+msgstr ""
+
+#: ../glade/glade_atk.c:127
+msgid "Flows From"
+msgstr ""
+
+#: ../glade/glade_atk.c:128
+msgid "Subwindow Of"
+msgstr ""
+
+#: ../glade/glade_atk.c:129
+msgid "Embeds"
+msgstr ""
+
+#: ../glade/glade_atk.c:130
+#, fuzzy
+msgid "Embedded By"
+msgstr "Označeno od"
+
+#: ../glade/glade_atk.c:131
+#, fuzzy
+msgid "Popup For"
+msgstr "Iskačući meni"
+
+#: ../glade/glade_atk.c:132
+msgid "Parent Window Of"
+msgstr ""
+
+#. I don't think we should set the transient parent as the dialog could be
+#. left open if desired.
+#: ../glade/glade_atk.c:331
+#, c-format
+msgid "Relationship: %s"
+msgstr "Odnos: %s"
+
+#. Create the pages of the main notebook
+#. NOTE: If you add/remove pages you need to change the GB_PAGE_SIGNALS
+#. value at the top of this file
+#: ../glade/glade_atk.c:375 ../glade/property.c:615
+msgid "Widget"
+msgstr "Element"
+
+#: ../glade/glade_atk.c:638 ../glade/glade_menu_editor.c:772
+#: ../glade/property.c:776
+msgid "Name:"
+msgstr "Ime:"
+
+#: ../glade/glade_atk.c:639
+msgid "The name of the widget to pass to assistive technologies"
+msgstr "Ime elementa koje se predaje pomoćnim tehnologijama"
+
+#: ../glade/glade_atk.c:640
+msgid "Description:"
+msgstr "Opis:"
+
+#: ../glade/glade_atk.c:641
+msgid "The description of the widget to pass to assistive technologies"
+msgstr "Opis elementa koji se predaje pomoćnim tehnologijama"
+
+#: ../glade/glade_atk.c:643
+msgid "Table Caption:"
+msgstr "Naslov tabele:"
+
+#: ../glade/glade_atk.c:644
+msgid "The table caption to pass to assistive technologies"
+msgstr "Naslov tabele koji se predaje pomoćnim tehnologijama"
+
+#: ../glade/glade_atk.c:681
+msgid "Select the widgets with this relationship"
+msgstr "Izaberi elemente sa ovim odnosima"
+
+#: ../glade/glade_atk.c:761
+msgid "Click"
+msgstr "Klik"
+
+#: ../glade/glade_atk.c:762
+msgid "Press"
+msgstr "Pritisni"
+
+#: ../glade/glade_atk.c:763
+msgid "Release"
+msgstr "Pusti"
+
+#: ../glade/glade_atk.c:822
+msgid "Enter the description of the action to pass to assistive technologies"
+msgstr "Unesi opis akcije koja se predaje pomoćnim tehnologijama"
+
+#: ../glade/glade_clipboard.c:118
+msgid "Clipboard"
+msgstr "Spisak isečaka"
+
+#: ../glade/glade_clipboard.c:351
+msgid "You need to select a widget to paste into"
+msgstr "Mora se izabrati element u koji će se prekopirati"
+
+#: ../glade/glade_clipboard.c:376
+msgid "You can't paste into windows or dialogs."
+msgstr "Ne može se ubaciti u prozore ili prozorčiće."
+
+#: ../glade/glade_clipboard.c:399
+msgid ""
+"You can't paste into the selected widget, since\n"
+"it is created automatically by its parent."
+msgstr ""
+"Ne može se ubaciti u izabrani element pošto je\n"
+"automatski napravljena od prethodnika."
+
+#: ../glade/glade_clipboard.c:408 ../glade/glade_clipboard.c:416
+msgid "Only menu items can be pasted into a menu or menu bar."
+msgstr "Samo se elementi spiska mogu prekopirati u meni ili na liniju menija."
+
+#: ../glade/glade_clipboard.c:427
+msgid "Only buttons can be pasted into a dialog action area."
+msgstr "Samo se dugmad mogu prekopirati u oblast akcije prozorčeta."
+
+#: ../glade/glade_clipboard.c:437
+msgid "Only GnomeDockItem widgets can be pasted into a GnomeDock."
+msgstr "Samo se GnomeDockItem elementi mogu prekopirati u GnomeDock."
+
+#: ../glade/glade_clipboard.c:446
+msgid "Only GnomeDockItem widgets can be pasted over a GnomeDockItem."
+msgstr "Samo se GnomeDockItem elementi mogu prekopirati preko GnomeDockItem."
+
+#: ../glade/glade_clipboard.c:449
+msgid "Sorry - pasting over a GnomeDockItem is not implemented yet."
+msgstr "Izvini - kopiranje preko GnomeDockItem još uvek nije operativno."
+
+#: ../glade/glade_clipboard.c:457
+msgid "GnomeDockItem widgets can only be pasted into a GnomeDock."
+msgstr "Samo se GnomeDockItem elementi mogu prekopirati u GnomeDock."
+
+#. 3 - see GladeStockMenuItemNew above.
+#: ../glade/glade_gnome.c:121 ../glade/glade_gnome.c:874
+#: ../glade/glade_project_window.c:208 ../glade/glade_project_window.c:632
+msgid "_New"
+msgstr "_Novi"
+
+#: ../glade/glade_gnome.c:874
+msgid "Create a new file"
+msgstr "Napravi novu datoteku"
+
+#. Note that glade_palette_set_show_gnome_widgets() has some of these
+#. strings hard-coded now, so keep up-to-date.
+#: ../glade/glade_gnomelib.c:116
+msgid "_Gnome"
+msgstr "_Gnom"
+
+#: ../glade/glade_gnomelib.c:117 ../glade/glade_gtk12lib.c:248
+#: ../glade/glade_palette.c:315
+msgid "Dep_recated"
+msgstr "Neodob_reno"
+
+#. Note that glade_palette_set_show_gnome_widgets() has some of these
+#. strings hard-coded now, so keep up-to-date.
+#: ../glade/glade_gtk12lib.c:246
+msgid "GTK+ _Basic"
+msgstr "GTK+ _Osnovni"
+
+#: ../glade/glade_gtk12lib.c:247
+msgid "GTK+ _Additional"
+msgstr "GTK+ _Dodatni"
+
+#: ../glade/glade_keys_dialog.c:94
+msgid "Select Accelerator Key"
+msgstr "Izaberi ključ za prečicu"
+
+#: ../glade/glade_keys_dialog.c:97
+msgid "Keys"
+msgstr "Ključevi"
+
+#: ../glade/glade_menu_editor.c:394
+msgid "Menu Editor"
+msgstr "Editor menija"
+
+#: ../glade/glade_menu_editor.c:411
+msgid "Type"
+msgstr "Vrsta"
+
+#: ../glade/glade_menu_editor.c:412
+msgid "Accelerator"
+msgstr "Brzi pristup"
+
+#: ../glade/glade_menu_editor.c:413
+msgid "Name"
+msgstr "Ime"
+
+#: ../glade/glade_menu_editor.c:414 ../glade/property.c:1498
+msgid "Handler"
+msgstr "Upravljač"
+
+#: ../glade/glade_menu_editor.c:415 ../glade/property.c:102
+msgid "Active"
+msgstr "Aktivan"
+
+#: ../glade/glade_menu_editor.c:416
+msgid "Group"
+msgstr "Grupa"
+
+#: ../glade/glade_menu_editor.c:417
+msgid "Icon"
+msgstr "Ikona"
+
+#: ../glade/glade_menu_editor.c:458
+msgid "Move the item and its children up one place in the list"
+msgstr "Pomeri elemenat i njegove naslednike jedno mesto iznad na listi"
+
+#: ../glade/glade_menu_editor.c:470
+msgid "Move the item and its children down one place in the list"
+msgstr "Pomeri elemenat i njegove naslednike jedno mesto ispod na listi"
+
+#: ../glade/glade_menu_editor.c:482
+msgid "Move the item and its children up one level"
+msgstr "Pomeri elemenat i njegove naslednike jedan nivo iznad"
+
+#: ../glade/glade_menu_editor.c:494
+msgid "Move the item and its children down one level"
+msgstr "Pomeri elemenat i njegove naslednike jedan nivo ispod"
+
+#: ../glade/glade_menu_editor.c:524
+msgid "The stock item to use."
+msgstr "Uobičajeni elemenat koji se koristi."
+
+#: ../glade/glade_menu_editor.c:527 ../glade/glade_menu_editor.c:642
+msgid "Stock Item:"
+msgstr "Uobičajeni elemenat:"
+
+#: ../glade/glade_menu_editor.c:640
+msgid "The stock Gnome item to use."
+msgstr "Uobičajeni Gnom elemenat koji se koristi."
+
+#: ../glade/glade_menu_editor.c:745
+msgid "The text of the menu item, or empty for separators."
+msgstr "Tekst stavke menija, ili prazno za razdvajače."
+
+#: ../glade/glade_menu_editor.c:769 ../glade/property.c:777
+msgid "The name of the widget"
+msgstr "Ime elementa"
+
+#: ../glade/glade_menu_editor.c:790
+msgid "The function to be called when the item is selected"
+msgstr "Funkcija koja se poziva kad se izabere elemenat"
+
+#: ../glade/glade_menu_editor.c:792 ../glade/property.c:1546
+msgid "Handler:"
+msgstr "Upravljač:"
+
+#: ../glade/glade_menu_editor.c:811
+msgid "An optional icon to show on the left of the menu item."
+msgstr "Opcionalna ikona koja se prikazuje levo od elementa menija."
+
+#: ../glade/glade_menu_editor.c:934
+msgid "The tip to show when the mouse is over the item"
+msgstr "Savet koji se prikazuje kad je pokazivač miša iznad elementa"
+
+#: ../glade/glade_menu_editor.c:936 ../glade/property.c:824
+msgid "Tooltip:"
+msgstr "Savet:"
+
+#: ../glade/glade_menu_editor.c:957
+msgid "_Add"
+msgstr "Dod_aj"
+
+#: ../glade/glade_menu_editor.c:962
+msgid "Add a new item below the selected item."
+msgstr "Dodaj novi elemenat ispod izabranog."
+
+#: ../glade/glade_menu_editor.c:967
+msgid "Add _Child"
+msgstr "Dodaj _Naslednika"
+
+#: ../glade/glade_menu_editor.c:972
+msgid "Add a new child item below the selected item."
+msgstr "Dodaj novi nasleđeni elemenat ispod izabranog."
+
+#: ../glade/glade_menu_editor.c:978
+msgid "Add _Separator"
+msgstr "Dodaj _razdvajač"
+
+#: ../glade/glade_menu_editor.c:983
+msgid "Add a separator below the selected item."
+msgstr "Dodaj razdvajač ispod izabranog elementa."
+
+#: ../glade/glade_menu_editor.c:988 ../glade/glade_project_window.c:239
+msgid "_Delete"
+msgstr "O_briši"
+
+#: ../glade/glade_menu_editor.c:993
+msgid "Delete the current item"
+msgstr "Obriši tekući elemenat"
+
+#. Type radio options and toggle options.
+#: ../glade/glade_menu_editor.c:999
+msgid "Item Type:"
+msgstr "Vrsta elementa:"
+
+#: ../glade/glade_menu_editor.c:1015
+msgid "If the item is initially on."
+msgstr "Da li je elemenat početno uključen."
+
+#: ../glade/glade_menu_editor.c:1017
+msgid "Active:"
+msgstr "Aktivan:"
+
+#: ../glade/glade_menu_editor.c:1022 ../glade/glade_menu_editor.c:1632
+#: ../glade/property.c:2215 ../glade/property.c:2225
+msgid "No"
+msgstr "Ne"
+
+#: ../glade/glade_menu_editor.c:1036
+msgid "The radio menu item's group"
+msgstr "Grupa radio elemenata menija"
+
+#: ../glade/glade_menu_editor.c:1053 ../glade/glade_menu_editor.c:2406
+#: ../glade/glade_menu_editor.c:2546
+msgid "Radio"
+msgstr "Radio"
+
+#: ../glade/glade_menu_editor.c:1060 ../glade/glade_menu_editor.c:2404
+#: ../glade/glade_menu_editor.c:2544
+msgid "Check"
+msgstr "Provera"
+
+#: ../glade/glade_menu_editor.c:1067 ../glade/property.c:102
+msgid "Normal"
+msgstr "Obično"
+
+#. Accelerator key options.
+#: ../glade/glade_menu_editor.c:1076
+msgid "Accelerator:"
+msgstr "Prečica:"
+
+#: ../glade/glade_menu_editor.c:1113 ../glade/property.c:1681
+msgid "Ctrl"
+msgstr "Kontrol"
+
+#: ../glade/glade_menu_editor.c:1118 ../glade/property.c:1684
+msgid "Shift"
+msgstr "Šift"
+
+#: ../glade/glade_menu_editor.c:1123 ../glade/property.c:1687
+msgid "Alt"
+msgstr "Alt"
+
+#: ../glade/glade_menu_editor.c:1128 ../glade/property.c:1694
+msgid "Key:"
+msgstr "Ključ:"
+
+#: ../glade/glade_menu_editor.c:1134 ../glade/property.c:1673
+msgid "Modifiers:"
+msgstr "Modifikatori:"
+
+#: ../glade/glade_menu_editor.c:1632 ../glade/glade_menu_editor.c:2411
+#: ../glade/glade_menu_editor.c:2554 ../glade/property.c:2215
+msgid "Yes"
+msgstr "Da"
+
+#: ../glade/glade_menu_editor.c:2002
+msgid "Select icon"
+msgstr "Izaberi ikonu"
+
+#: ../glade/glade_menu_editor.c:2345 ../glade/glade_menu_editor.c:2706
+msgid "separator"
+msgstr "razdvajač"
+
+#. Add the special 'New' item to create a new group.
+#: ../glade/glade_menu_editor.c:3624 ../glade/glade_project_window.c:366
+#: ../glade/property.c:5109
+msgid "New"
+msgstr "Novo"
+
+#: ../glade/glade_palette.c:194 ../glade/glade_palette.c:196
+#: ../glade/glade_palette.c:412
+msgid "Selector"
+msgstr "Izbirač"
+
+#: ../glade/glade_project.c:385
+msgid ""
+"The project directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+"Direktorijum projekta nije određen.\n"
+"Odredi ga pomoću prozorčeta za opcije projekta.\n"
+
+#: ../glade/glade_project.c:392
+msgid ""
+"The source directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+"Izvorni direktorijum nije određen.\n"
+"Odredi ga pomoću prozorčeta za opcije projekta.\n"
+
+#: ../glade/glade_project.c:402
+msgid ""
+"Invalid source directory:\n"
+"\n"
+"The source directory must be the project directory\n"
+"or a subdirectory of the project directory.\n"
+msgstr ""
+"Nevažeći izvorni direktorijum:\n"
+"\n"
+"Izvorni direktorijum mora biti direktorijum projekta.\n"
+"ili poddirektorijum direktorijuma projekta.\n"
+
+#: ../glade/glade_project.c:410
+msgid ""
+"The pixmaps directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+"Direktorijum piksmapa nije određen.\n"
+"Odredi ga pomoću prozorčeta za opcije projekta.\n"
+
+#: ../glade/glade_project.c:438
+#, c-format
+msgid "Sorry - generating source for %s is not implemented yet"
+msgstr "Izvini - generisanje izvornog koda za %s još uvek nije operativno"
+
+#: ../glade/glade_project.c:509
+msgid ""
+"Your project uses deprecated widgets that Gtkmm-2\n"
+"does not support.  Check your project for these\n"
+"widgets, and use their replacements."
+msgstr ""
+"Vaš projekat koristi prevaziđene elemente koje Gtkmm-2\n"
+"ne podržava. Pronađite ove elemente u vašem projektu, i \n"
+"koristite njihove zamene."
+
+#: ../glade/glade_project.c:521
+msgid ""
+"Error running glade-- to generate the C++ source code.\n"
+"Check that you have glade-- installed and that it is in your PATH.\n"
+"Then try running 'glade-- <project_file.glade>' in a terminal."
+msgstr ""
+"Greška prilikom glade-- izvođenja za generisanje C++ izvornog koda.\n"
+"Proveri da li je glade-- instaliran i da li je u tvom PATH-u.\n"
+"Zatim probaj da izvršiš 'glade-- <project_file.glade>' u terminalu."
+
+#: ../glade/glade_project.c:548
+msgid ""
+"Error running gate to generate the Ada95 source code.\n"
+"Check that you have gate installed and that it is in your PATH.\n"
+"Then try running 'gate <project_file.glade>' in a terminal."
+msgstr ""
+"Greška prilikom pokretanja gate-a za generisanje Ada95 izvornog koda.\n"
+"Proveri da li je gate instaliran i da li je u tvom PATH-u.\n"
+"Zatim probaj da izvršiš „gate <project_file.glade>“ u terminalu."
+
+#: ../glade/glade_project.c:571
+msgid ""
+"Error running glade2perl to generate the Perl source code.\n"
+"Check that you have glade2perl installed and that it is in your PATH.\n"
+"Then try running 'glade2perl <project_file.glade>' in a terminal."
+msgstr ""
+"Greška prilikom pokretanja glade2perl-a za generisanje Perl izvornog koda.\n"
+"Proveri da li je glade2perl instaliran i da li je u tvom PATH-u.\n"
+"Zatim probaj da izvršiš „glade2perl <project_file.glade>“ u terminalu."
+
+#: ../glade/glade_project.c:594
+msgid ""
+"Error running eglade to generate the Eiffel source code.\n"
+"Check that you have eglade installed and that it is in your PATH.\n"
+"Then try running 'eglade <project_file.glade>' in a terminal."
+msgstr ""
+"Greška prilikom pokretanja eglade-a za generisanje Eiffel izvornog koda.\n"
+"Proveri da li je eglade instaliran i da li je u tvom PATH-u.\n"
+"Zatim probaj da izvršiš „eglade <project_file.glade>“ u terminalu."
+
+#: ../glade/glade_project.c:954
+msgid ""
+"The pixmap directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+"Direktorijum piksmapa nije određen.\n"
+"Odredi ga pomoću prozorčeta za opcije projekta.\n"
+
+#: ../glade/glade_project.c:1772
+msgid "Error writing project XML file\n"
+msgstr "Greška pri pisanju XML daljtoteke za projekat\n"
+
+#: ../glade/glade_project_options.c:157 ../glade/glade_project_window.c:382
+#: ../glade/glade_project_window.c:889
+msgid "Project Options"
+msgstr "Postavke projekta"
+
+#.
+#. * General Page.
+#.
+#: ../glade/glade_project_options.c:174
+msgid "General"
+msgstr "Opšte"
+
+#: ../glade/glade_project_options.c:183
+msgid "Basic Options:"
+msgstr "Osnovne postavke:"
+
+#: ../glade/glade_project_options.c:201
+msgid "The project directory"
+msgstr "Direktorijum projekta"
+
+#: ../glade/glade_project_options.c:203
+msgid "Project Directory:"
+msgstr "Direktorijum projekta:"
+
+#: ../glade/glade_project_options.c:221
+msgid "Browse..."
+msgstr "Pregled..."
+
+#: ../glade/glade_project_options.c:236
+msgid "The name of the current project"
+msgstr "Ime tekućeg projekta"
+
+#: ../glade/glade_project_options.c:238
+msgid "Project Name:"
+msgstr "Ime projekta:"
+
+#: ../glade/glade_project_options.c:258
+msgid "The name of the program"
+msgstr "Ime programa"
+
+#: ../glade/glade_project_options.c:281
+msgid "The project file"
+msgstr "Datoteka projekta"
+
+#: ../glade/glade_project_options.c:283
+msgid "Project File:"
+msgstr "Datoteka projekta:"
+
+#. Project Source Directory.
+#: ../glade/glade_project_options.c:299
+msgid "Subdirectories:"
+msgstr "Poddirektorijumi:"
+
+#: ../glade/glade_project_options.c:316
+msgid "The directory to save generated source code"
+msgstr "Direktorijum za smeštaj generisanog izvornog koda"
+
+#: ../glade/glade_project_options.c:319
+msgid "Source Directory:"
+msgstr "Direktorijum izvornog koda:"
+
+#: ../glade/glade_project_options.c:338
+msgid "The directory to store pixmaps"
+msgstr "Direktorijum za smeštaj piksmapa"
+
+#: ../glade/glade_project_options.c:341
+msgid "Pixmaps Directory:"
+msgstr "Direktorijum piksmapa:"
+
+#: ../glade/glade_project_options.c:363
+msgid "The license which is added at the top of generated files"
+msgstr "Licenca koja će se postaviti na početku generisanih datoteka"
+
+#. Source Language.
+#: ../glade/glade_project_options.c:385
+msgid "Language:"
+msgstr "Jezici:"
+
+#: ../glade/glade_project_options.c:416
+msgid "Gnome:"
+msgstr "Gnom:"
+
+#: ../glade/glade_project_options.c:424
+msgid "Enable Gnome Support"
+msgstr "Omogući podršku za Gnom"
+
+#: ../glade/glade_project_options.c:430
+msgid "If a Gnome application is to be built"
+msgstr "Da li će se izgraditi Gnom aplikacija"
+
+#: ../glade/glade_project_options.c:433
+msgid "Enable Gnome DB Support"
+msgstr "Omogući podršku za Gnom bazu podataka"
+
+#: ../glade/glade_project_options.c:437
+msgid "If a Gnome DB application is to be built"
+msgstr "Da li će se izgraditi Gnom aplikacija sa bazom podataka"
+
+#.
+#. * C Options Page.
+#.
+#: ../glade/glade_project_options.c:447
+msgid "C Options"
+msgstr "C opcije"
+
+#: ../glade/glade_project_options.c:456
+msgid "<b>Note:</b> for large applications the use of libglade is recommended."
+msgstr ""
+"<b>Zapamtite:</b> za velike programe, preporučuje se upotreba libglade-a."
+
+#: ../glade/glade_project_options.c:468
+msgid "General Options:"
+msgstr "Opšte opcije:"
+
+#. Gettext Support.
+#: ../glade/glade_project_options.c:478
+msgid "Gettext Support"
+msgstr "Gettext podrška"
+
+#: ../glade/glade_project_options.c:483
+msgid "If strings are marked for translation by gettext"
+msgstr "Da li su slogovi obeleženi za prevod pomoću gettext"
+
+#. Setting widget names.
+#: ../glade/glade_project_options.c:487
+msgid "Set Widget Names"
+msgstr "Odredi imena elemenata"
+
+#: ../glade/glade_project_options.c:492
+msgid "If widget names are set in the source code"
+msgstr "Da li se imena elemenata određuju u izvornom kodu"
+
+#. Backing up source files.
+#: ../glade/glade_project_options.c:496
+msgid "Backup Source Files"
+msgstr "Sačuvaj datoteke izvornog koda"
+
+#: ../glade/glade_project_options.c:501
+msgid "If copies of old source files are made"
+msgstr "Da li se čuvaju kopije datoteka izvornog koda"
+
+#. Gnome Help System support.
+#: ../glade/glade_project_options.c:505
+msgid "Gnome Help Support"
+msgstr "Podrška za Gnom pomoć"
+
+#: ../glade/glade_project_options.c:512
+msgid "If support for the Gnome Help system should be included"
+msgstr "Da li se uključuje podrška za Gnom sistem pomoći"
+
+#: ../glade/glade_project_options.c:515
+msgid "File Output Options:"
+msgstr "Postavke izlaza datoteka:"
+
+#. Outputting main file.
+#: ../glade/glade_project_options.c:525
+msgid "Output main.c File"
+msgstr "main.c datoteka je izlaz"
+
+#: ../glade/glade_project_options.c:530
+msgid ""
+"If a main.c file is output containing a main() function, if it doesn't "
+"already exist"
+msgstr "Da li je main.c izlaz koji sadrži main() funkciju i ona ne postoji"
+
+#. Outputting support files.
+#: ../glade/glade_project_options.c:534
+msgid "Output Support Functions"
+msgstr "Proizvedi pomoćne Funkcije"
+
+#: ../glade/glade_project_options.c:539
+msgid "If the support functions are output"
+msgstr "Da li se proizvode pomoćne funkcije"
+
+#. Outputting build files.
+#: ../glade/glade_project_options.c:543
+msgid "Output Build Files"
+msgstr "Proizvedi datoteke za izradu"
+
+#: ../glade/glade_project_options.c:548
+msgid ""
+"If files for building the source code are output, including Makefile.am and "
+"configure.in, if they don't already exist"
+msgstr ""
+"Da li se proizvode datoteke za izradu izvornog koda, kao Makefile.am i "
+"configure.in, ukoliko one već ne postoje"
+
+#. Main source file.
+#: ../glade/glade_project_options.c:552
+msgid "Interface Creation Functions:"
+msgstr "Funkcije izrade sučelja:"
+
+#: ../glade/glade_project_options.c:564
+msgid "The file in which the functions to create the interface are written"
+msgstr "Datoteka u kojoj se nalaze funkcije za kreiranje interfejsa"
+
+#: ../glade/glade_project_options.c:566 ../glade/glade_project_options.c:612
+#: ../glade/glade_project_options.c:658 ../glade/property.c:998
+msgid "Source File:"
+msgstr "Datoteka izvornog koda:"
+
+#: ../glade/glade_project_options.c:581
+msgid ""
+"The file in which the declarations of the functions to create the interface "
+"are written"
+msgstr ""
+"Datoteka u kojoj se nalaze deklaracije funkcija za kreiranje interfejsa"
+
+#: ../glade/glade_project_options.c:583 ../glade/glade_project_options.c:629
+#: ../glade/glade_project_options.c:675
+msgid "Header File:"
+msgstr "Datoteka zaglavlja:"
+
+#: ../glade/glade_project_options.c:594
+msgid "Source file for interface creation functions"
+msgstr "Izvorna datoteka za funkcije za izradu sučelja"
+
+#: ../glade/glade_project_options.c:595
+msgid "Header file for interface creation functions"
+msgstr "Datoteka zaglavlja za funkcije za izradu sučelja"
+
+#. Handler source file.
+#: ../glade/glade_project_options.c:598
+msgid "Signal Handler & Callback Functions:"
+msgstr "Funkcije za upravljanje signalima i pozvanim funkcijama:"
+
+#: ../glade/glade_project_options.c:610
+msgid ""
+"The file in which the empty signal handler and callback functions are written"
+msgstr ""
+"Datoteka u kojoj su upisani prazni upravljači signala i pozvane funkcije"
+
+#: ../glade/glade_project_options.c:627
+msgid ""
+"The file in which the declarations of the signal handler and callback "
+"functions are written"
+msgstr ""
+"Datoteka u koju se upisuju deklaracije upravljača signala i pozvanih funkcija"
+
+#: ../glade/glade_project_options.c:640
+msgid "Source file for signal handler and callback functions"
+msgstr "Izvorna datoteka za rukovaoca signalima i pozivne funkcije"
+
+#: ../glade/glade_project_options.c:641
+msgid "Header file for signal handler and callback functions"
+msgstr "Datoteka zaglavlja za rukovaoca signalima i pozivne funkcije"
+
+#. Support source file.
+#: ../glade/glade_project_options.c:644
+msgid "Support Functions:"
+msgstr "Pomoćne funkcije:"
+
+#: ../glade/glade_project_options.c:656
+msgid "The file in which the support functions are written"
+msgstr "Datoteka u koju se upisuju pomoćne funkcije"
+
+#: ../glade/glade_project_options.c:673
+msgid "The file in which the declarations of the support functions are written"
+msgstr "Datoteka u koju se upisuju deklaracije pomoćnih funkcija"
+
+#: ../glade/glade_project_options.c:686
+msgid "Source file for support functions"
+msgstr "Izvorna datoteka za pomoćne funkcije"
+
+#: ../glade/glade_project_options.c:687
+msgid "Header file for support functions"
+msgstr "Datoteka zaglavlja za pomoćne funkcije"
+
+#.
+#. * libglade Options Page.
+#.
+#: ../glade/glade_project_options.c:693
+msgid "LibGlade Options"
+msgstr "LibGlade opcije"
+
+#: ../glade/glade_project_options.c:702
+msgid "Translatable Strings:"
+msgstr "Nizovi koji se prevode:"
+
+#: ../glade/glade_project_options.c:716
+msgid "<b>Note:</b> this option is deprecated - use intltool instead."
+msgstr ""
+"<b>Zapamtite:</b> ova opcija je prevaziđena — koristite intltool umesto nje."
+
+#. Output translatable strings.
+#: ../glade/glade_project_options.c:726
+msgid "Save Translatable Strings"
+msgstr "Sačuvaj nizove koji se prevode"
+
+#: ../glade/glade_project_options.c:731
+msgid ""
+"If translatable strings are saved in a separate C source file, to enable "
+"translation of interfaces loaded by libglade"
+msgstr ""
+"Da li se nizovi koji se prevode čuvaju u posebnoj datoteci C izvornog koda "
+"da bi se omogućilo prevođenje interfejsa koje puni libglade"
+
+#: ../glade/glade_project_options.c:741
+msgid "The C source file to save all translatable strings in"
+msgstr ""
+"Izvorna datoteka C koda u kojoj će se sačuvati svi nizovi koji se prevode"
+
+#: ../glade/glade_project_options.c:743 ../glade/gnome/gnomepixmap.c:79
+msgid "File:"
+msgstr "Datoteka:"
+
+#: ../glade/glade_project_options.c:1202
+msgid "Select the Project Directory"
+msgstr "Izaberite direktorijum projekta"
+
+#: ../glade/glade_project_options.c:1392 ../glade/glade_project_options.c:1402
+#: ../glade/glade_project_options.c:1412
+msgid "You need to set the Translatable Strings File option"
+msgstr "Morate postaviti opciju za datoteku koja sadrži nizove koji se prevode"
+
+#: ../glade/glade_project_options.c:1396 ../glade/glade_project_options.c:1406
+msgid "You need to set the Project Directory option"
+msgstr "Morate postaviti opciju direktorijum projekta"
+
+#: ../glade/glade_project_options.c:1398 ../glade/glade_project_options.c:1408
+msgid "You need to set the Project File option"
+msgstr "Morate postaviti opciju za datoteku projekta"
+
+#: ../glade/glade_project_options.c:1414
+msgid "You need to set the Project Name option"
+msgstr "Morate postaviti opciju za ime projekta"
+
+#: ../glade/glade_project_options.c:1416
+msgid "You need to set the Program Name option"
+msgstr "Morate postaviti opciju za ime programa"
+
+#: ../glade/glade_project_options.c:1419
+msgid "You need to set the Source Directory option"
+msgstr "Morate postaviti opciju za direktorijum izvornog koda"
+
+#: ../glade/glade_project_options.c:1422
+msgid "You need to set the Pixmaps Directory option"
+msgstr "Morate postaviti opciju za direktorijum piksmapa"
+
+#: ../glade/glade_project_window.c:184
+#, c-format
+msgid ""
+"Couldn't show help file: %s.\n"
+"\n"
+"Error: %s"
+msgstr ""
+"Ne može da prikaže datoteku za pomoć: %s.\n"
+"\n"
+"Greška: %s"
+
+#: ../glade/glade_project_window.c:208 ../glade/glade_project_window.c:634
+msgid "Create a new project"
+msgstr "Napravi novi projekat"
+
+#: ../glade/glade_project_window.c:216 ../glade/glade_project_window.c:654
+#: ../glade/glade_project_window.c:905
+msgid "_Build"
+msgstr "_Izgradi"
+
+#: ../glade/glade_project_window.c:217 ../glade/glade_project_window.c:665
+msgid "Output the project source code"
+msgstr "Proizvedi izvorni kod projekta"
+
+#: ../glade/glade_project_window.c:223 ../glade/glade_project_window.c:668
+msgid "Op_tions..."
+msgstr "Op_cije..."
+
+#: ../glade/glade_project_window.c:224 ../glade/glade_project_window.c:677
+msgid "Edit the project options"
+msgstr "Izmeni opcije projekta"
+
+#: ../glade/glade_project_window.c:239 ../glade/glade_project_window.c:716
+msgid "Delete the selected widget"
+msgstr "Obriši izabrani element"
+
+#: ../glade/glade_project_window.c:257 ../glade/glade_project_window.c:727
+msgid "Show _Palette"
+msgstr "Prikaži _paletu"
+
+#: ../glade/glade_project_window.c:257 ../glade/glade_project_window.c:732
+msgid "Show the palette of widgets"
+msgstr "Prikaži paletu sa elemenetima"
+
+#: ../glade/glade_project_window.c:263 ../glade/glade_project_window.c:737
+msgid "Show Property _Editor"
+msgstr "Prikaži uređivač _osobina"
+
+#: ../glade/glade_project_window.c:264 ../glade/glade_project_window.c:743
+msgid "Show the property editor"
+msgstr "Prikaži uređivač osobina"
+
+#: ../glade/glade_project_window.c:270 ../glade/glade_project_window.c:747
+msgid "Show Widget _Tree"
+msgstr "Prikaži stablo _elemenata"
+
+#: ../glade/glade_project_window.c:271 ../glade/glade_project_window.c:753
+#: ../glade/main.c:82
+msgid "Show the widget tree"
+msgstr "Prikaži stablo elemenata"
+
+#: ../glade/glade_project_window.c:277 ../glade/glade_project_window.c:757
+msgid "Show _Clipboard"
+msgstr "Prikaži spisak _isečaka"
+
+#: ../glade/glade_project_window.c:278 ../glade/glade_project_window.c:763
+#: ../glade/main.c:86
+msgid "Show the clipboard"
+msgstr "Prikaži spisak isečaka"
+
+#: ../glade/glade_project_window.c:296
+msgid "Show _Grid"
+msgstr "Prikaži mre_žu"
+
+#: ../glade/glade_project_window.c:297 ../glade/glade_project_window.c:799
+msgid "Show the grid (in fixed containers only)"
+msgstr "Prikaži mrežu (samo u fiksnim kontejnerima)"
+
+#: ../glade/glade_project_window.c:303
+msgid "_Snap to Grid"
+msgstr "_Prioni na mrežu"
+
+#: ../glade/glade_project_window.c:304
+msgid "Snap widgets to the grid"
+msgstr "Prioni element za mrežu"
+
+#: ../glade/glade_project_window.c:310 ../glade/glade_project_window.c:771
+msgid "Show _Widget Tooltips"
+msgstr "Prikaži pre_dloge za element"
+
+#: ../glade/glade_project_window.c:311 ../glade/glade_project_window.c:779
+msgid "Show the tooltips of created widgets"
+msgstr "Prikaži predloge za napravljene elemente"
+
+#: ../glade/glade_project_window.c:320 ../glade/glade_project_window.c:802
+msgid "Set Grid _Options..."
+msgstr "Postavi opcije za _mrežu..."
+
+#: ../glade/glade_project_window.c:321
+msgid "Set the grid style and spacing"
+msgstr "Postavi stil mreže i razmak"
+
+#: ../glade/glade_project_window.c:327 ../glade/glade_project_window.c:823
+msgid "Set Snap O_ptions..."
+msgstr "Postavi opcije za prianjanj_e..."
+
+#: ../glade/glade_project_window.c:328
+msgid "Set options for snapping to the grid"
+msgstr "Postavi opcije za prianjanje uz mrežu"
+
+#: ../glade/glade_project_window.c:340
+msgid "_FAQ"
+msgstr "_FAQ"
+
+#: ../glade/glade_project_window.c:341
+msgid "View the Glade FAQ"
+msgstr "Pogledajte pitanja i odgovore za Glejda"
+
+#. create File menu
+#: ../glade/glade_project_window.c:355 ../glade/glade_project_window.c:625
+msgid "_Project"
+msgstr "_Projekat"
+
+#: ../glade/glade_project_window.c:366 ../glade/glade_project_window.c:872
+#: ../glade/glade_project_window.c:1049
+msgid "New Project"
+msgstr "Novi projekat"
+
+#: ../glade/glade_project_window.c:371
+msgid "Open"
+msgstr "Otvori"
+
+#: ../glade/glade_project_window.c:371 ../glade/glade_project_window.c:877
+#: ../glade/glade_project_window.c:1110
+msgid "Open Project"
+msgstr "Otvori projekat"
+
+#: ../glade/glade_project_window.c:376
+msgid "Save"
+msgstr "Sačuvaj"
+
+#: ../glade/glade_project_window.c:376 ../glade/glade_project_window.c:881
+#: ../glade/glade_project_window.c:1475
+msgid "Save Project"
+msgstr "Sačuvaj projekat"
+
+#: ../glade/glade_project_window.c:382
+msgid "Options"
+msgstr "Opcije"
+
+#: ../glade/glade_project_window.c:387
+msgid "Build"
+msgstr "Izgradi"
+
+#: ../glade/glade_project_window.c:387
+msgid "Build the Source Code"
+msgstr "Izgradi izvorni kod"
+
+#: ../glade/glade_project_window.c:638
+msgid "Open an existing project"
+msgstr "Otvori postojeći projekat"
+
+#: ../glade/glade_project_window.c:642
+msgid "Save project"
+msgstr "Sačuvaj projekat"
+
+#: ../glade/glade_project_window.c:687
+msgid "Quit Glade"
+msgstr "Izađi iz Glejda"
+
+#: ../glade/glade_project_window.c:701
+msgid "Cut the selected widget to the clipboard"
+msgstr "Iseci izabrani element i smesti među isečke"
+
+#: ../glade/glade_project_window.c:706
+msgid "Copy the selected widget to the clipboard"
+msgstr "Umnoži izabrani element i smesti među isečke"
+
+#: ../glade/glade_project_window.c:711
+msgid "Paste the widget from the clipboard over the selected widget"
+msgstr "Ubaci elemnt iz spiska isečaka preko izabranog elementa"
+
+#: ../glade/glade_project_window.c:783
+msgid "_Grid"
+msgstr "_Mreža"
+
+#: ../glade/glade_project_window.c:791
+msgid "_Show Grid"
+msgstr "_Prikaži mrežu"
+
+#: ../glade/glade_project_window.c:808
+msgid "Set the spacing between grid lines"
+msgstr "Odredi razmak između linija mreže"
+
+#: ../glade/glade_project_window.c:811
+msgid "S_nap to Grid"
+msgstr "_Prioni na mrežu"
+
+#: ../glade/glade_project_window.c:819
+msgid "Snap widgets to the grid (in fixed containers only)"
+msgstr "Prioni element na mrežu (samo u fiksnim kontejnerima)"
+
+#: ../glade/glade_project_window.c:829
+msgid "Set which parts of a widget snap to the grid"
+msgstr "Odredi koji delovi forme prijanjaju na mrežu"
+
+#. Don't show these yet as we have no help pages.
+#. menuitem = gtk_menu_item_new_with_mnemonic (_("_Contents"));
+#. gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#. gtk_widget_show (menuitem);
+#.
+#. menuitem = gtk_menu_item_new_with_mnemonic (_("_Index"));
+#. gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#. gtk_widget_show (menuitem);
+#.
+#. menuitem = gtk_menu_item_new ();
+#. gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#. gtk_widget_show (menuitem);
+#.
+#: ../glade/glade_project_window.c:854
+msgid "_About..."
+msgstr "_O programu..."
+
+#: ../glade/glade_project_window.c:895
+msgid "Optio_ns"
+msgstr "Opc_ije"
+
+#: ../glade/glade_project_window.c:899
+msgid "Write Source Code"
+msgstr "Proizvedi izvorni kod"
+
+#: ../glade/glade_project_window.c:986 ../glade/glade_project_window.c:1691
+#: ../glade/glade_project_window.c:1980
+msgid "Glade"
+msgstr "Glejd"
+
+#: ../glade/glade_project_window.c:993
+msgid "Are you sure you want to create a new project?"
+msgstr "Da li sigurno želiš da kreiraš novi projekat?"
+
+#: ../glade/glade_project_window.c:1053
+msgid "New _GTK+ Project"
+msgstr "Novi _Gtk+ projekat"
+
+#: ../glade/glade_project_window.c:1054
+msgid "New G_NOME Project"
+msgstr "Novi G_nom projekat"
+
+#: ../glade/glade_project_window.c:1057
+msgid "Which type of project do you want to create?"
+msgstr "Koju vrstu projekta želiš da kreiraš?"
+
+#: ../glade/glade_project_window.c:1091
+msgid "New project created."
+msgstr "Napravljen je novi projekat."
+
+#: ../glade/glade_project_window.c:1181
+msgid "Project opened."
+msgstr "Projekat otvoren."
+
+#: ../glade/glade_project_window.c:1195
+msgid "Error opening project."
+msgstr "Greška prilikom otvaranja projekta"
+
+#: ../glade/glade_project_window.c:1259
+msgid "Errors opening project file"
+msgstr "Greške prilikom otvaranja datoteke projekta"
+
+#: ../glade/glade_project_window.c:1265
+msgid " errors opening project file:"
+msgstr " greške prilikom otvaranja datoteke projekta"
+
+#: ../glade/glade_project_window.c:1338
+msgid ""
+"There is no project currently open.\n"
+"Create a new project with the Project/New command."
+msgstr ""
+"Trenutno nema nijednog otvorenog projekta.\n"
+"Napravi novi projekat pomoću Projekat/Novi naredbe."
+
+#: ../glade/glade_project_window.c:1542
+msgid "Error saving project"
+msgstr "Greška prilikom spasavanja projekta"
+
+#: ../glade/glade_project_window.c:1544
+msgid "Error saving project."
+msgstr "Greška prilikom spasavanja projekta"
+
+#: ../glade/glade_project_window.c:1550
+msgid "Project saved."
+msgstr "Projekat sačuvan."
+
+#: ../glade/glade_project_window.c:1620
+msgid "Errors writing source code"
+msgstr "Greška prilikom pisanja izvornog koda"
+
+#: ../glade/glade_project_window.c:1622
+msgid "Error writing source."
+msgstr "Greška prilikom pisanja izvornog koda."
+
+#: ../glade/glade_project_window.c:1628
+msgid "Source code written."
+msgstr "Izvorni kod ispisan."
+
+#: ../glade/glade_project_window.c:1659
+msgid "System error message:"
+msgstr "Sistemska poruka greške:"
+
+#: ../glade/glade_project_window.c:1698
+msgid "Are you sure you want to quit?"
+msgstr "Da li sigurno da želiš da prekineš?"
+
+#: ../glade/glade_project_window.c:1982 ../glade/glade_project_window.c:2042
+msgid "(C) 1998-2002 Damon Chaplin"
+msgstr "(C) 1998-2002 Dejmon Čaplin"
+
+#: ../glade/glade_project_window.c:1983 ../glade/glade_project_window.c:2041
+msgid "Glade is a User Interface Builder for GTK+ and GNOME."
+msgstr "Glejd je izgrađivač korisničkog sučelja za Gtk+ i Gnoma."
+
+#: ../glade/glade_project_window.c:2012
+msgid "About Glade"
+msgstr "O Glejdu"
+
+#: ../glade/glade_project_window.c:2097
+msgid "<untitled>"
+msgstr "<bez naslova>"
+
+#: ../glade/gnome-db/gnomedbbrowser.c:135
+msgid "Database Browser"
+msgstr "Pregledač baze podataka"
+
+#: ../glade/gnome-db/gnomedbcombo.c:124
+msgid "Data-bound combo"
+msgstr "Kombinacija podataka i povezivanja"
+
+#: ../glade/gnome-db/gnomedbconnectprop.c:86
+msgid "GnomeDbConnectionProperties"
+msgstr "GnomeDbConnectionProperties"
+
+#: ../glade/gnome-db/gnomedbconnectsel.c:147
+msgid "Connection Selector"
+msgstr "Izbornik veza"
+
+#: ../glade/gnome-db/gnomedbdsnconfig.c:136
+msgid "DSN Configurator"
+msgstr "DSN Konfigurator"
+
+#: ../glade/gnome-db/gnomedbdsndruid.c:147
+msgid "DSN Config Druid"
+msgstr "Druid za DSN konfiguraciju"
+
+#: ../glade/gnome-db/gnomedbeditor.c:63
+msgid "Highlight text:"
+msgstr "Istakni tekst:"
+
+#: ../glade/gnome-db/gnomedbeditor.c:63
+msgid "If selected, text will be highlighted inside the widget"
+msgstr "Ukoliko je izabrano, u elementu će tekst biti istaknut"
+
+#: ../glade/gnome-db/gnomedbeditor.c:178
+msgid "GnomeDbEditor"
+msgstr "GnomeDbEditor"
+
+#: ../glade/gnome-db/gnomedberror.c:136
+msgid "Database error viewer"
+msgstr "Pregledač grešaka baze podataka"
+
+#: ../glade/gnome-db/gnomedberrordlg.c:218
+msgid "Database error dialog"
+msgstr "Prozorče grešaka baze podataka"
+
+#: ../glade/gnome-db/gnomedbform.c:147
+msgid "Form"
+msgstr "Obrazac"
+
+#: ../glade/gnome-db/gnomedbgraybar.c:59
+msgid "Text inside the gray bar"
+msgstr "Tekst unutar sive trake"
+
+#: ../glade/gnome-db/gnomedbgraybar.c:138
+msgid "Gray Bar"
+msgstr "Siva traka"
+
+#: ../glade/gnome-db/gnomedbgrid.c:132
+msgid "Data-bound grid"
+msgstr "Mreža granice podataka"
+
+#: ../glade/gnome-db/gnomedblist.c:136
+msgid "Data-bound list"
+msgstr "Spisak granice podataka"
+
+#: ../glade/gnome-db/gnomedblogin.c:136
+msgid "Database login widget"
+msgstr "Element za prijavu na bazu podataka"
+
+#: ../glade/gnome-db/gnomedblogindlg.c:76
+msgid "Login"
+msgstr "Prijava"
+
+#: ../glade/gnome-db/gnomedblogindlg.c:219
+msgid "Database login dialog"
+msgstr "Prozorče za prijavu na bazu podataka"
+
+#: ../glade/gnome-db/gnomedbprovidersel.c:147
+msgid "Provider Selector"
+msgstr "Izbor snabdevača"
+
+#: ../glade/gnome-db/gnomedbquerybuilder.c:86
+msgid "GnomeDbQueryBuilder"
+msgstr "GnomeDbQueryBuilder"
+
+#: ../glade/gnome-db/gnomedbsourcesel.c:147
+msgid "Data Source Selector"
+msgstr "Izbornik izvora podataka"
+
+#: ../glade/gnome-db/gnomedbtableeditor.c:133
+msgid "Table Editor "
+msgstr "Editor tabele "
+
+#: ../glade/gnome/bonobodock.c:231
+msgid "Allow Floating:"
+msgstr "Dopusti plutanje"
+
+#: ../glade/gnome/bonobodock.c:232
+msgid "If floating dock items are allowed"
+msgstr "Da li su dozvoljene stavke plutajućeg doka"
+
+#: ../glade/gnome/bonobodock.c:278
+msgid "Add dock band on top"
+msgstr "Dodaj traku doka na vrh"
+
+#: ../glade/gnome/bonobodock.c:285
+msgid "Add dock band on bottom"
+msgstr "Dodaj traku doka na dno"
+
+#: ../glade/gnome/bonobodock.c:292
+msgid "Add dock band on left"
+msgstr "Dodaj traku doka na levo"
+
+#: ../glade/gnome/bonobodock.c:299
+msgid "Add dock band on right"
+msgstr "Dodaj traku doka na desno"
+
+#: ../glade/gnome/bonobodock.c:306
+msgid "Add floating dock item"
+msgstr "Dodaj stavku plutajućeg doka"
+
+#: ../glade/gnome/bonobodock.c:495
+msgid "Gnome Dock"
+msgstr "Gnom dok"
+
+#: ../glade/gnome/bonobodockitem.c:165
+msgid "Locked:"
+msgstr "Zaključano:"
+
+#: ../glade/gnome/bonobodockitem.c:166
+msgid "If the dock item is locked in position"
+msgstr "Da li je stavka doka zaključana u položaju"
+
+#: ../glade/gnome/bonobodockitem.c:167
+msgid "Exclusive:"
+msgstr "Ekskluzivno:"
+
+#: ../glade/gnome/bonobodockitem.c:168
+msgid "If the dock item is always the only item in its band"
+msgstr "Da li je stavka doka uvek jedina na svojoj traci"
+
+#: ../glade/gnome/bonobodockitem.c:169
+msgid "Never Floating:"
+msgstr "Nikad plutanje:"
+
+#: ../glade/gnome/bonobodockitem.c:170
+msgid "If the dock item is never allowed to float in its own window"
+msgstr ""
+"Da li nije nikad dozvoljeno stavki doka da pluta u svom sopstvenom prozoru"
+
+#: ../glade/gnome/bonobodockitem.c:171
+msgid "Never Vertical:"
+msgstr "Nikad vertikalno:"
+
+#: ../glade/gnome/bonobodockitem.c:172
+msgid "If the dock item is never allowed to be vertical"
+msgstr "Da li nije nikad dozvoljeno stavci doka da bude vertikalna"
+
+#: ../glade/gnome/bonobodockitem.c:173
+msgid "Never Horizontal:"
+msgstr "Nikad vodoravno:"
+
+#: ../glade/gnome/bonobodockitem.c:174
+msgid "If the dock item is never allowed to be horizontal"
+msgstr "Da li nije nikad dozvoljeno stavci doka da bude vodoravna"
+
+#: ../glade/gnome/bonobodockitem.c:177
+msgid "The type of shadow around the dock item"
+msgstr "Vrsta senke oko stavke doka"
+
+#: ../glade/gnome/bonobodockitem.c:180
+msgid "The orientation of a floating dock item"
+msgstr "Pravac pružanja plutajuće stavke doka"
+
+#: ../glade/gnome/bonobodockitem.c:428
+msgid "Add dock item before"
+msgstr "Dodaj traku doka ispred"
+
+#: ../glade/gnome/bonobodockitem.c:435
+msgid "Add dock item after"
+msgstr "Dodaj traku doka iza"
+
+#: ../glade/gnome/bonobodockitem.c:771
+msgid "Gnome Dock Item"
+msgstr "Gnom stavka doka"
+
+#: ../glade/gnome/gnomeabout.c:139
+msgid ""
+"Additional information, such as a description of the package and its home "
+"page on the web"
+msgstr ""
+"Dodatne informacije kao što su opis paketa i njegova matična stranica na vebu"
+
+#: ../glade/gnome/gnomeabout.c:539
+msgid "Gnome About Dialog"
+msgstr "Gnomovo prozorče o programu"
+
+#: ../glade/gnome/gnomeapp.c:170
+msgid "New File"
+msgstr "Nova datoteka"
+
+#: ../glade/gnome/gnomeapp.c:172
+msgid "Open File"
+msgstr "Otvori datoteku"
+
+#: ../glade/gnome/gnomeapp.c:174
+msgid "Save File"
+msgstr "Sačuvaj datoteku"
+
+#: ../glade/gnome/gnomeapp.c:203
+msgid "Status Bar:"
+msgstr "Statusna linija:"
+
+#: ../glade/gnome/gnomeapp.c:204
+msgid "If the window has a status bar"
+msgstr "Da li prozor ima statusnu liniju"
+
+#: ../glade/gnome/gnomeapp.c:205
+msgid "Store Config:"
+msgstr "Sačuvaj kofiguraciju:"
+
+#: ../glade/gnome/gnomeapp.c:206
+msgid "If the layout is saved and restored automatically"
+msgstr "Da li se konfiguracija čuva i povraća automatski"
+
+#: ../glade/gnome/gnomeapp.c:442
+msgid "Gnome Application Window"
+msgstr "Gnom programski prozor"
+
+#: ../glade/gnome/gnomeappbar.c:56
+msgid "Status Message."
+msgstr "Poruka o stanju."
+
+#: ../glade/gnome/gnomeappbar.c:69
+msgid "Progress:"
+msgstr "Napredak:"
+
+#: ../glade/gnome/gnomeappbar.c:70
+msgid "If the app bar has a progress indicator"
+msgstr "Da li programska linija ima pokazivač napretka"
+
+#: ../glade/gnome/gnomeappbar.c:71
+msgid "Status:"
+msgstr "Stanje:"
+
+#: ../glade/gnome/gnomeappbar.c:72
+msgid "If the app bar has an area for status messages and user input"
+msgstr ""
+"Da li programska linija ima oblast za poruke o napretku i korisnički unos"
+
+#: ../glade/gnome/gnomeappbar.c:184
+msgid "Gnome Application Bar"
+msgstr "Gnom programska linija"
+
+#: ../glade/gnome/gnomecanvas.c:68
+msgid "Anti-Aliased:"
+msgstr "Umekšano:"
+
+#: ../glade/gnome/gnomecanvas.c:69
+msgid "If the canvas is anti-aliased, to smooth the edges of text and graphics"
+msgstr "Da li je površina umekšana, tj. ivice teksta i grafike"
+
+#: ../glade/gnome/gnomecanvas.c:70
+msgid "X1:"
+msgstr "X1:"
+
+#: ../glade/gnome/gnomecanvas.c:70
+msgid "The minimum x coordinate"
+msgstr "Najmanja iks koordinata"
+
+#: ../glade/gnome/gnomecanvas.c:71
+msgid "Y1:"
+msgstr "Y1:"
+
+#: ../glade/gnome/gnomecanvas.c:71
+msgid "The minimum y coordinate"
+msgstr "Najmanja ipsilon koordinata"
+
+#: ../glade/gnome/gnomecanvas.c:72
+msgid "X2:"
+msgstr "X2:"
+
+#: ../glade/gnome/gnomecanvas.c:72
+msgid "The maximum x coordinate"
+msgstr "Najveća iks koordinata"
+
+#: ../glade/gnome/gnomecanvas.c:73
+msgid "Y2:"
+msgstr "Y2:"
+
+#: ../glade/gnome/gnomecanvas.c:73
+msgid "The maximum y coordinate"
+msgstr "Najveća ipsilon koordinata"
+
+#: ../glade/gnome/gnomecanvas.c:75
+msgid "Pixels Per Unit:"
+msgstr "Piksela u jedinici:"
+
+#: ../glade/gnome/gnomecanvas.c:76
+msgid "The number of pixels corresponding to one unit"
+msgstr "Broj piksela koji odgovara jednoj jedinici mere"
+
+#: ../glade/gnome/gnomecanvas.c:239
+msgid "GnomeCanvas"
+msgstr "GnomeCanvas"
+
+#: ../glade/gnome/gnomecolorpicker.c:68
+msgid "Dither:"
+msgstr "Prilagođavanje:"
+
+#: ../glade/gnome/gnomecolorpicker.c:69
+msgid "If the sample should use dithering to be more accurate"
+msgstr "Da li primer koristi prilagođavanje da bi bio precizniji"
+
+#: ../glade/gnome/gnomecolorpicker.c:160
+msgid "Pick a color"
+msgstr "Izaberi boju"
+
+#: ../glade/gnome/gnomecolorpicker.c:219
+msgid "Gnome Color Picker"
+msgstr "Gnome izabirač boja"
+
+#: ../glade/gnome/gnomecontrol.c:160
+msgid "Couldn't create the Bonobo control"
+msgstr "Ne može da napravi Bonobo kontrolu"
+
+#: ../glade/gnome/gnomecontrol.c:249
+msgid "New Bonobo Control"
+msgstr "Nova Bonobo kontrola"
+
+#: ../glade/gnome/gnomecontrol.c:262
+msgid "Select a Bonobo Control"
+msgstr "Izaberi Bonobo kontrolu"
+
+#: ../glade/gnome/gnomecontrol.c:290
+msgid "OAFIID"
+msgstr "OAFIID"
+
+#: ../glade/gnome/gnomecontrol.c:295 ../glade/property.c:3896
+msgid "Description"
+msgstr "Opis"
+
+#: ../glade/gnome/gnomecontrol.c:339
+msgid "Bonobo Control"
+msgstr "Bonobo kontrola"
+
+#: ../glade/gnome/gnomedateedit.c:70
+msgid "Show Time:"
+msgstr "Prikaži vreme:"
+
+#: ../glade/gnome/gnomedateedit.c:71
+msgid "If the time is shown as well as the date"
+msgstr "Da li se prikazuju vreme i datum"
+
+#: ../glade/gnome/gnomedateedit.c:72
+msgid "24 Hour Format:"
+msgstr "Dvadesetčetvoročasovni format:"
+
+#: ../glade/gnome/gnomedateedit.c:73
+msgid "If the time is shown in 24-hour format"
+msgstr "Da li se vreme prikazuje u dvadesetčetvoročasovnom formatu"
+
+#: ../glade/gnome/gnomedateedit.c:76
+msgid "Lower Hour:"
+msgstr "Niži čas:"
+
+#: ../glade/gnome/gnomedateedit.c:77
+msgid "The lowest hour to show in the popup"
+msgstr "Najniži čas koji se pokazuje u iskoku"
+
+#: ../glade/gnome/gnomedateedit.c:79
+msgid "Upper Hour:"
+msgstr "Gornji čas:"
+
+#: ../glade/gnome/gnomedateedit.c:80
+msgid "The highest hour to show in the popup"
+msgstr "Najviši čas koji se pokazuje u iskoku"
+
+#: ../glade/gnome/gnomedateedit.c:298
+msgid "GnomeDateEdit"
+msgstr "GnomeDateEdit"
+
+#: ../glade/gnome/gnomedialog.c:152 ../glade/gnome/gnomemessagebox.c:189
+msgid "Auto Close:"
+msgstr "Automatsko zatvaranje:"
+
+#: ../glade/gnome/gnomedialog.c:153 ../glade/gnome/gnomemessagebox.c:190
+msgid "If the dialog closes when any button is clicked"
+msgstr "Da li se prozorče zatvara kad se pritisne na bilo koje dugme"
+
+#: ../glade/gnome/gnomedialog.c:154 ../glade/gnome/gnomemessagebox.c:191
+msgid "Hide on Close:"
+msgstr "Sakrij pri zatvaranju:"
+
+#: ../glade/gnome/gnomedialog.c:155 ../glade/gnome/gnomemessagebox.c:192
+msgid "If the dialog is hidden when it is closed, instead of being destroyed"
+msgstr "Da li se prozorče skriva, umesto da se uništi prilikom zatvaranja"
+
+#: ../glade/gnome/gnomedialog.c:341
+msgid "Gnome Dialog Box"
+msgstr "Gnomovo prozorče"
+
+#: ../glade/gnome/gnomedruid.c:91
+msgid "New Gnome Druid"
+msgstr "Novi Gnomov pomoćnik"
+
+#: ../glade/gnome/gnomedruid.c:190
+msgid "Show Help"
+msgstr "Prikaži pomoć"
+
+#: ../glade/gnome/gnomedruid.c:190
+msgid "Display the help button."
+msgstr "Prikaži dugme za pomoć."
+
+#: ../glade/gnome/gnomedruid.c:255
+msgid "Add Start Page"
+msgstr "Dodaj početnu stranicu"
+
+#: ../glade/gnome/gnomedruid.c:270
+msgid "Add Finish Page"
+msgstr "Dodaj krajnju stranicu"
+
+#: ../glade/gnome/gnomedruid.c:485
+msgid "Druid"
+msgstr "Druid"
+
+#: ../glade/gnome/gnomedruidpageedge.c:94
+#: ../glade/gnome/gnomedruidpagestandard.c:86
+msgid "The title of the page"
+msgstr "Naslov stranice"
+
+#: ../glade/gnome/gnomedruidpageedge.c:96
+msgid "The main text of the page, introducing people to the druid."
+msgstr "Osnovni tekst na stranici koji te upoznaje sa druidom."
+
+#: ../glade/gnome/gnomedruidpageedge.c:98
+#: ../glade/gnome/gnomedruidpagestandard.c:87
+msgid "Title Color:"
+msgstr "Boja naslova:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:99
+#: ../glade/gnome/gnomedruidpagestandard.c:88
+msgid "The color of the title text"
+msgstr "Boja teksta naslova"
+
+#: ../glade/gnome/gnomedruidpageedge.c:100
+msgid "Text Color:"
+msgstr "Boja teksta:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:101
+msgid "The color of the main text"
+msgstr "Boja osnovnog teksta"
+
+#: ../glade/gnome/gnomedruidpageedge.c:103
+#: ../glade/gnome/gnomedruidpagestandard.c:92
+msgid "The background color of the page"
+msgstr "Boja pozadine stranice"
+
+#: ../glade/gnome/gnomedruidpageedge.c:104
+#: ../glade/gnome/gnomedruidpagestandard.c:93
+msgid "Logo Back. Color:"
+msgstr "Boja poz. logoa:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:105
+#: ../glade/gnome/gnomedruidpagestandard.c:94
+msgid "The background color around the logo"
+msgstr "Boja pozadine oko logoa"
+
+#: ../glade/gnome/gnomedruidpageedge.c:106
+msgid "Text Box Color:"
+msgstr "Boja kućice za tekst:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:107
+msgid "The background color of the main text area"
+msgstr "Boja pozadine oblasti osnovnog teksta"
+
+#: ../glade/gnome/gnomedruidpageedge.c:108
+#: ../glade/gnome/gnomedruidpagestandard.c:95
+msgid "Logo Image:"
+msgstr "Slika za logo:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:109
+#: ../glade/gnome/gnomedruidpagestandard.c:96
+msgid "The logo to display in the top-right of the page"
+msgstr "Logo koji se prikazuje u gornjem levom delu stranice"
+
+#: ../glade/gnome/gnomedruidpageedge.c:110
+msgid "Side Watermark:"
+msgstr "Vodotisak na boku:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:111
+msgid "The main image to display on the side of the page."
+msgstr "Vodotisak koji se prikazuje na boku stranice."
+
+#: ../glade/gnome/gnomedruidpageedge.c:112
+#: ../glade/gnome/gnomedruidpagestandard.c:97
+msgid "Top Watermark:"
+msgstr "Vodotisak na vrhu:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:113
+msgid "The watermark to display at the top of the page."
+msgstr "Vodotisak koji se prikazuje na vrhu stranice."
+
+#: ../glade/gnome/gnomedruidpageedge.c:522
+msgid "Druid Start or Finish Page"
+msgstr "Početna ili krajnja stranica druida"
+
+#: ../glade/gnome/gnomedruidpagestandard.c:89
+msgid "Contents Back. Color:"
+msgstr "Boja pozadine sadržaja:"
+
+#: ../glade/gnome/gnomedruidpagestandard.c:90
+msgid "The background color around the title"
+msgstr "Boja pozadine oko naslova"
+
+#: ../glade/gnome/gnomedruidpagestandard.c:98
+msgid "The image to display along the top of the page"
+msgstr "Slika koja se prikazuje duž vrha strane"
+
+#: ../glade/gnome/gnomedruidpagestandard.c:447
+msgid "Druid Standard Page"
+msgstr "Standardna strana Druida"
+
+#: ../glade/gnome/gnomeentry.c:71 ../glade/gnome/gnomefileentry.c:96
+#: ../glade/gnome/gnomeiconentry.c:74 ../glade/gnome/gnomepixmapentry.c:77
+msgid "History ID:"
+msgstr "Identifikacija istorijata:"
+
+#: ../glade/gnome/gnomeentry.c:72 ../glade/gnome/gnomefileentry.c:97
+#: ../glade/gnome/gnomeiconentry.c:75 ../glade/gnome/gnomepixmapentry.c:78
+msgid "The ID to save the history entries under"
+msgstr "Identifikacija pod kojom se čuvaju stavke istorijata"
+
+#: ../glade/gnome/gnomeentry.c:73 ../glade/gnome/gnomefileentry.c:98
+#: ../glade/gnome/gnomeiconentry.c:76 ../glade/gnome/gnomepixmapentry.c:79
+msgid "Max Saved:"
+msgstr "Maks. sačuvano:"
+
+#: ../glade/gnome/gnomeentry.c:74 ../glade/gnome/gnomefileentry.c:99
+#: ../glade/gnome/gnomeiconentry.c:77 ../glade/gnome/gnomepixmapentry.c:80
+msgid "The maximum number of history entries saved"
+msgstr "Najveći broj sačuvanih stavki istorijata"
+
+#: ../glade/gnome/gnomeentry.c:210
+msgid "Gnome Entry"
+msgstr "Gnome stavka"
+
+#: ../glade/gnome/gnomefileentry.c:102 ../glade/gnome/gnomeiconentry.c:73
+#: ../glade/gnome/gnomepixmapentry.c:83
+msgid "The title of the file selection dialog"
+msgstr "Naslov prozorčeta za izbora datoteke"
+
+#: ../glade/gnome/gnomefileentry.c:103
+msgid "Directory:"
+msgstr "Direktorijum:"
+
+#: ../glade/gnome/gnomefileentry.c:104
+msgid "If a directory is needed rather than a file"
+msgstr "Da li je umesto datoteke potreban direktorijum"
+
+#: ../glade/gnome/gnomefileentry.c:106 ../glade/gnome/gnomepixmapentry.c:85
+msgid "If the file selection dialog should be modal"
+msgstr "Da li prozorče za izbor datoteke treba da bude modalno"
+
+#: ../glade/gnome/gnomefileentry.c:107 ../glade/gnome/gnomepixmapentry.c:86
+msgid "Use FileChooser:"
+msgstr "Koristi novi izbirač datoteka"
+
+#: ../glade/gnome/gnomefileentry.c:108 ../glade/gnome/gnomepixmapentry.c:87
+msgid "Use the new GtkFileChooser widget instead of GtkFileSelection"
+msgstr "Koristi novi GtkFileChooser element umesto GtkFileSelection-a"
+
+#: ../glade/gnome/gnomefileentry.c:367
+msgid "Gnome File Entry"
+msgstr "Gnomov unos datoteke"
+
+#: ../glade/gnome/gnomefontpicker.c:98
+msgid "The preview text to show in the font selection dialog"
+msgstr "Pregledni tekst za prikaz u prozorčetu za izbor fonta"
+
+#: ../glade/gnome/gnomefontpicker.c:99
+msgid "Mode:"
+msgstr "Način:"
+
+#: ../glade/gnome/gnomefontpicker.c:100
+msgid "What to display in the font picker button"
+msgstr "Šta prikazati u dugmetu za izbor pisma"
+
+#: ../glade/gnome/gnomefontpicker.c:107
+msgid "The size of the font to use in the font picker button"
+msgstr "Veličina pisma koje se koristi u dugmetu za izbor pisma"
+
+#: ../glade/gnome/gnomefontpicker.c:392
+msgid "Gnome Font Picker"
+msgstr "Gnome odabirač pisma"
+
+#: ../glade/gnome/gnomehref.c:66
+msgid "URL:"
+msgstr "Adresa (URL):"
+
+#: ../glade/gnome/gnomehref.c:67
+msgid "The URL to display when the button is clicked"
+msgstr "Adresa (URL) koja se prikazuje kad se klikne na dugme"
+
+#: ../glade/gnome/gnomehref.c:69
+msgid "The text to display in the button"
+msgstr "Tekst koji se prikazuje u dugmetu"
+
+#: ../glade/gnome/gnomehref.c:206
+msgid "Gnome HRef Link Button"
+msgstr "Gnome HRef dugme za povezivanje"
+
+#: ../glade/gnome/gnomeiconentry.c:208
+msgid "Gnome Icon Entry"
+msgstr "Gnome unos ikone"
+
+#: ../glade/gnome/gnomeiconlist.c:175
+msgid "The selection mode"
+msgstr "Način izbora"
+
+#: ../glade/gnome/gnomeiconlist.c:177
+msgid "Icon Width:"
+msgstr "Širina ikone:"
+
+#: ../glade/gnome/gnomeiconlist.c:178
+msgid "The width of each icon"
+msgstr "Širina svake ikone"
+
+#: ../glade/gnome/gnomeiconlist.c:181
+msgid "The number of pixels between rows of icons"
+msgstr "Broj piksela između redova ikona"
+
+#: ../glade/gnome/gnomeiconlist.c:184
+msgid "The number of pixels between columns of icons"
+msgstr "Broj piksela između stubaca ikona"
+
+#: ../glade/gnome/gnomeiconlist.c:187
+msgid "Icon Border:"
+msgstr "Ivica ikone:"
+
+#: ../glade/gnome/gnomeiconlist.c:188
+msgid "The number of pixels around icons (unused?)"
+msgstr "Broj piksela oko ikone (ne koristi se?)"
+
+#: ../glade/gnome/gnomeiconlist.c:191
+msgid "Text Spacing:"
+msgstr "Razmak teksta:"
+
+#: ../glade/gnome/gnomeiconlist.c:192
+msgid "The number of pixels between the text and the icon"
+msgstr "Broj piksela između teksta i ikone"
+
+#: ../glade/gnome/gnomeiconlist.c:194
+msgid "Text Editable:"
+msgstr "Tekst se može menjati:"
+
+#: ../glade/gnome/gnomeiconlist.c:195
+msgid "If the icon text can be edited by the user"
+msgstr "Da li korisnik može menjati tekst"
+
+#: ../glade/gnome/gnomeiconlist.c:196
+msgid "Text Static:"
+msgstr "Statičan tekst:"
+
+#: ../glade/gnome/gnomeiconlist.c:197
+msgid ""
+"If the icon text is static, in which case it will not be copied by the "
+"GnomeIconList"
+msgstr ""
+"Da li je tekst statičan, u kom slučaju se neće kopirati pomoćy GnomeIconList"
+
+#: ../glade/gnome/gnomeiconlist.c:461
+msgid "Icon List"
+msgstr "Spisak ikona"
+
+#: ../glade/gnome/gnomeiconselection.c:154
+msgid "Icon Selection"
+msgstr "Izbor ikona"
+
+#: ../glade/gnome/gnomemessagebox.c:174
+msgid "Message Type:"
+msgstr "Vrsta poruka:"
+
+#: ../glade/gnome/gnomemessagebox.c:175
+msgid "The type of the message box"
+msgstr "Vrsta kutije sa porukama"
+
+#: ../glade/gnome/gnomemessagebox.c:177
+msgid "Message:"
+msgstr "Poruka:"
+
+#: ../glade/gnome/gnomemessagebox.c:177
+msgid "The message to display"
+msgstr "Poruka za prikaz"
+
+#: ../glade/gnome/gnomemessagebox.c:498
+msgid "Gnome Message Box"
+msgstr "Gnome kućica za poruke"
+
+#: ../glade/gnome/gnomepixmap.c:79
+msgid "The pixmap filename"
+msgstr "Ime pixmap-e"
+
+#: ../glade/gnome/gnomepixmap.c:80
+msgid "Scaled:"
+msgstr "U razmeri:"
+
+#: ../glade/gnome/gnomepixmap.c:80
+msgid "If the pixmap is scaled"
+msgstr "Da li je piksmapa u razmeri"
+
+#: ../glade/gnome/gnomepixmap.c:81
+msgid "Scaled Width:"
+msgstr "Širina razmere:"
+
+#: ../glade/gnome/gnomepixmap.c:82
+msgid "The width to scale the pixmap to"
+msgstr "Širina razmere u kojoj će biti ikona"
+
+#: ../glade/gnome/gnomepixmap.c:84
+msgid "Scaled Height:"
+msgstr "Visina razmere:"
+
+#: ../glade/gnome/gnomepixmap.c:85
+msgid "The height to scale the pixmap to"
+msgstr "Visina razmere u kojoj će biti ikona"
+
+#: ../glade/gnome/gnomepixmap.c:346
+msgid "Gnome Pixmap"
+msgstr "Gnome piksmapa"
+
+#: ../glade/gnome/gnomepixmapentry.c:75
+msgid "Preview:"
+msgstr "Prikaz:"
+
+#: ../glade/gnome/gnomepixmapentry.c:76
+msgid "If a small preview of the pixmap is displayed"
+msgstr "Da li je prikazan smanjeni pregled piksmape"
+
+#: ../glade/gnome/gnomepixmapentry.c:303
+msgid "GnomePixmapEntry"
+msgstr "GnomePixmapEntry"
+
+#: ../glade/gnome/gnomepropertybox.c:112
+msgid "New GnomePropertyBox"
+msgstr "Nov GnomePropertyBox"
+
+#: ../glade/gnome/gnomepropertybox.c:365
+msgid "Property Dialog Box"
+msgstr "Prozorče sa osobinama"
+
+#: ../glade/main.c:70
+msgid "Write the source code and exit"
+msgstr "Ispiši izvorni kod i izađi"
+
+#: ../glade/main.c:74
+msgid "Start with the palette hidden"
+msgstr "Počni sa skrivenom paletom"
+
+#: ../glade/main.c:78
+msgid "Start with the property editor hidden"
+msgstr "Počni sa skrivenim editorom vrednosti"
+
+#: ../glade/main.c:436
+msgid ""
+"glade: The XML file must be set for the '-w' or '--write-source' option.\n"
+msgstr ""
+"glade: XML datoteka mora biti postavljena sa '-w' ili '--write-source' "
+"opcijom.\n"
+
+#: ../glade/main.c:450
+msgid "glade: Error loading XML file.\n"
+msgstr "glade: Greška prilikom punjenja XML datoteke.\n"
+
+#: ../glade/main.c:457
+msgid "glade: Error writing source.\n"
+msgstr "glade: Greška prilikom pisanja izvornog koda.\n"
+
+#: ../glade/palette.c:60
+msgid "Palette"
+msgstr "Paleta"
+
+#: ../glade/property.c:73
+msgid "private"
+msgstr "privatno"
+
+#: ../glade/property.c:73
+msgid "protected"
+msgstr "zaštićeno"
+
+#: ../glade/property.c:73
+msgid "public"
+msgstr "javno"
+
+#: ../glade/property.c:102
+msgid "Prelight"
+msgstr "Osvetljenje"
+
+#: ../glade/property.c:103
+msgid "Selected"
+msgstr "Izabrano"
+
+#: ../glade/property.c:103
+msgid "Insens"
+msgstr "Neosetljiv"
+
+#: ../glade/property.c:467
+msgid "When the window needs redrawing"
+msgstr "Kad se prozor mora ponovo iscrtati"
+
+#: ../glade/property.c:468
+msgid "When the mouse moves"
+msgstr "Kad se miš pomera"
+
+#: ../glade/property.c:469
+msgid "Mouse movement hints"
+msgstr "Nagoveštaji pomeranja miša"
+
+#: ../glade/property.c:470
+msgid "Mouse movement with any button pressed"
+msgstr "Pomeranje miša kad je bilo koje dugme pritisnuto"
+
+#: ../glade/property.c:471
+msgid "Mouse movement with button 1 pressed"
+msgstr "Pomeranje miša kad je dugme 1 pritisnuto"
+
+#: ../glade/property.c:472
+msgid "Mouse movement with button 2 pressed"
+msgstr "Pomeranje miša kad je dugme 2 pritisnuto"
+
+#: ../glade/property.c:473
+msgid "Mouse movement with button 3 pressed"
+msgstr "Pomeranje miša kad je dugme 3 pritisnuto"
+
+#: ../glade/property.c:474
+msgid "Any mouse button pressed"
+msgstr "Bilo koje dugme miša pritisnuto"
+
+#: ../glade/property.c:475
+msgid "Any mouse button released"
+msgstr "Bilo koje dugme miša pušteno"
+
+#: ../glade/property.c:476
+msgid "Any key pressed"
+msgstr "Bilo koje dugme pritisnuto"
+
+#: ../glade/property.c:477
+msgid "Any key released"
+msgstr "Bilo koje dugme pušteno"
+
+#: ../glade/property.c:478
+msgid "When the mouse enters the window"
+msgstr "Kad miš uđe u prozor"
+
+#: ../glade/property.c:479
+msgid "When the mouse leaves the window"
+msgstr "Kad miš napušta prozor"
+
+#: ../glade/property.c:480
+msgid "Any change in input focus"
+msgstr "Bilo koja promena u fokusu unosa"
+
+#: ../glade/property.c:481
+msgid "Any change in window structure"
+msgstr "Bilo koja promena u strukturi prozora"
+
+#: ../glade/property.c:482
+msgid "Any change in X Windows property"
+msgstr "Bilo koja promena u X Windows osobinama"
+
+#: ../glade/property.c:483
+msgid "Any change in visibility"
+msgstr "Bilo koja promena u vidljivosti"
+
+#: ../glade/property.c:484 ../glade/property.c:485
+msgid "For cursors in XInput-aware programs"
+msgstr "Za kurzore u programima koji podržavaju XInput"
+
+#: ../glade/property.c:596
+msgid "Properties"
+msgstr "Osobine"
+
+#: ../glade/property.c:620
+msgid "Packing"
+msgstr "Pakovanje"
+
+#: ../glade/property.c:625
+msgid "Common"
+msgstr "Zajedničko"
+
+#: ../glade/property.c:631
+msgid "Style"
+msgstr "Stil"
+
+#: ../glade/property.c:637 ../glade/property.c:4640
+msgid "Signals"
+msgstr "Signali"
+
+#: ../glade/property.c:700 ../glade/property.c:721
+msgid "Properties: "
+msgstr "Osobine: "
+
+#: ../glade/property.c:708 ../glade/property.c:732
+msgid "Properties: <none>"
+msgstr "Osobine: <nijedna>"
+
+#: ../glade/property.c:778
+msgid "Class:"
+msgstr "Klasa:"
+
+#: ../glade/property.c:779
+msgid "The class of the widget"
+msgstr "Klasa elementa"
+
+#: ../glade/property.c:813
+msgid "Width:"
+msgstr "Širina:"
+
+#: ../glade/property.c:814
+msgid ""
+"The requested width of the widget (usually used to set the minimum width)"
+msgstr ""
+"Zahtevana širina elementa (obično se koristi da bi se postavila najmanja "
+"širina)"
+
+#: ../glade/property.c:816
+msgid "Height:"
+msgstr "Visina:"
+
+#: ../glade/property.c:817
+msgid ""
+"The requested height of the widget (usually used to set the minimum height)"
+msgstr ""
+"Zahtevana visina elementa (obično se koristi da bi se postavila najmanja "
+"visina)"
+
+#: ../glade/property.c:820
+msgid "Visible:"
+msgstr "Vidljivo:"
+
+#: ../glade/property.c:821
+msgid "If the widget is initially visible"
+msgstr "Da li je element početno vidljiv"
+
+#: ../glade/property.c:822
+msgid "Sensitive:"
+msgstr "Osetljivo:"
+
+#: ../glade/property.c:823
+msgid "If the widget responds to input"
+msgstr "Da li element odgovara na unos"
+
+#: ../glade/property.c:825
+msgid "The tooltip to display if the mouse lingers over the widget"
+msgstr "Predlog koji se prikazuje kad je miš postavljen iznad elementa"
+
+#: ../glade/property.c:827
+msgid "Can Default:"
+msgstr "Može biti podrazumevano:"
+
+#: ../glade/property.c:828
+msgid "If the widget can be the default action in a dialog"
+msgstr "Da li element može biti podrazumevana akcija u prozorčetu"
+
+#: ../glade/property.c:829
+msgid "Has Default:"
+msgstr "Podrazumevano:"
+
+#: ../glade/property.c:830
+msgid "If the widget is the default action in the dialog"
+msgstr "Da li je element podrazumevana akcija u prozorčetu"
+
+#: ../glade/property.c:831
+msgid "Can Focus:"
+msgstr "Može da fokusira:"
+
+#: ../glade/property.c:832
+msgid "If the widget can accept the input focus"
+msgstr "Da li element može da bude u fokusu za unos"
+
+#: ../glade/property.c:833
+msgid "Has Focus:"
+msgstr "Ima fokus:"
+
+#: ../glade/property.c:834
+msgid "If the widget has the input focus"
+msgstr "Da li je elemenet u fokusu za unos"
+
+#: ../glade/property.c:836
+msgid "Events:"
+msgstr "Događaji:"
+
+#: ../glade/property.c:837
+msgid "The X events that the widget receives"
+msgstr "X događaji koje element prihvata"
+
+#: ../glade/property.c:839
+msgid "Ext.Events:"
+msgstr "Pr. događaji:"
+
+#: ../glade/property.c:840
+msgid "The X Extension events mode"
+msgstr "Mod događaja X proširenja"
+
+#: ../glade/property.c:843
+msgid "Accelerators:"
+msgstr "Ubrzivači:"
+
+#: ../glade/property.c:844
+msgid "Defines the signals to emit when keys are pressed"
+msgstr "Određuje signale koji se emituju kad su tipke pritisnute"
+
+#: ../glade/property.c:845
+msgid "Edit..."
+msgstr "Izmeni..."
+
+#: ../glade/property.c:867
+msgid "Propagate:"
+msgstr "Prenesi:"
+
+#: ../glade/property.c:868
+msgid "Set True to propagate the style to the widget's children"
+msgstr "Stavi na Tačno da bi se preneo stil na naslednike elementa"
+
+#: ../glade/property.c:869
+msgid "Named Style:"
+msgstr "Imenovani stil:"
+
+#: ../glade/property.c:870
+msgid "The name of the style, which can be shared by several widgets"
+msgstr "Ime stila koji može biti zajednički za više elemenata"
+
+#: ../glade/property.c:872
+msgid "Font:"
+msgstr "Font:"
+
+#: ../glade/property.c:873
+msgid "The font to use for any text in the widget"
+msgstr "Font koji se koristi za bilo koji tekst u elementu"
+
+#: ../glade/property.c:898
+msgid "Copy All"
+msgstr "Kopiraj sve"
+
+#: ../glade/property.c:926
+msgid "Foreground:"
+msgstr "Prvi plan:"
+
+#: ../glade/property.c:926
+msgid "Background:"
+msgstr "Pozadina:"
+
+#: ../glade/property.c:926
+msgid "Base:"
+msgstr "Osnova:"
+
+#: ../glade/property.c:928
+msgid "Foreground color"
+msgstr "Boja prvog plana"
+
+#: ../glade/property.c:928
+msgid "Background color"
+msgstr "Boja pozadine"
+
+#: ../glade/property.c:928
+msgid "Text color"
+msgstr "Boja teksta"
+
+#: ../glade/property.c:929
+msgid "Base color"
+msgstr "Osnovna boja"
+
+#: ../glade/property.c:946
+msgid "Back. Pixmap:"
+msgstr "Piksmapa poz.:"
+
+#: ../glade/property.c:947
+msgid "The graphic to use as the background of the widget"
+msgstr "Grafika koja se koristi kao pozadina elementa"
+
+#: ../glade/property.c:999
+msgid "The file to write source code into"
+msgstr "Datoteka za upis izvornog koda"
+
+#: ../glade/property.c:1000
+msgid "Public:"
+msgstr "Javno:"
+
+#: ../glade/property.c:1001
+msgid "If the widget is added to the component's data structure"
+msgstr "Da li je element dodat strukturi podataka komponente"
+
+#: ../glade/property.c:1012
+msgid "Separate Class:"
+msgstr "Posebna klasa:"
+
+#: ../glade/property.c:1013
+msgid "Put this widget's subtree in a separate class"
+msgstr "Stavi podstablo ovog elementa u posebnu klasu"
+
+#: ../glade/property.c:1014
+msgid "Separate File:"
+msgstr "Posebna datoteka:"
+
+#: ../glade/property.c:1015
+msgid "Put this widget in a separate source file"
+msgstr "Stavi ovaj element u posebnu datoteku izvornog koda"
+
+#: ../glade/property.c:1016
+msgid "Visibility:"
+msgstr "Vidljivost:"
+
+#: ../glade/property.c:1017
+msgid "Visibility of widgets. Public widgets are exported to a global map."
+msgstr "Vidljivost elemenata. Javni elementi se izvoze u globalnu mapu."
+
+#: ../glade/property.c:1126
+msgid "You need to select a color or background to copy"
+msgstr "Mora se izabrati boja ili pozadina koja se kopira"
+
+#: ../glade/property.c:1145
+msgid "Invalid selection in on_style_copy()"
+msgstr "Nevažeći izbor u on_style_copy()"
+
+#: ../glade/property.c:1187
+msgid "You need to copy a color or background pixmap first"
+msgstr "Mora se prvo kopirati boja ili piksmapa pozadine"
+
+#: ../glade/property.c:1193
+msgid "You need to select a color to paste into"
+msgstr "Mora se izabrati boja u koju će se prekopirati"
+
+#: ../glade/property.c:1203
+msgid "You need to select a background pixmap to paste into"
+msgstr "Mora se izabrati piksmapa pozadine u koju će se prekopirati"
+
+#: ../glade/property.c:1455
+msgid "Couldn't create pixmap from file\n"
+msgstr "Ne može da napravi pixmap iz datoteke\n"
+
+#. List of current signal handlers - Signal/Handler/Data/Options
+#: ../glade/property.c:1497
+msgid "Signal"
+msgstr "Signal"
+
+#: ../glade/property.c:1499
+msgid "Data"
+msgstr "Podaci"
+
+#: ../glade/property.c:1500
+msgid "After"
+msgstr "Posle"
+
+#: ../glade/property.c:1501
+msgid "Object"
+msgstr "Objekat"
+
+#: ../glade/property.c:1532 ../glade/property.c:1696
+msgid "Signal:"
+msgstr "Signal:"
+
+#: ../glade/property.c:1533
+msgid "The signal to add a handler for"
+msgstr "Signal za koji se dodaje upravljač"
+
+#: ../glade/property.c:1547
+msgid "The function to handle the signal"
+msgstr "Funkcija koja obrađuje signal"
+
+#: ../glade/property.c:1550
+msgid "Data:"
+msgstr "Podaci:"
+
+#: ../glade/property.c:1551
+msgid "The data passed to the handler"
+msgstr "Podaci koji se predaju upravljaču"
+
+#: ../glade/property.c:1552
+msgid "Object:"
+msgstr "Objekat:"
+
+#: ../glade/property.c:1553
+msgid "The object which receives the signal"
+msgstr "Objekat koji prima signal"
+
+#: ../glade/property.c:1554
+msgid "After:"
+msgstr "Posle:"
+
+#: ../glade/property.c:1555
+msgid "If the handler runs after the class function"
+msgstr "Da li se upravljač izvršava posle funkcije klase"
+
+#: ../glade/property.c:1568
+msgid "Add"
+msgstr "Dodaj"
+
+#: ../glade/property.c:1574
+msgid "Update"
+msgstr "Ažuriraj"
+
+#: ../glade/property.c:1586
+msgid "Clear"
+msgstr "Očisti"
+
+#: ../glade/property.c:1636
+msgid "Accelerators"
+msgstr "Ubrzavači"
+
+#. List of current accelerators - Mods/Keys/Signals
+#: ../glade/property.c:1649
+msgid "Mod"
+msgstr "Način"
+
+#: ../glade/property.c:1650
+msgid "Key"
+msgstr "Tipka"
+
+#: ../glade/property.c:1651
+msgid "Signal to emit"
+msgstr "Signal koji se emituje"
+
+#: ../glade/property.c:1695
+msgid "The accelerator key"
+msgstr "Tipka ubrzavača"
+
+#: ../glade/property.c:1697
+msgid "The signal to emit when the accelerator is pressed"
+msgstr "Signal koji se emituje kad se ubrzavač pritisne"
+
+#: ../glade/property.c:1846
+msgid "Edit Text Property"
+msgstr ""
+
+#: ../glade/property.c:1884
+msgid "<b>_Text:</b>"
+msgstr ""
+
+#: ../glade/property.c:1894
+#, fuzzy
+msgid "T_ranslatable"
+msgstr "Nizovi koji se prevode:"
+
+#: ../glade/property.c:1898
+msgid "Has Context _Prefix"
+msgstr ""
+
+#: ../glade/property.c:1924
+msgid "<b>Co_mments For Translators:</b>"
+msgstr ""
+
+#: ../glade/property.c:3886
+msgid "Select X Events"
+msgstr "Izaberi X događaje"
+
+#: ../glade/property.c:3895
+msgid "Event Mask"
+msgstr "Maska događaja"
+
+#: ../glade/property.c:4025 ../glade/property.c:4074
+msgid "You need to set the accelerator key"
+msgstr "Mora se postaviti tipka za ubrzavanje"
+
+#: ../glade/property.c:4032 ../glade/property.c:4081
+msgid "You need to set the signal to emit"
+msgstr "Mora se postaviti signal koji se emituje"
+
+#: ../glade/property.c:4308 ../glade/property.c:4364
+msgid "You need to set the signal name"
+msgstr "Mora se odrediti ime za signal"
+
+#: ../glade/property.c:4315 ../glade/property.c:4371
+msgid "You need to set the handler for the signal"
+msgstr "Mora se odrediti upravljač signala"
+
+#. This groups the signals by class, e.g. 'GtkButton signals'.
+#: ../glade/property.c:4574
+#, c-format
+msgid "%s signals"
+msgstr "%s signali"
+
+#: ../glade/property.c:4631
+msgid "Select Signal"
+msgstr "Izaberi signal"
+
+#: ../glade/property.c:4827
+msgid "Value:"
+msgstr "Vrednost:"
+
+#: ../glade/property.c:4827
+msgid "Min:"
+msgstr "Min:"
+
+#: ../glade/property.c:4827
+msgid "Step Inc:"
+msgstr "Korak pov:"
+
+#: ../glade/property.c:4828
+msgid "Page Inc:"
+msgstr "Strana pov:"
+
+#: ../glade/property.c:4828
+msgid "Page Size:"
+msgstr "Veličina strane:"
+
+#: ../glade/property.c:4830
+msgid "H Value:"
+msgstr "H vrednost:"
+
+#: ../glade/property.c:4830
+msgid "H Min:"
+msgstr "H min:"
+
+#: ../glade/property.c:4830
+msgid "H Max:"
+msgstr "H maks:"
+
+#: ../glade/property.c:4830
+msgid "H Step Inc:"
+msgstr "H korak pov:"
+
+#: ../glade/property.c:4831
+msgid "H Page Inc:"
+msgstr "H strana pov:"
+
+#: ../glade/property.c:4831
+msgid "H Page Size:"
+msgstr "H veličina strane:"
+
+#: ../glade/property.c:4833
+msgid "V Value:"
+msgstr "V vrednost:"
+
+#: ../glade/property.c:4833
+msgid "V Min:"
+msgstr "V min:"
+
+#: ../glade/property.c:4833
+msgid "V Max:"
+msgstr "V maks:"
+
+#: ../glade/property.c:4833
+msgid "V Step Inc:"
+msgstr "V korak uklj:"
+
+#: ../glade/property.c:4834
+msgid "V Page Inc:"
+msgstr "V strana uklj:"
+
+#: ../glade/property.c:4834
+msgid "V Page Size:"
+msgstr "V veličina strane:"
+
+#: ../glade/property.c:4837
+msgid "The initial value"
+msgstr "Početna vrednost"
+
+#: ../glade/property.c:4838
+msgid "The minimum value"
+msgstr "Najmanja vrednost"
+
+#: ../glade/property.c:4839
+msgid "The maximum value"
+msgstr "Najveća vrednost"
+
+#: ../glade/property.c:4840
+msgid "The step increment"
+msgstr "Uvećanje koraka"
+
+#: ../glade/property.c:4841
+msgid "The page increment"
+msgstr "Uvećanje stranice"
+
+#: ../glade/property.c:4842
+msgid "The page size"
+msgstr "Veličina stranice"
+
+#: ../glade/property.c:4997
+msgid "The requested font is not available."
+msgstr "Zahtevano pismo nije dostupno."
+
+#: ../glade/property.c:5046
+msgid "Select Named Style"
+msgstr "Izaberi imenovani stil"
+
+#: ../glade/property.c:5057
+msgid "Styles"
+msgstr "Stilovi"
+
+#: ../glade/property.c:5116
+msgid "Rename"
+msgstr "Promeni ime"
+
+#: ../glade/property.c:5144
+msgid "Cancel"
+msgstr "Odustani"
+
+#: ../glade/property.c:5264
+msgid "New Style:"
+msgstr "Novi stil:"
+
+#: ../glade/property.c:5278 ../glade/property.c:5399
+msgid "Invalid style name"
+msgstr "Nevažeće ime stila"
+
+#: ../glade/property.c:5286 ../glade/property.c:5409
+msgid "That style name is already in use"
+msgstr "Ime stila već postoji"
+
+#: ../glade/property.c:5384
+msgid "Rename Style To:"
+msgstr "Preimenuj stil u:"
+
+#: ../glade/save.c:139 ../glade/source.c:2771
+#, c-format
+msgid ""
+"Couldn't rename file:\n"
+"  %s\n"
+"to:\n"
+"  %s\n"
+msgstr ""
+"Ne može da preimenuje datoteku: \n"
+"  %s\n"
+"u:\n"
+"  %s\n"
+
+#: ../glade/save.c:174 ../glade/save.c:225 ../glade/save.c:947
+#: ../glade/source.c:358 ../glade/source.c:373 ../glade/source.c:391
+#: ../glade/source.c:404 ../glade/source.c:815 ../glade/source.c:1043
+#: ../glade/source.c:1134 ../glade/source.c:1328 ../glade/source.c:1423
+#: ../glade/source.c:1643 ../glade/source.c:1732 ../glade/source.c:1784
+#: ../glade/source.c:1848 ../glade/source.c:1895 ../glade/source.c:2032
+#: ../glade/utils.c:1147
+#, c-format
+msgid ""
+"Couldn't create file:\n"
+"  %s\n"
+msgstr ""
+"Ne može da kreira datoteku: \n"
+"  %s\n"
+
+#: ../glade/save.c:848
+msgid "Error writing XML file\n"
+msgstr "Greška pri pisanju XML datoteke\n"
+
+#: ../glade/save.c:953
+#, c-format
+msgid ""
+"/*\n"
+" * Translatable strings file generated by Glade.\n"
+" * Add this file to your project's POTFILES.in.\n"
+" * DO NOT compile it as part of your application.\n"
+" */\n"
+"\n"
+msgstr ""
+"/*\n"
+" * Translatable strings file generated by Glade.\n"
+" * Add this file to your project's POTFILES.in.\n"
+" * DO NOT compile it as part of your application.\n"
+" */\n"
+"\n"
+
+#: ../glade/source.c:184
+#, c-format
+msgid ""
+"Invalid interface source filename: %s\n"
+"%s\n"
+msgstr ""
+"Nevažeće ime datoteke za izvorni kod interfejsa: %s\n"
+"%s\n"
+
+#: ../glade/source.c:186
+#, c-format
+msgid ""
+"Invalid interface header filename: %s\n"
+"%s\n"
+msgstr ""
+"Nevažeće ime datoteke za zaglavlje interfejsa: %s\n"
+"%s\n"
+
+#: ../glade/source.c:189
+#, c-format
+msgid ""
+"Invalid callbacks source filename: %s\n"
+"%s\n"
+msgstr ""
+"Nevažeće ime datoteke za povratnu funkciju: %s\n"
+"%s\n"
+
+#: ../glade/source.c:191
+#, c-format
+msgid ""
+"Invalid callbacks header filename: %s\n"
+"%s\n"
+msgstr ""
+"Nevažeće ime datoteke za zaglavlje povratne funkcije: %s\n"
+"%s\n"
+
+#: ../glade/source.c:197
+#, c-format
+msgid ""
+"Invalid support source filename: %s\n"
+"%s\n"
+msgstr ""
+"Nevažeće ime datoteke za pomoćni izvorni kod: %s\n"
+"%s\n"
+
+#: ../glade/source.c:199
+#, c-format
+msgid ""
+"Invalid support header filename: %s\n"
+"%s\n"
+msgstr ""
+"Nevažeće ime datoteke za zaglavlje podrške: %s\n"
+"%s\n"
+
+#: ../glade/source.c:418 ../glade/source.c:426
+#, c-format
+msgid ""
+"Couldn't append to file:\n"
+"  %s\n"
+msgstr ""
+"Ne može da doda u datoteku:\n"
+"  %s\n"
+
+#: ../glade/source.c:1724 ../glade/utils.c:1168
+#, c-format
+msgid ""
+"Error writing to file:\n"
+"  %s\n"
+msgstr ""
+"Greška pri pisanju datoteke:\n"
+"  %s\n"
+
+#: ../glade/source.c:2743
+msgid "The filename must be set in the Project Options dialog."
+msgstr "Ime datoteke se mora postaviti u prozorčetu sa opcijama projekta."
+
+#: ../glade/source.c:2746
+msgid ""
+"The filename must be a simple relative filename.\n"
+"Use the Project Options dialog to set it."
+msgstr ""
+"Ime datoteke mora biti ime datoteke bliskog rođaka.\n"
+"Koristi opcije projekta da ga postaviš."
+
+#: ../glade/tree.c:78
+msgid "Widget Tree"
+msgstr "Stablo elemenata"
+
+#: ../glade/utils.c:900 ../glade/utils.c:940
+msgid "Widget not found in box"
+msgstr "Element nije nađen u kutijici"
+
+#: ../glade/utils.c:920
+msgid "Widget not found in table"
+msgstr "Element nije nađen u tabeli"
+
+#: ../glade/utils.c:960
+msgid "Widget not found in fixed container"
+msgstr "Element nije nađen u utvrđenom sadržaocu"
+
+#: ../glade/utils.c:981
+msgid "Widget not found in packer"
+msgstr "Element nije nađen u pakeru"
+
+#: ../glade/utils.c:1118
+#, c-format
+msgid ""
+"Couldn't access file:\n"
+"  %s\n"
+msgstr ""
+"Ne može da pristupi datoteci:\n"
+"  %s\n"
+
+#: ../glade/utils.c:1141
+#, c-format
+msgid ""
+"Couldn't open file:\n"
+"  %s\n"
+msgstr ""
+"Ne može da otvori datoteku: \n"
+"  %s\n"
+
+#: ../glade/utils.c:1158
+#, c-format
+msgid ""
+"Error reading from file:\n"
+"  %s\n"
+msgstr ""
+"Greška pri čitanju datoteke: \n"
+".  %s\n"
+
+#. This happens under WIN32 when stat is confused by the filename, but this is
+#. harmless, since we know that the directory exists after all.
+#: ../glade/utils.c:1225
+#, c-format
+msgid ""
+"Couldn't create directory:\n"
+"  %s\n"
+msgstr ""
+"Ne može da kreira direktorijum: \n"
+"  %s\n"
+
+#: ../glade/utils.c:1232
+#, c-format
+msgid ""
+"Couldn't access directory:\n"
+"  %s\n"
+msgstr ""
+"Ne može da pristupi direktorijumu:\n"
+"  %s\n"
+
+#: ../glade/utils.c:1240
+#, c-format
+msgid ""
+"Invalid directory:\n"
+"  %s\n"
+msgstr ""
+"Nevažeći direktorijum:\n"
+"  %s\n"
+
+#: ../glade/utils.c:1611
+msgid "Projects"
+msgstr "Projekti"
+
+#: ../glade/utils.c:1628
+msgid "project"
+msgstr "projekat"
+
+#: ../glade/utils.c:1634
+#, c-format
+msgid ""
+"Couldn't open directory:\n"
+"  %s\n"
+msgstr ""
+"Ne može da otvori direktorijum: \n"
+"  %s\n"

@@ -1,0 +1,33 @@
+/* XPM */
+static char *drawingarea_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"21 21 6 1",
+"  c Gray0",
+". c Blue",
+"X c Red",
+"o c Yellow",
+"O c #b3cece",
+"+ c None",
+/* pixels */
+"+++++++++++++++++++++",
+"+++++++++++++++++++++",
+"+++++++++++++++++++++",
+"++          +++++++++",
+"++ XXXXXXXX +++++++++",
+"++ XXXXXXXX     +++++",
+"++ XXXXXXX ooooo ++++",
+"++ XXXXXX ooooooo +++",
+"++ XXXXX ooooooooo ++",
+"++ XXXXX ooooooooo ++",
+"++ XXXXX ooooooooo ++",
+"++ XXXXX ooooooooo ++",
+"++        ooooooo +++",
+"++++ ..... ooooo ++++",
+"++++ ......     +++++",
+"++++ ......... ++++++",
+"++++ ......... ++++++",
+"++++ ......... ++++++",
+"++++           ++++++",
+"+++++++++++++++++++++",
+"+++++++++++++++++++++"
+};

@@ -1,0 +1,6451 @@
+# translation of glade.glade-gnome2-branch.po to
+# translation of glade.glade-gnome2-branch.po to Macedonian
+# translation of glade.glade-gnome2-branch.po to
+# This file is distributed under the same license as the PACKAGE package.
+# Georgi Stanojevsi <бла>, 2003
+# Georgi Stanojevsi <бла>, 2003
+# Georgi Stanojevsi <бла>, 2003
+# Georgi Stanojevsi <бла>, 2003
+# Georgi Stanojevsi <бла>, 2003
+# Georgi Stanojevsi <бла>, 2003
+# Georgi Stanojevsi <бла>, 2003
+# Georgi Stanojevsi <бла>, 2003
+# Georgi Stanojevsi <бла>, 2003
+# Georgi Stanojevsi <бла>, 2003
+# Georgi Stanojevsi <бла>, 2003
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER, 2003
+# Ivan Stojmirov <stojmir@linux.net.mk>, 2003
+# Georgi Stanojevsi <бла>, 2003
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: glade.glade-gnome2-branch\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2005-08-26 13:38+0200\n"
+"PO-Revision-Date: 2003-06-16 04:32+0000\n"
+"Last-Translator: Georgi Stanojevsi <бла>\n"
+"Language-Team: Macedonian <lug@lists.linux.net.mk>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.0.1\n"
+
+#: ../glade-2.desktop.in.h:1
+msgid "Design user interfaces"
+msgstr ""
+
+#: ../glade-2.desktop.in.h:2
+msgid "Glade Interface Designer"
+msgstr "Интерфејс"
+
+#: ../glade/editor.c:343
+msgid "Grid Options"
+msgstr "Решетка"
+
+#: ../glade/editor.c:357
+msgid "Horizontal Spacing:"
+msgstr "Хоризонтално Растојание:"
+
+#: ../glade/editor.c:372
+msgid "Vertical Spacing:"
+msgstr "Вертикално Растојание:"
+
+#: ../glade/editor.c:390
+msgid "Grid Style:"
+msgstr "Решетка Стил:"
+
+#: ../glade/editor.c:396
+msgid "Dots"
+msgstr "Точки"
+
+#: ../glade/editor.c:405
+msgid "Lines"
+msgstr "Линии"
+
+#: ../glade/editor.c:487
+msgid "Snap Options"
+msgstr "Прилепи"
+
+#. Horizontal snapping
+#: ../glade/editor.c:502
+msgid "Horizontal Snapping:"
+msgstr "Хоризонтално:"
+
+#: ../glade/editor.c:508 ../glade/gbwidgets/gbtextview.c:49
+msgid "Left"
+msgstr "Лево"
+
+#: ../glade/editor.c:517 ../glade/gbwidgets/gbtextview.c:50
+msgid "Right"
+msgstr "Десно"
+
+#. Vertical snapping
+#: ../glade/editor.c:526
+msgid "Vertical Snapping:"
+msgstr "Вертикално:"
+
+#: ../glade/editor.c:532
+msgid "Top"
+msgstr "Горе"
+
+#: ../glade/editor.c:540
+msgid "Bottom"
+msgstr "Долен дел"
+
+#: ../glade/editor.c:741
+#, fuzzy
+msgid "GtkToolItem widgets can only be added to a GtkToolbar."
+msgstr "а."
+
+#: ../glade/editor.c:758
+msgid "Couldn't insert a GtkScrolledWindow widget."
+msgstr "а."
+
+#: ../glade/editor.c:805
+msgid "Couldn't insert a GtkViewport widget."
+msgstr "а."
+
+#: ../glade/editor.c:832
+msgid "Couldn't add new widget."
+msgstr "Неможам да додадам елемент"
+
+#: ../glade/editor.c:1230
+msgid ""
+"You can't add a widget at the selected position.\n"
+"\n"
+"Tip: GTK+ uses containers to lay out widgets.\n"
+"Try deleting the existing widget and using\n"
+"a box or table container instead.\n"
+msgstr ""
+"Неможеш да додадеш елемент на одбраната позиција\n"
+"\n"
+"Совет: GTK+ користи контејнер да ги постави елементите.\n"
+"Пробај да ги избришеш постоечките елементи  и ж\n"
+"наместо тоа користи  контејнер табел.\n"
+
+#: ../glade/editor.c:3517
+msgid "Couldn't delete widget."
+msgstr "избриши."
+
+#: ../glade/editor.c:3541 ../glade/editor.c:3545
+msgid "The widget can't be deleted"
+msgstr "Елементот неможе да биде избришан"
+
+#: ../glade/editor.c:3572
+msgid ""
+"The widget is created automatically as part of the parent widget, and it "
+"can't be deleted."
+msgstr "од и избришано."
+
+#: ../glade/gbwidget.c:697
+msgid "Border Width:"
+msgstr "Граница Ширина:"
+
+#: ../glade/gbwidget.c:698
+msgid "The width of the border around the container"
+msgstr "ширина од"
+
+#: ../glade/gbwidget.c:1745
+msgid "Select"
+msgstr "Избор"
+
+#: ../glade/gbwidget.c:1767
+msgid "Remove Scrolled Window"
+msgstr "Отстрани"
+
+#: ../glade/gbwidget.c:1776
+msgid "Add Scrolled Window"
+msgstr "Додај"
+
+#: ../glade/gbwidget.c:1797
+msgid "Remove Alignment"
+msgstr "Отстрани"
+
+#: ../glade/gbwidget.c:1805
+msgid "Add Alignment"
+msgstr "Додај"
+
+#: ../glade/gbwidget.c:1820
+msgid "Remove Event Box"
+msgstr "Отстрани Настан"
+
+#: ../glade/gbwidget.c:1828
+msgid "Add Event Box"
+msgstr "Додај Настан"
+
+#: ../glade/gbwidget.c:1838
+msgid "Redisplay"
+msgstr "Прикажи повторно"
+
+#: ../glade/gbwidget.c:1849
+msgid "Cut"
+msgstr "Исечи"
+
+#: ../glade/gbwidget.c:1856 ../glade/property.c:892 ../glade/property.c:5135
+msgid "Copy"
+msgstr "Копирај"
+
+#: ../glade/gbwidget.c:1865 ../glade/property.c:904
+msgid "Paste"
+msgstr "Вметни"
+
+#: ../glade/gbwidget.c:1877 ../glade/property.c:1580 ../glade/property.c:5126
+msgid "Delete"
+msgstr "Избриши"
+
+#. N/A stands for 'Not Applicable'. It is used when a standard widget
+#. property does not apply to the current widget. e.g. widgets without
+#. windows can't use the Events property. This appears in the property
+#. editor and so should be a short abbreviation.
+#: ../glade/gbwidget.c:2403 ../glade/gbwidget.c:2472
+msgid "N/A"
+msgstr "Не е достапно"
+
+#. General code for container - has to remove all children and add back
+#. NOTE: this may not work for specialised containers.
+#. NOTE: need to ref widgets?
+#: ../glade/gbwidget.c:3202
+msgid "replacing child of container - not implemented yet\n"
+msgstr "replacing child of container - not implemented yet\n"
+
+#: ../glade/gbwidget.c:3430
+msgid "Couldn't insert GtkAlignment widget."
+msgstr "Неможе да внесам GtkAlignment елемент"
+
+#: ../glade/gbwidget.c:3470
+msgid "Couldn't remove GtkAlignment widget."
+msgstr "отстрани."
+
+#: ../glade/gbwidget.c:3494
+msgid "Couldn't insert GtkEventBox widget."
+msgstr "Неможам да внесам GtkEventBox елемент"
+
+#: ../glade/gbwidget.c:3533
+msgid "Couldn't remove GtkEventBox widget."
+msgstr "отстрани."
+
+#: ../glade/gbwidget.c:3568
+msgid "Couldn't insert GtkScrolledWindow widget."
+msgstr "Неможам да внесам GtkScrolledWindow елемент."
+
+#: ../glade/gbwidget.c:3607
+msgid "Couldn't remove GtkScrolledWindow widget."
+msgstr "отстрани."
+
+#: ../glade/gbwidget.c:3721
+msgid "Remove Label"
+msgstr "Отстрани"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:78
+#, fuzzy
+msgid "Application Name"
+msgstr "Gnome Апликација"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:102 ../glade/gnome/gnomeabout.c:137
+#, fuzzy
+msgid "Logo:"
+msgstr "Лого:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:102 ../glade/gnome/gnomeabout.c:137
+#, fuzzy
+msgid "The pixmap to use as the logo"
+msgstr "до"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:104 ../glade/glade_project_options.c:260
+msgid "Program Name:"
+msgstr "Програм Име:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:104
+#, fuzzy
+msgid "The name of the application"
+msgstr "име од"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:105 ../glade/gnome/gnomeabout.c:139
+msgid "Comments:"
+msgstr "Коментари:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:105
+#, fuzzy
+msgid "Additional information, such as a description of the application"
+msgstr "Дополнително а опис од и дома Вклучено"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:106 ../glade/gnome/gnomeabout.c:138
+msgid "Copyright:"
+msgstr "Copyright:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:106 ../glade/gnome/gnomeabout.c:138
+#, fuzzy
+msgid "The copyright notice"
+msgstr "copyright"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:108
+msgid "Website URL:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:108
+#, fuzzy
+msgid "The URL of the application's website"
+msgstr "а Gnome е до"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:109
+#, fuzzy
+msgid "Website Label:"
+msgstr "Мени Ознака:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:109
+#, fuzzy
+msgid "The label to display for the link to the website"
+msgstr "до горе од"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:111 ../glade/glade_project_options.c:365
+#, fuzzy
+msgid "License:"
+msgstr "Лиценца:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:111
+#, fuzzy
+msgid "The license details of the application"
+msgstr "Стилот за нестиснато копче"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:113 ../glade/gnome/gnomeabout.c:141
+#, fuzzy
+msgid "Authors:"
+msgstr "Автори:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:113 ../glade/gnome/gnomeabout.c:141
+#, fuzzy
+msgid "The authors of the package, one on each line"
+msgstr "од Вклучено"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:114 ../glade/gnome/gnomeabout.c:142
+#, fuzzy
+msgid "Documenters:"
+msgstr "Документи:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:114 ../glade/gnome/gnomeabout.c:142
+#, fuzzy
+msgid "The documenters of the package, one on each line"
+msgstr "од Вклучено"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:115
+msgid "Artists:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:115
+#, fuzzy
+msgid ""
+"The people who have created the artwork for the package, one on each line"
+msgstr "од Вклучено"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:116 ../glade/gnome/gnomeabout.c:143
+msgid "Translators:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:116 ../glade/gnome/gnomeabout.c:143
+#, fuzzy
+msgid ""
+"The translators of the package. This should normally be left empty so that "
+"translators can add their names in the po files"
+msgstr "од лево празно во"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:559
+#, fuzzy
+msgid "About Dialog"
+msgstr "Gnome За"
+
+#: ../glade/gbwidgets/gbaccellabel.c:200
+msgid "Label with Accelerator"
+msgstr "Ознака"
+
+#. The GtkProgress interface is deprecated now, and GtkProgressBar doesn't
+#. have functions to set these, so I suppose we shouldn't support them.
+#: ../glade/gbwidgets/gbalignment.c:71 ../glade/gbwidgets/gbarrow.c:89
+#: ../glade/gbwidgets/gbaspectframe.c:130 ../glade/gbwidgets/gbimage.c:119
+#: ../glade/gbwidgets/gblabel.c:180 ../glade/gbwidgets/gbprogressbar.c:162
+msgid "X Align:"
+msgstr "X Порамни:"
+
+#: ../glade/gbwidgets/gbalignment.c:72
+msgid "The horizontal alignment of the child widget"
+msgstr "од"
+
+#: ../glade/gbwidgets/gbalignment.c:74 ../glade/gbwidgets/gbarrow.c:92
+#: ../glade/gbwidgets/gbaspectframe.c:133 ../glade/gbwidgets/gbimage.c:122
+#: ../glade/gbwidgets/gblabel.c:183 ../glade/gbwidgets/gbprogressbar.c:165
+msgid "Y Align:"
+msgstr "Y Порамни:"
+
+#: ../glade/gbwidgets/gbalignment.c:75
+msgid "The vertical alignment of the child widget"
+msgstr "од"
+
+#: ../glade/gbwidgets/gbalignment.c:77
+msgid "X Scale:"
+msgstr "X Промени големина:"
+
+#: ../glade/gbwidgets/gbalignment.c:78
+msgid "The horizontal scale of the child widget"
+msgstr "од"
+
+#: ../glade/gbwidgets/gbalignment.c:80
+msgid "Y Scale:"
+msgstr "Y скала"
+
+#: ../glade/gbwidgets/gbalignment.c:81
+msgid "The vertical scale of the child widget"
+msgstr "Вертикалната скала на елементот на потомокот"
+
+#: ../glade/gbwidgets/gbalignment.c:85
+#, fuzzy
+msgid "Top Padding:"
+msgstr "Padding:"
+
+#: ../glade/gbwidgets/gbalignment.c:86
+#, fuzzy
+msgid "Space to put above the child widget"
+msgstr "од"
+
+#: ../glade/gbwidgets/gbalignment.c:89
+#, fuzzy
+msgid "Bottom Padding:"
+msgstr "Padding:"
+
+#: ../glade/gbwidgets/gbalignment.c:90
+#, fuzzy
+msgid "Space to put below the child widget"
+msgstr "од"
+
+#: ../glade/gbwidgets/gbalignment.c:93
+#, fuzzy
+msgid "Left Padding:"
+msgstr "Padding:"
+
+#: ../glade/gbwidgets/gbalignment.c:94
+#, fuzzy
+msgid "Space to put to the left of the child widget"
+msgstr "од"
+
+#: ../glade/gbwidgets/gbalignment.c:97
+#, fuzzy
+msgid "Right Padding:"
+msgstr "Padding:"
+
+#: ../glade/gbwidgets/gbalignment.c:98
+#, fuzzy
+msgid "Space to put to the right of the child widget"
+msgstr "од"
+
+#: ../glade/gbwidgets/gbalignment.c:255
+msgid "Alignment"
+msgstr "Поставеност"
+
+#: ../glade/gbwidgets/gbarrow.c:85
+msgid "Direction:"
+msgstr "Насока:"
+
+#: ../glade/gbwidgets/gbarrow.c:85
+msgid "The direction of the arrow"
+msgstr "Насоката на стрелката"
+
+#: ../glade/gbwidgets/gbarrow.c:87 ../glade/gbwidgets/gbaspectframe.c:128
+#: ../glade/gbwidgets/gbclist.c:247 ../glade/gbwidgets/gbctree.c:253
+#: ../glade/gbwidgets/gbframe.c:123 ../glade/gbwidgets/gbhandlebox.c:109
+#: ../glade/gbwidgets/gbviewport.c:104 ../glade/gnome/bonobodockitem.c:176
+msgid "Shadow:"
+msgstr "Сенка:"
+
+#: ../glade/gbwidgets/gbarrow.c:87
+msgid "The shadow type of the arrow"
+msgstr "Тип на сенката на стрелката"
+
+#: ../glade/gbwidgets/gbarrow.c:90
+msgid "The horizontal alignment of the arrow"
+msgstr "Хоризонтална поставеност  на стрелката"
+
+#: ../glade/gbwidgets/gbarrow.c:93
+msgid "The vertical alignment of the arrow"
+msgstr "Вертикалната поставеност на стрелката"
+
+#: ../glade/gbwidgets/gbarrow.c:95 ../glade/gbwidgets/gbimage.c:125
+#: ../glade/gbwidgets/gblabel.c:186
+msgid "X Pad:"
+msgstr "X Pad:"
+
+#: ../glade/gbwidgets/gbarrow.c:95 ../glade/gbwidgets/gbimage.c:125
+#: ../glade/gbwidgets/gblabel.c:186 ../glade/gbwidgets/gbtable.c:382
+msgid "The horizontal padding"
+msgstr "Хоризонтално  padding"
+
+#: ../glade/gbwidgets/gbarrow.c:97 ../glade/gbwidgets/gbimage.c:127
+#: ../glade/gbwidgets/gblabel.c:188
+msgid "Y Pad:"
+msgstr "Y Pad:"
+
+#: ../glade/gbwidgets/gbarrow.c:97 ../glade/gbwidgets/gbimage.c:127
+#: ../glade/gbwidgets/gblabel.c:188 ../glade/gbwidgets/gbtable.c:385
+msgid "The vertical padding"
+msgstr "Вертикален padding"
+
+#: ../glade/gbwidgets/gbarrow.c:299
+msgid "Arrow"
+msgstr "Стрелка"
+
+#: ../glade/gbwidgets/gbaspectframe.c:122 ../glade/gbwidgets/gbframe.c:117
+msgid "Label X Align:"
+msgstr "Име на х-поставеноста:"
+
+#: ../glade/gbwidgets/gbaspectframe.c:123 ../glade/gbwidgets/gbframe.c:118
+msgid "The horizontal alignment of the frame's label widget"
+msgstr "Хоризонталната поставеност на името на елементот за рамка"
+
+#: ../glade/gbwidgets/gbaspectframe.c:125 ../glade/gbwidgets/gbframe.c:120
+msgid "Label Y Align:"
+msgstr "Име на Y-поставеноста"
+
+#: ../glade/gbwidgets/gbaspectframe.c:126 ../glade/gbwidgets/gbframe.c:121
+msgid "The vertical alignment of the frame's label widget"
+msgstr "Вертикалната поставеност на името за рамката"
+
+#: ../glade/gbwidgets/gbaspectframe.c:128 ../glade/gbwidgets/gbframe.c:123
+msgid "The type of shadow of the frame"
+msgstr "Тип на сенката на рамката"
+
+#: ../glade/gbwidgets/gbaspectframe.c:131
+#: ../glade/gbwidgets/gbaspectframe.c:134
+msgid "The horizontal alignment of the frame's child"
+msgstr "Хоризонталната поставеност на потомокот на рамката"
+
+#: ../glade/gbwidgets/gbaspectframe.c:136
+msgid "Ratio:"
+msgstr "Однос:"
+
+#: ../glade/gbwidgets/gbaspectframe.c:137
+msgid "The aspect ratio of the frame's child"
+msgstr "Односот на рамката"
+
+#: ../glade/gbwidgets/gbaspectframe.c:138
+msgid "Obey Child:"
+msgstr "Послушај го потмокот:"
+
+#: ../glade/gbwidgets/gbaspectframe.c:139
+msgid "If the aspect ratio should be determined by the child"
+msgstr "Дали односот треба да биде одреден од потомокот"
+
+#: ../glade/gbwidgets/gbaspectframe.c:319
+msgid "Aspect Frame"
+msgstr "Рамка за сооднос"
+
+#: ../glade/gbwidgets/gbbutton.c:118 ../glade/gbwidgets/gbcheckbutton.c:85
+#: ../glade/gbwidgets/gbmenutoolbutton.c:85
+#: ../glade/gbwidgets/gbradiobutton.c:126
+#: ../glade/gbwidgets/gbradiotoolbutton.c:133
+#: ../glade/gbwidgets/gbtogglebutton.c:88
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:90
+#: ../glade/gbwidgets/gbtoolbutton.c:104
+msgid "Stock Button:"
+msgstr "Копче за натрупување"
+
+#: ../glade/gbwidgets/gbbutton.c:119 ../glade/gbwidgets/gbcheckbutton.c:86
+#: ../glade/gbwidgets/gbmenutoolbutton.c:86
+#: ../glade/gbwidgets/gbradiobutton.c:127
+#: ../glade/gbwidgets/gbradiotoolbutton.c:134
+#: ../glade/gbwidgets/gbtogglebutton.c:89
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:91
+#: ../glade/gbwidgets/gbtoolbutton.c:105
+msgid "The stock button to use"
+msgstr "Копчето за натрупување да се користи"
+
+#. For now we don't support editing the menuitem properties in the property
+#. editor. The menu editor has to be used instead.
+#: ../glade/gbwidgets/gbbutton.c:121 ../glade/gbwidgets/gbcheckbutton.c:88
+#: ../glade/gbwidgets/gbcheckmenuitem.c:72
+#: ../glade/gbwidgets/gbimagemenuitem.c:92 ../glade/gbwidgets/gblabel.c:168
+#: ../glade/gbwidgets/gblistitem.c:73 ../glade/gbwidgets/gbmenuitem.c:87
+#: ../glade/gbwidgets/gbmenutoolbutton.c:88
+#: ../glade/gbwidgets/gbradiobutton.c:129
+#: ../glade/gbwidgets/gbradiomenuitem.c:103
+#: ../glade/gbwidgets/gbradiotoolbutton.c:136
+#: ../glade/gbwidgets/gbtogglebutton.c:91
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:93
+#: ../glade/gbwidgets/gbtoolbutton.c:107 ../glade/glade_menu_editor.c:747
+#: ../glade/gnome/gnomehref.c:68
+msgid "Label:"
+msgstr "Име:"
+
+#: ../glade/gbwidgets/gbbutton.c:121 ../glade/gbwidgets/gbcheckbutton.c:88
+#: ../glade/gbwidgets/gbcheckmenuitem.c:72 ../glade/gbwidgets/gbentry.c:100
+#: ../glade/gbwidgets/gbimagemenuitem.c:92 ../glade/gbwidgets/gblabel.c:168
+#: ../glade/gbwidgets/gblistitem.c:73 ../glade/gbwidgets/gbmenuitem.c:87
+#: ../glade/gbwidgets/gbmenutoolbutton.c:88
+#: ../glade/gbwidgets/gbradiobutton.c:129
+#: ../glade/gbwidgets/gbradiomenuitem.c:103
+#: ../glade/gbwidgets/gbradiotoolbutton.c:136
+#: ../glade/gbwidgets/gbtextview.c:124 ../glade/gbwidgets/gbtogglebutton.c:91
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:93
+#: ../glade/gbwidgets/gbtoolbutton.c:107 ../glade/gnome-db/gnomedbeditor.c:64
+msgid "The text to display"
+msgstr "Текстот да се прикажа"
+
+#: ../glade/gbwidgets/gbbutton.c:122 ../glade/gbwidgets/gbcheckbutton.c:89
+#: ../glade/gbwidgets/gbimage.c:107 ../glade/gbwidgets/gbmenutoolbutton.c:89
+#: ../glade/gbwidgets/gbradiobutton.c:130
+#: ../glade/gbwidgets/gbradiotoolbutton.c:137
+#: ../glade/gbwidgets/gbtogglebutton.c:92
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:94
+#: ../glade/gbwidgets/gbtoolbutton.c:108 ../glade/gbwidgets/gbwindow.c:295
+#: ../glade/glade_menu_editor.c:813
+msgid "Icon:"
+msgstr "Икона:"
+
+#: ../glade/gbwidgets/gbbutton.c:123 ../glade/gbwidgets/gbcheckbutton.c:90
+#: ../glade/gbwidgets/gbimage.c:108 ../glade/gbwidgets/gbmenutoolbutton.c:90
+#: ../glade/gbwidgets/gbradiobutton.c:131
+#: ../glade/gbwidgets/gbradiotoolbutton.c:138
+#: ../glade/gbwidgets/gbtogglebutton.c:93
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:95
+#: ../glade/gbwidgets/gbtoolbutton.c:109
+msgid "The icon to display"
+msgstr "Иконата да се прикаже"
+
+#: ../glade/gbwidgets/gbbutton.c:125 ../glade/gbwidgets/gbcheckbutton.c:92
+#: ../glade/gbwidgets/gbradiobutton.c:133
+#: ../glade/gbwidgets/gbtogglebutton.c:95
+msgid "Button Relief:"
+msgstr "Отпушти копче:"
+
+#: ../glade/gbwidgets/gbbutton.c:126 ../glade/gbwidgets/gbcheckbutton.c:93
+#: ../glade/gbwidgets/gbradiobutton.c:134
+#: ../glade/gbwidgets/gbtogglebutton.c:96
+msgid "The relief style of the button"
+msgstr "Стилот за нестиснато копче"
+
+#: ../glade/gbwidgets/gbbutton.c:131
+msgid "Response ID:"
+msgstr "Број за распознавање"
+
+#: ../glade/gbwidgets/gbbutton.c:132
+msgid ""
+"The response code returned when the button is pressed. Select one of the "
+"standard responses or enter a positive integer value"
+msgstr ""
+"Кодот за одговор кој се генерира кога ќе се притисне копчето. Избери еден од "
+"стандарните одговори или внеси позитивен целоброен број"
+
+#: ../glade/gbwidgets/gbbutton.c:137 ../glade/gbwidgets/gbcheckbutton.c:102
+#: ../glade/gbwidgets/gbcolorbutton.c:70 ../glade/gbwidgets/gbcombobox.c:83
+#: ../glade/gbwidgets/gbcomboboxentry.c:82
+#: ../glade/gbwidgets/gbfontbutton.c:78 ../glade/gbwidgets/gbradiobutton.c:148
+#: ../glade/gbwidgets/gbtogglebutton.c:103
+#: ../glade/gnome/gnomecolorpicker.c:76 ../glade/gnome/gnomefontpicker.c:109
+#: ../glade/gnome/gnomehref.c:70
+msgid "Focus On Click:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbbutton.c:137 ../glade/gbwidgets/gbcheckbutton.c:102
+#: ../glade/gbwidgets/gbcolorbutton.c:70 ../glade/gbwidgets/gbfontbutton.c:78
+#: ../glade/gbwidgets/gbradiobutton.c:148
+#: ../glade/gbwidgets/gbtogglebutton.c:103
+#: ../glade/gnome/gnomecolorpicker.c:76 ../glade/gnome/gnomefontpicker.c:109
+#: ../glade/gnome/gnomehref.c:70
+#, fuzzy
+msgid "If the button grabs focus when it is clicked"
+msgstr "дијалог е"
+
+#: ../glade/gbwidgets/gbbutton.c:1502
+msgid "Remove Button Contents"
+msgstr "Тргни ја содржината на копчето"
+
+#: ../glade/gbwidgets/gbbutton.c:1600
+msgid "Button"
+msgstr "Копче"
+
+#: ../glade/gbwidgets/gbcalendar.c:73
+msgid "Heading:"
+msgstr "Заглавје:"
+
+#: ../glade/gbwidgets/gbcalendar.c:74
+msgid "If the month and year should be shown at the top"
+msgstr "Дали месецот или годината да бидат прикажани горе"
+
+#: ../glade/gbwidgets/gbcalendar.c:75
+msgid "Day Names:"
+msgstr "Имиња на денови"
+
+#: ../glade/gbwidgets/gbcalendar.c:76
+msgid "If the day names should be shown"
+msgstr "Дали имињата на деновите треба да бидат прикажани"
+
+#: ../glade/gbwidgets/gbcalendar.c:77
+msgid "Fixed Month:"
+msgstr "Статичен месец:"
+
+#: ../glade/gbwidgets/gbcalendar.c:78
+msgid "If the month and year shouldn't be changeable"
+msgstr "Дали месецот или годината треба да бидат променливи"
+
+#: ../glade/gbwidgets/gbcalendar.c:79
+msgid "Week Numbers:"
+msgstr "Броеви на седмицата:"
+
+#: ../glade/gbwidgets/gbcalendar.c:80
+msgid "If the number of the week should be shown"
+msgstr "Дали бројот на седмицата треба да биде прикажан"
+
+#: ../glade/gbwidgets/gbcalendar.c:81 ../glade/gnome/gnomedateedit.c:74
+msgid "Monday First:"
+msgstr "Понеделник прв:"
+
+#: ../glade/gbwidgets/gbcalendar.c:82 ../glade/gnome/gnomedateedit.c:75
+msgid "If the week should start on Monday"
+msgstr "Дали седмицата да почне во понеделник"
+
+#: ../glade/gbwidgets/gbcalendar.c:266
+msgid "Calendar"
+msgstr "Календар"
+
+#: ../glade/gbwidgets/gbcellview.c:63 ../glade/gnome/gnomedruidpageedge.c:102
+#: ../glade/gnome/gnomedruidpagestandard.c:91
+#, fuzzy
+msgid "Back. Color:"
+msgstr "Назад Боја:"
+
+#: ../glade/gbwidgets/gbcellview.c:64
+#, fuzzy
+msgid "The background color"
+msgstr "Боја на позадина"
+
+#: ../glade/gbwidgets/gbcellview.c:192
+#, fuzzy
+msgid "Cell View"
+msgstr "Текст поглед"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:96
+#: ../glade/gbwidgets/gbcheckmenuitem.c:73
+#: ../glade/gbwidgets/gbradiobutton.c:137
+#: ../glade/gbwidgets/gbradiomenuitem.c:104
+#: ../glade/gbwidgets/gbradiotoolbutton.c:147
+#: ../glade/gbwidgets/gbtogglebutton.c:99
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:97
+msgid "Initially On:"
+msgstr "На почеток вклучено"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:97
+msgid "If the check button is initially on"
+msgstr "Дали check-копчето да биде на почеток штиклирано"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:98
+#: ../glade/gbwidgets/gbradiobutton.c:139
+#: ../glade/gbwidgets/gbtogglebutton.c:101
+msgid "Inconsistent:"
+msgstr "Неконзистентно:"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:99
+#: ../glade/gbwidgets/gbradiobutton.c:140
+#: ../glade/gbwidgets/gbtogglebutton.c:102
+msgid "If the button is shown in an inconsistent state"
+msgstr "Дали копчето е во неконзистетна состојба"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:100
+#: ../glade/gbwidgets/gbradiobutton.c:141
+msgid "Indicator:"
+msgstr "Покажувач:"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:101
+#: ../glade/gbwidgets/gbradiobutton.c:142
+msgid "If the indicator is always drawn"
+msgstr "Дали покажувачот се секогаш нацртан"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:211
+msgid "Check Button"
+msgstr "Chekck-копче"
+
+#: ../glade/gbwidgets/gbcheckmenuitem.c:74
+msgid "If the check menu item is initially on"
+msgstr "Дали елементот од check-мениото е на почеток вклучено"
+
+#: ../glade/gbwidgets/gbcheckmenuitem.c:203
+msgid "Check Menu Item"
+msgstr "Елемент од check менито"
+
+#: ../glade/gbwidgets/gbclist.c:141
+msgid "New columned list"
+msgstr "Нова листа со колони"
+
+#. Columns label & entry
+#: ../glade/gbwidgets/gbclist.c:152 ../glade/gbwidgets/gbctree.c:157
+#: ../glade/gbwidgets/gbhbox.c:110 ../glade/gbwidgets/gbhbuttonbox.c:132
+#: ../glade/gbwidgets/gbtable.c:165
+msgid "Number of columns:"
+msgstr "Број на колони:"
+
+#: ../glade/gbwidgets/gbclist.c:242 ../glade/gbwidgets/gbctree.c:248
+#: ../glade/gbwidgets/gbiconview.c:127 ../glade/gbwidgets/gblist.c:77
+#: ../glade/gnome/gnomeiconlist.c:174
+msgid "Select Mode:"
+msgstr "Режим за избор"
+
+#: ../glade/gbwidgets/gbclist.c:243
+msgid "The selection mode of the columned list"
+msgstr "Режимот за избор на листата со колони"
+
+#: ../glade/gbwidgets/gbclist.c:245 ../glade/gbwidgets/gbctree.c:251
+msgid "Show Titles:"
+msgstr "Прикажи наслови:"
+
+#: ../glade/gbwidgets/gbclist.c:246 ../glade/gbwidgets/gbctree.c:252
+msgid "If the column titles are shown"
+msgstr "Дали насловите на колоните да бидат прикажани"
+
+#: ../glade/gbwidgets/gbclist.c:248
+msgid "The type of shadow of the columned list's border"
+msgstr "Типот на сенка на работ на листата со колони"
+
+#: ../glade/gbwidgets/gbclist.c:594
+msgid "Columned List"
+msgstr "Листа со колони"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:65 ../glade/gnome/gnomecolorpicker.c:70
+#, fuzzy
+msgid "Use Alpha:"
+msgstr "Користи го Alpha:"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:66 ../glade/gnome/gnomecolorpicker.c:71
+#, fuzzy
+msgid "If the alpha channel should be used"
+msgstr "alpha"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:68
+#: ../glade/gbwidgets/gbfilechooserbutton.c:85
+#: ../glade/gbwidgets/gbfontbutton.c:68 ../glade/gbwidgets/gbwindow.c:242
+#: ../glade/gnome/gnomecolorpicker.c:73 ../glade/gnome/gnomedruidpageedge.c:93
+#: ../glade/gnome/gnomedruidpagestandard.c:85
+#: ../glade/gnome/gnomefileentry.c:101 ../glade/gnome/gnomefontpicker.c:95
+#: ../glade/gnome/gnomeiconentry.c:72 ../glade/gnome/gnomepixmapentry.c:82
+msgid "Title:"
+msgstr "Наслов:"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:69 ../glade/gnome/gnomecolorpicker.c:74
+#, fuzzy
+msgid "The title of the color selection dialog"
+msgstr "од"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:91
+#: ../glade/gbwidgets/gbcolorbutton.c:119
+#: ../glade/gbwidgets/gbcolorbutton.c:162
+#, fuzzy
+msgid "Pick a Color"
+msgstr "Одбери боја"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:211
+#, fuzzy
+msgid "Color Chooser Button"
+msgstr "Chekck-копче"
+
+#: ../glade/gbwidgets/gbcolorselection.c:62
+#, fuzzy
+msgid "Opacity Control:"
+msgstr "Opacity Control:"
+
+#: ../glade/gbwidgets/gbcolorselection.c:63
+#, fuzzy
+msgid "If the opacity control is shown"
+msgstr "control е"
+
+#: ../glade/gbwidgets/gbcolorselection.c:64
+msgid "Palette:"
+msgstr "Палета:"
+
+#: ../glade/gbwidgets/gbcolorselection.c:65
+msgid "If the palette is shown"
+msgstr "Дали е прикажана палетата"
+
+#: ../glade/gbwidgets/gbcolorselection.c:173
+msgid "Color Selection"
+msgstr "Избор на бои"
+
+#: ../glade/gbwidgets/gbcolorselectiondialog.c:70
+msgid "Select Color"
+msgstr "Избери боја"
+
+#: ../glade/gbwidgets/gbcolorselectiondialog.c:315 ../glade/property.c:1275
+msgid "Color Selection Dialog"
+msgstr "Прозорец за избор на бои"
+
+#: ../glade/gbwidgets/gbcombo.c:105
+msgid "Value In List:"
+msgstr "Вредност во листат"
+
+#: ../glade/gbwidgets/gbcombo.c:106
+msgid "If the value must be in the list"
+msgstr "Дали вредноста мора да биде во листат"
+
+#: ../glade/gbwidgets/gbcombo.c:107
+msgid "OK If Empty:"
+msgstr "Во ред ако е празно"
+
+#: ../glade/gbwidgets/gbcombo.c:108
+msgid "If an empty value is acceptable, when 'Value In List' is set"
+msgstr ""
+"дали празна вредност е прифатлива, кога \"Вредност во листата\" е полно"
+
+#: ../glade/gbwidgets/gbcombo.c:109
+msgid "Case Sensitive:"
+msgstr "Распознавај мали и големи букви:"
+
+#: ../glade/gbwidgets/gbcombo.c:110
+msgid "If the searching is case sensitive"
+msgstr "Дали пребарувањетораспознава мали и големи букви"
+
+#: ../glade/gbwidgets/gbcombo.c:111
+msgid "Use Arrows:"
+msgstr "Користи стрелки"
+
+#: ../glade/gbwidgets/gbcombo.c:112
+msgid "If arrows can be used to change the value"
+msgstr "Дали стрелките може да се користат да се смени вредноста"
+
+#: ../glade/gbwidgets/gbcombo.c:113
+msgid "Use Always:"
+msgstr "Користи секогаш"
+
+#: ../glade/gbwidgets/gbcombo.c:114
+msgid "If arrows work even if the value is not in the list"
+msgstr "дали работи стрелката без разлика дали вредноста е во листата"
+
+#: ../glade/gbwidgets/gbcombo.c:115 ../glade/gbwidgets/gbcombobox.c:78
+#: ../glade/gbwidgets/gbcomboboxentry.c:75
+msgid "Items:"
+msgstr "Елементи:"
+
+#: ../glade/gbwidgets/gbcombo.c:116 ../glade/gbwidgets/gbcombobox.c:79
+#: ../glade/gbwidgets/gbcomboboxentry.c:76
+msgid "The items in the combo list, one per line"
+msgstr "Вредностите во combo листата, секоја во посебен ред"
+
+#: ../glade/gbwidgets/gbcombo.c:425 ../glade/gbwidgets/gbcombobox.c:289
+msgid "Combo Box"
+msgstr "Комбо кутија"
+
+#: ../glade/gbwidgets/gbcombobox.c:81 ../glade/gbwidgets/gbcomboboxentry.c:78
+msgid "Add Tearoffs:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcombobox.c:82 ../glade/gbwidgets/gbcomboboxentry.c:79
+msgid "Whether dropdowns should have a tearoff menu item"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcombobox.c:84 ../glade/gbwidgets/gbcomboboxentry.c:83
+#, fuzzy
+msgid "Whether the combo box grabs focus when it is clicked"
+msgstr "дијалог е"
+
+#: ../glade/gbwidgets/gbcomboboxentry.c:80 ../glade/gbwidgets/gbentry.c:102
+msgid "Has Frame:"
+msgstr "Има рамка:"
+
+#: ../glade/gbwidgets/gbcomboboxentry.c:81
+msgid "Whether the combo box draws a frame around the child"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcomboboxentry.c:302
+#, fuzzy
+msgid "Combo Box Entry"
+msgstr "Комбо кутија"
+
+#: ../glade/gbwidgets/gbctree.c:146
+msgid "New columned tree"
+msgstr "Ново дрво со колони"
+
+#: ../glade/gbwidgets/gbctree.c:249
+msgid "The selection mode of the columned tree"
+msgstr "Режимот за избор на дрвото со колони"
+
+#: ../glade/gbwidgets/gbctree.c:254
+msgid "The type of shadow of the columned tree's border"
+msgstr "Типот на сенката на работ на дрвото со колони"
+
+#: ../glade/gbwidgets/gbctree.c:538
+msgid "Columned Tree"
+msgstr "Дрво со колони"
+
+#: ../glade/gbwidgets/gbcurve.c:85 ../glade/gbwidgets/gbwindow.c:245
+msgid "Type:"
+msgstr "Тип:"
+
+#: ../glade/gbwidgets/gbcurve.c:85
+msgid "The type of the curve"
+msgstr "Тип на кривината"
+
+#: ../glade/gbwidgets/gbcurve.c:87 ../glade/gbwidgets/gbgammacurve.c:91
+msgid "X Min:"
+msgstr "X Min:"
+
+#: ../glade/gbwidgets/gbcurve.c:87 ../glade/gbwidgets/gbgammacurve.c:91
+msgid "The minimum horizontal value"
+msgstr "Минималната хоризонтална вредност"
+
+#: ../glade/gbwidgets/gbcurve.c:88 ../glade/gbwidgets/gbgammacurve.c:92
+msgid "X Max:"
+msgstr "X Max:"
+
+#: ../glade/gbwidgets/gbcurve.c:88 ../glade/gbwidgets/gbgammacurve.c:92
+msgid "The maximum horizontal value"
+msgstr "Максималната хоризонатална вредност"
+
+#: ../glade/gbwidgets/gbcurve.c:89 ../glade/gbwidgets/gbgammacurve.c:93
+msgid "Y Min:"
+msgstr "Y Min:"
+
+#: ../glade/gbwidgets/gbcurve.c:89 ../glade/gbwidgets/gbgammacurve.c:93
+msgid "The minimum vertical value"
+msgstr "Минималната вертикална вредност"
+
+#: ../glade/gbwidgets/gbcurve.c:90 ../glade/gbwidgets/gbgammacurve.c:94
+msgid "Y Max:"
+msgstr "Y Max:"
+
+#: ../glade/gbwidgets/gbcurve.c:90 ../glade/gbwidgets/gbgammacurve.c:94
+msgid "The maximum vertical value"
+msgstr "Максималната вертикална вредност"
+
+#: ../glade/gbwidgets/gbcurve.c:250
+msgid "Curve"
+msgstr "Крива"
+
+#: ../glade/gbwidgets/gbcustom.c:154
+msgid "Creation Function:"
+msgstr "Креторт фунцијата "
+
+#: ../glade/gbwidgets/gbcustom.c:155
+msgid "The function which creates the widget"
+msgstr "Функцијата која ги создава елементите"
+
+#: ../glade/gbwidgets/gbcustom.c:157
+msgid "String1:"
+msgstr "Низа од знаци1"
+
+#: ../glade/gbwidgets/gbcustom.c:158
+msgid "The first string argument to pass to the function"
+msgstr "Првиот аргумент за функцијата кој мора да биде низа од знаци"
+
+#: ../glade/gbwidgets/gbcustom.c:159
+msgid "String2:"
+msgstr "Низа од знаци2:"
+
+#: ../glade/gbwidgets/gbcustom.c:160
+msgid "The second string argument to pass to the function"
+msgstr "Вториот аргумент за функцијата кој мора да биде низа од знаци"
+
+#: ../glade/gbwidgets/gbcustom.c:161
+msgid "Int1:"
+msgstr "Целоброен1:"
+
+#: ../glade/gbwidgets/gbcustom.c:162
+msgid "The first integer argument to pass to the function"
+msgstr "Првиот целоброен аргумент за функцијата"
+
+#: ../glade/gbwidgets/gbcustom.c:163
+msgid "Int2:"
+msgstr "Целоброен2:"
+
+#: ../glade/gbwidgets/gbcustom.c:164
+msgid "The second integer argument to pass to the function"
+msgstr "Вториот целоброен аргумент за функцијата"
+
+#: ../glade/gbwidgets/gbcustom.c:380
+msgid "Custom Widget"
+msgstr "Сопствен елемент"
+
+#: ../glade/gbwidgets/gbdialog.c:292
+msgid "New dialog"
+msgstr "Нов диалог прозорец"
+
+#: ../glade/gbwidgets/gbdialog.c:304
+msgid "Cancel, OK"
+msgstr "Откажи, Во ред"
+
+#: ../glade/gbwidgets/gbdialog.c:313 ../glade/glade.c:367
+#: ../glade/glade_project_window.c:1316 ../glade/property.c:5156
+msgid "OK"
+msgstr "Во ред"
+
+#: ../glade/gbwidgets/gbdialog.c:322
+msgid "Cancel, Apply, OK"
+msgstr "Откажи, Примени, Во ред"
+
+#: ../glade/gbwidgets/gbdialog.c:331
+msgid "Close"
+msgstr "Затвори"
+
+#: ../glade/gbwidgets/gbdialog.c:340
+msgid "_Standard Button Layout:"
+msgstr "_Стандарден распоред на копчиња"
+
+#: ../glade/gbwidgets/gbdialog.c:349
+msgid "_Number of Buttons:"
+msgstr "_Број на копчиња:"
+
+#: ../glade/gbwidgets/gbdialog.c:366
+msgid "Show Help Button"
+msgstr "Прикажи копче за помош"
+
+#: ../glade/gbwidgets/gbdialog.c:397
+msgid "Has Separator:"
+msgstr "Има разделувач"
+
+#: ../glade/gbwidgets/gbdialog.c:398
+msgid "If the dialog has a horizontal separator above the buttons"
+msgstr "Дали диалогот има хоризонтален одвојувач над копчињата"
+
+#: ../glade/gbwidgets/gbdialog.c:605
+msgid "Dialog"
+msgstr "Дијалог"
+
+#: ../glade/gbwidgets/gbdrawingarea.c:146
+msgid "Drawing Area"
+msgstr "Реон за цртање"
+
+#: ../glade/gbwidgets/gbentry.c:94 ../glade/gbwidgets/gbtextview.c:115
+#: ../glade/gnome-db/gnomedbeditor.c:62
+msgid "Editable:"
+msgstr "Можност за уредување:"
+
+#: ../glade/gbwidgets/gbentry.c:94 ../glade/gbwidgets/gbtextview.c:116
+#: ../glade/gnome-db/gnomedbeditor.c:62
+msgid "If the text can be edited"
+msgstr "Дали текстот може да се менува"
+
+#: ../glade/gbwidgets/gbentry.c:95
+msgid "Text Visible:"
+msgstr "Видлив текст"
+
+#: ../glade/gbwidgets/gbentry.c:96
+msgid ""
+"If the text entered by the user will be shown. When turned off, the text "
+"typed in is displayed as asterix characters, which is useful for entering "
+"passwords"
+msgstr ""
+"Дали текстот внесуван од корисникот ќе биде прикажан. Кога е исклучено, "
+"текстот внесуван се прикажува како ѕвездички, што е корисно при внесување "
+"лозинки"
+
+#: ../glade/gbwidgets/gbentry.c:97
+msgid "Max Length:"
+msgstr "Макс. должина"
+
+#: ../glade/gbwidgets/gbentry.c:98
+msgid "The maximum length of the text"
+msgstr "Максималната должина на текстот"
+
+#: ../glade/gbwidgets/gbentry.c:100 ../glade/gbwidgets/gbprogressbar.c:143
+#: ../glade/gbwidgets/gbtextview.c:124 ../glade/gnome-db/gnomedbeditor.c:64
+#: ../glade/gnome-db/gnomedbgraybar.c:59
+#: ../glade/gnome/gnomedruidpageedge.c:95 ../glade/property.c:926
+msgid "Text:"
+msgstr "Текст:"
+
+#: ../glade/gbwidgets/gbentry.c:102
+msgid "If the entry has a frame around it"
+msgstr "Дали записот има рамка околу него"
+
+#: ../glade/gbwidgets/gbentry.c:103
+msgid "Invisible Char:"
+msgstr "Невидлив знак"
+
+#: ../glade/gbwidgets/gbentry.c:103
+msgid ""
+"The character to use if the text should not visible, e.g. when entering "
+"passwords"
+msgstr ""
+"Знакот кој треба да се користи доколку текстот треба да биде невидлив, на "
+"пример кога се внесуваат лозинка"
+
+#: ../glade/gbwidgets/gbentry.c:104
+msgid "Activates Default:"
+msgstr "Активира преддефинирано:"
+
+#: ../glade/gbwidgets/gbentry.c:104
+msgid "If the default widget in the window is activated when Enter is pressed"
+msgstr ""
+"Ако преддефинираниот елемент во прозорот е активиран кога ќе се притисне "
+"Enter"
+
+#: ../glade/gbwidgets/gbentry.c:105
+msgid "Width In Chars:"
+msgstr "Ширина во знаци:"
+
+#: ../glade/gbwidgets/gbentry.c:105
+msgid "The number of characters to leave space for in the entry"
+msgstr "Број на знаци за кои е потребно да се остави празно мести во записот"
+
+#: ../glade/gbwidgets/gbentry.c:318
+msgid "Text Entry"
+msgstr "Текстуален запис"
+
+#: ../glade/gbwidgets/gbeventbox.c:65
+#, fuzzy
+msgid "Visible Window:"
+msgstr "Видливо:"
+
+#: ../glade/gbwidgets/gbeventbox.c:65
+msgid "If the event box uses a visible window"
+msgstr ""
+
+#: ../glade/gbwidgets/gbeventbox.c:66
+#, fuzzy
+msgid "Above Child:"
+msgstr "Послушај го потмокот:"
+
+#: ../glade/gbwidgets/gbeventbox.c:66
+msgid "If the event box window is above the child widget's window"
+msgstr ""
+
+#: ../glade/gbwidgets/gbeventbox.c:167
+msgid "Event Box"
+msgstr "Кутија за настани"
+
+#: ../glade/gbwidgets/gbexpander.c:54
+#, fuzzy
+msgid "Initially Expanded:"
+msgstr "На почеток вклучено"
+
+#: ../glade/gbwidgets/gbexpander.c:55
+msgid "Whether the expander is initially opened to reveal the child widget"
+msgstr ""
+
+#: ../glade/gbwidgets/gbexpander.c:57 ../glade/gbwidgets/gbhbox.c:175
+#: ../glade/gbwidgets/gbhbuttonbox.c:199 ../glade/gbwidgets/gbvbox.c:160
+msgid "Spacing:"
+msgstr "Растојание:"
+
+#: ../glade/gbwidgets/gbexpander.c:58
+#, fuzzy
+msgid "Space to put between the label and the child"
+msgstr "број од пиксели помеѓу текст и"
+
+#: ../glade/gbwidgets/gbexpander.c:105 ../glade/gbwidgets/gbframe.c:225
+msgid "Add Label Widget"
+msgstr "Додади елемент за наслови"
+
+#: ../glade/gbwidgets/gbexpander.c:228
+#, fuzzy
+msgid "Expander"
+msgstr "Прошири:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:86
+#, fuzzy
+msgid "The window title of the file chooser dialog"
+msgstr "од датотека"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:87
+#: ../glade/gbwidgets/gbfilechooserwidget.c:86
+#: ../glade/gbwidgets/gbfilechooserdialog.c:156
+#: ../glade/gnome/gnomefileentry.c:109
+#, fuzzy
+msgid "Action:"
+msgstr "фракција:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:88
+#: ../glade/gbwidgets/gbfilechooserwidget.c:87
+#: ../glade/gbwidgets/gbfilechooserdialog.c:157
+#: ../glade/gnome/gnomefileentry.c:110
+msgid "The type of file operation being performed"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:90
+#: ../glade/gbwidgets/gbfilechooserwidget.c:89
+#: ../glade/gbwidgets/gbfilechooserdialog.c:159
+msgid "Local Only:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:91
+#: ../glade/gbwidgets/gbfilechooserwidget.c:90
+#: ../glade/gbwidgets/gbfilechooserdialog.c:160
+msgid "Whether the selected files should be limited to local files"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:92
+#: ../glade/gbwidgets/gbfilechooserwidget.c:93
+#: ../glade/gbwidgets/gbfilechooserdialog.c:163
+#, fuzzy
+msgid "Show Hidden:"
+msgstr "Прикажи Време:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:93
+#: ../glade/gbwidgets/gbfilechooserwidget.c:94
+#: ../glade/gbwidgets/gbfilechooserdialog.c:164
+msgid "Whether the hidden files and folders should be displayed"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:94
+#: ../glade/gbwidgets/gblabel.c:200
+#, fuzzy
+msgid "Width in Chars:"
+msgstr "Ширина во знаци:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:95
+#, fuzzy
+msgid "The width of the button in characters"
+msgstr "ширина од"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:283
+#, fuzzy
+msgid "File Chooser Button"
+msgstr "Chekck-копче"
+
+#: ../glade/gbwidgets/gbfilechooserwidget.c:91
+#: ../glade/gbwidgets/gbfilechooserdialog.c:161
+#, fuzzy
+msgid "Select Multiple:"
+msgstr "Избери датотека"
+
+#: ../glade/gbwidgets/gbfilechooserwidget.c:92
+#: ../glade/gbwidgets/gbfilechooserdialog.c:162
+msgid "Whether to allow multiple files to be selected"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfilechooserwidget.c:260
+#, fuzzy
+msgid "File Chooser"
+msgstr "Наслов Боја:"
+
+#: ../glade/gbwidgets/gbfilechooserdialog.c:421
+#, fuzzy
+msgid "File Chooser Dialog"
+msgstr "Диалог за избор на датотека"
+
+#: ../glade/gbwidgets/gbfileselection.c:71 ../glade/property.c:1365
+msgid "Select File"
+msgstr "Избери датотека"
+
+#: ../glade/gbwidgets/gbfileselection.c:113
+msgid "File Ops.:"
+msgstr "Опции за датотека..."
+
+#: ../glade/gbwidgets/gbfileselection.c:114
+msgid "If the file operation buttons are shown"
+msgstr "Дали копчињата за операции со датотеки се прикажани"
+
+#: ../glade/gbwidgets/gbfileselection.c:292
+msgid "File Selection Dialog"
+msgstr "Диалог за избор на датотека"
+
+#: ../glade/gbwidgets/gbfixed.c:139 ../glade/gbwidgets/gblayout.c:221
+msgid "X:"
+msgstr "X:"
+
+#: ../glade/gbwidgets/gbfixed.c:140
+msgid "The X coordinate of the widget in the GtkFixed"
+msgstr "Х кординатата на елементот во GtkFixed"
+
+#: ../glade/gbwidgets/gbfixed.c:142 ../glade/gbwidgets/gblayout.c:224
+msgid "Y:"
+msgstr "Y:"
+
+#: ../glade/gbwidgets/gbfixed.c:143
+msgid "The Y coordinate of the widget in the GtkFixed"
+msgstr "Y координатата на елементот во GtkFixed"
+
+#: ../glade/gbwidgets/gbfixed.c:228
+msgid "Fixed Positions"
+msgstr "Статични позиции"
+
+#: ../glade/gbwidgets/gbfontbutton.c:69 ../glade/gnome/gnomefontpicker.c:96
+#, fuzzy
+msgid "The title of the font selection dialog"
+msgstr "од"
+
+#: ../glade/gbwidgets/gbfontbutton.c:70
+#, fuzzy
+msgid "Show Style:"
+msgstr "Прикажи наслови:"
+
+#: ../glade/gbwidgets/gbfontbutton.c:71
+#, fuzzy
+msgid "If the font style is shown as part of the font information"
+msgstr "големина е од"
+
+#: ../glade/gbwidgets/gbfontbutton.c:72 ../glade/gnome/gnomefontpicker.c:102
+#, fuzzy
+msgid "Show Size:"
+msgstr "Прикажи Големина:"
+
+#: ../glade/gbwidgets/gbfontbutton.c:73 ../glade/gnome/gnomefontpicker.c:103
+#, fuzzy
+msgid "If the font size is shown as part of the font information"
+msgstr "големина е од"
+
+#: ../glade/gbwidgets/gbfontbutton.c:74 ../glade/gnome/gnomefontpicker.c:104
+#, fuzzy
+msgid "Use Font:"
+msgstr "Користи го Фонт:"
+
+#: ../glade/gbwidgets/gbfontbutton.c:75 ../glade/gnome/gnomefontpicker.c:105
+#, fuzzy
+msgid "If the selected font is used when displaying the font information"
+msgstr "е"
+
+#: ../glade/gbwidgets/gbfontbutton.c:76 ../glade/gnome/gnomefontpicker.c:106
+#, fuzzy
+msgid "Use Size:"
+msgstr "Користи го Големина:"
+
+#: ../glade/gbwidgets/gbfontbutton.c:77
+#, fuzzy
+msgid "if the selected font size is used when displaying the font information"
+msgstr "е"
+
+#: ../glade/gbwidgets/gbfontbutton.c:97 ../glade/gbwidgets/gbfontbutton.c:133
+#: ../glade/gbwidgets/gbfontbutton.c:191 ../glade/gnome/gnomefontpicker.c:128
+#: ../glade/gnome/gnomefontpicker.c:199 ../glade/gnome/gnomefontpicker.c:301
+msgid "Pick a Font"
+msgstr "Избери Фонт"
+
+#: ../glade/gbwidgets/gbfontbutton.c:268
+#, fuzzy
+msgid "Font Chooser Button"
+msgstr "Chekck-копче"
+
+#: ../glade/gbwidgets/gbfontselection.c:64 ../glade/gnome/gnomefontpicker.c:97
+msgid "Preview Text:"
+msgstr "Преглед на текстот:"
+
+#: ../glade/gbwidgets/gbfontselection.c:64
+msgid "The preview text to display"
+msgstr "Текстот за преглед да се прикаже"
+
+#: ../glade/gbwidgets/gbfontselection.c:170
+msgid "Font Selection"
+msgstr "Избор на фонт"
+
+#: ../glade/gbwidgets/gbfontselectiondialog.c:69
+msgid "Select Font"
+msgstr "Избери фонт"
+
+#: ../glade/gbwidgets/gbfontselectiondialog.c:300
+msgid "Font Selection Dialog"
+msgstr "Диалог за избор на фонт"
+
+#: ../glade/gbwidgets/gbframe.c:360
+msgid "Frame"
+msgstr "Рамка"
+
+#: ../glade/gbwidgets/gbgammacurve.c:88
+msgid "Initial Type:"
+msgstr "Почетен тип:"
+
+#: ../glade/gbwidgets/gbgammacurve.c:88
+msgid "The initial type of the curve"
+msgstr "Почетниот тип на кривината"
+
+#: ../glade/gbwidgets/gbgammacurve.c:256
+msgid "Gamma Curve"
+msgstr "Гама кривина"
+
+#: ../glade/gbwidgets/gbhandlebox.c:110
+msgid "The type of shadow around the handle box"
+msgstr "Типот на сенката околу handle кутијата"
+
+#: ../glade/gbwidgets/gbhandlebox.c:113
+msgid "Handle Pos:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhandlebox.c:114
+msgid "The position of the handle"
+msgstr "Позицијата на држачот"
+
+#: ../glade/gbwidgets/gbhandlebox.c:116
+#, fuzzy
+msgid "Snap Edge:"
+msgstr "Прилепи:"
+
+#: ../glade/gbwidgets/gbhandlebox.c:117
+#, fuzzy
+msgid "The edge of the handle box which snaps into position"
+msgstr "од"
+
+#: ../glade/gbwidgets/gbhandlebox.c:304
+msgid "Handle Box"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhbox.c:99
+msgid "New horizontal box"
+msgstr "Нова хоризонтална кутија"
+
+#: ../glade/gbwidgets/gbhbox.c:171 ../glade/gbwidgets/gbhbuttonbox.c:194
+#: ../glade/gbwidgets/gbtoolbar.c:267 ../glade/gbwidgets/gbvbox.c:156
+msgid "Size:"
+msgstr "Големина:"
+
+#: ../glade/gbwidgets/gbhbox.c:171 ../glade/gbwidgets/gbvbox.c:156
+msgid "The number of widgets in the box"
+msgstr "Број на елементи во кутијата"
+
+#: ../glade/gbwidgets/gbhbox.c:173 ../glade/gbwidgets/gbtable.c:243
+#: ../glade/gbwidgets/gbtoolbar.c:426 ../glade/gbwidgets/gbvbox.c:158
+msgid "Homogeneous:"
+msgstr "Хомогено:"
+
+#: ../glade/gbwidgets/gbhbox.c:174 ../glade/gbwidgets/gbvbox.c:159
+msgid "If the children should be the same size"
+msgstr "Дали децата треба да бидат со иста големина"
+
+#: ../glade/gbwidgets/gbhbox.c:175 ../glade/gbwidgets/gbvbox.c:160
+msgid "The space between each child"
+msgstr "Просторот помеѓу децата"
+
+#: ../glade/gbwidgets/gbhbox.c:312
+msgid "Can't delete any children."
+msgstr "Неможам да ги избришам потомците ."
+
+#: ../glade/gbwidgets/gbhbox.c:327 ../glade/gbwidgets/gbhpaned.c:73
+#: ../glade/gbwidgets/gbhruler.c:89 ../glade/gbwidgets/gbnotebook.c:669
+#: ../glade/gbwidgets/gbvpaned.c:69 ../glade/gbwidgets/gbvruler.c:89
+#: ../glade/gbwidgets/gbwindow.c:254
+msgid "Position:"
+msgstr "Позиција:"
+
+#: ../glade/gbwidgets/gbhbox.c:328
+msgid "The widget's position relative to its siblings"
+msgstr "Положбата на елементотелативна до неговите потомци"
+
+#: ../glade/gbwidgets/gbhbox.c:330
+msgid "Padding:"
+msgstr "Padding:"
+
+#: ../glade/gbwidgets/gbhbox.c:331
+#, fuzzy
+msgid "The widget's padding"
+msgstr "s"
+
+#: ../glade/gbwidgets/gbhbox.c:333 ../glade/gbwidgets/gbnotebook.c:672
+#: ../glade/gbwidgets/gbpreview.c:65 ../glade/gbwidgets/gbtoolbar.c:424
+msgid "Expand:"
+msgstr "Прошири:"
+
+#: ../glade/gbwidgets/gbhbox.c:334 ../glade/gbwidgets/gbtoolbar.c:425
+msgid "Set True to let the widget expand"
+msgstr "Постави на True да дозволиш елементот да се зголемува"
+
+#: ../glade/gbwidgets/gbhbox.c:335 ../glade/gbwidgets/gbnotebook.c:674
+msgid "Fill:"
+msgstr "Пополни:"
+
+#: ../glade/gbwidgets/gbhbox.c:336
+msgid "Set True to let the widget fill its allocated area"
+msgstr ""
+"Постави на True да му дозволиш на елементот да го пополни целиот обележан "
+"реон"
+
+#: ../glade/gbwidgets/gbhbox.c:337 ../glade/gbwidgets/gbnotebook.c:676
+msgid "Pack Start:"
+msgstr "Пакет за старт"
+
+#: ../glade/gbwidgets/gbhbox.c:338
+msgid "Set True to pack the widget at the start of the box"
+msgstr "Постави на True  да го спакуваш елементот на почеток на кутијата"
+
+#: ../glade/gbwidgets/gbhbox.c:455
+msgid "Insert Before"
+msgstr "Вметни пред"
+
+#: ../glade/gbwidgets/gbhbox.c:461
+msgid "Insert After"
+msgstr "Вметни по"
+
+#: ../glade/gbwidgets/gbhbox.c:571
+msgid "Horizontal Box"
+msgstr "Хоризонтална кутија"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:120
+msgid "New horizontal button box"
+msgstr "Нова хоризонтална кутија за копчиња"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:194
+msgid "The number of buttons"
+msgstr "Број на копчиња"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:196
+msgid "Layout:"
+msgstr "Поставеност:"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:197
+msgid "The layout style of the buttons"
+msgstr "Стилот за поставеноста на копчињата"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:199
+msgid "The space between the buttons"
+msgstr "Простор помеѓу копчињата"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:414
+msgid "Horizontal Button Box"
+msgstr "Хоризонтална курија со копчиња"
+
+#: ../glade/gbwidgets/gbhpaned.c:74 ../glade/gbwidgets/gbvpaned.c:70
+msgid "The position of the divider"
+msgstr "Положбата на одвојувачот"
+
+#: ../glade/gbwidgets/gbhpaned.c:186 ../glade/gbwidgets/gbwindow.c:283
+msgid "Shrink:"
+msgstr "Намали:"
+
+#: ../glade/gbwidgets/gbhpaned.c:187
+msgid "Set True to let the widget shrink"
+msgstr "Подеси на True да дозволиш елементот да се смали"
+
+#: ../glade/gbwidgets/gbhpaned.c:188
+msgid "Resize:"
+msgstr "Промени големина:"
+
+#: ../glade/gbwidgets/gbhpaned.c:189
+msgid "Set True to let the widget resize"
+msgstr "Постави на True"
+
+#: ../glade/gbwidgets/gbhpaned.c:315
+msgid "Horizontal Panes"
+msgstr "Хоризонтални панели"
+
+#: ../glade/gbwidgets/gbhruler.c:82 ../glade/gbwidgets/gbvruler.c:82
+msgid "Metric:"
+msgstr "Метричен:"
+
+#: ../glade/gbwidgets/gbhruler.c:83 ../glade/gbwidgets/gbvruler.c:83
+msgid "The units of the ruler"
+msgstr "Поделките на линијарот"
+
+#: ../glade/gbwidgets/gbhruler.c:85 ../glade/gbwidgets/gbvruler.c:85
+msgid "Lower Value:"
+msgstr "Помала вредност:"
+
+#: ../glade/gbwidgets/gbhruler.c:86 ../glade/gbwidgets/gbvruler.c:86
+#: ../glade/gbwidgets/gbvruler.c:88
+msgid "The low value of the ruler"
+msgstr "Ниската вредност на ленијарот"
+
+#: ../glade/gbwidgets/gbhruler.c:87 ../glade/gbwidgets/gbvruler.c:87
+msgid "Upper Value:"
+msgstr "Поголема вредност:"
+
+#: ../glade/gbwidgets/gbhruler.c:88
+msgid "The high value of the ruler"
+msgstr "Висока вредност на ленијарот"
+
+#: ../glade/gbwidgets/gbhruler.c:90 ../glade/gbwidgets/gbvruler.c:90
+msgid "The current position on the ruler"
+msgstr "Тековна позиција на ленијарот"
+
+#: ../glade/gbwidgets/gbhruler.c:91 ../glade/gbwidgets/gbvruler.c:91
+#: ../glade/property.c:4827
+#, fuzzy
+msgid "Max:"
+msgstr "Максимум:"
+
+#: ../glade/gbwidgets/gbhruler.c:92 ../glade/gbwidgets/gbvruler.c:92
+msgid "The maximum value of the ruler"
+msgstr "Максимална вредност на ленијарот"
+
+#: ../glade/gbwidgets/gbhruler.c:247
+msgid "Horizontal Ruler"
+msgstr "Хоризонтален ленијар"
+
+#: ../glade/gbwidgets/gbhscale.c:107 ../glade/gbwidgets/gbvscale.c:108
+msgid "Show Value:"
+msgstr "Прикажи вредност:"
+
+#: ../glade/gbwidgets/gbhscale.c:107 ../glade/gbwidgets/gbvscale.c:108
+msgid "If the scale's value is shown"
+msgstr "Ако вредноста на скалата е прикажана"
+
+#: ../glade/gbwidgets/gbhscale.c:108 ../glade/gbwidgets/gbspinbutton.c:93
+#: ../glade/gbwidgets/gbvscale.c:109
+msgid "Digits:"
+msgstr "Цифри:"
+
+#: ../glade/gbwidgets/gbhscale.c:108 ../glade/gbwidgets/gbvscale.c:109
+msgid "The number of digits to show"
+msgstr "Број на прикажани цифри"
+
+#: ../glade/gbwidgets/gbhscale.c:110 ../glade/gbwidgets/gbvscale.c:111
+#, fuzzy
+msgid "Value Pos:"
+msgstr "Вредност:"
+
+#: ../glade/gbwidgets/gbhscale.c:111 ../glade/gbwidgets/gbvscale.c:112
+#, fuzzy
+msgid "The position of the value"
+msgstr "позиција од"
+
+#: ../glade/gbwidgets/gbhscale.c:113 ../glade/gbwidgets/gbhscrollbar.c:87
+#: ../glade/gbwidgets/gbvscale.c:114 ../glade/gbwidgets/gbvscrollbar.c:87
+msgid "Policy:"
+msgstr "Политика:"
+
+#: ../glade/gbwidgets/gbhscale.c:114 ../glade/gbwidgets/gbvscale.c:115
+#, fuzzy
+msgid "The update policy of the scale"
+msgstr "од"
+
+#: ../glade/gbwidgets/gbhscale.c:116 ../glade/gbwidgets/gbhscrollbar.c:90
+#: ../glade/gbwidgets/gbvscale.c:117 ../glade/gbwidgets/gbvscrollbar.c:90
+msgid "Inverted:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhscale.c:116 ../glade/gbwidgets/gbhscrollbar.c:90
+#: ../glade/gbwidgets/gbvscale.c:117 ../glade/gbwidgets/gbvscrollbar.c:90
+#, fuzzy
+msgid "If the range values are inverted"
+msgstr "опсег"
+
+#: ../glade/gbwidgets/gbhscale.c:319
+msgid "Horizontal Scale"
+msgstr "Хоризнотална вредност"
+
+#: ../glade/gbwidgets/gbhscrollbar.c:88 ../glade/gbwidgets/gbvscrollbar.c:88
+#, fuzzy
+msgid "The update policy of the scrollbar"
+msgstr "од"
+
+#: ../glade/gbwidgets/gbhscrollbar.c:237
+#, fuzzy
+msgid "Horizontal Scrollbar"
+msgstr "Хоризонтално"
+
+#: ../glade/gbwidgets/gbhseparator.c:144
+msgid "Horizonal Separator"
+msgstr ""
+
+#: ../glade/gbwidgets/gbiconview.c:106
+#, fuzzy, c-format
+msgid "Icon %i"
+msgstr "Икона"
+
+#: ../glade/gbwidgets/gbiconview.c:128
+#, fuzzy
+msgid "The selection mode of the icon view"
+msgstr "Режимот за избор на дрвото со колони"
+
+#: ../glade/gbwidgets/gbiconview.c:130 ../glade/gbwidgets/gbprogressbar.c:134
+#: ../glade/gbwidgets/gbtoolbar.c:270 ../glade/gnome/bonobodockitem.c:179
+msgid "Orientation:"
+msgstr "Ориентација:"
+
+#: ../glade/gbwidgets/gbiconview.c:131
+#, fuzzy
+msgid "The orientation of the icons"
+msgstr "од s"
+
+#: ../glade/gbwidgets/gbiconview.c:287
+#, fuzzy
+msgid "Icon View"
+msgstr "Икона Големина:"
+
+#: ../glade/gbwidgets/gbimage.c:110 ../glade/gbwidgets/gbwindow.c:299
+#, fuzzy
+msgid "Named Icon:"
+msgstr "Икона:"
+
+#: ../glade/gbwidgets/gbimage.c:111 ../glade/gbwidgets/gbwindow.c:300
+#, fuzzy
+msgid "The named icon to use"
+msgstr "Gnome до."
+
+#: ../glade/gbwidgets/gbimage.c:112
+#, fuzzy
+msgid "Icon Size:"
+msgstr "Икона Големина:"
+
+#: ../glade/gbwidgets/gbimage.c:113
+msgid "The stock icon size"
+msgstr ""
+
+#: ../glade/gbwidgets/gbimage.c:115
+#, fuzzy
+msgid "Pixel Size:"
+msgstr "Страница Големина:"
+
+#: ../glade/gbwidgets/gbimage.c:116
+msgid ""
+"The size of the named icon in pixels, or -1 to use the Icon Size property"
+msgstr ""
+
+#: ../glade/gbwidgets/gbimage.c:120
+#, fuzzy
+msgid "The horizontal alignment"
+msgstr "хоризонтално"
+
+#: ../glade/gbwidgets/gbimage.c:123
+#, fuzzy
+msgid "The vertical alignment"
+msgstr "вертикално"
+
+#: ../glade/gbwidgets/gbimage.c:648
+msgid "Image"
+msgstr "Слика"
+
+#: ../glade/gbwidgets/gbimagemenuitem.c:255
+#: ../glade/gbwidgets/gbmenuitem.c:228
+#, fuzzy
+msgid "Invalid stock menu item"
+msgstr "Невавалидно"
+
+#: ../glade/gbwidgets/gbimagemenuitem.c:471
+#, fuzzy
+msgid "Menu item with a pixmap"
+msgstr "Мени а"
+
+#: ../glade/gbwidgets/gbinputdialog.c:256
+#, fuzzy
+msgid "Input Dialog"
+msgstr "Внеси"
+
+#: ../glade/gbwidgets/gblabel.c:169
+#, fuzzy
+msgid "Use Underline:"
+msgstr "Користи го Потцртан:"
+
+#: ../glade/gbwidgets/gblabel.c:170
+#, fuzzy
+msgid "If the text includes an underlined access key"
+msgstr "текст"
+
+#: ../glade/gbwidgets/gblabel.c:171
+#, fuzzy
+msgid "Use Markup:"
+msgstr "Користи го Означи:"
+
+#: ../glade/gbwidgets/gblabel.c:172
+#, fuzzy
+msgid "If the text includes pango markup"
+msgstr "текст"
+
+#: ../glade/gbwidgets/gblabel.c:173
+#, fuzzy
+msgid "Justify:"
+msgstr "Порамни:"
+
+#: ../glade/gbwidgets/gblabel.c:174
+#, fuzzy
+msgid "The justification of the lines of the label"
+msgstr "од линии од"
+
+#: ../glade/gbwidgets/gblabel.c:176
+#, fuzzy
+msgid "Wrap Text:"
+msgstr "Пореди Текст:"
+
+#: ../glade/gbwidgets/gblabel.c:177
+#, fuzzy
+msgid "If the text is wrapped to fit within the width of the label"
+msgstr "текст е до ширина од"
+
+#: ../glade/gbwidgets/gblabel.c:178
+msgid "Selectable:"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:179
+#, fuzzy
+msgid "If the label text can be selected with the mouse"
+msgstr "ознака текст"
+
+#: ../glade/gbwidgets/gblabel.c:181
+#, fuzzy
+msgid "The horizontal alignment of the entire label"
+msgstr "хоризонтално од"
+
+#: ../glade/gbwidgets/gblabel.c:184
+#, fuzzy
+msgid "The vertical alignment of the entire label"
+msgstr "вертикално од"
+
+#: ../glade/gbwidgets/gblabel.c:190
+#, fuzzy
+msgid "Focus Target:"
+msgstr "Фокусирање Цел:"
+
+#: ../glade/gbwidgets/gblabel.c:191
+#, fuzzy
+msgid ""
+"The widget to set the keyboard focus to when the underlined access key is "
+"used"
+msgstr "до до е"
+
+#. gtk_combo_set_value_in_list (GTK_COMBO (combo), TRUE, TRUE);
+#: ../glade/gbwidgets/gblabel.c:197 ../glade/gbwidgets/gbprogressbar.c:146
+msgid "Ellipsize:"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:198 ../glade/gbwidgets/gbprogressbar.c:147
+msgid "How to ellipsize the string"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:201
+#, fuzzy
+msgid "The width of the label in characters"
+msgstr "ширина од"
+
+#: ../glade/gbwidgets/gblabel.c:203
+#, fuzzy
+msgid "Single Line Mode:"
+msgstr "Режим за избор"
+
+#: ../glade/gbwidgets/gblabel.c:204
+msgid "If the label is only given enough height for a single line"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:205
+msgid "Angle:"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:206
+#, fuzzy
+msgid "The angle of the label text"
+msgstr "од"
+
+#: ../glade/gbwidgets/gblabel.c:332 ../glade/gbwidgets/gblabel.c:347
+#: ../glade/gbwidgets/gblabel.c:614
+msgid "Auto"
+msgstr "Автоматски"
+
+#: ../glade/gbwidgets/gblabel.c:870 ../glade/glade_menu_editor.c:410
+msgid "Label"
+msgstr "Ознака"
+
+#: ../glade/gbwidgets/gblayout.c:96
+#, fuzzy
+msgid "Area Width:"
+msgstr "Област Ширина:"
+
+#: ../glade/gbwidgets/gblayout.c:97
+#, fuzzy
+msgid "The width of the layout area"
+msgstr "ширина од"
+
+#: ../glade/gbwidgets/gblayout.c:99
+#, fuzzy
+msgid "Area Height:"
+msgstr "Област Висина:"
+
+#: ../glade/gbwidgets/gblayout.c:100
+#, fuzzy
+msgid "The height of the layout area"
+msgstr "висина од"
+
+#: ../glade/gbwidgets/gblayout.c:222
+#, fuzzy
+msgid "The X coordinate of the widget in the GtkLayout"
+msgstr "X од во"
+
+#: ../glade/gbwidgets/gblayout.c:225
+#, fuzzy
+msgid "The Y coordinate of the widget in the GtkLayout"
+msgstr "Y од во"
+
+#: ../glade/gbwidgets/gblayout.c:380
+msgid "Layout"
+msgstr "Изглед"
+
+#: ../glade/gbwidgets/gblist.c:78
+#, fuzzy
+msgid "The selection mode of the list"
+msgstr "режим од"
+
+#: ../glade/gbwidgets/gblist.c:192
+msgid "List"
+msgstr "Листа"
+
+#: ../glade/gbwidgets/gblistitem.c:171
+#, fuzzy
+msgid "List Item"
+msgstr "Листа"
+
+#: ../glade/gbwidgets/gbmenu.c:198
+#, fuzzy
+msgid "Popup Menu"
+msgstr "Поп-ап"
+
+#. FIXME: I'm not sure if we should translate the non-stock labels or not.
+#: ../glade/gbwidgets/gbmenubar.c:190
+msgid "_File"
+msgstr "_Датотека"
+
+#. Create Edit menu
+#: ../glade/gbwidgets/gbmenubar.c:198 ../glade/glade_project_window.c:691
+msgid "_Edit"
+msgstr "_Уреди"
+
+#. Create View menu
+#: ../glade/gbwidgets/gbmenubar.c:204 ../glade/glade_project_window.c:720
+msgid "_View"
+msgstr "_Преглед"
+
+#. Create Help menu
+#: ../glade/gbwidgets/gbmenubar.c:206 ../glade/glade_project_window.c:833
+msgid "_Help"
+msgstr "_Помош"
+
+#: ../glade/gbwidgets/gbmenubar.c:207
+msgid "_About"
+msgstr "_За"
+
+#: ../glade/gbwidgets/gbmenubar.c:268 ../glade/gbwidgets/gbmenubar.c:346
+#: ../glade/gbwidgets/gboptionmenu.c:139
+#, fuzzy
+msgid "Edit Menus..."
+msgstr "Уреди Мени."
+
+#: ../glade/gbwidgets/gbmenubar.c:442
+msgid "Menu Bar"
+msgstr "Мени"
+
+#: ../glade/gbwidgets/gbmenuitem.c:379
+msgid "Menu Item"
+msgstr "Мени елемент"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:92
+#: ../glade/gbwidgets/gbradiotoolbutton.c:150
+#: ../glade/gbwidgets/gbseparatortoolitem.c:67
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:99
+#: ../glade/gbwidgets/gbtoolbutton.c:111 ../glade/gbwidgets/gbtoolitem.c:65
+#, fuzzy
+msgid "Show Horizontal:"
+msgstr "Никогаш Хоризонтално:"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:93
+#: ../glade/gbwidgets/gbradiotoolbutton.c:151
+#: ../glade/gbwidgets/gbseparatortoolitem.c:68
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:100
+#: ../glade/gbwidgets/gbtoolbutton.c:112 ../glade/gbwidgets/gbtoolitem.c:66
+#, fuzzy
+msgid "If the item is visible when the toolbar is horizontal"
+msgstr "е Никогаш до"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:94
+#: ../glade/gbwidgets/gbradiotoolbutton.c:152
+#: ../glade/gbwidgets/gbseparatortoolitem.c:69
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:101
+#: ../glade/gbwidgets/gbtoolbutton.c:113 ../glade/gbwidgets/gbtoolitem.c:67
+#, fuzzy
+msgid "Show Vertical:"
+msgstr "Прикажи вредност:"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:95
+#: ../glade/gbwidgets/gbradiotoolbutton.c:153
+#: ../glade/gbwidgets/gbseparatortoolitem.c:70
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:102
+#: ../glade/gbwidgets/gbtoolbutton.c:114 ../glade/gbwidgets/gbtoolitem.c:68
+#, fuzzy
+msgid "If the item is visible when the toolbar is vertical"
+msgstr "е Никогаш до"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:96
+#: ../glade/gbwidgets/gbradiotoolbutton.c:154
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:103
+#: ../glade/gbwidgets/gbtoolbutton.c:115 ../glade/gbwidgets/gbtoolitem.c:69
+msgid "Is Important:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:97
+#: ../glade/gbwidgets/gbradiotoolbutton.c:155
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:104
+#: ../glade/gbwidgets/gbtoolbutton.c:116 ../glade/gbwidgets/gbtoolitem.c:70
+msgid ""
+"If the item's text should be shown when the toolbar's mode is "
+"GTK_TOOLBAR_BOTH_HORIZ"
+msgstr ""
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:255
+#, fuzzy
+msgid "Toolbar Button with Menu"
+msgstr "Промени"
+
+#: ../glade/gbwidgets/gbnotebook.c:191
+#, fuzzy
+msgid "New notebook"
+msgstr "Ново"
+
+#: ../glade/gbwidgets/gbnotebook.c:202 ../glade/gnome/gnomepropertybox.c:124
+msgid "Number of pages:"
+msgstr "Број на страници:"
+
+#: ../glade/gbwidgets/gbnotebook.c:274
+#, fuzzy
+msgid "Show Tabs:"
+msgstr "Прикажи Табови:"
+
+#: ../glade/gbwidgets/gbnotebook.c:274
+msgid "If the notebook tabs are shown"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:275
+#, fuzzy
+msgid "Show Border:"
+msgstr "Прикажи Граница:"
+
+#: ../glade/gbwidgets/gbnotebook.c:276
+#, fuzzy
+msgid "If the notebook border is shown, when the tabs are not shown"
+msgstr "е не"
+
+#: ../glade/gbwidgets/gbnotebook.c:277
+#, fuzzy
+msgid "Tab Pos:"
+msgstr "Табулатор:"
+
+#: ../glade/gbwidgets/gbnotebook.c:278
+#, fuzzy
+msgid "The position of the notebook tabs"
+msgstr "позиција од"
+
+#: ../glade/gbwidgets/gbnotebook.c:280
+msgid "Scrollable:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:281
+msgid "If the notebook tabs are scrollable"
+msgstr ""
+
+#. These seem to be deprecated.
+#: ../glade/gbwidgets/gbnotebook.c:284
+#, fuzzy
+msgid "Tab Horz. Border:"
+msgstr "Табулатор Граница:"
+
+#: ../glade/gbwidgets/gbnotebook.c:285
+#, fuzzy
+msgid "The size of the notebook tabs' horizontal border"
+msgstr "големина од хоризонтално"
+
+#: ../glade/gbwidgets/gbnotebook.c:287
+#, fuzzy
+msgid "Tab Vert. Border:"
+msgstr "Табулатор Граница:"
+
+#: ../glade/gbwidgets/gbnotebook.c:288
+#, fuzzy
+msgid "The size of the notebook tabs' vertical border"
+msgstr "големина од вертикално"
+
+#: ../glade/gbwidgets/gbnotebook.c:291
+#, fuzzy
+msgid "Show Popup:"
+msgstr "Прикажи Поп-ап:"
+
+#: ../glade/gbwidgets/gbnotebook.c:291
+#, fuzzy
+msgid "If the popup menu is enabled"
+msgstr "е"
+
+#: ../glade/gbwidgets/gbnotebook.c:292 ../glade/gnome/gnomedruid.c:102
+msgid "Number of Pages:"
+msgstr "Број на страници:"
+
+#: ../glade/gbwidgets/gbnotebook.c:293
+#, fuzzy
+msgid "The number of notebook pages"
+msgstr "број од"
+
+#: ../glade/gbwidgets/gbnotebook.c:540
+msgid "Previous Page"
+msgstr "Претходна страница"
+
+#: ../glade/gbwidgets/gbnotebook.c:548
+msgid "Next Page"
+msgstr "Следна страница"
+
+#: ../glade/gbwidgets/gbnotebook.c:556
+msgid "Delete Page"
+msgstr "Избриши ја страницата"
+
+#: ../glade/gbwidgets/gbnotebook.c:562
+#, fuzzy
+msgid "Switch Next"
+msgstr "Префрли"
+
+#: ../glade/gbwidgets/gbnotebook.c:570
+#, fuzzy
+msgid "Switch Previous"
+msgstr "Префрли"
+
+#: ../glade/gbwidgets/gbnotebook.c:578 ../glade/gnome/gnomedruid.c:298
+#, fuzzy
+msgid "Insert Page After"
+msgstr "Внеси Страница"
+
+#: ../glade/gbwidgets/gbnotebook.c:586 ../glade/gnome/gnomedruid.c:285
+#, fuzzy
+msgid "Insert Page Before"
+msgstr "Внеси Страница"
+
+#: ../glade/gbwidgets/gbnotebook.c:670
+#, fuzzy
+msgid "The page's position in the list of pages"
+msgstr "s позиција во листа од"
+
+#: ../glade/gbwidgets/gbnotebook.c:673
+#, fuzzy
+msgid "Set True to let the tab expand"
+msgstr "Постави Точно до"
+
+#: ../glade/gbwidgets/gbnotebook.c:675
+#, fuzzy
+msgid "Set True to let the tab fill its allocated area"
+msgstr "Постави Точно до"
+
+#: ../glade/gbwidgets/gbnotebook.c:677
+#, fuzzy
+msgid "Set True to pack the tab at the start of the notebook"
+msgstr "Постави Точно до старт од"
+
+#: ../glade/gbwidgets/gbnotebook.c:678
+#, fuzzy
+msgid "Menu Label:"
+msgstr "Мени Ознака:"
+
+#: ../glade/gbwidgets/gbnotebook.c:679
+#, fuzzy
+msgid "The text to display in the popup menu"
+msgstr "текст до во"
+
+#: ../glade/gbwidgets/gbnotebook.c:937
+msgid "Notebook"
+msgstr ""
+
+#: ../glade/gbwidgets/gboptionmenu.c:230
+#, fuzzy, c-format
+msgid "Cannot add a %s to a GtkOptionMenu."
+msgstr "а s до а."
+
+#: ../glade/gbwidgets/gboptionmenu.c:270
+#, fuzzy
+msgid "Option Menu"
+msgstr "Option"
+
+#: ../glade/gbwidgets/gbpreview.c:63
+msgid "Color:"
+msgstr "Боја:"
+
+#: ../glade/gbwidgets/gbpreview.c:64
+#, fuzzy
+msgid "If the preview is color or grayscale"
+msgstr "е or"
+
+#: ../glade/gbwidgets/gbpreview.c:66
+#, fuzzy
+msgid "If the preview expands to fill its allocated area"
+msgstr "до"
+
+#: ../glade/gbwidgets/gbpreview.c:162
+msgid "Preview"
+msgstr "Преглед"
+
+#: ../glade/gbwidgets/gbprogressbar.c:135
+#, fuzzy
+msgid "The orientation of the progress bar's contents"
+msgstr "од s"
+
+#: ../glade/gbwidgets/gbprogressbar.c:137
+#, fuzzy
+msgid "Fraction:"
+msgstr "фракција:"
+
+#: ../glade/gbwidgets/gbprogressbar.c:138
+#, fuzzy
+msgid "The fraction of work that has been completed"
+msgstr "од работа има"
+
+#: ../glade/gbwidgets/gbprogressbar.c:140
+#, fuzzy
+msgid "Pulse Step:"
+msgstr "Чекор:"
+
+#: ../glade/gbwidgets/gbprogressbar.c:141
+#, fuzzy
+msgid ""
+"The fraction of the progress bar length to move the bouncing block when "
+"pulsed"
+msgstr "од должина до"
+
+#: ../glade/gbwidgets/gbprogressbar.c:144
+#, fuzzy
+msgid "The text to display over the progress bar"
+msgstr "текст до"
+
+#. ShowText is implicit now, if the Text property is set to anything.
+#: ../glade/gbwidgets/gbprogressbar.c:152
+#, fuzzy
+msgid "Show Text:"
+msgstr "Прикажи Текст:"
+
+#: ../glade/gbwidgets/gbprogressbar.c:153
+#, fuzzy
+msgid "If the text should be shown in the progress bar"
+msgstr "текст во"
+
+#. ActivityMode is deprecated and implicit now. The app just calls
+#. gtk_progress_bar_pulse() and it automatically goes into activity mode.
+#: ../glade/gbwidgets/gbprogressbar.c:157
+#, fuzzy
+msgid "Activity Mode:"
+msgstr "Помести:"
+
+#: ../glade/gbwidgets/gbprogressbar.c:158
+#, fuzzy
+msgid "If the progress bar should act like the front of Kit's car"
+msgstr "како од s"
+
+#: ../glade/gbwidgets/gbprogressbar.c:163
+#, fuzzy
+msgid "The horizontal alignment of the text"
+msgstr "хоризонтално од"
+
+#: ../glade/gbwidgets/gbprogressbar.c:166
+#, fuzzy
+msgid "The vertical alignment of the text"
+msgstr "вертикално од"
+
+#: ../glade/gbwidgets/gbprogressbar.c:421
+msgid "Progress Bar"
+msgstr "Прогрес лента"
+
+#: ../glade/gbwidgets/gbradiobutton.c:138
+#: ../glade/gbwidgets/gbradiotoolbutton.c:148
+#, fuzzy
+msgid "If the radio button is initially on"
+msgstr "е"
+
+#: ../glade/gbwidgets/gbradiobutton.c:143
+#: ../glade/gbwidgets/gbradiomenuitem.c:106
+#: ../glade/gbwidgets/gbradiotoolbutton.c:141
+#: ../glade/glade_menu_editor.c:1038
+msgid "Group:"
+msgstr "Група:"
+
+#: ../glade/gbwidgets/gbradiobutton.c:144
+#, fuzzy
+msgid ""
+"The radio button group (the default is all radio buttons with the same "
+"parent)"
+msgstr "група стандардно е"
+
+#: ../glade/gbwidgets/gbradiobutton.c:189
+#: ../glade/gbwidgets/gbradiobutton.c:350
+#: ../glade/gbwidgets/gbradiotoolbutton.c:233
+#: ../glade/gbwidgets/gbradiotoolbutton.c:322
+msgid "New Group"
+msgstr "Нова група"
+
+#: ../glade/gbwidgets/gbradiobutton.c:463
+#, fuzzy
+msgid "Radio Button"
+msgstr "Радио"
+
+#: ../glade/gbwidgets/gbradiomenuitem.c:105
+#, fuzzy
+msgid "If the radio menu item is initially on"
+msgstr "е"
+
+#: ../glade/gbwidgets/gbradiomenuitem.c:107
+#, fuzzy
+msgid ""
+"The radio menu item group (the default is all radio menu items with the same "
+"parent)"
+msgstr "група стандардно е"
+
+#: ../glade/gbwidgets/gbradiomenuitem.c:386
+#, fuzzy
+msgid "Radio Menu Item"
+msgstr "Радио Мени"
+
+#: ../glade/gbwidgets/gbradiotoolbutton.c:142
+#, fuzzy
+msgid ""
+"The radio tool button group (the default is all radio tool buttons in the "
+"toolbar)"
+msgstr "група стандардно е"
+
+#: ../glade/gbwidgets/gbradiotoolbutton.c:528
+#, fuzzy
+msgid "Toolbar Radio Button"
+msgstr "Радио"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:131
+#, fuzzy
+msgid "H Policy:"
+msgstr "Политика:"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:132
+#, fuzzy
+msgid "When the horizontal scrollbar will be shown"
+msgstr "хоризонтално"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:134
+#, fuzzy
+msgid "V Policy:"
+msgstr "Политика:"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:135
+#, fuzzy
+msgid "When the vertical scrollbar will be shown"
+msgstr "вертикално"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:137
+#, fuzzy
+msgid "Window Pos:"
+msgstr "Прозорец:"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:138
+#, fuzzy
+msgid "Where the child window is located with respect to the scrollbars"
+msgstr "Каде е до"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:140
+#, fuzzy
+msgid "Shadow Type:"
+msgstr "Сенка Тип:"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:141
+#, fuzzy
+msgid "The update policy of the vertical scrollbar"
+msgstr "од вертикално"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:353
+msgid "Scrolled Window"
+msgstr ""
+
+#: ../glade/gbwidgets/gbseparatormenuitem.c:153
+#, fuzzy
+msgid "Separator for Menus"
+msgstr "Раздвојувач за"
+
+#: ../glade/gbwidgets/gbseparatortoolitem.c:65
+msgid "Draw:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbseparatortoolitem.c:66
+msgid "If the separator is drawn, or just blank"
+msgstr ""
+
+#: ../glade/gbwidgets/gbseparatortoolitem.c:204
+#, fuzzy
+msgid "Toolbar Separator Item"
+msgstr "Има разделувач"
+
+#: ../glade/gbwidgets/gbspinbutton.c:91
+#, fuzzy
+msgid "Climb Rate:"
+msgstr "Стапка:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:92
+#, fuzzy
+msgid ""
+"The climb rate of the spinbutton, used in conjunction with the Page Increment"
+msgstr "стапка од во Страница"
+
+#: ../glade/gbwidgets/gbspinbutton.c:94
+#, fuzzy
+msgid "The number of decimal digits to show"
+msgstr "број од до"
+
+#: ../glade/gbwidgets/gbspinbutton.c:96
+#, fuzzy
+msgid "Numeric:"
+msgstr "Нумеричко:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:97
+msgid "If only numeric entry is allowed"
+msgstr ""
+
+#: ../glade/gbwidgets/gbspinbutton.c:98
+#, fuzzy
+msgid "Update Policy:"
+msgstr "Надградба Политика:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:99
+#, fuzzy
+msgid "When value_changed signals are emitted"
+msgstr "вредност променто"
+
+#: ../glade/gbwidgets/gbspinbutton.c:101
+#, fuzzy
+msgid "Snap:"
+msgstr "Прилепи:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:102
+#, fuzzy
+msgid "If the value is snapped to multiples of the step increment"
+msgstr "вредност е до од"
+
+#: ../glade/gbwidgets/gbspinbutton.c:103
+#, fuzzy
+msgid "Wrap:"
+msgstr "Пореди:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:104
+#, fuzzy
+msgid "If the value is wrapped at the limits"
+msgstr "вредност е"
+
+#: ../glade/gbwidgets/gbspinbutton.c:284
+msgid "Spin Button"
+msgstr "Копче за вртење"
+
+#: ../glade/gbwidgets/gbstatusbar.c:64
+#, fuzzy
+msgid "Resize Grip:"
+msgstr "големина:"
+
+#: ../glade/gbwidgets/gbstatusbar.c:64
+#, fuzzy
+msgid "If the status bar has a resize grip to resize the window"
+msgstr "статус има а до"
+
+#: ../glade/gbwidgets/gbstatusbar.c:156
+msgid "Status Bar"
+msgstr "Статусна лента"
+
+#: ../glade/gbwidgets/gbtable.c:137
+#, fuzzy
+msgid "New table"
+msgstr "Ново"
+
+#: ../glade/gbwidgets/gbtable.c:149 ../glade/gbwidgets/gbvbox.c:95
+#: ../glade/gbwidgets/gbvbuttonbox.c:123
+msgid "Number of rows:"
+msgstr "Број на редици"
+
+#: ../glade/gbwidgets/gbtable.c:237
+msgid "Rows:"
+msgstr "Редици:"
+
+#: ../glade/gbwidgets/gbtable.c:238
+#, fuzzy
+msgid "The number of rows in the table"
+msgstr "број од редици во"
+
+#: ../glade/gbwidgets/gbtable.c:240
+msgid "Columns:"
+msgstr "Колони:"
+
+#: ../glade/gbwidgets/gbtable.c:241
+#, fuzzy
+msgid "The number of columns in the table"
+msgstr "број од колони во"
+
+#: ../glade/gbwidgets/gbtable.c:244
+msgid "If the children should all be the same size"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:245 ../glade/gnome/gnomeiconlist.c:180
+#, fuzzy
+msgid "Row Spacing:"
+msgstr "Редица Растојание:"
+
+#: ../glade/gbwidgets/gbtable.c:246
+#, fuzzy
+msgid "The space between each row"
+msgstr "помеѓу"
+
+#: ../glade/gbwidgets/gbtable.c:248 ../glade/gnome/gnomeiconlist.c:183
+#, fuzzy
+msgid "Col Spacing:"
+msgstr "Кол Растојание:"
+
+#: ../glade/gbwidgets/gbtable.c:249
+#, fuzzy
+msgid "The space between each column"
+msgstr "помеѓу"
+
+#: ../glade/gbwidgets/gbtable.c:368
+#, fuzzy
+msgid "Cell X:"
+msgstr "Ќелија X:"
+
+#: ../glade/gbwidgets/gbtable.c:369
+#, fuzzy
+msgid "The left edge of the widget in the table"
+msgstr "лево од во"
+
+#: ../glade/gbwidgets/gbtable.c:371
+#, fuzzy
+msgid "Cell Y:"
+msgstr "Ќелија Y:"
+
+#: ../glade/gbwidgets/gbtable.c:372
+#, fuzzy
+msgid "The top edge of the widget in the table"
+msgstr "горе од во"
+
+#: ../glade/gbwidgets/gbtable.c:375
+#, fuzzy
+msgid "Col Span:"
+msgstr "Кол:"
+
+#: ../glade/gbwidgets/gbtable.c:376
+#, fuzzy
+msgid "The number of columns spanned by the widget in the table"
+msgstr "број од колони од во"
+
+#: ../glade/gbwidgets/gbtable.c:378
+#, fuzzy
+msgid "Row Span:"
+msgstr "Редица:"
+
+#: ../glade/gbwidgets/gbtable.c:379
+#, fuzzy
+msgid "The number of rows spanned by the widget in the table"
+msgstr "број од редици од во"
+
+#: ../glade/gbwidgets/gbtable.c:381
+#, fuzzy
+msgid "H Padding:"
+msgstr "Padding:"
+
+#: ../glade/gbwidgets/gbtable.c:384
+#, fuzzy
+msgid "V Padding:"
+msgstr "Padding:"
+
+#: ../glade/gbwidgets/gbtable.c:387
+#, fuzzy
+msgid "X Expand:"
+msgstr "X Прошири:"
+
+#: ../glade/gbwidgets/gbtable.c:388
+#, fuzzy
+msgid "Set True to let the widget expand horizontally"
+msgstr "Постави Точно до"
+
+#: ../glade/gbwidgets/gbtable.c:389
+#, fuzzy
+msgid "Y Expand:"
+msgstr "Y Прошири:"
+
+#: ../glade/gbwidgets/gbtable.c:390
+#, fuzzy
+msgid "Set True to let the widget expand vertically"
+msgstr "Постави Точно до"
+
+#: ../glade/gbwidgets/gbtable.c:391
+#, fuzzy
+msgid "X Shrink:"
+msgstr "X Собери:"
+
+#: ../glade/gbwidgets/gbtable.c:392
+#, fuzzy
+msgid "Set True to let the widget shrink horizontally"
+msgstr "Постави Точно до"
+
+#: ../glade/gbwidgets/gbtable.c:393
+#, fuzzy
+msgid "Y Shrink:"
+msgstr "Y Собери:"
+
+#: ../glade/gbwidgets/gbtable.c:394
+#, fuzzy
+msgid "Set True to let the widget shrink vertically"
+msgstr "Постави Точно до"
+
+#: ../glade/gbwidgets/gbtable.c:395
+#, fuzzy
+msgid "X Fill:"
+msgstr "X Пополни:"
+
+#: ../glade/gbwidgets/gbtable.c:396
+#, fuzzy
+msgid "Set True to let the widget fill its horizontal allocated area"
+msgstr "Постави Точно до хоризонтално"
+
+#: ../glade/gbwidgets/gbtable.c:397
+#, fuzzy
+msgid "Y Fill:"
+msgstr "Y Пополни:"
+
+#: ../glade/gbwidgets/gbtable.c:398
+#, fuzzy
+msgid "Set True to let the widget fill its vertical allocated area"
+msgstr "Постави Точно до вертикално"
+
+#: ../glade/gbwidgets/gbtable.c:667
+#, fuzzy
+msgid "Insert Row Before"
+msgstr "Внеси Редица"
+
+#: ../glade/gbwidgets/gbtable.c:674
+#, fuzzy
+msgid "Insert Row After"
+msgstr "Внеси Редица"
+
+#: ../glade/gbwidgets/gbtable.c:681
+#, fuzzy
+msgid "Insert Column Before"
+msgstr "Внеси Колона"
+
+#: ../glade/gbwidgets/gbtable.c:688
+#, fuzzy
+msgid "Insert Column After"
+msgstr "Внеси Колона"
+
+#: ../glade/gbwidgets/gbtable.c:695
+msgid "Delete Row"
+msgstr "Бришење на ред"
+
+#: ../glade/gbwidgets/gbtable.c:701
+msgid "Delete Column"
+msgstr "Избриши колона"
+
+#: ../glade/gbwidgets/gbtable.c:1208
+msgid "Table"
+msgstr "Табела"
+
+#: ../glade/gbwidgets/gbtextview.c:51
+msgid "Center"
+msgstr "Центар"
+
+#: ../glade/gbwidgets/gbtextview.c:52
+msgid "Fill"
+msgstr "Пополни"
+
+#. Add a "None" item first, so it is easy to reset the pixmap.
+#. If the user selects the 'None' item from the combo, we reset the
+#. text to "" and return. This callback will be called again.
+#. Add a 'None' item at the top of the list.
+#: ../glade/gbwidgets/gbtextview.c:71 ../glade/glade_gnome.c:112
+#: ../glade/glade_menu_editor.c:542 ../glade/glade_menu_editor.c:829
+#: ../glade/glade_menu_editor.c:1344 ../glade/glade_menu_editor.c:2251
+#: ../glade/property.c:2431
+msgid "None"
+msgstr "Ништо"
+
+#: ../glade/gbwidgets/gbtextview.c:72
+msgid "Character"
+msgstr "Карактер"
+
+#: ../glade/gbwidgets/gbtextview.c:73
+msgid "Word"
+msgstr "Збор"
+
+#: ../glade/gbwidgets/gbtextview.c:117
+#, fuzzy
+msgid "Cursor Visible:"
+msgstr "Курсор Видливо:"
+
+#: ../glade/gbwidgets/gbtextview.c:118
+#, fuzzy
+msgid "If the cursor is visible"
+msgstr "е"
+
+#: ../glade/gbwidgets/gbtextview.c:119
+msgid "Overwrite:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtextview.c:120
+msgid "If entered text overwrites the existing text"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtextview.c:121
+msgid "Accepts Tab:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtextview.c:122
+#, fuzzy
+msgid "If tab characters can be entered"
+msgstr "Дали текстот може да се менува"
+
+#: ../glade/gbwidgets/gbtextview.c:126
+#, fuzzy
+msgid "Justification:"
+msgstr "Порамнување:"
+
+#: ../glade/gbwidgets/gbtextview.c:127
+#, fuzzy
+msgid "The justification of the text"
+msgstr "од"
+
+#: ../glade/gbwidgets/gbtextview.c:129
+msgid "Wrapping:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtextview.c:130
+#, fuzzy
+msgid "The wrapping of the text"
+msgstr "од"
+
+#: ../glade/gbwidgets/gbtextview.c:133
+#, fuzzy
+msgid "Space Above:"
+msgstr "Простор Горе:"
+
+#: ../glade/gbwidgets/gbtextview.c:134
+#, fuzzy
+msgid "Pixels of blank space above paragraphs"
+msgstr "Пиксели од горе"
+
+#: ../glade/gbwidgets/gbtextview.c:136
+#, fuzzy
+msgid "Space Below:"
+msgstr "Простор Доле:"
+
+#: ../glade/gbwidgets/gbtextview.c:137
+#, fuzzy
+msgid "Pixels of blank space below paragraphs"
+msgstr "Пиксели од доле"
+
+#: ../glade/gbwidgets/gbtextview.c:139
+#, fuzzy
+msgid "Space Inside:"
+msgstr "Простор Внатре:"
+
+#: ../glade/gbwidgets/gbtextview.c:140
+#, fuzzy
+msgid "Pixels of blank space between wrapped lines in a paragraph"
+msgstr "Пиксели од помеѓу линии во а"
+
+#: ../glade/gbwidgets/gbtextview.c:143
+#, fuzzy
+msgid "Left Margin:"
+msgstr "Лево Маргина:"
+
+#: ../glade/gbwidgets/gbtextview.c:144
+#, fuzzy
+msgid "Width of the left margin in pixels"
+msgstr "Ширина од лево во"
+
+#: ../glade/gbwidgets/gbtextview.c:146
+#, fuzzy
+msgid "Right Margin:"
+msgstr "Десно Маргина:"
+
+#: ../glade/gbwidgets/gbtextview.c:147
+#, fuzzy
+msgid "Width of the right margin in pixels"
+msgstr "Ширина од десно во"
+
+#: ../glade/gbwidgets/gbtextview.c:149
+#, fuzzy
+msgid "Indent:"
+msgstr "Вовлечено:"
+
+#: ../glade/gbwidgets/gbtextview.c:150
+#, fuzzy
+msgid "Amount of pixels to indent paragraphs"
+msgstr "од пиксели до"
+
+#: ../glade/gbwidgets/gbtextview.c:463
+msgid "Text View"
+msgstr "Текст поглед"
+
+#: ../glade/gbwidgets/gbtogglebutton.c:100
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:98
+#, fuzzy
+msgid "If the toggle button is initially on"
+msgstr "е"
+
+#: ../glade/gbwidgets/gbtogglebutton.c:199
+#, fuzzy
+msgid "Toggle Button"
+msgstr "Промени"
+
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:297
+#, fuzzy
+msgid "Toolbar Toggle Button"
+msgstr "Промени"
+
+#: ../glade/gbwidgets/gbtoolbar.c:191
+#, fuzzy
+msgid "New toolbar"
+msgstr "Ново"
+
+#: ../glade/gbwidgets/gbtoolbar.c:202
+#, fuzzy
+msgid "Number of items:"
+msgstr "Број од:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:268
+#, fuzzy
+msgid "The number of items in the toolbar"
+msgstr "број од во"
+
+#: ../glade/gbwidgets/gbtoolbar.c:271
+msgid "The toolbar orientation"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtoolbar.c:273
+msgid "Style:"
+msgstr "Стил:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:274
+msgid "The toolbar style"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtoolbar.c:276
+#, fuzzy
+msgid "Tooltips:"
+msgstr "Кратки совети:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:276
+msgid "If tooltips are enabled"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtoolbar.c:277
+#, fuzzy
+msgid "Show Arrow:"
+msgstr "Прикажи Граница:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:277
+msgid "If an arrow should be shown to popup a menu if the toolbar doesn't fit"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtoolbar.c:427
+#, fuzzy
+msgid "If the item should be the same size as other homogeneous items"
+msgstr "Дали децата треба да бидат со иста големина"
+
+#. Commands for inserting new items.
+#: ../glade/gbwidgets/gbtoolbar.c:506
+#, fuzzy
+msgid "Insert Item Before"
+msgstr "Внеси Елемент"
+
+#: ../glade/gbwidgets/gbtoolbar.c:513
+#, fuzzy
+msgid "Insert Item After"
+msgstr "Внеси Елемент"
+
+#: ../glade/gbwidgets/gbtoolbar.c:680
+msgid "Toolbar"
+msgstr "Алатник"
+
+#: ../glade/gbwidgets/gbtoolbutton.c:586
+#, fuzzy
+msgid "Toolbar Button"
+msgstr "Промени"
+
+#: ../glade/gbwidgets/gbtoolitem.c:201
+#, fuzzy
+msgid "Toolbar Item"
+msgstr "Алатник"
+
+#: ../glade/gbwidgets/gbtreeview.c:71
+#, fuzzy
+msgid "Column 1"
+msgstr "Колона"
+
+#: ../glade/gbwidgets/gbtreeview.c:79
+#, fuzzy
+msgid "Column 2"
+msgstr "Колона"
+
+#: ../glade/gbwidgets/gbtreeview.c:87
+#, fuzzy
+msgid "Column 3"
+msgstr "Колона"
+
+#: ../glade/gbwidgets/gbtreeview.c:97
+#, c-format
+msgid "Row %i"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtreeview.c:114
+#, fuzzy
+msgid "Headers Visible:"
+msgstr "Заглавја Видливо:"
+
+#: ../glade/gbwidgets/gbtreeview.c:115
+#, fuzzy
+msgid "If the column header buttons are shown"
+msgstr "колона"
+
+#: ../glade/gbwidgets/gbtreeview.c:116
+#, fuzzy
+msgid "Rules Hint:"
+msgstr "Правила Совет:"
+
+#: ../glade/gbwidgets/gbtreeview.c:117
+#, fuzzy
+msgid ""
+"If a hint is set so the theme engine should draw rows in alternating colors"
+msgstr "а е редици во менување"
+
+#: ../glade/gbwidgets/gbtreeview.c:118
+msgid "Reorderable:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtreeview.c:119
+#, fuzzy
+msgid "If the view is reorderable"
+msgstr "е"
+
+#: ../glade/gbwidgets/gbtreeview.c:120
+#, fuzzy
+msgid "Enable Search:"
+msgstr "Овозможи Барај:"
+
+#: ../glade/gbwidgets/gbtreeview.c:121
+#, fuzzy
+msgid "If the user can search through columns interactively"
+msgstr "корисник колони"
+
+#: ../glade/gbwidgets/gbtreeview.c:123
+#, fuzzy
+msgid "Fixed Height Mode:"
+msgstr "Раширено Висина:"
+
+#: ../glade/gbwidgets/gbtreeview.c:124
+msgid "Sets all rows to the same height to improve performance"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtreeview.c:125
+#, fuzzy
+msgid "Hover Selection:"
+msgstr "Избор на бои"
+
+#: ../glade/gbwidgets/gbtreeview.c:126
+#, fuzzy
+msgid "Whether the selection should follow the pointer"
+msgstr "режим од"
+
+#: ../glade/gbwidgets/gbtreeview.c:127
+#, fuzzy
+msgid "Hover Expand:"
+msgstr "X Прошири:"
+
+#: ../glade/gbwidgets/gbtreeview.c:128
+msgid ""
+"Whether rows should be expanded or collapsed when the pointer moves over them"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtreeview.c:317
+#, fuzzy
+msgid "List or Tree View"
+msgstr "Листа or Tree"
+
+#: ../glade/gbwidgets/gbvbox.c:84
+#, fuzzy
+msgid "New vertical box"
+msgstr "Ново вертикално"
+
+#: ../glade/gbwidgets/gbvbox.c:245
+#, fuzzy
+msgid "Vertical Box"
+msgstr "Вертикално"
+
+#: ../glade/gbwidgets/gbvbuttonbox.c:111
+#, fuzzy
+msgid "New vertical button box"
+msgstr "Ново вертикално"
+
+#: ../glade/gbwidgets/gbvbuttonbox.c:344
+#, fuzzy
+msgid "Vertical Button Box"
+msgstr "Вертикално Копче"
+
+#: ../glade/gbwidgets/gbviewport.c:104
+#, fuzzy
+msgid "The type of shadow of the viewport"
+msgstr "тип од од"
+
+#: ../glade/gbwidgets/gbviewport.c:240
+msgid "Viewport"
+msgstr ""
+
+#: ../glade/gbwidgets/gbvpaned.c:192
+#, fuzzy
+msgid "Vertical Panes"
+msgstr "Вертикално"
+
+#: ../glade/gbwidgets/gbvruler.c:247
+msgid "Vertical Ruler"
+msgstr "Вертикален Линијар"
+
+#: ../glade/gbwidgets/gbvscale.c:319
+msgid "Vertical Scale"
+msgstr "Вертикална вредност"
+
+#: ../glade/gbwidgets/gbvscrollbar.c:236
+#, fuzzy
+msgid "Vertical Scrollbar"
+msgstr "Вертикално"
+
+#: ../glade/gbwidgets/gbvseparator.c:144
+#, fuzzy
+msgid "Vertical Separator"
+msgstr "Вертикално"
+
+#: ../glade/gbwidgets/gbwindow.c:242
+#, fuzzy
+msgid "The title of the window"
+msgstr "од"
+
+#: ../glade/gbwidgets/gbwindow.c:245
+#, fuzzy
+msgid "The type of the window"
+msgstr "тип од"
+
+#: ../glade/gbwidgets/gbwindow.c:249
+#, fuzzy
+msgid "Type Hint:"
+msgstr "Тип:"
+
+#: ../glade/gbwidgets/gbwindow.c:250
+msgid "Tells the window manager how to treat the window"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:255
+#, fuzzy
+msgid "The initial position of the window"
+msgstr "позиција од"
+
+#: ../glade/gbwidgets/gbwindow.c:259 ../glade/gnome/gnomefileentry.c:105
+#: ../glade/gnome/gnomepixmapentry.c:84
+#, fuzzy
+msgid "Modal:"
+msgstr "Модално:"
+
+#: ../glade/gbwidgets/gbwindow.c:259
+#, fuzzy
+msgid "If the window is modal"
+msgstr "е"
+
+#: ../glade/gbwidgets/gbwindow.c:264
+#, fuzzy
+msgid "Default Width:"
+msgstr "Стандардно Ширина:"
+
+#: ../glade/gbwidgets/gbwindow.c:265
+#, fuzzy
+msgid "The default width of the window"
+msgstr "стандардно ширина од"
+
+#: ../glade/gbwidgets/gbwindow.c:269
+#, fuzzy
+msgid "Default Height:"
+msgstr "Стандардно Висина:"
+
+#: ../glade/gbwidgets/gbwindow.c:270
+#, fuzzy
+msgid "The default height of the window"
+msgstr "стандардно висина од"
+
+#: ../glade/gbwidgets/gbwindow.c:276
+#, fuzzy
+msgid "Resizable:"
+msgstr "Со променлива големина:"
+
+#: ../glade/gbwidgets/gbwindow.c:277
+msgid "If the window can be resized"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:284
+msgid "If the window can be shrunk"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:285
+#, fuzzy
+msgid "Grow:"
+msgstr "Расти:"
+
+#: ../glade/gbwidgets/gbwindow.c:286
+msgid "If the window can be enlarged"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:291
+#, fuzzy
+msgid "Auto-Destroy:"
+msgstr "Автоматски Уништи:"
+
+#: ../glade/gbwidgets/gbwindow.c:292
+#, fuzzy
+msgid "If the window is destroyed when its transient parent is destroyed"
+msgstr "е е"
+
+#: ../glade/gbwidgets/gbwindow.c:296
+#, fuzzy
+msgid "The icon for this window"
+msgstr "за"
+
+#: ../glade/gbwidgets/gbwindow.c:303
+msgid "Role:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:303
+msgid "A unique identifier for the window to be used when restoring a session"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:306
+#, fuzzy
+msgid "Decorated:"
+msgstr "Одд."
+
+#: ../glade/gbwidgets/gbwindow.c:307
+#, fuzzy
+msgid "If the window should be decorated by the window manager"
+msgstr "Дали односот треба да биде одреден од потомокот"
+
+#: ../glade/gbwidgets/gbwindow.c:310
+msgid "Skip Taskbar:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:311
+#, fuzzy
+msgid "If the window should not appear in the task bar"
+msgstr "има а статус"
+
+#: ../glade/gbwidgets/gbwindow.c:314
+msgid "Skip Pager:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:315
+#, fuzzy
+msgid "If the window should not appear in the pager"
+msgstr "текст во"
+
+#: ../glade/gbwidgets/gbwindow.c:318
+#, fuzzy
+msgid "Gravity:"
+msgstr "Решетка Стил:"
+
+#: ../glade/gbwidgets/gbwindow.c:319
+msgid "The reference point to use when the window coordinates are set"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:323
+#, fuzzy
+msgid "Focus On Map:"
+msgstr "Фокусирање Цел:"
+
+#: ../glade/gbwidgets/gbwindow.c:323
+#, fuzzy
+msgid "If the window should receive the input focus when it is mapped"
+msgstr "Дали односот треба да биде одреден од потомокот"
+
+#: ../glade/gbwidgets/gbwindow.c:1198
+msgid "Window"
+msgstr "Прозорец"
+
+#: ../glade/glade.c:369 ../glade/gnome-db/gnomedberrordlg.c:74
+msgid "Error"
+msgstr "Грешка"
+
+#: ../glade/glade.c:372
+#, fuzzy
+msgid "System Error"
+msgstr "Систем"
+
+#: ../glade/glade.c:376
+msgid "Error opening file"
+msgstr "Грешка при отворање на датотеката"
+
+#: ../glade/glade.c:378
+#, fuzzy
+msgid "Error reading file"
+msgstr "Грешка"
+
+#: ../glade/glade.c:380
+#, fuzzy
+msgid "Error writing file"
+msgstr "Грешка"
+
+#: ../glade/glade.c:383
+#, fuzzy
+msgid "Invalid directory"
+msgstr "Невавалидно"
+
+#: ../glade/glade.c:387
+msgid "Invalid value"
+msgstr "Неважечка вредност"
+
+#: ../glade/glade.c:389
+#, fuzzy
+msgid "Invalid XML entity"
+msgstr "Невавалидно XML"
+
+#: ../glade/glade.c:391
+#, fuzzy
+msgid "Start tag expected"
+msgstr "Старт"
+
+#: ../glade/glade.c:393
+#, fuzzy
+msgid "End tag expected"
+msgstr "Крај"
+
+#: ../glade/glade.c:395
+#, fuzzy
+msgid "Character data expected"
+msgstr "Карактер податоци"
+
+#: ../glade/glade.c:397
+#, fuzzy
+msgid "Class id missing"
+msgstr "Класа идентификација"
+
+#: ../glade/glade.c:399
+#, fuzzy
+msgid "Class unknown"
+msgstr "Класа"
+
+#: ../glade/glade.c:401
+#, fuzzy
+msgid "Invalid component"
+msgstr "Невавалидно"
+
+#: ../glade/glade.c:403
+msgid "Unexpected end of file"
+msgstr "Неочекуван крај на датотеката"
+
+#: ../glade/glade.c:406
+#, fuzzy
+msgid "Unknown error code"
+msgstr "Непознато"
+
+#: ../glade/glade_atk.c:120
+msgid "Controlled By"
+msgstr ""
+
+#: ../glade/glade_atk.c:121
+msgid "Controller For"
+msgstr ""
+
+#: ../glade/glade_atk.c:122
+#, fuzzy
+msgid "Label For"
+msgstr "Ознака"
+
+#: ../glade/glade_atk.c:123
+msgid "Labelled By"
+msgstr ""
+
+#: ../glade/glade_atk.c:124
+#, fuzzy
+msgid "Member Of"
+msgstr "Член"
+
+#: ../glade/glade_atk.c:125
+msgid "Node Child Of"
+msgstr ""
+
+#: ../glade/glade_atk.c:126
+msgid "Flows To"
+msgstr ""
+
+#: ../glade/glade_atk.c:127
+msgid "Flows From"
+msgstr ""
+
+#: ../glade/glade_atk.c:128
+msgid "Subwindow Of"
+msgstr ""
+
+#: ../glade/glade_atk.c:129
+msgid "Embeds"
+msgstr ""
+
+#: ../glade/glade_atk.c:130
+msgid "Embedded By"
+msgstr ""
+
+#: ../glade/glade_atk.c:131
+#, fuzzy
+msgid "Popup For"
+msgstr "Поп-ап"
+
+#: ../glade/glade_atk.c:132
+msgid "Parent Window Of"
+msgstr ""
+
+#. I don't think we should set the transient parent as the dialog could be
+#. left open if desired.
+#: ../glade/glade_atk.c:331
+#, c-format
+msgid "Relationship: %s"
+msgstr ""
+
+#. Create the pages of the main notebook
+#. NOTE: If you add/remove pages you need to change the GB_PAGE_SIGNALS
+#. value at the top of this file
+#: ../glade/glade_atk.c:375 ../glade/property.c:615
+msgid "Widget"
+msgstr "Елемент"
+
+#: ../glade/glade_atk.c:638 ../glade/glade_menu_editor.c:772
+#: ../glade/property.c:776
+msgid "Name:"
+msgstr "Име:"
+
+#: ../glade/glade_atk.c:639
+#, fuzzy
+msgid "The name of the widget to pass to assistive technologies"
+msgstr "име од до до"
+
+#: ../glade/glade_atk.c:640
+msgid "Description:"
+msgstr "Опис:"
+
+#: ../glade/glade_atk.c:641
+#, fuzzy
+msgid "The description of the widget to pass to assistive technologies"
+msgstr "опис од до до"
+
+#: ../glade/glade_atk.c:643
+#, fuzzy
+msgid "Table Caption:"
+msgstr "Табела Наслов:"
+
+#: ../glade/glade_atk.c:644
+#, fuzzy
+msgid "The table caption to pass to assistive technologies"
+msgstr "до до"
+
+#: ../glade/glade_atk.c:681
+#, fuzzy
+msgid "Select the widgets with this relationship"
+msgstr "Избор"
+
+#: ../glade/glade_atk.c:761
+msgid "Click"
+msgstr ""
+
+#: ../glade/glade_atk.c:762
+msgid "Press"
+msgstr ""
+
+#: ../glade/glade_atk.c:763
+msgid "Release"
+msgstr "Серија"
+
+#: ../glade/glade_atk.c:822
+#, fuzzy
+msgid "Enter the description of the action to pass to assistive technologies"
+msgstr "опис од до до"
+
+#: ../glade/glade_clipboard.c:118
+msgid "Clipboard"
+msgstr "Клипборд"
+
+#: ../glade/glade_clipboard.c:351
+#, fuzzy
+msgid "You need to select a widget to paste into"
+msgstr "Вие до избери а до вметни"
+
+#: ../glade/glade_clipboard.c:376
+#, fuzzy
+msgid "You can't paste into windows or dialogs."
+msgstr "Вие вметни прозорци or."
+
+#: ../glade/glade_clipboard.c:399
+#, fuzzy
+msgid ""
+"You can't paste into the selected widget, since\n"
+"it is created automatically by its parent."
+msgstr "Вие вметни од е од."
+
+#: ../glade/glade_clipboard.c:408 ../glade/glade_clipboard.c:416
+#, fuzzy
+msgid "Only menu items can be pasted into a menu or menu bar."
+msgstr "а or."
+
+#: ../glade/glade_clipboard.c:427
+#, fuzzy
+msgid "Only buttons can be pasted into a dialog action area."
+msgstr "а дијалог."
+
+#: ../glade/glade_clipboard.c:437
+#, fuzzy
+msgid "Only GnomeDockItem widgets can be pasted into a GnomeDock."
+msgstr "а."
+
+#: ../glade/glade_clipboard.c:446
+#, fuzzy
+msgid "Only GnomeDockItem widgets can be pasted over a GnomeDockItem."
+msgstr "а."
+
+#: ../glade/glade_clipboard.c:449
+#, fuzzy
+msgid "Sorry - pasting over a GnomeDockItem is not implemented yet."
+msgstr "Жалам а е не."
+
+#: ../glade/glade_clipboard.c:457
+#, fuzzy
+msgid "GnomeDockItem widgets can only be pasted into a GnomeDock."
+msgstr "а."
+
+#. 3 - see GladeStockMenuItemNew above.
+#: ../glade/glade_gnome.c:121 ../glade/glade_gnome.c:874
+#: ../glade/glade_project_window.c:208 ../glade/glade_project_window.c:632
+msgid "_New"
+msgstr "_Ново"
+
+#: ../glade/glade_gnome.c:874
+#, fuzzy
+msgid "Create a new file"
+msgstr "Создади а"
+
+#. Note that glade_palette_set_show_gnome_widgets() has some of these
+#. strings hard-coded now, so keep up-to-date.
+#: ../glade/glade_gnomelib.c:116
+msgid "_Gnome"
+msgstr ""
+
+#: ../glade/glade_gnomelib.c:117 ../glade/glade_gtk12lib.c:248
+#: ../glade/glade_palette.c:315
+#, fuzzy
+msgid "Dep_recated"
+msgstr "Одд."
+
+#. Note that glade_palette_set_show_gnome_widgets() has some of these
+#. strings hard-coded now, so keep up-to-date.
+#: ../glade/glade_gtk12lib.c:246
+msgid "GTK+ _Basic"
+msgstr ""
+
+#: ../glade/glade_gtk12lib.c:247
+msgid "GTK+ _Additional"
+msgstr ""
+
+#: ../glade/glade_keys_dialog.c:94
+#, fuzzy
+msgid "Select Accelerator Key"
+msgstr "Избор"
+
+#: ../glade/glade_keys_dialog.c:97
+msgid "Keys"
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:394
+msgid "Menu Editor"
+msgstr "Уредувач на мени"
+
+#: ../glade/glade_menu_editor.c:411
+msgid "Type"
+msgstr "Тип"
+
+#: ../glade/glade_menu_editor.c:412
+msgid "Accelerator"
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:413
+msgid "Name"
+msgstr "Име"
+
+#: ../glade/glade_menu_editor.c:414 ../glade/property.c:1498
+msgid "Handler"
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:415 ../glade/property.c:102
+msgid "Active"
+msgstr "Активен"
+
+#: ../glade/glade_menu_editor.c:416
+msgid "Group"
+msgstr "Група"
+
+#: ../glade/glade_menu_editor.c:417
+msgid "Icon"
+msgstr "Икона"
+
+#: ../glade/glade_menu_editor.c:458
+#, fuzzy
+msgid "Move the item and its children up one place in the list"
+msgstr "Премести и горе во"
+
+#: ../glade/glade_menu_editor.c:470
+#, fuzzy
+msgid "Move the item and its children down one place in the list"
+msgstr "Премести и долу во"
+
+#: ../glade/glade_menu_editor.c:482
+#, fuzzy
+msgid "Move the item and its children up one level"
+msgstr "Премести и горе"
+
+#: ../glade/glade_menu_editor.c:494
+#, fuzzy
+msgid "Move the item and its children down one level"
+msgstr "Премести и долу"
+
+#: ../glade/glade_menu_editor.c:524
+#, fuzzy
+msgid "The stock item to use."
+msgstr "до."
+
+#: ../glade/glade_menu_editor.c:527 ../glade/glade_menu_editor.c:642
+#, fuzzy
+msgid "Stock Item:"
+msgstr "Резерва Елемент:"
+
+#: ../glade/glade_menu_editor.c:640
+#, fuzzy
+msgid "The stock Gnome item to use."
+msgstr "Gnome до."
+
+#: ../glade/glade_menu_editor.c:745
+msgid "The text of the menu item, or empty for separators."
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:769 ../glade/property.c:777
+#, fuzzy
+msgid "The name of the widget"
+msgstr "име од"
+
+#: ../glade/glade_menu_editor.c:790
+#, fuzzy
+msgid "The function to be called when the item is selected"
+msgstr "функција до е"
+
+#: ../glade/glade_menu_editor.c:792 ../glade/property.c:1546
+msgid "Handler:"
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:811
+#, fuzzy
+msgid "An optional icon to show on the left of the menu item."
+msgstr "до Вклучено лево од."
+
+#: ../glade/glade_menu_editor.c:934
+#, fuzzy
+msgid "The tip to show when the mouse is over the item"
+msgstr "до е"
+
+#: ../glade/glade_menu_editor.c:936 ../glade/property.c:824
+#, fuzzy
+msgid "Tooltip:"
+msgstr "Совет:"
+
+#: ../glade/glade_menu_editor.c:957
+msgid "_Add"
+msgstr "Додади"
+
+#: ../glade/glade_menu_editor.c:962
+#, fuzzy
+msgid "Add a new item below the selected item."
+msgstr "Додај а доле."
+
+#: ../glade/glade_menu_editor.c:967
+#, fuzzy
+msgid "Add _Child"
+msgstr "Додај"
+
+#: ../glade/glade_menu_editor.c:972
+#, fuzzy
+msgid "Add a new child item below the selected item."
+msgstr "Додај а доле."
+
+#: ../glade/glade_menu_editor.c:978
+#, fuzzy
+msgid "Add _Separator"
+msgstr "Додај"
+
+#: ../glade/glade_menu_editor.c:983
+#, fuzzy
+msgid "Add a separator below the selected item."
+msgstr "Додај а доле."
+
+#: ../glade/glade_menu_editor.c:988 ../glade/glade_project_window.c:239
+msgid "_Delete"
+msgstr "_Избриши"
+
+#: ../glade/glade_menu_editor.c:993
+#, fuzzy
+msgid "Delete the current item"
+msgstr "Избриши"
+
+#. Type radio options and toggle options.
+#: ../glade/glade_menu_editor.c:999
+#, fuzzy
+msgid "Item Type:"
+msgstr "Елемент Тип:"
+
+#: ../glade/glade_menu_editor.c:1015
+#, fuzzy
+msgid "If the item is initially on."
+msgstr "е Вклучено."
+
+#: ../glade/glade_menu_editor.c:1017
+#, fuzzy
+msgid "Active:"
+msgstr "Активен:"
+
+#: ../glade/glade_menu_editor.c:1022 ../glade/glade_menu_editor.c:1632
+#: ../glade/property.c:2215 ../glade/property.c:2225
+msgid "No"
+msgstr "Не"
+
+#: ../glade/glade_menu_editor.c:1036
+#, fuzzy
+msgid "The radio menu item's group"
+msgstr "s"
+
+#: ../glade/glade_menu_editor.c:1053 ../glade/glade_menu_editor.c:2406
+#: ../glade/glade_menu_editor.c:2546
+msgid "Radio"
+msgstr "Радио"
+
+#: ../glade/glade_menu_editor.c:1060 ../glade/glade_menu_editor.c:2404
+#: ../glade/glade_menu_editor.c:2544
+msgid "Check"
+msgstr "Проверка"
+
+#: ../glade/glade_menu_editor.c:1067 ../glade/property.c:102
+msgid "Normal"
+msgstr "Нормално"
+
+#. Accelerator key options.
+#: ../glade/glade_menu_editor.c:1076
+msgid "Accelerator:"
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:1113 ../glade/property.c:1681
+msgid "Ctrl"
+msgstr "Ctrl"
+
+#: ../glade/glade_menu_editor.c:1118 ../glade/property.c:1684
+msgid "Shift"
+msgstr "Shift"
+
+#: ../glade/glade_menu_editor.c:1123 ../glade/property.c:1687
+msgid "Alt"
+msgstr "Alt"
+
+#: ../glade/glade_menu_editor.c:1128 ../glade/property.c:1694
+msgid "Key:"
+msgstr "Клуч:"
+
+#: ../glade/glade_menu_editor.c:1134 ../glade/property.c:1673
+msgid "Modifiers:"
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:1632 ../glade/glade_menu_editor.c:2411
+#: ../glade/glade_menu_editor.c:2554 ../glade/property.c:2215
+msgid "Yes"
+msgstr "Да"
+
+#: ../glade/glade_menu_editor.c:2002
+#, fuzzy
+msgid "Select icon"
+msgstr "Избор"
+
+#: ../glade/glade_menu_editor.c:2345 ../glade/glade_menu_editor.c:2706
+msgid "separator"
+msgstr ""
+
+#. Add the special 'New' item to create a new group.
+#: ../glade/glade_menu_editor.c:3624 ../glade/glade_project_window.c:366
+#: ../glade/property.c:5109
+msgid "New"
+msgstr "Ново"
+
+#: ../glade/glade_palette.c:194 ../glade/glade_palette.c:196
+#: ../glade/glade_palette.c:412
+msgid "Selector"
+msgstr "Избирач"
+
+#: ../glade/glade_project.c:385
+#, fuzzy
+msgid ""
+"The project directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr "е не Проект Опции дијалог"
+
+#: ../glade/glade_project.c:392
+#, fuzzy
+msgid ""
+"The source directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr "е не Проект Опции дијалог"
+
+#: ../glade/glade_project.c:402
+#, fuzzy
+msgid ""
+"Invalid source directory:\n"
+"\n"
+"The source directory must be the project directory\n"
+"or a subdirectory of the project directory.\n"
+msgstr "Невавалидно н а од"
+
+#: ../glade/glade_project.c:410
+#, fuzzy
+msgid ""
+"The pixmaps directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr "е не Проект Опции дијалог"
+
+#: ../glade/glade_project.c:438
+#, fuzzy, c-format
+msgid "Sorry - generating source for %s is not implemented yet"
+msgstr "Жалам за s е не"
+
+#: ../glade/glade_project.c:509
+#, fuzzy
+msgid ""
+"Your project uses deprecated widgets that Gtkmm-2\n"
+"does not support.  Check your project for these\n"
+"widgets, and use their replacements."
+msgstr "не Проверка за и."
+
+#: ../glade/glade_project.c:521
+#, fuzzy
+msgid ""
+"Error running glade-- to generate the C++ source code.\n"
+"Check that you have glade-- installed and that it is in your PATH.\n"
+"Then try running 'glade-- <project_file.glade>' in a terminal."
+msgstr "Грешка до C инсталирано и е во<project_file.glade> во а."
+
+#: ../glade/glade_project.c:548
+#, fuzzy
+msgid ""
+"Error running gate to generate the Ada95 source code.\n"
+"Check that you have gate installed and that it is in your PATH.\n"
+"Then try running 'gate <project_file.glade>' in a terminal."
+msgstr "Грешка до инсталирано и е во<project_file.glade> во а."
+
+#: ../glade/glade_project.c:571
+#, fuzzy
+msgid ""
+"Error running glade2perl to generate the Perl source code.\n"
+"Check that you have glade2perl installed and that it is in your PATH.\n"
+"Then try running 'glade2perl <project_file.glade>' in a terminal."
+msgstr "Грешка до Perl инсталирано и е во<project_file.glade> во а."
+
+#: ../glade/glade_project.c:594
+#, fuzzy
+msgid ""
+"Error running eglade to generate the Eiffel source code.\n"
+"Check that you have eglade installed and that it is in your PATH.\n"
+"Then try running 'eglade <project_file.glade>' in a terminal."
+msgstr "Грешка до инсталирано и е во<project_file.glade> во а."
+
+#: ../glade/glade_project.c:954
+#, fuzzy
+msgid ""
+"The pixmap directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr "е не Проект Опции дијалог"
+
+#: ../glade/glade_project.c:1772
+#, fuzzy
+msgid "Error writing project XML file\n"
+msgstr "Грешка XML датотека"
+
+#: ../glade/glade_project_options.c:157 ../glade/glade_project_window.c:382
+#: ../glade/glade_project_window.c:889
+#, fuzzy
+msgid "Project Options"
+msgstr "Проект"
+
+#.
+#. * General Page.
+#.
+#: ../glade/glade_project_options.c:174
+msgid "General"
+msgstr "Општо"
+
+#: ../glade/glade_project_options.c:183
+#, fuzzy
+msgid "Basic Options:"
+msgstr "Основно Опции:"
+
+#: ../glade/glade_project_options.c:201
+msgid "The project directory"
+msgstr ""
+
+#: ../glade/glade_project_options.c:203
+#, fuzzy
+msgid "Project Directory:"
+msgstr "Проект Директориум:"
+
+#: ../glade/glade_project_options.c:221
+msgid "Browse..."
+msgstr "Разгледај..."
+
+#: ../glade/glade_project_options.c:236
+#, fuzzy
+msgid "The name of the current project"
+msgstr "име од"
+
+#: ../glade/glade_project_options.c:238
+msgid "Project Name:"
+msgstr "Проект Име:"
+
+#: ../glade/glade_project_options.c:258
+msgid "The name of the program"
+msgstr "Име на програмот"
+
+#: ../glade/glade_project_options.c:281
+msgid "The project file"
+msgstr ""
+
+#: ../glade/glade_project_options.c:283
+#, fuzzy
+msgid "Project File:"
+msgstr "Проект Датотека:"
+
+#. Project Source Directory.
+#: ../glade/glade_project_options.c:299
+msgid "Subdirectories:"
+msgstr ""
+
+#: ../glade/glade_project_options.c:316
+#, fuzzy
+msgid "The directory to save generated source code"
+msgstr "до зачувај"
+
+#: ../glade/glade_project_options.c:319
+#, fuzzy
+msgid "Source Directory:"
+msgstr "Извор Директориум:"
+
+#: ../glade/glade_project_options.c:338
+#, fuzzy
+msgid "The directory to store pixmaps"
+msgstr "до"
+
+#: ../glade/glade_project_options.c:341
+#, fuzzy
+msgid "Pixmaps Directory:"
+msgstr "Директориум:"
+
+#: ../glade/glade_project_options.c:363
+#, fuzzy
+msgid "The license which is added at the top of generated files"
+msgstr "е горе од"
+
+#. Source Language.
+#: ../glade/glade_project_options.c:385
+msgid "Language:"
+msgstr "Јазик:"
+
+#: ../glade/glade_project_options.c:416
+#, fuzzy
+msgid "Gnome:"
+msgstr "Gnome:"
+
+#: ../glade/glade_project_options.c:424
+#, fuzzy
+msgid "Enable Gnome Support"
+msgstr "Овозможи Gnome"
+
+#: ../glade/glade_project_options.c:430
+#, fuzzy
+msgid "If a Gnome application is to be built"
+msgstr "а Gnome е до"
+
+#: ../glade/glade_project_options.c:433
+#, fuzzy
+msgid "Enable Gnome DB Support"
+msgstr "Овозможи Gnome DB"
+
+#: ../glade/glade_project_options.c:437
+#, fuzzy
+msgid "If a Gnome DB application is to be built"
+msgstr "а Gnome DB е до"
+
+#.
+#. * C Options Page.
+#.
+#: ../glade/glade_project_options.c:447
+#, fuzzy
+msgid "C Options"
+msgstr "C"
+
+#: ../glade/glade_project_options.c:456
+msgid "<b>Note:</b> for large applications the use of libglade is recommended."
+msgstr ""
+
+#: ../glade/glade_project_options.c:468
+#, fuzzy
+msgid "General Options:"
+msgstr "Општо Опции:"
+
+#. Gettext Support.
+#: ../glade/glade_project_options.c:478
+msgid "Gettext Support"
+msgstr ""
+
+#: ../glade/glade_project_options.c:483
+#, fuzzy
+msgid "If strings are marked for translation by gettext"
+msgstr "за од"
+
+#. Setting widget names.
+#: ../glade/glade_project_options.c:487
+#, fuzzy
+msgid "Set Widget Names"
+msgstr "Постави Елемент"
+
+#: ../glade/glade_project_options.c:492
+#, fuzzy
+msgid "If widget names are set in the source code"
+msgstr "во"
+
+#. Backing up source files.
+#: ../glade/glade_project_options.c:496
+#, fuzzy
+msgid "Backup Source Files"
+msgstr "Сигурносна копија Извор"
+
+#: ../glade/glade_project_options.c:501
+#, fuzzy
+msgid "If copies of old source files are made"
+msgstr "од"
+
+#. Gnome Help System support.
+#: ../glade/glade_project_options.c:505
+#, fuzzy
+msgid "Gnome Help Support"
+msgstr "Gnome Помош"
+
+#: ../glade/glade_project_options.c:512
+#, fuzzy
+msgid "If support for the Gnome Help system should be included"
+msgstr "за Gnome Помош"
+
+#: ../glade/glade_project_options.c:515
+#, fuzzy
+msgid "File Output Options:"
+msgstr "Датотека Излезни Опции:"
+
+#. Outputting main file.
+#: ../glade/glade_project_options.c:525
+#, fuzzy
+msgid "Output main.c File"
+msgstr "Излезни"
+
+#: ../glade/glade_project_options.c:530
+#, fuzzy
+msgid ""
+"If a main.c file is output containing a main() function, if it doesn't "
+"already exist"
+msgstr "а датотека е излез а функција"
+
+#. Outputting support files.
+#: ../glade/glade_project_options.c:534
+#, fuzzy
+msgid "Output Support Functions"
+msgstr "Излезни Поддршка"
+
+#: ../glade/glade_project_options.c:539
+#, fuzzy
+msgid "If the support functions are output"
+msgstr "функции"
+
+#. Outputting build files.
+#: ../glade/glade_project_options.c:543
+#, fuzzy
+msgid "Output Build Files"
+msgstr "Излезни Изгради"
+
+#: ../glade/glade_project_options.c:548
+#, fuzzy
+msgid ""
+"If files for building the source code are output, including Makefile.am and "
+"configure.in, if they don't already exist"
+msgstr "за излез Makefile am и во"
+
+#. Main source file.
+#: ../glade/glade_project_options.c:552
+#, fuzzy
+msgid "Interface Creation Functions:"
+msgstr "Интерфејс Функции:"
+
+#: ../glade/glade_project_options.c:564
+#, fuzzy
+msgid "The file in which the functions to create the interface are written"
+msgstr "датотека во функции до"
+
+#: ../glade/glade_project_options.c:566 ../glade/glade_project_options.c:612
+#: ../glade/glade_project_options.c:658 ../glade/property.c:998
+#, fuzzy
+msgid "Source File:"
+msgstr "Извор Датотека:"
+
+#: ../glade/glade_project_options.c:581
+#, fuzzy
+msgid ""
+"The file in which the declarations of the functions to create the interface "
+"are written"
+msgstr "датотека во од функции до"
+
+#: ../glade/glade_project_options.c:583 ../glade/glade_project_options.c:629
+#: ../glade/glade_project_options.c:675
+#, fuzzy
+msgid "Header File:"
+msgstr "Заглавие Датотека:"
+
+#: ../glade/glade_project_options.c:594
+#, fuzzy
+msgid "Source file for interface creation functions"
+msgstr "Интерфејс Функции:"
+
+#: ../glade/glade_project_options.c:595
+#, fuzzy
+msgid "Header file for interface creation functions"
+msgstr "Интерфејс Функции:"
+
+#. Handler source file.
+#: ../glade/glade_project_options.c:598
+#, fuzzy
+msgid "Signal Handler & Callback Functions:"
+msgstr "Сигнал Повикај назад Функции:"
+
+#: ../glade/glade_project_options.c:610
+#, fuzzy
+msgid ""
+"The file in which the empty signal handler and callback functions are written"
+msgstr "датотека во празно и функции"
+
+#: ../glade/glade_project_options.c:627
+#, fuzzy
+msgid ""
+"The file in which the declarations of the signal handler and callback "
+"functions are written"
+msgstr "датотека во од и функции"
+
+#: ../glade/glade_project_options.c:640
+#, fuzzy
+msgid "Source file for signal handler and callback functions"
+msgstr "Сигнал Повикај назад Функции:"
+
+#: ../glade/glade_project_options.c:641
+#, fuzzy
+msgid "Header file for signal handler and callback functions"
+msgstr "датотека во празно и функции"
+
+#. Support source file.
+#: ../glade/glade_project_options.c:644
+#, fuzzy
+msgid "Support Functions:"
+msgstr "Поддршка Функции:"
+
+#: ../glade/glade_project_options.c:656
+#, fuzzy
+msgid "The file in which the support functions are written"
+msgstr "датотека во функции"
+
+#: ../glade/glade_project_options.c:673
+#, fuzzy
+msgid "The file in which the declarations of the support functions are written"
+msgstr "датотека во од функции"
+
+#: ../glade/glade_project_options.c:686
+#, fuzzy
+msgid "Source file for support functions"
+msgstr "Поддршка Функции:"
+
+#: ../glade/glade_project_options.c:687
+msgid "Header file for support functions"
+msgstr ""
+
+#.
+#. * libglade Options Page.
+#.
+#: ../glade/glade_project_options.c:693
+msgid "LibGlade Options"
+msgstr ""
+
+#: ../glade/glade_project_options.c:702
+#, fuzzy
+msgid "Translatable Strings:"
+msgstr "Стрингови:"
+
+#: ../glade/glade_project_options.c:716
+msgid "<b>Note:</b> this option is deprecated - use intltool instead."
+msgstr ""
+
+#. Output translatable strings.
+#: ../glade/glade_project_options.c:726
+#, fuzzy
+msgid "Save Translatable Strings"
+msgstr "Зачувај"
+
+#: ../glade/glade_project_options.c:731
+#, fuzzy
+msgid ""
+"If translatable strings are saved in a separate C source file, to enable "
+"translation of interfaces loaded by libglade"
+msgstr "во а C датотека до од од"
+
+#: ../glade/glade_project_options.c:741
+#, fuzzy
+msgid "The C source file to save all translatable strings in"
+msgstr "C датотека до зачувај"
+
+#: ../glade/glade_project_options.c:743 ../glade/gnome/gnomepixmap.c:79
+msgid "File:"
+msgstr "Датотека:"
+
+#: ../glade/glade_project_options.c:1202
+#, fuzzy
+msgid "Select the Project Directory"
+msgstr "Избор Проект"
+
+#: ../glade/glade_project_options.c:1392 ../glade/glade_project_options.c:1402
+#: ../glade/glade_project_options.c:1412
+#, fuzzy
+msgid "You need to set the Translatable Strings File option"
+msgstr "Вие до Стрингови Датотека"
+
+#: ../glade/glade_project_options.c:1396 ../glade/glade_project_options.c:1406
+#, fuzzy
+msgid "You need to set the Project Directory option"
+msgstr "Вие до Проект Директориум"
+
+#: ../glade/glade_project_options.c:1398 ../glade/glade_project_options.c:1408
+#, fuzzy
+msgid "You need to set the Project File option"
+msgstr "Вие до Проект Датотека"
+
+#: ../glade/glade_project_options.c:1414
+#, fuzzy
+msgid "You need to set the Project Name option"
+msgstr "Вие до Проект Име"
+
+#: ../glade/glade_project_options.c:1416
+#, fuzzy
+msgid "You need to set the Program Name option"
+msgstr "Вие до Програм Име"
+
+#: ../glade/glade_project_options.c:1419
+#, fuzzy
+msgid "You need to set the Source Directory option"
+msgstr "Вие до Извор Директориум"
+
+#: ../glade/glade_project_options.c:1422
+#, fuzzy
+msgid "You need to set the Pixmaps Directory option"
+msgstr "Вие до Директориум"
+
+#: ../glade/glade_project_window.c:184
+#, fuzzy, c-format
+msgid ""
+"Couldn't show help file: %s.\n"
+"\n"
+"Error: %s"
+msgstr "датотека s н"
+
+#: ../glade/glade_project_window.c:208 ../glade/glade_project_window.c:634
+#, fuzzy
+msgid "Create a new project"
+msgstr "Создади а"
+
+#: ../glade/glade_project_window.c:216 ../glade/glade_project_window.c:654
+#: ../glade/glade_project_window.c:905
+msgid "_Build"
+msgstr "_Изгради"
+
+#: ../glade/glade_project_window.c:217 ../glade/glade_project_window.c:665
+#, fuzzy
+msgid "Output the project source code"
+msgstr "Излезни"
+
+#: ../glade/glade_project_window.c:223 ../glade/glade_project_window.c:668
+msgid "Op_tions..."
+msgstr ""
+
+#: ../glade/glade_project_window.c:224 ../glade/glade_project_window.c:677
+#, fuzzy
+msgid "Edit the project options"
+msgstr "Уреди"
+
+#: ../glade/glade_project_window.c:239 ../glade/glade_project_window.c:716
+#, fuzzy
+msgid "Delete the selected widget"
+msgstr "Избриши"
+
+#: ../glade/glade_project_window.c:257 ../glade/glade_project_window.c:727
+#, fuzzy
+msgid "Show _Palette"
+msgstr "Прикажи"
+
+#: ../glade/glade_project_window.c:257 ../glade/glade_project_window.c:732
+#, fuzzy
+msgid "Show the palette of widgets"
+msgstr "Прикажи од"
+
+#: ../glade/glade_project_window.c:263 ../glade/glade_project_window.c:737
+#, fuzzy
+msgid "Show Property _Editor"
+msgstr "Прикажи Својство"
+
+#: ../glade/glade_project_window.c:264 ../glade/glade_project_window.c:743
+#, fuzzy
+msgid "Show the property editor"
+msgstr "Прикажи"
+
+#: ../glade/glade_project_window.c:270 ../glade/glade_project_window.c:747
+#, fuzzy
+msgid "Show Widget _Tree"
+msgstr "Прикажи Елемент"
+
+#: ../glade/glade_project_window.c:271 ../glade/glade_project_window.c:753
+#: ../glade/main.c:82
+#, fuzzy
+msgid "Show the widget tree"
+msgstr "Прикажи"
+
+#: ../glade/glade_project_window.c:277 ../glade/glade_project_window.c:757
+#, fuzzy
+msgid "Show _Clipboard"
+msgstr "Прикажи"
+
+#: ../glade/glade_project_window.c:278 ../glade/glade_project_window.c:763
+#: ../glade/main.c:86
+#, fuzzy
+msgid "Show the clipboard"
+msgstr "Прикажи"
+
+#: ../glade/glade_project_window.c:296
+msgid "Show _Grid"
+msgstr "Прикажи _решетка"
+
+#: ../glade/glade_project_window.c:297 ../glade/glade_project_window.c:799
+#, fuzzy
+msgid "Show the grid (in fixed containers only)"
+msgstr "Прикажи во статично"
+
+#: ../glade/glade_project_window.c:303
+#, fuzzy
+msgid "_Snap to Grid"
+msgstr "Прилепи до"
+
+#: ../glade/glade_project_window.c:304
+#, fuzzy
+msgid "Snap widgets to the grid"
+msgstr "Прилепи до"
+
+#: ../glade/glade_project_window.c:310 ../glade/glade_project_window.c:771
+#, fuzzy
+msgid "Show _Widget Tooltips"
+msgstr "Прикажи Елемент"
+
+#: ../glade/glade_project_window.c:311 ../glade/glade_project_window.c:779
+#, fuzzy
+msgid "Show the tooltips of created widgets"
+msgstr "Прикажи од"
+
+#: ../glade/glade_project_window.c:320 ../glade/glade_project_window.c:802
+#, fuzzy
+msgid "Set Grid _Options..."
+msgstr "Постави Решетка Опции."
+
+#: ../glade/glade_project_window.c:321
+#, fuzzy
+msgid "Set the grid style and spacing"
+msgstr "Постави и"
+
+#: ../glade/glade_project_window.c:327 ../glade/glade_project_window.c:823
+#, fuzzy
+msgid "Set Snap O_ptions..."
+msgstr "Постави Прилепи."
+
+#: ../glade/glade_project_window.c:328
+#, fuzzy
+msgid "Set options for snapping to the grid"
+msgstr "Постави за до"
+
+#: ../glade/glade_project_window.c:340
+msgid "_FAQ"
+msgstr ""
+
+#: ../glade/glade_project_window.c:341
+#, fuzzy
+msgid "View the Glade FAQ"
+msgstr "Преглед"
+
+#. create File menu
+#: ../glade/glade_project_window.c:355 ../glade/glade_project_window.c:625
+msgid "_Project"
+msgstr "_Проект"
+
+#: ../glade/glade_project_window.c:366 ../glade/glade_project_window.c:872
+#: ../glade/glade_project_window.c:1049
+#, fuzzy
+msgid "New Project"
+msgstr "Ново"
+
+#: ../glade/glade_project_window.c:371
+msgid "Open"
+msgstr "Отвори"
+
+#: ../glade/glade_project_window.c:371 ../glade/glade_project_window.c:877
+#: ../glade/glade_project_window.c:1110
+msgid "Open Project"
+msgstr "Отвори проект"
+
+#: ../glade/glade_project_window.c:376
+msgid "Save"
+msgstr "Зачувај"
+
+#: ../glade/glade_project_window.c:376 ../glade/glade_project_window.c:881
+#: ../glade/glade_project_window.c:1475
+msgid "Save Project"
+msgstr "Зачувај"
+
+#: ../glade/glade_project_window.c:382
+msgid "Options"
+msgstr "Опции"
+
+#: ../glade/glade_project_window.c:387
+msgid "Build"
+msgstr "Изгради"
+
+#: ../glade/glade_project_window.c:387
+#, fuzzy
+msgid "Build the Source Code"
+msgstr "Изгради Извор"
+
+#: ../glade/glade_project_window.c:638
+#, fuzzy
+msgid "Open an existing project"
+msgstr "Отвори"
+
+#: ../glade/glade_project_window.c:642
+#, fuzzy
+msgid "Save project"
+msgstr "Зачувај"
+
+#: ../glade/glade_project_window.c:687
+#, fuzzy
+msgid "Quit Glade"
+msgstr "Напушти"
+
+#: ../glade/glade_project_window.c:701
+#, fuzzy
+msgid "Cut the selected widget to the clipboard"
+msgstr "Исечи до"
+
+#: ../glade/glade_project_window.c:706
+#, fuzzy
+msgid "Copy the selected widget to the clipboard"
+msgstr "Копирај до"
+
+#: ../glade/glade_project_window.c:711
+#, fuzzy
+msgid "Paste the widget from the clipboard over the selected widget"
+msgstr "Вметни од"
+
+#: ../glade/glade_project_window.c:783
+msgid "_Grid"
+msgstr ""
+
+#: ../glade/glade_project_window.c:791
+#, fuzzy
+msgid "_Show Grid"
+msgstr "Прикажи"
+
+#: ../glade/glade_project_window.c:808
+#, fuzzy
+msgid "Set the spacing between grid lines"
+msgstr "Постави помеѓу"
+
+#: ../glade/glade_project_window.c:811
+#, fuzzy
+msgid "S_nap to Grid"
+msgstr "S до"
+
+#: ../glade/glade_project_window.c:819
+#, fuzzy
+msgid "Snap widgets to the grid (in fixed containers only)"
+msgstr "Прилепи до во статично"
+
+#: ../glade/glade_project_window.c:829
+#, fuzzy
+msgid "Set which parts of a widget snap to the grid"
+msgstr "Постави од а до"
+
+#. Don't show these yet as we have no help pages.
+#. menuitem = gtk_menu_item_new_with_mnemonic (_("_Contents"));
+#. gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#. gtk_widget_show (menuitem);
+#.
+#. menuitem = gtk_menu_item_new_with_mnemonic (_("_Index"));
+#. gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#. gtk_widget_show (menuitem);
+#.
+#. menuitem = gtk_menu_item_new ();
+#. gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#. gtk_widget_show (menuitem);
+#.
+#: ../glade/glade_project_window.c:854
+msgid "_About..."
+msgstr "_За..."
+
+#: ../glade/glade_project_window.c:895
+msgid "Optio_ns"
+msgstr ""
+
+#: ../glade/glade_project_window.c:899
+#, fuzzy
+msgid "Write Source Code"
+msgstr "Запис Извор"
+
+#: ../glade/glade_project_window.c:986 ../glade/glade_project_window.c:1691
+#: ../glade/glade_project_window.c:1980
+msgid "Glade"
+msgstr ""
+
+#: ../glade/glade_project_window.c:993
+#, fuzzy
+msgid "Are you sure you want to create a new project?"
+msgstr "до а?"
+
+#: ../glade/glade_project_window.c:1053
+#, fuzzy
+msgid "New _GTK+ Project"
+msgstr "Ново"
+
+#: ../glade/glade_project_window.c:1054
+#, fuzzy
+msgid "New G_NOME Project"
+msgstr "Ново"
+
+#: ../glade/glade_project_window.c:1057
+#, fuzzy
+msgid "Which type of project do you want to create?"
+msgstr "тип од до?"
+
+#: ../glade/glade_project_window.c:1091
+#, fuzzy
+msgid "New project created."
+msgstr "Ново."
+
+#: ../glade/glade_project_window.c:1181
+#, fuzzy
+msgid "Project opened."
+msgstr "Проект."
+
+#: ../glade/glade_project_window.c:1195
+#, fuzzy
+msgid "Error opening project."
+msgstr "Грешка."
+
+#: ../glade/glade_project_window.c:1259
+#, fuzzy
+msgid "Errors opening project file"
+msgstr "Грешки"
+
+#: ../glade/glade_project_window.c:1265
+#, fuzzy
+msgid " errors opening project file:"
+msgstr "датотека:"
+
+#: ../glade/glade_project_window.c:1338
+#, fuzzy
+msgid ""
+"There is no project currently open.\n"
+"Create a new project with the Project/New command."
+msgstr "е не отвори а Проект Ново."
+
+#: ../glade/glade_project_window.c:1542
+#, fuzzy
+msgid "Error saving project"
+msgstr "Грешка"
+
+#: ../glade/glade_project_window.c:1544
+#, fuzzy
+msgid "Error saving project."
+msgstr "Грешка."
+
+#: ../glade/glade_project_window.c:1550
+#, fuzzy
+msgid "Project saved."
+msgstr "Проект."
+
+#: ../glade/glade_project_window.c:1620
+#, fuzzy
+msgid "Errors writing source code"
+msgstr "Грешки"
+
+#: ../glade/glade_project_window.c:1622
+#, fuzzy
+msgid "Error writing source."
+msgstr "Грешка."
+
+#: ../glade/glade_project_window.c:1628
+#, fuzzy
+msgid "Source code written."
+msgstr "Извор."
+
+#: ../glade/glade_project_window.c:1659
+#, fuzzy
+msgid "System error message:"
+msgstr "Систем:"
+
+#: ../glade/glade_project_window.c:1698
+msgid "Are you sure you want to quit?"
+msgstr "Дали сте сигурни дека сакате да излезете?"
+
+#: ../glade/glade_project_window.c:1982 ../glade/glade_project_window.c:2042
+#, fuzzy
+msgid "(C) 1998-2002 Damon Chaplin"
+msgstr "C"
+
+#: ../glade/glade_project_window.c:1983 ../glade/glade_project_window.c:2041
+#, fuzzy
+msgid "Glade is a User Interface Builder for GTK+ and GNOME."
+msgstr "е а Корисник Интерфејс за и GNOME."
+
+#: ../glade/glade_project_window.c:2012
+#, fuzzy
+msgid "About Glade"
+msgstr "За"
+
+#: ../glade/glade_project_window.c:2097
+msgid "<untitled>"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbbrowser.c:135
+#, fuzzy
+msgid "Database Browser"
+msgstr "База на податоци"
+
+#: ../glade/gnome-db/gnomedbcombo.c:124
+#, fuzzy
+msgid "Data-bound combo"
+msgstr "Податоци"
+
+#: ../glade/gnome-db/gnomedbconnectprop.c:86
+msgid "GnomeDbConnectionProperties"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbconnectsel.c:147
+#, fuzzy
+msgid "Connection Selector"
+msgstr "Врска"
+
+#: ../glade/gnome-db/gnomedbdsnconfig.c:136
+msgid "DSN Configurator"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbdsndruid.c:147
+msgid "DSN Config Druid"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbeditor.c:63
+msgid "Highlight text:"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbeditor.c:63
+msgid "If selected, text will be highlighted inside the widget"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbeditor.c:178
+#, fuzzy
+msgid "GnomeDbEditor"
+msgstr "Gnome"
+
+#: ../glade/gnome-db/gnomedberror.c:136
+#, fuzzy
+msgid "Database error viewer"
+msgstr "База на податоци"
+
+#: ../glade/gnome-db/gnomedberrordlg.c:218
+#, fuzzy
+msgid "Database error dialog"
+msgstr "База на податоци"
+
+#: ../glade/gnome-db/gnomedbform.c:147
+msgid "Form"
+msgstr "Форма"
+
+#: ../glade/gnome-db/gnomedbgraybar.c:59
+msgid "Text inside the gray bar"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbgraybar.c:138
+msgid "Gray Bar"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbgrid.c:132
+#, fuzzy
+msgid "Data-bound grid"
+msgstr "Податоци"
+
+#: ../glade/gnome-db/gnomedblist.c:136
+#, fuzzy
+msgid "Data-bound list"
+msgstr "Податоци"
+
+#: ../glade/gnome-db/gnomedblogin.c:136
+#, fuzzy
+msgid "Database login widget"
+msgstr "База на податоци"
+
+#: ../glade/gnome-db/gnomedblogindlg.c:76
+msgid "Login"
+msgstr "Логин"
+
+#: ../glade/gnome-db/gnomedblogindlg.c:219
+#, fuzzy
+msgid "Database login dialog"
+msgstr "База на податоци"
+
+#: ../glade/gnome-db/gnomedbprovidersel.c:147
+#, fuzzy
+msgid "Provider Selector"
+msgstr "Провајдер"
+
+#: ../glade/gnome-db/gnomedbquerybuilder.c:86
+msgid "GnomeDbQueryBuilder"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbsourcesel.c:147
+#, fuzzy
+msgid "Data Source Selector"
+msgstr "Податоци Извор"
+
+#: ../glade/gnome-db/gnomedbtableeditor.c:133
+#, fuzzy
+msgid "Table Editor "
+msgstr "Табела "
+
+#: ../glade/gnome/bonobodock.c:231
+#, fuzzy
+msgid "Allow Floating:"
+msgstr "Дозволи Лебдење:"
+
+#: ../glade/gnome/bonobodock.c:232
+msgid "If floating dock items are allowed"
+msgstr ""
+
+#: ../glade/gnome/bonobodock.c:278
+#, fuzzy
+msgid "Add dock band on top"
+msgstr "Додај Вклучено"
+
+#: ../glade/gnome/bonobodock.c:285
+#, fuzzy
+msgid "Add dock band on bottom"
+msgstr "Додај Вклучено"
+
+#: ../glade/gnome/bonobodock.c:292
+#, fuzzy
+msgid "Add dock band on left"
+msgstr "Додај Вклучено"
+
+#: ../glade/gnome/bonobodock.c:299
+#, fuzzy
+msgid "Add dock band on right"
+msgstr "Додај Вклучено"
+
+#: ../glade/gnome/bonobodock.c:306
+#, fuzzy
+msgid "Add floating dock item"
+msgstr "Додај"
+
+#: ../glade/gnome/bonobodock.c:495
+#, fuzzy
+msgid "Gnome Dock"
+msgstr "Gnome"
+
+#: ../glade/gnome/bonobodockitem.c:165
+#, fuzzy
+msgid "Locked:"
+msgstr "Заклучено:"
+
+#: ../glade/gnome/bonobodockitem.c:166
+#, fuzzy
+msgid "If the dock item is locked in position"
+msgstr "е во"
+
+#: ../glade/gnome/bonobodockitem.c:167
+msgid "Exclusive:"
+msgstr ""
+
+#: ../glade/gnome/bonobodockitem.c:168
+#, fuzzy
+msgid "If the dock item is always the only item in its band"
+msgstr "е во"
+
+#: ../glade/gnome/bonobodockitem.c:169
+#, fuzzy
+msgid "Never Floating:"
+msgstr "Никогаш Лебдење:"
+
+#: ../glade/gnome/bonobodockitem.c:170
+#, fuzzy
+msgid "If the dock item is never allowed to float in its own window"
+msgstr "е Никогаш до ток во"
+
+#: ../glade/gnome/bonobodockitem.c:171
+#, fuzzy
+msgid "Never Vertical:"
+msgstr "Никогаш Вертикално:"
+
+#: ../glade/gnome/bonobodockitem.c:172
+#, fuzzy
+msgid "If the dock item is never allowed to be vertical"
+msgstr "е Никогаш до"
+
+#: ../glade/gnome/bonobodockitem.c:173
+#, fuzzy
+msgid "Never Horizontal:"
+msgstr "Никогаш Хоризонтално:"
+
+#: ../glade/gnome/bonobodockitem.c:174
+#, fuzzy
+msgid "If the dock item is never allowed to be horizontal"
+msgstr "е Никогаш до"
+
+#: ../glade/gnome/bonobodockitem.c:177
+#, fuzzy
+msgid "The type of shadow around the dock item"
+msgstr "тип од"
+
+#: ../glade/gnome/bonobodockitem.c:180
+#, fuzzy
+msgid "The orientation of a floating dock item"
+msgstr "од а"
+
+#: ../glade/gnome/bonobodockitem.c:428
+#, fuzzy
+msgid "Add dock item before"
+msgstr "Додај"
+
+#: ../glade/gnome/bonobodockitem.c:435
+#, fuzzy
+msgid "Add dock item after"
+msgstr "Додај"
+
+#: ../glade/gnome/bonobodockitem.c:771
+#, fuzzy
+msgid "Gnome Dock Item"
+msgstr "Gnome"
+
+#: ../glade/gnome/gnomeabout.c:139
+#, fuzzy
+msgid ""
+"Additional information, such as a description of the package and its home "
+"page on the web"
+msgstr "Дополнително а опис од и дома Вклучено"
+
+#: ../glade/gnome/gnomeabout.c:539
+#, fuzzy
+msgid "Gnome About Dialog"
+msgstr "Gnome За"
+
+#: ../glade/gnome/gnomeapp.c:170
+msgid "New File"
+msgstr "Нова датотека"
+
+#: ../glade/gnome/gnomeapp.c:172
+msgid "Open File"
+msgstr "Отвори датотека"
+
+#: ../glade/gnome/gnomeapp.c:174
+msgid "Save File"
+msgstr "Сними датотека"
+
+#: ../glade/gnome/gnomeapp.c:203
+#, fuzzy
+msgid "Status Bar:"
+msgstr "Статус:"
+
+#: ../glade/gnome/gnomeapp.c:204
+#, fuzzy
+msgid "If the window has a status bar"
+msgstr "има а статус"
+
+#: ../glade/gnome/gnomeapp.c:205
+msgid "Store Config:"
+msgstr ""
+
+#: ../glade/gnome/gnomeapp.c:206
+#, fuzzy
+msgid "If the layout is saved and restored automatically"
+msgstr "е и"
+
+#: ../glade/gnome/gnomeapp.c:442
+#, fuzzy
+msgid "Gnome Application Window"
+msgstr "Gnome Апликација"
+
+#: ../glade/gnome/gnomeappbar.c:56
+#, fuzzy
+msgid "Status Message."
+msgstr "Статус Порака."
+
+#: ../glade/gnome/gnomeappbar.c:69
+msgid "Progress:"
+msgstr "Напредок:"
+
+#: ../glade/gnome/gnomeappbar.c:70
+#, fuzzy
+msgid "If the app bar has a progress indicator"
+msgstr "има а"
+
+#: ../glade/gnome/gnomeappbar.c:71
+msgid "Status:"
+msgstr "Статус:"
+
+#: ../glade/gnome/gnomeappbar.c:72
+#, fuzzy
+msgid "If the app bar has an area for status messages and user input"
+msgstr "има за статус и корисник"
+
+#: ../glade/gnome/gnomeappbar.c:184
+#, fuzzy
+msgid "Gnome Application Bar"
+msgstr "Gnome Апликација"
+
+#: ../glade/gnome/gnomecanvas.c:68
+msgid "Anti-Aliased:"
+msgstr ""
+
+#: ../glade/gnome/gnomecanvas.c:69
+#, fuzzy
+msgid "If the canvas is anti-aliased, to smooth the edges of text and graphics"
+msgstr "е до од текст и"
+
+#: ../glade/gnome/gnomecanvas.c:70
+msgid "X1:"
+msgstr ""
+
+#: ../glade/gnome/gnomecanvas.c:70
+#, fuzzy
+msgid "The minimum x coordinate"
+msgstr "x"
+
+#: ../glade/gnome/gnomecanvas.c:71
+msgid "Y1:"
+msgstr ""
+
+#: ../glade/gnome/gnomecanvas.c:71
+#, fuzzy
+msgid "The minimum y coordinate"
+msgstr "у"
+
+#: ../glade/gnome/gnomecanvas.c:72
+msgid "X2:"
+msgstr ""
+
+#: ../glade/gnome/gnomecanvas.c:72
+#, fuzzy
+msgid "The maximum x coordinate"
+msgstr "x"
+
+#: ../glade/gnome/gnomecanvas.c:73
+msgid "Y2:"
+msgstr ""
+
+#: ../glade/gnome/gnomecanvas.c:73
+#, fuzzy
+msgid "The maximum y coordinate"
+msgstr "у"
+
+#: ../glade/gnome/gnomecanvas.c:75
+#, fuzzy
+msgid "Pixels Per Unit:"
+msgstr "Пиксели Единица:"
+
+#: ../glade/gnome/gnomecanvas.c:76
+#, fuzzy
+msgid "The number of pixels corresponding to one unit"
+msgstr "број од пиксели до"
+
+#: ../glade/gnome/gnomecanvas.c:239
+msgid "GnomeCanvas"
+msgstr ""
+
+#: ../glade/gnome/gnomecolorpicker.c:68
+#, fuzzy
+msgid "Dither:"
+msgstr "Dither:"
+
+#: ../glade/gnome/gnomecolorpicker.c:69
+#, fuzzy
+msgid "If the sample should use dithering to be more accurate"
+msgstr "до"
+
+#: ../glade/gnome/gnomecolorpicker.c:160
+msgid "Pick a color"
+msgstr "Одбери боја"
+
+#: ../glade/gnome/gnomecolorpicker.c:219
+#, fuzzy
+msgid "Gnome Color Picker"
+msgstr "Gnome Боја"
+
+#: ../glade/gnome/gnomecontrol.c:160
+msgid "Couldn't create the Bonobo control"
+msgstr ""
+
+#: ../glade/gnome/gnomecontrol.c:249
+#, fuzzy
+msgid "New Bonobo Control"
+msgstr "Ново"
+
+#: ../glade/gnome/gnomecontrol.c:262
+#, fuzzy
+msgid "Select a Bonobo Control"
+msgstr "Избор а"
+
+#: ../glade/gnome/gnomecontrol.c:290
+msgid "OAFIID"
+msgstr ""
+
+#: ../glade/gnome/gnomecontrol.c:295 ../glade/property.c:3896
+msgid "Description"
+msgstr "Опис"
+
+#: ../glade/gnome/gnomecontrol.c:339
+msgid "Bonobo Control"
+msgstr ""
+
+#: ../glade/gnome/gnomedateedit.c:70
+#, fuzzy
+msgid "Show Time:"
+msgstr "Прикажи Време:"
+
+#: ../glade/gnome/gnomedateedit.c:71
+#, fuzzy
+msgid "If the time is shown as well as the date"
+msgstr "време е"
+
+#: ../glade/gnome/gnomedateedit.c:72
+#, fuzzy
+msgid "24 Hour Format:"
+msgstr "Формат:"
+
+#: ../glade/gnome/gnomedateedit.c:73
+#, fuzzy
+msgid "If the time is shown in 24-hour format"
+msgstr "време е во час"
+
+#: ../glade/gnome/gnomedateedit.c:76
+#, fuzzy
+msgid "Lower Hour:"
+msgstr "Долни:"
+
+#: ../glade/gnome/gnomedateedit.c:77
+#, fuzzy
+msgid "The lowest hour to show in the popup"
+msgstr "час до во"
+
+#: ../glade/gnome/gnomedateedit.c:79
+#, fuzzy
+msgid "Upper Hour:"
+msgstr "Горни:"
+
+#: ../glade/gnome/gnomedateedit.c:80
+#, fuzzy
+msgid "The highest hour to show in the popup"
+msgstr "час до во"
+
+#: ../glade/gnome/gnomedateedit.c:298
+msgid "GnomeDateEdit"
+msgstr ""
+
+#: ../glade/gnome/gnomedialog.c:152 ../glade/gnome/gnomemessagebox.c:189
+#, fuzzy
+msgid "Auto Close:"
+msgstr "Автоматски Затвори:"
+
+#: ../glade/gnome/gnomedialog.c:153 ../glade/gnome/gnomemessagebox.c:190
+#, fuzzy
+msgid "If the dialog closes when any button is clicked"
+msgstr "дијалог е"
+
+#: ../glade/gnome/gnomedialog.c:154 ../glade/gnome/gnomemessagebox.c:191
+#, fuzzy
+msgid "Hide on Close:"
+msgstr "Скриј Вклучено Затвори:"
+
+#: ../glade/gnome/gnomedialog.c:155 ../glade/gnome/gnomemessagebox.c:192
+#, fuzzy
+msgid "If the dialog is hidden when it is closed, instead of being destroyed"
+msgstr "дијалог е сокриен е од"
+
+#: ../glade/gnome/gnomedialog.c:341
+#, fuzzy
+msgid "Gnome Dialog Box"
+msgstr "Gnome Дијалог"
+
+#: ../glade/gnome/gnomedruid.c:91
+#, fuzzy
+msgid "New Gnome Druid"
+msgstr "Ново Gnome"
+
+#: ../glade/gnome/gnomedruid.c:190
+msgid "Show Help"
+msgstr "Покажи Помош"
+
+#: ../glade/gnome/gnomedruid.c:190
+#, fuzzy
+msgid "Display the help button."
+msgstr "Прикажи."
+
+#: ../glade/gnome/gnomedruid.c:255
+#, fuzzy
+msgid "Add Start Page"
+msgstr "Додај Старт"
+
+#: ../glade/gnome/gnomedruid.c:270
+#, fuzzy
+msgid "Add Finish Page"
+msgstr "Додај Крај"
+
+#: ../glade/gnome/gnomedruid.c:485
+msgid "Druid"
+msgstr ""
+
+#: ../glade/gnome/gnomedruidpageedge.c:94
+#: ../glade/gnome/gnomedruidpagestandard.c:86
+#, fuzzy
+msgid "The title of the page"
+msgstr "од"
+
+#: ../glade/gnome/gnomedruidpageedge.c:96
+#, fuzzy
+msgid "The main text of the page, introducing people to the druid."
+msgstr "текст од до."
+
+#: ../glade/gnome/gnomedruidpageedge.c:98
+#: ../glade/gnome/gnomedruidpagestandard.c:87
+#, fuzzy
+msgid "Title Color:"
+msgstr "Наслов Боја:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:99
+#: ../glade/gnome/gnomedruidpagestandard.c:88
+#, fuzzy
+msgid "The color of the title text"
+msgstr "од"
+
+#: ../glade/gnome/gnomedruidpageedge.c:100
+#, fuzzy
+msgid "Text Color:"
+msgstr "Текст Боја:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:101
+#, fuzzy
+msgid "The color of the main text"
+msgstr "од"
+
+#: ../glade/gnome/gnomedruidpageedge.c:103
+#: ../glade/gnome/gnomedruidpagestandard.c:92
+#, fuzzy
+msgid "The background color of the page"
+msgstr "од"
+
+#: ../glade/gnome/gnomedruidpageedge.c:104
+#: ../glade/gnome/gnomedruidpagestandard.c:93
+#, fuzzy
+msgid "Logo Back. Color:"
+msgstr "Лого Назад Боја:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:105
+#: ../glade/gnome/gnomedruidpagestandard.c:94
+msgid "The background color around the logo"
+msgstr ""
+
+#: ../glade/gnome/gnomedruidpageedge.c:106
+#, fuzzy
+msgid "Text Box Color:"
+msgstr "Текст Кутија Боја:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:107
+#, fuzzy
+msgid "The background color of the main text area"
+msgstr "од текст"
+
+#: ../glade/gnome/gnomedruidpageedge.c:108
+#: ../glade/gnome/gnomedruidpagestandard.c:95
+#, fuzzy
+msgid "Logo Image:"
+msgstr "Лого Слика:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:109
+#: ../glade/gnome/gnomedruidpagestandard.c:96
+#, fuzzy
+msgid "The logo to display in the top-right of the page"
+msgstr "до во горе десно од"
+
+#: ../glade/gnome/gnomedruidpageedge.c:110
+#, fuzzy
+msgid "Side Watermark:"
+msgstr "Воден жиг:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:111
+#, fuzzy
+msgid "The main image to display on the side of the page."
+msgstr "до Вклучено од."
+
+#: ../glade/gnome/gnomedruidpageedge.c:112
+#: ../glade/gnome/gnomedruidpagestandard.c:97
+#, fuzzy
+msgid "Top Watermark:"
+msgstr "Горе Воден жиг:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:113
+#, fuzzy
+msgid "The watermark to display at the top of the page."
+msgstr "до горе од."
+
+#: ../glade/gnome/gnomedruidpageedge.c:522
+#, fuzzy
+msgid "Druid Start or Finish Page"
+msgstr "Старт or Крај"
+
+#: ../glade/gnome/gnomedruidpagestandard.c:89
+#, fuzzy
+msgid "Contents Back. Color:"
+msgstr "Содржина Назад Боја:"
+
+#: ../glade/gnome/gnomedruidpagestandard.c:90
+msgid "The background color around the title"
+msgstr ""
+
+#: ../glade/gnome/gnomedruidpagestandard.c:98
+#, fuzzy
+msgid "The image to display along the top of the page"
+msgstr "до горе од"
+
+#: ../glade/gnome/gnomedruidpagestandard.c:447
+#, fuzzy
+msgid "Druid Standard Page"
+msgstr "Стандарден"
+
+#: ../glade/gnome/gnomeentry.c:71 ../glade/gnome/gnomefileentry.c:96
+#: ../glade/gnome/gnomeiconentry.c:74 ../glade/gnome/gnomepixmapentry.c:77
+#, fuzzy
+msgid "History ID:"
+msgstr "Историја ID:"
+
+#: ../glade/gnome/gnomeentry.c:72 ../glade/gnome/gnomefileentry.c:97
+#: ../glade/gnome/gnomeiconentry.c:75 ../glade/gnome/gnomepixmapentry.c:78
+#, fuzzy
+msgid "The ID to save the history entries under"
+msgstr "ID до зачувај"
+
+#: ../glade/gnome/gnomeentry.c:73 ../glade/gnome/gnomefileentry.c:98
+#: ../glade/gnome/gnomeiconentry.c:76 ../glade/gnome/gnomepixmapentry.c:79
+#, fuzzy
+msgid "Max Saved:"
+msgstr "Максимум:"
+
+#: ../glade/gnome/gnomeentry.c:74 ../glade/gnome/gnomefileentry.c:99
+#: ../glade/gnome/gnomeiconentry.c:77 ../glade/gnome/gnomepixmapentry.c:80
+#, fuzzy
+msgid "The maximum number of history entries saved"
+msgstr "број од"
+
+#: ../glade/gnome/gnomeentry.c:210
+#, fuzzy
+msgid "Gnome Entry"
+msgstr "Gnome"
+
+#: ../glade/gnome/gnomefileentry.c:102 ../glade/gnome/gnomeiconentry.c:73
+#: ../glade/gnome/gnomepixmapentry.c:83
+#, fuzzy
+msgid "The title of the file selection dialog"
+msgstr "од датотека"
+
+#: ../glade/gnome/gnomefileentry.c:103
+msgid "Directory:"
+msgstr "Директориум:"
+
+#: ../glade/gnome/gnomefileentry.c:104
+#, fuzzy
+msgid "If a directory is needed rather than a file"
+msgstr "а е а"
+
+#: ../glade/gnome/gnomefileentry.c:106 ../glade/gnome/gnomepixmapentry.c:85
+#, fuzzy
+msgid "If the file selection dialog should be modal"
+msgstr "датотека дијалог"
+
+#: ../glade/gnome/gnomefileentry.c:107 ../glade/gnome/gnomepixmapentry.c:86
+msgid "Use FileChooser:"
+msgstr ""
+
+#: ../glade/gnome/gnomefileentry.c:108 ../glade/gnome/gnomepixmapentry.c:87
+msgid "Use the new GtkFileChooser widget instead of GtkFileSelection"
+msgstr ""
+
+#: ../glade/gnome/gnomefileentry.c:367
+#, fuzzy
+msgid "Gnome File Entry"
+msgstr "Gnome Датотека"
+
+#: ../glade/gnome/gnomefontpicker.c:98
+#, fuzzy
+msgid "The preview text to show in the font selection dialog"
+msgstr "текст до во"
+
+#: ../glade/gnome/gnomefontpicker.c:99
+msgid "Mode:"
+msgstr "Режим:"
+
+#: ../glade/gnome/gnomefontpicker.c:100
+#, fuzzy
+msgid "What to display in the font picker button"
+msgstr "до во"
+
+#: ../glade/gnome/gnomefontpicker.c:107
+#, fuzzy
+msgid "The size of the font to use in the font picker button"
+msgstr "големина од до во"
+
+#: ../glade/gnome/gnomefontpicker.c:392
+#, fuzzy
+msgid "Gnome Font Picker"
+msgstr "Gnome Фонт"
+
+#: ../glade/gnome/gnomehref.c:66
+msgid "URL:"
+msgstr "URL:"
+
+#: ../glade/gnome/gnomehref.c:67
+#, fuzzy
+msgid "The URL to display when the button is clicked"
+msgstr "URL до е"
+
+#: ../glade/gnome/gnomehref.c:69
+#, fuzzy
+msgid "The text to display in the button"
+msgstr "текст до во"
+
+#: ../glade/gnome/gnomehref.c:206
+#, fuzzy
+msgid "Gnome HRef Link Button"
+msgstr "Gnome Линк"
+
+#: ../glade/gnome/gnomeiconentry.c:208
+#, fuzzy
+msgid "Gnome Icon Entry"
+msgstr "Gnome Икона"
+
+#: ../glade/gnome/gnomeiconlist.c:175
+msgid "The selection mode"
+msgstr ""
+
+#: ../glade/gnome/gnomeiconlist.c:177
+#, fuzzy
+msgid "Icon Width:"
+msgstr "Икона Ширина:"
+
+#: ../glade/gnome/gnomeiconlist.c:178
+#, fuzzy
+msgid "The width of each icon"
+msgstr "ширина од"
+
+#: ../glade/gnome/gnomeiconlist.c:181
+#, fuzzy
+msgid "The number of pixels between rows of icons"
+msgstr "број од пиксели помеѓу редици од"
+
+#: ../glade/gnome/gnomeiconlist.c:184
+#, fuzzy
+msgid "The number of pixels between columns of icons"
+msgstr "број од пиксели помеѓу колони од"
+
+#: ../glade/gnome/gnomeiconlist.c:187
+#, fuzzy
+msgid "Icon Border:"
+msgstr "Икона Граница:"
+
+#: ../glade/gnome/gnomeiconlist.c:188
+#, fuzzy
+msgid "The number of pixels around icons (unused?)"
+msgstr "број од пиксели некористено"
+
+#: ../glade/gnome/gnomeiconlist.c:191
+#, fuzzy
+msgid "Text Spacing:"
+msgstr "Текст Растојание:"
+
+#: ../glade/gnome/gnomeiconlist.c:192
+#, fuzzy
+msgid "The number of pixels between the text and the icon"
+msgstr "број од пиксели помеѓу текст и"
+
+#: ../glade/gnome/gnomeiconlist.c:194
+#, fuzzy
+msgid "Text Editable:"
+msgstr "Текст Уредливо:"
+
+#: ../glade/gnome/gnomeiconlist.c:195
+#, fuzzy
+msgid "If the icon text can be edited by the user"
+msgstr "текст од"
+
+#: ../glade/gnome/gnomeiconlist.c:196
+#, fuzzy
+msgid "Text Static:"
+msgstr "Текст Статична:"
+
+#: ../glade/gnome/gnomeiconlist.c:197
+#, fuzzy
+msgid ""
+"If the icon text is static, in which case it will not be copied by the "
+"GnomeIconList"
+msgstr "текст е во не од"
+
+#: ../glade/gnome/gnomeiconlist.c:461
+#, fuzzy
+msgid "Icon List"
+msgstr "Икона"
+
+#: ../glade/gnome/gnomeiconselection.c:154
+#, fuzzy
+msgid "Icon Selection"
+msgstr "Икона"
+
+#: ../glade/gnome/gnomemessagebox.c:174
+#, fuzzy
+msgid "Message Type:"
+msgstr "Порака Тип:"
+
+#: ../glade/gnome/gnomemessagebox.c:175
+#, fuzzy
+msgid "The type of the message box"
+msgstr "тип од"
+
+#: ../glade/gnome/gnomemessagebox.c:177
+msgid "Message:"
+msgstr "Порака:"
+
+#: ../glade/gnome/gnomemessagebox.c:177
+#, fuzzy
+msgid "The message to display"
+msgstr "до"
+
+#: ../glade/gnome/gnomemessagebox.c:498
+#, fuzzy
+msgid "Gnome Message Box"
+msgstr "Gnome Порака"
+
+#: ../glade/gnome/gnomepixmap.c:79
+msgid "The pixmap filename"
+msgstr ""
+
+#: ../glade/gnome/gnomepixmap.c:80
+#, fuzzy
+msgid "Scaled:"
+msgstr "Раширено:"
+
+#: ../glade/gnome/gnomepixmap.c:80
+#, fuzzy
+msgid "If the pixmap is scaled"
+msgstr "е"
+
+#: ../glade/gnome/gnomepixmap.c:81
+#, fuzzy
+msgid "Scaled Width:"
+msgstr "Раширено Ширина:"
+
+#: ../glade/gnome/gnomepixmap.c:82
+#, fuzzy
+msgid "The width to scale the pixmap to"
+msgstr "ширина до"
+
+#: ../glade/gnome/gnomepixmap.c:84
+#, fuzzy
+msgid "Scaled Height:"
+msgstr "Раширено Висина:"
+
+#: ../glade/gnome/gnomepixmap.c:85
+#, fuzzy
+msgid "The height to scale the pixmap to"
+msgstr "висина до"
+
+#: ../glade/gnome/gnomepixmap.c:346
+#, fuzzy
+msgid "Gnome Pixmap"
+msgstr "Gnome"
+
+#: ../glade/gnome/gnomepixmapentry.c:75
+msgid "Preview:"
+msgstr "Преглед:"
+
+#: ../glade/gnome/gnomepixmapentry.c:76
+#, fuzzy
+msgid "If a small preview of the pixmap is displayed"
+msgstr "а од е"
+
+#: ../glade/gnome/gnomepixmapentry.c:303
+msgid "GnomePixmapEntry"
+msgstr ""
+
+#: ../glade/gnome/gnomepropertybox.c:112
+#, fuzzy
+msgid "New GnomePropertyBox"
+msgstr "Ново"
+
+#: ../glade/gnome/gnomepropertybox.c:365
+#, fuzzy
+msgid "Property Dialog Box"
+msgstr "Својство Дијалог"
+
+#: ../glade/main.c:70
+#, fuzzy
+msgid "Write the source code and exit"
+msgstr "Запис и"
+
+#: ../glade/main.c:74
+#, fuzzy
+msgid "Start with the palette hidden"
+msgstr "Старт"
+
+#: ../glade/main.c:78
+#, fuzzy
+msgid "Start with the property editor hidden"
+msgstr "Старт"
+
+#: ../glade/main.c:436
+#, fuzzy
+msgid ""
+"glade: The XML file must be set for the '-w' or '--write-source' option.\n"
+msgstr "XML датотека за or"
+
+#: ../glade/main.c:450
+#, fuzzy
+msgid "glade: Error loading XML file.\n"
+msgstr "Грешка вчитувам XML датотека"
+
+#: ../glade/main.c:457
+#, fuzzy
+msgid "glade: Error writing source.\n"
+msgstr "Грешка"
+
+#: ../glade/palette.c:60
+msgid "Palette"
+msgstr "Палета"
+
+#: ../glade/property.c:73
+msgid "private"
+msgstr "приватно"
+
+#: ../glade/property.c:73
+msgid "protected"
+msgstr "заштитено"
+
+#: ../glade/property.c:73
+msgid "public"
+msgstr "јавно"
+
+#: ../glade/property.c:102
+msgid "Prelight"
+msgstr ""
+
+#: ../glade/property.c:103
+msgid "Selected"
+msgstr "Селектирано"
+
+#: ../glade/property.c:103
+msgid "Insens"
+msgstr ""
+
+#: ../glade/property.c:467
+msgid "When the window needs redrawing"
+msgstr ""
+
+#: ../glade/property.c:468
+msgid "When the mouse moves"
+msgstr ""
+
+#: ../glade/property.c:469
+#, fuzzy
+msgid "Mouse movement hints"
+msgstr "Глушец"
+
+#: ../glade/property.c:470
+#, fuzzy
+msgid "Mouse movement with any button pressed"
+msgstr "Глушец"
+
+#: ../glade/property.c:471
+#, fuzzy
+msgid "Mouse movement with button 1 pressed"
+msgstr "Глушец"
+
+#: ../glade/property.c:472
+#, fuzzy
+msgid "Mouse movement with button 2 pressed"
+msgstr "Глушец"
+
+#: ../glade/property.c:473
+#, fuzzy
+msgid "Mouse movement with button 3 pressed"
+msgstr "Глушец"
+
+#: ../glade/property.c:474
+#, fuzzy
+msgid "Any mouse button pressed"
+msgstr "Секоја"
+
+#: ../glade/property.c:475
+#, fuzzy
+msgid "Any mouse button released"
+msgstr "Секоја"
+
+#: ../glade/property.c:476
+#, fuzzy
+msgid "Any key pressed"
+msgstr "Секоја"
+
+#: ../glade/property.c:477
+#, fuzzy
+msgid "Any key released"
+msgstr "Секоја"
+
+#: ../glade/property.c:478
+msgid "When the mouse enters the window"
+msgstr ""
+
+#: ../glade/property.c:479
+msgid "When the mouse leaves the window"
+msgstr ""
+
+#: ../glade/property.c:480
+#, fuzzy
+msgid "Any change in input focus"
+msgstr "Секоја во"
+
+#: ../glade/property.c:481
+#, fuzzy
+msgid "Any change in window structure"
+msgstr "Секоја во"
+
+#: ../glade/property.c:482
+#, fuzzy
+msgid "Any change in X Windows property"
+msgstr "Секоја во X Прозорци"
+
+#: ../glade/property.c:483
+#, fuzzy
+msgid "Any change in visibility"
+msgstr "Секоја во"
+
+#: ../glade/property.c:484 ../glade/property.c:485
+#, fuzzy
+msgid "For cursors in XInput-aware programs"
+msgstr "За во"
+
+#: ../glade/property.c:596
+msgid "Properties"
+msgstr "Својства"
+
+#: ../glade/property.c:620
+msgid "Packing"
+msgstr ""
+
+#: ../glade/property.c:625
+msgid "Common"
+msgstr ""
+
+#: ../glade/property.c:631
+msgid "Style"
+msgstr "Стил"
+
+#: ../glade/property.c:637 ../glade/property.c:4640
+msgid "Signals"
+msgstr ""
+
+#: ../glade/property.c:700 ../glade/property.c:721
+msgid "Properties: "
+msgstr "Својства: "
+
+#: ../glade/property.c:708 ../glade/property.c:732
+#, fuzzy
+msgid "Properties: <none>"
+msgstr "Својства<none>"
+
+#: ../glade/property.c:778
+msgid "Class:"
+msgstr "Класа:"
+
+#: ../glade/property.c:779
+#, fuzzy
+msgid "The class of the widget"
+msgstr "од"
+
+#: ../glade/property.c:813
+msgid "Width:"
+msgstr "Ширина:"
+
+#: ../glade/property.c:814
+#, fuzzy
+msgid ""
+"The requested width of the widget (usually used to set the minimum width)"
+msgstr "ширина од до ширина"
+
+#: ../glade/property.c:816
+msgid "Height:"
+msgstr "Висина:"
+
+#: ../glade/property.c:817
+#, fuzzy
+msgid ""
+"The requested height of the widget (usually used to set the minimum height)"
+msgstr "висина од до висина"
+
+#: ../glade/property.c:820
+msgid "Visible:"
+msgstr "Видливо:"
+
+#: ../glade/property.c:821
+#, fuzzy
+msgid "If the widget is initially visible"
+msgstr "е"
+
+#: ../glade/property.c:822
+msgid "Sensitive:"
+msgstr ""
+
+#: ../glade/property.c:823
+#, fuzzy
+msgid "If the widget responds to input"
+msgstr "до"
+
+#: ../glade/property.c:825
+#, fuzzy
+msgid "The tooltip to display if the mouse lingers over the widget"
+msgstr "до"
+
+#: ../glade/property.c:827
+#, fuzzy
+msgid "Can Default:"
+msgstr "Стандардно:"
+
+#: ../glade/property.c:828
+#, fuzzy
+msgid "If the widget can be the default action in a dialog"
+msgstr "стандардно во а"
+
+#: ../glade/property.c:829
+#, fuzzy
+msgid "Has Default:"
+msgstr "Стандардно:"
+
+#: ../glade/property.c:830
+#, fuzzy
+msgid "If the widget is the default action in the dialog"
+msgstr "е стандардно во"
+
+#: ../glade/property.c:831
+#, fuzzy
+msgid "Can Focus:"
+msgstr "Фокусирање:"
+
+#: ../glade/property.c:832
+msgid "If the widget can accept the input focus"
+msgstr ""
+
+#: ../glade/property.c:833
+#, fuzzy
+msgid "Has Focus:"
+msgstr "Фокусирање:"
+
+#: ../glade/property.c:834
+#, fuzzy
+msgid "If the widget has the input focus"
+msgstr "има"
+
+#: ../glade/property.c:836
+#, fuzzy
+msgid "Events:"
+msgstr "Настани:"
+
+#: ../glade/property.c:837
+#, fuzzy
+msgid "The X events that the widget receives"
+msgstr "X"
+
+#: ../glade/property.c:839
+#, fuzzy
+msgid "Ext.Events:"
+msgstr "Настани:"
+
+#: ../glade/property.c:840
+#, fuzzy
+msgid "The X Extension events mode"
+msgstr "X Наставка"
+
+#: ../glade/property.c:843
+msgid "Accelerators:"
+msgstr ""
+
+#: ../glade/property.c:844
+#, fuzzy
+msgid "Defines the signals to emit when keys are pressed"
+msgstr "Дефинирања до"
+
+#: ../glade/property.c:845
+msgid "Edit..."
+msgstr "Уреди..."
+
+#: ../glade/property.c:867
+msgid "Propagate:"
+msgstr ""
+
+#: ../glade/property.c:868
+#, fuzzy
+msgid "Set True to propagate the style to the widget's children"
+msgstr "Постави Точно до до s"
+
+#: ../glade/property.c:869
+#, fuzzy
+msgid "Named Style:"
+msgstr "Стил:"
+
+#: ../glade/property.c:870
+#, fuzzy
+msgid "The name of the style, which can be shared by several widgets"
+msgstr "име од од"
+
+#: ../glade/property.c:872
+msgid "Font:"
+msgstr "Фонт:"
+
+#: ../glade/property.c:873
+#, fuzzy
+msgid "The font to use for any text in the widget"
+msgstr "до за текст во"
+
+#: ../glade/property.c:898
+#, fuzzy
+msgid "Copy All"
+msgstr "Копирај"
+
+#: ../glade/property.c:926
+msgid "Foreground:"
+msgstr "Предница:"
+
+#: ../glade/property.c:926
+msgid "Background:"
+msgstr "Позадина:"
+
+#: ../glade/property.c:926
+#, fuzzy
+msgid "Base:"
+msgstr "Основа:"
+
+#: ../glade/property.c:928
+msgid "Foreground color"
+msgstr ""
+
+#: ../glade/property.c:928
+msgid "Background color"
+msgstr "Боја на позадина"
+
+#: ../glade/property.c:928
+msgid "Text color"
+msgstr "Боја на текст"
+
+#: ../glade/property.c:929
+#, fuzzy
+msgid "Base color"
+msgstr "Основа"
+
+#: ../glade/property.c:946
+#, fuzzy
+msgid "Back. Pixmap:"
+msgstr "Назад Сликичка:"
+
+#: ../glade/property.c:947
+#, fuzzy
+msgid "The graphic to use as the background of the widget"
+msgstr "графика до од"
+
+#: ../glade/property.c:999
+#, fuzzy
+msgid "The file to write source code into"
+msgstr "датотека до"
+
+#: ../glade/property.c:1000
+#, fuzzy
+msgid "Public:"
+msgstr "Јавно:"
+
+#: ../glade/property.c:1001
+#, fuzzy
+msgid "If the widget is added to the component's data structure"
+msgstr "е до компонента s податоци"
+
+#: ../glade/property.c:1012
+#, fuzzy
+msgid "Separate Class:"
+msgstr "Одделно Класа:"
+
+#: ../glade/property.c:1013
+#, fuzzy
+msgid "Put this widget's subtree in a separate class"
+msgstr "s во а"
+
+#: ../glade/property.c:1014
+#, fuzzy
+msgid "Separate File:"
+msgstr "Одделно Датотека:"
+
+#: ../glade/property.c:1015
+#, fuzzy
+msgid "Put this widget in a separate source file"
+msgstr "во а"
+
+#: ../glade/property.c:1016
+msgid "Visibility:"
+msgstr "Видливост:"
+
+#: ../glade/property.c:1017
+#, fuzzy
+msgid "Visibility of widgets. Public widgets are exported to a global map."
+msgstr "Прегледност од Јавно до а."
+
+#: ../glade/property.c:1126
+#, fuzzy
+msgid "You need to select a color or background to copy"
+msgstr "Вие до избери а or до"
+
+#: ../glade/property.c:1145
+#, fuzzy
+msgid "Invalid selection in on_style_copy()"
+msgstr "Невавалидно во Вклучено копирај"
+
+#: ../glade/property.c:1187
+#, fuzzy
+msgid "You need to copy a color or background pixmap first"
+msgstr "Вие до копирај а or"
+
+#: ../glade/property.c:1193
+#, fuzzy
+msgid "You need to select a color to paste into"
+msgstr "Вие до избери а до вметни"
+
+#: ../glade/property.c:1203
+#, fuzzy
+msgid "You need to select a background pixmap to paste into"
+msgstr "Вие до избери а до вметни"
+
+#: ../glade/property.c:1455
+#, fuzzy
+msgid "Couldn't create pixmap from file\n"
+msgstr "од датотека"
+
+#. List of current signal handlers - Signal/Handler/Data/Options
+#: ../glade/property.c:1497
+msgid "Signal"
+msgstr "Сигнал"
+
+#: ../glade/property.c:1499
+msgid "Data"
+msgstr "Податоци"
+
+#: ../glade/property.c:1500
+msgid "After"
+msgstr "После"
+
+#: ../glade/property.c:1501
+msgid "Object"
+msgstr "Објект"
+
+#: ../glade/property.c:1532 ../glade/property.c:1696
+#, fuzzy
+msgid "Signal:"
+msgstr "Сигнал:"
+
+#: ../glade/property.c:1533
+#, fuzzy
+msgid "The signal to add a handler for"
+msgstr "до а"
+
+#: ../glade/property.c:1547
+#, fuzzy
+msgid "The function to handle the signal"
+msgstr "функција до"
+
+#: ../glade/property.c:1550
+#, fuzzy
+msgid "Data:"
+msgstr "Податоци:"
+
+#: ../glade/property.c:1551
+#, fuzzy
+msgid "The data passed to the handler"
+msgstr "податоци до"
+
+#: ../glade/property.c:1552
+msgid "Object:"
+msgstr "Објект:"
+
+#: ../glade/property.c:1553
+msgid "The object which receives the signal"
+msgstr ""
+
+#: ../glade/property.c:1554
+msgid "After:"
+msgstr "После:"
+
+#: ../glade/property.c:1555
+#, fuzzy
+msgid "If the handler runs after the class function"
+msgstr "после"
+
+#: ../glade/property.c:1568
+msgid "Add"
+msgstr "Додај"
+
+#: ../glade/property.c:1574
+msgid "Update"
+msgstr "Надградба"
+
+#: ../glade/property.c:1586
+msgid "Clear"
+msgstr "Избриши"
+
+#: ../glade/property.c:1636
+msgid "Accelerators"
+msgstr ""
+
+#. List of current accelerators - Mods/Keys/Signals
+#: ../glade/property.c:1649
+msgid "Mod"
+msgstr ""
+
+#: ../glade/property.c:1650
+msgid "Key"
+msgstr "Копче"
+
+#: ../glade/property.c:1651
+#, fuzzy
+msgid "Signal to emit"
+msgstr "Сигнал до"
+
+#: ../glade/property.c:1695
+msgid "The accelerator key"
+msgstr ""
+
+#: ../glade/property.c:1697
+#, fuzzy
+msgid "The signal to emit when the accelerator is pressed"
+msgstr "до е"
+
+#: ../glade/property.c:1846
+msgid "Edit Text Property"
+msgstr ""
+
+#: ../glade/property.c:1884
+msgid "<b>_Text:</b>"
+msgstr ""
+
+#: ../glade/property.c:1894
+#, fuzzy
+msgid "T_ranslatable"
+msgstr "Стрингови:"
+
+#: ../glade/property.c:1898
+msgid "Has Context _Prefix"
+msgstr ""
+
+#: ../glade/property.c:1924
+msgid "<b>Co_mments For Translators:</b>"
+msgstr ""
+
+#: ../glade/property.c:3886
+#, fuzzy
+msgid "Select X Events"
+msgstr "Избор X"
+
+#: ../glade/property.c:3895
+#, fuzzy
+msgid "Event Mask"
+msgstr "Настан"
+
+#: ../glade/property.c:4025 ../glade/property.c:4074
+#, fuzzy
+msgid "You need to set the accelerator key"
+msgstr "Вие до"
+
+#: ../glade/property.c:4032 ../glade/property.c:4081
+#, fuzzy
+msgid "You need to set the signal to emit"
+msgstr "Вие до до"
+
+#: ../glade/property.c:4308 ../glade/property.c:4364
+#, fuzzy
+msgid "You need to set the signal name"
+msgstr "Вие до"
+
+#: ../glade/property.c:4315 ../glade/property.c:4371
+#, fuzzy
+msgid "You need to set the handler for the signal"
+msgstr "Вие до за"
+
+#. This groups the signals by class, e.g. 'GtkButton signals'.
+#: ../glade/property.c:4574
+#, fuzzy, c-format
+msgid "%s signals"
+msgstr "s"
+
+#: ../glade/property.c:4631
+#, fuzzy
+msgid "Select Signal"
+msgstr "Избор"
+
+#: ../glade/property.c:4827
+msgid "Value:"
+msgstr "Вредност:"
+
+#: ../glade/property.c:4827
+#, fuzzy
+msgid "Min:"
+msgstr "Минимум:"
+
+#: ../glade/property.c:4827
+#, fuzzy
+msgid "Step Inc:"
+msgstr "Чекор:"
+
+#: ../glade/property.c:4828
+#, fuzzy
+msgid "Page Inc:"
+msgstr "Страница:"
+
+#: ../glade/property.c:4828
+#, fuzzy
+msgid "Page Size:"
+msgstr "Страница Големина:"
+
+#: ../glade/property.c:4830
+#, fuzzy
+msgid "H Value:"
+msgstr "Вредност:"
+
+#: ../glade/property.c:4830
+#, fuzzy
+msgid "H Min:"
+msgstr "Минимум:"
+
+#: ../glade/property.c:4830
+#, fuzzy
+msgid "H Max:"
+msgstr "Максимум:"
+
+#: ../glade/property.c:4830
+#, fuzzy
+msgid "H Step Inc:"
+msgstr "Чекор:"
+
+#: ../glade/property.c:4831
+#, fuzzy
+msgid "H Page Inc:"
+msgstr "Страница:"
+
+#: ../glade/property.c:4831
+#, fuzzy
+msgid "H Page Size:"
+msgstr "Страница Големина:"
+
+#: ../glade/property.c:4833
+#, fuzzy
+msgid "V Value:"
+msgstr "Вредност:"
+
+#: ../glade/property.c:4833
+#, fuzzy
+msgid "V Min:"
+msgstr "Минимум:"
+
+#: ../glade/property.c:4833
+#, fuzzy
+msgid "V Max:"
+msgstr "Максимум:"
+
+#: ../glade/property.c:4833
+#, fuzzy
+msgid "V Step Inc:"
+msgstr "Чекор:"
+
+#: ../glade/property.c:4834
+#, fuzzy
+msgid "V Page Inc:"
+msgstr "Страница:"
+
+#: ../glade/property.c:4834
+#, fuzzy
+msgid "V Page Size:"
+msgstr "Страница Големина:"
+
+#: ../glade/property.c:4837
+msgid "The initial value"
+msgstr ""
+
+#: ../glade/property.c:4838
+msgid "The minimum value"
+msgstr ""
+
+#: ../glade/property.c:4839
+msgid "The maximum value"
+msgstr ""
+
+#: ../glade/property.c:4840
+msgid "The step increment"
+msgstr ""
+
+#: ../glade/property.c:4841
+msgid "The page increment"
+msgstr ""
+
+#: ../glade/property.c:4842
+msgid "The page size"
+msgstr ""
+
+#: ../glade/property.c:4997
+#, fuzzy
+msgid "The requested font is not available."
+msgstr "е не достапен."
+
+#: ../glade/property.c:5046
+#, fuzzy
+msgid "Select Named Style"
+msgstr "Избор"
+
+#: ../glade/property.c:5057
+msgid "Styles"
+msgstr "Стилови"
+
+#: ../glade/property.c:5116
+msgid "Rename"
+msgstr "Преименувај"
+
+#: ../glade/property.c:5144
+msgid "Cancel"
+msgstr "Откажи"
+
+#: ../glade/property.c:5264
+#, fuzzy
+msgid "New Style:"
+msgstr "Ново Стил:"
+
+#: ../glade/property.c:5278 ../glade/property.c:5399
+#, fuzzy
+msgid "Invalid style name"
+msgstr "Невавалидно"
+
+#: ../glade/property.c:5286 ../glade/property.c:5409
+#, fuzzy
+msgid "That style name is already in use"
+msgstr "име е во"
+
+#: ../glade/property.c:5384
+#, fuzzy
+msgid "Rename Style To:"
+msgstr "Преименувај Стил До:"
+
+#: ../glade/save.c:139 ../glade/source.c:2771
+#, fuzzy, c-format
+msgid ""
+"Couldn't rename file:\n"
+"  %s\n"
+"to:\n"
+"  %s\n"
+msgstr ""
+"датотека\n"
+" s\n"
+" s"
+
+#: ../glade/save.c:174 ../glade/save.c:225 ../glade/save.c:947
+#: ../glade/source.c:358 ../glade/source.c:373 ../glade/source.c:391
+#: ../glade/source.c:404 ../glade/source.c:815 ../glade/source.c:1043
+#: ../glade/source.c:1134 ../glade/source.c:1328 ../glade/source.c:1423
+#: ../glade/source.c:1643 ../glade/source.c:1732 ../glade/source.c:1784
+#: ../glade/source.c:1848 ../glade/source.c:1895 ../glade/source.c:2032
+#: ../glade/utils.c:1147
+#, fuzzy, c-format
+msgid ""
+"Couldn't create file:\n"
+"  %s\n"
+msgstr ""
+"датотека\n"
+" s"
+
+#: ../glade/save.c:848
+#, fuzzy
+msgid "Error writing XML file\n"
+msgstr "Грешка XML датотека"
+
+#: ../glade/save.c:953
+#, fuzzy, c-format
+msgid ""
+"/*\n"
+" * Translatable strings file generated by Glade.\n"
+" * Add this file to your project's POTFILES.in.\n"
+" * DO NOT compile it as part of your application.\n"
+" */\n"
+"\n"
+msgstr ""
+"\n"
+" датотека од\n"
+" Додај датотека до s во\n"
+" NOT од\n"
+" н"
+
+#: ../glade/source.c:184
+#, fuzzy, c-format
+msgid ""
+"Invalid interface source filename: %s\n"
+"%s\n"
+msgstr "Невавалидно s н s"
+
+#: ../glade/source.c:186
+#, fuzzy, c-format
+msgid ""
+"Invalid interface header filename: %s\n"
+"%s\n"
+msgstr "Невавалидно s н s"
+
+#: ../glade/source.c:189
+#, fuzzy, c-format
+msgid ""
+"Invalid callbacks source filename: %s\n"
+"%s\n"
+msgstr "Невавалидно s н s"
+
+#: ../glade/source.c:191
+#, fuzzy, c-format
+msgid ""
+"Invalid callbacks header filename: %s\n"
+"%s\n"
+msgstr "Невавалидно s н s"
+
+#: ../glade/source.c:197
+#, fuzzy, c-format
+msgid ""
+"Invalid support source filename: %s\n"
+"%s\n"
+msgstr "Невавалидно s н s"
+
+#: ../glade/source.c:199
+#, fuzzy, c-format
+msgid ""
+"Invalid support header filename: %s\n"
+"%s\n"
+msgstr "Невавалидно s н s"
+
+#: ../glade/source.c:418 ../glade/source.c:426
+#, fuzzy, c-format
+msgid ""
+"Couldn't append to file:\n"
+"  %s\n"
+msgstr ""
+"до датотека\n"
+" s"
+
+#: ../glade/source.c:1724 ../glade/utils.c:1168
+#, fuzzy, c-format
+msgid ""
+"Error writing to file:\n"
+"  %s\n"
+msgstr ""
+"Грешка до датотека\n"
+" s"
+
+#: ../glade/source.c:2743
+#, fuzzy
+msgid "The filename must be set in the Project Options dialog."
+msgstr "во Проект Опции дијалог."
+
+#: ../glade/source.c:2746
+#, fuzzy
+msgid ""
+"The filename must be a simple relative filename.\n"
+"Use the Project Options dialog to set it."
+msgstr "а релативен Проект Опции дијалог до."
+
+#: ../glade/tree.c:78
+#, fuzzy
+msgid "Widget Tree"
+msgstr "Елемент"
+
+#: ../glade/utils.c:900 ../glade/utils.c:940
+#, fuzzy
+msgid "Widget not found in box"
+msgstr "Елемент не во"
+
+#: ../glade/utils.c:920
+#, fuzzy
+msgid "Widget not found in table"
+msgstr "Елемент не во"
+
+#: ../glade/utils.c:960
+#, fuzzy
+msgid "Widget not found in fixed container"
+msgstr "Елемент не во статично"
+
+#: ../glade/utils.c:981
+#, fuzzy
+msgid "Widget not found in packer"
+msgstr "Елемент не во"
+
+#: ../glade/utils.c:1118
+#, fuzzy, c-format
+msgid ""
+"Couldn't access file:\n"
+"  %s\n"
+msgstr ""
+"датотека\n"
+" s"
+
+#: ../glade/utils.c:1141
+#, fuzzy, c-format
+msgid ""
+"Couldn't open file:\n"
+"  %s\n"
+msgstr ""
+"отвори датотека\n"
+" s"
+
+#: ../glade/utils.c:1158
+#, fuzzy, c-format
+msgid ""
+"Error reading from file:\n"
+"  %s\n"
+msgstr ""
+"Грешка од датотека\n"
+" s"
+
+#. This happens under WIN32 when stat is confused by the filename, but this is
+#. harmless, since we know that the directory exists after all.
+#: ../glade/utils.c:1225
+#, fuzzy, c-format
+msgid ""
+"Couldn't create directory:\n"
+"  %s\n"
+msgstr ""
+"\n"
+" s"
+
+#: ../glade/utils.c:1232
+#, fuzzy, c-format
+msgid ""
+"Couldn't access directory:\n"
+"  %s\n"
+msgstr ""
+"\n"
+" s"
+
+#: ../glade/utils.c:1240
+#, fuzzy, c-format
+msgid ""
+"Invalid directory:\n"
+"  %s\n"
+msgstr ""
+"Невавалидно\n"
+" s"
+
+#: ../glade/utils.c:1611
+msgid "Projects"
+msgstr ""
+
+#: ../glade/utils.c:1628
+msgid "project"
+msgstr ""
+
+#: ../glade/utils.c:1634
+#, fuzzy, c-format
+msgid ""
+"Couldn't open directory:\n"
+"  %s\n"
+msgstr ""
+"отвори\n"
+" s"

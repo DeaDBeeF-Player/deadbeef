@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<omf>
+  <resource>
+    <creator>
+      docs@gnome.org (GDP)
+    </creator>
+    <maintainer>
+      docs@gnome.org (GDP)
+    </maintainer>
+    <title>
+      Glade Manual V2.1
+    </title>
+    <date>
+      2004-06-17
+    </date>
+    <version identifier="2.1" date="2004-06-17" description="Updated for GNOME 2.6, program version 2.0.0"/>
+    <subject category="GNOME|Applications|Programming"/>
+    <description>
+      User manual for the Glade application. 
+    </description>
+    <type>
+      user's guide
+    </type>
+    <format mime="text/xml" dtd="-//OASIS//DTD DocBook XML V4.1.2//EN"/>
+    <identifier url="glade-user-guide.xml"/>
+    <language code="C"/>
+    <relation seriesid="15c7f60c-3093-11d8-924d-b89741557cdb"/>
+    <rights type="GNU FDL" license.version="1.1" holder="Sun Microsystems, Michael Vance"/>
+  </resource>
+</omf>

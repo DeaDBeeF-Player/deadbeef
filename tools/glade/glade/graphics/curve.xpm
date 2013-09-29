@@ -1,0 +1,32 @@
+/* XPM */
+static char *curve_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"21 21 5 1",
+"  c Gray0",
+". c #7b7b7b",
+"X c #d6d6d6",
+"o c #b3cece",
+"O c None",
+/* pixels */
+"OOOOOOOOOOOOOOOOOOOOO",
+"OOOOOOOOOOOOOOOOOOOOO",
+"OO.................OO",
+"OO.XXX.XXX.XXX.X  .OO",
+"OO.XXX.XXX.XXX   X.OO",
+"OO.XXX.XXX.X   XXX.OO",
+"OO........   ......OO",
+"OO.XXX.XX  XXX.XXX.OO",
+"OO.XXX.X  .XXX.XXX.OO",
+"OO.XXX.  X.XXX.XXX.OO",
+"OO....  ...........OO",
+"OO.XXX XXX.XXX.XXX.OO",
+"OO.XX .XXX.XXX.XXX.OO",
+"OO.XX .XXX.XXX.XXX.OO",
+"OO..  .............OO",
+"OO.X X.XXX.XXX.XXX.OO",
+"OO.  X.XXX.XXX.XXX.OO",
+"OO. XX.XXX.XXX.XXX.OO",
+"OO.................OO",
+"OOOOOOOOOOOOOOOOOOOOO",
+"OOOOOOOOOOOOOOOOOOOOO"
+};

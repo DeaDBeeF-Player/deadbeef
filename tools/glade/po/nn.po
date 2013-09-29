@@ -1,0 +1,6484 @@
+# Norwegian (nynorsk) translation of glade.
+# Copyright (C) 2000 Gaute Hvoslef Kvalnes.
+# Gaute Hvoslef Kvalnes <ai98ghk@stud.hib.no>, 2000
+# Kjartan Maraas <kmaraas@gnome.org>, 2001.
+msgid ""
+msgstr ""
+"Project-Id-Version: glade 0.6.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2005-08-26 13:38+0200\n"
+"PO-Revision-Date: 2001-06-25 18:55+02:00\n"
+"Last-Translator: Kjartan Maraas <kmaraas@gnome.org>\n"
+"Language-Team: Norwegian (Nynorsk)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../glade-2.desktop.in.h:1
+msgid "Design user interfaces"
+msgstr ""
+
+#: ../glade-2.desktop.in.h:2
+msgid "Glade Interface Designer"
+msgstr ""
+
+#: ../glade/editor.c:343
+msgid "Grid Options"
+msgstr "Val for rutenett"
+
+#: ../glade/editor.c:357
+msgid "Horizontal Spacing:"
+msgstr "Vassrett mellomrom:"
+
+#: ../glade/editor.c:372
+#, fuzzy
+msgid "Vertical Spacing:"
+msgstr "Vertikal justering"
+
+#: ../glade/editor.c:390
+#, fuzzy
+msgid "Grid Style:"
+msgstr "Overgangsstil:"
+
+#: ../glade/editor.c:396
+#, fuzzy
+msgid "Dots"
+msgstr "DOS"
+
+#: ../glade/editor.c:405
+msgid "Lines"
+msgstr "Linjer"
+
+#: ../glade/editor.c:487
+#, fuzzy
+msgid "Snap Options"
+msgstr "Lagra val"
+
+#. Horizontal snapping
+#: ../glade/editor.c:502
+#, fuzzy
+msgid "Horizontal Snapping:"
+msgstr "Horisontal justering"
+
+#: ../glade/editor.c:508 ../glade/gbwidgets/gbtextview.c:49
+msgid "Left"
+msgstr "Venstre"
+
+#: ../glade/editor.c:517 ../glade/gbwidgets/gbtextview.c:50
+msgid "Right"
+msgstr "Høgre"
+
+#. Vertical snapping
+#: ../glade/editor.c:526
+#, fuzzy
+msgid "Vertical Snapping:"
+msgstr "Vertikal justering"
+
+#: ../glade/editor.c:532
+msgid "Top"
+msgstr "Topp"
+
+#: ../glade/editor.c:540
+msgid "Bottom"
+msgstr "Botn"
+
+#: ../glade/editor.c:741
+msgid "GtkToolItem widgets can only be added to a GtkToolbar."
+msgstr ""
+
+#: ../glade/editor.c:758
+msgid "Couldn't insert a GtkScrolledWindow widget."
+msgstr ""
+
+#: ../glade/editor.c:805
+msgid "Couldn't insert a GtkViewport widget."
+msgstr ""
+
+#: ../glade/editor.c:832
+#, fuzzy
+msgid "Couldn't add new widget."
+msgstr "Kunne ikkje lasta fila."
+
+#: ../glade/editor.c:1230
+msgid ""
+"You can't add a widget at the selected position.\n"
+"\n"
+"Tip: GTK+ uses containers to lay out widgets.\n"
+"Try deleting the existing widget and using\n"
+"a box or table container instead.\n"
+msgstr ""
+
+#: ../glade/editor.c:3517
+#, fuzzy
+msgid "Couldn't delete widget."
+msgstr "Kunne ikkje sletta fila %1"
+
+#: ../glade/editor.c:3541 ../glade/editor.c:3545
+#, fuzzy
+msgid "The widget can't be deleted"
+msgstr "Denne mappa kan ikkje slettast."
+
+#: ../glade/editor.c:3572
+msgid ""
+"The widget is created automatically as part of the parent widget, and it "
+"can't be deleted."
+msgstr ""
+
+#: ../glade/gbwidget.c:697
+#, fuzzy
+msgid "Border Width:"
+msgstr "Breidd på rammekantlinje"
+
+#: ../glade/gbwidget.c:698
+msgid "The width of the border around the container"
+msgstr ""
+
+#: ../glade/gbwidget.c:1745
+msgid "Select"
+msgstr "Vel"
+
+#: ../glade/gbwidget.c:1767
+#, fuzzy
+msgid "Remove Scrolled Window"
+msgstr "Fjern post"
+
+#: ../glade/gbwidget.c:1776
+#, fuzzy
+msgid "Add Scrolled Window"
+msgstr "Vis alle &vindauga"
+
+#: ../glade/gbwidget.c:1797
+#, fuzzy
+msgid "Remove Alignment"
+msgstr "Fjern element"
+
+#: ../glade/gbwidget.c:1805
+#, fuzzy
+msgid "Add Alignment"
+msgstr "Justering"
+
+#: ../glade/gbwidget.c:1820
+#, fuzzy
+msgid "Remove Event Box"
+msgstr "Fjer&n boks"
+
+#: ../glade/gbwidget.c:1828
+#, fuzzy
+msgid "Add Event Box"
+msgstr "Legg til &boks"
+
+#: ../glade/gbwidget.c:1838
+#, fuzzy
+msgid "Redisplay"
+msgstr "Frisk &opp"
+
+#: ../glade/gbwidget.c:1849
+msgid "Cut"
+msgstr "Klipp ut"
+
+#: ../glade/gbwidget.c:1856 ../glade/property.c:892 ../glade/property.c:5135
+msgid "Copy"
+msgstr "Kopier"
+
+#: ../glade/gbwidget.c:1865 ../glade/property.c:904
+msgid "Paste"
+msgstr "Lim inn"
+
+#: ../glade/gbwidget.c:1877 ../glade/property.c:1580 ../glade/property.c:5126
+msgid "Delete"
+msgstr "Slett"
+
+#. N/A stands for 'Not Applicable'. It is used when a standard widget
+#. property does not apply to the current widget. e.g. widgets without
+#. windows can't use the Events property. This appears in the property
+#. editor and so should be a short abbreviation.
+#: ../glade/gbwidget.c:2403 ../glade/gbwidget.c:2472
+msgid "N/A"
+msgstr "I/T"
+
+#. General code for container - has to remove all children and add back
+#. NOTE: this may not work for specialised containers.
+#. NOTE: need to ref widgets?
+#: ../glade/gbwidget.c:3202
+#, fuzzy
+msgid "replacing child of container - not implemented yet\n"
+msgstr "Importering av søkjemotorinnstillingar er ikkje implementert enno."
+
+#: ../glade/gbwidget.c:3430
+#, fuzzy
+msgid "Couldn't insert GtkAlignment widget."
+msgstr "Kunne ikkje setja inn dokument"
+
+#: ../glade/gbwidget.c:3470
+msgid "Couldn't remove GtkAlignment widget."
+msgstr ""
+
+#: ../glade/gbwidget.c:3494
+#, fuzzy
+msgid "Couldn't insert GtkEventBox widget."
+msgstr "Kunne ikkje setja inn dokument"
+
+#: ../glade/gbwidget.c:3533
+#, fuzzy
+msgid "Couldn't remove GtkEventBox widget."
+msgstr "Kunne ikkje fjerna fil eller katalog\n"
+
+#: ../glade/gbwidget.c:3568
+msgid "Couldn't insert GtkScrolledWindow widget."
+msgstr ""
+
+#: ../glade/gbwidget.c:3607
+msgid "Couldn't remove GtkScrolledWindow widget."
+msgstr ""
+
+#: ../glade/gbwidget.c:3721
+#, fuzzy
+msgid "Remove Label"
+msgstr "Fjern lag"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:78
+#, fuzzy
+msgid "Application Name"
+msgstr "Name=Dokka programlinje"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:102 ../glade/gnome/gnomeabout.c:137
+#, fuzzy
+msgid "Logo:"
+msgstr "&Logo:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:102 ../glade/gnome/gnomeabout.c:137
+msgid "The pixmap to use as the logo"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:104 ../glade/glade_project_options.c:260
+msgid "Program Name:"
+msgstr "Programnamn:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:104
+#, fuzzy
+msgid "The name of the application"
+msgstr "Namnet på fila programmet skal skriva til"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:105 ../glade/gnome/gnomeabout.c:139
+#, fuzzy
+msgid "Comments:"
+msgstr "Kommentar"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:105
+msgid "Additional information, such as a description of the application"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:106 ../glade/gnome/gnomeabout.c:138
+#, fuzzy
+msgid "Copyright:"
+msgstr "Opphavsrett"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:106 ../glade/gnome/gnomeabout.c:138
+#, fuzzy
+msgid "The copyright notice"
+msgstr "Første kontor"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:108
+msgid "Website URL:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:108
+#, fuzzy
+msgid "The URL of the application's website"
+msgstr "Legg til eit nytt program for denne filtypen."
+
+#: ../glade/gbwidgets/gbaboutdialog.c:109
+#, fuzzy
+msgid "Website Label:"
+msgstr "Etikett:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:109
+#, fuzzy
+msgid "The label to display for the link to the website"
+msgstr "Denne skrifttypen vert brukt til vising av vanleg tekst på nettsider."
+
+#: ../glade/gbwidgets/gbaboutdialog.c:111 ../glade/glade_project_options.c:365
+#, fuzzy
+msgid "License:"
+msgstr "GPL-lisens"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:111
+#, fuzzy
+msgid "The license details of the application"
+msgstr "Artisten på Internett"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:113 ../glade/gnome/gnomeabout.c:141
+msgid "Authors:"
+msgstr "Forfattarar:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:113 ../glade/gnome/gnomeabout.c:141
+msgid "The authors of the package, one on each line"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:114 ../glade/gnome/gnomeabout.c:142
+#, fuzzy
+msgid "Documenters:"
+msgstr "Kommentar"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:114 ../glade/gnome/gnomeabout.c:142
+msgid "The documenters of the package, one on each line"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:115
+msgid "Artists:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:115
+msgid ""
+"The people who have created the artwork for the package, one on each line"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:116 ../glade/gnome/gnomeabout.c:143
+#, fuzzy
+msgid "Translators:"
+msgstr "Omsett i:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:116 ../glade/gnome/gnomeabout.c:143
+msgid ""
+"The translators of the package. This should normally be left empty so that "
+"translators can add their names in the po files"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:559
+#, fuzzy
+msgid "About Dialog"
+msgstr "KDebugDialog"
+
+#: ../glade/gbwidgets/gbaccellabel.c:200
+#, fuzzy
+msgid "Label with Accelerator"
+msgstr "Spelar 1 akselerasjon"
+
+#. The GtkProgress interface is deprecated now, and GtkProgressBar doesn't
+#. have functions to set these, so I suppose we shouldn't support them.
+#: ../glade/gbwidgets/gbalignment.c:71 ../glade/gbwidgets/gbarrow.c:89
+#: ../glade/gbwidgets/gbaspectframe.c:130 ../glade/gbwidgets/gbimage.c:119
+#: ../glade/gbwidgets/gblabel.c:180 ../glade/gbwidgets/gbprogressbar.c:162
+#, fuzzy
+msgid "X Align:"
+msgstr "Juster"
+
+#: ../glade/gbwidgets/gbalignment.c:72
+#, fuzzy
+msgid "The horizontal alignment of the child widget"
+msgstr "Endra tabellnamn"
+
+#: ../glade/gbwidgets/gbalignment.c:74 ../glade/gbwidgets/gbarrow.c:92
+#: ../glade/gbwidgets/gbaspectframe.c:133 ../glade/gbwidgets/gbimage.c:122
+#: ../glade/gbwidgets/gblabel.c:183 ../glade/gbwidgets/gbprogressbar.c:165
+#, fuzzy
+msgid "Y Align:"
+msgstr "Juster"
+
+#: ../glade/gbwidgets/gbalignment.c:75
+#, fuzzy
+msgid "The vertical alignment of the child widget"
+msgstr "Endra tabellnamn"
+
+#: ../glade/gbwidgets/gbalignment.c:77
+#, fuzzy
+msgid "X Scale:"
+msgstr "Skalert"
+
+#: ../glade/gbwidgets/gbalignment.c:78
+#, fuzzy
+msgid "The horizontal scale of the child widget"
+msgstr "Namnet på fila programmet skal skriva til"
+
+#: ../glade/gbwidgets/gbalignment.c:80
+#, fuzzy
+msgid "Y Scale:"
+msgstr "Skalert"
+
+#: ../glade/gbwidgets/gbalignment.c:81
+#, fuzzy
+msgid "The vertical scale of the child widget"
+msgstr "Namnet på fila programmet skal skriva til"
+
+#: ../glade/gbwidgets/gbalignment.c:85
+#, fuzzy
+msgid "Top Padding:"
+msgstr "Padding"
+
+#: ../glade/gbwidgets/gbalignment.c:86
+#, fuzzy
+msgid "Space to put above the child widget"
+msgstr "Namnet på fila programmet skal skriva til"
+
+#: ../glade/gbwidgets/gbalignment.c:89
+#, fuzzy
+msgid "Bottom Padding:"
+msgstr "Padding"
+
+#: ../glade/gbwidgets/gbalignment.c:90
+#, fuzzy
+msgid "Space to put below the child widget"
+msgstr "Namnet på fila programmet skal skriva til"
+
+#: ../glade/gbwidgets/gbalignment.c:93
+#, fuzzy
+msgid "Left Padding:"
+msgstr "Padding"
+
+#: ../glade/gbwidgets/gbalignment.c:94
+#, fuzzy
+msgid "Space to put to the left of the child widget"
+msgstr "Namnet på fila programmet skal skriva til"
+
+#: ../glade/gbwidgets/gbalignment.c:97
+#, fuzzy
+msgid "Right Padding:"
+msgstr "Padding"
+
+#: ../glade/gbwidgets/gbalignment.c:98
+#, fuzzy
+msgid "Space to put to the right of the child widget"
+msgstr "Endra tabellnamn"
+
+#: ../glade/gbwidgets/gbalignment.c:255
+msgid "Alignment"
+msgstr "Justering"
+
+#: ../glade/gbwidgets/gbarrow.c:85
+msgid "Direction:"
+msgstr "Retning:"
+
+#: ../glade/gbwidgets/gbarrow.c:85
+#, fuzzy
+msgid "The direction of the arrow"
+msgstr "Versjonen av programmet."
+
+#: ../glade/gbwidgets/gbarrow.c:87 ../glade/gbwidgets/gbaspectframe.c:128
+#: ../glade/gbwidgets/gbclist.c:247 ../glade/gbwidgets/gbctree.c:253
+#: ../glade/gbwidgets/gbframe.c:123 ../glade/gbwidgets/gbhandlebox.c:109
+#: ../glade/gbwidgets/gbviewport.c:104 ../glade/gnome/bonobodockitem.c:176
+#, fuzzy
+msgid "Shadow:"
+msgstr "Skugge"
+
+#: ../glade/gbwidgets/gbarrow.c:87
+msgid "The shadow type of the arrow"
+msgstr ""
+
+#: ../glade/gbwidgets/gbarrow.c:90
+#, fuzzy
+msgid "The horizontal alignment of the arrow"
+msgstr "Endra tabellnamn"
+
+#: ../glade/gbwidgets/gbarrow.c:93
+#, fuzzy
+msgid "The vertical alignment of the arrow"
+msgstr "Endra tabellnamn"
+
+#: ../glade/gbwidgets/gbarrow.c:95 ../glade/gbwidgets/gbimage.c:125
+#: ../glade/gbwidgets/gblabel.c:186
+#, fuzzy
+msgid "X Pad:"
+msgstr "POP-passord:"
+
+#: ../glade/gbwidgets/gbarrow.c:95 ../glade/gbwidgets/gbimage.c:125
+#: ../glade/gbwidgets/gblabel.c:186 ../glade/gbwidgets/gbtable.c:382
+#, fuzzy
+msgid "The horizontal padding"
+msgstr "Endra tabellnamn"
+
+#: ../glade/gbwidgets/gbarrow.c:97 ../glade/gbwidgets/gbimage.c:127
+#: ../glade/gbwidgets/gblabel.c:188
+#, fuzzy
+msgid "Y Pad:"
+msgstr "POP-passord:"
+
+#: ../glade/gbwidgets/gbarrow.c:97 ../glade/gbwidgets/gbimage.c:127
+#: ../glade/gbwidgets/gblabel.c:188 ../glade/gbwidgets/gbtable.c:385
+#, fuzzy
+msgid "The vertical padding"
+msgstr "Endra tabellnamn"
+
+#: ../glade/gbwidgets/gbarrow.c:299
+msgid "Arrow"
+msgstr "Pil"
+
+#: ../glade/gbwidgets/gbaspectframe.c:122 ../glade/gbwidgets/gbframe.c:117
+#, fuzzy
+msgid "Label X Align:"
+msgstr "Etikettar og teiknforklaring"
+
+#: ../glade/gbwidgets/gbaspectframe.c:123 ../glade/gbwidgets/gbframe.c:118
+#, fuzzy
+msgid "The horizontal alignment of the frame's label widget"
+msgstr "Endra tabellnamn"
+
+#: ../glade/gbwidgets/gbaspectframe.c:125 ../glade/gbwidgets/gbframe.c:120
+#, fuzzy
+msgid "Label Y Align:"
+msgstr "Etikettar og teiknforklaring"
+
+#: ../glade/gbwidgets/gbaspectframe.c:126 ../glade/gbwidgets/gbframe.c:121
+#, fuzzy
+msgid "The vertical alignment of the frame's label widget"
+msgstr "Endra tabellnamn"
+
+#: ../glade/gbwidgets/gbaspectframe.c:128 ../glade/gbwidgets/gbframe.c:123
+#, fuzzy
+msgid "The type of shadow of the frame"
+msgstr "Versjonen av programmet."
+
+#: ../glade/gbwidgets/gbaspectframe.c:131
+#: ../glade/gbwidgets/gbaspectframe.c:134
+#, fuzzy
+msgid "The horizontal alignment of the frame's child"
+msgstr "Endra tabellnamn"
+
+#: ../glade/gbwidgets/gbaspectframe.c:136
+#, fuzzy
+msgid "Ratio:"
+msgstr "&Høve ('ratios')"
+
+#: ../glade/gbwidgets/gbaspectframe.c:137
+#, fuzzy
+msgid "The aspect ratio of the frame's child"
+msgstr "Tekst i andre rammer:"
+
+#: ../glade/gbwidgets/gbaspectframe.c:138
+msgid "Obey Child:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaspectframe.c:139
+msgid "If the aspect ratio should be determined by the child"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaspectframe.c:319
+#, fuzzy
+msgid "Aspect Frame"
+msgstr "&Lag tekstramme"
+
+#: ../glade/gbwidgets/gbbutton.c:118 ../glade/gbwidgets/gbcheckbutton.c:85
+#: ../glade/gbwidgets/gbmenutoolbutton.c:85
+#: ../glade/gbwidgets/gbradiobutton.c:126
+#: ../glade/gbwidgets/gbradiotoolbutton.c:133
+#: ../glade/gbwidgets/gbtogglebutton.c:88
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:90
+#: ../glade/gbwidgets/gbtoolbutton.c:104
+#, fuzzy
+msgid "Stock Button:"
+msgstr "Venstre knapp"
+
+#: ../glade/gbwidgets/gbbutton.c:119 ../glade/gbwidgets/gbcheckbutton.c:86
+#: ../glade/gbwidgets/gbmenutoolbutton.c:86
+#: ../glade/gbwidgets/gbradiobutton.c:127
+#: ../glade/gbwidgets/gbradiotoolbutton.c:134
+#: ../glade/gbwidgets/gbtogglebutton.c:89
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:91
+#: ../glade/gbwidgets/gbtoolbutton.c:105
+#, fuzzy
+msgid "The stock button to use"
+msgstr "Oppsettfila som skal brukast."
+
+#. For now we don't support editing the menuitem properties in the property
+#. editor. The menu editor has to be used instead.
+#: ../glade/gbwidgets/gbbutton.c:121 ../glade/gbwidgets/gbcheckbutton.c:88
+#: ../glade/gbwidgets/gbcheckmenuitem.c:72
+#: ../glade/gbwidgets/gbimagemenuitem.c:92 ../glade/gbwidgets/gblabel.c:168
+#: ../glade/gbwidgets/gblistitem.c:73 ../glade/gbwidgets/gbmenuitem.c:87
+#: ../glade/gbwidgets/gbmenutoolbutton.c:88
+#: ../glade/gbwidgets/gbradiobutton.c:129
+#: ../glade/gbwidgets/gbradiomenuitem.c:103
+#: ../glade/gbwidgets/gbradiotoolbutton.c:136
+#: ../glade/gbwidgets/gbtogglebutton.c:91
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:93
+#: ../glade/gbwidgets/gbtoolbutton.c:107 ../glade/glade_menu_editor.c:747
+#: ../glade/gnome/gnomehref.c:68
+msgid "Label:"
+msgstr "Etikett:"
+
+#: ../glade/gbwidgets/gbbutton.c:121 ../glade/gbwidgets/gbcheckbutton.c:88
+#: ../glade/gbwidgets/gbcheckmenuitem.c:72 ../glade/gbwidgets/gbentry.c:100
+#: ../glade/gbwidgets/gbimagemenuitem.c:92 ../glade/gbwidgets/gblabel.c:168
+#: ../glade/gbwidgets/gblistitem.c:73 ../glade/gbwidgets/gbmenuitem.c:87
+#: ../glade/gbwidgets/gbmenutoolbutton.c:88
+#: ../glade/gbwidgets/gbradiobutton.c:129
+#: ../glade/gbwidgets/gbradiomenuitem.c:103
+#: ../glade/gbwidgets/gbradiotoolbutton.c:136
+#: ../glade/gbwidgets/gbtextview.c:124 ../glade/gbwidgets/gbtogglebutton.c:91
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:93
+#: ../glade/gbwidgets/gbtoolbutton.c:107 ../glade/gnome-db/gnomedbeditor.c:64
+#, fuzzy
+msgid "The text to display"
+msgstr "Ein URL som skal visast"
+
+#: ../glade/gbwidgets/gbbutton.c:122 ../glade/gbwidgets/gbcheckbutton.c:89
+#: ../glade/gbwidgets/gbimage.c:107 ../glade/gbwidgets/gbmenutoolbutton.c:89
+#: ../glade/gbwidgets/gbradiobutton.c:130
+#: ../glade/gbwidgets/gbradiotoolbutton.c:137
+#: ../glade/gbwidgets/gbtogglebutton.c:92
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:94
+#: ../glade/gbwidgets/gbtoolbutton.c:108 ../glade/gbwidgets/gbwindow.c:295
+#: ../glade/glade_menu_editor.c:813
+#, fuzzy
+msgid "Icon:"
+msgstr "Ikon:"
+
+#: ../glade/gbwidgets/gbbutton.c:123 ../glade/gbwidgets/gbcheckbutton.c:90
+#: ../glade/gbwidgets/gbimage.c:108 ../glade/gbwidgets/gbmenutoolbutton.c:90
+#: ../glade/gbwidgets/gbradiobutton.c:131
+#: ../glade/gbwidgets/gbradiotoolbutton.c:138
+#: ../glade/gbwidgets/gbtogglebutton.c:93
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:95
+#: ../glade/gbwidgets/gbtoolbutton.c:109
+#, fuzzy
+msgid "The icon to display"
+msgstr "Ein URL som skal visast"
+
+#: ../glade/gbwidgets/gbbutton.c:125 ../glade/gbwidgets/gbcheckbutton.c:92
+#: ../glade/gbwidgets/gbradiobutton.c:133
+#: ../glade/gbwidgets/gbtogglebutton.c:95
+#, fuzzy
+msgid "Button Relief:"
+msgstr "Knappetekst"
+
+#: ../glade/gbwidgets/gbbutton.c:126 ../glade/gbwidgets/gbcheckbutton.c:93
+#: ../glade/gbwidgets/gbradiobutton.c:134
+#: ../glade/gbwidgets/gbtogglebutton.c:96
+#, fuzzy
+msgid "The relief style of the button"
+msgstr "Artisten på Internett"
+
+#: ../glade/gbwidgets/gbbutton.c:131
+msgid "Response ID:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbbutton.c:132
+msgid ""
+"The response code returned when the button is pressed. Select one of the "
+"standard responses or enter a positive integer value"
+msgstr ""
+
+#: ../glade/gbwidgets/gbbutton.c:137 ../glade/gbwidgets/gbcheckbutton.c:102
+#: ../glade/gbwidgets/gbcolorbutton.c:70 ../glade/gbwidgets/gbcombobox.c:83
+#: ../glade/gbwidgets/gbcomboboxentry.c:82
+#: ../glade/gbwidgets/gbfontbutton.c:78 ../glade/gbwidgets/gbradiobutton.c:148
+#: ../glade/gbwidgets/gbtogglebutton.c:103
+#: ../glade/gnome/gnomecolorpicker.c:76 ../glade/gnome/gnomefontpicker.c:109
+#: ../glade/gnome/gnomehref.c:70
+msgid "Focus On Click:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbbutton.c:137 ../glade/gbwidgets/gbcheckbutton.c:102
+#: ../glade/gbwidgets/gbcolorbutton.c:70 ../glade/gbwidgets/gbfontbutton.c:78
+#: ../glade/gbwidgets/gbradiobutton.c:148
+#: ../glade/gbwidgets/gbtogglebutton.c:103
+#: ../glade/gnome/gnomecolorpicker.c:76 ../glade/gnome/gnomefontpicker.c:109
+#: ../glade/gnome/gnomehref.c:70
+msgid "If the button grabs focus when it is clicked"
+msgstr ""
+
+#: ../glade/gbwidgets/gbbutton.c:1502
+msgid "Remove Button Contents"
+msgstr ""
+
+#: ../glade/gbwidgets/gbbutton.c:1600
+msgid "Button"
+msgstr "Knapp"
+
+#: ../glade/gbwidgets/gbcalendar.c:73
+#, fuzzy
+msgid "Heading:"
+msgstr "Overskrift:"
+
+#: ../glade/gbwidgets/gbcalendar.c:74
+msgid "If the month and year should be shown at the top"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcalendar.c:75
+#, fuzzy
+msgid "Day Names:"
+msgstr "Etternamn:"
+
+#: ../glade/gbwidgets/gbcalendar.c:76
+msgid "If the day names should be shown"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcalendar.c:77
+#, fuzzy
+msgid "Fixed Month:"
+msgstr "Fast skrifttype"
+
+#: ../glade/gbwidgets/gbcalendar.c:78
+msgid "If the month and year shouldn't be changeable"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcalendar.c:79
+#, fuzzy
+msgid "Week Numbers:"
+msgstr "Tal:"
+
+#: ../glade/gbwidgets/gbcalendar.c:80
+#, fuzzy
+msgid "If the number of the week should be shown"
+msgstr "Oppgi namnet på verten du vil kopla til."
+
+#: ../glade/gbwidgets/gbcalendar.c:81 ../glade/gnome/gnomedateedit.c:74
+#, fuzzy
+msgid "Monday First:"
+msgstr "Finn &første"
+
+#: ../glade/gbwidgets/gbcalendar.c:82 ../glade/gnome/gnomedateedit.c:75
+#, fuzzy
+msgid "If the week should start on Monday"
+msgstr "day(1) returnerer måndag (dersom veka startar på måndag)"
+
+#: ../glade/gbwidgets/gbcalendar.c:266
+msgid "Calendar"
+msgstr "Kalender"
+
+#: ../glade/gbwidgets/gbcellview.c:63 ../glade/gnome/gnomedruidpageedge.c:102
+#: ../glade/gnome/gnomedruidpagestandard.c:91
+#, fuzzy
+msgid "Back. Color:"
+msgstr "Bakgrunnsfarge:"
+
+#: ../glade/gbwidgets/gbcellview.c:64
+#, fuzzy
+msgid "The background color"
+msgstr "Bakgrunnsfarge"
+
+#: ../glade/gbwidgets/gbcellview.c:192
+#, fuzzy
+msgid "Cell View"
+msgstr "Synleg"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:96
+#: ../glade/gbwidgets/gbcheckmenuitem.c:73
+#: ../glade/gbwidgets/gbradiobutton.c:137
+#: ../glade/gbwidgets/gbradiomenuitem.c:104
+#: ../glade/gbwidgets/gbradiotoolbutton.c:147
+#: ../glade/gbwidgets/gbtogglebutton.c:99
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:97
+#, fuzzy
+msgid "Initially On:"
+msgstr "Førebokstavar"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:97
+msgid "If the check button is initially on"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcheckbutton.c:98
+#: ../glade/gbwidgets/gbradiobutton.c:139
+#: ../glade/gbwidgets/gbtogglebutton.c:101
+#, fuzzy
+msgid "Inconsistent:"
+msgstr "Liste over skrifttypar"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:99
+#: ../glade/gbwidgets/gbradiobutton.c:140
+#: ../glade/gbwidgets/gbtogglebutton.c:102
+msgid "If the button is shown in an inconsistent state"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcheckbutton.c:100
+#: ../glade/gbwidgets/gbradiobutton.c:141
+#, fuzzy
+msgid "Indicator:"
+msgstr "I katalog"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:101
+#: ../glade/gbwidgets/gbradiobutton.c:142
+msgid "If the indicator is always drawn"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcheckbutton.c:211
+#, fuzzy
+msgid "Check Button"
+msgstr "Sjekk &likningar"
+
+#: ../glade/gbwidgets/gbcheckmenuitem.c:74
+msgid "If the check menu item is initially on"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcheckmenuitem.c:203
+#, fuzzy
+msgid "Check Menu Item"
+msgstr "Sjekk nyhende"
+
+#: ../glade/gbwidgets/gbclist.c:141
+#, fuzzy
+msgid "New columned list"
+msgstr "Ny konto"
+
+#. Columns label & entry
+#: ../glade/gbwidgets/gbclist.c:152 ../glade/gbwidgets/gbctree.c:157
+#: ../glade/gbwidgets/gbhbox.c:110 ../glade/gbwidgets/gbhbuttonbox.c:132
+#: ../glade/gbwidgets/gbtable.c:165
+#, fuzzy
+msgid "Number of columns:"
+msgstr "Tal på kolonnar:"
+
+#: ../glade/gbwidgets/gbclist.c:242 ../glade/gbwidgets/gbctree.c:248
+#: ../glade/gbwidgets/gbiconview.c:127 ../glade/gbwidgets/gblist.c:77
+#: ../glade/gnome/gnomeiconlist.c:174
+#, fuzzy
+msgid "Select Mode:"
+msgstr "Vel modus"
+
+#: ../glade/gbwidgets/gbclist.c:243
+#, fuzzy
+msgid "The selection mode of the columned list"
+msgstr "Flyttar utvalet til venstre"
+
+#: ../glade/gbwidgets/gbclist.c:245 ../glade/gbwidgets/gbctree.c:251
+#, fuzzy
+msgid "Show Titles:"
+msgstr "Vis tid som:"
+
+#: ../glade/gbwidgets/gbclist.c:246 ../glade/gbwidgets/gbctree.c:252
+msgid "If the column titles are shown"
+msgstr ""
+
+#: ../glade/gbwidgets/gbclist.c:248
+msgid "The type of shadow of the columned list's border"
+msgstr ""
+
+#: ../glade/gbwidgets/gbclist.c:594
+#, fuzzy
+msgid "Columned List"
+msgstr "Kolonne"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:65 ../glade/gnome/gnomecolorpicker.c:70
+#, fuzzy
+msgid "Use Alpha:"
+msgstr "Bruk bilete"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:66 ../glade/gnome/gnomecolorpicker.c:71
+msgid "If the alpha channel should be used"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcolorbutton.c:68
+#: ../glade/gbwidgets/gbfilechooserbutton.c:85
+#: ../glade/gbwidgets/gbfontbutton.c:68 ../glade/gbwidgets/gbwindow.c:242
+#: ../glade/gnome/gnomecolorpicker.c:73 ../glade/gnome/gnomedruidpageedge.c:93
+#: ../glade/gnome/gnomedruidpagestandard.c:85
+#: ../glade/gnome/gnomefileentry.c:101 ../glade/gnome/gnomefontpicker.c:95
+#: ../glade/gnome/gnomeiconentry.c:72 ../glade/gnome/gnomepixmapentry.c:82
+msgid "Title:"
+msgstr "Tittel:"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:69 ../glade/gnome/gnomecolorpicker.c:74
+#, fuzzy
+msgid "The title of the color selection dialog"
+msgstr "Skriv tittelen på ruta her."
+
+#: ../glade/gbwidgets/gbcolorbutton.c:91
+#: ../glade/gbwidgets/gbcolorbutton.c:119
+#: ../glade/gbwidgets/gbcolorbutton.c:162
+#, fuzzy
+msgid "Pick a Color"
+msgstr "Pikkolofløyte"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:211
+#, fuzzy
+msgid "Color Chooser Button"
+msgstr "Sjekk &likningar"
+
+#: ../glade/gbwidgets/gbcolorselection.c:62
+msgid "Opacity Control:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcolorselection.c:63
+msgid "If the opacity control is shown"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcolorselection.c:64
+#, fuzzy
+msgid "Palette:"
+msgstr "&Palett"
+
+#: ../glade/gbwidgets/gbcolorselection.c:65
+#, fuzzy
+msgid "If the palette is shown"
+msgstr "Sentrer dei valte elementa"
+
+#: ../glade/gbwidgets/gbcolorselection.c:173
+#, fuzzy
+msgid "Color Selection"
+msgstr "&Utval"
+
+#: ../glade/gbwidgets/gbcolorselectiondialog.c:70
+msgid "Select Color"
+msgstr "Vel farge"
+
+#: ../glade/gbwidgets/gbcolorselectiondialog.c:315 ../glade/property.c:1275
+#, fuzzy
+msgid "Color Selection Dialog"
+msgstr "&Utval"
+
+#: ../glade/gbwidgets/gbcombo.c:105
+#, fuzzy
+msgid "Value In List:"
+msgstr "Fil-liste"
+
+#: ../glade/gbwidgets/gbcombo.c:106
+#, fuzzy
+msgid "If the value must be in the list"
+msgstr ""
+"Fila\n"
+"%1\n"
+"er alt i lista"
+
+#: ../glade/gbwidgets/gbcombo.c:107
+msgid "OK If Empty:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcombo.c:108
+msgid "If an empty value is acceptable, when 'Value In List' is set"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcombo.c:109
+#, fuzzy
+msgid "Case Sensitive:"
+msgstr "Skil mellom store og små bokstavar"
+
+#: ../glade/gbwidgets/gbcombo.c:110
+#, fuzzy
+msgid "If the searching is case sensitive"
+msgstr "Nøyaktig, så understreng (vilkårleg bokstavstorleik)"
+
+#: ../glade/gbwidgets/gbcombo.c:111
+#, fuzzy
+msgid "Use Arrows:"
+msgstr "Piler:"
+
+#: ../glade/gbwidgets/gbcombo.c:112
+msgid "If arrows can be used to change the value"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcombo.c:113
+#, fuzzy
+msgid "Use Always:"
+msgstr "Alltid"
+
+#: ../glade/gbwidgets/gbcombo.c:114
+msgid "If arrows work even if the value is not in the list"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcombo.c:115 ../glade/gbwidgets/gbcombobox.c:78
+#: ../glade/gbwidgets/gbcomboboxentry.c:75
+#, fuzzy
+msgid "Items:"
+msgstr "Element:"
+
+#: ../glade/gbwidgets/gbcombo.c:116 ../glade/gbwidgets/gbcombobox.c:79
+#: ../glade/gbwidgets/gbcomboboxentry.c:76
+msgid "The items in the combo list, one per line"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcombo.c:425 ../glade/gbwidgets/gbcombobox.c:289
+#, fuzzy
+msgid "Combo Box"
+msgstr "Comoros"
+
+#: ../glade/gbwidgets/gbcombobox.c:81 ../glade/gbwidgets/gbcomboboxentry.c:78
+msgid "Add Tearoffs:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcombobox.c:82 ../glade/gbwidgets/gbcomboboxentry.c:79
+msgid "Whether dropdowns should have a tearoff menu item"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcombobox.c:84 ../glade/gbwidgets/gbcomboboxentry.c:83
+msgid "Whether the combo box grabs focus when it is clicked"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcomboboxentry.c:80 ../glade/gbwidgets/gbentry.c:102
+#, fuzzy
+msgid "Has Frame:"
+msgstr "Ramme"
+
+#: ../glade/gbwidgets/gbcomboboxentry.c:81
+msgid "Whether the combo box draws a frame around the child"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcomboboxentry.c:302
+#, fuzzy
+msgid "Combo Box Entry"
+msgstr "Comoros"
+
+#: ../glade/gbwidgets/gbctree.c:146
+#, fuzzy
+msgid "New columned tree"
+msgstr "Tekst i partalskolonner"
+
+#: ../glade/gbwidgets/gbctree.c:249
+#, fuzzy
+msgid "The selection mode of the columned tree"
+msgstr "Flyttar utvalet til venstre"
+
+#: ../glade/gbwidgets/gbctree.c:254
+msgid "The type of shadow of the columned tree's border"
+msgstr ""
+
+#: ../glade/gbwidgets/gbctree.c:538
+#, fuzzy
+msgid "Columned Tree"
+msgstr "Kolonne"
+
+#: ../glade/gbwidgets/gbcurve.c:85 ../glade/gbwidgets/gbwindow.c:245
+msgid "Type:"
+msgstr "Type:"
+
+#: ../glade/gbwidgets/gbcurve.c:85
+#, fuzzy
+msgid "The type of the curve"
+msgstr "Vel stilen til linjebrotverdien."
+
+#: ../glade/gbwidgets/gbcurve.c:87 ../glade/gbwidgets/gbgammacurve.c:91
+#, fuzzy
+msgid "X Min:"
+msgstr "Minst"
+
+#: ../glade/gbwidgets/gbcurve.c:87 ../glade/gbwidgets/gbgammacurve.c:91
+#, fuzzy
+msgid "The minimum horizontal value"
+msgstr "Endra tabellnamn"
+
+#: ../glade/gbwidgets/gbcurve.c:88 ../glade/gbwidgets/gbgammacurve.c:92
+#, fuzzy
+msgid "X Max:"
+msgstr "Høgst"
+
+#: ../glade/gbwidgets/gbcurve.c:88 ../glade/gbwidgets/gbgammacurve.c:92
+#, fuzzy
+msgid "The maximum horizontal value"
+msgstr "Maksimer (berre loddrett)"
+
+#: ../glade/gbwidgets/gbcurve.c:89 ../glade/gbwidgets/gbgammacurve.c:93
+#, fuzzy
+msgid "Y Min:"
+msgstr "Y-min : "
+
+#: ../glade/gbwidgets/gbcurve.c:89 ../glade/gbwidgets/gbgammacurve.c:93
+msgid "The minimum vertical value"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcurve.c:90 ../glade/gbwidgets/gbgammacurve.c:94
+#, fuzzy
+msgid "Y Max:"
+msgstr "Y-maks : "
+
+#: ../glade/gbwidgets/gbcurve.c:90 ../glade/gbwidgets/gbgammacurve.c:94
+#, fuzzy
+msgid "The maximum vertical value"
+msgstr "Maksimer vindauge loddrett"
+
+#: ../glade/gbwidgets/gbcurve.c:250
+msgid "Curve"
+msgstr "Kurve"
+
+#: ../glade/gbwidgets/gbcustom.c:154
+#, fuzzy
+msgid "Creation Function:"
+msgstr "Frå %1 til Function"
+
+#: ../glade/gbwidgets/gbcustom.c:155
+#, fuzzy
+msgid "The function which creates the widget"
+msgstr "PI()-funksjonen verdien PI\n"
+
+#: ../glade/gbwidgets/gbcustom.c:157
+#, fuzzy
+msgid "String1:"
+msgstr "Streng"
+
+#: ../glade/gbwidgets/gbcustom.c:158
+msgid "The first string argument to pass to the function"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcustom.c:159
+#, fuzzy
+msgid "String2:"
+msgstr "Streng"
+
+#: ../glade/gbwidgets/gbcustom.c:160
+msgid "The second string argument to pass to the function"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcustom.c:161
+#, fuzzy
+msgid "Int1:"
+msgstr "Avb%1"
+
+#: ../glade/gbwidgets/gbcustom.c:162
+msgid "The first integer argument to pass to the function"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcustom.c:163
+#, fuzzy
+msgid "Int2:"
+msgstr "Heiltal"
+
+#: ../glade/gbwidgets/gbcustom.c:164
+msgid "The second integer argument to pass to the function"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcustom.c:380
+#, fuzzy
+msgid "Custom Widget"
+msgstr "Klipp ut element"
+
+#: ../glade/gbwidgets/gbdialog.c:292
+#, fuzzy
+msgid "New dialog"
+msgstr "Nytt bilete"
+
+#: ../glade/gbwidgets/gbdialog.c:304
+#, fuzzy
+msgid "Cancel, OK"
+msgstr "Avbryt"
+
+#: ../glade/gbwidgets/gbdialog.c:313 ../glade/glade.c:367
+#: ../glade/glade_project_window.c:1316 ../glade/property.c:5156
+msgid "OK"
+msgstr "OK"
+
+#: ../glade/gbwidgets/gbdialog.c:322
+msgid "Cancel, Apply, OK"
+msgstr ""
+
+#: ../glade/gbwidgets/gbdialog.c:331
+msgid "Close"
+msgstr "Lukk"
+
+#: ../glade/gbwidgets/gbdialog.c:340
+msgid "_Standard Button Layout:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbdialog.c:349
+#, fuzzy
+msgid "_Number of Buttons:"
+msgstr "Tal på rader:"
+
+#: ../glade/gbwidgets/gbdialog.c:366
+#, fuzzy
+msgid "Show Help Button"
+msgstr "Operasjonsknappar"
+
+#: ../glade/gbwidgets/gbdialog.c:397
+#, fuzzy
+msgid "Has Separator:"
+msgstr "Delingslinje"
+
+#: ../glade/gbwidgets/gbdialog.c:398
+msgid "If the dialog has a horizontal separator above the buttons"
+msgstr ""
+
+#: ../glade/gbwidgets/gbdialog.c:605
+#, fuzzy
+msgid "Dialog"
+msgstr "Dialogar"
+
+#: ../glade/gbwidgets/gbdrawingarea.c:146
+#, fuzzy
+msgid "Drawing Area"
+msgstr "&Teiknemodus"
+
+#: ../glade/gbwidgets/gbentry.c:94 ../glade/gbwidgets/gbtextview.c:115
+#: ../glade/gnome-db/gnomedbeditor.c:62
+#, fuzzy
+msgid "Editable:"
+msgstr "Rediger variabel"
+
+#: ../glade/gbwidgets/gbentry.c:94 ../glade/gbwidgets/gbtextview.c:116
+#: ../glade/gnome-db/gnomedbeditor.c:62
+#, fuzzy
+msgid "If the text can be edited"
+msgstr "Dette innlegget kan ikkje endrast."
+
+#: ../glade/gbwidgets/gbentry.c:95
+#, fuzzy
+msgid "Text Visible:"
+msgstr "Synleg"
+
+#: ../glade/gbwidgets/gbentry.c:96
+msgid ""
+"If the text entered by the user will be shown. When turned off, the text "
+"typed in is displayed as asterix characters, which is useful for entering "
+"passwords"
+msgstr ""
+
+#: ../glade/gbwidgets/gbentry.c:97
+#, fuzzy
+msgid "Max Length:"
+msgstr "Lengste lengd"
+
+#: ../glade/gbwidgets/gbentry.c:98
+msgid "The maximum length of the text"
+msgstr ""
+
+#: ../glade/gbwidgets/gbentry.c:100 ../glade/gbwidgets/gbprogressbar.c:143
+#: ../glade/gbwidgets/gbtextview.c:124 ../glade/gnome-db/gnomedbeditor.c:64
+#: ../glade/gnome-db/gnomedbgraybar.c:59
+#: ../glade/gnome/gnomedruidpageedge.c:95 ../glade/property.c:926
+msgid "Text:"
+msgstr "Tekst:"
+
+#: ../glade/gbwidgets/gbentry.c:102
+msgid "If the entry has a frame around it"
+msgstr ""
+
+#: ../glade/gbwidgets/gbentry.c:103
+#, fuzzy
+msgid "Invisible Char:"
+msgstr "Synleg"
+
+#: ../glade/gbwidgets/gbentry.c:103
+msgid ""
+"The character to use if the text should not visible, e.g. when entering "
+"passwords"
+msgstr ""
+
+#: ../glade/gbwidgets/gbentry.c:104
+#, fuzzy
+msgid "Activates Default:"
+msgstr "(standard)"
+
+#: ../glade/gbwidgets/gbentry.c:104
+msgid "If the default widget in the window is activated when Enter is pressed"
+msgstr ""
+
+#: ../glade/gbwidgets/gbentry.c:105
+msgid "Width In Chars:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbentry.c:105
+#, fuzzy
+msgid "The number of characters to leave space for in the entry"
+msgstr "Høgste tal på ord i spørjinga"
+
+#: ../glade/gbwidgets/gbentry.c:318
+#, fuzzy
+msgid "Text Entry"
+msgstr "Neste oppføring"
+
+#: ../glade/gbwidgets/gbeventbox.c:65
+#, fuzzy
+msgid "Visible Window:"
+msgstr "Synleg"
+
+#: ../glade/gbwidgets/gbeventbox.c:65
+msgid "If the event box uses a visible window"
+msgstr ""
+
+#: ../glade/gbwidgets/gbeventbox.c:66
+msgid "Above Child:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbeventbox.c:66
+msgid "If the event box window is above the child widget's window"
+msgstr ""
+
+#: ../glade/gbwidgets/gbeventbox.c:167
+#, fuzzy
+msgid "Event Box"
+msgstr "Hending: "
+
+#: ../glade/gbwidgets/gbexpander.c:54
+#, fuzzy
+msgid "Initially Expanded:"
+msgstr "Førebokstavar"
+
+#: ../glade/gbwidgets/gbexpander.c:55
+msgid "Whether the expander is initially opened to reveal the child widget"
+msgstr ""
+
+#: ../glade/gbwidgets/gbexpander.c:57 ../glade/gbwidgets/gbhbox.c:175
+#: ../glade/gbwidgets/gbhbuttonbox.c:199 ../glade/gbwidgets/gbvbox.c:160
+msgid "Spacing:"
+msgstr "Mellomrom:"
+
+#: ../glade/gbwidgets/gbexpander.c:58
+msgid "Space to put between the label and the child"
+msgstr ""
+
+#: ../glade/gbwidgets/gbexpander.c:105 ../glade/gbwidgets/gbframe.c:225
+#, fuzzy
+msgid "Add Label Widget"
+msgstr "Justering"
+
+#: ../glade/gbwidgets/gbexpander.c:228
+#, fuzzy
+msgid "Expander"
+msgstr "Utvid"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:86
+#, fuzzy
+msgid "The window title of the file chooser dialog"
+msgstr "Namnet på fila programmet skal skriva til"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:87
+#: ../glade/gbwidgets/gbfilechooserwidget.c:86
+#: ../glade/gbwidgets/gbfilechooserdialog.c:156
+#: ../glade/gnome/gnomefileentry.c:109
+#, fuzzy
+msgid "Action:"
+msgstr "Retning:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:88
+#: ../glade/gbwidgets/gbfilechooserwidget.c:87
+#: ../glade/gbwidgets/gbfilechooserdialog.c:157
+#: ../glade/gnome/gnomefileentry.c:110
+msgid "The type of file operation being performed"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:90
+#: ../glade/gbwidgets/gbfilechooserwidget.c:89
+#: ../glade/gbwidgets/gbfilechooserdialog.c:159
+msgid "Local Only:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:91
+#: ../glade/gbwidgets/gbfilechooserwidget.c:90
+#: ../glade/gbwidgets/gbfilechooserdialog.c:160
+msgid "Whether the selected files should be limited to local files"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:92
+#: ../glade/gbwidgets/gbfilechooserwidget.c:93
+#: ../glade/gbwidgets/gbfilechooserdialog.c:163
+#, fuzzy
+msgid "Show Hidden:"
+msgstr "Vis tid som:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:93
+#: ../glade/gbwidgets/gbfilechooserwidget.c:94
+#: ../glade/gbwidgets/gbfilechooserdialog.c:164
+msgid "Whether the hidden files and folders should be displayed"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:94
+#: ../glade/gbwidgets/gblabel.c:200
+msgid "Width in Chars:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:95
+#, fuzzy
+msgid "The width of the button in characters"
+msgstr "PID-en til programmet."
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:283
+#, fuzzy
+msgid "File Chooser Button"
+msgstr "Sjekk &likningar"
+
+#: ../glade/gbwidgets/gbfilechooserwidget.c:91
+#: ../glade/gbwidgets/gbfilechooserdialog.c:161
+#, fuzzy
+msgid "Select Multiple:"
+msgstr "Vel filter"
+
+#: ../glade/gbwidgets/gbfilechooserwidget.c:92
+#: ../glade/gbwidgets/gbfilechooserdialog.c:162
+msgid "Whether to allow multiple files to be selected"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfilechooserwidget.c:260
+#, fuzzy
+msgid "File Chooser"
+msgstr " Tittelfarge: "
+
+#: ../glade/gbwidgets/gbfilechooserdialog.c:421
+#, fuzzy
+msgid "File Chooser Dialog"
+msgstr "Filval"
+
+#: ../glade/gbwidgets/gbfileselection.c:71 ../glade/property.c:1365
+#, fuzzy
+msgid "Select File"
+msgstr "Vel filter"
+
+#: ../glade/gbwidgets/gbfileselection.c:113
+#, fuzzy
+msgid "File Ops.:"
+msgstr "Filtypar:"
+
+#: ../glade/gbwidgets/gbfileselection.c:114
+msgid "If the file operation buttons are shown"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfileselection.c:292
+#, fuzzy
+msgid "File Selection Dialog"
+msgstr "Filval"
+
+#: ../glade/gbwidgets/gbfixed.c:139 ../glade/gbwidgets/gblayout.c:221
+msgid "X:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfixed.c:140
+#, fuzzy
+msgid "The X coordinate of the widget in the GtkFixed"
+msgstr "Namnet på fila programmet skal skriva til"
+
+#: ../glade/gbwidgets/gbfixed.c:142 ../glade/gbwidgets/gblayout.c:224
+msgid "Y:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfixed.c:143
+#, fuzzy
+msgid "The Y coordinate of the widget in the GtkFixed"
+msgstr "Namnet på fila programmet skal skriva til"
+
+#: ../glade/gbwidgets/gbfixed.c:228
+#, fuzzy
+msgid "Fixed Positions"
+msgstr "Mappeposisjon"
+
+#: ../glade/gbwidgets/gbfontbutton.c:69 ../glade/gnome/gnomefontpicker.c:96
+#, fuzzy
+msgid "The title of the font selection dialog"
+msgstr "Namnet på fila programmet skal skriva til"
+
+#: ../glade/gbwidgets/gbfontbutton.c:70
+#, fuzzy
+msgid "Show Style:"
+msgstr "Vis tid som:"
+
+#: ../glade/gbwidgets/gbfontbutton.c:71
+msgid "If the font style is shown as part of the font information"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfontbutton.c:72 ../glade/gnome/gnomefontpicker.c:102
+#, fuzzy
+msgid "Show Size:"
+msgstr "Vis &storleik"
+
+#: ../glade/gbwidgets/gbfontbutton.c:73 ../glade/gnome/gnomefontpicker.c:103
+msgid "If the font size is shown as part of the font information"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfontbutton.c:74 ../glade/gnome/gnomefontpicker.c:104
+#, fuzzy
+msgid "Use Font:"
+msgstr "Tilbakestill skrifttype"
+
+#: ../glade/gbwidgets/gbfontbutton.c:75 ../glade/gnome/gnomefontpicker.c:105
+msgid "If the selected font is used when displaying the font information"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfontbutton.c:76 ../glade/gnome/gnomefontpicker.c:106
+#, fuzzy
+msgid "Use Size:"
+msgstr "Sidestorleik:"
+
+#: ../glade/gbwidgets/gbfontbutton.c:77
+msgid "if the selected font size is used when displaying the font information"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfontbutton.c:97 ../glade/gbwidgets/gbfontbutton.c:133
+#: ../glade/gbwidgets/gbfontbutton.c:191 ../glade/gnome/gnomefontpicker.c:128
+#: ../glade/gnome/gnomefontpicker.c:199 ../glade/gnome/gnomefontpicker.c:301
+#, fuzzy
+msgid "Pick a Font"
+msgstr "Gjeldande skrifttype"
+
+#: ../glade/gbwidgets/gbfontbutton.c:268
+#, fuzzy
+msgid "Font Chooser Button"
+msgstr "Sjekk &likningar"
+
+#: ../glade/gbwidgets/gbfontselection.c:64 ../glade/gnome/gnomefontpicker.c:97
+#, fuzzy
+msgid "Preview Text:"
+msgstr "Førehandsvising:"
+
+#: ../glade/gbwidgets/gbfontselection.c:64
+#, fuzzy
+msgid "The preview text to display"
+msgstr "Ein URL som skal visast"
+
+#: ../glade/gbwidgets/gbfontselection.c:170
+#, fuzzy
+msgid "Font Selection"
+msgstr "Skule"
+
+#: ../glade/gbwidgets/gbfontselectiondialog.c:69
+msgid "Select Font"
+msgstr "Vel skrifttype"
+
+#: ../glade/gbwidgets/gbfontselectiondialog.c:300
+#, fuzzy
+msgid "Font Selection Dialog"
+msgstr "KFax-valdialog"
+
+#: ../glade/gbwidgets/gbframe.c:360
+msgid "Frame"
+msgstr "Ramme"
+
+#: ../glade/gbwidgets/gbgammacurve.c:88
+#, fuzzy
+msgid "Initial Type:"
+msgstr "Initier"
+
+#: ../glade/gbwidgets/gbgammacurve.c:88
+#, fuzzy
+msgid "The initial type of the curve"
+msgstr "Det er ikkje band i stasjonen."
+
+#: ../glade/gbwidgets/gbgammacurve.c:256
+#, fuzzy
+msgid "Gamma Curve"
+msgstr "Gamma"
+
+#: ../glade/gbwidgets/gbhandlebox.c:110
+msgid "The type of shadow around the handle box"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhandlebox.c:113
+#, fuzzy
+msgid "Handle Pos:"
+msgstr "Overskriftsrader"
+
+#: ../glade/gbwidgets/gbhandlebox.c:114
+#, fuzzy
+msgid "The position of the handle"
+msgstr "Vel posisjonen i toppblokka."
+
+#: ../glade/gbwidgets/gbhandlebox.c:116
+#, fuzzy
+msgid "Snap Edge:"
+msgstr "Juster til hjelpelinjer"
+
+#: ../glade/gbwidgets/gbhandlebox.c:117
+msgid "The edge of the handle box which snaps into position"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhandlebox.c:304
+#, fuzzy
+msgid "Handle Box"
+msgstr "Krayon-boks"
+
+#: ../glade/gbwidgets/gbhbox.c:99
+#, fuzzy
+msgid "New horizontal box"
+msgstr "Opna horisontalt"
+
+#: ../glade/gbwidgets/gbhbox.c:171 ../glade/gbwidgets/gbhbuttonbox.c:194
+#: ../glade/gbwidgets/gbtoolbar.c:267 ../glade/gbwidgets/gbvbox.c:156
+msgid "Size:"
+msgstr "Storleik:"
+
+#: ../glade/gbwidgets/gbhbox.c:171 ../glade/gbwidgets/gbvbox.c:156
+#, fuzzy
+msgid "The number of widgets in the box"
+msgstr "Høgste tal på ord i spørjinga"
+
+#: ../glade/gbwidgets/gbhbox.c:173 ../glade/gbwidgets/gbtable.c:243
+#: ../glade/gbwidgets/gbtoolbar.c:426 ../glade/gbwidgets/gbvbox.c:158
+#, fuzzy
+msgid "Homogeneous:"
+msgstr "Heimetelefon:"
+
+#: ../glade/gbwidgets/gbhbox.c:174 ../glade/gbwidgets/gbvbox.c:159
+msgid "If the children should be the same size"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhbox.c:175 ../glade/gbwidgets/gbvbox.c:160
+msgid "The space between each child"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhbox.c:312
+#, fuzzy
+msgid "Can't delete any children."
+msgstr "Kan ikkje sletta ei hugseliste som har barn."
+
+#: ../glade/gbwidgets/gbhbox.c:327 ../glade/gbwidgets/gbhpaned.c:73
+#: ../glade/gbwidgets/gbhruler.c:89 ../glade/gbwidgets/gbnotebook.c:669
+#: ../glade/gbwidgets/gbvpaned.c:69 ../glade/gbwidgets/gbvruler.c:89
+#: ../glade/gbwidgets/gbwindow.c:254
+#, fuzzy
+msgid "Position:"
+msgstr "Pos&isjon:"
+
+#: ../glade/gbwidgets/gbhbox.c:328
+msgid "The widget's position relative to its siblings"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhbox.c:330
+#, fuzzy
+msgid "Padding:"
+msgstr "Padding"
+
+#: ../glade/gbwidgets/gbhbox.c:331
+msgid "The widget's padding"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhbox.c:333 ../glade/gbwidgets/gbnotebook.c:672
+#: ../glade/gbwidgets/gbpreview.c:65 ../glade/gbwidgets/gbtoolbar.c:424
+#, fuzzy
+msgid "Expand:"
+msgstr "Utvid"
+
+#: ../glade/gbwidgets/gbhbox.c:334 ../glade/gbwidgets/gbtoolbar.c:425
+msgid "Set True to let the widget expand"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhbox.c:335 ../glade/gbwidgets/gbnotebook.c:674
+#, fuzzy
+msgid "Fill:"
+msgstr "Fyll"
+
+#: ../glade/gbwidgets/gbhbox.c:336
+msgid "Set True to let the widget fill its allocated area"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhbox.c:337 ../glade/gbwidgets/gbnotebook.c:676
+#, fuzzy
+msgid "Pack Start:"
+msgstr "Start:"
+
+#: ../glade/gbwidgets/gbhbox.c:338
+msgid "Set True to pack the widget at the start of the box"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhbox.c:455
+#, fuzzy
+msgid "Insert Before"
+msgstr "Sett inn frå:"
+
+#: ../glade/gbwidgets/gbhbox.c:461
+#, fuzzy
+msgid "Insert After"
+msgstr "Set inn dato"
+
+#: ../glade/gbwidgets/gbhbox.c:571
+#, fuzzy
+msgid "Horizontal Box"
+msgstr "Vassrett"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:120
+#, fuzzy
+msgid "New horizontal button box"
+msgstr "Opna horisontalt"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:194
+#, fuzzy
+msgid "The number of buttons"
+msgstr "Nummerknappar"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:196
+msgid "Layout:"
+msgstr "Utsjånad:"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:197
+#, fuzzy
+msgid "The layout style of the buttons"
+msgstr "Her kan du endra storleiken på gøymeknappane."
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:199
+msgid "The space between the buttons"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:414
+#, fuzzy
+msgid "Horizontal Button Box"
+msgstr "Berre vassrett"
+
+#: ../glade/gbwidgets/gbhpaned.c:74 ../glade/gbwidgets/gbvpaned.c:70
+#, fuzzy
+msgid "The position of the divider"
+msgstr "Vel posisjonen i toppblokka."
+
+#: ../glade/gbwidgets/gbhpaned.c:186 ../glade/gbwidgets/gbwindow.c:283
+#, fuzzy
+msgid "Shrink:"
+msgstr "Krymp brettet"
+
+#: ../glade/gbwidgets/gbhpaned.c:187
+#, fuzzy
+msgid "Set True to let the widget shrink"
+msgstr "Sentrer dei valte elementa"
+
+#: ../glade/gbwidgets/gbhpaned.c:188
+#, fuzzy
+msgid "Resize:"
+msgstr "Endra storleik"
+
+#: ../glade/gbwidgets/gbhpaned.c:189
+#, fuzzy
+msgid "Set True to let the widget resize"
+msgstr "Sentrer dei valte elementa"
+
+#: ../glade/gbwidgets/gbhpaned.c:315
+#, fuzzy
+msgid "Horizontal Panes"
+msgstr "Vassrette linjer"
+
+#: ../glade/gbwidgets/gbhruler.c:82 ../glade/gbwidgets/gbvruler.c:82
+#, fuzzy
+msgid "Metric:"
+msgstr "Ymse:"
+
+#: ../glade/gbwidgets/gbhruler.c:83 ../glade/gbwidgets/gbvruler.c:83
+#, fuzzy
+msgid "The units of the ruler"
+msgstr "Artisten på Internett"
+
+#: ../glade/gbwidgets/gbhruler.c:85 ../glade/gbwidgets/gbvruler.c:85
+#, fuzzy
+msgid "Lower Value:"
+msgstr "Små bokstavar"
+
+#: ../glade/gbwidgets/gbhruler.c:86 ../glade/gbwidgets/gbvruler.c:86
+#: ../glade/gbwidgets/gbvruler.c:88
+#, fuzzy
+msgid "The low value of the ruler"
+msgstr "Set timeverdien til slutt-tida."
+
+#: ../glade/gbwidgets/gbhruler.c:87 ../glade/gbwidgets/gbvruler.c:87
+#, fuzzy
+msgid "Upper Value:"
+msgstr "Store bokstavar"
+
+#: ../glade/gbwidgets/gbhruler.c:88
+#, fuzzy
+msgid "The high value of the ruler"
+msgstr "Endra namnet på spelarane"
+
+#: ../glade/gbwidgets/gbhruler.c:90 ../glade/gbwidgets/gbvruler.c:90
+#, fuzzy
+msgid "The current position on the ruler"
+msgstr "Vel posisjonen i toppblokka."
+
+#: ../glade/gbwidgets/gbhruler.c:91 ../glade/gbwidgets/gbvruler.c:91
+#: ../glade/property.c:4827
+#, fuzzy
+msgid "Max:"
+msgstr "Høgst"
+
+#: ../glade/gbwidgets/gbhruler.c:92 ../glade/gbwidgets/gbvruler.c:92
+#, fuzzy
+msgid "The maximum value of the ruler"
+msgstr "Oppgi den høgste verdien stolpane kan få."
+
+#: ../glade/gbwidgets/gbhruler.c:247
+#, fuzzy
+msgid "Horizontal Ruler"
+msgstr "Vassrett delingslinje"
+
+#: ../glade/gbwidgets/gbhscale.c:107 ../glade/gbwidgets/gbvscale.c:108
+#, fuzzy
+msgid "Show Value:"
+msgstr "Vis tabell"
+
+#: ../glade/gbwidgets/gbhscale.c:107 ../glade/gbwidgets/gbvscale.c:108
+msgid "If the scale's value is shown"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhscale.c:108 ../glade/gbwidgets/gbspinbutton.c:93
+#: ../glade/gbwidgets/gbvscale.c:109
+#, fuzzy
+msgid "Digits:"
+msgstr "Siffer"
+
+#: ../glade/gbwidgets/gbhscale.c:108 ../glade/gbwidgets/gbvscale.c:109
+#, fuzzy
+msgid "The number of digits to show"
+msgstr "høgste tal på emnelinjer for nedlasting"
+
+#: ../glade/gbwidgets/gbhscale.c:110 ../glade/gbwidgets/gbvscale.c:111
+#, fuzzy
+msgid "Value Pos:"
+msgstr "Verdi:"
+
+#: ../glade/gbwidgets/gbhscale.c:111 ../glade/gbwidgets/gbvscale.c:112
+#, fuzzy
+msgid "The position of the value"
+msgstr "Vel posisjonen i toppblokka."
+
+#: ../glade/gbwidgets/gbhscale.c:113 ../glade/gbwidgets/gbhscrollbar.c:87
+#: ../glade/gbwidgets/gbvscale.c:114 ../glade/gbwidgets/gbvscrollbar.c:87
+msgid "Policy:"
+msgstr "Praksis:"
+
+#: ../glade/gbwidgets/gbhscale.c:114 ../glade/gbwidgets/gbvscale.c:115
+#, fuzzy
+msgid "The update policy of the scale"
+msgstr "Datoen er ugyldig."
+
+#: ../glade/gbwidgets/gbhscale.c:116 ../glade/gbwidgets/gbhscrollbar.c:90
+#: ../glade/gbwidgets/gbvscale.c:117 ../glade/gbwidgets/gbvscrollbar.c:90
+#, fuzzy
+msgid "Inverted:"
+msgstr "Konverterar"
+
+#: ../glade/gbwidgets/gbhscale.c:116 ../glade/gbwidgets/gbhscrollbar.c:90
+#: ../glade/gbwidgets/gbvscale.c:117 ../glade/gbwidgets/gbvscrollbar.c:90
+#, fuzzy
+msgid "If the range values are inverted"
+msgstr ""
+"Fila\n"
+"%1\n"
+"er alt i lista"
+
+#: ../glade/gbwidgets/gbhscale.c:319
+#, fuzzy
+msgid "Horizontal Scale"
+msgstr "Vassrett delingslinje"
+
+#: ../glade/gbwidgets/gbhscrollbar.c:88 ../glade/gbwidgets/gbvscrollbar.c:88
+msgid "The update policy of the scrollbar"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhscrollbar.c:237
+#, fuzzy
+msgid "Horizontal Scrollbar"
+msgstr "Vassrette linjer"
+
+#: ../glade/gbwidgets/gbhseparator.c:144
+#, fuzzy
+msgid "Horizonal Separator"
+msgstr "Vassrett sinus"
+
+#: ../glade/gbwidgets/gbiconview.c:106
+#, fuzzy, c-format
+msgid "Icon %i"
+msgstr "Liste over skrifttypar"
+
+#: ../glade/gbwidgets/gbiconview.c:128
+#, fuzzy
+msgid "The selection mode of the icon view"
+msgstr "Flyttar utvalet til venstre"
+
+#: ../glade/gbwidgets/gbiconview.c:130 ../glade/gbwidgets/gbprogressbar.c:134
+#: ../glade/gbwidgets/gbtoolbar.c:270 ../glade/gnome/bonobodockitem.c:179
+msgid "Orientation:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbiconview.c:131
+#, fuzzy
+msgid "The orientation of the icons"
+msgstr "Versjonen av programmet."
+
+#: ../glade/gbwidgets/gbiconview.c:287
+#, fuzzy
+msgid "Icon View"
+msgstr "Vis &storleik"
+
+#: ../glade/gbwidgets/gbimage.c:110 ../glade/gbwidgets/gbwindow.c:299
+#, fuzzy
+msgid "Named Icon:"
+msgstr "Ikon:"
+
+#: ../glade/gbwidgets/gbimage.c:111 ../glade/gbwidgets/gbwindow.c:300
+#, fuzzy
+msgid "The named icon to use"
+msgstr "Oppsettfila som skal brukast."
+
+#: ../glade/gbwidgets/gbimage.c:112
+#, fuzzy
+msgid "Icon Size:"
+msgstr "Vis &storleik"
+
+#: ../glade/gbwidgets/gbimage.c:113
+#, fuzzy
+msgid "The stock icon size"
+msgstr "Oppsettfila som skal brukast."
+
+#: ../glade/gbwidgets/gbimage.c:115
+#, fuzzy
+msgid "Pixel Size:"
+msgstr "Sidestorleik:"
+
+#: ../glade/gbwidgets/gbimage.c:116
+msgid ""
+"The size of the named icon in pixels, or -1 to use the Icon Size property"
+msgstr ""
+
+#: ../glade/gbwidgets/gbimage.c:120
+#, fuzzy
+msgid "The horizontal alignment"
+msgstr "Endra tabellnamn"
+
+#: ../glade/gbwidgets/gbimage.c:123
+#, fuzzy
+msgid "The vertical alignment"
+msgstr "Endra tabellnamn"
+
+#: ../glade/gbwidgets/gbimage.c:648
+msgid "Image"
+msgstr "Bilete"
+
+#: ../glade/gbwidgets/gbimagemenuitem.c:255
+#: ../glade/gbwidgets/gbmenuitem.c:228
+#, fuzzy
+msgid "Invalid stock menu item"
+msgstr "Ugyldig biletefil"
+
+#: ../glade/gbwidgets/gbimagemenuitem.c:471
+msgid "Menu item with a pixmap"
+msgstr ""
+
+#: ../glade/gbwidgets/gbinputdialog.c:256
+#, fuzzy
+msgid "Input Dialog"
+msgstr "&Gradvis overgang"
+
+#: ../glade/gbwidgets/gblabel.c:169
+#, fuzzy
+msgid "Use Underline:"
+msgstr "Understreka"
+
+#: ../glade/gbwidgets/gblabel.c:170
+msgid "If the text includes an underlined access key"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:171
+#, fuzzy
+msgid "Use Markup:"
+msgstr "Bruk bilete"
+
+#: ../glade/gbwidgets/gblabel.c:172
+msgid "If the text includes pango markup"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:173
+msgid "Justify:"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:174
+msgid "The justification of the lines of the label"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:176
+#, fuzzy
+msgid "Wrap Text:"
+msgstr "Tag-tekst"
+
+#: ../glade/gbwidgets/gblabel.c:177
+msgid "If the text is wrapped to fit within the width of the label"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:178
+#, fuzzy
+msgid "Selectable:"
+msgstr "Merka:"
+
+#: ../glade/gbwidgets/gblabel.c:179
+#, fuzzy
+msgid "If the label text can be selected with the mouse"
+msgstr "Dette innlegget kan ikkje endrast."
+
+#: ../glade/gbwidgets/gblabel.c:181
+#, fuzzy
+msgid "The horizontal alignment of the entire label"
+msgstr "Endra tabellnamn"
+
+#: ../glade/gbwidgets/gblabel.c:184
+#, fuzzy
+msgid "The vertical alignment of the entire label"
+msgstr "Endra tabellnamn"
+
+#: ../glade/gbwidgets/gblabel.c:190
+#, fuzzy
+msgid "Focus Target:"
+msgstr "Slett mål"
+
+#: ../glade/gbwidgets/gblabel.c:191
+msgid ""
+"The widget to set the keyboard focus to when the underlined access key is "
+"used"
+msgstr ""
+
+#. gtk_combo_set_value_in_list (GTK_COMBO (combo), TRUE, TRUE);
+#: ../glade/gbwidgets/gblabel.c:197 ../glade/gbwidgets/gbprogressbar.c:146
+#, fuzzy
+msgid "Ellipsize:"
+msgstr "Executive"
+
+#: ../glade/gbwidgets/gblabel.c:198 ../glade/gbwidgets/gbprogressbar.c:147
+msgid "How to ellipsize the string"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:201
+#, fuzzy
+msgid "The width of the label in characters"
+msgstr "PID-en til programmet."
+
+#: ../glade/gbwidgets/gblabel.c:203
+#, fuzzy
+msgid "Single Line Mode:"
+msgstr "Vel modus"
+
+#: ../glade/gbwidgets/gblabel.c:204
+msgid "If the label is only given enough height for a single line"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:205
+msgid "Angle:"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:206
+#, fuzzy
+msgid "The angle of the label text"
+msgstr "Endra tabellnamn"
+
+#: ../glade/gbwidgets/gblabel.c:332 ../glade/gbwidgets/gblabel.c:347
+#: ../glade/gbwidgets/gblabel.c:614
+msgid "Auto"
+msgstr "Auto"
+
+#: ../glade/gbwidgets/gblabel.c:870 ../glade/glade_menu_editor.c:410
+#, fuzzy
+msgid "Label"
+msgstr "Tittel"
+
+#: ../glade/gbwidgets/gblayout.c:96
+#, fuzzy
+msgid "Area Width:"
+msgstr "Tab-breidd:"
+
+#: ../glade/gbwidgets/gblayout.c:97
+#, fuzzy
+msgid "The width of the layout area"
+msgstr "PID-en til programmet."
+
+#: ../glade/gbwidgets/gblayout.c:99
+#, fuzzy
+msgid "Area Height:"
+msgstr "Høgd:"
+
+#: ../glade/gbwidgets/gblayout.c:100
+#, fuzzy
+msgid "The height of the layout area"
+msgstr "Skriv tittelen på ruta her."
+
+#: ../glade/gbwidgets/gblayout.c:222
+#, fuzzy
+msgid "The X coordinate of the widget in the GtkLayout"
+msgstr "Namnet på fila programmet skal skriva til"
+
+#: ../glade/gbwidgets/gblayout.c:225
+#, fuzzy
+msgid "The Y coordinate of the widget in the GtkLayout"
+msgstr "Namnet på fila programmet skal skriva til"
+
+#: ../glade/gbwidgets/gblayout.c:380
+msgid "Layout"
+msgstr "Stil"
+
+#: ../glade/gbwidgets/gblist.c:78
+#, fuzzy
+msgid "The selection mode of the list"
+msgstr "Flyttar utvalet til venstre"
+
+#: ../glade/gbwidgets/gblist.c:192
+msgid "List"
+msgstr ""
+
+#: ../glade/gbwidgets/gblistitem.c:171
+#, fuzzy
+msgid "List Item"
+msgstr "Vis liste"
+
+#: ../glade/gbwidgets/gbmenu.c:198
+#, fuzzy
+msgid "Popup Menu"
+msgstr "Programstartmeny"
+
+#. FIXME: I'm not sure if we should translate the non-stock labels or not.
+#: ../glade/gbwidgets/gbmenubar.c:190
+#, fuzzy
+msgid "_File"
+msgstr "Fil"
+
+#. Create Edit menu
+#: ../glade/gbwidgets/gbmenubar.c:198 ../glade/glade_project_window.c:691
+#, fuzzy
+msgid "_Edit"
+msgstr "Rediger"
+
+#. Create View menu
+#: ../glade/gbwidgets/gbmenubar.c:204 ../glade/glade_project_window.c:720
+#, fuzzy
+msgid "_View"
+msgstr "Vis"
+
+#. Create Help menu
+#: ../glade/gbwidgets/gbmenubar.c:206 ../glade/glade_project_window.c:833
+#, fuzzy
+msgid "_Help"
+msgstr "Hjelp"
+
+#: ../glade/gbwidgets/gbmenubar.c:207
+#, fuzzy
+msgid "_About"
+msgstr "Om"
+
+#: ../glade/gbwidgets/gbmenubar.c:268 ../glade/gbwidgets/gbmenubar.c:346
+#: ../glade/gbwidgets/gboptionmenu.c:139
+#, fuzzy
+msgid "Edit Menus..."
+msgstr "Rediger K-meny"
+
+#: ../glade/gbwidgets/gbmenubar.c:442
+#, fuzzy
+msgid "Menu Bar"
+msgstr "Vis menylinje"
+
+#: ../glade/gbwidgets/gbmenuitem.c:379
+#, fuzzy
+msgid "Menu Item"
+msgstr "Nytt element"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:92
+#: ../glade/gbwidgets/gbradiotoolbutton.c:150
+#: ../glade/gbwidgets/gbseparatortoolitem.c:67
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:99
+#: ../glade/gbwidgets/gbtoolbutton.c:111 ../glade/gbwidgets/gbtoolitem.c:65
+#, fuzzy
+msgid "Show Horizontal:"
+msgstr "Vassrett:"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:93
+#: ../glade/gbwidgets/gbradiotoolbutton.c:151
+#: ../glade/gbwidgets/gbseparatortoolitem.c:68
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:100
+#: ../glade/gbwidgets/gbtoolbutton.c:112 ../glade/gbwidgets/gbtoolitem.c:66
+msgid "If the item is visible when the toolbar is horizontal"
+msgstr ""
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:94
+#: ../glade/gbwidgets/gbradiotoolbutton.c:152
+#: ../glade/gbwidgets/gbseparatortoolitem.c:69
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:101
+#: ../glade/gbwidgets/gbtoolbutton.c:113 ../glade/gbwidgets/gbtoolitem.c:67
+#, fuzzy
+msgid "Show Vertical:"
+msgstr "Vis tabell"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:95
+#: ../glade/gbwidgets/gbradiotoolbutton.c:153
+#: ../glade/gbwidgets/gbseparatortoolitem.c:70
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:102
+#: ../glade/gbwidgets/gbtoolbutton.c:114 ../glade/gbwidgets/gbtoolitem.c:68
+msgid "If the item is visible when the toolbar is vertical"
+msgstr ""
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:96
+#: ../glade/gbwidgets/gbradiotoolbutton.c:154
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:103
+#: ../glade/gbwidgets/gbtoolbutton.c:115 ../glade/gbwidgets/gbtoolitem.c:69
+msgid "Is Important:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:97
+#: ../glade/gbwidgets/gbradiotoolbutton.c:155
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:104
+#: ../glade/gbwidgets/gbtoolbutton.c:116 ../glade/gbwidgets/gbtoolitem.c:70
+msgid ""
+"If the item's text should be shown when the toolbar's mode is "
+"GTK_TOOLBAR_BOTH_HORIZ"
+msgstr ""
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:255
+#, fuzzy
+msgid "Toolbar Button with Menu"
+msgstr "Slå av/på &simulering"
+
+#: ../glade/gbwidgets/gbnotebook.c:191
+#, fuzzy
+msgid "New notebook"
+msgstr "Ny node"
+
+#: ../glade/gbwidgets/gbnotebook.c:202 ../glade/gnome/gnomepropertybox.c:124
+#, fuzzy
+msgid "Number of pages:"
+msgstr "Tal på plan:"
+
+#: ../glade/gbwidgets/gbnotebook.c:274
+#, fuzzy
+msgid "Show Tabs:"
+msgstr "Vis tabell"
+
+#: ../glade/gbwidgets/gbnotebook.c:274
+msgid "If the notebook tabs are shown"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:275
+#, fuzzy
+msgid "Show Border:"
+msgstr "Vis kant"
+
+#: ../glade/gbwidgets/gbnotebook.c:276
+msgid "If the notebook border is shown, when the tabs are not shown"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:277
+msgid "Tab Pos:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:278
+#, fuzzy
+msgid "The position of the notebook tabs"
+msgstr "Versjonen av programmet."
+
+#: ../glade/gbwidgets/gbnotebook.c:280
+#, fuzzy
+msgid "Scrollable:"
+msgstr "Tabellar"
+
+#: ../glade/gbwidgets/gbnotebook.c:281
+msgid "If the notebook tabs are scrollable"
+msgstr ""
+
+#. These seem to be deprecated.
+#: ../glade/gbwidgets/gbnotebook.c:284
+#, fuzzy
+msgid "Tab Horz. Border:"
+msgstr "Ingen kantlinjer"
+
+#: ../glade/gbwidgets/gbnotebook.c:285
+msgid "The size of the notebook tabs' horizontal border"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:287
+#, fuzzy
+msgid "Tab Vert. Border:"
+msgstr "Målmappe:"
+
+#: ../glade/gbwidgets/gbnotebook.c:288
+msgid "The size of the notebook tabs' vertical border"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:291
+#, fuzzy
+msgid "Show Popup:"
+msgstr "Vis gruppe"
+
+#: ../glade/gbwidgets/gbnotebook.c:291
+msgid "If the popup menu is enabled"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:292 ../glade/gnome/gnomedruid.c:102
+#, fuzzy
+msgid "Number of Pages:"
+msgstr "Tal på rader:"
+
+#: ../glade/gbwidgets/gbnotebook.c:293
+#, fuzzy
+msgid "The number of notebook pages"
+msgstr "Ingen fleire sider."
+
+#: ../glade/gbwidgets/gbnotebook.c:540
+msgid "Previous Page"
+msgstr "Førre side"
+
+#: ../glade/gbwidgets/gbnotebook.c:548
+msgid "Next Page"
+msgstr "Neste side"
+
+#: ../glade/gbwidgets/gbnotebook.c:556
+#, fuzzy
+msgid "Delete Page"
+msgstr "&Slett side"
+
+#: ../glade/gbwidgets/gbnotebook.c:562
+#, fuzzy
+msgid "Switch Next"
+msgstr "Del tekst"
+
+#: ../glade/gbwidgets/gbnotebook.c:570
+#, fuzzy
+msgid "Switch Previous"
+msgstr "Byt til førre skrivebord"
+
+#: ../glade/gbwidgets/gbnotebook.c:578 ../glade/gnome/gnomedruid.c:298
+#, fuzzy
+msgid "Insert Page After"
+msgstr "Set inn sidetal"
+
+#: ../glade/gbwidgets/gbnotebook.c:586 ../glade/gnome/gnomedruid.c:285
+#, fuzzy
+msgid "Insert Page Before"
+msgstr "Set inn sidetal"
+
+#: ../glade/gbwidgets/gbnotebook.c:670
+#, fuzzy
+msgid "The page's position in the list of pages"
+msgstr "Vel posisjonen i toppblokka."
+
+#: ../glade/gbwidgets/gbnotebook.c:673
+#, fuzzy
+msgid "Set True to let the tab expand"
+msgstr "Sentrer dei valte elementa"
+
+#: ../glade/gbwidgets/gbnotebook.c:675
+#, fuzzy
+msgid "Set True to let the tab fill its allocated area"
+msgstr "Sentrer dei valte elementa"
+
+#: ../glade/gbwidgets/gbnotebook.c:677
+msgid "Set True to pack the tab at the start of the notebook"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:678
+#, fuzzy
+msgid "Menu Label:"
+msgstr "Etikett:"
+
+#: ../glade/gbwidgets/gbnotebook.c:679
+#, fuzzy
+msgid "The text to display in the popup menu"
+msgstr "Ein URL som skal visast"
+
+#: ../glade/gbwidgets/gbnotebook.c:937
+#, fuzzy
+msgid "Notebook"
+msgstr "Merk"
+
+#: ../glade/gbwidgets/gboptionmenu.c:230
+#, c-format
+msgid "Cannot add a %s to a GtkOptionMenu."
+msgstr ""
+
+#: ../glade/gbwidgets/gboptionmenu.c:270
+#, fuzzy
+msgid "Option Menu"
+msgstr "Operasjonsmeny"
+
+#: ../glade/gbwidgets/gbpreview.c:63
+msgid "Color:"
+msgstr "Farge:"
+
+#: ../glade/gbwidgets/gbpreview.c:64
+#, fuzzy
+msgid "If the preview is color or grayscale"
+msgstr "TrueColor til gråtonar"
+
+#: ../glade/gbwidgets/gbpreview.c:66
+msgid "If the preview expands to fill its allocated area"
+msgstr ""
+
+#: ../glade/gbwidgets/gbpreview.c:162
+msgid "Preview"
+msgstr "Førehandsvis"
+
+#: ../glade/gbwidgets/gbprogressbar.c:135
+#, fuzzy
+msgid "The orientation of the progress bar's contents"
+msgstr "Versjonen av programmet."
+
+#: ../glade/gbwidgets/gbprogressbar.c:137
+#, fuzzy
+msgid "Fraction:"
+msgstr "Retning:"
+
+#: ../glade/gbwidgets/gbprogressbar.c:138
+msgid "The fraction of work that has been completed"
+msgstr ""
+
+#: ../glade/gbwidgets/gbprogressbar.c:140
+#, fuzzy
+msgid "Pulse Step:"
+msgstr "Bruk bilete"
+
+#: ../glade/gbwidgets/gbprogressbar.c:141
+msgid ""
+"The fraction of the progress bar length to move the bouncing block when "
+"pulsed"
+msgstr ""
+
+#: ../glade/gbwidgets/gbprogressbar.c:144
+#, fuzzy
+msgid "The text to display over the progress bar"
+msgstr "PID-en til programmet."
+
+#. ShowText is implicit now, if the Text property is set to anything.
+#: ../glade/gbwidgets/gbprogressbar.c:152
+#, fuzzy
+msgid "Show Text:"
+msgstr "Vis tekst"
+
+#: ../glade/gbwidgets/gbprogressbar.c:153
+msgid "If the text should be shown in the progress bar"
+msgstr ""
+
+#. ActivityMode is deprecated and implicit now. The app just calls
+#. gtk_progress_bar_pulse() and it automatically goes into activity mode.
+#: ../glade/gbwidgets/gbprogressbar.c:157
+#, fuzzy
+msgid "Activity Mode:"
+msgstr "Aktiver"
+
+#: ../glade/gbwidgets/gbprogressbar.c:158
+msgid "If the progress bar should act like the front of Kit's car"
+msgstr ""
+
+#: ../glade/gbwidgets/gbprogressbar.c:163
+#, fuzzy
+msgid "The horizontal alignment of the text"
+msgstr "Endra tabellnamn"
+
+#: ../glade/gbwidgets/gbprogressbar.c:166
+#, fuzzy
+msgid "The vertical alignment of the text"
+msgstr "Endra tabellnamn"
+
+#: ../glade/gbwidgets/gbprogressbar.c:421
+#, fuzzy
+msgid "Progress Bar"
+msgstr "Framgang:"
+
+#: ../glade/gbwidgets/gbradiobutton.c:138
+#: ../glade/gbwidgets/gbradiotoolbutton.c:148
+msgid "If the radio button is initially on"
+msgstr ""
+
+#: ../glade/gbwidgets/gbradiobutton.c:143
+#: ../glade/gbwidgets/gbradiomenuitem.c:106
+#: ../glade/gbwidgets/gbradiotoolbutton.c:141
+#: ../glade/glade_menu_editor.c:1038
+msgid "Group:"
+msgstr "Gruppe:"
+
+#: ../glade/gbwidgets/gbradiobutton.c:144
+msgid ""
+"The radio button group (the default is all radio buttons with the same "
+"parent)"
+msgstr ""
+
+#: ../glade/gbwidgets/gbradiobutton.c:189
+#: ../glade/gbwidgets/gbradiobutton.c:350
+#: ../glade/gbwidgets/gbradiotoolbutton.c:233
+#: ../glade/gbwidgets/gbradiotoolbutton.c:322
+#, fuzzy
+msgid "New Group"
+msgstr "Nye grupper"
+
+#: ../glade/gbwidgets/gbradiobutton.c:463
+msgid "Radio Button"
+msgstr "Radioknapp"
+
+#: ../glade/gbwidgets/gbradiomenuitem.c:105
+msgid "If the radio menu item is initially on"
+msgstr ""
+
+#: ../glade/gbwidgets/gbradiomenuitem.c:107
+msgid ""
+"The radio menu item group (the default is all radio menu items with the same "
+"parent)"
+msgstr ""
+
+#: ../glade/gbwidgets/gbradiomenuitem.c:386
+#, fuzzy
+msgid "Radio Menu Item"
+msgstr "Radio-telefon"
+
+#: ../glade/gbwidgets/gbradiotoolbutton.c:142
+msgid ""
+"The radio tool button group (the default is all radio tool buttons in the "
+"toolbar)"
+msgstr ""
+
+#: ../glade/gbwidgets/gbradiotoolbutton.c:528
+#, fuzzy
+msgid "Toolbar Radio Button"
+msgstr "Radioknapp"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:131
+#, fuzzy
+msgid "H Policy:"
+msgstr "Praksis:"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:132
+msgid "When the horizontal scrollbar will be shown"
+msgstr ""
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:134
+#, fuzzy
+msgid "V Policy:"
+msgstr "Praksis:"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:135
+msgid "When the vertical scrollbar will be shown"
+msgstr ""
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:137
+#, fuzzy
+msgid "Window Pos:"
+msgstr "Lukk vindauge"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:138
+msgid "Where the child window is located with respect to the scrollbars"
+msgstr ""
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:140
+#, fuzzy
+msgid "Shadow Type:"
+msgstr "Skugge"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:141
+msgid "The update policy of the vertical scrollbar"
+msgstr ""
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:353
+#, fuzzy
+msgid "Scrolled Window"
+msgstr "Rull ned"
+
+#: ../glade/gbwidgets/gbseparatormenuitem.c:153
+msgid "Separator for Menus"
+msgstr ""
+
+#: ../glade/gbwidgets/gbseparatortoolitem.c:65
+msgid "Draw:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbseparatortoolitem.c:66
+msgid "If the separator is drawn, or just blank"
+msgstr ""
+
+#: ../glade/gbwidgets/gbseparatortoolitem.c:204
+#, fuzzy
+msgid "Toolbar Separator Item"
+msgstr "Vassrett sinus"
+
+#: ../glade/gbwidgets/gbspinbutton.c:91
+#, fuzzy
+msgid "Climb Rate:"
+msgstr "Fargerate:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:92
+msgid ""
+"The climb rate of the spinbutton, used in conjunction with the Page Increment"
+msgstr ""
+
+#: ../glade/gbwidgets/gbspinbutton.c:94
+#, fuzzy
+msgid "The number of decimal digits to show"
+msgstr "høgste tal på emnelinjer for nedlasting"
+
+#: ../glade/gbwidgets/gbspinbutton.c:96
+#, fuzzy
+msgid "Numeric:"
+msgstr "Tal:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:97
+msgid "If only numeric entry is allowed"
+msgstr ""
+
+#: ../glade/gbwidgets/gbspinbutton.c:98
+#, fuzzy
+msgid "Update Policy:"
+msgstr "Standardpraksis"
+
+#: ../glade/gbwidgets/gbspinbutton.c:99
+msgid "When value_changed signals are emitted"
+msgstr ""
+
+#: ../glade/gbwidgets/gbspinbutton.c:101
+#, fuzzy
+msgid "Snap:"
+msgstr "Form:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:102
+msgid "If the value is snapped to multiples of the step increment"
+msgstr ""
+
+#: ../glade/gbwidgets/gbspinbutton.c:103
+#, fuzzy
+msgid "Wrap:"
+msgstr "Tekstbryting:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:104
+msgid "If the value is wrapped at the limits"
+msgstr ""
+
+#: ../glade/gbwidgets/gbspinbutton.c:284
+#, fuzzy
+msgid "Spin Button"
+msgstr "Operasjonsknappar"
+
+#: ../glade/gbwidgets/gbstatusbar.c:64
+#, fuzzy
+msgid "Resize Grip:"
+msgstr "Endra storleik"
+
+#: ../glade/gbwidgets/gbstatusbar.c:64
+msgid "If the status bar has a resize grip to resize the window"
+msgstr ""
+
+#: ../glade/gbwidgets/gbstatusbar.c:156
+msgid "Status Bar"
+msgstr "Statuslinje"
+
+#: ../glade/gbwidgets/gbtable.c:137
+#, fuzzy
+msgid "New table"
+msgstr "Vis tabell"
+
+#: ../glade/gbwidgets/gbtable.c:149 ../glade/gbwidgets/gbvbox.c:95
+#: ../glade/gbwidgets/gbvbuttonbox.c:123
+#, fuzzy
+msgid "Number of rows:"
+msgstr "Tal på rader:"
+
+#: ../glade/gbwidgets/gbtable.c:237
+msgid "Rows:"
+msgstr "Rader:"
+
+#: ../glade/gbwidgets/gbtable.c:238
+#, fuzzy
+msgid "The number of rows in the table"
+msgstr "Høgste tal på ord i spørjinga"
+
+#: ../glade/gbwidgets/gbtable.c:240
+msgid "Columns:"
+msgstr "Kolonnar:"
+
+#: ../glade/gbwidgets/gbtable.c:241
+#, fuzzy
+msgid "The number of columns in the table"
+msgstr "Høgste tal på ord i spørjinga"
+
+#: ../glade/gbwidgets/gbtable.c:244
+msgid "If the children should all be the same size"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:245 ../glade/gnome/gnomeiconlist.c:180
+#, fuzzy
+msgid "Row Spacing:"
+msgstr "Mellomrom:"
+
+#: ../glade/gbwidgets/gbtable.c:246
+#, fuzzy
+msgid "The space between each row"
+msgstr "Minutt mellom kvar autolagring"
+
+#: ../glade/gbwidgets/gbtable.c:248 ../glade/gnome/gnomeiconlist.c:183
+#, fuzzy
+msgid "Col Spacing:"
+msgstr "Cellemellomrom"
+
+#: ../glade/gbwidgets/gbtable.c:249
+msgid "The space between each column"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:368
+#, fuzzy
+msgid "Cell X:"
+msgstr "Celle &X"
+
+#: ../glade/gbwidgets/gbtable.c:369
+#, fuzzy
+msgid "The left edge of the widget in the table"
+msgstr "Slett rada frå tabellen."
+
+#: ../glade/gbwidgets/gbtable.c:371
+#, fuzzy
+msgid "Cell Y:"
+msgstr "Celle &Y"
+
+#: ../glade/gbwidgets/gbtable.c:372
+#, fuzzy
+msgid "The top edge of the widget in the table"
+msgstr "Namnet på fila programmet skal skriva til"
+
+#: ../glade/gbwidgets/gbtable.c:375
+#, fuzzy
+msgid "Col Span:"
+msgstr "Firma:"
+
+#: ../glade/gbwidgets/gbtable.c:376
+#, fuzzy
+msgid "The number of columns spanned by the widget in the table"
+msgstr "Oppgi namnet på verten du vil kopla til."
+
+#: ../glade/gbwidgets/gbtable.c:378
+#, fuzzy
+msgid "Row Span:"
+msgstr "Rader spent over"
+
+#: ../glade/gbwidgets/gbtable.c:379
+msgid "The number of rows spanned by the widget in the table"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:381
+#, fuzzy
+msgid "H Padding:"
+msgstr "Padding"
+
+#: ../glade/gbwidgets/gbtable.c:384
+#, fuzzy
+msgid "V Padding:"
+msgstr "Padding"
+
+#: ../glade/gbwidgets/gbtable.c:387
+#, fuzzy
+msgid "X Expand:"
+msgstr "Utvid"
+
+#: ../glade/gbwidgets/gbtable.c:388
+msgid "Set True to let the widget expand horizontally"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:389
+#, fuzzy
+msgid "Y Expand:"
+msgstr "Utvid"
+
+#: ../glade/gbwidgets/gbtable.c:390
+msgid "Set True to let the widget expand vertically"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:391
+msgid "X Shrink:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:392
+msgid "Set True to let the widget shrink horizontally"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:393
+msgid "Y Shrink:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:394
+msgid "Set True to let the widget shrink vertically"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:395
+#, fuzzy
+msgid "X Fill:"
+msgstr "Fyll"
+
+#: ../glade/gbwidgets/gbtable.c:396
+msgid "Set True to let the widget fill its horizontal allocated area"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:397
+#, fuzzy
+msgid "Y Fill:"
+msgstr "Fyll"
+
+#: ../glade/gbwidgets/gbtable.c:398
+msgid "Set True to let the widget fill its vertical allocated area"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:667
+#, fuzzy
+msgid "Insert Row Before"
+msgstr "Set inn rad"
+
+#: ../glade/gbwidgets/gbtable.c:674
+#, fuzzy
+msgid "Insert Row After"
+msgstr "Set inn rad"
+
+#: ../glade/gbwidgets/gbtable.c:681
+#, fuzzy
+msgid "Insert Column Before"
+msgstr "Set inn kolonne"
+
+#: ../glade/gbwidgets/gbtable.c:688
+#, fuzzy
+msgid "Insert Column After"
+msgstr "Set inn kolonne"
+
+#: ../glade/gbwidgets/gbtable.c:695
+msgid "Delete Row"
+msgstr "Fjern rad"
+
+#: ../glade/gbwidgets/gbtable.c:701
+msgid "Delete Column"
+msgstr "Fjern kolonne"
+
+#: ../glade/gbwidgets/gbtable.c:1208
+#, fuzzy
+msgid "Table"
+msgstr "Tittel"
+
+#: ../glade/gbwidgets/gbtextview.c:51
+msgid "Center"
+msgstr "Sentrert"
+
+#: ../glade/gbwidgets/gbtextview.c:52
+#, fuzzy
+msgid "Fill"
+msgstr "Fyll"
+
+#. Add a "None" item first, so it is easy to reset the pixmap.
+#. If the user selects the 'None' item from the combo, we reset the
+#. text to "" and return. This callback will be called again.
+#. Add a 'None' item at the top of the list.
+#: ../glade/gbwidgets/gbtextview.c:71 ../glade/glade_gnome.c:112
+#: ../glade/glade_menu_editor.c:542 ../glade/glade_menu_editor.c:829
+#: ../glade/glade_menu_editor.c:1344 ../glade/glade_menu_editor.c:2251
+#: ../glade/property.c:2431
+msgid "None"
+msgstr "Ingen"
+
+#: ../glade/gbwidgets/gbtextview.c:72
+msgid "Character"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtextview.c:73
+msgid "Word"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtextview.c:117
+#, fuzzy
+msgid "Cursor Visible:"
+msgstr "Synleg"
+
+#: ../glade/gbwidgets/gbtextview.c:118
+msgid "If the cursor is visible"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtextview.c:119
+#, fuzzy
+msgid "Overwrite:"
+msgstr "Konverterar"
+
+#: ../glade/gbwidgets/gbtextview.c:120
+msgid "If entered text overwrites the existing text"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtextview.c:121
+msgid "Accepts Tab:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtextview.c:122
+#, fuzzy
+msgid "If tab characters can be entered"
+msgstr "Dette innlegget kan ikkje endrast."
+
+#: ../glade/gbwidgets/gbtextview.c:126
+#, fuzzy
+msgid "Justification:"
+msgstr "Pos&isjon:"
+
+#: ../glade/gbwidgets/gbtextview.c:127
+#, fuzzy
+msgid "The justification of the text"
+msgstr "Vel posisjonen i toppblokka."
+
+#: ../glade/gbwidgets/gbtextview.c:129
+#, fuzzy
+msgid "Wrapping:"
+msgstr "Tekstbryting:"
+
+#: ../glade/gbwidgets/gbtextview.c:130
+#, fuzzy
+msgid "The wrapping of the text"
+msgstr "Endra tabellnamn"
+
+#: ../glade/gbwidgets/gbtextview.c:133
+#, fuzzy
+msgid "Space Above:"
+msgstr "Sidestorleik:"
+
+#: ../glade/gbwidgets/gbtextview.c:134
+msgid "Pixels of blank space above paragraphs"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtextview.c:136
+#, fuzzy
+msgid "Space Below:"
+msgstr "Sidestorleik:"
+
+#: ../glade/gbwidgets/gbtextview.c:137
+msgid "Pixels of blank space below paragraphs"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtextview.c:139
+#, fuzzy
+msgid "Space Inside:"
+msgstr "Sidestorleik:"
+
+#: ../glade/gbwidgets/gbtextview.c:140
+msgid "Pixels of blank space between wrapped lines in a paragraph"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtextview.c:143
+msgid "Left Margin:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtextview.c:144
+msgid "Width of the left margin in pixels"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtextview.c:146
+msgid "Right Margin:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtextview.c:147
+msgid "Width of the right margin in pixels"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtextview.c:149
+#, fuzzy
+msgid "Indent:"
+msgstr "&Indeks"
+
+#: ../glade/gbwidgets/gbtextview.c:150
+msgid "Amount of pixels to indent paragraphs"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtextview.c:463
+#, fuzzy
+msgid "Text View"
+msgstr "Synleg"
+
+#: ../glade/gbwidgets/gbtogglebutton.c:100
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:98
+msgid "If the toggle button is initially on"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtogglebutton.c:199
+#, fuzzy
+msgid "Toggle Button"
+msgstr "Slå av/på &simulering"
+
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:297
+#, fuzzy
+msgid "Toolbar Toggle Button"
+msgstr "Slå av/på &simulering"
+
+#: ../glade/gbwidgets/gbtoolbar.c:191
+#, fuzzy
+msgid "New toolbar"
+msgstr "Vis verktøylinje"
+
+#: ../glade/gbwidgets/gbtoolbar.c:202
+#, fuzzy
+msgid "Number of items:"
+msgstr "Tal på punkt:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:268
+#, fuzzy
+msgid "The number of items in the toolbar"
+msgstr "Namnet på fila programmet skal skriva til"
+
+#: ../glade/gbwidgets/gbtoolbar.c:271
+#, fuzzy
+msgid "The toolbar orientation"
+msgstr "Posisjon for verktøy&linje:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:273
+msgid "Style:"
+msgstr "Stil:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:274
+#, fuzzy
+msgid "The toolbar style"
+msgstr "Verktøylinjer"
+
+#: ../glade/gbwidgets/gbtoolbar.c:276
+#, fuzzy
+msgid "Tooltips:"
+msgstr "Verktøytips"
+
+#: ../glade/gbwidgets/gbtoolbar.c:276
+#, fuzzy
+msgid "If tooltips are enabled"
+msgstr "Verktøytips på"
+
+#: ../glade/gbwidgets/gbtoolbar.c:277
+#, fuzzy
+msgid "Show Arrow:"
+msgstr "Vis kant"
+
+#: ../glade/gbwidgets/gbtoolbar.c:277
+msgid "If an arrow should be shown to popup a menu if the toolbar doesn't fit"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtoolbar.c:427
+#, fuzzy
+msgid "If the item should be the same size as other homogeneous items"
+msgstr "Aktiv - Musepeikaren ligg over ikonet"
+
+#. Commands for inserting new items.
+#: ../glade/gbwidgets/gbtoolbar.c:506
+#, fuzzy
+msgid "Insert Item Before"
+msgstr "Sett inn autoform"
+
+#: ../glade/gbwidgets/gbtoolbar.c:513
+#, fuzzy
+msgid "Insert Item After"
+msgstr "Set inn sluttnote"
+
+#: ../glade/gbwidgets/gbtoolbar.c:680
+msgid "Toolbar"
+msgstr "Verktøylinje"
+
+#: ../glade/gbwidgets/gbtoolbutton.c:586
+#, fuzzy
+msgid "Toolbar Button"
+msgstr "Slå av/på &simulering"
+
+#: ../glade/gbwidgets/gbtoolitem.c:201
+#, fuzzy
+msgid "Toolbar Item"
+msgstr "Verktøylinje"
+
+#: ../glade/gbwidgets/gbtreeview.c:71
+#, fuzzy
+msgid "Column 1"
+msgstr "Kolonnar:"
+
+#: ../glade/gbwidgets/gbtreeview.c:79
+#, fuzzy
+msgid "Column 2"
+msgstr "Kolonnar:"
+
+#: ../glade/gbwidgets/gbtreeview.c:87
+#, fuzzy
+msgid "Column 3"
+msgstr "Kolonnar:"
+
+#: ../glade/gbwidgets/gbtreeview.c:97
+#, c-format
+msgid "Row %i"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtreeview.c:114
+#, fuzzy
+msgid "Headers Visible:"
+msgstr "Meldingshovud"
+
+#: ../glade/gbwidgets/gbtreeview.c:115
+msgid "If the column header buttons are shown"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtreeview.c:116
+msgid "Rules Hint:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtreeview.c:117
+msgid ""
+"If a hint is set so the theme engine should draw rows in alternating colors"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtreeview.c:118
+#, fuzzy
+msgid "Reorderable:"
+msgstr "Omvendt"
+
+#: ../glade/gbwidgets/gbtreeview.c:119
+#, fuzzy
+msgid "If the view is reorderable"
+msgstr "TrueColor til gråtonar"
+
+#: ../glade/gbwidgets/gbtreeview.c:120
+#, fuzzy
+msgid "Enable Search:"
+msgstr "Søk"
+
+#: ../glade/gbwidgets/gbtreeview.c:121
+msgid "If the user can search through columns interactively"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtreeview.c:123
+#, fuzzy
+msgid "Fixed Height Mode:"
+msgstr "Biletehøgd:"
+
+#: ../glade/gbwidgets/gbtreeview.c:124
+msgid "Sets all rows to the same height to improve performance"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtreeview.c:125
+#, fuzzy
+msgid "Hover Selection:"
+msgstr "&Utval"
+
+#: ../glade/gbwidgets/gbtreeview.c:126
+#, fuzzy
+msgid "Whether the selection should follow the pointer"
+msgstr "Flyttar utvalet til venstre"
+
+#: ../glade/gbwidgets/gbtreeview.c:127
+#, fuzzy
+msgid "Hover Expand:"
+msgstr "Utvid"
+
+#: ../glade/gbwidgets/gbtreeview.c:128
+msgid ""
+"Whether rows should be expanded or collapsed when the pointer moves over them"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtreeview.c:317
+msgid "List or Tree View"
+msgstr ""
+
+#: ../glade/gbwidgets/gbvbox.c:84
+#, fuzzy
+msgid "New vertical box"
+msgstr "Opna vertikalt"
+
+#: ../glade/gbwidgets/gbvbox.c:245
+#, fuzzy
+msgid "Vertical Box"
+msgstr "Loddrett"
+
+#: ../glade/gbwidgets/gbvbuttonbox.c:111
+msgid "New vertical button box"
+msgstr ""
+
+#: ../glade/gbwidgets/gbvbuttonbox.c:344
+#, fuzzy
+msgid "Vertical Button Box"
+msgstr "Berre loddrett"
+
+#: ../glade/gbwidgets/gbviewport.c:104
+msgid "The type of shadow of the viewport"
+msgstr ""
+
+#: ../glade/gbwidgets/gbviewport.c:240
+#, fuzzy
+msgid "Viewport"
+msgstr "Innleggvisar"
+
+#: ../glade/gbwidgets/gbvpaned.c:192
+#, fuzzy
+msgid "Vertical Panes"
+msgstr "Vertikal balanse"
+
+#: ../glade/gbwidgets/gbvruler.c:247
+#, fuzzy
+msgid "Vertical Ruler"
+msgstr "Vertikal raster:"
+
+#: ../glade/gbwidgets/gbvscale.c:319
+#, fuzzy
+msgid "Vertical Scale"
+msgstr "Vertikal balanse"
+
+#: ../glade/gbwidgets/gbvscrollbar.c:236
+#, fuzzy
+msgid "Vertical Scrollbar"
+msgstr "Berre loddrett"
+
+#: ../glade/gbwidgets/gbvseparator.c:144
+#, fuzzy
+msgid "Vertical Separator"
+msgstr "Vertikal tekst"
+
+#: ../glade/gbwidgets/gbwindow.c:242
+#, fuzzy
+msgid "The title of the window"
+msgstr "Opna filer i nytt vindauge"
+
+#: ../glade/gbwidgets/gbwindow.c:245
+#, fuzzy
+msgid "The type of the window"
+msgstr "Type vindauge"
+
+#: ../glade/gbwidgets/gbwindow.c:249
+#, fuzzy
+msgid "Type Hint:"
+msgstr "Type:"
+
+#: ../glade/gbwidgets/gbwindow.c:250
+msgid "Tells the window manager how to treat the window"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:255
+msgid "The initial position of the window"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:259 ../glade/gnome/gnomefileentry.c:105
+#: ../glade/gnome/gnomepixmapentry.c:84
+#, fuzzy
+msgid "Modal:"
+msgstr "Modell:"
+
+#: ../glade/gbwidgets/gbwindow.c:259
+#, fuzzy
+msgid "If the window is modal"
+msgstr "Vel vindaugstittel"
+
+#: ../glade/gbwidgets/gbwindow.c:264
+#, fuzzy
+msgid "Default Width:"
+msgstr "Notatbreidd"
+
+#: ../glade/gbwidgets/gbwindow.c:265
+#, fuzzy
+msgid "The default width of the window"
+msgstr ""
+"\n"
+"eller standardfila av type: "
+
+#: ../glade/gbwidgets/gbwindow.c:269
+#, fuzzy
+msgid "Default Height:"
+msgstr "Notathøgd"
+
+#: ../glade/gbwidgets/gbwindow.c:270
+#, fuzzy
+msgid "The default height of the window"
+msgstr ""
+"\n"
+"eller standardfila av type: "
+
+#: ../glade/gbwidgets/gbwindow.c:276
+#, fuzzy
+msgid "Resizable:"
+msgstr "Endra storleik"
+
+#: ../glade/gbwidgets/gbwindow.c:277
+#, fuzzy
+msgid "If the window can be resized"
+msgstr "Startar vindaugsbehandlaren."
+
+#: ../glade/gbwidgets/gbwindow.c:284
+msgid "If the window can be shrunk"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:285
+#, fuzzy
+msgid "Grow:"
+msgstr "Veks "
+
+#: ../glade/gbwidgets/gbwindow.c:286
+#, fuzzy
+msgid "If the window can be enlarged"
+msgstr "Startar vindaugsbehandlaren."
+
+#: ../glade/gbwidgets/gbwindow.c:291
+msgid "Auto-Destroy:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:292
+msgid "If the window is destroyed when its transient parent is destroyed"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:296
+#, fuzzy
+msgid "The icon for this window"
+msgstr "Opna filer i nytt vindauge"
+
+#: ../glade/gbwidgets/gbwindow.c:303
+msgid "Role:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:303
+msgid "A unique identifier for the window to be used when restoring a session"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:306
+#, fuzzy
+msgid "Decorated:"
+msgstr "Tilkopla"
+
+#: ../glade/gbwidgets/gbwindow.c:307
+#, fuzzy
+msgid "If the window should be decorated by the window manager"
+msgstr "Startar vindaugsbehandlaren."
+
+#: ../glade/gbwidgets/gbwindow.c:310
+msgid "Skip Taskbar:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:311
+#, fuzzy
+msgid "If the window should not appear in the task bar"
+msgstr "Vis statuslinje"
+
+#: ../glade/gbwidgets/gbwindow.c:314
+msgid "Skip Pager:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:315
+#, fuzzy
+msgid "If the window should not appear in the pager"
+msgstr "Startar vindaugsbehandlaren."
+
+#: ../glade/gbwidgets/gbwindow.c:318
+#, fuzzy
+msgid "Gravity:"
+msgstr "Overgangsstil:"
+
+#: ../glade/gbwidgets/gbwindow.c:319
+msgid "The reference point to use when the window coordinates are set"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:323
+#, fuzzy
+msgid "Focus On Map:"
+msgstr "Slett mål"
+
+#: ../glade/gbwidgets/gbwindow.c:323
+#, fuzzy
+msgid "If the window should receive the input focus when it is mapped"
+msgstr "Startar vindaugsbehandlaren."
+
+#: ../glade/gbwidgets/gbwindow.c:1198
+#, fuzzy
+msgid "Window"
+msgstr "Lukk vindauge"
+
+#: ../glade/glade.c:369 ../glade/gnome-db/gnomedberrordlg.c:74
+msgid "Error"
+msgstr "Feil"
+
+#: ../glade/glade.c:372
+#, fuzzy
+msgid "System Error"
+msgstr "systemfeil"
+
+#: ../glade/glade.c:376
+#, fuzzy
+msgid "Error opening file"
+msgstr "Feil ved opning av fil!"
+
+#: ../glade/glade.c:378
+#, fuzzy
+msgid "Error reading file"
+msgstr ""
+"Feil ved lesing a fil:\n"
+"%1"
+
+#: ../glade/glade.c:380
+#, fuzzy
+msgid "Error writing file"
+msgstr "Feil ved skriving av fil!"
+
+#: ../glade/glade.c:383
+#, fuzzy
+msgid "Invalid directory"
+msgstr "I katalog"
+
+#: ../glade/glade.c:387
+#, fuzzy
+msgid "Invalid value"
+msgstr "Sluttverdi"
+
+#: ../glade/glade.c:389
+#, fuzzy
+msgid "Invalid XML entity"
+msgstr "Identitet"
+
+#: ../glade/glade.c:391
+#, fuzzy
+msgid "Start tag expected"
+msgstr "Start-dato"
+
+#: ../glade/glade.c:393
+#, fuzzy
+msgid "End tag expected"
+msgstr "Kommando som skal køyrast."
+
+#: ../glade/glade.c:395
+#, fuzzy
+msgid "Character data expected"
+msgstr "Teiknsett"
+
+#: ../glade/glade.c:397
+#, fuzzy
+msgid "Class id missing"
+msgstr "aRts-katalog manglar"
+
+#: ../glade/glade.c:399
+#, fuzzy
+msgid "Class unknown"
+msgstr "ukjend"
+
+#: ../glade/glade.c:401
+#, fuzzy
+msgid "Invalid component"
+msgstr "Ugyldig konto."
+
+#: ../glade/glade.c:403
+#, fuzzy
+msgid "Unexpected end of file"
+msgstr "Uventa %1 i PK-fila %2"
+
+#: ../glade/glade.c:406
+#, fuzzy
+msgid "Unknown error code"
+msgstr "Ukjend feil."
+
+#: ../glade/glade_atk.c:120
+msgid "Controlled By"
+msgstr ""
+
+#: ../glade/glade_atk.c:121
+msgid "Controller For"
+msgstr ""
+
+#: ../glade/glade_atk.c:122
+#, fuzzy
+msgid "Label For"
+msgstr "Tittel"
+
+#: ../glade/glade_atk.c:123
+#, fuzzy
+msgid "Labelled By"
+msgstr "Tittel"
+
+#: ../glade/glade_atk.c:124
+msgid "Member Of"
+msgstr ""
+
+#: ../glade/glade_atk.c:125
+msgid "Node Child Of"
+msgstr ""
+
+#: ../glade/glade_atk.c:126
+msgid "Flows To"
+msgstr ""
+
+#: ../glade/glade_atk.c:127
+msgid "Flows From"
+msgstr ""
+
+#: ../glade/glade_atk.c:128
+msgid "Subwindow Of"
+msgstr ""
+
+#: ../glade/glade_atk.c:129
+msgid "Embeds"
+msgstr ""
+
+#: ../glade/glade_atk.c:130
+#, fuzzy
+msgid "Embedded By"
+msgstr "Tittel"
+
+#: ../glade/glade_atk.c:131
+#, fuzzy
+msgid "Popup For"
+msgstr "Programstartmeny"
+
+#: ../glade/glade_atk.c:132
+msgid "Parent Window Of"
+msgstr ""
+
+#. I don't think we should set the transient parent as the dialog could be
+#. left open if desired.
+#: ../glade/glade_atk.c:331
+#, c-format
+msgid "Relationship: %s"
+msgstr ""
+
+#. Create the pages of the main notebook
+#. NOTE: If you add/remove pages you need to change the GB_PAGE_SIGNALS
+#. value at the top of this file
+#: ../glade/glade_atk.c:375 ../glade/property.c:615
+#, fuzzy
+msgid "Widget"
+msgstr "Breidd"
+
+#: ../glade/glade_atk.c:638 ../glade/glade_menu_editor.c:772
+#: ../glade/property.c:776
+msgid "Name:"
+msgstr "Namn:"
+
+#: ../glade/glade_atk.c:639
+msgid "The name of the widget to pass to assistive technologies"
+msgstr ""
+
+#: ../glade/glade_atk.c:640
+#, fuzzy
+msgid "Description:"
+msgstr "Skildring"
+
+#: ../glade/glade_atk.c:641
+msgid "The description of the widget to pass to assistive technologies"
+msgstr ""
+
+#: ../glade/glade_atk.c:643
+#, fuzzy
+msgid "Table Caption:"
+msgstr "Generelle val"
+
+#: ../glade/glade_atk.c:644
+msgid "The table caption to pass to assistive technologies"
+msgstr ""
+
+#: ../glade/glade_atk.c:681
+msgid "Select the widgets with this relationship"
+msgstr ""
+
+#: ../glade/glade_atk.c:761
+#, fuzzy
+msgid "Click"
+msgstr "Klokke"
+
+#: ../glade/glade_atk.c:762
+#, fuzzy
+msgid "Press"
+msgstr "Framgang:"
+
+#: ../glade/glade_atk.c:763
+#, fuzzy
+msgid "Release"
+msgstr "Omvendt"
+
+#: ../glade/glade_atk.c:822
+msgid "Enter the description of the action to pass to assistive technologies"
+msgstr ""
+
+#: ../glade/glade_clipboard.c:118
+msgid "Clipboard"
+msgstr ""
+
+#: ../glade/glade_clipboard.c:351
+#, fuzzy
+msgid "You need to select a widget to paste into"
+msgstr "Du må velja ein prosess først."
+
+#: ../glade/glade_clipboard.c:376
+msgid "You can't paste into windows or dialogs."
+msgstr ""
+
+#: ../glade/glade_clipboard.c:399
+msgid ""
+"You can't paste into the selected widget, since\n"
+"it is created automatically by its parent."
+msgstr ""
+
+#: ../glade/glade_clipboard.c:408 ../glade/glade_clipboard.c:416
+msgid "Only menu items can be pasted into a menu or menu bar."
+msgstr ""
+
+#: ../glade/glade_clipboard.c:427
+msgid "Only buttons can be pasted into a dialog action area."
+msgstr ""
+
+#: ../glade/glade_clipboard.c:437
+msgid "Only GnomeDockItem widgets can be pasted into a GnomeDock."
+msgstr ""
+
+#: ../glade/glade_clipboard.c:446
+msgid "Only GnomeDockItem widgets can be pasted over a GnomeDockItem."
+msgstr ""
+
+#: ../glade/glade_clipboard.c:449
+#, fuzzy
+msgid "Sorry - pasting over a GnomeDockItem is not implemented yet."
+msgstr "Orsak, funksjonen er ikkje implementert enno."
+
+#: ../glade/glade_clipboard.c:457
+msgid "GnomeDockItem widgets can only be pasted into a GnomeDock."
+msgstr ""
+
+#. 3 - see GladeStockMenuItemNew above.
+#: ../glade/glade_gnome.c:121 ../glade/glade_gnome.c:874
+#: ../glade/glade_project_window.c:208 ../glade/glade_project_window.c:632
+#, fuzzy
+msgid "_New"
+msgstr "Ny"
+
+#: ../glade/glade_gnome.c:874
+#, fuzzy
+msgid "Create a new file"
+msgstr "Lagar ei ny fil"
+
+#. Note that glade_palette_set_show_gnome_widgets() has some of these
+#. strings hard-coded now, so keep up-to-date.
+#: ../glade/glade_gnomelib.c:116
+#, fuzzy
+msgid "_Gnome"
+msgstr "Spel:"
+
+#: ../glade/glade_gnomelib.c:117 ../glade/glade_gtk12lib.c:248
+#: ../glade/glade_palette.c:315
+#, fuzzy
+msgid "Dep_recated"
+msgstr "Tilkopla"
+
+#. Note that glade_palette_set_show_gnome_widgets() has some of these
+#. strings hard-coded now, so keep up-to-date.
+#: ../glade/glade_gtk12lib.c:246
+#, fuzzy
+msgid "GTK+ _Basic"
+msgstr "KBasic"
+
+#: ../glade/glade_gtk12lib.c:247
+#, fuzzy
+msgid "GTK+ _Additional"
+msgstr "&Anna"
+
+#: ../glade/glade_keys_dialog.c:94
+#, fuzzy
+msgid "Select Accelerator Key"
+msgstr "Sje&kk akseleratorar"
+
+#: ../glade/glade_keys_dialog.c:97
+msgid "Keys"
+msgstr "Tastar"
+
+#: ../glade/glade_menu_editor.c:394
+#, fuzzy
+msgid "Menu Editor"
+msgstr "Menyredigering ..."
+
+#: ../glade/glade_menu_editor.c:411
+msgid "Type"
+msgstr "Type"
+
+#: ../glade/glade_menu_editor.c:412
+#, fuzzy
+msgid "Accelerator"
+msgstr "Akselerasjon"
+
+#: ../glade/glade_menu_editor.c:413
+msgid "Name"
+msgstr "Namn"
+
+#: ../glade/glade_menu_editor.c:414 ../glade/property.c:1498
+#, fuzzy
+msgid "Handler"
+msgstr "Deklarasjonsfil"
+
+#: ../glade/glade_menu_editor.c:415 ../glade/property.c:102
+msgid "Active"
+msgstr "Aktivt"
+
+#: ../glade/glade_menu_editor.c:416
+msgid "Group"
+msgstr "Gruppe"
+
+#: ../glade/glade_menu_editor.c:417
+msgid "Icon"
+msgstr "Ikon"
+
+#: ../glade/glade_menu_editor.c:458
+msgid "Move the item and its children up one place in the list"
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:470
+msgid "Move the item and its children down one place in the list"
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:482
+msgid "Move the item and its children up one level"
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:494
+msgid "Move the item and its children down one level"
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:524
+#, fuzzy
+msgid "The stock item to use."
+msgstr "Oppsettfila som skal brukast."
+
+#: ../glade/glade_menu_editor.c:527 ../glade/glade_menu_editor.c:642
+#, fuzzy
+msgid "Stock Item:"
+msgstr "Element:"
+
+#: ../glade/glade_menu_editor.c:640
+#, fuzzy
+msgid "The stock Gnome item to use."
+msgstr "Oppsettfila som skal brukast."
+
+#: ../glade/glade_menu_editor.c:745
+msgid "The text of the menu item, or empty for separators."
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:769 ../glade/property.c:777
+#, fuzzy
+msgid "The name of the widget"
+msgstr "Namnet på fila programmet skal skriva til"
+
+#: ../glade/glade_menu_editor.c:790
+msgid "The function to be called when the item is selected"
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:792 ../glade/property.c:1546
+#, fuzzy
+msgid "Handler:"
+msgstr "Meldingshovud:"
+
+#: ../glade/glade_menu_editor.c:811
+msgid "An optional icon to show on the left of the menu item."
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:934
+#, fuzzy
+msgid "The tip to show when the mouse is over the item"
+msgstr "Aktiv - Musepeikaren ligg over ikonet"
+
+#: ../glade/glade_menu_editor.c:936 ../glade/property.c:824
+#, fuzzy
+msgid "Tooltip:"
+msgstr "Verktøytips"
+
+#: ../glade/glade_menu_editor.c:957
+#, fuzzy
+msgid "_Add"
+msgstr "Legg til"
+
+#: ../glade/glade_menu_editor.c:962
+#, fuzzy
+msgid "Add a new item below the selected item."
+msgstr "Legg til eit nytt mønster for den valte filtypen."
+
+#: ../glade/glade_menu_editor.c:967
+msgid "Add _Child"
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:972
+#, fuzzy
+msgid "Add a new child item below the selected item."
+msgstr "Legg til eit nytt mønster for den valte filtypen."
+
+#: ../glade/glade_menu_editor.c:978
+#, fuzzy
+msgid "Add _Separator"
+msgstr ""
+"Legg til\n"
+"&delelinje"
+
+#: ../glade/glade_menu_editor.c:983
+#, fuzzy
+msgid "Add a separator below the selected item."
+msgstr "Legg til eit nytt mønster for den valte filtypen."
+
+#: ../glade/glade_menu_editor.c:988 ../glade/glade_project_window.c:239
+#, fuzzy
+msgid "_Delete"
+msgstr "Slett"
+
+#: ../glade/glade_menu_editor.c:993
+#, fuzzy
+msgid "Delete the current item"
+msgstr "Slett denne profilen"
+
+#. Type radio options and toggle options.
+#: ../glade/glade_menu_editor.c:999
+#, fuzzy
+msgid "Item Type:"
+msgstr "Elementstil"
+
+#: ../glade/glade_menu_editor.c:1015
+msgid "If the item is initially on."
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:1017
+#, fuzzy
+msgid "Active:"
+msgstr "Aktivt"
+
+#: ../glade/glade_menu_editor.c:1022 ../glade/glade_menu_editor.c:1632
+#: ../glade/property.c:2215 ../glade/property.c:2225
+msgid "No"
+msgstr "Nei"
+
+#: ../glade/glade_menu_editor.c:1036
+msgid "The radio menu item's group"
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:1053 ../glade/glade_menu_editor.c:2406
+#: ../glade/glade_menu_editor.c:2546
+msgid "Radio"
+msgstr "Radio"
+
+#: ../glade/glade_menu_editor.c:1060 ../glade/glade_menu_editor.c:2404
+#: ../glade/glade_menu_editor.c:2544
+msgid "Check"
+msgstr "Sjekk"
+
+#: ../glade/glade_menu_editor.c:1067 ../glade/property.c:102
+msgid "Normal"
+msgstr "Vanleg"
+
+#. Accelerator key options.
+#: ../glade/glade_menu_editor.c:1076
+#, fuzzy
+msgid "Accelerator:"
+msgstr "Akselerasjon"
+
+#: ../glade/glade_menu_editor.c:1113 ../glade/property.c:1681
+msgid "Ctrl"
+msgstr "Ctrl"
+
+#: ../glade/glade_menu_editor.c:1118 ../glade/property.c:1684
+msgid "Shift"
+msgstr "Shift"
+
+#: ../glade/glade_menu_editor.c:1123 ../glade/property.c:1687
+msgid "Alt"
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:1128 ../glade/property.c:1694
+#, fuzzy
+msgid "Key:"
+msgstr "Nøkkel"
+
+#: ../glade/glade_menu_editor.c:1134 ../glade/property.c:1673
+#, fuzzy
+msgid "Modifiers:"
+msgstr "Modifikatorar"
+
+#: ../glade/glade_menu_editor.c:1632 ../glade/glade_menu_editor.c:2411
+#: ../glade/glade_menu_editor.c:2554 ../glade/property.c:2215
+msgid "Yes"
+msgstr "Ja"
+
+#: ../glade/glade_menu_editor.c:2002
+#, fuzzy
+msgid "Select icon"
+msgstr "Vel ikon"
+
+#: ../glade/glade_menu_editor.c:2345 ../glade/glade_menu_editor.c:2706
+#, fuzzy
+msgid "separator"
+msgstr "Delingslinje"
+
+#. Add the special 'New' item to create a new group.
+#: ../glade/glade_menu_editor.c:3624 ../glade/glade_project_window.c:366
+#: ../glade/property.c:5109
+msgid "New"
+msgstr "Ny"
+
+#: ../glade/glade_palette.c:194 ../glade/glade_palette.c:196
+#: ../glade/glade_palette.c:412
+#, fuzzy
+msgid "Selector"
+msgstr "Vel"
+
+#: ../glade/glade_project.c:385
+#, fuzzy
+msgid ""
+"The project directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+"Ingen redigeringsprogram valt.\n"
+"Set dette opp i innstillingane."
+
+#: ../glade/glade_project.c:392
+#, fuzzy
+msgid ""
+"The source directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+"Ingen redigeringsprogram valt.\n"
+"Set dette opp i innstillingane."
+
+#: ../glade/glade_project.c:402
+msgid ""
+"Invalid source directory:\n"
+"\n"
+"The source directory must be the project directory\n"
+"or a subdirectory of the project directory.\n"
+msgstr ""
+
+#: ../glade/glade_project.c:410
+msgid ""
+"The pixmaps directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+
+#: ../glade/glade_project.c:438
+#, fuzzy, c-format
+msgid "Sorry - generating source for %s is not implemented yet"
+msgstr "Orsak, funksjonen er ikkje implementert enno."
+
+#: ../glade/glade_project.c:509
+msgid ""
+"Your project uses deprecated widgets that Gtkmm-2\n"
+"does not support.  Check your project for these\n"
+"widgets, and use their replacements."
+msgstr ""
+
+#: ../glade/glade_project.c:521
+msgid ""
+"Error running glade-- to generate the C++ source code.\n"
+"Check that you have glade-- installed and that it is in your PATH.\n"
+"Then try running 'glade-- <project_file.glade>' in a terminal."
+msgstr ""
+
+#: ../glade/glade_project.c:548
+msgid ""
+"Error running gate to generate the Ada95 source code.\n"
+"Check that you have gate installed and that it is in your PATH.\n"
+"Then try running 'gate <project_file.glade>' in a terminal."
+msgstr ""
+
+#: ../glade/glade_project.c:571
+msgid ""
+"Error running glade2perl to generate the Perl source code.\n"
+"Check that you have glade2perl installed and that it is in your PATH.\n"
+"Then try running 'glade2perl <project_file.glade>' in a terminal."
+msgstr ""
+
+#: ../glade/glade_project.c:594
+msgid ""
+"Error running eglade to generate the Eiffel source code.\n"
+"Check that you have eglade installed and that it is in your PATH.\n"
+"Then try running 'eglade <project_file.glade>' in a terminal."
+msgstr ""
+
+#: ../glade/glade_project.c:954
+msgid ""
+"The pixmap directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+
+#: ../glade/glade_project.c:1772
+#, fuzzy
+msgid "Error writing project XML file\n"
+msgstr "Feil ved skriving av fil!"
+
+#: ../glade/glade_project_options.c:157 ../glade/glade_project_window.c:382
+#: ../glade/glade_project_window.c:889
+msgid "Project Options"
+msgstr "Prosjektval"
+
+#.
+#. * General Page.
+#.
+#: ../glade/glade_project_options.c:174
+msgid "General"
+msgstr "Generelt"
+
+#: ../glade/glade_project_options.c:183
+#, fuzzy
+msgid "Basic Options:"
+msgstr "Kscd-val"
+
+#: ../glade/glade_project_options.c:201
+#, fuzzy
+msgid "The project directory"
+msgstr "Prosjektkatalog:"
+
+#: ../glade/glade_project_options.c:203
+#, fuzzy
+msgid "Project Directory:"
+msgstr "Prosjektkatalog:"
+
+#: ../glade/glade_project_options.c:221
+msgid "Browse..."
+msgstr "Bla gjennom ..."
+
+#: ../glade/glade_project_options.c:236
+#, fuzzy
+msgid "The name of the current project"
+msgstr "Døyp om denne profilen"
+
+#: ../glade/glade_project_options.c:238
+#, fuzzy
+msgid "Project Name:"
+msgstr "Prosjektnamn"
+
+#: ../glade/glade_project_options.c:258
+#, fuzzy
+msgid "The name of the program"
+msgstr "PID-en til programmet."
+
+#: ../glade/glade_project_options.c:281
+#, fuzzy
+msgid "The project file"
+msgstr "Prosjektkompilatoren"
+
+#: ../glade/glade_project_options.c:283
+#, fuzzy
+msgid "Project File:"
+msgstr "Prosjektvising"
+
+#. Project Source Directory.
+#: ../glade/glade_project_options.c:299
+#, fuzzy
+msgid "Subdirectories:"
+msgstr "katalogar"
+
+#: ../glade/glade_project_options.c:316
+msgid "The directory to save generated source code"
+msgstr ""
+
+#: ../glade/glade_project_options.c:319
+#, fuzzy
+msgid "Source Directory:"
+msgstr "Heimekatalog:"
+
+#: ../glade/glade_project_options.c:338
+#, fuzzy
+msgid "The directory to store pixmaps"
+msgstr "Arkivmappa finst ikkje."
+
+#: ../glade/glade_project_options.c:341
+#, fuzzy
+msgid "Pixmaps Directory:"
+msgstr "Heimekatalog:"
+
+#: ../glade/glade_project_options.c:363
+msgid "The license which is added at the top of generated files"
+msgstr ""
+
+#. Source Language.
+#: ../glade/glade_project_options.c:385
+msgid "Language:"
+msgstr "Språk:"
+
+#: ../glade/glade_project_options.c:416
+#, fuzzy
+msgid "Gnome:"
+msgstr "Spel:"
+
+#: ../glade/glade_project_options.c:424
+#, fuzzy
+msgid "Enable Gnome Support"
+msgstr "NIS-støtte"
+
+#: ../glade/glade_project_options.c:430
+#, fuzzy
+msgid "If a Gnome application is to be built"
+msgstr "Legg til eit nytt program for denne filtypen."
+
+#: ../glade/glade_project_options.c:433
+#, fuzzy
+msgid "Enable Gnome DB Support"
+msgstr "NIS-støtte"
+
+#: ../glade/glade_project_options.c:437
+msgid "If a Gnome DB application is to be built"
+msgstr ""
+
+#.
+#. * C Options Page.
+#.
+#: ../glade/glade_project_options.c:447
+#, fuzzy
+msgid "C Options"
+msgstr "Val"
+
+#: ../glade/glade_project_options.c:456
+msgid "<b>Note:</b> for large applications the use of libglade is recommended."
+msgstr ""
+
+#: ../glade/glade_project_options.c:468
+#, fuzzy
+msgid "General Options:"
+msgstr "Generelle val"
+
+#. Gettext Support.
+#: ../glade/glade_project_options.c:478
+#, fuzzy
+msgid "Gettext Support"
+msgstr "&Gettext-info"
+
+#: ../glade/glade_project_options.c:483
+msgid "If strings are marked for translation by gettext"
+msgstr ""
+
+#. Setting widget names.
+#: ../glade/glade_project_options.c:487
+#, fuzzy
+msgid "Set Widget Names"
+msgstr "Sidenamn"
+
+#: ../glade/glade_project_options.c:492
+msgid "If widget names are set in the source code"
+msgstr ""
+
+#. Backing up source files.
+#: ../glade/glade_project_options.c:496
+#, fuzzy
+msgid "Backup Source Files"
+msgstr "Profilar for reservekopiering"
+
+#: ../glade/glade_project_options.c:501
+msgid "If copies of old source files are made"
+msgstr ""
+
+#. Gnome Help System support.
+#: ../glade/glade_project_options.c:505
+#, fuzzy
+msgid "Gnome Help Support"
+msgstr "Støtte for mushjul"
+
+#: ../glade/glade_project_options.c:512
+msgid "If support for the Gnome Help system should be included"
+msgstr ""
+
+#: ../glade/glade_project_options.c:515
+#, fuzzy
+msgid "File Output Options:"
+msgstr "Val for tidsavgrensing"
+
+#. Outputting main file.
+#: ../glade/glade_project_options.c:525
+#, fuzzy
+msgid "Output main.c File"
+msgstr "Ut-fil:"
+
+#: ../glade/glade_project_options.c:530
+msgid ""
+"If a main.c file is output containing a main() function, if it doesn't "
+"already exist"
+msgstr ""
+
+#. Outputting support files.
+#: ../glade/glade_project_options.c:534
+#, fuzzy
+msgid "Output Support Functions"
+msgstr "Ut-mål"
+
+#: ../glade/glade_project_options.c:539
+msgid "If the support functions are output"
+msgstr ""
+
+#. Outputting build files.
+#: ../glade/glade_project_options.c:543
+#, fuzzy
+msgid "Output Build Files"
+msgstr "Ut-fil:"
+
+#: ../glade/glade_project_options.c:548
+msgid ""
+"If files for building the source code are output, including Makefile.am and "
+"configure.in, if they don't already exist"
+msgstr ""
+
+#. Main source file.
+#: ../glade/glade_project_options.c:552
+#, fuzzy
+msgid "Interface Creation Functions:"
+msgstr "Innstillingar for grensesnitt"
+
+#: ../glade/glade_project_options.c:564
+msgid "The file in which the functions to create the interface are written"
+msgstr ""
+
+#: ../glade/glade_project_options.c:566 ../glade/glade_project_options.c:612
+#: ../glade/glade_project_options.c:658 ../glade/property.c:998
+#, fuzzy
+msgid "Source File:"
+msgstr "Kjeldefil"
+
+#: ../glade/glade_project_options.c:581
+msgid ""
+"The file in which the declarations of the functions to create the interface "
+"are written"
+msgstr ""
+
+#: ../glade/glade_project_options.c:583 ../glade/glade_project_options.c:629
+#: ../glade/glade_project_options.c:675
+#, fuzzy
+msgid "Header File:"
+msgstr "Meldingshovud"
+
+#: ../glade/glade_project_options.c:594
+#, fuzzy
+msgid "Source file for interface creation functions"
+msgstr "Innstillingar for grensesnitt"
+
+#: ../glade/glade_project_options.c:595
+#, fuzzy
+msgid "Header file for interface creation functions"
+msgstr "Innstillingar for grensesnitt"
+
+#. Handler source file.
+#: ../glade/glade_project_options.c:598
+msgid "Signal Handler & Callback Functions:"
+msgstr ""
+
+#: ../glade/glade_project_options.c:610
+msgid ""
+"The file in which the empty signal handler and callback functions are written"
+msgstr ""
+
+#: ../glade/glade_project_options.c:627
+msgid ""
+"The file in which the declarations of the signal handler and callback "
+"functions are written"
+msgstr ""
+
+#: ../glade/glade_project_options.c:640
+msgid "Source file for signal handler and callback functions"
+msgstr ""
+
+#: ../glade/glade_project_options.c:641
+msgid "Header file for signal handler and callback functions"
+msgstr ""
+
+#. Support source file.
+#: ../glade/glade_project_options.c:644
+#, fuzzy
+msgid "Support Functions:"
+msgstr "Støtta utvidingar"
+
+#: ../glade/glade_project_options.c:656
+msgid "The file in which the support functions are written"
+msgstr ""
+
+#: ../glade/glade_project_options.c:673
+#, fuzzy
+msgid "The file in which the declarations of the support functions are written"
+msgstr "Skriv deklarasjonen av medlemsfunksjonen her."
+
+#: ../glade/glade_project_options.c:686
+#, fuzzy
+msgid "Source file for support functions"
+msgstr "Støtta utvidingar"
+
+#: ../glade/glade_project_options.c:687
+msgid "Header file for support functions"
+msgstr ""
+
+#.
+#. * libglade Options Page.
+#.
+#: ../glade/glade_project_options.c:693
+#, fuzzy
+msgid "LibGlade Options"
+msgstr "Lenkjarval"
+
+#: ../glade/glade_project_options.c:702
+#, fuzzy
+msgid "Translatable Strings:"
+msgstr "Omsett i:"
+
+#: ../glade/glade_project_options.c:716
+msgid "<b>Note:</b> this option is deprecated - use intltool instead."
+msgstr ""
+
+#. Output translatable strings.
+#: ../glade/glade_project_options.c:726
+#, fuzzy
+msgid "Save Translatable Strings"
+msgstr "Omse&tt tekst (msgstr):"
+
+#: ../glade/glade_project_options.c:731
+msgid ""
+"If translatable strings are saved in a separate C source file, to enable "
+"translation of interfaces loaded by libglade"
+msgstr ""
+
+#: ../glade/glade_project_options.c:741
+msgid "The C source file to save all translatable strings in"
+msgstr ""
+
+#: ../glade/glade_project_options.c:743 ../glade/gnome/gnomepixmap.c:79
+msgid "File:"
+msgstr "Fil:"
+
+#: ../glade/glade_project_options.c:1202
+#, fuzzy
+msgid "Select the Project Directory"
+msgstr "Vel utpakkingskatalog"
+
+#: ../glade/glade_project_options.c:1392 ../glade/glade_project_options.c:1402
+#: ../glade/glade_project_options.c:1412
+msgid "You need to set the Translatable Strings File option"
+msgstr ""
+
+#: ../glade/glade_project_options.c:1396 ../glade/glade_project_options.c:1406
+#, fuzzy
+msgid "You need to set the Project Directory option"
+msgstr "Du må velja ein katalog"
+
+#: ../glade/glade_project_options.c:1398 ../glade/glade_project_options.c:1408
+#, fuzzy
+msgid "You need to set the Project File option"
+msgstr "Du må velja ein prosess først."
+
+#: ../glade/glade_project_options.c:1414
+#, fuzzy
+msgid "You need to set the Project Name option"
+msgstr "Du må velja ein prosess først."
+
+#: ../glade/glade_project_options.c:1416
+msgid "You need to set the Program Name option"
+msgstr ""
+
+#: ../glade/glade_project_options.c:1419
+#, fuzzy
+msgid "You need to set the Source Directory option"
+msgstr "Du må velja ein prosess først."
+
+#: ../glade/glade_project_options.c:1422
+#, fuzzy
+msgid "You need to set the Pixmaps Directory option"
+msgstr "Du må velja ein katalog"
+
+#: ../glade/glade_project_window.c:184
+#, fuzzy, c-format
+msgid ""
+"Couldn't show help file: %s.\n"
+"\n"
+"Error: %s"
+msgstr "Kunne ikkje døypa om fila %1"
+
+#: ../glade/glade_project_window.c:208 ../glade/glade_project_window.c:634
+#, fuzzy
+msgid "Create a new project"
+msgstr "Lagar eit nytt prosjekt"
+
+#: ../glade/glade_project_window.c:216 ../glade/glade_project_window.c:654
+#: ../glade/glade_project_window.c:905
+#, fuzzy
+msgid "_Build"
+msgstr "&Bygg"
+
+#: ../glade/glade_project_window.c:217 ../glade/glade_project_window.c:665
+#, fuzzy
+msgid "Output the project source code"
+msgstr "Sett prosjektnamnet her."
+
+#: ../glade/glade_project_window.c:223 ../glade/glade_project_window.c:668
+#, fuzzy
+msgid "Op_tions..."
+msgstr "Val"
+
+#: ../glade/glade_project_window.c:224 ../glade/glade_project_window.c:677
+#, fuzzy
+msgid "Edit the project options"
+msgstr "Prosjektval"
+
+#: ../glade/glade_project_window.c:239 ../glade/glade_project_window.c:716
+#, fuzzy
+msgid "Delete the selected widget"
+msgstr "Sentrer dei valte elementa"
+
+#: ../glade/glade_project_window.c:257 ../glade/glade_project_window.c:727
+#, fuzzy
+msgid "Show _Palette"
+msgstr "Vis dato"
+
+#: ../glade/glade_project_window.c:257 ../glade/glade_project_window.c:732
+#, fuzzy
+msgid "Show the palette of widgets"
+msgstr "Sentrer dei valte elementa"
+
+#: ../glade/glade_project_window.c:263 ../glade/glade_project_window.c:737
+#, fuzzy
+msgid "Show Property _Editor"
+msgstr "Vis kolonnenummer"
+
+#: ../glade/glade_project_window.c:264 ../glade/glade_project_window.c:743
+#, fuzzy
+msgid "Show the property editor"
+msgstr "Viser fileigenskapane"
+
+#: ../glade/glade_project_window.c:270 ../glade/glade_project_window.c:747
+#, fuzzy
+msgid "Show Widget _Tree"
+msgstr "Vis skjulte ressursar"
+
+#: ../glade/glade_project_window.c:271 ../glade/glade_project_window.c:753
+#: ../glade/main.c:82
+#, fuzzy
+msgid "Show the widget tree"
+msgstr "vis trådar som tre"
+
+#: ../glade/glade_project_window.c:277 ../glade/glade_project_window.c:757
+#, fuzzy
+msgid "Show _Clipboard"
+msgstr "&Til utklippstavle"
+
+#: ../glade/glade_project_window.c:278 ../glade/glade_project_window.c:763
+#: ../glade/main.c:86
+#, fuzzy
+msgid "Show the clipboard"
+msgstr "Kopier til utklippstavla"
+
+#: ../glade/glade_project_window.c:296
+#, fuzzy
+msgid "Show _Grid"
+msgstr "Vis rutenett"
+
+#: ../glade/glade_project_window.c:297 ../glade/glade_project_window.c:799
+msgid "Show the grid (in fixed containers only)"
+msgstr ""
+
+#: ../glade/glade_project_window.c:303
+#, fuzzy
+msgid "_Snap to Grid"
+msgstr "Juster til rutenett"
+
+#: ../glade/glade_project_window.c:304
+#, fuzzy
+msgid "Snap widgets to the grid"
+msgstr "Juster til rutenett"
+
+#: ../glade/glade_project_window.c:310 ../glade/glade_project_window.c:771
+#, fuzzy
+msgid "Show _Widget Tooltips"
+msgstr "Vis verktøy&tips"
+
+#: ../glade/glade_project_window.c:311 ../glade/glade_project_window.c:779
+msgid "Show the tooltips of created widgets"
+msgstr ""
+
+#: ../glade/glade_project_window.c:320 ../glade/glade_project_window.c:802
+#, fuzzy
+msgid "Set Grid _Options..."
+msgstr "Val ..."
+
+#: ../glade/glade_project_window.c:321
+msgid "Set the grid style and spacing"
+msgstr ""
+
+#: ../glade/glade_project_window.c:327 ../glade/glade_project_window.c:823
+#, fuzzy
+msgid "Set Snap O_ptions..."
+msgstr "&Faksinnstillingar ..."
+
+#: ../glade/glade_project_window.c:328
+#, fuzzy
+msgid "Set options for snapping to the grid"
+msgstr "Val for lagring av fil"
+
+#: ../glade/glade_project_window.c:340
+msgid "_FAQ"
+msgstr ""
+
+#: ../glade/glade_project_window.c:341
+msgid "View the Glade FAQ"
+msgstr ""
+
+#. create File menu
+#: ../glade/glade_project_window.c:355 ../glade/glade_project_window.c:625
+#, fuzzy
+msgid "_Project"
+msgstr "Prosjekt"
+
+#: ../glade/glade_project_window.c:366 ../glade/glade_project_window.c:872
+#: ../glade/glade_project_window.c:1049
+msgid "New Project"
+msgstr "Nytt prosjekt"
+
+#: ../glade/glade_project_window.c:371
+msgid "Open"
+msgstr "Opna"
+
+#: ../glade/glade_project_window.c:371 ../glade/glade_project_window.c:877
+#: ../glade/glade_project_window.c:1110
+msgid "Open Project"
+msgstr "Opna prosjekt"
+
+#: ../glade/glade_project_window.c:376
+msgid "Save"
+msgstr "Lagra"
+
+#: ../glade/glade_project_window.c:376 ../glade/glade_project_window.c:881
+#: ../glade/glade_project_window.c:1475
+msgid "Save Project"
+msgstr "Lagra prosjekt"
+
+#: ../glade/glade_project_window.c:382
+msgid "Options"
+msgstr "Val"
+
+#: ../glade/glade_project_window.c:387
+#, fuzzy
+msgid "Build"
+msgstr "&Bygg"
+
+#: ../glade/glade_project_window.c:387
+#, fuzzy
+msgid "Build the Source Code"
+msgstr "Vis kjeldekode"
+
+#: ../glade/glade_project_window.c:638
+#, fuzzy
+msgid "Open an existing project"
+msgstr "Opnar eit eksisterande prosjekt"
+
+#: ../glade/glade_project_window.c:642
+#, fuzzy
+msgid "Save project"
+msgstr "Lagra prosjekt"
+
+#: ../glade/glade_project_window.c:687
+#, fuzzy
+msgid "Quit Glade"
+msgstr "Avslutt Kscd"
+
+#: ../glade/glade_project_window.c:701
+#, fuzzy
+msgid "Cut the selected widget to the clipboard"
+msgstr "Du må velja ein prosess først."
+
+#: ../glade/glade_project_window.c:706
+#, fuzzy
+msgid "Copy the selected widget to the clipboard"
+msgstr "Du må velja ein prosess først."
+
+#: ../glade/glade_project_window.c:711
+#, fuzzy
+msgid "Paste the widget from the clipboard over the selected widget"
+msgstr "Viser korleis den valte skrifttypen ser ut."
+
+#: ../glade/glade_project_window.c:783
+#, fuzzy
+msgid "_Grid"
+msgstr "Vis rutenett"
+
+#: ../glade/glade_project_window.c:791
+#, fuzzy
+msgid "_Show Grid"
+msgstr "Vis rutenett"
+
+#: ../glade/glade_project_window.c:808
+msgid "Set the spacing between grid lines"
+msgstr ""
+
+#: ../glade/glade_project_window.c:811
+#, fuzzy
+msgid "S_nap to Grid"
+msgstr "Juster til rutenett"
+
+#: ../glade/glade_project_window.c:819
+msgid "Snap widgets to the grid (in fixed containers only)"
+msgstr ""
+
+#: ../glade/glade_project_window.c:829
+msgid "Set which parts of a widget snap to the grid"
+msgstr ""
+
+#. Don't show these yet as we have no help pages.
+#. menuitem = gtk_menu_item_new_with_mnemonic (_("_Contents"));
+#. gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#. gtk_widget_show (menuitem);
+#.
+#. menuitem = gtk_menu_item_new_with_mnemonic (_("_Index"));
+#. gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#. gtk_widget_show (menuitem);
+#.
+#. menuitem = gtk_menu_item_new ();
+#. gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#. gtk_widget_show (menuitem);
+#.
+#: ../glade/glade_project_window.c:854
+#, fuzzy
+msgid "_About..."
+msgstr "Om ..."
+
+#: ../glade/glade_project_window.c:895
+#, fuzzy
+msgid "Optio_ns"
+msgstr "Val"
+
+#: ../glade/glade_project_window.c:899
+#, fuzzy
+msgid "Write Source Code"
+msgstr "Skriptkjelde"
+
+#: ../glade/glade_project_window.c:986 ../glade/glade_project_window.c:1691
+#: ../glade/glade_project_window.c:1980
+msgid "Glade"
+msgstr "Glade"
+
+#: ../glade/glade_project_window.c:993
+#, fuzzy
+msgid "Are you sure you want to create a new project?"
+msgstr "Er du sikker på at du vil fjerna profilen \"%1\"?"
+
+#: ../glade/glade_project_window.c:1053
+#, fuzzy
+msgid "New _GTK+ Project"
+msgstr "Nytt prosjekt"
+
+#: ../glade/glade_project_window.c:1054
+#, fuzzy
+msgid "New G_NOME Project"
+msgstr "Nytt prosjekt"
+
+#: ../glade/glade_project_window.c:1057
+msgid "Which type of project do you want to create?"
+msgstr ""
+
+#: ../glade/glade_project_window.c:1091
+#, fuzzy
+msgid "New project created."
+msgstr "Nytt prosjekt"
+
+#: ../glade/glade_project_window.c:1181
+#, fuzzy
+msgid "Project opened."
+msgstr "Prosjektval"
+
+#: ../glade/glade_project_window.c:1195
+#, fuzzy
+msgid "Error opening project."
+msgstr "Opnar prosjekt ..."
+
+#: ../glade/glade_project_window.c:1259
+#, fuzzy
+msgid "Errors opening project file"
+msgstr "Feil ved opning av fil!"
+
+#: ../glade/glade_project_window.c:1265
+#, fuzzy
+msgid " errors opening project file:"
+msgstr "Feil ved opning av fil!"
+
+#: ../glade/glade_project_window.c:1338
+msgid ""
+"There is no project currently open.\n"
+"Create a new project with the Project/New command."
+msgstr ""
+
+#: ../glade/glade_project_window.c:1542
+#, fuzzy
+msgid "Error saving project"
+msgstr "Feil ved lagring av innstillingar."
+
+#: ../glade/glade_project_window.c:1544
+#, fuzzy
+msgid "Error saving project."
+msgstr "Feil ved lagring av innstillingar."
+
+#: ../glade/glade_project_window.c:1550
+#, fuzzy
+msgid "Project saved."
+msgstr "Prosjektnamn"
+
+#: ../glade/glade_project_window.c:1620
+#, fuzzy
+msgid "Errors writing source code"
+msgstr "Feil ved skriving av fil!"
+
+#: ../glade/glade_project_window.c:1622
+#, fuzzy
+msgid "Error writing source."
+msgstr "Feil ved lesing av vCard:\n"
+
+#: ../glade/glade_project_window.c:1628
+#, fuzzy
+msgid "Source code written."
+msgstr "Kjeldestreng"
+
+#: ../glade/glade_project_window.c:1659
+#, fuzzy
+msgid "System error message:"
+msgstr "Vis sidekantar"
+
+#: ../glade/glade_project_window.c:1698
+#, fuzzy
+msgid "Are you sure you want to quit?"
+msgstr "Er du sikker på at du vil sletta %1?"
+
+#: ../glade/glade_project_window.c:1982 ../glade/glade_project_window.c:2042
+msgid "(C) 1998-2002 Damon Chaplin"
+msgstr ""
+
+#: ../glade/glade_project_window.c:1983 ../glade/glade_project_window.c:2041
+msgid "Glade is a User Interface Builder for GTK+ and GNOME."
+msgstr ""
+
+#: ../glade/glade_project_window.c:2012
+#, fuzzy
+msgid "About Glade"
+msgstr "Avslutt Kscd"
+
+#: ../glade/glade_project_window.c:2097
+#, fuzzy
+msgid "<untitled>"
+msgstr "utan tittel"
+
+#: ../glade/gnome-db/gnomedbbrowser.c:135
+#, fuzzy
+msgid "Database Browser"
+msgstr "Databasefeil"
+
+#: ../glade/gnome-db/gnomedbcombo.c:124
+msgid "Data-bound combo"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbconnectprop.c:86
+msgid "GnomeDbConnectionProperties"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbconnectsel.c:147
+#, fuzzy
+msgid "Connection Selector"
+msgstr "Skule"
+
+#: ../glade/gnome-db/gnomedbdsnconfig.c:136
+#, fuzzy
+msgid "DSN Configurator"
+msgstr "kISDN-oppsett"
+
+#: ../glade/gnome-db/gnomedbdsndruid.c:147
+#, fuzzy
+msgid "DSN Config Druid"
+msgstr "kISDN-oppsett"
+
+#: ../glade/gnome-db/gnomedbeditor.c:63
+msgid "Highlight text:"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbeditor.c:63
+msgid "If selected, text will be highlighted inside the widget"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbeditor.c:178
+#, fuzzy
+msgid "GnomeDbEditor"
+msgstr "Nummerert liste"
+
+#: ../glade/gnome-db/gnomedberror.c:136
+#, fuzzy
+msgid "Database error viewer"
+msgstr "Databasefeil"
+
+#: ../glade/gnome-db/gnomedberrordlg.c:218
+#, fuzzy
+msgid "Database error dialog"
+msgstr "Databasefeil"
+
+#: ../glade/gnome-db/gnomedbform.c:147
+#, fuzzy
+msgid "Form"
+msgstr "Format:"
+
+#: ../glade/gnome-db/gnomedbgraybar.c:59
+msgid "Text inside the gray bar"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbgraybar.c:138
+msgid "Gray Bar"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbgrid.c:132
+msgid "Data-bound grid"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedblist.c:136
+msgid "Data-bound list"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedblogin.c:136
+#, fuzzy
+msgid "Database login widget"
+msgstr "Database"
+
+#: ../glade/gnome-db/gnomedblogindlg.c:76
+msgid "Login"
+msgstr "Innlogging"
+
+#: ../glade/gnome-db/gnomedblogindlg.c:219
+#, fuzzy
+msgid "Database login dialog"
+msgstr "Datautsjånad i redigerar"
+
+#: ../glade/gnome-db/gnomedbprovidersel.c:147
+#, fuzzy
+msgid "Provider Selector"
+msgstr "Comment=Teiknveljar"
+
+#: ../glade/gnome-db/gnomedbquerybuilder.c:86
+msgid "GnomeDbQueryBuilder"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbsourcesel.c:147
+#, fuzzy
+msgid "Data Source Selector"
+msgstr "Heimekatalog:"
+
+#: ../glade/gnome-db/gnomedbtableeditor.c:133
+#, fuzzy
+msgid "Table Editor "
+msgstr "Menyredigering ..."
+
+#: ../glade/gnome/bonobodock.c:231
+#, fuzzy
+msgid "Allow Floating:"
+msgstr "Flytande"
+
+#: ../glade/gnome/bonobodock.c:232
+#, fuzzy
+msgid "If floating dock items are allowed"
+msgstr "Eit desimaltal"
+
+#: ../glade/gnome/bonobodock.c:278
+msgid "Add dock band on top"
+msgstr ""
+
+#: ../glade/gnome/bonobodock.c:285
+msgid "Add dock band on bottom"
+msgstr ""
+
+#: ../glade/gnome/bonobodock.c:292
+#, fuzzy
+msgid "Add dock band on left"
+msgstr "Legg til rot-indeks (oppe til venstre)"
+
+#: ../glade/gnome/bonobodock.c:299
+msgid "Add dock band on right"
+msgstr ""
+
+#: ../glade/gnome/bonobodock.c:306
+#, fuzzy
+msgid "Add floating dock item"
+msgstr "Eit desimaltal"
+
+#: ../glade/gnome/bonobodock.c:495
+msgid "Gnome Dock"
+msgstr ""
+
+#: ../glade/gnome/bonobodockitem.c:165
+#, fuzzy
+msgid "Locked:"
+msgstr "Lås"
+
+#: ../glade/gnome/bonobodockitem.c:166
+msgid "If the dock item is locked in position"
+msgstr ""
+
+#: ../glade/gnome/bonobodockitem.c:167
+#, fuzzy
+msgid "Exclusive:"
+msgstr "Executive"
+
+#: ../glade/gnome/bonobodockitem.c:168
+msgid "If the dock item is always the only item in its band"
+msgstr ""
+
+#: ../glade/gnome/bonobodockitem.c:169
+#, fuzzy
+msgid "Never Floating:"
+msgstr "Flytande"
+
+#: ../glade/gnome/bonobodockitem.c:170
+msgid "If the dock item is never allowed to float in its own window"
+msgstr ""
+
+#: ../glade/gnome/bonobodockitem.c:171
+#, fuzzy
+msgid "Never Vertical:"
+msgstr "Loddrett:"
+
+#: ../glade/gnome/bonobodockitem.c:172
+msgid "If the dock item is never allowed to be vertical"
+msgstr ""
+
+#: ../glade/gnome/bonobodockitem.c:173
+#, fuzzy
+msgid "Never Horizontal:"
+msgstr "Vassrett:"
+
+#: ../glade/gnome/bonobodockitem.c:174
+msgid "If the dock item is never allowed to be horizontal"
+msgstr ""
+
+#: ../glade/gnome/bonobodockitem.c:177
+msgid "The type of shadow around the dock item"
+msgstr ""
+
+#: ../glade/gnome/bonobodockitem.c:180
+msgid "The orientation of a floating dock item"
+msgstr ""
+
+#: ../glade/gnome/bonobodockitem.c:428
+#, fuzzy
+msgid "Add dock item before"
+msgstr "Legg til klassemedlem"
+
+#: ../glade/gnome/bonobodockitem.c:435
+#, fuzzy
+msgid "Add dock item after"
+msgstr "Legg ti lokal skrivar"
+
+#: ../glade/gnome/bonobodockitem.c:771
+#, fuzzy
+msgid "Gnome Dock Item"
+msgstr "Element i hugselista"
+
+#: ../glade/gnome/gnomeabout.c:139
+msgid ""
+"Additional information, such as a description of the package and its home "
+"page on the web"
+msgstr ""
+
+#: ../glade/gnome/gnomeabout.c:539
+#, fuzzy
+msgid "Gnome About Dialog"
+msgstr "KDebugDialog"
+
+#: ../glade/gnome/gnomeapp.c:170
+msgid "New File"
+msgstr "Ny fil"
+
+#: ../glade/gnome/gnomeapp.c:172
+msgid "Open File"
+msgstr "Opna fil"
+
+#: ../glade/gnome/gnomeapp.c:174
+msgid "Save File"
+msgstr "Lagra fil"
+
+#: ../glade/gnome/gnomeapp.c:203
+#, fuzzy
+msgid "Status Bar:"
+msgstr "Statuslinje"
+
+#: ../glade/gnome/gnomeapp.c:204
+#, fuzzy
+msgid "If the window has a status bar"
+msgstr "Vis statuslinje"
+
+#: ../glade/gnome/gnomeapp.c:205
+#, fuzzy
+msgid "Store Config:"
+msgstr "&Lagra oppsett"
+
+#: ../glade/gnome/gnomeapp.c:206
+msgid "If the layout is saved and restored automatically"
+msgstr ""
+
+#: ../glade/gnome/gnomeapp.c:442
+#, fuzzy
+msgid "Gnome Application Window"
+msgstr "Applikasjonsvegvisar"
+
+#: ../glade/gnome/gnomeappbar.c:56
+#, fuzzy
+msgid "Status Message."
+msgstr "Lagra melding"
+
+#: ../glade/gnome/gnomeappbar.c:69
+msgid "Progress:"
+msgstr "Framgang:"
+
+#: ../glade/gnome/gnomeappbar.c:70
+msgid "If the app bar has a progress indicator"
+msgstr ""
+
+#: ../glade/gnome/gnomeappbar.c:71
+msgid "Status:"
+msgstr "Status:"
+
+#: ../glade/gnome/gnomeappbar.c:72
+msgid "If the app bar has an area for status messages and user input"
+msgstr ""
+
+#: ../glade/gnome/gnomeappbar.c:184
+#, fuzzy
+msgid "Gnome Application Bar"
+msgstr "Name=Dokka programlinje"
+
+#: ../glade/gnome/gnomecanvas.c:68
+#, fuzzy
+msgid "Anti-Aliased:"
+msgstr "Anti-aliasing"
+
+#: ../glade/gnome/gnomecanvas.c:69
+msgid "If the canvas is anti-aliased, to smooth the edges of text and graphics"
+msgstr ""
+
+#: ../glade/gnome/gnomecanvas.c:70
+#, fuzzy
+msgid "X1:"
+msgstr "1:5"
+
+#: ../glade/gnome/gnomecanvas.c:70
+msgid "The minimum x coordinate"
+msgstr ""
+
+#: ../glade/gnome/gnomecanvas.c:71
+#, fuzzy
+msgid "Y1:"
+msgstr "1:5"
+
+#: ../glade/gnome/gnomecanvas.c:71
+msgid "The minimum y coordinate"
+msgstr ""
+
+#: ../glade/gnome/gnomecanvas.c:72
+msgid "X2:"
+msgstr ""
+
+#: ../glade/gnome/gnomecanvas.c:72
+msgid "The maximum x coordinate"
+msgstr ""
+
+#: ../glade/gnome/gnomecanvas.c:73
+msgid "Y2:"
+msgstr ""
+
+#: ../glade/gnome/gnomecanvas.c:73
+msgid "The maximum y coordinate"
+msgstr ""
+
+#: ../glade/gnome/gnomecanvas.c:75
+#, fuzzy
+msgid "Pixels Per Unit:"
+msgstr "Drapsprosent: "
+
+#: ../glade/gnome/gnomecanvas.c:76
+msgid "The number of pixels corresponding to one unit"
+msgstr ""
+
+#: ../glade/gnome/gnomecanvas.c:239
+msgid "GnomeCanvas"
+msgstr ""
+
+#: ../glade/gnome/gnomecolorpicker.c:68
+#, fuzzy
+msgid "Dither:"
+msgstr "Andre:"
+
+#: ../glade/gnome/gnomecolorpicker.c:69
+msgid "If the sample should use dithering to be more accurate"
+msgstr ""
+
+#: ../glade/gnome/gnomecolorpicker.c:160
+#, fuzzy
+msgid "Pick a color"
+msgstr "Pikkolofløyte"
+
+#: ../glade/gnome/gnomecolorpicker.c:219
+#, fuzzy
+msgid "Gnome Color Picker"
+msgstr "kSirc Fargeveljar"
+
+#: ../glade/gnome/gnomecontrol.c:160
+#, fuzzy
+msgid "Couldn't create the Bonobo control"
+msgstr ""
+"Kunne ikkje lesa fil:\n"
+"%s"
+
+#: ../glade/gnome/gnomecontrol.c:249
+#, fuzzy
+msgid "New Bonobo Control"
+msgstr "Ny node"
+
+#: ../glade/gnome/gnomecontrol.c:262
+msgid "Select a Bonobo Control"
+msgstr ""
+
+#: ../glade/gnome/gnomecontrol.c:290
+msgid "OAFIID"
+msgstr ""
+
+#: ../glade/gnome/gnomecontrol.c:295 ../glade/property.c:3896
+msgid "Description"
+msgstr "Skildring"
+
+#: ../glade/gnome/gnomecontrol.c:339
+msgid "Bonobo Control"
+msgstr ""
+
+#: ../glade/gnome/gnomedateedit.c:70
+#, fuzzy
+msgid "Show Time:"
+msgstr "Vis tid som:"
+
+#: ../glade/gnome/gnomedateedit.c:71
+msgid "If the time is shown as well as the date"
+msgstr ""
+
+#: ../glade/gnome/gnomedateedit.c:72
+#, fuzzy
+msgid "24 Hour Format:"
+msgstr "Importformat:"
+
+#: ../glade/gnome/gnomedateedit.c:73
+msgid "If the time is shown in 24-hour format"
+msgstr ""
+
+#: ../glade/gnome/gnomedateedit.c:76
+#, fuzzy
+msgid "Lower Hour:"
+msgstr "Nedre skuff"
+
+#: ../glade/gnome/gnomedateedit.c:77
+msgid "The lowest hour to show in the popup"
+msgstr ""
+
+#: ../glade/gnome/gnomedateedit.c:79
+#, fuzzy
+msgid "Upper Hour:"
+msgstr "øvre skuff"
+
+#: ../glade/gnome/gnomedateedit.c:80
+msgid "The highest hour to show in the popup"
+msgstr ""
+
+#: ../glade/gnome/gnomedateedit.c:298
+#, fuzzy
+msgid "GnomeDateEdit"
+msgstr "Nummerert liste"
+
+#: ../glade/gnome/gnomedialog.c:152 ../glade/gnome/gnomemessagebox.c:189
+#, fuzzy
+msgid "Auto Close:"
+msgstr "Automatisk fortsetjing"
+
+#: ../glade/gnome/gnomedialog.c:153 ../glade/gnome/gnomemessagebox.c:190
+msgid "If the dialog closes when any button is clicked"
+msgstr ""
+
+#: ../glade/gnome/gnomedialog.c:154 ../glade/gnome/gnomemessagebox.c:191
+#, fuzzy
+msgid "Hide on Close:"
+msgstr "Lukk vindauge"
+
+#: ../glade/gnome/gnomedialog.c:155 ../glade/gnome/gnomemessagebox.c:192
+msgid "If the dialog is hidden when it is closed, instead of being destroyed"
+msgstr ""
+
+#: ../glade/gnome/gnomedialog.c:341
+#, fuzzy
+msgid "Gnome Dialog Box"
+msgstr "Dialogboksar"
+
+#: ../glade/gnome/gnomedruid.c:91
+#, fuzzy
+msgid "New Gnome Druid"
+msgstr "Ny node"
+
+#: ../glade/gnome/gnomedruid.c:190
+#, fuzzy
+msgid "Show Help"
+msgstr "Vis tekst"
+
+#: ../glade/gnome/gnomedruid.c:190
+msgid "Display the help button."
+msgstr ""
+
+#: ../glade/gnome/gnomedruid.c:255
+#, fuzzy
+msgid "Add Start Page"
+msgstr "Start-dato"
+
+#: ../glade/gnome/gnomedruid.c:270
+#, fuzzy
+msgid "Add Finish Page"
+msgstr "Legg til nytt bilete"
+
+#: ../glade/gnome/gnomedruid.c:485
+msgid "Druid"
+msgstr ""
+
+#: ../glade/gnome/gnomedruidpageedge.c:94
+#: ../glade/gnome/gnomedruidpagestandard.c:86
+#, fuzzy
+msgid "The title of the page"
+msgstr "Artisten på Internett"
+
+#: ../glade/gnome/gnomedruidpageedge.c:96
+msgid "The main text of the page, introducing people to the druid."
+msgstr ""
+
+#: ../glade/gnome/gnomedruidpageedge.c:98
+#: ../glade/gnome/gnomedruidpagestandard.c:87
+#, fuzzy
+msgid "Title Color:"
+msgstr " Tittelfarge: "
+
+#: ../glade/gnome/gnomedruidpageedge.c:99
+#: ../glade/gnome/gnomedruidpagestandard.c:88
+#, fuzzy
+msgid "The color of the title text"
+msgstr "Namnet på fila programmet skal skriva til"
+
+#: ../glade/gnome/gnomedruidpageedge.c:100
+msgid "Text Color:"
+msgstr "Tekstfarge:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:101
+#, fuzzy
+msgid "The color of the main text"
+msgstr "vel klientgeometrien til hovudelementet."
+
+#: ../glade/gnome/gnomedruidpageedge.c:103
+#: ../glade/gnome/gnomedruidpagestandard.c:92
+#, fuzzy
+msgid "The background color of the page"
+msgstr "Vel bakgrunnsfargen for skriveområdet."
+
+#: ../glade/gnome/gnomedruidpageedge.c:104
+#: ../glade/gnome/gnomedruidpagestandard.c:93
+#, fuzzy
+msgid "Logo Back. Color:"
+msgstr " Bakgrunnsfarge: "
+
+#: ../glade/gnome/gnomedruidpageedge.c:105
+#: ../glade/gnome/gnomedruidpagestandard.c:94
+#, fuzzy
+msgid "The background color around the logo"
+msgstr "Vel bakgrunnsfargen for skriveområdet."
+
+#: ../glade/gnome/gnomedruidpageedge.c:106
+#, fuzzy
+msgid "Text Box Color:"
+msgstr "Tekstfarge:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:107
+#, fuzzy
+msgid "The background color of the main text area"
+msgstr "Vel bakgrunnsfargen for skriveområdet."
+
+#: ../glade/gnome/gnomedruidpageedge.c:108
+#: ../glade/gnome/gnomedruidpagestandard.c:95
+#, fuzzy
+msgid "Logo Image:"
+msgstr "Bilete"
+
+#: ../glade/gnome/gnomedruidpageedge.c:109
+#: ../glade/gnome/gnomedruidpagestandard.c:96
+msgid "The logo to display in the top-right of the page"
+msgstr ""
+
+#: ../glade/gnome/gnomedruidpageedge.c:110
+msgid "Side Watermark:"
+msgstr ""
+
+#: ../glade/gnome/gnomedruidpageedge.c:111
+#, fuzzy
+msgid "The main image to display on the side of the page."
+msgstr "Denne skrifttypen vert brukt til vising av vanleg tekst på nettsider."
+
+#: ../glade/gnome/gnomedruidpageedge.c:112
+#: ../glade/gnome/gnomedruidpagestandard.c:97
+msgid "Top Watermark:"
+msgstr ""
+
+#: ../glade/gnome/gnomedruidpageedge.c:113
+#, fuzzy
+msgid "The watermark to display at the top of the page."
+msgstr "Denne skrifttypen vert brukt til vising av vanleg tekst på nettsider."
+
+#: ../glade/gnome/gnomedruidpageedge.c:522
+#, fuzzy
+msgid "Druid Start or Finish Page"
+msgstr "Lag kopi av side"
+
+#: ../glade/gnome/gnomedruidpagestandard.c:89
+#, fuzzy
+msgid "Contents Back. Color:"
+msgstr " Bakgrunnsfarge: "
+
+#: ../glade/gnome/gnomedruidpagestandard.c:90
+#, fuzzy
+msgid "The background color around the title"
+msgstr "Vel bakgrunnsfargen for skriveområdet."
+
+#: ../glade/gnome/gnomedruidpagestandard.c:98
+#, fuzzy
+msgid "The image to display along the top of the page"
+msgstr "Denne skrifttypen vert brukt til vising av vanleg tekst på nettsider."
+
+#: ../glade/gnome/gnomedruidpagestandard.c:447
+#, fuzzy
+msgid "Druid Standard Page"
+msgstr "Standardpakke"
+
+#: ../glade/gnome/gnomeentry.c:71 ../glade/gnome/gnomefileentry.c:96
+#: ../glade/gnome/gnomeiconentry.c:74 ../glade/gnome/gnomepixmapentry.c:77
+#, fuzzy
+msgid "History ID:"
+msgstr "Historie"
+
+#: ../glade/gnome/gnomeentry.c:72 ../glade/gnome/gnomefileentry.c:97
+#: ../glade/gnome/gnomeiconentry.c:75 ../glade/gnome/gnomepixmapentry.c:78
+msgid "The ID to save the history entries under"
+msgstr ""
+
+#: ../glade/gnome/gnomeentry.c:73 ../glade/gnome/gnomefileentry.c:98
+#: ../glade/gnome/gnomeiconentry.c:76 ../glade/gnome/gnomepixmapentry.c:79
+#, fuzzy
+msgid "Max Saved:"
+msgstr "Lagra"
+
+#: ../glade/gnome/gnomeentry.c:74 ../glade/gnome/gnomefileentry.c:99
+#: ../glade/gnome/gnomeiconentry.c:77 ../glade/gnome/gnomepixmapentry.c:80
+#, fuzzy
+msgid "The maximum number of history entries saved"
+msgstr "Høgste tal på søke-oppføringar :"
+
+#: ../glade/gnome/gnomeentry.c:210
+#, fuzzy
+msgid "Gnome Entry"
+msgstr "Geometri"
+
+#: ../glade/gnome/gnomefileentry.c:102 ../glade/gnome/gnomeiconentry.c:73
+#: ../glade/gnome/gnomepixmapentry.c:83
+#, fuzzy
+msgid "The title of the file selection dialog"
+msgstr "Namnet på fila programmet skal skriva til"
+
+#: ../glade/gnome/gnomefileentry.c:103
+msgid "Directory:"
+msgstr "Katalog:"
+
+#: ../glade/gnome/gnomefileentry.c:104
+msgid "If a directory is needed rather than a file"
+msgstr ""
+
+#: ../glade/gnome/gnomefileentry.c:106 ../glade/gnome/gnomepixmapentry.c:85
+msgid "If the file selection dialog should be modal"
+msgstr ""
+
+#: ../glade/gnome/gnomefileentry.c:107 ../glade/gnome/gnomepixmapentry.c:86
+msgid "Use FileChooser:"
+msgstr ""
+
+#: ../glade/gnome/gnomefileentry.c:108 ../glade/gnome/gnomepixmapentry.c:87
+msgid "Use the new GtkFileChooser widget instead of GtkFileSelection"
+msgstr ""
+
+#: ../glade/gnome/gnomefileentry.c:367
+#, fuzzy
+msgid "Gnome File Entry"
+msgstr "Gå til oppføring"
+
+#: ../glade/gnome/gnomefontpicker.c:98
+msgid "The preview text to show in the font selection dialog"
+msgstr ""
+
+#: ../glade/gnome/gnomefontpicker.c:99
+msgid "Mode:"
+msgstr "Modus:"
+
+#: ../glade/gnome/gnomefontpicker.c:100
+msgid "What to display in the font picker button"
+msgstr ""
+
+#: ../glade/gnome/gnomefontpicker.c:107
+msgid "The size of the font to use in the font picker button"
+msgstr ""
+
+#: ../glade/gnome/gnomefontpicker.c:392
+#, fuzzy
+msgid "Gnome Font Picker"
+msgstr "Comment=Nyhendetelegraf"
+
+#: ../glade/gnome/gnomehref.c:66
+msgid "URL:"
+msgstr "URL:"
+
+#: ../glade/gnome/gnomehref.c:67
+msgid "The URL to display when the button is clicked"
+msgstr ""
+
+#: ../glade/gnome/gnomehref.c:69
+msgid "The text to display in the button"
+msgstr ""
+
+#: ../glade/gnome/gnomehref.c:206
+msgid "Gnome HRef Link Button"
+msgstr ""
+
+#: ../glade/gnome/gnomeiconentry.c:208
+#, fuzzy
+msgid "Gnome Icon Entry"
+msgstr "Gå til oppføring"
+
+#: ../glade/gnome/gnomeiconlist.c:175
+#, fuzzy
+msgid "The selection mode"
+msgstr "Valg-modus"
+
+#: ../glade/gnome/gnomeiconlist.c:177
+#, fuzzy
+msgid "Icon Width:"
+msgstr "Pennbreidd:"
+
+#: ../glade/gnome/gnomeiconlist.c:178
+msgid "The width of each icon"
+msgstr ""
+
+#: ../glade/gnome/gnomeiconlist.c:181
+#, fuzzy
+msgid "The number of pixels between rows of icons"
+msgstr "Tal på valte element"
+
+#: ../glade/gnome/gnomeiconlist.c:184
+msgid "The number of pixels between columns of icons"
+msgstr ""
+
+#: ../glade/gnome/gnomeiconlist.c:187
+#, fuzzy
+msgid "Icon Border:"
+msgstr "Ordna"
+
+#: ../glade/gnome/gnomeiconlist.c:188
+msgid "The number of pixels around icons (unused?)"
+msgstr ""
+
+#: ../glade/gnome/gnomeiconlist.c:191
+#, fuzzy
+msgid "Text Spacing:"
+msgstr "Mellomrom:"
+
+#: ../glade/gnome/gnomeiconlist.c:192
+msgid "The number of pixels between the text and the icon"
+msgstr ""
+
+#: ../glade/gnome/gnomeiconlist.c:194
+#, fuzzy
+msgid "Text Editable:"
+msgstr "Tekstlinjer:"
+
+#: ../glade/gnome/gnomeiconlist.c:195
+msgid "If the icon text can be edited by the user"
+msgstr ""
+
+#: ../glade/gnome/gnomeiconlist.c:196
+#, fuzzy
+msgid "Text Static:"
+msgstr "&Neste artikkel"
+
+#: ../glade/gnome/gnomeiconlist.c:197
+msgid ""
+"If the icon text is static, in which case it will not be copied by the "
+"GnomeIconList"
+msgstr ""
+
+#: ../glade/gnome/gnomeiconlist.c:461
+#, fuzzy
+msgid "Icon List"
+msgstr "Liste over skrifttypar"
+
+#: ../glade/gnome/gnomeiconselection.c:154
+#, fuzzy
+msgid "Icon Selection"
+msgstr "I &utval"
+
+#: ../glade/gnome/gnomemessagebox.c:174
+#, fuzzy
+msgid "Message Type:"
+msgstr "Melding"
+
+#: ../glade/gnome/gnomemessagebox.c:175
+#, fuzzy
+msgid "The type of the message box"
+msgstr "Storleiken på kartet som skal dumpast"
+
+#: ../glade/gnome/gnomemessagebox.c:177
+msgid "Message:"
+msgstr "Melding:"
+
+#: ../glade/gnome/gnomemessagebox.c:177
+#, fuzzy
+msgid "The message to display"
+msgstr "Meldingsvising:"
+
+#: ../glade/gnome/gnomemessagebox.c:498
+#, fuzzy
+msgid "Gnome Message Box"
+msgstr "Meldingsboks"
+
+#: ../glade/gnome/gnomepixmap.c:79
+#, fuzzy
+msgid "The pixmap filename"
+msgstr "storleik på filnamn"
+
+#: ../glade/gnome/gnomepixmap.c:80
+#, fuzzy
+msgid "Scaled:"
+msgstr "Skalert"
+
+#: ../glade/gnome/gnomepixmap.c:80
+msgid "If the pixmap is scaled"
+msgstr ""
+
+#: ../glade/gnome/gnomepixmap.c:81
+#, fuzzy
+msgid "Scaled Width:"
+msgstr "Biletebreidd:"
+
+#: ../glade/gnome/gnomepixmap.c:82
+#, fuzzy
+msgid "The width to scale the pixmap to"
+msgstr "Storleiken på kartet som skal dumpast"
+
+#: ../glade/gnome/gnomepixmap.c:84
+#, fuzzy
+msgid "Scaled Height:"
+msgstr "Biletehøgd:"
+
+#: ../glade/gnome/gnomepixmap.c:85
+#, fuzzy
+msgid "The height to scale the pixmap to"
+msgstr "Storleiken på kartet som skal dumpast"
+
+#: ../glade/gnome/gnomepixmap.c:346
+#, fuzzy
+msgid "Gnome Pixmap"
+msgstr "Set inn bilete"
+
+#: ../glade/gnome/gnomepixmapentry.c:75
+msgid "Preview:"
+msgstr "Førehandsvising:"
+
+#: ../glade/gnome/gnomepixmapentry.c:76
+msgid "If a small preview of the pixmap is displayed"
+msgstr ""
+
+#: ../glade/gnome/gnomepixmapentry.c:303
+msgid "GnomePixmapEntry"
+msgstr ""
+
+#: ../glade/gnome/gnomepropertybox.c:112
+msgid "New GnomePropertyBox"
+msgstr ""
+
+#: ../glade/gnome/gnomepropertybox.c:365
+#, fuzzy
+msgid "Property Dialog Box"
+msgstr "Framgangsdialog"
+
+#: ../glade/main.c:70
+msgid "Write the source code and exit"
+msgstr ""
+
+#: ../glade/main.c:74
+#, fuzzy
+msgid "Start with the palette hidden"
+msgstr "Sentrer dei valte elementa"
+
+#: ../glade/main.c:78
+#, fuzzy
+msgid "Start with the property editor hidden"
+msgstr "Viser fileigenskapane"
+
+#: ../glade/main.c:436
+msgid ""
+"glade: The XML file must be set for the '-w' or '--write-source' option.\n"
+msgstr ""
+
+#: ../glade/main.c:450
+#, fuzzy
+msgid "glade: Error loading XML file.\n"
+msgstr ""
+"Feil ved nedlasting av fil:\n"
+"%1"
+
+#: ../glade/main.c:457
+#, fuzzy
+msgid "glade: Error writing source.\n"
+msgstr "Feil ved lesing av vCard:\n"
+
+#: ../glade/palette.c:60
+#, fuzzy
+msgid "Palette"
+msgstr "&Palett"
+
+#: ../glade/property.c:73
+#, fuzzy
+msgid "private"
+msgstr "Privat"
+
+#: ../glade/property.c:73
+#, fuzzy
+msgid "protected"
+msgstr "Tilkopla"
+
+#: ../glade/property.c:73
+#, fuzzy
+msgid "public"
+msgstr "Gi ut"
+
+#: ../glade/property.c:102
+#, fuzzy
+msgid "Prelight"
+msgstr "Høgre parentes"
+
+#: ../glade/property.c:103
+#, fuzzy
+msgid "Selected"
+msgstr "Merka:"
+
+#: ../glade/property.c:103
+#, fuzzy
+msgid "Insens"
+msgstr "Instansar"
+
+#: ../glade/property.c:467
+msgid "When the window needs redrawing"
+msgstr ""
+
+#: ../glade/property.c:468
+msgid "When the mouse moves"
+msgstr ""
+
+#: ../glade/property.c:469
+#, fuzzy
+msgid "Mouse movement hints"
+msgstr "Mushendingar"
+
+#: ../glade/property.c:470
+msgid "Mouse movement with any button pressed"
+msgstr ""
+
+#: ../glade/property.c:471
+msgid "Mouse movement with button 1 pressed"
+msgstr ""
+
+#: ../glade/property.c:472
+msgid "Mouse movement with button 2 pressed"
+msgstr ""
+
+#: ../glade/property.c:473
+msgid "Mouse movement with button 3 pressed"
+msgstr ""
+
+#: ../glade/property.c:474
+msgid "Any mouse button pressed"
+msgstr ""
+
+#: ../glade/property.c:475
+msgid "Any mouse button released"
+msgstr ""
+
+#: ../glade/property.c:476
+#, fuzzy
+msgid "Any key pressed"
+msgstr "Vilkårleg melding"
+
+#: ../glade/property.c:477
+msgid "Any key released"
+msgstr ""
+
+#: ../glade/property.c:478
+#, fuzzy
+msgid "When the mouse enters the window"
+msgstr "Opna dokumentet i eit nytt vindauge"
+
+#: ../glade/property.c:479
+#, fuzzy
+msgid "When the mouse leaves the window"
+msgstr "Opna dokumentet i eit nytt vindauge"
+
+#: ../glade/property.c:480
+msgid "Any change in input focus"
+msgstr ""
+
+#: ../glade/property.c:481
+msgid "Any change in window structure"
+msgstr ""
+
+#: ../glade/property.c:482
+msgid "Any change in X Windows property"
+msgstr ""
+
+#: ../glade/property.c:483
+msgid "Any change in visibility"
+msgstr ""
+
+#: ../glade/property.c:484 ../glade/property.c:485
+msgid "For cursors in XInput-aware programs"
+msgstr ""
+
+#: ../glade/property.c:596
+msgid "Properties"
+msgstr "Eigenskapar"
+
+#: ../glade/property.c:620
+#, fuzzy
+msgid "Packing"
+msgstr "&Bak"
+
+#: ../glade/property.c:625
+#, fuzzy
+msgid "Common"
+msgstr "Kommentar"
+
+#: ../glade/property.c:631
+msgid "Style"
+msgstr "Stil"
+
+#: ../glade/property.c:637 ../glade/property.c:4640
+#, fuzzy
+msgid "Signals"
+msgstr "Signal"
+
+#: ../glade/property.c:700 ../glade/property.c:721
+#, fuzzy
+msgid "Properties: "
+msgstr "Eigenskapar"
+
+#: ../glade/property.c:708 ../glade/property.c:732
+#, fuzzy
+msgid "Properties: <none>"
+msgstr "Eigenskapar for"
+
+#: ../glade/property.c:778
+msgid "Class:"
+msgstr "Klasse:"
+
+#: ../glade/property.c:779
+#, fuzzy
+msgid "The class of the widget"
+msgstr "Namnet på fila programmet skal skriva til"
+
+#: ../glade/property.c:813
+msgid "Width:"
+msgstr "Breidd:"
+
+#: ../glade/property.c:814
+msgid ""
+"The requested width of the widget (usually used to set the minimum width)"
+msgstr ""
+
+#: ../glade/property.c:816
+msgid "Height:"
+msgstr "Høgd:"
+
+#: ../glade/property.c:817
+msgid ""
+"The requested height of the widget (usually used to set the minimum height)"
+msgstr ""
+
+#: ../glade/property.c:820
+#, fuzzy
+msgid "Visible:"
+msgstr "Synleg"
+
+#: ../glade/property.c:821
+msgid "If the widget is initially visible"
+msgstr ""
+
+#: ../glade/property.c:822
+#, fuzzy
+msgid "Sensitive:"
+msgstr "Gradering"
+
+#: ../glade/property.c:823
+msgid "If the widget responds to input"
+msgstr ""
+
+#: ../glade/property.c:825
+#, fuzzy
+msgid "The tooltip to display if the mouse lingers over the widget"
+msgstr "Brukt for å visa namna på skrivebordsikona."
+
+#: ../glade/property.c:827
+#, fuzzy
+msgid "Can Default:"
+msgstr "(standard)"
+
+#: ../glade/property.c:828
+#, fuzzy
+msgid "If the widget can be the default action in a dialog"
+msgstr "&Reguler satsing er standard"
+
+#: ../glade/property.c:829
+#, fuzzy
+msgid "Has Default:"
+msgstr "(standard)"
+
+#: ../glade/property.c:830
+#, fuzzy
+msgid "If the widget is the default action in the dialog"
+msgstr "&Reguler satsing er standard"
+
+#: ../glade/property.c:831
+#, fuzzy
+msgid "Can Focus:"
+msgstr "Ved fokus"
+
+#: ../glade/property.c:832
+msgid "If the widget can accept the input focus"
+msgstr ""
+
+#: ../glade/property.c:833
+#, fuzzy
+msgid "Has Focus:"
+msgstr "Ved fokus"
+
+#: ../glade/property.c:834
+msgid "If the widget has the input focus"
+msgstr ""
+
+#: ../glade/property.c:836
+#, fuzzy
+msgid "Events:"
+msgstr "&Hendingar"
+
+#: ../glade/property.c:837
+msgid "The X events that the widget receives"
+msgstr ""
+
+#: ../glade/property.c:839
+#, fuzzy
+msgid "Ext.Events:"
+msgstr "&Hendingar"
+
+#: ../glade/property.c:840
+#, fuzzy
+msgid "The X Extension events mode"
+msgstr "Skrivebordsfila for utviding."
+
+#: ../glade/property.c:843
+#, fuzzy
+msgid "Accelerators:"
+msgstr "Akselerasjon"
+
+#: ../glade/property.c:844
+msgid "Defines the signals to emit when keys are pressed"
+msgstr ""
+
+#: ../glade/property.c:845
+msgid "Edit..."
+msgstr "Endra ..."
+
+#: ../glade/property.c:867
+#, fuzzy
+msgid "Propagate:"
+msgstr "Frå side:"
+
+#: ../glade/property.c:868
+msgid "Set True to propagate the style to the widget's children"
+msgstr ""
+
+#: ../glade/property.c:869
+#, fuzzy
+msgid "Named Style:"
+msgstr "Name=Stil"
+
+#: ../glade/property.c:870
+msgid "The name of the style, which can be shared by several widgets"
+msgstr ""
+
+#: ../glade/property.c:872
+msgid "Font:"
+msgstr "Skrifttype:"
+
+#: ../glade/property.c:873
+#, fuzzy
+msgid "The font to use for any text in the widget"
+msgstr "Dette er skrifttypen for tekst i Konqueror-vindauge."
+
+#: ../glade/property.c:898
+#, fuzzy
+msgid "Copy All"
+msgstr "Lukk alle"
+
+#: ../glade/property.c:926
+msgid "Foreground:"
+msgstr "Framgrunn:"
+
+#: ../glade/property.c:926
+msgid "Background:"
+msgstr "Bakgrunn:"
+
+#: ../glade/property.c:926
+#, fuzzy
+msgid "Base:"
+msgstr "Basis"
+
+#: ../glade/property.c:928
+#, fuzzy
+msgid "Foreground color"
+msgstr "Framgrunnsfarge:"
+
+#: ../glade/property.c:928
+msgid "Background color"
+msgstr "Bakgrunnsfarge"
+
+#: ../glade/property.c:928
+msgid "Text color"
+msgstr "Tekstfarge"
+
+#: ../glade/property.c:929
+#, fuzzy
+msgid "Base color"
+msgstr "Bruk fargar"
+
+#: ../glade/property.c:946
+#, fuzzy
+msgid "Back. Pixmap:"
+msgstr "Vel bakgrunnsbilete"
+
+#: ../glade/property.c:947
+#, fuzzy
+msgid "The graphic to use as the background of the widget"
+msgstr "Vel bakgrunnsfargen for skriveområdet."
+
+#: ../glade/property.c:999
+#, fuzzy
+msgid "The file to write source code into"
+msgstr "Namnet på fila programmet skal skriva til"
+
+#: ../glade/property.c:1000
+#, fuzzy
+msgid "Public:"
+msgstr "Gi ut"
+
+#: ../glade/property.c:1001
+msgid "If the widget is added to the component's data structure"
+msgstr ""
+
+#: ../glade/property.c:1012
+#, fuzzy
+msgid "Separate Class:"
+msgstr "Delt"
+
+#: ../glade/property.c:1013
+msgid "Put this widget's subtree in a separate class"
+msgstr ""
+
+#: ../glade/property.c:1014
+#, fuzzy
+msgid "Separate File:"
+msgstr "Delt"
+
+#: ../glade/property.c:1015
+msgid "Put this widget in a separate source file"
+msgstr ""
+
+#: ../glade/property.c:1016
+#, fuzzy
+msgid "Visibility:"
+msgstr "Synleg"
+
+#: ../glade/property.c:1017
+msgid "Visibility of widgets. Public widgets are exported to a global map."
+msgstr ""
+
+#: ../glade/property.c:1126
+#, fuzzy
+msgid "You need to select a color or background to copy"
+msgstr "Du må velja ein prosess først."
+
+#: ../glade/property.c:1145
+msgid "Invalid selection in on_style_copy()"
+msgstr ""
+
+#: ../glade/property.c:1187
+#, fuzzy
+msgid "You need to copy a color or background pixmap first"
+msgstr "Du må opna ei faksside først."
+
+#: ../glade/property.c:1193
+#, fuzzy
+msgid "You need to select a color to paste into"
+msgstr "Du må velja ein prosess først."
+
+#: ../glade/property.c:1203
+#, fuzzy
+msgid "You need to select a background pixmap to paste into"
+msgstr "Du må velja ein prosess først."
+
+#: ../glade/property.c:1455
+#, fuzzy
+msgid "Couldn't create pixmap from file\n"
+msgstr "Kunne ikkje laga spool-fil\n"
+
+#. List of current signal handlers - Signal/Handler/Data/Options
+#: ../glade/property.c:1497
+msgid "Signal"
+msgstr "Signal"
+
+#: ../glade/property.c:1499
+msgid "Data"
+msgstr "Data"
+
+#: ../glade/property.c:1500
+msgid "After"
+msgstr "Etter"
+
+#: ../glade/property.c:1501
+msgid "Object"
+msgstr ""
+
+#: ../glade/property.c:1532 ../glade/property.c:1696
+#, fuzzy
+msgid "Signal:"
+msgstr "Signal"
+
+#: ../glade/property.c:1533
+msgid "The signal to add a handler for"
+msgstr ""
+
+#: ../glade/property.c:1547
+#, fuzzy
+msgid "The function to handle the signal"
+msgstr "PI()-funksjonen verdien PI\n"
+
+#: ../glade/property.c:1550
+#, fuzzy
+msgid "Data:"
+msgstr "&Data"
+
+#: ../glade/property.c:1551
+msgid "The data passed to the handler"
+msgstr ""
+
+#: ../glade/property.c:1552
+#, fuzzy
+msgid "Object:"
+msgstr "Objekt"
+
+#: ../glade/property.c:1553
+msgid "The object which receives the signal"
+msgstr ""
+
+#: ../glade/property.c:1554
+#, fuzzy
+msgid "After:"
+msgstr "Etter"
+
+#: ../glade/property.c:1555
+msgid "If the handler runs after the class function"
+msgstr ""
+
+#: ../glade/property.c:1568
+msgid "Add"
+msgstr "Legg til"
+
+#: ../glade/property.c:1574
+msgid "Update"
+msgstr "Oppdater"
+
+#: ../glade/property.c:1586
+msgid "Clear"
+msgstr "Tøm"
+
+#: ../glade/property.c:1636
+#, fuzzy
+msgid "Accelerators"
+msgstr "Akselerasjon"
+
+#. List of current accelerators - Mods/Keys/Signals
+#: ../glade/property.c:1649
+#, fuzzy
+msgid "Mod"
+msgstr "Mod3"
+
+#: ../glade/property.c:1650
+msgid "Key"
+msgstr "Nøkkel"
+
+#: ../glade/property.c:1651
+#, fuzzy
+msgid "Signal to emit"
+msgstr "Rediger fil"
+
+#: ../glade/property.c:1695
+#, fuzzy
+msgid "The accelerator key"
+msgstr "Sje&kk akseleratorar"
+
+#: ../glade/property.c:1697
+msgid "The signal to emit when the accelerator is pressed"
+msgstr ""
+
+#: ../glade/property.c:1846
+msgid "Edit Text Property"
+msgstr ""
+
+#: ../glade/property.c:1884
+msgid "<b>_Text:</b>"
+msgstr ""
+
+#: ../glade/property.c:1894
+#, fuzzy
+msgid "T_ranslatable"
+msgstr "Omsett i:"
+
+#: ../glade/property.c:1898
+msgid "Has Context _Prefix"
+msgstr ""
+
+#: ../glade/property.c:1924
+msgid "<b>Co_mments For Translators:</b>"
+msgstr ""
+
+#: ../glade/property.c:3886
+#, fuzzy
+msgid "Select X Events"
+msgstr "Velg skrifttypar"
+
+#: ../glade/property.c:3895
+#, fuzzy
+msgid "Event Mask"
+msgstr "Hending: "
+
+#: ../glade/property.c:4025 ../glade/property.c:4074
+#, fuzzy
+msgid "You need to set the accelerator key"
+msgstr "Du må velja ein prosess først."
+
+#: ../glade/property.c:4032 ../glade/property.c:4081
+#, fuzzy
+msgid "You need to set the signal to emit"
+msgstr "Du må velja ein prosess først."
+
+#: ../glade/property.c:4308 ../glade/property.c:4364
+#, fuzzy
+msgid "You need to set the signal name"
+msgstr "Vil du bruka eit anna filnamn?"
+
+#: ../glade/property.c:4315 ../glade/property.c:4371
+msgid "You need to set the handler for the signal"
+msgstr ""
+
+#. This groups the signals by class, e.g. 'GtkButton signals'.
+#: ../glade/property.c:4574
+#, fuzzy, c-format
+msgid "%s signals"
+msgstr "Andre signal"
+
+#: ../glade/property.c:4631
+#, fuzzy
+msgid "Select Signal"
+msgstr "Vel alle"
+
+#: ../glade/property.c:4827
+msgid "Value:"
+msgstr "Verdi:"
+
+#: ../glade/property.c:4827
+#, fuzzy
+msgid "Min:"
+msgstr "Minst"
+
+#: ../glade/property.c:4827
+#, fuzzy
+msgid "Step Inc:"
+msgstr "Gå inn"
+
+#: ../glade/property.c:4828
+#, fuzzy
+msgid "Page Inc:"
+msgstr "Sider inn"
+
+#: ../glade/property.c:4828
+msgid "Page Size:"
+msgstr "Sidestorleik:"
+
+#: ../glade/property.c:4830
+#, fuzzy
+msgid "H Value:"
+msgstr "Verdi:"
+
+#: ../glade/property.c:4830
+#, fuzzy
+msgid "H Min:"
+msgstr "Minst"
+
+#: ../glade/property.c:4830
+#, fuzzy
+msgid "H Max:"
+msgstr "Høgst"
+
+#: ../glade/property.c:4830
+#, fuzzy
+msgid "H Step Inc:"
+msgstr "Gå inn"
+
+#: ../glade/property.c:4831
+#, fuzzy
+msgid "H Page Inc:"
+msgstr "Sider inn"
+
+#: ../glade/property.c:4831
+#, fuzzy
+msgid "H Page Size:"
+msgstr "Sidestorleik:"
+
+#: ../glade/property.c:4833
+#, fuzzy
+msgid "V Value:"
+msgstr "Verdi:"
+
+#: ../glade/property.c:4833
+#, fuzzy
+msgid "V Min:"
+msgstr "Minst"
+
+#: ../glade/property.c:4833
+#, fuzzy
+msgid "V Max:"
+msgstr "Høgst"
+
+#: ../glade/property.c:4833
+#, fuzzy
+msgid "V Step Inc:"
+msgstr "Gå inn"
+
+#: ../glade/property.c:4834
+#, fuzzy
+msgid "V Page Inc:"
+msgstr "Sider inn"
+
+#: ../glade/property.c:4834
+#, fuzzy
+msgid "V Page Size:"
+msgstr "Sidestorleik:"
+
+#: ../glade/property.c:4837
+#, fuzzy
+msgid "The initial value"
+msgstr "Ny snill-verdi:"
+
+#: ../glade/property.c:4838
+#, fuzzy
+msgid "The minimum value"
+msgstr "Lågaste verdi"
+
+#: ../glade/property.c:4839
+#, fuzzy
+msgid "The maximum value"
+msgstr "Høgaste verdi"
+
+#: ../glade/property.c:4840
+#, fuzzy
+msgid "The step increment"
+msgstr "GNU lista veksande"
+
+#: ../glade/property.c:4841
+#, fuzzy
+msgid "The page increment"
+msgstr "Vertikal justering"
+
+#: ../glade/property.c:4842
+#, fuzzy
+msgid "The page size"
+msgstr "Sidenamn"
+
+#: ../glade/property.c:4997
+#, fuzzy
+msgid "The requested font is not available."
+msgstr "Den valte fila er ikkje skrivbar"
+
+#: ../glade/property.c:5046
+#, fuzzy
+msgid "Select Named Style"
+msgstr "Valte tabellar"
+
+#: ../glade/property.c:5057
+msgid "Styles"
+msgstr "Stilar"
+
+#: ../glade/property.c:5116
+msgid "Rename"
+msgstr "Omdøyp"
+
+#: ../glade/property.c:5144
+msgid "Cancel"
+msgstr "Avbryt"
+
+#: ../glade/property.c:5264
+#, fuzzy
+msgid "New Style:"
+msgstr "Pennstil:"
+
+#: ../glade/property.c:5278 ../glade/property.c:5399
+#, fuzzy
+msgid "Invalid style name"
+msgstr "Ugyldig(e) filnamn"
+
+#: ../glade/property.c:5286 ../glade/property.c:5409
+#, fuzzy
+msgid "That style name is already in use"
+msgstr "Dette namnet er alt i bruk."
+
+#: ../glade/property.c:5384
+#, fuzzy
+msgid "Rename Style To:"
+msgstr "Pennstil:"
+
+#: ../glade/save.c:139 ../glade/source.c:2771
+#, fuzzy, c-format
+msgid ""
+"Couldn't rename file:\n"
+"  %s\n"
+"to:\n"
+"  %s\n"
+msgstr "Kunne ikkje døypa om fila %1"
+
+#: ../glade/save.c:174 ../glade/save.c:225 ../glade/save.c:947
+#: ../glade/source.c:358 ../glade/source.c:373 ../glade/source.c:391
+#: ../glade/source.c:404 ../glade/source.c:815 ../glade/source.c:1043
+#: ../glade/source.c:1134 ../glade/source.c:1328 ../glade/source.c:1423
+#: ../glade/source.c:1643 ../glade/source.c:1732 ../glade/source.c:1784
+#: ../glade/source.c:1848 ../glade/source.c:1895 ../glade/source.c:2032
+#: ../glade/utils.c:1147
+#, fuzzy, c-format
+msgid ""
+"Couldn't create file:\n"
+"  %s\n"
+msgstr ""
+"Kunne ikkje lesa fil:\n"
+"%s"
+
+#: ../glade/save.c:848
+#, fuzzy
+msgid "Error writing XML file\n"
+msgstr "Feil ved skriving av fil!"
+
+#: ../glade/save.c:953
+#, c-format
+msgid ""
+"/*\n"
+" * Translatable strings file generated by Glade.\n"
+" * Add this file to your project's POTFILES.in.\n"
+" * DO NOT compile it as part of your application.\n"
+" */\n"
+"\n"
+msgstr ""
+
+#: ../glade/source.c:184
+#, fuzzy, c-format
+msgid ""
+"Invalid interface source filename: %s\n"
+"%s\n"
+msgstr "Ugyldig filnamn: %1"
+
+#: ../glade/source.c:186
+#, fuzzy, c-format
+msgid ""
+"Invalid interface header filename: %s\n"
+"%s\n"
+msgstr "Ugyldig filnamn: %1"
+
+#: ../glade/source.c:189
+#, fuzzy, c-format
+msgid ""
+"Invalid callbacks source filename: %s\n"
+"%s\n"
+msgstr "Ugyldig filnamn: %1"
+
+#: ../glade/source.c:191
+#, fuzzy, c-format
+msgid ""
+"Invalid callbacks header filename: %s\n"
+"%s\n"
+msgstr "Ugyldig filnamn: %1"
+
+#: ../glade/source.c:197
+#, fuzzy, c-format
+msgid ""
+"Invalid support source filename: %s\n"
+"%s\n"
+msgstr "Ugyldig filnamn: %1"
+
+#: ../glade/source.c:199
+#, fuzzy, c-format
+msgid ""
+"Invalid support header filename: %s\n"
+"%s\n"
+msgstr "Ugyldig filnamn: %1"
+
+#: ../glade/source.c:418 ../glade/source.c:426
+#, fuzzy, c-format
+msgid ""
+"Couldn't append to file:\n"
+"  %s\n"
+msgstr ""
+"Kunne ikkje opna fil:\n"
+"%s"
+
+#: ../glade/source.c:1724 ../glade/utils.c:1168
+#, fuzzy, c-format
+msgid ""
+"Error writing to file:\n"
+"  %s\n"
+msgstr ""
+"Feil ved skriving av fil:\n"
+"%s"
+
+#: ../glade/source.c:2743
+#, fuzzy
+msgid "The filename must be set in the Project Options dialog."
+msgstr "Filnamnet må slutta på .desktop."
+
+#: ../glade/source.c:2746
+msgid ""
+"The filename must be a simple relative filename.\n"
+"Use the Project Options dialog to set it."
+msgstr ""
+
+#: ../glade/tree.c:78
+#, fuzzy
+msgid "Widget Tree"
+msgstr "Element til venstre"
+
+#: ../glade/utils.c:900 ../glade/utils.c:940
+#, fuzzy
+msgid "Widget not found in box"
+msgstr "Fann ikkje fil"
+
+#: ../glade/utils.c:920
+#, fuzzy
+msgid "Widget not found in table"
+msgstr "Fann ikkje fil"
+
+#: ../glade/utils.c:960
+#, fuzzy
+msgid "Widget not found in fixed container"
+msgstr "Fann ikkje \"%1\" i hjelpetekstane."
+
+#: ../glade/utils.c:981
+#, fuzzy
+msgid "Widget not found in packer"
+msgstr "Fann ikkje fil"
+
+#: ../glade/utils.c:1118
+#, fuzzy, c-format
+msgid ""
+"Couldn't access file:\n"
+"  %s\n"
+msgstr ""
+"Kunne ikkje opna fil:\n"
+"%s"
+
+#: ../glade/utils.c:1141
+#, fuzzy, c-format
+msgid ""
+"Couldn't open file:\n"
+"  %s\n"
+msgstr ""
+"Kunne ikkje opna fil:\n"
+"%s"
+
+#: ../glade/utils.c:1158
+#, fuzzy, c-format
+msgid ""
+"Error reading from file:\n"
+"  %s\n"
+msgstr "feil ved lesing frå fila %1\n"
+
+#. This happens under WIN32 when stat is confused by the filename, but this is
+#. harmless, since we know that the directory exists after all.
+#: ../glade/utils.c:1225
+#, fuzzy, c-format
+msgid ""
+"Couldn't create directory:\n"
+"  %s\n"
+msgstr "Kunne ikkje laga katalog\n"
+
+#: ../glade/utils.c:1232
+#, fuzzy, c-format
+msgid ""
+"Couldn't access directory:\n"
+"  %s\n"
+msgstr ""
+"Kunne ikkje laga katalog\n"
+"%1"
+
+#: ../glade/utils.c:1240
+#, fuzzy, c-format
+msgid ""
+"Invalid directory:\n"
+"  %s\n"
+msgstr "Ugyldig katalog oppgitt!"
+
+#: ../glade/utils.c:1611
+#, fuzzy
+msgid "Projects"
+msgstr "Prosjekt"
+
+#: ../glade/utils.c:1628
+#, fuzzy
+msgid "project"
+msgstr "Prosjekt"
+
+#: ../glade/utils.c:1634
+#, fuzzy, c-format
+msgid ""
+"Couldn't open directory:\n"
+"  %s\n"
+msgstr "Kan ikkje opna katalogen %1"

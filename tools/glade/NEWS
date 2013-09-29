@@ -1,0 +1,580 @@
+Glade 2.12.1	(9 Dec 2007)
+============
+
+ o Build fix for bonobo-i18n deprecation
+ o Translation updates
+
+Glade 2.12.1	(Oct 9 2005)
+============
+
+ o Fixed missing include file for GnomeDB widgets.
+ o Translation updates.
+
+
+Glade 2.12.0	(Sep 14 2005)
+============
+
+ o Added support for new properties - "GtkWindow::urgency_hint",
+   "GtkAboutDialog::wrap_license", "GtkIconView::reorderable",
+   "GtkFileChooserDialog::do_overwrite_confirmation",
+   "GtkFileChooserButton::do_overwrite_confirmation",
+   "GtkMenuBar::pack_direction", "GtkMenuBar::child_pack_direction".
+ o Added 12 new named icons in GTK+ and GNOME.
+ o Fixed bug using "Named Icon" property for widgets other than GtkWindow.
+ o Fixed code generation for "GtkAboutDialog::destroy_with_parent".
+
+
+Glade 2.10.1	(Sep 13 2005)
+============
+
+ o Use stock ids instead of text labels in "Stock Item" and "Icon"
+   properties, to avoid problems with stock items with the same labels.
+ o Use gtk_init_with_args() in the GTK+ version, so --help works.
+ o Don't use -path option of find in autogen.sh, since Solaris doesn't have it.
+ o Rename GnomeCanvas "anti_aliased" property to "aa", so libglade loads it.
+ o Always allow GtkEventBox widgets to have tooltips.
+ o Support custom widgets and GtkFileChooserButtons as a label's focus target.
+ o Output a warning if unknown radio groups are found in the XML file.
+ o Output a warning if an invalid date is found in the XML file, but continue
+   to load the file.
+
+
+Glade 2.10.0	(Mar 16 2005)
+============
+
+ o Updated translations.
+
+
+Glade 2.9.0	(Jan 31 2005)
+===========
+
+This is the first beta release for GTK+ 2.6 and GNOME 2.10.
+
+ o Added support for new widgets - GtkMenuToolButton, GtkCellView, GtkIconView,
+   GtkAboutDialog and GtkFileChooserButton.
+ o Added support for new properties - "GtkLabel::ellipsize",
+   "GtkLabel::width_chars", "GtkLabel::single_line_mode", "GtkLabel::angle",
+   "GtkComboBoxEntry::add_tearoffs", "GtkComboBoxEntry::has_frame",
+   "GtkComboBoxEntry::focus_on_click", "GtkComboBox::add_tearoffs",
+   "GtkComboBox::focus_on_click", "GtkTreeView::fixed_height_mode",
+   "GtkTreeView::hover_selection", "GtkTreeView::hover_expand",
+   "GtkProgressBar::ellipsize", "GtkImage::icon_name", "GtkImage::pixel_size",
+   "GtkWindow::icon_name", "GtkWindow::focus_on_map".
+
+
+Glade 2.6.8	(Dec 21 2004)
+===========
+
+ o Fixed bug that could cause an infinite loop on startup.
+
+
+Glade 2.6.7	(Dec 2 2004)
+===========
+
+ o Fixed crashing bug in GnomeHRef.
+
+
+Glade 2.6.6	(Nov 30 2004)
+===========
+
+ o Fixed the handling of the new translation properties in buttons.
+ o Used the correct "text" property in GnomeHRef.
+ o Used "%.12g" when outputting floats, to keep as many digits as possible.
+
+
+Glade 2.6.5	(Oct 24 2004)
+===========
+
+ o Fixed another bug in drawing code that was causing warnings/crashes.
+
+
+Glade 2.6.4	(Oct 20 2004)
+===========
+
+ o Fixed bug in drawing code that was causing crashes.
+
+
+Glade 2.6.3     (Oct 19 2004)
+===========
+ 
+ o Fixed problem with missing '...' buttons in the property editor.
+
+
+Glade 2.6.2	(Oct 13 2004)
+===========
+
+ o Build fix - mkinstalldirs wasn't in the tarball.
+
+
+Glade 2.6.1	(Oct 12 2004)
+===========
+
+ o Save window positions between sessions.
+ o Rewrote selection drawing code so it works better on win32.
+ o Support "translatable", "context" and "comments" attributes for text
+   properties to help with translation.
+ o Bug fixes.
+
+
+Glade 2.6.0	(Apr 14 2004)
+===========
+
+ o Fixed trivial compilation problem in plain GTK+ version.
+ o Fixed bug freeing unallocated memory on Win32.
+ o Updated links to related software in README.
+
+
+Glade 2.5.1	(Mar 29 2004)
+===========
+
+ o Fixed bug migrating old toolbar widgets which meant that widgets other
+   than the normal/toggle/radio buttons were being lost when loading.
+ o Use the new GtkFileChooseDialog throughout Glade.
+ o Load the gail-gnome module as well as gail.
+ o If there is no .gladep file check the <requires> tags to see if it is
+   a GNOME or GTK+ project. Previously it would assume its a GNOME project.
+ o Set up GtkFrame according to the HIG.
+ o A few other minor fixes.
+
+
+Glade 2.5.0	(Mar 17 2004)
+===========
+
+ o Added support for new widgets in GTK+ 2.4 - GtkExpander, GtkFontButton,
+   GtkColorButton, GtkComboBox, GtkComboBoxEntry, GtkToolItem, GtkToolButton,
+   GtkToggleToolButton, GtkRadioToolButton, GtkSeparatorToolItem,
+   GtkFileChooserWidget, GtkFileChooserDialog.
+ o Added support for a number of new properties of existing widgets.
+ o New user manual (Pat Costello).
+ o Removed Turbo Start Guide.
+ o Updated FAQ to use sect1/sect2 elements so it is displayed OK in yelp.
+
+
+Glade 2.0.1	(Nov 7 2003)
+===========
+
+ o Bug fixes.
+
+
+Glade 2.0.0	(Apr 11 2003)
+===========
+
+ o Hide GNOME widgets and stock items in GTK+ projects.
+ o Made stock icon code more robust, hopefully fixing bug #105694.
+ o Updated for newer GnomeDB.
+ o Updated example text editor application for GTK+ 2.
+ o Bug fixes, including a few crashers.
+
+
+Glade 1.1.3	(Nov 2 2002)
+===========
+
+ o The widget tree now has icons & popup menus again.
+ o Removed dependancy on gnome-common for generated apps.
+ o Stopped generating any deprecated code.
+ o Updated GnomeDB support.
+ o Updated the generated signal callback argument names.
+ o A few keynav improvements, including global accelerators like Ctrl+S.
+ o Disabled support for typing in labels while hovering over widgets, as
+   it is a bit too error-prone.
+ o Added 'New' button back to toolbar in GNOME version!
+ o A few bug fixes.
+
+
+Glade 1.1.2	(Sep 16 2002)
+===========
+
+ o Bug fixes.
+
+
+Glade 1.1.1	(Jul 15 2002)
+===========
+
+ o Bug fixes.
+
+
+Glade 1.1.0	(May 17 2002)
+===========
+
+ o First beta release of GTK+ 2 / GNOME 2 port of Glade.
+
+
+Glade 0.6.4	(Feb 1 2002)
+===========
+
+ o Fixed some docs installation problems. (Eric Dorland & Damon)
+ o Took 'Curve Type' property out for GtkCurve & GtkGammaCurve, since GTK+ has
+   a bug which makes this crash pretty often. (Damon)
+ o Removed some unfinished GnomeDB widgets from the palette (Rodrigo Moya)
+
+
+Glade 0.6.3	(Jan 25 2002)
+===========
+
+ o Fixed some BadMatch problems on multi-depth displays (Dave Camp).
+ o Better GnomeDB support (Rodrigo Moya, Jos� Antonio Salgueiro Aquino,
+   Daniel Wagner),
+ o Fixed properties problem where properties didn't get updated on focus-out.
+ o Fixed bug when using GtkText and gettext (Dennis Brakhane).
+ o Updated docs to use DocBook 4.0, and avoided use of stylesheet images so
+   it compiles easier.
+ o New translations - Romanian (Marius Andreiana), Simplified Chinese
+   (Wang Jian) and Portuguese (Duarte Loreto).
+
+
+Glade 0.6.2	(Mar 28 2001)
+===========
+
+ o Updated documentation build stuff (for GNOME 1.4).
+
+
+Glade 0.6.1	(Mar 12 2001)
+===========
+
+ o Updated translations (for GNOME 1.4 RC1).
+
+
+Glade 0.6.0	(Feb 15 2001)
+===========
+
+ o A number of fairly minor bug fixes (for GNOME 1.4 beta 1).
+
+
+Glade 0.5.11	(Oct 1 2000)
+============
+
+ o Added workaround for SEGV bug in GnomeMessageBox in gnome-libs 1.2.3.
+ o A few changes in the generated code to keep g++ happy.
+ o Added gtk_widget_grab_focus() and gtk_widget_activate_default() to the
+   lists of standard signal handlers.
+ o Changed the widget tree view so it automatically expands to show selected
+   widgets.
+ o Updates to Russian, Swedish, French, Korean and Japanese translations.
+
+
+Glade 0.5.10	(Sep 24 2000)
+============
+
+ o Fixed code generation bug with GnomePropertyBox which caused a SEGV.
+ o Added support for the "relief" property for GtkButton & GtkToggleButton.
+   This is the only change to the XML file format.
+ o Fixed menu editor bug which meant that widgets were occasionally given
+   the same name.
+ o Added support for tooltips for GtkRadioButton and GtkCheckButton.
+ o Better support for keyboard navigation (from Jon K Hellan).
+ o Fixed --write-source option so it handles relative paths (from Rick Niles).
+ o Stopped installing logo into `gnome-config --datadir` since it causes
+   problems for people installing in personal directories etc. Also changed
+   the generated Makefile.am so it doesn't do it either.
+ o Added 'Class' property to the property editor so you can see the class of
+   the selected widget (from Jon K Hellan).
+ o Output the GtkOptionMenu and GtkCombo item strings separately in the
+   translatable strings file.
+ o Allowed start & finish pages of a GnomeDruid to be removed, in case the
+   developer wants to replace them with custom pages.
+ o Fixed the 'Redisplay Window' (Ctl-R) command so it should work again.
+ o Added the XML file and the autogen.sh file to the EXTRA_DIST in the
+   generated Makefile.am so they get distributed with the project.
+
+
+Glade 0.5.9	(May 20 2000)
+===========
+
+ o Added a Turbo-Start Guide from Paul J. Drongowski.
+ o Patches from James M. Cape to allow setting of the Title of GnomeMessageBox
+   widgets, and setting all the standard window properties of GnomePropertyBox.
+ o Updated Norwegian, Russian, Swedish, Japanese and German translations.
+
+
+Glade 0.5.8	(May 14 2000)
+===========
+
+ o Added User Guide and FAQ to the Help menu, though these are unfinished.
+ o Added option to support the Gnome Help system. Currently this only adds the
+   GNOME_UIINFO_HELP macro to the GnomeUIInfo struct, though we may include a
+   complete template User Guide with all the build files in future. Note that
+   you will have to install the topic.dat file in the appropriate directory
+   for the Help menuitems to be added. See the Glade source for an example.
+ o Installed the menu hints in the GnomeAppBar.
+ o Added a '--write-source' command line option to just build the source code
+   and exit. Note that an X connection is probably necessay for this to work.
+ o Partial support for GnomeDB widgets, though you'll have to set up the
+   configure.in/Makefile.am yourself. Parts of this may be unfinished.
+ o The beginnings of support for Bonobo controls. To include this configure
+   with '--with-bonobo'. This is still unfinished. Source code output isn't
+   done.
+ o Lots of new translations (many thanks to the people who do this behind the
+   scenes).
+
+
+Glade 0.5.7	(Feb 19 2000)
+===========
+
+ o Fixed problem with gnome-gettext.m4 macros being removed.
+ o French, Swedish, Japanese & Norwegian translations updated.
+
+
+Glade 0.5.6	(Feb 13 2000)
+===========
+
+ o Bug fixes -	XML/source code output for box children with PACK_END set.
+		Using normal pixmaps in menu items.
+		Used correct default for C++ option cxx_use_heap, so it doesn't
+		appear in projects for other languages.
+		Fixed code output for children of paned widgets.
+		Fixed progress bar bug.
+		Fixed GLADE_DATA_DIR so --datadir works.
+		Fix bug which caused widgets to be skipped in code output.
+ o Used WM_NAME & WM_CLASS properties so window positions can be saved by the
+   window manager.
+ o Defaults for project options - to cut down on XML output. More default
+   values will be used in future - see doc/file_format.txt.
+
+Glade 0.5.5	(Nov 11 1999)
+===========
+
+ o Bug fixes -	fixed accelerator keys dialog so the GTK+ version compiles.
+		output (void) as the function prototypes in interface.c
+
+
+Glade 0.5.4	(Nov 6 1999)
+===========
+
+ o Added back the 'Data' & 'Object' fields on the 'Signals' page, though I
+   still think people shouldn't use these.
+ o Added some support for GnomeAnimator. You just have to add the frames of the
+   animation yourself.
+ o Moved accelerator keys from a property editor page to a separate dialog,
+   which you can access via the 'Basic' page of the property editor.
+ o Bug fixes -	Allow label to be removed from buttons etc.
+		Make sure GnomeDruid strings are translated.
+		Don't let widgets be added to GnomeCanvas.
+		Don't let child widgets of GtkEntry/GnomeEntry etc. be deleted.
+		Ignore <style> stuff in XML file.
+
+
+Glade 0.5.3	(Sep 12 1999)
+===========
+
+ o Better support for scrollable widgets. Scrolled windows and viewports are
+   added automatically if needed.
+ o Bug fixes.
+
+
+Glade 0.5.2	(Sep 5 1999)
+===========
+
+ o New widgets -
+      GtkLayout
+      GnomeDruid (+ GnomeDruidPageStart/Standard/Finish)
+      GnomeIconList
+      GnomeIconSelection
+      GnomePropertyBox
+      GnomePixmap
+ o Made it possible to specify the widget to set the keyboard focus to when
+   an underlined accelerator key is pressed. (Though there are still problems
+   with underlined accelerator keys, e.g. they won't work well in notebooks.)
+ o Removed the unfinished support for styles, since it caused problems
+   (especially when people were using themes).
+ o Bug fixes.
+
+
+Glade 0.5.1	(Aug 1 1999)
+===========
+
+This release contains:
+
+ o New widget properties -
+     GtkWindow & dialog subclasses now have default width & height properties.
+     GtkPaned has Position property, and children have Shrink & Resize packing
+	properties.
+     GtkMenubar has shadow type property.
+     GtkHandleBox has shadow type, handle position & snap edge properties.
+     GtkBox children have Position property (which isn't saved in the XML),
+	though this may be a little confusing due to the PACK_START/END flag.
+ o More support for underlined accelerator keys. If the label in a button has
+   an underlined character, then the button can be activated by pressing
+   Alt + the underlined key. Similarly if a normal label has an underlined
+   character, pressing Alt + the key will set the keyboard focus to the widget
+   on the right, e.g. a text entry box.
+ o Ctrl-R accelerator to redisplay a window - it should appear at the same size
+   it will be in the final application. Very handy.
+ o Bug fixes, including a fairly serious one in the generated code which meant
+   that widgets were never destroyed.
+
+
+Glade 0.5.0	(Jun 20 1999)
+===========
+
+This release adds support for Gnome applications.
+It is an unstable release, likely to contain quite a few bugs, and so should
+not be used for serious development.
+
+ o Gnome support, including support for creating all the configuration files
+   necessary for building a Gnome app, and support for a number of Gnome
+   widgets (though there's still a few to add). You can now create a simple
+   Gnome application in minutes!
+ o Better support for gettext - Glade now outputs everything needed to use
+   gettext in an application. All you need to add is the list of languages
+   supported, in configure.in, and the po files containing the translated
+   strings, in the po/ subdirectory.
+ o Better support for pixmaps - Glade now outputs everything needed to install
+   the pixmaps used by the application, and to distribute them with your app.
+   All you need to do is add the pixmaps to the interface within Glade!
+ o Simpler project setup - new projects are given default options for
+   everything, so you can now save projects and build the source with a few
+   mouse clicks! Projects are by default placed in $HOME/Projects.
+ o Better source code output - gladesrc.c & gladesig.c have been renamed to
+   interface.c and callbacks.c respectively, the support functions have been
+   moved to a new file, support.c, and the main() function is now output in
+   its own file, main.c.
+ o Better error messages - no more "Error writing source" dialogs, I hope!
+
+
+Glade 0.4.1	(Mar 28 1999)
+===========
+
+This release mainly fixes a few bugs discovered in 0.4.0. 
+
+Note that to update old projects to work with Glade 0.4.1 you may need to add
+AM_CONFIG_HEADER (config.h) to your project's configure.in, after
+AM_INIT_AUTOMAKE.
+
+ o Fixed tooltips bug which meant that all tooltips were lost. 
+ o Fixed problem when setting of x & y properties of widgets in fixed
+   containers. 
+ o Fixed problems setting the project filename and directory options. This
+   could cause Glade to hang when saving a project. 
+ o Added support for running external source code generators when the project
+   language option is set to C++ or Ada 95. 
+ o Added confirmation dialog when creating new project, to try to ensure that
+   no work is accidentally lost. 
+ o Changed the way in which x, y, width & height properties are set, to make it
+   obvious when these have been set by the user, and to make it easy to revert
+   to default values. 
+ o Fixed compilation problem when using Gnome and --disable-nls. 
+ o Fixed bug in example application which stopped it form working when
+   installed. 
+ o Added doc/upgrading-to-gtk-1.1.txt which describes problems which may occur
+   when upgrading a GTK+ 1.0 application to 1.1/1.2. 
+
+This is the last release to support GTK+ 1.0.
+
+
+Glade 0.4.0	(Mar 21 1999)
+===========
+
+ o Cut & Paste support with a clipboard containing multiple cuttings.
+ o Support for GtkToolbar, GtkPixmap & GtkCalendar widgets.
+   Updated support for GtkProgressBar (for GTK+ 1.2).
+ o A new multi-page palette.
+ o A new toolbar with convenient Open/Save/Options/Build buttons.
+ o Support for typing label text while the mouse hovers above a label.
+ o Faster loading of project files & writing of C source.
+ o Complete rewrite of project-related code.
+ o Russian & Japanese translations.
+ o An example application - a simple text editor, with a menubar and toolbar.
+ o Several bug fixes.
+
+
+Glade 0.3.9	(Dec 1 1998)
+===========
+
+Minor fixes to work with GTK 1.1.5. 
+
+
+Glade 0.3.8	(Nov 30 1998)
+===========
+
+Incorporates the patch to 0.3.7 which fixed one problem with updating the
+source code. 
+Fixed bug reading dates in the XML file. 
+Updated the code to work with the latest GTK (1.1.5). 
+
+
+Glade 0.3.7	(Nov 17 1998)
+===========
+
+Developers release.
+
+Signal handlers are not overwritten each time the source code is output.
+Instead any new/changed signal handlers are appended to the file.
+It is up to the user to delete any old handlers and copy code across,
+but it's much better than before.
+
+You can now run 'glade filename' to load an XML file on startup.
+
+Bug fixes: writing source for popup menu in GTK 1.1 caused SEGV,
+the clist got fixed twice for 0.3.6 but it should now be OK.
+
+
+Glade 0.3.6	(Nov 12 1998)
+===========
+
+Developers release, incorporating several patches sent to me.
+
+It now runs using the latest GTK in CVS - with themes. Still needs work.
+
+Spanish translations (only in the full version).
+
+Bug fixes: stopped combo box from grabbing the pointer and making it
+impossible to select anything. CList labels in GTK 1.1 weren't being saved
+or having the source code written.
+
+
+Glade 0.3.5	(Oct 3 1998)
+===========
+
+Support for menu bars and popup menus.
+
+Support for accelerators (mainly for the menubars).
+
+French and German translations.
+
+Bug fixes including: combo lists and resizing, widget resizing, frame
+labels, the preview widget type property, the scale widget digits property,
+empty buttons, event prototype output in GTK 1.1, the project clist in GTK 1.1,
+and more i18n changes (I daren't say fixes for these!).
+
+
+Glade 0.3.4	(Aug 31 1998)
+===========
+
+I think I've fixed the i18n configuration/compilation stuff.
+(This may also have caused problems with the XML output from Glade, since
+some numbers may have been written in the local format and so won't be
+read in again properly.)
+
+Partial support for some of the GTK 1.1 widgets, e.g. GtkPacker.
+
+Easier compilation & recompilation - a simple Makefile is output to create
+the initial configure script etc., and the configure.in and Makefile.am are not
+overwritten so you only have to type 'make' each time.
+
+A number of minor bug fixes (thanks for the bug reports!).
+
+
+Glade 0.3.3	(16 Aug 1998)
+===========
+
+Support for GtkNotebook and GtkInputDialog.
+
+GtkDialog, GtkColorSelectionDialog & GtkFileSelectionDialog should work now.
+
+Better redrawing of widgets when selected/deselected.
+
+Support for gettext, with partial support for Portuguese (Brazilian).
+(May be some compilation problems as I had to change the configure stuff.)
+
+Support for GTK 1.1. Glade should now compile and run with GTK 1.1, though
+the new widgets are not supported yet.
+
+Several minor bug fixes, mostly related to source code output.
+
+Moved all source code into glade subdirectory.
+
+Got rid of 'holding widgets' - previously inserted above widgets with no
+windows so that we can get events for them. These proved too awkward.
+We now use the widget tree exactly as it will be in the finished program.
+The event handlers are more intelligent so they can figure out which widget
+the event is really for.
