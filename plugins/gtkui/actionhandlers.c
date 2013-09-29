@@ -859,6 +859,7 @@ action_sort_custom_handler_cb (void *data) {
 
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
         deadbeef->plt_sort (plt, PL_MAIN, -1, fmt, order == 0 ? DDB_SORT_ASCENDING : DDB_SORT_DESCENDING);
+        deadbeef->plt_save_config (plt);
         deadbeef->plt_unref (plt);
 
         deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
