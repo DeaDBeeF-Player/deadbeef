@@ -1,0 +1,2064 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "
+http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+<!ENTITY app "Glade">
+<!ENTITY appversion "2.0.0">
+<!ENTITY date "17 June 2004">
+<!ENTITY legal SYSTEM "legal.xml">
+<!ENTITY manrevision "2.1">
+]>
+<article id="index" lang="en"> 
+  <articleinfo> 
+         <title>&app; Manual V&manrevision;</title> 
+         <copyright> 
+                <year>2004</year>
+                <year>2003</year>
+                <holder>Sun Microsystems</holder> 
+         </copyright> 
+         <copyright> 
+                <year>2002</year><year>2000</year> 
+                <holder>Michael Vance</holder> 
+         </copyright> 
+          
+         <publisher> 
+                <publishername> GNOME Documentation Project</publishername>
+         </publisher> &legal; 
+         <legalnotice id="feedback"> 
+                <title>Feedback Information</title> 
+                <para>
+                  To report a bug or make a suggestion regarding this
+application or this
+                  documentation, see the 
+                  <ulink type="help" url="ghelp:gnome-feedback">GNOME
+Feedback
+                         Page</ulink>. 
+                </para>
+         </legalnotice> 
+         <authorgroup> 
+                <author> 
+                  <firstname>Sun</firstname> 
+                  <surname>GNOME Documentation Team</surname> 
+                  <affiliation> 
+                         <orgname>Sun Microsystems</orgname> 
+                  </affiliation> 
+                </author> 
+                <author> 
+                  <firstname>Michael</firstname> 
+                  <surname>Vance</surname> 
+                  <affiliation> 
+                         <orgname>GNOME Documentation Project</orgname> 
+                  </affiliation> 
+                </author> 
+         </authorgroup> 
+         <affiliation> 
+                <orgname>GNOME Documentation Project</orgname> 
+         </affiliation> 
+         <revhistory> 
+                <revision> 
+                  <revnumber>&app; Manual V&manrevision;</revnumber> 
+                  <date>&date;</date> 
+                  <revdescription> 
+                         <para>
+                                Sun GNOME Documentation Team</para>
+                         <para>
+                                GNOME Documentation Project 
+                         </para>
+                  </revdescription> 
+                </revision>
+                <revision> 
+                  <revnumber>&app; User Manual V2.0</revnumber> 
+                  <date>25 February 2004</date> 
+                  <revdescription> 
+                         <para>
+                                Sun GNOME Documentation Team</para>
+                         <para>
+                                GNOME Documentation Project 
+                         </para>
+                  </revdescription> 
+                </revision>             
+                <revision> 
+                  <revnumber>&app; User Manual V1.2</revnumber> 
+                  <date>10 Feb 2004</date> 
+                  <revdescription> 
+                         <para>
+                                Sun GNOME Documentation Team</para>
+                         <para>
+                                GNOME Documentation Project 
+                         </para>
+                  </revdescription> 
+                </revision>  
+                <revision> 
+                  <revnumber>&app; User Manual V1.1</revnumber> 
+                  <date>30 Mar 2002</date> 
+                  <revdescription> 
+                         <para role="author"> 
+                                Michael Vance</para>
+                         <para role="publisher">
+                                GNOME Documentation Project</para>
+                  </revdescription> 
+                </revision> 
+                <revision> 
+                  <revnumber>&app; User Manual V1.0</revnumber> 
+                  <date>11 May 2000</date> 
+                  <revdescription> 
+                         <para role="author">
+                                Michael Vance</para>
+                         <para role="publisher">
+                                GNOME Documentation Project</para>
+                  </revdescription> 
+                </revision> 
+         </revhistory> 
+         <releaseinfo> This manual describes version &appversion; of
+                &app;.</releaseinfo> 
+  </articleinfo>
+
+
+<!-- INTRODUCTION -->
+  <sect1 id="introduction"> 
+         <title>Introduction</title> 
+         <para>
+                The <application>Glade</application> application enables
+you to create
+                graphical user interfaces (GUIs) from the
+<application>GTK+</application> and
+                <application>GNOME</application> libraries.
+<application>Glade</application>
+                enables you to create source code for your GUIs in the
+following languages: 
+         </para>
+         <itemizedlist> 
+                 
+                <listitem> 
+                        <para>
+                         Ada</para>
+                </listitem><listitem> 
+                        <para>
+                         C
+                        </para>
+                </listitem>
+                <listitem> 
+                        <para>
+                         C++ 
+                        </para>
+                </listitem> 
+         </itemizedlist> 
+         <para><application>Glade</application> generates C code by
+default. You might have to install additional packages to generate code in
+the other languages.</para><para>
+                You can also use <application>Glade</application> in
+conjunction with
+                <application>libglade</application> to dynamically create
+GUIs from the XML
+                description file that <application>Glade</application>
+creates. For large applications, the use of
+<application>libglade</application> is recommended rather than C code
+generation.</para>
+         <para>
+                The <application>GTK+</application> and
+<application>GNOME</application>
+                libraries provide an extensive collection of user interface
+building blocks
+                such as text boxes, dialog labels, numeric entries, check
+boxes, and menus. These
+                building blocks are called
+<emphasis>widgets</emphasis>.</para>
+         <para>
+                <application>Glade</application> enables you to do the
+following tasks in a simple manner:</para><itemizedlist><listitem><para>
+Place widgets correctly in a GUI.</para></listitem><listitem><para>Assign
+functionality to the widgets.</para></listitem></itemizedlist><para>You
+                choose widgets from a palette of available widgets, and
+place the widgets
+                into your project. You edit the widget properties in the 
+                <guilabel>Properties</guilabel> window. You also use the 
+                <guilabel>Properties</guilabel> window to add connections
+between your
+                widgets and externally-written code. 
+         </para>
+         <para>
+                You can obtain <application>Glade</application> from the
+following
+                locations: 
+         </para>
+         <variablelist> 
+                <varlistentry> 
+                  <term>Glade download site</term> 
+                  <listitem> 
+                         <para>
+                                Links are provided on the following
+<application>Glade</application> 
+                                download site for various package formats:
+<ulink url="http://glade.gnome.org/download.html" type="http">
+http://glade.gnome.org/download.html</ulink></para>
+                  </listitem> 
+                </varlistentry> 
+         </variablelist> 
+         <variablelist> 
+                <varlistentry> 
+                  <term>GNOME CVS</term> 
+                  <listitem> 
+                         <para>
+                                For information about how to get
+<application>Glade</application>
+                                from the <application>GNOME</application>
+CVS server, see the 
+                                
+                                  <application>GNOME</application> CVS page
+at the following location: <ulink url="
+http://developer.gnome.org/tools/cvs.html" type="http">
+http://developer.gnome.org/tools/cvs.html</ulink></para>
+                  </listitem> 
+                </varlistentry> 
+         </variablelist> 
+         <para>
+                <application>Glade</application> features a
+<application>GNOME</application> support option. However,
+                to use this feature you need to have a recent version of
+the
+                <application>GNOME</application> desktop environment. If
+you do not have a recent version of the <application>GNOME</application>
+desktop environment, you can
+                disable the support feature when you compile
+<application>Glade</application>. To disable the support feature, include
+the following option in the compile command: 
+                <command>--disable-gnome</command>. 
+         </para>
+  </sect1>
+
+<!-- GETTING STARTED-->
+  <sect1 id="getting-started"> 
+         <title>Getting Started</title> 
+         <para>
+                You can start Glade in the following ways:
+         </para>
+         <variablelist>
+                <varlistentry>
+                  <term>Command line</term>
+                  <listitem>
+                         <para>
+                                Execute the following command: 
+                                <command>glade-2</command>
+                         </para>
+                  </listitem>
+                </varlistentry>
+                <varlistentry>
+                  <term>Applications menu</term>
+                  <listitem>
+                         <para>Choose
+<menuchoice><guimenu>Applications</guimenu><guisubmenu>Programming</guisubmenu><guimenuitem>Glade
+Interface Designer</guimenuitem></menuchoice>.</para>
+                  </listitem>
+                </varlistentry>
+         </variablelist> 
+         <para>
+                When you start <application>Glade</application>, the
+following windows appear:
+         </para>
+         <para>
+                <inlinemediaobject> 
+                  <imageobject> <imagedata
+fileref="figures/glade-windows.png"/> 
+                  </imageobject> 
+                </inlinemediaobject> 
+         </para>
+         <para>
+                <application>Glade</application> consists of the following
+windows:</para>
+         <variablelist>
+                <varlistentry>
+                  <term>Glade window</term>
+                  <listitem>
+<!--
+                <figure> 
+                  <title>Main window</title> 
+                  <screenshot>
+                         <graphic fileref="figures/window-main.png"
+format="PNG" srccredit="mkv"/> 
+                  </screenshot> 
+                </figure> 
+                <sect3 id="windows-main-menu"> 
+                  <title>Menu</title> 
+                  <para>
+                         Menus are documented 
+                         <link linkend="menus"> here</link>. 
+                  </para>
+                </sect3> 
+                <sect3 id="windows-main-toolbar"> 
+                  <title>Toolbar</title> 
+                  <para>
+                         The toolbar is documented 
+                         <link linkend="toolbar"> here</link>. 
+                  </para>
+                </sect3>
+-->
+                         <para>
+                                The 
+                                <guilabel>Glade</guilabel> window contains
+a menubar and a toolbar.
+                                You can use either the menubar or the
+toolbar to work with projects. This
+                                manual documents functionality from the
+menubar. The 
+                                <guilabel>Glade</guilabel> window also
+contains a list of the top-level
+                                widgets that are defined for the current
+project.
+                         </para>
+<!--
+                <itemizedlist> 
+                  <listitem> 
+                         <para>
+                                <structname>GtkWindow</structname> 
+                         </para>
+                  </listitem> 
+                  <listitem> 
+                         <para>
+                                <structname>GtkDialog</structname> 
+                         </para>
+                  </listitem> 
+                  <listitem> 
+                         <para>
+                                <structname>GtkFileSelection</structname> 
+                         </para>
+                  </listitem> 
+                  <listitem> 
+                         <para>
+                                <structname>GtkColorSelectionDialog</structname>
+                         </para>
+                  </listitem> 
+                  <listitem> 
+                         <para>
+                                <structname>GtkFontSelectionDialog</structname>
+                         </para>
+                  </listitem> 
+                  <listitem> 
+                         <para>
+                                <structname>GtkInputDialog</structname> 
+                         </para>
+                  </listitem> 
+                  <listitem> 
+                         <para>
+                                <structname>GnomeApp</structname> 
+                         </para>
+                  </listitem> 
+                  <listitem> 
+                         <para>
+                                <structname>GnomeDialog</structname> 
+                         </para>
+                  </listitem> 
+                  <listitem> 
+                         <para>
+                                <structname>GnomeMessageBox</structname> 
+                         </para>
+                  </listitem> 
+                  <listitem> 
+                         <para>
+                                <structname>GnomeAbout</structname> 
+                         </para>
+                  </listitem> 
+                  <listitem> 
+                         <para>
+                                <structname>GnomePropertyBox</structname> 
+                         </para>
+                  </listitem> 
+                </itemizedlist>
+-->
+                  </listitem>
+                </varlistentry>
+                <varlistentry>
+                  <term>Palette window</term>
+                  <listitem>
+                         <para>
+                                The 
+                                <guilabel>Palette</guilabel> window
+contains the widgets that you
+                                can use to build an interface. You add
+widgets from the 
+                                <guilabel>Palette</guilabel> window to your
+project.</para>
+                  </listitem>
+                </varlistentry>
+                <varlistentry>
+                  <term>Properties window</term>
+                  <listitem>
+                         <para>
+                                The 
+                                <guilabel>Properties</guilabel> window
+enables you to manipulate
+                                the properties of widgets, such as their
+size, color, signal masks, and so on.</para>
+                  </listitem>
+                </varlistentry>
+                <varlistentry>
+                  <term>Widget Tree window</term>
+                  <listitem>
+                         <para>
+                                All widgets in a user interface are
+organized into the 
+                                <guilabel>Widget Tree</guilabel>. You can
+view the path up the tree from a
+                                specific widget to the root widget, or
+top-level widget. 
+                        </para>
+                  </listitem>
+                </varlistentry>
+                <varlistentry>
+                  <term>Clipboard</term>
+                  <listitem>
+                         <para>
+                                The 
+                                <guilabel>Clipboard</guilabel> enables you
+to remove items from
+                                your project, and paste items back into
+your project.
+                         </para>
+                  </listitem>
+                </varlistentry>
+                <varlistentry>
+                  <term>Project Windows</term>
+                  <listitem>
+                         <para>
+                                These are the windows of the application
+that you are designing.
+                         </para>
+                  </listitem>
+                </varlistentry>
+         </variablelist> 
+  </sect1>
+
+<!-- VIEWING PROJECT WINDOWS-->
+  <sect1 id="menus"> 
+         <title>Viewing Glade Windows</title> 
+         <para>
+                You can use the 
+                <guimenu>View</guimenu> menu to perform the following
+actions: 
+         </para>
+         <itemizedlist> 
+                <listitem> 
+                  <para>
+                         Display hidden windows. 
+                  </para>
+                </listitem> 
+                <listitem> 
+                  <para>
+                         Raise obscured windows to the top of the window
+stack. 
+                  </para>
+                </listitem> 
+         </itemizedlist> 
+         <sect2 id="view-palette"> 
+                <title>To View the Palette Window</title> 
+                <para>Choose 
+                  <menuchoice> 
+                         <guimenu>View</guimenu> 
+                         <guisubmenu>Show Palette</guisubmenu> 
+                  </menuchoice>. 
+                </para>
+         </sect2> 
+         <sect2 id="view-properties"> 
+                <title>To View the Properties Window</title> 
+                <para>Choose 
+                  <menuchoice> 
+                         <guimenu>View</guimenu> 
+                         <guisubmenu>Show Property Editor</guisubmenu> 
+                  </menuchoice>. 
+                </para>
+         </sect2> 
+         <sect2 id="view-widgets"> 
+                <title>To View the Widget Tree</title> 
+                <para>Choose 
+                  <menuchoice> 
+                         <guimenu>View</guimenu> 
+                         <guisubmenu>Show Widget Tree</guisubmenu> 
+                  </menuchoice>. 
+                </para>
+         </sect2> 
+         <sect2 id="view-menu"> 
+                <title>To View the Clipboard</title> 
+                <para>Choose 
+                  <menuchoice> 
+                         <guimenu>View</guimenu> 
+                         <guisubmenu>Show Clipboard</guisubmenu> 
+                  </menuchoice>.
+        </para>
+         </sect2> <!-- Toolbar -->
+<!-- 
+         <sect2 id="toolbar"> 
+                <title>Toolbar</title> 
+                <figure> 
+                  <title>Toolbar</title> 
+                  <screenshot>
+                         <graphic fileref="figures/toolbar.png"
+format="PNG" srccredit="mkv"/> 
+                  </screenshot> 
+                </figure> 
+                <sect3 id="toolbar-open"> 
+                  <title>Open</title> 
+                  <para>
+                         Corresponds to 
+                         <link linkend="file-open-project"> 
+                                <command>File:Open</command></link>. 
+                  </para>
+                </sect3> 
+                <sect3 id="toolbar-save"> 
+                  <title>Save</title> 
+                  <para>
+                         Corresponds to 
+                         <link linkend="file-save-project"> 
+                                <command>File:Save</command></link>. 
+                  </para>
+                </sect3> 
+                <sect3 id="toolbar-options"> 
+                  <title>Options</title> 
+                  <para>
+                         Corresponds to 
+                         <link linkend="file-project-options"> 
+                                <command>File:Project
+Options</command></link>. 
+                  </para>
+                </sect3> 
+                <sect3 id="toolbar-build"> 
+                  <title>Build</title> 
+                  <para>
+                         Corresponds to 
+                         <link linkend="file-build-source-code"> 
+                                <command>File:Build</command></link>. 
+                  </para>
+                </sect3> 
+         </sect2>
+-->
+  </sect1> 
+
+   
+<!-- WORKING WITH PROJECTS-->
+  <sect1 id="working-with-projects"> 
+         <title>Working With Projects</title> 
+         <para>
+                The typical stages in a <application>Glade</application>
+project are as
+                follows: 
+         </para>
+         <variablelist> 
+                <varlistentry> 
+                  <term> Construct the user interface</term> 
+                  <listitem> 
+                         <para>
+                                Select the widgets that you require from
+the <guilabel>Palette</guilabel> window. Insert the widgets into your
+project. Right-click on a widget to view a popup menu from
+                                which you can choose to perform actions on
+that widget.</para>
+
+<note><para>Take care when you
+                                perform actions on widgets that have
+children. If you delete the parent widget,
+                                you also delete the children.</para></note>
+
+
+                  </listitem> 
+                </varlistentry> 
+                <varlistentry> 
+                  <term> Refine the widgets</term> 
+                  <listitem> 
+                         <para>
+                                While you construct the interface, you use
+the 
+                                <guilabel>Properties</guilabel> window to
+manipulate the various settings and dimensions of the widgets. 
+                         </para>
+                  </listitem> 
+                </varlistentry> 
+                <varlistentry> 
+                  <term> Build the source code</term> 
+                  <listitem> 
+                         <para>
+                                When the interface is finished, you save
+the project and build the
+                                 source files that generate the user
+interface. You can then integrate the
+                                source code with your project logic. The
+default language for source code is C.</para>
+                          
+                  </listitem> 
+                </varlistentry> 
+         </variablelist> 
+         <sect2 id="file-new-project"> 
+                <title>To Create a New Project</title> 
+                <para>Perform the following steps to create a new project: 
+                </para>
+                <orderedlist>
+                        <listitem>
+                                <para>Choose 
+                  <menuchoice> 
+                         <guimenu>Project</guimenu> 
+                         <guisubmenu>New</guisubmenu> 
+                  </menuchoice>. 
+                                </para>
+                        </listitem>
+                        <listitem>
+                                <para>In the <guilabel>Glade</guilabel>
+dialog box, click <guibutton>OK</guibutton>.
+                                </para>
+                        </listitem>
+                        <listitem>
+                                <para>In the <guilabel>New
+Project</guilabel> dialog box, click on the appropriate button to select a
+new <application>GTK+</application> project or a new
+<application>GNOME</application> project.
+                                </para>
+                        </listitem>
+                        <listitem>
+                                <para>In the <guilabel>Palette</guilabel>
+window, click on the window widget. 
+                                </para>
+                        </listitem>
+                        <listitem>
+                                <para>
+                                        You can now add widgets for your
+application to the new project window. See <xref
+linkend="working-with-widgets"/> for more information about how to use
+widgets to build your application interface.
+                                </para>
+                        </listitem>
+                </orderedlist>
+         </sect2> 
+         <sect2 id="file-open-project"> 
+                <title>To Open an Existing Project</title> 
+                <para>Choose 
+                  <menuchoice> 
+                         <guimenu>Project</guimenu> 
+                         <guisubmenu>Open</guisubmenu> 
+                  </menuchoice>. An <guilabel>Open Project</guilabel>
+dialog appears, in
+                  which you specify the filename of the project that you
+want to open. </para>
+         </sect2> 
+         <sect2 id="file-save-project"> 
+                <title>To Save a Project</title> 
+                <para>Choose 
+                  <menuchoice> 
+                         <guimenu>Project</guimenu> 
+                         <guisubmenu>Save</guisubmenu> 
+                  </menuchoice>. If this is the first time you are saving
+your project, a  
+                         <guilabel>Project Options</guilabel> dialog
+appears,
+                  containing default values.  See <xref
+linkend="project-options"/>  for more  information about setting project
+options.
+</para>
+<para>
+                  If you have previously specified the project settings,
+                  <application>Glade</application> saves your current
+project without comment. 
+                </para>
+         </sect2> 
+         <sect2 id="file-build-source-code"> 
+                <title>To Generate Source Code For Your Project</title> 
+                <para>Choose 
+                  <menuchoice> 
+                         <guimenu>Project</guimenu> 
+                         <guisubmenu>Build</guisubmenu> 
+                  </menuchoice>. If this is the first time you are saving
+your project, a 
+                         <guilabel>Project Options</guilabel> dialog
+appears,
+                  containing default values. See <xref
+linkend="project-options"/> for more information about setting project
+options. 
+</para>
+<para>
+If you have previously specified the project
+                  settings, <application>Glade</application> outputs code
+without comment. </para>
+                  </sect2> 
+         <sect2 id="file-project-options"> 
+                <title>To Set Project Options</title> 
+                <para>Choose 
+                  <menuchoice> 
+                         <guimenu>Project</guimenu> 
+                         <guisubmenu>Options</guisubmenu> 
+                  </menuchoice>. The 
+                  
+                         <guilabel>Project Options</guilabel> dialog
+appears,
+                  containing default values. If you have previously
+specified the project
+                  settings, those settings appear in the 
+                  <guilabel>Project Options</guilabel> fields. 
+                See <xref linkend="project-options"/>  for more
+information about setting project options.</para>
+         </sect2> 
+         <sect2 id="file-menu"> 
+                <title>To Exit Glade</title> 
+                <para>
+                  Save your project before you exit the application.</para>
+                <para>
+                  To exit <application>Glade</application>, choose 
+                  <menuchoice> 
+                         <guimenu>Project</guimenu> 
+                         <guisubmenu>Quit</guisubmenu> 
+                  </menuchoice>. <application>Glade</application> asks you
+if you want to
+                  quit the application, but does not query you to save
+unsaved project data. 
+                </para>
+         </sect2> 
+  </sect1><!-- SETTING PROJECT OPTIONS-->
+  <sect1 id="project-options"> 
+         <title>Setting Your Project Options</title> 
+         <para>
+                Use only ASCII characters for names of files and
+directories in the 
+                <guilabel>Project Options</guilabel> dialog. Other systems
+might use
+                different character encodings for the names of files and
+directories, which can cause
+                problems. You can set options in the following functional
+areas in the  
+                <guilabel>Project Options</guilabel> dialog: 
+         </para>
+         <itemizedlist> 
+                <listitem> 
+                  <para>
+                         <guilabel>General</guilabel> 
+                  </para>
+                </listitem> 
+                <listitem> 
+                  <para>
+                         <guilabel>C Options</guilabel> 
+                  </para>
+                </listitem> 
+                <listitem> 
+                  <para>
+                         <guilabel>LibGlade Options</guilabel>
+                  </para>
+                </listitem> 
+         </itemizedlist><!-- General options-->
+         <sect2 id="project-options-general"> 
+                <title>General</title> 
+                 
+                <!-- Basic options -->
+                <sect3 id="project-options-general-basic"> 
+                  <title>Basic Options</title> 
+                  <variablelist> 
+                         <varlistentry> 
+                                <term>Project Directory</term> 
+                                <listitem> 
+                                  <para>
+                                         Enter the location of your project
+in this field.
+                                         Click on 
+                                         <guibutton>Browse</guibutton> to
+select a location directory
+                                         from your file system.</para>
+                                </listitem> 
+                         </varlistentry> 
+                         <varlistentry> 
+                                <term>Project Name</term> 
+                                <listitem> 
+                                  <para>
+                                         Type the name of your project in
+this text box. When you edit
+                                         this information, the program name
+and project filename change automatically.</para>
+                                </listitem> 
+                         </varlistentry> 
+                         <varlistentry> 
+                                <term>Program Name</term> 
+                                <listitem> 
+                                  <para>
+                                         Type the name of the executable
+for your project in this text
+                                         box.
+<application>Glade</application> uses this executable to generate code for
+                                         your project. When you edit this
+information, the project file changes automatically.</para>
+                                </listitem> 
+                         </varlistentry> 
+                         <varlistentry> 
+                                <term>Project File</term> 
+                                <listitem> 
+                                  <para>
+                                         Type the filename for your project
+in this text box. All of
+                                         your project information is stored
+in this file.</para>
+                                </listitem> 
+                         </varlistentry> 
+                  </variablelist> 
+                </sect3> <!-- Subdirectories -->
+                <sect3 id="project-options-general-subdirs"> 
+                  <title>Subdirectories</title> 
+                  <variablelist> 
+                         <varlistentry> 
+                                <term>Source Directory</term> 
+                                <listitem> 
+                                  <para>
+                                         Use the text box to specify where
+you want
+                                         <application>Glade</application>
+to build source code for the project.</para>
+                                </listitem> 
+                         </varlistentry> 
+                         <varlistentry> 
+                                <term>Pixmaps Directory</term> 
+                                <listitem> 
+                                  <para>
+                                         Use the text box to specify where
+                                         <application>Glade</application>
+can find any image files that are used in the
+                                         project.</para>
+                                </listitem> 
+                         </varlistentry> 
+                  </variablelist> 
+                </sect3> <!-- Language -->
+                <sect3 id="project-options-general-language"> 
+                  <title>Language</title> 
+                  <para>
+                         Pick the programming language that you want
+                         <application>Glade</application> to use to build
+source code for the project. 
+                  </para>
+                </sect3> 
+                 <!-- GNOME Support-->
+                <sect3> 
+                  <title>Enable Gnome Support</title> 
+                  <para>
+                         Select this check box if you want
+<application>Glade</application> to
+                         build source code that uses the GNOME libraries. 
+                  </para>
+                </sect3> 
+         </sect2> <!-- C Options -->
+         <sect2 id="c-options"> 
+                <title>C Options</title> 
+                <sect3 id="project-options-c-general"> 
+                  <title>General Options</title> 
+                  <variablelist> 
+                         <varlistentry> 
+                                <term>Gettext Support</term> 
+                                <listitem> 
+                                  <para>
+                                         Select this option to create code
+that supports GNU gettext for
+                                         internationalization. 
+                                  </para>
+                                </listitem> 
+                         </varlistentry> 
+                         <varlistentry> 
+                                <term>Set Widget Names</term> 
+                                <listitem> 
+                                  <para>
+                                         Select this option to create code
+to set the names for all
+                                         widgets. This feature is useful if
+you intend to use <application>GTK+
+                                         </application> calls such as
+<function>gtk_widget_path()</function>.</para>
+                                </listitem> 
+                         </varlistentry> 
+                         <varlistentry> 
+                                <term>Backup Source Files</term> 
+                                <listitem> 
+                                  <para>
+                                         Select this option to make a
+backup of all your source files
+                                         when you build new files. 
+                                  </para>
+                                </listitem> 
+                         </varlistentry> 
+                  <varlistentry> 
+                                <term>Gnome Help Support</term> 
+                                <listitem> 
+                                  <para>
+                                         Select this option to create code
+that supports Help in the GNOME desktop environment.</para>
+                                </listitem> 
+                         </varlistentry></variablelist> 
+                </sect3> 
+                <sect3 id="project-options-c-file"> 
+                  <title>File Output Options</title> 
+                  <variablelist> 
+                         <varlistentry> 
+                                <term>Output <filename>main.c</filename>
+File</term> 
+                                <listitem> 
+                                  <para>
+                                         Select this option to output a
+file named
+                                         <filename>main.c</filename>, which
+contains a simple bootstrap. The function
+                                         called by
+<filename>main.c</filename> depends on the status of the 
+                                         <guilabel>Enable Gnome
+Support</guilabel> option: 
+                                         <informaltable frame="topbot"> 
+                                                <tgroup cols="2"
+colsep="0"><colspec colnum="1" colname="col1" colwidth="1.00*"/><colspec
+colnum="2" colname="col2" colwidth="2.07*"/> 
+                                                  <thead> 
+                                                         <row> 
+                                                                <entry
+colname="col1"><para>Option Status</para></entry> 
+                                                                <entry
+colname="col2"><para>Called Function</para></entry> 
+                                                         </row> 
+                                                  </thead> 
+                                                  <tbody> 
+                                                         <row rowsep="0"> 
+                                                                <entry
+colname="col1" rowsep="0"><para>Enabled</para></entry> 
+                                                                <entry
+colname="col2"
+rowsep="0"><para><function>gnome_init()</function></para></entry> 
+                                                         </row> 
+                                                         <row> 
+                                                                <entry
+colname="col1"><para>Not Enabled</para></entry> 
+                                                                <entry
+colname="col2"><para><function>gtk_init()</function></para></entry> 
+                                                         </row> 
+                                                  </tbody> 
+                                                </tgroup> 
+                                         </informaltable> 
+                                  </para>
+                                </listitem> 
+                         </varlistentry> 
+                         <varlistentry> 
+                                <term>Output Support Functions</term> 
+                                <listitem> 
+                                  <para>
+                                         Select this option to output a
+file named
+                                         <filename>support.c</filename>,
+which contains utility functions for various tasks, for example:
+                                         </para>
+                                <itemizedlist><listitem><para>Create an
+image file.</para></listitem><listitem><para>Look for a widget by
+name.</para></listitem></itemizedlist></listitem> 
+                         </varlistentry> 
+                         <varlistentry> 
+                                <term>Output Build Files</term> 
+                                <listitem> 
+                                  <para>
+                                         Select this option to output files
+to support configuration of your
+                                         project through
+<function>automake</function> and
+                                         <function>autoconf</function>.
+This option creates the following files: 
+                                  </para>
+                                  <informaltable frame="topbot"> 
+                                         <tgroup cols="2"><colspec
+colnum="1" colname="col1" colsep="0" colwidth="1.00*"/><colspec colnum="2"
+colname="col2" colwidth="2.11*"/> 
+                                                <thead> 
+                                                  <row> 
+                                                         <entry
+colname="col1" colsep="0"><para>Filename</para></entry> 
+                                                         <entry
+colname="col2"><para>Description</para></entry> 
+                                                  </row> 
+                                                </thead> 
+                                                <tbody> 
+                                                  <row rowsep="0"> 
+                                                         <entry
+colname="col1" rowsep="0" colsep="0"> 
+                                                                <para>
+                                                                  <filename>AUTHORS</filename>
+                                                                </para>
+                                                         </entry> 
+                                                         <entry
+colname="col2"> 
+                                                                <para>
+                                                                  Authorship
+file for contributors. 
+                                                                </para>
+                                                         </entry> 
+                                                  </row> 
+                                                  <row rowsep="0"> 
+                                                         <entry
+colname="col1" rowsep="0" colsep="0"> 
+                                                                <para>
+                                                                  <filename>autogen.sh</filename>
+                                                                </para>
+                                                         </entry> 
+                                                         <entry
+colname="col2"> 
+                                                                <para>
+                                                                  Script
+for building a configure script. 
+                                                                </para>
+                                                         </entry> 
+                                                  </row> 
+                                                  <row rowsep="0"> 
+                                                         <entry
+colname="col1" rowsep="0" colsep="0"> 
+                                                                <para>
+                                                                  <filename>ChangeLog</filename>
+                                                                </para>
+                                                         </entry> 
+                                                         <entry
+colname="col2"> 
+                                                                <para>
+                                                                  Log of
+changes you have made in the project. 
+                                                                </para>
+                                                         </entry> 
+                                                  </row> 
+                                                  <row rowsep="0"> 
+                                                         <entry
+colname="col1" rowsep="0" colsep="0"> 
+                                                                <para>
+                                                                  <filename>configure.in</filename>
+                                                                </para>
+                                                         </entry> 
+                                                         <entry
+colname="col2"> 
+                                                                <para>
+                                                                  Template
+for building a configure script. 
+                                                                </para>
+                                                         </entry> 
+                                                  </row> 
+                                                  <row rowsep="0"> 
+                                                         <entry
+colname="col1" rowsep="0" colsep="0"> 
+                                                                <para>
+                                                                  <filename>Makefile.am</filename>
+                                                                </para>
+                                                         </entry> 
+                                                         <entry
+colname="col2"> 
+                                                                <para>
+                                                                  Automake
+template for the project. 
+                                                                </para>
+                                                         </entry> 
+                                                  </row> 
+                                                  <row rowsep="0"> 
+                                                         <entry
+colname="col1" rowsep="0" colsep="0"> 
+                                                                <para>
+                                                                  <filename>NEWS</filename>
+                                                                </para>
+                                                         </entry> 
+                                                         <entry
+colname="col2"> 
+                                                                <para>
+                                                                  Announcements
+for new releases. 
+                                                                </para>
+                                                         </entry> 
+                                                  </row> 
+                                                  <row rowsep="0"> 
+                                                         <entry
+colname="col1" rowsep="0" colsep="0"> 
+                                                                <para>
+                                                                  <filename>README</filename>
+                                                                </para>
+                                                         </entry> 
+                                                         <entry
+colname="col2"> 
+                                                                <para>
+                                                                  Contains
+general information about the project. 
+                                                                </para>
+                                                         </entry> 
+                                                  </row> 
+                                                  <row rowsep="0"> 
+                                                         <entry
+colname="col1" rowsep="0" colsep="0"> 
+                                                                <para>
+                                                                  <filename>src/Makefile.am</filename>
+                                                                </para>
+                                                         </entry> 
+                                                         <entry
+colname="col2"> 
+                                                                <para>
+                                                                  Automake
+template for the <filename>src/ </filename>
+                                                                  directory.
+                                                                </para>
+                                                         </entry> 
+                                                  </row> 
+                                                  <row rowsep="0"> 
+                                                         <entry
+colname="col1" rowsep="0" colsep="0"> 
+                                                                <para>
+                                                                  <filename>stamp-h.in</filename>
+                                                                </para>
+                                                         </entry> 
+                                                         <entry
+colname="col2"> 
+                                                                <para>
+                                                                  Timestamp
+file. 
+                                                                </para>
+                                                         </entry> 
+                                                  </row> 
+                                                </tbody> 
+                                         </tgroup> 
+                                  </informaltable> 
+                                </listitem> 
+                         </varlistentry> 
+                  </variablelist> 
+                </sect3> 
+                <sect3 id="project-options-c-interface"> 
+                  <title>Interface Creation Functions</title> 
+                  <variablelist> 
+                         <varlistentry> 
+                                <term>Source File</term> 
+                                <listitem> 
+                                  <para>
+                                         Use the text box to specify the
+file where you want
+                                         <application>Glade</application>
+to store the code for the user interface. 
+                                  </para>
+                                </listitem> 
+                         </varlistentry> 
+                         <varlistentry> 
+                                <term>Header File</term> 
+                                <listitem> 
+                                  <para>
+                                         Use the text box to specify the
+name of the file where you want
+                                         <application>Glade</application>
+to store function prototypes for the user
+                                         interface code. 
+                                  </para>
+                                </listitem> 
+                         </varlistentry> 
+                  </variablelist> 
+                </sect3> 
+                <sect3 id="project-options-c-signal"> 
+                  <title>Signal Handler &amp; Callback Functions</title> 
+                  <variablelist> 
+                         <varlistentry> 
+                                <term>Source File</term> 
+                                <listitem> 
+                                  <para>
+                                         Use the text box to specify the
+name of the file where you want
+                                         <application>Glade</application>
+to store signal handler code. 
+                                  </para>
+                                </listitem> 
+                         </varlistentry> 
+                         <varlistentry> 
+                                <term>Header File</term> 
+                                <listitem> 
+                                  <para>
+                                         Use the text box to specify the
+file where you want
+                                         <application>Glade</application>
+to store function prototypes for signal
+                                         handler code. 
+                                  </para>
+                                </listitem> 
+                         </varlistentry> 
+                  </variablelist> 
+                </sect3> 
+                <!-- Support Functions-->
+                <sect3 id="project-options-c-support"> 
+                  <title>Support Functions</title> 
+                  <variablelist> 
+                         <varlistentry> 
+                                <term>Source File</term> 
+                                <listitem> 
+                                  <para>
+                                         Use the text box to specify the
+file where you want
+                                         <application>Glade</application>
+to store support function code. 
+                                  </para>
+                                </listitem> 
+                         </varlistentry> 
+                         <varlistentry> 
+                                <term>Header File</term> 
+                                <listitem> 
+                                  <para>
+                                         Use the text box to specify the
+file where you
+                                         <application>Glade</application>
+to store function prototypes for the support
+                                         function code. 
+                                  </para>
+                                </listitem> 
+                         </varlistentry> 
+                  </variablelist> 
+                </sect3> 
+         </sect2> <!-- Libglade options -->
+         <sect2 id="libglade-options"> 
+                <title>Libglade Options</title> 
+                <sect3 id="project-options-libglade-trans"> 
+                  <title>Save Translatable Strings</title> 
+                  <para>This option is deprecated. Use
+<application>intltool</application> instead when you want to translate
+interfaces designed in Glade.</para>
+                </sect3> 
+         </sect2> 
+  </sect1> <!-- WORKING WITH WIDGETS-->
+  <sect1 id="working-with-widgets"> 
+         <title>Working With Widgets</title>
+         <sect2 id="select-widgets-palette">
+                <title>To Select Widgets From the Palette Window</title>
+                <para>
+                  You can work with the widgets in the 
+                  <guilabel>Palette</guilabel> window in the following
+ways:
+                </para>
+                <variablelist> 
+                  <varlistentry> 
+                         <term>Selection mode</term> 
+                         <listitem>
+                                <para>
+                                  To use selection mode,
+ click on the 
+                                  <guilabel>Selector</guilabel> arrow. The
+pointer changes to an
+                                  arrow to indicate that selection mode is
+active. In this mode, you use the mouse to select widgets in your project.
+You can then use the <guilabel>Properties</guilabel> window to edit the
+properties of the widgets. If you hold down the <keycap>Shift</keycap> key
+and repeatedly select a widget, the selection cycles through the widget and
+all of its parent widgets.</para>
+<para>You can also use the widget context menu to select a widget.
+Right-click on a widget to open the widget context menu.</para><para>You
+can add multiple widgets of a specific type from the
+<guilabel>Palette</guilabel> to your project by holding down the
+<keycap>Control</keycap> key when you select a widget. You need to click on
+the <guilabel>Selector</guilabel> arrow or another widget in the
+<guilabel>Palette</guilabel> to return to normal mode.</para>
+                         </listitem> 
+                  </varlistentry> 
+                </variablelist> 
+                <variablelist> 
+                  <varlistentry> 
+                         <term>Widget placement mode</term> 
+                         <listitem> 
+                                <para>
+                                  To use widget placement mode, select a
+widget in the 
+                                  <guilabel>Palette</guilabel> window. When
+you select most widgets, the
+                                  pointer changes to a pointer-plus-cross.
+You can then place the widget inside containers,
+                                  top-level  widgets, and so on. After you
+place a widget, the mode returns to
+                                  selection mode.</para>
+                         </listitem> 
+                  </varlistentry> 
+                </variablelist> 
+                <variablelist> 
+                  <varlistentry> 
+                         <term>Top-level placement mode</term> 
+                         <listitem> 
+                                <para>
+                                  To use top level placement mode, select a
+defined top-level
+                                  widget in the
+<application>Palette</application> window. When you select a top-level
+                                  widget in the 
+                                  <guilabel>Palette</guilabel> window, the
+widget appears
+                                  immediately on your desktop. You can then
+edit the widget. After you select a top-level widget,
+                                  the mode returns to selection mode.
+                                </para>
+                         </listitem> 
+                  </varlistentry> 
+                </variablelist> 
+         </sect2>
+<sect2 id="organize-widgets">
+<title>To Organize Widgets In Your Project</title>
+<para>You use widget containers, or boxes, to layout and organize widgets
+in your project window. You can choose the following widget containers from
+the <guilabel>Palette</guilabel> window:
+</para>
+<itemizedlist>
+<listitem><para>Horizontal Box</para>
+</listitem><listitem><para>Vertical Box</para></listitem>
+<listitem><para>Table</para></listitem>
+<listitem><para>Fixed Positions</para></listitem>
+<listitem><para>Horizontal Button Box</para></listitem>
+<listitem><para>Vertical Button Box</para></listitem>
+<listitem><para>Horizontal Panes</para></listitem>
+<listitem><para>Vertical Panes</para></listitem>
+<listitem><para>Notebook</para></listitem>
+<listitem><para>Frame</para></listitem>
+<listitem><para>Scrolled Window</para></listitem>
+<listitem><para>Viewport</para></listitem>
+</itemizedlist>
+<para>
+You can  nest boxes  to create complex layout structures. When you create
+horizontal and vertical boxes, <application>Glade</application> asks you
+how many rows or columns to create initially, though rows and columns can
+easily be added or deleted later. 
+</para>
+<para>
+When you have created all the boxes you require, you can add specific
+widgets like labels, buttons, and more complicated widgets into the boxes.
+Notice that <application>Glade</application> packs widgets into the layout
+which eliminates a lot of tedious work. The use of boxes enables windows to
+change size to accommodate different size labels in different languages
+when the application is localized.</para></sect2>
+         <sect2 id="place-widgets-clipboard"> 
+                <title>To Place a Widget on the Clipboard</title> 
+                <para>
+                  To remove a widget from a parent and place the widget on
+the clipboard,
+                  select the widget then choose 
+                  <menuchoice> 
+                         <guimenu>Edit</guimenu> 
+                         <guisubmenu>Cut</guisubmenu> 
+                  </menuchoice>. 
+                </para>
+         </sect2> 
+         <sect2 id="copy-widget-clipboard"> 
+                <title>To Copy a Widget to the Clipboard</title> 
+                <para>
+                  To copy a widget to the clipboard, select the widget then
+choose 
+                  <menuchoice> 
+                         <guimenu>Edit</guimenu> 
+                         <guisubmenu>Copy</guisubmenu> 
+                  </menuchoice>. The original widget remains attached to
+the parent. 
+                </para>
+         </sect2> 
+         <sect2 id="paste-widget-clipboard"> 
+                <title>To Paste a Widget From the Clipboard Into Your
+Project</title> 
+                <para>
+                  To paste a widget that exists on the clipboard into your
+project,
+                  choose 
+                  <menuchoice> 
+                         <guimenu>Edit</guimenu> 
+                         <guisubmenu>Paste</guisubmenu> 
+                  </menuchoice>.</para><para>All widgets must have a unique
+name within <application>Glade</application>. If you cut a widget, and then
+paste the widget into your project, then the widget and all of the children
+of the widget keep their original names. If you copy a widget, or paste the
+widget multiple times into your project, then
+<application>Glade</application> generates new names for the widget
+copies.</para>
+         </sect2> 
+         <sect2 id="delete-widget"> 
+                <title>To Delete a Widget</title> 
+                <para>To delete a widget from the parent without
+                  moving the widget to the clipboard, 
+                                select the widget then 
+                                choose 
+                                <menuchoice> 
+                                  <guimenu>Edit</guimenu> 
+                                  <guisubmenu>Clear</guisubmenu> 
+                                </menuchoice>. 
+                         </para>
+                 
+         </sect2> 
+  </sect1><!--WIDGET REFERENCE INFORMATION-->
+  <sect1 id="finding-out-about-widgets">
+         <title>Finding Out More About Widgets</title>
+         <para>
+                Widgets are grouped into the following categories in the 
+                <guilabel>Palette</guilabel> window:</para>
+         <variablelist> 
+                <varlistentry> 
+                  <term>GTK+ Basic</term> 
+                  <listitem> 
+                         <para>
+                                This category contains frequently-used
+                                <application>GTK+</application> widgets
+such as
+                                windows and labels.</para>
+                  </listitem> 
+                </varlistentry> 
+                <varlistentry> 
+                  <term>GTK+ Additional</term> 
+                  <listitem> 
+                         <para>
+                                This category contains widgets such as
+                                <structname>GtkAlignment</structname>,
+<structname>GtkPacker</structname>, and
+                                <structname>GtkCalendar</structname>. 
+                         </para>
+                  </listitem> 
+                </varlistentry> 
+                <varlistentry> 
+                  <term>Gnome</term> 
+                  <listitem> 
+                         <para>
+                                This category includes all of the
+<application>GNOME</application>
+                                widgets that
+<application>Glade</application> supports.</para>
+                  </listitem> 
+                </varlistentry> 
+         </variablelist> 
+         <para>
+To find out the purpose of a 
+                widget in the <application>Palette</application> window,
+point to the widget to activate a tooltip.
+                For more information about the widgets that
+                <application>Glade</application> supports, see the 
+                        <citetitle><ulink url="
+http://developer.gnome.org/doc/API/2.0/gtk/index.html">GTK+ Reference
+Manual</ulink></citetitle>.
+                </para>
+<!--
+         <sect2 id="gtk+-basic">
+                <title>GTK+ Basic</title> 
+                <para>
+
+                         <inlinemediaobject> 
+                                <imageobject>
+                                  <imagedata
+fileref="figures/window-palette-basic.png"/> 
+                                </imageobject> 
+                         </inlinemediaobject>
+                  <informaltable> 
+                         <tgroup cols="4"><colspec colnum="1"
+colname="col1"/><colspec colnum="2" colname="col2" colwidth="*"/><colspec
+colnum="3" colname="col3" colwidth="*"/><colspec colnum="4" colname="col4"
+colwidth="*"/> 
+                                <tbody> 
+                                  <row><entry colname="col1"><para>
+                                                  <structname>GtkButton</structname>
+                                                </para></entry><entry
+colname="col2"><para>
+                                                  <structname>GtkFixed</structname>
+                                                </para></entry><entry
+colname="col3"><para>
+                                                  <structname>GtkMenuBar</structname>
+                                                </para></entry><entry
+colname="col4"><para>
+                                                  <structname>GtkTree</structname>
+                                                </para></entry></row><row><entry
+colname="col1"><para>
+                                                  <structname>GtkCheckButton</structname>
+                                                </para></entry><entry
+colname="col2"><para>
+                                                  <structname>GtkFontSelectionDialog</structname>
+                                                </para></entry><entry
+colname="col3"><para>
+                                                  <structname>GtkNotebook</structname>
+                                                </para></entry><entry
+colname="col4"><para>
+                                                  <structname>GtkScrolledWindow</structname>
+                                                </para></entry></row><row><entry
+colname="col1"><para>
+                                                  <structname>GtkCList</structname>
+                                                </para></entry><entry
+colname="col2"><para>
+                                                  <structname>GtkFrame</structname>
+                                                </para></entry><entry
+colname="col3"><para>
+                                                  <structname>GtkOptionMenu</structname>
+                                                </para></entry><entry
+colname="col4"><para>
+                                                  <structname>GtkSpinButton</structname>
+                                                </para></entry></row><row><entry
+colname="col1"><para>
+                                                  <structname>GtkColorSelectionDialog</structname>
+                                                </para></entry><entry
+colname="col2"><para>
+                                                  <structname>GtkHandleBox</structname>
+                                                </para></entry><entry
+colname="col3"><para>
+                                                  <structname>GtkPixmap</structname>
+                                                </para></entry><entry
+colname="col4"><para>
+                                                  <structname>GtkStatusbar</structname>
+                                                </para></entry></row><row><entry
+colname="col1"><para>
+                                                  <structname>GtkCombo</structname>
+                                                </para></entry><entry
+colname="col2"><para>
+                                                  <structname>GtkHBox</structname>
+                                                </para></entry><entry
+colname="col3"><para>
+                                                  <structname>GtkProgressBar</structname>
+                                                </para></entry><entry
+colname="col4"><para>
+                                                  <structname>GtkVBox</structname>
+                                                </para></entry></row><row><entry
+colname="col1"><para>
+                                                  <structname>GtkCTree</structname>
+                                                </para></entry><entry
+colname="col2"><para>
+                                                  <structname>GtkHButtonBox</structname>
+                                                </para></entry><entry
+colname="col3"><para>
+                                                  <structname>GtkRadioButton</structname>
+                                                </para></entry><entry
+colname="col4"><para>
+                                                  <structname>GtkVButtonBox</structname>
+                                                </para></entry></row><row><entry
+colname="col1"><para>
+                                                  <structname>GtkDialog</structname>
+                                                </para></entry><entry
+colname="col2"><para>
+                                                  <structname>GtkHPaned</structname>
+                                                </para></entry><entry
+colname="col3"><para>
+                                                  <structname>GtkTable</structname>
+                                                </para></entry><entry
+colname="col4"><para>
+                                                  <structname>GtkViewport</structname>
+                                                </para></entry></row><row><entry
+colname="col1"><para>
+                                                  <structname>GtkDrawingArea</structname>
+                                                </para></entry><entry
+colname="col2"><para>
+                                                  <structname>GtkHSeparator</structname>
+                                                </para></entry><entry
+colname="col3"><para>
+                                                  <structname>GtkText</structname>
+                                                </para></entry><entry
+colname="col4"><para>
+                                                  <structname>GtkVPaned</structname>
+                                                </para></entry></row><row><entry
+colname="col1"><para>
+                                                  <structname>GtkEntry</structname>
+                                                </para></entry><entry
+colname="col2"><para>
+                                                  <structname>GtkLabel</structname>
+                                                </para></entry><entry
+colname="col3"><para>
+                                                  <structname>GtkToggleButton</structname>
+                                                </para></entry><entry
+colname="col4"><para>
+                                                  <structname>GtkVSeparator</structname>
+                                                </para></entry></row><row><entry
+colname="col1"><para>
+                                                  <structname>GtkFileSelection</structname>
+                                                </para></entry><entry
+colname="col2"><para>
+                                                  <structname>GtkList</structname>
+                                                </para></entry><entry
+colname="col3"><para>
+                                                  <structname>GtkToolbar</structname>
+                                                </para></entry><entry
+colname="col4"><para>
+                                                  <structname>GtkWindow</structname>
+                                                </para></entry></row>
+                                                
+                                </tbody> 
+                         </tgroup> 
+                  </informaltable> 
+                </para>
+         </sect2>
+         <sect2 id="gtk+-additional">
+                <title>GTK+ Additional</title>
+                <para>
+                         <inlinemediaobject> 
+                                <imageobject> <imagedata
+fileref="figures/window-palette-add.png"/>                                
+                                </imageobject> 
+                         </inlinemediaobject>
+                  <informaltable> 
+                         <tgroup cols="4"><colspec colnum="1"
+colname="col1"/><colspec colnum="2" colname="col2" colwidth="*"/><colspec
+colnum="3" colname="col3" colwidth="*"/><colspec colnum="4" colname="col4"
+colwidth="*"/> 
+                                <tbody> 
+                                  <row> 
+                                         <entry colname="col1"><para>
+                                                  Custom Widget 
+                                                </para> 
+                                                
+                                         </entry> 
+                                         <entry
+colname="col2"><structname>GtkColorSelection</structname> 
+                                                 
+                                                
+                                         </entry> 
+                                         <entry colname="col3"><para>
+                                                  <structname>GtkHScale</structname>
+                                                </para> 
+                                                
+                                         </entry> 
+                                         <entry
+colname="col4"><structname>GtkPopopMenu</structname> 
+                                                 
+                                                
+                                         </entry> 
+                                  </row> 
+                                  <row> 
+                                         <entry colname="col1"><para>
+                                                  <structname>GtkAccelLabel</structname>
+                                                </para> 
+                                                
+                                         </entry> 
+                                         <entry
+colname="col2"><structname>GtkCurve</structname> 
+                                                 
+                                                
+                                          
+                                                
+                                         </entry> 
+                                         <entry colname="col3"><para>
+                                                  <structname>GtkHScrollbar</structname>
+                                                </para> 
+                                                
+                                         </entry> 
+                                         <entry colname="col4"><para>
+                                                  <structname>GtkPreview</structname>
+                                                </para> 
+                                                
+                                         </entry> 
+                                  </row> 
+                                  <row> 
+                                         <entry colname="col1"><para>
+                                                  <structname>GtkAlignment</structname>
+                                                
+                                                  </para> 
+                                                
+                                         </entry> 
+                                         <entry colname="col2"><para>
+                                                  <structname>GtkEventBox</structname>
+                                                </para> 
+                                                
+                                         </entry> 
+                                         <entry colname="col3"><para>
+                                                  <structname>GtkImage</structname>
+                                                </para> 
+                                                
+                                         </entry> 
+                                         <entry colname="col4"> 
+                                                <para>
+                                                  <structname>GtkVRuler</structname>
+                                                
+                                                  </para>
+                                         </entry> 
+                                  </row> 
+                                  <row> 
+                                         <entry colname="col1"> 
+                                                <para><structname>GtkArrow</structname>
+                                                
+                                                  </para>
+                                         </entry> 
+                                         <entry colname="col2"><para>
+                                                  <structname>GtkFontSelection</structname>
+                                                </para> 
+                                                
+                                         </entry> 
+                                         <entry colname="col3"><para>
+                                                  <structname>GtkInputDialog</structname>
+                                                </para> 
+                                                
+                                         </entry> 
+                                         <entry colname="col4"><para>
+                                                  <structname>GtkVScale</structname>
+                                                </para> 
+                                                
+                                         </entry> 
+                                  </row> 
+                                  <row> 
+                                         <entry colname="col1"><para>
+                                                  <structname>GtkAspectFrame</structname>
+                                                </para> 
+                                                
+                                         </entry> 
+                                         <entry colname="col2"><para>
+                                                  <structname>GtkGammaCurve</structname>
+                                                </para> 
+                                                
+                                         </entry> 
+                                         <entry colname="col3"> 
+                                                <para>
+                                                  <structname>GtkLayout</structname>
+                                                
+                                                  </para>
+                                         </entry> 
+                                         <entry colname="col4"><para>
+                                                  <structname>GtkVScrollbar</structname>
+                                                </para> 
+                                                
+                                         </entry> 
+                                  </row> 
+                                  <row> 
+                                         <entry colname="col1"><para>
+                                                  <structname>GtkCalendar</structname>
+                                                </para> 
+                                                
+                                         </entry> 
+                                         <entry colname="col2"><para>
+                                                  <structname>GtkHRuler</structname>
+                                                </para> 
+                                                
+                                         </entry> 
+                                         <entry colname="col3"><para>
+                                                  <structname>GtkPacker</structname>
+                                                </para></entry> 
+                                         <entry colname="col4"> </entry> 
+                                  </row> 
+                                </tbody> 
+                         </tgroup> 
+                  </informaltable> 
+                </para>
+         </sect2>
+         <sect2 id="GNOME">
+                <title>GNOME</title>
+                <para>
+
+                         <inlinemediaobject> 
+                                <imageobject>
+                                  <imagedata
+fileref="figures/window-palette-gnome.png"/> 
+                                </imageobject> 
+                         </inlinemediaobject>
+                  <informaltable> 
+                         <tgroup cols="4"><colspec colnum="1"
+colname="col1" colwidth="1.02*"/><colspec colnum="2" colname="col2"
+colwidth="1.00*"/><colspec colnum="3" colname="col3"
+colwidth="1.05*"/><colspec colnum="4" colname="col4" colwidth="1.04*"/> 
+                                <tbody> 
+                                  <row><entry colname="col1"><para>
+                                                  <structname>GnomeApp</structname>
+                                                
+                                                  </para></entry><entry
+colname="col2"><para><structname>GnomeDateEdit</structname> 
+                                                 
+                                                
+                                          
+                                                
+                                         
+                                                  </para></entry><entry
+colname="col3"><para><structname>GnomeIconEntry</structname></para> 
+                                                 
+                                                
+                                         </entry><entry
+colname="col4"><para>
+                                                  <structname>GnomePixmap</structname></para></entry></row>
+                                  <row> 
+                                         <entry
+colname="col1"><para><structname>GnomeAbout</structname></para> 
+                                                
+                                          
+                                                
+                                         </entry> 
+                                         <entry colname="col2"><para>
+                                                  <structname>GnomeDialog</structname>
+                                                </para></entry> 
+                                         <entry colname="col3"><para>
+                                                  <structname>GnomeIconList</structname>
+                                                </para> 
+                                                
+                                         </entry> 
+                                         <entry colname="col4"> 
+                                                <para>
+                                                  <structname>GnomePixmapEntry</structname></para>
+                                         </entry> 
+                                  </row> 
+                                  <row> 
+                                         <entry colname="col1"> 
+                                                <para> 
+                                                
+                                                  
+                                                  <structname>GnomeAnimator</structname></para>
+                                         </entry> 
+                                         <entry colname="col2"> 
+                                                
+                                         <para>
+                                                  <structname>GnomeDruid</structname></para></entry>
+                                         <entry colname="col3"> 
+                                                <para><structname></structname>
+                                                 
+                                                
+                                         
+                                                  <structname>GnomeIconSelection</structname>
+                                                </para>
+                                         </entry> 
+                                         <entry colname="col4"> 
+                                                <para>
+                                                  <structname>GnomePropertyBox</structname>
+                                                </para>
+                                         </entry> 
+                                  </row> 
+                                  <row> 
+                                         <entry colname="col1"><para>
+                                                  <structname>GnomeAppBar</structname>
+                                                </para> 
+                                                
+                                         </entry> 
+                                         <entry
+colname="col2"><para><structname>GnomeEntry</structname></para> 
+                                                 
+                                                
+                                          
+                                                
+                                          
+                                                
+                                         </entry> 
+                                         <entry colname="col3"><para>
+                                                  <structname>GnomeLess</structname></para>
+                                                
+                                         </entry> 
+                                         <entry colname="col4"><para>
+                                                  <structname>GnomeSpell</structname></para>
+                                                </entry> 
+                                  </row> 
+                                  <row> 
+                                         <entry colname="col1"><para>
+                                                  <structname>GnomeCalculator</structname>
+                                                </para> 
+                                                
+                                         </entry> 
+                                         <entry colname="col2"><para>
+                                                  <structname>GnomeFileEntry</structname>
+                                                </para></entry> 
+                                         <entry colname="col3"><para>
+                                                  <structname>GnomeMessageBox</structname></para><structname></structname>
+                                                 
+                                                
+                                         </entry> 
+                                         <entry colname="col4"><para>
+                                                  <structname>GtkClock</structname></para>
+                                                 
+                                                
+                                         </entry> 
+                                  </row> 
+                                  <row> 
+                                         <entry
+colname="col1"><para><structname>GnomeCanvas</structname> 
+                                                
+                                                  </para> 
+                                                
+                                         </entry> 
+                                         <entry colname="col2"><para>
+                                                  <structname>GnomeFontPicker</structname>
+                                                </para> 
+                                                
+                                         </entry> 
+                                         <entry colname="col3"><para>
+                                                  <structname>GnomeNumberEntry</structname></para></entry>
+                                         <entry colname="col4"> 
+                                                <para><structname>GtkDial</structname>
+                                                
+                                                   
+                                                </para>
+                                         </entry> 
+                                  </row> 
+                                  <row> 
+                                         <entry colname="col1"><para>
+                                                  <structname>GnomeColorPicker</structname>
+                                                </para></entry> 
+                                         <entry
+colname="col2"><para><structname>GnomeHRef</structname> 
+                                                
+                                                  </para></entry> 
+                                         <entry colname="col3"> 
+                                                <para>
+                                                  <structname>GnomePaperSelector</structname>
+                                                </para>
+                                         </entry> 
+                                         <entry colname="col4"></entry> 
+                                  </row> 
+                                </tbody> 
+                         </tgroup> 
+                  </informaltable> 
+                </para>
+         </sect2>
+-->
+  </sect1> 
+  <!-- SETTINGS-->
+  <sect1 id="settings"> 
+         <title>Preferences</title> 
+         <sect2 id="settings-menu">
+                <title>Settings Menu</title>
+                <variablelist>
+                  <varlistentry>
+                         <term>Show Grid</term>
+                         <listitem>
+                                <para>
+                                  Select this option if you want to show a
+grid when you place a
+                                  widget in a GtkFixed or GtkLayout
+container.</para>
+                         </listitem>
+                  </varlistentry>
+                  <varlistentry>
+                         <term>Snap to Grid</term>
+                         <listitem>
+                                <para>
+                                  Select this option if you want widgets to
+snap to the grid in a
+                                  GtkFixed or GtkLayout container.</para>
+                         </listitem>
+                  </varlistentry>
+                  <varlistentry>
+                         <term>Show Widget Tooltips</term>
+                         <listitem>
+                                <para>
+                                  Select this option to enable the tooltips
+you have set in your interface. Tooltip display can be a distraction when
+you are creating an interface within Glade, so you might like to turn them
+off.</para>
+                         </listitem>
+                  </varlistentry>
+                </variablelist>
+         </sect2>
+         <sect2 id="grid-options">
+                <title>Grid Options</title>
+                <variablelist>
+                  <varlistentry>
+                         <term>Horizontal spacing</term>
+                         <listitem>
+                                <para>
+                                  Use the spin box to specify the number of
+pixels to skip
+                                  horizontally before drawing a line in the
+grid.
+                                </para>
+                         </listitem>
+                  </varlistentry>
+                  <varlistentry>
+                         <term> Vertical spacing</term>
+                         <listitem>
+                                <para>
+                                  Use the spin box to specify the number of
+pixels to skip
+                                  vertically before drawing a line in the
+grid.
+                                </para>
+                         </listitem>
+                  </varlistentry>
+                  <varlistentry>
+                         <term>Grid style</term>
+                         <listitem>
+                                <para>
+                                  Use the radio buttons to specify whether
+to draw the grid with
+                                  dots or lines.
+                                </para>
+                         </listitem>
+                  </varlistentry>
+                </variablelist>
+         </sect2>
+         <sect2 id="snap-options">
+                <title>Snap Options</title>
+                <variablelist>
+                  <varlistentry>
+                         <term>Horizontal snapping</term>
+                         <listitem>
+                                <para>
+                                  Use the check boxes to specify the snap
+behavior in the grid of
+                                  the left and right edges of a widget.
+                                </para>
+                         </listitem>
+                  </varlistentry>
+                  <varlistentry>
+                         <term> Vertical snapping</term>
+                         <listitem>
+                                <para>
+                                  Use the check boxes to specify the snap
+behavior in the grid of
+                                  the top and bottom edges of a widget.
+                                </para>
+                         </listitem>
+                  </varlistentry>
+                </variablelist> 
+         </sect2>
+  </sect1><!-- OUTPUT -->
+<!-- 
+  <sect1 id="output"> 
+         <title>Output</title> 
+         <para>
+                Please write me. 
+         </para>
+  </sect1>
+-->
+<!-- LIBGLADE -->
+<!--
+  <sect1 id="libglade"> 
+         <title>Libglade</title> 
+         <para>
+                Please write me. 
+         </para>
+  </sect1>
+-->
+<!-- QUICKSTART -->
+<!-- 
+  <sect1 id="quickstart"> 
+         <title>Quick Start</title> 
+         <para>
+                Please write me. 
+         </para>
+  </sect1>
+-->
+<!-- HELLOWORLD -->
+<!--
+  <sect1 id="helloworld"> 
+         <title>Hello, World - A Simple Project</title> 
+         <para>
+                Please write me. 
+         </para>
+  </sect1>
+-->
+<!-- AUTHORS -->
+<!--
+  <sect1 id="authors"> 
+         <title>Authors</title> 
+         <para>
+                Glade was written by Damon Chaplin
+<email>damon@gnome.org</email>. To
+                find more information about Glade, please visit the Glade 
+                <ulink url="http://glade.gnome.org" type="http">web
+page</ulink>. 
+         </para>
+         <para>
+                Please send all comments, suggestions, and bug reports to
+the Glade
+                mailing list. Information on how to join this list is
+available at 
+                <ulink url="http://glade.gnome.org/lists.html"
+type="http">this
+                  page</ulink>. 
+         </para>
+         <para>
+                This reference manual is maintained by Michael Vance
+                <email>briareos@lokigames.com</email>. Please send all
+comments, suggestions,
+                and bug reports regarding the manual his way. 
+         </para>
+         <para>
+                <variablelist> 
+                  <title>Contributors</title> 
+                  <varlistentry> 
+                         <term>Ray Barker
+<email>fatray@home.com</email></term> 
+                         <listitem> 
+                                <para>
+                                  Contributed menu dialog, file output
+documentation 
+                                </para>
+                         </listitem> 
+                  </varlistentry> 
+                  <varlistentry> 
+                         <term> Paul J. Drongowski
+<email>pjd@ives.lkg.dec.com</email> </term>
+                         
+                         <listitem> 
+                                <para>
+                                  Contributed quick start tutorial 
+                                </para>
+                         </listitem> 
+                  </varlistentry> 
+                </variablelist> 
+         </para>
+         <para>
+                You can also add your comments online by using 
+                <ulink type="http" url="http://www.gnome.org/gdp/doctable/
+">GNOME
+                  Documentation Status Table</ulink>. 
+         </para>
+  </sect1>
+ -->
+</article> 

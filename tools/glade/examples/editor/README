@@ -1,0 +1,16 @@
+
+This is a simple example application built with Glade.
+
+It is a text editor, with standard commands to open and save files,
+cut/copy/paste text, and set the font.
+
+The signal handler code in src/callbacks.c has been commented to make it
+easy to understand how a Glade application is put together.
+
+It is not built normally as part of Glade. To build it, you must cd into the
+editor directory, remove the 'NO-AUTO-GEN' file, then run:
+
+./autogen.sh
+make
+
+Then run src/glade-editor.

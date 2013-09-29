@@ -1,0 +1,20 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE omf PUBLIC "-//OMF//DTD Scrollkeeper OMF Variant V1.0//EN" "http://scrollkeeper.sourceforge.net/dtds/scrollkeeper-omf-1.0/scrollkeeper-omf.dtd">
+<omf>
+  <resource>
+    <creator>
+    Damon Chaplin
+    </creator>
+    <title>
+      Glade FAQ
+    </title>
+    <date>
+    2002
+    </date>
+    <subject category="GNOME|Development"/>
+    <format mime="text/xml"/>
+    <identifier url="glade-faq.xml"/>
+    <language code="ro"/>
+    <relation seriesid="2619c82a-a636-11d6-8522-d29c286dcc64"/>
+  </resource>
+</omf>

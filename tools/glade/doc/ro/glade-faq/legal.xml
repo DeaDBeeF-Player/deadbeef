@@ -1,0 +1,70 @@
+   <legalnotice id="legalnotice">
+         <para>
+           Permisiunea de a copia, distribui şi/sau modifica acest document
+           este acordată conform Licenţei pentru Documentaţia Liberă GNU
+	   (GFDL), versiunea 1.1 sau orice versiune ulterioară publicată de
+	   către Fundaţia pentru Software Liber, dar fără Secţiuni invariante,
+	   şi fără texte de copertă. Puteţi găsi o copie a GFDL la <ulink type="help"
+	   url="ghelp:fdl">această legătură</ulink> sau în fişierul COPYING-DOCS
+	   distribuit cu acest manual.
+          </para>
+          <para> Acest manual este o parte a colecţiei de manuale GNOME
+	  distribuite sub licenţă GFDL. Dacă doriţi să distribuiţi acest manual
+	  separat de colecţie, puteţi face acest lucru adăugând o copie a licenţei
+	  acestui manual, după cum este descris în secţiunea 6 a licenţei.
+         </para>
+ 
+         <para>
+           Multe dintre numele folosite de companii pentru a denumi produsele
+	   şi serviciile oferite sunt mărci înregistrate. Acolo unde aceste nume apar
+	   în documentaţia GNOME, şi membrii Proiectului pentru Documentaţii GNOME
+	   sunt conştienţi de aceste mărci înregistrate,  numele sunt scrise
+	   cu majuscule sau cu cel puţin cu prima literă majusculă.
+         </para>
+
+         <para>
+           DOCUMENTUL ŞI VERSIUNILE MODIFICATE ALE DOCUMENTULUI SUNT
+	   OFERITE ÎN TERMENII LICENŢEI PENTRU DOCUMENTAŢIA LIBERĂ GNU
+	   ÎN URMĂTOARELE CONDIŢII:
+
+           <orderedlist>
+                 <listitem>
+                   <para>DOCUMENTUL ESTE OFERIT FĂRĂ NICI O GARANŢIE DE
+		   VREUN FEL, EXPRIMATĂ SAU IMPLICATĂ, INCLUZÂND, FĂRĂ
+		   LIMITARE, GARANŢIA CĂ DOCUMENTUL SAU VERSIUNILE 
+		   MODIFICATE ALE DOCUMENTULUI SUNT FĂRĂ GREŞELI, SAU
+		   PENTRU UN SCOP ANUME. ÎNTREGUL RISC AL CALITĂŢII,
+		   ACURATEŢII SAU PERFORMANŢEI DOCUMENTULUI SAU ALE
+		   VERSIUNILOR MODIFICATE ALE DOCUMENTULUI VĂ APARŢINE.
+		   ÎN CAZUL ÎN CARE ORICE DOCUMENT SAU VERSIUNE MODIFICATĂ
+		   PREZINTĂ O GREŞEALĂ, ATUNCI DUMNEAVOASTRĂ (ŞI NU AUTORUL
+		   INIŢIAL SAU ORICARE CONTRIBUTOR) VĂ VEŢI ASUMA COSTUL
+		   REPARĂRII, ÎNTREŢINERII SAU CORECTĂRII. ACEASTĂ NEASUMARE
+		   A GARANŢIEI CONSTITUIE O PARTE ESENŢIALĂ A ACESTEI
+		   LICENŢE. NU ESTE AUTORIZATĂ FOLOSIREA DOCUMENTULUI
+		   SAU A VERSIUNILOR MODIFICATE DECÂNT ÎN PREZENŢA ACESTEI
+		   NEASUMĂRI A GARANŢIEI. ŞI
+                   </para>
+                 </listitem>
+                 <listitem>
+                   <para>ÎN NICI O CIRCUMSTANŢĂ SAU TEORIE LEGALĂ, 
+		   FIE ÎNTR-UN CONTRACT (INCLUZÂND NEGLIJENŢA), SAU ALTFEL,
+		   AUTORUL, SCRIITORUL INIŢIAL, ORICE CONTRIBUTOR, SAU
+		   ORICE DISTRIBUITOR AL DOCUMENTULUI SAU A VERSIUNII
+		   MODIFICATE  A DOCUMENTULUI, SAU ORICE FURNIZOR AL UNEI
+		   ASTFEL DE PĂRŢI, VA FI RĂSPUNZĂTOR ÎN FAŢA ALTEI PERSOANE
+		   PENTRU ORICE DAUNE DIRECTE, INDIRECTE, SPECIALE,
+		   INCIDENTALE SAU CONSECVENŢIALE DE ORICE FEL, INCLUZÂND,
+		   FĂRĂ LIMITĂRI, DAUNE DE ORICE FEL, INCLUZÂND DAUNE
+		   PENTRU PIERDEREA LUCIDITĂŢII, OPRIREA PRODUCŢIEI, ERORI
+		   ALE CALCULATORULUI SAU NEFUNCŢIONĂRI, SAU ORICARE
+		   PAGUBE CAUZATE DE FOLOSIREA DOCUMENTULUI SAU A VERSIUNILOR
+		   MODIFICATE ALE ACESTUIA, CHIAR DACĂ ACEA PARTE A FOST
+		   INFORMATĂ DESPRE POSIBILITATEA ACESTOR DAUNE.
+
+                   </para>
+                 </listitem>
+           </orderedlist>
+         </para>
+   </legalnotice>
+

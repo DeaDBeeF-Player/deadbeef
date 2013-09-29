@@ -1,0 +1,6008 @@
+# Greek translation of Glade.
+# Copyright (C) 2000-2001 Free Software Foundation, Inc.
+# Spiros Papadimitriou <spapadim+@cs.cmu.edu>, 2000.
+# Simos Xenitellis <simos@hellug.gr>, 2001.
+# Velonis Petros <velonis@freemail.gr>, 2004.
+#
+# NOTE: This is work in progress; please send me email before
+#   modifying anything!  Thanks!  -- Spiros
+# spyros: ~260 messages (initial translation)
+# simos: 363 messages (not full yet), 14Feb2001
+# simos: 414 messages (not full yet), 27Feb2001, still 808 left.
+# petros: 410 messages 13Apr2004.
+msgid ""
+msgstr ""
+"Project-Id-Version: glade 0.5.11\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-09-12 12:30+0300\n"
+"PO-Revision-Date: 2004-04-13 18:41+0200\n"
+"Last-Translator: Velonis Petros <velonis@freemail.gr>\n"
+"Language-Team: Greek <gnomehellas@gmx.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../glade-2.desktop.in.h:1
+msgid "Create or open user interface designs for GTK+ or GNOME applications"
+msgstr ""
+
+#: ../glade-2.desktop.in.h:2
+msgid "Glade Interface Designer"
+msgstr ""
+
+#: ../glade/editor.c:343
+msgid "Grid Options"
+msgstr "Επιλογές Πλέγματος"
+
+#: ../glade/editor.c:357
+msgid "Horizontal Spacing:"
+msgstr "Οριζόντιο Διάκενο:"
+
+#: ../glade/editor.c:372
+msgid "Vertical Spacing:"
+msgstr "Κατακόρυφο Διάκενο:"
+
+#: ../glade/editor.c:390
+msgid "Grid Style:"
+msgstr "Στύλ Πλέγματος"
+
+#: ../glade/editor.c:396
+msgid "Dots"
+msgstr "Κουκκίδες"
+
+#: ../glade/editor.c:405
+msgid "Lines"
+msgstr "Γραμμές"
+
+#: ../glade/editor.c:487
+msgid "Snap Options"
+msgstr "Επιλογές Στοίχισης"
+
+#. Horizontal snapping
+#: ../glade/editor.c:502
+msgid "Horizontal Snapping:"
+msgstr "Οριζόντια Στοίχιση:"
+
+#: ../glade/editor.c:508 ../glade/gbwidgets/gbtextview.c:49
+msgid "Left"
+msgstr "Αριστερά"
+
+#: ../glade/editor.c:517 ../glade/gbwidgets/gbtextview.c:50
+msgid "Right"
+msgstr "Δεξιά"
+
+#. Vertical snapping
+#: ../glade/editor.c:526
+msgid "Vertical Snapping:"
+msgstr ""
+
+#: ../glade/editor.c:532
+msgid "Top"
+msgstr "Επάνω"
+
+#: ../glade/editor.c:540
+msgid "Bottom"
+msgstr "Κάτω"
+
+#: ../glade/editor.c:741
+msgid "GtkToolItem widgets can only be added to a GtkToolbar."
+msgstr ""
+
+#: ../glade/editor.c:758
+msgid "Couldn't insert a GtkScrolledWindow widget."
+msgstr "Αδύνατη η εισαγωγή μαραφετιού GtkScrolledWindow."
+
+#: ../glade/editor.c:805
+msgid "Couldn't insert a GtkViewport widget."
+msgstr "Αδύνατη η εισαγωγή μαραφετιού GtkViewport."
+
+#: ../glade/editor.c:832
+msgid "Couldn't add new widget."
+msgstr "Αδύνατη η εισαγωγή νέου μαραφετιού."
+
+#: ../glade/editor.c:1230
+msgid ""
+"You can't add a widget at the selected position.\n"
+"\n"
+"Tip: GTK+ uses containers to lay out widgets.\n"
+"Try deleting the existing widget and using\n"
+"a box or table container instead.\n"
+msgstr ""
+"Αδύνατη η προσθήκη μαραφετιού στην επιλεγμένη θέση.\n"
+"\n"
+"Υπόδειξη: Το GTK+ χρησιμοποιεί δοχεία για την τοποθέτηση\n"
+"των μαραφετιών. Δοκιμάστε να διαγράψετε το υπάρχον μαραφέτι\n"
+"και χρησιμοποιήστε ένα δοχείο τύπου κουτιού ή πίνακα στη\n"
+"θέση του.\n"
+
+#: ../glade/editor.c:3517
+msgid "Couldn't delete widget."
+msgstr "Αδύνατη η διαγραφή μαραφετιού."
+
+#: ../glade/editor.c:3541 ../glade/editor.c:3545
+msgid "The widget can't be deleted"
+msgstr "Το μαραφέτι δε μπορεί να διαγραφεί."
+
+#: ../glade/editor.c:3572
+msgid ""
+"The widget is created automatically as part of the parent widget, and it "
+"can't be deleted."
+msgstr ""
+
+#: ../glade/gbwidget.c:697
+msgid "Border Width:"
+msgstr "Πλάτος Πλαισίου:"
+
+#: ../glade/gbwidget.c:698
+msgid "The width of the border around the container"
+msgstr "Το πλάτος του πλαισίου γύρω από το δοχείο"
+
+#: ../glade/gbwidget.c:1751
+msgid "Select"
+msgstr "Επιλογή"
+
+#: ../glade/gbwidget.c:1773
+msgid "Remove Scrolled Window"
+msgstr "Διαγραφή Κυλιόμενου Παραθύρου"
+
+#: ../glade/gbwidget.c:1782
+msgid "Add Scrolled Window"
+msgstr "Νέο Κυλιόμενο Παράθυρο"
+
+#: ../glade/gbwidget.c:1803
+msgid "Remove Alignment"
+msgstr "Διαγραφή Ευθυγράμμισης"
+
+#: ../glade/gbwidget.c:1811
+msgid "Add Alignment"
+msgstr "Νέα Ευθυγράμμιση"
+
+#: ../glade/gbwidget.c:1826
+msgid "Remove Event Box"
+msgstr "Διαγραφή Κουτιού Γεγονότων"
+
+#: ../glade/gbwidget.c:1834
+msgid "Add Event Box"
+msgstr "Προσθήκη Κουρτιού Γεγονότων"
+
+#: ../glade/gbwidget.c:1844
+msgid "Redisplay"
+msgstr "Επανασχεδίαση"
+
+#: ../glade/gbwidget.c:1859
+msgid "Cut"
+msgstr "Κοπή"
+
+#: ../glade/gbwidget.c:1866 ../glade/property.c:892 ../glade/property.c:5141
+msgid "Copy"
+msgstr "Αντιγραφή"
+
+#: ../glade/gbwidget.c:1875 ../glade/property.c:904
+msgid "Paste"
+msgstr "Επικόλληση"
+
+#: ../glade/gbwidget.c:1887 ../glade/property.c:1581 ../glade/property.c:5132
+msgid "Delete"
+msgstr "Διαγραφή"
+
+#. N/A stands for 'Not Applicable'. It is used when a standard widget
+#. property does not apply to the current widget. e.g. widgets without
+#. windows can't use the Events property. This appears in the property
+#. editor and so should be a short abbreviation.
+#: ../glade/gbwidget.c:2414 ../glade/gbwidget.c:2483
+msgid "N/A"
+msgstr "--"
+
+#. General code for container - has to remove all children and add back
+#. NOTE: this may not work for specialised containers.
+#. NOTE: need to ref widgets?
+#: ../glade/gbwidget.c:3213
+msgid "replacing child of container - not implemented yet\n"
+msgstr "αντικατάσταση παιδιού δοχείου - δεν έχει υλοποιηθεί ακόμα\n"
+
+#: ../glade/gbwidget.c:3441
+msgid "Couldn't insert GtkAlignment widget."
+msgstr "Αδύνατη η εισαγωγή μαραφετιού GtkAlignment."
+
+#: ../glade/gbwidget.c:3481
+msgid "Couldn't remove GtkAlignment widget."
+msgstr "Αδύνατη η εισαγωγή μαραφετιού GtkAlignment."
+
+#: ../glade/gbwidget.c:3505
+msgid "Couldn't insert GtkEventBox widget."
+msgstr "Αδύνατη η εισαγωγή μαραφετιού GtkEventBox."
+
+#: ../glade/gbwidget.c:3544
+msgid "Couldn't remove GtkEventBox widget."
+msgstr "Αδύνατη η εισαγωγή μαραφετιού GtkEventBox."
+
+#: ../glade/gbwidget.c:3579
+msgid "Couldn't insert GtkScrolledWindow widget."
+msgstr "Αδύνατη η εισαγωγή μαραφετιού GtkScrolledWindow."
+
+#: ../glade/gbwidget.c:3618
+msgid "Couldn't remove GtkScrolledWindow widget."
+msgstr "Αδύνατη η εισαγωγή μαραφετιού GtkScrolledWindow."
+
+#: ../glade/gbwidget.c:3732
+msgid "Remove Label"
+msgstr "Διαγραφή Ετικέτας"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:79
+msgid "Application Name"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:103 ../glade/gnome/gnomeabout.c:137
+#, fuzzy
+msgid "Logo:"
+msgstr "Λογότυπο: "
+
+#: ../glade/gbwidgets/gbaboutdialog.c:103 ../glade/gnome/gnomeabout.c:137
+msgid "The pixmap to use as the logo"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:105 ../glade/glade_project_options.c:260
+msgid "Program Name:"
+msgstr "Όνομα Προγράμματος:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:105
+#, fuzzy
+msgid "The name of the application"
+msgstr "Το όνομα του μαραφετιού"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:106 ../glade/gnome/gnomeabout.c:139
+msgid "Comments:"
+msgstr "Σχόλια:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:106
+msgid "Additional information, such as a description of the application"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:107 ../glade/gnome/gnomeabout.c:138
+msgid "Copyright:"
+msgstr "Πνευματικά δικαιώματα:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:107 ../glade/gnome/gnomeabout.c:138
+msgid "The copyright notice"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:109
+msgid "Website URL:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:109
+msgid "The URL of the application's website"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:110
+#, fuzzy
+msgid "Website Label:"
+msgstr "Ετικέτα Μενού:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:110
+msgid "The label to display for the link to the website"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:112 ../glade/glade_project_options.c:365
+msgid "License:"
+msgstr "Άδεια Χρήσης:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:112
+msgid "The license details of the application"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:113
+#, fuzzy
+msgid "Wrap License:"
+msgstr "Άδεια Χρήσης:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:113
+msgid "If the license text should be wrapped"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:115 ../glade/gnome/gnomeabout.c:141
+msgid "Authors:"
+msgstr "Συγγραφείς:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:115 ../glade/gnome/gnomeabout.c:141
+msgid "The authors of the package, one on each line"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:116 ../glade/gnome/gnomeabout.c:142
+#, fuzzy
+msgid "Documenters:"
+msgstr "Τεκμηριωτές"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:116 ../glade/gnome/gnomeabout.c:142
+msgid "The documenters of the package, one on each line"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:117
+msgid "Artists:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:117
+msgid ""
+"The people who have created the artwork for the package, one on each line"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:118 ../glade/gnome/gnomeabout.c:143
+msgid "Translators:"
+msgstr "Μεταφραστές:Πέτρος Βελώνης <velonis@freemail.gr>"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:118 ../glade/gnome/gnomeabout.c:143
+msgid ""
+"The translators of the package. This should normally be left empty so that "
+"translators can add their names in the po files"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:588
+#, fuzzy
+msgid "About Dialog"
+msgstr "Διάλογος"
+
+#: ../glade/gbwidgets/gbaccellabel.c:200
+msgid "Label with Accelerator"
+msgstr ""
+
+#. The GtkProgress interface is deprecated now, and GtkProgressBar doesn't
+#. have functions to set these, so I suppose we shouldn't support them.
+#: ../glade/gbwidgets/gbalignment.c:71 ../glade/gbwidgets/gbarrow.c:89
+#: ../glade/gbwidgets/gbaspectframe.c:130 ../glade/gbwidgets/gbimage.c:119
+#: ../glade/gbwidgets/gblabel.c:181 ../glade/gbwidgets/gbprogressbar.c:162
+#, fuzzy
+msgid "X Align:"
+msgstr "Στοίχιση"
+
+#: ../glade/gbwidgets/gbalignment.c:72
+msgid "The horizontal alignment of the child widget"
+msgstr ""
+
+#: ../glade/gbwidgets/gbalignment.c:74 ../glade/gbwidgets/gbarrow.c:92
+#: ../glade/gbwidgets/gbaspectframe.c:133 ../glade/gbwidgets/gbimage.c:122
+#: ../glade/gbwidgets/gblabel.c:184 ../glade/gbwidgets/gbprogressbar.c:165
+#, fuzzy
+msgid "Y Align:"
+msgstr "Στοίχιση"
+
+#: ../glade/gbwidgets/gbalignment.c:75
+msgid "The vertical alignment of the child widget"
+msgstr ""
+
+#: ../glade/gbwidgets/gbalignment.c:77
+#, fuzzy
+msgid "X Scale:"
+msgstr "Κλίμακα: %f\n"
+
+#: ../glade/gbwidgets/gbalignment.c:78
+msgid "The horizontal scale of the child widget"
+msgstr ""
+
+#: ../glade/gbwidgets/gbalignment.c:80
+#, fuzzy
+msgid "Y Scale:"
+msgstr "Κλίμακα: %f\n"
+
+#: ../glade/gbwidgets/gbalignment.c:81
+msgid "The vertical scale of the child widget"
+msgstr ""
+
+#: ../glade/gbwidgets/gbalignment.c:85
+#, fuzzy
+msgid "Top Padding:"
+msgstr "Γέμισμα προς τα πάνω"
+
+#: ../glade/gbwidgets/gbalignment.c:86
+msgid "Space to put above the child widget"
+msgstr ""
+
+#: ../glade/gbwidgets/gbalignment.c:89
+#, fuzzy
+msgid "Bottom Padding:"
+msgstr "Γέμισμα προς τα κάτω"
+
+#: ../glade/gbwidgets/gbalignment.c:90
+msgid "Space to put below the child widget"
+msgstr ""
+
+#: ../glade/gbwidgets/gbalignment.c:93
+#, fuzzy
+msgid "Left Padding:"
+msgstr "Αριστερό γέμισμα"
+
+#: ../glade/gbwidgets/gbalignment.c:94
+msgid "Space to put to the left of the child widget"
+msgstr ""
+
+#: ../glade/gbwidgets/gbalignment.c:97
+#, fuzzy
+msgid "Right Padding:"
+msgstr "Δεξιό γέμισμα "
+
+#: ../glade/gbwidgets/gbalignment.c:98
+msgid "Space to put to the right of the child widget"
+msgstr ""
+
+#: ../glade/gbwidgets/gbalignment.c:255
+#, fuzzy
+msgid "Alignment"
+msgstr "Στοίχιση"
+
+#: ../glade/gbwidgets/gbarrow.c:85
+msgid "Direction:"
+msgstr "Κατεύθυνση:"
+
+#: ../glade/gbwidgets/gbarrow.c:85
+#, fuzzy
+msgid "The direction of the arrow"
+msgstr "Διεύθυνση βέλους"
+
+#: ../glade/gbwidgets/gbarrow.c:87 ../glade/gbwidgets/gbaspectframe.c:128
+#: ../glade/gbwidgets/gbclist.c:247 ../glade/gbwidgets/gbctree.c:253
+#: ../glade/gbwidgets/gbframe.c:123 ../glade/gbwidgets/gbhandlebox.c:109
+#: ../glade/gbwidgets/gbviewport.c:104 ../glade/gnome/bonobodockitem.c:176
+msgid "Shadow:"
+msgstr "Σκιά:"
+
+#: ../glade/gbwidgets/gbarrow.c:87
+msgid "The shadow type of the arrow"
+msgstr "Το είδος σκιάς του τόξου"
+
+#: ../glade/gbwidgets/gbarrow.c:90
+msgid "The horizontal alignment of the arrow"
+msgstr ""
+
+#: ../glade/gbwidgets/gbarrow.c:93
+msgid "The vertical alignment of the arrow"
+msgstr ""
+
+#: ../glade/gbwidgets/gbarrow.c:95 ../glade/gbwidgets/gbimage.c:125
+#: ../glade/gbwidgets/gblabel.c:187
+#, fuzzy
+msgid "X Pad:"
+msgstr "PAD"
+
+#: ../glade/gbwidgets/gbarrow.c:95 ../glade/gbwidgets/gbimage.c:125
+#: ../glade/gbwidgets/gblabel.c:187 ../glade/gbwidgets/gbtable.c:382
+#, fuzzy
+msgid "The horizontal padding"
+msgstr "Οριζόντιο γέμισμα"
+
+#: ../glade/gbwidgets/gbarrow.c:97 ../glade/gbwidgets/gbimage.c:127
+#: ../glade/gbwidgets/gblabel.c:189
+#, fuzzy
+msgid "Y Pad:"
+msgstr "PAD"
+
+#: ../glade/gbwidgets/gbarrow.c:97 ../glade/gbwidgets/gbimage.c:127
+#: ../glade/gbwidgets/gblabel.c:189 ../glade/gbwidgets/gbtable.c:385
+#, fuzzy
+msgid "The vertical padding"
+msgstr "Κάθετο γέμισμα"
+
+#: ../glade/gbwidgets/gbarrow.c:299
+msgid "Arrow"
+msgstr "Βέλος"
+
+#: ../glade/gbwidgets/gbaspectframe.c:122 ../glade/gbwidgets/gbframe.c:117
+msgid "Label X Align:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaspectframe.c:123 ../glade/gbwidgets/gbframe.c:118
+msgid "The horizontal alignment of the frame's label widget"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaspectframe.c:125 ../glade/gbwidgets/gbframe.c:120
+#, fuzzy
+msgid "Label Y Align:"
+msgstr "Ετικέτα:"
+
+#: ../glade/gbwidgets/gbaspectframe.c:126 ../glade/gbwidgets/gbframe.c:121
+msgid "The vertical alignment of the frame's label widget"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaspectframe.c:128 ../glade/gbwidgets/gbframe.c:123
+msgid "The type of shadow of the frame"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaspectframe.c:131
+#: ../glade/gbwidgets/gbaspectframe.c:134
+msgid "The horizontal alignment of the frame's child"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaspectframe.c:136
+msgid "Ratio:"
+msgstr "Αναλογία:"
+
+#: ../glade/gbwidgets/gbaspectframe.c:137
+msgid "The aspect ratio of the frame's child"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaspectframe.c:138
+#, fuzzy
+msgid "Obey Child:"
+msgstr "Υπακοή στο θυγατρικό"
+
+#: ../glade/gbwidgets/gbaspectframe.c:139
+msgid "If the aspect ratio should be determined by the child"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaspectframe.c:319
+msgid "Aspect Frame"
+msgstr ""
+
+#: ../glade/gbwidgets/gbbutton.c:118 ../glade/gbwidgets/gbcheckbutton.c:85
+#: ../glade/gbwidgets/gbmenutoolbutton.c:85
+#: ../glade/gbwidgets/gbradiobutton.c:126
+#: ../glade/gbwidgets/gbradiotoolbutton.c:133
+#: ../glade/gbwidgets/gbtogglebutton.c:88
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:90
+#: ../glade/gbwidgets/gbtoolbutton.c:104
+msgid "Stock Button:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbbutton.c:119 ../glade/gbwidgets/gbcheckbutton.c:86
+#: ../glade/gbwidgets/gbmenutoolbutton.c:86
+#: ../glade/gbwidgets/gbradiobutton.c:127
+#: ../glade/gbwidgets/gbradiotoolbutton.c:134
+#: ../glade/gbwidgets/gbtogglebutton.c:89
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:91
+#: ../glade/gbwidgets/gbtoolbutton.c:105
+msgid "The stock button to use"
+msgstr ""
+
+#. For now we don't support editing the menuitem properties in the property
+#. editor. The menu editor has to be used instead.
+#: ../glade/gbwidgets/gbbutton.c:121 ../glade/gbwidgets/gbcheckbutton.c:88
+#: ../glade/gbwidgets/gbcheckmenuitem.c:72
+#: ../glade/gbwidgets/gbimagemenuitem.c:92 ../glade/gbwidgets/gblabel.c:169
+#: ../glade/gbwidgets/gblistitem.c:73 ../glade/gbwidgets/gbmenuitem.c:87
+#: ../glade/gbwidgets/gbmenutoolbutton.c:88
+#: ../glade/gbwidgets/gbradiobutton.c:129
+#: ../glade/gbwidgets/gbradiomenuitem.c:103
+#: ../glade/gbwidgets/gbradiotoolbutton.c:136
+#: ../glade/gbwidgets/gbtogglebutton.c:91
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:93
+#: ../glade/gbwidgets/gbtoolbutton.c:107 ../glade/glade_menu_editor.c:748
+#: ../glade/gnome/gnomehref.c:68
+msgid "Label:"
+msgstr "Ετικέτα:"
+
+#: ../glade/gbwidgets/gbbutton.c:121 ../glade/gbwidgets/gbcheckbutton.c:88
+#: ../glade/gbwidgets/gbcheckmenuitem.c:72 ../glade/gbwidgets/gbentry.c:100
+#: ../glade/gbwidgets/gbimagemenuitem.c:92 ../glade/gbwidgets/gblabel.c:169
+#: ../glade/gbwidgets/gblistitem.c:73 ../glade/gbwidgets/gbmenuitem.c:87
+#: ../glade/gbwidgets/gbmenutoolbutton.c:88
+#: ../glade/gbwidgets/gbradiobutton.c:129
+#: ../glade/gbwidgets/gbradiomenuitem.c:103
+#: ../glade/gbwidgets/gbradiotoolbutton.c:136
+#: ../glade/gbwidgets/gbtextview.c:124 ../glade/gbwidgets/gbtogglebutton.c:91
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:93
+#: ../glade/gbwidgets/gbtoolbutton.c:107 ../glade/gnome-db/gnomedbeditor.c:64
+#, fuzzy
+msgid "The text to display"
+msgstr "Κείμενο προς εμφάνιση"
+
+#: ../glade/gbwidgets/gbbutton.c:122 ../glade/gbwidgets/gbcheckbutton.c:89
+#: ../glade/gbwidgets/gbimage.c:107 ../glade/gbwidgets/gbmenutoolbutton.c:89
+#: ../glade/gbwidgets/gbradiobutton.c:130
+#: ../glade/gbwidgets/gbradiotoolbutton.c:137
+#: ../glade/gbwidgets/gbtogglebutton.c:92
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:94
+#: ../glade/gbwidgets/gbtoolbutton.c:108 ../glade/gbwidgets/gbwindow.c:297
+#: ../glade/glade_menu_editor.c:814
+msgid "Icon:"
+msgstr "Εικονίδιο:"
+
+#: ../glade/gbwidgets/gbbutton.c:123 ../glade/gbwidgets/gbcheckbutton.c:90
+#: ../glade/gbwidgets/gbimage.c:108 ../glade/gbwidgets/gbmenutoolbutton.c:90
+#: ../glade/gbwidgets/gbradiobutton.c:131
+#: ../glade/gbwidgets/gbradiotoolbutton.c:138
+#: ../glade/gbwidgets/gbtogglebutton.c:93
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:95
+#: ../glade/gbwidgets/gbtoolbutton.c:109
+msgid "The icon to display"
+msgstr ""
+
+#: ../glade/gbwidgets/gbbutton.c:125 ../glade/gbwidgets/gbcheckbutton.c:92
+#: ../glade/gbwidgets/gbradiobutton.c:133
+#: ../glade/gbwidgets/gbtogglebutton.c:95
+#, fuzzy
+msgid "Button Relief:"
+msgstr "Ανάγλυφο κουμπιού"
+
+#: ../glade/gbwidgets/gbbutton.c:126 ../glade/gbwidgets/gbcheckbutton.c:93
+#: ../glade/gbwidgets/gbradiobutton.c:134
+#: ../glade/gbwidgets/gbtogglebutton.c:96
+msgid "The relief style of the button"
+msgstr ""
+
+#: ../glade/gbwidgets/gbbutton.c:131
+msgid "Response ID:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbbutton.c:132
+msgid ""
+"The response code returned when the button is pressed. Select one of the "
+"standard responses or enter a positive integer value"
+msgstr ""
+
+#: ../glade/gbwidgets/gbbutton.c:137 ../glade/gbwidgets/gbcheckbutton.c:102
+#: ../glade/gbwidgets/gbcolorbutton.c:70 ../glade/gbwidgets/gbcombobox.c:83
+#: ../glade/gbwidgets/gbcomboboxentry.c:82
+#: ../glade/gbwidgets/gbfontbutton.c:78 ../glade/gbwidgets/gbradiobutton.c:148
+#: ../glade/gbwidgets/gbtogglebutton.c:103
+#: ../glade/gnome/gnomecolorpicker.c:76 ../glade/gnome/gnomefontpicker.c:109
+#: ../glade/gnome/gnomehref.c:70
+#, fuzzy
+msgid "Focus On Click:"
+msgstr "Εστίαση στο κλικ"
+
+#: ../glade/gbwidgets/gbbutton.c:137 ../glade/gbwidgets/gbcheckbutton.c:102
+#: ../glade/gbwidgets/gbcolorbutton.c:70 ../glade/gbwidgets/gbfontbutton.c:78
+#: ../glade/gbwidgets/gbradiobutton.c:148
+#: ../glade/gbwidgets/gbtogglebutton.c:103
+#: ../glade/gnome/gnomecolorpicker.c:76 ../glade/gnome/gnomefontpicker.c:109
+#: ../glade/gnome/gnomehref.c:70
+msgid "If the button grabs focus when it is clicked"
+msgstr ""
+
+#: ../glade/gbwidgets/gbbutton.c:1502
+msgid "Remove Button Contents"
+msgstr ""
+
+#: ../glade/gbwidgets/gbbutton.c:1600
+msgid "Button"
+msgstr "Κουμπί"
+
+#: ../glade/gbwidgets/gbcalendar.c:73
+#, fuzzy
+msgid "Heading:"
+msgstr "Επικεφαλίδα:"
+
+#: ../glade/gbwidgets/gbcalendar.c:74
+msgid "If the month and year should be shown at the top"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcalendar.c:75
+msgid "Day Names:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcalendar.c:76
+msgid "If the day names should be shown"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcalendar.c:77
+msgid "Fixed Month:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcalendar.c:78
+msgid "If the month and year shouldn't be changeable"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcalendar.c:79
+msgid "Week Numbers:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcalendar.c:80
+msgid "If the number of the week should be shown"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcalendar.c:81 ../glade/gnome/gnomedateedit.c:74
+msgid "Monday First:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcalendar.c:82 ../glade/gnome/gnomedateedit.c:75
+msgid "If the week should start on Monday"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcalendar.c:266
+msgid "Calendar"
+msgstr "Ημερολόγιο"
+
+#: ../glade/gbwidgets/gbcellview.c:63 ../glade/gnome/gnomedruidpageedge.c:102
+#: ../glade/gnome/gnomedruidpagestandard.c:91
+msgid "Back. Color:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcellview.c:64
+#, fuzzy
+msgid "The background color"
+msgstr "Χρώμα Παρασκηνίου"
+
+#: ../glade/gbwidgets/gbcellview.c:192
+#, fuzzy
+msgid "Cell View"
+msgstr "Προβολή Κειμένου"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:96
+#: ../glade/gbwidgets/gbcheckmenuitem.c:73
+#: ../glade/gbwidgets/gbradiobutton.c:137
+#: ../glade/gbwidgets/gbradiomenuitem.c:104
+#: ../glade/gbwidgets/gbradiotoolbutton.c:147
+#: ../glade/gbwidgets/gbtogglebutton.c:99
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:97
+msgid "Initially On:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcheckbutton.c:97
+msgid "If the check button is initially on"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcheckbutton.c:98
+#: ../glade/gbwidgets/gbradiobutton.c:139
+#: ../glade/gbwidgets/gbtogglebutton.c:101
+#, fuzzy
+msgid "Inconsistent:"
+msgstr "Ασυνέπεια"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:99
+#: ../glade/gbwidgets/gbradiobutton.c:140
+#: ../glade/gbwidgets/gbtogglebutton.c:102
+msgid "If the button is shown in an inconsistent state"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcheckbutton.c:100
+#: ../glade/gbwidgets/gbradiobutton.c:141
+#, fuzzy
+msgid "Indicator:"
+msgstr "Ένδειξη"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:101
+#: ../glade/gbwidgets/gbradiobutton.c:142
+msgid "If the indicator is always drawn"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcheckbutton.c:211
+msgid "Check Button"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcheckmenuitem.c:74
+msgid "If the check menu item is initially on"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcheckmenuitem.c:203
+#, fuzzy
+msgid "Check Menu Item"
+msgstr "αντικείμενο-μενού-επιλογής"
+
+#: ../glade/gbwidgets/gbclist.c:141
+msgid "New columned list"
+msgstr ""
+
+#. Columns label & entry
+#: ../glade/gbwidgets/gbclist.c:152 ../glade/gbwidgets/gbctree.c:157
+#: ../glade/gbwidgets/gbhbox.c:110 ../glade/gbwidgets/gbhbuttonbox.c:132
+#: ../glade/gbwidgets/gbtable.c:165
+msgid "Number of columns:"
+msgstr "Αριθμός στηλών:"
+
+#: ../glade/gbwidgets/gbclist.c:242 ../glade/gbwidgets/gbctree.c:248
+#: ../glade/gbwidgets/gbiconview.c:128 ../glade/gbwidgets/gblist.c:77
+#: ../glade/gnome/gnomeiconlist.c:174
+#, fuzzy
+msgid "Select Mode:"
+msgstr "Επιλογή κατάστασης"
+
+#: ../glade/gbwidgets/gbclist.c:243
+msgid "The selection mode of the columned list"
+msgstr ""
+
+#: ../glade/gbwidgets/gbclist.c:245 ../glade/gbwidgets/gbctree.c:251
+msgid "Show Titles:"
+msgstr "Εμφάνιση Τίτλων:"
+
+#: ../glade/gbwidgets/gbclist.c:246 ../glade/gbwidgets/gbctree.c:252
+msgid "If the column titles are shown"
+msgstr ""
+
+#: ../glade/gbwidgets/gbclist.c:248
+msgid "The type of shadow of the columned list's border"
+msgstr ""
+
+#: ../glade/gbwidgets/gbclist.c:594
+msgid "Columned List"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcolorbutton.c:65 ../glade/gnome/gnomecolorpicker.c:70
+#, fuzzy
+msgid "Use Alpha:"
+msgstr "Χρήση άλφα"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:66 ../glade/gnome/gnomecolorpicker.c:71
+msgid "If the alpha channel should be used"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcolorbutton.c:68
+#: ../glade/gbwidgets/gbfilechooserbutton.c:86
+#: ../glade/gbwidgets/gbfontbutton.c:68 ../glade/gbwidgets/gbwindow.c:244
+#: ../glade/gnome/gnomecolorpicker.c:73 ../glade/gnome/gnomedruidpageedge.c:93
+#: ../glade/gnome/gnomedruidpagestandard.c:85
+#: ../glade/gnome/gnomefileentry.c:101 ../glade/gnome/gnomefontpicker.c:95
+#: ../glade/gnome/gnomeiconentry.c:72 ../glade/gnome/gnomepixmapentry.c:82
+msgid "Title:"
+msgstr "Τίτλος:"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:69 ../glade/gnome/gnomecolorpicker.c:74
+#, fuzzy
+msgid "The title of the color selection dialog"
+msgstr "Ο τίτλος του διαλόγου επιλογής χρώματος"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:91
+#: ../glade/gbwidgets/gbcolorbutton.c:119
+#: ../glade/gbwidgets/gbcolorbutton.c:162
+#, fuzzy
+msgid "Pick a Color"
+msgstr "Επιλογή χρώματος"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:211
+msgid "Color Chooser Button"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcolorselection.c:62
+msgid "Opacity Control:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcolorselection.c:63
+msgid "If the opacity control is shown"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcolorselection.c:64
+#, fuzzy
+msgid "Palette:"
+msgstr "Παλέτα"
+
+#: ../glade/gbwidgets/gbcolorselection.c:65
+msgid "If the palette is shown"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcolorselection.c:173
+msgid "Color Selection"
+msgstr "Επιλογή Χρώματος"
+
+#: ../glade/gbwidgets/gbcolorselectiondialog.c:71
+msgid "Select Color"
+msgstr "Επιλέξτε Χρώμα"
+
+#: ../glade/gbwidgets/gbcolorselectiondialog.c:316 ../glade/property.c:1276
+msgid "Color Selection Dialog"
+msgstr "Διάλογος Επιλογής Χρώματος"
+
+#: ../glade/gbwidgets/gbcombo.c:105
+#, fuzzy
+msgid "Value In List:"
+msgstr "Τιμή στη λίστα"
+
+#: ../glade/gbwidgets/gbcombo.c:106
+msgid "If the value must be in the list"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcombo.c:107
+msgid "OK If Empty:"
+msgstr "Εντάξει Αν Άδειο:"
+
+#: ../glade/gbwidgets/gbcombo.c:108
+msgid "If an empty value is acceptable, when 'Value In List' is set"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcombo.c:109
+#, fuzzy
+msgid "Case Sensitive:"
+msgstr "Ταίριασμα πεζών-κεφαλαίων"
+
+#: ../glade/gbwidgets/gbcombo.c:110
+msgid "If the searching is case sensitive"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcombo.c:111
+msgid "Use Arrows:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcombo.c:112
+msgid "If arrows can be used to change the value"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcombo.c:113
+msgid "Use Always:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcombo.c:114
+msgid "If arrows work even if the value is not in the list"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcombo.c:115 ../glade/gbwidgets/gbcombobox.c:78
+#: ../glade/gbwidgets/gbcomboboxentry.c:75
+#, fuzzy
+msgid "Items:"
+msgstr "0 αντικείμενα"
+
+#: ../glade/gbwidgets/gbcombo.c:116 ../glade/gbwidgets/gbcombobox.c:79
+#: ../glade/gbwidgets/gbcomboboxentry.c:76
+msgid "The items in the combo list, one per line"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcombo.c:425 ../glade/gbwidgets/gbcombobox.c:289
+#, fuzzy
+msgid "Combo Box"
+msgstr "κουτί-πολλαπλών"
+
+#: ../glade/gbwidgets/gbcombobox.c:81 ../glade/gbwidgets/gbcomboboxentry.c:78
+msgid "Add Tearoffs:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcombobox.c:82 ../glade/gbwidgets/gbcomboboxentry.c:79
+msgid "Whether dropdowns should have a tearoff menu item"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcombobox.c:84 ../glade/gbwidgets/gbcomboboxentry.c:83
+msgid "Whether the combo box grabs focus when it is clicked"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcomboboxentry.c:80 ../glade/gbwidgets/gbentry.c:102
+#, fuzzy
+msgid "Has Frame:"
+msgstr "Έχει Πλαίσιο"
+
+#: ../glade/gbwidgets/gbcomboboxentry.c:81
+msgid "Whether the combo box draws a frame around the child"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcomboboxentry.c:302
+msgid "Combo Box Entry"
+msgstr ""
+
+#: ../glade/gbwidgets/gbctree.c:146
+msgid "New columned tree"
+msgstr ""
+
+#: ../glade/gbwidgets/gbctree.c:249
+msgid "The selection mode of the columned tree"
+msgstr ""
+
+#: ../glade/gbwidgets/gbctree.c:254
+msgid "The type of shadow of the columned tree's border"
+msgstr ""
+
+#: ../glade/gbwidgets/gbctree.c:538
+msgid "Columned Tree"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcurve.c:85 ../glade/gbwidgets/gbwindow.c:247
+#, fuzzy
+msgid "Type:"
+msgstr "Τύπος:"
+
+#: ../glade/gbwidgets/gbcurve.c:85
+#, fuzzy
+msgid "The type of the curve"
+msgstr "Είδος καμπύλης"
+
+#: ../glade/gbwidgets/gbcurve.c:87 ../glade/gbwidgets/gbgammacurve.c:91
+#, fuzzy
+msgid "X Min:"
+msgstr " λεπτ."
+
+#: ../glade/gbwidgets/gbcurve.c:87 ../glade/gbwidgets/gbgammacurve.c:91
+msgid "The minimum horizontal value"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcurve.c:88 ../glade/gbwidgets/gbgammacurve.c:92
+#, fuzzy
+msgid "X Max:"
+msgstr "Μέγιστο:"
+
+#: ../glade/gbwidgets/gbcurve.c:88 ../glade/gbwidgets/gbgammacurve.c:92
+msgid "The maximum horizontal value"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcurve.c:89 ../glade/gbwidgets/gbgammacurve.c:93
+#, fuzzy
+msgid "Y Min:"
+msgstr " λεπτ."
+
+#: ../glade/gbwidgets/gbcurve.c:89 ../glade/gbwidgets/gbgammacurve.c:93
+msgid "The minimum vertical value"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcurve.c:90 ../glade/gbwidgets/gbgammacurve.c:94
+#, fuzzy
+msgid "Y Max:"
+msgstr "Μέγιστο:"
+
+#: ../glade/gbwidgets/gbcurve.c:90 ../glade/gbwidgets/gbgammacurve.c:94
+msgid "The maximum vertical value"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcurve.c:250
+#, fuzzy
+msgid "Curve"
+msgstr "Καμπύλη"
+
+#: ../glade/gbwidgets/gbcustom.c:154
+msgid "Creation Function:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcustom.c:155
+msgid "The function which creates the widget"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcustom.c:157
+msgid "String1:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcustom.c:158
+msgid "The first string argument to pass to the function"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcustom.c:159
+#, fuzzy
+msgid "String2:"
+msgstr "Αλφαριθμητικό 2"
+
+#: ../glade/gbwidgets/gbcustom.c:160
+msgid "The second string argument to pass to the function"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcustom.c:161
+msgid "Int1:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcustom.c:162
+msgid "The first integer argument to pass to the function"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcustom.c:163
+msgid "Int2:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcustom.c:164
+msgid "The second integer argument to pass to the function"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcustom.c:380
+msgid "Custom Widget"
+msgstr ""
+
+#: ../glade/gbwidgets/gbdialog.c:293
+#, fuzzy
+msgid "New dialog"
+msgstr "Δημιουργία Διαλόγου..."
+
+#: ../glade/gbwidgets/gbdialog.c:305
+#, fuzzy
+msgid "Cancel, OK"
+msgstr ""
+"&Εντάξει\n"
+"&Ακύρωση"
+
+#: ../glade/gbwidgets/gbdialog.c:314 ../glade/glade.c:367
+#: ../glade/glade_project_window.c:1322 ../glade/property.c:5162
+msgid "OK"
+msgstr "Εντάξει"
+
+#: ../glade/gbwidgets/gbdialog.c:323
+msgid "Cancel, Apply, OK"
+msgstr ""
+
+#: ../glade/gbwidgets/gbdialog.c:332
+msgid "Close"
+msgstr "Κλείσιμο"
+
+#: ../glade/gbwidgets/gbdialog.c:341
+msgid "_Standard Button Layout:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbdialog.c:350
+#, fuzzy
+msgid "_Number of Buttons:"
+msgstr "Αριθμός στηλών:"
+
+#: ../glade/gbwidgets/gbdialog.c:367
+#, fuzzy
+msgid "Show Help Button"
+msgstr "Προβολή κουμπιού 'Βοήθεια'"
+
+#: ../glade/gbwidgets/gbdialog.c:398
+#, fuzzy
+msgid "Has Separator:"
+msgstr "Έχει διαχωριστικό"
+
+#: ../glade/gbwidgets/gbdialog.c:399
+msgid "If the dialog has a horizontal separator above the buttons"
+msgstr ""
+
+#: ../glade/gbwidgets/gbdialog.c:606
+msgid "Dialog"
+msgstr "Διάλογος"
+
+#: ../glade/gbwidgets/gbdrawingarea.c:146
+#, fuzzy
+msgid "Drawing Area"
+msgstr "Περιοχή Σχεδίασης"
+
+#: ../glade/gbwidgets/gbentry.c:94 ../glade/gbwidgets/gbtextview.c:115
+#: ../glade/gnome-db/gnomedbeditor.c:62
+#, fuzzy
+msgid "Editable:"
+msgstr "Επεξεργάσιμο"
+
+#: ../glade/gbwidgets/gbentry.c:94 ../glade/gbwidgets/gbtextview.c:116
+#: ../glade/gnome-db/gnomedbeditor.c:62
+msgid "If the text can be edited"
+msgstr ""
+
+#: ../glade/gbwidgets/gbentry.c:95
+msgid "Text Visible:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbentry.c:96
+msgid ""
+"If the text entered by the user will be shown. When turned off, the text "
+"typed in is displayed as asterix characters, which is useful for entering "
+"passwords"
+msgstr ""
+
+#: ../glade/gbwidgets/gbentry.c:97
+msgid "Max Length:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbentry.c:98
+msgid "The maximum length of the text"
+msgstr ""
+
+#: ../glade/gbwidgets/gbentry.c:100 ../glade/gbwidgets/gbprogressbar.c:143
+#: ../glade/gbwidgets/gbtextview.c:124 ../glade/gnome-db/gnomedbeditor.c:64
+#: ../glade/gnome-db/gnomedbgraybar.c:59
+#: ../glade/gnome/gnomedruidpageedge.c:95 ../glade/property.c:926
+msgid "Text:"
+msgstr "Κείμενο:"
+
+#: ../glade/gbwidgets/gbentry.c:102
+msgid "If the entry has a frame around it"
+msgstr ""
+
+#: ../glade/gbwidgets/gbentry.c:103
+#, fuzzy
+msgid "Invisible Char:"
+msgstr "Ορατό:"
+
+#: ../glade/gbwidgets/gbentry.c:103
+msgid ""
+"The character to use if the text should not visible, e.g. when entering "
+"passwords"
+msgstr ""
+
+#: ../glade/gbwidgets/gbentry.c:104
+#, fuzzy
+msgid "Activates Default:"
+msgstr "Ενεργοποίηση προεπιλεγμένου"
+
+#: ../glade/gbwidgets/gbentry.c:104
+msgid "If the default widget in the window is activated when Enter is pressed"
+msgstr ""
+
+#: ../glade/gbwidgets/gbentry.c:105
+#, fuzzy
+msgid "Width In Chars:"
+msgstr "Πλάτος σε χαρακτήρες"
+
+#: ../glade/gbwidgets/gbentry.c:105
+#, fuzzy
+msgid "The number of characters to leave space for in the entry"
+msgstr "Αριθμός χαρακτήρων για την παροχή διαστήματος στην καταχώριση"
+
+#: ../glade/gbwidgets/gbentry.c:318
+msgid "Text Entry"
+msgstr ""
+
+#: ../glade/gbwidgets/gbeventbox.c:65
+#, fuzzy
+msgid "Visible Window:"
+msgstr "Ορατό Παράθυρο"
+
+#: ../glade/gbwidgets/gbeventbox.c:65
+msgid "If the event box uses a visible window"
+msgstr ""
+
+#: ../glade/gbwidgets/gbeventbox.c:66
+#, fuzzy
+msgid "Above Child:"
+msgstr "Πάνω από το θυγατρικό"
+
+#: ../glade/gbwidgets/gbeventbox.c:66
+msgid "If the event box window is above the child widget's window"
+msgstr ""
+
+#: ../glade/gbwidgets/gbeventbox.c:167
+msgid "Event Box"
+msgstr ""
+
+#: ../glade/gbwidgets/gbexpander.c:54
+msgid "Initially Expanded:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbexpander.c:55
+msgid "Whether the expander is initially opened to reveal the child widget"
+msgstr ""
+
+#: ../glade/gbwidgets/gbexpander.c:57 ../glade/gbwidgets/gbhbox.c:175
+#: ../glade/gbwidgets/gbhbuttonbox.c:199 ../glade/gbwidgets/gbvbox.c:160
+#, fuzzy
+msgid "Spacing:"
+msgstr "Απόσταση"
+
+#: ../glade/gbwidgets/gbexpander.c:58
+#, fuzzy
+msgid "Space to put between the label and the child"
+msgstr ""
+"Επιπλέον διάστημα σε εικονοστοιχεία για προσθήκη ανάμεσα στο θυγατρικό και "
+"την ετικέτα"
+
+#: ../glade/gbwidgets/gbexpander.c:105 ../glade/gbwidgets/gbframe.c:225
+#, fuzzy
+msgid "Add Label Widget"
+msgstr "Νέα Ευθυγράμμιση"
+
+#: ../glade/gbwidgets/gbexpander.c:228
+#, fuzzy
+msgid "Expander"
+msgstr "Χειριστής"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:87
+#, fuzzy
+msgid "The window title of the file chooser dialog"
+msgstr "Ο τίτλος του διαλόγου επιλογής γραμματοσειράς"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:88
+#: ../glade/gbwidgets/gbfilechooserwidget.c:86
+#: ../glade/gbwidgets/gbfilechooserdialog.c:158
+#: ../glade/gnome/gnomefileentry.c:109
+msgid "Action:"
+msgstr "Ενέργεια:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:89
+#: ../glade/gbwidgets/gbfilechooserwidget.c:87
+#: ../glade/gbwidgets/gbfilechooserdialog.c:159
+#: ../glade/gnome/gnomefileentry.c:110
+msgid "The type of file operation being performed"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:91
+#: ../glade/gbwidgets/gbfilechooserwidget.c:89
+#: ../glade/gbwidgets/gbfilechooserdialog.c:161
+#, fuzzy
+msgid "Local Only:"
+msgstr "Μόνο τοπικά"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:92
+#: ../glade/gbwidgets/gbfilechooserwidget.c:90
+#: ../glade/gbwidgets/gbfilechooserdialog.c:162
+msgid "Whether the selected files should be limited to local files"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:93
+#: ../glade/gbwidgets/gbfilechooserwidget.c:93
+#: ../glade/gbwidgets/gbfilechooserdialog.c:165
+msgid "Show Hidden:"
+msgstr "Εμφάνιση Κρυμμένων:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:94
+#: ../glade/gbwidgets/gbfilechooserwidget.c:94
+#: ../glade/gbwidgets/gbfilechooserdialog.c:166
+#, fuzzy
+msgid "Whether the hidden files and folders should be displayed"
+msgstr "Αν θα εμφανίζονται τα κρυφά αρχεία και φάκελοι"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:95
+#: ../glade/gbwidgets/gbfilechooserdialog.c:167
+msgid "Confirm:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:96
+#: ../glade/gbwidgets/gbfilechooserdialog.c:168
+msgid ""
+"Whether a confirmation dialog will be displayed if a file will be overwritten"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:97
+#: ../glade/gbwidgets/gblabel.c:201
+#, fuzzy
+msgid "Width in Chars:"
+msgstr "Πλάτος σε χαρακτήρες"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:98
+#, fuzzy
+msgid "The width of the button in characters"
+msgstr "Το πλάτος του πλαισίου γύρω από το δοχείο"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:296
+#, fuzzy
+msgid "File Chooser Button"
+msgstr "επιλογέας-αρχείου"
+
+#: ../glade/gbwidgets/gbfilechooserwidget.c:91
+#: ../glade/gbwidgets/gbfilechooserdialog.c:163
+#, fuzzy
+msgid "Select Multiple:"
+msgstr "Επιλογή πολλαπλών"
+
+#: ../glade/gbwidgets/gbfilechooserwidget.c:92
+#: ../glade/gbwidgets/gbfilechooserdialog.c:164
+#, fuzzy
+msgid "Whether to allow multiple files to be selected"
+msgstr "Αν θα επιτρέπεται η επιλογή πολλαπλών αρχείων"
+
+#: ../glade/gbwidgets/gbfilechooserwidget.c:260
+#, fuzzy
+msgid "File Chooser"
+msgstr "επιλογέας-αρχείου"
+
+#: ../glade/gbwidgets/gbfilechooserdialog.c:435
+msgid "File Chooser Dialog"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfileselection.c:72 ../glade/property.c:1366
+msgid "Select File"
+msgstr "Επιλογή Αρχείου"
+
+#: ../glade/gbwidgets/gbfileselection.c:114
+msgid "File Ops.:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfileselection.c:115
+msgid "If the file operation buttons are shown"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfileselection.c:293
+msgid "File Selection Dialog"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfixed.c:139 ../glade/gbwidgets/gblayout.c:221
+msgid "X:"
+msgstr "Χ:"
+
+#: ../glade/gbwidgets/gbfixed.c:140
+#, fuzzy
+msgid "The X coordinate of the widget in the GtkFixed"
+msgstr "Το όνομα του μαραφετιού"
+
+#: ../glade/gbwidgets/gbfixed.c:142 ../glade/gbwidgets/gblayout.c:224
+msgid "Y:"
+msgstr "Υ:"
+
+#: ../glade/gbwidgets/gbfixed.c:143
+#, fuzzy
+msgid "The Y coordinate of the widget in the GtkFixed"
+msgstr "Το όνομα του μαραφετιού"
+
+#: ../glade/gbwidgets/gbfixed.c:228
+msgid "Fixed Positions"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfontbutton.c:69 ../glade/gnome/gnomefontpicker.c:96
+#, fuzzy
+msgid "The title of the font selection dialog"
+msgstr "Ο τίτλος του διαλόγου επιλογής γραμματοσειράς"
+
+#: ../glade/gbwidgets/gbfontbutton.c:70
+msgid "Show Style:"
+msgstr "Εμφάνιση Στυλ:"
+
+#: ../glade/gbwidgets/gbfontbutton.c:71
+msgid "If the font style is shown as part of the font information"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfontbutton.c:72 ../glade/gnome/gnomefontpicker.c:102
+msgid "Show Size:"
+msgstr "Εμφάνιση Μεγέθους:"
+
+#: ../glade/gbwidgets/gbfontbutton.c:73 ../glade/gnome/gnomefontpicker.c:103
+msgid "If the font size is shown as part of the font information"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfontbutton.c:74 ../glade/gnome/gnomefontpicker.c:104
+msgid "Use Font:"
+msgstr "Χρήση γραμματοσειράς:"
+
+#: ../glade/gbwidgets/gbfontbutton.c:75 ../glade/gnome/gnomefontpicker.c:105
+msgid "If the selected font is used when displaying the font information"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfontbutton.c:76 ../glade/gnome/gnomefontpicker.c:106
+msgid "Use Size:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfontbutton.c:77
+msgid "if the selected font size is used when displaying the font information"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfontbutton.c:97 ../glade/gbwidgets/gbfontbutton.c:133
+#: ../glade/gbwidgets/gbfontbutton.c:191 ../glade/gnome/gnomefontpicker.c:128
+#: ../glade/gnome/gnomefontpicker.c:199 ../glade/gnome/gnomefontpicker.c:301
+msgid "Pick a Font"
+msgstr "Επιλογή Γραμματοσειράς"
+
+#: ../glade/gbwidgets/gbfontbutton.c:268
+msgid "Font Chooser Button"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfontselection.c:64 ../glade/gnome/gnomefontpicker.c:97
+msgid "Preview Text:"
+msgstr "Προεπισκόπηση Κειμένου:"
+
+#: ../glade/gbwidgets/gbfontselection.c:64
+msgid "The preview text to display"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfontselection.c:170
+msgid "Font Selection"
+msgstr "Επιλογή Γραμματοσειράς"
+
+#: ../glade/gbwidgets/gbfontselectiondialog.c:70
+#, fuzzy
+msgid "Select Font"
+msgstr "Επιλογή γραμματοσειράς"
+
+#: ../glade/gbwidgets/gbfontselectiondialog.c:301
+msgid "Font Selection Dialog"
+msgstr ""
+
+#: ../glade/gbwidgets/gbframe.c:360
+msgid "Frame"
+msgstr "Πλαίσιο"
+
+#: ../glade/gbwidgets/gbgammacurve.c:88
+msgid "Initial Type:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbgammacurve.c:88
+msgid "The initial type of the curve"
+msgstr ""
+
+#: ../glade/gbwidgets/gbgammacurve.c:256
+msgid "Gamma Curve"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhandlebox.c:110
+msgid "The type of shadow around the handle box"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhandlebox.c:113
+msgid "Handle Pos:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhandlebox.c:114
+#, fuzzy
+msgid "The position of the handle"
+msgstr "Θέση χειριστή"
+
+#: ../glade/gbwidgets/gbhandlebox.c:116
+#, fuzzy
+msgid "Snap Edge:"
+msgstr "Snap edge"
+
+#: ../glade/gbwidgets/gbhandlebox.c:117
+msgid "The edge of the handle box which snaps into position"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhandlebox.c:304
+msgid "Handle Box"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhbox.c:99
+msgid "New horizontal box"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhbox.c:171 ../glade/gbwidgets/gbhbuttonbox.c:194
+#: ../glade/gbwidgets/gbtoolbar.c:267 ../glade/gbwidgets/gbvbox.c:156
+msgid "Size:"
+msgstr "Μέγεθος:"
+
+#: ../glade/gbwidgets/gbhbox.c:171 ../glade/gbwidgets/gbvbox.c:156
+msgid "The number of widgets in the box"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhbox.c:173 ../glade/gbwidgets/gbtable.c:243
+#: ../glade/gbwidgets/gbtoolbar.c:426 ../glade/gbwidgets/gbvbox.c:158
+#, fuzzy
+msgid "Homogeneous:"
+msgstr "Ομογενοποίηση"
+
+#: ../glade/gbwidgets/gbhbox.c:174 ../glade/gbwidgets/gbvbox.c:159
+msgid "If the children should be the same size"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhbox.c:175 ../glade/gbwidgets/gbvbox.c:160
+msgid "The space between each child"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhbox.c:312
+msgid "Can't delete any children."
+msgstr ""
+
+#: ../glade/gbwidgets/gbhbox.c:327 ../glade/gbwidgets/gbhpaned.c:73
+#: ../glade/gbwidgets/gbhruler.c:89 ../glade/gbwidgets/gbnotebook.c:669
+#: ../glade/gbwidgets/gbvpaned.c:69 ../glade/gbwidgets/gbvruler.c:89
+#: ../glade/gbwidgets/gbwindow.c:256
+msgid "Position:"
+msgstr "Θέση:"
+
+#: ../glade/gbwidgets/gbhbox.c:328
+msgid "The widget's position relative to its siblings"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhbox.c:330
+#, fuzzy
+msgid "Padding:"
+msgstr "Συμπλήρωση"
+
+#: ../glade/gbwidgets/gbhbox.c:331
+msgid "The widget's padding"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhbox.c:333 ../glade/gbwidgets/gbnotebook.c:672
+#: ../glade/gbwidgets/gbpreview.c:65 ../glade/gbwidgets/gbtoolbar.c:424
+#, fuzzy
+msgid "Expand:"
+msgstr "Ανάπτυξη"
+
+#: ../glade/gbwidgets/gbhbox.c:334 ../glade/gbwidgets/gbtoolbar.c:425
+msgid "Set True to let the widget expand"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhbox.c:335 ../glade/gbwidgets/gbnotebook.c:674
+#, fuzzy
+msgid "Fill:"
+msgstr "Γέμισμα"
+
+#: ../glade/gbwidgets/gbhbox.c:336
+msgid "Set True to let the widget fill its allocated area"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhbox.c:337 ../glade/gbwidgets/gbnotebook.c:676
+msgid "Pack Start:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhbox.c:338
+msgid "Set True to pack the widget at the start of the box"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhbox.c:455
+#, fuzzy
+msgid "Insert Before"
+msgstr "Εισαγωγή πριν από"
+
+#: ../glade/gbwidgets/gbhbox.c:461
+msgid "Insert After"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhbox.c:571
+msgid "Horizontal Box"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:120
+msgid "New horizontal button box"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:194
+msgid "The number of buttons"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:196
+#, fuzzy
+msgid "Layout:"
+msgstr "Διάταξη"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:197
+msgid "The layout style of the buttons"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:199
+msgid "The space between the buttons"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:414
+msgid "Horizontal Button Box"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhpaned.c:74 ../glade/gbwidgets/gbvpaned.c:70
+msgid "The position of the divider"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhpaned.c:186 ../glade/gbwidgets/gbwindow.c:285
+#, fuzzy
+msgid "Shrink:"
+msgstr "Σμίκρυνση"
+
+#: ../glade/gbwidgets/gbhpaned.c:187
+msgid "Set True to let the widget shrink"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhpaned.c:188
+#, fuzzy
+msgid "Resize:"
+msgstr "Αλλαγή Μεγέθους:"
+
+#: ../glade/gbwidgets/gbhpaned.c:189
+msgid "Set True to let the widget resize"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhpaned.c:315
+msgid "Horizontal Panes"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhruler.c:82 ../glade/gbwidgets/gbvruler.c:82
+msgid "Metric:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhruler.c:83 ../glade/gbwidgets/gbvruler.c:83
+msgid "The units of the ruler"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhruler.c:85 ../glade/gbwidgets/gbvruler.c:85
+msgid "Lower Value:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhruler.c:86 ../glade/gbwidgets/gbvruler.c:86
+#: ../glade/gbwidgets/gbvruler.c:88
+msgid "The low value of the ruler"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhruler.c:87 ../glade/gbwidgets/gbvruler.c:87
+msgid "Upper Value:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhruler.c:88
+msgid "The high value of the ruler"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhruler.c:90 ../glade/gbwidgets/gbvruler.c:90
+msgid "The current position on the ruler"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhruler.c:91 ../glade/gbwidgets/gbvruler.c:91
+#: ../glade/property.c:4833
+msgid "Max:"
+msgstr "Μέγιστο:"
+
+#: ../glade/gbwidgets/gbhruler.c:92 ../glade/gbwidgets/gbvruler.c:92
+msgid "The maximum value of the ruler"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhruler.c:247
+msgid "Horizontal Ruler"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhscale.c:107 ../glade/gbwidgets/gbvscale.c:108
+msgid "Show Value:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhscale.c:107 ../glade/gbwidgets/gbvscale.c:108
+msgid "If the scale's value is shown"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhscale.c:108 ../glade/gbwidgets/gbspinbutton.c:93
+#: ../glade/gbwidgets/gbvscale.c:109
+msgid "Digits:"
+msgstr "Ψηφία:"
+
+#: ../glade/gbwidgets/gbhscale.c:108 ../glade/gbwidgets/gbvscale.c:109
+msgid "The number of digits to show"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhscale.c:110 ../glade/gbwidgets/gbvscale.c:111
+msgid "Value Pos:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhscale.c:111 ../glade/gbwidgets/gbvscale.c:112
+#, fuzzy
+msgid "The position of the value"
+msgstr "Θέση τιμής"
+
+#: ../glade/gbwidgets/gbhscale.c:113 ../glade/gbwidgets/gbhscrollbar.c:87
+#: ../glade/gbwidgets/gbvscale.c:114 ../glade/gbwidgets/gbvscrollbar.c:87
+msgid "Policy:"
+msgstr "Πολιτική:"
+
+#: ../glade/gbwidgets/gbhscale.c:114 ../glade/gbwidgets/gbvscale.c:115
+msgid "The update policy of the scale"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhscale.c:116 ../glade/gbwidgets/gbhscrollbar.c:90
+#: ../glade/gbwidgets/gbvscale.c:117 ../glade/gbwidgets/gbvscrollbar.c:90
+#, fuzzy
+msgid "Inverted:"
+msgstr "Αντεστραμμένη"
+
+#: ../glade/gbwidgets/gbhscale.c:116 ../glade/gbwidgets/gbhscrollbar.c:90
+#: ../glade/gbwidgets/gbvscale.c:117 ../glade/gbwidgets/gbvscrollbar.c:90
+msgid "If the range values are inverted"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhscale.c:319
+#, fuzzy
+msgid "Horizontal Scale"
+msgstr "Οριζόντια κλίμακα"
+
+#: ../glade/gbwidgets/gbhscrollbar.c:88 ../glade/gbwidgets/gbvscrollbar.c:88
+msgid "The update policy of the scrollbar"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhscrollbar.c:237
+msgid "Horizontal Scrollbar"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhseparator.c:144
+msgid "Horizonal Separator"
+msgstr ""
+
+#: ../glade/gbwidgets/gbiconview.c:107
+#, fuzzy, c-format
+msgid "Icon %i"
+msgstr "Λίστα Εικονιδίων"
+
+#: ../glade/gbwidgets/gbiconview.c:129
+#, fuzzy
+msgid "The selection mode of the icon view"
+msgstr "Λειτουργία Επιλογής"
+
+#: ../glade/gbwidgets/gbiconview.c:131 ../glade/gbwidgets/gbprogressbar.c:134
+#: ../glade/gbwidgets/gbtoolbar.c:270 ../glade/gnome/bonobodockitem.c:179
+#, fuzzy
+msgid "Orientation:"
+msgstr "Προσανατολισμός:"
+
+#: ../glade/gbwidgets/gbiconview.c:132
+#, fuzzy
+msgid "The orientation of the icons"
+msgstr "Η αρχική θέση του παραθύρου"
+
+#: ../glade/gbwidgets/gbiconview.c:134 ../glade/gbwidgets/gbtreeview.c:118
+#, fuzzy
+msgid "Reorderable:"
+msgstr "Δυνατότητα αναταξινόμησης"
+
+#: ../glade/gbwidgets/gbiconview.c:135
+msgid "If the view can be reordered using Drag and Drop"
+msgstr ""
+
+#: ../glade/gbwidgets/gbiconview.c:308
+#, fuzzy
+msgid "Icon View"
+msgstr "Μέγεθος εικονιδίου"
+
+#: ../glade/gbwidgets/gbimage.c:110 ../glade/gbwidgets/gbwindow.c:301
+#, fuzzy
+msgid "Named Icon:"
+msgstr "Εικονίδιο:"
+
+#: ../glade/gbwidgets/gbimage.c:111 ../glade/gbwidgets/gbwindow.c:302
+#, fuzzy
+msgid "The named icon to use"
+msgstr "Το όνομα του μαραφετιού"
+
+#: ../glade/gbwidgets/gbimage.c:112
+#, fuzzy
+msgid "Icon Size:"
+msgstr "Μέγεθος εικονιδίου"
+
+#: ../glade/gbwidgets/gbimage.c:113
+msgid "The stock icon size"
+msgstr ""
+
+#: ../glade/gbwidgets/gbimage.c:115
+#, fuzzy
+msgid "Pixel Size:"
+msgstr "Μέγεθος Σελίδας:"
+
+#: ../glade/gbwidgets/gbimage.c:116
+msgid ""
+"The size of the named icon in pixels, or -1 to use the Icon Size property"
+msgstr ""
+
+#: ../glade/gbwidgets/gbimage.c:120
+#, fuzzy
+msgid "The horizontal alignment"
+msgstr "Οριζόντια στοίχιση"
+
+#: ../glade/gbwidgets/gbimage.c:123
+#, fuzzy
+msgid "The vertical alignment"
+msgstr "Κατακόρυφη Στοίχιση"
+
+#: ../glade/gbwidgets/gbimage.c:648
+msgid "Image"
+msgstr "Εικόνα"
+
+#: ../glade/gbwidgets/gbimagemenuitem.c:255
+#: ../glade/gbwidgets/gbmenuitem.c:228
+msgid "Invalid stock menu item"
+msgstr ""
+
+#: ../glade/gbwidgets/gbimagemenuitem.c:471
+msgid "Menu item with a pixmap"
+msgstr ""
+
+#: ../glade/gbwidgets/gbinputdialog.c:257
+msgid "Input Dialog"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:170
+#, fuzzy
+msgid "Use Underline:"
+msgstr "Χρήση υπογράμμισης"
+
+#: ../glade/gbwidgets/gblabel.c:171
+msgid "If the text includes an underlined access key"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:172
+#, fuzzy
+msgid "Use Markup:"
+msgstr "Χρήση markup"
+
+#: ../glade/gbwidgets/gblabel.c:173
+msgid "If the text includes pango markup"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:174
+msgid "Justify:"
+msgstr "Στοίχιση:"
+
+#: ../glade/gbwidgets/gblabel.c:175
+msgid "The justification of the lines of the label"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:177
+msgid "Wrap Text:"
+msgstr "Αναδίπλωση Κειμένου:"
+
+#: ../glade/gbwidgets/gblabel.c:178
+msgid "If the text is wrapped to fit within the width of the label"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:179
+#, fuzzy
+msgid "Selectable:"
+msgstr "Δυνατότητα επιλογής"
+
+#: ../glade/gbwidgets/gblabel.c:180
+msgid "If the label text can be selected with the mouse"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:182
+msgid "The horizontal alignment of the entire label"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:185
+msgid "The vertical alignment of the entire label"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:191
+msgid "Focus Target:"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:192
+msgid ""
+"The widget to set the keyboard focus to when the underlined access key is "
+"used"
+msgstr ""
+
+#. gtk_combo_set_value_in_list (GTK_COMBO (combo), TRUE, TRUE);
+#: ../glade/gbwidgets/gblabel.c:198 ../glade/gbwidgets/gbprogressbar.c:146
+msgid "Ellipsize:"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:199 ../glade/gbwidgets/gbprogressbar.c:147
+msgid "How to ellipsize the string"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:202
+#, fuzzy
+msgid "The width of the label in characters"
+msgstr "Το πλάτος του πλαισίου γύρω από το δοχείο"
+
+#: ../glade/gbwidgets/gblabel.c:204
+#, fuzzy
+msgid "Single Line Mode:"
+msgstr "Επιλογή κατάστασης"
+
+#: ../glade/gbwidgets/gblabel.c:205
+msgid "If the label is only given enough height for a single line"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:206
+msgid "Angle:"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:207
+#, fuzzy
+msgid "The angle of the label text"
+msgstr "Αναδίπλωση κειμένου"
+
+#: ../glade/gbwidgets/gblabel.c:333 ../glade/gbwidgets/gblabel.c:348
+#: ../glade/gbwidgets/gblabel.c:616
+#, fuzzy
+msgid "Auto"
+msgstr "Αυτόματο"
+
+#: ../glade/gbwidgets/gblabel.c:872 ../glade/glade_menu_editor.c:411
+msgid "Label"
+msgstr "Ετικέτα"
+
+#: ../glade/gbwidgets/gblayout.c:96
+msgid "Area Width:"
+msgstr ""
+
+#: ../glade/gbwidgets/gblayout.c:97
+msgid "The width of the layout area"
+msgstr ""
+
+#: ../glade/gbwidgets/gblayout.c:99
+msgid "Area Height:"
+msgstr ""
+
+#: ../glade/gbwidgets/gblayout.c:100
+msgid "The height of the layout area"
+msgstr ""
+
+#: ../glade/gbwidgets/gblayout.c:222
+#, fuzzy
+msgid "The X coordinate of the widget in the GtkLayout"
+msgstr "Το όνομα του μαραφετιού"
+
+#: ../glade/gbwidgets/gblayout.c:225
+#, fuzzy
+msgid "The Y coordinate of the widget in the GtkLayout"
+msgstr "Το όνομα του μαραφετιού"
+
+#: ../glade/gbwidgets/gblayout.c:380
+msgid "Layout"
+msgstr "Διάταξη"
+
+#: ../glade/gbwidgets/gblist.c:78
+msgid "The selection mode of the list"
+msgstr ""
+
+#: ../glade/gbwidgets/gblist.c:192
+msgid "List"
+msgstr "Λίστα"
+
+#: ../glade/gbwidgets/gblistitem.c:171
+#, fuzzy
+msgid "List Item"
+msgstr "αντικείμενο-λίστας"
+
+#: ../glade/gbwidgets/gbmenu.c:198
+#, fuzzy
+msgid "Popup Menu"
+msgstr "Αναδυόμενο μενού"
+
+#  FIXME: I'm not sure if we should translate the non-stock labels or not.
+#. FIXME: I'm not sure if we should translate the non-stock labels or not.
+#: ../glade/gbwidgets/gbmenubar.c:215
+msgid "_File"
+msgstr "_Αρχείο"
+
+#  Create Edit menu
+#. Create Edit menu
+#: ../glade/gbwidgets/gbmenubar.c:223 ../glade/glade_project_window.c:692
+msgid "_Edit"
+msgstr "_Επεξεργασία"
+
+#  Create View menu
+#. Create View menu
+#: ../glade/gbwidgets/gbmenubar.c:229 ../glade/glade_project_window.c:721
+msgid "_View"
+msgstr "_Προβολή"
+
+#  Create Help menu
+#. Create Help menu
+#: ../glade/gbwidgets/gbmenubar.c:231 ../glade/glade_project_window.c:834
+msgid "_Help"
+msgstr "_Βοήθεια"
+
+#: ../glade/gbwidgets/gbmenubar.c:232
+msgid "_About"
+msgstr "_Περί"
+
+#: ../glade/gbwidgets/gbmenubar.c:291
+#, fuzzy
+msgid "Pack Direction:"
+msgstr "Κατεύθυνση:"
+
+#: ../glade/gbwidgets/gbmenubar.c:292
+#, fuzzy
+msgid "The pack direction of the menubar"
+msgstr "Διεύθυνση βέλους"
+
+#: ../glade/gbwidgets/gbmenubar.c:294
+#, fuzzy
+msgid "Child Direction:"
+msgstr "Κατεύθυνση:"
+
+#: ../glade/gbwidgets/gbmenubar.c:295
+#, fuzzy
+msgid "The child pack direction of the menubar"
+msgstr "Διεύθυνση βέλους"
+
+#: ../glade/gbwidgets/gbmenubar.c:300 ../glade/gbwidgets/gbmenubar.c:418
+#: ../glade/gbwidgets/gboptionmenu.c:139
+msgid "Edit Menus..."
+msgstr ""
+
+#: ../glade/gbwidgets/gbmenubar.c:541
+#, fuzzy
+msgid "Menu Bar"
+msgstr "Εργαλειοθήκη Μενού"
+
+#: ../glade/gbwidgets/gbmenuitem.c:379
+#, fuzzy
+msgid "Menu Item"
+msgstr "αντικείμενο-μενού"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:92
+#: ../glade/gbwidgets/gbradiotoolbutton.c:150
+#: ../glade/gbwidgets/gbseparatortoolitem.c:67
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:99
+#: ../glade/gbwidgets/gbtoolbutton.c:111 ../glade/gbwidgets/gbtoolitem.c:65
+#, fuzzy
+msgid "Show Horizontal:"
+msgstr "Εμφάνιση Τίτλων:"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:93
+#: ../glade/gbwidgets/gbradiotoolbutton.c:151
+#: ../glade/gbwidgets/gbseparatortoolitem.c:68
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:100
+#: ../glade/gbwidgets/gbtoolbutton.c:112 ../glade/gbwidgets/gbtoolitem.c:66
+msgid "If the item is visible when the toolbar is horizontal"
+msgstr ""
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:94
+#: ../glade/gbwidgets/gbradiotoolbutton.c:152
+#: ../glade/gbwidgets/gbseparatortoolitem.c:69
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:101
+#: ../glade/gbwidgets/gbtoolbutton.c:113 ../glade/gbwidgets/gbtoolitem.c:67
+#, fuzzy
+msgid "Show Vertical:"
+msgstr "Εμφάνιση Τίτλων:"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:95
+#: ../glade/gbwidgets/gbradiotoolbutton.c:153
+#: ../glade/gbwidgets/gbseparatortoolitem.c:70
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:102
+#: ../glade/gbwidgets/gbtoolbutton.c:114 ../glade/gbwidgets/gbtoolitem.c:68
+msgid "If the item is visible when the toolbar is vertical"
+msgstr ""
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:96
+#: ../glade/gbwidgets/gbradiotoolbutton.c:154
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:103
+#: ../glade/gbwidgets/gbtoolbutton.c:115 ../glade/gbwidgets/gbtoolitem.c:69
+#, fuzzy
+msgid "Is Important:"
+msgstr "Είναι σημαντικό"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:97
+#: ../glade/gbwidgets/gbradiotoolbutton.c:155
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:104
+#: ../glade/gbwidgets/gbtoolbutton.c:116 ../glade/gbwidgets/gbtoolitem.c:70
+msgid ""
+"If the item's text should be shown when the toolbar's mode is "
+"GTK_TOOLBAR_BOTH_HORIZ"
+msgstr ""
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:255
+msgid "Toolbar Button with Menu"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:191
+msgid "New notebook"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:202 ../glade/gnome/gnomepropertybox.c:125
+msgid "Number of pages:"
+msgstr "Αριθμός σελίδων:"
+
+#: ../glade/gbwidgets/gbnotebook.c:274
+#, fuzzy
+msgid "Show Tabs:"
+msgstr "Προβολή Στηλοθετών"
+
+#: ../glade/gbwidgets/gbnotebook.c:274
+msgid "If the notebook tabs are shown"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:275
+#, fuzzy
+msgid "Show Border:"
+msgstr "Προβολή Περιγράμματος"
+
+#: ../glade/gbwidgets/gbnotebook.c:276
+msgid "If the notebook border is shown, when the tabs are not shown"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:277
+msgid "Tab Pos:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:278
+msgid "The position of the notebook tabs"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:280
+#, fuzzy
+msgid "Scrollable:"
+msgstr "Με δυνατότητα κύλισης"
+
+#: ../glade/gbwidgets/gbnotebook.c:281
+msgid "If the notebook tabs are scrollable"
+msgstr ""
+
+#. These seem to be deprecated.
+#: ../glade/gbwidgets/gbnotebook.c:284
+msgid "Tab Horz. Border:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:285
+msgid "The size of the notebook tabs' horizontal border"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:287
+msgid "Tab Vert. Border:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:288
+msgid "The size of the notebook tabs' vertical border"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:291
+msgid "Show Popup:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:291
+msgid "If the popup menu is enabled"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:292 ../glade/gnome/gnomedruid.c:102
+msgid "Number of Pages:"
+msgstr "Αριθμός σελίδων:"
+
+#: ../glade/gbwidgets/gbnotebook.c:293
+msgid "The number of notebook pages"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:540
+msgid "Previous Page"
+msgstr "Προηγούμενη Σελίδα"
+
+#: ../glade/gbwidgets/gbnotebook.c:548
+msgid "Next Page"
+msgstr "Επόμενη Σελίδα"
+
+#: ../glade/gbwidgets/gbnotebook.c:556
+msgid "Delete Page"
+msgstr "Διαγραφή σελίδας"
+
+#: ../glade/gbwidgets/gbnotebook.c:562
+msgid "Switch Next"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:570
+msgid "Switch Previous"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:578 ../glade/gnome/gnomedruid.c:298
+msgid "Insert Page After"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:586 ../glade/gnome/gnomedruid.c:285
+msgid "Insert Page Before"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:670
+msgid "The page's position in the list of pages"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:673
+msgid "Set True to let the tab expand"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:675
+msgid "Set True to let the tab fill its allocated area"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:677
+msgid "Set True to pack the tab at the start of the notebook"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:678
+msgid "Menu Label:"
+msgstr "Ετικέτα Μενού:"
+
+#: ../glade/gbwidgets/gbnotebook.c:679
+msgid "The text to display in the popup menu"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:937
+#, fuzzy
+msgid "Notebook"
+msgstr "Φορητός Υπολογιστής"
+
+#: ../glade/gbwidgets/gboptionmenu.c:230
+#, c-format
+msgid "Cannot add a %s to a GtkOptionMenu."
+msgstr ""
+
+#: ../glade/gbwidgets/gboptionmenu.c:270
+msgid "Option Menu"
+msgstr ""
+
+#: ../glade/gbwidgets/gbpreview.c:63
+msgid "Color:"
+msgstr "Χρώμα:"
+
+#: ../glade/gbwidgets/gbpreview.c:64
+msgid "If the preview is color or grayscale"
+msgstr ""
+
+#: ../glade/gbwidgets/gbpreview.c:66
+msgid "If the preview expands to fill its allocated area"
+msgstr ""
+
+#: ../glade/gbwidgets/gbpreview.c:162
+msgid "Preview"
+msgstr "Προεπισκόπιση"
+
+#: ../glade/gbwidgets/gbprogressbar.c:135
+msgid "The orientation of the progress bar's contents"
+msgstr ""
+
+#: ../glade/gbwidgets/gbprogressbar.c:137
+#, fuzzy
+msgid "Fraction:"
+msgstr "Κλάσμα"
+
+#: ../glade/gbwidgets/gbprogressbar.c:138
+msgid "The fraction of work that has been completed"
+msgstr ""
+
+#: ../glade/gbwidgets/gbprogressbar.c:140
+#, fuzzy
+msgid "Pulse Step:"
+msgstr "Παλμικό Bήμα"
+
+#: ../glade/gbwidgets/gbprogressbar.c:141
+msgid ""
+"The fraction of the progress bar length to move the bouncing block when "
+"pulsed"
+msgstr ""
+
+#: ../glade/gbwidgets/gbprogressbar.c:144
+msgid "The text to display over the progress bar"
+msgstr ""
+
+#  ShowText is implicit now, if the Text property is set to anything.
+#. ShowText is implicit now, if the Text property is set to anything.
+#: ../glade/gbwidgets/gbprogressbar.c:152
+#, fuzzy
+msgid "Show Text:"
+msgstr "Προβολή κειμένου"
+
+#: ../glade/gbwidgets/gbprogressbar.c:153
+msgid "If the text should be shown in the progress bar"
+msgstr ""
+
+#. ActivityMode is deprecated and implicit now. The app just calls
+#. gtk_progress_bar_pulse() and it automatically goes into activity mode.
+#: ../glade/gbwidgets/gbprogressbar.c:157
+#, fuzzy
+msgid "Activity Mode:"
+msgstr "Κατάσταση δραστηριότητας"
+
+#: ../glade/gbwidgets/gbprogressbar.c:158
+msgid "If the progress bar should act like the front of Kit's car"
+msgstr ""
+
+#: ../glade/gbwidgets/gbprogressbar.c:163
+#, fuzzy
+msgid "The horizontal alignment of the text"
+msgstr "Οριζόντια στοίχιση κειμένου"
+
+#: ../glade/gbwidgets/gbprogressbar.c:166
+#, fuzzy
+msgid "The vertical alignment of the text"
+msgstr "Κάθετη στοίχιση κειμένου"
+
+#: ../glade/gbwidgets/gbprogressbar.c:421
+msgid "Progress Bar"
+msgstr "Ράβδος Προόδου"
+
+#: ../glade/gbwidgets/gbradiobutton.c:138
+#: ../glade/gbwidgets/gbradiotoolbutton.c:148
+msgid "If the radio button is initially on"
+msgstr ""
+
+#: ../glade/gbwidgets/gbradiobutton.c:143
+#: ../glade/gbwidgets/gbradiomenuitem.c:106
+#: ../glade/gbwidgets/gbradiotoolbutton.c:141
+#: ../glade/glade_menu_editor.c:1039
+msgid "Group:"
+msgstr "Ομάδα"
+
+#: ../glade/gbwidgets/gbradiobutton.c:144
+msgid ""
+"The radio button group (the default is all radio buttons with the same "
+"parent)"
+msgstr ""
+
+#: ../glade/gbwidgets/gbradiobutton.c:189
+#: ../glade/gbwidgets/gbradiobutton.c:350
+#: ../glade/gbwidgets/gbradiotoolbutton.c:233
+#: ../glade/gbwidgets/gbradiotoolbutton.c:322
+msgid "New Group"
+msgstr "Νέα Ομάδα"
+
+#: ../glade/gbwidgets/gbradiobutton.c:465
+msgid "Radio Button"
+msgstr "Ραδιοπλήκτρο"
+
+#: ../glade/gbwidgets/gbradiomenuitem.c:105
+msgid "If the radio menu item is initially on"
+msgstr ""
+
+#: ../glade/gbwidgets/gbradiomenuitem.c:107
+msgid ""
+"The radio menu item group (the default is all radio menu items with the same "
+"parent)"
+msgstr ""
+
+#: ../glade/gbwidgets/gbradiomenuitem.c:388
+#, fuzzy
+msgid "Radio Menu Item"
+msgstr "αντικείμενο-μενού-radio"
+
+#: ../glade/gbwidgets/gbradiotoolbutton.c:142
+msgid ""
+"The radio tool button group (the default is all radio tool buttons in the "
+"toolbar)"
+msgstr ""
+
+#: ../glade/gbwidgets/gbradiotoolbutton.c:530
+msgid "Toolbar Radio Button"
+msgstr ""
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:131
+#, fuzzy
+msgid "H Policy:"
+msgstr "Πολιτική"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:132
+msgid "When the horizontal scrollbar will be shown"
+msgstr ""
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:134
+#, fuzzy
+msgid "V Policy:"
+msgstr "Πολιτική"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:135
+msgid "When the vertical scrollbar will be shown"
+msgstr ""
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:137
+msgid "Window Pos:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:138
+msgid "Where the child window is located with respect to the scrollbars"
+msgstr ""
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:140
+msgid "Shadow Type:"
+msgstr "Τύπος Σκίασης:"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:141
+msgid "The update policy of the vertical scrollbar"
+msgstr ""
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:353
+msgid "Scrolled Window"
+msgstr ""
+
+#: ../glade/gbwidgets/gbseparatormenuitem.c:153
+msgid "Separator for Menus"
+msgstr ""
+
+#: ../glade/gbwidgets/gbseparatortoolitem.c:65
+#, fuzzy
+msgid "Draw:"
+msgstr "_οΏ½οΏ½οΏ½οΏ½οΏ½οΏ½οΏ½οΏ½"
+
+#: ../glade/gbwidgets/gbseparatortoolitem.c:66
+msgid "If the separator is drawn, or just blank"
+msgstr ""
+
+#: ../glade/gbwidgets/gbseparatortoolitem.c:204
+#, fuzzy
+msgid "Toolbar Separator Item"
+msgstr "διαχωριστής"
+
+#: ../glade/gbwidgets/gbspinbutton.c:91
+#, fuzzy
+msgid "Climb Rate:"
+msgstr "Ρυθμός Αναρρίχησης"
+
+#: ../glade/gbwidgets/gbspinbutton.c:92
+msgid ""
+"The climb rate of the spinbutton, used in conjunction with the Page Increment"
+msgstr ""
+
+#: ../glade/gbwidgets/gbspinbutton.c:94
+msgid "The number of decimal digits to show"
+msgstr ""
+
+#: ../glade/gbwidgets/gbspinbutton.c:96
+#, fuzzy
+msgid "Numeric:"
+msgstr "Αριθμητικός"
+
+#: ../glade/gbwidgets/gbspinbutton.c:97
+msgid "If only numeric entry is allowed"
+msgstr ""
+
+#: ../glade/gbwidgets/gbspinbutton.c:98
+#, fuzzy
+msgid "Update Policy:"
+msgstr "Πολιτική ενημέρωσης"
+
+#: ../glade/gbwidgets/gbspinbutton.c:99
+msgid "When value_changed signals are emitted"
+msgstr ""
+
+#: ../glade/gbwidgets/gbspinbutton.c:101
+#, fuzzy
+msgid "Snap:"
+msgstr "?"
+
+#: ../glade/gbwidgets/gbspinbutton.c:102
+msgid "If the value is snapped to multiples of the step increment"
+msgstr ""
+
+#: ../glade/gbwidgets/gbspinbutton.c:103
+#, fuzzy
+msgid "Wrap:"
+msgstr "Αλλα_γή σειράς"
+
+#: ../glade/gbwidgets/gbspinbutton.c:104
+msgid "If the value is wrapped at the limits"
+msgstr ""
+
+#: ../glade/gbwidgets/gbspinbutton.c:284
+#, fuzzy
+msgid "Spin Button"
+msgstr "κουμπί-στροβιλισμού (spin)"
+
+#: ../glade/gbwidgets/gbstatusbar.c:64
+msgid "Resize Grip:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbstatusbar.c:64
+msgid "If the status bar has a resize grip to resize the window"
+msgstr ""
+
+#: ../glade/gbwidgets/gbstatusbar.c:156
+msgid "Status Bar"
+msgstr "Γραμμή Κατάστασης"
+
+#: ../glade/gbwidgets/gbtable.c:137
+msgid "New table"
+msgstr "Νέος πίνακας"
+
+#: ../glade/gbwidgets/gbtable.c:149 ../glade/gbwidgets/gbvbox.c:95
+#: ../glade/gbwidgets/gbvbuttonbox.c:123
+#, fuzzy
+msgid "Number of rows:"
+msgstr "Αριθμός σειρών:"
+
+#: ../glade/gbwidgets/gbtable.c:237
+msgid "Rows:"
+msgstr "Γραμμές:"
+
+#: ../glade/gbwidgets/gbtable.c:238
+msgid "The number of rows in the table"
+msgstr "Ο αριθμός των γραμμών στον πίνακα"
+
+#: ../glade/gbwidgets/gbtable.c:240
+msgid "Columns:"
+msgstr "Στήλες:"
+
+#: ../glade/gbwidgets/gbtable.c:241
+#, fuzzy
+msgid "The number of columns in the table"
+msgstr "Ο αριθμός των στηλών στον πίνακα"
+
+#: ../glade/gbwidgets/gbtable.c:244
+msgid "If the children should all be the same size"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:245 ../glade/gnome/gnomeiconlist.c:180
+#, fuzzy
+msgid "Row Spacing:"
+msgstr "Διάστημα γραμμών"
+
+#: ../glade/gbwidgets/gbtable.c:246
+msgid "The space between each row"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:248 ../glade/gnome/gnomeiconlist.c:183
+msgid "Col Spacing:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:249
+msgid "The space between each column"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:368
+msgid "Cell X:"
+msgstr "Κελί Χ:"
+
+#: ../glade/gbwidgets/gbtable.c:369
+msgid "The left edge of the widget in the table"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:371
+msgid "Cell Y:"
+msgstr "Κελί Υ:"
+
+#: ../glade/gbwidgets/gbtable.c:372
+msgid "The top edge of the widget in the table"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:375
+msgid "Col Span:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:376
+msgid "The number of columns spanned by the widget in the table"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:378
+#, fuzzy
+msgid "Row Span:"
+msgstr "Κάλυψη Γραμμής"
+
+#: ../glade/gbwidgets/gbtable.c:379
+msgid "The number of rows spanned by the widget in the table"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:381
+#, fuzzy
+msgid "H Padding:"
+msgstr "Συμπλήρωση"
+
+#: ../glade/gbwidgets/gbtable.c:384
+#, fuzzy
+msgid "V Padding:"
+msgstr "Συμπλήρωση"
+
+#: ../glade/gbwidgets/gbtable.c:387
+#, fuzzy
+msgid "X Expand:"
+msgstr "Ανάπτυξη"
+
+#: ../glade/gbwidgets/gbtable.c:388
+msgid "Set True to let the widget expand horizontally"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:389
+#, fuzzy
+msgid "Y Expand:"
+msgstr "Ανάπτυξη"
+
+#: ../glade/gbwidgets/gbtable.c:390
+msgid "Set True to let the widget expand vertically"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:391
+#, fuzzy
+msgid "X Shrink:"
+msgstr "Σμίκρυνση"
+
+#: ../glade/gbwidgets/gbtable.c:392
+msgid "Set True to let the widget shrink horizontally"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:393
+#, fuzzy
+msgid "Y Shrink:"
+msgstr "Σμίκρυνση"
+
+#: ../glade/gbwidgets/gbtable.c:394
+msgid "Set True to let the widget shrink vertically"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:395
+#, fuzzy
+msgid "X Fill:"
+msgstr "Γέμισμα"
+
+#: ../glade/gbwidgets/gbtable.c:396
+msgid "Set True to let the widget fill its horizontal allocated area"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:397
+#, fuzzy
+msgid "Y Fill:"
+msgstr "Γέμισμα"
+
+#: ../glade/gbwidgets/gbtable.c:398
+msgid "Set True to let the widget fill its vertical allocated area"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:667
+msgid "Insert Row Before"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:674
+msgid "Insert Row After"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:681
+msgid "Insert Column Before"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:688
+msgid "Insert Column After"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:695
+msgid "Delete Row"
+msgstr "Διαγραφή Γραμμής"
+
+#: ../glade/gbwidgets/gbtable.c:701
+msgid "Delete Column"
+msgstr "Διαγραφή Στήλης"
+
+#: ../glade/gbwidgets/gbtable.c:1208
+#, fuzzy
+msgid "Table"
+msgstr "Πίνακας"
+
+#: ../glade/gbwidgets/gbtextview.c:51
+msgid "Center"
+msgstr "Κέντρο"
+
+#: ../glade/gbwidgets/gbtextview.c:52
+#, fuzzy
+msgid "Fill"
+msgstr "Γέμισμα"
+
+#. Add a "None" item first, so it is easy to reset the pixmap.
+#. If the user selects the 'None' item from the combo, we reset the
+#. text to "" and return. This callback will be called again.
+#. Add a 'None' item at the top of the list.
+#: ../glade/gbwidgets/gbtextview.c:71 ../glade/glade_gnome.c:112
+#: ../glade/glade_menu_editor.c:543 ../glade/glade_menu_editor.c:830
+#: ../glade/glade_menu_editor.c:1345 ../glade/glade_menu_editor.c:2255
+#: ../glade/property.c:2432
+msgid "None"
+msgstr "Κανένα"
+
+#: ../glade/gbwidgets/gbtextview.c:72
+msgid "Character"
+msgstr "Χαρακτήρας"
+
+#: ../glade/gbwidgets/gbtextview.c:73
+msgid "Word"
+msgstr "Λέξη"
+
+#: ../glade/gbwidgets/gbtextview.c:117
+#, fuzzy
+msgid "Cursor Visible:"
+msgstr "Ορατός Δρομέας"
+
+#: ../glade/gbwidgets/gbtextview.c:118
+msgid "If the cursor is visible"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtextview.c:119
+#, fuzzy
+msgid "Overwrite:"
+msgstr "Αντικατάσταση"
+
+#: ../glade/gbwidgets/gbtextview.c:120
+msgid "If entered text overwrites the existing text"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtextview.c:121
+#, fuzzy
+msgid "Accepts Tab:"
+msgstr "Δέχεται  tab"
+
+#: ../glade/gbwidgets/gbtextview.c:122
+msgid "If tab characters can be entered"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtextview.c:126
+#, fuzzy
+msgid "Justification:"
+msgstr "Στοίχιση"
+
+#: ../glade/gbwidgets/gbtextview.c:127
+#, fuzzy
+msgid "The justification of the text"
+msgstr "Το όνομα του μαραφετιού"
+
+#: ../glade/gbwidgets/gbtextview.c:129
+msgid "Wrapping:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtextview.c:130
+#, fuzzy
+msgid "The wrapping of the text"
+msgstr "Αναδίπλωση κειμένου"
+
+#: ../glade/gbwidgets/gbtextview.c:133
+msgid "Space Above:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtextview.c:134
+#, fuzzy
+msgid "Pixels of blank space above paragraphs"
+msgstr "Εικονοστοιχεία κενού διαστήματος πάνω από παραγράφους"
+
+#: ../glade/gbwidgets/gbtextview.c:136
+msgid "Space Below:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtextview.c:137
+#, fuzzy
+msgid "Pixels of blank space below paragraphs"
+msgstr "Εικονοστοιχεία κενού διαστήματος κάτω από παραγράφους"
+
+#: ../glade/gbwidgets/gbtextview.c:139
+#, fuzzy
+msgid "Space Inside:"
+msgstr "Ευαίσθητο:"
+
+#: ../glade/gbwidgets/gbtextview.c:140
+#, fuzzy
+msgid "Pixels of blank space between wrapped lines in a paragraph"
+msgstr ""
+"Εικονοστοιχεία κενού διαστήματος μεταξύ αναδιπλούμενων γραμμών σε παράγραφο"
+
+#: ../glade/gbwidgets/gbtextview.c:143
+msgid "Left Margin:"
+msgstr "Αριστερό περιθώριο:"
+
+#: ../glade/gbwidgets/gbtextview.c:144
+#, fuzzy
+msgid "Width of the left margin in pixels"
+msgstr "Πλάτος του αριστερού περιθωρίου σε εικονοστοιχεία"
+
+#: ../glade/gbwidgets/gbtextview.c:146
+msgid "Right Margin:"
+msgstr "Δεξί περιθώριο:"
+
+#: ../glade/gbwidgets/gbtextview.c:147
+#, fuzzy
+msgid "Width of the right margin in pixels"
+msgstr "Πλάτος του δεξιού περιθωρίου σε εικονοστοιχεία"
+
+#: ../glade/gbwidgets/gbtextview.c:149
+#, fuzzy
+msgid "Indent:"
+msgstr "_Εσοχή"
+
+#: ../glade/gbwidgets/gbtextview.c:150
+msgid "Amount of pixels to indent paragraphs"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtextview.c:463
+#, fuzzy
+msgid "Text View"
+msgstr "Προβολή Κειμένου"
+
+#: ../glade/gbwidgets/gbtogglebutton.c:100
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:98
+msgid "If the toggle button is initially on"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtogglebutton.c:199
+#, fuzzy
+msgid "Toggle Button"
+msgstr "κουμπί-εναλλαγής"
+
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:297
+msgid "Toolbar Toggle Button"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtoolbar.c:191
+#, fuzzy
+msgid "New toolbar"
+msgstr "Νέα γραμμή εργαλειών"
+
+#: ../glade/gbwidgets/gbtoolbar.c:202
+msgid "Number of items:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtoolbar.c:268
+msgid "The number of items in the toolbar"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtoolbar.c:271
+#, fuzzy
+msgid "The toolbar orientation"
+msgstr "Ο προσανατολισμός της εργαλειοθήκης"
+
+#: ../glade/gbwidgets/gbtoolbar.c:273
+msgid "Style:"
+msgstr "Στυλ:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:274
+msgid "The toolbar style"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtoolbar.c:276
+#, fuzzy
+msgid "Tooltips:"
+msgstr "Βοηθήματα"
+
+#: ../glade/gbwidgets/gbtoolbar.c:276
+msgid "If tooltips are enabled"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtoolbar.c:277
+msgid "Show Arrow:"
+msgstr "Εμφάνιση βέλους:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:277
+msgid "If an arrow should be shown to popup a menu if the toolbar doesn't fit"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtoolbar.c:427
+#, fuzzy
+msgid "If the item should be the same size as other homogeneous items"
+msgstr ""
+"Η υπόδειξη που θα εμφανιστεί όταν το ποντίκι είναι πάνω στο αντικείμενο"
+
+#. Commands for inserting new items.
+#: ../glade/gbwidgets/gbtoolbar.c:506
+msgid "Insert Item Before"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtoolbar.c:513
+msgid "Insert Item After"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtoolbar.c:680
+msgid "Toolbar"
+msgstr "Εργαλειοθήκη"
+
+#: ../glade/gbwidgets/gbtoolbutton.c:586
+msgid "Toolbar Button"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtoolitem.c:201
+msgid "Toolbar Item"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtreeview.c:71
+msgid "Column 1"
+msgstr "Στήλη 1"
+
+#: ../glade/gbwidgets/gbtreeview.c:79
+msgid "Column 2"
+msgstr "Στήλη 2"
+
+#: ../glade/gbwidgets/gbtreeview.c:87
+#, fuzzy
+msgid "Column 3"
+msgstr "Στήλη 1"
+
+#: ../glade/gbwidgets/gbtreeview.c:97
+#, c-format
+msgid "Row %i"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtreeview.c:114
+#, fuzzy
+msgid "Headers Visible:"
+msgstr "Αρχείο Επικεφαλίδας:"
+
+#: ../glade/gbwidgets/gbtreeview.c:115
+msgid "If the column header buttons are shown"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtreeview.c:116
+#, fuzzy
+msgid "Rules Hint:"
+msgstr "Συμβουλή κανόνων"
+
+#: ../glade/gbwidgets/gbtreeview.c:117
+msgid ""
+"If a hint is set so the theme engine should draw rows in alternating colors"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtreeview.c:119
+msgid "If the view is reorderable"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtreeview.c:120
+#, fuzzy
+msgid "Enable Search:"
+msgstr "Ενεργοποίηση Αναζήτησης"
+
+#: ../glade/gbwidgets/gbtreeview.c:121
+msgid "If the user can search through columns interactively"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtreeview.c:123
+#, fuzzy
+msgid "Fixed Height Mode:"
+msgstr "Επιλογή κατάστασης"
+
+#: ../glade/gbwidgets/gbtreeview.c:124
+msgid "Sets all rows to the same height to improve performance"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtreeview.c:125
+#, fuzzy
+msgid "Hover Selection:"
+msgstr "Επιλογή Χρώματος"
+
+#: ../glade/gbwidgets/gbtreeview.c:126
+msgid "Whether the selection should follow the pointer"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtreeview.c:127
+#, fuzzy
+msgid "Hover Expand:"
+msgstr "Ανάπτυξη"
+
+#: ../glade/gbwidgets/gbtreeview.c:128
+msgid ""
+"Whether rows should be expanded or collapsed when the pointer moves over them"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtreeview.c:317
+msgid "List or Tree View"
+msgstr ""
+
+#: ../glade/gbwidgets/gbvbox.c:84
+msgid "New vertical box"
+msgstr ""
+
+#: ../glade/gbwidgets/gbvbox.c:245
+msgid "Vertical Box"
+msgstr ""
+
+#: ../glade/gbwidgets/gbvbuttonbox.c:111
+msgid "New vertical button box"
+msgstr ""
+
+#: ../glade/gbwidgets/gbvbuttonbox.c:344
+msgid "Vertical Button Box"
+msgstr ""
+
+#: ../glade/gbwidgets/gbviewport.c:104
+msgid "The type of shadow of the viewport"
+msgstr ""
+
+#: ../glade/gbwidgets/gbviewport.c:240
+#, fuzzy
+msgid "Viewport"
+msgstr "Παράθυρο άποψης"
+
+#: ../glade/gbwidgets/gbvpaned.c:192
+msgid "Vertical Panes"
+msgstr ""
+
+#: ../glade/gbwidgets/gbvruler.c:247
+msgid "Vertical Ruler"
+msgstr "Κάθετος Χάρακας"
+
+#: ../glade/gbwidgets/gbvscale.c:319
+msgid "Vertical Scale"
+msgstr "Κάθετη Κλίμακα"
+
+#: ../glade/gbwidgets/gbvscrollbar.c:236
+msgid "Vertical Scrollbar"
+msgstr ""
+
+#: ../glade/gbwidgets/gbvseparator.c:144
+msgid "Vertical Separator"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:244
+#, fuzzy
+msgid "The title of the window"
+msgstr "Ο τίτλος του παραθύρου"
+
+#: ../glade/gbwidgets/gbwindow.c:247
+#, fuzzy
+msgid "The type of the window"
+msgstr "Ο τύπος του παραθύρου"
+
+#: ../glade/gbwidgets/gbwindow.c:251
+#, fuzzy
+msgid "Type Hint:"
+msgstr "Είδος συμβουλής"
+
+#: ../glade/gbwidgets/gbwindow.c:252
+msgid "Tells the window manager how to treat the window"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:257
+#, fuzzy
+msgid "The initial position of the window"
+msgstr "Η αρχική θέση του παραθύρου"
+
+#: ../glade/gbwidgets/gbwindow.c:261 ../glade/gnome/gnomefileentry.c:105
+#: ../glade/gnome/gnomepixmapentry.c:84
+#, fuzzy
+msgid "Modal:"
+msgstr "Αποκλειστικό"
+
+#: ../glade/gbwidgets/gbwindow.c:261
+msgid "If the window is modal"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:266
+#, fuzzy
+msgid "Default Width:"
+msgstr "???ep??e?µ??? p??t??"
+
+#: ../glade/gbwidgets/gbwindow.c:267
+msgid "The default width of the window"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:271
+#, fuzzy
+msgid "Default Height:"
+msgstr "???ep??e?µ??? ????"
+
+#: ../glade/gbwidgets/gbwindow.c:272
+msgid "The default height of the window"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:278
+#, fuzzy
+msgid "Resizable:"
+msgstr "Δυνατότητα αλλαγής μεγέθους"
+
+#: ../glade/gbwidgets/gbwindow.c:279
+#, fuzzy
+msgid "If the window can be resized"
+msgstr "Το μαραφέτι δε μπορεί να διαγραφεί."
+
+#: ../glade/gbwidgets/gbwindow.c:286
+msgid "If the window can be shrunk"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:287
+#, fuzzy
+msgid "Grow:"
+msgstr "Ανάπτυξη"
+
+#: ../glade/gbwidgets/gbwindow.c:288
+msgid "If the window can be enlarged"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:293
+msgid "Auto-Destroy:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:294
+msgid "If the window is destroyed when its transient parent is destroyed"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:298
+#, fuzzy
+msgid "The icon for this window"
+msgstr "Εικονίδιο για αυτό το παράθυρο"
+
+#: ../glade/gbwidgets/gbwindow.c:305
+msgid "Role:"
+msgstr "Ρόλος:"
+
+#: ../glade/gbwidgets/gbwindow.c:305
+#, fuzzy
+msgid "A unique identifier for the window to be used when restoring a session"
+msgstr ""
+"Μοναδικό αναγνωριστικό για το παράθυρο που θα χρησιμοποείται για την "
+"επαναφορά μιας συνεδρίας"
+
+#: ../glade/gbwidgets/gbwindow.c:308
+#, fuzzy
+msgid "Decorated:"
+msgstr "Διακοσμημένο"
+
+#: ../glade/gbwidgets/gbwindow.c:309
+msgid "If the window should be decorated by the window manager"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:312
+#, fuzzy
+msgid "Skip Taskbar:"
+msgstr "Παράκαμψη γραμμής εργασιών"
+
+#: ../glade/gbwidgets/gbwindow.c:313
+msgid "If the window should not appear in the task bar"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:316
+#, fuzzy
+msgid "Skip Pager:"
+msgstr "Παράκαμψη pager"
+
+#: ../glade/gbwidgets/gbwindow.c:317
+msgid "If the window should not appear in the pager"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:320
+msgid "Gravity:"
+msgstr "Βαρύτητα:"
+
+#: ../glade/gbwidgets/gbwindow.c:321
+msgid "The reference point to use when the window coordinates are set"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:325
+#, fuzzy
+msgid "Focus On Map:"
+msgstr "Εστίαση στο κλικ"
+
+#: ../glade/gbwidgets/gbwindow.c:325
+msgid "If the window should receive the input focus when it is mapped"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:328
+#, fuzzy
+msgid "Urgency Hint:"
+msgstr "Είδος συμβουλής"
+
+#: ../glade/gbwidgets/gbwindow.c:328
+msgid "If the window should be brought to the user's attention"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:1232
+msgid "Window"
+msgstr "Παράθυρο"
+
+#: ../glade/glade.c:369 ../glade/gnome-db/gnomedberrordlg.c:75
+msgid "Error"
+msgstr "Σφάλμα"
+
+#: ../glade/glade.c:372
+msgid "System Error"
+msgstr "Σφάλμα Συστήματος"
+
+#: ../glade/glade.c:376
+msgid "Error opening file"
+msgstr "Σφάλμα ανοίγματος αρχείου"
+
+#: ../glade/glade.c:378
+msgid "Error reading file"
+msgstr "Σφάλμα ανάγνωσης αρχείου"
+
+#: ../glade/glade.c:380
+msgid "Error writing file"
+msgstr "Σφάλμα εγγραφής αρχείου"
+
+#: ../glade/glade.c:383
+msgid "Invalid directory"
+msgstr "Άκυρος κατάλογος"
+
+#: ../glade/glade.c:387
+msgid "Invalid value"
+msgstr "Άκυρη τιμή"
+
+#: ../glade/glade.c:389
+msgid "Invalid XML entity"
+msgstr "Άκυρη οντότητα XML"
+
+#: ../glade/glade.c:391
+msgid "Start tag expected"
+msgstr "Αναμενόταν ετικέτα αρχής"
+
+#: ../glade/glade.c:393
+msgid "End tag expected"
+msgstr ""
+
+#: ../glade/glade.c:395
+msgid "Character data expected"
+msgstr "Αναμενόταν δεδομένα χαρακτήρων"
+
+#: ../glade/glade.c:397
+msgid "Class id missing"
+msgstr "Απών ID οντότητας"
+
+#: ../glade/glade.c:399
+msgid "Class unknown"
+msgstr "Άγνωστη οντότητα"
+
+#: ../glade/glade.c:401
+msgid "Invalid component"
+msgstr "Μη έγκυρο συστατικό"
+
+#: ../glade/glade.c:403
+msgid "Unexpected end of file"
+msgstr "Μη αναμενόμενο τέλος αρχείου"
+
+#: ../glade/glade.c:406
+msgid "Unknown error code"
+msgstr "Άγνωστος κωδικός σφάλματος"
+
+#: ../glade/glade_atk.c:120
+msgid "Controlled By"
+msgstr ""
+
+#: ../glade/glade_atk.c:121
+msgid "Controller For"
+msgstr ""
+
+#: ../glade/glade_atk.c:122
+#, fuzzy
+msgid "Label For"
+msgstr "Ετικέτα"
+
+#: ../glade/glade_atk.c:123
+#, fuzzy
+msgid "Labelled By"
+msgstr "Ετικέτα"
+
+#: ../glade/glade_atk.c:124
+#, fuzzy
+msgid "Member Of"
+msgstr "Μέλος"
+
+#: ../glade/glade_atk.c:125
+msgid "Node Child Of"
+msgstr ""
+
+#: ../glade/glade_atk.c:126
+msgid "Flows To"
+msgstr ""
+
+#: ../glade/glade_atk.c:127
+msgid "Flows From"
+msgstr ""
+
+#: ../glade/glade_atk.c:128
+msgid "Subwindow Of"
+msgstr ""
+
+#: ../glade/glade_atk.c:129
+msgid "Embeds"
+msgstr ""
+
+#: ../glade/glade_atk.c:130
+#, fuzzy
+msgid "Embedded By"
+msgstr "Ετικέτα"
+
+#: ../glade/glade_atk.c:131
+#, fuzzy
+msgid "Popup For"
+msgstr "Αναδυόμενο μενού"
+
+#: ../glade/glade_atk.c:132
+msgid "Parent Window Of"
+msgstr ""
+
+#. I don't think we should set the transient parent as the dialog could be
+#. left open if desired.
+#: ../glade/glade_atk.c:331
+#, fuzzy, c-format
+msgid "Relationship: %s"
+msgstr "Σχέση"
+
+#. Create the pages of the main notebook
+#. NOTE: If you add/remove pages you need to change the GB_PAGE_SIGNALS
+#. value at the top of this file
+#: ../glade/glade_atk.c:375 ../glade/property.c:615
+msgid "Widget"
+msgstr "Μαραφέτι"
+
+#: ../glade/glade_atk.c:638 ../glade/glade_menu_editor.c:773
+#: ../glade/property.c:776
+msgid "Name:"
+msgstr "Όνομα:"
+
+#: ../glade/glade_atk.c:639
+msgid "The name of the widget to pass to assistive technologies"
+msgstr ""
+
+#: ../glade/glade_atk.c:640
+msgid "Description:"
+msgstr "Περιγραφή:"
+
+#: ../glade/glade_atk.c:641
+msgid "The description of the widget to pass to assistive technologies"
+msgstr ""
+
+#: ../glade/glade_atk.c:643
+#, fuzzy
+msgid "Table Caption:"
+msgstr "Γενικές Επιλογές:"
+
+#: ../glade/glade_atk.c:644
+msgid "The table caption to pass to assistive technologies"
+msgstr ""
+
+#: ../glade/glade_atk.c:681
+msgid "Select the widgets with this relationship"
+msgstr ""
+
+#: ../glade/glade_atk.c:761
+#, fuzzy
+msgid "Click"
+msgstr "κλικ"
+
+#: ../glade/glade_atk.c:762
+#, fuzzy
+msgid "Press"
+msgstr "Πάτημα"
+
+#: ../glade/glade_atk.c:763
+#, fuzzy
+msgid "Release"
+msgstr "Έκδοση"
+
+#: ../glade/glade_atk.c:822
+msgid "Enter the description of the action to pass to assistive technologies"
+msgstr ""
+
+#: ../glade/glade_clipboard.c:118
+msgid "Clipboard"
+msgstr "Πρόχειρο"
+
+#: ../glade/glade_clipboard.c:351
+msgid "You need to select a widget to paste into"
+msgstr "Πρέπει να επιλέξτε ένα μαραφέτι στο οποίο να επικολλήσετε"
+
+#: ../glade/glade_clipboard.c:376
+msgid "You can't paste into windows or dialogs."
+msgstr "Δεν μπορείτε να επικολλήσετε σε παράθυρα ή διαλόγους."
+
+#: ../glade/glade_clipboard.c:399
+msgid ""
+"You can't paste into the selected widget, since\n"
+"it is created automatically by its parent."
+msgstr ""
+"Δε μπορείτε να επικολλήσετε στο επιλεγμένο μαραφέτι,\n"
+"διότι δημιουργείται αυτόματα από το γονέα του."
+
+#: ../glade/glade_clipboard.c:408 ../glade/glade_clipboard.c:416
+msgid "Only menu items can be pasted into a menu or menu bar."
+msgstr ""
+
+#: ../glade/glade_clipboard.c:427
+msgid "Only buttons can be pasted into a dialog action area."
+msgstr ""
+
+#: ../glade/glade_clipboard.c:437
+msgid "Only GnomeDockItem widgets can be pasted into a GnomeDock."
+msgstr ""
+
+#: ../glade/glade_clipboard.c:446
+msgid "Only GnomeDockItem widgets can be pasted over a GnomeDockItem."
+msgstr ""
+
+#: ../glade/glade_clipboard.c:449
+msgid "Sorry - pasting over a GnomeDockItem is not implemented yet."
+msgstr ""
+
+#: ../glade/glade_clipboard.c:457
+msgid "GnomeDockItem widgets can only be pasted into a GnomeDock."
+msgstr ""
+
+#. 3 - see GladeStockMenuItemNew above.
+#: ../glade/glade_gnome.c:121 ../glade/glade_gnome.c:874
+#: ../glade/glade_project_window.c:211 ../glade/glade_project_window.c:633
+msgid "_New"
+msgstr "_Νέο"
+
+#: ../glade/glade_gnome.c:874
+msgid "Create a new file"
+msgstr "Δημιουργία νέου αρχείου"
+
+#  Note that glade_palette_set_show_gnome_widgets() has some of these
+#  strings hard-coded now, so keep up-to-date.
+#. Note that glade_palette_set_show_gnome_widgets() has some of these
+#. strings hard-coded now, so keep up-to-date.
+#: ../glade/glade_gnomelib.c:116
+msgid "_Gnome"
+msgstr "_Gnome"
+
+#: ../glade/glade_gnomelib.c:117 ../glade/glade_gtk12lib.c:248
+#: ../glade/glade_palette.c:315
+#, fuzzy
+msgid "Dep_recated"
+msgstr "προστατευόμενο"
+
+#  Note that glade_palette_set_show_gnome_widgets() has some of these
+#  strings hard-coded now, so keep up-to-date.
+#. Note that glade_palette_set_show_gnome_widgets() has some of these
+#. strings hard-coded now, so keep up-to-date.
+#: ../glade/glade_gtk12lib.c:246
+msgid "GTK+ _Basic"
+msgstr "Βασικά GTK+"
+
+#: ../glade/glade_gtk12lib.c:247
+msgid "GTK+ _Additional"
+msgstr "Πρόσθετα GTK+"
+
+#: ../glade/glade_keys_dialog.c:94
+msgid "Select Accelerator Key"
+msgstr "Επιλογη Πλήκτρου Επιτάχυνσης"
+
+#: ../glade/glade_keys_dialog.c:97
+msgid "Keys"
+msgstr "Πλήκτρα"
+
+#: ../glade/glade_menu_editor.c:395
+msgid "Menu Editor"
+msgstr "Διορθωτής Μενού"
+
+#: ../glade/glade_menu_editor.c:412
+msgid "Type"
+msgstr "Τύπος"
+
+#: ../glade/glade_menu_editor.c:413
+msgid "Accelerator"
+msgstr "Πλήκτρο Επιτάχυνσης"
+
+#: ../glade/glade_menu_editor.c:414
+msgid "Name"
+msgstr "Όνομα"
+
+#: ../glade/glade_menu_editor.c:415 ../glade/property.c:1499
+msgid "Handler"
+msgstr "Χειριστής"
+
+#: ../glade/glade_menu_editor.c:416 ../glade/property.c:102
+msgid "Active"
+msgstr "Ενεργό"
+
+#: ../glade/glade_menu_editor.c:417
+msgid "Group"
+msgstr "Ομάδα"
+
+#: ../glade/glade_menu_editor.c:418
+msgid "Icon"
+msgstr "Εικονίδιο"
+
+#: ../glade/glade_menu_editor.c:459
+msgid "Move the item and its children up one place in the list"
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:471
+msgid "Move the item and its children down one place in the list"
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:483
+msgid "Move the item and its children up one level"
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:495
+msgid "Move the item and its children down one level"
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:525
+msgid "The stock item to use."
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:528 ../glade/glade_menu_editor.c:643
+msgid "Stock Item:"
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:641
+msgid "The stock Gnome item to use."
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:746
+msgid "The text of the menu item, or empty for separators."
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:770 ../glade/property.c:777
+msgid "The name of the widget"
+msgstr "Το όνομα του μαραφετιού"
+
+#: ../glade/glade_menu_editor.c:791
+msgid "The function to be called when the item is selected"
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:793 ../glade/property.c:1547
+msgid "Handler:"
+msgstr "Χειριστής:"
+
+#: ../glade/glade_menu_editor.c:812
+msgid "An optional icon to show on the left of the menu item."
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:935
+msgid "The tip to show when the mouse is over the item"
+msgstr ""
+"Η υπόδειξη που θα εμφανιστεί όταν το ποντίκι είναι πάνω στο αντικείμενο"
+
+#: ../glade/glade_menu_editor.c:937 ../glade/property.c:824
+msgid "Tooltip:"
+msgstr "Βοήθημα:"
+
+#: ../glade/glade_menu_editor.c:958
+msgid "_Add"
+msgstr "_Προσθήκη"
+
+#: ../glade/glade_menu_editor.c:963
+msgid "Add a new item below the selected item."
+msgstr "Προσθήκη νέου στοιχείου κάτω από το επιλεγμένο στοιχείο."
+
+#: ../glade/glade_menu_editor.c:968
+msgid "Add _Child"
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:973
+#, fuzzy
+msgid "Add a new child item below the selected item."
+msgstr "Προσθήκη νέου στοιχείου κάτω από το επιλεγμένο στοιχείο."
+
+#: ../glade/glade_menu_editor.c:979
+msgid "Add _Separator"
+msgstr "Προσθήκη _Διαχωριστικού"
+
+#: ../glade/glade_menu_editor.c:984
+msgid "Add a separator below the selected item."
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:989 ../glade/glade_project_window.c:242
+msgid "_Delete"
+msgstr "_Διαγραφή"
+
+#: ../glade/glade_menu_editor.c:994
+msgid "Delete the current item"
+msgstr "Διαγραφή του τρέχοντος στοιχείου"
+
+#. Type radio options and toggle options.
+#: ../glade/glade_menu_editor.c:1000
+msgid "Item Type:"
+msgstr "Τύπος Στοιχείου:"
+
+#: ../glade/glade_menu_editor.c:1016
+msgid "If the item is initially on."
+msgstr "Αν το στοιχείο είναι αρχικά ενεργό."
+
+#: ../glade/glade_menu_editor.c:1018
+msgid "Active:"
+msgstr "Ενεργό:"
+
+#: ../glade/glade_menu_editor.c:1023 ../glade/glade_menu_editor.c:1638
+#: ../glade/property.c:2216 ../glade/property.c:2226
+msgid "No"
+msgstr "Όχι"
+
+#: ../glade/glade_menu_editor.c:1037
+msgid "The radio menu item's group"
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:1054 ../glade/glade_menu_editor.c:2414
+#: ../glade/glade_menu_editor.c:2554
+#, fuzzy
+msgid "Radio"
+msgstr "Ραδιόφωνο"
+
+#: ../glade/glade_menu_editor.c:1061 ../glade/glade_menu_editor.c:2412
+#: ../glade/glade_menu_editor.c:2552
+msgid "Check"
+msgstr "Έλεγχος"
+
+#: ../glade/glade_menu_editor.c:1068 ../glade/property.c:102
+msgid "Normal"
+msgstr "Κανονικό"
+
+#. Accelerator key options.
+#: ../glade/glade_menu_editor.c:1077
+msgid "Accelerator:"
+msgstr "Πλήκτρο Επιτάχυνσης:"
+
+#: ../glade/glade_menu_editor.c:1114 ../glade/property.c:1682
+msgid "Ctrl"
+msgstr "Ctrl"
+
+#: ../glade/glade_menu_editor.c:1119 ../glade/property.c:1685
+msgid "Shift"
+msgstr "Shift"
+
+#: ../glade/glade_menu_editor.c:1124 ../glade/property.c:1688
+msgid "Alt"
+msgstr "Alt"
+
+#: ../glade/glade_menu_editor.c:1129 ../glade/property.c:1695
+msgid "Key:"
+msgstr "Πλήκτρο:"
+
+#: ../glade/glade_menu_editor.c:1135 ../glade/property.c:1674
+#, fuzzy
+msgid "Modifiers:"
+msgstr "Τροποποιητές"
+
+#: ../glade/glade_menu_editor.c:1638 ../glade/glade_menu_editor.c:2419
+#: ../glade/glade_menu_editor.c:2562 ../glade/property.c:2216
+msgid "Yes"
+msgstr "Ναί"
+
+#: ../glade/glade_menu_editor.c:2008
+msgid "Select icon"
+msgstr "Επιλογή εικονιδίου"
+
+#: ../glade/glade_menu_editor.c:2353 ../glade/glade_menu_editor.c:2714
+msgid "separator"
+msgstr "διαχωριστής"
+
+#. Add the special 'New' item to create a new group.
+#: ../glade/glade_menu_editor.c:3638 ../glade/glade_project_window.c:369
+#: ../glade/property.c:5115
+msgid "New"
+msgstr "Νέο"
+
+#: ../glade/glade_palette.c:194 ../glade/glade_palette.c:196
+#: ../glade/glade_palette.c:412
+msgid "Selector"
+msgstr "Επιλογέας"
+
+#: ../glade/glade_project.c:385
+msgid ""
+"The project directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+
+#: ../glade/glade_project.c:392
+msgid ""
+"The source directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+
+#: ../glade/glade_project.c:402
+msgid ""
+"Invalid source directory:\n"
+"\n"
+"The source directory must be the project directory\n"
+"or a subdirectory of the project directory.\n"
+msgstr ""
+
+#: ../glade/glade_project.c:410
+msgid ""
+"The pixmaps directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+
+#: ../glade/glade_project.c:438
+#, c-format
+msgid "Sorry - generating source for %s is not implemented yet"
+msgstr ""
+
+#: ../glade/glade_project.c:509
+msgid ""
+"Your project uses deprecated widgets that Gtkmm-2\n"
+"does not support.  Check your project for these\n"
+"widgets, and use their replacements."
+msgstr ""
+
+#: ../glade/glade_project.c:521
+msgid ""
+"Error running glade-- to generate the C++ source code.\n"
+"Check that you have glade-- installed and that it is in your PATH.\n"
+"Then try running 'glade-- <project_file.glade>' in a terminal."
+msgstr ""
+
+#: ../glade/glade_project.c:548
+msgid ""
+"Error running gate to generate the Ada95 source code.\n"
+"Check that you have gate installed and that it is in your PATH.\n"
+"Then try running 'gate <project_file.glade>' in a terminal."
+msgstr ""
+
+#: ../glade/glade_project.c:571
+msgid ""
+"Error running glade2perl to generate the Perl source code.\n"
+"Check that you have glade2perl installed and that it is in your PATH.\n"
+"Then try running 'glade2perl <project_file.glade>' in a terminal."
+msgstr ""
+
+#: ../glade/glade_project.c:594
+msgid ""
+"Error running eglade to generate the Eiffel source code.\n"
+"Check that you have eglade installed and that it is in your PATH.\n"
+"Then try running 'eglade <project_file.glade>' in a terminal."
+msgstr ""
+
+#: ../glade/glade_project.c:954
+msgid ""
+"The pixmap directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+
+#: ../glade/glade_project.c:1772
+#, fuzzy
+msgid "Error writing project XML file\n"
+msgstr "Σφάλμα εγγραφής αρχείου XML\n"
+
+#: ../glade/glade_project_options.c:157 ../glade/glade_project_window.c:385
+#: ../glade/glade_project_window.c:890
+msgid "Project Options"
+msgstr "Επιλογές Έργου"
+
+#.
+#. * General Page.
+#.
+#: ../glade/glade_project_options.c:174
+msgid "General"
+msgstr "Γενικά"
+
+#: ../glade/glade_project_options.c:183
+msgid "Basic Options:"
+msgstr "Βασικές Επιλογές:"
+
+#: ../glade/glade_project_options.c:201
+msgid "The project directory"
+msgstr "Ο κατάλογος του έργου"
+
+#: ../glade/glade_project_options.c:203
+msgid "Project Directory:"
+msgstr "Κατάλογος Έργου:"
+
+#: ../glade/glade_project_options.c:221
+msgid "Browse..."
+msgstr "Εξερεύνηση..."
+
+#: ../glade/glade_project_options.c:236
+msgid "The name of the current project"
+msgstr "Το όνομα του τρέχοντος έργου"
+
+#: ../glade/glade_project_options.c:238
+msgid "Project Name:"
+msgstr "Όνομα Έργου:"
+
+#: ../glade/glade_project_options.c:258
+msgid "The name of the program"
+msgstr "Το όνομα του προγράμματος"
+
+#: ../glade/glade_project_options.c:281
+msgid "The project file"
+msgstr "Το αρχείο του έργου"
+
+#: ../glade/glade_project_options.c:283
+msgid "Project File:"
+msgstr "Αρχείο Έργου:"
+
+#. Project Source Directory.
+#: ../glade/glade_project_options.c:299
+msgid "Subdirectories:"
+msgstr "Υποκατάλογοι:"
+
+#: ../glade/glade_project_options.c:316
+msgid "The directory to save generated source code"
+msgstr ""
+
+#: ../glade/glade_project_options.c:319
+msgid "Source Directory:"
+msgstr "Κατάλογος Πηγαίου Κώδικα:"
+
+#: ../glade/glade_project_options.c:338
+msgid "The directory to store pixmaps"
+msgstr ""
+
+#: ../glade/glade_project_options.c:341
+msgid "Pixmaps Directory:"
+msgstr "Κατάλογος Εικόνων:"
+
+#: ../glade/glade_project_options.c:363
+msgid "The license which is added at the top of generated files"
+msgstr ""
+
+#. Source Language.
+#: ../glade/glade_project_options.c:385
+msgid "Language:"
+msgstr "Γλώσσα:"
+
+#: ../glade/glade_project_options.c:416
+msgid "Gnome:"
+msgstr "Gnome:"
+
+#: ../glade/glade_project_options.c:424
+msgid "Enable Gnome Support"
+msgstr "Ενεργοποίηση Υποστήριξης Gnome"
+
+#: ../glade/glade_project_options.c:430
+msgid "If a Gnome application is to be built"
+msgstr ""
+
+#: ../glade/glade_project_options.c:433
+msgid "Enable Gnome DB Support"
+msgstr "Ενεργοποίηση Υποστήριξης Gnome DB"
+
+#: ../glade/glade_project_options.c:437
+msgid "If a Gnome DB application is to be built"
+msgstr ""
+
+#.
+#. * C Options Page.
+#.
+#: ../glade/glade_project_options.c:447
+msgid "C Options"
+msgstr "Επιλογές C"
+
+#: ../glade/glade_project_options.c:456
+msgid "<b>Note:</b> for large applications the use of libglade is recommended."
+msgstr ""
+
+#: ../glade/glade_project_options.c:468
+msgid "General Options:"
+msgstr "Γενικές Επιλογές:"
+
+#. Gettext Support.
+#: ../glade/glade_project_options.c:478
+msgid "Gettext Support"
+msgstr "Υποστήριξη Gettext"
+
+#: ../glade/glade_project_options.c:483
+msgid "If strings are marked for translation by gettext"
+msgstr ""
+
+#. Setting widget names.
+#: ../glade/glade_project_options.c:487
+msgid "Set Widget Names"
+msgstr "Καθορισμός Ονομάτων Μαραφετιών"
+
+#: ../glade/glade_project_options.c:492
+msgid "If widget names are set in the source code"
+msgstr ""
+
+#. Backing up source files.
+#: ../glade/glade_project_options.c:496
+msgid "Backup Source Files"
+msgstr "Εφεδρικά Αντίγραφα Πηγαίου Κώδικα"
+
+#: ../glade/glade_project_options.c:501
+msgid "If copies of old source files are made"
+msgstr ""
+
+#. Gnome Help System support.
+#: ../glade/glade_project_options.c:505
+msgid "Gnome Help Support"
+msgstr "Υποστήριξη Βοήθειας Gnome"
+
+#: ../glade/glade_project_options.c:512
+msgid "If support for the Gnome Help system should be included"
+msgstr ""
+
+#: ../glade/glade_project_options.c:515
+msgid "File Output Options:"
+msgstr "Επιλογές Παραγωγής Αρχείων:"
+
+#. Outputting main file.
+#: ../glade/glade_project_options.c:525
+msgid "Output main.c File"
+msgstr "Παραγωγή Αρχείου main.c"
+
+#: ../glade/glade_project_options.c:530
+msgid ""
+"If a main.c file is output containing a main() function, if it doesn't "
+"already exist"
+msgstr ""
+
+#. Outputting support files.
+#: ../glade/glade_project_options.c:534
+msgid "Output Support Functions"
+msgstr "Παραγωγή Συναρτήσεων Υποστήριξης"
+
+#: ../glade/glade_project_options.c:539
+msgid "If the support functions are output"
+msgstr ""
+
+#. Outputting build files.
+#: ../glade/glade_project_options.c:543
+msgid "Output Build Files"
+msgstr "Παραγωγή Αρχείων Δημιουργίας"
+
+#: ../glade/glade_project_options.c:548
+msgid ""
+"If files for building the source code are output, including Makefile.am and "
+"configure.in, if they don't already exist"
+msgstr ""
+
+#. Main source file.
+#: ../glade/glade_project_options.c:552
+msgid "Interface Creation Functions:"
+msgstr "Συναρτήσεις Δημιουργίας Διεπιφάνειας:"
+
+#: ../glade/glade_project_options.c:564
+msgid "The file in which the functions to create the interface are written"
+msgstr ""
+
+#: ../glade/glade_project_options.c:566 ../glade/glade_project_options.c:612
+#: ../glade/glade_project_options.c:658 ../glade/property.c:998
+msgid "Source File:"
+msgstr "Αρχείο Πηγαίου Κώδικα:"
+
+#: ../glade/glade_project_options.c:581
+msgid ""
+"The file in which the declarations of the functions to create the interface "
+"are written"
+msgstr ""
+
+#: ../glade/glade_project_options.c:583 ../glade/glade_project_options.c:629
+#: ../glade/glade_project_options.c:675
+msgid "Header File:"
+msgstr "Αρχείο Επικεφαλίδας:"
+
+#: ../glade/glade_project_options.c:594
+#, fuzzy
+msgid "Source file for interface creation functions"
+msgstr "Συναρτήσεις Δημιουργίας Διεπιφάνειας:"
+
+#: ../glade/glade_project_options.c:595
+#, fuzzy
+msgid "Header file for interface creation functions"
+msgstr "Συναρτήσεις Δημιουργίας Διεπιφάνειας:"
+
+#. Handler source file.
+#: ../glade/glade_project_options.c:598
+msgid "Signal Handler & Callback Functions:"
+msgstr ""
+
+#: ../glade/glade_project_options.c:610
+msgid ""
+"The file in which the empty signal handler and callback functions are written"
+msgstr ""
+
+#: ../glade/glade_project_options.c:627
+msgid ""
+"The file in which the declarations of the signal handler and callback "
+"functions are written"
+msgstr ""
+
+#: ../glade/glade_project_options.c:640
+msgid "Source file for signal handler and callback functions"
+msgstr ""
+
+#: ../glade/glade_project_options.c:641
+msgid "Header file for signal handler and callback functions"
+msgstr ""
+
+#. Support source file.
+#: ../glade/glade_project_options.c:644
+msgid "Support Functions:"
+msgstr "Συναρτήσεις Υποστήριξης:"
+
+#: ../glade/glade_project_options.c:656
+msgid "The file in which the support functions are written"
+msgstr ""
+
+#: ../glade/glade_project_options.c:673
+msgid "The file in which the declarations of the support functions are written"
+msgstr ""
+
+#: ../glade/glade_project_options.c:686
+#, fuzzy
+msgid "Source file for support functions"
+msgstr "Συναρτήσεις Υποστήριξης:"
+
+#: ../glade/glade_project_options.c:687
+msgid "Header file for support functions"
+msgstr ""
+
+#.
+#. * libglade Options Page.
+#.
+#: ../glade/glade_project_options.c:693
+msgid "LibGlade Options"
+msgstr "Επιλογές LibGlade"
+
+#: ../glade/glade_project_options.c:702
+msgid "Translatable Strings:"
+msgstr "Μεταφράσιμα Αλφαριθμητικά"
+
+#: ../glade/glade_project_options.c:716
+msgid "<b>Note:</b> this option is deprecated - use intltool instead."
+msgstr ""
+
+#. Output translatable strings.
+#: ../glade/glade_project_options.c:726
+msgid "Save Translatable Strings"
+msgstr "Αποθήκευση Μεταφράσιμων Αλφαριθμητικών"
+
+#: ../glade/glade_project_options.c:731
+msgid ""
+"If translatable strings are saved in a separate C source file, to enable "
+"translation of interfaces loaded by libglade"
+msgstr ""
+
+#: ../glade/glade_project_options.c:741
+msgid "The C source file to save all translatable strings in"
+msgstr ""
+
+#: ../glade/glade_project_options.c:743 ../glade/gnome/gnomepixmap.c:79
+msgid "File:"
+msgstr "Αρχείο:"
+
+#: ../glade/glade_project_options.c:1202
+msgid "Select the Project Directory"
+msgstr "Επιλογή του Καταλόγου του Έργου"
+
+#: ../glade/glade_project_options.c:1392 ../glade/glade_project_options.c:1402
+#: ../glade/glade_project_options.c:1412
+msgid "You need to set the Translatable Strings File option"
+msgstr ""
+
+#: ../glade/glade_project_options.c:1396 ../glade/glade_project_options.c:1406
+msgid "You need to set the Project Directory option"
+msgstr ""
+
+#: ../glade/glade_project_options.c:1398 ../glade/glade_project_options.c:1408
+msgid "You need to set the Project File option"
+msgstr ""
+
+#: ../glade/glade_project_options.c:1414
+msgid "You need to set the Project Name option"
+msgstr ""
+
+#: ../glade/glade_project_options.c:1416
+msgid "You need to set the Program Name option"
+msgstr ""
+
+#: ../glade/glade_project_options.c:1419
+msgid "You need to set the Source Directory option"
+msgstr ""
+
+#: ../glade/glade_project_options.c:1422
+msgid "You need to set the Pixmaps Directory option"
+msgstr ""
+
+#: ../glade/glade_project_window.c:187
+#, fuzzy, c-format
+msgid ""
+"Couldn't show help file: %s.\n"
+"\n"
+"Error: %s"
+msgstr "Αδυναμία ανοίγματος αρχείου.\n"
+
+#: ../glade/glade_project_window.c:211 ../glade/glade_project_window.c:635
+msgid "Create a new project"
+msgstr "Δημιουργία νέου έργου"
+
+#: ../glade/glade_project_window.c:219 ../glade/glade_project_window.c:655
+#: ../glade/glade_project_window.c:906
+#, fuzzy
+msgid "_Build"
+msgstr "Κατασκευή"
+
+#: ../glade/glade_project_window.c:220 ../glade/glade_project_window.c:666
+msgid "Output the project source code"
+msgstr "Παραγωγή πηγαίου κώδικα του έργου"
+
+#: ../glade/glade_project_window.c:226 ../glade/glade_project_window.c:669
+msgid "Op_tions..."
+msgstr "Επι_λογές..."
+
+#: ../glade/glade_project_window.c:227 ../glade/glade_project_window.c:678
+msgid "Edit the project options"
+msgstr "Διόρωση των επιλογών του έργου"
+
+#: ../glade/glade_project_window.c:242 ../glade/glade_project_window.c:717
+msgid "Delete the selected widget"
+msgstr "Διαγραφή του επιλεγμένου μαραφετιού"
+
+#: ../glade/glade_project_window.c:260 ../glade/glade_project_window.c:728
+msgid "Show _Palette"
+msgstr "Εμφάνιση Πα_λέττας"
+
+#: ../glade/glade_project_window.c:260 ../glade/glade_project_window.c:733
+msgid "Show the palette of widgets"
+msgstr ""
+
+#: ../glade/glade_project_window.c:266 ../glade/glade_project_window.c:738
+msgid "Show Property _Editor"
+msgstr "Εμφάνιση Διορ_θωτή Ιδιοτήτων"
+
+#: ../glade/glade_project_window.c:267 ../glade/glade_project_window.c:744
+msgid "Show the property editor"
+msgstr "Εμφάνιση του διορθωτή ιδιοτήτων"
+
+#: ../glade/glade_project_window.c:273 ../glade/glade_project_window.c:748
+msgid "Show Widget _Tree"
+msgstr ""
+
+#: ../glade/glade_project_window.c:274 ../glade/glade_project_window.c:754
+#: ../glade/main.c:82 ../glade/main.c:116
+msgid "Show the widget tree"
+msgstr ""
+
+#: ../glade/glade_project_window.c:280 ../glade/glade_project_window.c:758
+msgid "Show _Clipboard"
+msgstr "Εμφάνιση Π_ροχείρου"
+
+#: ../glade/glade_project_window.c:281 ../glade/glade_project_window.c:764
+#: ../glade/main.c:86 ../glade/main.c:120
+msgid "Show the clipboard"
+msgstr "Εμφάνιση του προχείρου"
+
+#: ../glade/glade_project_window.c:299
+msgid "Show _Grid"
+msgstr "Εμφάνιση Π_λέγματος"
+
+#: ../glade/glade_project_window.c:300 ../glade/glade_project_window.c:800
+msgid "Show the grid (in fixed containers only)"
+msgstr ""
+
+#: ../glade/glade_project_window.c:306
+#, fuzzy
+msgid "_Snap to Grid"
+msgstr "Τοπο_θέτηση Σε Πλέγμα"
+
+#: ../glade/glade_project_window.c:307
+msgid "Snap widgets to the grid"
+msgstr ""
+
+#: ../glade/glade_project_window.c:313 ../glade/glade_project_window.c:772
+msgid "Show _Widget Tooltips"
+msgstr ""
+
+#: ../glade/glade_project_window.c:314 ../glade/glade_project_window.c:780
+msgid "Show the tooltips of created widgets"
+msgstr ""
+
+#: ../glade/glade_project_window.c:323 ../glade/glade_project_window.c:803
+msgid "Set Grid _Options..."
+msgstr ""
+
+#: ../glade/glade_project_window.c:324
+msgid "Set the grid style and spacing"
+msgstr ""
+
+#: ../glade/glade_project_window.c:330 ../glade/glade_project_window.c:824
+msgid "Set Snap O_ptions..."
+msgstr ""
+
+#: ../glade/glade_project_window.c:331
+msgid "Set options for snapping to the grid"
+msgstr ""
+
+#: ../glade/glade_project_window.c:343
+msgid "_FAQ"
+msgstr "_Συχνές ερωτήσεις"
+
+#: ../glade/glade_project_window.c:344
+msgid "View the Glade FAQ"
+msgstr ""
+
+#. create File menu
+#: ../glade/glade_project_window.c:358 ../glade/glade_project_window.c:626
+#, fuzzy
+msgid "_Project"
+msgstr "_Έργο"
+
+#: ../glade/glade_project_window.c:369 ../glade/glade_project_window.c:873
+#: ../glade/glade_project_window.c:1055
+msgid "New Project"
+msgstr "Νέο Έργο"
+
+#: ../glade/glade_project_window.c:374
+msgid "Open"
+msgstr "Άνοιγμα"
+
+#: ../glade/glade_project_window.c:374 ../glade/glade_project_window.c:878
+#: ../glade/glade_project_window.c:1116
+msgid "Open Project"
+msgstr "Άνοιγμα Έργου"
+
+#: ../glade/glade_project_window.c:379
+msgid "Save"
+msgstr "Αποθήκευση"
+
+#: ../glade/glade_project_window.c:379 ../glade/glade_project_window.c:882
+#: ../glade/glade_project_window.c:1481
+msgid "Save Project"
+msgstr "Αποθήκευση Έργου"
+
+#: ../glade/glade_project_window.c:385
+msgid "Options"
+msgstr "Επιλογές"
+
+#: ../glade/glade_project_window.c:390
+msgid "Build"
+msgstr "Κατασκευή"
+
+#: ../glade/glade_project_window.c:390
+msgid "Build the Source Code"
+msgstr "Κατασκευή του Πηγαίου Κώδικα"
+
+#: ../glade/glade_project_window.c:639
+msgid "Open an existing project"
+msgstr "Άνοιγμα υπάρχοντος έργου"
+
+#: ../glade/glade_project_window.c:643
+msgid "Save project"
+msgstr "Αποθήκευση έργου"
+
+#: ../glade/glade_project_window.c:688
+msgid "Quit Glade"
+msgstr "Τερματισμός Glade"
+
+#: ../glade/glade_project_window.c:702
+#, fuzzy
+msgid "Cut the selected widget to the clipboard"
+msgstr "Πρέπει να επιλέξτε ένα μαραφέτι στο οποίο να επικολλήσετε"
+
+#: ../glade/glade_project_window.c:707
+#, fuzzy
+msgid "Copy the selected widget to the clipboard"
+msgstr "Πρέπει να επιλέξτε ένα μαραφέτι στο οποίο να επικολλήσετε"
+
+#: ../glade/glade_project_window.c:712
+msgid "Paste the widget from the clipboard over the selected widget"
+msgstr ""
+
+#: ../glade/glade_project_window.c:784
+msgid "_Grid"
+msgstr "Πλέ_γμα"
+
+#: ../glade/glade_project_window.c:792
+msgid "_Show Grid"
+msgstr "Εμφάνιση Π_λέγματος"
+
+#: ../glade/glade_project_window.c:809
+msgid "Set the spacing between grid lines"
+msgstr ""
+
+#: ../glade/glade_project_window.c:812
+#, fuzzy
+msgid "S_nap to Grid"
+msgstr "Εμφάνιση Πλέγματος"
+
+#: ../glade/glade_project_window.c:820
+msgid "Snap widgets to the grid (in fixed containers only)"
+msgstr ""
+
+#: ../glade/glade_project_window.c:830
+msgid "Set which parts of a widget snap to the grid"
+msgstr ""
+
+#  Don't show these yet as we have no help pages.
+#  menuitem = gtk_menu_item_new_with_mnemonic (_("_Contents"));
+#  gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#  gtk_widget_show (menuitem);
+#  menuitem = gtk_menu_item_new_with_mnemonic (_("_Index"));
+#  gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#  gtk_widget_show (menuitem);
+#  menuitem = gtk_menu_item_new ();
+#  gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#  gtk_widget_show (menuitem);
+#. Don't show these yet as we have no help pages.
+#. menuitem = gtk_menu_item_new_with_mnemonic (_("_Contents"));
+#. gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#. gtk_widget_show (menuitem);
+#.
+#. menuitem = gtk_menu_item_new_with_mnemonic (_("_Index"));
+#. gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#. gtk_widget_show (menuitem);
+#.
+#. menuitem = gtk_menu_item_new ();
+#. gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#. gtk_widget_show (menuitem);
+#.
+#: ../glade/glade_project_window.c:855
+msgid "_About..."
+msgstr "_Περί..."
+
+#: ../glade/glade_project_window.c:896
+#, fuzzy
+msgid "Optio_ns"
+msgstr "&Επιλογές"
+
+#: ../glade/glade_project_window.c:900
+msgid "Write Source Code"
+msgstr "Εγγραφή Πηγαίου Κώδικα"
+
+#: ../glade/glade_project_window.c:992 ../glade/glade_project_window.c:1697
+#: ../glade/glade_project_window.c:1986
+msgid "Glade"
+msgstr "Glade"
+
+#: ../glade/glade_project_window.c:999
+msgid "Are you sure you want to create a new project?"
+msgstr "Είσαστε βέβαιοι ότι θέλετε να δημιουργήσετε νέο έργο;"
+
+#: ../glade/glade_project_window.c:1059
+msgid "New _GTK+ Project"
+msgstr "Νέο Έργ_ο GTK+"
+
+#: ../glade/glade_project_window.c:1060
+msgid "New G_NOME Project"
+msgstr "Νέο Έ_ργο GNOME"
+
+#: ../glade/glade_project_window.c:1063
+msgid "Which type of project do you want to create?"
+msgstr ""
+
+#: ../glade/glade_project_window.c:1097
+msgid "New project created."
+msgstr "Δημιουργήθηκε νέο έργο."
+
+#: ../glade/glade_project_window.c:1187
+msgid "Project opened."
+msgstr "Ανοίχθηκε το έργο"
+
+#: ../glade/glade_project_window.c:1201
+msgid "Error opening project."
+msgstr "Σφάλμα ανοίγματος έργου."
+
+#: ../glade/glade_project_window.c:1265
+msgid "Errors opening project file"
+msgstr "Σφάλματα ανοίγματος αρχείου έργου"
+
+#: ../glade/glade_project_window.c:1271
+msgid " errors opening project file:"
+msgstr " σφάλματα ανοίγματος αρχείου έργου:"
+
+#: ../glade/glade_project_window.c:1344
+msgid ""
+"There is no project currently open.\n"
+"Create a new project with the Project/New command."
+msgstr ""
+
+#: ../glade/glade_project_window.c:1548
+msgid "Error saving project"
+msgstr "Σφάλμα αποθήκευσης έργου"
+
+#: ../glade/glade_project_window.c:1550
+msgid "Error saving project."
+msgstr "Σφάλμα αποθήκευσης έργου."
+
+#: ../glade/glade_project_window.c:1556
+msgid "Project saved."
+msgstr "Το έργο αποθηκεύτηκε."
+
+#: ../glade/glade_project_window.c:1626
+msgid "Errors writing source code"
+msgstr "Σφάλμα εγγραφής πηγαίου κώδικα"
+
+#: ../glade/glade_project_window.c:1628
+msgid "Error writing source."
+msgstr "Σφάλμα εγγραφής πηγαίου κώδικα."
+
+#: ../glade/glade_project_window.c:1634
+msgid "Source code written."
+msgstr "Ο πηγαίος κώδικας γράφτηκε."
+
+#: ../glade/glade_project_window.c:1665
+msgid "System error message:"
+msgstr "Μήνημα σφάλματος συστήματος:"
+
+#: ../glade/glade_project_window.c:1704
+msgid "Are you sure you want to quit?"
+msgstr "Είσαστε βέβαιοι ότι θέλετε τερματισμό;"
+
+#: ../glade/glade_project_window.c:1988 ../glade/glade_project_window.c:2048
+msgid "(C) 1998-2002 Damon Chaplin"
+msgstr "(C) 1998-2002 Ντέιμον Τσάπλιν"
+
+#: ../glade/glade_project_window.c:1989 ../glade/glade_project_window.c:2047
+#, fuzzy
+msgid "Glade is a User Interface Builder for GTK+ and GNOME."
+msgstr ""
+"Το Glade είναι ένας Κατασκευαστής Γραφικής Διασύνδεσης για τα GTK+ και "
+"GNOME.\n"
+
+#: ../glade/glade_project_window.c:2018
+#, fuzzy
+msgid "About Glade"
+msgstr "Τερματισμός Glade"
+
+#: ../glade/glade_project_window.c:2103
+msgid "<untitled>"
+msgstr "<ανώνυμο>"
+
+#: ../glade/gnome-db/gnomedbbrowser.c:135
+msgid "Database Browser"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbcombo.c:124
+msgid "Data-bound combo"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbconnectprop.c:86
+msgid "GnomeDbConnectionProperties"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbconnectsel.c:147
+#, fuzzy
+msgid "Connection Selector"
+msgstr "Επιλογή Εικονιδίου"
+
+#: ../glade/gnome-db/gnomedbdsnconfig.c:136
+msgid "DSN Configurator"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbdsndruid.c:147
+msgid "DSN Config Druid"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbeditor.c:63
+msgid "Highlight text:"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbeditor.c:63
+msgid "If selected, text will be highlighted inside the widget"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbeditor.c:178
+msgid "GnomeDbEditor"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedberror.c:136
+msgid "Database error viewer"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedberrordlg.c:219
+msgid "Database error dialog"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbform.c:147
+msgid "Form"
+msgstr "Φόρμα"
+
+#: ../glade/gnome-db/gnomedbgraybar.c:59
+msgid "Text inside the gray bar"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbgraybar.c:138
+msgid "Gray Bar"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbgrid.c:132
+msgid "Data-bound grid"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedblist.c:136
+msgid "Data-bound list"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedblogin.c:136
+msgid "Database login widget"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedblogindlg.c:78
+msgid "Login"
+msgstr "Αυθεντικοποίηση χρήστη"
+
+#: ../glade/gnome-db/gnomedblogindlg.c:221
+msgid "Database login dialog"
+msgstr "Διάλογος βάσης δεδομένων αυθεντικοποίησης χρήστη"
+
+#: ../glade/gnome-db/gnomedbprovidersel.c:147
+#, fuzzy
+msgid "Provider Selector"
+msgstr "Επιλογέας"
+
+#: ../glade/gnome-db/gnomedbquerybuilder.c:86
+msgid "GnomeDbQueryBuilder"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbsourcesel.c:147
+#, fuzzy
+msgid "Data Source Selector"
+msgstr "Κατάλογος Πηγαίου Κώδικα:"
+
+#: ../glade/gnome-db/gnomedbtableeditor.c:133
+#, fuzzy
+msgid "Table Editor "
+msgstr "Διορθωτής Μενού"
+
+#: ../glade/gnome/bonobodock.c:231
+msgid "Allow Floating:"
+msgstr ""
+
+#: ../glade/gnome/bonobodock.c:232
+msgid "If floating dock items are allowed"
+msgstr ""
+
+#: ../glade/gnome/bonobodock.c:278
+msgid "Add dock band on top"
+msgstr ""
+
+#: ../glade/gnome/bonobodock.c:285
+msgid "Add dock band on bottom"
+msgstr ""
+
+#: ../glade/gnome/bonobodock.c:292
+msgid "Add dock band on left"
+msgstr ""
+
+#: ../glade/gnome/bonobodock.c:299
+msgid "Add dock band on right"
+msgstr ""
+
+#: ../glade/gnome/bonobodock.c:306
+msgid "Add floating dock item"
+msgstr ""
+
+#: ../glade/gnome/bonobodock.c:495
+msgid "Gnome Dock"
+msgstr ""
+
+#: ../glade/gnome/bonobodockitem.c:165
+#, fuzzy
+msgid "Locked:"
+msgstr "Κλειδωμένο"
+
+#: ../glade/gnome/bonobodockitem.c:166
+msgid "If the dock item is locked in position"
+msgstr ""
+
+#: ../glade/gnome/bonobodockitem.c:167
+msgid "Exclusive:"
+msgstr ""
+
+#: ../glade/gnome/bonobodockitem.c:168
+msgid "If the dock item is always the only item in its band"
+msgstr ""
+
+#: ../glade/gnome/bonobodockitem.c:169
+msgid "Never Floating:"
+msgstr ""
+
+#: ../glade/gnome/bonobodockitem.c:170
+msgid "If the dock item is never allowed to float in its own window"
+msgstr ""
+
+#: ../glade/gnome/bonobodockitem.c:171
+msgid "Never Vertical:"
+msgstr ""
+
+#: ../glade/gnome/bonobodockitem.c:172
+msgid "If the dock item is never allowed to be vertical"
+msgstr ""
+
+#: ../glade/gnome/bonobodockitem.c:173
+msgid "Never Horizontal:"
+msgstr ""
+
+#: ../glade/gnome/bonobodockitem.c:174
+msgid "If the dock item is never allowed to be horizontal"
+msgstr ""
+
+#: ../glade/gnome/bonobodockitem.c:177
+msgid "The type of shadow around the dock item"
+msgstr ""
+
+#: ../glade/gnome/bonobodockitem.c:180
+msgid "The orientation of a floating dock item"
+msgstr ""
+
+#: ../glade/gnome/bonobodockitem.c:428
+msgid "Add dock item before"
+msgstr ""
+
+#: ../glade/gnome/bonobodockitem.c:435
+msgid "Add dock item after"
+msgstr ""
+
+#: ../glade/gnome/bonobodockitem.c:771
+msgid "Gnome Dock Item"
+msgstr ""
+
+#: ../glade/gnome/gnomeabout.c:139
+msgid ""
+"Additional information, such as a description of the package and its home "
+"page on the web"
+msgstr ""
+
+#: ../glade/gnome/gnomeabout.c:539
+msgid "Gnome About Dialog"
+msgstr ""
+
+#: ../glade/gnome/gnomeapp.c:171
+msgid "New File"
+msgstr "Νέο Αρχείο"
+
+#: ../glade/gnome/gnomeapp.c:173
+msgid "Open File"
+msgstr "Άνοιγμα Αρχείου"
+
+#: ../glade/gnome/gnomeapp.c:175
+msgid "Save File"
+msgstr "Αποθήκευση Αρχείου"
+
+#: ../glade/gnome/gnomeapp.c:204
+msgid "Status Bar:"
+msgstr "Γραμμή Κατάστασης:"
+
+#: ../glade/gnome/gnomeapp.c:205
+msgid "If the window has a status bar"
+msgstr ""
+
+#: ../glade/gnome/gnomeapp.c:206
+msgid "Store Config:"
+msgstr ""
+
+#: ../glade/gnome/gnomeapp.c:207
+msgid "If the layout is saved and restored automatically"
+msgstr ""
+
+#: ../glade/gnome/gnomeapp.c:443
+msgid "Gnome Application Window"
+msgstr ""
+
+#: ../glade/gnome/gnomeappbar.c:56
+#, fuzzy
+msgid "Status Message."
+msgstr "Μύνημα %d / %d / Κατάσταση: %s"
+
+#: ../glade/gnome/gnomeappbar.c:69
+msgid "Progress:"
+msgstr "Πρόοδος:"
+
+#: ../glade/gnome/gnomeappbar.c:70
+msgid "If the app bar has a progress indicator"
+msgstr ""
+
+#: ../glade/gnome/gnomeappbar.c:71
+msgid "Status:"
+msgstr "Κατάσταση:"
+
+#: ../glade/gnome/gnomeappbar.c:72
+msgid "If the app bar has an area for status messages and user input"
+msgstr ""
+
+#: ../glade/gnome/gnomeappbar.c:184
+msgid "Gnome Application Bar"
+msgstr ""
+
+#: ../glade/gnome/gnomecanvas.c:68
+msgid "Anti-Aliased:"
+msgstr ""
+
+#: ../glade/gnome/gnomecanvas.c:69
+msgid "If the canvas is anti-aliased, to smooth the edges of text and graphics"
+msgstr ""
+
+#: ../glade/gnome/gnomecanvas.c:70
+msgid "X1:"
+msgstr "X1:"
+
+#: ../glade/gnome/gnomecanvas.c:70
+msgid "The minimum x coordinate"
+msgstr ""
+
+#: ../glade/gnome/gnomecanvas.c:71
+msgid "Y1:"
+msgstr "Y1:"
+
+#: ../glade/gnome/gnomecanvas.c:71
+msgid "The minimum y coordinate"
+msgstr ""
+
+#: ../glade/gnome/gnomecanvas.c:72
+msgid "X2:"
+msgstr ""
+
+#: ../glade/gnome/gnomecanvas.c:72
+msgid "The maximum x coordinate"
+msgstr ""
+
+#: ../glade/gnome/gnomecanvas.c:73
+msgid "Y2:"
+msgstr ""
+
+#: ../glade/gnome/gnomecanvas.c:73
+msgid "The maximum y coordinate"
+msgstr ""
+
+#: ../glade/gnome/gnomecanvas.c:75
+msgid "Pixels Per Unit:"
+msgstr ""
+
+#: ../glade/gnome/gnomecanvas.c:76
+msgid "The number of pixels corresponding to one unit"
+msgstr ""
+
+#: ../glade/gnome/gnomecanvas.c:248
+msgid "GnomeCanvas"
+msgstr ""
+
+#: ../glade/gnome/gnomecolorpicker.c:68
+msgid "Dither:"
+msgstr ""
+
+#: ../glade/gnome/gnomecolorpicker.c:69
+msgid "If the sample should use dithering to be more accurate"
+msgstr ""
+
+#: ../glade/gnome/gnomecolorpicker.c:160
+msgid "Pick a color"
+msgstr "Επιλέξτε ένα χρώμα"
+
+#: ../glade/gnome/gnomecolorpicker.c:219
+msgid "Gnome Color Picker"
+msgstr ""
+
+#: ../glade/gnome/gnomecontrol.c:160
+#, fuzzy
+msgid "Couldn't create the Bonobo control"
+msgstr "Αδυναμία δημιουργίας εικόνας pixmap από το αρχείο"
+
+#: ../glade/gnome/gnomecontrol.c:249
+msgid "New Bonobo Control"
+msgstr ""
+
+#: ../glade/gnome/gnomecontrol.c:262
+msgid "Select a Bonobo Control"
+msgstr ""
+
+#: ../glade/gnome/gnomecontrol.c:290
+msgid "OAFIID"
+msgstr ""
+
+#: ../glade/gnome/gnomecontrol.c:295 ../glade/property.c:3902
+msgid "Description"
+msgstr "Περιγραφή"
+
+#: ../glade/gnome/gnomecontrol.c:339
+msgid "Bonobo Control"
+msgstr ""
+
+#: ../glade/gnome/gnomedateedit.c:70
+msgid "Show Time:"
+msgstr ""
+
+#: ../glade/gnome/gnomedateedit.c:71
+msgid "If the time is shown as well as the date"
+msgstr ""
+
+#: ../glade/gnome/gnomedateedit.c:72
+msgid "24 Hour Format:"
+msgstr ""
+
+#: ../glade/gnome/gnomedateedit.c:73
+msgid "If the time is shown in 24-hour format"
+msgstr ""
+
+#: ../glade/gnome/gnomedateedit.c:76
+msgid "Lower Hour:"
+msgstr "Χαμηλότερη Ώρα:"
+
+#: ../glade/gnome/gnomedateedit.c:77
+msgid "The lowest hour to show in the popup"
+msgstr ""
+
+#: ../glade/gnome/gnomedateedit.c:79
+msgid "Upper Hour:"
+msgstr "Υψηλότερη Ώρα:"
+
+#: ../glade/gnome/gnomedateedit.c:80
+msgid "The highest hour to show in the popup"
+msgstr ""
+
+#: ../glade/gnome/gnomedateedit.c:298
+msgid "GnomeDateEdit"
+msgstr ""
+
+#: ../glade/gnome/gnomedialog.c:153 ../glade/gnome/gnomemessagebox.c:190
+msgid "Auto Close:"
+msgstr "Αυτόματο Κλείσιμο:"
+
+#: ../glade/gnome/gnomedialog.c:154 ../glade/gnome/gnomemessagebox.c:191
+msgid "If the dialog closes when any button is clicked"
+msgstr ""
+
+#: ../glade/gnome/gnomedialog.c:155 ../glade/gnome/gnomemessagebox.c:192
+msgid "Hide on Close:"
+msgstr ""
+
+#: ../glade/gnome/gnomedialog.c:156 ../glade/gnome/gnomemessagebox.c:193
+msgid "If the dialog is hidden when it is closed, instead of being destroyed"
+msgstr ""
+
+#: ../glade/gnome/gnomedialog.c:342
+msgid "Gnome Dialog Box"
+msgstr ""
+
+#: ../glade/gnome/gnomedruid.c:91
+msgid "New Gnome Druid"
+msgstr ""
+
+#: ../glade/gnome/gnomedruid.c:190
+msgid "Show Help"
+msgstr "Προβολή Βοήθειας"
+
+#: ../glade/gnome/gnomedruid.c:190
+msgid "Display the help button."
+msgstr ""
+
+#: ../glade/gnome/gnomedruid.c:255
+msgid "Add Start Page"
+msgstr ""
+
+#: ../glade/gnome/gnomedruid.c:270
+msgid "Add Finish Page"
+msgstr ""
+
+#: ../glade/gnome/gnomedruid.c:485
+#, fuzzy
+msgid "Druid"
+msgstr "Δρυΐδης"
+
+#: ../glade/gnome/gnomedruidpageedge.c:94
+#: ../glade/gnome/gnomedruidpagestandard.c:86
+msgid "The title of the page"
+msgstr "Τίτλος Σελίδας"
+
+#: ../glade/gnome/gnomedruidpageedge.c:96
+msgid "The main text of the page, introducing people to the druid."
+msgstr ""
+
+#: ../glade/gnome/gnomedruidpageedge.c:98
+#: ../glade/gnome/gnomedruidpagestandard.c:87
+msgid "Title Color:"
+msgstr "Χρώμα Τίτλου:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:99
+#: ../glade/gnome/gnomedruidpagestandard.c:88
+msgid "The color of the title text"
+msgstr ""
+
+#: ../glade/gnome/gnomedruidpageedge.c:100
+msgid "Text Color:"
+msgstr "Χρώμα Κειμένου:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:101
+msgid "The color of the main text"
+msgstr ""
+
+#: ../glade/gnome/gnomedruidpageedge.c:103
+#: ../glade/gnome/gnomedruidpagestandard.c:92
+msgid "The background color of the page"
+msgstr ""
+
+#: ../glade/gnome/gnomedruidpageedge.c:104
+#: ../glade/gnome/gnomedruidpagestandard.c:93
+msgid "Logo Back. Color:"
+msgstr ""
+
+#: ../glade/gnome/gnomedruidpageedge.c:105
+#: ../glade/gnome/gnomedruidpagestandard.c:94
+msgid "The background color around the logo"
+msgstr ""
+
+#: ../glade/gnome/gnomedruidpageedge.c:106
+msgid "Text Box Color:"
+msgstr ""
+
+#: ../glade/gnome/gnomedruidpageedge.c:107
+msgid "The background color of the main text area"
+msgstr ""
+
+#: ../glade/gnome/gnomedruidpageedge.c:108
+#: ../glade/gnome/gnomedruidpagestandard.c:95
+msgid "Logo Image:"
+msgstr "Εικόνα Λογότυπου:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:109
+#: ../glade/gnome/gnomedruidpagestandard.c:96
+msgid "The logo to display in the top-right of the page"
+msgstr ""
+
+#: ../glade/gnome/gnomedruidpageedge.c:110
+msgid "Side Watermark:"
+msgstr ""
+
+#: ../glade/gnome/gnomedruidpageedge.c:111
+msgid "The main image to display on the side of the page."
+msgstr ""
+
+#: ../glade/gnome/gnomedruidpageedge.c:112
+#: ../glade/gnome/gnomedruidpagestandard.c:97
+#, fuzzy
+msgid "Top Watermark:"
+msgstr "Πάνω Υδατογράφημα"
+
+#: ../glade/gnome/gnomedruidpageedge.c:113
+msgid "The watermark to display at the top of the page."
+msgstr ""
+
+#: ../glade/gnome/gnomedruidpageedge.c:522
+msgid "Druid Start or Finish Page"
+msgstr ""
+
+#: ../glade/gnome/gnomedruidpagestandard.c:89
+msgid "Contents Back. Color:"
+msgstr ""
+
+#: ../glade/gnome/gnomedruidpagestandard.c:90
+msgid "The background color around the title"
+msgstr ""
+
+#: ../glade/gnome/gnomedruidpagestandard.c:98
+msgid "The image to display along the top of the page"
+msgstr ""
+
+#: ../glade/gnome/gnomedruidpagestandard.c:447
+msgid "Druid Standard Page"
+msgstr ""
+
+#: ../glade/gnome/gnomeentry.c:71 ../glade/gnome/gnomefileentry.c:96
+#: ../glade/gnome/gnomeiconentry.c:74 ../glade/gnome/gnomepixmapentry.c:77
+#, fuzzy
+msgid "History ID:"
+msgstr "id ιστορικού"
+
+#: ../glade/gnome/gnomeentry.c:72 ../glade/gnome/gnomefileentry.c:97
+#: ../glade/gnome/gnomeiconentry.c:75 ../glade/gnome/gnomepixmapentry.c:78
+msgid "The ID to save the history entries under"
+msgstr ""
+
+#: ../glade/gnome/gnomeentry.c:73 ../glade/gnome/gnomefileentry.c:98
+#: ../glade/gnome/gnomeiconentry.c:76 ../glade/gnome/gnomepixmapentry.c:79
+msgid "Max Saved:"
+msgstr ""
+
+#: ../glade/gnome/gnomeentry.c:74 ../glade/gnome/gnomefileentry.c:99
+#: ../glade/gnome/gnomeiconentry.c:77 ../glade/gnome/gnomepixmapentry.c:80
+msgid "The maximum number of history entries saved"
+msgstr ""
+
+#: ../glade/gnome/gnomeentry.c:210
+msgid "Gnome Entry"
+msgstr ""
+
+#: ../glade/gnome/gnomefileentry.c:102 ../glade/gnome/gnomeiconentry.c:73
+#: ../glade/gnome/gnomepixmapentry.c:83
+msgid "The title of the file selection dialog"
+msgstr ""
+
+#: ../glade/gnome/gnomefileentry.c:103
+msgid "Directory:"
+msgstr "Κατάλογος:"
+
+#: ../glade/gnome/gnomefileentry.c:104
+msgid "If a directory is needed rather than a file"
+msgstr ""
+
+#: ../glade/gnome/gnomefileentry.c:106 ../glade/gnome/gnomepixmapentry.c:85
+msgid "If the file selection dialog should be modal"
+msgstr ""
+
+#: ../glade/gnome/gnomefileentry.c:107 ../glade/gnome/gnomepixmapentry.c:86
+msgid "Use FileChooser:"
+msgstr ""
+
+#: ../glade/gnome/gnomefileentry.c:108 ../glade/gnome/gnomepixmapentry.c:87
+msgid "Use the new GtkFileChooser widget instead of GtkFileSelection"
+msgstr ""
+
+#: ../glade/gnome/gnomefileentry.c:367
+msgid "Gnome File Entry"
+msgstr ""
+
+#: ../glade/gnome/gnomefontpicker.c:98
+msgid "The preview text to show in the font selection dialog"
+msgstr ""
+
+#: ../glade/gnome/gnomefontpicker.c:99
+msgid "Mode:"
+msgstr "Κατάσταση:"
+
+#: ../glade/gnome/gnomefontpicker.c:100
+msgid "What to display in the font picker button"
+msgstr ""
+
+#: ../glade/gnome/gnomefontpicker.c:107
+msgid "The size of the font to use in the font picker button"
+msgstr ""
+
+#: ../glade/gnome/gnomefontpicker.c:392
+msgid "Gnome Font Picker"
+msgstr ""
+
+#: ../glade/gnome/gnomehref.c:66
+msgid "URL:"
+msgstr "URL:"
+
+#: ../glade/gnome/gnomehref.c:67
+msgid "The URL to display when the button is clicked"
+msgstr ""
+
+#: ../glade/gnome/gnomehref.c:69
+msgid "The text to display in the button"
+msgstr ""
+
+#: ../glade/gnome/gnomehref.c:206
+msgid "Gnome HRef Link Button"
+msgstr ""
+
+#: ../glade/gnome/gnomeiconentry.c:208
+msgid "Gnome Icon Entry"
+msgstr ""
+
+#: ../glade/gnome/gnomeiconlist.c:175
+#, fuzzy
+msgid "The selection mode"
+msgstr "Λειτουργία Επιλογής"
+
+#: ../glade/gnome/gnomeiconlist.c:177
+msgid "Icon Width:"
+msgstr "Πλάτος Εικονιδίου:"
+
+#: ../glade/gnome/gnomeiconlist.c:178
+msgid "The width of each icon"
+msgstr "Το πλάτος κάθε εικονιδίου"
+
+#: ../glade/gnome/gnomeiconlist.c:181
+msgid "The number of pixels between rows of icons"
+msgstr ""
+
+#: ../glade/gnome/gnomeiconlist.c:184
+msgid "The number of pixels between columns of icons"
+msgstr ""
+
+#: ../glade/gnome/gnomeiconlist.c:187
+msgid "Icon Border:"
+msgstr "Πλαίσιο Εικονιδίου:"
+
+#: ../glade/gnome/gnomeiconlist.c:188
+msgid "The number of pixels around icons (unused?)"
+msgstr ""
+
+#: ../glade/gnome/gnomeiconlist.c:191
+msgid "Text Spacing:"
+msgstr "Διάκενο Κειμένου:"
+
+#: ../glade/gnome/gnomeiconlist.c:192
+msgid "The number of pixels between the text and the icon"
+msgstr ""
+
+#: ../glade/gnome/gnomeiconlist.c:194
+#, fuzzy
+msgid "Text Editable:"
+msgstr "τροποποιήσιμο κείμενο"
+
+#: ../glade/gnome/gnomeiconlist.c:195
+msgid "If the icon text can be edited by the user"
+msgstr ""
+
+#: ../glade/gnome/gnomeiconlist.c:196
+msgid "Text Static:"
+msgstr ""
+
+#: ../glade/gnome/gnomeiconlist.c:197
+msgid ""
+"If the icon text is static, in which case it will not be copied by the "
+"GnomeIconList"
+msgstr ""
+
+#: ../glade/gnome/gnomeiconlist.c:461
+msgid "Icon List"
+msgstr "Λίστα Εικονιδίων"
+
+#: ../glade/gnome/gnomeiconselection.c:154
+msgid "Icon Selection"
+msgstr "Επιλογή Εικονιδίου"
+
+#: ../glade/gnome/gnomemessagebox.c:175
+msgid "Message Type:"
+msgstr "Τύπος Μηνύματος:"
+
+#: ../glade/gnome/gnomemessagebox.c:176
+msgid "The type of the message box"
+msgstr ""
+
+#: ../glade/gnome/gnomemessagebox.c:178
+msgid "Message:"
+msgstr "Μήνυμα:"
+
+#: ../glade/gnome/gnomemessagebox.c:178
+msgid "The message to display"
+msgstr "Το μήνυμα που θα εμφανιστεί"
+
+#: ../glade/gnome/gnomemessagebox.c:499
+msgid "Gnome Message Box"
+msgstr ""
+
+#: ../glade/gnome/gnomepixmap.c:79
+msgid "The pixmap filename"
+msgstr ""
+
+#: ../glade/gnome/gnomepixmap.c:80
+#, fuzzy
+msgid "Scaled:"
+msgstr "_Σε κλίμακα"
+
+#: ../glade/gnome/gnomepixmap.c:80
+msgid "If the pixmap is scaled"
+msgstr ""
+
+#: ../glade/gnome/gnomepixmap.c:81
+msgid "Scaled Width:"
+msgstr ""
+
+#: ../glade/gnome/gnomepixmap.c:82
+msgid "The width to scale the pixmap to"
+msgstr ""
+
+#: ../glade/gnome/gnomepixmap.c:84
+msgid "Scaled Height:"
+msgstr ""
+
+#: ../glade/gnome/gnomepixmap.c:85
+msgid "The height to scale the pixmap to"
+msgstr ""
+
+#: ../glade/gnome/gnomepixmap.c:346
+msgid "Gnome Pixmap"
+msgstr ""
+
+#: ../glade/gnome/gnomepixmapentry.c:75
+msgid "Preview:"
+msgstr "Επισκόπηση:"
+
+#: ../glade/gnome/gnomepixmapentry.c:76
+msgid "If a small preview of the pixmap is displayed"
+msgstr ""
+
+#: ../glade/gnome/gnomepixmapentry.c:303
+msgid "GnomePixmapEntry"
+msgstr ""
+
+#: ../glade/gnome/gnomepropertybox.c:113
+msgid "New GnomePropertyBox"
+msgstr ""
+
+#: ../glade/gnome/gnomepropertybox.c:366
+msgid "Property Dialog Box"
+msgstr ""
+
+#: ../glade/main.c:70 ../glade/main.c:104
+msgid "Write the source code and exit"
+msgstr "Εγγραφή του πηγαίου κώδικα και έξοδος"
+
+#: ../glade/main.c:74 ../glade/main.c:108
+msgid "Start with the palette hidden"
+msgstr ""
+
+#: ../glade/main.c:78 ../glade/main.c:112
+#, fuzzy
+msgid "Start with the property editor hidden"
+msgstr "Εμφάνιση του διορθωτή ιδιοτήτων"
+
+#: ../glade/main.c:460
+msgid ""
+"glade: The XML file must be set for the '-w' or '--write-source' option.\n"
+msgstr ""
+
+#: ../glade/main.c:474
+msgid "glade: Error loading XML file.\n"
+msgstr "glade: Σφάλμα ανάγνωσης αρχείου XML.\n"
+
+#: ../glade/main.c:481
+msgid "glade: Error writing source.\n"
+msgstr "glade: Σφάλμα εγγραφής πηγαίου κώδικα.\n"
+
+#: ../glade/palette.c:60
+msgid "Palette"
+msgstr "Παλέττα"
+
+#: ../glade/property.c:73
+msgid "private"
+msgstr "ιδιωτικό"
+
+#: ../glade/property.c:73
+msgid "protected"
+msgstr "προστατευόμενο"
+
+#: ../glade/property.c:73
+msgid "public"
+msgstr "δημόσιο"
+
+#: ../glade/property.c:102
+msgid "Prelight"
+msgstr ""
+
+#: ../glade/property.c:103
+msgid "Selected"
+msgstr "Επιλεγμένα"
+
+#: ../glade/property.c:103
+msgid "Insens"
+msgstr ""
+
+#: ../glade/property.c:467
+msgid "When the window needs redrawing"
+msgstr "Όταν το παράθυρο απαιτεί επανασχεδιασμό"
+
+#: ../glade/property.c:468
+msgid "When the mouse moves"
+msgstr "Όταν το ποντίκι κινείται"
+
+#: ../glade/property.c:469
+msgid "Mouse movement hints"
+msgstr ""
+
+#: ../glade/property.c:470
+msgid "Mouse movement with any button pressed"
+msgstr ""
+
+#: ../glade/property.c:471
+msgid "Mouse movement with button 1 pressed"
+msgstr ""
+
+#: ../glade/property.c:472
+msgid "Mouse movement with button 2 pressed"
+msgstr ""
+
+#: ../glade/property.c:473
+msgid "Mouse movement with button 3 pressed"
+msgstr ""
+
+#: ../glade/property.c:474
+msgid "Any mouse button pressed"
+msgstr ""
+
+#: ../glade/property.c:475
+msgid "Any mouse button released"
+msgstr ""
+
+#: ../glade/property.c:476
+msgid "Any key pressed"
+msgstr "Όποιο πλήκτρο πατηθεί"
+
+#: ../glade/property.c:477
+msgid "Any key released"
+msgstr "Όποιο πλήκτρο αφεθεί"
+
+#: ../glade/property.c:478
+msgid "When the mouse enters the window"
+msgstr "Όταν το ποντίκι μπαίνει στο παράθυρο"
+
+#: ../glade/property.c:479
+msgid "When the mouse leaves the window"
+msgstr "Όταν το ποντίκι φεύγει από το παράθυρο"
+
+#: ../glade/property.c:480
+msgid "Any change in input focus"
+msgstr ""
+
+#: ../glade/property.c:481
+msgid "Any change in window structure"
+msgstr "Όποια αλλαγή στη δομή του παραθύρου"
+
+#: ../glade/property.c:482
+msgid "Any change in X Windows property"
+msgstr "Όποια αλλαγή σε ιδιότητα του Χ"
+
+#: ../glade/property.c:483
+msgid "Any change in visibility"
+msgstr "Όποια αλλαγή στην ορατότητα"
+
+#: ../glade/property.c:484 ../glade/property.c:485
+msgid "For cursors in XInput-aware programs"
+msgstr ""
+
+#: ../glade/property.c:596
+msgid "Properties"
+msgstr "Ιδιότητες"
+
+#: ../glade/property.c:620
+msgid "Packing"
+msgstr "Στοίβαγμα"
+
+#: ../glade/property.c:625
+msgid "Common"
+msgstr "Κοινά"
+
+#: ../glade/property.c:631
+msgid "Style"
+msgstr "Στυλ"
+
+#: ../glade/property.c:637 ../glade/property.c:4646
+msgid "Signals"
+msgstr "Σήματα"
+
+#: ../glade/property.c:700 ../glade/property.c:721
+msgid "Properties: "
+msgstr "Ιδιότητες:"
+
+#: ../glade/property.c:708 ../glade/property.c:732
+msgid "Properties: <none>"
+msgstr "Ιδιότητες: <καμία>"
+
+#: ../glade/property.c:778
+msgid "Class:"
+msgstr "Κλάση:"
+
+#: ../glade/property.c:779
+msgid "The class of the widget"
+msgstr "Το όνομα του μαραφετιού"
+
+#: ../glade/property.c:813
+msgid "Width:"
+msgstr "Πλάτος:"
+
+#: ../glade/property.c:814
+msgid ""
+"The requested width of the widget (usually used to set the minimum width)"
+msgstr ""
+
+#: ../glade/property.c:816
+msgid "Height:"
+msgstr "Ύψος:"
+
+#: ../glade/property.c:817
+msgid ""
+"The requested height of the widget (usually used to set the minimum height)"
+msgstr ""
+
+#: ../glade/property.c:820
+msgid "Visible:"
+msgstr "Ορατό:"
+
+#: ../glade/property.c:821
+msgid "If the widget is initially visible"
+msgstr ""
+
+#: ../glade/property.c:822
+msgid "Sensitive:"
+msgstr "Ευαίσθητο:"
+
+#: ../glade/property.c:823
+msgid "If the widget responds to input"
+msgstr ""
+
+#: ../glade/property.c:825
+msgid "The tooltip to display if the mouse lingers over the widget"
+msgstr ""
+
+#: ../glade/property.c:827
+#, fuzzy
+msgid "Can Default:"
+msgstr "Δυνατότητα προεπιλογής"
+
+#: ../glade/property.c:828
+msgid "If the widget can be the default action in a dialog"
+msgstr ""
+
+#: ../glade/property.c:829
+msgid "Has Default:"
+msgstr "Έχει Εξ' Ορισμού:"
+
+#: ../glade/property.c:830
+msgid "If the widget is the default action in the dialog"
+msgstr ""
+
+#: ../glade/property.c:831
+#, fuzzy
+msgid "Can Focus:"
+msgstr "Δυνατότητα εστίασης"
+
+#: ../glade/property.c:832
+msgid "If the widget can accept the input focus"
+msgstr ""
+
+#: ../glade/property.c:833
+#, fuzzy
+msgid "Has Focus:"
+msgstr "Έχει εστίαση"
+
+#: ../glade/property.c:834
+msgid "If the widget has the input focus"
+msgstr ""
+
+#: ../glade/property.c:836
+msgid "Events:"
+msgstr "Γεγονότα:"
+
+#: ../glade/property.c:837
+msgid "The X events that the widget receives"
+msgstr ""
+
+#: ../glade/property.c:839
+msgid "Ext.Events:"
+msgstr ""
+
+#: ../glade/property.c:840
+msgid "The X Extension events mode"
+msgstr ""
+
+#: ../glade/property.c:843
+msgid "Accelerators:"
+msgstr ""
+
+#: ../glade/property.c:844
+msgid "Defines the signals to emit when keys are pressed"
+msgstr ""
+
+#: ../glade/property.c:845
+msgid "Edit..."
+msgstr "Επεξεργασία..."
+
+#: ../glade/property.c:867
+msgid "Propagate:"
+msgstr ""
+
+#: ../glade/property.c:868
+msgid "Set True to propagate the style to the widget's children"
+msgstr ""
+
+#: ../glade/property.c:869
+msgid "Named Style:"
+msgstr ""
+
+#: ../glade/property.c:870
+msgid "The name of the style, which can be shared by several widgets"
+msgstr ""
+
+#: ../glade/property.c:872
+msgid "Font:"
+msgstr "Γραμματοσειρά:"
+
+#: ../glade/property.c:873
+msgid "The font to use for any text in the widget"
+msgstr ""
+
+#: ../glade/property.c:898
+msgid "Copy All"
+msgstr "Αντιγραφή Όλων"
+
+#: ../glade/property.c:926
+msgid "Foreground:"
+msgstr "Προσκήνιο:"
+
+#: ../glade/property.c:926
+msgid "Background:"
+msgstr "Παρασκήνιο:"
+
+#: ../glade/property.c:926
+msgid "Base:"
+msgstr "Βάση:"
+
+#: ../glade/property.c:928
+msgid "Foreground color"
+msgstr "Χρώμα Προσκηνίου"
+
+#: ../glade/property.c:928
+msgid "Background color"
+msgstr "Χρώμα Παρασκηνίου"
+
+#: ../glade/property.c:928
+msgid "Text color"
+msgstr "Χρώμα κειμένου"
+
+#: ../glade/property.c:929
+msgid "Base color"
+msgstr "Χρώμα βάσης"
+
+#: ../glade/property.c:946
+msgid "Back. Pixmap:"
+msgstr ""
+
+#: ../glade/property.c:947
+msgid "The graphic to use as the background of the widget"
+msgstr ""
+
+#: ../glade/property.c:999
+msgid "The file to write source code into"
+msgstr ""
+
+#: ../glade/property.c:1000
+msgid "Public:"
+msgstr "Δημόσιο:"
+
+#: ../glade/property.c:1001
+msgid "If the widget is added to the component's data structure"
+msgstr ""
+
+#: ../glade/property.c:1012
+msgid "Separate Class:"
+msgstr "Ξεχωριστή Κλάση:"
+
+#: ../glade/property.c:1013
+msgid "Put this widget's subtree in a separate class"
+msgstr ""
+
+#: ../glade/property.c:1014
+msgid "Separate File:"
+msgstr "Ξεχωριστό Αρχείο:"
+
+#: ../glade/property.c:1015
+msgid "Put this widget in a separate source file"
+msgstr ""
+
+#: ../glade/property.c:1016
+msgid "Visibility:"
+msgstr "Ορατότητα:"
+
+#: ../glade/property.c:1017
+msgid "Visibility of widgets. Public widgets are exported to a global map."
+msgstr ""
+
+#: ../glade/property.c:1127
+msgid "You need to select a color or background to copy"
+msgstr ""
+
+#: ../glade/property.c:1146
+msgid "Invalid selection in on_style_copy()"
+msgstr ""
+
+#: ../glade/property.c:1188
+msgid "You need to copy a color or background pixmap first"
+msgstr ""
+
+#: ../glade/property.c:1194
+msgid "You need to select a color to paste into"
+msgstr ""
+
+#: ../glade/property.c:1204
+msgid "You need to select a background pixmap to paste into"
+msgstr ""
+
+#: ../glade/property.c:1456
+msgid "Couldn't create pixmap from file\n"
+msgstr ""
+
+#. List of current signal handlers - Signal/Handler/Data/Options
+#: ../glade/property.c:1498
+msgid "Signal"
+msgstr "Σήμα"
+
+#: ../glade/property.c:1500
+msgid "Data"
+msgstr "Δεδομένα"
+
+#: ../glade/property.c:1501
+msgid "After"
+msgstr "Μετά"
+
+#: ../glade/property.c:1502
+msgid "Object"
+msgstr "Αντικείμενο"
+
+#: ../glade/property.c:1533 ../glade/property.c:1697
+msgid "Signal:"
+msgstr "Σήμα:"
+
+#: ../glade/property.c:1534
+msgid "The signal to add a handler for"
+msgstr ""
+
+#: ../glade/property.c:1548
+msgid "The function to handle the signal"
+msgstr ""
+
+#: ../glade/property.c:1551
+msgid "Data:"
+msgstr "Δεδομένα:"
+
+#: ../glade/property.c:1552
+msgid "The data passed to the handler"
+msgstr ""
+
+#: ../glade/property.c:1553
+msgid "Object:"
+msgstr "Αντικείμενο:"
+
+#: ../glade/property.c:1554
+msgid "The object which receives the signal"
+msgstr ""
+
+#: ../glade/property.c:1555
+msgid "After:"
+msgstr "Μετά:"
+
+#: ../glade/property.c:1556
+msgid "If the handler runs after the class function"
+msgstr ""
+
+#: ../glade/property.c:1569
+msgid "Add"
+msgstr "Νέο"
+
+#: ../glade/property.c:1575
+msgid "Update"
+msgstr "Ενημέρωση"
+
+#: ../glade/property.c:1587
+msgid "Clear"
+msgstr "Καθαρισμός"
+
+#: ../glade/property.c:1637
+msgid "Accelerators"
+msgstr ""
+
+#. List of current accelerators - Mods/Keys/Signals
+#: ../glade/property.c:1650
+msgid "Mod"
+msgstr "Τροποποιητής"
+
+#: ../glade/property.c:1651
+msgid "Key"
+msgstr "Πλήκτρο"
+
+#: ../glade/property.c:1652
+msgid "Signal to emit"
+msgstr "Σήμα για εκπομπή"
+
+#: ../glade/property.c:1696
+#, fuzzy
+msgid "The accelerator key"
+msgstr "Πλήκτρο συντόμευσης"
+
+#: ../glade/property.c:1698
+msgid "The signal to emit when the accelerator is pressed"
+msgstr ""
+
+#: ../glade/property.c:1847
+msgid "Edit Text Property"
+msgstr ""
+
+#: ../glade/property.c:1885
+msgid "<b>_Text:</b>"
+msgstr ""
+
+#: ../glade/property.c:1895
+#, fuzzy
+msgid "T_ranslatable"
+msgstr "Μεταφράσιμα Αλφαριθμητικά"
+
+#: ../glade/property.c:1899
+msgid "Has Context _Prefix"
+msgstr ""
+
+#: ../glade/property.c:1925
+msgid "<b>Co_mments For Translators:</b>"
+msgstr ""
+
+#: ../glade/property.c:3892
+msgid "Select X Events"
+msgstr "Επιλογή Γεγονότων Χ"
+
+#: ../glade/property.c:3901
+msgid "Event Mask"
+msgstr "Μάσκα Γεγονότων"
+
+#: ../glade/property.c:4031 ../glade/property.c:4080
+msgid "You need to set the accelerator key"
+msgstr ""
+
+#: ../glade/property.c:4038 ../glade/property.c:4087
+msgid "You need to set the signal to emit"
+msgstr ""
+
+#: ../glade/property.c:4314 ../glade/property.c:4370
+msgid "You need to set the signal name"
+msgstr ""
+
+#: ../glade/property.c:4321 ../glade/property.c:4377
+msgid "You need to set the handler for the signal"
+msgstr ""
+
+#. This groups the signals by class, e.g. 'GtkButton signals'.
+#: ../glade/property.c:4580
+#, c-format
+msgid "%s signals"
+msgstr "%s σήματα"
+
+#: ../glade/property.c:4637
+msgid "Select Signal"
+msgstr "Επιλογή Σήματος"
+
+#: ../glade/property.c:4833
+msgid "Value:"
+msgstr "Τιμή:"
+
+#: ../glade/property.c:4833
+msgid "Min:"
+msgstr "Ελάχιστο:"
+
+#: ../glade/property.c:4833
+msgid "Step Inc:"
+msgstr "Αυξ. Βήματος:"
+
+#: ../glade/property.c:4834
+msgid "Page Inc:"
+msgstr "Αυξ. Σελίδας:"
+
+#: ../glade/property.c:4834
+msgid "Page Size:"
+msgstr "Μέγεθος Σελίδας:"
+
+#: ../glade/property.c:4836
+msgid "H Value:"
+msgstr "Τιμή Ο:"
+
+#: ../glade/property.c:4836
+msgid "H Min:"
+msgstr "Ελαχ. Ο:"
+
+#: ../glade/property.c:4836
+msgid "H Max:"
+msgstr "Μέγ. Ο:"
+
+#: ../glade/property.c:4836
+msgid "H Step Inc:"
+msgstr "Βήμα Αυξ. Ο:"
+
+#: ../glade/property.c:4837
+msgid "H Page Inc:"
+msgstr "Αυξ. Σελίδας Ο:"
+
+#: ../glade/property.c:4837
+msgid "H Page Size:"
+msgstr "Μέγεθος Σελίδας Ο:"
+
+#: ../glade/property.c:4839
+msgid "V Value:"
+msgstr "Τιμή Κ:"
+
+#: ../glade/property.c:4839
+msgid "V Min:"
+msgstr "Ελαχ. Κ:"
+
+#: ../glade/property.c:4839
+msgid "V Max:"
+msgstr "Μέγ. Κ:"
+
+#: ../glade/property.c:4839
+msgid "V Step Inc:"
+msgstr "Βήμα Αυξ. Κ:"
+
+#: ../glade/property.c:4840
+msgid "V Page Inc:"
+msgstr "Αυξ. Σελίδας Κ:"
+
+#: ../glade/property.c:4840
+msgid "V Page Size:"
+msgstr "Μέγεθος Σελίδας Κ:"
+
+#: ../glade/property.c:4843
+msgid "The initial value"
+msgstr "Η αρχική τιμή"
+
+#: ../glade/property.c:4844
+msgid "The minimum value"
+msgstr "Η ελάχιστη τιμή"
+
+#: ../glade/property.c:4845
+msgid "The maximum value"
+msgstr "Η μέγιστη τιμή"
+
+#: ../glade/property.c:4846
+msgid "The step increment"
+msgstr "Το βήμα αύξησης"
+
+#: ../glade/property.c:4847
+msgid "The page increment"
+msgstr "Η αύξηση σελίδας"
+
+#: ../glade/property.c:4848
+msgid "The page size"
+msgstr "Το μέγεθος σελίδας"
+
+#: ../glade/property.c:5003
+msgid "The requested font is not available."
+msgstr "Η επιθιμητή γραμματοσειρά δεν είναι διαθέσιμη."
+
+#: ../glade/property.c:5052
+msgid "Select Named Style"
+msgstr ""
+
+#: ../glade/property.c:5063
+msgid "Styles"
+msgstr "Στυλ"
+
+#: ../glade/property.c:5122
+msgid "Rename"
+msgstr "Μετανομασία"
+
+#: ../glade/property.c:5150
+msgid "Cancel"
+msgstr "Άκυρο"
+
+#: ../glade/property.c:5270
+msgid "New Style:"
+msgstr "Νέο Στυλ:"
+
+#: ../glade/property.c:5284 ../glade/property.c:5405
+msgid "Invalid style name"
+msgstr "Ακατάλληλο όνομα στυλ"
+
+#: ../glade/property.c:5292 ../glade/property.c:5415
+msgid "That style name is already in use"
+msgstr "Αυτό το όνομα στυλ χρησιμοποιείτε ήδη"
+
+#: ../glade/property.c:5390
+msgid "Rename Style To:"
+msgstr "Μετονομασία Στυλ Σε:"
+
+#: ../glade/save.c:139 ../glade/source.c:2771
+#, c-format
+msgid ""
+"Couldn't rename file:\n"
+"  %s\n"
+"to:\n"
+"  %s\n"
+msgstr ""
+
+#: ../glade/save.c:174 ../glade/save.c:225 ../glade/save.c:947
+#: ../glade/source.c:358 ../glade/source.c:373 ../glade/source.c:391
+#: ../glade/source.c:404 ../glade/source.c:815 ../glade/source.c:1043
+#: ../glade/source.c:1134 ../glade/source.c:1328 ../glade/source.c:1423
+#: ../glade/source.c:1643 ../glade/source.c:1732 ../glade/source.c:1784
+#: ../glade/source.c:1848 ../glade/source.c:1895 ../glade/source.c:2032
+#: ../glade/utils.c:1147
+#, c-format
+msgid ""
+"Couldn't create file:\n"
+"  %s\n"
+msgstr ""
+
+#: ../glade/save.c:848
+msgid "Error writing XML file\n"
+msgstr "Σφάλμα εγγραφής αρχείου XML\n"
+
+#: ../glade/save.c:953
+#, c-format
+msgid ""
+"/*\n"
+" * Translatable strings file generated by Glade.\n"
+" * Add this file to your project's POTFILES.in.\n"
+" * DO NOT compile it as part of your application.\n"
+" */\n"
+"\n"
+msgstr ""
+
+#: ../glade/source.c:184
+#, c-format
+msgid ""
+"Invalid interface source filename: %s\n"
+"%s\n"
+msgstr ""
+
+#: ../glade/source.c:186
+#, c-format
+msgid ""
+"Invalid interface header filename: %s\n"
+"%s\n"
+msgstr ""
+
+#: ../glade/source.c:189
+#, c-format
+msgid ""
+"Invalid callbacks source filename: %s\n"
+"%s\n"
+msgstr ""
+
+#: ../glade/source.c:191
+#, c-format
+msgid ""
+"Invalid callbacks header filename: %s\n"
+"%s\n"
+msgstr ""
+
+#: ../glade/source.c:197
+#, c-format
+msgid ""
+"Invalid support source filename: %s\n"
+"%s\n"
+msgstr ""
+
+#: ../glade/source.c:199
+#, c-format
+msgid ""
+"Invalid support header filename: %s\n"
+"%s\n"
+msgstr ""
+
+#: ../glade/source.c:418 ../glade/source.c:426
+#, c-format
+msgid ""
+"Couldn't append to file:\n"
+"  %s\n"
+msgstr ""
+
+#: ../glade/source.c:1724 ../glade/utils.c:1168
+#, fuzzy, c-format
+msgid ""
+"Error writing to file:\n"
+"  %s\n"
+msgstr "Σφάλμα στην εγγραφή στο αρχείο"
+
+#: ../glade/source.c:2743
+msgid "The filename must be set in the Project Options dialog."
+msgstr ""
+
+#: ../glade/source.c:2746
+msgid ""
+"The filename must be a simple relative filename.\n"
+"Use the Project Options dialog to set it."
+msgstr ""
+
+#: ../glade/tree.c:78
+msgid "Widget Tree"
+msgstr ""
+
+#: ../glade/utils.c:900 ../glade/utils.c:940
+msgid "Widget not found in box"
+msgstr ""
+
+#: ../glade/utils.c:920
+msgid "Widget not found in table"
+msgstr ""
+
+#: ../glade/utils.c:960
+msgid "Widget not found in fixed container"
+msgstr ""
+
+#: ../glade/utils.c:981
+msgid "Widget not found in packer"
+msgstr ""
+
+#: ../glade/utils.c:1118
+#, c-format
+msgid ""
+"Couldn't access file:\n"
+"  %s\n"
+msgstr ""
+
+#: ../glade/utils.c:1141
+#, fuzzy, c-format
+msgid ""
+"Couldn't open file:\n"
+"  %s\n"
+msgstr "Αδύνατο το άνοιγμα του αρχείου!"
+
+#: ../glade/utils.c:1158
+#, fuzzy, c-format
+msgid ""
+"Error reading from file:\n"
+"  %s\n"
+msgstr "σφάλμα ανάγνωσης από το αρχείο %1\n"
+
+#. This happens under WIN32 when stat is confused by the filename, but this is
+#. harmless, since we know that the directory exists after all.
+#: ../glade/utils.c:1225
+#, fuzzy, c-format
+msgid ""
+"Couldn't create directory:\n"
+"  %s\n"
+msgstr "Aδύνατη η δημιουργία καταλόγου %s"
+
+#: ../glade/utils.c:1232
+#, c-format
+msgid ""
+"Couldn't access directory:\n"
+"  %s\n"
+msgstr ""
+
+#: ../glade/utils.c:1240
+#, fuzzy, c-format
+msgid ""
+"Invalid directory:\n"
+"  %s\n"
+msgstr "Άκυρος κατάλογος"
+
+#: ../glade/utils.c:1611
+msgid "Projects"
+msgstr "Έργα"
+
+#: ../glade/utils.c:1628
+msgid "project"
+msgstr "έργο"
+
+#: ../glade/utils.c:1634
+#, c-format
+msgid ""
+"Couldn't open directory:\n"
+"  %s\n"
+msgstr ""

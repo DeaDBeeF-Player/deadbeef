@@ -1,0 +1,5887 @@
+# translation of glade.glade-gnome2-branch.po to Slovak
+# translation of sk.po to Slovak
+# Slovak translation of sk.po
+# glade slovak translation
+# Copyright (C) 2000,2002, 2003 Free Software Foundation, Inc.
+# Stanislav Visnovsky <visnovsky@nenya.ms.mff.cuni.cz>, 2000,2002.
+# Stanislav Višňovský <visnovsky@nenya.ms.mff.cuni.cz>, 2002.
+# Stanislav Visnovsky <visnovsky@kde.org>, 2003.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: glade.glade-gnome2-branch\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2005-08-26 13:38+0200\n"
+"PO-Revision-Date: 2003-08-22 19:03+0200\n"
+"Last-Translator: Stanislav Visnovsky <visnovsky@kde.org>\n"
+"Language-Team: Slovak <sk-i18n@linux.sk>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.2beta3\n"
+
+#: ../glade-2.desktop.in.h:1
+msgid "Design user interfaces"
+msgstr ""
+
+#: ../glade-2.desktop.in.h:2
+msgid "Glade Interface Designer"
+msgstr "Návrh rozhrania Glade"
+
+#: ../glade/editor.c:343
+msgid "Grid Options"
+msgstr "Možnosti mriežky"
+
+#: ../glade/editor.c:357
+msgid "Horizontal Spacing:"
+msgstr "Horizontálne medzery:"
+
+#: ../glade/editor.c:372
+msgid "Vertical Spacing:"
+msgstr "Vertikálne medzery:"
+
+#: ../glade/editor.c:390
+msgid "Grid Style:"
+msgstr "Štýl mriežky:"
+
+#: ../glade/editor.c:396
+msgid "Dots"
+msgstr "Bodky"
+
+#: ../glade/editor.c:405
+msgid "Lines"
+msgstr "Čiary"
+
+#: ../glade/editor.c:487
+msgid "Snap Options"
+msgstr "Možnosti priťahovania"
+
+#. Horizontal snapping
+#: ../glade/editor.c:502
+msgid "Horizontal Snapping:"
+msgstr "Horizontálne priťahovanie:"
+
+#: ../glade/editor.c:508 ../glade/gbwidgets/gbtextview.c:49
+msgid "Left"
+msgstr "Vľavo"
+
+#: ../glade/editor.c:517 ../glade/gbwidgets/gbtextview.c:50
+msgid "Right"
+msgstr "Vpravo"
+
+#. Vertical snapping
+#: ../glade/editor.c:526
+msgid "Vertical Snapping:"
+msgstr "Vertikálne priťahovanie:"
+
+#: ../glade/editor.c:532
+msgid "Top"
+msgstr "Hore"
+
+#: ../glade/editor.c:540
+msgid "Bottom"
+msgstr "Dolu"
+
+#: ../glade/editor.c:741
+#, fuzzy
+msgid "GtkToolItem widgets can only be added to a GtkToolbar."
+msgstr "Prvky GnomeDockItem je možné vložiť len do GnomeDock."
+
+#: ../glade/editor.c:758
+msgid "Couldn't insert a GtkScrolledWindow widget."
+msgstr "Nie je možné vložiť prvok GtkScrolledWindow."
+
+#: ../glade/editor.c:805
+msgid "Couldn't insert a GtkViewport widget."
+msgstr "Nie je možné vložiť prvok GtkViewport."
+
+#: ../glade/editor.c:832
+msgid "Couldn't add new widget."
+msgstr "Nie je možné pridať nový prvok."
+
+#: ../glade/editor.c:1230
+msgid ""
+"You can't add a widget at the selected position.\n"
+"\n"
+"Tip: GTK+ uses containers to lay out widgets.\n"
+"Try deleting the existing widget and using\n"
+"a box or table container instead.\n"
+msgstr ""
+"Nie je možné pridať prvok na vybranej pozícii.\n"
+"\n"
+"Tip: GTK+ používa kontajnery pre umiestnenie prvkov.\n"
+"Skúste odstrániť existujúci prvok a použiť\n"
+"box alebo tabuľkový kontajner.\n"
+
+#: ../glade/editor.c:3517
+msgid "Couldn't delete widget."
+msgstr "Nie je možné odstrániť prvok."
+
+#: ../glade/editor.c:3541 ../glade/editor.c:3545
+msgid "The widget can't be deleted"
+msgstr "Prvok nie je možné odstrániť."
+
+#: ../glade/editor.c:3572
+msgid ""
+"The widget is created automatically as part of the parent widget, and it "
+"can't be deleted."
+msgstr ""
+"Prvok je vytvorený automaticky a súčasť rodičovského prvku a preto ho nie je "
+"možné odstrániť."
+
+#: ../glade/gbwidget.c:697
+msgid "Border Width:"
+msgstr "Šírka okrajov:"
+
+#: ../glade/gbwidget.c:698
+msgid "The width of the border around the container"
+msgstr "Šírka okrajov okolo kontajneru"
+
+#: ../glade/gbwidget.c:1745
+msgid "Select"
+msgstr "Vybrať"
+
+#: ../glade/gbwidget.c:1767
+msgid "Remove Scrolled Window"
+msgstr "Odstrániť posuvné okno"
+
+#: ../glade/gbwidget.c:1776
+msgid "Add Scrolled Window"
+msgstr "Pridať posuvné okno"
+
+#: ../glade/gbwidget.c:1797
+msgid "Remove Alignment"
+msgstr "Odstrániť zarovnanie"
+
+#: ../glade/gbwidget.c:1805
+msgid "Add Alignment"
+msgstr "Pridať zarovnanie"
+
+#: ../glade/gbwidget.c:1820
+msgid "Remove Event Box"
+msgstr "Odstrániť box pre udalosti"
+
+#: ../glade/gbwidget.c:1828
+msgid "Add Event Box"
+msgstr "Pridať box pre udalosti"
+
+#: ../glade/gbwidget.c:1838
+msgid "Redisplay"
+msgstr "Znovuzobraziť"
+
+#: ../glade/gbwidget.c:1849
+msgid "Cut"
+msgstr "Vystrihnúť"
+
+#: ../glade/gbwidget.c:1856 ../glade/property.c:892 ../glade/property.c:5135
+msgid "Copy"
+msgstr "Kopírovať"
+
+#: ../glade/gbwidget.c:1865 ../glade/property.c:904
+msgid "Paste"
+msgstr "Vložiť"
+
+#: ../glade/gbwidget.c:1877 ../glade/property.c:1580 ../glade/property.c:5126
+msgid "Delete"
+msgstr "Odstrániť"
+
+#. N/A stands for 'Not Applicable'. It is used when a standard widget
+#. property does not apply to the current widget. e.g. widgets without
+#. windows can't use the Events property. This appears in the property
+#. editor and so should be a short abbreviation.
+#: ../glade/gbwidget.c:2403 ../glade/gbwidget.c:2472
+msgid "N/A"
+msgstr "N/A"
+
+#. General code for container - has to remove all children and add back
+#. NOTE: this may not work for specialised containers.
+#. NOTE: need to ref widgets?
+#: ../glade/gbwidget.c:3202
+msgid "replacing child of container - not implemented yet\n"
+msgstr "nahradzovanie potomka kontajneru - nie je implementované\n"
+
+#: ../glade/gbwidget.c:3430
+msgid "Couldn't insert GtkAlignment widget."
+msgstr "Nie je možné vložiť prvok  GtkAlignment."
+
+#: ../glade/gbwidget.c:3470
+msgid "Couldn't remove GtkAlignment widget."
+msgstr "Nie je možné odstrániť prvok GrkAlignment."
+
+#: ../glade/gbwidget.c:3494
+msgid "Couldn't insert GtkEventBox widget."
+msgstr "Nie je možné vložiť prvok GtkEventBox."
+
+#: ../glade/gbwidget.c:3533
+msgid "Couldn't remove GtkEventBox widget."
+msgstr "Nie je možné odstrániť prvok GtkEventBox."
+
+#: ../glade/gbwidget.c:3568
+msgid "Couldn't insert GtkScrolledWindow widget."
+msgstr "Nie je možné vložiť prvok GtkScrolledWindow."
+
+#: ../glade/gbwidget.c:3607
+msgid "Couldn't remove GtkScrolledWindow widget."
+msgstr "Nie je možné odstrániť prvok GtkScrolledWindow."
+
+#: ../glade/gbwidget.c:3721
+msgid "Remove Label"
+msgstr "Odstrániť nápis"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:78
+#, fuzzy
+msgid "Application Name"
+msgstr "Aplikačný pruh GNOME"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:102 ../glade/gnome/gnomeabout.c:137
+msgid "Logo:"
+msgstr "Logo:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:102 ../glade/gnome/gnomeabout.c:137
+msgid "The pixmap to use as the logo"
+msgstr "Obrázok použitý ako logo"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:104 ../glade/glade_project_options.c:260
+msgid "Program Name:"
+msgstr "Meno programu:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:104
+#, fuzzy
+msgid "The name of the application"
+msgstr "Meno prvku"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:105 ../glade/gnome/gnomeabout.c:139
+msgid "Comments:"
+msgstr "Komentáre:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:105
+#, fuzzy
+msgid "Additional information, such as a description of the application"
+msgstr "Dodatočná informácia, ako napr. popis balíka a jeho domovská stránka"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:106 ../glade/gnome/gnomeabout.c:138
+msgid "Copyright:"
+msgstr "Copyright:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:106 ../glade/gnome/gnomeabout.c:138
+msgid "The copyright notice"
+msgstr "Poznámka o copyrighte"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:108
+msgid "Website URL:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:108
+#, fuzzy
+msgid "The URL of the application's website"
+msgstr "Ak je to aplikácia pre GNOME"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:109
+#, fuzzy
+msgid "Website Label:"
+msgstr "Text menu:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:109
+#, fuzzy
+msgid "The label to display for the link to the website"
+msgstr "Obrázok zobrazený na vrchole stránky."
+
+#: ../glade/gbwidgets/gbaboutdialog.c:111 ../glade/glade_project_options.c:365
+msgid "License:"
+msgstr "Licencia:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:111
+#, fuzzy
+msgid "The license details of the application"
+msgstr "Štýl reliéfu tlačidla"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:113 ../glade/gnome/gnomeabout.c:141
+msgid "Authors:"
+msgstr "Autori:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:113 ../glade/gnome/gnomeabout.c:141
+msgid "The authors of the package, one on each line"
+msgstr "Autori balíka, každý v jednom riadku"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:114 ../glade/gnome/gnomeabout.c:142
+msgid "Documenters:"
+msgstr "Autori dokumentácie:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:114 ../glade/gnome/gnomeabout.c:142
+msgid "The documenters of the package, one on each line"
+msgstr "Autori dokumentácie, každý v jednom riadku"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:115
+msgid "Artists:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:115
+#, fuzzy
+msgid ""
+"The people who have created the artwork for the package, one on each line"
+msgstr "Autori balíka, každý v jednom riadku"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:116 ../glade/gnome/gnomeabout.c:143
+msgid "Translators:"
+msgstr "Prekladatelia:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:116 ../glade/gnome/gnomeabout.c:143
+msgid ""
+"The translators of the package. This should normally be left empty so that "
+"translators can add their names in the po files"
+msgstr ""
+"Prekladateľ balíka. Obvykle by to malo zostať prázdne, aby mohli "
+"prekladatelia pridať svoje mená v súboroch PO."
+
+#: ../glade/gbwidgets/gbaboutdialog.c:559
+#, fuzzy
+msgid "About Dialog"
+msgstr "GNOME dialóg O programe"
+
+#: ../glade/gbwidgets/gbaccellabel.c:200
+msgid "Label with Accelerator"
+msgstr "Nápis s akcelerátorom"
+
+#. The GtkProgress interface is deprecated now, and GtkProgressBar doesn't
+#. have functions to set these, so I suppose we shouldn't support them.
+#: ../glade/gbwidgets/gbalignment.c:71 ../glade/gbwidgets/gbarrow.c:89
+#: ../glade/gbwidgets/gbaspectframe.c:130 ../glade/gbwidgets/gbimage.c:119
+#: ../glade/gbwidgets/gblabel.c:180 ../glade/gbwidgets/gbprogressbar.c:162
+msgid "X Align:"
+msgstr "X zarov:"
+
+#: ../glade/gbwidgets/gbalignment.c:72
+msgid "The horizontal alignment of the child widget"
+msgstr "Horizontálne zarovnanie potomka"
+
+#: ../glade/gbwidgets/gbalignment.c:74 ../glade/gbwidgets/gbarrow.c:92
+#: ../glade/gbwidgets/gbaspectframe.c:133 ../glade/gbwidgets/gbimage.c:122
+#: ../glade/gbwidgets/gblabel.c:183 ../glade/gbwidgets/gbprogressbar.c:165
+msgid "Y Align:"
+msgstr "Y zarov:"
+
+#: ../glade/gbwidgets/gbalignment.c:75
+msgid "The vertical alignment of the child widget"
+msgstr "Vertikálne zarovnanie potomka"
+
+#: ../glade/gbwidgets/gbalignment.c:77
+msgid "X Scale:"
+msgstr "Mierka X:"
+
+#: ../glade/gbwidgets/gbalignment.c:78
+msgid "The horizontal scale of the child widget"
+msgstr "Horizontálna mierka potomka"
+
+#: ../glade/gbwidgets/gbalignment.c:80
+msgid "Y Scale:"
+msgstr "Mierka Y:"
+
+#: ../glade/gbwidgets/gbalignment.c:81
+msgid "The vertical scale of the child widget"
+msgstr "Vertikálna mierka potomka"
+
+#: ../glade/gbwidgets/gbalignment.c:85
+#, fuzzy
+msgid "Top Padding:"
+msgstr "H medzera:"
+
+#: ../glade/gbwidgets/gbalignment.c:86
+#, fuzzy
+msgid "Space to put above the child widget"
+msgstr "Horizontálna mierka potomka"
+
+#: ../glade/gbwidgets/gbalignment.c:89
+#, fuzzy
+msgid "Bottom Padding:"
+msgstr "H medzera:"
+
+#: ../glade/gbwidgets/gbalignment.c:90
+#, fuzzy
+msgid "Space to put below the child widget"
+msgstr "Horizontálna mierka potomka"
+
+#: ../glade/gbwidgets/gbalignment.c:93
+#, fuzzy
+msgid "Left Padding:"
+msgstr "H medzera:"
+
+#: ../glade/gbwidgets/gbalignment.c:94
+#, fuzzy
+msgid "Space to put to the left of the child widget"
+msgstr "Horizontálna mierka potomka"
+
+#: ../glade/gbwidgets/gbalignment.c:97
+#, fuzzy
+msgid "Right Padding:"
+msgstr "H medzera:"
+
+#: ../glade/gbwidgets/gbalignment.c:98
+#, fuzzy
+msgid "Space to put to the right of the child widget"
+msgstr "Horizontálne zarovnanie potomka"
+
+#: ../glade/gbwidgets/gbalignment.c:255
+msgid "Alignment"
+msgstr "Zarovnanie"
+
+#: ../glade/gbwidgets/gbarrow.c:85
+msgid "Direction:"
+msgstr "Smer:"
+
+#: ../glade/gbwidgets/gbarrow.c:85
+msgid "The direction of the arrow"
+msgstr "Smer šípky"
+
+#: ../glade/gbwidgets/gbarrow.c:87 ../glade/gbwidgets/gbaspectframe.c:128
+#: ../glade/gbwidgets/gbclist.c:247 ../glade/gbwidgets/gbctree.c:253
+#: ../glade/gbwidgets/gbframe.c:123 ../glade/gbwidgets/gbhandlebox.c:109
+#: ../glade/gbwidgets/gbviewport.c:104 ../glade/gnome/bonobodockitem.c:176
+msgid "Shadow:"
+msgstr "Tieň:"
+
+#: ../glade/gbwidgets/gbarrow.c:87
+msgid "The shadow type of the arrow"
+msgstr "Typ tieňa šípky"
+
+#: ../glade/gbwidgets/gbarrow.c:90
+msgid "The horizontal alignment of the arrow"
+msgstr "Horizontálne zarovnanie šipky"
+
+#: ../glade/gbwidgets/gbarrow.c:93
+msgid "The vertical alignment of the arrow"
+msgstr "Vertikálne zarovnanie šipky"
+
+#: ../glade/gbwidgets/gbarrow.c:95 ../glade/gbwidgets/gbimage.c:125
+#: ../glade/gbwidgets/gblabel.c:186
+msgid "X Pad:"
+msgstr "X medz:"
+
+#: ../glade/gbwidgets/gbarrow.c:95 ../glade/gbwidgets/gbimage.c:125
+#: ../glade/gbwidgets/gblabel.c:186 ../glade/gbwidgets/gbtable.c:382
+msgid "The horizontal padding"
+msgstr "Horizontálne medzery"
+
+#: ../glade/gbwidgets/gbarrow.c:97 ../glade/gbwidgets/gbimage.c:127
+#: ../glade/gbwidgets/gblabel.c:188
+msgid "Y Pad:"
+msgstr "Y medz:"
+
+#: ../glade/gbwidgets/gbarrow.c:97 ../glade/gbwidgets/gbimage.c:127
+#: ../glade/gbwidgets/gblabel.c:188 ../glade/gbwidgets/gbtable.c:385
+msgid "The vertical padding"
+msgstr "Vertikálne medzery:"
+
+#: ../glade/gbwidgets/gbarrow.c:299
+msgid "Arrow"
+msgstr "Šípka"
+
+#: ../glade/gbwidgets/gbaspectframe.c:122 ../glade/gbwidgets/gbframe.c:117
+msgid "Label X Align:"
+msgstr "X zarov. nápisu:"
+
+#: ../glade/gbwidgets/gbaspectframe.c:123 ../glade/gbwidgets/gbframe.c:118
+msgid "The horizontal alignment of the frame's label widget"
+msgstr "Horizontálne zarovnanie nápisu rámu"
+
+#: ../glade/gbwidgets/gbaspectframe.c:125 ../glade/gbwidgets/gbframe.c:120
+msgid "Label Y Align:"
+msgstr "Y zarov. nápisu:"
+
+#: ../glade/gbwidgets/gbaspectframe.c:126 ../glade/gbwidgets/gbframe.c:121
+msgid "The vertical alignment of the frame's label widget"
+msgstr "Vertikálne zarovnanie nápisu rámu"
+
+#: ../glade/gbwidgets/gbaspectframe.c:128 ../glade/gbwidgets/gbframe.c:123
+msgid "The type of shadow of the frame"
+msgstr "Typ tieňa rámu"
+
+#: ../glade/gbwidgets/gbaspectframe.c:131
+#: ../glade/gbwidgets/gbaspectframe.c:134
+msgid "The horizontal alignment of the frame's child"
+msgstr "Horizontálne zarovnanie potomka rámu"
+
+#: ../glade/gbwidgets/gbaspectframe.c:136
+msgid "Ratio:"
+msgstr "Pomer:"
+
+#: ../glade/gbwidgets/gbaspectframe.c:137
+msgid "The aspect ratio of the frame's child"
+msgstr "Pomer potomka rámu"
+
+#: ../glade/gbwidgets/gbaspectframe.c:138
+msgid "Obey Child:"
+msgstr "Podľa potomka:"
+
+#: ../glade/gbwidgets/gbaspectframe.c:139
+msgid "If the aspect ratio should be determined by the child"
+msgstr "Či má byť pomer zväčšenia určený potomkom"
+
+#: ../glade/gbwidgets/gbaspectframe.c:319
+msgid "Aspect Frame"
+msgstr "Pomerný rám"
+
+#: ../glade/gbwidgets/gbbutton.c:118 ../glade/gbwidgets/gbcheckbutton.c:85
+#: ../glade/gbwidgets/gbmenutoolbutton.c:85
+#: ../glade/gbwidgets/gbradiobutton.c:126
+#: ../glade/gbwidgets/gbradiotoolbutton.c:133
+#: ../glade/gbwidgets/gbtogglebutton.c:88
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:90
+#: ../glade/gbwidgets/gbtoolbutton.c:104
+msgid "Stock Button:"
+msgstr "GNOME tlačidlo:"
+
+#: ../glade/gbwidgets/gbbutton.c:119 ../glade/gbwidgets/gbcheckbutton.c:86
+#: ../glade/gbwidgets/gbmenutoolbutton.c:86
+#: ../glade/gbwidgets/gbradiobutton.c:127
+#: ../glade/gbwidgets/gbradiotoolbutton.c:134
+#: ../glade/gbwidgets/gbtogglebutton.c:89
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:91
+#: ../glade/gbwidgets/gbtoolbutton.c:105
+msgid "The stock button to use"
+msgstr "Použiť štandardné tlačidlo"
+
+#. For now we don't support editing the menuitem properties in the property
+#. editor. The menu editor has to be used instead.
+#: ../glade/gbwidgets/gbbutton.c:121 ../glade/gbwidgets/gbcheckbutton.c:88
+#: ../glade/gbwidgets/gbcheckmenuitem.c:72
+#: ../glade/gbwidgets/gbimagemenuitem.c:92 ../glade/gbwidgets/gblabel.c:168
+#: ../glade/gbwidgets/gblistitem.c:73 ../glade/gbwidgets/gbmenuitem.c:87
+#: ../glade/gbwidgets/gbmenutoolbutton.c:88
+#: ../glade/gbwidgets/gbradiobutton.c:129
+#: ../glade/gbwidgets/gbradiomenuitem.c:103
+#: ../glade/gbwidgets/gbradiotoolbutton.c:136
+#: ../glade/gbwidgets/gbtogglebutton.c:91
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:93
+#: ../glade/gbwidgets/gbtoolbutton.c:107 ../glade/glade_menu_editor.c:747
+#: ../glade/gnome/gnomehref.c:68
+msgid "Label:"
+msgstr "Nápis:"
+
+#: ../glade/gbwidgets/gbbutton.c:121 ../glade/gbwidgets/gbcheckbutton.c:88
+#: ../glade/gbwidgets/gbcheckmenuitem.c:72 ../glade/gbwidgets/gbentry.c:100
+#: ../glade/gbwidgets/gbimagemenuitem.c:92 ../glade/gbwidgets/gblabel.c:168
+#: ../glade/gbwidgets/gblistitem.c:73 ../glade/gbwidgets/gbmenuitem.c:87
+#: ../glade/gbwidgets/gbmenutoolbutton.c:88
+#: ../glade/gbwidgets/gbradiobutton.c:129
+#: ../glade/gbwidgets/gbradiomenuitem.c:103
+#: ../glade/gbwidgets/gbradiotoolbutton.c:136
+#: ../glade/gbwidgets/gbtextview.c:124 ../glade/gbwidgets/gbtogglebutton.c:91
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:93
+#: ../glade/gbwidgets/gbtoolbutton.c:107 ../glade/gnome-db/gnomedbeditor.c:64
+msgid "The text to display"
+msgstr "Zobrazovaný text"
+
+#: ../glade/gbwidgets/gbbutton.c:122 ../glade/gbwidgets/gbcheckbutton.c:89
+#: ../glade/gbwidgets/gbimage.c:107 ../glade/gbwidgets/gbmenutoolbutton.c:89
+#: ../glade/gbwidgets/gbradiobutton.c:130
+#: ../glade/gbwidgets/gbradiotoolbutton.c:137
+#: ../glade/gbwidgets/gbtogglebutton.c:92
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:94
+#: ../glade/gbwidgets/gbtoolbutton.c:108 ../glade/gbwidgets/gbwindow.c:295
+#: ../glade/glade_menu_editor.c:813
+msgid "Icon:"
+msgstr "Ikona:"
+
+#: ../glade/gbwidgets/gbbutton.c:123 ../glade/gbwidgets/gbcheckbutton.c:90
+#: ../glade/gbwidgets/gbimage.c:108 ../glade/gbwidgets/gbmenutoolbutton.c:90
+#: ../glade/gbwidgets/gbradiobutton.c:131
+#: ../glade/gbwidgets/gbradiotoolbutton.c:138
+#: ../glade/gbwidgets/gbtogglebutton.c:93
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:95
+#: ../glade/gbwidgets/gbtoolbutton.c:109
+msgid "The icon to display"
+msgstr "Zobrazená ikona"
+
+#: ../glade/gbwidgets/gbbutton.c:125 ../glade/gbwidgets/gbcheckbutton.c:92
+#: ../glade/gbwidgets/gbradiobutton.c:133
+#: ../glade/gbwidgets/gbtogglebutton.c:95
+msgid "Button Relief:"
+msgstr "Reliéf tlačidla:"
+
+#: ../glade/gbwidgets/gbbutton.c:126 ../glade/gbwidgets/gbcheckbutton.c:93
+#: ../glade/gbwidgets/gbradiobutton.c:134
+#: ../glade/gbwidgets/gbtogglebutton.c:96
+msgid "The relief style of the button"
+msgstr "Štýl reliéfu tlačidla"
+
+#: ../glade/gbwidgets/gbbutton.c:131
+msgid "Response ID:"
+msgstr "ID odpovede:"
+
+#: ../glade/gbwidgets/gbbutton.c:132
+msgid ""
+"The response code returned when the button is pressed. Select one of the "
+"standard responses or enter a positive integer value"
+msgstr ""
+"Kód odpovede vrátený pri stlačení tohto tlačidla. Vyberte jednu zo "
+"štandardných odpovedí alebo zadajte kladné celé číslo."
+
+#: ../glade/gbwidgets/gbbutton.c:137 ../glade/gbwidgets/gbcheckbutton.c:102
+#: ../glade/gbwidgets/gbcolorbutton.c:70 ../glade/gbwidgets/gbcombobox.c:83
+#: ../glade/gbwidgets/gbcomboboxentry.c:82
+#: ../glade/gbwidgets/gbfontbutton.c:78 ../glade/gbwidgets/gbradiobutton.c:148
+#: ../glade/gbwidgets/gbtogglebutton.c:103
+#: ../glade/gnome/gnomecolorpicker.c:76 ../glade/gnome/gnomefontpicker.c:109
+#: ../glade/gnome/gnomehref.c:70
+msgid "Focus On Click:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbbutton.c:137 ../glade/gbwidgets/gbcheckbutton.c:102
+#: ../glade/gbwidgets/gbcolorbutton.c:70 ../glade/gbwidgets/gbfontbutton.c:78
+#: ../glade/gbwidgets/gbradiobutton.c:148
+#: ../glade/gbwidgets/gbtogglebutton.c:103
+#: ../glade/gnome/gnomecolorpicker.c:76 ../glade/gnome/gnomefontpicker.c:109
+#: ../glade/gnome/gnomehref.c:70
+#, fuzzy
+msgid "If the button grabs focus when it is clicked"
+msgstr "Či sa dialóg má zatvoriť po stlačení ľubovoľného tlačidla"
+
+#: ../glade/gbwidgets/gbbutton.c:1502
+msgid "Remove Button Contents"
+msgstr "Odstrániť obsah tlačidla"
+
+#: ../glade/gbwidgets/gbbutton.c:1600
+msgid "Button"
+msgstr "Tlačidlo"
+
+#: ../glade/gbwidgets/gbcalendar.c:73
+msgid "Heading:"
+msgstr "Hlavička:"
+
+#: ../glade/gbwidgets/gbcalendar.c:74
+msgid "If the month and year should be shown at the top"
+msgstr "Mesiac a rok majú byť zobrazené hore"
+
+#: ../glade/gbwidgets/gbcalendar.c:75
+msgid "Day Names:"
+msgstr "Mená dní:"
+
+#: ../glade/gbwidgets/gbcalendar.c:76
+msgid "If the day names should be shown"
+msgstr "Či majú byť zobrazené mená dní"
+
+#: ../glade/gbwidgets/gbcalendar.c:77
+msgid "Fixed Month:"
+msgstr "Pevný mesiac:"
+
+#: ../glade/gbwidgets/gbcalendar.c:78
+msgid "If the month and year shouldn't be changeable"
+msgstr "Či má byť možné zmeniť mesiac a rok"
+
+#: ../glade/gbwidgets/gbcalendar.c:79
+msgid "Week Numbers:"
+msgstr "Čísla týždňov:"
+
+#: ../glade/gbwidgets/gbcalendar.c:80
+msgid "If the number of the week should be shown"
+msgstr "Či má byť zobrazený číslo týždňa"
+
+#: ../glade/gbwidgets/gbcalendar.c:81 ../glade/gnome/gnomedateedit.c:74
+msgid "Monday First:"
+msgstr "Naprv pondelok:"
+
+#: ../glade/gbwidgets/gbcalendar.c:82 ../glade/gnome/gnomedateedit.c:75
+msgid "If the week should start on Monday"
+msgstr "Či týždeň začína pondelkom"
+
+#: ../glade/gbwidgets/gbcalendar.c:266
+msgid "Calendar"
+msgstr "Kalendár"
+
+#: ../glade/gbwidgets/gbcellview.c:63 ../glade/gnome/gnomedruidpageedge.c:102
+#: ../glade/gnome/gnomedruidpagestandard.c:91
+msgid "Back. Color:"
+msgstr "Farba pozadia:"
+
+#: ../glade/gbwidgets/gbcellview.c:64
+#, fuzzy
+msgid "The background color"
+msgstr "Farba pozadia"
+
+#: ../glade/gbwidgets/gbcellview.c:192
+#, fuzzy
+msgid "Cell View"
+msgstr "Textový pohľad"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:96
+#: ../glade/gbwidgets/gbcheckmenuitem.c:73
+#: ../glade/gbwidgets/gbradiobutton.c:137
+#: ../glade/gbwidgets/gbradiomenuitem.c:104
+#: ../glade/gbwidgets/gbradiotoolbutton.c:147
+#: ../glade/gbwidgets/gbtogglebutton.c:99
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:97
+msgid "Initially On:"
+msgstr "Pri štarte označené:"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:97
+msgid "If the check button is initially on"
+msgstr "Či má byť tlačidlo pri štarte označené"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:98
+#: ../glade/gbwidgets/gbradiobutton.c:139
+#: ../glade/gbwidgets/gbtogglebutton.c:101
+msgid "Inconsistent:"
+msgstr "Nekonzistentné:"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:99
+#: ../glade/gbwidgets/gbradiobutton.c:140
+#: ../glade/gbwidgets/gbtogglebutton.c:102
+msgid "If the button is shown in an inconsistent state"
+msgstr "Či je tlačidlo zobrazené v nekonzistentnom stave"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:100
+#: ../glade/gbwidgets/gbradiobutton.c:141
+msgid "Indicator:"
+msgstr "Indikátor:"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:101
+#: ../glade/gbwidgets/gbradiobutton.c:142
+msgid "If the indicator is always drawn"
+msgstr "Či má byť vždy vykreslený indikátor"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:211
+msgid "Check Button"
+msgstr "Zaškrtnuté tlačidlo"
+
+#: ../glade/gbwidgets/gbcheckmenuitem.c:74
+msgid "If the check menu item is initially on"
+msgstr "Či má byť položka menu pri štarte zaškrtnutá"
+
+#: ../glade/gbwidgets/gbcheckmenuitem.c:203
+msgid "Check Menu Item"
+msgstr "Zaškrtnutá položka"
+
+#: ../glade/gbwidgets/gbclist.c:141
+msgid "New columned list"
+msgstr "Nový viacstĺpcový zoznam"
+
+#. Columns label & entry
+#: ../glade/gbwidgets/gbclist.c:152 ../glade/gbwidgets/gbctree.c:157
+#: ../glade/gbwidgets/gbhbox.c:110 ../glade/gbwidgets/gbhbuttonbox.c:132
+#: ../glade/gbwidgets/gbtable.c:165
+msgid "Number of columns:"
+msgstr "Počet stĺpcov:"
+
+#: ../glade/gbwidgets/gbclist.c:242 ../glade/gbwidgets/gbctree.c:248
+#: ../glade/gbwidgets/gbiconview.c:127 ../glade/gbwidgets/gblist.c:77
+#: ../glade/gnome/gnomeiconlist.c:174
+msgid "Select Mode:"
+msgstr "Mód výberu:"
+
+#: ../glade/gbwidgets/gbclist.c:243
+msgid "The selection mode of the columned list"
+msgstr "Mód výberu v stĺpcovom zozname"
+
+#: ../glade/gbwidgets/gbclist.c:245 ../glade/gbwidgets/gbctree.c:251
+msgid "Show Titles:"
+msgstr "Zobraziť titulky:"
+
+#: ../glade/gbwidgets/gbclist.c:246 ../glade/gbwidgets/gbctree.c:252
+msgid "If the column titles are shown"
+msgstr "Či majú byť zobrazené titulky stĺpcov"
+
+#: ../glade/gbwidgets/gbclist.c:248
+msgid "The type of shadow of the columned list's border"
+msgstr "Typ tieňa okraja vo viacstĺpcovom zozname"
+
+#: ../glade/gbwidgets/gbclist.c:594
+msgid "Columned List"
+msgstr "Viacstĺpcový zoznam"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:65 ../glade/gnome/gnomecolorpicker.c:70
+msgid "Use Alpha:"
+msgstr "Použiť alfa:"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:66 ../glade/gnome/gnomecolorpicker.c:71
+msgid "If the alpha channel should be used"
+msgstr "Či má byť použítý alfa kanál"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:68
+#: ../glade/gbwidgets/gbfilechooserbutton.c:85
+#: ../glade/gbwidgets/gbfontbutton.c:68 ../glade/gbwidgets/gbwindow.c:242
+#: ../glade/gnome/gnomecolorpicker.c:73 ../glade/gnome/gnomedruidpageedge.c:93
+#: ../glade/gnome/gnomedruidpagestandard.c:85
+#: ../glade/gnome/gnomefileentry.c:101 ../glade/gnome/gnomefontpicker.c:95
+#: ../glade/gnome/gnomeiconentry.c:72 ../glade/gnome/gnomepixmapentry.c:82
+msgid "Title:"
+msgstr "Titulok:"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:69 ../glade/gnome/gnomecolorpicker.c:74
+msgid "The title of the color selection dialog"
+msgstr "Titulok dialógu pre výber farby"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:91
+#: ../glade/gbwidgets/gbcolorbutton.c:119
+#: ../glade/gbwidgets/gbcolorbutton.c:162
+#, fuzzy
+msgid "Pick a Color"
+msgstr "Vyberte farbu"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:211
+#, fuzzy
+msgid "Color Chooser Button"
+msgstr "Zaškrtnuté tlačidlo"
+
+#: ../glade/gbwidgets/gbcolorselection.c:62
+msgid "Opacity Control:"
+msgstr "Ovládanie priehľadnosti:"
+
+#: ../glade/gbwidgets/gbcolorselection.c:63
+msgid "If the opacity control is shown"
+msgstr "Či má byť zobrazené ovládanie priehľadnosti"
+
+#: ../glade/gbwidgets/gbcolorselection.c:64
+msgid "Palette:"
+msgstr "Paleta:"
+
+#: ../glade/gbwidgets/gbcolorselection.c:65
+msgid "If the palette is shown"
+msgstr "Či je zobrazená paleta"
+
+#: ../glade/gbwidgets/gbcolorselection.c:173
+msgid "Color Selection"
+msgstr "Výber farby"
+
+#: ../glade/gbwidgets/gbcolorselectiondialog.c:70
+msgid "Select Color"
+msgstr "Vybrať farbu"
+
+#: ../glade/gbwidgets/gbcolorselectiondialog.c:315 ../glade/property.c:1275
+msgid "Color Selection Dialog"
+msgstr "Dialóg pre výber farby"
+
+#: ../glade/gbwidgets/gbcombo.c:105
+msgid "Value In List:"
+msgstr "Hodnota v zozname:"
+
+#: ../glade/gbwidgets/gbcombo.c:106
+msgid "If the value must be in the list"
+msgstr "Či musí byť hodnota v zozname"
+
+#: ../glade/gbwidgets/gbcombo.c:107
+msgid "OK If Empty:"
+msgstr "OK ak prázdna:"
+
+#: ../glade/gbwidgets/gbcombo.c:108
+msgid "If an empty value is acceptable, when 'Value In List' is set"
+msgstr ""
+"Či je akceptovateľná prázdna hodnota, keď je nastavená 'Hodnota v zozname'"
+
+#: ../glade/gbwidgets/gbcombo.c:109
+msgid "Case Sensitive:"
+msgstr "Rozlišovať písmená:"
+
+#: ../glade/gbwidgets/gbcombo.c:110
+msgid "If the searching is case sensitive"
+msgstr "Či sa majú pri hľadaní rozlišovať veľké a malé písmená"
+
+#: ../glade/gbwidgets/gbcombo.c:111
+msgid "Use Arrows:"
+msgstr "Použiť šipky:"
+
+#: ../glade/gbwidgets/gbcombo.c:112
+msgid "If arrows can be used to change the value"
+msgstr "Či je možné použiť šipky pre zmenu hodnoty"
+
+#: ../glade/gbwidgets/gbcombo.c:113
+msgid "Use Always:"
+msgstr "Použiť vždy:"
+
+#: ../glade/gbwidgets/gbcombo.c:114
+msgid "If arrows work even if the value is not in the list"
+msgstr "Či majú šipky fungovať, aj keď hodnota nie je v zozname"
+
+#: ../glade/gbwidgets/gbcombo.c:115 ../glade/gbwidgets/gbcombobox.c:78
+#: ../glade/gbwidgets/gbcomboboxentry.c:75
+msgid "Items:"
+msgstr "Položky:"
+
+#: ../glade/gbwidgets/gbcombo.c:116 ../glade/gbwidgets/gbcombobox.c:79
+#: ../glade/gbwidgets/gbcomboboxentry.c:76
+msgid "The items in the combo list, one per line"
+msgstr "Položky v zozname, jedna na riadku"
+
+#: ../glade/gbwidgets/gbcombo.c:425 ../glade/gbwidgets/gbcombobox.c:289
+msgid "Combo Box"
+msgstr "Combo Box"
+
+#: ../glade/gbwidgets/gbcombobox.c:81 ../glade/gbwidgets/gbcomboboxentry.c:78
+msgid "Add Tearoffs:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcombobox.c:82 ../glade/gbwidgets/gbcomboboxentry.c:79
+msgid "Whether dropdowns should have a tearoff menu item"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcombobox.c:84 ../glade/gbwidgets/gbcomboboxentry.c:83
+#, fuzzy
+msgid "Whether the combo box grabs focus when it is clicked"
+msgstr "Či sa dialóg má zatvoriť po stlačení ľubovoľného tlačidla"
+
+#: ../glade/gbwidgets/gbcomboboxentry.c:80 ../glade/gbwidgets/gbentry.c:102
+msgid "Has Frame:"
+msgstr "Má rám:"
+
+#: ../glade/gbwidgets/gbcomboboxentry.c:81
+msgid "Whether the combo box draws a frame around the child"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcomboboxentry.c:302
+#, fuzzy
+msgid "Combo Box Entry"
+msgstr "Combo Box"
+
+#: ../glade/gbwidgets/gbctree.c:146
+msgid "New columned tree"
+msgstr "Nový stĺpcový strom"
+
+#: ../glade/gbwidgets/gbctree.c:249
+msgid "The selection mode of the columned tree"
+msgstr "Mód výberu v stĺpcovom strome"
+
+#: ../glade/gbwidgets/gbctree.c:254
+msgid "The type of shadow of the columned tree's border"
+msgstr "Typ tieňa okraja stĺpcového stromu"
+
+#: ../glade/gbwidgets/gbctree.c:538
+msgid "Columned Tree"
+msgstr "Stĺpcový strom"
+
+#: ../glade/gbwidgets/gbcurve.c:85 ../glade/gbwidgets/gbwindow.c:245
+msgid "Type:"
+msgstr "Typ:"
+
+#: ../glade/gbwidgets/gbcurve.c:85
+msgid "The type of the curve"
+msgstr "Typ krivky"
+
+#: ../glade/gbwidgets/gbcurve.c:87 ../glade/gbwidgets/gbgammacurve.c:91
+msgid "X Min:"
+msgstr "X Min:"
+
+#: ../glade/gbwidgets/gbcurve.c:87 ../glade/gbwidgets/gbgammacurve.c:91
+msgid "The minimum horizontal value"
+msgstr "Minimálna horizontálna hodnota"
+
+#: ../glade/gbwidgets/gbcurve.c:88 ../glade/gbwidgets/gbgammacurve.c:92
+msgid "X Max:"
+msgstr "X Max:"
+
+#: ../glade/gbwidgets/gbcurve.c:88 ../glade/gbwidgets/gbgammacurve.c:92
+msgid "The maximum horizontal value"
+msgstr "Maximálna horizontálna hodnota:"
+
+#: ../glade/gbwidgets/gbcurve.c:89 ../glade/gbwidgets/gbgammacurve.c:93
+msgid "Y Min:"
+msgstr "Y Min:"
+
+#: ../glade/gbwidgets/gbcurve.c:89 ../glade/gbwidgets/gbgammacurve.c:93
+msgid "The minimum vertical value"
+msgstr "Minimálna vertikálna hodnota"
+
+#: ../glade/gbwidgets/gbcurve.c:90 ../glade/gbwidgets/gbgammacurve.c:94
+msgid "Y Max:"
+msgstr "Y Max:"
+
+#: ../glade/gbwidgets/gbcurve.c:90 ../glade/gbwidgets/gbgammacurve.c:94
+msgid "The maximum vertical value"
+msgstr "Maximálna vertikálna hodnota"
+
+#: ../glade/gbwidgets/gbcurve.c:250
+msgid "Curve"
+msgstr "Krivka"
+
+#: ../glade/gbwidgets/gbcustom.c:154
+msgid "Creation Function:"
+msgstr "Funkcia:"
+
+#: ../glade/gbwidgets/gbcustom.c:155
+msgid "The function which creates the widget"
+msgstr "Fukcia, ktorá vytvorí prvok"
+
+#: ../glade/gbwidgets/gbcustom.c:157
+msgid "String1:"
+msgstr "Reťazec1:"
+
+#: ../glade/gbwidgets/gbcustom.c:158
+msgid "The first string argument to pass to the function"
+msgstr "Prvý textový argument predaný funkcii"
+
+#: ../glade/gbwidgets/gbcustom.c:159
+msgid "String2:"
+msgstr "Reťazec2:"
+
+#: ../glade/gbwidgets/gbcustom.c:160
+msgid "The second string argument to pass to the function"
+msgstr "Druhý textový argument predaný funkcii"
+
+#: ../glade/gbwidgets/gbcustom.c:161
+msgid "Int1:"
+msgstr "Int1:"
+
+#: ../glade/gbwidgets/gbcustom.c:162
+msgid "The first integer argument to pass to the function"
+msgstr "Prvý celočíselný argument predaný funkcii"
+
+#: ../glade/gbwidgets/gbcustom.c:163
+msgid "Int2:"
+msgstr "Int2:"
+
+#: ../glade/gbwidgets/gbcustom.c:164
+msgid "The second integer argument to pass to the function"
+msgstr "Druhý celočíselný argument predaný funkcii"
+
+#: ../glade/gbwidgets/gbcustom.c:380
+msgid "Custom Widget"
+msgstr "Vlastný prvok"
+
+#: ../glade/gbwidgets/gbdialog.c:292
+msgid "New dialog"
+msgstr "Nový dialóg"
+
+#: ../glade/gbwidgets/gbdialog.c:304
+msgid "Cancel, OK"
+msgstr "Zrušiť, OK"
+
+#: ../glade/gbwidgets/gbdialog.c:313 ../glade/glade.c:367
+#: ../glade/glade_project_window.c:1316 ../glade/property.c:5156
+msgid "OK"
+msgstr "OK"
+
+#: ../glade/gbwidgets/gbdialog.c:322
+msgid "Cancel, Apply, OK"
+msgstr "Zrušiť, Použiť, OK"
+
+#: ../glade/gbwidgets/gbdialog.c:331
+msgid "Close"
+msgstr "Zavrieť"
+
+#: ../glade/gbwidgets/gbdialog.c:340
+msgid "_Standard Button Layout:"
+msgstr "Š_tandardné rozloženie tlačidiel:"
+
+#: ../glade/gbwidgets/gbdialog.c:349
+msgid "_Number of Buttons:"
+msgstr "_Počet tlačidiel:"
+
+#: ../glade/gbwidgets/gbdialog.c:366
+msgid "Show Help Button"
+msgstr "Zobraziť tlačidlo Pomocníka"
+
+#: ../glade/gbwidgets/gbdialog.c:397
+msgid "Has Separator:"
+msgstr "Má oddeľovač:"
+
+#: ../glade/gbwidgets/gbdialog.c:398
+msgid "If the dialog has a horizontal separator above the buttons"
+msgstr "Či má dialóg horizontálny oddeľovať nad tlačidlami"
+
+#: ../glade/gbwidgets/gbdialog.c:605
+msgid "Dialog"
+msgstr "Dialóg"
+
+#: ../glade/gbwidgets/gbdrawingarea.c:146
+msgid "Drawing Area"
+msgstr "Kreslená oblasť:"
+
+#: ../glade/gbwidgets/gbentry.c:94 ../glade/gbwidgets/gbtextview.c:115
+#: ../glade/gnome-db/gnomedbeditor.c:62
+msgid "Editable:"
+msgstr "Upraviteľný:"
+
+#: ../glade/gbwidgets/gbentry.c:94 ../glade/gbwidgets/gbtextview.c:116
+#: ../glade/gnome-db/gnomedbeditor.c:62
+msgid "If the text can be edited"
+msgstr "Či je možné upraviť text"
+
+#: ../glade/gbwidgets/gbentry.c:95
+msgid "Text Visible:"
+msgstr "Text viditeľný:"
+
+#: ../glade/gbwidgets/gbentry.c:96
+msgid ""
+"If the text entered by the user will be shown. When turned off, the text "
+"typed in is displayed as asterix characters, which is useful for entering "
+"passwords"
+msgstr ""
+"Či je text zadaný používateľom zobrazený. Keď nie je, zadaný text je "
+"zobrazený ako hviezdičky, čo je výhodné pre zadávanie hesiel"
+
+#: ../glade/gbwidgets/gbentry.c:97
+msgid "Max Length:"
+msgstr "Max. dĺžka:"
+
+#: ../glade/gbwidgets/gbentry.c:98
+msgid "The maximum length of the text"
+msgstr "Maximálna dĺžka textu"
+
+#: ../glade/gbwidgets/gbentry.c:100 ../glade/gbwidgets/gbprogressbar.c:143
+#: ../glade/gbwidgets/gbtextview.c:124 ../glade/gnome-db/gnomedbeditor.c:64
+#: ../glade/gnome-db/gnomedbgraybar.c:59
+#: ../glade/gnome/gnomedruidpageedge.c:95 ../glade/property.c:926
+msgid "Text:"
+msgstr "Text:"
+
+#: ../glade/gbwidgets/gbentry.c:102
+msgid "If the entry has a frame around it"
+msgstr "Či má rám okolo"
+
+#: ../glade/gbwidgets/gbentry.c:103
+msgid "Invisible Char:"
+msgstr "Neviditeľný znak:"
+
+#: ../glade/gbwidgets/gbentry.c:103
+msgid ""
+"The character to use if the text should not visible, e.g. when entering "
+"passwords"
+msgstr "Znak použitý ak text nemá byť viditeľný, napríklad pri zadávaní hesla"
+
+#: ../glade/gbwidgets/gbentry.c:104
+msgid "Activates Default:"
+msgstr "Aktivuje predvolený:"
+
+#: ../glade/gbwidgets/gbentry.c:104
+msgid "If the default widget in the window is activated when Enter is pressed"
+msgstr "Či stlačenie Enter aktivuje predvolený prvok okna"
+
+#: ../glade/gbwidgets/gbentry.c:105
+msgid "Width In Chars:"
+msgstr "Šírka v znakoch:"
+
+#: ../glade/gbwidgets/gbentry.c:105
+msgid "The number of characters to leave space for in the entry"
+msgstr "Počet znakov, na ktoré nechať v položke miesto"
+
+#: ../glade/gbwidgets/gbentry.c:318
+msgid "Text Entry"
+msgstr "Textová položka"
+
+#: ../glade/gbwidgets/gbeventbox.c:65
+#, fuzzy
+msgid "Visible Window:"
+msgstr "Viditeľný:"
+
+#: ../glade/gbwidgets/gbeventbox.c:65
+msgid "If the event box uses a visible window"
+msgstr ""
+
+#: ../glade/gbwidgets/gbeventbox.c:66
+#, fuzzy
+msgid "Above Child:"
+msgstr "Podľa potomka:"
+
+#: ../glade/gbwidgets/gbeventbox.c:66
+msgid "If the event box window is above the child widget's window"
+msgstr ""
+
+#: ../glade/gbwidgets/gbeventbox.c:167
+msgid "Event Box"
+msgstr "Box pre udalosti"
+
+#: ../glade/gbwidgets/gbexpander.c:54
+#, fuzzy
+msgid "Initially Expanded:"
+msgstr "Pri štarte označené:"
+
+#: ../glade/gbwidgets/gbexpander.c:55
+msgid "Whether the expander is initially opened to reveal the child widget"
+msgstr ""
+
+#: ../glade/gbwidgets/gbexpander.c:57 ../glade/gbwidgets/gbhbox.c:175
+#: ../glade/gbwidgets/gbhbuttonbox.c:199 ../glade/gbwidgets/gbvbox.c:160
+msgid "Spacing:"
+msgstr "Medzery:"
+
+#: ../glade/gbwidgets/gbexpander.c:58
+#, fuzzy
+msgid "Space to put between the label and the child"
+msgstr "Počet bodov medzi textom a ikonou"
+
+#: ../glade/gbwidgets/gbexpander.c:105 ../glade/gbwidgets/gbframe.c:225
+msgid "Add Label Widget"
+msgstr "Pridať Popis"
+
+#: ../glade/gbwidgets/gbexpander.c:228
+#, fuzzy
+msgid "Expander"
+msgstr "Expandovať:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:86
+#, fuzzy
+msgid "The window title of the file chooser dialog"
+msgstr "Titulok dialógu pre výber súboru"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:87
+#: ../glade/gbwidgets/gbfilechooserwidget.c:86
+#: ../glade/gbwidgets/gbfilechooserdialog.c:156
+#: ../glade/gnome/gnomefileentry.c:109
+#, fuzzy
+msgid "Action:"
+msgstr "Časť:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:88
+#: ../glade/gbwidgets/gbfilechooserwidget.c:87
+#: ../glade/gbwidgets/gbfilechooserdialog.c:157
+#: ../glade/gnome/gnomefileentry.c:110
+msgid "The type of file operation being performed"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:90
+#: ../glade/gbwidgets/gbfilechooserwidget.c:89
+#: ../glade/gbwidgets/gbfilechooserdialog.c:159
+msgid "Local Only:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:91
+#: ../glade/gbwidgets/gbfilechooserwidget.c:90
+#: ../glade/gbwidgets/gbfilechooserdialog.c:160
+msgid "Whether the selected files should be limited to local files"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:92
+#: ../glade/gbwidgets/gbfilechooserwidget.c:93
+#: ../glade/gbwidgets/gbfilechooserdialog.c:163
+#, fuzzy
+msgid "Show Hidden:"
+msgstr "Zobraziť čas:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:93
+#: ../glade/gbwidgets/gbfilechooserwidget.c:94
+#: ../glade/gbwidgets/gbfilechooserdialog.c:164
+msgid "Whether the hidden files and folders should be displayed"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:94
+#: ../glade/gbwidgets/gblabel.c:200
+#, fuzzy
+msgid "Width in Chars:"
+msgstr "Šírka v znakoch:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:95
+#, fuzzy
+msgid "The width of the button in characters"
+msgstr "Šírka oblasti"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:283
+#, fuzzy
+msgid "File Chooser Button"
+msgstr "Zaškrtnuté tlačidlo"
+
+#: ../glade/gbwidgets/gbfilechooserwidget.c:91
+#: ../glade/gbwidgets/gbfilechooserdialog.c:161
+#, fuzzy
+msgid "Select Multiple:"
+msgstr "Vyberte súbor"
+
+#: ../glade/gbwidgets/gbfilechooserwidget.c:92
+#: ../glade/gbwidgets/gbfilechooserdialog.c:162
+msgid "Whether to allow multiple files to be selected"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfilechooserwidget.c:260
+#, fuzzy
+msgid "File Chooser"
+msgstr "Farba titulku:"
+
+#: ../glade/gbwidgets/gbfilechooserdialog.c:421
+#, fuzzy
+msgid "File Chooser Dialog"
+msgstr "Dialóg pre výber súboru"
+
+#: ../glade/gbwidgets/gbfileselection.c:71 ../glade/property.c:1365
+msgid "Select File"
+msgstr "Vyberte súbor"
+
+#: ../glade/gbwidgets/gbfileselection.c:113
+msgid "File Ops.:"
+msgstr "Oper. so súbormi:"
+
+#: ../glade/gbwidgets/gbfileselection.c:114
+msgid "If the file operation buttons are shown"
+msgstr "Či sú zobrazené tlačidlá pre operácie so súbormi"
+
+#: ../glade/gbwidgets/gbfileselection.c:292
+msgid "File Selection Dialog"
+msgstr "Dialóg pre výber súboru"
+
+#: ../glade/gbwidgets/gbfixed.c:139 ../glade/gbwidgets/gblayout.c:221
+msgid "X:"
+msgstr "X:"
+
+#: ../glade/gbwidgets/gbfixed.c:140
+msgid "The X coordinate of the widget in the GtkFixed"
+msgstr "X súradnica prvku v GtkFixed"
+
+#: ../glade/gbwidgets/gbfixed.c:142 ../glade/gbwidgets/gblayout.c:224
+msgid "Y:"
+msgstr "Y:"
+
+#: ../glade/gbwidgets/gbfixed.c:143
+msgid "The Y coordinate of the widget in the GtkFixed"
+msgstr "Y súradnica prvku v GtkFixed"
+
+#: ../glade/gbwidgets/gbfixed.c:228
+msgid "Fixed Positions"
+msgstr "Pevné pozície"
+
+#: ../glade/gbwidgets/gbfontbutton.c:69 ../glade/gnome/gnomefontpicker.c:96
+msgid "The title of the font selection dialog"
+msgstr "Titulok dialógu pre výber písma"
+
+#: ../glade/gbwidgets/gbfontbutton.c:70
+#, fuzzy
+msgid "Show Style:"
+msgstr "Zobraziť titulky:"
+
+#: ../glade/gbwidgets/gbfontbutton.c:71
+#, fuzzy
+msgid "If the font style is shown as part of the font information"
+msgstr "Či má byť zobrazená informácia o veľkosti písma"
+
+#: ../glade/gbwidgets/gbfontbutton.c:72 ../glade/gnome/gnomefontpicker.c:102
+msgid "Show Size:"
+msgstr "Zobraziť veľkosť:"
+
+#: ../glade/gbwidgets/gbfontbutton.c:73 ../glade/gnome/gnomefontpicker.c:103
+msgid "If the font size is shown as part of the font information"
+msgstr "Či má byť zobrazená informácia o veľkosti písma"
+
+#: ../glade/gbwidgets/gbfontbutton.c:74 ../glade/gnome/gnomefontpicker.c:104
+msgid "Use Font:"
+msgstr "Použiť písmo:"
+
+#: ../glade/gbwidgets/gbfontbutton.c:75 ../glade/gnome/gnomefontpicker.c:105
+msgid "If the selected font is used when displaying the font information"
+msgstr "Či má byť vybrané písmo použité pri zobrazení informácie o písme"
+
+#: ../glade/gbwidgets/gbfontbutton.c:76 ../glade/gnome/gnomefontpicker.c:106
+msgid "Use Size:"
+msgstr "Použiť veľkosť:"
+
+#: ../glade/gbwidgets/gbfontbutton.c:77
+#, fuzzy
+msgid "if the selected font size is used when displaying the font information"
+msgstr "Či má byť vybrané písmo použité pri zobrazení informácie o písme"
+
+#: ../glade/gbwidgets/gbfontbutton.c:97 ../glade/gbwidgets/gbfontbutton.c:133
+#: ../glade/gbwidgets/gbfontbutton.c:191 ../glade/gnome/gnomefontpicker.c:128
+#: ../glade/gnome/gnomefontpicker.c:199 ../glade/gnome/gnomefontpicker.c:301
+msgid "Pick a Font"
+msgstr "Vyberte písmo"
+
+#: ../glade/gbwidgets/gbfontbutton.c:268
+#, fuzzy
+msgid "Font Chooser Button"
+msgstr "Zaškrtnuté tlačidlo"
+
+#: ../glade/gbwidgets/gbfontselection.c:64 ../glade/gnome/gnomefontpicker.c:97
+msgid "Preview Text:"
+msgstr "Ukážkový text:"
+
+#: ../glade/gbwidgets/gbfontselection.c:64
+msgid "The preview text to display"
+msgstr "Zobrazovaný text náhľadu"
+
+#: ../glade/gbwidgets/gbfontselection.c:170
+msgid "Font Selection"
+msgstr "Font Selection"
+
+#: ../glade/gbwidgets/gbfontselectiondialog.c:69
+msgid "Select Font"
+msgstr "Select Font"
+
+#: ../glade/gbwidgets/gbfontselectiondialog.c:300
+msgid "Font Selection Dialog"
+msgstr "Dialóg pre výber písma"
+
+#: ../glade/gbwidgets/gbframe.c:360
+msgid "Frame"
+msgstr "Rám"
+
+#: ../glade/gbwidgets/gbgammacurve.c:88
+msgid "Initial Type:"
+msgstr "Počiatočný typ:"
+
+#: ../glade/gbwidgets/gbgammacurve.c:88
+msgid "The initial type of the curve"
+msgstr "Počiatočný typ krivky"
+
+#: ../glade/gbwidgets/gbgammacurve.c:256
+msgid "Gamma Curve"
+msgstr "Gamma krivka"
+
+#: ../glade/gbwidgets/gbhandlebox.c:110
+msgid "The type of shadow around the handle box"
+msgstr "Typ tieňa okolo boxu obsluhy"
+
+#: ../glade/gbwidgets/gbhandlebox.c:113
+msgid "Handle Pos:"
+msgstr "Poz. obsluhy:"
+
+#: ../glade/gbwidgets/gbhandlebox.c:114
+msgid "The position of the handle"
+msgstr "Pozícia obsluhy"
+
+#: ../glade/gbwidgets/gbhandlebox.c:116
+msgid "Snap Edge:"
+msgstr "Pritiahnuť okraj:"
+
+#: ../glade/gbwidgets/gbhandlebox.c:117
+msgid "The edge of the handle box which snaps into position"
+msgstr "Okraj boxu obsluhy, ktorý sa má pritiahnuť na pozíciu"
+
+#: ../glade/gbwidgets/gbhandlebox.c:304
+msgid "Handle Box"
+msgstr "Box obsluhy"
+
+#: ../glade/gbwidgets/gbhbox.c:99
+msgid "New horizontal box"
+msgstr "Nový horizontálny box"
+
+#: ../glade/gbwidgets/gbhbox.c:171 ../glade/gbwidgets/gbhbuttonbox.c:194
+#: ../glade/gbwidgets/gbtoolbar.c:267 ../glade/gbwidgets/gbvbox.c:156
+msgid "Size:"
+msgstr "Veľkosť:"
+
+#: ../glade/gbwidgets/gbhbox.c:171 ../glade/gbwidgets/gbvbox.c:156
+msgid "The number of widgets in the box"
+msgstr "Počet prvkov v boxe"
+
+#: ../glade/gbwidgets/gbhbox.c:173 ../glade/gbwidgets/gbtable.c:243
+#: ../glade/gbwidgets/gbtoolbar.c:426 ../glade/gbwidgets/gbvbox.c:158
+msgid "Homogeneous:"
+msgstr "Homogénny:"
+
+#: ../glade/gbwidgets/gbhbox.c:174 ../glade/gbwidgets/gbvbox.c:159
+msgid "If the children should be the same size"
+msgstr "Či majú byť potomci rovnako veľkí"
+
+#: ../glade/gbwidgets/gbhbox.c:175 ../glade/gbwidgets/gbvbox.c:160
+msgid "The space between each child"
+msgstr "Medzery medzi potomkami"
+
+#: ../glade/gbwidgets/gbhbox.c:312
+msgid "Can't delete any children."
+msgstr "Nie je možné odstrániť žiadneho potomka."
+
+#: ../glade/gbwidgets/gbhbox.c:327 ../glade/gbwidgets/gbhpaned.c:73
+#: ../glade/gbwidgets/gbhruler.c:89 ../glade/gbwidgets/gbnotebook.c:669
+#: ../glade/gbwidgets/gbvpaned.c:69 ../glade/gbwidgets/gbvruler.c:89
+#: ../glade/gbwidgets/gbwindow.c:254
+msgid "Position:"
+msgstr "Pozícia:"
+
+#: ../glade/gbwidgets/gbhbox.c:328
+msgid "The widget's position relative to its siblings"
+msgstr "Pozícia prvku relatívne k jeho súrodencom"
+
+#: ../glade/gbwidgets/gbhbox.c:330
+msgid "Padding:"
+msgstr "Medzery:"
+
+#: ../glade/gbwidgets/gbhbox.c:331
+msgid "The widget's padding"
+msgstr "Medzery prvku"
+
+#: ../glade/gbwidgets/gbhbox.c:333 ../glade/gbwidgets/gbnotebook.c:672
+#: ../glade/gbwidgets/gbpreview.c:65 ../glade/gbwidgets/gbtoolbar.c:424
+msgid "Expand:"
+msgstr "Expandovať:"
+
+#: ../glade/gbwidgets/gbhbox.c:334 ../glade/gbwidgets/gbtoolbar.c:425
+msgid "Set True to let the widget expand"
+msgstr "Nastavte na Áno aby mohol prvok rásť"
+
+#: ../glade/gbwidgets/gbhbox.c:335 ../glade/gbwidgets/gbnotebook.c:674
+msgid "Fill:"
+msgstr "Vyplniť:"
+
+#: ../glade/gbwidgets/gbhbox.c:336
+msgid "Set True to let the widget fill its allocated area"
+msgstr "Nastavte na Áno aby prvok vyplnil celú alokovanú plochu"
+
+#: ../glade/gbwidgets/gbhbox.c:337 ../glade/gbwidgets/gbnotebook.c:676
+msgid "Pack Start:"
+msgstr "Nahrnúť na začiatok:"
+
+#: ../glade/gbwidgets/gbhbox.c:338
+msgid "Set True to pack the widget at the start of the box"
+msgstr "Nastavte na Áno aby prvok bol nahrnutý na začiatku boxu"
+
+#: ../glade/gbwidgets/gbhbox.c:455
+msgid "Insert Before"
+msgstr "Vložiť pred"
+
+#: ../glade/gbwidgets/gbhbox.c:461
+msgid "Insert After"
+msgstr "Vložiť za"
+
+#: ../glade/gbwidgets/gbhbox.c:571
+msgid "Horizontal Box"
+msgstr "Horizontálny box"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:120
+msgid "New horizontal button box"
+msgstr "Nový horizontálny tlačidlový box"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:194
+msgid "The number of buttons"
+msgstr "Počet tlačidiel"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:196
+msgid "Layout:"
+msgstr "Rozloženie:"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:197
+msgid "The layout style of the buttons"
+msgstr "Štýl rozloženia tlačidiel"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:199
+msgid "The space between the buttons"
+msgstr "Priestor medzi tlačidlami"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:414
+msgid "Horizontal Button Box"
+msgstr "Horizontálny tlačidlový box"
+
+#: ../glade/gbwidgets/gbhpaned.c:74 ../glade/gbwidgets/gbvpaned.c:70
+msgid "The position of the divider"
+msgstr "Pozícia deliacej čiary"
+
+#: ../glade/gbwidgets/gbhpaned.c:186 ../glade/gbwidgets/gbwindow.c:283
+msgid "Shrink:"
+msgstr "Zmenšovať:"
+
+#: ../glade/gbwidgets/gbhpaned.c:187
+msgid "Set True to let the widget shrink"
+msgstr "Nastavte na Áno pre umožnenie zmenšovania prvku"
+
+#: ../glade/gbwidgets/gbhpaned.c:188
+msgid "Resize:"
+msgstr "Zmena veľkosti:"
+
+#: ../glade/gbwidgets/gbhpaned.c:189
+msgid "Set True to let the widget resize"
+msgstr "Nastavte na Áno, ak má prvok meniť veľkosť"
+
+#: ../glade/gbwidgets/gbhpaned.c:315
+msgid "Horizontal Panes"
+msgstr "Horizontálne oblasti"
+
+#: ../glade/gbwidgets/gbhruler.c:82 ../glade/gbwidgets/gbvruler.c:82
+msgid "Metric:"
+msgstr "Jednotky:"
+
+#: ../glade/gbwidgets/gbhruler.c:83 ../glade/gbwidgets/gbvruler.c:83
+msgid "The units of the ruler"
+msgstr "Jednotky pravítka"
+
+#: ../glade/gbwidgets/gbhruler.c:85 ../glade/gbwidgets/gbvruler.c:85
+msgid "Lower Value:"
+msgstr "Spodná hodnota:"
+
+#: ../glade/gbwidgets/gbhruler.c:86 ../glade/gbwidgets/gbvruler.c:86
+#: ../glade/gbwidgets/gbvruler.c:88
+msgid "The low value of the ruler"
+msgstr "Spodná hodnota pravítka"
+
+#: ../glade/gbwidgets/gbhruler.c:87 ../glade/gbwidgets/gbvruler.c:87
+msgid "Upper Value:"
+msgstr "Horná hodnota:"
+
+#: ../glade/gbwidgets/gbhruler.c:88
+msgid "The high value of the ruler"
+msgstr "Horná hodnota pravítka"
+
+#: ../glade/gbwidgets/gbhruler.c:90 ../glade/gbwidgets/gbvruler.c:90
+msgid "The current position on the ruler"
+msgstr "Aktuálna pozícia na pravítku"
+
+#: ../glade/gbwidgets/gbhruler.c:91 ../glade/gbwidgets/gbvruler.c:91
+#: ../glade/property.c:4827
+msgid "Max:"
+msgstr "Max:"
+
+#: ../glade/gbwidgets/gbhruler.c:92 ../glade/gbwidgets/gbvruler.c:92
+msgid "The maximum value of the ruler"
+msgstr "Maximálna hodnota pravítka"
+
+#: ../glade/gbwidgets/gbhruler.c:247
+msgid "Horizontal Ruler"
+msgstr "Horizontálne pravítko"
+
+#: ../glade/gbwidgets/gbhscale.c:107 ../glade/gbwidgets/gbvscale.c:108
+msgid "Show Value:"
+msgstr "Zobraziť hodnotu:"
+
+#: ../glade/gbwidgets/gbhscale.c:107 ../glade/gbwidgets/gbvscale.c:108
+msgid "If the scale's value is shown"
+msgstr "Či je zobrazená hodnota mierky"
+
+#: ../glade/gbwidgets/gbhscale.c:108 ../glade/gbwidgets/gbspinbutton.c:93
+#: ../glade/gbwidgets/gbvscale.c:109
+msgid "Digits:"
+msgstr "Číslice:"
+
+#: ../glade/gbwidgets/gbhscale.c:108 ../glade/gbwidgets/gbvscale.c:109
+msgid "The number of digits to show"
+msgstr "Počet zobrazovaných číslic"
+
+#: ../glade/gbwidgets/gbhscale.c:110 ../glade/gbwidgets/gbvscale.c:111
+msgid "Value Pos:"
+msgstr "Poz. hodnoty:"
+
+#: ../glade/gbwidgets/gbhscale.c:111 ../glade/gbwidgets/gbvscale.c:112
+msgid "The position of the value"
+msgstr "Pozícia hodnoty"
+
+#: ../glade/gbwidgets/gbhscale.c:113 ../glade/gbwidgets/gbhscrollbar.c:87
+#: ../glade/gbwidgets/gbvscale.c:114 ../glade/gbwidgets/gbvscrollbar.c:87
+msgid "Policy:"
+msgstr "Mód:"
+
+#: ../glade/gbwidgets/gbhscale.c:114 ../glade/gbwidgets/gbvscale.c:115
+msgid "The update policy of the scale"
+msgstr "Mód obnovovania mierky"
+
+#: ../glade/gbwidgets/gbhscale.c:116 ../glade/gbwidgets/gbhscrollbar.c:90
+#: ../glade/gbwidgets/gbvscale.c:117 ../glade/gbwidgets/gbvscrollbar.c:90
+msgid "Inverted:"
+msgstr "Prevrátený:"
+
+#: ../glade/gbwidgets/gbhscale.c:116 ../glade/gbwidgets/gbhscrollbar.c:90
+#: ../glade/gbwidgets/gbvscale.c:117 ../glade/gbwidgets/gbvscrollbar.c:90
+msgid "If the range values are inverted"
+msgstr "Či musí byť rozsah hodnôt prevrátený"
+
+#: ../glade/gbwidgets/gbhscale.c:319
+msgid "Horizontal Scale"
+msgstr "Horizontálna mierka"
+
+#: ../glade/gbwidgets/gbhscrollbar.c:88 ../glade/gbwidgets/gbvscrollbar.c:88
+msgid "The update policy of the scrollbar"
+msgstr "Obnovovací mód posuvníka"
+
+#: ../glade/gbwidgets/gbhscrollbar.c:237
+msgid "Horizontal Scrollbar"
+msgstr "Horizontálny posuvník"
+
+#: ../glade/gbwidgets/gbhseparator.c:144
+msgid "Horizonal Separator"
+msgstr "Horizontálny oddeľovač"
+
+#: ../glade/gbwidgets/gbiconview.c:106
+#, fuzzy, c-format
+msgid "Icon %i"
+msgstr "Zoznam ikon"
+
+#: ../glade/gbwidgets/gbiconview.c:128
+#, fuzzy
+msgid "The selection mode of the icon view"
+msgstr "Mód výberu v stĺpcovom strome"
+
+#: ../glade/gbwidgets/gbiconview.c:130 ../glade/gbwidgets/gbprogressbar.c:134
+#: ../glade/gbwidgets/gbtoolbar.c:270 ../glade/gnome/bonobodockitem.c:179
+msgid "Orientation:"
+msgstr "Orientácia:"
+
+#: ../glade/gbwidgets/gbiconview.c:131
+#, fuzzy
+msgid "The orientation of the icons"
+msgstr "Orientácia obsahu pruhu"
+
+#: ../glade/gbwidgets/gbiconview.c:287
+#, fuzzy
+msgid "Icon View"
+msgstr "Veľkosť ikony:"
+
+#: ../glade/gbwidgets/gbimage.c:110 ../glade/gbwidgets/gbwindow.c:299
+#, fuzzy
+msgid "Named Icon:"
+msgstr "Ikona:"
+
+#: ../glade/gbwidgets/gbimage.c:111 ../glade/gbwidgets/gbwindow.c:300
+#, fuzzy
+msgid "The named icon to use"
+msgstr "Použitá štandardná položka GNOME."
+
+#: ../glade/gbwidgets/gbimage.c:112
+msgid "Icon Size:"
+msgstr "Veľkosť ikony:"
+
+#: ../glade/gbwidgets/gbimage.c:113
+msgid "The stock icon size"
+msgstr "Veľkosť štandardnej ikony"
+
+#: ../glade/gbwidgets/gbimage.c:115
+#, fuzzy
+msgid "Pixel Size:"
+msgstr "Veľkosť strany:"
+
+#: ../glade/gbwidgets/gbimage.c:116
+msgid ""
+"The size of the named icon in pixels, or -1 to use the Icon Size property"
+msgstr ""
+
+#: ../glade/gbwidgets/gbimage.c:120
+msgid "The horizontal alignment"
+msgstr "Horizontálne zarovnanie"
+
+#: ../glade/gbwidgets/gbimage.c:123
+msgid "The vertical alignment"
+msgstr "Vertikálne zarovnanie"
+
+#: ../glade/gbwidgets/gbimage.c:648
+msgid "Image"
+msgstr "Obrázok"
+
+#: ../glade/gbwidgets/gbimagemenuitem.c:255
+#: ../glade/gbwidgets/gbmenuitem.c:228
+msgid "Invalid stock menu item"
+msgstr "Neplatná štandarná GNOME položka menu"
+
+#: ../glade/gbwidgets/gbimagemenuitem.c:471
+msgid "Menu item with a pixmap"
+msgstr "Položka menu s obrázkom"
+
+#: ../glade/gbwidgets/gbinputdialog.c:256
+msgid "Input Dialog"
+msgstr "Vstupný dialóg"
+
+#: ../glade/gbwidgets/gblabel.c:169
+msgid "Use Underline:"
+msgstr "Použiť podtržítko:"
+
+#: ../glade/gbwidgets/gblabel.c:170
+#, fuzzy
+msgid "If the text includes an underlined access key"
+msgstr "Či text obsahuje akcelerátor označený podtržítkom"
+
+#: ../glade/gbwidgets/gblabel.c:171
+msgid "Use Markup:"
+msgstr "Použité značky:"
+
+#: ../glade/gbwidgets/gblabel.c:172
+msgid "If the text includes pango markup"
+msgstr "Či text obsahuje značky Pango"
+
+#: ../glade/gbwidgets/gblabel.c:173
+msgid "Justify:"
+msgstr "Zarovnať:"
+
+#: ../glade/gbwidgets/gblabel.c:174
+msgid "The justification of the lines of the label"
+msgstr "Zarovnanie riadkov nápisu"
+
+#: ../glade/gbwidgets/gblabel.c:176
+msgid "Wrap Text:"
+msgstr "Zalamovať text:"
+
+#: ../glade/gbwidgets/gblabel.c:177
+msgid "If the text is wrapped to fit within the width of the label"
+msgstr "Či je text zalomený aby pasoval do šírky nápisu"
+
+#: ../glade/gbwidgets/gblabel.c:178
+msgid "Selectable:"
+msgstr "Vybrateľný:"
+
+#: ../glade/gbwidgets/gblabel.c:179
+msgid "If the label text can be selected with the mouse"
+msgstr "Či je text popisu možné vybrať myšou"
+
+#: ../glade/gbwidgets/gblabel.c:181
+msgid "The horizontal alignment of the entire label"
+msgstr "Horizontálne zarovnanie celého nápisu"
+
+#: ../glade/gbwidgets/gblabel.c:184
+msgid "The vertical alignment of the entire label"
+msgstr "Vertikálne zarovnanie celého nápisu"
+
+#: ../glade/gbwidgets/gblabel.c:190
+msgid "Focus Target:"
+msgstr "Cieľ fokusu:"
+
+#: ../glade/gbwidgets/gblabel.c:191
+#, fuzzy
+msgid ""
+"The widget to set the keyboard focus to when the underlined access key is "
+"used"
+msgstr "Prvok, na ktorý umiestniť fokus pri použití asociovaného akcelerátoru"
+
+#. gtk_combo_set_value_in_list (GTK_COMBO (combo), TRUE, TRUE);
+#: ../glade/gbwidgets/gblabel.c:197 ../glade/gbwidgets/gbprogressbar.c:146
+#, fuzzy
+msgid "Ellipsize:"
+msgstr "Exkluzívny:"
+
+#: ../glade/gbwidgets/gblabel.c:198 ../glade/gbwidgets/gbprogressbar.c:147
+msgid "How to ellipsize the string"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:201
+#, fuzzy
+msgid "The width of the label in characters"
+msgstr "Šírka oblasti"
+
+#: ../glade/gbwidgets/gblabel.c:203
+#, fuzzy
+msgid "Single Line Mode:"
+msgstr "Mód výberu:"
+
+#: ../glade/gbwidgets/gblabel.c:204
+msgid "If the label is only given enough height for a single line"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:205
+msgid "Angle:"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:206
+#, fuzzy
+msgid "The angle of the label text"
+msgstr "Zalomenie textu"
+
+#: ../glade/gbwidgets/gblabel.c:332 ../glade/gbwidgets/gblabel.c:347
+#: ../glade/gbwidgets/gblabel.c:614
+msgid "Auto"
+msgstr "Auto"
+
+#: ../glade/gbwidgets/gblabel.c:870 ../glade/glade_menu_editor.c:410
+msgid "Label"
+msgstr "Nápis"
+
+#: ../glade/gbwidgets/gblayout.c:96
+msgid "Area Width:"
+msgstr "Šírka oblasti:"
+
+#: ../glade/gbwidgets/gblayout.c:97
+msgid "The width of the layout area"
+msgstr "Šírka oblasti"
+
+#: ../glade/gbwidgets/gblayout.c:99
+msgid "Area Height:"
+msgstr "Výška oblasti:"
+
+#: ../glade/gbwidgets/gblayout.c:100
+msgid "The height of the layout area"
+msgstr "Výška oblasti"
+
+#: ../glade/gbwidgets/gblayout.c:222
+msgid "The X coordinate of the widget in the GtkLayout"
+msgstr "X súradnica prvku v GtkLayout"
+
+#: ../glade/gbwidgets/gblayout.c:225
+msgid "The Y coordinate of the widget in the GtkLayout"
+msgstr "Y súradnica prvku v GtkLayout"
+
+#: ../glade/gbwidgets/gblayout.c:380
+msgid "Layout"
+msgstr "Oblasť"
+
+#: ../glade/gbwidgets/gblist.c:78
+msgid "The selection mode of the list"
+msgstr "Mód výberu v zozname"
+
+#: ../glade/gbwidgets/gblist.c:192
+msgid "List"
+msgstr "Zoznam"
+
+#: ../glade/gbwidgets/gblistitem.c:171
+msgid "List Item"
+msgstr "Položka zoznamu"
+
+#: ../glade/gbwidgets/gbmenu.c:198
+msgid "Popup Menu"
+msgstr "Popup Menu"
+
+#. FIXME: I'm not sure if we should translate the non-stock labels or not.
+#: ../glade/gbwidgets/gbmenubar.c:190
+msgid "_File"
+msgstr "_Súbor"
+
+#. Create Edit menu
+#: ../glade/gbwidgets/gbmenubar.c:198 ../glade/glade_project_window.c:691
+msgid "_Edit"
+msgstr "_Upraviť"
+
+#. Create View menu
+#: ../glade/gbwidgets/gbmenubar.c:204 ../glade/glade_project_window.c:720
+msgid "_View"
+msgstr "_Zobraziť"
+
+#. Create Help menu
+#: ../glade/gbwidgets/gbmenubar.c:206 ../glade/glade_project_window.c:833
+msgid "_Help"
+msgstr "_Pomocník"
+
+#: ../glade/gbwidgets/gbmenubar.c:207
+msgid "_About"
+msgstr "_O programe"
+
+#: ../glade/gbwidgets/gbmenubar.c:268 ../glade/gbwidgets/gbmenubar.c:346
+#: ../glade/gbwidgets/gboptionmenu.c:139
+msgid "Edit Menus..."
+msgstr "Upraviť menu..."
+
+#: ../glade/gbwidgets/gbmenubar.c:442
+msgid "Menu Bar"
+msgstr "Menu"
+
+#: ../glade/gbwidgets/gbmenuitem.c:379
+msgid "Menu Item"
+msgstr "Položka menu"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:92
+#: ../glade/gbwidgets/gbradiotoolbutton.c:150
+#: ../glade/gbwidgets/gbseparatortoolitem.c:67
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:99
+#: ../glade/gbwidgets/gbtoolbutton.c:111 ../glade/gbwidgets/gbtoolitem.c:65
+#, fuzzy
+msgid "Show Horizontal:"
+msgstr "Nikdy horizontálny:"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:93
+#: ../glade/gbwidgets/gbradiotoolbutton.c:151
+#: ../glade/gbwidgets/gbseparatortoolitem.c:68
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:100
+#: ../glade/gbwidgets/gbtoolbutton.c:112 ../glade/gbwidgets/gbtoolitem.c:66
+#, fuzzy
+msgid "If the item is visible when the toolbar is horizontal"
+msgstr "Či nie je položke nikdy povolené byť horizontálna"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:94
+#: ../glade/gbwidgets/gbradiotoolbutton.c:152
+#: ../glade/gbwidgets/gbseparatortoolitem.c:69
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:101
+#: ../glade/gbwidgets/gbtoolbutton.c:113 ../glade/gbwidgets/gbtoolitem.c:67
+#, fuzzy
+msgid "Show Vertical:"
+msgstr "Zobraziť hodnotu:"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:95
+#: ../glade/gbwidgets/gbradiotoolbutton.c:153
+#: ../glade/gbwidgets/gbseparatortoolitem.c:70
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:102
+#: ../glade/gbwidgets/gbtoolbutton.c:114 ../glade/gbwidgets/gbtoolitem.c:68
+#, fuzzy
+msgid "If the item is visible when the toolbar is vertical"
+msgstr "Či nie je položke nikdy povolené byť vertikálna"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:96
+#: ../glade/gbwidgets/gbradiotoolbutton.c:154
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:103
+#: ../glade/gbwidgets/gbtoolbutton.c:115 ../glade/gbwidgets/gbtoolitem.c:69
+msgid "Is Important:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:97
+#: ../glade/gbwidgets/gbradiotoolbutton.c:155
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:104
+#: ../glade/gbwidgets/gbtoolbutton.c:116 ../glade/gbwidgets/gbtoolitem.c:70
+msgid ""
+"If the item's text should be shown when the toolbar's mode is "
+"GTK_TOOLBAR_BOTH_HORIZ"
+msgstr ""
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:255
+#, fuzzy
+msgid "Toolbar Button with Menu"
+msgstr "Prepínač"
+
+#: ../glade/gbwidgets/gbnotebook.c:191
+msgid "New notebook"
+msgstr "Nový notes"
+
+#: ../glade/gbwidgets/gbnotebook.c:202 ../glade/gnome/gnomepropertybox.c:124
+msgid "Number of pages:"
+msgstr "Počet záložiek:"
+
+#: ../glade/gbwidgets/gbnotebook.c:274
+msgid "Show Tabs:"
+msgstr "Zobraziť záložky:"
+
+#: ../glade/gbwidgets/gbnotebook.c:274
+msgid "If the notebook tabs are shown"
+msgstr "Či sú záložky zobrazené"
+
+#: ../glade/gbwidgets/gbnotebook.c:275
+msgid "Show Border:"
+msgstr "Zobraziť okraj:"
+
+#: ../glade/gbwidgets/gbnotebook.c:276
+msgid "If the notebook border is shown, when the tabs are not shown"
+msgstr "Či je zobrazený okraj notesu, keď nie sú zobrazené záložky"
+
+#: ../glade/gbwidgets/gbnotebook.c:277
+msgid "Tab Pos:"
+msgstr "Poz. zálož.:"
+
+#: ../glade/gbwidgets/gbnotebook.c:278
+msgid "The position of the notebook tabs"
+msgstr "Pozícia záložiek notesu"
+
+#: ../glade/gbwidgets/gbnotebook.c:280
+msgid "Scrollable:"
+msgstr "Posuvníky:"
+
+#: ../glade/gbwidgets/gbnotebook.c:281
+msgid "If the notebook tabs are scrollable"
+msgstr "Či sú záložky notesu s posuvníkom"
+
+#. These seem to be deprecated.
+#: ../glade/gbwidgets/gbnotebook.c:284
+msgid "Tab Horz. Border:"
+msgstr "Horiz. okraj záložky:"
+
+#: ../glade/gbwidgets/gbnotebook.c:285
+msgid "The size of the notebook tabs' horizontal border"
+msgstr "Veľkosť horizontálneho okraja záložiek notesu"
+
+#: ../glade/gbwidgets/gbnotebook.c:287
+msgid "Tab Vert. Border:"
+msgstr "Vert. okraj záložky:"
+
+#: ../glade/gbwidgets/gbnotebook.c:288
+msgid "The size of the notebook tabs' vertical border"
+msgstr "Veľkosť vertikálneho okraja záložiek notesu"
+
+#: ../glade/gbwidgets/gbnotebook.c:291
+msgid "Show Popup:"
+msgstr "Zobraziť popup:"
+
+#: ../glade/gbwidgets/gbnotebook.c:291
+msgid "If the popup menu is enabled"
+msgstr "Či je popup menu povolené"
+
+#: ../glade/gbwidgets/gbnotebook.c:292 ../glade/gnome/gnomedruid.c:102
+msgid "Number of Pages:"
+msgstr "Počet záložiek:"
+
+#: ../glade/gbwidgets/gbnotebook.c:293
+msgid "The number of notebook pages"
+msgstr "Počet záložiek notesu"
+
+#: ../glade/gbwidgets/gbnotebook.c:540
+msgid "Previous Page"
+msgstr "Predchádzajúca stránka"
+
+#: ../glade/gbwidgets/gbnotebook.c:548
+msgid "Next Page"
+msgstr "Následujúca stránka"
+
+#: ../glade/gbwidgets/gbnotebook.c:556
+msgid "Delete Page"
+msgstr "Odstrániť stránku"
+
+#: ../glade/gbwidgets/gbnotebook.c:562
+msgid "Switch Next"
+msgstr "Prepnúť na následujúcu"
+
+#: ../glade/gbwidgets/gbnotebook.c:570
+msgid "Switch Previous"
+msgstr "Prepnúť na predchádzajúcu"
+
+#: ../glade/gbwidgets/gbnotebook.c:578 ../glade/gnome/gnomedruid.c:298
+msgid "Insert Page After"
+msgstr "Vložiť stránku za"
+
+#: ../glade/gbwidgets/gbnotebook.c:586 ../glade/gnome/gnomedruid.c:285
+msgid "Insert Page Before"
+msgstr "Vložiť stránku pred"
+
+#: ../glade/gbwidgets/gbnotebook.c:670
+msgid "The page's position in the list of pages"
+msgstr "Pozícia záložky v zozname záložiek"
+
+#: ../glade/gbwidgets/gbnotebook.c:673
+msgid "Set True to let the tab expand"
+msgstr "Nastavte na Áno aby mohla záložka rásť"
+
+#: ../glade/gbwidgets/gbnotebook.c:675
+msgid "Set True to let the tab fill its allocated area"
+msgstr "Nastavte na Áno aby záložka vyplnila celú alokovanú plochu"
+
+#: ../glade/gbwidgets/gbnotebook.c:677
+msgid "Set True to pack the tab at the start of the notebook"
+msgstr "Nastavte na Áno aby boli záložky nahrnuté na začiatku notesu"
+
+#: ../glade/gbwidgets/gbnotebook.c:678
+msgid "Menu Label:"
+msgstr "Text menu:"
+
+#: ../glade/gbwidgets/gbnotebook.c:679
+msgid "The text to display in the popup menu"
+msgstr "Text zobrazený v kontextovom menu"
+
+#: ../glade/gbwidgets/gbnotebook.c:937
+msgid "Notebook"
+msgstr "Notes"
+
+#: ../glade/gbwidgets/gboptionmenu.c:230
+#, c-format
+msgid "Cannot add a %s to a GtkOptionMenu."
+msgstr "Nepodarilo sa pridať %s do GtkOptionMenu."
+
+#: ../glade/gbwidgets/gboptionmenu.c:270
+msgid "Option Menu"
+msgstr "Menu možností"
+
+#: ../glade/gbwidgets/gbpreview.c:63
+msgid "Color:"
+msgstr "Farba:"
+
+#: ../glade/gbwidgets/gbpreview.c:64
+msgid "If the preview is color or grayscale"
+msgstr "Či je ukážka farebná alebo čiernobiela"
+
+#: ../glade/gbwidgets/gbpreview.c:66
+msgid "If the preview expands to fill its allocated area"
+msgstr "Či sa má ukážka roztiahnuť na celú alokovanú plochu"
+
+#: ../glade/gbwidgets/gbpreview.c:162
+msgid "Preview"
+msgstr "Ukážka"
+
+#: ../glade/gbwidgets/gbprogressbar.c:135
+msgid "The orientation of the progress bar's contents"
+msgstr "Orientácia obsahu pruhu"
+
+#: ../glade/gbwidgets/gbprogressbar.c:137
+msgid "Fraction:"
+msgstr "Časť:"
+
+#: ../glade/gbwidgets/gbprogressbar.c:138
+msgid "The fraction of work that has been completed"
+msgstr "Časť, ktorá už je dokončená"
+
+#: ../glade/gbwidgets/gbprogressbar.c:140
+msgid "Pulse Step:"
+msgstr "Krok pulzu:"
+
+#: ../glade/gbwidgets/gbprogressbar.c:141
+msgid ""
+"The fraction of the progress bar length to move the bouncing block when "
+"pulsed"
+msgstr "Časť pruhu, o ktorú posunúť blok pri pulze"
+
+#: ../glade/gbwidgets/gbprogressbar.c:144
+msgid "The text to display over the progress bar"
+msgstr "Text pruhu priebehu"
+
+#. ShowText is implicit now, if the Text property is set to anything.
+#: ../glade/gbwidgets/gbprogressbar.c:152
+msgid "Show Text:"
+msgstr "Zobraziť text:"
+
+#: ../glade/gbwidgets/gbprogressbar.c:153
+msgid "If the text should be shown in the progress bar"
+msgstr "Či má byť zobrazený text v pruhu"
+
+#. ActivityMode is deprecated and implicit now. The app just calls
+#. gtk_progress_bar_pulse() and it automatically goes into activity mode.
+#: ../glade/gbwidgets/gbprogressbar.c:157
+msgid "Activity Mode:"
+msgstr "Mód aktivity:"
+
+#: ../glade/gbwidgets/gbprogressbar.c:158
+msgid "If the progress bar should act like the front of Kit's car"
+msgstr "Či má pruh fungovať ako predok Kitovho auta"
+
+#: ../glade/gbwidgets/gbprogressbar.c:163
+msgid "The horizontal alignment of the text"
+msgstr "Horizontálne zarovnanie textu"
+
+#: ../glade/gbwidgets/gbprogressbar.c:166
+msgid "The vertical alignment of the text"
+msgstr "Vertikálne zarovnanie textu"
+
+#: ../glade/gbwidgets/gbprogressbar.c:421
+msgid "Progress Bar"
+msgstr "Pruh priebehu"
+
+#: ../glade/gbwidgets/gbradiobutton.c:138
+#: ../glade/gbwidgets/gbradiotoolbutton.c:148
+msgid "If the radio button is initially on"
+msgstr "Či je prepínač na začiatku v stave Áno"
+
+#: ../glade/gbwidgets/gbradiobutton.c:143
+#: ../glade/gbwidgets/gbradiomenuitem.c:106
+#: ../glade/gbwidgets/gbradiotoolbutton.c:141
+#: ../glade/glade_menu_editor.c:1038
+msgid "Group:"
+msgstr "Skupina:"
+
+#: ../glade/gbwidgets/gbradiobutton.c:144
+msgid ""
+"The radio button group (the default is all radio buttons with the same "
+"parent)"
+msgstr ""
+"Skupina prepínačov (štandardne sú v jednej skupine všetky prepínače od "
+"rovnakého rodiča)"
+
+#: ../glade/gbwidgets/gbradiobutton.c:189
+#: ../glade/gbwidgets/gbradiobutton.c:350
+#: ../glade/gbwidgets/gbradiotoolbutton.c:233
+#: ../glade/gbwidgets/gbradiotoolbutton.c:322
+msgid "New Group"
+msgstr "Nová skupina"
+
+#: ../glade/gbwidgets/gbradiobutton.c:463
+msgid "Radio Button"
+msgstr "Prepínač"
+
+#: ../glade/gbwidgets/gbradiomenuitem.c:105
+msgid "If the radio menu item is initially on"
+msgstr "Či je položka menu prepínač na začiatku zapnutá"
+
+#: ../glade/gbwidgets/gbradiomenuitem.c:107
+msgid ""
+"The radio menu item group (the default is all radio menu items with the same "
+"parent)"
+msgstr ""
+"Skupina položiek menu typu prepínač (štandardne sú všetky takéto položky "
+"jedného rodiča v rovnakej skupine)"
+
+#: ../glade/gbwidgets/gbradiomenuitem.c:386
+msgid "Radio Menu Item"
+msgstr "Položka menu prepínač"
+
+#: ../glade/gbwidgets/gbradiotoolbutton.c:142
+#, fuzzy
+msgid ""
+"The radio tool button group (the default is all radio tool buttons in the "
+"toolbar)"
+msgstr ""
+"Skupina prepínačov (štandardne sú v jednej skupine všetky prepínače od "
+"rovnakého rodiča)"
+
+#: ../glade/gbwidgets/gbradiotoolbutton.c:528
+#, fuzzy
+msgid "Toolbar Radio Button"
+msgstr "Prepínač"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:131
+msgid "H Policy:"
+msgstr "H mód:"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:132
+msgid "When the horizontal scrollbar will be shown"
+msgstr "Kedy bude zobrazený horizontálny posuvník"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:134
+msgid "V Policy:"
+msgstr "V mód:"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:135
+msgid "When the vertical scrollbar will be shown"
+msgstr "Kedy bude zobrazený vertikálny posuvník"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:137
+msgid "Window Pos:"
+msgstr "Pozícia okna:"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:138
+msgid "Where the child window is located with respect to the scrollbars"
+msgstr "Umiestnenie potomka vzhľadom k posuvníkom"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:140
+msgid "Shadow Type:"
+msgstr "Typ tieňa:"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:141
+msgid "The update policy of the vertical scrollbar"
+msgstr "Mód obnovy vertikálneho posuvníka"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:353
+msgid "Scrolled Window"
+msgstr "Okno s posuvníkmi"
+
+#: ../glade/gbwidgets/gbseparatormenuitem.c:153
+msgid "Separator for Menus"
+msgstr "Oddeľovač menu"
+
+#: ../glade/gbwidgets/gbseparatortoolitem.c:65
+msgid "Draw:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbseparatortoolitem.c:66
+msgid "If the separator is drawn, or just blank"
+msgstr ""
+
+#: ../glade/gbwidgets/gbseparatortoolitem.c:204
+#, fuzzy
+msgid "Toolbar Separator Item"
+msgstr "Horizontálny oddeľovač"
+
+#: ../glade/gbwidgets/gbspinbutton.c:91
+msgid "Climb Rate:"
+msgstr "Rast:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:92
+msgid ""
+"The climb rate of the spinbutton, used in conjunction with the Page Increment"
+msgstr ""
+"Hodnota, o ktorú sa mení nastavovacie tlačidlo, použitá spolu so krokom "
+"stránky"
+
+#: ../glade/gbwidgets/gbspinbutton.c:94
+msgid "The number of decimal digits to show"
+msgstr "Počet zobrazovaných číslic"
+
+#: ../glade/gbwidgets/gbspinbutton.c:96
+msgid "Numeric:"
+msgstr "Číslic:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:97
+msgid "If only numeric entry is allowed"
+msgstr ""
+
+#: ../glade/gbwidgets/gbspinbutton.c:98
+msgid "Update Policy:"
+msgstr "Metóda obnovovania:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:99
+msgid "When value_changed signals are emitted"
+msgstr "Keď sú vyslané signály value_changed"
+
+#: ../glade/gbwidgets/gbspinbutton.c:101
+msgid "Snap:"
+msgstr "Pritiahnuť:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:102
+msgid "If the value is snapped to multiples of the step increment"
+msgstr "Či je hodnota pritiahnutá k násobku kroku"
+
+#: ../glade/gbwidgets/gbspinbutton.c:103
+msgid "Wrap:"
+msgstr "Zalomiť:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:104
+msgid "If the value is wrapped at the limits"
+msgstr "Či je za hranicami hodnota zalomená"
+
+#: ../glade/gbwidgets/gbspinbutton.c:284
+msgid "Spin Button"
+msgstr "Nastavovacie tlačidlo"
+
+#: ../glade/gbwidgets/gbstatusbar.c:64
+msgid "Resize Grip:"
+msgstr "Zmena veľkosti:"
+
+#: ../glade/gbwidgets/gbstatusbar.c:64
+msgid "If the status bar has a resize grip to resize the window"
+msgstr "Či má stavový riadok značku pre zmenu veľkosti okna"
+
+#: ../glade/gbwidgets/gbstatusbar.c:156
+msgid "Status Bar"
+msgstr "Stavový riadok"
+
+#: ../glade/gbwidgets/gbtable.c:137
+msgid "New table"
+msgstr "Nová tabuľka"
+
+#: ../glade/gbwidgets/gbtable.c:149 ../glade/gbwidgets/gbvbox.c:95
+#: ../glade/gbwidgets/gbvbuttonbox.c:123
+msgid "Number of rows:"
+msgstr "Počet riadkov:"
+
+#: ../glade/gbwidgets/gbtable.c:237
+msgid "Rows:"
+msgstr "Riadky:"
+
+#: ../glade/gbwidgets/gbtable.c:238
+msgid "The number of rows in the table"
+msgstr "Počet riadkov v tabuľke"
+
+#: ../glade/gbwidgets/gbtable.c:240
+msgid "Columns:"
+msgstr "Stĺpce:"
+
+#: ../glade/gbwidgets/gbtable.c:241
+msgid "The number of columns in the table"
+msgstr "Počet stĺpcov v tabuľke"
+
+#: ../glade/gbwidgets/gbtable.c:244
+msgid "If the children should all be the same size"
+msgstr "Či má mať potomok rovnakú veľkosť"
+
+#: ../glade/gbwidgets/gbtable.c:245 ../glade/gnome/gnomeiconlist.c:180
+msgid "Row Spacing:"
+msgstr "Medzery medzi riadkami:"
+
+#: ../glade/gbwidgets/gbtable.c:246
+msgid "The space between each row"
+msgstr "Medzera medzi dvoma riadkami"
+
+#: ../glade/gbwidgets/gbtable.c:248 ../glade/gnome/gnomeiconlist.c:183
+msgid "Col Spacing:"
+msgstr "Medzery medzi stĺpcami:"
+
+#: ../glade/gbwidgets/gbtable.c:249
+msgid "The space between each column"
+msgstr "Medzera medzi dvoma stĺpcami"
+
+#: ../glade/gbwidgets/gbtable.c:368
+msgid "Cell X:"
+msgstr "Bunka X:"
+
+#: ../glade/gbwidgets/gbtable.c:369
+msgid "The left edge of the widget in the table"
+msgstr "Ľavý okraj prvku v tabuľke"
+
+#: ../glade/gbwidgets/gbtable.c:371
+msgid "Cell Y:"
+msgstr "Bunka Y:"
+
+#: ../glade/gbwidgets/gbtable.c:372
+msgid "The top edge of the widget in the table"
+msgstr "Horný okraj prvku v tabuľke"
+
+#: ../glade/gbwidgets/gbtable.c:375
+msgid "Col Span:"
+msgstr "Rozsah stĺpcov:"
+
+#: ../glade/gbwidgets/gbtable.c:376
+msgid "The number of columns spanned by the widget in the table"
+msgstr "Počet stĺpcov, cez ktoré má prvok v tabuľke siahať"
+
+#: ../glade/gbwidgets/gbtable.c:378
+msgid "Row Span:"
+msgstr "Rozsah riadkov:"
+
+#: ../glade/gbwidgets/gbtable.c:379
+msgid "The number of rows spanned by the widget in the table"
+msgstr "Počet riadkov, cez ktoré má prvok v tabuľke siahať"
+
+#: ../glade/gbwidgets/gbtable.c:381
+msgid "H Padding:"
+msgstr "H medzera:"
+
+#: ../glade/gbwidgets/gbtable.c:384
+msgid "V Padding:"
+msgstr "V medzera:"
+
+#: ../glade/gbwidgets/gbtable.c:387
+msgid "X Expand:"
+msgstr "Expandovať X:"
+
+#: ../glade/gbwidgets/gbtable.c:388
+msgid "Set True to let the widget expand horizontally"
+msgstr "Nastavte na Áno aby mohol prvok expandovať horizontálne"
+
+#: ../glade/gbwidgets/gbtable.c:389
+msgid "Y Expand:"
+msgstr "Expandovať Y:"
+
+#: ../glade/gbwidgets/gbtable.c:390
+msgid "Set True to let the widget expand vertically"
+msgstr "Nastavte na Áno aby mohol prvok expandovať vertikálne"
+
+#: ../glade/gbwidgets/gbtable.c:391
+msgid "X Shrink:"
+msgstr "Zmešovať X:"
+
+#: ../glade/gbwidgets/gbtable.c:392
+msgid "Set True to let the widget shrink horizontally"
+msgstr "Nastavte na Áno aby sa mohol prvok zmenšovať horizontálne"
+
+#: ../glade/gbwidgets/gbtable.c:393
+msgid "Y Shrink:"
+msgstr "Zmešovať Y:"
+
+#: ../glade/gbwidgets/gbtable.c:394
+msgid "Set True to let the widget shrink vertically"
+msgstr "Nastavte na Áno aby sa mohol prvok zmenšovať vertikálne"
+
+#: ../glade/gbwidgets/gbtable.c:395
+msgid "X Fill:"
+msgstr "Vyplniť X:"
+
+#: ../glade/gbwidgets/gbtable.c:396
+msgid "Set True to let the widget fill its horizontal allocated area"
+msgstr ""
+"Nastavte na Áno aby sa mohol prvok horizontálne vyplniť celú alokovanú plochu"
+
+#: ../glade/gbwidgets/gbtable.c:397
+msgid "Y Fill:"
+msgstr "Vyplniť Y:"
+
+#: ../glade/gbwidgets/gbtable.c:398
+msgid "Set True to let the widget fill its vertical allocated area"
+msgstr ""
+"Nastavte na Áno aby sa mohol prvok vertikálne vyplniť celú alokovanú plochu"
+
+#: ../glade/gbwidgets/gbtable.c:667
+msgid "Insert Row Before"
+msgstr "Vložiť riadok pred"
+
+#: ../glade/gbwidgets/gbtable.c:674
+msgid "Insert Row After"
+msgstr "Vložiť riadok za"
+
+#: ../glade/gbwidgets/gbtable.c:681
+msgid "Insert Column Before"
+msgstr "Vložiť stĺpec pred"
+
+#: ../glade/gbwidgets/gbtable.c:688
+msgid "Insert Column After"
+msgstr "Vložiť stĺpec za"
+
+#: ../glade/gbwidgets/gbtable.c:695
+msgid "Delete Row"
+msgstr "Odstrániť riadok"
+
+#: ../glade/gbwidgets/gbtable.c:701
+msgid "Delete Column"
+msgstr "Odstrániť stĺpec"
+
+#: ../glade/gbwidgets/gbtable.c:1208
+msgid "Table"
+msgstr "Tabuľka"
+
+#: ../glade/gbwidgets/gbtextview.c:51
+msgid "Center"
+msgstr "Na stred"
+
+#: ../glade/gbwidgets/gbtextview.c:52
+msgid "Fill"
+msgstr "Vyplniť"
+
+#. Add a "None" item first, so it is easy to reset the pixmap.
+#. If the user selects the 'None' item from the combo, we reset the
+#. text to "" and return. This callback will be called again.
+#. Add a 'None' item at the top of the list.
+#: ../glade/gbwidgets/gbtextview.c:71 ../glade/glade_gnome.c:112
+#: ../glade/glade_menu_editor.c:542 ../glade/glade_menu_editor.c:829
+#: ../glade/glade_menu_editor.c:1344 ../glade/glade_menu_editor.c:2251
+#: ../glade/property.c:2431
+msgid "None"
+msgstr "Žiadna"
+
+#: ../glade/gbwidgets/gbtextview.c:72
+msgid "Character"
+msgstr "Znak"
+
+#: ../glade/gbwidgets/gbtextview.c:73
+msgid "Word"
+msgstr "Slovo"
+
+#: ../glade/gbwidgets/gbtextview.c:117
+msgid "Cursor Visible:"
+msgstr "Viditeľný kurzor:"
+
+#: ../glade/gbwidgets/gbtextview.c:118
+msgid "If the cursor is visible"
+msgstr "Či je kurzor viditeľný"
+
+#: ../glade/gbwidgets/gbtextview.c:119
+#, fuzzy
+msgid "Overwrite:"
+msgstr "Prevrátený:"
+
+#: ../glade/gbwidgets/gbtextview.c:120
+msgid "If entered text overwrites the existing text"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtextview.c:121
+msgid "Accepts Tab:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtextview.c:122
+#, fuzzy
+msgid "If tab characters can be entered"
+msgstr "Či je možné upraviť text"
+
+#: ../glade/gbwidgets/gbtextview.c:126
+msgid "Justification:"
+msgstr "Zarovnanie:"
+
+#: ../glade/gbwidgets/gbtextview.c:127
+msgid "The justification of the text"
+msgstr "Zarovnanie textu"
+
+#: ../glade/gbwidgets/gbtextview.c:129
+msgid "Wrapping:"
+msgstr "Zalomenie:"
+
+#: ../glade/gbwidgets/gbtextview.c:130
+msgid "The wrapping of the text"
+msgstr "Zalomenie textu"
+
+#: ../glade/gbwidgets/gbtextview.c:133
+msgid "Space Above:"
+msgstr "Priestor nad:"
+
+#: ../glade/gbwidgets/gbtextview.c:134
+msgid "Pixels of blank space above paragraphs"
+msgstr "Počet bodov prázdneho miesta nad odstavcami"
+
+#: ../glade/gbwidgets/gbtextview.c:136
+msgid "Space Below:"
+msgstr "Priestor pod:"
+
+#: ../glade/gbwidgets/gbtextview.c:137
+msgid "Pixels of blank space below paragraphs"
+msgstr "Počet bodov prázdneho miesta pod odstavcami"
+
+#: ../glade/gbwidgets/gbtextview.c:139
+msgid "Space Inside:"
+msgstr "Priestor vnútri:"
+
+#: ../glade/gbwidgets/gbtextview.c:140
+msgid "Pixels of blank space between wrapped lines in a paragraph"
+msgstr "Počet bodov prázdneho miesta medzi zalomenými riadkami v odstavci"
+
+#: ../glade/gbwidgets/gbtextview.c:143
+msgid "Left Margin:"
+msgstr "Ľavý okraj:"
+
+#: ../glade/gbwidgets/gbtextview.c:144
+msgid "Width of the left margin in pixels"
+msgstr "Šírka ľavého okraja v bodoch"
+
+#: ../glade/gbwidgets/gbtextview.c:146
+msgid "Right Margin:"
+msgstr "Pravý okraj:"
+
+#: ../glade/gbwidgets/gbtextview.c:147
+msgid "Width of the right margin in pixels"
+msgstr "Šírka pravého okraja v bodoch"
+
+#: ../glade/gbwidgets/gbtextview.c:149
+msgid "Indent:"
+msgstr "Odsadenie:"
+
+#: ../glade/gbwidgets/gbtextview.c:150
+msgid "Amount of pixels to indent paragraphs"
+msgstr "Počet bodov odsadenia odstavcov"
+
+#: ../glade/gbwidgets/gbtextview.c:463
+msgid "Text View"
+msgstr "Textový pohľad"
+
+#: ../glade/gbwidgets/gbtogglebutton.c:100
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:98
+msgid "If the toggle button is initially on"
+msgstr "Či je prepínač pri štarte zapnutý"
+
+#: ../glade/gbwidgets/gbtogglebutton.c:199
+msgid "Toggle Button"
+msgstr "Prepínač"
+
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:297
+#, fuzzy
+msgid "Toolbar Toggle Button"
+msgstr "Prepínač"
+
+#: ../glade/gbwidgets/gbtoolbar.c:191
+msgid "New toolbar"
+msgstr "Nový panel nástrojov"
+
+#: ../glade/gbwidgets/gbtoolbar.c:202
+msgid "Number of items:"
+msgstr "Počet položiek:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:268
+msgid "The number of items in the toolbar"
+msgstr "Počet položiek panelu"
+
+#: ../glade/gbwidgets/gbtoolbar.c:271
+msgid "The toolbar orientation"
+msgstr "Orientácia panelu"
+
+#: ../glade/gbwidgets/gbtoolbar.c:273
+msgid "Style:"
+msgstr "Štýl:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:274
+msgid "The toolbar style"
+msgstr "Štýl panelu"
+
+#: ../glade/gbwidgets/gbtoolbar.c:276
+msgid "Tooltips:"
+msgstr "Rady:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:276
+msgid "If tooltips are enabled"
+msgstr "Či sú povolené rady"
+
+#: ../glade/gbwidgets/gbtoolbar.c:277
+#, fuzzy
+msgid "Show Arrow:"
+msgstr "Zobraziť okraj:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:277
+msgid "If an arrow should be shown to popup a menu if the toolbar doesn't fit"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtoolbar.c:427
+#, fuzzy
+msgid "If the item should be the same size as other homogeneous items"
+msgstr "Či majú byť potomci rovnako veľkí"
+
+#. Commands for inserting new items.
+#: ../glade/gbwidgets/gbtoolbar.c:506
+msgid "Insert Item Before"
+msgstr "Vložiť položku pred"
+
+#: ../glade/gbwidgets/gbtoolbar.c:513
+msgid "Insert Item After"
+msgstr "Vložiť položku za"
+
+#: ../glade/gbwidgets/gbtoolbar.c:680
+msgid "Toolbar"
+msgstr "Panel nástrojov"
+
+#: ../glade/gbwidgets/gbtoolbutton.c:586
+#, fuzzy
+msgid "Toolbar Button"
+msgstr "Prepínač"
+
+#: ../glade/gbwidgets/gbtoolitem.c:201
+#, fuzzy
+msgid "Toolbar Item"
+msgstr "Panel nástrojov"
+
+#: ../glade/gbwidgets/gbtreeview.c:71
+msgid "Column 1"
+msgstr "Stĺpec 1"
+
+#: ../glade/gbwidgets/gbtreeview.c:79
+msgid "Column 2"
+msgstr "Stĺpec 2"
+
+#: ../glade/gbwidgets/gbtreeview.c:87
+#, fuzzy
+msgid "Column 3"
+msgstr "Stĺpec 1"
+
+#: ../glade/gbwidgets/gbtreeview.c:97
+#, c-format
+msgid "Row %i"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtreeview.c:114
+msgid "Headers Visible:"
+msgstr "Viditeľné hlavičky:"
+
+#: ../glade/gbwidgets/gbtreeview.c:115
+msgid "If the column header buttons are shown"
+msgstr "Či majú byť zobrazené tlačidlá titulkov stĺpcov"
+
+#: ../glade/gbwidgets/gbtreeview.c:116
+msgid "Rules Hint:"
+msgstr "Rada pre pravidlá:"
+
+#: ../glade/gbwidgets/gbtreeview.c:117
+msgid ""
+"If a hint is set so the theme engine should draw rows in alternating colors"
+msgstr ""
+"Či je nastavená rada, takže téma má kresliť riadky v striedajúcich sa farbách"
+
+#: ../glade/gbwidgets/gbtreeview.c:118
+msgid "Reorderable:"
+msgstr "Zmena triedenia:"
+
+#: ../glade/gbwidgets/gbtreeview.c:119
+msgid "If the view is reorderable"
+msgstr "Či je možná zmena triedenia"
+
+#: ../glade/gbwidgets/gbtreeview.c:120
+msgid "Enable Search:"
+msgstr "Povoliť hľadanie:"
+
+#: ../glade/gbwidgets/gbtreeview.c:121
+msgid "If the user can search through columns interactively"
+msgstr "Či môže používateľ hľadať interaktívne v stĺpcoch"
+
+#: ../glade/gbwidgets/gbtreeview.c:123
+#, fuzzy
+msgid "Fixed Height Mode:"
+msgstr "Zväčšená výška:"
+
+#: ../glade/gbwidgets/gbtreeview.c:124
+msgid "Sets all rows to the same height to improve performance"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtreeview.c:125
+#, fuzzy
+msgid "Hover Selection:"
+msgstr "Výber farby"
+
+#: ../glade/gbwidgets/gbtreeview.c:126
+#, fuzzy
+msgid "Whether the selection should follow the pointer"
+msgstr "Mód výberu v zozname"
+
+#: ../glade/gbwidgets/gbtreeview.c:127
+#, fuzzy
+msgid "Hover Expand:"
+msgstr "Expandovať X:"
+
+#: ../glade/gbwidgets/gbtreeview.c:128
+msgid ""
+"Whether rows should be expanded or collapsed when the pointer moves over them"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtreeview.c:317
+msgid "List or Tree View"
+msgstr "Pohľad typu Zoznam alebo Strom"
+
+#: ../glade/gbwidgets/gbvbox.c:84
+msgid "New vertical box"
+msgstr "Nový vertikálny box"
+
+#: ../glade/gbwidgets/gbvbox.c:245
+msgid "Vertical Box"
+msgstr "Vertikálny box"
+
+#: ../glade/gbwidgets/gbvbuttonbox.c:111
+msgid "New vertical button box"
+msgstr "Nový vertikálny tlačidlový box"
+
+#: ../glade/gbwidgets/gbvbuttonbox.c:344
+msgid "Vertical Button Box"
+msgstr "Vertikálny tlačidlový box"
+
+#: ../glade/gbwidgets/gbviewport.c:104
+msgid "The type of shadow of the viewport"
+msgstr "Typ tieňa pohľadu"
+
+#: ../glade/gbwidgets/gbviewport.c:240
+msgid "Viewport"
+msgstr "Pohľad"
+
+#: ../glade/gbwidgets/gbvpaned.c:192
+msgid "Vertical Panes"
+msgstr "Vertikálne oblasti"
+
+#: ../glade/gbwidgets/gbvruler.c:247
+msgid "Vertical Ruler"
+msgstr "Vertikálne pravítko"
+
+#: ../glade/gbwidgets/gbvscale.c:319
+msgid "Vertical Scale"
+msgstr "Vertikálna škála"
+
+#: ../glade/gbwidgets/gbvscrollbar.c:236
+msgid "Vertical Scrollbar"
+msgstr "Vertikálny posuvník"
+
+#: ../glade/gbwidgets/gbvseparator.c:144
+msgid "Vertical Separator"
+msgstr "Vertikálny oddeľovač"
+
+#: ../glade/gbwidgets/gbwindow.c:242
+msgid "The title of the window"
+msgstr "Titulok okna"
+
+#: ../glade/gbwidgets/gbwindow.c:245
+msgid "The type of the window"
+msgstr "Typ okna"
+
+#: ../glade/gbwidgets/gbwindow.c:249
+#, fuzzy
+msgid "Type Hint:"
+msgstr "Typ:"
+
+#: ../glade/gbwidgets/gbwindow.c:250
+msgid "Tells the window manager how to treat the window"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:255
+msgid "The initial position of the window"
+msgstr "Počiatočná pozícia okna"
+
+#: ../glade/gbwidgets/gbwindow.c:259 ../glade/gnome/gnomefileentry.c:105
+#: ../glade/gnome/gnomepixmapentry.c:84
+msgid "Modal:"
+msgstr "Modálne:"
+
+#: ../glade/gbwidgets/gbwindow.c:259
+msgid "If the window is modal"
+msgstr "Či je okno modálne"
+
+#: ../glade/gbwidgets/gbwindow.c:264
+msgid "Default Width:"
+msgstr "Štand. šírka:"
+
+#: ../glade/gbwidgets/gbwindow.c:265
+msgid "The default width of the window"
+msgstr "Štandardná šírka okna"
+
+#: ../glade/gbwidgets/gbwindow.c:269
+msgid "Default Height:"
+msgstr "Štand. výška:"
+
+#: ../glade/gbwidgets/gbwindow.c:270
+msgid "The default height of the window"
+msgstr "Štandardná výška okna"
+
+#: ../glade/gbwidgets/gbwindow.c:276
+msgid "Resizable:"
+msgstr "Zmena veľkosti:"
+
+#: ../glade/gbwidgets/gbwindow.c:277
+msgid "If the window can be resized"
+msgstr "Či je možné zmeniť veľkosť okna"
+
+#: ../glade/gbwidgets/gbwindow.c:284
+msgid "If the window can be shrunk"
+msgstr "Či je možné zmenšiť okno"
+
+#: ../glade/gbwidgets/gbwindow.c:285
+msgid "Grow:"
+msgstr "Rásť:"
+
+#: ../glade/gbwidgets/gbwindow.c:286
+msgid "If the window can be enlarged"
+msgstr "Či je možné zväčšiť okno"
+
+#: ../glade/gbwidgets/gbwindow.c:291
+msgid "Auto-Destroy:"
+msgstr "Automatické zničenie:"
+
+#: ../glade/gbwidgets/gbwindow.c:292
+msgid "If the window is destroyed when its transient parent is destroyed"
+msgstr "Či má byť okno zničené pri zničení jeho dočasného rodiča"
+
+#: ../glade/gbwidgets/gbwindow.c:296
+msgid "The icon for this window"
+msgstr "Ikona pre toto okno"
+
+#: ../glade/gbwidgets/gbwindow.c:303
+msgid "Role:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:303
+msgid "A unique identifier for the window to be used when restoring a session"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:306
+#, fuzzy
+msgid "Decorated:"
+msgstr "_Zastaralé"
+
+#: ../glade/gbwidgets/gbwindow.c:307
+#, fuzzy
+msgid "If the window should be decorated by the window manager"
+msgstr "Či má byť pomer zväčšenia určený potomkom"
+
+#: ../glade/gbwidgets/gbwindow.c:310
+msgid "Skip Taskbar:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:311
+#, fuzzy
+msgid "If the window should not appear in the task bar"
+msgstr "Či má okno stavový riadok"
+
+#: ../glade/gbwidgets/gbwindow.c:314
+msgid "Skip Pager:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:315
+#, fuzzy
+msgid "If the window should not appear in the pager"
+msgstr "Či má byť zobrazený text v pruhu"
+
+#: ../glade/gbwidgets/gbwindow.c:318
+#, fuzzy
+msgid "Gravity:"
+msgstr "Štýl mriežky:"
+
+#: ../glade/gbwidgets/gbwindow.c:319
+msgid "The reference point to use when the window coordinates are set"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:323
+#, fuzzy
+msgid "Focus On Map:"
+msgstr "Cieľ fokusu:"
+
+#: ../glade/gbwidgets/gbwindow.c:323
+#, fuzzy
+msgid "If the window should receive the input focus when it is mapped"
+msgstr "Či má byť pomer zväčšenia určený potomkom"
+
+#: ../glade/gbwidgets/gbwindow.c:1198
+msgid "Window"
+msgstr "Okno"
+
+#: ../glade/glade.c:369 ../glade/gnome-db/gnomedberrordlg.c:74
+msgid "Error"
+msgstr "Chyba"
+
+#: ../glade/glade.c:372
+msgid "System Error"
+msgstr "Chyba systému"
+
+#: ../glade/glade.c:376
+msgid "Error opening file"
+msgstr "Chyba pri otváraní súboru"
+
+#: ../glade/glade.c:378
+msgid "Error reading file"
+msgstr "Chyba pri čítaní súboru"
+
+#: ../glade/glade.c:380
+msgid "Error writing file"
+msgstr "Chyba pri zápise do súboru"
+
+#: ../glade/glade.c:383
+msgid "Invalid directory"
+msgstr "Neplatný priečinok"
+
+#: ../glade/glade.c:387
+msgid "Invalid value"
+msgstr "Neplatná hodnota"
+
+#: ../glade/glade.c:389
+msgid "Invalid XML entity"
+msgstr "Neplatná entita XML"
+
+#: ../glade/glade.c:391
+msgid "Start tag expected"
+msgstr "Očakávaná počiatočná značka"
+
+#: ../glade/glade.c:393
+msgid "End tag expected"
+msgstr "Očakávaná koncová značka"
+
+#: ../glade/glade.c:395
+msgid "Character data expected"
+msgstr "Očakávané znakové dáta"
+
+#: ../glade/glade.c:397
+msgid "Class id missing"
+msgstr "Chýba ID triedy"
+
+#: ../glade/glade.c:399
+msgid "Class unknown"
+msgstr "Neznáma trieda"
+
+#: ../glade/glade.c:401
+msgid "Invalid component"
+msgstr "Neplatný komponent"
+
+#: ../glade/glade.c:403
+msgid "Unexpected end of file"
+msgstr "Neočakávaný koniec súboru"
+
+#: ../glade/glade.c:406
+msgid "Unknown error code"
+msgstr "Neznáma chyba"
+
+#: ../glade/glade_atk.c:120
+msgid "Controlled By"
+msgstr "Ovládaný"
+
+#: ../glade/glade_atk.c:121
+msgid "Controller For"
+msgstr "Ovládajúci pre"
+
+#: ../glade/glade_atk.c:122
+msgid "Label For"
+msgstr "Popis pre"
+
+#: ../glade/glade_atk.c:123
+msgid "Labelled By"
+msgstr "Popisovaný"
+
+#: ../glade/glade_atk.c:124
+msgid "Member Of"
+msgstr "Člen"
+
+#: ../glade/glade_atk.c:125
+msgid "Node Child Of"
+msgstr "Potomok"
+
+#: ../glade/glade_atk.c:126
+msgid "Flows To"
+msgstr ""
+
+#: ../glade/glade_atk.c:127
+msgid "Flows From"
+msgstr ""
+
+#: ../glade/glade_atk.c:128
+msgid "Subwindow Of"
+msgstr ""
+
+#: ../glade/glade_atk.c:129
+msgid "Embeds"
+msgstr ""
+
+#: ../glade/glade_atk.c:130
+#, fuzzy
+msgid "Embedded By"
+msgstr "Popisovaný"
+
+#: ../glade/glade_atk.c:131
+#, fuzzy
+msgid "Popup For"
+msgstr "Popup Menu"
+
+#: ../glade/glade_atk.c:132
+msgid "Parent Window Of"
+msgstr ""
+
+#. I don't think we should set the transient parent as the dialog could be
+#. left open if desired.
+#: ../glade/glade_atk.c:331
+#, c-format
+msgid "Relationship: %s"
+msgstr "Vzťah: %s"
+
+#. Create the pages of the main notebook
+#. NOTE: If you add/remove pages you need to change the GB_PAGE_SIGNALS
+#. value at the top of this file
+#: ../glade/glade_atk.c:375 ../glade/property.c:615
+msgid "Widget"
+msgstr "Prvok"
+
+#: ../glade/glade_atk.c:638 ../glade/glade_menu_editor.c:772
+#: ../glade/property.c:776
+msgid "Name:"
+msgstr "Meno:"
+
+#: ../glade/glade_atk.c:639
+msgid "The name of the widget to pass to assistive technologies"
+msgstr "Meno prvku, predávaného asistenčným technológiám"
+
+#: ../glade/glade_atk.c:640
+msgid "Description:"
+msgstr "Popis:"
+
+#: ../glade/glade_atk.c:641
+msgid "The description of the widget to pass to assistive technologies"
+msgstr "Popis prvku predávaný asistenčným technológiám"
+
+#: ../glade/glade_atk.c:643
+msgid "Table Caption:"
+msgstr "Titulok tabuľky:"
+
+#: ../glade/glade_atk.c:644
+msgid "The table caption to pass to assistive technologies"
+msgstr "Titulok tabuľky predávaný asistenčným technológiám"
+
+#: ../glade/glade_atk.c:681
+msgid "Select the widgets with this relationship"
+msgstr "Výber prvok s týmto vzťahom"
+
+#: ../glade/glade_atk.c:761
+msgid "Click"
+msgstr "Kliknutie"
+
+#: ../glade/glade_atk.c:762
+msgid "Press"
+msgstr "Stlačenie"
+
+#: ../glade/glade_atk.c:763
+msgid "Release"
+msgstr "Pustenie"
+
+#: ../glade/glade_atk.c:822
+msgid "Enter the description of the action to pass to assistive technologies"
+msgstr "Zadajte popis akcie predávanej asistenčným technológiám"
+
+#: ../glade/glade_clipboard.c:118
+msgid "Clipboard"
+msgstr "Schránka"
+
+#: ../glade/glade_clipboard.c:351
+msgid "You need to select a widget to paste into"
+msgstr "Musíte vybrať prvok, do ktorého chcete vkladať"
+
+#: ../glade/glade_clipboard.c:376
+msgid "You can't paste into windows or dialogs."
+msgstr "Nie je možné vkladať do okien alebo dialógov."
+
+#: ../glade/glade_clipboard.c:399
+msgid ""
+"You can't paste into the selected widget, since\n"
+"it is created automatically by its parent."
+msgstr ""
+"Nie je možné vložiť do vybraného prvku, pretože\n"
+"je automaticky vytvorený rodičom."
+
+#: ../glade/glade_clipboard.c:408 ../glade/glade_clipboard.c:416
+msgid "Only menu items can be pasted into a menu or menu bar."
+msgstr "Len položky menu je možné vložiť do menu alebo do pruhu menu."
+
+#: ../glade/glade_clipboard.c:427
+msgid "Only buttons can be pasted into a dialog action area."
+msgstr "Len tlačidlá je možné vložiť do oblasti akcií dialógu."
+
+#: ../glade/glade_clipboard.c:437
+msgid "Only GnomeDockItem widgets can be pasted into a GnomeDock."
+msgstr "Len prvky GnomeDockItem je možné vložiť do GnomeDock."
+
+#: ../glade/glade_clipboard.c:446
+msgid "Only GnomeDockItem widgets can be pasted over a GnomeDockItem."
+msgstr "Len prvky GnomeDockItem je možné vložiť namiesto GnomeDockIterm."
+
+#: ../glade/glade_clipboard.c:449
+msgid "Sorry - pasting over a GnomeDockItem is not implemented yet."
+msgstr ""
+"Ľutujem - vkladanie namiesto GnomeDockItem nie je zatiaľ implementované."
+
+#: ../glade/glade_clipboard.c:457
+msgid "GnomeDockItem widgets can only be pasted into a GnomeDock."
+msgstr "Prvky GnomeDockItem je možné vložiť len do GnomeDock."
+
+#. 3 - see GladeStockMenuItemNew above.
+#: ../glade/glade_gnome.c:121 ../glade/glade_gnome.c:874
+#: ../glade/glade_project_window.c:208 ../glade/glade_project_window.c:632
+msgid "_New"
+msgstr "_Nový"
+
+#: ../glade/glade_gnome.c:874
+msgid "Create a new file"
+msgstr "Vytvorí nový súbor"
+
+#. Note that glade_palette_set_show_gnome_widgets() has some of these
+#. strings hard-coded now, so keep up-to-date.
+#: ../glade/glade_gnomelib.c:116
+msgid "_Gnome"
+msgstr "_Gnome"
+
+#: ../glade/glade_gnomelib.c:117 ../glade/glade_gtk12lib.c:248
+#: ../glade/glade_palette.c:315
+msgid "Dep_recated"
+msgstr "_Zastaralé"
+
+#. Note that glade_palette_set_show_gnome_widgets() has some of these
+#. strings hard-coded now, so keep up-to-date.
+#: ../glade/glade_gtk12lib.c:246
+msgid "GTK+ _Basic"
+msgstr "GTK+ _Základné"
+
+#: ../glade/glade_gtk12lib.c:247
+msgid "GTK+ _Additional"
+msgstr "GTK+ _Prídavné"
+
+#: ../glade/glade_keys_dialog.c:94
+msgid "Select Accelerator Key"
+msgstr "Vyberte akcelerátor"
+
+#: ../glade/glade_keys_dialog.c:97
+msgid "Keys"
+msgstr "Klávesy"
+
+#: ../glade/glade_menu_editor.c:394
+msgid "Menu Editor"
+msgstr "Editor menu"
+
+#: ../glade/glade_menu_editor.c:411
+msgid "Type"
+msgstr "Typ"
+
+#: ../glade/glade_menu_editor.c:412
+msgid "Accelerator"
+msgstr "Akcelerátor"
+
+#: ../glade/glade_menu_editor.c:413
+msgid "Name"
+msgstr "Meno"
+
+#: ../glade/glade_menu_editor.c:414 ../glade/property.c:1498
+msgid "Handler"
+msgstr "Obsluha"
+
+#: ../glade/glade_menu_editor.c:415 ../glade/property.c:102
+msgid "Active"
+msgstr "Aktívna"
+
+#: ../glade/glade_menu_editor.c:416
+msgid "Group"
+msgstr "Skupina"
+
+#: ../glade/glade_menu_editor.c:417
+msgid "Icon"
+msgstr "Ikona"
+
+#: ../glade/glade_menu_editor.c:458
+msgid "Move the item and its children up one place in the list"
+msgstr "Posunie položku a jej potomkov o jedno miesto hore v zozname"
+
+#: ../glade/glade_menu_editor.c:470
+msgid "Move the item and its children down one place in the list"
+msgstr "Posunie položku a jej potomkov o jedno miesto dolu v zozname"
+
+#: ../glade/glade_menu_editor.c:482
+msgid "Move the item and its children up one level"
+msgstr "Posunie položku a jej potomkov o jednu úroveň vyššie"
+
+#: ../glade/glade_menu_editor.c:494
+msgid "Move the item and its children down one level"
+msgstr "Posunie položku a jej potomkov o jednu úroveň nižšie"
+
+#: ../glade/glade_menu_editor.c:524
+msgid "The stock item to use."
+msgstr "Použitá štandardná položka."
+
+#: ../glade/glade_menu_editor.c:527 ../glade/glade_menu_editor.c:642
+msgid "Stock Item:"
+msgstr "GNOME položka:"
+
+#: ../glade/glade_menu_editor.c:640
+msgid "The stock Gnome item to use."
+msgstr "Použitá štandardná položka GNOME."
+
+#: ../glade/glade_menu_editor.c:745
+msgid "The text of the menu item, or empty for separators."
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:769 ../glade/property.c:777
+msgid "The name of the widget"
+msgstr "Meno prvku"
+
+#: ../glade/glade_menu_editor.c:790
+msgid "The function to be called when the item is selected"
+msgstr "Funkcia, ktorú zavolať pri výbere tejto položky"
+
+#: ../glade/glade_menu_editor.c:792 ../glade/property.c:1546
+msgid "Handler:"
+msgstr "Obsluha:"
+
+#: ../glade/glade_menu_editor.c:811
+msgid "An optional icon to show on the left of the menu item."
+msgstr "Nepovinná ikona zobrazovaná vľavo od položky menu."
+
+#: ../glade/glade_menu_editor.c:934
+msgid "The tip to show when the mouse is over the item"
+msgstr "Rada zobrazovaná pri ukázaní kurzorom na položku"
+
+#: ../glade/glade_menu_editor.c:936 ../glade/property.c:824
+msgid "Tooltip:"
+msgstr "Rada:"
+
+#: ../glade/glade_menu_editor.c:957
+msgid "_Add"
+msgstr "_Pridať"
+
+#: ../glade/glade_menu_editor.c:962
+msgid "Add a new item below the selected item."
+msgstr "Pridá novú položku pod vybranú položku."
+
+#: ../glade/glade_menu_editor.c:967
+msgid "Add _Child"
+msgstr "Pridať p_otomka"
+
+#: ../glade/glade_menu_editor.c:972
+msgid "Add a new child item below the selected item."
+msgstr "Pridá nového potomka pod vybranú položku."
+
+#: ../glade/glade_menu_editor.c:978
+msgid "Add _Separator"
+msgstr "Pridať o_ddeľovač"
+
+#: ../glade/glade_menu_editor.c:983
+msgid "Add a separator below the selected item."
+msgstr "Pridá oddeľovač pod vybranú položku."
+
+#: ../glade/glade_menu_editor.c:988 ../glade/glade_project_window.c:239
+msgid "_Delete"
+msgstr "_Odstrániť"
+
+#: ../glade/glade_menu_editor.c:993
+msgid "Delete the current item"
+msgstr "Odstráni aktuálnu položku"
+
+#. Type radio options and toggle options.
+#: ../glade/glade_menu_editor.c:999
+msgid "Item Type:"
+msgstr "Typ položky:"
+
+#: ../glade/glade_menu_editor.c:1015
+msgid "If the item is initially on."
+msgstr "Ak je položka na začiatku aktívna."
+
+#: ../glade/glade_menu_editor.c:1017
+msgid "Active:"
+msgstr "Aktívna:"
+
+#: ../glade/glade_menu_editor.c:1022 ../glade/glade_menu_editor.c:1632
+#: ../glade/property.c:2215 ../glade/property.c:2225
+msgid "No"
+msgstr "Nie"
+
+#: ../glade/glade_menu_editor.c:1036
+msgid "The radio menu item's group"
+msgstr "Skupina položiek menu prepínačov"
+
+#: ../glade/glade_menu_editor.c:1053 ../glade/glade_menu_editor.c:2406
+#: ../glade/glade_menu_editor.c:2546
+msgid "Radio"
+msgstr "Prepínač"
+
+#: ../glade/glade_menu_editor.c:1060 ../glade/glade_menu_editor.c:2404
+#: ../glade/glade_menu_editor.c:2544
+msgid "Check"
+msgstr "Zaškrtávacia"
+
+#: ../glade/glade_menu_editor.c:1067 ../glade/property.c:102
+msgid "Normal"
+msgstr "Normálna"
+
+#. Accelerator key options.
+#: ../glade/glade_menu_editor.c:1076
+msgid "Accelerator:"
+msgstr "Akcelerátor:"
+
+#: ../glade/glade_menu_editor.c:1113 ../glade/property.c:1681
+msgid "Ctrl"
+msgstr "Ctrl"
+
+#: ../glade/glade_menu_editor.c:1118 ../glade/property.c:1684
+msgid "Shift"
+msgstr "Shift"
+
+#: ../glade/glade_menu_editor.c:1123 ../glade/property.c:1687
+msgid "Alt"
+msgstr "Alt"
+
+#: ../glade/glade_menu_editor.c:1128 ../glade/property.c:1694
+msgid "Key:"
+msgstr "Kláves:"
+
+#: ../glade/glade_menu_editor.c:1134 ../glade/property.c:1673
+msgid "Modifiers:"
+msgstr "Modifikátory:"
+
+#: ../glade/glade_menu_editor.c:1632 ../glade/glade_menu_editor.c:2411
+#: ../glade/glade_menu_editor.c:2554 ../glade/property.c:2215
+msgid "Yes"
+msgstr "Áno"
+
+#: ../glade/glade_menu_editor.c:2002
+msgid "Select icon"
+msgstr "Vyberte ikonu"
+
+#: ../glade/glade_menu_editor.c:2345 ../glade/glade_menu_editor.c:2706
+msgid "separator"
+msgstr "oddeľovač"
+
+#. Add the special 'New' item to create a new group.
+#: ../glade/glade_menu_editor.c:3624 ../glade/glade_project_window.c:366
+#: ../glade/property.c:5109
+msgid "New"
+msgstr "Nový"
+
+#: ../glade/glade_palette.c:194 ../glade/glade_palette.c:196
+#: ../glade/glade_palette.c:412
+msgid "Selector"
+msgstr "Výber"
+
+#: ../glade/glade_project.c:385
+msgid ""
+"The project directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+"Priečinok projektu nie je nastavený.\n"
+"Prosím, nastavte ho pomocou dialógu Možnosti projektu.\n"
+
+#: ../glade/glade_project.c:392
+msgid ""
+"The source directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+"Priečinok pre zdrojové kódy nie je nastavený.\n"
+"Prosím, nastavte ho pomocou dialógu Možnosti projektu.\n"
+
+#: ../glade/glade_project.c:402
+msgid ""
+"Invalid source directory:\n"
+"\n"
+"The source directory must be the project directory\n"
+"or a subdirectory of the project directory.\n"
+msgstr ""
+"Neplatný priečinok pre zdrojové kódy:\n"
+"\n"
+"Tento priečinok musí byť priečinok projektu alebo\n"
+"jeho podpriečinok.\n"
+
+#: ../glade/glade_project.c:410
+msgid ""
+"The pixmaps directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+"Priečinok pre obrázky nie je nastavený.\n"
+"Prosím, nastavte ho pomocou dialógu Možnosti projektu.\n"
+
+#: ../glade/glade_project.c:438
+#, c-format
+msgid "Sorry - generating source for %s is not implemented yet"
+msgstr ""
+"Ľutujem - generovanie zdrojového kódu pre %s zatiaľ nie je implementované"
+
+#: ../glade/glade_project.c:509
+msgid ""
+"Your project uses deprecated widgets that Gtkmm-2\n"
+"does not support.  Check your project for these\n"
+"widgets, and use their replacements."
+msgstr ""
+"Váš projekt používa zastaralé prvky, ktoré Gtkmm-2\n"
+"už nepodporuje. Skontrolujte používanie týchto prvkov\n"
+"a použite ich náhrady."
+
+#: ../glade/glade_project.c:521
+msgid ""
+"Error running glade-- to generate the C++ source code.\n"
+"Check that you have glade-- installed and that it is in your PATH.\n"
+"Then try running 'glade-- <project_file.glade>' in a terminal."
+msgstr ""
+"Chyba pri spúšťaní glade-- pre generovanie zdrojového kódu pre C++.\n"
+"Overte, že máte glade-- nainštalované a je v PATH.\n"
+"Potom skúste spustiť v termináli 'glade-- <project_file.glade>'."
+
+#: ../glade/glade_project.c:548
+msgid ""
+"Error running gate to generate the Ada95 source code.\n"
+"Check that you have gate installed and that it is in your PATH.\n"
+"Then try running 'gate <project_file.glade>' in a terminal."
+msgstr ""
+"Chyba pri spúšťaní gate pre generovanie zdrojového kódu Ada95.\n"
+"Overte, že máte gate nainštalované a je v PATH.\n"
+"Potom skúste spustiť v termináli 'gate -- <projekt.glade>'."
+
+#: ../glade/glade_project.c:571
+msgid ""
+"Error running glade2perl to generate the Perl source code.\n"
+"Check that you have glade2perl installed and that it is in your PATH.\n"
+"Then try running 'glade2perl <project_file.glade>' in a terminal."
+msgstr ""
+"Chyba pri spúšťaní glade2perl pre generovanie zdrojového kódu pre Perl.\n"
+"Overte, že máte glade2perl nainštalované a je v PATH.\n"
+"Potom skúste spustiť v termináli 'glade2prl <projek.glade>'."
+
+#: ../glade/glade_project.c:594
+msgid ""
+"Error running eglade to generate the Eiffel source code.\n"
+"Check that you have eglade installed and that it is in your PATH.\n"
+"Then try running 'eglade <project_file.glade>' in a terminal."
+msgstr ""
+"Chyba pri spúšťaní eglade pre generovanie zdrojového kódu pre Eiffel.\n"
+"Overte, že máte eglade nainštalované a je v PATH.\n"
+"Potom skúste spustiť v termináli 'eglade <projek.glade>'."
+
+#: ../glade/glade_project.c:954
+msgid ""
+"The pixmap directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+"Priečinok obrázkov nie je nastavený.\n"
+"Prosím, nastavte ho pomocou dialógu Možnosti projektu.\n"
+
+#: ../glade/glade_project.c:1772
+msgid "Error writing project XML file\n"
+msgstr "Chyba pri zápise XML súboru\n"
+
+#: ../glade/glade_project_options.c:157 ../glade/glade_project_window.c:382
+#: ../glade/glade_project_window.c:889
+msgid "Project Options"
+msgstr "Možnosti projektu"
+
+#.
+#. * General Page.
+#.
+#: ../glade/glade_project_options.c:174
+msgid "General"
+msgstr "Všeobecné"
+
+#: ../glade/glade_project_options.c:183
+msgid "Basic Options:"
+msgstr "Základné možnosti:"
+
+#: ../glade/glade_project_options.c:201
+msgid "The project directory"
+msgstr "Priečinok projektu"
+
+#: ../glade/glade_project_options.c:203
+msgid "Project Directory:"
+msgstr "Priečinok projektu:"
+
+#: ../glade/glade_project_options.c:221
+msgid "Browse..."
+msgstr "Prechádzať..."
+
+#: ../glade/glade_project_options.c:236
+msgid "The name of the current project"
+msgstr "Meno aktuálneho projektu"
+
+#: ../glade/glade_project_options.c:238
+msgid "Project Name:"
+msgstr "Meno projektu:"
+
+#: ../glade/glade_project_options.c:258
+msgid "The name of the program"
+msgstr "Meno programu"
+
+#: ../glade/glade_project_options.c:281
+msgid "The project file"
+msgstr "Súbor s projektom"
+
+#: ../glade/glade_project_options.c:283
+msgid "Project File:"
+msgstr "Súbor projektu:"
+
+#. Project Source Directory.
+#: ../glade/glade_project_options.c:299
+msgid "Subdirectories:"
+msgstr "Podpriečinky:"
+
+#: ../glade/glade_project_options.c:316
+msgid "The directory to save generated source code"
+msgstr "Priečinok, kam ukladať generované zdrojové kódy"
+
+#: ../glade/glade_project_options.c:319
+msgid "Source Directory:"
+msgstr "Zdrojový priečinok:"
+
+#: ../glade/glade_project_options.c:338
+msgid "The directory to store pixmaps"
+msgstr "Priečinok pre obrázky:"
+
+#: ../glade/glade_project_options.c:341
+msgid "Pixmaps Directory:"
+msgstr "Priečinok s pixmapami:"
+
+#: ../glade/glade_project_options.c:363
+msgid "The license which is added at the top of generated files"
+msgstr "Licencia, ktorá bude pridaná na začiatok generovaných súborov"
+
+#. Source Language.
+#: ../glade/glade_project_options.c:385
+msgid "Language:"
+msgstr "Jazyk:"
+
+#: ../glade/glade_project_options.c:416
+msgid "Gnome:"
+msgstr "Gnome:"
+
+#: ../glade/glade_project_options.c:424
+msgid "Enable Gnome Support"
+msgstr "Povoliť podporu GNOME"
+
+#: ../glade/glade_project_options.c:430
+msgid "If a Gnome application is to be built"
+msgstr "Ak je to aplikácia pre GNOME"
+
+#: ../glade/glade_project_options.c:433
+msgid "Enable Gnome DB Support"
+msgstr "Povoliť podporu GNOME DB"
+
+#: ../glade/glade_project_options.c:437
+msgid "If a Gnome DB application is to be built"
+msgstr "Ak je to aplikácia pre GNOME DB"
+
+#.
+#. * C Options Page.
+#.
+#: ../glade/glade_project_options.c:447
+msgid "C Options"
+msgstr "Možnosti C"
+
+#: ../glade/glade_project_options.c:456
+msgid "<b>Note:</b> for large applications the use of libglade is recommended."
+msgstr ""
+
+#: ../glade/glade_project_options.c:468
+msgid "General Options:"
+msgstr "Všeobecné možnosti:"
+
+#. Gettext Support.
+#: ../glade/glade_project_options.c:478
+msgid "Gettext Support"
+msgstr "Podpora Gettext"
+
+#: ../glade/glade_project_options.c:483
+msgid "If strings are marked for translation by gettext"
+msgstr "Či sú texty označené pre preklad pomocou gettext"
+
+#. Setting widget names.
+#: ../glade/glade_project_options.c:487
+msgid "Set Widget Names"
+msgstr "Nastaviť mená prvkov"
+
+#: ../glade/glade_project_options.c:492
+msgid "If widget names are set in the source code"
+msgstr "Ak majú byť mená prvkov nastavené v zdrojových kódoch"
+
+#. Backing up source files.
+#: ../glade/glade_project_options.c:496
+msgid "Backup Source Files"
+msgstr "Zálohovať zdrojové súbory"
+
+#: ../glade/glade_project_options.c:501
+msgid "If copies of old source files are made"
+msgstr "Či majú byť zachované kópie starých zdrojových súborov"
+
+#. Gnome Help System support.
+#: ../glade/glade_project_options.c:505
+msgid "Gnome Help Support"
+msgstr "Podpora GNOME Pomocníka"
+
+#: ../glade/glade_project_options.c:512
+msgid "If support for the Gnome Help system should be included"
+msgstr "Či má byť zahrnutá podpora systému GNOME Pomocník"
+
+#: ../glade/glade_project_options.c:515
+msgid "File Output Options:"
+msgstr "Možnosti výstupných súborov:"
+
+#. Outputting main file.
+#: ../glade/glade_project_options.c:525
+msgid "Output main.c File"
+msgstr "Výstupný súbor main.c"
+
+#: ../glade/glade_project_options.c:530
+msgid ""
+"If a main.c file is output containing a main() function, if it doesn't "
+"already exist"
+msgstr "Či má súbor main.c obsahovať funkciu main(), ak ešte neexistuje."
+
+#. Outputting support files.
+#: ../glade/glade_project_options.c:534
+msgid "Output Support Functions"
+msgstr "Generovať podporné funkcie"
+
+#: ../glade/glade_project_options.c:539
+msgid "If the support functions are output"
+msgstr "Či majú byť generované podporné funkcie"
+
+#. Outputting build files.
+#: ../glade/glade_project_options.c:543
+msgid "Output Build Files"
+msgstr "Generovať súbory pre kompiláciu"
+
+#: ../glade/glade_project_options.c:548
+msgid ""
+"If files for building the source code are output, including Makefile.am and "
+"configure.in, if they don't already exist"
+msgstr ""
+"Či majú byť generované súbory pre kompiláciu, spolu s Makefile.am a "
+"configure.in, ak ešte neexistujú"
+
+#. Main source file.
+#: ../glade/glade_project_options.c:552
+msgid "Interface Creation Functions:"
+msgstr "Funkcie pre vytvorenie rozhrania:"
+
+#: ../glade/glade_project_options.c:564
+msgid "The file in which the functions to create the interface are written"
+msgstr "Súbor, v ktorom budú funkcie pre vytvorenie rozhrania"
+
+#: ../glade/glade_project_options.c:566 ../glade/glade_project_options.c:612
+#: ../glade/glade_project_options.c:658 ../glade/property.c:998
+msgid "Source File:"
+msgstr "Zdrojový súbor:"
+
+#: ../glade/glade_project_options.c:581
+msgid ""
+"The file in which the declarations of the functions to create the interface "
+"are written"
+msgstr ""
+"Súbor, do ktorého sú zapísané deklarácie funkcií pre vytvorenie rozhrania"
+
+#: ../glade/glade_project_options.c:583 ../glade/glade_project_options.c:629
+#: ../glade/glade_project_options.c:675
+msgid "Header File:"
+msgstr "Hlavičkový súbor:"
+
+#: ../glade/glade_project_options.c:594
+#, fuzzy
+msgid "Source file for interface creation functions"
+msgstr "Funkcie pre vytvorenie rozhrania:"
+
+#: ../glade/glade_project_options.c:595
+#, fuzzy
+msgid "Header file for interface creation functions"
+msgstr "Funkcie pre vytvorenie rozhrania:"
+
+#. Handler source file.
+#: ../glade/glade_project_options.c:598
+msgid "Signal Handler & Callback Functions:"
+msgstr "Funkcie pre signály a callback funkcie:"
+
+#: ../glade/glade_project_options.c:610
+msgid ""
+"The file in which the empty signal handler and callback functions are written"
+msgstr ""
+"Súbor, do ktorého budú generované prázdne ovládače signálov a callback "
+"funkcie"
+
+#: ../glade/glade_project_options.c:627
+msgid ""
+"The file in which the declarations of the signal handler and callback "
+"functions are written"
+msgstr ""
+"Súbor, do ktorého budú generované deklarácie ovládačov signálov a callback "
+"funkcií"
+
+#: ../glade/glade_project_options.c:640
+#, fuzzy
+msgid "Source file for signal handler and callback functions"
+msgstr "Funkcie pre signály a callback funkcie:"
+
+#: ../glade/glade_project_options.c:641
+#, fuzzy
+msgid "Header file for signal handler and callback functions"
+msgstr ""
+"Súbor, do ktorého budú generované prázdne ovládače signálov a callback "
+"funkcie"
+
+#. Support source file.
+#: ../glade/glade_project_options.c:644
+msgid "Support Functions:"
+msgstr "Podporné funkcie:"
+
+#: ../glade/glade_project_options.c:656
+msgid "The file in which the support functions are written"
+msgstr "Súbor, do ktorého budú generované podporné funkcie"
+
+#: ../glade/glade_project_options.c:673
+msgid "The file in which the declarations of the support functions are written"
+msgstr "Súbor, do ktorého budú generované deklarácie podporných funkcií"
+
+#: ../glade/glade_project_options.c:686
+#, fuzzy
+msgid "Source file for support functions"
+msgstr "Podporné funkcie:"
+
+#: ../glade/glade_project_options.c:687
+msgid "Header file for support functions"
+msgstr ""
+
+#.
+#. * libglade Options Page.
+#.
+#: ../glade/glade_project_options.c:693
+msgid "LibGlade Options"
+msgstr "Možnosti LibGlade"
+
+#: ../glade/glade_project_options.c:702
+msgid "Translatable Strings:"
+msgstr "Preložiteľné texty:"
+
+#: ../glade/glade_project_options.c:716
+msgid "<b>Note:</b> this option is deprecated - use intltool instead."
+msgstr ""
+
+#. Output translatable strings.
+#: ../glade/glade_project_options.c:726
+msgid "Save Translatable Strings"
+msgstr "Uložiť preložiteľné texty"
+
+#: ../glade/glade_project_options.c:731
+msgid ""
+"If translatable strings are saved in a separate C source file, to enable "
+"translation of interfaces loaded by libglade"
+msgstr ""
+"Či sú preložiteľné texty uložené do samostatného C zdrojového súboru, pre "
+"možnosť prekladu rozhraní načítaných pomocou libglade"
+
+#: ../glade/glade_project_options.c:741
+msgid "The C source file to save all translatable strings in"
+msgstr ""
+"Súbor so zdrojovým C kódom pre uloženie všetkých preložiteľných reťazcov"
+
+#: ../glade/glade_project_options.c:743 ../glade/gnome/gnomepixmap.c:79
+msgid "File:"
+msgstr "Súbor:"
+
+#: ../glade/glade_project_options.c:1202
+msgid "Select the Project Directory"
+msgstr "Vyberte priečinok projektu"
+
+#: ../glade/glade_project_options.c:1392 ../glade/glade_project_options.c:1402
+#: ../glade/glade_project_options.c:1412
+msgid "You need to set the Translatable Strings File option"
+msgstr "Musíte nastaviť súbor s preložiteľnými reťazcami"
+
+#: ../glade/glade_project_options.c:1396 ../glade/glade_project_options.c:1406
+msgid "You need to set the Project Directory option"
+msgstr "Musíte nastaviť priečinok projektu"
+
+#: ../glade/glade_project_options.c:1398 ../glade/glade_project_options.c:1408
+msgid "You need to set the Project File option"
+msgstr "Musíte nastaviť súbor projektu"
+
+#: ../glade/glade_project_options.c:1414
+msgid "You need to set the Project Name option"
+msgstr "Musíte nastaviť meno projektu"
+
+#: ../glade/glade_project_options.c:1416
+msgid "You need to set the Program Name option"
+msgstr "Musíte nastaviť meno programu"
+
+#: ../glade/glade_project_options.c:1419
+msgid "You need to set the Source Directory option"
+msgstr "Musíte nastaviť priečinok pre zdrojové kódy"
+
+#: ../glade/glade_project_options.c:1422
+msgid "You need to set the Pixmaps Directory option"
+msgstr "Musíte nastaviť priečinok pre obrázky"
+
+#: ../glade/glade_project_window.c:184
+#, c-format
+msgid ""
+"Couldn't show help file: %s.\n"
+"\n"
+"Error: %s"
+msgstr ""
+"Nie je zobraziť Pomocníka: %s\n"
+"\n"
+"Chyba: %s"
+
+#: ../glade/glade_project_window.c:208 ../glade/glade_project_window.c:634
+msgid "Create a new project"
+msgstr "Vytvorí nový projekt"
+
+#: ../glade/glade_project_window.c:216 ../glade/glade_project_window.c:654
+#: ../glade/glade_project_window.c:905
+msgid "_Build"
+msgstr "_Generovať"
+
+#: ../glade/glade_project_window.c:217 ../glade/glade_project_window.c:665
+msgid "Output the project source code"
+msgstr "Vygeneruje zdrojový kód projektu"
+
+#: ../glade/glade_project_window.c:223 ../glade/glade_project_window.c:668
+msgid "Op_tions..."
+msgstr "_Možnosti..."
+
+#: ../glade/glade_project_window.c:224 ../glade/glade_project_window.c:677
+msgid "Edit the project options"
+msgstr "Upraví možnosti projektu"
+
+#: ../glade/glade_project_window.c:239 ../glade/glade_project_window.c:716
+msgid "Delete the selected widget"
+msgstr "Odstráni vybraný prvok"
+
+#: ../glade/glade_project_window.c:257 ../glade/glade_project_window.c:727
+msgid "Show _Palette"
+msgstr "Zobraziť _paletu"
+
+#: ../glade/glade_project_window.c:257 ../glade/glade_project_window.c:732
+msgid "Show the palette of widgets"
+msgstr "Zobrazí paletu prvkov"
+
+#: ../glade/glade_project_window.c:263 ../glade/glade_project_window.c:737
+msgid "Show Property _Editor"
+msgstr "Zobraziť _editor vlastností"
+
+#: ../glade/glade_project_window.c:264 ../glade/glade_project_window.c:743
+msgid "Show the property editor"
+msgstr "Zobrazí editor vlastností"
+
+#: ../glade/glade_project_window.c:270 ../glade/glade_project_window.c:747
+msgid "Show Widget _Tree"
+msgstr "Zobraziť _strom prvkov"
+
+#: ../glade/glade_project_window.c:271 ../glade/glade_project_window.c:753
+#: ../glade/main.c:82
+msgid "Show the widget tree"
+msgstr "Zobrazí strom prvkov"
+
+#: ../glade/glade_project_window.c:277 ../glade/glade_project_window.c:757
+msgid "Show _Clipboard"
+msgstr "Zobraziť s_chránku"
+
+#: ../glade/glade_project_window.c:278 ../glade/glade_project_window.c:763
+#: ../glade/main.c:86
+msgid "Show the clipboard"
+msgstr "Zobrazí schránku"
+
+#: ../glade/glade_project_window.c:296
+msgid "Show _Grid"
+msgstr "Zobraziť _mriežku"
+
+#: ../glade/glade_project_window.c:297 ../glade/glade_project_window.c:799
+msgid "Show the grid (in fixed containers only)"
+msgstr "Zobrazí mriežku (len v pevných kontajneroch)"
+
+#: ../glade/glade_project_window.c:303
+msgid "_Snap to Grid"
+msgstr "_Pritiahnuť k mriežke"
+
+#: ../glade/glade_project_window.c:304
+msgid "Snap widgets to the grid"
+msgstr "Pritiahne prvky k mriežke"
+
+#: ../glade/glade_project_window.c:310 ../glade/glade_project_window.c:771
+msgid "Show _Widget Tooltips"
+msgstr "Zobraziť rady _prvku"
+
+#: ../glade/glade_project_window.c:311 ../glade/glade_project_window.c:779
+msgid "Show the tooltips of created widgets"
+msgstr "Zobrazí rady vytvorených prvkov"
+
+#: ../glade/glade_project_window.c:320 ../glade/glade_project_window.c:802
+msgid "Set Grid _Options..."
+msgstr "Nastaviť možnosti _mriežky..."
+
+#: ../glade/glade_project_window.c:321
+msgid "Set the grid style and spacing"
+msgstr "Nastaví štýl mriežky a medzery"
+
+#: ../glade/glade_project_window.c:327 ../glade/glade_project_window.c:823
+msgid "Set Snap O_ptions..."
+msgstr "Nastaviť možnosti _priťahovania..."
+
+#: ../glade/glade_project_window.c:328
+msgid "Set options for snapping to the grid"
+msgstr "Nastaví možnosti pre priťahovanie k mriežke"
+
+#: ../glade/glade_project_window.c:340
+msgid "_FAQ"
+msgstr "_FAQ"
+
+#: ../glade/glade_project_window.c:341
+msgid "View the Glade FAQ"
+msgstr "Zobrazí FAQ pre Glade"
+
+#. create File menu
+#: ../glade/glade_project_window.c:355 ../glade/glade_project_window.c:625
+msgid "_Project"
+msgstr "_Projekt"
+
+#: ../glade/glade_project_window.c:366 ../glade/glade_project_window.c:872
+#: ../glade/glade_project_window.c:1049
+msgid "New Project"
+msgstr "Nový projekt"
+
+#: ../glade/glade_project_window.c:371
+msgid "Open"
+msgstr "Otvoriť"
+
+#: ../glade/glade_project_window.c:371 ../glade/glade_project_window.c:877
+#: ../glade/glade_project_window.c:1110
+msgid "Open Project"
+msgstr "Otvoriť projekt"
+
+#: ../glade/glade_project_window.c:376
+msgid "Save"
+msgstr "Uložiť"
+
+#: ../glade/glade_project_window.c:376 ../glade/glade_project_window.c:881
+#: ../glade/glade_project_window.c:1475
+msgid "Save Project"
+msgstr "Uložiť projekt"
+
+#: ../glade/glade_project_window.c:382
+msgid "Options"
+msgstr "Možnosti"
+
+#: ../glade/glade_project_window.c:387
+msgid "Build"
+msgstr "Generovať"
+
+#: ../glade/glade_project_window.c:387
+msgid "Build the Source Code"
+msgstr "Vytvorí zdrojový kód"
+
+#: ../glade/glade_project_window.c:638
+msgid "Open an existing project"
+msgstr "Otvorí existujúci projekt"
+
+#: ../glade/glade_project_window.c:642
+msgid "Save project"
+msgstr "Uložiť projekt"
+
+#: ../glade/glade_project_window.c:687
+msgid "Quit Glade"
+msgstr "Koniec Glade"
+
+#: ../glade/glade_project_window.c:701
+msgid "Cut the selected widget to the clipboard"
+msgstr "Vystrihne vybraný prvok do schránky"
+
+#: ../glade/glade_project_window.c:706
+msgid "Copy the selected widget to the clipboard"
+msgstr "Skopíruje vybraný prvok do schránky"
+
+#: ../glade/glade_project_window.c:711
+msgid "Paste the widget from the clipboard over the selected widget"
+msgstr "Vloží prvok zo schránky namiesto vybraného prvku"
+
+#: ../glade/glade_project_window.c:783
+msgid "_Grid"
+msgstr "_Mriežka"
+
+#: ../glade/glade_project_window.c:791
+msgid "_Show Grid"
+msgstr "_Zobraziť mriežku"
+
+#: ../glade/glade_project_window.c:808
+msgid "Set the spacing between grid lines"
+msgstr "Nastaví medzeri medzi čiarami mriežky"
+
+#: ../glade/glade_project_window.c:811
+msgid "S_nap to Grid"
+msgstr "Pri_tiahnuť k mriežke"
+
+#: ../glade/glade_project_window.c:819
+msgid "Snap widgets to the grid (in fixed containers only)"
+msgstr "Pritiahne prvky k mriežke (lev v pevných kontajneroch)"
+
+#: ../glade/glade_project_window.c:829
+msgid "Set which parts of a widget snap to the grid"
+msgstr "Nastaví, ktoré časti prvku sa majú pritiahnuť k mriežke"
+
+#. Don't show these yet as we have no help pages.
+#. menuitem = gtk_menu_item_new_with_mnemonic (_("_Contents"));
+#. gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#. gtk_widget_show (menuitem);
+#.
+#. menuitem = gtk_menu_item_new_with_mnemonic (_("_Index"));
+#. gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#. gtk_widget_show (menuitem);
+#.
+#. menuitem = gtk_menu_item_new ();
+#. gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#. gtk_widget_show (menuitem);
+#.
+#: ../glade/glade_project_window.c:854
+msgid "_About..."
+msgstr "_O programe..."
+
+#: ../glade/glade_project_window.c:895
+msgid "Optio_ns"
+msgstr "_Možnosti"
+
+#: ../glade/glade_project_window.c:899
+msgid "Write Source Code"
+msgstr "Zápis zdrojového kódu"
+
+#: ../glade/glade_project_window.c:986 ../glade/glade_project_window.c:1691
+#: ../glade/glade_project_window.c:1980
+msgid "Glade"
+msgstr "Glade"
+
+#: ../glade/glade_project_window.c:993
+msgid "Are you sure you want to create a new project?"
+msgstr "Naozaj chcete vytvoriť nový projekt?"
+
+#: ../glade/glade_project_window.c:1053
+msgid "New _GTK+ Project"
+msgstr "Nový projekt _GTK+"
+
+#: ../glade/glade_project_window.c:1054
+msgid "New G_NOME Project"
+msgstr "Nový projekt G_NOME"
+
+#: ../glade/glade_project_window.c:1057
+msgid "Which type of project do you want to create?"
+msgstr "Aký projekt chcete vytvoriť?"
+
+#: ../glade/glade_project_window.c:1091
+msgid "New project created."
+msgstr "Nový projekt vytvorený."
+
+#: ../glade/glade_project_window.c:1181
+msgid "Project opened."
+msgstr "Projekt otvorený."
+
+#: ../glade/glade_project_window.c:1195
+msgid "Error opening project."
+msgstr "Chyba pri otváraní projektu."
+
+#: ../glade/glade_project_window.c:1259
+msgid "Errors opening project file"
+msgstr "Chyby pri otváraní súboru projektu"
+
+#: ../glade/glade_project_window.c:1265
+msgid " errors opening project file:"
+msgstr " chýb pri otváraní súboru projektu:"
+
+#: ../glade/glade_project_window.c:1338
+msgid ""
+"There is no project currently open.\n"
+"Create a new project with the Project/New command."
+msgstr ""
+"Momentálne nie je otvorený žiadny projekt.\n"
+"Vytvorte nový projekt pomocou Projekt/Nový."
+
+#: ../glade/glade_project_window.c:1542
+msgid "Error saving project"
+msgstr "Chyba pri ukladaní projektu"
+
+#: ../glade/glade_project_window.c:1544
+msgid "Error saving project."
+msgstr "Chyba pri ukladaní projektu."
+
+#: ../glade/glade_project_window.c:1550
+msgid "Project saved."
+msgstr "Projekt uložený."
+
+#: ../glade/glade_project_window.c:1620
+msgid "Errors writing source code"
+msgstr "Chyby pri zápise zdrojového kódu."
+
+#: ../glade/glade_project_window.c:1622
+msgid "Error writing source."
+msgstr "Chyba pri zápise zdrojového kódu."
+
+#: ../glade/glade_project_window.c:1628
+msgid "Source code written."
+msgstr "Zdrojový kód zapísaný."
+
+#: ../glade/glade_project_window.c:1659
+msgid "System error message:"
+msgstr "Systémová chyba:"
+
+#: ../glade/glade_project_window.c:1698
+msgid "Are you sure you want to quit?"
+msgstr "Naozaj chcete skončiť?"
+
+#: ../glade/glade_project_window.c:1982 ../glade/glade_project_window.c:2042
+msgid "(C) 1998-2002 Damon Chaplin"
+msgstr "(C) 1998-2002 Damon Chaplin"
+
+#: ../glade/glade_project_window.c:1983 ../glade/glade_project_window.c:2041
+msgid "Glade is a User Interface Builder for GTK+ and GNOME."
+msgstr "Glade je návrhár používateľského rozhranie pre GTK+ a GNOME."
+
+#: ../glade/glade_project_window.c:2012
+msgid "About Glade"
+msgstr "O Glade"
+
+#: ../glade/glade_project_window.c:2097
+msgid "<untitled>"
+msgstr "<bezmena>"
+
+#: ../glade/gnome-db/gnomedbbrowser.c:135
+msgid "Database Browser"
+msgstr "Prehliadač databáze"
+
+#: ../glade/gnome-db/gnomedbcombo.c:124
+msgid "Data-bound combo"
+msgstr "Combo viazaný na dáta"
+
+#: ../glade/gnome-db/gnomedbconnectprop.c:86
+msgid "GnomeDbConnectionProperties"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbconnectsel.c:147
+msgid "Connection Selector"
+msgstr "Výber spojenia"
+
+#: ../glade/gnome-db/gnomedbdsnconfig.c:136
+msgid "DSN Configurator"
+msgstr "Nastavenie DSN"
+
+#: ../glade/gnome-db/gnomedbdsndruid.c:147
+msgid "DSN Config Druid"
+msgstr "Sprievodca nastavením DSN"
+
+#: ../glade/gnome-db/gnomedbeditor.c:63
+msgid "Highlight text:"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbeditor.c:63
+msgid "If selected, text will be highlighted inside the widget"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbeditor.c:178
+#, fuzzy
+msgid "GnomeDbEditor"
+msgstr "GNOME Editor dátumu"
+
+#: ../glade/gnome-db/gnomedberror.c:136
+msgid "Database error viewer"
+msgstr "Prehliadač chýb databáze"
+
+#: ../glade/gnome-db/gnomedberrordlg.c:218
+msgid "Database error dialog"
+msgstr "Dialóg pre chyby databáze"
+
+#: ../glade/gnome-db/gnomedbform.c:147
+msgid "Form"
+msgstr "Formulár"
+
+#: ../glade/gnome-db/gnomedbgraybar.c:59
+msgid "Text inside the gray bar"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbgraybar.c:138
+msgid "Gray Bar"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbgrid.c:132
+msgid "Data-bound grid"
+msgstr "Tabuľka viazaná na dáta"
+
+#: ../glade/gnome-db/gnomedblist.c:136
+msgid "Data-bound list"
+msgstr "Zoznam viazaný na dáta"
+
+#: ../glade/gnome-db/gnomedblogin.c:136
+msgid "Database login widget"
+msgstr "Prvok pre prihlásenie k databázi"
+
+#: ../glade/gnome-db/gnomedblogindlg.c:76
+msgid "Login"
+msgstr "Prihlásenie"
+
+#: ../glade/gnome-db/gnomedblogindlg.c:219
+msgid "Database login dialog"
+msgstr "Dialóg pre prihlásenie k databázi"
+
+#: ../glade/gnome-db/gnomedbprovidersel.c:147
+msgid "Provider Selector"
+msgstr "Výber poskytovateľa"
+
+#: ../glade/gnome-db/gnomedbquerybuilder.c:86
+msgid "GnomeDbQueryBuilder"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbsourcesel.c:147
+msgid "Data Source Selector"
+msgstr "Výber zdroja dát"
+
+#: ../glade/gnome-db/gnomedbtableeditor.c:133
+msgid "Table Editor "
+msgstr "Editor tabuľky"
+
+#: ../glade/gnome/bonobodock.c:231
+msgid "Allow Floating:"
+msgstr "Povoliť voľné:"
+
+#: ../glade/gnome/bonobodock.c:232
+msgid "If floating dock items are allowed"
+msgstr "Či sú povolené plávajúce položky"
+
+#: ../glade/gnome/bonobodock.c:278
+msgid "Add dock band on top"
+msgstr "Pridať pruh hore"
+
+#: ../glade/gnome/bonobodock.c:285
+msgid "Add dock band on bottom"
+msgstr "Pridať pruh dole"
+
+#: ../glade/gnome/bonobodock.c:292
+msgid "Add dock band on left"
+msgstr "Pridať pruh vľavo"
+
+#: ../glade/gnome/bonobodock.c:299
+msgid "Add dock band on right"
+msgstr "Pridať pruh vpravo"
+
+#: ../glade/gnome/bonobodock.c:306
+msgid "Add floating dock item"
+msgstr "Pridať voľne umiestnenú položku"
+
+#: ../glade/gnome/bonobodock.c:495
+msgid "Gnome Dock"
+msgstr "GNOME Pruh"
+
+#: ../glade/gnome/bonobodockitem.c:165
+msgid "Locked:"
+msgstr "Zamknutý:"
+
+#: ../glade/gnome/bonobodockitem.c:166
+msgid "If the dock item is locked in position"
+msgstr "Či je pozícia položky zamknutá"
+
+#: ../glade/gnome/bonobodockitem.c:167
+msgid "Exclusive:"
+msgstr "Exkluzívny:"
+
+#: ../glade/gnome/bonobodockitem.c:168
+msgid "If the dock item is always the only item in its band"
+msgstr "Či je položky vždy jediná svojho druhu"
+
+#: ../glade/gnome/bonobodockitem.c:169
+msgid "Never Floating:"
+msgstr "Nikdy plávajúci:"
+
+#: ../glade/gnome/bonobodockitem.c:170
+msgid "If the dock item is never allowed to float in its own window"
+msgstr "Či nie je položke nikdy povolené byť voľne nad jej vlastným oknom"
+
+#: ../glade/gnome/bonobodockitem.c:171
+msgid "Never Vertical:"
+msgstr "Nikdy vertikálny:"
+
+#: ../glade/gnome/bonobodockitem.c:172
+msgid "If the dock item is never allowed to be vertical"
+msgstr "Či nie je položke nikdy povolené byť vertikálna"
+
+#: ../glade/gnome/bonobodockitem.c:173
+msgid "Never Horizontal:"
+msgstr "Nikdy horizontálny:"
+
+#: ../glade/gnome/bonobodockitem.c:174
+msgid "If the dock item is never allowed to be horizontal"
+msgstr "Či nie je položke nikdy povolené byť horizontálna"
+
+#: ../glade/gnome/bonobodockitem.c:177
+msgid "The type of shadow around the dock item"
+msgstr "Typ tieňa okolo položky"
+
+#: ../glade/gnome/bonobodockitem.c:180
+msgid "The orientation of a floating dock item"
+msgstr "Orientácia voľne umiestnenej položky"
+
+#: ../glade/gnome/bonobodockitem.c:428
+msgid "Add dock item before"
+msgstr "Pridať položku pruhu pred"
+
+#: ../glade/gnome/bonobodockitem.c:435
+msgid "Add dock item after"
+msgstr "Pridať položku pruhu za"
+
+#: ../glade/gnome/bonobodockitem.c:771
+msgid "Gnome Dock Item"
+msgstr "GNOME Položka pruhu"
+
+#: ../glade/gnome/gnomeabout.c:139
+msgid ""
+"Additional information, such as a description of the package and its home "
+"page on the web"
+msgstr "Dodatočná informácia, ako napr. popis balíka a jeho domovská stránka"
+
+#: ../glade/gnome/gnomeabout.c:539
+msgid "Gnome About Dialog"
+msgstr "GNOME dialóg O programe"
+
+#: ../glade/gnome/gnomeapp.c:170
+msgid "New File"
+msgstr "Nový súbor"
+
+#: ../glade/gnome/gnomeapp.c:172
+msgid "Open File"
+msgstr "Otvoriť súbor"
+
+#: ../glade/gnome/gnomeapp.c:174
+msgid "Save File"
+msgstr "Uložiť súbor"
+
+#: ../glade/gnome/gnomeapp.c:203
+msgid "Status Bar:"
+msgstr "Stavový riadok:"
+
+#: ../glade/gnome/gnomeapp.c:204
+msgid "If the window has a status bar"
+msgstr "Či má okno stavový riadok"
+
+#: ../glade/gnome/gnomeapp.c:205
+msgid "Store Config:"
+msgstr "Uložiť nastavenie:"
+
+#: ../glade/gnome/gnomeapp.c:206
+msgid "If the layout is saved and restored automatically"
+msgstr "Či má byť vzhľad uložený a obnovený automaticky"
+
+#: ../glade/gnome/gnomeapp.c:442
+msgid "Gnome Application Window"
+msgstr "Aplikačné okno GNOME"
+
+#: ../glade/gnome/gnomeappbar.c:56
+msgid "Status Message."
+msgstr "Stavová správa."
+
+#: ../glade/gnome/gnomeappbar.c:69
+msgid "Progress:"
+msgstr "Priebeh:"
+
+#: ../glade/gnome/gnomeappbar.c:70
+msgid "If the app bar has a progress indicator"
+msgstr "Či má aplikačný pruh indikátor priebehu"
+
+#: ../glade/gnome/gnomeappbar.c:71
+msgid "Status:"
+msgstr "Stav:"
+
+#: ../glade/gnome/gnomeappbar.c:72
+msgid "If the app bar has an area for status messages and user input"
+msgstr "Či má aplikačný pruh oblasť pre stavové správy a vstup od používateľa"
+
+#: ../glade/gnome/gnomeappbar.c:184
+msgid "Gnome Application Bar"
+msgstr "Aplikačný pruh GNOME"
+
+#: ../glade/gnome/gnomecanvas.c:68
+msgid "Anti-Aliased:"
+msgstr "Anti-Alias:"
+
+#: ../glade/gnome/gnomecanvas.c:69
+msgid "If the canvas is anti-aliased, to smooth the edges of text and graphics"
+msgstr ""
+"Či je canvas anti-aliasovaný, čiže či vyhladzovať okraje textu a grafiky"
+
+#: ../glade/gnome/gnomecanvas.c:70
+msgid "X1:"
+msgstr "X1:"
+
+#: ../glade/gnome/gnomecanvas.c:70
+msgid "The minimum x coordinate"
+msgstr "Minimálna súradnica X"
+
+#: ../glade/gnome/gnomecanvas.c:71
+msgid "Y1:"
+msgstr "Y1:"
+
+#: ../glade/gnome/gnomecanvas.c:71
+msgid "The minimum y coordinate"
+msgstr "Minimálna súradnica Y"
+
+#: ../glade/gnome/gnomecanvas.c:72
+msgid "X2:"
+msgstr "X2:"
+
+#: ../glade/gnome/gnomecanvas.c:72
+msgid "The maximum x coordinate"
+msgstr "Maximálna súradnica X"
+
+#: ../glade/gnome/gnomecanvas.c:73
+msgid "Y2:"
+msgstr "Y2:"
+
+#: ../glade/gnome/gnomecanvas.c:73
+msgid "The maximum y coordinate"
+msgstr "Maximálna súradnica Y"
+
+#: ../glade/gnome/gnomecanvas.c:75
+msgid "Pixels Per Unit:"
+msgstr "Bodov na jednotku:"
+
+#: ../glade/gnome/gnomecanvas.c:76
+msgid "The number of pixels corresponding to one unit"
+msgstr "Počet bodov odpovedajúcich jednej jednotke"
+
+#: ../glade/gnome/gnomecanvas.c:239
+msgid "GnomeCanvas"
+msgstr "GnomeCanvas"
+
+#: ../glade/gnome/gnomecolorpicker.c:68
+msgid "Dither:"
+msgstr "Diter:"
+
+#: ../glade/gnome/gnomecolorpicker.c:69
+msgid "If the sample should use dithering to be more accurate"
+msgstr "Či má príklad používať diterovanie pre väčšiu presnosť"
+
+#: ../glade/gnome/gnomecolorpicker.c:160
+msgid "Pick a color"
+msgstr "Vyberte farbu"
+
+#: ../glade/gnome/gnomecolorpicker.c:219
+msgid "Gnome Color Picker"
+msgstr "GNOME Výber farby"
+
+#: ../glade/gnome/gnomecontrol.c:160
+msgid "Couldn't create the Bonobo control"
+msgstr "Nie je možné vytvoriť prvok Bonobo Control"
+
+#: ../glade/gnome/gnomecontrol.c:249
+msgid "New Bonobo Control"
+msgstr "Nový Bonobo Control"
+
+#: ../glade/gnome/gnomecontrol.c:262
+msgid "Select a Bonobo Control"
+msgstr "Vyberte prvok Bonobo Control"
+
+#: ../glade/gnome/gnomecontrol.c:290
+msgid "OAFIID"
+msgstr "OAFIID"
+
+#: ../glade/gnome/gnomecontrol.c:295 ../glade/property.c:3896
+msgid "Description"
+msgstr "Popis"
+
+#: ../glade/gnome/gnomecontrol.c:339
+msgid "Bonobo Control"
+msgstr "Bonobo Control"
+
+#: ../glade/gnome/gnomedateedit.c:70
+msgid "Show Time:"
+msgstr "Zobraziť čas:"
+
+#: ../glade/gnome/gnomedateedit.c:71
+msgid "If the time is shown as well as the date"
+msgstr "Či je zobrazený aj čas"
+
+#: ../glade/gnome/gnomedateedit.c:72
+msgid "24 Hour Format:"
+msgstr "24-hodinový formát:"
+
+#: ../glade/gnome/gnomedateedit.c:73
+msgid "If the time is shown in 24-hour format"
+msgstr "Či je čas zobrazený v 24-hodinovom formáte"
+
+#: ../glade/gnome/gnomedateedit.c:76
+msgid "Lower Hour:"
+msgstr "Min. hodina:"
+
+#: ../glade/gnome/gnomedateedit.c:77
+msgid "The lowest hour to show in the popup"
+msgstr "Minimálna zobrazovaná hodina v popup"
+
+#: ../glade/gnome/gnomedateedit.c:79
+msgid "Upper Hour:"
+msgstr "Max. hodina:"
+
+#: ../glade/gnome/gnomedateedit.c:80
+msgid "The highest hour to show in the popup"
+msgstr "Maximálna zobrazovaná hodina v popup"
+
+#: ../glade/gnome/gnomedateedit.c:298
+msgid "GnomeDateEdit"
+msgstr "GNOME Editor dátumu"
+
+#: ../glade/gnome/gnomedialog.c:152 ../glade/gnome/gnomemessagebox.c:189
+msgid "Auto Close:"
+msgstr "Automatické zatváranie:"
+
+#: ../glade/gnome/gnomedialog.c:153 ../glade/gnome/gnomemessagebox.c:190
+msgid "If the dialog closes when any button is clicked"
+msgstr "Či sa dialóg má zatvoriť po stlačení ľubovoľného tlačidla"
+
+#: ../glade/gnome/gnomedialog.c:154 ../glade/gnome/gnomemessagebox.c:191
+msgid "Hide on Close:"
+msgstr "Skryť pri zatváraní:"
+
+#: ../glade/gnome/gnomedialog.c:155 ../glade/gnome/gnomemessagebox.c:192
+msgid "If the dialog is hidden when it is closed, instead of being destroyed"
+msgstr "Či má byť dialóg skrytý pri zatváraní, namiesto jeho zničenia"
+
+#: ../glade/gnome/gnomedialog.c:341
+msgid "Gnome Dialog Box"
+msgstr "GNOME Dialóg"
+
+#: ../glade/gnome/gnomedruid.c:91
+msgid "New Gnome Druid"
+msgstr "Nový GNOME Druid"
+
+#: ../glade/gnome/gnomedruid.c:190
+msgid "Show Help"
+msgstr "Zobraziť Pomocníka"
+
+#: ../glade/gnome/gnomedruid.c:190
+msgid "Display the help button."
+msgstr "Zobraziť tlačidlo Pomocník."
+
+#: ../glade/gnome/gnomedruid.c:255
+msgid "Add Start Page"
+msgstr "Pridať štartovaciu stránku"
+
+#: ../glade/gnome/gnomedruid.c:270
+msgid "Add Finish Page"
+msgstr "Pridať koncovú stránku"
+
+#: ../glade/gnome/gnomedruid.c:485
+msgid "Druid"
+msgstr "Druid"
+
+#: ../glade/gnome/gnomedruidpageedge.c:94
+#: ../glade/gnome/gnomedruidpagestandard.c:86
+msgid "The title of the page"
+msgstr "Titulok stránky"
+
+#: ../glade/gnome/gnomedruidpageedge.c:96
+msgid "The main text of the page, introducing people to the druid."
+msgstr "Hlavný text stránky, informujúci ľudí o druidovi."
+
+#: ../glade/gnome/gnomedruidpageedge.c:98
+#: ../glade/gnome/gnomedruidpagestandard.c:87
+msgid "Title Color:"
+msgstr "Farba titulku:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:99
+#: ../glade/gnome/gnomedruidpagestandard.c:88
+msgid "The color of the title text"
+msgstr "Farba textu titulku"
+
+#: ../glade/gnome/gnomedruidpageedge.c:100
+msgid "Text Color:"
+msgstr "Farba textu:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:101
+msgid "The color of the main text"
+msgstr "Farba hlavného textu"
+
+#: ../glade/gnome/gnomedruidpageedge.c:103
+#: ../glade/gnome/gnomedruidpagestandard.c:92
+msgid "The background color of the page"
+msgstr "Farba pozadia stránky"
+
+#: ../glade/gnome/gnomedruidpageedge.c:104
+#: ../glade/gnome/gnomedruidpagestandard.c:93
+msgid "Logo Back. Color:"
+msgstr "Farba poz. loga:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:105
+#: ../glade/gnome/gnomedruidpagestandard.c:94
+msgid "The background color around the logo"
+msgstr "Farba pozadia okolo loga"
+
+#: ../glade/gnome/gnomedruidpageedge.c:106
+msgid "Text Box Color:"
+msgstr "Farba textového boxu:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:107
+msgid "The background color of the main text area"
+msgstr "Farba pozadia hlavnej oblasti textu"
+
+#: ../glade/gnome/gnomedruidpageedge.c:108
+#: ../glade/gnome/gnomedruidpagestandard.c:95
+msgid "Logo Image:"
+msgstr "Logo:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:109
+#: ../glade/gnome/gnomedruidpagestandard.c:96
+msgid "The logo to display in the top-right of the page"
+msgstr "Logo zobrazené v pravom hornom rohu stránky"
+
+#: ../glade/gnome/gnomedruidpageedge.c:110
+msgid "Side Watermark:"
+msgstr "Bočný vodoznak:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:111
+msgid "The main image to display on the side of the page."
+msgstr "Hlavný obrázok zobrazený naboku stránky."
+
+#: ../glade/gnome/gnomedruidpageedge.c:112
+#: ../glade/gnome/gnomedruidpagestandard.c:97
+msgid "Top Watermark:"
+msgstr "Horný vodoznak:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:113
+msgid "The watermark to display at the top of the page."
+msgstr "Vodoznak zobrazený na vrchole stránky."
+
+#: ../glade/gnome/gnomedruidpageedge.c:522
+msgid "Druid Start or Finish Page"
+msgstr "Prvá alebo posledná stránka druida"
+
+#: ../glade/gnome/gnomedruidpagestandard.c:89
+msgid "Contents Back. Color:"
+msgstr "Farba poz. obsahu:"
+
+#: ../glade/gnome/gnomedruidpagestandard.c:90
+msgid "The background color around the title"
+msgstr "Farba pozadia okolo titulku"
+
+#: ../glade/gnome/gnomedruidpagestandard.c:98
+msgid "The image to display along the top of the page"
+msgstr "Obrázok zobrazený na vrchole stránky."
+
+#: ../glade/gnome/gnomedruidpagestandard.c:447
+msgid "Druid Standard Page"
+msgstr "Štandardná stránka druida"
+
+#: ../glade/gnome/gnomeentry.c:71 ../glade/gnome/gnomefileentry.c:96
+#: ../glade/gnome/gnomeiconentry.c:74 ../glade/gnome/gnomepixmapentry.c:77
+msgid "History ID:"
+msgstr "ID histórie:"
+
+#: ../glade/gnome/gnomeentry.c:72 ../glade/gnome/gnomefileentry.c:97
+#: ../glade/gnome/gnomeiconentry.c:75 ../glade/gnome/gnomepixmapentry.c:78
+msgid "The ID to save the history entries under"
+msgstr "ID, pod ktorým sa majú ukladať položky histórie"
+
+#: ../glade/gnome/gnomeentry.c:73 ../glade/gnome/gnomefileentry.c:98
+#: ../glade/gnome/gnomeiconentry.c:76 ../glade/gnome/gnomepixmapentry.c:79
+msgid "Max Saved:"
+msgstr "Max uložených:"
+
+#: ../glade/gnome/gnomeentry.c:74 ../glade/gnome/gnomefileentry.c:99
+#: ../glade/gnome/gnomeiconentry.c:77 ../glade/gnome/gnomepixmapentry.c:80
+msgid "The maximum number of history entries saved"
+msgstr "Maximálny počet uložených položiek histórie"
+
+#: ../glade/gnome/gnomeentry.c:210
+msgid "Gnome Entry"
+msgstr "GNOME Položka"
+
+#: ../glade/gnome/gnomefileentry.c:102 ../glade/gnome/gnomeiconentry.c:73
+#: ../glade/gnome/gnomepixmapentry.c:83
+msgid "The title of the file selection dialog"
+msgstr "Titulok dialógu pre výber súboru"
+
+#: ../glade/gnome/gnomefileentry.c:103
+msgid "Directory:"
+msgstr "Priečinok:"
+
+#: ../glade/gnome/gnomefileentry.c:104
+msgid "If a directory is needed rather than a file"
+msgstr "Či má byť požadovaný priečinok namiesto súboru"
+
+#: ../glade/gnome/gnomefileentry.c:106 ../glade/gnome/gnomepixmapentry.c:85
+msgid "If the file selection dialog should be modal"
+msgstr "Či má byť dialóg pre výber súboru modálny"
+
+#: ../glade/gnome/gnomefileentry.c:107 ../glade/gnome/gnomepixmapentry.c:86
+msgid "Use FileChooser:"
+msgstr ""
+
+#: ../glade/gnome/gnomefileentry.c:108 ../glade/gnome/gnomepixmapentry.c:87
+msgid "Use the new GtkFileChooser widget instead of GtkFileSelection"
+msgstr ""
+
+#: ../glade/gnome/gnomefileentry.c:367
+msgid "Gnome File Entry"
+msgstr "GNOME Položka súbor"
+
+#: ../glade/gnome/gnomefontpicker.c:98
+msgid "The preview text to show in the font selection dialog"
+msgstr "Ukážkový text použitý pri výbere písma"
+
+#: ../glade/gnome/gnomefontpicker.c:99
+msgid "Mode:"
+msgstr "Mód:7"
+
+#: ../glade/gnome/gnomefontpicker.c:100
+msgid "What to display in the font picker button"
+msgstr "Čo zobraziť na tlačidle pri výbere písma"
+
+#: ../glade/gnome/gnomefontpicker.c:107
+msgid "The size of the font to use in the font picker button"
+msgstr "Veľkosť použitého písma na tlačidle výberu písma"
+
+#: ../glade/gnome/gnomefontpicker.c:392
+msgid "Gnome Font Picker"
+msgstr "GNOME Výber písma"
+
+#: ../glade/gnome/gnomehref.c:66
+msgid "URL:"
+msgstr "URL:"
+
+#: ../glade/gnome/gnomehref.c:67
+msgid "The URL to display when the button is clicked"
+msgstr "URL zobrazené po stlačení tlačidla"
+
+#: ../glade/gnome/gnomehref.c:69
+msgid "The text to display in the button"
+msgstr "Text zobrazený v tlačidle"
+
+#: ../glade/gnome/gnomehref.c:206
+msgid "Gnome HRef Link Button"
+msgstr "GNOME Tlačidlo pre odkaz"
+
+#: ../glade/gnome/gnomeiconentry.c:208
+msgid "Gnome Icon Entry"
+msgstr "GNOME Položka ikona"
+
+#: ../glade/gnome/gnomeiconlist.c:175
+msgid "The selection mode"
+msgstr "Mód výberu"
+
+#: ../glade/gnome/gnomeiconlist.c:177
+msgid "Icon Width:"
+msgstr "Šírka ikony:"
+
+#: ../glade/gnome/gnomeiconlist.c:178
+msgid "The width of each icon"
+msgstr "Šírka každej ikony"
+
+#: ../glade/gnome/gnomeiconlist.c:181
+msgid "The number of pixels between rows of icons"
+msgstr "Počet bodov medzi riadkami ikon"
+
+#: ../glade/gnome/gnomeiconlist.c:184
+msgid "The number of pixels between columns of icons"
+msgstr "Počet bodov medzi stĺpcami ikon"
+
+#: ../glade/gnome/gnomeiconlist.c:187
+msgid "Icon Border:"
+msgstr "Okraj ikony:"
+
+#: ../glade/gnome/gnomeiconlist.c:188
+msgid "The number of pixels around icons (unused?)"
+msgstr "Počet bodov okolo ikon (nepoužívané?)"
+
+#: ../glade/gnome/gnomeiconlist.c:191
+msgid "Text Spacing:"
+msgstr "Medzera textu:"
+
+#: ../glade/gnome/gnomeiconlist.c:192
+msgid "The number of pixels between the text and the icon"
+msgstr "Počet bodov medzi textom a ikonou"
+
+#: ../glade/gnome/gnomeiconlist.c:194
+msgid "Text Editable:"
+msgstr "Upraviteľný text:"
+
+#: ../glade/gnome/gnomeiconlist.c:195
+msgid "If the icon text can be edited by the user"
+msgstr "Či je text ikony upraviteľný používateľom"
+
+#: ../glade/gnome/gnomeiconlist.c:196
+msgid "Text Static:"
+msgstr "Statický text:"
+
+#: ../glade/gnome/gnomeiconlist.c:197
+msgid ""
+"If the icon text is static, in which case it will not be copied by the "
+"GnomeIconList"
+msgstr "Či je text statický, v tom prípade nebude kopírovaný GnomeIconListom"
+
+#: ../glade/gnome/gnomeiconlist.c:461
+msgid "Icon List"
+msgstr "Zoznam ikon"
+
+#: ../glade/gnome/gnomeiconselection.c:154
+msgid "Icon Selection"
+msgstr "Výber ikony"
+
+#: ../glade/gnome/gnomemessagebox.c:174
+msgid "Message Type:"
+msgstr "Typ správy:"
+
+#: ../glade/gnome/gnomemessagebox.c:175
+msgid "The type of the message box"
+msgstr "Typ dialógu"
+
+#: ../glade/gnome/gnomemessagebox.c:177
+msgid "Message:"
+msgstr "Správa:"
+
+#: ../glade/gnome/gnomemessagebox.c:177
+msgid "The message to display"
+msgstr "Zobrazovaná správa"
+
+#: ../glade/gnome/gnomemessagebox.c:498
+msgid "Gnome Message Box"
+msgstr "GNOME dialóg pre správy"
+
+#: ../glade/gnome/gnomepixmap.c:79
+msgid "The pixmap filename"
+msgstr "Meno súboru s obrázkom"
+
+#: ../glade/gnome/gnomepixmap.c:80
+msgid "Scaled:"
+msgstr "Zväčšený:"
+
+#: ../glade/gnome/gnomepixmap.c:80
+msgid "If the pixmap is scaled"
+msgstr "Či je obrázok zväčšený"
+
+#: ../glade/gnome/gnomepixmap.c:81
+msgid "Scaled Width:"
+msgstr "Zväčšená šírka:"
+
+#: ../glade/gnome/gnomepixmap.c:82
+msgid "The width to scale the pixmap to"
+msgstr "Šírka, na ktorú zväčšiť obrázok"
+
+#: ../glade/gnome/gnomepixmap.c:84
+msgid "Scaled Height:"
+msgstr "Zväčšená výška:"
+
+#: ../glade/gnome/gnomepixmap.c:85
+msgid "The height to scale the pixmap to"
+msgstr "Výška, na ktorú zväčšiť obrázok"
+
+#: ../glade/gnome/gnomepixmap.c:346
+msgid "Gnome Pixmap"
+msgstr "Gnome Pixmap"
+
+#: ../glade/gnome/gnomepixmapentry.c:75
+msgid "Preview:"
+msgstr "Ukážka:"
+
+#: ../glade/gnome/gnomepixmapentry.c:76
+msgid "If a small preview of the pixmap is displayed"
+msgstr "Či má byť zobrazovaná ukážka obrázku"
+
+#: ../glade/gnome/gnomepixmapentry.c:303
+msgid "GnomePixmapEntry"
+msgstr "GnomePixmapEntry"
+
+#: ../glade/gnome/gnomepropertybox.c:112
+msgid "New GnomePropertyBox"
+msgstr "Nový GnomePropertyBox"
+
+#: ../glade/gnome/gnomepropertybox.c:365
+msgid "Property Dialog Box"
+msgstr "Dialóg pre vlastnosti"
+
+#: ../glade/main.c:70
+msgid "Write the source code and exit"
+msgstr "Zapísať zdrojový kód a skončiť"
+
+#: ../glade/main.c:74
+msgid "Start with the palette hidden"
+msgstr "Spustiť so skrytou paletou"
+
+#: ../glade/main.c:78
+msgid "Start with the property editor hidden"
+msgstr "Spustiť so skrytým editorom vlastností"
+
+#: ../glade/main.c:436
+msgid ""
+"glade: The XML file must be set for the '-w' or '--write-source' option.\n"
+msgstr ""
+"glade: XML súbor musí byť zadaný pre použitie '-w' alebo '--write-source'.\n"
+
+#: ../glade/main.c:450
+msgid "glade: Error loading XML file.\n"
+msgstr "glade: Chyba pri načítavaní XML súboru.\n"
+
+#: ../glade/main.c:457
+msgid "glade: Error writing source.\n"
+msgstr "glade: Chyba pri zápise zdrojového kódu.\n"
+
+#: ../glade/palette.c:60
+msgid "Palette"
+msgstr "Paleta"
+
+#: ../glade/property.c:73
+msgid "private"
+msgstr "private"
+
+#: ../glade/property.c:73
+msgid "protected"
+msgstr "protected"
+
+#: ../glade/property.c:73
+msgid "public"
+msgstr "public"
+
+#: ../glade/property.c:102
+msgid "Prelight"
+msgstr "Predvybraný"
+
+#: ../glade/property.c:103
+msgid "Selected"
+msgstr "Vybraný"
+
+#: ../glade/property.c:103
+msgid "Insens"
+msgstr "Necitlivý"
+
+#: ../glade/property.c:467
+msgid "When the window needs redrawing"
+msgstr "Keď je treba prekresliť okno"
+
+#: ../glade/property.c:468
+msgid "When the mouse moves"
+msgstr "Pri pohybe myši"
+
+#: ../glade/property.c:469
+msgid "Mouse movement hints"
+msgstr "Pri pohybe myši radou"
+
+#: ../glade/property.c:470
+msgid "Mouse movement with any button pressed"
+msgstr "Pri pohybe myši so stlačeným tlačidlom"
+
+#: ../glade/property.c:471
+msgid "Mouse movement with button 1 pressed"
+msgstr "Pri pohybe myši so stlačeným tlačidlom 1"
+
+#: ../glade/property.c:472
+msgid "Mouse movement with button 2 pressed"
+msgstr "Pri pohybe myši so stlačeným tlačidlom 2"
+
+#: ../glade/property.c:473
+msgid "Mouse movement with button 3 pressed"
+msgstr "Pri pohybe myši so stlačeným tlačidlom 3"
+
+#: ../glade/property.c:474
+msgid "Any mouse button pressed"
+msgstr "Pri stlačení niektorého tlačidla myši"
+
+#: ../glade/property.c:475
+msgid "Any mouse button released"
+msgstr "Pri pustení niektorého tlačidla myši"
+
+#: ../glade/property.c:476
+msgid "Any key pressed"
+msgstr "Pri stlačení klávesy"
+
+#: ../glade/property.c:477
+msgid "Any key released"
+msgstr "Pri pustení klávesy"
+
+#: ../glade/property.c:478
+msgid "When the mouse enters the window"
+msgstr "Pri vstupe myši do okna"
+
+#: ../glade/property.c:479
+msgid "When the mouse leaves the window"
+msgstr "Pri opustení okna myšou"
+
+#: ../glade/property.c:480
+msgid "Any change in input focus"
+msgstr "Pri zmene vstupného fokusu"
+
+#: ../glade/property.c:481
+msgid "Any change in window structure"
+msgstr "Pri zmene štruktúry okna"
+
+#: ../glade/property.c:482
+msgid "Any change in X Windows property"
+msgstr "Pri zmene vlastností X Window"
+
+#: ../glade/property.c:483
+msgid "Any change in visibility"
+msgstr "Pri zmene viditeľnosti"
+
+#: ../glade/property.c:484 ../glade/property.c:485
+msgid "For cursors in XInput-aware programs"
+msgstr "Pre kurzory v programoch podporujúcich XInput"
+
+#: ../glade/property.c:596
+msgid "Properties"
+msgstr "Vlastnosti"
+
+#: ../glade/property.c:620
+msgid "Packing"
+msgstr "Zoskupovanie"
+
+#: ../glade/property.c:625
+msgid "Common"
+msgstr "Obvyklé"
+
+#: ../glade/property.c:631
+msgid "Style"
+msgstr "Štýl"
+
+#: ../glade/property.c:637 ../glade/property.c:4640
+msgid "Signals"
+msgstr "Signály"
+
+#: ../glade/property.c:700 ../glade/property.c:721
+msgid "Properties: "
+msgstr "Vlastnosti: "
+
+#: ../glade/property.c:708 ../glade/property.c:732
+msgid "Properties: <none>"
+msgstr "Vlastnosti: <žiadne>"
+
+#: ../glade/property.c:778
+msgid "Class:"
+msgstr "Trieda:"
+
+#: ../glade/property.c:779
+msgid "The class of the widget"
+msgstr "Trieda prvku"
+
+#: ../glade/property.c:813
+msgid "Width:"
+msgstr "Šírka:"
+
+#: ../glade/property.c:814
+msgid ""
+"The requested width of the widget (usually used to set the minimum width)"
+msgstr ""
+"Požadovaná šírka prvku (obvykle používané pre nastavenie minimálnej šírky)"
+
+#: ../glade/property.c:816
+msgid "Height:"
+msgstr "Výška:"
+
+#: ../glade/property.c:817
+msgid ""
+"The requested height of the widget (usually used to set the minimum height)"
+msgstr ""
+"Požadovaná výška prvku (obvykle používané pre nastavenie minimálnej výšky)"
+
+#: ../glade/property.c:820
+msgid "Visible:"
+msgstr "Viditeľný:"
+
+#: ../glade/property.c:821
+msgid "If the widget is initially visible"
+msgstr "Či je prvok na začiatku viditeľný"
+
+#: ../glade/property.c:822
+msgid "Sensitive:"
+msgstr "Citlivý:"
+
+#: ../glade/property.c:823
+msgid "If the widget responds to input"
+msgstr "Či reaguje na vstup"
+
+#: ../glade/property.c:825
+msgid "The tooltip to display if the mouse lingers over the widget"
+msgstr "Rada zobrazovaná pri nechaní myši nad prvkom"
+
+#: ../glade/property.c:827
+msgid "Can Default:"
+msgstr "Môže predvolený:"
+
+#: ../glade/property.c:828
+msgid "If the widget can be the default action in a dialog"
+msgstr "Či prvok môže byť štandardná akcia dialógu"
+
+#: ../glade/property.c:829
+msgid "Has Default:"
+msgstr "Je predvolený:"
+
+#: ../glade/property.c:830
+msgid "If the widget is the default action in the dialog"
+msgstr "Či prvok je štandardná akcia v dialógu"
+
+#: ../glade/property.c:831
+msgid "Can Focus:"
+msgstr "Môže fokus:"
+
+#: ../glade/property.c:832
+msgid "If the widget can accept the input focus"
+msgstr "Či prvok môže akceptovať vstupný fokus"
+
+#: ../glade/property.c:833
+msgid "Has Focus:"
+msgstr "Má fokus:"
+
+#: ../glade/property.c:834
+msgid "If the widget has the input focus"
+msgstr "Či prvok má vstupný fokus"
+
+#: ../glade/property.c:836
+msgid "Events:"
+msgstr "Udalosti:"
+
+#: ../glade/property.c:837
+msgid "The X events that the widget receives"
+msgstr "X udalosti, ktoré prvok prijíma"
+
+#: ../glade/property.c:839
+msgid "Ext.Events:"
+msgstr "Ext. udalosti:"
+
+#: ../glade/property.c:840
+msgid "The X Extension events mode"
+msgstr "Mód udalostí X Extension"
+
+#: ../glade/property.c:843
+msgid "Accelerators:"
+msgstr "Akcelerátory:"
+
+#: ../glade/property.c:844
+msgid "Defines the signals to emit when keys are pressed"
+msgstr "Definuje signály vysielané pri stlačení kláves"
+
+#: ../glade/property.c:845
+msgid "Edit..."
+msgstr "Upraviť..."
+
+#: ../glade/property.c:867
+msgid "Propagate:"
+msgstr "Propagovať:"
+
+#: ../glade/property.c:868
+msgid "Set True to propagate the style to the widget's children"
+msgstr "Nastavte na Áno, aby bol štýl propagovaný na potomkov prvku"
+
+#: ../glade/property.c:869
+msgid "Named Style:"
+msgstr "Pomenovaný štýl:"
+
+#: ../glade/property.c:870
+msgid "The name of the style, which can be shared by several widgets"
+msgstr "Meno štýlu, ktorý môžu zdieľať viaceré prvky"
+
+#: ../glade/property.c:872
+msgid "Font:"
+msgstr "Písmo:"
+
+#: ../glade/property.c:873
+msgid "The font to use for any text in the widget"
+msgstr "Písmo použité pre text prvku"
+
+#: ../glade/property.c:898
+msgid "Copy All"
+msgstr "Kopírovať všetky"
+
+#: ../glade/property.c:926
+msgid "Foreground:"
+msgstr "Poprenie:"
+
+#: ../glade/property.c:926
+msgid "Background:"
+msgstr "Pozadie:"
+
+#: ../glade/property.c:926
+msgid "Base:"
+msgstr "Základ:"
+
+#: ../glade/property.c:928
+msgid "Foreground color"
+msgstr "Farba popredia"
+
+#: ../glade/property.c:928
+msgid "Background color"
+msgstr "Farba pozadia"
+
+#: ../glade/property.c:928
+msgid "Text color"
+msgstr "Farba textu"
+
+#: ../glade/property.c:929
+msgid "Base color"
+msgstr "Základná farba"
+
+#: ../glade/property.c:946
+msgid "Back. Pixmap:"
+msgstr "Obr. pozadia:"
+
+#: ../glade/property.c:947
+msgid "The graphic to use as the background of the widget"
+msgstr "Grafika použitá ako pozadie prvku"
+
+#: ../glade/property.c:999
+msgid "The file to write source code into"
+msgstr "Súbor, do ktorého zapísať zdrojový kód"
+
+#: ../glade/property.c:1000
+msgid "Public:"
+msgstr "Verejný:"
+
+#: ../glade/property.c:1001
+msgid "If the widget is added to the component's data structure"
+msgstr "Či je prvok pridaný do dátovej štruktúry komponentu"
+
+#: ../glade/property.c:1012
+msgid "Separate Class:"
+msgstr "Samostatná trieda:"
+
+#: ../glade/property.c:1013
+msgid "Put this widget's subtree in a separate class"
+msgstr "Podstrom tohoto prvku má byť v samostatej triede"
+
+#: ../glade/property.c:1014
+msgid "Separate File:"
+msgstr "Samostatný súbor:"
+
+#: ../glade/property.c:1015
+msgid "Put this widget in a separate source file"
+msgstr "Tento prvok má byť v samostatnom zdrojovom súbore"
+
+#: ../glade/property.c:1016
+msgid "Visibility:"
+msgstr "Viditeľnosť:"
+
+#: ../glade/property.c:1017
+msgid "Visibility of widgets. Public widgets are exported to a global map."
+msgstr "Viditeľnosť prvkov. Verejné prvky sú exportované do globálnej mapy."
+
+#: ../glade/property.c:1126
+msgid "You need to select a color or background to copy"
+msgstr "Musíte vybrať farbu alebo pozadie pre kopírovanie"
+
+#: ../glade/property.c:1145
+msgid "Invalid selection in on_style_copy()"
+msgstr "Neplatný výber v on_style_copy()"
+
+#: ../glade/property.c:1187
+msgid "You need to copy a color or background pixmap first"
+msgstr "Musíte najskôr skopírovať farbu alebo obrázok pozadia"
+
+#: ../glade/property.c:1193
+msgid "You need to select a color to paste into"
+msgstr "Musíte vybrať farbu, do ktorej vložiť"
+
+#: ../glade/property.c:1203
+msgid "You need to select a background pixmap to paste into"
+msgstr "Musíte vybrať obrázok pozadia, do ktorého vložiť"
+
+#: ../glade/property.c:1455
+msgid "Couldn't create pixmap from file\n"
+msgstr "Nie je možné vytvoriť obrázok zo súboru\n"
+
+#. List of current signal handlers - Signal/Handler/Data/Options
+#: ../glade/property.c:1497
+msgid "Signal"
+msgstr "Signál"
+
+#: ../glade/property.c:1499
+msgid "Data"
+msgstr "Dáta"
+
+#: ../glade/property.c:1500
+msgid "After"
+msgstr "Po"
+
+#: ../glade/property.c:1501
+msgid "Object"
+msgstr "Objekt"
+
+#: ../glade/property.c:1532 ../glade/property.c:1696
+msgid "Signal:"
+msgstr "Signál:"
+
+#: ../glade/property.c:1533
+msgid "The signal to add a handler for"
+msgstr "Signál, pre ktorý pridať obsluhu"
+
+#: ../glade/property.c:1547
+msgid "The function to handle the signal"
+msgstr "Funkcia, ktorá obslúži signál"
+
+#: ../glade/property.c:1550
+msgid "Data:"
+msgstr "Dáta:"
+
+#: ../glade/property.c:1551
+msgid "The data passed to the handler"
+msgstr "Dáta predané obsluhe"
+
+#: ../glade/property.c:1552
+msgid "Object:"
+msgstr "Objekt:"
+
+#: ../glade/property.c:1553
+msgid "The object which receives the signal"
+msgstr "Objekt, ktorý prijme signál"
+
+#: ../glade/property.c:1554
+msgid "After:"
+msgstr "Po:"
+
+#: ../glade/property.c:1555
+msgid "If the handler runs after the class function"
+msgstr "Či má byť obsluha spustená po funkcii triedy"
+
+#: ../glade/property.c:1568
+msgid "Add"
+msgstr "Pridať"
+
+#: ../glade/property.c:1574
+msgid "Update"
+msgstr "Obnoviť"
+
+#: ../glade/property.c:1586
+msgid "Clear"
+msgstr "Zmazať"
+
+#: ../glade/property.c:1636
+msgid "Accelerators"
+msgstr "Akcelerátory"
+
+#. List of current accelerators - Mods/Keys/Signals
+#: ../glade/property.c:1649
+msgid "Mod"
+msgstr "Mod"
+
+#: ../glade/property.c:1650
+msgid "Key"
+msgstr "Kláves"
+
+#: ../glade/property.c:1651
+msgid "Signal to emit"
+msgstr "Vyslať signál"
+
+#: ../glade/property.c:1695
+msgid "The accelerator key"
+msgstr "Akcelerátor"
+
+#: ../glade/property.c:1697
+msgid "The signal to emit when the accelerator is pressed"
+msgstr "Emitovaný signál pri stlačení akcelerátora"
+
+#: ../glade/property.c:1846
+msgid "Edit Text Property"
+msgstr ""
+
+#: ../glade/property.c:1884
+msgid "<b>_Text:</b>"
+msgstr ""
+
+#: ../glade/property.c:1894
+#, fuzzy
+msgid "T_ranslatable"
+msgstr "Preložiteľné texty:"
+
+#: ../glade/property.c:1898
+msgid "Has Context _Prefix"
+msgstr ""
+
+#: ../glade/property.c:1924
+msgid "<b>Co_mments For Translators:</b>"
+msgstr ""
+
+#: ../glade/property.c:3886
+msgid "Select X Events"
+msgstr "Vyberte X udalosti"
+
+#: ../glade/property.c:3895
+msgid "Event Mask"
+msgstr "Maska udalostí"
+
+#: ../glade/property.c:4025 ../glade/property.c:4074
+msgid "You need to set the accelerator key"
+msgstr "Musíte nastaviť akcelerátor"
+
+#: ../glade/property.c:4032 ../glade/property.c:4081
+msgid "You need to set the signal to emit"
+msgstr "Musíte nastaviť vysielaný signál"
+
+#: ../glade/property.c:4308 ../glade/property.c:4364
+msgid "You need to set the signal name"
+msgstr "Musíte nastaviť meno signálu"
+
+#: ../glade/property.c:4315 ../glade/property.c:4371
+msgid "You need to set the handler for the signal"
+msgstr "Musíte nastaviť obsluhu signálu"
+
+#. This groups the signals by class, e.g. 'GtkButton signals'.
+#: ../glade/property.c:4574
+#, c-format
+msgid "%s signals"
+msgstr "%s signály"
+
+#: ../glade/property.c:4631
+msgid "Select Signal"
+msgstr "Vyberte signál"
+
+#: ../glade/property.c:4827
+msgid "Value:"
+msgstr "Hodnota:"
+
+#: ../glade/property.c:4827
+msgid "Min:"
+msgstr "Min:"
+
+#: ../glade/property.c:4827
+msgid "Step Inc:"
+msgstr "Krok zvyš:"
+
+#: ../glade/property.c:4828
+msgid "Page Inc:"
+msgstr "Strana zvyš:"
+
+#: ../glade/property.c:4828
+msgid "Page Size:"
+msgstr "Veľkosť strany:"
+
+#: ../glade/property.c:4830
+msgid "H Value:"
+msgstr "H Hodnota:"
+
+#: ../glade/property.c:4830
+msgid "H Min:"
+msgstr "H Min:"
+
+#: ../glade/property.c:4830
+msgid "H Max:"
+msgstr "H Max:"
+
+#: ../glade/property.c:4830
+msgid "H Step Inc:"
+msgstr "H krok:"
+
+#: ../glade/property.c:4831
+msgid "H Page Inc:"
+msgstr "H stránka:"
+
+#: ../glade/property.c:4831
+msgid "H Page Size:"
+msgstr "H veľk. stránky:"
+
+#: ../glade/property.c:4833
+msgid "V Value:"
+msgstr "V Hodnota:"
+
+#: ../glade/property.c:4833
+msgid "V Min:"
+msgstr "V Min:"
+
+#: ../glade/property.c:4833
+msgid "V Max:"
+msgstr "V Max:"
+
+#: ../glade/property.c:4833
+msgid "V Step Inc:"
+msgstr "V krok:"
+
+#: ../glade/property.c:4834
+msgid "V Page Inc:"
+msgstr "V stránka:"
+
+#: ../glade/property.c:4834
+msgid "V Page Size:"
+msgstr "V veľk. stránky:"
+
+#: ../glade/property.c:4837
+msgid "The initial value"
+msgstr "Počiatočná hodnota"
+
+#: ../glade/property.c:4838
+msgid "The minimum value"
+msgstr "Minimálna hodnota"
+
+#: ../glade/property.c:4839
+msgid "The maximum value"
+msgstr "Maximálna hodnota"
+
+#: ../glade/property.c:4840
+msgid "The step increment"
+msgstr "Posun pre krok"
+
+#: ../glade/property.c:4841
+msgid "The page increment"
+msgstr "Posun pre stránku"
+
+#: ../glade/property.c:4842
+msgid "The page size"
+msgstr "Veľkosť stránky"
+
+#: ../glade/property.c:4997
+msgid "The requested font is not available."
+msgstr "Požadované písmo nie je k dispozícii."
+
+#: ../glade/property.c:5046
+msgid "Select Named Style"
+msgstr "Vyberte pomenovaný štýl"
+
+#: ../glade/property.c:5057
+msgid "Styles"
+msgstr "Štýly"
+
+#: ../glade/property.c:5116
+msgid "Rename"
+msgstr "Premenovať"
+
+#: ../glade/property.c:5144
+msgid "Cancel"
+msgstr "Zrušiť"
+
+#: ../glade/property.c:5264
+msgid "New Style:"
+msgstr "Nový štýl:"
+
+#: ../glade/property.c:5278 ../glade/property.c:5399
+msgid "Invalid style name"
+msgstr "Neplatné meno štýlu"
+
+#: ../glade/property.c:5286 ../glade/property.c:5409
+msgid "That style name is already in use"
+msgstr "Toto meno štýlu už je použité"
+
+#: ../glade/property.c:5384
+msgid "Rename Style To:"
+msgstr "Premenovať štýl na:"
+
+#: ../glade/save.c:139 ../glade/source.c:2771
+#, c-format
+msgid ""
+"Couldn't rename file:\n"
+"  %s\n"
+"to:\n"
+"  %s\n"
+msgstr ""
+"Nie je možné premenovať súbor:\n"
+"  %s\n"
+"na:\n"
+"  %s\n"
+
+#: ../glade/save.c:174 ../glade/save.c:225 ../glade/save.c:947
+#: ../glade/source.c:358 ../glade/source.c:373 ../glade/source.c:391
+#: ../glade/source.c:404 ../glade/source.c:815 ../glade/source.c:1043
+#: ../glade/source.c:1134 ../glade/source.c:1328 ../glade/source.c:1423
+#: ../glade/source.c:1643 ../glade/source.c:1732 ../glade/source.c:1784
+#: ../glade/source.c:1848 ../glade/source.c:1895 ../glade/source.c:2032
+#: ../glade/utils.c:1147
+#, c-format
+msgid ""
+"Couldn't create file:\n"
+"  %s\n"
+msgstr ""
+"Nie je možné vytvoriť súbor:\n"
+"  %s\n"
+
+#: ../glade/save.c:848
+msgid "Error writing XML file\n"
+msgstr "Chyba pri zápise XML súboru\n"
+
+#: ../glade/save.c:953
+#, c-format
+msgid ""
+"/*\n"
+" * Translatable strings file generated by Glade.\n"
+" * Add this file to your project's POTFILES.in.\n"
+" * DO NOT compile it as part of your application.\n"
+" */\n"
+"\n"
+msgstr ""
+"/*\n"
+" * Translatable strings file generated by Glade.\n"
+" * Add this file to your project's POTFILES.in.\n"
+" * DO NOT compile it as part of your application.\n"
+" */\n"
+"\n"
+
+#: ../glade/source.c:184
+#, c-format
+msgid ""
+"Invalid interface source filename: %s\n"
+"%s\n"
+msgstr ""
+"Neplatné meno súboru pre zdrojový kód: %s\n"
+"%s\n"
+
+#: ../glade/source.c:186
+#, c-format
+msgid ""
+"Invalid interface header filename: %s\n"
+"%s\n"
+msgstr ""
+"Neplatné meno hlavičkového súboru: %s\n"
+"%s\n"
+
+#: ../glade/source.c:189
+#, c-format
+msgid ""
+"Invalid callbacks source filename: %s\n"
+"%s\n"
+msgstr ""
+"Neplatné meno zdrojového súboru pre callback funkcie: %s\n"
+"%s\n"
+
+#: ../glade/source.c:191
+#, c-format
+msgid ""
+"Invalid callbacks header filename: %s\n"
+"%s\n"
+msgstr ""
+"Neplatné meno hlavičkového súboru pre callback funkcie: %s\n"
+"%s\n"
+
+#: ../glade/source.c:197
+#, c-format
+msgid ""
+"Invalid support source filename: %s\n"
+"%s\n"
+msgstr ""
+"Neplatné meno zdrojového súboru pre podporu: %s\n"
+"%s\n"
+
+#: ../glade/source.c:199
+#, c-format
+msgid ""
+"Invalid support header filename: %s\n"
+"%s\n"
+msgstr ""
+"Neplatné meno hlavičkového súboru pre podporu: %s\n"
+"%s\n"
+
+#: ../glade/source.c:418 ../glade/source.c:426
+#, c-format
+msgid ""
+"Couldn't append to file:\n"
+"  %s\n"
+msgstr ""
+"Nie je možné pridať do súboru:\n"
+"  %s\n"
+
+#: ../glade/source.c:1724 ../glade/utils.c:1168
+#, c-format
+msgid ""
+"Error writing to file:\n"
+"  %s\n"
+msgstr ""
+"Chyba pri zápise do súboru:\n"
+"  %s\n"
+
+#: ../glade/source.c:2743
+msgid "The filename must be set in the Project Options dialog."
+msgstr "Meno súboru musí byť nastavené v dialógu Možnosti projektu."
+
+#: ../glade/source.c:2746
+msgid ""
+"The filename must be a simple relative filename.\n"
+"Use the Project Options dialog to set it."
+msgstr ""
+"Meno súboru musí byť jednoduché relatívne meno.\n"
+"Použite dialóg Možnosti projektu pre jeho nastavenie."
+
+#: ../glade/tree.c:78
+msgid "Widget Tree"
+msgstr "Strom prvku"
+
+#: ../glade/utils.c:900 ../glade/utils.c:940
+msgid "Widget not found in box"
+msgstr "Prvok nenájdený v boxe"
+
+#: ../glade/utils.c:920
+msgid "Widget not found in table"
+msgstr "Prvok nenájdený v tabuľke"
+
+#: ../glade/utils.c:960
+msgid "Widget not found in fixed container"
+msgstr "Prvok nenájdený v pevnom kontajneri"
+
+#: ../glade/utils.c:981
+msgid "Widget not found in packer"
+msgstr "Prvok nenájdený v zoskupení"
+
+#: ../glade/utils.c:1118
+#, c-format
+msgid ""
+"Couldn't access file:\n"
+"  %s\n"
+msgstr ""
+"Nie je možný prístup k súboru:\n"
+"  %s\n"
+
+#: ../glade/utils.c:1141
+#, c-format
+msgid ""
+"Couldn't open file:\n"
+"  %s\n"
+msgstr ""
+"Nie je možné otvoriť súbor:\n"
+"  %s\n"
+
+#: ../glade/utils.c:1158
+#, c-format
+msgid ""
+"Error reading from file:\n"
+"  %s\n"
+msgstr ""
+"Chyba pri čítaní zo súboru:\n"
+"  %s\n"
+
+#. This happens under WIN32 when stat is confused by the filename, but this is
+#. harmless, since we know that the directory exists after all.
+#: ../glade/utils.c:1225
+#, c-format
+msgid ""
+"Couldn't create directory:\n"
+"  %s\n"
+msgstr ""
+"Nie je možné vytvoriť priečinok:\n"
+"  %s\n"
+
+#: ../glade/utils.c:1232
+#, c-format
+msgid ""
+"Couldn't access directory:\n"
+"  %s\n"
+msgstr ""
+"Nie je možný prístup k priečinku:\n"
+"  %s\n"
+
+#: ../glade/utils.c:1240
+#, c-format
+msgid ""
+"Invalid directory:\n"
+"  %s\n"
+msgstr ""
+"Neplatný priečinok:\n"
+"  %s\n"
+
+#: ../glade/utils.c:1611
+msgid "Projects"
+msgstr "Projekty"
+
+#: ../glade/utils.c:1628
+msgid "project"
+msgstr "projekt"
+
+#: ../glade/utils.c:1634
+#, c-format
+msgid ""
+"Couldn't open directory:\n"
+"  %s\n"
+msgstr ""
+"Nie je možné otvoriť priečinok:\n"
+"  %s\n"

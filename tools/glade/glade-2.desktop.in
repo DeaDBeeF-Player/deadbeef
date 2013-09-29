@@ -1,0 +1,13 @@
+[Desktop Entry]
+Encoding=UTF-8
+_Name=Glade Interface Designer
+_Comment=Create or open user interface designs for GTK+ or GNOME applications
+Exec=glade-2 %F
+Terminal=false
+Type=Application
+Icon=glade-2.png
+Categories=Application;Development;
+MimeType=application/x-glade
+X-GNOME-Bugzilla-Bugzilla=GNOME
+X-GNOME-Bugzilla-Product=glade
+X-GNOME-Bugzilla-Component=general

@@ -1,0 +1,6668 @@
+# Arabic translations for THIS package.
+# Copyright (C) 2007 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as THIS package.
+# Automatically generated, 2007.
+# Djihed Afifi <djihed@gmail.com>, 2007
+msgid ""
+msgstr ""
+"Project-Id-Version: Arabic\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-04-21 12:55+0100\n"
+"PO-Revision-Date: 2007-04-14 18:49+0100\n"
+"Last-Translator: Djihed Afifi <djihed@gmail.com>\n"
+"Language-Team: Arabeyes <doc@arabeyes.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../glade-2.desktop.in.h:1
+#, fuzzy
+msgid "Create or open user interface designs for GTK+ or GNOME applications"
+msgstr "انشئ او افتح واجهات مستخدم لتطبيقات جي تي كاي+ (‎GTK+) و جنوم"
+
+#: ../glade-2.desktop.in.h:2
+msgid "Glade Interface Designer"
+msgstr "مخطط الواجهة غلايد"
+
+#: ../glade/editor.c:343
+#, fuzzy
+msgid "Grid Options"
+msgstr "خيارات التسلسل"
+
+#: ../glade/editor.c:357
+#, fuzzy
+msgid "Horizontal Spacing:"
+msgstr "الحشو الأفقي"
+
+#: ../glade/editor.c:372
+#, fuzzy
+msgid "Vertical Spacing:"
+msgstr "الحشو العمودي"
+
+#: ../glade/editor.c:390
+#, fuzzy
+msgid "Grid Style:"
+msgstr "أسلوب الأوراق"
+
+#: ../glade/editor.c:396
+msgid "Dots"
+msgstr "نقاط"
+
+#: ../glade/editor.c:405
+msgid "Lines"
+msgstr "سطور"
+
+#: ../glade/editor.c:487
+#, fuzzy
+msgid "Snap Options"
+msgstr "خيارات الإرسال"
+
+#. Horizontal snapping
+#: ../glade/editor.c:502
+#, fuzzy
+msgid "Horizontal Snapping:"
+msgstr "الحشو الأفقي"
+
+#: ../glade/editor.c:508 ../glade/gbwidgets/gbtextview.c:49
+msgid "Left"
+msgstr "يسار"
+
+#: ../glade/editor.c:517 ../glade/gbwidgets/gbtextview.c:50
+msgid "Right"
+msgstr "يمين"
+
+#. Vertical snapping
+#: ../glade/editor.c:526
+#, fuzzy
+msgid "Vertical Snapping:"
+msgstr "الحشو العمودي"
+
+#: ../glade/editor.c:532
+#, fuzzy
+msgid "Top"
+msgstr "الأعلى:"
+
+#: ../glade/editor.c:540
+#, fuzzy
+msgid "Bottom"
+msgstr "الأسفل:"
+
+#: ../glade/editor.c:741
+msgid "GtkToolItem widgets can only be added to a GtkToolbar."
+msgstr ""
+
+#: ../glade/editor.c:758
+msgid "Couldn't insert a GtkScrolledWindow widget."
+msgstr ""
+
+#: ../glade/editor.c:805
+#, fuzzy
+msgid "Couldn't insert a GtkViewport widget."
+msgstr "الحشو الذي سيدخل في أعلى القطعة."
+
+#: ../glade/editor.c:832
+#, fuzzy
+msgid "Couldn't add new widget."
+msgstr "تعذّر إضافة هويّة المستخدم (id)"
+
+#: ../glade/editor.c:1230
+msgid ""
+"You can't add a widget at the selected position.\n"
+"\n"
+"Tip: GTK+ uses containers to lay out widgets.\n"
+"Try deleting the existing widget and using\n"
+"a box or table container instead.\n"
+msgstr ""
+
+#: ../glade/editor.c:3517
+#, fuzzy
+msgid "Couldn't delete widget."
+msgstr "غير قادر على حذف المفتاح"
+
+#: ../glade/editor.c:3541 ../glade/editor.c:3545
+#, fuzzy
+msgid "The widget can't be deleted"
+msgstr "لا يمكن حذف السِمة"
+
+#: ../glade/editor.c:3572
+msgid ""
+"The widget is created automatically as part of the parent widget, and it "
+"can't be deleted."
+msgstr ""
+
+#: ../glade/gbwidget.c:697
+#, fuzzy
+msgid "Border Width:"
+msgstr "عرض الحد"
+
+#: ../glade/gbwidget.c:698
+#, fuzzy
+msgid "The width of the border around the container"
+msgstr "عرض الحد الفارغ خارج أبناء الحاويات"
+
+#: ../glade/gbwidget.c:1751
+msgid "Select"
+msgstr "انتقِ"
+
+#: ../glade/gbwidget.c:1773
+#, fuzzy
+msgid "Remove Scrolled Window"
+msgstr "لنافذة ملفوفة"
+
+#: ../glade/gbwidget.c:1782
+#, fuzzy
+msgid "Add Scrolled Window"
+msgstr "لنافذة ملفوفة"
+
+#: ../glade/gbwidget.c:1803
+#, fuzzy
+msgid "Remove Alignment"
+msgstr "السطر المحذوف"
+
+#: ../glade/gbwidget.c:1811
+#, fuzzy
+msgid "Add Alignment"
+msgstr "محاذاة:"
+
+#: ../glade/gbwidget.c:1826
+#, fuzzy
+msgid "Remove Event Box"
+msgstr "صندوق حدث"
+
+#: ../glade/gbwidget.c:1834
+#, fuzzy
+msgid "Add Event Box"
+msgstr "صندوق حدث"
+
+#: ../glade/gbwidget.c:1844
+#, fuzzy
+msgid "Redisplay"
+msgstr "العرض"
+
+#: ../glade/gbwidget.c:1859
+msgid "Cut"
+msgstr "قص"
+
+#: ../glade/gbwidget.c:1866 ../glade/property.c:892 ../glade/property.c:5141
+#, fuzzy
+msgid "Copy"
+msgstr "ان_سخ"
+
+#: ../glade/gbwidget.c:1875 ../glade/property.c:904
+#, fuzzy
+msgid "Paste"
+msgstr "ال_صق"
+
+#: ../glade/gbwidget.c:1887 ../glade/property.c:1581 ../glade/property.c:5132
+msgid "Delete"
+msgstr "حدف"
+
+#. N/A stands for 'Not Applicable'. It is used when a standard widget
+#. property does not apply to the current widget. e.g. widgets without
+#. windows can't use the Events property. This appears in the property
+#. editor and so should be a short abbreviation.
+#: ../glade/gbwidget.c:2414 ../glade/gbwidget.c:2483
+msgid "N/A"
+msgstr "غير متوفر"
+
+#. General code for container - has to remove all children and add back
+#. NOTE: this may not work for specialised containers.
+#. NOTE: need to ref widgets?
+#: ../glade/gbwidget.c:3213
+#, fuzzy
+msgid "replacing child of container - not implemented yet\n"
+msgstr "عفوا، لا تعيينات متقدمة مضمنة حاليا."
+
+#: ../glade/gbwidget.c:3441
+msgid "Couldn't insert GtkAlignment widget."
+msgstr ""
+
+#: ../glade/gbwidget.c:3481
+#, fuzzy
+msgid "Couldn't remove GtkAlignment widget."
+msgstr "لا يمكن حذف عنصر"
+
+#: ../glade/gbwidget.c:3505
+#, fuzzy
+msgid "Couldn't insert GtkEventBox widget."
+msgstr "غير قادر على كتابة المفتاح للملف"
+
+#: ../glade/gbwidget.c:3544
+#, fuzzy
+msgid "Couldn't remove GtkEventBox widget."
+msgstr "تعذّر الحصول على بيانات المفتاح"
+
+#: ../glade/gbwidget.c:3579
+msgid "Couldn't insert GtkScrolledWindow widget."
+msgstr ""
+
+#: ../glade/gbwidget.c:3618
+msgid "Couldn't remove GtkScrolledWindow widget."
+msgstr ""
+
+#: ../glade/gbwidget.c:3732
+#, fuzzy
+msgid "Remove Label"
+msgstr "حذف طبقة"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:79
+#, fuzzy
+msgid "Application Name"
+msgstr "قائمة التطبيقات"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:103 ../glade/gnome/gnomeabout.c:137
+#, fuzzy
+msgid "Logo:"
+msgstr "لغ"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:103 ../glade/gnome/gnomeabout.c:137
+#, fuzzy
+msgid "The pixmap to use as the logo"
+msgstr "السِّمة المستعملة لحوار القفل."
+
+#: ../glade/gbwidgets/gbaboutdialog.c:105 ../glade/glade_project_options.c:260
+#, fuzzy
+msgid "Program Name:"
+msgstr "اسم البرنامج"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:105
+#, fuzzy
+msgid "The name of the application"
+msgstr "تطبيقات أخرى مختلفة"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:106 ../glade/gnome/gnomeabout.c:139
+#, fuzzy
+msgid "Comments:"
+msgstr "ال_تعليق:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:106
+msgid "Additional information, such as a description of the application"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:107 ../glade/gnome/gnomeabout.c:138
+msgid "Copyright:"
+msgstr "حقوق النسخ:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:107 ../glade/gnome/gnomeabout.c:138
+#, fuzzy
+msgid "The copyright notice"
+msgstr "تنبيه أمني"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:109
+#, fuzzy
+msgid "Website URL:"
+msgstr "موقع الانترنت"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:109
+#, fuzzy
+msgid "The URL of the application's website"
+msgstr "اعرض نسخة التّطبيق"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:110
+#, fuzzy
+msgid "Website Label:"
+msgstr "عنوان موقع الويب"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:110
+#, fuzzy
+msgid "The label to display for the link to the website"
+msgstr "الأسم الذي سيعرض للمستخدم لهذا المرجوع"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:112 ../glade/glade_project_options.c:365
+#, fuzzy
+msgid "License:"
+msgstr "الترخيص"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:112
+#, fuzzy
+msgid "The license details of the application"
+msgstr "كتيّب هذا التطبيق"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:113
+#, fuzzy
+msgid "Wrap License:"
+msgstr "لف الرخصة"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:113
+#, fuzzy
+msgid "If the license text should be wrapped"
+msgstr "ما إذا توجب أن يكون زر القفل مكبوسا أم لا"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:115 ../glade/gnome/gnomeabout.c:141
+#, fuzzy
+msgid "Authors:"
+msgstr "المؤلف:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:115 ../glade/gnome/gnomeabout.c:141
+#, fuzzy
+msgid "The authors of the package, one on each line"
+msgstr "عرض لوح الفهرس والبحث."
+
+#: ../glade/gbwidgets/gbaboutdialog.c:116 ../glade/gnome/gnomeabout.c:142
+#, fuzzy
+msgid "Documenters:"
+msgstr "الموثّقون"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:116 ../glade/gnome/gnomeabout.c:142
+#, fuzzy
+msgid "The documenters of the package, one on each line"
+msgstr "المكون الأحمر للون الخلفية."
+
+#: ../glade/gbwidgets/gbaboutdialog.c:117
+#, fuzzy
+msgid "Artists:"
+msgstr "فنان: "
+
+#: ../glade/gbwidgets/gbaboutdialog.c:117
+#, fuzzy
+msgid ""
+"The people who have created the artwork for the package, one on each line"
+msgstr "قائمة بالأشخاص الذي شاركوا بأعمال فنية للبرنامج"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:118 ../glade/gnome/gnomeabout.c:143
+msgid "Translators:"
+msgstr "المترجمون:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:118 ../glade/gnome/gnomeabout.c:143
+msgid ""
+"The translators of the package. This should normally be left empty so that "
+"translators can add their names in the po files"
+msgstr ""
+
+#: ../glade/gbwidgets/gbaboutdialog.c:588
+msgid "About Dialog"
+msgstr "حوار حوْل"
+
+#: ../glade/gbwidgets/gbaccellabel.c:200
+#, fuzzy
+msgid "Label with Accelerator"
+msgstr "مُسَرِّع"
+
+#. The GtkProgress interface is deprecated now, and GtkProgressBar doesn't
+#. have functions to set these, so I suppose we shouldn't support them.
+#: ../glade/gbwidgets/gbalignment.c:71 ../glade/gbwidgets/gbarrow.c:89
+#: ../glade/gbwidgets/gbaspectframe.c:130 ../glade/gbwidgets/gbimage.c:119
+#: ../glade/gbwidgets/gblabel.c:181 ../glade/gbwidgets/gbprogressbar.c:162
+#, fuzzy
+msgid "X Align:"
+msgstr "تنسيق س"
+
+#: ../glade/gbwidgets/gbalignment.c:72
+#, fuzzy
+msgid "The horizontal alignment of the child widget"
+msgstr "الترصيف الأفقي للشارة"
+
+#: ../glade/gbwidgets/gbalignment.c:74 ../glade/gbwidgets/gbarrow.c:92
+#: ../glade/gbwidgets/gbaspectframe.c:133 ../glade/gbwidgets/gbimage.c:122
+#: ../glade/gbwidgets/gblabel.c:184 ../glade/gbwidgets/gbprogressbar.c:165
+#, fuzzy
+msgid "Y Align:"
+msgstr "تنسيق ص"
+
+#: ../glade/gbwidgets/gbalignment.c:75
+#, fuzzy
+msgid "The vertical alignment of the child widget"
+msgstr "الترصيف العمودي للشارة"
+
+#: ../glade/gbwidgets/gbalignment.c:77
+#, fuzzy
+msgid "X Scale:"
+msgstr "_مقياس:"
+
+#: ../glade/gbwidgets/gbalignment.c:78
+#, fuzzy
+msgid "The horizontal scale of the child widget"
+msgstr "الإسم الداخلي للقطعة"
+
+#: ../glade/gbwidgets/gbalignment.c:80
+#, fuzzy
+msgid "Y Scale:"
+msgstr "_مقياس:"
+
+#: ../glade/gbwidgets/gbalignment.c:81
+#, fuzzy
+msgid "The vertical scale of the child widget"
+msgstr "الإسم الداخلي للقطعة"
+
+#: ../glade/gbwidgets/gbalignment.c:85
+#, fuzzy
+msgid "Top Padding:"
+msgstr "الحشو الأعلى"
+
+#: ../glade/gbwidgets/gbalignment.c:86
+#, fuzzy
+msgid "Space to put above the child widget"
+msgstr "لا يمكن اللق لقطع مختلفة"
+
+#: ../glade/gbwidgets/gbalignment.c:89
+#, fuzzy
+msgid "Bottom Padding:"
+msgstr "الحشو الأسفل"
+
+#: ../glade/gbwidgets/gbalignment.c:90
+#, fuzzy
+msgid "Space to put below the child widget"
+msgstr "لا يمكن اللق لقطع مختلفة"
+
+#: ../glade/gbwidgets/gbalignment.c:93
+#, fuzzy
+msgid "Left Padding:"
+msgstr "الحشو الأيسر"
+
+#: ../glade/gbwidgets/gbalignment.c:94
+#, fuzzy
+msgid "Space to put to the left of the child widget"
+msgstr "الحشو الذي سيدخل عند يسار القطعة"
+
+#: ../glade/gbwidgets/gbalignment.c:97
+#, fuzzy
+msgid "Right Padding:"
+msgstr "الحشو الأيمن"
+
+#: ../glade/gbwidgets/gbalignment.c:98
+#, fuzzy
+msgid "Space to put to the right of the child widget"
+msgstr "الحشو·الذي·سيدخل·على·يمين·القطعة"
+
+#: ../glade/gbwidgets/gbalignment.c:255
+#, fuzzy
+msgid "Alignment"
+msgstr "محاذاة:"
+
+#: ../glade/gbwidgets/gbarrow.c:85
+msgid "Direction:"
+msgstr "الإتجاه:"
+
+#: ../glade/gbwidgets/gbarrow.c:85
+#, fuzzy
+msgid "The direction of the arrow"
+msgstr "اتجاه الحزمة لشريط القائمة"
+
+#: ../glade/gbwidgets/gbarrow.c:87 ../glade/gbwidgets/gbaspectframe.c:128
+#: ../glade/gbwidgets/gbclist.c:247 ../glade/gbwidgets/gbctree.c:253
+#: ../glade/gbwidgets/gbframe.c:123 ../glade/gbwidgets/gbhandlebox.c:109
+#: ../glade/gbwidgets/gbviewport.c:104 ../glade/gnome/bonobodockitem.c:176
+#, fuzzy
+msgid "Shadow:"
+msgstr "ظل"
+
+#: ../glade/gbwidgets/gbarrow.c:87
+#, fuzzy
+msgid "The shadow type of the arrow"
+msgstr "نوع النافذة"
+
+#: ../glade/gbwidgets/gbarrow.c:90
+#, fuzzy
+msgid "The horizontal alignment of the arrow"
+msgstr "الترصيف الأفقي للشارة"
+
+#: ../glade/gbwidgets/gbarrow.c:93
+#, fuzzy
+msgid "The vertical alignment of the arrow"
+msgstr "الترصيف العمودي للشارة"
+
+#: ../glade/gbwidgets/gbarrow.c:95 ../glade/gbwidgets/gbimage.c:125
+#: ../glade/gbwidgets/gblabel.c:187
+#, fuzzy
+msgid "X Pad:"
+msgstr "حشو س"
+
+#: ../glade/gbwidgets/gbarrow.c:95 ../glade/gbwidgets/gbimage.c:125
+#: ../glade/gbwidgets/gblabel.c:187 ../glade/gbwidgets/gbtable.c:382
+#, fuzzy
+msgid "The horizontal padding"
+msgstr "الحشو الأفقي"
+
+#: ../glade/gbwidgets/gbarrow.c:97 ../glade/gbwidgets/gbimage.c:127
+#: ../glade/gbwidgets/gblabel.c:189
+#, fuzzy
+msgid "Y Pad:"
+msgstr "حشو ص"
+
+#: ../glade/gbwidgets/gbarrow.c:97 ../glade/gbwidgets/gbimage.c:127
+#: ../glade/gbwidgets/gblabel.c:189 ../glade/gbwidgets/gbtable.c:385
+#, fuzzy
+msgid "The vertical padding"
+msgstr "الحشو العمودي"
+
+#: ../glade/gbwidgets/gbarrow.c:299
+msgid "Arrow"
+msgstr "سهم"
+
+#: ../glade/gbwidgets/gbaspectframe.c:122 ../glade/gbwidgets/gbframe.c:117
+#, fuzzy
+msgid "Label X Align:"
+msgstr "ترصيف س للعلامة"
+
+#: ../glade/gbwidgets/gbaspectframe.c:123 ../glade/gbwidgets/gbframe.c:118
+#, fuzzy
+msgid "The horizontal alignment of the frame's label widget"
+msgstr "الترصيف الأفقي للشارة"
+
+#: ../glade/gbwidgets/gbaspectframe.c:125 ../glade/gbwidgets/gbframe.c:120
+#, fuzzy
+msgid "Label Y Align:"
+msgstr "ترصيف س للعلامة"
+
+#: ../glade/gbwidgets/gbaspectframe.c:126 ../glade/gbwidgets/gbframe.c:121
+#, fuzzy
+msgid "The vertical alignment of the frame's label widget"
+msgstr "الترصيف العمودي للشارة"
+
+#: ../glade/gbwidgets/gbaspectframe.c:128 ../glade/gbwidgets/gbframe.c:123
+#, fuzzy
+msgid "The type of shadow of the frame"
+msgstr "نوع الملف."
+
+#: ../glade/gbwidgets/gbaspectframe.c:131
+#: ../glade/gbwidgets/gbaspectframe.c:134
+#, fuzzy
+msgid "The horizontal alignment of the frame's child"
+msgstr "الترصيف الأفقي للشارة"
+
+#: ../glade/gbwidgets/gbaspectframe.c:136
+#, fuzzy
+msgid "Ratio:"
+msgstr "النسبة"
+
+#: ../glade/gbwidgets/gbaspectframe.c:137
+#, fuzzy
+msgid "The aspect ratio of the frame's child"
+msgstr "فرض نسبة الإشعاع حتى تناسب نسبة إطار الإبن"
+
+#: ../glade/gbwidgets/gbaspectframe.c:138
+#, fuzzy
+msgid "Obey Child:"
+msgstr "ابن مطيع"
+
+#: ../glade/gbwidgets/gbaspectframe.c:139
+#, fuzzy
+msgid "If the aspect ratio should be determined by the child"
+msgstr "ما إذا توجب أن يكون زر التغيير نشطا أم لا"
+
+#: ../glade/gbwidgets/gbaspectframe.c:319
+msgid "Aspect Frame"
+msgstr "إطار معدل"
+
+#: ../glade/gbwidgets/gbbutton.c:118 ../glade/gbwidgets/gbcheckbutton.c:85
+#: ../glade/gbwidgets/gbmenutoolbutton.c:85
+#: ../glade/gbwidgets/gbradiobutton.c:126
+#: ../glade/gbwidgets/gbradiotoolbutton.c:133
+#: ../glade/gbwidgets/gbtogglebutton.c:88
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:90
+#: ../glade/gbwidgets/gbtoolbutton.c:104
+#, fuzzy
+msgid "Stock Button:"
+msgstr "زر مدعوم"
+
+#: ../glade/gbwidgets/gbbutton.c:119 ../glade/gbwidgets/gbcheckbutton.c:86
+#: ../glade/gbwidgets/gbmenutoolbutton.c:86
+#: ../glade/gbwidgets/gbradiobutton.c:127
+#: ../glade/gbwidgets/gbradiotoolbutton.c:134
+#: ../glade/gbwidgets/gbtogglebutton.c:89
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:91
+#: ../glade/gbwidgets/gbtoolbutton.c:105
+#, fuzzy
+msgid "The stock button to use"
+msgstr "المنطقة الزمنية التي ستُستعمل"
+
+#. For now we don't support editing the menuitem properties in the property
+#. editor. The menu editor has to be used instead.
+#: ../glade/gbwidgets/gbbutton.c:121 ../glade/gbwidgets/gbcheckbutton.c:88
+#: ../glade/gbwidgets/gbcheckmenuitem.c:72
+#: ../glade/gbwidgets/gbimagemenuitem.c:92 ../glade/gbwidgets/gblabel.c:169
+#: ../glade/gbwidgets/gblistitem.c:73 ../glade/gbwidgets/gbmenuitem.c:87
+#: ../glade/gbwidgets/gbmenutoolbutton.c:88
+#: ../glade/gbwidgets/gbradiobutton.c:129
+#: ../glade/gbwidgets/gbradiomenuitem.c:103
+#: ../glade/gbwidgets/gbradiotoolbutton.c:136
+#: ../glade/gbwidgets/gbtogglebutton.c:91
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:93
+#: ../glade/gbwidgets/gbtoolbutton.c:107 ../glade/glade_menu_editor.c:748
+#: ../glade/gnome/gnomehref.c:68
+#, fuzzy
+msgid "Label:"
+msgstr "عنوان"
+
+#: ../glade/gbwidgets/gbbutton.c:121 ../glade/gbwidgets/gbcheckbutton.c:88
+#: ../glade/gbwidgets/gbcheckmenuitem.c:72 ../glade/gbwidgets/gbentry.c:100
+#: ../glade/gbwidgets/gbimagemenuitem.c:92 ../glade/gbwidgets/gblabel.c:169
+#: ../glade/gbwidgets/gblistitem.c:73 ../glade/gbwidgets/gbmenuitem.c:87
+#: ../glade/gbwidgets/gbmenutoolbutton.c:88
+#: ../glade/gbwidgets/gbradiobutton.c:129
+#: ../glade/gbwidgets/gbradiomenuitem.c:103
+#: ../glade/gbwidgets/gbradiotoolbutton.c:136
+#: ../glade/gbwidgets/gbtextview.c:124 ../glade/gbwidgets/gbtogglebutton.c:91
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:93
+#: ../glade/gbwidgets/gbtoolbutton.c:107 ../glade/gnome-db/gnomedbeditor.c:64
+msgid "The text to display"
+msgstr "النص المعروض"
+
+#: ../glade/gbwidgets/gbbutton.c:122 ../glade/gbwidgets/gbcheckbutton.c:89
+#: ../glade/gbwidgets/gbimage.c:107 ../glade/gbwidgets/gbmenutoolbutton.c:89
+#: ../glade/gbwidgets/gbradiobutton.c:130
+#: ../glade/gbwidgets/gbradiotoolbutton.c:137
+#: ../glade/gbwidgets/gbtogglebutton.c:92
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:94
+#: ../glade/gbwidgets/gbtoolbutton.c:108 ../glade/gbwidgets/gbwindow.c:297
+#: ../glade/glade_menu_editor.c:814
+msgid "Icon:"
+msgstr "أيقونة:"
+
+#: ../glade/gbwidgets/gbbutton.c:123 ../glade/gbwidgets/gbcheckbutton.c:90
+#: ../glade/gbwidgets/gbimage.c:108 ../glade/gbwidgets/gbmenutoolbutton.c:90
+#: ../glade/gbwidgets/gbradiobutton.c:131
+#: ../glade/gbwidgets/gbradiotoolbutton.c:138
+#: ../glade/gbwidgets/gbtogglebutton.c:93
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:95
+#: ../glade/gbwidgets/gbtoolbutton.c:109
+#, fuzzy
+msgid "The icon to display"
+msgstr "النص المعروض"
+
+#: ../glade/gbwidgets/gbbutton.c:125 ../glade/gbwidgets/gbcheckbutton.c:92
+#: ../glade/gbwidgets/gbradiobutton.c:133
+#: ../glade/gbwidgets/gbtogglebutton.c:95
+#, fuzzy
+msgid "Button Relief:"
+msgstr "تحرير الزر"
+
+#: ../glade/gbwidgets/gbbutton.c:126 ../glade/gbwidgets/gbcheckbutton.c:93
+#: ../glade/gbwidgets/gbradiobutton.c:134
+#: ../glade/gbwidgets/gbtogglebutton.c:96
+#, fuzzy
+msgid "The relief style of the button"
+msgstr "حالة التحول للزر"
+
+#: ../glade/gbwidgets/gbbutton.c:131
+#, fuzzy
+msgid "Response ID:"
+msgstr "هوية الإجابة"
+
+#: ../glade/gbwidgets/gbbutton.c:132
+msgid ""
+"The response code returned when the button is pressed. Select one of the "
+"standard responses or enter a positive integer value"
+msgstr ""
+
+#: ../glade/gbwidgets/gbbutton.c:137 ../glade/gbwidgets/gbcheckbutton.c:102
+#: ../glade/gbwidgets/gbcolorbutton.c:70 ../glade/gbwidgets/gbcombobox.c:83
+#: ../glade/gbwidgets/gbcomboboxentry.c:82
+#: ../glade/gbwidgets/gbfontbutton.c:78 ../glade/gbwidgets/gbradiobutton.c:148
+#: ../glade/gbwidgets/gbtogglebutton.c:103
+#: ../glade/gnome/gnomecolorpicker.c:76 ../glade/gnome/gnomefontpicker.c:109
+#: ../glade/gnome/gnomehref.c:70
+#, fuzzy
+msgid "Focus On Click:"
+msgstr "تركيز عند النقر"
+
+#: ../glade/gbwidgets/gbbutton.c:137 ../glade/gbwidgets/gbcheckbutton.c:102
+#: ../glade/gbwidgets/gbcolorbutton.c:70 ../glade/gbwidgets/gbfontbutton.c:78
+#: ../glade/gbwidgets/gbradiobutton.c:148
+#: ../glade/gbwidgets/gbtogglebutton.c:103
+#: ../glade/gnome/gnomecolorpicker.c:76 ../glade/gnome/gnomefontpicker.c:109
+#: ../glade/gnome/gnomehref.c:70
+#, fuzzy
+msgid "If the button grabs focus when it is clicked"
+msgstr "فيما إذا سيقبض الزر التركيز عند نقره بالفأرة"
+
+#: ../glade/gbwidgets/gbbutton.c:1502
+#, fuzzy
+msgid "Remove Button Contents"
+msgstr "احذف العشرات"
+
+#: ../glade/gbwidgets/gbbutton.c:1600
+msgid "Button"
+msgstr "زر"
+
+#: ../glade/gbwidgets/gbcalendar.c:73
+#, fuzzy
+msgid "Heading:"
+msgstr "ترويس"
+
+#: ../glade/gbwidgets/gbcalendar.c:74
+#, fuzzy
+msgid "If the month and year should be shown at the top"
+msgstr "فيما إذا كان سيتم عرض الحد أم لا"
+
+#: ../glade/gbwidgets/gbcalendar.c:75
+#, fuzzy
+msgid "Day Names:"
+msgstr "اظهار اسماء الأيام"
+
+#: ../glade/gbwidgets/gbcalendar.c:76
+#, fuzzy
+msgid "If the day names should be shown"
+msgstr "فيما إذا كان سيتم عرض الألسنة أم لا"
+
+#: ../glade/gbwidgets/gbcalendar.c:77
+#, fuzzy
+msgid "Fixed Month:"
+msgstr "ثابت ال_عرض:"
+
+#: ../glade/gbwidgets/gbcalendar.c:78
+#, fuzzy
+msgid "If the month and year shouldn't be changeable"
+msgstr "لا يمكن تغيير المالك."
+
+#: ../glade/gbwidgets/gbcalendar.c:79
+#, fuzzy
+msgid "Week Numbers:"
+msgstr "اظهار أرقام الأسابيع"
+
+#: ../glade/gbwidgets/gbcalendar.c:80
+#, fuzzy
+msgid "If the number of the week should be shown"
+msgstr "فيما إذا كان سيتم عرض الحد أم لا"
+
+#: ../glade/gbwidgets/gbcalendar.c:81 ../glade/gnome/gnomedateedit.c:74
+#, fuzzy
+msgid "Monday First:"
+msgstr "الاثنين الاول"
+
+#: ../glade/gbwidgets/gbcalendar.c:82 ../glade/gnome/gnomedateedit.c:75
+msgid "If the week should start on Monday"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcalendar.c:266
+#, fuzzy
+msgid "Calendar"
+msgstr "التقويمات"
+
+#: ../glade/gbwidgets/gbcellview.c:63 ../glade/gnome/gnomedruidpageedge.c:102
+#: ../glade/gnome/gnomedruidpagestandard.c:91
+#, fuzzy
+msgid "Back. Color:"
+msgstr "لون الخلفية"
+
+#: ../glade/gbwidgets/gbcellview.c:64
+msgid "The background color"
+msgstr "لون الخلفية"
+
+#: ../glade/gbwidgets/gbcellview.c:192
+#, fuzzy
+msgid "Cell View"
+msgstr "_عرض كامل"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:96
+#: ../glade/gbwidgets/gbcheckmenuitem.c:73
+#: ../glade/gbwidgets/gbradiobutton.c:137
+#: ../glade/gbwidgets/gbradiomenuitem.c:104
+#: ../glade/gbwidgets/gbradiotoolbutton.c:147
+#: ../glade/gbwidgets/gbtogglebutton.c:99
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:97
+#, fuzzy
+msgid "Initially On:"
+msgstr "التأخير الأوّلي:"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:97
+msgid "If the check button is initially on"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcheckbutton.c:98
+#: ../glade/gbwidgets/gbradiobutton.c:139
+#: ../glade/gbwidgets/gbtogglebutton.c:101
+#, fuzzy
+msgid "Inconsistent:"
+msgstr "تناقض"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:99
+#: ../glade/gbwidgets/gbradiobutton.c:140
+#: ../glade/gbwidgets/gbtogglebutton.c:102
+#, fuzzy
+msgid "If the button is shown in an inconsistent state"
+msgstr "فيما إذا كان زر التحوّل في حالة \"بين\""
+
+#: ../glade/gbwidgets/gbcheckbutton.c:100
+#: ../glade/gbwidgets/gbradiobutton.c:141
+msgid "Indicator:"
+msgstr "موضّح:"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:101
+#: ../glade/gbwidgets/gbradiobutton.c:142
+#, fuzzy
+msgid "If the indicator is always drawn"
+msgstr "ما إذا كان مؤشر ا?دخال سيتم عرضه"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:211
+msgid "Check Button"
+msgstr "زر تحول"
+
+#: ../glade/gbwidgets/gbcheckmenuitem.c:74
+msgid "If the check menu item is initially on"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcheckmenuitem.c:203
+msgid "Check Menu Item"
+msgstr "عنصر القائمة تحكم"
+
+#: ../glade/gbwidgets/gbclist.c:141
+#, fuzzy
+msgid "New columned list"
+msgstr "قائمة بأعمدة"
+
+#. Columns label & entry
+#: ../glade/gbwidgets/gbclist.c:152 ../glade/gbwidgets/gbctree.c:157
+#: ../glade/gbwidgets/gbhbox.c:110 ../glade/gbwidgets/gbhbuttonbox.c:132
+#: ../glade/gbwidgets/gbtable.c:165
+msgid "Number of columns:"
+msgstr "عدد الأعمدة:"
+
+#: ../glade/gbwidgets/gbclist.c:242 ../glade/gbwidgets/gbctree.c:248
+#: ../glade/gbwidgets/gbiconview.c:128 ../glade/gbwidgets/gblist.c:77
+#: ../glade/gnome/gnomeiconlist.c:174
+#, fuzzy
+msgid "Select Mode:"
+msgstr "نمط الانتقاء"
+
+#: ../glade/gbwidgets/gbclist.c:243
+#, fuzzy
+msgid "The selection mode of the columned list"
+msgstr "نظام التحجيم للعمود"
+
+#: ../glade/gbwidgets/gbclist.c:245 ../glade/gbwidgets/gbctree.c:251
+#, fuzzy
+msgid "Show Titles:"
+msgstr "اظهر الوقت"
+
+#: ../glade/gbwidgets/gbclist.c:246 ../glade/gbwidgets/gbctree.c:252
+#, fuzzy
+msgid "If the column titles are shown"
+msgstr "أظهر أزرار رؤوس العمود"
+
+#: ../glade/gbwidgets/gbclist.c:248
+#, fuzzy
+msgid "The type of shadow of the columned list's border"
+msgstr "نوع صندوق الرسالة"
+
+#: ../glade/gbwidgets/gbclist.c:594
+msgid "Columned List"
+msgstr "قائمة بأعمدة"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:65 ../glade/gnome/gnomecolorpicker.c:70
+#, fuzzy
+msgid "Use Alpha:"
+msgstr "استخدم الفا"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:66 ../glade/gnome/gnomecolorpicker.c:71
+#, fuzzy
+msgid "If the alpha channel should be used"
+msgstr "فيما اذا وجب استخدام لوحة ألوان"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:68
+#: ../glade/gbwidgets/gbfilechooserbutton.c:86
+#: ../glade/gbwidgets/gbfontbutton.c:68 ../glade/gbwidgets/gbwindow.c:244
+#: ../glade/gnome/gnomecolorpicker.c:73 ../glade/gnome/gnomedruidpageedge.c:93
+#: ../glade/gnome/gnomedruidpagestandard.c:85
+#: ../glade/gnome/gnomefileentry.c:101 ../glade/gnome/gnomefontpicker.c:95
+#: ../glade/gnome/gnomeiconentry.c:72 ../glade/gnome/gnomepixmapentry.c:82
+#, fuzzy
+msgid "Title:"
+msgstr "الع_نوان:"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:69 ../glade/gnome/gnomecolorpicker.c:74
+msgid "The title of the color selection dialog"
+msgstr "عنوان حوار انتقاء الألوان"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:91
+#: ../glade/gbwidgets/gbcolorbutton.c:119
+#: ../glade/gbwidgets/gbcolorbutton.c:162
+msgid "Pick a Color"
+msgstr "اختر لوناً"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:211
+#, fuzzy
+msgid "Color Chooser Button"
+msgstr "زر حوار تصفّح الملفات"
+
+#: ../glade/gbwidgets/gbcolorselection.c:62
+#, fuzzy
+msgid "Opacity Control:"
+msgstr "له متحكم تعتيم"
+
+#: ../glade/gbwidgets/gbcolorselection.c:63
+#, fuzzy
+msgid "If the opacity control is shown"
+msgstr "ما إذا كان مؤشر ا?دخال سيتم عرضه"
+
+#: ../glade/gbwidgets/gbcolorselection.c:64
+#, fuzzy
+msgid "Palette:"
+msgstr "لوحة"
+
+#: ../glade/gbwidgets/gbcolorselection.c:65
+#, fuzzy
+msgid "If the palette is shown"
+msgstr "ما إذا كان مؤشر ا?دخال سيتم عرضه"
+
+#: ../glade/gbwidgets/gbcolorselection.c:173
+msgid "Color Selection"
+msgstr "انتقاء اللون"
+
+#: ../glade/gbwidgets/gbcolorselectiondialog.c:71
+msgid "Select Color"
+msgstr "تحديد لون"
+
+#: ../glade/gbwidgets/gbcolorselectiondialog.c:316 ../glade/property.c:1276
+msgid "Color Selection Dialog"
+msgstr "حوار انتقاء الألوان"
+
+#: ../glade/gbwidgets/gbcombo.c:105
+#, fuzzy
+msgid "Value In List:"
+msgstr "القيمة في القائمة"
+
+#: ../glade/gbwidgets/gbcombo.c:106
+#, fuzzy
+msgid "If the value must be in the list"
+msgstr "فيما إذا وجب على القيم المدخلة أن تكون موجودةً في القائمة"
+
+#: ../glade/gbwidgets/gbcombo.c:107
+msgid "OK If Empty:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcombo.c:108
+msgid "If an empty value is acceptable, when 'Value In List' is set"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcombo.c:109
+#, fuzzy
+msgid "Case Sensitive:"
+msgstr "ح_ساس لحالة الأحرف"
+
+#: ../glade/gbwidgets/gbcombo.c:110
+#, fuzzy
+msgid "If the searching is case sensitive"
+msgstr "فيما إذا كان تطابق عناصر القائمة حساس للحالة"
+
+#: ../glade/gbwidgets/gbcombo.c:111
+#, fuzzy
+msgid "Use Arrows:"
+msgstr "سهام"
+
+#: ../glade/gbwidgets/gbcombo.c:112
+msgid "If arrows can be used to change the value"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcombo.c:113
+#, fuzzy
+msgid "Use Always:"
+msgstr "دائماً"
+
+#: ../glade/gbwidgets/gbcombo.c:114
+msgid "If arrows work even if the value is not in the list"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcombo.c:115 ../glade/gbwidgets/gbcombobox.c:78
+#: ../glade/gbwidgets/gbcomboboxentry.c:75
+#, fuzzy
+msgid "Items:"
+msgstr "ع_ناصر:"
+
+#: ../glade/gbwidgets/gbcombo.c:116 ../glade/gbwidgets/gbcombobox.c:79
+#: ../glade/gbwidgets/gbcomboboxentry.c:76
+#, fuzzy
+msgid "The items in the combo list, one per line"
+msgstr "العناصر في هذه الكومبو"
+
+#: ../glade/gbwidgets/gbcombo.c:425 ../glade/gbwidgets/gbcombobox.c:289
+msgid "Combo Box"
+msgstr "إطار كومبو"
+
+#: ../glade/gbwidgets/gbcombobox.c:81 ../glade/gbwidgets/gbcomboboxentry.c:78
+#, fuzzy
+msgid "Add Tearoffs:"
+msgstr "إضافة قاطفات للقوائم"
+
+#: ../glade/gbwidgets/gbcombobox.c:82 ../glade/gbwidgets/gbcomboboxentry.c:79
+msgid "Whether dropdowns should have a tearoff menu item"
+msgstr "فيما إذا وجب أن يكون للقوائم النازلة عنصر قطع"
+
+#: ../glade/gbwidgets/gbcombobox.c:84 ../glade/gbwidgets/gbcomboboxentry.c:83
+#, fuzzy
+msgid "Whether the combo box grabs focus when it is clicked"
+msgstr "فيما إذا سيأخذ الزر التركيز عند نقره بالفأرة"
+
+#: ../glade/gbwidgets/gbcomboboxentry.c:80 ../glade/gbwidgets/gbentry.c:102
+#, fuzzy
+msgid "Has Frame:"
+msgstr "له إطار"
+
+#: ../glade/gbwidgets/gbcomboboxentry.c:81
+msgid "Whether the combo box draws a frame around the child"
+msgstr "إذا ما كان صندوق الإختيار يرسم إطارا حول الإبن"
+
+#: ../glade/gbwidgets/gbcomboboxentry.c:302
+msgid "Combo Box Entry"
+msgstr "مدخل إطار كومبو"
+
+#: ../glade/gbwidgets/gbctree.c:146
+#, fuzzy
+msgid "New columned tree"
+msgstr "تقويم جديد"
+
+#: ../glade/gbwidgets/gbctree.c:249
+#, fuzzy
+msgid "The selection mode of the columned tree"
+msgstr "نظام التحجيم للعمود"
+
+#: ../glade/gbwidgets/gbctree.c:254
+msgid "The type of shadow of the columned tree's border"
+msgstr ""
+
+#: ../glade/gbwidgets/gbctree.c:538
+#, fuzzy
+msgid "Columned Tree"
+msgstr "رأس العمود"
+
+#: ../glade/gbwidgets/gbcurve.c:85 ../glade/gbwidgets/gbwindow.c:247
+#, fuzzy
+msgid "Type:"
+msgstr "_نوع"
+
+#: ../glade/gbwidgets/gbcurve.c:85
+#, fuzzy
+msgid "The type of the curve"
+msgstr "نوع الملف."
+
+#: ../glade/gbwidgets/gbcurve.c:87 ../glade/gbwidgets/gbgammacurve.c:91
+#, fuzzy
+msgid "X Min:"
+msgstr "عدد أوسط:"
+
+#: ../glade/gbwidgets/gbcurve.c:87 ../glade/gbwidgets/gbgammacurve.c:91
+#, fuzzy
+msgid "The minimum horizontal value"
+msgstr "القيمة الدنيا"
+
+#: ../glade/gbwidgets/gbcurve.c:88 ../glade/gbwidgets/gbgammacurve.c:92
+#, fuzzy
+msgid "X Max:"
+msgstr "فاكس:"
+
+#: ../glade/gbwidgets/gbcurve.c:88 ../glade/gbwidgets/gbgammacurve.c:92
+#, fuzzy
+msgid "The maximum horizontal value"
+msgstr "القيمة القصوى"
+
+#: ../glade/gbwidgets/gbcurve.c:89 ../glade/gbwidgets/gbgammacurve.c:93
+#, fuzzy
+msgid "Y Min:"
+msgstr "عدد أوسط:"
+
+#: ../glade/gbwidgets/gbcurve.c:89 ../glade/gbwidgets/gbgammacurve.c:93
+#, fuzzy
+msgid "The minimum vertical value"
+msgstr "القيمة الدنيا"
+
+#: ../glade/gbwidgets/gbcurve.c:90 ../glade/gbwidgets/gbgammacurve.c:94
+#, fuzzy
+msgid "Y Max:"
+msgstr "فاكس:"
+
+#: ../glade/gbwidgets/gbcurve.c:90 ../glade/gbwidgets/gbgammacurve.c:94
+#, fuzzy
+msgid "The maximum vertical value"
+msgstr "القيمة القصوى"
+
+#: ../glade/gbwidgets/gbcurve.c:250
+msgid "Curve"
+msgstr "منحنى"
+
+#: ../glade/gbwidgets/gbcustom.c:154
+#, fuzzy
+msgid "Creation Function:"
+msgstr "وظيفة الإنشاء"
+
+#: ../glade/gbwidgets/gbcustom.c:155
+#, fuzzy
+msgid "The function which creates the widget"
+msgstr "الوظيفة التي تنشئ هذه القطعة"
+
+#: ../glade/gbwidgets/gbcustom.c:157
+#, fuzzy
+msgid "String1:"
+msgstr "نصّ 1"
+
+#: ../glade/gbwidgets/gbcustom.c:158
+msgid "The first string argument to pass to the function"
+msgstr "النص الأول المعطى للوظيفة"
+
+#: ../glade/gbwidgets/gbcustom.c:159
+#, fuzzy
+msgid "String2:"
+msgstr "سلسلة2"
+
+#: ../glade/gbwidgets/gbcustom.c:160
+msgid "The second string argument to pass to the function"
+msgstr "النص الثاني المعطى للوظيفة"
+
+#: ../glade/gbwidgets/gbcustom.c:161
+#, fuzzy
+msgid "Int1:"
+msgstr "داخل:"
+
+#: ../glade/gbwidgets/gbcustom.c:162
+msgid "The first integer argument to pass to the function"
+msgstr "العدد الصحيح الأول المعطى للوظيفة"
+
+#: ../glade/gbwidgets/gbcustom.c:163
+#, fuzzy
+msgid "Int2:"
+msgstr "داخل:"
+
+#: ../glade/gbwidgets/gbcustom.c:164
+msgid "The second integer argument to pass to the function"
+msgstr "العدد صحيح الثاني المعطى للوظيفة"
+
+#: ../glade/gbwidgets/gbcustom.c:380
+#, fuzzy
+msgid "Custom Widget"
+msgstr "قطعة مخصصة"
+
+#: ../glade/gbwidgets/gbdialog.c:293
+#, fuzzy
+msgid "New dialog"
+msgstr "حوار"
+
+#: ../glade/gbwidgets/gbdialog.c:305
+#, fuzzy
+msgid "Cancel, OK"
+msgstr "إلغي"
+
+#: ../glade/gbwidgets/gbdialog.c:314 ../glade/glade.c:367
+#: ../glade/glade_project_window.c:1322 ../glade/property.c:5162
+msgid "OK"
+msgstr "موافق"
+
+#: ../glade/gbwidgets/gbdialog.c:323
+#, fuzzy
+msgid "Cancel, Apply, OK"
+msgstr "إلغاء ال_كل"
+
+#: ../glade/gbwidgets/gbdialog.c:332
+msgid "Close"
+msgstr "أغلق"
+
+#: ../glade/gbwidgets/gbdialog.c:341
+#, fuzzy
+msgid "_Standard Button Layout:"
+msgstr "تصاميم الأزرار"
+
+#: ../glade/gbwidgets/gbdialog.c:350
+#, fuzzy
+msgid "_Number of Buttons:"
+msgstr "_عدد القنابل:"
+
+#: ../glade/gbwidgets/gbdialog.c:367
+#, fuzzy
+msgid "Show Help Button"
+msgstr "إظهار أزرار المساعدة"
+
+#: ../glade/gbwidgets/gbdialog.c:398
+#, fuzzy
+msgid "Has Separator:"
+msgstr "له فاصل"
+
+#: ../glade/gbwidgets/gbdialog.c:399
+#, fuzzy
+msgid "If the dialog has a horizontal separator above the buttons"
+msgstr "للحوار عمود فاصل فوق أزراره"
+
+#: ../glade/gbwidgets/gbdialog.c:606
+msgid "Dialog"
+msgstr "حوار"
+
+#: ../glade/gbwidgets/gbdrawingarea.c:146
+msgid "Drawing Area"
+msgstr "مساحة رسم"
+
+#: ../glade/gbwidgets/gbentry.c:94 ../glade/gbwidgets/gbtextview.c:115
+#: ../glade/gnome-db/gnomedbeditor.c:62
+#, fuzzy
+msgid "Editable:"
+msgstr "نص قابل للتحرير"
+
+#: ../glade/gbwidgets/gbentry.c:94 ../glade/gbwidgets/gbtextview.c:116
+#: ../glade/gnome-db/gnomedbeditor.c:62
+#, fuzzy
+msgid "If the text can be edited"
+msgstr "إذا يمكن تحرير ال html "
+
+#: ../glade/gbwidgets/gbentry.c:95
+#, fuzzy
+msgid "Text Visible:"
+msgstr "ملف نصي"
+
+#: ../glade/gbwidgets/gbentry.c:96
+msgid ""
+"If the text entered by the user will be shown. When turned off, the text "
+"typed in is displayed as asterix characters, which is useful for entering "
+"passwords"
+msgstr ""
+
+#: ../glade/gbwidgets/gbentry.c:97
+#, fuzzy
+msgid "Max Length:"
+msgstr "الطول:"
+
+#: ../glade/gbwidgets/gbentry.c:98
+#, fuzzy
+msgid "The maximum length of the text"
+msgstr "قيمة التسوية القصوى"
+
+#: ../glade/gbwidgets/gbentry.c:100 ../glade/gbwidgets/gbprogressbar.c:143
+#: ../glade/gbwidgets/gbtextview.c:124 ../glade/gnome-db/gnomedbeditor.c:64
+#: ../glade/gnome-db/gnomedbgraybar.c:59
+#: ../glade/gnome/gnomedruidpageedge.c:95 ../glade/property.c:926
+#, fuzzy
+msgid "Text:"
+msgstr "_نص"
+
+#: ../glade/gbwidgets/gbentry.c:102
+msgid "If the entry has a frame around it"
+msgstr ""
+
+#: ../glade/gbwidgets/gbentry.c:103
+#, fuzzy
+msgid "Invisible Char:"
+msgstr "مخفي"
+
+#: ../glade/gbwidgets/gbentry.c:103
+msgid ""
+"The character to use if the text should not visible, e.g. when entering "
+"passwords"
+msgstr ""
+
+#: ../glade/gbwidgets/gbentry.c:104
+#, fuzzy
+msgid "Activates Default:"
+msgstr "نشّط الإفتراض"
+
+#: ../glade/gbwidgets/gbentry.c:104
+#, fuzzy
+msgid "If the default widget in the window is activated when Enter is pressed"
+msgstr "عرض النافذة الإفتراضي، مستخدم عند عرض النافذة في المرة الأولى"
+
+#: ../glade/gbwidgets/gbentry.c:105
+#, fuzzy
+msgid "Width In Chars:"
+msgstr "العرض بالحروف"
+
+#: ../glade/gbwidgets/gbentry.c:105
+#, fuzzy
+msgid "The number of characters to leave space for in the entry"
+msgstr "عدد الخانات العشرية التي يتم عرضها في القيمة"
+
+#: ../glade/gbwidgets/gbentry.c:318
+msgid "Text Entry"
+msgstr "مدخل نص"
+
+#: ../glade/gbwidgets/gbeventbox.c:65
+#, fuzzy
+msgid "Visible Window:"
+msgstr "النافذة المرئية"
+
+#: ../glade/gbwidgets/gbeventbox.c:65
+msgid "If the event box uses a visible window"
+msgstr ""
+
+#: ../glade/gbwidgets/gbeventbox.c:66
+#, fuzzy
+msgid "Above Child:"
+msgstr "فوق الابن"
+
+#: ../glade/gbwidgets/gbeventbox.c:66
+msgid "If the event box window is above the child widget's window"
+msgstr ""
+
+#: ../glade/gbwidgets/gbeventbox.c:167
+msgid "Event Box"
+msgstr "صندوق حدث"
+
+#: ../glade/gbwidgets/gbexpander.c:54
+#, fuzzy
+msgid "Initially Expanded:"
+msgstr "هو موسع"
+
+#: ../glade/gbwidgets/gbexpander.c:55
+#, fuzzy
+msgid "Whether the expander is initially opened to reveal the child widget"
+msgstr "فيما إذا وقع فتح الموسع للكشف عن القطعة الإبنة"
+
+#: ../glade/gbwidgets/gbexpander.c:57 ../glade/gbwidgets/gbhbox.c:175
+#: ../glade/gbwidgets/gbhbuttonbox.c:199 ../glade/gbwidgets/gbvbox.c:160
+msgid "Spacing:"
+msgstr "المباعدة:"
+
+#: ../glade/gbwidgets/gbexpander.c:58
+#, fuzzy
+msgid "Space to put between the label and the child"
+msgstr "المساحة بين اسم المستخدم و المؤشر"
+
+#: ../glade/gbwidgets/gbexpander.c:105 ../glade/gbwidgets/gbframe.c:225
+#, fuzzy
+msgid "Add Label Widget"
+msgstr "إضافة مفتاح طبقة"
+
+#: ../glade/gbwidgets/gbexpander.c:228
+msgid "Expander"
+msgstr "موسّع"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:87
+#, fuzzy
+msgid "The window title of the file chooser dialog"
+msgstr "عنوان لحوار تصفّح الملفات."
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:88
+#: ../glade/gbwidgets/gbfilechooserwidget.c:86
+#: ../glade/gbwidgets/gbfilechooserdialog.c:158
+#: ../glade/gnome/gnomefileentry.c:109
+#, fuzzy
+msgid "Action:"
+msgstr "أفعال"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:89
+#: ../glade/gbwidgets/gbfilechooserwidget.c:87
+#: ../glade/gbwidgets/gbfilechooserdialog.c:159
+#: ../glade/gnome/gnomefileentry.c:110
+#, fuzzy
+msgid "The type of file operation being performed"
+msgstr "نوع العملية التي يقوم بها منتقي الملفات"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:91
+#: ../glade/gbwidgets/gbfilechooserwidget.c:89
+#: ../glade/gbwidgets/gbfilechooserdialog.c:161
+#, fuzzy
+msgid "Local Only:"
+msgstr "المحلي فقط"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:92
+#: ../glade/gbwidgets/gbfilechooserwidget.c:90
+#: ../glade/gbwidgets/gbfilechooserdialog.c:162
+#, fuzzy
+msgid "Whether the selected files should be limited to local files"
+msgstr "فيما إذا سيقع حد الملفات المنتقات للملف المحلي: العناوين"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:93
+#: ../glade/gbwidgets/gbfilechooserwidget.c:93
+#: ../glade/gbwidgets/gbfilechooserdialog.c:165
+#, fuzzy
+msgid "Show Hidden:"
+msgstr "اظهار المخفي"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:94
+#: ../glade/gbwidgets/gbfilechooserwidget.c:94
+#: ../glade/gbwidgets/gbfilechooserdialog.c:166
+msgid "Whether the hidden files and folders should be displayed"
+msgstr "فيما اذا وجب عرض الملفات و الدلائل المخفية"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:95
+#: ../glade/gbwidgets/gbfilechooserdialog.c:167
+#, fuzzy
+msgid "Confirm:"
+msgstr "التّأ_كيد:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:96
+#: ../glade/gbwidgets/gbfilechooserdialog.c:168
+msgid ""
+"Whether a confirmation dialog will be displayed if a file will be overwritten"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:97
+#: ../glade/gbwidgets/gblabel.c:201
+#, fuzzy
+msgid "Width in Chars:"
+msgstr "العرض بالحروف"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:98
+#, fuzzy
+msgid "The width of the button in characters"
+msgstr "العرض المطلوب لقطعة الزر، بالمحارف"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:296
+msgid "File Chooser Button"
+msgstr "زر حوار تصفّح الملفات"
+
+#: ../glade/gbwidgets/gbfilechooserwidget.c:91
+#: ../glade/gbwidgets/gbfilechooserdialog.c:163
+#, fuzzy
+msgid "Select Multiple:"
+msgstr "إنتقاء متعدّد"
+
+#: ../glade/gbwidgets/gbfilechooserwidget.c:92
+#: ../glade/gbwidgets/gbfilechooserdialog.c:164
+msgid "Whether to allow multiple files to be selected"
+msgstr "ما إذا سيتم السماح بانتقاء ملفات متعددة"
+
+#: ../glade/gbwidgets/gbfilechooserwidget.c:260
+#, fuzzy
+msgid "File Chooser"
+msgstr "حوار الملفات"
+
+#: ../glade/gbwidgets/gbfilechooserdialog.c:435
+msgid "File Chooser Dialog"
+msgstr "حوار تصفّح الملفات"
+
+#: ../glade/gbwidgets/gbfileselection.c:72 ../glade/property.c:1366
+#, fuzzy
+msgid "Select File"
+msgstr "اختر ملف"
+
+#: ../glade/gbwidgets/gbfileselection.c:114
+#, fuzzy
+msgid "File Ops.:"
+msgstr "الملف على أنّه"
+
+#: ../glade/gbwidgets/gbfileselection.c:115
+#, fuzzy
+msgid "If the file operation buttons are shown"
+msgstr "ما إذا كان مؤشر ا?دخال سيتم عرضه"
+
+#: ../glade/gbwidgets/gbfileselection.c:293
+#, fuzzy
+msgid "File Selection Dialog"
+msgstr "حوار انتقاء الخط"
+
+#: ../glade/gbwidgets/gbfixed.c:139 ../glade/gbwidgets/gblayout.c:221
+#, fuzzy
+msgid "X:"
+msgstr "_س:"
+
+#: ../glade/gbwidgets/gbfixed.c:140
+#, fuzzy
+msgid "The X coordinate of the widget in the GtkFixed"
+msgstr "فهرس الإبن عند الأب"
+
+#: ../glade/gbwidgets/gbfixed.c:142 ../glade/gbwidgets/gblayout.c:224
+#, fuzzy
+msgid "Y:"
+msgstr "_ص:"
+
+#: ../glade/gbwidgets/gbfixed.c:143
+#, fuzzy
+msgid "The Y coordinate of the widget in the GtkFixed"
+msgstr "فهرس الإبن عند الأب"
+
+#: ../glade/gbwidgets/gbfixed.c:228
+#, fuzzy
+msgid "Fixed Positions"
+msgstr "موقع النافذة"
+
+#: ../glade/gbwidgets/gbfontbutton.c:69 ../glade/gnome/gnomefontpicker.c:96
+msgid "The title of the font selection dialog"
+msgstr "عنوان حوار انتقاء الخطوط"
+
+#: ../glade/gbwidgets/gbfontbutton.c:70
+#, fuzzy
+msgid "Show Style:"
+msgstr "اظهار الأسلوب"
+
+#: ../glade/gbwidgets/gbfontbutton.c:71
+#, fuzzy
+msgid "If the font style is shown as part of the font information"
+msgstr "لم تكتب جميع المعلومات المطلوبة."
+
+#: ../glade/gbwidgets/gbfontbutton.c:72 ../glade/gnome/gnomefontpicker.c:102
+#, fuzzy
+msgid "Show Size:"
+msgstr "اظهر الوقت"
+
+#: ../glade/gbwidgets/gbfontbutton.c:73 ../glade/gnome/gnomefontpicker.c:103
+#, fuzzy
+msgid "If the font size is shown as part of the font information"
+msgstr "لم تكتب جميع المعلومات المطلوبة."
+
+#: ../glade/gbwidgets/gbfontbutton.c:74 ../glade/gnome/gnomefontpicker.c:104
+#, fuzzy
+msgid "Use Font:"
+msgstr "الخط:"
+
+#: ../glade/gbwidgets/gbfontbutton.c:75 ../glade/gnome/gnomefontpicker.c:105
+msgid "If the selected font is used when displaying the font information"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfontbutton.c:76 ../glade/gnome/gnomefontpicker.c:106
+#, fuzzy
+msgid "Use Size:"
+msgstr "الحجم:"
+
+#: ../glade/gbwidgets/gbfontbutton.c:77
+#, fuzzy
+msgid "if the selected font size is used when displaying the font information"
+msgstr "فيما إذا سيعرض حجم الخط المنتقى في العلامة"
+
+#: ../glade/gbwidgets/gbfontbutton.c:97 ../glade/gbwidgets/gbfontbutton.c:133
+#: ../glade/gbwidgets/gbfontbutton.c:191 ../glade/gnome/gnomefontpicker.c:128
+#: ../glade/gnome/gnomefontpicker.c:199 ../glade/gnome/gnomefontpicker.c:301
+#, fuzzy
+msgid "Pick a Font"
+msgstr "لقط نقطة رمادية"
+
+#: ../glade/gbwidgets/gbfontbutton.c:268
+#, fuzzy
+msgid "Font Chooser Button"
+msgstr "زر حوار تصفّح الملفات"
+
+#: ../glade/gbwidgets/gbfontselection.c:64 ../glade/gnome/gnomefontpicker.c:97
+#, fuzzy
+msgid "Preview Text:"
+msgstr "معاينة:"
+
+#: ../glade/gbwidgets/gbfontselection.c:64
+#, fuzzy
+msgid "The preview text to display"
+msgstr "النص المعروض"
+
+#: ../glade/gbwidgets/gbfontselection.c:170
+msgid "Font Selection"
+msgstr "اختيار الخط"
+
+#: ../glade/gbwidgets/gbfontselectiondialog.c:70
+#, fuzzy
+msgid "Select Font"
+msgstr "انتقي خط"
+
+#: ../glade/gbwidgets/gbfontselectiondialog.c:301
+msgid "Font Selection Dialog"
+msgstr "حوار انتقاء الخط"
+
+#: ../glade/gbwidgets/gbframe.c:360
+msgid "Frame"
+msgstr "إطار"
+
+#: ../glade/gbwidgets/gbgammacurve.c:88
+#, fuzzy
+msgid "Initial Type:"
+msgstr "وقت أولي"
+
+#: ../glade/gbwidgets/gbgammacurve.c:88
+#, fuzzy
+msgid "The initial type of the curve"
+msgstr "نوع mime للملف."
+
+#: ../glade/gbwidgets/gbgammacurve.c:256
+msgid "Gamma Curve"
+msgstr "منحنى غاما"
+
+#: ../glade/gbwidgets/gbhandlebox.c:110
+#, fuzzy
+msgid "The type of shadow around the handle box"
+msgstr "نوع صندوق الرسالة"
+
+#: ../glade/gbwidgets/gbhandlebox.c:113
+#, fuzzy
+msgid "Handle Pos:"
+msgstr "معالجة القافزة"
+
+#: ../glade/gbwidgets/gbhandlebox.c:114
+#, fuzzy
+msgid "The position of the handle"
+msgstr "اتجاه الشريط"
+
+#: ../glade/gbwidgets/gbhandlebox.c:116
+#, fuzzy
+msgid "Snap Edge:"
+msgstr "حافة سريعة"
+
+#: ../glade/gbwidgets/gbhandlebox.c:117
+msgid "The edge of the handle box which snaps into position"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhandlebox.c:304
+msgid "Handle Box"
+msgstr "صندوق"
+
+#: ../glade/gbwidgets/gbhbox.c:99
+#, fuzzy
+msgid "New horizontal box"
+msgstr "صندوق افقي"
+
+#: ../glade/gbwidgets/gbhbox.c:171 ../glade/gbwidgets/gbhbuttonbox.c:194
+#: ../glade/gbwidgets/gbtoolbar.c:267 ../glade/gbwidgets/gbvbox.c:156
+msgid "Size:"
+msgstr "الحجم:"
+
+#: ../glade/gbwidgets/gbhbox.c:171 ../glade/gbwidgets/gbvbox.c:156
+#, fuzzy
+msgid "The number of widgets in the box"
+msgstr "عدد العناصر في الصندوق"
+
+#: ../glade/gbwidgets/gbhbox.c:173 ../glade/gbwidgets/gbtable.c:243
+#: ../glade/gbwidgets/gbtoolbar.c:426 ../glade/gbwidgets/gbvbox.c:158
+#, fuzzy
+msgid "Homogeneous:"
+msgstr "متناسق"
+
+#: ../glade/gbwidgets/gbhbox.c:174 ../glade/gbwidgets/gbvbox.c:159
+#, fuzzy
+msgid "If the children should be the same size"
+msgstr "ما إذا سيكون كل الأبناء بنفس الحجم"
+
+#: ../glade/gbwidgets/gbhbox.c:175 ../glade/gbwidgets/gbvbox.c:160
+#, fuzzy
+msgid "The space between each child"
+msgstr "الفراغ بين المفاتيح"
+
+#: ../glade/gbwidgets/gbhbox.c:312
+#, fuzzy
+msgid "Can't delete any children."
+msgstr "تعذّر حذف هويّة المستخدم"
+
+#: ../glade/gbwidgets/gbhbox.c:327 ../glade/gbwidgets/gbhpaned.c:73
+#: ../glade/gbwidgets/gbhruler.c:89 ../glade/gbwidgets/gbnotebook.c:669
+#: ../glade/gbwidgets/gbvpaned.c:69 ../glade/gbwidgets/gbvruler.c:89
+#: ../glade/gbwidgets/gbwindow.c:256
+#, fuzzy
+msgid "Position:"
+msgstr "الموقع"
+
+#: ../glade/gbwidgets/gbhbox.c:328
+#, fuzzy
+msgid "The widget's position relative to its siblings"
+msgstr "فسّر الموقع نسبة إلى الحافة السفلى/العليا"
+
+#: ../glade/gbwidgets/gbhbox.c:330
+#, fuzzy
+msgid "Padding:"
+msgstr "إحا_طة"
+
+#: ../glade/gbwidgets/gbhbox.c:331
+#, fuzzy
+msgid "The widget's padding"
+msgstr "حشو العرض الداخلي للابن"
+
+#: ../glade/gbwidgets/gbhbox.c:333 ../glade/gbwidgets/gbnotebook.c:672
+#: ../glade/gbwidgets/gbpreview.c:65 ../glade/gbwidgets/gbtoolbar.c:424
+#, fuzzy
+msgid "Expand:"
+msgstr "اب_سط"
+
+#: ../glade/gbwidgets/gbhbox.c:334 ../glade/gbwidgets/gbtoolbar.c:425
+msgid "Set True to let the widget expand"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhbox.c:335 ../glade/gbwidgets/gbnotebook.c:674
+#, fuzzy
+msgid "Fill:"
+msgstr "ملأ"
+
+#: ../glade/gbwidgets/gbhbox.c:336
+#, fuzzy
+msgid "Set True to let the widget fill its allocated area"
+msgstr "حجم المساحات المرسومة خارج مكان القطعة "
+
+#: ../glade/gbwidgets/gbhbox.c:337 ../glade/gbwidgets/gbnotebook.c:676
+#, fuzzy
+msgid "Pack Start:"
+msgstr "المُحزّم:"
+
+#: ../glade/gbwidgets/gbhbox.c:338
+msgid "Set True to pack the widget at the start of the box"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhbox.c:455
+#, fuzzy
+msgid "Insert Before"
+msgstr "أدخل دور"
+
+#: ../glade/gbwidgets/gbhbox.c:461
+#, fuzzy
+msgid "Insert After"
+msgstr "أدخل جدول"
+
+#: ../glade/gbwidgets/gbhbox.c:571
+msgid "Horizontal Box"
+msgstr "صندوق افقي"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:120
+#, fuzzy
+msgid "New horizontal button box"
+msgstr "صندوق ازرار افقي"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:194
+#, fuzzy
+msgid "The number of buttons"
+msgstr "قائمة الخيارات"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:196
+#, fuzzy
+msgid "Layout:"
+msgstr "ت_خطيط"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:197
+#, fuzzy
+msgid "The layout style of the buttons"
+msgstr "حالة التحول للزر"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:199
+#, fuzzy
+msgid "The space between the buttons"
+msgstr "الفراغ بين المفاتيح"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:414
+msgid "Horizontal Button Box"
+msgstr "صندوق ازرار افقي"
+
+#: ../glade/gbwidgets/gbhpaned.c:74 ../glade/gbwidgets/gbvpaned.c:70
+#, fuzzy
+msgid "The position of the divider"
+msgstr "مكان الدرويد"
+
+#: ../glade/gbwidgets/gbhpaned.c:186 ../glade/gbwidgets/gbwindow.c:285
+#, fuzzy
+msgid "Shrink:"
+msgstr "تقليص"
+
+#: ../glade/gbwidgets/gbhpaned.c:187
+msgid "Set True to let the widget shrink"
+msgstr ""
+
+#: ../glade/gbwidgets/gbhpaned.c:188
+#, fuzzy
+msgid "Resize:"
+msgstr "تغيير الحج_م"
+
+#: ../glade/gbwidgets/gbhpaned.c:189
+#, fuzzy
+msgid "Set True to let the widget resize"
+msgstr "صغّر لنصف حجم الفيديو"
+
+#: ../glade/gbwidgets/gbhpaned.c:315
+msgid "Horizontal Panes"
+msgstr "لوحات افقية"
+
+#: ../glade/gbwidgets/gbhruler.c:82 ../glade/gbwidgets/gbvruler.c:82
+#, fuzzy
+msgid "Metric:"
+msgstr "بياتريس"
+
+#: ../glade/gbwidgets/gbhruler.c:83 ../glade/gbwidgets/gbvruler.c:83
+#, fuzzy
+msgid "The units of the ruler"
+msgstr "محتويات الخانة"
+
+#: ../glade/gbwidgets/gbhruler.c:85 ../glade/gbwidgets/gbvruler.c:85
+#, fuzzy
+msgid "Lower Value:"
+msgstr "خفض الطبقة"
+
+#: ../glade/gbwidgets/gbhruler.c:86 ../glade/gbwidgets/gbvruler.c:86
+#: ../glade/gbwidgets/gbvruler.c:88
+#, fuzzy
+msgid "The low value of the ruler"
+msgstr "قيمة التسوية"
+
+#: ../glade/gbwidgets/gbhruler.c:87 ../glade/gbwidgets/gbvruler.c:87
+#, fuzzy
+msgid "Upper Value:"
+msgstr "المجموع الأعلى"
+
+#: ../glade/gbwidgets/gbhruler.c:88
+#, fuzzy
+msgid "The high value of the ruler"
+msgstr "القياس المستعمل للمسطرة"
+
+#: ../glade/gbwidgets/gbhruler.c:90 ../glade/gbwidgets/gbvruler.c:90
+#, fuzzy
+msgid "The current position on the ruler"
+msgstr "مكان الدرويد"
+
+#: ../glade/gbwidgets/gbhruler.c:91 ../glade/gbwidgets/gbvruler.c:91
+#: ../glade/property.c:4833
+#, fuzzy
+msgid "Max:"
+msgstr "فاكس:"
+
+#: ../glade/gbwidgets/gbhruler.c:92 ../glade/gbwidgets/gbvruler.c:92
+#, fuzzy
+msgid "The maximum value of the ruler"
+msgstr "قيمة التسوية القصوى"
+
+#: ../glade/gbwidgets/gbhruler.c:247
+msgid "Horizontal Ruler"
+msgstr "مسطرة افقية"
+
+#: ../glade/gbwidgets/gbhscale.c:107 ../glade/gbwidgets/gbvscale.c:108
+#, fuzzy
+msgid "Show Value:"
+msgstr "اعرض مقبض"
+
+#: ../glade/gbwidgets/gbhscale.c:107 ../glade/gbwidgets/gbvscale.c:108
+#, fuzzy
+msgid "If the scale's value is shown"
+msgstr "ما إذا كان مؤشر ا?دخال سيتم عرضه"
+
+#: ../glade/gbwidgets/gbhscale.c:108 ../glade/gbwidgets/gbspinbutton.c:93
+#: ../glade/gbwidgets/gbvscale.c:109
+#, fuzzy
+msgid "Digits:"
+msgstr "خانات رقمية"
+
+#: ../glade/gbwidgets/gbhscale.c:108 ../glade/gbwidgets/gbvscale.c:109
+#, fuzzy
+msgid "The number of digits to show"
+msgstr "عدد العناصر في الصندوق"
+
+#: ../glade/gbwidgets/gbhscale.c:110 ../glade/gbwidgets/gbvscale.c:111
+#, fuzzy
+msgid "Value Pos:"
+msgstr "القي_م:"
+
+#: ../glade/gbwidgets/gbhscale.c:111 ../glade/gbwidgets/gbvscale.c:112
+#, fuzzy
+msgid "The position of the value"
+msgstr "لون القيمة"
+
+#: ../glade/gbwidgets/gbhscale.c:113 ../glade/gbwidgets/gbhscrollbar.c:87
+#: ../glade/gbwidgets/gbvscale.c:114 ../glade/gbwidgets/gbvscrollbar.c:87
+#, fuzzy
+msgid "Policy:"
+msgstr "الأولويّة:"
+
+#: ../glade/gbwidgets/gbhscale.c:114 ../glade/gbwidgets/gbvscale.c:115
+#, fuzzy
+msgid "The update policy of the scale"
+msgstr "خذ صورة للشّاشة"
+
+#: ../glade/gbwidgets/gbhscale.c:116 ../glade/gbwidgets/gbhscrollbar.c:90
+#: ../glade/gbwidgets/gbvscale.c:117 ../glade/gbwidgets/gbvscrollbar.c:90
+#, fuzzy
+msgid "Inverted:"
+msgstr "معكوس"
+
+#: ../glade/gbwidgets/gbhscale.c:116 ../glade/gbwidgets/gbhscrollbar.c:90
+#: ../glade/gbwidgets/gbvscale.c:117 ../glade/gbwidgets/gbvscrollbar.c:90
+#, fuzzy
+msgid "If the range values are inverted"
+msgstr "لا قيمة صالحة للتحويل"
+
+#: ../glade/gbwidgets/gbhscale.c:319
+msgid "Horizontal Scale"
+msgstr "قياس أفقي"
+
+#: ../glade/gbwidgets/gbhscrollbar.c:88 ../glade/gbwidgets/gbvscrollbar.c:88
+#, fuzzy
+msgid "The update policy of the scrollbar"
+msgstr "موقع شريط التمرير"
+
+#: ../glade/gbwidgets/gbhscrollbar.c:237
+msgid "Horizontal Scrollbar"
+msgstr "عمود لف أفقي"
+
+#: ../glade/gbwidgets/gbhseparator.c:144
+#, fuzzy
+msgid "Horizonal Separator"
+msgstr "فاصل افقي "
+
+#: ../glade/gbwidgets/gbiconview.c:107
+#, fuzzy, c-format
+msgid "Icon %i"
+msgstr "حجم الأيقونة"
+
+#: ../glade/gbwidgets/gbiconview.c:129
+#, fuzzy
+msgid "The selection mode of the icon view"
+msgstr "نمط عرض الأيقونات"
+
+#: ../glade/gbwidgets/gbiconview.c:131 ../glade/gbwidgets/gbprogressbar.c:134
+#: ../glade/gbwidgets/gbtoolbar.c:270 ../glade/gnome/bonobodockitem.c:179
+msgid "Orientation:"
+msgstr "الإتجاه:"
+
+#: ../glade/gbwidgets/gbiconview.c:132
+#, fuzzy
+msgid "The orientation of the icons"
+msgstr "اتجاه الشريط"
+
+#: ../glade/gbwidgets/gbiconview.c:134 ../glade/gbwidgets/gbtreeview.c:118
+#, fuzzy
+msgid "Reorderable:"
+msgstr "قابل لإعادة الترتيب"
+
+#: ../glade/gbwidgets/gbiconview.c:135
+msgid "If the view can be reordered using Drag and Drop"
+msgstr ""
+
+#: ../glade/gbwidgets/gbiconview.c:308
+msgid "Icon View"
+msgstr "مشهد الأيقونات"
+
+#: ../glade/gbwidgets/gbimage.c:110 ../glade/gbwidgets/gbwindow.c:301
+#, fuzzy
+msgid "Named Icon:"
+msgstr "اسم :"
+
+#: ../glade/gbwidgets/gbimage.c:111 ../glade/gbwidgets/gbwindow.c:302
+#, fuzzy
+msgid "The named icon to use"
+msgstr "ملف اللّعبة الذي سيستخدم"
+
+#: ../glade/gbwidgets/gbimage.c:112
+#, fuzzy
+msgid "Icon Size:"
+msgstr "حجم الأيقونة"
+
+#: ../glade/gbwidgets/gbimage.c:113
+#, fuzzy
+msgid "The stock icon size"
+msgstr "حجم أيقونة شريط الأدوات"
+
+#: ../glade/gbwidgets/gbimage.c:115
+#, fuzzy
+msgid "Pixel Size:"
+msgstr "حجم البكسل"
+
+#: ../glade/gbwidgets/gbimage.c:116
+msgid ""
+"The size of the named icon in pixels, or -1 to use the Icon Size property"
+msgstr ""
+
+#: ../glade/gbwidgets/gbimage.c:120
+#, fuzzy
+msgid "The horizontal alignment"
+msgstr "ترصيف أفقي"
+
+#: ../glade/gbwidgets/gbimage.c:123
+#, fuzzy
+msgid "The vertical alignment"
+msgstr "ترصيف عمودي"
+
+#: ../glade/gbwidgets/gbimage.c:648
+#, fuzzy
+msgid "Image"
+msgstr "صور"
+
+#: ../glade/gbwidgets/gbimagemenuitem.c:255
+#: ../glade/gbwidgets/gbmenuitem.c:228
+#, fuzzy
+msgid "Invalid stock menu item"
+msgstr "مستند غير صالح"
+
+#: ../glade/gbwidgets/gbimagemenuitem.c:471
+msgid "Menu item with a pixmap"
+msgstr ""
+
+#: ../glade/gbwidgets/gbinputdialog.c:257
+msgid "Input Dialog"
+msgstr "حوار ادخال"
+
+#: ../glade/gbwidgets/gblabel.c:170
+#, fuzzy
+msgid "Use Underline:"
+msgstr "استخدم التسطير"
+
+#: ../glade/gbwidgets/gblabel.c:171
+msgid "If the text includes an underlined access key"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:172
+#, fuzzy
+msgid "Use Markup:"
+msgstr "استمل التشكيل"
+
+#: ../glade/gbwidgets/gblabel.c:173
+#, fuzzy
+msgid "If the text includes pango markup"
+msgstr "النص الثانوي يحتوي على تشكيل بانغو Pango."
+
+#: ../glade/gbwidgets/gblabel.c:174
+msgid "Justify:"
+msgstr "الضبط:"
+
+#: ../glade/gbwidgets/gblabel.c:175
+#, fuzzy
+msgid "The justification of the lines of the label"
+msgstr "صرب ملف القواعد الذي سيستعمل"
+
+#: ../glade/gbwidgets/gblabel.c:177
+#, fuzzy
+msgid "Wrap Text:"
+msgstr "_كسر النص"
+
+#: ../glade/gbwidgets/gblabel.c:178
+#, fuzzy
+msgid "If the text is wrapped to fit within the width of the label"
+msgstr "قائمة لصفات الأساليب لتطبيقها على نص العلامة"
+
+#: ../glade/gbwidgets/gblabel.c:179
+#, fuzzy
+msgid "Selectable:"
+msgstr "قابل للاختيار"
+
+#: ../glade/gbwidgets/gblabel.c:180
+#, fuzzy
+msgid "If the label text can be selected with the mouse"
+msgstr "فيما اذا كان من الممكن انتقاء نص الشارة بالفأرة"
+
+#: ../glade/gbwidgets/gblabel.c:182
+#, fuzzy
+msgid "The horizontal alignment of the entire label"
+msgstr "الترصيف الأفقي للشارة"
+
+#: ../glade/gbwidgets/gblabel.c:185
+#, fuzzy
+msgid "The vertical alignment of the entire label"
+msgstr "الترصيف العمودي للشارة"
+
+#: ../glade/gbwidgets/gblabel.c:191
+#, fuzzy
+msgid "Focus Target:"
+msgstr "تغيير التركيز"
+
+#: ../glade/gbwidgets/gblabel.c:192
+#, fuzzy
+msgid ""
+"The widget to set the keyboard focus to when the underlined access key is "
+"used"
+msgstr "القطعة التي ستفعل عند نقر مفتاح الإختصار المسطر"
+
+#. gtk_combo_set_value_in_list (GTK_COMBO (combo), TRUE, TRUE);
+#: ../glade/gbwidgets/gblabel.c:198 ../glade/gbwidgets/gbprogressbar.c:146
+#, fuzzy
+msgid "Ellipsize:"
+msgstr "قص"
+
+#: ../glade/gbwidgets/gblabel.c:199 ../glade/gbwidgets/gbprogressbar.c:147
+#, fuzzy
+msgid "How to ellipsize the string"
+msgstr "كيفية اصطفاف السطور"
+
+#: ../glade/gbwidgets/gblabel.c:202
+#, fuzzy
+msgid "The width of the label in characters"
+msgstr "العرض المطلوب للعنوان بالمحارف"
+
+#: ../glade/gbwidgets/gblabel.c:204
+#, fuzzy
+msgid "Single Line Mode:"
+msgstr "نمط سطر وحيد"
+
+#: ../glade/gbwidgets/gblabel.c:205
+msgid "If the label is only given enough height for a single line"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:206
+#, fuzzy
+msgid "Angle:"
+msgstr "الزاوية"
+
+#: ../glade/gbwidgets/gblabel.c:207
+#, fuzzy
+msgid "The angle of the label text"
+msgstr "نص الشارة"
+
+#: ../glade/gbwidgets/gblabel.c:333 ../glade/gbwidgets/gblabel.c:348
+#: ../glade/gbwidgets/gblabel.c:616
+msgid "Auto"
+msgstr "تلقائي"
+
+#: ../glade/gbwidgets/gblabel.c:872 ../glade/glade_menu_editor.c:411
+msgid "Label"
+msgstr "عنوان"
+
+#: ../glade/gbwidgets/gblayout.c:96
+#, fuzzy
+msgid "Area Width:"
+msgstr "العرض:"
+
+#: ../glade/gbwidgets/gblayout.c:97
+#, fuzzy
+msgid "The width of the layout area"
+msgstr "عرض التصميم"
+
+#: ../glade/gbwidgets/gblayout.c:99
+#, fuzzy
+msgid "Area Height:"
+msgstr "المؤخرة اليمنى"
+
+#: ../glade/gbwidgets/gblayout.c:100
+#, fuzzy
+msgid "The height of the layout area"
+msgstr "ارتفاع التصميم"
+
+#: ../glade/gbwidgets/gblayout.c:222
+#, fuzzy
+msgid "The X coordinate of the widget in the GtkLayout"
+msgstr "فهرس الإبن عند الأب"
+
+#: ../glade/gbwidgets/gblayout.c:225
+#, fuzzy
+msgid "The Y coordinate of the widget in the GtkLayout"
+msgstr "فهرس الإبن عند الأب"
+
+#: ../glade/gbwidgets/gblayout.c:380
+#, fuzzy
+msgid "Layout"
+msgstr "ت_خطيط"
+
+#: ../glade/gbwidgets/gblist.c:78
+#, fuzzy
+msgid "The selection mode of the list"
+msgstr "نمط الانتقاء"
+
+#: ../glade/gbwidgets/gblist.c:192
+msgid "List"
+msgstr "قائمة"
+
+#: ../glade/gbwidgets/gblistitem.c:171
+msgid "List Item"
+msgstr "عنصر قائمة"
+
+#: ../glade/gbwidgets/gbmenu.c:198
+msgid "Popup Menu"
+msgstr "قائمة منبثقة"
+
+#. FIXME: I'm not sure if we should translate the non-stock labels or not.
+#: ../glade/gbwidgets/gbmenubar.c:215
+#, fuzzy
+msgid "_File"
+msgstr "/ملف"
+
+#. Create Edit menu
+#: ../glade/gbwidgets/gbmenubar.c:223 ../glade/glade_project_window.c:692
+#, fuzzy
+msgid "_Edit"
+msgstr "_تحرير/"
+
+#. Create View menu
+#: ../glade/gbwidgets/gbmenubar.c:229 ../glade/glade_project_window.c:721
+#, fuzzy
+msgid "_View"
+msgstr "_عرض/"
+
+#. Create Help menu
+#: ../glade/gbwidgets/gbmenubar.c:231 ../glade/glade_project_window.c:834
+#, fuzzy
+msgid "_Help"
+msgstr "مساعدة"
+
+#: ../glade/gbwidgets/gbmenubar.c:232
+#, fuzzy
+msgid "_About"
+msgstr "_6 عن البرنامج"
+
+#: ../glade/gbwidgets/gbmenubar.c:291
+#, fuzzy
+msgid "Pack Direction:"
+msgstr "اتّجاه الجمع"
+
+#: ../glade/gbwidgets/gbmenubar.c:292
+msgid "The pack direction of the menubar"
+msgstr "اتجاه الحزمة لشريط القائمة"
+
+#: ../glade/gbwidgets/gbmenubar.c:294
+#, fuzzy
+msgid "Child Direction:"
+msgstr "اتجاه حزمة الإبن"
+
+#: ../glade/gbwidgets/gbmenubar.c:295
+msgid "The child pack direction of the menubar"
+msgstr "اتجاه حزمة الإبن  لشريط القائمة"
+
+#: ../glade/gbwidgets/gbmenubar.c:300 ../glade/gbwidgets/gbmenubar.c:418
+#: ../glade/gbwidgets/gboptionmenu.c:139
+#, fuzzy
+msgid "Edit Menus..."
+msgstr "حرّر القوائم"
+
+#: ../glade/gbwidgets/gbmenubar.c:541
+#, fuzzy
+msgid "Menu Bar"
+msgstr "عمود القائمة"
+
+#: ../glade/gbwidgets/gbmenuitem.c:379
+msgid "Menu Item"
+msgstr "عنصر قائمة"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:92
+#: ../glade/gbwidgets/gbradiotoolbutton.c:150
+#: ../glade/gbwidgets/gbseparatortoolitem.c:67
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:99
+#: ../glade/gbwidgets/gbtoolbutton.c:111 ../glade/gbwidgets/gbtoolitem.c:65
+#, fuzzy
+msgid "Show Horizontal:"
+msgstr "أفقي:"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:93
+#: ../glade/gbwidgets/gbradiotoolbutton.c:151
+#: ../glade/gbwidgets/gbseparatortoolitem.c:68
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:100
+#: ../glade/gbwidgets/gbtoolbutton.c:112 ../glade/gbwidgets/gbtoolitem.c:66
+#, fuzzy
+msgid "If the item is visible when the toolbar is horizontal"
+msgstr ""
+"فيما إذا سيكون عنصر عمود الأدوات مرئيا عندما يكون عمود الأدوات في اتجاه افقي."
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:94
+#: ../glade/gbwidgets/gbradiotoolbutton.c:152
+#: ../glade/gbwidgets/gbseparatortoolitem.c:69
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:101
+#: ../glade/gbwidgets/gbtoolbutton.c:113 ../glade/gbwidgets/gbtoolitem.c:67
+#, fuzzy
+msgid "Show Vertical:"
+msgstr "رأسي:"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:95
+#: ../glade/gbwidgets/gbradiotoolbutton.c:153
+#: ../glade/gbwidgets/gbseparatortoolitem.c:70
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:102
+#: ../glade/gbwidgets/gbtoolbutton.c:114 ../glade/gbwidgets/gbtoolitem.c:68
+#, fuzzy
+msgid "If the item is visible when the toolbar is vertical"
+msgstr ""
+"فيما إذا سيكون عنصر عمود الأدوات مرئيا عندما يكون عمود الأدوات في اتجاه "
+"عمودي."
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:96
+#: ../glade/gbwidgets/gbradiotoolbutton.c:154
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:103
+#: ../glade/gbwidgets/gbtoolbutton.c:115 ../glade/gbwidgets/gbtoolitem.c:69
+#, fuzzy
+msgid "Is Important:"
+msgstr "مهم"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:97
+#: ../glade/gbwidgets/gbradiotoolbutton.c:155
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:104
+#: ../glade/gbwidgets/gbtoolbutton.c:116 ../glade/gbwidgets/gbtoolitem.c:70
+msgid ""
+"If the item's text should be shown when the toolbar's mode is "
+"GTK_TOOLBAR_BOTH_HORIZ"
+msgstr ""
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:255
+#, fuzzy
+msgid "Toolbar Button with Menu"
+msgstr "أسلوب أزرار شريط الأدوات"
+
+#: ../glade/gbwidgets/gbnotebook.c:191
+#, fuzzy
+msgid "New notebook"
+msgstr "دفتر"
+
+#: ../glade/gbwidgets/gbnotebook.c:202 ../glade/gnome/gnomepropertybox.c:125
+#, fuzzy
+msgid "Number of pages:"
+msgstr "عدد الصفحات"
+
+#: ../glade/gbwidgets/gbnotebook.c:274
+#, fuzzy
+msgid "Show Tabs:"
+msgstr "عرض الألسنة"
+
+#: ../glade/gbwidgets/gbnotebook.c:274
+#, fuzzy
+msgid "If the notebook tabs are shown"
+msgstr "ما إذا كان مؤشر ا?دخال سيتم عرضه"
+
+#: ../glade/gbwidgets/gbnotebook.c:275
+#, fuzzy
+msgid "Show Border:"
+msgstr "عرض الحد"
+
+#: ../glade/gbwidgets/gbnotebook.c:276
+msgid "If the notebook border is shown, when the tabs are not shown"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:277
+#, fuzzy
+msgid "Tab Pos:"
+msgstr "موقع اللسان"
+
+#: ../glade/gbwidgets/gbnotebook.c:278
+#, fuzzy
+msgid "The position of the notebook tabs"
+msgstr "اتجاه شريط ا?دوات"
+
+#: ../glade/gbwidgets/gbnotebook.c:280
+#, fuzzy
+msgid "Scrollable:"
+msgstr "قابل للف"
+
+#: ../glade/gbwidgets/gbnotebook.c:281
+msgid "If the notebook tabs are scrollable"
+msgstr ""
+
+#. These seem to be deprecated.
+#: ../glade/gbwidgets/gbnotebook.c:284
+#, fuzzy
+msgid "Tab Horz. Border:"
+msgstr "حد اللسان"
+
+#: ../glade/gbwidgets/gbnotebook.c:285
+#, fuzzy
+msgid "The size of the notebook tabs' horizontal border"
+msgstr "أي جهة من الدفتر تحوي الألسنة"
+
+#: ../glade/gbwidgets/gbnotebook.c:287
+#, fuzzy
+msgid "Tab Vert. Border:"
+msgstr "حد اللسان"
+
+#: ../glade/gbwidgets/gbnotebook.c:288
+#, fuzzy
+msgid "The size of the notebook tabs' vertical border"
+msgstr "أي جهة من الدفتر تحوي الألسنة"
+
+#: ../glade/gbwidgets/gbnotebook.c:291
+#, fuzzy
+msgid "Show Popup:"
+msgstr "شو لو"
+
+#: ../glade/gbwidgets/gbnotebook.c:291
+#, fuzzy
+msgid "If the popup menu is enabled"
+msgstr "فيما إذا كانت العملية مفعلة."
+
+#: ../glade/gbwidgets/gbnotebook.c:292 ../glade/gnome/gnomedruid.c:102
+msgid "Number of Pages:"
+msgstr "عدد الصفحات:"
+
+#: ../glade/gbwidgets/gbnotebook.c:293
+#, fuzzy
+msgid "The number of notebook pages"
+msgstr "عدد الصفحات في المفكرة"
+
+#: ../glade/gbwidgets/gbnotebook.c:540
+#, fuzzy
+msgid "Previous Page"
+msgstr "الصفحة ال_سابقة"
+
+#: ../glade/gbwidgets/gbnotebook.c:548
+#, fuzzy
+msgid "Next Page"
+msgstr "الصفحة ال_تالية"
+
+#: ../glade/gbwidgets/gbnotebook.c:556
+#, fuzzy
+msgid "Delete Page"
+msgstr "احذف الشريط"
+
+#: ../glade/gbwidgets/gbnotebook.c:562
+#, fuzzy
+msgid "Switch Next"
+msgstr "تحول للسان التالي"
+
+#: ../glade/gbwidgets/gbnotebook.c:570
+#, fuzzy
+msgid "Switch Previous"
+msgstr "تحول للسان السابق"
+
+#: ../glade/gbwidgets/gbnotebook.c:578 ../glade/gnome/gnomedruid.c:298
+#, fuzzy
+msgid "Insert Page After"
+msgstr "أدخل صورة"
+
+#: ../glade/gbwidgets/gbnotebook.c:586 ../glade/gnome/gnomedruid.c:285
+#, fuzzy
+msgid "Insert Page Before"
+msgstr "أدخل صورة"
+
+#: ../glade/gbwidgets/gbnotebook.c:670
+#, fuzzy
+msgid "The page's position in the list of pages"
+msgstr "مكان الصفحة للمعاون"
+
+#: ../glade/gbwidgets/gbnotebook.c:673
+#, fuzzy
+msgid "Set True to let the tab expand"
+msgstr "تشطب النص"
+
+#: ../glade/gbwidgets/gbnotebook.c:675
+#, fuzzy
+msgid "Set True to let the tab fill its allocated area"
+msgstr "فيما إذا وجب للسان الإبن ملأ المساحة المخصصة"
+
+#: ../glade/gbwidgets/gbnotebook.c:677
+msgid "Set True to pack the tab at the start of the notebook"
+msgstr ""
+
+#: ../glade/gbwidgets/gbnotebook.c:678
+#, fuzzy
+msgid "Menu Label:"
+msgstr "شارة القائمة"
+
+#: ../glade/gbwidgets/gbnotebook.c:679
+#, fuzzy
+msgid "The text to display in the popup menu"
+msgstr "ما إذا يعرض العمود"
+
+#: ../glade/gbwidgets/gbnotebook.c:937
+msgid "Notebook"
+msgstr "دفتر"
+
+#: ../glade/gbwidgets/gboptionmenu.c:230
+#, c-format
+msgid "Cannot add a %s to a GtkOptionMenu."
+msgstr ""
+
+#: ../glade/gbwidgets/gboptionmenu.c:270
+msgid "Option Menu"
+msgstr "قائمة خيار"
+
+#: ../glade/gbwidgets/gbpreview.c:63
+#, fuzzy
+msgid "Color:"
+msgstr "الل_ون:"
+
+#: ../glade/gbwidgets/gbpreview.c:64
+msgid "If the preview is color or grayscale"
+msgstr ""
+
+#: ../glade/gbwidgets/gbpreview.c:66
+#, fuzzy
+msgid "If the preview expands to fill its allocated area"
+msgstr "فيما إذا وجب للسان الإبن ملأ المساحة المخصصة"
+
+#: ../glade/gbwidgets/gbpreview.c:162
+#, fuzzy
+msgid "Preview"
+msgstr "معاينات"
+
+#: ../glade/gbwidgets/gbprogressbar.c:135
+#, fuzzy
+msgid "The orientation of the progress bar's contents"
+msgstr "اتجاه الشريط"
+
+#: ../glade/gbwidgets/gbprogressbar.c:137
+#, fuzzy
+msgid "Fraction:"
+msgstr "جزء"
+
+#: ../glade/gbwidgets/gbprogressbar.c:138
+#, fuzzy
+msgid "The fraction of work that has been completed"
+msgstr "جزء من العمل الذي تم"
+
+#: ../glade/gbwidgets/gbprogressbar.c:140
+#, fuzzy
+msgid "Pulse Step:"
+msgstr "خطوة النبض"
+
+#: ../glade/gbwidgets/gbprogressbar.c:141
+#, fuzzy
+msgid ""
+"The fraction of the progress bar length to move the bouncing block when "
+"pulsed"
+msgstr "جزء التقدم الكلي لتحريك الكتلة القافزة عند النبض"
+
+#: ../glade/gbwidgets/gbprogressbar.c:144
+#, fuzzy
+msgid "The text to display over the progress bar"
+msgstr "النص الذي سيعرض في عمود التقدم"
+
+#. ShowText is implicit now, if the Text property is set to anything.
+#: ../glade/gbwidgets/gbprogressbar.c:152
+#, fuzzy
+msgid "Show Text:"
+msgstr "اظهار نص"
+
+#: ../glade/gbwidgets/gbprogressbar.c:153
+#, fuzzy
+msgid "If the text should be shown in the progress bar"
+msgstr "النص الذي سيعرض في عمود التقدم"
+
+#. ActivityMode is deprecated and implicit now. The app just calls
+#. gtk_progress_bar_pulse() and it automatically goes into activity mode.
+#: ../glade/gbwidgets/gbprogressbar.c:157
+#, fuzzy
+msgid "Activity Mode:"
+msgstr "نمط النشاط"
+
+#: ../glade/gbwidgets/gbprogressbar.c:158
+msgid "If the progress bar should act like the front of Kit's car"
+msgstr ""
+
+#: ../glade/gbwidgets/gbprogressbar.c:163
+#, fuzzy
+msgid "The horizontal alignment of the text"
+msgstr "الترصيف الأفقي للشارة"
+
+#: ../glade/gbwidgets/gbprogressbar.c:166
+#, fuzzy
+msgid "The vertical alignment of the text"
+msgstr "الترصيف العمودي للشارة"
+
+#: ../glade/gbwidgets/gbprogressbar.c:421
+msgid "Progress Bar"
+msgstr "عمود التقدم"
+
+#: ../glade/gbwidgets/gbradiobutton.c:138
+#: ../glade/gbwidgets/gbradiotoolbutton.c:148
+#, fuzzy
+msgid "If the radio button is initially on"
+msgstr "إستخدم أزرار راديو لأجل العمود الأول"
+
+#: ../glade/gbwidgets/gbradiobutton.c:143
+#: ../glade/gbwidgets/gbradiomenuitem.c:106
+#: ../glade/gbwidgets/gbradiotoolbutton.c:141
+#: ../glade/glade_menu_editor.c:1039
+msgid "Group:"
+msgstr "المجموعة:"
+
+#: ../glade/gbwidgets/gbradiobutton.c:144
+msgid ""
+"The radio button group (the default is all radio buttons with the same "
+"parent)"
+msgstr ""
+
+#: ../glade/gbwidgets/gbradiobutton.c:189
+#: ../glade/gbwidgets/gbradiobutton.c:350
+#: ../glade/gbwidgets/gbradiotoolbutton.c:233
+#: ../glade/gbwidgets/gbradiotoolbutton.c:322
+#, fuzzy
+msgid "New Group"
+msgstr "مجموعة جديدة"
+
+#: ../glade/gbwidgets/gbradiobutton.c:465
+msgid "Radio Button"
+msgstr "زر مشع"
+
+#: ../glade/gbwidgets/gbradiomenuitem.c:105
+msgid "If the radio menu item is initially on"
+msgstr ""
+
+#: ../glade/gbwidgets/gbradiomenuitem.c:107
+msgid ""
+"The radio menu item group (the default is all radio menu items with the same "
+"parent)"
+msgstr ""
+
+#: ../glade/gbwidgets/gbradiomenuitem.c:388
+msgid "Radio Menu Item"
+msgstr "زر قائمة زر مشع"
+
+#: ../glade/gbwidgets/gbradiotoolbutton.c:142
+#, fuzzy
+msgid ""
+"The radio tool button group (the default is all radio tool buttons in the "
+"toolbar)"
+msgstr "زرّ ال radio tool الذي ينتمي هذا الزرّ إلى مجموعته."
+
+#: ../glade/gbwidgets/gbradiotoolbutton.c:530
+#, fuzzy
+msgid "Toolbar Radio Button"
+msgstr "زر مشع"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:131
+#, fuzzy
+msgid "H Policy:"
+msgstr "سياسة التحديث"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:132
+#, fuzzy
+msgid "When the horizontal scrollbar will be shown"
+msgstr "آن عرض عمود اللف الأفقي"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:134
+#, fuzzy
+msgid "V Policy:"
+msgstr "سياسة التحديث"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:135
+#, fuzzy
+msgid "When the vertical scrollbar will be shown"
+msgstr "آن عرض شريط التدرج العمودي"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:137
+#, fuzzy
+msgid "Window Pos:"
+msgstr "ال_نوافذ:"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:138
+#, fuzzy
+msgid "Where the child window is located with respect to the scrollbars"
+msgstr ""
+"إذا كان \"window-placement\" يستخدم لتحديد موقع المحتويات حسب أشرطة اللّف."
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:140
+#, fuzzy
+msgid "Shadow Type:"
+msgstr "نوع الظل"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:141
+#, fuzzy
+msgid "The update policy of the vertical scrollbar"
+msgstr "عرض أسهم شريط التدرج العمودي"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:353
+msgid "Scrolled Window"
+msgstr "لنافذة ملفوفة"
+
+#: ../glade/gbwidgets/gbseparatormenuitem.c:153
+#, fuzzy
+msgid "Separator for Menus"
+msgstr "عنصر قائمة فاصل"
+
+#: ../glade/gbwidgets/gbseparatortoolitem.c:65
+#, fuzzy
+msgid "Draw:"
+msgstr "مرسوم:"
+
+#: ../glade/gbwidgets/gbseparatortoolitem.c:66
+#, fuzzy
+msgid "If the separator is drawn, or just blank"
+msgstr "فيما إذا كان الفاصل رسما أو فراغا"
+
+#: ../glade/gbwidgets/gbseparatortoolitem.c:204
+#, fuzzy
+msgid "Toolbar Separator Item"
+msgstr "عنصر قائمة فاصل"
+
+#: ../glade/gbwidgets/gbspinbutton.c:91
+#, fuzzy
+msgid "Climb Rate:"
+msgstr "نسبة التسلق"
+
+#: ../glade/gbwidgets/gbspinbutton.c:92
+msgid ""
+"The climb rate of the spinbutton, used in conjunction with the Page Increment"
+msgstr ""
+
+#: ../glade/gbwidgets/gbspinbutton.c:94
+#, fuzzy
+msgid "The number of decimal digits to show"
+msgstr "عدد الخانات العشرية لعرضها"
+
+#: ../glade/gbwidgets/gbspinbutton.c:96
+#, fuzzy
+msgid "Numeric:"
+msgstr "رقمي"
+
+#: ../glade/gbwidgets/gbspinbutton.c:97
+msgid "If only numeric entry is allowed"
+msgstr ""
+
+#: ../glade/gbwidgets/gbspinbutton.c:98
+#, fuzzy
+msgid "Update Policy:"
+msgstr "سياسة التحديث"
+
+#: ../glade/gbwidgets/gbspinbutton.c:99
+msgid "When value_changed signals are emitted"
+msgstr ""
+
+#: ../glade/gbwidgets/gbspinbutton.c:101
+#, fuzzy
+msgid "Snap:"
+msgstr "الشكل:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:102
+msgid "If the value is snapped to multiples of the step increment"
+msgstr ""
+
+#: ../glade/gbwidgets/gbspinbutton.c:103
+#, fuzzy
+msgid "Wrap:"
+msgstr "تغطية"
+
+#: ../glade/gbwidgets/gbspinbutton.c:104
+msgid "If the value is wrapped at the limits"
+msgstr ""
+
+#: ../glade/gbwidgets/gbspinbutton.c:284
+msgid "Spin Button"
+msgstr "زر تدوير"
+
+#: ../glade/gbwidgets/gbstatusbar.c:64
+#, fuzzy
+msgid "Resize Grip:"
+msgstr "له مقبض تحجيم"
+
+#: ../glade/gbwidgets/gbstatusbar.c:64
+#, fuzzy
+msgid "If the status bar has a resize grip to resize the window"
+msgstr "فيما إذا كان لعمود الحالة "
+
+#: ../glade/gbwidgets/gbstatusbar.c:156
+msgid "Status Bar"
+msgstr "عمود حالة"
+
+#: ../glade/gbwidgets/gbtable.c:137
+#, fuzzy
+msgid "New table"
+msgstr "لسان جديد"
+
+#: ../glade/gbwidgets/gbtable.c:149 ../glade/gbwidgets/gbvbox.c:95
+#: ../glade/gbwidgets/gbvbuttonbox.c:123
+#, fuzzy
+msgid "Number of rows:"
+msgstr "عدد الطبقات:"
+
+#: ../glade/gbwidgets/gbtable.c:237
+#, fuzzy
+msgid "Rows:"
+msgstr "ص_فوف:"
+
+#: ../glade/gbwidgets/gbtable.c:238
+msgid "The number of rows in the table"
+msgstr "عدد السطور في الجدول"
+
+#: ../glade/gbwidgets/gbtable.c:240
+msgid "Columns:"
+msgstr "أعمدة:"
+
+#: ../glade/gbwidgets/gbtable.c:241
+msgid "The number of columns in the table"
+msgstr "عدد الأعمدة في الجدول"
+
+#: ../glade/gbwidgets/gbtable.c:244
+#, fuzzy
+msgid "If the children should all be the same size"
+msgstr "ما إذا سيكون كل الأبناء بنفس الحجم"
+
+#: ../glade/gbwidgets/gbtable.c:245 ../glade/gnome/gnomeiconlist.c:180
+#, fuzzy
+msgid "Row Spacing:"
+msgstr "فراغات السطور"
+
+#: ../glade/gbwidgets/gbtable.c:246
+#, fuzzy
+msgid "The space between each row"
+msgstr "الفراغ بين المفاتيح"
+
+#: ../glade/gbwidgets/gbtable.c:248 ../glade/gnome/gnomeiconlist.c:183
+#, fuzzy
+msgid "Col Spacing:"
+msgstr "فراغات العمود"
+
+#: ../glade/gbwidgets/gbtable.c:249
+#, fuzzy
+msgid "The space between each column"
+msgstr "الفراغ بين المفاتيح"
+
+#: ../glade/gbwidgets/gbtable.c:368
+#, fuzzy
+msgid "Cell X:"
+msgstr "خلية"
+
+#: ../glade/gbwidgets/gbtable.c:369
+#, fuzzy
+msgid "The left edge of the widget in the table"
+msgstr "فهرس الإبن عند الأب"
+
+#: ../glade/gbwidgets/gbtable.c:371
+#, fuzzy
+msgid "Cell Y:"
+msgstr "خلية"
+
+#: ../glade/gbwidgets/gbtable.c:372
+#, fuzzy
+msgid "The top edge of the widget in the table"
+msgstr "فهرس الإبن عند الأب"
+
+#: ../glade/gbwidgets/gbtable.c:375
+#, fuzzy
+msgid "Col Span:"
+msgstr "إتساع عمود:"
+
+#: ../glade/gbwidgets/gbtable.c:376
+#, fuzzy
+msgid "The number of columns spanned by the widget in the table"
+msgstr "عدد الأعمدة في الجدول"
+
+#: ../glade/gbwidgets/gbtable.c:378
+#, fuzzy
+msgid "Row Span:"
+msgstr "اتساع الصف:"
+
+#: ../glade/gbwidgets/gbtable.c:379
+#, fuzzy
+msgid "The number of rows spanned by the widget in the table"
+msgstr "عدد السطور في الجدول"
+
+#: ../glade/gbwidgets/gbtable.c:381
+#, fuzzy
+msgid "H Padding:"
+msgstr "إحاطة س"
+
+#: ../glade/gbwidgets/gbtable.c:384
+#, fuzzy
+msgid "V Padding:"
+msgstr "إحاطة س"
+
+#: ../glade/gbwidgets/gbtable.c:387
+#, fuzzy
+msgid "X Expand:"
+msgstr "اب_سط"
+
+#: ../glade/gbwidgets/gbtable.c:388
+msgid "Set True to let the widget expand horizontally"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:389
+#, fuzzy
+msgid "Y Expand:"
+msgstr "اب_سط"
+
+#: ../glade/gbwidgets/gbtable.c:390
+msgid "Set True to let the widget expand vertically"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:391
+#, fuzzy
+msgid "X Shrink:"
+msgstr "تقليص"
+
+#: ../glade/gbwidgets/gbtable.c:392
+msgid "Set True to let the widget shrink horizontally"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:393
+#, fuzzy
+msgid "Y Shrink:"
+msgstr "تقليص"
+
+#: ../glade/gbwidgets/gbtable.c:394
+msgid "Set True to let the widget shrink vertically"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:395
+#, fuzzy
+msgid "X Fill:"
+msgstr "ملأ"
+
+#: ../glade/gbwidgets/gbtable.c:396
+msgid "Set True to let the widget fill its horizontal allocated area"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:397
+#, fuzzy
+msgid "Y Fill:"
+msgstr "ملأ"
+
+#: ../glade/gbwidgets/gbtable.c:398
+msgid "Set True to let the widget fill its vertical allocated area"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtable.c:667
+#, fuzzy
+msgid "Insert Row Before"
+msgstr "أدخل دور"
+
+#: ../glade/gbwidgets/gbtable.c:674
+#, fuzzy
+msgid "Insert Row After"
+msgstr "أدخل جدول"
+
+#: ../glade/gbwidgets/gbtable.c:681
+#, fuzzy
+msgid "Insert Column Before"
+msgstr "عمود سابق"
+
+#: ../glade/gbwidgets/gbtable.c:688
+#, fuzzy
+msgid "Insert Column After"
+msgstr "عمود لاحق"
+
+#: ../glade/gbwidgets/gbtable.c:695
+#, fuzzy
+msgid "Delete Row"
+msgstr "مُفَوَّضْ إلى"
+
+#: ../glade/gbwidgets/gbtable.c:701
+#, fuzzy
+msgid "Delete Column"
+msgstr "عمود منتقى"
+
+#: ../glade/gbwidgets/gbtable.c:1208
+msgid "Table"
+msgstr "جدول"
+
+#: ../glade/gbwidgets/gbtextview.c:51
+msgid "Center"
+msgstr "وسط"
+
+#: ../glade/gbwidgets/gbtextview.c:52
+msgid "Fill"
+msgstr "ملأ"
+
+#. Add a "None" item first, so it is easy to reset the pixmap.
+#. If the user selects the 'None' item from the combo, we reset the
+#. text to "" and return. This callback will be called again.
+#. Add a 'None' item at the top of the list.
+#: ../glade/gbwidgets/gbtextview.c:71 ../glade/glade_gnome.c:112
+#: ../glade/glade_menu_editor.c:543 ../glade/glade_menu_editor.c:830
+#: ../glade/glade_menu_editor.c:1345 ../glade/glade_menu_editor.c:2255
+#: ../glade/property.c:2432
+#, fuzzy
+msgid "None"
+msgstr "_لا شيء"
+
+#: ../glade/gbwidgets/gbtextview.c:72
+#, fuzzy
+msgid "Character"
+msgstr "حر_ف"
+
+#: ../glade/gbwidgets/gbtextview.c:73
+msgid "Word"
+msgstr "كلمة"
+
+#: ../glade/gbwidgets/gbtextview.c:117
+#, fuzzy
+msgid "Cursor Visible:"
+msgstr "المؤشر مرئي"
+
+#: ../glade/gbwidgets/gbtextview.c:118
+#, fuzzy
+msgid "If the cursor is visible"
+msgstr "شريط الحالة مرئي"
+
+#: ../glade/gbwidgets/gbtextview.c:119
+#, fuzzy
+msgid "Overwrite:"
+msgstr "إحلاله؟"
+
+#: ../glade/gbwidgets/gbtextview.c:120
+#, fuzzy
+msgid "If entered text overwrites the existing text"
+msgstr "فيما إذا سينمّق النص المدخل المحتويات الموجودة"
+
+#: ../glade/gbwidgets/gbtextview.c:121
+#, fuzzy
+msgid "Accepts Tab:"
+msgstr "تقبل الألسنة"
+
+#: ../glade/gbwidgets/gbtextview.c:122
+msgid "If tab characters can be entered"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtextview.c:126
+#, fuzzy
+msgid "Justification:"
+msgstr "تعيين الضبط"
+
+#: ../glade/gbwidgets/gbtextview.c:127
+#, fuzzy
+msgid "The justification of the text"
+msgstr "تشبّع ألوان الفيديو"
+
+#: ../glade/gbwidgets/gbtextview.c:129
+#, fuzzy
+msgid "Wrapping:"
+msgstr "تحذير:"
+
+#: ../glade/gbwidgets/gbtextview.c:130
+#, fuzzy
+msgid "The wrapping of the text"
+msgstr "عامل التثبيط بالنسبة للمعدل"
+
+#: ../glade/gbwidgets/gbtextview.c:133
+#, fuzzy
+msgid "Space Above:"
+msgstr "حجم الفاصل"
+
+#: ../glade/gbwidgets/gbtextview.c:134
+msgid "Pixels of blank space above paragraphs"
+msgstr "بكسلات من المسافات الفارغة أعلى الفقرات"
+
+#: ../glade/gbwidgets/gbtextview.c:136
+#, fuzzy
+msgid "Space Below:"
+msgstr "فيضان المكدّس"
+
+#: ../glade/gbwidgets/gbtextview.c:137
+msgid "Pixels of blank space below paragraphs"
+msgstr "بكسلات من المسافات الفارغة أسفل الفقرات"
+
+#: ../glade/gbwidgets/gbtextview.c:139
+#, fuzzy
+msgid "Space Inside:"
+msgstr "حجم الفاصل"
+
+#: ../glade/gbwidgets/gbtextview.c:140
+msgid "Pixels of blank space between wrapped lines in a paragraph"
+msgstr "بكسلات من المسافات الفارغة بين ا?سطر الملتوية في فقرة"
+
+#: ../glade/gbwidgets/gbtextview.c:143
+#, fuzzy
+msgid "Left Margin:"
+msgstr "الهامش الأيسر"
+
+#: ../glade/gbwidgets/gbtextview.c:144
+msgid "Width of the left margin in pixels"
+msgstr "عرض الهامش ا?يسر بالبكسل"
+
+#: ../glade/gbwidgets/gbtextview.c:146
+#, fuzzy
+msgid "Right Margin:"
+msgstr "الهامش الأيمن"
+
+#: ../glade/gbwidgets/gbtextview.c:147
+msgid "Width of the right margin in pixels"
+msgstr "عرض الهامش ا?يمن بالبكسل"
+
+#: ../glade/gbwidgets/gbtextview.c:149
+#, fuzzy
+msgid "Indent:"
+msgstr "إزاحة"
+
+#: ../glade/gbwidgets/gbtextview.c:150
+#, fuzzy
+msgid "Amount of pixels to indent paragraphs"
+msgstr "مقدار إزاحة الفقرات، بالبكسل"
+
+#: ../glade/gbwidgets/gbtextview.c:463
+msgid "Text View"
+msgstr "عرض النَّص"
+
+#: ../glade/gbwidgets/gbtogglebutton.c:100
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:98
+#, fuzzy
+msgid "If the toggle button is initially on"
+msgstr "فيما إذا كان زر التحوّل في حالة \"بين\""
+
+#: ../glade/gbwidgets/gbtogglebutton.c:199
+msgid "Toggle Button"
+msgstr "زر تحول"
+
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:297
+#, fuzzy
+msgid "Toolbar Toggle Button"
+msgstr "زر تحول"
+
+#: ../glade/gbwidgets/gbtoolbar.c:191
+#, fuzzy
+msgid "New toolbar"
+msgstr "أظهر شريط الأدوات"
+
+#: ../glade/gbwidgets/gbtoolbar.c:202
+#, fuzzy
+msgid "Number of items:"
+msgstr "عدد العناصر"
+
+#: ../glade/gbwidgets/gbtoolbar.c:268
+#, fuzzy
+msgid "The number of items in the toolbar"
+msgstr "عدد العناصر في الصندوق"
+
+#: ../glade/gbwidgets/gbtoolbar.c:271
+#, fuzzy
+msgid "The toolbar orientation"
+msgstr "اتجاه الشريط"
+
+#: ../glade/gbwidgets/gbtoolbar.c:273
+msgid "Style:"
+msgstr "الأسلوب:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:274
+#, fuzzy
+msgid "The toolbar style"
+msgstr "أسلوب شري_ط الأدوات"
+
+#: ../glade/gbwidgets/gbtoolbar.c:276
+#, fuzzy
+msgid "Tooltips:"
+msgstr "التّلميحة:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:276
+#, fuzzy
+msgid "If tooltips are enabled"
+msgstr "تلميحات الأدوات مفعلة"
+
+#: ../glade/gbwidgets/gbtoolbar.c:277
+#, fuzzy
+msgid "Show Arrow:"
+msgstr "عرض السهم"
+
+#: ../glade/gbwidgets/gbtoolbar.c:277
+#, fuzzy
+msgid "If an arrow should be shown to popup a menu if the toolbar doesn't fit"
+msgstr "فيما إذا سيعرض سهم إذا لم يتلائم عمود الأدوات"
+
+#: ../glade/gbwidgets/gbtoolbar.c:427
+#, fuzzy
+msgid "If the item should be the same size as other homogeneous items"
+msgstr "ما إذا يجب أن يكون العنصر بنفس الحجم كالعناصر المتجانسة الأخرى"
+
+#. Commands for inserting new items.
+#: ../glade/gbwidgets/gbtoolbar.c:506
+#, fuzzy
+msgid "Insert Item Before"
+msgstr "أدرج التاريخ/الوقت"
+
+#: ../glade/gbwidgets/gbtoolbar.c:513
+#, fuzzy
+msgid "Insert Item After"
+msgstr "نص مدرج"
+
+#: ../glade/gbwidgets/gbtoolbar.c:680
+msgid "Toolbar"
+msgstr "شريط الأدوات"
+
+#: ../glade/gbwidgets/gbtoolbutton.c:586
+#, fuzzy
+msgid "Toolbar Button"
+msgstr "زر الأداة"
+
+#: ../glade/gbwidgets/gbtoolitem.c:201
+#, fuzzy
+msgid "Toolbar Item"
+msgstr "أسلوب شري_ط الأدوات"
+
+#: ../glade/gbwidgets/gbtreeview.c:71
+#, fuzzy
+msgid "Column 1"
+msgstr "العمود"
+
+#: ../glade/gbwidgets/gbtreeview.c:79
+#, fuzzy
+msgid "Column 2"
+msgstr "العمود"
+
+#: ../glade/gbwidgets/gbtreeview.c:87
+#, fuzzy
+msgid "Column 3"
+msgstr "العمود"
+
+#: ../glade/gbwidgets/gbtreeview.c:97
+#, fuzzy, c-format
+msgid "Row %i"
+msgstr "صف"
+
+#: ../glade/gbwidgets/gbtreeview.c:114
+#, fuzzy
+msgid "Headers Visible:"
+msgstr "العناوين مرئية"
+
+#: ../glade/gbwidgets/gbtreeview.c:115
+#, fuzzy
+msgid "If the column header buttons are shown"
+msgstr "أظهر أزرار رؤوس العمود"
+
+#: ../glade/gbwidgets/gbtreeview.c:116
+#, fuzzy
+msgid "Rules Hint:"
+msgstr "تلميحة القواعد"
+
+#: ../glade/gbwidgets/gbtreeview.c:117
+#, fuzzy
+msgid ""
+"If a hint is set so the theme engine should draw rows in alternating colors"
+msgstr "تعين تلميحة لآلة التيمة حتى ترسم صفوفا بألوان متغايرة"
+
+#: ../glade/gbwidgets/gbtreeview.c:119
+#, fuzzy
+msgid "If the view is reorderable"
+msgstr "العرض قابل لإعادة الترتيب"
+
+#: ../glade/gbwidgets/gbtreeview.c:120
+#, fuzzy
+msgid "Enable Search:"
+msgstr "تفعيل البحث"
+
+#: ../glade/gbwidgets/gbtreeview.c:121
+#, fuzzy
+msgid "If the user can search through columns interactively"
+msgstr "عرض يسمح للمستخدم بالبحث خلال الأعمدة بتفاعل"
+
+#: ../glade/gbwidgets/gbtreeview.c:123
+#, fuzzy
+msgid "Fixed Height Mode:"
+msgstr "نسق الارتفاع الثابت"
+
+#: ../glade/gbwidgets/gbtreeview.c:124
+msgid "Sets all rows to the same height to improve performance"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtreeview.c:125
+#, fuzzy
+msgid "Hover Selection:"
+msgstr "اختيار الحوم"
+
+#: ../glade/gbwidgets/gbtreeview.c:126
+msgid "Whether the selection should follow the pointer"
+msgstr "فيما اذا كان المنتقى يتبع المؤشر"
+
+#: ../glade/gbwidgets/gbtreeview.c:127
+#, fuzzy
+msgid "Hover Expand:"
+msgstr "تمديد الحوم"
+
+#: ../glade/gbwidgets/gbtreeview.c:128
+#, fuzzy
+msgid ""
+"Whether rows should be expanded or collapsed when the pointer moves over them"
+msgstr "ما إذا وجب توسيع وانهيار الصفوف عندما يقوم المؤشر بتحريكها"
+
+#: ../glade/gbwidgets/gbtreeview.c:317
+#, fuzzy
+msgid "List or Tree View"
+msgstr "مشهد القائمة"
+
+#: ../glade/gbwidgets/gbvbox.c:84
+#, fuzzy
+msgid "New vertical box"
+msgstr "صندوق عمودي"
+
+#: ../glade/gbwidgets/gbvbox.c:245
+msgid "Vertical Box"
+msgstr "صندوق عمودي"
+
+#: ../glade/gbwidgets/gbvbuttonbox.c:111
+#, fuzzy
+msgid "New vertical button box"
+msgstr "صندوق أزرار عمودي"
+
+#: ../glade/gbwidgets/gbvbuttonbox.c:344
+msgid "Vertical Button Box"
+msgstr "صندوق أزرار عمودي"
+
+#: ../glade/gbwidgets/gbviewport.c:104
+#, fuzzy
+msgid "The type of shadow of the viewport"
+msgstr "نوع الملف."
+
+#: ../glade/gbwidgets/gbviewport.c:240
+msgid "Viewport"
+msgstr "منفذ عرض"
+
+#: ../glade/gbwidgets/gbvpaned.c:192
+msgid "Vertical Panes"
+msgstr "لوحات عمودية"
+
+#: ../glade/gbwidgets/gbvruler.c:247
+msgid "Vertical Ruler"
+msgstr "مسطرة عمودية"
+
+#: ../glade/gbwidgets/gbvscale.c:319
+msgid "Vertical Scale"
+msgstr "قياس عمودي"
+
+#: ../glade/gbwidgets/gbvscrollbar.c:236
+msgid "Vertical Scrollbar"
+msgstr "عمود تدريج عمودي"
+
+#: ../glade/gbwidgets/gbvseparator.c:144
+msgid "Vertical Separator"
+msgstr "فاصل عمودي "
+
+#: ../glade/gbwidgets/gbwindow.c:244
+msgid "The title of the window"
+msgstr "عنوان النافذة"
+
+#: ../glade/gbwidgets/gbwindow.c:247
+msgid "The type of the window"
+msgstr "نوع النافذة"
+
+#: ../glade/gbwidgets/gbwindow.c:251
+#, fuzzy
+msgid "Type Hint:"
+msgstr "أكتب التلميحة"
+
+#: ../glade/gbwidgets/gbwindow.c:252
+#, fuzzy
+msgid "Tells the window manager how to treat the window"
+msgstr "جاذيبة الشباك للشباك"
+
+#: ../glade/gbwidgets/gbwindow.c:257
+msgid "The initial position of the window"
+msgstr "موقع النافذة الأولي"
+
+#: ../glade/gbwidgets/gbwindow.c:261 ../glade/gnome/gnomefileentry.c:105
+#: ../glade/gnome/gnomepixmapentry.c:84
+#, fuzzy
+msgid "Modal:"
+msgstr "النّموذج"
+
+#: ../glade/gbwidgets/gbwindow.c:261
+#, fuzzy
+msgid "If the window is modal"
+msgstr "حدد أيقونة النافذة"
+
+#: ../glade/gbwidgets/gbwindow.c:266
+#, fuzzy
+msgid "Default Width:"
+msgstr "العرض الافتراضي"
+
+#: ../glade/gbwidgets/gbwindow.c:267
+#, fuzzy
+msgid "The default width of the window"
+msgstr "عرض النافذة"
+
+#: ../glade/gbwidgets/gbwindow.c:271
+#, fuzzy
+msgid "Default Height:"
+msgstr "الإرتفاع الإفتراضي"
+
+#: ../glade/gbwidgets/gbwindow.c:272
+#, fuzzy
+msgid "The default height of the window"
+msgstr "الارتفاع الافتراضى لنافدة الدخول "
+
+#: ../glade/gbwidgets/gbwindow.c:278
+#, fuzzy
+msgid "Resizable:"
+msgstr "قابل للتحجيم"
+
+#: ../glade/gbwidgets/gbwindow.c:279
+#, fuzzy
+msgid "If the window can be resized"
+msgstr "لا يمكن قراءة أالملف"
+
+#: ../glade/gbwidgets/gbwindow.c:286
+#, fuzzy
+msgid "If the window can be shrunk"
+msgstr "حدد أيقونة النافذة"
+
+#: ../glade/gbwidgets/gbwindow.c:287
+#, fuzzy
+msgid "Grow:"
+msgstr "توسيع"
+
+#: ../glade/gbwidgets/gbwindow.c:288
+#, fuzzy
+msgid "If the window can be enlarged"
+msgstr "لا يمكن قراءة أالملف"
+
+#: ../glade/gbwidgets/gbwindow.c:293
+#, fuzzy
+msgid "Auto-Destroy:"
+msgstr "خانة المؤلّف"
+
+#: ../glade/gbwidgets/gbwindow.c:294
+#, fuzzy
+msgid "If the window is destroyed when its transient parent is destroyed"
+msgstr "فيما إذا وجب تدمير هذه النافذة عند تدمير النافذة الأم"
+
+#: ../glade/gbwidgets/gbwindow.c:298
+#, fuzzy
+msgid "The icon for this window"
+msgstr "أيقونة لهذه النافذة"
+
+#: ../glade/gbwidgets/gbwindow.c:305
+#, fuzzy
+msgid "Role:"
+msgstr "الدور: "
+
+#: ../glade/gbwidgets/gbwindow.c:305
+#, fuzzy
+msgid "A unique identifier for the window to be used when restoring a session"
+msgstr "معرف وحيد للنافذة يستخدم عند استرجاع جلسة"
+
+#: ../glade/gbwidgets/gbwindow.c:308
+#, fuzzy
+msgid "Decorated:"
+msgstr "مزوق"
+
+#: ../glade/gbwidgets/gbwindow.c:309
+#, fuzzy
+msgid "If the window should be decorated by the window manager"
+msgstr "ما إذا وجب تزويق النافذة بمدير النوافذ"
+
+#: ../glade/gbwidgets/gbwindow.c:312
+#, fuzzy
+msgid "Skip Taskbar:"
+msgstr "تخطي عمود المهام"
+
+#: ../glade/gbwidgets/gbwindow.c:313
+#, fuzzy
+msgid "If the window should not appear in the task bar"
+msgstr "TRUE إذا وجب أن لا تكون النافذة في عمود المهام."
+
+#: ../glade/gbwidgets/gbwindow.c:316
+#, fuzzy
+msgid "Skip Pager:"
+msgstr "تخطي المتصفح"
+
+#: ../glade/gbwidgets/gbwindow.c:317
+#, fuzzy
+msgid "If the window should not appear in the pager"
+msgstr "يضبط لـ TRUE إذا وجب أن لا تكون النافذة في المتصفح."
+
+#: ../glade/gbwidgets/gbwindow.c:320
+#, fuzzy
+msgid "Gravity:"
+msgstr "الجاذبية"
+
+#: ../glade/gbwidgets/gbwindow.c:321
+msgid "The reference point to use when the window coordinates are set"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:325
+#, fuzzy
+msgid "Focus On Map:"
+msgstr "تركيز على الخارطة"
+
+#: ../glade/gbwidgets/gbwindow.c:325
+#, fuzzy
+msgid "If the window should receive the input focus when it is mapped"
+msgstr "يضبط لـ TRUE إذا وجب للنافذة أن تتلقى تركيز الإدخال."
+
+#: ../glade/gbwidgets/gbwindow.c:328
+#, fuzzy
+msgid "Urgency Hint:"
+msgstr "أورجانش"
+
+#: ../glade/gbwidgets/gbwindow.c:328
+#, fuzzy
+msgid "If the window should be brought to the user's attention"
+msgstr "يضبط لـ TRUE إذا وجب تنبيه المستخدم بالنافذة"
+
+#: ../glade/gbwidgets/gbwindow.c:1232
+msgid "Window"
+msgstr "نافذة"
+
+#: ../glade/glade.c:369 ../glade/gnome-db/gnomedberrordlg.c:75
+msgid "Error"
+msgstr "خطأ"
+
+#: ../glade/glade.c:372
+#, fuzzy
+msgid "System Error"
+msgstr "خطأ في النظام: %s"
+
+#: ../glade/glade.c:376
+msgid "Error opening file"
+msgstr "خطاء في فتح الملف"
+
+#: ../glade/glade.c:378
+#, fuzzy
+msgid "Error reading file"
+msgstr "خطأ عند قراءة الملف:"
+
+#: ../glade/glade.c:380
+#, fuzzy
+msgid "Error writing file"
+msgstr "خطأ أثناء الكتابة للقرص"
+
+#: ../glade/glade.c:383
+#, fuzzy
+msgid "Invalid directory"
+msgstr "ليس دليل مستخدمين صحيح"
+
+#: ../glade/glade.c:387
+#, fuzzy
+msgid "Invalid value"
+msgstr "تاريخ غير صحيح"
+
+#: ../glade/glade.c:389
+#, fuzzy
+msgid "Invalid XML entity"
+msgstr "مُدخل مضيف غير سليم"
+
+#: ../glade/glade.c:391
+#, fuzzy
+msgid "Start tag expected"
+msgstr "تاريخ البدء"
+
+#: ../glade/glade.c:393
+#, fuzzy
+msgid "End tag expected"
+msgstr "%d صفحة مختارة"
+
+#: ../glade/glade.c:395
+#, fuzzy
+msgid "Character data expected"
+msgstr "لوحة المحارِف"
+
+#: ../glade/glade.c:397
+#, fuzzy
+msgid "Class id missing"
+msgstr "قائمة الأصناف"
+
+#: ../glade/glade.c:399
+#, fuzzy
+msgid "Class unknown"
+msgstr "مجهول"
+
+#: ../glade/glade.c:401
+#, fuzzy
+msgid "Invalid component"
+msgstr "مستند غير صالح"
+
+#: ../glade/glade.c:403
+#, fuzzy
+msgid "Unexpected end of file"
+msgstr "نهاية إرسال غير متوقعة!"
+
+#: ../glade/glade.c:406
+#, fuzzy
+msgid "Unknown error code"
+msgstr "خطأ مجهول."
+
+#: ../glade/glade_atk.c:120
+msgid "Controlled By"
+msgstr "متحكَّمة من طرف"
+
+#: ../glade/glade_atk.c:121
+msgid "Controller For"
+msgstr "متحكم لـ"
+
+#: ../glade/glade_atk.c:122
+msgid "Label For"
+msgstr "علامة لـ"
+
+#: ../glade/glade_atk.c:123
+msgid "Labelled By"
+msgstr "معلّمة من طرف"
+
+#: ../glade/glade_atk.c:124
+msgid "Member Of"
+msgstr "عضو لـ"
+
+#: ../glade/glade_atk.c:125
+msgid "Node Child Of"
+msgstr "العقدة الإبن لـ"
+
+#: ../glade/glade_atk.c:126
+msgid "Flows To"
+msgstr "يتدلى لـ"
+
+#: ../glade/glade_atk.c:127
+msgid "Flows From"
+msgstr "يتدلى من"
+
+#: ../glade/glade_atk.c:128
+msgid "Subwindow Of"
+msgstr "نافذة ابن لـ"
+
+#: ../glade/glade_atk.c:129
+msgid "Embeds"
+msgstr "تحتوي على"
+
+#: ../glade/glade_atk.c:130
+msgid "Embedded By"
+msgstr "محتواة من طرف"
+
+#: ../glade/glade_atk.c:131
+msgid "Popup For"
+msgstr "منبثقة لـ"
+
+#: ../glade/glade_atk.c:132
+msgid "Parent Window Of"
+msgstr "النافذة الأب لـ"
+
+#. I don't think we should set the transient parent as the dialog could be
+#. left open if desired.
+#: ../glade/glade_atk.c:331
+#, fuzzy, c-format
+msgid "Relationship: %s"
+msgstr "السبب: %s"
+
+#. Create the pages of the main notebook
+#. NOTE: If you add/remove pages you need to change the GB_PAGE_SIGNALS
+#. value at the top of this file
+#: ../glade/glade_atk.c:375 ../glade/property.c:615
+#, fuzzy
+msgid "Widget"
+msgstr "العرض"
+
+#: ../glade/glade_atk.c:638 ../glade/glade_menu_editor.c:773
+#: ../glade/property.c:776
+#, fuzzy
+msgid "Name:"
+msgstr "الإ_سم:"
+
+#: ../glade/glade_atk.c:639
+#, fuzzy
+msgid "The name of the widget to pass to assistive technologies"
+msgstr "اسم قائمة القطع المستعملة عند انشاء هذا الصنف"
+
+#: ../glade/glade_atk.c:640
+#, fuzzy
+msgid "Description:"
+msgstr "ال_وصف:"
+
+#: ../glade/glade_atk.c:641
+#, fuzzy
+msgid "The description of the widget to pass to assistive technologies"
+msgstr "تطبيقات تدعم تقانة الإعانة"
+
+#: ../glade/glade_atk.c:643
+#, fuzzy
+msgid "Table Caption:"
+msgstr "عنوان الجدول"
+
+#: ../glade/glade_atk.c:644
+#, fuzzy
+msgid "The table caption to pass to assistive technologies"
+msgstr "تطبيقات تدعم تقانة الإعانة"
+
+#: ../glade/glade_atk.c:681
+#, fuzzy
+msgid "Select the widgets with this relationship"
+msgstr "انتقِ قطعة في مساحة العمل"
+
+#: ../glade/glade_atk.c:761
+msgid "Click"
+msgstr "نقر"
+
+#: ../glade/glade_atk.c:762
+#, fuzzy
+msgid "Press"
+msgstr "مضغوط"
+
+#: ../glade/glade_atk.c:763
+#, fuzzy
+msgid "Release"
+msgstr "إصدارة %s"
+
+#: ../glade/glade_atk.c:822
+#, fuzzy
+msgid "Enter the description of the action to pass to assistive technologies"
+msgstr "حدد وصف عمل تنشيط آ تي كاي atk "
+
+#: ../glade/glade_clipboard.c:118
+#, fuzzy
+msgid "Clipboard"
+msgstr "ال_حافظة"
+
+#: ../glade/glade_clipboard.c:351
+#, fuzzy
+msgid "You need to select a widget to paste into"
+msgstr "انقر هنا لتختر المجلدات التي ستنشر بها"
+
+#: ../glade/glade_clipboard.c:376
+#, fuzzy
+msgid "You can't paste into windows or dialogs."
+msgstr "لا يمكنك الدردشة مادمت لست في غرفة."
+
+#: ../glade/glade_clipboard.c:399
+msgid ""
+"You can't paste into the selected widget, since\n"
+"it is created automatically by its parent."
+msgstr ""
+
+#: ../glade/glade_clipboard.c:408 ../glade/glade_clipboard.c:416
+#, fuzzy
+msgid "Only menu items can be pasted into a menu or menu bar."
+msgstr "يمكن لصق قطعة واحدة فقط كل مرة غلى هذه الحاوية"
+
+#: ../glade/glade_clipboard.c:427
+#, fuzzy
+msgid "Only buttons can be pasted into a dialog action area."
+msgstr "يمكن لصق قطعة واحدة فقط كل مرة غلى هذه الحاوية"
+
+#: ../glade/glade_clipboard.c:437
+#, fuzzy
+msgid "Only GnomeDockItem widgets can be pasted into a GnomeDock."
+msgstr "يمكن لصق قطعة واحدة فقط كل مرة غلى هذه الحاوية"
+
+#: ../glade/glade_clipboard.c:446
+#, fuzzy
+msgid "Only GnomeDockItem widgets can be pasted over a GnomeDockItem."
+msgstr "يمكن لصق قطعة واحدة فقط كل مرة غلى هذه الحاوية"
+
+#: ../glade/glade_clipboard.c:449
+#, fuzzy
+msgid "Sorry - pasting over a GnomeDockItem is not implemented yet."
+msgstr "عفوا، لا تعيينات متقدمة مضمنة حاليا."
+
+#: ../glade/glade_clipboard.c:457
+msgid "GnomeDockItem widgets can only be pasted into a GnomeDock."
+msgstr ""
+
+#. 3 - see GladeStockMenuItemNew above.
+#: ../glade/glade_gnome.c:121 ../glade/glade_gnome.c:874
+#: ../glade/glade_project_window.c:211 ../glade/glade_project_window.c:633
+msgid "_New"
+msgstr "_جديد"
+
+#: ../glade/glade_gnome.c:874
+#, fuzzy
+msgid "Create a new file"
+msgstr "انشيء مفتاح جديد"
+
+#. Note that glade_palette_set_show_gnome_widgets() has some of these
+#. strings hard-coded now, so keep up-to-date.
+#: ../glade/glade_gnomelib.c:116
+#, fuzzy
+msgid "_Gnome"
+msgstr "_لعبة"
+
+#: ../glade/glade_gnomelib.c:117 ../glade/glade_gtk12lib.c:248
+#: ../glade/glade_palette.c:315
+#, fuzzy
+msgid "Dep_recated"
+msgstr "ملغاة"
+
+#. Note that glade_palette_set_show_gnome_widgets() has some of these
+#. strings hard-coded now, so keep up-to-date.
+#: ../glade/glade_gtk12lib.c:246
+#, fuzzy
+msgid "GTK+ _Basic"
+msgstr "_أساسي"
+
+#: ../glade/glade_gtk12lib.c:247
+#, fuzzy
+msgid "GTK+ _Additional"
+msgstr "جمع"
+
+#: ../glade/glade_keys_dialog.c:94
+#, fuzzy
+msgid "Select Accelerator Key"
+msgstr "مُسَرِّع"
+
+#: ../glade/glade_keys_dialog.c:97
+msgid "Keys"
+msgstr "مفاتيح"
+
+#: ../glade/glade_menu_editor.c:395
+msgid "Menu Editor"
+msgstr "محرر القوائم"
+
+#: ../glade/glade_menu_editor.c:412
+#, fuzzy
+msgid "Type"
+msgstr "أنواع"
+
+#: ../glade/glade_menu_editor.c:413
+msgid "Accelerator"
+msgstr "مُسَرِّع"
+
+#: ../glade/glade_menu_editor.c:414
+#, fuzzy
+msgid "Name"
+msgstr "الإ_سم"
+
+#: ../glade/glade_menu_editor.c:415 ../glade/property.c:1499
+#, fuzzy
+msgid "Handler"
+msgstr "تشاندلر"
+
+#: ../glade/glade_menu_editor.c:416 ../glade/property.c:102
+msgid "Active"
+msgstr "نشط"
+
+#: ../glade/glade_menu_editor.c:417
+#, fuzzy
+msgid "Group"
+msgstr "المجموعة:"
+
+#: ../glade/glade_menu_editor.c:418
+msgid "Icon"
+msgstr "أيقونة"
+
+#: ../glade/glade_menu_editor.c:459
+msgid "Move the item and its children up one place in the list"
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:471
+msgid "Move the item and its children down one place in the list"
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:483
+msgid "Move the item and its children up one level"
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:495
+msgid "Move the item and its children down one level"
+msgstr ""
+
+#: ../glade/glade_menu_editor.c:525
+#, fuzzy
+msgid "The stock item to use."
+msgstr "عنصر مختار لهذه الصورة"
+
+# Stock items are images supplied by the library for use in icons and buttons, like the ones you see in most GTK applications
+#: ../glade/glade_menu_editor.c:528 ../glade/glade_menu_editor.c:643
+#, fuzzy
+msgid "Stock Item:"
+msgstr "عنصر مدعوم"
+
+#: ../glade/glade_menu_editor.c:641
+#, fuzzy
+msgid "The stock Gnome item to use."
+msgstr "ملف اللّعبة الذي سيستخدم"
+
+#: ../glade/glade_menu_editor.c:746
+#, fuzzy
+msgid "The text of the menu item, or empty for separators."
+msgstr "نص عنصر القائمة"
+
+#: ../glade/glade_menu_editor.c:770 ../glade/property.c:777
+#, fuzzy
+msgid "The name of the widget"
+msgstr "الإسم الداخلي للقطعة"
+
+#: ../glade/glade_menu_editor.c:791
+#, fuzzy
+msgid "The function to be called when the item is selected"
+msgstr "معلومات الصفحة حيث ستطبع الصورة"
+
+#: ../glade/glade_menu_editor.c:793 ../glade/property.c:1547
+#, fuzzy
+msgid "Handler:"
+msgstr "تشاندلر"
+
+#: ../glade/glade_menu_editor.c:812
+#, fuzzy
+msgid "An optional icon to show on the left of the menu item."
+msgstr "الحشو الذي سيدخل عند يسار القطعة"
+
+#: ../glade/glade_menu_editor.c:935
+#, fuzzy
+msgid "The tip to show when the mouse is over the item"
+msgstr "ا_نتقي النوافذ عند تنقل الفأرة فوقها"
+
+#: ../glade/glade_menu_editor.c:937 ../glade/property.c:824
+msgid "Tooltip:"
+msgstr "التّلميحة:"
+
+#: ../glade/glade_menu_editor.c:958
+#, fuzzy
+msgid "_Add"
+msgstr "أ_ضف"
+
+#: ../glade/glade_menu_editor.c:963
+#, fuzzy
+msgid "Add a new item below the selected item."
+msgstr "إنشاء صورة جديدة من قالب محدد"
+
+#: ../glade/glade_menu_editor.c:968
+#, fuzzy
+msgid "Add _Child"
+msgstr "اضف عنصر ابن"
+
+#: ../glade/glade_menu_editor.c:973
+#, fuzzy
+msgid "Add a new child item below the selected item."
+msgstr "إنشاء صورة جديدة من قالب محدد"
+
+#: ../glade/glade_menu_editor.c:979
+#, fuzzy
+msgid "Add _Separator"
+msgstr "اضف فاصل"
+
+#: ../glade/glade_menu_editor.c:984
+#, fuzzy
+msgid "Add a separator below the selected item."
+msgstr "أضف علامة موقع إلى المجلّد المنتقى"
+
+#: ../glade/glade_menu_editor.c:989 ../glade/glade_project_window.c:242
+msgid "_Delete"
+msgstr "_فسخ"
+
+#: ../glade/glade_menu_editor.c:994
+#, fuzzy
+msgid "Delete the current item"
+msgstr "حذف هذا الحدث"
+
+#. Type radio options and toggle options.
+#: ../glade/glade_menu_editor.c:1000
+#, fuzzy
+msgid "Item Type:"
+msgstr "نوع الصورة:"
+
+#: ../glade/glade_menu_editor.c:1016
+#, fuzzy
+msgid "If the item is initially on."
+msgstr "قاربت بطاريتك على النّفاذ"
+
+#: ../glade/glade_menu_editor.c:1018
+#, fuzzy
+msgid "Active:"
+msgstr "نشط"
+
+#: ../glade/glade_menu_editor.c:1023 ../glade/glade_menu_editor.c:1638
+#: ../glade/property.c:2216 ../glade/property.c:2226
+msgid "No"
+msgstr "لا"
+
+#: ../glade/glade_menu_editor.c:1037
+#, fuzzy
+msgid "The radio menu item's group"
+msgstr "رسم كعنصر قائمة مشع"
+
+#: ../glade/glade_menu_editor.c:1054 ../glade/glade_menu_editor.c:2414
+#: ../glade/glade_menu_editor.c:2554
+#, fuzzy
+msgid "Radio"
+msgstr "صوت"
+
+#: ../glade/glade_menu_editor.c:1061 ../glade/glade_menu_editor.c:2412
+#: ../glade/glade_menu_editor.c:2552
+#, fuzzy
+msgid "Check"
+msgstr "ا_فحص"
+
+#: ../glade/glade_menu_editor.c:1068 ../glade/property.c:102
+msgid "Normal"
+msgstr "عادي"
+
+#. Accelerator key options.
+#: ../glade/glade_menu_editor.c:1077
+#, fuzzy
+msgid "Accelerator:"
+msgstr "مُسَرِّع"
+
+#: ../glade/glade_menu_editor.c:1114 ../glade/property.c:1682
+msgid "Ctrl"
+msgstr "Ctrl"
+
+#: ../glade/glade_menu_editor.c:1119 ../glade/property.c:1685
+#, fuzzy
+msgid "Shift"
+msgstr "_Shift"
+
+#: ../glade/glade_menu_editor.c:1124 ../glade/property.c:1688
+msgid "Alt"
+msgstr "Alt"
+
+#: ../glade/glade_menu_editor.c:1129 ../glade/property.c:1695
+msgid "Key:"
+msgstr "المفتاح:"
+
+#: ../glade/glade_menu_editor.c:1135 ../glade/property.c:1674
+#, fuzzy
+msgid "Modifiers:"
+msgstr "مغير:"
+
+#: ../glade/glade_menu_editor.c:1638 ../glade/glade_menu_editor.c:2419
+#: ../glade/glade_menu_editor.c:2562 ../glade/property.c:2216
+msgid "Yes"
+msgstr "نعم"
+
+#: ../glade/glade_menu_editor.c:2008
+#, fuzzy
+msgid "Select icon"
+msgstr "أختر أيقونة..."
+
+#: ../glade/glade_menu_editor.c:2353 ../glade/glade_menu_editor.c:2714
+#, fuzzy
+msgid "separator"
+msgstr "<فاصل>"
+
+#. Add the special 'New' item to create a new group.
+#: ../glade/glade_menu_editor.c:3638 ../glade/glade_project_window.c:369
+#: ../glade/property.c:5115
+msgid "New"
+msgstr "جديد"
+
+#: ../glade/glade_palette.c:194 ../glade/glade_palette.c:196
+#: ../glade/glade_palette.c:412
+#, fuzzy
+msgid "Selector"
+msgstr "انتقِ"
+
+#: ../glade/glade_project.c:385
+#, fuzzy
+msgid ""
+"The project directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr "آخر دليل تم تصدير ملاحظة إليه باستخدام الملحق تصدير بصيغة HTML"
+
+#: ../glade/glade_project.c:392
+#, fuzzy
+msgid ""
+"The source directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr "آخر دليل تم تصدير ملاحظة إليه باستخدام الملحق تصدير بصيغة HTML"
+
+#: ../glade/glade_project.c:402
+msgid ""
+"Invalid source directory:\n"
+"\n"
+"The source directory must be the project directory\n"
+"or a subdirectory of the project directory.\n"
+msgstr ""
+
+#: ../glade/glade_project.c:410
+#, fuzzy
+msgid ""
+"The pixmaps directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr "آخر دليل تم تصدير ملاحظة إليه باستخدام الملحق تصدير بصيغة HTML"
+
+#: ../glade/glade_project.c:438
+#, fuzzy, c-format
+msgid "Sorry - generating source for %s is not implemented yet"
+msgstr "عفوا، التصفح للبحث عن الملفات الصوتية ليس مضمنا حاليا."
+
+#: ../glade/glade_project.c:509
+msgid ""
+"Your project uses deprecated widgets that Gtkmm-2\n"
+"does not support.  Check your project for these\n"
+"widgets, and use their replacements."
+msgstr ""
+
+#: ../glade/glade_project.c:521
+msgid ""
+"Error running glade-- to generate the C++ source code.\n"
+"Check that you have glade-- installed and that it is in your PATH.\n"
+"Then try running 'glade-- <project_file.glade>' in a terminal."
+msgstr ""
+
+#: ../glade/glade_project.c:548
+msgid ""
+"Error running gate to generate the Ada95 source code.\n"
+"Check that you have gate installed and that it is in your PATH.\n"
+"Then try running 'gate <project_file.glade>' in a terminal."
+msgstr ""
+
+#: ../glade/glade_project.c:571
+msgid ""
+"Error running glade2perl to generate the Perl source code.\n"
+"Check that you have glade2perl installed and that it is in your PATH.\n"
+"Then try running 'glade2perl <project_file.glade>' in a terminal."
+msgstr ""
+
+#: ../glade/glade_project.c:594
+msgid ""
+"Error running eglade to generate the Eiffel source code.\n"
+"Check that you have eglade installed and that it is in your PATH.\n"
+"Then try running 'eglade <project_file.glade>' in a terminal."
+msgstr ""
+
+#: ../glade/glade_project.c:954
+#, fuzzy
+msgid ""
+"The pixmap directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr "آخر دليل تم تصدير ملاحظة إليه باستخدام الملحق تصدير بصيغة HTML"
+
+#: ../glade/glade_project.c:1772
+#, fuzzy
+msgid "Error writing project XML file\n"
+msgstr "فشلت الكتابة إلى ملف الصورة: %s"
+
+#: ../glade/glade_project_options.c:157 ../glade/glade_project_window.c:385
+#: ../glade/glade_project_window.c:890
+#, fuzzy
+msgid "Project Options"
+msgstr "خيارات الصورة"
+
+#.
+#. * General Page.
+#.
+#: ../glade/glade_project_options.c:174
+#, fuzzy
+msgid "General"
+msgstr "_عامّ"
+
+#: ../glade/glade_project_options.c:183
+#, fuzzy
+msgid "Basic Options:"
+msgstr "خيارات القرص"
+
+#: ../glade/glade_project_options.c:201
+#, fuzzy
+msgid "The project directory"
+msgstr "اختر دليل"
+
+#: ../glade/glade_project_options.c:203
+#, fuzzy
+msgid "Project Directory:"
+msgstr "المجلد المنزلي"
+
+#: ../glade/glade_project_options.c:221
+#, fuzzy
+msgid "Browse..."
+msgstr "_تصفّح"
+
+#: ../glade/glade_project_options.c:236
+#, fuzzy
+msgid "The name of the current project"
+msgstr "دليل الصفحة الحالية"
+
+#: ../glade/glade_project_options.c:238
+#, fuzzy
+msgid "Project Name:"
+msgstr "اسم الخاصية"
+
+#: ../glade/glade_project_options.c:258
+msgid "The name of the program"
+msgstr "اسم البرنامج"
+
+#: ../glade/glade_project_options.c:281
+#, fuzzy
+msgid "The project file"
+msgstr "ملف مشروع براسيرو"
+
+#: ../glade/glade_project_options.c:283
+#, fuzzy
+msgid "Project File:"
+msgstr "موقع المشروع"
+
+#. Project Source Directory.
+#: ../glade/glade_project_options.c:299
+#, fuzzy
+msgid "Subdirectories:"
+msgstr "دليل"
+
+#: ../glade/glade_project_options.c:316
+#, fuzzy
+msgid "The directory to save generated source code"
+msgstr "الدليل لتحميل ملف مصدر gok منه."
+
+#: ../glade/glade_project_options.c:319
+#, fuzzy
+msgid "Source Directory:"
+msgstr "المجلد المنزلي"
+
+#: ../glade/glade_project_options.c:338
+#, fuzzy
+msgid "The directory to store pixmaps"
+msgstr "بُنية المجلّدات للملفات"
+
+#: ../glade/glade_project_options.c:341
+#, fuzzy
+msgid "Pixmaps Directory:"
+msgstr "دليل بيكسماب"
+
+#: ../glade/glade_project_options.c:363
+#, fuzzy
+msgid "The license which is added at the top of generated files"
+msgstr "الحشو الذي سيدخل في أعلى القطعة."
+
+#. Source Language.
+#: ../glade/glade_project_options.c:385
+msgid "Language:"
+msgstr "اللغة:"
+
+#: ../glade/glade_project_options.c:416
+#, fuzzy
+msgid "Gnome:"
+msgstr "المنزل:"
+
+#: ../glade/glade_project_options.c:424
+#, fuzzy
+msgid "Enable Gnome Support"
+msgstr "_شغّل الدعم"
+
+#: ../glade/glade_project_options.c:430
+#, fuzzy
+msgid "If a Gnome application is to be built"
+msgstr "أجبر تطبيق لا يعمل عاديا على الإنتهاء"
+
+#: ../glade/glade_project_options.c:433
+#, fuzzy
+msgid "Enable Gnome DB Support"
+msgstr "_شغّل الدعم"
+
+#: ../glade/glade_project_options.c:437
+#, fuzzy
+msgid "If a Gnome DB application is to be built"
+msgstr "أجبر تطبيق لا يعمل عاديا على الإنتهاء"
+
+#.
+#. * C Options Page.
+#.
+#: ../glade/glade_project_options.c:447
+#, fuzzy
+msgid "C Options"
+msgstr "خيارات"
+
+#: ../glade/glade_project_options.c:456
+msgid "<b>Note:</b> for large applications the use of libglade is recommended."
+msgstr ""
+
+#: ../glade/glade_project_options.c:468
+#, fuzzy
+msgid "General Options:"
+msgstr "خيارات _عامة"
+
+#. Gettext Support.
+#: ../glade/glade_project_options.c:478
+#, fuzzy
+msgid "Gettext Support"
+msgstr "دعم"
+
+#: ../glade/glade_project_options.c:483
+msgid "If strings are marked for translation by gettext"
+msgstr ""
+
+#. Setting widget names.
+#: ../glade/glade_project_options.c:487
+#, fuzzy
+msgid "Set Widget Names"
+msgstr "اسم الكائن"
+
+#: ../glade/glade_project_options.c:492
+#, fuzzy
+msgid "If widget names are set in the source code"
+msgstr "المجلد المقصود داخل المجلد المصدر."
+
+#. Backing up source files.
+#: ../glade/glade_project_options.c:496
+#, fuzzy
+msgid "Backup Source Files"
+msgstr "ابحث عن ملفات"
+
+#: ../glade/glade_project_options.c:501
+msgid "If copies of old source files are made"
+msgstr ""
+
+#. Gnome Help System support.
+#: ../glade/glade_project_options.c:505
+#, fuzzy
+msgid "Gnome Help Support"
+msgstr "أهلا جنوم"
+
+#: ../glade/glade_project_options.c:512
+msgid "If support for the Gnome Help system should be included"
+msgstr ""
+
+#: ../glade/glade_project_options.c:515
+#, fuzzy
+msgid "File Output Options:"
+msgstr "خيارات المساعدة:"
+
+#. Outputting main file.
+#: ../glade/glade_project_options.c:525
+#, fuzzy
+msgid "Output main.c File"
+msgstr "سطور الخَرْج"
+
+#: ../glade/glade_project_options.c:530
+msgid ""
+"If a main.c file is output containing a main() function, if it doesn't "
+"already exist"
+msgstr ""
+
+#. Outputting support files.
+#: ../glade/glade_project_options.c:534
+#, fuzzy
+msgid "Output Support Functions"
+msgstr "دالّات OpenSSL"
+
+#: ../glade/glade_project_options.c:539
+msgid "If the support functions are output"
+msgstr ""
+
+#. Outputting build files.
+#: ../glade/glade_project_options.c:543
+#, fuzzy
+msgid "Output Build Files"
+msgstr "سطور الخَرْج"
+
+#: ../glade/glade_project_options.c:548
+msgid ""
+"If files for building the source code are output, including Makefile.am and "
+"configure.in, if they don't already exist"
+msgstr ""
+
+#. Main source file.
+#: ../glade/glade_project_options.c:552
+#, fuzzy
+msgid "Interface Creation Functions:"
+msgstr "وظيفة الإنشاء"
+
+#: ../glade/glade_project_options.c:564
+msgid "The file in which the functions to create the interface are written"
+msgstr ""
+
+#: ../glade/glade_project_options.c:566 ../glade/glade_project_options.c:612
+#: ../glade/glade_project_options.c:658 ../glade/property.c:998
+#, fuzzy
+msgid "Source File:"
+msgstr "حجم المصدر"
+
+#: ../glade/glade_project_options.c:581
+msgid ""
+"The file in which the declarations of the functions to create the interface "
+"are written"
+msgstr ""
+
+#: ../glade/glade_project_options.c:583 ../glade/glade_project_options.c:629
+#: ../glade/glade_project_options.c:675
+#, fuzzy
+msgid "Header File:"
+msgstr "صورة الرأس"
+
+#: ../glade/glade_project_options.c:594
+msgid "Source file for interface creation functions"
+msgstr ""
+
+#: ../glade/glade_project_options.c:595
+#, fuzzy
+msgid "Header file for interface creation functions"
+msgstr "من فضلك تأكّد من اتصالك بالإنترنت"
+
+#. Handler source file.
+#: ../glade/glade_project_options.c:598
+msgid "Signal Handler & Callback Functions:"
+msgstr ""
+
+#: ../glade/glade_project_options.c:610
+msgid ""
+"The file in which the empty signal handler and callback functions are written"
+msgstr ""
+
+#: ../glade/glade_project_options.c:627
+msgid ""
+"The file in which the declarations of the signal handler and callback "
+"functions are written"
+msgstr ""
+
+#: ../glade/glade_project_options.c:640
+msgid "Source file for signal handler and callback functions"
+msgstr ""
+
+#: ../glade/glade_project_options.c:641
+msgid "Header file for signal handler and callback functions"
+msgstr ""
+
+#. Support source file.
+#: ../glade/glade_project_options.c:644
+#, fuzzy
+msgid "Support Functions:"
+msgstr "دالّات Qt"
+
+#: ../glade/glade_project_options.c:656
+#, fuzzy
+msgid "The file in which the support functions are written"
+msgstr "الحالة التي يفعل فيها هذا العمل"
+
+#: ../glade/glade_project_options.c:673
+msgid "The file in which the declarations of the support functions are written"
+msgstr ""
+
+#: ../glade/glade_project_options.c:686
+#, fuzzy
+msgid "Source file for support functions"
+msgstr "ابحث عن دالّة"
+
+#: ../glade/glade_project_options.c:687
+#, fuzzy
+msgid "Header file for support functions"
+msgstr "ابحث عن دالّة"
+
+#.
+#. * libglade Options Page.
+#.
+#: ../glade/glade_project_options.c:693
+#, fuzzy
+msgid "LibGlade Options"
+msgstr "خيارات غلايد"
+
+#: ../glade/glade_project_options.c:702
+#, fuzzy
+msgid "Translatable Strings:"
+msgstr "قابل للترجمة"
+
+#: ../glade/glade_project_options.c:716
+msgid "<b>Note:</b> this option is deprecated - use intltool instead."
+msgstr ""
+
+#. Output translatable strings.
+#: ../glade/glade_project_options.c:726
+#, fuzzy
+msgid "Save Translatable Strings"
+msgstr "قابل للترجمة"
+
+#: ../glade/glade_project_options.c:731
+msgid ""
+"If translatable strings are saved in a separate C source file, to enable "
+"translation of interfaces loaded by libglade"
+msgstr ""
+
+#: ../glade/glade_project_options.c:741
+msgid "The C source file to save all translatable strings in"
+msgstr ""
+
+#: ../glade/glade_project_options.c:743 ../glade/gnome/gnomepixmap.c:79
+#, fuzzy
+msgid "File:"
+msgstr "_ملف:"
+
+#: ../glade/glade_project_options.c:1202
+#, fuzzy
+msgid "Select the Project Directory"
+msgstr "اختر دليل"
+
+#: ../glade/glade_project_options.c:1392 ../glade/glade_project_options.c:1402
+#: ../glade/glade_project_options.c:1412
+#, fuzzy
+msgid "You need to set the Translatable Strings File option"
+msgstr "اذا كان النص القابل للترجمة له بادئة سياقية"
+
+#: ../glade/glade_project_options.c:1396 ../glade/glade_project_options.c:1406
+msgid "You need to set the Project Directory option"
+msgstr ""
+
+#: ../glade/glade_project_options.c:1398 ../glade/glade_project_options.c:1408
+msgid "You need to set the Project File option"
+msgstr ""
+
+#: ../glade/glade_project_options.c:1414
+msgid "You need to set the Project Name option"
+msgstr ""
+
+#: ../glade/glade_project_options.c:1416
+#, fuzzy
+msgid "You need to set the Program Name option"
+msgstr "لم يمكن القيام بالعملية"
+
+#: ../glade/glade_project_options.c:1419
+msgid "You need to set the Source Directory option"
+msgstr ""
+
+#: ../glade/glade_project_options.c:1422
+msgid "You need to set the Pixmaps Directory option"
+msgstr ""
+
+#: ../glade/glade_project_window.c:187
+#, fuzzy, c-format
+msgid ""
+"Couldn't show help file: %s.\n"
+"\n"
+"Error: %s"
+msgstr "لم يمكن فتح الملفّ '%s': %s"
+
+#: ../glade/glade_project_window.c:211 ../glade/glade_project_window.c:635
+msgid "Create a new project"
+msgstr "انشيء مشروع جديد"
+
+#: ../glade/glade_project_window.c:219 ../glade/glade_project_window.c:655
+#: ../glade/glade_project_window.c:906
+#, fuzzy
+msgid "_Build"
+msgstr "ابني"
+
+#: ../glade/glade_project_window.c:220 ../glade/glade_project_window.c:666
+#, fuzzy
+msgid "Output the project source code"
+msgstr "عرض المشاريع المفتوحة مؤخرا"
+
+#: ../glade/glade_project_window.c:226 ../glade/glade_project_window.c:669
+#, fuzzy
+msgid "Op_tions..."
+msgstr "ال_خيارات"
+
+#: ../glade/glade_project_window.c:227 ../glade/glade_project_window.c:678
+#, fuzzy
+msgid "Edit the project options"
+msgstr "عدّل معلومات الاتصال"
+
+#: ../glade/glade_project_window.c:242 ../glade/glade_project_window.c:717
+#, fuzzy
+msgid "Delete the selected widget"
+msgstr "احذف النصّ المنتقى"
+
+#: ../glade/glade_project_window.c:260 ../glade/glade_project_window.c:728
+#, fuzzy
+msgid "Show _Palette"
+msgstr "لوح الوان"
+
+#: ../glade/glade_project_window.c:260 ../glade/glade_project_window.c:733
+#, fuzzy
+msgid "Show the palette of widgets"
+msgstr "حجم لوح الألوان في نمط 8 bit"
+
+#: ../glade/glade_project_window.c:266 ../glade/glade_project_window.c:738
+#, fuzzy
+msgid "Show Property _Editor"
+msgstr "محرر الطور"
+
+#: ../glade/glade_project_window.c:267 ../glade/glade_project_window.c:744
+#, fuzzy
+msgid "Show the property editor"
+msgstr "اعرض المشروع فقط"
+
+#: ../glade/glade_project_window.c:273 ../glade/glade_project_window.c:748
+#, fuzzy
+msgid "Show Widget _Tree"
+msgstr "أظهر ال_شريط الجانبي"
+
+#: ../glade/glade_project_window.c:274 ../glade/glade_project_window.c:754
+#: ../glade/main.c:82 ../glade/main.c:116
+#, fuzzy
+msgid "Show the widget tree"
+msgstr "اظهر أسبوع العمل"
+
+#: ../glade/glade_project_window.c:280 ../glade/glade_project_window.c:758
+#, fuzzy
+msgid "Show _Clipboard"
+msgstr "ال_حافظة"
+
+#: ../glade/glade_project_window.c:281 ../glade/glade_project_window.c:764
+#: ../glade/main.c:86 ../glade/main.c:120
+msgid "Show the clipboard"
+msgstr "اعرض الحافظة"
+
+#: ../glade/glade_project_window.c:299
+#, fuzzy
+msgid "Show _Grid"
+msgstr "إظهار الشبكة"
+
+#: ../glade/glade_project_window.c:300 ../glade/glade_project_window.c:800
+msgid "Show the grid (in fixed containers only)"
+msgstr ""
+
+#: ../glade/glade_project_window.c:306
+#, fuzzy
+msgid "_Snap to Grid"
+msgstr "قفز إلى الشبكة"
+
+#: ../glade/glade_project_window.c:307
+msgid "Snap widgets to the grid"
+msgstr ""
+
+#: ../glade/glade_project_window.c:313 ../glade/glade_project_window.c:772
+#, fuzzy
+msgid "Show _Widget Tooltips"
+msgstr "اظهر التلميحات"
+
+#: ../glade/glade_project_window.c:314 ../glade/glade_project_window.c:780
+msgid "Show the tooltips of created widgets"
+msgstr ""
+
+#: ../glade/glade_project_window.c:323 ../glade/glade_project_window.c:803
+#, fuzzy
+msgid "Set Grid _Options..."
+msgstr "خيارات التسلسل"
+
+#: ../glade/glade_project_window.c:324
+msgid "Set the grid style and spacing"
+msgstr ""
+
+#: ../glade/glade_project_window.c:330 ../glade/glade_project_window.c:824
+#, fuzzy
+msgid "Set Snap O_ptions..."
+msgstr "خيارات الإرسال"
+
+#: ../glade/glade_project_window.c:331
+msgid "Set options for snapping to the grid"
+msgstr ""
+
+#: ../glade/glade_project_window.c:343
+#, fuzzy
+msgid "_FAQ"
+msgstr "_ك"
+
+#: ../glade/glade_project_window.c:344
+#, fuzzy
+msgid "View the Glade FAQ"
+msgstr "إعرض لوح الاتصال"
+
+#. create File menu
+#: ../glade/glade_project_window.c:358 ../glade/glade_project_window.c:626
+#, fuzzy
+msgid "_Project"
+msgstr "م_شاريع"
+
+#: ../glade/glade_project_window.c:369 ../glade/glade_project_window.c:873
+#: ../glade/glade_project_window.c:1055
+#, fuzzy
+msgid "New Project"
+msgstr "مشروع جديد"
+
+#: ../glade/glade_project_window.c:374
+#, fuzzy
+msgid "Open"
+msgstr "ا_فتح"
+
+#: ../glade/glade_project_window.c:374 ../glade/glade_project_window.c:878
+#: ../glade/glade_project_window.c:1116
+#, fuzzy
+msgid "Open Project"
+msgstr "افتح المشروع"
+
+#: ../glade/glade_project_window.c:379
+msgid "Save"
+msgstr "احفظ"
+
+#: ../glade/glade_project_window.c:379 ../glade/glade_project_window.c:882
+#: ../glade/glade_project_window.c:1481
+#, fuzzy
+msgid "Save Project"
+msgstr "مشروع نشط"
+
+#: ../glade/glade_project_window.c:385
+msgid "Options"
+msgstr "خيارات"
+
+#: ../glade/glade_project_window.c:390
+msgid "Build"
+msgstr "ابني"
+
+#: ../glade/glade_project_window.c:390
+#, fuzzy
+msgid "Build the Source Code"
+msgstr "أنشئ نفس النموذج"
+
+#: ../glade/glade_project_window.c:639
+#, fuzzy
+msgid "Open an existing project"
+msgstr "افتح مستند موجود"
+
+#: ../glade/glade_project_window.c:643
+#, fuzzy
+msgid "Save project"
+msgstr "مشروع جديد"
+
+#: ../glade/glade_project_window.c:688
+#, fuzzy
+msgid "Quit Glade"
+msgstr "اخرج من مُقسِّم‌ج؟"
+
+#: ../glade/glade_project_window.c:702
+#, fuzzy
+msgid "Cut the selected widget to the clipboard"
+msgstr "قُص النص المنتقى للحافظة"
+
+#: ../glade/glade_project_window.c:707
+#, fuzzy
+msgid "Copy the selected widget to the clipboard"
+msgstr "انسخ النص المنتقى للحافظة"
+
+#: ../glade/glade_project_window.c:712
+#, fuzzy
+msgid "Paste the widget from the clipboard over the selected widget"
+msgstr "ما إذا أمكن أن يصبح الكائن هو الكائن الافتراضي"
+
+#: ../glade/glade_project_window.c:784
+#, fuzzy
+msgid "_Grid"
+msgstr "الشبكة"
+
+#: ../glade/glade_project_window.c:792
+#, fuzzy
+msgid "_Show Grid"
+msgstr "إظهار الشبكة"
+
+#: ../glade/glade_project_window.c:809
+#, fuzzy
+msgid "Set the spacing between grid lines"
+msgstr "التباعد العامودي لخطوط الشبكة"
+
+#: ../glade/glade_project_window.c:812
+#, fuzzy
+msgid "S_nap to Grid"
+msgstr "قفز إلى الشبكة"
+
+#: ../glade/glade_project_window.c:820
+msgid "Snap widgets to the grid (in fixed containers only)"
+msgstr ""
+
+#: ../glade/glade_project_window.c:830
+msgid "Set which parts of a widget snap to the grid"
+msgstr ""
+
+#. Don't show these yet as we have no help pages.
+#. menuitem = gtk_menu_item_new_with_mnemonic (_("_Contents"));
+#. gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#. gtk_widget_show (menuitem);
+#.
+#. menuitem = gtk_menu_item_new_with_mnemonic (_("_Index"));
+#. gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#. gtk_widget_show (menuitem);
+#.
+#. menuitem = gtk_menu_item_new ();
+#. gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#. gtk_widget_show (menuitem);
+#.
+#: ../glade/glade_project_window.c:855
+msgid "_About..."
+msgstr "_حول..."
+
+#: ../glade/glade_project_window.c:896
+#, fuzzy
+msgid "Optio_ns"
+msgstr "خيارات"
+
+#: ../glade/glade_project_window.c:900
+#, fuzzy
+msgid "Write Source Code"
+msgstr "الشيفرة المصدرية"
+
+#: ../glade/glade_project_window.c:992 ../glade/glade_project_window.c:1697
+#: ../glade/glade_project_window.c:1986
+msgid "Glade"
+msgstr "جلايد (Glade)"
+
+#: ../glade/glade_project_window.c:999
+#, fuzzy
+msgid "Are you sure you want to create a new project?"
+msgstr "أمتأكد من رغبتك في إنشاء %1 عنوان قرص على %2؟"
+
+#: ../glade/glade_project_window.c:1059
+#, fuzzy
+msgid "New _GTK+ Project"
+msgstr "مشروع جديد"
+
+#: ../glade/glade_project_window.c:1060
+#, fuzzy
+msgid "New G_NOME Project"
+msgstr "مشروع جديد"
+
+#: ../glade/glade_project_window.c:1063
+#, fuzzy
+msgid "Which type of project do you want to create?"
+msgstr "اختر نوع اتصال VPN الذي تريد انشاءه"
+
+#: ../glade/glade_project_window.c:1097
+#, fuzzy
+msgid "New project created."
+msgstr "مشروع جديد"
+
+#: ../glade/glade_project_window.c:1187
+#, fuzzy
+msgid "Project opened."
+msgstr "موقع المشروع"
+
+#: ../glade/glade_project_window.c:1201
+#, fuzzy
+msgid "Error opening project."
+msgstr "خطاء في فتح الملف"
+
+#: ../glade/glade_project_window.c:1265
+#, fuzzy
+msgid "Errors opening project file"
+msgstr "خطاء في فتح الملف"
+
+#: ../glade/glade_project_window.c:1271
+#, fuzzy
+msgid " errors opening project file:"
+msgstr "خطاء في فتح الملف"
+
+#: ../glade/glade_project_window.c:1344
+msgid ""
+"There is no project currently open.\n"
+"Create a new project with the Project/New command."
+msgstr ""
+
+#: ../glade/glade_project_window.c:1548
+#, fuzzy
+msgid "Error saving project"
+msgstr "خطأ أثناء حفظ الأيقونة"
+
+#: ../glade/glade_project_window.c:1550
+#, fuzzy
+msgid "Error saving project."
+msgstr "خطأ أثناء حفظ الأيقونة"
+
+#: ../glade/glade_project_window.c:1556
+#, fuzzy
+msgid "Project saved."
+msgstr "تم حفظ المشروع '%s'"
+
+#: ../glade/glade_project_window.c:1626
+#, fuzzy
+msgid "Errors writing source code"
+msgstr "خطأ أثناء الكتابة للقرص"
+
+#: ../glade/glade_project_window.c:1628
+#, fuzzy
+msgid "Error writing source."
+msgstr "خطأ أثناء الكتابة للقرص"
+
+#: ../glade/glade_project_window.c:1634
+#, fuzzy
+msgid "Source code written."
+msgstr "الشيفرة المصدرية"
+
+#: ../glade/glade_project_window.c:1665
+#, fuzzy
+msgid "System error message:"
+msgstr "خطأ في النظام: %s"
+
+#: ../glade/glade_project_window.c:1704
+#, fuzzy
+msgid "Are you sure you want to quit?"
+msgstr "أمتأكد أنك تريد الخروج؟"
+
+#: ../glade/glade_project_window.c:1988 ../glade/glade_project_window.c:2048
+msgid "(C) 1998-2002 Damon Chaplin"
+msgstr ""
+
+#: ../glade/glade_project_window.c:1989 ../glade/glade_project_window.c:2047
+#, fuzzy
+msgid "Glade is a User Interface Builder for GTK+ and GNOME."
+msgstr "انشئ او افتح واجهات مستخدم لتطبيقات جي تي كاي+ (‎GTK+) و جنوم"
+
+#: ../glade/glade_project_window.c:2018
+#, fuzzy
+msgid "About Glade"
+msgstr "عنّي"
+
+#: ../glade/glade_project_window.c:2103
+#, fuzzy
+msgid "<untitled>"
+msgstr "(بدون عنوان)"
+
+#: ../glade/gnome-db/gnomedbbrowser.c:135
+#, fuzzy
+msgid "Database Browser"
+msgstr "خادم قاعدة بيانات"
+
+#: ../glade/gnome-db/gnomedbcombo.c:124
+#, fuzzy
+msgid "Data-bound combo"
+msgstr "أمر كتابة قرص بيانات"
+
+#: ../glade/gnome-db/gnomedbconnectprop.c:86
+#, fuzzy
+msgid "GnomeDbConnectionProperties"
+msgstr "خصائص الاتصال"
+
+#: ../glade/gnome-db/gnomedbconnectsel.c:147
+#, fuzzy
+msgid "Connection Selector"
+msgstr "الإتّصال بالخادم"
+
+#: ../glade/gnome-db/gnomedbdsnconfig.c:136
+#, fuzzy
+msgid "DSN Configurator"
+msgstr "إعدادات"
+
+#: ../glade/gnome-db/gnomedbdsndruid.c:147
+#, fuzzy
+msgid "DSN Config Druid"
+msgstr "مساعد الإعداد"
+
+#: ../glade/gnome-db/gnomedbeditor.c:63
+#, fuzzy
+msgid "Highlight text:"
+msgstr "خط التظليل:"
+
+#: ../glade/gnome-db/gnomedbeditor.c:63
+msgid "If selected, text will be highlighted inside the widget"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedbeditor.c:178
+#, fuzzy
+msgid "GnomeDbEditor"
+msgstr "محرر التاريخ لجنوم"
+
+#: ../glade/gnome-db/gnomedberror.c:136
+#, fuzzy
+msgid "Database error viewer"
+msgstr "خادم قاعدة بيانات"
+
+#: ../glade/gnome-db/gnomedberrordlg.c:219
+#, fuzzy
+msgid "Database error dialog"
+msgstr "اعرض صندوق حوار الخطأ"
+
+#: ../glade/gnome-db/gnomedbform.c:147
+msgid "Form"
+msgstr "استمارة"
+
+#: ../glade/gnome-db/gnomedbgraybar.c:59
+#, fuzzy
+msgid "Text inside the gray bar"
+msgstr "النص على عمود التقدم"
+
+#: ../glade/gnome-db/gnomedbgraybar.c:138
+#, fuzzy
+msgid "Gray Bar"
+msgstr "رمادي"
+
+#: ../glade/gnome-db/gnomedbgrid.c:132
+msgid "Data-bound grid"
+msgstr ""
+
+#: ../glade/gnome-db/gnomedblist.c:136
+#, fuzzy
+msgid "Data-bound list"
+msgstr "قائمة ألسنة"
+
+#: ../glade/gnome-db/gnomedblogin.c:136
+#, fuzzy
+msgid "Database login widget"
+msgstr "قاعدة البيانات المستعملة"
+
+#: ../glade/gnome-db/gnomedblogindlg.c:78
+#, fuzzy
+msgid "Login"
+msgstr "اسم الولوج:"
+
+#: ../glade/gnome-db/gnomedblogindlg.c:221
+#, fuzzy
+msgid "Database login dialog"
+msgstr "قاعدة البيانات المستعملة"
+
+#: ../glade/gnome-db/gnomedbprovidersel.c:147
+#, fuzzy
+msgid "Provider Selector"
+msgstr "اختيار الحوم"
+
+#: ../glade/gnome-db/gnomedbquerybuilder.c:86
+#, fuzzy
+msgid "GnomeDbQueryBuilder"
+msgstr "جنوم درود"
+
+#: ../glade/gnome-db/gnomedbsourcesel.c:147
+#, fuzzy
+msgid "Data Source Selector"
+msgstr "منتقي مصدر المهام"
+
+#: ../glade/gnome-db/gnomedbtableeditor.c:133
+#, fuzzy
+msgid "Table Editor "
+msgstr "محرر لوح اللون"
+
+#: ../glade/gnome/bonobodock.c:231
+#, fuzzy
+msgid "Allow Floating:"
+msgstr "طافية"
+
+#: ../glade/gnome/bonobodock.c:232
+#, fuzzy
+msgid "If floating dock items are allowed"
+msgstr "النشر غير مسموح به"
+
+#: ../glade/gnome/bonobodock.c:278
+msgid "Add dock band on top"
+msgstr ""
+
+#: ../glade/gnome/bonobodock.c:285
+msgid "Add dock band on bottom"
+msgstr ""
+
+#: ../glade/gnome/bonobodock.c:292
+msgid "Add dock band on left"
+msgstr ""
+
+#: ../glade/gnome/bonobodock.c:299
+msgid "Add dock band on right"
+msgstr ""
+
+#: ../glade/gnome/bonobodock.c:306
+#, fuzzy
+msgid "Add floating dock item"
+msgstr "عنصر مخزون"
+
+#: ../glade/gnome/bonobodock.c:495
+#, fuzzy
+msgid "Gnome Dock"
+msgstr "حوار جنوم"
+
+#: ../glade/gnome/bonobodockitem.c:165
+#, fuzzy
+msgid "Locked:"
+msgstr "مقفل"
+
+#: ../glade/gnome/bonobodockitem.c:166
+msgid "If the dock item is locked in position"
+msgstr ""
+
+#: ../glade/gnome/bonobodockitem.c:167
+#, fuzzy
+msgid "Exclusive:"
+msgstr "خاص"
+
+#: ../glade/gnome/bonobodockitem.c:168
+msgid "If the dock item is always the only item in its band"
+msgstr ""
+
+#: ../glade/gnome/bonobodockitem.c:169
+#, fuzzy
+msgid "Never Floating:"
+msgstr "غير طافية أبدا"
+
+#: ../glade/gnome/bonobodockitem.c:170
+msgid "If the dock item is never allowed to float in its own window"
+msgstr ""
+
+#: ../glade/gnome/bonobodockitem.c:171
+#, fuzzy
+msgid "Never Vertical:"
+msgstr "غير عمودي أبدا"
+
+#: ../glade/gnome/bonobodockitem.c:172
+msgid "If the dock item is never allowed to be vertical"
+msgstr ""
+
+#: ../glade/gnome/bonobodockitem.c:173
+#, fuzzy
+msgid "Never Horizontal:"
+msgstr "غير أفقي أبدا"
+
+#: ../glade/gnome/bonobodockitem.c:174
+#, fuzzy
+msgid "If the dock item is never allowed to be horizontal"
+msgstr "تثبت من انه يمكن تأجيل الإستراحات"
+
+#: ../glade/gnome/bonobodockitem.c:177
+#, fuzzy
+msgid "The type of shadow around the dock item"
+msgstr "النص الذي سيعرض في العنصر."
+
+#: ../glade/gnome/bonobodockitem.c:180
+#, fuzzy
+msgid "The orientation of a floating dock item"
+msgstr "اتجاه الشريط"
+
+#: ../glade/gnome/bonobodockitem.c:428
+msgid "Add dock item before"
+msgstr ""
+
+#: ../glade/gnome/bonobodockitem.c:435
+msgid "Add dock item after"
+msgstr ""
+
+# Stock items are images supplied by the library for use in icons and buttons, like the ones you see in most GTK applications
+#: ../glade/gnome/bonobodockitem.c:771
+#, fuzzy
+msgid "Gnome Dock Item"
+msgstr "عنصر مدعوم"
+
+#: ../glade/gnome/gnomeabout.c:139
+msgid ""
+"Additional information, such as a description of the package and its home "
+"page on the web"
+msgstr ""
+
+#: ../glade/gnome/gnomeabout.c:539
+#, fuzzy
+msgid "Gnome About Dialog"
+msgstr "حوار حوْل"
+
+#: ../glade/gnome/gnomeapp.c:171
+msgid "New File"
+msgstr "ملف جديد"
+
+#: ../glade/gnome/gnomeapp.c:173
+msgid "Open File"
+msgstr "افتح ملف"
+
+#: ../glade/gnome/gnomeapp.c:175
+msgid "Save File"
+msgstr "احفظ ملف"
+
+#: ../glade/gnome/gnomeapp.c:204
+#, fuzzy
+msgid "Status Bar:"
+msgstr "عمود حالة"
+
+#: ../glade/gnome/gnomeapp.c:205
+#, fuzzy
+msgid "If the window has a status bar"
+msgstr "أظهر/اخفي شريط حالة النّافذة."
+
+#: ../glade/gnome/gnomeapp.c:206
+#, fuzzy
+msgid "Store Config:"
+msgstr "حفظ الاعدادات"
+
+#: ../glade/gnome/gnomeapp.c:207
+msgid "If the layout is saved and restored automatically"
+msgstr ""
+
+#: ../glade/gnome/gnomeapp.c:443
+#, fuzzy
+msgid "Gnome Application Window"
+msgstr "نافذة تطبيق عادية"
+
+#: ../glade/gnome/gnomeappbar.c:56
+msgid "Status Message."
+msgstr "رسالة الحالة."
+
+#: ../glade/gnome/gnomeappbar.c:69
+#, fuzzy
+msgid "Progress:"
+msgstr "في تقدّم"
+
+#: ../glade/gnome/gnomeappbar.c:70
+msgid "If the app bar has a progress indicator"
+msgstr ""
+
+#: ../glade/gnome/gnomeappbar.c:71
+msgid "Status:"
+msgstr "الحالة:"
+
+#: ../glade/gnome/gnomeappbar.c:72
+msgid "If the app bar has an area for status messages and user input"
+msgstr ""
+
+#: ../glade/gnome/gnomeappbar.c:184
+#, fuzzy
+msgid "Gnome Application Bar"
+msgstr "شريط تطبيق جنوم"
+
+#: ../glade/gnome/gnomecanvas.c:68
+#, fuzzy
+msgid "Anti-Aliased:"
+msgstr "محسّن الحواف"
+
+#: ../glade/gnome/gnomecanvas.c:69
+msgid "If the canvas is anti-aliased, to smooth the edges of text and graphics"
+msgstr ""
+
+#: ../glade/gnome/gnomecanvas.c:70
+#, fuzzy
+msgid "X1:"
+msgstr "س1"
+
+#: ../glade/gnome/gnomecanvas.c:70
+msgid "The minimum x coordinate"
+msgstr "احداثية س الصغرى"
+
+#: ../glade/gnome/gnomecanvas.c:71
+#, fuzzy
+msgid "Y1:"
+msgstr "ص1"
+
+#: ../glade/gnome/gnomecanvas.c:71
+msgid "The minimum y coordinate"
+msgstr "احداثية ع الصغرى"
+
+#: ../glade/gnome/gnomecanvas.c:72
+#, fuzzy
+msgid "X2:"
+msgstr "س2"
+
+#: ../glade/gnome/gnomecanvas.c:72
+msgid "The maximum x coordinate"
+msgstr "احداثية س الكبرى"
+
+#: ../glade/gnome/gnomecanvas.c:73
+#, fuzzy
+msgid "Y2:"
+msgstr "ص2"
+
+#: ../glade/gnome/gnomecanvas.c:73
+msgid "The maximum y coordinate"
+msgstr "احداثية ع الكبرى"
+
+#: ../glade/gnome/gnomecanvas.c:75
+#, fuzzy
+msgid "Pixels Per Unit:"
+msgstr "بكسلات في الوحدة"
+
+#: ../glade/gnome/gnomecanvas.c:76
+msgid "The number of pixels corresponding to one unit"
+msgstr "عدد البكسلات المرتبطة بوحدة فقط"
+
+#: ../glade/gnome/gnomecanvas.c:248
+#, fuzzy
+msgid "GnomeCanvas"
+msgstr "رقعة الرسم جنوم"
+
+#: ../glade/gnome/gnomecolorpicker.c:68
+#, fuzzy
+msgid "Dither:"
+msgstr "ردّد"
+
+#: ../glade/gnome/gnomecolorpicker.c:69
+msgid "If the sample should use dithering to be more accurate"
+msgstr ""
+
+#: ../glade/gnome/gnomecolorpicker.c:160
+#, fuzzy
+msgid "Pick a color"
+msgstr "اختر لوناً"
+
+#: ../glade/gnome/gnomecolorpicker.c:219
+msgid "Gnome Color Picker"
+msgstr "لاقط اللون لجنوم"
+
+#: ../glade/gnome/gnomecontrol.c:160
+#, fuzzy
+msgid "Couldn't create the Bonobo control"
+msgstr "لم يمكن قراءة جدول المحتويات"
+
+#: ../glade/gnome/gnomecontrol.c:249
+#, fuzzy
+msgid "New Bonobo Control"
+msgstr "تحكم النُسخ"
+
+#: ../glade/gnome/gnomecontrol.c:262
+#, fuzzy
+msgid "Select a Bonobo Control"
+msgstr "اختر لوحة"
+
+#: ../glade/gnome/gnomecontrol.c:290
+#, fuzzy
+msgid "OAFIID"
+msgstr "PROFILEID"
+
+#: ../glade/gnome/gnomecontrol.c:295 ../glade/property.c:3902
+#, fuzzy
+msgid "Description"
+msgstr "ال_وصف"
+
+#: ../glade/gnome/gnomecontrol.c:339
+#, fuzzy
+msgid "Bonobo Control"
+msgstr "التحكّم في الزيادة"
+
+#: ../glade/gnome/gnomedateedit.c:70
+#, fuzzy
+msgid "Show Time:"
+msgstr "اظهر الوقت"
+
+#: ../glade/gnome/gnomedateedit.c:71
+msgid "If the time is shown as well as the date"
+msgstr ""
+
+#: ../glade/gnome/gnomedateedit.c:72
+#, fuzzy
+msgid "24 Hour Format:"
+msgstr "نسق 24 ساعة"
+
+#: ../glade/gnome/gnomedateedit.c:73
+#, fuzzy
+msgid "If the time is shown in 24-hour format"
+msgstr "هذا السِمة ليست بتنسيق مدعوم."
+
+#: ../glade/gnome/gnomedateedit.c:76
+#, fuzzy
+msgid "Lower Hour:"
+msgstr "أدنى ساعة"
+
+#: ../glade/gnome/gnomedateedit.c:77
+#, fuzzy
+msgid "The lowest hour to show in the popup"
+msgstr "النص الذي سيعرض في العنصر."
+
+#: ../glade/gnome/gnomedateedit.c:79
+#, fuzzy
+msgid "Upper Hour:"
+msgstr "الساعة العليا"
+
+#: ../glade/gnome/gnomedateedit.c:80
+#, fuzzy
+msgid "The highest hour to show in the popup"
+msgstr "النص الذي سيعرض في العنصر."
+
+#: ../glade/gnome/gnomedateedit.c:298
+#, fuzzy
+msgid "GnomeDateEdit"
+msgstr "محرر التاريخ لجنوم"
+
+#: ../glade/gnome/gnomedialog.c:153 ../glade/gnome/gnomemessagebox.c:190
+#, fuzzy
+msgid "Auto Close:"
+msgstr "أنهي عن الإغلاق"
+
+#: ../glade/gnome/gnomedialog.c:154 ../glade/gnome/gnomemessagebox.c:191
+#, fuzzy
+msgid "If the dialog closes when any button is clicked"
+msgstr "ما إذا كان جزء القفل من الرز سيتم عرضه"
+
+#: ../glade/gnome/gnomedialog.c:155 ../glade/gnome/gnomemessagebox.c:192
+#, fuzzy
+msgid "Hide on Close:"
+msgstr "أنهي عن الإغلاق"
+
+#: ../glade/gnome/gnomedialog.c:156 ../glade/gnome/gnomemessagebox.c:193
+#, fuzzy
+msgid "If the dialog is hidden when it is closed, instead of being destroyed"
+msgstr "إذا ضبط، فستستخدم العلامة لاختيار عنصر مخزن بدل عرضها"
+
+#: ../glade/gnome/gnomedialog.c:342
+#, fuzzy
+msgid "Gnome Dialog Box"
+msgstr "حوار جنوم"
+
+#: ../glade/gnome/gnomedruid.c:91
+#, fuzzy
+msgid "New Gnome Druid"
+msgstr "جنوم درود"
+
+#: ../glade/gnome/gnomedruid.c:190
+msgid "Show Help"
+msgstr "إظهار المساعدة"
+
+#: ../glade/gnome/gnomedruid.c:190
+#, fuzzy
+msgid "Display the help button."
+msgstr "عرض الخلية"
+
+#: ../glade/gnome/gnomedruid.c:255
+#, fuzzy
+msgid "Add Start Page"
+msgstr "زاوية البداية"
+
+#: ../glade/gnome/gnomedruid.c:270
+#, fuzzy
+msgid "Add Finish Page"
+msgstr "أضِف صفحة غلاف"
+
+#: ../glade/gnome/gnomedruid.c:485
+#, fuzzy
+msgid "Druid"
+msgstr "الشبكة"
+
+#: ../glade/gnome/gnomedruidpageedge.c:94
+#: ../glade/gnome/gnomedruidpagestandard.c:86
+#, fuzzy
+msgid "The title of the page"
+msgstr "عنوان الصورة المعاونة"
+
+#: ../glade/gnome/gnomedruidpageedge.c:96
+msgid "The main text of the page, introducing people to the druid."
+msgstr ""
+
+#: ../glade/gnome/gnomedruidpageedge.c:98
+#: ../glade/gnome/gnomedruidpagestandard.c:87
+#, fuzzy
+msgid "Title Color:"
+msgstr "لون العنوان:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:99
+#: ../glade/gnome/gnomedruidpagestandard.c:88
+#, fuzzy
+msgid "The color of the title text"
+msgstr "لون النص المقتبس"
+
+#: ../glade/gnome/gnomedruidpageedge.c:100
+#, fuzzy
+msgid "Text Color:"
+msgstr "لون النص"
+
+#: ../glade/gnome/gnomedruidpageedge.c:101
+#, fuzzy
+msgid "The color of the main text"
+msgstr "لون النص المقتبس"
+
+#: ../glade/gnome/gnomedruidpageedge.c:103
+#: ../glade/gnome/gnomedruidpagestandard.c:92
+#, fuzzy
+msgid "The background color of the page"
+msgstr "لون خلفية المرحِّب."
+
+#: ../glade/gnome/gnomedruidpageedge.c:104
+#: ../glade/gnome/gnomedruidpagestandard.c:93
+#, fuzzy
+msgid "Logo Back. Color:"
+msgstr "لون الواجهة الخلفية للشعار"
+
+#: ../glade/gnome/gnomedruidpageedge.c:105
+#: ../glade/gnome/gnomedruidpagestandard.c:94
+#, fuzzy
+msgid "The background color around the logo"
+msgstr "لون الخلفية"
+
+#: ../glade/gnome/gnomedruidpageedge.c:106
+#, fuzzy
+msgid "Text Box Color:"
+msgstr "لون النص"
+
+#: ../glade/gnome/gnomedruidpageedge.c:107
+#, fuzzy
+msgid "The background color of the main text area"
+msgstr "لون خلفية المرحِّب."
+
+#: ../glade/gnome/gnomedruidpageedge.c:108
+#: ../glade/gnome/gnomedruidpagestandard.c:95
+#, fuzzy
+msgid "Logo Image:"
+msgstr "صورة الشعار"
+
+#: ../glade/gnome/gnomedruidpageedge.c:109
+#: ../glade/gnome/gnomedruidpagestandard.c:96
+#, fuzzy
+msgid "The logo to display in the top-right of the page"
+msgstr "الحشو·الذي·سيدخل·على·يمين·القطعة"
+
+#: ../glade/gnome/gnomedruidpageedge.c:110
+#, fuzzy
+msgid "Side Watermark:"
+msgstr "علامة مائية"
+
+#: ../glade/gnome/gnomedruidpageedge.c:111
+#, fuzzy
+msgid "The main image to display on the side of the page."
+msgstr "الاسم الذي سيعرض للمستخدم لهذه العملية"
+
+#: ../glade/gnome/gnomedruidpageedge.c:112
+#: ../glade/gnome/gnomedruidpagestandard.c:97
+#, fuzzy
+msgid "Top Watermark:"
+msgstr "علامة مائية"
+
+#: ../glade/gnome/gnomedruidpageedge.c:113
+#, fuzzy
+msgid "The watermark to display at the top of the page."
+msgstr "الحشو الذي سيدخل في أعلى القطعة."
+
+#: ../glade/gnome/gnomedruidpageedge.c:522
+msgid "Druid Start or Finish Page"
+msgstr ""
+
+#: ../glade/gnome/gnomedruidpagestandard.c:89
+#, fuzzy
+msgid "Contents Back. Color:"
+msgstr "لون الواجهة الخلفية للمحتويات"
+
+#: ../glade/gnome/gnomedruidpagestandard.c:90
+#, fuzzy
+msgid "The background color around the title"
+msgstr "لون الواجهة الأمامية للعنوان"
+
+#: ../glade/gnome/gnomedruidpagestandard.c:98
+#, fuzzy
+msgid "The image to display along the top of the page"
+msgstr "الحشو الذي سيدخل في أعلى القطعة."
+
+#: ../glade/gnome/gnomedruidpagestandard.c:447
+#, fuzzy
+msgid "Druid Standard Page"
+msgstr "مفتاح قياسي"
+
+#: ../glade/gnome/gnomeentry.c:71 ../glade/gnome/gnomefileentry.c:96
+#: ../glade/gnome/gnomeiconentry.c:74 ../glade/gnome/gnomepixmapentry.c:77
+#, fuzzy
+msgid "History ID:"
+msgstr "هويّة التاريخ"
+
+#: ../glade/gnome/gnomeentry.c:72 ../glade/gnome/gnomefileentry.c:97
+#: ../glade/gnome/gnomeiconentry.c:75 ../glade/gnome/gnomepixmapentry.c:78
+#, fuzzy
+msgid "The ID to save the history entries under"
+msgstr "هوية المخزون لأيقونة المخزون التي ستترجم"
+
+#: ../glade/gnome/gnomeentry.c:73 ../glade/gnome/gnomefileentry.c:98
+#: ../glade/gnome/gnomeiconentry.c:76 ../glade/gnome/gnomepixmapentry.c:79
+#, fuzzy
+msgid "Max Saved:"
+msgstr "المحفوظ العلوي"
+
+#: ../glade/gnome/gnomeentry.c:74 ../glade/gnome/gnomefileentry.c:99
+#: ../glade/gnome/gnomeiconentry.c:77 ../glade/gnome/gnomepixmapentry.c:80
+msgid "The maximum number of history entries saved"
+msgstr "العدد الأقصى لمداخل التاريخ المحفوظة"
+
+#: ../glade/gnome/gnomeentry.c:210
+#, fuzzy
+msgid "Gnome Entry"
+msgstr "خانة جنوم"
+
+#: ../glade/gnome/gnomefileentry.c:102 ../glade/gnome/gnomeiconentry.c:73
+#: ../glade/gnome/gnomepixmapentry.c:83
+#, fuzzy
+msgid "The title of the file selection dialog"
+msgstr "عنوان حوار انتقاء الخطوط"
+
+#: ../glade/gnome/gnomefileentry.c:103
+#, fuzzy
+msgid "Directory:"
+msgstr "دليل"
+
+#: ../glade/gnome/gnomefileentry.c:104
+#, fuzzy
+msgid "If a directory is needed rather than a file"
+msgstr "ضع المجلدات اولا ثم الملفات "
+
+#: ../glade/gnome/gnomefileentry.c:106 ../glade/gnome/gnomepixmapentry.c:85
+#, fuzzy
+msgid "If the file selection dialog should be modal"
+msgstr "ما إذا وجب أن تكون نافذة تصفّح الملفات سائدة."
+
+#: ../glade/gnome/gnomefileentry.c:107 ../glade/gnome/gnomepixmapentry.c:86
+#, fuzzy
+msgid "Use FileChooser:"
+msgstr "استخدم GtkFileChooser"
+
+#: ../glade/gnome/gnomefileentry.c:108 ../glade/gnome/gnomepixmapentry.c:87
+#, fuzzy
+msgid "Use the new GtkFileChooser widget instead of GtkFileSelection"
+msgstr ""
+"فيما إذا ستستخدم قطعة GtkFileChooser أو قطعة GtkFileSelection لانتقاء "
+"الملفات."
+
+#: ../glade/gnome/gnomefileentry.c:367
+msgid "Gnome File Entry"
+msgstr "مدخل ملفات جنوم"
+
+#: ../glade/gnome/gnomefontpicker.c:98
+#, fuzzy
+msgid "The preview text to show in the font selection dialog"
+msgstr "عنوان حوار انتقاء الخطوط"
+
+#: ../glade/gnome/gnomefontpicker.c:99
+#, fuzzy
+msgid "Mode:"
+msgstr "_نمط:"
+
+#: ../glade/gnome/gnomefontpicker.c:100
+#, fuzzy
+msgid "What to display in the font picker button"
+msgstr "فيما إذا ستعرض بكسباف معلم السطر"
+
+#: ../glade/gnome/gnomefontpicker.c:107
+#, fuzzy
+msgid "The size of the font to use in the font picker button"
+msgstr "نسق عملية منتقي الخطوط"
+
+#: ../glade/gnome/gnomefontpicker.c:392
+msgid "Gnome Font Picker"
+msgstr "لاقط الخطوط لجنوم"
+
+#: ../glade/gnome/gnomehref.c:66
+msgid "URL:"
+msgstr "العنوان:"
+
+#: ../glade/gnome/gnomehref.c:67
+#, fuzzy
+msgid "The URL to display when the button is clicked"
+msgstr "الاسم الذي سيعرض للمستخدم لهذه العملية"
+
+#: ../glade/gnome/gnomehref.c:69
+#, fuzzy
+msgid "The text to display in the button"
+msgstr "نصّ على الزرّ"
+
+#: ../glade/gnome/gnomehref.c:206
+#, fuzzy
+msgid "Gnome HRef Link Button"
+msgstr "زر وصلة"
+
+#: ../glade/gnome/gnomeiconentry.c:208
+msgid "Gnome Icon Entry"
+msgstr "مدخل ايقونات جنوم"
+
+#: ../glade/gnome/gnomeiconlist.c:175
+msgid "The selection mode"
+msgstr "نمط الانتقاء"
+
+#: ../glade/gnome/gnomeiconlist.c:177
+#, fuzzy
+msgid "Icon Width:"
+msgstr "عرض الأيقونة"
+
+#: ../glade/gnome/gnomeiconlist.c:178
+msgid "The width of each icon"
+msgstr "عرض كل الأيقونة"
+
+#: ../glade/gnome/gnomeiconlist.c:181
+msgid "The number of pixels between rows of icons"
+msgstr "عدد البكسلات بين أعمدة أيقونات"
+
+#: ../glade/gnome/gnomeiconlist.c:184
+msgid "The number of pixels between columns of icons"
+msgstr "عدد البكسلات بين صفوف أيقونات"
+
+#: ../glade/gnome/gnomeiconlist.c:187
+#, fuzzy
+msgid "Icon Border:"
+msgstr "الحد الداخلي"
+
+#: ../glade/gnome/gnomeiconlist.c:188
+#, fuzzy
+msgid "The number of pixels around icons (unused?)"
+msgstr "عدد البكسلات المرتبطة بوحدة فقط"
+
+#: ../glade/gnome/gnomeiconlist.c:191
+#, fuzzy
+msgid "Text Spacing:"
+msgstr "مباعدة النص"
+
+#: ../glade/gnome/gnomeiconlist.c:192
+msgid "The number of pixels between the text and the icon"
+msgstr "الفراغ بالبكسل بين الأيقونة و الشارة"
+
+#: ../glade/gnome/gnomeiconlist.c:194
+#, fuzzy
+msgid "Text Editable:"
+msgstr "نص قابل للتحرير"
+
+#: ../glade/gnome/gnomeiconlist.c:195
+msgid "If the icon text can be edited by the user"
+msgstr "اذا يمكن تحرير نص الايقونة من طرف المستخدم"
+
+#: ../glade/gnome/gnomeiconlist.c:196
+#, fuzzy
+msgid "Text Static:"
+msgstr "نص ثابت"
+
+#: ../glade/gnome/gnomeiconlist.c:197
+msgid ""
+"If the icon text is static, in which case it will not be copied by the "
+"GnomeIconList"
+msgstr ""
+"اذا كان نص الايقونة ثابتا، في هذه الحالية لا يتم نسخها من طرف GnomeIconList"
+
+#: ../glade/gnome/gnomeiconlist.c:461
+#, fuzzy
+msgid "Icon List"
+msgstr "مجموعة الأيقونات"
+
+#: ../glade/gnome/gnomeiconselection.c:154
+#, fuzzy
+msgid "Icon Selection"
+msgstr "منتقي الأيقونات"
+
+#: ../glade/gnome/gnomemessagebox.c:175
+#, fuzzy
+msgid "Message Type:"
+msgstr "نوع الرسالة"
+
+#: ../glade/gnome/gnomemessagebox.c:176
+msgid "The type of the message box"
+msgstr "نوع صندوق الرسالة"
+
+#: ../glade/gnome/gnomemessagebox.c:178
+msgid "Message:"
+msgstr "الرسالة:"
+
+#: ../glade/gnome/gnomemessagebox.c:178
+#, fuzzy
+msgid "The message to display"
+msgstr "النص المعروض"
+
+#: ../glade/gnome/gnomemessagebox.c:499
+msgid "Gnome Message Box"
+msgstr "صندوق رسالة جنوم"
+
+#: ../glade/gnome/gnomepixmap.c:79
+#, fuzzy
+msgid "The pixmap filename"
+msgstr "ملف البكسمب"
+
+#: ../glade/gnome/gnomepixmap.c:80
+#, fuzzy
+msgid "Scaled:"
+msgstr "محجّم"
+
+#: ../glade/gnome/gnomepixmap.c:80
+#, fuzzy
+msgid "If the pixmap is scaled"
+msgstr "ملف البكسمب"
+
+#: ../glade/gnome/gnomepixmap.c:81
+#, fuzzy
+msgid "Scaled Width:"
+msgstr "العرض المحسوب"
+
+#: ../glade/gnome/gnomepixmap.c:82
+msgid "The width to scale the pixmap to"
+msgstr "العرض الذي يتم تصغير البكسمب اليه"
+
+#: ../glade/gnome/gnomepixmap.c:84
+#, fuzzy
+msgid "Scaled Height:"
+msgstr "الارتفاع المحسوب"
+
+#: ../glade/gnome/gnomepixmap.c:85
+msgid "The height to scale the pixmap to"
+msgstr "الارتفاع الذي يتم تصغير البكسمب اليه"
+
+#: ../glade/gnome/gnomepixmap.c:346
+msgid "Gnome Pixmap"
+msgstr "بيكسماب جنوم"
+
+#: ../glade/gnome/gnomepixmapentry.c:75
+msgid "Preview:"
+msgstr "معاينة:"
+
+#: ../glade/gnome/gnomepixmapentry.c:76
+#, fuzzy
+msgid "If a small preview of the pixmap is displayed"
+msgstr "ما إذا كان جزء القفل من الرز سيتم عرضه"
+
+#: ../glade/gnome/gnomepixmapentry.c:303
+#, fuzzy
+msgid "GnomePixmapEntry"
+msgstr "مدخل بيكسماب جنوم"
+
+#: ../glade/gnome/gnomepropertybox.c:113
+#, fuzzy
+msgid "New GnomePropertyBox"
+msgstr "صندوق خصائص جنوم"
+
+#: ../glade/gnome/gnomepropertybox.c:366
+#, fuzzy
+msgid "Property Dialog Box"
+msgstr "حوار الخصائص"
+
+#: ../glade/main.c:70 ../glade/main.c:104
+#, fuzzy
+msgid "Write the source code and exit"
+msgstr "اعرض الشفرة المصدرية لهذه الصفحة"
+
+#: ../glade/main.c:74 ../glade/main.c:108
+#, fuzzy
+msgid "Start with the palette hidden"
+msgstr "ابدأ بموقع الفأرة:"
+
+#: ../glade/main.c:78 ../glade/main.c:112
+#, fuzzy
+msgid "Start with the property editor hidden"
+msgstr "مفتاح GConf الذي يتبع محرّر الخاصية هذا."
+
+#: ../glade/main.c:460
+msgid ""
+"glade: The XML file must be set for the '-w' or '--write-source' option.\n"
+msgstr ""
+
+#: ../glade/main.c:474
+#, fuzzy
+msgid "glade: Error loading XML file.\n"
+msgstr "خطأ أثناء فتح الملف '%s': %s"
+
+#: ../glade/main.c:481
+#, fuzzy
+msgid "glade: Error writing source.\n"
+msgstr "خطأ أثناء الكتابة للقرص"
+
+#: ../glade/palette.c:60
+msgid "Palette"
+msgstr "لوحة"
+
+#: ../glade/property.c:73
+#, fuzzy
+msgid "private"
+msgstr "خاص"
+
+#: ../glade/property.c:73
+#, fuzzy
+msgid "protected"
+msgstr "ملغاة"
+
+#: ../glade/property.c:73
+#, fuzzy
+msgid "public"
+msgstr "عام"
+
+#: ../glade/property.c:102
+#, fuzzy
+msgid "Prelight"
+msgstr "يمين"
+
+#: ../glade/property.c:103
+#, fuzzy
+msgid "Selected"
+msgstr "مخ_تار"
+
+#: ../glade/property.c:103
+#, fuzzy
+msgid "Insens"
+msgstr "إزاحة"
+
+#: ../glade/property.c:467
+#, fuzzy
+msgid "When the window needs redrawing"
+msgstr "حدد أيقونة النافذة"
+
+#: ../glade/property.c:468
+#, fuzzy
+msgid "When the mouse moves"
+msgstr "اظهر النقلة السابقة"
+
+#: ../glade/property.c:469
+#, fuzzy
+msgid "Mouse movement hints"
+msgstr "أحداث عجلة الفأرة"
+
+#: ../glade/property.c:470
+msgid "Mouse movement with any button pressed"
+msgstr ""
+
+#: ../glade/property.c:471
+#, fuzzy
+msgid "Mouse movement with button 1 pressed"
+msgstr "القيمة الإعادية لمهلة الإنتهاء، عند ضغط الزر"
+
+#: ../glade/property.c:472
+#, fuzzy
+msgid "Mouse movement with button 2 pressed"
+msgstr "القيمة الإعادية لمهلة الإنتهاء، عند ضغط الزر"
+
+#: ../glade/property.c:473
+#, fuzzy
+msgid "Mouse movement with button 3 pressed"
+msgstr "القيمة الإعادية لمهلة الإنتهاء، عند ضغط الزر"
+
+#: ../glade/property.c:474
+#, fuzzy
+msgid "Any mouse button pressed"
+msgstr "عندما يضغط زر_  التعليق:"
+
+#: ../glade/property.c:475
+#, fuzzy
+msgid "Any mouse button released"
+msgstr "إطلاق يسار الفأرة"
+
+#: ../glade/property.c:476
+#, fuzzy
+msgid "Any key pressed"
+msgstr "غير مضغوط"
+
+#: ../glade/property.c:477
+#, fuzzy
+msgid "Any key released"
+msgstr "ترك الزر"
+
+#: ../glade/property.c:478
+#, fuzzy
+msgid "When the mouse enters the window"
+msgstr "نوع النافذة"
+
+#: ../glade/property.c:479
+#, fuzzy
+msgid "When the mouse leaves the window"
+msgstr "نوع النافذة"
+
+#: ../glade/property.c:480
+msgid "Any change in input focus"
+msgstr ""
+
+#: ../glade/property.c:481
+msgid "Any change in window structure"
+msgstr ""
+
+#: ../glade/property.c:482
+msgid "Any change in X Windows property"
+msgstr ""
+
+#: ../glade/property.c:483
+#, fuzzy
+msgid "Any change in visibility"
+msgstr "رؤية العنصر"
+
+#: ../glade/property.c:484 ../glade/property.c:485
+msgid "For cursors in XInput-aware programs"
+msgstr ""
+
+#: ../glade/property.c:596
+msgid "Properties"
+msgstr "خصائص"
+
+#: ../glade/property.c:620
+#, fuzzy
+msgid "Packing"
+msgstr "ال_حزم"
+
+#: ../glade/property.c:625
+msgid "Common"
+msgstr "متداول"
+
+#: ../glade/property.c:631
+#, fuzzy
+msgid "Style"
+msgstr "أ_سلوب"
+
+#: ../glade/property.c:637 ../glade/property.c:4646
+#, fuzzy
+msgid "Signals"
+msgstr "اشارة"
+
+#: ../glade/property.c:700 ../glade/property.c:721
+#, fuzzy
+msgid "Properties: "
+msgstr "_خاصيات:"
+
+#: ../glade/property.c:708 ../glade/property.c:732
+#, fuzzy
+msgid "Properties: <none>"
+msgstr "_خاصيات:"
+
+#: ../glade/property.c:778
+#, fuzzy
+msgid "Class:"
+msgstr "الصف"
+
+#: ../glade/property.c:779
+#, fuzzy
+msgid "The class of the widget"
+msgstr "تباين ألوان الفيديو"
+
+#: ../glade/property.c:813
+msgid "Width:"
+msgstr "العرض:"
+
+#: ../glade/property.c:814
+#, fuzzy
+msgid ""
+"The requested width of the widget (usually used to set the minimum width)"
+msgstr "القطعة الأب لهذه القطعة. يجب أن يكون قطعة حاوية"
+
+#: ../glade/property.c:816
+#, fuzzy
+msgid "Height:"
+msgstr "ثمانية"
+
+#: ../glade/property.c:817
+msgid ""
+"The requested height of the widget (usually used to set the minimum height)"
+msgstr ""
+
+#: ../glade/property.c:820
+#, fuzzy
+msgid "Visible:"
+msgstr "مرئي"
+
+#: ../glade/property.c:821
+#, fuzzy
+msgid "If the widget is initially visible"
+msgstr "ما إذا كان الكائن ظاهرا"
+
+#: ../glade/property.c:822
+#, fuzzy
+msgid "Sensitive:"
+msgstr "حساس"
+
+#: ../glade/property.c:823
+#, fuzzy
+msgid "If the widget responds to input"
+msgstr "ما إذا كان الكائن يرد على ا?دخال"
+
+#: ../glade/property.c:825
+#, fuzzy
+msgid "The tooltip to display if the mouse lingers over the widget"
+msgstr "الاسم الذي سيعرض للمستخدم لهذه العملية"
+
+#: ../glade/property.c:827
+#, fuzzy
+msgid "Can Default:"
+msgstr "ممكن الافتراض"
+
+#: ../glade/property.c:828
+#, fuzzy
+msgid "If the widget can be the default action in a dialog"
+msgstr "ما إذا أمكن أن يصبح الكائن هو الكائن الافتراضي"
+
+#: ../glade/property.c:829
+#, fuzzy
+msgid "Has Default:"
+msgstr "له افتراض"
+
+#: ../glade/property.c:830
+#, fuzzy
+msgid "If the widget is the default action in the dialog"
+msgstr "إذا كان TRUE، فستتلقى القطعة الحدث الافتراضي عند تركيزها"
+
+#: ../glade/property.c:831
+#, fuzzy
+msgid "Can Focus:"
+msgstr "ممكن تلقي البؤرة"
+
+#: ../glade/property.c:832
+#, fuzzy
+msgid "If the widget can accept the input focus"
+msgstr "ما إذا كان بقدرة الكائن قبول بؤرة ا?دخال"
+
+#: ../glade/property.c:833
+#, fuzzy
+msgid "Has Focus:"
+msgstr "له تركيز"
+
+#: ../glade/property.c:834
+#, fuzzy
+msgid "If the widget has the input focus"
+msgstr "ما إذا كان الكائن له بؤرة ا?دخال"
+
+#: ../glade/property.c:836
+#, fuzzy
+msgid "Events:"
+msgstr "أحداث"
+
+#: ../glade/property.c:837
+#, fuzzy
+msgid "The X events that the widget receives"
+msgstr "مشروع جلايد الذي تنتمي له هذه القطعة"
+
+#: ../glade/property.c:839
+#, fuzzy
+msgid "Ext.Events:"
+msgstr "أحداث"
+
+#: ../glade/property.c:840
+#, fuzzy
+msgid "The X Extension events mode"
+msgstr "أحداث امتداد"
+
+#: ../glade/property.c:843
+#, fuzzy
+msgid "Accelerators:"
+msgstr "مسرّعات"
+
+#: ../glade/property.c:844
+#, fuzzy
+msgid "Defines the signals to emit when keys are pressed"
+msgstr "فيما إذا سيقع اللف إلى الأسفل عند نقر مفتاح"
+
+#: ../glade/property.c:845
+#, fuzzy
+msgid "Edit..."
+msgstr "_حرر..."
+
+#: ../glade/property.c:867
+#, fuzzy
+msgid "Propagate:"
+msgstr "_خاصيات:"
+
+#: ../glade/property.c:868
+msgid "Set True to propagate the style to the widget's children"
+msgstr ""
+
+#: ../glade/property.c:869
+#, fuzzy
+msgid "Named Style:"
+msgstr "أسلوب الأوراق"
+
+#: ../glade/property.c:870
+#, fuzzy
+msgid "The name of the style, which can be shared by several widgets"
+msgstr "اضبطه إذا كان من الممكن أن يتكون التحديد من عناصر عدّة"
+
+#: ../glade/property.c:872
+msgid "Font:"
+msgstr "الخط:"
+
+#: ../glade/property.c:873
+#, fuzzy
+msgid "The font to use for any text in the widget"
+msgstr "الوصف الخطي المستخدم للأيقونات على سطح المكتب."
+
+#: ../glade/property.c:898
+#, fuzzy
+msgid "Copy All"
+msgstr "انسخ ال_كل"
+
+#: ../glade/property.c:926
+msgid "Foreground:"
+msgstr "الواجهة الأمامية:"
+
+#: ../glade/property.c:926
+msgid "Background:"
+msgstr "الخلفية:"
+
+#: ../glade/property.c:926
+#, fuzzy
+msgid "Base:"
+msgstr "قاعدة"
+
+#: ../glade/property.c:928
+msgid "Foreground color"
+msgstr "لون الواجهة الأمامية"
+
+#: ../glade/property.c:928
+#, fuzzy
+msgid "Background color"
+msgstr "اللون الخلفي:"
+
+#: ../glade/property.c:928
+msgid "Text color"
+msgstr "لون النص"
+
+#: ../glade/property.c:929
+msgid "Base color"
+msgstr "اللون الأساسي"
+
+#: ../glade/property.c:946
+msgid "Back. Pixmap:"
+msgstr ""
+
+#: ../glade/property.c:947
+#, fuzzy
+msgid "The graphic to use as the background of the widget"
+msgstr "الحشو الذي سيدخل في أعلى القطعة."
+
+#: ../glade/property.c:999
+#, fuzzy
+msgid "The file to write source code into"
+msgstr "لا ملفات لكتابتها على القرص."
+
+#: ../glade/property.c:1000
+#, fuzzy
+msgid "Public:"
+msgstr "عام"
+
+#: ../glade/property.c:1001
+msgid "If the widget is added to the component's data structure"
+msgstr ""
+
+#: ../glade/property.c:1012
+#, fuzzy
+msgid "Separate Class:"
+msgstr "الطبقة المنفصلة"
+
+#: ../glade/property.c:1013
+msgid "Put this widget's subtree in a separate class"
+msgstr ""
+
+#: ../glade/property.c:1014
+#, fuzzy
+msgid "Separate File:"
+msgstr "الطبقة المنفصلة"
+
+#: ../glade/property.c:1015
+msgid "Put this widget in a separate source file"
+msgstr ""
+
+#: ../glade/property.c:1016
+msgid "Visibility:"
+msgstr "مدى الرؤية:"
+
+#: ../glade/property.c:1017
+msgid "Visibility of widgets. Public widgets are exported to a global map."
+msgstr ""
+
+#: ../glade/property.c:1127
+#, fuzzy
+msgid "You need to select a color or background to copy"
+msgstr "تحتاج أن تعطي المجموعة اسماً على الأقل"
+
+#: ../glade/property.c:1146
+#, fuzzy
+msgid "Invalid selection in on_style_copy()"
+msgstr "عنصر منتقى غير سليم!"
+
+#: ../glade/property.c:1188
+msgid "You need to copy a color or background pixmap first"
+msgstr ""
+
+#: ../glade/property.c:1194
+#, fuzzy
+msgid "You need to select a color to paste into"
+msgstr "انقر هنا لتختر المجلدات التي ستنشر بها"
+
+#: ../glade/property.c:1204
+#, fuzzy
+msgid "You need to select a background pixmap to paste into"
+msgstr "عليك أولاً أن تختار مجموعة ضمن القائمة"
+
+#: ../glade/property.c:1456
+#, fuzzy
+msgid "Couldn't create pixmap from file\n"
+msgstr "لم أستطع إنشاء ملف ذاكرة مخبئيّة"
+
+#. List of current signal handlers - Signal/Handler/Data/Options
+#: ../glade/property.c:1498
+#, fuzzy
+msgid "Signal"
+msgstr "اشارة"
+
+#: ../glade/property.c:1500
+#, fuzzy
+msgid "Data"
+msgstr "قرص بيانات مدمج"
+
+#: ../glade/property.c:1501
+msgid "After"
+msgstr "بعد"
+
+#: ../glade/property.c:1502
+msgid "Object"
+msgstr "جسم"
+
+#: ../glade/property.c:1533 ../glade/property.c:1697
+#, fuzzy
+msgid "Signal:"
+msgstr "اشارة"
+
+#: ../glade/property.c:1534
+#, fuzzy
+msgid "The signal to add a handler for"
+msgstr "غيّر متلقي الإشارة %s"
+
+#: ../glade/property.c:1548
+#, fuzzy
+msgid "The function to handle the signal"
+msgstr "الوظيفة التي تنشئ هذه القطعة"
+
+#: ../glade/property.c:1551
+#, fuzzy
+msgid "Data:"
+msgstr "التّاريخ:"
+
+#: ../glade/property.c:1552
+#, fuzzy
+msgid "The data passed to the handler"
+msgstr "ضف ورقة لليد"
+
+#: ../glade/property.c:1553
+#, fuzzy
+msgid "Object:"
+msgstr "أجسام:"
+
+#: ../glade/property.c:1554
+#, fuzzy
+msgid "The object which receives the signal"
+msgstr "الوظيفة التي تنشئ هذه القطعة"
+
+#: ../glade/property.c:1555
+#, fuzzy
+msgid "After:"
+msgstr "ب_عد:"
+
+#: ../glade/property.c:1556
+msgid "If the handler runs after the class function"
+msgstr ""
+
+#: ../glade/property.c:1569
+#, fuzzy
+msgid "Add"
+msgstr "أ_ضف"
+
+#: ../glade/property.c:1575
+#, fuzzy
+msgid "Update"
+msgstr "_حدّث"
+
+#: ../glade/property.c:1587
+#, fuzzy
+msgid "Clear"
+msgstr "ا_مسح"
+
+#: ../glade/property.c:1637
+msgid "Accelerators"
+msgstr "مسرّعات"
+
+#. List of current accelerators - Mods/Keys/Signals
+#: ../glade/property.c:1650
+msgid "Mod"
+msgstr "باقي"
+
+#: ../glade/property.c:1651
+#, fuzzy
+msgid "Key"
+msgstr "مفاتيح"
+
+#: ../glade/property.c:1652
+#, fuzzy
+msgid "Signal to emit"
+msgstr "_وقّع النص"
+
+#: ../glade/property.c:1696
+#, fuzzy
+msgid "The accelerator key"
+msgstr "اختر المفاتيح السريعة..."
+
+#: ../glade/property.c:1698
+#, fuzzy
+msgid "The signal to emit when the accelerator is pressed"
+msgstr "القطعة التي ستفعل عند نقر مفتاح الإختصار المسطر"
+
+#: ../glade/property.c:1847
+#, fuzzy
+msgid "Edit Text Property"
+msgstr "تحرير النص"
+
+#: ../glade/property.c:1885
+#, fuzzy
+msgid "<b>_Text:</b>"
+msgstr "<b>بحث عن ال_نص:</b>"
+
+#: ../glade/property.c:1895
+msgid "T_ranslatable"
+msgstr "_قابل للترجمة"
+
+#: ../glade/property.c:1899
+#, fuzzy
+msgid "Has Context _Prefix"
+msgstr "_له بادئة سياقية"
+
+#: ../glade/property.c:1925
+#, fuzzy
+msgid "<b>Co_mments For Translators:</b>"
+msgstr "_ملاحظة للمترجمين:"
+
+#: ../glade/property.c:3892
+#, fuzzy
+msgid "Select X Events"
+msgstr "حدث OnSelect"
+
+#: ../glade/property.c:3901
+#, fuzzy
+msgid "Event Mask"
+msgstr "أحداث"
+
+#: ../glade/property.c:4031 ../glade/property.c:4080
+#, fuzzy
+msgid "You need to set the accelerator key"
+msgstr "قائمة مفاتيح مسرعة"
+
+#: ../glade/property.c:4038 ../glade/property.c:4087
+#, fuzzy
+msgid "You need to set the signal to emit"
+msgstr "لا يمكن ضبط قناع الإشارة!"
+
+#: ../glade/property.c:4314 ../glade/property.c:4370
+#, fuzzy
+msgid "You need to set the signal name"
+msgstr "لم تدخِل اسم الحزمة"
+
+#: ../glade/property.c:4321 ../glade/property.c:4377
+#, fuzzy
+msgid "You need to set the handler for the signal"
+msgstr "غير قادر على تعيين مالك الجهاز."
+
+#. This groups the signals by class, e.g. 'GtkButton signals'.
+#: ../glade/property.c:4580
+#, fuzzy, c-format
+msgid "%s signals"
+msgstr " %s يفوز!"
+
+#: ../glade/property.c:4637
+#, fuzzy
+msgid "Select Signal"
+msgstr "اختر الكل"
+
+#: ../glade/property.c:4833
+msgid "Value:"
+msgstr "القيمة:"
+
+#: ../glade/property.c:4833
+#, fuzzy
+msgid "Min:"
+msgstr "عدد أوسط:"
+
+#: ../glade/property.c:4833
+#, fuzzy
+msgid "Step Inc:"
+msgstr "درجة الزيادة:"
+
+#: ../glade/property.c:4834
+#, fuzzy
+msgid "Page Inc:"
+msgstr "درجة الزيادة بالصفحة:"
+
+#: ../glade/property.c:4834
+#, fuzzy
+msgid "Page Size:"
+msgstr "حجم الصفحة"
+
+#: ../glade/property.c:4836
+#, fuzzy
+msgid "H Value:"
+msgstr "القيمة:"
+
+#: ../glade/property.c:4836
+#, fuzzy
+msgid "H Min:"
+msgstr "عدد أوسط:"
+
+#: ../glade/property.c:4836
+#, fuzzy
+msgid "H Max:"
+msgstr "فاكس:"
+
+#: ../glade/property.c:4836
+#, fuzzy
+msgid "H Step Inc:"
+msgstr "درجة الزيادة:"
+
+#: ../glade/property.c:4837
+#, fuzzy
+msgid "H Page Inc:"
+msgstr "درجة الزيادة بالصفحة:"
+
+#: ../glade/property.c:4837
+#, fuzzy
+msgid "H Page Size:"
+msgstr "حجم الصفحة"
+
+#: ../glade/property.c:4839
+#, fuzzy
+msgid "V Value:"
+msgstr "القيمة:"
+
+#: ../glade/property.c:4839
+#, fuzzy
+msgid "V Min:"
+msgstr "عدد أوسط:"
+
+#: ../glade/property.c:4839
+#, fuzzy
+msgid "V Max:"
+msgstr "فاكس:"
+
+#: ../glade/property.c:4839
+#, fuzzy
+msgid "V Step Inc:"
+msgstr "درجة الزيادة:"
+
+#: ../glade/property.c:4840
+#, fuzzy
+msgid "V Page Inc:"
+msgstr "درجة الزيادة بالصفحة:"
+
+#: ../glade/property.c:4840
+#, fuzzy
+msgid "V Page Size:"
+msgstr "حجم الصفحة"
+
+#: ../glade/property.c:4843
+#, fuzzy
+msgid "The initial value"
+msgstr "حدد القيمة الأولية"
+
+#: ../glade/property.c:4844
+msgid "The minimum value"
+msgstr "القيمة الدنيا"
+
+#: ../glade/property.c:4845
+msgid "The maximum value"
+msgstr "القيمة القصوى"
+
+#: ../glade/property.c:4846
+#, fuzzy
+msgid "The step increment"
+msgstr "زيادة درجية"
+
+#: ../glade/property.c:4847
+#, fuzzy
+msgid "The page increment"
+msgstr "زيادة الصفحة"
+
+#: ../glade/property.c:4848
+#, fuzzy
+msgid "The page size"
+msgstr "حجم اللوحة"
+
+#: ../glade/property.c:5003
+#, fuzzy
+msgid "The requested font is not available."
+msgstr "خيارات الإرسال غير متوفرة."
+
+#: ../glade/property.c:5052
+#, fuzzy
+msgid "Select Named Style"
+msgstr "إنتقِ ملفًّا"
+
+#: ../glade/property.c:5063
+#, fuzzy
+msgid "Styles"
+msgstr "أ_سلوب"
+
+#: ../glade/property.c:5122
+msgid "Rename"
+msgstr "اعادة تسمية "
+
+#: ../glade/property.c:5150
+msgid "Cancel"
+msgstr "إلغي"
+
+#: ../glade/property.c:5270
+#, fuzzy
+msgid "New Style:"
+msgstr "الأسلوب:"
+
+#: ../glade/property.c:5284 ../glade/property.c:5405
+#, fuzzy
+msgid "Invalid style name"
+msgstr "اسم ملف غير صالح"
+
+#: ../glade/property.c:5292 ../glade/property.c:5415
+#, fuzzy
+msgid "That style name is already in use"
+msgstr "الاسم المحدد مستخدم فعلا."
+
+#: ../glade/property.c:5390
+#, fuzzy
+msgid "Rename Style To:"
+msgstr "تغيير اسم العنصر"
+
+#: ../glade/save.c:139 ../glade/source.c:2771
+#, fuzzy, c-format
+msgid ""
+"Couldn't rename file:\n"
+"  %s\n"
+"to:\n"
+"  %s\n"
+msgstr "تعذّر حذف الملف %s: %s\n"
+
+#: ../glade/save.c:174 ../glade/save.c:225 ../glade/save.c:947
+#: ../glade/source.c:358 ../glade/source.c:373 ../glade/source.c:391
+#: ../glade/source.c:404 ../glade/source.c:815 ../glade/source.c:1043
+#: ../glade/source.c:1134 ../glade/source.c:1328 ../glade/source.c:1423
+#: ../glade/source.c:1643 ../glade/source.c:1732 ../glade/source.c:1784
+#: ../glade/source.c:1848 ../glade/source.c:1895 ../glade/source.c:2032
+#: ../glade/utils.c:1147
+#, fuzzy, c-format
+msgid ""
+"Couldn't create file:\n"
+"  %s\n"
+msgstr "تعذّر إنشاء الأنبوب: %s"
+
+#: ../glade/save.c:848
+#, fuzzy
+msgid "Error writing XML file\n"
+msgstr ""
+"خطأ أثناء طباعة الملف:\n"
+"%s"
+
+#: ../glade/save.c:953
+#, c-format
+msgid ""
+"/*\n"
+" * Translatable strings file generated by Glade.\n"
+" * Add this file to your project's POTFILES.in.\n"
+" * DO NOT compile it as part of your application.\n"
+" */\n"
+"\n"
+msgstr ""
+
+#: ../glade/source.c:184
+#, fuzzy, c-format
+msgid ""
+"Invalid interface source filename: %s\n"
+"%s\n"
+msgstr "اسم ملف غير سليم: %s"
+
+#: ../glade/source.c:186
+#, fuzzy, c-format
+msgid ""
+"Invalid interface header filename: %s\n"
+"%s\n"
+msgstr "اسم ملف غير سليم: %s"
+
+#: ../glade/source.c:189
+#, fuzzy, c-format
+msgid ""
+"Invalid callbacks source filename: %s\n"
+"%s\n"
+msgstr "اسم ملف غير سليم: %s"
+
+#: ../glade/source.c:191
+#, fuzzy, c-format
+msgid ""
+"Invalid callbacks header filename: %s\n"
+"%s\n"
+msgstr "اسم ملف غير سليم: %s"
+
+#: ../glade/source.c:197
+#, fuzzy, c-format
+msgid ""
+"Invalid support source filename: %s\n"
+"%s\n"
+msgstr "اسم ملف غير سليم: %s"
+
+#: ../glade/source.c:199
+#, fuzzy, c-format
+msgid ""
+"Invalid support header filename: %s\n"
+"%s\n"
+msgstr "اسم ملف غير سليم: %s"
+
+#: ../glade/source.c:418 ../glade/source.c:426
+#, fuzzy, c-format
+msgid ""
+"Couldn't append to file:\n"
+"  %s\n"
+msgstr "تعذّرت تعمية الملف: %s"
+
+#: ../glade/source.c:1724 ../glade/utils.c:1168
+#, fuzzy, c-format
+msgid ""
+"Error writing to file:\n"
+"  %s\n"
+msgstr "فشلت الكتابة إلى ملف الصورة: %s"
+
+#: ../glade/source.c:2743
+#, fuzzy
+msgid "The filename must be set in the Project Options dialog."
+msgstr "عنوان آخر دليل استُخدم في حوار إنتقاء الأسماء."
+
+#: ../glade/source.c:2746
+msgid ""
+"The filename must be a simple relative filename.\n"
+"Use the Project Options dialog to set it."
+msgstr ""
+
+#: ../glade/tree.c:78
+#, fuzzy
+msgid "Widget Tree"
+msgstr "اسم الكائن"
+
+#: ../glade/utils.c:900 ../glade/utils.c:940
+#, fuzzy
+msgid "Widget not found in box"
+msgstr "الجسم غير موجود في المخزن"
+
+#: ../glade/utils.c:920
+#, fuzzy
+msgid "Widget not found in table"
+msgstr "الجسم غير موجود في المخزن"
+
+#: ../glade/utils.c:960
+#, fuzzy
+msgid "Widget not found in fixed container"
+msgstr "المفتاح %s غير موجود في الإعدادات"
+
+#: ../glade/utils.c:981
+#, fuzzy
+msgid "Widget not found in packer"
+msgstr "الجسم غير موجود في المخزن"
+
+#: ../glade/utils.c:1118
+#, fuzzy, c-format
+msgid ""
+"Couldn't access file:\n"
+"  %s\n"
+msgstr "تعذّر توقيع لملف: %s"
+
+#: ../glade/utils.c:1141
+#, fuzzy, c-format
+msgid ""
+"Couldn't open file:\n"
+"  %s\n"
+msgstr "لم يمكن فتح الملفّ '%s': %s"
+
+#: ../glade/utils.c:1158
+#, fuzzy, c-format
+msgid ""
+"Error reading from file:\n"
+"  %s\n"
+msgstr "خطأ عند القراءة من الابن: %s."
+
+#. This happens under WIN32 when stat is confused by the filename, but this is
+#. harmless, since we know that the directory exists after all.
+#: ../glade/utils.c:1225
+#, fuzzy, c-format
+msgid ""
+"Couldn't create directory:\n"
+"  %s\n"
+msgstr "لا يمكن إنشاء المجلّد %s:"
+
+#: ../glade/utils.c:1232
+#, fuzzy, c-format
+msgid ""
+"Couldn't access directory:\n"
+"  %s\n"
+msgstr "لا يمكن إنشاء المجلّد %s:"
+
+#: ../glade/utils.c:1240
+#, fuzzy, c-format
+msgid ""
+"Invalid directory:\n"
+"  %s\n"
+msgstr "دليل عمل غير سليم: %s"
+
+#: ../glade/utils.c:1611
+#, fuzzy
+msgid "Projects"
+msgstr "م_شاريع"
+
+#: ../glade/utils.c:1628
+#, fuzzy
+msgid "project"
+msgstr "مشروع"
+
+#: ../glade/utils.c:1634
+#, fuzzy, c-format
+msgid ""
+"Couldn't open directory:\n"
+"  %s\n"
+msgstr "تعذّر فتح دليل الذّاكرة المخبّأة: %s"
+

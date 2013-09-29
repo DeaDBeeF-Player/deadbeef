@@ -1,0 +1,36 @@
+/* XPM */
+static char *preview_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"21 21 9 1",
+"  c Gray0",
+". c Blue",
+"X c Green",
+"o c Cyan",
+"O c Red",
+"+ c Magenta",
+"@ c Yellow",
+"# c #b3cece",
+"$ c None",
+/* pixels */
+"$$$$$$$$$$$$$$$$$$$$$",
+"$$$$$$$$$$$$$$$$$$$$$",
+"$$$$$$$$$$$$$$$$$$$$$",
+"$                    ",
+"$ OOO@@@XXXooo...+++ ",
+"$ OOO@@@XXXooo...+++ ",
+"$ OOO@@@XXXooo...+++ ",
+"$ OOO@@@XXXooo...+++ ",
+"$ OOO@@@XXXooo...+++ ",
+"$ OOO@@@XXXooo...+++ ",
+"$ OOO@@@XXXooo...+++ ",
+"$ OOO@@@XXXooo...+++ ",
+"$ OOO@@@XXXooo...+++ ",
+"$ OOO@@@XXXooo...+++ ",
+"$ OOO@@@XXXooo...+++ ",
+"$ OOO@@@XXXooo...+++ ",
+"$ OOO@@@XXXooo...+++ ",
+"$ OOO@@@XXXooo...+++ ",
+"$                    ",
+"$$$$$$$$$$$$$$$$$$$$$",
+"$$$$$$$$$$$$$$$$$$$$$"
+};

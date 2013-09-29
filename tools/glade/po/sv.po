@@ -1,0 +1,6424 @@
+# Swedish translation of Glade.
+# Copyright (C) 1999, 2000, 2001, 2002, 2003, 2007 Free Software Foundation, Inc.
+# Martin Norbäck <d95mback@dtek.chalmers.se>, 1999, 2001.
+# Christian Rose <menthos@menthos.com>, 2000, 2001, 2002, 2003.
+# Daniel Nylander <po@danielnylander.se>, 2007.
+#
+# $Id: sv.po,v 1.44 2005/10/02 22:04:16 menthos Exp $
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: glade\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-09-21 00:25+0200\n"
+"PO-Revision-Date: 2007-09-21 00:30+0100\n"
+"Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
+"Language-Team: Swedish <sv@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../glade-2.desktop.in.h:1
+msgid "Create or open user interface designs for GTK+ or GNOME applications"
+msgstr "Skapa eller öppna användargränssnitt för GTK+ eller GNOME-program"
+
+#: ../glade-2.desktop.in.h:2
+msgid "Glade Interface Designer"
+msgstr "Gränssnittsbyggaren Glade"
+
+#: ../glade/editor.c:343
+msgid "Grid Options"
+msgstr "Alternativ för rutnät"
+
+#: ../glade/editor.c:357
+msgid "Horizontal Spacing:"
+msgstr "Horisontellt mellanrum:"
+
+#: ../glade/editor.c:372
+msgid "Vertical Spacing:"
+msgstr "Vertikalt mellanrum:"
+
+#: ../glade/editor.c:390
+msgid "Grid Style:"
+msgstr "Stil för rutnät:"
+
+#: ../glade/editor.c:396
+msgid "Dots"
+msgstr "Punkter"
+
+#: ../glade/editor.c:405
+msgid "Lines"
+msgstr "Linjer"
+
+#: ../glade/editor.c:487
+msgid "Snap Options"
+msgstr "Alternativ för fästning mot rutnätet"
+
+#. Horizontal snapping
+#: ../glade/editor.c:502
+msgid "Horizontal Snapping:"
+msgstr "Horisontell fästning mot rutnätet:"
+
+#: ../glade/editor.c:508
+#: ../glade/gbwidgets/gbtextview.c:49
+msgid "Left"
+msgstr "Vänster"
+
+#: ../glade/editor.c:517
+#: ../glade/gbwidgets/gbtextview.c:50
+msgid "Right"
+msgstr "Höger"
+
+#. Vertical snapping
+#: ../glade/editor.c:526
+msgid "Vertical Snapping:"
+msgstr "Vertikal fästning mot rutnätet"
+
+#: ../glade/editor.c:532
+msgid "Top"
+msgstr "Topp"
+
+#: ../glade/editor.c:540
+msgid "Bottom"
+msgstr "Botten"
+
+#: ../glade/editor.c:741
+#, fuzzy
+msgid "GtkToolItem widgets can only be added to a GtkToolbar."
+msgstr "GnomeDockItem-widgetar kan bara klistras in i en GnomeDock."
+
+#: ../glade/editor.c:758
+msgid "Couldn't insert a GtkScrolledWindow widget."
+msgstr "Kunde inte infoga en GtkScrolledWindow-widget."
+
+#: ../glade/editor.c:805
+msgid "Couldn't insert a GtkViewport widget."
+msgstr "Kunde inte infoga en GtkViewport-widget."
+
+#: ../glade/editor.c:832
+msgid "Couldn't add new widget."
+msgstr "Kunde inte lägga till en ny widget."
+
+#: ../glade/editor.c:1230
+msgid ""
+"You can't add a widget at the selected position.\n"
+"\n"
+"Tip: GTK+ uses containers to lay out widgets.\n"
+"Try deleting the existing widget and using\n"
+"a box or table container instead.\n"
+msgstr ""
+"Du kan inte lägga till en widget till den valda positionen.\n"
+"\n"
+"Tips: GTK+ använder containers för att lägga upp widgets.\n"
+"Försök att ta bort den existerande widgeten och använd\n"
+"en box eller en container istället.\n"
+
+#: ../glade/editor.c:3517
+msgid "Couldn't delete widget."
+msgstr "Kunde inte ta bort widgeten."
+
+#: ../glade/editor.c:3541
+#: ../glade/editor.c:3545
+msgid "The widget can't be deleted"
+msgstr "Widgeten kan inte tas bort."
+
+#: ../glade/editor.c:3572
+msgid "The widget is created automatically as part of the parent widget, and it can't be deleted."
+msgstr "Widgeten är automatgenererad som en del av föräldrawidgeten, och kan inte tas bort"
+
+#: ../glade/gbwidget.c:697
+msgid "Border Width:"
+msgstr "Kantbredd:"
+
+#: ../glade/gbwidget.c:698
+msgid "The width of the border around the container"
+msgstr "Bredden på kanten runt behållaren"
+
+#: ../glade/gbwidget.c:1751
+msgid "Select"
+msgstr "Välj"
+
+#: ../glade/gbwidget.c:1773
+msgid "Remove Scrolled Window"
+msgstr "Ta bort rullfönster"
+
+#: ../glade/gbwidget.c:1782
+msgid "Add Scrolled Window"
+msgstr "Lägg till rullfönster"
+
+#: ../glade/gbwidget.c:1803
+msgid "Remove Alignment"
+msgstr "Ta bort justering"
+
+#: ../glade/gbwidget.c:1811
+msgid "Add Alignment"
+msgstr "Lägg till justering"
+
+#: ../glade/gbwidget.c:1826
+msgid "Remove Event Box"
+msgstr "Ta bort händelseruta"
+
+#: ../glade/gbwidget.c:1834
+msgid "Add Event Box"
+msgstr "Lägg till händelseruta"
+
+#: ../glade/gbwidget.c:1844
+msgid "Redisplay"
+msgstr "Visa igen"
+
+#: ../glade/gbwidget.c:1859
+msgid "Cut"
+msgstr "Klipp ut"
+
+#: ../glade/gbwidget.c:1866
+#: ../glade/property.c:892
+#: ../glade/property.c:5141
+msgid "Copy"
+msgstr "Kopiera"
+
+#: ../glade/gbwidget.c:1875
+#: ../glade/property.c:904
+msgid "Paste"
+msgstr "Klistra in"
+
+#: ../glade/gbwidget.c:1887
+#: ../glade/property.c:1581
+#: ../glade/property.c:5132
+msgid "Delete"
+msgstr "Ta bort"
+
+#. N/A stands for 'Not Applicable'. It is used when a standard widget
+#. property does not apply to the current widget. e.g. widgets without
+#. windows can't use the Events property. This appears in the property
+#. editor and so should be a short abbreviation.
+#: ../glade/gbwidget.c:2414
+#: ../glade/gbwidget.c:2483
+msgid "N/A"
+msgstr "N/A"
+
+#. General code for container - has to remove all children and add back
+#. NOTE: this may not work for specialised containers.
+#. NOTE: need to ref widgets?
+#: ../glade/gbwidget.c:3213
+msgid "replacing child of container - not implemented yet\n"
+msgstr "ersätta barn till behållare - inte implementerat ännu\n"
+
+#: ../glade/gbwidget.c:3441
+msgid "Couldn't insert GtkAlignment widget."
+msgstr "Kunde inte infoga en GtkAlignment-widget."
+
+#: ../glade/gbwidget.c:3481
+msgid "Couldn't remove GtkAlignment widget."
+msgstr "Kunde inte ta bort en GtkAlignment-widget."
+
+#: ../glade/gbwidget.c:3505
+msgid "Couldn't insert GtkEventBox widget."
+msgstr "Kunde inte sätta in en GtkEventBox-widget."
+
+#: ../glade/gbwidget.c:3544
+msgid "Couldn't remove GtkEventBox widget."
+msgstr "Kunde inte ta bort en GtkEventBox-widget."
+
+#: ../glade/gbwidget.c:3579
+msgid "Couldn't insert GtkScrolledWindow widget."
+msgstr "Kunde inte sätta in en GtkScrolledWindow-widget."
+
+#: ../glade/gbwidget.c:3618
+msgid "Couldn't remove GtkScrolledWindow widget."
+msgstr "Kunde inte ta bort en GtkScrolledWindow-widget."
+
+#: ../glade/gbwidget.c:3732
+msgid "Remove Label"
+msgstr "Ta bort etikett"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbaboutdialog.c:79
+#, fuzzy
+msgid "Application Name"
+msgstr "Gnome-applikationsruta"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbaboutdialog.c:103
+#: ../glade/gnome/gnomeabout.c:137
+msgid "Logo:"
+msgstr "Logotyp:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbaboutdialog.c:103
+#: ../glade/gnome/gnomeabout.c:137
+msgid "The pixmap to use as the logo"
+msgstr "Pixmap som ska användas som logotyp"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:105
+#: ../glade/glade_project_options.c:260
+msgid "Program Name:"
+msgstr "Programnamn:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:105
+msgid "The name of the application"
+msgstr "Namnet på programmet"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:106
+#: ../glade/gnome/gnomeabout.c:139
+msgid "Comments:"
+msgstr "Kommentarer:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:106
+msgid "Additional information, such as a description of the application"
+msgstr "Extra information, såsom en beskrivning av programmet"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:107
+#: ../glade/gnome/gnomeabout.c:138
+msgid "Copyright:"
+msgstr "Copyright:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:107
+#: ../glade/gnome/gnomeabout.c:138
+msgid "The copyright notice"
+msgstr "Copyrightnotisen"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:109
+msgid "Website URL:"
+msgstr ""
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbaboutdialog.c:109
+#, fuzzy
+msgid "The URL of the application's website"
+msgstr "Om programmet är ett Gnomeprogram"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:110
+#, fuzzy
+msgid "Website Label:"
+msgstr "Menyetikett:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:110
+#, fuzzy
+msgid "The label to display for the link to the website"
+msgstr "Bilden som ska visas längs överkanten på sidan"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:112
+#: ../glade/glade_project_options.c:365
+msgid "License:"
+msgstr "Licens:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:112
+#, fuzzy
+msgid "The license details of the application"
+msgstr "Reliefstilen på knappen"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:113
+#, fuzzy
+msgid "Wrap License:"
+msgstr "Licens:"
+
+# SUN CHANGED MESSAGE
+#
+# Sun vill ha "alpha-kanalen"
+# Jag vill ha "alfakanalen"
+#
+#: ../glade/gbwidgets/gbaboutdialog.c:113
+#, fuzzy
+msgid "If the license text should be wrapped"
+msgstr "Om alfakanalen ska användas"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:115
+#: ../glade/gnome/gnomeabout.c:141
+msgid "Authors:"
+msgstr "Författare:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbaboutdialog.c:115
+#: ../glade/gnome/gnomeabout.c:141
+msgid "The authors of the package, one on each line"
+msgstr "Författarna av paketet, en per rad"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:116
+#: ../glade/gnome/gnomeabout.c:142
+msgid "Documenters:"
+msgstr "Dokumenterare:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:116
+#: ../glade/gnome/gnomeabout.c:142
+msgid "The documenters of the package, one on each line"
+msgstr "Dokumenterarna av paketet, en per rad"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:117
+msgid "Artists:"
+msgstr ""
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbaboutdialog.c:117
+#, fuzzy
+msgid "The people who have created the artwork for the package, one on each line"
+msgstr "Författarna av paketet, en per rad"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:118
+#: ../glade/gnome/gnomeabout.c:143
+msgid "Translators:"
+msgstr "Översättare:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:118
+#: ../glade/gnome/gnomeabout.c:143
+msgid "The translators of the package. This should normally be left empty so that translators can add their names in the po files"
+msgstr "Översättarna av paketet. Detta ska normalt lämnas tomt så att författarna kan lägga till sina namn i po-filerna"
+
+# SUN CHANGED MESSAGE
+#
+# Sun vill ha "Om..."-här
+# Jag vill ha "Om"
+#
+#: ../glade/gbwidgets/gbaboutdialog.c:588
+#, fuzzy
+msgid "About Dialog"
+msgstr "Gnome Om-dialog"
+
+#: ../glade/gbwidgets/gbaccellabel.c:200
+msgid "Label with Accelerator"
+msgstr "Etikett med snabbtangent"
+
+#. The GtkProgress interface is deprecated now, and GtkProgressBar doesn't
+#. have functions to set these, so I suppose we shouldn't support them.
+#: ../glade/gbwidgets/gbalignment.c:71
+#: ../glade/gbwidgets/gbarrow.c:89
+#: ../glade/gbwidgets/gbaspectframe.c:130
+#: ../glade/gbwidgets/gbimage.c:119
+#: ../glade/gbwidgets/gblabel.c:181
+#: ../glade/gbwidgets/gbprogressbar.c:162
+msgid "X Align:"
+msgstr "X-justering:"
+
+#: ../glade/gbwidgets/gbalignment.c:72
+msgid "The horizontal alignment of the child widget"
+msgstr "Justeringen i x-led för barnwidgeten"
+
+#: ../glade/gbwidgets/gbalignment.c:74
+#: ../glade/gbwidgets/gbarrow.c:92
+#: ../glade/gbwidgets/gbaspectframe.c:133
+#: ../glade/gbwidgets/gbimage.c:122
+#: ../glade/gbwidgets/gblabel.c:184
+#: ../glade/gbwidgets/gbprogressbar.c:165
+msgid "Y Align:"
+msgstr "Y-justering:"
+
+#: ../glade/gbwidgets/gbalignment.c:75
+msgid "The vertical alignment of the child widget"
+msgstr "Justeringen i y-led för barnwidgeten"
+
+#: ../glade/gbwidgets/gbalignment.c:77
+msgid "X Scale:"
+msgstr "X-skala:"
+
+#: ../glade/gbwidgets/gbalignment.c:78
+msgid "The horizontal scale of the child widget"
+msgstr "Skalan i x-led för barnwidgeten"
+
+#: ../glade/gbwidgets/gbalignment.c:80
+msgid "Y Scale:"
+msgstr "Y-skala:"
+
+#: ../glade/gbwidgets/gbalignment.c:81
+msgid "The vertical scale of the child widget"
+msgstr "Skalan i y-led för barnwidgeten"
+
+#: ../glade/gbwidgets/gbalignment.c:85
+#, fuzzy
+msgid "Top Padding:"
+msgstr "H fyllning:"
+
+#: ../glade/gbwidgets/gbalignment.c:86
+#, fuzzy
+msgid "Space to put above the child widget"
+msgstr "Skalan i x-led för barnwidgeten"
+
+#: ../glade/gbwidgets/gbalignment.c:89
+#, fuzzy
+msgid "Bottom Padding:"
+msgstr "H fyllning:"
+
+#: ../glade/gbwidgets/gbalignment.c:90
+#, fuzzy
+msgid "Space to put below the child widget"
+msgstr "Skalan i x-led för barnwidgeten"
+
+#: ../glade/gbwidgets/gbalignment.c:93
+#, fuzzy
+msgid "Left Padding:"
+msgstr "H fyllning:"
+
+#: ../glade/gbwidgets/gbalignment.c:94
+#, fuzzy
+msgid "Space to put to the left of the child widget"
+msgstr "Skalan i x-led för barnwidgeten"
+
+#: ../glade/gbwidgets/gbalignment.c:97
+#, fuzzy
+msgid "Right Padding:"
+msgstr "H fyllning:"
+
+#: ../glade/gbwidgets/gbalignment.c:98
+#, fuzzy
+msgid "Space to put to the right of the child widget"
+msgstr "Justeringen i x-led för barnwidgeten"
+
+#: ../glade/gbwidgets/gbalignment.c:255
+msgid "Alignment"
+msgstr "Justering"
+
+#: ../glade/gbwidgets/gbarrow.c:85
+msgid "Direction:"
+msgstr "Riktning:"
+
+#: ../glade/gbwidgets/gbarrow.c:85
+msgid "The direction of the arrow"
+msgstr "Pilens riktning"
+
+#: ../glade/gbwidgets/gbarrow.c:87
+#: ../glade/gbwidgets/gbaspectframe.c:128
+#: ../glade/gbwidgets/gbclist.c:247
+#: ../glade/gbwidgets/gbctree.c:253
+#: ../glade/gbwidgets/gbframe.c:123
+#: ../glade/gbwidgets/gbhandlebox.c:109
+#: ../glade/gbwidgets/gbviewport.c:104
+#: ../glade/gnome/bonobodockitem.c:176
+msgid "Shadow:"
+msgstr "Skugga:"
+
+#: ../glade/gbwidgets/gbarrow.c:87
+msgid "The shadow type of the arrow"
+msgstr "Skuggtypen för pilen"
+
+#: ../glade/gbwidgets/gbarrow.c:90
+msgid "The horizontal alignment of the arrow"
+msgstr "Justeringen i x-led för pilen"
+
+#: ../glade/gbwidgets/gbarrow.c:93
+msgid "The vertical alignment of the arrow"
+msgstr "Justeringen i y-led för pilen"
+
+#: ../glade/gbwidgets/gbarrow.c:95
+#: ../glade/gbwidgets/gbimage.c:125
+#: ../glade/gbwidgets/gblabel.c:187
+msgid "X Pad:"
+msgstr "X-fyll:"
+
+#: ../glade/gbwidgets/gbarrow.c:95
+#: ../glade/gbwidgets/gbimage.c:125
+#: ../glade/gbwidgets/gblabel.c:187
+#: ../glade/gbwidgets/gbtable.c:382
+msgid "The horizontal padding"
+msgstr "Fyllningen i x-led"
+
+#: ../glade/gbwidgets/gbarrow.c:97
+#: ../glade/gbwidgets/gbimage.c:127
+#: ../glade/gbwidgets/gblabel.c:189
+msgid "Y Pad:"
+msgstr "Y-fyll:"
+
+#: ../glade/gbwidgets/gbarrow.c:97
+#: ../glade/gbwidgets/gbimage.c:127
+#: ../glade/gbwidgets/gblabel.c:189
+#: ../glade/gbwidgets/gbtable.c:385
+msgid "The vertical padding"
+msgstr "Fyllningen i y-led"
+
+#: ../glade/gbwidgets/gbarrow.c:299
+msgid "Arrow"
+msgstr "Pil"
+
+#: ../glade/gbwidgets/gbaspectframe.c:122
+#: ../glade/gbwidgets/gbframe.c:117
+msgid "Label X Align:"
+msgstr "Etikett X-justering:"
+
+#: ../glade/gbwidgets/gbaspectframe.c:123
+#: ../glade/gbwidgets/gbframe.c:118
+msgid "The horizontal alignment of the frame's label widget"
+msgstr "Horisontell justering av ramens etikettwidget"
+
+#: ../glade/gbwidgets/gbaspectframe.c:125
+#: ../glade/gbwidgets/gbframe.c:120
+msgid "Label Y Align:"
+msgstr "Etikett Y-justering:"
+
+#: ../glade/gbwidgets/gbaspectframe.c:126
+#: ../glade/gbwidgets/gbframe.c:121
+msgid "The vertical alignment of the frame's label widget"
+msgstr "Vertikal justering av ramens etikettwidget"
+
+#: ../glade/gbwidgets/gbaspectframe.c:128
+#: ../glade/gbwidgets/gbframe.c:123
+msgid "The type of shadow of the frame"
+msgstr "Skuggtypen för ramen"
+
+#: ../glade/gbwidgets/gbaspectframe.c:131
+#: ../glade/gbwidgets/gbaspectframe.c:134
+msgid "The horizontal alignment of the frame's child"
+msgstr "Justeringen i x-led för ramens barn"
+
+#: ../glade/gbwidgets/gbaspectframe.c:136
+msgid "Ratio:"
+msgstr "Förhållande:"
+
+#: ../glade/gbwidgets/gbaspectframe.c:137
+msgid "The aspect ratio of the frame's child"
+msgstr "Sidoförhållandet för ramens barn"
+
+#: ../glade/gbwidgets/gbaspectframe.c:138
+msgid "Obey Child:"
+msgstr "Lyd barn:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbaspectframe.c:139
+msgid "If the aspect ratio should be determined by the child"
+msgstr "Om sidoförhållandet ska bestämmas av barnet"
+
+#: ../glade/gbwidgets/gbaspectframe.c:319
+msgid "Aspect Frame"
+msgstr "Sidoram"
+
+#: ../glade/gbwidgets/gbbutton.c:118
+#: ../glade/gbwidgets/gbcheckbutton.c:85
+#: ../glade/gbwidgets/gbmenutoolbutton.c:85
+#: ../glade/gbwidgets/gbradiobutton.c:126
+#: ../glade/gbwidgets/gbradiotoolbutton.c:133
+#: ../glade/gbwidgets/gbtogglebutton.c:88
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:90
+#: ../glade/gbwidgets/gbtoolbutton.c:104
+msgid "Stock Button:"
+msgstr "Standardknapp:"
+
+#: ../glade/gbwidgets/gbbutton.c:119
+#: ../glade/gbwidgets/gbcheckbutton.c:86
+#: ../glade/gbwidgets/gbmenutoolbutton.c:86
+#: ../glade/gbwidgets/gbradiobutton.c:127
+#: ../glade/gbwidgets/gbradiotoolbutton.c:134
+#: ../glade/gbwidgets/gbtogglebutton.c:89
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:91
+#: ../glade/gbwidgets/gbtoolbutton.c:105
+msgid "The stock button to use"
+msgstr "Standardknappen som ska användas"
+
+#. For now we don't support editing the menuitem properties in the property
+#. editor. The menu editor has to be used instead.
+#: ../glade/gbwidgets/gbbutton.c:121
+#: ../glade/gbwidgets/gbcheckbutton.c:88
+#: ../glade/gbwidgets/gbcheckmenuitem.c:72
+#: ../glade/gbwidgets/gbimagemenuitem.c:92
+#: ../glade/gbwidgets/gblabel.c:169
+#: ../glade/gbwidgets/gblistitem.c:73
+#: ../glade/gbwidgets/gbmenuitem.c:87
+#: ../glade/gbwidgets/gbmenutoolbutton.c:88
+#: ../glade/gbwidgets/gbradiobutton.c:129
+#: ../glade/gbwidgets/gbradiomenuitem.c:103
+#: ../glade/gbwidgets/gbradiotoolbutton.c:136
+#: ../glade/gbwidgets/gbtogglebutton.c:91
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:93
+#: ../glade/gbwidgets/gbtoolbutton.c:107
+#: ../glade/glade_menu_editor.c:748
+#: ../glade/gnome/gnomehref.c:68
+msgid "Label:"
+msgstr "Etikett:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbbutton.c:121
+#: ../glade/gbwidgets/gbcheckbutton.c:88
+#: ../glade/gbwidgets/gbcheckmenuitem.c:72
+#: ../glade/gbwidgets/gbentry.c:100
+#: ../glade/gbwidgets/gbimagemenuitem.c:92
+#: ../glade/gbwidgets/gblabel.c:169
+#: ../glade/gbwidgets/gblistitem.c:73
+#: ../glade/gbwidgets/gbmenuitem.c:87
+#: ../glade/gbwidgets/gbmenutoolbutton.c:88
+#: ../glade/gbwidgets/gbradiobutton.c:129
+#: ../glade/gbwidgets/gbradiomenuitem.c:103
+#: ../glade/gbwidgets/gbradiotoolbutton.c:136
+#: ../glade/gbwidgets/gbtextview.c:124
+#: ../glade/gbwidgets/gbtogglebutton.c:91
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:93
+#: ../glade/gbwidgets/gbtoolbutton.c:107
+#: ../glade/gnome-db/gnomedbeditor.c:64
+msgid "The text to display"
+msgstr "Texten som ska visas"
+
+#: ../glade/gbwidgets/gbbutton.c:122
+#: ../glade/gbwidgets/gbcheckbutton.c:89
+#: ../glade/gbwidgets/gbimage.c:107
+#: ../glade/gbwidgets/gbmenutoolbutton.c:89
+#: ../glade/gbwidgets/gbradiobutton.c:130
+#: ../glade/gbwidgets/gbradiotoolbutton.c:137
+#: ../glade/gbwidgets/gbtogglebutton.c:92
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:94
+#: ../glade/gbwidgets/gbtoolbutton.c:108
+#: ../glade/gbwidgets/gbwindow.c:297
+#: ../glade/glade_menu_editor.c:814
+msgid "Icon:"
+msgstr "Ikon:"
+
+#: ../glade/gbwidgets/gbbutton.c:123
+#: ../glade/gbwidgets/gbcheckbutton.c:90
+#: ../glade/gbwidgets/gbimage.c:108
+#: ../glade/gbwidgets/gbmenutoolbutton.c:90
+#: ../glade/gbwidgets/gbradiobutton.c:131
+#: ../glade/gbwidgets/gbradiotoolbutton.c:138
+#: ../glade/gbwidgets/gbtogglebutton.c:93
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:95
+#: ../glade/gbwidgets/gbtoolbutton.c:109
+msgid "The icon to display"
+msgstr "Ikonen som ska visas"
+
+#: ../glade/gbwidgets/gbbutton.c:125
+#: ../glade/gbwidgets/gbcheckbutton.c:92
+#: ../glade/gbwidgets/gbradiobutton.c:133
+#: ../glade/gbwidgets/gbtogglebutton.c:95
+msgid "Button Relief:"
+msgstr "Knapprelief:"
+
+#: ../glade/gbwidgets/gbbutton.c:126
+#: ../glade/gbwidgets/gbcheckbutton.c:93
+#: ../glade/gbwidgets/gbradiobutton.c:134
+#: ../glade/gbwidgets/gbtogglebutton.c:96
+msgid "The relief style of the button"
+msgstr "Reliefstilen på knappen"
+
+#: ../glade/gbwidgets/gbbutton.c:131
+msgid "Response ID:"
+msgstr "Svars-ID:"
+
+#: ../glade/gbwidgets/gbbutton.c:132
+msgid "The response code returned when the button is pressed. Select one of the standard responses or enter a positive integer value"
+msgstr "Den svarskod som returneras då knappen trycks ned. Välj en av standardsvaren eller ange ett positivt heltalsvärde"
+
+#: ../glade/gbwidgets/gbbutton.c:137
+#: ../glade/gbwidgets/gbcheckbutton.c:102
+#: ../glade/gbwidgets/gbcolorbutton.c:70
+#: ../glade/gbwidgets/gbcombobox.c:83
+#: ../glade/gbwidgets/gbcomboboxentry.c:82
+#: ../glade/gbwidgets/gbfontbutton.c:78
+#: ../glade/gbwidgets/gbradiobutton.c:148
+#: ../glade/gbwidgets/gbtogglebutton.c:103
+#: ../glade/gnome/gnomecolorpicker.c:76
+#: ../glade/gnome/gnomefontpicker.c:109
+#: ../glade/gnome/gnomehref.c:70
+msgid "Focus On Click:"
+msgstr ""
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbbutton.c:137
+#: ../glade/gbwidgets/gbcheckbutton.c:102
+#: ../glade/gbwidgets/gbcolorbutton.c:70
+#: ../glade/gbwidgets/gbfontbutton.c:78
+#: ../glade/gbwidgets/gbradiobutton.c:148
+#: ../glade/gbwidgets/gbtogglebutton.c:103
+#: ../glade/gnome/gnomecolorpicker.c:76
+#: ../glade/gnome/gnomefontpicker.c:109
+#: ../glade/gnome/gnomehref.c:70
+#, fuzzy
+msgid "If the button grabs focus when it is clicked"
+msgstr "Om dialogen ska stängas när någon knapp trycks ned"
+
+#: ../glade/gbwidgets/gbbutton.c:1502
+msgid "Remove Button Contents"
+msgstr "Ta bort knappinnehåll"
+
+#: ../glade/gbwidgets/gbbutton.c:1600
+msgid "Button"
+msgstr "Knapp"
+
+#: ../glade/gbwidgets/gbcalendar.c:73
+msgid "Heading:"
+msgstr "Rubrik:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbcalendar.c:74
+msgid "If the month and year should be shown at the top"
+msgstr "Om månad och år ska visas högst upp"
+
+#: ../glade/gbwidgets/gbcalendar.c:75
+msgid "Day Names:"
+msgstr "Veckodagsnamn:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbcalendar.c:76
+msgid "If the day names should be shown"
+msgstr "Om namnen på veckodagarna ska visas"
+
+#: ../glade/gbwidgets/gbcalendar.c:77
+msgid "Fixed Month:"
+msgstr "Fix månad:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbcalendar.c:78
+msgid "If the month and year shouldn't be changeable"
+msgstr "Om det inte ska gå att ändra månad och år"
+
+#: ../glade/gbwidgets/gbcalendar.c:79
+msgid "Week Numbers:"
+msgstr "Veckonummer:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbcalendar.c:80
+msgid "If the number of the week should be shown"
+msgstr "Om veckonumret ska visas"
+
+#: ../glade/gbwidgets/gbcalendar.c:81
+#: ../glade/gnome/gnomedateedit.c:74
+msgid "Monday First:"
+msgstr "Måndag först:"
+
+#: ../glade/gbwidgets/gbcalendar.c:82
+#: ../glade/gnome/gnomedateedit.c:75
+msgid "If the week should start on Monday"
+msgstr "Om veckan startar med måndag"
+
+#: ../glade/gbwidgets/gbcalendar.c:266
+msgid "Calendar"
+msgstr "Kalender"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbcellview.c:63
+#: ../glade/gnome/gnomedruidpageedge.c:102
+#: ../glade/gnome/gnomedruidpagestandard.c:91
+msgid "Back. Color:"
+msgstr "Bakgrundsfärg:"
+
+#: ../glade/gbwidgets/gbcellview.c:64
+msgid "The background color"
+msgstr "Bakgrundsfärgen"
+
+#: ../glade/gbwidgets/gbcellview.c:192
+msgid "Cell View"
+msgstr "Cellvy"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:96
+#: ../glade/gbwidgets/gbcheckmenuitem.c:73
+#: ../glade/gbwidgets/gbradiobutton.c:137
+#: ../glade/gbwidgets/gbradiomenuitem.c:104
+#: ../glade/gbwidgets/gbradiotoolbutton.c:147
+#: ../glade/gbwidgets/gbtogglebutton.c:99
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:97
+msgid "Initially On:"
+msgstr "Initialt på:"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:97
+msgid "If the check button is initially on"
+msgstr "Om kryssrutan är påslagen från början"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:98
+#: ../glade/gbwidgets/gbradiobutton.c:139
+#: ../glade/gbwidgets/gbtogglebutton.c:101
+msgid "Inconsistent:"
+msgstr "Inkonsekvent:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbcheckbutton.c:99
+#: ../glade/gbwidgets/gbradiobutton.c:140
+#: ../glade/gbwidgets/gbtogglebutton.c:102
+msgid "If the button is shown in an inconsistent state"
+msgstr "Om knappen ska visas i ett inkonsekvent tillstånd"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:100
+#: ../glade/gbwidgets/gbradiobutton.c:141
+msgid "Indicator:"
+msgstr "Indikator:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbcheckbutton.c:101
+#: ../glade/gbwidgets/gbradiobutton.c:142
+msgid "If the indicator is always drawn"
+msgstr "Om indikatorn alltid ska visas"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:211
+msgid "Check Button"
+msgstr "Kryssruta"
+
+#: ../glade/gbwidgets/gbcheckmenuitem.c:74
+msgid "If the check menu item is initially on"
+msgstr "Om kryssmenyvalet är påslaget från början"
+
+#: ../glade/gbwidgets/gbcheckmenuitem.c:203
+msgid "Check Menu Item"
+msgstr "Kryssmenyval"
+
+#: ../glade/gbwidgets/gbclist.c:141
+msgid "New columned list"
+msgstr "Ny kolumnlista"
+
+#. Columns label & entry
+#: ../glade/gbwidgets/gbclist.c:152
+#: ../glade/gbwidgets/gbctree.c:157
+#: ../glade/gbwidgets/gbhbox.c:110
+#: ../glade/gbwidgets/gbhbuttonbox.c:132
+#: ../glade/gbwidgets/gbtable.c:165
+msgid "Number of columns:"
+msgstr "Antal kolumner:"
+
+#: ../glade/gbwidgets/gbclist.c:242
+#: ../glade/gbwidgets/gbctree.c:248
+#: ../glade/gbwidgets/gbiconview.c:128
+#: ../glade/gbwidgets/gblist.c:77
+#: ../glade/gnome/gnomeiconlist.c:174
+msgid "Select Mode:"
+msgstr "Markeringsläge:"
+
+#: ../glade/gbwidgets/gbclist.c:243
+msgid "The selection mode of the columned list"
+msgstr "Markeringsläget för kolumnlistan"
+
+#: ../glade/gbwidgets/gbclist.c:245
+#: ../glade/gbwidgets/gbctree.c:251
+msgid "Show Titles:"
+msgstr "Visa rubriker:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbclist.c:246
+#: ../glade/gbwidgets/gbctree.c:252
+msgid "If the column titles are shown"
+msgstr "Om kolumnrubrikerna ska visas"
+
+#: ../glade/gbwidgets/gbclist.c:248
+msgid "The type of shadow of the columned list's border"
+msgstr "Skuggtypen för kolumnlistans kant"
+
+#: ../glade/gbwidgets/gbclist.c:594
+msgid "Columned List"
+msgstr "Kolumnlista"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:65
+#: ../glade/gnome/gnomecolorpicker.c:70
+msgid "Use Alpha:"
+msgstr "Använd alfa:"
+
+# SUN CHANGED MESSAGE
+#
+# Sun vill ha "alpha-kanalen"
+# Jag vill ha "alfakanalen"
+#
+#: ../glade/gbwidgets/gbcolorbutton.c:66
+#: ../glade/gnome/gnomecolorpicker.c:71
+msgid "If the alpha channel should be used"
+msgstr "Om alfakanalen ska användas"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:68
+#: ../glade/gbwidgets/gbfilechooserbutton.c:86
+#: ../glade/gbwidgets/gbfontbutton.c:68
+#: ../glade/gbwidgets/gbwindow.c:244
+#: ../glade/gnome/gnomecolorpicker.c:73
+#: ../glade/gnome/gnomedruidpageedge.c:93
+#: ../glade/gnome/gnomedruidpagestandard.c:85
+#: ../glade/gnome/gnomefileentry.c:101
+#: ../glade/gnome/gnomefontpicker.c:95
+#: ../glade/gnome/gnomeiconentry.c:72
+#: ../glade/gnome/gnomepixmapentry.c:82
+msgid "Title:"
+msgstr "Titel:"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:69
+#: ../glade/gnome/gnomecolorpicker.c:74
+msgid "The title of the color selection dialog"
+msgstr "Titeln på färgvalsdialogen"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:91
+#: ../glade/gbwidgets/gbcolorbutton.c:119
+#: ../glade/gbwidgets/gbcolorbutton.c:162
+msgid "Pick a Color"
+msgstr "Välj en färg"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:211
+#, fuzzy
+msgid "Color Chooser Button"
+msgstr "Kryssruta"
+
+#: ../glade/gbwidgets/gbcolorselection.c:62
+msgid "Opacity Control:"
+msgstr "Opacitetskontroll:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbcolorselection.c:63
+msgid "If the opacity control is shown"
+msgstr "Om opacitetskontrollen ska visas"
+
+#: ../glade/gbwidgets/gbcolorselection.c:64
+msgid "Palette:"
+msgstr "Palett:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbcolorselection.c:65
+msgid "If the palette is shown"
+msgstr "Om paletten ska visas"
+
+#: ../glade/gbwidgets/gbcolorselection.c:173
+msgid "Color Selection"
+msgstr "Färgväljare"
+
+#: ../glade/gbwidgets/gbcolorselectiondialog.c:71
+msgid "Select Color"
+msgstr "Välj färg"
+
+#: ../glade/gbwidgets/gbcolorselectiondialog.c:316
+#: ../glade/property.c:1276
+msgid "Color Selection Dialog"
+msgstr "Färgvalsdialog"
+
+#: ../glade/gbwidgets/gbcombo.c:105
+msgid "Value In List:"
+msgstr "Värde i listan:"
+
+#: ../glade/gbwidgets/gbcombo.c:106
+msgid "If the value must be in the list"
+msgstr "Om värdet måste finnas i listan"
+
+#: ../glade/gbwidgets/gbcombo.c:107
+msgid "OK If Empty:"
+msgstr "OK om tom:"
+
+#: ../glade/gbwidgets/gbcombo.c:108
+msgid "If an empty value is acceptable, when 'Value In List' is set"
+msgstr "Om ett tomt värde är ok när 'Värde i listan' är påslaget"
+
+#: ../glade/gbwidgets/gbcombo.c:109
+msgid "Case Sensitive:"
+msgstr "Matcha gemener/versaler:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbcombo.c:110
+msgid "If the searching is case sensitive"
+msgstr "Om sökningen ska ta hänsyn till gemener/versaler"
+
+#: ../glade/gbwidgets/gbcombo.c:111
+msgid "Use Arrows:"
+msgstr "Använd pilar:"
+
+#: ../glade/gbwidgets/gbcombo.c:112
+msgid "If arrows can be used to change the value"
+msgstr "Om pilar kan användas för att ändra värdet"
+
+#: ../glade/gbwidgets/gbcombo.c:113
+msgid "Use Always:"
+msgstr "Använd alltid:"
+
+#: ../glade/gbwidgets/gbcombo.c:114
+msgid "If arrows work even if the value is not in the list"
+msgstr "Om pilar fungerar även om värdet inte finns i listan"
+
+#: ../glade/gbwidgets/gbcombo.c:115
+#: ../glade/gbwidgets/gbcombobox.c:78
+#: ../glade/gbwidgets/gbcomboboxentry.c:75
+msgid "Items:"
+msgstr "Val:"
+
+#: ../glade/gbwidgets/gbcombo.c:116
+#: ../glade/gbwidgets/gbcombobox.c:79
+#: ../glade/gbwidgets/gbcomboboxentry.c:76
+msgid "The items in the combo list, one per line"
+msgstr "Valen i kombinationslistan, ett per rad"
+
+#: ../glade/gbwidgets/gbcombo.c:425
+#: ../glade/gbwidgets/gbcombobox.c:289
+msgid "Combo Box"
+msgstr "Kombinationsruta"
+
+#: ../glade/gbwidgets/gbcombobox.c:81
+#: ../glade/gbwidgets/gbcomboboxentry.c:78
+msgid "Add Tearoffs:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcombobox.c:82
+#: ../glade/gbwidgets/gbcomboboxentry.c:79
+msgid "Whether dropdowns should have a tearoff menu item"
+msgstr ""
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbcombobox.c:84
+#: ../glade/gbwidgets/gbcomboboxentry.c:83
+#, fuzzy
+msgid "Whether the combo box grabs focus when it is clicked"
+msgstr "Om dialogen ska stängas när någon knapp trycks ned"
+
+#: ../glade/gbwidgets/gbcomboboxentry.c:80
+#: ../glade/gbwidgets/gbentry.c:102
+msgid "Has Frame:"
+msgstr "Har ram:"
+
+#: ../glade/gbwidgets/gbcomboboxentry.c:81
+msgid "Whether the combo box draws a frame around the child"
+msgstr ""
+
+#: ../glade/gbwidgets/gbcomboboxentry.c:302
+#, fuzzy
+msgid "Combo Box Entry"
+msgstr "Kombinationsruta"
+
+#: ../glade/gbwidgets/gbctree.c:146
+msgid "New columned tree"
+msgstr "Nytt kolumnträd"
+
+#: ../glade/gbwidgets/gbctree.c:249
+msgid "The selection mode of the columned tree"
+msgstr "Markeringsläget för kolumnträdet"
+
+#: ../glade/gbwidgets/gbctree.c:254
+msgid "The type of shadow of the columned tree's border"
+msgstr "Skuggtypen för kolumnträdets kant"
+
+#: ../glade/gbwidgets/gbctree.c:538
+msgid "Columned Tree"
+msgstr "Kolumnträd"
+
+#: ../glade/gbwidgets/gbcurve.c:85
+#: ../glade/gbwidgets/gbwindow.c:247
+msgid "Type:"
+msgstr "Typ:"
+
+#: ../glade/gbwidgets/gbcurve.c:85
+msgid "The type of the curve"
+msgstr "Typen på kurvan"
+
+#: ../glade/gbwidgets/gbcurve.c:87
+#: ../glade/gbwidgets/gbgammacurve.c:91
+msgid "X Min:"
+msgstr "X-min:"
+
+#: ../glade/gbwidgets/gbcurve.c:87
+#: ../glade/gbwidgets/gbgammacurve.c:91
+msgid "The minimum horizontal value"
+msgstr "Det minsta horisontellvärdet"
+
+#: ../glade/gbwidgets/gbcurve.c:88
+#: ../glade/gbwidgets/gbgammacurve.c:92
+msgid "X Max:"
+msgstr "X-max:"
+
+#: ../glade/gbwidgets/gbcurve.c:88
+#: ../glade/gbwidgets/gbgammacurve.c:92
+msgid "The maximum horizontal value"
+msgstr "Det maximala horisontellvärdet"
+
+#: ../glade/gbwidgets/gbcurve.c:89
+#: ../glade/gbwidgets/gbgammacurve.c:93
+msgid "Y Min:"
+msgstr "Y-min:"
+
+#: ../glade/gbwidgets/gbcurve.c:89
+#: ../glade/gbwidgets/gbgammacurve.c:93
+msgid "The minimum vertical value"
+msgstr "Det minsta vertikalvärdet"
+
+#: ../glade/gbwidgets/gbcurve.c:90
+#: ../glade/gbwidgets/gbgammacurve.c:94
+msgid "Y Max:"
+msgstr "Y-max:"
+
+#: ../glade/gbwidgets/gbcurve.c:90
+#: ../glade/gbwidgets/gbgammacurve.c:94
+msgid "The maximum vertical value"
+msgstr "Det maximala vertikalvärdet"
+
+#: ../glade/gbwidgets/gbcurve.c:250
+msgid "Curve"
+msgstr "Kurva"
+
+#: ../glade/gbwidgets/gbcustom.c:154
+msgid "Creation Function:"
+msgstr "Tillverkningsfunktion:"
+
+#: ../glade/gbwidgets/gbcustom.c:155
+msgid "The function which creates the widget"
+msgstr "Funktionen som tillverkar widgeten"
+
+#: ../glade/gbwidgets/gbcustom.c:157
+msgid "String1:"
+msgstr "Sträng1:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbcustom.c:158
+msgid "The first string argument to pass to the function"
+msgstr "Det första strängargumentet som ska skickas till funktionen"
+
+#: ../glade/gbwidgets/gbcustom.c:159
+msgid "String2:"
+msgstr "Sträng2:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbcustom.c:160
+msgid "The second string argument to pass to the function"
+msgstr "Det andra strängargumentet som ska skickas till funktionen"
+
+#: ../glade/gbwidgets/gbcustom.c:161
+msgid "Int1:"
+msgstr "Heltal1:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbcustom.c:162
+msgid "The first integer argument to pass to the function"
+msgstr "Det första heltalsargumentet som ska skickas till funktionen"
+
+#: ../glade/gbwidgets/gbcustom.c:163
+msgid "Int2:"
+msgstr "Heltal2:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbcustom.c:164
+msgid "The second integer argument to pass to the function"
+msgstr "Det första heltalsargumentet som ska skickas till funktionen"
+
+#: ../glade/gbwidgets/gbcustom.c:380
+msgid "Custom Widget"
+msgstr "Skräddarsydd widget"
+
+#: ../glade/gbwidgets/gbdialog.c:293
+msgid "New dialog"
+msgstr "Ny dialog"
+
+#: ../glade/gbwidgets/gbdialog.c:305
+msgid "Cancel, OK"
+msgstr "Avbryt, OK"
+
+#: ../glade/gbwidgets/gbdialog.c:314
+#: ../glade/glade.c:367
+#: ../glade/glade_project_window.c:1322
+#: ../glade/property.c:5162
+msgid "OK"
+msgstr "OK"
+
+#: ../glade/gbwidgets/gbdialog.c:323
+msgid "Cancel, Apply, OK"
+msgstr "Avbryt, Verkställ, OK"
+
+#: ../glade/gbwidgets/gbdialog.c:332
+msgid "Close"
+msgstr "Stäng"
+
+#: ../glade/gbwidgets/gbdialog.c:341
+msgid "_Standard Button Layout:"
+msgstr "_Standardknapplayout:"
+
+#: ../glade/gbwidgets/gbdialog.c:350
+msgid "_Number of Buttons:"
+msgstr "_Antal knappar:"
+
+#: ../glade/gbwidgets/gbdialog.c:367
+msgid "Show Help Button"
+msgstr "Visa hjälpknapp"
+
+#: ../glade/gbwidgets/gbdialog.c:398
+msgid "Has Separator:"
+msgstr "Har avskiljare:"
+
+#: ../glade/gbwidgets/gbdialog.c:399
+msgid "If the dialog has a horizontal separator above the buttons"
+msgstr "Om dialogen har en horisontell avskiljare ovanför knapparna"
+
+#: ../glade/gbwidgets/gbdialog.c:606
+msgid "Dialog"
+msgstr "Dialog"
+
+#: ../glade/gbwidgets/gbdrawingarea.c:146
+msgid "Drawing Area"
+msgstr "Rityta"
+
+#: ../glade/gbwidgets/gbentry.c:94
+#: ../glade/gbwidgets/gbtextview.c:115
+#: ../glade/gnome-db/gnomedbeditor.c:62
+msgid "Editable:"
+msgstr "Redigerbar:"
+
+#: ../glade/gbwidgets/gbentry.c:94
+#: ../glade/gbwidgets/gbtextview.c:116
+#: ../glade/gnome-db/gnomedbeditor.c:62
+msgid "If the text can be edited"
+msgstr "Om texten är redigerbar"
+
+#: ../glade/gbwidgets/gbentry.c:95
+msgid "Text Visible:"
+msgstr "Synlig text:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbentry.c:96
+msgid "If the text entered by the user will be shown. When turned off, the text typed in is displayed as asterix characters, which is useful for entering passwords"
+msgstr "Om texten som skrivs in av användaren ska visas. Om detta slås av så visas den som asterisker, användbart för att skriva in lösenord."
+
+#: ../glade/gbwidgets/gbentry.c:97
+msgid "Max Length:"
+msgstr "Maxlängd:"
+
+#: ../glade/gbwidgets/gbentry.c:98
+msgid "The maximum length of the text"
+msgstr "Textens maximala längd"
+
+#: ../glade/gbwidgets/gbentry.c:100
+#: ../glade/gbwidgets/gbprogressbar.c:143
+#: ../glade/gbwidgets/gbtextview.c:124
+#: ../glade/gnome-db/gnomedbeditor.c:64
+#: ../glade/gnome-db/gnomedbgraybar.c:59
+#: ../glade/gnome/gnomedruidpageedge.c:95
+#: ../glade/property.c:926
+msgid "Text:"
+msgstr "Text:"
+
+#: ../glade/gbwidgets/gbentry.c:102
+msgid "If the entry has a frame around it"
+msgstr "Om fältet har en ram runt"
+
+#: ../glade/gbwidgets/gbentry.c:103
+msgid "Invisible Char:"
+msgstr "Osynligt tecken:"
+
+#: ../glade/gbwidgets/gbentry.c:103
+msgid "The character to use if the text should not visible, e.g. when entering passwords"
+msgstr "Tecknet att använda om texten inte ska vara synlig, t.ex. vid inmatning av lösenord"
+
+#: ../glade/gbwidgets/gbentry.c:104
+msgid "Activates Default:"
+msgstr "Aktiverar standardval:"
+
+#: ../glade/gbwidgets/gbentry.c:104
+msgid "If the default widget in the window is activated when Enter is pressed"
+msgstr "Om standardwidgeten i fönstret är aktiverad då Retur trycks ned"
+
+#: ../glade/gbwidgets/gbentry.c:105
+msgid "Width In Chars:"
+msgstr "Bredd i tecken:"
+
+#: ../glade/gbwidgets/gbentry.c:105
+msgid "The number of characters to leave space for in the entry"
+msgstr "Antalet tecken att lämna plats för i inmatningsrutan"
+
+#: ../glade/gbwidgets/gbentry.c:318
+msgid "Text Entry"
+msgstr "Inmatningsruta"
+
+#: ../glade/gbwidgets/gbeventbox.c:65
+#, fuzzy
+msgid "Visible Window:"
+msgstr "Synlig:"
+
+#: ../glade/gbwidgets/gbeventbox.c:65
+msgid "If the event box uses a visible window"
+msgstr ""
+
+#: ../glade/gbwidgets/gbeventbox.c:66
+#, fuzzy
+msgid "Above Child:"
+msgstr "Lyd barn:"
+
+#: ../glade/gbwidgets/gbeventbox.c:66
+msgid "If the event box window is above the child widget's window"
+msgstr ""
+
+#: ../glade/gbwidgets/gbeventbox.c:167
+msgid "Event Box"
+msgstr "Händelseruta"
+
+#: ../glade/gbwidgets/gbexpander.c:54
+#, fuzzy
+msgid "Initially Expanded:"
+msgstr "Initialt på:"
+
+#: ../glade/gbwidgets/gbexpander.c:55
+msgid "Whether the expander is initially opened to reveal the child widget"
+msgstr ""
+
+#: ../glade/gbwidgets/gbexpander.c:57
+#: ../glade/gbwidgets/gbhbox.c:175
+#: ../glade/gbwidgets/gbhbuttonbox.c:199
+#: ../glade/gbwidgets/gbvbox.c:160
+msgid "Spacing:"
+msgstr "Avstånd:"
+
+#: ../glade/gbwidgets/gbexpander.c:58
+#, fuzzy
+msgid "Space to put between the label and the child"
+msgstr "Antal bildpunkter mellan texten och ikonen"
+
+#: ../glade/gbwidgets/gbexpander.c:105
+#: ../glade/gbwidgets/gbframe.c:225
+msgid "Add Label Widget"
+msgstr "Lägg till etikettwidget"
+
+#: ../glade/gbwidgets/gbexpander.c:228
+#, fuzzy
+msgid "Expander"
+msgstr "Expandera:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:87
+#, fuzzy
+msgid "The window title of the file chooser dialog"
+msgstr "Titel på filväljardialogen"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:88
+#: ../glade/gbwidgets/gbfilechooserwidget.c:86
+#: ../glade/gbwidgets/gbfilechooserdialog.c:158
+#: ../glade/gnome/gnomefileentry.c:109
+msgid "Action:"
+msgstr "Åtgärd:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:89
+#: ../glade/gbwidgets/gbfilechooserwidget.c:87
+#: ../glade/gbwidgets/gbfilechooserdialog.c:159
+#: ../glade/gnome/gnomefileentry.c:110
+msgid "The type of file operation being performed"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:91
+#: ../glade/gbwidgets/gbfilechooserwidget.c:89
+#: ../glade/gbwidgets/gbfilechooserdialog.c:161
+msgid "Local Only:"
+msgstr "Endast lokal:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:92
+#: ../glade/gbwidgets/gbfilechooserwidget.c:90
+#: ../glade/gbwidgets/gbfilechooserdialog.c:162
+msgid "Whether the selected files should be limited to local files"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:93
+#: ../glade/gbwidgets/gbfilechooserwidget.c:93
+#: ../glade/gbwidgets/gbfilechooserdialog.c:165
+msgid "Show Hidden:"
+msgstr "Visa dolda:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:94
+#: ../glade/gbwidgets/gbfilechooserwidget.c:94
+#: ../glade/gbwidgets/gbfilechooserdialog.c:166
+msgid "Whether the hidden files and folders should be displayed"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:95
+#: ../glade/gbwidgets/gbfilechooserdialog.c:167
+msgid "Confirm:"
+msgstr "Bekräfta:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:96
+#: ../glade/gbwidgets/gbfilechooserdialog.c:168
+msgid "Whether a confirmation dialog will be displayed if a file will be overwritten"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:97
+#: ../glade/gbwidgets/gblabel.c:201
+msgid "Width in Chars:"
+msgstr "Bredd i tecken:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:98
+#, fuzzy
+msgid "The width of the button in characters"
+msgstr "Bredden på layoutytan"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:296
+#, fuzzy
+msgid "File Chooser Button"
+msgstr "Kryssruta"
+
+#: ../glade/gbwidgets/gbfilechooserwidget.c:91
+#: ../glade/gbwidgets/gbfilechooserdialog.c:163
+#, fuzzy
+msgid "Select Multiple:"
+msgstr "Välj fil"
+
+#: ../glade/gbwidgets/gbfilechooserwidget.c:92
+#: ../glade/gbwidgets/gbfilechooserdialog.c:164
+msgid "Whether to allow multiple files to be selected"
+msgstr ""
+
+#: ../glade/gbwidgets/gbfilechooserwidget.c:260
+msgid "File Chooser"
+msgstr "Filväljare"
+
+#: ../glade/gbwidgets/gbfilechooserdialog.c:435
+msgid "File Chooser Dialog"
+msgstr "Filväljardialog"
+
+#: ../glade/gbwidgets/gbfileselection.c:72
+#: ../glade/property.c:1366
+msgid "Select File"
+msgstr "Välj fil"
+
+#: ../glade/gbwidgets/gbfileselection.c:114
+msgid "File Ops.:"
+msgstr "Filoperationer:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbfileselection.c:115
+msgid "If the file operation buttons are shown"
+msgstr "Om filoperationsknapparna ska visas"
+
+#: ../glade/gbwidgets/gbfileselection.c:293
+msgid "File Selection Dialog"
+msgstr "Filväljardialog"
+
+#: ../glade/gbwidgets/gbfixed.c:139
+#: ../glade/gbwidgets/gblayout.c:221
+msgid "X:"
+msgstr "X:"
+
+#: ../glade/gbwidgets/gbfixed.c:140
+msgid "The X coordinate of the widget in the GtkFixed"
+msgstr "X-koordinaten för widgeten i GtkFixed"
+
+#: ../glade/gbwidgets/gbfixed.c:142
+#: ../glade/gbwidgets/gblayout.c:224
+msgid "Y:"
+msgstr "Y:"
+
+#: ../glade/gbwidgets/gbfixed.c:143
+msgid "The Y coordinate of the widget in the GtkFixed"
+msgstr "Y-koordinaten för widgeten i GtkFixed"
+
+#: ../glade/gbwidgets/gbfixed.c:228
+msgid "Fixed Positions"
+msgstr "Fixa positioner"
+
+#: ../glade/gbwidgets/gbfontbutton.c:69
+#: ../glade/gnome/gnomefontpicker.c:96
+msgid "The title of the font selection dialog"
+msgstr "Titel på typsnittsväljardialogen"
+
+#: ../glade/gbwidgets/gbfontbutton.c:70
+msgid "Show Style:"
+msgstr "Visa stil:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbfontbutton.c:71
+#, fuzzy
+msgid "If the font style is shown as part of the font information"
+msgstr "Om typsnittsstorleken ska visas som en del av typsnittsinformationen"
+
+#: ../glade/gbwidgets/gbfontbutton.c:72
+#: ../glade/gnome/gnomefontpicker.c:102
+msgid "Show Size:"
+msgstr "Visa storlek:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbfontbutton.c:73
+#: ../glade/gnome/gnomefontpicker.c:103
+msgid "If the font size is shown as part of the font information"
+msgstr "Om typsnittsstorleken ska visas som en del av typsnittsinformationen"
+
+#: ../glade/gbwidgets/gbfontbutton.c:74
+#: ../glade/gnome/gnomefontpicker.c:104
+msgid "Use Font:"
+msgstr "Använd typsnitt:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbfontbutton.c:75
+#: ../glade/gnome/gnomefontpicker.c:105
+msgid "If the selected font is used when displaying the font information"
+msgstr "Om det valda typsnittet ska användas för att visa typsnittsinformation"
+
+#: ../glade/gbwidgets/gbfontbutton.c:76
+#: ../glade/gnome/gnomefontpicker.c:106
+msgid "Use Size:"
+msgstr "Använd storlek:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbfontbutton.c:77
+#, fuzzy
+msgid "if the selected font size is used when displaying the font information"
+msgstr "Om det valda typsnittet ska användas för att visa typsnittsinformation"
+
+#: ../glade/gbwidgets/gbfontbutton.c:97
+#: ../glade/gbwidgets/gbfontbutton.c:133
+#: ../glade/gbwidgets/gbfontbutton.c:191
+#: ../glade/gnome/gnomefontpicker.c:128
+#: ../glade/gnome/gnomefontpicker.c:199
+#: ../glade/gnome/gnomefontpicker.c:301
+msgid "Pick a Font"
+msgstr "Välj ett typsnitt"
+
+#: ../glade/gbwidgets/gbfontbutton.c:268
+#, fuzzy
+msgid "Font Chooser Button"
+msgstr "Kryssruta"
+
+#: ../glade/gbwidgets/gbfontselection.c:64
+#: ../glade/gnome/gnomefontpicker.c:97
+msgid "Preview Text:"
+msgstr "Förhandsgranskningstext:"
+
+# SUN CHANGED MESSAGE
+#
+# Sun vill ha "Texten som ska visas"
+# Jag vill ha "Förhandsvisningstexten som ska visas"
+#
+#: ../glade/gbwidgets/gbfontselection.c:64
+msgid "The preview text to display"
+msgstr "Förhandsvisningstexten som ska visas"
+
+#: ../glade/gbwidgets/gbfontselection.c:170
+msgid "Font Selection"
+msgstr "Typsnittsval"
+
+#: ../glade/gbwidgets/gbfontselectiondialog.c:70
+msgid "Select Font"
+msgstr "Välj typsnitt"
+
+#: ../glade/gbwidgets/gbfontselectiondialog.c:301
+msgid "Font Selection Dialog"
+msgstr "Typsnittsväljardialog"
+
+#: ../glade/gbwidgets/gbframe.c:360
+msgid "Frame"
+msgstr "Ram"
+
+#: ../glade/gbwidgets/gbgammacurve.c:88
+msgid "Initial Type:"
+msgstr "Initialtyp:"
+
+#: ../glade/gbwidgets/gbgammacurve.c:88
+msgid "The initial type of the curve"
+msgstr "Kurvans typ från början"
+
+#: ../glade/gbwidgets/gbgammacurve.c:256
+msgid "Gamma Curve"
+msgstr "Gammakurva"
+
+#: ../glade/gbwidgets/gbhandlebox.c:110
+msgid "The type of shadow around the handle box"
+msgstr "Skuggtypen runt hantagsrutan"
+
+#: ../glade/gbwidgets/gbhandlebox.c:113
+msgid "Handle Pos:"
+msgstr "Handtagsposition:"
+
+#: ../glade/gbwidgets/gbhandlebox.c:114
+msgid "The position of the handle"
+msgstr "Handtagets position"
+
+#: ../glade/gbwidgets/gbhandlebox.c:116
+msgid "Snap Edge:"
+msgstr "Fästkant:"
+
+#: ../glade/gbwidgets/gbhandlebox.c:117
+msgid "The edge of the handle box which snaps into position"
+msgstr "Kanten på handtagsrutan som fäster fast"
+
+#: ../glade/gbwidgets/gbhandlebox.c:304
+msgid "Handle Box"
+msgstr "Handtagsruta"
+
+#: ../glade/gbwidgets/gbhbox.c:99
+msgid "New horizontal box"
+msgstr "Ny horisontell ruta"
+
+#: ../glade/gbwidgets/gbhbox.c:171
+#: ../glade/gbwidgets/gbhbuttonbox.c:194
+#: ../glade/gbwidgets/gbtoolbar.c:267
+#: ../glade/gbwidgets/gbvbox.c:156
+msgid "Size:"
+msgstr "Storlek:"
+
+#: ../glade/gbwidgets/gbhbox.c:171
+#: ../glade/gbwidgets/gbvbox.c:156
+msgid "The number of widgets in the box"
+msgstr "Antalet widgetar i rutan"
+
+#: ../glade/gbwidgets/gbhbox.c:173
+#: ../glade/gbwidgets/gbtable.c:243
+#: ../glade/gbwidgets/gbtoolbar.c:426
+#: ../glade/gbwidgets/gbvbox.c:158
+msgid "Homogeneous:"
+msgstr "Homogen:"
+
+# SUN CHANGED MESSAGE
+#
+# Sun vill ha "vara samma storlek"
+# Jag vill ha "vara av samma storlek"
+#
+#: ../glade/gbwidgets/gbhbox.c:174
+#: ../glade/gbwidgets/gbvbox.c:159
+msgid "If the children should be the same size"
+msgstr "Om barnen ska vara av samma storlek"
+
+#: ../glade/gbwidgets/gbhbox.c:175
+#: ../glade/gbwidgets/gbvbox.c:160
+msgid "The space between each child"
+msgstr "Avståndet mellan varje barn"
+
+#: ../glade/gbwidgets/gbhbox.c:312
+msgid "Can't delete any children."
+msgstr "Kan inte ta bort några barn"
+
+#: ../glade/gbwidgets/gbhbox.c:327
+#: ../glade/gbwidgets/gbhpaned.c:73
+#: ../glade/gbwidgets/gbhruler.c:89
+#: ../glade/gbwidgets/gbnotebook.c:669
+#: ../glade/gbwidgets/gbvpaned.c:69
+#: ../glade/gbwidgets/gbvruler.c:89
+#: ../glade/gbwidgets/gbwindow.c:256
+msgid "Position:"
+msgstr "Position:"
+
+#: ../glade/gbwidgets/gbhbox.c:328
+msgid "The widget's position relative to its siblings"
+msgstr "Widgetens position relativt sina syskon"
+
+#: ../glade/gbwidgets/gbhbox.c:330
+msgid "Padding:"
+msgstr "Fyllning:"
+
+#: ../glade/gbwidgets/gbhbox.c:331
+msgid "The widget's padding"
+msgstr "Widgetens kantfyllning"
+
+#: ../glade/gbwidgets/gbhbox.c:333
+#: ../glade/gbwidgets/gbnotebook.c:672
+#: ../glade/gbwidgets/gbpreview.c:65
+#: ../glade/gbwidgets/gbtoolbar.c:424
+msgid "Expand:"
+msgstr "Expandera:"
+
+#: ../glade/gbwidgets/gbhbox.c:334
+#: ../glade/gbwidgets/gbtoolbar.c:425
+msgid "Set True to let the widget expand"
+msgstr "Välj Sant för att låta widgeten expandera"
+
+#: ../glade/gbwidgets/gbhbox.c:335
+#: ../glade/gbwidgets/gbnotebook.c:674
+msgid "Fill:"
+msgstr "Fyll:"
+
+#: ../glade/gbwidgets/gbhbox.c:336
+msgid "Set True to let the widget fill its allocated area"
+msgstr "Välj Sant för att låta widgeten fylla hela sin tilldelade area"
+
+#: ../glade/gbwidgets/gbhbox.c:337
+#: ../glade/gbwidgets/gbnotebook.c:676
+msgid "Pack Start:"
+msgstr "Packstart:"
+
+#: ../glade/gbwidgets/gbhbox.c:338
+msgid "Set True to pack the widget at the start of the box"
+msgstr "Välj Sant för att packa widgeten i början av rutan"
+
+#: ../glade/gbwidgets/gbhbox.c:455
+msgid "Insert Before"
+msgstr "Stoppa in före"
+
+#: ../glade/gbwidgets/gbhbox.c:461
+msgid "Insert After"
+msgstr "Stoppa in efter"
+
+#: ../glade/gbwidgets/gbhbox.c:571
+msgid "Horizontal Box"
+msgstr "Horisontell ruta"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:120
+msgid "New horizontal button box"
+msgstr "Ny horisontell knappruta"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:194
+msgid "The number of buttons"
+msgstr "Antalet knappar"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:196
+msgid "Layout:"
+msgstr "Layout:"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:197
+msgid "The layout style of the buttons"
+msgstr "Layoutstilen på knapparna"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:199
+msgid "The space between the buttons"
+msgstr "Avståndet mellan knapparna"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:414
+msgid "Horizontal Button Box"
+msgstr "Horisontell knappruta"
+
+#: ../glade/gbwidgets/gbhpaned.c:74
+#: ../glade/gbwidgets/gbvpaned.c:70
+msgid "The position of the divider"
+msgstr "Delarens position"
+
+#: ../glade/gbwidgets/gbhpaned.c:186
+#: ../glade/gbwidgets/gbwindow.c:285
+msgid "Shrink:"
+msgstr "Krymp:"
+
+#: ../glade/gbwidgets/gbhpaned.c:187
+msgid "Set True to let the widget shrink"
+msgstr "Välj Sant för att låta widgeten krympa"
+
+#: ../glade/gbwidgets/gbhpaned.c:188
+msgid "Resize:"
+msgstr "Ändra storlek:"
+
+#: ../glade/gbwidgets/gbhpaned.c:189
+msgid "Set True to let the widget resize"
+msgstr "Välj Sant för att låta widgeten ändra storlek"
+
+#: ../glade/gbwidgets/gbhpaned.c:315
+msgid "Horizontal Panes"
+msgstr "Horisontella paneler"
+
+#: ../glade/gbwidgets/gbhruler.c:82
+#: ../glade/gbwidgets/gbvruler.c:82
+msgid "Metric:"
+msgstr "Mått:"
+
+#: ../glade/gbwidgets/gbhruler.c:83
+#: ../glade/gbwidgets/gbvruler.c:83
+msgid "The units of the ruler"
+msgstr "Måttenheterna på linjalen"
+
+#: ../glade/gbwidgets/gbhruler.c:85
+#: ../glade/gbwidgets/gbvruler.c:85
+msgid "Lower Value:"
+msgstr "Lägsta värde:"
+
+#: ../glade/gbwidgets/gbhruler.c:86
+#: ../glade/gbwidgets/gbvruler.c:86
+#: ../glade/gbwidgets/gbvruler.c:88
+msgid "The low value of the ruler"
+msgstr "Det lägsta värdet på linjalen"
+
+#: ../glade/gbwidgets/gbhruler.c:87
+#: ../glade/gbwidgets/gbvruler.c:87
+msgid "Upper Value:"
+msgstr "Högsta värde:"
+
+#: ../glade/gbwidgets/gbhruler.c:88
+msgid "The high value of the ruler"
+msgstr "Det högsta värdet på linjalen"
+
+#: ../glade/gbwidgets/gbhruler.c:90
+#: ../glade/gbwidgets/gbvruler.c:90
+msgid "The current position on the ruler"
+msgstr "Den nuvarande positionen på linjalen"
+
+#: ../glade/gbwidgets/gbhruler.c:91
+#: ../glade/gbwidgets/gbvruler.c:91
+#: ../glade/property.c:4833
+msgid "Max:"
+msgstr "Max:"
+
+#: ../glade/gbwidgets/gbhruler.c:92
+#: ../glade/gbwidgets/gbvruler.c:92
+msgid "The maximum value of the ruler"
+msgstr "Maxvärdet på linjalen"
+
+#: ../glade/gbwidgets/gbhruler.c:247
+msgid "Horizontal Ruler"
+msgstr "Horisontell linjal"
+
+#: ../glade/gbwidgets/gbhscale.c:107
+#: ../glade/gbwidgets/gbvscale.c:108
+msgid "Show Value:"
+msgstr "Visa värde:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbhscale.c:107
+#: ../glade/gbwidgets/gbvscale.c:108
+msgid "If the scale's value is shown"
+msgstr "Om skalans värde ska visas"
+
+#: ../glade/gbwidgets/gbhscale.c:108
+#: ../glade/gbwidgets/gbspinbutton.c:93
+#: ../glade/gbwidgets/gbvscale.c:109
+msgid "Digits:"
+msgstr "Siffror:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbhscale.c:108
+#: ../glade/gbwidgets/gbvscale.c:109
+msgid "The number of digits to show"
+msgstr "Hur många siffror som ska visas"
+
+#: ../glade/gbwidgets/gbhscale.c:110
+#: ../glade/gbwidgets/gbvscale.c:111
+msgid "Value Pos:"
+msgstr "Värdepos:"
+
+#: ../glade/gbwidgets/gbhscale.c:111
+#: ../glade/gbwidgets/gbvscale.c:112
+msgid "The position of the value"
+msgstr "Värdets position"
+
+#: ../glade/gbwidgets/gbhscale.c:113
+#: ../glade/gbwidgets/gbhscrollbar.c:87
+#: ../glade/gbwidgets/gbvscale.c:114
+#: ../glade/gbwidgets/gbvscrollbar.c:87
+msgid "Policy:"
+msgstr "Policy:"
+
+#: ../glade/gbwidgets/gbhscale.c:114
+#: ../glade/gbwidgets/gbvscale.c:115
+msgid "The update policy of the scale"
+msgstr "Uppdateringspolicyn för skalan"
+
+#: ../glade/gbwidgets/gbhscale.c:116
+#: ../glade/gbwidgets/gbhscrollbar.c:90
+#: ../glade/gbwidgets/gbvscale.c:117
+#: ../glade/gbwidgets/gbvscrollbar.c:90
+msgid "Inverted:"
+msgstr "Inverterad:"
+
+#: ../glade/gbwidgets/gbhscale.c:116
+#: ../glade/gbwidgets/gbhscrollbar.c:90
+#: ../glade/gbwidgets/gbvscale.c:117
+#: ../glade/gbwidgets/gbvscrollbar.c:90
+msgid "If the range values are inverted"
+msgstr "Om intervallvärdena är inverterade"
+
+#: ../glade/gbwidgets/gbhscale.c:319
+msgid "Horizontal Scale"
+msgstr "Horisontell skala"
+
+#: ../glade/gbwidgets/gbhscrollbar.c:88
+#: ../glade/gbwidgets/gbvscrollbar.c:88
+msgid "The update policy of the scrollbar"
+msgstr "Uppdateringspolicyn för rullningslisten"
+
+#: ../glade/gbwidgets/gbhscrollbar.c:237
+msgid "Horizontal Scrollbar"
+msgstr "Horisontell rullningslist"
+
+#: ../glade/gbwidgets/gbhseparator.c:144
+msgid "Horizonal Separator"
+msgstr "Horisontell avdelare"
+
+#: ../glade/gbwidgets/gbiconview.c:107
+#, c-format
+msgid "Icon %i"
+msgstr "Ikon %i"
+
+#: ../glade/gbwidgets/gbiconview.c:129
+#, fuzzy
+msgid "The selection mode of the icon view"
+msgstr "Markeringsläget för kolumnlistan"
+
+#: ../glade/gbwidgets/gbiconview.c:131
+#: ../glade/gbwidgets/gbprogressbar.c:134
+#: ../glade/gbwidgets/gbtoolbar.c:270
+#: ../glade/gnome/bonobodockitem.c:179
+msgid "Orientation:"
+msgstr "Orientering:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbiconview.c:132
+#, fuzzy
+msgid "The orientation of the icons"
+msgstr "Orienteringen på förloppsmätarens innehåll"
+
+#: ../glade/gbwidgets/gbiconview.c:134
+#: ../glade/gbwidgets/gbtreeview.c:118
+msgid "Reorderable:"
+msgstr "Omordningsbar:"
+
+#: ../glade/gbwidgets/gbiconview.c:135
+msgid "If the view can be reordered using Drag and Drop"
+msgstr ""
+
+#: ../glade/gbwidgets/gbiconview.c:308
+#, fuzzy
+msgid "Icon View"
+msgstr "Ikonstorlek:"
+
+#: ../glade/gbwidgets/gbimage.c:110
+#: ../glade/gbwidgets/gbwindow.c:301
+#, fuzzy
+msgid "Named Icon:"
+msgstr "Ikon:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbimage.c:111
+#: ../glade/gbwidgets/gbwindow.c:302
+#, fuzzy
+msgid "The named icon to use"
+msgstr "Vilket standard-Gnome-menyval som ska användas."
+
+#: ../glade/gbwidgets/gbimage.c:112
+msgid "Icon Size:"
+msgstr "Ikonstorlek:"
+
+#: ../glade/gbwidgets/gbimage.c:113
+msgid "The stock icon size"
+msgstr "Storlek på standardikoner"
+
+#: ../glade/gbwidgets/gbimage.c:115
+#, fuzzy
+msgid "Pixel Size:"
+msgstr "Sidstorlek:"
+
+#: ../glade/gbwidgets/gbimage.c:116
+msgid "The size of the named icon in pixels, or -1 to use the Icon Size property"
+msgstr ""
+
+#: ../glade/gbwidgets/gbimage.c:120
+msgid "The horizontal alignment"
+msgstr "Den horisontella justeringen"
+
+#: ../glade/gbwidgets/gbimage.c:123
+msgid "The vertical alignment"
+msgstr "Den vertikala justeringen"
+
+#: ../glade/gbwidgets/gbimage.c:648
+msgid "Image"
+msgstr "Bild"
+
+#: ../glade/gbwidgets/gbimagemenuitem.c:255
+#: ../glade/gbwidgets/gbmenuitem.c:228
+msgid "Invalid stock menu item"
+msgstr "Ogiltigt standardmenyval"
+
+#: ../glade/gbwidgets/gbimagemenuitem.c:471
+msgid "Menu item with a pixmap"
+msgstr "Menyval med pixmap"
+
+#: ../glade/gbwidgets/gbinputdialog.c:257
+msgid "Input Dialog"
+msgstr "Inmatningsdialog"
+
+#: ../glade/gbwidgets/gblabel.c:170
+msgid "Use Underline:"
+msgstr "Använd understrykning:"
+
+#: ../glade/gbwidgets/gblabel.c:171
+msgid "If the text includes an underlined access key"
+msgstr "Om texten innehåller en understruken åtkomsttangent"
+
+#: ../glade/gbwidgets/gblabel.c:172
+msgid "Use Markup:"
+msgstr "Använd märkning:"
+
+#: ../glade/gbwidgets/gblabel.c:173
+msgid "If the text includes pango markup"
+msgstr "Om texten innehåller pangomärkning"
+
+#: ../glade/gbwidgets/gblabel.c:174
+msgid "Justify:"
+msgstr "Justering:"
+
+#: ../glade/gbwidgets/gblabel.c:175
+msgid "The justification of the lines of the label"
+msgstr "Justeringen på raderna på etiketten"
+
+#: ../glade/gbwidgets/gblabel.c:177
+msgid "Wrap Text:"
+msgstr "Radbryt text:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gblabel.c:178
+msgid "If the text is wrapped to fit within the width of the label"
+msgstr "Om texten ska radbrytas för att passa inom bredden på etiketten"
+
+#: ../glade/gbwidgets/gblabel.c:179
+msgid "Selectable:"
+msgstr "Markeringsbar:"
+
+#: ../glade/gbwidgets/gblabel.c:180
+msgid "If the label text can be selected with the mouse"
+msgstr "Om etikettexten kan markeras med musen"
+
+#: ../glade/gbwidgets/gblabel.c:182
+msgid "The horizontal alignment of the entire label"
+msgstr "Justeringen i x-led av hela etiketten"
+
+#: ../glade/gbwidgets/gblabel.c:185
+msgid "The vertical alignment of the entire label"
+msgstr "Justerginen i y-led av hela etiketten"
+
+#: ../glade/gbwidgets/gblabel.c:191
+msgid "Focus Target:"
+msgstr "Fokusmål:"
+
+#: ../glade/gbwidgets/gblabel.c:192
+msgid "The widget to set the keyboard focus to when the underlined access key is used"
+msgstr "Widgeten som ska få tangentbordsfokus när den understrukna åtkomsttangenten används"
+
+#. gtk_combo_set_value_in_list (GTK_COMBO (combo), TRUE, TRUE);
+#: ../glade/gbwidgets/gblabel.c:198
+#: ../glade/gbwidgets/gbprogressbar.c:146
+#, fuzzy
+msgid "Ellipsize:"
+msgstr "Exklusivt:"
+
+#: ../glade/gbwidgets/gblabel.c:199
+#: ../glade/gbwidgets/gbprogressbar.c:147
+msgid "How to ellipsize the string"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:202
+#, fuzzy
+msgid "The width of the label in characters"
+msgstr "Bredden på layoutytan"
+
+#: ../glade/gbwidgets/gblabel.c:204
+#, fuzzy
+msgid "Single Line Mode:"
+msgstr "Markeringsläge:"
+
+#: ../glade/gbwidgets/gblabel.c:205
+msgid "If the label is only given enough height for a single line"
+msgstr ""
+
+#: ../glade/gbwidgets/gblabel.c:206
+msgid "Angle:"
+msgstr "Vinkel:"
+
+#: ../glade/gbwidgets/gblabel.c:207
+#, fuzzy
+msgid "The angle of the label text"
+msgstr "Radbrytning av texten"
+
+#: ../glade/gbwidgets/gblabel.c:333
+#: ../glade/gbwidgets/gblabel.c:348
+#: ../glade/gbwidgets/gblabel.c:616
+msgid "Auto"
+msgstr "Auto"
+
+#: ../glade/gbwidgets/gblabel.c:872
+#: ../glade/glade_menu_editor.c:411
+msgid "Label"
+msgstr "Etikett"
+
+#: ../glade/gbwidgets/gblayout.c:96
+msgid "Area Width:"
+msgstr "Ytbredd:"
+
+#: ../glade/gbwidgets/gblayout.c:97
+msgid "The width of the layout area"
+msgstr "Bredden på layoutytan"
+
+#: ../glade/gbwidgets/gblayout.c:99
+msgid "Area Height:"
+msgstr "Ythöjd:"
+
+#: ../glade/gbwidgets/gblayout.c:100
+msgid "The height of the layout area"
+msgstr "Höjden på layoutytan"
+
+#: ../glade/gbwidgets/gblayout.c:222
+msgid "The X coordinate of the widget in the GtkLayout"
+msgstr "X-koordinaten för widgeten i GtkLayout"
+
+#: ../glade/gbwidgets/gblayout.c:225
+msgid "The Y coordinate of the widget in the GtkLayout"
+msgstr "Y-koordinaten för widgeten i GtkLayout"
+
+#: ../glade/gbwidgets/gblayout.c:380
+msgid "Layout"
+msgstr "Layout"
+
+#: ../glade/gbwidgets/gblist.c:78
+msgid "The selection mode of the list"
+msgstr "Markeringsläget för listan"
+
+#: ../glade/gbwidgets/gblist.c:192
+msgid "List"
+msgstr "Lista"
+
+#: ../glade/gbwidgets/gblistitem.c:171
+msgid "List Item"
+msgstr "Listval"
+
+#: ../glade/gbwidgets/gbmenu.c:198
+msgid "Popup Menu"
+msgstr "Popupmeny"
+
+#. FIXME: I'm not sure if we should translate the non-stock labels or not.
+#: ../glade/gbwidgets/gbmenubar.c:215
+msgid "_File"
+msgstr "_Arkiv"
+
+#. Create Edit menu
+#: ../glade/gbwidgets/gbmenubar.c:223
+#: ../glade/glade_project_window.c:692
+msgid "_Edit"
+msgstr "_Redigera"
+
+#. Create View menu
+#: ../glade/gbwidgets/gbmenubar.c:229
+#: ../glade/glade_project_window.c:721
+msgid "_View"
+msgstr "_Visa"
+
+#. Create Help menu
+#: ../glade/gbwidgets/gbmenubar.c:231
+#: ../glade/glade_project_window.c:834
+msgid "_Help"
+msgstr "_Hjälp"
+
+#: ../glade/gbwidgets/gbmenubar.c:232
+msgid "_About"
+msgstr "_Om"
+
+#: ../glade/gbwidgets/gbmenubar.c:291
+#, fuzzy
+msgid "Pack Direction:"
+msgstr "Riktning:"
+
+#: ../glade/gbwidgets/gbmenubar.c:292
+#, fuzzy
+msgid "The pack direction of the menubar"
+msgstr "Pilens riktning"
+
+#: ../glade/gbwidgets/gbmenubar.c:294
+#, fuzzy
+msgid "Child Direction:"
+msgstr "Riktning:"
+
+#: ../glade/gbwidgets/gbmenubar.c:295
+#, fuzzy
+msgid "The child pack direction of the menubar"
+msgstr "Pilens riktning"
+
+#: ../glade/gbwidgets/gbmenubar.c:300
+#: ../glade/gbwidgets/gbmenubar.c:418
+#: ../glade/gbwidgets/gboptionmenu.c:139
+msgid "Edit Menus..."
+msgstr "Redigera menyer..."
+
+#: ../glade/gbwidgets/gbmenubar.c:541
+msgid "Menu Bar"
+msgstr "Menyrad"
+
+#: ../glade/gbwidgets/gbmenuitem.c:379
+msgid "Menu Item"
+msgstr "Menyval"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:92
+#: ../glade/gbwidgets/gbradiotoolbutton.c:150
+#: ../glade/gbwidgets/gbseparatortoolitem.c:67
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:99
+#: ../glade/gbwidgets/gbtoolbutton.c:111
+#: ../glade/gbwidgets/gbtoolitem.c:65
+#, fuzzy
+msgid "Show Horizontal:"
+msgstr "Aldrig horisontellt:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbmenutoolbutton.c:93
+#: ../glade/gbwidgets/gbradiotoolbutton.c:151
+#: ../glade/gbwidgets/gbseparatortoolitem.c:68
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:100
+#: ../glade/gbwidgets/gbtoolbutton.c:112
+#: ../glade/gbwidgets/gbtoolitem.c:66
+#, fuzzy
+msgid "If the item is visible when the toolbar is horizontal"
+msgstr "Om dockelementet aldrig ska tillåtas bli horisontellt"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:94
+#: ../glade/gbwidgets/gbradiotoolbutton.c:152
+#: ../glade/gbwidgets/gbseparatortoolitem.c:69
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:101
+#: ../glade/gbwidgets/gbtoolbutton.c:113
+#: ../glade/gbwidgets/gbtoolitem.c:67
+#, fuzzy
+msgid "Show Vertical:"
+msgstr "Visa värde:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbmenutoolbutton.c:95
+#: ../glade/gbwidgets/gbradiotoolbutton.c:153
+#: ../glade/gbwidgets/gbseparatortoolitem.c:70
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:102
+#: ../glade/gbwidgets/gbtoolbutton.c:114
+#: ../glade/gbwidgets/gbtoolitem.c:68
+#, fuzzy
+msgid "If the item is visible when the toolbar is vertical"
+msgstr "Om dockelementet aldrig ska tillåtas bli vertikalt"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:96
+#: ../glade/gbwidgets/gbradiotoolbutton.c:154
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:103
+#: ../glade/gbwidgets/gbtoolbutton.c:115
+#: ../glade/gbwidgets/gbtoolitem.c:69
+msgid "Is Important:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:97
+#: ../glade/gbwidgets/gbradiotoolbutton.c:155
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:104
+#: ../glade/gbwidgets/gbtoolbutton.c:116
+#: ../glade/gbwidgets/gbtoolitem.c:70
+msgid "If the item's text should be shown when the toolbar's mode is GTK_TOOLBAR_BOTH_HORIZ"
+msgstr ""
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:255
+#, fuzzy
+msgid "Toolbar Button with Menu"
+msgstr "Omställningsknapp"
+
+#: ../glade/gbwidgets/gbnotebook.c:191
+msgid "New notebook"
+msgstr "Nytt flikhäfte"
+
+#: ../glade/gbwidgets/gbnotebook.c:202
+#: ../glade/gnome/gnomepropertybox.c:125
+msgid "Number of pages:"
+msgstr "Antal sidor:"
+
+#: ../glade/gbwidgets/gbnotebook.c:274
+msgid "Show Tabs:"
+msgstr "Visa flikar:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbnotebook.c:274
+msgid "If the notebook tabs are shown"
+msgstr "Om flikarna ska synas"
+
+#: ../glade/gbwidgets/gbnotebook.c:275
+msgid "Show Border:"
+msgstr "Visa kant:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbnotebook.c:276
+msgid "If the notebook border is shown, when the tabs are not shown"
+msgstr "Om kanten ska synas när flikarna inte syns"
+
+#: ../glade/gbwidgets/gbnotebook.c:277
+msgid "Tab Pos:"
+msgstr "Flikpos:"
+
+#: ../glade/gbwidgets/gbnotebook.c:278
+msgid "The position of the notebook tabs"
+msgstr "Positionen på flikarna"
+
+#: ../glade/gbwidgets/gbnotebook.c:280
+msgid "Scrollable:"
+msgstr "Rullbar:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbnotebook.c:281
+msgid "If the notebook tabs are scrollable"
+msgstr "Om flikarna ska vara rullbara"
+
+#. These seem to be deprecated.
+#: ../glade/gbwidgets/gbnotebook.c:284
+msgid "Tab Horz. Border:"
+msgstr "Flik horisontalkant:"
+
+#: ../glade/gbwidgets/gbnotebook.c:285
+msgid "The size of the notebook tabs' horizontal border"
+msgstr "Storleken på flikarnas horisontalkant"
+
+#: ../glade/gbwidgets/gbnotebook.c:287
+msgid "Tab Vert. Border:"
+msgstr "Flik vertikalkant:"
+
+#: ../glade/gbwidgets/gbnotebook.c:288
+msgid "The size of the notebook tabs' vertical border"
+msgstr "Storleken på flikarnas vertikalkant"
+
+#: ../glade/gbwidgets/gbnotebook.c:291
+msgid "Show Popup:"
+msgstr "Visa popup:"
+
+# SUN CHANGED MESSAGE
+#
+# Sun vill ha "popup menyn"
+# Jag vill ha "popupmenyn"
+#
+#: ../glade/gbwidgets/gbnotebook.c:291
+msgid "If the popup menu is enabled"
+msgstr "Om popupmenyn ska användas"
+
+#: ../glade/gbwidgets/gbnotebook.c:292
+#: ../glade/gnome/gnomedruid.c:102
+msgid "Number of Pages:"
+msgstr "Antal sidor:"
+
+#: ../glade/gbwidgets/gbnotebook.c:293
+msgid "The number of notebook pages"
+msgstr "Antal sidor i flikhäftet"
+
+#: ../glade/gbwidgets/gbnotebook.c:540
+msgid "Previous Page"
+msgstr "Föregående sida"
+
+#: ../glade/gbwidgets/gbnotebook.c:548
+msgid "Next Page"
+msgstr "Nästa sida"
+
+#: ../glade/gbwidgets/gbnotebook.c:556
+msgid "Delete Page"
+msgstr "Ta bort sida"
+
+#: ../glade/gbwidgets/gbnotebook.c:562
+msgid "Switch Next"
+msgstr "Byt till nästa"
+
+#: ../glade/gbwidgets/gbnotebook.c:570
+msgid "Switch Previous"
+msgstr "Byt till föregående"
+
+#: ../glade/gbwidgets/gbnotebook.c:578
+#: ../glade/gnome/gnomedruid.c:298
+msgid "Insert Page After"
+msgstr "Stoppa in sida efter"
+
+#: ../glade/gbwidgets/gbnotebook.c:586
+#: ../glade/gnome/gnomedruid.c:285
+msgid "Insert Page Before"
+msgstr "Stoppa in sida innan"
+
+#: ../glade/gbwidgets/gbnotebook.c:670
+msgid "The page's position in the list of pages"
+msgstr "Sidans position i sidlistan"
+
+#: ../glade/gbwidgets/gbnotebook.c:673
+msgid "Set True to let the tab expand"
+msgstr "Välj Sant för att låta fliken expandera"
+
+#: ../glade/gbwidgets/gbnotebook.c:675
+msgid "Set True to let the tab fill its allocated area"
+msgstr "Välj Sant för att låta fliken fylla hela sin tilldelade area"
+
+#: ../glade/gbwidgets/gbnotebook.c:677
+msgid "Set True to pack the tab at the start of the notebook"
+msgstr "Välj Sant för att packa fliken i början av flikhäftet"
+
+#: ../glade/gbwidgets/gbnotebook.c:678
+msgid "Menu Label:"
+msgstr "Menyetikett:"
+
+#: ../glade/gbwidgets/gbnotebook.c:679
+msgid "The text to display in the popup menu"
+msgstr "Texten som ska visas i popupmenyn"
+
+#: ../glade/gbwidgets/gbnotebook.c:937
+msgid "Notebook"
+msgstr "Flikhäfte"
+
+#: ../glade/gbwidgets/gboptionmenu.c:230
+#, c-format
+msgid "Cannot add a %s to a GtkOptionMenu."
+msgstr "Kan inte lägga till %s till en GtkOptionMenu."
+
+#: ../glade/gbwidgets/gboptionmenu.c:270
+msgid "Option Menu"
+msgstr "Alternativmeny"
+
+#: ../glade/gbwidgets/gbpreview.c:63
+msgid "Color:"
+msgstr "Färg:"
+
+#: ../glade/gbwidgets/gbpreview.c:64
+msgid "If the preview is color or grayscale"
+msgstr "Om förhandsgranskningen är färg eller gråskala"
+
+#: ../glade/gbwidgets/gbpreview.c:66
+msgid "If the preview expands to fill its allocated area"
+msgstr "Om förhandsgranskningen expanderar för att fylla sin tilldelade yta"
+
+#: ../glade/gbwidgets/gbpreview.c:162
+msgid "Preview"
+msgstr "Förhandsgranskning"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbprogressbar.c:135
+msgid "The orientation of the progress bar's contents"
+msgstr "Orienteringen på förloppsmätarens innehåll"
+
+#: ../glade/gbwidgets/gbprogressbar.c:137
+msgid "Fraction:"
+msgstr "Andel:"
+
+#: ../glade/gbwidgets/gbprogressbar.c:138
+msgid "The fraction of work that has been completed"
+msgstr "Den andel av arbetet som har färdigställts"
+
+#: ../glade/gbwidgets/gbprogressbar.c:140
+msgid "Pulse Step:"
+msgstr "Pulseringssteg:"
+
+#: ../glade/gbwidgets/gbprogressbar.c:141
+msgid "The fraction of the progress bar length to move the bouncing block when pulsed"
+msgstr "Den andel av förloppsmätarens längd som det studsande blocket ska flyttas när det pulseras"
+
+#: ../glade/gbwidgets/gbprogressbar.c:144
+msgid "The text to display over the progress bar"
+msgstr "Texten som ska visas på förloppsmätaren"
+
+#. ShowText is implicit now, if the Text property is set to anything.
+#: ../glade/gbwidgets/gbprogressbar.c:152
+msgid "Show Text:"
+msgstr "Visa text:"
+
+# SUN CHANGED MESSAGE
+#
+# Sun vill ha "framgångsmätaren"
+# Jag vill ha "förloppsmätaren"
+#
+#: ../glade/gbwidgets/gbprogressbar.c:153
+msgid "If the text should be shown in the progress bar"
+msgstr "Om text ska visas i förloppsmätaren"
+
+#. ActivityMode is deprecated and implicit now. The app just calls
+#. gtk_progress_bar_pulse() and it automatically goes into activity mode.
+#: ../glade/gbwidgets/gbprogressbar.c:157
+msgid "Activity Mode:"
+msgstr "Aktivitetsläge:"
+
+# SUN CHANGED MESSAGE
+#
+# Sun vill ha
+# "Om framgångsmätaren ska bete sig som fronten på Kits bil (???)"
+#
+# Jag vill ha
+# "Om förloppsmätaren ska bete sig som fronten på Kits bil"
+#
+#: ../glade/gbwidgets/gbprogressbar.c:158
+msgid "If the progress bar should act like the front of Kit's car"
+msgstr "Om förloppsmätaren ska bete sig som fronten på Kits bil"
+
+#: ../glade/gbwidgets/gbprogressbar.c:163
+msgid "The horizontal alignment of the text"
+msgstr "Den horisontella justeringen av texten"
+
+#: ../glade/gbwidgets/gbprogressbar.c:166
+msgid "The vertical alignment of the text"
+msgstr "Den vertikala justeringen av texten"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbprogressbar.c:421
+msgid "Progress Bar"
+msgstr "Förloppsmätare"
+
+#: ../glade/gbwidgets/gbradiobutton.c:138
+#: ../glade/gbwidgets/gbradiotoolbutton.c:148
+msgid "If the radio button is initially on"
+msgstr "Om radioknappen är på från början"
+
+#: ../glade/gbwidgets/gbradiobutton.c:143
+#: ../glade/gbwidgets/gbradiomenuitem.c:106
+#: ../glade/gbwidgets/gbradiotoolbutton.c:141
+#: ../glade/glade_menu_editor.c:1039
+msgid "Group:"
+msgstr "Grupp:"
+
+#: ../glade/gbwidgets/gbradiobutton.c:144
+msgid "The radio button group (the default is all radio buttons with the same parent)"
+msgstr "Radioknappsgruppen (standard är alla radioknappar med samma förälder)"
+
+#: ../glade/gbwidgets/gbradiobutton.c:189
+#: ../glade/gbwidgets/gbradiobutton.c:350
+#: ../glade/gbwidgets/gbradiotoolbutton.c:233
+#: ../glade/gbwidgets/gbradiotoolbutton.c:322
+msgid "New Group"
+msgstr "Ny grupp"
+
+#: ../glade/gbwidgets/gbradiobutton.c:465
+msgid "Radio Button"
+msgstr "Radioknapp"
+
+#: ../glade/gbwidgets/gbradiomenuitem.c:105
+msgid "If the radio menu item is initially on"
+msgstr "Om radiomenyvalet är på från början"
+
+#: ../glade/gbwidgets/gbradiomenuitem.c:107
+msgid "The radio menu item group (the default is all radio menu items with the same parent)"
+msgstr "Radiomenyvalsgruppen (standard är alla radiomenyval med samma förälder)"
+
+#: ../glade/gbwidgets/gbradiomenuitem.c:388
+msgid "Radio Menu Item"
+msgstr "Radiomenyval"
+
+#: ../glade/gbwidgets/gbradiotoolbutton.c:142
+#, fuzzy
+msgid "The radio tool button group (the default is all radio tool buttons in the toolbar)"
+msgstr "Radioknappsgruppen (standard är alla radioknappar med samma förälder)"
+
+#: ../glade/gbwidgets/gbradiotoolbutton.c:530
+#, fuzzy
+msgid "Toolbar Radio Button"
+msgstr "Radioknapp"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:131
+msgid "H Policy:"
+msgstr "H policy:"
+
+# SUN CHANGED MESSAGE
+#
+# Sun vill ha "rullisten"
+# Jag vill ha "rullningslisten"
+#
+#: ../glade/gbwidgets/gbscrolledwindow.c:132
+msgid "When the horizontal scrollbar will be shown"
+msgstr "När den horisontella rullningslisten ska visas"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:134
+msgid "V Policy:"
+msgstr "V policy:"
+
+# SUN CHANGED MESSAGE
+#
+# Sun vill ha "rullisten"
+# Jag vill ha "rullningslisten"
+#
+#: ../glade/gbwidgets/gbscrolledwindow.c:135
+msgid "When the vertical scrollbar will be shown"
+msgstr "När den vertikala rullningslisten ska visas"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:137
+msgid "Window Pos:"
+msgstr "Fönsterposition:"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:138
+msgid "Where the child window is located with respect to the scrollbars"
+msgstr "Där barnwidgeten placeras med hänsyn till rullningslisterna"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:140
+msgid "Shadow Type:"
+msgstr "Skuggtyp:"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:141
+msgid "The update policy of the vertical scrollbar"
+msgstr "Uppdateringspolicyn för den vertikala rullningslisten"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:353
+msgid "Scrolled Window"
+msgstr "Rullfönster"
+
+#: ../glade/gbwidgets/gbseparatormenuitem.c:153
+msgid "Separator for Menus"
+msgstr "Avskiljare för menyer"
+
+#: ../glade/gbwidgets/gbseparatortoolitem.c:65
+msgid "Draw:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbseparatortoolitem.c:66
+msgid "If the separator is drawn, or just blank"
+msgstr ""
+
+#: ../glade/gbwidgets/gbseparatortoolitem.c:204
+#, fuzzy
+msgid "Toolbar Separator Item"
+msgstr "Horisontell avdelare"
+
+#: ../glade/gbwidgets/gbspinbutton.c:91
+msgid "Climb Rate:"
+msgstr "Ökningshastighet"
+
+#: ../glade/gbwidgets/gbspinbutton.c:92
+msgid "The climb rate of the spinbutton, used in conjunction with the Page Increment"
+msgstr "Ökningshastigheten för snurrknappen, används tillsammans med sidökning"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbspinbutton.c:94
+msgid "The number of decimal digits to show"
+msgstr "Antalet decimala siffror som ska visas"
+
+#: ../glade/gbwidgets/gbspinbutton.c:96
+msgid "Numeric:"
+msgstr "Numerisk:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:97
+msgid "If only numeric entry is allowed"
+msgstr "Om endast numerisk inmatning är tillåten"
+
+#: ../glade/gbwidgets/gbspinbutton.c:98
+msgid "Update Policy:"
+msgstr "Uppdateringspolicy:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbspinbutton.c:99
+msgid "When value_changed signals are emitted"
+msgstr "När value_changed-signaler ska avges"
+
+#: ../glade/gbwidgets/gbspinbutton.c:101
+msgid "Snap:"
+msgstr "Fäst.mult:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbspinbutton.c:102
+msgid "If the value is snapped to multiples of the step increment"
+msgstr "Om värdet ska anpassas till multipler av stegökningen"
+
+#: ../glade/gbwidgets/gbspinbutton.c:103
+msgid "Wrap:"
+msgstr "Fånga:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbspinbutton.c:104
+msgid "If the value is wrapped at the limits"
+msgstr "Om värdet ska fångas mellan gränserna"
+
+#: ../glade/gbwidgets/gbspinbutton.c:284
+msgid "Spin Button"
+msgstr "Snurrknapp"
+
+#: ../glade/gbwidgets/gbstatusbar.c:64
+msgid "Resize Grip:"
+msgstr "Handtag för storleksändring:"
+
+#: ../glade/gbwidgets/gbstatusbar.c:64
+msgid "If the status bar has a resize grip to resize the window"
+msgstr "Om statusraden har ett handtag för storleksändring för att storleksändra fönstret"
+
+#: ../glade/gbwidgets/gbstatusbar.c:156
+msgid "Status Bar"
+msgstr "Statusfält"
+
+#: ../glade/gbwidgets/gbtable.c:137
+msgid "New table"
+msgstr "Ny tabell"
+
+#: ../glade/gbwidgets/gbtable.c:149
+#: ../glade/gbwidgets/gbvbox.c:95
+#: ../glade/gbwidgets/gbvbuttonbox.c:123
+msgid "Number of rows:"
+msgstr "Antal rader:"
+
+#: ../glade/gbwidgets/gbtable.c:237
+msgid "Rows:"
+msgstr "Rader:"
+
+#: ../glade/gbwidgets/gbtable.c:238
+msgid "The number of rows in the table"
+msgstr "Antal rader i tabellen"
+
+#: ../glade/gbwidgets/gbtable.c:240
+msgid "Columns:"
+msgstr "Kolumner:"
+
+#: ../glade/gbwidgets/gbtable.c:241
+msgid "The number of columns in the table"
+msgstr "Antal kolumner i tabellen"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbtable.c:244
+msgid "If the children should all be the same size"
+msgstr "Om alla barn ska vara av samma storlek"
+
+#: ../glade/gbwidgets/gbtable.c:245
+#: ../glade/gnome/gnomeiconlist.c:180
+msgid "Row Spacing:"
+msgstr "Radavstånd:"
+
+#: ../glade/gbwidgets/gbtable.c:246
+msgid "The space between each row"
+msgstr "Avståndet mellan varje rad"
+
+#: ../glade/gbwidgets/gbtable.c:248
+#: ../glade/gnome/gnomeiconlist.c:183
+msgid "Col Spacing:"
+msgstr "Kolumnavstånd:"
+
+#: ../glade/gbwidgets/gbtable.c:249
+msgid "The space between each column"
+msgstr "Avståndet mellan varje kolumn"
+
+#: ../glade/gbwidgets/gbtable.c:368
+msgid "Cell X:"
+msgstr "Cell X:"
+
+#: ../glade/gbwidgets/gbtable.c:369
+msgid "The left edge of the widget in the table"
+msgstr "Vänsterkanten för varje widget i tabellen"
+
+#: ../glade/gbwidgets/gbtable.c:371
+msgid "Cell Y:"
+msgstr "Cell Y:"
+
+#: ../glade/gbwidgets/gbtable.c:372
+msgid "The top edge of the widget in the table"
+msgstr "Ovankanten av varje widget i tabellen"
+
+#: ../glade/gbwidgets/gbtable.c:375
+msgid "Col Span:"
+msgstr "Kol täck:"
+
+#: ../glade/gbwidgets/gbtable.c:376
+msgid "The number of columns spanned by the widget in the table"
+msgstr "Det antal kolumner som täcks av widgeten i tabellen"
+
+#: ../glade/gbwidgets/gbtable.c:378
+msgid "Row Span:"
+msgstr "Rad täck:"
+
+#: ../glade/gbwidgets/gbtable.c:379
+msgid "The number of rows spanned by the widget in the table"
+msgstr "Det antal rader som täcks av widgeten i tabellen"
+
+#: ../glade/gbwidgets/gbtable.c:381
+msgid "H Padding:"
+msgstr "H fyllning:"
+
+#: ../glade/gbwidgets/gbtable.c:384
+msgid "V Padding:"
+msgstr "V fyllning:"
+
+#: ../glade/gbwidgets/gbtable.c:387
+msgid "X Expand:"
+msgstr "X-expandera:"
+
+#: ../glade/gbwidgets/gbtable.c:388
+msgid "Set True to let the widget expand horizontally"
+msgstr "Välj Sant för att låta widgeten expandera horisontellt"
+
+#: ../glade/gbwidgets/gbtable.c:389
+msgid "Y Expand:"
+msgstr "Y-expandera:"
+
+#: ../glade/gbwidgets/gbtable.c:390
+msgid "Set True to let the widget expand vertically"
+msgstr "Välj Sant för att låta widgeten expandera vertikalt"
+
+#: ../glade/gbwidgets/gbtable.c:391
+msgid "X Shrink:"
+msgstr "X krymp:"
+
+#: ../glade/gbwidgets/gbtable.c:392
+msgid "Set True to let the widget shrink horizontally"
+msgstr "Välj Sant för att låta widgeten krympa horisontellt"
+
+#: ../glade/gbwidgets/gbtable.c:393
+msgid "Y Shrink:"
+msgstr "Y krymp:"
+
+#: ../glade/gbwidgets/gbtable.c:394
+msgid "Set True to let the widget shrink vertically"
+msgstr "Välj Sant för att låta widgeten krympa vertikalt"
+
+#: ../glade/gbwidgets/gbtable.c:395
+msgid "X Fill:"
+msgstr "X fyll:"
+
+#: ../glade/gbwidgets/gbtable.c:396
+msgid "Set True to let the widget fill its horizontal allocated area"
+msgstr "Välj Sant för att låta widgeten fylla sin horisontellt allokerade area"
+
+#: ../glade/gbwidgets/gbtable.c:397
+msgid "Y Fill:"
+msgstr "Y fyll:"
+
+#: ../glade/gbwidgets/gbtable.c:398
+msgid "Set True to let the widget fill its vertical allocated area"
+msgstr "Välj Sant för att låta widgeten fylla sin vertikalt allokerade area"
+
+#: ../glade/gbwidgets/gbtable.c:667
+msgid "Insert Row Before"
+msgstr "Stoppa in rad före"
+
+#: ../glade/gbwidgets/gbtable.c:674
+msgid "Insert Row After"
+msgstr "Stoppa in rad efter"
+
+#: ../glade/gbwidgets/gbtable.c:681
+msgid "Insert Column Before"
+msgstr "Stoppa in kolumn före"
+
+#: ../glade/gbwidgets/gbtable.c:688
+msgid "Insert Column After"
+msgstr "Stoppa in kolumn efter"
+
+#: ../glade/gbwidgets/gbtable.c:695
+msgid "Delete Row"
+msgstr "Ta bort rad"
+
+#: ../glade/gbwidgets/gbtable.c:701
+msgid "Delete Column"
+msgstr "Ta bort kolumn"
+
+#: ../glade/gbwidgets/gbtable.c:1208
+msgid "Table"
+msgstr "Tabell"
+
+#: ../glade/gbwidgets/gbtextview.c:51
+msgid "Center"
+msgstr "Centrera"
+
+#: ../glade/gbwidgets/gbtextview.c:52
+msgid "Fill"
+msgstr "Fyll"
+
+#. Add a "None" item first, so it is easy to reset the pixmap.
+#. If the user selects the 'None' item from the combo, we reset the
+#. text to "" and return. This callback will be called again.
+#. Add a 'None' item at the top of the list.
+#: ../glade/gbwidgets/gbtextview.c:71
+#: ../glade/glade_gnome.c:112
+#: ../glade/glade_menu_editor.c:543
+#: ../glade/glade_menu_editor.c:830
+#: ../glade/glade_menu_editor.c:1345
+#: ../glade/glade_menu_editor.c:2255
+#: ../glade/property.c:2432
+msgid "None"
+msgstr "Ingen"
+
+#: ../glade/gbwidgets/gbtextview.c:72
+msgid "Character"
+msgstr "Tecken"
+
+#: ../glade/gbwidgets/gbtextview.c:73
+msgid "Word"
+msgstr "Ord"
+
+#: ../glade/gbwidgets/gbtextview.c:117
+msgid "Cursor Visible:"
+msgstr "Synlig markör:"
+
+#: ../glade/gbwidgets/gbtextview.c:118
+msgid "If the cursor is visible"
+msgstr "Om markören är synlig"
+
+#: ../glade/gbwidgets/gbtextview.c:119
+msgid "Overwrite:"
+msgstr "Skriv över:"
+
+#: ../glade/gbwidgets/gbtextview.c:120
+msgid "If entered text overwrites the existing text"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtextview.c:121
+msgid "Accepts Tab:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtextview.c:122
+#, fuzzy
+msgid "If tab characters can be entered"
+msgstr "Om texten är redigerbar"
+
+#: ../glade/gbwidgets/gbtextview.c:126
+msgid "Justification:"
+msgstr "Justering:"
+
+#: ../glade/gbwidgets/gbtextview.c:127
+msgid "The justification of the text"
+msgstr "Justeringen på texten"
+
+#: ../glade/gbwidgets/gbtextview.c:129
+msgid "Wrapping:"
+msgstr "Radbrytning:"
+
+#: ../glade/gbwidgets/gbtextview.c:130
+msgid "The wrapping of the text"
+msgstr "Radbrytning av texten"
+
+#: ../glade/gbwidgets/gbtextview.c:133
+msgid "Space Above:"
+msgstr "Mellanrum ovanför:"
+
+#: ../glade/gbwidgets/gbtextview.c:134
+msgid "Pixels of blank space above paragraphs"
+msgstr "Bildpunkter med tomt utrymme ovanför stycken"
+
+#: ../glade/gbwidgets/gbtextview.c:136
+msgid "Space Below:"
+msgstr "Mellanrum nedanför:"
+
+#: ../glade/gbwidgets/gbtextview.c:137
+msgid "Pixels of blank space below paragraphs"
+msgstr "Bildpunkter med tomt utrymme nedanför stycken"
+
+#: ../glade/gbwidgets/gbtextview.c:139
+msgid "Space Inside:"
+msgstr "Mellanrum inuti:"
+
+#: ../glade/gbwidgets/gbtextview.c:140
+msgid "Pixels of blank space between wrapped lines in a paragraph"
+msgstr "Bildpunkter med tomt utrymme mellan radbrutna rader i ett stycke"
+
+#: ../glade/gbwidgets/gbtextview.c:143
+msgid "Left Margin:"
+msgstr "Vänstermarginal:"
+
+#: ../glade/gbwidgets/gbtextview.c:144
+msgid "Width of the left margin in pixels"
+msgstr "Bredd på den vänstra marginalen i bildpunkter"
+
+#: ../glade/gbwidgets/gbtextview.c:146
+msgid "Right Margin:"
+msgstr "Högermarginal:"
+
+#: ../glade/gbwidgets/gbtextview.c:147
+msgid "Width of the right margin in pixels"
+msgstr "Bredd på den högra marginalen i bildpunkter"
+
+#: ../glade/gbwidgets/gbtextview.c:149
+msgid "Indent:"
+msgstr "Indrag:"
+
+#: ../glade/gbwidgets/gbtextview.c:150
+msgid "Amount of pixels to indent paragraphs"
+msgstr "Mängden bildpunkter att dra in stycken"
+
+#: ../glade/gbwidgets/gbtextview.c:463
+msgid "Text View"
+msgstr "Textvy"
+
+#: ../glade/gbwidgets/gbtogglebutton.c:100
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:98
+msgid "If the toggle button is initially on"
+msgstr "Om omställningsknappen är på från början"
+
+#: ../glade/gbwidgets/gbtogglebutton.c:199
+msgid "Toggle Button"
+msgstr "Omställningsknapp"
+
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:297
+#, fuzzy
+msgid "Toolbar Toggle Button"
+msgstr "Omställningsknapp"
+
+#: ../glade/gbwidgets/gbtoolbar.c:191
+msgid "New toolbar"
+msgstr "Ny verktygsrad"
+
+#: ../glade/gbwidgets/gbtoolbar.c:202
+msgid "Number of items:"
+msgstr "Antal verktyg:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:268
+msgid "The number of items in the toolbar"
+msgstr "Antalet verktyg i verktygsraden"
+
+#: ../glade/gbwidgets/gbtoolbar.c:271
+msgid "The toolbar orientation"
+msgstr "Verktygsradens orientering"
+
+#: ../glade/gbwidgets/gbtoolbar.c:273
+msgid "Style:"
+msgstr "Stil:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:274
+msgid "The toolbar style"
+msgstr "Verktygsraders stil"
+
+#: ../glade/gbwidgets/gbtoolbar.c:276
+msgid "Tooltips:"
+msgstr "Verktygstips:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:276
+msgid "If tooltips are enabled"
+msgstr "Om verktygstips är påslagna"
+
+#: ../glade/gbwidgets/gbtoolbar.c:277
+#, fuzzy
+msgid "Show Arrow:"
+msgstr "Visa kant:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:277
+msgid "If an arrow should be shown to popup a menu if the toolbar doesn't fit"
+msgstr ""
+
+# SUN CHANGED MESSAGE
+#
+# Sun vill ha "vara samma storlek"
+# Jag vill ha "vara av samma storlek"
+#
+#: ../glade/gbwidgets/gbtoolbar.c:427
+#, fuzzy
+msgid "If the item should be the same size as other homogeneous items"
+msgstr "Om barnen ska vara av samma storlek"
+
+#. Commands for inserting new items.
+#: ../glade/gbwidgets/gbtoolbar.c:506
+msgid "Insert Item Before"
+msgstr "Stoppa in verktyg innan"
+
+#: ../glade/gbwidgets/gbtoolbar.c:513
+msgid "Insert Item After"
+msgstr "Stoppa in verktyg efter"
+
+#: ../glade/gbwidgets/gbtoolbar.c:680
+msgid "Toolbar"
+msgstr "Verktygsrad"
+
+#: ../glade/gbwidgets/gbtoolbutton.c:586
+#, fuzzy
+msgid "Toolbar Button"
+msgstr "Omställningsknapp"
+
+#: ../glade/gbwidgets/gbtoolitem.c:201
+#, fuzzy
+msgid "Toolbar Item"
+msgstr "Verktygsrad"
+
+#: ../glade/gbwidgets/gbtreeview.c:71
+msgid "Column 1"
+msgstr "Kolumn 1"
+
+#: ../glade/gbwidgets/gbtreeview.c:79
+msgid "Column 2"
+msgstr "Kolumn 2"
+
+#: ../glade/gbwidgets/gbtreeview.c:87
+#, fuzzy
+msgid "Column 3"
+msgstr "Kolumn 1"
+
+#: ../glade/gbwidgets/gbtreeview.c:97
+#, c-format
+msgid "Row %i"
+msgstr "Rad %i"
+
+#: ../glade/gbwidgets/gbtreeview.c:114
+msgid "Headers Visible:"
+msgstr "Synliga huvuden:"
+
+# SUN CHANGED MESSAGE
+#
+# Sun vill ha "kolumnrubrikerna"
+# Jag vill ha "kolumnrubrikknapparna"
+#
+#: ../glade/gbwidgets/gbtreeview.c:115
+msgid "If the column header buttons are shown"
+msgstr "Om kolumnrubrikknapparna ska visas"
+
+#: ../glade/gbwidgets/gbtreeview.c:116
+msgid "Rules Hint:"
+msgstr "Linjaltips:"
+
+#: ../glade/gbwidgets/gbtreeview.c:117
+msgid "If a hint is set so the theme engine should draw rows in alternating colors"
+msgstr "Om ett tips ställs in så att temamotorn ska rita rader med alternerande färger"
+
+#: ../glade/gbwidgets/gbtreeview.c:119
+msgid "If the view is reorderable"
+msgstr "Om vyn är omordningsbar"
+
+#: ../glade/gbwidgets/gbtreeview.c:120
+msgid "Enable Search:"
+msgstr "Aktivera sökning:"
+
+#: ../glade/gbwidgets/gbtreeview.c:121
+msgid "If the user can search through columns interactively"
+msgstr "Om användaren kan söka genom kolumner interaktivt"
+
+#: ../glade/gbwidgets/gbtreeview.c:123
+#, fuzzy
+msgid "Fixed Height Mode:"
+msgstr "Skalningshöjd:"
+
+#: ../glade/gbwidgets/gbtreeview.c:124
+msgid "Sets all rows to the same height to improve performance"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtreeview.c:125
+#, fuzzy
+msgid "Hover Selection:"
+msgstr "Färgväljare"
+
+#: ../glade/gbwidgets/gbtreeview.c:126
+#, fuzzy
+msgid "Whether the selection should follow the pointer"
+msgstr "Markeringsläget för listan"
+
+#: ../glade/gbwidgets/gbtreeview.c:127
+#, fuzzy
+msgid "Hover Expand:"
+msgstr "X-expandera:"
+
+#: ../glade/gbwidgets/gbtreeview.c:128
+msgid "Whether rows should be expanded or collapsed when the pointer moves over them"
+msgstr ""
+
+#: ../glade/gbwidgets/gbtreeview.c:317
+msgid "List or Tree View"
+msgstr "Lista eller trädvy"
+
+#: ../glade/gbwidgets/gbvbox.c:84
+msgid "New vertical box"
+msgstr "Ny vertikalruta"
+
+#: ../glade/gbwidgets/gbvbox.c:245
+msgid "Vertical Box"
+msgstr "Vertikalruta"
+
+#: ../glade/gbwidgets/gbvbuttonbox.c:111
+msgid "New vertical button box"
+msgstr "Ny vertikal knappruta"
+
+#: ../glade/gbwidgets/gbvbuttonbox.c:344
+msgid "Vertical Button Box"
+msgstr "Vertikal knappruta"
+
+#: ../glade/gbwidgets/gbviewport.c:104
+msgid "The type of shadow of the viewport"
+msgstr "Skuggtyp för vyfönstret"
+
+#: ../glade/gbwidgets/gbviewport.c:240
+msgid "Viewport"
+msgstr "Vyfönster"
+
+#: ../glade/gbwidgets/gbvpaned.c:192
+msgid "Vertical Panes"
+msgstr "Vertikala paneler"
+
+#: ../glade/gbwidgets/gbvruler.c:247
+msgid "Vertical Ruler"
+msgstr "Vertikal linjal"
+
+#: ../glade/gbwidgets/gbvscale.c:319
+msgid "Vertical Scale"
+msgstr "Vertikal skala"
+
+#: ../glade/gbwidgets/gbvscrollbar.c:236
+msgid "Vertical Scrollbar"
+msgstr "Vertikal rullninglist"
+
+#: ../glade/gbwidgets/gbvseparator.c:144
+msgid "Vertical Separator"
+msgstr "Vertikal avskiljare"
+
+#: ../glade/gbwidgets/gbwindow.c:244
+msgid "The title of the window"
+msgstr "Fönstrets titel"
+
+#: ../glade/gbwidgets/gbwindow.c:247
+msgid "The type of the window"
+msgstr "Fönstrets typ"
+
+#: ../glade/gbwidgets/gbwindow.c:251
+#, fuzzy
+msgid "Type Hint:"
+msgstr "Typ:"
+
+#: ../glade/gbwidgets/gbwindow.c:252
+msgid "Tells the window manager how to treat the window"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:257
+msgid "The initial position of the window"
+msgstr "Fönstrets startposition"
+
+#: ../glade/gbwidgets/gbwindow.c:261
+#: ../glade/gnome/gnomefileentry.c:105
+#: ../glade/gnome/gnomepixmapentry.c:84
+msgid "Modal:"
+msgstr "Modalt:"
+
+#: ../glade/gbwidgets/gbwindow.c:261
+msgid "If the window is modal"
+msgstr "Om fönstret är modalt"
+
+#: ../glade/gbwidgets/gbwindow.c:266
+msgid "Default Width:"
+msgstr "Standardbredd:"
+
+#: ../glade/gbwidgets/gbwindow.c:267
+msgid "The default width of the window"
+msgstr "Fönstrets standardbredd"
+
+#: ../glade/gbwidgets/gbwindow.c:271
+msgid "Default Height:"
+msgstr "Standardhöjd:"
+
+#: ../glade/gbwidgets/gbwindow.c:272
+msgid "The default height of the window"
+msgstr "Fönstrets standardhöjd"
+
+#: ../glade/gbwidgets/gbwindow.c:278
+msgid "Resizable:"
+msgstr "Storleksändringsbar:"
+
+#: ../glade/gbwidgets/gbwindow.c:279
+msgid "If the window can be resized"
+msgstr "Om fönstrets storlek kan ändras"
+
+#: ../glade/gbwidgets/gbwindow.c:286
+msgid "If the window can be shrunk"
+msgstr "Om fönstret kan krympas"
+
+#: ../glade/gbwidgets/gbwindow.c:287
+msgid "Grow:"
+msgstr "Förstora:"
+
+#: ../glade/gbwidgets/gbwindow.c:288
+msgid "If the window can be enlarged"
+msgstr "Om fönstret kan förstoras"
+
+#: ../glade/gbwidgets/gbwindow.c:293
+msgid "Auto-Destroy:"
+msgstr "Förstör automatiskt:"
+
+# SUN CHANGED MESSAGE
+#
+# Sun vill ha
+# "Om dialogen ska  vid stängning, i stället för att förstöras"
+#
+# Jag vill ha
+# "Om fönstret ska förstöras när dess tillfälliga förälder förstörs"
+#
+#: ../glade/gbwidgets/gbwindow.c:294
+msgid "If the window is destroyed when its transient parent is destroyed"
+msgstr "Om fönstret ska förstöras när dess tillfälliga förälder förstörs"
+
+#: ../glade/gbwidgets/gbwindow.c:298
+msgid "The icon for this window"
+msgstr "Ikonen för detta fönster"
+
+#: ../glade/gbwidgets/gbwindow.c:305
+msgid "Role:"
+msgstr "Roll:"
+
+#: ../glade/gbwidgets/gbwindow.c:305
+msgid "A unique identifier for the window to be used when restoring a session"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:308
+#, fuzzy
+msgid "Decorated:"
+msgstr "För_åldrade"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbwindow.c:309
+#, fuzzy
+msgid "If the window should be decorated by the window manager"
+msgstr "Om sidoförhållandet ska bestämmas av barnet"
+
+#: ../glade/gbwidgets/gbwindow.c:312
+msgid "Skip Taskbar:"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:313
+#, fuzzy
+msgid "If the window should not appear in the task bar"
+msgstr "Om fönstret har en statusrad"
+
+#: ../glade/gbwidgets/gbwindow.c:316
+msgid "Skip Pager:"
+msgstr ""
+
+# SUN CHANGED MESSAGE
+#
+# Sun vill ha "framgångsmätaren"
+# Jag vill ha "förloppsmätaren"
+#
+#: ../glade/gbwidgets/gbwindow.c:317
+#, fuzzy
+msgid "If the window should not appear in the pager"
+msgstr "Om text ska visas i förloppsmätaren"
+
+#: ../glade/gbwidgets/gbwindow.c:320
+#, fuzzy
+msgid "Gravity:"
+msgstr "Stil för rutnät:"
+
+#: ../glade/gbwidgets/gbwindow.c:321
+msgid "The reference point to use when the window coordinates are set"
+msgstr ""
+
+#: ../glade/gbwidgets/gbwindow.c:325
+#, fuzzy
+msgid "Focus On Map:"
+msgstr "Fokusmål:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbwindow.c:325
+#, fuzzy
+msgid "If the window should receive the input focus when it is mapped"
+msgstr "Om sidoförhållandet ska bestämmas av barnet"
+
+#: ../glade/gbwidgets/gbwindow.c:328
+#, fuzzy
+msgid "Urgency Hint:"
+msgstr "Typ:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbwindow.c:328
+#, fuzzy
+msgid "If the window should be brought to the user's attention"
+msgstr "Om sidoförhållandet ska bestämmas av barnet"
+
+#: ../glade/gbwidgets/gbwindow.c:1232
+msgid "Window"
+msgstr "Fönster"
+
+#: ../glade/glade.c:369
+#: ../glade/gnome-db/gnomedberrordlg.c:75
+msgid "Error"
+msgstr "Fel"
+
+#: ../glade/glade.c:372
+msgid "System Error"
+msgstr "Systemfel"
+
+#: ../glade/glade.c:376
+msgid "Error opening file"
+msgstr "Fel vid öppnandet av filen"
+
+#: ../glade/glade.c:378
+msgid "Error reading file"
+msgstr "Fel vid läsningen av filen"
+
+#: ../glade/glade.c:380
+msgid "Error writing file"
+msgstr "Fel vid skrivningen av filen"
+
+#: ../glade/glade.c:383
+msgid "Invalid directory"
+msgstr "Ogiltig katalog"
+
+#: ../glade/glade.c:387
+msgid "Invalid value"
+msgstr "Ogiltigt värde"
+
+#: ../glade/glade.c:389
+msgid "Invalid XML entity"
+msgstr "Ogiltig XML-entitet"
+
+#: ../glade/glade.c:391
+msgid "Start tag expected"
+msgstr "Förväntade mig en starttagg"
+
+#: ../glade/glade.c:393
+msgid "End tag expected"
+msgstr "Förväntade mig en sluttagg"
+
+#: ../glade/glade.c:395
+msgid "Character data expected"
+msgstr "Förväntade mig teckendata"
+
+#: ../glade/glade.c:397
+msgid "Class id missing"
+msgstr "Id för klass saknas"
+
+#: ../glade/glade.c:399
+msgid "Class unknown"
+msgstr "Okänd klass"
+
+#: ../glade/glade.c:401
+msgid "Invalid component"
+msgstr "Ogiltig komponent"
+
+#: ../glade/glade.c:403
+msgid "Unexpected end of file"
+msgstr "Oväntat filslut"
+
+#: ../glade/glade.c:406
+msgid "Unknown error code"
+msgstr "Okänd felkod"
+
+#: ../glade/glade_atk.c:120
+msgid "Controlled By"
+msgstr "Kontrollerad av"
+
+#: ../glade/glade_atk.c:121
+msgid "Controller For"
+msgstr "Kontrollör för"
+
+#: ../glade/glade_atk.c:122
+msgid "Label For"
+msgstr "Etikett för"
+
+#: ../glade/glade_atk.c:123
+msgid "Labelled By"
+msgstr "Etiketterad av"
+
+#: ../glade/glade_atk.c:124
+msgid "Member Of"
+msgstr "Medlem av"
+
+#: ../glade/glade_atk.c:125
+msgid "Node Child Of"
+msgstr "Nodbarn av"
+
+#: ../glade/glade_atk.c:126
+msgid "Flows To"
+msgstr ""
+
+#: ../glade/glade_atk.c:127
+msgid "Flows From"
+msgstr ""
+
+#: ../glade/glade_atk.c:128
+msgid "Subwindow Of"
+msgstr ""
+
+#: ../glade/glade_atk.c:129
+msgid "Embeds"
+msgstr ""
+
+#: ../glade/glade_atk.c:130
+#, fuzzy
+msgid "Embedded By"
+msgstr "Etiketterad av"
+
+#: ../glade/glade_atk.c:131
+#, fuzzy
+msgid "Popup For"
+msgstr "Popupmeny"
+
+#: ../glade/glade_atk.c:132
+msgid "Parent Window Of"
+msgstr ""
+
+#. I don't think we should set the transient parent as the dialog could be
+#. left open if desired.
+#: ../glade/glade_atk.c:331
+#, c-format
+msgid "Relationship: %s"
+msgstr "Förhållande: %s"
+
+#. Create the pages of the main notebook
+#. NOTE: If you add/remove pages you need to change the GB_PAGE_SIGNALS
+#. value at the top of this file
+#: ../glade/glade_atk.c:375
+#: ../glade/property.c:615
+msgid "Widget"
+msgstr "Widget"
+
+#: ../glade/glade_atk.c:638
+#: ../glade/glade_menu_editor.c:773
+#: ../glade/property.c:776
+msgid "Name:"
+msgstr "Namn:"
+
+#: ../glade/glade_atk.c:639
+msgid "The name of the widget to pass to assistive technologies"
+msgstr "Namnet på den widget som ska skickas till hjälpmedelstekniker"
+
+#: ../glade/glade_atk.c:640
+msgid "Description:"
+msgstr "Beskrivning:"
+
+#: ../glade/glade_atk.c:641
+msgid "The description of the widget to pass to assistive technologies"
+msgstr "Beskrivningen av den widget som ska skickas till hjälpmedelstekniker"
+
+#: ../glade/glade_atk.c:643
+msgid "Table Caption:"
+msgstr "Tabellrubrik:"
+
+#: ../glade/glade_atk.c:644
+msgid "The table caption to pass to assistive technologies"
+msgstr "Tabellrubriken att skicka till hjälpmedelstekniker"
+
+#: ../glade/glade_atk.c:681
+msgid "Select the widgets with this relationship"
+msgstr "Välj de widgetar som har detta förhållande"
+
+#: ../glade/glade_atk.c:761
+msgid "Click"
+msgstr "Klicka"
+
+#: ../glade/glade_atk.c:762
+msgid "Press"
+msgstr "Tryck"
+
+#: ../glade/glade_atk.c:763
+msgid "Release"
+msgstr "Släpp"
+
+#: ../glade/glade_atk.c:822
+msgid "Enter the description of the action to pass to assistive technologies"
+msgstr "Ange den beskrivning av åtgärden som ska skickas till hjälpmedelstekniker"
+
+#: ../glade/glade_clipboard.c:118
+msgid "Clipboard"
+msgstr "Urklipp"
+
+#: ../glade/glade_clipboard.c:351
+msgid "You need to select a widget to paste into"
+msgstr "Du måste välja en widget att klistra in i"
+
+#: ../glade/glade_clipboard.c:376
+msgid "You can't paste into windows or dialogs."
+msgstr "Du kan inte klistra in i fönster eller dialogrutor"
+
+#: ../glade/glade_clipboard.c:399
+msgid ""
+"You can't paste into the selected widget, since\n"
+"it is created automatically by its parent."
+msgstr ""
+"Du kan inte klistra in i den valda widgeten, eftersom\n"
+"den har skapats automatisk av sin förälder."
+
+#: ../glade/glade_clipboard.c:408
+#: ../glade/glade_clipboard.c:416
+msgid "Only menu items can be pasted into a menu or menu bar."
+msgstr "Bara menyval kan klistras in i en meny eller menyrad."
+
+#: ../glade/glade_clipboard.c:427
+msgid "Only buttons can be pasted into a dialog action area."
+msgstr "Endast knappar kan klistras in i ett dialogåtgärdsområde."
+
+#: ../glade/glade_clipboard.c:437
+msgid "Only GnomeDockItem widgets can be pasted into a GnomeDock."
+msgstr "Endast GnomeDockItem-widgetar kan klistras in i en GnomeDock."
+
+#: ../glade/glade_clipboard.c:446
+msgid "Only GnomeDockItem widgets can be pasted over a GnomeDockItem."
+msgstr "Endast GnomeDockItem-widgetar kan klistras in över en GnomeDockItem."
+
+#: ../glade/glade_clipboard.c:449
+msgid "Sorry - pasting over a GnomeDockItem is not implemented yet."
+msgstr "Tyvärr - inklistring över en GnomeDockItem är inte implementerat ännu."
+
+#: ../glade/glade_clipboard.c:457
+msgid "GnomeDockItem widgets can only be pasted into a GnomeDock."
+msgstr "GnomeDockItem-widgetar kan bara klistras in i en GnomeDock."
+
+#. 3 - see GladeStockMenuItemNew above.
+#: ../glade/glade_gnome.c:121
+#: ../glade/glade_gnome.c:874
+#: ../glade/glade_project_window.c:211
+#: ../glade/glade_project_window.c:633
+msgid "_New"
+msgstr "_Ny"
+
+#: ../glade/glade_gnome.c:874
+msgid "Create a new file"
+msgstr "Skapa en ny fil"
+
+#. Note that glade_palette_set_show_gnome_widgets() has some of these
+#. strings hard-coded now, so keep up-to-date.
+#: ../glade/glade_gnomelib.c:116
+msgid "_Gnome"
+msgstr "_Gnome"
+
+#: ../glade/glade_gnomelib.c:117
+#: ../glade/glade_gtk12lib.c:248
+#: ../glade/glade_palette.c:315
+msgid "Dep_recated"
+msgstr "För_åldrade"
+
+#. Note that glade_palette_set_show_gnome_widgets() has some of these
+#. strings hard-coded now, so keep up-to-date.
+#: ../glade/glade_gtk12lib.c:246
+msgid "GTK+ _Basic"
+msgstr "GTK+ _standard"
+
+#: ../glade/glade_gtk12lib.c:247
+msgid "GTK+ _Additional"
+msgstr "GTK+ _extra"
+
+#: ../glade/glade_keys_dialog.c:94
+msgid "Select Accelerator Key"
+msgstr "Välj snabbtangent"
+
+#: ../glade/glade_keys_dialog.c:97
+msgid "Keys"
+msgstr "Tangenter"
+
+#: ../glade/glade_menu_editor.c:395
+msgid "Menu Editor"
+msgstr "Menyredigerare"
+
+#: ../glade/glade_menu_editor.c:412
+msgid "Type"
+msgstr "Typ"
+
+#: ../glade/glade_menu_editor.c:413
+msgid "Accelerator"
+msgstr "Snabbtangent"
+
+#: ../glade/glade_menu_editor.c:414
+msgid "Name"
+msgstr "Namn"
+
+#: ../glade/glade_menu_editor.c:415
+#: ../glade/property.c:1499
+msgid "Handler"
+msgstr "Hanterare"
+
+#: ../glade/glade_menu_editor.c:416
+#: ../glade/property.c:102
+msgid "Active"
+msgstr "Aktiv"
+
+#: ../glade/glade_menu_editor.c:417
+msgid "Group"
+msgstr "Grupp"
+
+#: ../glade/glade_menu_editor.c:418
+msgid "Icon"
+msgstr "Ikon"
+
+#: ../glade/glade_menu_editor.c:459
+msgid "Move the item and its children up one place in the list"
+msgstr "Flytta menyvalet och dess barn ett steg upp i listan"
+
+#: ../glade/glade_menu_editor.c:471
+msgid "Move the item and its children down one place in the list"
+msgstr "Flytta menyvalet och dess barn ett steg ner i listan"
+
+#: ../glade/glade_menu_editor.c:483
+msgid "Move the item and its children up one level"
+msgstr "Flytta menyvalet och dess barn upp en nivå"
+
+#: ../glade/glade_menu_editor.c:495
+msgid "Move the item and its children down one level"
+msgstr "Flytta menyvalet och dess barn ner en nivå"
+
+# SUN CHANGED MESSAGE
+#: ../glade/glade_menu_editor.c:525
+msgid "The stock item to use."
+msgstr "Vilket standardmenyval som ska användas."
+
+#: ../glade/glade_menu_editor.c:528
+#: ../glade/glade_menu_editor.c:643
+msgid "Stock Item:"
+msgstr "Standardmenyval:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/glade_menu_editor.c:641
+msgid "The stock Gnome item to use."
+msgstr "Vilket standard-Gnome-menyval som ska användas."
+
+#: ../glade/glade_menu_editor.c:746
+msgid "The text of the menu item, or empty for separators."
+msgstr "Texten på menyvalet, eller tomt för avskiljare."
+
+#: ../glade/glade_menu_editor.c:770
+#: ../glade/property.c:777
+msgid "The name of the widget"
+msgstr "Widgetens namn"
+
+# SUN CHANGED MESSAGE
+#: ../glade/glade_menu_editor.c:791
+msgid "The function to be called when the item is selected"
+msgstr "Funktionen som ska anropas när menyvalet väljs"
+
+#: ../glade/glade_menu_editor.c:793
+#: ../glade/property.c:1547
+msgid "Handler:"
+msgstr "Hanterare:"
+
+#: ../glade/glade_menu_editor.c:812
+msgid "An optional icon to show on the left of the menu item."
+msgstr "En valfri ikon att visa till vänster om menyvalet"
+
+# SUN CHANGED MESSAGE
+#: ../glade/glade_menu_editor.c:935
+msgid "The tip to show when the mouse is over the item"
+msgstr "Det tips som ska visa när muspekaren är ovanför menyvalet"
+
+#: ../glade/glade_menu_editor.c:937
+#: ../glade/property.c:824
+msgid "Tooltip:"
+msgstr "Tips:"
+
+#: ../glade/glade_menu_editor.c:958
+msgid "_Add"
+msgstr "_Lägg till"
+
+#: ../glade/glade_menu_editor.c:963
+msgid "Add a new item below the selected item."
+msgstr "Lägg till ett nytt menyval under det valda menyvalet"
+
+#: ../glade/glade_menu_editor.c:968
+msgid "Add _Child"
+msgstr "Lägg till _barn"
+
+#: ../glade/glade_menu_editor.c:973
+msgid "Add a new child item below the selected item."
+msgstr "Lägg till ett nytt barnmenyval under det valda menyvalet."
+
+#: ../glade/glade_menu_editor.c:979
+msgid "Add _Separator"
+msgstr "Lägg till _avskiljare"
+
+#: ../glade/glade_menu_editor.c:984
+msgid "Add a separator below the selected item."
+msgstr "Lägg till en avskiljare under det valda menyvalet"
+
+#: ../glade/glade_menu_editor.c:989
+#: ../glade/glade_project_window.c:242
+msgid "_Delete"
+msgstr "_Ta bort"
+
+#: ../glade/glade_menu_editor.c:994
+msgid "Delete the current item"
+msgstr "Ta bort nuvarande menyval"
+
+#. Type radio options and toggle options.
+#: ../glade/glade_menu_editor.c:1000
+msgid "Item Type:"
+msgstr "Menyvalstyp:"
+
+#: ../glade/glade_menu_editor.c:1016
+msgid "If the item is initially on."
+msgstr "Om menyvalet är aktivt från början"
+
+#: ../glade/glade_menu_editor.c:1018
+msgid "Active:"
+msgstr "Aktivt:"
+
+#: ../glade/glade_menu_editor.c:1023
+#: ../glade/glade_menu_editor.c:1638
+#: ../glade/property.c:2216
+#: ../glade/property.c:2226
+msgid "No"
+msgstr "Nej"
+
+#: ../glade/glade_menu_editor.c:1037
+msgid "The radio menu item's group"
+msgstr "Radiomenyvalets grupp"
+
+#: ../glade/glade_menu_editor.c:1054
+#: ../glade/glade_menu_editor.c:2414
+#: ../glade/glade_menu_editor.c:2554
+msgid "Radio"
+msgstr "Radioknapp"
+
+#: ../glade/glade_menu_editor.c:1061
+#: ../glade/glade_menu_editor.c:2412
+#: ../glade/glade_menu_editor.c:2552
+msgid "Check"
+msgstr "Kryssruta"
+
+#: ../glade/glade_menu_editor.c:1068
+#: ../glade/property.c:102
+msgid "Normal"
+msgstr "Normal"
+
+#. Accelerator key options.
+#: ../glade/glade_menu_editor.c:1077
+msgid "Accelerator:"
+msgstr "Snabbval:"
+
+#: ../glade/glade_menu_editor.c:1114
+#: ../glade/property.c:1682
+msgid "Ctrl"
+msgstr "Ctrl"
+
+#: ../glade/glade_menu_editor.c:1119
+#: ../glade/property.c:1685
+msgid "Shift"
+msgstr "Shift"
+
+#: ../glade/glade_menu_editor.c:1124
+#: ../glade/property.c:1688
+msgid "Alt"
+msgstr "Alt"
+
+#: ../glade/glade_menu_editor.c:1129
+#: ../glade/property.c:1695
+msgid "Key:"
+msgstr "Tangent:"
+
+#: ../glade/glade_menu_editor.c:1135
+#: ../glade/property.c:1674
+msgid "Modifiers:"
+msgstr "Modifierare:"
+
+#: ../glade/glade_menu_editor.c:1638
+#: ../glade/glade_menu_editor.c:2419
+#: ../glade/glade_menu_editor.c:2562
+#: ../glade/property.c:2216
+msgid "Yes"
+msgstr "Ja"
+
+#: ../glade/glade_menu_editor.c:2008
+msgid "Select icon"
+msgstr "Välj ikon"
+
+#: ../glade/glade_menu_editor.c:2353
+#: ../glade/glade_menu_editor.c:2714
+msgid "separator"
+msgstr "avskiljare"
+
+#. Add the special 'New' item to create a new group.
+#: ../glade/glade_menu_editor.c:3638
+#: ../glade/glade_project_window.c:369
+#: ../glade/property.c:5115
+msgid "New"
+msgstr "Ny"
+
+#: ../glade/glade_palette.c:194
+#: ../glade/glade_palette.c:196
+#: ../glade/glade_palette.c:412
+msgid "Selector"
+msgstr "Väljare"
+
+#: ../glade/glade_project.c:385
+msgid ""
+"The project directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+"Projektkatalogen är inte definierad.\n"
+"Definiera den i dialogrutan för Projektinställningar.\n"
+
+#: ../glade/glade_project.c:392
+msgid ""
+"The source directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+"Källkodskatalogen är inte definierad.\n"
+"Definiera den i dialogrutan för Projektinställningar.\n"
+
+#: ../glade/glade_project.c:402
+msgid ""
+"Invalid source directory:\n"
+"\n"
+"The source directory must be the project directory\n"
+"or a subdirectory of the project directory.\n"
+msgstr ""
+"Ogiltig källkodskatalog:\n"
+"\n"
+"Källkodskatalogen måste vara projektkatalogen eller\n"
+"en underkatalog till projektkatalogen.\n"
+
+#: ../glade/glade_project.c:410
+msgid ""
+"The pixmaps directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+"Pixmapkatalogen är inte definierad.\n"
+"Definiera den i dialogrutan för Projektinställningar.\n"
+
+#: ../glade/glade_project.c:438
+#, c-format
+msgid "Sorry - generating source for %s is not implemented yet"
+msgstr "Tyvärr - kodgenerering för %s är inte implementerad ännu"
+
+#: ../glade/glade_project.c:509
+msgid ""
+"Your project uses deprecated widgets that Gtkmm-2\n"
+"does not support.  Check your project for these\n"
+"widgets, and use their replacements."
+msgstr ""
+"Ditt projekt använder föråldrade widgetar som Gtkmm-2\n"
+"inte stöder. Kontrollera dessa widgetar i ditt projekt\n"
+"och använd deras ersättningar."
+
+#: ../glade/glade_project.c:521
+msgid ""
+"Error running glade-- to generate the C++ source code.\n"
+"Check that you have glade-- installed and that it is in your PATH.\n"
+"Then try running 'glade-- <project_file.glade>' in a terminal."
+msgstr ""
+"Fel vid körning av glade-- för att generera C++-källkod.\n"
+"Se till att du har glade-- installerat och att det är i din PATH.\n"
+"Försök sedan köra \"glade-- <projektfil.glade>\" i en terminal."
+
+#: ../glade/glade_project.c:548
+msgid ""
+"Error running gate to generate the Ada95 source code.\n"
+"Check that you have gate installed and that it is in your PATH.\n"
+"Then try running 'gate <project_file.glade>' in a terminal."
+msgstr ""
+"Fel vid körning av gate för att generera Ada95-källkod.\n"
+"Se till att du har gate installerat och att det är i din PATH.\n"
+"Försök sedan köra \"gate <projektfil.glade>\" i en terminal."
+
+#: ../glade/glade_project.c:571
+msgid ""
+"Error running glade2perl to generate the Perl source code.\n"
+"Check that you have glade2perl installed and that it is in your PATH.\n"
+"Then try running 'glade2perl <project_file.glade>' in a terminal."
+msgstr ""
+"Fel vid körning av glade2perl för att generera Perl-källkod.\n"
+"Se till att du har glade2perl installerat och att det är i din PATH.\n"
+"Försök sedan köra \"glade2perl <projektfil.glade>\" i en terminal."
+
+#: ../glade/glade_project.c:594
+msgid ""
+"Error running eglade to generate the Eiffel source code.\n"
+"Check that you have eglade installed and that it is in your PATH.\n"
+"Then try running 'eglade <project_file.glade>' in a terminal."
+msgstr ""
+"Fel vid körning av eglade för att generera Eiffel-källkod.\n"
+"Se till att du har eglade installerat och att det är i din PATH.\n"
+"Försök sedan köra \"eglade <projektfil.glade>\" i en terminal."
+
+#: ../glade/glade_project.c:954
+msgid ""
+"The pixmap directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+"Pixmapkatalogen är inte definierad.\n"
+"Definiera den i dialogrutan för Projektinställningar.\n"
+
+#: ../glade/glade_project.c:1772
+msgid "Error writing project XML file\n"
+msgstr "Fel vid skrivning av XML-projektfil\n"
+
+#: ../glade/glade_project_options.c:157
+#: ../glade/glade_project_window.c:385
+#: ../glade/glade_project_window.c:890
+msgid "Project Options"
+msgstr "Projektinställningar"
+
+#.
+#. * General Page.
+#.
+#: ../glade/glade_project_options.c:174
+msgid "General"
+msgstr "Allmänt"
+
+#: ../glade/glade_project_options.c:183
+msgid "Basic Options:"
+msgstr "Grundinställningar"
+
+#: ../glade/glade_project_options.c:201
+msgid "The project directory"
+msgstr "Projektkatalog"
+
+#: ../glade/glade_project_options.c:203
+msgid "Project Directory:"
+msgstr "Projektkatalog:"
+
+#: ../glade/glade_project_options.c:221
+msgid "Browse..."
+msgstr "Bläddra..."
+
+#: ../glade/glade_project_options.c:236
+msgid "The name of the current project"
+msgstr "Namnet på det nuvarande projektet"
+
+#: ../glade/glade_project_options.c:238
+msgid "Project Name:"
+msgstr "Projektnamn:"
+
+#: ../glade/glade_project_options.c:258
+msgid "The name of the program"
+msgstr "Namnet på programmet"
+
+#: ../glade/glade_project_options.c:281
+msgid "The project file"
+msgstr "Projektfilen"
+
+#: ../glade/glade_project_options.c:283
+msgid "Project File:"
+msgstr "Projektfil:"
+
+#. Project Source Directory.
+#: ../glade/glade_project_options.c:299
+msgid "Subdirectories:"
+msgstr "Underkataloger:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/glade_project_options.c:316
+msgid "The directory to save generated source code"
+msgstr "Katalogen där genererad källkod ska sparas"
+
+#: ../glade/glade_project_options.c:319
+msgid "Source Directory:"
+msgstr "Källkodskatalog:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/glade_project_options.c:338
+msgid "The directory to store pixmaps"
+msgstr "Katalogen där pixmappar ska sparas"
+
+#: ../glade/glade_project_options.c:341
+msgid "Pixmaps Directory:"
+msgstr "Pixmapkatalog"
+
+# SUN CHANGED MESSAGE
+#: ../glade/glade_project_options.c:363
+msgid "The license which is added at the top of generated files"
+msgstr "Licensen som ska läggas först i genererade filer"
+
+#. Source Language.
+#: ../glade/glade_project_options.c:385
+msgid "Language:"
+msgstr "Språk:"
+
+#: ../glade/glade_project_options.c:416
+msgid "Gnome:"
+msgstr "Gnome:"
+
+#: ../glade/glade_project_options.c:424
+msgid "Enable Gnome Support"
+msgstr "Aktivera Gnome-stöd"
+
+# SUN CHANGED MESSAGE
+#: ../glade/glade_project_options.c:430
+msgid "If a Gnome application is to be built"
+msgstr "Om programmet är ett Gnomeprogram"
+
+#: ../glade/glade_project_options.c:433
+msgid "Enable Gnome DB Support"
+msgstr "Aktivera Gnome DB-stöd"
+
+# SUN CHANGED MESSAGE
+#: ../glade/glade_project_options.c:437
+msgid "If a Gnome DB application is to be built"
+msgstr "Om programmet är ett Gnome DB-program"
+
+#.
+#. * C Options Page.
+#.
+#: ../glade/glade_project_options.c:447
+msgid "C Options"
+msgstr "C-inställningar"
+
+#: ../glade/glade_project_options.c:456
+msgid "<b>Note:</b> for large applications the use of libglade is recommended."
+msgstr ""
+
+#: ../glade/glade_project_options.c:468
+msgid "General Options:"
+msgstr "Allmänt:"
+
+#. Gettext Support.
+#: ../glade/glade_project_options.c:478
+msgid "Gettext Support"
+msgstr "Gettext-stöd"
+
+# SUN CHANGED MESSAGE
+#: ../glade/glade_project_options.c:483
+msgid "If strings are marked for translation by gettext"
+msgstr "Om strängar ska markeras för översättning med gettext"
+
+#. Setting widget names.
+#: ../glade/glade_project_options.c:487
+msgid "Set Widget Names"
+msgstr "Sätt widgetnamn"
+
+# SUN CHANGED MESSAGE
+#: ../glade/glade_project_options.c:492
+msgid "If widget names are set in the source code"
+msgstr "Om widgetnamn ska sättas i källkoden"
+
+#. Backing up source files.
+#: ../glade/glade_project_options.c:496
+msgid "Backup Source Files"
+msgstr "Säkerhetskopiera källkodsfiler"
+
+# SUN CHANGED MESSAGE
+#: ../glade/glade_project_options.c:501
+msgid "If copies of old source files are made"
+msgstr "Om kopior av gamla källkodsfiler ska göras"
+
+#. Gnome Help System support.
+#: ../glade/glade_project_options.c:505
+msgid "Gnome Help Support"
+msgstr "Stöd för Gnomes hjälpsystem"
+
+# SUN CHANGED MESSAGE
+#: ../glade/glade_project_options.c:512
+msgid "If support for the Gnome Help system should be included"
+msgstr "Om stöd för Gnomes hjälpsystem ska inkluderas"
+
+#: ../glade/glade_project_options.c:515
+msgid "File Output Options:"
+msgstr "Filgenereringsinställningar:"
+
+#. Outputting main file.
+#: ../glade/glade_project_options.c:525
+msgid "Output main.c File"
+msgstr "Generera filen main.c"
+
+# SUN CHANGED MESSAGE
+#
+# Sun skrev "existar innan"
+# Jag skriver "redan existerar"
+#
+#: ../glade/glade_project_options.c:530
+msgid "If a main.c file is output containing a main() function, if it doesn't already exist"
+msgstr "Om filen main.c med en en main()-funktion ska skapas, om den inte redan existerar"
+
+#. Outputting support files.
+#: ../glade/glade_project_options.c:534
+msgid "Output Support Functions"
+msgstr "Generera stödfunktioner"
+
+# SUN CHANGED MESSAGE
+#: ../glade/glade_project_options.c:539
+msgid "If the support functions are output"
+msgstr "Om stödfunktioner ska genereras"
+
+#. Outputting build files.
+#: ../glade/glade_project_options.c:543
+msgid "Output Build Files"
+msgstr "Generera byggfiler"
+
+# SUN CHANGED MESSAGE
+#: ../glade/glade_project_options.c:548
+msgid "If files for building the source code are output, including Makefile.am and configure.in, if they don't already exist"
+msgstr "Om filer för att bygga källkoden ska skapas. Detta inkluderar Makefile.am och configure.in om de inte redan existerar"
+
+#. Main source file.
+#: ../glade/glade_project_options.c:552
+msgid "Interface Creation Functions:"
+msgstr "Gränssnittsskaparfunktioner:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/glade_project_options.c:564
+msgid "The file in which the functions to create the interface are written"
+msgstr "Filen som funktionerna för att skapa gränssnittet ska ligga i"
+
+#: ../glade/glade_project_options.c:566
+#: ../glade/glade_project_options.c:612
+#: ../glade/glade_project_options.c:658
+#: ../glade/property.c:998
+msgid "Source File:"
+msgstr "Källkodsfil:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/glade_project_options.c:581
+msgid "The file in which the declarations of the functions to create the interface are written"
+msgstr "Filen som funktionsdeklarationerna för att skapa gränssnittet ska ligga i"
+
+#: ../glade/glade_project_options.c:583
+#: ../glade/glade_project_options.c:629
+#: ../glade/glade_project_options.c:675
+msgid "Header File:"
+msgstr "Headerfil:"
+
+#: ../glade/glade_project_options.c:594
+msgid "Source file for interface creation functions"
+msgstr "Källkodsfil för gränssnittsskaparfunktioner"
+
+#: ../glade/glade_project_options.c:595
+msgid "Header file for interface creation functions"
+msgstr "Headerfil för gränssnittsskaparfunktioner"
+
+#. Handler source file.
+#: ../glade/glade_project_options.c:598
+msgid "Signal Handler & Callback Functions:"
+msgstr "Signalhanterings- och callbackfunktioner"
+
+# SUN CHANGED MESSAGE
+#: ../glade/glade_project_options.c:610
+msgid "The file in which the empty signal handler and callback functions are written"
+msgstr "Filen som de tomma signalhanterings- och callbackfunktionerna ska ligga i"
+
+# SUN CHANGED MESSAGE
+#
+# Sun skrev "Filten"
+# Jag skriver "Filen"
+#
+#: ../glade/glade_project_options.c:627
+msgid "The file in which the declarations of the signal handler and callback functions are written"
+msgstr "Filen som deklarationerna för signalhanterings- och callbackfunktionerna ska ligga i"
+
+#: ../glade/glade_project_options.c:640
+msgid "Source file for signal handler and callback functions"
+msgstr "Källkodsfil för signalhanterings- och callbackfunktioner"
+
+#: ../glade/glade_project_options.c:641
+msgid "Header file for signal handler and callback functions"
+msgstr "Headerfil för signalhanterings- och callbackfunktioner"
+
+#. Support source file.
+#: ../glade/glade_project_options.c:644
+msgid "Support Functions:"
+msgstr "Stödfunktioner:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/glade_project_options.c:656
+msgid "The file in which the support functions are written"
+msgstr "Filen som stödfunktionerna ska ligga i"
+
+# SUN CHANGED MESSAGE
+#
+# Sun skrev "Filetn"
+# Jag skriver "Filen"
+#
+#: ../glade/glade_project_options.c:673
+msgid "The file in which the declarations of the support functions are written"
+msgstr "Filen som deklarationerna för stödfunktionerna ska ligga i"
+
+#: ../glade/glade_project_options.c:686
+msgid "Source file for support functions"
+msgstr "Källkodsfil för stödfunktioner"
+
+#: ../glade/glade_project_options.c:687
+msgid "Header file for support functions"
+msgstr "Headerfil för stödfunktioner"
+
+#.
+#. * libglade Options Page.
+#.
+#: ../glade/glade_project_options.c:693
+msgid "LibGlade Options"
+msgstr "LibGlade-alternativ"
+
+#: ../glade/glade_project_options.c:702
+msgid "Translatable Strings:"
+msgstr "Översättningsbara strängar:"
+
+#: ../glade/glade_project_options.c:716
+msgid "<b>Note:</b> this option is deprecated - use intltool instead."
+msgstr ""
+
+#. Output translatable strings.
+#: ../glade/glade_project_options.c:726
+msgid "Save Translatable Strings"
+msgstr "Spara översättningsbara strängar"
+
+# SUN CHANGED MESSAGE
+#
+# Sun vill ha "interface"
+# Jag vill ha "gränssnitt"
+#
+# Sun vill ha "laddat in"
+# Jag vill ha "läst in"
+#
+#: ../glade/glade_project_options.c:731
+msgid "If translatable strings are saved in a separate C source file, to enable translation of interfaces loaded by libglade"
+msgstr "Om översättningsbara strängar ska sparas i en separat C-källkodsfil, för att möjliggöra översättning av gränssnitt som libglade har läst in"
+
+# SUN CHANGED MESSAGE
+#: ../glade/glade_project_options.c:741
+msgid "The C source file to save all translatable strings in"
+msgstr "C-källkodsfilen som alla översättningsbara strängar ska sparas i"
+
+#: ../glade/glade_project_options.c:743
+#: ../glade/gnome/gnomepixmap.c:79
+msgid "File:"
+msgstr "Fil:"
+
+#: ../glade/glade_project_options.c:1202
+msgid "Select the Project Directory"
+msgstr "Välj projektkatalogen"
+
+# SUN CHANGED MESSAGE
+#
+# Sun vill ha
+# "Du måste sätta det Översättningsbara strängfils-alternativet"
+#
+# Jag vill ha
+# "Du måste ställa in alternativet för översättningsbara strängar"
+#
+#: ../glade/glade_project_options.c:1392
+#: ../glade/glade_project_options.c:1402
+#: ../glade/glade_project_options.c:1412
+msgid "You need to set the Translatable Strings File option"
+msgstr "Du måste ställa in alternativet för översättningsbara strängar"
+
+#: ../glade/glade_project_options.c:1396
+#: ../glade/glade_project_options.c:1406
+msgid "You need to set the Project Directory option"
+msgstr "Du måste välja en projektkatalog"
+
+#: ../glade/glade_project_options.c:1398
+#: ../glade/glade_project_options.c:1408
+msgid "You need to set the Project File option"
+msgstr "Du måste välja en projektfil"
+
+#: ../glade/glade_project_options.c:1414
+msgid "You need to set the Project Name option"
+msgstr "Du måste välja ett projektnamn"
+
+#: ../glade/glade_project_options.c:1416
+msgid "You need to set the Program Name option"
+msgstr "Du måste välja ett programnamn"
+
+#: ../glade/glade_project_options.c:1419
+msgid "You need to set the Source Directory option"
+msgstr "Du måste välja en källkodskatalog"
+
+#: ../glade/glade_project_options.c:1422
+msgid "You need to set the Pixmaps Directory option"
+msgstr "Du måste välja en pixmapkatalog"
+
+#: ../glade/glade_project_window.c:187
+#, c-format
+msgid ""
+"Couldn't show help file: %s.\n"
+"\n"
+"Error: %s"
+msgstr ""
+"Kunde inte visa hjälpfil: %s.\n"
+"\n"
+"Fel: %s"
+
+#: ../glade/glade_project_window.c:211
+#: ../glade/glade_project_window.c:635
+msgid "Create a new project"
+msgstr "Skapa ett nytt projekt"
+
+#: ../glade/glade_project_window.c:219
+#: ../glade/glade_project_window.c:655
+#: ../glade/glade_project_window.c:906
+msgid "_Build"
+msgstr "_Bygg"
+
+#: ../glade/glade_project_window.c:220
+#: ../glade/glade_project_window.c:666
+msgid "Output the project source code"
+msgstr "Skapa källkod för projektet"
+
+#: ../glade/glade_project_window.c:226
+#: ../glade/glade_project_window.c:669
+msgid "Op_tions..."
+msgstr "Al_ternativ..."
+
+#: ../glade/glade_project_window.c:227
+#: ../glade/glade_project_window.c:678
+msgid "Edit the project options"
+msgstr "Ändra alternativ för projektet"
+
+#: ../glade/glade_project_window.c:242
+#: ../glade/glade_project_window.c:717
+msgid "Delete the selected widget"
+msgstr "Ta bort den markerade widgeten"
+
+#: ../glade/glade_project_window.c:260
+#: ../glade/glade_project_window.c:728
+msgid "Show _Palette"
+msgstr "Visa _palett"
+
+#: ../glade/glade_project_window.c:260
+#: ../glade/glade_project_window.c:733
+msgid "Show the palette of widgets"
+msgstr "Visa widgetpaletten."
+
+#: ../glade/glade_project_window.c:266
+#: ../glade/glade_project_window.c:738
+msgid "Show Property _Editor"
+msgstr "Visa _egenskapsredigerare"
+
+#: ../glade/glade_project_window.c:267
+#: ../glade/glade_project_window.c:744
+msgid "Show the property editor"
+msgstr "Visa egenskapsredigeraren"
+
+#: ../glade/glade_project_window.c:273
+#: ../glade/glade_project_window.c:748
+msgid "Show Widget _Tree"
+msgstr "Visa widget-_träd"
+
+#: ../glade/glade_project_window.c:274
+#: ../glade/glade_project_window.c:754
+#: ../glade/main.c:82
+#: ../glade/main.c:116
+msgid "Show the widget tree"
+msgstr "Visa widget-trädet"
+
+#: ../glade/glade_project_window.c:280
+#: ../glade/glade_project_window.c:758
+msgid "Show _Clipboard"
+msgstr "Visa _urklipp"
+
+#: ../glade/glade_project_window.c:281
+#: ../glade/glade_project_window.c:764
+#: ../glade/main.c:86
+#: ../glade/main.c:120
+msgid "Show the clipboard"
+msgstr "Visa urklippet"
+
+#: ../glade/glade_project_window.c:299
+msgid "Show _Grid"
+msgstr "Visa _rutnätet"
+
+#: ../glade/glade_project_window.c:300
+#: ../glade/glade_project_window.c:800
+msgid "Show the grid (in fixed containers only)"
+msgstr "Visa rutnätet (bara i fixa behållare)"
+
+#: ../glade/glade_project_window.c:306
+msgid "_Snap to Grid"
+msgstr "_Fäst mot rutnätet"
+
+#: ../glade/glade_project_window.c:307
+msgid "Snap widgets to the grid"
+msgstr "Fäst widgetar mot rutnätet"
+
+#: ../glade/glade_project_window.c:313
+#: ../glade/glade_project_window.c:772
+msgid "Show _Widget Tooltips"
+msgstr "Visa _widget-verktygstips"
+
+#: ../glade/glade_project_window.c:314
+#: ../glade/glade_project_window.c:780
+msgid "Show the tooltips of created widgets"
+msgstr "Visa verktygstips för de skapade widgetarna"
+
+#: ../glade/glade_project_window.c:323
+#: ../glade/glade_project_window.c:803
+msgid "Set Grid _Options..."
+msgstr "Rutnäts_alternativ..."
+
+#: ../glade/glade_project_window.c:324
+msgid "Set the grid style and spacing"
+msgstr "Ställer in rutnätsstil och -avstånd"
+
+#: ../glade/glade_project_window.c:330
+#: ../glade/glade_project_window.c:824
+msgid "Set Snap O_ptions..."
+msgstr "Alternativ för f_ästning mot rutnätet"
+
+#: ../glade/glade_project_window.c:331
+msgid "Set options for snapping to the grid"
+msgstr "Ställer in alternativ för att fästa mot rutnätet"
+
+#: ../glade/glade_project_window.c:343
+msgid "_FAQ"
+msgstr "_Frågor och svar"
+
+#: ../glade/glade_project_window.c:344
+msgid "View the Glade FAQ"
+msgstr "Visa frågor och svar om Glade"
+
+#. create File menu
+#: ../glade/glade_project_window.c:358
+#: ../glade/glade_project_window.c:626
+msgid "_Project"
+msgstr "_Projekt"
+
+#: ../glade/glade_project_window.c:369
+#: ../glade/glade_project_window.c:873
+#: ../glade/glade_project_window.c:1055
+msgid "New Project"
+msgstr "Nytt projekt"
+
+#: ../glade/glade_project_window.c:374
+msgid "Open"
+msgstr "Öppna"
+
+#: ../glade/glade_project_window.c:374
+#: ../glade/glade_project_window.c:878
+#: ../glade/glade_project_window.c:1116
+msgid "Open Project"
+msgstr "Öppna projekt"
+
+#: ../glade/glade_project_window.c:379
+msgid "Save"
+msgstr "Spara"
+
+#: ../glade/glade_project_window.c:379
+#: ../glade/glade_project_window.c:882
+#: ../glade/glade_project_window.c:1481
+msgid "Save Project"
+msgstr "Spara projekt"
+
+#: ../glade/glade_project_window.c:385
+msgid "Options"
+msgstr "Alternativ"
+
+#: ../glade/glade_project_window.c:390
+msgid "Build"
+msgstr "Bygg"
+
+#: ../glade/glade_project_window.c:390
+msgid "Build the Source Code"
+msgstr "Bygg källkod"
+
+#: ../glade/glade_project_window.c:639
+msgid "Open an existing project"
+msgstr "Öppna ett existerade projekt"
+
+#: ../glade/glade_project_window.c:643
+msgid "Save project"
+msgstr "Spara projekt"
+
+#: ../glade/glade_project_window.c:688
+msgid "Quit Glade"
+msgstr "Avsluta Glade"
+
+#: ../glade/glade_project_window.c:702
+msgid "Cut the selected widget to the clipboard"
+msgstr "Klipp ut den markerade widgeten till urklipp"
+
+#: ../glade/glade_project_window.c:707
+msgid "Copy the selected widget to the clipboard"
+msgstr "Kopiera den markerade widgeten till urklipp"
+
+#: ../glade/glade_project_window.c:712
+msgid "Paste the widget from the clipboard over the selected widget"
+msgstr "Klistra widgeten från urklipp över den markerade widgeten"
+
+#: ../glade/glade_project_window.c:784
+msgid "_Grid"
+msgstr "_Rutnät"
+
+#: ../glade/glade_project_window.c:792
+msgid "_Show Grid"
+msgstr "_Visa rutnät"
+
+#: ../glade/glade_project_window.c:809
+msgid "Set the spacing between grid lines"
+msgstr "Ställ in avståndet mellan linjer i rutnätet"
+
+#: ../glade/glade_project_window.c:812
+msgid "S_nap to Grid"
+msgstr "_Fäst mot rutnätet"
+
+#: ../glade/glade_project_window.c:820
+msgid "Snap widgets to the grid (in fixed containers only)"
+msgstr "Fäst widgetar mot rutnätet (endast i fixa behållare)"
+
+# SUN CHANGED MESSAGE
+#: ../glade/glade_project_window.c:830
+msgid "Set which parts of a widget snap to the grid"
+msgstr "Ange vilka delar av en widget som ska fästa mot rutnätet"
+
+#. Don't show these yet as we have no help pages.
+#. menuitem = gtk_menu_item_new_with_mnemonic (_("_Contents"));
+#. gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#. gtk_widget_show (menuitem);
+#.
+#. menuitem = gtk_menu_item_new_with_mnemonic (_("_Index"));
+#. gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#. gtk_widget_show (menuitem);
+#.
+#. menuitem = gtk_menu_item_new ();
+#. gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#. gtk_widget_show (menuitem);
+#.
+#: ../glade/glade_project_window.c:855
+msgid "_About..."
+msgstr "_Om..."
+
+#: ../glade/glade_project_window.c:896
+msgid "Optio_ns"
+msgstr "Alternati_v"
+
+#: ../glade/glade_project_window.c:900
+msgid "Write Source Code"
+msgstr "Skriv källkod"
+
+#: ../glade/glade_project_window.c:992
+#: ../glade/glade_project_window.c:1697
+#: ../glade/glade_project_window.c:1986
+msgid "Glade"
+msgstr "Glade"
+
+#: ../glade/glade_project_window.c:999
+msgid "Are you sure you want to create a new project?"
+msgstr "Är du säker på att du vill skapa ett nytt projekt?"
+
+#: ../glade/glade_project_window.c:1059
+msgid "New _GTK+ Project"
+msgstr "Nytt _GTK+-projekt"
+
+#: ../glade/glade_project_window.c:1060
+msgid "New G_NOME Project"
+msgstr "Nytt G_NOME-projekt"
+
+#: ../glade/glade_project_window.c:1063
+msgid "Which type of project do you want to create?"
+msgstr "Vilken typ av projekt vill du skapa?"
+
+#: ../glade/glade_project_window.c:1097
+msgid "New project created."
+msgstr "Har skapat ett nytt projekt."
+
+#: ../glade/glade_project_window.c:1187
+msgid "Project opened."
+msgstr "Har öppnat projektet."
+
+#: ../glade/glade_project_window.c:1201
+msgid "Error opening project."
+msgstr "Ett fel uppstod när jag skulle öppna projektet."
+
+#: ../glade/glade_project_window.c:1265
+msgid "Errors opening project file"
+msgstr "Fel uppstod när jag skulle öppna projektfilen"
+
+#: ../glade/glade_project_window.c:1271
+msgid " errors opening project file:"
+msgstr " fel när jag skulle öppna projektfilen:"
+
+#: ../glade/glade_project_window.c:1344
+msgid ""
+"There is no project currently open.\n"
+"Create a new project with the Project/New command."
+msgstr ""
+"Inget projekt är öppnat för tillfället.\n"
+"Skapa ett nytt projekt med kommandot Projekt/Nytt."
+
+#: ../glade/glade_project_window.c:1548
+msgid "Error saving project"
+msgstr "Fel uppstod när jag skulle spara projektet"
+
+#: ../glade/glade_project_window.c:1550
+msgid "Error saving project."
+msgstr "Fel uppstod när jag skulle spara projektet."
+
+#: ../glade/glade_project_window.c:1556
+msgid "Project saved."
+msgstr "Projektet sparat."
+
+#: ../glade/glade_project_window.c:1626
+msgid "Errors writing source code"
+msgstr "Fel uppstod när jag skulle skiva källkoden"
+
+#: ../glade/glade_project_window.c:1628
+msgid "Error writing source."
+msgstr "Fel uppstod när jag skulle skiva källkoden."
+
+#: ../glade/glade_project_window.c:1634
+msgid "Source code written."
+msgstr "Källkoden skriven."
+
+#: ../glade/glade_project_window.c:1665
+msgid "System error message:"
+msgstr "Systemfelsmeddelande:"
+
+#: ../glade/glade_project_window.c:1704
+msgid "Are you sure you want to quit?"
+msgstr "Är du säker på att du vill avsluta?"
+
+#: ../glade/glade_project_window.c:1988
+#: ../glade/glade_project_window.c:2048
+msgid "(C) 1998-2002 Damon Chaplin"
+msgstr "© 1998-2002 Damon Chaplin"
+
+#: ../glade/glade_project_window.c:1989
+#: ../glade/glade_project_window.c:2047
+msgid "Glade is a User Interface Builder for GTK+ and GNOME."
+msgstr "Glade är en användargränssnittskonstruerare för GTK+ och GNOME."
+
+#: ../glade/glade_project_window.c:2018
+msgid "About Glade"
+msgstr "Om Glade"
+
+#: ../glade/glade_project_window.c:2103
+msgid "<untitled>"
+msgstr "<namnlös>"
+
+#: ../glade/gnome-db/gnomedbbrowser.c:135
+msgid "Database Browser"
+msgstr "Databasbläddrare"
+
+#: ../glade/gnome-db/gnomedbcombo.c:124
+msgid "Data-bound combo"
+msgstr "Databunden kombinationslista"
+
+#: ../glade/gnome-db/gnomedbconnectprop.c:86
+msgid "GnomeDbConnectionProperties"
+msgstr "Egenskaper för Gnome-databasanslutning"
+
+#: ../glade/gnome-db/gnomedbconnectsel.c:147
+msgid "Connection Selector"
+msgstr "Anslutningsväljare"
+
+#: ../glade/gnome-db/gnomedbdsnconfig.c:136
+msgid "DSN Configurator"
+msgstr "DSN-konfigurerare"
+
+#: ../glade/gnome-db/gnomedbdsndruid.c:147
+msgid "DSN Config Druid"
+msgstr "DSN-konfigurationsguide"
+
+#: ../glade/gnome-db/gnomedbeditor.c:63
+msgid "Highlight text:"
+msgstr "Färgmarkera text:"
+
+#: ../glade/gnome-db/gnomedbeditor.c:63
+msgid "If selected, text will be highlighted inside the widget"
+msgstr "Om detta är markerat kommer text inuti widgeten att färgmarkeras"
+
+#: ../glade/gnome-db/gnomedbeditor.c:178
+msgid "GnomeDbEditor"
+msgstr "Gnome-databasredigerare"
+
+#: ../glade/gnome-db/gnomedberror.c:136
+msgid "Database error viewer"
+msgstr "Databasfelvisare"
+
+#: ../glade/gnome-db/gnomedberrordlg.c:219
+msgid "Database error dialog"
+msgstr "Databasfeldialog"
+
+#: ../glade/gnome-db/gnomedbform.c:147
+msgid "Form"
+msgstr "Formulär"
+
+#: ../glade/gnome-db/gnomedbgraybar.c:59
+msgid "Text inside the gray bar"
+msgstr "Text inuti den gråa raden"
+
+#: ../glade/gnome-db/gnomedbgraybar.c:138
+msgid "Gray Bar"
+msgstr "Grå rad"
+
+#: ../glade/gnome-db/gnomedbgrid.c:132
+msgid "Data-bound grid"
+msgstr "Databundet rutnät"
+
+#: ../glade/gnome-db/gnomedblist.c:136
+msgid "Data-bound list"
+msgstr "Databunden lista"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome-db/gnomedblogin.c:136
+msgid "Database login widget"
+msgstr "Databasinloggningswidget"
+
+#: ../glade/gnome-db/gnomedblogindlg.c:78
+msgid "Login"
+msgstr "Logga in"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome-db/gnomedblogindlg.c:221
+msgid "Database login dialog"
+msgstr "Databasinloggningsdialog"
+
+#: ../glade/gnome-db/gnomedbprovidersel.c:147
+msgid "Provider Selector"
+msgstr "Leverantörsväljare"
+
+#: ../glade/gnome-db/gnomedbquerybuilder.c:86
+msgid "GnomeDbQueryBuilder"
+msgstr "Gnome-databasfrågebyggare"
+
+#: ../glade/gnome-db/gnomedbsourcesel.c:147
+msgid "Data Source Selector"
+msgstr "Datakälleväljare"
+
+#: ../glade/gnome-db/gnomedbtableeditor.c:133
+msgid "Table Editor "
+msgstr "Tabellredigerare "
+
+#: ../glade/gnome/bonobodock.c:231
+msgid "Allow Floating:"
+msgstr "Tillåt flytning:"
+
+#: ../glade/gnome/bonobodock.c:232
+msgid "If floating dock items are allowed"
+msgstr "Om flytande dockelement är tillåtna"
+
+#: ../glade/gnome/bonobodock.c:278
+msgid "Add dock band on top"
+msgstr "Lägg till dockplats överst"
+
+#: ../glade/gnome/bonobodock.c:285
+msgid "Add dock band on bottom"
+msgstr "Lägg till dockplats nederst"
+
+#: ../glade/gnome/bonobodock.c:292
+msgid "Add dock band on left"
+msgstr "Lägg till dockplats till vänster"
+
+#: ../glade/gnome/bonobodock.c:299
+msgid "Add dock band on right"
+msgstr "Lägg till dockplats till höger"
+
+#: ../glade/gnome/bonobodock.c:306
+msgid "Add floating dock item"
+msgstr "Lägg till flytande dockelement"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/bonobodock.c:495
+msgid "Gnome Dock"
+msgstr "Gnome-docka"
+
+#: ../glade/gnome/bonobodockitem.c:165
+msgid "Locked:"
+msgstr "Låst:"
+
+#: ../glade/gnome/bonobodockitem.c:166
+msgid "If the dock item is locked in position"
+msgstr "Om dockelementet är fastlåst i sin position"
+
+#: ../glade/gnome/bonobodockitem.c:167
+msgid "Exclusive:"
+msgstr "Exklusivt:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/bonobodockitem.c:168
+msgid "If the dock item is always the only item in its band"
+msgstr "Om dockelementet alltid ska vara ensamt i sin dockplats"
+
+#: ../glade/gnome/bonobodockitem.c:169
+msgid "Never Floating:"
+msgstr "Aldrig flytande:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/bonobodockitem.c:170
+msgid "If the dock item is never allowed to float in its own window"
+msgstr "Om dockelementet aldrig ska tillåtas flyta"
+
+#: ../glade/gnome/bonobodockitem.c:171
+msgid "Never Vertical:"
+msgstr "Aldrig vertikalt:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/bonobodockitem.c:172
+msgid "If the dock item is never allowed to be vertical"
+msgstr "Om dockelementet aldrig ska tillåtas bli vertikalt"
+
+#: ../glade/gnome/bonobodockitem.c:173
+msgid "Never Horizontal:"
+msgstr "Aldrig horisontellt:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/bonobodockitem.c:174
+msgid "If the dock item is never allowed to be horizontal"
+msgstr "Om dockelementet aldrig ska tillåtas bli horisontellt"
+
+#: ../glade/gnome/bonobodockitem.c:177
+msgid "The type of shadow around the dock item"
+msgstr "Skuggtypen runt dockelementet"
+
+#: ../glade/gnome/bonobodockitem.c:180
+msgid "The orientation of a floating dock item"
+msgstr "Orienteringen hos ett flytande dockelement"
+
+#: ../glade/gnome/bonobodockitem.c:428
+msgid "Add dock item before"
+msgstr "Lägg till dockelement före"
+
+#: ../glade/gnome/bonobodockitem.c:435
+msgid "Add dock item after"
+msgstr "Lägg till dockelement efter"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/bonobodockitem.c:771
+msgid "Gnome Dock Item"
+msgstr "Gnome-dockelement"
+
+#: ../glade/gnome/gnomeabout.c:139
+msgid "Additional information, such as a description of the package and its home page on the web"
+msgstr "Extra information, såsom en beskrivning av paketet och hemsidan på webben"
+
+# SUN CHANGED MESSAGE
+#
+# Sun vill ha "Om..."-här
+# Jag vill ha "Om"
+#
+#: ../glade/gnome/gnomeabout.c:539
+msgid "Gnome About Dialog"
+msgstr "Gnome Om-dialog"
+
+#: ../glade/gnome/gnomeapp.c:171
+msgid "New File"
+msgstr "Ny fil"
+
+#: ../glade/gnome/gnomeapp.c:173
+msgid "Open File"
+msgstr "Öppna fil"
+
+#: ../glade/gnome/gnomeapp.c:175
+msgid "Save File"
+msgstr "Spara fil"
+
+#: ../glade/gnome/gnomeapp.c:204
+msgid "Status Bar:"
+msgstr "Statusrad:"
+
+#: ../glade/gnome/gnomeapp.c:205
+msgid "If the window has a status bar"
+msgstr "Om fönstret har en statusrad"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomeapp.c:206
+msgid "Store Config:"
+msgstr "Spara konfiguration:"
+
+#: ../glade/gnome/gnomeapp.c:207
+msgid "If the layout is saved and restored automatically"
+msgstr "Om layouten sparas och återställs automatiskt"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomeapp.c:443
+msgid "Gnome Application Window"
+msgstr "Gnome-programfönster"
+
+#: ../glade/gnome/gnomeappbar.c:56
+msgid "Status Message."
+msgstr "Statusmeddelande."
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomeappbar.c:69
+msgid "Progress:"
+msgstr "Förlopp:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomeappbar.c:70
+msgid "If the app bar has a progress indicator"
+msgstr "Om programmet har en förloppsindikator"
+
+#: ../glade/gnome/gnomeappbar.c:71
+msgid "Status:"
+msgstr "Status:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomeappbar.c:72
+msgid "If the app bar has an area for status messages and user input"
+msgstr "Om programmet har ett område för statusmeddelanden och användarinmatning"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomeappbar.c:184
+msgid "Gnome Application Bar"
+msgstr "Gnome-applikationsruta"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomecanvas.c:68
+msgid "Anti-Aliased:"
+msgstr "Kantutjämnad:"
+
+# SUN CHANGED MESSAGE
+#
+# Sun skrev "kantutjmnad"
+# Jag skriver "kantutjämnad"
+#
+#: ../glade/gnome/gnomecanvas.c:69
+msgid "If the canvas is anti-aliased, to smooth the edges of text and graphics"
+msgstr "Om canvasen är kantutjämnad för att jämna till kanter på text och grafik"
+
+#: ../glade/gnome/gnomecanvas.c:70
+msgid "X1:"
+msgstr "X1:"
+
+#: ../glade/gnome/gnomecanvas.c:70
+msgid "The minimum x coordinate"
+msgstr "Den minsta x-koordinaten"
+
+#: ../glade/gnome/gnomecanvas.c:71
+msgid "Y1:"
+msgstr "Y1:"
+
+#: ../glade/gnome/gnomecanvas.c:71
+msgid "The minimum y coordinate"
+msgstr "Den minsta y-koordinaten"
+
+#: ../glade/gnome/gnomecanvas.c:72
+msgid "X2:"
+msgstr "X2:"
+
+#: ../glade/gnome/gnomecanvas.c:72
+msgid "The maximum x coordinate"
+msgstr "Den maximala x-koordinaten"
+
+#: ../glade/gnome/gnomecanvas.c:73
+msgid "Y2:"
+msgstr "Y2:"
+
+#: ../glade/gnome/gnomecanvas.c:73
+msgid "The maximum y coordinate"
+msgstr "Den maximala y-koordinaten"
+
+#: ../glade/gnome/gnomecanvas.c:75
+msgid "Pixels Per Unit:"
+msgstr "Bildpunkter per enhet:"
+
+#: ../glade/gnome/gnomecanvas.c:76
+msgid "The number of pixels corresponding to one unit"
+msgstr "Antal bildpunkter per enhet"
+
+#: ../glade/gnome/gnomecanvas.c:248
+msgid "GnomeCanvas"
+msgstr "GnomeCanvas"
+
+#: ../glade/gnome/gnomecolorpicker.c:68
+msgid "Dither:"
+msgstr "Färgutjämna:"
+
+# SUN CHANGED MESSAGE
+#
+# Sun vill ha "ditrering"
+# Jag vill ha "färgutjämning"
+#
+#: ../glade/gnome/gnomecolorpicker.c:69
+msgid "If the sample should use dithering to be more accurate"
+msgstr "Om testet ska använda färgutjämning för att bli mer noggrant"
+
+#: ../glade/gnome/gnomecolorpicker.c:160
+msgid "Pick a color"
+msgstr "Välj en färg"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomecolorpicker.c:219
+msgid "Gnome Color Picker"
+msgstr "Gnome-färgväljare"
+
+#: ../glade/gnome/gnomecontrol.c:160
+msgid "Couldn't create the Bonobo control"
+msgstr "Kunde inte skapa Bonobo-kontrollen"
+
+#: ../glade/gnome/gnomecontrol.c:249
+msgid "New Bonobo Control"
+msgstr "Ny Bonobo-kontroll"
+
+#: ../glade/gnome/gnomecontrol.c:262
+msgid "Select a Bonobo Control"
+msgstr "Välj en Bonobo-kontroll"
+
+#: ../glade/gnome/gnomecontrol.c:290
+msgid "OAFIID"
+msgstr "OAFIID"
+
+#: ../glade/gnome/gnomecontrol.c:295
+#: ../glade/property.c:3902
+msgid "Description"
+msgstr "Beskrivning"
+
+#: ../glade/gnome/gnomecontrol.c:339
+msgid "Bonobo Control"
+msgstr "Bonobo-kontroll"
+
+#: ../glade/gnome/gnomedateedit.c:70
+msgid "Show Time:"
+msgstr "Visa tid:"
+
+# SUN CHANGED MESSAGE
+#
+# Sun skrev "tillsammant"
+# Jag skriver "tillsammans"
+#
+#: ../glade/gnome/gnomedateedit.c:71
+msgid "If the time is shown as well as the date"
+msgstr "Om tiden ska visas tillsammans med datumet"
+
+#: ../glade/gnome/gnomedateedit.c:72
+msgid "24 Hour Format:"
+msgstr "24-timmarsformat:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomedateedit.c:73
+msgid "If the time is shown in 24-hour format"
+msgstr "Om tiden ska visas i 24-timmarsformat"
+
+#: ../glade/gnome/gnomedateedit.c:76
+msgid "Lower Hour:"
+msgstr "Lägsta timme:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomedateedit.c:77
+msgid "The lowest hour to show in the popup"
+msgstr "Den lägsta timme som ska visas i popupen"
+
+#: ../glade/gnome/gnomedateedit.c:79
+msgid "Upper Hour:"
+msgstr "Högsta timme:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomedateedit.c:80
+msgid "The highest hour to show in the popup"
+msgstr "Den högsta timme som ska visas i popupen"
+
+# SUN CHANGED MESSAGE
+#
+# Sun vill ha "Gnome-Datumredigerare"
+# Jag vill ha "Gnome-datumredigerare"
+#
+#: ../glade/gnome/gnomedateedit.c:298
+msgid "GnomeDateEdit"
+msgstr "Gnome-datumredigerare"
+
+#: ../glade/gnome/gnomedialog.c:153
+#: ../glade/gnome/gnomemessagebox.c:190
+msgid "Auto Close:"
+msgstr "Automatstäng:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomedialog.c:154
+#: ../glade/gnome/gnomemessagebox.c:191
+msgid "If the dialog closes when any button is clicked"
+msgstr "Om dialogen ska stängas när någon knapp trycks ned"
+
+#: ../glade/gnome/gnomedialog.c:155
+#: ../glade/gnome/gnomemessagebox.c:192
+msgid "Hide on Close:"
+msgstr "Dölj vid stängning:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomedialog.c:156
+#: ../glade/gnome/gnomemessagebox.c:193
+msgid "If the dialog is hidden when it is closed, instead of being destroyed"
+msgstr "Om dialogen ska döljas vid stängning, i stället för att förstöras"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomedialog.c:342
+msgid "Gnome Dialog Box"
+msgstr "Gnome-dialogruta"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomedruid.c:91
+msgid "New Gnome Druid"
+msgstr "Ny Gnomeguide"
+
+#: ../glade/gnome/gnomedruid.c:190
+msgid "Show Help"
+msgstr "Visa hjälp"
+
+#: ../glade/gnome/gnomedruid.c:190
+msgid "Display the help button."
+msgstr "Visa hjälpknappen."
+
+#: ../glade/gnome/gnomedruid.c:255
+msgid "Add Start Page"
+msgstr "Lägg till startsida"
+
+#: ../glade/gnome/gnomedruid.c:270
+msgid "Add Finish Page"
+msgstr "Lägg till avslutningssida"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomedruid.c:485
+msgid "Druid"
+msgstr "Guide"
+
+#: ../glade/gnome/gnomedruidpageedge.c:94
+#: ../glade/gnome/gnomedruidpagestandard.c:86
+msgid "The title of the page"
+msgstr "Titeln på sidan"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomedruidpageedge.c:96
+msgid "The main text of the page, introducing people to the druid."
+msgstr "Huvudtexten på sidan som presenterar guiden."
+
+#: ../glade/gnome/gnomedruidpageedge.c:98
+#: ../glade/gnome/gnomedruidpagestandard.c:87
+msgid "Title Color:"
+msgstr "Titelfärg:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:99
+#: ../glade/gnome/gnomedruidpagestandard.c:88
+msgid "The color of the title text"
+msgstr "Färgen på titeltexten"
+
+#: ../glade/gnome/gnomedruidpageedge.c:100
+msgid "Text Color:"
+msgstr "Textfärg:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:101
+msgid "The color of the main text"
+msgstr "Färgen på huvudtexten"
+
+#: ../glade/gnome/gnomedruidpageedge.c:103
+#: ../glade/gnome/gnomedruidpagestandard.c:92
+msgid "The background color of the page"
+msgstr "Bakgrundsfärg på sidan"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomedruidpageedge.c:104
+#: ../glade/gnome/gnomedruidpagestandard.c:93
+msgid "Logo Back. Color:"
+msgstr "Logotypbakgrundsfärg:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomedruidpageedge.c:105
+#: ../glade/gnome/gnomedruidpagestandard.c:94
+msgid "The background color around the logo"
+msgstr "Bakgrundsfärgen runt logotypen"
+
+#: ../glade/gnome/gnomedruidpageedge.c:106
+msgid "Text Box Color:"
+msgstr "Textrutefärg:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:107
+msgid "The background color of the main text area"
+msgstr "Bakgrundsfärgen på huvudtextrutan"
+
+#: ../glade/gnome/gnomedruidpageedge.c:108
+#: ../glade/gnome/gnomedruidpagestandard.c:95
+msgid "Logo Image:"
+msgstr "Logotypbild:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomedruidpageedge.c:109
+#: ../glade/gnome/gnomedruidpagestandard.c:96
+msgid "The logo to display in the top-right of the page"
+msgstr "Logotypen som ska visas uppe till höger på sidan"
+
+#: ../glade/gnome/gnomedruidpageedge.c:110
+msgid "Side Watermark:"
+msgstr "Sidvattenstämpel:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:111
+msgid "The main image to display on the side of the page."
+msgstr "Huvudbilden som ska visas till vänster på sidan."
+
+#: ../glade/gnome/gnomedruidpageedge.c:112
+#: ../glade/gnome/gnomedruidpagestandard.c:97
+msgid "Top Watermark:"
+msgstr "Övre vattenstämpel:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:113
+msgid "The watermark to display at the top of the page."
+msgstr "Vattenstämpeln som ska visas överst på sidan."
+
+#: ../glade/gnome/gnomedruidpageedge.c:522
+msgid "Druid Start or Finish Page"
+msgstr "Guidestartsida eller -avslutningssida"
+
+#: ../glade/gnome/gnomedruidpagestandard.c:89
+msgid "Contents Back. Color:"
+msgstr "Innehållsbakgrundsfärg:"
+
+#: ../glade/gnome/gnomedruidpagestandard.c:90
+msgid "The background color around the title"
+msgstr "Bakgrundsfärgen runt titeln"
+
+#: ../glade/gnome/gnomedruidpagestandard.c:98
+msgid "The image to display along the top of the page"
+msgstr "Bilden som ska visas längs överkanten på sidan"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomedruidpagestandard.c:447
+msgid "Druid Standard Page"
+msgstr "Guidestandardsida"
+
+#: ../glade/gnome/gnomeentry.c:71
+#: ../glade/gnome/gnomefileentry.c:96
+#: ../glade/gnome/gnomeiconentry.c:74
+#: ../glade/gnome/gnomepixmapentry.c:77
+msgid "History ID:"
+msgstr "Historik-ID:"
+
+# SUN CHANGED MESSAGE
+#
+# Sun vill ha punkt på slutet
+# Det vill inte jag, för det har inte originalet
+#
+#: ../glade/gnome/gnomeentry.c:72
+#: ../glade/gnome/gnomefileentry.c:97
+#: ../glade/gnome/gnomeiconentry.c:75
+#: ../glade/gnome/gnomepixmapentry.c:78
+msgid "The ID to save the history entries under"
+msgstr "ID under vilket historikelement ska sparas"
+
+#: ../glade/gnome/gnomeentry.c:73
+#: ../glade/gnome/gnomefileentry.c:98
+#: ../glade/gnome/gnomeiconentry.c:76
+#: ../glade/gnome/gnomepixmapentry.c:79
+msgid "Max Saved:"
+msgstr "Max sparade:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomeentry.c:74
+#: ../glade/gnome/gnomefileentry.c:99
+#: ../glade/gnome/gnomeiconentry.c:77
+#: ../glade/gnome/gnomepixmapentry.c:80
+msgid "The maximum number of history entries saved"
+msgstr "Maximalt antal historikelement som ska sparas"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomeentry.c:210
+msgid "Gnome Entry"
+msgstr "Gnome-inmatning"
+
+#: ../glade/gnome/gnomefileentry.c:102
+#: ../glade/gnome/gnomeiconentry.c:73
+#: ../glade/gnome/gnomepixmapentry.c:83
+msgid "The title of the file selection dialog"
+msgstr "Titel på filväljardialogen"
+
+#: ../glade/gnome/gnomefileentry.c:103
+msgid "Directory:"
+msgstr "Katalog:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomefileentry.c:104
+msgid "If a directory is needed rather than a file"
+msgstr "Om en katalog ska väljas i stället för en fil"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomefileentry.c:106
+#: ../glade/gnome/gnomepixmapentry.c:85
+msgid "If the file selection dialog should be modal"
+msgstr "Om filväljardialogen ska vara modal"
+
+#: ../glade/gnome/gnomefileentry.c:107
+#: ../glade/gnome/gnomepixmapentry.c:86
+msgid "Use FileChooser:"
+msgstr ""
+
+#: ../glade/gnome/gnomefileentry.c:108
+#: ../glade/gnome/gnomepixmapentry.c:87
+msgid "Use the new GtkFileChooser widget instead of GtkFileSelection"
+msgstr ""
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomefileentry.c:367
+msgid "Gnome File Entry"
+msgstr "Gnome-filväljardialog"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomefontpicker.c:98
+msgid "The preview text to show in the font selection dialog"
+msgstr "Texten som ska visas i typsnittsväljardialogen"
+
+#: ../glade/gnome/gnomefontpicker.c:99
+msgid "Mode:"
+msgstr "Läge:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomefontpicker.c:100
+msgid "What to display in the font picker button"
+msgstr "Vad som ska visas i typsnittsväljarknappen"
+
+#: ../glade/gnome/gnomefontpicker.c:107
+msgid "The size of the font to use in the font picker button"
+msgstr "Storleken på typsnittsväljarknappens text"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomefontpicker.c:392
+msgid "Gnome Font Picker"
+msgstr "Gnome-typsnittsväljare"
+
+#: ../glade/gnome/gnomehref.c:66
+msgid "URL:"
+msgstr "URL:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomehref.c:67
+msgid "The URL to display when the button is clicked"
+msgstr "URL:en som ska visas när knappen trycks ned"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomehref.c:69
+msgid "The text to display in the button"
+msgstr "Texten som ska visas i knappen"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomehref.c:206
+msgid "Gnome HRef Link Button"
+msgstr "Gnome-hyperlänksknapp"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomeiconentry.c:208
+msgid "Gnome Icon Entry"
+msgstr "Gnome-ikonväljare"
+
+#: ../glade/gnome/gnomeiconlist.c:175
+msgid "The selection mode"
+msgstr "Markeringsläget"
+
+#: ../glade/gnome/gnomeiconlist.c:177
+msgid "Icon Width:"
+msgstr "Ikonbredd:"
+
+#: ../glade/gnome/gnomeiconlist.c:178
+msgid "The width of each icon"
+msgstr "Bredden på varje ikon"
+
+#: ../glade/gnome/gnomeiconlist.c:181
+msgid "The number of pixels between rows of icons"
+msgstr "Antal bildpunkter mellan raderna av ikoner"
+
+#: ../glade/gnome/gnomeiconlist.c:184
+msgid "The number of pixels between columns of icons"
+msgstr "Antal bildpunkter mellan kolumnerna av ikoner"
+
+#: ../glade/gnome/gnomeiconlist.c:187
+msgid "Icon Border:"
+msgstr "Ikonkant:"
+
+#: ../glade/gnome/gnomeiconlist.c:188
+msgid "The number of pixels around icons (unused?)"
+msgstr "Antalet bildpunkter runt ikoner (ej använd?)"
+
+#: ../glade/gnome/gnomeiconlist.c:191
+msgid "Text Spacing:"
+msgstr "Textmellanrum:"
+
+#: ../glade/gnome/gnomeiconlist.c:192
+msgid "The number of pixels between the text and the icon"
+msgstr "Antal bildpunkter mellan texten och ikonen"
+
+#: ../glade/gnome/gnomeiconlist.c:194
+msgid "Text Editable:"
+msgstr "Text redigerbar:"
+
+#: ../glade/gnome/gnomeiconlist.c:195
+msgid "If the icon text can be edited by the user"
+msgstr "Om ikonens text kan redigeras av användaren"
+
+#: ../glade/gnome/gnomeiconlist.c:196
+msgid "Text Static:"
+msgstr "Fixerad text:"
+
+#: ../glade/gnome/gnomeiconlist.c:197
+msgid "If the icon text is static, in which case it will not be copied by the GnomeIconList"
+msgstr "Om ikonens text är fixerad, då den inte kommer att kopieras av GnomeIconList"
+
+#: ../glade/gnome/gnomeiconlist.c:461
+msgid "Icon List"
+msgstr "Ikonlista"
+
+#: ../glade/gnome/gnomeiconselection.c:154
+msgid "Icon Selection"
+msgstr "Ikonmarkering"
+
+#: ../glade/gnome/gnomemessagebox.c:175
+msgid "Message Type:"
+msgstr "Meddelandetyp:"
+
+#: ../glade/gnome/gnomemessagebox.c:176
+msgid "The type of the message box"
+msgstr "Typ på meddelanderutan"
+
+#: ../glade/gnome/gnomemessagebox.c:178
+msgid "Message:"
+msgstr "Meddelande:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomemessagebox.c:178
+msgid "The message to display"
+msgstr "Meddelandet som ska visas"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomemessagebox.c:499
+msgid "Gnome Message Box"
+msgstr "Gnome-meddelandebox"
+
+#: ../glade/gnome/gnomepixmap.c:79
+msgid "The pixmap filename"
+msgstr "Pixmappens filnamn"
+
+#: ../glade/gnome/gnomepixmap.c:80
+msgid "Scaled:"
+msgstr "Skalad:"
+
+#: ../glade/gnome/gnomepixmap.c:80
+msgid "If the pixmap is scaled"
+msgstr "Om pixmappen är skalad"
+
+#: ../glade/gnome/gnomepixmap.c:81
+msgid "Scaled Width:"
+msgstr "Skalningsbredd:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomepixmap.c:82
+msgid "The width to scale the pixmap to"
+msgstr "Bredden som pixmappen ska skalas till"
+
+#: ../glade/gnome/gnomepixmap.c:84
+msgid "Scaled Height:"
+msgstr "Skalningshöjd:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomepixmap.c:85
+msgid "The height to scale the pixmap to"
+msgstr "Höjd som pixmappen ska skalas till"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomepixmap.c:346
+msgid "Gnome Pixmap"
+msgstr "Gnome-pixmap"
+
+#: ../glade/gnome/gnomepixmapentry.c:75
+msgid "Preview:"
+msgstr "Förhandsgranskning:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomepixmapentry.c:76
+msgid "If a small preview of the pixmap is displayed"
+msgstr "Om en liten förhandsgranskning av pixmappen ska visas"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomepixmapentry.c:303
+msgid "GnomePixmapEntry"
+msgstr "Gnome-pixmapinmatning"
+
+#: ../glade/gnome/gnomepropertybox.c:113
+msgid "New GnomePropertyBox"
+msgstr "Ny GnomePropertyBox"
+
+#: ../glade/gnome/gnomepropertybox.c:366
+msgid "Property Dialog Box"
+msgstr "Egenskapsdialogruta"
+
+#: ../glade/main.c:70
+#: ../glade/main.c:104
+msgid "Write the source code and exit"
+msgstr "Skriv källkod och avsluta"
+
+#: ../glade/main.c:74
+#: ../glade/main.c:108
+msgid "Start with the palette hidden"
+msgstr "Starta med paletten dold"
+
+#: ../glade/main.c:78
+#: ../glade/main.c:112
+msgid "Start with the property editor hidden"
+msgstr "Starta med egenskapsredigeraren dold"
+
+#: ../glade/main.c:460
+#, c-format
+msgid "glade: The XML file must be set for the '-w' or '--write-source' option.\n"
+msgstr "glade: XML-fil måste anges för alternativet \"w\" eller \"--write-source\".\n"
+
+#: ../glade/main.c:474
+#, c-format
+msgid "glade: Error loading XML file.\n"
+msgstr "glade: Ett fel uppstod vid inläsning av XML-filen.\n"
+
+#: ../glade/main.c:481
+#, c-format
+msgid "glade: Error writing source.\n"
+msgstr "glade: Ett fel uppstod vid skrivning av källkoden.\n"
+
+#: ../glade/palette.c:60
+msgid "Palette"
+msgstr "Palett"
+
+#: ../glade/property.c:73
+msgid "private"
+msgstr "privat"
+
+#: ../glade/property.c:73
+msgid "protected"
+msgstr "skyddad"
+
+#: ../glade/property.c:73
+msgid "public"
+msgstr "publik"
+
+#: ../glade/property.c:102
+msgid "Prelight"
+msgstr "Upplyst"
+
+#: ../glade/property.c:103
+msgid "Selected"
+msgstr "Vald"
+
+#: ../glade/property.c:103
+msgid "Insens"
+msgstr "Okänslig"
+
+#: ../glade/property.c:467
+msgid "When the window needs redrawing"
+msgstr "När fönstret behöver ritas om"
+
+#: ../glade/property.c:468
+msgid "When the mouse moves"
+msgstr "När muspekaren flyttas"
+
+#: ../glade/property.c:469
+msgid "Mouse movement hints"
+msgstr "Muspekarflyttningsantydningar"
+
+#: ../glade/property.c:470
+msgid "Mouse movement with any button pressed"
+msgstr "Musflyttning med någon knapp nedtryckt"
+
+#: ../glade/property.c:471
+msgid "Mouse movement with button 1 pressed"
+msgstr "Musflyttning med knapp 1 nedtryckt"
+
+#: ../glade/property.c:472
+msgid "Mouse movement with button 2 pressed"
+msgstr "Musflyttning med knapp 2 nedtryckt"
+
+#: ../glade/property.c:473
+msgid "Mouse movement with button 3 pressed"
+msgstr "Musflyttning med knapp 3 nedtryckt"
+
+#: ../glade/property.c:474
+msgid "Any mouse button pressed"
+msgstr "Någon musknapp nedtryckt"
+
+#: ../glade/property.c:475
+msgid "Any mouse button released"
+msgstr "Någon musknapp uppsläppt"
+
+#: ../glade/property.c:476
+msgid "Any key pressed"
+msgstr "Någon tangent nedtryckt"
+
+#: ../glade/property.c:477
+msgid "Any key released"
+msgstr "Någon tangent uppsläppt"
+
+#: ../glade/property.c:478
+msgid "When the mouse enters the window"
+msgstr "När muspekaren flyttas in i fönstret"
+
+#: ../glade/property.c:479
+msgid "When the mouse leaves the window"
+msgstr "När muspekaren flyttas ut ur fönstret"
+
+#: ../glade/property.c:480
+msgid "Any change in input focus"
+msgstr "Någon ändring i inmatningsfokus"
+
+#: ../glade/property.c:481
+msgid "Any change in window structure"
+msgstr "Någon ändring i fönsterstrukturen"
+
+#: ../glade/property.c:482
+msgid "Any change in X Windows property"
+msgstr "Någon ändring i X-windowsegenskaperna"
+
+#: ../glade/property.c:483
+msgid "Any change in visibility"
+msgstr "Någon ändring i synlighet"
+
+#: ../glade/property.c:484
+#: ../glade/property.c:485
+msgid "For cursors in XInput-aware programs"
+msgstr "För pekare i program som är XInput-medvetna"
+
+#: ../glade/property.c:596
+msgid "Properties"
+msgstr "Egenskaper"
+
+#: ../glade/property.c:620
+msgid "Packing"
+msgstr "Packning"
+
+#: ../glade/property.c:625
+msgid "Common"
+msgstr "Gemensamt"
+
+#: ../glade/property.c:631
+msgid "Style"
+msgstr "Stil"
+
+#: ../glade/property.c:637
+#: ../glade/property.c:4646
+msgid "Signals"
+msgstr "Signaler"
+
+#: ../glade/property.c:700
+#: ../glade/property.c:721
+msgid "Properties: "
+msgstr "Egenskaper:"
+
+#: ../glade/property.c:708
+#: ../glade/property.c:732
+msgid "Properties: <none>"
+msgstr "Egenskaper: <inga>"
+
+#: ../glade/property.c:778
+msgid "Class:"
+msgstr "Klass:"
+
+#: ../glade/property.c:779
+msgid "The class of the widget"
+msgstr "Widgetens klass"
+
+#: ../glade/property.c:813
+msgid "Width:"
+msgstr "Bredd:"
+
+#: ../glade/property.c:814
+msgid "The requested width of the widget (usually used to set the minimum width)"
+msgstr "Den begärda bredden på widgeten (vanligtvis använt för att ange den minsta bredden)"
+
+#: ../glade/property.c:816
+msgid "Height:"
+msgstr "Höjd:"
+
+#: ../glade/property.c:817
+msgid "The requested height of the widget (usually used to set the minimum height)"
+msgstr "Den begärda höjden på widgeten (vanligtvis använt för att ange den minsta höjden)"
+
+#: ../glade/property.c:820
+msgid "Visible:"
+msgstr "Synlig:"
+
+#: ../glade/property.c:821
+msgid "If the widget is initially visible"
+msgstr "Om widgeten är synlig från början"
+
+#: ../glade/property.c:822
+msgid "Sensitive:"
+msgstr "Känslig:"
+
+#: ../glade/property.c:823
+msgid "If the widget responds to input"
+msgstr "Om widgeten reagerar på inmatning"
+
+# SUN CHANGED MESSAGE
+#: ../glade/property.c:825
+msgid "The tooltip to display if the mouse lingers over the widget"
+msgstr "Verktygstipset som ska visas om muspekaren hålls över widgeten"
+
+#: ../glade/property.c:827
+msgid "Can Default:"
+msgstr "Kan vara standardval"
+
+#: ../glade/property.c:828
+msgid "If the widget can be the default action in a dialog"
+msgstr "Om widgeten kan vara standardvalet i en dialog"
+
+#: ../glade/property.c:829
+msgid "Has Default:"
+msgstr "Är standardval:"
+
+#: ../glade/property.c:830
+msgid "If the widget is the default action in the dialog"
+msgstr "Om widgeten är standardval i dialogen"
+
+#: ../glade/property.c:831
+msgid "Can Focus:"
+msgstr "Kan ha fokus:"
+
+#: ../glade/property.c:832
+msgid "If the widget can accept the input focus"
+msgstr "Om widgeten kan ha inmatningsfokus"
+
+#: ../glade/property.c:833
+msgid "Has Focus:"
+msgstr "Har fokus:"
+
+#: ../glade/property.c:834
+msgid "If the widget has the input focus"
+msgstr "Om widgeten har inmatningsfokus"
+
+#: ../glade/property.c:836
+msgid "Events:"
+msgstr "Händelser:"
+
+#: ../glade/property.c:837
+msgid "The X events that the widget receives"
+msgstr "De X-händelser som widgeten tar emot"
+
+#: ../glade/property.c:839
+msgid "Ext.Events:"
+msgstr "Tilläggshändelser:"
+
+#: ../glade/property.c:840
+msgid "The X Extension events mode"
+msgstr "X-tilläggshändelseläge"
+
+#: ../glade/property.c:843
+msgid "Accelerators:"
+msgstr "Snabbtangenter:"
+
+# SUN CHANGED MESSAGE
+#
+# Sun vill ha "tangenterna"
+# Jag vill ha "tangenter"
+#
+#: ../glade/property.c:844
+msgid "Defines the signals to emit when keys are pressed"
+msgstr "Definierar signalen som ska skickas när tangenter trycks ned"
+
+#: ../glade/property.c:845
+msgid "Edit..."
+msgstr "Redigera..."
+
+#: ../glade/property.c:867
+msgid "Propagate:"
+msgstr "Propagera:"
+
+#: ../glade/property.c:868
+msgid "Set True to propagate the style to the widget's children"
+msgstr "Sätt Sann för att propagera stilen till widgetens barn"
+
+#: ../glade/property.c:869
+msgid "Named Style:"
+msgstr "Namngiven stil:"
+
+#: ../glade/property.c:870
+msgid "The name of the style, which can be shared by several widgets"
+msgstr "Namn på stilen (som kan delas mellan flera widgetar)"
+
+#: ../glade/property.c:872
+msgid "Font:"
+msgstr "Typsnitt:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/property.c:873
+msgid "The font to use for any text in the widget"
+msgstr "Typsnittet som ska användas för all text i widgeten"
+
+#: ../glade/property.c:898
+msgid "Copy All"
+msgstr "Kopiera allt"
+
+#: ../glade/property.c:926
+msgid "Foreground:"
+msgstr "Förgrund:"
+
+#: ../glade/property.c:926
+msgid "Background:"
+msgstr "Bakgrund:"
+
+#: ../glade/property.c:926
+msgid "Base:"
+msgstr "Bas:"
+
+#: ../glade/property.c:928
+msgid "Foreground color"
+msgstr "Förgrundsfärg"
+
+#: ../glade/property.c:928
+msgid "Background color"
+msgstr "Bakgrundsfärg"
+
+#: ../glade/property.c:928
+msgid "Text color"
+msgstr "Textfärg"
+
+#: ../glade/property.c:929
+msgid "Base color"
+msgstr "Basfärg"
+
+#: ../glade/property.c:946
+msgid "Back. Pixmap:"
+msgstr "Bakgrundspixmap:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/property.c:947
+msgid "The graphic to use as the background of the widget"
+msgstr "Grafiken som ska användas som bakgrund till widgeten"
+
+# SUN CHANGED MESSAGE
+#: ../glade/property.c:999
+msgid "The file to write source code into"
+msgstr "Filen som källkoden ska skrivas till"
+
+#: ../glade/property.c:1000
+msgid "Public:"
+msgstr "Publik:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/property.c:1001
+msgid "If the widget is added to the component's data structure"
+msgstr "Om widgeten ska läggas till komponentens datastruktur"
+
+#: ../glade/property.c:1012
+msgid "Separate Class:"
+msgstr "Separat klass:"
+
+#: ../glade/property.c:1013
+msgid "Put this widget's subtree in a separate class"
+msgstr "Lägg den här widgetens delträd i en separat klass"
+
+#: ../glade/property.c:1014
+msgid "Separate File:"
+msgstr "Separat fil:"
+
+#: ../glade/property.c:1015
+msgid "Put this widget in a separate source file"
+msgstr "Lägg denna widget i en separat källkodsfil"
+
+#: ../glade/property.c:1016
+msgid "Visibility:"
+msgstr "Synlighet:"
+
+#: ../glade/property.c:1017
+msgid "Visibility of widgets. Public widgets are exported to a global map."
+msgstr "Synlighet hos widgetar. Publika widgetar exporteras till en global tabell"
+
+#: ../glade/property.c:1127
+msgid "You need to select a color or background to copy"
+msgstr "Du måste välja en färg eller bakgrund att kopiera"
+
+#: ../glade/property.c:1146
+msgid "Invalid selection in on_style_copy()"
+msgstr "Ogiltigt val i on_style_copy()"
+
+#: ../glade/property.c:1188
+msgid "You need to copy a color or background pixmap first"
+msgstr "Du måste kopiera en färg eller en bakgrundspixmap först"
+
+#: ../glade/property.c:1194
+msgid "You need to select a color to paste into"
+msgstr "Du måste välja en färg att klistra in i"
+
+#: ../glade/property.c:1204
+msgid "You need to select a background pixmap to paste into"
+msgstr "Du måste välja en bakgrund att klistra in i"
+
+#: ../glade/property.c:1456
+msgid "Couldn't create pixmap from file\n"
+msgstr "Kunde inte skapa pixmap från fil\n"
+
+#. List of current signal handlers - Signal/Handler/Data/Options
+#: ../glade/property.c:1498
+msgid "Signal"
+msgstr "Signal"
+
+#: ../glade/property.c:1500
+msgid "Data"
+msgstr "Data"
+
+#: ../glade/property.c:1501
+msgid "After"
+msgstr "Efter"
+
+#: ../glade/property.c:1502
+msgid "Object"
+msgstr "Objekt"
+
+#: ../glade/property.c:1533
+#: ../glade/property.c:1697
+msgid "Signal:"
+msgstr "Signal:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/property.c:1534
+msgid "The signal to add a handler for"
+msgstr "Signalen som hanteraren ska läggas till för"
+
+# SUN CHANGED MESSAGE
+#: ../glade/property.c:1548
+msgid "The function to handle the signal"
+msgstr "Funktionen som ska hantera signalen"
+
+#: ../glade/property.c:1551
+msgid "Data:"
+msgstr "Data:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/property.c:1552
+msgid "The data passed to the handler"
+msgstr "Data som ska skickas till hanteraren"
+
+#: ../glade/property.c:1553
+msgid "Object:"
+msgstr "Objekt:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/property.c:1554
+msgid "The object which receives the signal"
+msgstr "Objektet som ska erhålla signalen"
+
+#: ../glade/property.c:1555
+msgid "After:"
+msgstr "Efter:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/property.c:1556
+msgid "If the handler runs after the class function"
+msgstr "Om hanteraren ska köras efter klassfunktionen"
+
+#: ../glade/property.c:1569
+msgid "Add"
+msgstr "Lägg till"
+
+#: ../glade/property.c:1575
+msgid "Update"
+msgstr "Uppdatera"
+
+#: ../glade/property.c:1587
+msgid "Clear"
+msgstr "Töm"
+
+#: ../glade/property.c:1637
+msgid "Accelerators"
+msgstr "Snabbtangenter"
+
+#. List of current accelerators - Mods/Keys/Signals
+#: ../glade/property.c:1650
+msgid "Mod"
+msgstr "Mod"
+
+#: ../glade/property.c:1651
+msgid "Key"
+msgstr "Tangent"
+
+# SUN CHANGED MESSAGE
+#: ../glade/property.c:1652
+msgid "Signal to emit"
+msgstr "Signal som ska avges"
+
+#: ../glade/property.c:1696
+msgid "The accelerator key"
+msgstr "Snabbtangent"
+
+# SUN CHANGED MESSAGE
+#: ../glade/property.c:1698
+msgid "The signal to emit when the accelerator is pressed"
+msgstr "Signalen som ska skickas när snabbtangenten trycks ned"
+
+#: ../glade/property.c:1847
+msgid "Edit Text Property"
+msgstr ""
+
+#: ../glade/property.c:1885
+msgid "<b>_Text:</b>"
+msgstr "<b>_Text:</b>"
+
+#: ../glade/property.c:1895
+msgid "T_ranslatable"
+msgstr "Öve_rsättningsbar"
+
+#: ../glade/property.c:1899
+msgid "Has Context _Prefix"
+msgstr ""
+
+#: ../glade/property.c:1925
+msgid "<b>Co_mments For Translators:</b>"
+msgstr ""
+
+#: ../glade/property.c:3892
+msgid "Select X Events"
+msgstr "Välj X-händelser"
+
+#: ../glade/property.c:3901
+msgid "Event Mask"
+msgstr "Händelsemask"
+
+#: ../glade/property.c:4031
+#: ../glade/property.c:4080
+msgid "You need to set the accelerator key"
+msgstr "Du måste välja snabbtangenten"
+
+# SUN CHANGED MESSAGE
+#: ../glade/property.c:4038
+#: ../glade/property.c:4087
+msgid "You need to set the signal to emit"
+msgstr "Du måste välja vilken signal som ska skickas"
+
+#: ../glade/property.c:4314
+#: ../glade/property.c:4370
+msgid "You need to set the signal name"
+msgstr "Du måste välja signalnamn"
+
+#: ../glade/property.c:4321
+#: ../glade/property.c:4377
+msgid "You need to set the handler for the signal"
+msgstr "Du måste välja hanterare för signalen"
+
+#. This groups the signals by class, e.g. 'GtkButton signals'.
+#: ../glade/property.c:4580
+#, c-format
+msgid "%s signals"
+msgstr "%s-signaler"
+
+#: ../glade/property.c:4637
+msgid "Select Signal"
+msgstr "Välj signal"
+
+#: ../glade/property.c:4833
+msgid "Value:"
+msgstr "Värde:"
+
+#: ../glade/property.c:4833
+msgid "Min:"
+msgstr "Min:"
+
+#: ../glade/property.c:4833
+msgid "Step Inc:"
+msgstr "Stegökning:"
+
+#: ../glade/property.c:4834
+msgid "Page Inc:"
+msgstr "Sidökning:"
+
+#: ../glade/property.c:4834
+msgid "Page Size:"
+msgstr "Sidstorlek:"
+
+#: ../glade/property.c:4836
+msgid "H Value:"
+msgstr "H värde:"
+
+#: ../glade/property.c:4836
+msgid "H Min:"
+msgstr "H min:"
+
+#: ../glade/property.c:4836
+msgid "H Max:"
+msgstr "H max:"
+
+#: ../glade/property.c:4836
+msgid "H Step Inc:"
+msgstr "H stegökning:"
+
+#: ../glade/property.c:4837
+msgid "H Page Inc:"
+msgstr "H sidökning:"
+
+#: ../glade/property.c:4837
+msgid "H Page Size:"
+msgstr "H sidstorlek:"
+
+#: ../glade/property.c:4839
+msgid "V Value:"
+msgstr "V värde:"
+
+#: ../glade/property.c:4839
+msgid "V Min:"
+msgstr "V min:"
+
+#: ../glade/property.c:4839
+msgid "V Max:"
+msgstr "V max:"
+
+#: ../glade/property.c:4839
+msgid "V Step Inc:"
+msgstr "V stegökning:"
+
+#: ../glade/property.c:4840
+msgid "V Page Inc:"
+msgstr "V sidökning:"
+
+#: ../glade/property.c:4840
+msgid "V Page Size:"
+msgstr "V sidstorlek:"
+
+#: ../glade/property.c:4843
+msgid "The initial value"
+msgstr "Initialvärdet"
+
+#: ../glade/property.c:4844
+msgid "The minimum value"
+msgstr "Minsta värdet"
+
+#: ../glade/property.c:4845
+msgid "The maximum value"
+msgstr "Största värdet"
+
+#: ../glade/property.c:4846
+msgid "The step increment"
+msgstr "Ökning per steg"
+
+#: ../glade/property.c:4847
+msgid "The page increment"
+msgstr "Ökning per sida"
+
+#: ../glade/property.c:4848
+msgid "The page size"
+msgstr "Sidstorlek"
+
+#: ../glade/property.c:5003
+msgid "The requested font is not available."
+msgstr "Det begärda typsnittet finns inte tillgängligt."
+
+#: ../glade/property.c:5052
+msgid "Select Named Style"
+msgstr "Välj namngiven stil"
+
+#: ../glade/property.c:5063
+msgid "Styles"
+msgstr "Stilar"
+
+#: ../glade/property.c:5122
+msgid "Rename"
+msgstr "Döp om"
+
+#: ../glade/property.c:5150
+msgid "Cancel"
+msgstr "Avbryt"
+
+#: ../glade/property.c:5270
+msgid "New Style:"
+msgstr "Ny stil:"
+
+#: ../glade/property.c:5284
+#: ../glade/property.c:5405
+msgid "Invalid style name"
+msgstr "Ogiltigt stilnamn"
+
+#: ../glade/property.c:5292
+#: ../glade/property.c:5415
+msgid "That style name is already in use"
+msgstr "Stilnamnet används redan"
+
+#: ../glade/property.c:5390
+msgid "Rename Style To:"
+msgstr "Döp om stil till:"
+
+#: ../glade/save.c:139
+#: ../glade/source.c:2771
+#, c-format
+msgid ""
+"Couldn't rename file:\n"
+"  %s\n"
+"to:\n"
+"  %s\n"
+msgstr ""
+"Kunde inte döpa om filen:\n"
+"  %s\n"
+"till:\n"
+"  %s\n"
+
+#: ../glade/save.c:174
+#: ../glade/save.c:225
+#: ../glade/save.c:947
+#: ../glade/source.c:358
+#: ../glade/source.c:373
+#: ../glade/source.c:391
+#: ../glade/source.c:404
+#: ../glade/source.c:815
+#: ../glade/source.c:1043
+#: ../glade/source.c:1134
+#: ../glade/source.c:1328
+#: ../glade/source.c:1423
+#: ../glade/source.c:1643
+#: ../glade/source.c:1732
+#: ../glade/source.c:1784
+#: ../glade/source.c:1848
+#: ../glade/source.c:1895
+#: ../glade/source.c:2032
+#: ../glade/utils.c:1147
+#, c-format
+msgid ""
+"Couldn't create file:\n"
+"  %s\n"
+msgstr ""
+"Kunde inte skapa filen:\n"
+"  %s\n"
+
+#: ../glade/save.c:848
+msgid "Error writing XML file\n"
+msgstr "Ett fel uppstod vid skrivning av XML-fil\n"
+
+#: ../glade/save.c:953
+#, c-format
+msgid ""
+"/*\n"
+" * Translatable strings file generated by Glade.\n"
+" * Add this file to your project's POTFILES.in.\n"
+" * DO NOT compile it as part of your application.\n"
+" */\n"
+"\n"
+msgstr ""
+"/*\n"
+" * Översättningsbara strängar genererade av Glade.\n"
+" * Lägg till detta till ditt projekts POTFILES.in.\n"
+" * Kompilera INTE det som en del av ditt projekt.\n"
+" */\n"
+"\n"
+
+#: ../glade/source.c:184
+#, c-format
+msgid ""
+"Invalid interface source filename: %s\n"
+"%s\n"
+msgstr ""
+"Ogiltigt filnamn för gränssnittskällfil: %s\n"
+"%s\n"
+
+#: ../glade/source.c:186
+#, c-format
+msgid ""
+"Invalid interface header filename: %s\n"
+"%s\n"
+msgstr ""
+"Ogiltigt filnamn för gränssnittshuvud: %s\n"
+"%s\n"
+
+#: ../glade/source.c:189
+#, c-format
+msgid ""
+"Invalid callbacks source filename: %s\n"
+"%s\n"
+msgstr ""
+"Ogiltigt filnamn för callbacks-källfil: %s\n"
+"%s\n"
+
+#: ../glade/source.c:191
+#, c-format
+msgid ""
+"Invalid callbacks header filename: %s\n"
+"%s\n"
+msgstr ""
+"Ogiltigt filnamn för callbacks-huvud: %s\n"
+"%s\n"
+
+#: ../glade/source.c:197
+#, c-format
+msgid ""
+"Invalid support source filename: %s\n"
+"%s\n"
+msgstr ""
+"Ogiltigt filnamn för stödkällfil: %s\n"
+"%s\n"
+
+#: ../glade/source.c:199
+#, c-format
+msgid ""
+"Invalid support header filename: %s\n"
+"%s\n"
+msgstr ""
+"Ogiltigt filnamn för stödhuvud: %s\n"
+"%s\n"
+
+#: ../glade/source.c:418
+#: ../glade/source.c:426
+#, c-format
+msgid ""
+"Couldn't append to file:\n"
+"  %s\n"
+msgstr ""
+"Kunde inte lägga till i filen:\n"
+"  %s\n"
+
+#: ../glade/source.c:1724
+#: ../glade/utils.c:1168
+#, c-format
+msgid ""
+"Error writing to file:\n"
+"  %s\n"
+msgstr ""
+"Fel vid skrivning till filen:\n"
+"  %s\n"
+
+#: ../glade/source.c:2743
+msgid "The filename must be set in the Project Options dialog."
+msgstr "Filnamnet måste ställas in i dialogen Projektalternativ."
+
+#: ../glade/source.c:2746
+msgid ""
+"The filename must be a simple relative filename.\n"
+"Use the Project Options dialog to set it."
+msgstr ""
+"Filnamnet måste vara ett enkelt relativt filnamn.\n"
+"Använd dialogen Projektalternativ för att ställa in det."
+
+#: ../glade/tree.c:78
+msgid "Widget Tree"
+msgstr "Widgetträd"
+
+#: ../glade/utils.c:900
+#: ../glade/utils.c:940
+msgid "Widget not found in box"
+msgstr "Widgeten hittades inte i rutan"
+
+#: ../glade/utils.c:920
+msgid "Widget not found in table"
+msgstr "Widgeten hittades inte i tabellen"
+
+#: ../glade/utils.c:960
+msgid "Widget not found in fixed container"
+msgstr "Widgeten hittades inte i den fixa behållaren"
+
+#: ../glade/utils.c:981
+msgid "Widget not found in packer"
+msgstr "Widgeten hittades inte i paketeraren"
+
+#: ../glade/utils.c:1118
+#, c-format
+msgid ""
+"Couldn't access file:\n"
+"  %s\n"
+msgstr ""
+"Kunde inte komma åt filen:\n"
+"  %s\n"
+
+#: ../glade/utils.c:1141
+#, c-format
+msgid ""
+"Couldn't open file:\n"
+"  %s\n"
+msgstr ""
+"Kunde inte öppna filen:\n"
+"  %s\n"
+
+#: ../glade/utils.c:1158
+#, c-format
+msgid ""
+"Error reading from file:\n"
+"  %s\n"
+msgstr ""
+"Fel vid läsning från filen:\n"
+"  %s\n"
+
+#. This happens under WIN32 when stat is confused by the filename, but this is
+#. harmless, since we know that the directory exists after all.
+#: ../glade/utils.c:1225
+#, c-format
+msgid ""
+"Couldn't create directory:\n"
+"  %s\n"
+msgstr ""
+"Kunde inte skapa katalogen:\n"
+"  %s\n"
+
+#: ../glade/utils.c:1232
+#, c-format
+msgid ""
+"Couldn't access directory:\n"
+"  %s\n"
+msgstr ""
+"Kunde inte komma åt katalogen:\n"
+"  %s\n"
+
+#: ../glade/utils.c:1240
+#, c-format
+msgid ""
+"Invalid directory:\n"
+"  %s\n"
+msgstr ""
+"Ogiltig katalog:\n"
+"  %s\n"
+
+#: ../glade/utils.c:1611
+msgid "Projects"
+msgstr "Projekt"
+
+#: ../glade/utils.c:1628
+msgid "project"
+msgstr "projekt"
+
+#: ../glade/utils.c:1634
+#, c-format
+msgid ""
+"Couldn't open directory:\n"
+"  %s\n"
+msgstr ""
+"Kunde inte öppna katalogen:\n"
+"  %s\n"
+
+#~ msgid "Design user interfaces"
+#~ msgstr "Konstruera användargränssnitt"
+#~ msgid "WM Name:"
+#~ msgstr "WM-namn:"
+

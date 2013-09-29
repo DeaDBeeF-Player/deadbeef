@@ -1,0 +1,6735 @@
+# Traditional Chinese Messages for the glade
+# Copyright (C) 2003-2005 Free Software Foundation, Inc.
+# Wang Jian <lark@linux.net.cn>
+# Sun G11n <gnome_int_l10n@ireland.sun.com>, 2003
+# Wei-Lun Chao <chaoweilun@pcmail.com.tw>, 2005
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: glade 2.12.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2005-12-14 03:17+0100\n"
+"PO-Revision-Date: 2005-12-14 15:26+0800\n"
+"Last-Translator: Wei-Lun Chao <chaoweilun@pcmail.com.tw>\n"
+"Language-Team: Chinese (traditional) <community@linuxhall.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../glade-2.desktop.in.h:1
+msgid "Design user interfaces"
+msgstr "設計使用者介面"
+
+#: ../glade-2.desktop.in.h:2
+msgid "Glade Interface Designer"
+msgstr "Glade 介面設計程式"
+
+#: ../glade/editor.c:343
+msgid "Grid Options"
+msgstr "網格選項"
+
+#: ../glade/editor.c:357
+msgid "Horizontal Spacing:"
+msgstr "水平間隔:"
+
+#: ../glade/editor.c:372
+msgid "Vertical Spacing:"
+msgstr "垂直間隔:"
+
+#: ../glade/editor.c:390
+msgid "Grid Style:"
+msgstr "網格風格:"
+
+#: ../glade/editor.c:396
+msgid "Dots"
+msgstr "點"
+
+#: ../glade/editor.c:405
+msgid "Lines"
+msgstr "線"
+
+#: ../glade/editor.c:487
+msgid "Snap Options"
+msgstr "貼齊選項"
+
+#. Horizontal snapping
+#: ../glade/editor.c:502
+msgid "Horizontal Snapping:"
+msgstr "水平貼齊:"
+
+#: ../glade/editor.c:508 ../glade/gbwidgets/gbtextview.c:49
+msgid "Left"
+msgstr "左"
+
+#: ../glade/editor.c:517 ../glade/gbwidgets/gbtextview.c:50
+msgid "Right"
+msgstr "右"
+
+#. Vertical snapping
+#: ../glade/editor.c:526
+msgid "Vertical Snapping:"
+msgstr "垂直貼齊:"
+
+#: ../glade/editor.c:532
+msgid "Top"
+msgstr "上"
+
+#: ../glade/editor.c:540
+msgid "Bottom"
+msgstr "下"
+
+#: ../glade/editor.c:741
+msgid "GtkToolItem widgets can only be added to a GtkToolbar."
+msgstr "GtkToolItem 視窗元件只能被添加到 GtkToolbar 中。"
+
+#: ../glade/editor.c:758
+msgid "Couldn't insert a GtkScrolledWindow widget."
+msgstr "無法插入一個 GtkScrolledWindow 視窗元件。"
+
+#: ../glade/editor.c:805
+msgid "Couldn't insert a GtkViewport widget."
+msgstr "無法插入一個 GtkViewport 視窗元件。"
+
+#: ../glade/editor.c:832
+msgid "Couldn't add new widget."
+msgstr "無法添加新視窗元件。"
+
+#: ../glade/editor.c:1230
+msgid ""
+"You can't add a widget at the selected position.\n"
+"\n"
+"Tip: GTK+ uses containers to lay out widgets.\n"
+"Try deleting the existing widget and using\n"
+"a box or table container instead.\n"
+msgstr ""
+"您無法在選定的位置添加視窗元件。\n"
+"\n"
+"提示:GTK+ 使用容器來進行視窗元件佈局。您可以試試\n"
+"將存在的視窗元件刪除，再使用方框或表格容器。\n"
+
+#: ../glade/editor.c:3517
+msgid "Couldn't delete widget."
+msgstr "無法刪除視窗元件。"
+
+#: ../glade/editor.c:3541 ../glade/editor.c:3545
+msgid "The widget can't be deleted"
+msgstr "視窗元件不能被刪除"
+
+#: ../glade/editor.c:3572
+msgid ""
+"The widget is created automatically as part of the parent widget, and it "
+"can't be deleted."
+msgstr "該視窗元件被自動建立做為父視窗元件的一部分，不能被刪除。"
+
+#: ../glade/gbwidget.c:697
+msgid "Border Width:"
+msgstr "邊框寬度:"
+
+#: ../glade/gbwidget.c:698
+msgid "The width of the border around the container"
+msgstr "容器邊框的寬度"
+
+#: ../glade/gbwidget.c:1751
+msgid "Select"
+msgstr "選擇"
+
+#: ../glade/gbwidget.c:1773
+msgid "Remove Scrolled Window"
+msgstr "刪除捲動視窗"
+
+#: ../glade/gbwidget.c:1782
+msgid "Add Scrolled Window"
+msgstr "添加捲動視窗"
+
+#: ../glade/gbwidget.c:1803
+msgid "Remove Alignment"
+msgstr "刪除對齊"
+
+#: ../glade/gbwidget.c:1811
+msgid "Add Alignment"
+msgstr "添加對齊"
+
+#: ../glade/gbwidget.c:1826
+msgid "Remove Event Box"
+msgstr "刪除事件方框"
+
+#: ../glade/gbwidget.c:1834
+msgid "Add Event Box"
+msgstr "添加事件方框"
+
+#: ../glade/gbwidget.c:1844
+msgid "Redisplay"
+msgstr "重繪"
+
+#: ../glade/gbwidget.c:1859
+msgid "Cut"
+msgstr "裁剪"
+
+#: ../glade/gbwidget.c:1866 ../glade/property.c:892 ../glade/property.c:5141
+msgid "Copy"
+msgstr "複製"
+
+#: ../glade/gbwidget.c:1875 ../glade/property.c:904
+msgid "Paste"
+msgstr "貼上"
+
+#: ../glade/gbwidget.c:1887 ../glade/property.c:1581 ../glade/property.c:5132
+msgid "Delete"
+msgstr "刪除"
+
+#. N/A stands for 'Not Applicable'. It is used when a standard widget
+#. property does not apply to the current widget. e.g. widgets without
+#. windows can't use the Events property. This appears in the property
+#. editor and so should be a short abbreviation.
+#: ../glade/gbwidget.c:2414 ../glade/gbwidget.c:2483
+msgid "N/A"
+msgstr "未提供"
+
+#. General code for container - has to remove all children and add back
+#. NOTE: this may not work for specialised containers.
+#. NOTE: need to ref widgets?
+#: ../glade/gbwidget.c:3213
+msgid "replacing child of container - not implemented yet\n"
+msgstr "替換容器的子視窗元件 - 尚未實作\n"
+
+#: ../glade/gbwidget.c:3441
+msgid "Couldn't insert GtkAlignment widget."
+msgstr "無法插入 GtkAlignment 視窗元件。"
+
+#: ../glade/gbwidget.c:3481
+msgid "Couldn't remove GtkAlignment widget."
+msgstr "無法刪除 GtkAlignment 視窗元件。"
+
+#: ../glade/gbwidget.c:3505
+msgid "Couldn't insert GtkEventBox widget."
+msgstr "無法插入 GtkEventBox 視窗元件。"
+
+#: ../glade/gbwidget.c:3544
+msgid "Couldn't remove GtkEventBox widget."
+msgstr "無法刪除 GtkEventBox 視窗元件。"
+
+#: ../glade/gbwidget.c:3579
+msgid "Couldn't insert GtkScrolledWindow widget."
+msgstr "無法插入 GtkScrolledWindow 視窗元件。"
+
+#: ../glade/gbwidget.c:3618
+msgid "Couldn't remove GtkScrolledWindow widget."
+msgstr "無法刪除 GtkScrolledWindow 視窗元件。"
+
+#: ../glade/gbwidget.c:3732
+msgid "Remove Label"
+msgstr "刪除標籤"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbaboutdialog.c:79
+msgid "Application Name"
+msgstr "應用程式名稱"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbaboutdialog.c:103 ../glade/gnome/gnomeabout.c:137
+msgid "Logo:"
+msgstr "標誌:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbaboutdialog.c:103 ../glade/gnome/gnomeabout.c:137
+msgid "The pixmap to use as the logo"
+msgstr "做為標誌的像素圖"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:105 ../glade/glade_project_options.c:260
+msgid "Program Name:"
+msgstr "程式名稱:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:105
+msgid "The name of the application"
+msgstr "應用程式名稱"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbaboutdialog.c:106 ../glade/gnome/gnomeabout.c:139
+msgid "Comments:"
+msgstr "備註:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbaboutdialog.c:106
+msgid "Additional information, such as a description of the application"
+msgstr "附加資訊，例如套件的說明"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbaboutdialog.c:107 ../glade/gnome/gnomeabout.c:138
+msgid "Copyright:"
+msgstr "版權:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbaboutdialog.c:107 ../glade/gnome/gnomeabout.c:138
+msgid "The copyright notice"
+msgstr "版權聲明"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:109
+msgid "Website URL:"
+msgstr "網址 URL:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:109
+msgid "The URL of the application's website"
+msgstr "應用程式網址的 URL"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:110
+msgid "Website Label:"
+msgstr "網址標籤:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbaboutdialog.c:110
+msgid "The label to display for the link to the website"
+msgstr "做為網址連接而顯示的標籤"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:112 ../glade/glade_project_options.c:365
+msgid "License:"
+msgstr "授權:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbaboutdialog.c:112
+msgid "The license details of the application"
+msgstr "應用程式的授權細節"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:113
+msgid "Wrap License:"
+msgstr "授權換列:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbaboutdialog.c:113
+msgid "If the license text should be wrapped"
+msgstr "授權文字是否使用換列"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbaboutdialog.c:115 ../glade/gnome/gnomeabout.c:141
+msgid "Authors:"
+msgstr "程式作者:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbaboutdialog.c:115 ../glade/gnome/gnomeabout.c:141
+msgid "The authors of the package, one on each line"
+msgstr "套件的作者，每列一位"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbaboutdialog.c:116 ../glade/gnome/gnomeabout.c:142
+msgid "Documenters:"
+msgstr "文件作者:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbaboutdialog.c:116 ../glade/gnome/gnomeabout.c:142
+msgid "The documenters of the package, one on each line"
+msgstr "套件文件的作者，每列一位"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:117
+msgid "Artists:"
+msgstr "美工人員:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbaboutdialog.c:117
+msgid ""
+"The people who have created the artwork for the package, one on each line"
+msgstr "套件美工的製作人員，每列一位"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbaboutdialog.c:118 ../glade/gnome/gnomeabout.c:143
+msgid "Translators:"
+msgstr "翻譯人員:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:118 ../glade/gnome/gnomeabout.c:143
+msgid ""
+"The translators of the package. This should normally be left empty so that "
+"translators can add their names in the po files"
+msgstr ""
+"套件的翻譯人員。通常會保持空白，以便翻譯者能夠在 po 檔案中加入他們的名字"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbaboutdialog.c:588
+msgid "About Dialog"
+msgstr "「關於」對話框"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbaccellabel.c:200
+msgid "Label with Accelerator"
+msgstr "帶有快捷鍵的標籤"
+
+# SUN NEW TRANSLATION
+#. The GtkProgress interface is deprecated now, and GtkProgressBar doesn't
+#. have functions to set these, so I suppose we shouldn't support them.
+#: ../glade/gbwidgets/gbalignment.c:71 ../glade/gbwidgets/gbarrow.c:89
+#: ../glade/gbwidgets/gbaspectframe.c:130 ../glade/gbwidgets/gbimage.c:119
+#: ../glade/gbwidgets/gblabel.c:181 ../glade/gbwidgets/gbprogressbar.c:162
+msgid "X Align:"
+msgstr "X 對齊:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbalignment.c:72
+msgid "The horizontal alignment of the child widget"
+msgstr "水平對齊子視窗元件"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbalignment.c:74 ../glade/gbwidgets/gbarrow.c:92
+#: ../glade/gbwidgets/gbaspectframe.c:133 ../glade/gbwidgets/gbimage.c:122
+#: ../glade/gbwidgets/gblabel.c:184 ../glade/gbwidgets/gbprogressbar.c:165
+msgid "Y Align:"
+msgstr "Y 對齊:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbalignment.c:75
+msgid "The vertical alignment of the child widget"
+msgstr "垂直對齊子視窗元件"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbalignment.c:77
+msgid "X Scale:"
+msgstr "X 比例尺:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbalignment.c:78
+msgid "The horizontal scale of the child widget"
+msgstr "子視窗元件的水平比例尺"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbalignment.c:80
+msgid "Y Scale:"
+msgstr "Y 比例尺:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbalignment.c:81
+msgid "The vertical scale of the child widget"
+msgstr "子視窗元件的垂直比例尺"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbalignment.c:85
+msgid "Top Padding:"
+msgstr "頂部填充:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbalignment.c:86
+msgid "Space to put above the child widget"
+msgstr "置於子視窗元件之上的空間"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbalignment.c:89
+msgid "Bottom Padding:"
+msgstr "底部填充:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbalignment.c:90
+msgid "Space to put below the child widget"
+msgstr "置於子視窗元件之下的空間"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbalignment.c:93
+msgid "Left Padding:"
+msgstr "左側填充:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbalignment.c:94
+msgid "Space to put to the left of the child widget"
+msgstr "置於子視窗元件左側的空間"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbalignment.c:97
+msgid "Right Padding:"
+msgstr "右側填充:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbalignment.c:98
+msgid "Space to put to the right of the child widget"
+msgstr "置於子視窗元件右側的空間"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbalignment.c:255
+msgid "Alignment"
+msgstr "對齊"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbarrow.c:85
+msgid "Direction:"
+msgstr "方向:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbarrow.c:85
+msgid "The direction of the arrow"
+msgstr "箭頭方向"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbarrow.c:87 ../glade/gbwidgets/gbaspectframe.c:128
+#: ../glade/gbwidgets/gbclist.c:247 ../glade/gbwidgets/gbctree.c:253
+#: ../glade/gbwidgets/gbframe.c:123 ../glade/gbwidgets/gbhandlebox.c:109
+#: ../glade/gbwidgets/gbviewport.c:104 ../glade/gnome/bonobodockitem.c:176
+msgid "Shadow:"
+msgstr "陰影:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbarrow.c:87
+msgid "The shadow type of the arrow"
+msgstr "箭頭的陰影類型"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbarrow.c:90
+msgid "The horizontal alignment of the arrow"
+msgstr "水平對齊箭頭"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbarrow.c:93
+msgid "The vertical alignment of the arrow"
+msgstr "垂直對齊箭頭"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbarrow.c:95 ../glade/gbwidgets/gbimage.c:125
+#: ../glade/gbwidgets/gblabel.c:187
+msgid "X Pad:"
+msgstr "X 填充:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbarrow.c:95 ../glade/gbwidgets/gbimage.c:125
+#: ../glade/gbwidgets/gblabel.c:187 ../glade/gbwidgets/gbtable.c:382
+msgid "The horizontal padding"
+msgstr "水平填充"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbarrow.c:97 ../glade/gbwidgets/gbimage.c:127
+#: ../glade/gbwidgets/gblabel.c:189
+msgid "Y Pad:"
+msgstr "Y 填充:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbarrow.c:97 ../glade/gbwidgets/gbimage.c:127
+#: ../glade/gbwidgets/gblabel.c:189 ../glade/gbwidgets/gbtable.c:385
+msgid "The vertical padding"
+msgstr "垂直填充"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbarrow.c:299
+msgid "Arrow"
+msgstr "箭頭"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbaspectframe.c:122 ../glade/gbwidgets/gbframe.c:117
+msgid "Label X Align:"
+msgstr "標籤 X 對齊:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbaspectframe.c:123 ../glade/gbwidgets/gbframe.c:118
+msgid "The horizontal alignment of the frame's label widget"
+msgstr "水平對齊框格標籤"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbaspectframe.c:125 ../glade/gbwidgets/gbframe.c:120
+msgid "Label Y Align:"
+msgstr "標籤 X 對齊:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbaspectframe.c:126 ../glade/gbwidgets/gbframe.c:121
+msgid "The vertical alignment of the frame's label widget"
+msgstr "垂直對齊整個標籤"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbaspectframe.c:128 ../glade/gbwidgets/gbframe.c:123
+msgid "The type of shadow of the frame"
+msgstr "框格陰影的類型"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbaspectframe.c:131
+#: ../glade/gbwidgets/gbaspectframe.c:134
+msgid "The horizontal alignment of the frame's child"
+msgstr "水平對齊子框格"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbaspectframe.c:136
+msgid "Ratio:"
+msgstr "比例:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbaspectframe.c:137
+msgid "The aspect ratio of the frame's child"
+msgstr "子框格的長寬比"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbaspectframe.c:138
+msgid "Obey Child:"
+msgstr "遵從子項:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbaspectframe.c:139
+msgid "If the aspect ratio should be determined by the child"
+msgstr "長寬比是否由子項決定"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbaspectframe.c:319
+msgid "Aspect Frame"
+msgstr "框格外觀"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbbutton.c:118 ../glade/gbwidgets/gbcheckbutton.c:85
+#: ../glade/gbwidgets/gbmenutoolbutton.c:85
+#: ../glade/gbwidgets/gbradiobutton.c:126
+#: ../glade/gbwidgets/gbradiotoolbutton.c:133
+#: ../glade/gbwidgets/gbtogglebutton.c:88
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:90
+#: ../glade/gbwidgets/gbtoolbutton.c:104
+msgid "Stock Button:"
+msgstr "內置按鈕:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbbutton.c:119 ../glade/gbwidgets/gbcheckbutton.c:86
+#: ../glade/gbwidgets/gbmenutoolbutton.c:86
+#: ../glade/gbwidgets/gbradiobutton.c:127
+#: ../glade/gbwidgets/gbradiotoolbutton.c:134
+#: ../glade/gbwidgets/gbtogglebutton.c:89
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:91
+#: ../glade/gbwidgets/gbtoolbutton.c:105
+msgid "The stock button to use"
+msgstr "所使用的內置按鈕"
+
+#. For now we don't support editing the menuitem properties in the property
+#. editor. The menu editor has to be used instead.
+#: ../glade/gbwidgets/gbbutton.c:121 ../glade/gbwidgets/gbcheckbutton.c:88
+#: ../glade/gbwidgets/gbcheckmenuitem.c:72
+#: ../glade/gbwidgets/gbimagemenuitem.c:92 ../glade/gbwidgets/gblabel.c:169
+#: ../glade/gbwidgets/gblistitem.c:73 ../glade/gbwidgets/gbmenuitem.c:87
+#: ../glade/gbwidgets/gbmenutoolbutton.c:88
+#: ../glade/gbwidgets/gbradiobutton.c:129
+#: ../glade/gbwidgets/gbradiomenuitem.c:103
+#: ../glade/gbwidgets/gbradiotoolbutton.c:136
+#: ../glade/gbwidgets/gbtogglebutton.c:91
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:93
+#: ../glade/gbwidgets/gbtoolbutton.c:107 ../glade/glade_menu_editor.c:748
+#: ../glade/gnome/gnomehref.c:68
+msgid "Label:"
+msgstr "標籤:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbbutton.c:121 ../glade/gbwidgets/gbcheckbutton.c:88
+#: ../glade/gbwidgets/gbcheckmenuitem.c:72 ../glade/gbwidgets/gbentry.c:100
+#: ../glade/gbwidgets/gbimagemenuitem.c:92 ../glade/gbwidgets/gblabel.c:169
+#: ../glade/gbwidgets/gblistitem.c:73 ../glade/gbwidgets/gbmenuitem.c:87
+#: ../glade/gbwidgets/gbmenutoolbutton.c:88
+#: ../glade/gbwidgets/gbradiobutton.c:129
+#: ../glade/gbwidgets/gbradiomenuitem.c:103
+#: ../glade/gbwidgets/gbradiotoolbutton.c:136
+#: ../glade/gbwidgets/gbtextview.c:124 ../glade/gbwidgets/gbtogglebutton.c:91
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:93
+#: ../glade/gbwidgets/gbtoolbutton.c:107 ../glade/gnome-db/gnomedbeditor.c:64
+msgid "The text to display"
+msgstr "要顯示的文字"
+
+#: ../glade/gbwidgets/gbbutton.c:122 ../glade/gbwidgets/gbcheckbutton.c:89
+#: ../glade/gbwidgets/gbimage.c:107 ../glade/gbwidgets/gbmenutoolbutton.c:89
+#: ../glade/gbwidgets/gbradiobutton.c:130
+#: ../glade/gbwidgets/gbradiotoolbutton.c:137
+#: ../glade/gbwidgets/gbtogglebutton.c:92
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:94
+#: ../glade/gbwidgets/gbtoolbutton.c:108 ../glade/gbwidgets/gbwindow.c:297
+#: ../glade/glade_menu_editor.c:814
+msgid "Icon:"
+msgstr "圖示:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbbutton.c:123 ../glade/gbwidgets/gbcheckbutton.c:90
+#: ../glade/gbwidgets/gbimage.c:108 ../glade/gbwidgets/gbmenutoolbutton.c:90
+#: ../glade/gbwidgets/gbradiobutton.c:131
+#: ../glade/gbwidgets/gbradiotoolbutton.c:138
+#: ../glade/gbwidgets/gbtogglebutton.c:93
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:95
+#: ../glade/gbwidgets/gbtoolbutton.c:109
+msgid "The icon to display"
+msgstr "要顯示的圖示"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbbutton.c:125 ../glade/gbwidgets/gbcheckbutton.c:92
+#: ../glade/gbwidgets/gbradiobutton.c:133
+#: ../glade/gbwidgets/gbtogglebutton.c:95
+msgid "Button Relief:"
+msgstr "按鈕浮雕:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbbutton.c:126 ../glade/gbwidgets/gbcheckbutton.c:93
+#: ../glade/gbwidgets/gbradiobutton.c:134
+#: ../glade/gbwidgets/gbtogglebutton.c:96
+msgid "The relief style of the button"
+msgstr "按鈕的浮雕風格"
+
+#: ../glade/gbwidgets/gbbutton.c:131
+msgid "Response ID:"
+msgstr "回應 ID:"
+
+#: ../glade/gbwidgets/gbbutton.c:132
+msgid ""
+"The response code returned when the button is pressed. Select one of the "
+"standard responses or enter a positive integer value"
+msgstr "當按鈕按下時傳回的回應碼。選擇其中之一標準回應或是輸入一個正整數值"
+
+#: ../glade/gbwidgets/gbbutton.c:137 ../glade/gbwidgets/gbcheckbutton.c:102
+#: ../glade/gbwidgets/gbcolorbutton.c:70 ../glade/gbwidgets/gbcombobox.c:83
+#: ../glade/gbwidgets/gbcomboboxentry.c:82
+#: ../glade/gbwidgets/gbfontbutton.c:78 ../glade/gbwidgets/gbradiobutton.c:148
+#: ../glade/gbwidgets/gbtogglebutton.c:103
+#: ../glade/gnome/gnomecolorpicker.c:76 ../glade/gnome/gnomefontpicker.c:109
+#: ../glade/gnome/gnomehref.c:70
+msgid "Focus On Click:"
+msgstr "點選時聚焦"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbbutton.c:137 ../glade/gbwidgets/gbcheckbutton.c:102
+#: ../glade/gbwidgets/gbcolorbutton.c:70 ../glade/gbwidgets/gbfontbutton.c:78
+#: ../glade/gbwidgets/gbradiobutton.c:148
+#: ../glade/gbwidgets/gbtogglebutton.c:103
+#: ../glade/gnome/gnomecolorpicker.c:76 ../glade/gnome/gnomefontpicker.c:109
+#: ../glade/gnome/gnomehref.c:70
+msgid "If the button grabs focus when it is clicked"
+msgstr "是否單擊按鈕時是否擷取焦點"
+
+#: ../glade/gbwidgets/gbbutton.c:1502
+msgid "Remove Button Contents"
+msgstr "移除按鈕內容"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbbutton.c:1600
+msgid "Button"
+msgstr "按鈕"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcalendar.c:73
+msgid "Heading:"
+msgstr "標題:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcalendar.c:74
+msgid "If the month and year should be shown at the top"
+msgstr "月份和年份是否顯示在頂部"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcalendar.c:75
+msgid "Day Names:"
+msgstr "日期名稱:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcalendar.c:76
+msgid "If the day names should be shown"
+msgstr "是否顯示日期名稱"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcalendar.c:77
+msgid "Fixed Month:"
+msgstr "固定月份:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcalendar.c:78
+msgid "If the month and year shouldn't be changeable"
+msgstr "月份和年份是否應為不可更改"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcalendar.c:79
+msgid "Week Numbers:"
+msgstr "週數:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcalendar.c:80
+msgid "If the number of the week should be shown"
+msgstr "是否顯示週數"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcalendar.c:81 ../glade/gnome/gnomedateedit.c:74
+msgid "Monday First:"
+msgstr "週一開始:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcalendar.c:82 ../glade/gnome/gnomedateedit.c:75
+msgid "If the week should start on Monday"
+msgstr "每周是否從週一開始"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcalendar.c:266
+msgid "Calendar"
+msgstr "日曆"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcellview.c:63 ../glade/gnome/gnomedruidpageedge.c:102
+#: ../glade/gnome/gnomedruidpagestandard.c:91
+msgid "Back. Color:"
+msgstr "背景色:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcellview.c:64
+msgid "The background color"
+msgstr "背景色"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcellview.c:192
+msgid "Cell View"
+msgstr "單元格檢視"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcheckbutton.c:96
+#: ../glade/gbwidgets/gbcheckmenuitem.c:73
+#: ../glade/gbwidgets/gbradiobutton.c:137
+#: ../glade/gbwidgets/gbradiomenuitem.c:104
+#: ../glade/gbwidgets/gbradiotoolbutton.c:147
+#: ../glade/gbwidgets/gbtogglebutton.c:99
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:97
+msgid "Initially On:"
+msgstr "初始開啟:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcheckbutton.c:97
+msgid "If the check button is initially on"
+msgstr "選取按鈕最初是否處於開啟狀態"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:98
+#: ../glade/gbwidgets/gbradiobutton.c:139
+#: ../glade/gbwidgets/gbtogglebutton.c:101
+msgid "Inconsistent:"
+msgstr "不一致:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcheckbutton.c:99
+#: ../glade/gbwidgets/gbradiobutton.c:140
+#: ../glade/gbwidgets/gbtogglebutton.c:102
+msgid "If the button is shown in an inconsistent state"
+msgstr "是否在不一致狀態下顯示按鈕"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcheckbutton.c:100
+#: ../glade/gbwidgets/gbradiobutton.c:141
+msgid "Indicator:"
+msgstr "指示器:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcheckbutton.c:101
+#: ../glade/gbwidgets/gbradiobutton.c:142
+msgid "If the indicator is always drawn"
+msgstr "指示器是否始終處於顯示狀態"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcheckbutton.c:211
+msgid "Check Button"
+msgstr "選取按鈕"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcheckmenuitem.c:74
+msgid "If the check menu item is initially on"
+msgstr "選取選單項最初是否處於開啟狀態"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcheckmenuitem.c:203
+msgid "Check Menu Item"
+msgstr "選取選單項目"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbclist.c:141
+msgid "New columned list"
+msgstr "新柱狀列表"
+
+# SUN NEW TRANSLATION
+#. Columns label & entry
+#: ../glade/gbwidgets/gbclist.c:152 ../glade/gbwidgets/gbctree.c:157
+#: ../glade/gbwidgets/gbhbox.c:110 ../glade/gbwidgets/gbhbuttonbox.c:132
+#: ../glade/gbwidgets/gbtable.c:165
+msgid "Number of columns:"
+msgstr "欄數:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbclist.c:242 ../glade/gbwidgets/gbctree.c:248
+#: ../glade/gbwidgets/gbiconview.c:128 ../glade/gbwidgets/gblist.c:77
+#: ../glade/gnome/gnomeiconlist.c:174
+msgid "Select Mode:"
+msgstr "選擇模式:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbclist.c:243
+msgid "The selection mode of the columned list"
+msgstr "柱狀列表的選擇模式"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbclist.c:245 ../glade/gbwidgets/gbctree.c:251
+msgid "Show Titles:"
+msgstr "顯示標題:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbclist.c:246 ../glade/gbwidgets/gbctree.c:252
+msgid "If the column titles are shown"
+msgstr "是否顯示行標題"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbclist.c:248
+msgid "The type of shadow of the columned list's border"
+msgstr "柱狀列表邊框的陰影類型"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbclist.c:594
+msgid "Columned List"
+msgstr "柱狀列表"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcolorbutton.c:65 ../glade/gnome/gnomecolorpicker.c:70
+msgid "Use Alpha:"
+msgstr "使用 Alpha:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcolorbutton.c:66 ../glade/gnome/gnomecolorpicker.c:71
+msgid "If the alpha channel should be used"
+msgstr "是否使用 Alpha 通道"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcolorbutton.c:68
+#: ../glade/gbwidgets/gbfilechooserbutton.c:86
+#: ../glade/gbwidgets/gbfontbutton.c:68 ../glade/gbwidgets/gbwindow.c:244
+#: ../glade/gnome/gnomecolorpicker.c:73 ../glade/gnome/gnomedruidpageedge.c:93
+#: ../glade/gnome/gnomedruidpagestandard.c:85
+#: ../glade/gnome/gnomefileentry.c:101 ../glade/gnome/gnomefontpicker.c:95
+#: ../glade/gnome/gnomeiconentry.c:72 ../glade/gnome/gnomepixmapentry.c:82
+msgid "Title:"
+msgstr "標題:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcolorbutton.c:69 ../glade/gnome/gnomecolorpicker.c:74
+msgid "The title of the color selection dialog"
+msgstr "顏色選擇對話框的標題"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcolorbutton.c:91
+#: ../glade/gbwidgets/gbcolorbutton.c:119
+#: ../glade/gbwidgets/gbcolorbutton.c:162
+msgid "Pick a Color"
+msgstr "選擇顏色"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcolorbutton.c:211
+msgid "Color Chooser Button"
+msgstr "顏色選取按鈕"
+
+#: ../glade/gbwidgets/gbcolorselection.c:62
+msgid "Opacity Control:"
+msgstr "不透明度控制:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcolorselection.c:63
+msgid "If the opacity control is shown"
+msgstr "是否顯示不透明控制"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcolorselection.c:64
+msgid "Palette:"
+msgstr "調色板:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcolorselection.c:65
+msgid "If the palette is shown"
+msgstr "是否顯示調色板"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcolorselection.c:173
+msgid "Color Selection"
+msgstr "顏色選擇"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcolorselectiondialog.c:71
+msgid "Select Color"
+msgstr "選擇顏色"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcolorselectiondialog.c:316 ../glade/property.c:1276
+msgid "Color Selection Dialog"
+msgstr "「顏色選擇」對話框"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcombo.c:105
+msgid "Value In List:"
+msgstr "列表中的值:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcombo.c:106
+msgid "If the value must be in the list"
+msgstr "值是否必須在列表中"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcombo.c:107
+msgid "OK If Empty:"
+msgstr "如果為空則可接受:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcombo.c:108
+msgid "If an empty value is acceptable, when 'Value In List' is set"
+msgstr "當設置「列表中的值」時，是否可以接受空值"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcombo.c:109
+msgid "Case Sensitive:"
+msgstr "區分大小寫:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcombo.c:110
+msgid "If the searching is case sensitive"
+msgstr "搜尋是否區分大小寫"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcombo.c:111
+msgid "Use Arrows:"
+msgstr "使用箭頭:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcombo.c:112
+msgid "If arrows can be used to change the value"
+msgstr "箭頭是否可以用於更改值"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcombo.c:113
+msgid "Use Always:"
+msgstr "始終使用:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcombo.c:114
+msgid "If arrows work even if the value is not in the list"
+msgstr "即使當值不在列表中時，箭頭是否依然起作用"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcombo.c:115 ../glade/gbwidgets/gbcombobox.c:78
+#: ../glade/gbwidgets/gbcomboboxentry.c:75
+msgid "Items:"
+msgstr "項目:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcombo.c:116 ../glade/gbwidgets/gbcombobox.c:79
+#: ../glade/gbwidgets/gbcomboboxentry.c:76
+msgid "The items in the combo list, one per line"
+msgstr "組合列表中的項目，每列一個"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcombo.c:425 ../glade/gbwidgets/gbcombobox.c:289
+msgid "Combo Box"
+msgstr "組合方框"
+
+#: ../glade/gbwidgets/gbcombobox.c:81 ../glade/gbwidgets/gbcomboboxentry.c:78
+msgid "Add Tearoffs:"
+msgstr "添加撕裂線:"
+
+#: ../glade/gbwidgets/gbcombobox.c:82 ../glade/gbwidgets/gbcomboboxentry.c:79
+msgid "Whether dropdowns should have a tearoff menu item"
+msgstr "是否下拉選單應該具有撕裂線項目"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcombobox.c:84 ../glade/gbwidgets/gbcomboboxentry.c:83
+msgid "Whether the combo box grabs focus when it is clicked"
+msgstr "當單擊組合方框時是否擷取焦點"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcomboboxentry.c:80 ../glade/gbwidgets/gbentry.c:102
+msgid "Has Frame:"
+msgstr "具有框格"
+
+#: ../glade/gbwidgets/gbcomboboxentry.c:81
+msgid "Whether the combo box draws a frame around the child"
+msgstr "是否組合方框在子元件周圍繪製框格"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcomboboxentry.c:302
+msgid "Combo Box Entry"
+msgstr "組合方框輸入"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbctree.c:146
+msgid "New columned tree"
+msgstr "新柱狀樹"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbctree.c:249
+msgid "The selection mode of the columned tree"
+msgstr "柱狀樹的選擇模式"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbctree.c:254
+msgid "The type of shadow of the columned tree's border"
+msgstr "柱狀樹邊框的陰影類型"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbctree.c:538
+msgid "Columned Tree"
+msgstr "柱狀樹"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcurve.c:85 ../glade/gbwidgets/gbwindow.c:247
+msgid "Type:"
+msgstr "類型:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcurve.c:85
+msgid "The type of the curve"
+msgstr "曲線類型"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcurve.c:87 ../glade/gbwidgets/gbgammacurve.c:91
+msgid "X Min:"
+msgstr "X 最小值:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcurve.c:87 ../glade/gbwidgets/gbgammacurve.c:91
+msgid "The minimum horizontal value"
+msgstr "水平最小值"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcurve.c:88 ../glade/gbwidgets/gbgammacurve.c:92
+msgid "X Max:"
+msgstr "X 最大值:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcurve.c:88 ../glade/gbwidgets/gbgammacurve.c:92
+msgid "The maximum horizontal value"
+msgstr "水平最大值"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcurve.c:89 ../glade/gbwidgets/gbgammacurve.c:93
+msgid "Y Min:"
+msgstr "Y 最小值:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcurve.c:89 ../glade/gbwidgets/gbgammacurve.c:93
+msgid "The minimum vertical value"
+msgstr "垂直最小值"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcurve.c:90 ../glade/gbwidgets/gbgammacurve.c:94
+msgid "Y Max:"
+msgstr "Y 最大值:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcurve.c:90 ../glade/gbwidgets/gbgammacurve.c:94
+msgid "The maximum vertical value"
+msgstr "垂直最大值"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcurve.c:250
+msgid "Curve"
+msgstr "曲線"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcustom.c:154
+msgid "Creation Function:"
+msgstr "建立函數:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcustom.c:155
+msgid "The function which creates the widget"
+msgstr "建立視窗元件的函數"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcustom.c:157
+msgid "String1:"
+msgstr "字串一:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcustom.c:158
+msgid "The first string argument to pass to the function"
+msgstr "傳遞給函數的第一個字串參數"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcustom.c:159
+msgid "String2:"
+msgstr "字串二:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcustom.c:160
+msgid "The second string argument to pass to the function"
+msgstr "傳遞給函數的第二個字串參數"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcustom.c:161
+msgid "Int1:"
+msgstr "整數一:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcustom.c:162
+msgid "The first integer argument to pass to the function"
+msgstr "傳遞給函數的第一個整數參數"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcustom.c:163
+msgid "Int2:"
+msgstr "整數二:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcustom.c:164
+msgid "The second integer argument to pass to the function"
+msgstr "傳遞給函數的第二個整數參數"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbcustom.c:380
+msgid "Custom Widget"
+msgstr "自定視窗元件"
+
+#: ../glade/gbwidgets/gbdialog.c:293
+msgid "New dialog"
+msgstr "新對話框"
+
+#: ../glade/gbwidgets/gbdialog.c:305
+msgid "Cancel, OK"
+msgstr "取消，確定"
+
+#: ../glade/gbwidgets/gbdialog.c:314 ../glade/glade.c:367
+#: ../glade/glade_project_window.c:1322 ../glade/property.c:5162
+msgid "OK"
+msgstr "確定"
+
+#: ../glade/gbwidgets/gbdialog.c:323
+msgid "Cancel, Apply, OK"
+msgstr "取消，套用，確定"
+
+#: ../glade/gbwidgets/gbdialog.c:332
+msgid "Close"
+msgstr "關閉"
+
+#: ../glade/gbwidgets/gbdialog.c:341
+msgid "_Standard Button Layout:"
+msgstr "標準按鈕配置(_S):"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbdialog.c:350
+msgid "_Number of Buttons:"
+msgstr "按鈕數(_N):"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbdialog.c:367
+msgid "Show Help Button"
+msgstr "顯示求助按鈕"
+
+#: ../glade/gbwidgets/gbdialog.c:398
+msgid "Has Separator:"
+msgstr "具有分隔線:"
+
+#: ../glade/gbwidgets/gbdialog.c:399
+msgid "If the dialog has a horizontal separator above the buttons"
+msgstr "是否對話框的按鈕上方有水平分隔線"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbdialog.c:606
+msgid "Dialog"
+msgstr "對話框"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbdrawingarea.c:146
+msgid "Drawing Area"
+msgstr "繪製區"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbentry.c:94 ../glade/gbwidgets/gbtextview.c:115
+#: ../glade/gnome-db/gnomedbeditor.c:62
+msgid "Editable:"
+msgstr "可編輯:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbentry.c:94 ../glade/gbwidgets/gbtextview.c:116
+#: ../glade/gnome-db/gnomedbeditor.c:62
+msgid "If the text can be edited"
+msgstr "文字是否可以編輯"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbentry.c:95
+msgid "Text Visible:"
+msgstr "文字可見:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbentry.c:96
+msgid ""
+"If the text entered by the user will be shown. When turned off, the text "
+"typed in is displayed as asterix characters, which is useful for entering "
+"passwords"
+msgstr ""
+"是否顯示使用者輸入的文字。當關閉時，鍵入的文字將顯示為星號，這可用於輸入密碼"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbentry.c:97
+msgid "Max Length:"
+msgstr "最大長度:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbentry.c:98
+msgid "The maximum length of the text"
+msgstr "文字的最大長度"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbentry.c:100 ../glade/gbwidgets/gbprogressbar.c:143
+#: ../glade/gbwidgets/gbtextview.c:124 ../glade/gnome-db/gnomedbeditor.c:64
+#: ../glade/gnome-db/gnomedbgraybar.c:59
+#: ../glade/gnome/gnomedruidpageedge.c:95 ../glade/property.c:926
+msgid "Text:"
+msgstr "文字:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbentry.c:102
+msgid "If the entry has a frame around it"
+msgstr "輸入欄是否有框格圍繞"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbentry.c:103
+msgid "Invisible Char:"
+msgstr "不可見字元:"
+
+#: ../glade/gbwidgets/gbentry.c:103
+msgid ""
+"The character to use if the text should not visible, e.g. when entering "
+"passwords"
+msgstr "用來遮蓋輸入內容的字元（當輸入密碼時）"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbentry.c:104
+msgid "Activates Default:"
+msgstr "啟動預設值:"
+
+#: ../glade/gbwidgets/gbentry.c:104
+msgid "If the default widget in the window is activated when Enter is pressed"
+msgstr "當按下 Enter 鍵時，是否啟動預設視窗元件"
+
+#: ../glade/gbwidgets/gbentry.c:105
+msgid "Width In Chars:"
+msgstr "字元數寬度:"
+
+#: ../glade/gbwidgets/gbentry.c:105
+msgid "The number of characters to leave space for in the entry"
+msgstr "輸入元件中預留的空白長度(單位為字元)"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbentry.c:318
+msgid "Text Entry"
+msgstr "文字輸入"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbeventbox.c:65
+msgid "Visible Window:"
+msgstr "可見視窗:"
+
+#: ../glade/gbwidgets/gbeventbox.c:65
+msgid "If the event box uses a visible window"
+msgstr "事件方框是否使用可見的視窗"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbeventbox.c:66
+msgid "Above Child:"
+msgstr "子項之上:"
+
+#: ../glade/gbwidgets/gbeventbox.c:66
+msgid "If the event box window is above the child widget's window"
+msgstr "事件方框是否保持在其他子視窗的上面"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbeventbox.c:167
+msgid "Event Box"
+msgstr "事件方框"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbexpander.c:54
+msgid "Initially Expanded:"
+msgstr "初始擴展:"
+
+#: ../glade/gbwidgets/gbexpander.c:55
+msgid "Whether the expander is initially opened to reveal the child widget"
+msgstr "該擴展元件是否已經開啟，使其子元件顯露出來。"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbexpander.c:57 ../glade/gbwidgets/gbhbox.c:175
+#: ../glade/gbwidgets/gbhbuttonbox.c:199 ../glade/gbwidgets/gbvbox.c:160
+msgid "Spacing:"
+msgstr "間距:"
+
+#: ../glade/gbwidgets/gbexpander.c:58
+msgid "Space to put between the label and the child"
+msgstr "置於標籤與子項間的空間"
+
+#: ../glade/gbwidgets/gbexpander.c:105 ../glade/gbwidgets/gbframe.c:225
+msgid "Add Label Widget"
+msgstr "添加標籤視窗元件"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbexpander.c:228
+msgid "Expander"
+msgstr "擴展器"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfilechooserbutton.c:87
+msgid "The window title of the file chooser dialog"
+msgstr "「檔案選擇」對話框的視窗標題"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfilechooserbutton.c:88
+#: ../glade/gbwidgets/gbfilechooserwidget.c:86
+#: ../glade/gbwidgets/gbfilechooserdialog.c:158
+#: ../glade/gnome/gnomefileentry.c:109
+msgid "Action:"
+msgstr "動作:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:89
+#: ../glade/gbwidgets/gbfilechooserwidget.c:87
+#: ../glade/gbwidgets/gbfilechooserdialog.c:159
+#: ../glade/gnome/gnomefileentry.c:110
+msgid "The type of file operation being performed"
+msgstr "要執行的檔案作業指令種類"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:91
+#: ../glade/gbwidgets/gbfilechooserwidget.c:89
+#: ../glade/gbwidgets/gbfilechooserdialog.c:161
+msgid "Local Only:"
+msgstr "限定本地端:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:92
+#: ../glade/gbwidgets/gbfilechooserwidget.c:90
+#: ../glade/gbwidgets/gbfilechooserdialog.c:162
+msgid "Whether the selected files should be limited to local files"
+msgstr "是否選擇的檔案應該限定於本地端檔案"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfilechooserbutton.c:93
+#: ../glade/gbwidgets/gbfilechooserwidget.c:93
+#: ../glade/gbwidgets/gbfilechooserdialog.c:165
+msgid "Show Hidden:"
+msgstr "顯示隱藏項:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:94
+#: ../glade/gbwidgets/gbfilechooserwidget.c:94
+#: ../glade/gbwidgets/gbfilechooserdialog.c:166
+msgid "Whether the hidden files and folders should be displayed"
+msgstr "是否顯示隱藏的檔案和目錄"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:95
+#: ../glade/gbwidgets/gbfilechooserdialog.c:167
+msgid "Confirm:"
+msgstr "確認:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:96
+#: ../glade/gbwidgets/gbfilechooserdialog.c:168
+msgid ""
+"Whether a confirmation dialog will be displayed if a file will be overwritten"
+msgstr ""
+"如果某個檔案將被覆寫時，是否顯示一個確認對話框"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:97
+#: ../glade/gbwidgets/gblabel.c:201
+msgid "Width in Chars:"
+msgstr "字元數寬度:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfilechooserbutton.c:98
+msgid "The width of the button in characters"
+msgstr "按鈕寬度(字元數)"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfilechooserbutton.c:296
+msgid "File Chooser Button"
+msgstr "檔案選擇按鈕"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfilechooserwidget.c:91
+#: ../glade/gbwidgets/gbfilechooserdialog.c:163
+msgid "Select Multiple:"
+msgstr "多重選擇:"
+
+#: ../glade/gbwidgets/gbfilechooserwidget.c:92
+#: ../glade/gbwidgets/gbfilechooserdialog.c:164
+msgid "Whether to allow multiple files to be selected"
+msgstr "是否允許同時選取多個檔案"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfilechooserwidget.c:260
+msgid "File Chooser"
+msgstr "檔案選擇器"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfilechooserdialog.c:435
+msgid "File Chooser Dialog"
+msgstr "「檔案選擇」對話框"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfileselection.c:72 ../glade/property.c:1366
+msgid "Select File"
+msgstr "選擇檔案"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfileselection.c:114
+msgid "File Ops.:"
+msgstr "檔案操作:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfileselection.c:115
+msgid "If the file operation buttons are shown"
+msgstr "是否顯示檔案操作按鈕"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfileselection.c:293
+msgid "File Selection Dialog"
+msgstr "「檔案選取」對話框"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfixed.c:139 ../glade/gbwidgets/gblayout.c:221
+msgid "X:"
+msgstr "X:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfixed.c:140
+msgid "The X coordinate of the widget in the GtkFixed"
+msgstr "在 GtkFixed 中視窗元件的 X 座標"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfixed.c:142 ../glade/gbwidgets/gblayout.c:224
+msgid "Y:"
+msgstr "Y:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfixed.c:143
+msgid "The Y coordinate of the widget in the GtkFixed"
+msgstr "在 GtkFixed 中視窗元件的 X 座標"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfixed.c:228
+msgid "Fixed Positions"
+msgstr "固定位置"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfontbutton.c:69 ../glade/gnome/gnomefontpicker.c:96
+msgid "The title of the font selection dialog"
+msgstr "「字型選擇」對話框的標題"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfontbutton.c:70
+msgid "Show Style:"
+msgstr "顯示風格:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfontbutton.c:71
+msgid "If the font style is shown as part of the font information"
+msgstr "是否將字型風格做為字型資訊的一部分顯示"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfontbutton.c:72 ../glade/gnome/gnomefontpicker.c:102
+msgid "Show Size:"
+msgstr "顯示大小:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfontbutton.c:73 ../glade/gnome/gnomefontpicker.c:103
+msgid "If the font size is shown as part of the font information"
+msgstr "是否將字型大小做為字型資訊的一部分顯示"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfontbutton.c:74 ../glade/gnome/gnomefontpicker.c:104
+msgid "Use Font:"
+msgstr "使用字型:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfontbutton.c:75 ../glade/gnome/gnomefontpicker.c:105
+msgid "If the selected font is used when displaying the font information"
+msgstr "在顯示字型資訊時是否使用選定字型"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfontbutton.c:76 ../glade/gnome/gnomefontpicker.c:106
+msgid "Use Size:"
+msgstr "使用大小:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfontbutton.c:77
+msgid "if the selected font size is used when displaying the font information"
+msgstr "在顯示字型資訊時是否使用選定字型大小"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gbwidgets/gbfontbutton.c:97 ../glade/gbwidgets/gbfontbutton.c:133
+#: ../glade/gbwidgets/gbfontbutton.c:191 ../glade/gnome/gnomefontpicker.c:128
+#: ../glade/gnome/gnomefontpicker.c:199 ../glade/gnome/gnomefontpicker.c:301
+msgid "Pick a Font"
+msgstr "選取字型"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfontbutton.c:268
+msgid "Font Chooser Button"
+msgstr "字型選擇按鈕"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfontselection.c:64 ../glade/gnome/gnomefontpicker.c:97
+msgid "Preview Text:"
+msgstr "預覽文字:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfontselection.c:64
+msgid "The preview text to display"
+msgstr "要顯示的預覽檔案"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfontselection.c:170
+msgid "Font Selection"
+msgstr "字型選擇"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfontselectiondialog.c:70
+msgid "Select Font"
+msgstr "選擇字型"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbfontselectiondialog.c:301
+msgid "Font Selection Dialog"
+msgstr "「字型選擇」對話框"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbframe.c:360
+msgid "Frame"
+msgstr "框格"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbgammacurve.c:88
+msgid "Initial Type:"
+msgstr "初始類型:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbgammacurve.c:88
+msgid "The initial type of the curve"
+msgstr "曲線的初始類型"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbgammacurve.c:256
+msgid "Gamma Curve"
+msgstr "Gamma 曲線"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhandlebox.c:110
+msgid "The type of shadow around the handle box"
+msgstr "控制框周圍的陰影類型"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhandlebox.c:113
+msgid "Handle Pos:"
+msgstr "控制位置:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhandlebox.c:114
+msgid "The position of the handle"
+msgstr "控制點的位置"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhandlebox.c:116
+msgid "Snap Edge:"
+msgstr "貼齊邊緣:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhandlebox.c:117
+msgid "The edge of the handle box which snaps into position"
+msgstr "貼齊位置的控制框邊緣"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhandlebox.c:304
+msgid "Handle Box"
+msgstr "控制框"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhbox.c:99
+msgid "New horizontal box"
+msgstr "新水平框"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhbox.c:171 ../glade/gbwidgets/gbhbuttonbox.c:194
+#: ../glade/gbwidgets/gbtoolbar.c:267 ../glade/gbwidgets/gbvbox.c:156
+msgid "Size:"
+msgstr "大小:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhbox.c:171 ../glade/gbwidgets/gbvbox.c:156
+msgid "The number of widgets in the box"
+msgstr "方框中的視窗元件數量"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhbox.c:173 ../glade/gbwidgets/gbtable.c:243
+#: ../glade/gbwidgets/gbtoolbar.c:426 ../glade/gbwidgets/gbvbox.c:158
+msgid "Homogeneous:"
+msgstr "同質:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhbox.c:174 ../glade/gbwidgets/gbvbox.c:159
+msgid "If the children should be the same size"
+msgstr "子項的大小是否應相同"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhbox.c:175 ../glade/gbwidgets/gbvbox.c:160
+msgid "The space between each child"
+msgstr "每個子項之間的間隔"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhbox.c:312
+msgid "Can't delete any children."
+msgstr "無法刪除任何子項。"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhbox.c:327 ../glade/gbwidgets/gbhpaned.c:73
+#: ../glade/gbwidgets/gbhruler.c:89 ../glade/gbwidgets/gbnotebook.c:669
+#: ../glade/gbwidgets/gbvpaned.c:69 ../glade/gbwidgets/gbvruler.c:89
+#: ../glade/gbwidgets/gbwindow.c:256
+msgid "Position:"
+msgstr "位置:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhbox.c:328
+msgid "The widget's position relative to its siblings"
+msgstr "視窗元件相對於同級元件的位置"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhbox.c:330
+msgid "Padding:"
+msgstr "填充:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhbox.c:331
+msgid "The widget's padding"
+msgstr "視窗元件的填充"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhbox.c:333 ../glade/gbwidgets/gbnotebook.c:672
+#: ../glade/gbwidgets/gbpreview.c:65 ../glade/gbwidgets/gbtoolbar.c:424
+msgid "Expand:"
+msgstr "擴展:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhbox.c:334 ../glade/gbwidgets/gbtoolbar.c:425
+msgid "Set True to let the widget expand"
+msgstr "設置為 True 使視窗元件可以擴展"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhbox.c:335 ../glade/gbwidgets/gbnotebook.c:674
+msgid "Fill:"
+msgstr "裝滿:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhbox.c:336
+msgid "Set True to let the widget fill its allocated area"
+msgstr "設置為 True 使視窗元件可以裝滿它的分配區域"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhbox.c:337 ../glade/gbwidgets/gbnotebook.c:676
+msgid "Pack Start:"
+msgstr "包裝開始位置:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhbox.c:338
+msgid "Set True to pack the widget at the start of the box"
+msgstr "設置為 True 在方框開始處對視窗元件包裝"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhbox.c:455
+msgid "Insert Before"
+msgstr "在物件之前插入"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhbox.c:461
+msgid "Insert After"
+msgstr "在物件之後插入"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhbox.c:571
+msgid "Horizontal Box"
+msgstr "水平方框"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhbuttonbox.c:120
+msgid "New horizontal button box"
+msgstr "新水平按鈕框"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhbuttonbox.c:194
+msgid "The number of buttons"
+msgstr "按鈕數量"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhbuttonbox.c:196
+msgid "Layout:"
+msgstr "佈局:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhbuttonbox.c:197
+msgid "The layout style of the buttons"
+msgstr "按鈕的佈局風格"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhbuttonbox.c:199
+msgid "The space between the buttons"
+msgstr "按鈕之間的間隔"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhbuttonbox.c:414
+msgid "Horizontal Button Box"
+msgstr "水平按鈕框"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhpaned.c:74 ../glade/gbwidgets/gbvpaned.c:70
+msgid "The position of the divider"
+msgstr "切割符號的位置"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhpaned.c:186 ../glade/gbwidgets/gbwindow.c:285
+msgid "Shrink:"
+msgstr "收縮:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhpaned.c:187
+msgid "Set True to let the widget shrink"
+msgstr "設置為 True 使視窗元件可以收縮"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhpaned.c:188
+msgid "Resize:"
+msgstr "改變大小:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhpaned.c:189
+msgid "Set True to let the widget resize"
+msgstr "設置為 True 使視窗元件可以改變大小"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhpaned.c:315
+msgid "Horizontal Panes"
+msgstr "水平窗格"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhruler.c:82 ../glade/gbwidgets/gbvruler.c:82
+msgid "Metric:"
+msgstr "度量:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhruler.c:83 ../glade/gbwidgets/gbvruler.c:83
+msgid "The units of the ruler"
+msgstr "標尺的單位"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhruler.c:85 ../glade/gbwidgets/gbvruler.c:85
+msgid "Lower Value:"
+msgstr "較低值:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhruler.c:86 ../glade/gbwidgets/gbvruler.c:86
+#: ../glade/gbwidgets/gbvruler.c:88
+msgid "The low value of the ruler"
+msgstr "標尺的低值"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhruler.c:87 ../glade/gbwidgets/gbvruler.c:87
+msgid "Upper Value:"
+msgstr "較高值:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhruler.c:88
+msgid "The high value of the ruler"
+msgstr "標尺的高值"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhruler.c:90 ../glade/gbwidgets/gbvruler.c:90
+msgid "The current position on the ruler"
+msgstr "標尺上的目前位置"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhruler.c:91 ../glade/gbwidgets/gbvruler.c:91
+#: ../glade/property.c:4833
+msgid "Max:"
+msgstr "最大值:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhruler.c:92 ../glade/gbwidgets/gbvruler.c:92
+msgid "The maximum value of the ruler"
+msgstr "標尺的最大值"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhruler.c:247
+msgid "Horizontal Ruler"
+msgstr "水平標尺"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhscale.c:107 ../glade/gbwidgets/gbvscale.c:108
+msgid "Show Value:"
+msgstr "顯示值:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhscale.c:107 ../glade/gbwidgets/gbvscale.c:108
+msgid "If the scale's value is shown"
+msgstr "是否顯示比例尺的值"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhscale.c:108 ../glade/gbwidgets/gbspinbutton.c:93
+#: ../glade/gbwidgets/gbvscale.c:109
+msgid "Digits:"
+msgstr "數字:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhscale.c:108 ../glade/gbwidgets/gbvscale.c:109
+msgid "The number of digits to show"
+msgstr "要顯示的數字位數"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhscale.c:110 ../glade/gbwidgets/gbvscale.c:111
+msgid "Value Pos:"
+msgstr "值位置:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhscale.c:111 ../glade/gbwidgets/gbvscale.c:112
+msgid "The position of the value"
+msgstr "值的位置"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhscale.c:113 ../glade/gbwidgets/gbhscrollbar.c:87
+#: ../glade/gbwidgets/gbvscale.c:114 ../glade/gbwidgets/gbvscrollbar.c:87
+msgid "Policy:"
+msgstr "策略:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhscale.c:114 ../glade/gbwidgets/gbvscale.c:115
+msgid "The update policy of the scale"
+msgstr "比例尺的更新策略"
+
+#: ../glade/gbwidgets/gbhscale.c:116 ../glade/gbwidgets/gbhscrollbar.c:90
+#: ../glade/gbwidgets/gbvscale.c:117 ../glade/gbwidgets/gbvscrollbar.c:90
+msgid "Inverted:"
+msgstr "轉換"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhscale.c:116 ../glade/gbwidgets/gbhscrollbar.c:90
+#: ../glade/gbwidgets/gbvscale.c:117 ../glade/gbwidgets/gbvscrollbar.c:90
+msgid "If the range values are inverted"
+msgstr "範圍值是否已轉換"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhscale.c:319
+msgid "Horizontal Scale"
+msgstr "水平比例尺"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhscrollbar.c:88 ../glade/gbwidgets/gbvscrollbar.c:88
+msgid "The update policy of the scrollbar"
+msgstr "捲動軸的更新策略"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhscrollbar.c:237
+msgid "Horizontal Scrollbar"
+msgstr "水平捲動軸"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbhseparator.c:144
+msgid "Horizonal Separator"
+msgstr "水平分隔線"
+
+#: ../glade/gbwidgets/gbiconview.c:107
+#, c-format
+msgid "Icon %i"
+msgstr "圖示 %i"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbiconview.c:129
+msgid "The selection mode of the icon view"
+msgstr "圖示檢視的選擇模式"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbiconview.c:131 ../glade/gbwidgets/gbprogressbar.c:134
+#: ../glade/gbwidgets/gbtoolbar.c:270 ../glade/gnome/bonobodockitem.c:179
+msgid "Orientation:"
+msgstr "指向:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbiconview.c:132
+msgid "The orientation of the icons"
+msgstr "圖示的指向"
+
+#: ../glade/gbwidgets/gbiconview.c:134 ../glade/gbwidgets/gbtreeview.c:118
+msgid "Reorderable:"
+msgstr "可重新排列:"
+
+#: ../glade/gbwidgets/gbiconview.c:135
+msgid "If the view can be reordered using Drag and Drop"
+msgstr "是否此檢視可以利用滑鼠拖放重新排列"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbiconview.c:308
+msgid "Icon View"
+msgstr "圖示檢視"
+
+#: ../glade/gbwidgets/gbimage.c:110 ../glade/gbwidgets/gbwindow.c:301
+msgid "Named Icon:"
+msgstr "具名圖示:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbimage.c:111 ../glade/gbwidgets/gbwindow.c:302
+msgid "The named icon to use"
+msgstr "所使用的具名圖示"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbimage.c:112
+msgid "Icon Size:"
+msgstr "圖示大小:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbimage.c:113
+msgid "The stock icon size"
+msgstr "內置圖示大小"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbimage.c:115
+msgid "Pixel Size:"
+msgstr "像素大小:"
+
+#: ../glade/gbwidgets/gbimage.c:116
+msgid ""
+"The size of the named icon in pixels, or -1 to use the Icon Size property"
+msgstr "具名圖示大小(像素數)，或 -1 以使用圖示大小屬性"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbimage.c:120
+msgid "The horizontal alignment"
+msgstr "水平對齊"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbimage.c:123
+msgid "The vertical alignment"
+msgstr "垂直對齊"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbimage.c:648
+msgid "Image"
+msgstr "圖像"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbimagemenuitem.c:255
+#: ../glade/gbwidgets/gbmenuitem.c:228
+msgid "Invalid stock menu item"
+msgstr "無效的內置選單項目"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbimagemenuitem.c:471
+msgid "Menu item with a pixmap"
+msgstr "附像素圖的選單項目"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbinputdialog.c:257
+msgid "Input Dialog"
+msgstr "輸入對話框"
+
+#: ../glade/gbwidgets/gblabel.c:170
+msgid "Use Underline:"
+msgstr "使用底線:"
+
+#: ../glade/gbwidgets/gblabel.c:171
+msgid "If the text includes an underlined access key"
+msgstr "文字中是否包括加底線的存取鍵"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gblabel.c:172
+msgid "Use Markup:"
+msgstr "使用標記:"
+
+#: ../glade/gbwidgets/gblabel.c:173
+msgid "If the text includes pango markup"
+msgstr "文字是否包括 pango 標記"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gblabel.c:174
+msgid "Justify:"
+msgstr "調整:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gblabel.c:175
+msgid "The justification of the lines of the label"
+msgstr "調整標籤中的各列"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gblabel.c:177
+msgid "Wrap Text:"
+msgstr "換列文字:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gblabel.c:178
+msgid "If the text is wrapped to fit within the width of the label"
+msgstr "是否換列文字以適合標籤的寬度"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gblabel.c:179
+msgid "Selectable:"
+msgstr "可選取:"
+
+#: ../glade/gbwidgets/gblabel.c:180
+msgid "If the label text can be selected with the mouse"
+msgstr "標籤文字是否可用滑鼠選取"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gblabel.c:182
+msgid "The horizontal alignment of the entire label"
+msgstr "水平對齊整個標籤"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gblabel.c:185
+msgid "The vertical alignment of the entire label"
+msgstr "垂直對齊整個標籤"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gblabel.c:191
+msgid "Focus Target:"
+msgstr "聚焦目標:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gblabel.c:192
+msgid ""
+"The widget to set the keyboard focus to when the underlined access key is "
+"used"
+msgstr "當使用加底線的快捷鍵時，要在其上設置鍵盤焦點的視窗元件"
+
+# SUN NEW TRANSLATION
+#. gtk_combo_set_value_in_list (GTK_COMBO (combo), TRUE, TRUE);
+#: ../glade/gbwidgets/gblabel.c:198 ../glade/gbwidgets/gbprogressbar.c:146
+msgid "Ellipsize:"
+msgstr "省略:"
+
+#: ../glade/gbwidgets/gblabel.c:199 ../glade/gbwidgets/gbprogressbar.c:147
+msgid "How to ellipsize the string"
+msgstr "如何省略字串"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gblabel.c:202
+msgid "The width of the label in characters"
+msgstr "標籤的寬度(字元數)"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gblabel.c:204
+msgid "Single Line Mode:"
+msgstr "單列模式:"
+
+#: ../glade/gbwidgets/gblabel.c:205
+msgid "If the label is only given enough height for a single line"
+msgstr "是否標籤只提供單列所需的足夠高度"
+
+#: ../glade/gbwidgets/gblabel.c:206
+msgid "Angle:"
+msgstr "角度:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gblabel.c:207
+msgid "The angle of the label text"
+msgstr "標籤文字的角度"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gblabel.c:333 ../glade/gbwidgets/gblabel.c:348
+#: ../glade/gbwidgets/gblabel.c:616
+msgid "Auto"
+msgstr "自動"
+
+#: ../glade/gbwidgets/gblabel.c:872 ../glade/glade_menu_editor.c:411
+msgid "Label"
+msgstr "標籤"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gblayout.c:96
+msgid "Area Width:"
+msgstr "區域寬度:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gblayout.c:97
+msgid "The width of the layout area"
+msgstr "佈局區域的寬度"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gblayout.c:99
+msgid "Area Height:"
+msgstr "區域高度:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gblayout.c:100
+msgid "The height of the layout area"
+msgstr "佈局區域的高度"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gblayout.c:222
+msgid "The X coordinate of the widget in the GtkLayout"
+msgstr "GtkLayout 中視窗元件的 X 座標"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gblayout.c:225
+msgid "The Y coordinate of the widget in the GtkLayout"
+msgstr "GtkLayout 中視窗元件的 Y 座標"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gblayout.c:380
+msgid "Layout"
+msgstr "佈局"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gblist.c:78
+msgid "The selection mode of the list"
+msgstr "列表的選擇模式"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gblist.c:192
+msgid "List"
+msgstr "列表"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gblistitem.c:171
+msgid "List Item"
+msgstr "列表項目"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbmenu.c:198
+msgid "Popup Menu"
+msgstr "跳出式選單"
+
+# SUN NEW TRANSLATION
+#. FIXME: I'm not sure if we should translate the non-stock labels or not.
+#: ../glade/gbwidgets/gbmenubar.c:215
+msgid "_File"
+msgstr "_File"
+
+# SUN NEW TRANSLATION
+#. Create Edit menu
+#: ../glade/gbwidgets/gbmenubar.c:223 ../glade/glade_project_window.c:692
+msgid "_Edit"
+msgstr "_Edit"
+
+#. Create View menu
+#: ../glade/gbwidgets/gbmenubar.c:229 ../glade/glade_project_window.c:721
+msgid "_View"
+msgstr "_View"
+
+#. Create Help menu
+#: ../glade/gbwidgets/gbmenubar.c:231 ../glade/glade_project_window.c:834
+msgid "_Help"
+msgstr "_Help"
+
+#: ../glade/gbwidgets/gbmenubar.c:232
+msgid "_About"
+msgstr "_About"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbmenubar.c:291
+msgid "Pack Direction:"
+msgstr "包裝方向:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbmenubar.c:292
+msgid "The pack direction of the menubar"
+msgstr "選單列的包裝方向"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbmenubar.c:294
+msgid "Child Direction:"
+msgstr "子物件方向:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbmenubar.c:295
+msgid "The child pack direction of the menubar"
+msgstr "選單列子物件的包裝方向"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbmenubar.c:300 ../glade/gbwidgets/gbmenubar.c:418
+#: ../glade/gbwidgets/gboptionmenu.c:139
+msgid "Edit Menus..."
+msgstr "編輯選單..."
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbmenubar.c:541
+msgid "Menu Bar"
+msgstr "選單列"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbmenuitem.c:379
+msgid "Menu Item"
+msgstr "選單項目"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbmenutoolbutton.c:92
+#: ../glade/gbwidgets/gbradiotoolbutton.c:150
+#: ../glade/gbwidgets/gbseparatortoolitem.c:67
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:99
+#: ../glade/gbwidgets/gbtoolbutton.c:111 ../glade/gbwidgets/gbtoolitem.c:65
+msgid "Show Horizontal:"
+msgstr "顯示水平:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbmenutoolbutton.c:93
+#: ../glade/gbwidgets/gbradiotoolbutton.c:151
+#: ../glade/gbwidgets/gbseparatortoolitem.c:68
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:100
+#: ../glade/gbwidgets/gbtoolbutton.c:112 ../glade/gbwidgets/gbtoolitem.c:66
+msgid "If the item is visible when the toolbar is horizontal"
+msgstr "當工具列處於水平狀態時，項目是否不可見"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbmenutoolbutton.c:94
+#: ../glade/gbwidgets/gbradiotoolbutton.c:152
+#: ../glade/gbwidgets/gbseparatortoolitem.c:69
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:101
+#: ../glade/gbwidgets/gbtoolbutton.c:113 ../glade/gbwidgets/gbtoolitem.c:67
+msgid "Show Vertical:"
+msgstr "顯示垂直:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbmenutoolbutton.c:95
+#: ../glade/gbwidgets/gbradiotoolbutton.c:153
+#: ../glade/gbwidgets/gbseparatortoolitem.c:70
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:102
+#: ../glade/gbwidgets/gbtoolbutton.c:114 ../glade/gbwidgets/gbtoolitem.c:68
+msgid "If the item is visible when the toolbar is vertical"
+msgstr "當工具列處於垂直狀態時，項目是否不可見"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:96
+#: ../glade/gbwidgets/gbradiotoolbutton.c:154
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:103
+#: ../glade/gbwidgets/gbtoolbutton.c:115 ../glade/gbwidgets/gbtoolitem.c:69
+msgid "Is Important:"
+msgstr "是重要的:"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:97
+#: ../glade/gbwidgets/gbradiotoolbutton.c:155
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:104
+#: ../glade/gbwidgets/gbtoolbutton.c:116 ../glade/gbwidgets/gbtoolitem.c:70
+msgid ""
+"If the item's text should be shown when the toolbar's mode is "
+"GTK_TOOLBAR_BOTH_HORIZ"
+msgstr "當進度條模式為 GTK_TOOLBAR_BOTH_HORIZ 時，是否應該顯示項目文字"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbmenutoolbutton.c:255
+msgid "Toolbar Button with Menu"
+msgstr "附帶選單的工具列按鈕"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbnotebook.c:191
+msgid "New notebook"
+msgstr "新筆記本"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbnotebook.c:202 ../glade/gnome/gnomepropertybox.c:125
+msgid "Number of pages:"
+msgstr "頁數:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbnotebook.c:274
+msgid "Show Tabs:"
+msgstr "顯示頁標:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbnotebook.c:274
+msgid "If the notebook tabs are shown"
+msgstr "是否顯示筆記本頁標"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbnotebook.c:275
+msgid "Show Border:"
+msgstr "顯示邊框:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbnotebook.c:276
+msgid "If the notebook border is shown, when the tabs are not shown"
+msgstr "在不顯示頁標時，是否顯示筆記本邊框"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbnotebook.c:277
+msgid "Tab Pos:"
+msgstr "頁標位置:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbnotebook.c:278
+msgid "The position of the notebook tabs"
+msgstr "筆記本頁標的位置"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbnotebook.c:280
+msgid "Scrollable:"
+msgstr "可捲動:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbnotebook.c:281
+msgid "If the notebook tabs are scrollable"
+msgstr "筆記本頁標是否可捲動"
+
+# SUN NEW TRANSLATION
+#. These seem to be deprecated.
+#: ../glade/gbwidgets/gbnotebook.c:284
+msgid "Tab Horz. Border:"
+msgstr "頁標水平邊框:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbnotebook.c:285
+msgid "The size of the notebook tabs' horizontal border"
+msgstr "筆記本頁標的水平邊框的大小"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbnotebook.c:287
+msgid "Tab Vert. Border:"
+msgstr "頁標垂直邊框:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbnotebook.c:288
+msgid "The size of the notebook tabs' vertical border"
+msgstr "筆記本頁標的垂直邊框大小"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbnotebook.c:291
+msgid "Show Popup:"
+msgstr "顯示跳出式選單:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbnotebook.c:291
+msgid "If the popup menu is enabled"
+msgstr "是否啟用跳出式選單"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbnotebook.c:292 ../glade/gnome/gnomedruid.c:102
+msgid "Number of Pages:"
+msgstr "頁數:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbnotebook.c:293
+msgid "The number of notebook pages"
+msgstr "筆記本頁數"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbnotebook.c:540
+msgid "Previous Page"
+msgstr "上一頁"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbnotebook.c:548
+msgid "Next Page"
+msgstr "下一頁"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbnotebook.c:556
+msgid "Delete Page"
+msgstr "刪除頁"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbnotebook.c:562
+msgid "Switch Next"
+msgstr "切換至下一個"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbnotebook.c:570
+msgid "Switch Previous"
+msgstr "切換至上一個"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbnotebook.c:578 ../glade/gnome/gnomedruid.c:298
+msgid "Insert Page After"
+msgstr "在物件之後插入頁面"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbnotebook.c:586 ../glade/gnome/gnomedruid.c:285
+msgid "Insert Page Before"
+msgstr "在物件之前插入頁面"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbnotebook.c:670
+msgid "The page's position in the list of pages"
+msgstr "在頁面列表中該頁位置"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbnotebook.c:673
+msgid "Set True to let the tab expand"
+msgstr "設置為 True 使頁標可以擴展"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbnotebook.c:675
+msgid "Set True to let the tab fill its allocated area"
+msgstr "設置為 True 使頁標可以裝滿它的分配區域"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbnotebook.c:677
+msgid "Set True to pack the tab at the start of the notebook"
+msgstr "設置為 True 在筆記本開始處對頁標包裝"
+
+#: ../glade/gbwidgets/gbnotebook.c:678
+msgid "Menu Label:"
+msgstr "選單標籤:"
+
+#: ../glade/gbwidgets/gbnotebook.c:679
+msgid "The text to display in the popup menu"
+msgstr "顯示在跳出式選單上的文字"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbnotebook.c:937
+msgid "Notebook"
+msgstr "筆記本"
+
+#: ../glade/gbwidgets/gboptionmenu.c:230
+#, c-format
+msgid "Cannot add a %s to a GtkOptionMenu."
+msgstr "無法加入 %s 到 GtkOptionMenu。"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gboptionmenu.c:270
+msgid "Option Menu"
+msgstr "選項選單"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbpreview.c:63
+msgid "Color:"
+msgstr "顏色:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbpreview.c:64
+msgid "If the preview is color or grayscale"
+msgstr "預覽是彩色圖像還是灰階圖像"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbpreview.c:66
+msgid "If the preview expands to fill its allocated area"
+msgstr "是否擴展預覽以裝滿它的分配區域"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbpreview.c:162
+msgid "Preview"
+msgstr "預覽"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbprogressbar.c:135
+msgid "The orientation of the progress bar's contents"
+msgstr "進度條內容的指向"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbprogressbar.c:137
+msgid "Fraction:"
+msgstr "文字:"
+
+#: ../glade/gbwidgets/gbprogressbar.c:138
+msgid "The fraction of work that has been completed"
+msgstr "已完成的工作比例"
+
+#: ../glade/gbwidgets/gbprogressbar.c:140
+msgid "Pulse Step:"
+msgstr "脈衝步長"
+
+#: ../glade/gbwidgets/gbprogressbar.c:141
+msgid ""
+"The fraction of the progress bar length to move the bouncing block when "
+"pulsed"
+msgstr "當一次脈衝後，跳動區塊應移動的比例（以進度條全長為基準）"
+
+#: ../glade/gbwidgets/gbprogressbar.c:144
+msgid "The text to display over the progress bar"
+msgstr "顯示在進度條上的文字"
+
+# SUN NEW TRANSLATION
+#. ShowText is implicit now, if the Text property is set to anything.
+#: ../glade/gbwidgets/gbprogressbar.c:152
+msgid "Show Text:"
+msgstr "顯示文字:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbprogressbar.c:153
+msgid "If the text should be shown in the progress bar"
+msgstr "是否在進度條中顯示文字"
+
+# SUN NEW TRANSLATION
+#. ActivityMode is deprecated and implicit now. The app just calls
+#. gtk_progress_bar_pulse() and it automatically goes into activity mode.
+#: ../glade/gbwidgets/gbprogressbar.c:157
+msgid "Activity Mode:"
+msgstr "活動模式:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbprogressbar.c:158
+msgid "If the progress bar should act like the front of Kit's car"
+msgstr "進度條動作是否應像 Kit 汽車的前端"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbprogressbar.c:163
+msgid "The horizontal alignment of the text"
+msgstr "水平對齊文字"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbprogressbar.c:166
+msgid "The vertical alignment of the text"
+msgstr "垂直對齊文字"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbprogressbar.c:421
+msgid "Progress Bar"
+msgstr "進度條"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbradiobutton.c:138
+#: ../glade/gbwidgets/gbradiotoolbutton.c:148
+msgid "If the radio button is initially on"
+msgstr "單選按鈕初始是否開啟"
+
+#: ../glade/gbwidgets/gbradiobutton.c:143
+#: ../glade/gbwidgets/gbradiomenuitem.c:106
+#: ../glade/gbwidgets/gbradiotoolbutton.c:141
+#: ../glade/glade_menu_editor.c:1039
+msgid "Group:"
+msgstr "群組:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbradiobutton.c:144
+msgid ""
+"The radio button group (the default is all radio buttons with the same "
+"parent)"
+msgstr "單選按鈕組（預設情況下是具有相同親代的所有單選按鈕）"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbradiobutton.c:189
+#: ../glade/gbwidgets/gbradiobutton.c:350
+#: ../glade/gbwidgets/gbradiotoolbutton.c:233
+#: ../glade/gbwidgets/gbradiotoolbutton.c:322
+msgid "New Group"
+msgstr "新群組"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbradiobutton.c:465
+msgid "Radio Button"
+msgstr "單選按鈕"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbradiomenuitem.c:105
+msgid "If the radio menu item is initially on"
+msgstr "單選選單項初始是否開啟"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbradiomenuitem.c:107
+msgid ""
+"The radio menu item group (the default is all radio menu items with the same "
+"parent)"
+msgstr "單選選單項組（預設情況下具有相同親代的所有單選選單項）"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbradiomenuitem.c:388
+msgid "Radio Menu Item"
+msgstr "單選選單項"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbradiotoolbutton.c:142
+msgid ""
+"The radio tool button group (the default is all radio tool buttons in the "
+"toolbar)"
+msgstr "單選工具按鈕組（預設情況下是具有相同親代的所有單選按鈕）"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbradiotoolbutton.c:530
+msgid "Toolbar Radio Button"
+msgstr "工具列單選按鈕"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbscrolledwindow.c:131
+msgid "H Policy:"
+msgstr "水平策略:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbscrolledwindow.c:132
+msgid "When the horizontal scrollbar will be shown"
+msgstr "顯示水平捲動軸時"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbscrolledwindow.c:134
+msgid "V Policy:"
+msgstr "垂直策略:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbscrolledwindow.c:135
+msgid "When the vertical scrollbar will be shown"
+msgstr "顯示垂直捲動軸時"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbscrolledwindow.c:137
+msgid "Window Pos:"
+msgstr "視窗位置:"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:138
+msgid "Where the child window is located with respect to the scrollbars"
+msgstr "子視窗位於相對於捲動軸的哪個地方"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbscrolledwindow.c:140
+msgid "Shadow Type:"
+msgstr "陰影風格:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbscrolledwindow.c:141
+msgid "The update policy of the vertical scrollbar"
+msgstr "垂直捲動軸的更新策略"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbscrolledwindow.c:353
+msgid "Scrolled Window"
+msgstr "捲動視窗"
+
+#: ../glade/gbwidgets/gbseparatormenuitem.c:153
+msgid "Separator for Menus"
+msgstr "選單的分隔線"
+
+#: ../glade/gbwidgets/gbseparatortoolitem.c:65
+msgid "Draw:"
+msgstr "繪製:"
+
+#: ../glade/gbwidgets/gbseparatortoolitem.c:66
+msgid "If the separator is drawn, or just blank"
+msgstr "分隔線應否繪製出來，或只要留白"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbseparatortoolitem.c:204
+msgid "Toolbar Separator Item"
+msgstr "工具列分隔線"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbspinbutton.c:91
+msgid "Climb Rate:"
+msgstr "傾斜度:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbspinbutton.c:92
+msgid ""
+"The climb rate of the spinbutton, used in conjunction with the Page Increment"
+msgstr "旋轉按鈕的傾斜度，與頁面增量配合使用"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbspinbutton.c:94
+msgid "The number of decimal digits to show"
+msgstr "顯示的小數位數"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbspinbutton.c:96
+msgid "Numeric:"
+msgstr "數字:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:97
+msgid "If only numeric entry is allowed"
+msgstr "是否只允許輸入數值"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbspinbutton.c:98
+msgid "Update Policy:"
+msgstr "更新策略:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbspinbutton.c:99
+msgid "When value_changed signals are emitted"
+msgstr "發出值更改信號時"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbspinbutton.c:101
+msgid "Snap:"
+msgstr "貼齊:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbspinbutton.c:102
+msgid "If the value is snapped to multiples of the step increment"
+msgstr "值是否與步進增量的乘積貼齊"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbspinbutton.c:103
+msgid "Wrap:"
+msgstr "換列:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbspinbutton.c:104
+msgid "If the value is wrapped at the limits"
+msgstr "值是否在達到界限時換列"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbspinbutton.c:284
+msgid "Spin Button"
+msgstr "旋轉按鈕"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbstatusbar.c:64
+msgid "Resize Grip:"
+msgstr "改變大小標記:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbstatusbar.c:64
+msgid "If the status bar has a resize grip to resize the window"
+msgstr "是否狀態列具有標記以改變視窗大小"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbstatusbar.c:156
+msgid "Status Bar"
+msgstr "狀態列"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:137
+msgid "New table"
+msgstr "新表格"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:149 ../glade/gbwidgets/gbvbox.c:95
+#: ../glade/gbwidgets/gbvbuttonbox.c:123
+msgid "Number of rows:"
+msgstr "列數:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:237
+msgid "Rows:"
+msgstr "列:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:238
+msgid "The number of rows in the table"
+msgstr "表格中的列數"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:240
+msgid "Columns:"
+msgstr "欄:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:241
+msgid "The number of columns in the table"
+msgstr "表中的欄數"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:244
+msgid "If the children should all be the same size"
+msgstr "所有子項的大小是否都應相同"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:245 ../glade/gnome/gnomeiconlist.c:180
+msgid "Row Spacing:"
+msgstr "列間距:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:246
+msgid "The space between each row"
+msgstr "每列之間的間距"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:248 ../glade/gnome/gnomeiconlist.c:183
+msgid "Col Spacing:"
+msgstr "欄間距:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:249
+msgid "The space between each column"
+msgstr "每欄之間的間距"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:368
+msgid "Cell X:"
+msgstr "單元格 X:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:369
+msgid "The left edge of the widget in the table"
+msgstr "表格中視窗元件的左緣"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:371
+msgid "Cell Y:"
+msgstr "單元格 Y:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:372
+msgid "The top edge of the widget in the table"
+msgstr "表格中視窗元件的上緣"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:375
+msgid "Col Span:"
+msgstr "欄跨度:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:376
+msgid "The number of columns spanned by the widget in the table"
+msgstr "表格中視窗元件跨越的欄數"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:378
+msgid "Row Span:"
+msgstr "列跨度:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:379
+msgid "The number of rows spanned by the widget in the table"
+msgstr "表格中視窗元件跨越的列數"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:381
+msgid "H Padding:"
+msgstr "水平填充:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:384
+msgid "V Padding:"
+msgstr "垂直填充:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:387
+msgid "X Expand:"
+msgstr "X 擴展:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:388
+msgid "Set True to let the widget expand horizontally"
+msgstr "設置為 True 使視窗元件可以水平擴展"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:389
+msgid "Y Expand:"
+msgstr "Y 擴展:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:390
+msgid "Set True to let the widget expand vertically"
+msgstr "設置為 True 使視窗元件可以垂直擴展"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:391
+msgid "X Shrink:"
+msgstr "X 收縮:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:392
+msgid "Set True to let the widget shrink horizontally"
+msgstr "設置為 True 使視窗元件可以水平收縮"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:393
+msgid "Y Shrink:"
+msgstr "Y 收縮:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:394
+msgid "Set True to let the widget shrink vertically"
+msgstr "設置為 True 使視窗元件可以垂直收縮"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:395
+msgid "X Fill:"
+msgstr "X 裝滿:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:396
+msgid "Set True to let the widget fill its horizontal allocated area"
+msgstr "設置為 True 使視窗元件可以裝滿它的水平分配區域"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:397
+msgid "Y Fill:"
+msgstr "Y 裝滿:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:398
+msgid "Set True to let the widget fill its vertical allocated area"
+msgstr "設置為 True 使視窗元件可以裝滿它的垂直分配區域"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:667
+msgid "Insert Row Before"
+msgstr "在物件之前插入列"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:674
+msgid "Insert Row After"
+msgstr "在物件之後插入列"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:681
+msgid "Insert Column Before"
+msgstr "在物件之前插入欄"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:688
+msgid "Insert Column After"
+msgstr "在物件之後插入欄"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:695
+msgid "Delete Row"
+msgstr "刪除列"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:701
+msgid "Delete Column"
+msgstr "刪除欄"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtable.c:1208
+msgid "Table"
+msgstr "表格"
+
+#: ../glade/gbwidgets/gbtextview.c:51
+msgid "Center"
+msgstr "中心"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtextview.c:52
+msgid "Fill"
+msgstr "裝滿:"
+
+#. Add a "None" item first, so it is easy to reset the pixmap.
+#. If the user selects the 'None' item from the combo, we reset the
+#. text to "" and return. This callback will be called again.
+#. Add a 'None' item at the top of the list.
+#: ../glade/gbwidgets/gbtextview.c:71 ../glade/glade_gnome.c:112
+#: ../glade/glade_menu_editor.c:543 ../glade/glade_menu_editor.c:830
+#: ../glade/glade_menu_editor.c:1345 ../glade/glade_menu_editor.c:2255
+#: ../glade/property.c:2432
+msgid "None"
+msgstr "無"
+
+#: ../glade/gbwidgets/gbtextview.c:72
+msgid "Character"
+msgstr "字元"
+
+#: ../glade/gbwidgets/gbtextview.c:73
+msgid "Word"
+msgstr "字詞"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtextview.c:117
+msgid "Cursor Visible:"
+msgstr "游標可見:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtextview.c:118
+msgid "If the cursor is visible"
+msgstr "游標是否可見"
+
+#: ../glade/gbwidgets/gbtextview.c:119
+msgid "Overwrite:"
+msgstr "覆寫:"
+
+#: ../glade/gbwidgets/gbtextview.c:120
+msgid "If entered text overwrites the existing text"
+msgstr "是否輸入文字可以覆寫既有文字"
+
+#: ../glade/gbwidgets/gbtextview.c:121
+msgid "Accepts Tab:"
+msgstr "接受 Tab 鍵:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtextview.c:122
+msgid "If tab characters can be entered"
+msgstr "是否可以輸入頁標字元"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtextview.c:126
+msgid "Justification:"
+msgstr "調整:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtextview.c:127
+msgid "The justification of the text"
+msgstr "文字的調整"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtextview.c:129
+msgid "Wrapping:"
+msgstr "換列:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtextview.c:130
+msgid "The wrapping of the text"
+msgstr "文字的換列長度"
+
+#: ../glade/gbwidgets/gbtextview.c:133
+msgid "Space Above:"
+msgstr "頂端空間:"
+
+#: ../glade/gbwidgets/gbtextview.c:134
+msgid "Pixels of blank space above paragraphs"
+msgstr "段落頂端空間的像素數目"
+
+#: ../glade/gbwidgets/gbtextview.c:136
+msgid "Space Below:"
+msgstr "底部空間:"
+
+#: ../glade/gbwidgets/gbtextview.c:137
+msgid "Pixels of blank space below paragraphs"
+msgstr "段落底部空間的像素數目"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtextview.c:139
+msgid "Space Inside:"
+msgstr "內部空間:"
+
+#: ../glade/gbwidgets/gbtextview.c:140
+msgid "Pixels of blank space between wrapped lines in a paragraph"
+msgstr "段落內部列距的像素數目"
+
+#: ../glade/gbwidgets/gbtextview.c:143
+msgid "Left Margin:"
+msgstr "左邊界:"
+
+#: ../glade/gbwidgets/gbtextview.c:144
+msgid "Width of the left margin in pixels"
+msgstr "左邊界的寬度，以像素數目表示"
+
+#: ../glade/gbwidgets/gbtextview.c:146
+msgid "Right Margin:"
+msgstr "右邊界:"
+
+#: ../glade/gbwidgets/gbtextview.c:147
+msgid "Width of the right margin in pixels"
+msgstr "右邊界的寬度，以像素數目表示"
+
+#: ../glade/gbwidgets/gbtextview.c:149
+msgid "Indent:"
+msgstr "縮格:"
+
+#: ../glade/gbwidgets/gbtextview.c:150
+msgid "Amount of pixels to indent paragraphs"
+msgstr "段落縮排的程度，以像素數目表示"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtextview.c:463
+msgid "Text View"
+msgstr "文字檢視"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtogglebutton.c:100
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:98
+msgid "If the toggle button is initially on"
+msgstr "切換按鈕最初是否處於開啟狀態"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtogglebutton.c:199
+msgid "Toggle Button"
+msgstr "切換按鈕"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:297
+msgid "Toolbar Toggle Button"
+msgstr "工具列切換按鈕"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtoolbar.c:191
+msgid "New toolbar"
+msgstr "新工具列"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtoolbar.c:202
+msgid "Number of items:"
+msgstr "項數:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtoolbar.c:268
+msgid "The number of items in the toolbar"
+msgstr "工具列中的項數"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtoolbar.c:271
+msgid "The toolbar orientation"
+msgstr "工具列指向"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtoolbar.c:273
+msgid "Style:"
+msgstr "風格:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtoolbar.c:274
+msgid "The toolbar style"
+msgstr "工具列風格"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtoolbar.c:276
+msgid "Tooltips:"
+msgstr "工具提示:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtoolbar.c:276
+msgid "If tooltips are enabled"
+msgstr "是否啟用工具提示"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtoolbar.c:277
+msgid "Show Arrow:"
+msgstr "顯示箭頭:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:277
+msgid "If an arrow should be shown to popup a menu if the toolbar doesn't fit"
+msgstr "若工具列大小不符是否顯示箭頭以便跳出選單"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtoolbar.c:427
+msgid "If the item should be the same size as other homogeneous items"
+msgstr "同質子項的大小是否應相同"
+
+# SUN NEW TRANSLATION
+#. Commands for inserting new items.
+#: ../glade/gbwidgets/gbtoolbar.c:506
+msgid "Insert Item Before"
+msgstr "在物件之前插入項目"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtoolbar.c:513
+msgid "Insert Item After"
+msgstr "在物件之後插入項目"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtoolbar.c:680
+msgid "Toolbar"
+msgstr "工具列"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtoolbutton.c:586
+msgid "Toolbar Button"
+msgstr "切換按鈕"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtoolitem.c:201
+msgid "Toolbar Item"
+msgstr "工具列"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtreeview.c:71
+msgid "Column 1"
+msgstr "第一欄"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtreeview.c:79
+msgid "Column 2"
+msgstr "第二欄"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtreeview.c:87
+msgid "Column 3"
+msgstr "第三欄"
+
+#: ../glade/gbwidgets/gbtreeview.c:97
+#, c-format
+msgid "Row %i"
+msgstr "列 %i"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtreeview.c:114
+msgid "Headers Visible:"
+msgstr "標題可見:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtreeview.c:115
+msgid "If the column header buttons are shown"
+msgstr "是否顯示欄標題按鈕"
+
+#: ../glade/gbwidgets/gbtreeview.c:116
+msgid "Rules Hint:"
+msgstr "規則提示:"
+
+#: ../glade/gbwidgets/gbtreeview.c:117
+msgid ""
+"If a hint is set so the theme engine should draw rows in alternating colors"
+msgstr "是否已設定提示，而佈景主題引擎應該以交錯的顏色顯示各列"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtreeview.c:119
+msgid "If the view is reorderable"
+msgstr "檢視順序是否可以重排"
+
+#: ../glade/gbwidgets/gbtreeview.c:120
+msgid "Enable Search:"
+msgstr "啟動搜尋:"
+
+#: ../glade/gbwidgets/gbtreeview.c:121
+msgid "If the user can search through columns interactively"
+msgstr "是否使用者能以互動方式搜尋所有欄位"
+
+#: ../glade/gbwidgets/gbtreeview.c:123
+msgid "Fixed Height Mode:"
+msgstr "固定高度模式:"
+
+#: ../glade/gbwidgets/gbtreeview.c:124
+msgid "Sets all rows to the same height to improve performance"
+msgstr "設定各列相同高度以增進執行效率"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtreeview.c:125
+msgid "Hover Selection:"
+msgstr "盤旋選擇"
+
+#: ../glade/gbwidgets/gbtreeview.c:126
+msgid "Whether the selection should follow the pointer"
+msgstr "是否選擇應該跟隨滑鼠指標"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbtreeview.c:127
+msgid "Hover Expand:"
+msgstr "盤旋擴展:"
+
+#: ../glade/gbwidgets/gbtreeview.c:128
+msgid ""
+"Whether rows should be expanded or collapsed when the pointer moves over them"
+msgstr "是否各列應該在指標移動經過時擴展或緊縮"
+
+#: ../glade/gbwidgets/gbtreeview.c:317
+msgid "List or Tree View"
+msgstr "表列或樹狀顯示"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbvbox.c:84
+msgid "New vertical box"
+msgstr "新垂直方框"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbvbox.c:245
+msgid "Vertical Box"
+msgstr "垂直方框"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbvbuttonbox.c:111
+msgid "New vertical button box"
+msgstr "新垂直按鈕框"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbvbuttonbox.c:344
+msgid "Vertical Button Box"
+msgstr "垂直按鈕框"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbviewport.c:104
+msgid "The type of shadow of the viewport"
+msgstr "檢視區的陰影類型"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbviewport.c:240
+msgid "Viewport"
+msgstr "檢視區"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbvpaned.c:192
+msgid "Vertical Panes"
+msgstr "垂直窗格"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbvruler.c:247
+msgid "Vertical Ruler"
+msgstr "垂直標尺"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbvscale.c:319
+msgid "Vertical Scale"
+msgstr "垂直比例尺"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbvscrollbar.c:236
+msgid "Vertical Scrollbar"
+msgstr "垂直捲動軸"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbvseparator.c:144
+msgid "Vertical Separator"
+msgstr "垂直分隔線"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbwindow.c:244
+msgid "The title of the window"
+msgstr "視窗的標題"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbwindow.c:247
+msgid "The type of the window"
+msgstr "視窗的類型"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbwindow.c:251
+msgid "Type Hint:"
+msgstr "類型提示:"
+
+#: ../glade/gbwidgets/gbwindow.c:252
+msgid "Tells the window manager how to treat the window"
+msgstr "通知視窗管理員如何去定位視窗"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbwindow.c:257
+msgid "The initial position of the window"
+msgstr "視窗的初始位置"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbwindow.c:261 ../glade/gnome/gnomefileentry.c:105
+#: ../glade/gnome/gnomepixmapentry.c:84
+msgid "Modal:"
+msgstr "模態:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbwindow.c:261
+msgid "If the window is modal"
+msgstr "視窗是否為模態"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbwindow.c:266
+msgid "Default Width:"
+msgstr "預設寬度:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbwindow.c:267
+msgid "The default width of the window"
+msgstr "視窗的預設寬度"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbwindow.c:271
+msgid "Default Height:"
+msgstr "預設高度:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbwindow.c:272
+msgid "The default height of the window"
+msgstr "視窗的預設高度"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbwindow.c:278
+msgid "Resizable:"
+msgstr "可變大小:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbwindow.c:279
+msgid "If the window can be resized"
+msgstr "是否可以改變視窗大小"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbwindow.c:286
+msgid "If the window can be shrunk"
+msgstr "是否可以縮小視窗"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbwindow.c:287
+msgid "Grow:"
+msgstr "增大:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbwindow.c:288
+msgid "If the window can be enlarged"
+msgstr "是否可以放大視窗"
+
+#: ../glade/gbwidgets/gbwindow.c:293
+msgid "Auto-Destroy:"
+msgstr "自動摧毀:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbwindow.c:294
+msgid "If the window is destroyed when its transient parent is destroyed"
+msgstr "是否在關閉對話框時隱藏它，而不摧毀它"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbwindow.c:298
+msgid "The icon for this window"
+msgstr "視窗的圖示"
+
+#: ../glade/gbwidgets/gbwindow.c:305
+msgid "Role:"
+msgstr "角色:"
+
+#: ../glade/gbwidgets/gbwindow.c:305
+msgid "A unique identifier for the window to be used when restoring a session"
+msgstr "當回存作業階段時視窗的唯一識別證明"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbwindow.c:308
+msgid "Decorated:"
+msgstr "被裝飾:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbwindow.c:309
+msgid "If the window should be decorated by the window manager"
+msgstr "視窗是否由視窗管理員所裝飾"
+
+#: ../glade/gbwidgets/gbwindow.c:312
+msgid "Skip Taskbar:"
+msgstr "忽略工作列:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbwindow.c:313
+msgid "If the window should not appear in the task bar"
+msgstr "視窗是否不應出現於工作列"
+
+#: ../glade/gbwidgets/gbwindow.c:316
+msgid "Skip Pager:"
+msgstr "忽略工作區管理程式"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbwindow.c:317
+msgid "If the window should not appear in the pager"
+msgstr "視窗是否不應出現於工作區切換程式"
+
+#: ../glade/gbwidgets/gbwindow.c:320
+msgid "Gravity:"
+msgstr "重心:"
+
+#: ../glade/gbwidgets/gbwindow.c:321
+msgid "The reference point to use when the window coordinates are set"
+msgstr "當視窗座標設定時所用的參考點"
+
+#: ../glade/gbwidgets/gbwindow.c:325
+msgid "Focus On Map:"
+msgstr "映射時聚焦"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbwindow.c:325
+msgid "If the window should receive the input focus when it is mapped"
+msgstr "視窗是否在被映射時獲得輸入焦點"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbwindow.c:328
+msgid "Urgency Hint:"
+msgstr "緊急提示:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbwindow.c:328
+msgid "If the window should be brought to the user's attention"
+msgstr "視窗是否應該引起使用者注意"
+
+# SUN NEW TRANSLATION
+#: ../glade/gbwidgets/gbwindow.c:1232
+msgid "Window"
+msgstr "視窗"
+
+#: ../glade/glade.c:369 ../glade/gnome-db/gnomedberrordlg.c:75
+msgid "Error"
+msgstr "錯誤"
+
+#: ../glade/glade.c:372
+msgid "System Error"
+msgstr "系統錯誤"
+
+#: ../glade/glade.c:376
+msgid "Error opening file"
+msgstr "開啟檔案時發生錯誤"
+
+#: ../glade/glade.c:378
+msgid "Error reading file"
+msgstr "讀取檔案時發生錯誤"
+
+#: ../glade/glade.c:380
+msgid "Error writing file"
+msgstr "寫入檔案時發生錯誤"
+
+#: ../glade/glade.c:383
+msgid "Invalid directory"
+msgstr "無效的目錄"
+
+#: ../glade/glade.c:387
+msgid "Invalid value"
+msgstr "無效的值"
+
+#: ../glade/glade.c:389
+msgid "Invalid XML entity"
+msgstr "無效的 XML 實體"
+
+#: ../glade/glade.c:391
+msgid "Start tag expected"
+msgstr "需要開始標記"
+
+#: ../glade/glade.c:393
+msgid "End tag expected"
+msgstr "需要結束標記"
+
+#: ../glade/glade.c:395
+msgid "Character data expected"
+msgstr "需要字元資料"
+
+#: ../glade/glade.c:397
+msgid "Class id missing"
+msgstr "需要類別 ID"
+
+#: ../glade/glade.c:399
+msgid "Class unknown"
+msgstr "未知類別"
+
+#: ../glade/glade.c:401
+msgid "Invalid component"
+msgstr "無效的視窗元件"
+
+#: ../glade/glade.c:403
+msgid "Unexpected end of file"
+msgstr "非正常檔案結束"
+
+#: ../glade/glade.c:406
+msgid "Unknown error code"
+msgstr "未知錯誤碼"
+
+#: ../glade/glade_atk.c:120
+msgid "Controlled By"
+msgstr "控制經由"
+
+#: ../glade/glade_atk.c:121
+msgid "Controller For"
+msgstr "控制由於"
+
+#: ../glade/glade_atk.c:122
+msgid "Label For"
+msgstr "標籤以供"
+
+#: ../glade/glade_atk.c:123
+msgid "Labelled By"
+msgstr "標籤由"
+
+#: ../glade/glade_atk.c:124
+msgid "Member Of"
+msgstr "會員之於"
+
+#: ../glade/glade_atk.c:125
+msgid "Node Child Of"
+msgstr "子結點之於"
+
+#: ../glade/glade_atk.c:126
+msgid "Flows To"
+msgstr "流程接往"
+
+#: ../glade/glade_atk.c:127
+msgid "Flows From"
+msgstr "流程從來"
+
+#: ../glade/glade_atk.c:128
+msgid "Subwindow Of"
+msgstr "子視窗之於"
+
+#: ../glade/glade_atk.c:129
+msgid "Embeds"
+msgstr "內嵌"
+
+#: ../glade/glade_atk.c:130
+msgid "Embedded By"
+msgstr "內嵌由"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_atk.c:131
+msgid "Popup For"
+msgstr "跳出式選單以供"
+
+#: ../glade/glade_atk.c:132
+msgid "Parent Window Of"
+msgstr "主視窗之於"
+
+#. I don't think we should set the transient parent as the dialog could be
+#. left open if desired.
+#: ../glade/glade_atk.c:331
+#, c-format
+msgid "Relationship: %s"
+msgstr "關係: %s"
+
+# SUN NEW TRANSLATION
+#. Create the pages of the main notebook
+#. NOTE: If you add/remove pages you need to change the GB_PAGE_SIGNALS
+#. value at the top of this file
+#: ../glade/glade_atk.c:375 ../glade/property.c:615
+msgid "Widget"
+msgstr "視窗元件"
+
+#: ../glade/glade_atk.c:638 ../glade/glade_menu_editor.c:773
+#: ../glade/property.c:776
+msgid "Name:"
+msgstr "名稱:"
+
+#: ../glade/glade_atk.c:639
+msgid "The name of the widget to pass to assistive technologies"
+msgstr "要傳遞給輔助技術的視窗元件名稱"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_atk.c:640
+msgid "Description:"
+msgstr "說明:"
+
+#: ../glade/glade_atk.c:641
+msgid "The description of the widget to pass to assistive technologies"
+msgstr "要傳遞給輔助技術的視窗元件說明"
+
+#: ../glade/glade_atk.c:643
+msgid "Table Caption:"
+msgstr "表格標題:"
+
+#: ../glade/glade_atk.c:644
+msgid "The table caption to pass to assistive technologies"
+msgstr "要傳遞給輔助技術的表格標題"
+
+#: ../glade/glade_atk.c:681
+msgid "Select the widgets with this relationship"
+msgstr "以此關係來選取視窗元件"
+
+#: ../glade/glade_atk.c:761
+msgid "Click"
+msgstr "點擊"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_atk.c:762
+msgid "Press"
+msgstr "按下"
+
+#: ../glade/glade_atk.c:763
+msgid "Release"
+msgstr "釋放"
+
+#: ../glade/glade_atk.c:822
+msgid "Enter the description of the action to pass to assistive technologies"
+msgstr "輸入要傳遞給輔助技術的動作說明"
+
+#: ../glade/glade_clipboard.c:118
+msgid "Clipboard"
+msgstr "剪貼簿"
+
+#: ../glade/glade_clipboard.c:351
+msgid "You need to select a widget to paste into"
+msgstr "您需要選擇一個視窗元件將資料貼入"
+
+#: ../glade/glade_clipboard.c:376
+msgid "You can't paste into windows or dialogs."
+msgstr "您無法貼到視窗或對話框中。"
+
+#: ../glade/glade_clipboard.c:399
+msgid ""
+"You can't paste into the selected widget, since\n"
+"it is created automatically by its parent."
+msgstr ""
+"您無法貼到選取的視窗元件中，因為它由父視窗元件\n"
+"自動建立。"
+
+#: ../glade/glade_clipboard.c:408 ../glade/glade_clipboard.c:416
+msgid "Only menu items can be pasted into a menu or menu bar."
+msgstr "只有選單項目能夠被貼到選單或選單列中。"
+
+#: ../glade/glade_clipboard.c:427
+msgid "Only buttons can be pasted into a dialog action area."
+msgstr "只有按鈕能被貼到對話框動作區。"
+
+#: ../glade/glade_clipboard.c:437
+msgid "Only GnomeDockItem widgets can be pasted into a GnomeDock."
+msgstr "只有 GnomeDockItem 視窗元件能被貼到 GnomeDock 中。"
+
+#: ../glade/glade_clipboard.c:446
+msgid "Only GnomeDockItem widgets can be pasted over a GnomeDockItem."
+msgstr "只有 GnomeDOckItem 視窗元件能被貼到 GnomeDockItem 之上。"
+
+#: ../glade/glade_clipboard.c:449
+msgid "Sorry - pasting over a GnomeDockItem is not implemented yet."
+msgstr "抱歉 - 貼到 GnomeDockItem 之上尚未實作。"
+
+#: ../glade/glade_clipboard.c:457
+msgid "GnomeDockItem widgets can only be pasted into a GnomeDock."
+msgstr "GnomeDockItem 視窗元件只能被貼到 GnomeDock 中。"
+
+#. 3 - see GladeStockMenuItemNew above.
+#: ../glade/glade_gnome.c:121 ../glade/glade_gnome.c:874
+#: ../glade/glade_project_window.c:211 ../glade/glade_project_window.c:633
+msgid "_New"
+msgstr "_New"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_gnome.c:874
+msgid "Create a new file"
+msgstr "建立新檔案"
+
+#. Note that glade_palette_set_show_gnome_widgets() has some of these
+#. strings hard-coded now, so keep up-to-date.
+#: ../glade/glade_gnomelib.c:116
+msgid "_Gnome"
+msgstr "_Gnome"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_gnomelib.c:117 ../glade/glade_gtk12lib.c:248
+#: ../glade/glade_palette.c:315
+msgid "Dep_recated"
+msgstr "不建議(_R)"
+
+#. Note that glade_palette_set_show_gnome_widgets() has some of these
+#. strings hard-coded now, so keep up-to-date.
+#: ../glade/glade_gtk12lib.c:246
+msgid "GTK+ _Basic"
+msgstr "GTK+ 基本(_B)"
+
+#: ../glade/glade_gtk12lib.c:247
+msgid "GTK+ _Additional"
+msgstr "GTK+ 附加(_A)"
+
+#: ../glade/glade_keys_dialog.c:94
+msgid "Select Accelerator Key"
+msgstr "選擇快捷鍵"
+
+#: ../glade/glade_keys_dialog.c:97
+msgid "Keys"
+msgstr "鍵"
+
+#: ../glade/glade_menu_editor.c:395
+msgid "Menu Editor"
+msgstr "選單編輯器"
+
+#: ../glade/glade_menu_editor.c:412
+msgid "Type"
+msgstr "類型"
+
+#: ../glade/glade_menu_editor.c:413
+msgid "Accelerator"
+msgstr "快捷鍵"
+
+#: ../glade/glade_menu_editor.c:414
+msgid "Name"
+msgstr "名稱"
+
+#: ../glade/glade_menu_editor.c:415 ../glade/property.c:1499
+msgid "Handler"
+msgstr "處理"
+
+#: ../glade/glade_menu_editor.c:416 ../glade/property.c:102
+msgid "Active"
+msgstr "活動"
+
+#: ../glade/glade_menu_editor.c:417
+msgid "Group"
+msgstr "群組"
+
+#: ../glade/glade_menu_editor.c:418
+msgid "Icon"
+msgstr "圖示"
+
+#: ../glade/glade_menu_editor.c:459
+msgid "Move the item and its children up one place in the list"
+msgstr "在列表中將項目及其子項向上移動一個位置"
+
+#: ../glade/glade_menu_editor.c:471
+msgid "Move the item and its children down one place in the list"
+msgstr "在列表中將項目及其子項向下移動一個位置"
+
+#: ../glade/glade_menu_editor.c:483
+msgid "Move the item and its children up one level"
+msgstr "將項目及其子項向上移動一個層次"
+
+#: ../glade/glade_menu_editor.c:495
+msgid "Move the item and its children down one level"
+msgstr "將項目及其子項向下移動一個層次"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_menu_editor.c:525
+msgid "The stock item to use."
+msgstr "所使用的內置項目。"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_menu_editor.c:528 ../glade/glade_menu_editor.c:643
+msgid "Stock Item:"
+msgstr "內置項目:"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_menu_editor.c:641
+msgid "The stock Gnome item to use."
+msgstr "所使用的內置 Gnome 項目。"
+
+#: ../glade/glade_menu_editor.c:746
+msgid "The text of the menu item, or empty for separators."
+msgstr "選單項目的文字，或是空白表示分隔線。"
+
+#: ../glade/glade_menu_editor.c:770 ../glade/property.c:777
+msgid "The name of the widget"
+msgstr "視窗元件名稱"
+
+#: ../glade/glade_menu_editor.c:791
+msgid "The function to be called when the item is selected"
+msgstr "當項目被選取時呼叫的函數"
+
+#: ../glade/glade_menu_editor.c:793 ../glade/property.c:1547
+msgid "Handler:"
+msgstr "處理:"
+
+#: ../glade/glade_menu_editor.c:812
+msgid "An optional icon to show on the left of the menu item."
+msgstr "在選單項左側顯示的可選圖示。"
+
+#: ../glade/glade_menu_editor.c:935
+msgid "The tip to show when the mouse is over the item"
+msgstr "當滑鼠位於項目之上時顯示的提示"
+
+#: ../glade/glade_menu_editor.c:937 ../glade/property.c:824
+msgid "Tooltip:"
+msgstr "工具提示:"
+
+#: ../glade/glade_menu_editor.c:958
+msgid "_Add"
+msgstr "_Add"
+
+#: ../glade/glade_menu_editor.c:963
+msgid "Add a new item below the selected item."
+msgstr "在選取的項目下添加一個新項目。"
+
+#: ../glade/glade_menu_editor.c:968
+msgid "Add _Child"
+msgstr "添加子元件(_C)"
+
+#: ../glade/glade_menu_editor.c:973
+msgid "Add a new child item below the selected item."
+msgstr "在選取的項目下添加一個新的子項目。"
+
+#: ../glade/glade_menu_editor.c:979
+msgid "Add _Separator"
+msgstr "添加分隔線(_S)"
+
+#: ../glade/glade_menu_editor.c:984
+msgid "Add a separator below the selected item."
+msgstr "在選取的項目下添加一條分隔線。"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_menu_editor.c:989 ../glade/glade_project_window.c:242
+msgid "_Delete"
+msgstr "_Delete"
+
+#: ../glade/glade_menu_editor.c:994
+msgid "Delete the current item"
+msgstr "刪除目前項目"
+
+#. Type radio options and toggle options.
+#: ../glade/glade_menu_editor.c:1000
+msgid "Item Type:"
+msgstr "項目類型:"
+
+#: ../glade/glade_menu_editor.c:1016
+msgid "If the item is initially on."
+msgstr "是否項目初始是開啟的。"
+
+#: ../glade/glade_menu_editor.c:1018
+msgid "Active:"
+msgstr "活動:"
+
+#: ../glade/glade_menu_editor.c:1023 ../glade/glade_menu_editor.c:1638
+#: ../glade/property.c:2216 ../glade/property.c:2226
+msgid "No"
+msgstr "否"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_menu_editor.c:1037
+msgid "The radio menu item's group"
+msgstr "單選選單項目群組"
+
+#: ../glade/glade_menu_editor.c:1054 ../glade/glade_menu_editor.c:2414
+#: ../glade/glade_menu_editor.c:2554
+msgid "Radio"
+msgstr "單選"
+
+#: ../glade/glade_menu_editor.c:1061 ../glade/glade_menu_editor.c:2412
+#: ../glade/glade_menu_editor.c:2552
+msgid "Check"
+msgstr "核取"
+
+#: ../glade/glade_menu_editor.c:1068 ../glade/property.c:102
+msgid "Normal"
+msgstr "普通"
+
+#. Accelerator key options.
+#: ../glade/glade_menu_editor.c:1077
+msgid "Accelerator:"
+msgstr "快捷鍵:"
+
+#: ../glade/glade_menu_editor.c:1114 ../glade/property.c:1682
+msgid "Ctrl"
+msgstr "Ctrl"
+
+#: ../glade/glade_menu_editor.c:1119 ../glade/property.c:1685
+msgid "Shift"
+msgstr "Shift"
+
+#: ../glade/glade_menu_editor.c:1124 ../glade/property.c:1688
+msgid "Alt"
+msgstr "Alt"
+
+#: ../glade/glade_menu_editor.c:1129 ../glade/property.c:1695
+msgid "Key:"
+msgstr "按鍵:"
+
+#: ../glade/glade_menu_editor.c:1135 ../glade/property.c:1674
+msgid "Modifiers:"
+msgstr "修飾鍵:"
+
+#: ../glade/glade_menu_editor.c:1638 ../glade/glade_menu_editor.c:2419
+#: ../glade/glade_menu_editor.c:2562 ../glade/property.c:2216
+msgid "Yes"
+msgstr "是"
+
+#: ../glade/glade_menu_editor.c:2008
+msgid "Select icon"
+msgstr "選擇圖示"
+
+#: ../glade/glade_menu_editor.c:2353 ../glade/glade_menu_editor.c:2714
+msgid "separator"
+msgstr "分隔線"
+
+#. Add the special 'New' item to create a new group.
+#: ../glade/glade_menu_editor.c:3638 ../glade/glade_project_window.c:369
+#: ../glade/property.c:5115
+msgid "New"
+msgstr "新增"
+
+#: ../glade/glade_palette.c:194 ../glade/glade_palette.c:196
+#: ../glade/glade_palette.c:412
+msgid "Selector"
+msgstr "選擇器"
+
+#: ../glade/glade_project.c:385
+msgid ""
+"The project directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+"沒有設置專案目錄。\n"
+"請使用「專案選項」對話框來設置它。\n"
+
+#: ../glade/glade_project.c:392
+msgid ""
+"The source directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+"沒有設置原始碼目錄。\n"
+"請使用「專案選項」對話框來設置它。\n"
+
+#: ../glade/glade_project.c:402
+msgid ""
+"Invalid source directory:\n"
+"\n"
+"The source directory must be the project directory\n"
+"or a subdirectory of the project directory.\n"
+msgstr ""
+"無效的原始碼目錄:\n"
+"\n"
+"原始碼目錄必須是專案目錄或專案目錄的子目錄。\n"
+
+# SUN CHANGED MESSAGE
+#: ../glade/glade_project.c:410
+msgid ""
+"The pixmaps directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+"沒有設置像素圖目錄。\n"
+"請使用「專案選項」對話框來設置它。\n"
+
+#: ../glade/glade_project.c:438
+#, c-format
+msgid "Sorry - generating source for %s is not implemented yet"
+msgstr "抱歉 - 產生 %s 原始碼的功能尚未實作"
+
+#: ../glade/glade_project.c:509
+msgid ""
+"Your project uses deprecated widgets that Gtkmm-2\n"
+"does not support.  Check your project for these\n"
+"widgets, and use their replacements."
+msgstr ""
+"您的專案使用了不建議的視窗元件，而 Gtkmm-2 並不支援它。在您的專案中查出這些視"
+"窗元件，並使用它們的替代品。"
+
+#: ../glade/glade_project.c:521
+msgid ""
+"Error running glade-- to generate the C++ source code.\n"
+"Check that you have glade-- installed and that it is in your PATH.\n"
+"Then try running 'glade-- <project_file.glade>' in a terminal."
+msgstr ""
+"執行 glade-- 產生 C++ 原始碼時發生錯誤。\n"
+"請檢查您已安裝了 glade-- 並且它在您的命令搜尋路徑中。\n"
+"然後試著在終端機中執行 'glade-- <project_file.glade>'"
+
+#: ../glade/glade_project.c:548
+msgid ""
+"Error running gate to generate the Ada95 source code.\n"
+"Check that you have gate installed and that it is in your PATH.\n"
+"Then try running 'gate <project_file.glade>' in a terminal."
+msgstr ""
+"執行 gate 產生 Ada95 原始碼時發生錯誤。\n"
+"請檢查您已安裝了 gate 並且它在您的命令搜尋路徑中。\n"
+"然後試著在終端機中執行 'gate <project_file.glade>'"
+
+#: ../glade/glade_project.c:571
+msgid ""
+"Error running glade2perl to generate the Perl source code.\n"
+"Check that you have glade2perl installed and that it is in your PATH.\n"
+"Then try running 'glade2perl <project_file.glade>' in a terminal."
+msgstr ""
+"執行 glade2perl 產生 Perl 原始碼時發生錯誤。\n"
+"請檢查您已安裝了 glade2perl 並且它在您的命令搜尋路徑中。然後試著在終端機中執"
+"行 'glade2perl <project_file.glade>'"
+
+#: ../glade/glade_project.c:594
+msgid ""
+"Error running eglade to generate the Eiffel source code.\n"
+"Check that you have eglade installed and that it is in your PATH.\n"
+"Then try running 'eglade <project_file.glade>' in a terminal."
+msgstr ""
+"執行 eglade 產生 Eiffel 原始碼時發生錯誤。\n"
+"請檢查您已安裝了 eglade 並且它在您的命令搜尋路徑中。然後試著在終端機中執行 "
+"'eglade <project_file.glade>'"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project.c:954
+msgid ""
+"The pixmap directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+"沒有設置像素圖目錄。\n"
+"請使用「專案選項」對話框設置它。\n"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project.c:1772
+msgid "Error writing project XML file\n"
+msgstr "寫入專案 XML 檔案時發生錯誤\n"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_options.c:157 ../glade/glade_project_window.c:385
+#: ../glade/glade_project_window.c:890
+msgid "Project Options"
+msgstr "專案選項"
+
+#.
+#. * General Page.
+#.
+#: ../glade/glade_project_options.c:174
+msgid "General"
+msgstr "一般"
+
+#: ../glade/glade_project_options.c:183
+msgid "Basic Options:"
+msgstr "基本選項:"
+
+#: ../glade/glade_project_options.c:201
+msgid "The project directory"
+msgstr "專案目錄"
+
+#: ../glade/glade_project_options.c:203
+msgid "Project Directory:"
+msgstr "專案目錄:"
+
+#: ../glade/glade_project_options.c:221
+msgid "Browse..."
+msgstr "瀏覽..."
+
+#: ../glade/glade_project_options.c:236
+msgid "The name of the current project"
+msgstr "目前專案的名稱"
+
+#: ../glade/glade_project_options.c:238
+msgid "Project Name:"
+msgstr "專案名稱:"
+
+#: ../glade/glade_project_options.c:258
+msgid "The name of the program"
+msgstr "程式名稱"
+
+#: ../glade/glade_project_options.c:281
+msgid "The project file"
+msgstr "專案檔案"
+
+#: ../glade/glade_project_options.c:283
+msgid "Project File:"
+msgstr "專案檔案:"
+
+#. Project Source Directory.
+#: ../glade/glade_project_options.c:299
+msgid "Subdirectories:"
+msgstr "子目錄:"
+
+#: ../glade/glade_project_options.c:316
+msgid "The directory to save generated source code"
+msgstr "儲存產生之原始碼的目錄"
+
+#: ../glade/glade_project_options.c:319
+msgid "Source Directory:"
+msgstr "原始碼目錄:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/glade_project_options.c:338
+msgid "The directory to store pixmaps"
+msgstr "儲存像素圖的目錄"
+
+# SUN CHANGED MESSAGE
+#: ../glade/glade_project_options.c:341
+msgid "Pixmaps Directory:"
+msgstr "像素圖目錄:"
+
+#: ../glade/glade_project_options.c:363
+msgid "The license which is added at the top of generated files"
+msgstr "在產生的檔案頂部所添加的授權"
+
+#. Source Language.
+#: ../glade/glade_project_options.c:385
+msgid "Language:"
+msgstr "語言:"
+
+#: ../glade/glade_project_options.c:416
+msgid "Gnome:"
+msgstr "Gnome:"
+
+#: ../glade/glade_project_options.c:424
+msgid "Enable Gnome Support"
+msgstr "啟用 Gnome 支援"
+
+#: ../glade/glade_project_options.c:430
+msgid "If a Gnome application is to be built"
+msgstr "是否要建構 Gnome 應用程式"
+
+#: ../glade/glade_project_options.c:433
+msgid "Enable Gnome DB Support"
+msgstr "啟用 Gnome DB 支援"
+
+#: ../glade/glade_project_options.c:437
+msgid "If a Gnome DB application is to be built"
+msgstr "是否要建構 Gnome DB 應用程式"
+
+#.
+#. * C Options Page.
+#.
+#: ../glade/glade_project_options.c:447
+msgid "C Options"
+msgstr "C 選項"
+
+#: ../glade/glade_project_options.c:456
+msgid "<b>Note:</b> for large applications the use of libglade is recommended."
+msgstr "<b>注意:</b> 對於大型應用程式而言，建議使用 libglade。"
+
+#: ../glade/glade_project_options.c:468
+msgid "General Options:"
+msgstr "一般選項:"
+
+#. Gettext Support.
+#: ../glade/glade_project_options.c:478
+msgid "Gettext Support"
+msgstr "Gettext 支援"
+
+#: ../glade/glade_project_options.c:483
+msgid "If strings are marked for translation by gettext"
+msgstr "是否標記字串以利用 gettext 翻譯"
+
+# SUN NEW TRANSLATION
+#. Setting widget names.
+#: ../glade/glade_project_options.c:487
+msgid "Set Widget Names"
+msgstr "設置視窗元件名稱"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_options.c:492
+msgid "If widget names are set in the source code"
+msgstr "視窗元件名稱是否在原始碼中設置"
+
+#. Backing up source files.
+#: ../glade/glade_project_options.c:496
+msgid "Backup Source Files"
+msgstr "備份原始碼檔案"
+
+#: ../glade/glade_project_options.c:501
+msgid "If copies of old source files are made"
+msgstr "是否保留舊原始碼的複本"
+
+#. Gnome Help System support.
+#: ../glade/glade_project_options.c:505
+msgid "Gnome Help Support"
+msgstr "Gnome 求助支援"
+
+#: ../glade/glade_project_options.c:512
+msgid "If support for the Gnome Help system should be included"
+msgstr "是否包括 Gnome 求助系統的支援"
+
+#: ../glade/glade_project_options.c:515
+msgid "File Output Options:"
+msgstr "檔案輸出選項:"
+
+#. Outputting main file.
+#: ../glade/glade_project_options.c:525
+msgid "Output main.c File"
+msgstr "輸出 main.c 檔案"
+
+#: ../glade/glade_project_options.c:530
+msgid ""
+"If a main.c file is output containing a main() function, if it doesn't "
+"already exist"
+msgstr "如果不存在 main.c，是否輸出包含 main() 函數的 main.c 檔案"
+
+# SUN NEW TRANSLATION
+#. Outputting support files.
+#: ../glade/glade_project_options.c:534
+msgid "Output Support Functions"
+msgstr "輸出支援函數"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_options.c:539
+msgid "If the support functions are output"
+msgstr "是否輸出支援函數"
+
+# SUN NEW TRANSLATION
+#. Outputting build files.
+#: ../glade/glade_project_options.c:543
+msgid "Output Build Files"
+msgstr "輸出建構檔案"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_options.c:548
+msgid ""
+"If files for building the source code are output, including Makefile.am and "
+"configure.in, if they don't already exist"
+msgstr ""
+"如果用於建構原始碼的檔案不存在，包括 Makefile.am 和 configure.in，是否輸出這"
+"些檔案"
+
+# SUN NEW TRANSLATION
+#. Main source file.
+#: ../glade/glade_project_options.c:552
+msgid "Interface Creation Functions:"
+msgstr "介面建立函數:"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_options.c:564
+msgid "The file in which the functions to create the interface are written"
+msgstr "寫入用於建立介面之函數的檔案"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_options.c:566 ../glade/glade_project_options.c:612
+#: ../glade/glade_project_options.c:658 ../glade/property.c:998
+msgid "Source File:"
+msgstr "原始碼檔案:"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_options.c:581
+msgid ""
+"The file in which the declarations of the functions to create the interface "
+"are written"
+msgstr "寫入用於建立介面之函數聲明的檔案"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_options.c:583 ../glade/glade_project_options.c:629
+#: ../glade/glade_project_options.c:675
+msgid "Header File:"
+msgstr "表頭檔案:"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_options.c:594
+msgid "Source file for interface creation functions"
+msgstr "介面建立函數的原始碼檔案"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_options.c:595
+msgid "Header file for interface creation functions"
+msgstr "介面建立函數的表頭檔案"
+
+# SUN NEW TRANSLATION
+#. Handler source file.
+#: ../glade/glade_project_options.c:598
+msgid "Signal Handler & Callback Functions:"
+msgstr "信號處理程序和回呼函數:"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_options.c:610
+msgid ""
+"The file in which the empty signal handler and callback functions are written"
+msgstr "寫入空的信號處理程序和回呼函數的檔案"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_options.c:627
+msgid ""
+"The file in which the declarations of the signal handler and callback "
+"functions are written"
+msgstr "寫入信號處理程序和回呼函數聲明的檔案"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_options.c:640
+msgid "Source file for signal handler and callback functions"
+msgstr "信號處理程序和回呼函數的原始碼檔案"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_options.c:641
+msgid "Header file for signal handler and callback functions"
+msgstr "寫入空的信號處理程序和回呼函數的表頭檔案"
+
+# SUN NEW TRANSLATION
+#. Support source file.
+#: ../glade/glade_project_options.c:644
+msgid "Support Functions:"
+msgstr "支援函數:"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_options.c:656
+msgid "The file in which the support functions are written"
+msgstr "寫入支援函數的檔案"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_options.c:673
+msgid "The file in which the declarations of the support functions are written"
+msgstr "寫入支援函數聲明的檔案"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_options.c:686
+msgid "Source file for support functions"
+msgstr "支援函數的原始碼檔案"
+
+#: ../glade/glade_project_options.c:687
+msgid "Header file for support functions"
+msgstr "用於支援函數的表頭檔案"
+
+# SUN NEW TRANSLATION
+#.
+#. * libglade Options Page.
+#.
+#: ../glade/glade_project_options.c:693
+msgid "LibGlade Options"
+msgstr "LibGlade 選項"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_options.c:702
+msgid "Translatable Strings:"
+msgstr "可翻譯字串:"
+
+#: ../glade/glade_project_options.c:716
+msgid "<b>Note:</b> this option is deprecated - use intltool instead."
+msgstr "<b>注意:</b> 並不建議此選項 - 使用 intltool 來取代。"
+
+# SUN NEW TRANSLATION
+#. Output translatable strings.
+#: ../glade/glade_project_options.c:726
+msgid "Save Translatable Strings"
+msgstr "儲存可翻譯字串"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_options.c:731
+msgid ""
+"If translatable strings are saved in a separate C source file, to enable "
+"translation of interfaces loaded by libglade"
+msgstr ""
+"是否將可翻譯字串儲存在一個單獨的 C 語言原始碼檔案中，以便可以翻譯由 libglade "
+"載入的介面"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_options.c:741
+msgid "The C source file to save all translatable strings in"
+msgstr "要在其中儲存所有可翻譯字串的 C 語言原始碼檔案"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_options.c:743 ../glade/gnome/gnomepixmap.c:79
+msgid "File:"
+msgstr "檔案:"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_options.c:1202
+msgid "Select the Project Directory"
+msgstr "選擇專案目錄"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_options.c:1392 ../glade/glade_project_options.c:1402
+#: ../glade/glade_project_options.c:1412
+msgid "You need to set the Translatable Strings File option"
+msgstr "需要設置「可翻譯字串檔案」選項"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_options.c:1396 ../glade/glade_project_options.c:1406
+msgid "You need to set the Project Directory option"
+msgstr "需要設置「專案目錄」選項"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_options.c:1398 ../glade/glade_project_options.c:1408
+msgid "You need to set the Project File option"
+msgstr "需要設置「專案檔案」選項"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_options.c:1414
+msgid "You need to set the Project Name option"
+msgstr "需要設置「專案名稱」選項"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_options.c:1416
+msgid "You need to set the Program Name option"
+msgstr "需要設置「程式名稱」選項"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_options.c:1419
+msgid "You need to set the Source Directory option"
+msgstr "需要設置「原始碼目錄」選項"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_options.c:1422
+msgid "You need to set the Pixmaps Directory option"
+msgstr "需要設置「像素圖目錄」選項"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:187
+#, c-format
+msgid ""
+"Couldn't show help file: %s.\n"
+"\n"
+"Error: %s"
+msgstr ""
+"無法顯示輔助檔案: %s 。\n"
+"\n"
+"錯誤: %s"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:211 ../glade/glade_project_window.c:635
+msgid "Create a new project"
+msgstr "建立新專案"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:219 ../glade/glade_project_window.c:655
+#: ../glade/glade_project_window.c:906
+msgid "_Build"
+msgstr "建構(_B)"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:220 ../glade/glade_project_window.c:666
+msgid "Output the project source code"
+msgstr "輸出專案原始碼"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:226 ../glade/glade_project_window.c:669
+msgid "Op_tions..."
+msgstr "選項(_T)..."
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:227 ../glade/glade_project_window.c:678
+msgid "Edit the project options"
+msgstr "編輯專案選項"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:242 ../glade/glade_project_window.c:717
+msgid "Delete the selected widget"
+msgstr "刪除選定視窗元件"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:260 ../glade/glade_project_window.c:728
+msgid "Show _Palette"
+msgstr "顯示調色板(_P)"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:260 ../glade/glade_project_window.c:733
+msgid "Show the palette of widgets"
+msgstr "顯示視窗元件的調色板"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:266 ../glade/glade_project_window.c:738
+msgid "Show Property _Editor"
+msgstr "顯示屬性編輯器(_E)"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:267 ../glade/glade_project_window.c:744
+msgid "Show the property editor"
+msgstr "顯示屬性編輯器"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:273 ../glade/glade_project_window.c:748
+msgid "Show Widget _Tree"
+msgstr "顯示視窗元件樹(_T)"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:274 ../glade/glade_project_window.c:754
+#: ../glade/main.c:82 ../glade/main.c:116
+msgid "Show the widget tree"
+msgstr "顯示視窗元件樹"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:280 ../glade/glade_project_window.c:758
+msgid "Show _Clipboard"
+msgstr "顯示剪貼簿(_C)"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:281 ../glade/glade_project_window.c:764
+#: ../glade/main.c:86 ../glade/main.c:120
+msgid "Show the clipboard"
+msgstr "顯示剪貼簿"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:299
+msgid "Show _Grid"
+msgstr "顯示網格(_G)"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:300 ../glade/glade_project_window.c:800
+msgid "Show the grid (in fixed containers only)"
+msgstr "顯示網格（僅限固定容器中）"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:306
+msgid "_Snap to Grid"
+msgstr "貼齊網格(_S)"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:307
+msgid "Snap widgets to the grid"
+msgstr "將視窗元件與網格貼齊"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:313 ../glade/glade_project_window.c:772
+msgid "Show _Widget Tooltips"
+msgstr "顯示視窗元件工具提示(_W)"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:314 ../glade/glade_project_window.c:780
+msgid "Show the tooltips of created widgets"
+msgstr "顯示已建立視窗元件的工具提示"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:323 ../glade/glade_project_window.c:803
+msgid "Set Grid _Options..."
+msgstr "設置網格選項(_O)..."
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:324
+msgid "Set the grid style and spacing"
+msgstr "設置網格風格和間距"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:330 ../glade/glade_project_window.c:824
+msgid "Set Snap O_ptions..."
+msgstr "設置貼齊選項(_P)..."
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:331
+msgid "Set options for snapping to the grid"
+msgstr "設置貼齊網格的選項"
+
+#: ../glade/glade_project_window.c:343
+msgid "_FAQ"
+msgstr "常見問題(_F)"
+
+#: ../glade/glade_project_window.c:344
+msgid "View the Glade FAQ"
+msgstr "檢視 Glade 常見問題"
+
+# SUN NEW TRANSLATION
+#. create File menu
+#: ../glade/glade_project_window.c:358 ../glade/glade_project_window.c:626
+msgid "_Project"
+msgstr "專案(_P)"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:369 ../glade/glade_project_window.c:873
+#: ../glade/glade_project_window.c:1055
+msgid "New Project"
+msgstr "新專案"
+
+#: ../glade/glade_project_window.c:374
+msgid "Open"
+msgstr "開啟"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:374 ../glade/glade_project_window.c:878
+#: ../glade/glade_project_window.c:1116
+msgid "Open Project"
+msgstr "開啟專案"
+
+#: ../glade/glade_project_window.c:379
+msgid "Save"
+msgstr "儲存"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:379 ../glade/glade_project_window.c:882
+#: ../glade/glade_project_window.c:1481
+msgid "Save Project"
+msgstr "儲存專案"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:385
+msgid "Options"
+msgstr "選項"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:390
+msgid "Build"
+msgstr "建構"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:390
+msgid "Build the Source Code"
+msgstr "建構原始碼"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:639
+msgid "Open an existing project"
+msgstr "開啟現有專案"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:643
+msgid "Save project"
+msgstr "儲存專案"
+
+#: ../glade/glade_project_window.c:688
+msgid "Quit Glade"
+msgstr "離開 Glade"
+
+#: ../glade/glade_project_window.c:702
+msgid "Cut the selected widget to the clipboard"
+msgstr "剪下選定視窗元件並放入剪貼簿"
+
+#: ../glade/glade_project_window.c:707
+msgid "Copy the selected widget to the clipboard"
+msgstr "複製選定視窗元件並放入剪貼簿"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:712
+msgid "Paste the widget from the clipboard over the selected widget"
+msgstr "將剪貼簿中的視窗元件貼在選定視窗元件上"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:784
+msgid "_Grid"
+msgstr "網格(_G)"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:792
+msgid "_Show Grid"
+msgstr "顯示網格(_S)"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:809
+msgid "Set the spacing between grid lines"
+msgstr "設置網格線間的間距"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:812
+msgid "S_nap to Grid"
+msgstr "貼齊網格(_N)"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:820
+msgid "Snap widgets to the grid (in fixed containers only)"
+msgstr "將視窗元件與網格貼齊（僅限固定容器中）"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:830
+msgid "Set which parts of a widget snap to the grid"
+msgstr "設置視窗元件中的哪些視窗元件與網格貼齊"
+
+#. Don't show these yet as we have no help pages.
+#. menuitem = gtk_menu_item_new_with_mnemonic (_("_Contents"));
+#. gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#. gtk_widget_show (menuitem);
+#.
+#. menuitem = gtk_menu_item_new_with_mnemonic (_("_Index"));
+#. gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#. gtk_widget_show (menuitem);
+#.
+#. menuitem = gtk_menu_item_new ();
+#. gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#. gtk_widget_show (menuitem);
+#.
+#: ../glade/glade_project_window.c:855
+msgid "_About..."
+msgstr "關於(_A)"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:896
+msgid "Optio_ns"
+msgstr "選項(_N)"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:900
+msgid "Write Source Code"
+msgstr "寫入原始碼"
+
+#: ../glade/glade_project_window.c:992 ../glade/glade_project_window.c:1697
+#: ../glade/glade_project_window.c:1986
+msgid "Glade"
+msgstr "Glade"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:999
+msgid "Are you sure you want to create a new project?"
+msgstr "您確定要建立新專案？"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:1059
+msgid "New _GTK+ Project"
+msgstr "新 _GTK+ 專案"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:1060
+msgid "New G_NOME Project"
+msgstr "新 G_NOME 專案"
+
+#: ../glade/glade_project_window.c:1063
+msgid "Which type of project do you want to create?"
+msgstr "您要建立哪種類型的專案？"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:1097
+msgid "New project created."
+msgstr "新專案已建立。"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:1187
+msgid "Project opened."
+msgstr "專案已開啟。"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:1201
+msgid "Error opening project."
+msgstr "開啟專案時發生錯誤。"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:1265
+msgid "Errors opening project file"
+msgstr "開啟專案檔時發生錯誤"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:1271
+msgid " errors opening project file:"
+msgstr " 開啟專案檔時發生錯誤:"
+
+#: ../glade/glade_project_window.c:1344
+msgid ""
+"There is no project currently open.\n"
+"Create a new project with the Project/New command."
+msgstr ""
+"目前沒有開啟任何專案。\n"
+"用 專案/新增 命令來建立新專案。"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:1548
+msgid "Error saving project"
+msgstr "儲存專案時發生錯誤"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:1550
+msgid "Error saving project."
+msgstr "儲存專案時發生錯誤。"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:1556
+msgid "Project saved."
+msgstr "專案已儲存。"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:1626
+msgid "Errors writing source code"
+msgstr "寫入原始碼時發生錯誤"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:1628
+msgid "Error writing source."
+msgstr "寫入原始碼時發生錯誤。"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:1634
+msgid "Source code written."
+msgstr "原始碼已寫入。"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:1665
+msgid "System error message:"
+msgstr "系統錯誤訊息:"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:1704
+msgid "Are you sure you want to quit?"
+msgstr "您確定要離開？"
+
+#: ../glade/glade_project_window.c:1988 ../glade/glade_project_window.c:2048
+msgid "(C) 1998-2002 Damon Chaplin"
+msgstr "©1998-2002 Damon Chaplin"
+
+#: ../glade/glade_project_window.c:1989 ../glade/glade_project_window.c:2047
+msgid "Glade is a User Interface Builder for GTK+ and GNOME."
+msgstr ""
+"Glade 使用者介面建構程式\n"
+"適用於 GTK+ 與 GNOME"
+
+#: ../glade/glade_project_window.c:2018
+msgid "About Glade"
+msgstr "關於 Glade"
+
+# SUN NEW TRANSLATION
+#: ../glade/glade_project_window.c:2103
+msgid "<untitled>"
+msgstr "<未命名>"
+
+#: ../glade/gnome-db/gnomedbbrowser.c:135
+msgid "Database Browser"
+msgstr "資料庫瀏覽器"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome-db/gnomedbcombo.c:124
+msgid "Data-bound combo"
+msgstr "資料綁定組合"
+
+#: ../glade/gnome-db/gnomedbconnectprop.c:86
+msgid "GnomeDbConnectionProperties"
+msgstr "GnomeDbConnectionProperties"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome-db/gnomedbconnectsel.c:147
+msgid "Connection Selector"
+msgstr "連線選擇器"
+
+#: ../glade/gnome-db/gnomedbdsnconfig.c:136
+msgid "DSN Configurator"
+msgstr "DSN 配置器"
+
+#: ../glade/gnome-db/gnomedbdsndruid.c:147
+msgid "DSN Config Druid"
+msgstr "DSN 配置精靈"
+
+#: ../glade/gnome-db/gnomedbeditor.c:63
+msgid "Highlight text:"
+msgstr "高亮度顯示文字:"
+
+#: ../glade/gnome-db/gnomedbeditor.c:63
+msgid "If selected, text will be highlighted inside the widget"
+msgstr "若被選取，文字會在視窗元件之內以高亮度顯示"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome-db/gnomedbeditor.c:178
+msgid "GnomeDbEditor"
+msgstr "GnomeDbEditor"
+
+#: ../glade/gnome-db/gnomedberror.c:136
+msgid "Database error viewer"
+msgstr "資料庫錯誤檢視器"
+
+#: ../glade/gnome-db/gnomedberrordlg.c:219
+msgid "Database error dialog"
+msgstr "資料庫錯誤對話框"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome-db/gnomedbform.c:147
+msgid "Form"
+msgstr "表單"
+
+#: ../glade/gnome-db/gnomedbgraybar.c:59
+msgid "Text inside the gray bar"
+msgstr "灰色條中的文字"
+
+#: ../glade/gnome-db/gnomedbgraybar.c:138
+msgid "Gray Bar"
+msgstr "灰色條"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome-db/gnomedbgrid.c:132
+msgid "Data-bound grid"
+msgstr "資料綁定網格"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome-db/gnomedblist.c:136
+msgid "Data-bound list"
+msgstr "資料綁定列表"
+
+#: ../glade/gnome-db/gnomedblogin.c:136
+msgid "Database login widget"
+msgstr "資料庫登入視窗元件"
+
+#: ../glade/gnome-db/gnomedblogindlg.c:78
+msgid "Login"
+msgstr "登入"
+
+#: ../glade/gnome-db/gnomedblogindlg.c:221
+msgid "Database login dialog"
+msgstr "資料庫登入對話框"
+
+#: ../glade/gnome-db/gnomedbprovidersel.c:147
+msgid "Provider Selector"
+msgstr "提供者選擇器"
+
+#: ../glade/gnome-db/gnomedbquerybuilder.c:86
+msgid "GnomeDbQueryBuilder"
+msgstr "GnomeDbQueryBuilder"
+
+#: ../glade/gnome-db/gnomedbsourcesel.c:147
+msgid "Data Source Selector"
+msgstr "資料來源選擇器"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome-db/gnomedbtableeditor.c:133
+msgid "Table Editor "
+msgstr "表格編輯器"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/bonobodock.c:231
+msgid "Allow Floating:"
+msgstr "允許浮動:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/bonobodock.c:232
+msgid "If floating dock items are allowed"
+msgstr "是否允許浮動停靠項"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/bonobodock.c:278
+msgid "Add dock band on top"
+msgstr "在頂部添加停靠帶"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/bonobodock.c:285
+msgid "Add dock band on bottom"
+msgstr "在底部添加停靠帶"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/bonobodock.c:292
+msgid "Add dock band on left"
+msgstr "在左側添加停靠帶"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/bonobodock.c:299
+msgid "Add dock band on right"
+msgstr "在右側添加停靠帶"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/bonobodock.c:306
+msgid "Add floating dock item"
+msgstr "添加浮動停靠項"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/bonobodock.c:495
+msgid "Gnome Dock"
+msgstr "Gnome 停靠"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/bonobodockitem.c:165
+msgid "Locked:"
+msgstr "鎖定:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/bonobodockitem.c:166
+msgid "If the dock item is locked in position"
+msgstr "停靠項是否鎖定位置"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/bonobodockitem.c:167
+msgid "Exclusive:"
+msgstr "獨佔:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/bonobodockitem.c:168
+msgid "If the dock item is always the only item in its band"
+msgstr "停靠項是否始終是該停靠帶內的唯一項目"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/bonobodockitem.c:169
+msgid "Never Floating:"
+msgstr "絕不浮動:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/bonobodockitem.c:170
+msgid "If the dock item is never allowed to float in its own window"
+msgstr "是否絕不允許停靠項在它自己的視窗內浮動"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/bonobodockitem.c:171
+msgid "Never Vertical:"
+msgstr "絕不垂直:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/bonobodockitem.c:172
+msgid "If the dock item is never allowed to be vertical"
+msgstr "是否絕不允許停靠項處於垂直狀態"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/bonobodockitem.c:173
+msgid "Never Horizontal:"
+msgstr "絕不水平:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/bonobodockitem.c:174
+msgid "If the dock item is never allowed to be horizontal"
+msgstr "是否絕不允許停靠項處於水平狀態"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/bonobodockitem.c:177
+msgid "The type of shadow around the dock item"
+msgstr "停靠項周圍的陰影類型"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/bonobodockitem.c:180
+msgid "The orientation of a floating dock item"
+msgstr "浮動停靠項的指向"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/bonobodockitem.c:428
+msgid "Add dock item before"
+msgstr "在物件之前添加停靠項"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/bonobodockitem.c:435
+msgid "Add dock item after"
+msgstr "在物件之後添加停靠項"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/bonobodockitem.c:771
+msgid "Gnome Dock Item"
+msgstr "Gnome 停靠項"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomeabout.c:139
+msgid ""
+"Additional information, such as a description of the package and its home "
+"page on the web"
+msgstr "附加資訊，例如套件的說明及其在網上的主頁"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomeabout.c:539
+msgid "Gnome About Dialog"
+msgstr "Gnome 關於對話框"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomeapp.c:171
+msgid "New File"
+msgstr "新檔案"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomeapp.c:173
+msgid "Open File"
+msgstr "開啟檔案"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomeapp.c:175
+msgid "Save File"
+msgstr "儲存檔案"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomeapp.c:204
+msgid "Status Bar:"
+msgstr "狀態列:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomeapp.c:205
+msgid "If the window has a status bar"
+msgstr "視窗是否有狀態列"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomeapp.c:206
+msgid "Store Config:"
+msgstr "回存配置:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomeapp.c:207
+msgid "If the layout is saved and restored automatically"
+msgstr "是否自動儲存並恢復佈局"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomeapp.c:443
+msgid "Gnome Application Window"
+msgstr "Gnome 應用程式視窗"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomeappbar.c:56
+msgid "Status Message."
+msgstr "狀態訊息。"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomeappbar.c:69
+msgid "Progress:"
+msgstr "進度:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomeappbar.c:70
+msgid "If the app bar has a progress indicator"
+msgstr "應用程式列是否有進度指示器"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomeappbar.c:71
+msgid "Status:"
+msgstr "狀態:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomeappbar.c:72
+msgid "If the app bar has an area for status messages and user input"
+msgstr "應用程式列是否有用於顯示狀態訊息和使用者輸入的區域"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomeappbar.c:184
+msgid "Gnome Application Bar"
+msgstr "Gnome 應用程式列"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomecanvas.c:68
+msgid "Anti-Aliased:"
+msgstr "平滑鋸齒:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomecanvas.c:69
+msgid "If the canvas is anti-aliased, to smooth the edges of text and graphics"
+msgstr "畫布是否能平滑鋸齒，以便平滑文字和圖形的邊緣"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomecanvas.c:70
+msgid "X1:"
+msgstr "X1:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomecanvas.c:70
+msgid "The minimum x coordinate"
+msgstr "X 座標的最小值"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomecanvas.c:71
+msgid "Y1:"
+msgstr "Y1:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomecanvas.c:71
+msgid "The minimum y coordinate"
+msgstr "Y 座標的最小值"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomecanvas.c:72
+msgid "X2:"
+msgstr "X2:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomecanvas.c:72
+msgid "The maximum x coordinate"
+msgstr "X 座標的最大值"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomecanvas.c:73
+msgid "Y2:"
+msgstr "Y2:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomecanvas.c:73
+msgid "The maximum y coordinate"
+msgstr "Y 座標的最大值"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomecanvas.c:75
+msgid "Pixels Per Unit:"
+msgstr "每單位像素數:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomecanvas.c:76
+msgid "The number of pixels corresponding to one unit"
+msgstr "對應於一個單位的像素數"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomecanvas.c:248
+msgid "GnomeCanvas"
+msgstr "GnomeCanvas"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomecolorpicker.c:68
+msgid "Dither:"
+msgstr "抖動:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomecolorpicker.c:69
+msgid "If the sample should use dithering to be more accurate"
+msgstr "取樣是否使用抖動以使結果更精確"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomecolorpicker.c:160
+msgid "Pick a color"
+msgstr "選取顏色"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomecolorpicker.c:219
+msgid "Gnome Color Picker"
+msgstr "Gnome 顏色選擇器"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomecontrol.c:160
+msgid "Couldn't create the Bonobo control"
+msgstr "無法建立 Bonobo 控制"
+
+#: ../glade/gnome/gnomecontrol.c:249
+msgid "New Bonobo Control"
+msgstr "新 Bonobo 控制項"
+
+#: ../glade/gnome/gnomecontrol.c:262
+msgid "Select a Bonobo Control"
+msgstr "選取一個 Bonobo 控制項"
+
+#: ../glade/gnome/gnomecontrol.c:290
+msgid "OAFIID"
+msgstr "OAFIID"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomecontrol.c:295 ../glade/property.c:3902
+msgid "Description"
+msgstr "說明"
+
+#: ../glade/gnome/gnomecontrol.c:339
+msgid "Bonobo Control"
+msgstr "Bonobo 控制項"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedateedit.c:70
+msgid "Show Time:"
+msgstr "顯示時間:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedateedit.c:71
+msgid "If the time is shown as well as the date"
+msgstr "是否顯示日期及時間"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedateedit.c:72
+msgid "24 Hour Format:"
+msgstr "24 小時格式:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedateedit.c:73
+msgid "If the time is shown in 24-hour format"
+msgstr "是否以 24 小時格式顯示時間"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedateedit.c:76
+msgid "Lower Hour:"
+msgstr "較低小時:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedateedit.c:77
+msgid "The lowest hour to show in the popup"
+msgstr "在跳出式選單中顯示的最低小時"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedateedit.c:79
+msgid "Upper Hour:"
+msgstr "較高小時:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedateedit.c:80
+msgid "The highest hour to show in the popup"
+msgstr "在跳出式選單中顯示的最高小時"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedateedit.c:298
+msgid "GnomeDateEdit"
+msgstr "Gnome 日期編輯"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedialog.c:153 ../glade/gnome/gnomemessagebox.c:190
+msgid "Auto Close:"
+msgstr "自動關閉:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedialog.c:154 ../glade/gnome/gnomemessagebox.c:191
+msgid "If the dialog closes when any button is clicked"
+msgstr "是否在單擊任意按鈕時關閉對話框"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedialog.c:155 ../glade/gnome/gnomemessagebox.c:192
+msgid "Hide on Close:"
+msgstr "關閉時隱藏:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedialog.c:156 ../glade/gnome/gnomemessagebox.c:193
+msgid "If the dialog is hidden when it is closed, instead of being destroyed"
+msgstr "是否在關閉對話框時隱藏它，而不摧毀它"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedialog.c:342
+msgid "Gnome Dialog Box"
+msgstr "Gnome 對話框"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedruid.c:91
+msgid "New Gnome Druid"
+msgstr "新 Gnome 精靈"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedruid.c:190
+msgid "Show Help"
+msgstr "顯示求助"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedruid.c:190
+msgid "Display the help button."
+msgstr "顯示求助按鈕。"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedruid.c:255
+msgid "Add Start Page"
+msgstr "添加開始頁面"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedruid.c:270
+msgid "Add Finish Page"
+msgstr "添加完成頁面"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedruid.c:485
+msgid "Druid"
+msgstr "精靈"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedruidpageedge.c:94
+#: ../glade/gnome/gnomedruidpagestandard.c:86
+msgid "The title of the page"
+msgstr "頁面標題"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedruidpageedge.c:96
+msgid "The main text of the page, introducing people to the druid."
+msgstr "該頁面的主要文字，向精靈介紹人員。"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedruidpageedge.c:98
+#: ../glade/gnome/gnomedruidpagestandard.c:87
+msgid "Title Color:"
+msgstr "標題顏色:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedruidpageedge.c:99
+#: ../glade/gnome/gnomedruidpagestandard.c:88
+msgid "The color of the title text"
+msgstr "標題文字的顏色"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedruidpageedge.c:100
+msgid "Text Color:"
+msgstr "文字顏色:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedruidpageedge.c:101
+msgid "The color of the main text"
+msgstr "主要文字的顏色"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedruidpageedge.c:103
+#: ../glade/gnome/gnomedruidpagestandard.c:92
+msgid "The background color of the page"
+msgstr "頁面的背景色"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedruidpageedge.c:104
+#: ../glade/gnome/gnomedruidpagestandard.c:93
+msgid "Logo Back. Color:"
+msgstr "標誌背景色:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedruidpageedge.c:105
+#: ../glade/gnome/gnomedruidpagestandard.c:94
+msgid "The background color around the logo"
+msgstr "標誌周圍的背景色"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedruidpageedge.c:106
+msgid "Text Box Color:"
+msgstr "文字框顏色:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedruidpageedge.c:107
+msgid "The background color of the main text area"
+msgstr "主文字區域的背景色"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedruidpageedge.c:108
+#: ../glade/gnome/gnomedruidpagestandard.c:95
+msgid "Logo Image:"
+msgstr "標誌圖像:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedruidpageedge.c:109
+#: ../glade/gnome/gnomedruidpagestandard.c:96
+msgid "The logo to display in the top-right of the page"
+msgstr "顯示在頁面右上方的標誌"
+
+#: ../glade/gnome/gnomedruidpageedge.c:110
+msgid "Side Watermark:"
+msgstr "頁側浮水印:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedruidpageedge.c:111
+msgid "The main image to display on the side of the page."
+msgstr "顯示在頁面側邊的主要圖像。"
+
+#: ../glade/gnome/gnomedruidpageedge.c:112
+#: ../glade/gnome/gnomedruidpagestandard.c:97
+msgid "Top Watermark:"
+msgstr "頁首浮水印:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedruidpageedge.c:113
+msgid "The watermark to display at the top of the page."
+msgstr "顯示在頁面頂部的浮水印。"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedruidpageedge.c:522
+msgid "Druid Start or Finish Page"
+msgstr "精靈開始或結束頁面"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedruidpagestandard.c:89
+msgid "Contents Back. Color:"
+msgstr "內容背景色:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedruidpagestandard.c:90
+msgid "The background color around the title"
+msgstr "標題周圍的背景色"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedruidpagestandard.c:98
+msgid "The image to display along the top of the page"
+msgstr "單獨顯示在頁面頂部的圖像"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomedruidpagestandard.c:447
+msgid "Druid Standard Page"
+msgstr "精靈標準頁面"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomeentry.c:71 ../glade/gnome/gnomefileentry.c:96
+#: ../glade/gnome/gnomeiconentry.c:74 ../glade/gnome/gnomepixmapentry.c:77
+msgid "History ID:"
+msgstr "歷史 ID:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomeentry.c:72 ../glade/gnome/gnomefileentry.c:97
+#: ../glade/gnome/gnomeiconentry.c:75 ../glade/gnome/gnomepixmapentry.c:78
+msgid "The ID to save the history entries under"
+msgstr "用於儲存歷史項的 ID"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomeentry.c:73 ../glade/gnome/gnomefileentry.c:98
+#: ../glade/gnome/gnomeiconentry.c:76 ../glade/gnome/gnomepixmapentry.c:79
+msgid "Max Saved:"
+msgstr "最大儲存數量:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomeentry.c:74 ../glade/gnome/gnomefileentry.c:99
+#: ../glade/gnome/gnomeiconentry.c:77 ../glade/gnome/gnomepixmapentry.c:80
+msgid "The maximum number of history entries saved"
+msgstr "儲存歷史項的最大數量"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomeentry.c:210
+msgid "Gnome Entry"
+msgstr "Gnome 輸入"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomefileentry.c:102 ../glade/gnome/gnomeiconentry.c:73
+#: ../glade/gnome/gnomepixmapentry.c:83
+msgid "The title of the file selection dialog"
+msgstr "「檔案選擇」對話框的標題"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomefileentry.c:103
+msgid "Directory:"
+msgstr "目錄:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomefileentry.c:104
+msgid "If a directory is needed rather than a file"
+msgstr "是否需要目錄，而不是檔案"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomefileentry.c:106 ../glade/gnome/gnomepixmapentry.c:85
+msgid "If the file selection dialog should be modal"
+msgstr "「檔案選擇」對話框是否為模態"
+
+#: ../glade/gnome/gnomefileentry.c:107 ../glade/gnome/gnomepixmapentry.c:86
+msgid "Use FileChooser:"
+msgstr "使用檔案選擇器:"
+
+#: ../glade/gnome/gnomefileentry.c:108 ../glade/gnome/gnomepixmapentry.c:87
+msgid "Use the new GtkFileChooser widget instead of GtkFileSelection"
+msgstr "使用新的 GtkFileChooser 視窗元件以取代 GtkFileSelection"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomefileentry.c:367
+msgid "Gnome File Entry"
+msgstr "Gnome 檔案輸入"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomefontpicker.c:98
+msgid "The preview text to show in the font selection dialog"
+msgstr "在「字型選擇」對話框中顯示的預覽文字"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomefontpicker.c:99
+msgid "Mode:"
+msgstr "模式:"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomefontpicker.c:100
+msgid "What to display in the font picker button"
+msgstr "「字型選擇器」按鈕中顯示的內容"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomefontpicker.c:107
+msgid "The size of the font to use in the font picker button"
+msgstr "在「字型選擇器」按鈕中使用的字型大小"
+
+#: ../glade/gnome/gnomefontpicker.c:392
+msgid "Gnome Font Picker"
+msgstr "Gnome 字型選擇器"
+
+#: ../glade/gnome/gnomehref.c:66
+msgid "URL:"
+msgstr "URL:"
+
+#: ../glade/gnome/gnomehref.c:67
+msgid "The URL to display when the button is clicked"
+msgstr "當按鈕被點擊時顯示的 URL"
+
+#: ../glade/gnome/gnomehref.c:69
+msgid "The text to display in the button"
+msgstr "顯示在按鈕上的文字"
+
+#: ../glade/gnome/gnomehref.c:206
+msgid "Gnome HRef Link Button"
+msgstr "Gnome 超文字鏈結按鈕"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomeiconentry.c:208
+msgid "Gnome Icon Entry"
+msgstr "Gnome 圖示輸入"
+
+#: ../glade/gnome/gnomeiconlist.c:175
+msgid "The selection mode"
+msgstr "選擇模式"
+
+#: ../glade/gnome/gnomeiconlist.c:177
+msgid "Icon Width:"
+msgstr "圖示寬度:"
+
+#: ../glade/gnome/gnomeiconlist.c:178
+msgid "The width of each icon"
+msgstr "每個圖示的寬度"
+
+#: ../glade/gnome/gnomeiconlist.c:181
+msgid "The number of pixels between rows of icons"
+msgstr "圖示列之間的像素數"
+
+#: ../glade/gnome/gnomeiconlist.c:184
+msgid "The number of pixels between columns of icons"
+msgstr "圖示欄之間的像素數"
+
+#: ../glade/gnome/gnomeiconlist.c:187
+msgid "Icon Border:"
+msgstr "圖示邊框:"
+
+#: ../glade/gnome/gnomeiconlist.c:188
+msgid "The number of pixels around icons (unused?)"
+msgstr "圖示周圍的像素數(未使用？)"
+
+#: ../glade/gnome/gnomeiconlist.c:191
+msgid "Text Spacing:"
+msgstr "文字間距:"
+
+#: ../glade/gnome/gnomeiconlist.c:192
+msgid "The number of pixels between the text and the icon"
+msgstr "在文字和圖示之間的像素數"
+
+#: ../glade/gnome/gnomeiconlist.c:194
+msgid "Text Editable:"
+msgstr "可編輯文字:"
+
+#: ../glade/gnome/gnomeiconlist.c:195
+msgid "If the icon text can be edited by the user"
+msgstr "圖示文字是否可編輯"
+
+#: ../glade/gnome/gnomeiconlist.c:196
+msgid "Text Static:"
+msgstr "靜態文字:"
+
+#: ../glade/gnome/gnomeiconlist.c:197
+msgid ""
+"If the icon text is static, in which case it will not be copied by the "
+"GnomeIconList"
+msgstr "圖示文字是否靜態，如果是靜態的，GnomeIconList 將不會複製它"
+
+#: ../glade/gnome/gnomeiconlist.c:461
+msgid "Icon List"
+msgstr "圖示列表"
+
+#: ../glade/gnome/gnomeiconselection.c:154
+msgid "Icon Selection"
+msgstr "選擇圖示"
+
+#: ../glade/gnome/gnomemessagebox.c:175
+msgid "Message Type:"
+msgstr "訊息類型:"
+
+#: ../glade/gnome/gnomemessagebox.c:176
+msgid "The type of the message box"
+msgstr "訊息框類型"
+
+#: ../glade/gnome/gnomemessagebox.c:178
+msgid "Message:"
+msgstr "訊息:"
+
+#: ../glade/gnome/gnomemessagebox.c:178
+msgid "The message to display"
+msgstr "要顯示的訊息"
+
+#: ../glade/gnome/gnomemessagebox.c:499
+msgid "Gnome Message Box"
+msgstr "Gnome 訊息框"
+
+# SUN NEW TRANSLATION
+#: ../glade/gnome/gnomepixmap.c:79
+msgid "The pixmap filename"
+msgstr "像素圖檔案名"
+
+#: ../glade/gnome/gnomepixmap.c:80
+msgid "Scaled:"
+msgstr "縮放:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomepixmap.c:80
+msgid "If the pixmap is scaled"
+msgstr "是否縮放像素圖"
+
+#: ../glade/gnome/gnomepixmap.c:81
+msgid "Scaled Width:"
+msgstr "縮放寬度:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomepixmap.c:82
+msgid "The width to scale the pixmap to"
+msgstr "像素圖縮放後寬度"
+
+#: ../glade/gnome/gnomepixmap.c:84
+msgid "Scaled Height:"
+msgstr "縮放高度:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomepixmap.c:85
+msgid "The height to scale the pixmap to"
+msgstr "像素圖縮放後高度"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomepixmap.c:346
+msgid "Gnome Pixmap"
+msgstr "Gnome 像素圖"
+
+#: ../glade/gnome/gnomepixmapentry.c:75
+msgid "Preview:"
+msgstr "預覽:"
+
+# SUN CHANGED MESSAGE
+#: ../glade/gnome/gnomepixmapentry.c:76
+msgid "If a small preview of the pixmap is displayed"
+msgstr "是否顯示像素圖的預覽"
+
+#: ../glade/gnome/gnomepixmapentry.c:303
+msgid "GnomePixmapEntry"
+msgstr "Gnome 像素圖輸入"
+
+#: ../glade/gnome/gnomepropertybox.c:113
+msgid "New GnomePropertyBox"
+msgstr "新 Gnome 屬性對話框"
+
+#: ../glade/gnome/gnomepropertybox.c:366
+msgid "Property Dialog Box"
+msgstr "屬性對話框"
+
+# SUN NEW TRANSLATION
+#: ../glade/main.c:70 ../glade/main.c:104
+msgid "Write the source code and exit"
+msgstr "寫入原始碼並離開"
+
+# SUN NEW TRANSLATION
+#: ../glade/main.c:74 ../glade/main.c:108
+msgid "Start with the palette hidden"
+msgstr "開始時隱藏調色板"
+
+# SUN NEW TRANSLATION
+#: ../glade/main.c:78 ../glade/main.c:112
+msgid "Start with the property editor hidden"
+msgstr "開始時隱藏屬性編輯器"
+
+# SUN NEW TRANSLATION
+#: ../glade/main.c:460
+msgid ""
+"glade: The XML file must be set for the '-w' or '--write-source' option.\n"
+msgstr "glade:必須為「-w」或「--write-source」選項設置 XML 檔案。\n"
+
+# SUN NEW TRANSLATION
+#: ../glade/main.c:474
+msgid "glade: Error loading XML file.\n"
+msgstr "glade:載入 XML 檔案時發生錯誤。\n"
+
+# SUN NEW TRANSLATION
+#: ../glade/main.c:481
+msgid "glade: Error writing source.\n"
+msgstr "glade:寫入原始碼時發生錯誤。\n"
+
+# SUN NEW TRANSLATION
+#: ../glade/palette.c:60
+msgid "Palette"
+msgstr "調色板"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:73
+msgid "private"
+msgstr "私有"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:73
+msgid "protected"
+msgstr "被保護"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:73
+msgid "public"
+msgstr "公共"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:102
+msgid "Prelight"
+msgstr "預亮顯示"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:103
+msgid "Selected"
+msgstr "選定"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:103
+msgid "Insens"
+msgstr "Insens"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:467
+msgid "When the window needs redrawing"
+msgstr "當視窗需要重繪時"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:468
+msgid "When the mouse moves"
+msgstr "當滑鼠移動時"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:469
+msgid "Mouse movement hints"
+msgstr "滑鼠移動提示"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:470
+msgid "Mouse movement with any button pressed"
+msgstr "在按下任何按鈕時移動滑鼠"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:471
+msgid "Mouse movement with button 1 pressed"
+msgstr "在按下按鈕 1 時移動滑鼠"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:472
+msgid "Mouse movement with button 2 pressed"
+msgstr "在按下按鈕 2 時移動滑鼠"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:473
+msgid "Mouse movement with button 3 pressed"
+msgstr "在按下按鈕 3 時移動滑鼠"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:474
+msgid "Any mouse button pressed"
+msgstr "按下任意滑鼠按鈕"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:475
+msgid "Any mouse button released"
+msgstr "釋放任意滑鼠按鈕"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:476
+msgid "Any key pressed"
+msgstr "按下任意鍵"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:477
+msgid "Any key released"
+msgstr "釋放任意鍵"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:478
+msgid "When the mouse enters the window"
+msgstr "當滑鼠進入視窗時"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:479
+msgid "When the mouse leaves the window"
+msgstr "當滑鼠離開視窗時"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:480
+msgid "Any change in input focus"
+msgstr "輸入焦點中的任何更改"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:481
+msgid "Any change in window structure"
+msgstr "視窗結構中的任何更改"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:482
+msgid "Any change in X Windows property"
+msgstr "X Window 屬性中的任何更改"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:483
+msgid "Any change in visibility"
+msgstr "可見性的任何更改"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:484 ../glade/property.c:485
+msgid "For cursors in XInput-aware programs"
+msgstr "對於相容 XInput 之程式中的游標"
+
+#: ../glade/property.c:596
+msgid "Properties"
+msgstr "屬性"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:620
+msgid "Packing"
+msgstr "包裝"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:625
+msgid "Common"
+msgstr "一般"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:631
+msgid "Style"
+msgstr "風格"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:637 ../glade/property.c:4646
+msgid "Signals"
+msgstr "信號"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:700 ../glade/property.c:721
+msgid "Properties: "
+msgstr "屬性:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:708 ../glade/property.c:732
+msgid "Properties: <none>"
+msgstr "屬性:<無>"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:778
+msgid "Class:"
+msgstr "類別:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:779
+msgid "The class of the widget"
+msgstr "視窗元件類別"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:813
+msgid "Width:"
+msgstr "寬度:"
+
+#: ../glade/property.c:814
+msgid ""
+"The requested width of the widget (usually used to set the minimum width)"
+msgstr "視窗元件所需的寬度 (一般習慣設為最小寬度)"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:816
+msgid "Height:"
+msgstr "高度:"
+
+#: ../glade/property.c:817
+msgid ""
+"The requested height of the widget (usually used to set the minimum height)"
+msgstr "視窗元件所需的高度 (一般習慣設為最小高度)"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:820
+msgid "Visible:"
+msgstr "可見:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:821
+msgid "If the widget is initially visible"
+msgstr "視窗元件初始是否可見"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:822
+msgid "Sensitive:"
+msgstr "敏感:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:823
+msgid "If the widget responds to input"
+msgstr "視窗元件是否回應輸入"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:825
+msgid "The tooltip to display if the mouse lingers over the widget"
+msgstr "當滑鼠滑過視窗元件時要顯示的工具提示"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:827
+msgid "Can Default:"
+msgstr "可為預設:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:828
+msgid "If the widget can be the default action in a dialog"
+msgstr "該視窗元件是否可為對話框中預設動作"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:829
+msgid "Has Default:"
+msgstr "具有預設:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:830
+msgid "If the widget is the default action in the dialog"
+msgstr "該視窗元件是否為對話框中預設動作"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:831
+msgid "Can Focus:"
+msgstr "可以聚焦:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:832
+msgid "If the widget can accept the input focus"
+msgstr "該視窗元件是否可以接受輸入焦點"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:833
+msgid "Has Focus:"
+msgstr "具有焦點:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:834
+msgid "If the widget has the input focus"
+msgstr "該視窗元件是否具有輸入焦點"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:836
+msgid "Events:"
+msgstr "事件:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:837
+msgid "The X events that the widget receives"
+msgstr "該視窗元件接收的 X 事件"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:839
+msgid "Ext.Events:"
+msgstr "擴展事件:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:840
+msgid "The X Extension events mode"
+msgstr "X 擴展事件模式"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:843
+msgid "Accelerators:"
+msgstr "快捷鍵:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:844
+msgid "Defines the signals to emit when keys are pressed"
+msgstr "定義按鍵時所發出的信號"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:845
+msgid "Edit..."
+msgstr "編輯..."
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:867
+msgid "Propagate:"
+msgstr "傳播:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:868
+msgid "Set True to propagate the style to the widget's children"
+msgstr "設置為 True 會將風格傳播到該視窗元件的子元件"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:869
+msgid "Named Style:"
+msgstr "具名風格:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:870
+msgid "The name of the style, which can be shared by several widgets"
+msgstr "風格的名稱，可以由多個視窗元件共享"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:872
+msgid "Font:"
+msgstr "字型:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:873
+msgid "The font to use for any text in the widget"
+msgstr "視窗元件中的任意文字所使用的字型"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:898
+msgid "Copy All"
+msgstr "全部複製"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:926
+msgid "Foreground:"
+msgstr "前景:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:926
+msgid "Background:"
+msgstr "背景:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:926
+msgid "Base:"
+msgstr "基底:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:928
+msgid "Foreground color"
+msgstr "前景色"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:928
+msgid "Background color"
+msgstr "背景色"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:928
+msgid "Text color"
+msgstr "文字顏色"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:929
+msgid "Base color"
+msgstr "基底色"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:946
+msgid "Back. Pixmap:"
+msgstr "背景像素圖:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:947
+msgid "The graphic to use as the background of the widget"
+msgstr "用做視窗元件背景的圖形"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:999
+msgid "The file to write source code into"
+msgstr "將原始碼寫入其中的檔案"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1000
+msgid "Public:"
+msgstr "公共:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1001
+msgid "If the widget is added to the component's data structure"
+msgstr "是否將視窗元件添加到組件的資料結構中"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1012
+msgid "Separate Class:"
+msgstr "單獨的類別:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1013
+msgid "Put this widget's subtree in a separate class"
+msgstr "將此視窗元件的子樹放入單獨的類別中"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1014
+msgid "Separate File:"
+msgstr "單獨的檔案:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1015
+msgid "Put this widget in a separate source file"
+msgstr "將此視窗元件放入單獨的原始碼檔案中"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1016
+msgid "Visibility:"
+msgstr "可見性:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1017
+msgid "Visibility of widgets. Public widgets are exported to a global map."
+msgstr "視窗元件的可見性。公共視窗元件將導出到全域映射中。"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1127
+msgid "You need to select a color or background to copy"
+msgstr "需要選擇欲複製的顏色或背景"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1146
+msgid "Invalid selection in on_style_copy()"
+msgstr "on_style_copy() 中的所選內容無效"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1188
+msgid "You need to copy a color or background pixmap first"
+msgstr "需要先複製顏色或背景像素圖"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1194
+msgid "You need to select a color to paste into"
+msgstr "需要選擇欲貼上的顏色"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1204
+msgid "You need to select a background pixmap to paste into"
+msgstr "需要選擇欲貼上的背景像素圖"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1456
+msgid "Couldn't create pixmap from file\n"
+msgstr "無法從檔案建立像素圖\n"
+
+# SUN NEW TRANSLATION
+#. List of current signal handlers - Signal/Handler/Data/Options
+#: ../glade/property.c:1498
+msgid "Signal"
+msgstr "信號"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1500
+msgid "Data"
+msgstr "資料"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1501
+msgid "After"
+msgstr "後於"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1502
+msgid "Object"
+msgstr "物件"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1533 ../glade/property.c:1697
+msgid "Signal:"
+msgstr "信號:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1534
+msgid "The signal to add a handler for"
+msgstr "為以下物件添加處理程序的信號"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1548
+msgid "The function to handle the signal"
+msgstr "處理信號的函數"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1551
+msgid "Data:"
+msgstr "資料:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1552
+msgid "The data passed to the handler"
+msgstr "傳遞給處理程序的資料"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1553
+msgid "Object:"
+msgstr "物件:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1554
+msgid "The object which receives the signal"
+msgstr "接收信號的物件"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1555
+msgid "After:"
+msgstr "後於:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1556
+msgid "If the handler runs after the class function"
+msgstr "處理程序是否在類別函數之後執行"
+
+#: ../glade/property.c:1569
+msgid "Add"
+msgstr "添加"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1575
+msgid "Update"
+msgstr "更新"
+
+#: ../glade/property.c:1587
+msgid "Clear"
+msgstr "清除"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1637
+msgid "Accelerators"
+msgstr "快捷鍵"
+
+# SUN NEW TRANSLATION
+#. List of current accelerators - Mods/Keys/Signals
+#: ../glade/property.c:1650
+msgid "Mod"
+msgstr "修飾鍵"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1651
+msgid "Key"
+msgstr "按鍵"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1652
+msgid "Signal to emit"
+msgstr "要發出的信號"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1696
+msgid "The accelerator key"
+msgstr "快捷鍵"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1698
+msgid "The signal to emit when the accelerator is pressed"
+msgstr "當按下快捷鍵時要發出的信號"
+
+#: ../glade/property.c:1847
+msgid "Edit Text Property"
+msgstr "編輯文字屬性"
+
+#: ../glade/property.c:1885
+msgid "<b>_Text:</b>"
+msgstr "<b>文字(_T):</b>"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:1895
+msgid "T_ranslatable"
+msgstr "可翻譯(_R)"
+
+#: ../glade/property.c:1899
+msgid "Has Context _Prefix"
+msgstr "具有文意前綴(_P)"
+
+#: ../glade/property.c:1925
+msgid "<b>Co_mments For Translators:</b>"
+msgstr "<b>給翻譯者的註解(_M):</b>"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:3892
+msgid "Select X Events"
+msgstr "選擇 X 事件"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:3901
+msgid "Event Mask"
+msgstr "事件遮罩"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:4031 ../glade/property.c:4080
+msgid "You need to set the accelerator key"
+msgstr "需要設置快捷鍵"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:4038 ../glade/property.c:4087
+msgid "You need to set the signal to emit"
+msgstr "需要設置要發出的信號"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:4314 ../glade/property.c:4370
+msgid "You need to set the signal name"
+msgstr "需要設置信號名稱"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:4321 ../glade/property.c:4377
+msgid "You need to set the handler for the signal"
+msgstr "需要設置信號的處理程序"
+
+# SUN NEW TRANSLATION
+#. This groups the signals by class, e.g. 'GtkButton signals'.
+#: ../glade/property.c:4580
+#, c-format
+msgid "%s signals"
+msgstr "%s 信號"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:4637
+msgid "Select Signal"
+msgstr "選擇信號"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:4833
+msgid "Value:"
+msgstr "值:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:4833
+msgid "Min:"
+msgstr "最小值:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:4833
+msgid "Step Inc:"
+msgstr "步進增量:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:4834
+msgid "Page Inc:"
+msgstr "頁面增量:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:4834
+msgid "Page Size:"
+msgstr "頁面大小:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:4836
+msgid "H Value:"
+msgstr "水平值:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:4836
+msgid "H Min:"
+msgstr "水平最小值:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:4836
+msgid "H Max:"
+msgstr "水平最大值:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:4836
+msgid "H Step Inc:"
+msgstr "水平步進增量:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:4837
+msgid "H Page Inc:"
+msgstr "水平頁面增量:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:4837
+msgid "H Page Size:"
+msgstr "水平頁面大小:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:4839
+msgid "V Value:"
+msgstr "垂直值:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:4839
+msgid "V Min:"
+msgstr "垂直最小值:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:4839
+msgid "V Max:"
+msgstr "垂直最大值:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:4839
+msgid "V Step Inc:"
+msgstr "垂直步進增量:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:4840
+msgid "V Page Inc:"
+msgstr "垂直頁面增量:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:4840
+msgid "V Page Size:"
+msgstr "垂直頁面大小:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:4843
+msgid "The initial value"
+msgstr "初始值"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:4844
+msgid "The minimum value"
+msgstr "最小值"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:4845
+msgid "The maximum value"
+msgstr "最大值"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:4846
+msgid "The step increment"
+msgstr "步進增量"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:4847
+msgid "The page increment"
+msgstr "頁面增量"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:4848
+msgid "The page size"
+msgstr "頁面大小"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:5003
+msgid "The requested font is not available."
+msgstr "所需的字型不可用。"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:5052
+msgid "Select Named Style"
+msgstr "選擇命名的風格"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:5063
+msgid "Styles"
+msgstr "風格"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:5122
+msgid "Rename"
+msgstr "重新命名"
+
+#: ../glade/property.c:5150
+msgid "Cancel"
+msgstr "取消"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:5270
+msgid "New Style:"
+msgstr "新風格:"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:5284 ../glade/property.c:5405
+msgid "Invalid style name"
+msgstr "無效的風格名稱"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:5292 ../glade/property.c:5415
+msgid "That style name is already in use"
+msgstr "該風格名稱已被使用"
+
+# SUN NEW TRANSLATION
+#: ../glade/property.c:5390
+msgid "Rename Style To:"
+msgstr "將風格重命名為:"
+
+# SUN NEW TRANSLATION
+#: ../glade/save.c:139 ../glade/source.c:2771
+#, c-format
+msgid ""
+"Couldn't rename file:\n"
+"  %s\n"
+"to:\n"
+"  %s\n"
+msgstr ""
+"無法將檔案:\n"
+"  %s\n"
+"重新命名為:\n"
+"  %s\n"
+
+# SUN NEW TRANSLATION
+#: ../glade/save.c:174 ../glade/save.c:225 ../glade/save.c:947
+#: ../glade/source.c:358 ../glade/source.c:373 ../glade/source.c:391
+#: ../glade/source.c:404 ../glade/source.c:815 ../glade/source.c:1043
+#: ../glade/source.c:1134 ../glade/source.c:1328 ../glade/source.c:1423
+#: ../glade/source.c:1643 ../glade/source.c:1732 ../glade/source.c:1784
+#: ../glade/source.c:1848 ../glade/source.c:1895 ../glade/source.c:2032
+#: ../glade/utils.c:1147
+#, c-format
+msgid ""
+"Couldn't create file:\n"
+"  %s\n"
+msgstr ""
+"無法建立檔案:\n"
+"  %s\n"
+
+# SUN NEW TRANSLATION
+#: ../glade/save.c:848
+msgid "Error writing XML file\n"
+msgstr "寫入 XML 檔案時發生錯誤\n"
+
+# SUN NEW TRANSLATION
+#: ../glade/save.c:953
+#, c-format
+msgid ""
+"/*\n"
+" * Translatable strings file generated by Glade.\n"
+" * Add this file to your project's POTFILES.in.\n"
+" * DO NOT compile it as part of your application.\n"
+" */\n"
+"\n"
+msgstr ""
+"/*\n"
+" * Glade 產生的可翻譯字串檔案。\n"
+" * 將此檔案添加到專案的 POTFILES.in 中。\n"
+" * 不要將它做為應用程式的一部分而進行編譯。\n"
+" */\n"
+"\n"
+
+# SUN NEW TRANSLATION
+#: ../glade/source.c:184
+#, c-format
+msgid ""
+"Invalid interface source filename: %s\n"
+"%s\n"
+msgstr ""
+"無效的介面原始碼檔案名:%s\n"
+"%s\n"
+
+# SUN NEW TRANSLATION
+#: ../glade/source.c:186
+#, c-format
+msgid ""
+"Invalid interface header filename: %s\n"
+"%s\n"
+msgstr ""
+"無效的介面表頭檔案名:%s\n"
+"%s\n"
+
+# SUN NEW TRANSLATION
+#: ../glade/source.c:189
+#, c-format
+msgid ""
+"Invalid callbacks source filename: %s\n"
+"%s\n"
+msgstr ""
+"無效的回呼原始碼檔案名:%s\n"
+"%s\n"
+
+# SUN NEW TRANSLATION
+#: ../glade/source.c:191
+#, c-format
+msgid ""
+"Invalid callbacks header filename: %s\n"
+"%s\n"
+msgstr ""
+"無效的回呼表頭檔案名:%s\n"
+"%s\n"
+
+# SUN NEW TRANSLATION
+#: ../glade/source.c:197
+#, c-format
+msgid ""
+"Invalid support source filename: %s\n"
+"%s\n"
+msgstr ""
+"無效的支援原始碼檔案名:%s\n"
+"%s\n"
+
+# SUN NEW TRANSLATION
+#: ../glade/source.c:199
+#, c-format
+msgid ""
+"Invalid support header filename: %s\n"
+"%s\n"
+msgstr ""
+"無效的支援表頭檔案名:%s\n"
+"%s\n"
+
+# SUN NEW TRANSLATION
+#: ../glade/source.c:418 ../glade/source.c:426
+#, c-format
+msgid ""
+"Couldn't append to file:\n"
+"  %s\n"
+msgstr ""
+"無法附加到檔案:\n"
+"  %s\n"
+
+# SUN NEW TRANSLATION
+#: ../glade/source.c:1724 ../glade/utils.c:1168
+#, c-format
+msgid ""
+"Error writing to file:\n"
+"  %s\n"
+msgstr ""
+"發生錯誤於寫入檔案:\n"
+"  %s \n"
+
+# SUN NEW TRANSLATION
+#: ../glade/source.c:2743
+msgid "The filename must be set in the Project Options dialog."
+msgstr "檔案名必須在「專案選項」對話框中設置。"
+
+# SUN NEW TRANSLATION
+#: ../glade/source.c:2746
+msgid ""
+"The filename must be a simple relative filename.\n"
+"Use the Project Options dialog to set it."
+msgstr ""
+"檔案名必須是一個簡單的相對檔案名。\n"
+"使用「專案選項」對話框進行設置。"
+
+# SUN NEW TRANSLATION
+#: ../glade/tree.c:78
+msgid "Widget Tree"
+msgstr "視窗元件樹"
+
+# SUN NEW TRANSLATION
+#: ../glade/utils.c:900 ../glade/utils.c:940
+msgid "Widget not found in box"
+msgstr "在框中找不到視窗元件"
+
+# SUN NEW TRANSLATION
+#: ../glade/utils.c:920
+msgid "Widget not found in table"
+msgstr "在表格中找不到視窗元件"
+
+# SUN NEW TRANSLATION
+#: ../glade/utils.c:960
+msgid "Widget not found in fixed container"
+msgstr "在固定容器中找不到視窗元件"
+
+# SUN NEW TRANSLATION
+#: ../glade/utils.c:981
+msgid "Widget not found in packer"
+msgstr "在包裝程序中找不到視窗元件"
+
+# SUN NEW TRANSLATION
+#: ../glade/utils.c:1118
+#, c-format
+msgid ""
+"Couldn't access file:\n"
+"  %s\n"
+msgstr ""
+"無法存取檔案:\n"
+"  %s\n"
+
+# SUN NEW TRANSLATION
+#: ../glade/utils.c:1141
+#, c-format
+msgid ""
+"Couldn't open file:\n"
+"  %s\n"
+msgstr ""
+"無法開啟檔案:\n"
+"  %s\n"
+
+# SUN NEW TRANSLATION
+#: ../glade/utils.c:1158
+#, c-format
+msgid ""
+"Error reading from file:\n"
+"  %s\n"
+msgstr ""
+"發生錯誤於讀取檔案:\n"
+"  %s \n"
+
+# SUN NEW TRANSLATION
+#. This happens under WIN32 when stat is confused by the filename, but this is
+#. harmless, since we know that the directory exists after all.
+#: ../glade/utils.c:1225
+#, c-format
+msgid ""
+"Couldn't create directory:\n"
+"  %s\n"
+msgstr ""
+"無法建立目錄:\n"
+"  %s\n"
+
+# SUN NEW TRANSLATION
+#: ../glade/utils.c:1232
+#, c-format
+msgid ""
+"Couldn't access directory:\n"
+"  %s\n"
+msgstr ""
+"無法存取目錄:\n"
+"  %s\n"
+
+# SUN NEW TRANSLATION
+#: ../glade/utils.c:1240
+#, c-format
+msgid ""
+"Invalid directory:\n"
+"  %s\n"
+msgstr ""
+"無效的目錄:\n"
+"  %s\n"
+
+# SUN NEW TRANSLATION
+#: ../glade/utils.c:1611
+msgid "Projects"
+msgstr "專案集"
+
+# SUN NEW TRANSLATION
+#: ../glade/utils.c:1628
+msgid "project"
+msgstr "專案"
+
+# SUN NEW TRANSLATION
+#: ../glade/utils.c:1634
+#, c-format
+msgid ""
+"Couldn't open directory:\n"
+"  %s\n"
+msgstr ""
+"無法開啟目錄:\n"
+"  %s\n"

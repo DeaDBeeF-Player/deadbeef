@@ -1,0 +1,68 @@
+
+
+Note that there won't be much new development on this version of Glade any
+more. As soon as everything works for GTK+ 2 and GNOME 2, only bug fixes
+will be allowed.
+
+A rewrite of Glade (called Glade 3) is underway, and is in the glade3
+module in the GNOME cvs repository.
+
+
+Minor bugs & notes
+==================
+
+ o i18n UTF-8 bug - filenames etc. see bug #107696
+   o source.c - generated code that uses filenames. What do we do?
+   o gnome_program_locate_file() uses on-disk encoding. check calls.
+     - used in source.c, gnomepixmap.c generated code.
+     - only used for pixmaps/pixbufs.
+     - just recommend people use ASCII only for filenames? Yes.
+
+ o Is there a problem with stock buttons and i18n? Outputting translated
+   names in code? See Peeter Vois message on glade-users. Also bug 98510.
+   For some menuitems which aren't stock items, it outputs the native
+   language as the label text, which may not be wanted.
+   Also, it uses the native language for part of the signal handler function
+   names. Not sure what to do here. Some people may want to use native
+   language labels and names, and some may want to use English.
+
+ o X11 dependency patch. bug 107450. for directfb.
+
+ o Should add a Role property to windows at some point. Though I don't think
+   it is a GObject property so libglade needs to support it.
+
+ o Grid/Snap settings should be in project options, so other developers use
+   the same settings (What if different windows want different settings?).
+   Move to Options dialog. Move 'Show Widget Tooltips' to View menu for now.
+   Get rid of 'Settings' menu.
+
+ o Should get rid of GtkCLists & other badly deprecated stuff.
+
+ o Optional int properties - we currently use a checkbutton with no label, but
+   it doesn't receive the input focus. Use a checkbutton with indicator off?
+   with tick and cross icons? There is a GTK+ bug & patch about this issue.
+
+ o Look for code that iterates over strings. need to use UTF8 functions.
+   - project options stuff that creates options automatically.
+   - widget name stuff?
+   - signal handler name stuff in menu editor.
+   - will only become a problem when non-ASCII used.
+
+ o popup menus - make sure correct menu items are displayed - for widgets
+   which can't be deleted/have event boxes added etc.
+
+ o buttons with label & icon. Bad interactions between label field in button
+   and label, e.g. if you select the label and turn markup on, then select the
+   button and enter bad markup.
+
+   Either
+    o Turn markup off when we set the label in the button.
+    o Use common function to set the label from the button.
+      But will this work for all buttons? in libglade?
+
+ o radio groups - the widgets don't update well when you move them between
+   groups, e.g. sometimes no widgets in the group are selected. I'm not sure
+   if this matters.
+
+ o When a widget is selected/deselected, we should update all open dialogs
+   to reflect the new widgets settings, e.g. signals dialogs.

@@ -1,0 +1,33 @@
+/* XPM */
+static char *toolbar_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"21 21 6 1",
+"  c Gray0",
+". c #7b7b7b",
+"X c #d6d6d6",
+"o c #b3cece",
+"O c Gray100",
+"+ c None",
+/* pixels */
+"+++++++++++++++++++++",
+"+++++++++++++++++++++",
+"+++++++++++++++++++++",
+"+++++++++++++++++++++",
+"+OOOOOOOOOOOOOOOOOOO ",
+"+OXXXXXXXXXXXXXXXXX. ",
+"+OXOOOO OOOO OOOO X. ",
+"+OXOXXX OXXX OXXX X. ",
+"+OXOXXX OXXX OXXX X. ",
+"+OXO    O    O    X. ",
+"+OXXXXXXXXXXXXXXXXX. ",
+"+O.................. ",
+"+                    ",
+"+++++++++++++++++++++",
+"+++++++++++++++++++++",
+"+++++++++++++++++++++",
+"+++++++++++++++++++++",
+"+++++++++++++++++++++",
+"+++++++++++++++++++++",
+"+++++++++++++++++++++",
+"+++++++++++++++++++++"
+};

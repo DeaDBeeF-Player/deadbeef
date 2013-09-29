@@ -1,0 +1,32 @@
+/* XPM */
+static char *popupmenu_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"21 21 5 1",
+"  c Gray0",
+". c #7b7b7b",
+"X c #b3cece",
+"o c Gray100",
+"O c None",
+/* pixels */
+"OOOOOOOOOOOOOOOOOOOOO",
+"OO........OOOOOOOOOOO",
+"OO.oooooo  OOOOOOOOOO",
+"OO.ooooo........OOOOO",
+"OO.ooooo.oooooo. OOOO",
+"OO.......oooooo. OOOO",
+"OO.ooooo.oooooo. O.OO",
+"OO.ooooo........ O.OO",
+"OO.ooooo.oooooo. O.O.",
+"OO.......oooooo. O.O.",
+"OO.ooooo.oooooo. O.O.",
+"OO.ooooo........ O.O.",
+"OO.ooooo.        O.O.",
+"OO........ O.OOOOO.O.",
+"OO.oooooo. O.O.....O.",
+"OO.oooooo. O.O.OOOOO.",
+"OO.oooooo. O.O.O.....",
+"OO........ O.O.OOOOOO",
+"OOO        O.O.OOOOOO",
+"OOOOOOOOOOOO.O.OOOOOO",
+"OOOOO........O.OOOOOO"
+};

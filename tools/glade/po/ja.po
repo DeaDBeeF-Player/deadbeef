@@ -1,0 +1,5817 @@
+# glade ja.po.
+# Copyright (C) 1999-2004 Free Software Foundation, Inc.
+# 大河 雄一 <kuri@makino.cc.tohoku.ac.jp>, 1999-2001.
+# 竹田 寛郁 <takepin@turbolinux.co.jp>, 2000.
+# 栗原 守 <storm@din.or.jp>, 1999.
+# Yukihiro Nakai <nakai@gnome.gr.jp>, 2003.
+# Takeshi AIHANA <aihana@gnome.gr.jp>, 2004.
+msgid ""
+msgstr ""
+"Project-Id-Version: glade HEAD\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2005-08-26 13:38+0200\n"
+"PO-Revision-Date: 2005-02-01 22:13+0900\n"
+"Last-Translator: Takeshi AIHANA <aihana@gnome.gr.jp>\n"
+"Language-Team: Japanese <gnome-translation@gnome.gr.jp>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../glade-2.desktop.in.h:1
+msgid "Design user interfaces"
+msgstr "ユーザ・インタフェースを設計します"
+
+#: ../glade-2.desktop.in.h:2
+msgid "Glade Interface Designer"
+msgstr "Glade インタフェース・デザイナ"
+
+#: ../glade/editor.c:343
+msgid "Grid Options"
+msgstr "グリッドの設定"
+
+#: ../glade/editor.c:357
+msgid "Horizontal Spacing:"
+msgstr "水平方向の間隔:"
+
+#: ../glade/editor.c:372
+msgid "Vertical Spacing:"
+msgstr "垂直方向の間隔:"
+
+#: ../glade/editor.c:390
+msgid "Grid Style:"
+msgstr "グリッドのスタイル:"
+
+#: ../glade/editor.c:396
+msgid "Dots"
+msgstr "点"
+
+#: ../glade/editor.c:405
+msgid "Lines"
+msgstr "線"
+
+#: ../glade/editor.c:487
+msgid "Snap Options"
+msgstr "スナップの設定"
+
+#. Horizontal snapping
+#: ../glade/editor.c:502
+msgid "Horizontal Snapping:"
+msgstr "水平方向のスナップ:"
+
+#: ../glade/editor.c:508 ../glade/gbwidgets/gbtextview.c:49
+msgid "Left"
+msgstr "左"
+
+#: ../glade/editor.c:517 ../glade/gbwidgets/gbtextview.c:50
+msgid "Right"
+msgstr "右"
+
+#. Vertical snapping
+#: ../glade/editor.c:526
+msgid "Vertical Snapping:"
+msgstr "垂直方向のスナップ:"
+
+#: ../glade/editor.c:532
+msgid "Top"
+msgstr "上"
+
+#: ../glade/editor.c:540
+msgid "Bottom"
+msgstr "下"
+
+#: ../glade/editor.c:741
+msgid "GtkToolItem widgets can only be added to a GtkToolbar."
+msgstr "GtkToolItem ウィジットは GtkToolbar にのみ追加することができます。"
+
+#: ../glade/editor.c:758
+msgid "Couldn't insert a GtkScrolledWindow widget."
+msgstr "ウィジット GtkScrolledWindow を挿入できませんでした。"
+
+#: ../glade/editor.c:805
+msgid "Couldn't insert a GtkViewport widget."
+msgstr "ウィジット GtkViewport を挿入できませんでした。"
+
+#: ../glade/editor.c:832
+msgid "Couldn't add new widget."
+msgstr "新しいウィジットを追加できませんでした。"
+
+#: ../glade/editor.c:1230
+msgid ""
+"You can't add a widget at the selected position.\n"
+"\n"
+"Tip: GTK+ uses containers to lay out widgets.\n"
+"Try deleting the existing widget and using\n"
+"a box or table container instead.\n"
+msgstr ""
+"選択した位置にはウィジットを追加できません。\n"
+"\n"
+"【ヒント】\n"
+"GTK+ ではウィジットを配置するために\n"
+"コンテナを使用します。既に配置してある\n"
+"コンテナを削除し、その代わりに\n"
+"ボックスまたはテーブル・コンテナを使ってみて下さい。\n"
+
+#: ../glade/editor.c:3517
+msgid "Couldn't delete widget."
+msgstr "ウィジットを削除できませんでした。"
+
+#: ../glade/editor.c:3541 ../glade/editor.c:3545
+msgid "The widget can't be deleted"
+msgstr "そのウィジットは削除できません"
+
+#: ../glade/editor.c:3572
+msgid ""
+"The widget is created automatically as part of the parent widget, and it "
+"can't be deleted."
+msgstr ""
+"そのウィジットは親ウィジットの一部として自動的に生成されたものなので、削除す"
+"ることはできません。"
+
+#: ../glade/gbwidget.c:697
+msgid "Border Width:"
+msgstr "境界線の幅:"
+
+#: ../glade/gbwidget.c:698
+msgid "The width of the border around the container"
+msgstr "コンテナとウィジットの間に挿入する余白です"
+
+#: ../glade/gbwidget.c:1745
+msgid "Select"
+msgstr "選択"
+
+#: ../glade/gbwidget.c:1767
+msgid "Remove Scrolled Window"
+msgstr "スクロール・ウィンドウの削除"
+
+#: ../glade/gbwidget.c:1776
+msgid "Add Scrolled Window"
+msgstr "スクロール・ウィンドウの追加"
+
+#: ../glade/gbwidget.c:1797
+msgid "Remove Alignment"
+msgstr "アライメントの削除"
+
+#: ../glade/gbwidget.c:1805
+msgid "Add Alignment"
+msgstr "アライメントの追加"
+
+#: ../glade/gbwidget.c:1820
+msgid "Remove Event Box"
+msgstr "イベントボックスの削除"
+
+#: ../glade/gbwidget.c:1828
+msgid "Add Event Box"
+msgstr "イベントボックスの追加"
+
+#: ../glade/gbwidget.c:1838
+msgid "Redisplay"
+msgstr "再表示"
+
+#: ../glade/gbwidget.c:1849
+msgid "Cut"
+msgstr "切り取り"
+
+#: ../glade/gbwidget.c:1856 ../glade/property.c:892 ../glade/property.c:5135
+msgid "Copy"
+msgstr "コピー"
+
+#: ../glade/gbwidget.c:1865 ../glade/property.c:904
+msgid "Paste"
+msgstr "貼り付け"
+
+#: ../glade/gbwidget.c:1877 ../glade/property.c:1580 ../glade/property.c:5126
+msgid "Delete"
+msgstr "削除"
+
+#. N/A stands for 'Not Applicable'. It is used when a standard widget
+#. property does not apply to the current widget. e.g. widgets without
+#. windows can't use the Events property. This appears in the property
+#. editor and so should be a short abbreviation.
+#: ../glade/gbwidget.c:2403 ../glade/gbwidget.c:2472
+msgid "N/A"
+msgstr "該当なし"
+
+#. General code for container - has to remove all children and add back
+#. NOTE: this may not work for specialised containers.
+#. NOTE: need to ref widgets?
+#: ../glade/gbwidget.c:3202
+msgid "replacing child of container - not implemented yet\n"
+msgstr "コンテナの子ウィジットの入れ替え - 未実装\n"
+
+#: ../glade/gbwidget.c:3430
+msgid "Couldn't insert GtkAlignment widget."
+msgstr "ウィジット GtkAlignment を挿入できませんでした。"
+
+#: ../glade/gbwidget.c:3470
+msgid "Couldn't remove GtkAlignment widget."
+msgstr "ウィジット GtkAlignment を削除できませんでした。"
+
+#: ../glade/gbwidget.c:3494
+msgid "Couldn't insert GtkEventBox widget."
+msgstr "ウィジット GtkEventBox を挿入できませんでした。"
+
+#: ../glade/gbwidget.c:3533
+msgid "Couldn't remove GtkEventBox widget."
+msgstr "ウィジット GtkEventBox を削除できませんでした。"
+
+#: ../glade/gbwidget.c:3568
+msgid "Couldn't insert GtkScrolledWindow widget."
+msgstr "ウィジット GtkScrolledWindow を追加できませんでした。"
+
+#: ../glade/gbwidget.c:3607
+msgid "Couldn't remove GtkScrolledWindow widget."
+msgstr "ウィジット GtkScrolledWindow を削除できませんでした。"
+
+#: ../glade/gbwidget.c:3721
+msgid "Remove Label"
+msgstr "ラベルの削除"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:78
+msgid "Application Name"
+msgstr "アプリケーション名"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:102 ../glade/gnome/gnomeabout.c:137
+msgid "Logo:"
+msgstr "ロゴ:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:102 ../glade/gnome/gnomeabout.c:137
+msgid "The pixmap to use as the logo"
+msgstr "ロゴとして使用するピックスマップです"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:104 ../glade/glade_project_options.c:260
+msgid "Program Name:"
+msgstr "プログラム名:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:104
+msgid "The name of the application"
+msgstr "アプリケーションの名前です"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:105 ../glade/gnome/gnomeabout.c:139
+msgid "Comments:"
+msgstr "コメント:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:105
+msgid "Additional information, such as a description of the application"
+msgstr "アプリケーションに関する追加情報です"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:106 ../glade/gnome/gnomeabout.c:138
+msgid "Copyright:"
+msgstr "著作権:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:106 ../glade/gnome/gnomeabout.c:138
+msgid "The copyright notice"
+msgstr "著作権を通知に関する情報です"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:108
+msgid "Website URL:"
+msgstr "ウェブサイトの URL:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:108
+msgid "The URL of the application's website"
+msgstr "アプリケーションを配布しているウェブサイトの URL です"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:109
+msgid "Website Label:"
+msgstr "ウェブサイトのラベル:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:109
+msgid "The label to display for the link to the website"
+msgstr "ウェブサイトのリンクを表すラベルです。"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:111 ../glade/glade_project_options.c:365
+msgid "License:"
+msgstr "ライセンス:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:111
+msgid "The license details of the application"
+msgstr "アプリケーションのラインセンスの詳細です"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:113 ../glade/gnome/gnomeabout.c:141
+msgid "Authors:"
+msgstr "作者:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:113 ../glade/gnome/gnomeabout.c:141
+msgid "The authors of the package, one on each line"
+msgstr "パッケージの作者です (一人/行)"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:114 ../glade/gnome/gnomeabout.c:142
+msgid "Documenters:"
+msgstr "ドキュメント作者:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:114 ../glade/gnome/gnomeabout.c:142
+msgid "The documenters of the package, one on each line"
+msgstr "パッケージのドキュメント作者です (一人/行)"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:115
+msgid "Artists:"
+msgstr "アーティスト:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:115
+msgid ""
+"The people who have created the artwork for the package, one on each line"
+msgstr "パッケージのアートワーク関連の担当者です (一人/行)"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:116 ../glade/gnome/gnomeabout.c:143
+msgid "Translators:"
+msgstr "翻訳者:"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:116 ../glade/gnome/gnomeabout.c:143
+msgid ""
+"The translators of the package. This should normally be left empty so that "
+"translators can add their names in the po files"
+msgstr ""
+"パッケージの翻訳者で、通常は po ファイルに記載するので空のままにしておいて下"
+"さい"
+
+#: ../glade/gbwidgets/gbaboutdialog.c:559
+msgid "About Dialog"
+msgstr "情報ダイアログ"
+
+#: ../glade/gbwidgets/gbaccellabel.c:200
+msgid "Label with Accelerator"
+msgstr "アクセラレータ付きのラベル"
+
+#. The GtkProgress interface is deprecated now, and GtkProgressBar doesn't
+#. have functions to set these, so I suppose we shouldn't support them.
+#: ../glade/gbwidgets/gbalignment.c:71 ../glade/gbwidgets/gbarrow.c:89
+#: ../glade/gbwidgets/gbaspectframe.c:130 ../glade/gbwidgets/gbimage.c:119
+#: ../glade/gbwidgets/gblabel.c:180 ../glade/gbwidgets/gbprogressbar.c:162
+msgid "X Align:"
+msgstr "X-アライメント:"
+
+#: ../glade/gbwidgets/gbalignment.c:72
+msgid "The horizontal alignment of the child widget"
+msgstr "子ウィジットの水平方向に対する位置です"
+
+#: ../glade/gbwidgets/gbalignment.c:74 ../glade/gbwidgets/gbarrow.c:92
+#: ../glade/gbwidgets/gbaspectframe.c:133 ../glade/gbwidgets/gbimage.c:122
+#: ../glade/gbwidgets/gblabel.c:183 ../glade/gbwidgets/gbprogressbar.c:165
+msgid "Y Align:"
+msgstr "Y-アライメント:"
+
+#: ../glade/gbwidgets/gbalignment.c:75
+msgid "The vertical alignment of the child widget"
+msgstr "子ウィジットの垂直方向に対する位置です"
+
+#: ../glade/gbwidgets/gbalignment.c:77
+msgid "X Scale:"
+msgstr "X-スケール:"
+
+#: ../glade/gbwidgets/gbalignment.c:78
+msgid "The horizontal scale of the child widget"
+msgstr "子ウィジットの水平方向に対する大きさです"
+
+#: ../glade/gbwidgets/gbalignment.c:80
+msgid "Y Scale:"
+msgstr "Y-スケール:"
+
+#: ../glade/gbwidgets/gbalignment.c:81
+msgid "The vertical scale of the child widget"
+msgstr "子ウィジットの垂直方向に対する大きさです"
+
+#: ../glade/gbwidgets/gbalignment.c:85
+msgid "Top Padding:"
+msgstr "上パディング:"
+
+#: ../glade/gbwidgets/gbalignment.c:86
+msgid "Space to put above the child widget"
+msgstr "子ウィジットの上側に挿入する余白です"
+
+#: ../glade/gbwidgets/gbalignment.c:89
+msgid "Bottom Padding:"
+msgstr "下パディング:"
+
+#: ../glade/gbwidgets/gbalignment.c:90
+msgid "Space to put below the child widget"
+msgstr "子ウィジットの下側に挿入する余白です"
+
+#: ../glade/gbwidgets/gbalignment.c:93
+msgid "Left Padding:"
+msgstr "左パディング:"
+
+#: ../glade/gbwidgets/gbalignment.c:94
+msgid "Space to put to the left of the child widget"
+msgstr "子ウィジットの左側に挿入する余白です"
+
+#: ../glade/gbwidgets/gbalignment.c:97
+msgid "Right Padding:"
+msgstr "右パディング:"
+
+#: ../glade/gbwidgets/gbalignment.c:98
+msgid "Space to put to the right of the child widget"
+msgstr "子ウィジットの右側に挿入する余白です"
+
+#: ../glade/gbwidgets/gbalignment.c:255
+msgid "Alignment"
+msgstr "位置"
+
+#: ../glade/gbwidgets/gbarrow.c:85
+msgid "Direction:"
+msgstr "方向:"
+
+#: ../glade/gbwidgets/gbarrow.c:85
+msgid "The direction of the arrow"
+msgstr "アロー (矢印) の向きです"
+
+#: ../glade/gbwidgets/gbarrow.c:87 ../glade/gbwidgets/gbaspectframe.c:128
+#: ../glade/gbwidgets/gbclist.c:247 ../glade/gbwidgets/gbctree.c:253
+#: ../glade/gbwidgets/gbframe.c:123 ../glade/gbwidgets/gbhandlebox.c:109
+#: ../glade/gbwidgets/gbviewport.c:104 ../glade/gnome/bonobodockitem.c:176
+msgid "Shadow:"
+msgstr "影:"
+
+#: ../glade/gbwidgets/gbarrow.c:87
+msgid "The shadow type of the arrow"
+msgstr "アロー (矢印) に付ける影の種類です"
+
+#: ../glade/gbwidgets/gbarrow.c:90
+msgid "The horizontal alignment of the arrow"
+msgstr "アロー (矢印) の水平方向に対する位置です"
+
+#: ../glade/gbwidgets/gbarrow.c:93
+msgid "The vertical alignment of the arrow"
+msgstr "アロー (矢印) の垂直方向に対する位置です"
+
+#: ../glade/gbwidgets/gbarrow.c:95 ../glade/gbwidgets/gbimage.c:125
+#: ../glade/gbwidgets/gblabel.c:186
+msgid "X Pad:"
+msgstr "X-パディング:"
+
+#: ../glade/gbwidgets/gbarrow.c:95 ../glade/gbwidgets/gbimage.c:125
+#: ../glade/gbwidgets/gblabel.c:186 ../glade/gbwidgets/gbtable.c:382
+msgid "The horizontal padding"
+msgstr "水平方向に挿入する余白です"
+
+#: ../glade/gbwidgets/gbarrow.c:97 ../glade/gbwidgets/gbimage.c:127
+#: ../glade/gbwidgets/gblabel.c:188
+msgid "Y Pad:"
+msgstr "Y-パディング:"
+
+#: ../glade/gbwidgets/gbarrow.c:97 ../glade/gbwidgets/gbimage.c:127
+#: ../glade/gbwidgets/gblabel.c:188 ../glade/gbwidgets/gbtable.c:385
+msgid "The vertical padding"
+msgstr "垂直方向に挿入する余白です"
+
+#: ../glade/gbwidgets/gbarrow.c:299
+msgid "Arrow"
+msgstr "アロー"
+
+#: ../glade/gbwidgets/gbaspectframe.c:122 ../glade/gbwidgets/gbframe.c:117
+msgid "Label X Align:"
+msgstr "ラベルのX-位置:"
+
+#: ../glade/gbwidgets/gbaspectframe.c:123 ../glade/gbwidgets/gbframe.c:118
+msgid "The horizontal alignment of the frame's label widget"
+msgstr "フレームのラベル・ウィジットの水平方向に対する位置です"
+
+#: ../glade/gbwidgets/gbaspectframe.c:125 ../glade/gbwidgets/gbframe.c:120
+msgid "Label Y Align:"
+msgstr "ラベルのY-位置:"
+
+#: ../glade/gbwidgets/gbaspectframe.c:126 ../glade/gbwidgets/gbframe.c:121
+msgid "The vertical alignment of the frame's label widget"
+msgstr "フレームのラベル・ウィジットの垂直方向に対する位置です"
+
+#: ../glade/gbwidgets/gbaspectframe.c:128 ../glade/gbwidgets/gbframe.c:123
+msgid "The type of shadow of the frame"
+msgstr "フレームに付ける影の種類です"
+
+#: ../glade/gbwidgets/gbaspectframe.c:131
+#: ../glade/gbwidgets/gbaspectframe.c:134
+msgid "The horizontal alignment of the frame's child"
+msgstr "フレームの子ウィジットの水平方向に対する位置です"
+
+#: ../glade/gbwidgets/gbaspectframe.c:136
+msgid "Ratio:"
+msgstr "比率:"
+
+#: ../glade/gbwidgets/gbaspectframe.c:137
+msgid "The aspect ratio of the frame's child"
+msgstr "フレームの子ウィジットに対するアスペクト (縦横) の比率です"
+
+#: ../glade/gbwidgets/gbaspectframe.c:138
+msgid "Obey Child:"
+msgstr "子に従う:"
+
+#: ../glade/gbwidgets/gbaspectframe.c:139
+msgid "If the aspect ratio should be determined by the child"
+msgstr "アスペクト (縦横) 比率を子ウィジットに合わせるかどうかです"
+
+#: ../glade/gbwidgets/gbaspectframe.c:319
+msgid "Aspect Frame"
+msgstr "アスペクト・フレーム"
+
+#: ../glade/gbwidgets/gbbutton.c:118 ../glade/gbwidgets/gbcheckbutton.c:85
+#: ../glade/gbwidgets/gbmenutoolbutton.c:85
+#: ../glade/gbwidgets/gbradiobutton.c:126
+#: ../glade/gbwidgets/gbradiotoolbutton.c:133
+#: ../glade/gbwidgets/gbtogglebutton.c:88
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:90
+#: ../glade/gbwidgets/gbtoolbutton.c:104
+msgid "Stock Button:"
+msgstr "ストック・ボタン:"
+
+#: ../glade/gbwidgets/gbbutton.c:119 ../glade/gbwidgets/gbcheckbutton.c:86
+#: ../glade/gbwidgets/gbmenutoolbutton.c:86
+#: ../glade/gbwidgets/gbradiobutton.c:127
+#: ../glade/gbwidgets/gbradiotoolbutton.c:134
+#: ../glade/gbwidgets/gbtogglebutton.c:89
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:91
+#: ../glade/gbwidgets/gbtoolbutton.c:105
+msgid "The stock button to use"
+msgstr "使用するストック・ボタンの種類です"
+
+#. For now we don't support editing the menuitem properties in the property
+#. editor. The menu editor has to be used instead.
+#: ../glade/gbwidgets/gbbutton.c:121 ../glade/gbwidgets/gbcheckbutton.c:88
+#: ../glade/gbwidgets/gbcheckmenuitem.c:72
+#: ../glade/gbwidgets/gbimagemenuitem.c:92 ../glade/gbwidgets/gblabel.c:168
+#: ../glade/gbwidgets/gblistitem.c:73 ../glade/gbwidgets/gbmenuitem.c:87
+#: ../glade/gbwidgets/gbmenutoolbutton.c:88
+#: ../glade/gbwidgets/gbradiobutton.c:129
+#: ../glade/gbwidgets/gbradiomenuitem.c:103
+#: ../glade/gbwidgets/gbradiotoolbutton.c:136
+#: ../glade/gbwidgets/gbtogglebutton.c:91
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:93
+#: ../glade/gbwidgets/gbtoolbutton.c:107 ../glade/glade_menu_editor.c:747
+#: ../glade/gnome/gnomehref.c:68
+msgid "Label:"
+msgstr "ラベル:"
+
+#: ../glade/gbwidgets/gbbutton.c:121 ../glade/gbwidgets/gbcheckbutton.c:88
+#: ../glade/gbwidgets/gbcheckmenuitem.c:72 ../glade/gbwidgets/gbentry.c:100
+#: ../glade/gbwidgets/gbimagemenuitem.c:92 ../glade/gbwidgets/gblabel.c:168
+#: ../glade/gbwidgets/gblistitem.c:73 ../glade/gbwidgets/gbmenuitem.c:87
+#: ../glade/gbwidgets/gbmenutoolbutton.c:88
+#: ../glade/gbwidgets/gbradiobutton.c:129
+#: ../glade/gbwidgets/gbradiomenuitem.c:103
+#: ../glade/gbwidgets/gbradiotoolbutton.c:136
+#: ../glade/gbwidgets/gbtextview.c:124 ../glade/gbwidgets/gbtogglebutton.c:91
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:93
+#: ../glade/gbwidgets/gbtoolbutton.c:107 ../glade/gnome-db/gnomedbeditor.c:64
+msgid "The text to display"
+msgstr "表示するテキストです"
+
+#: ../glade/gbwidgets/gbbutton.c:122 ../glade/gbwidgets/gbcheckbutton.c:89
+#: ../glade/gbwidgets/gbimage.c:107 ../glade/gbwidgets/gbmenutoolbutton.c:89
+#: ../glade/gbwidgets/gbradiobutton.c:130
+#: ../glade/gbwidgets/gbradiotoolbutton.c:137
+#: ../glade/gbwidgets/gbtogglebutton.c:92
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:94
+#: ../glade/gbwidgets/gbtoolbutton.c:108 ../glade/gbwidgets/gbwindow.c:295
+#: ../glade/glade_menu_editor.c:813
+msgid "Icon:"
+msgstr "アイコン:"
+
+#: ../glade/gbwidgets/gbbutton.c:123 ../glade/gbwidgets/gbcheckbutton.c:90
+#: ../glade/gbwidgets/gbimage.c:108 ../glade/gbwidgets/gbmenutoolbutton.c:90
+#: ../glade/gbwidgets/gbradiobutton.c:131
+#: ../glade/gbwidgets/gbradiotoolbutton.c:138
+#: ../glade/gbwidgets/gbtogglebutton.c:93
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:95
+#: ../glade/gbwidgets/gbtoolbutton.c:109
+msgid "The icon to display"
+msgstr "表示するアイコンの種類です"
+
+#: ../glade/gbwidgets/gbbutton.c:125 ../glade/gbwidgets/gbcheckbutton.c:92
+#: ../glade/gbwidgets/gbradiobutton.c:133
+#: ../glade/gbwidgets/gbtogglebutton.c:95
+msgid "Button Relief:"
+msgstr "ボタンの枠"
+
+#: ../glade/gbwidgets/gbbutton.c:126 ../glade/gbwidgets/gbcheckbutton.c:93
+#: ../glade/gbwidgets/gbradiobutton.c:134
+#: ../glade/gbwidgets/gbtogglebutton.c:96
+msgid "The relief style of the button"
+msgstr "ボタンの周囲に配置する枠のスタイルです"
+
+#: ../glade/gbwidgets/gbbutton.c:131
+msgid "Response ID:"
+msgstr "応答ID:"
+
+#: ../glade/gbwidgets/gbbutton.c:132
+msgid ""
+"The response code returned when the button is pressed. Select one of the "
+"standard responses or enter a positive integer value"
+msgstr ""
+"ボタンが押下されたら返される応答コードで、標準的な応答値を選択するか、または"
+"正の整数値を入力して下さい"
+
+#: ../glade/gbwidgets/gbbutton.c:137 ../glade/gbwidgets/gbcheckbutton.c:102
+#: ../glade/gbwidgets/gbcolorbutton.c:70 ../glade/gbwidgets/gbcombobox.c:83
+#: ../glade/gbwidgets/gbcomboboxentry.c:82
+#: ../glade/gbwidgets/gbfontbutton.c:78 ../glade/gbwidgets/gbradiobutton.c:148
+#: ../glade/gbwidgets/gbtogglebutton.c:103
+#: ../glade/gnome/gnomecolorpicker.c:76 ../glade/gnome/gnomefontpicker.c:109
+#: ../glade/gnome/gnomehref.c:70
+msgid "Focus On Click:"
+msgstr "クリック時のフォーカス:"
+
+#: ../glade/gbwidgets/gbbutton.c:137 ../glade/gbwidgets/gbcheckbutton.c:102
+#: ../glade/gbwidgets/gbcolorbutton.c:70 ../glade/gbwidgets/gbfontbutton.c:78
+#: ../glade/gbwidgets/gbradiobutton.c:148
+#: ../glade/gbwidgets/gbtogglebutton.c:103
+#: ../glade/gnome/gnomecolorpicker.c:76 ../glade/gnome/gnomefontpicker.c:109
+#: ../glade/gnome/gnomehref.c:70
+msgid "If the button grabs focus when it is clicked"
+msgstr "ボタンがクリックされたら、フォーカスを当てるかどうかです"
+
+#: ../glade/gbwidgets/gbbutton.c:1502
+msgid "Remove Button Contents"
+msgstr "ボタンの削除"
+
+#: ../glade/gbwidgets/gbbutton.c:1600
+msgid "Button"
+msgstr "ボタン"
+
+#: ../glade/gbwidgets/gbcalendar.c:73
+msgid "Heading:"
+msgstr "見出し:"
+
+#: ../glade/gbwidgets/gbcalendar.c:74
+msgid "If the month and year should be shown at the top"
+msgstr "カレンダの上部に年と月を表示するかどうかです"
+
+#: ../glade/gbwidgets/gbcalendar.c:75
+msgid "Day Names:"
+msgstr "曜日:"
+
+#: ../glade/gbwidgets/gbcalendar.c:76
+msgid "If the day names should be shown"
+msgstr "曜日を表示するかどうかです"
+
+#: ../glade/gbwidgets/gbcalendar.c:77
+msgid "Fixed Month:"
+msgstr "月の固定:"
+
+#: ../glade/gbwidgets/gbcalendar.c:78
+msgid "If the month and year shouldn't be changeable"
+msgstr "年と月を変更不可にするかどうかです"
+
+#: ../glade/gbwidgets/gbcalendar.c:79
+msgid "Week Numbers:"
+msgstr "週番号:"
+
+#: ../glade/gbwidgets/gbcalendar.c:80
+msgid "If the number of the week should be shown"
+msgstr "週の番号を表示するかどうかです"
+
+#: ../glade/gbwidgets/gbcalendar.c:81 ../glade/gnome/gnomedateedit.c:74
+msgid "Monday First:"
+msgstr "月曜日から開始:"
+
+#: ../glade/gbwidgets/gbcalendar.c:82 ../glade/gnome/gnomedateedit.c:75
+msgid "If the week should start on Monday"
+msgstr "週の始まりを月曜日にするかどうかです"
+
+#: ../glade/gbwidgets/gbcalendar.c:266
+msgid "Calendar"
+msgstr "カレンダ"
+
+#: ../glade/gbwidgets/gbcellview.c:63 ../glade/gnome/gnomedruidpageedge.c:102
+#: ../glade/gnome/gnomedruidpagestandard.c:91
+msgid "Back. Color:"
+msgstr "背景色:"
+
+#: ../glade/gbwidgets/gbcellview.c:64
+msgid "The background color"
+msgstr "背景色です"
+
+#: ../glade/gbwidgets/gbcellview.c:192
+msgid "Cell View"
+msgstr "セル・ビュー"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:96
+#: ../glade/gbwidgets/gbcheckmenuitem.c:73
+#: ../glade/gbwidgets/gbradiobutton.c:137
+#: ../glade/gbwidgets/gbradiomenuitem.c:104
+#: ../glade/gbwidgets/gbradiotoolbutton.c:147
+#: ../glade/gbwidgets/gbtogglebutton.c:99
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:97
+msgid "Initially On:"
+msgstr "初期状態:"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:97
+msgid "If the check button is initially on"
+msgstr "チェック・ボタンの初期値をオンにするかどうかです"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:98
+#: ../glade/gbwidgets/gbradiobutton.c:139
+#: ../glade/gbwidgets/gbtogglebutton.c:101
+msgid "Inconsistent:"
+msgstr "不整合:"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:99
+#: ../glade/gbwidgets/gbradiobutton.c:140
+#: ../glade/gbwidgets/gbtogglebutton.c:102
+msgid "If the button is shown in an inconsistent state"
+msgstr "ボタンを inconsistent (不整合) 状態で表示するかどうかです"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:100
+#: ../glade/gbwidgets/gbradiobutton.c:141
+msgid "Indicator:"
+msgstr "インジゲータ:"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:101
+#: ../glade/gbwidgets/gbradiobutton.c:142
+msgid "If the indicator is always drawn"
+msgstr "常にチェック・ボックスを表示するかどうかです"
+
+#: ../glade/gbwidgets/gbcheckbutton.c:211
+msgid "Check Button"
+msgstr "チェック・ボタン"
+
+#: ../glade/gbwidgets/gbcheckmenuitem.c:74
+msgid "If the check menu item is initially on"
+msgstr "チェック・メニュー・アイテムの初期値をオンにするかどうかです"
+
+#: ../glade/gbwidgets/gbcheckmenuitem.c:203
+msgid "Check Menu Item"
+msgstr "チェック・メニュー・アイテム"
+
+#: ../glade/gbwidgets/gbclist.c:141
+msgid "New columned list"
+msgstr "新しいコラム・リスト"
+
+#. Columns label & entry
+#: ../glade/gbwidgets/gbclist.c:152 ../glade/gbwidgets/gbctree.c:157
+#: ../glade/gbwidgets/gbhbox.c:110 ../glade/gbwidgets/gbhbuttonbox.c:132
+#: ../glade/gbwidgets/gbtable.c:165
+msgid "Number of columns:"
+msgstr "列の数:"
+
+#: ../glade/gbwidgets/gbclist.c:242 ../glade/gbwidgets/gbctree.c:248
+#: ../glade/gbwidgets/gbiconview.c:127 ../glade/gbwidgets/gblist.c:77
+#: ../glade/gnome/gnomeiconlist.c:174
+msgid "Select Mode:"
+msgstr "選択モード:"
+
+#: ../glade/gbwidgets/gbclist.c:243
+msgid "The selection mode of the columned list"
+msgstr "コラム・リストの選択モードです"
+
+#: ../glade/gbwidgets/gbclist.c:245 ../glade/gbwidgets/gbctree.c:251
+msgid "Show Titles:"
+msgstr "タイトル表示:"
+
+#: ../glade/gbwidgets/gbclist.c:246 ../glade/gbwidgets/gbctree.c:252
+msgid "If the column titles are shown"
+msgstr "列のタイトルを表示するかどうかです"
+
+#: ../glade/gbwidgets/gbclist.c:248
+msgid "The type of shadow of the columned list's border"
+msgstr "コラム・リストの境界線に付ける影の種類です"
+
+#: ../glade/gbwidgets/gbclist.c:594
+msgid "Columned List"
+msgstr "コラム・リスト"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:65 ../glade/gnome/gnomecolorpicker.c:70
+msgid "Use Alpha:"
+msgstr "アルファ使用:"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:66 ../glade/gnome/gnomecolorpicker.c:71
+msgid "If the alpha channel should be used"
+msgstr "αチャンネルを使用するかどうかです"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:68
+#: ../glade/gbwidgets/gbfilechooserbutton.c:85
+#: ../glade/gbwidgets/gbfontbutton.c:68 ../glade/gbwidgets/gbwindow.c:242
+#: ../glade/gnome/gnomecolorpicker.c:73 ../glade/gnome/gnomedruidpageedge.c:93
+#: ../glade/gnome/gnomedruidpagestandard.c:85
+#: ../glade/gnome/gnomefileentry.c:101 ../glade/gnome/gnomefontpicker.c:95
+#: ../glade/gnome/gnomeiconentry.c:72 ../glade/gnome/gnomepixmapentry.c:82
+msgid "Title:"
+msgstr "タイトル:"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:69 ../glade/gnome/gnomecolorpicker.c:74
+msgid "The title of the color selection dialog"
+msgstr "カラー選択ダイアログのタイトルです"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:91
+#: ../glade/gbwidgets/gbcolorbutton.c:119
+#: ../glade/gbwidgets/gbcolorbutton.c:162
+msgid "Pick a Color"
+msgstr "色の取得"
+
+#: ../glade/gbwidgets/gbcolorbutton.c:211
+msgid "Color Chooser Button"
+msgstr "色の選択ボタン"
+
+#: ../glade/gbwidgets/gbcolorselection.c:62
+msgid "Opacity Control:"
+msgstr "不透明度の制御:"
+
+#: ../glade/gbwidgets/gbcolorselection.c:63
+msgid "If the opacity control is shown"
+msgstr "透明/不透明を制御するコントロールを表示するかどうかです"
+
+#: ../glade/gbwidgets/gbcolorselection.c:64
+msgid "Palette:"
+msgstr "パレット:"
+
+#: ../glade/gbwidgets/gbcolorselection.c:65
+msgid "If the palette is shown"
+msgstr "色パレットを表示するかどうかです"
+
+#: ../glade/gbwidgets/gbcolorselection.c:173
+msgid "Color Selection"
+msgstr "色の選択"
+
+#: ../glade/gbwidgets/gbcolorselectiondialog.c:70
+msgid "Select Color"
+msgstr "色の選択"
+
+#: ../glade/gbwidgets/gbcolorselectiondialog.c:315 ../glade/property.c:1275
+msgid "Color Selection Dialog"
+msgstr "カラー選択ダイアログ"
+
+#: ../glade/gbwidgets/gbcombo.c:105
+msgid "Value In List:"
+msgstr "リストの値:"
+
+#: ../glade/gbwidgets/gbcombo.c:106
+msgid "If the value must be in the list"
+msgstr "リストの中に値を配置すべきかどうかです"
+
+#: ../glade/gbwidgets/gbcombo.c:107
+msgid "OK If Empty:"
+msgstr "空の値許可:"
+
+#: ../glade/gbwidgets/gbcombo.c:108
+msgid "If an empty value is acceptable, when 'Value In List' is set"
+msgstr "'リストの値'が有効な場合に、空の値も許可するかどうかです"
+
+#: ../glade/gbwidgets/gbcombo.c:109
+msgid "Case Sensitive:"
+msgstr "大小文字の区別:"
+
+#: ../glade/gbwidgets/gbcombo.c:110
+msgid "If the searching is case sensitive"
+msgstr "大文字/小文字を区別して検索するかどうかです"
+
+#: ../glade/gbwidgets/gbcombo.c:111
+msgid "Use Arrows:"
+msgstr "アロー使用可否:"
+
+#: ../glade/gbwidgets/gbcombo.c:112
+msgid "If arrows can be used to change the value"
+msgstr "アロー (矢印) で値を変更できるようにするかどうかです"
+
+#: ../glade/gbwidgets/gbcombo.c:113
+msgid "Use Always:"
+msgstr "常に使用:"
+
+#: ../glade/gbwidgets/gbcombo.c:114
+msgid "If arrows work even if the value is not in the list"
+msgstr "リストの中に値が無くてもアロー (矢印) を動作させるかどうかです"
+
+#: ../glade/gbwidgets/gbcombo.c:115 ../glade/gbwidgets/gbcombobox.c:78
+#: ../glade/gbwidgets/gbcomboboxentry.c:75
+msgid "Items:"
+msgstr "アイテム:"
+
+#: ../glade/gbwidgets/gbcombo.c:116 ../glade/gbwidgets/gbcombobox.c:79
+#: ../glade/gbwidgets/gbcomboboxentry.c:76
+msgid "The items in the combo list, one per line"
+msgstr "コンボ・リストの中のアイテムです (１アイテム/行)"
+
+#: ../glade/gbwidgets/gbcombo.c:425 ../glade/gbwidgets/gbcombobox.c:289
+msgid "Combo Box"
+msgstr "コンボ・ボックス"
+
+#: ../glade/gbwidgets/gbcombobox.c:81 ../glade/gbwidgets/gbcomboboxentry.c:78
+msgid "Add Tearoffs:"
+msgstr "ティアオフの追加:"
+
+#: ../glade/gbwidgets/gbcombobox.c:82 ../glade/gbwidgets/gbcomboboxentry.c:79
+msgid "Whether dropdowns should have a tearoff menu item"
+msgstr "ドロップダウン式のメニュー・アイテムを取り外し可能にするかどうかです"
+
+#: ../glade/gbwidgets/gbcombobox.c:84 ../glade/gbwidgets/gbcomboboxentry.c:83
+msgid "Whether the combo box grabs focus when it is clicked"
+msgstr "コンボ・ボックスがクリックされたら、フォーカスを当てるかどうかです"
+
+#: ../glade/gbwidgets/gbcomboboxentry.c:80 ../glade/gbwidgets/gbentry.c:102
+msgid "Has Frame:"
+msgstr "フレーム有無:"
+
+#: ../glade/gbwidgets/gbcomboboxentry.c:81
+msgid "Whether the combo box draws a frame around the child"
+msgstr "コンボ・ボックスの子ウィジットの周囲にフレームを配置するかどうかです"
+
+#: ../glade/gbwidgets/gbcomboboxentry.c:302
+msgid "Combo Box Entry"
+msgstr "コンボ・ボックスのエントリ"
+
+#: ../glade/gbwidgets/gbctree.c:146
+msgid "New columned tree"
+msgstr "新しいコラム・ツリー"
+
+#: ../glade/gbwidgets/gbctree.c:249
+msgid "The selection mode of the columned tree"
+msgstr "コラム・ツリーの選択モードです"
+
+#: ../glade/gbwidgets/gbctree.c:254
+msgid "The type of shadow of the columned tree's border"
+msgstr "コラム・ツリーに付ける影の種類です"
+
+#: ../glade/gbwidgets/gbctree.c:538
+msgid "Columned Tree"
+msgstr "コラム・ツリー"
+
+#: ../glade/gbwidgets/gbcurve.c:85 ../glade/gbwidgets/gbwindow.c:245
+msgid "Type:"
+msgstr "種類:"
+
+#: ../glade/gbwidgets/gbcurve.c:85
+msgid "The type of the curve"
+msgstr "曲線の種類です"
+
+#: ../glade/gbwidgets/gbcurve.c:87 ../glade/gbwidgets/gbgammacurve.c:91
+msgid "X Min:"
+msgstr "X-最小値:"
+
+#: ../glade/gbwidgets/gbcurve.c:87 ../glade/gbwidgets/gbgammacurve.c:91
+msgid "The minimum horizontal value"
+msgstr "水平方向の最小値です"
+
+#: ../glade/gbwidgets/gbcurve.c:88 ../glade/gbwidgets/gbgammacurve.c:92
+msgid "X Max:"
+msgstr "X-最大値:"
+
+#: ../glade/gbwidgets/gbcurve.c:88 ../glade/gbwidgets/gbgammacurve.c:92
+msgid "The maximum horizontal value"
+msgstr "水平方向の最大値です"
+
+#: ../glade/gbwidgets/gbcurve.c:89 ../glade/gbwidgets/gbgammacurve.c:93
+msgid "Y Min:"
+msgstr "Y-最小値:"
+
+#: ../glade/gbwidgets/gbcurve.c:89 ../glade/gbwidgets/gbgammacurve.c:93
+msgid "The minimum vertical value"
+msgstr "垂直方向の最小値です"
+
+#: ../glade/gbwidgets/gbcurve.c:90 ../glade/gbwidgets/gbgammacurve.c:94
+msgid "Y Max:"
+msgstr "Y-最大値:"
+
+#: ../glade/gbwidgets/gbcurve.c:90 ../glade/gbwidgets/gbgammacurve.c:94
+msgid "The maximum vertical value"
+msgstr "垂直方向の最大値です"
+
+#: ../glade/gbwidgets/gbcurve.c:250
+msgid "Curve"
+msgstr "カーブ"
+
+#: ../glade/gbwidgets/gbcustom.c:154
+msgid "Creation Function:"
+msgstr "生成関数:"
+
+#: ../glade/gbwidgets/gbcustom.c:155
+msgid "The function which creates the widget"
+msgstr "ウィジットを生成する関数です"
+
+#: ../glade/gbwidgets/gbcustom.c:157
+msgid "String1:"
+msgstr "文字列１:"
+
+#: ../glade/gbwidgets/gbcustom.c:158
+msgid "The first string argument to pass to the function"
+msgstr "ウィジット生成関数へ引き渡される一番目の文字列です"
+
+#: ../glade/gbwidgets/gbcustom.c:159
+msgid "String2:"
+msgstr "文字列２:"
+
+#: ../glade/gbwidgets/gbcustom.c:160
+msgid "The second string argument to pass to the function"
+msgstr "ウィジット生成関数へ引き渡される二番目の文字列です"
+
+#: ../glade/gbwidgets/gbcustom.c:161
+msgid "Int1:"
+msgstr "整数１:"
+
+#: ../glade/gbwidgets/gbcustom.c:162
+msgid "The first integer argument to pass to the function"
+msgstr "ウィジット生成関数へ引き渡される一番目の整数値です"
+
+#: ../glade/gbwidgets/gbcustom.c:163
+msgid "Int2:"
+msgstr "整数２:"
+
+#: ../glade/gbwidgets/gbcustom.c:164
+msgid "The second integer argument to pass to the function"
+msgstr "ウィジット生成関数へ引き渡される二番目の整数値です"
+
+#: ../glade/gbwidgets/gbcustom.c:380
+msgid "Custom Widget"
+msgstr "カスタム・ウィジット"
+
+#: ../glade/gbwidgets/gbdialog.c:292
+msgid "New dialog"
+msgstr "新しいダイアログ"
+
+#: ../glade/gbwidgets/gbdialog.c:304
+msgid "Cancel, OK"
+msgstr "[キャンセル] と [OK]"
+
+#: ../glade/gbwidgets/gbdialog.c:313 ../glade/glade.c:367
+#: ../glade/glade_project_window.c:1316 ../glade/property.c:5156
+msgid "OK"
+msgstr "[OK]"
+
+#: ../glade/gbwidgets/gbdialog.c:322
+msgid "Cancel, Apply, OK"
+msgstr "[キャンセル]、[適用]、[OK]"
+
+#: ../glade/gbwidgets/gbdialog.c:331
+msgid "Close"
+msgstr "[閉じる]"
+
+#: ../glade/gbwidgets/gbdialog.c:340
+msgid "_Standard Button Layout:"
+msgstr "ボタンのレイアウト(_S):"
+
+#: ../glade/gbwidgets/gbdialog.c:349
+msgid "_Number of Buttons:"
+msgstr "ボタンの数(_N):"
+
+#: ../glade/gbwidgets/gbdialog.c:366
+msgid "Show Help Button"
+msgstr "[ヘルプ] ボタンも表示する"
+
+#: ../glade/gbwidgets/gbdialog.c:397
+msgid "Has Separator:"
+msgstr "セパレータ有無:"
+
+#: ../glade/gbwidgets/gbdialog.c:398
+msgid "If the dialog has a horizontal separator above the buttons"
+msgstr "ボタンの上に垂直セパレータを表示するかどうかです"
+
+#: ../glade/gbwidgets/gbdialog.c:605
+msgid "Dialog"
+msgstr "ダイアログ"
+
+#: ../glade/gbwidgets/gbdrawingarea.c:146
+msgid "Drawing Area"
+msgstr "ドローイング・エリア"
+
+#: ../glade/gbwidgets/gbentry.c:94 ../glade/gbwidgets/gbtextview.c:115
+#: ../glade/gnome-db/gnomedbeditor.c:62
+msgid "Editable:"
+msgstr "編集可否:"
+
+#: ../glade/gbwidgets/gbentry.c:94 ../glade/gbwidgets/gbtextview.c:116
+#: ../glade/gnome-db/gnomedbeditor.c:62
+msgid "If the text can be edited"
+msgstr "テキストを編集できるかどうかです"
+
+#: ../glade/gbwidgets/gbentry.c:95
+msgid "Text Visible:"
+msgstr "表示可否:"
+
+#: ../glade/gbwidgets/gbentry.c:96
+msgid ""
+"If the text entered by the user will be shown. When turned off, the text "
+"typed in is displayed as asterix characters, which is useful for entering "
+"passwords"
+msgstr ""
+"入力時に文字を表示するかどうかで、\"いいえ\" を選択すると '*' で表示されます "
+"(パスワード入力に便利です)"
+
+#: ../glade/gbwidgets/gbentry.c:97
+msgid "Max Length:"
+msgstr "最大文字長:"
+
+#: ../glade/gbwidgets/gbentry.c:98
+msgid "The maximum length of the text"
+msgstr "入力可能な文字数の最大値です"
+
+#: ../glade/gbwidgets/gbentry.c:100 ../glade/gbwidgets/gbprogressbar.c:143
+#: ../glade/gbwidgets/gbtextview.c:124 ../glade/gnome-db/gnomedbeditor.c:64
+#: ../glade/gnome-db/gnomedbgraybar.c:59
+#: ../glade/gnome/gnomedruidpageedge.c:95 ../glade/property.c:926
+msgid "Text:"
+msgstr "テキスト:"
+
+#: ../glade/gbwidgets/gbentry.c:102
+msgid "If the entry has a frame around it"
+msgstr "エントリの周りにフレームを付けるかどうかです"
+
+#: ../glade/gbwidgets/gbentry.c:103
+msgid "Invisible Char:"
+msgstr "不表示の文字:"
+
+#: ../glade/gbwidgets/gbentry.c:103
+msgid ""
+"The character to use if the text should not visible, e.g. when entering "
+"passwords"
+msgstr ""
+"\"表示可否\" を \"いいえ\" にした場合の代用文字です (パスワード入力時など)"
+
+#: ../glade/gbwidgets/gbentry.c:104
+msgid "Activates Default:"
+msgstr "アクティブ可否:"
+
+#: ../glade/gbwidgets/gbentry.c:104
+msgid "If the default widget in the window is activated when Enter is pressed"
+msgstr ""
+"エントリを押下すると、ウィンドウの中のデフォルト・ウィジットをアクティブにす"
+"るかどうかです"
+
+#: ../glade/gbwidgets/gbentry.c:105
+msgid "Width In Chars:"
+msgstr "文字の幅:"
+
+#: ../glade/gbwidgets/gbentry.c:105
+msgid "The number of characters to leave space for in the entry"
+msgstr "エントリの中でスペースのままにしておく文字数です"
+
+#: ../glade/gbwidgets/gbentry.c:318
+msgid "Text Entry"
+msgstr "テキスト・エントリ"
+
+#: ../glade/gbwidgets/gbeventbox.c:65
+msgid "Visible Window:"
+msgstr "ウィンドウ使用:"
+
+#: ../glade/gbwidgets/gbeventbox.c:65
+msgid "If the event box uses a visible window"
+msgstr "イベント・ボックスとして表示可能なウィンドウを使用するかどうかです"
+
+#: ../glade/gbwidgets/gbeventbox.c:66
+msgid "Above Child:"
+msgstr "子の前面:"
+
+#: ../glade/gbwidgets/gbeventbox.c:66
+msgid "If the event box window is above the child widget's window"
+msgstr ""
+"イベント・ボックスのウィンドウを子ウィジットのウインドウの前面に配置するかど"
+"うかです"
+
+#: ../glade/gbwidgets/gbeventbox.c:167
+msgid "Event Box"
+msgstr "イベント・ボックス"
+
+#: ../glade/gbwidgets/gbexpander.c:54
+msgid "Initially Expanded:"
+msgstr "初期状態:"
+
+#: ../glade/gbwidgets/gbexpander.c:55
+msgid "Whether the expander is initially opened to reveal the child widget"
+msgstr "子ウィジットを表示するためにエキスパンダを開いておくかどうかです"
+
+#: ../glade/gbwidgets/gbexpander.c:57 ../glade/gbwidgets/gbhbox.c:175
+#: ../glade/gbwidgets/gbhbuttonbox.c:199 ../glade/gbwidgets/gbvbox.c:160
+msgid "Spacing:"
+msgstr "余白:"
+
+#: ../glade/gbwidgets/gbexpander.c:58
+msgid "Space to put between the label and the child"
+msgstr "ラベルと子ウィジットの間に挿入する余白です"
+
+#: ../glade/gbwidgets/gbexpander.c:105 ../glade/gbwidgets/gbframe.c:225
+msgid "Add Label Widget"
+msgstr "ラベル・ウィジットの追加"
+
+#: ../glade/gbwidgets/gbexpander.c:228
+msgid "Expander"
+msgstr "エキスパンダ"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:86
+msgid "The window title of the file chooser dialog"
+msgstr "ファイル選択ダイアログのウィンドウ・タイトルです"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:87
+#: ../glade/gbwidgets/gbfilechooserwidget.c:86
+#: ../glade/gbwidgets/gbfilechooserdialog.c:156
+#: ../glade/gnome/gnomefileentry.c:109
+msgid "Action:"
+msgstr "アクション:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:88
+#: ../glade/gbwidgets/gbfilechooserwidget.c:87
+#: ../glade/gbwidgets/gbfilechooserdialog.c:157
+#: ../glade/gnome/gnomefileentry.c:110
+msgid "The type of file operation being performed"
+msgstr "実行するファイル操作の種類です"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:90
+#: ../glade/gbwidgets/gbfilechooserwidget.c:89
+#: ../glade/gbwidgets/gbfilechooserdialog.c:159
+msgid "Local Only:"
+msgstr "ローカルのみ:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:91
+#: ../glade/gbwidgets/gbfilechooserwidget.c:90
+#: ../glade/gbwidgets/gbfilechooserdialog.c:160
+msgid "Whether the selected files should be limited to local files"
+msgstr "選択可能なファイルをローカルのものに限定するかどうかです"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:92
+#: ../glade/gbwidgets/gbfilechooserwidget.c:93
+#: ../glade/gbwidgets/gbfilechooserdialog.c:163
+msgid "Show Hidden:"
+msgstr "隠しファイル:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:93
+#: ../glade/gbwidgets/gbfilechooserwidget.c:94
+#: ../glade/gbwidgets/gbfilechooserdialog.c:164
+msgid "Whether the hidden files and folders should be displayed"
+msgstr "隠しファイルと隠しフォルダも表示するかどうかです"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:94
+#: ../glade/gbwidgets/gblabel.c:200
+msgid "Width in Chars:"
+msgstr "ボタンの幅:"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:95
+msgid "The width of the button in characters"
+msgstr "ボタンの幅です (文字単位)"
+
+#: ../glade/gbwidgets/gbfilechooserbutton.c:283
+msgid "File Chooser Button"
+msgstr "ファイル選択ボタン"
+
+#: ../glade/gbwidgets/gbfilechooserwidget.c:91
+#: ../glade/gbwidgets/gbfilechooserdialog.c:161
+msgid "Select Multiple:"
+msgstr "複数選択:"
+
+#: ../glade/gbwidgets/gbfilechooserwidget.c:92
+#: ../glade/gbwidgets/gbfilechooserdialog.c:162
+msgid "Whether to allow multiple files to be selected"
+msgstr "複数のファイルを選択できるかどうかです"
+
+#: ../glade/gbwidgets/gbfilechooserwidget.c:260
+msgid "File Chooser"
+msgstr "ファイル選択"
+
+#: ../glade/gbwidgets/gbfilechooserdialog.c:421
+msgid "File Chooser Dialog"
+msgstr "ファイル選択ダイアログ"
+
+#: ../glade/gbwidgets/gbfileselection.c:71 ../glade/property.c:1365
+msgid "Select File"
+msgstr "ファイルの選択"
+
+#: ../glade/gbwidgets/gbfileselection.c:113
+msgid "File Ops.:"
+msgstr "ファイル操作:"
+
+#: ../glade/gbwidgets/gbfileselection.c:114
+msgid "If the file operation buttons are shown"
+msgstr "ファイル操作用の追加ボタンを上部を表示するかどうかです"
+
+#: ../glade/gbwidgets/gbfileselection.c:292
+msgid "File Selection Dialog"
+msgstr "ファイル選択ダイアログ (旧式)"
+
+#: ../glade/gbwidgets/gbfixed.c:139 ../glade/gbwidgets/gblayout.c:221
+msgid "X:"
+msgstr "X-座標:"
+
+#: ../glade/gbwidgets/gbfixed.c:140
+msgid "The X coordinate of the widget in the GtkFixed"
+msgstr "GtkFixed に配置する子ウィジットの X座標です"
+
+#: ../glade/gbwidgets/gbfixed.c:142 ../glade/gbwidgets/gblayout.c:224
+msgid "Y:"
+msgstr "Y-座標:"
+
+#: ../glade/gbwidgets/gbfixed.c:143
+msgid "The Y coordinate of the widget in the GtkFixed"
+msgstr "GtkFixed に配置する子ウィジットの Y座標です"
+
+#: ../glade/gbwidgets/gbfixed.c:228
+msgid "Fixed Positions"
+msgstr "フィックスド・コンテナ"
+
+#: ../glade/gbwidgets/gbfontbutton.c:69 ../glade/gnome/gnomefontpicker.c:96
+msgid "The title of the font selection dialog"
+msgstr "フォント選択ダイアログのタイトルです"
+
+#: ../glade/gbwidgets/gbfontbutton.c:70
+msgid "Show Style:"
+msgstr "スタイル表示:"
+
+#: ../glade/gbwidgets/gbfontbutton.c:71
+msgid "If the font style is shown as part of the font information"
+msgstr "フォントのスタイルをフォント情報の一部として表示するかどうかです"
+
+#: ../glade/gbwidgets/gbfontbutton.c:72 ../glade/gnome/gnomefontpicker.c:102
+msgid "Show Size:"
+msgstr "サイズ表示:"
+
+#: ../glade/gbwidgets/gbfontbutton.c:73 ../glade/gnome/gnomefontpicker.c:103
+msgid "If the font size is shown as part of the font information"
+msgstr "フォントのサイズをフォント情報の一部として表示するかどうかです"
+
+#: ../glade/gbwidgets/gbfontbutton.c:74 ../glade/gnome/gnomefontpicker.c:104
+msgid "Use Font:"
+msgstr "フォント使用:"
+
+#: ../glade/gbwidgets/gbfontbutton.c:75 ../glade/gnome/gnomefontpicker.c:105
+msgid "If the selected font is used when displaying the font information"
+msgstr "フォント情報を表示する際に選択したフォントを使用するかどうかです"
+
+#: ../glade/gbwidgets/gbfontbutton.c:76 ../glade/gnome/gnomefontpicker.c:106
+msgid "Use Size:"
+msgstr "サイズ使用:"
+
+#: ../glade/gbwidgets/gbfontbutton.c:77
+msgid "if the selected font size is used when displaying the font information"
+msgstr ""
+"フォント情報を表示する際に選択したフォントのサイズを使用するかどうかです"
+
+#: ../glade/gbwidgets/gbfontbutton.c:97 ../glade/gbwidgets/gbfontbutton.c:133
+#: ../glade/gbwidgets/gbfontbutton.c:191 ../glade/gnome/gnomefontpicker.c:128
+#: ../glade/gnome/gnomefontpicker.c:199 ../glade/gnome/gnomefontpicker.c:301
+msgid "Pick a Font"
+msgstr "フォントの選択"
+
+#: ../glade/gbwidgets/gbfontbutton.c:268
+msgid "Font Chooser Button"
+msgstr "フォント選択ボタン"
+
+#: ../glade/gbwidgets/gbfontselection.c:64 ../glade/gnome/gnomefontpicker.c:97
+msgid "Preview Text:"
+msgstr "プレビュー:"
+
+#: ../glade/gbwidgets/gbfontselection.c:64
+msgid "The preview text to display"
+msgstr "プレビュー表示する文字列です"
+
+#: ../glade/gbwidgets/gbfontselection.c:170
+msgid "Font Selection"
+msgstr "フォントの選択"
+
+#: ../glade/gbwidgets/gbfontselectiondialog.c:69
+msgid "Select Font"
+msgstr "フォントの選択"
+
+#: ../glade/gbwidgets/gbfontselectiondialog.c:300
+msgid "Font Selection Dialog"
+msgstr "フォント選択ダイアログ"
+
+#: ../glade/gbwidgets/gbframe.c:360
+msgid "Frame"
+msgstr "フレーム"
+
+#: ../glade/gbwidgets/gbgammacurve.c:88
+msgid "Initial Type:"
+msgstr "初期のタイプ:"
+
+#: ../glade/gbwidgets/gbgammacurve.c:88
+msgid "The initial type of the curve"
+msgstr "初めて表示する際の曲線の種類です"
+
+#: ../glade/gbwidgets/gbgammacurve.c:256
+msgid "Gamma Curve"
+msgstr "ガンマ・カーブ"
+
+#: ../glade/gbwidgets/gbhandlebox.c:110
+msgid "The type of shadow around the handle box"
+msgstr "ハンドル・ボックスの周りに付ける影の種類です"
+
+#: ../glade/gbwidgets/gbhandlebox.c:113
+msgid "Handle Pos:"
+msgstr "ハンドルの位置:"
+
+#: ../glade/gbwidgets/gbhandlebox.c:114
+msgid "The position of the handle"
+msgstr "ハンドル・ボックスの取っ手を表示する位置です"
+
+#: ../glade/gbwidgets/gbhandlebox.c:116
+msgid "Snap Edge:"
+msgstr "スナップ端:"
+
+#: ../glade/gbwidgets/gbhandlebox.c:117
+msgid "The edge of the handle box which snaps into position"
+msgstr "ハンドル・ボックスの端をスナップさせる位置です"
+
+#: ../glade/gbwidgets/gbhandlebox.c:304
+msgid "Handle Box"
+msgstr "ハンドル・ボックス"
+
+#: ../glade/gbwidgets/gbhbox.c:99
+msgid "New horizontal box"
+msgstr "新しい水平ボックス"
+
+#: ../glade/gbwidgets/gbhbox.c:171 ../glade/gbwidgets/gbhbuttonbox.c:194
+#: ../glade/gbwidgets/gbtoolbar.c:267 ../glade/gbwidgets/gbvbox.c:156
+msgid "Size:"
+msgstr "サイズ:"
+
+#: ../glade/gbwidgets/gbhbox.c:171 ../glade/gbwidgets/gbvbox.c:156
+msgid "The number of widgets in the box"
+msgstr "ボックスの中に配置するウィジットの数です"
+
+#: ../glade/gbwidgets/gbhbox.c:173 ../glade/gbwidgets/gbtable.c:243
+#: ../glade/gbwidgets/gbtoolbar.c:426 ../glade/gbwidgets/gbvbox.c:158
+msgid "Homogeneous:"
+msgstr "均等配置:"
+
+#: ../glade/gbwidgets/gbhbox.c:174 ../glade/gbwidgets/gbvbox.c:159
+msgid "If the children should be the same size"
+msgstr "配置する子ウィジットの大きさを同じにするかどうかです"
+
+#: ../glade/gbwidgets/gbhbox.c:175 ../glade/gbwidgets/gbvbox.c:160
+msgid "The space between each child"
+msgstr "子ウィジット同士の間隔です"
+
+#: ../glade/gbwidgets/gbhbox.c:312
+msgid "Can't delete any children."
+msgstr "いかなる子ウィジットも削除できません。"
+
+#: ../glade/gbwidgets/gbhbox.c:327 ../glade/gbwidgets/gbhpaned.c:73
+#: ../glade/gbwidgets/gbhruler.c:89 ../glade/gbwidgets/gbnotebook.c:669
+#: ../glade/gbwidgets/gbvpaned.c:69 ../glade/gbwidgets/gbvruler.c:89
+#: ../glade/gbwidgets/gbwindow.c:254
+msgid "Position:"
+msgstr "位置:"
+
+#: ../glade/gbwidgets/gbhbox.c:328
+msgid "The widget's position relative to its siblings"
+msgstr "兄弟関係にあるウィジットに対する相対位置です"
+
+#: ../glade/gbwidgets/gbhbox.c:330
+msgid "Padding:"
+msgstr "パディング:"
+
+#: ../glade/gbwidgets/gbhbox.c:331
+msgid "The widget's padding"
+msgstr "ウィジットの余白です"
+
+#: ../glade/gbwidgets/gbhbox.c:333 ../glade/gbwidgets/gbnotebook.c:672
+#: ../glade/gbwidgets/gbpreview.c:65 ../glade/gbwidgets/gbtoolbar.c:424
+msgid "Expand:"
+msgstr "広げる:"
+
+#: ../glade/gbwidgets/gbhbox.c:334 ../glade/gbwidgets/gbtoolbar.c:425
+msgid "Set True to let the widget expand"
+msgstr ""
+"親ウィジットのサイズを変更した際に、子ウィジットも一緒にサイズを変更するかど"
+"うかです"
+
+#: ../glade/gbwidgets/gbhbox.c:335 ../glade/gbwidgets/gbnotebook.c:674
+msgid "Fill:"
+msgstr "埋める:"
+
+#: ../glade/gbwidgets/gbhbox.c:336
+msgid "Set True to let the widget fill its allocated area"
+msgstr "子ウィジットを割り当てられた領域一杯に広げるかどうかです"
+
+#: ../glade/gbwidgets/gbhbox.c:337 ../glade/gbwidgets/gbnotebook.c:676
+msgid "Pack Start:"
+msgstr "先頭からパック:"
+
+#: ../glade/gbwidgets/gbhbox.c:338
+msgid "Set True to pack the widget at the start of the box"
+msgstr "ウィジットをボックスの先頭から配置していくかどうかです"
+
+#: ../glade/gbwidgets/gbhbox.c:455
+msgid "Insert Before"
+msgstr "ボックスを前に追加"
+
+#: ../glade/gbwidgets/gbhbox.c:461
+msgid "Insert After"
+msgstr "ボックスを後ろに追加"
+
+#: ../glade/gbwidgets/gbhbox.c:571
+msgid "Horizontal Box"
+msgstr "水平ボックス"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:120
+msgid "New horizontal button box"
+msgstr "新しい水平ボタン・ボックス"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:194
+msgid "The number of buttons"
+msgstr "ボタンの数"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:196
+msgid "Layout:"
+msgstr "レイアウト:"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:197
+msgid "The layout style of the buttons"
+msgstr "ボタンを配置するスタイルです"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:199
+msgid "The space between the buttons"
+msgstr "ボタンとボタンの間に挿入する余白です"
+
+#: ../glade/gbwidgets/gbhbuttonbox.c:414
+msgid "Horizontal Button Box"
+msgstr "水平ボタン・ボックス"
+
+#: ../glade/gbwidgets/gbhpaned.c:74 ../glade/gbwidgets/gbvpaned.c:70
+msgid "The position of the divider"
+msgstr "ペインを分割する位置です"
+
+#: ../glade/gbwidgets/gbhpaned.c:186 ../glade/gbwidgets/gbwindow.c:283
+msgid "Shrink:"
+msgstr "縮める:"
+
+#: ../glade/gbwidgets/gbhpaned.c:187
+msgid "Set True to let the widget shrink"
+msgstr "子ウィジットを縮めるかどうかです"
+
+#: ../glade/gbwidgets/gbhpaned.c:188
+msgid "Resize:"
+msgstr "サイズ変更:"
+
+#: ../glade/gbwidgets/gbhpaned.c:189
+msgid "Set True to let the widget resize"
+msgstr "子ウィジットのサイズ変更を許可するかどうかです"
+
+#: ../glade/gbwidgets/gbhpaned.c:315
+msgid "Horizontal Panes"
+msgstr "水平ペイン"
+
+#: ../glade/gbwidgets/gbhruler.c:82 ../glade/gbwidgets/gbvruler.c:82
+msgid "Metric:"
+msgstr "単位:"
+
+#: ../glade/gbwidgets/gbhruler.c:83 ../glade/gbwidgets/gbvruler.c:83
+msgid "The units of the ruler"
+msgstr "ルーラの単位です"
+
+#: ../glade/gbwidgets/gbhruler.c:85 ../glade/gbwidgets/gbvruler.c:85
+msgid "Lower Value:"
+msgstr "下限値:"
+
+#: ../glade/gbwidgets/gbhruler.c:86 ../glade/gbwidgets/gbvruler.c:86
+#: ../glade/gbwidgets/gbvruler.c:88
+msgid "The low value of the ruler"
+msgstr "ルーラの下限の値です"
+
+#: ../glade/gbwidgets/gbhruler.c:87 ../glade/gbwidgets/gbvruler.c:87
+msgid "Upper Value:"
+msgstr "上限値"
+
+#: ../glade/gbwidgets/gbhruler.c:88
+msgid "The high value of the ruler"
+msgstr "ルーラの上限の値です"
+
+#: ../glade/gbwidgets/gbhruler.c:90 ../glade/gbwidgets/gbvruler.c:90
+msgid "The current position on the ruler"
+msgstr "ルーラの現在の位置です"
+
+#: ../glade/gbwidgets/gbhruler.c:91 ../glade/gbwidgets/gbvruler.c:91
+#: ../glade/property.c:4827
+msgid "Max:"
+msgstr "最大値:"
+
+#: ../glade/gbwidgets/gbhruler.c:92 ../glade/gbwidgets/gbvruler.c:92
+msgid "The maximum value of the ruler"
+msgstr "ルーラの最大値です"
+
+#: ../glade/gbwidgets/gbhruler.c:247
+msgid "Horizontal Ruler"
+msgstr "水平ルーラ"
+
+#: ../glade/gbwidgets/gbhscale.c:107 ../glade/gbwidgets/gbvscale.c:108
+msgid "Show Value:"
+msgstr "値の表示:"
+
+#: ../glade/gbwidgets/gbhscale.c:107 ../glade/gbwidgets/gbvscale.c:108
+msgid "If the scale's value is shown"
+msgstr "スケールの値を表示するかどうかです"
+
+#: ../glade/gbwidgets/gbhscale.c:108 ../glade/gbwidgets/gbspinbutton.c:93
+#: ../glade/gbwidgets/gbvscale.c:109
+msgid "Digits:"
+msgstr "桁数:"
+
+#: ../glade/gbwidgets/gbhscale.c:108 ../glade/gbwidgets/gbvscale.c:109
+msgid "The number of digits to show"
+msgstr "表示する小数点以下の桁数です"
+
+#: ../glade/gbwidgets/gbhscale.c:110 ../glade/gbwidgets/gbvscale.c:111
+msgid "Value Pos:"
+msgstr "値の位置:"
+
+#: ../glade/gbwidgets/gbhscale.c:111 ../glade/gbwidgets/gbvscale.c:112
+msgid "The position of the value"
+msgstr "値を表示する位置です"
+
+#: ../glade/gbwidgets/gbhscale.c:113 ../glade/gbwidgets/gbhscrollbar.c:87
+#: ../glade/gbwidgets/gbvscale.c:114 ../glade/gbwidgets/gbvscrollbar.c:87
+msgid "Policy:"
+msgstr "ポリシー:"
+
+#: ../glade/gbwidgets/gbhscale.c:114 ../glade/gbwidgets/gbvscale.c:115
+msgid "The update policy of the scale"
+msgstr "スケールを更新する際のポリシーです"
+
+#: ../glade/gbwidgets/gbhscale.c:116 ../glade/gbwidgets/gbhscrollbar.c:90
+#: ../glade/gbwidgets/gbvscale.c:117 ../glade/gbwidgets/gbvscrollbar.c:90
+msgid "Inverted:"
+msgstr "反転:"
+
+#: ../glade/gbwidgets/gbhscale.c:116 ../glade/gbwidgets/gbhscrollbar.c:90
+#: ../glade/gbwidgets/gbvscale.c:117 ../glade/gbwidgets/gbvscrollbar.c:90
+msgid "If the range values are inverted"
+msgstr "スケール内のレンジ値を逆に表示するかどうかです"
+
+#: ../glade/gbwidgets/gbhscale.c:319
+msgid "Horizontal Scale"
+msgstr "水平スケール"
+
+#: ../glade/gbwidgets/gbhscrollbar.c:88 ../glade/gbwidgets/gbvscrollbar.c:88
+msgid "The update policy of the scrollbar"
+msgstr "スクロールバーを更新する際のポリシーです"
+
+#: ../glade/gbwidgets/gbhscrollbar.c:237
+msgid "Horizontal Scrollbar"
+msgstr "水平スクロールバー"
+
+#: ../glade/gbwidgets/gbhseparator.c:144
+msgid "Horizonal Separator"
+msgstr "水平セパレータ"
+
+#: ../glade/gbwidgets/gbiconview.c:106
+#, c-format
+msgid "Icon %i"
+msgstr "アイコン %i"
+
+#: ../glade/gbwidgets/gbiconview.c:128
+msgid "The selection mode of the icon view"
+msgstr "アイコン表示の選択モードです"
+
+#: ../glade/gbwidgets/gbiconview.c:130 ../glade/gbwidgets/gbprogressbar.c:134
+#: ../glade/gbwidgets/gbtoolbar.c:270 ../glade/gnome/bonobodockitem.c:179
+msgid "Orientation:"
+msgstr "方向:"
+
+#: ../glade/gbwidgets/gbiconview.c:131
+msgid "The orientation of the icons"
+msgstr "アイコンの向きです"
+
+#: ../glade/gbwidgets/gbiconview.c:287
+msgid "Icon View"
+msgstr "アイコン表示"
+
+#: ../glade/gbwidgets/gbimage.c:110 ../glade/gbwidgets/gbwindow.c:299
+msgid "Named Icon:"
+msgstr "名前付きアイコン:"
+
+#: ../glade/gbwidgets/gbimage.c:111 ../glade/gbwidgets/gbwindow.c:300
+msgid "The named icon to use"
+msgstr "使用する名前付きアイコンです"
+
+#: ../glade/gbwidgets/gbimage.c:112
+msgid "Icon Size:"
+msgstr "アイコンのサイズ:"
+
+#: ../glade/gbwidgets/gbimage.c:113
+msgid "The stock icon size"
+msgstr "表示するストック・アイコンの大きさです"
+
+#: ../glade/gbwidgets/gbimage.c:115
+msgid "Pixel Size:"
+msgstr "ピクセルの大きさ:"
+
+#: ../glade/gbwidgets/gbimage.c:116
+msgid ""
+"The size of the named icon in pixels, or -1 to use the Icon Size property"
+msgstr ""
+"名前が付いたアイコンのサイズ (ピクセル単位)、またはプロパティ 'Icon Size' を"
+"使用する時は -1です"
+
+#: ../glade/gbwidgets/gbimage.c:120
+msgid "The horizontal alignment"
+msgstr "イメージの水平方向に対する位置です"
+
+#: ../glade/gbwidgets/gbimage.c:123
+msgid "The vertical alignment"
+msgstr "イメージの垂直方向に対する位置です"
+
+#: ../glade/gbwidgets/gbimage.c:648
+msgid "Image"
+msgstr "イメージ"
+
+#: ../glade/gbwidgets/gbimagemenuitem.c:255
+#: ../glade/gbwidgets/gbmenuitem.c:228
+msgid "Invalid stock menu item"
+msgstr "ストック・メニューのアイテムが不正です"
+
+#: ../glade/gbwidgets/gbimagemenuitem.c:471
+msgid "Menu item with a pixmap"
+msgstr "ピックスマップ付きのメニュー・アイテム"
+
+#: ../glade/gbwidgets/gbinputdialog.c:256
+msgid "Input Dialog"
+msgstr "入力ダイアログ"
+
+#: ../glade/gbwidgets/gblabel.c:169
+msgid "Use Underline:"
+msgstr "下線付き:"
+
+#: ../glade/gbwidgets/gblabel.c:170
+msgid "If the text includes an underlined access key"
+msgstr "テキストにアクセラレータキーを示す下線を含めるかどうかです"
+
+#: ../glade/gbwidgets/gblabel.c:171
+msgid "Use Markup:"
+msgstr "マークアップ付き:"
+
+#: ../glade/gbwidgets/gblabel.c:172
+msgid "If the text includes pango markup"
+msgstr "テキストに Pango マークアップを含めるかどうかです"
+
+#: ../glade/gbwidgets/gblabel.c:173
+msgid "Justify:"
+msgstr "行端揃え:"
+
+#: ../glade/gbwidgets/gblabel.c:174
+msgid "The justification of the lines of the label"
+msgstr "ラベルの線の行端揃えの起点です"
+
+#: ../glade/gbwidgets/gblabel.c:176
+msgid "Wrap Text:"
+msgstr "テキストのラップ:"
+
+#: ../glade/gbwidgets/gblabel.c:177
+msgid "If the text is wrapped to fit within the width of the label"
+msgstr "ラベルの幅にフィットするようにテキストを改行するかどうかです"
+
+#: ../glade/gbwidgets/gblabel.c:178
+msgid "Selectable:"
+msgstr "選択可能:"
+
+#: ../glade/gbwidgets/gblabel.c:179
+msgid "If the label text can be selected with the mouse"
+msgstr "テキストをマウスで選択できるかどうかです"
+
+#: ../glade/gbwidgets/gblabel.c:181
+msgid "The horizontal alignment of the entire label"
+msgstr "ラベル全体の水平方向に対する位置です"
+
+#: ../glade/gbwidgets/gblabel.c:184
+msgid "The vertical alignment of the entire label"
+msgstr "ラベル全体の垂直方向に対する位置です"
+
+#: ../glade/gbwidgets/gblabel.c:190
+msgid "Focus Target:"
+msgstr "フォーカス対象:"
+
+#: ../glade/gbwidgets/gblabel.c:191
+msgid ""
+"The widget to set the keyboard focus to when the underlined access key is "
+"used"
+msgstr ""
+"アクセラレータキーが押下された際に、キーボード・フォーカスを当てるウィジット"
+"です"
+
+#. gtk_combo_set_value_in_list (GTK_COMBO (combo), TRUE, TRUE);
+#: ../glade/gbwidgets/gblabel.c:197 ../glade/gbwidgets/gbprogressbar.c:146
+msgid "Ellipsize:"
+msgstr "占有:"
+
+#: ../glade/gbwidgets/gblabel.c:198 ../glade/gbwidgets/gbprogressbar.c:147
+msgid "How to ellipsize the string"
+msgstr "どれくらい文字列が占有するかどうかです"
+
+#: ../glade/gbwidgets/gblabel.c:201
+msgid "The width of the label in characters"
+msgstr "ラベルの幅 (文字単位) です"
+
+#: ../glade/gbwidgets/gblabel.c:203
+msgid "Single Line Mode:"
+msgstr "シングル・ライン・モード:"
+
+#: ../glade/gbwidgets/gblabel.c:204
+msgid "If the label is only given enough height for a single line"
+msgstr "ラベルが一行分の高さだけ与えられるかどうかです"
+
+#: ../glade/gbwidgets/gblabel.c:205
+msgid "Angle:"
+msgstr "角度:"
+
+#: ../glade/gbwidgets/gblabel.c:206
+msgid "The angle of the label text"
+msgstr "ラベルのテキストを描画する角度です"
+
+#: ../glade/gbwidgets/gblabel.c:332 ../glade/gbwidgets/gblabel.c:347
+#: ../glade/gbwidgets/gblabel.c:614
+msgid "Auto"
+msgstr "自動"
+
+#: ../glade/gbwidgets/gblabel.c:870 ../glade/glade_menu_editor.c:410
+msgid "Label"
+msgstr "ラベル"
+
+#: ../glade/gbwidgets/gblayout.c:96
+msgid "Area Width:"
+msgstr "幅:"
+
+#: ../glade/gbwidgets/gblayout.c:97
+msgid "The width of the layout area"
+msgstr "レイアウト領域の幅です"
+
+#: ../glade/gbwidgets/gblayout.c:99
+msgid "Area Height:"
+msgstr "高さ:"
+
+#: ../glade/gbwidgets/gblayout.c:100
+msgid "The height of the layout area"
+msgstr "レイアウト領域の高さです"
+
+#: ../glade/gbwidgets/gblayout.c:222
+msgid "The X coordinate of the widget in the GtkLayout"
+msgstr "GtkLayout の中に配置する子ウィジットの X座標です"
+
+#: ../glade/gbwidgets/gblayout.c:225
+msgid "The Y coordinate of the widget in the GtkLayout"
+msgstr "GtkLayout の中に配置する子ウィジットの Y座標です"
+
+#: ../glade/gbwidgets/gblayout.c:380
+msgid "Layout"
+msgstr "レイアウト"
+
+#: ../glade/gbwidgets/gblist.c:78
+msgid "The selection mode of the list"
+msgstr "リストの選択モードです"
+
+#: ../glade/gbwidgets/gblist.c:192
+msgid "List"
+msgstr "リスト"
+
+#: ../glade/gbwidgets/gblistitem.c:171
+msgid "List Item"
+msgstr "リスト・アイテム"
+
+#: ../glade/gbwidgets/gbmenu.c:198
+msgid "Popup Menu"
+msgstr "ポップアップ・メニュー"
+
+#. FIXME: I'm not sure if we should translate the non-stock labels or not.
+#: ../glade/gbwidgets/gbmenubar.c:190
+msgid "_File"
+msgstr "ファイル(_F)"
+
+#. Create Edit menu
+#: ../glade/gbwidgets/gbmenubar.c:198 ../glade/glade_project_window.c:691
+msgid "_Edit"
+msgstr "編集(_E)"
+
+#. Create View menu
+#: ../glade/gbwidgets/gbmenubar.c:204 ../glade/glade_project_window.c:720
+msgid "_View"
+msgstr "表示(_V)"
+
+#. Create Help menu
+#: ../glade/gbwidgets/gbmenubar.c:206 ../glade/glade_project_window.c:833
+msgid "_Help"
+msgstr "ヘルプ(_H)"
+
+#: ../glade/gbwidgets/gbmenubar.c:207
+msgid "_About"
+msgstr "情報(_A)"
+
+#: ../glade/gbwidgets/gbmenubar.c:268 ../glade/gbwidgets/gbmenubar.c:346
+#: ../glade/gbwidgets/gboptionmenu.c:139
+msgid "Edit Menus..."
+msgstr "メニューの編集..."
+
+#: ../glade/gbwidgets/gbmenubar.c:442
+msgid "Menu Bar"
+msgstr "メニュー・バー"
+
+#: ../glade/gbwidgets/gbmenuitem.c:379
+msgid "Menu Item"
+msgstr "メニュー・アイテム"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:92
+#: ../glade/gbwidgets/gbradiotoolbutton.c:150
+#: ../glade/gbwidgets/gbseparatortoolitem.c:67
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:99
+#: ../glade/gbwidgets/gbtoolbutton.c:111 ../glade/gbwidgets/gbtoolitem.c:65
+msgid "Show Horizontal:"
+msgstr "水平表示:"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:93
+#: ../glade/gbwidgets/gbradiotoolbutton.c:151
+#: ../glade/gbwidgets/gbseparatortoolitem.c:68
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:100
+#: ../glade/gbwidgets/gbtoolbutton.c:112 ../glade/gbwidgets/gbtoolitem.c:66
+msgid "If the item is visible when the toolbar is horizontal"
+msgstr "ツールバーを横向き (水平) にしたら、アイテムも表示するかどうかです"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:94
+#: ../glade/gbwidgets/gbradiotoolbutton.c:152
+#: ../glade/gbwidgets/gbseparatortoolitem.c:69
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:101
+#: ../glade/gbwidgets/gbtoolbutton.c:113 ../glade/gbwidgets/gbtoolitem.c:67
+msgid "Show Vertical:"
+msgstr "垂直表示:"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:95
+#: ../glade/gbwidgets/gbradiotoolbutton.c:153
+#: ../glade/gbwidgets/gbseparatortoolitem.c:70
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:102
+#: ../glade/gbwidgets/gbtoolbutton.c:114 ../glade/gbwidgets/gbtoolitem.c:68
+msgid "If the item is visible when the toolbar is vertical"
+msgstr "ツールバーを縦向き (垂直) にしたら、アイテムも表示するかどうかです"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:96
+#: ../glade/gbwidgets/gbradiotoolbutton.c:154
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:103
+#: ../glade/gbwidgets/gbtoolbutton.c:115 ../glade/gbwidgets/gbtoolitem.c:69
+msgid "Is Important:"
+msgstr "重要:"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:97
+#: ../glade/gbwidgets/gbradiotoolbutton.c:155
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:104
+#: ../glade/gbwidgets/gbtoolbutton.c:116 ../glade/gbwidgets/gbtoolitem.c:70
+msgid ""
+"If the item's text should be shown when the toolbar's mode is "
+"GTK_TOOLBAR_BOTH_HORIZ"
+msgstr ""
+"ツールバーのモードが GTK_TOOLBAR_BOTH_HORIZ の場合は、アイテムのテキストを表"
+"示する必要があるかどうかです"
+
+#: ../glade/gbwidgets/gbmenutoolbutton.c:255
+msgid "Toolbar Button with Menu"
+msgstr "メニュー付きツールーバー・ボタン"
+
+#: ../glade/gbwidgets/gbnotebook.c:191
+msgid "New notebook"
+msgstr "新しいノートブック"
+
+#: ../glade/gbwidgets/gbnotebook.c:202 ../glade/gnome/gnomepropertybox.c:124
+msgid "Number of pages:"
+msgstr "ページ数"
+
+#: ../glade/gbwidgets/gbnotebook.c:274
+msgid "Show Tabs:"
+msgstr "タブの表示:"
+
+#: ../glade/gbwidgets/gbnotebook.c:274
+msgid "If the notebook tabs are shown"
+msgstr "ノートブックのタブを表示するかどうかです"
+
+#: ../glade/gbwidgets/gbnotebook.c:275
+msgid "Show Border:"
+msgstr "境界線の表示:"
+
+#: ../glade/gbwidgets/gbnotebook.c:276
+msgid "If the notebook border is shown, when the tabs are not shown"
+msgstr "タブを表示しないときに、ノートブックの境界線を描画するかどうかです"
+
+#: ../glade/gbwidgets/gbnotebook.c:277
+msgid "Tab Pos:"
+msgstr "タブの位置:"
+
+#: ../glade/gbwidgets/gbnotebook.c:278
+msgid "The position of the notebook tabs"
+msgstr "ノートブックのタブを表示する位置です"
+
+#: ../glade/gbwidgets/gbnotebook.c:280
+msgid "Scrollable:"
+msgstr "スクロール可否:"
+
+#: ../glade/gbwidgets/gbnotebook.c:281
+msgid "If the notebook tabs are scrollable"
+msgstr "ノートブックのタブをスクロールできるようにするかどうかです"
+
+#. These seem to be deprecated.
+#: ../glade/gbwidgets/gbnotebook.c:284
+msgid "Tab Horz. Border:"
+msgstr "水平タブの境界線:"
+
+#: ../glade/gbwidgets/gbnotebook.c:285
+msgid "The size of the notebook tabs' horizontal border"
+msgstr "ノートブックタブの水平方向に対する境界線の大きさです"
+
+#: ../glade/gbwidgets/gbnotebook.c:287
+msgid "Tab Vert. Border:"
+msgstr "垂直タブの境界線:"
+
+#: ../glade/gbwidgets/gbnotebook.c:288
+msgid "The size of the notebook tabs' vertical border"
+msgstr "ノートブックタブの垂直方向に対する境界線の大きさです"
+
+#: ../glade/gbwidgets/gbnotebook.c:291
+msgid "Show Popup:"
+msgstr "ポップアップ:"
+
+#: ../glade/gbwidgets/gbnotebook.c:291
+msgid "If the popup menu is enabled"
+msgstr "ポップアップ・メニューを利用できるかどうかです"
+
+#: ../glade/gbwidgets/gbnotebook.c:292 ../glade/gnome/gnomedruid.c:102
+msgid "Number of Pages:"
+msgstr "ページ数:"
+
+#: ../glade/gbwidgets/gbnotebook.c:293
+msgid "The number of notebook pages"
+msgstr "ノートブックのページ数です"
+
+#: ../glade/gbwidgets/gbnotebook.c:540
+msgid "Previous Page"
+msgstr "前のページ"
+
+#: ../glade/gbwidgets/gbnotebook.c:548
+msgid "Next Page"
+msgstr "次のページ"
+
+#: ../glade/gbwidgets/gbnotebook.c:556
+msgid "Delete Page"
+msgstr "ページの削除"
+
+#: ../glade/gbwidgets/gbnotebook.c:562
+msgid "Switch Next"
+msgstr "次ページに移動"
+
+#: ../glade/gbwidgets/gbnotebook.c:570
+msgid "Switch Previous"
+msgstr "前ページに移動"
+
+#: ../glade/gbwidgets/gbnotebook.c:578 ../glade/gnome/gnomedruid.c:298
+msgid "Insert Page After"
+msgstr "ページを後ろに挿入"
+
+#: ../glade/gbwidgets/gbnotebook.c:586 ../glade/gnome/gnomedruid.c:285
+msgid "Insert Page Before"
+msgstr "ページを前に挿入"
+
+#: ../glade/gbwidgets/gbnotebook.c:670
+msgid "The page's position in the list of pages"
+msgstr "ページの位置です"
+
+#: ../glade/gbwidgets/gbnotebook.c:673
+msgid "Set True to let the tab expand"
+msgstr ""
+"親ウィジットのサイズを変更した際に、タブも一緒にサイズを変更するかどうかです"
+
+#: ../glade/gbwidgets/gbnotebook.c:675
+msgid "Set True to let the tab fill its allocated area"
+msgstr "タブを割り当てられた領域一杯に広げるかどうかです"
+
+#: ../glade/gbwidgets/gbnotebook.c:677
+msgid "Set True to pack the tab at the start of the notebook"
+msgstr "タブをノートブックの先頭から配置していくかどうかです"
+
+#: ../glade/gbwidgets/gbnotebook.c:678
+msgid "Menu Label:"
+msgstr "メニューのラベル:"
+
+#: ../glade/gbwidgets/gbnotebook.c:679
+msgid "The text to display in the popup menu"
+msgstr "ポップアップ・メニューに表示する文字列です"
+
+#: ../glade/gbwidgets/gbnotebook.c:937
+msgid "Notebook"
+msgstr "ノートブック"
+
+#: ../glade/gbwidgets/gboptionmenu.c:230
+#, c-format
+msgid "Cannot add a %s to a GtkOptionMenu."
+msgstr "%s を GtkOptionMenu へ追加できません。"
+
+#: ../glade/gbwidgets/gboptionmenu.c:270
+msgid "Option Menu"
+msgstr "オプション・メニュー"
+
+#: ../glade/gbwidgets/gbpreview.c:63
+msgid "Color:"
+msgstr "色:"
+
+#: ../glade/gbwidgets/gbpreview.c:64
+msgid "If the preview is color or grayscale"
+msgstr "プレビューがカラー表示かモノクロ表示かどうかです"
+
+#: ../glade/gbwidgets/gbpreview.c:66
+msgid "If the preview expands to fill its allocated area"
+msgstr "プレビューを割り当てられた領域一杯に広げるかどうかです"
+
+#: ../glade/gbwidgets/gbpreview.c:162
+msgid "Preview"
+msgstr "プレビュー"
+
+#: ../glade/gbwidgets/gbprogressbar.c:135
+msgid "The orientation of the progress bar's contents"
+msgstr "プログレス・バーが延びていく方向です"
+
+#: ../glade/gbwidgets/gbprogressbar.c:137
+msgid "Fraction:"
+msgstr "割合い:"
+
+#: ../glade/gbwidgets/gbprogressbar.c:138
+msgid "The fraction of work that has been completed"
+msgstr "処理の完了状態を示す割合いです"
+
+#: ../glade/gbwidgets/gbprogressbar.c:140
+msgid "Pulse Step:"
+msgstr "パルス幅:"
+
+#: ../glade/gbwidgets/gbprogressbar.c:141
+msgid ""
+"The fraction of the progress bar length to move the bouncing block when "
+"pulsed"
+msgstr ""
+"パルスを受け取ったときに移動するプログレス・バー・ブロックの長さの割合です"
+
+#: ../glade/gbwidgets/gbprogressbar.c:144
+msgid "The text to display over the progress bar"
+msgstr "プログレス・バーの上に表示する文字列です"
+
+#. ShowText is implicit now, if the Text property is set to anything.
+#: ../glade/gbwidgets/gbprogressbar.c:152
+msgid "Show Text:"
+msgstr "テキスト表示:"
+
+#: ../glade/gbwidgets/gbprogressbar.c:153
+msgid "If the text should be shown in the progress bar"
+msgstr "プログレス・バーの中にテキストを表示するかどうかです"
+
+#. ActivityMode is deprecated and implicit now. The app just calls
+#. gtk_progress_bar_pulse() and it automatically goes into activity mode.
+#: ../glade/gbwidgets/gbprogressbar.c:157
+msgid "Activity Mode:"
+msgstr "動作モード:"
+
+#: ../glade/gbwidgets/gbprogressbar.c:158
+msgid "If the progress bar should act like the front of Kit's car"
+msgstr "プログレス・バーの動きを模型の自動車の前面のようにするかどうかです"
+
+#: ../glade/gbwidgets/gbprogressbar.c:163
+msgid "The horizontal alignment of the text"
+msgstr "テキストの水平方向に対する位置です"
+
+#: ../glade/gbwidgets/gbprogressbar.c:166
+msgid "The vertical alignment of the text"
+msgstr "テキストの垂直方向に対する位置です"
+
+#: ../glade/gbwidgets/gbprogressbar.c:421
+msgid "Progress Bar"
+msgstr "プログレス・バー"
+
+#: ../glade/gbwidgets/gbradiobutton.c:138
+#: ../glade/gbwidgets/gbradiotoolbutton.c:148
+msgid "If the radio button is initially on"
+msgstr "ラジオ・ボタンの初期値をオンにするかどうかです"
+
+#: ../glade/gbwidgets/gbradiobutton.c:143
+#: ../glade/gbwidgets/gbradiomenuitem.c:106
+#: ../glade/gbwidgets/gbradiotoolbutton.c:141
+#: ../glade/glade_menu_editor.c:1038
+msgid "Group:"
+msgstr "グループ:"
+
+#: ../glade/gbwidgets/gbradiobutton.c:144
+msgid ""
+"The radio button group (the default is all radio buttons with the same "
+"parent)"
+msgstr ""
+"ラジオ・ボタンのグループです (デフォルトでは全てのラジオボタンは同じ親を持ち"
+"ます)"
+
+#: ../glade/gbwidgets/gbradiobutton.c:189
+#: ../glade/gbwidgets/gbradiobutton.c:350
+#: ../glade/gbwidgets/gbradiotoolbutton.c:233
+#: ../glade/gbwidgets/gbradiotoolbutton.c:322
+msgid "New Group"
+msgstr "新しいグループ"
+
+#: ../glade/gbwidgets/gbradiobutton.c:463
+msgid "Radio Button"
+msgstr "ラジオ・ボタン"
+
+#: ../glade/gbwidgets/gbradiomenuitem.c:105
+msgid "If the radio menu item is initially on"
+msgstr "ラジオ・メニュー・アイテムの初期値をオンにするかどうかです"
+
+#: ../glade/gbwidgets/gbradiomenuitem.c:107
+msgid ""
+"The radio menu item group (the default is all radio menu items with the same "
+"parent)"
+msgstr ""
+"ラジオ・メニュー・アイテムのグループです (デフォルトでは全てのラジオ・メ"
+"ニュー・アイテムは同じ親を持ちます)"
+
+#: ../glade/gbwidgets/gbradiomenuitem.c:386
+msgid "Radio Menu Item"
+msgstr "ラジオ・メニュー・アイテム"
+
+#: ../glade/gbwidgets/gbradiotoolbutton.c:142
+msgid ""
+"The radio tool button group (the default is all radio tool buttons in the "
+"toolbar)"
+msgstr ""
+"ラジオ・ツール・ボタンのグループです (デフォルトでは全てのラジオ・ツール・ボ"
+"タンは同じ親を持ちます)"
+
+#: ../glade/gbwidgets/gbradiotoolbutton.c:528
+msgid "Toolbar Radio Button"
+msgstr "ツールバー・ラジオ・ボタン"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:131
+msgid "H Policy:"
+msgstr "水平ポリシー:"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:132
+msgid "When the horizontal scrollbar will be shown"
+msgstr "水平スクロールバーがいつ表示されるかを指定します"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:134
+msgid "V Policy:"
+msgstr "垂直ポリシー:"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:135
+msgid "When the vertical scrollbar will be shown"
+msgstr "垂直スクロールバーがいつ表示されるかを指定します"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:137
+msgid "Window Pos:"
+msgstr "ウィンドウ位置:"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:138
+msgid "Where the child window is located with respect to the scrollbars"
+msgstr "スクロールバーの属性を反映した子ウィンドウを配置する場所です"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:140
+msgid "Shadow Type:"
+msgstr "影の種類:"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:141
+msgid "The update policy of the vertical scrollbar"
+msgstr "垂直スクロールバーを更新する際のポリシーです"
+
+#: ../glade/gbwidgets/gbscrolledwindow.c:353
+msgid "Scrolled Window"
+msgstr "スクロール・ウィンドウ"
+
+#: ../glade/gbwidgets/gbseparatormenuitem.c:153
+msgid "Separator for Menus"
+msgstr "メニューのセパレータ"
+
+#: ../glade/gbwidgets/gbseparatortoolitem.c:65
+msgid "Draw:"
+msgstr "描画:"
+
+#: ../glade/gbwidgets/gbseparatortoolitem.c:66
+msgid "If the separator is drawn, or just blank"
+msgstr "セパレータを描画するか、単に空白するかどうかです"
+
+#: ../glade/gbwidgets/gbseparatortoolitem.c:204
+msgid "Toolbar Separator Item"
+msgstr "ツールバー・セパレータ・アイテム"
+
+#: ../glade/gbwidgets/gbspinbutton.c:91
+msgid "Climb Rate:"
+msgstr "増分値:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:92
+msgid ""
+"The climb rate of the spinbutton, used in conjunction with the Page Increment"
+msgstr "スピンボタンの増分値で、ページの増分値とともに利用します"
+
+#: ../glade/gbwidgets/gbspinbutton.c:94
+msgid "The number of decimal digits to show"
+msgstr "表示される数値のの小数点以下の桁数です"
+
+#: ../glade/gbwidgets/gbspinbutton.c:96
+msgid "Numeric:"
+msgstr "数値のみ:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:97
+msgid "If only numeric entry is allowed"
+msgstr "数値のみ入力可能かどうかです"
+
+#: ../glade/gbwidgets/gbspinbutton.c:98
+msgid "Update Policy:"
+msgstr "更新ポリシー:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:99
+msgid "When value_changed signals are emitted"
+msgstr "シグナル \"value_changed\" を発行するタイミングです"
+
+#: ../glade/gbwidgets/gbspinbutton.c:101
+msgid "Snap:"
+msgstr "スナップ:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:102
+msgid "If the value is snapped to multiples of the step increment"
+msgstr "ステップ単位の増分値を倍にした値でスナップするかどうかです"
+
+#: ../glade/gbwidgets/gbspinbutton.c:103
+msgid "Wrap:"
+msgstr "ラップ:"
+
+#: ../glade/gbwidgets/gbspinbutton.c:104
+msgid "If the value is wrapped at the limits"
+msgstr "最大/最小値のつなげて一回りさせるかどうかです"
+
+#: ../glade/gbwidgets/gbspinbutton.c:284
+msgid "Spin Button"
+msgstr "スピン・ボタン"
+
+#: ../glade/gbwidgets/gbstatusbar.c:64
+msgid "Resize Grip:"
+msgstr "グリップ:"
+
+#: ../glade/gbwidgets/gbstatusbar.c:64
+msgid "If the status bar has a resize grip to resize the window"
+msgstr ""
+"ステータスバーがウィンドウ・サイズを変更するためのグリップを持つかどうかです"
+
+#: ../glade/gbwidgets/gbstatusbar.c:156
+msgid "Status Bar"
+msgstr "ステータス・バー"
+
+#: ../glade/gbwidgets/gbtable.c:137
+msgid "New table"
+msgstr "新しいテーブル"
+
+#: ../glade/gbwidgets/gbtable.c:149 ../glade/gbwidgets/gbvbox.c:95
+#: ../glade/gbwidgets/gbvbuttonbox.c:123
+msgid "Number of rows:"
+msgstr "行の数:"
+
+#: ../glade/gbwidgets/gbtable.c:237
+msgid "Rows:"
+msgstr "行の数:"
+
+#: ../glade/gbwidgets/gbtable.c:238
+msgid "The number of rows in the table"
+msgstr "テーブルの行数です"
+
+#: ../glade/gbwidgets/gbtable.c:240
+msgid "Columns:"
+msgstr "列の数:"
+
+#: ../glade/gbwidgets/gbtable.c:241
+msgid "The number of columns in the table"
+msgstr "テーブルの列数です"
+
+#: ../glade/gbwidgets/gbtable.c:244
+msgid "If the children should all be the same size"
+msgstr "子ウィジェットの全てを同じ大きさにするかどうかです"
+
+#: ../glade/gbwidgets/gbtable.c:245 ../glade/gnome/gnomeiconlist.c:180
+msgid "Row Spacing:"
+msgstr "行の間隔:"
+
+#: ../glade/gbwidgets/gbtable.c:246
+msgid "The space between each row"
+msgstr "テーブルの行と行の間に挿入する余白です"
+
+#: ../glade/gbwidgets/gbtable.c:248 ../glade/gnome/gnomeiconlist.c:183
+msgid "Col Spacing:"
+msgstr "列の間隔:"
+
+#: ../glade/gbwidgets/gbtable.c:249
+msgid "The space between each column"
+msgstr "テーブルの列と列の間に挿入する余白です"
+
+#: ../glade/gbwidgets/gbtable.c:368
+msgid "Cell X:"
+msgstr "セル水平位置:"
+
+#: ../glade/gbwidgets/gbtable.c:369
+msgid "The left edge of the widget in the table"
+msgstr "テーブルに配置するウィジットの左端の位置です"
+
+#: ../glade/gbwidgets/gbtable.c:371
+msgid "Cell Y:"
+msgstr "セル垂直位置:"
+
+#: ../glade/gbwidgets/gbtable.c:372
+msgid "The top edge of the widget in the table"
+msgstr "テーブルに配置するウィジットの上端の位置です"
+
+#: ../glade/gbwidgets/gbtable.c:375
+msgid "Col Span:"
+msgstr "列の占有:"
+
+#: ../glade/gbwidgets/gbtable.c:376
+msgid "The number of columns spanned by the widget in the table"
+msgstr "テーブルの中でウィジットが占める列数です"
+
+#: ../glade/gbwidgets/gbtable.c:378
+msgid "Row Span:"
+msgstr "行の占有:"
+
+#: ../glade/gbwidgets/gbtable.c:379
+msgid "The number of rows spanned by the widget in the table"
+msgstr "テーブルの中でウィジットが占める行数です"
+
+#: ../glade/gbwidgets/gbtable.c:381
+msgid "H Padding:"
+msgstr "水平パディング:"
+
+#: ../glade/gbwidgets/gbtable.c:384
+msgid "V Padding:"
+msgstr "垂直パディング:"
+
+#: ../glade/gbwidgets/gbtable.c:387
+msgid "X Expand:"
+msgstr "X方向に広げる:"
+
+#: ../glade/gbwidgets/gbtable.c:388
+msgid "Set True to let the widget expand horizontally"
+msgstr "\"はい\" にすると、ウィンドウが水平方向に広がります"
+
+#: ../glade/gbwidgets/gbtable.c:389
+msgid "Y Expand:"
+msgstr "Y方向に広げる:"
+
+#: ../glade/gbwidgets/gbtable.c:390
+msgid "Set True to let the widget expand vertically"
+msgstr "\"はい\" にすると、ウィンドウが垂直方向に広がります"
+
+#: ../glade/gbwidgets/gbtable.c:391
+msgid "X Shrink:"
+msgstr "X方向に縮める:"
+
+#: ../glade/gbwidgets/gbtable.c:392
+msgid "Set True to let the widget shrink horizontally"
+msgstr "\"はい\" にすると、ウィンドウが水平方向に縮まります"
+
+#: ../glade/gbwidgets/gbtable.c:393
+msgid "Y Shrink:"
+msgstr "Y方向に縮める:"
+
+#: ../glade/gbwidgets/gbtable.c:394
+msgid "Set True to let the widget shrink vertically"
+msgstr "\"はい\" にすると、ウィンドウが垂直方向に縮まります"
+
+#: ../glade/gbwidgets/gbtable.c:395
+msgid "X Fill:"
+msgstr "X方向に埋める:"
+
+#: ../glade/gbwidgets/gbtable.c:396
+msgid "Set True to let the widget fill its horizontal allocated area"
+msgstr ""
+"\"はい\" にすると、子ウィジットを割り当てられた領域の水平方向に広げます"
+
+#: ../glade/gbwidgets/gbtable.c:397
+msgid "Y Fill:"
+msgstr "Y方向に埋める:"
+
+#: ../glade/gbwidgets/gbtable.c:398
+msgid "Set True to let the widget fill its vertical allocated area"
+msgstr ""
+"\"はい\" にすると、子ウィジットを割り当てられた領域の垂直方向に広げます"
+
+#: ../glade/gbwidgets/gbtable.c:667
+msgid "Insert Row Before"
+msgstr "行を前に挿入"
+
+#: ../glade/gbwidgets/gbtable.c:674
+msgid "Insert Row After"
+msgstr "行を後に挿入"
+
+#: ../glade/gbwidgets/gbtable.c:681
+msgid "Insert Column Before"
+msgstr "列を前に挿入"
+
+#: ../glade/gbwidgets/gbtable.c:688
+msgid "Insert Column After"
+msgstr "列を後に挿入"
+
+#: ../glade/gbwidgets/gbtable.c:695
+msgid "Delete Row"
+msgstr "行の削除"
+
+#: ../glade/gbwidgets/gbtable.c:701
+msgid "Delete Column"
+msgstr "列の削除"
+
+#: ../glade/gbwidgets/gbtable.c:1208
+msgid "Table"
+msgstr "テーブル"
+
+#: ../glade/gbwidgets/gbtextview.c:51
+msgid "Center"
+msgstr "中央"
+
+#: ../glade/gbwidgets/gbtextview.c:52
+msgid "Fill"
+msgstr "領域埋め"
+
+#. Add a "None" item first, so it is easy to reset the pixmap.
+#. If the user selects the 'None' item from the combo, we reset the
+#. text to "" and return. This callback will be called again.
+#. Add a 'None' item at the top of the list.
+#: ../glade/gbwidgets/gbtextview.c:71 ../glade/glade_gnome.c:112
+#: ../glade/glade_menu_editor.c:542 ../glade/glade_menu_editor.c:829
+#: ../glade/glade_menu_editor.c:1344 ../glade/glade_menu_editor.c:2251
+#: ../glade/property.c:2431
+msgid "None"
+msgstr "なし"
+
+#: ../glade/gbwidgets/gbtextview.c:72
+msgid "Character"
+msgstr "文字"
+
+#: ../glade/gbwidgets/gbtextview.c:73
+msgid "Word"
+msgstr "単語"
+
+#: ../glade/gbwidgets/gbtextview.c:117
+msgid "Cursor Visible:"
+msgstr "カーソル表示:"
+
+#: ../glade/gbwidgets/gbtextview.c:118
+msgid "If the cursor is visible"
+msgstr "カーソルを表示するかどうかです"
+
+#: ../glade/gbwidgets/gbtextview.c:119
+msgid "Overwrite:"
+msgstr "上書き:"
+
+#: ../glade/gbwidgets/gbtextview.c:120
+msgid "If entered text overwrites the existing text"
+msgstr "入力したテキストが既存のテキストを上書きするかどうかです"
+
+#: ../glade/gbwidgets/gbtextview.c:121
+msgid "Accepts Tab:"
+msgstr "タブ文字:"
+
+#: ../glade/gbwidgets/gbtextview.c:122
+msgid "If tab characters can be entered"
+msgstr "タブ文字を入力できるかどうかです"
+
+#: ../glade/gbwidgets/gbtextview.c:126
+msgid "Justification:"
+msgstr "行端揃え:"
+
+#: ../glade/gbwidgets/gbtextview.c:127
+msgid "The justification of the text"
+msgstr "テキストの行端を揃えるかどうかです"
+
+#: ../glade/gbwidgets/gbtextview.c:129
+msgid "Wrapping:"
+msgstr "ラップ:"
+
+#: ../glade/gbwidgets/gbtextview.c:130
+msgid "The wrapping of the text"
+msgstr "テキストをラッピングするかどうかです"
+
+#: ../glade/gbwidgets/gbtextview.c:133
+msgid "Space Above:"
+msgstr "上の余白:"
+
+#: ../glade/gbwidgets/gbtextview.c:134
+msgid "Pixels of blank space above paragraphs"
+msgstr "段落の上に挿入する余白のピクセル数です"
+
+#: ../glade/gbwidgets/gbtextview.c:136
+msgid "Space Below:"
+msgstr "下の余白:"
+
+#: ../glade/gbwidgets/gbtextview.c:137
+msgid "Pixels of blank space below paragraphs"
+msgstr "段落の下に挿入する余白のピクセル数です"
+
+#: ../glade/gbwidgets/gbtextview.c:139
+msgid "Space Inside:"
+msgstr "内部の余白:"
+
+#: ../glade/gbwidgets/gbtextview.c:140
+msgid "Pixels of blank space between wrapped lines in a paragraph"
+msgstr "段落でラップした行と行の間に挿入する余白のピクセル数です"
+
+#: ../glade/gbwidgets/gbtextview.c:143
+msgid "Left Margin:"
+msgstr "左マージン:"
+
+#: ../glade/gbwidgets/gbtextview.c:144
+msgid "Width of the left margin in pixels"
+msgstr "左マージンの幅を示すピクセル値です"
+
+#: ../glade/gbwidgets/gbtextview.c:146
+msgid "Right Margin:"
+msgstr "右マージン:"
+
+#: ../glade/gbwidgets/gbtextview.c:147
+msgid "Width of the right margin in pixels"
+msgstr "右マージンの幅を示すピクセル値です"
+
+#: ../glade/gbwidgets/gbtextview.c:149
+msgid "Indent:"
+msgstr "インデント:"
+
+#: ../glade/gbwidgets/gbtextview.c:150
+msgid "Amount of pixels to indent paragraphs"
+msgstr "段落の字下がりに使用するピクセル数です"
+
+#: ../glade/gbwidgets/gbtextview.c:463
+msgid "Text View"
+msgstr "テキスト・ビュー"
+
+#: ../glade/gbwidgets/gbtogglebutton.c:100
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:98
+msgid "If the toggle button is initially on"
+msgstr "トグル・ボタンの初期値をオンにするかどうかです"
+
+#: ../glade/gbwidgets/gbtogglebutton.c:199
+msgid "Toggle Button"
+msgstr "トグル・ボタン"
+
+#: ../glade/gbwidgets/gbtoggletoolbutton.c:297
+msgid "Toolbar Toggle Button"
+msgstr "ツールバー・トグル・ボタン"
+
+#: ../glade/gbwidgets/gbtoolbar.c:191
+msgid "New toolbar"
+msgstr "新しいツールバー"
+
+#: ../glade/gbwidgets/gbtoolbar.c:202
+msgid "Number of items:"
+msgstr "アイテムの数:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:268
+msgid "The number of items in the toolbar"
+msgstr "ツールバーのアイテムの数です"
+
+#: ../glade/gbwidgets/gbtoolbar.c:271
+msgid "The toolbar orientation"
+msgstr "ツールバーの方向です"
+
+#: ../glade/gbwidgets/gbtoolbar.c:273
+msgid "Style:"
+msgstr "スタイル:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:274
+msgid "The toolbar style"
+msgstr "ツールバーのスタイルです"
+
+#: ../glade/gbwidgets/gbtoolbar.c:276
+msgid "Tooltips:"
+msgstr "ツールチップ:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:276
+msgid "If tooltips are enabled"
+msgstr "ツールチップ・ヒントを表示するかどうかです"
+
+#: ../glade/gbwidgets/gbtoolbar.c:277
+msgid "Show Arrow:"
+msgstr "アロー表示:"
+
+#: ../glade/gbwidgets/gbtoolbar.c:277
+msgid "If an arrow should be shown to popup a menu if the toolbar doesn't fit"
+msgstr ""
+"ツールバーがフィットしない場合にメニューをポップさせるためのアロー (矢印) を"
+"表示するかどうかです"
+
+#: ../glade/gbwidgets/gbtoolbar.c:427
+msgid "If the item should be the same size as other homogeneous items"
+msgstr "アイテムを他の homogeneous アイテム同様に同じ大きさにするかどうかです"
+
+#. Commands for inserting new items.
+#: ../glade/gbwidgets/gbtoolbar.c:506
+msgid "Insert Item Before"
+msgstr "アイテムを前に挿入"
+
+#: ../glade/gbwidgets/gbtoolbar.c:513
+msgid "Insert Item After"
+msgstr "アイテムを後ろに挿入"
+
+#: ../glade/gbwidgets/gbtoolbar.c:680
+msgid "Toolbar"
+msgstr "ツールバー"
+
+#: ../glade/gbwidgets/gbtoolbutton.c:586
+msgid "Toolbar Button"
+msgstr "ツールバー・ボタン"
+
+#: ../glade/gbwidgets/gbtoolitem.c:201
+msgid "Toolbar Item"
+msgstr "ツールバー・アイテム"
+
+#: ../glade/gbwidgets/gbtreeview.c:71
+msgid "Column 1"
+msgstr "1列目"
+
+#: ../glade/gbwidgets/gbtreeview.c:79
+msgid "Column 2"
+msgstr "2列目"
+
+#: ../glade/gbwidgets/gbtreeview.c:87
+msgid "Column 3"
+msgstr "3列目"
+
+#: ../glade/gbwidgets/gbtreeview.c:97
+#, c-format
+msgid "Row %i"
+msgstr "%i行目"
+
+#: ../glade/gbwidgets/gbtreeview.c:114
+msgid "Headers Visible:"
+msgstr "見出し:"
+
+#: ../glade/gbwidgets/gbtreeview.c:115
+msgid "If the column header buttons are shown"
+msgstr "列を示す見出しボタンを表示するかどうかです"
+
+#: ../glade/gbwidgets/gbtreeview.c:116
+msgid "Rules Hint:"
+msgstr "ヒントのルール:"
+
+#: ../glade/gbwidgets/gbtreeview.c:117
+msgid ""
+"If a hint is set so the theme engine should draw rows in alternating colors"
+msgstr "テーマ・エンジンが他の色で行を描画するヒントをセットするかどうかです"
+
+#: ../glade/gbwidgets/gbtreeview.c:118
+msgid "Reorderable:"
+msgstr "順序の変更:"
+
+#: ../glade/gbwidgets/gbtreeview.c:119
+msgid "If the view is reorderable"
+msgstr "表示する項目の順序を変更できるかどうかです"
+
+#: ../glade/gbwidgets/gbtreeview.c:120
+msgid "Enable Search:"
+msgstr "検索可否:"
+
+#: ../glade/gbwidgets/gbtreeview.c:121
+msgid "If the user can search through columns interactively"
+msgstr "ユーザが列を相互に検索できるかどうかです"
+
+#: ../glade/gbwidgets/gbtreeview.c:123
+msgid "Fixed Height Mode:"
+msgstr "高さ固定モード:"
+
+#: ../glade/gbwidgets/gbtreeview.c:124
+msgid "Sets all rows to the same height to improve performance"
+msgstr "パフォーマンスを向上するために全ての行を同じ高さにします"
+
+#: ../glade/gbwidgets/gbtreeview.c:125
+msgid "Hover Selection:"
+msgstr "ホバー時の選択範囲:"
+
+#: ../glade/gbwidgets/gbtreeview.c:126
+msgid "Whether the selection should follow the pointer"
+msgstr "選択範囲をマウス・ポインタに従って変更するかどうかです"
+
+#: ../glade/gbwidgets/gbtreeview.c:127
+msgid "Hover Expand:"
+msgstr "ホバー時の展開:"
+
+#: ../glade/gbwidgets/gbtreeview.c:128
+msgid ""
+"Whether rows should be expanded or collapsed when the pointer moves over them"
+msgstr "マウスが上に乗ったらツリーを展開/畳むかどうかです"
+
+#: ../glade/gbwidgets/gbtreeview.c:317
+msgid "List or Tree View"
+msgstr "リスト/ツリー・ビュー"
+
+#: ../glade/gbwidgets/gbvbox.c:84
+msgid "New vertical box"
+msgstr "新しい垂直ボックス"
+
+#: ../glade/gbwidgets/gbvbox.c:245
+msgid "Vertical Box"
+msgstr "垂直ボックス"
+
+#: ../glade/gbwidgets/gbvbuttonbox.c:111
+msgid "New vertical button box"
+msgstr "新しい垂直ボタン・ボックス"
+
+#: ../glade/gbwidgets/gbvbuttonbox.c:344
+msgid "Vertical Button Box"
+msgstr "垂直ボタン・ボックス"
+
+#: ../glade/gbwidgets/gbviewport.c:104
+msgid "The type of shadow of the viewport"
+msgstr "ビューポートに付ける影の種類です"
+
+#: ../glade/gbwidgets/gbviewport.c:240
+msgid "Viewport"
+msgstr "ビューポート"
+
+#: ../glade/gbwidgets/gbvpaned.c:192
+msgid "Vertical Panes"
+msgstr "垂直ペイン"
+
+#: ../glade/gbwidgets/gbvruler.c:247
+msgid "Vertical Ruler"
+msgstr "垂直ルーラ"
+
+#: ../glade/gbwidgets/gbvscale.c:319
+msgid "Vertical Scale"
+msgstr "垂直スケール"
+
+#: ../glade/gbwidgets/gbvscrollbar.c:236
+msgid "Vertical Scrollbar"
+msgstr "垂直スクロールバー"
+
+#: ../glade/gbwidgets/gbvseparator.c:144
+msgid "Vertical Separator"
+msgstr "垂直セパレータ"
+
+#: ../glade/gbwidgets/gbwindow.c:242
+msgid "The title of the window"
+msgstr "ウィンドウに付けるタイトルです"
+
+#: ../glade/gbwidgets/gbwindow.c:245
+msgid "The type of the window"
+msgstr "ウィンドウの種類です"
+
+#: ../glade/gbwidgets/gbwindow.c:249
+msgid "Type Hint:"
+msgstr "ヒントの種類:"
+
+#: ../glade/gbwidgets/gbwindow.c:250
+msgid "Tells the window manager how to treat the window"
+msgstr "ウィンドウ・マネージャに問い合わせるウィンドウの扱い方です"
+
+#: ../glade/gbwidgets/gbwindow.c:255
+msgid "The initial position of the window"
+msgstr "ウインドウを表示する初期位置です"
+
+#: ../glade/gbwidgets/gbwindow.c:259 ../glade/gnome/gnomefileentry.c:105
+#: ../glade/gnome/gnomepixmapentry.c:84
+msgid "Modal:"
+msgstr "モーダル:"
+
+#: ../glade/gbwidgets/gbwindow.c:259
+msgid "If the window is modal"
+msgstr "ウィンドウはモーダル式かどうかです"
+
+#: ../glade/gbwidgets/gbwindow.c:264
+msgid "Default Width:"
+msgstr "幅:"
+
+#: ../glade/gbwidgets/gbwindow.c:265
+msgid "The default width of the window"
+msgstr "ウィンドウのデフォルトの幅です"
+
+#: ../glade/gbwidgets/gbwindow.c:269
+msgid "Default Height:"
+msgstr "高さ:"
+
+#: ../glade/gbwidgets/gbwindow.c:270
+msgid "The default height of the window"
+msgstr "ウィンドウのデフォルトの高さです"
+
+#: ../glade/gbwidgets/gbwindow.c:276
+msgid "Resizable:"
+msgstr "サイズ変更:"
+
+#: ../glade/gbwidgets/gbwindow.c:277
+msgid "If the window can be resized"
+msgstr "ウィンドウのサイズを変更できるかどうかです"
+
+#: ../glade/gbwidgets/gbwindow.c:284
+msgid "If the window can be shrunk"
+msgstr "ウィンドウを縮めれるかどうかです"
+
+#: ../glade/gbwidgets/gbwindow.c:285
+msgid "Grow:"
+msgstr "拡大:"
+
+#: ../glade/gbwidgets/gbwindow.c:286
+msgid "If the window can be enlarged"
+msgstr "ウィンドウを拡大できるかどうかです"
+
+#: ../glade/gbwidgets/gbwindow.c:291
+msgid "Auto-Destroy:"
+msgstr "自動デストロイ:"
+
+#: ../glade/gbwidgets/gbwindow.c:292
+msgid "If the window is destroyed when its transient parent is destroyed"
+msgstr ""
+"親ウィジットが終了 (destroy) したら同時にウィンドウも終了するかどうかです"
+
+#: ../glade/gbwidgets/gbwindow.c:296
+msgid "The icon for this window"
+msgstr "ウィンドウのアイコンです"
+
+#: ../glade/gbwidgets/gbwindow.c:303
+msgid "Role:"
+msgstr "ロール:"
+
+#: ../glade/gbwidgets/gbwindow.c:303
+msgid "A unique identifier for the window to be used when restoring a session"
+msgstr "セッションを再開する際に使用するウィンドウの重複しない識別子です"
+
+#: ../glade/gbwidgets/gbwindow.c:306
+msgid "Decorated:"
+msgstr "装飾:"
+
+#: ../glade/gbwidgets/gbwindow.c:307
+msgid "If the window should be decorated by the window manager"
+msgstr "ウィンドウ・マネージャがこのウィンドウに装飾を付けるかどうかです"
+
+#: ../glade/gbwidgets/gbwindow.c:310
+msgid "Skip Taskbar:"
+msgstr "タスクバー非表示:"
+
+#: ../glade/gbwidgets/gbwindow.c:311
+msgid "If the window should not appear in the task bar"
+msgstr "ウィンドウをタスクバーの中に表示しないかどうかです"
+
+#: ../glade/gbwidgets/gbwindow.c:314
+msgid "Skip Pager:"
+msgstr "ページャ非表示:"
+
+#: ../glade/gbwidgets/gbwindow.c:315
+msgid "If the window should not appear in the pager"
+msgstr "ウィンドウをページャの中に表示しないかどうかです"
+
+#: ../glade/gbwidgets/gbwindow.c:318
+msgid "Gravity:"
+msgstr "グラビティ:"
+
+#: ../glade/gbwidgets/gbwindow.c:319
+msgid "The reference point to use when the window coordinates are set"
+msgstr "ウィンドウの座標がセットされたら使用するリファレンス・ポイントです"
+
+#: ../glade/gbwidgets/gbwindow.c:323
+msgid "Focus On Map:"
+msgstr "マップ時のフォーカス:"
+
+#: ../glade/gbwidgets/gbwindow.c:323
+msgid "If the window should receive the input focus when it is mapped"
+msgstr "ウィンドウがマップされたら、入力フォーカスを受け取るかどうかです"
+
+#: ../glade/gbwidgets/gbwindow.c:1198
+msgid "Window"
+msgstr "ウィンドウ"
+
+#: ../glade/glade.c:369 ../glade/gnome-db/gnomedberrordlg.c:74
+msgid "Error"
+msgstr "エラー"
+
+#: ../glade/glade.c:372
+msgid "System Error"
+msgstr "システムのエラー"
+
+#: ../glade/glade.c:376
+msgid "Error opening file"
+msgstr "ファイル・オープンのエラー"
+
+#: ../glade/glade.c:378
+msgid "Error reading file"
+msgstr "ファイル読み込みのエラー"
+
+#: ../glade/glade.c:380
+msgid "Error writing file"
+msgstr "ファイル書き込みのエラー"
+
+#: ../glade/glade.c:383
+msgid "Invalid directory"
+msgstr "不正なフォルダ"
+
+#: ../glade/glade.c:387
+msgid "Invalid value"
+msgstr "不正な値"
+
+#: ../glade/glade.c:389
+msgid "Invalid XML entity"
+msgstr "不正な XML エンティティ"
+
+#: ../glade/glade.c:391
+msgid "Start tag expected"
+msgstr "開始タグなし"
+
+#: ../glade/glade.c:393
+msgid "End tag expected"
+msgstr "終了タグなし"
+
+#: ../glade/glade.c:395
+msgid "Character data expected"
+msgstr "文字データなし"
+
+#: ../glade/glade.c:397
+msgid "Class id missing"
+msgstr "クラス ID がありません"
+
+#: ../glade/glade.c:399
+msgid "Class unknown"
+msgstr "不明なクラス"
+
+#: ../glade/glade.c:401
+msgid "Invalid component"
+msgstr "不正なコンポーネント"
+
+#: ../glade/glade.c:403
+msgid "Unexpected end of file"
+msgstr "ファイルが途中で終了"
+
+#: ../glade/glade.c:406
+msgid "Unknown error code"
+msgstr "不明なエラー・コード"
+
+#: ../glade/glade_atk.c:120
+msgid "Controlled By"
+msgstr "コントロール元"
+
+#: ../glade/glade_atk.c:121
+msgid "Controller For"
+msgstr "コントロール先"
+
+#: ../glade/glade_atk.c:122
+msgid "Label For"
+msgstr "ラベルの所有元"
+
+#: ../glade/glade_atk.c:123
+msgid "Labelled By"
+msgstr "ラベルを付与した元"
+
+#: ../glade/glade_atk.c:124
+msgid "Member Of"
+msgstr "所属するグループ"
+
+#: ../glade/glade_atk.c:125
+msgid "Node Child Of"
+msgstr "ノードの親"
+
+#: ../glade/glade_atk.c:126
+msgid "Flows To"
+msgstr "フロー先"
+
+#: ../glade/glade_atk.c:127
+msgid "Flows From"
+msgstr "フロー元"
+
+#: ../glade/glade_atk.c:128
+msgid "Subwindow Of"
+msgstr "サブウィンドウ"
+
+#: ../glade/glade_atk.c:129
+msgid "Embeds"
+msgstr "埋め込み"
+
+#: ../glade/glade_atk.c:130
+msgid "Embedded By"
+msgstr "埋め込み元"
+
+#: ../glade/glade_atk.c:131
+msgid "Popup For"
+msgstr "ポップアップ"
+
+#: ../glade/glade_atk.c:132
+msgid "Parent Window Of"
+msgstr "親ウィンドウ"
+
+#. I don't think we should set the transient parent as the dialog could be
+#. left open if desired.
+#: ../glade/glade_atk.c:331
+#, c-format
+msgid "Relationship: %s"
+msgstr "関係: %s"
+
+#. Create the pages of the main notebook
+#. NOTE: If you add/remove pages you need to change the GB_PAGE_SIGNALS
+#. value at the top of this file
+#: ../glade/glade_atk.c:375 ../glade/property.c:615
+msgid "Widget"
+msgstr "ウィジット"
+
+#: ../glade/glade_atk.c:638 ../glade/glade_menu_editor.c:772
+#: ../glade/property.c:776
+msgid "Name:"
+msgstr "名前:"
+
+#: ../glade/glade_atk.c:639
+msgid "The name of the widget to pass to assistive technologies"
+msgstr "支援技術コンポーネントへ引き渡すウィジットの名前です"
+
+#: ../glade/glade_atk.c:640
+msgid "Description:"
+msgstr "説明:"
+
+#: ../glade/glade_atk.c:641
+msgid "The description of the widget to pass to assistive technologies"
+msgstr "支援技術コンポーネントへ引き渡すウィジットの説明です"
+
+#: ../glade/glade_atk.c:643
+msgid "Table Caption:"
+msgstr "テーブルのキャプション:"
+
+#: ../glade/glade_atk.c:644
+msgid "The table caption to pass to assistive technologies"
+msgstr "支援技術コンポーネントへ引き渡すテーブルのキャプションです"
+
+#: ../glade/glade_atk.c:681
+msgid "Select the widgets with this relationship"
+msgstr "この関係を持つウィジットを選択して下さい"
+
+#: ../glade/glade_atk.c:761
+msgid "Click"
+msgstr "クリック"
+
+#: ../glade/glade_atk.c:762
+msgid "Press"
+msgstr "押下"
+
+#: ../glade/glade_atk.c:763
+msgid "Release"
+msgstr "押下解放"
+
+#: ../glade/glade_atk.c:822
+msgid "Enter the description of the action to pass to assistive technologies"
+msgstr "支援技術コンポーネントへ引き渡すアクションの説明を入力して下さい"
+
+#: ../glade/glade_clipboard.c:118
+msgid "Clipboard"
+msgstr "クリップボード"
+
+#: ../glade/glade_clipboard.c:351
+msgid "You need to select a widget to paste into"
+msgstr "貼り付ける先のウィジットを選択して下さい"
+
+#: ../glade/glade_clipboard.c:376
+msgid "You can't paste into windows or dialogs."
+msgstr "ウィンドウやダイアログには貼り付けることはできません。"
+
+#: ../glade/glade_clipboard.c:399
+msgid ""
+"You can't paste into the selected widget, since\n"
+"it is created automatically by its parent."
+msgstr ""
+"親ウィジットが自動的に生成したウィジットには貼り付けることはできません。"
+
+#: ../glade/glade_clipboard.c:408 ../glade/glade_clipboard.c:416
+msgid "Only menu items can be pasted into a menu or menu bar."
+msgstr "メニュー/メニュー・バーにはメニュー・アイテムのみ貼り付けが可能です。"
+
+#: ../glade/glade_clipboard.c:427
+msgid "Only buttons can be pasted into a dialog action area."
+msgstr "ダイアログのアクション領域の中にはボタンのみ貼り付けが可能です"
+
+#: ../glade/glade_clipboard.c:437
+msgid "Only GnomeDockItem widgets can be pasted into a GnomeDock."
+msgstr "GnomeDock の中には GnomeDockItem のみ貼り付けが可能です。"
+
+#: ../glade/glade_clipboard.c:446
+msgid "Only GnomeDockItem widgets can be pasted over a GnomeDockItem."
+msgstr "GnomeDockItem の上には GnomeDocItem ウィジットのみ貼り付けが可能です。"
+
+#: ../glade/glade_clipboard.c:449
+msgid "Sorry - pasting over a GnomeDockItem is not implemented yet."
+msgstr "すみません - GnomeDockItem 上の貼り付けは未だ実装されていません。"
+
+#: ../glade/glade_clipboard.c:457
+msgid "GnomeDockItem widgets can only be pasted into a GnomeDock."
+msgstr "GnomeDoc の中には GnomeDocItem ウィジットのみ貼り付けが可能です。"
+
+#. 3 - see GladeStockMenuItemNew above.
+#: ../glade/glade_gnome.c:121 ../glade/glade_gnome.c:874
+#: ../glade/glade_project_window.c:208 ../glade/glade_project_window.c:632
+msgid "_New"
+msgstr "新規(_N)"
+
+#: ../glade/glade_gnome.c:874
+msgid "Create a new file"
+msgstr "新しいファイルを生成します"
+
+#. Note that glade_palette_set_show_gnome_widgets() has some of these
+#. strings hard-coded now, so keep up-to-date.
+#: ../glade/glade_gnomelib.c:116
+msgid "_Gnome"
+msgstr "GNOME(_G)"
+
+#: ../glade/glade_gnomelib.c:117 ../glade/glade_gtk12lib.c:248
+#: ../glade/glade_palette.c:315
+msgid "Dep_recated"
+msgstr "下位互換ウィジット(_R)"
+
+#. Note that glade_palette_set_show_gnome_widgets() has some of these
+#. strings hard-coded now, so keep up-to-date.
+#: ../glade/glade_gtk12lib.c:246
+msgid "GTK+ _Basic"
+msgstr "GTK+ 基本ウィジット(_B)"
+
+#: ../glade/glade_gtk12lib.c:247
+msgid "GTK+ _Additional"
+msgstr "GTK+ 追加ウィジット(_A)"
+
+#: ../glade/glade_keys_dialog.c:94
+msgid "Select Accelerator Key"
+msgstr "アクセラレータ・キーの選択"
+
+#: ../glade/glade_keys_dialog.c:97
+msgid "Keys"
+msgstr "キー"
+
+#: ../glade/glade_menu_editor.c:394
+msgid "Menu Editor"
+msgstr "メニューの編集"
+
+#: ../glade/glade_menu_editor.c:411
+msgid "Type"
+msgstr "種類"
+
+#: ../glade/glade_menu_editor.c:412
+msgid "Accelerator"
+msgstr "アクセラレータ"
+
+#: ../glade/glade_menu_editor.c:413
+msgid "Name"
+msgstr "名前"
+
+#: ../glade/glade_menu_editor.c:414 ../glade/property.c:1498
+msgid "Handler"
+msgstr "ハンドラ"
+
+#: ../glade/glade_menu_editor.c:415 ../glade/property.c:102
+msgid "Active"
+msgstr "アクティブ"
+
+#: ../glade/glade_menu_editor.c:416
+msgid "Group"
+msgstr "グループ"
+
+#: ../glade/glade_menu_editor.c:417
+msgid "Icon"
+msgstr "アイコン"
+
+#: ../glade/glade_menu_editor.c:458
+msgid "Move the item and its children up one place in the list"
+msgstr "アイテムとその子ウィジットを一つ上にあげます"
+
+#: ../glade/glade_menu_editor.c:470
+msgid "Move the item and its children down one place in the list"
+msgstr "アイテムとその子ウィジットを一つ下にさげます"
+
+#: ../glade/glade_menu_editor.c:482
+msgid "Move the item and its children up one level"
+msgstr "アイテムとその子ウィジットを一つ上のレベルにあげます"
+
+#: ../glade/glade_menu_editor.c:494
+msgid "Move the item and its children down one level"
+msgstr "アイテムとその子ウィジットを一つ下のレベルにさげます"
+
+#: ../glade/glade_menu_editor.c:524
+msgid "The stock item to use."
+msgstr "使用するストック・ボタンの種類です"
+
+#: ../glade/glade_menu_editor.c:527 ../glade/glade_menu_editor.c:642
+msgid "Stock Item:"
+msgstr "ストック・アイテム:"
+
+#: ../glade/glade_menu_editor.c:640
+msgid "The stock Gnome item to use."
+msgstr "使用する GNOME のストック・アイテムの種類です"
+
+#: ../glade/glade_menu_editor.c:745
+msgid "The text of the menu item, or empty for separators."
+msgstr "メニュー・アイテムの文字列です (セパレータの場合は空)"
+
+#: ../glade/glade_menu_editor.c:769 ../glade/property.c:777
+msgid "The name of the widget"
+msgstr "ウィジットの名前です"
+
+#: ../glade/glade_menu_editor.c:790
+msgid "The function to be called when the item is selected"
+msgstr "アイテムが選択されたら呼び出される関数です"
+
+#: ../glade/glade_menu_editor.c:792 ../glade/property.c:1546
+msgid "Handler:"
+msgstr "ハンドラ:"
+
+#: ../glade/glade_menu_editor.c:811
+msgid "An optional icon to show on the left of the menu item."
+msgstr "メニュー・アイテムの左側に表示するオプションのアイコンです"
+
+#: ../glade/glade_menu_editor.c:934
+msgid "The tip to show when the mouse is over the item"
+msgstr ""
+"アイテムの上にマウス・カーソルがきたときに表示するツールチップ・ヒントです"
+
+#: ../glade/glade_menu_editor.c:936 ../glade/property.c:824
+msgid "Tooltip:"
+msgstr "ツールチップ:"
+
+#: ../glade/glade_menu_editor.c:957
+msgid "_Add"
+msgstr "追加(_A)"
+
+#: ../glade/glade_menu_editor.c:962
+msgid "Add a new item below the selected item."
+msgstr "選択したアイテムの下に新しいアイテムを追加します"
+
+#: ../glade/glade_menu_editor.c:967
+msgid "Add _Child"
+msgstr "子ウィジットの追加(_C)"
+
+#: ../glade/glade_menu_editor.c:972
+msgid "Add a new child item below the selected item."
+msgstr "選択したアイテムの下に新しい子ウィジットを追加します"
+
+#: ../glade/glade_menu_editor.c:978
+msgid "Add _Separator"
+msgstr "セパレータの追加(_S)"
+
+#: ../glade/glade_menu_editor.c:983
+msgid "Add a separator below the selected item."
+msgstr "選択したアイテムの下にセパレータを一つ追加します"
+
+#: ../glade/glade_menu_editor.c:988 ../glade/glade_project_window.c:239
+msgid "_Delete"
+msgstr "削除(_D)"
+
+#: ../glade/glade_menu_editor.c:993
+msgid "Delete the current item"
+msgstr "選択しているアイテムを削除します"
+
+#. Type radio options and toggle options.
+#: ../glade/glade_menu_editor.c:999
+msgid "Item Type:"
+msgstr "アイテムの種類:"
+
+#: ../glade/glade_menu_editor.c:1015
+msgid "If the item is initially on."
+msgstr "アイテムの初期値をオンにするかどうかです"
+
+#: ../glade/glade_menu_editor.c:1017
+msgid "Active:"
+msgstr "アクティブ:"
+
+#: ../glade/glade_menu_editor.c:1022 ../glade/glade_menu_editor.c:1632
+#: ../glade/property.c:2215 ../glade/property.c:2225
+msgid "No"
+msgstr "いいえ"
+
+#: ../glade/glade_menu_editor.c:1036
+msgid "The radio menu item's group"
+msgstr "ラジオ・メニュー・アイテムのグループです"
+
+#: ../glade/glade_menu_editor.c:1053 ../glade/glade_menu_editor.c:2406
+#: ../glade/glade_menu_editor.c:2546
+msgid "Radio"
+msgstr "ラジオ"
+
+#: ../glade/glade_menu_editor.c:1060 ../glade/glade_menu_editor.c:2404
+#: ../glade/glade_menu_editor.c:2544
+msgid "Check"
+msgstr "チェック"
+
+#: ../glade/glade_menu_editor.c:1067 ../glade/property.c:102
+msgid "Normal"
+msgstr "標準"
+
+#. Accelerator key options.
+#: ../glade/glade_menu_editor.c:1076
+msgid "Accelerator:"
+msgstr "アクセラレータ:"
+
+#: ../glade/glade_menu_editor.c:1113 ../glade/property.c:1681
+msgid "Ctrl"
+msgstr "[CTRL]"
+
+#: ../glade/glade_menu_editor.c:1118 ../glade/property.c:1684
+msgid "Shift"
+msgstr "[SHIFT]"
+
+#: ../glade/glade_menu_editor.c:1123 ../glade/property.c:1687
+msgid "Alt"
+msgstr "[ALT]"
+
+#: ../glade/glade_menu_editor.c:1128 ../glade/property.c:1694
+msgid "Key:"
+msgstr "キー:"
+
+#: ../glade/glade_menu_editor.c:1134 ../glade/property.c:1673
+msgid "Modifiers:"
+msgstr "修飾キー:"
+
+#: ../glade/glade_menu_editor.c:1632 ../glade/glade_menu_editor.c:2411
+#: ../glade/glade_menu_editor.c:2554 ../glade/property.c:2215
+msgid "Yes"
+msgstr "はい"
+
+#: ../glade/glade_menu_editor.c:2002
+msgid "Select icon"
+msgstr "アイコンの選択"
+
+#: ../glade/glade_menu_editor.c:2345 ../glade/glade_menu_editor.c:2706
+msgid "separator"
+msgstr "セパレータ"
+
+#. Add the special 'New' item to create a new group.
+#: ../glade/glade_menu_editor.c:3624 ../glade/glade_project_window.c:366
+#: ../glade/property.c:5109
+msgid "New"
+msgstr "新規"
+
+#: ../glade/glade_palette.c:194 ../glade/glade_palette.c:196
+#: ../glade/glade_palette.c:412
+msgid "Selector"
+msgstr "セレクタ"
+
+#: ../glade/glade_project.c:385
+msgid ""
+"The project directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+"プロジェクトのフォルダがセットされていません。\n"
+"プロジェクト設定ダイアログから設定して下さい。\n"
+
+#: ../glade/glade_project.c:392
+msgid ""
+"The source directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+"ソース・フォルダがセットされていません。\n"
+"プロジェクト設定ダイアログから設定して下さい。\n"
+
+#: ../glade/glade_project.c:402
+msgid ""
+"Invalid source directory:\n"
+"\n"
+"The source directory must be the project directory\n"
+"or a subdirectory of the project directory.\n"
+msgstr ""
+"無効なソース・フォルダです:\n"
+"\n"
+"ソース・フォルダはプロジェクト・フォルダか、\n"
+"その下にあるサブフォルダにして下さい。\n"
+
+#: ../glade/glade_project.c:410
+msgid ""
+"The pixmaps directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+"ピックスマップ・フォルダがセットされていません。\n"
+"プロジェクト設定ダイアログから設定して下さい。\n"
+
+#: ../glade/glade_project.c:438
+#, c-format
+msgid "Sorry - generating source for %s is not implemented yet"
+msgstr "すみません - %s のソース出力は未だ実装されていません。"
+
+#: ../glade/glade_project.c:509
+msgid ""
+"Your project uses deprecated widgets that Gtkmm-2\n"
+"does not support.  Check your project for these\n"
+"widgets, and use their replacements."
+msgstr ""
+"プロジェクトではサポートしてない Gtkmm-2 の\n"
+"廃止されたウィジットを利用しています。\n"
+"プロジェクト内のこれらのウィジットをチェックし、\n"
+"代替えのウィジットを利用して下さい。"
+
+#: ../glade/glade_project.c:521
+msgid ""
+"Error running glade-- to generate the C++ source code.\n"
+"Check that you have glade-- installed and that it is in your PATH.\n"
+"Then try running 'glade-- <project_file.glade>' in a terminal."
+msgstr ""
+"C++ ソース・コードを生成する際に glade-- の実行エラーです。\n"
+"インストールした glade-- が環境変数 ${PATH} 内に存在しているか\n"
+"チェックして下さい。その次に、端末から\n"
+"`glade-- <プロジェクトファイル.glade>` を実行してみて下さい。"
+
+#: ../glade/glade_project.c:548
+msgid ""
+"Error running gate to generate the Ada95 source code.\n"
+"Check that you have gate installed and that it is in your PATH.\n"
+"Then try running 'gate <project_file.glade>' in a terminal."
+msgstr ""
+"Ada95 ソース・コードを生成する際に gate の実行エラーです。\n"
+"インストールした gate が環境変数 ${PATH} 内に存在しているか\n"
+"チェックして下さい。その次に、端末から\n"
+"`gate <プロジェクトファイル.glade>` を実行してみて下さい。"
+
+#: ../glade/glade_project.c:571
+msgid ""
+"Error running glade2perl to generate the Perl source code.\n"
+"Check that you have glade2perl installed and that it is in your PATH.\n"
+"Then try running 'glade2perl <project_file.glade>' in a terminal."
+msgstr ""
+"Perl ソース・コードを生成する際に glade2perl の実行エラーです。\n"
+"インストールした glade2perl が環境変数 ${PATH} 内に存在しているか\n"
+"チェックして下さい。その次に、端末から\n"
+"`glade2perl <プロジェクトファイル.glade>` を実行してみて下さい。"
+
+#: ../glade/glade_project.c:594
+msgid ""
+"Error running eglade to generate the Eiffel source code.\n"
+"Check that you have eglade installed and that it is in your PATH.\n"
+"Then try running 'eglade <project_file.glade>' in a terminal."
+msgstr ""
+"Effel ソース・コードを生成する際に eglade の実行エラーです。\n"
+"インストールした eglade が環境変数 ${PATH} 内に存在しているか\n"
+"チェックして下さい。その次に、端末から\n"
+"`eglade <プロジェクトファイル.glade>` を実行してみて下さい。"
+
+#: ../glade/glade_project.c:954
+msgid ""
+"The pixmap directory is not set.\n"
+"Please set it using the Project Options dialog.\n"
+msgstr ""
+"ピックスマップ・フォルダがセットされていません。\n"
+"プロジェクト設定ダイアログから設定して下さい。\n"
+
+#: ../glade/glade_project.c:1772
+msgid "Error writing project XML file\n"
+msgstr "プロジェクト・ファイル (XML形式) を出力する際にエラー\n"
+
+#: ../glade/glade_project_options.c:157 ../glade/glade_project_window.c:382
+#: ../glade/glade_project_window.c:889
+msgid "Project Options"
+msgstr "プロジェクトの設定"
+
+#.
+#. * General Page.
+#.
+#: ../glade/glade_project_options.c:174
+msgid "General"
+msgstr "全般"
+
+#: ../glade/glade_project_options.c:183
+msgid "Basic Options:"
+msgstr "基本設定:"
+
+#: ../glade/glade_project_options.c:201
+msgid "The project directory"
+msgstr "プロジェクトの $topdir フォルダです"
+
+#: ../glade/glade_project_options.c:203
+msgid "Project Directory:"
+msgstr "プロジェクトのフォルダ:"
+
+#: ../glade/glade_project_options.c:221
+msgid "Browse..."
+msgstr "参照..."
+
+#: ../glade/glade_project_options.c:236
+msgid "The name of the current project"
+msgstr "このプロジェクトの名前です"
+
+#: ../glade/glade_project_options.c:238
+msgid "Project Name:"
+msgstr "プロジェクト名:"
+
+#: ../glade/glade_project_options.c:258
+msgid "The name of the program"
+msgstr "実行形式プログラムの名前です"
+
+#: ../glade/glade_project_options.c:281
+msgid "The project file"
+msgstr "プロジェクト・ファイルの名前です"
+
+#: ../glade/glade_project_options.c:283
+msgid "Project File:"
+msgstr "プロジェクト・ファイル名:"
+
+#. Project Source Directory.
+#: ../glade/glade_project_options.c:299
+msgid "Subdirectories:"
+msgstr "サブフォルダ:"
+
+#: ../glade/glade_project_options.c:316
+msgid "The directory to save generated source code"
+msgstr "生成したソース・コードを保存するフォルダです"
+
+#: ../glade/glade_project_options.c:319
+msgid "Source Directory:"
+msgstr "ソース・フォルダ:"
+
+#: ../glade/glade_project_options.c:338
+msgid "The directory to store pixmaps"
+msgstr "画像 (ピックスマップ) を格納するフォルダです"
+
+#: ../glade/glade_project_options.c:341
+msgid "Pixmaps Directory:"
+msgstr "ピックスマップ・フォルダ:"
+
+#: ../glade/glade_project_options.c:363
+msgid "The license which is added at the top of generated files"
+msgstr "生成したファイルの先頭に挿入するライセンスです"
+
+#. Source Language.
+#: ../glade/glade_project_options.c:385
+msgid "Language:"
+msgstr "コンパイラ言語:"
+
+#: ../glade/glade_project_options.c:416
+msgid "Gnome:"
+msgstr "GNOME:"
+
+#: ../glade/glade_project_options.c:424
+msgid "Enable Gnome Support"
+msgstr "GNOME をサポートする"
+
+#: ../glade/glade_project_options.c:430
+msgid "If a Gnome application is to be built"
+msgstr "GNOME 対応アプリケーションを作成するかどうかです"
+
+#: ../glade/glade_project_options.c:433
+msgid "Enable Gnome DB Support"
+msgstr "GNOME DB をサポートする"
+
+#: ../glade/glade_project_options.c:437
+msgid "If a Gnome DB application is to be built"
+msgstr "GNOME DB 対応アプリケーションを作成するかどうかです"
+
+#.
+#. * C Options Page.
+#.
+#: ../glade/glade_project_options.c:447
+msgid "C Options"
+msgstr "C オプション"
+
+#: ../glade/glade_project_options.c:456
+msgid "<b>Note:</b> for large applications the use of libglade is recommended."
+msgstr ""
+"<b>注記:</b> libglade を利用する大きなアプリケーションでは必須のオプションで"
+"す。"
+
+#: ../glade/glade_project_options.c:468
+msgid "General Options:"
+msgstr "全般の設定:"
+
+#. Gettext Support.
+#: ../glade/glade_project_options.c:478
+msgid "Gettext Support"
+msgstr "Gettext (i18N) をサポートする"
+
+#: ../glade/glade_project_options.c:483
+msgid "If strings are marked for translation by gettext"
+msgstr "gettext を使った翻訳のために文字列にマークを付けるかどうかです"
+
+#. Setting widget names.
+#: ../glade/glade_project_options.c:487
+msgid "Set Widget Names"
+msgstr "ウィジット名をセットする"
+
+#: ../glade/glade_project_options.c:492
+msgid "If widget names are set in the source code"
+msgstr "ソース・コードの中でウィジット名をセットするかどうかです"
+
+#. Backing up source files.
+#: ../glade/glade_project_options.c:496
+msgid "Backup Source Files"
+msgstr "ソース・ファイルをバックアップする"
+
+#: ../glade/glade_project_options.c:501
+msgid "If copies of old source files are made"
+msgstr "古いソース・ファイルの複製を作成するかどうかです"
+
+#. Gnome Help System support.
+#: ../glade/glade_project_options.c:505
+msgid "Gnome Help Support"
+msgstr "GNOME ヘルプをサポートする"
+
+#: ../glade/glade_project_options.c:512
+msgid "If support for the Gnome Help system should be included"
+msgstr "GNOME ヘルプ・システムをサポートするかどうかです"
+
+#: ../glade/glade_project_options.c:515
+msgid "File Output Options:"
+msgstr "ファイルの出力設定:"
+
+#. Outputting main file.
+#: ../glade/glade_project_options.c:525
+msgid "Output main.c File"
+msgstr "ファイル 'main.c' を出力する"
+
+#: ../glade/glade_project_options.c:530
+msgid ""
+"If a main.c file is output containing a main() function, if it doesn't "
+"already exist"
+msgstr "(まだ存在していなければ) 関数 main() を含む main.c を出力します"
+
+#. Outputting support files.
+#: ../glade/glade_project_options.c:534
+msgid "Output Support Functions"
+msgstr "サポート関数を出力する"
+
+#: ../glade/glade_project_options.c:539
+msgid "If the support functions are output"
+msgstr "いろいろなサポート関数を出力するかどうかです"
+
+#. Outputting build files.
+#: ../glade/glade_project_options.c:543
+msgid "Output Build Files"
+msgstr "ビルド用ファイルを出力する"
+
+#: ../glade/glade_project_options.c:548
+msgid ""
+"If files for building the source code are output, including Makefile.am and "
+"configure.in, if they don't already exist"
+msgstr ""
+"(まだ存在していなければ) Makefile.am や configure.in を含む、ソース・コードの"
+"ビルド用ファイルを出力します"
+
+#. Main source file.
+#: ../glade/glade_project_options.c:552
+msgid "Interface Creation Functions:"
+msgstr "インタフェース生成関数:"
+
+#: ../glade/glade_project_options.c:564
+msgid "The file in which the functions to create the interface are written"
+msgstr "インタフェースを生成する関数を出力するファイルです"
+
+#: ../glade/glade_project_options.c:566 ../glade/glade_project_options.c:612
+#: ../glade/glade_project_options.c:658 ../glade/property.c:998
+msgid "Source File:"
+msgstr "ソース・ファイル名:"
+
+#: ../glade/glade_project_options.c:581
+msgid ""
+"The file in which the declarations of the functions to create the interface "
+"are written"
+msgstr "インタフェース生成関数の宣言を出力するファイルです"
+
+#: ../glade/glade_project_options.c:583 ../glade/glade_project_options.c:629
+#: ../glade/glade_project_options.c:675
+msgid "Header File:"
+msgstr "ヘッダ・ファイル名:"
+
+#: ../glade/glade_project_options.c:594
+msgid "Source file for interface creation functions"
+msgstr "インタフェース生成関数のソース・ファイルです"
+
+#: ../glade/glade_project_options.c:595
+msgid "Header file for interface creation functions"
+msgstr "インタフェース生成関数のヘッダ・ファイルです"
+
+#. Handler source file.
+#: ../glade/glade_project_options.c:598
+msgid "Signal Handler & Callback Functions:"
+msgstr "シグナル・ハンドラとコールバック関数:"
+
+#: ../glade/glade_project_options.c:610
+msgid ""
+"The file in which the empty signal handler and callback functions are written"
+msgstr "空のシグナル・ハンドラとコールバック関数を出力するファイルです"
+
+#: ../glade/glade_project_options.c:627
+msgid ""
+"The file in which the declarations of the signal handler and callback "
+"functions are written"
+msgstr "シグナル・ハンドラとコールバック関数の宣言を出力するファイルです　"
+
+#: ../glade/glade_project_options.c:640
+msgid "Source file for signal handler and callback functions"
+msgstr "シグナル・ハンドラとコールバック関数のソース・ファイルです"
+
+#: ../glade/glade_project_options.c:641
+msgid "Header file for signal handler and callback functions"
+msgstr "シグナル・ハンドラとコールバック関数のヘッダ・ファイルです"
+
+#. Support source file.
+#: ../glade/glade_project_options.c:644
+msgid "Support Functions:"
+msgstr "サポート関数:"
+
+#: ../glade/glade_project_options.c:656
+msgid "The file in which the support functions are written"
+msgstr "サポート関数を出力するファイルです"
+
+#: ../glade/glade_project_options.c:673
+msgid "The file in which the declarations of the support functions are written"
+msgstr "サポート関数の宣言を出力するファイルです"
+
+#: ../glade/glade_project_options.c:686
+msgid "Source file for support functions"
+msgstr "サポート関数のソース・ファイルです"
+
+#: ../glade/glade_project_options.c:687
+msgid "Header file for support functions"
+msgstr "サポート関数のヘッダ・ファイルです"
+
+#.
+#. * libglade Options Page.
+#.
+#: ../glade/glade_project_options.c:693
+msgid "LibGlade Options"
+msgstr "LibGlade 設定"
+
+#: ../glade/glade_project_options.c:702
+msgid "Translatable Strings:"
+msgstr "翻訳可能な文字列:"
+
+#: ../glade/glade_project_options.c:716
+msgid "<b>Note:</b> this option is deprecated - use intltool instead."
+msgstr ""
+"<b>注記:</b> このオプションは破棄されました - 代わりに 'intltool' をご利用下"
+"さい。"
+
+#. Output translatable strings.
+#: ../glade/glade_project_options.c:726
+msgid "Save Translatable Strings"
+msgstr "翻訳可能な文字列を保存する"
+
+#: ../glade/glade_project_options.c:731
+msgid ""
+"If translatable strings are saved in a separate C source file, to enable "
+"translation of interfaces loaded by libglade"
+msgstr "<<このオプションは破棄されました>>"
+
+#: ../glade/glade_project_options.c:741
+msgid "The C source file to save all translatable strings in"
+msgstr "<<このオプションは破棄されました>>"
+
+#: ../glade/glade_project_options.c:743 ../glade/gnome/gnomepixmap.c:79
+msgid "File:"
+msgstr "ファイル:"
+
+#: ../glade/glade_project_options.c:1202
+msgid "Select the Project Directory"
+msgstr "プロジェクト・フォルダの選択"
+
+#: ../glade/glade_project_options.c:1392 ../glade/glade_project_options.c:1402
+#: ../glade/glade_project_options.c:1412
+msgid "You need to set the Translatable Strings File option"
+msgstr "翻訳可能な文字列ファイルを設定して下さい"
+
+#: ../glade/glade_project_options.c:1396 ../glade/glade_project_options.c:1406
+msgid "You need to set the Project Directory option"
+msgstr "プロジェクト・フォルダを設定して下さい"
+
+#: ../glade/glade_project_options.c:1398 ../glade/glade_project_options.c:1408
+msgid "You need to set the Project File option"
+msgstr "プロジェクト・ファイルを設定して下さい"
+
+#: ../glade/glade_project_options.c:1414
+msgid "You need to set the Project Name option"
+msgstr "プロジェクト名を設定して下さい"
+
+#: ../glade/glade_project_options.c:1416
+msgid "You need to set the Program Name option"
+msgstr "プログラム名を設定して下さい"
+
+#: ../glade/glade_project_options.c:1419
+msgid "You need to set the Source Directory option"
+msgstr "ソース・フォルダを設定して下さい"
+
+#: ../glade/glade_project_options.c:1422
+msgid "You need to set the Pixmaps Directory option"
+msgstr "ピックスマップ・フォルダを設定して下さい"
+
+#: ../glade/glade_project_window.c:184
+#, c-format
+msgid ""
+"Couldn't show help file: %s.\n"
+"\n"
+"Error: %s"
+msgstr ""
+"ヘルプ・ファイルを表示できませんでした: %s\n"
+"\n"
+"エラー: %s"
+
+#: ../glade/glade_project_window.c:208 ../glade/glade_project_window.c:634
+msgid "Create a new project"
+msgstr "新しいプロジェクトを生成します"
+
+#: ../glade/glade_project_window.c:216 ../glade/glade_project_window.c:654
+#: ../glade/glade_project_window.c:905
+msgid "_Build"
+msgstr "ビルド(_B)"
+
+#: ../glade/glade_project_window.c:217 ../glade/glade_project_window.c:665
+msgid "Output the project source code"
+msgstr "プロジェクトのソース・コードを出力します"
+
+#: ../glade/glade_project_window.c:223 ../glade/glade_project_window.c:668
+msgid "Op_tions..."
+msgstr "オプション(_T)..."
+
+#: ../glade/glade_project_window.c:224 ../glade/glade_project_window.c:677
+msgid "Edit the project options"
+msgstr "プロジェクトの設定を編集します"
+
+#: ../glade/glade_project_window.c:239 ../glade/glade_project_window.c:716
+msgid "Delete the selected widget"
+msgstr "選択したウィジットを削除します"
+
+#: ../glade/glade_project_window.c:257 ../glade/glade_project_window.c:727
+msgid "Show _Palette"
+msgstr "パレットの表示(_P)"
+
+#: ../glade/glade_project_window.c:257 ../glade/glade_project_window.c:732
+msgid "Show the palette of widgets"
+msgstr "ウィジットのパレットを表示します"
+
+#: ../glade/glade_project_window.c:263 ../glade/glade_project_window.c:737
+msgid "Show Property _Editor"
+msgstr "プロパティの表示(_E)"
+
+#: ../glade/glade_project_window.c:264 ../glade/glade_project_window.c:743
+msgid "Show the property editor"
+msgstr "プロパティ・エディタを開きます"
+
+#: ../glade/glade_project_window.c:270 ../glade/glade_project_window.c:747
+msgid "Show Widget _Tree"
+msgstr "ウィジット・ツリーの表示(_T)"
+
+#: ../glade/glade_project_window.c:271 ../glade/glade_project_window.c:753
+#: ../glade/main.c:82
+msgid "Show the widget tree"
+msgstr "ウィジットの階層を示すウィンドウを開きます"
+
+#: ../glade/glade_project_window.c:277 ../glade/glade_project_window.c:757
+msgid "Show _Clipboard"
+msgstr "クリップボードの表示(_C)"
+
+#: ../glade/glade_project_window.c:278 ../glade/glade_project_window.c:763
+#: ../glade/main.c:86
+msgid "Show the clipboard"
+msgstr "Glade 用のクリップボード履歴ウィンドウを開きます"
+
+#: ../glade/glade_project_window.c:296
+msgid "Show _Grid"
+msgstr "グリッドの表示(_G)"
+
+#: ../glade/glade_project_window.c:297 ../glade/glade_project_window.c:799
+msgid "Show the grid (in fixed containers only)"
+msgstr "グリッドを表示します (フィックスド・コンテナのみ)"
+
+#: ../glade/glade_project_window.c:303
+msgid "_Snap to Grid"
+msgstr "スナップを有効にする(_S)"
+
+#: ../glade/glade_project_window.c:304
+msgid "Snap widgets to the grid"
+msgstr "ウィジットをグリッドに合わせて配置します"
+
+#: ../glade/glade_project_window.c:310 ../glade/glade_project_window.c:771
+msgid "Show _Widget Tooltips"
+msgstr "ツールチップの表示(_W)"
+
+#: ../glade/glade_project_window.c:311 ../glade/glade_project_window.c:779
+msgid "Show the tooltips of created widgets"
+msgstr "生成したウィジットのツールチップを表示します"
+
+#: ../glade/glade_project_window.c:320 ../glade/glade_project_window.c:802
+msgid "Set Grid _Options..."
+msgstr "グリッドの設定(_O)..."
+
+#: ../glade/glade_project_window.c:321
+msgid "Set the grid style and spacing"
+msgstr "グリッドのスタイルと間隔を設定します"
+
+#: ../glade/glade_project_window.c:327 ../glade/glade_project_window.c:823
+msgid "Set Snap O_ptions..."
+msgstr "スナップの設定(_P)..."
+
+#: ../glade/glade_project_window.c:328
+msgid "Set options for snapping to the grid"
+msgstr "グリッドへスナップするオプションを設定します"
+
+#: ../glade/glade_project_window.c:340
+msgid "_FAQ"
+msgstr "FAQ(_F)"
+
+#: ../glade/glade_project_window.c:341
+msgid "View the Glade FAQ"
+msgstr "Glade の FAQ を表示します"
+
+#. create File menu
+#: ../glade/glade_project_window.c:355 ../glade/glade_project_window.c:625
+msgid "_Project"
+msgstr "プロジェクト(_P)"
+
+#: ../glade/glade_project_window.c:366 ../glade/glade_project_window.c:872
+#: ../glade/glade_project_window.c:1049
+msgid "New Project"
+msgstr "新しいプロジェクトを生成します"
+
+#: ../glade/glade_project_window.c:371
+msgid "Open"
+msgstr "開く"
+
+#: ../glade/glade_project_window.c:371 ../glade/glade_project_window.c:877
+#: ../glade/glade_project_window.c:1110
+msgid "Open Project"
+msgstr "既存のプロジェクトを開きます"
+
+#: ../glade/glade_project_window.c:376
+msgid "Save"
+msgstr "保存"
+
+#: ../glade/glade_project_window.c:376 ../glade/glade_project_window.c:881
+#: ../glade/glade_project_window.c:1475
+msgid "Save Project"
+msgstr "プロジェクトを保存します"
+
+#: ../glade/glade_project_window.c:382
+msgid "Options"
+msgstr "オプション"
+
+#: ../glade/glade_project_window.c:387
+msgid "Build"
+msgstr "ビルド"
+
+#: ../glade/glade_project_window.c:387
+msgid "Build the Source Code"
+msgstr "ソース・コードを出力します"
+
+#: ../glade/glade_project_window.c:638
+msgid "Open an existing project"
+msgstr "プロジェクトを開く"
+
+#: ../glade/glade_project_window.c:642
+msgid "Save project"
+msgstr "プロジェクトの保存"
+
+#: ../glade/glade_project_window.c:687
+msgid "Quit Glade"
+msgstr "Glade の終了"
+
+#: ../glade/glade_project_window.c:701
+msgid "Cut the selected widget to the clipboard"
+msgstr "選択したウィジットをクリップボードへ切り取ります"
+
+#: ../glade/glade_project_window.c:706
+msgid "Copy the selected widget to the clipboard"
+msgstr "選択したウィジットをクリップボードへコピーします"
+
+#: ../glade/glade_project_window.c:711
+msgid "Paste the widget from the clipboard over the selected widget"
+msgstr "クリップボードで選択したウィジットを貼り付けます"
+
+#: ../glade/glade_project_window.c:783
+msgid "_Grid"
+msgstr "グリッド(_G)"
+
+#: ../glade/glade_project_window.c:791
+msgid "_Show Grid"
+msgstr "グリッドの表示(_S)"
+
+#: ../glade/glade_project_window.c:808
+msgid "Set the spacing between grid lines"
+msgstr "グリッド線の間隔を設定します"
+
+#: ../glade/glade_project_window.c:811
+msgid "S_nap to Grid"
+msgstr "スナップを有効にする(_N)"
+
+#: ../glade/glade_project_window.c:819
+msgid "Snap widgets to the grid (in fixed containers only)"
+msgstr "ウィジットをグリッドに合わせて配置します (フィックスド・コンテナのみ)"
+
+#: ../glade/glade_project_window.c:829
+msgid "Set which parts of a widget snap to the grid"
+msgstr "ウィジェットのどの部分をグリッドにスナップさせるかを設定します"
+
+#. Don't show these yet as we have no help pages.
+#. menuitem = gtk_menu_item_new_with_mnemonic (_("_Contents"));
+#. gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#. gtk_widget_show (menuitem);
+#.
+#. menuitem = gtk_menu_item_new_with_mnemonic (_("_Index"));
+#. gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#. gtk_widget_show (menuitem);
+#.
+#. menuitem = gtk_menu_item_new ();
+#. gtk_container_add (GTK_CONTAINER (menu), menuitem);
+#. gtk_widget_show (menuitem);
+#.
+#: ../glade/glade_project_window.c:854
+msgid "_About..."
+msgstr "情報(_A)..."
+
+#: ../glade/glade_project_window.c:895
+msgid "Optio_ns"
+msgstr "オプション(_N)"
+
+#: ../glade/glade_project_window.c:899
+msgid "Write Source Code"
+msgstr "ソース・コードを出力します"
+
+#: ../glade/glade_project_window.c:986 ../glade/glade_project_window.c:1691
+#: ../glade/glade_project_window.c:1980
+msgid "Glade"
+msgstr "Glade"
+
+#: ../glade/glade_project_window.c:993
+msgid "Are you sure you want to create a new project?"
+msgstr "新しいプロジェクトを作成してもよろしいですか？"
+
+#: ../glade/glade_project_window.c:1053
+msgid "New _GTK+ Project"
+msgstr "GTK+ プロジェクト(_G)"
+
+#: ../glade/glade_project_window.c:1054
+msgid "New G_NOME Project"
+msgstr "GNOME プロジェクト(_N)"
+
+#: ../glade/glade_project_window.c:1057
+msgid "Which type of project do you want to create?"
+msgstr "生成するプロジェクトの種類を選択して下さい:"
+
+#: ../glade/glade_project_window.c:1091
+msgid "New project created."
+msgstr "新しいプロジェクトを生成しました"
+
+#: ../glade/glade_project_window.c:1181
+msgid "Project opened."
+msgstr "プロジェクトを開きました"
+
+#: ../glade/glade_project_window.c:1195
+msgid "Error opening project."
+msgstr "プロジェクトを開けません"
+
+#: ../glade/glade_project_window.c:1259
+msgid "Errors opening project file"
+msgstr "プロジェクト・ファイルのオープンでエラー"
+
+#: ../glade/glade_project_window.c:1265
+msgid " errors opening project file:"
+msgstr "プロジェクト・ファイルのオープンでエラー:"
+
+#: ../glade/glade_project_window.c:1338
+msgid ""
+"There is no project currently open.\n"
+"Create a new project with the Project/New command."
+msgstr ""
+"現在オープンされているプロジェクトはありません。\n"
+"[プロジェクト]-[新規] で新しいプロジェクトを生成して下さい。"
+
+#: ../glade/glade_project_window.c:1542
+msgid "Error saving project"
+msgstr "プロジェクトの保存でエラー"
+
+#: ../glade/glade_project_window.c:1544
+msgid "Error saving project."
+msgstr "プロジェクトを保存できません"
+
+#: ../glade/glade_project_window.c:1550
+msgid "Project saved."
+msgstr "プロジェクトを保存しました"
+
+#: ../glade/glade_project_window.c:1620
+msgid "Errors writing source code"
+msgstr "ソース・コードの出力でエラー"
+
+#: ../glade/glade_project_window.c:1622
+msgid "Error writing source."
+msgstr "ソース・コードを出力できません"
+
+#: ../glade/glade_project_window.c:1628
+msgid "Source code written."
+msgstr "ソース・コードを出力しました"
+
+#: ../glade/glade_project_window.c:1659
+msgid "System error message:"
+msgstr "システムのエラー・メッセージ:"
+
+#: ../glade/glade_project_window.c:1698
+msgid "Are you sure you want to quit?"
+msgstr "本当に終了してもよろしいですか？"
+
+#: ../glade/glade_project_window.c:1982 ../glade/glade_project_window.c:2042
+msgid "(C) 1998-2002 Damon Chaplin"
+msgstr "(C) 1998-2002 Damon Chaplin"
+
+#: ../glade/glade_project_window.c:1983 ../glade/glade_project_window.c:2041
+msgid "Glade is a User Interface Builder for GTK+ and GNOME."
+msgstr "Glade は GTK+2/GNOME 向けのユーザ・インタフェース・ビルダです。"
+
+#: ../glade/glade_project_window.c:2012
+msgid "About Glade"
+msgstr "Glade について"
+
+#: ../glade/glade_project_window.c:2097
+msgid "<untitled>"
+msgstr "<タイトルなし>"
+
+#: ../glade/gnome-db/gnomedbbrowser.c:135
+msgid "Database Browser"
+msgstr "Database Browser"
+
+#: ../glade/gnome-db/gnomedbcombo.c:124
+msgid "Data-bound combo"
+msgstr "データ領域コンボ"
+
+#: ../glade/gnome-db/gnomedbconnectprop.c:86
+msgid "GnomeDbConnectionProperties"
+msgstr "GnomeDbConnectionProperties"
+
+#: ../glade/gnome-db/gnomedbconnectsel.c:147
+msgid "Connection Selector"
+msgstr "接続セレクタ"
+
+#: ../glade/gnome-db/gnomedbdsnconfig.c:136
+msgid "DSN Configurator"
+msgstr "DSN 設定"
+
+#: ../glade/gnome-db/gnomedbdsndruid.c:147
+msgid "DSN Config Druid"
+msgstr "DSN Config Druid"
+
+#: ../glade/gnome-db/gnomedbeditor.c:63
+msgid "Highlight text:"
+msgstr "強調表示:"
+
+#: ../glade/gnome-db/gnomedbeditor.c:63
+msgid "If selected, text will be highlighted inside the widget"
+msgstr "\"はい\" にすると、テキストがウィジットの内部で強調表示されます"
+
+#: ../glade/gnome-db/gnomedbeditor.c:178
+msgid "GnomeDbEditor"
+msgstr "GnomeDbEditor"
+
+#: ../glade/gnome-db/gnomedberror.c:136
+msgid "Database error viewer"
+msgstr "Database error viewer"
+
+#: ../glade/gnome-db/gnomedberrordlg.c:218
+msgid "Database error dialog"
+msgstr "Database error dialog"
+
+#: ../glade/gnome-db/gnomedbform.c:147
+msgid "Form"
+msgstr "フォーム"
+
+#: ../glade/gnome-db/gnomedbgraybar.c:59
+msgid "Text inside the gray bar"
+msgstr "グレー・バー内部に表示するテキストです"
+
+#: ../glade/gnome-db/gnomedbgraybar.c:138
+msgid "Gray Bar"
+msgstr "Gray Bar"
+
+#: ../glade/gnome-db/gnomedbgrid.c:132
+msgid "Data-bound grid"
+msgstr "Data-bound grid"
+
+#: ../glade/gnome-db/gnomedblist.c:136
+msgid "Data-bound list"
+msgstr "Data-bound list"
+
+#: ../glade/gnome-db/gnomedblogin.c:136
+msgid "Database login widget"
+msgstr "Database login widget"
+
+#: ../glade/gnome-db/gnomedblogindlg.c:76
+msgid "Login"
+msgstr "ログイン"
+
+#: ../glade/gnome-db/gnomedblogindlg.c:219
+msgid "Database login dialog"
+msgstr "Database login dialog"
+
+#: ../glade/gnome-db/gnomedbprovidersel.c:147
+msgid "Provider Selector"
+msgstr "Provider Selector"
+
+#: ../glade/gnome-db/gnomedbquerybuilder.c:86
+msgid "GnomeDbQueryBuilder"
+msgstr "GnomeDbQueryBuilder"
+
+#: ../glade/gnome-db/gnomedbsourcesel.c:147
+msgid "Data Source Selector"
+msgstr "Data Source Selector"
+
+#: ../glade/gnome-db/gnomedbtableeditor.c:133
+msgid "Table Editor "
+msgstr "Table Editor "
+
+#: ../glade/gnome/bonobodock.c:231
+msgid "Allow Floating:"
+msgstr "フローティング:"
+
+#: ../glade/gnome/bonobodock.c:232
+msgid "If floating dock items are allowed"
+msgstr "ドック・アイテムのフローティングを許可するかどうかです"
+
+#: ../glade/gnome/bonobodock.c:278
+msgid "Add dock band on top"
+msgstr "ドックを先頭に追加"
+
+#: ../glade/gnome/bonobodock.c:285
+msgid "Add dock band on bottom"
+msgstr "ドックを末尾に追加"
+
+#: ../glade/gnome/bonobodock.c:292
+msgid "Add dock band on left"
+msgstr "ドックを左に追加"
+
+#: ../glade/gnome/bonobodock.c:299
+msgid "Add dock band on right"
+msgstr "ドックを右に追加"
+
+#: ../glade/gnome/bonobodock.c:306
+msgid "Add floating dock item"
+msgstr "フローティング・ドックの追加"
+
+#: ../glade/gnome/bonobodock.c:495
+msgid "Gnome Dock"
+msgstr "GNOME ドック"
+
+#: ../glade/gnome/bonobodockitem.c:165
+msgid "Locked:"
+msgstr "ロック:"
+
+#: ../glade/gnome/bonobodockitem.c:166
+msgid "If the dock item is locked in position"
+msgstr "ドック・アイテムの場所を固定するかどうかです"
+
+#: ../glade/gnome/bonobodockitem.c:167
+msgid "Exclusive:"
+msgstr "占有:"
+
+#: ../glade/gnome/bonobodockitem.c:168
+msgid "If the dock item is always the only item in its band"
+msgstr ""
+"ドック・アイテムが常にそのドックにとって唯一のアイテムにするかどうかです"
+
+#: ../glade/gnome/bonobodockitem.c:169
+msgid "Never Floating:"
+msgstr "フローティング不可:"
+
+#: ../glade/gnome/bonobodockitem.c:170
+msgid "If the dock item is never allowed to float in its own window"
+msgstr ""
+"そのウィンドウの中でドック・アイテムのフローティングを許可しないかどうかです"
+
+#: ../glade/gnome/bonobodockitem.c:171
+msgid "Never Vertical:"
+msgstr "縦向き不可:"
+
+#: ../glade/gnome/bonobodockitem.c:172
+msgid "If the dock item is never allowed to be vertical"
+msgstr "ドック・アイテムの縦向き配置を許可しないかどうかです"
+
+#: ../glade/gnome/bonobodockitem.c:173
+msgid "Never Horizontal:"
+msgstr "横向き不可:"
+
+#: ../glade/gnome/bonobodockitem.c:174
+msgid "If the dock item is never allowed to be horizontal"
+msgstr "ドック・アイテムの横向き配置を許可しないかどうかです"
+
+#: ../glade/gnome/bonobodockitem.c:177
+msgid "The type of shadow around the dock item"
+msgstr "ドック・アイテムの周りに付ける影の種類です"
+
+#: ../glade/gnome/bonobodockitem.c:180
+msgid "The orientation of a floating dock item"
+msgstr "フローティング・ドック・アイテムの向きです"
+
+#: ../glade/gnome/bonobodockitem.c:428
+msgid "Add dock item before"
+msgstr "ドックアイテムを前に追加"
+
+#: ../glade/gnome/bonobodockitem.c:435
+msgid "Add dock item after"
+msgstr "ドックアイテムを後ろに追加"
+
+#: ../glade/gnome/bonobodockitem.c:771
+msgid "Gnome Dock Item"
+msgstr "GNOME ドック・アイテム"
+
+#: ../glade/gnome/gnomeabout.c:139
+msgid ""
+"Additional information, such as a description of the package and its home "
+"page on the web"
+msgstr "パッケージの説明やホームページなどの追加情報です"
+
+#: ../glade/gnome/gnomeabout.c:539
+msgid "Gnome About Dialog"
+msgstr "GNOME 情報ダイアログ"
+
+#: ../glade/gnome/gnomeapp.c:170
+msgid "New File"
+msgstr "新しいファイル"
+
+#: ../glade/gnome/gnomeapp.c:172
+msgid "Open File"
+msgstr "ファイルを開く"
+
+#: ../glade/gnome/gnomeapp.c:174
+msgid "Save File"
+msgstr "ファイルの保存"
+
+#: ../glade/gnome/gnomeapp.c:203
+msgid "Status Bar:"
+msgstr "ステータス・バー:"
+
+#: ../glade/gnome/gnomeapp.c:204
+msgid "If the window has a status bar"
+msgstr "ウィンドウがステータス・バーを持つかどうかです"
+
+#: ../glade/gnome/gnomeapp.c:205
+msgid "Store Config:"
+msgstr "設定の保存:"
+
+#: ../glade/gnome/gnomeapp.c:206
+msgid "If the layout is saved and restored automatically"
+msgstr "自動的にレイアウトの保存とリストアを行うかどうかです"
+
+#: ../glade/gnome/gnomeapp.c:442
+msgid "Gnome Application Window"
+msgstr "GNOME アプリケーション・ウィンドウ"
+
+#: ../glade/gnome/gnomeappbar.c:56
+msgid "Status Message."
+msgstr "これはステータス・メッセージです"
+
+#: ../glade/gnome/gnomeappbar.c:69
+msgid "Progress:"
+msgstr "プログレス:"
+
+#: ../glade/gnome/gnomeappbar.c:70
+msgid "If the app bar has a progress indicator"
+msgstr "アプリケーションがプログレス・インジケータを持つかどうかです"
+
+#: ../glade/gnome/gnomeappbar.c:71
+msgid "Status:"
+msgstr "ステータス:"
+
+#: ../glade/gnome/gnomeappbar.c:72
+msgid "If the app bar has an area for status messages and user input"
+msgstr ""
+"アプリケーションがステータス・メッセージやユーザ入力のためのエリアを持つかど"
+"うかです"
+
+#: ../glade/gnome/gnomeappbar.c:184
+msgid "Gnome Application Bar"
+msgstr "Gnome Application Bar"
+
+#: ../glade/gnome/gnomecanvas.c:68
+msgid "Anti-Aliased:"
+msgstr "アンチエイリアス:"
+
+#: ../glade/gnome/gnomecanvas.c:69
+msgid "If the canvas is anti-aliased, to smooth the edges of text and graphics"
+msgstr ""
+"テキストやグラフィックスのエッジを滑らかにするために、キャンバスでアンチ・エ"
+"イリアス表示を行うかどうかです"
+
+#: ../glade/gnome/gnomecanvas.c:70
+msgid "X1:"
+msgstr "X1:"
+
+#: ../glade/gnome/gnomecanvas.c:70
+msgid "The minimum x coordinate"
+msgstr "座標 X の最小値です"
+
+#: ../glade/gnome/gnomecanvas.c:71
+msgid "Y1:"
+msgstr "Y1:"
+
+#: ../glade/gnome/gnomecanvas.c:71
+msgid "The minimum y coordinate"
+msgstr "座標 Y の最小値です"
+
+#: ../glade/gnome/gnomecanvas.c:72
+msgid "X2:"
+msgstr "X2:"
+
+#: ../glade/gnome/gnomecanvas.c:72
+msgid "The maximum x coordinate"
+msgstr "座標 X の最大値です"
+
+#: ../glade/gnome/gnomecanvas.c:73
+msgid "Y2:"
+msgstr "Y2:"
+
+#: ../glade/gnome/gnomecanvas.c:73
+msgid "The maximum y coordinate"
+msgstr "座標 Y の最大値です"
+
+#: ../glade/gnome/gnomecanvas.c:75
+msgid "Pixels Per Unit:"
+msgstr "ピクセル数/単位:"
+
+#: ../glade/gnome/gnomecanvas.c:76
+msgid "The number of pixels corresponding to one unit"
+msgstr "単位あたりのピクセル数です"
+
+#: ../glade/gnome/gnomecanvas.c:239
+msgid "GnomeCanvas"
+msgstr "GNOME キャンバス"
+
+#: ../glade/gnome/gnomecolorpicker.c:68
+msgid "Dither:"
+msgstr "ディザ:"
+
+#: ../glade/gnome/gnomecolorpicker.c:69
+msgid "If the sample should use dithering to be more accurate"
+msgstr "より精密にサンプルにディザ技法を使用するかどうかです"
+
+#: ../glade/gnome/gnomecolorpicker.c:160
+msgid "Pick a color"
+msgstr "色の選択"
+
+#: ../glade/gnome/gnomecolorpicker.c:219
+msgid "Gnome Color Picker"
+msgstr "GNOME カラーピッカー"
+
+#: ../glade/gnome/gnomecontrol.c:160
+msgid "Couldn't create the Bonobo control"
+msgstr "Bonobo コントロールを生成できませんでした"
+
+#: ../glade/gnome/gnomecontrol.c:249
+msgid "New Bonobo Control"
+msgstr "新しい Bonobo コントロール"
+
+#: ../glade/gnome/gnomecontrol.c:262
+msgid "Select a Bonobo Control"
+msgstr "Bonobo コントロールの選択"
+
+#: ../glade/gnome/gnomecontrol.c:290
+msgid "OAFIID"
+msgstr "OAFIID"
+
+#: ../glade/gnome/gnomecontrol.c:295 ../glade/property.c:3896
+msgid "Description"
+msgstr "説明"
+
+#: ../glade/gnome/gnomecontrol.c:339
+msgid "Bonobo Control"
+msgstr "Bonobo コントロール"
+
+#: ../glade/gnome/gnomedateedit.c:70
+msgid "Show Time:"
+msgstr "時刻表示:"
+
+#: ../glade/gnome/gnomedateedit.c:71
+msgid "If the time is shown as well as the date"
+msgstr "日付と同様に時刻も表示するかどうかです"
+
+#: ../glade/gnome/gnomedateedit.c:72
+msgid "24 Hour Format:"
+msgstr "24時間制:"
+
+#: ../glade/gnome/gnomedateedit.c:73
+msgid "If the time is shown in 24-hour format"
+msgstr "時刻を 24時間のフォーマットで表示するかどうかです"
+
+#: ../glade/gnome/gnomedateedit.c:76
+msgid "Lower Hour:"
+msgstr "下限時:"
+
+#: ../glade/gnome/gnomedateedit.c:77
+msgid "The lowest hour to show in the popup"
+msgstr "ポップアップで表示する際の下限となる時間 (h) です"
+
+#: ../glade/gnome/gnomedateedit.c:79
+msgid "Upper Hour:"
+msgstr "上限時:"
+
+#: ../glade/gnome/gnomedateedit.c:80
+msgid "The highest hour to show in the popup"
+msgstr "ポップアップで表示する際の上限となる時間 (h) です"
+
+#: ../glade/gnome/gnomedateedit.c:298
+msgid "GnomeDateEdit"
+msgstr "GNOME 日付編集"
+
+#: ../glade/gnome/gnomedialog.c:152 ../glade/gnome/gnomemessagebox.c:189
+msgid "Auto Close:"
+msgstr "自動クローズ:"
+
+#: ../glade/gnome/gnomedialog.c:153 ../glade/gnome/gnomemessagebox.c:190
+msgid "If the dialog closes when any button is clicked"
+msgstr "何かボタンが押下されたらダイアログを閉じるかどうかです"
+
+#: ../glade/gnome/gnomedialog.c:154 ../glade/gnome/gnomemessagebox.c:191
+msgid "Hide on Close:"
+msgstr "クローズ時隠す:"
+
+#: ../glade/gnome/gnomedialog.c:155 ../glade/gnome/gnomemessagebox.c:192
+msgid "If the dialog is hidden when it is closed, instead of being destroyed"
+msgstr ""
+"ダイアログを閉じる際に削除 (destroy) する代わりに隠す (hidden) かどうかです"
+
+#: ../glade/gnome/gnomedialog.c:341
+msgid "Gnome Dialog Box"
+msgstr "GNOME ダイアログ・ボックス"
+
+#: ../glade/gnome/gnomedruid.c:91
+msgid "New Gnome Druid"
+msgstr "新しい GNOME ドルイド"
+
+#: ../glade/gnome/gnomedruid.c:190
+msgid "Show Help"
+msgstr "ヘルプの表示:"
+
+#: ../glade/gnome/gnomedruid.c:190
+msgid "Display the help button."
+msgstr "ヘルプ・ボタンを表示するかどうかです"
+
+#: ../glade/gnome/gnomedruid.c:255
+msgid "Add Start Page"
+msgstr "開始ページの追加"
+
+#: ../glade/gnome/gnomedruid.c:270
+msgid "Add Finish Page"
+msgstr "完了ページの追加"
+
+#: ../glade/gnome/gnomedruid.c:485
+msgid "Druid"
+msgstr "ドルイド"
+
+#: ../glade/gnome/gnomedruidpageedge.c:94
+#: ../glade/gnome/gnomedruidpagestandard.c:86
+msgid "The title of the page"
+msgstr "ページのタイトルです"
+
+#: ../glade/gnome/gnomedruidpageedge.c:96
+msgid "The main text of the page, introducing people to the druid."
+msgstr "ドルイドの役割りを紹介するページに表示するテキストです"
+
+#: ../glade/gnome/gnomedruidpageedge.c:98
+#: ../glade/gnome/gnomedruidpagestandard.c:87
+msgid "Title Color:"
+msgstr "タイトル色:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:99
+#: ../glade/gnome/gnomedruidpagestandard.c:88
+msgid "The color of the title text"
+msgstr "タイトルに配置する文字の色です"
+
+#: ../glade/gnome/gnomedruidpageedge.c:100
+msgid "Text Color:"
+msgstr "文字色:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:101
+msgid "The color of the main text"
+msgstr "標準で表示する文字の色です"
+
+#: ../glade/gnome/gnomedruidpageedge.c:103
+#: ../glade/gnome/gnomedruidpagestandard.c:92
+msgid "The background color of the page"
+msgstr "ページの背景色です"
+
+#: ../glade/gnome/gnomedruidpageedge.c:104
+#: ../glade/gnome/gnomedruidpagestandard.c:93
+msgid "Logo Back. Color:"
+msgstr "ロゴ背景色:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:105
+#: ../glade/gnome/gnomedruidpagestandard.c:94
+msgid "The background color around the logo"
+msgstr "ロゴのまわりの背景色です"
+
+#: ../glade/gnome/gnomedruidpageedge.c:106
+msgid "Text Box Color:"
+msgstr "文字ボックス色:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:107
+msgid "The background color of the main text area"
+msgstr "メイン・テキスト領域の背景色です"
+
+#: ../glade/gnome/gnomedruidpageedge.c:108
+#: ../glade/gnome/gnomedruidpagestandard.c:95
+msgid "Logo Image:"
+msgstr "ロゴの画像:"
+
+#: ../glade/gnome/gnomedruidpageedge.c:109
+#: ../glade/gnome/gnomedruidpagestandard.c:96
+msgid "The logo to display in the top-right of the page"
+msgstr "ページの右上に配置するロゴです"
+
+#: ../glade/gnome/gnomedruidpageedge.c:110
+msgid "Side Watermark:"
+msgstr "透かし(横):"
+
+#: ../glade/gnome/gnomedruidpageedge.c:111
+msgid "The main image to display on the side of the page."
+msgstr "ページの横側に配置する透かしの画像です"
+
+#: ../glade/gnome/gnomedruidpageedge.c:112
+#: ../glade/gnome/gnomedruidpagestandard.c:97
+msgid "Top Watermark:"
+msgstr "透かし(上):"
+
+#: ../glade/gnome/gnomedruidpageedge.c:113
+msgid "The watermark to display at the top of the page."
+msgstr "ページの上側に配置する透かしの画像です"
+
+#: ../glade/gnome/gnomedruidpageedge.c:522
+msgid "Druid Start or Finish Page"
+msgstr "ドルイドの開始または完了ページです"
+
+#: ../glade/gnome/gnomedruidpagestandard.c:89
+msgid "Contents Back. Color:"
+msgstr "内容の背景色:"
+
+#: ../glade/gnome/gnomedruidpagestandard.c:90
+msgid "The background color around the title"
+msgstr "タイトルの周りに配置する背景色です"
+
+#: ../glade/gnome/gnomedruidpagestandard.c:98
+msgid "The image to display along the top of the page"
+msgstr "ページの上部に沿って表示する画像です"
+
+#: ../glade/gnome/gnomedruidpagestandard.c:447
+msgid "Druid Standard Page"
+msgstr "ドルイド標準ページ"
+
+#: ../glade/gnome/gnomeentry.c:71 ../glade/gnome/gnomefileentry.c:96
+#: ../glade/gnome/gnomeiconentry.c:74 ../glade/gnome/gnomepixmapentry.c:77
+msgid "History ID:"
+msgstr "履歴 ID:"
+
+#: ../glade/gnome/gnomeentry.c:72 ../glade/gnome/gnomefileentry.c:97
+#: ../glade/gnome/gnomeiconentry.c:75 ../glade/gnome/gnomepixmapentry.c:78
+msgid "The ID to save the history entries under"
+msgstr "履歴のエントリを保存する際の ID です"
+
+#: ../glade/gnome/gnomeentry.c:73 ../glade/gnome/gnomefileentry.c:98
+#: ../glade/gnome/gnomeiconentry.c:76 ../glade/gnome/gnomepixmapentry.c:79
+msgid "Max Saved:"
+msgstr "最大保存数:"
+
+#: ../glade/gnome/gnomeentry.c:74 ../glade/gnome/gnomefileentry.c:99
+#: ../glade/gnome/gnomeiconentry.c:77 ../glade/gnome/gnomepixmapentry.c:80
+msgid "The maximum number of history entries saved"
+msgstr "保存可能な履歴エントリの最大値です"
+
+#: ../glade/gnome/gnomeentry.c:210
+msgid "Gnome Entry"
+msgstr "GNOME エントリ"
+
+#: ../glade/gnome/gnomefileentry.c:102 ../glade/gnome/gnomeiconentry.c:73
+#: ../glade/gnome/gnomepixmapentry.c:83
+msgid "The title of the file selection dialog"
+msgstr "ファイル選択ダイアログのタイトルです"
+
+#: ../glade/gnome/gnomefileentry.c:103
+msgid "Directory:"
+msgstr "フォルダ:"
+
+#: ../glade/gnome/gnomefileentry.c:104
+msgid "If a directory is needed rather than a file"
+msgstr "ファイルではなくフォルダが必要かどうかです"
+
+#: ../glade/gnome/gnomefileentry.c:106 ../glade/gnome/gnomepixmapentry.c:85
+msgid "If the file selection dialog should be modal"
+msgstr "ファイル選択ダイアログはモーダル式にするかどうかです"
+
+#: ../glade/gnome/gnomefileentry.c:107 ../glade/gnome/gnomepixmapentry.c:86
+msgid "Use FileChooser:"
+msgstr "FileChooser:"
+
+#: ../glade/gnome/gnomefileentry.c:108 ../glade/gnome/gnomepixmapentry.c:87
+msgid "Use the new GtkFileChooser widget instead of GtkFileSelection"
+msgstr "GtkFileSelection の代わりに GtkFileChooser ウィジットを利用します"
+
+#: ../glade/gnome/gnomefileentry.c:367
+msgid "Gnome File Entry"
+msgstr "GNOME ファイル・エントリ"
+
+#: ../glade/gnome/gnomefontpicker.c:98
+msgid "The preview text to show in the font selection dialog"
+msgstr "フォント選択ダイアログにテキストのプレビューを表示するかどうかです"
+
+#: ../glade/gnome/gnomefontpicker.c:99
+msgid "Mode:"
+msgstr "モード:"
+
+#: ../glade/gnome/gnomefontpicker.c:100
+msgid "What to display in the font picker button"
+msgstr "フォント選択ボタンに表示する種類です"
+
+#: ../glade/gnome/gnomefontpicker.c:107
+msgid "The size of the font to use in the font picker button"
+msgstr "フォント選択ボタンの中で使用するフォントの大きさです"
+
+#: ../glade/gnome/gnomefontpicker.c:392
+msgid "Gnome Font Picker"
+msgstr "GNOME フォント選択"
+
+#: ../glade/gnome/gnomehref.c:66
+msgid "URL:"
+msgstr "URL:"
+
+#: ../glade/gnome/gnomehref.c:67
+msgid "The URL to display when the button is clicked"
+msgstr "ボタンをクリックすると表示される URL です"
+
+#: ../glade/gnome/gnomehref.c:69
+msgid "The text to display in the button"
+msgstr "ボタンの中に表示するテキストです"
+
+#: ../glade/gnome/gnomehref.c:206
+msgid "Gnome HRef Link Button"
+msgstr "GNOME HRef リンク・ボタン"
+
+#: ../glade/gnome/gnomeiconentry.c:208
+msgid "Gnome Icon Entry"
+msgstr "Gnome Icon Entry"
+
+#: ../glade/gnome/gnomeiconlist.c:175
+msgid "The selection mode"
+msgstr "アイコンを選択するモードです"
+
+#: ../glade/gnome/gnomeiconlist.c:177
+msgid "Icon Width:"
+msgstr "アイコン幅:"
+
+#: ../glade/gnome/gnomeiconlist.c:178
+msgid "The width of each icon"
+msgstr "表示するアイコンの幅です"
+
+#: ../glade/gnome/gnomeiconlist.c:181
+msgid "The number of pixels between rows of icons"
+msgstr "アイコンを配置する行間のピクセル数です"
+
+#: ../glade/gnome/gnomeiconlist.c:184
+msgid "The number of pixels between columns of icons"
+msgstr "アイコンを配置する列間のピクセル数です"
+
+#: ../glade/gnome/gnomeiconlist.c:187
+msgid "Icon Border:"
+msgstr "アイコン境界:"
+
+#: ../glade/gnome/gnomeiconlist.c:188
+msgid "The number of pixels around icons (unused?)"
+msgstr "アイコンの周りに挿入する余白です (未使用？)"
+
+#: ../glade/gnome/gnomeiconlist.c:191
+msgid "Text Spacing:"
+msgstr "テキスト間隔:"
+
+#: ../glade/gnome/gnomeiconlist.c:192
+msgid "The number of pixels between the text and the icon"
+msgstr "テキストとアイコン間に挿入するピクセル数です"
+
+#: ../glade/gnome/gnomeiconlist.c:194
+msgid "Text Editable:"
+msgstr "テキスト編集可:"
+
+#: ../glade/gnome/gnomeiconlist.c:195
+msgid "If the icon text can be edited by the user"
+msgstr "アイコン・テキストが編集可能かどうかです"
+
+#: ../glade/gnome/gnomeiconlist.c:196
+msgid "Text Static:"
+msgstr "テキスト静止:"
+
+#: ../glade/gnome/gnomeiconlist.c:197
+msgid ""
+"If the icon text is static, in which case it will not be copied by the "
+"GnomeIconList"
+msgstr ""
+"GnomeIconList がアイコンをコピーしない場合は、アイコンをスタティックにします"
+
+#: ../glade/gnome/gnomeiconlist.c:461
+msgid "Icon List"
+msgstr "アイコン・リスト"
+
+#: ../glade/gnome/gnomeiconselection.c:154
+msgid "Icon Selection"
+msgstr "アイコンの選択"
+
+#: ../glade/gnome/gnomemessagebox.c:174
+msgid "Message Type:"
+msgstr "メッセージ種:"
+
+#: ../glade/gnome/gnomemessagebox.c:175
+msgid "The type of the message box"
+msgstr "メッセージ・ボックスの種類です"
+
+#: ../glade/gnome/gnomemessagebox.c:177
+msgid "Message:"
+msgstr "メッセージ:"
+
+#: ../glade/gnome/gnomemessagebox.c:177
+msgid "The message to display"
+msgstr "表示するメッセージです"
+
+#: ../glade/gnome/gnomemessagebox.c:498
+msgid "Gnome Message Box"
+msgstr "Gnome Message Box"
+
+#: ../glade/gnome/gnomepixmap.c:79
+msgid "The pixmap filename"
+msgstr "ピクスマップのファイル名です"
+
+#: ../glade/gnome/gnomepixmap.c:80
+msgid "Scaled:"
+msgstr "スケール可:"
+
+#: ../glade/gnome/gnomepixmap.c:80
+msgid "If the pixmap is scaled"
+msgstr "ピックマップを拡大/縮小するかどうかです"
+
+#: ../glade/gnome/gnomepixmap.c:81
+msgid "Scaled Width:"
+msgstr "スケール幅:"
+
+#: ../glade/gnome/gnomepixmap.c:82
+msgid "The width to scale the pixmap to"
+msgstr "ピックマップを拡大/縮小する幅です"
+
+#: ../glade/gnome/gnomepixmap.c:84
+msgid "Scaled Height:"
+msgstr "スケール高:"
+
+#: ../glade/gnome/gnomepixmap.c:85
+msgid "The height to scale the pixmap to"
+msgstr "ピックマップを拡大/縮小する高さです"
+
+#: ../glade/gnome/gnomepixmap.c:346
+msgid "Gnome Pixmap"
+msgstr "GNOME ピックスマップ"
+
+#: ../glade/gnome/gnomepixmapentry.c:75
+msgid "Preview:"
+msgstr "プレビュー:"
+
+#: ../glade/gnome/gnomepixmapentry.c:76
+msgid "If a small preview of the pixmap is displayed"
+msgstr "ピックスマップのプレビューを小さく表示するかどうかです"
+
+#: ../glade/gnome/gnomepixmapentry.c:303
+msgid "GnomePixmapEntry"
+msgstr "GNOME ピックスマップ・エントリ"
+
+#: ../glade/gnome/gnomepropertybox.c:112
+msgid "New GnomePropertyBox"
+msgstr "新しい GNOME プロパティボックス"
+
+#: ../glade/gnome/gnomepropertybox.c:365
+msgid "Property Dialog Box"
+msgstr "Property Dialog Box"
+
+#: ../glade/main.c:70
+msgid "Write the source code and exit"
+msgstr "ソース・コードを出力して終了する"
+
+#: ../glade/main.c:74
+msgid "Start with the palette hidden"
+msgstr "パレットは表示しないで起動する"
+
+#: ../glade/main.c:78
+msgid "Start with the property editor hidden"
+msgstr "プロパティ・エディタを表示しないで起動する"
+
+#: ../glade/main.c:436
+msgid ""
+"glade: The XML file must be set for the '-w' or '--write-source' option.\n"
+msgstr ""
+"glade: オプション '-w' または '--write-source' には XML ファイルを指定して下"
+"さい。　\n"
+
+#: ../glade/main.c:450
+msgid "glade: Error loading XML file.\n"
+msgstr "glade: XML ファイルの読み込みエラーです。\n"
+
+#: ../glade/main.c:457
+msgid "glade: Error writing source.\n"
+msgstr "glade: ソース・コードの出力エラーです。\n"
+
+#: ../glade/palette.c:60
+msgid "Palette"
+msgstr "パレット"
+
+#: ../glade/property.c:73
+msgid "private"
+msgstr "private"
+
+#: ../glade/property.c:73
+msgid "protected"
+msgstr "protected"
+
+#: ../glade/property.c:73
+msgid "public"
+msgstr "public"
+
+#: ../glade/property.c:102
+msgid "Prelight"
+msgstr "プリライト"
+
+#: ../glade/property.c:103
+msgid "Selected"
+msgstr "選択"
+
+#: ../glade/property.c:103
+msgid "Insens"
+msgstr "無反応"
+
+#: ../glade/property.c:467
+msgid "When the window needs redrawing"
+msgstr "ウィンドウの再描画が必要なとき"
+
+#: ../glade/property.c:468
+msgid "When the mouse moves"
+msgstr "マウスを動かしたとき"
+
+#: ../glade/property.c:469
+msgid "Mouse movement hints"
+msgstr "マウスの移動のヒント"
+
+#: ../glade/property.c:470
+msgid "Mouse movement with any button pressed"
+msgstr "どらかボタンを押しながらマウスを動かしたとき"
+
+#: ../glade/property.c:471
+msgid "Mouse movement with button 1 pressed"
+msgstr "ボタン１を押しながらマウスを動かしたとき"
+
+#: ../glade/property.c:472
+msgid "Mouse movement with button 2 pressed"
+msgstr "ボタン２を押しながらマウスを動かしたとき"
+
+#: ../glade/property.c:473
+msgid "Mouse movement with button 3 pressed"
+msgstr "ボタン３を押しながらマウスを動かしたとき"
+
+#: ../glade/property.c:474
+msgid "Any mouse button pressed"
+msgstr "どれかマウスのボタンを押したとき"
+
+#: ../glade/property.c:475
+msgid "Any mouse button released"
+msgstr "どれかマウスのボタンをはなしたとき"
+
+#: ../glade/property.c:476
+msgid "Any key pressed"
+msgstr "どれかキーボードのキーを押したとき"
+
+#: ../glade/property.c:477
+msgid "Any key released"
+msgstr "どれかキーボードのキーを解放したとき"
+
+#: ../glade/property.c:478
+msgid "When the mouse enters the window"
+msgstr "マウス・カーソルがウィンドウの上に入ったとき"
+
+#: ../glade/property.c:479
+msgid "When the mouse leaves the window"
+msgstr "マウス・カーソルがウィンドウの上から離れたとき"
+
+#: ../glade/property.c:480
+msgid "Any change in input focus"
+msgstr "入力フォーカス内で変更があったとき"
+
+#: ../glade/property.c:481
+msgid "Any change in window structure"
+msgstr "ウィンドウ構造に変更があったとき"
+
+#: ../glade/property.c:482
+msgid "Any change in X Windows property"
+msgstr "X Window のプロパティに変更があったとき"
+
+#: ../glade/property.c:483
+msgid "Any change in visibility"
+msgstr "表示に変化があったとき"
+
+#: ../glade/property.c:484 ../glade/property.c:485
+msgid "For cursors in XInput-aware programs"
+msgstr "XInput 対応プログラムのカーソルのため"
+
+#: ../glade/property.c:596
+msgid "Properties"
+msgstr "プロパティ"
+
+#: ../glade/property.c:620
+msgid "Packing"
+msgstr "パッキング"
+
+#: ../glade/property.c:625
+msgid "Common"
+msgstr "共通"
+
+#: ../glade/property.c:631
+msgid "Style"
+msgstr "スタイル"
+
+#: ../glade/property.c:637 ../glade/property.c:4640
+msgid "Signals"
+msgstr "シグナル"
+
+#: ../glade/property.c:700 ../glade/property.c:721
+msgid "Properties: "
+msgstr "プロパティ:"
+
+#: ../glade/property.c:708 ../glade/property.c:732
+msgid "Properties: <none>"
+msgstr "プロパティ: <なし>"
+
+#: ../glade/property.c:778
+msgid "Class:"
+msgstr "クラス:"
+
+#: ../glade/property.c:779
+msgid "The class of the widget"
+msgstr "ウィジェットのクラス名です"
+
+#: ../glade/property.c:813
+msgid "Width:"
+msgstr "幅:"
+
+#: ../glade/property.c:814
+msgid ""
+"The requested width of the widget (usually used to set the minimum width)"
+msgstr "要求されたウィジットの幅です (通常は幅の最小値を使用します)"
+
+#: ../glade/property.c:816
+msgid "Height:"
+msgstr "高さ:"
+
+#: ../glade/property.c:817
+msgid ""
+"The requested height of the widget (usually used to set the minimum height)"
+msgstr "要求されたウィジットの高さです (通常は高さの最小値を使用します)"
+
+#: ../glade/property.c:820
+msgid "Visible:"
+msgstr "表示可否:"
+
+#: ../glade/property.c:821
+msgid "If the widget is initially visible"
+msgstr "ウィジットの初期値を表示可能にするかどうかです"
+
+#: ../glade/property.c:822
+msgid "Sensitive:"
+msgstr "反応可能:"
+
+#: ../glade/property.c:823
+msgid "If the widget responds to input"
+msgstr "入力にウィジットが対応できるかどうかです"
+
+#: ../glade/property.c:825
+msgid "The tooltip to display if the mouse lingers over the widget"
+msgstr ""
+"マウス・カーソルがウィジットの上にきたときにツールチップ・ヒントを表示するか"
+"どうかです"
+
+#: ../glade/property.c:827
+msgid "Can Default:"
+msgstr "デフォルト可:"
+
+#: ../glade/property.c:828
+msgid "If the widget can be the default action in a dialog"
+msgstr "ウィジットがダイアログの中でデフォルトのアクションになれるかどうかです"
+
+#: ../glade/property.c:829
+msgid "Has Default:"
+msgstr "デフォルト有:"
+
+#: ../glade/property.c:830
+msgid "If the widget is the default action in the dialog"
+msgstr "ウィジットがダイアログの中でデフォルトのアクションであるかどうかです"
+
+#: ../glade/property.c:831
+msgid "Can Focus:"
+msgstr "フォーカス可:"
+
+#: ../glade/property.c:832
+msgid "If the widget can accept the input focus"
+msgstr "ウィジットが入力フォーカスを受け入れるかどうかです"
+
+#: ../glade/property.c:833
+msgid "Has Focus:"
+msgstr "フォーカス有:"
+
+#: ../glade/property.c:834
+msgid "If the widget has the input focus"
+msgstr "ウィジットに入力フォーカスが当たっているかどうかです"
+
+#: ../glade/property.c:836
+msgid "Events:"
+msgstr "イベント:"
+
+#: ../glade/property.c:837
+msgid "The X events that the widget receives"
+msgstr "ウィジットが受け取る X-イベントです"
+
+#: ../glade/property.c:839
+msgid "Ext.Events:"
+msgstr "拡張イベント:"
+
+#: ../glade/property.c:840
+msgid "The X Extension events mode"
+msgstr "X-拡張イベント・モードにするかどうかです"
+
+#: ../glade/property.c:843
+msgid "Accelerators:"
+msgstr "アクセラレータ:"
+
+#: ../glade/property.c:844
+msgid "Defines the signals to emit when keys are pressed"
+msgstr "キーが押下された際に発行するシグナルを定義します"
+
+#: ../glade/property.c:845
+msgid "Edit..."
+msgstr "編集..."
+
+#: ../glade/property.c:867
+msgid "Propagate:"
+msgstr "継承:"
+
+#: ../glade/property.c:868
+msgid "Set True to propagate the style to the widget's children"
+msgstr "ウィジットの子へスタイルを継承するかどうかです"
+
+#: ../glade/property.c:869
+msgid "Named Style:"
+msgstr "スタイル名:"
+
+#: ../glade/property.c:870
+msgid "The name of the style, which can be shared by several widgets"
+msgstr "複数のウィジットで共有することが可能なスタイルの名前です"
+
+#: ../glade/property.c:872
+msgid "Font:"
+msgstr "フォント:"
+
+#: ../glade/property.c:873
+msgid "The font to use for any text in the widget"
+msgstr "ウィジットのあらゆる文字に使用する標準フォントです"
+
+#: ../glade/property.c:898
+msgid "Copy All"
+msgstr "全てコピー"
+
+#: ../glade/property.c:926
+msgid "Foreground:"
+msgstr "前景色:"
+
+#: ../glade/property.c:926
+msgid "Background:"
+msgstr "背景色:"
+
+#: ../glade/property.c:926
+msgid "Base:"
+msgstr "ベース色:"
+
+#: ../glade/property.c:928
+msgid "Foreground color"
+msgstr "前景色です"
+
+#: ../glade/property.c:928
+msgid "Background color"
+msgstr "背景色です"
+
+#: ../glade/property.c:928
+msgid "Text color"
+msgstr "文字の色です"
+
+#: ../glade/property.c:929
+msgid "Base color"
+msgstr "基本となる色です"
+
+#: ../glade/property.c:946
+msgid "Back. Pixmap:"
+msgstr "ピックスマップ背景:"
+
+#: ../glade/property.c:947
+msgid "The graphic to use as the background of the widget"
+msgstr "ウィジットの背景に使用するグラフィックスです"
+
+#: ../glade/property.c:999
+msgid "The file to write source code into"
+msgstr "ソース・コードを出力する先のファイル名です"
+
+#: ../glade/property.c:1000
+msgid "Public:"
+msgstr "Public:"
+
+#: ../glade/property.c:1001
+msgid "If the widget is added to the component's data structure"
+msgstr "ウィジットがコンポーネントのデータ構造体へ追加されるかどうか"
+
+#: ../glade/property.c:1012
+msgid "Separate Class:"
+msgstr "別クラス:"
+
+#: ../glade/property.c:1013
+msgid "Put this widget's subtree in a separate class"
+msgstr "このウィジットのサブツリーを別のクラスへ出力します"
+
+#: ../glade/property.c:1014
+msgid "Separate File:"
+msgstr "別ファイル:"
+
+#: ../glade/property.c:1015
+msgid "Put this widget in a separate source file"
+msgstr "このウィジットを別のソース・ファイルへ出力します"
+
+#: ../glade/property.c:1016
+msgid "Visibility:"
+msgstr "可視性:"
+
+#: ../glade/property.c:1017
+msgid "Visibility of widgets. Public widgets are exported to a global map."
+msgstr ""
+"ウィジットの公開/保護/非公開で、公開ウィジットはグローバル・マップにエキス"
+"ポートされます"
+
+#: ../glade/property.c:1126
+msgid "You need to select a color or background to copy"
+msgstr "コピーする色または背景を選択して下さい"
+
+#: ../glade/property.c:1145
+msgid "Invalid selection in on_style_copy()"
+msgstr "関数 on_style_copy() の中の選択範囲が間違っています"
+
+#: ../glade/property.c:1187
+msgid "You need to copy a color or background pixmap first"
+msgstr "まず最初に色または背景ピックスマップをコピーして下さい"
+
+#: ../glade/property.c:1193
+msgid "You need to select a color to paste into"
+msgstr "貼り付ける色を選択して下さい"
+
+#: ../glade/property.c:1203
+msgid "You need to select a background pixmap to paste into"
+msgstr "貼り付ける背景ピックスマップを選択して下さい"
+
+#: ../glade/property.c:1455
+msgid "Couldn't create pixmap from file\n"
+msgstr "ファイルからピックスマップを生成できませんでした\n"
+
+#. List of current signal handlers - Signal/Handler/Data/Options
+#: ../glade/property.c:1497
+msgid "Signal"
+msgstr "シグナル"
+
+#: ../glade/property.c:1499
+msgid "Data"
+msgstr "データ"
+
+#: ../glade/property.c:1500
+msgid "After"
+msgstr "後で呼び出す"
+
+#: ../glade/property.c:1501
+msgid "Object"
+msgstr "オブジェクト"
+
+#: ../glade/property.c:1532 ../glade/property.c:1696
+msgid "Signal:"
+msgstr "シグナル:"
+
+#: ../glade/property.c:1533
+msgid "The signal to add a handler for"
+msgstr "ハンドラを接続するシグナルです"
+
+#: ../glade/property.c:1547
+msgid "The function to handle the signal"
+msgstr "シグナルを取り扱う関数です"
+
+#: ../glade/property.c:1550
+msgid "Data:"
+msgstr "データ:"
+
+#: ../glade/property.c:1551
+msgid "The data passed to the handler"
+msgstr "ハンドラに引き渡すデータです"
+
+#: ../glade/property.c:1552
+msgid "Object:"
+msgstr "オブジェクト:"
+
+#: ../glade/property.c:1553
+msgid "The object which receives the signal"
+msgstr "シグナルを受け取るオブジェクトです"
+
+#: ../glade/property.c:1554
+msgid "After:"
+msgstr "後で呼び出す:"
+
+#: ../glade/property.c:1555
+msgid "If the handler runs after the class function"
+msgstr "クラス専用の関数を呼び出した後でハンドラを呼び出すかどうかです"
+
+#: ../glade/property.c:1568
+msgid "Add"
+msgstr "追加"
+
+#: ../glade/property.c:1574
+msgid "Update"
+msgstr "更新"
+
+#: ../glade/property.c:1586
+msgid "Clear"
+msgstr "クリア"
+
+#: ../glade/property.c:1636
+msgid "Accelerators"
+msgstr "アクセラレータ"
+
+#. List of current accelerators - Mods/Keys/Signals
+#: ../glade/property.c:1649
+msgid "Mod"
+msgstr "修飾"
+
+#: ../glade/property.c:1650
+msgid "Key"
+msgstr "キー"
+
+#: ../glade/property.c:1651
+msgid "Signal to emit"
+msgstr "発行するシグナル"
+
+#: ../glade/property.c:1695
+msgid "The accelerator key"
+msgstr "アクセラレータ・キー"
+
+#: ../glade/property.c:1697
+msgid "The signal to emit when the accelerator is pressed"
+msgstr "アクセラレータが押下されたら発行するシグナルです"
+
+#: ../glade/property.c:1846
+msgid "Edit Text Property"
+msgstr "テキスト・プロパティの編集"
+
+#: ../glade/property.c:1884
+msgid "<b>_Text:</b>"
+msgstr "<b>テキスト(_T):</b>"
+
+#: ../glade/property.c:1894
+msgid "T_ranslatable"
+msgstr "翻訳可能な文字列である(_R)"
+
+#: ../glade/property.c:1898
+msgid "Has Context _Prefix"
+msgstr "コンテキストの接頭子を持つ(_P)"
+
+#: ../glade/property.c:1924
+msgid "<b>Co_mments For Translators:</b>"
+msgstr "<b>翻訳者へのコメント(_M):</b>"
+
+#: ../glade/property.c:3886
+msgid "Select X Events"
+msgstr "X-イベントの選択"
+
+#: ../glade/property.c:3895
+msgid "Event Mask"
+msgstr "イベント・マスク"
+
+#: ../glade/property.c:4025 ../glade/property.c:4074
+msgid "You need to set the accelerator key"
+msgstr "アクセラレータ・キーをセットして下さい。"
+
+#: ../glade/property.c:4032 ../glade/property.c:4081
+msgid "You need to set the signal to emit"
+msgstr "発行するシグナルをセットして下さい。"
+
+#: ../glade/property.c:4308 ../glade/property.c:4364
+msgid "You need to set the signal name"
+msgstr "シグナル名をセットして下さい。"
+
+#: ../glade/property.c:4315 ../glade/property.c:4371
+msgid "You need to set the handler for the signal"
+msgstr "シグナルにハンドラをセットして下さい。"
+
+#. This groups the signals by class, e.g. 'GtkButton signals'.
+#: ../glade/property.c:4574
+#, c-format
+msgid "%s signals"
+msgstr "%s シグナル"
+
+#: ../glade/property.c:4631
+msgid "Select Signal"
+msgstr "シグナルの選択"
+
+#: ../glade/property.c:4827
+msgid "Value:"
+msgstr "値:"
+
+#: ../glade/property.c:4827
+msgid "Min:"
+msgstr "最小:"
+
+#: ../glade/property.c:4827
+msgid "Step Inc:"
+msgstr "ステップ増分値:"
+
+#: ../glade/property.c:4828
+msgid "Page Inc:"
+msgstr "ページ増分値:"
+
+#: ../glade/property.c:4828
+msgid "Page Size:"
+msgstr "ページ幅:"
+
+#: ../glade/property.c:4830
+msgid "H Value:"
+msgstr "水平の値:"
+
+#: ../glade/property.c:4830
+msgid "H Min:"
+msgstr "水平の最小値:"
+
+#: ../glade/property.c:4830
+msgid "H Max:"
+msgstr "水平の最大値:"
+
+#: ../glade/property.c:4830
+msgid "H Step Inc:"
+msgstr "水平ステップ増分値:"
+
+#: ../glade/property.c:4831
+msgid "H Page Inc:"
+msgstr "水平ページ増分値:"
+
+#: ../glade/property.c:4831
+msgid "H Page Size:"
+msgstr "水平ページ幅:"
+
+#: ../glade/property.c:4833
+msgid "V Value:"
+msgstr "垂直の値:"
+
+#: ../glade/property.c:4833
+msgid "V Min:"
+msgstr "垂直の最小値:"
+
+#: ../glade/property.c:4833
+msgid "V Max:"
+msgstr "垂直の最大値:"
+
+#: ../glade/property.c:4833
+msgid "V Step Inc:"
+msgstr "垂直ステップ増分値:"
+
+#: ../glade/property.c:4834
+msgid "V Page Inc:"
+msgstr "垂直ページ増分値:"
+
+#: ../glade/property.c:4834
+msgid "V Page Size:"
+msgstr "垂直ページ幅:"
+
+#: ../glade/property.c:4837
+msgid "The initial value"
+msgstr "初期値です"
+
+#: ../glade/property.c:4838
+msgid "The minimum value"
+msgstr "最小値です"
+
+#: ../glade/property.c:4839
+msgid "The maximum value"
+msgstr "最大値です"
+
+#: ../glade/property.c:4840
+msgid "The step increment"
+msgstr "ステップの増分値です"
+
+#: ../glade/property.c:4841
+msgid "The page increment"
+msgstr "ページの増分値です"
+
+#: ../glade/property.c:4842
+msgid "The page size"
+msgstr "ページの大きさです"
+
+#: ../glade/property.c:4997
+msgid "The requested font is not available."
+msgstr "指定したフォントは利用できません。"
+
+#: ../glade/property.c:5046
+msgid "Select Named Style"
+msgstr "スタイル名の選択"
+
+#: ../glade/property.c:5057
+msgid "Styles"
+msgstr "スタイル"
+
+#: ../glade/property.c:5116
+msgid "Rename"
+msgstr "名前の変更"
+
+#: ../glade/property.c:5144
+msgid "Cancel"
+msgstr "キャンセル"
+
+#: ../glade/property.c:5264
+msgid "New Style:"
+msgstr "新スタイル:"
+
+#: ../glade/property.c:5278 ../glade/property.c:5399
+msgid "Invalid style name"
+msgstr "スタイル名が無効です"
+
+#: ../glade/property.c:5286 ../glade/property.c:5409
+msgid "That style name is already in use"
+msgstr "スタイル名は既に使用されています"
+
+#: ../glade/property.c:5384
+msgid "Rename Style To:"
+msgstr "スタイル名変更:"
+
+#: ../glade/save.c:139 ../glade/source.c:2771
+#, c-format
+msgid ""
+"Couldn't rename file:\n"
+"  %s\n"
+"to:\n"
+"  %s\n"
+msgstr ""
+"ファイル名を変更できませんでした:\n"
+"  %s\n"
+"から:\n"
+"  %s\n"
+
+#: ../glade/save.c:174 ../glade/save.c:225 ../glade/save.c:947
+#: ../glade/source.c:358 ../glade/source.c:373 ../glade/source.c:391
+#: ../glade/source.c:404 ../glade/source.c:815 ../glade/source.c:1043
+#: ../glade/source.c:1134 ../glade/source.c:1328 ../glade/source.c:1423
+#: ../glade/source.c:1643 ../glade/source.c:1732 ../glade/source.c:1784
+#: ../glade/source.c:1848 ../glade/source.c:1895 ../glade/source.c:2032
+#: ../glade/utils.c:1147
+#, c-format
+msgid ""
+"Couldn't create file:\n"
+"  %s\n"
+msgstr ""
+"ファイルを作れませんでした:\n"
+"  %s\n"
+
+#: ../glade/save.c:848
+msgid "Error writing XML file\n"
+msgstr "XML ファイルの出力エラー\n"
+
+#: ../glade/save.c:953
+#, c-format
+msgid ""
+"/*\n"
+" * Translatable strings file generated by Glade.\n"
+" * Add this file to your project's POTFILES.in.\n"
+" * DO NOT compile it as part of your application.\n"
+" */\n"
+"\n"
+msgstr ""
+"/*\n"
+" * Glade が生成した翻訳可能な文字列です。\n"
+" * このファイルをあなたのプロジェクトの POTFILES.in に追加して下さい。\n"
+" * アプリケーションの一部としてコンパイルしないで下さい。\n"
+" */\n"
+"\n"
+
+#: ../glade/source.c:184
+#, c-format
+msgid ""
+"Invalid interface source filename: %s\n"
+"%s\n"
+msgstr ""
+"不正なインタフェース・ソース・ファイル名: %s\n"
+"%s\n"
+
+#: ../glade/source.c:186
+#, c-format
+msgid ""
+"Invalid interface header filename: %s\n"
+"%s\n"
+msgstr ""
+"不正なインタフェース・ヘッダ・ファイル名: %s\n"
+"%s\n"
+
+#: ../glade/source.c:189
+#, c-format
+msgid ""
+"Invalid callbacks source filename: %s\n"
+"%s\n"
+msgstr ""
+"不正なコールバック・ソース・ファイル名: %s\n"
+"%s\n"
+
+#: ../glade/source.c:191
+#, c-format
+msgid ""
+"Invalid callbacks header filename: %s\n"
+"%s\n"
+msgstr ""
+"不正なコールバック・ヘッダ・ファイル名: %s\n"
+"%s\n"
+
+#: ../glade/source.c:197
+#, c-format
+msgid ""
+"Invalid support source filename: %s\n"
+"%s\n"
+msgstr ""
+"不正なサポート・ソース・ファイル名: %s\n"
+"%s\n"
+
+#: ../glade/source.c:199
+#, c-format
+msgid ""
+"Invalid support header filename: %s\n"
+"%s\n"
+msgstr ""
+"不正なサポート・ヘッダ・ファイル名: %s\n"
+"%s\n"
+
+#: ../glade/source.c:418 ../glade/source.c:426
+#, c-format
+msgid ""
+"Couldn't append to file:\n"
+"  %s\n"
+msgstr ""
+"ファイルに追加できませんでした:\n"
+"  %s\n"
+
+#: ../glade/source.c:1724 ../glade/utils.c:1168
+#, c-format
+msgid ""
+"Error writing to file:\n"
+"  %s\n"
+msgstr ""
+"ファイル出力エラー:\n"
+"  %s\n"
+
+#: ../glade/source.c:2743
+msgid "The filename must be set in the Project Options dialog."
+msgstr "ファイル名はプロジェクト設定ダイアログで設定して下さい。"
+
+#: ../glade/source.c:2746
+msgid ""
+"The filename must be a simple relative filename.\n"
+"Use the Project Options dialog to set it."
+msgstr ""
+"ファイル名は単純な相対ファイル名にして下さい。\n"
+"プロジェクト設定ダイアログから設定して下さい。"
+
+#: ../glade/tree.c:78
+msgid "Widget Tree"
+msgstr "ウィジット・ツリー"
+
+#: ../glade/utils.c:900 ../glade/utils.c:940
+msgid "Widget not found in box"
+msgstr "ボックスの中にウィジットがありません"
+
+#: ../glade/utils.c:920
+msgid "Widget not found in table"
+msgstr "テーブルの中にウィジットがありません"
+
+#: ../glade/utils.c:960
+msgid "Widget not found in fixed container"
+msgstr "フィックスド・コンテナの中にウィジットがありません"
+
+#: ../glade/utils.c:981
+msgid "Widget not found in packer"
+msgstr "パッカーにウィジットがありません"
+
+#: ../glade/utils.c:1118
+#, c-format
+msgid ""
+"Couldn't access file:\n"
+"  %s\n"
+msgstr ""
+"ファイルにアクセスできませんでした:\n"
+"  %s\n"
+
+#: ../glade/utils.c:1141
+#, c-format
+msgid ""
+"Couldn't open file:\n"
+"  %s\n"
+msgstr ""
+"ファイルを開けませんでした:\n"
+"  %s\n"
+
+#: ../glade/utils.c:1158
+#, c-format
+msgid ""
+"Error reading from file:\n"
+"  %s\n"
+msgstr ""
+"ファイル読み込みエラー:\n"
+"  %s\n"
+
+#. This happens under WIN32 when stat is confused by the filename, but this is
+#. harmless, since we know that the directory exists after all.
+#: ../glade/utils.c:1225
+#, c-format
+msgid ""
+"Couldn't create directory:\n"
+"  %s\n"
+msgstr ""
+"フォルダを作成できませんでした:\n"
+"  %s\n"
+
+#: ../glade/utils.c:1232
+#, c-format
+msgid ""
+"Couldn't access directory:\n"
+"  %s\n"
+msgstr ""
+"フォルダにアクセスできませんでした:\n"
+"  %s\n"
+
+#: ../glade/utils.c:1240
+#, c-format
+msgid ""
+"Invalid directory:\n"
+"  %s\n"
+msgstr ""
+"不正なフォルダです:\n"
+"  %s\n"
+
+#: ../glade/utils.c:1611
+msgid "Projects"
+msgstr "Projects"
+
+#: ../glade/utils.c:1628
+msgid "project"
+msgstr "project"
+
+#: ../glade/utils.c:1634
+#, c-format
+msgid ""
+"Couldn't open directory:\n"
+"  %s\n"
+msgstr ""
+"フォルダを開けませんでした:\n"
+"  %s\n"

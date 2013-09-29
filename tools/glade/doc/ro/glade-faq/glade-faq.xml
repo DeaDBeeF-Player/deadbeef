@@ -1,0 +1,1007 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+<!ENTITY legal SYSTEM "legal.xml">
+<!ENTITY date "Mar. 30, 2002"> <!-- date the manual was last updated -->
+<!ENTITY app "<application>Glade</application>">
+]>
+<article id="index" lang="ro">
+	
+	<articleinfo> 
+		<title>Întrebări frecvente Glade</title>
+		<copyright>
+			<year>2000</year>
+			<holder>Damon Chaplin</holder>
+		</copyright>
+		
+		<publisher>
+			<publishername>
+				Proiectul de documentare GNOME
+			</publishername>
+		</publisher>
+		
+		&legal;
+		
+		<legalnotice id="feedback">
+			<title>Comentarii</title>
+			<para>
+				Pentru a semnala o eroare în această aplicaţie sau
+				provitor la această documentaţie va rugăm să accesaţi
+				<ulink type="help"
+					url="ghelp:gnome-feedback">Pagina de conentarii GNOME</ulink>.
+			</para>
+		</legalnotice>
+		
+		<authorgroup>
+			<author>
+				<firstname>Damon</firstname>
+				<surname>Chaplin</surname>
+				<affiliation>
+					<orgname>Ximian, Inc.</orgname>
+				</affiliation>
+			</author>
+		</authorgroup>
+		
+		<revhistory>
+			
+			<revision>
+				<revnumber>1.1</revnumber>
+				<date>&date;</date> <!-- or use &date; -->
+				<revdescription>
+					<para role="author">Cristi Călin 
+						<email>kman@csc.ro</email></para>
+					<para role="publisher">Proiectul de documentare GNOME</para>
+				</revdescription>
+				
+			</revision>
+			
+		</revhistory>
+		<releaseinfo>
+			Acestea sunt cele mai frecvente întrebări referitoare la Glade. 
+			Ele au fost revizuite pe &date;.
+		</releaseinfo>
+		
+	</articleinfo>
+	
+	
+	<!-- ============= Document Body ============================= -->
+	
+	<sect1 id="qanda">
+		<title>Întrebări frecvente Glade</title>
+		
+		<para>
+			Aceasta este lista cu cele mai frecvente întrebări referitoare la
+			<application>Glade</application> designer de interfeţe GNOME/Gtk+ 2.0. 
+		</para>
+		
+		<!-- Cut this out to add a new question and answer.
+		<qandaentry>
+			<question>
+				<para>
+				</para>
+			</question>
+			<answer>
+				<para>
+				</para>
+			</answer>
+		</qandaentry> 
+		-->
+		
+		<qandaset>
+			
+			<!-- ============= General Information About Glade =========== -->
+			
+			<qandadiv>
+				<title>Informaţii generale depre Glade</title>
+				
+				<qandaentry>
+					<question>
+						<para>
+						      Ce documentatie există pentru Glade?
+						</para>
+					</question>
+					<answer>
+						<para>
+							În versiunea pentru GNOME sunt disponibile Quick-Start-ul, Manualul şi lista cu cele mai frecvente întrebări
+							prin accesarea meniului Ajutor. Din păcate, acestea nu sunt încă complete.
+						</para>
+						<para>
+							Exista, însa si alte documente pe Web:
+						</para>
+						<para>
+							Ghid în limba Spaniolă -
+						       	<ulink url="http://tigre.aragon.unam.mx/m3d/links_es.htm"
+								type="http">tigre.aragon.unam.mx/m3d/links_es.htm</ulink>
+					        </para>
+					        <para>
+						        Ghid înlimba Italiană - 
+							<ulink url="http://digilander.iol.it/robang/glade"
+								type="http">digilander.iol.it/robang/glade</ulink>
+						</para>
+						<para>
+							Nu ştiu dacă există vre-o carte referitoare la Glade, cu toate ca am vazut
+							un capitol care facea referinţă la Glade într-o carte publicată de Wrox press
+							pentru dezvoltatorii de Linux.
+						</para>
+						<para>
+							Legături vor fi prezente pe sit-ul de prezentare Glade la
+							<ulink url="http://glade.gnome.org" type="http">glade.gnome.org</ulink>
+							in timp ce devin disponibile.
+						</para>
+					</answer>
+				</qandaentry> 
+				
+				<qandaentry>
+					<question>
+						<para>
+							Există exemple de cod?
+						</para>
+					</question>
+					<answer>
+						<para>
+							Glade include doar un sigur exemplu de editor de texte în directorul examples/editor.
+							Dacă sunteţi în posesia unui pachet binar (ex. un RPM sau DEB), este posibil ca
+						        respectivele fişiere să fie instalate în /usr/doc/glade-X.X.X. Dacă nu puteţi să-le găsiţi,
+							atunci puteti descărca un pachet arhiva de la 
+							<ulink url="http://glade.gnome.org" type="http">glade.gnome.org</ulink>.
+						</para>
+						<para>
+							Situl web contine legături spre câteva aplicatii, din care puteti extrage exemple de cod.
+							Vizitati secţiunea 'Applications' de pe 
+							<ulink url="http://glade.gnome.org" type="http">glade.gnome.org</ulink>.
+						</para>
+					</answer>
+				</qandaentry> 
+				
+				<qandaentry>
+					<question>
+						<para>
+							Sunt obligat(ă) să folosesc o anumită licenţă pentru codul C generat de Glade?
+						</para>
+					</question>
+					<answer>
+						<para>
+							Nu. Sunteţi liber(ă) să folosiţi orice fel de licenţă pentru codul C generat de Glade.
+						</para>
+						<para>
+							Cu toate acestea, în spiritul software-ului liber, noi încurajăm utilizarea 
+							licenţelor GPL şi LGPL.
+						</para>
+					</answer>
+				</qandaentry> 
+				
+			</qandadiv>
+			
+			<!-- ============= Creating A User Interface In Glade ======== -->
+			
+			<qandadiv>
+				<title>Crearea unei interfeţe cu utilizatorul folosind Glade</title>
+				
+				<qandaentry>
+					<question>
+						<para>
+							Când adaug un widget într-o fereastră, acesta umple toată fereastra
+							şi nu mai pot adăuga late widget-uri.
+						</para>
+					</question>
+					<answer>
+						<para>
+							Aceasta nu este o eroare in <application>Glade</application>! 
+							în GTK+ trebuie să folositi containere pentru a va aşeza widget-urile.
+							Cele mai frecvent utilizate containere se afla în josul paginii 
+							principale din paleta de unelte. Încercaţi mai întâi sa adăugati o
+							cutie verticală în <application>Glade</application>. Acum încercaţi
+							sa adăugaţi un tabel într-o anumită poziţie in cutia verticală.
+							Aţi prins ideea?
+						</para>
+						<para>
+							Dacă vreţi numai să poziţionaţi un widget la anumite coordonate,
+							incercaţi containerul Fix. Totuşi, această metodă nu este recomandată
+							întrucât ferestrele sau dialogurile la care lucraţi nu vor arăta bine
+							dacă vor fi redimensionate, iar dacă treduceţi textul din etichete sau
+							butoane în alte limbi, acestea s-ar putea să nu mai încapă.
+						</para>
+					</answer>
+				</qandaentry> 
+				
+				<qandaentry>
+					<question>
+						<para>
+							Cum pot schimba culoarea unui widget (ex. sa fac o etichetă roşie)?
+						</para>
+					</question>
+					<answer>
+						<para>
+							Puteţi folosi fişiere GTK+ rc standard pentru a seta culorile sau 
+							fonturile widget-urilor.
+							Dacă aveţi activată opţiunea 'Set Widget Names' in proiectul Glade, 
+							atunci vă va fi mai uşor să accesaţi widget-urile după nume.
+							Verificaţi documentaţia GTK+ la <ulink
+								url="http://developer.gnome.org/doc/API/gtk/index.html"
+								type="http">developer.gnome.org/doc/API/gtk/index.html</ulink>. 
+						</para>
+						<para>
+							Puteţi schimba stilul unui widget programatic, apelând funcţia
+							gtk_widget_modify_style(). Exemplu:
+							<programlisting>
+								GdkColor red = { 0, 65535, 0, 0 };
+								GtkRcStyle *rc_style = gtk_rc_style_new ();
+								rc_style->fg[GTK_STATE_NORMAL] = red;
+								rc_style->color_flags[GTK_STATE_NORMAL] |= GTK_RC_FG;
+								gtk_widget_modify_style (widget, rc_style);
+								gtk_rc_style_unref (rc_style);
+							</programlisting>
+						</para>
+					</answer>
+				</qandaentry> 
+				
+				<qandaentry>
+					<question>
+						<para>
+							Cum adaug un pixmap unui buton?
+						</para>
+					</question>
+					<answer>
+						<para>
+							Creaţi un buton şi selectaţi <guilabel>Remove Label</guilabel>
+							din meniul popup. Puteţi apoi adăuga orige widget vreţi acelui buton, 
+							spre exemplu o cutie orizontală cu un pixmap şi o etichetă.
+							(<application>Glade</application> v-ar putea uşura această muncă 
+							pe viitor.)
+						</para>
+					</answer>
+				</qandaentry> 
+				
+				<qandaentry>
+					<question>
+						<para>
+							Cum pot adăuga mai multe widget-uri de acelaşi tip intr-un singur pas?
+						</para>
+					</question>
+					<answer>
+						<para>
+							Ţineţi apăsată tasta 'Control' în timp ce selectaţi widget-ul din
+							<interface>Paletă</interface>. Va rămâne apoi selectată, până ce veţi 
+							selecta alt obiect din <interface>Selector</interface>. 
+						</para>
+					</answer>
+				</qandaentry> 
+				
+				<qandaentry>
+					<question>
+						<para>
+							Primesc următorul mesaj când încerc să folosesc un 'scrolled window':
+							Gtk-WARNING **: <errorname>gtk_scrolled_window_add(): cannot add
+								non scrollable widget use
+								gtk_scrolled_window_add_with_viewport() instead</errorname>
+						</para>
+					</question>
+					<answer>
+						<para>
+							Puteţi ignora fără grijă acest mesaj. El este afişat de GTK+ pentru
+							a aminti dezfoltatorilor să îşi revizuiască codul, deoarece comportamentul
+							'scrolled windows' s-a schimbat intre versiunea GTK+ 1.0 şi GTK+ 1.2.
+							Codul generat de <application>Glade</application> nu este eronat.
+							În aplicaţia finală, acest mesaj ar trebui să dispară.
+						</para>
+					</answer>
+				</qandaentry> 
+				
+				<qandaentry>
+					<question>
+						<para>
+							Ce formate grafice suportă Glade?
+						</para>
+					</question>
+					<answer>
+						<para>
+							GTK+ 2.0 include gdk-pixbuf care asigură suport pentru foarte multe 
+							formate grefice, incluzând formatele PNG, TIFF, BMP, JPEG şi XPM.
+						</para>
+						<para>
+							Puteţi converi imaginile în diferite formate folosind editorul de imagini
+							GIMP sau utilitarul 'convert' din pachetul ImageMagick.
+						</para>
+					</answer>
+				</qandaentry> 
+				
+				<qandaentry>
+					<question>
+						<para>
+							Cum pot adăuga un handler de semnal?
+						</para>
+					</question>
+					<answer>
+						<para>
+							Urmaţi aceşti paşi:
+							<itemizedlist>
+								<listitem>
+									<para>
+										Selectaţi widget-ul căruia vreti sa-i adăugaţi handler-ul.
+									</para>
+								</listitem>
+								<listitem>
+									<para>
+										Selectaţi 'Semnale' din pagina Editorului de Proprietăţi.
+									</para>
+								</listitem>
+								<listitem>
+									<para>
+										Daţi clic pe butonul '...' (3 puncte) din dreapta câmpului 'Semnal:'.
+										Ar trebui sa apară o fereastră cu lista semnalelor pe care le emite acest widget.
+									</para>
+								</listitem>
+								<listitem>
+									<para>
+										în fereasta popup, selectaţi semnalul pentru care vreţi sa creaţi handler-ul
+										şi apasati pe butonul 'OK'.
+									</para>
+								</listitem>
+								<listitem>
+									<para>
+										Glade denumeşte automat funcţia handler, dar sunteţi liber(ă) sa îi schimbaţi 
+										numele din câmpul 'Handler:' de credeţi de cuviinţă.
+									</para>
+								</listitem>
+								<listitem>
+									<para>
+										Clic pe butonul 'Adaugă' pentru a-l adăuga în lista cu handler-uri de 
+										semnale ale acestui widget.
+									</para>
+								</listitem>
+							</itemizedlist>
+						</para>
+						<para>
+							Când generaţi codul C, un o funcţie vidă de tip handler va fi încorporată
+							în fişierul callbacks.c. Puteţi să va adăugaţi codul acolo.
+						</para>
+					</answer>
+				</qandaentry> 
+				
+			</qandadiv>
+			
+			
+			<!-- ============= Building The C Code Generated By Glade ====== -->
+			<qandadiv>
+				<title>Utilizarea codului C gerat de Glade</title>
+				
+				<qandaentry>
+					<question>
+						<para>
+							Cum pot genera cod cu ajutorul lui Glade?
+						</para>
+					</question>
+					<answer>
+						<para>
+							Aveţi nevoie de <application>automake</application> >= 1.4 şi de
+							<application>autoconf</application> >= 2.13 pentru a genera cod C
+							cu ajutorul lui Glade. Mai aveţi nevoie şi de  <application>gettext</application> >=
+							0.10.35 dacă vreţi să avtivaţi suportul de <application>gettext</application>. 
+							Vedeţi secţiunea <citetitle>Cerinţe</citetitle> din fişierul
+							<filename>README.ro</filename> pentru link-uri la aceste fişiere.
+						</para>
+						<para>
+							Rulaţi <command>./autogen.sh</command> în directorul rădacină al 
+						        proiectului pentru a rula <application>automake</application>,
+							<application>autoconf</application> şi celelalte utilitare necesare
+							procesului de compilare, şi crearea fişierelor <filename>Makefile</filename>. 
+							Argumentele date lui <filename>./autogen.sh</filename> vor fi trimise 
+							către <filename>configure</filename>.
+							Exemplu: <command>./autogen.sh --prefix /usr/local/gnome</command>.
+						</para>
+						<para>
+							Apoi rulaţi comanda <command>make</command> pentru a compila aplicaţia.
+						</para>
+						<para>
+							Notă: pentru aplicaţiile GNOME rebuie să rulaţi mai întâi comanda
+							<command>make install</command> pentru a instala pixmap-urile corect.
+							Dacă nu veţi rula această comanda, aplicaţia dvs. va rula, dar nu veţi
+							putea vedea pixmap-urile.
+						</para>
+					</answer>
+				</qandaentry>
+				
+				<qandaentry>
+					<question>
+						<para>
+							Primesc următoarea eroare:
+							aclocal: configure.in: 10: <errorname>macro `AM_PATH_GTK' not
+								found in library</errorname>
+						</para>
+					</question>
+					<answer>
+						<para>
+							înseamană că fişierul <filename>gtk.m4</filename> nu a putut fi găsit.
+							(<filename>gtk.m4</filename> e un set de macro-uri m4 care se instalează
+							odată cu GTK+ şi este folosit la compilarea programelor care se bazează
+							pe GTK+.) <application>aclocal</application> (care face parte din pachetul
+							<application>automake</application>) caută aceste macrouri pentru a le adăuga 
+							la fişierul <filename>aclocal.m4</filename> în directorul rădăcină al proiectului.
+						</para>
+						<para>
+						        Pentru a afla unde este instalat GTK+, rulaţi <command>gtk-config
+								--prefix</command>.  Fişierul <filename>gtk.m4</filename> ar trebui
+						       	să fie în subdirectorul <filename class="directory">share/aclocal</filename>.
+							Pentru a afla ce director foloseşte <application>aclocal</application>, rulaţi
+							<command>aclocal --print-ac-dir</command>. 
+						</para>
+						<para>
+							Ar trebui să adăugaţi directorul în care se află fişierul GTK+ m4.
+							la variabila de mediu <varname>ACLOCAL_FLAGS</varname>,
+							Ex: daca fişierele GTK+ m4 se află în<filename
+								class="directory">/usr/local/share/aclocal</filename>, atunci 
+							ar trebui să adăugaţi următoarele linii la fişierul<filename>$HOME/.profile</filename>:
+							<command>export ACLOCAL_FLAGS="-I
+								/usr/local/share/aclocal/"</command>.
+						</para>
+					</answer>
+				</qandaentry> 
+				
+				<qandaentry>
+					<question>
+						<para>
+							Primesc urmatoarea eroare:
+							** CRITICAL **: file glade_gnome.c: line 939
+							(glade_gnome_write_menu_item_source):
+							assertion `source_buffer != NULL' failed.
+						</para>
+					</question>
+					<answer>
+						<para>
+							încercaţi să folosiţi meniuri de tip Gnome într-o aplicaţie strict GTK+.
+							Editaţi toate meniurile şi setaţi proprietatea "Stock" pe "None".
+						</para>
+					</answer>
+				</qandaentry> 
+				
+			</qandadiv>
+			
+			<!-- ============= Using The C Code Generated By Glade ====== -->
+			<qandadiv>
+				<title>Folosirea codului C generat de Glade</title>
+				
+				<qandaentry>
+					<question>
+						<para>
+							Ce sunt toate fişierele create de Glade?
+						</para>
+					</question>
+					<answer>
+						<para>
+							Acestea sunt fişierele create implicit de către Glade, dar unele 
+							nume s-ar putea să difere dacă aţi schimbat din opţiunile proiectului.
+						</para>
+						
+						<formalpara>
+							<title>
+								<filename>autogen.sh</filename>
+							</title>
+							<para>
+							       	Script care rulează <application>automake</application>,
+								<application>autoconf</application> şi alte programe necesare,
+								in oridinea corectă, uşurând procesul de compilare a aplicaţiei.
+								Puteţi să-i transimiteţi orice argumente vreţi să-i transmiteti 
+								scriptului <application>configure</application>. După ce l-aţi rulat,
+								puteţi să apelaţi <command>make</command> pentru a compila aplicaţia.
+							</para>
+						</formalpara>
+						
+						<formalpara>
+							<title>
+								<filename>configure.in</filename>
+							</title>
+							<para>
+								Script standard, pe care <application>autoconf</application>
+								îl foloseşte la generarea scriptului configure.
+							</para>
+						</formalpara>
+						
+						<formalpara>
+							<title>
+								<filename>Makefile.am</filename>
+							</title>
+							<para>
+								Reguli standard make pe care automake le foloseşte la generarea
+								fişierului <filename>Makefile.in</filename>, pe care scriptul
+								configure la transformă în fişîere <filename>Makefile</filename>. 
+							</para>
+						</formalpara>
+						
+						<formalpara>
+							<title>
+								<filename>acconfig.h</filename>
+							</title>
+							<para>
+								Conţine câteva macro-uri care sunt folosite pe parcursul scriptului
+								configure şi sunt adăugate în fişierul <filename>config.h</filename> header 
+								(care ar trebui să fie primul inclus în orice sursă a programului).
+								Majoritatea acestor macro-uri sunt necesare suportului de gettext
+								(ENABLE_NLS, HAVE_CATGETS, HAVE_GETTEXT, HAVE_LC_MESSAGES,
+								HAVE_STPCPY), HAVE_LIBSM este necesar pentru Gnome (dar nu deranjeaza 
+								aplicaţiile GTK+), şi câteva sunt adăugate de către Glade
+								<application>Glade</application>(PACKAGE_LOCALE_DIR,
+								PACKAGE_DATA_DIR, PACKAGE_SOURCE_DIR).
+							</para>
+						</formalpara>
+						
+						<formalpara>
+							<title>
+								<filename>stamp-h.in</filename>
+							</title>
+							<para>
+								Folosit de <application>automake</application> ca fişier referinţă,
+								pentru a regenera anumite fişiere.
+							</para>
+						</formalpara>
+						
+						<formalpara>
+							<title>
+								<filename>AUTHORS</filename>, <filename>ChangeLog</filename>,
+								<filename>NEWS</filename>, <filename>README</filename>
+							</title>
+							<para>
+								Toate aceste fişiere sunt goale iniţial, dar sunt create pentru
+								a respecta convenţiile GNU.
+							</para>
+						</formalpara>
+						
+						<formalpara>
+							<title>
+								<filename>src/Makefile.am</filename>
+							</title>
+							<para>
+								Fişier automake standard.
+							</para>
+						</formalpara>
+						
+						<formalpara>
+							<title>
+								<filename>src/main.c</filename>
+							</title>
+							<para>
+								Conţine funcţia <function>main</function>() care va crea câte 
+								o fereastră/dialog.
+							</para>
+						</formalpara>
+						
+						<formalpara>
+							<title>
+								<filename>src/interface.h</filename>
+							</title>
+							<para>
+								Declaraţiile funcţiilor pe care trebuie să le apelaţi pentru
+								a crea ferestrele şi dialogurile construite cu 
+								<application>Glade</application>.
+							</para>
+						</formalpara>
+						
+						<formalpara>
+							<title>
+								<filename>src/interface.c</filename>
+							</title>
+							<para>
+								Codul pentru crearea ferestrelor şi dialogurilor şi celorlalte widget-uri.
+							</para>
+						</formalpara>
+						
+						<formalpara>
+							<title>
+								<filename>src/callbacks.h</filename>
+							</title>
+							<para>
+								Declaraţiile handler-urilor de semnal si funcţiilor callback, pe
+								care le veţi scrie.
+							</para>
+						</formalpara>
+						
+						<formalpara>
+							<title>
+								<filename>src/callbacks.c</filename>
+							</title>
+							<para>
+								Funcţiile signal handler şi callback.
+							</para>
+						</formalpara>
+						
+						<formalpara>
+							<title>
+								<filename>src/support.h</filename>
+							</title>
+							<para>
+								Declaraţii de funcţii, printr care şi <function>lookup_widget</function>() 
+								pe care o puteţi folosi să obtineţi pointeri la widget-uri.
+							</para>
+						</formalpara>
+						
+						<formalpara>
+							<title>
+								<filename>src/support.c</filename>
+							</title>
+							<para>
+								Funcţii suport.
+							</para>
+						</formalpara>
+						
+						<para>
+							Dacă aveţi ativat suportul de <application>gettext</application>, 
+							va fi creat directorul <filename class="directory">po</filename>,
+							cu fişierele <filename>POTFILES.in</filename> şi o copie separată a
+							<filename>ChangeLog</filename>. <filename>POTFILES.in</filename>
+							conşine lista fişierelor sursă pentru fişierele de traducere, aici 
+							ar trebui să vă adăugaţi toate fişierele de traducere.
+						</para>
+						
+						<para>
+							<note>
+								<title>Schimbarea opţiunilor Gnome şi Gettext</title>
+								<para>
+									Dacă schimbaţi opţiunile <guilabel>Gnome Support</guilabel> sau
+									<guilabel>Gettext Support</guilabel> după ce aţi compilat
+									proiectul, va trebui să înnoiţi unele fişiere precum 
+									<filename>configure.in</filename> şi <filename>Makefile.am</filename>. 
+									Cea mai bună soluţie ar fi să schimbaţi directorul proiectului
+									din dialogul <interface>Opţiuni Proiect</interface> şi să 
+									recompilati proiectul. Va trebui să treceţi în partea cealaltă 
+									tot codul srcris în afara Glade, precum handlere de semnal.
+									O alternativă ar fi să ştergeţi 
+									<filename>autogen.sh</filename>,
+									<filename>configure.in</filename>,
+									<filename>Makefile.am</filename>,
+									<filename>src/Makefile.am</filename>, şi
+									<filename>src/main.c</filename> şi să folosiţi
+									<application>Glade</application> pentru a le crea din nou.
+									Dar, dacă aţi operat asupra acestor fişiere în afara Glade, 
+									atunci va trebui să le modificaţi din nou.
+									(Poate, în viitor, <application>Glade</application> se va ocupa 
+									singur de această problemă.)
+								</para>
+							</note>
+						</para>
+					</answer>
+				</qandaentry> 
+				
+				<qandaentry>
+					<question>
+						<para>
+							Ce fişiere poate edita manual programatorul şi ce fişiere 
+							sunt suprascrise?
+						</para>
+					</question>
+					<answer>
+						<para>
+							În mare parte, <application>Glade</application> nu va suprascrie 
+							fişiere existente. (dacă este activată optiunea corespunzătoare.)
+						</para>
+						<para>
+							<application>Glade</application> suprascrie următoarele fişiere:
+							<filename>interface.h</filename>,
+							<filename>interface.c</filename>, 
+							<filename>support.h</filename>, şi
+							<filename>support.c</filename>.
+							(Aceste fişiere s-ar putea să aiba nume diferite dacă le-aţi 
+							schimbat în Optiunile Proiectului.)
+						</para>
+						<para>
+							Toate acese fişiere conţin un mesaj de avertizare: <quote>DO NOT
+							EDIT</quote>.
+						</para>
+						<para>
+							Dacă aţi modificat sau adăugat vre-un hadler de semnal, moduficările 
+							sunt adăugate la sfârşitul fişierelor <filename>acllbacks.h</filename>
+							şi <filename>callbacks.c</filename>. Astfel tot codul pe care l-aţi adăugat
+							va rămâne nealterat! Dacă aţi redenumit o funcţie de tip handler,
+							atunci trebuie ca voi să ştergeţi versiunea veche şi să modificaţi 
+							corpul funţiei.
+						</para>
+					</answer>
+				</qandaentry> 
+				
+				<qandaentry>
+					<question>
+						<para>
+							Cum pot să-mi adaug fişierele mele sursă într-un proiect?
+						</para>
+					</question>
+					<answer>
+						<para>
+							Adăugaţi fişierele .c sau .h în fişierul 
+							<filename>src/Makefile.am</filename>, în variabila
+							<varname><replaceable>project1</replaceable>_SOURCES</varname>
+							(unde <replaceable>project1</replaceable> reprezintă numele proiectului).
+						</para>
+						<para>
+							Dacă folosiţi <application>gettext</application>, ar trebui să adăugaţi 
+							fişierele sursă şi în <filename>po/POTFILES.in</filename> pentru ca 
+							textul din ele să poată fi tradus.
+						</para>
+					</answer>
+				</qandaentry> 
+				
+				<qandaentry>
+					<question>
+						<para>
+							Cum pot adăuga o bibliotecă la proiect?
+						</para>
+					</question>
+					<answer>
+						<para>
+							Trebuie să adăugaţi un test pentru biblioteca respectivă în fişierul
+							configure.in, iar variabilele CPPFLAGS şi LIBS să reflecte utilizarea
+							bibliotecii respective.
+							(CPPFLAGS ar trebui să conţină orive parmetru -I ce trebuie dat preprocesorului
+							C, iar LIBS ar trebui să conţină parametri de tip -l şi -L ce trebuie date linkeditorului.)
+						</para>
+						<para>
+							autoconf oferă macro-uri precum  AC_CHECK_HEADER and AC_CHECK_LIB care
+							pot fi folosite la verificrea antetelor şi bibliotecilor coresounzătoare.
+						</para>
+						<para>
+							Multe biblioteci GTK+ şi Gnome oferă un script precun gtk-config care va
+							afişa parametrii CPPFLAGS şi LIBS necesari.
+						</para>
+						<para>
+							Spre exemplu, libxml oferă un script xml-config care poate fi folosit ca 
+							în exemplul de mai jos:
+							<programlisting>
+								dnl Get libxml flags &amp; libs
+								AC_PATH_PROG(xml_config, xml-config)
+								if test "x$xml_config" = "x"; then
+								AC_MSG_ERROR([*** xml-config not found.])
+								fi
+								
+								XML_CFLAGS=`$xml_config --cflags 2>/dev/null`
+								XML_LIBS=`$xml_config --libs 2>/dev/null`
+								CPPFLAGS="$CPPFLAGS $XML_CFLAGS"
+								LIBS="$LIBS $XML_LIBS"
+							</programlisting>
+						</para>
+						<para>
+							Aveţi grijă să puneţi testul înaintea apelului AC_OUTPUT.
+						</para>
+					</answer>
+				</qandaentry> 
+				
+				<qandaentry>
+					<question>
+						<para>
+							Cum pot obţine un pointer la un widget în cadrul unui handler de semnal?
+						</para>
+					</question>
+					<answer>
+						<para>
+							Folosiţi funcţia <function>lookup_widget</function>().
+							(Localizată în fişierul <filename>support.c</filename>.)
+						</para>
+						<para>
+							Funcţia ia ca parametri un pointer la orice widget din fereastră şi
+							numele widget-ului pe care vreţi să-l accesaţi. De obicei, primul 
+							parametru ex primul argument al handler-ului.
+							Exemplu:
+							<programlisting>
+								void
+								on_button1_clicked                     (GtkButton       *button,
+								gpointer         user_data)
+								{
+								GtkWidget *entry1;
+								
+								entry1 = lookup_widget (GTK_WIDGET (button), "entry1");
+								
+								...
+								}
+							</programlisting>
+						</para>
+						<para>
+							Notă: acest cod nu funcţionează dacă utilizaţi libglade. Pentru libglade
+							folosiţi următoarea metodă:
+							<programlisting>
+								
+								void
+								on_button1_clicked                     (GtkButton       *button,
+								gpointer         user_data)
+								{
+								GladeXML* xml;
+								GtkWidget* entry1;
+								
+								xml = glade_get_widget_tree (GTK_WIDGET (button1));
+								entry1 = glade_xml_get_widget (xml, "entry1");
+								
+								...
+								}
+							</programlisting>
+						</para>
+					</answer>
+				</qandaentry> 
+				
+				<qandaentry>
+					<question>
+						<para>
+							Cum obţin un pointer la un widget dintr-o altă fereastră?
+						</para>
+					</question>
+					<answer>
+						<para>
+							Trebuie să păstraţi referinţe la toate ferestrele toplevel. Pentru aplicaţii
+							simple puteţi utiliza variabile globale pentru a păstra aceşti pointeri.
+						</para>
+						<para>
+							Pentru aplicaţii mai complicate puteţi folosi
+							<function>gtk_object_set_data</function>() şi alte funţii de acest gen
+							pentru a păstra pointeri la ferestre înglobate în alte ferestre.
+							Spre exemplu, dacă doriţi să creaţi un dialog care trebuie să acceseze
+							un widget din cadrul ferestrei principale puteţi utiliza următoarea
+							secvenţă de cod:
+							<programlisting>
+								dialog = create_dialog1 ();  /* Apelaţi funcţia generată de Glade. */
+								gtk_object_set_data (GTK_OBJECT (dialog), "main_window", main_window);
+							</programlisting>
+							Apoi când doriţi să accesaţi fereastra principală din cadrul dialogului
+							folosiţi următorul cod:
+							<programlisting>
+								main_window = gtk_object_get_data (GTK_OBJECT (dialog), "main_window");
+							</programlisting>
+						</para>
+						<para>
+							Trebuie să fiţi atenţi ca pointerii să fie în totdeauna valizi.
+							Dacă zona de memorie referită de pointerul respectiv este dealocată,
+							atunci nu mai folosiţi pointerul respectiv, în caz contra aplicaţi
+							va genera erori.
+						</para>
+					</answer>
+				</qandaentry> 
+				
+				<qandaentry>
+					<question>
+						<para>
+						       	Cum obţin valoarea unui GtkOptionMenu?
+						</para>
+					</question>
+					<answer>
+						<para>
+							Apelaţi funcţia <function>gtk_menu_get_active</function>() cu itemul 
+							curent din cadrul GtkOptionMenu. Puteţi folosi <function>g_list_index</function>() 
+							pentru a obţine indexul acestuia în cadrul meniului.
+							<programlisting>
+								void
+								on_button1_clicked                     (GtkButton       *button,
+								gpointer         user_data)
+								{
+								GtkWidget *option_menu, *menu, *active_item;
+								gint active_index;
+								
+								option_menu = lookup_widget (GTK_WIDGET (button), "optionmenu1");
+								menu = GTK_OPTION_MENU (option_menu)->menu;
+								active_item = gtk_menu_get_active (GTK_MENU (menu));
+								active_index = g_list_index (GTK_MENU_SHELL (menu)->children, active_item);
+								
+								g_print ("Active index: &percnt;i\n", active_index);
+								}</programlisting>
+						</para>
+					</answer>
+				</qandaentry> 
+				
+				<qandaentry id="gtkoptionmenu">
+					<question>
+						<para>
+							Cum fac un GtkOptionMenu să apeleze o funcţie când îşi schimbă valoarea?
+						</para>
+					</question>
+					<answer>
+						<para>
+							<application>Glade</application> încă nu face acest lucru în mod automat,
+							dar îl puteţi face manual.
+						</para>
+						<para>
+							Când creaţi fereastra, accesaţi meniul de opţiuni şi conectaţi-vă la
+							semnalul <quote>deactivate</quote> emis de meniu:
+							<programlisting>
+								window1 = create_window1 ();
+								option_menu = lookup_widget (window1, "optionmenu1");
+								gtk_signal_connect (GTK_OBJECT (GTK_OPTION_MENU (option_menu)->menu),
+								"deactivate", GTK_SIGNAL_FUNC (on_option_selected),
+								NULL);</programlisting>
+						</para>
+						
+						<para>
+							Apoi adăungaţi un handler la <filename>callbacks.c</filename>.
+							Puteţi obţine indexul itemului prin metoda descrisă la răspunsul anterior.
+							<programlisting>
+								static void
+								on_option_selected (GtkMenuShell *menu_shell,
+								gpointer data)
+								{
+								GtkWidget *active_item;
+								gint item_index;
+								
+								active_item = gtk_menu_get_active (GTK_MENU (menu_shell));
+								item_index = g_list_index (menu_shell->children, active_item);
+								
+								g_print ("In on_option_selected active: &percnt;i\n", item_index);
+								}</programlisting>
+						</para>
+					</answer>
+				</qandaentry> 
+				
+				<qandaentry>
+					<question>
+						<para>
+							Cum mă pot conecta la semnale GtkAdjustment?
+						</para>
+					</question>
+					<answer>
+						<para>
+							<application>Glade</application> încă nu suportă acest lucru în prezent,
+							dar o puteţi face manual după cum e descris în răspunsul de la 
+							întrebarea 3.6.
+						</para>
+						<para>
+							Cănd creaţi fereastra, obţineţi un pointer la widget-ul conţinând 
+							ajustarea, şî conectaţi-vă la senmalele 
+							<quote>changed</quote> sau <quote>value_changed</quote>:
+							<programlisting>
+								window1 = create_window1 ();
+								hscale = lookup_widget (window1, "hscale1");
+								gtk_signal_connect (GTK_OBJECT (GTK_RANGE (hscale)->adjustment),
+								"changed", GTK_SIGNAL_FUNC (on_adjustment_changed),
+								NULL);</programlisting>
+							
+						</para>
+					</answer>
+				</qandaentry> 
+				
+				<qandaentry>
+					<question>
+						<para>
+							Cum adaug rânduri la o GtkCList înainte de afişarea ferestrei?
+						</para>
+					</question>
+					<answer>
+						<para>
+							După ce aţi creat fereastra, folosind funcţia 'create' generată de Glade
+							folosiţi funcţia <function>lookup_widget</function>() pentru a obţine
+							un pointer la GtkCList-ul din widget şi adăugaţi rândurile necesare
+							ca în exemplu.
+							<programlisting>
+								GtkWidget *window, *clist;
+								gchar *row[2];		/* GtkCList-ul nostru are doar 2 coloane. */
+								
+								window = create_window1 ();
+								clist = lookup_widget (window, "clist1");
+								
+								row[0] = "Hello";
+								row[1] = "World";
+								gtk_clist_append (GTK_CLIST (clist), row);
+								
+								row[0] = "Second";
+								row[1] = "Row";
+								gtk_clist_append (GTK_CLIST (clist), row);
+								
+								gtk_widget_show (window1);
+							</programlisting>
+						</para>
+					</answer>
+				</qandaentry> 
+				
+			</qandadiv>
+			
+		</qandaset>
+		
+		<!-- ============= Authors ================================ -->
+		
+		<para>
+		        Acest FAQ a fost scris de către Damon Chaplin
+			(<email>damon@ximian.com</email>). Vă rugăm să trimiteţi orice
+			comentariu asupra acestui manual autorului.
+			Pentru mai multe informaţii despre <application>Glade</application> sau despre
+			listele de mail <application>Glade</application>, vizitaţi 
+			<ulink url="http://glade.gnome.org" type="http">Pagina Glade</ulink>.
+		</para>
+		
+		<!-- For translations: uncomment this: -->
+		
+		<para>
+	   		Traducerea în limba română realizată de către Călin Cristian Andrei
+	   		(<email>kman@csc.ro</email>). Orice comentarii sunt binevenite. Vă rog sa-mi
+	   	trimiteti orice comentarii legate de această traducere.
+   		</para>  
+ 	</sect1>
+</article> 

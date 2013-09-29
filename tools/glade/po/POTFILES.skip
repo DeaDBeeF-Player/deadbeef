@@ -1,0 +1,32 @@
+# List of source files that we never want added to POTFILES.in
+
+examples/editor/src/interface.c
+examples/editor/src/support.c
+examples/editor/editor.glade
+
+glade/glade_project.h
+glade/source.h
+
+# These are deprecated and will be removed at some point
+glade/gbwidgets/gbpacker.c
+glade/gbwidgets/gbpixmap.c
+glade/gbwidgets/gbtext.c
+glade/gbwidgets/gbtree.c
+glade/gbwidgets/gbtreeitem.c
+glade/gnome/bonobowindow.c
+glade/gnome/gnomestock.c
+glade/gnome/gnomeprintpaperselector.c
+glade/gnome-db/gnomedbdataset.c
+glade/gnome-db/gnomedbdesigner.c
+glade/gnome-db/gnomedbentry.c
+glade/gnome-db/gnomedbexport.c
+glade/gnome-db/gnomedbiconlist.c
+glade/gnome-db/gnomedblabel.c
+glade/gnome-db/gnomedblogviewer.c
+glade/gnome-db/gnomedbreport.c
+glade/gnome-db/gnomedbwindow.c
+glade/gnome-db/gnomedbbrowser.c
+glade/gnome-db/gnomedbconnectsel.c
+glade/gnome-db/gnomedblist.c
+glade/gnome-db/gnomedbquerybuilder.c
+

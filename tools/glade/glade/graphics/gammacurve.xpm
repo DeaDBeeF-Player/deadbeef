@@ -1,0 +1,33 @@
+/* XPM */
+static char *gammacurve_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"21 21 6 1",
+"  c Gray0",
+". c #7b7b7b",
+"X c #d6d6d6",
+"o c #b3cece",
+"O c Gray100",
+"+ c None",
+/* pixels */
+"+++++++++++++++++++++",
+"++++++++++++++++++OOO",
+".................+OX.",
+".XXX.XXX.XXX.X  .+O..",
+".XXX.XXX.XXX   X.++++",
+".XXX.XXX.X   XXX.+OOO",
+"........   ......+OX.",
+".XXX.XX  XXX.XXX.+O..",
+".XXX.X  .XXX.XXX.++++",
+".XXX.  X.XXX.XXX.+OOO",
+"....  ...........+OX.",
+".XXX XXX.XXX.XXX.+O..",
+".XX .XXX.XXX.XXX.++++",
+".XX .XXX.XXX.XXX.+OOO",
+"..  .............+OX.",
+".X X.XXX.XXX.XXX.+O..",
+".  X.XXX.XXX.XXX.++++",
+". XX.XXX.XXX.XXX.+OOO",
+".................+OX.",
+"++++++++++++++++++O..",
+"+++++++++++++++++++++"
+};

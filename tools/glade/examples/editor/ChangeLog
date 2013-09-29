@@ -1,0 +1,44 @@
+2005-09-12  Damon Chaplin  <damon@gnome.org>
+
+	* autogen.sh: don't use -path option of find, as Solaris doesn't have
+	it. (#301929)
+
+2003-10-10  Damon Chaplin  <damon@gnome.org>
+
+	* src/callbacks.c (on_About_activate): make sure we only show one
+	About dialog. Patch from Steve Chaplin.
+
+2003-10-08  Damon Chaplin  <damon@gnome.org>
+
+	* src/callbacks.c (on_main_window_delete_event): use exit() rather
+	than gtk_exit() which is now deprecated.
+
+2002-11-02  Damon Chaplin  <damon@gnome.org>
+
+	* AUTHORS: and again. This is getting annoying!
+
+2001-04-20  Damon Chaplin  <damon@ximian.com>
+
+	* AUTHORS: updated my email address.
+
+2000-09-23  Damon Chaplin  <damon@helixcode.com>
+
+	* src/Makefile.am (bin_PROGRAMS): changed name to glade-editor rather
+	than glade_editor, which was output due to a bug in Glade.
+
+1999-06-29  Damon Chaplin  <damon@karuna.freeserve.co.uk>
+
+	* src/callbacks.[hc]: renamed on_Quit_activate and on_Delete_activate
+	to on_Exit_activate and on_Clear_activate to match menus. 'Exit' and
+	'Clear' are the standard Gnome menu items.
+
+	* Makefile.am (install-data-local): used $(srcdir) when installing
+	pixmaps.
+
+	* editor.glade: updated menubar to use underlined accelerator keys.
+	Added handlebox around menubar and toolbar, and set toolbar button
+	relief to None. (The handlebox doesn't seem to work too well - you
+	need to set the border width to 2 for the shadow to display properly.)
+	Set default window size of the main window to 600x450, reset the width
+	and height, and turned Shrink off.
+
