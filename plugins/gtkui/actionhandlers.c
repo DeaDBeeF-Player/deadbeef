@@ -650,6 +650,7 @@ load_playlist_thread (void *data) {
             deadbeef->pl_item_unref (it);
         }
         deadbeef->plt_unref (plt);
+        deadbeef->pl_save_all ();
     }
     g_free (fname);
     gtkui_playlist_changed ();
