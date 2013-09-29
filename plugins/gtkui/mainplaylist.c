@@ -116,9 +116,12 @@ main_drag_n_drop (DdbListviewIter before, DdbPlaylistHandle from_playlist, uint3
     else {
         deadbeef->plt_move_items (plt, PL_MAIN, (ddb_playlist_t *)from_playlist, (DB_playItem_t *)before, indices, length);
     }
+    if (!copy && from_playlist != plt) {
+        deadbeef->plt_save_config (from_playlist);
+    }
+    deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
     deadbeef->pl_unlock ();
-    deadbeef->pl_save_all ();
 }
 
 void main_external_drag_n_drop (DdbListviewIter before, char *mem, int length) {
@@ -189,7 +192,7 @@ void main_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListvie
 void
 main_delete_selected (void) {
     deadbeef->pl_delete_selected ();
-    deadbeef->pl_save_all ();
+    deadbeef->pl_save_current();
     main_refresh ();
     search_refresh ();
 }
