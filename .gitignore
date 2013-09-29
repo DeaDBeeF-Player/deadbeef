@@ -62,3 +62,13 @@ po/insert-header.sin
 po/quot.sed
 po/remove-potcdate.sin
 po/deadbeef.pot
+compile
+deadbeef
+valgrind.out
+*.diff
+portable
+package_out
+package_temp
+messages.mo
+.install
+.config
