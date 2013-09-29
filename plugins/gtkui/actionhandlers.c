@@ -449,14 +449,14 @@ action_remove_from_playlist_handler (DB_plugin_action_t *act, int ctx) {
                     deadbeef->pl_item_unref (it);
                 }
             }
+            deadbeef->plt_save_config (plt);
             deadbeef->plt_unref (plt);
-            deadbeef->pl_save_all ();
             deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
         }
     }
     else if (ctx == DDB_ACTION_CTX_PLAYLIST) {
         deadbeef->pl_clear ();
-        deadbeef->pl_save_all ();
+        deadbeef->pl_save_current ();
         deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
     }
     else if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
@@ -469,17 +469,14 @@ action_remove_from_playlist_handler (DB_plugin_action_t *act, int ctx) {
                 int idx = deadbeef->plt_get_item_idx (plt, it, PL_MAIN);
                 if (idx != -1) {
                     deadbeef->plt_remove_item (plt, it);
-                    success = 1;
+                    deadbeef->pl_save_current ();
+                    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
                 }
                 deadbeef->plt_unref (plt);
             }
             deadbeef->pl_item_unref (it);
         }
         deadbeef->pl_unlock ();
-        if (success) {
-            deadbeef->pl_save_all ();
-            deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
-        }
     }
     return 0;
 }
@@ -518,7 +515,7 @@ action_delete_from_disk_handler_cb (void *data) {
             it = next;
         }
 
-        deadbeef->pl_save_all ();
+        deadbeef->pl_save_current ();
     }
     else if (ctx == DDB_ACTION_CTX_PLAYLIST) {
         DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
@@ -533,7 +530,7 @@ action_delete_from_disk_handler_cb (void *data) {
             it = next;
         }
 
-        deadbeef->pl_save_all ();
+        deadbeef->pl_save_current ();
     }
     else if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
         DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
@@ -881,7 +878,7 @@ action_sort_custom_handler (DB_plugin_action_t *act, int ctx) {
 int
 action_crop_selected_handler (DB_plugin_action_t *act, int ctx) {
     deadbeef->pl_crop_selected ();
-    deadbeef->pl_save_all ();
+    deadbeef->pl_save_current ();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
     return 0;
 }

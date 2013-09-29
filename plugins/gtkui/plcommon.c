@@ -338,7 +338,7 @@ on_remove2_activate                    (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     int cursor = deadbeef->pl_delete_selected ();
-    deadbeef->pl_save_all ();
+    deadbeef->pl_save_current ();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
