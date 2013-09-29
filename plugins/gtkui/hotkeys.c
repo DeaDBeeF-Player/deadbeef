@@ -511,7 +511,6 @@ on_hotkeys_list_cursor_changed         (GtkTreeView     *treeview,
     if (path) {
         gtk_tree_path_free (path);
     }
-    gtkui_hotkeys_changed = 1;
 }
 
 
