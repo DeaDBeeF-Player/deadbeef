@@ -347,6 +347,9 @@ static DB_functions_t deadbeef_api = {
     .background_job_increment = background_job_increment,
     .background_job_decrement = background_job_decrement,
     .have_background_jobs = have_background_jobs,
+    .plt_get_idx = (int (*)(ddb_playlist_t *))plt_get_idx,
+    .plt_save_n = plt_save_n,
+    .plt_save_config = (int (*)(ddb_playlist_t *))plt_save_config,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

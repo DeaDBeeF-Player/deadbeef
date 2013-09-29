@@ -414,7 +414,7 @@ plt_add (int before, const char *title) {
 
     plt_gen_conf ();
     if (!plt_loading) {
-        pl_save_n (before);
+        plt_save_n (before);
         conf_save ();
         messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
     }
@@ -464,7 +464,7 @@ plt_remove (int plt) {
         UNLOCK;
         plt_gen_conf ();
         conf_save ();
-        pl_save_n (0);
+        plt_save_n (0);
         messagepump_push (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
         return;
     }
@@ -2073,7 +2073,7 @@ save_fail:
 }
 
 int
-pl_save_n (int n) {
+plt_save_n (int n) {
     char path[PATH_MAX];
     if (snprintf (path, sizeof (path), "%s/playlists", dbconfdir) > sizeof (path)) {
         fprintf (stderr, "error: failed to make path string for playlists folder\n");
@@ -2103,7 +2103,7 @@ pl_save_n (int n) {
 
 int
 pl_save_current (void) {
-    return pl_save_n (plt_get_curr_idx ());
+    return plt_save_n (plt_get_curr_idx ());
 }
 
 int
@@ -3889,4 +3889,24 @@ pl_ensure_lock (void) {
     fprintf (stderr, "\033[0;31mnon-thread-safe playlist access function was called outside of pl_lock. please make a backtrace and post a bug. thank you.\033[37;0m\n");
     assert(0);
 #endif
+}
+
+int
+plt_get_idx (playlist_t *plt) {
+    int i;
+    playlist_t *p;
+    for (i = 0, p = playlists_head; p && p != plt; i++, p = p->next);
+    if (p == 0) {
+        return -1;
+    }
+    return i;
+}
+
+int
+plt_save_config (playlist_t *plt) {
+    int i = plt_get_idx (plt);
+    if (i == -1) {
+        return -1;
+    }
+    return plt_save_n (i);
 }

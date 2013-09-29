@@ -813,6 +813,13 @@ typedef struct {
     void (*background_job_increment) (void);
     void (*background_job_decrement) (void);
     int (*have_background_jobs) (void);
+
+    // utility function to get plt idx from handle
+    int (*plt_get_idx) (ddb_playlist_t *plt);
+
+    // save referenced playlist in config
+    int (*plt_save_n) (int n);
+    int (*plt_save_config) (ddb_playlist_t *plt);
 } DB_functions_t;
 
 // NOTE: an item placement must be selected like this

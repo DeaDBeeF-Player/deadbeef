@@ -299,7 +299,7 @@ int
 plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data);
 
 int
-pl_save_n (int n);
+plt_save_n (int n);
 
 int
 pl_save_current (void);
@@ -478,5 +478,11 @@ pl_meta_exists (playItem_t *it, const char *key);
 
 int
 plt_get_meta (playlist_t *handle, const char *key, char *val, int size);
+
+int
+plt_get_idx (playlist_t *plt);
+
+int
+plt_save_config (playlist_t *plt);
 
 #endif // __PLAYLIST_H
