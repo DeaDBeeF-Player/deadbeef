@@ -346,7 +346,7 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
         int sc = time-hr*3600-mn*60;
         snprintf (s, sizeof (s), "%02d:%02d:%02d", hr, mn, sc);
 
-        cairo_set_source_rgba (cr, 0, 0, 0, 0.5);
+        cairo_set_source_rgba (cr, clr_selection.red/65535.f, clr_selection.green/65535.f, clr_selection.blue/65535.f, 0.7f);
         cairo_save (cr);
         cairo_set_font_size (cr, 20);
 
@@ -357,11 +357,13 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
             self->textwidth = ex.width + 20;
         }
 
-        clearlooks_rounded_rectangle (cr, ax + aw/2 - self->textwidth/2, ay+4, self->textwidth, ah-8, 4, 0xff);
+        clearlooks_rounded_rectangle (cr, ax + aw/2 - self->textwidth/2, ay+4, self->textwidth, ah-8, 3, 0xff);
         cairo_fill (cr);
 
         cairo_move_to (cr, self->textpos, ay+ah/2+ex.height/2);
-        cairo_set_source_rgb (cr, 1, 1, 1);
+        GdkColor clr;
+        gtkui_get_listview_selected_text_color (&clr);
+        cairo_set_source_rgb (cr, clr.red/65535.f, clr.green/65535.f, clr.blue/65535.f);
         cairo_show_text (cr, s);
         cairo_restore (cr);
     }
