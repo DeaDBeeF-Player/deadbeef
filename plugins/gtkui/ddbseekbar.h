@@ -23,6 +23,8 @@ struct _DdbSeekbar {
 	DdbSeekbarPrivate * priv;
     int seekbar_moving;
     int seekbar_move_x;
+    int textpos;
+    int textwidth;
 };
 
 struct _DdbSeekbarClass {

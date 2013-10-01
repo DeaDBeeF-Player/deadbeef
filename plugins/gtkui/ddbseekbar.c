@@ -347,11 +347,23 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
         snprintf (s, sizeof (s), "%02d:%02d:%02d", hr, mn, sc);
 
         cairo_set_source_rgba (cr, 0, 0, 0, 0.5);
-        cairo_rectangle (cr, ax, ay, 100, ah);
+        cairo_save (cr);
+        cairo_set_font_size (cr, 20);
+
+        cairo_text_extents_t ex;
+        cairo_text_extents (cr, s, &ex);
+        if (self->textpos == -1) {
+            self->textpos = ax + aw/2 - ex.width/2;
+            self->textwidth = ex.width + 20;
+        }
+
+        clearlooks_rounded_rectangle (cr, ax + aw/2 - self->textwidth/2, ay+4, self->textwidth, ah-8, 4, 0xff);
         cairo_fill (cr);
-        cairo_move_to (cr, ax, ay+20);
+
+        cairo_move_to (cr, self->textpos, ay+ah/2+ex.height/2);
         cairo_set_source_rgb (cr, 1, 1, 1);
         cairo_show_text (cr, s);
+        cairo_restore (cr);
     }
 
 
@@ -383,6 +395,8 @@ on_seekbar_button_press_event          (GtkWidget       *widget,
         return FALSE;
     }
     self->seekbar_moving = 1;
+    self->textpos = -1;
+    self->textwidth = -1;
     GtkAllocation a;
     gtk_widget_get_allocation (widget, &a);
     self->seekbar_move_x = event->x - a.x;
