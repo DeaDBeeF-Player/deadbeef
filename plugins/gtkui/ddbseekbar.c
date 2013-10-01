@@ -23,7 +23,9 @@
 #include <gdk/gdk.h>
 #include <drawing.h>
 #include <gtkui.h>
+#include <math.h>
 #include "support.h"
+#include "ddbseekbar.h"
 
 #define DDB_TYPE_SEEKBAR (ddb_seekbar_get_type ())
 #define DDB_SEEKBAR(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), DDB_TYPE_SEEKBAR, DdbSeekbar))
@@ -31,20 +33,6 @@
 #define DDB_IS_SEEKBAR(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), DDB_TYPE_SEEKBAR))
 #define DDB_IS_SEEKBAR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), DDB_TYPE_SEEKBAR))
 #define DDB_SEEKBAR_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), DDB_TYPE_SEEKBAR, DdbSeekbarClass))
-
-typedef struct _DdbSeekbar DdbSeekbar;
-typedef struct _DdbSeekbarClass DdbSeekbarClass;
-typedef struct _DdbSeekbarPrivate DdbSeekbarPrivate;
-
-struct _DdbSeekbar {
-	GtkWidget parent_instance;
-	DdbSeekbarPrivate * priv;
-};
-
-struct _DdbSeekbarClass {
-	GtkWidgetClass parent_class;
-};
-
 
 static gpointer ddb_seekbar_parent_class = NULL;
 
@@ -207,6 +195,8 @@ static void ddb_seekbar_class_init (DdbSeekbarClass * klass) {
 static void ddb_seekbar_instance_init (DdbSeekbar * self) {
 	gtk_widget_set_has_window ((GtkWidget*) self, FALSE);
 	gtk_widget_set_has_tooltip ((GtkWidget*) self, TRUE);
+	self->seekbar_moving = 0;
+    self->seekbar_move_x = 0;
 }
 
 
@@ -221,5 +211,211 @@ GType ddb_seekbar_get_type (void) {
 	return ddb_seekbar_type_id__volatile;
 }
 
+enum
+{
+	CORNER_NONE        = 0,
+	CORNER_TOPLEFT     = 1,
+	CORNER_TOPRIGHT    = 2,
+	CORNER_BOTTOMLEFT  = 4,
+	CORNER_BOTTOMRIGHT = 8,
+	CORNER_ALL         = 15
+};
+
+static void
+clearlooks_rounded_rectangle (cairo_t * cr,
+			      double x, double y, double w, double h,
+			      double radius, uint8_t corners)
+{
+    if (radius < 0.01 || (corners == CORNER_NONE)) {
+        cairo_rectangle (cr, x, y, w, h);
+        return;
+    }
+	
+    if (corners & CORNER_TOPLEFT)
+        cairo_move_to (cr, x + radius, y);
+    else
+        cairo_move_to (cr, x, y);
+
+    if (corners & CORNER_TOPRIGHT)
+        cairo_arc (cr, x + w - radius, y + radius, radius, M_PI * 1.5, M_PI * 2);
+    else
+        cairo_line_to (cr, x + w, y);
+
+    if (corners & CORNER_BOTTOMRIGHT)
+        cairo_arc (cr, x + w - radius, y + h - radius, radius, 0, M_PI * 0.5);
+    else
+        cairo_line_to (cr, x + w, y + h);
+
+    if (corners & CORNER_BOTTOMLEFT)
+        cairo_arc (cr, x + radius, y + h - radius, radius, M_PI * 0.5, M_PI);
+    else
+        cairo_line_to (cr, x, y + h);
+
+    if (corners & CORNER_TOPLEFT)
+        cairo_arc (cr, x + radius, y + radius, radius, M_PI, M_PI * 1.5);
+    else
+        cairo_line_to (cr, x, y);
+	
+}
+
+void
+seekbar_draw (GtkWidget *widget, cairo_t *cr) {
+    if (!widget) {
+        return;
+    }
+
+    DdbSeekbar *self = DDB_SEEKBAR (widget);
+
+#if GTK_CHECK_VERSION(3,0,0)
+    GtkAllocation allocation;
+    gtk_widget_get_allocation (widget, &allocation);
+    cairo_translate (cr, -allocation.x, -allocation.y);
+#endif
+
+    GdkColor clr_selection, clr_back;
+    gtkui_get_bar_foreground_color (&clr_selection);
+    gtkui_get_bar_background_color (&clr_back);
+
+    GtkAllocation a;
+    gtk_widget_get_allocation (widget, &a);
+
+    int ax = a.x;
+    int ay = a.y;
+    int aw = a.width;
+    int ah = a.height;
+
+    DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
+    if (!trk || deadbeef->pl_get_item_duration (trk) < 0) {
+        if (trk) {
+            deadbeef->pl_item_unref (trk);
+        }
+        // empty seekbar, just a frame
+        clearlooks_rounded_rectangle (cr, 2+ax, a.height/2-4+ay, aw-4, 8, 4, 0xff);
+        cairo_set_source_rgb (cr, clr_selection.red/65535.f, clr_selection.green/65535.f, clr_selection.blue/65535.f );
+        cairo_set_line_width (cr, 2);
+        cairo_stroke (cr);
+        return;
+    }
+    float pos = 0;
+    if (self->seekbar_moving) {
+        int x = self->seekbar_move_x;
+        if (x < 0) {
+            x = 0;
+        }
+        if (x > a.width-1) {
+            x = a.width-1;
+        }
+        pos = x;
+    }
+    else {
+        if (deadbeef->pl_get_item_duration (trk) > 0) {
+            pos = deadbeef->streamer_get_playpos () / deadbeef->pl_get_item_duration (trk);
+            pos *= a.width;
+        }
+    }
+    // left
+    if (pos > 0) {
+        cairo_set_source_rgb (cr, clr_selection.red/65535.f, clr_selection.green/65535.f, clr_selection.blue/65535.f );
+        cairo_rectangle (cr, ax, ah/2-4+ay, pos, 8);
+        cairo_clip (cr);
+        clearlooks_rounded_rectangle (cr, 0+ax, ah/2-4 + ay, aw, 8, 4, 0xff);
+        cairo_fill (cr);
+        cairo_reset_clip (cr);
+    }
+
+    // right
+    cairo_set_source_rgb (cr, clr_back.red/65535.f, clr_back.green/65535.f, clr_back.blue/65535.f );
+    cairo_rectangle (cr, pos+ax, ah/2-4+ay, aw-pos, 8);
+    cairo_clip (cr);
+    clearlooks_rounded_rectangle (cr, 0+ax, ah/2-4+ay, aw, 8, 4, 0xff);
+    cairo_fill (cr);
+    cairo_reset_clip (cr);
+
+    if (self->seekbar_moving && trk) {
+        float dur = deadbeef->pl_get_item_duration (trk);
+        float time = self->seekbar_move_x * dur / (a.width);
+        if (time < 0) {
+            time = 0;
+        }
+        if (time > dur) {
+            time = dur;
+        }
+        char s[1000];
+        int hr = time/3600;
+        int mn = (time-hr*3600)/60;
+        int sc = time-hr*3600-mn*60;
+        snprintf (s, sizeof (s), "%02d:%02d:%02d", hr, mn, sc);
+
+        cairo_set_source_rgba (cr, 0, 0, 0, 0.5);
+        cairo_rectangle (cr, ax, ay, 100, ah);
+        cairo_fill (cr);
+        cairo_move_to (cr, ax, ay+20);
+        cairo_set_source_rgb (cr, 1, 1, 1);
+        cairo_show_text (cr, s);
+    }
+
+
+    if (trk) {
+        deadbeef->pl_item_unref (trk);
+    }
+}
+
+gboolean
+on_seekbar_motion_notify_event         (GtkWidget       *widget,
+                                        GdkEventMotion  *event)
+{
+    DdbSeekbar *self = DDB_SEEKBAR (widget);
+    if (self->seekbar_moving) {
+        GtkAllocation a;
+        gtk_widget_get_allocation (widget, &a);
+        self->seekbar_move_x = event->x - a.x;
+        gtk_widget_queue_draw (widget);
+    }
+    return FALSE;
+}
+
+gboolean
+on_seekbar_button_press_event          (GtkWidget       *widget,
+                                        GdkEventButton  *event)
+{
+    DdbSeekbar *self = DDB_SEEKBAR (widget);
+    if (deadbeef->get_output ()->state () == OUTPUT_STATE_STOPPED) {
+        return FALSE;
+    }
+    self->seekbar_moving = 1;
+    GtkAllocation a;
+    gtk_widget_get_allocation (widget, &a);
+    self->seekbar_move_x = event->x - a.x;
+    gtk_widget_queue_draw (widget);
+    return FALSE;
+}
+
+
+gboolean
+on_seekbar_button_release_event        (GtkWidget       *widget,
+                                        GdkEventButton  *event)
+{
+    DdbSeekbar *self = DDB_SEEKBAR (widget);
+    self->seekbar_moving = 0;
+    DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
+    if (trk) {
+        GtkAllocation a;
+        gtk_widget_get_allocation (widget, &a);
+        float time = (event->x - a.x) * deadbeef->pl_get_item_duration (trk) / (a.width);
+        if (time < 0) {
+            time = 0;
+        }
+        deadbeef->sendmessage (DB_EV_SEEK, 0, time * 1000, 0);
+        deadbeef->pl_item_unref (trk);
+    }
+    gtk_widget_queue_draw (widget);
+    return FALSE;
+}
+
+void
+seekbar_redraw (void) {
+    GtkWidget *widget = lookup_widget (mainwin, "seekbar");
+    gtk_widget_queue_draw (widget);
+}
 
 

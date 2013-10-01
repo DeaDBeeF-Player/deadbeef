@@ -21,6 +21,8 @@ typedef struct _DdbSeekbarPrivate DdbSeekbarPrivate;
 struct _DdbSeekbar {
 	GtkWidget parent_instance;
 	DdbSeekbarPrivate * priv;
+    int seekbar_moving;
+    int seekbar_move_x;
 };
 
 struct _DdbSeekbarClass {
