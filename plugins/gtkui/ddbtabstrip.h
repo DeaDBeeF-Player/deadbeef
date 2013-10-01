@@ -48,6 +48,7 @@ struct _DdbTabStrip {
     guint scroll_timer;
     int scroll_direction;
     drawctx_t drawctx;
+    int calculated_height;
 };
 
 struct _DdbTabStripClass {
