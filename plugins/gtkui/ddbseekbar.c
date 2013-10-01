@@ -346,7 +346,7 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
         int sc = time-hr*3600-mn*60;
         snprintf (s, sizeof (s), "%02d:%02d:%02d", hr, mn, sc);
 
-        cairo_set_source_rgba (cr, clr_selection.red/65535.f, clr_selection.green/65535.f, clr_selection.blue/65535.f, 0.7f);
+        cairo_set_source_rgba (cr, clr_selection.red/65535.f, clr_selection.green/65535.f, clr_selection.blue/65535.f, 0.8f);
         cairo_save (cr);
         cairo_set_font_size (cr, 20);
 
