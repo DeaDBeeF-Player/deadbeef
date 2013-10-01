@@ -374,7 +374,7 @@ ddb_tabstrip_draw_tab (GtkWidget *widget, cairo_t *cr, int idx, int selected, in
         { x + w - 0, y + h - 2 },
     };
     coord_t points_frame2[] = {
-        { x + 1, y + h + 1 },
+        { x + 1, y + h -1 },
         { x + 1, y + 1 },
         { x + w - h - 1, y + 1 },
         { x + w - h + 1, y + 2 },
@@ -592,6 +592,7 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
 #endif
     GtkAllocation a;
     gtk_widget_get_allocation (widget, &a);
+    a.height = ts->calculated_height;
 
     tabstrip_adjust_hscroll (ts);
     cairo_set_line_width (cr, 1);
@@ -998,6 +999,7 @@ on_tabstrip_configure_event              (GtkWidget       *widget,
     draw_init_font (&ts->drawctx, gtk_widget_get_style (widget));
     tabstrip_adjust_hscroll (ts);
     int height = draw_get_listview_rowheight (&ts->drawctx) + 4;
+    ts->calculated_height = height;
     GtkAllocation a;
     gtk_widget_get_allocation (widget, &a);
     if (height != a.height) {
