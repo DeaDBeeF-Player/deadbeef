@@ -1,1 +1,4 @@
 plugins/vorbis/vcedit.c
+plugins/gtkui/smclient/eggdesktopfile.c
+plugins/gtkui/smclient/eggsmclient.c
+
