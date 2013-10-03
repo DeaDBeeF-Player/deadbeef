@@ -33,3 +33,5 @@ plugins/shellexecui/shellexec.glade
 plugins/gtkui/actionhandlers.c
 plugins/gtkui/ctmapping.c
 plugins/gtkui/widgets.c
+plugins/gtkui/pltmenu.c
+plugins/pltbrowser/pltbrowser.c

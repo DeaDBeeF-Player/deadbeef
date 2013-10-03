@@ -39,14 +39,14 @@ deadbeef_SOURCES =\
 	replaygain.c replaygain.h\
 	fft.c fft.h\
 	handler.c handler.h\
-	plugins/libparser/parser.c plugins/libparser/parser.h
+	strdupa.h
 	
 #	ConvertUTF/ConvertUTF.c ConvertUTF/ConvertUTF.h
 
 sdkdir = $(pkgincludedir)
 sdk_HEADERS = deadbeef.h
 
-deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) $(ICONV_LIB) $(DL_LIBS) -lm -lpthread $(INTL_LIBS)
+deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) $(ICONV_LIB) $(DL_LIBS) -lm -lpthread $(INTL_LIBS) plugins/libparser/libparser.a
 
 AM_CFLAGS = $(DEPS_CFLAGS) -std=c99
 AM_CPPFLAGS = $(DEPS_CFLAGS)
