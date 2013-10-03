@@ -1,9 +1,9 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([deadbeef], [devel])
+AC_INIT([deadbeef], [0.6.0-beta1])
 
 AC_CONFIG_HEADER(config.h)
 
-AM_INIT_AUTOMAKE([1.11 dist-bzip2])
+AM_INIT_AUTOMAKE([1.11 dist-bzip2 tar-ustar])
 dnl AM_SILENT_RULES([yes])
 AM_MAINTAINER_MODE()
 
@@ -656,7 +656,7 @@ AS_IF([test "${enable_pltbrowser}" != "no"], [
     HAVE_PLTBROWSER=yes
 ])
 
-PLUGINS_DIRS="plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/ao plugins/mono2stereo plugins/shellexecui plugins/alac plugins/medialib plugins/wma plugins/pltbrowser plugins/coreaudio"
+PLUGINS_DIRS="plugins/libmp4ff plugins/libparser plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/ao plugins/mono2stereo plugins/shellexecui plugins/alac plugins/medialib plugins/wma plugins/pltbrowser plugins/coreaudio"
 
 AM_CONDITIONAL(APE_USE_YASM, test "x$APE_USE_YASM" = "xyes")
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
@@ -792,6 +792,8 @@ AC_CONFIG_FILES([
 Makefile
 pixmaps/Makefile
 icons/Makefile
+plugins/libmp4ff/Makefile
+plugins/libparser/Makefile
 plugins/gme/Makefile
 plugins/alsa/Makefile
 plugins/hotkeys/Makefile
