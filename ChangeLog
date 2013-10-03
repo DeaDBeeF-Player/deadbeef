@@ -1,3 +1,36 @@
+version 0.6.0
+	gui layout designer, with a set of widgets to choose from (View -> Design mode, then use right click)
+	new API for creating GUI extension plugins
+	visualization support, spectrum analyzer and scope widgets
+	new hotkeys system, which adds local hotkeys, and many more actions to choose from
+	playlist browser widget: a vertical alternative to playlist tabs
+	album art viewer widget
+	selection properties widget
+	button widget: put custom buttons to main window, and assign any actions to them
+	showing seek time in the bar during seeking
+	added worldofspectrum downloader to artwork plugin (for AY tunes)
+	native flac cuesheet support
+	lots of fixes in MP3 and ID3v2 support
+	improved AAC support
+	fixed the context menu in metadata editor
+	added GTK3.6 filechooser filter regression workaround
+	fixed compatibility with FFMPEG up to 2.0
+	added location field to the metadata tab in track properties
+	fixed playlist columns sizers dead zone bug
+	new WMA plugin
+	new ALAC plugin
+	a ton of stability/responsiveness fixes to mms plugin
+	added customizable content-type mapper, to associate network streams with plugins
+	improved remote playlist loading
+	fixed buffer overflow in m3u plugin
+	warn a user if he attempts to quit while a job is running (e.g. converter)
+	fixed tabstrip scrolling timer bug
+	added GTK3 touchpad smooth scrolling support (kudos to thesame)
+	added option to always convert 16 bit input signal to 24 bit (Eugene Rudchenko)
+	added experimental Mac OS X support (thanks to Carlos Alberto Nunes for the CoreAudio plugin)
+	improved playlist tab rendering code to work better on HDPI displays
+	fixed rounding error in streamer sleep time calculation - that solves some stuttering problems
+
 version 0.5.6
 	wavpack: fixed reload_metadata not clearing old data
 	sndfile: fixed big/little endian byte swap buffer overrun
