@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([deadbeef], [0.6.0-beta1])
+AC_INIT([deadbeef], [devel])
 
 AC_CONFIG_HEADER(config.h)
 
@@ -38,12 +38,14 @@ case "$host" in
     LIB="../deadbeef-deps/lib-x86-32-apple"
     YASM_FLAGS="-f macho32 -D ARCH_X86_32 -m x86 -DPREFIX"
     APE_USE_YASM=yes
+    OS_OSX=yes
     ;;
   x86_64-apple-*)
     AC_DEFINE(ARCH_X86_64, 1, [architecture is x86_64 on OSX])
     LIB="../deadbeef-deps/lib-x86-64-apple"
     YASM_FLAGS="-f macho64 -D ARCH_X86_64 -m amd64 -DPIC -DPREFIX"
     APE_USE_YASM=yes
+    OS_OSX=yes
     ;;
   i386-*-* | i486-*-* | i586-*-* | i686-*-* | i86pc-*-*)
     AC_DEFINE(ARCH_X86_32, 1, [architecture is x86])
@@ -204,7 +206,6 @@ AS_IF([test "${enable_gtk3}" = "yes"], [
     ])
     AC_CHECK_LIB([SM], [main], [HAVE_SM=yes;SM_LIBS="-lSM";AC_SUBST(SM_LIBS)])
     AC_CHECK_LIB([ICE], [main], [HAVE_ICE=yes;ICE_LIBS="-lICE";AC_SUBST(ICE_LIBS)])
-    GTK_CHECK_BACKEND([quartz], [3.0], [OS_OSX=yes], [OS_OSX=no])
     if test "$OS_OSX" = "yes"; then
         PKG_CHECK_MODULES(GTK_MAC, gtk-mac-integration)
         AC_SUBST(GTK_MAC_LIBS)
@@ -213,7 +214,6 @@ AS_IF([test "${enable_gtk3}" = "yes"], [
     
     ], [
     HAVE_GTK3=no
-    OS_OSX=no
 ])
 AM_CONDITIONAL(OS_OSX, test "x$OS_OSX" = "xyes")
 
