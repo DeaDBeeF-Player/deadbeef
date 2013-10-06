@@ -810,14 +810,3 @@ on_design_mode1_activate               (GtkMenuItem     *menuitem,
     w_set_design_mode (act ? 1 : 0);
 }
 
-
-
-
-void
-on_menu_bar1_activate                  (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    action_toggle_menu_handler_cb (NULL);
-}
-
-
