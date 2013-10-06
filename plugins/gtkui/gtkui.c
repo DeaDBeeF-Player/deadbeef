@@ -1074,6 +1074,15 @@ gtkui_thread (void *ctx) {
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (sb_mi), FALSE);
         gtk_widget_hide (sb);
     }
+
+    GtkWidget *menu = lookup_widget (mainwin, "menubar");
+    if (deadbeef->conf_get_int ("gtkui.show_menu", 1)) {
+        gtk_widget_show (menu);
+    }
+    else {
+        gtk_widget_hide (menu);
+    }
+
     searchwin = create_searchwin ();
     gtk_window_set_transient_for (GTK_WINDOW (searchwin), GTK_WINDOW (mainwin));
 
