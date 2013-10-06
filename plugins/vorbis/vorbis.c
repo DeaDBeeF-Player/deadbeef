@@ -422,7 +422,7 @@ cvorbis_read (DB_fileinfo_t *_info, char *bytes, int size) {
     }
     _info->readpos = (float)(ov_pcm_tell(&info->vorbis_file)-info->startsample)/info->vi->rate;
     //trace ("cvorbis_read got %d bytes, readpos %f, info->currentsample %d, ret %d\n", initsize-size, _info->readpos, info->currentsample, ret);
-    deadbeef->streamer_set_bitrate (ov_bitrate_instant (&info->vorbis_file)/1000);
+    deadbeef->streamer_set_bitrate (ov_bitrate (&info->vorbis_file, info->cur_bit_stream)/1000);
     return initsize - size;
 }
 
@@ -529,7 +529,7 @@ cvorbis_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         deadbeef->pl_add_meta (it, ":CHANNELS", s);
         snprintf (s, sizeof (s), "%d", samplerate);
         deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
-        int br = (int)roundf(fsize / duration * 8 / 1000);
+        int br = ov_bitrate (&vorbis_file, stream)/1000;
         snprintf (s, sizeof (s), "%d", br);
         deadbeef->pl_add_meta (it, ":BITRATE", s);
 
