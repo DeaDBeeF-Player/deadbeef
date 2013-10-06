@@ -4,7 +4,7 @@
 
   standard file vfs implementation
 
-  Copyright (C) 2009-2012 Alexey Yakovenko
+  Copyright (C) 2009-2013 Alexey Yakovenko
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -180,7 +180,7 @@ static DB_vfs_t plugin = {
     .plugin.id = "vfs_stdio",
     .plugin.descr = "Standard IO plugin\nUsed for reading normal local files\nIt is statically linked, so you can't delete it.",
     .plugin.copyright = 
-        "Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
         "modify it under the terms of the GNU General Public License\n"

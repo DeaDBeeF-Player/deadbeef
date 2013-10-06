@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -1480,7 +1480,7 @@ DB_misc_t plugin = {
         "· right click\n"
         "· select «Convert»\n",
     .plugin.copyright = 
-        "Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
         "modify it under the terms of the GNU General Public License\n"

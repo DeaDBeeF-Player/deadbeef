@@ -4,7 +4,7 @@
 
   application launcher, compatible with GNU/Linux and most other POSIX systems
 
-  Copyright (C) 2009-2012 Alexey Yakovenko
+  Copyright (C) 2009-2013 Alexey Yakovenko
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -862,7 +862,7 @@ main (int argc, char *argv[]) {
             return 0;
         }
         else if (!strcmp (argv[i], "--version")) {
-            fprintf (stdout, "DeaDBeeF " VERSION " Copyright © 2009-2012 Alexey Yakovenko\n");
+            fprintf (stdout, "DeaDBeeF " VERSION " Copyright © 2009-2013 Alexey Yakovenko\n");
             return 0;
         }
         else if (!strcmp (argv[i], "--gui")) {
