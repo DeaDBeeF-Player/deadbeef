@@ -264,7 +264,7 @@ mp4_track_get_info(mp4ff_t *mp4, int track, float *duration, int *samplerate, in
     }
     if (totalsamples) {
         *totalsamples = total_dur * (*samplerate) / mp4ff_time_scale (mp4, track);
-        *mp4framesize = (*totalsamples) / i_sample;
+        *mp4framesize = (*totalsamples) / i_sample_count;
     }
     *duration = total_dur / (float)mp4ff_time_scale (mp4, track);
 
@@ -529,6 +529,7 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
     while (size > 0) {
         if (info->skipsamples > 0 && info->out_remaining > 0) {
             int skip = min (info->out_remaining, info->skipsamples);
+//            trace ("skipping %d\n", skip);
             if (skip < info->out_remaining) {
                 memmove (info->out_buffer, info->out_buffer + skip * samplesize, (info->out_remaining - skip) * samplesize);
             }
@@ -669,7 +670,7 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
             samples = NeAACDecDecode (info->dec, &info->frame_info, info->buffer, info->remaining);
             trace ("samples =%p\n", samples);
             if (!samples) {
-                trace ("NeAACDecDecode failed with error %s (%d), consumed=%d\n", NeAACDecGetErrorMessage(info->frame_info.error), (int)info->frame_info.error, info->frame_info.bytesconsumed);
+                trace ("NeAACDecDecode failed with error %s (%d), consumed=%d\n", NeAACDecGetErrorMessage(info->frame_info.error), (int)info->frame_info.error, (int)info->frame_info.bytesconsumed);
 
                 if (info->num_errors > 10) {
                     trace ("NeAACDecDecode failed %d times, interrupting\n", info->num_errors);
@@ -701,6 +702,7 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
     }
 
     info->currentsample += (initsize-size) / samplesize;
+
     return initsize-size;
 }
 
@@ -763,11 +765,32 @@ static int
 aac_seek_sample (DB_fileinfo_t *_info, int sample) {
     aac_info_t *info = (aac_info_t *)_info;
 
+    trace ("seek: start %d + %d\n", info->startsample, sample);
+
     sample += info->startsample;
     if (info->mp4) {
-        int scale = info->mp4framesize;
-        info->mp4sample = sample / scale;
-        info->skipsamples = sample - info->mp4sample * scale;
+        int totalsamples = 0;
+        int i;
+        int num_sample_byte_sizes = mp4ff_get_num_sample_byte_sizes (info->mp4, info->mp4track);
+        int scale = _info->fmt.samplerate / mp4ff_time_scale (info->mp4, info->mp4track);
+        for (i = 0; i < num_sample_byte_sizes; i++)
+        {
+            unsigned int thissample_duration = 0;
+            unsigned int thissample_bytesize = 0;
+
+            mp4ff_get_sample_info(info->mp4, info->mp4track, i, &thissample_duration,
+                    &thissample_bytesize);
+
+            if (totalsamples + thissample_duration > sample / scale) {
+                info->skipsamples = sample - totalsamples * scale;
+                break;
+            }
+            totalsamples += thissample_duration;
+        }
+//        i = sample / info->mp4framesize;
+//        info->skipsamples = sample - info->mp4sample * info->mp4framesize;
+        info->mp4sample = i;
+        trace ("seek res: frame %d (old: %d*%d), skip %d\n", info->mp4sample, sample / info->mp4framesize, info->mp4framesize, info->skipsamples);
     }
     else {
         int skip = deadbeef->junk_get_leading_size (info->file);
@@ -1100,7 +1123,7 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             int i;
             for (i = 0; i < ntracks; i++) {
                 if (mp4ff_get_track_type (mp4, i) != TRACK_AUDIO) {
-                    trace ("aac: track %d is not audio\n");
+                    trace ("aac: track %d is not audio\n", i);
                     continue;
                 }
                 int mp4framesize;
