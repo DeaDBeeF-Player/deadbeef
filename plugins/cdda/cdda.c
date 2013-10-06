@@ -677,7 +677,7 @@ static DB_decoder_t plugin = {
     .plugin.name = "Audio CD player",
     .plugin.descr = "Audio CD plugin using libcdio and libcddb",
     .plugin.copyright = 
-        "Copyright (C) 2009-2012 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "Copyright (C) 2009-2011 Viktor Semykin <thesame.ml@gmail.com>\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
