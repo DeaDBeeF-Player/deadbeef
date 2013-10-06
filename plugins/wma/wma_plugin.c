@@ -91,6 +91,9 @@ wmaplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 //    exit (0);
 
     int res = get_asf_metadata (info->info.file, NULL, &info->wfx, &info->first_frame_offset);
+    if (!res) {
+        return -1;
+    }
     trace ("get_asf_metadata returned %d, first_frame_offset: %lld\n", res, info->first_frame_offset);
     int64_t pos = deadbeef->ftell (info->info.file);
     trace ("curr offs: %lld\n", pos);
@@ -372,8 +375,11 @@ wmaplug_read_metadata (DB_playItem_t *it) {
     }
     asf_waveformatex_t wfx;
     int64_t first_frame_offset;
-    get_asf_metadata (fp, it, &wfx, &first_frame_offset);
+    int res = get_asf_metadata (fp, it, &wfx, &first_frame_offset);
     deadbeef->fclose (fp);
+    if (!res) {
+        return -1;
+    }
     return 0;
 }
 
@@ -390,7 +396,11 @@ wmaplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
 
-    get_asf_metadata (fp, it, &wfx, &first_frame_offset);
+    int res = get_asf_metadata (fp, it, &wfx, &first_frame_offset);
+    if (!res) {
+        deadbeef->pl_item_unref (it);
+        return NULL;
+    }
     //trace ("datalen %d, channels %d, bps %d, rate %d\n", wfx.datalen, wfx.channels, wfx.bitspersample, wfx.rate);
     trace ("packet_size: %d, max_packet_size: %d\n", wfx.packet_size, wfx.max_packet_size);
 
