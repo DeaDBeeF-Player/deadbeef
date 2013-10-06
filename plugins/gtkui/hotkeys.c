@@ -695,7 +695,6 @@ on_hotkeys_set_key_key_press_event     (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     if (!grabbed) {
-        printf ("was not grabbed\n");
         return FALSE;
     }
 
@@ -706,8 +705,6 @@ on_hotkeys_set_key_key_press_event     (GtkWidget       *widget,
     gboolean cleared;
     GdkModifierType consumed_modifiers;
     GdkDisplay *display;
-
-    printf ("was grabbed\n");
 
     display = gtk_widget_get_display (widget);
 
@@ -813,7 +810,6 @@ hotkey_grab_focus (GtkWidget *widget) {
     }
     gtk_button_set_label (GTK_BUTTON (widget), _("New key combination..."));
     grabbed = 1;
-    printf ("successfully grabbed\n");
 }
 
 void
