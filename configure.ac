@@ -204,8 +204,8 @@ AS_IF([test "${enable_gtk3}" = "yes"], [
     ], [
        PKG_CHECK_MODULES(GTK3_DEPS, gtk+-3.0 >= 3.0 gthread-2.0 glib-2.0, HAVE_GTK3=yes, HAVE_GTK3=no)
     ])
-    AC_CHECK_LIB([SM], [main], [HAVE_SM=yes;SM_LIBS="-lSM";AC_SUBST(SM_LIBS)])
-    AC_CHECK_LIB([ICE], [main], [HAVE_ICE=yes;ICE_LIBS="-lICE";AC_SUBST(ICE_LIBS)])
+dnl    AC_CHECK_LIB([SM], [main], [HAVE_SM=yes;SM_LIBS="-lSM";AC_SUBST(SM_LIBS)])
+dnl    AC_CHECK_LIB([ICE], [main], [HAVE_ICE=yes;ICE_LIBS="-lICE";AC_SUBST(ICE_LIBS)])
     if test "$OS_OSX" = "yes"; then
         PKG_CHECK_MODULES(GTK_MAC, gtk-mac-integration)
         AC_SUBST(GTK_MAC_LIBS)
@@ -223,8 +223,8 @@ AS_IF([test "${enable_gtk2}" = "yes"], [
     ], [
         PKG_CHECK_MODULES(GTK2_DEPS, gtk+-2.0 >= 2.12 gthread-2.0 glib-2.0 gtkglext-1.0, HAVE_GTK2=yes, HAVE_GTK2=no)
     ])
-    AC_CHECK_LIB([SM], [main], [HAVE_SM=yes;SM_LIBS="-lSM";AC_SUBST(SM_LIBS)])
-    AC_CHECK_LIB([ICE], [main], [HAVE_ICE=yes;ICE_LIBS="-lICE";AC_SUBST(ICE_LIBS)])
+dnl    AC_CHECK_LIB([SM], [main], [HAVE_SM=yes;SM_LIBS="-lSM";AC_SUBST(SM_LIBS)])
+dnl    AC_CHECK_LIB([ICE], [main], [HAVE_ICE=yes;ICE_LIBS="-lICE";AC_SUBST(ICE_LIBS)])
 ], [
     HAVE_GTK2=no
 ])
@@ -705,8 +705,8 @@ AM_CONDITIONAL(HAVE_PSF, test "x$HAVE_PSF" = "xyes")
 AM_CONDITIONAL(HAVE_SHN, test "x$HAVE_SHN" = "xyes")
 AM_CONDITIONAL(HAVE_MONO2STEREO, test "x$HAVE_MONO2STEREO" = "xyes")
 AM_CONDITIONAL(HAVE_SHELLEXECUI, test "x$HAVE_SHELLEXECUI" = "xyes")
-AM_CONDITIONAL(HAVE_SM, test "x$HAVE_SM" = "xyes")
-AM_CONDITIONAL(HAVE_ICE, test "x$HAVE_ICE" = "xyes")
+dnl AM_CONDITIONAL(HAVE_SM, test "x$HAVE_SM" = "xyes")
+dnl AM_CONDITIONAL(HAVE_ICE, test "x$HAVE_ICE" = "xyes")
 AM_CONDITIONAL(HAVE_ALAC, test "x$HAVE_ALAC" = "xyes")
 AM_CONDITIONAL(HAVE_WMA, test "x$HAVE_WMA" = "xyes")
 AM_CONDITIONAL(HAVE_PLTBROWSER, test "x$HAVE_PLTBROWSER" = "xyes")

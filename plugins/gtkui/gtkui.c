@@ -59,10 +59,6 @@
 #else
 #include "retina.h"
 #endif
-#undef EGG_SM_CLIENT_BACKEND_XSMP
-#ifdef EGG_SM_CLIENT_BACKEND_XSMP
-#include "smclient/eggsmclient.h"
-#endif
 #include "actionhandlers.h"
 #include "hotkeys.h"
 
@@ -875,26 +871,6 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     return 0;
 }
 
-#ifdef EGG_SM_CLIENT_BACKEND_XSMP
-static void
-smclient_quit_requested (EggSMClient *client, gpointer user_data) {
-    egg_sm_client_will_quit (client, TRUE);
-}
-
-static void
-smclient_quit_cancelled (EggSMClient *client, gpointer user_data) {
-}
-
-static void
-smclient_quit (EggSMClient *client, gpointer user_data) {
-    gtkui_quit ();
-}
-
-static void
-smclient_save_state (EggSMClient *client, const char *state_dir, gpointer user_data) {
-}
-#endif
-
 static gboolean
 unlock_playlist_columns_cb (void *ctx) {
 //    ddb_listview_lock_columns (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), 0);
@@ -983,27 +959,6 @@ gtkui_thread (void *ctx) {
     }
 
     gtk_disable_setlocale ();
-#ifdef EGG_SM_CLIENT_BACKEND_XSMP
-    g_type_init ();
-    GOptionContext *goption_context;
-    GError *err = NULL;
-    goption_context = g_option_context_new (_("- Test logout functionality"));
-    g_option_context_add_group (goption_context, gtk_get_option_group (TRUE));
-    g_option_context_add_group (goption_context, egg_sm_client_get_option_group ());
-
-    if (!g_option_context_parse (goption_context, &argc, (char ***)&argv, &err))
-    {
-        g_printerr ("Could not parse arguments: %s\n", err->message);
-        g_error_free (err);
-    }
-    else {
-        EggSMClient *client = egg_sm_client_get ();
-        g_signal_connect (client, "quit-requested", G_CALLBACK (smclient_quit_requested), NULL);
-        g_signal_connect (client, "quit-cancelled", G_CALLBACK (smclient_quit_cancelled), NULL);
-        g_signal_connect (client, "quit", G_CALLBACK (smclient_quit), NULL);
-        g_signal_connect (client, "save-state", G_CALLBACK (smclient_save_state), NULL);
-    }
-#endif
 
     gtk_init (&argc, (char ***)&argv);
 

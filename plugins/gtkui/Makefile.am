@@ -1,17 +1,17 @@
 gtkuidir = $(libdir)/$(PACKAGE)
 
-if HAVE_SM
-if HAVE_ICE
-SM_SOURCES = smclient/eggdesktopfile.h\
-	smclient/eggsmclient-private.h\
-	smclient/eggsmclient.h\
-	smclient/eggdesktopfile.c\
-	smclient/eggsmclient-xsmp.c\
-	smclient/eggsmclient.c
-SM_LIBADD = $(SM_LIBS) $(ICE_LIBS)
-SM_CFLAGS = -DEGG_SM_CLIENT_BACKEND_XSMP -DG_LOG_DOMAIN=\""deadbeef"\"
-endif
-endif
+#if HAVE_SM
+#if HAVE_ICE
+#SM_SOURCES = smclient/eggdesktopfile.h\
+#	smclient/eggsmclient-private.h\
+#	smclient/eggsmclient.h\
+#	smclient/eggdesktopfile.c\
+#	smclient/eggsmclient-xsmp.c\
+#	smclient/eggsmclient.c
+#SM_LIBADD = $(SM_LIBS) $(ICE_LIBS)
+#SM_CFLAGS = -DEGG_SM_CLIENT_BACKEND_XSMP -DG_LOG_DOMAIN=\""deadbeef"\"
+#endif
+#endif
 
 GTKUI_SOURCES =    gtkui.c gtkui.h\
 				   callbacks.c interface.c support.c callbacks.h interface.h support.h\
