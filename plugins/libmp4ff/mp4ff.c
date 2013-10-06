@@ -409,6 +409,47 @@ int32_t mp4ff_get_sample_duration(const mp4ff_t *f, const int32_t track, const i
     return (int32_t)(-1);
 }
 
+int32_t mp4ff_get_num_sample_byte_sizes (const mp4ff_t *f, const int32_t track) {
+    return f->track[track]->stsz_sample_count;
+}
+
+int32_t mp4ff_get_sample_info(const mp4ff_t *f, const int32_t track, const int32_t samplenum, uint32_t *sample_duration, uint32_t *sample_byte_size) {
+// num_sample_byte_sizes --- stsz_sample_count
+// num_time_to_samples --- stts_entry_count
+// time_to_sample[i].sample_count --- p_track->stts_sample_count[i]
+// time_to_sample[i].sample_duration --- p_track->stts_sample_delta[i]
+// sample_byte_size[i] --- p_track->stsz_table[i]
+    unsigned int duration_index_accum = 0;
+    unsigned int duration_cur_index = 0;
+
+    if (samplenum >= f->track[track]->stsz_sample_count)
+    {
+        fprintf(stderr, "sample %i does not exist\n", samplenum);
+        return 0;
+    }
+
+    if (!f->track[track]->stts_entry_count)
+    {
+        fprintf(stderr, "no time to samples\n");
+        return 0;
+    }
+    while ((f->track[track]->stts_sample_count[duration_cur_index] + duration_index_accum) <= samplenum)
+    {
+        duration_index_accum += f->track[track]->stts_sample_count[duration_cur_index];
+        duration_cur_index++;
+        if (duration_cur_index >= f->track[track]->stts_entry_count)
+        {
+            fprintf(stderr, "sample %i does not have a duration\n", samplenum);
+            return 0;
+        }
+    }
+
+    *sample_duration = f->track[track]->stts_sample_delta[duration_cur_index];
+    *sample_byte_size = f->track[track]->stsz_table[samplenum];
+
+    return 1;
+}
+
 int64_t mp4ff_get_sample_position(const mp4ff_t *f, const int32_t track, const int32_t sample)
 {
     int32_t i, co = 0;

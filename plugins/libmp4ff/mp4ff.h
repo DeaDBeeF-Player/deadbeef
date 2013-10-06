@@ -48,6 +48,8 @@ mp4ff_t *mp4ff_open_read(mp4ff_callback_t *f);
 mp4ff_t *mp4ff_open_read_metaonly(mp4ff_callback_t *f);
 void mp4ff_close(mp4ff_t *f);
 int32_t mp4ff_get_sample_duration(const mp4ff_t *f, const int32_t track, const int32_t sample);
+int32_t mp4ff_get_num_sample_byte_sizes (const mp4ff_t *f, const int32_t track);
+int32_t mp4ff_get_sample_info(const mp4ff_t *f, const int32_t track, const int32_t samplenum, uint32_t *sample_duration, uint32_t *sample_byte_size);
 int32_t mp4ff_get_sample_duration_use_offsets(const mp4ff_t *f, const int32_t track, const int32_t sample);
 int64_t mp4ff_get_sample_position(const mp4ff_t *f, const int32_t track, const int32_t sample);
 int32_t mp4ff_get_sample_offset(const mp4ff_t *f, const int32_t track, const int32_t sample);

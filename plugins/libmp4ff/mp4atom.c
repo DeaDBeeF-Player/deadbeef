@@ -290,8 +290,7 @@ static int32_t mp4ff_read_stsz(mp4ff_t *f)
     if (f->track[f->total_tracks - 1]->stsz_sample_size == 0)
     {
         int32_t i;
-        f->track[f->total_tracks - 1]->stsz_table =
-            (int32_t*)malloc(f->track[f->total_tracks - 1]->stsz_sample_count*sizeof(int32_t));
+        f->track[f->total_tracks - 1]->stsz_table = (int32_t*)malloc(f->track[f->total_tracks - 1]->stsz_sample_count*sizeof(int32_t));
 
         for (i = 0; i < f->track[f->total_tracks - 1]->stsz_sample_count; i++)
         {
