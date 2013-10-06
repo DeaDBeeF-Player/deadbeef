@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-25 12:15+0200\n"
-"PO-Revision-Date: 2013-08-25 09:45+0000\n"
+"POT-Creation-Date: 2013-08-25 12:38+0200\n"
+"PO-Revision-Date: 2013-08-25 10:16+0000\n"
 "Last-Translator: waker <wakeroid@gmail.com>\n"
 "Language-Team: Indonesian (http://www.transifex.com/projects/p/deadbeef-"
 "player/language/id/)\n"
@@ -855,9 +855,8 @@ msgid "Network"
 msgstr "Jaringan"
 
 #: ../plugins/gtkui/interface.c:2492 ../plugins/gtkui/deadbeef.glade.h:153
-#, fuzzy
 msgid "Assigned Hotkeys:"
-msgstr "<b>Tombol pintas yang dipakai</b>"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:2527 ../plugins/gtkui/interface.c:4303
 #: ../plugins/gtkui/deadbeef.glade.h:154

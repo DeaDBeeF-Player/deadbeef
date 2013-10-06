@@ -3,15 +3,16 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# brli7848 <rainman59118@gmail.com>, 2013
 # PCMan <pcman.tw@gmail.com>, 2010
 # PCMan <pcman.tw@gmail.com>, 2010
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-25 12:15+0200\n"
-"PO-Revision-Date: 2013-08-25 09:45+0000\n"
-"Last-Translator: waker <wakeroid@gmail.com>\n"
+"POT-Creation-Date: 2013-08-25 12:38+0200\n"
+"PO-Revision-Date: 2013-09-16 08:24+0000\n"
+"Last-Translator: brli7848 <rainman59118@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) (http://www.transifex.com/projects/p/"
 "deadbeef-player/language/zh_TW/)\n"
 "Language: zh_TW\n"
@@ -142,20 +143,20 @@ msgstr "新增播放清單 (%d)"
 
 #: ../plugins/gtkui/gtkui.c:971
 msgid "- Test logout functionality"
-msgstr ""
+msgstr "- 測試登出功能"
 
 #. register widget types
 #: ../plugins/gtkui/gtkui.c:992
 msgid "Playlist with tabs"
-msgstr ""
+msgstr "含分頁的播放清單"
 
 #: ../plugins/gtkui/gtkui.c:994
 msgid "Splitter (top and bottom)"
-msgstr ""
+msgstr "分隔線 (上與下)"
 
 #: ../plugins/gtkui/gtkui.c:995
 msgid "Splitter (left and right)"
-msgstr ""
+msgstr "分隔線 (左與右)"
 
 #: ../plugins/gtkui/gtkui.c:997 ../plugins/gtkui/interface.c:326
 #: ../plugins/gtkui/deadbeef.glade.h:31
@@ -164,27 +165,27 @@ msgstr "分頁"
 
 #: ../plugins/gtkui/gtkui.c:998
 msgid "Playlist tabs"
-msgstr ""
+msgstr "播放清單分頁"
 
 #: ../plugins/gtkui/gtkui.c:999
 msgid "Playlist"
-msgstr ""
+msgstr "播放清單"
 
 #: ../plugins/gtkui/gtkui.c:1000
 msgid "Selection properties"
-msgstr ""
+msgstr "選取屬性"
 
 #: ../plugins/gtkui/gtkui.c:1001
 msgid "Album art display"
-msgstr ""
+msgstr "顯示專輯封面"
 
 #: ../plugins/gtkui/gtkui.c:1002
 msgid "Scope"
-msgstr ""
+msgstr "範圍"
 
 #: ../plugins/gtkui/gtkui.c:1003
 msgid "Spectrum"
-msgstr ""
+msgstr "頻譜"
 
 #: ../plugins/gtkui/gtkui.c:1004
 msgid "HBox"
@@ -196,7 +197,7 @@ msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:1006 ../plugins/gtkui/widgets.c:2897
 msgid "Button"
-msgstr ""
+msgstr "按鈕"
 
 #: ../plugins/gtkui/gtkui.c:1220
 msgid "Failed while reading help file"
@@ -214,7 +215,7 @@ msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:1243
 msgid "Do you still want to quit?"
-msgstr ""
+msgstr "仍然要退出？"
 
 #: ../plugins/gtkui/gtkui.c:1244 ../plugins/gtkui/trkproperties.c:165
 #: ../plugins/converter/convgui.c:862 ../plugins/converter/convgui.c:1317
@@ -301,7 +302,7 @@ msgstr "尋找(_F)"
 
 #: ../plugins/gtkui/interface.c:266 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Sort by"
-msgstr ""
+msgstr "排序依據"
 
 #: ../plugins/gtkui/interface.c:273 ../plugins/gtkui/interface.c:1479
 #: ../plugins/gtkui/mainplaylist.c:330 ../plugins/gtkui/prefwin.c:321
@@ -360,7 +361,7 @@ msgstr "狀態列"
 
 #: ../plugins/gtkui/interface.c:321 ../plugins/gtkui/deadbeef.glade.h:30
 msgid "Menu bar"
-msgstr ""
+msgstr "選單列"
 
 #: ../plugins/gtkui/interface.c:330 ../plugins/gtkui/deadbeef.glade.h:32
 msgid "Equalizer"
@@ -397,15 +398,15 @@ msgstr "重複"
 
 #: ../plugins/gtkui/interface.c:383 ../plugins/gtkui/deadbeef.glade.h:40
 msgid "Loop all"
-msgstr ""
+msgstr "重複全部"
 
 #: ../plugins/gtkui/interface.c:389 ../plugins/gtkui/deadbeef.glade.h:41
 msgid "Loop single song"
-msgstr ""
+msgstr "重複單一曲目"
 
 #: ../plugins/gtkui/interface.c:395 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Don't loop"
-msgstr ""
+msgstr "不要重複播放"
 
 #: ../plugins/gtkui/interface.c:401 ../plugins/gtkui/deadbeef.glade.h:43
 msgid "Scroll follows playback"
@@ -496,7 +497,7 @@ msgstr "歌曲屬性"
 
 #: ../plugins/gtkui/interface.c:1189 ../plugins/gtkui/deadbeef.glade.h:64
 msgid "Location:"
-msgstr ""
+msgstr "位址:"
 
 #: ../plugins/gtkui/interface.c:1230 ../plugins/gtkui/deadbeef.glade.h:65
 msgid "Settings"
@@ -663,7 +664,7 @@ msgstr "加入資料夾時不要加入壓縮檔"
 
 #: ../plugins/gtkui/interface.c:1963 ../plugins/gtkui/deadbeef.glade.h:107
 msgid "Auto-reset \"Stop after current\""
-msgstr ""
+msgstr "自動重設「播放當前歌曲後停止」"
 
 #: ../plugins/gtkui/interface.c:1967 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Playback"
@@ -713,11 +714,11 @@ msgstr "加入單一資料夾時自動為播放清單命名"
 
 #: ../plugins/gtkui/interface.c:2072 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Enable Russian CP1251 detection and recoding"
-msgstr ""
+msgstr "啟用俄羅斯文 CP1251 偵測與重新編碼"
 
 #: ../plugins/gtkui/interface.c:2076 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Enable Chinese CP936 detection and recoding"
-msgstr ""
+msgstr "啟用中文 CP936 偵測與重新編碼"
 
 #: ../plugins/gtkui/interface.c:2084 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Interface refresh rate (times per second):"
@@ -737,7 +738,7 @@ msgstr "圖像用戶介面外掛程式 (重新啟動始生效)："
 
 #: ../plugins/gtkui/interface.c:2134 ../plugins/gtkui/deadbeef.glade.h:125
 msgid "GUI/Misc"
-msgstr ""
+msgstr "圖形介面/雜項"
 
 #: ../plugins/gtkui/interface.c:2149 ../plugins/gtkui/interface.c:2193
 #: ../plugins/gtkui/deadbeef.glade.h:126
@@ -839,7 +840,7 @@ msgstr "代理密碼："
 
 #: ../plugins/gtkui/interface.c:2462 ../plugins/gtkui/deadbeef.glade.h:150
 msgid "HTTP User Agent:"
-msgstr ""
+msgstr "HTTP 使用者代理:"
 
 #: ../plugins/gtkui/interface.c:2475 ../plugins/gtkui/interface.c:4142
 #: ../plugins/gtkui/deadbeef.glade.h:151

@@ -4,13 +4,14 @@
 #
 # Translators:
 # Arthur Țițeică <arthur@psw.ro>, 2013
+# roentgen <arthur.titeica@gmail.com>, 2013
 # Mișu Moldovan <dumol@xfce.org>, 2012
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-25 12:15+0200\n"
-"PO-Revision-Date: 2013-08-25 10:03+0000\n"
+"POT-Creation-Date: 2013-08-25 12:38+0200\n"
+"PO-Revision-Date: 2013-08-25 12:31+0000\n"
 "Last-Translator: roentgen <arthur.titeica@gmail.com>\n"
 "Language-Team: Romanian (http://www.transifex.com/projects/p/deadbeef-player/"
 "language/ro/)\n"
@@ -534,7 +535,7 @@ msgstr "Titlu:"
 
 #: ../plugins/gtkui/interface.c:1457 ../plugins/gtkui/deadbeef.glade.h:73
 msgid "Enter new column title here"
-msgstr "Introduceți aici un nou titlu pentru coloană"
+msgstr "Introdu aici un nou titlu pentru coloană"
 
 #: ../plugins/gtkui/interface.c:1465 ../plugins/gtkui/deadbeef.glade.h:74
 msgid "Type:"
@@ -858,9 +859,8 @@ msgid "Network"
 msgstr "Rețea"
 
 #: ../plugins/gtkui/interface.c:2492 ../plugins/gtkui/deadbeef.glade.h:153
-#, fuzzy
 msgid "Assigned Hotkeys:"
-msgstr "<b>Acceleratori folosiți</b>"
+msgstr "Acceleratori folosiți:"
 
 #: ../plugins/gtkui/interface.c:2527 ../plugins/gtkui/interface.c:4303
 #: ../plugins/gtkui/deadbeef.glade.h:154
@@ -874,7 +874,7 @@ msgstr "<Nesetat>"
 
 #: ../plugins/gtkui/interface.c:2540 ../plugins/gtkui/deadbeef.glade.h:156
 msgid "Key combination:"
-msgstr ""
+msgstr "Combinație de taste:"
 
 #: ../plugins/gtkui/interface.c:2549 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "Global hotkey"
@@ -886,6 +886,9 @@ msgid ""
 "or the Revert button to undo your changes.\n"
 "The changes will NOT be saved if you don't press Apply."
 msgstr ""
+"Folosește butonul Aplică pentru a salva modificările\n"
+"sau butonul Anulează pentru a renunța la modificări.\n"
+"Modificările NU vor fi salvate dacă nu apeși Aplică."
 
 #: ../plugins/gtkui/interface.c:2581 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "Hotkeys"
@@ -2301,6 +2304,3 @@ msgstr "Umple"
 #: ../plugins/gtkui/widgets.c:3075
 msgid "Configure button"
 msgstr "Configurează buton"
-
-#~ msgid "Key:"
-#~ msgstr "Tastă:"

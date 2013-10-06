@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-25 12:15+0200\n"
-"PO-Revision-Date: 2013-08-25 09:45+0000\n"
-"Last-Translator: waker <wakeroid@gmail.com>\n"
+"POT-Creation-Date: 2013-08-25 12:38+0200\n"
+"PO-Revision-Date: 2013-08-25 14:23+0000\n"
+"Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/projects/p/deadbeef-"
 "player/language/pt/)\n"
 "Language: pt\n"
@@ -610,7 +610,7 @@ msgstr "Converter áudio 8 bits para 16 bits"
 
 #: ../plugins/gtkui/interface.c:1849 ../plugins/gtkui/deadbeef.glade.h:93
 msgid "Always convert 16 bit audio to 24 bit"
-msgstr ""
+msgstr "Converter áudio 16 bits para 24 bits"
 
 #: ../plugins/gtkui/interface.c:1853 ../plugins/gtkui/deadbeef.glade.h:94
 msgid "Sound"
@@ -854,14 +854,13 @@ msgid "Network"
 msgstr "Rede"
 
 #: ../plugins/gtkui/interface.c:2492 ../plugins/gtkui/deadbeef.glade.h:153
-#, fuzzy
 msgid "Assigned Hotkeys:"
-msgstr "<b>Atalhos atribuidos</b>"
+msgstr "Atalhos atribuídos:"
 
 #: ../plugins/gtkui/interface.c:2527 ../plugins/gtkui/interface.c:4303
 #: ../plugins/gtkui/deadbeef.glade.h:154
 msgid "Action:"
-msgstr ""
+msgstr "Ação:"
 
 #: ../plugins/gtkui/interface.c:2532 ../plugins/gtkui/interface.c:2545
 #: ../plugins/gtkui/interface.c:4307 ../plugins/gtkui/deadbeef.glade.h:155
@@ -870,7 +869,7 @@ msgstr "<Não definido>"
 
 #: ../plugins/gtkui/interface.c:2540 ../plugins/gtkui/deadbeef.glade.h:156
 msgid "Key combination:"
-msgstr ""
+msgstr "Combinação de teclas:"
 
 #: ../plugins/gtkui/interface.c:2549 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "Global hotkey"
@@ -882,6 +881,9 @@ msgid ""
 "or the Revert button to undo your changes.\n"
 "The changes will NOT be saved if you don't press Apply."
 msgstr ""
+"Utilize Aplicar para gravar as alterações.\n"
+"Utilize Reverter para anular as alterações.\n"
+"As alterações não serão gravadas se não premir Aplicar."
 
 #: ../plugins/gtkui/interface.c:2581 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "Hotkeys"
@@ -1020,27 +1022,27 @@ msgstr "Extras:"
 
 #: ../plugins/gtkui/interface.c:4239 ../plugins/gtkui/deadbeef.glade.h:190
 msgid "Button properties"
-msgstr ""
+msgstr "Propriedades do botão"
 
 #: ../plugins/gtkui/interface.c:4254 ../plugins/gtkui/deadbeef.glade.h:191
 msgid "Color:"
-msgstr ""
+msgstr "Cor:"
 
 #: ../plugins/gtkui/interface.c:4266 ../plugins/gtkui/deadbeef.glade.h:192
 msgid "Text color:"
-msgstr ""
+msgstr "Cor do texto:"
 
 #: ../plugins/gtkui/interface.c:4278 ../plugins/gtkui/deadbeef.glade.h:193
 msgid "Icon:"
-msgstr ""
+msgstr "Ícone:"
 
 #: ../plugins/gtkui/interface.c:4290 ../plugins/gtkui/deadbeef.glade.h:194
 msgid "Label:"
-msgstr ""
+msgstr "Etiqueta:"
 
 #: ../plugins/gtkui/interface.c:4371 ../plugins/gtkui/deadbeef.glade.h:195
 msgid "Select action"
-msgstr ""
+msgstr "Escolha a ação"
 
 #: ../plugins/gtkui/mainplaylist.c:328 ../plugins/gtkui/search.c:416
 msgid "Artist / Album"
@@ -2224,72 +2226,72 @@ msgstr "Nada selecionado."
 
 #: ../plugins/gtkui/widgets.c:553
 msgid "Replace with..."
-msgstr ""
+msgstr "Substituir por..."
 
 #: ../plugins/gtkui/widgets.c:558
 msgid "Insert..."
-msgstr ""
+msgstr "Inserir..."
 
 #: ../plugins/gtkui/widgets.c:585
 msgid "Cut"
-msgstr ""
+msgstr "Cortar"
 
 #: ../plugins/gtkui/widgets.c:592
 msgid "Copy"
-msgstr ""
+msgstr "Copiar"
 
 #: ../plugins/gtkui/widgets.c:599
 msgid "Paste"
-msgstr ""
+msgstr "Colar"
 
 #: ../plugins/gtkui/widgets.c:942
 msgid "Lock movement"
-msgstr ""
+msgstr "Bloquear movimentação"
 
 #: ../plugins/gtkui/widgets.c:1227
 msgid "Move tab left"
-msgstr ""
+msgstr "Mover separador à esquerda"
 
 #: ../plugins/gtkui/widgets.c:1234
 msgid "Move tab right"
-msgstr ""
+msgstr "Mover separador à direita"
 
 #: ../plugins/gtkui/widgets.c:1241
 msgid "Remove tab"
-msgstr ""
+msgstr "Remover separador"
 
 #: ../plugins/gtkui/widgets.c:1248
 msgid "Rename tab"
-msgstr ""
+msgstr "Mudar nome do separador"
 
 #: ../plugins/gtkui/widgets.c:1309
 msgid "Add new tab"
-msgstr ""
+msgstr "Adicionar separador"
 
 #: ../plugins/gtkui/widgets.c:1783
 msgid "Show Column Headers"
-msgstr ""
+msgstr "Mostrar título das colunas"
 
 #: ../plugins/gtkui/widgets.c:2634
 msgid "Expand the box by 1 item"
-msgstr ""
+msgstr "Expandir caixa em 1 item"
 
 #: ../plugins/gtkui/widgets.c:2639
 msgid "Shrink the box by 1 item"
-msgstr ""
+msgstr "Encolher caixa em 1 item"
 
 #: ../plugins/gtkui/widgets.c:2644
 msgid "Homogeneous"
-msgstr ""
+msgstr "Homogéneo"
 
 #: ../plugins/gtkui/widgets.c:2684
 msgid "Expand"
-msgstr ""
+msgstr "Expandir"
 
 #: ../plugins/gtkui/widgets.c:2692
 msgid "Fill"
-msgstr ""
+msgstr "Preencher"
 
 #: ../plugins/gtkui/widgets.c:3075
 msgid "Configure button"
-msgstr ""
+msgstr "Configurar botão"
