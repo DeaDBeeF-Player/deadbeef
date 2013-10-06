@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-25 12:15+0200\n"
-"PO-Revision-Date: 2013-08-25 09:45+0000\n"
-"Last-Translator: waker <wakeroid@gmail.com>\n"
+"POT-Creation-Date: 2013-08-25 12:38+0200\n"
+"PO-Revision-Date: 2013-08-26 12:28+0000\n"
+"Last-Translator: Wylmer Wang <wantinghard@gmail.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/projects/p/deadbeef-"
 "player/language/zh_CN/)\n"
 "Language: zh_CN\n"
@@ -609,7 +609,7 @@ msgstr "总是将 8 位音频转换为 16 位"
 
 #: ../plugins/gtkui/interface.c:1849 ../plugins/gtkui/deadbeef.glade.h:93
 msgid "Always convert 16 bit audio to 24 bit"
-msgstr ""
+msgstr "总是将 16 位音频转换为 24 位"
 
 #: ../plugins/gtkui/interface.c:1853 ../plugins/gtkui/deadbeef.glade.h:94
 msgid "Sound"
@@ -851,14 +851,13 @@ msgid "Network"
 msgstr "网络"
 
 #: ../plugins/gtkui/interface.c:2492 ../plugins/gtkui/deadbeef.glade.h:153
-#, fuzzy
 msgid "Assigned Hotkeys:"
-msgstr "<b>已分配的快捷键</b>"
+msgstr "已分配的快捷键："
 
 #: ../plugins/gtkui/interface.c:2527 ../plugins/gtkui/interface.c:4303
 #: ../plugins/gtkui/deadbeef.glade.h:154
 msgid "Action:"
-msgstr ""
+msgstr "操作："
 
 #: ../plugins/gtkui/interface.c:2532 ../plugins/gtkui/interface.c:2545
 #: ../plugins/gtkui/interface.c:4307 ../plugins/gtkui/deadbeef.glade.h:155
@@ -867,7 +866,7 @@ msgstr "<未设置>"
 
 #: ../plugins/gtkui/interface.c:2540 ../plugins/gtkui/deadbeef.glade.h:156
 msgid "Key combination:"
-msgstr ""
+msgstr "按键组合："
 
 #: ../plugins/gtkui/interface.c:2549 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "Global hotkey"
@@ -879,6 +878,9 @@ msgid ""
 "or the Revert button to undo your changes.\n"
 "The changes will NOT be saved if you don't press Apply."
 msgstr ""
+"使用“应用”按钮保存您的更改，\n"
+"或使用“恢复”按钮撤消更改。\n"
+"在您按“应用”之前，更改不会保存。"
 
 #: ../plugins/gtkui/interface.c:2581 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "Hotkeys"
@@ -1016,27 +1018,27 @@ msgstr "插件："
 
 #: ../plugins/gtkui/interface.c:4239 ../plugins/gtkui/deadbeef.glade.h:190
 msgid "Button properties"
-msgstr ""
+msgstr "按钮属性"
 
 #: ../plugins/gtkui/interface.c:4254 ../plugins/gtkui/deadbeef.glade.h:191
 msgid "Color:"
-msgstr ""
+msgstr "颜色："
 
 #: ../plugins/gtkui/interface.c:4266 ../plugins/gtkui/deadbeef.glade.h:192
 msgid "Text color:"
-msgstr ""
+msgstr "文本颜色："
 
 #: ../plugins/gtkui/interface.c:4278 ../plugins/gtkui/deadbeef.glade.h:193
 msgid "Icon:"
-msgstr ""
+msgstr "图标："
 
 #: ../plugins/gtkui/interface.c:4290 ../plugins/gtkui/deadbeef.glade.h:194
 msgid "Label:"
-msgstr ""
+msgstr "标签："
 
 #: ../plugins/gtkui/interface.c:4371 ../plugins/gtkui/deadbeef.glade.h:195
 msgid "Select action"
-msgstr ""
+msgstr "选择操作"
 
 #: ../plugins/gtkui/mainplaylist.c:328 ../plugins/gtkui/search.c:416
 msgid "Artist / Album"
@@ -2208,72 +2210,72 @@ msgstr "没有选择项目。"
 
 #: ../plugins/gtkui/widgets.c:553
 msgid "Replace with..."
-msgstr ""
+msgstr "替换为..."
 
 #: ../plugins/gtkui/widgets.c:558
 msgid "Insert..."
-msgstr ""
+msgstr "插入..."
 
 #: ../plugins/gtkui/widgets.c:585
 msgid "Cut"
-msgstr ""
+msgstr "剪切"
 
 #: ../plugins/gtkui/widgets.c:592
 msgid "Copy"
-msgstr ""
+msgstr "复制"
 
 #: ../plugins/gtkui/widgets.c:599
 msgid "Paste"
-msgstr ""
+msgstr "粘贴"
 
 #: ../plugins/gtkui/widgets.c:942
 msgid "Lock movement"
-msgstr ""
+msgstr "锁定移动"
 
 #: ../plugins/gtkui/widgets.c:1227
 msgid "Move tab left"
-msgstr ""
+msgstr "标签左移"
 
 #: ../plugins/gtkui/widgets.c:1234
 msgid "Move tab right"
-msgstr ""
+msgstr "标签右移"
 
 #: ../plugins/gtkui/widgets.c:1241
 msgid "Remove tab"
-msgstr ""
+msgstr "移除标签"
 
 #: ../plugins/gtkui/widgets.c:1248
 msgid "Rename tab"
-msgstr ""
+msgstr "重命名标签"
 
 #: ../plugins/gtkui/widgets.c:1309
 msgid "Add new tab"
-msgstr ""
+msgstr "添加新标签"
 
 #: ../plugins/gtkui/widgets.c:1783
 msgid "Show Column Headers"
-msgstr ""
+msgstr "显示列标题"
 
 #: ../plugins/gtkui/widgets.c:2634
 msgid "Expand the box by 1 item"
-msgstr ""
+msgstr "向框中增加 1 项"
 
 #: ../plugins/gtkui/widgets.c:2639
 msgid "Shrink the box by 1 item"
-msgstr ""
+msgstr "从框中减少 1 项"
 
 #: ../plugins/gtkui/widgets.c:2644
 msgid "Homogeneous"
-msgstr ""
+msgstr "平均"
 
 #: ../plugins/gtkui/widgets.c:2684
 msgid "Expand"
-msgstr ""
+msgstr "扩展"
 
 #: ../plugins/gtkui/widgets.c:2692
 msgid "Fill"
-msgstr ""
+msgstr "填充"
 
 #: ../plugins/gtkui/widgets.c:3075
 msgid "Configure button"
-msgstr ""
+msgstr "配置按钮"

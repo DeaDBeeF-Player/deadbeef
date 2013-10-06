@@ -3,16 +3,16 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# ppanhh <ppanhh@gmail.com>, 2013
+# ppanhh <vietnamesel10n@gmail.com>, 2013
 # Duy Hung Tran <nguyentieuhau@gmail.com>, 2010
-# ppanhh <ppanhh@gmail.com>, 2013
+# ppanhh <vietnamesel10n@gmail.com>, 2013
 # Duy Hung Tran <nguyentieuhau@gmail.com>, 2010
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-25 12:15+0200\n"
-"PO-Revision-Date: 2013-08-25 09:45+0000\n"
+"POT-Creation-Date: 2013-08-25 12:38+0200\n"
+"PO-Revision-Date: 2013-08-25 10:16+0000\n"
 "Last-Translator: waker <wakeroid@gmail.com>\n"
 "Language-Team: Vietnamese (http://www.transifex.com/projects/p/deadbeef-"
 "player/language/vi/)\n"

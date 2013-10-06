@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-25 12:15+0200\n"
-"PO-Revision-Date: 2013-08-25 09:45+0000\n"
-"Last-Translator: waker <wakeroid@gmail.com>\n"
+"POT-Creation-Date: 2013-08-25 12:38+0200\n"
+"PO-Revision-Date: 2013-08-28 11:10+0000\n"
+"Last-Translator: Baurzhan Muftakhidinov <baurthefirst@gmail.com>\n"
 "Language-Team: Kazakh (http://www.transifex.com/projects/p/deadbeef-player/"
 "language/kk/)\n"
 "Language: kk\n"
@@ -140,7 +140,7 @@ msgstr "Жаңа ойнату тізімі (%d)"
 
 #: ../plugins/gtkui/gtkui.c:971
 msgid "- Test logout functionality"
-msgstr ""
+msgstr "- Шығу мүмкіндігін сынау"
 
 #. register widget types
 #: ../plugins/gtkui/gtkui.c:992
@@ -149,11 +149,11 @@ msgstr "Беттері бар ойнату тізімі"
 
 #: ../plugins/gtkui/gtkui.c:994
 msgid "Splitter (top and bottom)"
-msgstr ""
+msgstr "Ажыратқыш (жоғары және төмен)"
 
 #: ../plugins/gtkui/gtkui.c:995
 msgid "Splitter (left and right)"
-msgstr ""
+msgstr "Ажыратқыш (сол және оң жақ)"
 
 #: ../plugins/gtkui/gtkui.c:997 ../plugins/gtkui/interface.c:326
 #: ../plugins/gtkui/deadbeef.glade.h:31
@@ -174,27 +174,27 @@ msgstr "Таңдалғанның қасиеттері"
 
 #: ../plugins/gtkui/gtkui.c:1001
 msgid "Album art display"
-msgstr ""
+msgstr "Альбом мұқабасын көрсету"
 
 #: ../plugins/gtkui/gtkui.c:1002
 msgid "Scope"
-msgstr ""
+msgstr "Scope"
 
 #: ../plugins/gtkui/gtkui.c:1003
 msgid "Spectrum"
-msgstr ""
+msgstr "Спектралды талдағыш"
 
 #: ../plugins/gtkui/gtkui.c:1004
 msgid "HBox"
-msgstr ""
+msgstr "HBox"
 
 #: ../plugins/gtkui/gtkui.c:1005
 msgid "VBox"
-msgstr ""
+msgstr "VBox"
 
 #: ../plugins/gtkui/gtkui.c:1006 ../plugins/gtkui/widgets.c:2897
 msgid "Button"
-msgstr ""
+msgstr "Батырма"
 
 #: ../plugins/gtkui/gtkui.c:1220
 msgid "Failed while reading help file"
@@ -209,6 +209,9 @@ msgid ""
 "The player is currently running backgroud tasks. If you quit now, the tasks "
 "will be cancelled or interrupted. This may result in data loss."
 msgstr ""
+"Плеер ағымдағы уақытта бірнеше фон тапсырмаларын орындап жатыр. Қазір "
+"жұмысын аяқтасаңыз, ол тапсырмалардан бас тартылады, немесе олар үзіледі. "
+"Бұл деректер жоғалуына әкеп соғуы мүмкін."
 
 #: ../plugins/gtkui/gtkui.c:1243
 msgid "Do you still want to quit?"
@@ -607,7 +610,7 @@ msgstr "8 биттік аудионы әрқашан 16 биттіке түрл�
 
 #: ../plugins/gtkui/interface.c:1849 ../plugins/gtkui/deadbeef.glade.h:93
 msgid "Always convert 16 bit audio to 24 bit"
-msgstr ""
+msgstr "16 биттік аудионы әрқашан 24 биттіке түрлендіру"
 
 #: ../plugins/gtkui/interface.c:1853 ../plugins/gtkui/deadbeef.glade.h:94
 msgid "Sound"
@@ -663,7 +666,7 @@ msgstr "Бумаларды қосқан кезде архивтерден қос
 
 #: ../plugins/gtkui/interface.c:1963 ../plugins/gtkui/deadbeef.glade.h:107
 msgid "Auto-reset \"Stop after current\""
-msgstr ""
+msgstr "\"Ағымдағысынан кейін тоқтатуды\" автотастау"
 
 #: ../plugins/gtkui/interface.c:1967 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Playback"
@@ -713,11 +716,11 @@ msgstr "Бірлік буманы қосқан кезде ойнату тізі�
 
 #: ../plugins/gtkui/interface.c:2072 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Enable Russian CP1251 detection and recoding"
-msgstr ""
+msgstr "Орыс CP1251 кодталуын анықтауды және қайта кодтауды іске қосу"
 
 #: ../plugins/gtkui/interface.c:2076 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Enable Chinese CP936 detection and recoding"
-msgstr ""
+msgstr "Қытайша CP936 кодталуын анықтауды және қайта кодтауды іске қосу"
 
 #: ../plugins/gtkui/interface.c:2084 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Interface refresh rate (times per second):"
@@ -737,7 +740,7 @@ msgstr "GUI плагині (ауыстырылса, қайта қосу кере
 
 #: ../plugins/gtkui/interface.c:2134 ../plugins/gtkui/deadbeef.glade.h:125
 msgid "GUI/Misc"
-msgstr ""
+msgstr "Интерфейс/түрлі"
 
 #: ../plugins/gtkui/interface.c:2149 ../plugins/gtkui/interface.c:2193
 #: ../plugins/gtkui/deadbeef.glade.h:126
@@ -839,26 +842,25 @@ msgstr "Прокси паролі:"
 
 #: ../plugins/gtkui/interface.c:2462 ../plugins/gtkui/deadbeef.glade.h:150
 msgid "HTTP User Agent:"
-msgstr ""
+msgstr "HTTP User Agent:"
 
 #: ../plugins/gtkui/interface.c:2475 ../plugins/gtkui/interface.c:4142
 #: ../plugins/gtkui/deadbeef.glade.h:151
 msgid "Edit Content-Type Mapping"
-msgstr ""
+msgstr "Content-Type сәйкестіктерін түзету"
 
 #: ../plugins/gtkui/interface.c:2479 ../plugins/gtkui/deadbeef.glade.h:152
 msgid "Network"
 msgstr "Желі"
 
 #: ../plugins/gtkui/interface.c:2492 ../plugins/gtkui/deadbeef.glade.h:153
-#, fuzzy
 msgid "Assigned Hotkeys:"
-msgstr "<b>Тағайындалған ыстық пернелер</b>"
+msgstr "Тағайындалған ыстық пернелер:"
 
 #: ../plugins/gtkui/interface.c:2527 ../plugins/gtkui/interface.c:4303
 #: ../plugins/gtkui/deadbeef.glade.h:154
 msgid "Action:"
-msgstr ""
+msgstr "Әрекет:"
 
 #: ../plugins/gtkui/interface.c:2532 ../plugins/gtkui/interface.c:2545
 #: ../plugins/gtkui/interface.c:4307 ../plugins/gtkui/deadbeef.glade.h:155
@@ -867,7 +869,7 @@ msgstr "<Орнатылмаған>"
 
 #: ../plugins/gtkui/interface.c:2540 ../plugins/gtkui/deadbeef.glade.h:156
 msgid "Key combination:"
-msgstr ""
+msgstr "Пернелер комбинациясы:"
 
 #: ../plugins/gtkui/interface.c:2549 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "Global hotkey"
@@ -879,6 +881,9 @@ msgid ""
 "or the Revert button to undo your changes.\n"
 "The changes will NOT be saved if you don't press Apply."
 msgstr ""
+"Өзгерістерді сақтау үшін Іске асыру батырмасын,\n"
+"не оларды болдырмау үшін Қайтару батырмасын қолданыңыз.\n"
+"Іске асыру батырмасы басылмаса, өзгерістер сақталмайды."
 
 #: ../plugins/gtkui/interface.c:2581 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "Hotkeys"
@@ -989,7 +994,7 @@ msgstr "ID3v2.4 жазу"
 
 #: ../plugins/gtkui/interface.c:3992 ../plugins/gtkui/deadbeef.glade.h:185
 msgid "Content-Type Mapping"
-msgstr ""
+msgstr "Content-Type сәйкестіктері"
 
 #: ../plugins/gtkui/interface.c:4015 ../plugins/gtkui/deadbeef.glade.h:186
 msgid ""
@@ -998,42 +1003,46 @@ msgid ""
 "\"audio/x-mpeg\", and need to be decoded by DeaDBeeF's own \"stdmpg\" "
 "plugin, or \"ffmpeg\" plugin."
 msgstr ""
+"Бұл кесте желілік ағындық құрама түрлері және DeaDBeeF декодер плагиндерінің "
+"арасындағы сәйкестіктерді орнатады. Мысалы, mp3 файлдарының құрама түрі "
+"\"audio/x-mpeg\" болады, және оны DeaDBeeF-тің өздік \"stdmpg\" плагині, не "
+"\"ffmpeg\" плагині декодтауы керек."
 
 #: ../plugins/gtkui/interface.c:4063 ../plugins/gtkui/deadbeef.glade.h:187
 msgid "Reset to defaults"
-msgstr ""
+msgstr "Бастапқы мәндеріне тастау"
 
 #: ../plugins/gtkui/interface.c:4158 ../plugins/gtkui/deadbeef.glade.h:188
 msgid "Content-Type:"
-msgstr ""
+msgstr "Content-Type:"
 
 #: ../plugins/gtkui/interface.c:4171 ../plugins/gtkui/deadbeef.glade.h:189
 msgid "Plugins:"
-msgstr ""
+msgstr "Плагиндер:"
 
 #: ../plugins/gtkui/interface.c:4239 ../plugins/gtkui/deadbeef.glade.h:190
 msgid "Button properties"
-msgstr ""
+msgstr "Батырма қасиеттері"
 
 #: ../plugins/gtkui/interface.c:4254 ../plugins/gtkui/deadbeef.glade.h:191
 msgid "Color:"
-msgstr ""
+msgstr "Түсі:"
 
 #: ../plugins/gtkui/interface.c:4266 ../plugins/gtkui/deadbeef.glade.h:192
 msgid "Text color:"
-msgstr ""
+msgstr "Мәтін түсі:"
 
 #: ../plugins/gtkui/interface.c:4278 ../plugins/gtkui/deadbeef.glade.h:193
 msgid "Icon:"
-msgstr ""
+msgstr "Таңбаша:"
 
 #: ../plugins/gtkui/interface.c:4290 ../plugins/gtkui/deadbeef.glade.h:194
 msgid "Label:"
-msgstr ""
+msgstr "Белгі:"
 
 #: ../plugins/gtkui/interface.c:4371 ../plugins/gtkui/deadbeef.glade.h:195
 msgid "Select action"
-msgstr ""
+msgstr "Әрекетті таңдаңыз"
 
 #: ../plugins/gtkui/mainplaylist.c:328 ../plugins/gtkui/search.c:416
 msgid "Artist / Album"
@@ -1416,7 +1425,7 @@ msgstr "Скробблинг сілтемесі"
 
 #: ../translation/extra.c:16
 msgid "Prefer Album Artist over Artist field"
-msgstr ""
+msgstr "Альбом әртісі өрісін әртіс өрісінен басым есептеу"
 
 #. OSS output plugin
 #: ../translation/extra.c:18
@@ -1488,7 +1497,7 @@ msgstr "Қайта дискретизация сапасы (0..2, жоғарыр
 
 #: ../translation/extra.c:37
 msgid "8-bit output (default is 16)"
-msgstr ""
+msgstr "8 биттік шығыс (бастапқысы 16)"
 
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:39
@@ -1497,11 +1506,11 @@ msgstr "Тректің макс. ұзындығы (мин)"
 
 #: ../translation/extra.c:40
 msgid "Fadeout length (seconds)"
-msgstr ""
+msgstr "Дыбыс өшуінің ұзақтығы (секунд)"
 
 #: ../translation/extra.c:41
 msgid "Play loops nr. of times (if available)"
-msgstr ""
+msgstr "Циклдерді ойнату рет саны (қолжетерлік болса)"
 
 #. Standard GTK2 user interface plugin
 #: ../translation/extra.c:43
@@ -1663,21 +1672,21 @@ msgstr "Дискреттеудің автожиілігі (дискреттеу 
 #. shellexecui
 #: ../translation/extra.c:97
 msgid "Configure custom shell commands"
-msgstr ""
+msgstr "Таңдауыңызша қоршам командаларын баптау"
 
 #. mpgmad
 #: ../translation/extra.c:99
 msgid "Disable gapless playback (faster scanning)"
-msgstr ""
+msgstr "Үзіліссіз ойнатуды сөндіру (скандауды жылдамдатады)"
 
 #. adplug
 #: ../translation/extra.c:101
 msgid "Prefer Ken emu over Satoh (surround won't work)"
-msgstr ""
+msgstr "Ken эмуляторын Satoh басым есептеу (surround жасамайтын болады)"
 
 #: ../translation/extra.c:102
 msgid "Enable surround"
-msgstr ""
+msgstr "Surround іске қосу"
 
 #: ../plugins/converter/convgui.c:117
 msgid "The file already exists. Overwrite?"
@@ -1773,7 +1782,7 @@ msgstr "Шығыс бумасы:"
 #: ../plugins/converter/interface.c:109
 #: ../plugins/converter/converter.glade.h:2
 msgid "Write to source track folder"
-msgstr ""
+msgstr "Бастапқы трек бумасына жазу"
 
 #: ../plugins/converter/interface.c:113
 #: ../plugins/converter/converter.glade.h:3
@@ -1966,23 +1975,33 @@ msgid ""
 "32 bit signed int\n"
 "32 bit float"
 msgstr ""
+"Қайнар көз пішімін сақтау\n"
+"8 bit signed int\n"
+"16 bit signed int\n"
+"24 bit signed int\n"
+"32 bit signed int\n"
+"32 bit float"
 
 #: ../plugins/converter/converter.glade.h:19
 msgid ""
 "Prompt\n"
 "Overwrite"
 msgstr ""
+"Сұрау\n"
+"Үстінен жазу"
 
 #: ../plugins/converter/converter.glade.h:34
 msgid ""
 "Pipe\n"
 "Temporary file"
 msgstr ""
+"Pipe\n"
+"Уақытша файл"
 
 #: ../plugins/shellexecui/interface.c:46
 #: ../plugins/shellexecui/shellexec.glade.h:1
 msgid "Custom Shell Commands"
-msgstr ""
+msgstr "Таңдауыңызша қоршам командалары"
 
 #: ../plugins/shellexecui/interface.c:69
 #: ../plugins/shellexecui/shellexec.glade.h:5
@@ -2012,16 +2031,19 @@ msgid ""
 "main application was started from. Title formatting can be used. Example: "
 "xdg-open %D"
 msgstr ""
+"Қалыпты қоршам командасы. Ол басты қолданба іске қосылған қоршам "
+"контекстінде жөнелтілетін болады. Атаудың пішімдеуін қолдануға болады. "
+"Мысалы: xdg-open %D"
 
 #: ../plugins/shellexecui/interface.c:180
 #: ../plugins/shellexecui/shellexec.glade.h:11
 msgid "ID:"
-msgstr ""
+msgstr "ID:"
 
 #: ../plugins/shellexecui/interface.c:192
 #: ../plugins/shellexecui/shellexec.glade.h:12
 msgid "Free-form name, for example \"My Shell Command\""
-msgstr ""
+msgstr "Таңдауыңызша атауы, мыс. \"Менің қоршам командам\""
 
 #: ../plugins/shellexecui/interface.c:200
 #: ../plugins/shellexecui/shellexec.glade.h:13
@@ -2029,151 +2051,155 @@ msgid ""
 "Command ID, normally it should be something short, for example \"youtube_open"
 "\". It must be unique."
 msgstr ""
+"Команданың ID-і, әдетте ол қысқа бірнәрсе болуы тиіс, мыс. \"youtube_open\". "
+"Және де ол бірегей болуы тиіс."
 
 #: ../plugins/shellexecui/interface.c:203
 #: ../plugins/shellexecui/shellexec.glade.h:15
 msgid "Single Tracks"
-msgstr ""
+msgstr "Дара тректер"
 
 #: ../plugins/shellexecui/interface.c:206
 #: ../plugins/shellexecui/shellexec.glade.h:14
 msgid "Works on single track."
-msgstr ""
+msgstr "Дара тректе жұмыс істейді."
 
 #: ../plugins/shellexecui/interface.c:208
 #: ../plugins/shellexecui/shellexec.glade.h:17
 msgid "Multiple Tracks"
-msgstr ""
+msgstr "Бірнеше трек"
 
 #: ../plugins/shellexecui/interface.c:211
 #: ../plugins/shellexecui/shellexec.glade.h:16
 msgid "Works on multiple tracks."
-msgstr ""
+msgstr "Бірнеше тректе жұмыс істейді."
 
 #: ../plugins/shellexecui/interface.c:213
 #: ../plugins/shellexecui/shellexec.glade.h:19
 msgid "Local"
-msgstr ""
+msgstr "Жергілікті"
 
 #: ../plugins/shellexecui/interface.c:216
 #: ../plugins/shellexecui/shellexec.glade.h:18
 msgid "Works on local files."
-msgstr ""
+msgstr "Жергілікті файлдарда жұмыс істейді."
 
 #: ../plugins/shellexecui/interface.c:218
 #: ../plugins/shellexecui/shellexec.glade.h:21
 msgid "Remote"
-msgstr ""
+msgstr "Қашықтағы"
 
 #: ../plugins/shellexecui/interface.c:221
 #: ../plugins/shellexecui/shellexec.glade.h:20
 msgid "Works on remote files (e.g. http:// streams)"
-msgstr ""
+msgstr "Қашықтағы файлдарда жұмыс істейді (мыс, http:// streams)"
 
 #: ../plugins/shellexecui/interface.c:223
 #: ../plugins/shellexecui/shellexec.glade.h:23
 msgid "Common"
-msgstr ""
+msgstr "Жалпы"
 
 #: ../plugins/shellexecui/interface.c:226
 #: ../plugins/shellexecui/shellexec.glade.h:22
 msgid "Item should appear in the main menu"
-msgstr ""
+msgstr "Нәрсе басты мәзірден көрінуі тиіс"
 
 #: ../plugins/shellexecui/shellexecui.c:94
 msgid "Add Command"
-msgstr ""
+msgstr "Команданы қосу"
 
 #: ../plugins/shellexecui/shellexecui.c:137 ../plugins/gtkui/widgets.c:578
 msgid "Delete"
-msgstr ""
+msgstr "Өшіру"
 
 #: ../plugins/shellexecui/shellexecui.c:139
 msgid "This action will delete the selected shell command. Are you sure?"
-msgstr ""
+msgstr "Бұл әрекет таңдалған қоршам командасын өшіреді. Осыны қалайсыз ба?"
 
 #: ../plugins/shellexecui/shellexecui.c:141
 msgid "Confirm Remove"
-msgstr ""
+msgstr "Өшіруді растау"
 
 #: ../plugins/shellexecui/shellexecui.c:227
 msgid "ID must be non-empty and unique.\n"
-msgstr ""
+msgstr "ID бос болмауы және бірегей болуы тиіс.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:233
 msgid "Title must be non-empty.\n"
-msgstr ""
+msgstr "Атауы бос болмауы тиіс.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:239
 msgid "Shell Command must be non-empty.\n"
-msgstr ""
+msgstr "Қоршам командасы бос болмауы тиіс.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:246
 #: ../plugins/shellexecui/shellexecui.c:250
 msgid "Invalid Values"
-msgstr ""
+msgstr "Қате мәндер"
 
 #: ../plugins/gtkui/actionhandlers.c:107
 msgid "Supported sound formats"
-msgstr ""
+msgstr "Қолдауы бар дыбыс пішімдері"
 
 #: ../plugins/gtkui/actionhandlers.c:118
 msgid "All files (*)"
-msgstr ""
+msgstr "Барлық файлдар (*)"
 
 #: ../plugins/gtkui/actionhandlers.c:126
 msgid "Open file(s)..."
-msgstr ""
+msgstr "Файл(дар)ды ашу..."
 
 #: ../plugins/gtkui/actionhandlers.c:165
 msgid "Add file(s) to playlist..."
-msgstr ""
+msgstr "Файл(дар)ды ойнату тізіміне қосу..."
 
 #: ../plugins/gtkui/actionhandlers.c:211
 msgid "Add folder(s) to playlist..."
-msgstr ""
+msgstr "Бума(лар)ды ойнату тізіміне қосу..."
 
 #: ../plugins/gtkui/actionhandlers.c:216
 msgid "Follow symlinks"
-msgstr ""
+msgstr "Сілтемелерден өту"
 
 #: ../plugins/gtkui/actionhandlers.c:427
 msgid "help.txt"
-msgstr ""
+msgstr "help.kk.txt"
 
 #: ../plugins/gtkui/actionhandlers.c:490
 msgid "Delete files from disk"
-msgstr ""
+msgstr "Файлдарды дисктен өшіру"
 
 #: ../plugins/gtkui/actionhandlers.c:491
 msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
 msgstr ""
+"Файлдар жоғалады. Жалғастыру керек пе?\n"
+"(Бұл сұхбатты GTKUI плагин баптауларында сөндіруге болады)"
 
 #: ../plugins/gtkui/actionhandlers.c:660
 msgid "Load Playlist"
-msgstr ""
+msgstr "Ойнату тізімін жүктеу"
 
 #: ../plugins/gtkui/actionhandlers.c:675
 msgid "Other files (*)"
-msgstr ""
+msgstr "Басқа файлдар (*)"
 
 #: ../plugins/gtkui/actionhandlers.c:709
 msgid "Save Playlist As"
-msgstr ""
+msgstr "Ойнату тізімін қалайша сақтау"
 
 #: ../plugins/gtkui/actionhandlers.c:720
 msgid "DeaDBeeF playlist files (*.dbpl)"
-msgstr ""
+msgstr "DeaDBeeF ойнату тізімі файлдары (*.dbpl)"
 
 #: ../plugins/gtkui/ctmapping.c:129
 msgid "Content-Type"
-msgstr ""
+msgstr "Content-Type"
 
 #: ../plugins/gtkui/ctmapping.c:199
 msgid "Invalid value(s)."
-msgstr ""
+msgstr "Мән(дер) қате."
 
 #: ../plugins/gtkui/ctmapping.c:200
 msgid ""
@@ -2185,79 +2211,86 @@ msgid ""
 "Content type should be only letters, numbers and '-' sign.\n"
 "Plugin id can contain only letters and numbers."
 msgstr ""
+"Content-type және Плагиндер өрістері бос болмауы және ережелерге сай болуы "
+"тиіс.\n"
+"Мысалы content-type: 'audio/mpeg'.\n"
+"Мысал плагин ID-лары: 'stdmpg ffmpeg'.\n"
+"Плагиндер ID ажыратқыштары ретінде бос аралықтар қолданылуы тиіс.\n"
+"Құрама түрі тек әріптер, сандар және '-' таңбасынан тұруы тиіс.\n"
+"Плагин ID-і ішінде тек әріптер және сандар болуы тиіс."
 
 #: ../plugins/gtkui/ctmapping.c:228 ../plugins/gtkui/ctmapping.c:260
 msgid "Nothing is selected."
-msgstr ""
+msgstr "Ешнәрсе таңдалмады."
 
 #: ../plugins/gtkui/widgets.c:553
 msgid "Replace with..."
-msgstr ""
+msgstr "Немен алмастыру..."
 
 #: ../plugins/gtkui/widgets.c:558
 msgid "Insert..."
-msgstr ""
+msgstr "Кірістіру..."
 
 #: ../plugins/gtkui/widgets.c:585
 msgid "Cut"
-msgstr ""
+msgstr "Қиып алу"
 
 #: ../plugins/gtkui/widgets.c:592
 msgid "Copy"
-msgstr ""
+msgstr "Көшіру"
 
 #: ../plugins/gtkui/widgets.c:599
 msgid "Paste"
-msgstr ""
+msgstr "Кірістіру"
 
 #: ../plugins/gtkui/widgets.c:942
 msgid "Lock movement"
-msgstr ""
+msgstr "Жылжытуды блоктау"
 
 #: ../plugins/gtkui/widgets.c:1227
 msgid "Move tab left"
-msgstr ""
+msgstr "Бетті солға жылжыту"
 
 #: ../plugins/gtkui/widgets.c:1234
 msgid "Move tab right"
-msgstr ""
+msgstr "Бетті оңға жылжыту"
 
 #: ../plugins/gtkui/widgets.c:1241
 msgid "Remove tab"
-msgstr ""
+msgstr "Бетті өшіру"
 
 #: ../plugins/gtkui/widgets.c:1248
 msgid "Rename tab"
-msgstr ""
+msgstr "Беттің атын ауыстыру"
 
 #: ../plugins/gtkui/widgets.c:1309
 msgid "Add new tab"
-msgstr ""
+msgstr "Жаңа бетті қосу"
 
 #: ../plugins/gtkui/widgets.c:1783
 msgid "Show Column Headers"
-msgstr ""
+msgstr "Бағандар атауларын көрсету"
 
 #: ../plugins/gtkui/widgets.c:2634
 msgid "Expand the box by 1 item"
-msgstr ""
+msgstr "Бұл боксты 1 элементке кеңейту"
 
 #: ../plugins/gtkui/widgets.c:2639
 msgid "Shrink the box by 1 item"
-msgstr ""
+msgstr "Бұл боксты 1 элементке азайту"
 
 #: ../plugins/gtkui/widgets.c:2644
 msgid "Homogeneous"
-msgstr ""
+msgstr "Біртектес"
 
 #: ../plugins/gtkui/widgets.c:2684
 msgid "Expand"
-msgstr ""
+msgstr "Жазу"
 
 #: ../plugins/gtkui/widgets.c:2692
 msgid "Fill"
-msgstr ""
+msgstr "Толтыру"
 
 #: ../plugins/gtkui/widgets.c:3075
 msgid "Configure button"
-msgstr ""
+msgstr "Батырманы баптау"

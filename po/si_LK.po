@@ -1,285 +1,284 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-#
+# 
 # Translators:
-# SatyaN <satyathavy@gmail.com>, 2010
+# amscata <amith@compsoc.lk>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-08-25 12:38+0200\n"
-"PO-Revision-Date: 2013-08-25 10:16+0000\n"
-"Last-Translator: waker <wakeroid@gmail.com>\n"
-"Language-Team: Khmer (http://www.transifex.com/projects/p/deadbeef-player/"
-"language/km/)\n"
-"Language: km\n"
+"PO-Revision-Date: 2013-10-01 08:34+0000\n"
+"Last-Translator: amscata <amith@compsoc.lk>\n"
+"Language-Team: Sinhala (Sri Lanka) (http://www.transifex.com/projects/p/deadbeef-player/language/si_LK/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: si_LK\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../plugins/gtkui/callbacks.c:542
 #, c-format
 msgid "About DeaDBeeF %s"
-msgstr "អំពី DeaDBeeF %s"
+msgstr "DeaDBeeF පිළිබඳ විස්තර %s"
 
 #: ../plugins/gtkui/callbacks.c:555
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
-msgstr "DeaDBeeF %s ផ្លាស់ប្តួរកំណត់ហេតុ"
+msgstr "DeaDBeeF %s වෙනස්කම් ලොගය"
 
 #: ../plugins/gtkui/callbacks.c:892
 #, c-format
 msgid "DeaDBeeF Translators"
-msgstr ""
+msgstr "DeaDBeeF පරිවර්තකයින්"
 
 #: ../plugins/gtkui/eq.c:141
 msgid "Save DeaDBeeF EQ Preset"
-msgstr "រក្សា DeaDBeeF EQ Preset"
+msgstr "DeaDBeeF සමකාරක සැකසුම් සුරකින්න"
 
 #: ../plugins/gtkui/eq.c:148
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
-msgstr ""
+msgstr "DeaDBeeF සමකාරක සැකසුම් ගොනුව (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:187
 msgid "Load DeaDBeeF EQ Preset..."
-msgstr "ផ្ទុក DeaDBeeF EQ Preset"
+msgstr "DeaDBeeF සමකාරක සැකසුම් විවෘත කරන්න"
 
 #: ../plugins/gtkui/eq.c:191
 msgid "DeaDBeeF EQ presets (*.ddbeq)"
-msgstr ""
+msgstr "DeaDBeeF සමකාරක සැකසුම් (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:252
 msgid "Import Foobar2000 EQ Preset..."
-msgstr "បញ្ចូល Foobar2000 EQ Preset..."
+msgstr "Foobar2000 සමකාරක සැකසුම් ලබාගන්න..."
 
 #: ../plugins/gtkui/eq.c:256
 msgid "Foobar2000 EQ presets (*.feq)"
-msgstr ""
+msgstr "Foobar2000 සමකාරක සැකසුම් (*.feq)"
 
 #: ../plugins/gtkui/eq.c:321
 msgid "Save Preset"
-msgstr "រក្សាទុកកំណត់ជាមុន"
+msgstr "සැකසුම සුරකින්න"
 
 #: ../plugins/gtkui/eq.c:329
 msgid "Load Preset"
-msgstr "ផ្ទុកកំណត់ជាមុន"
+msgstr "සැකසුම විවෘත කරන්න"
 
 #: ../plugins/gtkui/eq.c:337
 msgid "Import Foobar2000 Preset"
-msgstr "បញ្ចូល Foobar2000 EQ Preset..."
+msgstr "Foobar2000 සැකසුම් ලබාගන්න"
 
 #: ../plugins/gtkui/eq.c:362
 msgid "Enable"
-msgstr "អនុញ្ញាត"
+msgstr "සක්‍රීය කරන්න"
 
 #: ../plugins/gtkui/eq.c:371
 msgid "Zero All"
-msgstr "សូន្យទាំងអស់"
+msgstr "සියල්ල ශුන්‍යය කරන්න"
 
 #: ../plugins/gtkui/eq.c:378
 msgid "Zero Preamp"
-msgstr "គ្មានប្រដាប់បំពងសំលេង"
+msgstr "පූර්ව වර්ධකය ශුන්‍යය කරන්න"
 
 #: ../plugins/gtkui/eq.c:385
 msgid "Zero Bands"
-msgstr "គ្មានក្រុមតន្ត្រី"
+msgstr "කලාප ශුන්‍යය කරන්න"
 
 #: ../plugins/gtkui/eq.c:392 ../plugins/converter/interface.c:803
 #: ../plugins/converter/converter.glade.h:50
 msgid "Presets"
-msgstr ""
+msgstr "සැකසුම්"
 
 #: ../plugins/gtkui/gtkui.c:154
 #, c-format
 msgid "1 day %d:%02d:%02d"
-msgstr ""
+msgstr "දිනක් %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:157
 #, c-format
 msgid "%d days %d:%02d:%02d"
-msgstr ""
+msgstr "දින %d %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:166
 #, c-format
 msgid "Stopped | %d tracks | %s total playtime"
-msgstr ""
+msgstr "Stopped | %d tracks | %s මුළු ධාවන කාලය"
 
 #: ../plugins/gtkui/gtkui.c:179 ../playlist.c:3053
 msgid "Mono"
-msgstr "ម៉ូណូ"
+msgstr "එකම ශබ්දය දෙපසින්ම ඇසීම"
 
 #: ../plugins/gtkui/gtkui.c:179 ../playlist.c:3053
 msgid "Stereo"
-msgstr "ស្តេរេអូ"
+msgstr "ශබ්ද දෙකක් දෙපසින් ඇසීම"
 
 #: ../plugins/gtkui/gtkui.c:204
 #, c-format
 msgid "| %4d kbps "
-msgstr ""
+msgstr "| %4d kbps"
 
 #: ../plugins/gtkui/gtkui.c:210
 msgid "Paused | "
-msgstr "ផ្អាក"
+msgstr "මදකට නවතා ඇත |"
 
 #: ../plugins/gtkui/gtkui.c:215
 #, c-format
 msgid ""
 "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
-msgstr ""
+msgstr "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d ගීත| %s මුළු ධාවන කාලය"
 
 #: ../plugins/gtkui/gtkui.c:726 ../plugins/gtkui/fileman.c:41
 msgid "New Playlist"
-msgstr "បង្កើតបញ្ជីរថ្មី"
+msgstr "නව ගීත ලැයිස්තුව"
 
 #: ../plugins/gtkui/gtkui.c:729
 #, c-format
 msgid "New Playlist (%d)"
-msgstr ""
+msgstr "නව ගීත ලැයිස්තුව (%d)"
 
 #: ../plugins/gtkui/gtkui.c:971
 msgid "- Test logout functionality"
-msgstr ""
+msgstr "- ඉවත්වයාමේ ක්‍රියාව පරීක්ෂා කරන්න"
 
 #. register widget types
 #: ../plugins/gtkui/gtkui.c:992
 msgid "Playlist with tabs"
-msgstr ""
+msgstr "ටැබ සහිත ගීත ලැයිස්තුව"
 
 #: ../plugins/gtkui/gtkui.c:994
 msgid "Splitter (top and bottom)"
-msgstr ""
+msgstr "විභේදකය (ඉහළ සහ පහළ)"
 
 #: ../plugins/gtkui/gtkui.c:995
 msgid "Splitter (left and right)"
-msgstr ""
+msgstr "විභේදකය (වම සහ දකුණ)"
 
 #: ../plugins/gtkui/gtkui.c:997 ../plugins/gtkui/interface.c:326
 #: ../plugins/gtkui/deadbeef.glade.h:31
 msgid "Tabs"
-msgstr "ផ្ទាំង"
+msgstr "ටැබ"
 
 #: ../plugins/gtkui/gtkui.c:998
 msgid "Playlist tabs"
-msgstr ""
+msgstr "ගීත ලැයිස්තු ටැබ"
 
 #: ../plugins/gtkui/gtkui.c:999
 msgid "Playlist"
-msgstr ""
+msgstr "ගීත ලැයිස්තුව"
 
 #: ../plugins/gtkui/gtkui.c:1000
 msgid "Selection properties"
-msgstr ""
+msgstr "වරණ සතු ගුණාංග"
 
 #: ../plugins/gtkui/gtkui.c:1001
 msgid "Album art display"
-msgstr ""
+msgstr "ඇල්බම රූප දර්ශනය"
 
 #: ../plugins/gtkui/gtkui.c:1002
 msgid "Scope"
-msgstr ""
+msgstr "බලපවත්නා අවකාශය"
 
 #: ../plugins/gtkui/gtkui.c:1003
 msgid "Spectrum"
-msgstr ""
+msgstr "වර්ණාවලිය"
 
 #: ../plugins/gtkui/gtkui.c:1004
 msgid "HBox"
-msgstr ""
+msgstr "HBox"
 
 #: ../plugins/gtkui/gtkui.c:1005
 msgid "VBox"
-msgstr ""
+msgstr "VBox"
 
 #: ../plugins/gtkui/gtkui.c:1006 ../plugins/gtkui/widgets.c:2897
 msgid "Button"
-msgstr ""
+msgstr "බොත්තම"
 
 #: ../plugins/gtkui/gtkui.c:1220
 msgid "Failed while reading help file"
-msgstr "មានកំហុសពេលកំពុងអានឯកសារជំនួយ"
+msgstr "උපකාරක ගොනුව කියවීමට අසමත් විය"
 
 #: ../plugins/gtkui/gtkui.c:1230
 msgid "Failed to load help file"
-msgstr "មានកំហុសពេលផ្ទុកឯកសារជំនួយ"
+msgstr "උපකාරක ගොනුව විවෘත කිරීමට නොහැකි විය"
 
 #: ../plugins/gtkui/gtkui.c:1241
 msgid ""
 "The player is currently running backgroud tasks. If you quit now, the tasks "
 "will be cancelled or interrupted. This may result in data loss."
-msgstr ""
+msgstr "ධාවකය පසුබිම් කාර්යයක් සිදුකරමින් සිටියි. මේ මොහොතේ එම ධාවකය වසා දැමුවහොත් හෝ එයට බාධා කළහොත් එමඟින් දත්ත හානියක් ඇති වීමට ඉඩකඩ ඇත."
 
 #: ../plugins/gtkui/gtkui.c:1243
 msgid "Do you still want to quit?"
-msgstr ""
+msgstr "ඔබට තවමත් වසා දැමීමට අවශ්‍යය ද?"
 
 #: ../plugins/gtkui/gtkui.c:1244 ../plugins/gtkui/trkproperties.c:165
 #: ../plugins/converter/convgui.c:862 ../plugins/converter/convgui.c:1317
 #: ../plugins/gtkui/actionhandlers.c:492
 msgid "Warning"
-msgstr ""
+msgstr "අනතුරු ඇඟවීමයි"
 
 #: ../plugins/gtkui/interface.c:146 ../plugins/gtkui/deadbeef.glade.h:1
 msgid "_File"
-msgstr "ទិន្នន៍យ"
+msgstr "ගොනුව _F"
 
 #: ../plugins/gtkui/interface.c:153 ../plugins/gtkui/deadbeef.glade.h:2
 msgid "_Open file(s)"
-msgstr "បើកទិន្នន៍យ"
+msgstr "ගොනු(ව) විවෘත කරන්න _O"
 
 #: ../plugins/gtkui/interface.c:166 ../plugins/gtkui/deadbeef.glade.h:3
 msgid "Add file(s)"
-msgstr "បញ្ចួលទិន្នន៍យ"
+msgstr "ගොනු(ව) එකතු කරන්න"
 
 #: ../plugins/gtkui/interface.c:174 ../plugins/gtkui/deadbeef.glade.h:4
 msgid "Add folder(s)"
-msgstr "បង្កើតថត"
+msgstr "ෆෝල්ඩර(ය) එකතු කරන්න"
 
 #: ../plugins/gtkui/interface.c:182 ../plugins/gtkui/interface.c:3238
 #: ../plugins/gtkui/deadbeef.glade.h:5
 msgid "Add location"
-msgstr "បង្កើតទីតាំង"
+msgstr "ස්ථානය එකතු කරන්න"
 
 #: ../plugins/gtkui/interface.c:191 ../plugins/gtkui/deadbeef.glade.h:6
 msgid "New playlist"
-msgstr "បញ្ជីរថ្មី"
+msgstr "නව ගීත ලැයිස්තුව"
 
 #: ../plugins/gtkui/interface.c:195 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Load playlist"
-msgstr "ផ្ទុកបញ្ជីរ"
+msgstr "ගීත ලැයිස්තුව විවෘත කරන්න"
 
 #: ../plugins/gtkui/interface.c:199 ../plugins/gtkui/deadbeef.glade.h:8
 msgid "Save playlist"
-msgstr "រក្សាទុកបញ្ជីរ"
+msgstr "ගීත ලැයිස්තුව සුරකින්න"
 
 #: ../plugins/gtkui/interface.c:208 ../plugins/gtkui/deadbeef.glade.h:9
 msgid "_Quit"
-msgstr "ចាកចេញ"
+msgstr "ඉවත්වන්න _Q"
 
 #: ../plugins/gtkui/interface.c:216 ../plugins/gtkui/deadbeef.glade.h:10
 msgid "_Edit"
-msgstr "កែសំរួល"
+msgstr "සංස්කරණය _E"
 
 #: ../plugins/gtkui/interface.c:223 ../plugins/gtkui/deadbeef.glade.h:11
 msgid "_Clear"
-msgstr "ជម្រះ"
+msgstr "පිරිසිදු කරන්න _C"
 
 #: ../plugins/gtkui/interface.c:231 ../plugins/gtkui/deadbeef.glade.h:12
 msgid "Select all"
-msgstr "ជ្រើសទាំងអស់"
+msgstr "සියල්ල තෝරන්න"
 
 #: ../plugins/gtkui/interface.c:235 ../plugins/gtkui/deadbeef.glade.h:13
 msgid "Deselect all"
-msgstr "ដោះជម្រើសទាំងអស់"
+msgstr "සියල්ල තේරීම ඉවත් කරන්න"
 
 #: ../plugins/gtkui/interface.c:239 ../plugins/gtkui/deadbeef.glade.h:14
 msgid "Invert selection"
-msgstr "ដាក់បញ្ច្រាសជម្រើស"
+msgstr "තෝරාගත් පිළිවෙළ ප්‍රතිවර්ත කරන්න"
 
 #: ../plugins/gtkui/interface.c:243 ../plugins/gtkui/deadbeef.glade.h:15
 msgid "Selection"
-msgstr "ជម្រើស"
+msgstr "වරණය"
 
 #: ../plugins/gtkui/interface.c:250 ../plugins/gtkui/plcommon.c:489
 #: ../plugins/gtkui/deadbeef.glade.h:16 ../plugins/converter/interface.c:628
@@ -287,19 +286,19 @@ msgstr "ជម្រើស"
 #: ../plugins/shellexecui/interface.c:65
 #: ../plugins/shellexecui/shellexec.glade.h:4
 msgid "Remove"
-msgstr "យកចេញ"
+msgstr "ඉවත් කරන්න"
 
 #: ../plugins/gtkui/interface.c:258 ../plugins/gtkui/deadbeef.glade.h:17
 msgid "Crop"
-msgstr "ច្រឹប"
+msgstr "අවශ්‍ය පරිදි කපා හරින්න"
 
 #: ../plugins/gtkui/interface.c:262 ../plugins/gtkui/deadbeef.glade.h:18
 msgid "_Find"
-msgstr "សែ្វងរក"
+msgstr "සොයන්න _F"
 
 #: ../plugins/gtkui/interface.c:266 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Sort by"
-msgstr ""
+msgstr "පිළිවෙළට සකස් කල යුත්තේ"
 
 #: ../plugins/gtkui/interface.c:273 ../plugins/gtkui/interface.c:1479
 #: ../plugins/gtkui/mainplaylist.c:330 ../plugins/gtkui/prefwin.c:321
@@ -309,214 +308,214 @@ msgstr ""
 #: ../plugins/converter/converter.glade.h:43
 #: ../plugins/shellexecui/shellexecui.c:322
 msgid "Title"
-msgstr "ចំណងជើង"
+msgstr "මාතෘකාව"
 
 #: ../plugins/gtkui/interface.c:277 ../plugins/gtkui/deadbeef.glade.h:21
 msgid "Track number"
-msgstr ""
+msgstr "ගීතයේ අංකය"
 
 #: ../plugins/gtkui/interface.c:281 ../plugins/gtkui/interface.c:1478
 #: ../plugins/gtkui/interface.c:1877 ../plugins/gtkui/deadbeef.glade.h:22
 #: ../translation/extra.c:73
 msgid "Album"
-msgstr "អ៉ាល់បុ៑ម"
+msgstr "ඇල්බමය"
 
 #. Track properties dialog
 #: ../plugins/gtkui/interface.c:285 ../plugins/gtkui/interface.c:1477
 #: ../plugins/gtkui/plcommon.c:1044 ../plugins/gtkui/deadbeef.glade.h:23
 #: ../translation/extra.c:69
 msgid "Artist"
-msgstr "អ្នកនិពន្ធ"
+msgstr "ගායකයා"
 
 #: ../plugins/gtkui/interface.c:289 ../plugins/gtkui/deadbeef.glade.h:24
 #: ../translation/extra.c:74
 msgid "Date"
-msgstr ""
+msgstr "දිනය"
 
 #: ../plugins/gtkui/interface.c:293 ../plugins/gtkui/interface.c:370
 #: ../plugins/gtkui/deadbeef.glade.h:25
 msgid "Random"
-msgstr "ចៃដន្យ"
+msgstr "සසම්භාවී"
 
 #: ../plugins/gtkui/interface.c:297 ../plugins/gtkui/interface.c:1483
 #: ../plugins/gtkui/plcommon.c:1048 ../plugins/gtkui/deadbeef.glade.h:26
 msgid "Custom"
-msgstr "ផ្ទាល់ខ្លួន"
+msgstr "රිසි ආකාරයට සකසන්න"
 
 #: ../plugins/gtkui/interface.c:306 ../plugins/gtkui/interface.c:1802
 #: ../plugins/gtkui/deadbeef.glade.h:27
 msgid "Preferences"
-msgstr "ចំណង់ចំណូលចិត្ត"
+msgstr "අභිමතය"
 
 #: ../plugins/gtkui/interface.c:310 ../plugins/gtkui/deadbeef.glade.h:28
 msgid "_View"
-msgstr "មើល"
+msgstr "දර්ශනය කරන්න _V"
 
 #: ../plugins/gtkui/interface.c:317 ../plugins/gtkui/deadbeef.glade.h:29
 msgid "Status bar"
-msgstr "របាស្ថានភាព"
+msgstr "තත්ව දර්ශන තීරුව"
 
 #: ../plugins/gtkui/interface.c:321 ../plugins/gtkui/deadbeef.glade.h:30
 msgid "Menu bar"
-msgstr ""
+msgstr "මෙනූ තීරුව"
 
 #: ../plugins/gtkui/interface.c:330 ../plugins/gtkui/deadbeef.glade.h:32
 msgid "Equalizer"
-msgstr "ធ្វើអោយស្មើគ្នា"
+msgstr "සමකාරකය"
 
 #: ../plugins/gtkui/interface.c:334 ../plugins/gtkui/deadbeef.glade.h:33
 msgid "Design mode"
-msgstr ""
+msgstr "සැළසුම් කිරීමේ ප්‍රකාරය"
 
 #: ../plugins/gtkui/interface.c:338 ../plugins/gtkui/deadbeef.glade.h:34
 msgid "_Playback"
-msgstr "ចាក់សារថ្មី"
+msgstr "නැවත ධාවනය _P"
 
 #: ../plugins/gtkui/interface.c:345 ../plugins/gtkui/interface.c:3514
 #: ../plugins/gtkui/deadbeef.glade.h:35
 msgid "Order"
-msgstr "លំដាប់"
+msgstr "අනුපිළිවෙළ"
 
 #: ../plugins/gtkui/interface.c:352 ../plugins/gtkui/deadbeef.glade.h:36
 msgid "Linear"
-msgstr "លីនេអែ៑រ"
+msgstr "රේඛීය"
 
 #: ../plugins/gtkui/interface.c:358 ../plugins/gtkui/deadbeef.glade.h:37
 msgid "Shuffle tracks"
-msgstr ""
+msgstr "ගීත කලවම් කරන්න"
 
 #: ../plugins/gtkui/interface.c:364 ../plugins/gtkui/deadbeef.glade.h:38
 msgid "Shuffle albums"
-msgstr ""
+msgstr "ඇල්බම කලවම් කරන්න"
 
 #: ../plugins/gtkui/interface.c:376 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Looping"
-msgstr "ការរង្វិលជុំ"
+msgstr "නැවත නැවත ධාවනය කිරීම"
 
 #: ../plugins/gtkui/interface.c:383 ../plugins/gtkui/deadbeef.glade.h:40
 msgid "Loop all"
-msgstr ""
+msgstr "සියලු ගීත නැවත නැවත ධාවනය කරන්න"
 
 #: ../plugins/gtkui/interface.c:389 ../plugins/gtkui/deadbeef.glade.h:41
 msgid "Loop single song"
-msgstr ""
+msgstr "ගීය නැවත නැවත ධාවනය කරන්න"
 
 #: ../plugins/gtkui/interface.c:395 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Don't loop"
-msgstr ""
+msgstr "නැවත නැවත ධාවනය නොකරන්න"
 
 #: ../plugins/gtkui/interface.c:401 ../plugins/gtkui/deadbeef.glade.h:43
 msgid "Scroll follows playback"
-msgstr "រមូរចាក់សារថ្មី"
+msgstr "අනුචලන පිලිවෙළින් ධාවනය පෙන්වන්න"
 
 #: ../plugins/gtkui/interface.c:406 ../plugins/gtkui/deadbeef.glade.h:44
 msgid "Cursor follows playback"
-msgstr ""
+msgstr "කර්සරය මගින් ධාවන පිළිවෙළ පෙන්වන්න"
 
 #: ../plugins/gtkui/interface.c:410 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "Stop after current"
-msgstr "បញ្ចប់បន្ទាប់ពីបច្ចុប្បន្ន"
+msgstr "මෙම ගීතයට පසු නවත්වන්න"
 
 #: ../plugins/gtkui/interface.c:419 ../plugins/gtkui/deadbeef.glade.h:46
 msgid "Jump to current track"
-msgstr ""
+msgstr "ධාවනය කල ගීතයට යොමුකරන්න"
 
 #: ../plugins/gtkui/interface.c:423 ../plugins/gtkui/interface.c:430
 #: ../plugins/gtkui/deadbeef.glade.h:47
 msgid "_Help"
-msgstr "ជំនួយ"
+msgstr "උදව් _H"
 
 #: ../plugins/gtkui/interface.c:438 ../plugins/gtkui/deadbeef.glade.h:48
 msgid "_ChangeLog"
-msgstr "ផ្លាស់ប្តួរកំណត់ហេតុ"
+msgstr "වෙනස්කම් ලොගය _C"
 
 #: ../plugins/gtkui/interface.c:447 ../plugins/gtkui/deadbeef.glade.h:49
 msgid "_GPLv2"
-msgstr ""
+msgstr "_GPLv2"
 
 #: ../plugins/gtkui/interface.c:451 ../plugins/gtkui/deadbeef.glade.h:50
 msgid "_LGPLv2.1"
-msgstr ""
+msgstr "_LGPLv2.1"
 
 #: ../plugins/gtkui/interface.c:460 ../plugins/gtkui/deadbeef.glade.h:51
 msgid "_About"
-msgstr "អំពី"
+msgstr "පිළිබඳ තොරතුරු _A"
 
 #: ../plugins/gtkui/interface.c:468 ../plugins/gtkui/deadbeef.glade.h:52
 msgid "_Translators"
-msgstr ""
+msgstr "පරිවර්තක _T"
 
 #: ../plugins/gtkui/interface.c:847 ../plugins/gtkui/deadbeef.glade.h:53
 msgid "Search"
-msgstr "ស្វែងរក"
+msgstr "සොයන්න"
 
 #: ../plugins/gtkui/interface.c:916 ../plugins/gtkui/deadbeef.glade.h:54
 msgid "Stop"
-msgstr "ឈប់"
+msgstr "නවතන්න"
 
 #: ../plugins/gtkui/interface.c:924 ../plugins/gtkui/deadbeef.glade.h:55
 msgid "Play"
-msgstr "ចាក់"
+msgstr "ධාවනය කරන්න"
 
 #: ../plugins/gtkui/interface.c:932 ../plugins/gtkui/deadbeef.glade.h:56
 msgid "Pause"
-msgstr "ផ្អាក"
+msgstr "මදකට නතර කරන්න"
 
 #: ../plugins/gtkui/interface.c:940 ../plugins/gtkui/deadbeef.glade.h:57
 msgid "Previous"
-msgstr "មុន"
+msgstr "පෙර ගීතය"
 
 #: ../plugins/gtkui/interface.c:948 ../plugins/gtkui/deadbeef.glade.h:58
 msgid "Next"
-msgstr "បន្ទាប់"
+msgstr "මීළඟ ගීතය"
 
 #: ../plugins/gtkui/interface.c:956 ../plugins/gtkui/deadbeef.glade.h:59
 msgid "Play Random"
-msgstr "ចាក់ចែដន្យ"
+msgstr "අහඹු ලෙස ධාවනය කරන්න"
 
 #: ../plugins/gtkui/interface.c:965 ../plugins/gtkui/deadbeef.glade.h:60
 msgid "About"
-msgstr "អំពី"
+msgstr "පිළිබඳ තොරතුරු"
 
 #: ../plugins/gtkui/interface.c:978 ../plugins/gtkui/deadbeef.glade.h:61
 msgid "Quit"
-msgstr "លះបង់"
+msgstr "නවතන්න"
 
 #: ../plugins/gtkui/interface.c:1098 ../plugins/gtkui/deadbeef.glade.h:62
 #: ../plugins/converter/convgui.c:1421 ../plugins/converter/convgui.c:1429
 #: ../plugins/gtkui/actionhandlers.c:428
 msgid "Help"
-msgstr "ជំនួយ"
+msgstr "උදව්"
 
 #: ../plugins/gtkui/interface.c:1171 ../plugins/gtkui/deadbeef.glade.h:63
 msgid "Track Properties"
-msgstr "ដានលក្ខណះសម្បត្តិ"
+msgstr "ගීතයේ තොරතුරු"
 
 #: ../plugins/gtkui/interface.c:1189 ../plugins/gtkui/deadbeef.glade.h:64
 msgid "Location:"
-msgstr ""
+msgstr "ස්ථානය:"
 
 #: ../plugins/gtkui/interface.c:1230 ../plugins/gtkui/deadbeef.glade.h:65
 msgid "Settings"
-msgstr ""
+msgstr "සැකසුම්"
 
 #: ../plugins/gtkui/interface.c:1256 ../plugins/gtkui/deadbeef.glade.h:66
 msgid "_Apply"
-msgstr "អនុវត្ត"
+msgstr "යොදන්න _A"
 
 #: ../plugins/gtkui/interface.c:1277 ../plugins/gtkui/interface.c:1323
 #: ../plugins/gtkui/deadbeef.glade.h:67
 msgid "_Close"
-msgstr "បិទ"
+msgstr "නිමා කරන්න _C"
 
 #: ../plugins/gtkui/interface.c:1281 ../plugins/gtkui/deadbeef.glade.h:68
 msgid "Metadata"
-msgstr "មេតាទិន្នន៍យ"
+msgstr "පාර-දත්ත"
 
 #: ../plugins/gtkui/interface.c:1327 ../plugins/gtkui/plcommon.c:636
 #: ../plugins/gtkui/deadbeef.glade.h:69
 msgid "Properties"
-msgstr "លក្ខណះសម្បត្តិ"
+msgstr "වත්කම්"
 
 #: ../plugins/gtkui/interface.c:1449 ../plugins/gtkui/interface.c:3139
 #: ../plugins/gtkui/deadbeef.glade.h:72 ../plugins/converter/interface.c:378
@@ -524,469 +523,469 @@ msgstr "លក្ខណះសម្បត្តិ"
 #: ../plugins/shellexecui/interface.c:158
 #: ../plugins/shellexecui/shellexec.glade.h:7
 msgid "Title:"
-msgstr "ចំណងជើង"
+msgstr "ශීර්ෂය:"
 
 #: ../plugins/gtkui/interface.c:1457 ../plugins/gtkui/deadbeef.glade.h:73
 msgid "Enter new column title here"
-msgstr ""
+msgstr "නව සිරස් තීරු ශීර්ෂය මෙහි ඇතුළත් කරන්න"
 
 #: ../plugins/gtkui/interface.c:1465 ../plugins/gtkui/deadbeef.glade.h:74
 msgid "Type:"
-msgstr "ប្រភេទ"
+msgstr "වර්ගය:"
 
 #: ../plugins/gtkui/interface.c:1473
 msgid "Item Index"
-msgstr ""
+msgstr "අයිතම අංකය"
 
 #. create default set of columns
 #: ../plugins/gtkui/interface.c:1474 ../plugins/gtkui/mainplaylist.c:327
 msgid "Playing"
-msgstr "កំពុងលេង"
+msgstr "වාදනය වෙමින් පවතී"
 
 #: ../plugins/gtkui/interface.c:1475
 msgid "Album Art"
-msgstr "តាក់តែងអ៉ាល់បុ៑ម"
+msgstr "ඇල්බම රූපය"
 
 #: ../plugins/gtkui/interface.c:1476
 msgid "Artist - Album"
-msgstr "ម្ចាស់អ៉ាល់បុ៑ម"
+msgstr "ගායකයා - ඇල්බමය"
 
 #: ../plugins/gtkui/interface.c:1480 ../plugins/gtkui/mainplaylist.c:331
 #: ../plugins/gtkui/search.c:419
 msgid "Duration"
-msgstr ""
+msgstr "පවත්නා කාලය"
 
 #: ../plugins/gtkui/interface.c:1481 ../translation/extra.c:75
 msgid "Track Number"
-msgstr ""
+msgstr "ගීත අංකය"
 
 #: ../plugins/gtkui/interface.c:1482 ../translation/extra.c:72
 msgid "Band / Album Artist"
-msgstr "ក្រុម/ម្ចាស់អ៉ាល់បុ៑ម"
+msgstr "සංගීත කණ්ඩායම / ශිල්පියා"
 
 #: ../plugins/gtkui/interface.c:1489 ../plugins/gtkui/interface.c:3366
 #: ../plugins/gtkui/deadbeef.glade.h:86
 msgid "Format:"
-msgstr "ទ្រង់ទ្រាយ"
+msgstr "ආකෘතිය:"
 
 #: ../plugins/gtkui/interface.c:1514 ../plugins/gtkui/deadbeef.glade.h:87
 msgid "Alignment:"
-msgstr "តម្រឹម"
+msgstr "පෙළගැස්ම:"
 
 #: ../plugins/gtkui/interface.c:1522
 msgid "Left"
-msgstr "ឆ្វេង"
+msgstr "වම"
 
 #: ../plugins/gtkui/interface.c:1523
 msgid "Right"
-msgstr "ស្តាំ"
+msgstr "දකුණ"
 
 #: ../plugins/gtkui/interface.c:1546 ../plugins/gtkui/interface.c:3170
 #: ../plugins/gtkui/interface.c:3281 ../plugins/gtkui/interface.c:3407
 #: ../plugins/gtkui/deadbeef.glade.h:70
 msgid "_Cancel"
-msgstr "បោះបង់"
+msgstr "අවලංගු කරන්න _C"
 
 #: ../plugins/gtkui/interface.c:1567 ../plugins/gtkui/interface.c:3191
 #: ../plugins/gtkui/interface.c:3302 ../plugins/gtkui/interface.c:3428
 #: ../plugins/gtkui/deadbeef.glade.h:71
 msgid "_OK"
-msgstr "យល់ព្រម"
+msgstr "හරි _O"
 
 #: ../plugins/gtkui/interface.c:1823 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Output plugin:"
-msgstr "ទិន្នផលកម្មវីធីជំនួយ"
+msgstr "ප්‍රතිදාන පේනු මෘදුකාංගය"
 
 #: ../plugins/gtkui/interface.c:1836 ../plugins/gtkui/deadbeef.glade.h:91
 msgid "Output device:"
-msgstr ""
+msgstr "ප්‍රතිදාන උපකරණය"
 
 #: ../plugins/gtkui/interface.c:1845 ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Always convert 8 bit audio to 16 bit"
-msgstr ""
+msgstr "සෑමවිට ම බිට් 8 ශ්‍රව්‍ය ගොනු බිට් 16 ට පරිවර්තනය කරන්න"
 
 #: ../plugins/gtkui/interface.c:1849 ../plugins/gtkui/deadbeef.glade.h:93
 msgid "Always convert 16 bit audio to 24 bit"
-msgstr ""
+msgstr "සෑමවිට ම බිට් 16 ශ්‍රව්‍ය ගොනු බිට් 24 ට පරිවර්තනය කරන්න"
 
 #: ../plugins/gtkui/interface.c:1853 ../plugins/gtkui/deadbeef.glade.h:94
 msgid "Sound"
-msgstr "សំលេង"
+msgstr "ශබ්දය"
 
 #: ../plugins/gtkui/interface.c:1866 ../plugins/gtkui/deadbeef.glade.h:95
 msgid "Replaygain mode:"
-msgstr ""
+msgstr "ශබ්ද පරිපාලන ආකාරය"
 
 #: ../plugins/gtkui/interface.c:1875
 msgid "Disable"
-msgstr ""
+msgstr "අක්‍රීය කරන්න"
 
 #: ../plugins/gtkui/interface.c:1876
 msgid "Track"
-msgstr "ដាន"
+msgstr "ගීතය"
 
 #: ../plugins/gtkui/interface.c:1879 ../plugins/gtkui/deadbeef.glade.h:99
 msgid "Replaygain peak scale"
-msgstr ""
+msgstr "ශබ්ද පරිපාලනය ඉහළ පරාස වලින්"
 
 #: ../plugins/gtkui/interface.c:1894 ../plugins/gtkui/interface.c:1928
 #: ../plugins/gtkui/deadbeef.glade.h:100
 msgid "-12 dB"
-msgstr ""
+msgstr "-12 dB"
 
 #: ../plugins/gtkui/interface.c:1904 ../plugins/gtkui/interface.c:1938
 #: ../plugins/gtkui/deadbeef.glade.h:101
 msgid "+12 dB"
-msgstr ""
+msgstr "+12 dB"
 
 #: ../plugins/gtkui/interface.c:1908 ../plugins/gtkui/deadbeef.glade.h:102
 msgid "Replaygain preamp:"
-msgstr ""
+msgstr "ශබ්ද පරිපාලන පූර්ව වර්ධකය"
 
 #: ../plugins/gtkui/interface.c:1915 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Global preamp:"
-msgstr ""
+msgstr "සමස්ත පූර්ව වර්ධකය"
 
 #: ../plugins/gtkui/interface.c:1946 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Add files from command line (or file manager) to this playlist:"
-msgstr ""
+msgstr "විධාන තීරුව (හෝ ගොනු කළමනාකරණය) මගින්, ගීත ලැස්තුවට ගොනු ඇතුලත් කිරීම"
 
 #: ../plugins/gtkui/interface.c:1955 ../plugins/gtkui/deadbeef.glade.h:105
 msgid "Resume previous session on startup"
-msgstr ""
+msgstr "පටන්ගන්මෙදී, පෙර සැසිය නැවත අරඹන්න"
 
 #: ../plugins/gtkui/interface.c:1959 ../plugins/gtkui/deadbeef.glade.h:106
 msgid "Don't add from archives when adding folders"
-msgstr ""
+msgstr "ෆෝල්ඩර එකතු කිරීමේදී, සංරක්ෂණාගාරයෙන් එකතු නොකරන්න"
 
 #: ../plugins/gtkui/interface.c:1963 ../plugins/gtkui/deadbeef.glade.h:107
 msgid "Auto-reset \"Stop after current\""
-msgstr ""
+msgstr "\"මෙම ගීතයට පසු නැවතීම\", ස්වයංක්‍රීයව නැවත සකසන්න"
 
 #: ../plugins/gtkui/interface.c:1967 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Playback"
-msgstr ""
+msgstr "නැවත ධාවනය කරන්න"
 
 #: ../plugins/gtkui/interface.c:1988 ../plugins/gtkui/interface.c:2655
 #: ../plugins/gtkui/deadbeef.glade.h:109 ../plugins/converter/interface.c:632
 #: ../plugins/converter/converter.glade.h:47
 msgid "Configure"
-msgstr ""
+msgstr "හැඩගැස්වීම"
 
 #: ../plugins/gtkui/interface.c:2023 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "DSP Chain Preset"
-msgstr ""
+msgstr "DSP දාම පිහිටුවීම"
 
 #: ../plugins/gtkui/interface.c:2035 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "_Load"
-msgstr ""
+msgstr "ප්‍රවේශනය _L"
 
 #: ../plugins/gtkui/interface.c:2039 ../plugins/gtkui/deadbeef.glade.h:112
 msgid "DSP"
-msgstr ""
+msgstr "DSP"
 
 #: ../plugins/gtkui/interface.c:2048 ../plugins/gtkui/deadbeef.glade.h:113
 msgid "Close minimizes to tray"
-msgstr ""
+msgstr "වසා තැටිය තුලට හකුලුවන්න"
 
 #: ../plugins/gtkui/interface.c:2052 ../plugins/gtkui/deadbeef.glade.h:114
 msgid "Middle mouse button closes playlist"
-msgstr ""
+msgstr "මැදි මූසික බොත්තම ගීත ලැයිස්තුව වසා දමයි"
 
 #: ../plugins/gtkui/interface.c:2056 ../plugins/gtkui/deadbeef.glade.h:115
 msgid "Hide system tray icon"
-msgstr ""
+msgstr "පද්ධති තැටි අයිකනය සඟවන්න"
 
 #: ../plugins/gtkui/interface.c:2060 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Use bold font for currently playing track"
-msgstr ""
+msgstr "තද පැහැ අකුරු ධාවනය වෙමින් පවතින ගීතය දැක්වීමට භාවිතා කරන්න"
 
 #: ../plugins/gtkui/interface.c:2064 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Hide \"Delete from disk\" context menu item"
-msgstr ""
+msgstr "මෙතැනින් මකාදමන්න යන සන්දර්භ මෙනූ අයිතමය සඟවන්න"
 
 #: ../plugins/gtkui/interface.c:2068 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Auto-name playlists when adding a single folder"
-msgstr ""
+msgstr "තනි ෆෝල්ඩරයක් තුළට එක් කිරීමේදී ගීත ලැයිස්තු වල නම් ස්වයංක්‍රීයව සකසන්න"
 
 #: ../plugins/gtkui/interface.c:2072 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Enable Russian CP1251 detection and recoding"
-msgstr ""
+msgstr "රුසියානු CP1251 අනාවරණය කිරීම සහ ප්‍රතිකේතනය කිරීම සක්‍රීය කරන්න"
 
 #: ../plugins/gtkui/interface.c:2076 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Enable Chinese CP936 detection and recoding"
-msgstr ""
+msgstr "චීන CP936 අනාවරණය කිරීම සහ ප්‍රතිකේතනය කිරීම සක්‍රීය කරන්න"
 
 #: ../plugins/gtkui/interface.c:2084 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Interface refresh rate (times per second):"
-msgstr ""
+msgstr "අතුරු මුහුණත නැවුම් වීමේ අනුපාතය (තත්පරයකට වාර)"
 
 #: ../plugins/gtkui/interface.c:2098 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Titlebar text while playing:"
-msgstr ""
+msgstr "ධාවනය අතරතුර මාතෘකා තීරයේ ඇති වැකිය"
 
 #: ../plugins/gtkui/interface.c:2112 ../plugins/gtkui/deadbeef.glade.h:123
 msgid "Titlebar text while stopped:"
-msgstr ""
+msgstr "ධාවනය නැවතූ විට මාතෘකා තීරයේ ඇති වැකිය"
 
 #: ../plugins/gtkui/interface.c:2126 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "GUI Plugin (changing requires restart):"
-msgstr ""
+msgstr "අතුරු මුහුණත් කෙවෙනිය (වෙනස් වීමට නැවත පණ ගැන්විය යුතුයි)"
 
 #: ../plugins/gtkui/interface.c:2134 ../plugins/gtkui/deadbeef.glade.h:125
 msgid "GUI/Misc"
-msgstr ""
+msgstr "GUI/Misc"
 
 #: ../plugins/gtkui/interface.c:2149 ../plugins/gtkui/interface.c:2193
 #: ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Override"
-msgstr ""
+msgstr "අතික්‍රමනය කරන්න"
 
 #: ../plugins/gtkui/interface.c:2158 ../plugins/gtkui/deadbeef.glade.h:127
 msgid "Foreground"
-msgstr ""
+msgstr "පෙරබිම"
 
 #: ../plugins/gtkui/interface.c:2165 ../plugins/gtkui/deadbeef.glade.h:128
 msgid "Background"
-msgstr ""
+msgstr "පසුබිම"
 
 #: ../plugins/gtkui/interface.c:2184 ../plugins/gtkui/deadbeef.glade.h:129
 msgid "Seekbar/Volumebar colors"
-msgstr ""
+msgstr "සෙවුම් තීරු/ශබ්ද තීරු වර්ණ"
 
 #: ../plugins/gtkui/interface.c:2202 ../plugins/gtkui/deadbeef.glade.h:130
 msgid "Middle"
-msgstr ""
+msgstr "මධ්‍යම පැහැ"
 
 #: ../plugins/gtkui/interface.c:2209 ../plugins/gtkui/deadbeef.glade.h:131
 msgid "Light"
-msgstr ""
+msgstr "ලා පැහැ"
 
 #: ../plugins/gtkui/interface.c:2216 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Dark"
-msgstr ""
+msgstr "අඳුරු පැහැ"
 
 #: ../plugins/gtkui/interface.c:2247 ../plugins/gtkui/deadbeef.glade.h:133
 msgid "Base"
-msgstr ""
+msgstr "පාදම"
 
 #: ../plugins/gtkui/interface.c:2254 ../plugins/gtkui/interface.c:2311
 #: ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Text"
-msgstr ""
+msgstr "පාඨය"
 
 #: ../plugins/gtkui/interface.c:2267 ../plugins/gtkui/deadbeef.glade.h:135
 msgid "Tab strip colors"
-msgstr ""
+msgstr "පටි තීරු පැහැයන්"
 
 #: ../plugins/gtkui/interface.c:2276 ../plugins/gtkui/deadbeef.glade.h:136
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
-msgstr ""
+msgstr "ප්‍රතික්ෂේප කරන්න (GTK රුක් දසුන් තේමාව නැතිවන නමුත් එය ගීතය පරිවර්ථනය පහසු කරවයි)"
 
 #: ../plugins/gtkui/interface.c:2285 ../plugins/gtkui/deadbeef.glade.h:137
 msgid "Even row"
-msgstr ""
+msgstr "ඉරට්ටේ පේළි"
 
 #: ../plugins/gtkui/interface.c:2292 ../plugins/gtkui/deadbeef.glade.h:138
 msgid "Odd row"
-msgstr ""
+msgstr "ඔත්තේ පේළි"
 
 #: ../plugins/gtkui/interface.c:2318 ../plugins/gtkui/deadbeef.glade.h:139
 msgid "Selected row"
-msgstr ""
+msgstr "තෝරාගත් පේළිය"
 
 #: ../plugins/gtkui/interface.c:2337 ../plugins/gtkui/deadbeef.glade.h:140
 msgid "Selected text"
-msgstr ""
+msgstr "තෝරාගත් අකුරු"
 
 #: ../plugins/gtkui/interface.c:2350 ../plugins/gtkui/deadbeef.glade.h:141
 msgid "Cursor"
-msgstr ""
+msgstr "කර්සරය"
 
 #: ../plugins/gtkui/interface.c:2363 ../plugins/gtkui/deadbeef.glade.h:142
 msgid "Playlist colors"
-msgstr ""
+msgstr "ගීත ලැයිස්තු පැහැයන්"
 
 #: ../plugins/gtkui/interface.c:2367 ../plugins/gtkui/deadbeef.glade.h:143
 msgid "Colors"
-msgstr ""
+msgstr "පැහැයන්"
 
 #: ../plugins/gtkui/interface.c:2376 ../plugins/gtkui/deadbeef.glade.h:144
 msgid "Enable Proxy Server"
-msgstr ""
+msgstr "නියුතු සේවාදායකය සක්‍රිය කරන්න"
 
 #: ../plugins/gtkui/interface.c:2384 ../plugins/gtkui/deadbeef.glade.h:145
 msgid "Proxy Server Address:"
-msgstr ""
+msgstr "නියුතු සේවාදායක ලිපිනය:"
 
 #: ../plugins/gtkui/interface.c:2398 ../plugins/gtkui/deadbeef.glade.h:146
 msgid "Proxy Server Port:"
-msgstr ""
+msgstr "නියුතු සේවාදායක තොට:"
 
 #: ../plugins/gtkui/interface.c:2412 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "Proxy Type:"
-msgstr ""
+msgstr "නියුතු සේවාදායක වර්ගය:"
 
 #: ../plugins/gtkui/interface.c:2431 ../plugins/gtkui/deadbeef.glade.h:148
 msgid "Proxy Username:"
-msgstr ""
+msgstr "නියුතු සේවාදායක භාවිත නාමය:"
 
 #: ../plugins/gtkui/interface.c:2444 ../plugins/gtkui/deadbeef.glade.h:149
 msgid "Proxy Password:"
-msgstr ""
+msgstr "නියුතු සේවාදායක මුරපදය:"
 
 #: ../plugins/gtkui/interface.c:2462 ../plugins/gtkui/deadbeef.glade.h:150
 msgid "HTTP User Agent:"
-msgstr ""
+msgstr "HTTP භාවිත ඒජන්තවරයා"
 
 #: ../plugins/gtkui/interface.c:2475 ../plugins/gtkui/interface.c:4142
 #: ../plugins/gtkui/deadbeef.glade.h:151
 msgid "Edit Content-Type Mapping"
-msgstr ""
+msgstr "අන්තර්ගත-වර්ග අතර සබැඳීම සංස්කරණය කරන්න"
 
 #: ../plugins/gtkui/interface.c:2479 ../plugins/gtkui/deadbeef.glade.h:152
 msgid "Network"
-msgstr ""
+msgstr "ජාලය"
 
 #: ../plugins/gtkui/interface.c:2492 ../plugins/gtkui/deadbeef.glade.h:153
 msgid "Assigned Hotkeys:"
-msgstr ""
+msgstr "කෙටි යතුරු සංයෝජන ආදේශ කරන්න:"
 
 #: ../plugins/gtkui/interface.c:2527 ../plugins/gtkui/interface.c:4303
 #: ../plugins/gtkui/deadbeef.glade.h:154
 msgid "Action:"
-msgstr ""
+msgstr "ක්‍රියාවන්:"
 
 #: ../plugins/gtkui/interface.c:2532 ../plugins/gtkui/interface.c:2545
 #: ../plugins/gtkui/interface.c:4307 ../plugins/gtkui/deadbeef.glade.h:155
 msgid "<Not set>"
-msgstr ""
+msgstr "<Not set>"
 
 #: ../plugins/gtkui/interface.c:2540 ../plugins/gtkui/deadbeef.glade.h:156
 msgid "Key combination:"
-msgstr ""
+msgstr "යතුරු සංයෝජන:"
 
 #: ../plugins/gtkui/interface.c:2549 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "Global hotkey"
-msgstr ""
+msgstr "ගෝලීය කෙටි යතුරු සංයෝජන"
 
 #: ../plugins/gtkui/interface.c:2561 ../plugins/gtkui/deadbeef.glade.h:158
 msgid ""
 "Use the Apply button to save your changes,\n"
 "or the Revert button to undo your changes.\n"
 "The changes will NOT be saved if you don't press Apply."
-msgstr ""
+msgstr "යොදන්න බොත්තම ඔබගේ වෙනස්කම් සුරකින්නට භාවිතා කරන්න\n\nහෝ ප්‍රතිවර්තන බොත්තම වෙන්ස්කම් අවලංගු කිරීමට භාවිතා කරන්න\n\nවෙනස්කම් යොදන්න බොත්තම එබීමෙන් තොරව සුරැකෙන්නේ නැත."
 
 #: ../plugins/gtkui/interface.c:2581 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "Hotkeys"
-msgstr ""
+msgstr "කෙටි යතුරු සංයෝජන"
 
 #: ../plugins/gtkui/interface.c:2612 ../plugins/gtkui/deadbeef.glade.h:162
 msgid "Version: "
-msgstr ""
+msgstr "සංස්කරණය"
 
 #: ../plugins/gtkui/interface.c:2676 ../plugins/gtkui/deadbeef.glade.h:163
 #: ../translation/extra.c:82
 msgid "Copyright"
-msgstr ""
+msgstr "පිටපත් කිරීමේ අයිතිය"
 
 #: ../plugins/gtkui/interface.c:2686 ../plugins/gtkui/deadbeef.glade.h:164
 #: ../plugins/gtkui/ctmapping.c:131
 msgid "Plugins"
-msgstr ""
+msgstr "කෙවෙනි මෘදුකාංගය"
 
 #: ../plugins/gtkui/interface.c:3249 ../plugins/gtkui/deadbeef.glade.h:165
 msgid "URL:"
-msgstr ""
+msgstr "URL:"
 
 #: ../plugins/gtkui/interface.c:3351 ../plugins/gtkui/deadbeef.glade.h:166
 msgid "Group By ..."
-msgstr ""
+msgstr "සමුහ කල යුත්තේ ..."
 
 #: ../plugins/gtkui/interface.c:3475 ../plugins/gtkui/deadbeef.glade.h:167
 msgid "Sort by ..."
-msgstr ""
+msgstr "අනුපිළිවෙළට සකස් කල යුත්තේ ..."
 
 #: ../plugins/gtkui/interface.c:3491 ../plugins/gtkui/deadbeef.glade.h:168
 msgid "Format"
-msgstr ""
+msgstr "ආකෘතිය"
 
 #: ../plugins/gtkui/interface.c:3521
 msgid "Ascending"
-msgstr ""
+msgstr "ආරෝහන"
 
 #: ../plugins/gtkui/interface.c:3522
 msgid "Descending"
-msgstr ""
+msgstr "අවරෝහන"
 
 #: ../plugins/gtkui/interface.c:3575 ../plugins/gtkui/deadbeef.glade.h:171
 #: ../plugins/converter/interface.c:733
 #: ../plugins/converter/converter.glade.h:48
 msgid "Select DSP Plugin"
-msgstr ""
+msgstr "DSP කෙවෙනි මෘදුකාංගය තෝරන්න"
 
 #: ../plugins/gtkui/interface.c:3591 ../plugins/gtkui/deadbeef.glade.h:172
 #: ../plugins/converter/convgui.c:1194 ../plugins/converter/interface.c:749
 #: ../plugins/gtkui/dspconfig.c:139 ../plugins/converter/converter.glade.h:49
 msgid "Plugin"
-msgstr ""
+msgstr "කෙවෙනි මෘදුකාංගය"
 
 #: ../plugins/gtkui/interface.c:3676 ../plugins/gtkui/deadbeef.glade.h:173
 msgid "Tag Writer Settings"
-msgstr ""
+msgstr "ටැග් ලියන සැකසුම්"
 
 #: ../plugins/gtkui/interface.c:3707 ../plugins/gtkui/deadbeef.glade.h:174
 msgid "Write ID3v2"
-msgstr ""
+msgstr "ID3v2 ලියන්න"
 
 #: ../plugins/gtkui/interface.c:3711 ../plugins/gtkui/interface.c:3838
 #: ../plugins/gtkui/deadbeef.glade.h:175
 msgid "Write ID3v1"
-msgstr ""
+msgstr "ID3v1 ලියන්න"
 
 #: ../plugins/gtkui/interface.c:3715 ../plugins/gtkui/interface.c:3794
 #: ../plugins/gtkui/interface.c:3834 ../plugins/gtkui/deadbeef.glade.h:176
 msgid "Write APEv2"
-msgstr ""
+msgstr "APEv2 ලියන්න"
 
 #: ../plugins/gtkui/interface.c:3723 ../plugins/gtkui/interface.c:3802
 #: ../plugins/gtkui/deadbeef.glade.h:177
 msgid "Strip ID3v2"
-msgstr ""
+msgstr "ID3v2 ඉවත්කරන්න"
 
 #: ../plugins/gtkui/interface.c:3727 ../plugins/gtkui/interface.c:3850
 #: ../plugins/gtkui/deadbeef.glade.h:178
 msgid "Strip ID3v1"
-msgstr ""
+msgstr "ID3v1 ඉවත්කරන්න"
 
 #: ../plugins/gtkui/interface.c:3731 ../plugins/gtkui/interface.c:3806
 #: ../plugins/gtkui/interface.c:3846 ../plugins/gtkui/deadbeef.glade.h:179
 msgid "Strip APEv2"
-msgstr ""
+msgstr "APEv2 ඉවත්කරන්න"
 
 #: ../plugins/gtkui/interface.c:3739 ../plugins/gtkui/deadbeef.glade.h:180
 msgid "ID3v2 version"
-msgstr ""
+msgstr "ID3v2 සංස්කරණය"
 
 #: ../plugins/gtkui/interface.c:3746
 msgid "2.3 (Recommended)"
-msgstr ""
+msgstr "2.3 (නිර්දේශිත)"
 
 #: ../plugins/gtkui/interface.c:3747
 msgid "2.4"
-msgstr ""
+msgstr "2.4"
 
 #: ../plugins/gtkui/interface.c:3753 ../plugins/gtkui/deadbeef.glade.h:183
 msgid "ID3v1 character encoding (default is iso8859-1)"
-msgstr ""
+msgstr "ID3vI සංකේත ආකේතනය (සාමාන්‍ය භාවිතය iso8859-1)"
 
 #: ../plugins/gtkui/interface.c:3790 ../plugins/gtkui/deadbeef.glade.h:184
 msgid "Write ID3v2.4"
-msgstr ""
+msgstr "ID3v2.4 ලියන්න"
 
 #: ../plugins/gtkui/interface.c:3992 ../plugins/gtkui/deadbeef.glade.h:185
 msgid "Content-Type Mapping"
-msgstr ""
+msgstr "අන්තර්ගත-වර්ග අතර සබැඳීම"
 
 #: ../plugins/gtkui/interface.c:4015 ../plugins/gtkui/deadbeef.glade.h:186
 msgid ""
@@ -994,253 +993,252 @@ msgid ""
 "DeaDBeeF decoder plugins. For example, mp3 files can have content type "
 "\"audio/x-mpeg\", and need to be decoded by DeaDBeeF's own \"stdmpg\" "
 "plugin, or \"ffmpeg\" plugin."
-msgstr ""
+msgstr "මෙම වගුව ජාලගත අන්තර්ගත වර්ග සහ DeaDBeeF හි විකේතක කෙවෙනි මෘදුකාංග අතර පවතින සහසම්බන්ධතාවයන් දැක්වීමට භාවිතා කරයි. උදාහරණ ලෙස, mp3 ගොනුවක \"audio/x-mpeg\" අන්තර්ගත වර්ගය පැවතිය හැකි අතර එය DeaDBeeF හි \"stdmpg\" හෝ \"ffmpeg\" කෙවෙනි මෘදුකාංග භාවිතයෙන් විකේතනය කල යුතුව පැවතිය හැකිය."
 
 #: ../plugins/gtkui/interface.c:4063 ../plugins/gtkui/deadbeef.glade.h:187
 msgid "Reset to defaults"
-msgstr ""
+msgstr "සාමාන්‍යය භාවිත වලට නැවත සකසන්න"
 
 #: ../plugins/gtkui/interface.c:4158 ../plugins/gtkui/deadbeef.glade.h:188
 msgid "Content-Type:"
-msgstr ""
+msgstr "අන්තර්ගත-වර්ග:"
 
 #: ../plugins/gtkui/interface.c:4171 ../plugins/gtkui/deadbeef.glade.h:189
 msgid "Plugins:"
-msgstr ""
+msgstr "කෙවෙනි මෘදුකාංග"
 
 #: ../plugins/gtkui/interface.c:4239 ../plugins/gtkui/deadbeef.glade.h:190
 msgid "Button properties"
-msgstr ""
+msgstr "බොත්තම් සතු ගුණාංග"
 
 #: ../plugins/gtkui/interface.c:4254 ../plugins/gtkui/deadbeef.glade.h:191
 msgid "Color:"
-msgstr ""
+msgstr "වර්ණ:"
 
 #: ../plugins/gtkui/interface.c:4266 ../plugins/gtkui/deadbeef.glade.h:192
 msgid "Text color:"
-msgstr ""
+msgstr "අකුරු වල පැහැය:"
 
 #: ../plugins/gtkui/interface.c:4278 ../plugins/gtkui/deadbeef.glade.h:193
 msgid "Icon:"
-msgstr ""
+msgstr "අයිකන:"
 
 #: ../plugins/gtkui/interface.c:4290 ../plugins/gtkui/deadbeef.glade.h:194
 msgid "Label:"
-msgstr ""
+msgstr "ලේබල:"
 
 #: ../plugins/gtkui/interface.c:4371 ../plugins/gtkui/deadbeef.glade.h:195
 msgid "Select action"
-msgstr ""
+msgstr "ක්‍රියාව වරණය කරන්න"
 
 #: ../plugins/gtkui/mainplaylist.c:328 ../plugins/gtkui/search.c:416
 msgid "Artist / Album"
-msgstr ""
+msgstr "ගායකයා / ඇල්බම"
 
 #: ../plugins/gtkui/mainplaylist.c:329 ../plugins/gtkui/search.c:417
 msgid "Track No"
-msgstr ""
+msgstr "ගීත අංකය"
 
 #: ../plugins/gtkui/plcommon.c:466
 msgid "Add to playback queue"
-msgstr ""
+msgstr "නැවත ධාවන පෙලගැස්මට එකතුකරන්න"
 
 #: ../plugins/gtkui/plcommon.c:471
 msgid "Remove from playback queue"
-msgstr ""
+msgstr "නැවත ධාවන පෙලගැස්මෙන් ඉවත් කරන්න"
 
 #: ../plugins/gtkui/plcommon.c:479
 msgid "Reload metadata"
-msgstr ""
+msgstr "පාර-දත්ත නැවත ගන්න"
 
 #: ../plugins/gtkui/plcommon.c:497
 msgid "Remove from disk"
-msgstr ""
+msgstr "තැටියෙන් ඉවත් කරන්න"
 
 #: ../plugins/gtkui/plcommon.c:885 ../plugins/gtkui/plcommon.c:1011
 msgid "Add column"
-msgstr ""
+msgstr "නව සිරස් තීරුවක් එකතු කරන්න"
 
 #: ../plugins/gtkui/plcommon.c:915 ../plugins/gtkui/plcommon.c:1015
 msgid "Edit column"
-msgstr ""
+msgstr "සිරස් තීරුව සංස්කරණය කරන්න"
 
 #: ../plugins/gtkui/plcommon.c:1019
 msgid "Remove column"
-msgstr ""
+msgstr "සිරස් තීරුව ඉවත් කරන්න"
 
 #: ../plugins/gtkui/plcommon.c:1029
 msgid "Group by"
-msgstr ""
+msgstr "පාදක කරගෙන කණ්ඩායම් කිරීම"
 
 #: ../plugins/gtkui/plcommon.c:1036 ../plugins/gtkui/widgets.c:2993
 msgid "None"
-msgstr ""
+msgstr "කිසිවක් නැත"
 
 #: ../plugins/gtkui/plcommon.c:1040
 msgid "Artist/Date/Album"
-msgstr ""
+msgstr "ගයකයා/දිනය/ඇල්බමය"
 
 #: ../plugins/gtkui/pluginconf.c:42
 msgid "Open file..."
-msgstr ""
+msgstr "ගොනුව විවෘත කරන්න..."
 
 #: ../plugins/gtkui/pluginconf.c:220
 #, c-format
 msgid "Configure %s"
-msgstr ""
+msgstr "වින්‍යාස කිරීම %s"
 
 #: ../plugins/gtkui/prefwin.c:81
 msgid "Default Audio Device"
-msgstr ""
+msgstr "සාමාන්‍යයෙන් භාවිතා කරන ශ්‍රව්‍ය උපාංගය"
 
 #: ../plugins/gtkui/progress.c:56
 msgid "Adding files..."
-msgstr "កំពុងផ្ទុកទិន្នន៍យ"
+msgstr "ගොනු එකතු කිරීම..."
 
 #: ../plugins/gtkui/progress.c:90
 msgid "Initializing..."
-msgstr ""
+msgstr "ඇරඹීම..."
 
 #: ../plugins/gtkui/trkproperties.c:162
 msgid "You've modified data for this track."
-msgstr ""
+msgstr "මෙම ගීතයට අදාළ දත්ත ඔබ විසින් වෙනස් කර ඇත."
 
 #: ../plugins/gtkui/trkproperties.c:164
 msgid "Really close the window?"
-msgstr ""
+msgstr "කවුළුව නිමාකිරීමට අවශ්‍යද?"
 
 #. get value to edit
 #: ../plugins/gtkui/trkproperties.c:280
 msgid "[Multiple values] "
-msgstr ""
+msgstr "[බහු අගයන්]"
 
 #: ../plugins/gtkui/trkproperties.c:471 ../plugins/gtkui/trkproperties.c:483
 #: ../plugins/gtkui/widgets.c:1940
 msgid "Key"
-msgstr ""
+msgstr "යතුර"
 
 #: ../plugins/gtkui/trkproperties.c:472 ../plugins/gtkui/trkproperties.c:484
 #: ../plugins/gtkui/widgets.c:1942
 msgid "Value"
-msgstr ""
+msgstr "වටිනාකම"
 
 #: ../plugins/gtkui/trkproperties.c:503
 msgid "[Multiple values]"
-msgstr ""
+msgstr "[බහු අගයන්]"
 
 #: ../plugins/gtkui/trkproperties.c:678
 msgid "Writing tags..."
-msgstr ""
+msgstr "ටැග් ලිවීම..."
 
 #: ../plugins/gtkui/trkproperties.c:707
 msgid "Field name"
-msgstr ""
+msgstr "ක්ෂේත්‍ර නාමය"
 
 #: ../plugins/gtkui/trkproperties.c:710
 msgid "Name:"
-msgstr ""
+msgstr "නම:"
 
 #: ../plugins/gtkui/trkproperties.c:722
 msgid "Field names must not start with : or _"
-msgstr ""
+msgstr "ක්ෂේත්‍ර නාම : ලකුණකින් හෝ _ ලකුණකින් ආරම්භ නොකල යුතුය"
 
 #: ../plugins/gtkui/trkproperties.c:723 ../plugins/gtkui/trkproperties.c:762
 msgid "Cannot add field"
-msgstr ""
+msgstr "ක්ෂේත්‍රය එකතු කල නොහැක"
 
 #: ../plugins/gtkui/trkproperties.c:761
 msgid "Field with such name already exists, please try different name."
-msgstr ""
+msgstr "මෙනමින් දැනටමත් ක්ෂේත්‍රයක් පවතී, කරුණාකර වෙනත් නමක් භාවිතා කරන්න."
 
 #: ../plugins/gtkui/trkproperties.c:824
 msgid "Add field"
-msgstr ""
+msgstr "ක්ෂේත්‍රය එකතු කරන්න"
 
 #: ../plugins/gtkui/trkproperties.c:827
 msgid "Remove field"
-msgstr ""
+msgstr "ක්ෂේත්‍රය ඉවත් කරන්න"
 
 #: ../main.c:89
 #, c-format
 msgid "Usage: deadbeef [options] [--] [file(s)]\n"
-msgstr ""
+msgstr "භාවිතය: deadbeef [විකල්ප] [--] [ගොනු(ව)]\n"
 
 #: ../main.c:90
 #, c-format
 msgid "Options:\n"
-msgstr ""
+msgstr "විකල්ප:\n"
 
 #: ../main.c:91
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr ""
+msgstr "--help  හෝ  -h ආධාරක විස්තර (මෙම පණිවිඩය) දර්ශනය කර ඉවත් වන්න\n"
 
 #: ../main.c:92
 #, c-format
 msgid "   --quit             Quit player\n"
-msgstr ""
+msgstr "--quit ධාවකයෙන් ඉවත්වන්න\n"
 
 #: ../main.c:93
 #, c-format
 msgid "   --version          Print version info and exit\n"
-msgstr ""
+msgstr "--version සංස්කරණ තොරතුරු දර්ශනය කර ඉවත් වන්න\n"
 
 #: ../main.c:94
 #, c-format
 msgid "   --play             Start playback\n"
-msgstr ""
+msgstr "--play ගීත ධාවනය අරඹන්න\n"
 
 #: ../main.c:95
 #, c-format
 msgid "   --stop             Stop playback\n"
-msgstr ""
+msgstr "--stop ගීත ධාවනය නවත්වන්න\n"
 
 #: ../main.c:96
 #, c-format
 msgid "   --pause            Pause playback\n"
-msgstr ""
+msgstr "--pause ගීත ධාවනය මදකට නතර කරන්න\n"
 
 #: ../main.c:97
 #, c-format
 msgid "   --toggle-pause     Toggle pause\n"
-msgstr ""
+msgstr "--toggle-pause ධාවනය මදකට නතර කිරීම හා නැවත ධාවනය කිරීම\n"
 
 #: ../main.c:98
 #, c-format
 msgid ""
 "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
-msgstr ""
+msgstr "--play-pause ගීත ධාවනය නවතා ඇත්නම් ධාවනය අරභන්න, නැතිනම් ධාවනය මදකට නවත්වන්න\n"
 
 #: ../main.c:99
 #, c-format
 msgid "   --next             Next song in playlist\n"
-msgstr ""
+msgstr "--next ගීත ලැයිස්තුවේ ඇති ඊළඟ ගීතය ධාවනය කරන්න\n"
 
 #: ../main.c:100
 #, c-format
 msgid "   --prev             Previous song in playlist\n"
-msgstr ""
+msgstr "--prev ගීත ලැයිස්තුවේ කළින් ඇති ගීතය ධාවනය කරන්න\n"
 
 #: ../main.c:101
 #, c-format
 msgid "   --random           Random song in playlist\n"
-msgstr ""
+msgstr "--random ගීත ලැයිස්තුවේ ඇති ගීත සසම්භාවී ලෙස ධාවනය කරන්න\n"
 
 #: ../main.c:102
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
-msgstr ""
+msgstr "--queue පවතින ගීත(ය) ලැයිස්තුවට නව ගොනු එකතු කරන්න\n"
 
 #: ../main.c:103
 #, c-format
-msgid ""
-"   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
-msgstr ""
+msgid "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
+msgstr "--gui PLUGIN භාවිතා කිරීමට අවශ්‍යය අතුරු මුහුණත සඳහන් කරන්න, සාමාන්‍යයෙන් භාවිතා කරන්නේ \\\"GTK2\\\"\n"
 
 #: ../main.c:104
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr ""
+msgstr "--nowplaying FMT සම්මත ප්‍රතිදානයට ගීතයේ ආකෘතීකරණය කරන ලද නම දර්ශනය කරන්න\n"
 
 #: ../main.c:105
 #, c-format
@@ -1248,33 +1246,33 @@ msgid ""
 "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
 "                      copy[r]ight, [e]lapsed\n"
-msgstr ""
+msgstr "FMT %%-ආකෘතිය: ගායන ශිල්පියා[a], ගීත නාමය[t], ඇල්බමය[b],\n\nධාවන කාලය[l], ගීත අංකය[n], වර්ෂය[y], අදහස් දැක්වීම්[c],\n\nපිටපත් කිරීමේ අයිතිය[r], ධාවනය කිරීමට ඉතිරිව ඇති[e]\n"
 
 #: ../main.c:108
 #, c-format
 msgid ""
-"                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
-"- title\"\n"
-msgstr ""
+"                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist"
+" - title\"\n"
+msgstr "උදා:  --nowplaying \"%%a - %%t\" විධානය \"ගායකයා හා ගීතයේ නම\" දර්ශනය කල යුතුය\n"
 
 #: ../main.c:109
 #, c-format
 msgid ""
-"                      for more info, see http://sourceforge.net/apps/"
-"mediawiki/deadbeef/index.php?title=Title_Formatting\n"
-msgstr ""
+"                      for more info, see "
+"http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"
+msgstr "වැඩි විස්තර සඳහා, http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"
 
 #: ../playlist.c:463 ../playlist.c:2434
 msgid "Default"
-msgstr ""
+msgstr "සාමාන්‍ය භාවිතය"
 
 #: ../playlist.c:3822
 msgid "Yes"
-msgstr ""
+msgstr "ඔව්"
 
 #: ../playlist.c:3822
 msgid "No"
-msgstr ""
+msgstr "නැහැ"
 
 #: ../plugins/gtkui/deadbeef.glade.h:75
 msgid ""
@@ -1289,463 +1287,463 @@ msgid ""
 "Track Number\n"
 "Band / Album Artist\n"
 "Custom"
-msgstr ""
+msgstr "අයිතම අංකය\n\nධාවනය වෙමින් පවතී\n\nඇල්බම රූපය\n\nගායන ශිල්පියා - ඇල්බමය\n\nගායන ශිල්පියා\n\nඇල්බමය\n\nගීතය\n\nකාලය\n\nගීත අංකය\n\nකණ්ඩායම / ගායන ශිල්පියා\n\nරිසි ආකාරය"
 
 #: ../plugins/gtkui/deadbeef.glade.h:88
 msgid ""
 "Left\n"
 "Right"
-msgstr ""
+msgstr "වම\n\nදකුණ"
 
 #: ../plugins/gtkui/deadbeef.glade.h:96
 msgid ""
 "Disable\n"
 "Track\n"
 "Album"
-msgstr ""
+msgstr "අක්‍රීය\n\nගීතය\n\nඇල්බමය"
 
 #: ../plugins/gtkui/deadbeef.glade.h:169
 msgid ""
 "Ascending\n"
 "Descending"
-msgstr ""
+msgstr "ආරෝහණ\n\nඅවරෝහණ"
 
 #: ../plugins/gtkui/deadbeef.glade.h:181
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
-msgstr ""
+msgstr "2.3 (නිර්දේෂිත)\n\n2.4"
 
 #: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
 #: ../plugins/converter/support.c:90 ../plugins/converter/support.c:114
 #: ../plugins/shellexecui/support.c:90 ../plugins/shellexecui/support.c:114
 #, c-format
 msgid "Couldn't find pixmap file: %s"
-msgstr ""
+msgstr "%s pixmap ගොනුව සොයාගත නොහැකිය"
 
 #: ../plugins/wildmidi/wildmidiplug.c:164
 #, c-format
 msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings."
-msgstr ""
+msgstr "wildmidi: freepats වින්‍යාස ගොනුව සොයාගත නොහැක. කරුණාකර timidity-freepats පැකේජය පරිගණකය තුල පිහිටුවන්න හෝ freepats.cfg පවතින ස්ථානය කෙවෙනි මෘදුකාංග සැකසුම් තුල සඳහන් කරන්න."
 
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
 msgid "Add audio CD"
-msgstr ""
+msgstr "ගීත අඩංගු සංයුක්ත තැටිය ඇතුළත් කරන්න"
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
-msgstr ""
+msgstr "Last.fm හි බලන්න"
 
 #. ALSA output plugin
 #: ../translation/extra.c:6
 msgid "Use ALSA resampling"
-msgstr ""
+msgstr "ALSA නැවත සාම්පල කිරීම භාවිතා කරන්න"
 
 #: ../translation/extra.c:7
 msgid "Release device while stopped"
-msgstr ""
+msgstr "ධාවනය නවතා ඇති අතරේ උපාංගය නිදහස් කරන්න"
 
 #: ../translation/extra.c:8 ../translation/extra.c:55
 msgid "Preferred buffer size"
-msgstr ""
+msgstr "වරණිත ආරෝධක ප්‍රමාණය"
 
 #: ../translation/extra.c:9
 msgid "Preferred period size"
-msgstr ""
+msgstr "කැමති කාලාවර්ත ප්‍රමාණය"
 
 #. Last.fm plugin
 #: ../translation/extra.c:11
 msgid "Enable scrobbler"
-msgstr ""
+msgstr "Scrobbler සක්‍රීය කරන්න"
 
 #: ../translation/extra.c:12
 msgid "Disable nowplaying"
-msgstr ""
+msgstr "nowplaying අක්‍රීය කරන්න"
 
 #: ../translation/extra.c:13
 msgid "Username"
-msgstr ""
+msgstr "භාවිත නාමය"
 
 #: ../translation/extra.c:14
 msgid "Password"
-msgstr ""
+msgstr "මුර පදය"
 
 #: ../translation/extra.c:15
 msgid "Scrobble URL"
-msgstr ""
+msgstr "Scrobble වෙබ් ලිපිනය"
 
 #: ../translation/extra.c:16
 msgid "Prefer Album Artist over Artist field"
-msgstr ""
+msgstr "ශිල්පී ක්ෂේත්‍රයේ ඇති කැමති ගායකයා"
 
 #. OSS output plugin
 #: ../translation/extra.c:18
 msgid "Device file"
-msgstr ""
+msgstr "උපාංග ගොනුව"
 
 #: ../translation/extra.c:19
 msgid "OSS4 samplerate bug workaround"
-msgstr ""
+msgstr "OSS4 සාම්පල අනුපාතික දෝෂය මඟහැරයන්න"
 
 #. Album Artwork plugin
 #: ../translation/extra.c:21
 msgid "Cache update period (hr)"
-msgstr ""
+msgstr "තාවකාලික මතක යාවත්කාලීන කාලාවර්තය (පැය)"
 
 #: ../translation/extra.c:22
 msgid "Fetch from embedded tags"
-msgstr ""
+msgstr "අන්තර්ගත ටැග් වලින් ලබා ගන්න"
 
 #: ../translation/extra.c:23
 msgid "Fetch from local folder"
-msgstr ""
+msgstr "පරිස්ථානීය ෆෝල්ඩර වලින් ලබා ගන්න"
 
 #: ../translation/extra.c:24
 msgid "Local cover file mask"
-msgstr ""
+msgstr "ගොනු සඳහා පරිගණකයේ පවතින කවරයක් යොදන්න"
 
 #: ../translation/extra.c:25
 msgid "Fetch from last.fm"
-msgstr ""
+msgstr "last.fm හරහා ලබා ගන්න"
 
 #: ../translation/extra.c:26
 msgid "Fetch from albumart.org"
-msgstr ""
+msgstr "albumart.org හරහා ලබා ගන්න"
 
 #: ../translation/extra.c:27
 msgid "Scale artwork towards longer side"
-msgstr ""
+msgstr "සිත්තම දිග පැත්තට දික් කරන්න"
 
 #. Audio CD player
 #: ../translation/extra.c:29
 msgid "Use CDDB/FreeDB"
-msgstr ""
+msgstr "CDDB/FreeDB භාවිතා කරන්න"
 
 #: ../translation/extra.c:30
 msgid "Prefer CD-Text over CDDB"
-msgstr ""
+msgstr "CD-Text, CDDB හරහා ඉදිරිපත් කරන්න"
 
 #: ../translation/extra.c:31
 msgid "CDDB url (e.g. 'freedb.org')"
-msgstr ""
+msgstr "CDDB වෙබ් ලිපිනය (උදා. 'freedb.org')"
 
 #: ../translation/extra.c:32
 msgid "CDDB port number (e.g. '888')"
-msgstr ""
+msgstr "CDDB පෝර්ට් අංකය (උදා. '888')"
 
 #: ../translation/extra.c:33
 msgid "Prefer CDDB protocol over HTTP"
-msgstr ""
+msgstr "CDDB ප්‍රොටොකෝලය HTTP හරහා ඉදිරිපත් කරන්න"
 
 #: ../translation/extra.c:34
 msgid "Enable NRG image support"
-msgstr ""
+msgstr "NGR රූප ගොනු සහාය සක්‍රීය කරන්න"
 
 #. DUMB module player plugin
 #: ../translation/extra.c:36
 msgid "Resampling quality (0..2, higher is better)"
-msgstr ""
+msgstr "නැවත සාම්පල කිරීමේ ගුණත්වය (0..2, වඩා වැඩිනම් හොඳයි)"
 
 #: ../translation/extra.c:37
 msgid "8-bit output (default is 16)"
-msgstr ""
+msgstr "බිට් 8 ප්‍රතිදානය (සාමාන්‍ය භාවිතය බිට් 16)"
 
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:39
 msgid "Max song length (in minutes)"
-msgstr ""
+msgstr "ගීතයක උපරිම ධාවන කාලය (මිනිත්තු වලින්)"
 
 #: ../translation/extra.c:40
 msgid "Fadeout length (seconds)"
-msgstr ""
+msgstr "ගීතයක් ක්‍රමයෙන් නැතිවී යාමේ කාලය (තත්පර)"
 
 #: ../translation/extra.c:41
 msgid "Play loops nr. of times (if available)"
-msgstr ""
+msgstr "නැවත නැවත ධාවනය වීමේ වාර ගණන (ලබාගත හැකිනම්)"
 
 #. Standard GTK2 user interface plugin
 #: ../translation/extra.c:43
 msgid "Ask confirmation to delete files from disk"
-msgstr ""
+msgstr "තැටියේ ඇති ගොනු මකා දැමීමට ප්‍රථම තහවුරු කර ගැනීමට විමසන්න"
 
 #: ../translation/extra.c:44
 msgid "Status icon volume control sensitivity"
-msgstr ""
+msgstr "ශබ්ධය පාලනය කිරීමේ සංවේදීතා තත්වය සඳහා වූ සංකේතය"
 
 #: ../translation/extra.c:45
 msgid "Custom status icon"
-msgstr ""
+msgstr "භාවිත තත්ව අයිකනය"
 
 #: ../translation/extra.c:46
 msgid "Run gtk_init with --sync (debug mode)"
-msgstr ""
+msgstr "gtk_init වැරදි ඉවත් කිරීමේ ආකරය (--sync) සමඟ ක්‍රියාත්මක කරන්න"
 
 #: ../translation/extra.c:47
 msgid "Add separators between plugin context menu items"
-msgstr ""
+msgstr "මෙනූ අයිකන අතර වෙන්කිරීමක් යොදන්න"
 
 #. OSD Notify plugin
 #: ../translation/extra.c:49
 msgid "Notification title format"
-msgstr ""
+msgstr "දැනුම් දීමේ නාම ආකෘතිය"
 
 #: ../translation/extra.c:50
 msgid "Notification content format"
-msgstr ""
+msgstr "දැනුම් දීමේ අන්තර්ගතයන්ගේ ආකෘතිය"
 
 #: ../translation/extra.c:51
 msgid "Show album art"
-msgstr ""
+msgstr "ඇල්බම සිතුවම් දර්ශනය කරන්න"
 
 #: ../translation/extra.c:52
 msgid "Album art size (px)"
-msgstr ""
+msgstr "ඇල්බම සිතුවම් වල ප්‍රමාණය (px)"
 
 #. PulseAudio output plugin
 #: ../translation/extra.c:54
 msgid "PulseAudio server"
-msgstr ""
+msgstr "PulseAudio සර්වරය"
 
 #: ../translation/extra.c:56
 msgid "Samplerate"
-msgstr ""
+msgstr "සාම්පල අනුපාතිකය"
 
 #. SHN player plugin
 #: ../translation/extra.c:58
 msgid "Relative seek table path"
-msgstr ""
+msgstr "සාපේක්ෂ සෙවුම් වගුව ඇති ස්ථානය"
 
 #: ../translation/extra.c:59
 msgid "Absolute seek table path"
-msgstr ""
+msgstr "නිරපේක්ෂ සෙවුම් වගුව ඇති ස්ථානය"
 
 #: ../translation/extra.c:60
 msgid "Swap audio bytes (toggle if all you hear is static)"
-msgstr ""
+msgstr "ශ්‍රව්‍යය බයිට එකිනෙක මාරු කරන්න (ඔබට ශ්‍රවනය වන දේ වෙනසක් නැත්නම් නැවත මාරු කරන්න)"
 
 #. SID decoder plugin
 #: ../translation/extra.c:62
 msgid "Enable HVSC Songlength DB"
-msgstr ""
+msgstr "ගීත වල ධාවන කාලය අඩංගු HVSC දත්ත මූලය සක්‍රීය කරන්න"
 
 #: ../translation/extra.c:63
 msgid "Songlengths.txt (from HVSC)"
-msgstr ""
+msgstr "Songlengths.txt (HVSC මඟින්)"
 
 #: ../translation/extra.c:64
 msgid "Bits per sample (8 or 16)"
-msgstr ""
+msgstr "සාම්පලයකට ඇති බිට් ගණන (8 හෝ 16)"
 
 #: ../translation/extra.c:65
 msgid "Default song length (sec)"
-msgstr ""
+msgstr "ගීතයක සාමාන්‍ය ධාවන කාලය (තත්පර)"
 
 #. WildMidi player plugin
 #: ../translation/extra.c:67
 msgid "Timidity++ bank configuration file"
-msgstr ""
+msgstr "Timidity++ ගබඩා, වින්‍යාස ගොනුව"
 
 #: ../translation/extra.c:70
 msgid "Track Title"
-msgstr ""
+msgstr "ගීත නාමය"
 
 #: ../translation/extra.c:71
 msgid "Performer"
-msgstr ""
+msgstr "ගායකයා"
 
 #: ../translation/extra.c:76
 msgid "Total Tracks"
-msgstr ""
+msgstr "සම්පූර්ණ ගීත ගණන"
 
 #: ../translation/extra.c:77
 msgid "Genre"
-msgstr ""
+msgstr "ප්‍රභේදය"
 
 #: ../translation/extra.c:78
 msgid "Composer"
-msgstr ""
+msgstr "තනු නිර්මාපකයා"
 
 #: ../translation/extra.c:79
 msgid "Disc Number"
-msgstr ""
+msgstr "තැටි අංකය"
 
 #: ../translation/extra.c:80
 msgid "Comment"
-msgstr ""
+msgstr "අදහස් දැක්වීම්"
 
 #: ../translation/extra.c:81
 msgid "Encoder / Vendor"
-msgstr ""
+msgstr "ආකේතකය / විකුණුම්කරු"
 
 #: ../translation/extra.c:83
 msgid "Location"
-msgstr ""
+msgstr "ස්ථානය"
 
 #: ../translation/extra.c:84
 msgid "Subtrack Index"
-msgstr ""
+msgstr "උපගොනු අංකය"
 
 #: ../translation/extra.c:85
 msgid "Tag Type(s)"
-msgstr ""
+msgstr "ටැග් වර්ග(ය)"
 
 #: ../translation/extra.c:86
 msgid "Embedded Cuesheet"
-msgstr ""
+msgstr "එබ්බවූ, ගීත විහිදීම දැක්වෙන ගොනුව"
 
 #: ../translation/extra.c:87
 msgid "Codec"
-msgstr ""
+msgstr "ආකේතක විකේතක ක්‍රමය"
 
 #. FFmpeg deocder plugin
 #: ../translation/extra.c:89
 msgid "File Extensions (separate with ';')"
-msgstr ""
+msgstr "ගොනු දිගු (';' ලකුණකින් වෙන් වූ)"
 
 #. Converter GUI
 #: ../translation/extra.c:91
 msgid "Convert"
-msgstr ""
+msgstr "පරිවර්ථනය කරන්න"
 
 #. Resampler (Secret Rabbit Code)
 #: ../translation/extra.c:93
 msgid "Target Samplerate"
-msgstr ""
+msgstr "ඉලක්ක සාම්පල අනුපාතිකය"
 
 #: ../translation/extra.c:94
 msgid "Quality / Algorithm"
-msgstr ""
+msgstr "තත්වය / ඇල්ගොරිතමය"
 
 #: ../translation/extra.c:95
 msgid "Automatic Samplerate (overrides Target Samplerate)"
-msgstr ""
+msgstr "ස්වයංක්‍රීය Samplerate (ඉලක්ක Samplerate සංශෝධනය කරයි)"
 
 #. shellexecui
 #: ../translation/extra.c:97
 msgid "Configure custom shell commands"
-msgstr ""
+msgstr "රිසි ආකාරයට shell විධාන සකස් කරන්න"
 
 #. mpgmad
 #: ../translation/extra.c:99
 msgid "Disable gapless playback (faster scanning)"
-msgstr ""
+msgstr "ගීත අතර නැවතීමක් නොමැතිව ධාවනය වීම අක්‍රීය කරන්න (ඉක්මන් පරිලෝකනය)"
 
 #. adplug
 #: ../translation/extra.c:101
 msgid "Prefer Ken emu over Satoh (surround won't work)"
-msgstr ""
+msgstr "ශබ්දය වටෙන්ම ඇසීම ක්‍රියා කරන්නේ නැත"
 
 #: ../translation/extra.c:102
 msgid "Enable surround"
-msgstr ""
+msgstr "ශබ්දය වටෙන්ම ඇසීම සක්‍රීය කරන්න"
 
 #: ../plugins/converter/convgui.c:117
 msgid "The file already exists. Overwrite?"
-msgstr ""
+msgstr "ගොනුව දැනටමත් පවතී. එය මතම ලියන්නද?"
 
 #: ../plugins/converter/convgui.c:119
 msgid "Converter warning"
-msgstr ""
+msgstr "පරිවර්ථක අවවාදයක්"
 
 #: ../plugins/converter/convgui.c:287
 msgid "Please select encoder"
-msgstr ""
+msgstr "කරුණාකර ආකේතකය තෝරන්න"
 
 #: ../plugins/converter/convgui.c:289
 msgid "Converter error"
-msgstr ""
+msgstr "පරිවර්ථක දෝෂයක්"
 
 #: ../plugins/converter/convgui.c:313
 msgid "Converting..."
-msgstr ""
+msgstr "පරිවර්ථනය කරමින් පවතී..."
 
 #: ../plugins/converter/convgui.c:518
 msgid "Select folder..."
-msgstr ""
+msgstr "ෆෝල්ඩරය සුරකින්න..."
 
 #: ../plugins/converter/convgui.c:740
 msgid "Failed to save encoder preset"
-msgstr ""
+msgstr "ආකේතක පෙර සැකසුම සුරැකීමට නොහැකි විය"
 
 #: ../plugins/converter/convgui.c:742 ../plugins/converter/convgui.c:1216
 msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
-msgstr ""
+msgstr "පෙර සැකසුම් ෆෝල්ඩරයේ අවසරයන් පරීක්ෂා කරන්න, වෙනත් නාමයක් ලබා ගැනීමට උත්සාහ කරන්න, හෝ දෘඩ තැටියේ යම් ඉඩ ප්‍රමාණයක් නිදහස් කරන්න"
 
 #: ../plugins/converter/convgui.c:742 ../plugins/converter/convgui.c:1216
 msgid "Preset with the same name already exists. Try to pick another title."
-msgstr ""
+msgstr "මෙම නමින් තවත් පෙර සැකසුමක් දැනටමත් පවතී. වෙනත් නාමයක් ලබා දෙන්න."
 
 #: ../plugins/converter/convgui.c:743 ../plugins/converter/convgui.c:1217
 #: ../plugins/gtkui/ctmapping.c:202 ../plugins/gtkui/ctmapping.c:230
 #: ../plugins/gtkui/ctmapping.c:262
 msgid "Error"
-msgstr ""
+msgstr "දෝෂයක්"
 
 #: ../plugins/converter/convgui.c:797
 msgid "Add new encoder"
-msgstr ""
+msgstr "නව ආකේතකය එකතු කරන්න"
 
 #: ../plugins/converter/convgui.c:827
 msgid "Edit encoder"
-msgstr ""
+msgstr "ආකේතකය සංස්කරණය කරන්න"
 
 #: ../plugins/converter/convgui.c:859 ../plugins/converter/convgui.c:1314
 msgid "Remove preset"
-msgstr ""
+msgstr "පෙර සැකසුම ඉවත් කරන්න"
 
 #: ../plugins/converter/convgui.c:861 ../plugins/converter/convgui.c:1316
 msgid "This action will delete the selected preset. Are you sure?"
-msgstr ""
+msgstr "මෙම ක්‍රියාව මඟින් තෝරන ලද පෙර සැකසුම මකාදැමීමට නියමිතයි. එය සිදුකරන්නද?"
 
 #: ../plugins/converter/convgui.c:885
 msgid "Encoders"
-msgstr ""
+msgstr "ආකේතක"
 
 #: ../plugins/converter/convgui.c:956 ../plugins/gtkui/dspconfig.c:186
 msgid "Add plugin to DSP chain"
-msgstr ""
+msgstr "DSP දාමයට කෙවෙනි මෘදුකාංගය ඇතුළත් කරන්න"
 
 #: ../plugins/converter/convgui.c:1215
 msgid "Failed to save DSP preset"
-msgstr ""
+msgstr "DSP පෙර සැකසුම සුරැකීමට නොහැකි විය"
 
 #: ../plugins/converter/convgui.c:1279
 msgid "New DSP Preset"
-msgstr ""
+msgstr "නව DSP පෙර සැකසුම"
 
 #: ../plugins/converter/convgui.c:1364
 msgid "Edit DSP Preset"
-msgstr ""
+msgstr "DSP පෙර සැකසුම සංස්කරණය කරන්න"
 
 #: ../plugins/converter/convgui.c:1384
 msgid "DSP Presets"
-msgstr ""
+msgstr "DSP පෙර සැකසුම්"
 
 #: ../plugins/converter/interface.c:92
 #: ../plugins/converter/converter.glade.h:1
 msgid "Output folder:"
-msgstr ""
+msgstr "ප්‍රතිදාන ෆෝල්ඩරය:"
 
 #: ../plugins/converter/interface.c:109
 #: ../plugins/converter/converter.glade.h:2
 msgid "Write to source track folder"
-msgstr ""
+msgstr "ගීත අඩංගු ෆෝල්ඩරයට ලියන්න"
 
 #: ../plugins/converter/interface.c:113
 #: ../plugins/converter/converter.glade.h:3
 msgid "Preserve folder structure"
-msgstr ""
+msgstr "සංරක්ෂිත ෆෝල්ඩර ආකෘතිය"
 
 #: ../plugins/converter/interface.c:121
 #: ../plugins/converter/converter.glade.h:4
 msgid "Output file name:"
-msgstr ""
+msgstr "ප්‍රතිදාන ගොනු නාමය:"
 
 #: ../plugins/converter/interface.c:132
 #: ../plugins/converter/converter.glade.h:6
@@ -1753,89 +1751,89 @@ msgstr ""
 msgid ""
 "Extension (e.g. .mp3) will be appended automatically.\n"
 "Leave the field empty for default (%a - %t)."
-msgstr ""
+msgstr "දිගුව (උදා .mp3) ස්වයංක්‍රීයව අගට එකතු වේවි.\n\nසාමාන්‍යයෙන් භාවිතා කරන දිගු සඳහා ක්ෂේත්‍රය හිස්ව තබන්න (%a - %t)."
 
 #: ../plugins/converter/interface.c:145
 #: ../plugins/converter/converter.glade.h:8
 msgid "Encoder:"
-msgstr ""
+msgstr "ආකේතකය:"
 
 #: ../plugins/converter/interface.c:169
 #: ../plugins/converter/converter.glade.h:9
 msgid "DSP preset:"
-msgstr ""
+msgstr "DSP පෙර සැකසුම"
 
 #: ../plugins/converter/interface.c:192
 #: ../plugins/converter/converter.glade.h:10
 msgid "Number of threads:"
-msgstr ""
+msgstr "සමාන්තරව ක්‍රියාත්මක වන වැඩසටහන් ගණන:"
 
 #: ../plugins/converter/interface.c:205
 #: ../plugins/converter/converter.glade.h:11
 msgid "Output sample format:"
-msgstr ""
+msgstr "ප්‍රතිදාන ආකෘති ආදර්ශය:"
 
 #: ../plugins/converter/interface.c:212
 msgid "Keep source format"
-msgstr ""
+msgstr "ප්‍රභව ආකෘතිය පවත්වා ගන්න"
 
 #: ../plugins/converter/interface.c:213
 msgid "8 bit signed int"
-msgstr ""
+msgstr "බිට් 8 ඇති ලකුණු සහිත නිඛිල"
 
 #: ../plugins/converter/interface.c:214
 msgid "16 bit signed int"
-msgstr ""
+msgstr "බිට් 16 ඇති ලකුණු සහිත නිඛිල"
 
 #: ../plugins/converter/interface.c:215
 msgid "24 bit signed int"
-msgstr ""
+msgstr "බිට් 24 ඇති ලකුණු සහිත නිඛිල"
 
 #: ../plugins/converter/interface.c:216
 msgid "32 bit signed int"
-msgstr ""
+msgstr "බිට් 32 ඇති ලකුණු සහිත නිඛිල"
 
 #: ../plugins/converter/interface.c:217
 msgid "32 bit float"
-msgstr ""
+msgstr "බිට් 32 ඇති දශම"
 
 #: ../plugins/converter/interface.c:223
 #: ../plugins/converter/converter.glade.h:18
 msgid "When file exists:"
-msgstr ""
+msgstr "ගොනුව පවතින විට:"
 
 #: ../plugins/converter/interface.c:230
 msgid "Prompt"
-msgstr ""
+msgstr "Prompt"
 
 #: ../plugins/converter/interface.c:231
 msgid "Overwrite"
-msgstr ""
+msgstr "එය මත ලියන්න"
 
 #: ../plugins/converter/interface.c:362
 #: ../plugins/converter/converter.glade.h:21
 msgid "Edit Encoder Preset"
-msgstr ""
+msgstr "ආකේතක පෙර සැකසුම් සංස්කරණය කරන්න"
 
 #: ../plugins/converter/interface.c:385
 #: ../plugins/converter/converter.glade.h:23
 msgid "Untitled Encoder"
-msgstr ""
+msgstr "නම් නොකල ආකේතකය"
 
 #: ../plugins/converter/interface.c:393
 #: ../plugins/converter/converter.glade.h:24
 msgid "Output file extension:"
-msgstr ""
+msgstr "ප්‍රතිදාන ගොනු දිගුව:"
 
 #: ../plugins/converter/interface.c:400
 #: ../plugins/converter/converter.glade.h:25
 msgid "E.g. mp3"
-msgstr ""
+msgstr "උදා. mp3"
 
 #: ../plugins/converter/interface.c:408
 #: ../plugins/converter/converter.glade.h:26
 msgid "Command line:"
-msgstr ""
+msgstr "විධාන අතුරු මුහුණත"
 
 #: ../plugins/converter/interface.c:419
 #: ../plugins/converter/converter.glade.h:28
@@ -1843,7 +1841,7 @@ msgstr ""
 msgid ""
 "Example: lame - %o\n"
 "%i for input file, %o for output file, - for stdin"
-msgstr ""
+msgstr "උදාහරණය: සිත් නොගන්නා - %o\n\nආදාන ගොනු සඳහා %i, ප්‍රතිදාන ගොනු සඳහා %o, -සම්මත ආදානය සඳහා"
 
 #: ../plugins/converter/interface.c:429
 #: ../plugins/converter/converter.glade.h:31
@@ -1851,67 +1849,67 @@ msgstr ""
 msgid ""
 "<small>%o - output file name\n"
 "%i - temporary input file name</small>"
-msgstr ""
+msgstr "<small>%o - ප්‍රතිදාන ගොනු නාමය\n\n%i - තාවකාලික ආදාන ගොනු නාමය</small>"
 
 #: ../plugins/converter/interface.c:438
 #: ../plugins/converter/converter.glade.h:33
 msgid "Method:"
-msgstr ""
+msgstr "ක්‍රම:"
 
 #: ../plugins/converter/interface.c:445
 msgid "Pipe"
-msgstr ""
+msgstr "Pipe"
 
 #: ../plugins/converter/interface.c:446
 msgid "Temporary file"
-msgstr ""
+msgstr "තාවකාලික ගොනු"
 
 #: ../plugins/converter/interface.c:463
 #: ../plugins/converter/converter.glade.h:36
 msgid "APEv2"
-msgstr ""
+msgstr "APEv2"
 
 #: ../plugins/converter/interface.c:469
 #: ../plugins/converter/converter.glade.h:37
 msgid "ID3v1"
-msgstr ""
+msgstr "ID3v1"
 
 #: ../plugins/converter/interface.c:475
 #: ../plugins/converter/converter.glade.h:38
 msgid "OggVorbis"
-msgstr ""
+msgstr "OggVorbis"
 
 #: ../plugins/converter/interface.c:481
 #: ../plugins/converter/converter.glade.h:39
 msgid "FLAC"
-msgstr ""
+msgstr "FLAC"
 
 #: ../plugins/converter/interface.c:493
 #: ../plugins/converter/converter.glade.h:40
 msgid "ID3v2"
-msgstr ""
+msgstr "ID3v2"
 
 #: ../plugins/converter/interface.c:503
 #: ../plugins/converter/converter.glade.h:41
 msgid "<b>Tag writer</b>"
-msgstr ""
+msgstr "<b>ටැග් ලියනය</b>"
 
 #: ../plugins/converter/interface.c:589
 #: ../plugins/converter/converter.glade.h:42
 msgid "DSP Preset Editor"
-msgstr ""
+msgstr "DSP පෙර සැකසුම් සංස්කාරකය"
 
 #: ../plugins/converter/interface.c:612
 #: ../plugins/converter/converter.glade.h:44
 msgid "Untitled DSP Preset"
-msgstr ""
+msgstr "නම් නොකල DSP පෙර සැකසුම"
 
 #: ../plugins/converter/interface.c:624
 #: ../plugins/converter/converter.glade.h:45
 #: ../plugins/shellexecui/interface.c:61
 #: ../plugins/shellexecui/shellexec.glade.h:3
 msgid "Add"
-msgstr ""
+msgstr "එකතු කරන්න"
 
 #: ../plugins/converter/converter.glade.h:12
 msgid ""
@@ -1921,44 +1919,44 @@ msgid ""
 "24 bit signed int\n"
 "32 bit signed int\n"
 "32 bit float"
-msgstr ""
+msgstr "ප්‍රභව ආකෘතිය පවත්වා ගන්න\n\nබිට් 8 ලකුණු සහිත නිඛිල\n\nබිට් 16 ලකුණු සහිත නිඛිල\n\nබිට් 24 ලකුණු සහිත නිඛිල\n\nබිට් 32 ලකුණු සහිත නිඛිල\n\nබිට් 32 ලකුණු සහිත දශම"
 
 #: ../plugins/converter/converter.glade.h:19
 msgid ""
 "Prompt\n"
 "Overwrite"
-msgstr ""
+msgstr "Prompt\n\nමත ලියන්න"
 
 #: ../plugins/converter/converter.glade.h:34
 msgid ""
 "Pipe\n"
 "Temporary file"
-msgstr ""
+msgstr "Pipe\n\nතාවකාලික ගොනු"
 
 #: ../plugins/shellexecui/interface.c:46
 #: ../plugins/shellexecui/shellexec.glade.h:1
 msgid "Custom Shell Commands"
-msgstr ""
+msgstr "ව්‍යවහාරික shell විධාන"
 
 #: ../plugins/shellexecui/interface.c:69
 #: ../plugins/shellexecui/shellexec.glade.h:5
 msgid "Edit"
-msgstr ""
+msgstr "සංස්කරණය කරන්න"
 
 #: ../plugins/shellexecui/interface.c:87
 #: ../plugins/shellexecui/shellexec.glade.h:2
 msgid "Close"
-msgstr ""
+msgstr "නිමා කරන්න"
 
 #: ../plugins/shellexecui/interface.c:144
 #: ../plugins/shellexecui/shellexec.glade.h:6
 msgid "Edit Command"
-msgstr ""
+msgstr "විධානය සංස්කරණය කරන්න"
 
 #: ../plugins/shellexecui/interface.c:165
 #: ../plugins/shellexecui/shellexec.glade.h:8
 msgid "Command:"
-msgstr ""
+msgstr "විධානය:"
 
 #: ../plugins/shellexecui/interface.c:177
 #: ../plugins/shellexecui/shellexec.glade.h:10
@@ -1967,253 +1965,252 @@ msgid ""
 "Arbitrary shell command. Will be executed in the shell context which the "
 "main application was started from. Title formatting can be used. Example: "
 "xdg-open %D"
-msgstr ""
+msgstr "අත්තනෝමතික shell විධානයකි. එය ප්‍රධාන වැඩසටහන ක්‍රියාත්මක වීම ආරම්භ වූ shell සංදර්හය තුළම ක්‍රියාත්මක වීමට නියමිතයි. ශීර්ෂ ආකෘතීකරණය භාවිතා කල හැකිය. උදාහරණ ලෙස: xdg-open %D"
 
 #: ../plugins/shellexecui/interface.c:180
 #: ../plugins/shellexecui/shellexec.glade.h:11
 msgid "ID:"
-msgstr ""
+msgstr "අනන්‍යතාවය"
 
 #: ../plugins/shellexecui/interface.c:192
 #: ../plugins/shellexecui/shellexec.glade.h:12
 msgid "Free-form name, for example \"My Shell Command\""
-msgstr ""
+msgstr "නිදහස් ආරකින් ඇති නමකි, උදා. \\\"My Shell Command\\\""
 
 #: ../plugins/shellexecui/interface.c:200
 #: ../plugins/shellexecui/shellexec.glade.h:13
 msgid ""
-"Command ID, normally it should be something short, for example \"youtube_open"
-"\". It must be unique."
-msgstr ""
+"Command ID, normally it should be something short, for example "
+"\"youtube_open\". It must be unique."
+msgstr "විධාන හැඳිනුම, සාමාන්‍යයෙන් එය කෙටි විය යුතුය, උදාහරණ ලෙස \"youtube_open\". සහ එය අද්විතීය විය යුතුයි."
 
 #: ../plugins/shellexecui/interface.c:203
 #: ../plugins/shellexecui/shellexec.glade.h:15
 msgid "Single Tracks"
-msgstr ""
+msgstr "තනි ගීත"
 
 #: ../plugins/shellexecui/interface.c:206
 #: ../plugins/shellexecui/shellexec.glade.h:14
 msgid "Works on single track."
-msgstr ""
+msgstr "තනි ගීතයක් මත වැඩ කරන්න"
 
 #: ../plugins/shellexecui/interface.c:208
 #: ../plugins/shellexecui/shellexec.glade.h:17
 msgid "Multiple Tracks"
-msgstr ""
+msgstr "බහු ගීත"
 
 #: ../plugins/shellexecui/interface.c:211
 #: ../plugins/shellexecui/shellexec.glade.h:16
 msgid "Works on multiple tracks."
-msgstr ""
+msgstr "බහු ගීත මත වැඩ කරන්න"
 
 #: ../plugins/shellexecui/interface.c:213
 #: ../plugins/shellexecui/shellexec.glade.h:19
 msgid "Local"
-msgstr ""
+msgstr "පරිස්ථානීය"
 
 #: ../plugins/shellexecui/interface.c:216
 #: ../plugins/shellexecui/shellexec.glade.h:18
 msgid "Works on local files."
-msgstr ""
+msgstr "පරිස්ථානීය ගොනු මත ක්‍රියාත්මක වේ."
 
 #: ../plugins/shellexecui/interface.c:218
 #: ../plugins/shellexecui/shellexec.glade.h:21
 msgid "Remote"
-msgstr ""
+msgstr "දුරස්ථ"
 
 #: ../plugins/shellexecui/interface.c:221
 #: ../plugins/shellexecui/shellexec.glade.h:20
 msgid "Works on remote files (e.g. http:// streams)"
-msgstr ""
+msgstr "දුරස්ථ ගොනු මත ක්‍රියාත්මක වේ (උදා. http:// streams)"
 
 #: ../plugins/shellexecui/interface.c:223
 #: ../plugins/shellexecui/shellexec.glade.h:23
 msgid "Common"
-msgstr ""
+msgstr "පොදු"
 
 #: ../plugins/shellexecui/interface.c:226
 #: ../plugins/shellexecui/shellexec.glade.h:22
 msgid "Item should appear in the main menu"
-msgstr ""
+msgstr "අයිතමය ප්‍රධාන මෙනුව තුළ පෙනී සිටිය යුතුයි"
 
 #: ../plugins/shellexecui/shellexecui.c:94
 msgid "Add Command"
-msgstr ""
+msgstr "විධානය ඇතුලත් කරන්න"
 
 #: ../plugins/shellexecui/shellexecui.c:137 ../plugins/gtkui/widgets.c:578
 msgid "Delete"
-msgstr ""
+msgstr "මකා දමන්න"
 
 #: ../plugins/shellexecui/shellexecui.c:139
 msgid "This action will delete the selected shell command. Are you sure?"
-msgstr ""
+msgstr "මෙම ක්‍රියාව මඟින් තෝරන ලද shell විධානය මකාදැමීමට නියමිතයි. එය සිදුකරන්නද?"
 
 #: ../plugins/shellexecui/shellexecui.c:141
 msgid "Confirm Remove"
-msgstr ""
+msgstr "ඉවත් කිරීම තහවුරු කරන්න"
 
 #: ../plugins/shellexecui/shellexecui.c:227
 msgid "ID must be non-empty and unique.\n"
-msgstr ""
+msgstr "අනන්‍යතා ක්ෂේත්‍රය හිස්ව නොතැබිය යුතු අතර අද්විතීය විය යුතුය.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:233
 msgid "Title must be non-empty.\n"
-msgstr ""
+msgstr "මාතෘකාව  හිස්ව නොතැබිය යුතුය.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:239
 msgid "Shell Command must be non-empty.\n"
-msgstr ""
+msgstr "Shell විධානය හිස්ව නොවිය යුතුය.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:246
 #: ../plugins/shellexecui/shellexecui.c:250
 msgid "Invalid Values"
-msgstr ""
+msgstr "වලංගු නොවන අගයන්"
 
 #: ../plugins/gtkui/actionhandlers.c:107
 msgid "Supported sound formats"
-msgstr ""
+msgstr "සහායක හඬ ආකෘති"
 
 #: ../plugins/gtkui/actionhandlers.c:118
 msgid "All files (*)"
-msgstr ""
+msgstr "සියලුම ගොනු (*)"
 
 #: ../plugins/gtkui/actionhandlers.c:126
 msgid "Open file(s)..."
-msgstr ""
+msgstr "ගොනු(ව) විවෘත කරන්න..."
 
 #: ../plugins/gtkui/actionhandlers.c:165
 msgid "Add file(s) to playlist..."
-msgstr ""
+msgstr "ධාවන ලැයිස්තුවට ගොනු(ව) එකතු කරන්න..."
 
 #: ../plugins/gtkui/actionhandlers.c:211
 msgid "Add folder(s) to playlist..."
-msgstr ""
+msgstr "ධාවන ලැයිස්තුවට ෆෝල්ඩර(ය) එකතු කරන්න..."
 
 #: ../plugins/gtkui/actionhandlers.c:216
 msgid "Follow symlinks"
-msgstr ""
+msgstr "Symlinks අනුගමනය කරන්න"
 
 #: ../plugins/gtkui/actionhandlers.c:427
 msgid "help.txt"
-msgstr ""
+msgstr "help.txt"
 
 #: ../plugins/gtkui/actionhandlers.c:490
 msgid "Delete files from disk"
-msgstr ""
+msgstr "තැටියේ තිබෙන ගොනු ඉවත් කරන්න"
 
 #: ../plugins/gtkui/actionhandlers.c:491
 msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr ""
+msgstr "ගොනු විනාශ විය හැක. ක්‍රියාවට නංවන්නද?\n\n(මෙම කතිකාවත GTKUI මාර්ග අපගත කල හැක)"
 
 #: ../plugins/gtkui/actionhandlers.c:660
 msgid "Load Playlist"
-msgstr ""
+msgstr "ගීත ලැයිස්තුව විවෘත කරන්න"
 
 #: ../plugins/gtkui/actionhandlers.c:675
 msgid "Other files (*)"
-msgstr ""
+msgstr "අනෙකුත් ගොනු (*)"
 
 #: ../plugins/gtkui/actionhandlers.c:709
 msgid "Save Playlist As"
-msgstr ""
+msgstr "ගීත ලැයිස්තුව මෙනමින් සුරකින්න"
 
 #: ../plugins/gtkui/actionhandlers.c:720
 msgid "DeaDBeeF playlist files (*.dbpl)"
-msgstr ""
+msgstr "DeaDBeeF ගීත ලැයිස්තු ගොනු (*.dbpl)"
 
 #: ../plugins/gtkui/ctmapping.c:129
 msgid "Content-Type"
-msgstr ""
+msgstr "අන්තර්ගත-වර්ග:"
 
 #: ../plugins/gtkui/ctmapping.c:199
 msgid "Invalid value(s)."
-msgstr ""
+msgstr "වලංගු නොවන අගය(න්)"
 
 #: ../plugins/gtkui/ctmapping.c:200
 msgid ""
-"Content-type and Plugins fields must be non-empty, and comply with the "
-"rules.\n"
+"Content-type and Plugins fields must be non-empty, and comply with the rules.\n"
 "Example content-type: 'audio/mpeg'.\n"
 "Example plugin ids: 'stdmpg ffmpeg'.\n"
 "Spaces must be used as separators in plugin ids list.\n"
 "Content type should be only letters, numbers and '-' sign.\n"
 "Plugin id can contain only letters and numbers."
-msgstr ""
+msgstr "අන්තර්ගත-වර්ග සහ කෙවෙනි මෘදුකාංග ක්ෂේත්‍ර හිස්ව නොතැබිය යුතුය, සහ නියමයන්ට අනුකූල විය යුතුය.\n\nඋදාහරණ අන්තර්ගත-වර්ග: 'audio/mpeg'.\n\nඋදාහරණ කෙවෙනි මෘදුකාංග අනන්‍යතාවයන්: 'stdmpg ffmpeg'.\n\nකෙවෙනි අනන්‍යතා ලැයිතුවේදී හිස් තැනක් වෙන් කිරීමේ කාරකය ලෙස භාවිතා කල යුතුය.\n\nඅන්තර්ගත වර්ගයන් අකුරු, අංක සහ '-' සළකුණින් පමණක් සමන්විත යුතුය.\n\nමෘදුකාංග අනන්‍යතාවයන් සඳහා පැවතිය හැක්කේ අකුරු සහ අංක පමණකි."
 
 #: ../plugins/gtkui/ctmapping.c:228 ../plugins/gtkui/ctmapping.c:260
 msgid "Nothing is selected."
-msgstr ""
+msgstr "කිසිවක් වරණය කර නොමැත."
 
 #: ../plugins/gtkui/widgets.c:553
 msgid "Replace with..."
-msgstr ""
+msgstr "මෙයින් ප්‍රතිස්ථාපනය කරන්න..."
 
 #: ../plugins/gtkui/widgets.c:558
 msgid "Insert..."
-msgstr ""
+msgstr "අඩංගු කරන්න..."
 
 #: ../plugins/gtkui/widgets.c:585
 msgid "Cut"
-msgstr ""
+msgstr "කපන්න"
 
 #: ../plugins/gtkui/widgets.c:592
 msgid "Copy"
-msgstr ""
+msgstr "පිටපත් කරන්න"
 
 #: ../plugins/gtkui/widgets.c:599
 msgid "Paste"
-msgstr ""
+msgstr "අලවන්න"
 
 #: ../plugins/gtkui/widgets.c:942
 msgid "Lock movement"
-msgstr ""
+msgstr "චලන නවතන්න"
 
 #: ../plugins/gtkui/widgets.c:1227
 msgid "Move tab left"
-msgstr ""
+msgstr "ටැබය වම් දෙසට චලනය කරවන්න"
 
 #: ../plugins/gtkui/widgets.c:1234
 msgid "Move tab right"
-msgstr ""
+msgstr "ටැබය දකුණු දෙසට චලනය කරවන්න"
 
 #: ../plugins/gtkui/widgets.c:1241
 msgid "Remove tab"
-msgstr ""
+msgstr "ටැබය ඉවත් කරන්න"
 
 #: ../plugins/gtkui/widgets.c:1248
 msgid "Rename tab"
-msgstr ""
+msgstr "ටැබයේ නම වෙනස් කරන්න"
 
 #: ../plugins/gtkui/widgets.c:1309
 msgid "Add new tab"
-msgstr ""
+msgstr "නව ටැබයක් එකතු කරන්න"
 
 #: ../plugins/gtkui/widgets.c:1783
 msgid "Show Column Headers"
-msgstr ""
+msgstr "තීරු ශීර්ෂයන් දර්ශනය කරන්න"
 
 #: ../plugins/gtkui/widgets.c:2634
 msgid "Expand the box by 1 item"
-msgstr ""
+msgstr "පෙට්ටිය එක් අයිතමයකින් විහිදුවන්න"
 
 #: ../plugins/gtkui/widgets.c:2639
 msgid "Shrink the box by 1 item"
-msgstr ""
+msgstr "පෙට්ටිය එක් අයිතමයකින් හකුළුවන්න"
 
 #: ../plugins/gtkui/widgets.c:2644
 msgid "Homogeneous"
-msgstr ""
+msgstr "සජාතීය"
 
 #: ../plugins/gtkui/widgets.c:2684
 msgid "Expand"
-msgstr ""
+msgstr "විහිදුවන්න"
 
 #: ../plugins/gtkui/widgets.c:2692
 msgid "Fill"
-msgstr ""
+msgstr "පුරවන්න"
 
 #: ../plugins/gtkui/widgets.c:3075
 msgid "Configure button"
-msgstr ""
+msgstr "බොත්තම් හැඩගස්වන්න"
