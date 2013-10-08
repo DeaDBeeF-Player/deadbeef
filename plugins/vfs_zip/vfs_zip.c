@@ -23,8 +23,8 @@
 #include <assert.h>
 #include "../../deadbeef.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
@@ -182,8 +182,11 @@ vfs_zip_getlength (DB_FILE *f) {
 
 int
 vfs_zip_scandir (const char *dir, struct dirent ***namelist, int (*selector) (const struct dirent *), int (*cmp) (const struct dirent **, const struct dirent **)) {
-    struct zip *z = zip_open (dir, ZIP_CHECKCONS, NULL);
+    trace ("vfs_zip_scandir: %s\n", dir);
+    int error;
+    struct zip *z = zip_open (dir, 0, &error);
     if (!z) {
+        trace ("zip_open failed (code: %d)\n", error);
         return -1;
     }
 
