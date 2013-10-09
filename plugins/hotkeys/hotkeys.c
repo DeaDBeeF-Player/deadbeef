@@ -64,6 +64,9 @@ static xkey_t keys[] = {
 
 typedef struct command_s {
     int keycode;
+#ifndef __APPLE__
+    int x11_keycode;
+#endif
     int modifier;
     int ctx;
     int isglobal;
@@ -228,13 +231,31 @@ find_action_by_name (const char *command, int *is_14_action) {
 
 #ifndef __APPLE__
 static int
+get_x11_keycode (const char *name, int *syms, int first_kk, int last_kk, int ks_per_kk) {
+    int i, ks;
+
+    for (i = 0; i < last_kk-first_kk; i++)
+    {
+        int sym = * (syms + i*ks_per_kk);
+        for (ks = 0; keys[ks].name; ks++)
+        {
+            if ( (keys[ ks ].keysym == sym) && (0 == strcmp (name, keys[ ks ].name)))
+            {
+                return i+first_kk;
+            }
+        }
+    }
+    return 0;
+}
+
+static int
 read_config (Display *disp) {
     int ks_per_kk;
     int first_kk, last_kk;
     int* syms;
 
     XDisplayKeycodes (disp, &first_kk, &last_kk);
-    syms = XGetKeyboardMapping (disp, first_kk, last_kk - first_kk, &ks_per_kk);
+    syms = (int *)XGetKeyboardMapping (disp, first_kk, last_kk - first_kk, &ks_per_kk);
 #else
 #define ShiftMask       (1<<0)
 #define LockMask        (1<<1)
@@ -330,6 +351,10 @@ read_config (void) {
                 else {
                     // lookup name table
                     cmd_entry->keycode = get_keycode (p);
+#ifndef __APPLE__
+                    cmd_entry->x11_keycode = get_x11_keycode (p, syms, first_kk, last_kk, ks_per_kk);
+                    trace ("%s: kc=%d, xkc=%d\n", p, cmd_entry->keycode, cmd_entry->x11_keycode);
+#endif
                 }
                 if (!cmd_entry->keycode)
                 {
@@ -374,7 +399,7 @@ out:
                 flags |= Mod5Mask;
             }
             trace ("XGrabKey %d %x\n", commands[i].keycode, commands[i].modifier | flags);
-            XGrabKey (disp, commands[i].keycode, commands[i].modifier | flags, DefaultRootWindow (disp), False, GrabModeAsync, GrabModeAsync);
+            XGrabKey (disp, commands[i].x11_keycode, commands[i].modifier | flags, DefaultRootWindow (disp), False, GrabModeAsync, GrabModeAsync);
         }
     }
 #endif
@@ -456,7 +481,7 @@ hotkeys_event_loop (void *unused) {
                 state &= (ShiftMask|ControlMask|Mod1Mask|Mod4Mask);
                 trace ("filtered state=%X\n", state);
                 for (i = 0; i < command_count; i++) {
-                    if ( (event.xkey.keycode == commands[ i ].keycode) &&
+                    if ( (event.xkey.keycode == commands[ i ].x11_keycode) &&
                          (state == commands[ i ].modifier))
                     {
                         trace ("matches to commands[%d]!\n", i);
@@ -493,7 +518,7 @@ hotkeys_connect (void) {
     int first_kk, last_kk;
     int* syms;
     XDisplayKeycodes (disp, &first_kk, &last_kk);
-    syms = XGetKeyboardMapping (disp, first_kk, last_kk - first_kk, &ks_per_kk);
+    syms = (int *)XGetKeyboardMapping (disp, first_kk, last_kk - first_kk, &ks_per_kk);
     init_mapped_keycodes (disp, syms, first_kk, last_kk, ks_per_kk);
     XFree (syms);
     XSync (disp, 0);
