@@ -557,7 +557,7 @@ hotkeys_get_action_for_keycombo (int key, int mods, int isglobal, int *ctx) {
     int i;
     // find mapped keycode
 
-    if (isupper (key)) {
+    if (key < 0x7f && isupper (key)) {
         key = tolower (key);
     }
 
