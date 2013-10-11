@@ -476,9 +476,9 @@ hotkeys_event_loop (void *unused) {
             if (event.xkey.type == KeyPress)
             {
                 int state = event.xkey.state;
-                trace ("hotkeys: keypress, state=%X\n", state);
                 // ignore caps/scroll/numlock
                 state &= (ShiftMask|ControlMask|Mod1Mask|Mod4Mask);
+                trace ("hotkeys: key %d mods %X (%X)\n", event.xkey.keycode, state, event.xkey.state);
                 trace ("filtered state=%X\n", state);
                 for (i = 0; i < command_count; i++) {
                     if ( (event.xkey.keycode == commands[ i ].x11_keycode) &&
