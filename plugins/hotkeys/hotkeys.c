@@ -33,8 +33,8 @@
 #include "../../deadbeef.h"
 #include "actionhandlers.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 static DB_hotkeys_plugin_t plugin;
 DB_functions_t *deadbeef;
@@ -79,7 +79,7 @@ static int command_count = 0;
 
 #ifndef __APPLE__
 static void
-init_mapped_keycodes (Display *disp, int *syms, int first_kk, int last_kk, int ks_per_kk) {
+init_mapped_keycodes (Display *disp, Atom *syms, int first_kk, int last_kk, int ks_per_kk) {
     int i, ks;
     for (i = 0; i < last_kk-first_kk; i++)
     {
@@ -231,7 +231,7 @@ find_action_by_name (const char *command, int *is_14_action) {
 
 #ifndef __APPLE__
 static int
-get_x11_keycode (const char *name, int *syms, int first_kk, int last_kk, int ks_per_kk) {
+get_x11_keycode (const char *name, Atom *syms, int first_kk, int last_kk, int ks_per_kk) {
     int i, ks;
 
     for (i = 0; i < last_kk-first_kk; i++)
@@ -252,10 +252,10 @@ static int
 read_config (Display *disp) {
     int ks_per_kk;
     int first_kk, last_kk;
-    int* syms;
+    Atom* syms;
 
     XDisplayKeycodes (disp, &first_kk, &last_kk);
-    syms = (int *)XGetKeyboardMapping (disp, first_kk, last_kk - first_kk, &ks_per_kk);
+    syms = XGetKeyboardMapping (disp, first_kk, last_kk - first_kk, &ks_per_kk);
 #else
 #define ShiftMask       (1<<0)
 #define LockMask        (1<<1)
@@ -516,9 +516,9 @@ hotkeys_connect (void) {
 
     int ks_per_kk;
     int first_kk, last_kk;
-    int* syms;
+    Atom* syms;
     XDisplayKeycodes (disp, &first_kk, &last_kk);
-    syms = (int *)XGetKeyboardMapping (disp, first_kk, last_kk - first_kk, &ks_per_kk);
+    syms = XGetKeyboardMapping (disp, first_kk, last_kk - first_kk, &ks_per_kk);
     init_mapped_keycodes (disp, syms, first_kk, last_kk, ks_per_kk);
     XFree (syms);
     XSync (disp, 0);
