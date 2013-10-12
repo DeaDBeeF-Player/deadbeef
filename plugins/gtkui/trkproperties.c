@@ -42,6 +42,12 @@
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
+// some versions of cairo crash when fields are too long
+// this is the workaround
+// the fields are limited to be no more than 1000 bytes
+// if they are larger - they will be treated as "multiple values".
+#define MAX_GUI_FIELD_LEN 1000
+
 static GtkWidget *trackproperties;
 static GtkCellRenderer *rend_text2;
 static GtkListStore *store;
@@ -116,14 +122,14 @@ get_field_value (char *out, int size, const char *key, const char *(*getter)(DB_
         if (val && val[0] == 0) {
             val = NULL;
         }
-        if (i > 0) {
+        if (i > 0 || (val && strlen (val) >= MAX_GUI_FIELD_LEN)) {
             int n = 0;
             for (; n < i; n++) {
                 if (equals (prev[n], val)) {
                     break;
                 }
             }
-            if (n == i) {
+            if (n == i || (val && strlen (val) >= MAX_GUI_FIELD_LEN)) {
                 multiple = 1;
                 if (val) {
                     size_t l = snprintf (out, size, out == p ? "%s" : "; %s", val ? val : "");
@@ -278,7 +284,7 @@ void
 add_field (GtkListStore *store, const char *key, const char *title, int is_prop, DB_playItem_t **tracks, int numtracks) {
     // get value to edit
     const char *mult = is_prop ? "" : _("[Multiple values] ");
-    char val[1000];
+    char val[MAX_GUI_FIELD_LEN];
     size_t ml = strlen (mult);
     memcpy (val, mult, ml+1);
     int n = get_field_value (val + ml, sizeof (val) - ml, key, deadbeef->pl_find_meta_raw, equals_ptr, tracks, numtracks);
@@ -333,7 +339,7 @@ trkproperties_fill_meta (GtkListStore *store, DB_playItem_t **tracks, int numtra
             continue;
         }
 
-        char title[1000];
+        char title[MAX_GUI_FIELD_LEN];
         if (!types[i]) {
             snprintf (title, sizeof (title), "<%s>", keys[k]);
         }
@@ -372,7 +378,7 @@ trkproperties_fill_metadata (void) {
         if (hc_props[i]) {
             continue;
         }
-        char title[1000];
+        char title[MAX_GUI_FIELD_LEN];
         snprintf (title, sizeof (title), "<%s>", keys[k]+1);
         add_field (propstore, keys[k], title, 1, tracks, numtracks);
     }
@@ -528,13 +534,18 @@ set_metadata_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpoi
         gtk_tree_model_get_value (model, iter, 1, &value);
         const char *skey = g_value_get_string (&key);
         const char *svalue = g_value_get_string (&value);
-        if (*svalue) {
-            for (int i = 0; i < numtracks; i++) {
+
+        for (int i = 0; i < numtracks; i++) {
+            const char *oldvalue= deadbeef->pl_find_meta_raw (tracks[i], skey);
+            if (oldvalue) {
+                fprintf (stderr, "trkproperties: value is too long, ignored\n");
+                continue;
+            }
+
+            if (*svalue) {
                 deadbeef->pl_replace_meta (tracks[i], skey, svalue);
             }
-        }
-        else {
-            for (int i = 0; i < numtracks; i++) {
+            else {
                 deadbeef->pl_delete_meta (tracks[i], skey);
             }
         }
@@ -642,7 +653,6 @@ on_write_tags_clicked                  (GtkButton       *button,
             if (meta->key[0] != ':' && meta->key[0] != '!' && meta->key[0] != '_') {
                 GtkTreeIter iter;
                 gboolean res = gtk_tree_model_get_iter_first (model, &iter);
-                int mult = 0;
                 while (res) {
                     GValue key = {0,};
                     gtk_tree_model_get_value (model, &iter, 2, &key);
