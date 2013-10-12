@@ -988,6 +988,10 @@ gtkui_thread (void *ctx) {
     gtk_binding_entry_remove (binding_set, GDK_KEY_Return, 0);
     gtk_binding_entry_remove (binding_set, GDK_KEY_ISO_Enter, 0);
     gtk_binding_entry_remove (binding_set, GDK_KEY_KP_Enter, 0);
+    gtk_binding_entry_remove (binding_set, GDK_KEY_Tab, GDK_CONTROL_MASK);
+    gtk_binding_entry_remove (binding_set, GDK_KEY_Tab, GDK_CONTROL_MASK|GDK_SHIFT_MASK);
+    gtk_binding_entry_remove (binding_set, GDK_KEY_KP_Tab, GDK_CONTROL_MASK);
+    gtk_binding_entry_remove (binding_set, GDK_KEY_KP_Tab, GDK_CONTROL_MASK|GDK_SHIFT_MASK);
 
     // initialize default hotkey mapping
     struct stat st;

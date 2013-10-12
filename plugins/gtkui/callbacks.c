@@ -315,7 +315,7 @@ void
 on_find_activate                       (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    search_start ();       
+    search_start ();
 }
 
 void

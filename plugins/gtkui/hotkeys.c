@@ -757,6 +757,7 @@ on_hotkeys_set_key_key_press_event     (GtkWidget       *widget,
         }
     }
 
+#if 0
     if (!gtk_accelerator_valid (accel_key, accel_mods))
     {
         gtk_button_set_label (GTK_BUTTON (widget), _("Invalid key combination! try again!"));
@@ -764,6 +765,7 @@ on_hotkeys_set_key_key_press_event     (GtkWidget       *widget,
 
         goto out;
     }
+#endif
     last_accel_key = accel_key;
     last_accel_mask = accel_mods;
     get_keycombo_string (last_accel_key, last_accel_mask, name);
