@@ -500,27 +500,6 @@ on_mainwin_realize                     (GtkWidget       *widget,
     gtkui_init_theme_colors ();
 }
 
-
-
-void
-on_toggle_tabs                         (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    // FIXME!
-    return;
-    GtkWidget *ts = lookup_widget (mainwin, "tabstrip");
-    if (!gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem))) {
-        deadbeef->conf_set_int ("gtkui.tabs.visible", 0);
-        gtk_widget_hide (ts);
-    }
-    else {
-        deadbeef->conf_set_int ("gtkui.tabs.visible", 1);
-        gtk_widget_show (ts);
-    }
-    deadbeef->conf_save ();
-}
-
-
 void
 on_toggle_eq                           (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
