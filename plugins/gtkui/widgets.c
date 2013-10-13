@@ -882,16 +882,24 @@ w_splitter_lock (w_splitter_t *w) {
     gtk_box_pack_end (GTK_BOX (box), c2, TRUE, TRUE, 0);
 
     ddb_gtkui_widget_t *parent = w->base.parent;
-    if (w->base.parent) {
-        gtk_container_remove (GTK_CONTAINER (parent->widget), w->base.widget);
+    GtkWidget *cont = NULL;
+    if (parent) {
+        cont = parent->widget;
+        if (!strcmp (parent->type, "vsplitter") || !strcmp (parent->type, "hsplitter")) {
+            w_splitter_t *sp = (w_splitter_t *)parent;
+            if (sp->box) {
+                cont = sp->box;
+            }
+        }
+        gtk_container_remove (GTK_CONTAINER (cont), w->base.widget);
     }
     GtkWidget *eventbox = gtk_event_box_new ();
     gtk_widget_show (eventbox);
     gtk_container_add (GTK_CONTAINER (eventbox), box);
     w->base.widget = eventbox;
     w->box = box;
-    if (w->base.parent) {
-        gtk_container_add (GTK_CONTAINER (parent->widget), w->base.widget);
+    if (cont) {
+        gtk_container_add (GTK_CONTAINER (cont), w->base.widget);
     }
     w_splitter_init_signals (w);
 }
@@ -923,13 +931,21 @@ w_splitter_unlock (w_splitter_t *w) {
     gtk_paned_set_position (GTK_PANED (paned), w->position);
 
     ddb_gtkui_widget_t *parent = w->base.parent;
-    if (w->base.parent) {
-        gtk_container_remove (GTK_CONTAINER (parent->widget), w->base.widget);
+    GtkWidget *cont = NULL;
+    if (parent) {
+        cont = parent->widget;
+        if (!strcmp (parent->type, "vsplitter") || !strcmp (parent->type, "hsplitter")) {
+            w_splitter_t *sp = (w_splitter_t *)parent;
+            if (sp->box) {
+                cont = sp->box;
+            }
+        }
+        gtk_container_remove (GTK_CONTAINER (cont), w->base.widget);
     }
     w->base.widget = paned;
     w->box = NULL;
-    if (w->base.parent) {
-        gtk_container_add (GTK_CONTAINER (parent->widget), w->base.widget);
+    if (cont) {
+        gtk_container_add (GTK_CONTAINER (cont), w->base.widget);
     }
     w_splitter_init_signals (w);
 }
