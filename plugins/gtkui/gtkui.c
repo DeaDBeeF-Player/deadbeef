@@ -994,11 +994,13 @@ gtkui_thread (void *ctx) {
     gtk_binding_entry_remove (binding_set, GDK_KEY_KP_Tab, GDK_CONTROL_MASK|GDK_SHIFT_MASK);
 
     // initialize default hotkey mapping
-    struct stat st;
-    char checkpath[PATH_MAX];
-    snprintf (checkpath, sizeof (checkpath), "%s/config", deadbeef->get_config_dir ());
-    if (stat (checkpath, &st)) {
-        gtkui_set_default_hotkeys ();
+    if (!deadbeef->conf_get_int ("hotkeys_created", 0)) {
+        // check if any hotkeys were created manually (e.g. beta versions of 0.6)
+        if (!deadbeef->conf_find ("hotkey.key", NULL)) {
+            gtkui_set_default_hotkeys ();
+        }
+        deadbeef->conf_set_int ("hotkeys_created", 1);
+        deadbeef->conf_save ();
     }
 #if GTK_CHECK_VERSION(3,0,0)
     gtk_widget_set_events (GTK_WIDGET (mainwin), gtk_widget_get_events (GTK_WIDGET (mainwin)) | GDK_SCROLL_MASK);
