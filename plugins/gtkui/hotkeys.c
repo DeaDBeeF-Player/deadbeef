@@ -719,27 +719,11 @@ get_keycombo_string (guint accel_key, GdkModifierType accel_mods, char *new_valu
     strcat (new_value, name);
 }
 
-static gboolean
-test_existing_keycombo (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data) {
-    GValue keycombo = {0,};
-    gtk_tree_model_get_value (model, iter, 0, &keycombo);
-    const char *val = g_value_get_string (&keycombo);
-    if (val && !strcmp (val, data)) {
-        *((char *)data) = 0;
-        return TRUE;
-    }
-    return FALSE;
-}
-
 gboolean
 on_hotkeys_set_key_key_press_event     (GtkWidget       *widget,
                                         GdkEventKey     *event,
                                         gpointer         user_data)
 {
-    if (!grabbed) {
-        return FALSE;
-    }
-
     GdkModifierType accel_mods = 0;
     guint accel_key;
     gchar *path;
@@ -747,6 +731,12 @@ on_hotkeys_set_key_key_press_event     (GtkWidget       *widget,
     gboolean cleared;
     GdkModifierType consumed_modifiers;
     GdkDisplay *display;
+    GtkTreePath *curpath;
+    GtkTreeIter iter;
+
+    if (!grabbed) {
+        return FALSE;
+    }
 
     display = gtk_widget_get_display (widget);
 
@@ -779,64 +769,53 @@ on_hotkeys_set_key_key_press_event     (GtkWidget       *widget,
 
     char name[1000];
     gtk_button_set_label (GTK_BUTTON (widget), _(""));
-    if (accel_mods == 0)
-    {
-        switch (event->keyval)
-        {
-//        case GDK_Escape:
-//            get_keycombo_string (last_accel_key, last_accel_mask, name);
-//            gtk_button_set_label (GTK_BUTTON (widget), name);
-//            goto out; /* cancel */
-        case GDK_BackSpace:
-            gtk_button_set_label (GTK_BUTTON (widget), _("<Not set>"));
-            last_accel_key = 0;
-            last_accel_mask = 0;
-            /* clear the accelerator on Backspace */
-            cleared = TRUE;
-            goto out;
-        default:
-            break;
-        }
-    }
 
     GtkWidget *hotkeys = lookup_widget (prefwin, "hotkeys_list");
     GtkTreeModel *model = gtk_tree_view_get_model (GTK_TREE_VIEW (hotkeys));
 
     // check if this key already registered
     get_keycombo_string (accel_key, accel_mods, name);
-    gtk_tree_model_foreach (model, test_existing_keycombo, name);
-    if (*name == 0) {
+
+    gtk_tree_view_get_cursor (GTK_TREE_VIEW (hotkeys), &curpath, NULL);
+    gboolean res = gtk_tree_model_get_iter_first (model, &iter);
+    while (res) {
+        GtkTreePath *iterpath = gtk_tree_model_get_path (model, &iter);
+
+        if (!curpath || gtk_tree_path_compare (iterpath, curpath)) {
+            GValue keycombo = {0,};
+            gtk_tree_model_get_value (model, &iter, 0, &keycombo);
+            const char *val = g_value_get_string (&keycombo);
+            if (val && !strcmp (val, name)) {
+                gtk_tree_path_free (iterpath);
+                break;
+            }
+        }
+        gtk_tree_path_free (iterpath);
+
+        res = gtk_tree_model_iter_next (model, &iter);
+    }
+
+    if (res) {
         // duplicate
         gtk_button_set_label (GTK_BUTTON (widget), _("Duplicate key combination!"));
         gtk_widget_error_bell (widget);
         goto out;
     }
 
-#if 0
-    if (!gtk_accelerator_valid (accel_key, accel_mods))
-    {
-        gtk_button_set_label (GTK_BUTTON (widget), _("Invalid key combination! try again!"));
-        gtk_widget_error_bell (widget);
-
-        goto out;
-    }
-#endif
     last_accel_key = accel_key;
     last_accel_mask = accel_mods;
     get_keycombo_string (last_accel_key, last_accel_mask, name);
     gtk_button_set_label (GTK_BUTTON (widget), name);
 
     // update the tree
-    {
-        GtkTreePath *path;
-        gtk_tree_view_get_cursor (GTK_TREE_VIEW (hotkeys), &path, NULL);
-        GtkTreeIter iter;
-        if (path && gtk_tree_model_get_iter (model, &iter, path)) {
-            gtk_list_store_set (GTK_LIST_STORE (model), &iter, 0, name, -1);
-        }
+    if (curpath && gtk_tree_model_get_iter (model, &iter, curpath)) {
+        gtk_list_store_set (GTK_LIST_STORE (model), &iter, 0, name, -1);
     }
 
 out:
+    if (curpath) {
+        gtk_tree_path_free (curpath);
+    }
     gdk_display_keyboard_ungrab (display, GDK_CURRENT_TIME);
     gdk_display_pointer_ungrab (display, GDK_CURRENT_TIME);
     grabbed = 0;
