@@ -1026,7 +1026,6 @@ gtkui_thread (void *ctx) {
 
     // visibility of statusbar and headers
     GtkWidget *sb_mi = lookup_widget (mainwin, "view_status_bar");
-    GtkWidget *ts_mi = lookup_widget (mainwin, "view_tabs");
     GtkWidget *sb = lookup_widget (mainwin, "statusbar");
     if (deadbeef->conf_get_int ("gtkui.statusbar.visible", 1)) {
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (sb_mi), TRUE);
