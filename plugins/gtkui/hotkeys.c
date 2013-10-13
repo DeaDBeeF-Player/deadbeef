@@ -89,6 +89,27 @@ unescape_forward_slash (const char *src, char *dst, int size) {
     *dst = 0;
 }
 
+static void
+prettify_forward_slash (const char *src, char *dst, int size) {
+    char *start = dst;
+    const char arrow[] = " → ";
+    int larrow = strlen (arrow);
+    while (*src && size > 1) {
+        if (*src == '\\' && *(src+1) == '/') {
+            src++;
+        }
+        else if (*src == '/' && size > larrow) {
+            memcpy (dst, arrow, larrow);
+            src++;
+            dst += larrow;
+            size -= larrow;
+            continue;
+        }
+        *dst++ = *src++;
+        size--;
+    }
+    *dst = 0;
+}
 
 static const char *
 get_display_action_title (const char *title) {
@@ -463,7 +484,10 @@ set_button_action_label (const char *act, int action_ctx, GtkWidget *button) {
             }
             char s[200];
             snprintf (s, sizeof (s), "%s%s%s", ctx_str ? ctx_str : "", ctx_str ? " ⇒ ": "", action->title);
-            gtk_button_set_label (GTK_BUTTON (button), s);
+            char s_fixed[200];
+            prettify_forward_slash (s, s_fixed, sizeof (s_fixed));
+
+            gtk_button_set_label (GTK_BUTTON (button), s_fixed);
             return;
         }
     }
