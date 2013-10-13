@@ -719,6 +719,18 @@ get_keycombo_string (guint accel_key, GdkModifierType accel_mods, char *new_valu
     strcat (new_value, name);
 }
 
+static gboolean
+test_existing_keycombo (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data) {
+    GValue keycombo = {0,};
+    gtk_tree_model_get_value (model, iter, 0, &keycombo);
+    const char *val = g_value_get_string (&keycombo);
+    if (val && !strcmp (val, data)) {
+        *((char *)data) = 0;
+        return TRUE;
+    }
+    return FALSE;
+}
+
 gboolean
 on_hotkeys_set_key_key_press_event     (GtkWidget       *widget,
                                         GdkEventKey     *event,
@@ -787,6 +799,19 @@ on_hotkeys_set_key_key_press_event     (GtkWidget       *widget,
         }
     }
 
+    GtkWidget *hotkeys = lookup_widget (prefwin, "hotkeys_list");
+    GtkTreeModel *model = gtk_tree_view_get_model (GTK_TREE_VIEW (hotkeys));
+
+    // check if this key already registered
+    get_keycombo_string (accel_key, accel_mods, name);
+    gtk_tree_model_foreach (model, test_existing_keycombo, name);
+    if (*name == 0) {
+        // duplicate
+        gtk_button_set_label (GTK_BUTTON (widget), _("Duplicate key combination!"));
+        gtk_widget_error_bell (widget);
+        goto out;
+    }
+
 #if 0
     if (!gtk_accelerator_valid (accel_key, accel_mods))
     {
@@ -803,10 +828,8 @@ on_hotkeys_set_key_key_press_event     (GtkWidget       *widget,
 
     // update the tree
     {
-        GtkWidget *hotkeys = lookup_widget (prefwin, "hotkeys_list");
         GtkTreePath *path;
         gtk_tree_view_get_cursor (GTK_TREE_VIEW (hotkeys), &path, NULL);
-        GtkTreeModel *model = gtk_tree_view_get_model (GTK_TREE_VIEW (hotkeys));
         GtkTreeIter iter;
         if (path && gtk_tree_model_get_iter (model, &iter, path)) {
             gtk_list_store_set (GTK_LIST_STORE (model), &iter, 0, name, -1);
