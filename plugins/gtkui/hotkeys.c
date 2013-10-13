@@ -203,7 +203,7 @@ static void
 hotkeys_save (void) {
     GtkWidget *hotkeys = lookup_widget (prefwin, "hotkeys_list");
     GtkListStore *hkstore = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (hotkeys)));
-//    deadbeef->conf_remove_items ("hotkey.key");
+    deadbeef->conf_remove_items ("hotkey.key");
 
     GtkTreePath *path = gtk_tree_path_new_first ();
     GtkTreeIter iter;
@@ -566,6 +566,12 @@ on_hotkey_remove_clicked               (GtkButton       *button,
     GtkTreeIter iter;
     gtk_tree_model_get_iter (GTK_TREE_MODEL (hkstore), &iter, path);
     gtk_list_store_remove (hkstore, &iter);
+    set_button_action_label (NULL, 0, lookup_widget (prefwin, "hotkeys_actions"));
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "hotkey_is_global")), FALSE);
+        gtk_button_set_label (GTK_BUTTON (lookup_widget (prefwin, "hotkeys_set_key")), _("<Not set>"));
+    gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkeys_actions"), FALSE);
+    gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkey_is_global"), FALSE);
+    gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkeys_set_key"), FALSE);
     gtkui_hotkeys_changed = 1;
 }
 
