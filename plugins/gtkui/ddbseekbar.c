@@ -331,9 +331,17 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
     cairo_fill (cr);
     cairo_reset_clip (cr);
 
-    if (self->seekbar_moving && trk) {
+    if ((self->seekbar_moving || self->seekbar_moved > 0.0) && trk) {
+        float time = 0;
         float dur = deadbeef->pl_get_item_duration (trk);
-        float time = self->seekbar_move_x * dur / (a.width);
+
+        if (self->seekbar_moved > 0) {
+            time = deadbeef->streamer_get_playpos ();
+        }
+        else {
+            time = self->seekbar_move_x * dur / (a.width);
+        }
+
         if (time < 0) {
             time = 0;
         }
@@ -346,7 +354,7 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
         int sc = time-hr*3600-mn*60;
         snprintf (s, sizeof (s), "%02d:%02d:%02d", hr, mn, sc);
 
-        cairo_set_source_rgba (cr, clr_selection.red/65535.f, clr_selection.green/65535.f, clr_selection.blue/65535.f, 0.8f);
+        cairo_set_source_rgba (cr, clr_selection.red/65535.f, clr_selection.green/65535.f, clr_selection.blue/65535.f, self->seektime_alpha);
         cairo_save (cr);
         cairo_set_font_size (cr, 20);
 
@@ -363,11 +371,24 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
         cairo_move_to (cr, self->textpos, ay+ah/2+ex.height/2);
         GdkColor clr;
         gtkui_get_listview_selected_text_color (&clr);
-        cairo_set_source_rgb (cr, clr.red/65535.f, clr.green/65535.f, clr.blue/65535.f);
+        cairo_set_source_rgba (cr, clr.red/65535.f, clr.green/65535.f, clr.blue/65535.f, self->seektime_alpha);
         cairo_show_text (cr, s);
         cairo_restore (cr);
-    }
 
+        int fps = deadbeef->conf_get_int ("gtkui.refresh_rate", 10);
+        if (fps < 1) {
+            fps = 1;
+        }
+        else if (fps > 30) {
+            fps = 30;
+        }
+        if (self->seekbar_moved >= 0.0) {
+            self->seekbar_moved -= 1.0/fps;
+        }
+        else {
+            self->seekbar_moved = 0.0;
+        }
+    }
 
     if (trk) {
         deadbeef->pl_item_unref (trk);
@@ -397,8 +418,10 @@ on_seekbar_button_press_event          (GtkWidget       *widget,
         return FALSE;
     }
     self->seekbar_moving = 1;
+    self->seekbar_moved = 0;
     self->textpos = -1;
     self->textwidth = -1;
+    self->seektime_alpha = 0.8;
     GtkAllocation a;
     gtk_widget_get_allocation (widget, &a);
     self->seekbar_move_x = event->x - a.x;
@@ -413,6 +436,7 @@ on_seekbar_button_release_event        (GtkWidget       *widget,
 {
     DdbSeekbar *self = DDB_SEEKBAR (widget);
     self->seekbar_moving = 0;
+    self->seekbar_moved = 1.0;
     DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
     if (trk) {
         GtkAllocation a;
