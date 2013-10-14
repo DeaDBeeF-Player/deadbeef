@@ -566,6 +566,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                             buffer->bitrate = (fsize - deadbeef->ftell (buffer->file))/ buffer->samplerate * 1000;
                         }
                         buffer->startoffset = deadbeef->ftell (buffer->file);
+                        continue;
                     }
                 }
             }
