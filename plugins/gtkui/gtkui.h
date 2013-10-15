@@ -39,7 +39,7 @@ extern int gtkui_is_retina;
 
 struct _GSList;
 
-int GROUPS_PINNED;
+extern int gtkui_groups_pinned;
 
 // misc utility functions
 
