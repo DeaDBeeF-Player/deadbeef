@@ -280,6 +280,14 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
     else if (it) {
         char text[1024];
         deadbeef->pl_format_title (it, -1, text, sizeof (text), cinf->id, cinf->format);
+        char *lb = strchr (text, '\r');
+        if (lb) {
+            *lb = 0;
+        }
+        lb = strchr (text, '\n');
+        if (lb) {
+            *lb = 0;
+        }
         GdkColor *color = NULL;
         if (theming) {
             if (deadbeef->pl_is_selected (it)) {

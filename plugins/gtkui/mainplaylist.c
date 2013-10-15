@@ -171,6 +171,14 @@ void main_draw_group_title (DdbListview *listview, cairo_t *drawable, DdbListvie
     if (group_by_str && group_by_str[0]) {
         char str[1024];
         deadbeef->pl_format_title ((DB_playItem_t *)it, -1, str, sizeof (str), -1, group_by_str);
+        char *lb = strchr (str, '\r');
+        if (lb) {
+            *lb = 0;
+        }
+        lb = strchr (str, '\n');
+        if (lb) {
+            *lb = 0;
+        }
         int theming = !gtkui_override_listview_colors ();
         if (theming) {
             GdkColor *clr = &gtk_widget_get_style(theme_treeview)->fg[GTK_STATE_NORMAL];
@@ -214,6 +222,14 @@ main_get_group (DdbListviewIter it, char *str, int size) {
         return -1;
     }
     deadbeef->pl_format_title ((DB_playItem_t *)it, -1, str, size, -1, group_by_str);
+    char *lb = strchr (str, '\r');
+    if (lb) {
+        *lb = 0;
+    }
+    lb = strchr (str, '\n');
+    if (lb) {
+        *lb = 0;
+    }
     return 0;
 }
 
