@@ -90,7 +90,7 @@ ddb_listview_list_render (DdbListview *ps, cairo_t *cr, int x, int y, int w, int
 void
 ddb_listview_list_render_row_background (DdbListview *ps, cairo_t *cr, DdbListviewIter it, int even, int cursor, int x, int y, int w, int h);
 void
-ddb_listview_list_render_row_foreground (DdbListview *ps, cairo_t *cr, DdbListviewIter it, DdbListviewIter group_it, int even, int cursor, int group_y, int x, int y, int w, int h);
+ddb_listview_list_render_row_foreground (DdbListview *ps, cairo_t *cr, DdbListviewIter it, DdbListviewIter group_it, int even, int cursor, int group_y, int group_height, int group_pinned, int grp_next_y, int x, int y, int w, int h);
 void
 ddb_listview_list_track_dragdrop (DdbListview *ps, int y);
 int
@@ -681,6 +681,7 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
     // find 1st group
     DdbListviewGroup *grp = listview->groups;
     int grp_y = 0;
+    int grp_next_y = 0;
     while (grp && grp_y + grp->height < y + listview->scrollpos) {
         grp_y += grp->height;
         idx += grp->num_items + 1;
@@ -691,10 +692,16 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
     draw_begin (&listview->listctx, cr);
 
     int ii = 0;
+    if (grp) {
+        grp->pinned = 1;
+    }
     while (grp && grp_y < y + h + listview->scrollpos) {
         // render title
         DdbListviewIter it = grp->head;
         int grpheight = grp->height;
+        int pushback = 0;
+        int group_idx = idx;
+
         if (grp_y >= y + h + listview->scrollpos) {
             break;
         }
@@ -705,6 +712,7 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
                 listview->binding->draw_group_title (listview, cr, it, -listview->hscrollpos, grp_y - listview->scrollpos, listview->totalwidth, listview->grouptitle_height);
             }
         }
+
         for (int i = 0; i < grp->num_items; i++) {
             ii++;
 //            if (grp_y + listview->grouptitle_height + (i+1) * listview->rowheight >= y + h + listview->scrollpos) {
@@ -713,6 +721,10 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
             if (grp_y + listview->grouptitle_height + i * listview->rowheight >= y + h + listview->scrollpos) {
                 break;
             }
+            grp_next_y = grp_y + grpheight;
+            if (grp->pinned == 1 && GROUPS_PINNED && grp_next_y - listview->scrollpos <= listview->grouptitle_height) {
+                pushback = listview->grouptitle_height - (grp_next_y - listview->scrollpos);
+            }
             if (grp_y + listview->grouptitle_height + (i+1) * listview->rowheight >= y + listview->scrollpos
                     && grp_y + listview->grouptitle_height + i * listview->rowheight < y + h + listview->scrollpos) {
                 GtkStyle *st = gtk_widget_get_style (listview->list);
@@ -720,7 +732,13 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
                 cairo_rectangle (cr, -listview->hscrollpos, grp_y + listview->grouptitle_height + i * listview->rowheight - listview->scrollpos, listview->totalwidth, listview->rowheight);
                 cairo_fill (cr);
                 ddb_listview_list_render_row_background (listview, cr, it, (idx + 1 + i) & 1, (abs_idx+i) == listview->binding->cursor () ? 1 : 0, -listview->hscrollpos, grp_y + listview->grouptitle_height + i * listview->rowheight - listview->scrollpos, listview->totalwidth, listview->rowheight);
-                ddb_listview_list_render_row_foreground (listview, cr, it, grp->head, (idx + 1 + i) & 1, (idx+i) == listview->binding->cursor () ? 1 : 0, i * listview->rowheight, -listview->hscrollpos, grp_y + listview->grouptitle_height + i * listview->rowheight - listview->scrollpos, listview->totalwidth, listview->rowheight);
+                ddb_listview_list_render_row_foreground (listview, cr, it, grp->head, (idx + 1 + i) & 1, (idx+i) == listview->binding->cursor () ? 1 : 0, i * listview->rowheight, grp->height, grp->pinned, grp_next_y - listview->scrollpos, -listview->hscrollpos, grp_y + listview->grouptitle_height + i * listview->rowheight - listview->scrollpos, listview->totalwidth, listview->rowheight);
+            }
+            if (grp->pinned == 1 && GROUPS_PINNED) {
+                ddb_listview_list_render_row_background (listview, cr, NULL, group_idx & 1, 0, -listview->hscrollpos, y, listview->totalwidth, listview->grouptitle_height);
+                if (listview->binding->draw_group_title && listview->grouptitle_height > 0) {
+                    listview->binding->draw_group_title (listview, cr, it, -listview->hscrollpos, y - pushback, listview->totalwidth, listview->grouptitle_height);
+                }
             }
             DdbListviewIter next = listview->binding->next (it);
             listview->binding->unref (it);
@@ -729,12 +747,11 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
                 break; // sanity check, in case groups were not rebuilt yet
             }
         }
-        if (it) {
-            listview->binding->unref (it);
-        }
+
         idx += grp->num_items + 1;
         abs_idx += grp->num_items;
 
+        DdbListviewIter prev = listview->binding->prev (it);
         int filler = grpheight - (listview->grouptitle_height + listview->rowheight * grp->num_items);
         if (filler > 0) {
             int theming = !gtkui_override_listview_colors ();
@@ -752,13 +769,33 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
                 cairo_rectangle (cr, x, grp_y - listview->scrollpos + listview->grouptitle_height + listview->rowheight * grp->num_items, w, filler);
                 cairo_fill (cr);
             }
-
-
-            ddb_listview_list_render_row_foreground (listview, cr, NULL, grp->head, 0, 0, grp->num_items * listview->rowheight, -listview->hscrollpos, grp_y - listview->scrollpos + listview->grouptitle_height + listview->rowheight * grp->num_items, listview->totalwidth, filler);
+            ddb_listview_list_render_row_foreground (listview, cr, NULL, grp->head, 0, 0, grp->num_items * listview->rowheight, grp->height, grp->pinned, grp_next_y - listview->scrollpos, -listview->hscrollpos, grp_y - listview->scrollpos + listview->grouptitle_height + listview->rowheight * grp->num_items, listview->totalwidth, filler);
+            if (grp->pinned == 1 && GROUPS_PINNED) {
+                ddb_listview_list_render_row_background (listview, cr, NULL, group_idx & 1, 0, -listview->hscrollpos, y, listview->totalwidth, listview->grouptitle_height);
+                if (listview->binding->draw_group_title && listview->grouptitle_height > 0) {
+                    listview->binding->draw_group_title (listview, cr, prev, -listview->hscrollpos, y - pushback, listview->totalwidth, listview->grouptitle_height);
+                }
+            }
         }
-
+        if (prev) {
+            listview->binding->unref (prev);
+        }
+        if (it) {
+            listview->binding->unref (it);
+        }
         grp_y += grpheight;
-        grp = grp->next;
+        if (grp->pinned == 1) {
+            grp = grp->next;
+            if (grp) {
+                grp->pinned = 2;
+            }
+        }
+        else {
+            grp = grp->next;
+            if (grp) {
+                grp->pinned = 0;
+            }
+        }
     }
     if (grp_y < y + h + listview->scrollpos) {
         int hh = y + h - (grp_y - listview->scrollpos);
@@ -1307,7 +1344,7 @@ ddb_listview_list_render_row_background (DdbListview *ps, cairo_t *cr, DdbListvi
 }
 
 void
-ddb_listview_list_render_row_foreground (DdbListview *ps, cairo_t *cr, DdbListviewIter it, DdbListviewIter group_it, int even, int cursor, int group_y, int x, int y, int w, int h) {
+ddb_listview_list_render_row_foreground (DdbListview *ps, cairo_t *cr, DdbListviewIter it, DdbListviewIter group_it, int even, int cursor, int group_y, int group_height, int group_pinned, int grp_next_y, int x, int y, int w, int h) {
 	int width, height;
 	GtkAllocation a;
 	gtk_widget_get_allocation (ps->list, &a);
@@ -1327,7 +1364,7 @@ ddb_listview_list_render_row_foreground (DdbListview *ps, cairo_t *cr, DdbListvi
     int cidx = 0;
     for (c = ps->columns; c; c = c->next, cidx++) {
         int cw = c->width;
-        ps->binding->draw_column_data (ps, cr, it, ps->grouptitle_height > 0 ? group_it : NULL, cidx, group_y, x, y, cw, h);
+        ps->binding->draw_column_data (ps, cr, it, ps->grouptitle_height > 0 ? group_it : NULL, cidx, group_y, group_height, group_pinned, grp_next_y, x, y, cw, h);
         x += cw;
     }
 }
@@ -1392,7 +1429,7 @@ ddb_listview_click_selection (DdbListview *ps, int ex, int ey, DdbListviewGroup 
             it = next;
         }
     }
-    else if (sel == -1 && grp) {
+    else if ((sel == -1 && grp) || (ey <= ps->grouptitle_height && GROUPS_PINNED)) {
         // clicked group title, select group
         DdbListviewIter it;
         int idx = 0;

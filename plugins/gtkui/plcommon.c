@@ -85,6 +85,16 @@ redraw_playlist (void *user_data) {
     g_idle_add (redraw_playlist_cb, user_data);
 }
 
+static gboolean
+redraw_playlist_single_cb (gpointer user_data) {
+    gtk_widget_queue_draw (GTK_WIDGET(user_data));
+    return FALSE;
+}
+
+static void
+redraw_playlist_single (void *user_data) {
+    g_idle_add (redraw_playlist_cb, user_data);
+}
 
 #define ART_PADDING_HORZ 8
 #define ART_PADDING_VERT 0
@@ -138,7 +148,7 @@ deferred_cover_load_cb (void *ctx) {
     return FALSE;
 }
 
-void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, DdbListviewIter group_it, int column, int group_y, int x, int y, int width, int height) {
+void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, DdbListviewIter group_it, int column, int group_y, int group_height, int group_pinned, int grp_next_y, int x, int y, int width, int height) {
     const char *ctitle;
     int cwidth;
     int calign_right;
@@ -148,6 +158,7 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
     if (res == -1) {
         return;
     }
+
     DB_playItem_t *playing_track = deadbeef->streamer_get_playing_track ();
 	int theming = !gtkui_override_listview_colors ();
 
@@ -212,24 +223,40 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
             }
             int h = cwidth - group_y;
             h = min (height, art_h);
-            GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, art_width, NULL, NULL);
+
+            GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, art_width, redraw_playlist_single, listview);
             if (pixbuf) {
-                int pw = real_art_width;
-                int ph = pw;
+                int pw = gdk_pixbuf_get_width (pixbuf);
+                int ph;
+                if (group_pinned == 1 && GROUPS_PINNED) {
+                    ph = group_height;
+                } 
+                else {
+                    ph = gdk_pixbuf_get_height (pixbuf);
+                }
+                
                 if (sy < ph)
                 {
-                    ph -= sy;
-                    ph = min (ph, h);
-                    cairo_rectangle (cr, x + ART_PADDING_HORZ, art_y, pw, ph);
-                    cairo_save (cr);
-                    cairo_translate (cr, ((x + ART_PADDING_HORZ)-0), ((art_y)-sy));
-                    cairo_scale (cr, (float)art_scale, (float)art_scale);
-                    gdk_cairo_set_source_pixbuf (cr, pixbuf, 0, 0);
-                    cairo_pattern_set_filter (cairo_get_source(cr), art_width == real_art_width ? CAIRO_FILTER_GAUSSIAN : CAIRO_FILTER_FAST);
+                    pw = min (art_width, pw);
+                    if (group_pinned == 1 && GROUPS_PINNED) {
+                        int ph_real = gdk_pixbuf_get_height (pixbuf);
+                        if (grp_next_y <= ph_real + listview->grouptitle_height) {
+                            gdk_cairo_set_source_pixbuf (cr, pixbuf, (x + ART_PADDING_HORZ)-0, grp_next_y - ph_real);
+                            cairo_rectangle (cr, x + ART_PADDING_HORZ, grp_next_y - ph_real, pw, ph);
+                        } 
+                        else {
+                            gdk_cairo_set_source_pixbuf (cr, pixbuf, (x + ART_PADDING_HORZ)-0, listview->grouptitle_height);
+                            cairo_rectangle (cr, x + ART_PADDING_HORZ, listview->grouptitle_height, pw, ph);
+                        }
+                    }
+                    else {
+                        ph -= sy;
+                        ph = min (ph, h);
+                        gdk_cairo_set_source_pixbuf (cr, pixbuf, (x + ART_PADDING_HORZ)-0, (art_y)-sy);
+                        cairo_rectangle (cr, x + ART_PADDING_HORZ, art_y, pw, ph);
+                    }
                     cairo_fill (cr);
-                    cairo_restore (cr);
                 }
-                g_object_unref (pixbuf);
             }
         }
     }
@@ -745,6 +772,23 @@ on_group_by_none_activate              (GtkMenuItem     *menuitem,
 }
 
 void
+on_pin_groups_active                   (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{   
+    gboolean act = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem));
+    int old_val = deadbeef->conf_get_int ("playlist.pin.groups", 0);
+    deadbeef->conf_set_int ("playlist.pin.groups", 1-old_val);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    gtk_check_menu_item_toggled(menuitem);
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_modified (plt);
+        deadbeef->plt_unref(plt);
+    }
+    main_refresh ();
+}
+
+void
 on_group_by_artist_date_album_activate (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
@@ -1068,6 +1112,7 @@ create_headermenu (int groupby)
   GtkWidget *remove_column;
   GtkWidget *separator;
   GtkWidget *group_by;
+  GtkWidget *pin_groups;
   GtkWidget *group_by_menu;
   GtkWidget *none;
   GtkWidget *artist_date_album;
@@ -1094,6 +1139,11 @@ create_headermenu (int groupby)
       gtk_container_add (GTK_CONTAINER (headermenu), separator);
       gtk_widget_set_sensitive (separator, FALSE);
 
+      pin_groups = gtk_check_menu_item_new_with_mnemonic(_("Pin groups when scrolling"));
+      gtk_widget_show (pin_groups);
+      gtk_container_add (GTK_CONTAINER (headermenu), pin_groups);
+      gtk_check_menu_item_set_active (pin_groups, (gboolean)deadbeef->conf_get_int("playlist.pin.groups",0));
+
       group_by = gtk_menu_item_new_with_mnemonic (_("Group by"));
       gtk_widget_show (group_by);
       gtk_container_add (GTK_CONTAINER (headermenu), group_by);
@@ -1119,6 +1169,10 @@ create_headermenu (int groupby)
 
       g_signal_connect ((gpointer) none, "activate",
               G_CALLBACK (on_group_by_none_activate),
+              NULL);
+
+      g_signal_connect ((gpointer) pin_groups, "activate",
+              G_CALLBACK (on_pin_groups_active),
               NULL);
 
       g_signal_connect ((gpointer) artist_date_album, "activate",

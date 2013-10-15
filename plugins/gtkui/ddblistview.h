@@ -48,6 +48,7 @@ struct _DdbListviewGroup {
     DdbListviewIter head;
     int32_t height;
     int32_t num_items;
+    int pinned;
     struct _DdbListviewGroup *next;
 };
 
@@ -84,7 +85,7 @@ typedef struct {
 
     // callbacks
     void (*draw_group_title) (DdbListview *listview, cairo_t *drawable, DdbListviewIter iter, int x, int y, int width, int height);
-    void (*draw_column_data) (DdbListview *listview, cairo_t *drawable, DdbListviewIter iter, DdbListviewIter group_iter, int column, int group_y, int x, int y, int width, int height);
+    void (*draw_column_data) (DdbListview *listview, cairo_t *drawable, DdbListviewIter iter, DdbListviewIter group_iter, int column, int group_y, int group_height, int group_pinned, int grp_next_y, int x, int y, int width, int height);
     void (*list_context_menu) (DdbListview *listview, DdbListviewIter iter, int idx);
     void (*header_context_menu) (DdbListview *listview, int col);
     void (*handle_doubleclick) (DdbListview *listview, DdbListviewIter iter, int idx);
