@@ -85,6 +85,16 @@ redraw_playlist (void *user_data) {
     g_idle_add (redraw_playlist_cb, user_data);
 }
 
+static gboolean
+redraw_playlist_single_cb (gpointer user_data) {
+    gtk_widget_queue_draw (GTK_WIDGET(user_data));
+    return FALSE;
+}
+
+static void
+redraw_playlist_single (void *user_data) {
+    g_idle_add (redraw_playlist_single_cb, user_data);
+}
 
 #define ART_PADDING_HORZ 8
 #define ART_PADDING_VERT 0
@@ -212,7 +222,7 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
             }
             int h = cwidth - group_y;
             h = min (height, art_h);
-            GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, art_width, NULL, NULL);
+            GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, art_width, redraw_playlist_single, listview);
             if (pixbuf) {
                 int pw = real_art_width;
                 int ph = pw;
@@ -363,11 +373,6 @@ main_reload_metadata_activate
         it = next;
     }
     deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
-#if 0
-    main_refresh ();
-    search_redraw ();
-    trkproperties_fill_metadata ();
-#endif
 }
 
 void
