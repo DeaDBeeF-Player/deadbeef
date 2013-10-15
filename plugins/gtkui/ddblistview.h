@@ -43,6 +43,15 @@ typedef struct _DdbListviewClass DdbListviewClass;
 
 typedef void * DdbListviewIter;
 typedef void * DdbPlaylistHandle;
+
+struct _DdbListviewGroup {
+    DdbListviewIter head;
+    int32_t height;
+    int32_t num_items;
+    struct _DdbListviewGroup *next;
+};
+
+typedef struct _DdbListviewGroup DdbListviewGroup;
 //typedef void * DdbListviewColIter;
 
 typedef struct {
@@ -161,6 +170,11 @@ struct _DdbListview {
     // drawing contexts
     drawctx_t listctx;
     drawctx_t hdrctx;
+
+    // cover art size
+    int cover_size;
+    int new_cover_size;
+    guint cover_refresh_timeout_id;
 };
 
 struct _DdbListviewClass {
@@ -269,6 +283,9 @@ ddb_listview_lock_columns (DdbListview *lv, gboolean lock);
 
 int
 ddb_listview_get_row_pos (DdbListview *listview, int row_idx);
+
+void
+ddb_listview_groupcheck (DdbListview *listview);
 
 G_END_DECLS
 

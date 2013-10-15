@@ -74,20 +74,69 @@ rewrite_column_config (DdbListview *listview, const char *name) {
 }
 
 static gboolean
-redraw_playlist_cb (gpointer dt) {
-    void main_refresh (void);
-    main_refresh ();
+redraw_playlist_cb (gpointer user_data) {
+    DDB_LISTVIEW(user_data)->cover_size = DDB_LISTVIEW(user_data)->new_cover_size;
+    gtk_widget_queue_draw (GTK_WIDGET(user_data));
     return FALSE;
 }
 
 static void
 redraw_playlist (void *user_data) {
-    g_idle_add (redraw_playlist_cb, NULL);
+    g_idle_add (redraw_playlist_cb, user_data);
 }
 
 
 #define ART_PADDING_HORZ 8
 #define ART_PADDING_VERT 0
+
+static gboolean
+deferred_cover_load_cb (void *ctx) {
+    DdbListview *lv = ctx;
+    lv->cover_refresh_timeout_id = 0;
+    deadbeef->pl_lock ();
+    ddb_listview_groupcheck (lv);
+    // find 1st group
+    DdbListviewGroup *grp = lv->groups;
+    int idx = 0;
+    int abs_idx = 0;
+    int grp_y = 0;
+    while (grp && grp_y + grp->height < lv->scrollpos) {
+        grp_y += grp->height;
+        idx += grp->num_items + 1;
+        abs_idx += grp->num_items;
+        grp = grp->next;
+    }
+    GtkAllocation a;
+    gtk_widget_get_allocation (GTK_WIDGET (lv), &a);
+    while (grp && grp_y < a.height + lv->scrollpos) {
+        // render title
+        DdbListviewIter group_it = grp->head;
+        int grpheight = grp->height;
+        if (grp_y >= a.height + lv->scrollpos) {
+            break;
+        }
+        const char *album = deadbeef->pl_find_meta (group_it, "album");
+        const char *artist = deadbeef->pl_find_meta (group_it, "artist");
+        if (!album || !*album) {
+            album = deadbeef->pl_find_meta (group_it, "title");
+        }
+
+        grp_y += grpheight;
+        grp = grp->next;
+        int last = 0;
+        if (!grp || grp_y >= a.height + lv->scrollpos) {
+            printf ("queue redraw for cover size %d\n", lv->new_cover_size);
+            last = 1;
+        }
+        GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, lv->new_cover_size, last ? redraw_playlist : NULL, lv);
+        if (pixbuf) {
+            g_object_unref (pixbuf);
+        }
+    }
+    deadbeef->pl_unlock ();
+
+    return FALSE;
+}
 
 void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, DdbListviewIter group_it, int column, int group_y, int x, int y, int width, int height) {
     const char *ctitle;
@@ -126,42 +175,61 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
             cairo_rectangle (cr, x, y, width, height);
             cairo_fill (cr);
         }
-        int art_width = width - ART_PADDING_HORZ * 2;
-        int art_y = y; // dest y
-        int art_h = height;
-        int sy; // source y
-        if (group_y < ART_PADDING_VERT) {
-            art_y = y - group_y + ART_PADDING_VERT;
-            art_h = height - (art_y - y);
-            sy = group_y;
-        }
-        else {
-            sy = group_y - ART_PADDING_VERT;
-        }
-        if (art_width > 0) {
-            if (group_it) {
-                int h = cwidth - group_y;
-                h = min (height, art_h);
-                const char *album = deadbeef->pl_find_meta (group_it, "album");
-                const char *artist = deadbeef->pl_find_meta (group_it, "artist");
-                if (!album || !*album) {
-                    album = deadbeef->pl_find_meta (group_it, "title");
+        int real_art_width = width - ART_PADDING_HORZ * 2;
+        if (real_art_width > 0 && group_it) {
+            const char *album = deadbeef->pl_find_meta (group_it, "album");
+            const char *artist = deadbeef->pl_find_meta (group_it, "artist");
+            if (!album || !*album) {
+                album = deadbeef->pl_find_meta (group_it, "title");
+            }
+            if (listview->new_cover_size != real_art_width) {
+                listview->new_cover_size = real_art_width;
+                if (listview->cover_refresh_timeout_id) {
+                    g_source_remove (listview->cover_refresh_timeout_id);
+                    listview->cover_refresh_timeout_id = 0;
                 }
-                GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, art_width, redraw_playlist, NULL);
-                if (pixbuf) {
-                    int pw = gdk_pixbuf_get_width (pixbuf);
-                    int ph = gdk_pixbuf_get_height (pixbuf);
-                    if (sy < ph)
-                    {
-                        pw = min (art_width, pw);
-                        ph -= sy;
-                        ph = min (ph, h);
-                        gdk_cairo_set_source_pixbuf (cr, pixbuf, (x + ART_PADDING_HORZ)-0, (art_y)-sy);
-                        cairo_rectangle (cr, x + ART_PADDING_HORZ, art_y, pw, ph);
-                        cairo_fill (cr);
+                if (listview->cover_size == -1) {
+                    listview->cover_size = real_art_width;
+                }
+                else {
+                    if (!listview->cover_refresh_timeout_id) {
+                        listview->cover_refresh_timeout_id = g_timeout_add (1000, deferred_cover_load_cb, listview);
                     }
-                    g_object_unref (pixbuf);
                 }
+            }
+            int art_width = listview->cover_size;
+            float art_scale = (float)real_art_width / art_width;
+            int art_y = y; // dest y
+            int art_h = height;
+            int sy; // source y
+            if (group_y < ART_PADDING_VERT) {
+                art_y = y - group_y + ART_PADDING_VERT;
+                art_h = height - (art_y - y);
+                sy = group_y;
+            }
+            else {
+                sy = group_y - ART_PADDING_VERT;
+            }
+            int h = cwidth - group_y;
+            h = min (height, art_h);
+            GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, art_width, NULL, NULL);
+            if (pixbuf) {
+                int pw = real_art_width;
+                int ph = pw;
+                if (sy < ph)
+                {
+                    ph -= sy;
+                    ph = min (ph, h);
+                    cairo_rectangle (cr, x + ART_PADDING_HORZ, art_y, pw, ph);
+                    cairo_save (cr);
+                    cairo_translate (cr, ((x + ART_PADDING_HORZ)-0), ((art_y)-sy));
+                    cairo_scale (cr, (float)art_scale, (float)art_scale);
+                    gdk_cairo_set_source_pixbuf (cr, pixbuf, 0, 0);
+                    cairo_pattern_set_filter (cairo_get_source(cr), art_width == real_art_width ? CAIRO_FILTER_GAUSSIAN : CAIRO_FILTER_FAST);
+                    cairo_fill (cr);
+                    cairo_restore (cr);
+                }
+                g_object_unref (pixbuf);
             }
         }
     }
