@@ -87,8 +87,9 @@ int (*gtkui_original_plt_add_file) (ddb_playlist_t *plt, const char *fname, int 
 int (*gtkui_original_pl_add_files_begin) (ddb_playlist_t *plt);
 void (*gtkui_original_pl_add_files_end) (void);
 
-// cached config variable
+// cached config variables
 int gtkui_embolden_current_track;
+int gtkui_groups_pinned;
 
 #ifdef __APPLE__
 int gtkui_is_retina = 0;
@@ -854,7 +855,7 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
         break;
     case DB_EV_CONFIGCHANGED:
         g_idle_add (gtkui_on_configchanged, NULL);
-        GROUPS_PINNED = deadbeef->conf_get_int ("playlist.pin.groups",0);
+        gtkui_groups_pinned = deadbeef->conf_get_int ("playlist.pin.groups",0);
         break;
     case DB_EV_OUTPUTCHANGED:
         g_idle_add (outputchanged_cb, NULL);

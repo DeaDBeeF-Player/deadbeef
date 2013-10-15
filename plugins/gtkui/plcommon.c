@@ -228,22 +228,22 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
             if (pixbuf) {
                 int pw = gdk_pixbuf_get_width (pixbuf);
                 int ph;
-                if (group_pinned == 1 && GROUPS_PINNED) {
+                if (group_pinned == 1 && gtkui_groups_pinned) {
                     ph = group_height;
-                } 
+                }
                 else {
                     ph = gdk_pixbuf_get_height (pixbuf);
                 }
-                
+
                 if (sy < ph)
                 {
                     pw = min (art_width, pw);
-                    if (group_pinned == 1 && GROUPS_PINNED) {
+                    if (group_pinned == 1 && gtkui_groups_pinned) {
                         int ph_real = gdk_pixbuf_get_height (pixbuf);
                         if (grp_next_y <= ph_real + listview->grouptitle_height) {
                             gdk_cairo_set_source_pixbuf (cr, pixbuf, (x + ART_PADDING_HORZ)-0, grp_next_y - ph_real);
                             cairo_rectangle (cr, x + ART_PADDING_HORZ, grp_next_y - ph_real, pw, ph);
-                        } 
+                        }
                         else {
                             gdk_cairo_set_source_pixbuf (cr, pixbuf, (x + ART_PADDING_HORZ)-0, listview->grouptitle_height);
                             cairo_rectangle (cr, x + ART_PADDING_HORZ, listview->grouptitle_height, pw, ph);
@@ -626,15 +626,15 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
         {
             if ((action->flags & DB_ACTION_COMMON) || !(action->flags & DB_ACTION_ADD_MENU) || !(action->flags & (DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_SINGLE_TRACK)))
                 continue;
-            
+
             // create submenus (separated with '/')
             const char *prev = action->title;
             while (*prev && *prev == '/') {
                 prev++;
             }
-            
+
             GtkWidget *popup = NULL;
-            
+
             for (;;) {
                 const char *slash = strchr (prev, '/');
                 if (slash && *(slash-1) != '\\') {
@@ -769,12 +769,12 @@ on_group_by_none_activate              (GtkMenuItem     *menuitem,
 void
 on_pin_groups_active                   (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
-{   
+{
     gboolean act = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem));
     int old_val = deadbeef->conf_get_int ("playlist.pin.groups", 0);
     deadbeef->conf_set_int ("playlist.pin.groups", 1-old_val);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-    gtk_check_menu_item_toggled(menuitem);
+    gtk_check_menu_item_toggled(GTK_CHECK_MENU_ITEM(menuitem));
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {
         deadbeef->plt_modified (plt);
@@ -1137,7 +1137,7 @@ create_headermenu (int groupby)
       pin_groups = gtk_check_menu_item_new_with_mnemonic(_("Pin groups when scrolling"));
       gtk_widget_show (pin_groups);
       gtk_container_add (GTK_CONTAINER (headermenu), pin_groups);
-      gtk_check_menu_item_set_active (pin_groups, (gboolean)deadbeef->conf_get_int("playlist.pin.groups",0));
+      gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (pin_groups), (gboolean)deadbeef->conf_get_int("playlist.pin.groups",0));
 
       group_by = gtk_menu_item_new_with_mnemonic (_("Group by"));
       gtk_widget_show (group_by);
