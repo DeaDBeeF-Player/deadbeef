@@ -93,7 +93,7 @@ redraw_playlist_single_cb (gpointer user_data) {
 
 static void
 redraw_playlist_single (void *user_data) {
-    g_idle_add (redraw_playlist_cb, user_data);
+    g_idle_add (redraw_playlist_single_cb, user_data);
 }
 
 #define ART_PADDING_HORZ 8
@@ -390,11 +390,6 @@ main_reload_metadata_activate
         it = next;
     }
     deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
-#if 0
-    main_refresh ();
-    search_redraw ();
-    trkproperties_fill_metadata ();
-#endif
 }
 
 void
