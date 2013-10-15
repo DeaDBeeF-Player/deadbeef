@@ -875,7 +875,7 @@ fetcher_thread (void *none)
                                             continue;
                                         }
                                         if (*mime_end != 3) {
-                                            trace ("artwork: picture type=%d, skipped: %s\n", *mime_end);
+                                            trace ("artwork: picture type=%d\n", *mime_end);
                                             continue;
                                         }
                                         trace ("artwork: mime-type=%s, picture type: %d\n", data, *mime_end);

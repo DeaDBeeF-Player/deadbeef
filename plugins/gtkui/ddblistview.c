@@ -66,14 +66,6 @@ struct _DdbListviewColumn {
 };
 typedef struct _DdbListviewColumn DdbListviewColumn;
 
-struct _DdbListviewGroup {
-    DdbListviewIter head;
-    int32_t height;
-    int32_t num_items;
-    struct _DdbListviewGroup *next;
-};
-typedef struct _DdbListviewGroup DdbListviewGroup;
-
 static void ddb_listview_class_init(DdbListviewClass *klass);
 static void ddb_listview_init(DdbListview *listview);
 //static void ddb_listview_size_request(GtkWidget *widget, GtkRequisition *requisition);
@@ -334,6 +326,10 @@ ddb_listview_init(DdbListview *listview)
 
     listview->area_selection_start = 0;
     listview->area_selection_end = 0;
+
+    listview->cover_size = -1;
+    listview->new_cover_size = -1;
+    listview->cover_refresh_timeout_id = 0;
 
     GtkWidget *hbox;
     GtkWidget *vbox;
@@ -596,7 +592,7 @@ ddb_listview_list_configure_event            (GtkWidget       *widget,
     return FALSE;
 }
 
-static void
+void
 ddb_listview_groupcheck (DdbListview *listview) {
     int idx = listview->binding->modification_idx ();
     if (idx != listview->groups_build_idx) {
