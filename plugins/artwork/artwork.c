@@ -90,7 +90,6 @@ static const char *get_default_cover (void) {
 int
 make_cache_dir_path (char *path, int size, const char *artist, int img_size) {
     const char *cache = getenv ("XDG_CACHE_HOME");
-
     int sz;
     
     if (img_size == -1) {
@@ -1484,4 +1483,5 @@ static DB_artwork_plugin_t plugin = {
     .reset = artwork_reset,
     .get_default_cover = get_default_cover,
     .get_album_art_sync = get_album_art_sync,
+    .make_cache_path = make_cache_path,
 };

@@ -40,5 +40,10 @@ cover_art_init (void);
 void
 cover_art_free (void);
 
+// simply inserts callback point into queue
+// the callback will be called when the loading queue reaches this request
+void
+queue_cover_callback (void (*callback)(void *user_data), void *user_data);
+
 #endif
 
