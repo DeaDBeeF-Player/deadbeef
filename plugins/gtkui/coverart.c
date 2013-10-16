@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <assert.h>
 #ifdef __linux__
 #include <sys/prctl.h>
 #endif
@@ -33,6 +34,9 @@
 #define trace(...)
 
 extern DB_artwork_plugin_t *coverart_plugin;
+
+
+GdkPixbuf *pixbuf_default;
 
 #define MAX_ID 256
 #define CACHE_SIZE 20
@@ -169,11 +173,6 @@ loading_thread (void *none) {
                 if (error) {
                     g_error_free (error);
                     error = NULL;
-                }
-                const char *defpath = coverart_plugin->get_default_cover ();
-                pixbuf = gdk_pixbuf_new_from_file_at_scale (defpath, queue->width, queue->width, TRUE, &error);
-                if (!pixbuf) {
-                    fprintf (stderr, "default cover: gdk_pixbuf_new_from_file_at_scale %s %d failed, error: %s\n", defpath, queue->width, error->message);
                 }
             }
             if (error) {
@@ -370,7 +369,35 @@ cover_art_free (void) {
         }
     }
     memset (cache, 0, sizeof (cache));
+    if (pixbuf_default) {
+        g_object_unref (pixbuf_default);
+        pixbuf_default = NULL;
+    }
     deadbeef->cond_free (cond);
+    cond = 0;
     deadbeef->mutex_free (mutex);
+    mutex = 0;
 }
 
+GdkPixbuf *
+cover_get_default_pixbuf (void) {
+    if (!pixbuf_default) {
+        GError *error = NULL;
+        const char *defpath = coverart_plugin->get_default_cover ();
+        pixbuf_default = gdk_pixbuf_new_from_file (defpath, &error);
+        if (!pixbuf_default) {
+            fprintf (stderr, "default cover: gdk_pixbuf_new_from_file %s failed, error: %s\n", defpath, error->message);
+        }
+        if (error) {
+            g_error_free (error);
+            error = NULL;
+        }
+        if (!pixbuf_default) {
+            pixbuf_default = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, 2, 2);
+        }
+        assert (pixbuf_default);
+    }
+
+    g_object_ref (pixbuf_default);
+    return pixbuf_default;
+}

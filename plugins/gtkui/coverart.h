@@ -45,5 +45,8 @@ cover_art_free (void);
 void
 queue_cover_callback (void (*callback)(void *user_data), void *user_data);
 
+GdkPixbuf *
+cover_get_default_pixbuf (void);
+
 #endif
 
