@@ -138,7 +138,10 @@ deferred_cover_load_cb (void *ctx) {
             printf ("queue redraw for cover size %d\n", lv->new_cover_size);
             last = 1;
         }
-        GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, lv->new_cover_size, last ? redraw_playlist : NULL, lv);
+        GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, lv->new_cover_size, NULL, NULL);
+        if (last) {
+            queue_cover_callback (redraw_playlist, lv);
+        }
         if (pixbuf) {
             g_object_unref (pixbuf);
         }
@@ -209,7 +212,6 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
                 }
             }
             int art_width = listview->cover_size;
-            float art_scale = (float)real_art_width / art_width;
             int art_y = y; // dest y
             int art_h = height;
             int sy; // source y
@@ -224,8 +226,10 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
             int h = cwidth - group_y;
             h = min (height, art_h);
 
-            GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, art_width, redraw_playlist_single, listview);
+            GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, real_art_width == art_width ? art_width : -1, redraw_playlist_single, listview);
             if (pixbuf) {
+                art_width = gdk_pixbuf_get_width (pixbuf);
+                float art_scale = (float)real_art_width / art_width;
                 int pw = real_art_width;
                 int ph;
                 if (group_pinned == 1 && gtkui_groups_pinned) {
@@ -240,9 +244,9 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
                     cairo_save (cr);
                     if (group_pinned == 1 && gtkui_groups_pinned) {
                         int ph_real = gdk_pixbuf_get_height (pixbuf);
-                        if (grp_next_y <= ph_real + listview->grouptitle_height) {
-                            cairo_rectangle (cr, x + ART_PADDING_HORZ, grp_next_y - ph_real, pw, ph);
-                            cairo_translate (cr, (x + ART_PADDING_HORZ)-0, grp_next_y - ph_real);
+                        if (grp_next_y <= ph_real * art_scale + listview->grouptitle_height) {
+                            cairo_rectangle (cr, x + ART_PADDING_HORZ, grp_next_y - ph_real * art_scale, pw, ph);
+                            cairo_translate (cr, (x + ART_PADDING_HORZ)-0, grp_next_y - ph_real * art_scale);
                         }
                         else {
                             cairo_rectangle (cr, x + ART_PADDING_HORZ, listview->grouptitle_height, pw, ph);
@@ -261,6 +265,7 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
                     cairo_fill (cr);
                     cairo_restore (cr);
                 }
+                g_object_unref (pixbuf);
             }
         }
     }

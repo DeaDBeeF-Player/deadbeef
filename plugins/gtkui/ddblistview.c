@@ -662,8 +662,11 @@ ddb_listview_list_pickpoint_y (DdbListview *listview, int y, DdbListviewGroup **
     return -1;
 }
 
+int render_idx = 0;
+
 void
 ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int w, int h) {
+    render_idx = 0;
     cairo_set_line_width (cr, 1);
     cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
     GtkWidget *treeview = theme_treeview;

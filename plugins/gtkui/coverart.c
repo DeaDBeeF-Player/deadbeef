@@ -65,15 +65,19 @@ static void
 queue_add (const char *fname, int width, void (*callback) (void *user_data), void *user_data) {
     deadbeef->mutex_lock (mutex);
     load_query_t *q;
-    for (q = queue; q; q = q->next) {
-        if (!strcmp (q->fname, fname) && width == q->width) {
-            deadbeef->mutex_unlock (mutex);
-            return; // dupe
+    if (fname) {
+        for (q = queue; q; q = q->next) {
+            if (!strcmp (q->fname, fname) && width == q->width) {
+                deadbeef->mutex_unlock (mutex);
+                return; // dupe
+            }
         }
     }
     q = malloc (sizeof (load_query_t));
     memset (q, 0, sizeof (load_query_t));
-    q->fname = strdup (fname);
+    if (fname) {
+        q->fname = strdup (fname);
+    }
     q->width = width;
     q->callback = callback;
     q->user_data = user_data;
@@ -138,6 +142,14 @@ loading_thread (void *none) {
                 }
             }
             deadbeef->mutex_unlock (mutex);
+            if (!queue->fname) {
+                if (queue->callback) {
+                    queue->callback (queue->user_data);
+                }
+                queue_pop ();
+                continue;
+            }
+
             if (cache_min == -1) {
                 trace ("coverart pixbuf cache overflow, waiting...\n");
                 usleep (500000);
@@ -250,12 +262,46 @@ get_pixbuf (const char *fname, int width, void (*callback)(void *user_data), voi
     return NULL;
 }
 
+void
+queue_cover_callback (void (*callback)(void *user_data), void *user_data) {
+    queue_add (NULL, -1, callback, user_data);
+}
+
 
 GdkPixbuf *
 get_cover_art_callb (const char *fname, const char *artist, const char *album, int width, void (*callback) (void *user_data), void *user_data) {
     if (!coverart_plugin) {
         return NULL;
     }
+
+    if (width == -1) {
+        char path[2048];
+        coverart_plugin->make_cache_path (path, sizeof (path), album, artist, -1);
+        deadbeef->mutex_lock (mutex);
+        int i_largest = -1;
+        int size_largest = -1;
+        for (int i = 0; i < CACHE_SIZE; i++) {
+            if (!cache[i].pixbuf) {
+                continue;
+            }
+            if (!strcmp (cache[i].fname, path)) {
+                gettimeofday (&cache[i].tm, NULL);
+                if (cache[i].width > size_largest) {
+                    size_largest = cache[i].width;
+                    i_largest = i;
+                }
+            }
+        }
+        if (i_largest != -1) {
+            GdkPixbuf *pb = cache[i_largest].pixbuf;
+            g_object_ref (pb);
+            deadbeef->mutex_unlock (mutex);
+            return pb;
+        }
+        deadbeef->mutex_unlock (mutex);
+        return NULL;
+    }
+
     cover_avail_info_t *dt = malloc (sizeof (cover_avail_info_t));
     dt->width = width;
     dt->callback = callback;
