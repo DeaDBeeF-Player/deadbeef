@@ -2686,8 +2686,11 @@ ddb_listview_set_cursor_cb (gpointer data) {
         int newscroll = sc->pl->scrollpos;
         GtkAllocation a;
         gtk_widget_get_allocation (sc->pl->list, &a);
-        if (cursor_scroll < sc->pl->scrollpos) {
-            newscroll = cursor_scroll;
+        if (!gtkui_groups_pinned && cursor_scroll < sc->pl->scrollpos) {
+             newscroll = cursor_scroll;
+        }
+        else if (gtkui_groups_pinned && cursor_scroll < sc->pl->scrollpos + ps->grouptitle_height) {
+            newscroll = cursor_scroll - ps->grouptitle_height;
         }
         else if (cursor_scroll + sc->pl->rowheight >= sc->pl->scrollpos + a.height) {
             newscroll = cursor_scroll + sc->pl->rowheight - a.height + 1;
