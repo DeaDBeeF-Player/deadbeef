@@ -1417,7 +1417,7 @@ ddb_listview_click_selection (DdbListview *ps, int ex, int ey, DdbListviewGroup 
     deadbeef->pl_lock ();
     ps->areaselect = 0;
     ddb_listview_groupcheck (ps);
-    if (sel == -1 && (!grp || grp_index >= grp->num_items)) {
+    if (sel == -1 && (!grp || (ey > ps->grouptitle_height && grp_index >= grp->num_items))) {
         // clicked empty space, deselect everything
         DdbListviewIter it;
         int idx = 0;
