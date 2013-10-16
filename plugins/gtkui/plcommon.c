@@ -239,7 +239,7 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
                 {
                     cairo_save (cr);
                     if (group_pinned == 1 && gtkui_groups_pinned) {
-                        int ph_real = real_art_width;
+                        int ph_real = gdk_pixbuf_get_height (pixbuf);
                         if (grp_next_y <= ph_real + listview->grouptitle_height) {
                             cairo_rectangle (cr, x + ART_PADDING_HORZ, grp_next_y - ph_real, pw, ph);
                             cairo_translate (cr, (x + ART_PADDING_HORZ)-0, grp_next_y - ph_real);
