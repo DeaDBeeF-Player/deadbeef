@@ -226,15 +226,23 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
             int h = cwidth - group_y;
             h = min (height, art_h);
 
+            int hq = 0;
             GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, real_art_width == art_width ? art_width : -1, redraw_playlist_single, listview);
             if (!pixbuf) {
                 pixbuf = cover_get_default_pixbuf ();
+                if (!listview->cover_refresh_timeout_id) {
+                    hq = 1;
+                }
             }
             if (pixbuf) {
                 art_width = gdk_pixbuf_get_width (pixbuf);
                 float art_scale = (float)real_art_width / art_width;
                 int pw = real_art_width;
                 int ph;
+                if (gdk_pixbuf_get_width (pixbuf) < gdk_pixbuf_get_height (pixbuf)) {
+                    art_scale *= (float)gdk_pixbuf_get_width (pixbuf) / gdk_pixbuf_get_height (pixbuf);
+                }
+
                 if (group_pinned == 1 && gtkui_groups_pinned) {
                     ph = group_height;
                 }
@@ -264,7 +272,7 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
                     }
                     cairo_scale (cr, art_scale, art_scale);
                     gdk_cairo_set_source_pixbuf (cr, pixbuf, 0, 0);
-                    cairo_pattern_set_filter (cairo_get_source(cr), art_width == real_art_width ? CAIRO_FILTER_GAUSSIAN : CAIRO_FILTER_FAST);
+                    cairo_pattern_set_filter (cairo_get_source(cr), (hq || art_width == real_art_width) ? CAIRO_FILTER_GAUSSIAN : CAIRO_FILTER_FAST);
                     cairo_fill (cr);
                     cairo_restore (cr);
                 }
