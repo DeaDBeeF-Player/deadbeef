@@ -685,7 +685,13 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
     DdbListviewGroup *grp = listview->groups;
     int grp_y = 0;
     int grp_next_y = 0;
+    DdbListviewGroup *pinned_grp = NULL;
+
     while (grp && grp_y + grp->height < y + listview->scrollpos) {
+        if (grp_y < listview->scrollpos && grp_y + grp->height >= listview->scrollpos) {
+            pinned_grp = grp;
+            grp->pinned = 1;
+        }
         grp_y += grp->height;
         idx += grp->num_items + 1;
         abs_idx += grp->num_items;
@@ -694,10 +700,15 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
 
     draw_begin (&listview->listctx, cr);
 
-    int ii = 0;
-    if (grp) {
+    if (grp && !pinned_grp && grp_y < listview->scrollpos) {
         grp->pinned = 1;
+        pinned_grp = grp;
     }
+    else if (grp && pinned_grp && pinned_grp->next == grp) {
+        grp->pinned = 2;
+    }
+
+    int ii = 0;
     while (grp && grp_y < y + h + listview->scrollpos) {
         // render title
         DdbListviewIter it = grp->head;

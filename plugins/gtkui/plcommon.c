@@ -260,9 +260,9 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
                         ph -= sy;
                         ph = min (ph, h);
                         cairo_rectangle (cr, x + ART_PADDING_HORZ, art_y, pw, ph);
-                        cairo_translate (cr, (x + ART_PADDING_HORZ)-0, (art_y)-sy);
+                        cairo_translate (cr, (x + ART_PADDING_HORZ)-0, art_y - sy);
                     }
-                    cairo_scale (cr, (float)art_scale, (float)art_scale);
+                    cairo_scale (cr, art_scale, art_scale);
                     gdk_cairo_set_source_pixbuf (cr, pixbuf, 0, 0);
                     cairo_pattern_set_filter (cairo_get_source(cr), art_width == real_art_width ? CAIRO_FILTER_GAUSSIAN : CAIRO_FILTER_FAST);
                     cairo_fill (cr);
