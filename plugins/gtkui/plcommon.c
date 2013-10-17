@@ -135,7 +135,6 @@ deferred_cover_load_cb (void *ctx) {
         grp = grp->next;
         int last = 0;
         if (!grp || grp_y >= a.height + lv->scrollpos) {
-            printf ("queue redraw for cover size %d\n", lv->new_cover_size);
             last = 1;
         }
         GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, lv->new_cover_size, NULL, NULL);
