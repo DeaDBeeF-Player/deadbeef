@@ -134,7 +134,7 @@ queue_add (const char *fname, const char *artist, const char *album, int img_siz
     deadbeef->mutex_lock (mutex);
 
     for (cover_query_t *q = queue; q; q = q->next) {
-        if (!strcasecmp (artist, q->artist) || !strcasecmp (album, q->album)) {
+        if (!strcasecmp (artist, q->artist) && !strcasecmp (album, q->album) && img_size == q->size && callback == q->callback) {
             deadbeef->mutex_unlock (mutex);
             if (callback) {
                 callback (NULL, NULL, NULL, user_data);

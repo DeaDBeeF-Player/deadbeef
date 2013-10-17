@@ -71,7 +71,7 @@ queue_add (const char *fname, int width, void (*callback) (void *user_data), voi
     load_query_t *q;
     if (fname) {
         for (q = queue; q; q = q->next) {
-            if (q->fname && !strcmp (q->fname, fname) && width == q->width) {
+            if (q->fname && !strcmp (q->fname, fname) && width == q->width && q->callback == callback) {
                 deadbeef->mutex_unlock (mutex);
                 return; // dupe
             }
