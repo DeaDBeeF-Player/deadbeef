@@ -44,16 +44,22 @@ GdkPixbuf *pixbuf_default;
 typedef struct {
     struct timeval tm;
     char *fname;
-    time_t filetime;
     int width;
     GdkPixbuf *pixbuf;
 } cached_pixbuf_t;
 
+#define MAX_CALLBACKS 200
+
+typedef struct cover_callback_s {
+    void (*cb) (void*ud);
+    void *ud;
+} cover_callback_t;
+
 typedef struct load_query_s {
     char *fname;
     int width;
-    void (*callback) (void *user_data);
-    void *user_data;
+    cover_callback_t callbacks[MAX_CALLBACKS];
+    int numcb;
     struct load_query_s *next;
 } load_query_t;
 
@@ -71,9 +77,14 @@ queue_add (const char *fname, int width, void (*callback) (void *user_data), voi
     load_query_t *q;
     if (fname) {
         for (q = queue; q; q = q->next) {
-            if (q->fname && !strcmp (q->fname, fname) && width == q->width && q->callback == callback) {
+            if (q->fname && !strcmp (q->fname, fname) && width == q->width) {
+                if (q->numcb < MAX_CALLBACKS && callback) {
+                    q->callbacks[q->numcb].cb = callback;
+                    q->callbacks[q->numcb].ud = user_data;
+                    q->numcb++;
+                }
                 deadbeef->mutex_unlock (mutex);
-                return; // dupe
+                return;
             }
         }
     }
@@ -83,8 +94,9 @@ queue_add (const char *fname, int width, void (*callback) (void *user_data), voi
         q->fname = strdup (fname);
     }
     q->width = width;
-    q->callback = callback;
-    q->user_data = user_data;
+    q->callbacks[q->numcb].cb = callback;
+    q->callbacks[q->numcb].ud = user_data;
+    q->numcb++;
     if (tail) {
         tail->next = q;
         tail = q;
@@ -147,8 +159,10 @@ loading_thread (void *none) {
             }
             deadbeef->mutex_unlock (mutex);
             if (!queue->fname) {
-                if (queue->callback) {
-                    queue->callback (queue->user_data);
+                for (int i = 0; i < queue->numcb; i++) {
+                    if (queue->callbacks[i].cb) {
+                        queue->callbacks[i].cb (queue->callbacks[i].ud);
+                    }
                 }
                 queue_pop ();
                 continue;
@@ -159,11 +173,6 @@ loading_thread (void *none) {
                 usleep (500000);
                 continue;
             }
-            struct stat stat_buf;
-            if (stat (queue->fname, &stat_buf) < 0) {
-                trace ("failed to stat file %s\n", queue->fname);
-            }
-
             GdkPixbuf *pixbuf = NULL;
             GError *error = NULL;
             pixbuf = gdk_pixbuf_new_from_file_at_scale (queue->fname, queue->width, queue->width, TRUE, &error);
@@ -178,17 +187,17 @@ loading_thread (void *none) {
             }
             if (cache_min != -1) {
                 deadbeef->mutex_lock (mutex);
-                cache[cache_min].filetime = stat_buf.st_mtime;
                 cache[cache_min].pixbuf = pixbuf;
                 cache[cache_min].fname = strdup (queue->fname);
                 gettimeofday (&cache[cache_min].tm, NULL);
                 cache[cache_min].width = queue->width;
-                struct stat stat_buf;
                 deadbeef->mutex_unlock (mutex);
             }
 
-            if (queue->callback) {
-                queue->callback (queue->user_data);
+            for (int i = 0; i < queue->numcb; i++) {
+                if (queue->callbacks[i].cb) {
+                    queue->callbacks[i].cb (queue->callbacks[i].ud);
+                }
             }
             queue_pop ();
         }
@@ -228,15 +237,11 @@ get_pixbuf (const char *fname, int width, void (*callback)(void *user_data), voi
     for (int i = 0; i < CACHE_SIZE; i++) {
         if (cache[i].pixbuf) {
             if (!strcmp (fname, cache[i].fname) && cache[i].width == width) {
-                // check if cached filetime hasn't changed
-                struct stat stat_buf;
-                if (!stat (fname, &stat_buf) && stat_buf.st_mtime == cache[i].filetime) {
-                    gettimeofday (&cache[i].tm, NULL);
-                    GdkPixbuf *pb = cache[i].pixbuf;
-                    g_object_ref (pb);
-                    deadbeef->mutex_unlock (mutex);
-                    return pb;
-                }
+                gettimeofday (&cache[i].tm, NULL);
+                GdkPixbuf *pb = cache[i].pixbuf;
+                g_object_ref (pb);
+                deadbeef->mutex_unlock (mutex);
+                return pb;
             }
         }
     }

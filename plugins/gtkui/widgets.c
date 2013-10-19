@@ -2061,9 +2061,7 @@ coverart_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 
     w_coverart_t *w = user_data;
     int real_size = min (width, height);
-    if (w->cover_size == -1) {
-        w->cover_size = w->new_cover_size = real_size;
-    }
+
     if (real_size > 0 && it) {
         if (w->new_cover_size != real_size) {
             w->new_cover_size = real_size;
@@ -2073,6 +2071,7 @@ coverart_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
             }
             if (w->cover_size == -1) {
                 w->cover_size = real_size;
+                g_idle_add (deferred_cover_load_cb, w);
             }
             else {
                 if (!w->cover_refresh_timeout_id) {
@@ -2090,7 +2089,7 @@ coverart_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
         if (!album || !*album) {
             album = deadbeef->pl_find_meta (it, "title");
         }
-        GdkPixbuf *pixbuf = get_cover_art_callb (it ? deadbeef->pl_find_meta ((it), ":URI") : NULL, artist, album, real_size == size ? size : -1, coverart_avail_callback_single, user_data);
+        GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta ((it), ":URI"), artist, album, real_size == size ? size : -1, coverart_avail_callback_single, user_data);
         deadbeef->pl_unlock ();
 
         int hq = 0;
