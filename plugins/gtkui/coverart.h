@@ -48,5 +48,8 @@ queue_cover_callback (void (*callback)(void *user_data), void *user_data);
 GdkPixbuf *
 cover_get_default_pixbuf (void);
 
+int
+gtkui_is_default_pixbuf (GdkPixbuf *pb);
+
 #endif
 
