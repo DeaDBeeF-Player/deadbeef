@@ -1212,14 +1212,14 @@ get_album_art (const char *fname, const char *artist, const char *album, int siz
         if (callback) {
             callback (NULL, NULL, NULL, user_data);
         }
-        return size == -1 ? strdup (get_default_cover ()) : NULL;
+        return NULL;
     }
 
     if (!deadbeef->is_local_file (fname)) {
         if (callback) {
             callback (NULL, NULL, NULL, user_data);
         }
-        return size == -1 ? strdup (get_default_cover ()) : NULL;
+        return NULL;
     }
 
     make_cache_path (path, sizeof (path), album, artist, size);
@@ -1256,7 +1256,7 @@ get_album_art (const char *fname, const char *artist, const char *album, int siz
     }
 
     queue_add (fname, artist, album, size, callback, user_data);
-    return size == -1 ? strdup (get_default_cover ()) : NULL;
+    return NULL;
 }
 
 static void
