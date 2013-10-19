@@ -884,6 +884,8 @@ on_hotkeys_defaults_clicked            (GtkButton       *button,
         return;
     }
     gtkui_set_default_hotkeys ();
+    hotkeys_load ();
+    gtkui_hotkeys_changed = 0;
 }
 
 void
@@ -921,7 +923,5 @@ gtkui_set_default_hotkeys (void) {
     deadbeef->conf_set_str ("hotkey.key30", "b 0 0 next");
     deadbeef->conf_set_str ("hotkey.key31", "n 0 0 playback_random");
     deadbeef->conf_save ();
-    hotkeys_load ();
-    gtkui_hotkeys_changed = 0;
 }
 
