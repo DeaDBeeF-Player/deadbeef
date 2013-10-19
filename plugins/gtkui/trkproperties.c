@@ -537,7 +537,7 @@ set_metadata_cb (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpoi
 
         for (int i = 0; i < numtracks; i++) {
             const char *oldvalue= deadbeef->pl_find_meta_raw (tracks[i], skey);
-            if (oldvalue) {
+            if (oldvalue && strlen (oldvalue) > MAX_GUI_FIELD_LEN) {
                 fprintf (stderr, "trkproperties: value is too long, ignored\n");
                 continue;
             }
