@@ -93,6 +93,10 @@ typedef struct {
     int hideheaders;
 } w_playlist_t;
 
+// FIXME: hack for 0.6: prevent multiple instances of playlist widget, because
+// we saving per-playlist config is not implemented yet
+static int num_playlist_widgets;
+
 typedef struct {
     w_playlist_t plt;
     DdbTabStrip *tabstrip;
@@ -425,11 +429,29 @@ w_save (void) {
     deadbeef->conf_save ();
 }
 
+static int
+get_num_playlists (ddb_gtkui_widget_t *w) {
+    int num = 0;
+    if (!strcmp (w->type, "playlist") || !strcmp (w->type, "tabbed_playlist")) {
+        w_playlist_t *plt = (w_playlist_t *)w;
+        if (plt->list) {
+            num++;
+        }
+    }
+    for (w = w->children; w; w = w->next) {
+        num += get_num_playlists (w);
+    }
+    return num;
+}
+
 static void
 on_replace_activate (GtkMenuItem *menuitem, gpointer user_data) {
     for (w_creator_t *cr = w_creators; cr; cr = cr->next) {
         if (cr->type == user_data) {
+            int num = get_num_playlists (current_widget);
+            num_playlist_widgets -= num;
             w_replace (current_widget->parent, current_widget, w_create (user_data));
+            num_playlist_widgets += num;
         }
     }
     w_save ();
@@ -592,7 +614,7 @@ w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_da
         g_signal_connect ((gpointer) item, "activate",
                 G_CALLBACK (on_delete_activate),
                 NULL);
-        
+
         item = gtk_menu_item_new_with_mnemonic (_("Cut"));
         gtk_widget_show (item);
         gtk_container_add (GTK_CONTAINER (menu), item);
@@ -921,7 +943,7 @@ w_splitter_unlock (w_splitter_t *w) {
     gtk_widget_show (paned);
 
     GList *lst = gtk_container_get_children (GTK_CONTAINER (w->box));
-    
+
     GtkWidget *c1 = lst->data;
     g_object_ref (c1);
     GtkWidget *c2 = lst->next->data;
@@ -1250,7 +1272,7 @@ tab_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_
         GtkWidget *menu;
         GtkWidget *item;
         menu = gtk_menu_new ();
- 
+
         item = gtk_menu_item_new_with_mnemonic (_("Move tab left"));
         gtk_widget_show (item);
         gtk_container_add (GTK_CONTAINER (menu), item);
@@ -1379,7 +1401,7 @@ w_box_create (void) {
     w_box_t *w = malloc (sizeof (w_box_t));
     memset (w, 0, sizeof (w_box_t));
     w->base.widget = gtk_vbox_new (FALSE, 0);
-    w->base.append = w_container_add; 
+    w->base.append = w_container_add;
     w->base.remove = w_container_remove;
 
     return (ddb_gtkui_widget_t*)w;
@@ -1781,10 +1803,26 @@ w_playlist_initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
             w);
 }
 
+void
+w_playlist_destroy (ddb_gtkui_widget_t *w) {
+    num_playlist_widgets--;
+}
+
 ddb_gtkui_widget_t *
 w_tabbed_playlist_create (void) {
     w_tabbed_playlist_t *w = malloc (sizeof (w_tabbed_playlist_t));
     memset (w, 0, sizeof (w_tabbed_playlist_t));
+
+    if (num_playlist_widgets > 0) {
+        w->plt.base.widget = gtk_event_box_new ();
+        GtkWidget *label = gtk_label_new_with_mnemonic (_("Multiple playlist widgets are not supported yet"));
+        gtk_widget_show (label);
+        gtk_container_add (GTK_CONTAINER (w->plt.base.widget), label);
+        w_override_signals (w->plt.base.widget, w);
+        return (ddb_gtkui_widget_t*)w;
+    }
+
+    num_playlist_widgets++;
 
     GtkWidget *vbox = gtk_vbox_new (FALSE, 0);
     w->plt.base.widget = vbox;
@@ -1792,6 +1830,7 @@ w_tabbed_playlist_create (void) {
     w->plt.base.load = w_playlist_load;
     w->plt.base.init = w_playlist_init;
     w->plt.base.initmenu = w_playlist_initmenu;
+    w->plt.base.destroy = w_playlist_destroy;
     gtk_widget_show (vbox);
 
     GtkWidget *tabstrip = ddb_tabstrip_new ();
@@ -1823,12 +1862,24 @@ ddb_gtkui_widget_t *
 w_playlist_create (void) {
     w_playlist_t *w = malloc (sizeof (w_playlist_t));
     memset (w, 0, sizeof (w_playlist_t));
+    if (num_playlist_widgets > 0) {
+        w->base.widget = gtk_event_box_new ();
+        GtkWidget *label = gtk_label_new_with_mnemonic (_("Multiple playlist widgets are not supported yet"));
+        gtk_widget_show (label);
+        gtk_container_add (GTK_CONTAINER (w->base.widget), label);
+        w_override_signals (w->base.widget, w);
+        return (ddb_gtkui_widget_t*)w;
+    }
+
+    num_playlist_widgets++;
+
     w->base.widget = gtk_event_box_new ();
     w->list = DDB_LISTVIEW (ddb_listview_new ());
     w->base.save = w_playlist_save;
     w->base.load = w_playlist_load;
     w->base.init = w_playlist_init;
     w->base.initmenu = w_playlist_initmenu;
+    w->base.destroy = w_playlist_destroy;
     gtk_widget_show (GTK_WIDGET (w->list));
     main_playlist_init (GTK_WIDGET (w->list));
     if (deadbeef->conf_get_int ("gtkui.headers.visible", 1)) {
@@ -2714,7 +2765,7 @@ w_hvbox_initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
     gtk_widget_show (item);
     gtk_container_add (GTK_CONTAINER (menu), item);
     g_signal_connect ((gpointer) item, "activate", G_CALLBACK (on_hvbox_expand), w);
-    
+
     item = gtk_menu_item_new_with_mnemonic (_("Shrink the box by 1 item"));
     gtk_widget_show (item);
     gtk_container_add (GTK_CONTAINER (menu), item);
