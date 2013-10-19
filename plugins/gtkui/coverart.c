@@ -167,22 +167,14 @@ loading_thread (void *none) {
             GdkPixbuf *pixbuf = NULL;
             GError *error = NULL;
             pixbuf = gdk_pixbuf_new_from_file_at_scale (queue->fname, queue->width, queue->width, TRUE, &error);
-            if (!pixbuf) {
-                unlink (queue->fname);
-                fprintf (stderr, "gdk_pixbuf_new_from_file_at_scale %s %d failed, error: %s\n", queue->fname, queue->width, error ? error->message : "n/a");
-                if (error) {
-                    g_error_free (error);
-                    error = NULL;
-                }
-            }
             if (error) {
+                //fprintf (stderr, "gdk_pixbuf_new_from_file_at_scale %s %d failed, error: %s\n", queue->fname, queue->width, error ? error->message : "n/a");
                 g_error_free (error);
                 error = NULL;
             }
             if (!pixbuf) {
-                // make default empty image
-                pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, 2, 2);
-                stat_buf.st_mtime = 0;
+                pixbuf = pixbuf_default;
+                g_object_ref (pixbuf);
             }
             if (cache_min != -1) {
                 deadbeef->mutex_lock (mutex);
@@ -400,4 +392,9 @@ cover_get_default_pixbuf (void) {
 
     g_object_ref (pixbuf_default);
     return pixbuf_default;
+}
+
+int
+gtkui_is_default_pixbuf (GdkPixbuf *pb) {
+    return pb == pixbuf_default;
 }

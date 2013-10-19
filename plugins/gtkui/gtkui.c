@@ -873,12 +873,6 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     return 0;
 }
 
-static gboolean
-unlock_playlist_columns_cb (void *ctx) {
-//    ddb_listview_lock_columns (DDB_LISTVIEW (lookup_widget (mainwin, "playlist")), 0);
-    return FALSE;
-}
-
 static void
 init_widget_layout (void) {
     w_init ();
@@ -1074,8 +1068,6 @@ gtkui_thread (void *ctx) {
     deadbeef->conf_get_str ("gtkui.titlebar_stopped", "DeaDBeeF-%V", fmt, sizeof (fmt));
     deadbeef->pl_format_title (NULL, -1, str, sizeof (str), -1, fmt);
     gtk_window_set_title (GTK_WINDOW (mainwin), str);
-
-    g_idle_add (unlock_playlist_columns_cb, NULL);
 
     // override default file adding APIs to show progress bar
     gtkui_original_plt_add_dir = deadbeef->plt_add_dir;
