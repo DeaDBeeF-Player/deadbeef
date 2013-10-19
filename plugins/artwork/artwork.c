@@ -19,6 +19,7 @@
 #if HAVE_SYS_SYSLIMITS_H
 #include <sys/syslimits.h>
 #endif
+#include <assert.h>
 #include "../../deadbeef.h"
 #include "artwork.h"
 #include "lastfm.h"
@@ -52,13 +53,20 @@ DB_functions_t *deadbeef;
 
 DB_FILE *current_file;
 
+#define MAX_CALLBACKS 200
+
+typedef struct cover_callback_s {
+    artwork_callback cb;
+    void *ud;
+} cover_callback_t;
+
 typedef struct cover_query_s {
     char *fname;
     char *artist;
     char *album;
     int size;
-    artwork_callback callback;
-    void *user_data;
+    cover_callback_t callbacks[MAX_CALLBACKS];
+    int numcb;
     struct cover_query_s *next;
 } cover_query_t;
 
@@ -134,23 +142,28 @@ queue_add (const char *fname, const char *artist, const char *album, int img_siz
     deadbeef->mutex_lock (mutex);
 
     for (cover_query_t *q = queue; q; q = q->next) {
-        if (!strcasecmp (artist, q->artist) && !strcasecmp (album, q->album) && img_size == q->size && callback == q->callback) {
-            deadbeef->mutex_unlock (mutex);
-            if (callback) {
-                callback (NULL, NULL, NULL, user_data);
+        if (!strcasecmp (artist, q->artist) && !strcasecmp (album, q->album) && img_size == q->size) {
+            // already in queue, add callback
+            if (q->numcb < MAX_CALLBACKS && callback) {
+                q->callbacks[q->numcb].cb = callback;
+                q->callbacks[q->numcb].ud = user_data;
+                q->numcb++;
             }
-            return; // already in queue
+            deadbeef->mutex_unlock (mutex);
+            return;
         }
     }
 
+    trace ("artwork:queue_add %s %s %s %d\n", fname, artist, album, img_size);
     cover_query_t *q = malloc (sizeof (cover_query_t));
     memset (q, 0, sizeof (cover_query_t));
     q->fname = strdup (fname);
     q->artist = strdup (artist);
     q->album = strdup (album);
     q->size = img_size;
-    q->callback = callback;
-    q->user_data = user_data;
+    q->callbacks[q->numcb].cb = callback;
+    q->callbacks[q->numcb].ud = user_data;
+    q->numcb++;
     if (queue_tail) {
         queue_tail->next = q;
         queue_tail = q;
@@ -176,8 +189,10 @@ queue_pop (void) {
         if (queue->album) {
             free (queue->album);
         }
-        if (queue->callback) {
-            queue->callback (NULL, NULL, NULL, queue->user_data);
+        for (int i = 0; i < queue->numcb; i++) {
+            if (queue->callbacks[i].cb) {
+                queue->callbacks[i].cb (NULL, NULL, NULL, queue->callbacks[i].ud);
+            }
         }
         free (queue);
     }
@@ -1151,9 +1166,11 @@ fetcher_thread (void *none)
                     make_cache_path (scaled_path, sizeof (scaled_path), param->album, param->artist, param->size);
                     copy_file (cache_path, scaled_path, param->size);
                 }
-                if (param->callback) {
-                    param->callback (param->fname, param->artist, param->album, param->user_data);
-                    param->callback = NULL;
+                for (int i = 0; i < param->numcb; i++) {
+                    if (param->callbacks[i].cb) {
+                        param->callbacks[i].cb (param->fname, param->artist, param->album, param->callbacks[i].ud);
+                        param->callbacks[i].cb = NULL;
+                    }
                 }
             }
             queue_pop ();
@@ -1195,7 +1212,6 @@ find_image (const char *path) {
 char*
 get_album_art (const char *fname, const char *artist, const char *album, int size, artwork_callback callback, void *user_data)
 {
-    trace ("get_album_art: %s (%s - %s)\n", fname, artist, album);
     char path [1024];
 
     if (!album) {
@@ -1302,8 +1318,10 @@ artwork_reset (int fast) {
             free (queue->next->fname);
             free (queue->next->artist);
             free (queue->next->album);
-            if (queue->next->callback == sync_callback) {
-                sync_callback (NULL, NULL, NULL, queue->next->user_data);
+            for (int i = 0; i < queue->next->numcb; i++) {
+                if (queue->next->callbacks[i].cb == sync_callback) {
+                    sync_callback (NULL, NULL, NULL, queue->next->callbacks[i].ud);
+                }
             }
             queue->next = next;
             if (next == NULL) {
