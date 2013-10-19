@@ -32,6 +32,7 @@
 #include "drawing.h"
 #include "gtkui.h"
 #include "support.h"
+#include "actionhandlers.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -1949,7 +1950,7 @@ ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state) {
     state &= (GDK_SHIFT_MASK|GDK_CONTROL_MASK|GDK_MOD1_MASK|GDK_MOD4_MASK);
 
     if (state & ~GDK_SHIFT_MASK) {
-        return 0;
+        return FALSE;
     }
 
     if (keyval == GDK_Down) {
