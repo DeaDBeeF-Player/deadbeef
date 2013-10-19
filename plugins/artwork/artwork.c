@@ -1144,8 +1144,21 @@ fetcher_thread (void *none)
                         got_pic = 1;
                     }
                 }
-                if (!got_pic && artwork_enable_lfm && !fetch_from_lastfm (param->artist, param->album, cache_path)) {
-                    got_pic = 1;
+                if (!got_pic && artwork_enable_lfm) {
+                    if (!fetch_from_lastfm (param->artist, param->album, cache_path)) {
+                        got_pic = 1;
+                    }
+                    else {
+                        // try to fix parentheses
+                        char *fixed_alb = strdupa (param->album);
+                        char *openp = strchr (fixed_alb, '(');
+                        if (openp && openp != fixed_alb) {
+                            *openp = 0;
+                            if (!fetch_from_lastfm (param->artist, fixed_alb, cache_path)) {
+                                got_pic = 1;
+                            }
+                        }
+                    }
                 }
                 if (!got_pic && artwork_enable_aao && !fetch_from_albumart_org (param->artist, param->album, cache_path)) {
                     got_pic = 1;
