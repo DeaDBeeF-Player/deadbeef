@@ -26,6 +26,7 @@
 
 #include <string.h>
 #include <gtk/gtk.h>
+#include <unistd.h>
 #include "../../gettext.h"
 #include "../../deadbeef.h"
 #include "gtkui.h"

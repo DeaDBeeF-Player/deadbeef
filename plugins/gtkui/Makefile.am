@@ -50,6 +50,8 @@ sdk_HEADERS = gtkui_api.h
 
 EXTRA_DIST = deadbeef.glade
 
+GTKGLEXT_LIBS = -lGL -lGLU
+
 if STATICLINK
 if HAVE_GTK2
 if HAVE_GTK3
@@ -78,19 +80,79 @@ endif
 
 # normal lib
 if HAVE_GTK2
+GTKGLEXT_SOURCES_GTK2 = \
+	gtkglext-gtk2/gdk/x11/gdkglconfig-x11.c\
+	gtkglext-gtk2/gdk/x11/gdkglconfig-x11.h\
+	gtkglext-gtk2/gdk/x11/gdkglcontext-x11.c\
+	gtkglext-gtk2/gdk/x11/gdkglcontext-x11.h\
+	gtkglext-gtk2/gdk/x11/gdkgldrawable-x11.c\
+	gtkglext-gtk2/gdk/x11/gdkglglxext.c\
+	gtkglext-gtk2/gdk/x11/gdkglglxext.h\
+	gtkglext-gtk2/gdk/x11/gdkgloverlay-x11.c\
+	gtkglext-gtk2/gdk/x11/gdkgloverlay-x11.h\
+	gtkglext-gtk2/gdk/x11/gdkglpixmap-x11.c\
+	gtkglext-gtk2/gdk/x11/gdkglpixmap-x11.h\
+	gtkglext-gtk2/gdk/x11/gdkglprivate-x11.h\
+	gtkglext-gtk2/gdk/x11/gdkglquery-x11.c\
+	gtkglext-gtk2/gdk/x11/gdkglwindow-x11.c\
+	gtkglext-gtk2/gdk/x11/gdkglwindow-x11.h\
+	gtkglext-gtk2/gdk/x11/gdkglx.h\
+	gtkglext-gtk2/gtk/gtkgldebug.h\
+	gtkglext-gtk2/gtk/gtkgldefs.h\
+	gtkglext-gtk2/gtk/gtkgl.h\
+	gtkglext-gtk2/gtk/gtkglinit.c\
+	gtkglext-gtk2/gtk/gtkglinit.h\
+	gtkglext-gtk2/gtk/gtkglprivate.h\
+	gtkglext-gtk2/gtk/gtkglversion.c\
+	gtkglext-gtk2/gtk/gtkglversion.h\
+	gtkglext-gtk2/gtk/gtkglversion.h.in\
+	gtkglext-gtk2/gtk/gtkglwidget.c\
+	gtkglext-gtk2/gtk/gtkglwidget.h\
+	gtkglext-gtk2/gdk/gdkglconfig.c\
+	gtkglext-gtk2/gdk/gdkglconfig.h\
+	gtkglext-gtk2/gdk/gdkglcontext.c\
+	gtkglext-gtk2/gdk/gdkglcontext.h\
+	gtkglext-gtk2/gdk/gdkgldebug.h\
+	gtkglext-gtk2/gdk/gdkgldefs.h\
+	gtkglext-gtk2/gdk/gdkgldrawable.c\
+	gtkglext-gtk2/gdk/gdkgldrawable.h\
+	gtkglext-gtk2/gdk/gdkglenumtypes.c\
+	gtkglext-gtk2/gdk/gdkglenumtypes.h\
+	gtkglext-gtk2/gdk/gdkglext-config.h\
+	gtkglext-gtk2/gdk/gdkglglext.c\
+	gtkglext-gtk2/gdk/gdkglglext.h\
+	gtkglext-gtk2/gdk/gdkgl.h\
+	gtkglext-gtk2/gdk/gdkglinit.c\
+	gtkglext-gtk2/gdk/gdkglinit.h\
+	gtkglext-gtk2/gdk/gdkglpixmap.c\
+	gtkglext-gtk2/gdk/gdkglpixmap.h\
+	gtkglext-gtk2/gdk/gdkglprivate.h\
+	gtkglext-gtk2/gdk/gdkglquery.c\
+	gtkglext-gtk2/gdk/gdkglquery.h\
+	gtkglext-gtk2/gdk/gdkglshapes.c\
+	gtkglext-gtk2/gdk/gdkglshapes.h\
+	gtkglext-gtk2/gdk/gdkgltokens.h\
+	gtkglext-gtk2/gdk/gdkgltypes.h\
+	gtkglext-gtk2/gdk/gdkglversion.c\
+	gtkglext-gtk2/gdk/gdkglversion.h\
+	gtkglext-gtk2/gdk/gdkglwindow.c\
+	gtkglext-gtk2/gdk/gdkglwindow.h
 
-ddb_gui_GTK2_la_SOURCES = $(GTKUI_SOURCES)
+GTKGLEXT_CFLAGS_GTK2 = -I@top_srcdir@/plugins/gtkui/gtkglext-gtk2 -I@top_srcdir@/plugins/gtkui/gtkglext-gtk2/gdk -DGTK_GL_COMPILATION -DGDK_GL_COMPILATION
+
+ddb_gui_GTK2_la_SOURCES = $(GTKUI_SOURCES) $(GTKGLEXT_SOURCES_GTK2)
 ddb_gui_GTK2_la_LDFLAGS = -module
 
 if STATICLINK
 GTK_ROOT_216=@top_srcdir@/$(LIB)/gtk-2.16.0
 
-ddb_gui_GTK2_la_LIBADD = $(LDADD) -L$(GTK_ROOT_216)/lib -lgtk-x11-2.0 -lgdk-x11-2.0 -latk-1.0 -lgio-2.0 -lpangoft2-1.0 -lgdk_pixbuf-2.0 -lpangocairo-1.0 -lcairo -lpango-1.0 -lfreetype -lfontconfig -lgobject-2.0 -lgmodule-2.0 -lgthread-2.0 -lrt -lglib-2.0 $(SM_LIBADD) ../libparser/libparser.a
+ddb_gui_GTK2_la_LIBADD = $(LDADD) -L$(GTK_ROOT_216)/lib -lgtk-x11-2.0 -lgdk-x11-2.0 -latk-1.0 -lgio-2.0 -lpangoft2-1.0 -lgdk_pixbuf-2.0 -lpangocairo-1.0 -lcairo -lpango-1.0 -lfreetype -lfontconfig -lgobject-2.0 -lgmodule-2.0 -lgthread-2.0 -lrt -lglib-2.0 $(SM_LIBADD) ../libparser/libparser.a $(GTKGLEXT_LIBS)
 
-ddb_gui_GTK2_la_CFLAGS = -std=c99 -I$(GTK_ROOT_216)/include/gtk-2.0 -I$(GTK_ROOT_216)/lib/gtk-2.0/include -I$(GTK_ROOT_216)/include/atk-1.0 -I$(GTK_ROOT_216)/include/cairo -I$(GTK_ROOT_216)/include/pango-1.0 -I$(GTK_ROOT_216)/include -I$(GTK_ROOT_216)/include/glib-2.0 -I$(GTK_ROOT_216)/lib/glib-2.0/include $(SM_CFLAGS)
+ddb_gui_GTK2_la_CFLAGS = -std=c99 -I$(GTK_ROOT_216)/include/gtk-2.0 -I$(GTK_ROOT_216)/lib/gtk-2.0/include -I$(GTK_ROOT_216)/include/atk-1.0 -I$(GTK_ROOT_216)/include/cairo -I$(GTK_ROOT_216)/include/pango-1.0 -I$(GTK_ROOT_216)/include -I$(GTK_ROOT_216)/include/glib-2.0 -I$(GTK_ROOT_216)/lib/glib-2.0/include $(SM_CFLAGS) $(GTKGLEXT_CFLAGS_GTK2)
 else
-ddb_gui_GTK2_la_LIBADD = $(LDADD) $(GTK2_DEPS_LIBS) $(SM_LIBADD) -lGLU ../libparser/libparser.a
-ddb_gui_GTK2_la_CFLAGS = -std=c99 $(GTK2_DEPS_CFLAGS) $(SM_CFLAGS)
+ddb_gui_GTK2_la_LIBADD = $(LDADD) $(GTK2_DEPS_LIBS) $(SM_LIBADD) ../libparser/libparser.a  $(GTKGLEXT_LIBS)
+
+ddb_gui_GTK2_la_CFLAGS = -std=c99 $(GTK2_DEPS_CFLAGS) $(SM_CFLAGS) $(GTKGLEXT_CFLAGS_GTK2)
 endif
 
 endif
@@ -99,10 +161,9 @@ if HAVE_GTK3
 if OS_OSX
 AM_CPPFLAGS = $(CXXFLAGS) $(GTK3_DEPS_CFLAGS)
 GTK3_OSX_SOURCES = retina.m
-GTKGLEXT_SOURCES =
+GTKGLEXT_SOURCES_GTK3 =
 else
-GTKGLEXT_LIBS = -lGL
-GTKGLEXT_SOURCES = \
+GTKGLEXT_SOURCES_GTK3 = \
 	gtkglext-gtk3/gtk/gtkglinit.c\
 	gtkglext-gtk3/gtk/gtkglversion.c\
 	gtkglext-gtk3/gtk/gtkglwidget.c\
@@ -162,9 +223,9 @@ GTKGLEXT_SOURCES = \
 	gtkglext-gtk3/gdk/gdkglversion.h
 endif
 
-GTKGLEXT_CFLAGS = -I@top_srcdir@/plugins/gtkui/gtkglext-gtk3 -I@top_srcdir@/plugins/gtkui/gtkglext-gtk3/gdk -DGTK_GL_COMPILATION -DGDK_GL_COMPILATION
+GTKGLEXT_CFLAGS_GTK3 = -I@top_srcdir@/plugins/gtkui/gtkglext-gtk3 -I@top_srcdir@/plugins/gtkui/gtkglext-gtk3/gdk -DGTK_GL_COMPILATION -DGDK_GL_COMPILATION
 
-ddb_gui_GTK3_la_SOURCES = $(GTKUI_SOURCES) $(GTKGLEXT_SOURCES) $(GTK3_OSX_SOURCES)
+ddb_gui_GTK3_la_SOURCES = $(GTKUI_SOURCES) $(GTKGLEXT_SOURCES_GTK3) $(GTK3_OSX_SOURCES)
 ddb_gui_GTK3_la_LDFLAGS = -module
 
 if STATICLINK
@@ -172,11 +233,11 @@ GTK_ROOT_300=@top_srcdir@/$(LIB)/gtk-3.0.0
 
 ddb_gui_GTK3_la_LIBADD = $(LDADD) -L$(GTK_ROOT_300)/lib -lgtk-3 -lgdk-3 -latk-1.0 -lgio-2.0 -lpangocairo-1.0 -lgdk_pixbuf-2.0 -lcairo-gobject -lpango-1.0 -lcairo -lgobject-2.0 -lgthread-2.0 -lglib-2.0 -lfreetype -lfontconfig $(SM_LIBADD) $(GTKGLEXT_LIBS) ../libparser/libparser.a
 
-ddb_gui_GTK3_la_CFLAGS = -std=c99 -I$(GTK_ROOT_300)/include/gtk-3.0 -I$(GTK_ROOT_300)/include/pango-1.0 -I$(GTK_ROOT_300)/include/gio-unix-2.0/ -I$(GTK_ROOT_300)/include/atk-1.0 -I$(GTK_ROOT_300)/include/cairo -I$(GTK_ROOT_300)/include/gdk-pixbuf-2.0 -I$(GTK_ROOT_300)/include/freetype2 -I$(GTK_ROOT_300)/include/glib-2.0 -I$(GTK_ROOT_300)/lib/glib-2.0/include $(SM_CFLAGS) $(GTKGLEXT_CFLAGS)
+ddb_gui_GTK3_la_CFLAGS = -std=c99 -I$(GTK_ROOT_300)/include/gtk-3.0 -I$(GTK_ROOT_300)/include/pango-1.0 -I$(GTK_ROOT_300)/include/gio-unix-2.0/ -I$(GTK_ROOT_300)/include/atk-1.0 -I$(GTK_ROOT_300)/include/cairo -I$(GTK_ROOT_300)/include/gdk-pixbuf-2.0 -I$(GTK_ROOT_300)/include/freetype2 -I$(GTK_ROOT_300)/include/glib-2.0 -I$(GTK_ROOT_300)/lib/glib-2.0/include $(SM_CFLAGS) $(GTKGLEXT_CFLAGS_GTK3)
 
 else
 ddb_gui_GTK3_la_LIBADD = $(LDADD) $(GTK3_DEPS_LIBS) $(SM_LIBADD) $(GTKGLEXT_LIBS) $(GTK_MAC_LIBS) ../libparser/libparser.a
-ddb_gui_GTK3_la_CFLAGS = -std=c99 $(GTK3_DEPS_CFLAGS) $(SM_CFLAGS) $(GTKGLEXT_CFLAGS) $(GTK_MAC_CFLAGS)
+ddb_gui_GTK3_la_CFLAGS = -std=c99 $(GTK3_DEPS_CFLAGS) $(SM_CFLAGS) $(GTKGLEXT_CFLAGS_GTK3) $(GTK_MAC_CFLAGS)
 endif
 endif
 
@@ -187,9 +248,9 @@ GTK_ROOT=@top_srcdir@/$(LIB)/gtk-2.12.12/usr
 ddb_gui_GTK2_fallback_la_SOURCES = $(GTKUI_SOURCES)
 ddb_gui_GTK2_fallback_la_LDFLAGS = -module
 
-ddb_gui_GTK2_fallback_la_LIBADD = $(LDADD) -L$(GTK_ROOT)/lib $(GTK_ROOT)/lib/libgtk-x11-2.0.la $(GTK_ROOT)/lib/libgdk-x11-2.0.la $(GTK_ROOT)/lib/libpangoft2-1.0.la $(GTK_ROOT)/lib/libpangocairo-1.0.la $(GTK_ROOT)/lib/libgdk_pixbuf-2.0.la -lm $(GTK_ROOT)/lib/libcairo.la $(GTK_ROOT)/lib/libpango-1.0.la $(GTK_ROOT)/lib/libgobject-2.0.la $(GTK_ROOT)/lib/libgmodule-2.0.la $(GTK_ROOT)/lib/libgthread-2.0.la -lrt $(GTK_ROOT)/lib/libglib-2.0.la $(SM_LIBADD) ../libparser/libparser.a
+ddb_gui_GTK2_fallback_la_LIBADD = $(LDADD) -L$(GTK_ROOT)/lib $(GTK_ROOT)/lib/libgtk-x11-2.0.la $(GTK_ROOT)/lib/libgdk-x11-2.0.la $(GTK_ROOT)/lib/libpangoft2-1.0.la $(GTK_ROOT)/lib/libpangocairo-1.0.la $(GTK_ROOT)/lib/libgdk_pixbuf-2.0.la -lm $(GTK_ROOT)/lib/libcairo.la $(GTK_ROOT)/lib/libpango-1.0.la $(GTK_ROOT)/lib/libgobject-2.0.la $(GTK_ROOT)/lib/libgmodule-2.0.la $(GTK_ROOT)/lib/libgthread-2.0.la -lrt $(GTK_ROOT)/lib/libglib-2.0.la $(SM_LIBADD) ../libparser/libparser.a $(GTKGLEXT_LIBS)
 
-ddb_gui_GTK2_fallback_la_CFLAGS = -std=c99 -I $(GTK_ROOT)/include -I $(GTK_ROOT)/lib/gtk-2.0/include -I $(GTK_ROOT)/include/glib-2.0 -I $(GTK_ROOT)/include/gtk-2.0 -I $(GTK_ROOT)/include/cairo -I $(GTK_ROOT)/lib/glib-2.0/include/ -I $(GTK_ROOT)/include/pango-1.0 -I $(GTK_ROOT)/include/atk-1.0 $(SM_CFLAGS)
+ddb_gui_GTK2_fallback_la_CFLAGS = -std=c99 -I $(GTK_ROOT)/include -I $(GTK_ROOT)/lib/gtk-2.0/include -I $(GTK_ROOT)/include/glib-2.0 -I $(GTK_ROOT)/include/gtk-2.0 -I $(GTK_ROOT)/include/cairo -I $(GTK_ROOT)/lib/glib-2.0/include/ -I $(GTK_ROOT)/include/pango-1.0 -I $(GTK_ROOT)/include/atk-1.0 $(SM_CFLAGS) -I$(GTKGLEXT_ROOT)/include/gtkglext-1.0 $(GTKGLEXT_CFLAGS_GTK2)
 
 endif
 
