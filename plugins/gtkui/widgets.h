@@ -79,6 +79,9 @@ ddb_gtkui_widget_t *
 w_box_create (void);
 
 ddb_gtkui_widget_t *
+w_dummy_create (void);
+
+ddb_gtkui_widget_t *
 w_tabstrip_create (void);
 
 ddb_gtkui_widget_t *

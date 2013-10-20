@@ -75,6 +75,12 @@ static w_creator_t *w_creators;
 
 typedef struct {
     ddb_gtkui_widget_t base;
+    GtkWidget *label;
+    char *text;
+} w_dummy_t;
+
+typedef struct {
+    ddb_gtkui_widget_t base;
     GtkWidget *box; // hack to support splitter locking, can be a vbox or a hbox
     int position;
     int locked;
@@ -234,7 +240,7 @@ w_append (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
         cont->append (cont, child);
     }
     if (child->init) {
-        g_idle_add (w_init_cb, child);
+        child->init (child);
     }
 }
 
@@ -554,10 +560,13 @@ w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_da
     if (GTK_IS_CONTAINER (widget)) {
         // remember size of the 1st child
         GtkAllocation a;
+        a.width = a.height = -1;
         // hide all children
         gtk_container_foreach (GTK_CONTAINER (widget), hide_widget, &a);
 
-        gtk_widget_set_size_request (widget, a.width, a.height);
+        if (a.width >= 0) {
+            gtk_widget_set_size_request (widget, a.width, a.height);
+        }
     }
     gtk_widget_set_app_paintable (widget, TRUE);
     gtk_widget_queue_draw (((ddb_gtkui_widget_t *)user_data)->widget);
@@ -717,6 +726,7 @@ get_num_widgets (ddb_gtkui_widget_t *w, const char *type) {
     return num;
 }
 
+
 ddb_gtkui_widget_t *
 w_create (const char *type) {
     for (w_creator_t *c = w_creators; c; c = c->next) {
@@ -725,15 +735,10 @@ w_create (const char *type) {
                 int num = get_num_widgets (rootwidget, c->type);
                 if (num) {
                     // create dummy
-                    ddb_gtkui_widget_t *w = malloc (sizeof (ddb_gtkui_widget_t));
-                    memset (w, 0, sizeof (ddb_gtkui_widget_t));
-                    w->type = "dummy";
-                    w->widget = gtk_event_box_new ();
-                    GtkWidget *label = gtk_label_new_with_mnemonic (_("Multiple widgets of this type are not supported"));
-                    gtk_widget_show (label);
-                    gtk_container_add (GTK_CONTAINER (w->widget), label);
-                    w_override_signals (w->widget, w);
-                    return w;
+                    w_dummy_t *w = (w_dummy_t *)w_create ("dummy");
+                    w->text = strdup (_("Multiple widgets of this type are not supported"));
+                    return (ddb_gtkui_widget_t *)w;
+
                 }
             }
             ddb_gtkui_widget_t *w = c->create_func ();
@@ -833,6 +838,77 @@ w_placeholder_create (void) {
 #endif
     w_override_signals (w->base.widget, w);
     return (ddb_gtkui_widget_t*)w;
+}
+
+// dummy widget
+static const char *
+w_dummy_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) {
+    if (strcmp (type, "dummy")) {
+        return NULL;
+    }
+    w_dummy_t *b = (w_dummy_t *)w;
+    char key[MAX_TOKEN], val[MAX_TOKEN];
+    for (;;) {
+        get_keyvalue (s, key, val);
+        if (!strcmp (key, "text")) {
+            b->text = val[0] ? strdup (val) : NULL;
+        }
+    }
+
+    return s;
+}
+
+static void
+w_dummy_save (struct ddb_gtkui_widget_s *w, char *s, int sz) {
+    char save[1000] = "";
+    char *pp = save;
+    int ss = sizeof (save);
+    int n;
+
+    w_dummy_t *b = (w_dummy_t *)w;
+    if (b->text) {
+        n = snprintf (pp, ss, " text=\"%s\"", b->text);
+        ss -= n;
+        pp += n;
+    }
+
+    strncat (s, save, sz);
+}
+
+void
+w_dummy_init (ddb_gtkui_widget_t *wbase) {
+    w_dummy_t *w = (w_dummy_t *)wbase;
+    if (w->label) {
+        gtk_widget_destroy (w->label);
+        w->label = NULL;
+    }
+    if (w->text) {
+        w->label = gtk_label_new_with_mnemonic (w->text);
+        gtk_widget_show (w->label);
+        gtk_container_add (GTK_CONTAINER (w->base.widget), w->label);
+    }
+}
+
+static void
+w_dummy_destroy (ddb_gtkui_widget_t *wbase) {
+    w_dummy_t *w = (w_dummy_t *)wbase;
+    if (w->text) {
+        free (w->text);
+        w->text = NULL;
+    }
+}
+
+ddb_gtkui_widget_t *
+w_dummy_create (void) {
+    w_dummy_t *w = (w_dummy_t *)malloc (sizeof (w_dummy_t));
+    memset (w, 0, sizeof (w_dummy_t));
+    w->base.widget = gtk_event_box_new ();
+    w->base.init = w_dummy_init;
+    w->base.destroy = w_dummy_destroy;
+    w->base.load = w_dummy_load;
+    w->base.save = w_dummy_save;
+    w_override_signals (w->base.widget, w);
+    return (ddb_gtkui_widget_t *)w;
 }
 
 // common splitter funcs
@@ -1832,7 +1908,8 @@ w_tabbed_playlist_create (void) {
     gtk_widget_show (vbox);
 
     GtkWidget *tabstrip = ddb_tabstrip_new ();
-    w->tabstrip = (DdbTabStrip *)tabstrip;
+    w->tabstrip = DDB_TABSTRIP (tabstrip);
+    printf ("ts: %p\n", tabstrip);
     gtk_widget_show (tabstrip);
     GtkWidget *list = ddb_listview_new ();
     w->plt.list = (DdbListview *)list;
