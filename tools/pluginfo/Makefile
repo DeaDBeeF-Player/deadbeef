@@ -1,9 +1,9 @@
-#CC=../apbuild/apgcc
 CC=gcc
 CFLAGS=-Wall
 LDFLAGS=-lpthread -ldl -lm
 
-pluginfo: pluginfo.o
+all:
+	$(CC) $(CFLAGS) pluginfo.c $(LDFLAGS) -o pluginfo
 
 clean:
 	rm *.o pluginfo
