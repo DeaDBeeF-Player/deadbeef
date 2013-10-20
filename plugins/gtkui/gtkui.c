@@ -959,21 +959,21 @@ gtkui_thread (void *ctx) {
     gtk_init (&argc, (char ***)&argv);
 
     // register widget types
-    w_reg_widget (_("Playlist with tabs"), w_tabbed_playlist_create, "tabbed_playlist", NULL);
-    w_reg_widget (NULL, w_box_create, "box", NULL);
-    w_reg_widget (_("Splitter (top and bottom)"), w_vsplitter_create, "vsplitter", NULL);
-    w_reg_widget (_("Splitter (left and right)"), w_hsplitter_create, "hsplitter", NULL);
-    w_reg_widget (NULL, w_placeholder_create, "placeholder", NULL);
-//    w_reg_widget (_("Tabs"), w_tabs_create, "tabs", NULL);
-    w_reg_widget (_("Playlist tabs"), w_tabstrip_create, "tabstrip", NULL);
-    w_reg_widget (_("Playlist"), w_playlist_create, "playlist", NULL);
-    w_reg_widget (_("Selection properties"), w_selproperties_create, "selproperties", NULL);
-    w_reg_widget (_("Album art display"), w_coverart_create, "coverart", NULL);
-    w_reg_widget (_("Scope"), w_scope_create, "scope", NULL);
-    w_reg_widget (_("Spectrum"), w_spectrum_create, "spectrum", NULL);
-    w_reg_widget (_("HBox"), w_hbox_create, "hbox", NULL);
-    w_reg_widget (_("VBox"), w_vbox_create, "vbox", NULL);
-    w_reg_widget (_("Button"), w_button_create, "button", NULL);
+    w_reg_widget (_("Playlist with tabs"), DDB_WF_SINGLE_INSTANCE, w_tabbed_playlist_create, "tabbed_playlist", NULL);
+    w_reg_widget (_("Playlist"), DDB_WF_SINGLE_INSTANCE, w_playlist_create, "playlist", NULL);
+    w_reg_widget (NULL, 0, w_box_create, "box", NULL);
+    w_reg_widget (_("Splitter (top and bottom)"), 0, w_vsplitter_create, "vsplitter", NULL);
+    w_reg_widget (_("Splitter (left and right)"), 0, w_hsplitter_create, "hsplitter", NULL);
+    w_reg_widget (NULL, 0, w_placeholder_create, "placeholder", NULL);
+//    w_reg_widget (_("Tabs"), 0, w_tabs_create, "tabs", NULL);
+    w_reg_widget (_("Playlist tabs"), 0, w_tabstrip_create, "tabstrip", NULL);
+    w_reg_widget (_("Selection properties"), 0, w_selproperties_create, "selproperties", NULL);
+    w_reg_widget (_("Album art display"), 0, w_coverart_create, "coverart", NULL);
+    w_reg_widget (_("Scope"), 0, w_scope_create, "scope", NULL);
+    w_reg_widget (_("Spectrum"), 0, w_spectrum_create, "spectrum", NULL);
+    w_reg_widget (_("HBox"), 0, w_hbox_create, "hbox", NULL);
+    w_reg_widget (_("VBox"), 0, w_vbox_create, "vbox", NULL);
+    w_reg_widget (_("Button"), 0, w_button_create, "button", NULL);
 
     mainwin = create_mainwin ();
 

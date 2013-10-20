@@ -121,6 +121,12 @@ typedef struct ddb_gtkui_widget_s {
     struct ddb_gtkui_widget_s *next; // points to next widget in the same container
 } ddb_gtkui_widget_t;
 
+
+// flags for passing to w_reg_widget
+
+// tell the widget manager, that this widget can only have single instance
+#define DDB_WF_SINGLE_INSTANCE 0x00000001
+
 typedef struct {
     DB_gui_t gui;
 
@@ -130,10 +136,10 @@ typedef struct {
     // register new widget type;
     // type strings are passed at the end of argument list terminated with NULL
     // for example:
-    // w_reg_widget("My Visualization", my_viz_create, "my_viz_ng", "my_viz", NULL);
+    // w_reg_widget("My Visualization", 0, my_viz_create, "my_viz_ng", "my_viz", NULL);
     // this call will register new type "my_viz_ng", with support for another
     // "my_viz" type string
-    void (*w_reg_widget) (const char *title, ddb_gtkui_widget_t *(*create_func) (void), ...);
+    void (*w_reg_widget) (const char *title, uint32_t flags, ddb_gtkui_widget_t *(*create_func) (void), ...);
 
     // unregister existing widget type
     void (*w_unreg_widget) (const char *type);
