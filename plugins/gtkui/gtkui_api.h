@@ -25,7 +25,7 @@
 #ifndef __GTKUI_API_H
 #define __GTKUI_API_H
 
-#define DDB_GTKUI_API_VERSION 0
+#define DDB_GTKUI_API_VERSION 1
 
 #if GTK_CHECK_VERSION(3,0,0)
 #define DDB_GTKUI_PLUGIN_ID "gtkui3_1"
