@@ -72,3 +72,6 @@ package_temp
 messages.mo
 .install
 .config
+plugins/libmp4ff/libmp4ff.a
+plugins/libparser/libparser.a
+
