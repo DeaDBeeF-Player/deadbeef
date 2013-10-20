@@ -65,6 +65,7 @@
 typedef struct w_creator_s {
     const char *type;
     const char *title; // set to NULL to avoid exposing this widget type to user
+    uint32_t flags;
     int compat; // when this is set to 1 -- it's a backwards compatibility creator, and must be skipped in GUI
     ddb_gtkui_widget_t *(*create_func) (void);
     struct w_creator_s *next;
@@ -92,10 +93,6 @@ typedef struct {
     DdbListview *list;
     int hideheaders;
 } w_playlist_t;
-
-// FIXME: hack for 0.6: prevent multiple instances of playlist widget, because
-// we saving per-playlist config is not implemented yet
-static int num_playlist_widgets;
 
 typedef struct {
     w_playlist_t plt;
@@ -209,6 +206,15 @@ w_get_design_mode (void) {
     return design_mode;
 }
 
+static gboolean
+w_init_cb (void *data) {
+    ddb_gtkui_widget_t *w = data;
+    if (w->init) {
+        w->init (w);
+    }
+    return FALSE;
+}
+
 void
 w_append (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
     child->parent = cont;
@@ -228,7 +234,7 @@ w_append (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
         cont->append (cont, child);
     }
     if (child->init) {
-        child->init (child);
+        g_idle_add (w_init_cb, child);
     }
 }
 
@@ -261,15 +267,6 @@ w_remove (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
     child->parent = NULL;
 }
 
-gboolean
-w_init_cb (void *data) {
-    ddb_gtkui_widget_t *w = data;
-    if (w->init) {
-        w->init (w);
-    }
-    return FALSE;
-}
-
 void
 w_replace (ddb_gtkui_widget_t *w, ddb_gtkui_widget_t *from, ddb_gtkui_widget_t *to) {
     if (w->replace) {
@@ -282,6 +279,7 @@ w_replace (ddb_gtkui_widget_t *w, ddb_gtkui_widget_t *from, ddb_gtkui_widget_t *
         w_remove (w, from);
         w_destroy (from);
         w_append (w, to);
+        // we don't call init here, because w_append does it automatically
     }
 }
 
@@ -429,29 +427,19 @@ w_save (void) {
     deadbeef->conf_save ();
 }
 
-static int
-get_num_playlists (ddb_gtkui_widget_t *w) {
-    int num = 0;
-    if (!strcmp (w->type, "playlist") || !strcmp (w->type, "tabbed_playlist")) {
-        w_playlist_t *plt = (w_playlist_t *)w;
-        if (plt->list) {
-            num++;
-        }
-    }
-    for (w = w->children; w; w = w->next) {
-        num += get_num_playlists (w);
-    }
-    return num;
-}
-
 static void
 on_replace_activate (GtkMenuItem *menuitem, gpointer user_data) {
     for (w_creator_t *cr = w_creators; cr; cr = cr->next) {
         if (cr->type == user_data) {
-            int num = get_num_playlists (current_widget);
-            num_playlist_widgets -= num;
-            w_replace (current_widget->parent, current_widget, w_create (user_data));
-            num_playlist_widgets += num;
+            // hack for single-instance
+            // first replace with a placeholder, so that the original widget is destroyed
+            // then do the real replacement
+            ddb_gtkui_widget_t *w = w_create ("placeholder");
+            w_replace (current_widget->parent, current_widget, w);
+            current_widget = w;
+            w = w_create (user_data);
+            w_replace (current_widget->parent, current_widget, w);
+            current_widget = w;
         }
     }
     w_save ();
@@ -516,21 +504,16 @@ on_paste_activate (GtkMenuItem *menuitem, gpointer user_data) {
     if (!paste_buffer[0]) {
         return;
     }
-    ddb_gtkui_widget_t *w = NULL;
+
+    ddb_gtkui_widget_t *w = w_create ("placeholder");
+    w_replace (current_widget->parent, current_widget, w);
+    current_widget = w;
+
+    w = NULL;
     w_create_from_string (paste_buffer, &w);
-    if (parent->replace) {
-        parent->replace (parent, current_widget, w);
-    }
-    else {
-        w_remove (parent, current_widget);
-        w_destroy (current_widget);
-        current_widget = w;
-        w_append (parent, current_widget);
-    }
-    if (w->init) {
-        w->init (w);
-    }
+    w_replace (parent, current_widget, w);
     w_save ();
+    current_widget = w;
 }
 
 void
@@ -662,7 +645,7 @@ w_override_signals (GtkWidget *widget, gpointer user_data) {
 }
 
 void
-w_reg_widget (const char *title, ddb_gtkui_widget_t *(*create_func) (void), ...) {
+w_reg_widget (const char *title, uint32_t flags, ddb_gtkui_widget_t *(*create_func) (void), ...) {
     int compat = 0;
 
     va_list vl;
@@ -683,6 +666,7 @@ w_reg_widget (const char *title, ddb_gtkui_widget_t *(*create_func) (void), ...)
         memset (c, 0, sizeof (w_creator_t));
         c->type = type;
         c->title = title;
+        c->flags = flags;
         c->compat = compat;
         c->create_func = create_func;
         c->next = w_creators;
@@ -713,14 +697,45 @@ w_unreg_widget (const char *type) {
 
 int
 w_is_registered (const char *type) {
-    // FIXME
+    for (w_creator_t *c = w_creators; c; c = c->next) {
+        if (!strcmp (c->type, type)) {
+            return 1;
+        }
+    }
     return 0;
+}
+
+static int
+get_num_widgets (ddb_gtkui_widget_t *w, const char *type) {
+    int num = 0;
+    if (!strcmp (w->type, type)) {
+        num++;
+    }
+    for (w = w->children; w; w = w->next) {
+        num += get_num_widgets (w, type);
+    }
+    return num;
 }
 
 ddb_gtkui_widget_t *
 w_create (const char *type) {
     for (w_creator_t *c = w_creators; c; c = c->next) {
         if (!strcmp (c->type, type)) {
+            if (c->flags & DDB_WF_SINGLE_INSTANCE) {
+                int num = get_num_widgets (rootwidget, c->type);
+                if (num) {
+                    // create dummy
+                    ddb_gtkui_widget_t *w = malloc (sizeof (ddb_gtkui_widget_t));
+                    memset (w, 0, sizeof (ddb_gtkui_widget_t));
+                    w->type = "dummy";
+                    w->widget = gtk_event_box_new ();
+                    GtkWidget *label = gtk_label_new_with_mnemonic (_("Multiple widgets of this type are not supported"));
+                    gtk_widget_show (label);
+                    gtk_container_add (GTK_CONTAINER (w->widget), label);
+                    w_override_signals (w->widget, w);
+                    return w;
+                }
+            }
             ddb_gtkui_widget_t *w = c->create_func ();
             w->type = c->type;
 
@@ -1803,26 +1818,10 @@ w_playlist_initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
             w);
 }
 
-void
-w_playlist_destroy (ddb_gtkui_widget_t *w) {
-    num_playlist_widgets--;
-}
-
 ddb_gtkui_widget_t *
 w_tabbed_playlist_create (void) {
     w_tabbed_playlist_t *w = malloc (sizeof (w_tabbed_playlist_t));
     memset (w, 0, sizeof (w_tabbed_playlist_t));
-
-    if (num_playlist_widgets > 0) {
-        w->plt.base.widget = gtk_event_box_new ();
-        GtkWidget *label = gtk_label_new_with_mnemonic (_("Multiple playlist widgets are not supported yet"));
-        gtk_widget_show (label);
-        gtk_container_add (GTK_CONTAINER (w->plt.base.widget), label);
-        w_override_signals (w->plt.base.widget, w);
-        return (ddb_gtkui_widget_t*)w;
-    }
-
-    num_playlist_widgets++;
 
     GtkWidget *vbox = gtk_vbox_new (FALSE, 0);
     w->plt.base.widget = vbox;
@@ -1830,7 +1829,6 @@ w_tabbed_playlist_create (void) {
     w->plt.base.load = w_playlist_load;
     w->plt.base.init = w_playlist_init;
     w->plt.base.initmenu = w_playlist_initmenu;
-    w->plt.base.destroy = w_playlist_destroy;
     gtk_widget_show (vbox);
 
     GtkWidget *tabstrip = ddb_tabstrip_new ();
@@ -1862,16 +1860,6 @@ ddb_gtkui_widget_t *
 w_playlist_create (void) {
     w_playlist_t *w = malloc (sizeof (w_playlist_t));
     memset (w, 0, sizeof (w_playlist_t));
-    if (num_playlist_widgets > 0) {
-        w->base.widget = gtk_event_box_new ();
-        GtkWidget *label = gtk_label_new_with_mnemonic (_("Multiple playlist widgets are not supported yet"));
-        gtk_widget_show (label);
-        gtk_container_add (GTK_CONTAINER (w->base.widget), label);
-        w_override_signals (w->base.widget, w);
-        return (ddb_gtkui_widget_t*)w;
-    }
-
-    num_playlist_widgets++;
 
     w->base.widget = gtk_event_box_new ();
     w->list = DDB_LISTVIEW (ddb_listview_new ());
@@ -1879,7 +1867,6 @@ w_playlist_create (void) {
     w->base.load = w_playlist_load;
     w->base.init = w_playlist_init;
     w->base.initmenu = w_playlist_initmenu;
-    w->base.destroy = w_playlist_destroy;
     gtk_widget_show (GTK_WIDGET (w->list));
     main_playlist_init (GTK_WIDGET (w->list));
     if (deadbeef->conf_get_int ("gtkui.headers.visible", 1)) {
