@@ -105,7 +105,6 @@ GTKUI_SOURCES_GTK2 = $(GTKUI_SOURCES)\
 	gtkglext-gtk2/gtk/gtkglprivate.h\
 	gtkglext-gtk2/gtk/gtkglversion.c\
 	gtkglext-gtk2/gtk/gtkglversion.h\
-	gtkglext-gtk2/gtk/gtkglversion.h.in\
 	gtkglext-gtk2/gtk/gtkglwidget.c\
 	gtkglext-gtk2/gtk/gtkglwidget.h\
 	gtkglext-gtk2/gdk/gdkglconfig.c\
@@ -136,7 +135,13 @@ GTKUI_SOURCES_GTK2 = $(GTKUI_SOURCES)\
 	gtkglext-gtk2/gdk/gdkglversion.c\
 	gtkglext-gtk2/gdk/gdkglversion.h\
 	gtkglext-gtk2/gdk/gdkglwindow.c\
-	gtkglext-gtk2/gdk/gdkglwindow.h
+	gtkglext-gtk2/gdk/gdkglwindow.h\
+	gtkglext-gtk2/gdk/gdkglfont.h\
+	gtkglext-gtk2/gdk/glext/common-header.h\
+	gtkglext-gtk2/gdk/glext/glext-extra.h\
+	gtkglext-gtk2/gdk/glext/glext.h\
+	gtkglext-gtk2/gdk/glext/glxext-extra.h\
+	gtkglext-gtk2/gdk/glext/glxext.h
 
 GTKGLEXT_CFLAGS_GTK2 = -I@top_srcdir@/plugins/gtkui/gtkglext-gtk2 -I@top_srcdir@/plugins/gtkui/gtkglext-gtk2/gdk -DGTK_GL_COMPILATION -DGDK_GL_COMPILATION
 
@@ -158,7 +163,6 @@ endif
 endif
 
 if HAVE_GTK3
-GTK3_OSX_SOURCES =
 GTKUI_SOURCES_GTK3 = $(GTKUI_SOURCES)\
 	gtkglext-gtk3/gtk/gtkglinit.c\
 	gtkglext-gtk3/gtk/gtkglversion.c\
