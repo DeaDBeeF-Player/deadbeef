@@ -845,9 +845,6 @@ create_searchwin (void)
   gtk_widget_set_can_focus(searchlist, FALSE);
   gtk_widget_set_can_default(searchlist, FALSE);
 
-  g_signal_connect ((gpointer) searchwin, "key_press_event",
-                    G_CALLBACK (on_searchwin_key_press_event),
-                    NULL);
   g_signal_connect ((gpointer) searchwin, "delete_event",
                     G_CALLBACK (gtk_widget_hide_on_delete),
                     NULL);
@@ -857,6 +854,9 @@ create_searchwin (void)
   g_signal_connect ((gpointer) searchwin, "window_state_event",
                     G_CALLBACK (on_searchwin_window_state_event),
                     NULL);
+  g_signal_connect_after ((gpointer) searchwin, "key_press_event",
+                          G_CALLBACK (on_searchwin_key_press_event),
+                          NULL);
   g_signal_connect ((gpointer) searchentry, "changed",
                     G_CALLBACK (on_searchentry_changed),
                     NULL);
