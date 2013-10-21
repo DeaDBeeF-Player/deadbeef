@@ -34,6 +34,13 @@ int _Unwind_GetDataRelBase;
 int _Unwind_GetRegionStart;
 int _Unwind_SetGR;
 int _Unwind_GetIPInfo;
+int __cxa_pure_virtual;
+int __cxa_guard_release;
+int __cxa_guard_acquire;
+int _Znaj;
+int _ZdaPv;
+int _Znwj;
+int _ZdlPv;
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)

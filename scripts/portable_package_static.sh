@@ -70,6 +70,7 @@ tar jcvf ../../portable_out/build/$OUTNAME\
     $PLUGDIR/dsp_libsrc.so\
     $PLUGDIR/ddb_mono2stereo.so\
     $PLUGDIR/alac.so\
+    $PLUGDIR/wma.so\
     $PIXMAPDIR\
     $SRCDIR/locale
 cd ../..

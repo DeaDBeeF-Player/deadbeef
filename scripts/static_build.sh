@@ -8,13 +8,13 @@ cd tools/apbuild
 ./apinit
 cd ../../
 
-./autogen.sh
-
 export APBUILD_STATIC_LIBGCC=1
 export CC=$AP/apgcc
 export CXX=$AP/apgcc
 
-./configure --enable-staticlink --disable-artwork-imlib2 --disable-gtk3 --prefix=/opt/deadbeef
+./autogen.sh
+
+./configure --enable-staticlink --disable-artwork-imlib2 --prefix=/opt/deadbeef
 sed -i 's/-lstdc++ -lm -lgcc_s -lc -lgcc_s/-lm -lc/g' libtool
 sed -i 's/hardcode_into_libs=yes/hardcode_into_libs=no/g' libtool
 make clean
