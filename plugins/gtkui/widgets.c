@@ -1909,7 +1909,6 @@ w_tabbed_playlist_create (void) {
 
     GtkWidget *tabstrip = ddb_tabstrip_new ();
     w->tabstrip = DDB_TABSTRIP (tabstrip);
-    printf ("ts: %p\n", tabstrip);
     gtk_widget_show (tabstrip);
     GtkWidget *list = ddb_listview_new ();
     w->plt.list = (DdbListview *)list;
