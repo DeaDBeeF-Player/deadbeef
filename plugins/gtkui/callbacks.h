@@ -1295,3 +1295,8 @@ on_hotkeys_actions_clicked             (GtkButton       *button,
 void
 on_hotkeys_defaults_clicked            (GtkButton       *button,
                                         gpointer         user_data);
+
+gboolean
+on_searchwin_key_press_event           (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data);
