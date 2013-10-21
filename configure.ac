@@ -72,6 +72,7 @@ case "$host" in
     AC_DEFINE(ARCH_UNKNOWN, 1, [architecture is unknown])
     ;;
 esac
+AC_SUBST(NOCPPLIB)
 AC_SUBST(LIB)
 AC_SUBST(YASM_FLAGS)
 
