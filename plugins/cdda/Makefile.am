@@ -5,5 +5,5 @@ cdda_la_SOURCES = cdda.c
 cdda_la_LDFLAGS = -module
 
 cdda_la_LIBADD = $(LDADD) $(CDDA_LIBS)
-AM_CFLAGS = $(CFLAGS) -std=c99
+AM_CFLAGS = $(CFLAGS) -std=c99 $(CDDA_CFLAGS)
 endif
