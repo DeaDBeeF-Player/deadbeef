@@ -389,7 +389,9 @@ AS_IF([test "${enable_cdda}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_CDDAPLUGIN=yes
         CDDA_LIBS="../../$LIB/lib/libcdio.a ../../$LIB/lib/libudf.a ../../$LIB/lib/libiso9660.a ../../$LIB/lib/libcddb.a"
+        CDDA_CFLAGS="-I../../$LIB/include"
         AC_SUBST(CDDA_LIBS)
+        AC_SUBST(CDDA_CFLAGS)
     ], [
         AC_CHECK_LIB([cdio], [main], [HAVE_CDIO=yes])
         AC_CHECK_LIB([cddb], [main], [HAVE_CDDB=yes])
