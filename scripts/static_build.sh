@@ -18,7 +18,7 @@ export CXX=$AP/apgcc
 sed -i 's/-lstdc++ -lm -lgcc_s -lc -lgcc_s/-lm -lc/g' libtool
 sed -i 's/hardcode_into_libs=yes/hardcode_into_libs=no/g' libtool
 make clean
-make DESTDIR=`pwd`/static/$ARCH/deadbeef-$VERSION 
+make -j8 DESTDIR=`pwd`/static/$ARCH/deadbeef-$VERSION
 make DESTDIR=`pwd`/static/$ARCH/deadbeef-$VERSION install
 
 echo "building pluginfo tool..."
