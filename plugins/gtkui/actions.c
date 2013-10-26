@@ -86,7 +86,10 @@ add_mainmenu_actions (void)
         for (action = actions; action; action = action->next)
         {
             char *tmp = NULL;
-            if (!(action->flags & DB_ACTION_COMMON) || !(action->flags & DB_ACTION_ADD_MENU))
+
+            int has_addmenu = (action->flags & DB_ACTION_COMMON) && ((action->flags & DB_ACTION_ADD_MENU) | (action->flags & DB_ACTION_USING_API_14));
+
+            if (!has_addmenu)
                 continue;
 
             // 1st check if we have slashes
