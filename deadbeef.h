@@ -876,17 +876,7 @@ typedef struct DB_plugin_action_s {
     const char *title;
     const char *name;
     uint32_t flags;
-    /**
-     * Function called when user activates menu item
-     * @action pointer to action struct itself
-     * @it pointer to selected playitem for single-track action,
-     *   to first playitem for multiple-track action,
-     *   or NULL for common action
-     * @returns unused
-     */
     DB_plugin_action_callback_t callback;
-
-    //we have linked list here
     struct DB_plugin_action_s *next;
 } DB_plugin_action_t;
 

@@ -1683,11 +1683,10 @@ static ddb_gtkui_t plugin = {
         "You should have received a copy of the GNU General Public License\n"
         "along with this program; if not, write to the Free Software\n"
         "Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.\n"
-#if GTK_CHECK_VERSION(3,0,0)
         "\n"
-        "This plugin includes GTK3 port of gtkglext from https://github.com/tdz/gtkglext\n"
+        "This plugin includes gtkglext-1.0.2\n"
+        "GTK3 version uses the unofficial port from https://github.com/tdz/gtkglext\n"
         "(C) gtkglext authors and contributors under LGPLv2.1\n"
-#endif
     ,
     .gui.plugin.website = "http://deadbeef.sf.net",
     .gui.plugin.start = gtkui_start,

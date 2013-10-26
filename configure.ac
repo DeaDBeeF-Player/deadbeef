@@ -247,7 +247,7 @@ AC_SUBST(COREAUDIO_LIBS)
 AS_IF([test "${enable_ffmpeg}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         FFMPEG_DEPS_CFLAGS="-I../../$LIB/include"
-        FFMPEG_DEPS_LIBS="../../$LIB/lib/libavcodec.a -lpthread ../../$LIB/lib/libavformat.a ../../$LIB/lib/libavcodec.a ../../$LIB/lib/libavutil.a ../../$LIB/lib/libavcore.a -lm ../../$LIB/lib/libz.a"
+        FFMPEG_DEPS_LIBS="../../$LIB/lib/libavcodec.a -lpthread ../../$LIB/lib/libavformat.a ../../$LIB/lib/libavcodec.a ../../$LIB/lib/libavutil.a -lm ../../$LIB/lib/libz.a ../../$LIB/lib/libopencore-amrnb.a ../../$LIB/lib/libopencore-amrwb.a ../../$LIB/lib/libopus.a"
         AC_SUBST(FFMPEG_DEPS_CFLAGS)
         AC_SUBST(FFMPEG_DEPS_LIBS)
         HAVE_FFMPEG=yes
