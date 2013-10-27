@@ -1662,7 +1662,7 @@ static ddb_gtkui_t plugin = {
     .gui.plugin.api_vmajor = 1,
     .gui.plugin.api_vminor = 5,
     .gui.plugin.version_major = 2,
-    .gui.plugin.version_minor = DDB_GTKUI_API_VERSION,
+    .gui.plugin.version_minor = 0,
     .gui.plugin.type = DB_PLUGIN_GUI,
     .gui.plugin.id = DDB_GTKUI_PLUGIN_ID,
 #if GTK_CHECK_VERSION(3,0,0)

@@ -25,16 +25,17 @@
 #ifndef __GTKUI_API_H
 #define __GTKUI_API_H
 
-// the DDB_GTKUI_API_VERSION was introduced in deadbeef-0.6.0.
+// gtkui.version_major=2 corresponds to deadbeef 0.6
 // this is the version which has added design mode.
-// gtkui plugin has been renamed into gtkui_1, to avoid loading broken plugins
-// please DON'T simply patch your plugin to load gtkui_1 instead of gtkui
+// it's guaranteed that the API will remain backwards compatible
+// in minor releases (2.x)
+
+// gtkui plugin id has been changed to gtkui_1, to avoid loading broken plugins.
+// please DON'T simply patch your plugin to load gtkui_1 instead of gtkui.
 // for information, about how to port your plugin to the new API correctly,
 // and to learn more about design mode programming,
 // please visit the following page:
 // http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Porting_GUI_plugins_to_0.6
-
-#define DDB_GTKUI_API_VERSION 1
 
 #if GTK_CHECK_VERSION(3,0,0)
 #define DDB_GTKUI_PLUGIN_ID "gtkui3_1"
