@@ -489,6 +489,14 @@ m3uplug_save_m3u (const char *fname, DB_playItem_t *first, DB_playItem_t *last) 
     deadbeef->pl_item_ref (it);
     fprintf (fp, "#EXTM3U\n");
     while (it) {
+        // skip subtracks, pls and m3u formats don't support that
+        uint32_t flags = deadbeef->pl_get_item_flags (it);
+        if (flags & DDB_IS_SUBTRACK) {
+            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+            deadbeef->pl_item_unref (it);
+            it = next;
+            continue;
+        }
         int dur = (int)ceil(deadbeef->pl_get_item_duration (it));
         char s[1000];
         if (deadbeef->pl_meta_exists (it, "artist")) {
@@ -527,6 +535,14 @@ m3uplug_save_pls (const char *fname, DB_playItem_t *first, DB_playItem_t *last) 
     DB_playItem_t *it = first;
     deadbeef->pl_item_ref (it);
     while (it) {
+        // skip subtracks, pls and m3u formats don't support that
+        uint32_t flags = deadbeef->pl_get_item_flags (it);
+        if (flags & DDB_IS_SUBTRACK) {
+            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+            deadbeef->pl_item_unref (it);
+            it = next;
+            continue;
+        }
         n++;
         if (it == last) {
             break;
@@ -543,6 +559,14 @@ m3uplug_save_pls (const char *fname, DB_playItem_t *first, DB_playItem_t *last) 
     deadbeef->pl_item_ref (it);
     int i = 1;
     while (it) {
+        // skip subtracks, pls and m3u formats don't support that
+        uint32_t flags = deadbeef->pl_get_item_flags (it);
+        if (flags & DDB_IS_SUBTRACK) {
+            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+            deadbeef->pl_item_unref (it);
+            it = next;
+            continue;
+        }
         deadbeef->pl_lock ();
         {
             const char *fname = deadbeef->pl_find_meta (it, ":URI");
