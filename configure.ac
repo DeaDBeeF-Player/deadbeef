@@ -424,9 +424,14 @@ AS_IF([test "${enable_hotkeys}" != "no"], [
     AS_IF([test "${HAVE_XLIB_H}" = "yes"], [
         HOTKEYS_LIBS="-lX11"
         AC_SUBST(HOTKEYS_LIBS)
+        HAVE_HOTKEYS=yes
     ])
 ])
-HAVE_HOTKEYS=yes
+
+dnl no support for global hotkeys on osx, but plugin will work anyway
+AS_IF([test "${OS_OSX}" = "yes"], [
+    HAVE_HOTKEYS=yes
+])
 
 dnl *** OSS output (partly stolen from audacious)
 AS_IF([test "${enable_oss}" != "no"], [
