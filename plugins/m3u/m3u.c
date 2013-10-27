@@ -189,7 +189,7 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
             trace ("pl_insert_m3u: adding file %s\n", nm);
             it = deadbeef->plt_insert_file (plt, after, nm, pabort, cb, user_data);
             if (it) {
-                if (length >= 0) {
+                if (length >= 0 && deadbeef->pl_get_item_duration (it) < 0) {
                     deadbeef->plt_set_item_duration (plt, it, length);
                 }
                 if (title[0]) {
@@ -497,7 +497,7 @@ m3uplug_save_m3u (const char *fname, DB_playItem_t *first, DB_playItem_t *last) 
             it = next;
             continue;
         }
-        int dur = (int)ceil(deadbeef->pl_get_item_duration (it));
+        int dur = (int)floor(deadbeef->pl_get_item_duration (it));
         char s[1000];
         if (deadbeef->pl_meta_exists (it, "artist")) {
             deadbeef->pl_format_title (it, -1, s, sizeof (s), -1, "%a - %t");
