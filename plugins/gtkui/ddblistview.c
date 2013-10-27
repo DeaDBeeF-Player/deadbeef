@@ -1182,8 +1182,8 @@ ddb_listview_list_setup_vscroll (DdbListview *ps) {
     }
     else {
         gtk_widget_show (scroll);
-        if (ps->scrollpos >= vheight) {
-            ps->scrollpos = vheight-1;
+        if (ps->scrollpos >= vheight - a.height) {
+            ps->scrollpos = vheight - a.height;
         }
     }
     int h = a.height;
