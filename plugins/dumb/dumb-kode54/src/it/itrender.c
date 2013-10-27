@@ -23,6 +23,7 @@
 
 #include <math.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "dumb.h"
 #include "internal/dumb.h"
@@ -249,6 +250,7 @@ static DUMB_IT_SIGRENDERER *dup_sigrenderer(DUMB_IT_SIGRENDERER *src, int n_chan
 		if (callbacks) free(callbacks);
 		return NULL;
 	}
+	memset (dst, 0, sizeof (*dst));
 
 	dst->sigdata = src->sigdata;
 
@@ -4791,6 +4793,7 @@ static DUMB_IT_SIGRENDERER *init_sigrenderer(DUMB_IT_SIGDATA *sigdata, int n_cha
 		dumb_destroy_click_remover_array(n_channels, cr);
 		return NULL;
 	}
+	memset (sigrenderer, 0, sizeof (*sigrenderer));
 
 	sigrenderer->callbacks = callbacks;
 	sigrenderer->click_remover = cr;
