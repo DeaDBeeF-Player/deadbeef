@@ -261,7 +261,7 @@ static gboolean ddb_equalizer_real_draw (GtkWidget *widget, cairo_t *cr) {
     cairo_save (cr);
     pango_layout_set_text (l, "preamp", 6);
     pango_layout_set_alignment (l, PANGO_ALIGN_LEFT);
-    cairo_move_to (cr, 1, height-self->priv->eq_margin_bottom+2);
+    cairo_move_to (cr, 1, height-self->priv->eq_margin_bottom-2);
     pango_cairo_show_layout (cr, l);
     cairo_restore (cr);
 
