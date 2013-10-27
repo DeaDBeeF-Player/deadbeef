@@ -21,7 +21,11 @@
 #include "support.h"
 #include "gtkuigl.h"
 
-#ifndef __APPLE__
+#ifdef __APPLE__
+#undef USE_OPENGL
+#endif
+
+#ifdef USE_OPENGL
 static int gl_initialized;
 static int gl_init_state;
 //PFNGLXSWAPINTERVALSGIPROC glXSwapIntervalSGI;
