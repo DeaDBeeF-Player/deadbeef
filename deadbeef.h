@@ -480,18 +480,42 @@ typedef struct {
 
     // playlist metadata
     // this kind of metadata is stored in playlist (dbpl) files
+    // that is, this is the properties of playlist itself,
+    // not of the tracks in the playlist.
+    // for example, playlist tab color can be stored there, etc
+
+    // add meta if it doesn't exist yet
     void (*plt_add_meta) (ddb_playlist_t *handle, const char *key, const char *value);
+
+    // replace (or add) existing meta
     void (*plt_replace_meta) (ddb_playlist_t *handle, const char *key, const char *value);
+
+    // append meta to existing one, or add if doesn't exist
     void (*plt_append_meta) (ddb_playlist_t *handle, const char *key, const char *value);
+
+    // set integer meta (works same as replace)
     void (*plt_set_meta_int) (ddb_playlist_t *handle, const char *key, int value);
+
+    // set float meta (works same as replace)
     void (*plt_set_meta_float) (ddb_playlist_t *handle, const char *key, float value);
 
     // plt_find_meta must always be used in the pl_lock/unlock block
     const char *(*plt_find_meta) (ddb_playlist_t *handle, const char *key);
-    DB_metaInfo_t * (*plt_get_metadata_head) (ddb_playlist_t *handle); // returns head of metadata linked list
+
+    // returns head of metadata linked list, for direct access
+    // remember pl_lock/unlock
+    DB_metaInfo_t * (*plt_get_metadata_head) (ddb_playlist_t *handle);
+
+    // delete meta item from list
     void (*plt_delete_metadata) (ddb_playlist_t *handle, DB_metaInfo_t *meta);
+
+    // returns integer value of requested meta, def is the default value if not found
     int (*plt_find_meta_int) (ddb_playlist_t *handle, const char *key, int def);
+
+    // returns float value of requested meta, def is the default value if not found
     float (*plt_find_meta_float) (ddb_playlist_t *handle, const char *key, float def);
+
+    // delete all metadata
     void (*plt_delete_all_meta) (ddb_playlist_t *handle);
 
     // operating on playlist items
