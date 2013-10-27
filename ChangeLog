@@ -18,7 +18,6 @@ version 0.6.0
 	added location field to the metadata tab in track properties
 	fixed playlist columns sizers dead zone bug
 	new WMA plugin
-	new ALAC plugin
 	a ton of stability/responsiveness fixes to mms plugin
 	added customizable content-type mapper, to associate network streams with plugins
 	improved remote playlist loading
