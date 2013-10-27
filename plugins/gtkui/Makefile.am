@@ -50,7 +50,7 @@ sdk_HEADERS = gtkui_api.h
 
 EXTRA_DIST = deadbeef.glade
 
-GTKGLEXT_LIBS = -lGL -lGLU
+#GTKGLEXT_LIBS = -lGL -lGLU
 
 if STATICLINK
 if HAVE_GTK2
@@ -80,68 +80,68 @@ endif
 
 # normal lib
 if HAVE_GTK2
-GTKUI_SOURCES_GTK2 = $(GTKUI_SOURCES)\
-	gtkglext-gtk2/gdk/x11/gdkglconfig-x11.c\
-	gtkglext-gtk2/gdk/x11/gdkglconfig-x11.h\
-	gtkglext-gtk2/gdk/x11/gdkglcontext-x11.c\
-	gtkglext-gtk2/gdk/x11/gdkglcontext-x11.h\
-	gtkglext-gtk2/gdk/x11/gdkgldrawable-x11.c\
-	gtkglext-gtk2/gdk/x11/gdkglglxext.c\
-	gtkglext-gtk2/gdk/x11/gdkglglxext.h\
-	gtkglext-gtk2/gdk/x11/gdkgloverlay-x11.c\
-	gtkglext-gtk2/gdk/x11/gdkgloverlay-x11.h\
-	gtkglext-gtk2/gdk/x11/gdkglpixmap-x11.c\
-	gtkglext-gtk2/gdk/x11/gdkglpixmap-x11.h\
-	gtkglext-gtk2/gdk/x11/gdkglprivate-x11.h\
-	gtkglext-gtk2/gdk/x11/gdkglquery-x11.c\
-	gtkglext-gtk2/gdk/x11/gdkglwindow-x11.c\
-	gtkglext-gtk2/gdk/x11/gdkglwindow-x11.h\
-	gtkglext-gtk2/gdk/x11/gdkglx.h\
-	gtkglext-gtk2/gtk/gtkgldebug.h\
-	gtkglext-gtk2/gtk/gtkgldefs.h\
-	gtkglext-gtk2/gtk/gtkgl.h\
-	gtkglext-gtk2/gtk/gtkglinit.c\
-	gtkglext-gtk2/gtk/gtkglinit.h\
-	gtkglext-gtk2/gtk/gtkglprivate.h\
-	gtkglext-gtk2/gtk/gtkglversion.c\
-	gtkglext-gtk2/gtk/gtkglversion.h\
-	gtkglext-gtk2/gtk/gtkglwidget.c\
-	gtkglext-gtk2/gtk/gtkglwidget.h\
-	gtkglext-gtk2/gdk/gdkglconfig.c\
-	gtkglext-gtk2/gdk/gdkglconfig.h\
-	gtkglext-gtk2/gdk/gdkglcontext.c\
-	gtkglext-gtk2/gdk/gdkglcontext.h\
-	gtkglext-gtk2/gdk/gdkgldebug.h\
-	gtkglext-gtk2/gdk/gdkgldefs.h\
-	gtkglext-gtk2/gdk/gdkgldrawable.c\
-	gtkglext-gtk2/gdk/gdkgldrawable.h\
-	gtkglext-gtk2/gdk/gdkglenumtypes.c\
-	gtkglext-gtk2/gdk/gdkglenumtypes.h\
-	gtkglext-gtk2/gdk/gdkglext-config.h\
-	gtkglext-gtk2/gdk/gdkglglext.c\
-	gtkglext-gtk2/gdk/gdkglglext.h\
-	gtkglext-gtk2/gdk/gdkgl.h\
-	gtkglext-gtk2/gdk/gdkglinit.c\
-	gtkglext-gtk2/gdk/gdkglinit.h\
-	gtkglext-gtk2/gdk/gdkglpixmap.c\
-	gtkglext-gtk2/gdk/gdkglpixmap.h\
-	gtkglext-gtk2/gdk/gdkglprivate.h\
-	gtkglext-gtk2/gdk/gdkglquery.c\
-	gtkglext-gtk2/gdk/gdkglquery.h\
-	gtkglext-gtk2/gdk/gdkglshapes.c\
-	gtkglext-gtk2/gdk/gdkglshapes.h\
-	gtkglext-gtk2/gdk/gdkgltokens.h\
-	gtkglext-gtk2/gdk/gdkgltypes.h\
-	gtkglext-gtk2/gdk/gdkglversion.c\
-	gtkglext-gtk2/gdk/gdkglversion.h\
-	gtkglext-gtk2/gdk/gdkglwindow.c\
-	gtkglext-gtk2/gdk/gdkglwindow.h\
-	gtkglext-gtk2/gdk/gdkglfont.h\
-	gtkglext-gtk2/gdk/glext/common-header.h\
-	gtkglext-gtk2/gdk/glext/glext-extra.h\
-	gtkglext-gtk2/gdk/glext/glext.h\
-	gtkglext-gtk2/gdk/glext/glxext-extra.h\
-	gtkglext-gtk2/gdk/glext/glxext.h
+GTKUI_SOURCES_GTK2 = $(GTKUI_SOURCES)
+#	gtkglext-gtk2/gdk/x11/gdkglconfig-x11.c\
+#	gtkglext-gtk2/gdk/x11/gdkglconfig-x11.h\
+#	gtkglext-gtk2/gdk/x11/gdkglcontext-x11.c\
+#	gtkglext-gtk2/gdk/x11/gdkglcontext-x11.h\
+#	gtkglext-gtk2/gdk/x11/gdkgldrawable-x11.c\
+#	gtkglext-gtk2/gdk/x11/gdkglglxext.c\
+#	gtkglext-gtk2/gdk/x11/gdkglglxext.h\
+#	gtkglext-gtk2/gdk/x11/gdkgloverlay-x11.c\
+#	gtkglext-gtk2/gdk/x11/gdkgloverlay-x11.h\
+#	gtkglext-gtk2/gdk/x11/gdkglpixmap-x11.c\
+#	gtkglext-gtk2/gdk/x11/gdkglpixmap-x11.h\
+#	gtkglext-gtk2/gdk/x11/gdkglprivate-x11.h\
+#	gtkglext-gtk2/gdk/x11/gdkglquery-x11.c\
+#	gtkglext-gtk2/gdk/x11/gdkglwindow-x11.c\
+#	gtkglext-gtk2/gdk/x11/gdkglwindow-x11.h\
+#	gtkglext-gtk2/gdk/x11/gdkglx.h\
+#	gtkglext-gtk2/gtk/gtkgldebug.h\
+#	gtkglext-gtk2/gtk/gtkgldefs.h\
+#	gtkglext-gtk2/gtk/gtkgl.h\
+#	gtkglext-gtk2/gtk/gtkglinit.c\
+#	gtkglext-gtk2/gtk/gtkglinit.h\
+#	gtkglext-gtk2/gtk/gtkglprivate.h\
+#	gtkglext-gtk2/gtk/gtkglversion.c\
+#	gtkglext-gtk2/gtk/gtkglversion.h\
+#	gtkglext-gtk2/gtk/gtkglwidget.c\
+#	gtkglext-gtk2/gtk/gtkglwidget.h\
+#	gtkglext-gtk2/gdk/gdkglconfig.c\
+#	gtkglext-gtk2/gdk/gdkglconfig.h\
+#	gtkglext-gtk2/gdk/gdkglcontext.c\
+#	gtkglext-gtk2/gdk/gdkglcontext.h\
+#	gtkglext-gtk2/gdk/gdkgldebug.h\
+#	gtkglext-gtk2/gdk/gdkgldefs.h\
+#	gtkglext-gtk2/gdk/gdkgldrawable.c\
+#	gtkglext-gtk2/gdk/gdkgldrawable.h\
+#	gtkglext-gtk2/gdk/gdkglenumtypes.c\
+#	gtkglext-gtk2/gdk/gdkglenumtypes.h\
+#	gtkglext-gtk2/gdk/gdkglext-config.h\
+#	gtkglext-gtk2/gdk/gdkglglext.c\
+#	gtkglext-gtk2/gdk/gdkglglext.h\
+#	gtkglext-gtk2/gdk/gdkgl.h\
+#	gtkglext-gtk2/gdk/gdkglinit.c\
+#	gtkglext-gtk2/gdk/gdkglinit.h\
+#	gtkglext-gtk2/gdk/gdkglpixmap.c\
+#	gtkglext-gtk2/gdk/gdkglpixmap.h\
+#	gtkglext-gtk2/gdk/gdkglprivate.h\
+#	gtkglext-gtk2/gdk/gdkglquery.c\
+#	gtkglext-gtk2/gdk/gdkglquery.h\
+#	gtkglext-gtk2/gdk/gdkglshapes.c\
+#	gtkglext-gtk2/gdk/gdkglshapes.h\
+#	gtkglext-gtk2/gdk/gdkgltokens.h\
+#	gtkglext-gtk2/gdk/gdkgltypes.h\
+#	gtkglext-gtk2/gdk/gdkglversion.c\
+#	gtkglext-gtk2/gdk/gdkglversion.h\
+#	gtkglext-gtk2/gdk/gdkglwindow.c\
+#	gtkglext-gtk2/gdk/gdkglwindow.h\
+#	gtkglext-gtk2/gdk/gdkglfont.h\
+#	gtkglext-gtk2/gdk/glext/common-header.h\
+#	gtkglext-gtk2/gdk/glext/glext-extra.h\
+#	gtkglext-gtk2/gdk/glext/glext.h\
+#	gtkglext-gtk2/gdk/glext/glxext-extra.h\
+#	gtkglext-gtk2/gdk/glext/glxext.h
 
 GTKGLEXT_CFLAGS_GTK2 = -I@top_srcdir@/plugins/gtkui/gtkglext-gtk2 -I@top_srcdir@/plugins/gtkui/gtkglext-gtk2/gdk -DGTK_GL_COMPILATION -DGDK_GL_COMPILATION
 

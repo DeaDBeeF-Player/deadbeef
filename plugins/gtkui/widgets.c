@@ -31,7 +31,6 @@
 #include "../libparser/parser.h"
 #include "trkproperties.h"
 #include "coverart.h"
-//#define USE_OPENGL 1
 #if USE_OPENGL
 #include "gtkuigl.h"
 #endif
