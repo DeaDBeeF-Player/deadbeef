@@ -1645,13 +1645,10 @@ create_prefwin (void)
   GtkWidget *dsp_preset_save;
   GtkWidget *dsp_preset_load;
   GtkWidget *label110;
+  GtkWidget *notebook5;
   GtkWidget *vbox9;
   GtkWidget *pref_close_send_to_tray;
-  GtkWidget *mmb_delete_playlist;
   GtkWidget *hide_tray_icon;
-  GtkWidget *embolden_current;
-  GtkWidget *hide_delete_from_disk;
-  GtkWidget *auto_name_playlist_from_folder;
   GtkWidget *enable_cp1251_recoding;
   GtkWidget *enable_cp936_recoding;
   GtkWidget *hbox102;
@@ -1666,6 +1663,14 @@ create_prefwin (void)
   GtkWidget *hbox101;
   GtkWidget *label128;
   GtkWidget *gui_plugin;
+  GtkWidget *label147;
+  GtkWidget *vbox44;
+  GtkWidget *mmb_delete_playlist;
+  GtkWidget *embolden_current;
+  GtkWidget *hide_delete_from_disk;
+  GtkWidget *auto_name_playlist_from_folder;
+  GtkWidget *auto_size_columns;
+  GtkWidget *label148;
   GtkWidget *label2;
   GtkWidget *notebook4;
   GtkWidget *vbox21;
@@ -2026,34 +2031,23 @@ create_prefwin (void)
   gtk_widget_show (label110);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 2), label110);
 
+  notebook5 = gtk_notebook_new ();
+  gtk_widget_show (notebook5);
+  gtk_container_add (GTK_CONTAINER (notebook), notebook5);
+  gtk_container_set_border_width (GTK_CONTAINER (notebook5), 12);
+
   vbox9 = gtk_vbox_new (FALSE, 8);
   gtk_widget_show (vbox9);
-  gtk_container_add (GTK_CONTAINER (notebook), vbox9);
+  gtk_container_add (GTK_CONTAINER (notebook5), vbox9);
   gtk_container_set_border_width (GTK_CONTAINER (vbox9), 12);
 
   pref_close_send_to_tray = gtk_check_button_new_with_mnemonic (_("Close minimizes to tray"));
   gtk_widget_show (pref_close_send_to_tray);
   gtk_box_pack_start (GTK_BOX (vbox9), pref_close_send_to_tray, FALSE, FALSE, 0);
 
-  mmb_delete_playlist = gtk_check_button_new_with_mnemonic (_("Middle mouse button closes playlist"));
-  gtk_widget_show (mmb_delete_playlist);
-  gtk_box_pack_start (GTK_BOX (vbox9), mmb_delete_playlist, FALSE, FALSE, 0);
-
   hide_tray_icon = gtk_check_button_new_with_mnemonic (_("Hide system tray icon"));
   gtk_widget_show (hide_tray_icon);
   gtk_box_pack_start (GTK_BOX (vbox9), hide_tray_icon, FALSE, FALSE, 0);
-
-  embolden_current = gtk_check_button_new_with_mnemonic (_("Use bold font for currently playing track"));
-  gtk_widget_show (embolden_current);
-  gtk_box_pack_start (GTK_BOX (vbox9), embolden_current, FALSE, FALSE, 0);
-
-  hide_delete_from_disk = gtk_check_button_new_with_mnemonic (_("Hide \"Delete from disk\" context menu item"));
-  gtk_widget_show (hide_delete_from_disk);
-  gtk_box_pack_start (GTK_BOX (vbox9), hide_delete_from_disk, FALSE, FALSE, 0);
-
-  auto_name_playlist_from_folder = gtk_check_button_new_with_mnemonic (_("Auto-name playlists when adding a single folder"));
-  gtk_widget_show (auto_name_playlist_from_folder);
-  gtk_box_pack_start (GTK_BOX (vbox9), auto_name_playlist_from_folder, FALSE, FALSE, 0);
 
   enable_cp1251_recoding = gtk_check_button_new_with_mnemonic (_("Enable Russian CP1251 detection and recoding"));
   gtk_widget_show (enable_cp1251_recoding);
@@ -2116,6 +2110,39 @@ create_prefwin (void)
   gui_plugin = gtk_combo_box_text_new ();
   gtk_widget_show (gui_plugin);
   gtk_box_pack_start (GTK_BOX (hbox101), gui_plugin, TRUE, TRUE, 0);
+
+  label147 = gtk_label_new (_("Player"));
+  gtk_widget_show (label147);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook5), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook5), 0), label147);
+
+  vbox44 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox44);
+  gtk_container_add (GTK_CONTAINER (notebook5), vbox44);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox44), 12);
+
+  mmb_delete_playlist = gtk_check_button_new_with_mnemonic (_("Close playlists with middle mouse button"));
+  gtk_widget_show (mmb_delete_playlist);
+  gtk_box_pack_start (GTK_BOX (vbox44), mmb_delete_playlist, FALSE, FALSE, 0);
+
+  embolden_current = gtk_check_button_new_with_mnemonic (_("Draw playing track using bold font"));
+  gtk_widget_show (embolden_current);
+  gtk_box_pack_start (GTK_BOX (vbox44), embolden_current, FALSE, FALSE, 0);
+
+  hide_delete_from_disk = gtk_check_button_new_with_mnemonic (_("Hide \"Delete from disk\" context menu item"));
+  gtk_widget_show (hide_delete_from_disk);
+  gtk_box_pack_start (GTK_BOX (vbox44), hide_delete_from_disk, FALSE, FALSE, 0);
+
+  auto_name_playlist_from_folder = gtk_check_button_new_with_mnemonic (_("Auto-name playlists when adding a single folder"));
+  gtk_widget_show (auto_name_playlist_from_folder);
+  gtk_box_pack_start (GTK_BOX (vbox44), auto_name_playlist_from_folder, FALSE, FALSE, 0);
+
+  auto_size_columns = gtk_check_button_new_with_mnemonic (_("Auto-resize columns to fit the window"));
+  gtk_widget_show (auto_size_columns);
+  gtk_box_pack_start (GTK_BOX (vbox44), auto_size_columns, FALSE, FALSE, 0);
+
+  label148 = gtk_label_new (_("Playlist"));
+  gtk_widget_show (label148);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook5), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook5), 1), label148);
 
   label2 = gtk_label_new (_("GUI/Misc"));
   gtk_widget_show (label2);
@@ -2773,20 +2800,8 @@ create_prefwin (void)
   g_signal_connect ((gpointer) pref_close_send_to_tray, "clicked",
                     G_CALLBACK (on_pref_close_send_to_tray_clicked),
                     NULL);
-  g_signal_connect ((gpointer) mmb_delete_playlist, "toggled",
-                    G_CALLBACK (on_mmb_delete_playlist_toggled),
-                    NULL);
   g_signal_connect ((gpointer) hide_tray_icon, "toggled",
                     G_CALLBACK (on_hide_tray_icon_toggled),
-                    NULL);
-  g_signal_connect ((gpointer) embolden_current, "toggled",
-                    G_CALLBACK (on_embolden_current_toggled),
-                    NULL);
-  g_signal_connect ((gpointer) hide_delete_from_disk, "toggled",
-                    G_CALLBACK (on_hide_delete_from_disk_toggled),
-                    NULL);
-  g_signal_connect ((gpointer) auto_name_playlist_from_folder, "toggled",
-                    G_CALLBACK (on_auto_name_playlist_from_folder_toggled),
                     NULL);
   g_signal_connect ((gpointer) enable_cp1251_recoding, "toggled",
                     G_CALLBACK (on_enable_cp1251_recoding_toggled),
@@ -2805,6 +2820,21 @@ create_prefwin (void)
                     NULL);
   g_signal_connect ((gpointer) gui_plugin, "changed",
                     G_CALLBACK (on_gui_plugin_changed),
+                    NULL);
+  g_signal_connect ((gpointer) mmb_delete_playlist, "toggled",
+                    G_CALLBACK (on_mmb_delete_playlist_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) embolden_current, "toggled",
+                    G_CALLBACK (on_embolden_current_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) hide_delete_from_disk, "toggled",
+                    G_CALLBACK (on_hide_delete_from_disk_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) auto_name_playlist_from_folder, "toggled",
+                    G_CALLBACK (on_auto_name_playlist_from_folder_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) auto_size_columns, "toggled",
+                    G_CALLBACK (on_auto_size_columns_toggled),
                     NULL);
   g_signal_connect ((gpointer) override_bar_colors, "toggled",
                     G_CALLBACK (on_override_bar_colors_toggled),
@@ -2972,13 +3002,10 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, dsp_preset_save, "dsp_preset_save");
   GLADE_HOOKUP_OBJECT (prefwin, dsp_preset_load, "dsp_preset_load");
   GLADE_HOOKUP_OBJECT (prefwin, label110, "label110");
+  GLADE_HOOKUP_OBJECT (prefwin, notebook5, "notebook5");
   GLADE_HOOKUP_OBJECT (prefwin, vbox9, "vbox9");
   GLADE_HOOKUP_OBJECT (prefwin, pref_close_send_to_tray, "pref_close_send_to_tray");
-  GLADE_HOOKUP_OBJECT (prefwin, mmb_delete_playlist, "mmb_delete_playlist");
   GLADE_HOOKUP_OBJECT (prefwin, hide_tray_icon, "hide_tray_icon");
-  GLADE_HOOKUP_OBJECT (prefwin, embolden_current, "embolden_current");
-  GLADE_HOOKUP_OBJECT (prefwin, hide_delete_from_disk, "hide_delete_from_disk");
-  GLADE_HOOKUP_OBJECT (prefwin, auto_name_playlist_from_folder, "auto_name_playlist_from_folder");
   GLADE_HOOKUP_OBJECT (prefwin, enable_cp1251_recoding, "enable_cp1251_recoding");
   GLADE_HOOKUP_OBJECT (prefwin, enable_cp936_recoding, "enable_cp936_recoding");
   GLADE_HOOKUP_OBJECT (prefwin, hbox102, "hbox102");
@@ -2993,6 +3020,14 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, hbox101, "hbox101");
   GLADE_HOOKUP_OBJECT (prefwin, label128, "label128");
   GLADE_HOOKUP_OBJECT (prefwin, gui_plugin, "gui_plugin");
+  GLADE_HOOKUP_OBJECT (prefwin, label147, "label147");
+  GLADE_HOOKUP_OBJECT (prefwin, vbox44, "vbox44");
+  GLADE_HOOKUP_OBJECT (prefwin, mmb_delete_playlist, "mmb_delete_playlist");
+  GLADE_HOOKUP_OBJECT (prefwin, embolden_current, "embolden_current");
+  GLADE_HOOKUP_OBJECT (prefwin, hide_delete_from_disk, "hide_delete_from_disk");
+  GLADE_HOOKUP_OBJECT (prefwin, auto_name_playlist_from_folder, "auto_name_playlist_from_folder");
+  GLADE_HOOKUP_OBJECT (prefwin, auto_size_columns, "auto_size_columns");
+  GLADE_HOOKUP_OBJECT (prefwin, label148, "label148");
   GLADE_HOOKUP_OBJECT (prefwin, label2, "label2");
   GLADE_HOOKUP_OBJECT (prefwin, notebook4, "notebook4");
   GLADE_HOOKUP_OBJECT (prefwin, vbox21, "vbox21");
