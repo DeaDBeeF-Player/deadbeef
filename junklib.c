@@ -657,7 +657,7 @@ static const char *junk_genretbl[] = {
 };
 
 static int
-can_be_russian (const signed char *str) {
+can_be_russian (const signed char *str, int size) {
     if (!enable_cp1251_detection) {
         return 0;
     }
@@ -665,7 +665,8 @@ can_be_russian (const signed char *str) {
     int rus = 0;
     int rus_in_row = 0;
     int max_rus_row = 0;
-    for (; *str; str++) {
+    int n = 0;
+    for (; n < size; str++, n++) {
         if ((*str >= 'A' && *str <= 'Z')
                 || *str >= 'a' && *str <= 'z') {
             if (rus_in_row > max_rus_row) {
@@ -686,12 +687,12 @@ can_be_russian (const signed char *str) {
 }
 
 static int
-can_be_chinese (const uint8_t *str) {
+can_be_chinese (const uint8_t *str, int sz) {
     if (!enable_cp936_detection) {
         return 0;
     }
     int len = strlen (str);
-    for (int i = 0; *str; str++, i++) {
+    for (int i = 0; i < sz; str++, i++) {
         if (i < len-3
                 && (*str >= 0x81 && *str <= 0xFE )
                 && (*(str+1) >= 0x30 && *(str+1) <= 0x39)
@@ -722,11 +723,11 @@ convstr_id3v2 (int version, uint8_t encoding, const unsigned char* str, int sz) 
         enc = UTF8_STR;
     }
     else if (encoding == 0) {
-        if (can_be_chinese (str)) {
+        if (can_be_chinese (str, sz)) {
             // hack to add cp936 support
             enc = "cp936";
         }
-        else if (can_be_russian (str)) {
+        else if (can_be_russian (str, sz)) {
             // hack to add limited cp1251 recoding support
             enc = "cp1251";
         }
@@ -810,11 +811,11 @@ convstr_id3v1 (const char* str, int sz) {
         return str;
     }
     const char *enc = "iso8859-1";
-    if (can_be_chinese (str)) {
+    if (can_be_chinese (str, sz)) {
         // hack to add cp936 support
         enc = "cp936";
     }
-    else if (can_be_russian (str)) {
+    else if (can_be_russian (str, sz)) {
         // hack to add limited cp1251 recoding support
         enc = "cp1251";
     }
@@ -3526,11 +3527,11 @@ junk_detect_charset (const char *s) {
         return NULL; // means no recoding required
     }
     // hack to add cp936 support
-    if (can_be_chinese (s)) {
+    if (can_be_chinese (s, strlen (s))) {
        return "cp936";
     }
     // check if that could be non-latin1 (too many nonascii chars)
-    if (can_be_russian (s)) {
+    if (can_be_russian (s, strlen (s))) {
         return "cp1251";
     }
     return "cp1252";
