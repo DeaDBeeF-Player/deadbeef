@@ -61,6 +61,7 @@
 #endif
 #include "actionhandlers.h"
 #include "hotkeys.h"
+#include "../hotkeys/hotkeys.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -995,6 +996,11 @@ gtkui_thread (void *ctx) {
         // check if any hotkeys were created manually (e.g. beta versions of 0.6)
         if (!deadbeef->conf_find ("hotkey.key", NULL)) {
             gtkui_set_default_hotkeys ();
+            gtkui_import_0_5_global_hotkeys ();
+            DB_plugin_t *hkplug = deadbeef->plug_get_for_id ("hotkeys");
+            if (hkplug) {
+                ((DB_hotkeys_plugin_t *)hkplug)->reset ();
+            }
         }
         deadbeef->conf_set_int ("hotkeys_created", 1);
         deadbeef->conf_save ();

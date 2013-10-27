@@ -925,3 +925,29 @@ gtkui_set_default_hotkeys (void) {
     deadbeef->conf_save ();
 }
 
+void
+gtkui_import_0_5_global_hotkeys (void) {
+    int n = 40;
+    deadbeef->conf_lock ();
+    DB_conf_item_t *item = deadbeef->conf_find ("hotkeys.key", NULL);
+    while (item) {
+        char *val = strdupa (item->value);
+        char *colon = strchr (val, ':');
+        if (colon) {
+            *colon++ = 0;
+            while (*colon && *colon == ' ') {
+                colon++;
+            }
+            if (*colon) {
+                char newkey[100];
+                char newval[100];
+                snprintf (newkey, sizeof (newkey), "hotkey.key%02d", n);
+                snprintf (newval, sizeof (newval), "\"%s\" 0 1 %s", val, colon);
+                deadbeef->conf_set_str (newkey, newval);
+                n++;
+            }
+        }
+        item = deadbeef->conf_find ("hotkeys.", item);
+    }
+    deadbeef->conf_unlock ();
+}
