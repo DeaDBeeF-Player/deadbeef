@@ -43,6 +43,7 @@ Contributors:
     These people have also contributed significantly to the project by sending patches, testing, etc:
     
         Alex Dedul <rotmer@gmail.com>
+        Christian Boxdörfer <christian.boxdoerfer@posteo.de>
         David Bryant <david@wavpack.com>
         Derreck <sarumyanxxl@users.sourceforge.net>
         Igor Murzov <igor@gplsoft.org>
