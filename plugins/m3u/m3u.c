@@ -253,7 +253,7 @@ pls_insert_file (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, c
             deadbeef->plt_set_item_duration (plt, it, atoi (length));
         }
         if (title[0]) {
-            deadbeef->pl_replace_meta (it, "title", title);
+            deadbeef->pl_add_meta (it, "title", title);
         }
     }
     return it;
