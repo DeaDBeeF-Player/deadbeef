@@ -1300,3 +1300,7 @@ gboolean
 on_searchwin_key_press_event           (GtkWidget       *widget,
                                         GdkEventKey     *event,
                                         gpointer         user_data);
+
+void
+on_auto_size_columns_toggled           (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
