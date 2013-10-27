@@ -14,7 +14,7 @@ version 0.6.0
 	improved AAC support
 	fixed the context menu in metadata editor
 	added GTK3.6 filechooser filter regression workaround
-	fixed compatibility with FFMPEG up to 2.0
+	fixed compatibility with FFMPEG up to 2.0.2
 	added location field to the metadata tab in track properties
 	fixed playlist columns sizers dead zone bug
 	new WMA plugin
@@ -22,6 +22,7 @@ version 0.6.0
 	added customizable content-type mapper, to associate network streams with plugins
 	improved remote playlist loading
 	fixed buffer overflow in m3u plugin
+	subtracks no longer get written to pls and m3u
 	warn a user if he attempts to quit while a job is running (e.g. converter)
 	fixed tabstrip scrolling timer bug
 	added GTK3 touchpad smooth scrolling support (kudos to thesame)
@@ -29,6 +30,7 @@ version 0.6.0
 	added experimental Mac OS X support (thanks to Carlos Alberto Nunes for the CoreAudio plugin)
 	improved playlist tab rendering code to work better on HDPI displays
 	fixed rounding error in streamer sleep time calculation - that solves some stuttering problems
+	added OPUS and TAK support in the static build (via ffmpeg)
 
 version 0.5.6
 	wavpack: fixed reload_metadata not clearing old data
