@@ -299,7 +299,7 @@ on_edit_ok_button_clicked (GtkButton *button, gpointer user_data) {
     active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(lookup_widget(edit_dlg, "common_check")));
     flags = (flags & ~DB_ACTION_COMMON) | (active?DB_ACTION_COMMON:0);
 
-    current_action->parent.flags = flags;
+    current_action->parent.flags = flags | DB_ACTION_ADD_MENU;
     current_action->shx_flags = shx_flags;
 
     gtk_list_store_set(GTK_LIST_STORE(treemodel), &iter,
