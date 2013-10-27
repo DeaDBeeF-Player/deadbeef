@@ -378,6 +378,9 @@ cover_art_free (void) {
 
 GdkPixbuf *
 cover_get_default_pixbuf (void) {
+    if (!coverart_plugin) {
+        return NULL;
+    }
     if (!pixbuf_default) {
         GError *error = NULL;
         const char *defpath = coverart_plugin->get_default_cover ();
