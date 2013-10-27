@@ -19,13 +19,13 @@
 #include "../../deadbeef.h"
 #include "gtkui.h"
 #include "support.h"
-#include "gtkuigl.h"
-
 #ifdef __APPLE__
 #undef USE_OPENGL
 #endif
 
 #ifdef USE_OPENGL
+#include "gtkuigl.h"
+
 static int gl_initialized;
 static int gl_init_state;
 //PFNGLXSWAPINTERVALSGIPROC glXSwapIntervalSGI;
