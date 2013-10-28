@@ -142,6 +142,15 @@ static float audio_data[DDB_AUDIO_MEMORY_FRAMES];
 // message queue
 static struct handler_s *handler;
 
+// visualization stuff
+typedef struct wavedata_listener_s {
+    void *ctx;
+    void (*callback)(void *ctx, ddb_waveformat_t *fmt, const float *data, int nsamples);
+    struct wavedata_listener_s *next;
+} wavedata_listener_t;
+
+static wavedata_listener_t *wavedata_listeners;
+
 #if DETECT_PL_LOCK_RC
 volatile pthread_t streamer_lock_tid = 0;
 #endif
@@ -2281,12 +2290,19 @@ streamer_read (char *bytes, int size) {
         .is_float = 1,
         .is_bigendian = 0
     };
+
+    float temp_audio_data[in_frames * out_fmt.channels];
+    pcm_convert (&output->fmt, bytes, &out_fmt, (char *)temp_audio_data, sz);
     if (in_frames < DDB_AUDIO_MEMORY_FRAMES) {
         memmove (audio_data, audio_data + in_frames, (DDB_AUDIO_MEMORY_FRAMES-in_frames)*sizeof (float));
-        pcm_convert (&output->fmt, bytes, &out_fmt, (char *)(audio_data + DDB_AUDIO_MEMORY_FRAMES - in_frames), sz);
+        memcpy (audio_data + DDB_AUDIO_MEMORY_FRAMES - in_frames, temp_audio_data, sz);
     }
     else {
-        pcm_convert (&output->fmt, bytes + sz - DDB_AUDIO_MEMORY_FRAMES * in_frame_size, &out_fmt, (char *)audio_data, DDB_AUDIO_MEMORY_FRAMES * in_frame_size);
+        memcpy (audio_data, temp_audio_data, DDB_AUDIO_MEMORY_FRAMES * in_frame_size);
+    }
+
+    for (wavedata_listener_t *l = wavedata_listeners; l; l = l->next) {
+        l->callback (l->ctx, &out_fmt, temp_audio_data, in_frames);
     }
 
     calc_freq (audio_data, freq_data);
@@ -2573,6 +2589,31 @@ audio_get_waveform_data (int type, float *data) {
     mutex_lock (audio_mem_mutex);
     memcpy (data, type == DDB_AUDIO_WAVEFORM ? audio_data : freq_data, sizeof (audio_data));
     mutex_unlock (audio_mem_mutex);
+}
+
+void
+register_continuous_wavedata_listener (void *ctx, void (*callback)(void *ctx, ddb_waveformat_t *fmt, const float *data, int nsamples)) {
+    wavedata_listener_t *l = malloc (sizeof (wavedata_listener_t));
+    memset (l, 0, sizeof (wavedata_listener_t));
+    l->ctx = ctx;
+    l->callback = callback;
+    l->next = wavedata_listeners;
+    wavedata_listeners = l;
+}
+
+void
+unregister_continuous_wavedata_listener (void *ctx) {
+    wavedata_listener_t *l, *prev = NULL;
+    for (l = wavedata_listeners; l && l->ctx != ctx; prev = l, l = l->next);
+    if (l) {
+        if (prev) {
+            prev->next = l->next;
+        }
+        else {
+            wavedata_listeners = l->next;
+        }
+        free (l);
+    }
 }
 
 void

@@ -148,4 +148,10 @@ streamer_set_streamer_playlist (playlist_t *plt);
 struct handler_s *
 streamer_get_handler (void);
 
+void
+register_continuous_wavedata_listener (void *ctx, void (*callback)(void *ctx, ddb_waveformat_t *fmt, const float *data, int nsamples));
+
+void
+unregister_continuous_wavedata_listener (void *ctx);
+
 #endif // __STREAMER_H
