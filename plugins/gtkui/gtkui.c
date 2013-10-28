@@ -633,29 +633,8 @@ outputchanged_cb (gpointer nothing) {
 
 void
 save_playlist_as (void) {
-    action_save_playlist_handler_cb (NULL);
+    gdk_threads_add_idle (action_save_playlist_handler_cb, NULL);
 }
-
-#if 0
-void
-on_playlist_save_activate              (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
-    char last_playlist_save_name[1024];
-    deadbeef->conf_get_str ("gtkui.last_playlist_save_name", "", last_playlist_save_name, sizeof (last_playlist_save_name));
-    if (!last_playlist_save_name[0]) {
-        save_playlist_as ();
-    }
-    else {
-        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-        if (plt) {
-            deadbeef->plt_save (plt, NULL, NULL, last_playlist_save_name, NULL, NULL, NULL);
-            deadbeef->plt_unref (plt);
-        }
-    }
-}
-#endif
-
 
 void
 on_playlist_save_as_activate           (GtkMenuItem     *menuitem,
@@ -668,14 +647,14 @@ void
 on_playlist_load_activate              (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    action_load_playlist_handler_cb (NULL);
+    gdk_threads_add_idle (action_load_playlist_handler_cb, NULL);
 }
 
 void
 on_add_location_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    action_add_location_handler_cb (NULL);
+    gdk_threads_add_idle (action_add_location_handler_cb, NULL);
 }
 
 static gboolean

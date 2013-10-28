@@ -173,4 +173,7 @@ plt_get_title_wrapper (int plt, char *buffer, int len);
 void
 gtkui_quit (void);
 
+void
+gtkui_run_preferences_dlg (void);
+
 #endif
