@@ -132,9 +132,7 @@ unescape_forward_slash (const char *src, char *dst, int size) {
 }
 
 void
-on_preferences_activate                (GtkMenuItem     *menuitem,
-                                        gpointer         user_data)
-{
+gtkui_run_preferences_dlg (void) {
     if (prefwin) {
         return;
     }
@@ -364,7 +362,6 @@ on_preferences_activate                (GtkMenuItem     *menuitem,
     deadbeef->conf_save ();
     prefwin = NULL;
 }
-
 
 void
 on_pref_soundcard_changed              (GtkComboBox     *combobox,

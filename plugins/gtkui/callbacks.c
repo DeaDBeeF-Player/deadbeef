@@ -67,7 +67,7 @@ void
 on_open_activate                       (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    action_open_files_handler_cb (NULL);
+    gdk_threads_add_idle (action_open_files_handler_cb, NULL);
 }
 
 
@@ -75,14 +75,14 @@ void
 on_add_files_activate                  (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    action_add_files_handler_cb (NULL);
+    gdk_threads_add_idle (action_add_files_handler_cb, NULL);
 }
 
 void
 on_add_folders_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    action_add_folders_handler_cb (NULL);
+    gdk_threads_add_idle (action_add_folders_handler_cb, NULL);
 }
 
 
@@ -90,7 +90,7 @@ void
 on_quit_activate                      (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    action_quit_handler_cb (NULL);
+    gdk_threads_add_idle (action_quit_handler_cb, NULL);
 }
 
 
@@ -99,7 +99,7 @@ void
 on_select_all1_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    action_select_all_handler_cb (NULL);
+    gdk_threads_add_idle (action_select_all_handler_cb, NULL);
 }
 
 
@@ -322,7 +322,7 @@ void
 on_help1_activate                      (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    action_show_help_handler_cb (NULL);
+    gdk_threads_add_idle (action_show_help_handler_cb, NULL);
 }
 
 static GtkWidget *aboutwindow;
@@ -778,7 +778,7 @@ void
 on_sort_by_custom_activate             (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    action_sort_custom_handler_cb (NULL);
+    gdk_threads_add_idle (action_sort_custom_handler_cb, NULL);
 }
 
 void
@@ -789,4 +789,9 @@ on_design_mode1_activate               (GtkMenuItem     *menuitem,
     w_set_design_mode (act ? 1 : 0);
 }
 
-
+void
+on_preferences_activate                (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    gdk_threads_add_idle (action_preferences_handler_cb, NULL);
+}

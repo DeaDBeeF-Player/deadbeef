@@ -32,6 +32,13 @@
   g_object_set_data_full (G_OBJECT (component), name, \
     g_object_ref(G_OBJECT(widget)), (GDestroyNotify) g_object_unref)
 
+static gboolean
+menu_action_cb (void *ctx) {
+    DB_plugin_action_t *action = ctx;
+    action->callback (action, DDB_ACTION_CTX_MAIN);
+    return FALSE;
+}
+
 static void
 on_actionitem_activate (GtkMenuItem     *menuitem,
                            DB_plugin_action_t *action)
@@ -39,7 +46,7 @@ on_actionitem_activate (GtkMenuItem     *menuitem,
     // these actions are always in the MAIN context, or they are coming from new
     // plugins, so we don't have to care about the user data for <=1.4 plugins.
     // aren't we?..
-    action->callback (action, DDB_ACTION_CTX_MAIN);
+    gdk_threads_add_idle (menu_action_cb, action);
 }
 
 void
