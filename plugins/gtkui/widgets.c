@@ -134,6 +134,8 @@ typedef struct {
 #if USE_OPENGL
     GdkGLContext *glcontext;
 #endif
+    float *samples;
+    int nsamples;
 } w_scope_t;
 
 typedef struct {
@@ -2233,6 +2235,7 @@ w_coverart_create (void) {
 void
 w_scope_destroy (ddb_gtkui_widget_t *w) {
     w_scope_t *s = (w_scope_t *)w;
+    deadbeef->unregister_continuous_wavedata_listener (w);
     if (s->drawtimer) {
         g_source_remove (s->drawtimer);
         s->drawtimer = 0;
@@ -2243,6 +2246,10 @@ w_scope_destroy (ddb_gtkui_widget_t *w) {
         s->glcontext = NULL;
     }
 #endif
+    if (s->samples) {
+        free (s->samples);
+        s->samples = NULL;
+    }
 }
 
 gboolean
@@ -2252,11 +2259,27 @@ w_scope_draw_cb (void *data) {
     return TRUE;
 }
 
+static void
+scope_wavedata_listener (void *ctx, ddb_waveformat_t *fmt, const float *data, int in_samples) {
+    w_scope_t *w = ctx;
+    if (w->samples) {
+        // append
+        float ratio = (44100.f / fmt->samplerate);
+        int size = in_samples * ratio;
+
+        int sz = min (w->nsamples, size);
+        int n = w->nsamples-sz;
+
+        memmove (w->samples, w->samples + sz, n * sizeof (float));
+        float pos = 0;
+        for (int i = 0; i < sz && pos < in_samples; i++, pos += 1./ratio) {
+            w->samples[n + i] = data[(int)(pos * fmt->channels)];
+        }
+    }
+}
+
 gboolean
 scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
-    ddb_waveformat_t fmt;
-    float data[DDB_AUDIO_MEMORY_FRAMES];
-    deadbeef->audio_get_waveform_data (DDB_AUDIO_WAVEFORM, data);
     GtkAllocation a;
     gtk_widget_get_allocation (widget, &a);
     cairo_set_source_rgb (cr, 0, 0, 0);
@@ -2266,12 +2289,45 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     cairo_set_line_width (cr, 1);
     cairo_set_source_rgb (cr, 1, 1, 1);
 
+    w_scope_t *w = user_data;
+
+    float spp = 1;
+    int nsamples = a.width / spp;
+    if (w->nsamples != nsamples) {
+        printf ("init\n");
+        float *oldsamples = w->samples;
+        int oldnsamples = w->nsamples;
+        w->samples = NULL;
+        w->nsamples = nsamples;
+        if (nsamples > 0) {
+            w->samples = malloc (sizeof (float) * nsamples);
+            memset (w->samples, 0, sizeof (float) * nsamples);
+            if (oldsamples) {
+                int n = min (oldnsamples, w->nsamples);
+                memcpy (w->samples + w->nsamples - n, oldsamples + oldnsamples - n, n * sizeof (float));
+                free (oldsamples);
+            }
+        }
+        else {
+            return FALSE;
+        }
+    }
+
+
+    float incr = a.width / (float)w->nsamples;
+    for (int i = 0; i < w->nsamples; i++) {
+        float s = w->samples[i];
+        cairo_line_to (cr, i, s * a.height/2 + a.height/2);
+    }
+
+#if 0
     float incr = a.width / (float)DDB_AUDIO_MEMORY_FRAMES;
     float pos = 0;
     for (float x = 0; x < a.width && pos < DDB_AUDIO_MEMORY_FRAMES; x += incr, pos ++) {
         float s = data[(int)pos];
         cairo_line_to (cr, x, s * a.height/2 + a.height/2);
     }
+#endif
     cairo_stroke (cr);
 
     return FALSE;
@@ -2398,6 +2454,7 @@ w_scope_create (void) {
 #endif
     g_signal_connect_after (G_OBJECT (w->drawarea), "realize", G_CALLBACK (scope_realize), w);
     w_override_signals (w->base.widget, w);
+    deadbeef->register_continuous_wavedata_listener (w, scope_wavedata_listener);
     return (ddb_gtkui_widget_t *)w;
 }
 
