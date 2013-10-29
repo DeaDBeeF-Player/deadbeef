@@ -139,6 +139,14 @@ typedef struct {
     int nsamples;
 } w_scope_t;
 
+// spectrum analyzer based on cairo-spectrum from audacious
+// Copyright (c) 2011 William Pitcock <nenolod@dereferenced.org>
+#define MAX_BANDS DDB_FREQ_BANDS
+#define VIS_DELAY 1
+#define VIS_DELAY_PEAK 10
+#define VIS_FALLOFF 1
+#define VIS_FALLOFF_PEAK 1
+#define BAND_WIDTH 20
 typedef struct {
     ddb_gtkui_widget_t base;
     GtkWidget *drawarea;
@@ -147,6 +155,11 @@ typedef struct {
     GdkGLContext *glcontext;
 #endif
     float data[DDB_FREQ_BANDS];
+    float xscale[MAX_BANDS + 1];
+    int bars[MAX_BANDS + 1];
+    int delay[MAX_BANDS + 1];
+    int peaks[MAX_BANDS + 1];
+    int delay_peak[MAX_BANDS + 1];
 } w_spectrum_t;
 
 typedef struct {
@@ -2474,26 +2487,13 @@ w_spectrum_draw_cb (void *data) {
     return TRUE;
 }
 
-// spectrum analyzer based on cairo-spectrum from audacious
-// Copyright (c) 2011 William Pitcock <nenolod@dereferenced.org>
-#define MAX_BANDS DDB_FREQ_BANDS
-#define VIS_DELAY 1
-#define VIS_DELAY_PEAK 10
-#define VIS_FALLOFF 1
-#define VIS_FALLOFF_PEAK 1
-#define BAND_WIDTH 20
-static float xscale[MAX_BANDS + 1];
-static int bars[MAX_BANDS + 1];
-static int delay[MAX_BANDS + 1];
-static int peaks[MAX_BANDS + 1];
-static int delay_peak[MAX_BANDS + 1];
 
-static void calculate_bands(int bands)
+static void calculate_bands(w_spectrum_t *w, int bands)
 {
 	int i;
 
-	for (i = 0; i < bands; i++)
-		xscale[i] = powf((float)(MAX_BANDS+1), ((float) i / (float) bands)) - 1;
+	for (i = 0; i <= bands; i++)
+		w->xscale[i] = powf((float)(MAX_BANDS+1), ((float) i / (float) bands)) - 1;
 }
 
 static void
@@ -2515,49 +2515,49 @@ spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     bands = CLAMP(bands, 4, MAX_BANDS);
     width = a.width;
     height = a.height;
-	calculate_bands(bands);
+	calculate_bands(w, bands);
 
-	for (int i = 0; i < bands; i ++)
+	for (int i = 0; i <= bands; i ++)
 	{
-		int a = ceil (xscale[i]);
-		int b = floor (xscale[i + 1]);
+		int a = ceil (w->xscale[i]);
+		int b = floor (w->xscale[i + 1]);
 		float n = 0;
 
 		if (b < a)
-			n += freq[b] * (xscale[i + 1] - xscale[i]);
+			n += freq[b] * (w->xscale[i + 1] - w->xscale[i]);
 		else
 		{
 			if (a > 0)
-				n += freq[a - 1] * (a - xscale[i]);
+				n += freq[a - 1] * (a - w->xscale[i]);
 			for (; a < b; a ++)
 				n += freq[a];
 			if (b < MAX_BANDS)
-				n += freq[b] * (xscale[i + 1] - b);
+				n += freq[b] * (w->xscale[i + 1] - b);
 		}
 
 		/* 40 dB range */
 		int x = 20 * log10 (n * 200);
 		x = CLAMP (x, 0, 40);
 
-		bars[i] -= MAX (0, VIS_FALLOFF - delay[i]);
-		peaks[i] -= MAX (0, VIS_FALLOFF_PEAK - delay_peak[i]);;
+		w->bars[i] -= MAX (0, VIS_FALLOFF - w->delay[i]);
+		w->peaks[i] -= MAX (0, VIS_FALLOFF_PEAK - w->delay_peak[i]);;
 
-		if (delay[i])
-			delay[i]--;
-		if (delay_peak[i])
-			delay_peak[i]--;
+		if (w->delay[i])
+			w->delay[i]--;
+		if (w->delay_peak[i])
+			w->delay_peak[i]--;
 
-		if (x > bars[i])
+		if (x > w->bars[i])
 		{
-			bars[i] = x;
-			delay[i] = VIS_DELAY;
+			w->bars[i] = x;
+			w->delay[i] = VIS_DELAY;
 		}
-		if (x > peaks[i]) {
-            peaks[i] = x;
-            delay_peak[i] = VIS_DELAY_PEAK;
+		if (x > w->peaks[i]) {
+            w->peaks[i] = x;
+            w->delay_peak[i] = VIS_DELAY_PEAK;
         }
-        if (peaks[i] < bars[i]) {
-            peaks[i] = bars[i];
+        if (w->peaks[i] < w->bars[i]) {
+            w->peaks[i] = w->bars[i];
         }
 	}
 
@@ -2578,7 +2578,7 @@ spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 	for (gint i = 0; i <= bands; i++)
 	{
 		gint x = ((width / bands) * i) + 2;
-        int y = a.height - bars[i] * base_s;
+        int y = a.height - w->bars[i] * base_s;
         glColor3f (0, 0.5, 1);
 		glVertex2f (x + 1, y);
 		glVertex2f (x + 1 + (width / bands) - 1, y);
@@ -2587,7 +2587,7 @@ spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 
         // peak
         glColor3f (1, 1, 1);
-        y = a.height - peaks[i] * base_s;
+        y = a.height - w->peaks[i] * base_s;
 		glVertex2f (x + 1, y);
 		glVertex2f (x + 1 + (width / bands) - 1, y);
 		glVertex2f (x + 1 + (width / bands) - 1, y+1);
@@ -2606,7 +2606,7 @@ spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 	for (gint i = 0; i <= bands; i++)
 	{
 		int x = ((width / bands) * i) + 2;
-        int y = a.height - bars[i] * base_s;
+        int y = a.height - w->bars[i] * base_s;
         cairo_set_source_rgb (cr, 0, 0.5, 1);
         cairo_rectangle (cr, x+1, y, (width / bands) - 1, a.height);
 	}
@@ -2614,7 +2614,7 @@ spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 	for (gint i = 0; i <= bands; i++)
 	{
 		int x = ((width / bands) * i) + 2;
-        int y = a.height - peaks[i] * base_s;
+        int y = a.height - w->peaks[i] * base_s;
         cairo_set_source_rgb (cr, 1, 1, 1);
         cairo_rectangle (cr, x + 1, y, (width / bands) - 1, 2);
     }
