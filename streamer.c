@@ -105,6 +105,7 @@ static char streambuffer[STREAM_BUFFER_SIZE];
 static int bytes_until_next_song = 0;
 static uintptr_t mutex;
 static uintptr_t decodemutex;
+static uintptr_t wdl_mutex; // wavedata listener
 static int nextsong = -1;
 static int nextsong_pstate = -1;
 static int badsong = -1;
@@ -1890,6 +1891,7 @@ streamer_init (void) {
 #endif
     mutex = mutex_create ();
     decodemutex = mutex_create ();
+    wdl_mutex = mutex_create ();
 
     ringbuf_init (&streamer_ringbuf, streambuffer, STREAM_BUFFER_SIZE);
 
@@ -1915,7 +1917,6 @@ streamer_free (void) {
     streamer_abort_files ();
     streaming_terminate = 1;
     thread_join (streamer_tid);
-    mutex_free (decodemutex);
 
     if (streaming_track) {
         pl_item_unref (streaming_track);
@@ -1936,9 +1937,12 @@ streamer_free (void) {
     ctmap_free ();
     ctmap_free_mutex ();
 
+    mutex_free (decodemutex);
     decodemutex = 0;
     mutex_free (mutex);
     mutex = 0;
+    mutex_free (wdl_mutex);
+    wdl_mutex = 0;
 
     streamer_dsp_chain_save();
 
@@ -2291,11 +2295,13 @@ streamer_read (char *bytes, int size) {
 
         float temp_audio_data[in_frames * out_fmt.channels];
         pcm_convert (&output->fmt, bytes, &out_fmt, (char *)temp_audio_data, sz);
+        mutex_lock (wdl_mutex);
         for (wavedata_listener_t *l = wavedata_listeners; l; l = l->next) {
             if (l->type == DDB_AUDIO_WAVEFORM) {
                 l->callback (l->ctx, l->type, &out_fmt, temp_audio_data, in_frames);
             }
         }
+        mutex_unlock (wdl_mutex);
 
         int remaining = in_frames;
         do {
@@ -2306,11 +2312,13 @@ streamer_read (char *bytes, int size) {
             remaining -= sz;
             if (audio_data_fill == DDB_FREQ_BANDS) {
                 calc_freq (audio_data, freq_data);
+                mutex_lock (wdl_mutex);
                 for (wavedata_listener_t *l = wavedata_listeners; l; l = l->next) {
                     if (l->type == DDB_AUDIO_FREQ) {
                         l->callback (l->ctx, l->type, &out_fmt, freq_data, DDB_FREQ_BANDS);
                     }
                 }
+                mutex_unlock (wdl_mutex);
                 audio_data_fill = 0;
             }
         } while (remaining > 0);
@@ -2588,6 +2596,7 @@ streamer_notify_order_changed (int prev_order, int new_order) {
 
 void
 register_continuous_wavedata_listener (void *ctx, int type, void (*callback)(void *ctx, int type, ddb_waveformat_t *fmt, const float *data, int nsamples)) {
+    mutex_lock (wdl_mutex);
     wavedata_listener_t *l = malloc (sizeof (wavedata_listener_t));
     memset (l, 0, sizeof (wavedata_listener_t));
     l->ctx = ctx;
@@ -2595,21 +2604,26 @@ register_continuous_wavedata_listener (void *ctx, int type, void (*callback)(voi
     l->callback = callback;
     l->next = wavedata_listeners;
     wavedata_listeners = l;
+    mutex_unlock (wdl_mutex);
 }
 
 void
 unregister_continuous_wavedata_listener (void *ctx, int type) {
+    mutex_lock (wdl_mutex);
     wavedata_listener_t *l, *prev = NULL;
-    for (l = wavedata_listeners; l && l->ctx != ctx && l->type != type; prev = l, l = l->next);
-    if (l) {
-        if (prev) {
-            prev->next = l->next;
+    for (l = wavedata_listeners; l; prev = l, l = l->next) {
+        if (l->ctx == ctx && l->type == type) {
+            if (prev) {
+                prev->next = l->next;
+            }
+            else {
+                wavedata_listeners = l->next;
+            }
+            free (l);
+            break;
         }
-        else {
-            wavedata_listeners = l->next;
-        }
-        free (l);
     }
+    mutex_unlock (wdl_mutex);
 }
 
 void

@@ -137,6 +137,8 @@ typedef struct {
 #endif
     float *samples;
     int nsamples;
+    int resized;
+    intptr_t mutex;
 } w_scope_t;
 
 // spectrum analyzer based on cairo-spectrum from audacious
@@ -2265,6 +2267,10 @@ w_scope_destroy (ddb_gtkui_widget_t *w) {
         free (s->samples);
         s->samples = NULL;
     }
+    if (s->mutex) {
+        deadbeef->mutex_free (s->mutex);
+        s->mutex = 0;
+    }
 }
 
 gboolean
@@ -2277,6 +2283,26 @@ w_scope_draw_cb (void *data) {
 static void
 scope_wavedata_listener (void *ctx, int type, ddb_waveformat_t *fmt, const float *data, int in_samples) {
     w_scope_t *w = ctx;
+    if (w->nsamples != w->resized) {
+        deadbeef->mutex_lock (w->mutex);
+        float *oldsamples = w->samples;
+        int oldnsamples = w->nsamples;
+        w->samples = NULL;
+        w->nsamples = w->resized;
+        if (w->nsamples > 0) {
+            w->samples = malloc (sizeof (float) * w->nsamples);
+            memset (w->samples, 0, sizeof (float) * w->nsamples);
+            if (oldsamples) {
+                int n = min (oldnsamples, w->nsamples);
+                memcpy (w->samples + w->nsamples - n, oldsamples + oldnsamples - n, n * sizeof (float));
+            }
+        }
+        if (oldnsamples) {
+            free (oldsamples);
+        }
+        deadbeef->mutex_unlock (w->mutex);
+    }
+
     if (w->samples) {
         // append
         float ratio = fmt->samplerate / 44100.f;
@@ -2303,36 +2329,33 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 
     w_scope_t *w = user_data;
 
-    float spp = 1;
-    int nsamples = a.width / spp;
+    int nsamples = a.width;
     if (w->nsamples != nsamples) {
-        float *oldsamples = w->samples;
-        int oldnsamples = w->nsamples;
-        w->samples = NULL;
-        w->nsamples = nsamples;
-        if (nsamples > 0) {
-            w->samples = malloc (sizeof (float) * nsamples);
-            memset (w->samples, 0, sizeof (float) * nsamples);
-            if (oldsamples) {
-                int n = min (oldnsamples, w->nsamples);
-                memcpy (w->samples + w->nsamples - n, oldsamples + oldnsamples - n, n * sizeof (float));
-                free (oldsamples);
-            }
-        }
-        else {
-            return FALSE;
-        }
+        w->resized = nsamples;
+        return FALSE;
     }
 
     cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
     cairo_set_source_rgb (cr, 1, 1, 1);
     cairo_set_line_width (cr, 1);
-    cairo_move_to (cr, 0, ftoi(w->samples[0] * a.height/2 + a.height/2));
+    deadbeef->mutex_lock (w->mutex);
     float incr = a.width / (float)w->nsamples;
+    float h = a.height;
+    if (h > 50) {
+        h -= 20;
+    }
+    if (h > 100) {
+        h -= 40;
+    }
+    h /= 2;
+    float hh = a.height/2.f;
+
+    cairo_move_to (cr, 0, ftoi(w->samples[0] * h + hh));
     for (int i = 1; i < w->nsamples; i += 2) {
-        float y = w->samples[i] * a.height/2 + a.height/2;
+        float y = w->samples[i] * h + hh;
         cairo_line_to (cr, i, y);
     }
+    deadbeef->mutex_unlock (w->mutex);
     cairo_stroke (cr);
 
     return FALSE;
@@ -2450,6 +2473,8 @@ w_scope_create (void) {
                         GDK_GL_MODE_DOUBLE));
     gboolean cap = gtk_widget_set_gl_capability (w->drawarea, conf, NULL, TRUE, GDK_GL_RGBA_TYPE);
 #endif
+
+    w->mutex = deadbeef->mutex_create ();
     gtk_widget_show (w->drawarea);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->drawarea);
 #if !GTK_CHECK_VERSION(3,0,0)
