@@ -27,9 +27,9 @@
 #include <math.h>
 #include <complex.h>
 
-static float hamming[DDB_AUDIO_MEMORY_FRAMES];              /* hamming window, scaled to sum to 1 */
-static int reversed[DDB_AUDIO_MEMORY_FRAMES];               /* bit-reversal table */
-static float complex roots[DDB_AUDIO_MEMORY_FRAMES / 2];    /* N-th roots of unity */
+static float hamming[DDB_FREQ_BANDS];              /* hamming window, scaled to sum to 1 */
+static int reversed[DDB_FREQ_BANDS];               /* bit-reversal table */
+static float complex roots[DDB_FREQ_BANDS / 2];    /* N-th roots of unity */
 static int generated = 0;
 static float LOGN; /* log N (base 2) */
 
@@ -59,7 +59,7 @@ static void generate_tables (void)
     if (generated)
         return;
 
-    const int N = DDB_AUDIO_MEMORY_FRAMES;
+    const int N = DDB_FREQ_BANDS;
     LOGN = log2(N);
     for (int n = 0; n < N; n ++)
         hamming[n] = 1 - 0.85 * cosf (2 * M_PI * n / N);
@@ -71,9 +71,9 @@ static void generate_tables (void)
     generated = 1;
 }
 
-static void do_fft (float complex a[DDB_AUDIO_MEMORY_FRAMES])
+static void do_fft (float complex a[DDB_FREQ_BANDS])
 {
-    const int N = DDB_AUDIO_MEMORY_FRAMES;
+    const int N = DDB_FREQ_BANDS;
     int half = 1;       /* (2^s)/2 */
     int inv = N / 2;    /* N/(2^s) */
 
@@ -104,7 +104,7 @@ calc_freq (float *data, float *freq) {
 
     // fft code shamelessly stolen from audacious
     // thanks, John
-    int N = DDB_AUDIO_MEMORY_FRAMES;
+    int N = DDB_FREQ_BANDS;
     float complex a[N];
     for (int n = 0; n < N; n ++) {
         a[reversed[n]] = data[n] * hamming[n];

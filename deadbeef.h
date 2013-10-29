@@ -330,7 +330,7 @@ enum ddb_audio_data_type_t {
 
 // audio memory constants
 // since 1.5
-#define DDB_AUDIO_MEMORY_FRAMES 256
+#define DDB_FREQ_BANDS 256
 
 // typecasting macros
 #define DB_PLUGIN(x) ((DB_plugin_t *)(x))
@@ -820,18 +820,15 @@ typedef struct {
     int (*pl_meta_exists) (DB_playItem_t *it, const char *key);
 
     // ******* new 1.5 APIs *******
-    // access real-time audio data (e.g. for visualization)
-    // returns data size in bytes
-    // fmt and data will be filled with last bytes that came to the output plugin
-    // data size must be float[DDB_AUDIO_MEMORY_FRAMES]
-    // type is one of DDB_AUDIO_WAVEFORM and DDB_AUDIO_FREQ
-    void (*audio_get_waveform_data) (int type, float *data);
-
     // register/unregister for getting continuous wave data
     // mainly for visualization
     // ctx must be unique
-    void (*register_continuous_wavedata_listener) (void *ctx, void (*callback)(void *ctx, ddb_waveformat_t *fmt, const float *data, int nsamples));
-    void (*unregister_continuous_wavedata_listener) (void *ctx);
+    // type is one of DDB_AUDIO_WAVEFORM and DDB_AUDIO_FREQ
+    // the waveform can be arbitrary large;
+    // freq data size is always DDB_FREQ_BANDS
+    void (*register_continuous_wavedata_listener) (void *ctx, int type, void (*callback)(void *ctx, int type, ddb_waveformat_t *fmt, const float *data, int nsamples));
+
+    void (*unregister_continuous_wavedata_listener) (void *ctx, int type);
 
     // this is useful to mute/unmute audio, and query the muted status, from
     // plugins, without touching the volume control
