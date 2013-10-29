@@ -2279,35 +2279,36 @@ streamer_read (char *bytes, int size) {
     printf ("streamer_read took %d ms\n", ms);
 #endif
 
-    mutex_lock (audio_mem_mutex);
-    int in_frame_size = (output->fmt.bps >> 3) * output->fmt.channels;
-    int in_frames = sz / in_frame_size;
-    ddb_waveformat_t out_fmt = {
-        .bps = 32,
-        .channels = 1,
-        .samplerate = output->fmt.samplerate,
-        .channelmask = DDB_SPEAKER_FRONT_LEFT,
-        .is_float = 1,
-        .is_bigendian = 0
-    };
+    if (wavedata_listeners) {
+        mutex_lock (audio_mem_mutex);
+        int in_frame_size = (output->fmt.bps >> 3) * output->fmt.channels;
+        int in_frames = sz / in_frame_size;
+        ddb_waveformat_t out_fmt = {
+            .bps = 32,
+            .channels = 1,
+            .samplerate = output->fmt.samplerate,
+            .channelmask = DDB_SPEAKER_FRONT_LEFT,
+            .is_float = 1,
+            .is_bigendian = 0
+        };
 
-    float temp_audio_data[in_frames * out_fmt.channels];
-    pcm_convert (&output->fmt, bytes, &out_fmt, (char *)temp_audio_data, sz);
-    if (in_frames < DDB_AUDIO_MEMORY_FRAMES) {
-        memmove (audio_data, audio_data + in_frames, (DDB_AUDIO_MEMORY_FRAMES-in_frames)*sizeof (float));
-        memcpy (audio_data + DDB_AUDIO_MEMORY_FRAMES - in_frames, temp_audio_data, sz);
+        float temp_audio_data[in_frames * out_fmt.channels];
+        pcm_convert (&output->fmt, bytes, &out_fmt, (char *)temp_audio_data, sz);
+        if (in_frames < DDB_AUDIO_MEMORY_FRAMES) {
+            memmove (audio_data, audio_data + in_frames, (DDB_AUDIO_MEMORY_FRAMES-in_frames)*sizeof (float));
+            memcpy (audio_data + DDB_AUDIO_MEMORY_FRAMES - in_frames, temp_audio_data, sz);
+        }
+        else {
+            memcpy (audio_data, temp_audio_data, DDB_AUDIO_MEMORY_FRAMES * in_frame_size);
+        }
+
+        for (wavedata_listener_t *l = wavedata_listeners; l; l = l->next) {
+            l->callback (l->ctx, &out_fmt, temp_audio_data, in_frames);
+        }
+
+        calc_freq (audio_data, freq_data);
+        mutex_unlock (audio_mem_mutex);
     }
-    else {
-        memcpy (audio_data, temp_audio_data, DDB_AUDIO_MEMORY_FRAMES * in_frame_size);
-    }
-
-    for (wavedata_listener_t *l = wavedata_listeners; l; l = l->next) {
-        l->callback (l->ctx, &out_fmt, temp_audio_data, in_frames);
-    }
-
-    calc_freq (audio_data, freq_data);
-
-    mutex_unlock (audio_mem_mutex);
 
     if (!output->has_volume) {
         int mult = 1-audio_is_mute ();

@@ -37,6 +37,7 @@
 #include "namedicons.h"
 #include "hotkeys.h" // for building action treeview
 #include "../../strdupa.h"
+#include "../../optmath.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -2264,16 +2265,16 @@ scope_wavedata_listener (void *ctx, ddb_waveformat_t *fmt, const float *data, in
     w_scope_t *w = ctx;
     if (w->samples) {
         // append
-        float ratio = (44100.f / fmt->samplerate);
-        int size = in_samples * ratio;
+        float ratio = fmt->samplerate / 44100.f;
+        int size = in_samples / ratio;
 
         int sz = min (w->nsamples, size);
         int n = w->nsamples-sz;
 
         memmove (w->samples, w->samples + sz, n * sizeof (float));
         float pos = 0;
-        for (int i = 0; i < sz && pos < in_samples; i++, pos += 1./ratio) {
-            w->samples[n + i] = data[(int)(pos * fmt->channels)];
+        for (int i = 0; i < sz && pos < in_samples; i++, pos += ratio) {
+            w->samples[n + i] = data[ftoi(pos * fmt->channels)];
         }
     }
 }
@@ -2285,16 +2286,12 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     cairo_set_source_rgb (cr, 0, 0, 0);
     cairo_rectangle (cr, 0, 0, a.width, a.height);
     cairo_fill (cr);
-    cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
-    cairo_set_line_width (cr, 1);
-    cairo_set_source_rgb (cr, 1, 1, 1);
 
     w_scope_t *w = user_data;
 
     float spp = 1;
     int nsamples = a.width / spp;
     if (w->nsamples != nsamples) {
-        printf ("init\n");
         float *oldsamples = w->samples;
         int oldnsamples = w->nsamples;
         w->samples = NULL;
@@ -2313,21 +2310,15 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
         }
     }
 
-
+    cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
+    cairo_set_source_rgb (cr, 1, 1, 1);
+    cairo_set_line_width (cr, 1);
+    cairo_move_to (cr, 0, ftoi(w->samples[0] * a.height/2 + a.height/2));
     float incr = a.width / (float)w->nsamples;
-    for (int i = 0; i < w->nsamples; i++) {
-        float s = w->samples[i];
-        cairo_line_to (cr, i, s * a.height/2 + a.height/2);
+    for (int i = 1; i < w->nsamples; i += 2) {
+        float y = w->samples[i] * a.height/2 + a.height/2;
+        cairo_line_to (cr, i, y);
     }
-
-#if 0
-    float incr = a.width / (float)DDB_AUDIO_MEMORY_FRAMES;
-    float pos = 0;
-    for (float x = 0; x < a.width && pos < DDB_AUDIO_MEMORY_FRAMES; x += incr, pos ++) {
-        float s = data[(int)pos];
-        cairo_line_to (cr, x, s * a.height/2 + a.height/2);
-    }
-#endif
     cairo_stroke (cr);
 
     return FALSE;
