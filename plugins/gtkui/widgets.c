@@ -146,6 +146,7 @@ typedef struct {
 #if USE_OPENGL
     GdkGLContext *glcontext;
 #endif
+    float data[DDB_FREQ_BANDS];
 } w_spectrum_t;
 
 typedef struct {
@@ -2236,7 +2237,7 @@ w_coverart_create (void) {
 void
 w_scope_destroy (ddb_gtkui_widget_t *w) {
     w_scope_t *s = (w_scope_t *)w;
-    deadbeef->unregister_continuous_wavedata_listener (w);
+    deadbeef->unregister_continuous_wavedata_listener (w, DDB_AUDIO_WAVEFORM);
     if (s->drawtimer) {
         g_source_remove (s->drawtimer);
         s->drawtimer = 0;
@@ -2261,7 +2262,7 @@ w_scope_draw_cb (void *data) {
 }
 
 static void
-scope_wavedata_listener (void *ctx, ddb_waveformat_t *fmt, const float *data, int in_samples) {
+scope_wavedata_listener (void *ctx, int type, ddb_waveformat_t *fmt, const float *data, int in_samples) {
     w_scope_t *w = ctx;
     if (w->samples) {
         // append
@@ -2445,7 +2446,7 @@ w_scope_create (void) {
 #endif
     g_signal_connect_after (G_OBJECT (w->drawarea), "realize", G_CALLBACK (scope_realize), w);
     w_override_signals (w->base.widget, w);
-    deadbeef->register_continuous_wavedata_listener (w, scope_wavedata_listener);
+    deadbeef->register_continuous_wavedata_listener (w, DDB_AUDIO_WAVEFORM, scope_wavedata_listener);
     return (ddb_gtkui_widget_t *)w;
 }
 
@@ -2462,6 +2463,7 @@ w_spectrum_destroy (ddb_gtkui_widget_t *w) {
         gdk_gl_context_destroy (s->glcontext);
         s->glcontext = NULL;
     }
+    deadbeef->unregister_continuous_wavedata_listener (w, DDB_AUDIO_FREQ);
 #endif
 }
 
@@ -2474,7 +2476,7 @@ w_spectrum_draw_cb (void *data) {
 
 // spectrum analyzer based on cairo-spectrum from audacious
 // Copyright (c) 2011 William Pitcock <nenolod@dereferenced.org>
-#define MAX_BANDS DDB_AUDIO_MEMORY_FRAMES
+#define MAX_BANDS DDB_FREQ_BANDS
 #define VIS_DELAY 1
 #define VIS_DELAY_PEAK 10
 #define VIS_FALLOFF 1
@@ -2494,12 +2496,16 @@ static void calculate_bands(int bands)
 		xscale[i] = powf((float)(MAX_BANDS+1), ((float) i / (float) bands)) - 1;
 }
 
+static void
+spectrum_audio_listener (void *ctx, int type, ddb_waveformat_t *fmt, const float *data, int nsamples) {
+    w_spectrum_t *w = ctx;
+    memcpy (w->data, data, DDB_FREQ_BANDS * sizeof (float));
+}
+
 static gboolean
 spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     w_spectrum_t *w = user_data;
-    float data[DDB_AUDIO_MEMORY_FRAMES];
-    float *freq = data;
-    deadbeef->audio_get_waveform_data (DDB_AUDIO_FREQ, data);
+    float *freq = w->data;
 
     GtkAllocation a;
     gtk_widget_get_allocation (widget, &a);
@@ -2675,6 +2681,7 @@ w_spectrum_create (void) {
 #endif
     g_signal_connect_after (G_OBJECT (w->drawarea), "realize", G_CALLBACK (spectrum_realize), w);
     w_override_signals (w->base.widget, w);
+    deadbeef->register_continuous_wavedata_listener (w, DDB_AUDIO_FREQ, spectrum_audio_listener);
     return (ddb_gtkui_widget_t *)w;
 }
 

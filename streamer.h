@@ -149,9 +149,9 @@ struct handler_s *
 streamer_get_handler (void);
 
 void
-register_continuous_wavedata_listener (void *ctx, void (*callback)(void *ctx, ddb_waveformat_t *fmt, const float *data, int nsamples));
+register_continuous_wavedata_listener (void *ctx, int type, void (*callback)(void *ctx, int type, ddb_waveformat_t *fmt, const float *data, int nsamples));
 
 void
-unregister_continuous_wavedata_listener (void *ctx);
+unregister_continuous_wavedata_listener (void *ctx, int type);
 
 #endif // __STREAMER_H
