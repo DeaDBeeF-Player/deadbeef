@@ -2356,7 +2356,7 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     float hh = a.height/2.f;
 
     cairo_move_to (cr, 0, ftoi(w->samples[0] * h + hh));
-    for (int i = 1; i < w->nsamples; i += 2) {
+    for (int i = 1; i < w->nsamples; i++) {
         float y = w->samples[i] * h + hh;
         cairo_line_to (cr, i, y);
     }
@@ -2369,17 +2369,27 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 gboolean
 scope_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 #if USE_OPENGL
-    w_scope_t *w = user_data;
-    float data[DDB_AUDIO_MEMORY_FRAMES];
-    deadbeef->audio_get_waveform_data (DDB_AUDIO_WAVEFORM, data);
     GtkAllocation a;
     gtk_widget_get_allocation (widget, &a);
+    w_scope_t *w = user_data;
+    int nsamples = a.width;
+    if (w->nsamples != nsamples) {
+        w->resized = nsamples;
+        return FALSE;
+    }
+    float incr = a.width / (float)w->nsamples;
+    float h = a.height;
+    if (h > 50) {
+        h -= 20;
+    }
+    if (h > 100) {
+        h -= 40;
+    }
+    h /= 2;
+    float hh = a.height/2.f;
 
     GdkGLDrawable *d = gtk_widget_get_gl_drawable (widget);
     gdk_gl_drawable_gl_begin (d, w->glcontext);
-    //        if (glXSwapIntervalSGI) {
-    //            glXSwapIntervalSGI (1);
-    //        }
 
     glClear (GL_COLOR_BUFFER_BIT);
     glMatrixMode (GL_PROJECTION);
@@ -2388,36 +2398,11 @@ scope_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     glMatrixMode (GL_MODELVIEW);
     glViewport (0, 0, a.width, a.height);
 
-#if 0
-    // vsync test
-    static int box = 0;
-    static int speed = 5;
-    if (box > a.width-50) {
-        box = a.width-50;
-        speed = -5;
-    }
-    else if (box < 0) {
-        box = 0;
-        speed = 5;
-    }
-    box += speed;
-
-    glBegin (GL_QUADS);
-    glVertex2f (box, 0);
-    glVertex2f (box+50, 0);
-    glVertex2f (box+50, 50);
-    glVertex2f (box, 50);
-    glEnd ();
-#endif
     glBegin (GL_LINE_STRIP);
 
-    short *samples = (short *)data;
-
-    float incr = a.width / (float)DDB_AUDIO_MEMORY_FRAMES;
-    int pos = 0;
-    for (float x = 0; x < a.width && pos < DDB_AUDIO_MEMORY_FRAMES; x += incr, pos ++) {
-        float s = data[(int)pos];
-        glVertex2f (x, s * a.height/2 + a.height/2);
+    for (int i = 0; i < w->nsamples; i++) {
+        float y = w->samples[i] * h + hh;
+        glVertex2f (i, y);
     }
 
     glEnd();
@@ -2646,7 +2631,7 @@ spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 		int x = ((width / bands) * i) + 2;
         int y = a.height - w->peaks[i] * base_s;
         cairo_set_source_rgb (cr, 1, 1, 1);
-        cairo_rectangle (cr, x + 1, y, (width / bands) - 1, 2);
+        cairo_rectangle (cr, x + 1, y, (width / bands) - 1, 1);
     }
     cairo_fill (cr);
 
@@ -2670,7 +2655,6 @@ w_spectrum_init (ddb_gtkui_widget_t *w) {
         s->drawtimer = 0;
     }
 #if USE_OPENGL
-    gtkui_gl_init ();
     if (!gtkui_gl_init ()) {
         s->drawtimer = g_timeout_add (33, w_spectrum_draw_cb, w);
     }

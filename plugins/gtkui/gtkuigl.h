@@ -37,5 +37,11 @@
 
 int
 gtkui_gl_init (void);
+
+#if GTK_CHECK_VERSION(3,0,0)
+#define gdk_gl_context_destroy g_object_unref
+#endif
+
+
 #endif
 #endif
