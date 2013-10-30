@@ -331,6 +331,7 @@ enum ddb_audio_data_type_t {
 // audio memory constants
 // since 1.5
 #define DDB_FREQ_BANDS 256
+#define DDB_FREQ_MAX_CHANNELS 9
 
 // typecasting macros
 #define DB_PLUGIN(x) ((DB_plugin_t *)(x))

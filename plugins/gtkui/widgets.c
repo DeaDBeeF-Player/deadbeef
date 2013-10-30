@@ -2305,16 +2305,21 @@ scope_wavedata_listener (void *ctx, int type, ddb_waveformat_t *fmt, const float
 
     if (w->samples) {
         // append
+        int nsamples = in_samples / fmt->channels;
         float ratio = fmt->samplerate / 44100.f;
-        int size = in_samples / ratio;
+        int size = nsamples / ratio;
 
         int sz = min (w->nsamples, size);
         int n = w->nsamples-sz;
 
         memmove (w->samples, w->samples + sz, n * sizeof (float));
         float pos = 0;
-        for (int i = 0; i < sz && pos < in_samples; i++, pos += ratio) {
-            w->samples[n + i] = data[ftoi(pos * fmt->channels)];
+        for (int i = 0; i < sz && pos < nsamples; i++, pos += ratio) {
+            w->samples[n + i] = data[ftoi(pos * fmt->channels) * fmt->channels + 0];
+            for (int j = 1; j < fmt->channels; j++) {
+                w->samples[n + i] += data[ftoi(pos * fmt->channels) * fmt->channels + j];
+            }
+            w->samples[n+i] /= fmt->channels;
         }
     }
 }

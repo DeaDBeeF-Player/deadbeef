@@ -136,9 +136,10 @@ static int streamer_buffering;
 static DB_FILE *streamer_file;
 
 // for vis plugins
-static float freq_data[DDB_FREQ_BANDS];
-static float audio_data[DDB_FREQ_BANDS];
+static float freq_data[DDB_FREQ_BANDS * DDB_FREQ_MAX_CHANNELS];
+static float audio_data[DDB_FREQ_BANDS * DDB_FREQ_MAX_CHANNELS];
 static int audio_data_fill = 0;
+static int audio_data_channels = 0;
 
 // message queue
 static struct handler_s *handler;
@@ -2286,9 +2287,9 @@ streamer_read (char *bytes, int size) {
         int in_frames = sz / in_frame_size;
         ddb_waveformat_t out_fmt = {
             .bps = 32,
-            .channels = 1,
+            .channels = output->fmt.channels,
             .samplerate = output->fmt.samplerate,
-            .channelmask = DDB_SPEAKER_FRONT_LEFT,
+            .channelmask = output->fmt.channelmask,
             .is_float = 1,
             .is_bigendian = 0
         };
@@ -2303,15 +2304,26 @@ streamer_read (char *bytes, int size) {
         }
         mutex_unlock (wdl_mutex);
 
+        if (out_fmt.channels != audio_data_channels) {
+            audio_data_fill = 0;
+            audio_data_channels = out_fmt.channels;
+        }
         int remaining = in_frames;
         do {
             int sz = DDB_FREQ_BANDS-audio_data_fill;
             sz = min (sz, remaining);
-            memcpy (&audio_data[audio_data_fill], &temp_audio_data[in_frames-remaining], sz * sizeof (float));
+            for (int c = 0; c < audio_data_channels; c++) {
+                for (int s = 0; s < sz; s++) {
+                    audio_data[DDB_FREQ_BANDS * c + audio_data_fill + s] = temp_audio_data[(in_frames-remaining + s) * audio_data_channels + c];
+                }
+            }
+//            memcpy (&audio_data[audio_data_fill], &temp_audio_data[in_frames-remaining], sz * sizeof (float));
             audio_data_fill += sz;
             remaining -= sz;
             if (audio_data_fill == DDB_FREQ_BANDS) {
-                calc_freq (audio_data, freq_data);
+                for (int c = 0; c < audio_data_channels; c++) {
+                    calc_freq (&audio_data[DDB_FREQ_BANDS * c], &freq_data[DDB_FREQ_BANDS * c]);
+                }
                 mutex_lock (wdl_mutex);
                 for (wavedata_listener_t *l = wavedata_listeners; l; l = l->next) {
                     if (l->type == DDB_AUDIO_FREQ) {
