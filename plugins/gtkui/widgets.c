@@ -2329,6 +2329,23 @@ scope_wavedata_listener (void *ctx, int type, ddb_waveformat_t *fmt, const float
     }
 }
 
+// Bresenham's line drawing from http://rosettacode.org
+static inline void
+_draw_line (uint8_t *data, int stride, int x0, int y0, int x1, int y1) {
+    int dx = abs(x1-x0), sx = x0<x1 ? 1 : -1;
+    int dy = abs(y1-y0), sy = y0<y1 ? 1 : -1;
+    int err = (dx>dy ? dx : -dy)/2, e2;
+
+    for(;;){
+        uint32_t *ptr = (uint32_t*)&data[y0*stride+x0*4];
+        *ptr = 0xffffffff;
+        if (x0==x1 && y0==y1) break;
+        e2 = err;
+        if (e2 >-dx) { err -= dy; x0 += sx; }
+        if (e2 < dy) { err += dx; y0 += sy; }
+    }
+}
+
 gboolean
 scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     GtkAllocation a;
@@ -2336,30 +2353,20 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 
     w_scope_t *w = user_data;
 
-    if (!w->surf || cairo_image_surface_get_width (w->surf) != a.width) {
+    if (!w->surf || cairo_image_surface_get_width (w->surf) != a.width || cairo_image_surface_get_height (w->surf) != a.height) {
         if (w->surf) {
             cairo_surface_destroy (w->surf);
             w->surf = NULL;
         }
-        w->surf = cairo_surface_create_similar_image (cairo_get_target (cr), CAIRO_FORMAT_ARGB32, a.width, a.height);
+        w->surf = cairo_image_surface_create (CAIRO_FORMAT_RGB24, a.width, a.height);
     }
-
-    cairo_t *c = cairo_create (w->surf);
-
-    cairo_set_source_rgb (c, 0, 0, 0);
-    cairo_rectangle (c, 0, 0, a.width, a.height);
-    cairo_fill (c);
 
     int nsamples = a.width;
     if (w->nsamples != nsamples) {
         w->resized = nsamples;
-        cairo_destroy (c);
         return FALSE;
     }
 
-    cairo_set_antialias (c, CAIRO_ANTIALIAS_NONE);
-    cairo_set_source_rgb (c, 1, 1, 1);
-    cairo_set_line_width (c, 1);
     deadbeef->mutex_lock (w->mutex);
     float incr = a.width / (float)w->nsamples;
     float h = a.height;
@@ -2372,17 +2379,33 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     h /= 2;
     float hh = a.height/2.f;
 
-    cairo_move_to (c, 0, ftoi(w->samples[0] * h + hh));
-    for (int i = 1; i < w->nsamples; i++) {
-        float y = w->samples[i] * h + hh;
-        cairo_line_to (c, i, y);
+    cairo_surface_flush (w->surf);
+    unsigned char *data = cairo_image_surface_get_data (w->surf);
+    if (!data) {
+        deadbeef->mutex_unlock (w->mutex);
+        return FALSE;
     }
+    int stride = cairo_image_surface_get_stride (w->surf);
+    memset (data, 0, a.height * stride);
+    int prev_y = w->samples[0] * h + hh;
+    for (int i = 1; i < w->nsamples; i++) {
+        int y = ftoi (w->samples[i] * h + hh);
+        if (y < 0) {
+            y = 0;
+        }
+        if (y >= a.height) {
+            y = a.height-1;
+        }
+        _draw_line (data, stride, i-1, prev_y, i, y);
+        prev_y = y;
+    }
+    cairo_surface_mark_dirty (w->surf);
     deadbeef->mutex_unlock (w->mutex);
-    cairo_stroke (c);
-    cairo_destroy (c);
+    cairo_save (cr);
     cairo_set_source_surface (cr, w->surf, 0, 0);
     cairo_rectangle (cr, 0, 0, a.width, a.height);
     cairo_fill (cr);
+    cairo_restore (cr);
 
     return FALSE;
 }
