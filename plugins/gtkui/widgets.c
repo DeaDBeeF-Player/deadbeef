@@ -139,6 +139,7 @@ typedef struct {
     int nsamples;
     int resized;
     intptr_t mutex;
+    cairo_surface_t *surf;
 } w_scope_t;
 
 // spectrum analyzer based on cairo-spectrum from audacious
@@ -2263,6 +2264,10 @@ w_scope_destroy (ddb_gtkui_widget_t *w) {
         s->glcontext = NULL;
     }
 #endif
+    if (s->surf) {
+        cairo_surface_destroy (s->surf);
+        s->surf = NULL;
+    }
     if (s->samples) {
         free (s->samples);
         s->samples = NULL;
@@ -2328,21 +2333,33 @@ gboolean
 scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     GtkAllocation a;
     gtk_widget_get_allocation (widget, &a);
-    cairo_set_source_rgb (cr, 0, 0, 0);
-    cairo_rectangle (cr, 0, 0, a.width, a.height);
-    cairo_fill (cr);
 
     w_scope_t *w = user_data;
+
+    if (!w->surf || cairo_image_surface_get_width (w->surf) != a.width) {
+        if (w->surf) {
+            cairo_surface_destroy (w->surf);
+            w->surf = NULL;
+        }
+        w->surf = cairo_surface_create_similar_image (cairo_get_target (cr), CAIRO_FORMAT_ARGB32, a.width, a.height);
+    }
+
+    cairo_t *c = cairo_create (w->surf);
+
+    cairo_set_source_rgb (c, 0, 0, 0);
+    cairo_rectangle (c, 0, 0, a.width, a.height);
+    cairo_fill (c);
 
     int nsamples = a.width;
     if (w->nsamples != nsamples) {
         w->resized = nsamples;
+        cairo_destroy (c);
         return FALSE;
     }
 
-    cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
-    cairo_set_source_rgb (cr, 1, 1, 1);
-    cairo_set_line_width (cr, 1);
+    cairo_set_antialias (c, CAIRO_ANTIALIAS_NONE);
+    cairo_set_source_rgb (c, 1, 1, 1);
+    cairo_set_line_width (c, 1);
     deadbeef->mutex_lock (w->mutex);
     float incr = a.width / (float)w->nsamples;
     float h = a.height;
@@ -2355,13 +2372,17 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     h /= 2;
     float hh = a.height/2.f;
 
-    cairo_move_to (cr, 0, ftoi(w->samples[0] * h + hh));
+    cairo_move_to (c, 0, ftoi(w->samples[0] * h + hh));
     for (int i = 1; i < w->nsamples; i++) {
         float y = w->samples[i] * h + hh;
-        cairo_line_to (cr, i, y);
+        cairo_line_to (c, i, y);
     }
     deadbeef->mutex_unlock (w->mutex);
-    cairo_stroke (cr);
+    cairo_stroke (c);
+    cairo_destroy (c);
+    cairo_set_source_surface (cr, w->surf, 0, 0);
+    cairo_rectangle (cr, 0, 0, a.width, a.height);
+    cairo_fill (cr);
 
     return FALSE;
 }
