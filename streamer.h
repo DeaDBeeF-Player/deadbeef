@@ -149,9 +149,15 @@ struct handler_s *
 streamer_get_handler (void);
 
 void
-register_continuous_wavedata_listener (void *ctx, int type, void (*callback)(void *ctx, int type, ddb_waveformat_t *fmt, const float *data, int nsamples));
+vis_waveform_listen (void *ctx, void (*callback)(void *ctx, ddb_audio_data_t *data));
 
 void
-unregister_continuous_wavedata_listener (void *ctx, int type);
+vis_waveform_unlisten (void *ctx);
+
+void
+vis_spectrum_listen (void *ctx, void (*callback)(void *ctx, ddb_audio_data_t *data));
+
+void
+vis_spectrum_unlisten (void *ctx);
 
 #endif // __STREAMER_H

@@ -322,17 +322,6 @@ enum ddb_sort_order_t {
     DDB_SORT_RANDOM, // available since API 1.3
 };
 
-// since 1.5
-enum ddb_audio_data_type_t {
-    DDB_AUDIO_WAVEFORM,
-    DDB_AUDIO_FREQ,
-};
-
-// audio memory constants
-// since 1.5
-#define DDB_FREQ_BANDS 256
-#define DDB_FREQ_MAX_CHANNELS 9
-
 // typecasting macros
 #define DB_PLUGIN(x) ((DB_plugin_t *)(x))
 #define DB_CALLBACK(x) ((DB_callback_t)(x))
@@ -357,6 +346,15 @@ typedef struct {
     int is_float; // bps must be 32 if this is true
     int is_bigendian;
 } ddb_waveformat_t;
+
+// since 1.5
+#define DDB_FREQ_BANDS 256
+#define DDB_FREQ_MAX_CHANNELS 9
+typedef struct {
+    const ddb_waveformat_t *fmt;
+    const float *data;
+    int nframes;
+} ddb_audio_data_t;
 
 // forward decl for plugin struct
 struct DB_plugin_s;
@@ -824,12 +822,19 @@ typedef struct {
     // register/unregister for getting continuous wave data
     // mainly for visualization
     // ctx must be unique
-    // type is one of DDB_AUDIO_WAVEFORM and DDB_AUDIO_FREQ
-    // the waveform can be arbitrary large;
-    // freq data size is always DDB_FREQ_BANDS
-    void (*register_continuous_wavedata_listener) (void *ctx, int type, void (*callback)(void *ctx, int type, ddb_waveformat_t *fmt, const float *data, int nsamples));
+    // the waveform data can be arbitrary size
+    // the samples are interleaved
+    void (*vis_waveform_listen) (void *ctx, void (*callback)(void *ctx, ddb_audio_data_t *data));
+    void (*vis_waveform_unlisten) (void *ctx);
 
-    void (*unregister_continuous_wavedata_listener) (void *ctx, int type);
+    // register/unregister for getting continuous spectrum (frequency domain) data
+    // mainly for visualization
+    // ctx must be unique
+    // the data always contains DDB_FREQ_BANDS frames
+    // max number of channels is DDB_FREQ_MAX_CHANNELS
+    // the samples are non-interleaved
+    void (*vis_spectrum_listen) (void *ctx, void (*callback)(void *ctx, ddb_audio_data_t *data));
+    void (*vis_spectrum_unlisten) (void *ctx);
 
     // this is useful to mute/unmute audio, and query the muted status, from
     // plugins, without touching the volume control
