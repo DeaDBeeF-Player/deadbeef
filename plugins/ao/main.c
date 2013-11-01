@@ -36,9 +36,6 @@
 #define trace(fmt,...)
 extern DB_functions_t *deadbeef;
 
-/* file types */
-static uint32 type;
-
 static struct 
 { 
 	uint32 sig; 
@@ -97,11 +94,13 @@ int ao_get_lib(char *filename, uint8 **buffer, uint64 *length)
 }
 
 #if 0
+/* file types */
+static uint32 type;
+
 static void do_frame(uint32 size, int16 *buffer)
 {
 	(*types[type].gen)(buffer, size);
 }
-#endif
 
 int main(int argv, char *argc[])
 {
@@ -197,6 +196,7 @@ int main(int argv, char *argc[])
 
 	return 1;
 }
+#endif
 
 // stub for MAME stuff
 int change_pc(int foo)
