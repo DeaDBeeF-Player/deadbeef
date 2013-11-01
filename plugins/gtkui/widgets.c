@@ -157,7 +157,7 @@ typedef struct {
 #if USE_OPENGL
     GdkGLContext *glcontext;
 #endif
-    float data[DDB_FREQ_BANDS];
+    float data[DDB_FREQ_BANDS * DDB_FREQ_MAX_CHANNELS];
     float xscale[MAX_BANDS + 1];
     int bars[MAX_BANDS + 1];
     int delay[MAX_BANDS + 1];
@@ -2253,7 +2253,7 @@ w_coverart_create (void) {
 void
 w_scope_destroy (ddb_gtkui_widget_t *w) {
     w_scope_t *s = (w_scope_t *)w;
-    deadbeef->unregister_continuous_wavedata_listener (w, DDB_AUDIO_WAVEFORM);
+    deadbeef->vis_waveform_unlisten (w);
     if (s->drawtimer) {
         g_source_remove (s->drawtimer);
         s->drawtimer = 0;
@@ -2286,7 +2286,7 @@ w_scope_draw_cb (void *data) {
 }
 
 static void
-scope_wavedata_listener (void *ctx, int type, ddb_waveformat_t *fmt, const float *data, int in_samples) {
+scope_wavedata_listener (void *ctx, ddb_audio_data_t *data) {
     w_scope_t *w = ctx;
     if (w->nsamples != w->resized) {
         deadbeef->mutex_lock (w->mutex);
@@ -2310,8 +2310,8 @@ scope_wavedata_listener (void *ctx, int type, ddb_waveformat_t *fmt, const float
 
     if (w->samples) {
         // append
-        int nsamples = in_samples / fmt->channels;
-        float ratio = fmt->samplerate / 44100.f;
+        int nsamples = data->nframes / data->fmt->channels;
+        float ratio = data->fmt->samplerate / 44100.f;
         int size = nsamples / ratio;
 
         int sz = min (w->nsamples, size);
@@ -2320,11 +2320,11 @@ scope_wavedata_listener (void *ctx, int type, ddb_waveformat_t *fmt, const float
         memmove (w->samples, w->samples + sz, n * sizeof (float));
         float pos = 0;
         for (int i = 0; i < sz && pos < nsamples; i++, pos += ratio) {
-            w->samples[n + i] = data[ftoi(pos * fmt->channels) * fmt->channels + 0];
-            for (int j = 1; j < fmt->channels; j++) {
-                w->samples[n + i] += data[ftoi(pos * fmt->channels) * fmt->channels + j];
+            w->samples[n + i] = data->data[ftoi(pos * data->fmt->channels) * data->fmt->channels + 0];
+            for (int j = 1; j < data->fmt->channels; j++) {
+                w->samples[n + i] += data->data[ftoi(pos * data->fmt->channels) * data->fmt->channels + j];
             }
-            w->samples[n+i] /= fmt->channels;
+            w->samples[n+i] /= data->fmt->channels;
         }
     }
 }
@@ -2518,7 +2518,7 @@ w_scope_create (void) {
 #endif
     g_signal_connect_after (G_OBJECT (w->drawarea), "realize", G_CALLBACK (scope_realize), w);
     w_override_signals (w->base.widget, w);
-    deadbeef->register_continuous_wavedata_listener (w, DDB_AUDIO_WAVEFORM, scope_wavedata_listener);
+    deadbeef->vis_waveform_listen(w, scope_wavedata_listener);
     return (ddb_gtkui_widget_t *)w;
 }
 
@@ -2526,6 +2526,7 @@ w_scope_create (void) {
 void
 w_spectrum_destroy (ddb_gtkui_widget_t *w) {
     w_spectrum_t *s = (w_spectrum_t *)w;
+    deadbeef->vis_spectrum_unlisten (w);
     if (s->drawtimer) {
         g_source_remove (s->drawtimer);
         s->drawtimer = 0;
@@ -2535,7 +2536,6 @@ w_spectrum_destroy (ddb_gtkui_widget_t *w) {
         gdk_gl_context_destroy (s->glcontext);
         s->glcontext = NULL;
     }
-    deadbeef->unregister_continuous_wavedata_listener (w, DDB_AUDIO_FREQ);
 #endif
 }
 
@@ -2556,9 +2556,9 @@ static void calculate_bands(w_spectrum_t *w, int bands)
 }
 
 static void
-spectrum_audio_listener (void *ctx, int type, ddb_waveformat_t *fmt, const float *data, int nsamples) {
+spectrum_audio_listener (void *ctx, ddb_audio_data_t *data) {
     w_spectrum_t *w = ctx;
-    memcpy (w->data, data, DDB_FREQ_BANDS * sizeof (float));
+    memcpy (w->data, data->data, DDB_FREQ_BANDS * sizeof (float));
 }
 
 static gboolean
@@ -2739,7 +2739,7 @@ w_spectrum_create (void) {
 #endif
     g_signal_connect_after (G_OBJECT (w->drawarea), "realize", G_CALLBACK (spectrum_realize), w);
     w_override_signals (w->base.widget, w);
-    deadbeef->register_continuous_wavedata_listener (w, DDB_AUDIO_FREQ, spectrum_audio_listener);
+    deadbeef->vis_spectrum_listen (w, spectrum_audio_listener);
     return (ddb_gtkui_widget_t *)w;
 }
 

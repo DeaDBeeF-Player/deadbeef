@@ -341,8 +341,10 @@ static DB_functions_t deadbeef_api = {
     .plt_get_meta = (int (*) (ddb_playlist_t *handle, const char *key, char *val, int size))plt_get_meta,
     .pl_meta_exists = (int (*) (DB_playItem_t *it, const char *key))pl_meta_exists,
     // ******* new 1.5 APIs ********
-    .register_continuous_wavedata_listener = register_continuous_wavedata_listener,
-    .unregister_continuous_wavedata_listener = unregister_continuous_wavedata_listener,
+    .vis_waveform_listen = vis_waveform_listen,
+    .vis_waveform_unlisten = vis_waveform_unlisten,
+    .vis_spectrum_listen = vis_spectrum_listen,
+    .vis_spectrum_unlisten = vis_spectrum_unlisten,
     .audio_set_mute = audio_set_mute,
     .audio_is_mute = audio_is_mute,
     .background_job_increment = background_job_increment,
