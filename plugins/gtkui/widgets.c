@@ -2329,6 +2329,7 @@ scope_wavedata_listener (void *ctx, ddb_audio_data_t *data) {
     }
 }
 
+#if 0
 // Bresenham's line drawing from http://rosettacode.org
 static inline void
 _draw_line (uint8_t *data, int stride, int x0, int y0, int x1, int y1) {
@@ -2343,6 +2344,25 @@ _draw_line (uint8_t *data, int stride, int x0, int y0, int x1, int y1) {
         e2 = err;
         if (e2 >-dx) { err -= dy; x0 += sx; }
         if (e2 < dy) { err += dx; y0 += sy; }
+    }
+}
+#endif
+
+static inline void
+_draw_vline (uint8_t *data, int stride, int x0, int y0, int y1) {
+    if (y0 > y1) {
+        int tmp = y0;
+        y0 = y1;
+        y1 = tmp;
+        y1--;
+    }
+    else if (y0 < y1) {
+        y0++;
+    }
+    while (y0 <= y1) {
+        uint32_t *ptr = (uint32_t*)&data[y0*stride+x0*4];
+        *ptr = 0xffffffff;
+        y0++;
     }
 }
 
@@ -2396,7 +2416,7 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
         if (y >= a.height) {
             y = a.height-1;
         }
-        _draw_line (data, stride, i-1, prev_y, i, y);
+        _draw_vline (data, stride, i, prev_y, y);
         prev_y = y;
     }
     cairo_surface_mark_dirty (w->surf);
