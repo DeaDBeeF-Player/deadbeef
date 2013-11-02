@@ -163,6 +163,7 @@ typedef struct {
     int delay[MAX_BANDS + 1];
     int peaks[MAX_BANDS + 1];
     int delay_peak[MAX_BANDS + 1];
+    cairo_surface_t *surf;
 } w_spectrum_t;
 
 typedef struct {
@@ -2366,6 +2367,21 @@ _draw_vline (uint8_t *data, int stride, int x0, int y0, int y1) {
     }
 }
 
+static inline void
+_draw_bar (uint8_t *data, int stride, int x0, int y0, int w, int h, uint32_t color) {
+    int y1 = y0+h-1;
+    int x1 = x0+w-1;
+    uint32_t *ptr = (uint32_t*)&data[y0*stride+x0*4];
+    while (y0 <= y1) {
+        int x = x0;
+        while (x++ <= x1) {
+            *ptr++ = color;
+        }
+        y0++;
+        ptr += stride/4-w;
+    }
+}
+
 gboolean
 scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     GtkAllocation a;
@@ -2384,6 +2400,8 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     int nsamples = a.width;
     if (w->nsamples != nsamples) {
         w->resized = nsamples;
+    }
+    if (!w->samples) {
         return FALSE;
     }
 
@@ -2408,7 +2426,9 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     int stride = cairo_image_surface_get_stride (w->surf);
     memset (data, 0, a.height * stride);
     int prev_y = w->samples[0] * h + hh;
-    for (int i = 1; i < w->nsamples; i++) {
+
+    int n = min (w->nsamples, a.width);
+    for (int i = 1; i < n; i++) {
         int y = ftoi (w->samples[i] * h + hh);
         if (y < 0) {
             y = 0;
@@ -2551,6 +2571,10 @@ w_spectrum_destroy (ddb_gtkui_widget_t *w) {
         g_source_remove (s->drawtimer);
         s->drawtimer = 0;
     }
+    if (s->surf) {
+        cairo_surface_destroy (s->surf);
+        s->surf = NULL;
+    }
 #if USE_OPENGL
     if (s->glcontext) {
         gdk_gl_context_destroy (s->glcontext);
@@ -2677,27 +2701,49 @@ spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 
     gdk_gl_drawable_gl_end (d);
 #else
+    if (!w->surf || cairo_image_surface_get_width (w->surf) != a.width || cairo_image_surface_get_height (w->surf) != a.height) {
+        if (w->surf) {
+            cairo_surface_destroy (w->surf);
+            w->surf = NULL;
+        }
+        w->surf = cairo_image_surface_create (CAIRO_FORMAT_RGB24, a.width, a.height);
+    }
 	float base_s = (height / 40.f);
 
-	cairo_set_source_rgb (cr, 0, 0, 0);
-	cairo_paint (cr);
+    cairo_surface_flush (w->surf);
+    unsigned char *data = cairo_image_surface_get_data (w->surf);
+    if (!data) {
+        return FALSE;
+    }
+    int stride = cairo_image_surface_get_stride (w->surf);
+    memset (data, 0, a.height * stride);
 
 	for (gint i = 0; i <= bands; i++)
 	{
 		int x = ((width / bands) * i) + 2;
         int y = a.height - w->bars[i] * base_s;
-        cairo_set_source_rgb (cr, 0, 0.5, 1);
-        cairo_rectangle (cr, x+1, y, (width / bands) - 1, a.height);
+        if (y < 0) {
+            y = 0;
+        }
+        _draw_bar (data, stride, x+1, y, (width / bands) - 1, a.height-y, 0xff007fff);
 	}
-    cairo_fill (cr);
 	for (gint i = 0; i <= bands; i++)
 	{
 		int x = ((width / bands) * i) + 2;
         int y = a.height - w->peaks[i] * base_s;
-        cairo_set_source_rgb (cr, 1, 1, 1);
-        cairo_rectangle (cr, x + 1, y, (width / bands) - 1, 1);
+        if (y < 0) {
+            y = 0;
+        }
+        if (y < a.height-1) {
+            _draw_bar (data, stride, x + 1, y, (width / bands) - 1, 1, 0xffffffff);
+        }
     }
+    cairo_surface_mark_dirty (w->surf);
+    cairo_save (cr);
+    cairo_set_source_surface (cr, w->surf, 0, 0);
+    cairo_rectangle (cr, 0, 0, a.width, a.height);
     cairo_fill (cr);
+    cairo_restore (cr);
 
 #endif
     return FALSE;
