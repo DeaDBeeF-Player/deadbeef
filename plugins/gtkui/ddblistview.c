@@ -730,9 +730,6 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
 
         for (int i = 0; i < grp->num_items; i++) {
             ii++;
-//            if (grp_y + listview->grouptitle_height + (i+1) * listview->rowheight >= y + h + listview->scrollpos) {
-//                break;
-//            }
             if (grp_y + listview->grouptitle_height + i * listview->rowheight >= y + h + listview->scrollpos) {
                 break;
             }
@@ -749,17 +746,17 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
                 ddb_listview_list_render_row_background (listview, cr, it, (idx + 1 + i) & 1, (abs_idx+i) == listview->binding->cursor () ? 1 : 0, -listview->hscrollpos, grp_y + listview->grouptitle_height + i * listview->rowheight - listview->scrollpos, listview->totalwidth, listview->rowheight);
                 ddb_listview_list_render_row_foreground (listview, cr, it, grp->head, (idx + 1 + i) & 1, (idx+i) == listview->binding->cursor () ? 1 : 0, i * listview->rowheight, grp->height, grp->pinned, grp_next_y - listview->scrollpos, -listview->hscrollpos, grp_y + listview->grouptitle_height + i * listview->rowheight - listview->scrollpos, listview->totalwidth, listview->rowheight);
             }
-            if (grp->pinned == 1 && gtkui_groups_pinned && y <= 0) {
-                ddb_listview_list_render_row_background (listview, cr, NULL, group_idx & 1, 0, -listview->hscrollpos, y, listview->totalwidth, listview->grouptitle_height);
-                if (listview->binding->draw_group_title && listview->grouptitle_height > 0) {
-                    listview->binding->draw_group_title (listview, cr, it, -listview->hscrollpos, y - pushback, listview->totalwidth, listview->grouptitle_height);
-                }
-            }
             DdbListviewIter next = listview->binding->next (it);
             listview->binding->unref (it);
             it = next;
             if (!it) {
                 break; // sanity check, in case groups were not rebuilt yet
+            }
+        }
+        if (grp->pinned == 1 && gtkui_groups_pinned && y <= 0) {
+            ddb_listview_list_render_row_background (listview, cr, NULL, group_idx & 1, 0, -listview->hscrollpos, y, listview->totalwidth, listview->grouptitle_height);
+            if (listview->binding->draw_group_title && listview->grouptitle_height > 0) {
+                listview->binding->draw_group_title (listview, cr, grp->head, -listview->hscrollpos, y - pushback, listview->totalwidth, listview->grouptitle_height);
             }
         }
 
