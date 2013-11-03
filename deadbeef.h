@@ -808,7 +808,8 @@ typedef struct {
     int (*dsp_preset_save) (const char *fname, struct ddb_dsp_context_s *head);
     void (*dsp_preset_free) (struct ddb_dsp_context_s *head);
 
-    // ******* new 1.2 APIs ********
+    // since 1.2
+#if (DDB_API_LEVEL >= 2)
     ddb_playlist_t *(*plt_alloc) (const char *title);
     void (*plt_free) (ddb_playlist_t *plt);
 
@@ -824,19 +825,25 @@ typedef struct {
     // it's not thread-safe, and must be used under the same conditions as the
     // pl_find_meta
     const char *(*pl_find_meta_raw) (DB_playItem_t *it, const char *key);
+#endif
 
-    // ******* new 1.3 APIs ********
+    // since 1.3
+#if (DDB_API_LEVEL >= 3)
     int (*streamer_dsp_chain_save) (void);
+#endif
 
-    // ******* new 1.4 APIs ********
+    // since 1.4
+#if (DDB_API_LEVEL >= 4)
     int (*pl_get_meta) (DB_playItem_t *it, const char *key, char *val, int size);
     int (*pl_get_meta_raw) (DB_playItem_t *it, const char *key, char *val, int size);
     int (*plt_get_meta) (ddb_playlist_t *handle, const char *key, char *val, int size);
 
     // fast way to test if a field exists in playitem
     int (*pl_meta_exists) (DB_playItem_t *it, const char *key);
+#endif
 
-    // ******* new 1.5 APIs *******
+    // since 1.5
+#if (DDB_API_LEVEL >= 5)
     // register/unregister for getting continuous wave data
     // mainly for visualization
     // ctx must be unique
@@ -872,6 +879,7 @@ typedef struct {
     // save referenced playlist in config
     int (*plt_save_n) (int n);
     int (*plt_save_config) (ddb_playlist_t *plt);
+#endif
 } DB_functions_t;
 
 // NOTE: an item placement must be selected like this
