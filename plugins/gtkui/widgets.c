@@ -92,6 +92,7 @@ typedef struct {
 
 typedef struct {
     ddb_gtkui_widget_t base;
+    GtkWidget *tabstrip;
 } w_tabstrip_t;
 
 typedef struct {
@@ -1519,6 +1520,21 @@ w_box_create (void) {
 }
 
 //// tabstrip widget
+static gboolean
+tabstrip_refresh_cb (void *ctx) {
+    w_tabstrip_t *w = ctx;
+    ddb_tabstrip_refresh (DDB_TABSTRIP (w->tabstrip));
+    return FALSE;
+}
+static int
+w_tabstrip_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    switch (id) {
+    case DB_EV_PLAYLISTSWITCHED:
+        g_idle_add (tabstrip_refresh_cb, w);
+        break;
+    }
+    return 0;
+}
 
 ddb_gtkui_widget_t *
 w_tabstrip_create (void) {
@@ -1526,9 +1542,11 @@ w_tabstrip_create (void) {
     memset (w, 0, sizeof (w_tabstrip_t));
     w->base.flags = DDB_GTKUI_WIDGET_FLAG_NON_EXPANDABLE;
     w->base.widget = gtk_event_box_new ();
+    w->base.message = w_tabstrip_message;
     GtkWidget *ts = ddb_tabstrip_new ();
     gtk_widget_show (ts);
     gtk_container_add (GTK_CONTAINER (w->base.widget), ts);
+    w->tabstrip = ts;
     w_override_signals (w->base.widget, w);
     return (ddb_gtkui_widget_t*)w;
 }
