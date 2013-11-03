@@ -90,6 +90,12 @@ extern "C" {
 #define DDB_API_LEVEL DB_API_VERSION_MINOR
 #endif
 
+#if (DDB_API_LEVEL >= 5)
+#define DEPRECATED_15 __attribute__ ((deprecated("since deadbeef API 1.5")))
+#else
+#define DEPRECATED_15
+#endif
+
 #define DDB_PLUGIN_SET_API_VERSION\
     .plugin.api_vmajor = DB_API_VERSION_MAJOR,\
     .plugin.api_vminor = DB_API_VERSION_MINOR,
@@ -367,11 +373,17 @@ typedef struct {
 #if (DDB_API_LEVEL >= 5)
 #define DDB_FREQ_BANDS 256
 #define DDB_FREQ_MAX_CHANNELS 9
-typedef struct {
+typedef struct ddb_audio_data_s {
     const ddb_waveformat_t *fmt;
     const float *data;
     int nframes;
 } ddb_audio_data_t;
+
+typedef struct ddb_fileadd_data_s {
+    int visibility;
+    ddb_playlist_t *plt;
+    ddb_playItem_t *track;
+} ddb_fileadd_data_t;
 #endif
 
 // forward decl for plugin struct
@@ -537,8 +549,8 @@ typedef struct {
 
     // operating on playlist items
     DB_playItem_t * (*plt_insert_item) (ddb_playlist_t *playlist, DB_playItem_t *after, DB_playItem_t *it);
-    DB_playItem_t * (*plt_insert_file) (ddb_playlist_t *playlist, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
-    DB_playItem_t *(*plt_insert_dir) (ddb_playlist_t *plt, DB_playItem_t *after, const char *dirname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+    DB_playItem_t * (*plt_insert_file) (ddb_playlist_t *playlist, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data) DEPRECATED_15;
+    DB_playItem_t *(*plt_insert_dir) (ddb_playlist_t *plt, DB_playItem_t *after, const char *dirname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data) DEPRECATED_15;
     void (*plt_set_item_duration) (ddb_playlist_t *plt, DB_playItem_t *it, float duration);
     int (*plt_remove_item) (ddb_playlist_t *playlist, DB_playItem_t *it);
     int (*plt_getselcount) (ddb_playlist_t *playlist);
@@ -879,6 +891,23 @@ typedef struct {
     // save referenced playlist in config
     int (*plt_save_n) (int n);
     int (*plt_save_config) (ddb_playlist_t *plt);
+
+    // register file added callback
+    // the callback will be called for each file
+    // the visibility is taken from plt_add_* arguments
+
+    void (*listen_file_added) (int (*callback)(ddb_fileadd_data_t *data, void *user_data), void *user_data);
+    void (*unlisten_file_added) (int (*callback)(ddb_fileadd_data_t *data, void *user_data), void *user_data);
+
+    // visibility is a number, which tells listeners about the caller
+    // 0 is reserved for callers which want the GUI to intercept the calls,
+    // and show visual updates.
+    // this is the default value passed from plt_load, plt_add_dir, plt_add_file.
+    DB_playItem_t * (*plt_load2) (int visibility, ddb_playlist_t *plt, ddb_playItem_t *after, const char *fname, int *pabort);
+    int (*plt_add_file2) (int visibility, ddb_playlist_t *plt, const char *fname);
+    int (*plt_add_dir2) (int visibility, ddb_playlist_t *plt, const char *dirname);
+    ddb_playItem_t * (*plt_insert_file2) (int visibility, ddb_playlist_t *playlist, ddb_playItem_t *after, const char *fname, int *pabort);
+    ddb_playItem_t *(*plt_insert_dir2) (int visibility, ddb_playlist_t *plt, ddb_playItem_t *after, const char *dirname, int *pabort);
 #endif
 } DB_functions_t;
 
@@ -1203,8 +1232,7 @@ typedef struct DB_vfs_s {
 
     int (*is_container) (const char *fname); // should return 1 if this plugin can parse specified file
 
-// this is an evil hack to interrupt frozen vfs_curl streams
-// FIXME: pass it through command API
+// this allows interruption of hanging network streams
     void (*abort) (DB_FILE *stream);
 
 // file access, follows stdio API with few extension
@@ -1274,6 +1302,11 @@ typedef struct DB_playlist_s {
     int (*save) (ddb_playlist_t *plt, const char *fname, DB_playItem_t *first, DB_playItem_t *last);
 
     const char **extensions; // NULL-terminated list of supported file extensions, e.g. {"m3u", "pls", NULL}
+    
+    // since 1.5
+#if (DDB_API_LEVEL >= 5)
+    DB_playItem_t * (*load2) (int visibility, ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort);
+#endif
 } DB_playlist_t;
 
 #ifdef __cplusplus
