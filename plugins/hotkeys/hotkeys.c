@@ -70,7 +70,6 @@ typedef struct command_s {
     int modifier;
     int ctx;
     int isglobal;
-    int is_14_action; // means action is coming from plugin using API 1.4 or less
     DB_plugin_action_t *action;
 } command_t;
 
@@ -117,28 +116,26 @@ trim (char* s)
     return h;
 }
 
-typedef int (*action_callback_14_t)(struct DB_plugin_action_s *action, void *userdata);
-
 static void
-cmd_invoke_plugin_command (DB_plugin_action_t *action, int ctx, int is_14_action)
+cmd_invoke_plugin_command (DB_plugin_action_t *action, int ctx)
 {
-    if (is_14_action) {
+    if (action->callback) {
         if (ctx == DDB_ACTION_CTX_MAIN) {
             // collect stuff for 1.4 user data
 
             // common action
             if (action->flags & DB_ACTION_COMMON)
             {
-                ((action_callback_14_t)action->callback) (action, NULL);
+                action->callback (action, NULL);
                 return;
             }
 
             // playlist action
-            if (action->flags & DB_ACTION_PLAYLIST__DEPRECATED)
+            if (action->flags & DB_ACTION_PLAYLIST)
             {
                 ddb_playlist_t *plt = deadbeef->plt_get_curr ();
                 if (plt) {
-                    ((action_callback_14_t)action->callback) (action, plt);
+                    action->callback (action, plt);
                     deadbeef->plt_unref (plt);
                 }
                 return;
@@ -179,16 +176,16 @@ cmd_invoke_plugin_command (DB_plugin_action_t *action, int ctx, int is_14_action
 
             //So, action is allowed, do it.
 
-            if (action->flags & DB_ACTION_CAN_MULTIPLE_TRACKS__DEPRECATED)
+            if (action->flags & DB_ACTION_CAN_MULTIPLE_TRACKS)
             {
-                ((action_callback_14_t)action->callback) (action, NULL);
+                action->callback (action, NULL);
             }
             else {
                 pit = deadbeef->pl_get_first (PL_MAIN);
                 while (pit) {
                     if (deadbeef->pl_is_selected (pit))
                     {
-                        ((action_callback_14_t)action->callback) (action, pit);
+                        action->callback (action, pit);
                     }
                     DB_playItem_t *next = deadbeef->pl_get_next (pit, PL_MAIN);
                     deadbeef->pl_item_unref (pit);
@@ -198,14 +195,13 @@ cmd_invoke_plugin_command (DB_plugin_action_t *action, int ctx, int is_14_action
         }
     }
     else {
-        action->callback (action, ctx);
+        action->callback2 (action, ctx);
     }
 }
 
 static DB_plugin_action_t *
-find_action_by_name (const char *command, int *is_14_action) {
+find_action_by_name (const char *command) {
     // find action with this name, and add to list
-    *is_14_action = 0;
     DB_plugin_action_t *actions = NULL;
     DB_plugin_t **plugins = deadbeef->plug_get_list ();
     for (int i = 0; plugins[i]; i++) {
@@ -214,9 +210,6 @@ find_action_by_name (const char *command, int *is_14_action) {
             actions = p->get_actions (NULL);
             while (actions) {
                 if (actions->name && actions->title && !strcasecmp (actions->name, command)) {
-                    if (p->api_vminor < 5) {
-                        *is_14_action = 1;
-                    }
                     break; // found
                 }
                 actions = actions->next;
@@ -307,7 +300,7 @@ read_config (void) {
             trace ("hotkeys: unexpected eol (action)\n");
             goto out;
         }
-        cmd_entry->action = find_action_by_name (token, &cmd_entry->is_14_action);
+        cmd_entry->action = find_action_by_name (token);
         if (!cmd_entry->action) {
             trace ("hotkeys: action not found %s\n", token);
             goto out;
@@ -485,7 +478,7 @@ hotkeys_event_loop (void *unused) {
                          (state == commands[ i ].modifier))
                     {
                         trace ("matches to commands[%d]!\n", i);
-                        cmd_invoke_plugin_command (commands[i].action, commands[i].ctx, commands->is_14_action);
+                        cmd_invoke_plugin_command (commands[i].action, commands[i].ctx);
                         break;
                     }
                 }
@@ -748,7 +741,7 @@ static DB_plugin_action_t action_reload_metadata = {
     .title = "Reload metadata",
     .name = "reload_metadata",
     .flags = DB_ACTION_MULTIPLE_TRACKS,
-    .callback = action_reload_metadata_handler,
+    .callback2 = action_reload_metadata_handler,
     .next = NULL
 };
 
@@ -756,7 +749,7 @@ static DB_plugin_action_t action_jump_to_current = {
     .title = "Playback/Jump to currently playing track",
     .name = "jump_to_current_track",
     .flags = DB_ACTION_COMMON,
-    .callback = action_jump_to_current_handler,
+    .callback2 = action_jump_to_current_handler,
     .next = &action_reload_metadata
 };
 
@@ -764,7 +757,7 @@ static DB_plugin_action_t action_next_playlist = {
     .title = "Next playlist",
     .name = "next_playlist",
     .flags = DB_ACTION_COMMON,
-    .callback = action_next_playlist_handler,
+    .callback2 = action_next_playlist_handler,
     .next = &action_jump_to_current
 };
 
@@ -772,7 +765,7 @@ static DB_plugin_action_t action_prev_playlist = {
     .title = "Prev playlist",
     .name = "prev_playlist",
     .flags = DB_ACTION_COMMON,
-    .callback = action_prev_playlist_handler,
+    .callback2 = action_prev_playlist_handler,
     .next = &action_next_playlist
 };
 
@@ -780,7 +773,7 @@ static DB_plugin_action_t action_playlist10 = {
     .title = "Switch to playlist 10",
     .name = "playlist10",
     .flags = DB_ACTION_COMMON,
-    .callback = action_playlist10_handler,
+    .callback2 = action_playlist10_handler,
     .next = &action_prev_playlist
 };
 
@@ -788,7 +781,7 @@ static DB_plugin_action_t action_playlist9 = {
     .title = "Switch to playlist 9",
     .name = "playlist9",
     .flags = DB_ACTION_COMMON,
-    .callback = action_playlist9_handler,
+    .callback2 = action_playlist9_handler,
     .next = &action_playlist10
 };
 
@@ -796,7 +789,7 @@ static DB_plugin_action_t action_playlist8 = {
     .title = "Switch to playlist 8",
     .name = "playlist8",
     .flags = DB_ACTION_COMMON,
-    .callback = action_playlist8_handler,
+    .callback2 = action_playlist8_handler,
     .next = &action_playlist9
 };
 
@@ -804,7 +797,7 @@ static DB_plugin_action_t action_playlist7 = {
     .title = "Switch to playlist 7",
     .name = "playlist7",
     .flags = DB_ACTION_COMMON,
-    .callback = action_playlist7_handler,
+    .callback2 = action_playlist7_handler,
     .next = &action_playlist8
 };
 
@@ -812,7 +805,7 @@ static DB_plugin_action_t action_playlist6 = {
     .title = "Switch to playlist 6",
     .name = "playlist6",
     .flags = DB_ACTION_COMMON,
-    .callback = action_playlist6_handler,
+    .callback2 = action_playlist6_handler,
     .next = &action_playlist7
 };
 
@@ -820,7 +813,7 @@ static DB_plugin_action_t action_playlist5 = {
     .title = "Switch to playlist 5",
     .name = "playlist5",
     .flags = DB_ACTION_COMMON,
-    .callback = action_playlist5_handler,
+    .callback2 = action_playlist5_handler,
     .next = &action_playlist6
 };
 
@@ -828,7 +821,7 @@ static DB_plugin_action_t action_playlist4 = {
     .title = "Switch to playlist 4",
     .name = "playlist4",
     .flags = DB_ACTION_COMMON,
-    .callback = action_playlist4_handler,
+    .callback2 = action_playlist4_handler,
     .next = &action_playlist5
 };
 
@@ -836,7 +829,7 @@ static DB_plugin_action_t action_playlist3 = {
     .title = "Switch to playlist 3",
     .name = "playlist3",
     .flags = DB_ACTION_COMMON,
-    .callback = action_playlist3_handler,
+    .callback2 = action_playlist3_handler,
     .next = &action_playlist4
 };
 
@@ -844,7 +837,7 @@ static DB_plugin_action_t action_playlist2 = {
     .title = "Switch to playlist 2",
     .name = "playlist2",
     .flags = DB_ACTION_COMMON,
-    .callback = action_playlist2_handler,
+    .callback2 = action_playlist2_handler,
     .next = &action_playlist3
 };
 
@@ -852,7 +845,7 @@ static DB_plugin_action_t action_playlist1 = {
     .title = "Switch to playlist 1",
     .name = "playlist1",
     .flags = DB_ACTION_COMMON,
-    .callback = action_playlist1_handler,
+    .callback2 = action_playlist1_handler,
     .next = &action_playlist2
 };
 
@@ -860,7 +853,7 @@ static DB_plugin_action_t action_sort_randomize = {
     .title = "Edit/Sort Randomize",
     .name = "sort_randomize",
     .flags = DB_ACTION_COMMON,
-    .callback = action_sort_randomize_handler,
+    .callback2 = action_sort_randomize_handler,
     .next = &action_playlist1
 };
 
@@ -868,7 +861,7 @@ static DB_plugin_action_t action_sort_by_date = {
     .title = "Edit/Sort by date",
     .name = "sort_date",
     .flags = DB_ACTION_COMMON,
-    .callback = action_sort_by_date_handler,
+    .callback2 = action_sort_by_date_handler,
     .next = &action_sort_randomize
 };
 
@@ -876,7 +869,7 @@ static DB_plugin_action_t action_sort_by_artist = {
     .title = "Edit/Sort by artist",
     .name = "sort_artist",
     .flags = DB_ACTION_COMMON,
-    .callback = action_sort_by_artist_handler,
+    .callback2 = action_sort_by_artist_handler,
     .next = &action_sort_by_date
 };
 
@@ -885,7 +878,7 @@ static DB_plugin_action_t action_sort_by_album = {
     .title = "Edit/Sort by album",
     .name = "sort_album",
     .flags = DB_ACTION_COMMON,
-    .callback = action_sort_by_album_handler,
+    .callback2 = action_sort_by_album_handler,
     .next = &action_sort_by_artist
 };
 
@@ -893,7 +886,7 @@ static DB_plugin_action_t action_sort_by_tracknr = {
     .title = "Edit/Sort by track number",
     .name = "sort_tracknr",
     .flags = DB_ACTION_COMMON,
-    .callback = action_sort_by_tracknr_handler,
+    .callback2 = action_sort_by_tracknr_handler,
     .next = &action_sort_by_album
 };
 
@@ -901,7 +894,7 @@ static DB_plugin_action_t action_sort_by_title = {
     .title = "Edit/Sort by title",
     .name = "sort_title",
     .flags = DB_ACTION_COMMON,
-    .callback = action_sort_by_title_handler,
+    .callback2 = action_sort_by_title_handler,
     .next = &action_sort_by_tracknr
 };
 
@@ -909,7 +902,7 @@ static DB_plugin_action_t action_invert_selection = {
     .title = "Edit/Invert Selection",
     .name = "invert_selection",
     .flags = DB_ACTION_COMMON,
-    .callback = action_invert_selection_handler,
+    .callback2 = action_invert_selection_handler,
     .next = &action_sort_by_tracknr
 };
 
@@ -917,7 +910,7 @@ static DB_plugin_action_t action_clear_playlist = {
     .title = "Edit/Clear playlist",
     .name = "clear_playlist",
     .flags = DB_ACTION_COMMON,
-    .callback = action_clear_playlist_handler,
+    .callback2 = action_clear_playlist_handler,
     .next = &action_invert_selection
 };
 
@@ -925,7 +918,7 @@ static DB_plugin_action_t action_remove_from_playqueue = {
     .title = "Playback/Remove from playback queue",
     .name = "remove_from_playback_queue",
     .flags = DB_ACTION_MULTIPLE_TRACKS,
-    .callback = action_remove_from_playqueue_handler,
+    .callback2 = action_remove_from_playqueue_handler,
     .next = &action_clear_playlist
 };
 
@@ -933,7 +926,7 @@ static DB_plugin_action_t action_add_to_playqueue = {
     .title = "Playback/Add to playback queue",
     .name = "add_to_playback_queue",
     .flags = DB_ACTION_MULTIPLE_TRACKS,
-    .callback = action_add_to_playqueue_handler,
+    .callback2 = action_add_to_playqueue_handler,
     .next = &action_remove_from_playqueue
 };
 
@@ -941,7 +934,7 @@ static DB_plugin_action_t action_toggle_mute = {
     .title = "Playback/Toggle Mute",
     .name = "toggle_mute",
     .flags = DB_ACTION_COMMON,
-    .callback = action_toggle_mute_handler,
+    .callback2 = action_toggle_mute_handler,
     .next = &action_add_to_playqueue
 };
 
@@ -949,7 +942,7 @@ static DB_plugin_action_t action_play = {
     .title = "Playback/Play",
     .name = "play",
     .flags = DB_ACTION_COMMON,
-    .callback = action_play_cb,
+    .callback2 = action_play_cb,
     .next = &action_toggle_mute
 };
 
@@ -957,7 +950,7 @@ static DB_plugin_action_t action_stop = {
     .title = "Playback/Stop",
     .name = "stop",
     .flags = DB_ACTION_COMMON,
-    .callback = action_stop_cb,
+    .callback2 = action_stop_cb,
     .next = &action_play
 };
 
@@ -965,7 +958,7 @@ static DB_plugin_action_t action_prev = {
     .title = "Playback/Previous",
     .name = "prev",
     .flags = DB_ACTION_COMMON,
-    .callback = action_prev_cb,
+    .callback2 = action_prev_cb,
     .next = &action_stop
 };
 
@@ -973,7 +966,7 @@ static DB_plugin_action_t action_next = {
     .title = "Playback/Next",
     .name = "next",
     .flags = DB_ACTION_COMMON,
-    .callback = action_next_cb,
+    .callback2 = action_next_cb,
     .next = &action_prev
 };
 
@@ -981,7 +974,7 @@ static DB_plugin_action_t action_toggle_pause = {
     .title = "Playback/Toggle Pause",
     .name = "toggle_pause",
     .flags = DB_ACTION_COMMON,
-    .callback = action_toggle_pause_cb,
+    .callback2 = action_toggle_pause_cb,
     .next = &action_next
 };
 
@@ -989,7 +982,7 @@ static DB_plugin_action_t action_play_pause = {
     .title = "Playback/Play\\/Pause",
     .name = "play_pause",
     .flags = DB_ACTION_COMMON,
-    .callback = action_play_pause_cb,
+    .callback2 = action_play_pause_cb,
     .next = &action_toggle_pause
 };
 
@@ -997,7 +990,7 @@ static DB_plugin_action_t action_play_random = {
     .title = "Playback/Play Random",
     .name = "playback_random",
     .flags = DB_ACTION_COMMON,
-    .callback = action_play_random_cb,
+    .callback2 = action_play_random_cb,
     .next = &action_play_pause
 };
 
@@ -1005,7 +998,7 @@ static DB_plugin_action_t action_seek_1p_forward = {
     .title = "Playback/Seek 1% forward",
     .name = "seek_1p_fwd",
     .flags = DB_ACTION_COMMON,
-    .callback = action_seek_1p_forward_cb,
+    .callback2 = action_seek_1p_forward_cb,
     .next = &action_play_random
 };
 
@@ -1013,7 +1006,7 @@ static DB_plugin_action_t action_seek_1p_backward = {
     .title = "Playback/Seek 1% backward",
     .name = "seek_1p_back",
     .flags = DB_ACTION_COMMON,
-    .callback = action_seek_1p_backward_cb,
+    .callback2 = action_seek_1p_backward_cb,
     .next = &action_seek_1p_forward
 };
 
@@ -1021,7 +1014,7 @@ static DB_plugin_action_t action_seek_5p_forward = {
     .title = "Playback/Seek 5% forward",
     .name = "seek_5p_fwd",
     .flags = DB_ACTION_COMMON,
-    .callback = action_seek_5p_forward_cb,
+    .callback2 = action_seek_5p_forward_cb,
     .next = &action_seek_1p_backward
 };
 
@@ -1029,7 +1022,7 @@ static DB_plugin_action_t action_seek_5p_backward = {
     .title = "Playback/Seek 5% backward",
     .name = "seek_5p_back",
     .flags = DB_ACTION_COMMON,
-    .callback = action_seek_5p_backward_cb,
+    .callback2 = action_seek_5p_backward_cb,
     .next = &action_seek_5p_forward
 };
 
@@ -1037,7 +1030,7 @@ static DB_plugin_action_t action_volume_up = {
     .title = "Playback/Volume Up",
     .name = "volume_up",
     .flags = DB_ACTION_COMMON,
-    .callback = action_volume_up_cb,
+    .callback2 = action_volume_up_cb,
     .next = &action_seek_5p_backward
 };
 
@@ -1045,7 +1038,7 @@ static DB_plugin_action_t action_volume_down = {
     .title = "Playback/Volume Down",
     .name = "volume_down",
     .flags = DB_ACTION_COMMON,
-    .callback = action_volume_down_cb,
+    .callback2 = action_volume_down_cb,
     .next = &action_volume_up
 };
 
@@ -1053,7 +1046,7 @@ static DB_plugin_action_t action_toggle_stop_after_current = {
     .title = "Playback/Toggle Stop After Current",
     .name = "toggle_stop_after_current",
     .flags = DB_ACTION_COMMON,
-    .callback = action_toggle_stop_after_current_cb,
+    .callback2 = action_toggle_stop_after_current_cb,
     .next = &action_volume_down
 };
 

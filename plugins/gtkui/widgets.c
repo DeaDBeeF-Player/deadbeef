@@ -3224,7 +3224,13 @@ on_button_clicked               (GtkButton       *button,
         DB_plugin_action_t *acts = plugins[i]->get_actions (NULL);
         while (acts) {
             if (!strcmp (acts->name, w->action)) {
-                acts->callback (acts, w->action_ctx);
+                if (acts->callback) {
+#warning FIXME: context
+                    acts->callback (acts, NULL);
+                }
+                else if (acts->callback2) {
+                    acts->callback2 (acts, w->action_ctx);
+                }
                 return;
             }
             acts = acts->next;

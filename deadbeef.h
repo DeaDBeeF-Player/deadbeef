@@ -875,21 +875,17 @@ enum {
     /* Can handle multiple tracks */
     DB_ACTION_MULTIPLE_TRACKS = 1 << 2,
 
-    /* deprecated in API 1.5 */
-    DB_ACTION_CAN_MULTIPLE_TRACKS__DEPRECATED = 1 << 3,
+    /* DEPRECATED in API 1.5, ignored in callback2 */
+    DB_ACTION_CAN_MULTIPLE_TRACKS = 1 << 3,
     
     /* Action is inactive */
     DB_ACTION_DISABLED = 1 << 4,
 
-    /* deprecated in API 1.5 */
-    DB_ACTION_PLAYLIST__DEPRECATED = 1 << 5,
-
-    /* this flag is added automatically, and means that the plugin was compiled
-     * with API <=1.4, and work-around must be used to make it work */
-    DB_ACTION_USING_API_14 = 1 << 6,
+    /* DEPRECATED in API 1.5, ignored in callback2 */
+    DB_ACTION_PLAYLIST = 1 << 5,
 
     /* add item to menu(s), if contains slash symbol(s) */
-    DB_ACTION_ADD_MENU = 1 << 7
+    DB_ACTION_ADD_MENU = 1 << 6
 };
 
 // action contexts
@@ -904,14 +900,18 @@ enum {
 
 struct DB_plugin_action_s;
 
-typedef int (*DB_plugin_action_callback_t) (struct DB_plugin_action_s *action, int ctx);
+typedef int (*DB_plugin_action_callback_t) (struct DB_plugin_action_s *action, void *userdata);
+typedef int (*DB_plugin_action_callback2_t) (struct DB_plugin_action_s *action, int ctx);
 
 typedef struct DB_plugin_action_s {
     const char *title;
     const char *name;
     uint32_t flags;
+    // the use of "callback" is deprecated, only use it if the code must be compatible with API 1.4
+    // otherwise switch to callback2
     DB_plugin_action_callback_t callback;
     struct DB_plugin_action_s *next;
+    DB_plugin_action_callback2_t callback2;
 } DB_plugin_action_t;
 
 // base plugin interface
