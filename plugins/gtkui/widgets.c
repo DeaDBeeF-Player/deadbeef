@@ -2736,26 +2736,24 @@ spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     int stride = cairo_image_surface_get_stride (w->surf);
     memset (data, 0, a.height * stride);
 
+    int barw = width / bands;
 	for (gint i = 0; i <= bands; i++)
 	{
-		int x = ((width / bands) * i) + 2;
+		int x = barw * i;
         int y = a.height - w->bars[i] * base_s;
         if (y < 0) {
             y = 0;
         }
-        _draw_bar (data, stride, x+1, y, (width / bands) - 1, a.height-y, 0xff007fff);
-	}
-	for (gint i = 0; i <= bands; i++)
-	{
-		int x = ((width / bands) * i) + 2;
-        int y = a.height - w->peaks[i] * base_s;
-        if (y < 0) {
-            y = 0;
+        int bw = barw-1;
+        if (x + bw >= a.width) {
+            bw = a.width-x-1;
         }
+        _draw_bar (data, stride, x+1, y, bw, a.height-y, 0xff007fff);
+        y = a.height - w->peaks[i] * base_s;
         if (y < a.height-1) {
-            _draw_bar (data, stride, x + 1, y, (width / bands) - 1, 1, 0xffffffff);
+            _draw_bar (data, stride, x + 1, y, bw, 1, 0xffffffff);
         }
-    }
+	}
     cairo_surface_mark_dirty (w->surf);
     cairo_save (cr);
     cairo_set_source_surface (cr, w->surf, 0, 0);
