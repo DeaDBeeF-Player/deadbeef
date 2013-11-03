@@ -88,11 +88,13 @@ redraw_playlist (void *user_data) {
 static gboolean
 redraw_playlist_single_cb (gpointer user_data) {
     gtk_widget_queue_draw (GTK_WIDGET(user_data));
+    g_object_unref (GTK_WIDGET (user_data));
     return FALSE;
 }
 
 static void
 redraw_playlist_single (void *user_data) {
+    g_object_ref (GTK_WIDGET (user_data));
     g_idle_add (redraw_playlist_single_cb, user_data);
 }
 
