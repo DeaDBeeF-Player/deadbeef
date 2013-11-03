@@ -1123,11 +1123,11 @@ void
 w_vsplitter_init (ddb_gtkui_widget_t *base) {
     w_splitter_t *w = (w_splitter_t *)base;
     int pos = ((w_splitter_t *)w)->position; // prevent lock/unlock from overwriting position
-    if (w->locked && !w->box) {
+    if (w->locked && !GTK_IS_BOX(w->box)) {
         w->locked = 0;
         w_splitter_lock (w);
     }
-    else if (!w->locked && w->box) {
+    if (!w->locked && GTK_IS_BOX(w->box)) {
         w->locked = 1;
         w_splitter_unlock (w);
     }
