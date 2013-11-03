@@ -50,6 +50,7 @@
 #include "widgets.h"
 #include "../hotkeys/hotkeys.h"
 #include "actionhandlers.h"
+#include "actions.h"
 
 //#define trace(...) { fprintf (stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -204,10 +205,13 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
     if (hkplug) {
         int ctx;
         DB_plugin_action_t *act = ((DB_hotkeys_plugin_t *)hkplug)->get_action_for_keycombo (accel_key, mods, 0, &ctx);
-        if (act && act->callback) {
+        if (act && act->callback2) {
             trace ("executing action %s in ctx %d\n", act->name, ctx);
-            act->callback (act, ctx);
+            act->callback2 (act, ctx);
             return TRUE;
+        }
+        else if (act && act->callback) {
+            gtkui_exec_action_14 (act, -1);
         }
     }
     trace ("action not found\n");

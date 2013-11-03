@@ -530,17 +530,6 @@ plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle) {
     }
 #endif
 
-    // deprecated 1.4 DB_plugin_action_t hack
-    // this allows to check if the action is coming from pre-1.5 plugin without
-    // having a plugin pointer
-    if (plugin_api->get_actions && plugin_api->api_vmajor == 1 && plugin_api->api_vminor <= 4) {
-        DB_plugin_action_t *actions = plugin_api->get_actions (NULL);
-        while (actions) {
-            actions->flags |= DB_ACTION_USING_API_14;
-            actions = actions->next;
-        }
-    }
-
     plugin_t *plug = malloc (sizeof (plugin_t));
     memset (plug, 0, sizeof (plugin_t));
     plug->plugin = plugin_api;

@@ -21,6 +21,10 @@
 #ifndef __ACTIONS_H
 #define __ACTIONS_H
 
-void add_mainmenu_actions (void);
+void
+add_mainmenu_actions (void);
+
+void
+gtkui_exec_action_14 (DB_plugin_action_t *action, int cursor);
 
 #endif

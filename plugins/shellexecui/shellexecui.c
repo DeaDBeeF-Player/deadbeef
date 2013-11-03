@@ -365,7 +365,7 @@ static DB_plugin_action_t shellexecui_action = {
     .title = "Edit/Configure custom shell commands",
     .name = "shellexec_conf",
     .flags = DB_ACTION_COMMON | DB_ACTION_ADD_MENU,
-    .callback = shellexecui_action_callback,
+    .callback2 = shellexecui_action_callback,
     .next = NULL,
 };
 

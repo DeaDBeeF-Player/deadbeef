@@ -344,7 +344,7 @@ init_action_tree (GtkWidget *actions, const char *act, int ctx) {
                         unescape_forward_slash (t, title, sizeof (title));
                         gtk_tree_store_set (actions_store, &iter, 0, title, 1, actions->name, 2, DDB_ACTION_CTX_MAIN, -1);
                     }
-                    if (actions->flags & (DB_ACTION_SINGLE_TRACK | DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_CAN_MULTIPLE_TRACKS__DEPRECATED)) {
+                    if (actions->flags & (DB_ACTION_SINGLE_TRACK | DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_CAN_MULTIPLE_TRACKS)) {
                         t = action_tree_append (actions->title, actions_store, &action_selection_iter, &iter);
                         unescape_forward_slash (t, title, sizeof (title));
                         gtk_tree_store_set (actions_store, &iter, 0, title, 1, actions->name, 2, DDB_ACTION_CTX_SELECTION, -1);

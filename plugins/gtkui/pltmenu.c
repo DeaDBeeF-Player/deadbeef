@@ -105,19 +105,18 @@ static void
 on_actionitem_activate (GtkMenuItem     *menuitem,
                            DB_plugin_action_t *action)
 {
-    if (action->flags & DB_ACTION_USING_API_14) {
+    if (action->callback) {
         ddb_playlist_t *plt = NULL;
         if (pltmenu_idx != -1) {
             plt = deadbeef->plt_get_for_idx (pltmenu_idx);
         }
-        typedef int (*action_callback_14_t)(struct DB_plugin_action_s *action, void *userdata);
-        ((action_callback_14_t)action->callback) (action, plt);
+        action->callback (action, plt);
         if (plt) {
             deadbeef->plt_unref (plt);
         }
     }
     else {
-        action->callback (action, DDB_ACTION_CTX_PLAYLIST);
+        action->callback2 (action, DDB_ACTION_CTX_PLAYLIST);
     }
 }
 

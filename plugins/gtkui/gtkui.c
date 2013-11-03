@@ -1295,7 +1295,7 @@ static DB_plugin_action_t action_deselect_all = {
     .title = "Edit/Deselect All",
     .name = "deselect_all",
     .flags = DB_ACTION_COMMON,
-    .callback = action_deselect_all_handler,
+    .callback2 = action_deselect_all_handler,
     .next = NULL
 };
 
@@ -1303,7 +1303,7 @@ static DB_plugin_action_t action_select_all = {
     .title = "Edit/Select All",
     .name = "select_all",
     .flags = DB_ACTION_COMMON,
-    .callback = action_select_all_handler,
+    .callback2 = action_select_all_handler,
     .next = &action_deselect_all
 };
 
@@ -1311,7 +1311,7 @@ static DB_plugin_action_t action_quit = {
     .title = "Quit",
     .name = "quit",
     .flags = DB_ACTION_COMMON,
-    .callback = action_quit_handler,
+    .callback2 = action_quit_handler,
     .next = &action_select_all
 };
 
@@ -1319,7 +1319,7 @@ static DB_plugin_action_t action_delete_from_disk = {
     .title = "Delete From Disk",
     .name = "delete_from_disk",
     .flags = DB_ACTION_MULTIPLE_TRACKS,
-    .callback = action_delete_from_disk_handler,
+    .callback2 = action_delete_from_disk_handler,
     .next = &action_quit
 };
 
@@ -1327,7 +1327,7 @@ static DB_plugin_action_t action_add_location = {
     .title = "File/Add Location",
     .name = "add_location",
     .flags = DB_ACTION_COMMON,
-    .callback = action_add_location_handler,
+    .callback2 = action_add_location_handler,
     .next = &action_delete_from_disk
 };
 
@@ -1335,7 +1335,7 @@ static DB_plugin_action_t action_add_folders = {
     .title = "File/Add Folder(s)",
     .name = "add_folders",
     .flags = DB_ACTION_COMMON,
-    .callback = action_add_folders_handler,
+    .callback2 = action_add_folders_handler,
     .next = &action_add_location
 };
 
@@ -1343,7 +1343,7 @@ static DB_plugin_action_t action_add_files = {
     .title = "File/Add File(s)",
     .name = "add_files",
     .flags = DB_ACTION_COMMON,
-    .callback = action_add_files_handler,
+    .callback2 = action_add_files_handler,
     .next = &action_add_folders
 };
 
@@ -1351,7 +1351,7 @@ static DB_plugin_action_t action_open_files = {
     .title = "File/Open File(s)",
     .name = "open_files",
     .flags = DB_ACTION_COMMON,
-    .callback = action_open_files_handler,
+    .callback2 = action_open_files_handler,
     .next = &action_add_files
 };
 
@@ -1360,7 +1360,7 @@ static DB_plugin_action_t action_track_properties = {
     .title = "Track properties",
     .name = "track_properties",
     .flags = DB_ACTION_MULTIPLE_TRACKS,
-    .callback = action_show_track_properties_handler,
+    .callback2 = action_show_track_properties_handler,
     .next = &action_open_files
 };
 
@@ -1368,7 +1368,7 @@ static DB_plugin_action_t action_show_help = {
     .title = "Help/Show help page",
     .name = "help",
     .flags = DB_ACTION_COMMON,
-    .callback = action_show_help_handler,
+    .callback2 = action_show_help_handler,
     .next = &action_track_properties
 };
 
@@ -1376,7 +1376,7 @@ static DB_plugin_action_t action_playback_loop_cycle = {
     .title = "Playback/Cycle playback looping mode",
     .name = "loop_cycle",
     .flags = DB_ACTION_COMMON,
-    .callback = action_playback_loop_cycle_handler,
+    .callback2 = action_playback_loop_cycle_handler,
     .next = &action_show_help
 };
 
@@ -1384,7 +1384,7 @@ static DB_plugin_action_t action_playback_loop_off = {
     .title = "Playback/Playback looping - Don't loop",
     .name = "loop_off",
     .flags = DB_ACTION_COMMON,
-    .callback = action_playback_loop_off_handler,
+    .callback2 = action_playback_loop_off_handler,
     .next = &action_playback_loop_cycle
 };
 
@@ -1392,7 +1392,7 @@ static DB_plugin_action_t action_playback_loop_single = {
     .title = "Playback/Playback looping - Single track",
     .name = "loop_track",
     .flags = DB_ACTION_COMMON,
-    .callback = action_playback_loop_single_handler,
+    .callback2 = action_playback_loop_single_handler,
     .next = &action_playback_loop_off
 };
 
@@ -1400,7 +1400,7 @@ static DB_plugin_action_t action_playback_loop_all = {
     .title = "Playback/Playback looping - All",
     .name = "loop_all",
     .flags = DB_ACTION_COMMON,
-    .callback = action_playback_loop_all_handler,
+    .callback2 = action_playback_loop_all_handler,
     .next = &action_playback_loop_single
 };
 
@@ -1408,7 +1408,7 @@ static DB_plugin_action_t action_playback_order_cycle = {
     .title = "Playback/Cycle playback order",
     .name = "order_cycle",
     .flags = DB_ACTION_COMMON,
-    .callback = action_playback_order_cycle_handler,
+    .callback2 = action_playback_order_cycle_handler,
     .next = &action_playback_loop_all
 };
 
@@ -1416,7 +1416,7 @@ static DB_plugin_action_t action_playback_order_random = {
     .title = "Playback/Playback order - Random",
     .name = "order_random",
     .flags = DB_ACTION_COMMON,
-    .callback = action_playback_order_random_handler,
+    .callback2 = action_playback_order_random_handler,
     .next = &action_playback_order_cycle
 };
 
@@ -1424,7 +1424,7 @@ static DB_plugin_action_t action_playback_order_shuffle_albums = {
     .title = "Playback/Playback order - Shuffle albums",
     .name = "order_shuffle_albums",
     .flags = DB_ACTION_COMMON,
-    .callback = action_playback_order_shuffle_albums_handler,
+    .callback2 = action_playback_order_shuffle_albums_handler,
     .next = &action_playback_order_random
 };
 
@@ -1432,7 +1432,7 @@ static DB_plugin_action_t action_playback_order_shuffle = {
     .title = "Playback/Playback order - Shuffle tracks",
     .name = "order_shuffle",
     .flags = DB_ACTION_COMMON,
-    .callback = action_playback_order_shuffle_handler,
+    .callback2 = action_playback_order_shuffle_handler,
     .next = &action_playback_order_shuffle_albums
 };
 
@@ -1440,7 +1440,7 @@ static DB_plugin_action_t action_playback_order_linear = {
     .title = "Playback/Playback order - Linear",
     .name = "order_linear",
     .flags = DB_ACTION_COMMON,
-    .callback = action_playback_order_linear_handler,
+    .callback2 = action_playback_order_linear_handler,
     .next = &action_playback_order_shuffle
 };
 
@@ -1449,7 +1449,7 @@ static DB_plugin_action_t action_cursor_follows_playback = {
     .title = "Playback/Cursor follows playback toggle",
     .name = "toggle_cursor_follows_playback",
     .flags = DB_ACTION_COMMON,
-    .callback = action_cursor_follows_playback_handler,
+    .callback2 = action_cursor_follows_playback_handler,
     .next = &action_playback_order_linear
 };
 
@@ -1458,7 +1458,7 @@ static DB_plugin_action_t action_scroll_follows_playback = {
     .title = "Playback/Scroll follows playback toggle",
     .name = "toggle_scroll_follows_playback",
     .flags = DB_ACTION_COMMON,
-    .callback = action_scroll_follows_playback_handler,
+    .callback2 = action_scroll_follows_playback_handler,
     .next = &action_cursor_follows_playback
 };
 
@@ -1466,7 +1466,7 @@ static DB_plugin_action_t action_toggle_menu = {
     .title = "View/Show\\/Hide menu",
     .name = "toggle_menu",
     .flags = DB_ACTION_COMMON,
-    .callback = action_toggle_menu_handler,
+    .callback2 = action_toggle_menu_handler,
     .next = &action_scroll_follows_playback
 };
 
@@ -1474,7 +1474,7 @@ static DB_plugin_action_t action_toggle_statusbar = {
     .title = "View/Show\\/Hide statusbar",
     .name = "toggle_statusbar",
     .flags = DB_ACTION_COMMON,
-    .callback = action_toggle_statusbar_handler,
+    .callback2 = action_toggle_statusbar_handler,
     .next = &action_toggle_menu
 };
 
@@ -1482,7 +1482,7 @@ static DB_plugin_action_t action_toggle_designmode = {
     .title = "Edit/Toggle design mode",
     .name = "toggle_design_mode",
     .flags = DB_ACTION_COMMON,
-    .callback = action_toggle_designmode_handler,
+    .callback2 = action_toggle_designmode_handler,
     .next = &action_toggle_statusbar
 };
 
@@ -1490,7 +1490,7 @@ static DB_plugin_action_t action_preferences = {
     .title = "Edit/Preferences",
     .name = "preferences",
     .flags = DB_ACTION_COMMON,
-    .callback = action_preferences_handler,
+    .callback2 = action_preferences_handler,
     .next = &action_toggle_designmode
 };
 
@@ -1498,7 +1498,7 @@ static DB_plugin_action_t action_sort_custom = {
     .title = "Edit/Sort Custom",
     .name = "sort_custom",
     .flags = DB_ACTION_COMMON,
-    .callback = action_sort_custom_handler,
+    .callback2 = action_sort_custom_handler,
     .next = &action_preferences
 };
 
@@ -1506,7 +1506,7 @@ static DB_plugin_action_t action_crop_selected = {
     .title = "Edit/Crop Selected",
     .name = "crop_selected",
     .flags = DB_ACTION_COMMON,
-    .callback = action_crop_selected_handler,
+    .callback2 = action_crop_selected_handler,
     .next = &action_sort_custom
 };
 
@@ -1514,7 +1514,7 @@ static DB_plugin_action_t action_remove_from_playlist = {
     .title = "Edit/Remove from current playlist",
     .name = "remove_from_playlist",
     .flags = DB_ACTION_MULTIPLE_TRACKS,
-    .callback = action_remove_from_playlist_handler,
+    .callback2 = action_remove_from_playlist_handler,
     .next = &action_crop_selected
 };
 
@@ -1522,7 +1522,7 @@ static DB_plugin_action_t action_save_playlist = {
     .title = "File/Save playlist",
     .name = "save_playlist",
     .flags = DB_ACTION_COMMON,
-    .callback = action_save_playlist_handler,
+    .callback2 = action_save_playlist_handler,
     .next = &action_remove_from_playlist
 };
 
@@ -1530,7 +1530,7 @@ static DB_plugin_action_t action_load_playlist = {
     .title = "File/Load playlist",
     .name = "load_playlist",
     .flags = DB_ACTION_COMMON,
-    .callback = action_load_playlist_handler,
+    .callback2 = action_load_playlist_handler,
     .next = &action_save_playlist
 };
 
@@ -1538,7 +1538,7 @@ static DB_plugin_action_t action_remove_current_playlist = {
     .title = "File/Remove current playlist",
     .name = "remove_current_playlist",
     .flags = DB_ACTION_COMMON,
-    .callback = action_remove_current_playlist_handler,
+    .callback2 = action_remove_current_playlist_handler,
     .next = &action_load_playlist
 };
 
@@ -1547,7 +1547,7 @@ static DB_plugin_action_t action_new_playlist = {
     .title = "File/New Playlist",
     .name = "new_playlist",
     .flags = DB_ACTION_COMMON,
-    .callback = action_new_playlist_handler,
+    .callback2 = action_new_playlist_handler,
     .next = &action_remove_current_playlist
 };
 
@@ -1555,7 +1555,7 @@ static DB_plugin_action_t action_toggle_eq = {
     .title = "View/Show\\/Hide Equalizer",
     .name = "toggle_eq",
     .flags = DB_ACTION_COMMON,
-    .callback = action_toggle_eq_handler,
+    .callback2 = action_toggle_eq_handler,
     .next = &action_new_playlist
 };
 
@@ -1563,7 +1563,7 @@ static DB_plugin_action_t action_hide_eq = {
     .title = "View/Hide Equalizer",
     .name = "hide_eq",
     .flags = DB_ACTION_COMMON,
-    .callback = action_hide_eq_handler,
+    .callback2 = action_hide_eq_handler,
     .next = &action_toggle_eq
 };
 
@@ -1571,7 +1571,7 @@ static DB_plugin_action_t action_show_eq = {
     .title = "View/Show Equalizer",
     .name = "show_eq",
     .flags = DB_ACTION_COMMON,
-    .callback = action_show_eq_handler,
+    .callback2 = action_show_eq_handler,
     .next = &action_hide_eq
 };
 
@@ -1579,7 +1579,7 @@ static DB_plugin_action_t action_toggle_mainwin = {
     .title = "View/Show\\/Hide Player Window",
     .name = "toggle_player_window",
     .flags = DB_ACTION_COMMON,
-    .callback = action_toggle_mainwin_handler,
+    .callback2 = action_toggle_mainwin_handler,
     .next = &action_show_eq
 };
 
@@ -1587,7 +1587,7 @@ static DB_plugin_action_t action_hide_mainwin = {
     .title = "View/Hide Player Window",
     .name = "hide_player_window",
     .flags = DB_ACTION_COMMON,
-    .callback = action_hide_mainwin_handler,
+    .callback2 = action_hide_mainwin_handler,
     .next = &action_toggle_mainwin
 };
 
@@ -1595,7 +1595,7 @@ static DB_plugin_action_t action_show_mainwin = {
     .title = "View/Show Player Window",
     .name = "show_player_window",
     .flags = DB_ACTION_COMMON,
-    .callback = action_show_mainwin_handler,
+    .callback2 = action_show_mainwin_handler,
     .next = &action_hide_mainwin
 };
 
@@ -1603,7 +1603,7 @@ static DB_plugin_action_t action_find = {
     .title = "Edit/Find",
     .name = "find",
     .flags = DB_ACTION_COMMON,
-    .callback = action_find_handler,
+    .callback2 = action_find_handler,
     .next = &action_show_mainwin
 };
 

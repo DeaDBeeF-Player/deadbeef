@@ -24,6 +24,7 @@
 #include "gtkui.h"
 #include "../../deadbeef.h"
 #include "support.h"
+#include "actions.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -35,7 +36,12 @@
 static gboolean
 menu_action_cb (void *ctx) {
     DB_plugin_action_t *action = ctx;
-    action->callback (action, DDB_ACTION_CTX_MAIN);
+    if (action->callback) {
+        gtkui_exec_action_14 (action, -1);
+    }
+    else if (action->callback2) {
+        action->callback2 (action, DDB_ACTION_CTX_MAIN);
+    }
     return FALSE;
 }
 
@@ -94,7 +100,7 @@ add_mainmenu_actions (void)
         {
             char *tmp = NULL;
 
-            int has_addmenu = (action->flags & DB_ACTION_COMMON) && ((action->flags & DB_ACTION_ADD_MENU) | (action->flags & DB_ACTION_USING_API_14));
+            int has_addmenu = (action->flags & DB_ACTION_COMMON) && ((action->flags & DB_ACTION_ADD_MENU) || (action->callback));
 
             if (!has_addmenu)
                 continue;
@@ -183,3 +189,39 @@ add_mainmenu_actions (void)
     }
 }
 
+void
+gtkui_exec_action_14 (DB_plugin_action_t *action, int cursor) {
+    // Plugin can handle all tracks by itself
+    if (action->flags & DB_ACTION_CAN_MULTIPLE_TRACKS)
+    {
+        action->callback (action, NULL);
+        return;
+    }
+
+    // For single-track actions just invoke it with first selected track
+    if (!(action->flags & DB_ACTION_MULTIPLE_TRACKS))
+    {
+        if (cursor == -1) {
+            cursor = deadbeef->pl_get_cursor (PL_MAIN);
+        }
+        if (cursor == -1) 
+        {
+            return;
+        }
+        DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (cursor, PL_MAIN);
+        action->callback (action, it);
+        deadbeef->pl_item_unref (it);
+        return;
+    }
+
+    //We end up here if plugin won't traverse tracks and we have to do it ourselves
+    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+    while (it) {
+        if (deadbeef->pl_is_selected (it)) {
+            action->callback (action, it);
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+}

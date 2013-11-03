@@ -89,7 +89,7 @@ static int shx_exec_track_cmd (Shx_action_t *action, DB_playItem_t *it) {
     }
     strcat (cmd, "&");
     trace ("%s\n", cmd);
-    system (cmd);
+    res = system (cmd);
 }
 
 static int
@@ -99,7 +99,7 @@ shx_callback (Shx_action_t *action, int ctx)
     switch (ctx) {
     case DDB_ACTION_CTX_MAIN:
         trace ("%s\n", action->shcommand);
-        system (action->shcommand);
+        int res = system (action->shcommand);
         break;
     case DDB_ACTION_CTX_SELECTION:
         {
@@ -255,7 +255,7 @@ shx_save_actions (void)
 }
 
 Shx_action_t*
-shx_get_actions (DB_plugin_action_callback_t callback)
+shx_get_actions (DB_plugin_action_callback2_t callback)
 {
     Shx_action_t *action_list = NULL;
     Shx_action_t *prev = NULL;
@@ -303,7 +303,7 @@ shx_get_actions (DB_plugin_action_callback_t callback)
         action->parent.title = strdup (title);
         action->parent.name = strdup (name);
         action->shcommand = strdup (command);
-        action->parent.callback = callback;
+        action->parent.callback2 = callback;
         action->parent.next = NULL;
         action->parent.flags |= DB_ACTION_ADD_MENU;
 
@@ -339,7 +339,7 @@ shx_get_actions (DB_plugin_action_callback_t callback)
 Shx_action_t*
 shx_action_add (void) {
     Shx_action_t *a = calloc (sizeof (Shx_action_t), 1);
-    a->parent.callback = (DB_plugin_action_callback_t)shx_callback;
+    a->parent.callback2 = (DB_plugin_action_callback2_t)shx_callback;
     if (!actions) {
         actions = a;
     }
@@ -389,7 +389,7 @@ shx_action_remove (Shx_action_t *action) {
 static int
 shx_start ()
 {
-    actions = shx_get_actions((DB_plugin_action_callback_t)shx_callback);
+    actions = shx_get_actions((DB_plugin_action_callback2_t)shx_callback);
     return 0;
 }
 
