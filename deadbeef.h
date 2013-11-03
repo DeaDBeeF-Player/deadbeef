@@ -42,7 +42,11 @@ extern "C" {
 // that is enough for both static and dynamic modules
 
 // backwards compatibility is supported since API version 1.0
-// that means that the plugins which use the core API 1.0 will work without recompiling until API 2.0
+// that means that the plugins which use the API 1.0 will work without recompiling until API 2.0.
+//
+// increments in the major version number mean that there are API breaks, and
+// plugins must be recompiled to be compatible.
+//
 // add DDB_REQUIRE_API_VERSION(x,y) macro when you define the plugin structure
 // like this:
 // static DB_decoder_t plugin = {
@@ -50,14 +54,14 @@ extern "C" {
 //  ............
 // }
 // this is required for versioning
-// if you don't do it -- no version checking will be done (useful for
-// debugging/development)
-// your plugin will be accepted in all releases with API major version 'x',
-// and minor version 'y' and up.
-// increments in major version number mean that there are API breaks, and
-// plugins must be recompiled to be compatible
+// if you don't do it -- no version checking will be done (useful for debugging/development)
 //
 // please DON'T release plugins without version requirement
+//
+// to ensure compatibility, use the following macro:
+// #define DDB_API_LEVEL x
+// where x is the minor API version number.
+// that way, you'll get errors or warnings when using incompatible stuff.
 
 // api version history:
 // 9.9 -- devel
@@ -81,6 +85,10 @@ extern "C" {
 
 #define DB_API_VERSION_MAJOR 1
 #define DB_API_VERSION_MINOR 5
+
+#ifndef DDB_API_LEVEL
+#define DDB_API_LEVEL DB_API_VERSION_MINOR
+#endif
 
 #define DDB_PLUGIN_SET_API_VERSION\
     .plugin.api_vmajor = DB_API_VERSION_MAJOR,\
@@ -282,8 +290,10 @@ enum {
     DB_EV_DSPCHAINCHANGED = 21, // emitted when any parameter of the main dsp chain has been changed
 
     // since 1.5
+#if (DDB_API_LEVEL >= 5)
     DB_EV_SELCHANGED = 22, // selection changed in playlist p1 iter p2, ctx should be a pointer to playlist viewer instance, which caused the change, or NULL
     DB_EV_PLUGINSLOADED = 23, // after all plugins have been loaded and connected
+#endif
 
     // -----------------
     // structured events
@@ -296,8 +306,9 @@ enum {
     DB_EV_SEEKED = 1005, // seek happened, ctx=ddb_event_playpos_t
 
     // since 1.5
+#if (DDB_API_LEVEL >= 5)
     DB_EV_TRACKFOCUSCURRENT = 1006, // user wants to highlight/find the current playing track
-
+#endif
     DB_EV_MAX
 };
 
@@ -322,7 +333,9 @@ enum ddb_sort_order_t {
     DDB_SORT_DESCENDING,
     DDB_SORT_ASCENDING,
 // since 1.3
+#if (DDB_API_LEVEL >= 3)
     DDB_SORT_RANDOM,
+#endif
 };
 
 // typecasting macros
@@ -351,6 +364,7 @@ typedef struct {
 } ddb_waveformat_t;
 
 // since 1.5
+#if (DDB_API_LEVEL >= 5)
 #define DDB_FREQ_BANDS 256
 #define DDB_FREQ_MAX_CHANNELS 9
 typedef struct {
@@ -358,6 +372,7 @@ typedef struct {
     const float *data;
     int nframes;
 } ddb_audio_data_t;
+#endif
 
 // forward decl for plugin struct
 struct DB_plugin_s;
@@ -893,6 +908,7 @@ enum {
 
 // action contexts
 // since 1.5
+#if (DDB_API_LEVEL >= 5)
 enum {
     DDB_ACTION_CTX_MAIN,
     DDB_ACTION_CTX_SELECTION,
@@ -900,11 +916,14 @@ enum {
     DDB_ACTION_CTX_NOWPLAYING,
     DDB_ACTION_CTX_COUNT
 };
+#endif
 
 struct DB_plugin_action_s;
 
 typedef int (*DB_plugin_action_callback_t) (struct DB_plugin_action_s *action, void *userdata);
+#if (DDB_API_LEVEL >= 5)
 typedef int (*DB_plugin_action_callback2_t) (struct DB_plugin_action_s *action, int ctx);
+#endif
 
 typedef struct DB_plugin_action_s {
     const char *title;
@@ -914,7 +933,9 @@ typedef struct DB_plugin_action_s {
     // otherwise switch to callback2
     DB_plugin_action_callback_t callback;
     struct DB_plugin_action_s *next;
+#if (DDB_API_LEVEL >= 5)
     DB_plugin_action_callback2_t callback2;
+#endif
 } DB_plugin_action_t;
 
 // base plugin interface
@@ -1145,10 +1166,12 @@ typedef struct DB_dsp_s {
     const char *configdialog;
 
     // since 1.1
+#if (DDB_API_LEVEL >= 1)
     // can be NULL
     // should return 1 if the DSP plugin will not touch data with the current parameters;
     // 0 otherwise
     int (*can_bypass) (ddb_dsp_context_t *ctx, ddb_waveformat_t *fmt);
+#endif
 } DB_dsp_t;
 
 // misc plugin
