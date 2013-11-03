@@ -34,14 +34,16 @@
 extern "C" {
 #endif
 
-// every plugin must define following entry-point:
+// every plugin must define the following entry-point:
 // extern "C" DB_plugin_t* $MODULENAME_load (DB_functions_t *api);
 // where $MODULENAME is a name of module
 // e.g. if your plugin is called "myplugin.so", $MODULENAME is "myplugin"
 // this function should return pointer to DB_plugin_t structure
 // that is enough for both static and dynamic modules
 
-// add DDB_REQUIRE_API_VERSION(x,y) macro when you define plugin structure
+// backwards compatibility is supported since API version 1.0
+// that means that the plugins which use the core API 1.0 will work without recompiling until API 2.0
+// add DDB_REQUIRE_API_VERSION(x,y) macro when you define the plugin structure
 // like this:
 // static DB_decoder_t plugin = {
 //   DDB_REQUIRE_API_VERSION(1,0)
@@ -279,7 +281,7 @@ enum {
     DB_EV_ACTIONSCHANGED = 20, // plugin actions were changed, e.g. for reinitializing gui
     DB_EV_DSPCHAINCHANGED = 21, // emitted when any parameter of the main dsp chain has been changed
 
-    // new in 1.5
+    // since 1.5
     DB_EV_SELCHANGED = 22, // selection changed in playlist p1 iter p2, ctx should be a pointer to playlist viewer instance, which caused the change, or NULL
     DB_EV_PLUGINSLOADED = 23, // after all plugins have been loaded and connected
 
@@ -293,7 +295,7 @@ enum {
     DB_EV_TRACKINFOCHANGED = 1004, // trackinfo was changed (included medatata and playback status), ctx=ddb_event_track_t
     DB_EV_SEEKED = 1005, // seek happened, ctx=ddb_event_playpos_t
 
-    // new in 1.4
+    // since 1.5
     DB_EV_TRACKFOCUSCURRENT = 1006, // user wants to highlight/find the current playing track
 
     DB_EV_MAX
@@ -319,7 +321,8 @@ enum {
 enum ddb_sort_order_t {
     DDB_SORT_DESCENDING,
     DDB_SORT_ASCENDING,
-    DDB_SORT_RANDOM, // available since API 1.3
+// since 1.3
+    DDB_SORT_RANDOM,
 };
 
 // typecasting macros
@@ -1141,7 +1144,7 @@ typedef struct DB_dsp_s {
     // implemented if this is nonzero
     const char *configdialog;
 
-    // can_bypass is available since 1.1 api
+    // since 1.1
     // can be NULL
     // should return 1 if the DSP plugin will not touch data with the current parameters;
     // 0 otherwise
