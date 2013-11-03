@@ -38,6 +38,7 @@
 #include "hotkeys.h" // for building action treeview
 #include "../../strdupa.h"
 #include "../../optmath.h"
+#include "actions.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -955,7 +956,7 @@ w_splitter_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) 
 
 void
 w_splitter_save (struct ddb_gtkui_widget_s *w, char *s, int sz) {
-    int pos = ((w_splitter_t *)w)->box ? ((w_splitter_t *)w)->position : gtk_paned_get_position (GTK_PANED(((w_splitter_t *)w)->box));
+    int pos = ((w_splitter_t *)w)->locked ? ((w_splitter_t *)w)->position : gtk_paned_get_position (GTK_PANED(((w_splitter_t *)w)->box));
     char spos[100];
     snprintf (spos, sizeof (spos), " pos=%d locked=%d", pos, ((w_splitter_t *)w)->locked);
     strncat (s, spos, sz);
@@ -1087,12 +1088,7 @@ w_splitter_replace (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child, ddb_gtk
             newchild->parent = cont;
             w_remove (cont, child);
             w_destroy (child);
-            GtkWidget *container = ((w_splitter_t *)cont)->locked ? ((w_splitter_t *)cont)->box : cont->widget;
-#if 0
-            gtk_container_remove (GTK_CONTAINER(container), c->widget);
-            c->widget = NULL;
-            w_destroy (c);
-#endif
+            GtkWidget *container = ((w_splitter_t *)cont)->box;
             gtk_widget_show (newchild->widget);
             if (((w_splitter_t *)cont)->locked) {
                 if (ntab == 0) {
@@ -1141,9 +1137,9 @@ w_vsplitter_init (ddb_gtkui_widget_t *base) {
         pos = a.height/2;
     }
     w->position = pos;
-    if (!w->box) {
+    if (!w->locked) {
         gtk_widget_set_size_request (w->base.children->widget, -1, -1);
-        gtk_paned_set_position (GTK_PANED(w->base.widget), pos);
+        gtk_paned_set_position (GTK_PANED(w->box), pos);
     }
     else {
         gtk_widget_set_size_request (w->base.children->widget, -1, w->position);
@@ -1199,9 +1195,9 @@ w_hsplitter_init (ddb_gtkui_widget_t *base) {
         pos = a.width/2;
     }
     w->position = pos;
-    if (!w->box) {
+    if (!w->locked) {
         gtk_widget_set_size_request (w->base.children->widget, -1, -1);
-        gtk_paned_set_position (GTK_PANED(w->base.widget), pos);
+        gtk_paned_set_position (GTK_PANED(w->box), pos);
     }
     else {
         gtk_widget_set_size_request (w->base.children->widget, w->position, -1);
@@ -3225,8 +3221,7 @@ on_button_clicked               (GtkButton       *button,
         while (acts) {
             if (!strcmp (acts->name, w->action)) {
                 if (acts->callback) {
-#warning FIXME: context
-                    acts->callback (acts, NULL);
+                    gtkui_exec_action_14 (acts, -1);
                 }
                 else if (acts->callback2) {
                     acts->callback2 (acts, w->action_ctx);
