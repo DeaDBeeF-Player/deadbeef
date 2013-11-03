@@ -107,6 +107,11 @@ typedef struct ddb_gtkui_widget_s {
     // look at the splitter and tabs implementation for more details
     void (*replace) (struct ddb_gtkui_widget_s *container, struct ddb_gtkui_widget_s *child, struct ddb_gtkui_widget_s *newchild);
 
+    // return the container widget of a composite widget
+    // e.g. HBox is contained in EventBox, this function should return the HBox
+    // the default implementation will always return the toplevel widget
+    GtkWidget * (*get_container) (struct ddb_gtkui_widget_s *w);
+
     // implement this if you want to handle deadbeef broadcast messages/events
     int (*message) (struct ddb_gtkui_widget_s *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
 
@@ -174,6 +179,11 @@ typedef struct {
 
     // remove the widget from its container
     void (*w_remove) (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child);
+
+    // return the container widget of a composite widget
+    // e.g. HBox is contained in EventBox, this function should return the HBox
+    // the default implementation will always return the toplevel widget
+    GtkWidget * (*w_get_container) (ddb_gtkui_widget_t *w);
 
     // function to create the standard playlist context menu (the same as
     // appears when right-clicked on playlist tab)

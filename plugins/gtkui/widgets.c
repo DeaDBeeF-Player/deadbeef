@@ -294,6 +294,14 @@ w_remove (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
     child->parent = NULL;
 }
 
+GtkWidget *
+w_get_container (ddb_gtkui_widget_t *w) {
+    if (w->get_container) {
+        return w->get_container (w);
+    }
+    return w->widget;
+}
+
 void
 w_replace (ddb_gtkui_widget_t *w, ddb_gtkui_widget_t *from, ddb_gtkui_widget_t *to) {
     if (w->replace) {
@@ -989,6 +997,17 @@ w_splitter_init_signals (w_splitter_t *w) {
     g_signal_connect ((gpointer) w->base.widget, "button_press_event", G_CALLBACK (w_button_press_event), w);
 }
 
+GtkWidget *
+w_splitter_get_container (struct ddb_gtkui_widget_s *b) {
+    w_splitter_t *w = (w_splitter_t *)b;
+    if (w->box) {
+        return w->box;
+    }
+    else {
+        return w->base.widget;
+    }
+}
+
 void
 w_splitter_lock (w_splitter_t *w) {
     // we can't change GtkPaned behavior, so convert to vbox for now
@@ -1021,13 +1040,7 @@ w_splitter_lock (w_splitter_t *w) {
     ddb_gtkui_widget_t *parent = w->base.parent;
     GtkWidget *cont = NULL;
     if (parent) {
-        cont = parent->widget;
-        if (!strcmp (parent->type, "vsplitter") || !strcmp (parent->type, "hsplitter")) {
-            w_splitter_t *sp = (w_splitter_t *)parent;
-            if (sp->box) {
-                cont = sp->box;
-            }
-        }
+        cont = w_get_container (parent);
         gtk_container_remove (GTK_CONTAINER (cont), w->base.widget);
     }
     GtkWidget *eventbox = gtk_event_box_new ();
@@ -1070,13 +1083,7 @@ w_splitter_unlock (w_splitter_t *w) {
     ddb_gtkui_widget_t *parent = w->base.parent;
     GtkWidget *cont = NULL;
     if (parent) {
-        cont = parent->widget;
-        if (!strcmp (parent->type, "vsplitter") || !strcmp (parent->type, "hsplitter")) {
-            w_splitter_t *sp = (w_splitter_t *)parent;
-            if (sp->box) {
-                cont = sp->box;
-            }
-        }
+        cont = w_get_container (parent);
         gtk_container_remove (GTK_CONTAINER (cont), w->base.widget);
     }
     w->base.widget = paned;
@@ -1199,6 +1206,7 @@ w_vsplitter_create (void) {
     w->base.append = w_splitter_add;
     w->base.remove = w_splitter_remove;
     w->base.replace = w_splitter_replace;
+    w->base.get_container = w_splitter_get_container;
     w->base.load = w_splitter_load;
     w->base.save = w_splitter_save;
     w->base.init = w_vsplitter_init;
@@ -1254,6 +1262,7 @@ w_hsplitter_create (void) {
     w->base.append = w_splitter_add;
     w->base.remove = w_splitter_remove;
     w->base.replace = w_splitter_replace;
+    w->base.get_container = w_splitter_get_container;
     w->base.load = w_splitter_load;
     w->base.save = w_splitter_save;
     w->base.init = w_hsplitter_init;
@@ -3084,6 +3093,11 @@ w_hvbox_initchildmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
             w);
 }
 
+GtkWidget *
+w_hvbox_get_container (struct ddb_gtkui_widget_s *b) {
+    return ((w_hvbox_t *)b)->box;
+}
+
 ddb_gtkui_widget_t *
 w_hbox_create (void) {
     w_hvbox_t *w = malloc (sizeof (w_hvbox_t));
@@ -3097,6 +3111,7 @@ w_hbox_create (void) {
     w->base.load = w_hvbox_load;
     w->base.save = w_hvbox_save;
     w->base.init = w_hvbox_init;
+    w->base.get_container = w_hvbox_get_container;
     w->box = gtk_hbox_new (TRUE, 3);
     w->homogeneous = 1;
     w->expand = -1;
@@ -3120,6 +3135,7 @@ w_vbox_create (void) {
     w->base.append = w_hvbox_append;
     w->base.remove = w_hvbox_remove;
     w->base.replace = w_hvbox_replace;
+    w->base.get_container = w_hvbox_get_container;
     w->base.initmenu = w_hvbox_initmenu;
     w->base.initchildmenu = w_hvbox_initchildmenu;
     w->base.load = w_hvbox_load;

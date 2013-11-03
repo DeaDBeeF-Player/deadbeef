@@ -69,6 +69,11 @@ w_replace (ddb_gtkui_widget_t *w, ddb_gtkui_widget_t *from, ddb_gtkui_widget_t *
 void
 w_remove (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child);
 
+// returns actual container widget of a composite widget
+// e.g. HBox is contained in EventBox, this function will return the HBox
+GtkWidget *
+w_get_container (ddb_gtkui_widget_t *w);
+
 ddb_gtkui_widget_t *
 w_hsplitter_create (void);
 
