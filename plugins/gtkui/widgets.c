@@ -81,7 +81,7 @@ typedef struct {
 
 typedef struct {
     ddb_gtkui_widget_t base;
-    GtkWidget *box; // hack to support splitter locking, can be a vbox or a hbox
+    GtkWidget *box;
     int position;
     int locked;
 } w_splitter_t;
@@ -570,7 +570,6 @@ w_menu_deactivate (GtkMenuShell *menushell, gpointer user_data) {
     hidden = 0;
     ddb_gtkui_widget_t *w = user_data;
     if (GTK_IS_CONTAINER (w->widget)) {
-        gtk_widget_set_size_request (w->widget, -1, -1);
         gtk_container_foreach (GTK_CONTAINER (w->widget), show_widget, NULL);
     }
     gtk_widget_set_app_paintable (w->widget, FALSE);
@@ -587,16 +586,10 @@ w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_da
     widget = current_widget->widget;
     hidden = 1;
     if (GTK_IS_CONTAINER (widget)) {
-        // remember size of the 1st child
-        GtkAllocation a;
-        a.width = a.height = -1;
         // hide all children
-        gtk_container_foreach (GTK_CONTAINER (widget), hide_widget, &a);
-
-        if (a.width >= 0) {
-            gtk_widget_set_size_request (widget, a.width, a.height);
-        }
+        gtk_container_foreach (GTK_CONTAINER (widget), hide_widget, NULL);
     }
+
     gtk_widget_set_app_paintable (widget, TRUE);
     gtk_widget_queue_draw (((ddb_gtkui_widget_t *)user_data)->widget);
     GtkWidget *menu;
@@ -793,8 +786,7 @@ w_destroy (ddb_gtkui_widget_t *w) {
 ///// gtk_container convenience functions
 void
 w_container_add (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
-    GtkWidget *container = NULL;
-    container = cont->widget;
+    GtkWidget *container = w_get_container (cont);
     gtk_container_add (GTK_CONTAINER (container), child->widget);
     gtk_widget_show (child->widget);
 }
@@ -963,7 +955,7 @@ w_splitter_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) 
 
 void
 w_splitter_save (struct ddb_gtkui_widget_s *w, char *s, int sz) {
-    int pos = ((w_splitter_t *)w)->box ? ((w_splitter_t *)w)->position : gtk_paned_get_position (GTK_PANED(w->widget));
+    int pos = ((w_splitter_t *)w)->box ? ((w_splitter_t *)w)->position : gtk_paned_get_position (GTK_PANED(((w_splitter_t *)w)->box));
     char spos[100];
     snprintf (spos, sizeof (spos), " pos=%d locked=%d", pos, ((w_splitter_t *)w)->locked);
     strncat (s, spos, sz);
@@ -983,29 +975,13 @@ w_splitter_add (ddb_gtkui_widget_t *w, ddb_gtkui_widget_t *child) {
         }
     }
     else {
-        gtk_paned_set_position (GTK_PANED(w->widget), ((w_splitter_t *)w)->position);
+        gtk_paned_set_position (GTK_PANED(((w_splitter_t *)w)->box), ((w_splitter_t *)w)->position);
     }
-}
-
-void
-w_splitter_init_signals (w_splitter_t *w) {
-#if !GTK_CHECK_VERSION(3,0,0)
-    g_signal_connect ((gpointer) w->base.widget, "expose_event", G_CALLBACK (w_expose_event), w);
-#else
-    g_signal_connect ((gpointer) w->base.widget, "draw", G_CALLBACK (w_draw_event), w);
-#endif
-    g_signal_connect ((gpointer) w->base.widget, "button_press_event", G_CALLBACK (w_button_press_event), w);
 }
 
 GtkWidget *
 w_splitter_get_container (struct ddb_gtkui_widget_s *b) {
-    w_splitter_t *w = (w_splitter_t *)b;
-    if (w->box) {
-        return w->box;
-    }
-    else {
-        return w->base.widget;
-    }
+    return ((w_splitter_t *)b)->box;
 }
 
 void
@@ -1018,40 +994,28 @@ w_splitter_lock (w_splitter_t *w) {
 
     int vert = w->base.type == "vsplitter";
 
-    GtkWidget *box = vert ? gtk_vbox_new (FALSE, 6) : gtk_hbox_new (FALSE, 6);
-    gtk_widget_show (box);
-
-    w->position = gtk_paned_get_position (GTK_PANED (w->base.widget));
-
     GtkAllocation a;
     gtk_widget_get_allocation (w->base.widget, &a);
 
-    GtkWidget *c1 = gtk_paned_get_child1 (GTK_PANED (w->base.widget));
+    GtkWidget *box = vert ? gtk_vbox_new (FALSE, 6) : gtk_hbox_new (FALSE, 6);
+    gtk_widget_show (box);
+
+    w->position = gtk_paned_get_position (GTK_PANED (w->box));
+
+    GtkWidget *c1 = gtk_paned_get_child1 (GTK_PANED (w->box));
     g_object_ref (c1);
-    GtkWidget *c2 = gtk_paned_get_child2 (GTK_PANED (w->base.widget));
+    GtkWidget *c2 = gtk_paned_get_child2 (GTK_PANED (w->box));
     g_object_ref (c2);
-    gtk_container_remove (GTK_CONTAINER (w->base.widget), c1);
-    gtk_container_remove (GTK_CONTAINER (w->base.widget), c2);
+    gtk_container_remove (GTK_CONTAINER (w->box), c1);
+    gtk_container_remove (GTK_CONTAINER (w->box), c2);
 
     gtk_box_pack_start (GTK_BOX (box), c1, FALSE, FALSE, 0);
     gtk_widget_set_size_request (c1, vert ? -1 : w->position, vert ? w->position : -1);
     gtk_box_pack_end (GTK_BOX (box), c2, TRUE, TRUE, 0);
 
-    ddb_gtkui_widget_t *parent = w->base.parent;
-    GtkWidget *cont = NULL;
-    if (parent) {
-        cont = w_get_container (parent);
-        gtk_container_remove (GTK_CONTAINER (cont), w->base.widget);
-    }
-    GtkWidget *eventbox = gtk_event_box_new ();
-    gtk_widget_show (eventbox);
-    gtk_container_add (GTK_CONTAINER (eventbox), box);
-    w->base.widget = eventbox;
+    gtk_container_remove (GTK_CONTAINER (w->base.widget), w->box);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), box);
     w->box = box;
-    if (cont) {
-        gtk_container_add (GTK_CONTAINER (cont), w->base.widget);
-    }
-    w_splitter_init_signals (w);
 }
 
 void
@@ -1080,18 +1044,9 @@ w_splitter_unlock (w_splitter_t *w) {
     gtk_container_add (GTK_CONTAINER (paned), c2);
     gtk_paned_set_position (GTK_PANED (paned), w->position);
 
-    ddb_gtkui_widget_t *parent = w->base.parent;
-    GtkWidget *cont = NULL;
-    if (parent) {
-        cont = w_get_container (parent);
-        gtk_container_remove (GTK_CONTAINER (cont), w->base.widget);
-    }
-    w->base.widget = paned;
-    w->box = NULL;
-    if (cont) {
-        gtk_container_add (GTK_CONTAINER (cont), w->base.widget);
-    }
-    w_splitter_init_signals (w);
+    gtk_container_remove (GTK_CONTAINER (w->base.widget), w->box);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), paned);
+    w->box = paned;
 }
 
 void
@@ -1163,8 +1118,7 @@ w_splitter_replace (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child, ddb_gtk
 
 void
 w_splitter_remove (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
-    GtkWidget *container = ((w_splitter_t *)cont)->locked ? ((w_splitter_t *)cont)->box : cont->widget;
-    w_splitter_t *w = (w_splitter_t *)cont;
+    GtkWidget *container = w_get_container (cont);
     gtk_container_remove (GTK_CONTAINER (container), child->widget);
 }
 
@@ -1201,8 +1155,6 @@ w_vsplitter_create (void) {
     w_splitter_t *w = malloc (sizeof (w_splitter_t));
     memset (w, 0, sizeof (w_splitter_t));
     w->position = -1;
-    w->base.widget = gtk_vpaned_new ();
-    gtk_widget_set_can_focus (w->base.widget, FALSE);
     w->base.append = w_splitter_add;
     w->base.remove = w_splitter_remove;
     w->base.replace = w_splitter_replace;
@@ -1212,14 +1164,18 @@ w_vsplitter_create (void) {
     w->base.init = w_vsplitter_init;
     w->base.initmenu = w_splitter_initmenu;
 
+    w->base.widget = gtk_event_box_new ();
+    w->box = gtk_vpaned_new ();
+    gtk_widget_show (w->box);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), w->box);
+    w_override_signals (w->base.widget, w);
+
     ddb_gtkui_widget_t *ph1, *ph2;
     ph1 = w_create ("placeholder");
     ph2 = w_create ("placeholder");
 
     w_append ((ddb_gtkui_widget_t*)w, ph1);
     w_append ((ddb_gtkui_widget_t*)w, ph2);
-
-    w_splitter_init_signals (w);
 
     return (ddb_gtkui_widget_t*)w;
 }
@@ -1257,8 +1213,6 @@ w_hsplitter_create (void) {
     w_splitter_t *w = malloc (sizeof (w_splitter_t));
     memset (w, 0, sizeof (w_splitter_t));
     w->position = -1;
-    w->base.widget = gtk_hpaned_new ();
-    gtk_widget_set_can_focus (w->base.widget, FALSE);
     w->base.append = w_splitter_add;
     w->base.remove = w_splitter_remove;
     w->base.replace = w_splitter_replace;
@@ -1268,14 +1222,18 @@ w_hsplitter_create (void) {
     w->base.init = w_hsplitter_init;
     w->base.initmenu = w_splitter_initmenu;
 
+    w->base.widget = gtk_event_box_new ();
+    w->box = gtk_hpaned_new ();
+    gtk_widget_show (w->box);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), w->box);
+    w_override_signals (w->base.widget, w);
+
     ddb_gtkui_widget_t *ph1, *ph2;
     ph1 = w_create ("placeholder");
     ph2 = w_create ("placeholder");
 
     w_append ((ddb_gtkui_widget_t*)w, ph1);
     w_append ((ddb_gtkui_widget_t*)w, ph2);
-
-    w_splitter_init_signals (w);
 
     return (ddb_gtkui_widget_t*)w;
 }
