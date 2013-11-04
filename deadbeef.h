@@ -58,10 +58,13 @@ extern "C" {
 //
 // please DON'T release plugins without version requirement
 //
-// to ensure compatibility, use the following macro:
+// to ensure compatibility, use the following before including deadbeef.h:
 // #define DDB_API_LEVEL x
 // where x is the minor API version number.
 // that way, you'll get errors or warnings when using incompatible stuff.
+//
+// if you also want to get the deprecation warnings, use the following:
+// #define DDB_WARN_DEPRECATED 1
 
 // api version history:
 // 9.9 -- devel
@@ -90,10 +93,40 @@ extern "C" {
 #define DDB_API_LEVEL DB_API_VERSION_MINOR
 #endif
 
-#if (DDB_API_LEVEL >= 5)
+#if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 5)
 #define DEPRECATED_15 __attribute__ ((deprecated("since deadbeef API 1.5")))
 #else
 #define DEPRECATED_15
+#endif
+
+#if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 4)
+#define DEPRECATED_14 __attribute__ ((deprecated("since deadbeef API 1.4")))
+#else
+#define DEPRECATED_14
+#endif
+
+#if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 3)
+#define DEPRECATED_13 __attribute__ ((deprecated("since deadbeef API 1.3")))
+#else
+#define DEPRECATED_13
+#endif
+
+#if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 2)
+#define DEPRECATED_12 __attribute__ ((deprecated("since deadbeef API 1.2")))
+#else
+#define DEPRECATED_12
+#endif
+
+#if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 1)
+#define DEPRECATED_11 __attribute__ ((deprecated("since deadbeef API 1.1")))
+#else
+#define DEPRECATED_11
+#endif
+
+#if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 0)
+#define DEPRECATED __attribute__ ((deprecated))
+#else
+#define DEPRECATED
 #endif
 
 #define DDB_PLUGIN_SET_API_VERSION\
@@ -605,40 +638,39 @@ typedef struct {
     // they are marked with DEPRECATED comment
 
     // DEPRECATED: please use plt_get_item_idx
-    int (*pl_get_idx_of) (DB_playItem_t *it);
-    int (*pl_get_idx_of_iter) (DB_playItem_t *it, int iter);
+    int (*pl_get_idx_of) (DB_playItem_t *it) DEPRECATED;
+    int (*pl_get_idx_of_iter) (DB_playItem_t *it, int iter) DEPRECATED;
 
     // DEPRECATED: please use plt_get_item_for_idx
-    DB_playItem_t * (*pl_get_for_idx) (int idx);
-    DB_playItem_t * (*pl_get_for_idx_and_iter) (int idx, int iter);
+    DB_playItem_t * (*pl_get_for_idx) (int idx) DEPRECATED;
+    DB_playItem_t * (*pl_get_for_idx_and_iter) (int idx, int iter) DEPRECATED;
 
     // DEPRECATED: please use plt_get_totaltime
-    float (*pl_get_totaltime) (void);
+    float (*pl_get_totaltime) (void) DEPRECATED;
 
     // DEPRECATED: please use plt_get_item_count
-    int (*pl_getcount) (int iter);
+    int (*pl_getcount) (int iter) DEPRECATED;
 
     // DEPRECATED: please use plt_delete_selected
-    int (*pl_delete_selected) (void);
+    int (*pl_delete_selected) (void) DEPRECATED;
 
     // DEPRECATED: please use plt_set_cursor
-    void (*pl_set_cursor) (int iter, int cursor);
+    void (*pl_set_cursor) (int iter, int cursor) DEPRECATED;
 
     // DEPRECATED: please use plt_get_cursor
-    int (*pl_get_cursor) (int iter);
+    int (*pl_get_cursor) (int iter) DEPRECATED;
 
     // DEPRECATED: please use plt_crop_selected
-    void (*pl_crop_selected) (void);
+    void (*pl_crop_selected) (void) DEPRECATED;
 
     // DEPRECATED: please use plt_getselcount
-    int (*pl_getselcount) (void);
+    int (*pl_getselcount) (void) DEPRECATED;
 
     // DEPRECATED: please use plt_get_first
-    DB_playItem_t *(*pl_get_first) (int iter);
+    DB_playItem_t *(*pl_get_first) (int iter) DEPRECATED;
     
     // DEPRECATED: please use plt_get_last
-    DB_playItem_t *(*pl_get_last) (int iter);
-
+    DB_playItem_t *(*pl_get_last) (int iter) DEPRECATED;
 
     void (*pl_set_selected) (DB_playItem_t *it, int sel);
     int (*pl_is_selected) (DB_playItem_t *it);
@@ -895,19 +927,30 @@ typedef struct {
     // register file added callback
     // the callback will be called for each file
     // the visibility is taken from plt_add_* arguments
-
+    // the callback must return 0 to continue, or -1 to abort the operation.
     void (*listen_file_added) (int (*callback)(ddb_fileadd_data_t *data, void *user_data), void *user_data);
     void (*unlisten_file_added) (int (*callback)(ddb_fileadd_data_t *data, void *user_data), void *user_data);
 
-    // visibility is a number, which tells listeners about the caller
-    // 0 is reserved for callers which want the GUI to intercept the calls,
-    // and show visual updates.
+    // visibility is a number, which tells listeners about the caller.
+    // the value DDB_FILEADD_VISIBILITY_GUI (or 0) is reserved for callers which
+    // want the GUI to intercept the calls and show visual updates.
+    //
     // this is the default value passed from plt_load, plt_add_dir, plt_add_file.
-    DB_playItem_t * (*plt_load2) (int visibility, ddb_playlist_t *plt, ddb_playItem_t *after, const char *fname, int *pabort);
-    int (*plt_add_file2) (int visibility, ddb_playlist_t *plt, const char *fname);
-    int (*plt_add_dir2) (int visibility, ddb_playlist_t *plt, const char *dirname);
-    ddb_playItem_t * (*plt_insert_file2) (int visibility, ddb_playlist_t *playlist, ddb_playItem_t *after, const char *fname, int *pabort);
-    ddb_playItem_t *(*plt_insert_dir2) (int visibility, ddb_playlist_t *plt, ddb_playItem_t *after, const char *dirname, int *pabort);
+    //
+    // the values up to 10 are registered for deadbeef itself, so please avoid
+    // using them in your plugins, unless you really know what you're doing.
+    // any values above 10 are free for any use.
+    //
+    // the "callback", if not NULL, will be called with the passed "user_data",
+    // for each track.
+    //
+    // the registered listeners will be called too, the ddb_fileadd_data_t
+    // has the visibility
+    DB_playItem_t * (*plt_load2) (int visibility, ddb_playlist_t *plt, ddb_playItem_t *after, const char *fname, int *pabort, int (*callback)(DB_playItem_t *it, void *user_data), void *user_data);
+    int (*plt_add_file2) (int visibility, ddb_playlist_t *plt, const char *fname, int (*callback)(DB_playItem_t *it, void *user_data), void *user_data);
+    int (*plt_add_dir2) (int visibility, ddb_playlist_t *plt, const char *dirname, int (*callback)(DB_playItem_t *it, void *user_data), void *user_data);
+    ddb_playItem_t * (*plt_insert_file2) (int visibility, ddb_playlist_t *playlist, ddb_playItem_t *after, const char *fname, int *pabort, int (*callback)(DB_playItem_t *it, void *user_data), void *user_data);
+    ddb_playItem_t *(*plt_insert_dir2) (int visibility, ddb_playlist_t *plt, ddb_playItem_t *after, const char *dirname, int *pabort, int (*callback)(DB_playItem_t *it, void *user_data), void *user_data);
 #endif
 } DB_functions_t;
 

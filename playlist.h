@@ -30,6 +30,7 @@
 
 #include <stdint.h>
 #include <time.h>
+#include "deadbeef.h"
 
 #define PL_MAX_ITERATORS 2
 
@@ -484,5 +485,26 @@ plt_get_idx (playlist_t *plt);
 
 int
 plt_save_config (playlist_t *plt);
+
+void
+listen_file_added (int (*callback)(ddb_fileadd_data_t *data, void *user_data), void *user_data);
+
+void
+unlisten_file_added (int (*callback)(ddb_fileadd_data_t *data, void *user_data), void *user_data);
+
+DB_playItem_t *
+plt_load2 (int visibility, playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*callback)(playItem_t *it, void *user_data), void *user_data);
+
+int
+plt_add_file2 (int visibility, playlist_t *plt, const char *fname, int (*callback)(playItem_t *it, void *user_data), void *user_data);
+
+int
+plt_add_dir2 (int visibility, playlist_t *plt, const char *dirname, int (*callback)(playItem_t *it, void *user_data), void *user_data);
+
+playItem_t *
+plt_insert_file2 (int visibility, playlist_t *playlist, playItem_t *after, const char *fname, int *pabort, int (*callback)(playItem_t *it, void *user_data), void *user_data);
+
+playItem_t *
+plt_insert_dir2 (int visibility, playlist_t *plt, playItem_t *after, const char *dirname, int *pabort, int (*callback)(playItem_t *it, void *user_data), void *user_data);
 
 #endif // __PLAYLIST_H
