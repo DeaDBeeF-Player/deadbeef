@@ -353,6 +353,13 @@ static DB_functions_t deadbeef_api = {
     .plt_get_idx = (int (*)(ddb_playlist_t *))plt_get_idx,
     .plt_save_n = plt_save_n,
     .plt_save_config = (int (*)(ddb_playlist_t *))plt_save_config,
+    .listen_file_added = listen_file_added,
+    .unlisten_file_added = unlisten_file_added,
+    .plt_load2 = (DB_playItem_t * (*) (int visibility, ddb_playlist_t *plt, ddb_playItem_t *after, const char *fname, int *pabort, int (*callback)(DB_playItem_t *it, void *user_data), void *user_data))plt_load2,
+    .plt_add_file2 = (int (*) (int visibility, ddb_playlist_t *plt, const char *fname, int (*callback)(DB_playItem_t *it, void *user_data), void *user_data))plt_add_file2,
+    .plt_add_dir2 = (int (*) (int visibility, ddb_playlist_t *plt, const char *dirname, int (*callback)(DB_playItem_t *it, void *user_data), void *user_data))plt_add_dir2,
+    .plt_insert_file2 = (ddb_playItem_t * (*) (int visibility, ddb_playlist_t *playlist, ddb_playItem_t *after, const char *fname, int *pabort, int (*callback)(DB_playItem_t *it, void *user_data), void *user_data))plt_insert_file2,
+    .plt_insert_dir2 = (ddb_playItem_t *(*) (int visibility, ddb_playlist_t *plt, ddb_playItem_t *after, const char *dirname, int *pabort, int (*callback)(DB_playItem_t *it, void *user_data), void *user_data))plt_insert_dir2,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

@@ -3939,30 +3939,58 @@ plt_save_config (playlist_t *plt) {
     return plt_save_n (i);
 }
 
+typedef struct ddb_fileadd_listener_s {
+    int (*callback)(ddb_fileadd_data_t *data, void *user_data);
+    void *user_data;
+    struct ddb_fileadd_listener_s *next;
+} ddb_fileadd_listener_t;
+
+static ddb_fileadd_listener_t *file_add_listeners;
+
 void
 listen_file_added (int (*callback)(ddb_fileadd_data_t *data, void *user_data), void *user_data) {
+    ddb_fileadd_listener_t *l = malloc (sizeof (ddb_fileadd_listener_t));
+    memset (l, 0, sizeof (ddb_fileadd_listener_t));
+    l->callback = callback;
+    l->user_data = user_data;
+    l->next = file_add_listeners;
+    file_add_listeners = l;
+
 }
 
 void
 unlisten_file_added (int (*callback)(ddb_fileadd_data_t *data, void *user_data), void *user_data) {
+    ddb_fileadd_listener_t *prev = NULL;
+    for (ddb_fileadd_listener_t *l = file_add_listeners; l; prev = l, l = l->next) {
+        if (l->callback == callback && l->user_data == user_data) {
+            if (prev) {
+                prev->next = l->next;
+            }
+            else {
+                file_add_listeners = l->next;
+            }
+            free (l);
+            break;
+        }
+    }
 }
 
 DB_playItem_t *
-plt_load2 (int visibility, playlist_t *plt, playItem_t *after, const char *fname, int *pabort) {
-    plt_load_int (visibility, plt, after, fname, pabort, NULL, NULL);
+plt_load2 (int visibility, playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*callback)(playItem_t *it, void *user_data), void *user_data) {
+    plt_load_int (visibility, plt, after, fname, pabort, callback, user_data);
 }
 
 int
-plt_add_file2 (int visibility, playlist_t *plt, const char *fname) {
-    return plt_add_file_int (visibility, plt, fname, NULL, NULL);
+plt_add_file2 (int visibility, playlist_t *plt, const char *fname, int (*callback)(playItem_t *it, void *user_data), void *user_data) {
+    return plt_add_file_int (visibility, plt, fname, callback, user_data);
 }
 
 int
-plt_add_dir2 (int visibility, playlist_t *plt, const char *dirname) {
+plt_add_dir2 (int visibility, playlist_t *plt, const char *dirname, int (*callback)(playItem_t *it, void *user_data), void *user_data) {
     follow_symlinks = conf_get_int ("add_folders_follow_symlinks", 0);
     ignore_archives = conf_get_int ("ignore_archives", 1);
     int abort = 0;
-    playItem_t *it = plt_insert_dir_int (visibility, plt, NULL, plt->tail[PL_MAIN], dirname, &abort, NULL, NULL);
+    playItem_t *it = plt_insert_dir_int (visibility, plt, NULL, plt->tail[PL_MAIN], dirname, &abort, callback, user_data);
     if (it) {
         // pl_insert_file doesn't hold reference, don't unref here
         return 0;
@@ -3971,11 +3999,11 @@ plt_add_dir2 (int visibility, playlist_t *plt, const char *dirname) {
 }
 
 playItem_t *
-plt_insert_file2 (int visibility, playlist_t *playlist, playItem_t *after, const char *fname, int *pabort) {
-    return plt_insert_file_int (visibility, playlist, after, fname, pabort, NULL, NULL);
+plt_insert_file2 (int visibility, playlist_t *playlist, playItem_t *after, const char *fname, int *pabort, int (*callback)(playItem_t *it, void *user_data), void *user_data) {
+    return plt_insert_file_int (visibility, playlist, after, fname, pabort, callback, user_data);
 }
 
 playItem_t *
-plt_insert_dir2 (int visibility, playlist_t *plt, playItem_t *after, const char *dirname, int *pabort) {
-    return plt_insert_dir_int (visibility, plt, NULL, after, dirname, pabort, NULL, NULL);
+plt_insert_dir2 (int visibility, playlist_t *plt, playItem_t *after, const char *dirname, int *pabort, int (*callback)(playItem_t *it, void *user_data), void *user_data) {
+    return plt_insert_dir_int (visibility, plt, NULL, after, dirname, pabort, callback, user_data);
 }
