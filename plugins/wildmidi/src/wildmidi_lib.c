@@ -620,7 +620,7 @@ WM_BufferFile (const char *filename, unsigned long int *size) {
 			strncpy (buffer_file, home,strlen(home));
 		}
 	} else if (buffer_file[0] != '/') {
-		getcwd(buffer_dir,1024);
+		char *res = getcwd(buffer_dir,1024);
 		if (buffer_dir[strlen(buffer_dir)-1] != '/') {
 			buffer_dir[strlen(buffer_dir)+1] = '\0';
 			buffer_dir[strlen(buffer_dir)] = '/';
