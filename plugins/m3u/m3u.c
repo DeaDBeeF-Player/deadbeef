@@ -187,7 +187,7 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
         }
         if (is_fullpath) { // full path
             trace ("pl_insert_m3u: adding file %s\n", nm);
-            it = deadbeef->plt_insert_file (plt, after, nm, pabort, cb, user_data);
+            it = deadbeef->plt_insert_file2 (0, plt, after, nm, pabort, cb, user_data);
             if (it) {
                 if (length >= 0 && deadbeef->pl_get_item_duration (it) < 0) {
                     deadbeef->plt_set_item_duration (plt, it, length);
@@ -206,7 +206,7 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
             memcpy (fullpath, fname, slash - fname + 1);
             strcpy (fullpath + (slash - fname + 1), nm);
             trace ("pl_insert_m3u: adding file %s\n", fullpath);
-            it = deadbeef->plt_insert_file (plt, after, fullpath, pabort, cb, user_data);
+            it = deadbeef->plt_insert_file2 (0, plt, after, fullpath, pabort, cb, user_data);
         }
         if (it) {
             after = it;
@@ -238,7 +238,7 @@ pls_insert_file (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, c
     const char *slash = NULL;
 
     if (strrchr (uri, '/')) {
-        it = deadbeef->plt_insert_file (plt, after, uri, pabort, cb, user_data);
+        it = deadbeef->plt_insert_file2 (0, plt, after, uri, pabort, cb, user_data);
     }
     else if (slash = strrchr (fname, '/')) {
         int l = strlen (uri);
@@ -246,7 +246,7 @@ pls_insert_file (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, c
         memcpy (fullpath, fname, slash - fname + 1);
         strcpy (fullpath + (slash - fname + 1), uri);
         trace ("pls_insert_file: adding file %s\n", fullpath);
-        it = deadbeef->plt_insert_file (plt, after, fullpath, pabort, cb, user_data);
+        it = deadbeef->plt_insert_file2 (0, plt, after, fullpath, pabort, cb, user_data);
     }
     if (it) {
         if (length[0]) {
