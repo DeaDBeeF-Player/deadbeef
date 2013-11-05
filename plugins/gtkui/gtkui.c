@@ -1089,23 +1089,6 @@ gtkui_thread (void *ctx) {
 
     fileadded_listener_id = deadbeef->listen_file_added (gtkui_add_file_info_cb, NULL);
     fileadd_beginend_listener_id = deadbeef->listen_file_add_beginend (gtkui_add_file_begin_cb, gtkui_add_file_end_cb, NULL);
-#if 0
-    // override default file adding APIs to show progress bar
-    gtkui_original_plt_add_dir = deadbeef->plt_add_dir;
-    deadbeef->plt_add_dir = gtkui_plt_add_dir;
-
-    gtkui_original_plt_add_file = deadbeef->plt_add_file;
-    deadbeef->plt_add_file = gtkui_plt_add_file;
-
-    gtkui_original_pl_add_files_begin = deadbeef->pl_add_files_begin;
-    deadbeef->pl_add_files_begin = gtkui_pl_add_files_begin;
-
-    gtkui_original_pl_add_files_end = deadbeef->pl_add_files_end;
-    deadbeef->pl_add_files_end = gtkui_pl_add_files_end;
-
-    gtkui_original_plt_load = deadbeef->plt_load;
-    deadbeef->plt_load = gtkui_plt_load;
-#endif
 
     supereq_plugin = deadbeef->plug_get_for_id ("supereq");
 
@@ -1154,45 +1137,6 @@ gtkui_set_progress_text_idle (gpointer data) {
     }
     return FALSE;
 }
-
-#if 0
-DB_playItem_t * (*gtkui_original_plt_load) (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
-
-int
-gtkui_plt_add_dir (ddb_playlist_t *plt, const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data) {
-    int res = gtkui_original_plt_add_dir (plt, dirname, gtkui_add_file_info_cb, NULL);
-    return res;
-}
-
-int
-gtkui_plt_add_file (ddb_playlist_t *plt, const char *filename, int (*cb)(DB_playItem_t *it, void *data), void *user_data) {
-    int res = gtkui_original_plt_add_file (plt, filename, gtkui_add_file_info_cb, NULL);
-    return res;
-}
-
-int
-gtkui_pl_add_files_begin (ddb_playlist_t *plt) {
-    progress_show ();
-    return gtkui_original_pl_add_files_begin (plt);
-}
-
-void
-gtkui_pl_add_files_end (void) {
-    progress_hide ();
-    gtkui_original_pl_add_files_end ();
-}
-
-DB_playItem_t *
-gtkui_plt_load (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data) {
-    if (deadbeef->pl_add_files_begin (plt) < 0) {
-        return NULL;
-    }
-    DB_playItem_t *it = gtkui_original_plt_load (plt, after, fname, pabort, gtkui_add_file_info_cb, user_data);
-    deadbeef->pl_add_files_end ();
-
-    return it;
-}
-#endif
 
 void
 gtkui_playlist_set_curr (int playlist) {
