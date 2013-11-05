@@ -849,7 +849,7 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
                     tmp = "/tmp";
                 }
                 snprintf (input_file_name, sizeof (input_file_name), "%s/ddbconvXXXXXX", tmp);
-                mktemp (input_file_name);
+                char *res = mktemp (input_file_name);
                 strcat (input_file_name, ".wav");
             }
             else {

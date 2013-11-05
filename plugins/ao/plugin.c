@@ -186,21 +186,21 @@ aoplug_seek (DB_fileinfo_t *_info, float time) {
 
 static void
 aoplug_add_meta (DB_playItem_t *it, const char *key, const char *value, const char *comment_title) {
-    const char *res = NULL;
+//    const char *res = NULL;
     char tmp[200];
     // check utf8
     if (deadbeef->junk_recode (value, strlen (value), tmp, sizeof (tmp), "utf-8") >= 0) {
         if (key) {
             deadbeef->pl_add_meta (it, key, value);
         }
-        res = value;
+//        res = value;
     }
     // check shift-jis
     if (deadbeef->junk_recode (value, strlen (value), tmp, sizeof (tmp), "SHIFT-JIS") >= 0) {
         if (key) {
             deadbeef->pl_add_meta (it, key, tmp);
         }
-        res = tmp;
+//        res = tmp;
     }
 
 //    if (res) {
