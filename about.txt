@@ -73,5 +73,15 @@ Bundled libraries:
 Independent implementation of MD5 (RFC 1321).
 Copyright © 1999, 2000, 2002 Aladdin Enterprises.  All rights reserved.
 
+FFT Implementation from Audacious player
+Copyright © 2011 John Lindgren
+
+Optimized math routines from libvorbis
+Copyright © 2002-2008 Xiph.org Foundation
+
+The UTF-8 code is based on Basic UTF-8 manipulation routines by Jeff Bezanson
+Copyright © Jeff Bezanson
+placed in the public domain Fall 2005
+
 
 For information on libraries used in plugins -- see specific plugin's copyright information.
