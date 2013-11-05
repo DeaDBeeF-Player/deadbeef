@@ -283,6 +283,12 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
         parg++;
     }
     if (parg < pend) {
+        playlist_t *curr_plt = plt_get_curr ();
+        if (plt_add_files_begin (curr_plt, 0) != 0) {
+            plt_unref (curr_plt);
+            snprintf (sendback, sbsize, "it's not allowed to add files to playlist right now, because another file adding operation is in progress. please try again later.");
+            return 0;
+        }
         if (conf_get_int ("cli_add_to_specific_playlist", 1)) {
             char str[200];
             conf_get_str ("cli_add_playlist_name", "Default", str, sizeof (str));
@@ -295,46 +301,38 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             }
         }
         // add files
-        playlist_t *curr_plt = plt_get_curr ();
         if (!queue) {
             plt_clear (curr_plt);
             messagepump_push (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
             plt_reset_cursor (curr_plt);
         }
-        if (parg < pend) {
-            if (deadbeef->pl_add_files_begin ((ddb_playlist_t *)curr_plt) != 0) {
-                plt_unref (curr_plt);
-                snprintf (sendback, sbsize, "it's not allowed to add files to playlist right now, because another file adding operation is in progress. please try again later.");
-                return 0;
+        while (parg < pend) {
+            char resolved[PATH_MAX];
+            const char *pname;
+            if (realpath (parg, resolved)) {
+                pname = resolved;
             }
-            while (parg < pend) {
-                char resolved[PATH_MAX];
-                const char *pname;
-                if (realpath (parg, resolved)) {
-                    pname = resolved;
-                }
-                else {
-                    pname = parg;
-                }
-                if (deadbeef->plt_add_dir ((ddb_playlist_t*)curr_plt, pname, NULL, NULL) < 0) {
-                    if (deadbeef->plt_add_file ((ddb_playlist_t*)curr_plt, pname, NULL, NULL) < 0) {
-                        int ab = 0;
-                        playItem_t *it = plt_load (curr_plt, NULL, pname, &ab, NULL, NULL);
-                        if (it) {
-                            pl_item_unref (it);
-                        }
-                        else {
-                            fprintf (stderr, "failed to add file or folder %s\n", pname);
-                        }
+            else {
+                pname = parg;
+            }
+            if (deadbeef->plt_add_dir2 (0, (ddb_playlist_t*)curr_plt, pname, NULL, NULL) < 0) {
+                if (deadbeef->plt_add_file2 (0, (ddb_playlist_t*)curr_plt, pname, NULL, NULL) < 0) {
+                    int ab = 0;
+                    playItem_t *it = plt_load2 (0, curr_plt, NULL, pname, &ab, NULL, NULL);
+                    if (it) {
+                        pl_item_unref (it);
+                    }
+                    else {
+                        fprintf (stderr, "failed to add file or folder %s\n", pname);
                     }
                 }
-                parg += strlen (parg);
-                parg++;
             }
-            deadbeef->pl_add_files_end ();
-            plt_unref (curr_plt);
+            parg += strlen (parg);
+            parg++;
         }
         messagepump_push (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
+        plt_add_files_end (curr_plt, 0);
+        plt_unref (curr_plt);
         if (!queue) {
             messagepump_push (DB_EV_PLAY_CURRENT, 0, 1, 0);
             return 2; // don't reload playlist at startup

@@ -8,18 +8,18 @@
 #include "progress.h"
 #include "support.h"
 
-void
-gtkpl_add_dir (DdbListview *ps, char *folder) {
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    gtkui_original_plt_add_dir (plt, folder, gtkui_add_file_info_cb, NULL);
-    deadbeef->plt_unref (plt);
-    g_free (folder);
-}
+//void
+//gtkpl_add_dir (DdbListview *ps, char *folder) {
+//    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+//    gtkui_original_plt_add_dir (plt, folder, gtkui_add_file_info_cb, NULL);
+//    deadbeef->plt_unref (plt);
+//    g_free (folder);
+//}
 
 static void
 gtkpl_adddir_cb (gpointer data, gpointer userdata) {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    gtkui_original_plt_add_dir (plt, data, gtkui_add_file_info_cb, userdata);
+    deadbeef->plt_add_dir2 (0, plt, data, NULL, NULL);
     deadbeef->plt_unref (plt);
     g_free (data);
 }
@@ -28,7 +28,7 @@ void
 gtkpl_add_dirs (GSList *lst) {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     int empty = 0 == deadbeef->plt_get_item_count (plt, PL_MAIN);
-    if (deadbeef->pl_add_files_begin (plt) < 0) {
+    if (deadbeef->plt_add_files_begin (plt, 0) < 0) {
         deadbeef->plt_unref (plt);
         g_slist_free (lst);
         return;
@@ -51,14 +51,14 @@ gtkpl_add_dirs (GSList *lst) {
     deadbeef->pl_unlock ();
     g_slist_foreach(lst, gtkpl_adddir_cb, NULL);
     g_slist_free (lst);
-    deadbeef->pl_add_files_end ();
+    deadbeef->plt_add_files_end (plt, 0);
     deadbeef->plt_unref (plt);
 }
 
 static void
 gtkpl_addfile_cb (gpointer data, gpointer userdata) {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    gtkui_original_plt_add_file (plt, data, gtkui_add_file_info_cb, userdata);
+    deadbeef->plt_add_file2 (0, plt, data, NULL, 0);
     deadbeef->plt_unref (plt);
     g_free (data);
 }
@@ -66,14 +66,14 @@ gtkpl_addfile_cb (gpointer data, gpointer userdata) {
 void
 gtkpl_add_files (GSList *lst) {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    if (deadbeef->pl_add_files_begin (plt) < 0) {
+    if (deadbeef->plt_add_files_begin (plt, 0) < 0) {
         g_slist_free (lst);
         deadbeef->plt_unref (plt);
         return;
     }
     g_slist_foreach(lst, gtkpl_addfile_cb, NULL);
     g_slist_free (lst);
-    deadbeef->pl_add_files_end ();
+    deadbeef->plt_add_files_end (plt, 0);
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
     deadbeef->conf_save ();
@@ -183,7 +183,7 @@ set_dnd_cursor_idle (gpointer data) {
 void
 gtkpl_add_fm_dropped_files (DB_playItem_t *drop_before, char *ptr, int length) {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    if (deadbeef->pl_add_files_begin (plt) < 0) {
+    if (deadbeef->plt_add_files_begin (plt, 0) < 0) {
         free (ptr);
         deadbeef->plt_unref (plt);
         return;
@@ -209,11 +209,11 @@ gtkpl_add_fm_dropped_files (DB_playItem_t *drop_before, char *ptr, int length) {
             //strncpy (fname, p, pe - p);
             //fname[pe - p] = 0;
             int abort = 0;
-            DdbListviewIter inserted = deadbeef->plt_insert_dir (plt, after, fname, &abort, gtkui_add_file_info_cb, NULL);
+            DdbListviewIter inserted = deadbeef->plt_insert_dir2 (0, plt, after, fname, &abort, NULL, NULL);
             if (!inserted && !abort) {
-                inserted = deadbeef->plt_insert_file (plt, after, fname, &abort, gtkui_add_file_info_cb, NULL);
+                inserted = deadbeef->plt_insert_file2 (0, plt, after, fname, &abort, NULL, NULL);
                 if (!inserted && !abort) {
-                    inserted = gtkui_original_plt_load (plt, after, fname, &abort, gtkui_add_file_info_cb, NULL);
+                    inserted = deadbeef->plt_load2 (0, plt, after, fname, &abort, NULL, NULL);
                 }
             }
             if (inserted) {
@@ -238,7 +238,7 @@ gtkpl_add_fm_dropped_files (DB_playItem_t *drop_before, char *ptr, int length) {
     }
     free (ptr);
 
-    deadbeef->pl_add_files_end ();
+    deadbeef->plt_add_files_end (plt, 0);
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
     g_idle_add (set_dnd_cursor_idle, first);

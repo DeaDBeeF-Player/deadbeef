@@ -159,7 +159,7 @@ ddb_gui_GTK2_la_CFLAGS = -std=c99 -I$(GTK_ROOT_216)/include/gtk-2.0 -I$(GTK_ROOT
 else
 ddb_gui_GTK2_la_LIBADD = $(LDADD) $(GTK2_DEPS_LIBS) $(SM_LIBADD) ../libparser/libparser.a  $(GTKGLEXT2_LIBS)
 
-ddb_gui_GTK2_la_CFLAGS = -std=c99 $(GTK2_DEPS_CFLAGS) $(SM_CFLAGS) $(GTKGLEXT_CFLAGS_GTK2)
+ddb_gui_GTK2_la_CFLAGS = -std=c99 $(GTK2_DEPS_CFLAGS) $(SM_CFLAGS) $(GTKGLEXT_CFLAGS_GTK2) -DDDB_WARN_DEPRECATED=1
 endif
 
 endif
