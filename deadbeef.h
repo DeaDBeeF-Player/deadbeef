@@ -65,6 +65,9 @@ extern "C" {
 //
 // if you also want to get the deprecation warnings, use the following:
 // #define DDB_WARN_DEPRECATED 1
+//
+// NOTE: deprecation doesn't mean the API is going to be removed, it just means
+// that there's a better replacement in the newer deadbeef versions.
 
 // api version history:
 // 9.9 -- devel
@@ -604,8 +607,8 @@ typedef struct {
     void (*plt_sort) (ddb_playlist_t *plt, int iter, int id, const char *format, int order);
 
     // add files and folders to current playlist
-    int (*plt_add_file) (ddb_playlist_t *plt, const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
-    int (*plt_add_dir) (ddb_playlist_t *plt, const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+    int (*plt_add_file) (ddb_playlist_t *plt, const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data) DEPRECATED_15;
+    int (*plt_add_dir) (ddb_playlist_t *plt, const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data) DEPRECATED_15;
 
     // cuesheet support
     DB_playItem_t *(*plt_insert_cue_from_buffer) (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate);
@@ -622,65 +625,85 @@ typedef struct {
     void (*pl_item_unref) (DB_playItem_t *it);
     void (*pl_item_copy) (DB_playItem_t *out, DB_playItem_t *in);
 
+    // request lock for adding files to playlist
     // this function may return -1 if it is not possible to add files right now.
-    // caller must cancel operation in this case, or wait until previous add
-    // finishes
-    int (*pl_add_files_begin) (ddb_playlist_t *plt);
+    // caller must cancel operation in this case,
+    // or wait until previous operation finishes
+    int (*pl_add_files_begin) (ddb_playlist_t *plt) DEPRECATED_15;
 
+    // release the lock for adding files to playlist
     // end must be called when add files operation is finished
-    void (*pl_add_files_end) (void);
+    void (*pl_add_files_end) (void) DEPRECATED_15;
 
     // most of this functions are self explanatory
     // if you don't get what they do -- look in the code
-    // NOTE: many of pl_* functions, especially the ones that operate on current
-    // playlist, are going to be nuked somewhere around 0.6 release, in favor of
-    // more explicit plt_* family.
-    // they are marked with DEPRECATED comment
 
-    // DEPRECATED: please use plt_get_item_idx
-    int (*pl_get_idx_of) (DB_playItem_t *it) DEPRECATED;
-    int (*pl_get_idx_of_iter) (DB_playItem_t *it, int iter) DEPRECATED;
+    // --- the following functions work with current playlist ---
 
-    // DEPRECATED: please use plt_get_item_for_idx
-    DB_playItem_t * (*pl_get_for_idx) (int idx) DEPRECATED;
-    DB_playItem_t * (*pl_get_for_idx_and_iter) (int idx, int iter) DEPRECATED;
+    // get index of the track in MAIN
+    int (*pl_get_idx_of) (DB_playItem_t *it);
 
-    // DEPRECATED: please use plt_get_totaltime
-    float (*pl_get_totaltime) (void) DEPRECATED;
+    // get index of the track in MAIN or SEARCH
+    int (*pl_get_idx_of_iter) (DB_playItem_t *it, int iter);
 
-    // DEPRECATED: please use plt_get_item_count
-    int (*pl_getcount) (int iter) DEPRECATED;
+    // get track for index in MAIN
+    DB_playItem_t * (*pl_get_for_idx) (int idx);
 
-    // DEPRECATED: please use plt_delete_selected
-    int (*pl_delete_selected) (void) DEPRECATED;
+    // get track for index in MAIN or SEARCH
+    DB_playItem_t * (*pl_get_for_idx_and_iter) (int idx, int iter);
 
-    // DEPRECATED: please use plt_set_cursor
-    void (*pl_set_cursor) (int iter, int cursor) DEPRECATED;
+    // get total play time of all tracks in MAIN
+    float (*pl_get_totaltime) (void);
 
-    // DEPRECATED: please use plt_get_cursor
-    int (*pl_get_cursor) (int iter) DEPRECATED;
+    // get number of tracks in MAIN or SEARCH
+    int (*pl_getcount) (int iter);
 
-    // DEPRECATED: please use plt_crop_selected
-    void (*pl_crop_selected) (void) DEPRECATED;
+    // delete selected tracks
+    int (*pl_delete_selected) (void);
 
-    // DEPRECATED: please use plt_getselcount
-    int (*pl_getselcount) (void) DEPRECATED;
+    // set cursor position in MAIN or SEARCH
+    void (*pl_set_cursor) (int iter, int cursor);
 
-    // DEPRECATED: please use plt_get_first
-    DB_playItem_t *(*pl_get_first) (int iter) DEPRECATED;
-    
-    // DEPRECATED: please use plt_get_last
-    DB_playItem_t *(*pl_get_last) (int iter) DEPRECATED;
+    // get cursor position in MAIN
+    int (*pl_get_cursor) (int iter);
 
+    // remove all except selected tracks
+    void (*pl_crop_selected) (void);
+
+    // get number of selected tracks
+    int (*pl_getselcount) (void);
+
+    // get first track in MAIN or SEARCH
+    DB_playItem_t *(*pl_get_first) (int iter);
+
+    // get last track in MAIN or SEARCH
+    DB_playItem_t *(*pl_get_last) (int iter);
+
+    // --- misc functions ---
+
+    // mark the track as selected or unselected (1 or 0 respectively)
     void (*pl_set_selected) (DB_playItem_t *it, int sel);
+
+    // test whether the track is selected
     int (*pl_is_selected) (DB_playItem_t *it);
+
+    // save current playlist
     int (*pl_save_current) (void);
+
+    // save all playlists
     int (*pl_save_all) (void);
+
+    // select all tracks in current playlist
     void (*pl_select_all) (void);
+
+    // get next track
     DB_playItem_t *(*pl_get_next) (DB_playItem_t *it, int iter);
+    
+    // get previous track
     DB_playItem_t *(*pl_get_prev) (DB_playItem_t *it, int iter);
+
     /*
-       this function formats line for display in playlist
+       pl_format_title formats the line for display in playlist
        @it pointer to playlist item
        @idx number of that item in playlist (or -1)
        @s output buffer
@@ -706,8 +729,11 @@ typedef struct {
        more to come
     */
     int (*pl_format_title) (DB_playItem_t *it, int idx, char *s, int size, int id, const char *fmt);
+
     // _escaped version wraps all conversions with '' and replaces every ' in conversions with \'
     int (*pl_format_title_escaped) (DB_playItem_t *it, int idx, char *s, int size, int id, const char *fmt);
+
+    // format duration 't' (fractional seconds) into string, for display in playlist
     void (*pl_format_time) (float t, char *dur, int size);
 
     // find which playlist the specified item belongs to, returns NULL if none
@@ -928,8 +954,12 @@ typedef struct {
     // the callback will be called for each file
     // the visibility is taken from plt_add_* arguments
     // the callback must return 0 to continue, or -1 to abort the operation.
-    void (*listen_file_added) (int (*callback)(ddb_fileadd_data_t *data, void *user_data), void *user_data);
-    void (*unlisten_file_added) (int (*callback)(ddb_fileadd_data_t *data, void *user_data), void *user_data);
+    // returns ID
+    int (*listen_file_added) (int (*callback)(ddb_fileadd_data_t *data, void *user_data), void *user_data);
+    void (*unlisten_file_added) (int id);
+
+    int (*listen_file_add_beginend) (void (*callback_begin) (ddb_fileadd_data_t *data, void *user_data), void (*callback_end)(ddb_fileadd_data_t *data, void *user_data), void *user_data);
+    void (*unlisten_file_add_beginend) (int id);
 
     // visibility is a number, which tells listeners about the caller.
     // the value DDB_FILEADD_VISIBILITY_GUI (or 0) is reserved for callers which
@@ -951,6 +981,19 @@ typedef struct {
     int (*plt_add_dir2) (int visibility, ddb_playlist_t *plt, const char *dirname, int (*callback)(DB_playItem_t *it, void *user_data), void *user_data);
     ddb_playItem_t * (*plt_insert_file2) (int visibility, ddb_playlist_t *playlist, ddb_playItem_t *after, const char *fname, int *pabort, int (*callback)(DB_playItem_t *it, void *user_data), void *user_data);
     ddb_playItem_t *(*plt_insert_dir2) (int visibility, ddb_playlist_t *plt, ddb_playItem_t *after, const char *dirname, int *pabort, int (*callback)(DB_playItem_t *it, void *user_data), void *user_data);
+
+    // request lock for adding files to playlist
+    // returns 0 on success
+    // this function may return -1 if it is not possible to add files right now.
+    // caller must cancel operation in this case,
+    // or wait until previous operation finishes
+    // NOTE: it's not guaranteed that all deadbeef versions support
+    // adding the files to different playlists in parallel.
+    int (*plt_add_files_begin) (ddb_playlist_t *plt, int visibility);
+
+    // release the lock for adding files to playlist
+    // end must be called when add files operation is finished
+    void (*plt_add_files_end) (ddb_playlist_t *plt, int visibility);
 #endif
 } DB_functions_t;
 

@@ -120,6 +120,25 @@ static int no_remove_notify;
 
 static playlist_t *addfiles_playlist; // current playlist for adding files/folders; set in pl_add_files_begin
 
+typedef struct ddb_fileadd_listener_s {
+    int id;
+    int (*callback)(ddb_fileadd_data_t *data, void *user_data);
+    void *user_data;
+    struct ddb_fileadd_listener_s *next;
+} ddb_fileadd_listener_t;
+
+static ddb_fileadd_listener_t *file_add_listeners;
+
+typedef struct ddb_fileadd_beginend_listener_s {
+    int id;
+    void (*callback_begin)(ddb_fileadd_data_t *data, void *user_data);
+    void (*callback_end)(ddb_fileadd_data_t *data, void *user_data);
+    void *user_data;
+    struct ddb_fileadd_beginend_listener_s *next;
+} ddb_fileadd_beginend_listener_t;
+
+static ddb_fileadd_beginend_listener_t *file_add_beginend_listeners;
+
 void
 pl_set_order (int order) {
     int prev_order = pl_order;
@@ -788,12 +807,19 @@ plt_move (int from, int to) {
 
 void
 plt_clear (playlist_t *plt) {
+    pl_lock ();
+    if (addfiles_playlist) {
+        fprintf (stderr, "forbidden to clear playlist while add files in progress\n");
+        pl_unlock ();
+        return;
+    }
     while (plt->head[PL_MAIN]) {
         plt_remove_item (plt, plt->head[PL_MAIN]);
     }
     plt->current_row[PL_MAIN] = -1;
     plt->current_row[PL_SEARCH] = -1;
     plt_modified (plt);
+    pl_unlock ();
 }
 
 void
@@ -1341,6 +1367,11 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
     }
     eol++;
 
+    ddb_fileadd_data_t d;
+    memset (&d, 0, sizeof (d));
+    d.visibility = visibility;
+    d.plt = (ddb_playlist_t *)playlist;
+
     DB_decoder_t **decoders = plug_get_decoder_list ();
     // match by decoder
     for (int i = 0; decoders[i]; i++) {
@@ -1353,6 +1384,15 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
                     if (inserted != NULL) {
                         if (cb && cb (inserted, user_data) < 0) {
                             *pabort = 1;
+                        }
+                        if (file_add_listeners) {
+                            d.track = (ddb_playItem_t *)inserted;
+                            for (ddb_fileadd_listener_t *l = file_add_listeners; l; l = l->next) {
+                                if (l->callback (&d, l->user_data) < 0) {
+                                    *pabort = 1;
+                                    break;
+                                }
+                            }
                         }
                         trace ("file has been added by decoder: %s\n", decoders[i]->plugin.id);
                         return inserted;
@@ -1368,6 +1408,15 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
                     if (inserted != NULL) {
                         if (cb && cb (inserted, user_data) < 0) {
                             *pabort = 1;
+                        }
+                        if (file_add_listeners) {
+                            d.track = (ddb_playItem_t *)inserted;
+                            for (ddb_fileadd_listener_t *l = file_add_listeners; l; l = l->next) {
+                                if (l->callback (&d, l->user_data) < 0) {
+                                    *pabort = 1;
+                                    break;
+                                }
+                            }
                         }
                         return inserted;
                     }
@@ -1494,30 +1543,12 @@ plt_add_dir (playlist_t *plt, const char *dirname, int (*cb)(playItem_t *it, voi
 
 int
 pl_add_files_begin (playlist_t *plt) {
-    pl_lock ();
-    if (addfiles_playlist) {
-        pl_unlock ();
-        return -1;
-    }
-    addfiles_playlist = plt;
-    if (addfiles_playlist) {
-        plt_ref (addfiles_playlist);
-    }
-    pl_unlock ();
-    trace ("adding to playlist %p (%s)\n", plt, addfiles_playlist->title);
-    return 0;
+    return plt_add_files_begin (plt, 0);
 }
 
 void
 pl_add_files_end (void) {
-    trace ("end adding to playlist %s\n", addfiles_playlist->title);
-    pl_lock ();
-    if (addfiles_playlist) {
-        plt_unref (addfiles_playlist);
-    }
-    addfiles_playlist = NULL;
-    pl_unlock ();
-    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    return plt_add_files_end (addfiles_playlist, 0);
 }
 
 int
@@ -3939,30 +3970,32 @@ plt_save_config (playlist_t *plt) {
     return plt_save_n (i);
 }
 
-typedef struct ddb_fileadd_listener_s {
-    int (*callback)(ddb_fileadd_data_t *data, void *user_data);
-    void *user_data;
-    struct ddb_fileadd_listener_s *next;
-} ddb_fileadd_listener_t;
-
-static ddb_fileadd_listener_t *file_add_listeners;
-
-void
+int
 listen_file_added (int (*callback)(ddb_fileadd_data_t *data, void *user_data), void *user_data) {
-    ddb_fileadd_listener_t *l = malloc (sizeof (ddb_fileadd_listener_t));
+    ddb_fileadd_listener_t *l;
+
+    int id = 1;
+    for (l = file_add_listeners; l; l = l->next) {
+        if (l->id > id) {
+            id = l->id+1;
+        }
+    }
+
+    l = malloc (sizeof (ddb_fileadd_listener_t));
     memset (l, 0, sizeof (ddb_fileadd_listener_t));
+    l->id = id;
     l->callback = callback;
     l->user_data = user_data;
     l->next = file_add_listeners;
     file_add_listeners = l;
-
+    return id;
 }
 
 void
-unlisten_file_added (int (*callback)(ddb_fileadd_data_t *data, void *user_data), void *user_data) {
+unlisten_file_added (int id) {
     ddb_fileadd_listener_t *prev = NULL;
     for (ddb_fileadd_listener_t *l = file_add_listeners; l; prev = l, l = l->next) {
-        if (l->callback == callback && l->user_data == user_data) {
+        if (l->id == id) {
             if (prev) {
                 prev->next = l->next;
             }
@@ -3975,7 +4008,46 @@ unlisten_file_added (int (*callback)(ddb_fileadd_data_t *data, void *user_data),
     }
 }
 
-DB_playItem_t *
+int
+listen_file_add_beginend (void (*callback_begin) (ddb_fileadd_data_t *data, void *user_data), void (*callback_end)(ddb_fileadd_data_t *data, void *user_data), void *user_data) {
+    ddb_fileadd_beginend_listener_t *l;
+
+    int id = 1;
+    for (l = file_add_beginend_listeners; l; l = l->next) {
+        if (l->id > id) {
+            id = l->id+1;
+        }
+    }
+
+    l = malloc (sizeof (ddb_fileadd_beginend_listener_t));
+    memset (l, 0, sizeof (ddb_fileadd_beginend_listener_t));
+    l->id = id;
+    l->callback_begin = callback_begin;
+    l->callback_end = callback_end;
+    l->user_data = user_data;
+    l->next = file_add_beginend_listeners;
+    file_add_beginend_listeners = l;
+    return id;
+}
+
+void
+unlisten_file_add_beginend (int id) {
+    ddb_fileadd_beginend_listener_t *prev = NULL;
+    for (ddb_fileadd_beginend_listener_t *l = file_add_beginend_listeners; l; prev = l, l = l->next) {
+        if (l->id == id) {
+            if (prev) {
+                prev->next = l->next;
+            }
+            else {
+                file_add_beginend_listeners = l->next;
+            }
+            free (l);
+            break;
+        }
+    }
+}
+
+playItem_t *
 plt_load2 (int visibility, playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*callback)(playItem_t *it, void *user_data), void *user_data) {
     plt_load_int (visibility, plt, after, fname, pabort, callback, user_data);
 }
@@ -4006,4 +4078,49 @@ plt_insert_file2 (int visibility, playlist_t *playlist, playItem_t *after, const
 playItem_t *
 plt_insert_dir2 (int visibility, playlist_t *plt, playItem_t *after, const char *dirname, int *pabort, int (*callback)(playItem_t *it, void *user_data), void *user_data) {
     return plt_insert_dir_int (visibility, plt, NULL, after, dirname, pabort, callback, user_data);
+}
+
+int
+plt_add_files_begin (playlist_t *plt, int visibility) {
+    pl_lock ();
+    if (addfiles_playlist) {
+        pl_unlock ();
+        return -1;
+    }
+    if (plt->files_adding) {
+        pl_unlock ();
+        return -1;
+    }
+    addfiles_playlist = plt;
+    plt_ref (addfiles_playlist);
+    plt->files_adding = 1;
+    plt->files_add_visibility = visibility;
+    pl_unlock ();
+    ddb_fileadd_data_t d;
+    memset (&d, 0, sizeof (d));
+    d.visibility = visibility;
+    d.plt = (ddb_playlist_t *)plt;
+    for (ddb_fileadd_beginend_listener_t *l = file_add_beginend_listeners; l; l = l->next) {
+        l->callback_begin (&d, l->user_data);
+    }
+    return 0;
+}
+
+void
+plt_add_files_end (playlist_t *plt, int visibility) {
+    pl_lock ();
+    if (addfiles_playlist) {
+        plt_unref (addfiles_playlist);
+    }
+    addfiles_playlist = NULL;
+    messagepump_push (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+    plt->files_adding = 0;
+    pl_unlock ();
+    ddb_fileadd_data_t d;
+    memset (&d, 0, sizeof (d));
+    d.visibility = visibility;
+    d.plt = (ddb_playlist_t *)plt;
+    for (ddb_fileadd_beginend_listener_t *l = file_add_beginend_listeners; l; l = l->next) {
+        l->callback_end (&d, l->user_data);
+    }
 }

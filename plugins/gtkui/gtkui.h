@@ -132,12 +132,6 @@ gtkui_progress_hide_idle (gpointer data);
 gboolean
 gtkui_set_progress_text_idle (gpointer data);
 
-int
-gtkui_add_file_info_cb (DB_playItem_t *it, void *data);
-
-extern int (*gtkui_original_plt_add_dir) (ddb_playlist_t *plt, const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
-extern int (*gtkui_original_plt_add_file) (ddb_playlist_t *plt, const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
-
 void
 gtkui_playlist_set_curr (int playlist);
 
@@ -152,8 +146,6 @@ gtkui_trackinfochanged (DB_playItem_t *it);
 
 gboolean
 redraw_queued_tracks_cb (gpointer plt);
-
-extern DB_playItem_t * (*gtkui_original_plt_load) (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 
 void
 mainwin_toggle_visible (void);

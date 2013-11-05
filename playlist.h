@@ -67,7 +67,9 @@ typedef struct playlist_s {
     int current_row[PL_MAX_ITERATORS]; // current row (cursor)
     struct DB_metaInfo_s *meta; // linked list storing metainfo
     int refc;
+    int files_add_visibility;
     unsigned fast_mode : 1;
+    unsigned files_adding : 1;
 } playlist_t;
 
 // global playlist control functions
@@ -486,13 +488,19 @@ plt_get_idx (playlist_t *plt);
 int
 plt_save_config (playlist_t *plt);
 
-void
+int
 listen_file_added (int (*callback)(ddb_fileadd_data_t *data, void *user_data), void *user_data);
 
 void
-unlisten_file_added (int (*callback)(ddb_fileadd_data_t *data, void *user_data), void *user_data);
+unlisten_file_added (int id);
 
-DB_playItem_t *
+int
+listen_file_add_beginend (void (*callback_begin) (ddb_fileadd_data_t *data, void *user_data), void (*callback_end)(ddb_fileadd_data_t *data, void *user_data), void *user_data);
+
+void
+unlisten_file_add_beginend (int id);
+
+playItem_t *
 plt_load2 (int visibility, playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*callback)(playItem_t *it, void *user_data), void *user_data);
 
 int
@@ -506,5 +514,11 @@ plt_insert_file2 (int visibility, playlist_t *playlist, playItem_t *after, const
 
 playItem_t *
 plt_insert_dir2 (int visibility, playlist_t *plt, playItem_t *after, const char *dirname, int *pabort, int (*callback)(playItem_t *it, void *user_data), void *user_data);
+
+int
+plt_add_files_begin (playlist_t *plt, int visibility);
+
+void
+plt_add_files_end (playlist_t *plt, int visibility);
 
 #endif // __PLAYLIST_H

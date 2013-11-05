@@ -82,11 +82,15 @@ GtkWidget *traymenu;
 GtkWidget *theme_treeview;
 GtkWidget *theme_button;
 
+int fileadded_listener_id;
+int fileadd_beginend_listener_id;
 // overriden API methods
+#if 0
 int (*gtkui_original_plt_add_dir) (ddb_playlist_t *plt, const char *dirname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 int (*gtkui_original_plt_add_file) (ddb_playlist_t *plt, const char *fname, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 int (*gtkui_original_pl_add_files_begin) (ddb_playlist_t *plt);
 void (*gtkui_original_pl_add_files_end) (void);
+#endif
 
 // cached config variables
 int gtkui_embolden_current_track;
@@ -912,6 +916,34 @@ gtkui_connect_cb (void *none) {
     return FALSE;
 }
 
+int
+gtkui_add_file_info_cb (ddb_fileadd_data_t *data, void *user_data) {
+    if (data->visibility == 0) {
+        if (progress_is_aborted ()) {
+            return -1;
+        }
+        deadbeef->pl_lock ();
+        const char *fname = deadbeef->pl_find_meta (data->track, ":URI");
+        g_idle_add (gtkui_set_progress_text_idle, (gpointer)strdup(fname)); // slowwwww
+        deadbeef->pl_unlock ();
+    }
+    return 0;
+}
+
+void
+gtkui_add_file_begin_cb (ddb_fileadd_data_t *data, void *user_data) {
+    if (data->visibility == 0) {
+        progress_show ();
+    }
+}
+
+void
+gtkui_add_file_end_cb (ddb_fileadd_data_t *data, void *user_data) {
+    if (data->visibility == 0) {
+        progress_hide ();
+    }
+}
+
 void
 gtkui_thread (void *ctx) {
 #ifdef __linux__
@@ -1055,6 +1087,9 @@ gtkui_thread (void *ctx) {
     deadbeef->pl_format_title (NULL, -1, str, sizeof (str), -1, fmt);
     gtk_window_set_title (GTK_WINDOW (mainwin), str);
 
+    fileadded_listener_id = deadbeef->listen_file_added (gtkui_add_file_info_cb, NULL);
+    fileadd_beginend_listener_id = deadbeef->listen_file_add_beginend (gtkui_add_file_begin_cb, gtkui_add_file_end_cb, NULL);
+#if 0
     // override default file adding APIs to show progress bar
     gtkui_original_plt_add_dir = deadbeef->plt_add_dir;
     deadbeef->plt_add_dir = gtkui_plt_add_dir;
@@ -1070,6 +1105,7 @@ gtkui_thread (void *ctx) {
 
     gtkui_original_plt_load = deadbeef->plt_load;
     deadbeef->plt_load = gtkui_plt_load;
+#endif
 
     supereq_plugin = deadbeef->plug_get_for_id ("supereq");
 
@@ -1080,6 +1116,8 @@ gtkui_thread (void *ctx) {
     gtkui_is_retina = is_retina (mainwin);
 #endif
     gtk_main ();
+    deadbeef->unlisten_file_added (fileadded_listener_id);
+    deadbeef->unlisten_file_add_beginend (fileadd_beginend_listener_id);
 
     w_free ();
 
@@ -1117,18 +1155,7 @@ gtkui_set_progress_text_idle (gpointer data) {
     return FALSE;
 }
 
-int
-gtkui_add_file_info_cb (DB_playItem_t *it, void *data) {
-    if (progress_is_aborted ()) {
-        return -1;
-    }
-    deadbeef->pl_lock ();
-    const char *fname = deadbeef->pl_find_meta (it, ":URI");
-    g_idle_add (gtkui_set_progress_text_idle, (gpointer)strdup(fname)); // slowwwww
-    deadbeef->pl_unlock ();
-    return 0;
-}
-
+#if 0
 DB_playItem_t * (*gtkui_original_plt_load) (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 
 int
@@ -1165,6 +1192,7 @@ gtkui_plt_load (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, in
 
     return it;
 }
+#endif
 
 void
 gtkui_playlist_set_curr (int playlist) {

@@ -400,9 +400,9 @@ action_add_location_handler_cb (void *user_data) {
             const char *text = gtk_entry_get_text (entry);
             if (text) {
                 ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-                if (!deadbeef->pl_add_files_begin (plt)) {
-                    deadbeef->plt_add_file (plt, text, NULL, NULL);
-                    deadbeef->pl_add_files_end ();
+                if (!deadbeef->plt_add_files_begin (plt, 0)) {
+                    deadbeef->plt_add_file2 (0, plt, text, NULL, NULL);
+                    deadbeef->plt_add_files_end (plt, 0);
                     playlist_refresh ();
                 }
                 if (plt) {
