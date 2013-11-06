@@ -982,6 +982,7 @@
 	  <property name="invisible_char">•</property>
 	  <property name="activates_default">True</property>
 	  <signal name="changed" handler="on_searchentry_changed" last_modification_time="Sat, 08 Aug 2009 18:18:17 GMT"/>
+	  <signal name="activate" handler="on_searchentry_activate" last_modification_time="Wed, 06 Nov 2013 22:01:38 GMT"/>
 	</widget>
 	<packing>
 	  <property name="padding">0</property>

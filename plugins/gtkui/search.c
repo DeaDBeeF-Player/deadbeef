@@ -167,6 +167,21 @@ on_searchheader_motion_notify_event    (GtkWidget       *widget,
 
 ///////// searchwin playlist navigation and rendering
 
+void
+on_searchentry_activate                (GtkEntry        *entry,
+                                        gpointer         user_data)
+{
+    if (deadbeef->pl_getcount (PL_SEARCH) > 0) {
+        int row = deadbeef->pl_get_cursor (PL_SEARCH);
+        DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (max (row, 0), PL_SEARCH);
+        if (it) {
+            deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, deadbeef->pl_get_idx_of (it), 0);
+            deadbeef->pl_item_unref (it);
+        }
+    }
+}
+
+
 gboolean
 on_searchwin_key_press_event           (GtkWidget       *widget,
                                         GdkEventKey     *event,
@@ -177,14 +192,7 @@ on_searchwin_key_press_event           (GtkWidget       *widget,
         gtk_widget_hide (widget);
     }
     else if (event->keyval == GDK_Return) {
-        if (deadbeef->pl_getcount (PL_SEARCH) > 0) {
-            int row = deadbeef->pl_get_cursor (PL_SEARCH);
-            DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (max (row, 0), PL_SEARCH);
-            if (it) {
-                deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, deadbeef->pl_get_idx_of (it), 0);
-                deadbeef->pl_item_unref (it);
-            }
-        }
+        on_searchentry_activate (NULL, 0);
     }
     else if (event->keyval != GDK_Delete && event->keyval != GDK_Home && event->keyval != GDK_End){
         GtkWidget *pl = lookup_widget (searchwin, "searchlist");
