@@ -624,7 +624,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
         int count = 0;
         for (action = actions; action; action = action->next)
         {
-            if ((action->flags & DB_ACTION_COMMON) || !(action->flags & DB_ACTION_ADD_MENU) || !(action->flags & (DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_SINGLE_TRACK)))
+            if ((action->flags & DB_ACTION_COMMON) || !((action->callback2 && (action->flags & DB_ACTION_ADD_MENU)) || action->callback) || !(action->flags & (DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_SINGLE_TRACK)))
                 continue;
 
             // create submenus (separated with '/')
@@ -701,8 +701,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
                     G_CALLBACK (actionitem_activate),
                     action);
             if ((selected_count > 1 && !(action->flags & DB_ACTION_MULTIPLE_TRACKS)) ||
-                (action->flags & DB_ACTION_DISABLED))
-            {
+                (action->flags & DB_ACTION_DISABLED)) {
                 gtk_widget_set_sensitive (GTK_WIDGET (actionitem), FALSE);
             }
         }

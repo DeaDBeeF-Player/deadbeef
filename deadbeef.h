@@ -1016,13 +1016,19 @@ enum {
     /* Can handle multiple tracks */
     DB_ACTION_MULTIPLE_TRACKS = 1 << 2,
 
+    /* DEPRECATED in API 1.5 */
+    DB_ACTION_ALLOW_MULTIPLE_TRACKS = 1 << 2,
+
     /* DEPRECATED in API 1.5, ignored in callback2 */
+    /* Action can (and prefer) traverse multiple tracks by itself */
     DB_ACTION_CAN_MULTIPLE_TRACKS = 1 << 3,
     
     /* Action is inactive */
     DB_ACTION_DISABLED = 1 << 4,
 
     /* DEPRECATED in API 1.5, ignored in callback2 */
+    /* since 1.2 */
+    /* Action for the playlist (tab) */
     DB_ACTION_PLAYLIST = 1 << 5,
 
     /* add item to menu(s), if contains slash symbol(s) */
