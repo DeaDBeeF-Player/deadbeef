@@ -246,9 +246,12 @@ on_metadata_edited (GtkCellRendererText *renderer, gchar *path, gchar *new_text,
     gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, treepath);
     gtk_tree_path_free (treepath);
     GValue value = {0,};
+    GValue mult = {0,};
     gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 1, &value);
+    gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 3, &mult);
     const char *svalue = g_value_get_string (&value);
-    if (strcmp (svalue, new_text)) {
+    int imult = g_value_get_int (&mult);
+    if (strcmp (svalue, new_text) && (!imult || strlen (new_text))) {
         gtk_list_store_set (store, &iter, 1, new_text, 3, 0, -1);
         trkproperties_modified = 1;
     }
