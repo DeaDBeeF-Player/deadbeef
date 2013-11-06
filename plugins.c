@@ -1275,9 +1275,21 @@ plug_is_local_file (const char *fname) {
         return 1;
     }
 
-    for (; *fname; fname++) {
-        if (!strncmp (fname, "://", 3)) {
-            return 0;
+    const char *f = fname;
+    for (; *f; f++) {
+        if (!strncmp (f, "://", 3)) {
+            DB_vfs_t **plug = plug_get_vfs_list ();
+            for (int i = 0; plug[i]; i++) {
+                if (plug[i]->get_schemes && plug[i]->is_streaming && plug[i]->is_streaming()) {
+                    const char **sch = plug[i]->get_schemes ();
+                    for (int k = 0; sch[k]; k++) {
+                        if (!strncmp (sch[k], fname, strlen (sch[k]))) {
+                            return 0;
+                        }
+                    }
+                }
+            }
+            break;
         }
     }
 
