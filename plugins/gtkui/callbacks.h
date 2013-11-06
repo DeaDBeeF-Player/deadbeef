@@ -1304,3 +1304,7 @@ on_searchwin_key_press_event           (GtkWidget       *widget,
 void
 on_auto_size_columns_toggled           (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
+
+void
+on_searchentry_activate                (GtkEntry        *entry,
+                                        gpointer         user_data);

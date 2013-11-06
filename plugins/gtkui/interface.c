@@ -860,6 +860,9 @@ create_searchwin (void)
   g_signal_connect ((gpointer) searchentry, "changed",
                     G_CALLBACK (on_searchentry_changed),
                     NULL);
+  g_signal_connect ((gpointer) searchentry, "activate",
+                    G_CALLBACK (on_searchentry_activate),
+                    NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (searchwin, searchwin, "searchwin");
