@@ -43,6 +43,9 @@
 #define DDB_GTKUI_PLUGIN_ID "gtkui_1"
 #endif
 
+#define DDB_GTKUI_API_VERSION_MAJOR 2
+#define DDB_GTKUI_API_VERSION_MINOR 0
+
 // this flag tells that the widget should be added to h/vboxes with expand=FALSE
 #define DDB_GTKUI_WIDGET_FLAG_NON_EXPANDABLE 0x00000001
 
