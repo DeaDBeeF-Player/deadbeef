@@ -531,14 +531,14 @@ player_mainloop (void) {
         uint32_t p2;
         int term = 0;
         while (messagepump_pop(&msg, &ctx, &p1, &p2) != -1) {
-            if (!term) { // when term is set to 1 -- it means we can't handle events, but we still need to process them to avoid memleaks
-                // broadcast to all plugins
-                DB_plugin_t **plugs = plug_get_list ();
-                for (int n = 0; plugs[n]; n++) {
-                    if (plugs[n]->message) {
-                        plugs[n]->message (msg, ctx, p1, p2);
-                    }
+            // broadcast to all plugins
+            DB_plugin_t **plugs = plug_get_list ();
+            for (int n = 0; plugs[n]; n++) {
+                if (plugs[n]->message) {
+                    plugs[n]->message (msg, ctx, p1, p2);
                 }
+            }
+            if (!term) {
                 DB_output_t *output = plug_get_output ();
                 switch (msg) {
                 case DB_EV_REINIT_SOUND:
