@@ -571,9 +571,11 @@ on_mainwin_button_press_event          (GtkWidget       *widget,
     }
     GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
     GtkWidget *seekbar = lookup_widget (mainwin, "seekbar");
-    GtkAllocation a, b;
+    GtkWidget *statusbar = lookup_widget (mainwin, "statusbar");
+    GtkAllocation a, b, c;
     gtk_widget_get_allocation (volumebar, &a);
     gtk_widget_get_allocation (seekbar, &b);
+    gtk_widget_get_allocation (statusbar, &c);
     if (event->x >= a.x && event->x < a.x + a.width
             && event->y >= a.y && event->y < a.y + a.height) {
         capture = volumebar;
@@ -583,6 +585,12 @@ on_mainwin_button_press_event          (GtkWidget       *widget,
             && event->y >= b.y && event->y < b.y + b.height) {
         capture = seekbar;
         return gtk_widget_event (seekbar, (GdkEvent *)event);
+    }
+    else if (event->x >= c.x && event->x < c.x + c.width
+            && event->y >= c.y && event->y < c.y + c.height) {
+        if (event->type == GDK_2BUTTON_PRESS) {
+            deadbeef->sendmessage (DB_EV_TRACKFOCUSCURRENT, 0, 0, 0);
+        }
     }
 
   return FALSE;
