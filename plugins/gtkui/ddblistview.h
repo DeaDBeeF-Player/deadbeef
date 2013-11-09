@@ -127,6 +127,9 @@ struct _DdbListview {
 
     int drag_motion_y;
 
+    int ref_point; // idx of anchor when columns are resized
+    int ref_point_offset; // y pixel-coordinate of anchor relative to view
+
     // scrolling
     int scroll_mode; // 0=select, 1=dragndrop
     int scroll_pointer_y;
