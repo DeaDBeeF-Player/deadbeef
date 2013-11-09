@@ -97,6 +97,7 @@ typedef struct {
     AVCodecContext *ctx;
     AVFormatContext *fctx;
     AVPacket pkt;
+    AVFrame *frame;
     int stream_id;
 
     int left_in_packet;
@@ -226,6 +227,8 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
 
+    info->frame = avcodec_alloc_frame();
+
     // fill in mandatory plugin fields
     _info->plugin = &plugin;
     _info->readpos = 0;
@@ -263,6 +266,9 @@ ffmpeg_free (DB_fileinfo_t *_info) {
     trace ("ffmpeg: free\n");
     ffmpeg_info_t *info = (ffmpeg_info_t*)_info;
     if (info) {
+        if (info->frame) {
+            avcodec_free_frame(&info->frame);
+        }
         if (info->buffer) {
             free (info->buffer);
         }
@@ -320,7 +326,35 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
             int out_size = AVCODEC_MAX_AUDIO_FRAME_SIZE;
             int len;
             //trace ("in: out_size=%d(%d), size=%d\n", out_size, AVCODEC_MAX_AUDIO_FRAME_SIZE, size);
-#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(52,25,0)
+
+#if LIBAVCODEC_VERSION_INT > AV_VERSION_INT(53, 25, 0)
+            int got_frame = 0;
+            len = avcodec_decode_audio4(info->ctx, info->frame, &got_frame, &info->pkt);
+            if (len > 0) {
+                if (av_sample_fmt_is_planar(info->ctx->sample_fmt)) {
+                    out_size = 0;
+                    for (int c = 0; c < info->ctx->channels; c++) {
+                        for (int i = 0; i < info->frame->nb_samples; i++) {
+                            int32_t sample = ((int32_t *)info->frame->extended_data[c])[i];
+                            if (_info->fmt.bps == 16) {
+                                int16_t outsample = (int16_t)(sample >> 16);
+                                ((int16_t*)info->buffer)[i*info->ctx->channels+c] = outsample;
+                                out_size += 2;
+                            }
+                            else if (_info->fmt.bps == 32) {
+                                ((int32_t*)info->buffer)[i*info->ctx->channels+c] = sample;
+                                out_size += 4;
+                            }
+                        }
+                    }
+                }
+                else {
+                    out_size = info->frame->nb_samples * av_get_bytes_per_sample(info->frame->format);
+                    memcpy (info->buffer, info->frame->extended_data[0], out_size);
+                }
+            }
+
+#elif LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(52,25,0)
             len = avcodec_decode_audio3 (info->ctx, (int16_t *)info->buffer, &out_size, &info->pkt);
 #else
             len = avcodec_decode_audio2 (info->ctx, (int16_t *)info->buffer, &out_size, info->pkt.data, info->pkt.size);
@@ -801,7 +835,7 @@ ffmpeg_start (void) {
 #endif
     av_register_all ();
 #if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(54, 6, 0)
-#warning FFMPEG-0.11 is no longer exposing register_protocol API, which means that it cant work with MMS and HTTP plugins. if you need this functionality, please downgrade FFMPEG, and rebuild the FFMPEG plugin
+#warning FFMPEG-0.11 and higher does not expose register_protocol API, which means that it cant work with MMS and HTTP plugins. If you need this functionality, please downgrade FFMPEG to version 0.10 or less, and rebuild the FFMPEG plugin
 #elif LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(52, 69, 0)
     av_register_protocol2 (&vfswrapper, sizeof(vfswrapper));
 #else
