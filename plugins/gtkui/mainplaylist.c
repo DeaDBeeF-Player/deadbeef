@@ -250,6 +250,10 @@ main_column_size_changed (DdbListview *listview, int col) {
         return;
     }
     if (inf->id == DB_COLUMN_ALBUM_ART) {
+        if (listview->scrollpos > 0) {
+            int pos = ddb_listview_get_row_pos (listview, listview->ref_point);
+            gtk_range_set_value (GTK_RANGE (listview->scrollbar), pos - listview->ref_point_offset);
+        }
         coverart_reset_queue ();
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
         if (plt) {
