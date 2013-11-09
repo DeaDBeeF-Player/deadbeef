@@ -191,5 +191,16 @@ typedef struct {
     // function to create the standard playlist context menu (the same as
     // appears when right-clicked on playlist tab)
     GtkWidget* (*create_pltmenu) (int plt_idx);
+
+    // get_cover_art_pixbuf will return pixbuf, if available.
+    // if not available, the requested cover will be loaded asyncronously.
+    // the callback will be called when the requested cover is available,
+    // in which case you will need to call the get_cover_art_pixbuf again from
+    // the callback.
+    GdkPixbuf *(*get_cover_art_pixbuf) (const char *uri, const char *artist, const char *album, int size, void (*callback)(void *user_data), void *user_data);
+
+    // get_default_cover_pixbuf returns the default cover art image
+    GdkPixbuf *(*cover_get_default_pixbuf) (void);
 } ddb_gtkui_t;
+
 #endif

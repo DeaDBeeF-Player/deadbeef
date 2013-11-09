@@ -1663,4 +1663,6 @@ static ddb_gtkui_t plugin = {
     .w_replace = w_replace,
     .w_remove = w_remove,
     .create_pltmenu = gtkui_create_pltmenu,
+    .get_cover_art_pixbuf = get_cover_art_callb,
+    .cover_get_default_pixbuf = cover_get_default_pixbuf,
 };
