@@ -211,12 +211,6 @@ apply_replay_gain_int32 (playItem_t *it, char *bytes, int size) {
     int32_t *s = (int32_t*)bytes;
     for (int j = 0; j < size/4; j++) {
         int64_t sample = ((int32_t)(*s)) * vol / 1000;
-        if (sample > 0x7fffffff) {
-            sample = 0x7fffffff;
-        }
-        else if (sample < -0x80000000) {
-            sample = -0x80000000;
-        }
         *s = (int32_t)sample;
         s++;
     }

@@ -2148,6 +2148,9 @@ streamer_read_async (char *bytes, int size) {
                 is_eof = 1;
             }
             inputsize = nb;
+//            trace ("convert %d|%d|%d|%d|%d|%d to %d|%d|%d|%d|%d|%d\n"
+//                , fileinfo->fmt.bps, fileinfo->fmt.channels, fileinfo->fmt.samplerate, fileinfo->fmt.channelmask, fileinfo->fmt.is_float, fileinfo->fmt.is_bigendian
+//                , output->fmt.bps, output->fmt.channels, output->fmt.samplerate, output->fmt.channelmask, output->fmt.is_float, output->fmt.is_bigendian);
             bytesread = pcm_convert (&fileinfo->fmt, input, &output->fmt, bytes, inputsize);
 
 #ifdef ANDROID
