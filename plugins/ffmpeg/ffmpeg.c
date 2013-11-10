@@ -235,6 +235,9 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->fmt.bps = bps;
     _info->fmt.channels = info->ctx->channels;
     _info->fmt.samplerate = samplerate;
+    if (info->ctx->sample_fmt == AV_SAMPLE_FMT_FLT || info->ctx->sample_fmt == AV_SAMPLE_FMT_FLTP) {
+        _info->fmt.is_float = 1;
+    }
 
 
     int64_t layout = info->ctx->channel_layout;
@@ -335,13 +338,13 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
                     out_size = 0;
                     for (int c = 0; c < info->ctx->channels; c++) {
                         for (int i = 0; i < info->frame->nb_samples; i++) {
-                            int32_t sample = ((int32_t *)info->frame->extended_data[c])[i];
                             if (_info->fmt.bps == 16) {
-                                int16_t outsample = (int16_t)(sample >> 16);
+                                int16_t outsample = ((int16_t *)info->frame->extended_data[c])[i];
                                 ((int16_t*)info->buffer)[i*info->ctx->channels+c] = outsample;
                                 out_size += 2;
                             }
                             else if (_info->fmt.bps == 32) {
+                                int32_t sample = ((int32_t *)info->frame->extended_data[c])[i];
                                 ((int32_t*)info->buffer)[i*info->ctx->channels+c] = sample;
                                 out_size += 4;
                             }
