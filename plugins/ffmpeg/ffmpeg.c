@@ -338,10 +338,18 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
                     out_size = 0;
                     for (int c = 0; c < info->ctx->channels; c++) {
                         for (int i = 0; i < info->frame->nb_samples; i++) {
-                            if (_info->fmt.bps == 16) {
+                            if (_info->fmt.bps == 8) {
+                                info->buffer[i*info->ctx->channels+c] = ((int8_t *)info->frame->extended_data[c])[i];
+                                out_size++;
+                            }
+                            else if (_info->fmt.bps == 16) {
                                 int16_t outsample = ((int16_t *)info->frame->extended_data[c])[i];
                                 ((int16_t*)info->buffer)[i*info->ctx->channels+c] = outsample;
                                 out_size += 2;
+                            }
+                            else if (_info->fmt.bps == 24) {
+                                memcpy (&info->buffer[(i*info->ctx->channels+c)*3], &((int8_t*)info->frame->extended_data[c])[i*3], 3);
+                                out_size += 3;
                             }
                             else if (_info->fmt.bps == 32) {
                                 int32_t sample = ((int32_t *)info->frame->extended_data[c])[i];
