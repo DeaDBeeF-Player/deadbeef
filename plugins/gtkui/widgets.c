@@ -2385,46 +2385,49 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     if (w->nsamples != nsamples) {
         w->resized = nsamples;
     }
-    if (!w->samples) {
-        return FALSE;
-    }
-
-    deadbeef->mutex_lock (w->mutex);
-    float incr = a.width / (float)w->nsamples;
-    float h = a.height;
-    if (h > 50) {
-        h -= 20;
-    }
-    if (h > 100) {
-        h -= 40;
-    }
-    h /= 2;
-    float hh = a.height/2.f;
-
     cairo_surface_flush (w->surf);
     unsigned char *data = cairo_image_surface_get_data (w->surf);
     if (!data) {
-        deadbeef->mutex_unlock (w->mutex);
         return FALSE;
     }
     int stride = cairo_image_surface_get_stride (w->surf);
     memset (data, 0, a.height * stride);
-    int prev_y = w->samples[0] * h + hh;
+    if (w->samples && a.height > 2) {
+        deadbeef->mutex_lock (w->mutex);
+        float incr = a.width / (float)w->nsamples;
+        float h = a.height;
+        if (h > 50) {
+            h -= 20;
+        }
+        if (h > 100) {
+            h -= 40;
+        }
+        h /= 2;
+        float hh = a.height/2.f;
 
-    int n = min (w->nsamples, a.width);
-    for (int i = 1; i < n; i++) {
-        int y = ftoi (w->samples[i] * h + hh);
-        if (y < 0) {
-            y = 0;
+        int prev_y = w->samples[0] * h + hh;
+
+        int n = min (w->nsamples, a.width);
+        for (int i = 1; i < n; i++) {
+            int y = ftoi (w->samples[i] * h + hh);
+            if (y < 0) {
+                y = 0;
+            }
+            if (y >= a.height) {
+                y = a.height-1;
+            }
+            _draw_vline (data, stride, i, prev_y, y);
+            prev_y = y;
         }
-        if (y >= a.height) {
-            y = a.height-1;
+        if (n < a.width) {
+            memset (data + a.height / 2 * stride + n * 4, 0xff, (a.width-n)*4);
         }
-        _draw_vline (data, stride, i, prev_y, y);
-        prev_y = y;
+        deadbeef->mutex_unlock (w->mutex);
+    }
+    else if (a.height > 0) {
+        memset (data + a.height / 2 *stride, 0xff, stride);
     }
     cairo_surface_mark_dirty (w->surf);
-    deadbeef->mutex_unlock (w->mutex);
     cairo_save (cr);
     cairo_set_source_surface (cr, w->surf, 0, 0);
     cairo_rectangle (cr, 0, 0, a.width, a.height);
