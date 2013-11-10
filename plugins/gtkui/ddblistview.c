@@ -1204,6 +1204,7 @@ ddb_listview_list_setup_hscroll (DdbListview *ps) {
     GtkWidget *scroll = ps->hscrollbar;
     if (w >= size) {
         gtk_widget_hide (scroll);
+        ps->hscrollpos = 0;
         gtk_widget_queue_draw (ps->list);
     }
     else {
