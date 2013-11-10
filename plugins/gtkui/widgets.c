@@ -998,7 +998,7 @@ w_splitter_lock (w_splitter_t *w) {
     GtkAllocation a;
     gtk_widget_get_allocation (w->base.widget, &a);
 
-    GtkWidget *box = vert ? gtk_vbox_new (FALSE, 6) : gtk_hbox_new (FALSE, 6);
+    GtkWidget *box = vert ? gtk_vbox_new (FALSE, 3) : gtk_hbox_new (FALSE, 3);
     gtk_widget_show (box);
 
     w->position = gtk_paned_get_position (GTK_PANED (w->box));
