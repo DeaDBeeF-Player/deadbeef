@@ -59,6 +59,7 @@ G_DEFINE_TYPE (DdbListview, ddb_listview, GTK_TYPE_TABLE);
 struct _DdbListviewColumn {
     char *title;
     float width;
+    float fwidth; // only in autoresize mode
     int minheight;
     struct _DdbListviewColumn *next;
     void *user_data;
@@ -2390,22 +2391,45 @@ ddb_listview_header_configure_event              (GtkWidget       *widget,
     }
 
     if (!ps->lock_columns) {
+        DdbListviewColumn *c;
         if (ps->header_width != a.width && deadbeef->conf_get_int ("gtkui.autoresize_columns", 0)) {
-            if (ps->header_width == 0) {
-                ps->header_width = a.width;
+            if (!ps->col_autoresize) {
+                for (c = ps->columns; c; c = c->next) {
+                    c->fwidth = (float)c->width / (float)a.width;
+                }
+                ps->col_autoresize = 1;
             }
-            float ratio = (float)a.width / ps->header_width;
-            ps->header_width = a.width;
-            struct _DdbListviewColumn *c;
+            // use the fwidth
+            int changed = 0;
             for (c = ps->columns; c; c = c->next) {
-                c->width *= ratio;
+                int newwidth = a.width * c->fwidth;
+                if (newwidth != c->width) {
+                    c->width = newwidth;
+                    changed = 1;
+                }               
             }
-            ps->binding->columns_changed (ps);
+            if (changed) {
+                ps->binding->columns_changed (ps);
+            }
+        }
+        else {
+            if (ps->col_autoresize) {
+                int changed = 0;
+                for (c = ps->columns; c; c = c->next) {
+                    int newwidth = a.width * c->fwidth;
+                    if (newwidth != c->width) {
+                        c->width = newwidth;
+                        changed = 1;
+                    }               
+                }
+                ps->col_autoresize = 0;
+                if (changed) {
+                    ps->binding->columns_changed (ps);
+                }
+            }
         }
     }
-    else {
-        ps->header_width = a.width;
-    }
+    ps->header_width = a.width;
 
     return FALSE;
 }
@@ -2501,6 +2525,9 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
 
         int newx = ev_x > x + MIN_COLUMN_WIDTH ? ev_x : x + MIN_COLUMN_WIDTH;
         c->width = newx-x;
+        if (ps->col_autoresize) {
+            c->fwidth = (float)c->width / ps->header_sizing;
+        }
         if (c->minheight) {
             ddb_listview_build_groups (ps);
         }
@@ -2879,6 +2906,9 @@ ddb_listview_column_get_count (DdbListview *listview) {
 void
 ddb_listview_column_append (DdbListview *listview, const char *title, int width, int align_right, int minheight, void *user_data) {
     DdbListviewColumn* c = ddb_listview_column_alloc (title, width, align_right, minheight, user_data);
+    if (listview->col_autoresize) {
+        c->fwidth = (float)c->width / listview->header_sizing;
+    }
     int idx = 0;
     DdbListviewColumn * columns = listview->columns;
     if (columns) {
@@ -2899,6 +2929,9 @@ ddb_listview_column_append (DdbListview *listview, const char *title, int width,
 void
 ddb_listview_column_insert (DdbListview *listview, int before, const char *title, int width, int align_right, int minheight, void *user_data) {
     DdbListviewColumn *c = ddb_listview_column_alloc (title, width, align_right, minheight ,user_data);
+    if (listview->col_autoresize) {
+        c->fwidth = (float)c->width / listview->header_sizing;
+    }
     if (listview->columns) {
         DdbListviewColumn * prev = NULL;
         DdbListviewColumn * next = listview->columns;
@@ -3029,6 +3062,9 @@ ddb_listview_column_set_info (DdbListview *listview, int col, const char *title,
             free (c->title);
             c->title = strdup (title);
             c->width = width;
+            if (listview->col_autoresize) {
+                c->fwidth = (float)c->width / listview->header_sizing;
+            }
             c->align_right = align_right;
             c->minheight = minheight;
             c->user_data = user_data;
