@@ -46,7 +46,7 @@
 // this is the workaround
 // the fields are limited to be no more than 1000 bytes
 // if they are larger - they will be treated as "multiple values".
-#define MAX_GUI_FIELD_LEN 1000
+#define MAX_GUI_FIELD_LEN 5000
 
 static GtkWidget *trackproperties;
 static GtkCellRenderer *rend_text2;
