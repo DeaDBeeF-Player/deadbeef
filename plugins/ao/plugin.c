@@ -228,6 +228,7 @@ aoplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
 	if (deadbeef->fread(buffer, 1, size, fp) != size) {
         deadbeef->fclose (fp);
+        free (buffer);
 		fprintf(stderr, "psf: file read error: %s\n", fname);
         return NULL;
     }
