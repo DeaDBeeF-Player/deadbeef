@@ -1172,6 +1172,8 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
                         }
                         free (chapters);
                         if (cue) {
+                            deadbeef->fclose (fp);
+                            mp4ff_close (mp4);
                             deadbeef->pl_item_unref (it);
                             deadbeef->pl_item_unref (cue);
                             deadbeef->pl_unlock ();
@@ -1186,6 +1188,8 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
                     if (cuesheet) {
                         cue = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), totalsamples, samplerate);
                         if (cue) {
+                            deadbeef->fclose (fp);
+                            mp4ff_close (mp4);
                             deadbeef->pl_item_unref (it);
                             deadbeef->pl_item_unref (cue);
                             deadbeef->pl_unlock ();
