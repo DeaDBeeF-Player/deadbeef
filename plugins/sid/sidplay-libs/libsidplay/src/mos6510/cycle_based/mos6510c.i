@@ -131,6 +131,7 @@ const char _sidtune_CHRtab[256] =  // CHR$ conversion table (0x01 = no output)
 */
 
 #include "config.h"
+#include <string.h>
 
 #ifdef HAVE_EXCEPTIONS
 #   include <new>
@@ -2559,9 +2560,9 @@ void MOS6510::reset (void)
 // Module Credits                                                          //
 void MOS6510::credits (char *sbuffer)
 {   // Copy credits to buffer
-    sprintf (sbuffer, "%sModule     : MOS6510 Cycle Exact Emulation\n", sbuffer);
-    sprintf (sbuffer, "%sWritten By : %s\n", sbuffer, MOS6510_AUTHOR);
-    sprintf (sbuffer, "%sVersion    : %s\n", sbuffer, MOS6510_VERSION);
-    sprintf (sbuffer, "%sReleased   : %s\n", sbuffer, MOS6510_DATE);
-    sprintf (sbuffer, "%sEmail      : %s\n", sbuffer, MOS6510_EMAIL);
+    strcat (sbuffer, "Module     : MOS6510 Cycle Exact Emulation\n"
+            "Written By : " MOS6510_AUTHOR "\n"
+            "Version    : " MOS6510_VERSION "\n"
+            "Released   : " MOS6510_DATE "\n"
+            "Email      : " MOS6510_EMAIL "\n");
 }

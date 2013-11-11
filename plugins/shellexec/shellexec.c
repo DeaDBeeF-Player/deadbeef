@@ -106,7 +106,7 @@ shx_callback (Shx_action_t *action, int ctx)
             deadbeef->pl_lock ();
             ddb_playlist_t *plt = deadbeef->plt_get_curr ();
             if (plt) {
-                DB_playItem_t **items;
+                DB_playItem_t **items = NULL;
                 int items_count = deadbeef->plt_getselcount (plt);
                 if (0 < items_count) {
                     items = malloc (sizeof (DB_playItem_t *) * items_count);

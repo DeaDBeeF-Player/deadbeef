@@ -192,12 +192,15 @@ void ayemu_vtx_free(ayemu_vtx_t *vtx)
 {
 #define FREE_PTR(x)  if (x) { free(x); x = NULL; }
 
-  FREE_PTR(vtx->title);
-  FREE_PTR(vtx->author);
-  FREE_PTR(vtx->from);
-  FREE_PTR(vtx->tracker);
-  FREE_PTR(vtx->comment);
-  FREE_PTR(vtx->regdata);
+  if (vtx) {
+    FREE_PTR(vtx->title);
+    FREE_PTR(vtx->author);
+    FREE_PTR(vtx->from);
+    FREE_PTR(vtx->tracker);
+    FREE_PTR(vtx->comment);
+    FREE_PTR(vtx->regdata);
+    free (vtx);
+  }
 }
 
 

@@ -56,7 +56,7 @@ dsp_preset_load (const char *fname, ddb_dsp_context_t **head) {
     char temp[100];
     for (;;) {
         // plugin {
-        int err = fscanf (fp, "%100s {\n", temp);
+        int err = fscanf (fp, "%99s {\n", temp);
         if (err == EOF) {
             break;
         }

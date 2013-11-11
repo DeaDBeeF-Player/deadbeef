@@ -748,15 +748,19 @@ WM_LoadConfig (const char *config_file, const char *top_config_dir) {
 	char * new_config = NULL;
 	struct _patch * tmp_patch;
 
+	if ((config_buffer = WM_BufferFile(config_file, &config_size)) == NULL) {
+		return -1;
+	}
+
 	if (top_config_dir) {
         config_dir = strdup (top_config_dir);
     }
 
-	if ((config_buffer = WM_BufferFile(config_file, &config_size)) == NULL) {
-		return -1;
-	}
 	if (config_buffer == NULL) {
 		WM_FreePatches();
+		if (config_dir) {
+            free (config_dir);
+        }
 		return -1;
 	}
 	
@@ -3496,6 +3500,7 @@ WM_ParseNewMidi(unsigned char *mididata, unsigned long int midisize ) {
 		first_handle = malloc(sizeof(struct _hndl));
 		if (first_handle == NULL) {
 			WM_ERROR(__FUNCTION__, __LINE__, WM_ERR_MEM," to parse midi data", errno);
+			free (tmp_trackdata);
 			free(mdi->data);
 			free(mdi);
 			return NULL;

@@ -1663,7 +1663,7 @@ streamer_dsp_chain_load (const char *fname) {
     for (;;) {
         // plugin enabled {
         int enabled = 0;
-        int err = fscanf (fp, "%100s %d {\n", temp, &enabled);
+        int err = fscanf (fp, "%99s %d {\n", temp, &enabled);
         if (err == EOF) {
             break;
         }

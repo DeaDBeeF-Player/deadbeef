@@ -144,11 +144,16 @@ static int split_user_passwd(const char* in, char** user, char** passwd)
   *((*passwd)++) = '\0'; // don't you love C? :)
 
   *user = strdup(tmp);
-  if(!*user)
+  if(!*user) {
+    free (tmp);
     return 0;
+  }
   *passwd = strdup(*passwd);
-  if(!*passwd)
+  if(!*passwd) {
+    free (tmp);
+    free (*user);
     return 0;
+  }
 
   free(tmp);
   return 1;
