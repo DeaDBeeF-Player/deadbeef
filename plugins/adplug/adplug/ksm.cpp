@@ -50,6 +50,7 @@ bool CksmPlayer::load(const char *filename, const CFileProvider &fp)
   if(!fp.extension(filename, ".ksm")) {
     AdPlug_LogWrite("CksmPlayer::load(,\"%s\"): File doesn't have '.ksm' "
 		    "extension! Rejected!\n", filename);
+    delete[] fn;
     return false;
   }
   AdPlug_LogWrite("*** CksmPlayer::load(,\"%s\") ***\n", filename);
