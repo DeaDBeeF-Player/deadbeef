@@ -58,7 +58,7 @@ G_DEFINE_TYPE (DdbListview, ddb_listview, GTK_TYPE_TABLE);
 
 struct _DdbListviewColumn {
     char *title;
-    float width;
+    int width;
     float fwidth; // only in autoresize mode
     int minheight;
     struct _DdbListviewColumn *next;
@@ -2526,7 +2526,7 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
         int newx = ev_x > x + MIN_COLUMN_WIDTH ? ev_x : x + MIN_COLUMN_WIDTH;
         c->width = newx-x;
         if (ps->col_autoresize) {
-            c->fwidth = (float)c->width / ps->header_sizing;
+            c->fwidth = (float)c->width / ps->header_width;
         }
         if (c->minheight) {
             ddb_listview_build_groups (ps);
@@ -2907,7 +2907,7 @@ void
 ddb_listview_column_append (DdbListview *listview, const char *title, int width, int align_right, int minheight, void *user_data) {
     DdbListviewColumn* c = ddb_listview_column_alloc (title, width, align_right, minheight, user_data);
     if (listview->col_autoresize) {
-        c->fwidth = (float)c->width / listview->header_sizing;
+        c->fwidth = (float)c->width / listview->header_width;
     }
     int idx = 0;
     DdbListviewColumn * columns = listview->columns;
@@ -2930,7 +2930,7 @@ void
 ddb_listview_column_insert (DdbListview *listview, int before, const char *title, int width, int align_right, int minheight, void *user_data) {
     DdbListviewColumn *c = ddb_listview_column_alloc (title, width, align_right, minheight ,user_data);
     if (listview->col_autoresize) {
-        c->fwidth = (float)c->width / listview->header_sizing;
+        c->fwidth = (float)c->width / listview->header_width;
     }
     if (listview->columns) {
         DdbListviewColumn * prev = NULL;
@@ -3063,7 +3063,7 @@ ddb_listview_column_set_info (DdbListview *listview, int col, const char *title,
             c->title = strdup (title);
             c->width = width;
             if (listview->col_autoresize) {
-                c->fwidth = (float)c->width / listview->header_sizing;
+                c->fwidth = (float)c->width / listview->header_width;
             }
             c->align_right = align_right;
             c->minheight = minheight;
