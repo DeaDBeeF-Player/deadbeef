@@ -58,7 +58,10 @@ bool CdmoLoader::load(const char *filename, const CFileProvider &fp)
   dmo_unpacker *unpacker = new dmo_unpacker;
   unsigned char chkhdr[16];
 
-  if(!fp.extension(filename, ".dmo")) return false;
+  if(!fp.extension(filename, ".dmo")) {
+      delete unpacker;
+      return false;
+  }
   f = fp.open(filename); if(!f) return false;
 
   f->readString((char *)chkhdr, 16);
