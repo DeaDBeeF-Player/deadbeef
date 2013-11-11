@@ -2170,9 +2170,17 @@ coverart_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
                 art_scale *= (float)gdk_pixbuf_get_width (pixbuf) / gdk_pixbuf_get_height (pixbuf);
             }
             int ph = pw;
-            cairo_rectangle (cr, 0, 0, pw, ph);
+            int x = 0;
+            int y = 0;
+            if (gdk_pixbuf_get_width (pixbuf) > gdk_pixbuf_get_height (pixbuf)) {
+                y = (a.height - gdk_pixbuf_get_height (pixbuf)) / 2;
+            }
+            else if (gdk_pixbuf_get_width (pixbuf) < gdk_pixbuf_get_height (pixbuf)) {
+                x = (a.width - gdk_pixbuf_get_width (pixbuf)) / 2;
+            }
+            cairo_rectangle (cr, x, y, pw, ph);
             cairo_scale (cr, art_scale, art_scale);
-            gdk_cairo_set_source_pixbuf (cr, pixbuf, 0, 0);
+            gdk_cairo_set_source_pixbuf (cr, pixbuf, x, y);
             cairo_pattern_set_filter (cairo_get_source(cr), hq ? CAIRO_FILTER_GAUSSIAN : CAIRO_FILTER_FAST);
             cairo_fill (cr);
             g_object_unref (pixbuf);
