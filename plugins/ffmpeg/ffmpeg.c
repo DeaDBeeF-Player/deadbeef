@@ -97,7 +97,9 @@ typedef struct {
     AVCodecContext *ctx;
     AVFormatContext *fctx;
     AVPacket pkt;
+#if LIBAVCODEC_VERSION_INT > AV_VERSION_INT(53, 25, 0)
     AVFrame *frame;
+#endif
     int stream_id;
 
     int left_in_packet;
@@ -227,7 +229,9 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
 
+#if LIBAVCODEC_VERSION_INT > AV_VERSION_INT(53, 25, 0)
     info->frame = avcodec_alloc_frame();
+#endif
 
     // fill in mandatory plugin fields
     _info->plugin = &plugin;
@@ -269,9 +273,11 @@ ffmpeg_free (DB_fileinfo_t *_info) {
     trace ("ffmpeg: free\n");
     ffmpeg_info_t *info = (ffmpeg_info_t*)_info;
     if (info) {
+#if LIBAVCODEC_VERSION_INT > AV_VERSION_INT(53, 25, 0)
         if (info->frame) {
             avcodec_free_frame(&info->frame);
         }
+#endif
         if (info->buffer) {
             free (info->buffer);
         }
