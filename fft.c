@@ -27,9 +27,11 @@
 #include <math.h>
 #include <complex.h>
 
-static float hamming[DDB_FREQ_BANDS];              /* hamming window, scaled to sum to 1 */
-static int reversed[DDB_FREQ_BANDS];               /* bit-reversal table */
-static float complex roots[DDB_FREQ_BANDS / 2];    /* N-th roots of unity */
+#define N (DDB_FREQ_BANDS * 2)
+
+static float hamming[N];              /* hamming window, scaled to sum to 1 */
+static int reversed[N];               /* bit-reversal table */
+static float complex roots[N / 2];    /* N-th roots of unity */
 static int generated = 0;
 static float LOGN; /* log N (base 2) */
 
@@ -59,7 +61,6 @@ static void generate_tables (void)
     if (generated)
         return;
 
-    const int N = DDB_FREQ_BANDS;
     LOGN = log2(N);
     for (int n = 0; n < N; n ++)
         hamming[n] = 1 - 0.85 * cosf (2 * M_PI * n / N);
@@ -71,9 +72,8 @@ static void generate_tables (void)
     generated = 1;
 }
 
-static void do_fft (float complex a[DDB_FREQ_BANDS])
+static void do_fft (float complex a[N])
 {
-    const int N = DDB_FREQ_BANDS;
     int half = 1;       /* (2^s)/2 */
     int inv = N / 2;    /* N/(2^s) */
 
@@ -104,7 +104,6 @@ calc_freq (float *data, float *freq) {
 
     // fft code shamelessly stolen from audacious
     // thanks, John
-    int N = DDB_FREQ_BANDS;
     float complex a[N];
     for (int n = 0; n < N; n ++) {
         a[reversed[n]] = data[n] * hamming[n];

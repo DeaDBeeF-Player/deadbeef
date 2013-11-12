@@ -137,7 +137,7 @@ static DB_FILE *streamer_file;
 
 // for vis plugins
 static float freq_data[DDB_FREQ_BANDS * DDB_FREQ_MAX_CHANNELS];
-static float audio_data[DDB_FREQ_BANDS * DDB_FREQ_MAX_CHANNELS];
+static float audio_data[DDB_FREQ_BANDS * 2 * DDB_FREQ_MAX_CHANNELS];
 static int audio_data_fill = 0;
 static int audio_data_channels = 0;
 
@@ -2321,19 +2321,19 @@ streamer_read (char *bytes, int size) {
         if (spectrum_listeners) {
             int remaining = in_frames;
             do {
-                int sz = DDB_FREQ_BANDS-audio_data_fill;
+                int sz = DDB_FREQ_BANDS * 2 -audio_data_fill;
                 sz = min (sz, remaining);
                 for (int c = 0; c < audio_data_channels; c++) {
                     for (int s = 0; s < sz; s++) {
-                        audio_data[DDB_FREQ_BANDS * c + audio_data_fill + s] = temp_audio_data[(in_frames-remaining + s) * audio_data_channels + c];
+                        audio_data[DDB_FREQ_BANDS * 2 * c + audio_data_fill + s] = temp_audio_data[(in_frames-remaining + s) * audio_data_channels + c];
                     }
                 }
                 //            memcpy (&audio_data[audio_data_fill], &temp_audio_data[in_frames-remaining], sz * sizeof (float));
                 audio_data_fill += sz;
                 remaining -= sz;
-                if (audio_data_fill == DDB_FREQ_BANDS) {
+                if (audio_data_fill == DDB_FREQ_BANDS * 2) {
                     for (int c = 0; c < audio_data_channels; c++) {
-                        calc_freq (&audio_data[DDB_FREQ_BANDS * c], &freq_data[DDB_FREQ_BANDS * c]);
+                        calc_freq (&audio_data[DDB_FREQ_BANDS * 2 * c], &freq_data[DDB_FREQ_BANDS * c]);
                     }
                     ddb_audio_data_t data;
                     data.fmt = &out_fmt;
