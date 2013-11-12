@@ -135,6 +135,7 @@ create_shellexec_conf_edit_dialog (void)
   GtkWidget *local_check;
   GtkWidget *remote_check;
   GtkWidget *common_check;
+  GtkWidget *label1;
   GtkWidget *dialog_action_area1;
   GtkWidget *edit_cancel_button;
   GtkWidget *edit_ok_button;
@@ -220,10 +221,17 @@ create_shellexec_conf_edit_dialog (void)
   gtk_box_pack_start (GTK_BOX (dialog_vbox1), remote_check, FALSE, FALSE, 0);
   gtk_widget_set_tooltip_text (remote_check, _("Works on remote files (e.g. http:// streams)"));
 
-  common_check = gtk_check_button_new_with_mnemonic (_("Common"));
+  common_check = gtk_check_button_new_with_mnemonic (_("Generic (Main Menu)"));
   gtk_widget_show (common_check);
   gtk_box_pack_start (GTK_BOX (dialog_vbox1), common_check, FALSE, FALSE, 0);
   gtk_widget_set_tooltip_text (common_check, _("Item should appear in the main menu"));
+
+  label1 = gtk_label_new (_("<small>If you want to add the command to main menu, make sure that title contains the menu path like this: \"File/My Command\", where File is the menu name in the English version.</small>"));
+  gtk_widget_show (label1);
+  gtk_box_pack_start (GTK_BOX (dialog_vbox1), label1, FALSE, FALSE, 0);
+  gtk_label_set_use_markup (GTK_LABEL (label1), TRUE);
+  gtk_label_set_line_wrap (GTK_LABEL (label1), TRUE);
+  gtk_misc_set_alignment (GTK_MISC (label1), 0, 0.5);
 
   dialog_action_area1 = gtk_dialog_get_action_area (GTK_DIALOG (shellexec_conf_edit_dialog));
   gtk_widget_show (dialog_action_area1);
@@ -261,6 +269,7 @@ create_shellexec_conf_edit_dialog (void)
   GLADE_HOOKUP_OBJECT (shellexec_conf_edit_dialog, local_check, "local_check");
   GLADE_HOOKUP_OBJECT (shellexec_conf_edit_dialog, remote_check, "remote_check");
   GLADE_HOOKUP_OBJECT (shellexec_conf_edit_dialog, common_check, "common_check");
+  GLADE_HOOKUP_OBJECT (shellexec_conf_edit_dialog, label1, "label1");
   GLADE_HOOKUP_OBJECT_NO_REF (shellexec_conf_edit_dialog, dialog_action_area1, "dialog_action_area1");
   GLADE_HOOKUP_OBJECT (shellexec_conf_edit_dialog, edit_cancel_button, "edit_cancel_button");
   GLADE_HOOKUP_OBJECT (shellexec_conf_edit_dialog, edit_ok_button, "edit_ok_button");
