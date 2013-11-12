@@ -632,9 +632,9 @@ cda_action_add_cd (DB_plugin_action_t *act, int ctx)
 {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {
-        deadbeef->pl_add_files_begin (plt);
-        deadbeef->plt_add_file (plt, "all.cda", NULL, NULL);
-        deadbeef->pl_add_files_end ();
+        deadbeef->plt_add_files_begin (plt, 0);
+        deadbeef->plt_add_file2 (0, plt, "all.cda", NULL, NULL);
+        deadbeef->plt_add_files_end (plt, 0);
         deadbeef->plt_modified (plt);
         deadbeef->plt_unref (plt);
     }
@@ -646,7 +646,7 @@ static DB_plugin_action_t add_cd_action = {
     .name = "cd_add",
     .title = "File/Add audio CD",
     .flags = DB_ACTION_COMMON | DB_ACTION_ADD_MENU,
-    .callback = cda_action_add_cd,
+    .callback2 = cda_action_add_cd,
     .next = NULL
 };
 
