@@ -757,14 +757,13 @@ on_hotkeys_set_key_key_press_event     (GtkWidget       *widget,
 
     /* Filter consumed modifiers 
     */
-    accel_mods &= ~consumed_modifiers;
+    accel_mods &= ~(consumed_modifiers&~GDK_SHIFT_MASK);
 
     /* Put shift back if it changed the case of the key, not otherwise.
     */
     int lower = gdk_keyval_to_lower (accel_key);
     if (lower != accel_key) {
         accel_key = lower;
-        accel_mods |= GDK_SHIFT_MASK;
     }
 
     char name[1000];

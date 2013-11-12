@@ -193,11 +193,10 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
     if (accel_key == GDK_ISO_Left_Tab)
         accel_key = GDK_Tab;
     int mods = event->state & gtk_accelerator_get_default_mod_mask ();
-    mods &= ~consumed;
+    mods &= ~(consumed&~GDK_SHIFT_MASK);
     int lower = gdk_keyval_to_lower (accel_key);
     if (lower != accel_key) {
         accel_key = lower;
-        mods |= GDK_SHIFT_MASK;
     }
     trace ("pressed: keycode: %x, mods: %x, hw: %x, translated: %x\n", event->keyval, mods, event->hardware_keycode, accel_key);
 
