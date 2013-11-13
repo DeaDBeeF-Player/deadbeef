@@ -79,6 +79,8 @@ static void ddb_listview_destroy(GObject *object);
 void
 ddb_listview_build_groups (DdbListview *listview);
 
+static void
+ddb_listview_resize_groups (DdbListview *listview);
 // fwd decls
 void
 ddb_listview_free_groups (DdbListview *listview);
@@ -2533,7 +2535,7 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
             c->fwidth = (float)c->width / ps->header_width;
         }
         if (c->minheight) {
-            ddb_listview_build_groups (ps);
+            ddb_listview_resize_groups (ps);
         }
         ps->block_redraw_on_scroll = 1;
         ddb_listview_list_setup_vscroll (ps);
@@ -3209,6 +3211,38 @@ ddb_listview_build_groups (DdbListview *listview) {
         }
         listview->fullheight += grp->height;
     }
+    deadbeef->pl_unlock ();
+    if (old_height != listview->fullheight) {
+        ddb_listview_refresh (listview, DDB_REFRESH_VSCROLL);
+    }
+}
+
+void
+ddb_listview_resize_groups (DdbListview *listview) {
+    deadbeef->pl_lock ();
+    int old_height = listview->fullheight;
+    int grp_height_old = 0;
+    listview->fullheight = 0;
+
+    int min_height= 0;
+    DdbListviewColumn *c;
+    for (c = listview->columns; c; c = c->next) {
+        if (c->minheight && c->width > min_height) {
+            min_height = c->width;
+        }
+    }
+
+    DdbListviewGroup *grp = listview->groups;
+    while (grp) {
+        grp->height = listview->grouptitle_height + grp->num_items * listview->rowheight;
+        if (grp->height - listview->grouptitle_height < min_height) {
+            grp_height_old = grp->height;
+            grp->height = min_height + listview->grouptitle_height;
+        }
+        listview->fullheight += grp->height;
+        grp = grp->next;
+    }
+
     deadbeef->pl_unlock ();
     if (old_height != listview->fullheight) {
         ddb_listview_refresh (listview, DDB_REFRESH_VSCROLL);
