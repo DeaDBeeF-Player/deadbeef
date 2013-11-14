@@ -254,6 +254,11 @@ main_column_size_changed (DdbListview *listview, int col) {
     }
     if (inf->id == DB_COLUMN_ALBUM_ART) {
         coverart_reset_queue ();
+        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+        if (plt) {
+            deadbeef->plt_modified (plt);
+            deadbeef->plt_unref (plt);
+        }
     }
 }
 
