@@ -76,7 +76,7 @@ static void ddb_listview_init(DdbListview *listview);
 //static void ddb_listview_paint(GtkWidget *widget);
 static void ddb_listview_destroy(GObject *object);
 
-static void
+void
 ddb_listview_build_groups (DdbListview *listview);
 
 // fwd decls
@@ -2389,23 +2389,31 @@ ddb_listview_header_configure_event              (GtkWidget       *widget,
     if (height != a.height) {
         gtk_widget_set_size_request (widget, -1, height);
     }
+    int totalwidth = a.width;
+    if (GTK_WIDGET_VISIBLE (ps->scrollbar)) {
+        GtkAllocation sba;
+        gtk_widget_get_allocation (ps->scrollbar, &sba);
+        totalwidth += sba.width;
+    }
 
     if (!ps->lock_columns) {
         DdbListviewColumn *c;
-        if (ps->header_width != a.width && deadbeef->conf_get_int ("gtkui.autoresize_columns", 0)) {
+        if (ps->header_width != totalwidth && deadbeef->conf_get_int ("gtkui.autoresize_columns", 0)) {
             if (!ps->col_autoresize) {
                 for (c = ps->columns; c; c = c->next) {
-                    c->fwidth = (float)c->width / (float)a.width;
+                    c->fwidth = (float)c->width / (float)totalwidth;
                 }
                 ps->col_autoresize = 1;
             }
             // use the fwidth
             int changed = 0;
-            for (c = ps->columns; c; c = c->next) {
-                int newwidth = a.width * c->fwidth;
+            int i = 0;
+            for (c = ps->columns; c; c = c->next, i++) {
+                int newwidth = totalwidth * c->fwidth;
                 if (newwidth != c->width) {
                     c->width = newwidth;
                     changed = 1;
+                    ps->binding->column_size_changed (ps, i);
                 }               
             }
             if (changed) {
@@ -2415,11 +2423,13 @@ ddb_listview_header_configure_event              (GtkWidget       *widget,
         else {
             if (ps->col_autoresize) {
                 int changed = 0;
-                for (c = ps->columns; c; c = c->next) {
-                    int newwidth = a.width * c->fwidth;
+                int i = 0;
+                for (c = ps->columns; c; c = c->next, i++) {
+                    int newwidth = totalwidth * c->fwidth;
                     if (newwidth != c->width) {
                         c->width = newwidth;
                         changed = 1;
+                        ps->binding->column_size_changed (ps, i);
                     }               
                 }
                 ps->col_autoresize = 0;
@@ -2429,7 +2439,7 @@ ddb_listview_header_configure_event              (GtkWidget       *widget,
             }
         }
     }
-    ps->header_width = a.width;
+    ps->header_width = totalwidth;
 
     return FALSE;
 }
