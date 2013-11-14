@@ -504,6 +504,7 @@ on_hotkeys_list_cursor_changed         (GtkTreeView     *treeview,
     gtk_tree_view_get_cursor (treeview, &path, NULL);
     GtkTreeModel *model = gtk_tree_view_get_model (treeview);
     GtkTreeIter iter;
+    int changed = gtkui_hotkeys_changed;
     if (path && gtk_tree_model_get_iter (model, &iter, path)) {
         GtkWidget *actions = lookup_widget (prefwin, "hotkeys_actions");
         gtk_widget_set_sensitive (actions, TRUE);
@@ -535,6 +536,7 @@ on_hotkeys_list_cursor_changed         (GtkTreeView     *treeview,
     if (path) {
         gtk_tree_path_free (path);
     }
+    gtkui_hotkeys_changed = changed;
 }
 
 
@@ -568,7 +570,7 @@ on_hotkey_remove_clicked               (GtkButton       *button,
     gtk_list_store_remove (hkstore, &iter);
     set_button_action_label (NULL, 0, lookup_widget (prefwin, "hotkeys_actions"));
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "hotkey_is_global")), FALSE);
-        gtk_button_set_label (GTK_BUTTON (lookup_widget (prefwin, "hotkeys_set_key")), _("<Not set>"));
+    gtk_button_set_label (GTK_BUTTON (lookup_widget (prefwin, "hotkeys_set_key")), _("<Not set>"));
     gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkeys_actions"), FALSE);
     gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkey_is_global"), FALSE);
     gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkeys_set_key"), FALSE);
