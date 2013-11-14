@@ -499,10 +499,12 @@ m3uplug_save_m3u (const char *fname, DB_playItem_t *first, DB_playItem_t *last) 
         }
         int dur = (int)floor(deadbeef->pl_get_item_duration (it));
         char s[1000];
-        if (deadbeef->pl_meta_exists (it, "artist")) {
+        int has_artist = deadbeef->pl_meta_exists (it, "artist");
+        int has_title = deadbeef->pl_meta_exists (it, "title");
+        if (has_artist && has_title) {
             deadbeef->pl_format_title (it, -1, s, sizeof (s), -1, "%a - %t");
         }
-        else {
+        else if (has_title) {
             deadbeef->pl_format_title (it, -1, s, sizeof (s), -1, "%t");
         }
         fprintf (fp, "#EXTINF:%d,%s\n", dur, s);
