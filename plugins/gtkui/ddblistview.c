@@ -2390,7 +2390,7 @@ ddb_listview_header_configure_event              (GtkWidget       *widget,
         gtk_widget_set_size_request (widget, -1, height);
     }
     int totalwidth = a.width;
-    if (GTK_WIDGET_VISIBLE (ps->scrollbar)) {
+    if (gtk_widget_get_visible (ps->scrollbar)) {
         GtkAllocation sba;
         gtk_widget_get_allocation (ps->scrollbar, &sba);
         totalwidth += sba.width;
