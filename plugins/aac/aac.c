@@ -159,15 +159,15 @@ parse_aac_stream(DB_FILE *fp, int *psamplerate, int *pchannels, float *pduration
         if (size == 0) {
             memmove (buf, buf+1, sizeof (buf)-1);
             bufsize--;
-//            trace ("aac_sync fail, framepos: %d\n", framepos);
-            if (deadbeef->ftell (fp) - initfpos > 4000) { // how many is enough to make sure?
-                break;
-            }
+            trace ("aac_sync fail, framepos: %d\n", framepos);
+//            if (deadbeef->ftell (fp) - initfpos > 4000) { // how many is enough to make sure?
+//                break;
+//            }
             framepos++;
             continue;
         }
         else {
-//            trace ("aac: frame #%d sync: %dch %d %d %d %d\n", frame, channels, samplerate, bitrate, samples, size);
+            trace ("aac: frame #%d sync: %dch %d %d %d %d\n", frame, channels, samplerate, bitrate, samples, size);
             frame++;
             nsamples += samples;
             if (!stream_sr) {
