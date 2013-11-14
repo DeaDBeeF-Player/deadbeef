@@ -1013,7 +1013,9 @@ aac_load_itunes_chapters (mp4ff_t *mp4, /* out */ int *num_chapters, int sampler
                 }
                 int len = (buffer[0] << 8) | buffer[1];
                 len = min (len, buffer_size - 2);
-                chapters[*num_chapters].title = strndup (&buffer[2], len);
+                if (len > 0) {
+                    chapters[*num_chapters].title = strndup (&buffer[2], len);
+                }
                 chapters[*num_chapters].startsample = curr_sample;
                 curr_sample += (int64_t)dur * samplerate / 1000.f;
                 chapters[*num_chapters].endsample = curr_sample - 1;
@@ -1042,7 +1044,15 @@ aac_insert_with_chapters (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem
         DB_playItem_t *it = deadbeef->pl_item_alloc_init (uri, dec);
         deadbeef->pl_set_meta_int (it, ":TRACKNUM", i);
         deadbeef->pl_set_meta_int (it, "TRACK", i);
-        deadbeef->pl_add_meta (it, "title", chapters[i].title);
+        // poor-man utf8 check
+        if (!chapters[i].title || deadbeef->junk_detect_charset (chapters[i].title)) {
+            char s[1000];
+            snprintf (s, sizeof (s), "chapter %d", i+1);
+            deadbeef->pl_add_meta (it, "title", s);
+        }
+        else {
+            deadbeef->pl_add_meta (it, "title", chapters[i].title);
+        }
         it->startsample = chapters[i].startsample;
         it->endsample = chapters[i].endsample;
         deadbeef->pl_replace_meta (it, ":FILETYPE", ftype);
