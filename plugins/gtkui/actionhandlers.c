@@ -508,8 +508,9 @@ action_delete_from_disk_handler_cb (void *data) {
         while (it) {
             const char *uri = deadbeef->pl_find_meta (it, ":URI");
             if (deadbeef->pl_is_selected (it) && deadbeef->is_local_file (uri)) {
-                unlink (uri);
-                deadbeef->plt_remove_item (plt, it);
+                if (!unlink (uri)) {
+                    deadbeef->plt_remove_item (plt, it);
+                }
             }
             DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
             deadbeef->pl_item_unref (it);
@@ -523,8 +524,19 @@ action_delete_from_disk_handler_cb (void *data) {
         while (it) {
             const char *uri = deadbeef->pl_find_meta (it, ":URI");
             if (deadbeef->is_local_file (uri)) {
-                unlink (uri);
-                deadbeef->plt_remove_item (plt, it);
+                if (!unlink (uri)) {
+                    deadbeef->plt_remove_item (plt, it);
+                }
+// FIXME: this dialog should allow something like "cancel" and "ignore all", then
+// it will be usable
+//                else {
+//                    GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_OK, _("Can't delete the file. Perhaps it doesn't exist, read-only, or part of read-only VFS, or all of the above."));
+//                    gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), uri);
+//                    gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
+//
+//                    int response = gtk_dialog_run (GTK_DIALOG (dlg));
+//                    gtk_widget_destroy (dlg);
+//                }
             }
             DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
             deadbeef->pl_item_unref (it);
@@ -540,8 +552,9 @@ action_delete_from_disk_handler_cb (void *data) {
             if (deadbeef->is_local_file (uri)) {
                 int idx = deadbeef->plt_get_item_idx (plt, it, PL_MAIN);
                 if (idx != -1) {
-                    unlink (uri);
-                    deadbeef->plt_remove_item (plt, it);
+                    if (!unlink (uri)) {
+                        deadbeef->plt_remove_item (plt, it);
+                    }
                 }
             }
             deadbeef->pl_item_unref (it);

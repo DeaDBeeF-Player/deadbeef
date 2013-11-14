@@ -868,7 +868,10 @@ typedef struct {
     struct DB_plugin_s *(*plug_get_for_id) (const char *id);
 
     // misc utilities
-    int (*is_local_file) (const char *fname); // returns 1 for local filename, 0 otherwise
+    // returns 1 if the track is represented as a local file
+    // returns 0 if it's a remote file, e.g. a network stream
+    // since API 1.5 it also returns 1 for vfs tracks, e.g. from ZIP files
+    int (*is_local_file) (const char *fname);
 
     // pcm utilities
     int (*pcm_convert) (const ddb_waveformat_t * inputfmt, const char *input, const ddb_waveformat_t *outputfmt, char *output, int inputsize);
