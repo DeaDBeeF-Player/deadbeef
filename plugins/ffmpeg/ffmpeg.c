@@ -97,7 +97,7 @@ typedef struct {
     AVCodecContext *ctx;
     AVFormatContext *fctx;
     AVPacket pkt;
-#if LIBAVCODEC_VERSION_INT > AV_VERSION_INT(53, 25, 0)
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(54, 59, 100)
     AVFrame *frame;
 #endif
     int stream_id;
@@ -229,7 +229,7 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
 
-#if LIBAVCODEC_VERSION_INT > AV_VERSION_INT(53, 25, 0)
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(54, 59, 100)
     info->frame = avcodec_alloc_frame();
 #endif
 
@@ -336,7 +336,7 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
             int len;
             //trace ("in: out_size=%d(%d), size=%d\n", out_size, AVCODEC_MAX_AUDIO_FRAME_SIZE, size);
 
-#if LIBAVCODEC_VERSION_INT > AV_VERSION_INT(53, 25, 0)
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(54, 59, 100)
             int got_frame = 0;
             len = avcodec_decode_audio4(info->ctx, info->frame, &got_frame, &info->pkt);
             if (len > 0) {
