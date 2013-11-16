@@ -4049,7 +4049,7 @@ unlisten_file_add_beginend (int id) {
 
 playItem_t *
 plt_load2 (int visibility, playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*callback)(playItem_t *it, void *user_data), void *user_data) {
-    plt_load_int (visibility, plt, after, fname, pabort, callback, user_data);
+    return plt_load_int (visibility, plt, after, fname, pabort, callback, user_data);
 }
 
 int
