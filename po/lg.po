@@ -1,34 +1,35 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 # kizito <kbirabwa@yahoo.co.uk>, 2010
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-10 18:36+0100\n"
+"POT-Creation-Date: 2013-11-17 16:56+0100\n"
 "PO-Revision-Date: 2013-11-10 17:37+0000\n"
 "Last-Translator: waker <wakeroid@gmail.com>\n"
-"Language-Team: Ganda (http://www.transifex.com/projects/p/deadbeef-player/language/lg/)\n"
+"Language-Team: Ganda (http://www.transifex.com/projects/p/deadbeef-player/"
+"language/lg/)\n"
+"Language: lg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: lg\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../plugins/gtkui/callbacks.c:339
+#: ../plugins/gtkui/callbacks.c:338
 #, c-format
 msgid "About DeaDBeeF %s"
 msgstr "Okwanjula DeaDBeef %s"
 
-#: ../plugins/gtkui/callbacks.c:352
+#: ../plugins/gtkui/callbacks.c:351
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
 msgstr "Olukalala lw'enyukakyuka eziri mu DeadBeeF %s"
 
-#: ../plugins/gtkui/callbacks.c:676
+#: ../plugins/gtkui/callbacks.c:675
 #, c-format
 msgid "DeaDBeeF Translators"
 msgstr "Abaavvuunula DeaDBeeF"
@@ -39,23 +40,30 @@ msgstr "kaza koppi y'enteekateeka y'obwangufu bw'amaloboozi ag'omu DeaDBeeF"
 
 #: ../plugins/gtkui/eq.c:148
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
-msgstr "Fayiro z'enteekateeka z'obwangufu bw'amaloboozi ag'omu DeaDBeeF (*.ddbeq)"
+msgstr ""
+"Fayiro z'enteekateeka z'obwangufu bw'amaloboozi ag'omu DeaDBeeF (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:187
 msgid "Load DeaDBeeF EQ Preset..."
-msgstr "Soma fayiro y'enteekateeka z'obwangufu bw'amaloboozi ag'omu DeaDBeeF..."
+msgstr ""
+"Soma fayiro y'enteekateeka z'obwangufu bw'amaloboozi ag'omu DeaDBeeF..."
 
 #: ../plugins/gtkui/eq.c:191
 msgid "DeaDBeeF EQ presets (*.ddbeq)"
-msgstr "Fayiro z'enteekateeka z'obwangufu bw'amaloboozi ag'omu DeaDBeeF (*.ddbeq)"
+msgstr ""
+"Fayiro z'enteekateeka z'obwangufu bw'amaloboozi ag'omu DeaDBeeF (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:252
 msgid "Import Foobar2000 EQ Preset..."
-msgstr "Nona fayiro y'enteekateeka z'obwangufu bw'amalaboozi ey'ekika kya Foobar2000..."
+msgstr ""
+"Nona fayiro y'enteekateeka z'obwangufu bw'amalaboozi ey'ekika kya "
+"Foobar2000..."
 
 #: ../plugins/gtkui/eq.c:256
 msgid "Foobar2000 EQ presets (*.feq)"
-msgstr "fayiro z'enteekateeka z'obwangufu bw'amaloboozi ez'ekika kya Foobar2000 (*.feq)"
+msgstr ""
+"fayiro z'enteekateeka z'obwangufu bw'amaloboozi ez'ekika kya Foobar2000 (*."
+"feq)"
 
 #: ../plugins/gtkui/eq.c:321
 msgid "Save Preset"
@@ -90,123 +98,124 @@ msgstr "Amaloboozi gonna gadde ku zero"
 msgid "Presets"
 msgstr "Koppi ez'ebiteekateekedwa ezaaterekebwa"
 
-#: ../plugins/gtkui/gtkui.c:166
+#: ../plugins/gtkui/gtkui.c:163
 #, c-format
 msgid "1 day %d:%02d:%02d"
 msgstr "Lunaku 1 %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:169
+#: ../plugins/gtkui/gtkui.c:166
 #, c-format
 msgid "%d days %d:%02d:%02d"
 msgstr "Nnaku %d %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:178
+#: ../plugins/gtkui/gtkui.c:175
 #, c-format
 msgid "Stopped | %d tracks | %s total playtime"
 msgstr "Eyimirizidwa | Ntambi %d | Awamu zimala %s"
 
-#: ../plugins/gtkui/gtkui.c:191 ../playlist.c:3113
+#: ../plugins/gtkui/gtkui.c:188 ../playlist.c:3113
 msgid "Mono"
 msgstr "Mono"
 
-#: ../plugins/gtkui/gtkui.c:191 ../playlist.c:3113
+#: ../plugins/gtkui/gtkui.c:188 ../playlist.c:3113
 msgid "Stereo"
 msgstr "Siteriyo"
 
-#: ../plugins/gtkui/gtkui.c:216
+#: ../plugins/gtkui/gtkui.c:213
 #, c-format
 msgid "| %4d kbps "
 msgstr "| kb %4d bs "
 
-#: ../plugins/gtkui/gtkui.c:222
+#: ../plugins/gtkui/gtkui.c:219
 msgid "Paused | "
 msgstr "Luyimirizidwamu | "
 
-#: ../plugins/gtkui/gtkui.c:227
+#: ../plugins/gtkui/gtkui.c:224
 #, c-format
 msgid ""
 "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
-msgstr "%s%s%s| Hz %d | bbiti %d | %s | %d:%02d /%s | ntambi %d | Awamu zimala %s"
+msgstr ""
+"%s%s%s| Hz %d | bbiti %d | %s | %d:%02d /%s | ntambi %d | Awamu zimala %s"
 
-#: ../plugins/gtkui/gtkui.c:714 ../plugins/gtkui/fileman.c:41
+#: ../plugins/gtkui/gtkui.c:706 ../plugins/gtkui/fileman.c:41
 msgid "New Playlist"
 msgstr "Kolawo olukalalala olupya"
 
-#: ../plugins/gtkui/gtkui.c:717
+#: ../plugins/gtkui/gtkui.c:709
 #, c-format
 msgid "New Playlist (%d)"
 msgstr "Lukalalala olupya (%d)"
 
 #. register widget types
-#: ../plugins/gtkui/gtkui.c:974
+#: ../plugins/gtkui/gtkui.c:965
 msgid "Playlist with tabs"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:975 ../plugins/gtkui/interface.c:2146
+#: ../plugins/gtkui/gtkui.c:966 ../plugins/gtkui/interface.c:2146
 #: ../plugins/gtkui/deadbeef.glade.h:125
 msgid "Playlist"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:978
+#: ../plugins/gtkui/gtkui.c:969
 msgid "Splitter (top and bottom)"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:979
+#: ../plugins/gtkui/gtkui.c:970
 msgid "Splitter (left and right)"
 msgstr ""
 
 #. w_reg_widget (_("Tabs"), 0, w_tabs_create, "tabs", NULL);
-#: ../plugins/gtkui/gtkui.c:982
+#: ../plugins/gtkui/gtkui.c:973
 msgid "Playlist tabs"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:983
+#: ../plugins/gtkui/gtkui.c:974
 msgid "Selection properties"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:984
+#: ../plugins/gtkui/gtkui.c:975
 msgid "Album art display"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:985
+#: ../plugins/gtkui/gtkui.c:976
 msgid "Scope"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:986
+#: ../plugins/gtkui/gtkui.c:977
 msgid "Spectrum"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:987
+#: ../plugins/gtkui/gtkui.c:978
 msgid "HBox"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:988
+#: ../plugins/gtkui/gtkui.c:979
 msgid "VBox"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:989 ../plugins/gtkui/widgets.c:3267
+#: ../plugins/gtkui/gtkui.c:980 ../plugins/gtkui/widgets.c:3278
 msgid "Button"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1175
+#: ../plugins/gtkui/gtkui.c:1166
 msgid "Failed while reading help file"
 msgstr "Wazewo kiremya mu kusoma fayiro ey'obuyambi"
 
-#: ../plugins/gtkui/gtkui.c:1185
+#: ../plugins/gtkui/gtkui.c:1176
 msgid "Failed to load help file"
 msgstr "Nnemedwa okubikkula fayiro ey'obuyambi"
 
-#: ../plugins/gtkui/gtkui.c:1196
+#: ../plugins/gtkui/gtkui.c:1187
 msgid ""
 "The player is currently running backgroud tasks. If you quit now, the tasks "
 "will be cancelled or interrupted. This may result in data loss."
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1198
+#: ../plugins/gtkui/gtkui.c:1189
 msgid "Do you still want to quit?"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1199 ../plugins/gtkui/prefwin.c:349
+#: ../plugins/gtkui/gtkui.c:1190 ../plugins/gtkui/prefwin.c:349
 #: ../plugins/gtkui/trkproperties.c:171 ../plugins/converter/convgui.c:862
 #: ../plugins/converter/convgui.c:1317 ../plugins/gtkui/actionhandlers.c:491
 msgid "Warning"
@@ -294,7 +303,7 @@ msgid "Sort by"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:271 ../plugins/gtkui/interface.c:1463
-#: ../plugins/gtkui/mainplaylist.c:348 ../plugins/gtkui/prefwin.c:321
+#: ../plugins/gtkui/mainplaylist.c:353 ../plugins/gtkui/prefwin.c:321
 #: ../plugins/gtkui/search.c:424 ../plugins/gtkui/deadbeef.glade.h:20
 #: ../plugins/converter/convgui.c:893 ../plugins/converter/convgui.c:1392
 #: ../plugins/converter/interface.c:605
@@ -509,7 +518,7 @@ msgstr "Ebirufaako"
 #: ../plugins/gtkui/interface.c:1433 ../plugins/gtkui/interface.c:3192
 #: ../plugins/gtkui/deadbeef.glade.h:70 ../plugins/converter/interface.c:378
 #: ../plugins/converter/converter.glade.h:22
-#: ../plugins/shellexecui/interface.c:158
+#: ../plugins/shellexecui/interface.c:159
 #: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/pltmenu.c:65
 msgid "Title:"
 msgstr "Mutwe:"
@@ -527,7 +536,7 @@ msgid "Item Index"
 msgstr "Lukalala lw'ebirimu"
 
 #. create default set of columns
-#: ../plugins/gtkui/interface.c:1458 ../plugins/gtkui/mainplaylist.c:345
+#: ../plugins/gtkui/interface.c:1458 ../plugins/gtkui/mainplaylist.c:350
 msgid "Playing"
 msgstr "Oluliko"
 
@@ -539,7 +548,7 @@ msgstr "Bifaananyi bya ku alubamu"
 msgid "Artist - Album"
 msgstr "Muluyimba - Alubamu"
 
-#: ../plugins/gtkui/interface.c:1464 ../plugins/gtkui/mainplaylist.c:349
+#: ../plugins/gtkui/interface.c:1464 ../plugins/gtkui/mainplaylist.c:354
 #: ../plugins/gtkui/search.c:425
 msgid "Duration"
 msgstr "Obwuwanvu bwa lwo"
@@ -637,11 +646,14 @@ msgstr "Genda ku lutambi olutangaazidwa:"
 
 #: ../plugins/gtkui/interface.c:1940 ../plugins/gtkui/deadbeef.glade.h:102
 msgid "Add files from command line (or file manager) to this playlist:"
-msgstr "Olukalala lw'ongereko fayiro nga weyambisa kiwandikiro (oba ekiteekateekafayiro):"
+msgstr ""
+"Olukalala lw'ongereko fayiro nga weyambisa kiwandikiro (oba "
+"ekiteekateekafayiro):"
 
 #: ../plugins/gtkui/interface.c:1949 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Resume previous session on startup"
-msgstr "Puloguramu bw'etandikibwa etandikirenga gye yakoma ku mulundi ogwasemba"
+msgstr ""
+"Puloguramu bw'etandikibwa etandikirenga gye yakoma ku mulundi ogwasemba"
 
 #: ../plugins/gtkui/interface.c:1953 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Don't add from archives when adding folders"
@@ -675,7 +687,8 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2047 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "Close minimizes to tray"
-msgstr "Ggala kireetera puloguramu okufuuka kafaananyi mu kakuŋaanyizo ka ku lubaawo"
+msgstr ""
+"Ggala kireetera puloguramu okufuuka kafaananyi mu kakuŋaanyizo ka ku lubaawo"
 
 #: ../plugins/gtkui/interface.c:2051 ../plugins/gtkui/deadbeef.glade.h:112
 msgid "Hide system tray icon"
@@ -777,7 +790,9 @@ msgstr "Langi ez'oku bukonda"
 
 #: ../plugins/gtkui/interface.c:2292 ../plugins/gtkui/deadbeef.glade.h:137
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
-msgstr "Ssawo enteekateeka eyiyo (kiva ku lulyo lwa langi olwa sisitemu naye kyanguya puloguramu okulabika)"
+msgstr ""
+"Ssawo enteekateeka eyiyo (kiva ku lulyo lwa langi olwa sisitemu naye "
+"kyanguya puloguramu okulabika)"
 
 #: ../plugins/gtkui/interface.c:2301 ../plugins/gtkui/deadbeef.glade.h:138
 msgid "Even row"
@@ -1033,11 +1048,11 @@ msgstr ""
 msgid "Select action"
 msgstr ""
 
-#: ../plugins/gtkui/mainplaylist.c:346 ../plugins/gtkui/search.c:422
+#: ../plugins/gtkui/mainplaylist.c:351 ../plugins/gtkui/search.c:422
 msgid "Artist / Album"
 msgstr "Muluyimba / Alubamu"
 
-#: ../plugins/gtkui/mainplaylist.c:347 ../plugins/gtkui/search.c:423
+#: ../plugins/gtkui/mainplaylist.c:352 ../plugins/gtkui/search.c:423
 msgid "Track No"
 msgstr "Namba y'olutambi"
 
@@ -1077,7 +1092,7 @@ msgstr ""
 msgid "Group by"
 msgstr "Sengekera ku"
 
-#: ../plugins/gtkui/plcommon.c:1148 ../plugins/gtkui/widgets.c:3363
+#: ../plugins/gtkui/plcommon.c:1148 ../plugins/gtkui/widgets.c:3374
 msgid "None"
 msgstr "Tosengeka"
 
@@ -1186,7 +1201,9 @@ msgstr "Obuwayiro:\n"
 #: ../main.c:91
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr "   --help  oba  -h     Bw'ossawo kamu ku buno, okoma ku kufuna bino by'osoma\n"
+msgstr ""
+"   --help  oba  -h     Bw'ossawo kamu ku buno, okoma ku kufuna bino "
+"by'osoma\n"
 
 #: ../main.c:92
 #, c-format
@@ -1196,7 +1213,9 @@ msgstr "   --quit             Kano kaleetera puloguramu okumala\n"
 #: ../main.c:93
 #, c-format
 msgid "   --version          Print version info and exit\n"
-msgstr "   --version          Kano kaleetera puloguramu okukoma ku kukulaga olwandika lwa yo\n"
+msgstr ""
+"   --version          Kano kaleetera puloguramu okukoma ku kukulaga "
+"olwandika lwa yo\n"
 
 #: ../main.c:94
 #, c-format
@@ -1211,7 +1230,8 @@ msgstr "   --stop             Kano kaleetera pulguramu okukomya oluyimba\n"
 #: ../main.c:96
 #, c-format
 msgid "   --pause            Pause playback\n"
-msgstr "   --pause            Kano kaleetera puloguramu okuyimirizamu oluyimba\n"
+msgstr ""
+"   --pause            Kano kaleetera puloguramu okuyimirizamu oluyimba\n"
 
 #: ../main.c:97
 #, c-format
@@ -1227,32 +1247,42 @@ msgstr ""
 #: ../main.c:99
 #, c-format
 msgid "   --next             Next song in playlist\n"
-msgstr "   --next             Kano kaleetera puloguramu okutandika oluyimba oluddako mu lukalala\n"
+msgstr ""
+"   --next             Kano kaleetera puloguramu okutandika oluyimba oluddako "
+"mu lukalala\n"
 
 #: ../main.c:100
 #, c-format
 msgid "   --prev             Previous song in playlist\n"
-msgstr "   --prev             Kano kaleetera puloguramu okutandika olukulembera lw'ebadde ko mu lukalala\n"
+msgstr ""
+"   --prev             Kano kaleetera puloguramu okutandika olukulembera "
+"lw'ebadde ko mu lukalala\n"
 
 #: ../main.c:101
 #, c-format
 msgid "   --random           Random song in playlist\n"
-msgstr "   --random           Kano kaleetera puloguramu okuyita mu nyimba muwawa\n"
+msgstr ""
+"   --random           Kano kaleetera puloguramu okuyita mu nyimba muwawa\n"
 
 #: ../main.c:102
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
-msgstr "   --queue            Kano kaleetera puloguramu okwongera nyimba ku lukalala\n"
+msgstr ""
+"   --queue            Kano kaleetera puloguramu okwongera nyimba ku "
+"lukalala\n"
 
 #: ../main.c:103
 #, c-format
-msgid "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
+msgid ""
+"   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
 msgstr ""
 
 #: ../main.c:104
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr "   --nowplaying FMT  Kano kaleetera puloguramu okuwandikawo erinnya ly'olutambi\n"
+msgstr ""
+"   --nowplaying FMT  Kano kaleetera puloguramu okuwandikawo erinnya "
+"ly'olutambi\n"
 
 #: ../main.c:105
 #, c-format
@@ -1260,20 +1290,28 @@ msgid ""
 "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
 "                      copy[r]ight, [e]lapsed\n"
-msgstr "                      FMT %%-empandika: a: muyimbi, t: Linnya lya luyimba, b: Alubamu,\n                      : Buwanvu bwa luyimba,n: Lutambi,y: Mwaka mwe lwafulumira, c: Ebinnyonyola,\n                      r: Ebikugizo by'obwa nannyini, e: Ekitundu ky'oluyimba ekiwulirizidwako\n"
+msgstr ""
+"                      FMT %%-empandika: a: muyimbi, t: Linnya lya luyimba, "
+"b: Alubamu,\n"
+"                      : Buwanvu bwa luyimba,n: Lutambi,y: Mwaka mwe "
+"lwafulumira, c: Ebinnyonyola,\n"
+"                      r: Ebikugizo by'obwa nannyini, e: Ekitundu ky'oluyimba "
+"ekiwulirizidwako\n"
 
 #: ../main.c:108
 #, c-format
 msgid ""
-"                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist"
-" - title\"\n"
-msgstr "                      okugeza.: --nowplaying \"%%a - %%t\" kisuubirwa okuvaamu \"muyibi - linnya lya luyimba\"\n"
+"                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
+"- title\"\n"
+msgstr ""
+"                      okugeza.: --nowplaying \"%%a - %%t\" kisuubirwa "
+"okuvaamu \"muyibi - linnya lya luyimba\"\n"
 
 #: ../main.c:109
 #, c-format
 msgid ""
-"                      for more info, see "
-"http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"
+"                      for more info, see http://sourceforge.net/apps/"
+"mediawiki/deadbeef/index.php?title=Title_Formatting\n"
 msgstr ""
 
 #: ../playlist.c:482 ../playlist.c:2494
@@ -1307,14 +1345,19 @@ msgstr ""
 msgid ""
 "Left\n"
 "Right"
-msgstr "Kkono\nDyo"
+msgstr ""
+"Kkono\n"
+"Dyo"
 
 #: ../plugins/gtkui/deadbeef.glade.h:94
 msgid ""
 "Disable\n"
 "Track\n"
 "Album"
-msgstr "Gyako\nLutambi\nAlubamu"
+msgstr ""
+"Gyako\n"
+"Lutambi\n"
+"Alubamu"
 
 #: ../plugins/gtkui/deadbeef.glade.h:172
 msgid ""
@@ -1326,7 +1369,9 @@ msgstr ""
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
-msgstr "2.3 (Tukuwa magezi kukozesa luno)\n2.4"
+msgstr ""
+"2.3 (Tukuwa magezi kukozesa luno)\n"
+"2.4"
 
 #: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
 #: ../plugins/converter/support.c:90 ../plugins/converter/support.c:114
@@ -1340,7 +1385,10 @@ msgstr "Fayiro erimu ekifaananyi embuze: %s"
 msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings."
-msgstr "widimidi: Sirabye fayiro ey'enteekateeka eza freepats. Sisitemu yo giteekeko omuganda gwa timidity-freepats, oba gend mu nteekateeka otegeke ekkubo erigguka ku freepats.cfg."
+msgstr ""
+"widimidi: Sirabye fayiro ey'enteekateeka eza freepats. Sisitemu yo giteekeko "
+"omuganda gwa timidity-freepats, oba gend mu nteekateeka otegeke ekkubo "
+"erigguka ku freepats.cfg."
 
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
@@ -1962,17 +2010,17 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
-#: ../plugins/shellexecui/interface.c:144
+#: ../plugins/shellexecui/interface.c:145
 #: ../plugins/shellexecui/shellexec.glade.h:6
 msgid "Edit Command"
 msgstr ""
 
-#: ../plugins/shellexecui/interface.c:165
+#: ../plugins/shellexecui/interface.c:166
 #: ../plugins/shellexecui/shellexec.glade.h:8
 msgid "Command:"
 msgstr ""
 
-#: ../plugins/shellexecui/interface.c:177
+#: ../plugins/shellexecui/interface.c:178
 #: ../plugins/shellexecui/shellexec.glade.h:10
 #, no-c-format
 msgid ""
@@ -1981,71 +2029,79 @@ msgid ""
 "xdg-open %D"
 msgstr ""
 
-#: ../plugins/shellexecui/interface.c:180
+#: ../plugins/shellexecui/interface.c:181
 #: ../plugins/shellexecui/shellexec.glade.h:11
 msgid "ID:"
 msgstr ""
 
-#: ../plugins/shellexecui/interface.c:192
+#: ../plugins/shellexecui/interface.c:193
 #: ../plugins/shellexecui/shellexec.glade.h:12
 msgid "Free-form name, for example \"My Shell Command\""
 msgstr ""
 
-#: ../plugins/shellexecui/interface.c:200
+#: ../plugins/shellexecui/interface.c:201
 #: ../plugins/shellexecui/shellexec.glade.h:13
 msgid ""
-"Command ID, normally it should be something short, for example "
-"\"youtube_open\". It must be unique."
+"Command ID, normally it should be something short, for example \"youtube_open"
+"\". It must be unique."
 msgstr ""
 
-#: ../plugins/shellexecui/interface.c:203
+#: ../plugins/shellexecui/interface.c:204
 #: ../plugins/shellexecui/shellexec.glade.h:15
 msgid "Single Tracks"
 msgstr ""
 
-#: ../plugins/shellexecui/interface.c:206
+#: ../plugins/shellexecui/interface.c:207
 #: ../plugins/shellexecui/shellexec.glade.h:14
 msgid "Works on single track."
 msgstr ""
 
-#: ../plugins/shellexecui/interface.c:208
+#: ../plugins/shellexecui/interface.c:209
 #: ../plugins/shellexecui/shellexec.glade.h:17
 msgid "Multiple Tracks"
 msgstr ""
 
-#: ../plugins/shellexecui/interface.c:211
+#: ../plugins/shellexecui/interface.c:212
 #: ../plugins/shellexecui/shellexec.glade.h:16
 msgid "Works on multiple tracks."
 msgstr ""
 
-#: ../plugins/shellexecui/interface.c:213
+#: ../plugins/shellexecui/interface.c:214
 #: ../plugins/shellexecui/shellexec.glade.h:19
 msgid "Local"
 msgstr ""
 
-#: ../plugins/shellexecui/interface.c:216
+#: ../plugins/shellexecui/interface.c:217
 #: ../plugins/shellexecui/shellexec.glade.h:18
 msgid "Works on local files."
 msgstr ""
 
-#: ../plugins/shellexecui/interface.c:218
+#: ../plugins/shellexecui/interface.c:219
 #: ../plugins/shellexecui/shellexec.glade.h:21
 msgid "Remote"
 msgstr ""
 
-#: ../plugins/shellexecui/interface.c:221
+#: ../plugins/shellexecui/interface.c:222
 #: ../plugins/shellexecui/shellexec.glade.h:20
 msgid "Works on remote files (e.g. http:// streams)"
 msgstr ""
 
-#: ../plugins/shellexecui/interface.c:223
+#: ../plugins/shellexecui/interface.c:224
 #: ../plugins/shellexecui/shellexec.glade.h:23
-msgid "Common"
+msgid "Generic (Main Menu)"
 msgstr ""
 
-#: ../plugins/shellexecui/interface.c:226
+#: ../plugins/shellexecui/interface.c:227
 #: ../plugins/shellexecui/shellexec.glade.h:22
 msgid "Item should appear in the main menu"
+msgstr ""
+
+#: ../plugins/shellexecui/interface.c:229
+#: ../plugins/shellexecui/shellexec.glade.h:24
+msgid ""
+"<small>If you want to add the command to main menu, make sure that title "
+"contains the menu path like this: \"File/My Command\", where File is the "
+"menu name in the English version.</small>"
 msgstr ""
 
 #: ../plugins/shellexecui/shellexecui.c:94
@@ -2119,19 +2175,19 @@ msgid ""
 "(This dialog can be turned off in GTKUI plugin settings)"
 msgstr ""
 
-#: ../plugins/gtkui/actionhandlers.c:660
+#: ../plugins/gtkui/actionhandlers.c:673
 msgid "Load Playlist"
 msgstr ""
 
-#: ../plugins/gtkui/actionhandlers.c:675
+#: ../plugins/gtkui/actionhandlers.c:688
 msgid "Other files (*)"
 msgstr ""
 
-#: ../plugins/gtkui/actionhandlers.c:709
+#: ../plugins/gtkui/actionhandlers.c:722
 msgid "Save Playlist As"
 msgstr ""
 
-#: ../plugins/gtkui/actionhandlers.c:720
+#: ../plugins/gtkui/actionhandlers.c:733
 msgid "DeaDBeeF playlist files (*.dbpl)"
 msgstr ""
 
@@ -2145,7 +2201,8 @@ msgstr ""
 
 #: ../plugins/gtkui/ctmapping.c:200
 msgid ""
-"Content-type and Plugins fields must be non-empty, and comply with the rules.\n"
+"Content-type and Plugins fields must be non-empty, and comply with the "
+"rules.\n"
 "Example content-type: 'audio/mpeg'.\n"
 "Example plugin ids: 'stdmpg ffmpeg'.\n"
 "Spaces must be used as separators in plugin ids list.\n"
@@ -2209,27 +2266,27 @@ msgstr ""
 msgid "Show Column Headers"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2986
+#: ../plugins/gtkui/widgets.c:2997
 msgid "Expand the box by 1 item"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2991
+#: ../plugins/gtkui/widgets.c:3002
 msgid "Shrink the box by 1 item"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2996
+#: ../plugins/gtkui/widgets.c:3007
 msgid "Homogeneous"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3036
+#: ../plugins/gtkui/widgets.c:3047
 msgid "Expand"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3044
+#: ../plugins/gtkui/widgets.c:3055
 msgid "Fill"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3445
+#: ../plugins/gtkui/widgets.c:3456
 msgid "Configure button"
 msgstr ""
 
