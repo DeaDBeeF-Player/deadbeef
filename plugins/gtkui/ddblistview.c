@@ -2389,12 +2389,9 @@ ddb_listview_header_configure_event              (GtkWidget       *widget,
     if (height != a.height) {
         gtk_widget_set_size_request (widget, -1, height);
     }
-    int totalwidth = a.width;
-    if (gtk_widget_get_visible (ps->scrollbar)) {
-        GtkAllocation sba;
-        gtk_widget_get_allocation (ps->scrollbar, &sba);
-        totalwidth += sba.width;
-    }
+    GtkAllocation lva;
+    gtk_widget_get_allocation (GTK_WIDGET (ps), &lva);
+    int totalwidth = lva.width;
 
     if (!ps->lock_columns) {
         DdbListviewColumn *c;
