@@ -39,6 +39,11 @@
 		4D1B51691837F669003E6066 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B51631837F60A003E6066 /* CoreAudio.framework */; };
 		4D1B51741837F813003E6066 /* ffap.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B516D1837F813003E6066 /* ffap.c */; };
 		4D1B517F1837F8A9003E6066 /* mpgmad.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B517C1837F8A9003E6066 /* mpgmad.c */; };
+		4D2E508318392E4C0054B964 /* playbtn.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D2E508218392E4C0054B964 /* playbtn.png */; };
+		4D2E508518392F1C0054B964 /* stopbtn.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D2E508418392F1C0054B964 /* stopbtn.png */; };
+		4D2E508718392F930054B964 /* pausebtn.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D2E508618392F930054B964 /* pausebtn.png */; };
+		4D2E508C1839304F0054B964 /* nextbtn.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D2E508A1839304F0054B964 /* nextbtn.png */; };
+		4D2E508D1839304F0054B964 /* prevbtn.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D2E508B1839304F0054B964 /* prevbtn.png */; };
 		4DA72BE71838EAAB00A98C62 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA72BDA1838EAAB00A98C62 /* AppDelegate.m */; };
 		4DA72BE81838EAAB00A98C62 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DA72BDC1838EAAB00A98C62 /* MainMenu.xib */; };
 		4DA72BE91838EAAB00A98C62 /* deadbeef-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4DA72BDE1838EAAB00A98C62 /* deadbeef-Info.plist */; };
@@ -134,6 +139,11 @@
 		4D1B51671837F655003E6066 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		4D1B516D1837F813003E6066 /* ffap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ffap.c; sourceTree = "<group>"; };
 		4D1B517C1837F8A9003E6066 /* mpgmad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mpgmad.c; sourceTree = "<group>"; };
+		4D2E508218392E4C0054B964 /* playbtn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = playbtn.png; path = ../../../../Documents/playbtn.png; sourceTree = "<group>"; };
+		4D2E508418392F1C0054B964 /* stopbtn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = stopbtn.png; path = ../../../../Documents/stopbtn.png; sourceTree = "<group>"; };
+		4D2E508618392F930054B964 /* pausebtn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pausebtn.png; path = ../../../../Documents/pausebtn.png; sourceTree = "<group>"; };
+		4D2E508A1839304F0054B964 /* nextbtn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = nextbtn.png; path = ../../../../Documents/nextbtn.png; sourceTree = "<group>"; };
+		4D2E508B1839304F0054B964 /* prevbtn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = prevbtn.png; path = ../../../../Documents/prevbtn.png; sourceTree = "<group>"; };
 		4DA72BD91838EAAB00A98C62 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		4DA72BDA1838EAAB00A98C62 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		4DA72BDD1838EAAB00A98C62 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = MainMenu.xib; sourceTree = "<group>"; };
@@ -375,6 +385,11 @@
 		4DEE38461838E6450022D2B7 /* cocoaui */ = {
 			isa = PBXGroup;
 			children = (
+				4D2E508A1839304F0054B964 /* nextbtn.png */,
+				4D2E508B1839304F0054B964 /* prevbtn.png */,
+				4D2E508218392E4C0054B964 /* playbtn.png */,
+				4D2E508418392F1C0054B964 /* stopbtn.png */,
+				4D2E508618392F930054B964 /* pausebtn.png */,
 				4DA72BD91838EAAB00A98C62 /* AppDelegate.h */,
 				4DA72BDA1838EAAB00A98C62 /* AppDelegate.m */,
 				4DA72BDB1838EAAB00A98C62 /* Base.lproj */,
@@ -457,12 +472,17 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4D2E508518392F1C0054B964 /* stopbtn.png in Resources */,
 				4D1B4A101837EC49003E6066 /* readme.txt in Resources */,
 				4DA72BE91838EAAB00A98C62 /* deadbeef-Info.plist in Resources */,
+				4D2E508D1839304F0054B964 /* prevbtn.png in Resources */,
 				4DA72BE81838EAAB00A98C62 /* MainMenu.xib in Resources */,
+				4D2E508718392F930054B964 /* pausebtn.png in Resources */,
 				4DA72BEC1838EAAB00A98C62 /* Images.xcassets in Resources */,
 				4DA72BEA1838EAAB00A98C62 /* Credits.rtf in Resources */,
 				4DA72BEB1838EAAB00A98C62 /* InfoPlist.strings in Resources */,
+				4D2E508318392E4C0054B964 /* playbtn.png in Resources */,
+				4D2E508C1839304F0054B964 /* nextbtn.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -590,7 +610,7 @@
 					"/Users/oleksiy/deadbeef-deps-osx/libmad-0.15.1b",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
@@ -627,7 +647,7 @@
 					"/Users/oleksiy/deadbeef-deps-osx/libmad-0.15.1b",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = macosx;
 			};
@@ -658,7 +678,7 @@
 					"$(inherited)",
 					"/Users/oleksiy/deadbeef-deps-osx/libmad-0.15.1b/.libs",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -676,7 +696,7 @@
 					"$(inherited)",
 					"/Users/oleksiy/deadbeef-deps-osx/libmad-0.15.1b/.libs",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
