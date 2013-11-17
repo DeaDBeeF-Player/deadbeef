@@ -13,9 +13,9 @@ gtkuidir = $(libdir)/$(PACKAGE)
 #endif
 #endif
 
-if OS_OSX
-OSXSRC = retina.m
-endif
+#if OS_OSX
+#OSXSRC = retina.m
+#endif
 
 GTKUI_SOURCES =    gtkui.c gtkui.h\
 				   callbacks.c interface.c support.c callbacks.h interface.h support.h\
