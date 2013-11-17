@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 # Arthur Țițeică <arthur@psw.ro>, 2013
 # roentgen <arthur.titeica@gmail.com>, 2013
@@ -11,27 +11,29 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-10 18:36+0100\n"
-"PO-Revision-Date: 2013-11-10 17:37+0000\n"
-"Last-Translator: waker <wakeroid@gmail.com>\n"
-"Language-Team: Romanian (http://www.transifex.com/projects/p/deadbeef-player/language/ro/)\n"
+"POT-Creation-Date: 2013-11-17 16:56+0100\n"
+"PO-Revision-Date: 2013-11-10 18:30+0000\n"
+"Last-Translator: roentgen <arthur.titeica@gmail.com>\n"
+"Language-Team: Romanian (http://www.transifex.com/projects/p/deadbeef-player/"
+"language/ro/)\n"
+"Language: ro\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ro\n"
-"Plural-Forms: nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));\n"
+"Plural-Forms: nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?"
+"2:1));\n"
 
-#: ../plugins/gtkui/callbacks.c:339
+#: ../plugins/gtkui/callbacks.c:338
 #, c-format
 msgid "About DeaDBeeF %s"
 msgstr "Despre DeaDBeeF %s"
 
-#: ../plugins/gtkui/callbacks.c:352
+#: ../plugins/gtkui/callbacks.c:351
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
 msgstr "Istoricul modificărilor DeaDBeeF %s"
 
-#: ../plugins/gtkui/callbacks.c:676
+#: ../plugins/gtkui/callbacks.c:675
 #, c-format
 msgid "DeaDBeeF Translators"
 msgstr "Traducători DeaDBeeF"
@@ -93,123 +95,127 @@ msgstr "Zero benzi"
 msgid "Presets"
 msgstr "Presetări"
 
-#: ../plugins/gtkui/gtkui.c:166
+#: ../plugins/gtkui/gtkui.c:163
 #, c-format
 msgid "1 day %d:%02d:%02d"
 msgstr "o zi %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:169
+#: ../plugins/gtkui/gtkui.c:166
 #, c-format
 msgid "%d days %d:%02d:%02d"
 msgstr "%d zile %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:178
+#: ../plugins/gtkui/gtkui.c:175
 #, c-format
 msgid "Stopped | %d tracks | %s total playtime"
 msgstr "Oprit | %d piese | %s durată totală"
 
-#: ../plugins/gtkui/gtkui.c:191 ../playlist.c:3113
+#: ../plugins/gtkui/gtkui.c:188 ../playlist.c:3113
 msgid "Mono"
 msgstr "Mono"
 
-#: ../plugins/gtkui/gtkui.c:191 ../playlist.c:3113
+#: ../plugins/gtkui/gtkui.c:188 ../playlist.c:3113
 msgid "Stereo"
 msgstr "Stereo"
 
-#: ../plugins/gtkui/gtkui.c:216
+#: ../plugins/gtkui/gtkui.c:213
 #, c-format
 msgid "| %4d kbps "
 msgstr "| %4d kbps "
 
-#: ../plugins/gtkui/gtkui.c:222
+#: ../plugins/gtkui/gtkui.c:219
 msgid "Paused | "
 msgstr "Pauză | "
 
-#: ../plugins/gtkui/gtkui.c:227
+#: ../plugins/gtkui/gtkui.c:224
 #, c-format
 msgid ""
 "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
-msgstr "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d piese | %s durată totală"
+msgstr ""
+"%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d piese | %s durată totală"
 
-#: ../plugins/gtkui/gtkui.c:714 ../plugins/gtkui/fileman.c:41
+#: ../plugins/gtkui/gtkui.c:706 ../plugins/gtkui/fileman.c:41
 msgid "New Playlist"
 msgstr "Listă de redare nouă"
 
-#: ../plugins/gtkui/gtkui.c:717
+#: ../plugins/gtkui/gtkui.c:709
 #, c-format
 msgid "New Playlist (%d)"
 msgstr "Listă de redare nouă (%d)"
 
 #. register widget types
-#: ../plugins/gtkui/gtkui.c:974
+#: ../plugins/gtkui/gtkui.c:965
 msgid "Playlist with tabs"
 msgstr "Listă de redare cu file"
 
-#: ../plugins/gtkui/gtkui.c:975 ../plugins/gtkui/interface.c:2146
+#: ../plugins/gtkui/gtkui.c:966 ../plugins/gtkui/interface.c:2146
 #: ../plugins/gtkui/deadbeef.glade.h:125
 msgid "Playlist"
 msgstr "Listă de redare"
 
-#: ../plugins/gtkui/gtkui.c:978
+#: ../plugins/gtkui/gtkui.c:969
 msgid "Splitter (top and bottom)"
 msgstr "Separator (sus și jos)"
 
-#: ../plugins/gtkui/gtkui.c:979
+#: ../plugins/gtkui/gtkui.c:970
 msgid "Splitter (left and right)"
 msgstr "Separator (stânga și dreapta)"
 
 #. w_reg_widget (_("Tabs"), 0, w_tabs_create, "tabs", NULL);
-#: ../plugins/gtkui/gtkui.c:982
+#: ../plugins/gtkui/gtkui.c:973
 msgid "Playlist tabs"
 msgstr "File de liste de redare"
 
-#: ../plugins/gtkui/gtkui.c:983
+#: ../plugins/gtkui/gtkui.c:974
 msgid "Selection properties"
 msgstr "Proprietățile selecției"
 
-#: ../plugins/gtkui/gtkui.c:984
+#: ../plugins/gtkui/gtkui.c:975
 msgid "Album art display"
 msgstr "Afișare copertă de album"
 
-#: ../plugins/gtkui/gtkui.c:985
+#: ../plugins/gtkui/gtkui.c:976
 msgid "Scope"
 msgstr "Scop"
 
-#: ../plugins/gtkui/gtkui.c:986
+#: ../plugins/gtkui/gtkui.c:977
 msgid "Spectrum"
 msgstr "Spectru"
 
-#: ../plugins/gtkui/gtkui.c:987
+#: ../plugins/gtkui/gtkui.c:978
 msgid "HBox"
 msgstr "HBox"
 
-#: ../plugins/gtkui/gtkui.c:988
+#: ../plugins/gtkui/gtkui.c:979
 msgid "VBox"
 msgstr "VBox"
 
-#: ../plugins/gtkui/gtkui.c:989 ../plugins/gtkui/widgets.c:3267
+#: ../plugins/gtkui/gtkui.c:980 ../plugins/gtkui/widgets.c:3278
 msgid "Button"
 msgstr "Buton"
 
-#: ../plugins/gtkui/gtkui.c:1175
+#: ../plugins/gtkui/gtkui.c:1166
 msgid "Failed while reading help file"
 msgstr "Nu s-a putut citi fișierul ce conține ajutorul"
 
-#: ../plugins/gtkui/gtkui.c:1185
+#: ../plugins/gtkui/gtkui.c:1176
 msgid "Failed to load help file"
 msgstr "Nu s-a putut încărca fișierul ce conține ajutorul"
 
-#: ../plugins/gtkui/gtkui.c:1196
+#: ../plugins/gtkui/gtkui.c:1187
 msgid ""
 "The player is currently running backgroud tasks. If you quit now, the tasks "
 "will be cancelled or interrupted. This may result in data loss."
-msgstr "În acest moment aplicația rulează sarcini de fundal. Dacă renunți acum, sarcinile vor fi anulate sau întrerupte. Acest lucru poate cauza pierderi de date."
+msgstr ""
+"În acest moment lectorul rulează sarcini în fundal. Dacă renunți acum, "
+"sarcinile vor fi anulate sau întrerupte. Acest lucru poate cauza pierderi de "
+"date."
 
-#: ../plugins/gtkui/gtkui.c:1198
+#: ../plugins/gtkui/gtkui.c:1189
 msgid "Do you still want to quit?"
 msgstr "Dorești în continuare să renunți?"
 
-#: ../plugins/gtkui/gtkui.c:1199 ../plugins/gtkui/prefwin.c:349
+#: ../plugins/gtkui/gtkui.c:1190 ../plugins/gtkui/prefwin.c:349
 #: ../plugins/gtkui/trkproperties.c:171 ../plugins/converter/convgui.c:862
 #: ../plugins/converter/convgui.c:1317 ../plugins/gtkui/actionhandlers.c:491
 msgid "Warning"
@@ -297,7 +303,7 @@ msgid "Sort by"
 msgstr "Sortează după"
 
 #: ../plugins/gtkui/interface.c:271 ../plugins/gtkui/interface.c:1463
-#: ../plugins/gtkui/mainplaylist.c:348 ../plugins/gtkui/prefwin.c:321
+#: ../plugins/gtkui/mainplaylist.c:353 ../plugins/gtkui/prefwin.c:321
 #: ../plugins/gtkui/search.c:424 ../plugins/gtkui/deadbeef.glade.h:20
 #: ../plugins/converter/convgui.c:893 ../plugins/converter/convgui.c:1392
 #: ../plugins/converter/interface.c:605
@@ -512,7 +518,7 @@ msgstr "Proprietăți"
 #: ../plugins/gtkui/interface.c:1433 ../plugins/gtkui/interface.c:3192
 #: ../plugins/gtkui/deadbeef.glade.h:70 ../plugins/converter/interface.c:378
 #: ../plugins/converter/converter.glade.h:22
-#: ../plugins/shellexecui/interface.c:158
+#: ../plugins/shellexecui/interface.c:159
 #: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/pltmenu.c:65
 msgid "Title:"
 msgstr "Titlu:"
@@ -530,7 +536,7 @@ msgid "Item Index"
 msgstr "Index elementului"
 
 #. create default set of columns
-#: ../plugins/gtkui/interface.c:1458 ../plugins/gtkui/mainplaylist.c:345
+#: ../plugins/gtkui/interface.c:1458 ../plugins/gtkui/mainplaylist.c:350
 msgid "Playing"
 msgstr "În redare"
 
@@ -542,7 +548,7 @@ msgstr "Copertă album"
 msgid "Artist - Album"
 msgstr "Artist - Album"
 
-#: ../plugins/gtkui/interface.c:1464 ../plugins/gtkui/mainplaylist.c:349
+#: ../plugins/gtkui/interface.c:1464 ../plugins/gtkui/mainplaylist.c:354
 #: ../plugins/gtkui/search.c:425
 msgid "Duration"
 msgstr "Durată"
@@ -640,7 +646,9 @@ msgstr "Preamplificare globală:"
 
 #: ../plugins/gtkui/interface.c:1940 ../plugins/gtkui/deadbeef.glade.h:102
 msgid "Add files from command line (or file manager) to this playlist:"
-msgstr "Folosește această listă pentru fișierele adăugate din linia de comandă (sau manager de fișiere):"
+msgstr ""
+"Folosește această listă pentru fișierele adăugate din linia de comandă (sau "
+"manager de fișiere):"
 
 #: ../plugins/gtkui/interface.c:1949 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Resume previous session on startup"
@@ -710,15 +718,15 @@ msgstr "Extensie pentru GUI (modificările necesită repornire):"
 
 #: ../plugins/gtkui/interface.c:2117 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Player"
-msgstr ""
+msgstr "Lector"
 
 #: ../plugins/gtkui/interface.c:2126 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Close playlists with middle mouse button"
-msgstr ""
+msgstr "Închide listele de redare cu butonul de clic mijloc"
 
 #: ../plugins/gtkui/interface.c:2130 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Draw playing track using bold font"
-msgstr ""
+msgstr "Desenează piesa care rulează folosind un font îngroșat"
 
 #: ../plugins/gtkui/interface.c:2134 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Hide \"Delete from disk\" context menu item"
@@ -730,7 +738,7 @@ msgstr "Denumire automată pentru liste la adăugarea unui singur dosar"
 
 #: ../plugins/gtkui/interface.c:2142 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "Auto-resize columns to fit the window"
-msgstr ""
+msgstr "Dimensionare automată a coloanelor pentru a se încadra în fereastră"
 
 #: ../plugins/gtkui/interface.c:2150 ../plugins/gtkui/deadbeef.glade.h:126
 msgid "GUI/Misc"
@@ -780,7 +788,8 @@ msgstr "Culorile filelor"
 
 #: ../plugins/gtkui/interface.c:2292 ../plugins/gtkui/deadbeef.glade.h:137
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
-msgstr "Suprascriere (se pierde tema \"treeview\" GTK, dar se accelerează randarea)"
+msgstr ""
+"Suprascriere (se pierde tema \"treeview\" GTK, dar se accelerează randarea)"
 
 #: ../plugins/gtkui/interface.c:2301 ../plugins/gtkui/deadbeef.glade.h:138
 msgid "Even row"
@@ -876,10 +885,14 @@ msgid ""
 "The changes will NOT be saved\n"
 "if you don't press Apply."
 msgstr ""
+"Folosește butonul Aplică pe a salva modificările,\n"
+"sau butonul Revenire pentru a anula modificările.\n"
+"Modificările NU vor fi salvate\n"
+"dacă nu vei apăsa Aplică."
 
 #: ../plugins/gtkui/interface.c:2614 ../plugins/gtkui/deadbeef.glade.h:163
 msgid "_Defaults"
-msgstr ""
+msgstr "_Implicit"
 
 #: ../plugins/gtkui/interface.c:2618 ../plugins/gtkui/deadbeef.glade.h:164
 msgid "Hotkeys"
@@ -998,7 +1011,11 @@ msgid ""
 "DeaDBeeF decoder plugins. For example, mp3 files can have content type "
 "\"audio/x-mpeg\", and need to be decoded by DeaDBeeF's own \"stdmpg\" "
 "plugin, or \"ffmpeg\" plugin."
-msgstr "Această tabela definește legătura dintre tipurile de conținut ale fluxului de rețea și extensiile de decodare ale DeaDBeeF. De exemplu, fișierele mp3 pot avea tipul de conținut \"audio/x-mpeg\", și trebuie decodate de către extensia \"stdmpg\" proprie DeaDBeeF, sau de către extensia \"ffmpeg\"."
+msgstr ""
+"Această tabela definește legătura dintre tipurile de conținut ale fluxului "
+"de rețea și extensiile de decodare ale DeaDBeeF. De exemplu, fișierele mp3 "
+"pot avea tipul de conținut \"audio/x-mpeg\", și trebuie decodate de către "
+"extensia \"stdmpg\" proprie DeaDBeeF, sau de către extensia \"ffmpeg\"."
 
 #: ../plugins/gtkui/interface.c:4116 ../plugins/gtkui/deadbeef.glade.h:190
 msgid "Reset to defaults"
@@ -1036,11 +1053,11 @@ msgstr "Etichetă:"
 msgid "Select action"
 msgstr "Alege acțiune"
 
-#: ../plugins/gtkui/mainplaylist.c:346 ../plugins/gtkui/search.c:422
+#: ../plugins/gtkui/mainplaylist.c:351 ../plugins/gtkui/search.c:422
 msgid "Artist / Album"
 msgstr "Artist / Album"
 
-#: ../plugins/gtkui/mainplaylist.c:347 ../plugins/gtkui/search.c:423
+#: ../plugins/gtkui/mainplaylist.c:352 ../plugins/gtkui/search.c:423
 msgid "Track No"
 msgstr "Nr. piesă"
 
@@ -1080,7 +1097,7 @@ msgstr ""
 msgid "Group by"
 msgstr "Grupează după"
 
-#: ../plugins/gtkui/plcommon.c:1148 ../plugins/gtkui/widgets.c:3363
+#: ../plugins/gtkui/plcommon.c:1148 ../plugins/gtkui/widgets.c:3374
 msgid "None"
 msgstr "Fără"
 
@@ -1104,10 +1121,11 @@ msgstr "Dispozitiv audio implicit"
 #: ../plugins/gtkui/prefwin.c:346
 msgid "You modified the hotkeys settings, but didn't save your changes."
 msgstr ""
+"Ai modificat setările pentru taste rapide dar nu ai salvat schimbările."
 
 #: ../plugins/gtkui/prefwin.c:348
 msgid "Are you sure you want to continue without saving?"
-msgstr ""
+msgstr "Ești sigur că vrei să continui fără să salvezi?"
 
 #: ../plugins/gtkui/progress.c:56
 msgid "Adding files..."
@@ -1194,7 +1212,7 @@ msgstr "   --help  sau -h     Arată acest mesaj de ajutor și ieși\n"
 #: ../main.c:92
 #, c-format
 msgid "   --quit             Quit player\n"
-msgstr "   --quit             Ieșire din player\n"
+msgstr "   --quit             Ieșire din lector\n"
 
 #: ../main.c:93
 #, c-format
@@ -1225,7 +1243,9 @@ msgstr "   --toggle-pause     Comută starea de pauză\n"
 #, c-format
 msgid ""
 "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
-msgstr "   --play-pause       Pornește redarea dacă e cazul sau comută starea de pauză\n"
+msgstr ""
+"   --play-pause       Pornește redarea dacă e cazul sau comută starea de "
+"pauză\n"
 
 #: ../main.c:99
 #, c-format
@@ -1249,13 +1269,17 @@ msgstr "   --queue            Adaugă fișiere la lista de redare curentă\n"
 
 #: ../main.c:103
 #, c-format
-msgid "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
-msgstr "   --gui EXTENSIE     Precizează ce extensie GUI să fie utilizată, implicit \"GTK2\"\n"
+msgid ""
+"   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
+msgstr ""
+"   --gui EXTENSIE     Precizează ce extensie GUI să fie utilizată, implicit "
+"\"GTK2\"\n"
 
 #: ../main.c:104
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr "   --nowplaying FMT   Arată în ieșirea standard numele formatat al piesei\n"
+msgstr ""
+"   --nowplaying FMT   Arată în ieșirea standard numele formatat al piesei\n"
 
 #: ../main.c:105
 #, c-format
@@ -1263,21 +1287,30 @@ msgid ""
 "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
 "                      copy[r]ight, [e]lapsed\n"
-msgstr "                      Sintaxă FMT prefixată cu %%: [a]rtist, [t]itlu, al[b]um,\n                      [l]ungime, [n]umăr piesă, [y] pentru an, [c]omentariu,\n                      d[r]epturi de autor, durată r[e]dată\n"
+msgstr ""
+"                      Sintaxă FMT prefixată cu %%: [a]rtist, [t]itlu, al[b]"
+"um,\n"
+"                      [l]ungime, [n]umăr piesă, [y] pentru an, [c]"
+"omentariu,\n"
+"                      d[r]epturi de autor, durată r[e]dată\n"
 
 #: ../main.c:108
 #, c-format
 msgid ""
-"                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist"
-" - title\"\n"
-msgstr "                      de ex.: --nowplaying \"%%a - %%t\" va rezulta în \"artist  - titlu\"\n"
+"                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
+"- title\"\n"
+msgstr ""
+"                      de ex.: --nowplaying \"%%a - %%t\" va rezulta în "
+"\"artist  - titlu\"\n"
 
 #: ../main.c:109
 #, c-format
 msgid ""
-"                      for more info, see "
-"http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"
-msgstr "                      pentru mai multe detalii vezi http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"
+"                      for more info, see http://sourceforge.net/apps/"
+"mediawiki/deadbeef/index.php?title=Title_Formatting\n"
+msgstr ""
+"                      pentru mai multe detalii vezi http://sourceforge.net/"
+"apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"
 
 #: ../playlist.c:482 ../playlist.c:2494
 msgid "Default"
@@ -1304,32 +1337,52 @@ msgid ""
 "Track Number\n"
 "Band / Album Artist\n"
 "Custom"
-msgstr "Index element\nÎn redare\nCopertă album\nArtist - Album\nArtist\nAlbum\nTitlu\nDurată\nNumăr piesă\nFormație / Artist Album\nPersonalizat"
+msgstr ""
+"Index element\n"
+"În redare\n"
+"Copertă album\n"
+"Artist - Album\n"
+"Artist\n"
+"Album\n"
+"Titlu\n"
+"Durată\n"
+"Număr piesă\n"
+"Formație / Artist Album\n"
+"Personalizat"
 
 #: ../plugins/gtkui/deadbeef.glade.h:86
 msgid ""
 "Left\n"
 "Right"
-msgstr "Stânga\nDreapta"
+msgstr ""
+"Stânga\n"
+"Dreapta"
 
 #: ../plugins/gtkui/deadbeef.glade.h:94
 msgid ""
 "Disable\n"
 "Track\n"
 "Album"
-msgstr "Dezactivat\nPiesă\nAlbum"
+msgstr ""
+"Dezactivat\n"
+"Piesă\n"
+"Album"
 
 #: ../plugins/gtkui/deadbeef.glade.h:172
 msgid ""
 "Ascending\n"
 "Descending"
-msgstr "Crescător\nDescrescător"
+msgstr ""
+"Crescător\n"
+"Descrescător"
 
 #: ../plugins/gtkui/deadbeef.glade.h:184
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
-msgstr "2.3 (Recomandat)\n2.4"
+msgstr ""
+"2.3 (Recomandat)\n"
+"2.4"
 
 #: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
 #: ../plugins/converter/support.c:90 ../plugins/converter/support.c:114
@@ -1343,7 +1396,10 @@ msgstr "Nu s-a putut găsi fișierul pixmap: %s"
 msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings."
-msgstr "wildmidi: nu s-a găsit fișierul de configurare freepats. Instalează pachetul timidity-freepats sau introdu calea către freepats.cfg în opțiunile extensiei."
+msgstr ""
+"wildmidi: nu s-a găsit fișierul de configurare freepats. Instalează pachetul "
+"timidity-freepats sau introdu calea către freepats.cfg în opțiunile "
+"extensiei."
 
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
@@ -1501,7 +1557,8 @@ msgstr "Execută gtk_init cu --sync (mod de depanare)"
 
 #: ../translation/extra.c:47
 msgid "Add separators between plugin context menu items"
-msgstr "Adaugă separatori între elementele din meniul contextual al extensiilor"
+msgstr ""
+"Adaugă separatori între elementele din meniul contextual al extensiilor"
 
 #. OSD Notify plugin
 #: ../translation/extra.c:49
@@ -1690,7 +1747,9 @@ msgstr "Nu s-au putut salva presetările codorului"
 msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
-msgstr "Verificați drepturile pentru dosarul cu presetări, alegeți un alt titlu sau eliberați mai mult spațiu pe disc"
+msgstr ""
+"Verificați drepturile pentru dosarul cu presetări, alegeți un alt titlu sau "
+"eliberați mai mult spațiu pe disc"
 
 #: ../plugins/converter/convgui.c:742 ../plugins/converter/convgui.c:1216
 msgid "Preset with the same name already exists. Try to pick another title."
@@ -1768,7 +1827,9 @@ msgstr "Nume fișier rezultat:"
 msgid ""
 "Extension (e.g. .mp3) will be appended automatically.\n"
 "Leave the field empty for default (%a - %t)."
-msgstr "Extensia (de ex. .mp3) va fi adăugată automat.\nLasă câmpul gol pentru valoarea implicită (%a - %t)."
+msgstr ""
+"Extensia (de ex. .mp3) va fi adăugată automat.\n"
+"Lasă câmpul gol pentru valoarea implicită (%a - %t)."
 
 #: ../plugins/converter/interface.c:145
 #: ../plugins/converter/converter.glade.h:8
@@ -1858,7 +1919,9 @@ msgstr "Linie de comandă:"
 msgid ""
 "Example: lame - %o\n"
 "%i for input file, %o for output file, - for stdin"
-msgstr "Exemplu: lame - %o\n%i pentru fișierul input, %o pentru fișierul rezultat, - pentru stdin"
+msgstr ""
+"Exemplu: lame - %o\n"
+"%i pentru fișierul input, %o pentru fișierul rezultat, - pentru stdin"
 
 #: ../plugins/converter/interface.c:429
 #: ../plugins/converter/converter.glade.h:31
@@ -1866,7 +1929,9 @@ msgstr "Exemplu: lame - %o\n%i pentru fișierul input, %o pentru fișierul rezul
 msgid ""
 "<small>%o - output file name\n"
 "%i - temporary input file name</small>"
-msgstr "<small>%o - nume fișier rezultat\n%i - nume fișier temporar de input</small>"
+msgstr ""
+"<small>%o - nume fișier rezultat\n"
+"%i - nume fișier temporar de input</small>"
 
 #: ../plugins/converter/interface.c:438
 #: ../plugins/converter/converter.glade.h:33
@@ -1936,19 +2001,29 @@ msgid ""
 "24 bit signed int\n"
 "32 bit signed int\n"
 "32 bit float"
-msgstr "Păstrează formatul original\n8 bit signed int\n16 bit signed int\n24 bit signed int\n32 bit signed int\n32 bit float"
+msgstr ""
+"Păstrează formatul original\n"
+"8 bit signed int\n"
+"16 bit signed int\n"
+"24 bit signed int\n"
+"32 bit signed int\n"
+"32 bit float"
 
 #: ../plugins/converter/converter.glade.h:19
 msgid ""
 "Prompt\n"
 "Overwrite"
-msgstr "Întreabă\nSuprascrie"
+msgstr ""
+"Întreabă\n"
+"Suprascrie"
 
 #: ../plugins/converter/converter.glade.h:34
 msgid ""
 "Pipe\n"
 "Temporary file"
-msgstr "Pipe\nFișier temporar"
+msgstr ""
+"Pipe\n"
+"Fișier temporar"
 
 #: ../plugins/shellexecui/interface.c:46
 #: ../plugins/shellexecui/shellexec.glade.h:1
@@ -1965,91 +2040,104 @@ msgstr "Editare"
 msgid "Close"
 msgstr "Închide"
 
-#: ../plugins/shellexecui/interface.c:144
+#: ../plugins/shellexecui/interface.c:145
 #: ../plugins/shellexecui/shellexec.glade.h:6
 msgid "Edit Command"
 msgstr "Editează comanda"
 
-#: ../plugins/shellexecui/interface.c:165
+#: ../plugins/shellexecui/interface.c:166
 #: ../plugins/shellexecui/shellexec.glade.h:8
 msgid "Command:"
 msgstr "Comandă:"
 
-#: ../plugins/shellexecui/interface.c:177
+#: ../plugins/shellexecui/interface.c:178
 #: ../plugins/shellexecui/shellexec.glade.h:10
 #, no-c-format
 msgid ""
 "Arbitrary shell command. Will be executed in the shell context which the "
 "main application was started from. Title formatting can be used. Example: "
 "xdg-open %D"
-msgstr "O comandă shell oarecare ce va fi executată în interpretorul shell în care a fost pornit DeaDBeeF. Se poate utiliza formatarea titlului. De exemplu: xdg-open %D"
+msgstr ""
+"O comandă shell oarecare ce va fi executată în interpretorul shell în care a "
+"fost pornit DeaDBeeF. Se poate utiliza formatarea titlului. De exemplu: xdg-"
+"open %D"
 
-#: ../plugins/shellexecui/interface.c:180
+#: ../plugins/shellexecui/interface.c:181
 #: ../plugins/shellexecui/shellexec.glade.h:11
 msgid "ID:"
 msgstr "ID:"
 
-#: ../plugins/shellexecui/interface.c:192
+#: ../plugins/shellexecui/interface.c:193
 #: ../plugins/shellexecui/shellexec.glade.h:12
 msgid "Free-form name, for example \"My Shell Command\""
 msgstr "Nume arbitrar, de exemplu \"Comanda mea shell\""
 
-#: ../plugins/shellexecui/interface.c:200
+#: ../plugins/shellexecui/interface.c:201
 #: ../plugins/shellexecui/shellexec.glade.h:13
 msgid ""
-"Command ID, normally it should be something short, for example "
-"\"youtube_open\". It must be unique."
-msgstr "ID comendă, în mod obișnuit ar trebui să fie ceva scurt, de exemplu \"youtube_open\". Trebuie să fie unic."
+"Command ID, normally it should be something short, for example \"youtube_open"
+"\". It must be unique."
+msgstr ""
+"ID comendă, în mod obișnuit ar trebui să fie ceva scurt, de exemplu "
+"\"youtube_open\". Trebuie să fie unic."
 
-#: ../plugins/shellexecui/interface.c:203
+#: ../plugins/shellexecui/interface.c:204
 #: ../plugins/shellexecui/shellexec.glade.h:15
 msgid "Single Tracks"
 msgstr "Piese unice"
 
-#: ../plugins/shellexecui/interface.c:206
+#: ../plugins/shellexecui/interface.c:207
 #: ../plugins/shellexecui/shellexec.glade.h:14
 msgid "Works on single track."
 msgstr "Funcționează doar pentru o piesă unică."
 
-#: ../plugins/shellexecui/interface.c:208
+#: ../plugins/shellexecui/interface.c:209
 #: ../plugins/shellexecui/shellexec.glade.h:17
 msgid "Multiple Tracks"
 msgstr "Piese multiple"
 
-#: ../plugins/shellexecui/interface.c:211
+#: ../plugins/shellexecui/interface.c:212
 #: ../plugins/shellexecui/shellexec.glade.h:16
 msgid "Works on multiple tracks."
 msgstr "Funcționează pentru piese multiple."
 
-#: ../plugins/shellexecui/interface.c:213
+#: ../plugins/shellexecui/interface.c:214
 #: ../plugins/shellexecui/shellexec.glade.h:19
 msgid "Local"
 msgstr "Local"
 
-#: ../plugins/shellexecui/interface.c:216
+#: ../plugins/shellexecui/interface.c:217
 #: ../plugins/shellexecui/shellexec.glade.h:18
 msgid "Works on local files."
 msgstr "Funcționează pentru fișiere locale."
 
-#: ../plugins/shellexecui/interface.c:218
+#: ../plugins/shellexecui/interface.c:219
 #: ../plugins/shellexecui/shellexec.glade.h:21
 msgid "Remote"
 msgstr "La distanță"
 
-#: ../plugins/shellexecui/interface.c:221
+#: ../plugins/shellexecui/interface.c:222
 #: ../plugins/shellexecui/shellexec.glade.h:20
 msgid "Works on remote files (e.g. http:// streams)"
 msgstr "Funcționează pentru linkuri la distanță (de ex. fluxuri http://)"
 
-#: ../plugins/shellexecui/interface.c:223
+#: ../plugins/shellexecui/interface.c:224
 #: ../plugins/shellexecui/shellexec.glade.h:23
-msgid "Common"
-msgstr "Comun"
+msgid "Generic (Main Menu)"
+msgstr ""
 
-#: ../plugins/shellexecui/interface.c:226
+#: ../plugins/shellexecui/interface.c:227
 #: ../plugins/shellexecui/shellexec.glade.h:22
 msgid "Item should appear in the main menu"
 msgstr "Elementul va apărea în meniul principal"
+
+#: ../plugins/shellexecui/interface.c:229
+#: ../plugins/shellexecui/shellexec.glade.h:24
+msgid ""
+"<small>If you want to add the command to main menu, make sure that title "
+"contains the menu path like this: \"File/My Command\", where File is the "
+"menu name in the English version.</small>"
+msgstr ""
 
 #: ../plugins/shellexecui/shellexecui.c:94
 msgid "Add Command"
@@ -2120,21 +2208,23 @@ msgstr "Șterge fișierele de pe disc"
 msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr "Fișierele se vor pierde. Continui?\n(Acest mesaj poate fi dezactivat în setările extensiei GTKUI)"
+msgstr ""
+"Fișierele se vor pierde. Continui?\n"
+"(Acest mesaj poate fi dezactivat în setările extensiei GTKUI)"
 
-#: ../plugins/gtkui/actionhandlers.c:660
+#: ../plugins/gtkui/actionhandlers.c:673
 msgid "Load Playlist"
 msgstr "Încarcă listă de redare"
 
-#: ../plugins/gtkui/actionhandlers.c:675
+#: ../plugins/gtkui/actionhandlers.c:688
 msgid "Other files (*)"
 msgstr "Alte fișiere (*)"
 
-#: ../plugins/gtkui/actionhandlers.c:709
+#: ../plugins/gtkui/actionhandlers.c:722
 msgid "Save Playlist As"
 msgstr "Salvează lista de redare ca"
 
-#: ../plugins/gtkui/actionhandlers.c:720
+#: ../plugins/gtkui/actionhandlers.c:733
 msgid "DeaDBeeF playlist files (*.dbpl)"
 msgstr "Fișiere de listă DeadBeeF (*.dbpl)"
 
@@ -2148,13 +2238,21 @@ msgstr "Valoare nevalidă."
 
 #: ../plugins/gtkui/ctmapping.c:200
 msgid ""
-"Content-type and Plugins fields must be non-empty, and comply with the rules.\n"
+"Content-type and Plugins fields must be non-empty, and comply with the "
+"rules.\n"
 "Example content-type: 'audio/mpeg'.\n"
 "Example plugin ids: 'stdmpg ffmpeg'.\n"
 "Spaces must be used as separators in plugin ids list.\n"
 "Content type should be only letters, numbers and '-' sign.\n"
 "Plugin id can contain only letters and numbers."
-msgstr "Tipul de conținut si câmpurile extensiilor trebuie să fie completate și să respecte regulile.\nExemplu de tip de conținut: 'audio/mpeg'.\nExemplu de id de extensie: 'stdmpg ffmpeg'.\nSpațiile trebuie folosite ca separatori în lista de id-uri de extensii.\nTipul de conținut trebuie să aiba doar litere, numere și semnul '-'.\nID-ul de extensie poate conține doar litere și numere."
+msgstr ""
+"Tipul de conținut si câmpurile extensiilor trebuie să fie completate și să "
+"respecte regulile.\n"
+"Exemplu de tip de conținut: 'audio/mpeg'.\n"
+"Exemplu de id de extensie: 'stdmpg ffmpeg'.\n"
+"Spațiile trebuie folosite ca separatori în lista de id-uri de extensii.\n"
+"Tipul de conținut trebuie să aiba doar litere, numere și semnul '-'.\n"
+"ID-ul de extensie poate conține doar litere și numere."
 
 #: ../plugins/gtkui/ctmapping.c:228 ../plugins/gtkui/ctmapping.c:260
 msgid "Nothing is selected."
@@ -2212,50 +2310,53 @@ msgstr "Adaugă o nouă filă"
 msgid "Show Column Headers"
 msgstr "Arată titlul coloanelor"
 
-#: ../plugins/gtkui/widgets.c:2986
+#: ../plugins/gtkui/widgets.c:2997
 msgid "Expand the box by 1 item"
 msgstr "Extinde setul cu 1 element"
 
-#: ../plugins/gtkui/widgets.c:2991
+#: ../plugins/gtkui/widgets.c:3002
 msgid "Shrink the box by 1 item"
 msgstr "Micșorează setul cu 1 element"
 
-#: ../plugins/gtkui/widgets.c:2996
+#: ../plugins/gtkui/widgets.c:3007
 msgid "Homogeneous"
 msgstr "Omogen"
 
-#: ../plugins/gtkui/widgets.c:3036
+#: ../plugins/gtkui/widgets.c:3047
 msgid "Expand"
 msgstr "Extinde"
 
-#: ../plugins/gtkui/widgets.c:3044
+#: ../plugins/gtkui/widgets.c:3055
 msgid "Fill"
 msgstr "Umple"
 
-#: ../plugins/gtkui/widgets.c:3445
+#: ../plugins/gtkui/widgets.c:3456
 msgid "Configure button"
 msgstr "Configurează buton"
 
 #: ../plugins/gtkui/pltmenu.c:62
 msgid "Edit playlist"
-msgstr ""
+msgstr "Editează lista de redare"
 
 #: ../plugins/gtkui/pltmenu.c:258
 msgid "Rename Playlist"
-msgstr ""
+msgstr "Redenumește lista de redare"
 
 #: ../plugins/gtkui/pltmenu.c:265
 msgid "Remove Playlist"
-msgstr ""
+msgstr "Înlătură lista de redare"
 
 #: ../plugins/gtkui/pltmenu.c:272
 msgid "Add New Playlist"
-msgstr ""
+msgstr "Adaugă o nouă listă de redare"
 
 #: ../plugins/pltbrowser/pltbrowser.c:225
 msgid "Name"
-msgstr ""
+msgstr "Nume"
 
 #: ../plugins/pltbrowser/pltbrowser.c:251
 msgid "Playlist browser"
-msgstr ""
+msgstr "Navigator liste de redare"
+
+#~ msgid "Common"
+#~ msgstr "Comun"
