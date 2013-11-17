@@ -1,0 +1,337 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4D53406E1838E110009EBA01 /* bit.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D5340041838E110009EBA01 /* bit.c */; };
+		4D53406F1838E110009EBA01 /* bit.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D5340051838E110009EBA01 /* bit.h */; };
+		4D5340711838E110009EBA01 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D53400A1838E110009EBA01 /* config.h */; };
+		4D5340721838E110009EBA01 /* decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D5340151838E110009EBA01 /* decoder.c */; };
+		4D5340731838E110009EBA01 /* decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D5340161838E110009EBA01 /* decoder.h */; };
+		4D5340751838E110009EBA01 /* fixed.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D53401A1838E110009EBA01 /* fixed.c */; };
+		4D5340761838E110009EBA01 /* fixed.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D53401B1838E110009EBA01 /* fixed.h */; };
+		4D5340781838E110009EBA01 /* frame.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D53401E1838E110009EBA01 /* frame.c */; };
+		4D5340791838E110009EBA01 /* frame.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D53401F1838E110009EBA01 /* frame.h */; };
+		4D53407B1838E110009EBA01 /* global.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D5340221838E110009EBA01 /* global.h */; };
+		4D53407C1838E110009EBA01 /* huffman.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D5340231838E110009EBA01 /* huffman.c */; };
+		4D53407D1838E110009EBA01 /* huffman.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D5340241838E110009EBA01 /* huffman.h */; };
+		4D5340801838E110009EBA01 /* layer12.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D53402B1838E110009EBA01 /* layer12.c */; };
+		4D5340811838E110009EBA01 /* layer12.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D53402C1838E110009EBA01 /* layer12.h */; };
+		4D5340831838E110009EBA01 /* layer3.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D53402F1838E110009EBA01 /* layer3.c */; };
+		4D5340841838E110009EBA01 /* layer3.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D5340301838E110009EBA01 /* layer3.h */; };
+		4D5340861838E110009EBA01 /* mad.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D5340391838E110009EBA01 /* mad.h */; };
+		4D53408C1838E110009EBA01 /* stream.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D53404D1838E110009EBA01 /* stream.c */; };
+		4D53408D1838E110009EBA01 /* stream.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D53404E1838E110009EBA01 /* stream.h */; };
+		4D53408F1838E110009EBA01 /* synth.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D5340511838E110009EBA01 /* synth.c */; };
+		4D5340901838E110009EBA01 /* synth.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D5340521838E110009EBA01 /* synth.h */; };
+		4D5340921838E110009EBA01 /* timer.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D5340551838E110009EBA01 /* timer.c */; };
+		4D5340931838E110009EBA01 /* timer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D5340561838E110009EBA01 /* timer.h */; };
+		4D5340951838E110009EBA01 /* version.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D53405B1838E110009EBA01 /* version.c */; };
+		4D5340961838E110009EBA01 /* version.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D53405C1838E110009EBA01 /* version.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		4D533FD21838E017009EBA01 /* libmad.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libmad.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		4D5340041838E110009EBA01 /* bit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bit.c; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/bit.c"; sourceTree = SOURCE_ROOT; };
+		4D5340051838E110009EBA01 /* bit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bit.h; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/bit.h"; sourceTree = SOURCE_ROOT; };
+		4D53400A1838E110009EBA01 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/config.h"; sourceTree = SOURCE_ROOT; };
+		4D5340151838E110009EBA01 /* decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = decoder.c; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/decoder.c"; sourceTree = SOURCE_ROOT; };
+		4D5340161838E110009EBA01 /* decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = decoder.h; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/decoder.h"; sourceTree = SOURCE_ROOT; };
+		4D53401A1838E110009EBA01 /* fixed.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fixed.c; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/fixed.c"; sourceTree = SOURCE_ROOT; };
+		4D53401B1838E110009EBA01 /* fixed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fixed.h; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/fixed.h"; sourceTree = SOURCE_ROOT; };
+		4D53401E1838E110009EBA01 /* frame.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = frame.c; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/frame.c"; sourceTree = SOURCE_ROOT; };
+		4D53401F1838E110009EBA01 /* frame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = frame.h; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/frame.h"; sourceTree = SOURCE_ROOT; };
+		4D5340221838E110009EBA01 /* global.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = global.h; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/global.h"; sourceTree = SOURCE_ROOT; };
+		4D5340231838E110009EBA01 /* huffman.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = huffman.c; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/huffman.c"; sourceTree = SOURCE_ROOT; };
+		4D5340241838E110009EBA01 /* huffman.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = huffman.h; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/huffman.h"; sourceTree = SOURCE_ROOT; };
+		4D53402B1838E110009EBA01 /* layer12.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = layer12.c; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/layer12.c"; sourceTree = SOURCE_ROOT; };
+		4D53402C1838E110009EBA01 /* layer12.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = layer12.h; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/layer12.h"; sourceTree = SOURCE_ROOT; };
+		4D53402F1838E110009EBA01 /* layer3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = layer3.c; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/layer3.c"; sourceTree = SOURCE_ROOT; };
+		4D5340301838E110009EBA01 /* layer3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = layer3.h; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/layer3.h"; sourceTree = SOURCE_ROOT; };
+		4D5340391838E110009EBA01 /* mad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mad.h; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/mad.h"; sourceTree = SOURCE_ROOT; };
+		4D53404D1838E110009EBA01 /* stream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stream.c; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/stream.c"; sourceTree = SOURCE_ROOT; };
+		4D53404E1838E110009EBA01 /* stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stream.h; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/stream.h"; sourceTree = SOURCE_ROOT; };
+		4D5340511838E110009EBA01 /* synth.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = synth.c; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/synth.c"; sourceTree = SOURCE_ROOT; };
+		4D5340521838E110009EBA01 /* synth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = synth.h; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/synth.h"; sourceTree = SOURCE_ROOT; };
+		4D5340551838E110009EBA01 /* timer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = timer.c; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/timer.c"; sourceTree = SOURCE_ROOT; };
+		4D5340561838E110009EBA01 /* timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = timer.h; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/timer.h"; sourceTree = SOURCE_ROOT; };
+		4D53405B1838E110009EBA01 /* version.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = version.c; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/version.c"; sourceTree = SOURCE_ROOT; };
+		4D53405C1838E110009EBA01 /* version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = version.h; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/version.h"; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4D533FCF1838E017009EBA01 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4D533FC91838E017009EBA01 = {
+			isa = PBXGroup;
+			children = (
+				4D533FE31838E110009EBA01 /* libmad-0.15.1b */,
+				4D533FD31838E017009EBA01 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		4D533FD31838E017009EBA01 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4D533FD21838E017009EBA01 /* libmad.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4D533FE31838E110009EBA01 /* libmad-0.15.1b */ = {
+			isa = PBXGroup;
+			children = (
+				4D5340041838E110009EBA01 /* bit.c */,
+				4D5340051838E110009EBA01 /* bit.h */,
+				4D53400A1838E110009EBA01 /* config.h */,
+				4D5340151838E110009EBA01 /* decoder.c */,
+				4D5340161838E110009EBA01 /* decoder.h */,
+				4D53401A1838E110009EBA01 /* fixed.c */,
+				4D53401B1838E110009EBA01 /* fixed.h */,
+				4D53401E1838E110009EBA01 /* frame.c */,
+				4D53401F1838E110009EBA01 /* frame.h */,
+				4D5340221838E110009EBA01 /* global.h */,
+				4D5340231838E110009EBA01 /* huffman.c */,
+				4D5340241838E110009EBA01 /* huffman.h */,
+				4D53402B1838E110009EBA01 /* layer12.c */,
+				4D53402C1838E110009EBA01 /* layer12.h */,
+				4D53402F1838E110009EBA01 /* layer3.c */,
+				4D5340301838E110009EBA01 /* layer3.h */,
+				4D5340391838E110009EBA01 /* mad.h */,
+				4D53404D1838E110009EBA01 /* stream.c */,
+				4D53404E1838E110009EBA01 /* stream.h */,
+				4D5340511838E110009EBA01 /* synth.c */,
+				4D5340521838E110009EBA01 /* synth.h */,
+				4D5340551838E110009EBA01 /* timer.c */,
+				4D5340561838E110009EBA01 /* timer.h */,
+				4D53405B1838E110009EBA01 /* version.c */,
+				4D53405C1838E110009EBA01 /* version.h */,
+			);
+			name = "libmad-0.15.1b";
+			path = "../../../../deadbeef-deps-osx/libmad-0.15.1b";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		4D533FD01838E017009EBA01 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4D5340841838E110009EBA01 /* layer3.h in Headers */,
+				4D5340791838E110009EBA01 /* frame.h in Headers */,
+				4D53407B1838E110009EBA01 /* global.h in Headers */,
+				4D5340861838E110009EBA01 /* mad.h in Headers */,
+				4D5340711838E110009EBA01 /* config.h in Headers */,
+				4D5340961838E110009EBA01 /* version.h in Headers */,
+				4D5340761838E110009EBA01 /* fixed.h in Headers */,
+				4D53407D1838E110009EBA01 /* huffman.h in Headers */,
+				4D53408D1838E110009EBA01 /* stream.h in Headers */,
+				4D5340731838E110009EBA01 /* decoder.h in Headers */,
+				4D53406F1838E110009EBA01 /* bit.h in Headers */,
+				4D5340931838E110009EBA01 /* timer.h in Headers */,
+				4D5340811838E110009EBA01 /* layer12.h in Headers */,
+				4D5340901838E110009EBA01 /* synth.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		4D533FD11838E017009EBA01 /* mad */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4D533FD61838E017009EBA01 /* Build configuration list for PBXNativeTarget "mad" */;
+			buildPhases = (
+				4D533FCE1838E017009EBA01 /* Sources */,
+				4D533FCF1838E017009EBA01 /* Frameworks */,
+				4D533FD01838E017009EBA01 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = mad;
+			productName = mad;
+			productReference = 4D533FD21838E017009EBA01 /* libmad.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4D533FCA1838E017009EBA01 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0500;
+				ORGANIZATIONNAME = "Alexey Yakovenko";
+			};
+			buildConfigurationList = 4D533FCD1838E017009EBA01 /* Build configuration list for PBXProject "mad" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 4D533FC91838E017009EBA01;
+			productRefGroup = 4D533FD31838E017009EBA01 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4D533FD11838E017009EBA01 /* mad */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4D533FCE1838E017009EBA01 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4D53407C1838E110009EBA01 /* huffman.c in Sources */,
+				4D5340831838E110009EBA01 /* layer3.c in Sources */,
+				4D53408F1838E110009EBA01 /* synth.c in Sources */,
+				4D53408C1838E110009EBA01 /* stream.c in Sources */,
+				4D5340751838E110009EBA01 /* fixed.c in Sources */,
+				4D5340801838E110009EBA01 /* layer12.c in Sources */,
+				4D5340921838E110009EBA01 /* timer.c in Sources */,
+				4D5340951838E110009EBA01 /* version.c in Sources */,
+				4D5340721838E110009EBA01 /* decoder.c in Sources */,
+				4D53406E1838E110009EBA01 /* bit.c in Sources */,
+				4D5340781838E110009EBA01 /* frame.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		4D533FD41838E017009EBA01 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"FPM_INTEL=1",
+					"OPT_SPEED=1",
+					"HAVE_CONFIG_H=1",
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		4D533FD51838E017009EBA01 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		4D533FD71838E017009EBA01 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/oleksiy/deadbeef-deps-osx/libmad-0.15.1b/.libs",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		4D533FD81838E017009EBA01 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/oleksiy/deadbeef-deps-osx/libmad-0.15.1b/.libs",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4D533FCD1838E017009EBA01 /* Build configuration list for PBXProject "mad" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4D533FD41838E017009EBA01 /* Debug */,
+				4D533FD51838E017009EBA01 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4D533FD61838E017009EBA01 /* Build configuration list for PBXNativeTarget "mad" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4D533FD71838E017009EBA01 /* Debug */,
+				4D533FD81838E017009EBA01 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 4D533FCA1838E017009EBA01 /* Project object */;
+}
