@@ -9,6 +9,8 @@
 #import <Cocoa/Cocoa.h>
 #include "deadbeef.h"
 
+DB_functions_t *deadbeef;
+
 int cocoaui_start(void)
 {
 	char *argv[1];
@@ -28,6 +30,7 @@ DB_gui_t plugin = {
 	// NSApplicationMain doesn't return, so it doesn't seem it's possible to cleanup
 };
 
-DB_plugin_t *cocoaui_load (void) {
+DB_plugin_t *cocoaui_load (DB_functions_t *_deadbeef) {
+    deadbeef = _deadbeef;
 	return (DB_plugin_t *)&plugin;
 }
