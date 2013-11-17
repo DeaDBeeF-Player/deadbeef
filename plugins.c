@@ -663,6 +663,10 @@ load_plugin (const char *plugdir, char *d_name, int l) {
 
 static int
 load_gui_plugin (const char **plugdirs) {
+#if defined HAVE_COCOAUI
+    return 0;
+#endif
+
     char conf_gui_plug[100];
     conf_get_str ("gui_plugin", "GTK2", conf_gui_plug, sizeof (conf_gui_plug));
     char name[100];
@@ -1171,7 +1175,11 @@ plug_select_output (void) {
     return 0;
 #else
     char outplugname[100];
+#ifdef HAVE_COCOAUI
+    conf_get_str ("output_plugin", "core audio output plugin", outplugname, sizeof (outplugname));
+#else
     conf_get_str ("output_plugin", "ALSA output plugin", outplugname, sizeof (outplugname));
+#endif
     for (int i = 0; g_output_plugins[i]; i++) {
         DB_output_t *p = g_output_plugins[i];
         if (!strcmp (p->plugin.name, outplugname)) {
@@ -1213,7 +1221,11 @@ plug_reinit_sound (void) {
 
     if (plug_select_output () < 0) {
         char outplugname[100];
+#ifdef HAVE_COCOAUI
+        conf_get_str ("output_plugin", "core audio output plugin", outplugname, sizeof (outplugname));
+#else
         conf_get_str ("output_plugin", "ALSA output plugin", outplugname, sizeof (outplugname));
+#endif
         trace ("failed to select output plugin %s\nreverted to %s\n", outplugname, prev->plugin.name);
         output_plugin = prev;
     }
