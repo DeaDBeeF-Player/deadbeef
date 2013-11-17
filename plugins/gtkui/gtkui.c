@@ -492,11 +492,6 @@ playlistchanged_cb (gpointer none) {
     return FALSE;
 }
 
-void
-gtkui_playlist_changed (void) {
-    g_idle_add (playlistchanged_cb, NULL);
-}
-
 static gboolean
 playlistswitch_cb (gpointer none) {
     search_refresh ();
@@ -829,7 +824,7 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 //        g_idle_add (paused_cb, NULL);
 //        break;
     case DB_EV_PLAYLISTCHANGED:
-        gtkui_playlist_changed ();
+        g_idle_add (playlistchanged_cb, NULL);
         break;
     case DB_EV_VOLUMECHANGED:
         g_idle_add (gtkui_volumechanged_cb, NULL);
@@ -906,7 +901,6 @@ gtkui_connect_cb (void *none) {
             break;
         }
     }
-    gtkui_playlist_changed ();
     add_mainmenu_actions ();
     ddb_event_t *e = deadbeef->event_alloc (DB_EV_TRACKINFOCHANGED);
     deadbeef->event_send(e, 0, 0);

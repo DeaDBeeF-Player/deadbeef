@@ -656,7 +656,7 @@ load_playlist_thread (void *data) {
     if (plt) {
         deadbeef->plt_clear (plt);
         int abort = 0;
-        DB_playItem_t *it = deadbeef->plt_load (plt, NULL, fname, &abort, NULL, NULL);
+        DB_playItem_t *it = deadbeef->plt_load2 (0, plt, NULL, fname, &abort, NULL, NULL);
         if (it) {
             deadbeef->pl_item_unref (it);
         }
@@ -664,7 +664,7 @@ load_playlist_thread (void *data) {
         deadbeef->plt_unref (plt);
     }
     g_free (fname);
-    gtkui_playlist_changed ();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
 
