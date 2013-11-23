@@ -4077,7 +4077,12 @@ plt_insert_file2 (int visibility, playlist_t *playlist, playItem_t *after, const
 
 playItem_t *
 plt_insert_dir2 (int visibility, playlist_t *plt, playItem_t *after, const char *dirname, int *pabort, int (*callback)(playItem_t *it, void *user_data), void *user_data) {
-    return plt_insert_dir_int (visibility, plt, NULL, after, dirname, pabort, callback, user_data);
+    follow_symlinks = conf_get_int ("add_folders_follow_symlinks", 0);
+    ignore_archives = conf_get_int ("ignore_archives", 1);
+
+    playItem_t *ret = plt_insert_dir_int (visibility, plt, NULL, after, dirname, pabort, callback, user_data);
+    ignore_archives = 0;
+    return ret;
 }
 
 int
