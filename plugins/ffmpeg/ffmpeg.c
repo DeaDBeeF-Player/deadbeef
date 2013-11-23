@@ -370,7 +370,7 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
                     }
                 }
                 else {
-                    out_size = info->frame->nb_samples * av_get_bytes_per_sample(info->frame->format);
+                    out_size = info->frame->nb_samples * (_info->fmt.bps >> 3) * _info->fmt.channels;
                     memcpy (info->buffer, info->frame->extended_data[0], out_size);
                 }
             }
