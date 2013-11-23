@@ -396,7 +396,6 @@ musepack_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, peak_album);
             deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, gain_title);
             deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, peak_title);
-            deadbeef->pl_set_item_flags (it, DDB_IS_SUBTRACK);
             if (!prev) {
                 meta = deadbeef->pl_item_alloc ();
                 /*int apeerr = */deadbeef->junk_apev2_read (meta, fp);
@@ -420,6 +419,7 @@ musepack_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
             mpc_set_trk_properties (it, &si, fsize);
 
+            deadbeef->pl_set_item_flags (it, deadbeef->pl_get_item_flags (it) | DDB_IS_SUBTRACK);
             after = deadbeef->plt_insert_item (plt, after, it);
             prev = it;
             deadbeef->pl_item_unref (it);
