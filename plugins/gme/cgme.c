@@ -393,6 +393,9 @@ cgme_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
                         }
                     }
                 }
+                if (cnt > 1) {
+                    deadbeef->pl_set_item_flags (it, deadbeef->pl_get_item_flags (it) | DDB_IS_SUBTRACK);
+                }
                 after = deadbeef->plt_insert_item (plt, after, it);
                 deadbeef->pl_item_unref (it);
             }
