@@ -314,7 +314,7 @@ ddb_listview_init(DdbListview *listview)
     listview->last_header_motion_ev = -1; //is it subject to remove?
     listview->prev_header_x = -1;
     listview->header_prepare = 0;
-    listview->header_width = 0;
+    listview->header_width = -1;
 
     listview->columns = NULL;
     listview->lock_columns = 1;
@@ -2435,8 +2435,8 @@ ddb_listview_header_configure_event              (GtkWidget       *widget,
                 }
             }
         }
+        ps->header_width = totalwidth;
     }
-    ps->header_width = totalwidth;
 
     return FALSE;
 }
@@ -2444,6 +2444,20 @@ ddb_listview_header_configure_event              (GtkWidget       *widget,
 void
 ddb_listview_lock_columns (DdbListview *lv, gboolean lock) {
     lv->lock_columns = lock;
+    if (lock == 0) {
+        GtkAllocation a;
+        gtk_widget_get_allocation (GTK_WIDGET (lv), &a);
+        if (deadbeef->conf_get_int ("gtkui.autoresize_columns", 0)) {
+            DdbListviewColumn *c;
+            if (!lv->col_autoresize) {
+                for (c = lv->columns; c; c = c->next) {
+                    c->fwidth = (float)c->width / (float)a.width;
+                }
+                lv->col_autoresize = 1;
+            }
+        }
+        lv->header_width = a.width;
+    }
 }
 
 
