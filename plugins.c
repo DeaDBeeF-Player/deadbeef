@@ -364,6 +364,7 @@ static DB_functions_t deadbeef_api = {
     .plt_insert_dir2 = (ddb_playItem_t *(*) (int visibility, ddb_playlist_t *plt, ddb_playItem_t *after, const char *dirname, int *pabort, int (*callback)(DB_playItem_t *it, void *user_data), void *user_data))plt_insert_dir2,
     .plt_add_files_begin = (int (*) (ddb_playlist_t *plt, int visibility))plt_add_files_begin,
     .plt_add_files_end = (void (*) (ddb_playlist_t *plt, int visibility))plt_add_files_end,
+    .plt_deselect_all = (void (*) (ddb_playlist_t *plt))plt_deselect_all,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

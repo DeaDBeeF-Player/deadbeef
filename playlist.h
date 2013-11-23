@@ -521,4 +521,7 @@ plt_add_files_begin (playlist_t *plt, int visibility);
 void
 plt_add_files_end (playlist_t *plt, int visibility);
 
+void
+plt_deselect_all (playlist_t *plt);
+
 #endif // __PLAYLIST_H

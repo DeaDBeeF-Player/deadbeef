@@ -2894,6 +2894,7 @@ ddb_listview_scroll_to (DdbListview *listview, int pos) {
         gtk_range_set_value (GTK_RANGE (listview->scrollbar), pos - a.height/2);
     }
 }
+
 int
 ddb_listview_is_scrolling (DdbListview *listview) {
     return listview->dragwait;
