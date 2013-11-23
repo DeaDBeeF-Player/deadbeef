@@ -749,6 +749,15 @@ w_create (const char *type) {
         if (!strcmp (c->type, type)) {
             if (c->flags & DDB_WF_SINGLE_INSTANCE) {
                 int num = get_num_widgets (rootwidget, c->type);
+                // HACK: playlist and tabbed playlist are essentially the same
+                // widgets with single-instance limit
+
+                if (!strcmp (c->type, "tabbed_playlist")) {
+                    num += get_num_widgets (rootwidget, "playlist");
+                }
+                else if (!strcmp (c->type, "playlist")) {
+                    num += get_num_widgets (rootwidget, "tabbed_playlist");
+                }
                 if (num) {
                     // create dummy
                     w_dummy_t *w = (w_dummy_t *)w_create ("dummy");
