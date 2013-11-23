@@ -16,22 +16,7 @@ mkdir -p $PIXMAPDIR
 
 cp ./deadbeef $OUTDIR
 
-for i in nullout cdda flac alsa mpgmad hotkeys vtx \
-	 ffap ffmpeg wavpack vorbis oss vfs_curl \
-	 lastfm sid adplug sndfile artwork alac \
-	 supereq gme dumb notify musepack wildmidi \
-	 tta dca aac mms shn ao shellexec shellexecui vfs_zip \
-	 m3u converter pulse dsp_libsrc mono2stereo wma ; do
-    if [ -f ./plugins/$i/.libs/$i.so ]; then
-		 cp ./plugins/$i/.libs/$i.so $PLUGDIR/
-	elif [ -f ./plugins/$i/$i.so ]; then
-		 cp ./plugins/$i/$i.so $PLUGDIR/
-	elif [ -f ./plugins/$i/.libs/ddb_$i.so ]; then
-		 cp ./plugins/$i/.libs/ddb_$i.so $PLUGDIR/
-	else
-		echo ./plugins/$i/.libs/$i.so not found
-	fi
-
+for i in converter pltbrowser shellexecui ; do
     if [ -f ./plugins/$i/.libs/${i}_gtk2.so ]; then
 		 cp ./plugins/$i/.libs/${i}_gtk2.so $PLUGDIR/
     fi
@@ -42,6 +27,23 @@ for i in nullout cdda flac alsa mpgmad hotkeys vtx \
     if [ -f ./plugins/$i/.libs/$i.fallback.so ]; then
 		 cp ./plugins/$i/.libs/$i.fallback.so $PLUGDIR/
     fi
+done
+
+for i in nullout cdda flac alsa mpgmad hotkeys vtx \
+	 ffap ffmpeg wavpack vorbis oss vfs_curl \
+	 lastfm sid adplug sndfile artwork alac \
+	 supereq gme dumb notify musepack wildmidi \
+	 tta dca aac mms shn ao shellexec vfs_zip \
+	 m3u converter pulse dsp_libsrc mono2stereo wma ; do
+    if [ -f ./plugins/$i/.libs/$i.so ]; then
+		 cp ./plugins/$i/.libs/$i.so $PLUGDIR/
+	elif [ -f ./plugins/$i/$i.so ]; then
+		 cp ./plugins/$i/$i.so $PLUGDIR/
+	elif [ -f ./plugins/$i/.libs/ddb_$i.so ]; then
+		 cp ./plugins/$i/.libs/ddb_$i.so $PLUGDIR/
+	else
+		echo ./plugins/$i/.libs/$i.so not found
+	fi
 done
 
 if [ -f ./plugins/gtkui/.libs/ddb_gui_GTK2.so ]; then
