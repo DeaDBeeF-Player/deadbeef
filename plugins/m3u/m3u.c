@@ -503,11 +503,12 @@ m3uplug_save_m3u (const char *fname, DB_playItem_t *first, DB_playItem_t *last) 
         int has_title = deadbeef->pl_meta_exists (it, "title");
         if (has_artist && has_title) {
             deadbeef->pl_format_title (it, -1, s, sizeof (s), -1, "%a - %t");
+            fprintf (fp, "#EXTINF:%d,%s\n", dur, s);
         }
         else if (has_title) {
             deadbeef->pl_format_title (it, -1, s, sizeof (s), -1, "%t");
+            fprintf (fp, "#EXTINF:%d,%s\n", dur, s);
         }
-        fprintf (fp, "#EXTINF:%d,%s\n", dur, s);
         deadbeef->pl_lock ();
         {
             const char *fname = deadbeef->pl_find_meta (it, ":URI");
