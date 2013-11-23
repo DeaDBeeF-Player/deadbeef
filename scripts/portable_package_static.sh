@@ -71,6 +71,7 @@ tar jcvf ../../portable_out/build/$OUTNAME\
     $PLUGDIR/ddb_mono2stereo.so\
     $PLUGDIR/alac.so\
     $PLUGDIR/wma.so\
+    $PLUGDIR/pltbrowser.so\
     $PIXMAPDIR\
     $SRCDIR/locale
 cd ../..
