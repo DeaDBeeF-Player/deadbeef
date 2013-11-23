@@ -216,17 +216,10 @@ w_get_rootwidget (void) {
     return rootwidget;
 }
 
-static void
-set_design_mode (ddb_gtkui_widget_t *w) {
-    for (ddb_gtkui_widget_t *c = w->children; c; c = c->next) {
-        set_design_mode (c);
-    }
-}
-
 void
 w_set_design_mode (int active) {
     design_mode = active;
-    set_design_mode (rootwidget);
+    gtk_widget_queue_draw (mainwin);
 }
 
 int
@@ -803,6 +796,9 @@ w_container_remove (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
 ////// placeholder widget
 gboolean
 w_placeholder_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
+    if (!design_mode) {
+        return FALSE;
+    }
     cairo_set_source_rgb (cr, 255, 0, 0);
     cairo_surface_t *checker;
     cairo_t *cr2;
