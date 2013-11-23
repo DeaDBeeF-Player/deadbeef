@@ -997,6 +997,9 @@ typedef struct {
     // release the lock for adding files to playlist
     // end must be called when add files operation is finished
     void (*plt_add_files_end) (ddb_playlist_t *plt, int visibility);
+
+    // deselect all tracks in playlist
+    void (*plt_deselect_all) (ddb_playlist_t *plt);
 #endif
 } DB_functions_t;
 

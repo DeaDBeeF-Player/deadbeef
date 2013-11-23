@@ -4129,3 +4129,12 @@ plt_add_files_end (playlist_t *plt, int visibility) {
         l->callback_end (&d, l->user_data);
     }
 }
+
+void
+plt_deselect_all (playlist_t *playlist) {
+    LOCK;
+    for (playItem_t *it = playlist->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+        it->selected = 0;
+    }
+    UNLOCK;
+}
