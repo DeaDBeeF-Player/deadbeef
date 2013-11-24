@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-17 16:56+0100\n"
-"PO-Revision-Date: 2013-11-10 17:37+0000\n"
+"POT-Creation-Date: 2013-11-24 19:10+0100\n"
+"PO-Revision-Date: 2013-11-20 09:50+0000\n"
 "Last-Translator: waker <wakeroid@gmail.com>\n"
 "Language-Team: Kazakh (http://www.transifex.com/projects/p/deadbeef-player/"
 "language/kk/)\n"
@@ -106,11 +106,11 @@ msgstr "%d күн %d:%02d:%02d"
 msgid "Stopped | %d tracks | %s total playtime"
 msgstr "Тоқтатылған | %d трек | %s жалпы уақыты"
 
-#: ../plugins/gtkui/gtkui.c:188 ../playlist.c:3113
+#: ../plugins/gtkui/gtkui.c:188 ../playlist.c:3108
 msgid "Mono"
 msgstr "Моно"
 
-#: ../plugins/gtkui/gtkui.c:188 ../playlist.c:3113
+#: ../plugins/gtkui/gtkui.c:188 ../playlist.c:3108
 msgid "Stereo"
 msgstr "Стерео"
 
@@ -185,7 +185,7 @@ msgstr "HBox"
 msgid "VBox"
 msgstr "VBox"
 
-#: ../plugins/gtkui/gtkui.c:980 ../plugins/gtkui/widgets.c:3278
+#: ../plugins/gtkui/gtkui.c:980 ../plugins/gtkui/widgets.c:3250
 msgid "Button"
 msgstr "Батырма"
 
@@ -1087,7 +1087,7 @@ msgstr ""
 msgid "Group by"
 msgstr "Қалайша топтау"
 
-#: ../plugins/gtkui/plcommon.c:1148 ../plugins/gtkui/widgets.c:3374
+#: ../plugins/gtkui/plcommon.c:1148 ../plugins/gtkui/widgets.c:3346
 msgid "None"
 msgstr "Ешнәрсе"
 
@@ -1138,12 +1138,12 @@ msgid "[Multiple values] "
 msgstr "[Бірнеше мәндер] "
 
 #: ../plugins/gtkui/trkproperties.c:480 ../plugins/gtkui/trkproperties.c:492
-#: ../plugins/gtkui/widgets.c:2053
+#: ../plugins/gtkui/widgets.c:2025
 msgid "Key"
 msgstr "Кілт"
 
 #: ../plugins/gtkui/trkproperties.c:481 ../plugins/gtkui/trkproperties.c:493
-#: ../plugins/gtkui/widgets.c:2055
+#: ../plugins/gtkui/widgets.c:2027
 msgid "Value"
 msgstr "Мәні"
 
@@ -1297,15 +1297,15 @@ msgstr ""
 "                      көбірек білу үшін,  http://sourceforge.net/apps/"
 "mediawiki/deadbeef/index.php?title=Title_Formatting қараңыз\n"
 
-#: ../playlist.c:482 ../playlist.c:2494
+#: ../playlist.c:482 ../playlist.c:2489
 msgid "Default"
 msgstr "Бастапқы"
 
-#: ../playlist.c:3882
+#: ../playlist.c:3877
 msgid "Yes"
 msgstr "Иә"
 
-#: ../playlist.c:3882
+#: ../playlist.c:3877
 msgid "No"
 msgstr "Жоқ"
 
@@ -2127,7 +2127,7 @@ msgstr ""
 msgid "Add Command"
 msgstr "Команданы қосу"
 
-#: ../plugins/shellexecui/shellexecui.c:137 ../plugins/gtkui/widgets.c:626
+#: ../plugins/shellexecui/shellexecui.c:137 ../plugins/gtkui/widgets.c:619
 msgid "Delete"
 msgstr "Өшіру"
 
@@ -2242,79 +2242,79 @@ msgstr ""
 msgid "Nothing is selected."
 msgstr "Ешнәрсе таңдалмады."
 
-#: ../plugins/gtkui/widgets.c:601
+#: ../plugins/gtkui/widgets.c:594
 msgid "Replace with..."
 msgstr "Немен алмастыру..."
 
-#: ../plugins/gtkui/widgets.c:606
+#: ../plugins/gtkui/widgets.c:599
 msgid "Insert..."
 msgstr "Кірістіру..."
 
-#: ../plugins/gtkui/widgets.c:633
+#: ../plugins/gtkui/widgets.c:626
 msgid "Cut"
 msgstr "Қиып алу"
 
-#: ../plugins/gtkui/widgets.c:640
+#: ../plugins/gtkui/widgets.c:633
 msgid "Copy"
 msgstr "Көшіру"
 
-#: ../plugins/gtkui/widgets.c:647
+#: ../plugins/gtkui/widgets.c:640
 msgid "Paste"
 msgstr "Кірістіру"
 
-#: ../plugins/gtkui/widgets.c:762
+#: ../plugins/gtkui/widgets.c:764
 msgid "Multiple widgets of this type are not supported"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1066
+#: ../plugins/gtkui/widgets.c:1071
 msgid "Lock movement"
 msgstr "Жылжытуды блоктау"
 
-#: ../plugins/gtkui/widgets.c:1351
+#: ../plugins/gtkui/widgets.c:1356
 msgid "Move tab left"
 msgstr "Бетті солға жылжыту"
 
-#: ../plugins/gtkui/widgets.c:1358
+#: ../plugins/gtkui/widgets.c:1363
 msgid "Move tab right"
 msgstr "Бетті оңға жылжыту"
 
-#: ../plugins/gtkui/widgets.c:1365
+#: ../plugins/gtkui/widgets.c:1370
 msgid "Remove tab"
 msgstr "Бетті өшіру"
 
-#: ../plugins/gtkui/widgets.c:1372
+#: ../plugins/gtkui/widgets.c:1377
 msgid "Rename tab"
 msgstr "Беттің атын ауыстыру"
 
-#: ../plugins/gtkui/widgets.c:1433
+#: ../plugins/gtkui/widgets.c:1438
 msgid "Add new tab"
 msgstr "Жаңа бетті қосу"
 
-#: ../plugins/gtkui/widgets.c:1889
+#: ../plugins/gtkui/widgets.c:1861
 msgid "Show Column Headers"
 msgstr "Бағандар атауларын көрсету"
 
-#: ../plugins/gtkui/widgets.c:2997
+#: ../plugins/gtkui/widgets.c:2969
 msgid "Expand the box by 1 item"
 msgstr "Бұл боксты 1 элементке кеңейту"
 
-#: ../plugins/gtkui/widgets.c:3002
+#: ../plugins/gtkui/widgets.c:2974
 msgid "Shrink the box by 1 item"
 msgstr "Бұл боксты 1 элементке азайту"
 
-#: ../plugins/gtkui/widgets.c:3007
+#: ../plugins/gtkui/widgets.c:2979
 msgid "Homogeneous"
 msgstr "Біртектес"
 
-#: ../plugins/gtkui/widgets.c:3047
+#: ../plugins/gtkui/widgets.c:3019
 msgid "Expand"
 msgstr "Жазу"
 
-#: ../plugins/gtkui/widgets.c:3055
+#: ../plugins/gtkui/widgets.c:3027
 msgid "Fill"
 msgstr "Толтыру"
 
-#: ../plugins/gtkui/widgets.c:3456
+#: ../plugins/gtkui/widgets.c:3428
 msgid "Configure button"
 msgstr "Батырманы баптау"
 
@@ -2341,6 +2341,3 @@ msgstr ""
 #: ../plugins/pltbrowser/pltbrowser.c:251
 msgid "Playlist browser"
 msgstr ""
-
-#~ msgid "Common"
-#~ msgstr "Жалпы"

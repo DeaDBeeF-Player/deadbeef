@@ -10,9 +10,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-17 16:56+0100\n"
-"PO-Revision-Date: 2013-11-13 13:30+0000\n"
-"Last-Translator: Γιάννης Ανθυμίδης <yannanth@gmail.com>\n"
+"POT-Creation-Date: 2013-11-24 19:10+0100\n"
+"PO-Revision-Date: 2013-11-20 09:50+0000\n"
+"Last-Translator: waker <wakeroid@gmail.com>\n"
 "Language-Team: Greek (http://www.transifex.com/projects/p/deadbeef-player/"
 "language/el/)\n"
 "Language: el\n"
@@ -108,11 +108,11 @@ msgstr "%d μέρες %d:%02d:%02d"
 msgid "Stopped | %d tracks | %s total playtime"
 msgstr "Σταματημένο | %d κομμάτια | %s συνολικός χρόνος αναπαραγωγής"
 
-#: ../plugins/gtkui/gtkui.c:188 ../playlist.c:3113
+#: ../plugins/gtkui/gtkui.c:188 ../playlist.c:3108
 msgid "Mono"
 msgstr "Μονοφωνικό"
 
-#: ../plugins/gtkui/gtkui.c:188 ../playlist.c:3113
+#: ../plugins/gtkui/gtkui.c:188 ../playlist.c:3108
 msgid "Stereo"
 msgstr "Στερεοφωνικό"
 
@@ -189,7 +189,7 @@ msgstr ""
 msgid "VBox"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:980 ../plugins/gtkui/widgets.c:3278
+#: ../plugins/gtkui/gtkui.c:980 ../plugins/gtkui/widgets.c:3250
 msgid "Button"
 msgstr "Κουμπί"
 
@@ -1089,7 +1089,7 @@ msgstr ""
 msgid "Group by"
 msgstr "Ομαδοποίηση κατά"
 
-#: ../plugins/gtkui/plcommon.c:1148 ../plugins/gtkui/widgets.c:3374
+#: ../plugins/gtkui/plcommon.c:1148 ../plugins/gtkui/widgets.c:3346
 msgid "None"
 msgstr "Καμία"
 
@@ -1140,12 +1140,12 @@ msgid "[Multiple values] "
 msgstr "[Πολλαπλές τιμές]"
 
 #: ../plugins/gtkui/trkproperties.c:480 ../plugins/gtkui/trkproperties.c:492
-#: ../plugins/gtkui/widgets.c:2053
+#: ../plugins/gtkui/widgets.c:2025
 msgid "Key"
 msgstr "Πλήκτρο"
 
 #: ../plugins/gtkui/trkproperties.c:481 ../plugins/gtkui/trkproperties.c:493
-#: ../plugins/gtkui/widgets.c:2055
+#: ../plugins/gtkui/widgets.c:2027
 msgid "Value"
 msgstr "Τιμή"
 
@@ -1300,15 +1300,15 @@ msgstr ""
 "για περισσότερες πληροφορίες, δείτε το http://sourceforge.net/apps/mediawiki/"
 "deadbeef/index.php?title=Title_Formatting\n"
 
-#: ../playlist.c:482 ../playlist.c:2494
+#: ../playlist.c:482 ../playlist.c:2489
 msgid "Default"
 msgstr "Προεπιλογή"
 
-#: ../playlist.c:3882
+#: ../playlist.c:3877
 msgid "Yes"
 msgstr "Ναί"
 
-#: ../playlist.c:3882
+#: ../playlist.c:3877
 msgid "No"
 msgstr "Όχι"
 
@@ -2118,7 +2118,7 @@ msgstr ""
 msgid "Add Command"
 msgstr "Προσθήκη Εντολής"
 
-#: ../plugins/shellexecui/shellexecui.c:137 ../plugins/gtkui/widgets.c:626
+#: ../plugins/shellexecui/shellexecui.c:137 ../plugins/gtkui/widgets.c:619
 msgid "Delete"
 msgstr "Διαγραφή"
 
@@ -2225,79 +2225,79 @@ msgstr ""
 msgid "Nothing is selected."
 msgstr "Δεν έχει επιλεχτεί τίποτα."
 
-#: ../plugins/gtkui/widgets.c:601
+#: ../plugins/gtkui/widgets.c:594
 msgid "Replace with..."
 msgstr "Αντικατάσταση με..."
 
-#: ../plugins/gtkui/widgets.c:606
+#: ../plugins/gtkui/widgets.c:599
 msgid "Insert..."
 msgstr "Εισαγωγή..."
 
-#: ../plugins/gtkui/widgets.c:633
+#: ../plugins/gtkui/widgets.c:626
 msgid "Cut"
 msgstr "Αποκοπή"
 
-#: ../plugins/gtkui/widgets.c:640
+#: ../plugins/gtkui/widgets.c:633
 msgid "Copy"
 msgstr "Αντιγραφή"
 
-#: ../plugins/gtkui/widgets.c:647
+#: ../plugins/gtkui/widgets.c:640
 msgid "Paste"
 msgstr "Επικόλληση"
 
-#: ../plugins/gtkui/widgets.c:762
+#: ../plugins/gtkui/widgets.c:764
 msgid "Multiple widgets of this type are not supported"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1066
+#: ../plugins/gtkui/widgets.c:1071
 msgid "Lock movement"
 msgstr "Κλείδωμα κίνησης"
 
-#: ../plugins/gtkui/widgets.c:1351
+#: ../plugins/gtkui/widgets.c:1356
 msgid "Move tab left"
 msgstr "Μετακίνηση καρτέλας αριστερά"
 
-#: ../plugins/gtkui/widgets.c:1358
+#: ../plugins/gtkui/widgets.c:1363
 msgid "Move tab right"
 msgstr "Μετακίνηση καρτέλας δεξιά"
 
-#: ../plugins/gtkui/widgets.c:1365
+#: ../plugins/gtkui/widgets.c:1370
 msgid "Remove tab"
 msgstr "Αφαίρεση καρτέλας"
 
-#: ../plugins/gtkui/widgets.c:1372
+#: ../plugins/gtkui/widgets.c:1377
 msgid "Rename tab"
 msgstr "Μετονομασία καρτέλας"
 
-#: ../plugins/gtkui/widgets.c:1433
+#: ../plugins/gtkui/widgets.c:1438
 msgid "Add new tab"
 msgstr "Προσθήκη νέας καρτέλας"
 
-#: ../plugins/gtkui/widgets.c:1889
+#: ../plugins/gtkui/widgets.c:1861
 msgid "Show Column Headers"
 msgstr "Εμφάνιση Κεφαλίδων Στηλών"
 
-#: ../plugins/gtkui/widgets.c:2997
+#: ../plugins/gtkui/widgets.c:2969
 msgid "Expand the box by 1 item"
 msgstr "Ανάπτυξη κουτιού κατά 1 αντικείμενο"
 
-#: ../plugins/gtkui/widgets.c:3002
+#: ../plugins/gtkui/widgets.c:2974
 msgid "Shrink the box by 1 item"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3007
+#: ../plugins/gtkui/widgets.c:2979
 msgid "Homogeneous"
 msgstr "Ομογενής"
 
-#: ../plugins/gtkui/widgets.c:3047
+#: ../plugins/gtkui/widgets.c:3019
 msgid "Expand"
 msgstr "Ανάπτυξη"
 
-#: ../plugins/gtkui/widgets.c:3055
+#: ../plugins/gtkui/widgets.c:3027
 msgid "Fill"
 msgstr "Γέμιση"
 
-#: ../plugins/gtkui/widgets.c:3456
+#: ../plugins/gtkui/widgets.c:3428
 msgid "Configure button"
 msgstr "Ρύθμιση κουμπιού"
 
@@ -2324,6 +2324,3 @@ msgstr "Όνομα"
 #: ../plugins/pltbrowser/pltbrowser.c:251
 msgid "Playlist browser"
 msgstr ""
-
-#~ msgid "Common"
-#~ msgstr "Κοινά"
