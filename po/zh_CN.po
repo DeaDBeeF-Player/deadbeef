@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-17 16:56+0100\n"
-"PO-Revision-Date: 2013-11-10 17:37+0000\n"
+"POT-Creation-Date: 2013-11-24 19:10+0100\n"
+"PO-Revision-Date: 2013-11-20 09:50+0000\n"
 "Last-Translator: waker <wakeroid@gmail.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/projects/p/deadbeef-"
 "player/language/zh_CN/)\n"
@@ -106,11 +106,11 @@ msgstr "%d 天 %d:%02d:%02d"
 msgid "Stopped | %d tracks | %s total playtime"
 msgstr "已停止 | 音轨数 %d | 播放总时长 %s"
 
-#: ../plugins/gtkui/gtkui.c:188 ../playlist.c:3113
+#: ../plugins/gtkui/gtkui.c:188 ../playlist.c:3108
 msgid "Mono"
 msgstr "单声道"
 
-#: ../plugins/gtkui/gtkui.c:188 ../playlist.c:3113
+#: ../plugins/gtkui/gtkui.c:188 ../playlist.c:3108
 msgid "Stereo"
 msgstr "立体声"
 
@@ -185,7 +185,7 @@ msgstr "水平框"
 msgid "VBox"
 msgstr "垂直框"
 
-#: ../plugins/gtkui/gtkui.c:980 ../plugins/gtkui/widgets.c:3278
+#: ../plugins/gtkui/gtkui.c:980 ../plugins/gtkui/widgets.c:3250
 msgid "Button"
 msgstr "按钮"
 
@@ -1083,7 +1083,7 @@ msgstr ""
 msgid "Group by"
 msgstr "分组依据"
 
-#: ../plugins/gtkui/plcommon.c:1148 ../plugins/gtkui/widgets.c:3374
+#: ../plugins/gtkui/plcommon.c:1148 ../plugins/gtkui/widgets.c:3346
 msgid "None"
 msgstr "无"
 
@@ -1134,12 +1134,12 @@ msgid "[Multiple values] "
 msgstr "[多个值] "
 
 #: ../plugins/gtkui/trkproperties.c:480 ../plugins/gtkui/trkproperties.c:492
-#: ../plugins/gtkui/widgets.c:2053
+#: ../plugins/gtkui/widgets.c:2025
 msgid "Key"
 msgstr "键"
 
 #: ../plugins/gtkui/trkproperties.c:481 ../plugins/gtkui/trkproperties.c:493
-#: ../plugins/gtkui/widgets.c:2055
+#: ../plugins/gtkui/widgets.c:2027
 msgid "Value"
 msgstr "值"
 
@@ -1289,15 +1289,15 @@ msgstr ""
 "                      更多信息请参阅 http://sourceforge.net/apps/mediawiki/"
 "deadbeef/index.php?title=Title_Formatting\n"
 
-#: ../playlist.c:482 ../playlist.c:2494
+#: ../playlist.c:482 ../playlist.c:2489
 msgid "Default"
 msgstr "默认"
 
-#: ../playlist.c:3882
+#: ../playlist.c:3877
 msgid "Yes"
 msgstr "是"
 
-#: ../playlist.c:3882
+#: ../playlist.c:3877
 msgid "No"
 msgstr "否"
 
@@ -2113,7 +2113,7 @@ msgstr ""
 msgid "Add Command"
 msgstr "添加命令"
 
-#: ../plugins/shellexecui/shellexecui.c:137 ../plugins/gtkui/widgets.c:626
+#: ../plugins/shellexecui/shellexecui.c:137 ../plugins/gtkui/widgets.c:619
 msgid "Delete"
 msgstr "删除"
 
@@ -2227,79 +2227,79 @@ msgstr ""
 msgid "Nothing is selected."
 msgstr "没有选择项目。"
 
-#: ../plugins/gtkui/widgets.c:601
+#: ../plugins/gtkui/widgets.c:594
 msgid "Replace with..."
 msgstr "替换为..."
 
-#: ../plugins/gtkui/widgets.c:606
+#: ../plugins/gtkui/widgets.c:599
 msgid "Insert..."
 msgstr "插入..."
 
-#: ../plugins/gtkui/widgets.c:633
+#: ../plugins/gtkui/widgets.c:626
 msgid "Cut"
 msgstr "剪切"
 
-#: ../plugins/gtkui/widgets.c:640
+#: ../plugins/gtkui/widgets.c:633
 msgid "Copy"
 msgstr "复制"
 
-#: ../plugins/gtkui/widgets.c:647
+#: ../plugins/gtkui/widgets.c:640
 msgid "Paste"
 msgstr "粘贴"
 
-#: ../plugins/gtkui/widgets.c:762
+#: ../plugins/gtkui/widgets.c:764
 msgid "Multiple widgets of this type are not supported"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1066
+#: ../plugins/gtkui/widgets.c:1071
 msgid "Lock movement"
 msgstr "锁定移动"
 
-#: ../plugins/gtkui/widgets.c:1351
+#: ../plugins/gtkui/widgets.c:1356
 msgid "Move tab left"
 msgstr "标签左移"
 
-#: ../plugins/gtkui/widgets.c:1358
+#: ../plugins/gtkui/widgets.c:1363
 msgid "Move tab right"
 msgstr "标签右移"
 
-#: ../plugins/gtkui/widgets.c:1365
+#: ../plugins/gtkui/widgets.c:1370
 msgid "Remove tab"
 msgstr "移除标签"
 
-#: ../plugins/gtkui/widgets.c:1372
+#: ../plugins/gtkui/widgets.c:1377
 msgid "Rename tab"
 msgstr "重命名标签"
 
-#: ../plugins/gtkui/widgets.c:1433
+#: ../plugins/gtkui/widgets.c:1438
 msgid "Add new tab"
 msgstr "添加新标签"
 
-#: ../plugins/gtkui/widgets.c:1889
+#: ../plugins/gtkui/widgets.c:1861
 msgid "Show Column Headers"
 msgstr "显示列标题"
 
-#: ../plugins/gtkui/widgets.c:2997
+#: ../plugins/gtkui/widgets.c:2969
 msgid "Expand the box by 1 item"
 msgstr "向框中增加 1 项"
 
-#: ../plugins/gtkui/widgets.c:3002
+#: ../plugins/gtkui/widgets.c:2974
 msgid "Shrink the box by 1 item"
 msgstr "从框中减少 1 项"
 
-#: ../plugins/gtkui/widgets.c:3007
+#: ../plugins/gtkui/widgets.c:2979
 msgid "Homogeneous"
 msgstr "平均"
 
-#: ../plugins/gtkui/widgets.c:3047
+#: ../plugins/gtkui/widgets.c:3019
 msgid "Expand"
 msgstr "扩展"
 
-#: ../plugins/gtkui/widgets.c:3055
+#: ../plugins/gtkui/widgets.c:3027
 msgid "Fill"
 msgstr "填充"
 
-#: ../plugins/gtkui/widgets.c:3456
+#: ../plugins/gtkui/widgets.c:3428
 msgid "Configure button"
 msgstr "配置按钮"
 
@@ -2326,6 +2326,3 @@ msgstr ""
 #: ../plugins/pltbrowser/pltbrowser.c:251
 msgid "Playlist browser"
 msgstr ""
-
-#~ msgid "Common"
-#~ msgstr "常见"

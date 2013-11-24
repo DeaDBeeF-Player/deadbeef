@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-17 16:56+0100\n"
-"PO-Revision-Date: 2013-11-10 17:37+0000\n"
+"POT-Creation-Date: 2013-11-24 19:10+0100\n"
+"PO-Revision-Date: 2013-11-20 09:50+0000\n"
 "Last-Translator: waker <wakeroid@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/deadbeef-player/"
 "language/es/)\n"
@@ -110,11 +110,11 @@ msgstr "%d días y %d:%02d:%02d"
 msgid "Stopped | %d tracks | %s total playtime"
 msgstr "Detenido | %d pistas | Tiempo total: %s"
 
-#: ../plugins/gtkui/gtkui.c:188 ../playlist.c:3113
+#: ../plugins/gtkui/gtkui.c:188 ../playlist.c:3108
 msgid "Mono"
 msgstr "Mono"
 
-#: ../plugins/gtkui/gtkui.c:188 ../playlist.c:3113
+#: ../plugins/gtkui/gtkui.c:188 ../playlist.c:3108
 msgid "Stereo"
 msgstr "Estéreo"
 
@@ -190,7 +190,7 @@ msgstr "Hbox"
 msgid "VBox"
 msgstr "Vbox"
 
-#: ../plugins/gtkui/gtkui.c:980 ../plugins/gtkui/widgets.c:3278
+#: ../plugins/gtkui/gtkui.c:980 ../plugins/gtkui/widgets.c:3250
 msgid "Button"
 msgstr "Botón"
 
@@ -1092,7 +1092,7 @@ msgstr ""
 msgid "Group by"
 msgstr "Agrupar por"
 
-#: ../plugins/gtkui/plcommon.c:1148 ../plugins/gtkui/widgets.c:3374
+#: ../plugins/gtkui/plcommon.c:1148 ../plugins/gtkui/widgets.c:3346
 msgid "None"
 msgstr "Nada"
 
@@ -1143,12 +1143,12 @@ msgid "[Multiple values] "
 msgstr "[Valores múltiples]"
 
 #: ../plugins/gtkui/trkproperties.c:480 ../plugins/gtkui/trkproperties.c:492
-#: ../plugins/gtkui/widgets.c:2053
+#: ../plugins/gtkui/widgets.c:2025
 msgid "Key"
 msgstr "Clave"
 
 #: ../plugins/gtkui/trkproperties.c:481 ../plugins/gtkui/trkproperties.c:493
-#: ../plugins/gtkui/widgets.c:2055
+#: ../plugins/gtkui/widgets.c:2027
 msgid "Value"
 msgstr "Valor"
 
@@ -1303,15 +1303,15 @@ msgstr ""
 "                      para más información, vea http://sourceforge.net/apps/"
 "mediawiki/deadbeef/index.php?title=Title_Formatting\n"
 
-#: ../playlist.c:482 ../playlist.c:2494
+#: ../playlist.c:482 ../playlist.c:2489
 msgid "Default"
 msgstr "Predeterminado"
 
-#: ../playlist.c:3882
+#: ../playlist.c:3877
 msgid "Yes"
 msgstr "Sí"
 
-#: ../playlist.c:3882
+#: ../playlist.c:3877
 msgid "No"
 msgstr "No"
 
@@ -2136,7 +2136,7 @@ msgstr ""
 msgid "Add Command"
 msgstr "Añadir orden"
 
-#: ../plugins/shellexecui/shellexecui.c:137 ../plugins/gtkui/widgets.c:626
+#: ../plugins/shellexecui/shellexecui.c:137 ../plugins/gtkui/widgets.c:619
 msgid "Delete"
 msgstr "Eliminar"
 
@@ -2251,79 +2251,79 @@ msgstr ""
 msgid "Nothing is selected."
 msgstr "No se ha seleccionado nada."
 
-#: ../plugins/gtkui/widgets.c:601
+#: ../plugins/gtkui/widgets.c:594
 msgid "Replace with..."
 msgstr "Reemplazar con…"
 
-#: ../plugins/gtkui/widgets.c:606
+#: ../plugins/gtkui/widgets.c:599
 msgid "Insert..."
 msgstr "Insertar…"
 
-#: ../plugins/gtkui/widgets.c:633
+#: ../plugins/gtkui/widgets.c:626
 msgid "Cut"
 msgstr "Cortar"
 
-#: ../plugins/gtkui/widgets.c:640
+#: ../plugins/gtkui/widgets.c:633
 msgid "Copy"
 msgstr "Copiar"
 
-#: ../plugins/gtkui/widgets.c:647
+#: ../plugins/gtkui/widgets.c:640
 msgid "Paste"
 msgstr "Pegar"
 
-#: ../plugins/gtkui/widgets.c:762
+#: ../plugins/gtkui/widgets.c:764
 msgid "Multiple widgets of this type are not supported"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1066
+#: ../plugins/gtkui/widgets.c:1071
 msgid "Lock movement"
 msgstr "Bloquear el movimiento"
 
-#: ../plugins/gtkui/widgets.c:1351
+#: ../plugins/gtkui/widgets.c:1356
 msgid "Move tab left"
 msgstr "Mover la pestaña a la izquierda"
 
-#: ../plugins/gtkui/widgets.c:1358
+#: ../plugins/gtkui/widgets.c:1363
 msgid "Move tab right"
 msgstr "Mover la pestaña a la derecha"
 
-#: ../plugins/gtkui/widgets.c:1365
+#: ../plugins/gtkui/widgets.c:1370
 msgid "Remove tab"
 msgstr "Eliminar la pestaña"
 
-#: ../plugins/gtkui/widgets.c:1372
+#: ../plugins/gtkui/widgets.c:1377
 msgid "Rename tab"
 msgstr "Renombrar la pestaña"
 
-#: ../plugins/gtkui/widgets.c:1433
+#: ../plugins/gtkui/widgets.c:1438
 msgid "Add new tab"
 msgstr "Añadir una pestaña nueva"
 
-#: ../plugins/gtkui/widgets.c:1889
+#: ../plugins/gtkui/widgets.c:1861
 msgid "Show Column Headers"
 msgstr "Mostrar los títulos de las columnas"
 
-#: ../plugins/gtkui/widgets.c:2997
+#: ../plugins/gtkui/widgets.c:2969
 msgid "Expand the box by 1 item"
 msgstr "Expandir el cuadro un elemento"
 
-#: ../plugins/gtkui/widgets.c:3002
+#: ../plugins/gtkui/widgets.c:2974
 msgid "Shrink the box by 1 item"
 msgstr "Reducir el cuadro un elemento"
 
-#: ../plugins/gtkui/widgets.c:3007
+#: ../plugins/gtkui/widgets.c:2979
 msgid "Homogeneous"
 msgstr "Homogéneo"
 
-#: ../plugins/gtkui/widgets.c:3047
+#: ../plugins/gtkui/widgets.c:3019
 msgid "Expand"
 msgstr "Expandir"
 
-#: ../plugins/gtkui/widgets.c:3055
+#: ../plugins/gtkui/widgets.c:3027
 msgid "Fill"
 msgstr "Rellenar"
 
-#: ../plugins/gtkui/widgets.c:3456
+#: ../plugins/gtkui/widgets.c:3428
 msgid "Configure button"
 msgstr "Configurar el botón"
 
@@ -2350,6 +2350,3 @@ msgstr ""
 #: ../plugins/pltbrowser/pltbrowser.c:251
 msgid "Playlist browser"
 msgstr ""
-
-#~ msgid "Common"
-#~ msgstr "Comunes"

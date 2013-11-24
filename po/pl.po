@@ -5,6 +5,7 @@
 # Translators:
 # Grzegorz Gibas <amigib@gmail.com>, 2010
 # Łukasz Jasiński <alvarus@alvarus.org>, 2010
+# mati75 <mati75@linuxmint.pl>, 2013
 # Piotr Sokół <psokol@jabster.pl>, 2010
 # RyD0pR3c <prendter@gmail.com>, 2013
 # RyD0pR3c <prendter@gmail.com>, 2013
@@ -12,9 +13,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-17 16:56+0100\n"
-"PO-Revision-Date: 2013-11-10 17:37+0000\n"
-"Last-Translator: waker <wakeroid@gmail.com>\n"
+"POT-Creation-Date: 2013-11-24 19:10+0100\n"
+"PO-Revision-Date: 2013-11-23 13:40+0000\n"
+"Last-Translator: mati75 <mati75@linuxmint.pl>\n"
 "Language-Team: Polish (http://www.transifex.com/projects/p/deadbeef-player/"
 "language/pl/)\n"
 "Language: pl\n"
@@ -113,11 +114,11 @@ msgstr ""
 "Zatrzymano odtwarzanie | %d ścieżek | całkowity czas trwania listy "
 "odtwarzania: %s"
 
-#: ../plugins/gtkui/gtkui.c:188 ../playlist.c:3113
+#: ../plugins/gtkui/gtkui.c:188 ../playlist.c:3108
 msgid "Mono"
 msgstr "Mono"
 
-#: ../plugins/gtkui/gtkui.c:188 ../playlist.c:3113
+#: ../plugins/gtkui/gtkui.c:188 ../playlist.c:3108
 msgid "Stereo"
 msgstr "Stereo"
 
@@ -180,7 +181,7 @@ msgstr "Wyświetlanie okładki albumu"
 
 #: ../plugins/gtkui/gtkui.c:976
 msgid "Scope"
-msgstr ""
+msgstr "Zakres"
 
 #: ../plugins/gtkui/gtkui.c:977
 msgid "Spectrum"
@@ -194,7 +195,7 @@ msgstr ""
 msgid "VBox"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:980 ../plugins/gtkui/widgets.c:3278
+#: ../plugins/gtkui/gtkui.c:980 ../plugins/gtkui/widgets.c:3250
 msgid "Button"
 msgstr "Przycisk"
 
@@ -366,7 +367,7 @@ msgstr "Korektor dźwięku"
 
 #: ../plugins/gtkui/interface.c:323 ../plugins/gtkui/deadbeef.glade.h:31
 msgid "Design mode"
-msgstr ""
+msgstr "Tryb projektowania"
 
 #: ../plugins/gtkui/interface.c:327 ../plugins/gtkui/deadbeef.glade.h:32
 msgid "_Playback"
@@ -436,7 +437,7 @@ msgstr "_GPLv2"
 
 #: ../plugins/gtkui/interface.c:440 ../plugins/gtkui/deadbeef.glade.h:48
 msgid "_LGPLv2.1"
-msgstr "_GPLv2"
+msgstr "_LGPLv2.1"
 
 #: ../plugins/gtkui/interface.c:449 ../plugins/gtkui/deadbeef.glade.h:49
 msgid "_About"
@@ -720,7 +721,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2117 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Player"
-msgstr ""
+msgstr "Odtwarzacz"
 
 #: ../plugins/gtkui/interface.c:2126 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Close playlists with middle mouse button"
@@ -889,7 +890,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2614 ../plugins/gtkui/deadbeef.glade.h:163
 msgid "_Defaults"
-msgstr ""
+msgstr "_Domyślne"
 
 #: ../plugins/gtkui/interface.c:2618 ../plugins/gtkui/deadbeef.glade.h:164
 msgid "Hotkeys"
@@ -1090,7 +1091,7 @@ msgstr ""
 msgid "Group by"
 msgstr "Grupowanie"
 
-#: ../plugins/gtkui/plcommon.c:1148 ../plugins/gtkui/widgets.c:3374
+#: ../plugins/gtkui/plcommon.c:1148 ../plugins/gtkui/widgets.c:3346
 msgid "None"
 msgstr "Brak"
 
@@ -1141,12 +1142,12 @@ msgid "[Multiple values] "
 msgstr "[Wiele wartości]"
 
 #: ../plugins/gtkui/trkproperties.c:480 ../plugins/gtkui/trkproperties.c:492
-#: ../plugins/gtkui/widgets.c:2053
+#: ../plugins/gtkui/widgets.c:2025
 msgid "Key"
 msgstr "Typ"
 
 #: ../plugins/gtkui/trkproperties.c:481 ../plugins/gtkui/trkproperties.c:493
-#: ../plugins/gtkui/widgets.c:2055
+#: ../plugins/gtkui/widgets.c:2027
 msgid "Value"
 msgstr "Wartość"
 
@@ -1302,15 +1303,15 @@ msgstr ""
 "                      więcej informacji na http://sourceforge.net/apps/"
 "mediawiki/deadbeef/index.php?title=Title_Formatting\n"
 
-#: ../playlist.c:482 ../playlist.c:2494
+#: ../playlist.c:482 ../playlist.c:2489
 msgid "Default"
 msgstr "Domyślne"
 
-#: ../playlist.c:3882
+#: ../playlist.c:3877
 msgid "Yes"
 msgstr "Tak"
 
-#: ../playlist.c:3882
+#: ../playlist.c:3877
 msgid "No"
 msgstr "Nie"
 
@@ -1522,7 +1523,7 @@ msgstr "Maksymalna długość utworu (min):"
 
 #: ../translation/extra.c:40
 msgid "Fadeout length (seconds)"
-msgstr ""
+msgstr "Długość zanikania (sekundy)"
 
 #: ../translation/extra.c:41
 msgid "Play loops nr. of times (if available)"
@@ -1596,7 +1597,7 @@ msgstr ""
 
 #: ../translation/extra.c:63
 msgid "Songlengths.txt (from HVSC)"
-msgstr ""
+msgstr "Songlengths.txt (z HVSC)"
 
 #: ../translation/extra.c:64
 msgid "Bits per sample (8 or 16)"
@@ -1705,7 +1706,7 @@ msgstr ""
 
 #: ../translation/extra.c:102
 msgid "Enable surround"
-msgstr ""
+msgstr "Włącz dźwięk przestrzenny"
 
 #: ../plugins/converter/convgui.c:117
 msgid "The file already exists. Overwrite?"
@@ -1761,11 +1762,12 @@ msgstr "Edytuj enkoder"
 
 #: ../plugins/converter/convgui.c:859 ../plugins/converter/convgui.c:1314
 msgid "Remove preset"
-msgstr ""
+msgstr "Usuń ustawienie"
 
 #: ../plugins/converter/convgui.c:861 ../plugins/converter/convgui.c:1316
 msgid "This action will delete the selected preset. Are you sure?"
 msgstr ""
+"Ta czynność spowoduje usunięcie wybranego ustawienia. Czy jesteś pewien?"
 
 #: ../plugins/converter/convgui.c:885
 msgid "Encoders"
@@ -1777,19 +1779,19 @@ msgstr "Dodaj wtyczkę do łańcucha DSP"
 
 #: ../plugins/converter/convgui.c:1215
 msgid "Failed to save DSP preset"
-msgstr ""
+msgstr "Błąd zapisu ustawień DSP"
 
 #: ../plugins/converter/convgui.c:1279
 msgid "New DSP Preset"
-msgstr ""
+msgstr "Nowe ustawienia DSP"
 
 #: ../plugins/converter/convgui.c:1364
 msgid "Edit DSP Preset"
-msgstr ""
+msgstr "Edytuj ustawienia DSP"
 
 #: ../plugins/converter/convgui.c:1384
 msgid "DSP Presets"
-msgstr ""
+msgstr "Ustawienia DSP"
 
 #: ../plugins/converter/interface.c:92
 #: ../plugins/converter/converter.glade.h:1
@@ -1829,7 +1831,7 @@ msgstr "Enkoder:"
 #: ../plugins/converter/interface.c:169
 #: ../plugins/converter/converter.glade.h:9
 msgid "DSP preset:"
-msgstr ""
+msgstr "Ustawienie DSP:"
 
 #: ../plugins/converter/interface.c:192
 #: ../plugins/converter/converter.glade.h:10
@@ -2125,7 +2127,7 @@ msgstr ""
 msgid "Add Command"
 msgstr "Dodaj komendę"
 
-#: ../plugins/shellexecui/shellexecui.c:137 ../plugins/gtkui/widgets.c:626
+#: ../plugins/shellexecui/shellexecui.c:137 ../plugins/gtkui/widgets.c:619
 msgid "Delete"
 msgstr "Usuń"
 
@@ -2180,7 +2182,7 @@ msgstr ""
 
 #: ../plugins/gtkui/actionhandlers.c:429
 msgid "help.txt"
-msgstr ""
+msgstr "help.txt"
 
 #: ../plugins/gtkui/actionhandlers.c:489
 msgid "Delete files from disk"
@@ -2216,7 +2218,7 @@ msgstr "Typ zawartości"
 
 #: ../plugins/gtkui/ctmapping.c:199
 msgid "Invalid value(s)."
-msgstr ""
+msgstr "Nieprawidłowa wartość(i)."
 
 #: ../plugins/gtkui/ctmapping.c:200
 msgid ""
@@ -2233,105 +2235,102 @@ msgstr ""
 msgid "Nothing is selected."
 msgstr "Nic nie wybrano."
 
-#: ../plugins/gtkui/widgets.c:601
+#: ../plugins/gtkui/widgets.c:594
 msgid "Replace with..."
 msgstr "Zastąp..."
 
-#: ../plugins/gtkui/widgets.c:606
+#: ../plugins/gtkui/widgets.c:599
 msgid "Insert..."
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:633
+#: ../plugins/gtkui/widgets.c:626
 msgid "Cut"
 msgstr "Wytnij"
 
-#: ../plugins/gtkui/widgets.c:640
+#: ../plugins/gtkui/widgets.c:633
 msgid "Copy"
 msgstr "Kopiuj"
 
-#: ../plugins/gtkui/widgets.c:647
+#: ../plugins/gtkui/widgets.c:640
 msgid "Paste"
 msgstr "Wklej"
 
-#: ../plugins/gtkui/widgets.c:762
+#: ../plugins/gtkui/widgets.c:764
 msgid "Multiple widgets of this type are not supported"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1066
+#: ../plugins/gtkui/widgets.c:1071
 msgid "Lock movement"
-msgstr ""
+msgstr "Blokada ruchu"
 
-#: ../plugins/gtkui/widgets.c:1351
+#: ../plugins/gtkui/widgets.c:1356
 msgid "Move tab left"
 msgstr "Przesuń kartę w lewo"
 
-#: ../plugins/gtkui/widgets.c:1358
+#: ../plugins/gtkui/widgets.c:1363
 msgid "Move tab right"
 msgstr "Przesuń kartę w prawo"
 
-#: ../plugins/gtkui/widgets.c:1365
+#: ../plugins/gtkui/widgets.c:1370
 msgid "Remove tab"
 msgstr "Usuń kartę"
 
-#: ../plugins/gtkui/widgets.c:1372
+#: ../plugins/gtkui/widgets.c:1377
 msgid "Rename tab"
 msgstr "Zmień nazwę karty"
 
-#: ../plugins/gtkui/widgets.c:1433
+#: ../plugins/gtkui/widgets.c:1438
 msgid "Add new tab"
 msgstr "Dodaj nową kartę"
 
-#: ../plugins/gtkui/widgets.c:1889
+#: ../plugins/gtkui/widgets.c:1861
 msgid "Show Column Headers"
 msgstr "Pokaż nagłówki kolumn"
 
-#: ../plugins/gtkui/widgets.c:2997
+#: ../plugins/gtkui/widgets.c:2969
 msgid "Expand the box by 1 item"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3002
+#: ../plugins/gtkui/widgets.c:2974
 msgid "Shrink the box by 1 item"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3007
+#: ../plugins/gtkui/widgets.c:2979
 msgid "Homogeneous"
 msgstr "Homogeniczny"
 
-#: ../plugins/gtkui/widgets.c:3047
+#: ../plugins/gtkui/widgets.c:3019
 msgid "Expand"
 msgstr "Rozszerz"
 
-#: ../plugins/gtkui/widgets.c:3055
+#: ../plugins/gtkui/widgets.c:3027
 msgid "Fill"
 msgstr "Wypełnij"
 
-#: ../plugins/gtkui/widgets.c:3456
+#: ../plugins/gtkui/widgets.c:3428
 msgid "Configure button"
 msgstr "Konfiguruj przycisk"
 
 #: ../plugins/gtkui/pltmenu.c:62
 msgid "Edit playlist"
-msgstr ""
+msgstr "Edytuj playlistę"
 
 #: ../plugins/gtkui/pltmenu.c:258
 msgid "Rename Playlist"
-msgstr ""
+msgstr "Zmień nazwę playlisty"
 
 #: ../plugins/gtkui/pltmenu.c:265
 msgid "Remove Playlist"
-msgstr ""
+msgstr "Usuń playlistę"
 
 #: ../plugins/gtkui/pltmenu.c:272
 msgid "Add New Playlist"
-msgstr ""
+msgstr "Dodaj nową playlistę"
 
 #: ../plugins/pltbrowser/pltbrowser.c:225
 msgid "Name"
-msgstr ""
+msgstr "Nazwa"
 
 #: ../plugins/pltbrowser/pltbrowser.c:251
 msgid "Playlist browser"
-msgstr ""
-
-#~ msgid "Common"
-#~ msgstr "Częste"
+msgstr "Przeglądarka playlisty"
