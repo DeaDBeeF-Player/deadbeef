@@ -808,11 +808,6 @@ plt_move (int from, int to) {
 void
 plt_clear (playlist_t *plt) {
     pl_lock ();
-    if (addfiles_playlist) {
-        fprintf (stderr, "forbidden to clear playlist while add files in progress\n");
-        pl_unlock ();
-        return;
-    }
     while (plt->head[PL_MAIN]) {
         plt_remove_item (plt, plt->head[PL_MAIN]);
     }
