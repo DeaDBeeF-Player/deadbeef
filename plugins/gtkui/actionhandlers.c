@@ -38,6 +38,7 @@
 #include "interface.h"
 #include "trkproperties.h"
 #include "callbacks.h"
+#include <sys/stat.h>
 
 extern GtkWidget *mainwin;
 extern DB_functions_t *deadbeef;
@@ -482,6 +483,19 @@ action_remove_from_playlist_handler (DB_plugin_action_t *act, int ctx) {
     return 0;
 }
 
+void
+delete_and_remove_track (const char *uri, ddb_playlist_t *plt, ddb_playItem_t *it) {
+    int res = unlink (uri);
+
+    // check if file exists
+    struct stat buf;
+    memset (&buf, 0, sizeof (buf));
+    int stat_res = stat (uri, &buf);
+    if (stat_res != 0) {
+        deadbeef->plt_remove_item (plt, it);
+    }
+}
+
 gboolean
 action_delete_from_disk_handler_cb (void *data) {
     int ctx = (intptr_t)data;
@@ -508,9 +522,7 @@ action_delete_from_disk_handler_cb (void *data) {
         while (it) {
             const char *uri = deadbeef->pl_find_meta (it, ":URI");
             if (deadbeef->pl_is_selected (it) && deadbeef->is_local_file (uri)) {
-                if (!unlink (uri)) {
-                    deadbeef->plt_remove_item (plt, it);
-                }
+                delete_and_remove_track (uri, plt, it);
             }
             DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
             deadbeef->pl_item_unref (it);
@@ -524,9 +536,7 @@ action_delete_from_disk_handler_cb (void *data) {
         while (it) {
             const char *uri = deadbeef->pl_find_meta (it, ":URI");
             if (deadbeef->is_local_file (uri)) {
-                if (!unlink (uri)) {
-                    deadbeef->plt_remove_item (plt, it);
-                }
+                delete_and_remove_track (uri, plt, it);
 // FIXME: this dialog should allow something like "cancel" and "ignore all", then
 // it will be usable
 //                else {
@@ -552,9 +562,7 @@ action_delete_from_disk_handler_cb (void *data) {
             if (deadbeef->is_local_file (uri)) {
                 int idx = deadbeef->plt_get_item_idx (plt, it, PL_MAIN);
                 if (idx != -1) {
-                    if (!unlink (uri)) {
-                        deadbeef->plt_remove_item (plt, it);
-                    }
+                    delete_and_remove_track (uri, plt, it);
                 }
             }
             deadbeef->pl_item_unref (it);
