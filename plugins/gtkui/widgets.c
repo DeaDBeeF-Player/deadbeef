@@ -40,6 +40,9 @@
 #include "../../optmath.h"
 #include "actions.h"
 
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
+
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
@@ -717,7 +720,7 @@ w_unreg_widget (const char *type) {
         }
         prev = c;
     }
-    fprintf (stderr, "gtkui w_unreg_widget: widget type %s is not registered\n", type);
+    trace ("gtkui w_unreg_widget: widget type %s is not registered\n", type);
 }
 
 int
