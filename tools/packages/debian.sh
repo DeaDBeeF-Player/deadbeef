@@ -77,5 +77,5 @@ fakeroot -- tar zcvf ./control.tar.gz ./control ./md5sums ./postrm ./postinst ./
 fakeroot -- tar zcvf ./data.tar.gz ./opt ./usr
 
 # make final archive
-fakeroot -- ar cr $OUTDIR/deadbeef_${DEB_VERSION}-${BUILD}_$DEB_ARCH.deb debian-binary control.tar.gz data.tar.gz
+fakeroot -- ar cr $OUTDIR/deadbeef-static_${DEB_VERSION}-${BUILD}_$DEB_ARCH.deb debian-binary control.tar.gz data.tar.gz
 
