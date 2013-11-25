@@ -46,4 +46,5 @@ cp tools/packages/arch_install $INSTALL
 
 # archive
 cd $TEMPDIR
+chmod -R 755 .
 fakeroot -- tar Jcvf $OUTDIR/deadbeef-static-$ARCH_VERSION-$BUILD-$ARCH.pkg.tar.xz * .PKGINFO .INSTALL

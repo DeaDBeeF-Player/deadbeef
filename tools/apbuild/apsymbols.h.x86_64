@@ -6,6 +6,7 @@ APBUILD_NOTE_METADATA("apbuild.version=" APBUILD_VERSION);
 #endif
 
 /* apbuild generated symbol exclusion list */
+__asm__(".symver memcpy,memcpy@GLIBC_2.2.5");
 __asm__(".symver clnt_pcreateerror,clnt_pcreateerror@GLIBC_2.2.5");
 __asm__(".symver clnt_spcreateerror,clnt_spcreateerror@GLIBC_2.2.5");
 __asm__(".symver feupdateenv,feupdateenv@GLIBC_2.2.5");
