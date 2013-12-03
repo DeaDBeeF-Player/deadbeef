@@ -54,8 +54,8 @@ sdk_HEADERS = gtkui_api.h
 
 EXTRA_DIST = deadbeef.glade
 
-GTKGLEXT2_LIBS = -lGL -lGLU
-GTKGLEXT3_LIBS =
+#GTKGLEXT2_LIBS =
+#GTKGLEXT3_LIBS =
 
 if STATICLINK
 if HAVE_GTK2
@@ -149,7 +149,7 @@ GTKUI_SOURCES_GTK2 = $(GTKUI_SOURCES)
 #	gtkglext-gtk2/gdk/glext/glxext-extra.h\
 #	gtkglext-gtk2/gdk/glext/glxext.h
 
-GTKGLEXT_CFLAGS_GTK2 = -I@top_srcdir@/plugins/gtkui/gtkglext-gtk2 -I@top_srcdir@/plugins/gtkui/gtkglext-gtk2/gdk -DGTK_GL_COMPILATION -DGDK_GL_COMPILATION
+#GTKGLEXT_CFLAGS_GTK2 = -I@top_srcdir@/plugins/gtkui/gtkglext-gtk2 -I@top_srcdir@/plugins/gtkui/gtkglext-gtk2/gdk -DGTK_GL_COMPILATION -DGDK_GL_COMPILATION
 
 ddb_gui_GTK2_la_SOURCES = $(GTKUI_SOURCES_GTK2)
 ddb_gui_GTK2_la_LDFLAGS = -module

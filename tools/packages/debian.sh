@@ -72,6 +72,8 @@ done
 
 # archive control
 cd $TEMPDIR
+chmod 644 control md5sums shlibs
+chmod 755 postrm postinst
 fakeroot -- tar zcvf ./control.tar.gz ./control ./md5sums ./postrm ./postinst ./shlibs
 # archive data
 fakeroot -- tar zcvf ./data.tar.gz ./opt ./usr
