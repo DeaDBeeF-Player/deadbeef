@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([deadbeef], [0.6.0])
+AC_INIT([deadbeef], [devel])
 
 AC_CONFIG_HEADER(config.h)
 
@@ -28,11 +28,6 @@ test "$prefix" = NONE && prefix=/usr/local
 AC_DEFINE_UNQUOTED(LOCALEDIR, "${prefix}/${DATADIRNAME}/locale", [Name of gettext locale directory])
 
 case "$host" in
-  *-*-gnu)
-    NOCPPLIB="-nostdlib -lsupc++";;
-esac
-
-case "$host" in
   i686-apple-*)
     AC_DEFINE(ARCH_X86_32, 1, [architecture is x86 on OSX])
     LIB="../deadbeef-deps/lib-x86-32-apple"
@@ -58,7 +53,6 @@ case "$host" in
     LIB="../deadbeef-deps/lib-x86-64"
     YASM_FLAGS="-f elf -D ARCH_X86_64 -m amd64"
     APE_USE_YASM=yes
-    KILLCPPFLAGS="-nostdlib -lsupc++"
     ;;
   powerpc-*-* )
     AC_DEFINE(ARCH_PPC_32, 1, [architecture is ppc32])
@@ -72,9 +66,18 @@ case "$host" in
     AC_DEFINE(ARCH_UNKNOWN, 1, [architecture is unknown])
     ;;
 esac
-AC_SUBST(NOCPPLIB)
 AC_SUBST(LIB)
 AC_SUBST(YASM_FLAGS)
+
+case "$host" in
+  *-*-gnu)
+    AS_IF([test "${enable_staticlink}" != "no"], [
+        NOCPPLIB="-nostdlib ../../$LIB/lib/libsupc++.a"
+    ], [
+        NOCPPLIB="-nostdlib -lsupc++"
+    ]);;
+esac
+AC_SUBST(NOCPPLIB)
 
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 

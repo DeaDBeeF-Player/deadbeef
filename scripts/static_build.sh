@@ -9,6 +9,7 @@ cd tools/apbuild
 cd ../../
 
 export APBUILD_STATIC_LIBGCC=1
+export APBUILD_CXX1=1
 export CC=$AP/apgcc
 export CXX=$AP/apgcc
 

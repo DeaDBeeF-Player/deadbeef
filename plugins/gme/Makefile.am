@@ -402,5 +402,5 @@ gme_la_LDFLAGS = -module $(NOCPPLIB)
 gme_la_LIBADD = $(ZLIB_LIBS)
 
 AM_CFLAGS = $(CFLAGS) $(ZLIB_CFLAGS) -I$(gmepath) -std=c99 -DGME_VERSION_055
-AM_CPPFLAGS = $(CXXFLAGS) -fno-exceptions -fno-rtti -nostdlib -fno-unwind-tables
+AM_CPPFLAGS = $(CXXFLAGS) -fno-exceptions -fno-rtti -fno-unwind-tables
 endif
