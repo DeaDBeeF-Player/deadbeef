@@ -253,8 +253,13 @@ mp4_track_get_info(mp4ff_t *mp4, int track, float *duration, int *samplerate, in
     samples = (int64_t)mp4ff_num_samples(mp4, track);
     
     NeAACDecClose (dec);
+    dec = NULL;
 
-    int i_sample_count = mp4ff_num_samples (mp4, track);
+    if (samples <= 0) {
+        goto error;
+    }
+
+    int i_sample_count = samples;
     int i_sample;
 
     int64_t total_dur = 0;
