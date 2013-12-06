@@ -69,16 +69,6 @@ esac
 AC_SUBST(LIB)
 AC_SUBST(YASM_FLAGS)
 
-case "$host" in
-  *-*-gnu)
-    AS_IF([test "${enable_staticlink}" != "no"], [
-        NOCPPLIB="-nostdlib ../../$LIB/lib/libsupc++.a"
-    ], [
-        NOCPPLIB="-nostdlib -lsupc++"
-    ]);;
-esac
-AC_SUBST(NOCPPLIB)
-
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 
 dnl INSANE_CFLAGS="-Wformat -Wdisabled-optimization -Wcomment -Wchar-subscripts -Wunused-function -Wunused-value -Wuninitialized -Wtype-limits -Wbad-function-cast"
@@ -146,6 +136,17 @@ AS_IF([test "${enable_abstract_socket}" != "no"], [
     AC_DEFINE_UNQUOTED([USE_ABSTRACT_SOCKET_NAME], [1], [Define to use abstract socket name, without file])
     USE_ABSTRACT_SOCKET_NAME=yes
 ])
+
+case "$host" in
+  *-*-gnu )
+    AS_IF([test "${enable_staticlink}" != "no"], [
+        NOCPPLIB="-nostdlib ../../$LIB/lib/libsupc++.a"
+    ], [
+        NOCPPLIB="-nostdlib -lsupc++"
+    ])
+    AC_SUBST(NOCPPLIB)
+    ;;
+esac
 
 AC_CHECK_LIB([intl], [main], [INTL_LIBS="-lintl";AC_SUBST(INTL_LIBS)])
 
