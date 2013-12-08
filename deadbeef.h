@@ -92,42 +92,55 @@ extern "C" {
 #define DB_API_VERSION_MAJOR 1
 #define DB_API_VERSION_MINOR 5
 
+#define DDB_DEPRECATED(x)
+
+#ifdef __GNUC__
+#include <features.h>
+#undef DDB_DEPRECATED
+#if __GNUC_PREREQ(4,5)
+#define DDB_DEPRECATED(x) __attribute__ ((deprecated(x)))
+#else
+#define DDB_DEPRECATED(x) __attribute__ ((deprecated))
+#endif
+#endif
+
+
 #ifndef DDB_API_LEVEL
 #define DDB_API_LEVEL DB_API_VERSION_MINOR
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 5)
-#define DEPRECATED_15 __attribute__ ((deprecated("since deadbeef API 1.5")))
+#define DEPRECATED_15 DDB_DEPRECATED("since deadbeef API 1.5")
 #else
 #define DEPRECATED_15
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 4)
-#define DEPRECATED_14 __attribute__ ((deprecated("since deadbeef API 1.4")))
+#define DEPRECATED_14 DDB_DEPRECATED("since deadbeef API 1.4")
 #else
 #define DEPRECATED_14
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 3)
-#define DEPRECATED_13 __attribute__ ((deprecated("since deadbeef API 1.3")))
+#define DEPRECATED_13 DDB_DEPRECATED("since deadbeef API 1.3")
 #else
 #define DEPRECATED_13
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 2)
-#define DEPRECATED_12 __attribute__ ((deprecated("since deadbeef API 1.2")))
+#define DEPRECATED_12 DDB_DEPRECATED("since deadbeef API 1.2")
 #else
 #define DEPRECATED_12
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 1)
-#define DEPRECATED_11 __attribute__ ((deprecated("since deadbeef API 1.1")))
+#define DEPRECATED_11 DDB_DEPRECATED("since deadbeef API 1.1")
 #else
 #define DEPRECATED_11
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 0)
-#define DEPRECATED __attribute__ ((deprecated))
+#define DEPRECATED DDB_DEPRECATED
 #else
 #define DEPRECATED
 #endif
@@ -1406,6 +1419,9 @@ typedef struct DB_playlist_s {
     DB_playItem_t * (*load2) (int visibility, ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort);
 #endif
 } DB_playlist_t;
+
+#undef DDB_DEPRECATED
+#undef DEPRECATED
 
 #ifdef __cplusplus
 }
