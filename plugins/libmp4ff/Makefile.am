@@ -10,4 +10,4 @@ libmp4ff_a_SOURCES = \
 	mp4tagupdate.c\
 	mp4util.c
 
-libmp4ff_a_CFLAGS = -fPIC -DUSE_TAGGING
+AM_CFLAGS = -fPIC -DUSE_TAGGING
