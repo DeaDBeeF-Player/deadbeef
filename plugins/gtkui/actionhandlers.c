@@ -956,6 +956,7 @@ action_hide_eq_handler(DB_plugin_action_t *act, int ctx) {
 gboolean
 action_playback_loop_off_handler_cb (void *data) {
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "loop_disable")), 1);
+    return FALSE;
 }
 
 int
@@ -967,6 +968,7 @@ action_playback_loop_off_handler(DB_plugin_action_t *act, int ctx) {
 gboolean
 action_playback_loop_single_handler_cb (void *data) {
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "loop_single")), 1);
+    return FALSE;
 }
 
 int
@@ -978,6 +980,7 @@ action_playback_loop_single_handler(DB_plugin_action_t *act, int ctx) {
 gboolean
 action_playback_loop_all_handler_cb (void *data) {
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "loop_all")), 1);
+    return FALSE;
 }
 
 int
@@ -989,6 +992,7 @@ action_playback_loop_all_handler(DB_plugin_action_t *act, int ctx) {
 gboolean
 action_playback_order_random_handler_cb (void *data) {
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "order_random")), 1);
+    return FALSE;
 }
 
 int
@@ -1000,6 +1004,7 @@ action_playback_order_random_handler(DB_plugin_action_t *act, int ctx) {
 gboolean
 action_playback_order_shuffle_albums_handler_cb (void *data) {
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "order_shuffle_albums")), 1);
+    return FALSE;
 }
 
 int
@@ -1011,6 +1016,7 @@ action_playback_order_shuffle_albums_handler(DB_plugin_action_t *act, int ctx) {
 gboolean
 action_playback_order_shuffle_handler_cb (void *data) {
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "order_shuffle")), 1);
+    return FALSE;
 }
 
 int
@@ -1022,6 +1028,7 @@ action_playback_order_shuffle_handler(DB_plugin_action_t *act, int ctx) {
 gboolean
 action_playback_order_linear_handler_cb (void *data) {
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "order_linear")), 1);
+    return FALSE;
 }
 
 int
@@ -1047,6 +1054,7 @@ action_playback_order_cycle_handler_cb (void *data) {
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "order_linear")), 1);
         break;
     }
+    return FALSE;
 }
 
 int
@@ -1069,6 +1077,7 @@ action_playback_loop_cycle_handler_cb (void *data) {
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "loop_all")), 1);
         break;
     }
+    return FALSE;
 }
 
 int
