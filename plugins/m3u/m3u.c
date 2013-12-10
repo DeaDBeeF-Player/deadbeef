@@ -199,6 +199,9 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
                     deadbeef->pl_add_meta (it, "artist", artist);
                 }
             }
+            // reset title/artist, to avoid them from being reused in the next track
+            memset (title, 0, sizeof (title));
+            memset (artist, 0, sizeof (artist));
         }
         else {
             int l = strlen (nm);
