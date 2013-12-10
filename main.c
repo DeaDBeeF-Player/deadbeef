@@ -283,12 +283,6 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
         parg++;
     }
     if (parg < pend) {
-        playlist_t *curr_plt = plt_get_curr ();
-        if (plt_add_files_begin (curr_plt, 0) != 0) {
-            plt_unref (curr_plt);
-            snprintf (sendback, sbsize, "it's not allowed to add files to playlist right now, because another file adding operation is in progress. please try again later.");
-            return 0;
-        }
         if (conf_get_int ("cli_add_to_specific_playlist", 1)) {
             char str[200];
             conf_get_str ("cli_add_playlist_name", "Default", str, sizeof (str));
@@ -299,6 +293,12 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             if (idx >= 0) {
                 plt_set_curr_idx (idx);
             }
+        }
+        playlist_t *curr_plt = plt_get_curr ();
+        if (plt_add_files_begin (curr_plt, 0) != 0) {
+            plt_unref (curr_plt);
+            snprintf (sendback, sbsize, "it's not allowed to add files to playlist right now, because another file adding operation is in progress. please try again later.");
+            return 0;
         }
         // add files
         if (!queue) {
