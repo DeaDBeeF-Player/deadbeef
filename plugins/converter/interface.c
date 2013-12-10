@@ -72,6 +72,7 @@ create_converterdlg (void)
 
   converterdlg = gtk_dialog_new ();
   gtk_window_set_title (GTK_WINDOW (converterdlg), "Converter");
+  gtk_window_set_position (GTK_WINDOW (converterdlg), GTK_WIN_POS_MOUSE);
   gtk_window_set_modal (GTK_WINDOW (converterdlg), TRUE);
   gtk_window_set_destroy_with_parent (GTK_WINDOW (converterdlg), TRUE);
   gtk_window_set_type_hint (GTK_WINDOW (converterdlg), GDK_WINDOW_TYPE_HINT_DIALOG);
