@@ -79,6 +79,8 @@ GtkWidget *traymenu;
 GtkWidget *theme_treeview;
 GtkWidget *theme_button;
 
+static int gtkui_accept_messages = 0;
+
 int fileadded_listener_id;
 int fileadd_beginend_listener_id;
 // overriden API methods
@@ -797,6 +799,9 @@ gtkui_plt_load (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, in
 
 int
 gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    if (!gtkui_accept_messages) {
+        return -1;
+    }
     ddb_gtkui_widget_t *rootwidget = w_get_rootwidget ();
     if (rootwidget) {
         send_messages_to_widgets (rootwidget, id, ctx, p1, p2);
@@ -1084,6 +1089,8 @@ gtkui_thread (void *ctx) {
     supereq_plugin = deadbeef->plug_get_for_id ("supereq");
 
     gtkui_connect_cb (NULL);
+
+    gtkui_accept_messages = 1;
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 
 #ifdef __APPLE__
