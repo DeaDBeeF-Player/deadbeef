@@ -662,13 +662,16 @@ load_playlist_thread (void *data) {
     char *fname = data;
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {
-        deadbeef->plt_clear (plt);
-        int abort = 0;
-        DB_playItem_t *it = deadbeef->plt_load2 (0, plt, NULL, fname, &abort, NULL, NULL);
-        if (it) {
-            deadbeef->pl_item_unref (it);
+        if (!deadbeef->plt_add_files_begin (plt, 0)) {
+            deadbeef->plt_clear (plt);
+            int abort = 0;
+            DB_playItem_t *it = deadbeef->plt_load2 (0, plt, NULL, fname, &abort, NULL, NULL);
+            if (it) {
+                deadbeef->pl_item_unref (it);
+            }
+            deadbeef->plt_save_config (plt);
+            deadbeef->plt_add_files_end (plt, 0);
         }
-        deadbeef->plt_save_config (plt);
         deadbeef->plt_unref (plt);
     }
     g_free (fname);
