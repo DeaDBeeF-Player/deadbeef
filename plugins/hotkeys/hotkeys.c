@@ -452,7 +452,7 @@ hotkeys_event_loop (void *unused) {
                     if (f & 8) {
                         flags |= Mod5Mask;
                     }
-                    XUngrabKey (disp, commands[i].keycode, commands[i].modifier | flags, DefaultRootWindow (disp));
+                    XUngrabKey (disp, commands[i].x11_keycode, commands[i].modifier | flags, DefaultRootWindow (disp));
                 }
             }
             memset (commands, 0, sizeof (commands));
