@@ -83,6 +83,8 @@ static int autoconv_8_to_16 = 1;
 
 static int autoconv_16_to_24 = 0;
 
+static int trace_bufferfill = 0;
+
 static int streaming_terminate;
 
 // buffer up to 3 seconds at 44100Hz stereo
@@ -1600,7 +1602,9 @@ streamer_thread (void *ctx) {
                 ringbuf_write (&streamer_ringbuf, readbuffer, bytesread);
             }
 
-            //trace ("fill: %d, read: %d, size=%d, blocksize=%d\n", streamer_ringbuf.remaining, bytesread, STREAM_BUFFER_SIZE, blocksize);
+            if (trace_bufferfill >= 1) {
+                fprintf (stderr, "fill: %d, read: %d, size=%d, blocksize=%d\n", (int)streamer_ringbuf.remaining, (int)bytesread, (int)STREAM_BUFFER_SIZE, (int)blocksize);
+            }
         }
         streamer_unlock ();
         if ((streamer_ringbuf.remaining > 128000 && streamer_buffering) || !streaming_track) {
@@ -1613,7 +1617,9 @@ streamer_thread (void *ctx) {
         gettimeofday (&tm2, NULL);
 
         int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
-        //trace ("slept %dms (alloc=%dms, bytespersec=%d, chan=%d, blocksize=%d), fill: %d/%d (cursor=%d)\n", alloc_time-ms, alloc_time, bytes_in_one_second, output->fmt.channels, blocksize, streamer_ringbuf.remaining, STREAM_BUFFER_SIZE, streamer_ringbuf.cursor);
+        if (trace_bufferfill >= 2) {
+            fprintf (stderr, "slept %dms (alloc=%dms, bytespersec=%d, chan=%d, blocksize=%d), fill: %d/%d (cursor=%d)\n", (int)(alloc_time-ms), (int)alloc_time, (int)bytes_in_one_second, output->fmt.channels, blocksize, (int)streamer_ringbuf.remaining, STREAM_BUFFER_SIZE, (int)streamer_ringbuf.cursor);
+        }
 
         // add 1ms here to compensate the rounding error
         // and another 1ms to buffer slightly faster then playing
@@ -2444,6 +2450,11 @@ streamer_configchanged (void) {
         autoconv_16_to_24 = conf_autoconv_16_to_24;
         formatchanged = 1;
         streamer_reset (1);
+    }
+
+    int conf_streamer_trace_bufferfill = conf_get_int ("streamer.trace_buffer_fill",0);
+    if (conf_streamer_trace_bufferfill != trace_bufferfill) {
+        trace_bufferfill = conf_streamer_trace_bufferfill;
     }
 
     char mapstr[2048];
