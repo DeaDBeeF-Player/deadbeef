@@ -304,6 +304,11 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
     trace ("ffmpeg_read_int16 %d\n", size);
     ffmpeg_info_t *info = (ffmpeg_info_t*)_info;
 
+    _info->fmt.channels = info->ctx->channels;
+    _info->fmt.samplerate = info->ctx->sample_rate;
+    _info->fmt.bps = av_get_bits_per_sample_format (info->ctx->sample_fmt);
+    _info->fmt.is_float = (info->ctx->sample_fmt == AV_SAMPLE_FMT_FLT || info->ctx->sample_fmt == AV_SAMPLE_FMT_FLTP);
+
     int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
 
     if (info->endsample >= 0 && info->currentsample + size / samplesize > info->endsample) {
