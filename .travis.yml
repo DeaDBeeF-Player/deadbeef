@@ -3,4 +3,4 @@ compiler:
   - gcc
   - clang
 # Change this to your needs
-script: ./configure --disable-nls && make
+script: ./autogen.sh && ./configure --disable-nls && make
