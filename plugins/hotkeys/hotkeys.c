@@ -410,7 +410,10 @@ static void
 cleanup () {
     command_count = 0;
 #ifndef __APPLE__
-    XCloseDisplay (disp);
+    if (disp) {
+        XCloseDisplay (disp);
+        disp = NULL;
+    }
 #endif
 }
 
