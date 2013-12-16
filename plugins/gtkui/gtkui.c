@@ -779,7 +779,7 @@ add_mainmenu_actions_cb (void *data) {
     return FALSE;
 }
 
-void
+int
 gtkui_thread (void *ctx);
 
 int
@@ -940,13 +940,18 @@ gtkui_add_file_end_cb (ddb_fileadd_data_t *data, void *user_data) {
     }
 }
 
-void
+int
 gtkui_thread (void *ctx) {
 #ifdef __linux__
     prctl (PR_SET_NAME, "deadbeef-gtkui", 0, 0, 0, 0);
 #endif
 #ifndef __APPLE__
     XInitThreads (); // gtkglext/xcb doesn't work without this
+    Display *disp = XOpenDisplay (NULL);
+    if (!disp) {
+        return -1;
+    }
+    XCloseDisplay (disp);
 #endif
     // let's start some gtk
     g_thread_init (NULL);
