@@ -71,6 +71,7 @@ extern "C" {
 
 // api version history:
 // 9.9 -- devel
+// 1.6 -- deadbeef-0.6.1
 // 1.5 -- deadbeef-0.6
 // 1.4 -- deadbeef-0.5.5
 // 1.3 -- deadbeef-0.5.3
@@ -90,7 +91,7 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 1
-#define DB_API_VERSION_MINOR 5
+#define DB_API_VERSION_MINOR 6
 
 #define DDB_DEPRECATED(x)
 
@@ -107,6 +108,12 @@ extern "C" {
 
 #ifndef DDB_API_LEVEL
 #define DDB_API_LEVEL DB_API_VERSION_MINOR
+#endif
+
+#if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 6)
+#define DEPRECATED_16 DDB_DEPRECATED("since deadbeef API 1.6")
+#else
+#define DEPRECATED_16
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 5)
@@ -1013,6 +1020,11 @@ typedef struct {
 
     // deselect all tracks in playlist
     void (*plt_deselect_all) (ddb_playlist_t *plt);
+#endif
+    // since 1.6
+#if (DDB_API_LEVEL >= 6)
+    void (*plt_set_scroll) (ddb_playlist_t *plt, int scroll);
+    int (*plt_get_scroll) (ddb_playlist_t *plt);
 #endif
 } DB_functions_t;
 

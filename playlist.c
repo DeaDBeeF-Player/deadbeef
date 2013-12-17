@@ -265,6 +265,10 @@ plt_gen_conf (void) {
         char s[100];
         snprintf (s, sizeof (s), "playlist.tab.%02d", i);
         conf_set_str (s, p->title);
+        snprintf (s, sizeof (s), "playlist.cursor.%d", i);
+        conf_set_int (s, p->current_row[PL_MAIN]);
+        snprintf (s, sizeof (s), "playlist.scroll.%d", i);
+        conf_set_int (s, p->scroll);
     }
     UNLOCK;
 }
@@ -2166,6 +2170,7 @@ pl_save_all (void) {
     int curr = plt_get_curr_idx ();
     int err = 0;
 
+    plt_gen_conf ();
     plt_loading = 1;
     for (i = 0; i < cnt; i++, p = p->next) {
         if (snprintf (path, sizeof (path), "%s/playlists/%d.dbpl", dbconfdir, i) > sizeof (path)) {
@@ -2523,6 +2528,11 @@ pl_load_all (void) {
             if (trk) {
                 pl_item_unref (trk);
             }
+            char conf[100];
+            snprintf (conf, sizeof (conf), "playlist.cursor.%d", i);
+            plt->current_row[PL_MAIN] = deadbeef->conf_get_int (conf, -1);
+            snprintf (conf, sizeof (conf), "playlist.scroll.%d", i);
+            plt->scroll = deadbeef->conf_get_int (conf, 0);
             plt_unref (plt);
 
             if (!it) {
@@ -4133,3 +4143,14 @@ plt_deselect_all (playlist_t *playlist) {
     }
     UNLOCK;
 }
+
+void
+plt_set_scroll (playlist_t *plt, int scroll) {
+    plt->scroll = scroll;
+}
+
+int
+plt_get_scroll (playlist_t *plt) {
+    return plt->scroll;
+}
+

@@ -65,6 +65,7 @@ typedef struct playlist_s {
     playItem_t *head[PL_MAX_ITERATORS]; // head of linked list
     playItem_t *tail[PL_MAX_ITERATORS]; // tail of linked list
     int current_row[PL_MAX_ITERATORS]; // current row (cursor)
+    int scroll;
     struct DB_metaInfo_s *meta; // linked list storing metainfo
     int refc;
     int files_add_visibility;
@@ -523,5 +524,11 @@ plt_add_files_end (playlist_t *plt, int visibility);
 
 void
 plt_deselect_all (playlist_t *plt);
+
+void
+plt_set_scroll (playlist_t *plt, int scroll);
+
+int
+plt_get_scroll (playlist_t *plt);
 
 #endif // __PLAYLIST_H

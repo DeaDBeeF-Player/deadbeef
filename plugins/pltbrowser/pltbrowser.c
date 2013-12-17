@@ -53,31 +53,9 @@ on_pltbrowser_row_inserted (GtkTreeModel *tree_model, GtkTreePath *path, GtkTree
         return;
     }
 
-    char str1[100];
-    char str2[100];
-    char strcursor1[100];
-    char strcursor2[100];
-    int pos1;
-    int pos2;
-    int cursor1;
-    int cursor2;
-    snprintf (str1, sizeof (str1), "playlist.scroll.%d", plt->last_selected);
-    pos1 = deadbeef->conf_get_int (str1, 0);
-    snprintf (str2, sizeof (str2), "playlist.scroll.%d", idx);
-    pos2 = deadbeef->conf_get_int (str2, 0);
-
-    snprintf (strcursor1, sizeof (strcursor1), "playlist.cursor.%d", plt->last_selected);
-    cursor1 = deadbeef->conf_get_int (strcursor1, 0);
-    snprintf (strcursor2, sizeof (strcursor2), "playlist.cursor.%d", idx);
-    cursor2 = deadbeef->conf_get_int (strcursor2, 0);
-
     deadbeef->plt_move (plt->last_selected, idx);
-    deadbeef->conf_set_int (str1, pos2);
-    deadbeef->conf_set_int (str2, pos1);
-    deadbeef->conf_set_int (strcursor1, cursor2);
-    deadbeef->conf_set_int (strcursor2, cursor1);
     plt->last_selected = idx;
-    deadbeef->conf_set_int ("playlist.current", idx);
+    deadbeef->plt_set_curr_idx (idx);
     deadbeef->sendmessage (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
 }
 
@@ -94,7 +72,6 @@ on_pltbrowser_cursor_changed (GtkTreeView *treeview, gpointer user_data) {
     if (indices) {
         if (indices[0] >= 0) {
             deadbeef->plt_set_curr_idx (indices[0]);
-            deadbeef->conf_set_int ("playlist.current", indices[0]);
             w->last_selected = indices[0];
         }
         g_free (indices);

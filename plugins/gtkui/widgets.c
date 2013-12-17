@@ -1603,26 +1603,25 @@ refresh_cb (gpointer data) {
 static gboolean
 playlistswitch_cb (gpointer p) {
     w_playlist_t *tp = (w_playlist_t *)p;
-    int curr = deadbeef->plt_get_curr_idx ();
-    char conf[100];
-    snprintf (conf, sizeof (conf), "playlist.scroll.%d", curr);
-    int scroll = deadbeef->conf_get_int (conf, 0);
-    snprintf (conf, sizeof (conf), "playlist.cursor.%d", curr);
-    int cursor = deadbeef->conf_get_int (conf, -1);
-    deadbeef->pl_set_cursor (PL_MAIN, cursor);
     if (!strcmp (tp->base.type, "tabbed_playlist")) {
         ddb_tabstrip_refresh (((w_tabbed_playlist_t *)tp)->tabstrip);
     }
-    if (cursor != -1) {
-        DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (cursor, PL_MAIN);
-        if (it) {
-            deadbeef->pl_set_selected (it, 1);
-            deadbeef->pl_item_unref (it);
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        int cursor = deadbeef->plt_get_cursor (plt, PL_MAIN);
+        int scroll = deadbeef->plt_get_scroll (plt);
+        if (cursor != -1) {
+            DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (cursor, PL_MAIN);
+            if (it) {
+                deadbeef->pl_set_selected (it, 1);
+                deadbeef->pl_item_unref (it);
+            }
         }
-    }
+        deadbeef->plt_unref (plt);
 
-    ddb_listview_refresh (tp->list, DDB_LIST_CHANGED | DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL);
-    ddb_listview_set_vscroll (tp->list, scroll);
+        ddb_listview_refresh (tp->list, DDB_LIST_CHANGED | DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL);
+        ddb_listview_set_vscroll (tp->list, scroll);
+    }
     return FALSE;
 }
 
@@ -1649,9 +1648,6 @@ songchanged_cb (gpointer p) {
                 if (p) {
                     to_idx = deadbeef->plt_get_item_idx (p, to, PL_MAIN);
                     if (cursor_follows_playback) {
-                        char conf[100];
-                        snprintf (conf, sizeof (conf), "playlist.cursor.%d", plt);
-                        deadbeef->conf_set_int (conf, to_idx);
                         deadbeef->plt_deselect_all (p);
                         deadbeef->pl_set_selected (to, 1);
                         deadbeef->plt_set_cursor (p, PL_MAIN, to_idx);

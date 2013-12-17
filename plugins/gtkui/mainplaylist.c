@@ -64,9 +64,6 @@ main_get_cursor (void) {
 
 static void
 main_set_cursor (int cursor) {
-    char conf[100];
-    snprintf (conf, sizeof (conf), "playlist.cursor.%d", deadbeef->plt_get_curr_idx ());
-    deadbeef->conf_set_int (conf, cursor);
     return deadbeef->pl_set_cursor (PL_MAIN, cursor);
 }
 
@@ -275,10 +272,11 @@ void main_col_free_user_data (void *data) {
 void
 main_vscroll_changed (int pos) {
     coverart_reset_queue ();
-    int curr = deadbeef->plt_get_curr_idx ();
-    char conf[100];
-    snprintf (conf, sizeof (conf), "playlist.scroll.%d", curr);
-    deadbeef->conf_set_int (conf, pos);
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_set_scroll (plt, pos);
+        deadbeef->plt_unref (plt);
+    }
 }
 
 void
