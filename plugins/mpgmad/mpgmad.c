@@ -492,7 +492,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                         }
                         uint32_t nframes = extract_i32 (buf);
                         if (sample == 0) {
-                            buffer->duration = (((uint64_t)nframes * (uint64_t)samples_per_frame) - buffer->delay - buffer->padding)/ (uint64_t)samplerate;
+                            buffer->duration = (((uint64_t)nframes * (uint64_t)samples_per_frame) - buffer->delay - buffer->padding)/ (float)samplerate;
                         }
                         trace ("xing totalsamples: %d, nframes: %d, samples_per_frame: %d\n", nframes*samples_per_frame, nframes, samples_per_frame);
                         if (nframes <= 0 || samples_per_frame <= 0) {
@@ -605,7 +605,7 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
                     buffer->avg_packetlength = packetlength;
                     buffer->avg_samplerate = samplerate;
                     buffer->avg_samples_per_frame = samples_per_frame;
-                    buffer->duration = (buffer->nframes * samples_per_frame - buffer->delay - buffer->padding) / samplerate;
+                    buffer->duration = (((uint64_t)buffer->nframes * (uint64_t)samples_per_frame) - buffer->delay - buffer->padding)/ (float)samplerate;
                     buffer->totalsamples = buffer->nframes * samples_per_frame;
                     trace ("totalsamples: %d, samplesperframe: %d, fsize=%lld\n", buffer->totalsamples, samples_per_frame, fsize);
 //                    trace ("bitrate=%d, layer=%d, packetlength=%d, fsize=%d, nframes=%d, samples_per_frame=%d, samplerate=%d, duration=%f, totalsamples=%d\n", bitrate, layer, packetlength, sz, nframe, samples_per_frame, samplerate, buffer->duration, buffer->totalsamples);
@@ -676,7 +676,7 @@ end_scan:
         buffer->nframes = (fsize - buffer->startoffset - buffer->endoffset) / buffer->avg_packetlength;
         if (!buffer->have_xing_header) {
             buffer->totalsamples = buffer->nframes * buffer->avg_samples_per_frame;
-            buffer->duration = (buffer->totalsamples - buffer->delay - buffer->padding) / buffer->avg_samplerate;
+            buffer->duration = (buffer->totalsamples - buffer->delay - buffer->padding) / (float)buffer->avg_samplerate;
         }
         buffer->bitrate = (fsize-buffer->startoffset-buffer->endoffset) / buffer->duration * 8;
         trace ("nframes: %d, fsize: %lld, spf: %d, smp: %d, totalsamples: %d\n", buffer->nframes, fsize, buffer->avg_samples_per_frame, buffer->avg_samplerate, buffer->totalsamples);
@@ -685,7 +685,7 @@ end_scan:
     }
 
     buffer->totalsamples = scansamples;
-    buffer->duration = (buffer->totalsamples - buffer->delay - buffer->padding) / buffer->samplerate;
+    buffer->duration = (buffer->totalsamples - buffer->delay - buffer->padding) / (float)buffer->samplerate;
 //    printf ("nframes=%d, totalsamples=%d, samplerate=%d, dur=%f\n", nframe, scansamples, buffer->samplerate, buffer->duration);
     return 0;
 }
