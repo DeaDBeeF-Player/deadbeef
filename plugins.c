@@ -365,6 +365,9 @@ static DB_functions_t deadbeef_api = {
     .plt_add_files_begin = (int (*) (ddb_playlist_t *plt, int visibility))plt_add_files_begin,
     .plt_add_files_end = (void (*) (ddb_playlist_t *plt, int visibility))plt_add_files_end,
     .plt_deselect_all = (void (*) (ddb_playlist_t *plt))plt_deselect_all,
+    // ******* new 1.6 APIs ********
+    .plt_set_scroll = (void (*) (ddb_playlist_t *plt, int scroll))plt_set_scroll,
+    .plt_get_scroll = (int (*) (ddb_playlist_t *plt))plt_get_scroll,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;
