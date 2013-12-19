@@ -814,6 +814,7 @@ plug_load_all (void) {
 #ifndef ANDROID
     char *xdg_local_home = getenv ("XDG_LOCAL_HOME");
     char xdg_plugin_dir[1024];
+    char xdg_plugin_dir_explicit_arch[1024];
 
     if (xdg_local_home) {
         strncpy (xdg_plugin_dir, xdg_local_home, sizeof (xdg_plugin_dir));
@@ -826,16 +827,24 @@ plug_load_all (void) {
             xdg_plugin_dir[0] = 0;
         }
         else {
+            // multilib support:
+            // 1. load from lib$ARCH if present
+            // 2. load from lib if present
             int written = snprintf (xdg_plugin_dir, sizeof (xdg_plugin_dir), "%s/.local/lib/deadbeef", homedir);
             if (written > sizeof (xdg_plugin_dir)) {
                 trace ("warning: XDG_LOCAL_HOME value is too long: %s. Ignoring.", xdg_local_home);
                 xdg_plugin_dir[0] = 0;
             }
+            written = snprintf (xdg_plugin_dir_explicit_arch, sizeof (xdg_plugin_dir_explicit_arch), "%s/.local/lib%d/deadbeef", homedir, (int)(sizeof (long) * 8));
+            if (written > sizeof (xdg_plugin_dir_explicit_arch)) {
+                trace ("warning: XDG_LOCAL_HOME value is too long: %s. Ignoring.", xdg_local_home);
+                xdg_plugin_dir_explicit_arch[0] = 0;
+            }
         }
     }
 
     // load from HOME 1st, than replace from installdir if needed
-    const char *plugins_dirs[] = { xdg_plugin_dir, dirname, NULL };
+    const char *plugins_dirs[] = { xdg_plugin_dir_explicit_arch, xdg_plugin_dir, dirname, NULL };
 
     // If xdg_plugin_dir and dirname is the same, we should avoid each plugin
     // to be load twice.
