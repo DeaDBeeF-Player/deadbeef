@@ -74,4 +74,8 @@ messages.mo
 .config
 plugins/libmp4ff/libmp4ff.a
 plugins/libparser/libparser.a
-
+testrun.sh
+tools/pluginfo/i686
+tools/pluginfo/x86_64
+portable_out
+static
