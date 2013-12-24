@@ -291,7 +291,9 @@ dnl curl lib
 AS_IF([test "${enable_staticlink}" != "no"], [
     HAVE_CURL=yes
     CURL_LIBS="../../$LIB/lib/libcurl.a -lrt"
+    CURL_CFLAGS="-I../../$LIB/include"
     AC_SUBST(CURL_LIBS)
+    AC_SUBST(CURL_CFLAGS)
 ], [
     AC_CHECK_LIB([curl], [main], [HAVE_CURL=yes])
     CURL_LIBS="-lcurl"
@@ -386,6 +388,8 @@ AS_IF([test "${enable_vfs_curl}" != "no"], [
         HAVE_VFS_CURL=yes
         VFS_CURL_LIBS="$CURL_LIBS"
         AC_SUBST(VFS_CURL_LIBS)
+        VFS_CURL_CFLAGS="$CURL_CFLAGS"
+        AC_SUBST(VFS_CURL_CFLAGS)
     ])
 ])
 

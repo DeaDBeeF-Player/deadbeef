@@ -6,7 +6,7 @@ APBUILD_NOTE_METADATA("apbuild.version=" APBUILD_VERSION);
 #endif
 
 /* apbuild generated symbol exclusion list */
-__asm__(".symver __ctype_toupper,__ctype_toupper@GLIBC2.0");
+/*__asm__(".symver __ctype_toupper,__ctype_toupper@GLIBC2.0");*/
 __asm__(".symver memcpy,memcpy@GLIBC_2.0");
 __asm__(".symver _sys_errlist,_sys_errlist@GLIBC_2.0");
 __asm__(".symver _sys_nerr,_sys_nerr@GLIBC_2.0");

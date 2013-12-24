@@ -157,7 +157,7 @@ ddb_gui_GTK2_la_LDFLAGS = -module
 if STATICLINK
 GTK_ROOT_216=@top_srcdir@/$(LIB)/gtk-2.16.0
 
-ddb_gui_GTK2_la_LIBADD = $(LDADD) -L$(GTK_ROOT_216)/lib -lgtk-x11-2.0 -lgdk-x11-2.0 -latk-1.0 -lgio-2.0 -lpangoft2-1.0 -lgdk_pixbuf-2.0 -lpangocairo-1.0 -lcairo -lpango-1.0 -lfreetype -lfontconfig -lgobject-2.0 -lgmodule-2.0 -lgthread-2.0 -lrt -lglib-2.0 $(SM_LIBADD) ../libparser/libparser.a $(GTKGLEXT2_LIBS)
+ddb_gui_GTK2_la_LIBADD = $(LDADD) -L$(GTK_ROOT_216)/lib -lgtk-x11-2.0 -lgdk-x11-2.0 -latk-1.0 -lgio-2.0 -lpangoft2-1.0 -lgdk_pixbuf-2.0 -lpangocairo-1.0 -lcairo -lpango-1.0 -lfreetype -lgobject-2.0 -lgmodule-2.0 -lgthread-2.0 -lrt -lglib-2.0 $(SM_LIBADD) ../libparser/libparser.a $(GTKGLEXT2_LIBS)
 
 ddb_gui_GTK2_la_CFLAGS = -std=c99 -I$(GTK_ROOT_216)/include/gtk-2.0 -I$(GTK_ROOT_216)/lib/gtk-2.0/include -I$(GTK_ROOT_216)/include/atk-1.0 -I$(GTK_ROOT_216)/include/cairo -I$(GTK_ROOT_216)/include/pango-1.0 -I$(GTK_ROOT_216)/include -I$(GTK_ROOT_216)/include/glib-2.0 -I$(GTK_ROOT_216)/lib/glib-2.0/include $(SM_CFLAGS) $(GTKGLEXT_CFLAGS_GTK2)
 else
@@ -237,7 +237,7 @@ if STATICLINK
 ddb_gui_GTK3_la_SOURCES = $(GTKUI_SOURCES_GTK3)
 GTK_ROOT_300=@top_srcdir@/$(LIB)/gtk-3.0.0
 
-ddb_gui_GTK3_la_LIBADD = $(LDADD) -L$(GTK_ROOT_300)/lib -lgtk-3 -lgdk-3 -latk-1.0 -lgio-2.0 -lpangocairo-1.0 -lgdk_pixbuf-2.0 -lcairo-gobject -lpango-1.0 -lcairo -lgobject-2.0 -lgthread-2.0 -lglib-2.0 -lfreetype -lfontconfig $(SM_LIBADD) ../libparser/libparser.a $(GTKGLEXT3_LIBS)
+ddb_gui_GTK3_la_LIBADD = $(LDADD) -L$(GTK_ROOT_300)/lib -lgtk-3 -lgdk-3 -latk-1.0 -lgio-2.0 -lpangocairo-1.0 -lgdk_pixbuf-2.0 -lcairo-gobject -lpango-1.0 -lcairo -lgobject-2.0 -lgthread-2.0 -lglib-2.0 -lfreetype $(SM_LIBADD) ../libparser/libparser.a $(GTKGLEXT3_LIBS)
 
 ddb_gui_GTK3_la_CFLAGS = -std=c99 -I$(GTK_ROOT_300)/include/gtk-3.0 -I$(GTK_ROOT_300)/include/pango-1.0 -I$(GTK_ROOT_300)/include/gio-unix-2.0/ -I$(GTK_ROOT_300)/include/atk-1.0 -I$(GTK_ROOT_300)/include/cairo -I$(GTK_ROOT_300)/include/gdk-pixbuf-2.0 -I$(GTK_ROOT_300)/include/freetype2 -I$(GTK_ROOT_300)/include/glib-2.0 -I$(GTK_ROOT_300)/lib/glib-2.0/include $(SM_CFLAGS) $(GTKGLEXT_CFLAGS_GTK3)
 else
