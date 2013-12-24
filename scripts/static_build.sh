@@ -1,11 +1,27 @@
-#!/bin/sh
+#!/bin/bash
 VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print'`
 ORIGIN=`pwd | perl -ne 'chomp and print'`
 AP=$ORIGIN/tools/apbuild
-ARCH=`uname -m | perl -ne 'chomp and print'`
+#ARCH=`uname -m | perl -ne 'chomp and print'`
+if [[ "$ARCH" == "i686" ]]; then
+    export CFLAGS='-m32'
+    export LDFLAGS='-m32'
+    export CONFIGURE_FLAGS="--build=i686-unknown-linux-gnu"
+    export LD_LIBRARY_PATH="$ORIGIN/../deadbeef-deps/lib-x86-32/lib"
+    export PKG_CONFIG_PATH="$ORIGIN/../deadbeef-deps/lib-x86-32/lib/pkgconfig"
+elif [[ "$ARCH" == "x86_64" ]]; then
+    export CFLAGS='-m64'
+    export LDFLAGS='-m64'
+    export CONFIGURE_FLAGS="--build=x86_64-unknown-linux-gnu"
+    export LD_LIBRARY_PATH="$ORIGIN/../deadbeef-deps/lib-x86-64/lib"
+    export PKG_CONFIG_PATH="$ORIGIN/../deadbeef-deps/lib-x86-64/lib/pkgconfig"
+else
+    echo unknown arch $ARCH
+    exit -1
+fi
 
 cd tools/apbuild
-./apinit
+./apinit || exit -1
 cd ../../
 
 export APBUILD_STATIC_LIBGCC=1
@@ -13,16 +29,16 @@ export APBUILD_CXX1=1
 export CC=$AP/apgcc
 export CXX=$AP/apgcc
 
-./autogen.sh
+./autogen.sh || exit -1
 
-./configure --enable-staticlink --disable-artwork-imlib2 --prefix=/opt/deadbeef
+./configure CFLAGS=$CFLAGS LDFLAGS=$LDFLAGS $CONFIGURE_FLAGS --enable-staticlink --disable-artwork-imlib2 --prefix=/opt/deadbeef || exit -1
 sed -i 's/-lstdc++ -lm -lgcc_s -lc -lgcc_s/-lm -lc/g' libtool
 sed -i 's/hardcode_into_libs=yes/hardcode_into_libs=no/g' libtool
 make clean
-make -j8 DESTDIR=`pwd`/static/$ARCH/deadbeef-$VERSION
-make DESTDIR=`pwd`/static/$ARCH/deadbeef-$VERSION install
+make -j8 DESTDIR=`pwd`/static/$ARCH/deadbeef-$VERSION || exit -1
+make DESTDIR=`pwd`/static/$ARCH/deadbeef-$VERSION install || exit -1
 
 echo "building pluginfo tool..."
 cd tools/pluginfo
-make
+make || exit -1
 cd ../../
