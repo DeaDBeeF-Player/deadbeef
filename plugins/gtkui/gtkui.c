@@ -617,6 +617,9 @@ gtkui_on_configchanged (void *data) {
     // embolden current track
     gtkui_embolden_current_track = deadbeef->conf_get_int ("gtkui.embolden_current_track", 0);
 
+    // pin groups
+    gtkui_groups_pinned = deadbeef->conf_get_int ("playlist.pin.groups", 0);
+
     // tray icon
     gtkui_update_status_icon (NULL);
 
@@ -836,7 +839,6 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
         break;
     case DB_EV_CONFIGCHANGED:
         g_idle_add (gtkui_on_configchanged, NULL);
-        gtkui_groups_pinned = deadbeef->conf_get_int ("playlist.pin.groups",0);
         break;
     case DB_EV_OUTPUTCHANGED:
         g_idle_add (outputchanged_cb, NULL);

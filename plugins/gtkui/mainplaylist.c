@@ -373,6 +373,8 @@ main_playlist_init (GtkWidget *widget) {
     strncpy (group_by_str, deadbeef->conf_get_str_fast ("playlist.group_by", ""), sizeof (group_by_str));
     deadbeef->conf_unlock ();
     group_by_str[sizeof (group_by_str)-1] = 0;
+
+    gtkui_groups_pinned = deadbeef->conf_get_int ("playlist.pin.groups", 0);
 }
 
 void

@@ -769,9 +769,8 @@ void
 on_pin_groups_active                   (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    gboolean act = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem));
     int old_val = deadbeef->conf_get_int ("playlist.pin.groups", 0);
-    deadbeef->conf_set_int ("playlist.pin.groups", 1-old_val);
+    deadbeef->conf_set_int ("playlist.pin.groups", old_val ? 0 : 1);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtk_check_menu_item_toggled(GTK_CHECK_MENU_ITEM(menuitem));
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
