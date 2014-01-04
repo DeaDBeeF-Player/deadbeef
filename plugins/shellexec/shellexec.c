@@ -90,6 +90,7 @@ static int shx_exec_track_cmd (Shx_action_t *action, DB_playItem_t *it) {
     strcat (cmd, "&");
     trace ("%s\n", cmd);
     res = system (cmd);
+    return 0;
 }
 
 static int
