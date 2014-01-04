@@ -1129,6 +1129,7 @@ gtkui_thread (void *ctx) {
         gtk_widget_destroy (searchwin);
         searchwin = NULL;
     }
+    return 0;
 }
 
 gboolean
