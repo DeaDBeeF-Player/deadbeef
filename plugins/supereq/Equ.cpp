@@ -24,18 +24,6 @@
 #include "paramlist.hpp"
 #include "Equ.h"
 
-int _Unwind_Resume_or_Rethrow;
-int _Unwind_RaiseException;
-int _Unwind_GetLanguageSpecificData;
-int _Unwind_Resume;
-int _Unwind_DeleteException;
-int _Unwind_GetTextRelBase;
-int _Unwind_SetIP;
-int _Unwind_GetDataRelBase;
-int _Unwind_GetRegionStart;
-int _Unwind_SetGR;
-int _Unwind_GetIPInfo;
-
 #ifdef USE_OOURA
 extern "C" void rdft(int, int, REAL *, int *, REAL *);
 void rfft(int n,int isign,REAL *x)
