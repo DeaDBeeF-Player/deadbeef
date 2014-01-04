@@ -1481,10 +1481,21 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
                     }
                 }
                 else {
-                    inserted = plt_insert_file_int (visibility, playlist, after, namelist[i]->d_name, pabort, cb, user_data);
+                    char fullname[PATH_MAX];
+                    const char *sch = NULL;
+                    if (vfs->plugin.api_vminor >= 6 && vfs->get_scheme_for_name) {
+                        sch = vfs->get_scheme_for_name (dirname);
+                    }
+                    if (sch && strncmp (sch, namelist[i]->d_name, strlen (sch))) {
+                        snprintf (fullname, sizeof (fullname), "%s%s:%s", sch, dirname, namelist[i]->d_name);
+                    }
+                    else {
+                        strcpy (fullname, namelist[i]->d_name);
+                    }
+                    inserted = plt_insert_file_int (visibility, playlist, after, fullname, pabort, cb, user_data);
                     if (!inserted) {
                         // special case for loading playlists in zip files
-                        inserted = plt_load_int (visibility, playlist, after, namelist[i]->d_name, pabort, cb, user_data);
+                        inserted = plt_load_int (visibility, playlist, after, fullname, pabort, cb, user_data);
                     }
                 }
                 if (inserted) {

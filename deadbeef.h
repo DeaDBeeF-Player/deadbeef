@@ -1374,8 +1374,15 @@ typedef struct DB_vfs_s {
     // in icy protocol
     void (*set_track) (DB_FILE *f, DB_playItem_t *it);
 
-// folder access, follows dirent API, and uses dirent data structures
+    // folder access, follows dirent API, and uses dirent data structures
     int (*scandir) (const char *dir, struct dirent ***namelist, int (*selector) (const struct dirent *), int (*cmp) (const struct dirent **, const struct dirent **));
+
+#if (DDB_API_LEVEL >= 6)
+    // returns URI scheme for a given file name, e.g. "zip://"
+    // can be NULL
+    // can return NULL
+    const char *(*get_scheme_for_name) (const char *fname);
+#endif
 } DB_vfs_t;
 
 // gui plugin
