@@ -85,6 +85,8 @@ static int autoconv_16_to_24 = 0;
 
 static int trace_bufferfill = 0;
 
+static int stop_after_current = 0;
+
 static int streaming_terminate;
 
 // buffer up to 3 seconds at 44100Hz stereo
@@ -1332,11 +1334,12 @@ streamer_next (int bytesread) {
     streamer_lock ();
     bytes_until_next_song = streamer_ringbuf.remaining + bytesread;
     streamer_unlock ();
-    if (conf_get_int ("playlist.stop_after_current", 0)) {
+    if (stop_after_current) {
         streamer_buffering = 0;
         streamer_set_nextsong (-2, -2);
         if (conf_get_int ("playlist.stop_after_current_reset", 0)) {
             conf_set_int ("playlist.stop_after_current", 0);
+            stop_after_current = 0;
             deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
         }
     }
@@ -1624,7 +1627,7 @@ streamer_thread (void *ctx) {
         // add 1ms here to compensate the rounding error
         // and another 1ms to buffer slightly faster then playing
         alloc_time -= ms+2;
-        if (streamer_ringbuf.remaining > STREAM_BUFFER_SIZE / 2 && !streamer_buffering && alloc_time > 0) {
+        if ((bytes_until_next_song > 0 && stop_after_current) || (streamer_ringbuf.remaining > STREAM_BUFFER_SIZE / 2 && !streamer_buffering && alloc_time > 0)) {
             usleep (alloc_time * 1000);
         }
     }
@@ -2452,10 +2455,9 @@ streamer_configchanged (void) {
         streamer_reset (1);
     }
 
-    int conf_streamer_trace_bufferfill = conf_get_int ("streamer.trace_buffer_fill",0);
-    if (conf_streamer_trace_bufferfill != trace_bufferfill) {
-        trace_bufferfill = conf_streamer_trace_bufferfill;
-    }
+    trace_bufferfill = conf_get_int ("streamer.trace_buffer_fill",0);
+
+    stop_after_current = conf_get_int ("playlist.stop_after_current", 0);
 
     char mapstr[2048];
     deadbeef->conf_get_str ("network.ctmapping", DDB_DEFAULT_CTMAPPING, mapstr, sizeof (mapstr));
