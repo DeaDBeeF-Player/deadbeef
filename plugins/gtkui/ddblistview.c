@@ -2393,32 +2393,18 @@ ddb_listview_header_configure_event              (GtkWidget       *widget,
     gtk_widget_get_allocation (GTK_WIDGET (ps), &lva);
     int totalwidth = lva.width;
 
+    // col_autoresize flag indicates whether fwidth is valid
     if (!ps->lock_columns) {
         DdbListviewColumn *c;
-        if (ps->header_width != totalwidth && deadbeef->conf_get_int ("gtkui.autoresize_columns", 0)) {
-            if (!ps->col_autoresize) {
-                for (c = ps->columns; c; c = c->next) {
-                    c->fwidth = (float)c->width / (float)totalwidth;
+        if (deadbeef->conf_get_int ("gtkui.autoresize_columns", 0)) {
+            if (ps->header_width != totalwidth) {
+                if (!ps->col_autoresize) {
+                    for (c = ps->columns; c; c = c->next) {
+                        c->fwidth = (float)c->width / (float)totalwidth;
+                    }
+                    ps->col_autoresize = 1;
                 }
-                ps->col_autoresize = 1;
-            }
-            // use the fwidth
-            int changed = 0;
-            int i = 0;
-            for (c = ps->columns; c; c = c->next, i++) {
-                int newwidth = totalwidth * c->fwidth;
-                if (newwidth != c->width) {
-                    c->width = newwidth;
-                    changed = 1;
-                    ps->binding->column_size_changed (ps, i);
-                }               
-            }
-            if (changed) {
-                ps->binding->columns_changed (ps);
-            }
-        }
-        else {
-            if (ps->col_autoresize) {
+                // use the fwidth
                 int changed = 0;
                 int i = 0;
                 for (c = ps->columns; c; c = c->next, i++) {
@@ -2429,11 +2415,16 @@ ddb_listview_header_configure_event              (GtkWidget       *widget,
                         ps->binding->column_size_changed (ps, i);
                     }               
                 }
-                ps->col_autoresize = 0;
                 if (changed) {
                     ps->binding->columns_changed (ps);
                 }
             }
+        }
+        else {
+            for (c = ps->columns; c; c = c->next) {
+                c->fwidth = (float)c->width / (float)totalwidth;
+            }
+            ps->col_autoresize = 1;
         }
         ps->header_width = totalwidth;
     }
