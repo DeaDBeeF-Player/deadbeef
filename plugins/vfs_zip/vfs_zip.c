@@ -196,7 +196,7 @@ vfs_zip_scandir (const char *dir, struct dirent ***namelist, int (*selector) (co
         (*namelist)[i] = malloc (sizeof (struct dirent));
         memset ((*namelist)[i], 0, sizeof (struct dirent));
         const char *nm = zip_get_name (z, i, 0);
-        snprintf ((*namelist)[i]->d_name, sizeof ((*namelist)[i]->d_name), "zip://%s:%s", dir, nm);
+        snprintf ((*namelist)[i]->d_name, sizeof ((*namelist)[i]->d_name), "%s", nm);
     }
 
     zip_close (z);
@@ -211,10 +211,14 @@ vfs_zip_is_container (const char *fname) {
     }
     return 0;
 }
+const char *
+vfs_zip_get_scheme_for_name (const char *fname) {
+    return scheme_names[0];
+}
 
 static DB_vfs_t plugin = {
     .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
+    .plugin.api_vminor = 6,
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_VFS,
@@ -250,6 +254,7 @@ static DB_vfs_t plugin = {
     .is_streaming = vfs_zip_is_streaming,
     .is_container = vfs_zip_is_container,
     .scandir = vfs_zip_scandir,
+    .get_scheme_for_name = vfs_zip_get_scheme_for_name,
 };
 
 DB_plugin_t *
