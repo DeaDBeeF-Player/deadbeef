@@ -553,12 +553,12 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     GtkWidget *reload_metadata;
 
     playlist_menu = gtk_menu_new ();
-    add_to_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Add to playback queue"));
+    add_to_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Add To Playback Queue"));
     gtk_widget_show (add_to_playback_queue1);
     gtk_container_add (GTK_CONTAINER (playlist_menu), add_to_playback_queue1);
     g_object_set_data (G_OBJECT (add_to_playback_queue1), "ps", listview);
 
-    remove_from_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Remove from playback queue"));
+    remove_from_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Remove From Playback Queue"));
     if (inqueue == -1) {
         gtk_widget_set_sensitive (remove_from_playback_queue1, FALSE);
     }
@@ -566,7 +566,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     gtk_container_add (GTK_CONTAINER (playlist_menu), remove_from_playback_queue1);
     g_object_set_data (G_OBJECT (remove_from_playback_queue1), "ps", listview);
 
-    reload_metadata = gtk_menu_item_new_with_mnemonic (_("Reload metadata"));
+    reload_metadata = gtk_menu_item_new_with_mnemonic (_("Reload Metadata"));
     gtk_widget_show (reload_metadata);
     gtk_container_add (GTK_CONTAINER (playlist_menu), reload_metadata);
     g_object_set_data (G_OBJECT (reload_metadata), "ps", listview);
@@ -584,7 +584,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     int hide_remove_from_disk = deadbeef->conf_get_int ("gtkui.hide_remove_from_disk", 0);
 
     if (!hide_remove_from_disk) {
-        remove_from_disk = gtk_menu_item_new_with_mnemonic (_("Remove from disk"));
+        remove_from_disk = gtk_menu_item_new_with_mnemonic (_("Remove From Disk"));
         gtk_widget_show (remove_from_disk);
         gtk_container_add (GTK_CONTAINER (playlist_menu), remove_from_disk);
         g_object_set_data (G_OBJECT (remove_from_disk), "ps", listview);
@@ -722,7 +722,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     }
 
 
-    properties1 = gtk_menu_item_new_with_mnemonic (_("Properties"));
+    properties1 = gtk_menu_item_new_with_mnemonic (_("Track Properties"));
     gtk_widget_show (properties1);
     gtk_container_add (GTK_CONTAINER (playlist_menu), properties1);
     g_object_set_data (G_OBJECT (properties1), "ps", listview);

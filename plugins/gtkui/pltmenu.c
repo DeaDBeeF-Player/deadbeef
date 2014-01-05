@@ -150,6 +150,9 @@ add_tab_actions (GtkWidget *menu) {
     int i;
 
     int added_entries = 0;
+
+    int hide_remove_from_disk = deadbeef->conf_get_int ("gtkui.hide_remove_from_disk", 0);
+
     for (i = 0; plugins[i]; i++)
     {
         if (!plugins[i]->get_actions)
@@ -164,6 +167,10 @@ add_tab_actions (GtkWidget *menu) {
             char *tmp = NULL;
             if (!(action->flags & DB_ACTION_MULTIPLE_TRACKS))
                 continue;
+
+            if (action->name && !strcmp (action->name, "delete_from_disk") && hide_remove_from_disk) {
+                continue;
+            }
 
             // create submenus (separated with '/')
             const char *prev = action->title;

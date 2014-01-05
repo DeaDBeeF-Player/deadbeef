@@ -1292,7 +1292,7 @@ static DB_plugin_action_t action_quit = {
 };
 
 static DB_plugin_action_t action_delete_from_disk = {
-    .title = "Delete From Disk",
+    .title = "Remove From Disk",
     .name = "delete_from_disk",
     .flags = DB_ACTION_MULTIPLE_TRACKS,
     .callback2 = action_delete_from_disk_handler,

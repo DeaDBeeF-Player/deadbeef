@@ -2131,7 +2131,7 @@ create_prefwin (void)
   gtk_widget_show (embolden_current);
   gtk_box_pack_start (GTK_BOX (vbox44), embolden_current, FALSE, FALSE, 0);
 
-  hide_delete_from_disk = gtk_check_button_new_with_mnemonic (_("Hide \"Delete from disk\" context menu item"));
+  hide_delete_from_disk = gtk_check_button_new_with_mnemonic (_("Hide \"Remove From Disk\" context menu item"));
   gtk_widget_show (hide_delete_from_disk);
   gtk_box_pack_start (GTK_BOX (vbox44), hide_delete_from_disk, FALSE, FALSE, 0);
 
