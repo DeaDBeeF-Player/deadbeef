@@ -1333,7 +1333,7 @@ static DB_plugin_action_t action_open_files = {
 
 
 static DB_plugin_action_t action_track_properties = {
-    .title = "Track properties",
+    .title = "Track Properties",
     .name = "track_properties",
     .flags = DB_ACTION_MULTIPLE_TRACKS,
     .callback2 = action_show_track_properties_handler,
@@ -1341,7 +1341,7 @@ static DB_plugin_action_t action_track_properties = {
 };
 
 static DB_plugin_action_t action_show_help = {
-    .title = "Help/Show help page",
+    .title = "Help/Show Help Page",
     .name = "help",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_show_help_handler,
@@ -1349,7 +1349,7 @@ static DB_plugin_action_t action_show_help = {
 };
 
 static DB_plugin_action_t action_playback_loop_cycle = {
-    .title = "Playback/Cycle playback looping mode",
+    .title = "Playback/Cycle Playback Looping Mode",
     .name = "loop_cycle",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_loop_cycle_handler,
@@ -1357,7 +1357,7 @@ static DB_plugin_action_t action_playback_loop_cycle = {
 };
 
 static DB_plugin_action_t action_playback_loop_off = {
-    .title = "Playback/Playback looping - Don't loop",
+    .title = "Playback/Playback Looping - Don't loop",
     .name = "loop_off",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_loop_off_handler,
@@ -1365,7 +1365,7 @@ static DB_plugin_action_t action_playback_loop_off = {
 };
 
 static DB_plugin_action_t action_playback_loop_single = {
-    .title = "Playback/Playback looping - Single track",
+    .title = "Playback/Playback Looping - Single track",
     .name = "loop_track",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_loop_single_handler,
@@ -1373,7 +1373,7 @@ static DB_plugin_action_t action_playback_loop_single = {
 };
 
 static DB_plugin_action_t action_playback_loop_all = {
-    .title = "Playback/Playback looping - All",
+    .title = "Playback/Playback Looping - All",
     .name = "loop_all",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_loop_all_handler,
@@ -1381,7 +1381,7 @@ static DB_plugin_action_t action_playback_loop_all = {
 };
 
 static DB_plugin_action_t action_playback_order_cycle = {
-    .title = "Playback/Cycle playback order",
+    .title = "Playback/Cycle Playback Order",
     .name = "order_cycle",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_order_cycle_handler,
@@ -1389,7 +1389,7 @@ static DB_plugin_action_t action_playback_order_cycle = {
 };
 
 static DB_plugin_action_t action_playback_order_random = {
-    .title = "Playback/Playback order - Random",
+    .title = "Playback/Playback Order - Random",
     .name = "order_random",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_order_random_handler,
@@ -1397,7 +1397,7 @@ static DB_plugin_action_t action_playback_order_random = {
 };
 
 static DB_plugin_action_t action_playback_order_shuffle_albums = {
-    .title = "Playback/Playback order - Shuffle albums",
+    .title = "Playback/Playback Order - Shuffle albums",
     .name = "order_shuffle_albums",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_order_shuffle_albums_handler,
@@ -1405,7 +1405,7 @@ static DB_plugin_action_t action_playback_order_shuffle_albums = {
 };
 
 static DB_plugin_action_t action_playback_order_shuffle = {
-    .title = "Playback/Playback order - Shuffle tracks",
+    .title = "Playback/Playback Order - Shuffle tracks",
     .name = "order_shuffle",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_order_shuffle_handler,
@@ -1413,7 +1413,7 @@ static DB_plugin_action_t action_playback_order_shuffle = {
 };
 
 static DB_plugin_action_t action_playback_order_linear = {
-    .title = "Playback/Playback order - Linear",
+    .title = "Playback/Playback Order - Linear",
     .name = "order_linear",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_order_linear_handler,
@@ -1422,7 +1422,7 @@ static DB_plugin_action_t action_playback_order_linear = {
 
 
 static DB_plugin_action_t action_cursor_follows_playback = {
-    .title = "Playback/Cursor follows playback toggle",
+    .title = "Playback/Toggle Cursor Follows Playback",
     .name = "toggle_cursor_follows_playback",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_cursor_follows_playback_handler,
@@ -1431,7 +1431,7 @@ static DB_plugin_action_t action_cursor_follows_playback = {
 
 
 static DB_plugin_action_t action_scroll_follows_playback = {
-    .title = "Playback/Scroll follows playback toggle",
+    .title = "Playback/Toggle Scroll Follows Playback",
     .name = "toggle_scroll_follows_playback",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_scroll_follows_playback_handler,
@@ -1455,7 +1455,7 @@ static DB_plugin_action_t action_toggle_statusbar = {
 };
 
 static DB_plugin_action_t action_toggle_designmode = {
-    .title = "Edit/Toggle design mode",
+    .title = "Edit/Toggle Design Mode",
     .name = "toggle_design_mode",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_toggle_designmode_handler,
@@ -1487,7 +1487,7 @@ static DB_plugin_action_t action_crop_selected = {
 };
 
 static DB_plugin_action_t action_remove_from_playlist = {
-    .title = "Edit/Remove from current playlist",
+    .title = "Edit/Remove Track(s) From Current Playlist",
     .name = "remove_from_playlist",
     .flags = DB_ACTION_MULTIPLE_TRACKS,
     .callback2 = action_remove_from_playlist_handler,
@@ -1495,7 +1495,7 @@ static DB_plugin_action_t action_remove_from_playlist = {
 };
 
 static DB_plugin_action_t action_save_playlist = {
-    .title = "File/Save playlist",
+    .title = "File/Save Playlist",
     .name = "save_playlist",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_save_playlist_handler,
@@ -1503,7 +1503,7 @@ static DB_plugin_action_t action_save_playlist = {
 };
 
 static DB_plugin_action_t action_load_playlist = {
-    .title = "File/Load playlist",
+    .title = "File/Load Playlist",
     .name = "load_playlist",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_load_playlist_handler,
@@ -1511,7 +1511,7 @@ static DB_plugin_action_t action_load_playlist = {
 };
 
 static DB_plugin_action_t action_remove_current_playlist = {
-    .title = "File/Remove current playlist",
+    .title = "File/Remove Current Playlist",
     .name = "remove_current_playlist",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_remove_current_playlist_handler,
