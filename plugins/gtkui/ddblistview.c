@@ -2679,7 +2679,7 @@ ddb_listview_header_button_release_event         (GtkWidget       *widget,
             DdbListviewColumn *c;
             for (c = ps->columns; c; c = c->next) {
                 int w = c->width;
-                if (event->x >= x + w - 2 && event->x <= x + w) {
+                if (event->x >= x + w - 4 && event->x <= x + w) {
                     gdk_window_set_cursor (gtk_widget_get_window (widget), ps->cursor_sz);
                     break;
                 }
