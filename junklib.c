@@ -483,7 +483,7 @@ junk_iconv (const char *in, int inlen, char *out, int outlen, const char *cs_in,
     int err = errno;
     iconv_close (cd);
 
-    //trace ("iconv -f %s -t %s '%s': returned %d, inbytes %d/%d, outbytes %d/%d, errno=%d\n", cs_in, cs_out, in, res, inlen, inbytesleft, outlen, outbytesleft, err);
+    //trace ("iconv -f %s -t %s '%s': returned %d, inbytes %d/%d, outbytes %d/%d, errno=%d\n", cs_in, cs_out, in, (int)res, inlen, (int)inbytesleft, outlen, (int)outbytesleft, err);
     if (res == -1) {
         return -1;
     }
@@ -3522,18 +3522,21 @@ junk_id3v2_read (playItem_t *it, DB_FILE *fp) {
 
 const char *
 junk_detect_charset (const char *s) {
+    size_t len = strlen (s);
+
     // check if that's already utf8
-    if (u8_valid (s, strlen (s), NULL)) {
+    if (u8_valid (s, len, NULL)) {
         return NULL; // means no recoding required
     }
     // hack to add cp936 support
-    if (can_be_chinese (s, strlen (s))) {
+    if (can_be_chinese (s, len)) {
        return "cp936";
     }
     // check if that could be non-latin1 (too many nonascii chars)
-    if (can_be_russian (s, strlen (s))) {
+    if (can_be_russian (s, len)) {
         return "cp1251";
     }
+
     return "cp1252";
 }
 
