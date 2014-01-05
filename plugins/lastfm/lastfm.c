@@ -934,27 +934,12 @@ out:
     return 0;
 }
 
-static int
-lfm_action_love (DB_plugin_action_t *act, int ctx)
-{
-    printf ("Love starts here\n");
-    return 0;
-}
-
-static DB_plugin_action_t love_action = {
-    .title = "Love at Last.fm",
-    .name = "lfm_love",
-    .flags = DB_ACTION_SINGLE_TRACK,
-    .callback2 = lfm_action_love,
-    .next = NULL
-};
-
 static DB_plugin_action_t lookup_action = {
-    .title = "Lookup on Last.fm",
+    .title = "Lookup On Last.fm",
     .name = "lfm_lookup",
     .flags = DB_ACTION_SINGLE_TRACK | DB_ACTION_ADD_MENU,
     .callback2 = lfm_action_lookup,
-    .next = NULL// &love_action
+    .next = NULL
 };
 
 static DB_plugin_action_t *
@@ -965,12 +950,10 @@ lfm_get_actions (DB_playItem_t *it)
         !deadbeef->pl_meta_exists (it, "artist") ||
         !deadbeef->pl_meta_exists (it, "title"))
     {
-        love_action.flags |= DB_ACTION_DISABLED;
         lookup_action.flags |= DB_ACTION_DISABLED;
     }
     else
     {
-        love_action.flags &= ~DB_ACTION_DISABLED;
         lookup_action.flags &= ~DB_ACTION_DISABLED;
     }
     deadbeef->pl_unlock ();
