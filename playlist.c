@@ -883,9 +883,21 @@ pl_get_qvalue_from_cue (const uint8_t *p, int sz, char *out) {
     }
     // recode
     int l = strlen (str);
-    char in[l+1];
-    memcpy (in, str, l+1);
-    junk_recode (in, l, str, sz, charset);
+    char recbuf[l*10];
+    int res = junk_recode (str, l, recbuf, sizeof (recbuf)-1, charset);
+    if (res > 0) {
+        strcpy (str, recbuf);
+    }
+    else
+    {
+        res = junk_recode (str, l, recbuf, sizeof (recbuf)-1, "SHIFT-JIS");
+        if (res > 0) {
+            strcpy (str, recbuf);
+        }
+        else {
+            strcpy (str, "<UNRECOGNIZED CHARSET>");
+        }
+    }
 }
 
 static void
