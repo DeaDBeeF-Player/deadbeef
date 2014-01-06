@@ -2,7 +2,7 @@
     Shellexec plugin for DeaDBeeF
     Copyright (C) 2010-2012 Deadbeef team
     Original developer Viktor Semykin <thesame.ml@gmail.com>
-    Maintainance, minor improvements Alexey Yakovenko <waker@users.sf.net>
+    Maintenance, minor improvements Alexey Yakovenko <waker@users.sf.net>
     GUI support and bugfixing Azeem Arshad <kr00r4n@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
@@ -445,7 +445,7 @@ static Shx_plugin_t plugin = {
     .misc.plugin.copyright = 
         "Copyright (C) 2010-2012 Deadbeef team\n"
         "Original developer Viktor Semykin <thesame.ml@gmail.com>\n"
-        "Maintainance, minor improvements Alexey Yakovenko <waker@users.sf.net>\n"
+        "Maintenance, minor improvements Alexey Yakovenko <waker@users.sf.net>\n"
         "GUI support and bugfixing Azeem Arshad <kr00r4n@gmail.com>"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
