@@ -802,6 +802,18 @@ ctmap_init (void) {
     }
 }
 
+static int
+is_remote_stream (playItem_t *it) {
+    int remote = 0;
+    pl_lock ();
+    const char *uri = pl_find_meta (it, ":URI");
+    if (uri && !plug_is_local_file (uri)) {
+        remote = 1;
+    }
+    pl_unlock ();
+    return remote;
+}
+
 // that must be called after last sample from str_playing_song was done reading
 static int
 streamer_set_current (playItem_t *it) {
@@ -834,8 +846,15 @@ streamer_set_current (playItem_t *it) {
         pl_item_unref (streaming_track);
         streaming_track = NULL;
     }
+
     mutex_unlock (decodemutex);
-    if (!it) {
+
+    int paused_stream = 0;
+    if (it && nextsong_pstate == 2) {
+        paused_stream = is_remote_stream (it);
+    }
+
+    if (!it || paused_stream) {
         goto success;
     }
     if (to) {
@@ -1366,6 +1385,7 @@ streamer_thread (void *ctx) {
                 send_songfinished (playing_track);
             }
             streamer_start_new_song ();
+            nextsong_pstate = -1;
             // it's totally possible that song was switched
             // while streamer_set_current was running,
             // so we need to restart here
@@ -1446,7 +1466,7 @@ streamer_thread (void *ctx) {
         }
 
         int seek = seekpos;
-        if (seek >= 0) {
+        if (seek >= 0 && pl_get_item_duration (playing_track) > 0) {
             playpos = seek;
             seekpos = -1;
             trace ("seeking to %d\n", seek);
@@ -1481,7 +1501,9 @@ streamer_thread (void *ctx) {
                 DB_decoder_t *dec = NULL;
                 pl_lock ();
                 const char *decoder_id = pl_find_meta (streaming_track, ":DECODER");
-                dec = plug_get_decoder_for_id (decoder_id);
+                if (decoder_id) {
+                    dec = plug_get_decoder_for_id (decoder_id);
+                }
                 pl_unlock ();
                 if (dec) {
                     fileinfo = dec->open (0);
@@ -2229,7 +2251,6 @@ streamer_read_async (char *bytes, int size) {
 
         // in case of decoder error, or EOF while buffering - switch to next song instantly
         if (bytesread < 0 || (bytes_until_next_song >= 0 && streamer_buffering && bytesread == 0) || bytes_until_next_song < 0) {
-            trace ("finished streaming song, queueing next (%d %d %d %d)\n", bytesread, bytes_until_next_song, streamer_buffering, nextsong_pstate);
             streamer_next (bytesread);
         }
     }
@@ -2471,6 +2492,9 @@ streamer_play_current_track (void) {
     playlist_t *plt = plt_get_curr ();
     DB_output_t *output = plug_get_output ();
     if (output->state () == OUTPUT_STATE_PAUSED && playing_track) {
+        if (is_remote_stream (playing_track)) {
+            streamer_set_current (playing_track);
+        }
         // unpause currently paused track
         output->unpause ();
         messagepump_push (DB_EV_PAUSED, 0, 0, 0);

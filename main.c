@@ -600,8 +600,7 @@ player_mainloop (void) {
                     break;
                 case DB_EV_TOGGLE_PAUSE:
                     if (output->state () == OUTPUT_STATE_PAUSED) {
-                        output->unpause ();
-                        messagepump_push (DB_EV_PAUSED, 0, 0, 0);
+                        streamer_play_current_track ();
                     }
                     else {
                         output->pause ();
