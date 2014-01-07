@@ -2021,7 +2021,7 @@ streamer_set_output_format (void) {
     DB_output_t *output = plug_get_output ();
     int playing = (output->state () == OUTPUT_STATE_PLAYING);
 
-//    fprintf (stderr, "streamer_set_output_format %dbit %s %dch %dHz channelmask=%X, bufferfill: %d\n", output_format.bps, output_format.is_float ? "float" : "int", output_format.channels, output_format.samplerate, output_format.channelmask, streamer_ringbuf.remaining);
+    trace ("streamer_set_output_format %dbit %s %dch %dHz channelmask=%X, bufferfill: %d\n", output_format.bps, output_format.is_float ? "float" : "int", output_format.channels, output_format.samplerate, output_format.channelmask, streamer_ringbuf.remaining);
     ddb_waveformat_t fmt;
     memcpy (&fmt, &output_format, sizeof (ddb_waveformat_t));
     if (autoconv_8_to_16) {
@@ -2494,6 +2494,11 @@ streamer_play_current_track (void) {
     if (output->state () == OUTPUT_STATE_PAUSED && playing_track) {
         if (is_remote_stream (playing_track)) {
             streamer_set_current (playing_track);
+            if (fileinfo && memcmp (&orig_output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t))) {
+                memcpy (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
+                memcpy (&orig_output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
+                streamer_set_output_format ();
+            }
         }
         // unpause currently paused track
         output->unpause ();
