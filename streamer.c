@@ -2493,6 +2493,8 @@ streamer_play_current_track (void) {
     DB_output_t *output = plug_get_output ();
     if (output->state () == OUTPUT_STATE_PAUSED && playing_track) {
         if (is_remote_stream (playing_track)) {
+            streamer_reset (1);
+            streamer_set_current (NULL);
             streamer_set_current (playing_track);
             if (fileinfo && memcmp (&orig_output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t))) {
                 memcpy (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
