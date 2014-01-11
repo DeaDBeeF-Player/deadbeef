@@ -1385,7 +1385,9 @@ streamer_thread (void *ctx) {
                 send_songfinished (playing_track);
             }
             streamer_start_new_song ();
-            nextsong_pstate = -1;
+            if (nextsong_pstate == 2) {
+                nextsong_pstate = -1;
+            }
             // it's totally possible that song was switched
             // while streamer_set_current was running,
             // so we need to restart here
