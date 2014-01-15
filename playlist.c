@@ -1288,7 +1288,6 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
         DB_vfs_t **vfsplugs = plug_get_vfs_list ();
         for (int i = 0; vfsplugs[i]; i++) {
             if (vfsplugs[i]->is_container) {
-                trace ("%s cont test\n", fname);
                 if (vfsplugs[i]->is_container (fname)) {
                     trace ("inserting %s via vfs %s\n", fname, vfsplugs[i]->plugin.id);
                     playItem_t *it = plt_insert_dir_int (visibility, playlist, vfsplugs[i], after, fname, pabort, cb, user_data);
@@ -1505,10 +1504,13 @@ plt_insert_dir_int (int visibility, playlist_t *playlist, DB_vfs_t *vfs, playIte
                         strcpy (fullname, namelist[i]->d_name);
                     }
                     inserted = plt_insert_file_int (visibility, playlist, after, fullname, pabort, cb, user_data);
-                    if (!inserted) {
-                        // special case for loading playlists in zip files
-                        inserted = plt_load_int (visibility, playlist, after, fullname, pabort, cb, user_data);
-                    }
+                    // NOTE: adding archive to playlist is the same as adding a
+                    // folder, so we don't load any playlists.
+                    // the code below is kept for reference
+//                    if (!inserted) {
+//                        // special case for loading playlists in zip files
+//                        inserted = plt_load_int (visibility, playlist, after, fullname, pabort, cb, user_data);
+//                    }
                 }
                 if (inserted) {
                     after = inserted;
