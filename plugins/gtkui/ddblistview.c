@@ -2435,20 +2435,9 @@ ddb_listview_header_configure_event              (GtkWidget       *widget,
 void
 ddb_listview_lock_columns (DdbListview *lv, gboolean lock) {
     lv->lock_columns = lock;
-    if (lock == 0) {
-        GtkAllocation a;
-        gtk_widget_get_allocation (GTK_WIDGET (lv), &a);
-        if (deadbeef->conf_get_int ("gtkui.autoresize_columns", 0)) {
-            DdbListviewColumn *c;
-            if (!lv->col_autoresize) {
-                for (c = lv->columns; c; c = c->next) {
-                    c->fwidth = (float)c->width / (float)a.width;
-                }
-                lv->col_autoresize = 1;
-            }
-        }
-        lv->header_width = a.width;
-    }
+
+    // NOTE: at this point, it's still not guaranteed that the allocation contains
+    // the final size, so we don't calc initial autoresize state here
 }
 
 
