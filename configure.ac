@@ -142,7 +142,7 @@ case "$host" in
     AS_IF([test "${enable_staticlink}" != "no"], [
         NOCPPLIB="-nostdlib ../../$LIB/lib/libsupc++.a"
     ], [
-        NOCPPLIB="-nostdlib -lsupc++"
+        NOCPPLIB=""
     ])
     AC_SUBST(NOCPPLIB)
     ;;
