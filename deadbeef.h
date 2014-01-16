@@ -96,7 +96,13 @@ extern "C" {
 #define DDB_DEPRECATED(x)
 
 #ifdef __GNUC__
-#include <features.h>
+// avoid including glibc headers, this is not very portable
+#if defined __GNUC__ && defined __GNUC_MINOR__
+# define __GNUC_PREREQ(maj, min) \
+	((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
+#else
+# define __GNUC_PREREQ(maj, min) 0
+#endif
 #undef DDB_DEPRECATED
 #if __GNUC_PREREQ(4,5)
 #define DDB_DEPRECATED(x) __attribute__ ((deprecated(x)))
