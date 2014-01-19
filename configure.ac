@@ -498,6 +498,11 @@ AS_IF([test "${enable_shellexec}" != "no"], [
     HAVE_SHELLEXEC=yes
 ])
 
+AS_IF([test "${enable_shellexecui}" != "no" -a "${enable_shellexec}" != "no"], [
+    AS_IF([test "${HAVE_GTK2}" = "yes" -o "${HAVE_GTK3}" = "yes"], [
+        HAVE_SHELLEXECUI=yes
+    ])
+])
 
 AS_IF([test "${enable_artwork}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
@@ -638,12 +643,6 @@ dnl AS_IF([test "${enable_medialib}" != "no"], [
 dnl     HAVE_MEDIALIB=yes
 dnl ])
 
-AS_IF([test "${enable_shellexecui}" != "no"], [
-    AS_IF([test "${HAVE_GTK2}" = "yes" -o "${HAVE_GTK3}" = "yes"], [
-        HAVE_SHELLEXECUI=yes
-    ])
-])
-
 AS_IF([test "${enable_dumb}" != "no"], [
     HAVE_DUMB=yes
 ])
@@ -672,7 +671,7 @@ AS_IF([test "${enable_pltbrowser}" != "no"], [
     HAVE_PLTBROWSER=yes
 ])
 
-PLUGINS_DIRS="plugins/libmp4ff plugins/libparser plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/ao plugins/mono2stereo plugins/shellexecui plugins/alac plugins/wma plugins/pltbrowser plugins/coreaudio"
+PLUGINS_DIRS="plugins/libmp4ff plugins/libparser plugins/lastfm plugins/mpgmad plugins/vorbis plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/shellexecui plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/ao plugins/mono2stereo plugins/alac plugins/wma plugins/pltbrowser plugins/coreaudio"
 
 AM_CONDITIONAL(APE_USE_YASM, test "x$APE_USE_YASM" = "xyes")
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
@@ -701,6 +700,7 @@ AM_CONDITIONAL(HAVE_OSS, test "x$HAVE_OSS" = "xyes")
 AM_CONDITIONAL(HAVE_SUPEREQ, test "x$HAVE_SUPEREQ" = "xyes")
 AM_CONDITIONAL(HAVE_NOTIFY, test "x$HAVE_NOTIFY" = "xyes")
 AM_CONDITIONAL(HAVE_SHELLEXEC, test "x$HAVE_SHELLEXEC" = "xyes")
+AM_CONDITIONAL(HAVE_SHELLEXECUI, test "x$HAVE_SHELLEXECUI" = "xyes")
 AM_CONDITIONAL(HAVE_MUSEPACK, test "x$HAVE_MUSEPACK" = "xyes")
 AM_CONDITIONAL(HAVE_WILDMIDI, test "x$HAVE_WILDMIDI" = "xyes")
 AM_CONDITIONAL(HAVE_TTA, test "x$HAVE_TTA" = "xyes")
@@ -720,7 +720,6 @@ AM_CONDITIONAL(HAVE_DUMB, test "x$HAVE_DUMB" = "xyes")
 AM_CONDITIONAL(HAVE_PSF, test "x$HAVE_PSF" = "xyes")
 AM_CONDITIONAL(HAVE_SHN, test "x$HAVE_SHN" = "xyes")
 AM_CONDITIONAL(HAVE_MONO2STEREO, test "x$HAVE_MONO2STEREO" = "xyes")
-AM_CONDITIONAL(HAVE_SHELLEXECUI, test "x$HAVE_SHELLEXECUI" = "xyes")
 dnl AM_CONDITIONAL(HAVE_SM, test "x$HAVE_SM" = "xyes")
 dnl AM_CONDITIONAL(HAVE_ICE, test "x$HAVE_ICE" = "xyes")
 AM_CONDITIONAL(HAVE_ALAC, test "x$HAVE_ALAC" = "xyes")
@@ -776,12 +775,13 @@ PRINT_PLUGIN_INFO([vfs_curl],[http/ftp streaming support],[test "x$HAVE_VFS_CURL
 PRINT_PLUGIN_INFO([cdda],[cd audio player],[test "x$HAVE_CDDAPLUGIN" = "xyes"])
 PRINT_PLUGIN_INFO([gtkui],[GTK2 user interface],[test "x$HAVE_GTK2" = "xyes"])
 PRINT_PLUGIN_INFO([gtkui3],[GTK3 user interface],[test "x$HAVE_GTK3" = "xyes"])
-PRINT_PLUGIN_INFO([hotkeys],[Implementation of many hotkeys, shared across all gui plugins, and global hotkeys support for X11],[test "x$HAVE_HOTKEYS" = "xyes"])
+PRINT_PLUGIN_INFO([hotkeys],[Local and global hotkeys support],[test "x$HAVE_HOTKEYS" = "xyes"])
 PRINT_PLUGIN_INFO([ffmpeg],[ffmpeg codecs],[test "x$HAVE_FFMPEGPLUGIN" = "xyes"])
 PRINT_PLUGIN_INFO([artwork],[Cover art plugin],[test "x$HAVE_ARTWORK" = "xyes"])
 PRINT_PLUGIN_INFO([supereq],[Equalizer based on Super EQ library by Naoki Shibata],[test "x$HAVE_SUPEREQ" = "xyes"])
 PRINT_PLUGIN_INFO([notify],[notification-daemon support plugin],[test "x$HAVE_NOTIFY" = "xyes"])
 PRINT_PLUGIN_INFO([shellexec],[shell commands plugin],[test "x$HAVE_SHELLEXEC" = "xyes"])
+PRINT_PLUGIN_INFO([shellexecui],[GTK user interface for setting up shellexec plugin],[test "x$HAVE_SHELLEXECUI" = "xyes"])
 PRINT_PLUGIN_INFO([musepack],[musepack player plugin],[test "x$HAVE_MUSEPACK" = "xyes"])
 PRINT_PLUGIN_INFO([wildmidi],[WildMidi player plugin],[test "x$HAVE_WILDMIDI" = "xyes"])
 PRINT_PLUGIN_INFO([tta],[TTA player plugin],[test "x$HAVE_TTA" = "xyes"])
@@ -797,7 +797,6 @@ PRINT_PLUGIN_INFO([psf],[PSF format plugin, using AOSDK],[test "x$HAVE_PSF" = "x
 PRINT_PLUGIN_INFO([dumb],[DUMB module plugin, for MOD, S3M, etc],[test "x$HAVE_DUMB" = "xyes"])
 PRINT_PLUGIN_INFO([shn],[SHN plugin based on xmms-shn],[test "x$HAVE_SHN" = "xyes"])
 PRINT_PLUGIN_INFO([mono2stereo],[mono2stereo DSP plugin],[test "x$HAVE_MONO2STEREO" = "xyes"])
-PRINT_PLUGIN_INFO([shellexecui],[GTK user interface for configuring shellexec plugin],[test "x$HAVE_SHELLEXECUI" = "xyes"])
 PRINT_PLUGIN_INFO([alac],[ALAC plugin],[test "x$HAVE_ALAC" = "xyes"])
 PRINT_PLUGIN_INFO([wma],[WMA plugin],[test "x$HAVE_WMA" = "xyes"])
 PRINT_PLUGIN_INFO([pltbrowser],[playlist browser gui plugin],[test "x$HAVE_PLTBROWSER" = "xyes"])
