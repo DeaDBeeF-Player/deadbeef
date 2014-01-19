@@ -333,10 +333,6 @@ gtkui_run_preferences_dlg (void) {
     gtk_widget_set_sensitive (lookup_widget (prefwin, "configure_plugin"), FALSE);
 
     // hotkeys
-//    DB_plugin_t *hotkeys = deadbeef->plug_get_for_id ("hotkeys");
-//    if (hotkeys) {
-//        prefwin_add_hotkeys_tab (prefwin);
-//    }
     prefwin_init_hotkeys (prefwin);
 
     deadbeef->conf_unlock ();

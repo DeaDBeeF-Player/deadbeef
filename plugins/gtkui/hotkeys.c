@@ -421,9 +421,15 @@ on_hotkeys_actions_clicked             (GtkButton       *button,
     gtk_widget_destroy (dlg);
 }
 
-
 void
 prefwin_init_hotkeys (GtkWidget *_prefwin) {
+    DB_plugin_t *hkplug = deadbeef->plug_get_for_id ("hotkeys");
+    if (!hkplug) {
+        // remove hotkeys tab
+        gtk_notebook_remove_page (GTK_NOTEBOOK (lookup_widget (_prefwin, "notebook")), 6);
+        return;
+    }
+
     gtkui_hotkeys_changed = 0;
     ctx_names[DDB_ACTION_CTX_MAIN] = _("Main");
     ctx_names[DDB_ACTION_CTX_SELECTION] = _("Selection");
