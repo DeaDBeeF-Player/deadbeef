@@ -222,7 +222,6 @@ static int
 pltbrowser_connect (void) {
     gtkui_plugin = (ddb_gtkui_t *)deadbeef->plug_get_for_id (DDB_GTKUI_PLUGIN_ID);
     if(!gtkui_plugin) {
-        fprintf (stderr, "pltbrowser: can't find gtkui plugin\n");
         return -1;
     }
     gtkui_plugin->w_reg_widget (_("Playlist browser"), 0, w_pltbrowser_create, "pltbrowser", NULL);
@@ -249,8 +248,12 @@ static DB_misc_t plugin = {
 #else
     .plugin.id = "pltbrowser_gtk2",
 #endif
-    .plugin.name = "pltbrowser",
-    .plugin.descr = "Playlist browser",
+#if GTK_CHECK_VERSION(3,0,0)
+    .plugin.name = "Playlist browser GTK3",
+#else
+    .plugin.name = "Playlist browser GTK2",
+#endif
+    .plugin.descr = "Use View -> Design Mode to add playlist browser into main window",
     .plugin.copyright = 
         "DeaDBeeF -- the music player\n"
         "Copyright (C) 2009-2013 Alexey Yakovenko and other contributors\n"
