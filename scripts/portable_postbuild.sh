@@ -1,7 +1,14 @@
-#!/bin/sh
+#!/bin/bash
 VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print'`
 OSTYPE=`uname -s`
-ARCH=`uname -m | perl -ne 'chomp and print'`
+if [[ "$ARCH" == "i686" ]]; then
+    echo arch: $ARCH
+elif [[ "$ARCH" == "x86_64" ]]; then
+    echo arch: $ARCH
+else
+    echo unknown arch $ARCH
+    exit -1
+fi
 OUTDIR=portable/$ARCH/deadbeef-$VERSION
 PLUGDIR=$OUTDIR/plugins
 DOCDIR=$OUTDIR/doc
