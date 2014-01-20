@@ -215,9 +215,6 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
             after = it;
         }
         if (pabort && *pabort) {
-            if (after) {
-                deadbeef->pl_item_ref (after);
-            }
             free (membuffer);
             return after;
         }
@@ -225,9 +222,6 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
         if (p >= end) {
             break;
         }
-    }
-    if (after) {
-        deadbeef->pl_item_ref (after);
     }
     trace ("leave pl_insert_m3u\n");
     free (membuffer);
@@ -325,9 +319,6 @@ load_pls (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
                     after = it;
                 }
                 if (pabort && *pabort) {
-                    if (after) {
-                        deadbeef->pl_item_ref (after);
-                    }
                     free (buffer);
                     return after;
                 }
@@ -365,9 +356,6 @@ load_pls (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
                     after = it;
                 }
                 if (pabort && *pabort) {
-                    if (after) {
-                        deadbeef->pl_item_ref (after);
-                    }
                     free (buffer);
                     return after;
                 }
@@ -404,9 +392,6 @@ load_pls (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
                     after = it;
                 }
                 if (pabort && *pabort) {
-                    if (after) {
-                        deadbeef->pl_item_ref (after);
-                    }
                     free (buffer);
                     return after;
                 }
@@ -447,9 +432,6 @@ load_pls (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
         if (it) {
             after = it;
         }
-    }
-    if (after) {
-        deadbeef->pl_item_ref (after);
     }
     free (buffer);
     return after;

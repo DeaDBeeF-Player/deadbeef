@@ -666,9 +666,6 @@ load_playlist_thread (void *data) {
             deadbeef->plt_clear (plt);
             int abort = 0;
             DB_playItem_t *it = deadbeef->plt_load2 (0, plt, NULL, fname, &abort, NULL, NULL);
-            if (it) {
-                deadbeef->pl_item_unref (it);
-            }
             deadbeef->plt_save_config (plt);
             deadbeef->plt_add_files_end (plt, 0);
         }
