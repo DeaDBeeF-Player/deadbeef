@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Baurzhan Muftakhidinov <baurthefirst@gmail.com>, 2010,2013
+# Baurzhan Muftakhidinov <baurthefirst@gmail.com>, 2010,2013-2014
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-11-24 19:10+0100\n"
-"PO-Revision-Date: 2013-11-20 09:50+0000\n"
-"Last-Translator: waker <wakeroid@gmail.com>\n"
+"PO-Revision-Date: 2014-01-16 15:01+0000\n"
+"Last-Translator: Baurzhan Muftakhidinov <baurthefirst@gmail.com>\n"
 "Language-Team: Kazakh (http://www.transifex.com/projects/p/deadbeef-player/"
 "language/kk/)\n"
 "Language: kk\n"
@@ -713,15 +713,15 @@ msgstr "GUI плагині (ауыстырылса, қайта қосу кере
 
 #: ../plugins/gtkui/interface.c:2117 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Player"
-msgstr ""
+msgstr "Плеер"
 
 #: ../plugins/gtkui/interface.c:2126 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Close playlists with middle mouse button"
-msgstr ""
+msgstr "Ойнату тізімдерін тышқанның орта батырмасымен жабу"
 
 #: ../plugins/gtkui/interface.c:2130 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Draw playing track using bold font"
-msgstr ""
+msgstr "Ойнатылып жатқан тректі жуан қаріппен көрсету"
 
 #: ../plugins/gtkui/interface.c:2134 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Hide \"Delete from disk\" context menu item"
@@ -733,7 +733,7 @@ msgstr "Бірлік буманы қосқан кезде ойнату тізі�
 
 #: ../plugins/gtkui/interface.c:2142 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "Auto-resize columns to fit the window"
-msgstr ""
+msgstr "Бағандар өлшемдерін терезеге сыятындай автоөзгерту"
 
 #: ../plugins/gtkui/interface.c:2150 ../plugins/gtkui/deadbeef.glade.h:126
 msgid "GUI/Misc"
@@ -879,10 +879,14 @@ msgid ""
 "The changes will NOT be saved\n"
 "if you don't press Apply."
 msgstr ""
+"Өзгерістерді сақтау үшін Іске асыру, ал, оларды\n"
+"болдырмау үшін Қайтару батырмасын қолданыңыз.\n"
+"Іске асыру батырмасын баспасаңыз,\n"
+"өзгерістер сақталмайды."
 
 #: ../plugins/gtkui/interface.c:2614 ../plugins/gtkui/deadbeef.glade.h:163
 msgid "_Defaults"
-msgstr ""
+msgstr "_Бастапқы"
 
 #: ../plugins/gtkui/interface.c:2618 ../plugins/gtkui/deadbeef.glade.h:164
 msgid "Hotkeys"
@@ -1081,7 +1085,7 @@ msgstr "Бағанды өшіру"
 
 #: ../plugins/gtkui/plcommon.c:1136
 msgid "Pin groups when scrolling"
-msgstr ""
+msgstr "Айналдыру кезінде топтарды бекіту"
 
 #: ../plugins/gtkui/plcommon.c:1141
 msgid "Group by"
@@ -1111,10 +1115,11 @@ msgstr "Негізгі дыбыс құрылғысы"
 #: ../plugins/gtkui/prefwin.c:346
 msgid "You modified the hotkeys settings, but didn't save your changes."
 msgstr ""
+"Сіз ыстық перне жарлығын өзгерттіңіз, бірақ, өзгерістерді сақтаған жоқсыз."
 
 #: ../plugins/gtkui/prefwin.c:348
 msgid "Are you sure you want to continue without saving?"
-msgstr ""
+msgstr "Сақтамай-ақ жалғастыруды қалайсыз ба?"
 
 #: ../plugins/gtkui/progress.c:56
 msgid "Adding files..."
@@ -2108,7 +2113,7 @@ msgstr "Қашықтағы файлдарда жұмыс істейді (мыс,
 #: ../plugins/shellexecui/interface.c:224
 #: ../plugins/shellexecui/shellexec.glade.h:23
 msgid "Generic (Main Menu)"
-msgstr ""
+msgstr "Жалпы (басты мәзір)"
 
 #: ../plugins/shellexecui/interface.c:227
 #: ../plugins/shellexecui/shellexec.glade.h:22
@@ -2122,6 +2127,9 @@ msgid ""
 "contains the menu path like this: \"File/My Command\", where File is the "
 "menu name in the English version.</small>"
 msgstr ""
+"<small>Егер басты мәзірге команданы қосқыңыз келсе, оның атауында мәзір жолы "
+"болғанын тексеріңіз, келесідей: \"File/Менің командам\", бұл жердегі Файл - "
+"ағылшын тіліндегі мәзір аты.</small>"
 
 #: ../plugins/shellexecui/shellexecui.c:94
 msgid "Add Command"
@@ -2264,7 +2272,7 @@ msgstr "Кірістіру"
 
 #: ../plugins/gtkui/widgets.c:764
 msgid "Multiple widgets of this type are not supported"
-msgstr ""
+msgstr "Бұл түрдегі бірнеше виджеттерге қолдау жоқ"
 
 #: ../plugins/gtkui/widgets.c:1071
 msgid "Lock movement"
@@ -2320,24 +2328,24 @@ msgstr "Батырманы баптау"
 
 #: ../plugins/gtkui/pltmenu.c:62
 msgid "Edit playlist"
-msgstr ""
+msgstr "Ойнату тізімін түзету"
 
 #: ../plugins/gtkui/pltmenu.c:258
 msgid "Rename Playlist"
-msgstr ""
+msgstr "Ойнату тізімінің атын өзгерту"
 
 #: ../plugins/gtkui/pltmenu.c:265
 msgid "Remove Playlist"
-msgstr ""
+msgstr "Ойнату тізімін өшіру"
 
 #: ../plugins/gtkui/pltmenu.c:272
 msgid "Add New Playlist"
-msgstr ""
+msgstr "Жаңа ойнату тізімін қосу"
 
 #: ../plugins/pltbrowser/pltbrowser.c:225
 msgid "Name"
-msgstr ""
+msgstr "Аты"
 
 #: ../plugins/pltbrowser/pltbrowser.c:251
 msgid "Playlist browser"
-msgstr ""
+msgstr "Ойнату тізімдерді шолу"

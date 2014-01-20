@@ -5,6 +5,7 @@
 # Translators:
 # Grzegorz Gibas <amigib@gmail.com>, 2010
 # Łukasz Jasiński <alvarus@alvarus.org>, 2010
+# mati75 <mati75@linuxmint.pl>, 2013-2014
 # mati75 <mati75@linuxmint.pl>, 2013
 # Piotr Sokół <psokol@jabster.pl>, 2010
 # RyD0pR3c <prendter@gmail.com>, 2013
@@ -14,7 +15,7 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-11-24 19:10+0100\n"
-"PO-Revision-Date: 2013-11-23 13:40+0000\n"
+"PO-Revision-Date: 2014-01-04 22:34+0000\n"
 "Last-Translator: mati75 <mati75@linuxmint.pl>\n"
 "Language-Team: Polish (http://www.transifex.com/projects/p/deadbeef-player/"
 "language/pl/)\n"
@@ -189,11 +190,11 @@ msgstr "Spektrum"
 
 #: ../plugins/gtkui/gtkui.c:978
 msgid "HBox"
-msgstr ""
+msgstr "HBox"
 
 #: ../plugins/gtkui/gtkui.c:979
 msgid "VBox"
-msgstr ""
+msgstr "VBox"
 
 #: ../plugins/gtkui/gtkui.c:980 ../plugins/gtkui/widgets.c:3250
 msgid "Button"

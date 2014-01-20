@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-11-24 19:10+0100\n"
-"PO-Revision-Date: 2013-11-20 09:50+0000\n"
-"Last-Translator: waker <wakeroid@gmail.com>\n"
+"PO-Revision-Date: 2013-11-28 12:54+0000\n"
+"Last-Translator: Wylmer Wang <wantinghard@gmail.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/projects/p/deadbeef-"
 "player/language/zh_CN/)\n"
 "Language: zh_CN\n"
@@ -710,15 +710,15 @@ msgstr "图形用户界面插件(更改后需重启程序)："
 
 #: ../plugins/gtkui/interface.c:2117 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Player"
-msgstr ""
+msgstr "播放器"
 
 #: ../plugins/gtkui/interface.c:2126 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Close playlists with middle mouse button"
-msgstr ""
+msgstr "用鼠标中键关闭播放列表"
 
 #: ../plugins/gtkui/interface.c:2130 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Draw playing track using bold font"
-msgstr ""
+msgstr "用粗体显示正在播放的音轨"
 
 #: ../plugins/gtkui/interface.c:2134 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Hide \"Delete from disk\" context menu item"
@@ -730,7 +730,7 @@ msgstr "在添加单个文件夹时自动命名播放列表"
 
 #: ../plugins/gtkui/interface.c:2142 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "Auto-resize columns to fit the window"
-msgstr ""
+msgstr "自动调整列宽以适应窗口"
 
 #: ../plugins/gtkui/interface.c:2150 ../plugins/gtkui/deadbeef.glade.h:126
 msgid "GUI/Misc"
@@ -876,10 +876,13 @@ msgid ""
 "The changes will NOT be saved\n"
 "if you don't press Apply."
 msgstr ""
+"使用“应用”按钮保存您的更改，\n"
+"或使用“恢复”按钮撤消更改。\n"
+"在您按“应用”之前，更改不会保存。"
 
 #: ../plugins/gtkui/interface.c:2614 ../plugins/gtkui/deadbeef.glade.h:163
 msgid "_Defaults"
-msgstr ""
+msgstr "默认(_D)"
 
 #: ../plugins/gtkui/interface.c:2618 ../plugins/gtkui/deadbeef.glade.h:164
 msgid "Hotkeys"
@@ -1077,7 +1080,7 @@ msgstr "移除列"
 
 #: ../plugins/gtkui/plcommon.c:1136
 msgid "Pin groups when scrolling"
-msgstr ""
+msgstr "滚动时固顶组"
 
 #: ../plugins/gtkui/plcommon.c:1141
 msgid "Group by"
@@ -1106,11 +1109,11 @@ msgstr "默认音频设备"
 
 #: ../plugins/gtkui/prefwin.c:346
 msgid "You modified the hotkeys settings, but didn't save your changes."
-msgstr ""
+msgstr "您修改了热键设置，但没有保存更改。"
 
 #: ../plugins/gtkui/prefwin.c:348
 msgid "Are you sure you want to continue without saving?"
-msgstr ""
+msgstr "您确定要继续而不保存吗？"
 
 #: ../plugins/gtkui/progress.c:56
 msgid "Adding files..."
@@ -2094,7 +2097,7 @@ msgstr "作用于远程文件(如 http:// 流)"
 #: ../plugins/shellexecui/interface.c:224
 #: ../plugins/shellexecui/shellexec.glade.h:23
 msgid "Generic (Main Menu)"
-msgstr ""
+msgstr "常规(主菜单)"
 
 #: ../plugins/shellexecui/interface.c:227
 #: ../plugins/shellexecui/shellexec.glade.h:22
@@ -2108,6 +2111,8 @@ msgid ""
 "contains the menu path like this: \"File/My Command\", where File is the "
 "menu name in the English version.</small>"
 msgstr ""
+"<small>如果您想向主菜单添加命令，请确保标题中包含“File/My Command”这样的菜单"
+"路径，例子中 File 是英文的菜单名。</small>"
 
 #: ../plugins/shellexecui/shellexecui.c:94
 msgid "Add Command"
@@ -2249,7 +2254,7 @@ msgstr "粘贴"
 
 #: ../plugins/gtkui/widgets.c:764
 msgid "Multiple widgets of this type are not supported"
-msgstr ""
+msgstr "不支持此类部件的多个实例"
 
 #: ../plugins/gtkui/widgets.c:1071
 msgid "Lock movement"
@@ -2305,24 +2310,24 @@ msgstr "配置按钮"
 
 #: ../plugins/gtkui/pltmenu.c:62
 msgid "Edit playlist"
-msgstr ""
+msgstr "编辑播放列表"
 
 #: ../plugins/gtkui/pltmenu.c:258
 msgid "Rename Playlist"
-msgstr ""
+msgstr "重命名播放列表"
 
 #: ../plugins/gtkui/pltmenu.c:265
 msgid "Remove Playlist"
-msgstr ""
+msgstr "移除播放列表"
 
 #: ../plugins/gtkui/pltmenu.c:272
 msgid "Add New Playlist"
-msgstr ""
+msgstr "添加新播放列表"
 
 #: ../plugins/pltbrowser/pltbrowser.c:225
 msgid "Name"
-msgstr ""
+msgstr "名称"
 
 #: ../plugins/pltbrowser/pltbrowser.c:251
 msgid "Playlist browser"
-msgstr ""
+msgstr "播放列表浏览器"
