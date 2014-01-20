@@ -2487,12 +2487,18 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
         fclose (fp);
     }
     trace ("plt_load: success\n");
+    if (last_added) {
+        pl_item_unref (last_added);
+    }
     return last_added;
 load_fail:
     plt_clear (plt);
     fprintf (stderr, "playlist load fail (%s)!\n", fname);
     if (fp) {
         fclose (fp);
+    }
+    if (last_added) {
+        pl_item_unref (last_added);
     }
     return last_added;
 }
@@ -2522,9 +2528,6 @@ pl_load_all (void) {
 
         playlist_t *plt = plt_get_for_idx (0);
         playItem_t *it = plt_load (plt, NULL, defpl, NULL, NULL, NULL);
-        if (it) {
-            pl_item_unref (it);
-        }
         plt_unref (plt);
         return 0;
     }
@@ -2550,9 +2553,6 @@ pl_load_all (void) {
 
             playlist_t *plt = plt_get_curr ();
             playItem_t *trk = plt_load (plt, NULL, path, NULL, NULL, NULL);
-            if (trk) {
-                pl_item_unref (trk);
-            }
             char conf[100];
             snprintf (conf, sizeof (conf), "playlist.cursor.%d", i);
             plt->current_row[PL_MAIN] = deadbeef->conf_get_int (conf, -1);
