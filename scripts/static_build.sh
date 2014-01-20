@@ -4,8 +4,9 @@ ORIGIN=`pwd | perl -ne 'chomp and print'`
 AP=$ORIGIN/tools/apbuild
 #ARCH=`uname -m | perl -ne 'chomp and print'`
 if [[ "$ARCH" == "i686" ]]; then
-    export CFLAGS='-m32'
-    export LDFLAGS='-m32'
+    export CFLAGS="-m32 -I$ORIGIN/../deadbeef-deps/lib-x86-32/include/i386-linux-gnu"
+    export CXXFLAGS=$CFLAGS
+    export LDFLAGS="-m32 -L$ORIGIN/../deadbeef-deps/lib-x86-32/lib"
     export CONFIGURE_FLAGS="--build=i686-unknown-linux-gnu"
     export LD_LIBRARY_PATH="$ORIGIN/../deadbeef-deps/lib-x86-32/lib"
     export PKG_CONFIG_PATH="$ORIGIN/../deadbeef-deps/lib-x86-32/lib/pkgconfig"
@@ -31,7 +32,7 @@ export CXX=$AP/apgcc
 
 ./autogen.sh || exit -1
 
-./configure CFLAGS=$CFLAGS LDFLAGS=$LDFLAGS $CONFIGURE_FLAGS --enable-staticlink --disable-artwork-imlib2 --prefix=/opt/deadbeef || exit -1
+./configure CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" LDFLAGS="$LDFLAGS" $CONFIGURE_FLAGS --enable-staticlink --disable-artwork-imlib2 --prefix=/opt/deadbeef || exit -1
 sed -i 's/-lstdc++ -lm -lgcc_s -lc -lgcc_s/-lm -lc/g' libtool
 sed -i 's/hardcode_into_libs=yes/hardcode_into_libs=no/g' libtool
 make clean
