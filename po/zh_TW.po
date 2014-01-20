@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-11-24 19:10+0100\n"
-"PO-Revision-Date: 2013-11-20 09:50+0000\n"
-"Last-Translator: waker <wakeroid@gmail.com>\n"
+"PO-Revision-Date: 2013-12-16 07:57+0000\n"
+"Last-Translator: brli7848 <rainman59118@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) (http://www.transifex.com/projects/p/"
 "deadbeef-player/language/zh_TW/)\n"
 "Language: zh_TW\n"
@@ -183,11 +183,11 @@ msgstr "頻譜"
 
 #: ../plugins/gtkui/gtkui.c:978
 msgid "HBox"
-msgstr ""
+msgstr "HBox"
 
 #: ../plugins/gtkui/gtkui.c:979
 msgid "VBox"
-msgstr ""
+msgstr "VBox"
 
 #: ../plugins/gtkui/gtkui.c:980 ../plugins/gtkui/widgets.c:3250
 msgid "Button"
@@ -359,7 +359,7 @@ msgstr "等化器"
 
 #: ../plugins/gtkui/interface.c:323 ../plugins/gtkui/deadbeef.glade.h:31
 msgid "Design mode"
-msgstr ""
+msgstr "設計模式"
 
 #: ../plugins/gtkui/interface.c:327 ../plugins/gtkui/deadbeef.glade.h:32
 msgid "_Playback"
@@ -861,7 +861,7 @@ msgstr ""
 #: ../plugins/gtkui/interface.c:2548 ../plugins/gtkui/interface.c:2561
 #: ../plugins/gtkui/interface.c:4360 ../plugins/gtkui/deadbeef.glade.h:156
 msgid "<Not set>"
-msgstr ""
+msgstr "<Not set>"
 
 #: ../plugins/gtkui/interface.c:2556 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "Key combination:"
@@ -869,7 +869,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2565 ../plugins/gtkui/deadbeef.glade.h:158
 msgid "Global hotkey"
-msgstr ""
+msgstr "全域快速鍵"
 
 #: ../plugins/gtkui/interface.c:2577 ../plugins/gtkui/deadbeef.glade.h:159
 msgid ""
@@ -885,7 +885,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2618 ../plugins/gtkui/deadbeef.glade.h:164
 msgid "Hotkeys"
-msgstr ""
+msgstr "快速鍵"
 
 #: ../plugins/gtkui/interface.c:2649 ../plugins/gtkui/deadbeef.glade.h:165
 msgid "Version: "
@@ -907,11 +907,11 @@ msgstr "網址："
 
 #: ../plugins/gtkui/interface.c:3404 ../plugins/gtkui/deadbeef.glade.h:169
 msgid "Group By ..."
-msgstr ""
+msgstr "依據...分組"
 
 #: ../plugins/gtkui/interface.c:3528 ../plugins/gtkui/deadbeef.glade.h:170
 msgid "Sort by ..."
-msgstr ""
+msgstr "依據...排序"
 
 #: ../plugins/gtkui/interface.c:3544 ../plugins/gtkui/deadbeef.glade.h:171
 msgid "Format"
@@ -992,7 +992,7 @@ msgstr "寫入 ID3v2.4"
 
 #: ../plugins/gtkui/interface.c:4045 ../plugins/gtkui/deadbeef.glade.h:188
 msgid "Content-Type Mapping"
-msgstr ""
+msgstr "目錄類型取代"
 
 #: ../plugins/gtkui/interface.c:4068 ../plugins/gtkui/deadbeef.glade.h:189
 msgid ""
@@ -1144,7 +1144,7 @@ msgstr "值"
 
 #: ../plugins/gtkui/trkproperties.c:512
 msgid "[Multiple values]"
-msgstr ""
+msgstr "[多重值]"
 
 #: ../plugins/gtkui/trkproperties.c:691
 msgid "Writing tags..."
@@ -1152,7 +1152,7 @@ msgstr "正在寫入標記..."
 
 #: ../plugins/gtkui/trkproperties.c:720
 msgid "Field name"
-msgstr ""
+msgstr "欄位名稱"
 
 #: ../plugins/gtkui/trkproperties.c:723
 msgid "Name:"
@@ -1181,7 +1181,7 @@ msgstr "移除欄位"
 #: ../main.c:89
 #, c-format
 msgid "Usage: deadbeef [options] [--] [file(s)]\n"
-msgstr ""
+msgstr "使用方法: deadbeef [選項] [--] [檔案(複數)]\n"
 
 #: ../main.c:90
 #, c-format
@@ -1254,6 +1254,8 @@ msgstr "   --queue            將檔案附加至播放清單\n"
 msgid ""
 "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
 msgstr ""
+"   --gui 擴充  告訴程式您想使用哪個圖型介面擴充, 預設值是 \"GTK2\"\n"
+"\n"
 
 #: ../main.c:104
 #, c-format
@@ -1371,7 +1373,7 @@ msgstr ""
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
 msgid "Add audio CD"
-msgstr ""
+msgstr "新增音樂 CD"
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
@@ -1417,7 +1419,7 @@ msgstr "Scrobble 網址"
 
 #: ../translation/extra.c:16
 msgid "Prefer Album Artist over Artist field"
-msgstr ""
+msgstr "以專輯作者取代作者欄"
 
 #. OSS output plugin
 #: ../translation/extra.c:18
@@ -1489,7 +1491,7 @@ msgstr "重取樣品質 (0..2，越高越好)"
 
 #: ../translation/extra.c:37
 msgid "8-bit output (default is 16)"
-msgstr ""
+msgstr "8-bit 輸出 (預設值是 16)"
 
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:39
@@ -1498,11 +1500,11 @@ msgstr "歌曲最大長度 (分鐘)"
 
 #: ../translation/extra.c:40
 msgid "Fadeout length (seconds)"
-msgstr ""
+msgstr "淡出長度 (單位:秒)"
 
 #: ../translation/extra.c:41
 msgid "Play loops nr. of times (if available)"
-msgstr ""
+msgstr "重複播放 數字 次 (若支援)"
 
 #. Standard GTK2 user interface plugin
 #: ../translation/extra.c:43
@@ -1655,7 +1657,7 @@ msgstr "目標取樣率"
 
 #: ../translation/extra.c:94
 msgid "Quality / Algorithm"
-msgstr ""
+msgstr "品質 / 演算法"
 
 #: ../translation/extra.c:95
 msgid "Automatic Samplerate (overrides Target Samplerate)"
@@ -1664,21 +1666,21 @@ msgstr "自動取樣率 (優先於「目標取樣率」)"
 #. shellexecui
 #: ../translation/extra.c:97
 msgid "Configure custom shell commands"
-msgstr ""
+msgstr "設定自訂 shell 指令"
 
 #. mpgmad
 #: ../translation/extra.c:99
 msgid "Disable gapless playback (faster scanning)"
-msgstr ""
+msgstr "取消無間斷播放 (掃瞄更快速)"
 
 #. adplug
 #: ../translation/extra.c:101
 msgid "Prefer Ken emu over Satoh (surround won't work)"
-msgstr ""
+msgstr "優先使用 Ken emu 取代 Satoh (環繞音效將無效)"
 
 #: ../translation/extra.c:102
 msgid "Enable surround"
-msgstr ""
+msgstr "開啟環繞音效"
 
 #: ../plugins/converter/convgui.c:117
 msgid "The file already exists. Overwrite?"
@@ -1772,12 +1774,12 @@ msgstr "輸出資料夾："
 #: ../plugins/converter/interface.c:109
 #: ../plugins/converter/converter.glade.h:2
 msgid "Write to source track folder"
-msgstr ""
+msgstr "寫入來源曲目資料夾"
 
 #: ../plugins/converter/interface.c:113
 #: ../plugins/converter/converter.glade.h:3
 msgid "Preserve folder structure"
-msgstr ""
+msgstr "保持資料夾結構"
 
 #: ../plugins/converter/interface.c:121
 #: ../plugins/converter/converter.glade.h:4
@@ -1965,43 +1967,53 @@ msgid ""
 "32 bit signed int\n"
 "32 bit float"
 msgstr ""
+"保持來源格式\n"
+"8 bit signed int\n"
+"16 bit signed int\n"
+"24 bit signed int\n"
+"32 bit signed int\n"
+"32 bit float"
 
 #: ../plugins/converter/converter.glade.h:19
 msgid ""
 "Prompt\n"
 "Overwrite"
 msgstr ""
+"立刻\n"
+"覆寫"
 
 #: ../plugins/converter/converter.glade.h:34
 msgid ""
 "Pipe\n"
 "Temporary file"
 msgstr ""
+"管道\n"
+"臨時檔案"
 
 #: ../plugins/shellexecui/interface.c:46
 #: ../plugins/shellexecui/shellexec.glade.h:1
 msgid "Custom Shell Commands"
-msgstr ""
+msgstr "自訂 Shell 指令"
 
 #: ../plugins/shellexecui/interface.c:69
 #: ../plugins/shellexecui/shellexec.glade.h:5
 msgid "Edit"
-msgstr ""
+msgstr "編輯(_E)"
 
 #: ../plugins/shellexecui/interface.c:87
 #: ../plugins/shellexecui/shellexec.glade.h:2
 msgid "Close"
-msgstr ""
+msgstr "關閉(_C)"
 
 #: ../plugins/shellexecui/interface.c:145
 #: ../plugins/shellexecui/shellexec.glade.h:6
 msgid "Edit Command"
-msgstr ""
+msgstr "編輯指令"
 
 #: ../plugins/shellexecui/interface.c:166
 #: ../plugins/shellexecui/shellexec.glade.h:8
 msgid "Command:"
-msgstr ""
+msgstr "指令: "
 
 #: ../plugins/shellexecui/interface.c:178
 #: ../plugins/shellexecui/shellexec.glade.h:10
@@ -2015,7 +2027,7 @@ msgstr ""
 #: ../plugins/shellexecui/interface.c:181
 #: ../plugins/shellexecui/shellexec.glade.h:11
 msgid "ID:"
-msgstr ""
+msgstr "ID:"
 
 #: ../plugins/shellexecui/interface.c:193
 #: ../plugins/shellexecui/shellexec.glade.h:12

@@ -3,6 +3,7 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# Bugamol <haxycgm@gmail.com>, 2013
 # Максім Тамковіч <quendimax@tut.by>, 2011
 # Максім Томкавіч <quendimax@tut.by>, 2011
 msgid ""
@@ -10,8 +11,8 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-11-24 19:10+0100\n"
-"PO-Revision-Date: 2013-11-20 09:49+0000\n"
-"Last-Translator: waker <wakeroid@gmail.com>\n"
+"PO-Revision-Date: 2013-12-18 12:12+0000\n"
+"Last-Translator: Bugamol <haxycgm@gmail.com>\n"
 "Language-Team: Belarusian (http://www.transifex.com/projects/p/deadbeef-"
 "player/language/be/)\n"
 "Language: be\n"
@@ -144,25 +145,25 @@ msgstr "Новы плэйліст (%d)"
 #. register widget types
 #: ../plugins/gtkui/gtkui.c:965
 msgid "Playlist with tabs"
-msgstr ""
+msgstr "Плэйліст са ўстаўкамі"
 
 #: ../plugins/gtkui/gtkui.c:966 ../plugins/gtkui/interface.c:2146
 #: ../plugins/gtkui/deadbeef.glade.h:125
 msgid "Playlist"
-msgstr ""
+msgstr "Плэйліст"
 
 #: ../plugins/gtkui/gtkui.c:969
 msgid "Splitter (top and bottom)"
-msgstr ""
+msgstr "Падзяляльнік (верху і нізу)"
 
 #: ../plugins/gtkui/gtkui.c:970
 msgid "Splitter (left and right)"
-msgstr ""
+msgstr "Падзяляльнік (левага і правага)"
 
 #. w_reg_widget (_("Tabs"), 0, w_tabs_create, "tabs", NULL);
 #: ../plugins/gtkui/gtkui.c:973
 msgid "Playlist tabs"
-msgstr ""
+msgstr "Укладкі плэйліста"
 
 #: ../plugins/gtkui/gtkui.c:974
 msgid "Selection properties"
@@ -170,7 +171,7 @@ msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:975
 msgid "Album art display"
-msgstr ""
+msgstr "Паказваць вокладкі альбомаў"
 
 #: ../plugins/gtkui/gtkui.c:976
 msgid "Scope"
@@ -190,7 +191,7 @@ msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:980 ../plugins/gtkui/widgets.c:3250
 msgid "Button"
-msgstr ""
+msgstr "Кнопка"
 
 #: ../plugins/gtkui/gtkui.c:1166
 msgid "Failed while reading help file"
@@ -208,7 +209,7 @@ msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:1189
 msgid "Do you still want to quit?"
-msgstr ""
+msgstr "Насамрэч жадаеце выйсці?"
 
 #: ../plugins/gtkui/gtkui.c:1190 ../plugins/gtkui/prefwin.c:349
 #: ../plugins/gtkui/trkproperties.c:171 ../plugins/converter/convgui.c:862
@@ -387,15 +388,15 @@ msgstr "Паўтараць"
 
 #: ../plugins/gtkui/interface.c:372 ../plugins/gtkui/deadbeef.glade.h:38
 msgid "Loop all"
-msgstr ""
+msgstr "Паўтор плэйліста"
 
 #: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Loop single song"
-msgstr ""
+msgstr "Паўтараць адзіны запіс"
 
 #: ../plugins/gtkui/interface.c:384 ../plugins/gtkui/deadbeef.glade.h:40
 msgid "Don't loop"
-msgstr ""
+msgstr "Не паўтараць"
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:41
 msgid "Scroll follows playback"
@@ -486,7 +487,7 @@ msgstr "Уласцівасці трэка"
 
 #: ../plugins/gtkui/interface.c:1173 ../plugins/gtkui/deadbeef.glade.h:62
 msgid "Location:"
-msgstr ""
+msgstr "Месцазнаходжанне"
 
 #: ../plugins/gtkui/interface.c:1214 ../plugins/gtkui/deadbeef.glade.h:63
 msgid "Settings"
@@ -1014,7 +1015,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:4224 ../plugins/gtkui/deadbeef.glade.h:192
 msgid "Plugins:"
-msgstr ""
+msgstr "Дадаткі:"
 
 #: ../plugins/gtkui/interface.c:4292 ../plugins/gtkui/deadbeef.glade.h:193
 msgid "Button properties"
@@ -2005,22 +2006,22 @@ msgstr ""
 #: ../plugins/shellexecui/interface.c:69
 #: ../plugins/shellexecui/shellexec.glade.h:5
 msgid "Edit"
-msgstr ""
+msgstr "Рэдагаваць"
 
 #: ../plugins/shellexecui/interface.c:87
 #: ../plugins/shellexecui/shellexec.glade.h:2
 msgid "Close"
-msgstr ""
+msgstr "Зачыніць"
 
 #: ../plugins/shellexecui/interface.c:145
 #: ../plugins/shellexecui/shellexec.glade.h:6
 msgid "Edit Command"
-msgstr ""
+msgstr "Рэдагаваць каманду"
 
 #: ../plugins/shellexecui/interface.c:166
 #: ../plugins/shellexecui/shellexec.glade.h:8
 msgid "Command:"
-msgstr ""
+msgstr "Каманда:"
 
 #: ../plugins/shellexecui/interface.c:178
 #: ../plugins/shellexecui/shellexec.glade.h:10
@@ -2108,7 +2109,7 @@ msgstr ""
 
 #: ../plugins/shellexecui/shellexecui.c:94
 msgid "Add Command"
-msgstr ""
+msgstr "Дадаць каманду"
 
 #: ../plugins/shellexecui/shellexecui.c:137 ../plugins/gtkui/widgets.c:619
 msgid "Delete"
@@ -2145,19 +2146,19 @@ msgstr ""
 
 #: ../plugins/gtkui/actionhandlers.c:119
 msgid "All files (*)"
-msgstr ""
+msgstr "Усе файлы(*)"
 
 #: ../plugins/gtkui/actionhandlers.c:127
 msgid "Open file(s)..."
-msgstr ""
+msgstr "Адкрыць файл(ы)..."
 
 #: ../plugins/gtkui/actionhandlers.c:166
 msgid "Add file(s) to playlist..."
-msgstr ""
+msgstr "Дадаць файл(ы) ў плэйліст..."
 
 #: ../plugins/gtkui/actionhandlers.c:212
 msgid "Add folder(s) to playlist..."
-msgstr ""
+msgstr "Дадаць папку(і) ў плэйліст..."
 
 #: ../plugins/gtkui/actionhandlers.c:217
 msgid "Follow symlinks"
@@ -2226,15 +2227,15 @@ msgstr ""
 
 #: ../plugins/gtkui/widgets.c:626
 msgid "Cut"
-msgstr ""
+msgstr "Выняць"
 
 #: ../plugins/gtkui/widgets.c:633
 msgid "Copy"
-msgstr ""
+msgstr "Капіяваць"
 
 #: ../plugins/gtkui/widgets.c:640
 msgid "Paste"
-msgstr ""
+msgstr "Уставіць"
 
 #: ../plugins/gtkui/widgets.c:764
 msgid "Multiple widgets of this type are not supported"
