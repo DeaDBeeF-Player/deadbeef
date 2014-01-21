@@ -6,7 +6,7 @@ AP=$ORIGIN/tools/apbuild
 if [[ "$ARCH" == "i686" ]]; then
     export CFLAGS="-m32 -I$ORIGIN/../deadbeef-deps/lib-x86-32/include/i386-linux-gnu"
     export CXXFLAGS=$CFLAGS
-    export LDFLAGS="-m32 -L$ORIGIN/../deadbeef-deps/lib-x86-32/lib"
+    export LDFLAGS="-m32 -L$ORIGIN/../deadbeef-deps/lib-x86-32/lib -L$ORIGIN/../deadbeef-deps/lib-x86-32/lib/i386-linux-gnu"
     export CONFIGURE_FLAGS="--build=i686-unknown-linux-gnu"
     export LD_LIBRARY_PATH="$ORIGIN/../deadbeef-deps/lib-x86-32/lib"
     export PKG_CONFIG_PATH="$ORIGIN/../deadbeef-deps/lib-x86-32/lib/pkgconfig"
