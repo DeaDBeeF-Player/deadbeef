@@ -1011,7 +1011,6 @@ streamer_set_current (playItem_t *it) {
                 pl_item_unref (i);
                 i = next;
             }
-            pl_item_unref ((playItem_t*)m3u);
             plt_free (plt);
             if (res == 0) {
                 // succeeded -- playing now
