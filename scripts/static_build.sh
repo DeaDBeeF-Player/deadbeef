@@ -11,8 +11,8 @@ if [[ "$ARCH" == "i686" ]]; then
     export LD_LIBRARY_PATH="$ORIGIN/../deadbeef-deps/lib-x86-32/lib"
     export PKG_CONFIG_PATH="$ORIGIN/../deadbeef-deps/lib-x86-32/lib/pkgconfig"
 elif [[ "$ARCH" == "x86_64" ]]; then
-    export CFLAGS='-m64'
-    export LDFLAGS='-m64'
+    export CFLAGS='-m64 -I$ORIGIN/../deadbeef-deps/lib-x86-64/include/x86_64-linux-gnu'
+    export LDFLAGS="-m64 -L$ORIGIN/../deadbeef-deps/lib-x86-64/lib -L$ORIGIN/../deadbeef-deps/lib-x86-64/lib/x86_64-linux-gnu"
     export CONFIGURE_FLAGS="--build=x86_64-unknown-linux-gnu"
     export LD_LIBRARY_PATH="$ORIGIN/../deadbeef-deps/lib-x86-64/lib"
     export PKG_CONFIG_PATH="$ORIGIN/../deadbeef-deps/lib-x86-64/lib/pkgconfig"
