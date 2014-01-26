@@ -55,6 +55,7 @@ vfs_zip_is_streaming (void) {
 // fname must have form of zip://full_filepath.zip:full_filepath_in_zip
 DB_FILE*
 vfs_zip_open (const char *fname) {
+    trace ("vfs_zip: open %s\n", fname);
     if (strncasecmp (fname, "zip://", 6)) {
         return NULL;
     }
@@ -103,6 +104,7 @@ vfs_zip_open (const char *fname) {
 
 void
 vfs_zip_close (DB_FILE *f) {
+    trace ("vfs_zip: close\n");
     zip_file_t *zf = (zip_file_t *)f;
     if (zf->zf) {
         zip_fclose (zf->zf);
@@ -196,10 +198,12 @@ vfs_zip_scandir (const char *dir, struct dirent ***namelist, int (*selector) (co
         (*namelist)[i] = malloc (sizeof (struct dirent));
         memset ((*namelist)[i], 0, sizeof (struct dirent));
         const char *nm = zip_get_name (z, i, 0);
+        trace ("vfs_zip: %s\n", nm);
         snprintf ((*namelist)[i]->d_name, sizeof ((*namelist)[i]->d_name), "%s", nm);
     }
 
     zip_close (z);
+    trace ("vfs_zip: scandir done\n");
     return n;
 }
 
