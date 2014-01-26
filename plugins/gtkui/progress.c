@@ -78,6 +78,9 @@ progress_destroy (void) {
 
 void
 progress_settext (const char *text) {
+    if (deadbeef->junk_detect_charset (text)) {
+        text = "...";
+    }
     gtk_entry_set_text (GTK_ENTRY (progressitem), text);
 }
 
