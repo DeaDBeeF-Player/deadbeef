@@ -257,6 +257,7 @@ vtx_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         trace ("vtx: failed to read header\n");
         return NULL;
     }
+    printf ("hdr: %p\n", hdr);
     trace ("vtx: datasize: %d\n", hdr->regdata_size);
 
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
