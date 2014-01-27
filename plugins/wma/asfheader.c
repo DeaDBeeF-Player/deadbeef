@@ -392,17 +392,22 @@ static int asf_parse_header(DB_FILE *fd, asf_waveformatex_t* wfx, DB_playItem_t 
 {
     asf_object_t current;
     asf_object_t header;
-    uint64_t datalen;
-    int i;
+    uint64_t datalen = 0;
+    int i = 0;
     int fileprop = 0;
-    uint64_t play_duration;
-    uint16_t flags;
-    uint32_t subobjects;
+    uint64_t play_duration = 0;
+    uint16_t flags = 0;
+    uint32_t subobjects = 0;
     uint8_t utf8buf[512];
     int codectype = 0;
     unsigned char id3buffer[2048];
     unsigned char *id3buf = id3buffer;
     int id3buf_remaining = sizeof(id3buffer);
+
+    memset (&current, 0, sizeof (current));
+    memset (&header, 0, sizeof (header));
+    memset (&utf8buf, 0, sizeof (utf8buf));
+    memset (&id3buffer, 0, sizeof (id3buffer));
 
     asf_read_object_header((asf_object_t *) &header, fd);
 
