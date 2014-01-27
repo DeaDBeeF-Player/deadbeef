@@ -11,6 +11,9 @@
 
 #include "ayemu.h"
 
+//#define trace(...) { fprintf (stderr, __VA_ARGS__); }
+#define trace(fmt,...)
+
 #define AYEMU_VTX_STRING_MAX 254
 
 typedef const char * data_ptr_t;
@@ -97,7 +100,7 @@ static data_ptr_t read_header(data_ptr_t buf, ayemu_vtx_t **target, size_t size)
   else if (strncmp (hdr, "ym", 2) == 0)
     vtx->chiptype = AYEMU_YM;
   else {
-    fprintf (stderr, "File is _not_ VORTEX format!\n"
+    trace ("File is _not_ VORTEX format!\n"
 	     "It not begins with 'ay' or 'ym' string.\n");
     goto clean_and_ret_null;
   }
@@ -127,7 +130,7 @@ static data_ptr_t read_header(data_ptr_t buf, ayemu_vtx_t **target, size_t size)
 
 ayemu_vtx_t * ayemu_vtx_header(data_ptr_t buf, size_t size)
 {
-  ayemu_vtx_t *vtx;
+  ayemu_vtx_t *vtx = NULL;
 
   const char *data;
 
