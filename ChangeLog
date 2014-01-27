@@ -30,6 +30,9 @@ version 0.6.1
 	hide the "Hotkeys" tab from preferences if hotkeys plugin is not available
 	don't build shellexecui if not building shellexec
 	fixed memleak when drag-dropping pls/m3u playlists from file managers
+	prevent passing non-utf8 filenames to progress dialog
+	fixed crash when opening invalid VTX files
+	fixed crash when opening invalid WMA files
 
 version 0.6.0
 	gui layout designer, with a set of widgets to choose from (View -> Design mode, then use right click)
