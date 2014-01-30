@@ -946,8 +946,21 @@ cflac_write_metadata (DB_playItem_t *it) {
     } while (FLAC__metadata_iterator_next (iter));
 
     if (data) {
-        // delete all comments
-        FLAC__metadata_object_vorbiscomment_resize_comments (data, 0);
+        FLAC__StreamMetadata_VorbisComment *vc = &data->data.vorbis_comment;
+        int vc_comments = vc->num_comments;
+        for (int i = 0; i < vc_comments; i++) {
+            const FLAC__StreamMetadata_VorbisComment_Entry *c = &vc->comments[i];
+            if (c->length > 0) {
+                if (strncasecmp (c->entry, "replaygain_album_gain=", 22)
+                && strncasecmp (c->entry, "replaygain_album_peak=", 22)
+                && strncasecmp (c->entry, "replaygain_track_gain=", 22)
+                && strncasecmp (c->entry, "replaygain_track_peak=", 22)) {
+                    FLAC__metadata_object_vorbiscomment_delete_comment (data, i);
+                    vc_comments--;
+                    i--;
+                }
+            }
+        }
     }
     else {
         // create new and add to chain
@@ -962,6 +975,7 @@ cflac_write_metadata (DB_playItem_t *it) {
         }
     }
 
+    deadbeef->pl_lock ();
     DB_metaInfo_t *m = deadbeef->pl_get_metadata_head (it);
     while (m) {
         if (m->key[0] != ':') {
@@ -1000,6 +1014,8 @@ cflac_write_metadata (DB_playItem_t *it) {
         }
         m = m->next;
     }
+
+    deadbeef->pl_unlock ();
 
 #if 0 // fetching covers is broken, disabling for 0.5.2
     // check if we have embedded cover
