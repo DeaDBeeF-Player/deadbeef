@@ -958,7 +958,6 @@ gtkui_thread (void *ctx) {
     // let's start some gtk
     g_thread_init (NULL);
     add_pixmap_directory (deadbeef->get_pixmap_dir ());
-    gdk_threads_init ();
 
     int argc = 2;
     const char **argv = alloca (sizeof (char *) * argc);
