@@ -1,10 +1,17 @@
-#!/bin/sh
+#!/bin/bash
 
 PWD=`pwd`
 VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print'`
 ARCH_VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print' | sed 's/-//'`
 BUILD=`cat PORTABLE_BUILD | perl -ne 'chomp and print'`
-ARCH=`uname -m | perl -ne 'chomp and print'`
+if [[ "$ARCH" == "i686" ]]; then
+    echo
+elif [[ "$ARCH" == "x86_64" ]]; then
+    echo
+else
+    echo unknown arch $ARCH
+    exit -1
+fi
 INDIR=$PWD/static/$ARCH/deadbeef-$VERSION
 TEMPDIR=$PWD/package_temp/$ARCH/arch-$VERSION
 PKGINFO=$TEMPDIR/.PKGINFO

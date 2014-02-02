@@ -33,6 +33,8 @@ version 0.6.1
 	prevent passing non-utf8 filenames to progress dialog
 	fixed crash when opening invalid VTX files
 	fixed crash when opening invalid WMA files
+	don't delete replaygain info from FLACs when writing tags
+	fixed really old buffer overflow bug in dnd handler (kudos to Megabaks)
 
 version 0.6.0
 	gui layout designer, with a set of widgets to choose from (View -> Design mode, then use right click)
