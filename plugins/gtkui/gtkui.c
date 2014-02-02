@@ -947,17 +947,6 @@ gtkui_thread (void *ctx) {
 #ifdef __linux__
     prctl (PR_SET_NAME, "deadbeef-gtkui", 0, 0, 0, 0);
 #endif
-#ifndef __APPLE__
-    XInitThreads (); // gtkglext/xcb doesn't work without this
-    Display *disp = XOpenDisplay (NULL);
-    if (!disp) {
-        return -1;
-    }
-    XCloseDisplay (disp);
-#endif
-    // let's start some gtk
-    g_thread_init (NULL);
-    add_pixmap_directory (deadbeef->get_pixmap_dir ());
 
     int argc = 2;
     const char **argv = alloca (sizeof (char *) * argc);
@@ -969,7 +958,16 @@ gtkui_thread (void *ctx) {
     }
 
     gtk_disable_setlocale ();
+    add_pixmap_directory (deadbeef->get_pixmap_dir ());
 
+    // let's start some gtk
+    g_thread_init (NULL);
+#ifndef __FreeBSD__
+    // this call makes gtk_main hang on freebsd for unknown reason
+    // however, if we don't have this call, deadbeef will crash randomly on
+    // gentoo linux
+    gdk_threads_init ();
+#endif
     gtk_init (&argc, (char ***)&argv);
 
     // register widget types
