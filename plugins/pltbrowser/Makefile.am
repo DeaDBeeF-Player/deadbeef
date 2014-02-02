@@ -15,7 +15,7 @@ endif
 AM_CFLAGS = $(CFLAGS) -std=c99 -fPIC
 
 if HAVE_GTK2
-pltbrowser_gtk2_la_SOURCES = pltbrowser.c
+pltbrowser_gtk2_la_SOURCES = pltbrowser.c support.c support.h
 pltbrowser_gtk2_la_LDFLAGS = -module
 if STATICLINK
 GTK_ROOT=@top_srcdir@/$(LIB)/gtk-2.12.12/usr
