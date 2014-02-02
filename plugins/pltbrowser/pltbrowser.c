@@ -29,6 +29,7 @@
 #endif
 #include "../gtkui/gtkui_api.h"
 #include "../../gettext.h"
+#include "support.h"
 
 DB_functions_t *deadbeef;
 static ddb_gtkui_t *gtkui_plugin;
