@@ -21,11 +21,6 @@
 
 #include "ddblistview.h"
 
-typedef struct {
-    int id;
-    char *format;
-} col_info_t;
-
 #define MAX_GROUP_BY_STR 100
 extern char group_by_str[MAX_GROUP_BY_STR];
 

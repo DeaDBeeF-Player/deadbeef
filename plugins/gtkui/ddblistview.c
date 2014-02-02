@@ -607,6 +607,28 @@ ddb_listview_groupcheck (DdbListview *listview) {
     }
 }
 
+// returns 1 if X coordinate in list belongs to album art column and 0 if not
+int
+ddb_listview_is_album_art_column (DdbListview *listview, int x)
+{
+    int album_art_column = 0;
+    int col_x = 0;
+    int cnt = ddb_listview_column_get_count (listview);
+    for (int i = 0; i < cnt, col_x <= x; i++) {
+        const char *title;
+        int width;
+        int align_right;
+        col_info_t *info;
+        int minheight;
+        int res = ddb_listview_column_get_info (listview, i, &title, &width, &align_right, &minheight, (void **)&info);
+        if (res != -1 && x <= col_x + width && info->id == DB_COLUMN_ALBUM_ART) {
+            return 1;
+        }
+        col_x += width;
+    }
+    return 0;
+}
+
 // returns Y coordinate of an item by its index
 int
 ddb_listview_get_row_pos (DdbListview *listview, int row_idx) {
@@ -647,7 +669,7 @@ ddb_listview_list_pickpoint_y (DdbListview *listview, int y, DdbListviewGroup **
             y -= grp_y;
             if (y < listview->grouptitle_height) {
                 *group_idx = -1;
-                *global_idx = -1;
+                *global_idx = idx;
             }
             else if (y >= listview->grouptitle_height + grp->num_items * listview->rowheight) {
                 *group_idx = (y - listview->grouptitle_height) / listview->rowheight;
@@ -1433,7 +1455,11 @@ ddb_listview_click_selection (DdbListview *ps, int ex, int ey, DdbListviewGroup 
     deadbeef->pl_lock ();
     ps->areaselect = 0;
     ddb_listview_groupcheck (ps);
-    if (sel == -1 && (!grp || (ey > ps->grouptitle_height && grp_index >= grp->num_items))) {
+
+    // clicked album art column?
+    int album_art_column = ddb_listview_is_album_art_column (ps, ex);
+
+    if (sel == -1 && !album_art_column && (!grp || (ey > ps->grouptitle_height && grp_index >= grp->num_items))) {
         // clicked empty space, deselect everything
         DdbListviewIter it;
         int idx = 0;
@@ -1448,7 +1474,7 @@ ddb_listview_click_selection (DdbListview *ps, int ex, int ey, DdbListviewGroup 
             it = next;
         }
     }
-    else if ((sel == -1 && grp) || (ey <= ps->grouptitle_height && gtkui_groups_pinned)) {
+    else if ((sel != -1 && grp && grp_index == -1) || (ey <= ps->grouptitle_height && gtkui_groups_pinned) || album_art_column) {
         // clicked group title, select group
         DdbListviewIter it;
         int idx = 0;
@@ -1560,6 +1586,11 @@ ddb_listview_list_mouse1_pressed (DdbListview *ps, int state, int ex, int ey, Gd
 
     int prev = cursor;
     if (sel != -1) {
+        // pick 1st item in group in case album art column was clicked
+        if (ddb_listview_is_album_art_column (ps, ex) && grp_index != -1) {
+            sel -= grp_index;
+        }
+
         ps->binding->set_cursor (sel);
         DdbListviewIter it = ps->binding->get_for_idx (sel);
         if (it) {
