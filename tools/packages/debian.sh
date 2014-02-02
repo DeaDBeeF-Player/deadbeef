@@ -1,21 +1,20 @@
-#!/bin/sh
+#!/bin/bash
 
 PWD=`pwd`
 VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print'`
 DEB_VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print' | sed 's/-/~/'`
 BUILD=`cat PORTABLE_BUILD | perl -ne 'chomp and print'`
-ARCH=`uname -m | perl -ne 'chomp and print'`
+if [[ "$ARCH" == "i686" ]]; then
+    DEB_ARCH=i386
+elif [[ "$ARCH" == "x86_64" ]]; then
+    DEB_ARCH=amd64
+else
+    echo unknown arch $ARCH
+    exit -1
+fi
 INDIR=$PWD/static/$ARCH/deadbeef-$VERSION
 TEMPDIR=$PWD/package_temp/$ARCH/debian-$VERSION
 OUTDIR=$PWD/package_out/$ARCH/debian
-
-if [ "$ARCH" = "i686" ] ; then
-    DEB_ARCH=i386
-elif [ "$ARCH" = "x86_64" ] ; then
-    DEB_ARCH=amd64
-else
-    DEB_ARCH=unknown
-fi
 
 # make dirs
 rm -rf $TEMPDIR
