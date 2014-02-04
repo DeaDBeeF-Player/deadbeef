@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([deadbeef], [0.6.1])
+AC_INIT([deadbeef], [devel])
 
 AC_CONFIG_HEADER(config.h)
 
@@ -322,7 +322,9 @@ AS_IF([test "${enable_vorbis}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_VORBISPLUGIN=yes
         VORBIS_LIBS="../../$LIB/lib/libogg.a ../../$LIB/lib/libvorbis.a ../../$LIB/lib/libvorbisenc.a ../../$LIB/lib/libvorbisfile.a"
+        VORBIS_CFLAGS="-I../../$LIB/include"
         AC_SUBST(VORBIS_LIBS)
+        AC_SUBST(VORBIS_CFLAGS)
     ], [
         AC_CHECK_LIB([vorbis], [main], [HAVE_VORBIS=yes])
         AC_CHECK_LIB([vorbisfile], [main], [HAVE_VORBISFILE=yes])
