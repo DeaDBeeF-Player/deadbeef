@@ -556,16 +556,34 @@ ffmpeg_read_metadata_internal (DB_playItem_t *it, AVFormatContext *fctx) {
     // ffmpeg-0.11 new metadata format
     AVDictionary *md = fctx->metadata;
     AVDictionaryEntry *t = NULL;
-    while (t = av_dict_get (md, "", t, AV_DICT_IGNORE_SUFFIX)) {
-        int m;
-        for (m = 0; map[m]; m += 2) {
-            if (!strcasecmp (t->key, map[m])) {
-                deadbeef->pl_append_meta (it, map[m+1], t->value);
-                break;
+    int m;
+    if (md) {
+        while (t = av_dict_get (md, "", t, AV_DICT_IGNORE_SUFFIX)) {
+            for (m = 0; map[m]; m += 2) {
+                if (!strcasecmp (t->key, map[m])) {
+                    deadbeef->pl_append_meta (it, map[m+1], t->value);
+                    break;
+                }
+            }
+            if (!map[m]) {
+                deadbeef->pl_append_meta (it, t->key, t->value);
             }
         }
-        if (!map[m]) {
-            deadbeef->pl_append_meta (it, t->key, t->value);
+    }
+    else {
+        for (int i = 0; i < fctx->nb_streams; i++) {
+            md = fctx->streams[i]->metadata;
+            while (t = av_dict_get (md, "", t, AV_DICT_IGNORE_SUFFIX)) {
+                for (m = 0; map[m]; m += 2) {
+                    if (!strcasecmp (t->key, map[m])) {
+                        deadbeef->pl_append_meta (it, map[m+1], t->value);
+                        break;
+                    }
+                }
+                if (!map[m]) {
+                    deadbeef->pl_append_meta (it, t->key, t->value);
+                }
+            }
         }
     }
 #endif
