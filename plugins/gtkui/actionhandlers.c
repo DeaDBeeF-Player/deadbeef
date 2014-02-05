@@ -390,9 +390,38 @@ action_hide_mainwin_handler (struct DB_plugin_action_s *action, int ctx) {
     return 0;
 }
 
+static void
+on_toggle_set_custom_title (GtkToggleButton *togglebutton, gpointer user_data) {
+    gboolean active = gtk_toggle_button_get_active (togglebutton);
+    deadbeef->conf_set_int ("gtkui.location_set_custom_title", active);
+
+    GtkWidget *ct = lookup_widget (GTK_WIDGET (user_data), "custom_title");
+    gtk_widget_set_sensitive (ct, active);
+
+    deadbeef->conf_save ();
+}
+
+
 gboolean
 action_add_location_handler_cb (void *user_data) {
     GtkWidget *dlg = create_addlocationdlg ();
+
+    GtkWidget *sct = lookup_widget (dlg, "set_custom_title");
+    GtkWidget *ct = lookup_widget (dlg, "custom_title");
+
+    if (deadbeef->conf_get_int ("gtkui.location_set_custom_title", 0)) {
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (sct), TRUE);
+        gtk_widget_set_sensitive (ct, TRUE);
+    }
+    else {
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (sct), FALSE);
+        gtk_widget_set_sensitive (ct, FALSE);
+    }
+
+    g_signal_connect ((gpointer) sct, "toggled",
+            G_CALLBACK (on_toggle_set_custom_title),
+            dlg);
+
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
     int res = gtk_dialog_run (GTK_DIALOG (dlg));
     if (res == GTK_RESPONSE_OK) {
@@ -402,7 +431,14 @@ action_add_location_handler_cb (void *user_data) {
             if (text) {
                 ddb_playlist_t *plt = deadbeef->plt_get_curr ();
                 if (!deadbeef->plt_add_files_begin (plt, 0)) {
-                    deadbeef->plt_add_file2 (0, plt, text, NULL, NULL);
+                    DB_playItem_t *tail = deadbeef->plt_get_last (plt, PL_MAIN);
+                    DB_playItem_t *it = deadbeef->plt_insert_file2 (0, plt, tail, text, NULL, NULL, NULL);
+                    if (deadbeef->conf_get_int ("gtkui.location_set_custom_title", 0)) {
+                        deadbeef->pl_replace_meta (it, "DDB:CUSTOM_TITLE", gtk_entry_get_text (GTK_ENTRY (ct)));
+                    }
+                    if (tail) {
+                        deadbeef->pl_item_unref (tail);
+                    }
                     deadbeef->plt_add_files_end (plt, 0);
                     playlist_refresh ();
                 }

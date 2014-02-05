@@ -2913,8 +2913,21 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
             }
             else if (*fmt == 'a') {
                 meta = pl_find_meta_raw (it, "artist");
-                if (!meta) {
+                const char *custom = pl_find_meta_raw (it, "DDB:CUSTOM_TITLE");
+                if (!meta && !custom) {
                     meta = "Unknown artist";
+                }
+
+                if (custom) {
+                    if (!meta) {
+                        meta = custom;
+                    }
+                    else {
+                        int l = strlen (custom) + strlen (meta) + 4;
+                        char *out = alloca (l);
+                        snprintf (out, l, "[%s] %s", custom, meta);
+                        meta = out;
+                    }
                 }
             }
             else if (*fmt == 't') {
@@ -2961,6 +2974,19 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                         if (!meta) {
                             meta = pl_find_meta_raw (it, "artist");
                         }
+                    }
+                }
+
+                const char *custom = pl_find_meta_raw (it, "DDB:CUSTOM_TITLE");
+                if (custom) {
+                    if (!meta) {
+                        meta = custom;
+                    }
+                    else {
+                        int l = strlen (custom) + strlen (meta) + 4;
+                        char *out = alloca (l);
+                        snprintf (out, l, "[%s] %s", custom, meta);
+                        meta = out;
                     }
                 }
             }

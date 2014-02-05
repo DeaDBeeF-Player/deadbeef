@@ -3272,9 +3272,13 @@ create_addlocationdlg (void)
 {
   GtkWidget *addlocationdlg;
   GtkWidget *dialog_vbox4;
+  GtkWidget *vbox45;
   GtkWidget *hbox34;
   GtkWidget *label41;
   GtkWidget *addlocation_entry;
+  GtkWidget *hbox122;
+  GtkWidget *set_custom_title;
+  GtkWidget *custom_title;
   GtkWidget *addlocation_actionarea;
   GtkWidget *cancelbutton3;
   GtkWidget *alignment18;
@@ -3294,10 +3298,14 @@ create_addlocationdlg (void)
   dialog_vbox4 = gtk_dialog_get_content_area (GTK_DIALOG (addlocationdlg));
   gtk_widget_show (dialog_vbox4);
 
+  vbox45 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox45);
+  gtk_box_pack_start (GTK_BOX (dialog_vbox4), vbox45, TRUE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox45), 12);
+
   hbox34 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox34);
-  gtk_box_pack_start (GTK_BOX (dialog_vbox4), hbox34, TRUE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (hbox34), 12);
+  gtk_box_pack_start (GTK_BOX (vbox45), hbox34, TRUE, TRUE, 0);
 
   label41 = gtk_label_new (_("URL:"));
   gtk_widget_show (label41);
@@ -3309,6 +3317,19 @@ create_addlocationdlg (void)
   gtk_widget_set_size_request (addlocation_entry, 297, -1);
   gtk_entry_set_invisible_char (GTK_ENTRY (addlocation_entry), 8226);
   gtk_entry_set_activates_default (GTK_ENTRY (addlocation_entry), TRUE);
+
+  hbox122 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox122);
+  gtk_box_pack_start (GTK_BOX (vbox45), hbox122, TRUE, TRUE, 0);
+
+  set_custom_title = gtk_check_button_new_with_mnemonic (_("Set custom title"));
+  gtk_widget_show (set_custom_title);
+  gtk_box_pack_start (GTK_BOX (hbox122), set_custom_title, FALSE, FALSE, 0);
+
+  custom_title = gtk_entry_new ();
+  gtk_widget_show (custom_title);
+  gtk_box_pack_start (GTK_BOX (hbox122), custom_title, TRUE, TRUE, 0);
+  gtk_entry_set_invisible_char (GTK_ENTRY (custom_title), 8226);
 
   addlocation_actionarea = gtk_dialog_get_action_area (GTK_DIALOG (addlocationdlg));
   gtk_widget_show (addlocation_actionarea);
@@ -3359,9 +3380,13 @@ create_addlocationdlg (void)
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (addlocationdlg, addlocationdlg, "addlocationdlg");
   GLADE_HOOKUP_OBJECT_NO_REF (addlocationdlg, dialog_vbox4, "dialog_vbox4");
+  GLADE_HOOKUP_OBJECT (addlocationdlg, vbox45, "vbox45");
   GLADE_HOOKUP_OBJECT (addlocationdlg, hbox34, "hbox34");
   GLADE_HOOKUP_OBJECT (addlocationdlg, label41, "label41");
   GLADE_HOOKUP_OBJECT (addlocationdlg, addlocation_entry, "addlocation_entry");
+  GLADE_HOOKUP_OBJECT (addlocationdlg, hbox122, "hbox122");
+  GLADE_HOOKUP_OBJECT (addlocationdlg, set_custom_title, "set_custom_title");
+  GLADE_HOOKUP_OBJECT (addlocationdlg, custom_title, "custom_title");
   GLADE_HOOKUP_OBJECT_NO_REF (addlocationdlg, addlocation_actionarea, "addlocation_actionarea");
   GLADE_HOOKUP_OBJECT (addlocationdlg, cancelbutton3, "cancelbutton3");
   GLADE_HOOKUP_OBJECT (addlocationdlg, alignment18, "alignment18");
