@@ -184,7 +184,7 @@ gme_la_SOURCES = cgme.c\
 	$(gmeversion)/gme/Z80_Cpu.h\
 	$(gmeversion)/gme/Z80_Cpu_run.h
 
-gme_la_LDFLAGS = -module $(NOCPPLIB)
+gme_la_LDFLAGS = -module -avoid-version $(NOCPPLIB)
 gme_la_LIBADD = $(ZLIB_LIBS)
 
 AM_CFLAGS = $(CFLAGS) $(ZLIB_CFLAGS) -I$(gmepath) -std=c99 -DGME_VERSION_055

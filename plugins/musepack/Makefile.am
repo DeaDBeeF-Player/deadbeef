@@ -24,7 +24,7 @@ mpc/streaminfo.h\
 mpc/mpc_types.h\
 mpc/minimax.h
 
-musepack_la_LDFLAGS = -module
+musepack_la_LDFLAGS = -module -avoid-version
 musepack_la_LIBADD = $(LDADD) -lm
 
 AM_CFLAGS = $(CFLAGS) -fPIC -std=c99
