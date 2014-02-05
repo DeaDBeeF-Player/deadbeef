@@ -2,7 +2,7 @@ if HAVE_HOTKEYS
 hotkeysdir = $(libdir)/$(PACKAGE)
 pkglib_LTLIBRARIES = hotkeys.la
 hotkeys_la_SOURCES = hotkeys.c hotkeys.h ../libparser/parser.c ../libparser/parser.h actionhandlers.c actionhandlers.h
-hotkeys_la_LDFLAGS = -module
+hotkeys_la_LDFLAGS = -module -avoid-version
 
 EXTRA_hotkeys_la_SOURCES = keysyms.inc
 

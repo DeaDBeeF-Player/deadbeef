@@ -16,7 +16,7 @@ AM_CFLAGS = $(CFLAGS) -std=c99 -fPIC
 
 if HAVE_GTK2
 pltbrowser_gtk2_la_SOURCES = pltbrowser.c support.c support.h
-pltbrowser_gtk2_la_LDFLAGS = -module
+pltbrowser_gtk2_la_LDFLAGS = -module -avoid-version
 if STATICLINK
 GTK_ROOT=@top_srcdir@/$(LIB)/gtk-2.12.12/usr
 
@@ -31,7 +31,7 @@ endif
 
 if HAVE_GTK3
 pltbrowser_gtk3_la_SOURCES = pltbrowser.c
-pltbrowser_gtk3_la_LDFLAGS = -module
+pltbrowser_gtk3_la_LDFLAGS = -module -avoid-version
 if STATICLINK
 GTK_ROOT_300=@top_srcdir@/$(LIB)/gtk-3.0.0
 

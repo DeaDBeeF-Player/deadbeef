@@ -18,7 +18,7 @@ AM_CFLAGS = $(CFLAGS) -std=c99 -fPIC
 
 if HAVE_GTK2
 shellexecui_gtk2_la_SOURCES = shellexecui.c interface.c support.c callbacks.c interface.h support.h callbacks.h
-shellexecui_gtk2_la_LDFLAGS = -module
+shellexecui_gtk2_la_LDFLAGS = -module -avoid-version
 if STATICLINK
 GTK_ROOT=@top_srcdir@/$(LIB)/gtk-2.12.12/usr
 
@@ -33,7 +33,7 @@ endif
 
 if HAVE_GTK3
 shellexecui_gtk3_la_SOURCES = shellexecui.c interface.c support.c callbacks.c interface.h support.h callbacks.h
-shellexecui_gtk3_la_LDFLAGS = -module
+shellexecui_gtk3_la_LDFLAGS = -module -avoid-version
 if STATICLINK
 GTK_ROOT_300=@top_srcdir@/$(LIB)/gtk-3.0.0
 

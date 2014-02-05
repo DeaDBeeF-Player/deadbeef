@@ -29,11 +29,11 @@ EXTRA_DIST = $(convdata_DATA) converter.glade
 AM_CFLAGS = $(CFLAGS) -std=c99 -fPIC
 
 converter_la_SOURCES = converter.c converter.h
-converter_la_LDFLAGS = -module
+converter_la_LDFLAGS = -module -avoid-version
 
 if HAVE_GTK2
 converter_gtk2_la_SOURCES = convgui.c interface.c support.c callbacks.h converter.h interface.h support.h
-converter_gtk2_la_LDFLAGS = -module
+converter_gtk2_la_LDFLAGS = -module -avoid-version
 if STATICLINK
 GTK_ROOT=@top_srcdir@/$(LIB)/gtk-2.12.12/usr
 
@@ -48,7 +48,7 @@ endif
 
 if HAVE_GTK3
 converter_gtk3_la_SOURCES = convgui.c interface.c support.c callbacks.h converter.h interface.h support.h
-converter_gtk3_la_LDFLAGS = -module
+converter_gtk3_la_LDFLAGS = -module -avoid-version
 if STATICLINK
 GTK_ROOT_300=@top_srcdir@/$(LIB)/gtk-3.0.0
 

@@ -23,7 +23,7 @@ if APE_USE_YASM
 endif
 endif
 
-ffap_la_LDFLAGS = -module -lm
+ffap_la_LDFLAGS = -module -avoid-version -lm
 
 AM_CFLAGS = $(CFLAGS) -fPIC -std=c99
 endif

@@ -152,7 +152,7 @@ GTKUI_SOURCES_GTK2 = $(GTKUI_SOURCES)
 #GTKGLEXT_CFLAGS_GTK2 = -I@top_srcdir@/plugins/gtkui/gtkglext-gtk2 -I@top_srcdir@/plugins/gtkui/gtkglext-gtk2/gdk -DGTK_GL_COMPILATION -DGDK_GL_COMPILATION
 
 ddb_gui_GTK2_la_SOURCES = $(GTKUI_SOURCES_GTK2)
-ddb_gui_GTK2_la_LDFLAGS = -module
+ddb_gui_GTK2_la_LDFLAGS = -module -avoid-version
 
 if STATICLINK
 GTK_ROOT_216=@top_srcdir@/$(LIB)/gtk-2.16.0
@@ -231,7 +231,7 @@ GTKUI_SOURCES_GTK3 = $(GTKUI_SOURCES)
 
 GTKGLEXT_CFLAGS_GTK3 = -I@top_srcdir@/plugins/gtkui/gtkglext-gtk3 -I@top_srcdir@/plugins/gtkui/gtkglext-gtk3/gdk -DGTK_GL_COMPILATION -DGDK_GL_COMPILATION
 
-ddb_gui_GTK3_la_LDFLAGS = -module
+ddb_gui_GTK3_la_LDFLAGS = -module -avoid-version
 
 if STATICLINK
 ddb_gui_GTK3_la_SOURCES = $(GTKUI_SOURCES_GTK3)
@@ -254,7 +254,7 @@ if STATICLINK
 GTK_ROOT=@top_srcdir@/$(LIB)/gtk-2.12.12/usr
 
 ddb_gui_GTK2_fallback_la_SOURCES = $(GTKUI_SOURCES_GTK2)
-ddb_gui_GTK2_fallback_la_LDFLAGS = -module
+ddb_gui_GTK2_fallback_la_LDFLAGS = -module -avoid-version
 
 ddb_gui_GTK2_fallback_la_LIBADD = $(LDADD) -L$(GTK_ROOT)/lib $(GTK_ROOT)/lib/libgtk-x11-2.0.la $(GTK_ROOT)/lib/libgdk-x11-2.0.la $(GTK_ROOT)/lib/libpangoft2-1.0.la $(GTK_ROOT)/lib/libpangocairo-1.0.la $(GTK_ROOT)/lib/libgdk_pixbuf-2.0.la -lm $(GTK_ROOT)/lib/libcairo.la $(GTK_ROOT)/lib/libpango-1.0.la $(GTK_ROOT)/lib/libgobject-2.0.la $(GTK_ROOT)/lib/libgmodule-2.0.la $(GTK_ROOT)/lib/libgthread-2.0.la -lrt $(GTK_ROOT)/lib/libglib-2.0.la $(SM_LIBADD) ../libparser/libparser.a $(GTKGLEXT2_LIBS)
 

@@ -3,7 +3,7 @@ artworkdir = $(libdir)/$(PACKAGE)
 pkglib_LTLIBRARIES = artwork.la
 artwork_la_SOURCES = artwork.c artwork.h albumartorg.c albumartorg.h lastfm.c lastfm.h wos.c wos.h escape.c escape.h
 
-artwork_la_LDFLAGS = -module
+artwork_la_LDFLAGS = -module -avoid-version
 
 if HAVE_IMLIB2
 ARTWORK_DEPS=$(IMLIB2_DEPS_LIBS)
