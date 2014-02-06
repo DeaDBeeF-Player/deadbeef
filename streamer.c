@@ -132,7 +132,9 @@ static ddb_waveformat_t orig_output_format; // format that was requested before 
 static int formatchanged;
 
 static DB_fileinfo_t *fileinfo;
+static DB_FILE *fileinfo_file;
 static DB_fileinfo_t *new_fileinfo;
+static DB_FILE *new_fileinfo_file;
 
 static int streamer_buffering;
 
@@ -184,17 +186,15 @@ streamer_unlock (void) {
 static void
 streamer_abort_files (void) {
     trace ("\033[0;33mstreamer_abort_files\033[37;0m\n");
-    mutex_lock (decodemutex);
-    if (fileinfo && fileinfo->file) {
-        deadbeef->fabort (fileinfo->file);
+    if (fileinfo_file) {
+        deadbeef->fabort (fileinfo_file);
     }
-    if (new_fileinfo && new_fileinfo->file) {
-        deadbeef->fabort (new_fileinfo->file);
+    if (new_fileinfo_file) {
+        deadbeef->fabort (new_fileinfo_file);
     }
     if (streamer_file) {
         deadbeef->fabort (streamer_file);
     }
-    mutex_unlock (decodemutex);
 }
 
 
@@ -1123,6 +1123,7 @@ m3u_error:
             mutex_lock (decodemutex);
             dec->free (new_fileinfo);
             new_fileinfo = NULL;
+            new_fileinfo_file = NULL;
             mutex_unlock (decodemutex);
         }
 
@@ -1132,6 +1133,7 @@ m3u_error:
         }
         else {
             mutex_lock (decodemutex);
+            new_fileinfo_file = new_fileinfo->file;
             if (streaming_track) {
                 pl_item_unref (streaming_track);
             }
@@ -1151,10 +1153,12 @@ success:
     if (fileinfo) {
         fileinfo->plugin->free (fileinfo);
         fileinfo = NULL;
+        fileinfo_file = NULL;
     }
     if (new_fileinfo) {
         fileinfo = new_fileinfo;
         new_fileinfo = NULL;
+        new_fileinfo_file = NULL;
     }
     mutex_unlock (decodemutex);
     if (do_songstarted && playing_track) {
@@ -1482,6 +1486,7 @@ streamer_thread (void *ctx) {
                 if(fileinfo) {
                     fileinfo->plugin->free (fileinfo);
                     fileinfo = NULL;
+                    fileinfo_file = NULL;
                     pl_item_unref (streaming_track);
                     streaming_track = NULL;
                 }
@@ -1513,10 +1518,14 @@ streamer_thread (void *ctx) {
                         mutex_lock (decodemutex);
                         dec->free (fileinfo);
                         fileinfo = NULL;
+                        fileinfo_file = NULL;
                         mutex_unlock (decodemutex);
                     }
                 }
                 else {
+                    if (fileinfo) {
+                        fileinfo_file = fileinfo->file;
+                    }
                     mutex_unlock (decodemutex);
                 }
 
@@ -1660,6 +1669,7 @@ streamer_thread (void *ctx) {
     if (fileinfo) {
         fileinfo->plugin->free (fileinfo);
         fileinfo = NULL;
+        fileinfo_file = NULL;
     }
     if (streaming_track) {
         pl_item_unref (streaming_track);
