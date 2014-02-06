@@ -186,14 +186,17 @@ streamer_unlock (void) {
 static void
 streamer_abort_files (void) {
     trace ("\033[0;33mstreamer_abort_files\033[37;0m\n");
-    if (fileinfo_file) {
-        deadbeef->fabort (fileinfo_file);
+    DB_FILE *file = fileinfo_file;
+    DB_FILE *newfile = new_fileinfo_file;
+    DB_FILE *strfile = streamer_file;
+    if (file) {
+        deadbeef->fabort (file);
     }
-    if (new_fileinfo_file) {
-        deadbeef->fabort (new_fileinfo_file);
+    if (newfile) {
+        deadbeef->fabort (newfile);
     }
-    if (streamer_file) {
-        deadbeef->fabort (streamer_file);
+    if (strfile) {
+        deadbeef->fabort (strfile);
     }
 }
 
