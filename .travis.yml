@@ -4,6 +4,6 @@ compiler:
   - clang
 
 before_install:
-  - sudo apt-get install -qq autopoint automake autoconf intltool libgtk2.0-dev libgtk-3-dev libavutil-dev libavformat-dev libavcodec-dev libmad0-dev libwavpack-dev libflac-dev libx11-dev libfaad-dev libasound2-dev libcdio-cdda-dev libcdio-dev libcddb2-dev libsamplerate0-dev libsndfile1-dev libcurl4-nss-dev libdbus-1-dev libpulse-dev libzip-dev libvorbis-dev libimlib2-dev
+  - sudo apt-get update && sudo apt-get install -qq autopoint automake autoconf intltool libgtk2.0-dev libgtk-3-dev libavutil-dev libavformat-dev libavcodec-dev libmad0-dev libwavpack-dev libflac-dev libx11-dev libfaad-dev libasound2-dev libcdio-cdda-dev libcdio-dev libcddb2-dev libsamplerate0-dev libsndfile1-dev libcurl4-nss-dev libdbus-1-dev libpulse-dev libzip-dev libvorbis-dev libimlib2-dev
 
 script: ./autogen.sh && ./configure --disable-nls && make
