@@ -1,1 +1,1 @@
-[![travis-ci.org build status](https://travis-ci.org/oleksiyy/deadbeef.png?branch=master)](https://travis-ci.org/oleksiyy/deadbeef)
+[![Build Status](https://drone.io/github.com/oleksiyy/deadbeef/status.png)](https://drone.io/github.com/oleksiyy/deadbeef/latest)
