@@ -80,3 +80,4 @@ tools/pluginfo/x86_64
 portable_out
 static
 INSTALL
+/static-deps
