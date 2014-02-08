@@ -37,7 +37,7 @@
 #include "namedicons.h"
 #include "hotkeys.h" // for building action treeview
 #include "../../strdupa.h"
-#include "../../optmath.h"
+#include "../../fastftoi.h"
 #include "actions.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
