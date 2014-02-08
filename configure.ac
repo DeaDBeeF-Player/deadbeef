@@ -30,37 +30,37 @@ AC_DEFINE_UNQUOTED(LOCALEDIR, "${prefix}/${DATADIRNAME}/locale", [Name of gettex
 case "$host" in
   i686-apple-*)
     AC_DEFINE(ARCH_X86_32, 1, [architecture is x86 on OSX])
-    LIB="../deadbeef-deps/lib-x86-32-apple"
+    LIB="static-deps/lib-x86-32-apple"
     YASM_FLAGS="-f macho32 -D ARCH_X86_32 -m x86 -DPREFIX"
     APE_USE_YASM=yes
     OS_OSX=yes
     ;;
   x86_64-apple-*)
     AC_DEFINE(ARCH_X86_64, 1, [architecture is x86_64 on OSX])
-    LIB="../deadbeef-deps/lib-x86-64-apple"
+    LIB="static-deps/lib-x86-64-apple"
     YASM_FLAGS="-f macho64 -D ARCH_X86_64 -m amd64 -DPIC -DPREFIX"
     APE_USE_YASM=yes
     OS_OSX=yes
     ;;
   i386-*-* | i486-*-* | i586-*-* | i686-*-* | i86pc-*-*)
     AC_DEFINE(ARCH_X86_32, 1, [architecture is x86])
-    LIB="../deadbeef-deps/lib-x86-32"
+    LIB="static-deps/lib-x86-32"
     YASM_FLAGS="-f elf -D ARCH_X86_32 -m x86"
     APE_USE_YASM=yes
     ;;
   x86_64-*-* | amd64-*-*)
     AC_DEFINE(ARCH_X86_64, 1, [architecture is x86_64])
-    LIB="../deadbeef-deps/lib-x86-64"
+    LIB="static-deps/lib-x86-64"
     YASM_FLAGS="-f elf -D ARCH_X86_64 -m amd64"
     APE_USE_YASM=yes
     ;;
   powerpc-*-* )
     AC_DEFINE(ARCH_PPC_32, 1, [architecture is ppc32])
-    LIB="../deadbeef-deps/lib-ppc-32"
+    LIB="static-deps/lib-ppc-32"
     ;;
   powerpc64-*-* )
     AC_DEFINE(ARCH_PPC_64, 1, [architecture is ppc64])
-    LIB="../deadbeef-deps/lib-ppc-64"
+    LIB="static-deps/lib-ppc-64"
     ;;
   *)
     AC_DEFINE(ARCH_UNKNOWN, 1, [architecture is unknown])
