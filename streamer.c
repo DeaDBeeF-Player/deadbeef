@@ -41,7 +41,7 @@
 #include "messagepump.h"
 #include "conf.h"
 #include "plugins.h"
-#include "optmath.h"
+#include "fastftoi.h"
 #include "volume.h"
 #include "vfs.h"
 #include "premix.h"
