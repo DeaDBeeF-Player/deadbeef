@@ -237,7 +237,7 @@ dnl    AC_CHECK_LIB([ICE], [main], [HAVE_ICE=yes;ICE_LIBS="-lICE";AC_SUBST(ICE_L
 AS_IF([test "${enable_alsa}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_ALSA=yes
-        ALSA_DEPS_CFLAGS="-I../../$LIB/include/alsa"
+        ALSA_DEPS_CFLAGS="-I../../$LIB/include"
         ALSA_DEPS_LIBS="-lasound"
         AC_SUBST(ALSA_DEPS_CFLAGS)
         AC_SUBST(ALSA_DEPS_LIBS)
