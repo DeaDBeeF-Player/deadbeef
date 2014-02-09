@@ -187,21 +187,27 @@ CFLAGS="$CFLAGS $INSANE_CFLAGS -D_GNU_SOURCE $PREFIXFLAGS -DDDB_WARN_DEPRECATED=
 
 AS_IF([test "${enable_staticlink}" != "no"], [
     HAVE_ZLIB=yes
+    ZLIB_CFLAGS="-I../../$LIB/include"
     ZLIB_LIBS="../../$LIB/lib/libz.a"
+    AC_SUBST(ZLIB_CFLAGS)
+    AC_SUBST(ZLIB_LIBS)
 ], [
     AC_CHECK_LIB([z], [main], [HAVE_ZLIB=yes])
     ZLIB_LIBS="-lz"
+    AC_SUBST(ZLIB_LIBS)
 ])
-AC_SUBST(ZLIB_LIBS)
 
 AS_IF([test "${enable_staticlink}" != "no"], [
     HAVE_ZIP=yes
+    ZIP_CFLAGS="-I../../$LIB/include"
     ZIP_LIBS="../../$LIB/lib/libzip.a ../../$LIB/lib/libz.a"
+    AC_SUBST(ZIP_CFLAGS)
+    AC_SUBST(ZIP_LIBS)
 ], [
     AC_CHECK_LIB([zip], [main], [HAVE_ZIP=yes])
     ZIP_LIBS="-lzip"
+    AC_SUBST(ZIP_LIBS)
 ])
-AC_SUBST(ZIP_LIBS)
 
 AS_IF([test "${enable_gtk3}" = "yes"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
@@ -279,7 +285,15 @@ AS_IF([test "${enable_staticlink}" != "no"], [
 ])
 
 AS_IF([test "${enable_pulse}" != "no"], [
-    PKG_CHECK_MODULES(PULSE_DEPS, libpulse-simple, HAVE_PULSE=yes, HAVE_PULSE=no)
+    AS_IF([test "${enable_staticlink}" != "no"], [
+        HAVE_PULSE=yes
+        PULSE_DEPS_LIBS="-lpulse-simple"
+        PULSE_DEPS_CFLAGS="-I../../$LIB/include/"
+        AC_SUBST(DBUS_DEPS_CFLAGS)
+        AC_SUBST(DBUS_DEPS_LIBS)
+    ], [
+        PKG_CHECK_MODULES(PULSE_DEPS, libpulse-simple, HAVE_PULSE=yes, HAVE_PULSE=no)
+    ])
 ])
 
 AC_CHECK_HEADER([iconv.h],[],[iconv.h not found.])
@@ -634,7 +648,9 @@ AS_IF([test "${enable_dca}" != "no"], [
 
 AS_IF([test "${enable_aac}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
+        FAAD2_CFLAGS="-I../../$LIB/include"
         FAAD2_LIBS="../../$LIB/lib/libfaad.a"
+        AC_SUBST(FAAD2_CFLAGS)
         AC_SUBST(FAAD2_LIBS)
         HAVE_AAC=yes
     ], [
