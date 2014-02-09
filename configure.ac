@@ -447,11 +447,22 @@ AS_IF([test "${enable_ffmpeg}" != "no"], [
 ])
 
 AS_IF([test "${enable_hotkeys}" != "no"], [
-    AC_CHECK_HEADER([X11/Xlib.h], HAVE_XLIB_H=yes)
     AS_IF([test "${HAVE_XLIB_H}" = "yes"], [
-        HOTKEYS_LIBS="-lX11"
-        AC_SUBST(HOTKEYS_LIBS)
-        HAVE_HOTKEYS=yes
+        AS_IF([test "${enable_staticlink}" = "no"], [
+            HOTKEYS_CFLAGS="-I../../$LIB/include"
+            HOTKEYS_LIBS="-lX11"
+            AC_SUBST(HOTKEYS_CFLAGS)
+            AC_SUBST(HOTKEYS_LIBS)
+            HAVE_HOTKEYS=yes
+        ],
+        [
+            AC_CHECK_HEADER([X11/Xlib.h], HAVE_XLIB_H=yes)
+            AS_IF([test "${HAVE_XLIB_H}" = "yes"], [
+                HOTKEYS_LIBS="-lX11"
+                AC_SUBST(HOTKEYS_LIBS)
+                HAVE_HOTKEYS=yes
+            ])
+        ])
     ])
 ])
 
