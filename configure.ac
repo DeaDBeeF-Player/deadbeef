@@ -235,7 +235,16 @@ dnl    AC_CHECK_LIB([ICE], [main], [HAVE_ICE=yes;ICE_LIBS="-lICE";AC_SUBST(ICE_L
 ])
 
 AS_IF([test "${enable_alsa}" != "no"], [
-    PKG_CHECK_MODULES(ALSA_DEPS, alsa, HAVE_ALSA=yes, HAVE_ALSA=no)
+    AS_IF([test "${enable_staticlink}" != "no"], [
+        HAVE_ALSA=yes
+        ALSA_DEPS_CFLAGS="-I../../$LIB/include/alsa"
+        ALSA_DEPS_LIBS="-lasound"
+        AC_SUBST(ALSA_DEPS_CFLAGS)
+        AC_SUBST(ALSA_DEPS_LIBS)
+    ],
+    [
+        PKG_CHECK_MODULES(ALSA_DEPS, alsa, HAVE_ALSA=yes, HAVE_ALSA=no)
+    ])
 ])
 
 AC_CHECK_HEADER([CoreAudio/AudioHardware.h], [found_coreaudio_h=yes], [found_coreaudio_h=no])
