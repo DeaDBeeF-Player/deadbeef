@@ -7,5 +7,5 @@ hotkeys_la_LDFLAGS = -module -avoid-version
 EXTRA_hotkeys_la_SOURCES = keysyms.inc
 
 hotkeys_la_LIBADD = $(LDADD) $(HOTKEYS_LIBS)
-AM_CFLAGS = $(CFLAGS) -std=c99
+AM_CFLAGS = $(CFLAGS) $(HOTKEYS_CFLAGS) -std=c99
 endif
