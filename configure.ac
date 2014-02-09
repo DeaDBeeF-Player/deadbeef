@@ -342,7 +342,9 @@ dnl flac plugin
 AS_IF([test "${enable_flac}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_FLACPLUGIN=yes
+        FLAC_CFLAGS="-I../../$LIB/include"
         FLAC_LIBS="../../$LIB/lib/libFLAC.a ../../$LIB/lib/libogg.a"
+        AC_SUBST(FLAC_CFLAGS)
         AC_SUBST(FLAC_LIBS)
     ], [
         AC_CHECK_LIB([FLAC], [main], [HAVE_FLAC=yes])
@@ -358,7 +360,9 @@ dnl wavpack plugin
 AS_IF([test "${enable_wavpack}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_WAVPACKPLUGIN=yes
+        WAVPACK_CFLAGS="-I../../$LIB/include"
         WAVPACK_LIBS="../../$LIB/lib/libwavpack.a"
+        AC_SUBST(WAVPACK_CFLAGS)
         AC_SUBST(WAVPACK_LIBS)
     ], [
         AC_CHECK_LIB([wavpack], [main], [HAVE_WAVPACK=yes])
@@ -374,7 +378,9 @@ dnl libsndfile plugin
 AS_IF([test "${enable_sndfile}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_SNDFILEPLUGIN=yes
-        SNDFILE_LIBS="../../$LIB/lib/libsndfile.a"
+        SNDFILE_CFLAGS="-I../../$LIB/include"
+        SNDFILE_LIBS="../../$LIB/lib/libsndfile"
+        AC_SUBST(SNDFILE_CFLAGS)
         AC_SUBST(SNDFILE_LIBS)
     ], [
         AC_CHECK_LIB([sndfile], [main], [HAVE_SNDFILE=yes])
