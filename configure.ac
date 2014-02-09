@@ -305,7 +305,9 @@ dnl mpgmad plugin
 AS_IF([test "${enable_mpgmad}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_MPGMAD=yes
+        MAD_CFLAGS="-I../../$LIB/include"
         MAD_LIBS="../../$LIB/lib/libmad.a"
+        AC_SUBST(MAD_CFLAGS)
         AC_SUBST(MAD_LIBS)
     ], [
         AC_CHECK_LIB([mad], [main], [HAVE_LIBMAD=yes])
