@@ -599,7 +599,9 @@ AS_IF([test "${enable_nullout}" != "no"], [
 
 AS_IF([test "${enable_src}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
+        LIBSAMPLERATE_DEPS_CFLAGS="-I../../$LIB/include"
         LIBSAMPLERATE_DEPS_LIBS="../../$LIB/lib/libsamplerate.a -lpthread ${DL_LIBS}"
+        AC_SUBST(LIBSAMPLERATE_DEPS_CFLAGS)
         AC_SUBST(LIBSAMPLERATE_DEPS_LIBS)
         HAVE_DSP_SRC=yes
     ], [
