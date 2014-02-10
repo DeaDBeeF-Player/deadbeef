@@ -21,6 +21,7 @@ DOCDIR=$SRCDIR/doc
 PIXMAPDIR=$SRCDIR/pixmaps
 OUTNAME=deadbeef-static_${VERSION}-${BUILD}_${ARCH}.tar.bz2
 
+mkdir -p portable_out/build
 rm portable_out/build/$OUTNAME
 
 cd portable/$ARCH
