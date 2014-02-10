@@ -461,7 +461,7 @@ AS_IF([test "${enable_ffmpeg}" != "no"], [
 ])
 
 AS_IF([test "${enable_hotkeys}" != "no"], [
-    AS_IF([test "${enable_staticlink}" = "no"], [
+    AS_IF([test "${enable_staticlink}" != "no"], [
         HOTKEYS_CFLAGS="-I../../$LIB/include"
         HOTKEYS_LIBS="-lX11"
         AC_SUBST(HOTKEYS_CFLAGS)
