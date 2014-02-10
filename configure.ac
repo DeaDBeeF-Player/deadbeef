@@ -469,8 +469,8 @@ AS_IF([test "${enable_hotkeys}" != "no"], [
         HAVE_HOTKEYS=yes
     ],
     [
+        AC_CHECK_HEADER([X11/Xlib.h], HAVE_XLIB_H=yes)
         AS_IF([test "${HAVE_XLIB_H}" = "yes"], [
-            AC_CHECK_HEADER([X11/Xlib.h], HAVE_XLIB_H=yes)
             AS_IF([test "${HAVE_XLIB_H}" = "yes"], [
                 HOTKEYS_LIBS="-lX11"
                 AC_SUBST(HOTKEYS_LIBS)
