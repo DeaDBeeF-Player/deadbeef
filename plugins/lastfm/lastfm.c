@@ -359,7 +359,7 @@ lfm_fetch_song_info (DB_playItem_t *song, float playtime, char *a, char *t, char
     if (!deadbeef->pl_get_meta (song, "track", n, META_FIELD_SIZE)) {
         *n = 0;
     }
-    if (!deadbeef->pl_get_meta (song, "musicbrainz_trackid", m, META_FIELD_SIZE)) {
+    if (!deadbeef->conf_get_int ("lastfm.mbid", 0) || !deadbeef->pl_get_meta (song, "musicbrainz_trackid", m, META_FIELD_SIZE)) {
         *m = 0;
     }
     return 0;
@@ -973,6 +973,7 @@ static const char settings_dlg[] =
     "property Password password lastfm.password \"\";"
     "property \"Scrobble URL\" entry lastfm.scrobbler_url \""SCROBBLER_URL_LFM"\";"
     "property \"Prefer Album Artist over Artist field\" checkbox lastfm.prefer_album_artist 0;"
+    "property \"Send MusicBrainz ID\" checkbox lastfm.mbid 0;"
 ;
 
 // define plugin interface
