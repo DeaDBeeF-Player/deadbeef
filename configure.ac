@@ -4,7 +4,7 @@ AC_INIT([deadbeef], [devel])
 AC_CONFIG_HEADER(config.h)
 
 AM_INIT_AUTOMAKE([1.11 dist-bzip2 tar-ustar])
-AM_SILENT_RULES([yes])
+dnl AM_SILENT_RULES([yes])
 AM_MAINTAINER_MODE()
 
 AC_USE_SYSTEM_EXTENSIONS
@@ -87,6 +87,7 @@ AC_ARG_ENABLE(gtk2,     [AS_HELP_STRING([--disable-gtk2     ], [build GTK2 versi
 AC_ARG_ENABLE(vfs_curl, [AS_HELP_STRING([--disable-vfs-curl], [disable HTTP streaming vfs plugin (default: enabled)])], [enable_vfs_curl=$enableval], [enable_vfs_curl=yes])
 AC_ARG_ENABLE(lfm,      [AS_HELP_STRING([--disable-lfm     ], [disable last.fm/libre.fm scrobbler plugin (default: enabled)])], [enable_lfm=$enableval], [enable_lfm=yes])
 AC_ARG_ENABLE(artwork,  [AS_HELP_STRING([--disable-artwork ], [disable album art loader plugin (default: enabled)])], [enable_artwork=$enableval], [enable_artwork=yes])
+AC_ARG_ENABLE(artwork-network,  [AS_HELP_STRING([--disable-artwork-network ], [disable album art network loading support (default: enabled)])], [enable_artwork_network=$enableval], [enable_artwork_network=yes])
 AC_ARG_ENABLE(supereq,  [AS_HELP_STRING([--disable-supereq ], [disable SuperEQ DSP plugin (default: enabled)])], [enable_supereq=$enableval], [enable_supereq=yes])
 AC_ARG_ENABLE(sid,      [AS_HELP_STRING([--disable-sid     ], [disable commodore64 SID music player plugin (default: enabled)])], [enable_sid=$enableval], [enable_sid=yes])
 AC_ARG_ENABLE(mad,      [AS_HELP_STRING([--disable-mad     ], [disable mpeg (mad) plugin (default: enabled)])], [enable_mpgmad=$enableval], [enable_mpgmad=yes])
@@ -570,8 +571,12 @@ AS_IF([test "${enable_artwork}" != "no"], [
         ])
     ])
 
-    AS_IF([test "${HAVE_VFS_CURL}" = "yes"], [
-        AS_IF([test "${HAVE_JPEG}" = "yes" -o "${HAVE_IMLIB2}" == "yes"], [
+    AS_IF([test "${enable_artwork_network}" = "yes"], [
+        ARTWORK_USE_VFS_CURL=yes
+    ])
+
+    AS_IF([test "${HAVE_VFS_CURL}" = "yes" -o "${enable_artwork_network}" = "no" ], [
+        AS_IF([test "${HAVE_JPEG}" = "yes" -o "${HAVE_IMLIB2}" = "yes"], [
             HAVE_ARTWORK=yes
         ])
     ])
@@ -732,6 +737,7 @@ AM_CONDITIONAL(HAVE_COREAUDIO, test "x$HAVE_COREAUDIO" = "xyes")
 AM_CONDITIONAL(HAVE_FFMPEG, test "x$HAVE_FFMPEGPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_PULSE, test "x$HAVE_PULSEPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_ARTWORK, test "x$HAVE_ARTWORK" = "xyes")
+AM_CONDITIONAL(ARTWORK_USE_VFS_CURL, test "x$ARTWORK_USE_VFS_CURL" = "xyes")
 AM_CONDITIONAL(HAVE_ADPLUG, test "x$HAVE_ADPLUG" = "xyes")
 AM_CONDITIONAL(HAVE_FFAP, test "x$HAVE_FFAP" = "xyes")
 AM_CONDITIONAL(HAVE_SID, test "x$HAVE_SID" = "xyes")
