@@ -94,9 +94,6 @@ int
 gtkui_add_new_playlist (void);
 
 void
-seekbar_redraw (void);
-
-void
 seekbar_draw (GtkWidget *widget, cairo_t *cr);
 
 gboolean
@@ -161,5 +158,8 @@ gtkui_quit (void);
 
 void
 gtkui_run_preferences_dlg (void);
+
+int
+gtkui_get_gui_refresh_rate ();
 
 #endif

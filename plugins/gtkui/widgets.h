@@ -122,4 +122,7 @@ w_vbox_create (void);
 ddb_gtkui_widget_t *
 w_button_create (void);
 
+ddb_gtkui_widget_t *
+w_seekbar_create (void);
+
 #endif

@@ -52,7 +52,6 @@ static gboolean ddb_seekbar_real_button_press_event (GtkWidget* base, GdkEventBu
 static gboolean ddb_seekbar_real_button_release_event (GtkWidget* base, GdkEventButton* event);
 static gboolean ddb_seekbar_real_motion_notify_event (GtkWidget* base, GdkEventMotion* event);
 static gboolean ddb_seekbar_real_configure_event (GtkWidget* base, GdkEventConfigure* event);
-DdbSeekbar* ddb_seekbar_new (void);
 DdbSeekbar* ddb_seekbar_construct (GType object_type);
 static GObject * ddb_seekbar_constructor (GType type, guint n_construct_properties, GObjectConstructParam * construct_properties);
 
@@ -158,8 +157,8 @@ DdbSeekbar* ddb_seekbar_construct (GType object_type) {
 }
 
 
-DdbSeekbar* ddb_seekbar_new (void) {
-	return ddb_seekbar_construct (DDB_TYPE_SEEKBAR);
+GtkWidget* ddb_seekbar_new (void) {
+	return GTK_WIDGET (ddb_seekbar_construct (DDB_TYPE_SEEKBAR));
 }
 
 
@@ -452,10 +451,50 @@ on_seekbar_button_release_event        (GtkWidget       *widget,
     return FALSE;
 }
 
-void
-seekbar_redraw (void) {
-    GtkWidget *widget = lookup_widget (mainwin, "seekbar");
-    gtk_widget_queue_draw (widget);
+static gboolean
+on_evbox_button_press_event          (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data)
+{
+    return gtk_widget_event (GTK_WIDGET (user_data), (GdkEvent *)event);
 }
 
+gboolean
+on_evbox_button_release_event        (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data)
+{
+    return gtk_widget_event (GTK_WIDGET (user_data), (GdkEvent *)event);
+}
+
+static gboolean
+on_evbox_motion_notify_event         (GtkWidget       *widget,
+                                        GdkEventMotion  *event,
+                                        gpointer         user_data)
+{
+    return gtk_widget_event (GTK_WIDGET (user_data), (GdkEvent *)event);
+}
+
+static gboolean
+on_evbox_scroll_event                (GtkWidget       *widget,
+                                        GdkEvent        *event,
+                                        gpointer         user_data) {
+    return gtk_widget_event (GTK_WIDGET (user_data), (GdkEvent *)event);
+}
+
+void
+ddb_seekbar_init_signals (DdbSeekbar *sb, GtkWidget *evbox) {
+  g_signal_connect ((gpointer) evbox, "button_press_event",
+                    G_CALLBACK (on_evbox_button_press_event),
+                    sb);
+  g_signal_connect ((gpointer) evbox, "button_release_event",
+                    G_CALLBACK (on_evbox_button_release_event),
+                    sb);
+  g_signal_connect ((gpointer) evbox, "scroll_event",
+                    G_CALLBACK (on_evbox_scroll_event),
+                    sb);
+  g_signal_connect ((gpointer) evbox, "motion_notify_event",
+                    G_CALLBACK (on_evbox_motion_notify_event),
+                    sb);
+}
 
