@@ -34,10 +34,14 @@ struct _DdbSeekbarClass {
 };
 
 
-GType ddb_seekbar_get_type (void);
-DdbSeekbar* ddb_seekbar_new (void);
-DdbSeekbar* ddb_seekbar_construct (GType object_type);
+GType
+ddb_seekbar_get_type (void);
 
+GtkWidget*
+ddb_seekbar_new (void);
+
+void
+ddb_seekbar_init_signals (DdbSeekbar *sb, GtkWidget *evbox);
 
 G_END_DECLS
 

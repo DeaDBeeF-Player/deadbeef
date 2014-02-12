@@ -149,7 +149,6 @@ update_songinfo (gpointer ctx) {
     }
     DB_output_t *output = deadbeef->get_output ();
     char sbtext_new[512] = "-";
-    float songpos = last_songpos;
 
     float pl_totaltime = deadbeef->pl_get_totaltime ();
     int daystotal = (int)pl_totaltime / (3600*24);
@@ -175,7 +174,6 @@ update_songinfo (gpointer ctx) {
 
     if (!output || (output->state () == OUTPUT_STATE_STOPPED || !track || !c)) {
         snprintf (sbtext_new, sizeof (sbtext_new), _("Stopped | %d tracks | %s total playtime"), deadbeef->pl_getcount (PL_MAIN), totaltime_str);
-        songpos = 0;
     }
     else {
         float playpos = deadbeef->streamer_get_playpos ();
@@ -195,7 +193,6 @@ update_songinfo (gpointer ctx) {
         }
         int samplerate = c->fmt.samplerate;
         int bitspersample = c->fmt.bps;
-        songpos = playpos;
         //        codec_unlock ();
 
         char t[100];
@@ -240,18 +237,6 @@ update_songinfo (gpointer ctx) {
         gtk_statusbar_push (sb, sb_context_id, sb_text);
     }
 
-    if (mainwin) {
-        GtkWidget *widget = lookup_widget (mainwin, "seekbar");
-        // translate volume to seekbar pixels
-        songpos /= duration;
-        GtkAllocation a;
-        gtk_widget_get_allocation (widget, &a);
-        songpos *= a.width;
-        if (fabs (songpos - last_songpos) > 0.01) {
-            gtk_widget_queue_draw (widget);
-            last_songpos = songpos;
-        }
-    }
     if (track) {
         deadbeef->pl_item_unref (track);
     }
@@ -692,12 +677,15 @@ update_win_title_idle (gpointer data) {
 
 static gboolean
 redraw_seekbar_cb (gpointer nothing) {
+    return FALSE;
+#if 0
     int iconified = gdk_window_get_state(gtk_widget_get_window(mainwin)) & GDK_WINDOW_STATE_ICONIFIED;
     if (!gtk_widget_get_visible (mainwin) || iconified) {
         return FALSE;
     }
     seekbar_redraw ();
     return FALSE;
+#endif
 }
 
 int
@@ -746,8 +734,8 @@ volumebar_redraw (void) {
 
 static gint refresh_timeout = 0;
 
-void
-gtkui_setup_gui_refresh (void) {
+int
+gtkui_get_gui_refresh_rate () {
     int fps = deadbeef->conf_get_int ("gtkui.refresh_rate", 10);
     if (fps < 1) {
         fps = 1;
@@ -755,8 +743,12 @@ gtkui_setup_gui_refresh (void) {
     else if (fps > 30) {
         fps = 30;
     }
+    return fps;
+}
 
-    int tm = 1000/fps;
+void
+gtkui_setup_gui_refresh (void) {
+    int tm = 1000/gtkui_get_gui_refresh_rate ();
 
     if (refresh_timeout) {
         g_source_remove (refresh_timeout);
@@ -987,6 +979,7 @@ gtkui_thread (void *ctx) {
     w_reg_widget (_("HBox"), 0, w_hbox_create, "hbox", NULL);
     w_reg_widget (_("VBox"), 0, w_vbox_create, "vbox", NULL);
     w_reg_widget (_("Button"), 0, w_button_create, "button", NULL);
+    w_reg_widget (_("Seekbar"), 0, w_seekbar_create, "seekbar", NULL);
 
     mainwin = create_mainwin ();
 
