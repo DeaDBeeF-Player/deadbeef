@@ -46,9 +46,11 @@
 #include <assert.h>
 #include "../../deadbeef.h"
 #include "artwork.h"
+#ifdef USE_VFS_CURL
 #include "lastfm.h"
 #include "albumartorg.h"
 #include "wos.h"
+#endif
 
 #ifdef USE_IMLIB2
 #include <Imlib2.h>
@@ -109,9 +111,11 @@ static intptr_t tid;
 
 static int artwork_enable_embedded;
 static int artwork_enable_local;
+#ifdef USE_VFS_CURL
 static int artwork_enable_lfm;
 static int artwork_enable_aao;
 static int artwork_enable_wos;
+#endif
 static time_t artwork_reset_time;
 static char artwork_filemask[200];
 
@@ -1160,6 +1164,7 @@ fetcher_thread (void *none)
                 }
             }
 
+#ifdef USE_VFS_CURL
             if (!got_pic) {
                 if (artwork_enable_wos) {
 
@@ -1188,6 +1193,7 @@ fetcher_thread (void *none)
                     got_pic = 1;
                 }
             }
+#endif
 
             if (got_pic) {
                 trace ("downloaded art for %s %s\n", param->album, param->artist);
@@ -1382,25 +1388,31 @@ static int
 artwork_configchanged (void) {
     int new_artwork_enable_embedded = deadbeef->conf_get_int ("artwork.enable_embedded", 1);
     int new_artwork_enable_local = deadbeef->conf_get_int ("artwork.enable_localfolder", 1);
+#ifdef USE_VFS_CURL
     int new_artwork_enable_lfm = deadbeef->conf_get_int ("artwork.enable_lastfm", 0);
     int new_artwork_enable_aao = deadbeef->conf_get_int ("artwork.enable_albumartorg", 0);
     int new_artwork_enable_wos = deadbeef->conf_get_int ("artwork.enable_wos", 0);
+#endif
 
     char new_artwork_filemask[200];
     deadbeef->conf_get_str ("artwork.filemask", DEFAULT_FILEMASK, new_artwork_filemask, sizeof (new_artwork_filemask));
 
     if (new_artwork_enable_embedded != artwork_enable_embedded
             || new_artwork_enable_local != artwork_enable_local
+#ifdef USE_VFS_CURL
             || new_artwork_enable_lfm != artwork_enable_lfm
             || new_artwork_enable_aao != artwork_enable_aao
             || new_artwork_enable_wos != artwork_enable_wos
+#endif
             || strcmp (new_artwork_filemask, artwork_filemask)) {
         trace ("artwork config changed, invalidating cache...\n");
         artwork_enable_embedded = new_artwork_enable_embedded;
         artwork_enable_local = new_artwork_enable_local;
+#ifdef USE_VFS_CURL
         artwork_enable_lfm = new_artwork_enable_lfm;
         artwork_enable_aao = new_artwork_enable_aao;
         artwork_enable_wos = new_artwork_enable_wos;
+#endif
         artwork_reset_time = time (NULL);
         strcpy (artwork_filemask, new_artwork_filemask);
         deadbeef->conf_set_int64 ("artwork.cache_reset_time", artwork_reset_time);
@@ -1437,8 +1449,11 @@ artwork_plugin_start (void)
 
     artwork_enable_embedded = deadbeef->conf_get_int ("artwork.enable_embedded", 1);
     artwork_enable_local = deadbeef->conf_get_int ("artwork.enable_localfolder", 1);
+#ifdef USE_VFS_CURL
     artwork_enable_lfm = deadbeef->conf_get_int ("artwork.enable_lastfm", 0);
     artwork_enable_aao = deadbeef->conf_get_int ("artwork.enable_albumartorg", 0);
+    artwork_enable_wos = deadbeef->conf_get_int ("artwork.enable_wos", 0);
+#endif
     artwork_reset_time = deadbeef->conf_get_int64 ("artwork.cache_reset_time", 0);
 
     deadbeef->conf_get_str ("artwork.filemask", DEFAULT_FILEMASK, artwork_filemask, sizeof (artwork_filemask));
@@ -1495,9 +1510,11 @@ static const char settings_dlg[] =
     "property \"Fetch from embedded tags\" checkbox artwork.enable_embedded 1;\n"
     "property \"Fetch from local folder\" checkbox artwork.enable_localfolder 1;\n"
     "property \"Local cover file mask\" entry artwork.filemask \"" DEFAULT_FILEMASK "\";\n"
+#ifdef USE_VFS_CURL
     "property \"Fetch from last.fm\" checkbox artwork.enable_lastfm 0;\n"
     "property \"Fetch from albumart.org\" checkbox artwork.enable_albumartorg 0;\n"
     "property \"Fetch from worldofspectrum.org (AY only)\" checkbox artwork.enable_wos 0;\n"
+#endif
     "property \"Scale artwork towards longer side\" checkbox artwork.scale_towards_longer 1;\n"
 ;
 
