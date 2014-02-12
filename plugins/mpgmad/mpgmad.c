@@ -238,6 +238,8 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
     }
 
     for (;;) {
+        uint32_t hdr;
+        uint8_t sync;
 // {{{ parse frame header, sync stream
         // mp3 files often have some garbage in the beginning
         // try to skip it if this is the case
@@ -254,12 +256,18 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             break; // eof
         }
 
-        uint32_t hdr;
-        uint8_t sync = fb[0];
+retry_sync:
+
+        sync = fb[0];
         if (sync != 0xff) {
 //            trace ("[1]frame %d didn't seek to frame end\n", nframe);
             lastframe_valid = 0;
-            continue; // not an mpeg frame
+            memmove (fb, fb+1, 3);
+            if (deadbeef->fread (fb+3, 1, 1, buffer->file) != 1) {
+                break; // eof
+            }
+            offs++;
+            goto retry_sync; // not an mpeg frame
         }
         else {
             // 2nd sync byte
@@ -267,7 +275,12 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
             if ((sync >> 5) != 7) {
 //                trace ("[2]frame %d didn't seek to frame end\n", nframe);
                 lastframe_valid = 0;
-                continue;
+                memmove (fb, fb+1, 3);
+                if (deadbeef->fread (fb+3, 1, 1, buffer->file) != 1) {
+                    break; // eof
+                }
+                offs++;
+                goto retry_sync; // not an mpeg frame
             }
         }
         // found frame
