@@ -128,4 +128,7 @@ w_seekbar_create (void);
 ddb_gtkui_widget_t *
 w_playtb_create (void);
 
+ddb_gtkui_widget_t *
+w_volumebar_create (void);
+
 #endif

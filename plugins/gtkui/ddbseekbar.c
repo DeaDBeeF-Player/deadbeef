@@ -459,7 +459,7 @@ on_evbox_button_press_event          (GtkWidget       *widget,
     return gtk_widget_event (GTK_WIDGET (user_data), (GdkEvent *)event);
 }
 
-gboolean
+static gboolean
 on_evbox_button_release_event        (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)

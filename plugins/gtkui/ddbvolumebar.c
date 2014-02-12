@@ -311,3 +311,51 @@ on_volumebar_configure_event (GtkWidget *widget, GdkEventConfigure *event) {
     gtkui_init_theme_colors ();
     return FALSE;
 }
+
+static gboolean
+on_evbox_button_press_event          (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data)
+{
+    return gtk_widget_event (GTK_WIDGET (user_data), (GdkEvent *)event);
+}
+
+static gboolean
+on_evbox_button_release_event        (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data)
+{
+    return gtk_widget_event (GTK_WIDGET (user_data), (GdkEvent *)event);
+}
+
+static gboolean
+on_evbox_motion_notify_event         (GtkWidget       *widget,
+                                        GdkEventMotion  *event,
+                                        gpointer         user_data)
+{
+    return gtk_widget_event (GTK_WIDGET (user_data), (GdkEvent *)event);
+}
+
+static gboolean
+on_evbox_scroll_event                (GtkWidget       *widget,
+                                        GdkEvent        *event,
+                                        gpointer         user_data) {
+    return gtk_widget_event (GTK_WIDGET (user_data), (GdkEvent *)event);
+}
+
+void
+ddb_volumebar_init_signals (DdbVolumeBar *vb, GtkWidget *evbox) {
+  g_signal_connect ((gpointer) evbox, "button_press_event",
+                    G_CALLBACK (on_evbox_button_press_event),
+                    vb);
+  g_signal_connect ((gpointer) evbox, "button_release_event",
+                    G_CALLBACK (on_evbox_button_release_event),
+                    vb);
+  g_signal_connect ((gpointer) evbox, "scroll_event",
+                    G_CALLBACK (on_evbox_scroll_event),
+                    vb);
+  g_signal_connect ((gpointer) evbox, "motion_notify_event",
+                    G_CALLBACK (on_evbox_motion_notify_event),
+                    vb);
+}
+

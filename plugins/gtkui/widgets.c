@@ -40,6 +40,7 @@
 #include "../../fastftoi.h"
 #include "actions.h"
 #include "ddbseekbar.h"
+#include "ddbvolumebar.h"
 #include "callbacks.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -205,6 +206,11 @@ typedef struct {
 typedef struct {
     ddb_gtkui_widget_t base;
 } w_playtb_t;
+
+typedef struct {
+    ddb_gtkui_widget_t base;
+    GtkWidget *volumebar;
+} w_volumebar_t;
 
 static int design_mode;
 static ddb_gtkui_widget_t *rootwidget;
@@ -3627,5 +3633,44 @@ w_playtb_create (void) {
     g_signal_connect ((gpointer) nextbtn, "clicked",
             G_CALLBACK (on_nextbtn_clicked),
             NULL);
+    return (ddb_gtkui_widget_t*)w;
+}
+
+// volumebar
+static gboolean
+redraw_volumebar_cb (gpointer data) {
+    w_volumebar_t *w = data;
+    gtk_widget_queue_draw (w->volumebar);
+    char s[100];
+    int db = deadbeef->volume_get_db ();
+    snprintf (s, sizeof (s), "%s%ddB", db < 0 ? "" : "+", db);
+    gtk_widget_set_tooltip_text (w->volumebar, s);
+    gtk_widget_trigger_tooltip_query (w->volumebar);
+    return FALSE;
+}
+
+static int
+w_volumebar_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    switch (id) {
+    case DB_EV_CONFIGCHANGED:
+    case DB_EV_VOLUMECHANGED:
+        g_idle_add (redraw_volumebar_cb, w);
+        break;
+    }
+    return 0;
+}
+
+ddb_gtkui_widget_t *
+w_volumebar_create (void) {
+    w_volumebar_t *w = malloc (sizeof (w_volumebar_t));
+    memset (w, 0, sizeof (w_volumebar_t));
+    w->base.widget = gtk_event_box_new ();
+    w->base.message = w_volumebar_message;
+    w->volumebar = ddb_volumebar_new ();
+    ddb_volumebar_init_signals (DDB_VOLUMEBAR (w->volumebar), w->base.widget);
+    gtk_widget_show (w->volumebar);
+    gtk_widget_set_size_request (w->volumebar, 70, -1);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), w->volumebar);
+    w_override_signals (w->base.widget, w);
     return (ddb_gtkui_widget_t*)w;
 }
