@@ -355,7 +355,7 @@ lfm_fetch_song_info (DB_playItem_t *song, char *a, char *t, char *b, float *l, c
     if (!deadbeef->pl_get_meta (song, "track", n, META_FIELD_SIZE)) {
         *n = 0;
     }
-    if (!deadbeef->pl_get_meta (song, "mbid", m, META_FIELD_SIZE)) {
+    if (!deadbeef->pl_get_meta (song, "musicbrainz_trackid", m, META_FIELD_SIZE)) {
         *m = 0;
     }
     return 0;
