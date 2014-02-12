@@ -773,7 +773,6 @@ on_override_bar_colors_toggled         (GtkToggleButton *togglebutton,
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
     prefwin_init_theme_colors ();
-    volumebar_redraw ();
     eq_redraw ();
 }
 

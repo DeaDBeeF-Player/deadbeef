@@ -272,17 +272,6 @@ on_trayicon_scroll_event               (GtkWidget       *widget,
         vol = deadbeef->volume_get_min_db ();
     }
     deadbeef->volume_set_db (vol);
-    volumebar_redraw ();
-
-    //Update volume bar tooltip
-    if (mainwin) {
-        GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
-        char s[100];
-        int db = vol;
-        snprintf (s, sizeof (s), "%s%ddB", db < 0 ? "" : "+", db);
-        gtk_widget_set_tooltip_text (volumebar, s);
-        gtk_widget_trigger_tooltip_query (volumebar);
-    }
 
 #if 0
     char str[100];
@@ -487,13 +476,6 @@ gtkui_on_frameupdate (gpointer data) {
     update_songinfo (NULL);
 
     return TRUE;
-}
-
-static gboolean
-gtkui_volumechanged_cb (gpointer ctx) {
-    GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
-    gdk_window_invalidate_rect (gtk_widget_get_window (volumebar), NULL, FALSE);
-    return FALSE;
 }
 
 static gboolean
@@ -704,18 +686,6 @@ gtkui_add_new_playlist (void) {
     return -1;
 }
 
-void
-volumebar_redraw (void) {
-    GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
-    gdk_window_invalidate_rect (gtk_widget_get_window (volumebar), NULL, FALSE);
-}
-
-//void
-//tabstrip_redraw (void) {
-//    GtkWidget *ts = lookup_widget (mainwin, "tabstrip");
-//    ddb_tabstrip_refresh (DDB_TABSTRIP (ts));
-//}
-
 static gint refresh_timeout = 0;
 
 int
@@ -809,9 +779,6 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 //        break;
     case DB_EV_PLAYLISTCHANGED:
         g_idle_add (playlistchanged_cb, NULL);
-        break;
-    case DB_EV_VOLUMECHANGED:
-        g_idle_add (gtkui_volumechanged_cb, NULL);
         break;
     case DB_EV_CONFIGCHANGED:
         g_idle_add (gtkui_on_configchanged, NULL);
@@ -965,6 +932,7 @@ gtkui_thread (void *ctx) {
     w_reg_widget (_("Button"), 0, w_button_create, "button", NULL);
     w_reg_widget (_("Seekbar"), 0, w_seekbar_create, "seekbar", NULL);
     w_reg_widget (_("Playback controls"), 0, w_playtb_create, "playtb", NULL);
+    w_reg_widget (_("Volume bar"), 0, w_volumebar_create, "volumebar", NULL);
 
     mainwin = create_mainwin ();
 

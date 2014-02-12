@@ -109,9 +109,6 @@ on_seekbar_motion_notify_event         (GtkWidget       *widget,
                                         GdkEventMotion  *event);
 
 void
-volumebar_redraw (void);
-
-void
 gtkui_set_titlebar (DB_playItem_t *it);
 
 gboolean
