@@ -204,9 +204,7 @@ AS_IF([test "${enable_staticlink}" != "no"], [
     AC_SUBST(ZIP_CFLAGS)
     AC_SUBST(ZIP_LIBS)
 ], [
-    AC_CHECK_LIB([zip], [main], [HAVE_ZIP=yes])
-    ZIP_LIBS="-lzip"
-    AC_SUBST(ZIP_LIBS)
+    PKG_CHECK_MODULES(ZIP, libzip, HAVE_ZIP=yes, HAVE_ZIP=no)
 ])
 
 AS_IF([test "${enable_gtk3}" = "yes"], [
