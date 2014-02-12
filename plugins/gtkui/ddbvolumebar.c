@@ -266,17 +266,6 @@ on_volumebar_button_release_event      (GtkWidget       *widget,
   return FALSE;
 }
 
-void
-volumebar_notify_changed (void) {
-    GtkWidget *widget = lookup_widget (mainwin, "volumebar");
-    gtk_widget_queue_draw (widget);
-    char s[100];
-    int db = deadbeef->volume_get_db ();
-    snprintf (s, sizeof (s), "%s%ddB", db < 0 ? "" : "+", db);
-    gtk_widget_set_tooltip_text (widget, s);
-    gtk_widget_trigger_tooltip_query (widget);
-}
-
 gboolean
 on_volumebar_scroll_event              (GtkWidget       *widget,
                                         GdkEventScroll        *event)
@@ -296,7 +285,7 @@ on_volumebar_scroll_event              (GtkWidget       *widget,
         vol = -range;
     }
     deadbeef->volume_set_db (vol);
-    GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
+    GtkWidget *volumebar = DDB_VOLUMEBAR (widget);
     gtk_widget_queue_draw (widget);
     char s[100];
     int db = deadbeef->volume_get_db ();
