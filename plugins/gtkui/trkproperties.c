@@ -428,7 +428,7 @@ show_track_properties_dlg (int ctx) {
 
     tracks = malloc (sizeof (DB_playItem_t *) * num);
     if (!tracks) {
-        fprintf (stderr, "gtkui: failed to alloc %d bytes to store selected tracks\n", num * sizeof (void *));
+        fprintf (stderr, "gtkui: failed to alloc %d bytes to store selected tracks\n", (int)(num * sizeof (void *)));
         deadbeef->pl_unlock ();
         return;
     }

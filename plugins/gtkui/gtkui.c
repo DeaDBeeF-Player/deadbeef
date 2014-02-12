@@ -131,8 +131,6 @@ struct fromto_t {
 
 static gboolean
 update_win_title_idle (gpointer data);
-static gboolean
-redraw_seekbar_cb (gpointer nothing);
 
 // update status bar and window title
 static int sb_context_id = -1;
@@ -399,7 +397,6 @@ gtkpl_songchanged_wrapper (DB_playItem_t *from, DB_playItem_t *to) {
         deadbeef->pl_item_ref (to);
     }
     g_idle_add (update_win_title_idle, ft);
-    g_idle_add (redraw_seekbar_cb, NULL);
     if (searchwin && gtk_widget_get_window (searchwin)) {
         int iconified = gdk_window_get_state(gtk_widget_get_window (searchwin)) & GDK_WINDOW_STATE_ICONIFIED;
         if (gtk_widget_get_visible (searchwin) && !iconified) {
@@ -673,19 +670,6 @@ update_win_title_idle (gpointer data) {
         deadbeef->pl_item_unref (to);
     }
     return FALSE;
-}
-
-static gboolean
-redraw_seekbar_cb (gpointer nothing) {
-    return FALSE;
-#if 0
-    int iconified = gdk_window_get_state(gtk_widget_get_window(mainwin)) & GDK_WINDOW_STATE_ICONIFIED;
-    if (!gtk_widget_get_visible (mainwin) || iconified) {
-        return FALSE;
-    }
-    seekbar_redraw ();
-    return FALSE;
-#endif
 }
 
 int
@@ -980,6 +964,7 @@ gtkui_thread (void *ctx) {
     w_reg_widget (_("VBox"), 0, w_vbox_create, "vbox", NULL);
     w_reg_widget (_("Button"), 0, w_button_create, "button", NULL);
     w_reg_widget (_("Seekbar"), 0, w_seekbar_create, "seekbar", NULL);
+    w_reg_widget (_("Playback controls"), 0, w_playtb_create, "playtb", NULL);
 
     mainwin = create_mainwin ();
 
