@@ -36,12 +36,13 @@ static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 static int conf_fadeout = 10;
 static int conf_loopcount = 2;
+static int chip_voices = 0xff;
+static int chip_voices_changed = 0;
 
 typedef struct {
     DB_fileinfo_t info;
     Music_Emu *emu;
     int reallength;
-    uint32_t cgme_voicemask;
     float duration; // of current song
 } gme_fileinfo_t;
 
@@ -156,7 +157,8 @@ cgme_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         trace ("failed with error %d\n", res);
         return -1;
     }
-    gme_mute_voices (info->emu, info->cgme_voicemask);
+    chip_voices = deadbeef->conf_get_int ("chip.voices", 0xff);
+    gme_mute_voices (info->emu, chip_voices^0xff);
     gme_start_track (info->emu, deadbeef->pl_find_meta_int (it, ":TRACKNUM", 0));
 
 #ifdef GME_VERSION_055
@@ -200,6 +202,13 @@ cgme_read (DB_fileinfo_t *_info, char *bytes, int size) {
         // DON'T ajust size, buffer must always be po2
         //size = t * (float)info->samplerate * 4;
     }
+
+    if (chip_voices_changed) {
+        chip_voices = deadbeef->conf_get_int ("chip.voices", 0xff);
+        chip_voices_changed = 0;
+        gme_mute_voices (info->emu, chip_voices^0xff);
+    }
+
     if (gme_play (info->emu, size/2, (short*)bytes)) {
         return 0;
     }
@@ -412,25 +421,6 @@ static const char * exts[]=
 	"ay","gbs","gym","hes","kss","nsf","nsfe","sap","spc","vgm","vgz",NULL
 };
 
-#if 0
-static int
-cgme_numvoices (void) {
-    if (!emu) {
-        return 0;
-    }
-    return gme_voice_count (emu);
-}
-
-static void
-cgme_mutevoice (int voice, int mute) {
-    cgme_voicemask &= ~ (1<<voice);
-    cgme_voicemask |= ((mute ? 1 : 0) << voice);
-    if (emu) {
-        gme_mute_voices (emu, cgme_voicemask);
-    }
-}
-#endif
-
 static int
 cgme_start (void) {
     conf_fadeout = deadbeef->conf_get_int ("gme.fadeout", 10);
@@ -449,6 +439,9 @@ cgme_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     case DB_EV_CONFIGCHANGED:
         conf_fadeout = deadbeef->conf_get_int ("gme.fadeout", 10);
         conf_loopcount = deadbeef->conf_get_int ("gme.loopcount", 2);
+        if (chip_voices != deadbeef->conf_get_int ("chip.voices", 0xff)) {
+            chip_voices_changed = 1;
+        }
         break;
     }
     return 0;
