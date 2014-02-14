@@ -1264,6 +1264,10 @@ get_album_art (const char *fname, const char *artist, const char *album, int siz
         artist = "";
     }
 
+    if (*album && !(*artist)) {
+        artist = album;
+    }
+
     if (!*artist || !*album)
     {
         trace ("artist or album is empty, give up\n");

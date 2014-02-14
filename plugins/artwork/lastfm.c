@@ -45,11 +45,17 @@ int
 fetch_from_lastfm (const char *artist, const char *album, const char *dest)
 {
     char url [1024];
-    char *artist_url = uri_escape (artist, 0);
-    char *album_url = uri_escape (album, 0);
+    char *artist_url = NULL;
+    char *album_url = NULL;
+
+retry:
+    artist_url = uri_escape (artist, 0);
+    album_url = uri_escape (album, 0);
     snprintf (url, sizeof (url), BASE_URL "?method=album.getinfo&api_key=" API_KEY "&artist=%s&album=%s", artist_url, album_url);
     free (artist_url);
+    artist_url = NULL;
     free (album_url);
+    album_url = NULL;
 
     DB_FILE *fp = deadbeef->fopen (url);
     if (!fp) {
@@ -78,6 +84,11 @@ fetch_from_lastfm (const char *artist, const char *album, const char *dest)
 
     char *end = strstr (img, "</image>");
     if (!end || end == img) {
+        if (artist != album) {
+            artist = album;
+            goto retry;
+        }
+
         trace ("fetch_from_lastfm: bad xml (or image not found) from %s\n", url);
         return -1;
     }
