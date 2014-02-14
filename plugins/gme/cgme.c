@@ -21,6 +21,9 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#ifdef HAVE_CONFIG_H
+#  include "../../config.h"
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -28,9 +31,18 @@
 #include "gme/gme.h"
 #include <zlib.h>
 #include "../../deadbeef.h"
+#if HAVE_SYS_CDEFS_H
+#include <sys/cdefs.h>
+#endif
+#if HAVE_SYS_SYSLIMITS_H
+#include <sys/syslimits.h>
+#endif
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
+
+// how big vgz can be?
+#define MAX_REMOTE_GZ_FILE 0x100000
 
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
@@ -55,14 +67,38 @@ cgme_open (uint32_t hint) {
 
 static int
 read_gzfile (const char *fname, char **buffer, int *size) {
-    FILE *fp = fopen (fname, "rb");
+    int fd = -1;
+    DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
-        trace ("failed to fopen %s\n", fname);
+        trace ("gme read_gzfile: failed to fopen %s\n", fname);
         return -1;
     }
-    fseek (fp, 0, SEEK_END);
-    size_t sz = ftell (fp);
-    fclose (fp);
+
+    int64_t sz = deadbeef->fgetlength (fp);
+    if (fp->vfs && fp->vfs->plugin.id && strcmp (fp->vfs->plugin.id, "vfs_stdio") && sz > 0 && sz <= MAX_REMOTE_GZ_FILE) {
+        trace ("gme read_gzfile: reading %s of size %lld and writing to temp file\n", fname, sz);
+        char buffer[sz];
+        if (sz == deadbeef->fread (buffer, 1, sz, fp)) {
+            const char *tmp = getenv ("TMPDIR");
+            if (!tmp) {
+                tmp = "/tmp";
+            }
+            char nm[PATH_MAX];
+            snprintf (nm, sizeof (nm), "%s/ddbgmeXXXXXX.vgz", tmp);
+            fd = mkstemps (nm, 4);
+            if (fd == -1 || sz != write (fd, buffer, sz)) {
+                trace ("gme read_gzfile: failed to write temp file\n");
+                if (fd != -1) {
+                    close (fd);
+                }
+            }
+            if (fd != -1) {
+                lseek (fd, 0, SEEK_SET);
+            }
+        }
+    }
+
+    deadbeef->fclose (fp);
 
     sz *= 2;
     int readsize = sz;
@@ -71,7 +107,7 @@ read_gzfile (const char *fname, char **buffer, int *size) {
         return -1;
     }
 
-    gzFile gz = gzopen (fname, "rb");
+    gzFile gz = fd == -1 ? gzopen (fname, "rb") : gzdopen (fd, "r");
     if (!gz) {
         trace ("failed to gzopen %s\n", fname);
         return -1;
@@ -84,6 +120,7 @@ read_gzfile (const char *fname, char **buffer, int *size) {
         if (nb < 0) {
             free (*buffer);
             trace ("failed to gzread from %s\n", fname);
+            gzclose (gz);
             return -1;
         }
         if (nb > 0) {
