@@ -852,14 +852,6 @@ cmp3_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
     else {
         deadbeef->fset_track (info->buffer.file, it);
-        int64_t len = deadbeef->fgetlength (info->buffer.file);
-        if (len > 0) {
-            deadbeef->pl_delete_all_meta (it);
-            int v2err = deadbeef->junk_id3v2_read (it, info->buffer.file);
-            if (v2err != 0) {
-                deadbeef->fseek (info->buffer.file, 0, SEEK_SET);
-            }
-        }
         deadbeef->pl_add_meta (it, "title", NULL);
         int res = cmp3_scan_stream (&info->buffer, 0);
         if (res < 0) {
