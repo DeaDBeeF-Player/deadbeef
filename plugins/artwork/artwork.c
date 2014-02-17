@@ -120,11 +120,33 @@ static time_t artwork_reset_time;
 static char artwork_filemask[200];
 
 static const char *get_default_cover (void) {
-    return default_cover;
+return default_cover;
+}
+
+static int
+esc_char (char c) {
+    if (c < 1
+        || (c >= 'a' && c <= 'z')
+        || (c >= 'A' && c <= 'Z')
+        || (c >= '0' && c <= '9')
+        || c == ' '
+        || c == '_'
+        || c == '-') {
+        return c;
+    }
+    return '_';
 }
 
 int
 make_cache_dir_path (char *path, int size, const char *artist, int img_size) {
+    char esc_artist[PATH_MAX];
+    int i;
+
+    for (i = 0; artist[i]; i++) {
+        esc_artist[i] = esc_char (artist[i]);
+    }
+    esc_artist[i] = 0;
+
     const char *cache = getenv ("XDG_CACHE_HOME");
     int sz;
     
@@ -136,7 +158,7 @@ make_cache_dir_path (char *path, int size, const char *artist, int img_size) {
     }
     path += sz;
 
-    sz += snprintf (path, size-sz, "%s", artist);
+    sz += snprintf (path, size-sz, "%s", esc_artist);
     for (char *p = path; *p; p++) {
         if (*p == '/') {
             *p = '_';
@@ -148,10 +170,22 @@ make_cache_dir_path (char *path, int size, const char *artist, int img_size) {
 void
 make_cache_path (char *path, int size, const char *album, const char *artist, int img_size) {
     char *p = path;
+    char esc_album[PATH_MAX];
+    const char *palbum = album;
+    size_t l = strlen (album);
+    if (l > 200) {
+        palbum = album + l - 200;
+    }
+    int i;
+    for (i = 0; palbum[i]; i++) {
+        esc_album[i] = esc_char (palbum[i]);
+    }
+    esc_album[i] = 0;
+
     int sz = make_cache_dir_path (path, size, artist, img_size);
     size -= sz;
     path += sz;
-    sz = snprintf (path, size, "/%s.jpg", album);
+    sz = snprintf (path, size, "/%s.jpg", esc_album);
     for (char *p = path+1; *p; p++) {
         if (*p == '/') {
             *p = '_';
@@ -912,7 +946,7 @@ fetcher_thread (void *none)
                                             trace ("artwork: corrupted id3v2 APIC frame\n");
                                             continue;
                                         }
-                                        if (strcasecmp (data, "image/jpeg") && strcasecmp (data, "image/png")) {
+                                        if (strcasecmp (data, "image/jpeg") && strcasecmp (data, "image/png") && strcasecmp (data, "image/gif")) {
                                             trace ("artwork: unsupported mime type: %s\n", data);
                                             continue;
                                         }
@@ -1270,12 +1304,19 @@ get_album_art (const char *fname, const char *artist, const char *album, int siz
 
     if (!*artist || !*album)
     {
-        trace ("artist or album is empty, give up\n");
-        //give up
-        if (callback) {
-            callback (NULL, NULL, NULL, user_data);
+        if (fname) {
+            // album=escape(path), artist=uknown
+            artist = "Unknown artist";
+            album = fname;
         }
-        return NULL;
+        else {
+            trace ("artist or album is empty, give up\n");
+            //give up
+            if (callback) {
+                callback (NULL, NULL, NULL, user_data);
+            }
+            return NULL;
+        }
     }
 
     if (!deadbeef->is_local_file (fname)) {
