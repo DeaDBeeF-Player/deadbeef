@@ -799,7 +799,7 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     return 0;
 }
 
-static const char gtkui_def_layout[] = "vbox expand=\"0 1\" fill=\"1 1\" homogeneous=0 {hbox expand=\"0 1 0\" fill=\"1 1 1\" homogeneous=0 {playtb {} seekbar {} volumebar {} } tabbed_playlist hideheaders=0 {} }";
+static const char gtkui_def_layout[] = "vbox expand=\"0 1\" fill=\"1 1\" homogeneous=0 {hbox expand=\"0 1 0\" fill=\"1 1 1\" homogeneous=0 {playtb {} seekbar {} volumebar {} } tabbed_playlist hideheaders=0 {} } ";
 
 static void
 init_widget_layout (void) {
@@ -818,8 +818,9 @@ init_widget_layout (void) {
         snprintf (layout_upgrade, sizeof (layout_upgrade), "vbox expand=\"0 1\" fill=\"1 1\" homogeneous=0 {hbox expand=\"0 1 0\" fill=\"1 1 1\" homogeneous=0 {playtb {} seekbar {} volumebar {} } %s }", layout);
         strcpy (layout, layout_upgrade);
         deadbeef->conf_set_str ("gtkui.layout", layout);
-        deadbeef->conf_set_int ("gtkui.layout_062_upgraded", 1);
     }
+    deadbeef->conf_set_int ("gtkui.layout_062_upgraded", 1);
+    deadbeef->conf_save ();
 
     ddb_gtkui_widget_t *w = NULL;
     w_create_from_string (layout, &w);
