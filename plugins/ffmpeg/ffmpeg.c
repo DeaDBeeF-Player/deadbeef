@@ -442,10 +442,9 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
             if (info->pkt.duration > 0) {
                 AVRational *time_base = &info->fctx->streams[info->stream_id]->time_base;
                 float sec = (float)info->pkt.duration * time_base->num / time_base->den;
-                int bitrate = info->pkt.size/sec;
+                int bitrate = info->pkt.size * 8 / sec;
                 if (bitrate > 0) {
-                    // FIXME: seems like duration translation is wrong
-                    deadbeef->streamer_set_bitrate (bitrate / 100);
+                    deadbeef->streamer_set_bitrate (bitrate / 1000);
                 }
             }
 
