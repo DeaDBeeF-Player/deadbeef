@@ -808,7 +808,7 @@ init_widget_layout (void) {
 
     // load layout
     char layout[20000];
-    deadbeef->conf_get_str ("gtkui.layout", "tabbed_playlist \"\" { }", layout, sizeof (layout));
+    deadbeef->conf_get_str ("gtkui.layout", "vbox expand=\"0 1\" fill=\"1 1\" homogeneous=0 {hbox expand=\"0 1 0\" fill=\"1 1 1\" homogeneous=0 {playtb {} seekbar {} volumebar {} } tabbed_playlist hideheaders=0 {} }", layout, sizeof (layout));
 
     ddb_gtkui_widget_t *w = NULL;
     w_create_from_string (layout, &w);
