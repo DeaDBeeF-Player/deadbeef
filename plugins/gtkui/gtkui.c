@@ -799,6 +799,8 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     return 0;
 }
 
+static const char gtkui_def_layout[] = "vbox expand=\"0 1\" fill=\"1 1\" homogeneous=0 {hbox expand=\"0 1 0\" fill=\"1 1 1\" homogeneous=0 {playtb {} seekbar {} volumebar {} } tabbed_playlist hideheaders=0 {} }";
+
 static void
 init_widget_layout (void) {
     w_init ();
@@ -808,7 +810,16 @@ init_widget_layout (void) {
 
     // load layout
     char layout[20000];
-    deadbeef->conf_get_str ("gtkui.layout", "vbox expand=\"0 1\" fill=\"1 1\" homogeneous=0 {hbox expand=\"0 1 0\" fill=\"1 1 1\" homogeneous=0 {playtb {} seekbar {} volumebar {} } tabbed_playlist hideheaders=0 {} }", layout, sizeof (layout));
+    deadbeef->conf_get_str ("gtkui.layout", gtkui_def_layout, layout, sizeof (layout));
+
+    if (strcmp (layout, gtkui_def_layout) && !deadbeef->conf_get_int ("gtkui.layout_062_upgraded", 0)) {
+        // add top bar
+        char layout_upgrade[20000];
+        snprintf (layout_upgrade, sizeof (layout_upgrade), "vbox expand=\"0 1\" fill=\"1 1\" homogeneous=0 {hbox expand=\"0 1 0\" fill=\"1 1 1\" homogeneous=0 {playtb {} seekbar {} volumebar {} } %s }", layout);
+        strcpy (layout, layout_upgrade);
+        deadbeef->conf_set_str ("gtkui.layout", layout);
+        deadbeef->conf_set_int ("gtkui.layout_062_upgraded", 1);
+    }
 
     ddb_gtkui_widget_t *w = NULL;
     w_create_from_string (layout, &w);
