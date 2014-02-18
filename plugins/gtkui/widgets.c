@@ -586,12 +586,15 @@ show_widget (GtkWidget *widget, gpointer data) {
     gtk_widget_show (widget);
 }
 
+static GtkRequisition prev_req;
+
 void
 w_menu_deactivate (GtkMenuShell *menushell, gpointer user_data) {
     hidden = 0;
     ddb_gtkui_widget_t *w = user_data;
     if (GTK_IS_CONTAINER (w->widget)) {
         gtk_container_foreach (GTK_CONTAINER (w->widget), show_widget, NULL);
+        gtk_widget_set_size_request (w->widget, prev_req.width, prev_req.height);
     }
     gtk_widget_set_app_paintable (w->widget, FALSE);
     gtk_widget_queue_draw (w->widget);
@@ -606,8 +609,14 @@ w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_da
     current_widget = user_data;
     widget = current_widget->widget;
     hidden = 1;
+
     if (GTK_IS_CONTAINER (widget)) {
         // hide all children
+        gtk_widget_size_request (widget, &prev_req);
+
+        GtkAllocation a;
+        gtk_widget_get_allocation (widget, &a);
+        gtk_widget_set_size_request (widget, a.width, a.height);
         gtk_container_foreach (GTK_CONTAINER (widget), hide_widget, NULL);
     }
 
@@ -1908,11 +1917,12 @@ w_tabbed_playlist_create (void) {
     w->tabstrip = DDB_TABSTRIP (tabstrip);
     gtk_widget_show (tabstrip);
     GtkWidget *list = ddb_listview_new ();
+    gtk_widget_set_size_request (list, 100, 100);
     w->plt.list = (DdbListview *)list;
     gtk_widget_show (list);
 
     gtk_box_pack_start (GTK_BOX (vbox), tabstrip, FALSE, TRUE, 0);
-    gtk_widget_set_size_request (tabstrip, -1, 24);
+    gtk_widget_set_size_request (tabstrip, 100, 24);
     gtk_widget_set_can_focus (tabstrip, FALSE);
     gtk_widget_set_can_default (tabstrip, FALSE);
 
@@ -1920,7 +1930,6 @@ w_tabbed_playlist_create (void) {
 
     main_playlist_init (list);
 
-//    gtk_container_forall (GTK_CONTAINER (w->base.widget), w_override_signals, w);
     w_override_signals (w->plt.base.widget, w);
 
     w->plt.base.message = w_tabbed_playlist_message;
@@ -1936,6 +1945,7 @@ w_playlist_create (void) {
 
     w->base.widget = gtk_event_box_new ();
     w->list = DDB_LISTVIEW (ddb_listview_new ());
+    gtk_widget_set_size_request (GTK_WIDGET (w->list), 100, 100);
     w->base.save = w_playlist_save;
     w->base.load = w_playlist_load;
     w->base.init = w_playlist_init;
@@ -3542,6 +3552,7 @@ w_seekbar_create (void) {
     w->base.message = w_seekbar_message;
     w->base.destroy = w_seekbar_destroy;
     w->seekbar = ddb_seekbar_new ();
+    gtk_widget_set_size_request (w->seekbar, 20, 16);
     w->last_songpos = -1;
     ddb_seekbar_init_signals (DDB_SEEKBAR (w->seekbar), w->base.widget);
     gtk_widget_show (w->seekbar);
