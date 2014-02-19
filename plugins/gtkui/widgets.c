@@ -613,9 +613,6 @@ w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_da
     if (GTK_IS_CONTAINER (widget)) {
         // hide all children
         gtk_widget_size_request (widget, &prev_req);
-
-        GtkAllocation a;
-        gtk_widget_get_allocation (widget, &a);
         gtk_container_foreach (GTK_CONTAINER (widget), hide_widget, NULL);
         gtk_widget_set_size_request (widget, prev_req.width, prev_req.height);
     }
@@ -3491,20 +3488,6 @@ redraw_seekbar_cb (gpointer data) {
     return FALSE;
 }
 
-static int
-w_seekbar_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
-    switch (id) {
-    case DB_EV_SONGCHANGED:
-    case DB_EV_CONFIGCHANGED:
-        {
-            ddb_event_trackchange_t *ev = (ddb_event_trackchange_t *)ctx;
-            g_idle_add (redraw_seekbar_cb, w);
-        }
-        break;
-    }
-    return 0;
-}
-
 static gboolean
 seekbar_frameupdate (gpointer data) {
     w_seekbar_t *w = data;
@@ -3535,6 +3518,30 @@ seekbar_frameupdate (gpointer data) {
 }
 
 static void
+w_seekbar_init (ddb_gtkui_widget_t *base) {
+    w_seekbar_t *w = (w_seekbar_t *)base;
+    if (w->timer) {
+        g_source_remove (w->timer);
+        w->timer = 0;
+    }
+
+    w->timer = g_timeout_add (1000/gtkui_get_gui_refresh_rate (), seekbar_frameupdate, w);
+}
+
+static int
+w_seekbar_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    switch (id) {
+    case DB_EV_SONGCHANGED:
+        g_idle_add (redraw_seekbar_cb, w);
+        break;
+    case DB_EV_CONFIGCHANGED:
+        w_seekbar_init (w);
+        break;
+    }
+    return 0;
+}
+
+static void
 w_seekbar_destroy (ddb_gtkui_widget_t *wbase) {
     w_seekbar_t *w = (w_seekbar_t *)wbase;
     if (w->timer) {
@@ -3550,6 +3557,7 @@ w_seekbar_create (void) {
     w->base.widget = gtk_event_box_new ();
     w->base.message = w_seekbar_message;
     w->base.destroy = w_seekbar_destroy;
+    w->base.init = w_seekbar_init;
     w->seekbar = ddb_seekbar_new ();
     gtk_widget_set_size_request (w->base.widget, 20, 16);
     w->last_songpos = -1;
@@ -3557,7 +3565,6 @@ w_seekbar_create (void) {
     gtk_widget_show (w->seekbar);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->seekbar);
     w_override_signals (w->base.widget, w);
-    w->timer = g_timeout_add (1000/gtkui_get_gui_refresh_rate (), seekbar_frameupdate, w);
     return (ddb_gtkui_widget_t*)w;
 }
 
