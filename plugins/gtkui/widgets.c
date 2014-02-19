@@ -616,8 +616,8 @@ w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_da
 
         GtkAllocation a;
         gtk_widget_get_allocation (widget, &a);
-        gtk_widget_set_size_request (widget, a.width, a.height);
         gtk_container_foreach (GTK_CONTAINER (widget), hide_widget, NULL);
+        gtk_widget_set_size_request (widget, prev_req.width, prev_req.height);
     }
 
     gtk_widget_set_app_paintable (widget, TRUE);
