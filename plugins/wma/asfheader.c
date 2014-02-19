@@ -751,6 +751,9 @@ static int asf_parse_header(DB_FILE *fd, asf_waveformatex_t* wfx, DB_playItem_t 
                             if (type == 0) { // FIXME: custom fields -- after others work
                                 unsigned char *s = id3buf;
                                 asf_utf16LEdecode(fd, length, &id3buf, &id3buf_remaining);
+                                if (!strcmp (utf8buf, "MusicBrainz/Track Id")) {
+                                    strcpy (utf8buf, "musicbrainz_trackid");
+                                }
                                 deadbeef->pl_append_meta (it, utf8buf, s);
                             }
                             else {
