@@ -890,7 +890,7 @@ w_placeholder_create (void) {
 
     w->base.widget = gtk_event_box_new ();
     w->drawarea  = gtk_drawing_area_new ();
-    gtk_widget_set_size_request (w->drawarea, 20, 20);
+    gtk_widget_set_size_request (w->base.widget, 20, 20);
     gtk_widget_show (w->drawarea);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->drawarea);
 
@@ -1917,12 +1917,11 @@ w_tabbed_playlist_create (void) {
     w->tabstrip = DDB_TABSTRIP (tabstrip);
     gtk_widget_show (tabstrip);
     GtkWidget *list = ddb_listview_new ();
-    gtk_widget_set_size_request (list, 100, 100);
+    gtk_widget_set_size_request (vbox, 100, 100);
     w->plt.list = (DdbListview *)list;
     gtk_widget_show (list);
 
     gtk_box_pack_start (GTK_BOX (vbox), tabstrip, FALSE, TRUE, 0);
-    gtk_widget_set_size_request (tabstrip, 100, 24);
     gtk_widget_set_can_focus (tabstrip, FALSE);
     gtk_widget_set_can_default (tabstrip, FALSE);
 
@@ -1945,7 +1944,7 @@ w_playlist_create (void) {
 
     w->base.widget = gtk_event_box_new ();
     w->list = DDB_LISTVIEW (ddb_listview_new ());
-    gtk_widget_set_size_request (GTK_WIDGET (w->list), 100, 100);
+    gtk_widget_set_size_request (GTK_WIDGET (w->base.widget), 100, 100);
     w->base.save = w_playlist_save;
     w->base.load = w_playlist_load;
     w->base.init = w_playlist_init;
@@ -2954,8 +2953,6 @@ w_hvbox_replace (struct ddb_gtkui_widget_s *container, struct ddb_gtkui_widget_s
         return;
     }
 
-    w_remove (container, c);
-    w_destroy (c);
     if (prev) {
         prev->next = newchild;
     }
@@ -2964,6 +2961,8 @@ w_hvbox_replace (struct ddb_gtkui_widget_s *container, struct ddb_gtkui_widget_s
     }
     newchild->next = c->next;
     newchild->parent = container;
+    w_remove (container, c);
+    w_destroy (c);
 
     gtk_box_pack_start (GTK_BOX (b->box), newchild->widget, TRUE, TRUE, 0);
     gtk_widget_show (newchild->widget);
@@ -3552,7 +3551,7 @@ w_seekbar_create (void) {
     w->base.message = w_seekbar_message;
     w->base.destroy = w_seekbar_destroy;
     w->seekbar = ddb_seekbar_new ();
-    gtk_widget_set_size_request (w->seekbar, 20, 16);
+    gtk_widget_set_size_request (w->base.widget, 20, 16);
     w->last_songpos = -1;
     ddb_seekbar_init_signals (DDB_SEEKBAR (w->seekbar), w->base.widget);
     gtk_widget_show (w->seekbar);
@@ -3685,7 +3684,7 @@ w_volumebar_create (void) {
     w->volumebar = ddb_volumebar_new ();
     ddb_volumebar_init_signals (DDB_VOLUMEBAR (w->volumebar), w->base.widget);
     gtk_widget_show (w->volumebar);
-    gtk_widget_set_size_request (w->volumebar, 70, -1);
+    gtk_widget_set_size_request (w->base.widget, 70, -1);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->volumebar);
     w_override_signals (w->base.widget, w);
     return (ddb_gtkui_widget_t*)w;
