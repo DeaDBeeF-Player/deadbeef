@@ -123,9 +123,6 @@ gtkui_set_progress_text_idle (gpointer data);
 void
 gtkui_playlist_set_curr (int playlist);
 
-void
-gtkui_setup_gui_refresh ();
-
 int
 gtkui_get_curr_playlist_mod (void);
 

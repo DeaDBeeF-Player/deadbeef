@@ -81,6 +81,8 @@ GtkWidget *theme_button;
 
 static int gtkui_accept_messages = 0;
 
+static gint refresh_timeout = 0;
+
 int fileadded_listener_id;
 int fileadd_beginend_listener_id;
 // overriden API methods
@@ -553,6 +555,19 @@ gtkui_get_curr_playlist_mod (void) {
     return res;
 }
 
+void
+gtkui_setup_gui_refresh (void) {
+    int tm = 1000/gtkui_get_gui_refresh_rate ();
+
+    if (refresh_timeout) {
+        g_source_remove (refresh_timeout);
+        refresh_timeout = 0;
+    }
+
+    refresh_timeout = g_timeout_add (tm, gtkui_on_frameupdate, NULL);
+}
+
+
 static gboolean
 gtkui_on_configchanged (void *data) {
     // order and looping
@@ -586,6 +601,9 @@ gtkui_on_configchanged (void *data) {
 
     // tray icon
     gtkui_update_status_icon (NULL);
+
+    // statusbar refresh
+    gtkui_setup_gui_refresh ();
 
     return FALSE;
 }
@@ -686,8 +704,6 @@ gtkui_add_new_playlist (void) {
     return -1;
 }
 
-static gint refresh_timeout = 0;
-
 int
 gtkui_get_gui_refresh_rate () {
     int fps = deadbeef->conf_get_int ("gtkui.refresh_rate", 10);
@@ -698,18 +714,6 @@ gtkui_get_gui_refresh_rate () {
         fps = 30;
     }
     return fps;
-}
-
-void
-gtkui_setup_gui_refresh (void) {
-    int tm = 1000/gtkui_get_gui_refresh_rate ();
-
-    if (refresh_timeout) {
-        g_source_remove (refresh_timeout);
-        refresh_timeout = 0;
-    }
-
-    refresh_timeout = g_timeout_add (tm, gtkui_on_frameupdate, NULL);
 }
 
 static void
@@ -1037,8 +1041,6 @@ gtkui_thread (void *ctx) {
     gtk_widget_show (mainwin);
 
     init_widget_layout ();
-
-    gtkui_setup_gui_refresh ();
 
     char fmt[500];
     char str[600];

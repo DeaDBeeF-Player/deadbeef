@@ -1050,7 +1050,7 @@ on_gui_fps_value_changed           (GtkRange        *range,
 {
     int val = gtk_range_get_value (range);
     deadbeef->conf_set_int ("gtkui.refresh_rate", val);
-    gtkui_setup_gui_refresh ();
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 void
