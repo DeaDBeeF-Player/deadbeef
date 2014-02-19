@@ -842,6 +842,7 @@ static const char *metainfo[] = {
     "copyright", "copyright",
     "totaltracks", "numtracks",
     "tool", "tool",
+    "MusicBrainz Track Id", "musicbrainz_trackid",
     NULL
 };
 
