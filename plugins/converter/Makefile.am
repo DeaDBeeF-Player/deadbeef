@@ -22,7 +22,8 @@ convdata_DATA = \
 	presets/MusePack.txt\
 	presets/Ogg_Vorbis_(-q_5).txt\
 	presets/TTA.txt\
-	presets/WavPack.txt
+	presets/WavPack.txt\
+	presets/ALAC.txt
 
 EXTRA_DIST = $(convdata_DATA) converter.glade
 
