@@ -257,6 +257,7 @@ on_loop_all_activate                   (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("playback.loop", 0);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 
@@ -265,6 +266,7 @@ on_loop_single_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("playback.loop", 2);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 
@@ -273,6 +275,7 @@ on_loop_disable_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("playback.loop", 1);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 void
@@ -311,6 +314,7 @@ on_scroll_follows_playback_activate    (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("playlist.scroll.followplayback", gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem)));
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 
@@ -454,7 +458,7 @@ on_toggle_status_bar_activate          (GtkMenuItem     *menuitem,
             gtk_widget_show (sb);
         }
     }
-    deadbeef->conf_save ();
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 void
@@ -462,6 +466,7 @@ on_stop_after_current_activate         (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("playlist.stop_after_current", gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem)));
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 void
@@ -469,6 +474,7 @@ on_cursor_follows_playback_activate    (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("playlist.scroll.cursorfollowplayback", gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem)));
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 GtkWidget*
@@ -515,7 +521,7 @@ on_toggle_eq                           (GtkMenuItem     *menuitem,
         deadbeef->conf_set_int ("gtkui.eq.visible", 1);
         eq_window_show ();
     }
-    deadbeef->conf_save ();
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 
