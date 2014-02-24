@@ -263,7 +263,7 @@ plt_gen_conf (void) {
     playlist_t *p = playlists_head;
     for (i = 0; i < cnt; i++, p = p->next) {
         char s[100];
-        snprintf (s, sizeof (s), "playlist.tab.%02d", i);
+        snprintf (s, sizeof (s), "playlist.tab.%05d", i);
         conf_set_str (s, p->title);
         snprintf (s, sizeof (s), "playlist.cursor.%d", i);
         conf_set_int (s, p->current_row[PL_MAIN]);
@@ -377,10 +377,6 @@ int
 plt_add (int before, const char *title) {
     assert (before >= 0);
     trace ("plt_add\n");
-    if (plt_get_count () >= 100) {
-        fprintf (stderr, "can't create more than 100 playlists. sorry.\n");
-        return -1;
-    }
     playlist_t *plt = plt_alloc (title);
     plt_modified (plt);
 
