@@ -58,7 +58,7 @@ Copyright © 1999, 2000, 2002 Aladdin Enterprises.  All rights reserved.
 FFT Implementation from Audacious player
 Copyright © 2011 John Lindgren
 
-Optimized math routines from libvorbis
+Fast FTOI routines from libvorbis
 Copyright © 2002-2008 Xiph.org Foundation
 
 The UTF-8 code is based on Basic UTF-8 manipulation routines by Jeff Bezanson
