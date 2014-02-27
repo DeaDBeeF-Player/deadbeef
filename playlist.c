@@ -103,7 +103,6 @@ static int plt_loading = 0; // disable sending event about playlist switch, conf
 
 #if !DISABLE_LOCKING
 static uintptr_t mutex;
-static uintptr_t mutex_plt;
 #endif
 
 #define LOCK {pl_lock();}
@@ -163,7 +162,6 @@ pl_init (void) {
     playlist = &dummy_playlist;
 #if !DISABLE_LOCKING
     mutex = mutex_create ();
-    mutex_plt = mutex_create ();
 #endif
     return 0;
 }
@@ -192,10 +190,6 @@ pl_free (void) {
     if (mutex) {
         mutex_free (mutex);
         mutex = 0;
-    }
-    if (mutex_plt) {
-        mutex_free (mutex_plt);
-        mutex_plt = 0;
     }
 #endif
     playlist = NULL;
