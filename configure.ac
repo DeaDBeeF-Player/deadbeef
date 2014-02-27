@@ -401,7 +401,7 @@ AS_IF([test "${enable_sndfile}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_SNDFILEPLUGIN=yes
         SNDFILE_CFLAGS="-I../../$LIB/include"
-        SNDFILE_LIBS="../../$LIB/lib/libsndfile"
+        SNDFILE_LIBS="../../$LIB/lib/libsndfile.a"
         AC_SUBST(SNDFILE_CFLAGS)
         AC_SUBST(SNDFILE_LIBS)
     ], [
