@@ -11,12 +11,18 @@ if [[ "$ARCH" == "i686" ]]; then
     export CONFIGURE_FLAGS="--build=i686-unknown-linux-gnu"
     export LD_LIBRARY_PATH="$ORIGIN/$STATIC_DEPS/lib-x86-32/lib"
     export PKG_CONFIG_PATH="$ORIGIN/$STATIC_DEPS/lib-x86-32/lib/pkgconfig"
+    export GTK_ROOT_300="$ORIGIN/$STATIC_DEPS/lib-x86-32/gtk-3.0.0";
+    export GTK_ROOT_216="$ORIGIN/$STATIC_DEPS/lib-x86-32/gtk-2.16.0";
+    export GTK_ROOT_212="$ORIGIN/$STATIC_DEPS/lib-x86-32/gtk-2.12.12";
 elif [[ "$ARCH" == "x86_64" ]]; then
     export CFLAGS="-m64 -I$ORIGIN/$STATIC_DEPS/lib-x86-64/include/x86_64-linux-gnu"
     export LDFLAGS="-m64 -L$ORIGIN/$STATIC_DEPS/lib-x86-64/lib -L$ORIGIN/$STATIC_DEPS/lib-x86-64/lib/x86_64-linux-gnu"
     export CONFIGURE_FLAGS="--build=x86_64-unknown-linux-gnu"
     export LD_LIBRARY_PATH="$ORIGIN/$STATIC_DEPS/lib-x86-64/lib"
     export PKG_CONFIG_PATH="$ORIGIN/$STATIC_DEPS/lib-x86-64/lib/pkgconfig"
+    export GTK_ROOT_300="$ORIGIN/$STATIC_DEPS/lib-x86-64/gtk-3.0.0";
+    export GTK_ROOT_216="$ORIGIN/$STATIC_DEPS/lib-x86-64/gtk-2.16.0";
+    export GTK_ROOT_212="$ORIGIN/$STATIC_DEPS/lib-x86-64/gtk-2.12.12";
 else
     echo unknown arch $ARCH
     exit -1
