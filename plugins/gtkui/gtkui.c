@@ -864,7 +864,7 @@ gtkui_connect_cb (void *none) {
     DB_plugin_t **plugins = deadbeef->plug_get_list ();
     for (int i = 0; plugins[i]; i++) {
         DB_plugin_t *p = plugins[i];
-        if (p->id && !strcmp (p->id, "artwork")) {
+        if (p->id && !strcmp (p->id, "artwork") && p->version_major == 1 && p->version_minor >= 2) {
             trace ("gtkui: found cover-art loader plugin\n");
             coverart_plugin = (DB_artwork_plugin_t *)p;
             break;
