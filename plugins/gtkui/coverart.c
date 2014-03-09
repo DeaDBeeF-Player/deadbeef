@@ -272,7 +272,7 @@ get_cover_art_callb (const char *fname, const char *artist, const char *album, i
 
     if (width == -1) {
         char path[2048];
-        coverart_plugin->make_cache_path (path, sizeof (path), album, artist, -1);
+        coverart_plugin->make_cache_path2 (path, sizeof (path), fname, album, artist, -1);
         deadbeef->mutex_lock (mutex);
         int i_largest = -1;
         int size_largest = -1;

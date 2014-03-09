@@ -167,8 +167,33 @@ make_cache_dir_path (char *path, int size, const char *artist, int img_size) {
     return sz;
 }
 
-void
-make_cache_path (char *path, int size, const char *album, const char *artist, int img_size) {
+int
+make_cache_path2 (char *path, int size, const char *fname, const char *album, const char *artist, int img_size) {
+    if (!album) {
+        album = "";
+    }
+    if (!artist) {
+        artist = "";
+    }
+
+    if (*album && !(*artist)) {
+        artist = album;
+    }
+
+    if (!*artist || !*album)
+    {
+        if (fname) {
+            // album=escape(path), artist=uknown
+            artist = "Unknown artist";
+            album = fname;
+        }
+        else {
+            trace ("artist or album is empty, give up\n");
+            *path = 0;
+            return -1;
+        }
+    }
+
     char *p = path;
     char esc_album[PATH_MAX];
     const char *palbum = album;
@@ -191,6 +216,11 @@ make_cache_path (char *path, int size, const char *album, const char *artist, in
             *p = '_';
         }
     }
+}
+
+void
+make_cache_path (char *path, int size, const char *album, const char *artist, int img_size) {
+    make_cache_path2 (path, size, NULL, album, artist, img_size);
 }
 
 void
@@ -911,7 +941,7 @@ fetcher_thread (void *none)
 
             trace ("fetching cover for %s %s\n", param->album, param->artist);
             char cache_path[1024];
-            make_cache_path (cache_path, sizeof (cache_path), param->album, param->artist, -1);
+            make_cache_path2 (cache_path, sizeof (cache_path), param->fname, param->album, param->artist, -1);
             int got_pic = 0;
 
             if (deadbeef->is_local_file (param->fname)) {
@@ -1035,7 +1065,7 @@ fetcher_thread (void *none)
                                         trace ("found apev2 cover art of %d bytes (%s)\n", sz, ext);
                                         char tmp_path[1024];
                                         char cache_path[1024];
-                                        make_cache_path (cache_path, sizeof (cache_path), param->album, param->artist, -1);
+                                        make_cache_path2 (cache_path, sizeof (cache_path), param->fname, param->album, param->artist, -1);
                                         trace ("will write apev2 cover art into %s\n", cache_path);
                                         snprintf (tmp_path, sizeof (tmp_path), "%s.part", cache_path);
                                         FILE *out = fopen (tmp_path, "w+b");
@@ -1104,7 +1134,7 @@ fetcher_thread (void *none)
                         trace ("found flac cover art of %d bytes (%s)\n", pic->data_length, pic->description);
                         char tmp_path[1024];
                         char cache_path[1024];
-                        make_cache_path (cache_path, sizeof (cache_path), param->album, param->artist, -1);
+                        make_cache_path2 (cache_path, sizeof (cache_path), param->fname, param->album, param->artist, -1);
                         trace ("will write flac cover art into %s\n", cache_path);
                         snprintf (tmp_path, sizeof (tmp_path), "%s.part", cache_path);
                         FILE *out = fopen (tmp_path, "w+b");
@@ -1180,7 +1210,7 @@ fetcher_thread (void *none)
                             strcat (path, files[0]->d_name);
                             char cache_path[1024];
                             char tmp_path[1024];
-                            make_cache_path (cache_path, sizeof (cache_path), param->album, param->artist, -1);
+                            make_cache_path2 (cache_path, sizeof (cache_path), param->fname, param->album, param->artist, -1);
                             snprintf (tmp_path, sizeof (tmp_path), "%s.part", cache_path);
                             copy_file (path, tmp_path, -1);
                             int err = rename (tmp_path, cache_path);
@@ -1240,7 +1270,7 @@ fetcher_thread (void *none)
                         continue;
                     }
                     char scaled_path[1024];
-                    make_cache_path (scaled_path, sizeof (scaled_path), param->album, param->artist, param->size);
+                    make_cache_path2 (scaled_path, sizeof (scaled_path), param->fname, param->album, param->artist, param->size);
                     copy_file (cache_path, scaled_path, param->size);
                 }
                 for (int i = 0; i < param->numcb; i++) {
@@ -1291,34 +1321,6 @@ get_album_art (const char *fname, const char *artist, const char *album, int siz
 {
     char path [1024];
 
-    if (!album) {
-        album = "";
-    }
-    if (!artist) {
-        artist = "";
-    }
-
-    if (*album && !(*artist)) {
-        artist = album;
-    }
-
-    if (!*artist || !*album)
-    {
-        if (fname) {
-            // album=escape(path), artist=uknown
-            artist = "Unknown artist";
-            album = fname;
-        }
-        else {
-            trace ("artist or album is empty, give up\n");
-            //give up
-            if (callback) {
-                callback (NULL, NULL, NULL, user_data);
-            }
-            return NULL;
-        }
-    }
-
     if (!deadbeef->is_local_file (fname)) {
         if (callback) {
             callback (NULL, NULL, NULL, user_data);
@@ -1326,7 +1328,7 @@ get_album_art (const char *fname, const char *artist, const char *album, int siz
         return NULL;
     }
 
-    make_cache_path (path, sizeof (path), album, artist, size);
+    make_cache_path2 (path, sizeof (path), fname, album, artist, size);
     char *p = find_image (path);
     if (p) {
         if (callback) {
@@ -1338,7 +1340,7 @@ get_album_art (const char *fname, const char *artist, const char *album, int siz
     if (size != -1) {
         // check if we have unscaled image
         char unscaled_path[1024];
-        make_cache_path (unscaled_path, sizeof (unscaled_path), album, artist, -1);
+        make_cache_path2 (unscaled_path, sizeof (unscaled_path), fname, album, artist, -1);
         p = find_image (unscaled_path);
         if (p) {
             free (p);
@@ -1568,7 +1570,7 @@ static DB_artwork_plugin_t plugin = {
     .plugin.plugin.api_vmajor = 1,
     .plugin.plugin.api_vminor = 0,
     .plugin.plugin.version_major = 1,
-    .plugin.plugin.version_minor = 1,
+    .plugin.plugin.version_minor = 2,
     .plugin.plugin.type = DB_PLUGIN_MISC,
     .plugin.plugin.id = "artwork",
     .plugin.plugin.name = "Album Artwork",
@@ -1606,4 +1608,5 @@ static DB_artwork_plugin_t plugin = {
     .get_default_cover = get_default_cover,
     .get_album_art_sync = get_album_art_sync,
     .make_cache_path = make_cache_path,
+    .make_cache_path2 = make_cache_path2,
 };

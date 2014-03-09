@@ -47,6 +47,9 @@ typedef struct {
 
     // creates full path string for cache storage
     void (*make_cache_path) (char *path, int size, const char *album, const char *artist, int img_size);
+
+    // creates full path string for cache storage
+    int (*make_cache_path2) (char *path, int size, const char *fname, const char *album, const char *artist, int img_size);
 } DB_artwork_plugin_t;
 
 #endif /*__ARTWORK_H*/
