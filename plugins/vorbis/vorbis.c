@@ -368,12 +368,19 @@ cvorbis_read (DB_fileinfo_t *_info, char *bytes, int size) {
             if (ret > 0) {
                 // remap channels to wav format
                 int idx = _info->fmt.channels - 3;
-                static int remap[4][6] = {
+                static int remap[6][8] = {
                     {0,2,1},
                     {0,1,2,3}, // should not be used
                     {0,2,1,3,4},
-                    {0,2,1,4,5,3}
+                    {0,2,1,4,5,3},
+                    {0,2,1,4,5,6,3},
+                    {0,2,1,6,7,4,5,3}
                 };
+
+                if (_info->fmt.channels > 8) {
+                    fprintf (stderr, "vorbis plugin doesn't support more than 8 channels\n");
+                    return -1;
+                }
 
                 int i, j;
                 int16_t *src = temp;
