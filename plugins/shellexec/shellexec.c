@@ -88,6 +88,24 @@ static int shx_exec_track_cmd (Shx_action_t *action, DB_playItem_t *it) {
         return -1;
     }
     strcat (cmd, "&");
+
+    // replace \' with '"'"'
+    size_t l = strlen (cmd);
+    size_t remaining = _POSIX_ARG_MAX - l - 1;
+    for (int i = 0; cmd[i]; i++) {
+        if (cmd[i] == '\\' && cmd[i+1] == '\'' && remaining >= 3) {
+            memmove (&cmd[i+5], &cmd[i+2], l - i + 1 - 2);
+            memcpy (&cmd[i], "'\"'\"'", 5);
+            l += 3;
+            remaining -= 3;
+            i += 5;
+        }
+        else if (remaining < 3) {
+            fprintf (stderr, "shellexec: command is too long.\n");
+            return -1;
+        }
+    }
+
     trace ("%s\n", cmd);
     res = system (cmd);
     return 0;
