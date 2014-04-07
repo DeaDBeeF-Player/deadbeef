@@ -1158,20 +1158,18 @@ error:
     if (encoder_preset->tag_oggvorbis) {
         // find flac decoder plugin
         DB_decoder_t **plugs = deadbeef->plug_get_decoder_list ();
-        DB_decoder_t *ogg = NULL;
+        int res = -1;
         for (int i = 0; plugs[i]; i++) {
-            if (!strcmp (plugs[i]->plugin.id, "stdogg")) {
-                ogg = plugs[i];
-                break;
+            if (!strcmp (plugs[i]->plugin.id, "stdogg")
+                    || !strcmp (plugs[i]->plugin.id, "stdopus")) {
+                res = plugs[i]->write_metadata (out_it);
+                if (!res) {
+                    break;
+                }
             }
         }
-        if (!ogg) {
-            fprintf (stderr, "converter: ogg plugin not found, cannot write ogg metadata\n");
-        }
-        else {
-            if (0 != ogg->write_metadata (out_it)) {
-                fprintf (stderr, "converter: failed to write ogg metadata, not an ogg file?\n");
-            }
+        if (res) {
+            fprintf (stderr, "converter: failed to write ogg metadata, not an ogg file?\n");
         }
     }
     if (out_it) {
