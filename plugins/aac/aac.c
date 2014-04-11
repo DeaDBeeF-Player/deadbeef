@@ -482,6 +482,10 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             info->endsample = totalsamples-1;
         }
     }
+    if (_info->fmt.channels == 7) {
+        _info->fmt.channels = 8;
+    }
+
     trace ("totalsamples: %d, endsample: %d, samples-from-duration: %d, samplerate %d, channels %d\n", totalsamples-1, info->endsample, (int)deadbeef->pl_get_item_duration (it)*44100, _info->fmt.samplerate, _info->fmt.channels);
 
     for (int i = 0; i < _info->fmt.channels; i++) {
@@ -555,44 +559,45 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
                 int i, j;
                 if (info->remap[0] == -1) {
                     // build remap mtx
+                    memset (info->remap, -1, sizeof (info->remap));
 
                     // FIXME: should build channelmask 1st; then remap based on channelmask
                     for (i = 0; i < _info->fmt.channels; i++) {
                         switch (info->frame_info.channel_position[i]) {
                         case FRONT_CHANNEL_CENTER:
-                            trace ("FC->%d\n", i);
+                            trace ("FC->%d %d\n", i, 2);
                             info->remap[2] = i;
                             break;
                         case FRONT_CHANNEL_LEFT:
-                            trace ("FL->%d\n", i);
+                            trace ("FL->%d %d\n", i, 0);
                             info->remap[0] = i;
                             break;
                         case FRONT_CHANNEL_RIGHT:
-                            trace ("FR->%d\n", i);
+                            trace ("FR->%d %d\n", i, 1);
                             info->remap[1] = i;
                             break;
                         case SIDE_CHANNEL_LEFT:
-                            trace ("SL->%d\n", i);
+                            trace ("SL->%d %d\n", i, 6);
                             info->remap[6] = i;
                             break;
                         case SIDE_CHANNEL_RIGHT:
-                            trace ("SR->%d\n", i);
+                            trace ("SR->%d %d\n", i, 7);
                             info->remap[7] = i;
                             break;
                         case BACK_CHANNEL_LEFT:
-                            trace ("RL->%d\n", i);
+                            trace ("RL->%d %d\n", i, 4);
                             info->remap[4] = i;
                             break;
                         case BACK_CHANNEL_RIGHT:
-                            trace ("RR->%d\n", i);
+                            trace ("RR->%d %d\n", i, 5);
                             info->remap[5] = i;
                             break;
                         case BACK_CHANNEL_CENTER:
-                            trace ("BC->%d\n", i);
+                            trace ("BC->%d %d\n", i, 8);
                             info->remap[8] = i;
                             break;
                         case LFE_CHANNEL:
-                            trace ("LFE->%d\n", i);
+                            trace ("LFE->%d %d\n", i, 3);
                             info->remap[3] = i;
                             break;
                         default:
@@ -615,7 +620,12 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
 
                 for (i = 0; i < n; i++) {
                     for (j = 0; j < _info->fmt.channels; j++) {
-                        ((int16_t *)bytes)[j] = ((int16_t *)src)[info->remap[j]];
+                        if (info->remap[j] == -1) {
+                            ((int16_t *)bytes)[j] = 0;
+                        }
+                        else {
+                            ((int16_t *)bytes)[j] = ((int16_t *)src)[info->remap[j]];
+                        }
                     }
                     src += samplesize;
                     bytes += samplesize;
