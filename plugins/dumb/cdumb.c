@@ -126,6 +126,8 @@ cdumb_startrenderer (DB_fileinfo_t *_info) {
     dumb_it_set_resampling_quality (itsr, q);
     dumb_it_set_xm_speed_zero_callback (itsr, &dumb_it_callback_terminate, NULL);
     dumb_it_set_global_volume_zero_callback (itsr, &dumb_it_callback_terminate, NULL);
+
+    dumb_it_sr_set_global_volume (itsr, deadbeef->conf_get_int ("dumb.globalvolume", 64));
     return 0;
 }
 
@@ -889,6 +891,7 @@ cgme_stop (void) {
 static const char settings_dlg[] =
     "property \"Resampling quality (0..2, higher is better)\" entry dumb.resampling_quality 2;\n"
     "property \"8-bit output (default is 16)\" checkbox dumb.8bitoutput 0;\n"
+    "property \"Internal DUMB volume (0..128)\" spinbtn[0,128,16] dumb.globalvolume 64;\n"
 ;
 
 // define plugin interface
