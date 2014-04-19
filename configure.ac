@@ -265,7 +265,7 @@ AC_CHECK_HEADER([CoreAudio/AudioHardware.h], [found_coreaudio_h=yes], [found_cor
 AS_IF([test "${enable_coreaudio}" != "no" -a "${found_coreaudio_h}" != "no"], [
   AC_DEFINE(HAVE_COREAUDIO, 1, [Build coreaudio support])
   HAVE_COREAUDIO=yes
-  COREAUDIO_LIBS="-Wl,-framework,CoreAudio"
+  COREAUDIO_LIBS="-Wl,-framework,CoreAudio -Wl,-framework,AudioUnit"
 ])
 
 AC_SUBST(COREAUDIO_LIBS)
