@@ -86,6 +86,7 @@ char use_gui_plugin[100];
 
 static void
 print_help (void) {
+	bind_textdomain_codeset (PACKAGE, "");
     fprintf (stdout, _("Usage: deadbeef [options] [--] [file(s)]\n"));
     fprintf (stdout, _("Options:\n"));
     fprintf (stdout, _("   --help  or  -h     Print help (this message) and exit\n"));
@@ -107,6 +108,7 @@ print_help (void) {
                 "                      copy[r]ight, [e]lapsed\n"));
     fprintf (stdout, _("                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"));
     fprintf (stdout, _("                      for more info, see http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"));
+	bind_textdomain_codeset (PACKAGE, "UTF-8");
 }
 
 // Parse command line an return a single buffer with all
@@ -774,6 +776,7 @@ main (int argc, char *argv[]) {
     else {
         bindtextdomain (PACKAGE, LOCALEDIR);
     }
+	bind_textdomain_codeset (PACKAGE, "UTF-8");
 	textdomain (PACKAGE);
 #endif
 
