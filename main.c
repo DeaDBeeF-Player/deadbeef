@@ -774,7 +774,6 @@ main (int argc, char *argv[]) {
     else {
         bindtextdomain (PACKAGE, LOCALEDIR);
     }
-	bind_textdomain_codeset (PACKAGE, "UTF-8");
 	textdomain (PACKAGE);
 #endif
 
