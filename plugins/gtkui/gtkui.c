@@ -101,6 +101,8 @@ int gtkui_groups_pinned;
 int gtkui_is_retina = 0;
 #endif
 
+int gtkui_unicode_playstate = 0;
+
 #define TRAY_ICON "deadbeef_tray_icon"
 
 // that must be called before gtk_init
@@ -598,6 +600,9 @@ gtkui_on_configchanged (void *data) {
 
     // pin groups
     gtkui_groups_pinned = deadbeef->conf_get_int ("playlist.pin.groups", 0);
+
+    // play state images
+    gtkui_unicode_playstate = deadbeef->conf_get_int ("gtkui.unicode_playstate", 0);
 
     // tray icon
     gtkui_update_status_icon (NULL);
@@ -1573,6 +1578,7 @@ static const char settings_dlg[] =
     "property \"Custom status icon\" entry gtkui.custom_tray_icon \"" TRAY_ICON "\" ;\n"
     "property \"Run gtk_init with --sync (debug mode)\" checkbox gtkui.sync 0;\n"
     "property \"Add separators between plugin context menu items\" checkbox gtkui.action_separators 0;\n"
+    "property \"Use unicode chars instead of images for track state\" checkbox gtkui.unicode_playstate 0;\n"
 ;
 
 // define plugin interface

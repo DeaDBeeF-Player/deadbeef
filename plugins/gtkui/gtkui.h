@@ -36,6 +36,7 @@ extern GtkWidget *mainwin;
 extern GtkWidget *searchwin;
 extern int gtkui_embolden_current_track;
 extern int gtkui_is_retina;
+extern int gtkui_unicode_playstate;
 
 struct _GSList;
 

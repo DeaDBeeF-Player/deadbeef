@@ -345,7 +345,7 @@ main_playlist_init (GtkWidget *widget) {
     DB_conf_item_t *col = deadbeef->conf_find ("playlist.column.", NULL);
     if (!col) {
         // create default set of columns
-        add_column_helper (listview, _("Playing"), 50, DB_COLUMN_PLAYING, NULL, 0);
+        add_column_helper (listview, "♫", 50, DB_COLUMN_PLAYING, NULL, 0);
         add_column_helper (listview, _("Artist / Album"), 150, -1, "%a - %b", 0);
         add_column_helper (listview, _("Track No"), 50, -1, "%n", 1);
         add_column_helper (listview, _("Title"), 150, -1, "%t", 0);
