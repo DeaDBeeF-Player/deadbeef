@@ -278,7 +278,7 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
             }
         }
     }
-    else if (it && it == playing_track && cinf->id == DB_COLUMN_PLAYING) {
+    else if (!gtkui_unicode_playstate && it && it == playing_track && cinf->id == DB_COLUMN_PLAYING) {
         int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
         int buffering = !deadbeef->streamer_ok_to_read (-1);
         GdkPixbuf *pixbuf;
@@ -296,15 +296,30 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
         cairo_fill (cr);
     }
     else if (it) {
-        char text[1024];
-        deadbeef->pl_format_title (it, -1, text, sizeof (text), cinf->id, cinf->format);
-        char *lb = strchr (text, '\r');
-        if (lb) {
-            *lb = 0;
+        char text[1024] = "";
+        if (it == playing_track && cinf->id == DB_COLUMN_PLAYING) {
+            int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
+            int buffering = !deadbeef->streamer_ok_to_read (-1);
+            if (paused) {
+                strcpy (text, "||");
+            }
+            else if (!buffering) {
+                strcpy (text, "►");
+            }
+            else {
+                strcpy (text, "⋯⋯⋯");
+            }
         }
-        lb = strchr (text, '\n');
-        if (lb) {
-            *lb = 0;
+        else {
+            deadbeef->pl_format_title (it, -1, text, sizeof (text), cinf->id, cinf->format);
+            char *lb = strchr (text, '\r');
+            if (lb) {
+                *lb = 0;
+            }
+            lb = strchr (text, '\n');
+            if (lb) {
+                *lb = 0;
+            }
         }
         GdkColor *color = NULL;
         if (theming) {
@@ -332,7 +347,7 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
             draw_init_font_bold (&listview->listctx);
         }
         if (calign_right) {
-            draw_text (&listview->listctx, x+5, y + 3, cwidth-10, 1, text);
+            draw_text (&listview->listctx, x + 5, y + 3, cwidth-10, 1, text);
         }
         else {
             draw_text (&listview->listctx, x + 5, y + 3, cwidth-10, 0, text);
