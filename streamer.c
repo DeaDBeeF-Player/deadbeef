@@ -1474,9 +1474,9 @@ streamer_thread (void *ctx) {
         }
 
         int seek = seekpos;
+        seekpos = -1;
         if (seek >= 0 && pl_get_item_duration (playing_track) > 0) {
             playpos = seek;
-            seekpos = -1;
             trace ("seeking to %d\n", seek);
             float pos = seek;
 

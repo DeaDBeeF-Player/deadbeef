@@ -438,13 +438,15 @@ on_seekbar_button_release_event        (GtkWidget       *widget,
     self->seekbar_moved = 1.0;
     DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
     if (trk) {
-        GtkAllocation a;
-        gtk_widget_get_allocation (widget, &a);
-        float time = (event->x - a.x) * deadbeef->pl_get_item_duration (trk) / (a.width);
-        if (time < 0) {
-            time = 0;
+        if (deadbeef->pl_get_item_duration (trk) >= 0) {
+            GtkAllocation a;
+            gtk_widget_get_allocation (widget, &a);
+            float time = (event->x - a.x) * deadbeef->pl_get_item_duration (trk) / (a.width);
+            if (time < 0) {
+                time = 0;
+            }
+            deadbeef->sendmessage (DB_EV_SEEK, 0, time * 1000, 0);
         }
-        deadbeef->sendmessage (DB_EV_SEEK, 0, time * 1000, 0);
         deadbeef->pl_item_unref (trk);
     }
     gtk_widget_queue_draw (widget);
