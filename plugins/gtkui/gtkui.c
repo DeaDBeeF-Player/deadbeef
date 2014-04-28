@@ -102,6 +102,7 @@ int gtkui_is_retina = 0;
 #endif
 
 int gtkui_unicode_playstate = 0;
+int gtkui_disable_seekbar_overlay = 0;
 
 #define TRAY_ICON "deadbeef_tray_icon"
 
@@ -603,6 +604,9 @@ gtkui_on_configchanged (void *data) {
 
     // play state images
     gtkui_unicode_playstate = deadbeef->conf_get_int ("gtkui.unicode_playstate", 0);
+
+    // seekbar overlay
+    gtkui_disable_seekbar_overlay = deadbeef->conf_get_int ("gtkui.disable_seekbar_overlay", 0);
 
     // tray icon
     gtkui_update_status_icon (NULL);
@@ -1574,11 +1578,11 @@ ddb_gui_GTK3_load (DB_functions_t *api) {
 static const char settings_dlg[] =
     "property \"Ask confirmation to delete files from disk\" checkbox gtkui.delete_files_ask 1;\n"
     "property \"Status icon volume control sensitivity\" entry gtkui.tray_volume_sensitivity 1;\n"
-//    "property \"Show volume in dB (percentage otherwise)\" entry gtkui.show_gain_in_db 1\n"
     "property \"Custom status icon\" entry gtkui.custom_tray_icon \"" TRAY_ICON "\" ;\n"
     "property \"Run gtk_init with --sync (debug mode)\" checkbox gtkui.sync 0;\n"
     "property \"Add separators between plugin context menu items\" checkbox gtkui.action_separators 0;\n"
     "property \"Use unicode chars instead of images for track state\" checkbox gtkui.unicode_playstate 0;\n"
+    "property \"Disable seekbar overlay text\" checkbox gtkui.disable_seekbar_overlay 0;\n"
 ;
 
 // define plugin interface
