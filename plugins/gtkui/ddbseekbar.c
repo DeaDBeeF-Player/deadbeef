@@ -330,7 +330,7 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
     cairo_fill (cr);
     cairo_reset_clip (cr);
 
-    if ((self->seekbar_moving || self->seekbar_moved > 0.0) && trk) {
+    if (!gtkui_disable_seekbar_overlay && (self->seekbar_moving || self->seekbar_moved > 0.0) && trk) {
         float time = 0;
         float dur = deadbeef->pl_get_item_duration (trk);
 

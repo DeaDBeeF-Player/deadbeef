@@ -37,6 +37,7 @@ extern GtkWidget *searchwin;
 extern int gtkui_embolden_current_track;
 extern int gtkui_is_retina;
 extern int gtkui_unicode_playstate;
+extern int gtkui_disable_seekbar_overlay;
 
 struct _GSList;
 
