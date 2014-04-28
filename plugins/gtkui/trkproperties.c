@@ -243,8 +243,18 @@ on_metadata_edited (GtkCellRendererText *renderer, gchar *path, gchar *new_text,
     GtkListStore *store = GTK_LIST_STORE (user_data);
     GtkTreePath *treepath = gtk_tree_path_new_from_string (path);
     GtkTreeIter iter;
-    gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, treepath);
+
+    if (!treepath) {
+        return;
+    }
+
+    gboolean valid = gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, treepath);
     gtk_tree_path_free (treepath);
+
+    if (!valid) {
+        return;
+    }
+
     GValue value = {0,};
     GValue mult = {0,};
     gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 1, &value);
