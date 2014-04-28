@@ -822,20 +822,26 @@ init_widget_layout (void) {
     gtk_box_pack_start (GTK_BOX(lookup_widget(mainwin, "plugins_bottom_vbox")), rootwidget->widget, TRUE, TRUE, 0);
 
     // load layout
-    char layout[20000];
-    deadbeef->conf_get_str ("gtkui.layout", gtkui_def_layout, layout, sizeof (layout));
+    // config var name is defined in DDB_GTKUI_CONF_LAYOUT
+    // gtkui.layout: 0.6.0 and 0.6.1
+    // gtkui.layout.major.minor.point: later versions
 
-    int upgraded_062 = deadbeef->conf_get_int ("gtkui.layout_062_upgraded", 0);
-    if (strcmp (layout, gtkui_def_layout) && !upgraded_062) {
-        // add top bar
-        char layout_upgrade[20000];
-        snprintf (layout_upgrade, sizeof (layout_upgrade), "vbox expand=\"0 1\" fill=\"1 1\" homogeneous=0 {hbox expand=\"0 1 0\" fill=\"1 1 1\" homogeneous=0 {playtb {} seekbar {} volumebar {} } %s }", layout);
-        strcpy (layout, layout_upgrade);
-        deadbeef->conf_set_str ("gtkui.layout", layout);
-    }
-    if (!upgraded_062) {
-        deadbeef->conf_set_int ("gtkui.layout_062_upgraded", 1);
-        deadbeef->conf_save ();
+    char layout[20000];
+    deadbeef->conf_get_str (DDB_GTKUI_CONF_LAYOUT, "-", layout, sizeof (layout));
+    if (!strcmp (layout, "-")) {
+        // upgrade from 0.6.0 to 0.6.2
+        char layout_060[20000];
+        deadbeef->conf_get_str ("gtkui.layout", "-", layout_060, sizeof (layout_060));
+        if (!strcmp (layout_060, "-")) {
+            // new setup
+            strcpy (layout, gtkui_def_layout);
+        }
+        else {
+            // upgrade with top bar
+            snprintf (layout, sizeof (layout), "vbox expand=\"0 1\" fill=\"1 1\" homogeneous=0 {hbox expand=\"0 1 0\" fill=\"1 1 1\" homogeneous=0 {playtb {} seekbar {} volumebar {} } %s }", layout_060);
+            deadbeef->conf_set_str (DDB_GTKUI_CONF_LAYOUT, layout);
+            deadbeef->conf_save ();
+        }
     }
 
     ddb_gtkui_widget_t *w = NULL;

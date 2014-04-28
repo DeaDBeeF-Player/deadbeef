@@ -44,7 +44,10 @@
 #endif
 
 #define DDB_GTKUI_API_VERSION_MAJOR 2
-#define DDB_GTKUI_API_VERSION_MINOR 0
+#define DDB_GTKUI_API_VERSION_MINOR 1
+
+// added in API 2.1
+#define DDB_GTKUI_CONF_LAYOUT "gtkui.layout.0.6.2"
 
 // this flag tells that the widget should be added to h/vboxes with expand=FALSE
 #define DDB_GTKUI_WIDGET_FLAG_NON_EXPANDABLE 0x00000001
