@@ -479,7 +479,7 @@ void
 w_save (void) {
     char buf[20000] = "";
     save_widget_to_string (buf, sizeof (buf), rootwidget->children);
-    deadbeef->conf_set_str ("gtkui.layout", buf);
+    deadbeef->conf_set_str (DDB_GTKUI_CONF_LAYOUT, buf);
     deadbeef->conf_save ();
 }
 
