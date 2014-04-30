@@ -68,6 +68,7 @@ static char lfm_nowplaying[2048]; // packet for nowplaying, or ""
 typedef struct {
     DB_playItem_t *it;
     time_t started_timestamp;
+    float playtime;
 } subm_item_t;
 
 static subm_item_t lfm_subm_queue[LFM_SUBMISSION_QUEUE_SIZE];
@@ -322,7 +323,7 @@ fail:
 }
 
 static int
-lfm_fetch_song_info (DB_playItem_t *song, char *a, char *t, char *b, float *l, char *n, char *m) {
+lfm_fetch_song_info (DB_playItem_t *song, float playtime, char *a, char *t, char *b, float *l, char *n, char *m) {
     if (deadbeef->conf_get_int ("lastfm.prefer_album_artist", 0)) {
         if (!deadbeef->pl_get_meta (song, "band", a, META_FIELD_SIZE)) {
             if (!deadbeef->pl_get_meta (song, "album artist", a, META_FIELD_SIZE)) {
@@ -352,6 +353,9 @@ lfm_fetch_song_info (DB_playItem_t *song, char *a, char *t, char *b, float *l, c
         *b = 0;
     }
     *l = deadbeef->pl_get_item_duration (song);
+    if (*l <= 0) {
+        *l = playtime;
+    }
     if (!deadbeef->pl_get_meta (song, "track", n, META_FIELD_SIZE)) {
         *n = 0;
     }
@@ -433,7 +437,7 @@ lfm_add_keyvalue_uri_encoded (char **out, int *outl, const char *key, const char
 // subm is submission idx, or -1 for nowplaying
 // returns number of bytes added, or -1
 static int
-lfm_format_uri (int subm, DB_playItem_t *song, char *out, int outl, time_t started_timestamp) {
+lfm_format_uri (int subm, DB_playItem_t *song, char *out, int outl, time_t started_timestamp, float playtime) {
     if (subm > 50) {
         trace ("lastfm: it's only allowed to send up to 50 submissions at once (got idx=%d)\n", subm);
         return -1;
@@ -462,7 +466,7 @@ lfm_format_uri (int subm, DB_playItem_t *song, char *out, int outl, time_t start
         strcpy (km+1, ka+1);
     }
 
-    if (lfm_fetch_song_info (song, a, t, b, &l, n, m) == 0) {
+    if (lfm_fetch_song_info (song, playtime, a, t, b, &l, n, m) == 0) {
 //        trace ("playtime: %f\nartist: %s\ntitle: %s\nalbum: %s\nduration: %f\ntracknum: %s\n---\n", song->playtime, a, t, b, l, n);
     }
     else {
@@ -518,7 +522,7 @@ lastfm_songstarted (ddb_event_track_t *ev, uintptr_t data) {
         return 0;
     }
     deadbeef->mutex_lock (lfm_mutex);
-    if (lfm_format_uri (-1, ev->track, lfm_nowplaying, sizeof (lfm_nowplaying), ev->started_timestamp) < 0) {
+    if (lfm_format_uri (-1, ev->track, lfm_nowplaying, sizeof (lfm_nowplaying), ev->started_timestamp, 120) < 0) {
         lfm_nowplaying[0] = 0;
     }
 //    trace ("%s\n", lfm_nowplaying);
@@ -542,13 +546,14 @@ lastfm_songchanged (ddb_event_trackchange_t *ev, uintptr_t data) {
     trace ("lfm songfinished %s\n", deadbeef->pl_find_meta (ev->from, ":URI"));
 #if !LFM_IGNORE_RULES
     // check submission rules
-    // duration must be >= 30 sec
-    if (deadbeef->pl_get_item_duration (ev->from) < 30) {
-        trace ("track duration is %f seconds. not eligible for submission\n", deadbeef->pl_get_item_duration (ev->from));
+    // duration/playtime must be >= 30 sec
+    float dur = deadbeef->pl_get_item_duration (ev->from);
+    if (dur < 30 && ev->playtime < 30) {
+        trace ("track duration is %f sec, playtime if %f sec. not eligible for submission\n", dur, ev->playtime);
         return 0;
     }
-    // must be played for >=240sec of half the total time
-    if (ev->playtime < 240 && ev->playtime < deadbeef->pl_get_item_duration (ev->from)/2) {
+    // must be played for >=240sec or half the total time
+    if (ev->playtime < 240 && ev->playtime < dur/2) {
         trace ("track playtime=%f seconds. not eligible for submission\n", ev->playtime);
         return 0;
     }
@@ -568,6 +573,7 @@ lastfm_songchanged (ddb_event_trackchange_t *ev, uintptr_t data) {
             trace ("lfm: song is now in queue for submission\n");
             lfm_subm_queue[i].it = ev->from;
             lfm_subm_queue[i].started_timestamp = ev->started_timestamp;
+            lfm_subm_queue[i].playtime = ev->playtime;
             deadbeef->pl_item_ref (ev->from);
             break;
         }
@@ -634,7 +640,7 @@ lfm_send_submissions (void) {
     deadbeef->mutex_lock (lfm_mutex);
     for (i = 0; i < LFM_SUBMISSION_QUEUE_SIZE; i++) {
         if (lfm_subm_queue[i].it) {
-            res = lfm_format_uri (idx, lfm_subm_queue[i].it, r, len, lfm_subm_queue[i].started_timestamp);
+            res = lfm_format_uri (idx, lfm_subm_queue[i].it, r, len, lfm_subm_queue[i].started_timestamp, lfm_subm_queue[i].playtime);
             if (res < 0) {
                 trace ("lfm: failed to format uri\n");
                 return;
