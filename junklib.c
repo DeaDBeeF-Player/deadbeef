@@ -710,6 +710,37 @@ can_be_chinese (const uint8_t *str, int sz) {
     return 0;
 }
 
+static int
+can_be_shift_jis (const unsigned char *str, int size) {
+    unsigned char out[size*4];
+
+    if (size < 2) {
+        return 0;
+    }
+
+    const unsigned char *p = str;
+    int s = size;
+    while (s >= 2) {
+        if ((((p[0] >= 0x81 && p[0] <= 0x84) || (p[0] >= 0x87 && p[0] <= 0x9f))
+                    && ((p[1] >= 0x40 && p[1] <= 0x9e) || (p[1] >= 0x9f && p[1] <= 0xfc)))
+                || ((p[0] >= 0xe0 && p[0] <= 0xef)
+                    && ((p[1] >= 0x40 && p[1] <= 0x9e) || (p[1] >= 0x9f && p[1] <= 0xfc)))) {
+            break;
+        }
+        s--;
+        p++;
+    }
+
+    if (s >= 2) {
+        if (junk_iconv (str, size, out, sizeof (out), "shift-jis", UTF8_STR) >= 0) {
+            return 1;
+        }
+    }
+    return 0;
+
+}
+
+
 static char *
 convstr_id3v2 (int version, uint8_t encoding, const unsigned char* str, int sz) {
     char out[2048] = "";
@@ -3527,6 +3558,10 @@ junk_detect_charset (const char *s) {
     // check if that's already utf8
     if (u8_valid (s, len, NULL)) {
         return NULL; // means no recoding required
+    }
+    // try shift-jis
+    if (can_be_shift_jis (s, len)) {
+        return "shift-jis";
     }
     // hack to add cp936 support
     if (can_be_chinese (s, len)) {
