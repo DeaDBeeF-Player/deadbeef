@@ -324,7 +324,7 @@ cvorbis_read (DB_fileinfo_t *_info, char *bytes, int size) {
     if (!info->info.file->vfs->is_streaming ()) {
         if (info->currentsample + size / samplesize > info->endsample) {
             size = (info->endsample - info->currentsample + 1) * samplesize;
-            trace ("size truncated to %d bytes, cursample=%d, info->endsample=%d, totalsamples=%d\n", size, info->currentsample, info->endsample, ov_pcm_total (&info->vorbis_file, -1));
+            trace ("size truncated to %d bytes, cursample=%d, info->endsample=%d, totalsamples=%lld\n", size, info->currentsample, info->endsample, ov_pcm_total (&info->vorbis_file, -1));
             if (size <= 0) {
                 return 0;
             }
@@ -350,7 +350,7 @@ cvorbis_read (DB_fileinfo_t *_info, char *bytes, int size) {
     }
 //    trace ("cvorbis_read %d bytes[2]\n", size);
     int initsize = size;
-    long ret;
+    int64_t ret;
     for (;;)
     {
         // read ogg
@@ -360,7 +360,7 @@ cvorbis_read (DB_fileinfo_t *_info, char *bytes, int size) {
 #endif
 
         if (_info->fmt.channels <= 2 || _info->fmt.channels == 4) {
-            ret=ov_read (&info->vorbis_file, bytes, size, endianess, 2, 1, &info->cur_bit_stream);
+            ret = (int64_t)ov_read (&info->vorbis_file, bytes, size, endianess, 2, 1, &info->cur_bit_stream);
         }
         else {
             int16_t temp[size/2];
@@ -396,7 +396,7 @@ cvorbis_read (DB_fileinfo_t *_info, char *bytes, int size) {
         if (ret <= 0)
         {
             if (ret < 0) {
-                trace ("ov_read returned %d\n", ret);
+                trace ("ov_read returned %lld\n", ret);
                 switch (ret) {
                 case OV_HOLE:
                     trace ("OV_HOLE\n");
@@ -444,11 +444,11 @@ cvorbis_seek_sample (DB_fileinfo_t *_info, int sample) {
         trace ("vorbis: file is NULL on seek\n");
         return -1;
     }
-    trace ("vorbis: seek to sample %d\n");
+    trace ("vorbis: seek to sample %d\n", sample);
     sample += info->startsample;
     int res = ov_pcm_seek (&info->vorbis_file, sample);
     if (res != 0 && res != OV_ENOSEEK) {
-        trace ("vorbis: error %x seeking to sample %d\n", sample);
+        trace ("vorbis: error %x seeking to sample %d\n", res, sample);
         return -1;
     }
     int tell = ov_pcm_tell (&info->vorbis_file);
