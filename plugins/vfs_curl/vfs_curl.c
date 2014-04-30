@@ -75,6 +75,9 @@ typedef struct {
 
     char http_err[CURL_ERROR_SIZE];
 
+    float prev_playtime;
+    time_t started_timestamp;
+
     // flags (bitfields to save some space)
     unsigned seektoend : 1; // indicates that next tell must return length
     unsigned gotheader : 1; // tells that all headers (including ICY) were processed (to start reading body)
@@ -205,6 +208,9 @@ http_parse_shoutcast_meta (HTTP_FILE *fp, const char *meta, int size) {
                 int songstarted = 0;
                 char *tit = strstr (title, " - ");
                 deadbeef->pl_lock ();
+                // create dummy track with previous meta
+                DB_playItem_t *from = deadbeef->pl_item_alloc ();
+                deadbeef->pl_items_copy_junk (fp->track, from, from);
                 if (tit) {
                     *tit = 0;
                     tit += 3;
@@ -237,13 +243,32 @@ http_parse_shoutcast_meta (HTTP_FILE *fp, const char *meta, int size) {
                 }
                 deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
                 if (songstarted) {
-                    ddb_event_track_t *ev = (ddb_event_track_t *)deadbeef->event_alloc (DB_EV_SONGSTARTED);
-                    ev->track = fp->track;
-                    if (ev->track) {
-                        deadbeef->pl_item_ref (ev->track);
+                    float playpos = deadbeef->streamer_get_playpos ();
+                    {
+                        ddb_event_trackchange_t *ev = (ddb_event_trackchange_t *)deadbeef->event_alloc (DB_EV_SONGCHANGED);
+
+                        ev->from = from;
+                        ev->to = fp->track;
+                        ev->playtime = playpos - fp->prev_playtime;
+                        ev->started_timestamp = fp->started_timestamp;
+                        deadbeef->pl_item_ref (ev->from);
+                        deadbeef->pl_item_ref (ev->to);
+                        deadbeef->event_send ((ddb_event_t *)ev, 0, 0);
                     }
-                    deadbeef->event_send ((ddb_event_t *)ev, 0, 0);
+
+                    {
+                        ddb_event_track_t *ev = (ddb_event_track_t *)deadbeef->event_alloc (DB_EV_SONGSTARTED);
+                        ev->track = fp->track;
+                        fp->started_timestamp = time(NULL);
+                        ev->started_timestamp = fp->started_timestamp;
+                        if (ev->track) {
+                            deadbeef->pl_item_ref (ev->track);
+                        }
+                        deadbeef->event_send ((ddb_event_t *)ev, 0, 0);
+                    }
+                    fp->prev_playtime = playpos;
                 }
+                deadbeef->pl_item_unref (from);
             }
             return 0;
         }
