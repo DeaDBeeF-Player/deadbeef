@@ -3891,7 +3891,7 @@ pl_items_copy_junk (playItem_t *from, playItem_t *first, playItem_t *last) {
     DB_metaInfo_t *meta = from->meta;
     while (meta) {
         playItem_t *i;
-        for (i = first; ; i = i->next[PL_MAIN]) {
+        for (i = first; i; i = i->next[PL_MAIN]) {
             i->_flags = from->_flags;
             pl_add_meta (i, meta->key, meta->value);
             if (i == last) {
