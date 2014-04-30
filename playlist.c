@@ -880,13 +880,7 @@ pl_get_qvalue_from_cue (const uint8_t *p, int sz, char *out) {
     }
     else
     {
-        res = junk_recode (str, l, recbuf, sizeof (recbuf)-1, "SHIFT-JIS");
-        if (res > 0) {
-            strcpy (str, recbuf);
-        }
-        else {
-            strcpy (str, "<UNRECOGNIZED CHARSET>");
-        }
+        strcpy (str, "<UNRECOGNIZED CHARSET>");
     }
 }
 
