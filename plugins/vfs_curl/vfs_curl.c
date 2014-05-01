@@ -208,9 +208,14 @@ http_parse_shoutcast_meta (HTTP_FILE *fp, const char *meta, int size) {
                 int songstarted = 0;
                 char *tit = strstr (title, " - ");
                 deadbeef->pl_lock ();
+                int emulate_trackchange = deadbeef->conf_get_int ("vfs_curl.emulate_trackchange", 0);
                 // create dummy track with previous meta
-                DB_playItem_t *from = deadbeef->pl_item_alloc ();
-                deadbeef->pl_items_copy_junk (fp->track, from, from);
+                DB_playItem_t *from = NULL;
+                if (emulate_trackchange) {
+                    from = deadbeef->pl_item_alloc ();
+                    deadbeef->pl_items_copy_junk (fp->track, from, from);
+                }
+
                 if (tit) {
                     *tit = 0;
                     tit += 3;
@@ -243,7 +248,9 @@ http_parse_shoutcast_meta (HTTP_FILE *fp, const char *meta, int size) {
                 }
                 deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
                 if (songstarted) {
+
                     float playpos = deadbeef->streamer_get_playpos ();
+                    if (emulate_trackchange)
                     {
                         ddb_event_trackchange_t *ev = (ddb_event_trackchange_t *)deadbeef->event_alloc (DB_EV_SONGCHANGED);
 
@@ -256,19 +263,20 @@ http_parse_shoutcast_meta (HTTP_FILE *fp, const char *meta, int size) {
                         deadbeef->event_send ((ddb_event_t *)ev, 0, 0);
                     }
 
-                    {
-                        ddb_event_track_t *ev = (ddb_event_track_t *)deadbeef->event_alloc (DB_EV_SONGSTARTED);
-                        ev->track = fp->track;
-                        fp->started_timestamp = time(NULL);
-                        ev->started_timestamp = fp->started_timestamp;
-                        if (ev->track) {
-                            deadbeef->pl_item_ref (ev->track);
-                        }
-                        deadbeef->event_send ((ddb_event_t *)ev, 0, 0);
+                    ddb_event_track_t *ev = (ddb_event_track_t *)deadbeef->event_alloc (DB_EV_SONGSTARTED);
+                    ev->track = fp->track;
+                    fp->started_timestamp = time(NULL);
+                    ev->started_timestamp = fp->started_timestamp;
+                    if (ev->track) {
+                        deadbeef->pl_item_ref (ev->track);
                     }
+                    deadbeef->event_send ((ddb_event_t *)ev, 0, 0);
                     fp->prev_playtime = playpos;
                 }
-                deadbeef->pl_item_unref (from);
+                if (from) {
+                    deadbeef->pl_item_unref (from);
+                    from = NULL;
+                }
             }
             return 0;
         }
@@ -1115,7 +1123,10 @@ http_is_streaming (void) {
     return 1;
 }
 
-// standard stdio vfs
+static const char settings_dlg[] =
+    "property \"Emulate track change events (for scrobbling)\" checkbox vfs_curl.emulate_trackchange 0;\n"
+;
+
 static DB_vfs_t plugin = {
     .plugin.api_vmajor = 1,
     .plugin.api_vminor = 0,
@@ -1145,6 +1156,7 @@ static DB_vfs_t plugin = {
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.start = vfs_curl_start,
     .plugin.stop = vfs_curl_stop,
+    .plugin.configdialog = settings_dlg,
     .open = http_open,
     .set_track = http_set_track,
     .close = http_close,
