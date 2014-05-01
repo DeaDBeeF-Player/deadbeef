@@ -1308,3 +1308,11 @@ on_auto_size_columns_toggled           (GtkToggleButton *togglebutton,
 void
 on_searchentry_activate                (GtkEntry        *entry,
                                         gpointer         user_data);
+
+void
+on_stop_after_album_activate           (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_reset_autostopalbum_toggled         (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);

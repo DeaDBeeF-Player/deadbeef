@@ -929,6 +929,7 @@ gtkui_set_default_hotkeys (void) {
     deadbeef->conf_set_str ("hotkey.key29", "v 0 0 stop");
     deadbeef->conf_set_str ("hotkey.key30", "b 0 0 next");
     deadbeef->conf_set_str ("hotkey.key31", "n 0 0 playback_random");
+    deadbeef->conf_set_str ("hotkey.key32", "\"Ctrl k\" 0 0 toggle_stop_after_album");
     deadbeef->conf_save ();
 }
 

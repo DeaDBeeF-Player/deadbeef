@@ -470,6 +470,14 @@ on_stop_after_current_activate         (GtkMenuItem     *menuitem,
 }
 
 void
+on_stop_after_album_activate           (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("playlist.stop_after_album", gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem)));
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+void
 on_cursor_follows_playback_activate    (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
