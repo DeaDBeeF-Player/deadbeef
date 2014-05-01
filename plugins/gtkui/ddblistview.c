@@ -1790,7 +1790,7 @@ ddb_listview_list_mousemove (DdbListview *ps, GdkEventMotion *ev, int ex, int ey
     deadbeef->pl_lock ();
     if (ps->dragwait) {
         GtkWidget *widget = ps->list;
-        if (gtk_drag_check_threshold (widget, ps->lastpos[0], ex, ps->lastpos[1], ey)) {
+        if (gtk_drag_check_threshold (widget, ps->lastpos[0], ps->lastpos[1], ex, ey)) {
             ps->dragwait = 0;
             ps->drag_source_playlist = deadbeef->plt_get_curr_idx ();
             GtkTargetEntry entry = {
