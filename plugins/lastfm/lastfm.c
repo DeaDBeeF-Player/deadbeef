@@ -279,7 +279,7 @@ auth (void) {
             end++;
         }
         if (end - p > sizeof (lfm_nowplaying_url)-1) {
-            trace ("scrobbler nowplaying url is too long:\n", lfm_reply);
+            trace ("scrobbler nowplaying url is too long %d:\n", (int)(end-p));
             goto fail;
         }
         strncpy (lfm_nowplaying_url, p, end-p);
@@ -300,7 +300,7 @@ auth (void) {
             end++;
         }
         if (end - p > sizeof (lfm_submission_url)-1) {
-            trace ("scrobbler submission url is too long:\n", lfm_reply);
+            trace ("scrobbler submission url is too long: %d\n", (int)(end-p));
             goto fail;
         }
         strncpy (lfm_submission_url, p, end-p);
