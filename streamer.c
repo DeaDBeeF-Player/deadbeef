@@ -86,6 +86,7 @@ static int autoconv_16_to_24 = 0;
 static int trace_bufferfill = 0;
 
 static int stop_after_current = 0;
+static int stop_after_album = 0;
 
 static int streaming_terminate;
 
@@ -356,6 +357,61 @@ send_trackinfochanged (playItem_t *track) {
     messagepump_push_event ((ddb_event_t*)ev, 0, 0);
 }
 
+int stop_after_album_check (playItem_t *cur, playItem_t *next) {
+    if (!stop_after_album) {
+        return 0;
+    }
+
+    if (!cur) {
+        return 0;
+    }
+
+    if (!next) {
+        streamer_buffering = 0;
+        streamer_set_nextsong (-2, -2);
+        if (conf_get_int ("playlist.stop_after_album_reset", 0)) {
+            conf_set_int ("playlist.stop_after_album", 0);
+            stop_after_album = 0;
+            deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+        }
+    }
+
+    const char *cur_artist = pl_find_meta_raw (cur, "artist");
+    const char *next_artist = pl_find_meta_raw (next, "artist");
+
+    const char *cur_album = pl_find_meta_raw (cur, "album");
+    const char *next_album = pl_find_meta_raw (next, "album");
+
+    const char *cur_aa = pl_find_meta_raw (cur, "band");
+    if (!cur_aa) {
+        cur_aa = pl_find_meta_raw (cur, "album artist");
+    }
+    if (!cur_aa) {
+        cur_aa = pl_find_meta_raw (cur, "albumartist");
+    }
+    const char *next_aa = pl_find_meta_raw (next, "band");
+    if (!next_aa) {
+        next_aa = pl_find_meta_raw (next, "album artist");
+    }
+    if (!next_aa) {
+        next_aa = pl_find_meta_raw (next, "albumartist");
+    }
+
+    if ((cur_artist == next_artist) && (cur_album == next_album) && (cur_aa == next_aa)) {
+        return 0;
+    }
+
+    streamer_buffering = 0;
+    streamer_set_nextsong (-2, -2);
+    if (conf_get_int ("playlist.stop_after_album_reset", 0)) {
+        conf_set_int ("playlist.stop_after_album", 0);
+        stop_after_album = 0;
+        deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    }
+
+    return 1;
+}
+
 int
 streamer_move_to_nextsong (int reason) {
     trace ("streamer_move_to_nextsong (%d)\n", reason);
@@ -363,10 +419,18 @@ streamer_move_to_nextsong (int reason) {
     if (!streamer_playlist) {
         streamer_playlist = plt_get_curr ();
     }
+
+    playItem_t *curr = playlist_track;
+
     while (pl_playqueue_getcount ()) {
         trace ("pl_playqueue_getnext\n");
         playItem_t *it = pl_playqueue_getnext ();
         if (it) {
+            if (stop_after_album_check(curr, it)) {
+                pl_unlock ();
+                return -1;
+            }
+
             pl_playqueue_pop ();
             int r = str_get_idx_of (it);
             if (r >= 0) {
@@ -398,7 +462,6 @@ streamer_move_to_nextsong (int reason) {
         }
     }
 
-    playItem_t *curr = playlist_track;
     if (reason == 1) {
         if (streamer_playlist) {
             plt_unref (streamer_playlist);
@@ -445,6 +508,13 @@ streamer_move_to_nextsong (int reason) {
                 }
             }
             playItem_t *it = pmin;
+            // although it is possible that, although it == NULL, reshuffling the playlist
+            // will result in the next track belonging to the same album as this one, this
+            // is most likely not what the user wants.
+            if (stop_after_album_check(curr, it)) {
+                pl_unlock ();
+                return -1;
+            }
             if (!it) {
                 // all songs played, reshuffle and try again
                 if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) { // loop
@@ -479,6 +549,10 @@ streamer_move_to_nextsong (int reason) {
                 }
             }
             playItem_t *it = pmin;
+            if (stop_after_album_check(curr, it)) {
+                pl_unlock ();
+                return -1;
+            }
             if (!it) {
                 // all songs played, reshuffle and try again
                 if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL || reason == 1) { // loop
@@ -515,6 +589,10 @@ streamer_move_to_nextsong (int reason) {
         }
         else {
             it = streamer_playlist->head[PL_MAIN];
+        }
+        if (stop_after_album_check(curr, it)) {
+            pl_unlock ();
+            return -1;
         }
         if (!it) {
             trace ("streamer_move_nextsong: was last track\n");
@@ -2493,6 +2571,7 @@ streamer_configchanged (void) {
     trace_bufferfill = conf_get_int ("streamer.trace_buffer_fill",0);
 
     stop_after_current = conf_get_int ("playlist.stop_after_current", 0);
+    stop_after_album = conf_get_int ("playlist.stop_after_album", 0);
 
     char mapstr[2048];
     deadbeef->conf_get_str ("network.ctmapping", DDB_DEFAULT_CTMAPPING, mapstr, sizeof (mapstr));

@@ -96,6 +96,7 @@ create_mainwin (void)
   GtkWidget *scroll_follows_playback;
   GtkWidget *cursor_follows_playback;
   GtkWidget *stop_after_current;
+  GtkWidget *stop_after_album;
   GtkWidget *separator11;
   GtkWidget *jump_to_current_track1;
   GtkWidget *Help;
@@ -386,6 +387,10 @@ create_mainwin (void)
   gtk_widget_show (stop_after_current);
   gtk_container_add (GTK_CONTAINER (Playback_menu), stop_after_current);
 
+  stop_after_album = gtk_check_menu_item_new_with_mnemonic (_("Stop after current album"));
+  gtk_widget_show (stop_after_album);
+  gtk_container_add (GTK_CONTAINER (Playback_menu), stop_after_album);
+
   separator11 = gtk_separator_menu_item_new ();
   gtk_widget_show (separator11);
   gtk_container_add (GTK_CONTAINER (Playback_menu), separator11);
@@ -591,6 +596,9 @@ create_mainwin (void)
   g_signal_connect ((gpointer) stop_after_current, "activate",
                     G_CALLBACK (on_stop_after_current_activate),
                     NULL);
+  g_signal_connect ((gpointer) stop_after_album, "activate",
+                    G_CALLBACK (on_stop_after_album_activate),
+                    NULL);
   g_signal_connect ((gpointer) jump_to_current_track1, "activate",
                     G_CALLBACK (on_jump_to_current_track1_activate),
                     NULL);
@@ -679,6 +687,7 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, scroll_follows_playback, "scroll_follows_playback");
   GLADE_HOOKUP_OBJECT (mainwin, cursor_follows_playback, "cursor_follows_playback");
   GLADE_HOOKUP_OBJECT (mainwin, stop_after_current, "stop_after_current");
+  GLADE_HOOKUP_OBJECT (mainwin, stop_after_album, "stop_after_album");
   GLADE_HOOKUP_OBJECT (mainwin, separator11, "separator11");
   GLADE_HOOKUP_OBJECT (mainwin, jump_to_current_track1, "jump_to_current_track1");
   GLADE_HOOKUP_OBJECT (mainwin, Help, "Help");
@@ -1515,6 +1524,7 @@ create_prefwin (void)
   GtkWidget *resume_last_session;
   GtkWidget *ignore_archives;
   GtkWidget *reset_autostop;
+  GtkWidget *reset_autostopalbum;
   GtkWidget *label39;
   GtkWidget *vbox29;
   GtkWidget *hbox80;
@@ -1842,6 +1852,10 @@ create_prefwin (void)
   reset_autostop = gtk_check_button_new_with_mnemonic (_("Auto-reset \"Stop after current\""));
   gtk_widget_show (reset_autostop);
   gtk_box_pack_start (GTK_BOX (vbox8), reset_autostop, FALSE, FALSE, 0);
+
+  reset_autostopalbum = gtk_check_button_new_with_mnemonic (_("Auto-reset \"Stop after current album\""));
+  gtk_widget_show (reset_autostopalbum);
+  gtk_box_pack_start (GTK_BOX (vbox8), reset_autostopalbum, FALSE, FALSE, 0);
 
   label39 = gtk_label_new (_("Playback"));
   gtk_widget_show (label39);
@@ -2661,6 +2675,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) reset_autostop, "toggled",
                     G_CALLBACK (on_reset_autostop_toggled),
                     NULL);
+  g_signal_connect ((gpointer) reset_autostopalbum, "toggled",
+                    G_CALLBACK (on_reset_autostopalbum_toggled),
+                    NULL);
   g_signal_connect ((gpointer) dsp_add, "clicked",
                     G_CALLBACK (on_dsp_add_clicked),
                     NULL);
@@ -2872,6 +2889,7 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, resume_last_session, "resume_last_session");
   GLADE_HOOKUP_OBJECT (prefwin, ignore_archives, "ignore_archives");
   GLADE_HOOKUP_OBJECT (prefwin, reset_autostop, "reset_autostop");
+  GLADE_HOOKUP_OBJECT (prefwin, reset_autostopalbum, "reset_autostopalbum");
   GLADE_HOOKUP_OBJECT (prefwin, label39, "label39");
   GLADE_HOOKUP_OBJECT (prefwin, vbox29, "vbox29");
   GLADE_HOOKUP_OBJECT (prefwin, hbox80, "hbox80");

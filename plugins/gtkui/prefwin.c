@@ -215,6 +215,9 @@ gtkui_run_preferences_dlg (void) {
     // reset autostop
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "reset_autostop")), deadbeef->conf_get_int ("playlist.stop_after_current_reset", 0));
 
+    // reset album autostop
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "reset_autostopalbum")), deadbeef->conf_get_int ("playlist.stop_after_album_reset", 0));
+
     // titlebar text
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "titlebar_format_playing")), deadbeef->conf_get_str_fast ("gtkui.titlebar_playing", "%a - %t - DeaDBeeF-%V"));
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "titlebar_format_stopped")), deadbeef->conf_get_str_fast ("gtkui.titlebar_stopped", "DeaDBeeF-%V"));
@@ -1066,6 +1069,13 @@ on_reset_autostop_toggled              (GtkToggleButton *togglebutton,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("playlist.stop_after_current_reset", gtk_toggle_button_get_active (togglebutton));
+}
+
+void
+on_reset_autostopalbum_toggled         (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("playlist.stop_after_album_reset", gtk_toggle_button_get_active (togglebutton));
 }
 
 
