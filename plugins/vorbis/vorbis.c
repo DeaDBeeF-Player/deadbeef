@@ -1,20 +1,26 @@
 /*
-    DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
+    DeaDBeeF -- the music player
+    Copyright (C) 2009-2014 Alexey Yakovenko and other contributors
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 2 of the License, or
-    (at your option) any later version.
+    This software is provided 'as-is', without any express or implied
+    warranty.  In no event will the authors be held liable for any damages
+    arising from the use of this software.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    Permission is granted to anyone to use this software for any purpose,
+    including commercial applications, and to alter it and redistribute it
+    freely, subject to the following restrictions:
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+
+    2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+
+    3. This notice may not be removed or altered from any source distribution.
 */
+
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
@@ -26,6 +32,7 @@
 #include <limits.h>
 #include <unistd.h>
 #include <math.h>
+#include <stdbool.h>
 #include "../../deadbeef.h"
 #include "vcedit.h"
 
@@ -34,6 +41,9 @@
 
 //#define trace(...) { fprintf (stderr, __VA_ARGS__); }
 #define trace(fmt,...)
+
+#define RG_REFERENCE_LOUDNESS -1
+#define DELIMITER "\n - \n"
 
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
@@ -72,6 +82,53 @@ cvorbis_fclose (void *datasource) {
 static long
 cvorbis_ftell (void *datasource) {
     return deadbeef->ftell (datasource);
+}
+
+static const char
+*gain_tag_name(const int tag_enum)
+{
+    switch(tag_enum) {
+    case DDB_REPLAYGAIN_ALBUMGAIN:
+        return "REPLAYGAIN_ALBUM_GAIN";
+    case DDB_REPLAYGAIN_ALBUMPEAK:
+        return "REPLAYGAIN_ALBUM_PEAK";
+    case DDB_REPLAYGAIN_TRACKGAIN:
+        return "REPLAYGAIN_TRACK_GAIN";
+    case DDB_REPLAYGAIN_TRACKPEAK:
+        return "REPLAYGAIN_TRACK_PEAK";
+    case RG_REFERENCE_LOUDNESS:
+        return "REPLAYGAIN_REFERENCE_LOUDNESS";
+    default:
+        return NULL;
+    }
+}
+
+static const char
+*gain_meta_key(const int tag_enum)
+{
+    switch(tag_enum) {
+    case DDB_REPLAYGAIN_ALBUMGAIN:
+        return ":REPLAYGAIN_ALBUMGAIN";
+    case DDB_REPLAYGAIN_ALBUMPEAK:
+        return ":REPLAYGAIN_ALBUMPEAK";
+    case DDB_REPLAYGAIN_TRACKGAIN:
+        return ":REPLAYGAIN_TRACKGAIN";
+    case DDB_REPLAYGAIN_TRACKPEAK:
+        return ":REPLAYGAIN_TRACKPEAK";
+    case RG_REFERENCE_LOUDNESS:
+        return ":REPLAYGAIN_REFERENCE_LOUDNESS";
+    default:
+        return NULL;
+    }
+}
+
+static bool
+is_special_tag(const char *tag) {
+    return !strcasecmp(tag, gain_tag_name(DDB_REPLAYGAIN_ALBUMGAIN)) ||
+           !strcasecmp(tag, gain_tag_name(DDB_REPLAYGAIN_ALBUMPEAK)) ||
+           !strcasecmp(tag, gain_tag_name(DDB_REPLAYGAIN_TRACKGAIN)) ||
+           !strcasecmp(tag, gain_tag_name(DDB_REPLAYGAIN_TRACKPEAK)) ||
+           !strcasecmp(tag, gain_tag_name(RG_REFERENCE_LOUDNESS));
 }
 
 static const char *metainfo[] = {
@@ -141,6 +198,9 @@ update_vorbis_comments (DB_playItem_t *it, vorbis_comment *vc, int refresh_playl
                 }
                 else if (!strncasecmp (s, "replaygain_track_peak=", 22)) {
                     deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, atof (s+22));
+                }
+                else if (!strncasecmp (s, "replaygain_reference_loudness=", 30)) {
+                    deadbeef->pl_replace_meta(it, gain_meta_key(RG_REFERENCE_LOUDNESS), s+30);
                 }
                 else {
                     const char *p = s;
@@ -591,7 +651,7 @@ cvorbis_read_metadata (DB_playItem_t *it) {
     DB_FILE *fp = NULL;
     OggVorbis_File vorbis_file;
     vorbis_info *vi = NULL;
-    
+
     deadbeef->pl_lock ();
     fp = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
@@ -636,153 +696,127 @@ error:
 
 }
 
-int
-cvorbis_write_metadata (DB_playItem_t *it) {
-    vcedit_state *state = NULL;
-    vorbis_comment *vc = NULL;
-    FILE *fp = NULL;
-    FILE *out = NULL;
-    int err = -1;
-    char outname[PATH_MAX] = "";
-    char fname[PATH_MAX];
-    deadbeef->pl_get_meta (it, ":URI", fname, sizeof (fname));
+static void
+split_tag(vorbis_comment *tags, const char *key, const char *value)
+{
+    if (key && value) {
+        const char *p;
+        while (p = strstr(value, DELIMITER)) {
+            char v[p - value + 1];
+            strncpy(v, value, p-value);
+            v[p-value] = 0;
+            vorbis_comment_add_tag(tags, key, v);
+            value = p + strlen(DELIMITER);
+        }
 
-    struct field {
-        struct field *next;
-        int size;
-        uint8_t data[0];
-    };
-
-    struct field *preserved_fields = NULL;
-
-    state = vcedit_new_state ();
-    if (!state) {
-        trace ("cvorbis_write_metadata: vcedit_new_state failed\n");
-        return -1;
+        vorbis_comment_add_tag(tags, key, value);
     }
-    fp = fopen (fname, "rb");
+}
+
+static void
+merge_gain_tag(DB_playItem_t *it, vorbis_comment *vc, vorbis_comment *tags, const int tag_enum, const char *pattern, const int min, const int max)
+{
+    const char *key = gain_tag_name(tag_enum);
+
+    char *end;
+    const char *meta_value = deadbeef->pl_find_meta(it, key);
+    const float value = meta_value ? strtof(meta_value, &end) : 0;
+    if (meta_value && end != meta_value && value > min && value < max) {
+        char tag_value[10];
+        sprintf(tag_value, pattern, value);
+        vorbis_comment_add_tag(tags, key, tag_value);
+    }
+    else {
+        const char *tag_value = vorbis_comment_query(vc, key, 0);
+        if (tag_value)
+             vorbis_comment_add_tag(tags, key, tag_value);
+    }
+}
+
+static const char
+*map_tag(const char *key)
+{
+    for (int i = 0; metainfo[i]; i += 2)
+        if (!strcasecmp (metainfo[i+1], key))
+            return metainfo[i];
+    return key;
+}
+
+static vorbis_comment
+*create_tags_list(DB_playItem_t *it, const char *fname, vorbis_comment *tags)
+{
+    DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
-        trace ("cvorbis_write_metadata: failed to read metadata from %s\n", fname);
-        goto error;
+        trace ("vorbis: failed to fopen %s\n", fname);
+        return NULL;
     }
-    if (vcedit_open (state, fp) != 0) {
-        trace ("cvorbis_write_metadata: vcedit_open failed, error: %s\n", vcedit_error (state));
-        goto error;
+    ov_callbacks ovcb = {
+        .read_func = cvorbis_fread,
+        .seek_func = cvorbis_fseek,
+        .close_func = cvorbis_fclose,
+        .tell_func = cvorbis_ftell
+    };
+    OggVorbis_File vorbis_file;
+    int err = ov_test_callbacks (fp, &vorbis_file, NULL, 0, ovcb);
+    if (err != 0) {
+        trace ("ov_test_callbacks returned %d\n", err);
+        deadbeef->fclose (fp);
+        return NULL;
     }
 
-    vc = vcedit_comments (state);
+    vorbis_comment *vc = ov_comment (&vorbis_file, -1);
     if (!vc) {
-        trace ("cvorbis_write_metadata: vcedit_comments failed, error: %s\n", vcedit_error (state));
-        goto error;
+        trace ("ov_comment failed\n");
+        ov_clear (&vorbis_file);
+        return NULL;
     }
 
-#if 0
-    // copy all unknown fields to separate buffer
-    for (int i = 0; i < vc->comments; i++) {
-        int m;
-        for (m = 0; metainfo[m]; m += 2) {
-            int l = strlen (metainfo[m]);
-            if (vc->comment_lengths[i] > l && !strncasecmp (vc->user_comments[i], metainfo[m], l) && vc->user_comments[i][l] == '=') {
-                break;
-            }
-        }
-        if (!metainfo[m]) {
-            trace ("preserved field: %s\n", vc->user_comments[i]);
-            // unknown field
-            struct field *f = malloc (sizeof (struct field) + vc->comment_lengths[i]);
-            memset (f, 0, sizeof (struct field));
-            memcpy (f->data, vc->user_comments[i], vc->comment_lengths[i]);
-            f->size = vc->comment_lengths[i];
-            f->next = preserved_fields;
-            preserved_fields = f;
-        }
+    vorbis_comment_init(tags);
+    if (!(tags->vendor = strdup(vc->vendor))) {
+        ov_clear (&vorbis_file);
+        trace("create_tags_list: cannot allocate tags list\n");
+        return NULL;
     }
-#endif
 
-    vorbis_comment_clear(vc);
-    vorbis_comment_init(vc);
-
-    // add unknown/custom fields
     deadbeef->pl_lock ();
-    DB_metaInfo_t *m = deadbeef->pl_get_metadata_head (it);
+    merge_gain_tag(it, vc, tags, DDB_REPLAYGAIN_ALBUMGAIN, "%0.2f dB", -100, 100);
+    merge_gain_tag(it, vc, tags, DDB_REPLAYGAIN_ALBUMPEAK, "%0.8f", 0, 2);
+    merge_gain_tag(it, vc, tags, DDB_REPLAYGAIN_TRACKGAIN, "%0.2f dB", -100, 100);
+    merge_gain_tag(it, vc, tags, DDB_REPLAYGAIN_TRACKPEAK, "%0.8f", 0, 2);
+    merge_gain_tag(it, vc, tags, RG_REFERENCE_LOUDNESS, "%0.1f dB", 0, 128);
+    DB_metaInfo_t *m = deadbeef->pl_get_metadata_head(it);
     while (m) {
-        if (m->key[0] != ':') {
-            int i;
-            for (i = 0; metainfo[i]; i += 2) {
-                if (!strcasecmp (metainfo[i+1], m->key)) {
-                    break;
-                }
-            }
-            const char *val = m->value;
-            if (val && *val) {
-                while (val) {
-                    const char *next = strchr (val, '\n');
-                    int l;
-                    if (next) {
-                        l = next - val;
-                        next++;
-                    }
-                    else {
-                        l = strlen (val);
-                    }
-                    if (l > 0) {
-                        char s[100+l+1];
-                        int n = snprintf (s, sizeof (s), "%s=", metainfo[i] ? metainfo[i] : m->key);
-                        strncpy (s+n, val, l);
-                        *(s+n+l) = 0;
-                        vorbis_comment_add (vc, s);
-                    }
-                    val = next;
-                }
-            }
-        }
+        if (m->key[0] != ':' && m->key[0] != '!' && !is_special_tag(m->key))
+            split_tag(tags, map_tag(m->key), (char *)m->value);
         m = m->next;
     }
     deadbeef->pl_unlock ();
-    // add preserved fields
-    for (struct field *f = preserved_fields; f; f = f->next) {
-        vorbis_comment_add (vc, f->data);
+
+    ov_clear (&vorbis_file);
+    return tags;
+}
+
+static int
+cvorbis_write_metadata (DB_playItem_t *it) {
+    char fname[PATH_MAX];
+    deadbeef->pl_get_meta (it, ":URI", fname, sizeof (fname));
+
+    vorbis_comment tags;
+    if (!create_tags_list(it, fname, &tags))
+        return -1;
+
+    char *vorbis_error = NULL;
+    const off_t file_size = vcedit_write_metadata (deadbeef->fopen(fname), fname, -1, tags.vendor, tags.comments, tags.user_comments, &vorbis_error);
+    vorbis_comment_clear(&tags);
+    if (file_size <= 0) {
+        trace ("cvorbis_write_metadata: failed to write tags to %s, error: %s\n", fname, vorbis_error);
+        return -1;
     }
 
-    snprintf (outname, sizeof (outname), "%s.temp.ogg", fname);
+    deadbeef->pl_set_meta_int(it, ":FILE_SIZE", file_size);
+    return cvorbis_read_metadata(it);
 
-
-    out = fopen (outname, "w+b");
-    if (!out) {
-        trace ("cvorbis_write_metadata: failed to open %s for writing\n", outname);
-        goto error;
-    }
-
-    if (vcedit_write (state, out) < 0) {
-        trace ("cvorbis_write_metadata: failed to write tags to %s, error: %s\n", fname, vcedit_error (state));
-        goto error;
-    }
-
-    err = 0;
-error:
-    if (fp) {
-        fclose (fp);
-    }
-    if (out) {
-        fclose (out);
-    }
-    if (state) {
-        vcedit_clear (state);
-    }
-    while (preserved_fields) {
-        struct field *next = preserved_fields->next;
-        free (preserved_fields);
-        preserved_fields = next;
-    }
-
-    if (!err) {
-        rename (outname, fname);
-    }
-    else if (out) {
-        unlink (outname);
-    }
-
-    return err;
+    return 0;
 }
 
 
@@ -798,22 +832,62 @@ static DB_decoder_t plugin = {
     .plugin.id = "stdogg",
     .plugin.name = "OggVorbis decoder",
     .plugin.descr = "OggVorbis decoder using standard xiph.org libraries",
-    .plugin.copyright = 
-        "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
-        "\n"
-        "This program is free software; you can redistribute it and/or\n"
-        "modify it under the terms of the GNU General Public License\n"
-        "as published by the Free Software Foundation; either version 2\n"
-        "of the License, or (at your option) any later version.\n"
-        "\n"
-        "This program is distributed in the hope that it will be useful,\n"
-        "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
-        "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
-        "GNU General Public License for more details.\n"
-        "\n"
-        "You should have received a copy of the GNU General Public License\n"
-        "along with this program; if not, write to the Free Software\n"
-        "Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.\n"
+    .plugin.copyright =
+    "OggVorbis plugin for DeaDBeeF\n"
+    "Copyright (C) 2009-2014 Alexey Yakovenko et al.\n"
+    "\n"
+    "vcedit.c\n"
+    "Ogg Vorbis plugin Ogg edit functions\n"
+    "\n"
+    "Copyright (C) 2014 Ian Nartowicz <deadbeef@nartowicz.co.uk>\n"
+    "This software is provided 'as-is', without any express or implied\n"
+    "warranty.  In no event will the authors be held liable for any damages\n"
+    "arising from the use of this software.\n"
+    "\n"
+    "Permission is granted to anyone to use this software for any purpose,\n"
+    "including commercial applications, and to alter it and redistribute it\n"
+    "freely, subject to the following restrictions:\n"
+    "\n"
+    "1. The origin of this software must not be misrepresented; you must not\n"
+    " claim that you wrote the original software. If you use this software\n"
+    " in a product, an acknowledgment in the product documentation would be\n"
+    " appreciated but is not required.\n"
+    "\n"
+    "2. Altered source versions must be plainly marked as such, and must not be\n"
+    " misrepresented as being the original software.\n"
+    "\n"
+    "3. This notice may not be removed or altered from any source distribution.\n"
+    "\n"
+    "\n"
+    "\n"
+    "Uses libogg,libvorbis Copyright (c) 2002, Xiph.org Foundation\n"
+    "\n"
+    "Redistribution and use in source and binary forms, with or without\n"
+    "modification, are permitted provided that the following conditions\n"
+    "are met:\n"
+    "\n"
+    "- Redistributions of source code must retain the above copyright\n"
+    "notice, this list of conditions and the following disclaimer.\n"
+    "\n"
+    "- Redistributions in binary form must reproduce the above copyright\n"
+    "notice, this list of conditions and the following disclaimer in the\n"
+    "documentation and/or other materials provided with the distribution.\n"
+    "\n"
+    "- Neither the name of the DeaDBeeF Player nor the names of its\n"
+    "contributors may be used to endorse or promote products derived from\n"
+    "this software without specific prior written permission.\n"
+    "\n"
+    "THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS\n"
+    "``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT\n"
+    "LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR\n"
+    "A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE FOUNDATION OR\n"
+    "CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,\n"
+    "EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,\n"
+    "PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR\n"
+    "PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF\n"
+    "LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING\n"
+    "NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\n"
+    "SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n"
     ,
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.start = vorbis_start,

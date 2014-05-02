@@ -1,69 +1,35 @@
-/* This program is licensed under the GNU Library General Public License, version 2,
- * a copy of which is included with this program (with filename LICENSE.LGPL).
- *
- * (c) 2000-2001 Michael Smith <msmith@xiph.org>
- *
- * VCEdit header.
- *
- * last modified: $ID:$
- */
+/*
+  This file is part of Deadbeef Player source code
+  http://deadbeef.sourceforge.net
+
+  Ogg Vorbis plugin Ogg edit functions header
+
+  Copyright (C) 2014 Ian Nartowicz <deadbeef@nartowicz.co.uk>
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+
+*/
 
 #ifndef __VCEDIT_H
 #define __VCEDIT_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif 
+#define ALBUM_ART_KEY "METADATA_BLOCK_PICTURE"
+#define ALBUM_ART_META "metadata_block_picture"
 
-#include <stdio.h>
-#include <ogg/ogg.h>
-#include <vorbis/codec.h>
-
-typedef size_t (*vcedit_read_func)(void *, size_t, size_t, void *);
-typedef size_t (*vcedit_write_func)(const void *, size_t, size_t, void *);
-
-typedef struct {
-	long *streams;
-	size_t streams_len;
-} vcedit_serial_nos;
-
-typedef struct {
-	ogg_sync_state		*oy;
-	ogg_stream_state	*os;
-
-	vorbis_comment		*vc;
-	vorbis_info         *vi;
-
-	vcedit_read_func read;
-	vcedit_write_func write;
-
-	void		  *in;
-	int serial;
-	vcedit_serial_nos serials;
-	unsigned char	  *mainbuf;
-	unsigned char	  *bookbuf;
-	int	          mainlen;
-	int	          booklen;
-	char   *lasterror;
-	char   *vendor;
-	int prevW;
-	int extrapage;
-	int eosin;
-        struct vcedit_buffer_chain *sidebuf;
-} vcedit_state;
-
-extern vcedit_state *	vcedit_new_state(void);
-extern void		vcedit_clear(vcedit_state *state);
-extern vorbis_comment *	vcedit_comments(vcedit_state *state);
-extern int		vcedit_open(vcedit_state *state, FILE *in);
-extern int		vcedit_open_callbacks(vcedit_state *state, void *in,
-		vcedit_read_func read_func, vcedit_write_func write_func);
-extern int		vcedit_write(vcedit_state *state, void *out);
-extern char *   vcedit_error(vcedit_state *state);
-
-#ifdef __cplusplus
-}
-#endif 
+off_t vcedit_write_metadata(DB_FILE *in, const char *fname, int link, const char *vendor, const int num_tags, char **tags, char **lasterror);
 
 #endif /* __VCEDIT_H */
-
