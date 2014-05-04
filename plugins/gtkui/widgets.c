@@ -339,6 +339,145 @@ w_replace (ddb_gtkui_widget_t *w, ddb_gtkui_widget_t *from, ddb_gtkui_widget_t *
     }
 }
 
+// unknown widget wrapper
+typedef struct {
+    ddb_gtkui_widget_t base;
+    GtkWidget *drawarea;
+    char *expected_type;
+    char *parms;
+    char *children;
+} w_unknown_t;
+
+const char *
+w_unknown_load (struct ddb_gtkui_widget_s *base, const char *type, const char *s) {
+    w_unknown_t *w = (w_unknown_t *)base;
+    char buffer_parms[4000];
+    char buffer_children[4000];
+
+    const char *p = s;
+    while (*p && *p != '{') {
+        p++;
+    }
+
+    if (!(*p)) {
+        fprintf (stderr, "reached EOL before expected { while trying to load unknown widget %s\n", w->expected_type);
+        return NULL;
+    }
+
+    if (p - s + 1 > sizeof (buffer_parms)) {
+        fprintf (stderr, "buffer to small to load unknown widget %s\n", w->expected_type);
+        return NULL;
+    }
+
+    memcpy (buffer_parms, s, p-s);
+    buffer_parms[p-s] = 0;
+
+    p++;
+    s = p;
+
+    int nb = 1;
+    while (*p) {
+        if (*p == '{') {
+            nb++;
+        }
+        if (*p == '}') {
+            nb--;
+            if (nb == 0) {
+                break;
+            }
+        }
+        p++;
+    }
+    if (!(*p)) {
+        fprintf (stderr, "reached EOL before expected } while trying to load unknown widget %s\n", w->expected_type);
+        return NULL;
+    }
+    if (p - s + 1 > sizeof (buffer_parms)) {
+        fprintf (stderr, "buffer to small to load unknown widget %s\n", w->expected_type);
+        return NULL;
+    }
+    memcpy (buffer_children, s, p-s);
+    buffer_children[p-s] = 0;
+
+    w->parms = strdup (buffer_parms);
+    w->children = strdup (buffer_children);
+
+    // caller expects 's' to point to '}'
+    return p;
+}
+
+static void
+w_unknown_save (struct ddb_gtkui_widget_s *base, char *s, int sz) {
+    w_unknown_t *w = (w_unknown_t *)base;
+    int l = strlen (s);
+    s += l;
+    sz -= l;
+    snprintf (s, sz, "%s%s {%s}", w->expected_type, w->parms, w->children);
+}
+
+void w_unknown_destroy (ddb_gtkui_widget_t *_w) {
+    w_unknown_t *w = (w_unknown_t *)_w;
+    if (w->expected_type) {
+        free (w->expected_type);
+        w->expected_type = NULL;
+    }
+    if (w->parms) {
+        free (w->parms);
+        w->parms = NULL;
+    }
+    if (w->children) {
+        free (w->children);
+        w->children = NULL;
+    }
+}
+
+static gboolean
+unknown_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
+    ddb_gtkui_widget_t *w = user_data;
+    cairo_set_source_rgb(cr, 0.1, 0.1, 0.1);
+
+    cairo_set_font_size(cr, 16);
+
+    cairo_move_to(cr, 20, 30);
+
+    char s[1000];
+    snprintf (s, sizeof (s), _("Widget \"%s\" is not available"), ((w_unknown_t *)w)->expected_type);
+
+    cairo_show_text(cr, s);
+    return TRUE;
+}
+
+static gboolean
+unknown_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
+    cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
+    gboolean res = unknown_draw (widget, cr, user_data);
+    cairo_destroy (cr);
+    return res;
+}
+
+ddb_gtkui_widget_t *
+w_unknown_create (const char *type) {
+    w_unknown_t *w = malloc (sizeof (w_unknown_t));
+    memset (w, 0, sizeof (w_unknown_t));
+    w->base.type = "unknown";
+    w->base.load = w_unknown_load;
+    w->base.save = w_unknown_save;
+    w->base.destroy = w_unknown_destroy;
+    w->expected_type = strdup (type);
+
+    w->base.widget = gtk_event_box_new ();
+    w->drawarea = gtk_drawing_area_new ();
+    gtk_widget_show (w->drawarea);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), w->drawarea);
+#if !GTK_CHECK_VERSION(3,0,0)
+    g_signal_connect_after ((gpointer) w->drawarea, "expose_event", G_CALLBACK (unknown_expose_event), w);
+#else
+    g_signal_connect_after ((gpointer) w->drawarea, "draw", G_CALLBACK (unknown_draw), w);
+#endif
+    w_override_signals (w->base.widget, w);
+    return w;
+}
+
 const char *
 w_create_from_string (const char *s, ddb_gtkui_widget_t **parent) {
     char t[MAX_TOKEN];
@@ -349,8 +488,7 @@ w_create_from_string (const char *s, ddb_gtkui_widget_t **parent) {
     char *type = strdupa (t);
     ddb_gtkui_widget_t *w = w_create (type);
     if (!w) {
-        fprintf (stderr, "failed to create widget for type %s\n", t);
-        return NULL;
+        w = w_unknown_create (type);
     }
     // nuke all default children
     while (w->children) {
@@ -464,10 +602,17 @@ static char paste_buffer[20000];
 
 void
 save_widget_to_string (char *str, int sz, ddb_gtkui_widget_t *w) {
+    // uknown is special case
+    if (!strcmp (w->type, "unknown")) {
+        w->save (w, str, sz);
+        return;
+    }
+
     strcat (str, w->type);
     if (w->save) {
         w->save (w, str, sz);
     }
+
     strcat (str, " {");
     for (ddb_gtkui_widget_t *c = w->children; c; c = c->next) {
         save_widget_to_string (str, sz, c);
