@@ -169,16 +169,16 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
     if (cinf->id == DB_COLUMN_ALBUM_ART) {
         if (theming) {
 #if GTK_CHECK_VERSION(3,0,0)
-            cairo_rectangle (cr, x, y, width, height);
+            cairo_rectangle (cr, x, y, width, MAX (height,minheight));
             cairo_clip (cr);
-            gtk_paint_flat_box (gtk_widget_get_style (theme_treeview), cr, GTK_STATE_NORMAL, GTK_SHADOW_NONE, theme_treeview, "cell_even_ruled", x-1, y, width+2, height);
+            gtk_paint_flat_box (gtk_widget_get_style (theme_treeview), cr, GTK_STATE_NORMAL, GTK_SHADOW_NONE, theme_treeview, "cell_even_ruled", x-1, y, width+2, MAX (height,minheight));
             cairo_reset_clip (cr);
 #else
             GdkRectangle clip = {
                 .x = x,
                 .y = y,
                 .width = width,
-                .height = height,
+                .height = MAX (height,minheight),
             };
             gtk_paint_flat_box (gtk_widget_get_style (theme_treeview), gtk_widget_get_window (listview->list), GTK_STATE_NORMAL, GTK_SHADOW_NONE, &clip, theme_treeview, "cell_even_ruled", x-1, y, width+2, height);
 #endif
@@ -236,29 +236,22 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
                 art_width = gdk_pixbuf_get_width (pixbuf);
                 float art_scale = (float)real_art_width / art_width;
                 int pw = real_art_width;
-                int ph;
+                int ph = pw;
                 if (gdk_pixbuf_get_width (pixbuf) < gdk_pixbuf_get_height (pixbuf)) {
                     art_scale *= (float)gdk_pixbuf_get_width (pixbuf) / gdk_pixbuf_get_height (pixbuf);
                 }
 
-                if (group_pinned == 1 && gtkui_groups_pinned) {
-                    ph = group_height;
-                }
-                else {
-                    ph = pw;
-                }
-
-                if (sy < ph)
-                {
+                int draw_pinned = (y - listview->grouptitle_height < ph && group_pinned == 1 && gtkui_groups_pinned) ? 1 : 0;
+                if (art_y > -(ph + listview->grouptitle_height) || draw_pinned) {
                     cairo_save (cr);
-                    if (group_pinned == 1 && gtkui_groups_pinned) {
-                        int ph_real = gdk_pixbuf_get_height (pixbuf);
-                        if (grp_next_y <= ph_real * art_scale + listview->grouptitle_height) {
-                            cairo_rectangle (cr, x + ART_PADDING_HORZ, grp_next_y - ph_real * art_scale, pw, ph);
-                            cairo_translate (cr, (x + ART_PADDING_HORZ)-0, grp_next_y - ph_real * art_scale);
+                    if (draw_pinned) {
+                        int ph_real = gdk_pixbuf_get_height (pixbuf) * art_scale;
+                        if (grp_next_y <= ph_real + listview->grouptitle_height) {
+                            cairo_rectangle (cr, x + ART_PADDING_HORZ, grp_next_y - ph_real, pw, ph_real);
+                            cairo_translate (cr, (x + ART_PADDING_HORZ)-0, grp_next_y - ph_real);
                         }
                         else {
-                            cairo_rectangle (cr, x + ART_PADDING_HORZ, listview->grouptitle_height, pw, ph);
+                            cairo_rectangle (cr, x + ART_PADDING_HORZ, listview->grouptitle_height, pw, ph_real);
                             cairo_translate (cr, (x + ART_PADDING_HORZ)-0, listview->grouptitle_height);
                         }
                     }
