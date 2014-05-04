@@ -374,6 +374,7 @@ int stop_after_album_check (playItem_t *cur, playItem_t *next) {
             stop_after_album = 0;
             deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
         }
+        return 1;
     }
 
     const char *cur_artist = pl_find_meta_raw (cur, "artist");
