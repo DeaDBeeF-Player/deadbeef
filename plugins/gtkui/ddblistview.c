@@ -79,6 +79,8 @@ static void ddb_listview_destroy(GObject *object);
 void
 ddb_listview_build_groups (DdbListview *listview);
 
+static void
+ddb_listview_resize_groups (DdbListview *listview);
 // fwd decls
 void
 ddb_listview_free_groups (DdbListview *listview);
@@ -290,6 +292,9 @@ ddb_listview_init(DdbListview *listview)
 
     listview->col_movepos = -1;
     listview->drag_motion_y = -1;
+
+    listview->ref_point = -1;
+    listview->ref_point_offset = -1;
 
     listview->scroll_mode = 0;
     listview->scroll_pointer_y = -1;
@@ -2561,7 +2566,7 @@ ddb_listview_header_motion_notify_event          (GtkWidget       *widget,
             c->fwidth = (float)c->width / ps->header_width;
         }
         if (c->minheight) {
-            ddb_listview_build_groups (ps);
+            ddb_listview_resize_groups (ps);
         }
         ps->block_redraw_on_scroll = 1;
         ddb_listview_list_setup_vscroll (ps);
@@ -2618,6 +2623,45 @@ ddb_listview_header_button_press_event           (GtkWidget       *widget,
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
 //    ps->active_column = ddb_listview_header_get_column_for_coord (ps, event->x);
     if (TEST_LEFT_CLICK (event)) {
+
+        ddb_listview_groupcheck (ps);
+        DdbListviewGroup *grp = ps->groups;
+        DdbListviewGroup *grp_next;
+
+        if (grp && ps->scrollpos > 0) {
+            int abs_idx = 0;
+            int grp_y = 0;
+
+            GtkAllocation a;
+            gtk_widget_get_allocation (ps->list, &a);
+            int cursor_pos = ddb_listview_get_row_pos (ps, ps->binding->cursor ());
+            ps->ref_point = 0;
+            ps->ref_point_offset = 0;
+
+            // find 1st group
+            while (grp && grp_y + grp->height < ps->scrollpos) {
+                grp_y += grp->height;
+                abs_idx += grp->num_items;
+                grp = grp->next;
+            }
+            // choose cursor_pos as anchor
+            if (ps->scrollpos < cursor_pos && cursor_pos < ps->scrollpos + a.height && cursor_pos < ps->fullheight) {
+                ps->ref_point = ps->binding->cursor ();
+                ps->ref_point_offset = cursor_pos - ps->scrollpos;
+            }
+            // choose first group as anchor
+            else if (ps->scrollpos < grp_y + ps-> grouptitle_height + (grp->num_items * ps->rowheight) && grp_y + ps-> grouptitle_height + (grp->num_items * ps->rowheight) < ps->scrollpos + a.height) {
+                ps->ref_point = abs_idx;
+                ps->ref_point_offset = (grp_y + ps->grouptitle_height) - ps->scrollpos;
+            }
+            // choose next group as anchor
+            else {
+                grp_y += grp->height;
+                abs_idx += grp->num_items;
+                ps->ref_point = abs_idx;
+                ps->ref_point_offset = (grp_y + ps->grouptitle_height) - ps->scrollpos;
+            }
+        }
         // start sizing/dragging
         ps->header_dragging = -1;
         ps->header_sizing = -1;
@@ -3198,6 +3242,38 @@ ddb_listview_build_groups (DdbListview *listview) {
         }
         listview->fullheight += grp->height;
     }
+    deadbeef->pl_unlock ();
+    if (old_height != listview->fullheight) {
+        ddb_listview_refresh (listview, DDB_REFRESH_VSCROLL);
+    }
+}
+
+void
+ddb_listview_resize_groups (DdbListview *listview) {
+    deadbeef->pl_lock ();
+    int old_height = listview->fullheight;
+    int grp_height_old = 0;
+    listview->fullheight = 0;
+
+    int min_height= 0;
+    DdbListviewColumn *c;
+    for (c = listview->columns; c; c = c->next) {
+        if (c->minheight && c->width > min_height) {
+            min_height = c->width;
+        }
+    }
+
+    DdbListviewGroup *grp = listview->groups;
+    while (grp) {
+        grp->height = listview->grouptitle_height + grp->num_items * listview->rowheight;
+        if (grp->height - listview->grouptitle_height < min_height) {
+            grp_height_old = grp->height;
+            grp->height = min_height + listview->grouptitle_height;
+        }
+        listview->fullheight += grp->height;
+        grp = grp->next;
+    }
+
     deadbeef->pl_unlock ();
     if (old_height != listview->fullheight) {
         ddb_listview_refresh (listview, DDB_REFRESH_VSCROLL);
