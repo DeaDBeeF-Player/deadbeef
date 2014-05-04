@@ -52,6 +52,7 @@ typedef void * DdbPlaylistHandle;
 struct _DdbListviewGroup {
     DdbListviewIter head;
     int32_t height;
+    int32_t min_height;
     int32_t num_items;
     int pinned;
     struct _DdbListviewGroup *next;
@@ -131,6 +132,9 @@ struct _DdbListview {
     int col_movepos;
 
     int drag_motion_y;
+
+    int ref_point; // idx of anchor when columns are resized
+    int ref_point_offset; // y pixel-coordinate of anchor relative to view
 
     // scrolling
     int scroll_mode; // 0=select, 1=dragndrop
