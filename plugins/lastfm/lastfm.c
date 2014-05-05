@@ -549,8 +549,12 @@ lastfm_songchanged (ddb_event_trackchange_t *ev, uintptr_t data) {
     // duration/playtime must be >= 30 sec
     float dur = deadbeef->pl_get_item_duration (ev->from);
     if (dur < 30 && ev->playtime < 30) {
-        trace ("track duration is %f sec, playtime if %f sec. not eligible for submission\n", dur, ev->playtime);
-        return 0;
+        // the lastfm.send_tiny_tracks option can override this rule
+        // only if the track played fully, and has determined duration
+        if (!(dur > 0 && fabs (ev->playtime - dur) < 1.f && deadbeef->conf_get_int ("lastfm.submit_tiny_tracks", 0))) {
+            trace ("track duration is %f sec, playtime if %f sec. not eligible for submission\n", dur, ev->playtime);
+            return 0;
+        }
     }
     // must be played for >=240sec or half the total time
     if (ev->playtime < 240 && ev->playtime < dur/2) {
@@ -974,6 +978,7 @@ static const char settings_dlg[] =
     "property \"Scrobble URL\" entry lastfm.scrobbler_url \""SCROBBLER_URL_LFM"\";"
     "property \"Prefer Album Artist over Artist field\" checkbox lastfm.prefer_album_artist 0;"
     "property \"Send MusicBrainz ID\" checkbox lastfm.mbid 0;"
+    "property \"Submit tracks shorter than 30 seconds (not recommended)\" checkbox lastfm.submit_tiny_tracks 0;"
 ;
 
 // define plugin interface
