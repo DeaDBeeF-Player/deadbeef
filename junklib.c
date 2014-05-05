@@ -2998,6 +2998,23 @@ static int junk_id3v2_load_rva2 (int version_major, playItem_t *it, uint8_t *rea
     return 0;
 }
 
+#if 0
+int
+junk_id3v2_load_ufid (int version_major, playItem_t *it, uint8_t *readptr, int synched_size) {
+    char *owner = readptr;
+    while (*readptr && synched_size > 0) {
+        readptr++;
+    }
+    readptr++;
+    synched_size--;
+    if (!synched_size) {
+        trace ("UFID id is empty");
+        return -1;
+    }
+    return 0;
+}
+#endif
+
 int
 junk_id3v2_load_txx (int version_major, playItem_t *it, uint8_t *readptr, int synched_size) {
     char *txx = convstr_id3v2 (version_major, *readptr, readptr+1, synched_size-1);
@@ -3397,6 +3414,16 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
 
                     /*int res = */junk_id3v2_load_rva2(version_major, it, readptr, synched_size);
                 }
+#if 0
+                else if (it && !strcmp (frameid, "UFID")) {
+                    if (synched_size < 2) {
+                        trace ("UFID frame is too short, skipped\n");
+                        readptr += sz; // bad tag
+                        continue;
+                    }
+                    junk_id3v2_load_ufid (version_major, it, readptr, synched_size);
+                }
+#endif
                 else if (it && !strcmp (frameid, "TXXX")) {
                     if (synched_size < 2) {
                         trace ("TXXX frame is too short, skipped\n");
