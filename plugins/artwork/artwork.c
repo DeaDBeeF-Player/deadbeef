@@ -66,6 +66,8 @@ static uintptr_t imlib_mutex;
 #include <FLAC/metadata.h>
 #endif
 
+#include "../../strdupa.h"
+
 #define min(x,y) ((x)<(y)?(x):(y))
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
