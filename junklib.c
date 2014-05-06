@@ -136,6 +136,7 @@ static const char *frame_mapping[] = {
     "ORIGINAL_RELEASE_TIME", NULL, "TDOR", NULL, NULL,
     "MOOD", NULL, "TMOO", NULL, NULL,
     "PRODUCED_NOTICE", NULL, "TPRO", NULL, NULL,
+    "musicbrainz_trackid", NULL, NULL, NULL, NULL,
     NULL
 };
 
@@ -1814,7 +1815,6 @@ junk_id3v2_add_txxx_frame (DB_id3v2_tag_t *tag, const char *key, const char *val
     }
 
     return f;
-
 }
 
 // TODO: some non-Txxx frames might still need charset conversion
@@ -2998,12 +2998,12 @@ static int junk_id3v2_load_rva2 (int version_major, playItem_t *it, uint8_t *rea
     return 0;
 }
 
-#if 0
 int
 junk_id3v2_load_ufid (int version_major, playItem_t *it, uint8_t *readptr, int synched_size) {
     char *owner = readptr;
     while (*readptr && synched_size > 0) {
         readptr++;
+        synched_size--;
     }
     readptr++;
     synched_size--;
@@ -3011,9 +3011,71 @@ junk_id3v2_load_ufid (int version_major, playItem_t *it, uint8_t *readptr, int s
         trace ("UFID id is empty");
         return -1;
     }
+    char id[synched_size+1];
+    memcpy (id, readptr, synched_size);
+    id[synched_size] = 0;
+
+    // verify that owner is musicbrainz and that content is ascii
+    if (strcmp (owner, "http://musicbrainz.org")) {
+        return -1;
+    }
+    for (int i = 0; i < synched_size; i++) {
+        if (!isascii (id[i])) {
+            return -1;
+        }
+    }
+
+    pl_replace_meta (it, "musicbrainz_trackid", id);
     return 0;
 }
-#endif
+
+int
+junk_id3v2_remove_ufid_frames (DB_id3v2_tag_t *tag, const char *frame_id, const char *owner) {
+    DB_id3v2_frame_t *prev = NULL;
+    for (DB_id3v2_frame_t *f = tag->frames; f; ) {
+        DB_id3v2_frame_t *next = f->next;
+        if (!strcmp (f->id, frame_id) && f->size >= strlen(owner) && !strcmp (f->data, owner)) {
+            if (prev) {
+                prev->next = f->next;
+            }
+            else {
+                tag->frames = f->next;
+            }
+            free (f);
+        }
+        else {
+            prev = f;
+        }
+        f = next;
+    }
+    return 0;
+}
+
+DB_id3v2_frame_t *
+junk_id3v2_add_ufid_frame (DB_id3v2_tag_t *tag, const char *owner, const char *id, int id_len) {
+    int ownerlen = strlen (owner);
+    int len = ownerlen + 1 + id_len;
+
+    // make a frame
+    trace ("calculated frame size = %d\n", len);
+    DB_id3v2_frame_t *f = malloc (len + sizeof (DB_id3v2_frame_t));
+    memset (f, 0, sizeof (DB_id3v2_frame_t));
+    strcpy (f->id, "UFID");
+    f->size = len;
+    memcpy (f->data, owner, ownerlen+1);
+    memcpy (f->data+ownerlen+1, id, id_len);
+    // append to tag
+    DB_id3v2_frame_t *tail;
+    for (tail = tag->frames; tail && tail->next; tail = tail->next);
+    if (tail) {
+        tail->next = f;
+    }
+    else {
+        tag->frames = f;
+    }
+
+    return f;
+}
 
 int
 junk_id3v2_load_txx (int version_major, playItem_t *it, uint8_t *readptr, int synched_size) {
@@ -3414,7 +3476,6 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
 
                     /*int res = */junk_id3v2_load_rva2(version_major, it, readptr, synched_size);
                 }
-#if 0
                 else if (it && !strcmp (frameid, "UFID")) {
                     if (synched_size < 2) {
                         trace ("UFID frame is too short, skipped\n");
@@ -3423,7 +3484,6 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                     }
                     junk_id3v2_load_ufid (version_major, it, readptr, synched_size);
                 }
-#endif
                 else if (it && !strcmp (frameid, "TXXX")) {
                     if (synched_size < 2) {
                         trace ("TXXX frame is too short, skipped\n");
@@ -3755,14 +3815,19 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
 
         junk_id3v2_remove_all_txxx_frames (&id3v2);
 
-        // COMM
-        junk_id3v2_remove_frames (&id3v2, "COMM");
         pl_lock ();
         {
+            // COMM
+            junk_id3v2_remove_frames (&id3v2, "COMM");
             const char *val = pl_find_meta (it, "comment");
             if (val && *val) {
-                junk_id3v2_remove_frames (&id3v2, "COMM");
                 junk_id3v2_add_comment_frame (&id3v2, "eng", "", val);
+            }
+            // UFID
+            junk_id3v2_remove_ufid_frames (&id3v2, "UFID", "http://musicbrainz.org");
+            val = pl_find_meta (it, "musicbrainz_trackid");
+            if (val && *val) {
+                junk_id3v2_add_ufid_frame (&id3v2, "http://musicbrainz.org", val, strlen (val));
             }
         }
         pl_unlock ();
