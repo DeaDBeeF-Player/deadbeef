@@ -696,12 +696,17 @@ load_gui_plugin (const char **plugdirs) {
     return -1;
 }
 
-int
-load_plugin_dir (const char *plugdir) {
+static int
+load_plugin_dir (const char *plugdir, int gui_scan) {
     int n = 0;
     char conf_blacklist_plugins[1000];
     conf_get_str ("blacklist_plugins", "", conf_blacklist_plugins, sizeof (conf_blacklist_plugins));
-    trace ("loading plugins from %s\n", plugdir);
+    if (gui_scan) {
+        trace ("searching for GUI plugins in %s\n", plugdir);
+    }
+    else {
+        trace ("loading plugins from %s\n", plugdir);
+    }
     struct dirent **namelist = NULL;
     n = scandir (plugdir, &namelist, NULL, dirent_alphasort);
     if (n < 0)
@@ -762,35 +767,39 @@ load_plugin_dir (const char *plugdir) {
 
                 // add gui plugin names
                 if (!strncmp (d_name, "ddb_gui_", 8)) {
-                    trace ("found gui plugin %s\n", d_name);
-                    if (g_num_gui_names >= MAX_GUI_PLUGINS) {
-                        fprintf (stderr, "too many gui plugins\n");
-                        break; // no more gui plugins allowed
+                    if (gui_scan) {
+                        trace ("found gui plugin %s\n", d_name);
+                        if (g_num_gui_names >= MAX_GUI_PLUGINS) {
+                            fprintf (stderr, "too many gui plugins\n");
+                            break; // no more gui plugins allowed
+                        }
+                        char *nm = d_name + 8;
+                        char *e = strrchr (nm, '.');
+                        if (!e) {
+                            break;
+                        }
+                        if (strcmp (e, ".so")) {
+                            break;
+                        }
+                        *e = 0;
+                        // ignore fallbacks
+                        e = strrchr (nm, '.');
+                        if (e && !strcasecmp (e, ".fallback")) {
+                            break;
+                        }
+                        // add to list
+                        // FIXME check for gui plugins dupes
+                        g_gui_names[g_num_gui_names++] = strdup (nm);
+                        g_gui_names[g_num_gui_names] = NULL;
+                        trace ("added %s gui plugin\n", nm);
                     }
-                    char *nm = d_name + 8;
-                    char *e = strrchr (nm, '.');
-                    if (!e) {
-                        break;
-                    }
-                    if (strcmp (e, ".so")) {
-                        break;
-                    }
-                    *e = 0;
-                    // ignore fallbacks
-                    e = strrchr (nm, '.');
-                    if (e && !strcasecmp (e, ".fallback")) {
-                        break;
-                    }
-                    // add to list
-                    // FIXME check for gui plugins dupes
-                    g_gui_names[g_num_gui_names++] = strdup (nm);
-                    g_gui_names[g_num_gui_names] = NULL;
-                    trace ("added %s gui plugin\n", nm);
                     break;
                 }
 
-                if (0 != load_plugin (plugdir, d_name, l)) {
-                    trace ("plugin not found or failed to load\n");
+                if (!gui_scan) {
+                    if (0 != load_plugin (plugdir, d_name, l)) {
+                        trace ("plugin not found or failed to load\n");
+                    }
                 }
                 break;
             }
@@ -858,13 +867,26 @@ plug_load_all (void) {
 #endif
 
     int k = 0;
-
+#ifndef ANDROID
+    // load gui plugin before others
     while (plugins_dirs[k]) {
         const char *plugdir = plugins_dirs[k++];
         if (!(*plugdir)) {
             continue;
         }
-        load_plugin_dir (plugdir);
+        load_plugin_dir (plugdir, 1);
+    }
+    printf ("load gui plugin\n");
+    load_gui_plugin (plugins_dirs);
+#endif
+
+    k = 0;
+    while (plugins_dirs[k]) {
+        const char *plugdir = plugins_dirs[k++];
+        if (!(*plugdir)) {
+            continue;
+        }
+        load_plugin_dir (plugdir, 0);
     }
 
 #ifdef ANDROID
@@ -893,10 +915,6 @@ plug_load_all (void) {
         p = e+1;
     }
 #endif
-
-
-    // load gui plugin
-    load_gui_plugin (plugins_dirs);
 
 // load all compiled-in modules
 #define PLUG(n) extern DB_plugin_t * n##_load (DB_functions_t *api);
