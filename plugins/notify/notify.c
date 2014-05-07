@@ -1,6 +1,6 @@
 /*
-    DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
+    OSD Notification plugin for DeaDBeeF Player
+    Copyright (C) 2009-2014 Alexey Yakovenko and contributors
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -86,36 +86,6 @@ notify_thread (void *ctx) {
     deadbeef->thread_exit(NULL);
 
 }
-
-#if 0
-static void
-notify_marshal_dict_byte(DBusMessageIter *iter, const char *key, char value)
-{
-  DBusMessageIter entry, variant;
-
-  if (!key || !value) return;
-
-  dbus_message_iter_open_container(iter, DBUS_TYPE_DICT_ENTRY, NULL, &entry);
-  dbus_message_iter_append_basic(&entry, DBUS_TYPE_STRING, &key);
-  dbus_message_iter_open_container(&entry, DBUS_TYPE_VARIANT, "y", &variant);
-  dbus_message_iter_append_basic(&variant, DBUS_TYPE_BYTE, &value);
-  dbus_message_iter_close_container(&entry, &variant);
-  dbus_message_iter_close_container(iter, &entry);
-}
-
-static void
-notify_marshal_dict_string(DBusMessageIter *iter, const char *key, const char *value)
-{
-  DBusMessageIter entry, variant;
-
-  dbus_message_iter_open_container(iter, DBUS_TYPE_DICT_ENTRY, "sv", &entry);
-  dbus_message_iter_append_basic(&entry, DBUS_TYPE_STRING, &key);
-  dbus_message_iter_open_container(&entry, DBUS_TYPE_VARIANT, "s", &variant);
-  dbus_message_iter_append_basic(&variant, DBUS_TYPE_STRING, &value);
-  dbus_message_iter_close_container(&entry, &variant);
-  dbus_message_iter_close_container(iter, &entry);
-}
-#endif
 
 static void
 esc_xml (const char *cmd, char *esc, int size) {
@@ -343,7 +313,8 @@ DB_misc_t plugin = {
     .plugin.name = "OSD Notify",
     .plugin.descr = "Displays notifications when new track starts.\nRequires dbus and notification daemon to be running.\nNotification daemon should be provided by your desktop environment.\n",
     .plugin.copyright = 
-        "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "OSD Notification plugin for DeaDBeeF Player\n"
+        "Copyright (C) 2009-2014 Alexey Yakovenko and contributors\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
         "modify it under the terms of the GNU General Public License\n"
