@@ -1,6 +1,6 @@
 /*
-    DeaDBeeF -- the music player
-    Copyright (C) 2009-2013 Alexey Yakovenko and other contributors
+    Playlist browser widget plugin for DeaDBeeF Player
+    Copyright (C) 2009-2014 Alexey Yakovenko
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -256,8 +256,8 @@ static DB_misc_t plugin = {
 #endif
     .plugin.descr = "Use View -> Design Mode to add playlist browser into main window",
     .plugin.copyright = 
-        "DeaDBeeF -- the music player\n"
-        "Copyright (C) 2009-2013 Alexey Yakovenko and other contributors\n"
+        "Playlist browser widget plugin for DeaDBeeF Player\n"
+        "Copyright (C) 2009-2014 Alexey Yakovenko\n"
         "\n"
         "This software is provided 'as-is', without any express or implied\n"
         "warranty.  In no event will the authors be held liable for any damages\n"

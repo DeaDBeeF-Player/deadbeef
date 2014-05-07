@@ -1,20 +1,27 @@
 /*
-    DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
+    MPEG decoder plugin based on libmad
+    Copyright (C) 2009-2014 Alexey Yakovenko
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 2 of the License, or
-    (at your option) any later version.
+    This software is provided 'as-is', without any express or implied
+    warranty.  In no event will the authors be held liable for any damages
+    arising from the use of this software.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    Permission is granted to anyone to use this software for any purpose,
+    including commercial applications, and to alter it and redistribute it
+    freely, subject to the following restrictions:
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+
+    2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+
+    3. This notice may not be removed or altered from any source distribution.
 */
+
+
 #include <string.h>
 #include <stdio.h>
 #include <mad.h>
@@ -1467,21 +1474,26 @@ static DB_decoder_t plugin = {
     .plugin.name = "MPEG decoder",
     .plugin.descr = "MPEG v1/2 layer1/2/3 decoder based on libmad",
     .plugin.copyright = 
-        "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "MPEG decoder plugin based on libmad\n"
+        "Copyright (C) 2009-2014 Alexey Yakovenko\n"
         "\n"
-        "This program is free software; you can redistribute it and/or\n"
-        "modify it under the terms of the GNU General Public License\n"
-        "as published by the Free Software Foundation; either version 2\n"
-        "of the License, or (at your option) any later version.\n"
+        "This software is provided 'as-is', without any express or implied\n"
+        "warranty.  In no event will the authors be held liable for any damages\n"
+        "arising from the use of this software.\n"
         "\n"
-        "This program is distributed in the hope that it will be useful,\n"
-        "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
-        "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
-        "GNU General Public License for more details.\n"
+        "Permission is granted to anyone to use this software for any purpose,\n"
+        "including commercial applications, and to alter it and redistribute it\n"
+        "freely, subject to the following restrictions:\n"
         "\n"
-        "You should have received a copy of the GNU General Public License\n"
-        "along with this program; if not, write to the Free Software\n"
-        "Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.\n"
+        "1. The origin of this software must not be misrepresented; you must not\n"
+        " claim that you wrote the original software. If you use this software\n"
+        " in a product, an acknowledgment in the product documentation would be\n"
+        " appreciated but is not required.\n"
+        "\n"
+        "2. Altered source versions must be plainly marked as such, and must not be\n"
+        " misrepresented as being the original software.\n"
+        "\n"
+        "3. This notice may not be removed or altered from any source distribution.\n"
     ,
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.configdialog = settings_dlg,

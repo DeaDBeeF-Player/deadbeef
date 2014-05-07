@@ -1,6 +1,6 @@
 /*
     Shellexec plugin for DeaDBeeF
-    Copyright (C) 2010-2012 Deadbeef team
+    Copyright (C) 2010-2014 Deadbeef team
     Original developer Viktor Semykin <thesame.ml@gmail.com>
     Maintenance, minor improvements Alexey Yakovenko <waker@users.sf.net>
     GUI support and bugfixing Azeem Arshad <kr00r4n@gmail.com>
@@ -461,7 +461,8 @@ static Shx_plugin_t plugin = {
     "this would show the name of selected track in notification popup"
     ,
     .misc.plugin.copyright = 
-        "Copyright (C) 2010-2012 Deadbeef team\n"
+        "Shellexec plugin for DeaDBeeF\n"
+        "Copyright (C) 2010-2014 Deadbeef team\n"
         "Original developer Viktor Semykin <thesame.ml@gmail.com>\n"
         "Maintenance, minor improvements Alexey Yakovenko <waker@users.sf.net>\n"
         "GUI support and bugfixing Azeem Arshad <kr00r4n@gmail.com>"
