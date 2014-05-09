@@ -3005,12 +3005,12 @@ junk_id3v2_load_ufid (int version_major, playItem_t *it, uint8_t *readptr, int s
         readptr++;
         synched_size--;
     }
-    readptr++;
-    synched_size--;
     if (!synched_size) {
-        trace ("UFID id is empty");
+        trace ("UFID owner is not null-terminated\n");
         return -1;
     }
+    readptr++;
+    synched_size--;
     char id[synched_size+1];
     memcpy (id, readptr, synched_size);
     id[synched_size] = 0;
