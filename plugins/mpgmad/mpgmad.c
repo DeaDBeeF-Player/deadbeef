@@ -98,8 +98,8 @@ typedef struct {
 
     int skipsamples;
 
-    int startoffset; // in bytes (id3v2, xing/lame)
-    int endoffset; // in bytes (apev2, id3v1)
+    int64_t startoffset; // in bytes (id3v2, xing/lame)
+    int64_t endoffset; // in bytes (apev2, id3v1)
 
     // startsample and endsample exclude delay/padding
     int startsample;
@@ -213,13 +213,6 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
 
     if (sample <= 0) {
         buffer->totalsamples = 0;
-        if (fsize > 0) {
-            fsize -= initpos;
-            if (fsize < 0) {
-                trace ("cmp3_scan_stream: invalid file: bad header\n");
-                return -1;
-            }
-        }
     }
     if (sample <= 0 && buffer->avg_packetlength == 0) {
         buffer->avg_packetlength = 0;
@@ -590,11 +583,11 @@ retry_sync:
                     }
                     if (sample <= 0 && (flags&FRAMES_FLAG)) {
                         buffer->have_xing_header = 1;
-                        deadbeef->fseek (buffer->file, framepos+packetlength, SEEK_SET);
+                        buffer->startoffset = framepos+packetlength;
+                        deadbeef->fseek (buffer->file, buffer->startoffset, SEEK_SET);
                         if (fsize >= 0) {
-                            buffer->bitrate = (fsize - deadbeef->ftell (buffer->file))/ buffer->samplerate * 1000;
+                            buffer->bitrate = (fsize - buffer->startoffset - buffer->endoffset)/ buffer->samplerate * 1000;
                         }
-                        buffer->startoffset = deadbeef->ftell (buffer->file);
                     }
                 }
             }
@@ -622,6 +615,7 @@ retry_sync:
                         return 0;
                     }
                     buffer->nframes = sz / packetlength;
+                    printf ("buffer->nframes: %d/%d=%d\n", sz, packetlength, buffer->nframes);
                     buffer->avg_packetlength = packetlength;
                     buffer->avg_samplerate = samplerate;
                     buffer->avg_samples_per_frame = samples_per_frame;
@@ -691,14 +685,14 @@ end_scan:
         buffer->avg_samples_per_frame /= valid_frames;
 //        avg_bitrate /= valid_frames;
         //trace ("valid_frames=%d, avg_bitrate=%d, avg_packetlength=%f, avg_samplerate=%d, avg_samples_per_frame=%d\n", valid_frames, avg_bitrate, buffer->avg_packetlength, buffer->avg_samplerate, buffer->avg_samples_per_frame);
-        trace ("startoffs: %d, endoffs: %d\n",  buffer->startoffset, buffer->endoffset);
+        trace ("startoffs: %lld, endoffs: %lld\n",  buffer->startoffset, buffer->endoffset);
 
         buffer->nframes = (fsize - buffer->startoffset - buffer->endoffset) / buffer->avg_packetlength;
         if (!buffer->have_xing_header) {
             buffer->totalsamples = buffer->nframes * buffer->avg_samples_per_frame;
             buffer->duration = (buffer->totalsamples - buffer->delay - buffer->padding) / (float)buffer->avg_samplerate;
         }
-        buffer->bitrate = (fsize-buffer->startoffset-buffer->endoffset) / buffer->duration * 8;
+        buffer->bitrate = (fsize - buffer->startoffset - buffer->endoffset) / buffer->duration * 8;
         trace ("nframes: %d, fsize: %lld, spf: %d, smp: %d, totalsamples: %d\n", buffer->nframes, fsize, buffer->avg_samples_per_frame, buffer->avg_samplerate, buffer->totalsamples);
 // }}}
         return 0;
