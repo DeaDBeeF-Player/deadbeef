@@ -132,7 +132,7 @@ extern "C" {
 #define ATOM_SCHI 25
 
 #ifdef HAVE_CONFIG_H
-#include "../../config.h"   
+#include "../../config.h"
 #endif
 
 #if !(defined(_WIN32) || defined(_WIN32_WCE))
