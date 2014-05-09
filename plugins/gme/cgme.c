@@ -25,6 +25,7 @@
 #  include "../../config.h"
 #endif
 #include <stdio.h>
+#include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
@@ -84,8 +85,13 @@ read_gzfile (const char *fname, char **buffer, int *size) {
                 tmp = "/tmp";
             }
             char nm[PATH_MAX];
+#ifdef ANDROID
+            snprintf (nm, sizeof (nm), "%s/ddbgmeXXXXXX", tmp);
+            fd = mkstemp (nm);
+#else
             snprintf (nm, sizeof (nm), "%s/ddbgmeXXXXXX.vgz", tmp);
             fd = mkstemps (nm, 4);
+#endif
             if (fd == -1 || sz != write (fd, buffer, sz)) {
                 trace ("gme read_gzfile: failed to write temp file\n");
                 if (fd != -1) {
