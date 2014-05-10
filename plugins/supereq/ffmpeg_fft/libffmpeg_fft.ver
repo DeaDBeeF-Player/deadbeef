@@ -1,4 +1,0 @@
-LIBFFMPEG_FFT_52 {
-        global: *;
-};
-
