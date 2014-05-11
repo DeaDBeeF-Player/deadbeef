@@ -1296,3 +1296,8 @@ on_stop_after_album_activate           (GtkMenuItem     *menuitem,
 void
 on_reset_autostopalbum_toggled         (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
+
+gboolean
+on_mainwin_button_press_event          (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data);

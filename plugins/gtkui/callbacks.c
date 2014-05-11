@@ -571,6 +571,24 @@ on_new_playlist1_activate              (GtkMenuItem     *menuitem,
     action_new_playlist_handler_cb (NULL);
 }
 
+gboolean
+on_mainwin_button_press_event          (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data)
+{
+    GtkWidget *statusbar = lookup_widget (mainwin, "statusbar");
+    GtkAllocation c;
+    gtk_widget_get_allocation (statusbar, &c);
+    if (event->x >= c.x && event->x < c.x + c.width
+            && event->y >= c.y && event->y < c.y + c.height) {
+        if (event->type == GDK_2BUTTON_PRESS) {
+            deadbeef->sendmessage (DB_EV_TRACKFOCUSCURRENT, 0, 0, 0);
+        }
+    }
+
+    return FALSE;
+}
+
 
 GtkWidget*
 create_seekbar (gchar *widget_name, gchar *string1, gchar *string2,
