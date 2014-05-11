@@ -476,6 +476,9 @@ create_mainwin (void)
   g_signal_connect ((gpointer) mainwin, "realize",
                     G_CALLBACK (on_mainwin_realize),
                     NULL);
+  g_signal_connect ((gpointer) mainwin, "button_press_event",
+                    G_CALLBACK (on_mainwin_button_press_event),
+                    NULL);
   g_signal_connect ((gpointer) open, "activate",
                     G_CALLBACK (on_open_activate),
                     NULL);
