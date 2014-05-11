@@ -275,7 +275,11 @@ static int fallback_io_tcp_connect(void *data, const char *host, int port, int *
   for (rp = res; rp != NULL; rp = rp->ai_next) {
     struct sockaddr_in sin;
     memset (&sin, 0, sizeof (sin));
-    memcpy (&sin, rp->ai_addr, rp->ai_addrlen);
+    int l = rp->ai_addrlen;
+    if (l > sizeof (sin)) {
+        l = sizeof (sin);
+    }
+    memcpy (&sin, rp->ai_addr, l);
 #endif
     
     time_t t = time (NULL);
