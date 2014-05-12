@@ -33,19 +33,126 @@
 //  1: function call
 //   func_idx:byte, num_args:byte, arg1_len:byte[,arg2_len:byte[,...]]
 //  2: meta field
-//   field name\0
+//   len:byte, data
 //  3: if_defined block
-//   len: int32
+//   len:int32, data
 // !0: plain text
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 typedef struct {
     const char *i;
     char *o;
 } tf_compiler_t;
+
+typedef int (*tf_func_ptr_t)(int argc, char *arglens, char *args, char *out, int outlen);
+
+#define TF_MAX_FUNCS 0xff
+
+typedef struct {
+    const char *name;
+    tf_func_ptr_t func;
+} tf_func_def;
+
+int tf_eval (char *code, int size, char *out, int outlen);
+
+int tf_func_add (int argc, char *arglens, char *args, char *out, int outlen) {
+    int outval = 0;
+    char *arg = args;
+    printf ("num args: %d\n", argc);
+    for (int i = 0; i < argc; i++) {
+        char buf[200];
+        printf ("add: eval arg %d (%s)\n", i, arg);
+        int len = tf_eval (arg, arglens[i], buf, sizeof (buf));
+        if (len > 0) {
+            outval += atoi (buf);
+        }
+        arg += arglens[i];
+    }
+    int res = snprintf (out, outlen, "%d", outval);
+    printf ("and of add (%d), res: %d\n", outval, res);
+    return res;
+}
+
+tf_func_def tf_funcs[TF_MAX_FUNCS] = {
+    { "add", tf_func_add },
+    { NULL, NULL }
+};
+
+int tf_eval (char *code, int size, char *out, int outlen) {
+    char *init_out = out;
+    while (size) {
+        if (*code) {
+            printf ("free char: %c\n", *code);
+            *out++ = *code++;
+            size--;
+            outlen--;
+        }
+        else {
+            *code++;
+            size--;
+            printf ("special: %d\n", (int)(*code));
+            if (*code == 1) {
+                *code++;
+                size--;
+                printf ("exec func: %d (%s)\n", *code, tf_funcs[*code].name);
+                tf_func_ptr_t func = tf_funcs[*code].func;
+                code++;
+                size--;
+                int res = func (code[0], code+1, code+1+code[0], out, outlen);
+                if (res == -1) {
+                    return -1;
+                }
+                out += res;
+                outlen -= res;
+
+                int blocksize = 2 + code[0];
+                for (int i = 0; i < code[0]; i++) {
+                    blocksize += code[1+i];
+                }
+                printf ("blocksize: %d\n", blocksize);
+                code += blocksize;
+                size -= blocksize;
+            }
+            else if (*code == 2) {
+                code++;
+                size--;
+                uint8_t len = *code;
+                code++;
+                size--;
+                code += len;
+                size -= len;
+                int res = snprintf (out, outlen, "_metafield_");
+                out += res;
+                outlen -= res;
+            }
+            else if (*code == 3) {
+                code++;
+                size--;
+                int32_t len;
+                memcpy (&len, code, 4);
+                code += 4;
+                size -= 4;
+                code += len;
+                size -= len;
+                int res = snprintf (out, outlen, "_metafield_");
+                out += res;
+                outlen -= res;
+            }
+            else {
+                printf ("invalid special block: %d\n", (int)(*code));
+                return -1;
+            }
+        }
+    }
+    return out-init_out;
+}
+
+int
+tf_compile_plain (tf_compiler_t *c);
 
 int
 tf_compile_func (tf_compiler_t *c) {
@@ -55,7 +162,7 @@ tf_compile_func (tf_compiler_t *c) {
     // function marker
     *(c->o++) = 0;
     *(c->o++) = 1;
-
+    *(c->o++) = 0; // add
 
     const char *name_start = c->i;
 
@@ -85,7 +192,13 @@ tf_compile_func (tf_compiler_t *c) {
     //parse comma separated args until )
     char *prev_arg;
     while (*(c->i)) {
-        if (*(c->i) == ',' || *(c->i) == ')') {
+        if (*(c->i) == '\\') {
+            c->i++;
+            if (*(c->i) != 0) {
+                *(c->o++) = *(c->i++);
+            }
+        }
+        else if (*(c->i) == ',' || *(c->i) == ')') {
             // next arg
             int len = c->o - argstart;
             printf ("end of arg in func %s, len: %d\n", func_name, len);
@@ -102,7 +215,6 @@ tf_compile_func (tf_compiler_t *c) {
             }
 
             if (*(c->i) == ')') {
-                c->i++;
                 break;
             }
             c->i++;
@@ -112,6 +224,7 @@ tf_compile_func (tf_compiler_t *c) {
         }
     }
     if (*(c->i) != ')') {
+        c->i++;
         return -1;
     }
 
@@ -120,7 +233,86 @@ tf_compile_func (tf_compiler_t *c) {
     return 0;
 }
 
-inline int
+int
+tf_compile_field (tf_compiler_t *c) {
+    printf ("start field\n");
+    c->i++;
+    *(c->o++) = 0;
+    *(c->o++) = 2;
+
+    const char *fstart = c->i;
+    char *plen = c->o;
+    c->o += 1;
+    while (*(c->i)) {
+        if (*(c->i) == '%') {
+            break;
+        }
+        else {
+            *(c->o++) = *(c->i++);
+        }
+    }
+    if (*(c->i) != '%') {
+        return -1;
+    }
+    c->i++;
+
+    int32_t len = c->o - plen - 1;
+    if (len > 0xff) {
+        printf ("field name to big: %d\n", len);
+        return -1;
+    }
+    *plen = len;
+
+    char field[len+1];
+    memcpy (field, fstart, len);
+    field[len] = 0;
+    printf ("end field, len: %d, value: %s\n", len, field);
+    return 0;
+}
+
+int
+tf_compile_ifdef (tf_compiler_t *c) {
+    printf ("start ifdef\n");
+    c->i++;
+    *(c->o++) = 0;
+    *(c->o++) = 3;
+
+    char *plen = c->o;
+    c->o += 4;
+
+    char *start = c->o;
+
+    while (*(c->i)) {
+        if (*(c->i) == '\\') {
+            c->i++;
+            if (*(c->i) != 0) {
+                *(c->o++) = *(c->i++);
+            }
+        }
+        else if (*(c->i) == ']') {
+            break;
+        }
+        else if (tf_compile_plain (c)) {
+            return -1;
+        }
+    }
+
+    if (*(c->i) != ']') {
+        return -1;
+    }
+    c->i++;
+
+    int32_t len = c->o - plen - 4;
+    memcpy (plen, &len, 4);
+
+    char value[len+1];
+    memcpy (value, start, len);
+    value[len] = 0;
+    printf ("end ifdef, len: %d, value: %s\n", len, value+3);
+    return 0;
+}
+
+int
 tf_compile_plain (tf_compiler_t *c) {
     if (*(c->i) == '$') {
         if (tf_compile_func (c)) {
@@ -128,12 +320,14 @@ tf_compile_plain (tf_compiler_t *c) {
         }
     }
     else if (*(c->i) == '[') {
-        //p = tf_compile_ifdef ();
-        c->i++;
+        if (tf_compile_ifdef (c)) {
+            return -1;
+        }
     }
     else if (*(c->i) == '%') {
-        //p = tf_compile_field();
-        c->i++;
+        if (tf_compile_field (c)) {
+            return -1;
+        }
     }
     else if (*(c->i) == '\\') {
         c->i++;
@@ -147,8 +341,8 @@ tf_compile_plain (tf_compiler_t *c) {
     return 0;
 }
 
-void
-tf_compile (const char *script) {
+int
+tf_compile (const char *script, char **out) {
     tf_compiler_t c;
     memset (&c, 0, sizeof (c));
 
@@ -160,13 +354,35 @@ tf_compile (const char *script) {
     c.o = code;
 
     while (*(c.i)) {
-        tf_compile_plain (&c);
+        if (tf_compile_plain (&c)) {
+            return -1;
+        }
     }
 
     printf ("output len: %d\n", (int)(c.o - code));
     printf ("%s\n", code);
+
+    *out = malloc (c.o - code);
+    memcpy (*out, code, c.o - code);
+    return c.o - code;
 }
 
 int main () {
-    tf_compile ("hello$world(abra,kadabra,$add(1,2))");
+    int len;
+    char *code;
+    len = tf_compile ("$add(1,2)", &code);
+    printf ("code (%d): %s\n", len, code);
+
+    for (int i = 0; i < len; i++) {
+        printf ("%02x ", code[i]);
+    }
+    printf ("\n");
+    for (int i = 0; i < len; i++) {
+        printf ("%2c ", code[i] > 32 ? code[i] : 'x');
+    }
+    printf ("\n");
+
+    char out[1000] = "";
+    int res = tf_eval (code, len, out, sizeof (out));
+    printf ("output (%d): %s\n", res, out);
 }
