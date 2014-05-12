@@ -48,7 +48,7 @@ typedef struct {
     char *o;
 } tf_compiler_t;
 
-typedef int (*tf_func_ptr_t)(int argc, char *arglens, char *args, char *out, int outlen);
+typedef int (*tf_func_ptr_t)(int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef);
 
 #define TF_MAX_FUNCS 0xff
 
@@ -57,19 +57,20 @@ typedef struct {
     tf_func_ptr_t func;
 } tf_func_def;
 
-int tf_eval (char *code, int size, char *out, int outlen);
+int tf_eval (char *code, int size, char *out, int outlen, int fail_on_undef);
 
-int tf_func_add (int argc, char *arglens, char *args, char *out, int outlen) {
+int tf_func_add (int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
     int outval = 0;
     char *arg = args;
     printf ("num args: %d\n", argc);
     for (int i = 0; i < argc; i++) {
         char buf[200];
         printf ("add: eval arg %d (%s)\n", i, arg);
-        int len = tf_eval (arg, arglens[i], buf, sizeof (buf));
-        if (len > 0) {
-            outval += atoi (buf);
+        int len = tf_eval (arg, arglens[i], buf, sizeof (buf), fail_on_undef);
+        if (len < 0) {
+            return -1;
         }
+        outval += atoi (buf);
         arg += arglens[i];
     }
     int res = snprintf (out, outlen, "%d", outval);
@@ -82,14 +83,14 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { NULL, NULL }
 };
 
-int tf_eval (char *code, int size, char *out, int outlen) {
+int tf_eval (char *code, int size, char *out, int outlen, int fail_on_undef) {
     char *init_out = out;
     while (size) {
         if (*code) {
             printf ("free char: %c\n", *code);
             *out++ = *code++;
             size--;
-            outlen--;
+            outlen++;
         }
         else {
             *code++;
@@ -102,14 +103,14 @@ int tf_eval (char *code, int size, char *out, int outlen) {
                 tf_func_ptr_t func = tf_funcs[*code].func;
                 code++;
                 size--;
-                int res = func (code[0], code+1, code+1+code[0], out, outlen);
+                int res = func (code[0], code+1, code+1+code[0], out, outlen, fail_on_undef);
                 if (res == -1) {
                     return -1;
                 }
                 out += res;
                 outlen -= res;
 
-                int blocksize = 2 + code[0];
+                int blocksize = 1 + code[0];
                 for (int i = 0; i < code[0]; i++) {
                     blocksize += code[1+i];
                 }
@@ -118,6 +119,9 @@ int tf_eval (char *code, int size, char *out, int outlen) {
                 size -= blocksize;
             }
             else if (*code == 2) {
+                if (fail_on_undef) {
+                    return -1;
+                }
                 code++;
                 size--;
                 uint8_t len = *code;
@@ -136,11 +140,14 @@ int tf_eval (char *code, int size, char *out, int outlen) {
                 memcpy (&len, code, 4);
                 code += 4;
                 size -= 4;
+
+                int res = tf_eval (code, len, out, outlen, 1);
+                if (res > 0) {
+                    out += res;
+                    outlen -= res;
+                }
                 code += len;
                 size -= len;
-                int res = snprintf (out, outlen, "_metafield_");
-                out += res;
-                outlen -= res;
             }
             else {
                 printf ("invalid special block: %d\n", (int)(*code));
@@ -224,9 +231,9 @@ tf_compile_func (tf_compiler_t *c) {
         }
     }
     if (*(c->i) != ')') {
-        c->i++;
         return -1;
     }
+    c->i++;
 
     printf ("$%s num_args: %d\n", func_name, (int)*start);
 
@@ -370,7 +377,7 @@ tf_compile (const char *script, char **out) {
 int main () {
     int len;
     char *code;
-    len = tf_compile ("$add(1,2)", &code);
+    len = tf_compile ("$add(1,2,3) [hello] [%hello%]", &code);
     printf ("code (%d): %s\n", len, code);
 
     for (int i = 0; i < len; i++) {
@@ -383,6 +390,6 @@ int main () {
     printf ("\n");
 
     char out[1000] = "";
-    int res = tf_eval (code, len, out, sizeof (out));
+    int res = tf_eval (code, len, out, sizeof (out), 0);
     printf ("output (%d): %s\n", res, out);
 }
