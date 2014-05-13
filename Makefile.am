@@ -39,7 +39,8 @@ deadbeef_SOURCES =\
 	replaygain.c replaygain.h\
 	fft.c fft.h\
 	handler.c handler.h\
-	strdupa.h
+	strdupa.h\
+	tf.c tf.h
 	
 #	ConvertUTF/ConvertUTF.c ConvertUTF/ConvertUTF.h
 
