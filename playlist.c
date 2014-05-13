@@ -61,6 +61,7 @@
 #include "metacache.h"
 #include "volume.h"
 #include "pltmeta.h"
+#include "tf.h"
 
 #define DISABLE_LOCKING 0
 #define DEBUG_LOCKING 0
@@ -2424,6 +2425,35 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
             }
         }
         plt_insert_item (plt, plt->tail[PL_MAIN], it);
+
+        char *code;
+        int len;
+        const char *script = "\\[start of line\\] [album: \"%album%\"] \\[sum of 1,2,3: $add(1,2,3)\\] [title: \"%title%\"] \\[end of line\\]";
+        printf ("compiling \"%s\"\n", script);
+        len = tf_compile (script, &code);
+        if (len >= 0) {
+            printf ("compile success\n");
+            tf_context_t ctx;
+            memset (&ctx, 0, sizeof (ctx));
+            ctx._size = sizeof (ctx);
+            ctx.it = it;
+            ctx.plt = plt;
+            ctx.idx = 0;
+
+            char out[1000]="";
+            int res = tf_eval (&ctx, code, len, out, sizeof (out));
+            if (res > 0) {
+                printf ("eval success, output:\n%s\n", out);
+            }
+            else {
+                printf ("eval failed, err: %d\n", res);
+            }
+
+            tf_free (code);
+        }
+
+        exit (0);
+
         if (last_added) {
             pl_item_unref (last_added);
         }
