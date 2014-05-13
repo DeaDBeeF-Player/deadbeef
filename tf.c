@@ -42,6 +42,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include "playlist.h"
 
 typedef struct {
     const char *i;
@@ -374,7 +375,9 @@ tf_compile (const char *script, char **out) {
     return c.o - code;
 }
 
-int main () {
+
+void
+tf_test (void) {
     int len;
     char *code;
     len = tf_compile ("$add(1,2,3) [hello] [%hello%]", &code);
