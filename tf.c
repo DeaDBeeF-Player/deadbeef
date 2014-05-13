@@ -76,13 +76,13 @@ tf_func_add (tf_context_t *ctx, int argc, char *arglens, char *args, char *out, 
     char *arg = args;
     trace ("num args: %d\n", argc);
     for (int i = 0; i < argc; i++) {
-        char buf[200];
         trace ("add: eval arg %d (%s)\n", i, arg);
-        int len = tf_eval_int (ctx, arg, arglens[i], buf, sizeof (buf), fail_on_undef);
+        int len = tf_eval_int (ctx, arg, arglens[i], out, outlen, fail_on_undef);
         if (len < 0) {
+            *out = 0;
             return -1;
         }
-        outval += atoi (buf);
+        outval += atoi (out);
         arg += arglens[i];
     }
     int res = snprintf (out, outlen, "%d", outval);
@@ -90,8 +90,38 @@ tf_func_add (tf_context_t *ctx, int argc, char *arglens, char *args, char *out, 
     return res;
 }
 
+int
+tf_func_if (tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+    if (argc < 2 || argc > 3) {
+        return -1;
+    }
+    char *arg = args;
+    int res = tf_eval_int (ctx, arg, arglens[0], out, outlen, fail_on_undef);
+    arg += arglens[0];
+    if (res > 0) {
+        trace ("condition true, eval then block\n");
+        res = tf_eval_int (ctx, arg, arglens[1], out, outlen, fail_on_undef);
+        if (res < 0) {
+            *out = 0;
+            return -1;
+        }
+    }
+    else if (argc == 3) {
+        trace ("condition false, eval else block\n");
+        arg += arglens[1];
+        res = tf_eval_int (ctx, arg, arglens[2], out, outlen, fail_on_undef);
+        if (res < 0) {
+            *out = 0;
+            return -1;
+        }
+    }
+
+    return res;
+}
+
 tf_func_def tf_funcs[TF_MAX_FUNCS] = {
     { "add", tf_func_add },
+    { "if", tf_func_if },
     { NULL, NULL }
 };
 
@@ -193,7 +223,6 @@ tf_compile_func (tf_compiler_t *c) {
     // function marker
     *(c->o++) = 0;
     *(c->o++) = 1;
-    *(c->o++) = 0; // add
 
     const char *name_start = c->i;
 
@@ -203,6 +232,18 @@ tf_compile_func (tf_compiler_t *c) {
     }
 
     if (!*(c->i)) {
+        return -1;
+    }
+
+    int i;
+    for (i = 0; tf_funcs[i].name; i++) {
+        int l = strlen (tf_funcs[i].name);
+        if (c->i - name_start == l && !memcmp (tf_funcs[i].name, name_start, l)) {
+            *(c->o++) = i;
+            break;
+        }
+    }
+    if (!tf_funcs[i].name) {
         return -1;
     }
 
