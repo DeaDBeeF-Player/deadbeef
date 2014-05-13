@@ -2425,14 +2425,13 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
             }
         }
         plt_insert_item (plt, plt->tail[PL_MAIN], it);
-
         char *code;
         int len;
-        const char *script = "\\[start of line\\] [album: \"%album%\"] \\[sum of 1,2,3: $add(1,2,3)\\] [title: \"%title%\"] \\[end of line\\]";
+        const char *script = "$if(%album artist%,true,false) $if(%noway%,true,false) $if(%title%,true,false) $if(%album artist%,%album artist%,$if(%band%,%band%,[%artist%]))";
         printf ("compiling \"%s\"\n", script);
         len = tf_compile (script, &code);
         if (len >= 0) {
-            printf ("compile success\n");
+            printf ("compile success (len %d)\n", len);
             tf_context_t ctx;
             memset (&ctx, 0, sizeof (ctx));
             ctx._size = sizeof (ctx);
