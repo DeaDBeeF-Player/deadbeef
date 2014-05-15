@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <curl/curl.h>
+#include <math.h>
 #include "../../deadbeef.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
