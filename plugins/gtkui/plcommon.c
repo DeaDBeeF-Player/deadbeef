@@ -1038,8 +1038,6 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
         return;
     }
 
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "title")), title);
-    editcolumn_title_changed = 0;
     int idx = 10;
     if (inf->id == -1) {
         if (inf->format) {
@@ -1077,6 +1075,8 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
         gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "format")), inf->format);
     }
     gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")), align_right);
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "title")), title);
+    editcolumn_title_changed = 0;
     gint response = gtk_dialog_run (GTK_DIALOG (dlg));
     if (response == GTK_RESPONSE_OK) {
         const gchar *title = gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "title")));
