@@ -317,10 +317,15 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
             ddb_tf_context_t ctx = {
                 ._size = sizeof (ddb_tf_context_t),
                 .it = it,
-                .plt = NULL,
-                .idx = -1
+                .plt = deadbeef->plt_get_curr (),
+                .idx = -1,
+                .id = cinf->id
             };
             deadbeef->tf_eval (&ctx, cinf->bytecode, cinf->bytecode_len, text, sizeof (text));
+            if (ctx.plt) {
+                deadbeef->plt_unref (ctx.plt);
+                ctx.plt = NULL;
+            }
             char *lb = strchr (text, '\r');
             if (lb) {
                 *lb = 0;

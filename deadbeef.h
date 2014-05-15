@@ -458,6 +458,7 @@ typedef struct {
     ddb_playItem_t *it; // track to get information from, or NULL
     ddb_playlist_t *plt; // playlist in which the track resides, or NULL
     int idx; // index of the track in playlist the track belongs to, or -1
+    int id; // predefined column id
 } ddb_tf_context_t;
 #endif
 
