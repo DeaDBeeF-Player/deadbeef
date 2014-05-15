@@ -1102,7 +1102,11 @@ init_column (col_info_t *inf, int id, const char *format) {
         free (inf->format);
         inf->format = NULL;
     }
-
+    if (inf->bytecode) {
+        deadbeef->tf_free (inf->bytecode);
+        inf->bytecode = NULL;
+    }
+    inf->bytecode_len = 0;
     inf->id = -1;
 
     switch (id) {
@@ -1116,28 +1120,36 @@ init_column (col_info_t *inf, int id, const char *format) {
         inf->id = DB_COLUMN_ALBUM_ART;
         break;
     case 3:
-        inf->format = strdup ("%a - %b");
+        inf->format = strdup ("%artist% - %album%");
         break;
     case 4:
-        inf->format = strdup ("%a");
+        inf->format = strdup ("%artist%");
         break;
     case 5:
-        inf->format = strdup ("%b");
+        inf->format = strdup ("%album%");
         break;
     case 6:
-        inf->format = strdup ("%t");
+        inf->format = strdup ("%title%");
         break;
     case 7:
-        inf->format = strdup ("%l");
+        inf->format = strdup ("%length%");
         break;
     case 8:
-        inf->format = strdup ("%n");
+        inf->format = strdup ("%track%");
         break;
     case 9:
-        inf->format = strdup ("%B");
+        inf->format = strdup ("$if(%album artist%,%album artist%,$if(%albumartist%,%albumartist%,$if(%band%,%band%,%artist)))");
         break;
     default:
         inf->format = strdup (format);
+    }
+    if (inf->format) {
+        char *bytecode;
+        int res = deadbeef->tf_compile (inf->format, &bytecode);
+        if (res >= 0) {
+            inf->bytecode = bytecode;
+            inf->bytecode_len = res;
+        }
     }
 }
 
