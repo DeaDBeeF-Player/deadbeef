@@ -146,7 +146,8 @@ void
 main_col_sort (int col, int sort_order, void *user_data) {
     col_info_t *c = (col_info_t*)user_data;
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    deadbeef->plt_sort (plt, PL_MAIN, c->id, c->format, sort_order-1);
+    // FIXME: plt_sort is not compatible with new title formatting
+//    deadbeef->plt_sort (plt, PL_MAIN, c->id, c->format, sort_order-1);
     deadbeef->plt_unref (plt);
 }
 void main_handle_doubleclick (DdbListview *listview, DdbListviewIter iter, int idx) {
@@ -346,20 +347,22 @@ main_playlist_init (GtkWidget *widget) {
     main_binding.unref = (void (*) (DdbListviewIter))deadbeef->pl_item_unref;
     ddb_listview_set_binding (listview, &main_binding);
     lock_column_config = 1;
-    DB_conf_item_t *col = deadbeef->conf_find ("playlist.column.", NULL);
+    DB_conf_item_t *col = deadbeef->conf_find ("gtkui.column.", NULL);
     if (!col) {
         // create default set of columns
-        add_column_helper (listview, "♫", 50, DB_COLUMN_PLAYING, NULL, 0);
-        add_column_helper (listview, _("Artist / Album"), 150, -1, "%a - %b", 0);
-        add_column_helper (listview, _("Track No"), 50, -1, "%n", 1);
-        add_column_helper (listview, _("Title"), 150, -1, "%t", 0);
-        add_column_helper (listview, _("Duration"), 50, -1, "%l", 0);
+        add_column_helper (listview, "♫", 50, DB_COLUMN_PLAYING, "%playstatus%", 0);
+        add_column_helper (listview, _("Artist / Album"), 150, -1, "%artist% - %album%", 0);
+        add_column_helper (listview, _("Track No"), 50, -1, "%track%", 1);
+        add_column_helper (listview, _("Title"), 150, -1, "%title%", 0);
+        add_column_helper (listview, _("Duration"), 50, -1, "%length%", 0);
     }
     else {
+#if 0
         while (col) {
             append_column_from_textdef (listview, col->value);
             col = deadbeef->conf_find ("playlist.column.", col);
         }
+#endif
     }
     lock_column_config = 0;
 

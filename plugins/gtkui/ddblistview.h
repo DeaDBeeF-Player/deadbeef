@@ -39,8 +39,10 @@ G_BEGIN_DECLS
 #define DDB_LISTVIEW_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), DDB_TYPE_LISTVIEW, DdbListviewClass))
 
 typedef struct {
-    int id;
+    int id; // predefined col type
     char *format;
+    char *bytecode;
+    int bytecode_len;
 } col_info_t;
 
 typedef struct _DdbListview DdbListview;
