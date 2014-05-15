@@ -55,6 +55,7 @@
 #include "dsppreset.h"
 #include "pltmeta.h"
 #include "metacache.h"
+#include "tf.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
@@ -375,6 +376,9 @@ static DB_functions_t deadbeef_api = {
     // ******* new 1.6 APIs ********
     .plt_set_scroll = (void (*) (ddb_playlist_t *plt, int scroll))plt_set_scroll,
     .plt_get_scroll = (int (*) (ddb_playlist_t *plt))plt_get_scroll,
+    .tf_compile = tf_compile,
+    .tf_free = tf_free,
+    .tf_eval= tf_eval,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

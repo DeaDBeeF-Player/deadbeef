@@ -53,7 +53,7 @@ typedef struct {
     char *o;
 } tf_compiler_t;
 
-typedef int (*tf_func_ptr_t)(tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef);
+typedef int (*tf_func_ptr_t)(ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef);
 
 #define TF_MAX_FUNCS 0xff
 
@@ -63,15 +63,15 @@ typedef struct {
 } tf_func_def;
 
 int
-tf_eval_int (tf_context_t *ctx, char *code, int size, char *out, int outlen, int fail_on_undef);
+tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen, int fail_on_undef);
 
 int
-tf_eval (tf_context_t *ctx, char *code, int codelen, char *out, int outlen) {
+tf_eval (ddb_tf_context_t *ctx, char *code, int codelen, char *out, int outlen) {
     return tf_eval_int (ctx, code, codelen, out, outlen, 0);
 }
 
 int
-tf_func_add (tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_add (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
     int outval = 0;
     char *arg = args;
     trace ("num args: %d\n", argc);
@@ -91,7 +91,7 @@ tf_func_add (tf_context_t *ctx, int argc, char *arglens, char *args, char *out, 
 }
 
 int
-tf_func_if (tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
+tf_func_if (ddb_tf_context_t *ctx, int argc, char *arglens, char *args, char *out, int outlen, int fail_on_undef) {
     if (argc < 2 || argc > 3) {
         return -1;
     }
@@ -126,7 +126,7 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
 };
 
 int
-tf_eval_int (tf_context_t *ctx, char *code, int size, char *out, int outlen, int fail_on_undef) {
+tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen, int fail_on_undef) {
     char *init_out = out;
     while (size) {
         if (*code) {
@@ -172,7 +172,7 @@ tf_eval_int (tf_context_t *ctx, char *code, int size, char *out, int outlen, int
                 memcpy (name, code, len);
                 name[len] = 0;
 
-                const char *val = pl_find_meta (ctx->it, name);
+                const char *val = pl_find_meta ((playItem_t *)ctx->it, name);
                 if (val) {
                     int len = strlen (val);
                     memcpy (out, val, len);
@@ -460,7 +460,7 @@ tf_test (void) {
     }
     trace ("\n");
 
-    tf_context_t ctx;
+    ddb_tf_context_t ctx;
     memset (&ctx, 0, sizeof (ctx));
     ctx._size = sizeof (ctx);
     ctx.idx = -1;
