@@ -2473,6 +2473,7 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
             }
         }
         plt_insert_item (plt, plt->tail[PL_MAIN], it);
+#if 0
         char *code;
         int len;
         const char *script = "$if(%album artist%,true,false) $if(%noway%,true,false) $if(%title%,true,false) $if(%album artist%,%album artist%,$if(%band%,%band%,[%artist%]))";
@@ -2500,6 +2501,7 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
         }
 
         exit (0);
+#endif
 
         if (last_added) {
             pl_item_unref (last_added);

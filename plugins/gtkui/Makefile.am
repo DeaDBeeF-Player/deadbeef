@@ -47,6 +47,7 @@ GTKUI_SOURCES =    gtkui.c gtkui.h\
                    pltmenu.c\
                    ctmapping.c ctmapping.h\
                    namedicons.c namedicons.h\
+                   tfimport.c tfimport.h\
 				   $(SM_SOURCES) $(OSXSRC)
 
 sdkdir = $(pkgincludedir)
