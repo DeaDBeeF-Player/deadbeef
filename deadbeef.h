@@ -71,6 +71,7 @@ extern "C" {
 
 // api version history:
 // 9.9 -- devel
+// 1.7 -- deadbeef-0.6.3
 // 1.6 -- deadbeef-0.6.1
 // 1.5 -- deadbeef-0.6
 // 1.4 -- deadbeef-0.5.5
@@ -91,7 +92,7 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 1
-#define DB_API_VERSION_MINOR 6
+#define DB_API_VERSION_MINOR 7
 
 #define DDB_DEPRECATED(x)
 
@@ -446,6 +447,17 @@ typedef struct ddb_fileadd_data_s {
     ddb_playlist_t *plt;
     ddb_playItem_t *track;
 } ddb_fileadd_data_t;
+#endif
+
+// since 1.7
+#if (DDB_API_LEVEL >= 7)
+// context for title formatting interpreter
+typedef struct {
+    int _size; // must be set to sizeof(tf_context_t)
+    ddb_playItem_t *it; // track to get information from, or NULL
+    ddb_playlist_t *plt; // playlist in which the track resides, or NULL
+    int idx; // index of the track in playlist the track belongs to, or -1
+} ddb_tf_context_t;
 #endif
 
 // forward decl for plugin struct
@@ -1031,6 +1043,29 @@ typedef struct {
 #if (DDB_API_LEVEL >= 6)
     void (*plt_set_scroll) (ddb_playlist_t *plt, int scroll);
     int (*plt_get_scroll) (ddb_playlist_t *plt);
+#endif
+    // since 1.7
+#if (DDB_API_LEVEL >= 7)
+    // **** title formatting v2 ****
+
+    // compile the input title formatting string into bytecode
+    // script: freeform string with title formatting special characters in it
+    // out_code: points to the buffer pointer, for storing the resulting bytecode,
+    //   which must be tf_free'd by the caller.
+    // returns the output bytecode size.
+    int (*tf_compile) (const char *script, char **out_code);
+
+    // free the code returned by tf_compile
+    void (*tf_free) (char *code);
+
+    // evaluate the titleformatting script in a given context
+    // ctx: a pointer to ddb_tf_context_t structure initialized by the caller
+    // code: the bytecode data created by tf_compile
+    // codelen: bytecode size returned by tf_compile
+    // out: buffer allocated by the caller, must be big enough to fit the output string
+    // outlen: the size of out buffer
+    // returns -1 on fail, output size on success
+    int (*tf_eval) (ddb_tf_context_t *ctx, char *code, int codelen, char *out, int outlen);
 #endif
 } DB_functions_t;
 
