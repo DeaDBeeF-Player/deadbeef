@@ -24,15 +24,8 @@
 #ifndef __TF_H
 #define __TF_H
 
-typedef struct {
-    int _size; // must be set to sizeof(tf_context_t)
-    playItem_t *it; // track to get information from, or NULL
-    playlist_t *plt; // playlist in which the track resides, or NULL
-    int idx; // index of the track in playlist the track belongs to, or -1
-} tf_context_t;
-
 // returns the output bytecode size.
-// the resulting bytecode is stored in the *out.
+// the resulting bytecode is stored in the *out_code.
 // must be free'd by the caller.
 int
 tf_compile (const char *script, char **out_code);
@@ -40,8 +33,8 @@ tf_compile (const char *script, char **out_code);
 void
 tf_free (char *code);
 
-// returns -1 on fail, 0 on success
+// returns -1 on fail, size on success
 int
-tf_eval (tf_context_t *ctx, char *code, int codelen, char *out, int outlen);
+tf_eval (ddb_tf_context_t *ctx, char *code, int codelen, char *out, int outlen);
 
 #endif // __TF_H
