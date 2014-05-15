@@ -57,6 +57,7 @@ write_column_config (const char *name, int idx, const char *title, int width, in
 
 void
 rewrite_column_config (DdbListview *listview, const char *name) {
+    return;
     char key[128];
     snprintf (key, sizeof (key), "%s.column.", name);
     deadbeef->conf_remove_items (key);
@@ -304,7 +305,13 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
             }
         }
         else {
-            deadbeef->pl_format_title (it, -1, text, sizeof (text), cinf->id, cinf->format);
+            ddb_tf_context_t ctx = {
+                ._size = sizeof (ddb_tf_context_t),
+                .it = it,
+                .plt = NULL,
+                .idx = -1
+            };
+            deadbeef->tf_eval (&ctx, cinf->bytecode, cinf->bytecode_len, text, sizeof (text));
             char *lb = strchr (text, '\r');
             if (lb) {
                 *lb = 0;
@@ -1038,8 +1045,6 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
         return;
     }
 
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "title")), title);
-    editcolumn_title_changed = 0;
     int idx = 10;
     if (inf->id == -1) {
         if (inf->format) {
@@ -1077,6 +1082,8 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
         gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "format")), inf->format);
     }
     gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")), align_right);
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "title")), title);
+    editcolumn_title_changed = 0;
     gint response = gtk_dialog_run (GTK_DIALOG (dlg));
     if (response == GTK_RESPONSE_OK) {
         const gchar *title = gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "title")));
@@ -1211,6 +1218,12 @@ add_column_helper (DdbListview *listview, const char *title, int width, int id, 
     memset (inf, 0, sizeof (col_info_t));
     inf->id = id;
     inf->format = strdup (format);
+    char *bytecode;
+    int res = deadbeef->tf_compile (inf->format, &bytecode);
+    if (res >= 0) {
+        inf->bytecode = bytecode;
+        inf->bytecode_len = res;
+    }
     ddb_listview_column_append (listview, title, width, align_right, id == DB_COLUMN_ALBUM_ART ? width : 0, inf);
 }
 
