@@ -2825,7 +2825,7 @@ pl_format_time (float t, char *dur, int size) {
     }
 }
 
-static const char *
+const char *
 pl_format_duration (playItem_t *it, const char *ret, char *dur, int size) {
     if (ret) {
         return ret;

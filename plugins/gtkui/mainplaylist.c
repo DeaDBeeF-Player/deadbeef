@@ -270,6 +270,9 @@ void main_col_free_user_data (void *data) {
         if (inf->format) {
             free (inf->format);
         }
+        if (inf->bytecode) {
+            free (inf->bytecode);
+        }
         free (data);
     }
 }
