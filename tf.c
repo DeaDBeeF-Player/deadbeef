@@ -67,7 +67,28 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
 
 int
 tf_eval (ddb_tf_context_t *ctx, char *code, int codelen, char *out, int outlen) {
-    return tf_eval_int (ctx, code, codelen, out, outlen, 0);
+    int l = 0;
+    switch (ctx->id) {
+    case DB_COLUMN_FILENUMBER:
+        if (ctx->idx == -1 && ctx->plt) {
+            ctx->idx = plt_get_item_idx ((playlist_t *)ctx->plt, (playItem_t *)ctx->it, PL_MAIN);
+        }
+        l = snprintf (out, sizeof (outlen), "%d", ctx->idx+1);
+        break;
+    case DB_COLUMN_PLAYING:
+        l = pl_format_item_queue ((playItem_t *)ctx->it, out, outlen);
+        break;
+    default:
+        l = tf_eval_int (ctx, code, codelen, out, outlen, 0);
+        break;
+    }
+
+    for (; *out; out++) {
+        if (*out == '\n') {
+            *out = ';';
+        }
+    }
+    return l;
 }
 
 int
@@ -168,20 +189,29 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                 code++;
                 size--;
 
-                char name[len+1];
-                memcpy (name, code, len);
-                name[len] = 0;
-
-                const char *val = pl_find_meta ((playItem_t *)ctx->it, name);
-                if (val) {
-                    int len = strlen (val);
-                    memcpy (out, val, len);
-                    out[len] = 0;
-                    out += len;
-                    outlen -= len;
+                char s_length[] = "length";
+                if (len == sizeof (s_length)-1 && !memcmp (code, s_length, len)) {
+                    pl_format_duration ((playItem_t *)ctx->it, NULL, out, outlen);
+                    int s = strlen (out);
+                    out += s;
+                    outlen -= s;
                 }
-                else if (fail_on_undef) {
-                    return -1;
+                else {
+                    char name[len+1];
+                    memcpy (name, code, len);
+                    name[len] = 0;
+
+                    const char *val = pl_find_meta ((playItem_t *)ctx->it, name);
+                    if (val) {
+                        int len = strlen (val);
+                        memcpy (out, val, len);
+                        out[len] = 0;
+                        out += len;
+                        outlen -= len;
+                    }
+                    else if (fail_on_undef) {
+                        return -1;
+                    }
                 }
 
                 code += len;

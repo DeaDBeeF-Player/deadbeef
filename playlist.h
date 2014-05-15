@@ -532,4 +532,10 @@ plt_set_scroll (playlist_t *plt, int scroll);
 int
 plt_get_scroll (playlist_t *plt);
 
+const char *
+pl_format_duration (playItem_t *it, const char *ret, char *dur, int size);
+
+int
+pl_format_item_queue (playItem_t *it, char *s, int size);
+
 #endif // __PLAYLIST_H
