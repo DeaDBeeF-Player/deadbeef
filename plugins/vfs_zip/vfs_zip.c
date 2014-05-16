@@ -30,12 +30,16 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
+#define ENABLE_CACHE 1
+
 #define min(x,y) ((x)<(y)?(x):(y))
 
 static DB_functions_t *deadbeef;
 static DB_vfs_t plugin;
 
+#if ENABLE_CACHE
 #define ZIP_BUFFER_SIZE 8192
+#endif
 
 typedef struct {
     DB_FILE file;
@@ -45,9 +49,11 @@ typedef struct {
     int index;
     int64_t size;
 
+#if ENABLE_CACHE
     uint8_t buffer[ZIP_BUFFER_SIZE];
     int buffer_remaining;
     int buffer_pos;
+#endif
 } zip_file_t;
 
 static const char *scheme_names[] = { "zip://", NULL };
@@ -131,7 +137,8 @@ vfs_zip_read (void *ptr, size_t size, size_t nmemb, DB_FILE *f) {
     zip_file_t *zf = (zip_file_t *)f;
 //    printf ("read: %d\n", size*nmemb);
 
-    int sz = size * nmemb;
+    size_t sz = size * nmemb;
+#if ENABLE_CACHE
     while (sz) {
         if (zf->buffer_remaining == 0) {
             zf->buffer_pos = 0;
@@ -149,6 +156,11 @@ vfs_zip_read (void *ptr, size_t size, size_t nmemb, DB_FILE *f) {
         sz -= from_buf;
         ptr += from_buf;
     }
+#else
+    rb = zip_fread (zf->zf, ptr, sz);
+    sz -= rb;
+    zf->offset += rb;
+#endif
 
     return (size * nmemb - sz) / size;
 }
@@ -165,6 +177,7 @@ vfs_zip_seek (DB_FILE *f, int64_t offset, int whence) {
         offset = zf->size + offset;
     }
 
+#if ENABLE_CACHE
     int64_t offs = offset - zf->offset;
     if ((offs < 0 && -offs <= zf->buffer_pos) || (offs >= 0 && offs < zf->buffer_remaining)) {
         if (offs != 0) {
@@ -182,6 +195,7 @@ vfs_zip_seek (DB_FILE *f, int64_t offset, int whence) {
             zf->buffer_remaining -= offs;
             //printf ("[after] offs: %lld, rem: %d, pos: %d\n", offs, zf->buffer_remaining, zf->buffer_pos);
             zf->offset = offset;
+            assert (zf->buffer_pos < ZIP_BUFFER_SIZE);
             return 0;
         }
         else {
@@ -193,6 +207,8 @@ vfs_zip_seek (DB_FILE *f, int64_t offset, int whence) {
 //        printf ("cache miss: abs_offs: %lld, offs: %lld, rem: %d, pos: %d\n", offset, offs, zf->buffer_remaining, zf->buffer_pos);
 //    }
 
+    zf->offset += zf->buffer_remaining;
+#endif
     if (offset < zf->offset) {
         // reopen
         zip_fclose (zf->zf);
@@ -202,8 +218,10 @@ vfs_zip_seek (DB_FILE *f, int64_t offset, int whence) {
         }
         zf->offset = 0;
     }
+#if ENABLE_CACHE
     zf->buffer_pos = 0;
     zf->buffer_remaining = 0;
+#endif
     char buf[4096];
     int64_t n = offset - zf->offset;
     while (n > 0) {
@@ -235,7 +253,9 @@ vfs_zip_rewind (DB_FILE *f) {
     zf->zf = zip_fopen_index (zf->z, zf->index, 0);
     assert (zf->zf); // FIXME: better error handling?
     zf->offset = 0;
+#if ENABLE_CACHE
     zf->buffer_remaining = 0;
+#endif
 }
 
 int64_t
