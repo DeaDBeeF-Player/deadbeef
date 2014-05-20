@@ -44,9 +44,12 @@
 #include <stdint.h>
 #include <ctype.h>
 #include <inttypes.h>
+#include <math.h>
+#include "streamer.h"
 #include "playlist.h"
 #include "tf.h"
 #include "gettext.h"
+#include "plugins.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -193,120 +196,72 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                 code++;
                 size--;
 
-                char s_length[] = "length";
-                if (len == sizeof (s_length)-1 && !memcmp (code, s_length, len)) {
-                    pl_format_duration (it, NULL, out, outlen);
-                    int s = strlen (out);
-                    out += s;
-                    outlen -= s;
+                char name[len+1];
+                memcpy (name, code, len);
+                name[len] = 0;
+
+                // special cases
+                // most if not all of this stuff is to make tf scripts
+                // compatible with fb2k syntax
+                pl_lock ();
+                const char *val = NULL;
+                const char *aa_fields[] = { "album artist", "albumartist", "artist", "composer", "performer", NULL };
+                const char *a_fields[] = { "artist", "album artist", "albumartist", "composer", "performer", NULL };
+
+                // set to 1 if special case handler successfully wrote the output
+                int skip_out = 0;
+
+                // temp vars used for strcmp optimizations
+                int tmp_a, tmp_b, tmp_c, tmp_d;
+
+                if (!strcmp (name, aa_fields[0])) {
+                    for (int i = 0; !val && aa_fields[i]; i++) {
+                        val = pl_find_meta_raw (it, aa_fields[i]);
+                    }
+                    if (!val) {
+                        val = _("Unknown Artist");
+                    }
                 }
-                else {
-                    char name[len+1];
-                    memcpy (name, code, len);
-                    name[len] = 0;
-
-                    // special cases
-                    // most if not all of this stuff is to make tf scripts
-                    // compatible with fb2k syntax
-                    pl_lock ();
-                    const char *val = NULL;
-                    const char *aa_fields[] = { "album artist", "albumartist", "artist", "composer", "performer", NULL };
-                    const char *a_fields[] = { "artist", "album artist", "albumartist", "composer", "performer", NULL };
-
-                    // set to 1 if special case handler successfully wrote the output
-                    int skip_out = 0; 
-
-                    if (!strcmp (name, aa_fields[0])) {
-                        for (int i = 0; !val && aa_fields[i]; i++) {
-                            val = pl_find_meta_raw (it, aa_fields[i]);
-                        }
-                        if (!val) {
-                            val = _("Unknown Artist");
-                        }
+                else if (!strcmp (name, a_fields[0])) {
+                    for (int i = 0; !val && a_fields[i]; i++) {
+                        val = pl_find_meta_raw (it, a_fields[i]);
                     }
-                    else if (!strcmp (name, a_fields[0])) {
-                        for (int i = 0; !val && a_fields[i]; i++) {
-                            val = pl_find_meta_raw (it, a_fields[i]);
-                        }
-                        if (!val) {
-                            val = _("Unknown Artist");
-                        }
+                    if (!val) {
+                        val = _("Unknown Artist");
                     }
-                    else if (!strcmp (name, "track artist")) {
-                        const char *aa = NULL;
-                        for (int i = 0; !val && aa_fields[i]; i++) {
-                            val = pl_find_meta_raw (it, aa_fields[i]);
-                        }
-                        aa = val ? val : _("Unknown Artist");
+                }
+                else if (!strcmp (name, "track artist")) {
+                    const char *aa = NULL;
+                    for (int i = 0; !val && aa_fields[i]; i++) {
+                        val = pl_find_meta_raw (it, aa_fields[i]);
+                    }
+                    aa = val ? val : _("Unknown Artist");
+                    val = NULL;
+                    for (int i = 0; !val && a_fields[i]; i++) {
+                        val = pl_find_meta_raw (it, a_fields[i]);
+                    }
+                    if (!val) {
+                        val = _("Unknown Artist");
+                    }
+                    if (strcmp (val, aa)) {
                         val = NULL;
-                        for (int i = 0; !val && a_fields[i]; i++) {
-                            val = pl_find_meta_raw (it, a_fields[i]);
+                    }
+                }
+                else if (!strcmp (name, "tracknumber")) {
+                    val = pl_find_meta_raw (it, "track");
+                    if (val) {
+                        const char *p = val;
+                        while (*p) {
+                            if (!isdigit (*p)) {
+                                break;
+                            }
+                            p++;
                         }
-                        if (!val) {
-                            val = _("Unknown Artist");
-                        }
-                        if (strcmp (val, aa)) {
+                        if (*p) {
                             val = NULL;
                         }
-                    }
-                    else if (!strcmp (name, "tracknumber")) {
-                        val = pl_find_meta_raw (it, "track");
-                        if (val) {
-                            const char *p = val;
-                            while (*p) {
-                                if (!isdigit (*p)) {
-                                    break;
-                                }
-                                p++;
-                            }
-                            if (*p) {
-                                val = NULL;
-                            }
-                            else {
-                                int len = snprintf (out, outlen, "%02d", atoi(val));
-                                out[len] = 0;
-                                out += len;
-                                outlen -= len;
-                                skip_out = 1;
-                                val = NULL;
-                            }
-                        }
-                    }
-                    else if (!strcmp (name, "discnumber")) {
-                        val = pl_find_meta_raw (it, "disc");
-                    }
-                    else if (!strcmp (name, "track number")) {
-                        val = pl_find_meta_raw (it, "track");
-                    }
-                    else if (!strcmp (name, "samplerate")) {
-                        val = pl_find_meta_raw (it, ":SAMPLERATE");
-                    }
-                    else if (!strcmp (name, "bitrate")) {
-                        val = pl_find_meta_raw (it, ":BITRATE");
-                    }
-                    else if (!strcmp (name, "filesize")) {
-                        val = pl_find_meta_raw (it, ":FILE_SIZE");
-                    }
-                    else if (!strcmp (name, "filesize_natural")) {
-                        val = pl_find_meta_raw (it, ":FILE_SIZE");
-                        if (val) {
-                            int64_t bs = atoll (val);
-                            int len;
-                            if (bs >= 1024*1024*1024) {
-                                double gb = (double)bs / (double)(1024*1024*1024);
-                                len = snprintf (out, outlen, "%.3lf GB", gb);
-                            }
-                            else if (bs >= 1024*1024) {
-                                double mb = (double)bs / (double)(1024*1024);
-                                len = snprintf (out, outlen, "%.3lf MB", mb);
-                            }
-                            else if (bs >= 1024) {
-                                double kb = (double)bs / (double)(1024);
-                                len = snprintf (out, outlen, "%.3lf KB", kb);
-                            }
-                            else {
-                                len = snprintf (out, outlen, "%lld B", bs);
-                            }
+                        else {
+                            int len = snprintf (out, outlen, "%02d", atoi(val));
                             out[len] = 0;
                             out += len;
                             outlen -= len;
@@ -314,24 +269,183 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                             val = NULL;
                         }
                     }
-                    else if (!strcmp (name, "codec")) {
-                        val = pl_find_meta_raw (it, ":FILETYPE");
-                    }
-                    // default case
-                    else {
-                        val = pl_find_meta_raw (it, name);
-                    }
-                    if (!skip_out && val) {
-                        int len = strlen (val);
-                        memcpy (out, val, len);
+                }
+                else if (!strcmp (name, "discnumber")) {
+                    val = pl_find_meta_raw (it, "disc");
+                }
+                else if (!strcmp (name, "track number")) {
+                    val = pl_find_meta_raw (it, "track");
+                }
+                else if (!strcmp (name, "samplerate")) {
+                    val = pl_find_meta_raw (it, ":SAMPLERATE");
+                }
+                else if (!strcmp (name, "bitrate")) {
+                    val = pl_find_meta_raw (it, ":BITRATE");
+                }
+                else if (!strcmp (name, "filesize")) {
+                    val = pl_find_meta_raw (it, ":FILE_SIZE");
+                }
+                else if (!strcmp (name, "filesize_natural")) {
+                    val = pl_find_meta_raw (it, ":FILE_SIZE");
+                    if (val) {
+                        int64_t bs = atoll (val);
+                        int len;
+                        if (bs >= 1024*1024*1024) {
+                            double gb = (double)bs / (double)(1024*1024*1024);
+                            len = snprintf (out, outlen, "%.3lf GB", gb);
+                        }
+                        else if (bs >= 1024*1024) {
+                            double mb = (double)bs / (double)(1024*1024);
+                            len = snprintf (out, outlen, "%.3lf MB", mb);
+                        }
+                        else if (bs >= 1024) {
+                            double kb = (double)bs / (double)(1024);
+                            len = snprintf (out, outlen, "%.3lf KB", kb);
+                        }
+                        else {
+                            len = snprintf (out, outlen, "%lld B", bs);
+                        }
                         out[len] = 0;
                         out += len;
                         outlen -= len;
+                        skip_out = 1;
+                        val = NULL;
                     }
-                    pl_unlock ();
-                    if (!skip_out && !val && fail_on_undef) {
-                        return -1;
+                }
+                else if (!strcmp (name, "channels")) {
+                    val = pl_find_meta_raw (it, ":CHANNELS");
+                    if (val) {
+                        int ch = atoi (val);
+                        if (ch == 1) {
+                            val = _("mono");
+                        }
+                        else if (ch == 2) {
+                            val = _("stereo");
+                        }
                     }
+                }
+                else if (!strcmp (name, "codec")) {
+                    val = pl_find_meta_raw (it, ":FILETYPE");
+                }
+                else if ((tmp_a = !strcmp (name, "playback_time")) || (tmp_b = !strcmp (name, "playback_time_seconds")) || (tmp_c = !strcmp (name, "playback_time_remaining")) || (tmp_d = !strcmp (name, "playback_time_remaining_seconds"))) {
+                    // FIXME: this kind of fields need to notify the caller, that it
+                    // needs to be updated periodically
+                    playItem_t *playing = streamer_get_playing_track ();
+                    if (it && playing == it) {
+                        float t = streamer_get_playpos ();
+                        if (tmp_c || tmp_d) {
+                            float dur = pl_get_item_duration (it);
+                            t = dur - t;
+                        }
+                        if (t >= 0) {
+                            int len;
+                            if (tmp_a || tmp_c) {
+                                int hr = t/3600;
+                                int mn = (t-hr*3600)/60;
+                                int sc = t-hr*3600-mn*60;
+                                if (hr) {
+                                    len = snprintf (out, outlen, "%02d:%02d:%02d", hr, mn, sc);
+                                }
+                                else {
+                                    len = snprintf (out, outlen, "%02d:%02d", mn, sc);
+                                }
+                            }
+                            else if (tmp_b || tmp_d) {
+                                len = snprintf (out, outlen, "%0.2f", t);
+                            }
+                            out += len;
+                            outlen -= len;
+                            skip_out = 1;
+                            val = NULL;
+                        }
+                    }
+                    if (playing) {
+                        pl_item_unref (playing);
+                    }
+                }
+                else if ((tmp_a = !strcmp (name, "length")) || (tmp_b = !strcmp (name, "length_ex"))) {
+                    float t = pl_get_item_duration (it);
+                    if (t >= 0) {
+                        int hr = t/3600;
+                        int mn = (t-hr*3600)/60;
+                        int sc = tmp_a ? roundf(t-hr*3600-mn*60) : floor(t-hr*3600-mn*60);
+                        int ms = !tmp_b ? roundf ((t-hr*3600-mn*60-sc) * 1000.f) : 0;
+                        int len;
+                        if (tmp_a) {
+                            if (hr) {
+                                len = snprintf (out, outlen, "%2d:%02d:%02d", hr, mn, sc);
+                            }
+                            else {
+                                len = snprintf (out, outlen, "%2d:%02d", mn, sc);
+                            }
+                        }
+                        else if (tmp_b) {
+                            if (hr) {
+                                len = snprintf (out, outlen, "%2d:%02d:%02d.%03d", hr, mn, sc, ms);
+                            }
+                            else {
+                                len = snprintf (out, outlen, "%2d:%02d.%03d", mn, sc, ms);
+                            }
+                        }
+                        out += len;
+                        outlen -= len;
+                        skip_out = 1;
+                        val = NULL;
+                    }
+                }
+                else if ((tmp_a = !strcmp (name, "length_seconds") || (tmp_b = !strcmp (name, "length_seconds_fp")))) {
+                    float t = pl_get_item_duration (it);
+                    if (t >= 0) {
+                        int len;
+                        if (tmp_a) {
+                            len = snprintf (out, outlen, "%d", (int)roundf(t));
+                        }
+                        else {
+                            len = snprintf (out, outlen, "%0.3f", t);
+                        }
+                        out += len;
+                        outlen -= len;
+                        skip_out = 1;
+                        val = NULL;
+                    }
+                }
+                // TODO: length_samples: problem is that in deadbeef this is
+                // only guaranteed to be precise after init (mp3), and is not
+                // stores in the metadata
+
+                else if ((tmp_a = !strcmp (name, "is_playing")) || (tmp_b = !strcmp (name, "is_paused"))) {
+                    playItem_t *playing = streamer_get_playing_track ();
+                    
+                    if (playing && 
+                            (
+                            (tmp_a && plug_get_output ()->state () == OUTPUT_STATE_PLAYING)
+                            || (tmp_b && plug_get_output ()->state () == OUTPUT_STATE_PAUSED)
+                            )) {
+                        *out++ = '1';
+                        *out = 0;
+                        outlen--;
+                        skip_out = 1;
+                        val = NULL;
+                    }
+                    if (playing) {
+                        pl_item_unref (playing);
+                    }
+                }
+
+                // default case
+                else {
+                    val = pl_find_meta_raw (it, name);
+                }
+                if (!skip_out && val) {
+                    int len = strlen (val);
+                    memcpy (out, val, len);
+                    out[len] = 0;
+                    out += len;
+                    outlen -= len;
+                }
+                pl_unlock ();
+                if (!skip_out && !val && fail_on_undef) {
+                    return -1;
                 }
 
                 code += len;
