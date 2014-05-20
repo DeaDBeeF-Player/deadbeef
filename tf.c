@@ -42,8 +42,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include <ctype.h>
+#include <inttypes.h>
 #include "playlist.h"
 #include "tf.h"
+#include "gettext.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -148,6 +151,7 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
 
 int
 tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen, int fail_on_undef) {
+    playItem_t *it = (playItem_t *)ctx->it;
     char *init_out = out;
     while (size) {
         if (*code) {
@@ -191,7 +195,7 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
 
                 char s_length[] = "length";
                 if (len == sizeof (s_length)-1 && !memcmp (code, s_length, len)) {
-                    pl_format_duration ((playItem_t *)ctx->it, NULL, out, outlen);
+                    pl_format_duration (it, NULL, out, outlen);
                     int s = strlen (out);
                     out += s;
                     outlen -= s;
@@ -201,15 +205,131 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                     memcpy (name, code, len);
                     name[len] = 0;
 
-                    const char *val = pl_find_meta ((playItem_t *)ctx->it, name);
-                    if (val) {
+                    // special cases
+                    // most if not all of this stuff is to make tf scripts
+                    // compatible with fb2k syntax
+                    pl_lock ();
+                    const char *val = NULL;
+                    const char *aa_fields[] = { "album artist", "albumartist", "artist", "composer", "performer", NULL };
+                    const char *a_fields[] = { "artist", "album artist", "albumartist", "composer", "performer", NULL };
+
+                    // set to 1 if special case handler successfully wrote the output
+                    int skip_out = 0; 
+
+                    if (!strcmp (name, aa_fields[0])) {
+                        for (int i = 0; !val && aa_fields[i]; i++) {
+                            val = pl_find_meta_raw (it, aa_fields[i]);
+                        }
+                        if (!val) {
+                            val = _("Unknown Artist");
+                        }
+                    }
+                    else if (!strcmp (name, a_fields[0])) {
+                        for (int i = 0; !val && a_fields[i]; i++) {
+                            val = pl_find_meta_raw (it, a_fields[i]);
+                        }
+                        if (!val) {
+                            val = _("Unknown Artist");
+                        }
+                    }
+                    else if (!strcmp (name, "track artist")) {
+                        const char *aa = NULL;
+                        for (int i = 0; !val && aa_fields[i]; i++) {
+                            val = pl_find_meta_raw (it, aa_fields[i]);
+                        }
+                        aa = val ? val : _("Unknown Artist");
+                        val = NULL;
+                        for (int i = 0; !val && a_fields[i]; i++) {
+                            val = pl_find_meta_raw (it, a_fields[i]);
+                        }
+                        if (!val) {
+                            val = _("Unknown Artist");
+                        }
+                        if (strcmp (val, aa)) {
+                            val = NULL;
+                        }
+                    }
+                    else if (!strcmp (name, "tracknumber")) {
+                        val = pl_find_meta_raw (it, "track");
+                        if (val) {
+                            const char *p = val;
+                            while (*p) {
+                                if (!isdigit (*p)) {
+                                    break;
+                                }
+                                p++;
+                            }
+                            if (*p) {
+                                val = NULL;
+                            }
+                            else {
+                                int len = snprintf (out, outlen, "%02d", atoi(val));
+                                out[len] = 0;
+                                out += len;
+                                outlen -= len;
+                                skip_out = 1;
+                                val = NULL;
+                            }
+                        }
+                    }
+                    else if (!strcmp (name, "discnumber")) {
+                        val = pl_find_meta_raw (it, "disc");
+                    }
+                    else if (!strcmp (name, "track number")) {
+                        val = pl_find_meta_raw (it, "track");
+                    }
+                    else if (!strcmp (name, "samplerate")) {
+                        val = pl_find_meta_raw (it, ":SAMPLERATE");
+                    }
+                    else if (!strcmp (name, "bitrate")) {
+                        val = pl_find_meta_raw (it, ":BITRATE");
+                    }
+                    else if (!strcmp (name, "filesize")) {
+                        val = pl_find_meta_raw (it, ":FILE_SIZE");
+                    }
+                    else if (!strcmp (name, "filesize_natural")) {
+                        val = pl_find_meta_raw (it, ":FILE_SIZE");
+                        if (val) {
+                            int64_t bs = atoll (val);
+                            int len;
+                            if (bs >= 1024*1024*1024) {
+                                double gb = (double)bs / (double)(1024*1024*1024);
+                                len = snprintf (out, outlen, "%.3lf GB", gb);
+                            }
+                            else if (bs >= 1024*1024) {
+                                double mb = (double)bs / (double)(1024*1024);
+                                len = snprintf (out, outlen, "%.3lf MB", mb);
+                            }
+                            else if (bs >= 1024) {
+                                double kb = (double)bs / (double)(1024);
+                                len = snprintf (out, outlen, "%.3lf KB", kb);
+                            }
+                            else {
+                                len = snprintf (out, outlen, "%lld B", bs);
+                            }
+                            out[len] = 0;
+                            out += len;
+                            outlen -= len;
+                            skip_out = 1;
+                            val = NULL;
+                        }
+                    }
+                    else if (!strcmp (name, "codec")) {
+                        val = pl_find_meta_raw (it, ":FILETYPE");
+                    }
+                    // default case
+                    else {
+                        val = pl_find_meta_raw (it, name);
+                    }
+                    if (!skip_out && val) {
                         int len = strlen (val);
                         memcpy (out, val, len);
                         out[len] = 0;
                         out += len;
                         outlen -= len;
                     }
-                    else if (fail_on_undef) {
+                    pl_unlock ();
+                    if (!skip_out && !val && fail_on_undef) {
                         return -1;
                     }
                 }
