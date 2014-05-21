@@ -459,6 +459,13 @@ typedef struct {
     ddb_playlist_t *plt; // playlist in which the track resides, or NULL
     int idx; // index of the track in playlist the track belongs to, or -1
     int id; // predefined column id
+
+    // update is a returned value
+    // meaning:
+    // 0: no automatic updates
+    // <0: updates on every call
+    // >0: number of milliseconds between updates / until next update
+    int update;
 } ddb_tf_context_t;
 #endif
 
