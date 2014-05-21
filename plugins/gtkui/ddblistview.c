@@ -339,6 +339,8 @@ ddb_listview_init(DdbListview *listview)
     listview->cover_size = -1;
     listview->new_cover_size = -1;
     listview->cover_refresh_timeout_id = 0;
+    listview->tf_redraw_timeout_id = 0;
+    listview->tf_redraw_track_idx = -1;
 
     GtkWidget *hbox;
     GtkWidget *vbox;
@@ -516,6 +518,14 @@ ddb_listview_destroy(GObject *object)
   if (listview->cursor_drag) {
       gdk_cursor_unref (listview->cursor_drag);
       listview->cursor_drag = NULL;
+  }
+  if (listview->tf_redraw_timeout_id) {
+      g_source_remove (listview->tf_redraw_timeout_id);
+      listview->tf_redraw_timeout_id = 0;
+  }
+  if (listview->tf_redraw_track) {
+      listview->binding->unref (listview->tf_redraw_track);
+      listview->tf_redraw_track = NULL;
   }
   draw_free (&listview->listctx);
   draw_free (&listview->hdrctx);
