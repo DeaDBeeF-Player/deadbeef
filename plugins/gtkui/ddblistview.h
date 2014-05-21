@@ -188,6 +188,10 @@ struct _DdbListview {
     int cover_size;
     int new_cover_size;
     guint cover_refresh_timeout_id;
+
+    guint tf_redraw_timeout_id;
+    int tf_redraw_track_idx;
+    DdbListviewIter tf_redraw_track;
 };
 
 struct _DdbListviewClass {

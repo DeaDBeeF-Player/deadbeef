@@ -81,6 +81,21 @@ redraw_playlist_cb (gpointer user_data) {
     return FALSE;
 }
 
+static gboolean
+tf_redraw_cb (gpointer user_data) {
+    DdbListview *lv = user_data;
+
+    printf ("redraw track %d\n", lv->tf_redraw_track_idx);
+    ddb_listview_draw_row (lv, lv->tf_redraw_track_idx, lv->tf_redraw_track);
+    lv->tf_redraw_track_idx = -1;
+    if (lv->tf_redraw_track) {
+        lv->binding->unref (lv->tf_redraw_track);
+        lv->tf_redraw_track = NULL;
+    }
+    DDB_LISTVIEW(user_data)->tf_redraw_timeout_id = 0;
+    return FALSE;
+}
+
 static void
 redraw_playlist (void *user_data) {
     g_idle_add (redraw_playlist_cb, user_data);
@@ -313,6 +328,18 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
                 .id = cinf->id
             };
             deadbeef->tf_eval (&ctx, cinf->bytecode, cinf->bytecode_len, text, sizeof (text));
+            if (ctx.update > 0 && !listview->tf_redraw_timeout_id) {
+                printf ("adding timeout\n");
+                if (ctx.idx >= 0) {
+                    listview->tf_redraw_track_idx = ctx.idx;
+                }
+                else {
+                    listview->tf_redraw_track_idx = deadbeef->plt_get_item_idx (ctx.plt, it, PL_MAIN);
+                }
+                listview->tf_redraw_timeout_id = g_timeout_add (ctx.update, tf_redraw_cb, listview);
+                listview->tf_redraw_track = it;
+                deadbeef->pl_item_ref (it);
+            }
             if (ctx.plt) {
                 deadbeef->plt_unref (ctx.plt);
                 ctx.plt = NULL;

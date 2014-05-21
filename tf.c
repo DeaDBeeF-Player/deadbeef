@@ -212,7 +212,7 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                 int skip_out = 0;
 
                 // temp vars used for strcmp optimizations
-                int tmp_a, tmp_b, tmp_c, tmp_d;
+                int tmp_a = 0, tmp_b = 0, tmp_c = 0, tmp_d = 0;
 
                 if (!strcmp (name, aa_fields[0])) {
                     for (int i = 0; !val && aa_fields[i]; i++) {
@@ -328,12 +328,11 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                     val = pl_find_meta_raw (it, ":FILETYPE");
                 }
                 else if ((tmp_a = !strcmp (name, "playback_time")) || (tmp_b = !strcmp (name, "playback_time_seconds")) || (tmp_c = !strcmp (name, "playback_time_remaining")) || (tmp_d = !strcmp (name, "playback_time_remaining_seconds"))) {
-                    // FIXME: this kind of fields need to notify the caller, that it
-                    // needs to be updated periodically
                     playItem_t *playing = streamer_get_playing_track ();
                     if (it && playing == it) {
                         float t = streamer_get_playpos ();
                         if (tmp_c || tmp_d) {
+                            printf ("inverse time %d %d %d %d\n", tmp_a, tmp_b, tmp_c, tmp_d);
                             float dur = pl_get_item_duration (it);
                             t = dur - t;
                         }
@@ -357,6 +356,10 @@ tf_eval_int (ddb_tf_context_t *ctx, char *code, int size, char *out, int outlen,
                             outlen -= len;
                             skip_out = 1;
                             val = NULL;
+                            // notify the caller about update interval
+                            if (!ctx->update || (ctx->update > 1000)) {
+                                ctx->update = 1000;
+                            }
                         }
                     }
                     if (playing) {
