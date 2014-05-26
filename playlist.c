@@ -3735,7 +3735,7 @@ plt_search_process (playlist_t *playlist, const char *text) {
                             break;
                         }
                     }
-                    else if (utfcasestr_fast (value, lc)) {
+                    else if (u8_valid(value, strlen(value), NULL) && u8_valid(lc, strlen(lc), NULL) && utfcasestr_fast (value, lc)) {
                         //fprintf (stderr, "%s -> %s match (%s.%s)\n", text, value, pl_find_meta_raw (it, ":URI"), m->key);
                         // add to list
                         it->next[PL_SEARCH] = NULL;
