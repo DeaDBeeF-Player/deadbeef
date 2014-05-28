@@ -119,6 +119,7 @@ void
 on_playbtn_clicked                     (GtkButton       *button,
                                         gpointer         user_data)
 {
+    // NOTE: this function is a copy of action_play_cb
     DB_output_t *output = deadbeef->get_output ();
     if (output->state () == OUTPUT_STATE_PAUSED) {
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
@@ -136,7 +137,7 @@ on_playbtn_clicked                     (GtkButton       *button,
                 deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, cur, 0);
             }
             else {
-                deadbeef->sendmessage (DB_EV_PLAY_CURRENT, 0, 0, 0);
+                deadbeef->sendmessage (DB_EV_PLAY_CURRENT, 0, 1, 0);
             }
         }
         else {
@@ -145,7 +146,13 @@ on_playbtn_clicked                     (GtkButton       *button,
         deadbeef->plt_unref (plt);
     }
     else {
-        deadbeef->sendmessage (DB_EV_PLAY_CURRENT, 0, 0, 0);
+        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+        int cur = -1;
+        if (plt) {
+            cur = deadbeef->plt_get_cursor (plt, PL_MAIN);
+            deadbeef->plt_unref (plt);
+        }
+        deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, cur, 0);
     }
 }
 
