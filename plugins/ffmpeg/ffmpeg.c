@@ -658,7 +658,7 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 #endif
         {
             codec = avcodec_find_decoder(ctx->codec_id);
-            if (codec != NULL && !strcasecmp (codec->name, "alac")) { // only open alac streams
+            if (codec != NULL) {
                 break;
             }
         }
