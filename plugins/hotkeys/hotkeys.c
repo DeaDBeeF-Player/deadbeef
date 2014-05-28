@@ -587,6 +587,7 @@ hotkeys_reset (void) {
 
 int
 action_play_cb (struct DB_plugin_action_s *action, int ctx) {
+    // NOTE: this function is copied as on_playbtn_clicked in gtkui
     DB_output_t *output = deadbeef->get_output ();
     if (output->state () == OUTPUT_STATE_PAUSED) {
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
@@ -604,7 +605,7 @@ action_play_cb (struct DB_plugin_action_s *action, int ctx) {
                 deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, cur, 0);
             }
             else {
-                deadbeef->sendmessage (DB_EV_PLAY_CURRENT, 0, 0, 0);
+                deadbeef->sendmessage (DB_EV_PLAY_CURRENT, 0, 1, 0);
             }
         }
         else {
@@ -613,7 +614,13 @@ action_play_cb (struct DB_plugin_action_s *action, int ctx) {
         deadbeef->plt_unref (plt);
     }
     else {
-        deadbeef->sendmessage (DB_EV_PLAY_CURRENT, 0, 0, 0);
+        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+        int cur = -1;
+        if (plt) {
+            cur = deadbeef->plt_get_cursor (plt, PL_MAIN);
+            deadbeef->plt_unref (plt);
+        }
+        deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, cur, 0);
     }
     return 0;
 }
