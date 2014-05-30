@@ -712,7 +712,9 @@ ffap_init (DB_fileinfo_t *_info, DB_playItem_t *it)
         }
         info->ape_ctx.skip_header = skip;
     }
-    ape_read_header (info->fp, &info->ape_ctx);
+    if (ape_read_header (info->fp, &info->ape_ctx)) {
+        return -1;
+    }
     int i;
 
     if (info->ape_ctx.channels > 2) {
@@ -745,6 +747,13 @@ ffap_init (DB_fileinfo_t *_info, DB_playItem_t *it)
     _info->fmt.channels = info->ape_ctx.channels;
     _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
     _info->readpos = 0;
+
+    info->ape_ctx.packet_data = malloc (PACKET_BUFFER_SIZE);
+    if (!info->ape_ctx.packet_data) {
+        fprintf (stderr, "ape: failed to allocate memory for packet data\n");
+        return -1;
+    }
+
     if (it->endsample > 0) {
         info->startsample = it->startsample;
         info->endsample = it->endsample;
@@ -756,11 +765,6 @@ ffap_init (DB_fileinfo_t *_info, DB_playItem_t *it)
         info->endsample = info->ape_ctx.totalsamples-1;
     }
 
-    info->ape_ctx.packet_data = malloc (PACKET_BUFFER_SIZE);
-    if (!info->ape_ctx.packet_data) {
-        fprintf (stderr, "ape: failed to allocate memory for packet data\n");
-        return -1;
-    }
     return 0;
 }
 
@@ -1697,7 +1701,7 @@ ffap_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     /*int apeerr = */deadbeef->junk_apev2_read (it, fp);
 
     deadbeef->fclose (fp);
-    ape_free_ctx (&ape_ctx);
+    fp = NULL;
 
     // embedded cue
     deadbeef->pl_lock ();
@@ -1709,6 +1713,7 @@ ffap_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             deadbeef->pl_item_unref (it);
             deadbeef->pl_item_unref (cue);
             deadbeef->pl_unlock ();
+            ape_free_ctx (&ape_ctx);
             return cue;
         }
     }
@@ -1731,6 +1736,7 @@ ffap_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     if (cue) {
         deadbeef->pl_item_unref (it);
         deadbeef->pl_item_unref (cue);
+        ape_free_ctx (&ape_ctx);
         return cue;
     }
 
@@ -1739,6 +1745,7 @@ ffap_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
 
+    ape_free_ctx (&ape_ctx);
     return after;
 
 error:
