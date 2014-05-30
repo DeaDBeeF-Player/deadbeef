@@ -33,6 +33,7 @@
 #include <limits.h>
 #include <unistd.h>
 #include <stdbool.h>
+#include <sys/stat.h>
 #include <ogg/ogg.h>
 #include <deadbeef.h>
 #include "vcedit.h"
@@ -219,6 +220,11 @@ off_t vcedit_write_metadata(DB_FILE *in, const char *fname, int link, const char
     if (!in) {
         *lasterror = "file not opened for reading.";
         goto cleanup;
+    }
+    struct stat stat_struct;
+    if (stat(fname, &stat_struct) || chmod(outname, stat_struct.st_mode)) {
+        *lasterror = "cannot transfer file permissions.";
+	goto cleanup;
     }
 
     /* Copy through pages until we reach the right info header */
