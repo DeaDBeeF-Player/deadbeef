@@ -222,10 +222,8 @@ off_t vcedit_write_metadata(DB_FILE *in, const char *fname, int link, const char
         goto cleanup;
     }
     struct stat stat_struct;
-    if (stat(fname, &stat_struct) || chmod(outname, stat_struct.st_mode)) {
-        *lasterror = "cannot transfer file permissions.";
-	goto cleanup;
-    }
+    if (!stat(fname, &stat_struct))
+	chmod(outname, stat_struct.st_mode);
 
     /* Copy through pages until we reach the right info header */
     int codec_serial = 0;
