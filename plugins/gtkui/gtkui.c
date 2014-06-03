@@ -975,18 +975,6 @@ gtkui_thread (void *ctx) {
 
     mainwin = create_mainwin ();
 
-    // gtk adds default keybindings to GtkWindow, remove them
-    GtkBindingSet *binding_set = gtk_binding_set_by_class (GTK_WINDOW_GET_CLASS(mainwin));
-    gtk_binding_entry_remove (binding_set, GDK_space, 0);
-    gtk_binding_entry_remove (binding_set, GDK_KP_Space, 0);
-    gtk_binding_entry_remove (binding_set, GDK_Return, 0);
-    gtk_binding_entry_remove (binding_set, GDK_ISO_Enter, 0);
-    gtk_binding_entry_remove (binding_set, GDK_KP_Enter, 0);
-    gtk_binding_entry_remove (binding_set, GDK_Tab, GDK_CONTROL_MASK);
-    gtk_binding_entry_remove (binding_set, GDK_Tab, GDK_CONTROL_MASK|GDK_SHIFT_MASK);
-    gtk_binding_entry_remove (binding_set, GDK_KP_Tab, GDK_CONTROL_MASK);
-    gtk_binding_entry_remove (binding_set, GDK_KP_Tab, GDK_CONTROL_MASK|GDK_SHIFT_MASK);
-
     // initialize default hotkey mapping
     if (!deadbeef->conf_get_int ("hotkeys_created", 0)) {
         // check if any hotkeys were created manually (e.g. beta versions of 0.6)
