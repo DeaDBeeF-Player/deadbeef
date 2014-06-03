@@ -863,19 +863,6 @@ on_proxypassword_changed               (GtkEditable     *editable,
 }
 
 
-gboolean
-on_prefwin_key_press_event             (GtkWidget       *widget,
-                                        GdkEventKey     *event,
-                                        gpointer         user_data)
-{
-    if (event->keyval == GDK_Escape) {
-        gtk_widget_hide (widget);
-        gtk_widget_destroy (widget);
-    }
-    return FALSE;
-}
-
-
 void
 on_embolden_current_toggled            (GtkToggleButton *togglebutton,
                                         gpointer         user_data)
