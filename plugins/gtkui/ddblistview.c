@@ -614,7 +614,7 @@ int
 ddb_listview_is_album_art_column (DdbListview *listview, int x)
 {
     int album_art_column = 0;
-    int col_x = 0;
+    int col_x = -listview->hscrollpos;
     int cnt = ddb_listview_column_get_count (listview);
     for (int i = 0; i < cnt, col_x <= x; i++) {
         const char *title;
