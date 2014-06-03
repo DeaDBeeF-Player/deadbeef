@@ -38,7 +38,7 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include <ogg/ogg.h>
-#include <deadbeef/deadbeef.h>
+#include "../../deadbeef.h"
 #include "oggedit.h"
 
 #define CHUNKSIZE 4096
