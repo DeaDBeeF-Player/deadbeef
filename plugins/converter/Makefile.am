@@ -20,7 +20,7 @@ convdata_DATA = \
 	presets/MP3_VBR_192Kbps_(Lame).txt\
 	presets/MS_RIFF_WAV.txt\
 	presets/MusePack.txt\
-	presets/Ogg FLAC.txt\
+	presets/Ogg_FLAC.txt\
 	presets/Ogg_Vorbis_(-q_5).txt\
 	presets/Opus.txt\
 	presets/TTA.txt\
