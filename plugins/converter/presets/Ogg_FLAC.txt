@@ -1,0 +1,10 @@
+title Ogg FLAC
+ext oga
+encoder flac --ignore-chunk-sizes --no-padding --ogg -o %o -8 -
+method 0
+id3v2_version 0
+tag_id3v2 0
+tag_id3v1 0
+tag_apev2 0
+tag_flac 1
+tag_oggvorbis 0
