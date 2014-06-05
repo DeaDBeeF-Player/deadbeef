@@ -928,7 +928,7 @@ error:
 
     return err;
 }
-
+#if USE_OGGEDIT==1
 int
 cflac_write_metadata_ogg (DB_playItem_t *it, FLAC__StreamMetadata_VorbisComment *vc)
 {
@@ -949,7 +949,7 @@ cflac_write_metadata_ogg (DB_playItem_t *it, FLAC__StreamMetadata_VorbisComment 
 
     return 0;
 }
-
+#endif
 int
 cflac_write_metadata (DB_playItem_t *it) {
     int err = -1;
@@ -1010,7 +1010,7 @@ cflac_write_metadata (DB_playItem_t *it) {
     }
     else {
         // create new and add to chain
-		data = FLAC__metadata_object_new(FLAC__METADATA_TYPE_VORBIS_COMMENT);
+        data = FLAC__metadata_object_new(FLAC__METADATA_TYPE_VORBIS_COMMENT);
         if (!data) {
             fprintf (stderr, "flac: failed to allocate new vorbis comment block\n");
             goto error;
@@ -1160,10 +1160,12 @@ error2:
     }
 #endif
 
-    if (isogg)
-        res = cflac_write_metadata_ogg(it, &data->data.vorbis_comment);
-    else
+    if (!isogg)
         res = FLAC__metadata_chain_write (chain, 1, 0);
+#if USE_OGGEDIT==1
+    else
+        res = cflac_write_metadata_ogg(it, &data->data.vorbis_comment);
+#endif
     if (res) {
         trace ("cflac_write_metadata: failed to write tags: code %d\n", res);
         goto error;
