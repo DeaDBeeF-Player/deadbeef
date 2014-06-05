@@ -368,6 +368,23 @@ AS_IF([test "${enable_vorbis}" != "no"], [
     ])
 ])
 
+dnl libogg for oggedit
+AS_IF([test "${enable_staticlink}" != "no"], [
+    HAVE_OGG=yes
+    OGG_LIBS="../../$LIB/lib/libogg.a ../../$LIB/lib/libvorbis.a ../../$LIB/lib/libvorbisenc.a ../../$LIB/lib/libvorbisfile.a"
+    OGG_CFLAGS="-I../../$LIB/include"
+    AC_SUBST(OGG_LIBS)
+    AC_SUBST(OGG_CFLAGS)
+], [
+    AC_CHECK_LIB([ogg], [main], [HAVE_OGG=yes])
+    AS_IF([test "$HAVE_OGG" = "yes"], [
+        HAVE_VORBISPLUGIN=yes
+        OGG_LIBS="-logg"
+        AC_SUBST(OGG_LIBS)
+    ])
+])
+
+
 dnl flac plugin
 AS_IF([test "${enable_flac}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
@@ -734,6 +751,7 @@ PLUGINS_DIRS="plugins/liboggedit plugins/libmp4ff plugins/libparser plugins/last
 
 AM_CONDITIONAL(APE_USE_YASM, test "x$APE_USE_YASM" = "xyes")
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
+AM_CONDITIONAL(HAVE_OGG, test "x$HAVE_OGG" = "xyes")
 AM_CONDITIONAL(HAVE_FLAC, test "x$HAVE_FLACPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_WAVPACK, test "x$HAVE_WAVPACKPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_SNDFILE, test "x$HAVE_SNDFILEPLUGIN" = "xyes")
