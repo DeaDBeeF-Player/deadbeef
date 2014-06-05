@@ -3,7 +3,7 @@
     Copyright (C) 2009-2014 Alexey Yakovenko and other contributors
 
     This software is provided 'as-is', without any express or implied
-    warranty. In no event will the authors be held liable for any damages
+    warranty.  In no event will the authors be held liable for any damages
     arising from the use of this software.
 
     Permission is granted to anyone to use this software for any purpose,
@@ -37,7 +37,7 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
-// #define trace(...) { fprintf (stderr, __VA_ARGS__); }
+//#define trace(...) { fprintf (stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
 #if WORDS_BIGENDIAN
@@ -786,7 +786,7 @@ static DB_decoder_t plugin = {
     "\n"
     "Copyright (C) 2014 Ian Nartowicz <deadbeef@nartowicz.co.uk>\n"
     "This software is provided 'as-is', without any express or implied\n"
-    "warranty. In no event will the authors be held liable for any damages\n"
+    "warranty.  In no event will the authors be held liable for any damages\n"
     "arising from the use of this software.\n"
     "\n"
     "Permission is granted to anyone to use this software for any purpose,\n"
@@ -825,7 +825,7 @@ static DB_decoder_t plugin = {
     "THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS\n"
     "``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT\n"
     "LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR\n"
-    "A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE FOUNDATION OR\n"
+    "A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE FOUNDATION OR\n"
     "CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,\n"
     "EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,\n"
     "PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR\n"
