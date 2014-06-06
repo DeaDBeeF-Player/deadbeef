@@ -27,10 +27,6 @@
 #ifndef __OGGEDIT_H
 #define __OGGEDIT_H
 
-#define OPUSNAME "Opus"
-#define VORBISNAME "Vorbis"
-#define FLACNAME "Flac"
-
 #define ALBUM_ART_KEY "METADATA_BLOCK_PICTURE"
 #define ALBUM_ART_META "metadata_block_picture"
 
@@ -74,16 +70,24 @@
 /* Cannot read data from image file */
 #define OGGEDIT_CANT_READ_IMAGE_FILE -101
 
+/* oggedit_utils.c */
 uint8_t *oggedit_vorbis_channel_map(const int channel_count);
 const char *oggedit_map_tag(char *key, const char *in_or_out);
+
+/* oggedit_art.c */
 const char *oggedit_album_art_type(const int type);
 char *oggedit_album_art_tag(DB_FILE *fp, int *res);
 
-int oggedit_write_file(DB_FILE *in, const char *outname, const off_t offset, const char *codec);
-off_t oggedit_stream_info(DB_FILE *in, const off_t start_offset, const off_t end_offset, const char *codec, char **codecs);
-
+/* oggedit_flac.c */
 off_t oggedit_write_flac_metadata(DB_FILE *in, const char *fname, const off_t offset, const int num_tags, char **tags);
+
+/* oggedit_vorbis.c */
+off_t oggedit_vorbis_stream_info(DB_FILE *in, const off_t start_offset, const off_t end_offset, char **codecs);
 off_t oggedit_write_vorbis_metadata(DB_FILE *in, const char *fname, const off_t offset, const size_t stream_size, const int num_tags, char **tags);
+
+/* oggedit_opus.c */
+int oggedit_write_opus_file(DB_FILE *in, const char *outname, const off_t offset, const bool all_streams);
+off_t oggedit_opus_stream_info(DB_FILE *in, const off_t start_offset, const off_t end_offset, char **codecs);
 off_t oggedit_write_opus_metadata(DB_FILE *in, const char *fname, const off_t offset, const size_t stream_size, const int output_gain, const int num_tags, char **tags);
 
 #endif /* __OGGEDIT_H */
