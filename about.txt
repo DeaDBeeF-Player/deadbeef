@@ -28,6 +28,7 @@ Contributors:
         Christian Boxdörfer <christian.boxdoerfer@posteo.de>
         David Bryant <david@wavpack.com>
         Derreck <sarumyanxxl@users.sourceforge.net>
+        Ian Nartowicz
         Igor Murzov <igor@gplsoft.org>
         Igor Rudchenko <igor@thinkpads.net>
         Jan D. Behrens <zykure@web.de>
@@ -46,7 +47,7 @@ Special Thanks To:
     Jan Marguc
     Olga Belozerova
 
-    and to all the people and anonymous creatures hanging at deadbeef-ru@cjr and #deadbeef-player
+    and to all the people and anonymous creatures hanging at #deadbeef-player and #deadbeef-ru
 
 
 Bundled libraries:
