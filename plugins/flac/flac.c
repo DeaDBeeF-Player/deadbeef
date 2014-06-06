@@ -29,14 +29,17 @@
     NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include <math.h>
 #include <FLAC/stream_decoder.h>
 #include <FLAC/metadata.h>
-#include <math.h>
 #include "../../deadbeef.h"
 #include "../artwork/artwork.h"
+#include "../liboggedit/oggedit.h"
 
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
@@ -653,9 +656,9 @@ cflac_insert_with_embedded_cue (ddb_playlist_t *plt, DB_playItem_t *after, DB_pl
         deadbeef->pl_item_unref (it);
     }
     deadbeef->pl_item_ref (after);
-    
+
     DB_playItem_t *first = deadbeef->pl_get_next (ins, PL_MAIN);
-    
+
     if (!first) {
         first = deadbeef->plt_get_first (plt, PL_MAIN);
     }
@@ -869,9 +872,12 @@ cflac_read_metadata (DB_playItem_t *it) {
     }
     deadbeef->pl_lock ();
     FLAC__bool res = FLAC__metadata_chain_read (chain, deadbeef->pl_find_meta (it, ":URI"));
+    if (!res && FLAC__metadata_chain_status(chain) == FLAC__METADATA_SIMPLE_ITERATOR_STATUS_NOT_A_FLAC_FILE) {
+        res = FLAC__metadata_chain_read_ogg (chain, deadbeef->pl_find_meta (it, ":URI"));
+    }
     deadbeef->pl_unlock ();
     if (!res) {
-        trace ("cflac_read_metadata: FLAC__metadata_chain_read failed\n");
+        trace ("cflac_read_metadata: FLAC__metadata_chain_read(_ogg) failed\n");
         goto error;
     }
     FLAC__metadata_chain_merge_padding (chain);
@@ -922,7 +928,28 @@ error:
 
     return err;
 }
+#if USE_OGGEDIT
+int
+cflac_write_metadata_ogg (DB_playItem_t *it, FLAC__StreamMetadata_VorbisComment *vc)
+{
+    char fname[PATH_MAX];
+    deadbeef->pl_get_meta (it, ":URI", fname, sizeof (fname));
 
+    size_t num_tags = vc->num_comments;
+    char **tags = calloc(num_tags+1, sizeof(char **));
+    for (size_t i = 0; i < num_tags; i++)
+        tags[i] = vc->comments[i].entry;
+    const off_t file_size = oggedit_write_flac_metadata (deadbeef->fopen(fname), fname, 0, num_tags, tags);
+    if (file_size <= 0) {
+        trace ("cflac_write_metadata_ogg: oggedit_write_flac_metadata failed: code %d\n", file_size);
+        return -1;
+    }
+
+    free(tags);
+
+    return 0;
+}
+#endif
 int
 cflac_write_metadata (DB_playItem_t *it) {
     int err = -1;
@@ -936,9 +963,16 @@ cflac_write_metadata (DB_playItem_t *it) {
     }
     deadbeef->pl_lock ();
     FLAC__bool res = FLAC__metadata_chain_read (chain, deadbeef->pl_find_meta (it, ":URI"));
+    FLAC__bool isogg = false;
+#if USE_OGGEDIT
+    if (!res && FLAC__metadata_chain_status(chain) == FLAC__METADATA_SIMPLE_ITERATOR_STATUS_NOT_A_FLAC_FILE) {
+        isogg = true;
+        res = FLAC__metadata_chain_read_ogg (chain, deadbeef->pl_find_meta (it, ":URI"));
+    }
+#endif
     deadbeef->pl_unlock ();
     if (!res) {
-        trace ("cflac_write_metadata: FLAC__metadata_chain_read failed\n");
+        trace ("cflac_write_metadata: FLAC__metadata_chain_read(_ogg) failed - code %d\n", res);
         goto error;
     }
     FLAC__metadata_chain_merge_padding (chain);
@@ -978,7 +1012,7 @@ cflac_write_metadata (DB_playItem_t *it) {
     }
     else {
         // create new and add to chain
-		data = FLAC__metadata_object_new(FLAC__METADATA_TYPE_VORBIS_COMMENT);
+        data = FLAC__metadata_object_new(FLAC__METADATA_TYPE_VORBIS_COMMENT);
         if (!data) {
             fprintf (stderr, "flac: failed to allocate new vorbis comment block\n");
             goto error;
@@ -1128,10 +1162,17 @@ error2:
     }
 #endif
 
-    if (!FLAC__metadata_chain_write (chain, 1, 0)) {
-        trace ("cflac_write_metadata: FLAC__metadata_chain_write failed\n");
+    if (!isogg)
+        res = FLAC__metadata_chain_write (chain, 1, 0);
+#if USE_OGGEDIT
+    else
+        res = cflac_write_metadata_ogg(it, &data->data.vorbis_comment);
+#endif
+    if (res) {
+        trace ("cflac_write_metadata: failed to write tags: code %d\n", res);
         goto error;
     }
+
     err = 0;
 error:
     FLAC__metadata_iterator_delete (iter);
@@ -1154,7 +1195,7 @@ static DB_decoder_t plugin = {
     .plugin.id = "stdflac",
     .plugin.name = "FLAC decoder",
     .plugin.descr = "FLAC decoder using libFLAC",
-    .plugin.copyright = 
+    .plugin.copyright =
         "Copyright (C) 2009-2013 Alexey Yakovenko et al.\n"
         "Uses libFLAC (C) Copyright (C) 2000,2001,2002,2003,2004,2005,2006,2007  Josh Coalson\n"
         "Uses libogg Copyright (c) 2002, Xiph.org Foundation\n"
