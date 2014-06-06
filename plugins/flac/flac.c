@@ -46,7 +46,7 @@ static DB_functions_t *deadbeef;
 
 static DB_artwork_plugin_t *coverart_plugin = NULL;
 
-// #define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
@@ -872,13 +872,13 @@ cflac_read_metadata (DB_playItem_t *it) {
     }
     deadbeef->pl_lock ();
     FLAC__bool res = FLAC__metadata_chain_read (chain, deadbeef->pl_find_meta (it, ":URI"));
+    if (!res && FLAC__metadata_chain_status(chain) == FLAC__METADATA_SIMPLE_ITERATOR_STATUS_NOT_A_FLAC_FILE) {
+        res = FLAC__metadata_chain_read_ogg (chain, deadbeef->pl_find_meta (it, ":URI"));
+    }
     deadbeef->pl_unlock ();
     if (!res) {
-        FLAC__bool res = FLAC__metadata_chain_read_ogg (chain, deadbeef->pl_find_meta (it, ":URI"));
-        if (!res) {
-            trace ("cflac_read_metadata: FLAC__metadata_chain_read failed\n");
-            goto error;
-        }
+        trace ("cflac_read_metadata: FLAC__metadata_chain_read(_ogg) failed\n");
+        goto error;
     }
     FLAC__metadata_chain_merge_padding (chain);
 
@@ -928,7 +928,7 @@ error:
 
     return err;
 }
-#if USE_OGGEDIT==1
+#if USE_OGGEDIT
 int
 cflac_write_metadata_ogg (DB_playItem_t *it, FLAC__StreamMetadata_VorbisComment *vc)
 {
@@ -963,14 +963,16 @@ cflac_write_metadata (DB_playItem_t *it) {
     }
     deadbeef->pl_lock ();
     FLAC__bool res = FLAC__metadata_chain_read (chain, deadbeef->pl_find_meta (it, ":URI"));
-    deadbeef->pl_unlock ();
     FLAC__bool isogg = false;
+#if USE_OGGEDIT
     if (!res && FLAC__metadata_chain_status(chain) == FLAC__METADATA_SIMPLE_ITERATOR_STATUS_NOT_A_FLAC_FILE) {
         isogg = true;
         res = FLAC__metadata_chain_read_ogg (chain, deadbeef->pl_find_meta (it, ":URI"));
     }
+#endif
+    deadbeef->pl_unlock ();
     if (!res) {
-        trace ("cflac_write_metadata: FLAC__metadata_chain_read(_ogg) failed\n");
+        trace ("cflac_write_metadata: FLAC__metadata_chain_read(_ogg) failed - code %d\n", res);
         goto error;
     }
     FLAC__metadata_chain_merge_padding (chain);
@@ -1162,7 +1164,7 @@ error2:
 
     if (!isogg)
         res = FLAC__metadata_chain_write (chain, 1, 0);
-#if USE_OGGEDIT==1
+#if USE_OGGEDIT
     else
         res = cflac_write_metadata_ogg(it, &data->data.vorbis_comment);
 #endif
