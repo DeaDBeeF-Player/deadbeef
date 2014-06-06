@@ -5,7 +5,9 @@
 
 if [ -e syms ]; then rm syms; fi
 if [ -e allsym ]; then rm allsym; fi
-for f in /lib/*; do
+
+host=`gcc -v 2>&1 | grep 'Target:' | sed 's/Target: //'`
+for f in /lib/* /lib/$host/*; do
     if [ ! -f $f ]; then continue; fi
     readelf -s --wide $f >>syms
     objdump -T $f | grep "GLIBC_" | sed 's/\(.*\)GLIBC_//; s/)//' | grep -v PRIVATE | column -t >>allsym
