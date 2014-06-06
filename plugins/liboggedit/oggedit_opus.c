@@ -33,7 +33,7 @@
 #include <stdbool.h>
 #include <limits.h>
 #include <ogg/ogg.h>
-#include <deadbeef/deadbeef.h>
+#include "../../deadbeef.h"
 #include "oggedit_internal.h"
 #include "oggedit.h"
 
