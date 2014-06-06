@@ -32,7 +32,7 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include <ogg/ogg.h>
-#include <deadbeef/deadbeef.h>
+#include "../../deadbeef.h"
 #include "oggedit_internal.h"
 #include "oggedit.h"
 
