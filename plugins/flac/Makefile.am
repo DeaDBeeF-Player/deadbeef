@@ -5,7 +5,7 @@ flac_la_SOURCES = flac.c
 flac_la_LDFLAGS = -module -avoid-version -export-symbols-regex flac_load
 
 if HAVE_OGG
-oggedit_def = -DUSE_OGGEDIT=1 $(OGG_CFLAGS)
+oggedit_def = -DUSE_OGGEDIT=1
 oggedit_lib = ../liboggedit/liboggedit.a $(OGG_LIBS)
 endif
 
