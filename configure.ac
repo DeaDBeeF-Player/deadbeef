@@ -353,7 +353,7 @@ dnl vorbis plugin
 AS_IF([test "${enable_vorbis}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_VORBISPLUGIN=yes
-        VORBIS_LIBS="../../$LIB/lib/libogg.a ../../$LIB/lib/libvorbis.a ../../$LIB/lib/libvorbisfile.a"
+        VORBIS_LIBS="-lvorbisfile -lvorbis -lm -logg"
         VORBIS_CFLAGS="-I../../$LIB/include"
         AC_SUBST(VORBIS_LIBS)
         AC_SUBST(VORBIS_CFLAGS)
@@ -362,7 +362,7 @@ AS_IF([test "${enable_vorbis}" != "no"], [
         AC_CHECK_LIB([vorbisfile], [main], [HAVE_VORBISFILE=yes])
         AS_IF([test "$HAVE_VORBIS" = "yes" -a "${HAVE_VORBISFILE}" = "yes"], [
             HAVE_VORBISPLUGIN=yes
-            VORBIS_LIBS="-logg -lvorbis -lvorbisfile"
+            VORBIS_LIBS="-lvorbis -lvorbisfile"
             AC_SUBST(VORBIS_LIBS)
         ])
     ])
@@ -371,7 +371,7 @@ AS_IF([test "${enable_vorbis}" != "no"], [
 dnl libogg for oggedit
 AS_IF([test "${enable_staticlink}" != "no"], [
     HAVE_OGG=yes
-    OGG_LIBS="../../$LIB/lib/libogg.a"
+    OGG_LIBS="-logg"
     OGG_CFLAGS="-I../../$LIB/include"
     AC_SUBST(OGG_LIBS)
     AC_SUBST(OGG_CFLAGS)
@@ -390,7 +390,7 @@ AS_IF([test "${enable_flac}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_FLACPLUGIN=yes
         FLAC_CFLAGS="-I../../$LIB/include"
-        FLAC_LIBS="../../$LIB/lib/libFLAC.a"
+        FLAC_LIBS="-lFLAC"
         AC_SUBST(FLAC_CFLAGS)
         AC_SUBST(FLAC_LIBS)
     ], [
