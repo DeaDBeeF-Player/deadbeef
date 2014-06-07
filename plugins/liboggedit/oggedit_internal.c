@@ -276,7 +276,7 @@ int copy_up_to_header(DB_FILE *in, FILE *out, ogg_sync_state *oy, ogg_page *og, 
 long flush_stream(FILE *out, ogg_stream_state *os)
 {
     ogg_page og;
-    while (ogg_stream_flush_fill(os, &og, MAXPAYLOAD))
+    while (ogg_stream_flush(os, &og))
         if (!write_page(out, &og))
             return OGGEDIT_WRITE_ERROR;
     const long pageno = ogg_stream_check(os) ? OGGEDIT_FLUSH_FAILED : ogg_page_pageno(&og);
