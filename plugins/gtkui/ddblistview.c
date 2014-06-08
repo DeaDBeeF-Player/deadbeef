@@ -204,6 +204,9 @@ ddb_listview_list_button_press_event         (GtkWidget       *widget,
                                         gpointer         user_data);
 
 gboolean
+ddb_listview_list_popup_menu (GtkWidget *widget, gpointer user_data);
+
+gboolean
 ddb_listview_list_drag_motion                (GtkWidget       *widget,
                                         GdkDragContext  *drag_context,
                                         gint             x,
@@ -445,6 +448,9 @@ ddb_listview_init(DdbListview *listview)
             NULL);
     g_signal_connect_after ((gpointer) listview->list, "button_press_event",
             G_CALLBACK (ddb_listview_list_button_press_event),
+            NULL);
+    g_signal_connect ((gpointer) listview->list, "popup_menu",
+            G_CALLBACK (ddb_listview_list_popup_menu),
             NULL);
     g_signal_connect ((gpointer) listview->list, "scroll_event",
             G_CALLBACK (ddb_listview_vscroll_event),
@@ -2150,6 +2156,23 @@ ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state) {
     else {
         ps->shift_sel_anchor = cursor;
         ddb_listview_set_cursor (ps, cursor);
+    }
+    return TRUE;
+}
+
+gboolean
+ddb_listview_list_popup_menu (GtkWidget *widget, gpointer user_data) {
+    DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
+    DdbListviewIter it = ps->binding->head ();
+    while (it && !ps->binding->is_selected (it)) {
+        DdbListviewIter next = ps->binding->next (it);
+        ps->binding->unref (it);
+        it = next;
+    }
+    if (it) {
+        int sel = ps->binding->get_idx (it);
+        ps->binding->list_context_menu (ps, it, sel);
+        ps->binding->unref (it);
     }
     return TRUE;
 }
