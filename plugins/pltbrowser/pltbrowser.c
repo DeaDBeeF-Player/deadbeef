@@ -79,6 +79,9 @@ on_pltbrowser_cursor_changed (GtkTreeView *treeview, gpointer user_data) {
     }
 }
 
+gboolean
+on_pltbrowser_popup_menu (GtkWidget *widget, gpointer user_data);
+
 static gboolean
 fill_pltbrowser_cb (gpointer data) {
     w_pltbrowser_t *w = data;
@@ -109,6 +112,7 @@ fill_pltbrowser_cb (gpointer data) {
     deadbeef->pl_unlock ();
     w->ri_id = g_signal_connect ((gpointer)store, "row_inserted", G_CALLBACK (on_pltbrowser_row_inserted), w);
     w->cc_id = g_signal_connect ((gpointer)w->tree, "cursor_changed", G_CALLBACK (on_pltbrowser_cursor_changed), w);
+    g_signal_connect ((gpointer) w->tree, "popup_menu", G_CALLBACK (on_pltbrowser_popup_menu), NULL);
     return FALSE;
 }
 
@@ -137,27 +141,33 @@ on_pltbrowser_button_press_event         (GtkWidget       *widget,
         return FALSE;
     }
     if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
-        GtkTreePath *path;
-        GtkTreeViewColumn *col;
-        gtk_tree_view_get_cursor (GTK_TREE_VIEW(widget), &path, &col);
-        if (!path || !col) {
-            // reset
-            return FALSE;
-        }
-        int *indices = gtk_tree_path_get_indices (path);
-        int plt_idx;
-        if (indices) {
-            plt_idx = indices[0];
-            g_free (indices);
-        }
-        else {
-            return FALSE;
-        }
-
-        GtkWidget *menu = gtkui_plugin->create_pltmenu (plt_idx);
-        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, event->button, gtk_get_current_event_time());
+        return on_pltbrowser_popup_menu (widget, user_data);
     }
     return FALSE;
+}
+
+gboolean
+on_pltbrowser_popup_menu (GtkWidget *widget, gpointer user_data) {
+    GtkTreePath *path;
+    GtkTreeViewColumn *col;
+    gtk_tree_view_get_cursor (GTK_TREE_VIEW(widget), &path, &col);
+    if (!path || !col) {
+        // reset
+        return FALSE;
+    }
+    int *indices = gtk_tree_path_get_indices (path);
+    int plt_idx;
+    if (indices) {
+        plt_idx = indices[0];
+        g_free (indices);
+    }
+    else {
+        return FALSE;
+    }
+
+    GtkWidget *menu = gtkui_plugin->create_pltmenu (plt_idx);
+    gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
+    return TRUE;
 }
 
 static void
