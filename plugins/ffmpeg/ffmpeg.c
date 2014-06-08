@@ -553,11 +553,31 @@ ffmpeg_read_metadata_internal (DB_playItem_t *it, AVFormatContext *fctx) {
     }
 #else
     // ffmpeg-0.11 new metadata format
-    AVDictionary *md = fctx->metadata;
     AVDictionaryEntry *t = NULL;
     int m;
-    if (md) {
+    for (int i = 0; i < fctx->nb_streams + 1; i++) {
+        AVDictionary *md = i == 0 ? fctx->metadata : fctx->streams[i-1]->metadata;
+        if (!md) {
+            continue;
+        }
         while (t = av_dict_get (md, "", t, AV_DICT_IGNORE_SUFFIX)) {
+            if (!strcasecmp (t->key, "replaygain_album_gain")) {
+                deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, atof (t->value));
+                continue;
+            }
+            else if (!strcasecmp (t->key, "replaygain_album_peak")) {
+                deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, atof (t->value));
+                continue;
+            }
+            else if (!strcasecmp (t->key, "replaygain_track_gain")) {
+                deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, atof (t->value));
+                continue;
+            }
+            else if (!strcasecmp (t->key, "replaygain_track_peak")) {
+                deadbeef->pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, atof (t->value));
+                continue;
+            }
+
             for (m = 0; map[m]; m += 2) {
                 if (!strcasecmp (t->key, map[m])) {
                     deadbeef->pl_append_meta (it, map[m+1], t->value);
@@ -566,22 +586,6 @@ ffmpeg_read_metadata_internal (DB_playItem_t *it, AVFormatContext *fctx) {
             }
             if (!map[m]) {
                 deadbeef->pl_append_meta (it, t->key, t->value);
-            }
-        }
-    }
-    else {
-        for (int i = 0; i < fctx->nb_streams; i++) {
-            md = fctx->streams[i]->metadata;
-            while (t = av_dict_get (md, "", t, AV_DICT_IGNORE_SUFFIX)) {
-                for (m = 0; map[m]; m += 2) {
-                    if (!strcasecmp (t->key, map[m])) {
-                        deadbeef->pl_append_meta (it, map[m+1], t->value);
-                        break;
-                    }
-                }
-                if (!map[m]) {
-                    deadbeef->pl_append_meta (it, t->key, t->value);
-                }
             }
         }
     }
