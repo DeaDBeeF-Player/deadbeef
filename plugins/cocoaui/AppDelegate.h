@@ -10,7 +10,14 @@
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
-@property (assign) IBOutlet NSWindow *window;
+- (int)numberOfRowsInTableView:(NSTableView *)aTableView;
 
+- (id)tableView:(NSTableView *)aTableView
+objectValueForTableColumn:(NSTableColumn *)aTableColumn
+            row:(int)rowIndex;
+
+@property (assign) IBOutlet NSWindow *window;
+@property (assign) IBOutlet NSTableView *playlists;
+@property (assign) IBOutlet NSArrayController *arrayController;
 
 @end

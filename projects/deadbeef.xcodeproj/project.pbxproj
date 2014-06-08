@@ -39,11 +39,11 @@
 		4D1B51691837F669003E6066 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B51631837F60A003E6066 /* CoreAudio.framework */; };
 		4D1B51741837F813003E6066 /* ffap.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B516D1837F813003E6066 /* ffap.c */; };
 		4D1B517F1837F8A9003E6066 /* mpgmad.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B517C1837F8A9003E6066 /* mpgmad.c */; };
-		4D2E508318392E4C0054B964 /* playbtn.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D2E508218392E4C0054B964 /* playbtn.png */; };
-		4D2E508518392F1C0054B964 /* stopbtn.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D2E508418392F1C0054B964 /* stopbtn.png */; };
-		4D2E508718392F930054B964 /* pausebtn.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D2E508618392F930054B964 /* pausebtn.png */; };
-		4D2E508C1839304F0054B964 /* nextbtn.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D2E508A1839304F0054B964 /* nextbtn.png */; };
-		4D2E508D1839304F0054B964 /* prevbtn.png in Resources */ = {isa = PBXBuildFile; fileRef = 4D2E508B1839304F0054B964 /* prevbtn.png */; };
+		4D2A6CA1183BC29400AC6BF5 /* btnnextTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D2A6C9D183BC29400AC6BF5 /* btnnextTemplate.pdf */; };
+		4D2A6CA2183BC29400AC6BF5 /* btnpauseTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D2A6C9E183BC29400AC6BF5 /* btnpauseTemplate.pdf */; };
+		4D2A6CA3183BC29400AC6BF5 /* btnprevTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D2A6C9F183BC29400AC6BF5 /* btnprevTemplate.pdf */; };
+		4D2A6CA4183BC29400AC6BF5 /* btnstopTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D2A6CA0183BC29400AC6BF5 /* btnstopTemplate.pdf */; };
+		4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */; };
 		4DA72BE71838EAAB00A98C62 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA72BDA1838EAAB00A98C62 /* AppDelegate.m */; };
 		4DA72BE81838EAAB00A98C62 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DA72BDC1838EAAB00A98C62 /* MainMenu.xib */; };
 		4DA72BE91838EAAB00A98C62 /* deadbeef-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4DA72BDE1838EAAB00A98C62 /* deadbeef-Info.plist */; };
@@ -139,11 +139,11 @@
 		4D1B51671837F655003E6066 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		4D1B516D1837F813003E6066 /* ffap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ffap.c; sourceTree = "<group>"; };
 		4D1B517C1837F8A9003E6066 /* mpgmad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mpgmad.c; sourceTree = "<group>"; };
-		4D2E508218392E4C0054B964 /* playbtn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = playbtn.png; path = ../../../../Documents/playbtn.png; sourceTree = "<group>"; };
-		4D2E508418392F1C0054B964 /* stopbtn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = stopbtn.png; path = ../../../../Documents/stopbtn.png; sourceTree = "<group>"; };
-		4D2E508618392F930054B964 /* pausebtn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pausebtn.png; path = ../../../../Documents/pausebtn.png; sourceTree = "<group>"; };
-		4D2E508A1839304F0054B964 /* nextbtn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = nextbtn.png; path = ../../../../Documents/nextbtn.png; sourceTree = "<group>"; };
-		4D2E508B1839304F0054B964 /* prevbtn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = prevbtn.png; path = ../../../../Documents/prevbtn.png; sourceTree = "<group>"; };
+		4D2A6C9D183BC29400AC6BF5 /* btnnextTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnnextTemplate.pdf; path = images/btnnextTemplate.pdf; sourceTree = "<group>"; };
+		4D2A6C9E183BC29400AC6BF5 /* btnpauseTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnpauseTemplate.pdf; path = images/btnpauseTemplate.pdf; sourceTree = "<group>"; };
+		4D2A6C9F183BC29400AC6BF5 /* btnprevTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnprevTemplate.pdf; path = images/btnprevTemplate.pdf; sourceTree = "<group>"; };
+		4D2A6CA0183BC29400AC6BF5 /* btnstopTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnstopTemplate.pdf; path = images/btnstopTemplate.pdf; sourceTree = "<group>"; };
+		4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnplayTemplate.pdf; path = images/btnplayTemplate.pdf; sourceTree = "<group>"; };
 		4DA72BD91838EAAB00A98C62 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		4DA72BDA1838EAAB00A98C62 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		4DA72BDD1838EAAB00A98C62 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = MainMenu.xib; sourceTree = "<group>"; };
@@ -302,6 +302,18 @@
 			path = plugins/mpgmad;
 			sourceTree = "<group>";
 		};
+		4D2362B218395D0300C9E818 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				4D2A6C9D183BC29400AC6BF5 /* btnnextTemplate.pdf */,
+				4D2A6C9E183BC29400AC6BF5 /* btnpauseTemplate.pdf */,
+				4D2A6C9F183BC29400AC6BF5 /* btnprevTemplate.pdf */,
+				4D2A6CA0183BC29400AC6BF5 /* btnstopTemplate.pdf */,
+				4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */,
+			);
+			name = images;
+			sourceTree = "<group>";
+		};
 		4D2E5081183926400054B964 /* main */ = {
 			isa = PBXGroup;
 			children = (
@@ -385,11 +397,7 @@
 		4DEE38461838E6450022D2B7 /* cocoaui */ = {
 			isa = PBXGroup;
 			children = (
-				4D2E508A1839304F0054B964 /* nextbtn.png */,
-				4D2E508B1839304F0054B964 /* prevbtn.png */,
-				4D2E508218392E4C0054B964 /* playbtn.png */,
-				4D2E508418392F1C0054B964 /* stopbtn.png */,
-				4D2E508618392F930054B964 /* pausebtn.png */,
+				4D2362B218395D0300C9E818 /* images */,
 				4DA72BD91838EAAB00A98C62 /* AppDelegate.h */,
 				4DA72BDA1838EAAB00A98C62 /* AppDelegate.m */,
 				4DA72BDB1838EAAB00A98C62 /* Base.lproj */,
@@ -472,17 +480,17 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4D2E508518392F1C0054B964 /* stopbtn.png in Resources */,
+				4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */,
 				4D1B4A101837EC49003E6066 /* readme.txt in Resources */,
+				4D2A6CA3183BC29400AC6BF5 /* btnprevTemplate.pdf in Resources */,
+				4D2A6CA2183BC29400AC6BF5 /* btnpauseTemplate.pdf in Resources */,
+				4D2A6CA4183BC29400AC6BF5 /* btnstopTemplate.pdf in Resources */,
+				4D2A6CA1183BC29400AC6BF5 /* btnnextTemplate.pdf in Resources */,
 				4DA72BE91838EAAB00A98C62 /* deadbeef-Info.plist in Resources */,
-				4D2E508D1839304F0054B964 /* prevbtn.png in Resources */,
 				4DA72BE81838EAAB00A98C62 /* MainMenu.xib in Resources */,
-				4D2E508718392F930054B964 /* pausebtn.png in Resources */,
 				4DA72BEC1838EAAB00A98C62 /* Images.xcassets in Resources */,
 				4DA72BEA1838EAAB00A98C62 /* Credits.rtf in Resources */,
 				4DA72BEB1838EAAB00A98C62 /* InfoPlist.strings in Resources */,
-				4D2E508318392E4C0054B964 /* playbtn.png in Resources */,
-				4D2E508C1839304F0054B964 /* nextbtn.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
