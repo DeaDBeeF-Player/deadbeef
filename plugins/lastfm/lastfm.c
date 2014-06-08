@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <curl/curl.h>
+#include <math.h>
 #include "../../deadbeef.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -355,6 +356,9 @@ lfm_fetch_song_info (DB_playItem_t *song, float playtime, char *a, char *t, char
     *l = deadbeef->pl_get_item_duration (song);
     if (*l <= 0) {
         *l = playtime;
+    }
+    if (*l < 30 && deadbeef->conf_get_int ("lastfm.submit_tiny_tracks", 0)) {
+        *l = 30;
     }
     if (!deadbeef->pl_get_meta (song, "track", n, META_FIELD_SIZE)) {
         *n = 0;
