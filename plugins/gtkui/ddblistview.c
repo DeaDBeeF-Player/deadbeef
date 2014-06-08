@@ -3358,7 +3358,9 @@ ddb_listview_clear_sort (DdbListview *listview) {
 gboolean
 ddb_listview_list_key_press_event (GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
     DdbListview *listview = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
-    return ddb_listview_handle_keypress (listview, event->keyval, event->state);
-
+    if (!ddb_listview_handle_keypress (listview, event->keyval, event->state)) {
+        return on_mainwin_key_press_event (widget, event, user_data);
+    }
+    return TRUE;
 }
 

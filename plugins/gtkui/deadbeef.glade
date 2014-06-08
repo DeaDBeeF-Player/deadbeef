@@ -22,7 +22,7 @@
   <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="focus_on_map">True</property>
   <property name="urgency_hint">False</property>
-  <signal name="key_press_event" handler="on_mainwin_key_press_event" last_modification_time="Thu, 30 Jul 2009 21:14:26 GMT"/>
+  <signal name="key_press_event" handler="on_mainwin_key_press_event" after="yes" last_modification_time="Thu, 30 Jul 2009 21:14:26 GMT"/>
   <signal name="delete_event" handler="on_mainwin_delete_event" last_modification_time="Thu, 13 Aug 2009 20:35:55 GMT"/>
   <signal name="configure_event" handler="on_mainwin_configure_event" last_modification_time="Sun, 23 Aug 2009 15:26:53 GMT"/>
   <signal name="window_state_event" handler="on_mainwin_window_state_event" last_modification_time="Wed, 09 Dec 2009 19:39:55 GMT"/>
@@ -781,7 +781,7 @@
   <signal name="delete_event" handler="gtk_widget_hide_on_delete" last_modification_time="Sat, 08 Aug 2009 23:03:33 GMT"/>
   <signal name="configure_event" handler="on_searchwin_configure_event" last_modification_time="Mon, 28 Dec 2009 19:24:44 GMT"/>
   <signal name="window_state_event" handler="on_searchwin_window_state_event" last_modification_time="Mon, 28 Dec 2009 19:26:50 GMT"/>
-  <signal name="key_press_event" handler="on_searchwin_key_press_event" after="yes" last_modification_time="Mon, 21 Oct 2013 21:53:35 GMT"/>
+  <signal name="key_press_event" handler="on_searchwin_key_press_event" last_modification_time="Mon, 21 Oct 2013 21:53:35 GMT"/>
 
   <child>
     <widget class="GtkVBox" id="vbox4">
