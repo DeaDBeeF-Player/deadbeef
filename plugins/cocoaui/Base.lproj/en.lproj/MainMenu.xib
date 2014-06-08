@@ -248,7 +248,7 @@
                 <subviews>
                     <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="Z4L-BD-CH1">
                         <rect key="frame" x="-1" y="-1" width="149" height="362"/>
-                        <autoresizingMask key="autoresizingMask" heightSizable="YES"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <clipView key="contentView" id="TKB-8n-CcN">
                             <rect key="frame" x="1" y="17" width="147" height="344"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -297,7 +297,7 @@
                     </scrollView>
                     <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="9mw-RL-26I">
                         <rect key="frame" x="146" y="-1" width="335" height="362"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <clipView key="contentView" id="vNw-QK-jkc">
                             <rect key="frame" x="1" y="17" width="333" height="344"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -385,33 +385,31 @@
                             </connections>
                         </segmentedControl>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="3389B344-B503-47D8-9CF5-2D39F44EFD79" label="Custom View" paletteLabel="Custom View" id="Jzq-HR-oPq">
+                    <toolbarItem implicitItemIdentifier="C2805453-17EB-4D13-9A03-7257BEBABC09" label="Custom View" paletteLabel="Custom View" id="PPR-I8-MGB">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="8" height="21"/>
-                        <size key="maxSize" width="10004" height="25"/>
-                        <slider key="view" verticalHuggingPriority="750" horizontalCompressionResistancePriority="641" id="lhQ-zG-gJo">
-                            <rect key="frame" x="0.0" y="14" width="104" height="25"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
-                            <sliderCell key="cell" alignment="left" maxValue="100" doubleValue="69.0625" tickMarkPosition="above" sliderType="linear" id="rDd-Sa-3Uw"/>
+                        <size key="minSize" width="96" height="21"/>
+                        <size key="maxSize" width="189" height="29"/>
+                        <slider key="view" verticalHuggingPriority="750" id="9YJ-c1-GZu">
+                            <rect key="frame" x="0.0" y="14" width="169" height="29"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <sliderCell key="cell" state="on" alignment="left" maxValue="100" doubleValue="75.005208333333329" tickMarkPosition="above" sliderType="linear" id="w0V-j6-ANF"/>
                         </slider>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="835C1534-A2E3-4D5F-990B-E628FC683343" label="Custom View" paletteLabel="Custom View" id="SfM-4z-XQP">
+                    <toolbarItem implicitItemIdentifier="3389B344-B503-47D8-9CF5-2D39F44EFD79" label="Custom View" paletteLabel="Custom View" id="Jzq-HR-oPq">
                         <nil key="toolTip"/>
                         <size key="minSize" width="96" height="21"/>
                         <size key="maxSize" width="96" height="21"/>
-                        <slider key="view" verticalHuggingPriority="750" id="NJV-PL-kbm">
+                        <slider key="view" verticalHuggingPriority="750" id="lhQ-zG-gJo">
                             <rect key="frame" x="0.0" y="14" width="96" height="21"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
-                            <sliderCell key="cell" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="7FG-IR-3tw"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <sliderCell key="cell" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="rDd-Sa-3Uw"/>
                         </slider>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="NSToolbarSeparatorItem" id="O93-4y-veW"/>
                 </allowedToolbarItems>
                 <defaultToolbarItems>
                     <toolbarItem reference="3xP-pQ-d4L"/>
+                    <toolbarItem reference="PPR-I8-MGB"/>
                     <toolbarItem reference="Jzq-HR-oPq"/>
-                    <toolbarItem reference="O93-4y-veW"/>
-                    <toolbarItem reference="SfM-4z-XQP"/>
                 </defaultToolbarItems>
             </toolbar>
         </window>
@@ -424,10 +422,10 @@
         <customObject id="420" customClass="NSFontManager"/>
     </objects>
     <resources>
-        <image name="btnnextTemplate" width="75" height="75"/>
-        <image name="btnpauseTemplate" width="75" height="75"/>
-        <image name="btnplayTemplate" width="75" height="75"/>
-        <image name="btnprevTemplate" width="75" height="75"/>
-        <image name="btnstopTemplate" width="75" height="75"/>
+        <image name="btnnextTemplate" width="19" height="19"/>
+        <image name="btnpauseTemplate" width="19" height="19"/>
+        <image name="btnplayTemplate" width="56" height="64"/>
+        <image name="btnprevTemplate" width="19" height="19"/>
+        <image name="btnstopTemplate" width="19" height="19"/>
     </resources>
 </document>
