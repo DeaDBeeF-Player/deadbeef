@@ -2079,20 +2079,6 @@ ddb_listview_handle_keypress (DdbListview *ps, int keyval, int state) {
         cursor = 0;
         gtk_range_set_value (GTK_RANGE (range), gtk_adjustment_get_lower (adj));
     }
-    else if (keyval == GDK_Menu) {
-        DdbListviewIter it = ps->binding->head ();
-        while (it && !ps->binding->is_selected (it)) {
-            DdbListviewIter next = ps->binding->next (it);
-            ps->binding->unref (it);
-            it = next;
-        }
-        if (it) {
-            int sel = ps->binding->get_idx (it);
-            ps->binding->list_context_menu (ps, it, sel);
-            ps->binding->unref (it);
-        }
-        return TRUE;
-    }
     else {
         return FALSE;
     }
