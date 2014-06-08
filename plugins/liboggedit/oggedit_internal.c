@@ -36,6 +36,9 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include <ogg/ogg.h>
+#if HAVE_SYS_SYSLIMITS_H
+#include <sys/syslimits.h>
+#endif
 #include "../../deadbeef.h"
 #include "oggedit.h"
 #include "oggedit_internal.h"
@@ -433,8 +436,10 @@ ogg_packet *fill_vc_packet(const char *magic, const size_t magic_length, const c
     if (op) {
         memset(op, '\0', sizeof(*op));
         op->bytes = oggpack_bytes(&opb);
-        if (op->packet = malloc(op->bytes))
+        op->packet = malloc(op->bytes);
+        if (op->packet) {
             memcpy(op->packet, oggpack_get_buffer(&opb), op->bytes);
+        }
     }
     oggpack_writeclear(&opb);
 

@@ -32,6 +32,9 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include <ogg/ogg.h>
+#if HAVE_SYS_SYSLIMITS_H
+#include <sys/syslimits.h>
+#endif
 #include "../../deadbeef.h"
 #include "oggedit_internal.h"
 #include "oggedit.h"
@@ -86,7 +89,7 @@ static ogg_packet **metadata_block_packets(DB_FILE *in, ogg_sync_state *oy, cons
 
     if (!headers)
         *res = OGGEDIT_ALLOCATION_FAILURE;
-    else if (!packets || headers[0]->packet[0] & 0x3F != VCTYPE)
+    else if (!packets || (headers[0]->packet[0] & 0x3F) != VCTYPE)
         *res = OGGEDIT_CANNOT_PARSE_HEADERS;
     else
         *res = pages;
@@ -158,9 +161,12 @@ off_t oggedit_write_flac_metadata(DB_FILE *in, const char *fname, const off_t of
     const off_t stream_size_k = in->vfs->getlength(in) / 1000; // use file size for now
     const size_t metadata_size = 4 + vc_size(vendor, num_tags, tags);
     ptrdiff_t padding = headers[0]->bytes - metadata_size;
-    if (stream_size_k < 1000 || padding < 0 || headers[1] && padding > 0 || padding > stream_size_k+metadata_size)
-        if (res = open_temp_file(fname, tempname, &out))
+    if (stream_size_k < 1000 || padding < 0 || (headers[1] && padding > 0) || padding > stream_size_k+metadata_size) {
+        res = open_temp_file(fname, tempname, &out);
+        if (res) {
             goto cleanup;
+        }
+    }
 
     /* Re-pad if writing the whole file */
     if (*tempname) {
