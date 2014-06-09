@@ -65,6 +65,9 @@
 #include "plugins.h"
 #include "common.h"
 #include "junklib.h"
+#ifdef HAVE_COCOAUI
+#include "cocoautil.h"
+#endif
 
 #ifndef PREFIX
 #error PREFIX must be defined
@@ -817,10 +820,19 @@ main (int argc, char *argv[]) {
             fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
             return -1;
         }
+#ifdef HAVE_COCOAUI
+        char respath[PATH_MAX];
+        cocoautil_get_resources_path (respath, sizeof (respath));
+        if (snprintf (dbplugindir, sizeof (dbplugindir), "%s", respath) > sizeof (dbplugindir)) {
+            fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
+            return -1;
+        }
+#else
         if (snprintf (dbplugindir, sizeof (dbplugindir), "%s/plugins", dbinstalldir) > sizeof (dbplugindir)) {
             fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
             return -1;
         }
+#endif
         if (snprintf (dbpixmapdir, sizeof (dbpixmapdir), "%s/pixmaps", dbinstalldir) > sizeof (dbpixmapdir)) {
             fprintf (stderr, "fatal: too long install path %s\n", dbinstalldir);
             return -1;
