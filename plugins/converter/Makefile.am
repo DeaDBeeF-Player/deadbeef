@@ -20,24 +20,27 @@ convdata_DATA = \
 	presets/MP3_VBR_192Kbps_(Lame).txt\
 	presets/MS_RIFF_WAV.txt\
 	presets/MusePack.txt\
+	presets/Ogg_FLAC.txt\
 	presets/Ogg_Vorbis_(-q_5).txt\
+	presets/Opus.txt\
 	presets/TTA.txt\
-	presets/WavPack.txt
+	presets/WavPack.txt\
+	presets/ALAC.txt
 
 EXTRA_DIST = $(convdata_DATA) converter.glade
 
 AM_CFLAGS = $(CFLAGS) -std=c99 -fPIC
 
 converter_la_SOURCES = converter.c converter.h
-converter_la_LDFLAGS = -module
+converter_la_LDFLAGS = -module -avoid-version
 
 if HAVE_GTK2
 converter_gtk2_la_SOURCES = convgui.c interface.c support.c callbacks.h converter.h interface.h support.h
-converter_gtk2_la_LDFLAGS = -module
+converter_gtk2_la_LDFLAGS = -module -avoid-version
 if STATICLINK
 GTK_ROOT=@top_srcdir@/$(LIB)/gtk-2.12.12/usr
 
-converter_gtk2_la_LIBADD = $(LDADD) -L$(GTK_ROOT)/lib $(GTK_ROOT)/lib/libgtk-x11-2.0.la $(GTK_ROOT)/lib/libgdk-x11-2.0.la $(GTK_ROOT)/lib/libpangoft2-1.0.la $(GTK_ROOT)/lib/libpangocairo-1.0.la $(GTK_ROOT)/lib/libgdk_pixbuf-2.0.la -lm $(GTK_ROOT)/lib/libcairo.la $(GTK_ROOT)/lib/libpango-1.0.la $(GTK_ROOT)/lib/libgobject-2.0.la $(GTK_ROOT)/lib/libgmodule-2.0.la $(GTK_ROOT)/lib/libgthread-2.0.la -lrt $(GTK_ROOT)/lib/libglib-2.0.la
+converter_gtk2_la_LIBADD = $(LDADD) -L$(GTK_ROOT)/lib -lgtk-x11-2.0 -lgdk-x11-2.0 -latk-1.0 -lgdk_pixbuf-2.0 -lm -lpangocairo-1.0 -lpango-1.0 -lcairo -lgobject-2.0 -lgmodule-2.0 -ldl -lglib-2.0 -lrt
 
 converter_gtk2_la_CFLAGS = -std=c99 -I $(GTK_ROOT)/include -I $(GTK_ROOT)/lib/gtk-2.0/include -I $(GTK_ROOT)/include/glib-2.0 -I $(GTK_ROOT)/include/gtk-2.0 -I $(GTK_ROOT)/include/cairo -I $(GTK_ROOT)/lib/glib-2.0/include/ -I $(GTK_ROOT)/include/pango-1.0 -I $(GTK_ROOT)/include/atk-1.0 -DULTRA_COMPATIBLE=1
 else
@@ -48,18 +51,9 @@ endif
 
 if HAVE_GTK3
 converter_gtk3_la_SOURCES = convgui.c interface.c support.c callbacks.h converter.h interface.h support.h
-converter_gtk3_la_LDFLAGS = -module
-if STATICLINK
-GTK_ROOT_300=@top_srcdir@/$(LIB)/gtk-3.0.0
-
-converter_gtk3_la_LIBADD = $(LDADD) -L$(GTK_ROOT_300)/lib -lgtk-3 -lgdk-3 -latk-1.0 -lgio-2.0 -lpangocairo-1.0 -lgdk_pixbuf-2.0 -lcairo-gobject -lpango-1.0 -lcairo -lgobject-2.0 -lglib-2.0 -lfreetype -lfontconfig $(SM_LIBADD)
-
-converter_gtk3_la_CFLAGS = -std=c99 -I$(GTK_ROOT_300)/include/gtk-3.0 -I$(GTK_ROOT_300)/include/pango-1.0 -I$(GTK_ROOT_300)/include/gio-unix-2.0/ -I$(GTK_ROOT_300)/include/atk-1.0 -I$(GTK_ROOT_300)/include/cairo -I$(GTK_ROOT_300)/include/gdk-pixbuf-2.0 -I$(GTK_ROOT_300)/include/freetype2 -I$(GTK_ROOT_300)/include/glib-2.0 -I$(GTK_ROOT_300)/lib/glib-2.0/include $(SM_CFLAGS)
-
-else
+converter_gtk3_la_LDFLAGS = -module -avoid-version
 converter_gtk3_la_LIBADD = $(LDADD) $(GTK3_DEPS_LIBS)
 converter_gtk3_la_CFLAGS = -std=c99 $(GTK3_DEPS_CFLAGS)
-endif
 endif
 
 endif

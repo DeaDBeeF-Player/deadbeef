@@ -48,6 +48,9 @@ struct _DdbVolumeBarClass {
 GType ddb_volumebar_get_type(void) G_GNUC_CONST;
 GtkWidget * ddb_volumebar_new(void);
 
+void
+ddb_volumebar_init_signals (DdbVolumeBar *vb, GtkWidget *evbox);
+
 G_END_DECLS
 
 #endif // __DDBVOLUMEBAR_H

@@ -1,6 +1,6 @@
 /*
-    DeaDBeeF -- the music player
-    Copyright (C) 2009-2013 Alexey Yakovenko and other contributors
+    Playlist browser widget plugin for DeaDBeeF Player
+    Copyright (C) 2009-2014 Alexey Yakovenko
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -29,6 +29,7 @@
 #endif
 #include "../gtkui/gtkui_api.h"
 #include "../../gettext.h"
+#include "support.h"
 
 DB_functions_t *deadbeef;
 static ddb_gtkui_t *gtkui_plugin;
@@ -53,31 +54,9 @@ on_pltbrowser_row_inserted (GtkTreeModel *tree_model, GtkTreePath *path, GtkTree
         return;
     }
 
-    char str1[100];
-    char str2[100];
-    char strcursor1[100];
-    char strcursor2[100];
-    int pos1;
-    int pos2;
-    int cursor1;
-    int cursor2;
-    snprintf (str1, sizeof (str1), "playlist.scroll.%d", plt->last_selected);
-    pos1 = deadbeef->conf_get_int (str1, 0);
-    snprintf (str2, sizeof (str2), "playlist.scroll.%d", idx);
-    pos2 = deadbeef->conf_get_int (str2, 0);
-
-    snprintf (strcursor1, sizeof (strcursor1), "playlist.cursor.%d", plt->last_selected);
-    cursor1 = deadbeef->conf_get_int (strcursor1, 0);
-    snprintf (strcursor2, sizeof (strcursor2), "playlist.cursor.%d", idx);
-    cursor2 = deadbeef->conf_get_int (strcursor2, 0);
-
     deadbeef->plt_move (plt->last_selected, idx);
-    deadbeef->conf_set_int (str1, pos2);
-    deadbeef->conf_set_int (str2, pos1);
-    deadbeef->conf_set_int (strcursor1, cursor2);
-    deadbeef->conf_set_int (strcursor2, cursor1);
     plt->last_selected = idx;
-    deadbeef->conf_set_int ("playlist.current", idx);
+    deadbeef->plt_set_curr_idx (idx);
     deadbeef->sendmessage (DB_EV_PLAYLISTSWITCHED, 0, 0, 0);
 }
 
@@ -94,12 +73,14 @@ on_pltbrowser_cursor_changed (GtkTreeView *treeview, gpointer user_data) {
     if (indices) {
         if (indices[0] >= 0) {
             deadbeef->plt_set_curr_idx (indices[0]);
-            deadbeef->conf_set_int ("playlist.current", indices[0]);
             w->last_selected = indices[0];
         }
         g_free (indices);
     }
 }
+
+gboolean
+on_pltbrowser_popup_menu (GtkWidget *widget, gpointer user_data);
 
 static gboolean
 fill_pltbrowser_cb (gpointer data) {
@@ -131,6 +112,7 @@ fill_pltbrowser_cb (gpointer data) {
     deadbeef->pl_unlock ();
     w->ri_id = g_signal_connect ((gpointer)store, "row_inserted", G_CALLBACK (on_pltbrowser_row_inserted), w);
     w->cc_id = g_signal_connect ((gpointer)w->tree, "cursor_changed", G_CALLBACK (on_pltbrowser_cursor_changed), w);
+    g_signal_connect ((gpointer) w->tree, "popup_menu", G_CALLBACK (on_pltbrowser_popup_menu), NULL);
     return FALSE;
 }
 
@@ -159,27 +141,33 @@ on_pltbrowser_button_press_event         (GtkWidget       *widget,
         return FALSE;
     }
     if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
-        GtkTreePath *path;
-        GtkTreeViewColumn *col;
-        gtk_tree_view_get_cursor (GTK_TREE_VIEW(widget), &path, &col);
-        if (!path || !col) {
-            // reset
-            return FALSE;
-        }
-        int *indices = gtk_tree_path_get_indices (path);
-        int plt_idx;
-        if (indices) {
-            plt_idx = indices[0];
-            g_free (indices);
-        }
-        else {
-            return FALSE;
-        }
-
-        GtkWidget *menu = gtkui_plugin->create_pltmenu (plt_idx);
-        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, event->button, gtk_get_current_event_time());
+        return on_pltbrowser_popup_menu (widget, user_data);
     }
     return FALSE;
+}
+
+gboolean
+on_pltbrowser_popup_menu (GtkWidget *widget, gpointer user_data) {
+    GtkTreePath *path;
+    GtkTreeViewColumn *col;
+    gtk_tree_view_get_cursor (GTK_TREE_VIEW(widget), &path, &col);
+    if (!path || !col) {
+        // reset
+        return FALSE;
+    }
+    int *indices = gtk_tree_path_get_indices (path);
+    int plt_idx;
+    if (indices) {
+        plt_idx = indices[0];
+        g_free (indices);
+    }
+    else {
+        return FALSE;
+    }
+
+    GtkWidget *menu = gtkui_plugin->create_pltmenu (plt_idx);
+    gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
+    return TRUE;
 }
 
 static void
@@ -245,7 +233,6 @@ static int
 pltbrowser_connect (void) {
     gtkui_plugin = (ddb_gtkui_t *)deadbeef->plug_get_for_id (DDB_GTKUI_PLUGIN_ID);
     if(!gtkui_plugin) {
-        fprintf (stderr, "pltbrowser: can't find gtkui plugin\n");
         return -1;
     }
     gtkui_plugin->w_reg_widget (_("Playlist browser"), 0, w_pltbrowser_create, "pltbrowser", NULL);
@@ -272,11 +259,15 @@ static DB_misc_t plugin = {
 #else
     .plugin.id = "pltbrowser_gtk2",
 #endif
-    .plugin.name = "pltbrowser",
-    .plugin.descr = "Playlist browser",
+#if GTK_CHECK_VERSION(3,0,0)
+    .plugin.name = "Playlist browser GTK3",
+#else
+    .plugin.name = "Playlist browser GTK2",
+#endif
+    .plugin.descr = "Use View -> Design Mode to add playlist browser into main window",
     .plugin.copyright = 
-        "DeaDBeeF -- the music player\n"
-        "Copyright (C) 2009-2013 Alexey Yakovenko and other contributors\n"
+        "Playlist browser widget plugin for DeaDBeeF Player\n"
+        "Copyright (C) 2009-2014 Alexey Yakovenko\n"
         "\n"
         "This software is provided 'as-is', without any express or implied\n"
         "warranty.  In no event will the authors be held liable for any damages\n"

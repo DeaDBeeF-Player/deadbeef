@@ -119,6 +119,7 @@ void
 on_playbtn_clicked                     (GtkButton       *button,
                                         gpointer         user_data)
 {
+    // NOTE: this function is a copy of action_play_cb
     DB_output_t *output = deadbeef->get_output ();
     if (output->state () == OUTPUT_STATE_PAUSED) {
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
@@ -136,7 +137,7 @@ on_playbtn_clicked                     (GtkButton       *button,
                 deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, cur, 0);
             }
             else {
-                deadbeef->sendmessage (DB_EV_PLAY_CURRENT, 0, 0, 0);
+                deadbeef->sendmessage (DB_EV_PLAY_CURRENT, 0, 1, 0);
             }
         }
         else {
@@ -145,7 +146,13 @@ on_playbtn_clicked                     (GtkButton       *button,
         deadbeef->plt_unref (plt);
     }
     else {
-        deadbeef->sendmessage (DB_EV_PLAY_CURRENT, 0, 0, 0);
+        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+        int cur = -1;
+        if (plt) {
+            cur = deadbeef->plt_get_cursor (plt, PL_MAIN);
+            deadbeef->plt_unref (plt);
+        }
+        deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, cur, 0);
     }
 }
 
@@ -257,6 +264,7 @@ on_loop_all_activate                   (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("playback.loop", 0);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 
@@ -265,6 +273,7 @@ on_loop_single_activate                (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("playback.loop", 2);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 
@@ -273,6 +282,7 @@ on_loop_disable_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("playback.loop", 1);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 void
@@ -311,6 +321,7 @@ on_scroll_follows_playback_activate    (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("playlist.scroll.followplayback", gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem)));
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 
@@ -454,7 +465,7 @@ on_toggle_status_bar_activate          (GtkMenuItem     *menuitem,
             gtk_widget_show (sb);
         }
     }
-    deadbeef->conf_save ();
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 void
@@ -462,6 +473,15 @@ on_stop_after_current_activate         (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("playlist.stop_after_current", gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem)));
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+void
+on_stop_after_album_activate           (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("playlist.stop_after_album", gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem)));
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 void
@@ -469,6 +489,7 @@ on_cursor_follows_playback_activate    (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("playlist.scroll.cursorfollowplayback", gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem)));
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 GtkWidget*
@@ -515,7 +536,7 @@ on_toggle_eq                           (GtkMenuItem     *menuitem,
         deadbeef->conf_set_int ("gtkui.eq.visible", 1);
         eq_window_show ();
     }
-    deadbeef->conf_save ();
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 
@@ -557,96 +578,22 @@ on_new_playlist1_activate              (GtkMenuItem     *menuitem,
     action_new_playlist_handler_cb (NULL);
 }
 
-
-static GtkWidget *capture = NULL;
-
 gboolean
 on_mainwin_button_press_event          (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data)
 {
-    if (event->window != gtk_widget_get_window (mainwin)) {
-        return FALSE;
-    }
-    GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
-    GtkWidget *seekbar = lookup_widget (mainwin, "seekbar");
     GtkWidget *statusbar = lookup_widget (mainwin, "statusbar");
-    GtkAllocation a, b, c;
-    gtk_widget_get_allocation (volumebar, &a);
-    gtk_widget_get_allocation (seekbar, &b);
+    GtkAllocation c;
     gtk_widget_get_allocation (statusbar, &c);
-    if (event->x >= a.x && event->x < a.x + a.width
-            && event->y >= a.y && event->y < a.y + a.height) {
-        capture = volumebar;
-        return gtk_widget_event (volumebar, (GdkEvent *)event);
-    }
-    else if (event->x >= b.x && event->x < b.x + b.width
-            && event->y >= b.y && event->y < b.y + b.height) {
-        capture = seekbar;
-        return gtk_widget_event (seekbar, (GdkEvent *)event);
-    }
-    else if (event->x >= c.x && event->x < c.x + c.width
+    if (event->x >= c.x && event->x < c.x + c.width
             && event->y >= c.y && event->y < c.y + c.height) {
         if (event->type == GDK_2BUTTON_PRESS) {
             deadbeef->sendmessage (DB_EV_TRACKFOCUSCURRENT, 0, 0, 0);
         }
     }
 
-  return FALSE;
-}
-
-
-gboolean
-on_mainwin_button_release_event        (GtkWidget       *widget,
-                                        GdkEventButton  *event,
-                                        gpointer         user_data)
-{
-    if (capture) {
-        gboolean res = gtk_widget_event (capture, (GdkEvent *)event);
-        capture = NULL;
-        return res;
-    }
-
     return FALSE;
-}
-
-
-gboolean
-on_mainwin_scroll_event                (GtkWidget       *widget,
-                                        GdkEvent        *ev,
-                                        gpointer         user_data)
-{
-    GdkEventScroll *event = (GdkEventScroll *)ev;
-    if (event->window != gtk_widget_get_window (mainwin)) {
-        return FALSE;
-    }
-    GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
-    GtkWidget *seekbar = lookup_widget (mainwin, "seekbar");
-    GtkAllocation a;
-    gtk_widget_get_allocation (volumebar, &a);
-    GtkAllocation b;
-    gtk_widget_get_allocation (seekbar, &b);
-    if (event->x >= a.x && event->x < a.x + a.width
-            && event->y >= a.y && event->y < a.y + a.height) {
-        return gtk_widget_event (volumebar, (GdkEvent *)event);
-    }
-    else if (event->x >= b.x && event->x < b.x + b.width
-            && event->y >= b.y && event->y < b.y + b.height) {
-        return gtk_widget_event (seekbar, (GdkEvent *)event);
-    }
-  return FALSE;
-}
-
-
-gboolean
-on_mainwin_motion_notify_event         (GtkWidget       *widget,
-                                        GdkEventMotion  *event,
-                                        gpointer         user_data)
-{
-    if (capture) {
-        return gtk_widget_event (capture, (GdkEvent *)event);
-    }
-  return FALSE;
 }
 
 

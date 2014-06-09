@@ -41,7 +41,7 @@
 #include "messagepump.h"
 #include "conf.h"
 #include "plugins.h"
-#include "optmath.h"
+#include "fastftoi.h"
 #include "volume.h"
 #include "vfs.h"
 #include "premix.h"
@@ -82,6 +82,11 @@ static int dsp_on = 0;
 static int autoconv_8_to_16 = 1;
 
 static int autoconv_16_to_24 = 0;
+
+static int trace_bufferfill = 0;
+
+static int stop_after_current = 0;
+static int stop_after_album = 0;
 
 static int streaming_terminate;
 
@@ -128,7 +133,9 @@ static ddb_waveformat_t orig_output_format; // format that was requested before 
 static int formatchanged;
 
 static DB_fileinfo_t *fileinfo;
+static DB_FILE *fileinfo_file;
 static DB_fileinfo_t *new_fileinfo;
+static DB_FILE *new_fileinfo_file;
 
 static int streamer_buffering;
 
@@ -180,17 +187,18 @@ streamer_unlock (void) {
 static void
 streamer_abort_files (void) {
     trace ("\033[0;33mstreamer_abort_files\033[37;0m\n");
-    mutex_lock (decodemutex);
-    if (fileinfo && fileinfo->file) {
-        deadbeef->fabort (fileinfo->file);
+    DB_FILE *file = fileinfo_file;
+    DB_FILE *newfile = new_fileinfo_file;
+    DB_FILE *strfile = streamer_file;
+    if (file) {
+        deadbeef->fabort (file);
     }
-    if (new_fileinfo && new_fileinfo->file) {
-        deadbeef->fabort (new_fileinfo->file);
+    if (newfile) {
+        deadbeef->fabort (newfile);
     }
-    if (streamer_file) {
-        deadbeef->fabort (streamer_file);
+    if (strfile) {
+        deadbeef->fabort (strfile);
     }
-    mutex_unlock (decodemutex);
 }
 
 
@@ -349,6 +357,62 @@ send_trackinfochanged (playItem_t *track) {
     messagepump_push_event ((ddb_event_t*)ev, 0, 0);
 }
 
+int stop_after_album_check (playItem_t *cur, playItem_t *next) {
+    if (!stop_after_album) {
+        return 0;
+    }
+
+    if (!cur) {
+        return 0;
+    }
+
+    if (!next) {
+        streamer_buffering = 0;
+        streamer_set_nextsong (-2, -2);
+        if (conf_get_int ("playlist.stop_after_album_reset", 0)) {
+            conf_set_int ("playlist.stop_after_album", 0);
+            stop_after_album = 0;
+            deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+        }
+        return 1;
+    }
+
+    const char *cur_artist = pl_find_meta_raw (cur, "artist");
+    const char *next_artist = pl_find_meta_raw (next, "artist");
+
+    const char *cur_album = pl_find_meta_raw (cur, "album");
+    const char *next_album = pl_find_meta_raw (next, "album");
+
+    const char *cur_aa = pl_find_meta_raw (cur, "band");
+    if (!cur_aa) {
+        cur_aa = pl_find_meta_raw (cur, "album artist");
+    }
+    if (!cur_aa) {
+        cur_aa = pl_find_meta_raw (cur, "albumartist");
+    }
+    const char *next_aa = pl_find_meta_raw (next, "band");
+    if (!next_aa) {
+        next_aa = pl_find_meta_raw (next, "album artist");
+    }
+    if (!next_aa) {
+        next_aa = pl_find_meta_raw (next, "albumartist");
+    }
+
+    if ((cur_artist == next_artist) && (cur_album == next_album) && (cur_aa == next_aa)) {
+        return 0;
+    }
+
+    streamer_buffering = 0;
+    streamer_set_nextsong (-2, -2);
+    if (conf_get_int ("playlist.stop_after_album_reset", 0)) {
+        conf_set_int ("playlist.stop_after_album", 0);
+        stop_after_album = 0;
+        deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    }
+
+    return 1;
+}
+
 int
 streamer_move_to_nextsong (int reason) {
     trace ("streamer_move_to_nextsong (%d)\n", reason);
@@ -356,10 +420,18 @@ streamer_move_to_nextsong (int reason) {
     if (!streamer_playlist) {
         streamer_playlist = plt_get_curr ();
     }
+
+    playItem_t *curr = playlist_track;
+
     while (pl_playqueue_getcount ()) {
         trace ("pl_playqueue_getnext\n");
         playItem_t *it = pl_playqueue_getnext ();
         if (it) {
+            if (stop_after_album_check(curr, it)) {
+                pl_unlock ();
+                return -1;
+            }
+
             pl_playqueue_pop ();
             int r = str_get_idx_of (it);
             if (r >= 0) {
@@ -391,7 +463,6 @@ streamer_move_to_nextsong (int reason) {
         }
     }
 
-    playItem_t *curr = playlist_track;
     if (reason == 1) {
         if (streamer_playlist) {
             plt_unref (streamer_playlist);
@@ -438,6 +509,13 @@ streamer_move_to_nextsong (int reason) {
                 }
             }
             playItem_t *it = pmin;
+            // although it is possible that, although it == NULL, reshuffling the playlist
+            // will result in the next track belonging to the same album as this one, this
+            // is most likely not what the user wants.
+            if (stop_after_album_check(curr, it)) {
+                pl_unlock ();
+                return -1;
+            }
             if (!it) {
                 // all songs played, reshuffle and try again
                 if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL) { // loop
@@ -472,6 +550,10 @@ streamer_move_to_nextsong (int reason) {
                 }
             }
             playItem_t *it = pmin;
+            if (stop_after_album_check(curr, it)) {
+                pl_unlock ();
+                return -1;
+            }
             if (!it) {
                 // all songs played, reshuffle and try again
                 if (pl_loop_mode == PLAYBACK_MODE_LOOP_ALL || reason == 1) { // loop
@@ -508,6 +590,10 @@ streamer_move_to_nextsong (int reason) {
         }
         else {
             it = streamer_playlist->head[PL_MAIN];
+        }
+        if (stop_after_album_check(curr, it)) {
+            pl_unlock ();
+            return -1;
         }
         if (!it) {
             trace ("streamer_move_nextsong: was last track\n");
@@ -798,6 +884,18 @@ ctmap_init (void) {
     }
 }
 
+static int
+is_remote_stream (playItem_t *it) {
+    int remote = 0;
+    pl_lock ();
+    const char *uri = pl_find_meta (it, ":URI");
+    if (uri && !plug_is_local_file (uri)) {
+        remote = 1;
+    }
+    pl_unlock ();
+    return remote;
+}
+
 // that must be called after last sample from str_playing_song was done reading
 static int
 streamer_set_current (playItem_t *it) {
@@ -830,8 +928,15 @@ streamer_set_current (playItem_t *it) {
         pl_item_unref (streaming_track);
         streaming_track = NULL;
     }
+
     mutex_unlock (decodemutex);
-    if (!it) {
+
+    int paused_stream = 0;
+    if (it && nextsong_pstate == 2) {
+        paused_stream = is_remote_stream (it);
+    }
+
+    if (!it || paused_stream) {
         goto success;
     }
     if (to) {
@@ -988,7 +1093,6 @@ streamer_set_current (playItem_t *it) {
                 pl_item_unref (i);
                 i = next;
             }
-            pl_item_unref ((playItem_t*)m3u);
             plt_free (plt);
             if (res == 0) {
                 // succeeded -- playing now
@@ -1101,6 +1205,7 @@ m3u_error:
             mutex_lock (decodemutex);
             dec->free (new_fileinfo);
             new_fileinfo = NULL;
+            new_fileinfo_file = NULL;
             mutex_unlock (decodemutex);
         }
 
@@ -1110,6 +1215,7 @@ m3u_error:
         }
         else {
             mutex_lock (decodemutex);
+            new_fileinfo_file = new_fileinfo->file;
             if (streaming_track) {
                 pl_item_unref (streaming_track);
             }
@@ -1129,10 +1235,12 @@ success:
     if (fileinfo) {
         fileinfo->plugin->free (fileinfo);
         fileinfo = NULL;
+        fileinfo_file = NULL;
     }
     if (new_fileinfo) {
         fileinfo = new_fileinfo;
         new_fileinfo = NULL;
+        new_fileinfo_file = NULL;
     }
     mutex_unlock (decodemutex);
     if (do_songstarted && playing_track) {
@@ -1330,11 +1438,12 @@ streamer_next (int bytesread) {
     streamer_lock ();
     bytes_until_next_song = streamer_ringbuf.remaining + bytesread;
     streamer_unlock ();
-    if (conf_get_int ("playlist.stop_after_current", 0)) {
+    if (stop_after_current) {
         streamer_buffering = 0;
         streamer_set_nextsong (-2, -2);
         if (conf_get_int ("playlist.stop_after_current_reset", 0)) {
             conf_set_int ("playlist.stop_after_current", 0);
+            stop_after_current = 0;
             deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
         }
     }
@@ -1361,6 +1470,9 @@ streamer_thread (void *ctx) {
                 send_songfinished (playing_track);
             }
             streamer_start_new_song ();
+            if (nextsong_pstate == 2) {
+                nextsong_pstate = -1;
+            }
             // it's totally possible that song was switched
             // while streamer_set_current was running,
             // so we need to restart here
@@ -1440,10 +1552,10 @@ streamer_thread (void *ctx) {
             streamer_unlock ();
         }
 
-        int seek = seekpos;
-        if (seek >= 0) {
+        float seek = seekpos;
+        seekpos = -1;
+        if (seek >= 0 && pl_get_item_duration (playing_track) > 0) {
             playpos = seek;
-            seekpos = -1;
             trace ("seeking to %d\n", seek);
             float pos = seek;
 
@@ -1456,6 +1568,7 @@ streamer_thread (void *ctx) {
                 if(fileinfo) {
                     fileinfo->plugin->free (fileinfo);
                     fileinfo = NULL;
+                    fileinfo_file = NULL;
                     pl_item_unref (streaming_track);
                     streaming_track = NULL;
                 }
@@ -1476,7 +1589,9 @@ streamer_thread (void *ctx) {
                 DB_decoder_t *dec = NULL;
                 pl_lock ();
                 const char *decoder_id = pl_find_meta (streaming_track, ":DECODER");
-                dec = plug_get_decoder_for_id (decoder_id);
+                if (decoder_id) {
+                    dec = plug_get_decoder_for_id (decoder_id);
+                }
                 pl_unlock ();
                 if (dec) {
                     fileinfo = dec->open (0);
@@ -1485,10 +1600,14 @@ streamer_thread (void *ctx) {
                         mutex_lock (decodemutex);
                         dec->free (fileinfo);
                         fileinfo = NULL;
+                        fileinfo_file = NULL;
                         mutex_unlock (decodemutex);
                     }
                 }
                 else {
+                    if (fileinfo) {
+                        fileinfo_file = fileinfo->file;
+                    }
                     mutex_unlock (decodemutex);
                 }
 
@@ -1600,7 +1719,9 @@ streamer_thread (void *ctx) {
                 ringbuf_write (&streamer_ringbuf, readbuffer, bytesread);
             }
 
-            //trace ("fill: %d, read: %d, size=%d, blocksize=%d\n", streamer_ringbuf.remaining, bytesread, STREAM_BUFFER_SIZE, blocksize);
+            if (trace_bufferfill >= 1) {
+                fprintf (stderr, "fill: %d, read: %d, size=%d, blocksize=%d\n", (int)streamer_ringbuf.remaining, (int)bytesread, (int)STREAM_BUFFER_SIZE, (int)blocksize);
+            }
         }
         streamer_unlock ();
         if ((streamer_ringbuf.remaining > 128000 && streamer_buffering) || !streaming_track) {
@@ -1613,12 +1734,14 @@ streamer_thread (void *ctx) {
         gettimeofday (&tm2, NULL);
 
         int ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
-        //trace ("slept %dms (alloc=%dms, bytespersec=%d, chan=%d, blocksize=%d), fill: %d/%d (cursor=%d)\n", alloc_time-ms, alloc_time, bytes_in_one_second, output->fmt.channels, blocksize, streamer_ringbuf.remaining, STREAM_BUFFER_SIZE, streamer_ringbuf.cursor);
+        if (trace_bufferfill >= 2) {
+            fprintf (stderr, "slept %dms (alloc=%dms, bytespersec=%d, chan=%d, blocksize=%d), fill: %d/%d (cursor=%d)\n", (int)(alloc_time-ms), (int)alloc_time, (int)bytes_in_one_second, output->fmt.channels, blocksize, (int)streamer_ringbuf.remaining, STREAM_BUFFER_SIZE, (int)streamer_ringbuf.cursor);
+        }
 
         // add 1ms here to compensate the rounding error
         // and another 1ms to buffer slightly faster then playing
         alloc_time -= ms+2;
-        if (!streamer_buffering && alloc_time > 0) {
+        if ((bytes_until_next_song > 0 && stop_after_current) || (streamer_ringbuf.remaining > STREAM_BUFFER_SIZE / 2 && !streamer_buffering && alloc_time > 0)) {
             usleep (alloc_time * 1000);
         }
     }
@@ -1628,6 +1751,7 @@ streamer_thread (void *ctx) {
     if (fileinfo) {
         fileinfo->plugin->free (fileinfo);
         fileinfo = NULL;
+        fileinfo_file = NULL;
     }
     if (streaming_track) {
         pl_item_unref (streaming_track);
@@ -1990,7 +2114,7 @@ streamer_set_output_format (void) {
     DB_output_t *output = plug_get_output ();
     int playing = (output->state () == OUTPUT_STATE_PLAYING);
 
-//    fprintf (stderr, "streamer_set_output_format %dbit %s %dch %dHz channelmask=%X, bufferfill: %d\n", output_format.bps, output_format.is_float ? "float" : "int", output_format.channels, output_format.samplerate, output_format.channelmask, streamer_ringbuf.remaining);
+    trace ("streamer_set_output_format %dbit %s %dch %dHz channelmask=%X, bufferfill: %d\n", output_format.bps, output_format.is_float ? "float" : "int", output_format.channels, output_format.samplerate, output_format.channelmask, streamer_ringbuf.remaining);
     ddb_waveformat_t fmt;
     memcpy (&fmt, &output_format, sizeof (ddb_waveformat_t));
     if (autoconv_8_to_16) {
@@ -2220,7 +2344,6 @@ streamer_read_async (char *bytes, int size) {
 
         // in case of decoder error, or EOF while buffering - switch to next song instantly
         if (bytesread < 0 || (bytes_until_next_song >= 0 && streamer_buffering && bytesread == 0) || bytes_until_next_song < 0) {
-            trace ("finished streaming song, queueing next (%d %d %d %d)\n", bytesread, bytes_until_next_song, streamer_buffering, nextsong_pstate);
             streamer_next (bytesread);
         }
     }
@@ -2446,6 +2569,11 @@ streamer_configchanged (void) {
         streamer_reset (1);
     }
 
+    trace_bufferfill = conf_get_int ("streamer.trace_buffer_fill",0);
+
+    stop_after_current = conf_get_int ("playlist.stop_after_current", 0);
+    stop_after_album = conf_get_int ("playlist.stop_after_album", 0);
+
     char mapstr[2048];
     deadbeef->conf_get_str ("network.ctmapping", DDB_DEFAULT_CTMAPPING, mapstr, sizeof (mapstr));
     if (strcmp (mapstr, conf_network_ctmapping)) {
@@ -2458,6 +2586,16 @@ streamer_play_current_track (void) {
     playlist_t *plt = plt_get_curr ();
     DB_output_t *output = plug_get_output ();
     if (output->state () == OUTPUT_STATE_PAUSED && playing_track) {
+        if (is_remote_stream (playing_track)) {
+            streamer_reset (1);
+            streamer_set_current (NULL);
+            streamer_set_current (playing_track);
+            if (fileinfo && memcmp (&orig_output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t))) {
+                memcpy (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
+                memcpy (&orig_output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
+                streamer_set_output_format ();
+            }
+        }
         // unpause currently paused track
         output->unpause ();
         messagepump_push (DB_EV_PAUSED, 0, 0, 0);

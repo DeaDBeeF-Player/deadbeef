@@ -7,7 +7,7 @@ pkglib_LTLIBRARIES = tta.la
 
 tta_la_SOURCES = ttaplug.c filter.h ttadec.c ttadec.h
 
-tta_la_LDFLAGS = -module
+tta_la_LDFLAGS = -module -avoid-version
 
 AM_CFLAGS = $(CFLAGS) -std=c99 -fPIC
 endif

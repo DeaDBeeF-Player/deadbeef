@@ -1,0 +1,255 @@
+AudioOverload DeaDBeeF plugin
+Copyright (C) 2009-2014 Alexey Yakovenko <waker@users.sourceforge.net>
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+
+
+Here is a list of the licenses each file in this package are under, and their text.
+
+The upshot is this: if you create anything from this SDK and include any MAME licensed components
+(which are an integral part of each engine supplied) you must distribute the source code to your
+derivative program.
+
+
+=====================================================================================
+
+BSD license:
+
+Copyright (c) 2007-2009, R. Belmont and Richard Bannister.
+
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+* Neither the names of R. Belmont and Richard Bannister nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+=====================================================================================
+
+MAME license:
+
+Copyright (c) 1997-2008, Nicola Salmoria and the MAME team
+All rights reserved.
+
+Redistribution and use of this code or any derivative works are permitted provided that the following conditions are met:
+
+    * Redistributions may not be sold, nor may they be used in a commercial product or activity.
+    * Redistributions that are modified from the original source must include the complete source code, including the source code for all components used by a binary built from the modified sources. However, as a special exception, the source code distributed need not include anything that is normally distributed (in either source or binary form) with the major components (compiler, kernel, and so on) of the operating system on which the executable runs, unless that component itself accompanies the executable.
+    * Redistributions must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+=====================================================================================
+
+GPL license:
+
+Too long to include here.
+
+See eng_psf/peops/License.txt or eng_psf/peops2/License.txt for the complete text.
+
+While legally combining GPL with BSD and MAME licensed software is unclear, Pete Bernert 
+will probably be OK with anything you do as long as you distribute the source for your
+AOSDK based creations.
+										  
+=====================================================================================
+
+ZLIB license:
+
+/* zlib.h -- interface of the 'zlib' general purpose compression library
+  version 1.2.2, October 3rd, 2004
+
+  Copyright (C) 1995-2004 Jean-loup Gailly and Mark Adler
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+
+  Jean-loup Gailly jloup@gzip.org
+  Mark Adler madler@alumni.caltech.edu
+
+*/
+
+=====================================================================================
+
+List of files and their licenses:
+
+ao.h			BSD
+corlett.c		BSD 
+corlett.h		BSD 
+cpuintrf.h		BSD 
+dsnd.c			BSD 
+eng_protos.h		BSD 
+main.c			BSD 
+Makefile		BSD 
+mem.h			BSD 
+osd_cpu.h		MAME
+oss.c			BSD 
+oss.h			BSD 
+
+eng_dsf:
+
+aica.c			MAME
+aica.h			MAME
+aicadsp.c		MAME
+aicadsp.h		MAME
+aicalfo.c		MAME
+arm7.c			MAME
+arm7.h			MAME
+arm7i.c			MAME
+arm7i.h			MAME
+arm7memil.c		MAME
+eng_dsf.c		BSD
+dc_hw.c			BSD
+dc_hw.h			BSD
+
+eng_qsf:
+
+eng_qsf.c		BSD
+kabuki.c		MAME
+qsound.c		MAME
+qsound.h		MAME
+z80.c			MAME
+z80dasm.c		MAME
+z80dasm.h		MAME
+z80.h			MAME
+
+eng_ssf:
+
+eng_ssf.c		BSD
+m68kconf.h		MAME
+m68kcpu.c		MAME
+m68kcpu.h		MAME
+m68k.h			MAME
+m68k_in.c		MAME
+m68kmake.c		MAME
+m68kmame.h		MAME
+m68kopac.c		MAME
+m68kopdm.c		MAME
+m68kopnz.c		MAME
+m68kops.c		MAME
+m68kops.h		MAME
+sat_hw.c		BSD
+sat_hw.h		BSD
+scsp.c			MAME
+scspdsp.c		MAME
+scspdsp.h		MAME
+scsp.h			MAME
+scsplfo.c		MAME
+
+eng_psf:
+
+eng_psf2.c		BSD
+eng_psf.c		BSD
+eng_spu.c		BSD
+psx_hw.c		BSD
+psx.c			MAME
+psx.h			MAME
+cpuintrf.h		MAME
+mamemem.h		MAME
+
+eng_psf/peops:
+
+adsr.c			GPL
+adsr.h			GPL
+dma.c			GPL
+dma.h			GPL
+externals.h		GPL
+gauss_i.h		GPL
+registers.c		GPL
+registers.h		GPL
+regs.h			GPL
+reverb.c		GPL
+spu.c			GPL
+spu.h			GPL
+stdafx.h		GPL
+
+
+eng_psf/peops2:
+
+adsr.c			GPL
+adsr.h			GPL
+dma.c			GPL
+dma.h			GPL
+externals.h		GPL
+gauss_i.h		GPL
+psemuxa.h		GPL
+registers.c		GPL
+registers.h		GPL
+regs.h			GPL
+reverb.c		GPL
+reverb.h		GPL
+spu.c			GPL
+spu.h			GPL
+stdafx.h		GPL
+xa.c			GPL
+
+
+
+zlib:
+
+adler32.c		ZLIB
+compress.c		ZLIB
+crc32.c			ZLIB
+crc32.h			ZLIB
+crypt.h			ZLIB
+deflate.c		ZLIB
+deflate.h		ZLIB
+gzio.c			ZLIB
+infback.c		ZLIB
+inffast.c		ZLIB
+inffast.h		ZLIB
+inffixed.h		ZLIB
+inflate.c		ZLIB
+inflate.h		ZLIB
+inftrees.c		ZLIB
+inftrees.h		ZLIB
+ioapi.c			ZLIB
+ioapi.h			ZLIB
+trees.c			ZLIB
+trees.h			ZLIB
+uncompr.c		ZLIB
+unzip.c			ZLIB
+unzip.h			ZLIB
+zconf.h			ZLIB
+zlib.h			ZLIB
+zutil.c			ZLIB
+zutil.h			ZLIB
+

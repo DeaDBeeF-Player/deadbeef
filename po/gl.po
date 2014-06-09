@@ -1,35 +1,37 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
+# antiparvos <marcoslansgarza@gmail.com>, 2013
 # mbouzada <mbouzada@gmail.com>, 2010
 # mbouzada <mbouzada@gmail.com>, 2010
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-10 18:36+0100\n"
-"PO-Revision-Date: 2013-11-10 17:37+0000\n"
-"Last-Translator: waker <wakeroid@gmail.com>\n"
-"Language-Team: Galician (http://www.transifex.com/projects/p/deadbeef-player/language/gl/)\n"
+"POT-Creation-Date: 2013-11-24 19:10+0100\n"
+"PO-Revision-Date: 2013-11-27 10:34+0000\n"
+"Last-Translator: antiparvos <marcoslansgarza@gmail.com>\n"
+"Language-Team: Galician (http://www.transifex.com/projects/p/deadbeef-player/"
+"language/gl/)\n"
+"Language: gl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: gl\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../plugins/gtkui/callbacks.c:339
+#: ../plugins/gtkui/callbacks.c:338
 #, c-format
 msgid "About DeaDBeeF %s"
 msgstr "Sobre DeaDBeeF %s"
 
-#: ../plugins/gtkui/callbacks.c:352
+#: ../plugins/gtkui/callbacks.c:351
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
 msgstr "Cambios en DeaDBeeF %s"
 
-#: ../plugins/gtkui/callbacks.c:676
+#: ../plugins/gtkui/callbacks.c:675
 #, c-format
 msgid "DeaDBeeF Translators"
 msgstr "Tradutores de DeaDBeeF"
@@ -91,123 +93,126 @@ msgstr "Restabelecer as bandas"
 msgid "Presets"
 msgstr "Axustes"
 
-#: ../plugins/gtkui/gtkui.c:166
+#: ../plugins/gtkui/gtkui.c:163
 #, c-format
 msgid "1 day %d:%02d:%02d"
 msgstr "1 día %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:169
+#: ../plugins/gtkui/gtkui.c:166
 #, c-format
 msgid "%d days %d:%02d:%02d"
 msgstr "%d días %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:178
+#: ../plugins/gtkui/gtkui.c:175
 #, c-format
 msgid "Stopped | %d tracks | %s total playtime"
 msgstr "Detido | %d pistas | Tempo total: %s"
 
-#: ../plugins/gtkui/gtkui.c:191 ../playlist.c:3113
+#: ../plugins/gtkui/gtkui.c:188 ../playlist.c:3108
 msgid "Mono"
 msgstr "Mono"
 
-#: ../plugins/gtkui/gtkui.c:191 ../playlist.c:3113
+#: ../plugins/gtkui/gtkui.c:188 ../playlist.c:3108
 msgid "Stereo"
 msgstr "Estéreo"
 
-#: ../plugins/gtkui/gtkui.c:216
+#: ../plugins/gtkui/gtkui.c:213
 #, c-format
 msgid "| %4d kbps "
 msgstr "| %4d kbps "
 
-#: ../plugins/gtkui/gtkui.c:222
+#: ../plugins/gtkui/gtkui.c:219
 msgid "Paused | "
 msgstr "Pausado | "
 
-#: ../plugins/gtkui/gtkui.c:227
+#: ../plugins/gtkui/gtkui.c:224
 #, c-format
 msgid ""
 "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
-msgstr "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d pistas | Tempo total: %s"
+msgstr ""
+"%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d pistas | Tempo total: %s"
 
-#: ../plugins/gtkui/gtkui.c:714 ../plugins/gtkui/fileman.c:41
+#: ../plugins/gtkui/gtkui.c:706 ../plugins/gtkui/fileman.c:41
 msgid "New Playlist"
 msgstr "Nova lista de reprodución"
 
-#: ../plugins/gtkui/gtkui.c:717
+#: ../plugins/gtkui/gtkui.c:709
 #, c-format
 msgid "New Playlist (%d)"
 msgstr "Nova lista de reprodución (%d)"
 
 #. register widget types
-#: ../plugins/gtkui/gtkui.c:974
+#: ../plugins/gtkui/gtkui.c:965
 msgid "Playlist with tabs"
-msgstr ""
+msgstr "Listas con lapelas"
 
-#: ../plugins/gtkui/gtkui.c:975 ../plugins/gtkui/interface.c:2146
+#: ../plugins/gtkui/gtkui.c:966 ../plugins/gtkui/interface.c:2146
 #: ../plugins/gtkui/deadbeef.glade.h:125
 msgid "Playlist"
-msgstr ""
+msgstr "Lista de reprodución"
 
-#: ../plugins/gtkui/gtkui.c:978
+#: ../plugins/gtkui/gtkui.c:969
 msgid "Splitter (top and bottom)"
-msgstr ""
+msgstr "Separador (arriba e abaixo)"
 
-#: ../plugins/gtkui/gtkui.c:979
+#: ../plugins/gtkui/gtkui.c:970
 msgid "Splitter (left and right)"
-msgstr ""
+msgstr "Separador (esquerda e dereita)"
 
 #. w_reg_widget (_("Tabs"), 0, w_tabs_create, "tabs", NULL);
-#: ../plugins/gtkui/gtkui.c:982
+#: ../plugins/gtkui/gtkui.c:973
 msgid "Playlist tabs"
-msgstr ""
+msgstr "Lapelas das listas"
 
-#: ../plugins/gtkui/gtkui.c:983
+#: ../plugins/gtkui/gtkui.c:974
 msgid "Selection properties"
-msgstr ""
+msgstr "Propiedades da selección"
 
-#: ../plugins/gtkui/gtkui.c:984
+#: ../plugins/gtkui/gtkui.c:975
 msgid "Album art display"
-msgstr ""
+msgstr "Mostrar portadas"
 
-#: ../plugins/gtkui/gtkui.c:985
+#: ../plugins/gtkui/gtkui.c:976
 msgid "Scope"
-msgstr ""
+msgstr "Scope"
 
-#: ../plugins/gtkui/gtkui.c:986
+#: ../plugins/gtkui/gtkui.c:977
 msgid "Spectrum"
-msgstr ""
+msgstr "Spectrum"
 
-#: ../plugins/gtkui/gtkui.c:987
+#: ../plugins/gtkui/gtkui.c:978
 msgid "HBox"
-msgstr ""
+msgstr "HBox"
 
-#: ../plugins/gtkui/gtkui.c:988
+#: ../plugins/gtkui/gtkui.c:979
 msgid "VBox"
-msgstr ""
+msgstr "VBox"
 
-#: ../plugins/gtkui/gtkui.c:989 ../plugins/gtkui/widgets.c:3267
+#: ../plugins/gtkui/gtkui.c:980 ../plugins/gtkui/widgets.c:3250
 msgid "Button"
-msgstr ""
+msgstr "Botón"
 
-#: ../plugins/gtkui/gtkui.c:1175
+#: ../plugins/gtkui/gtkui.c:1166
 msgid "Failed while reading help file"
 msgstr "Produciuse un fallo ao ler o ficheiro de axuda"
 
-#: ../plugins/gtkui/gtkui.c:1185
+#: ../plugins/gtkui/gtkui.c:1176
 msgid "Failed to load help file"
 msgstr "Produciuse un fallo ao cargar o ficheiro de axuda"
 
-#: ../plugins/gtkui/gtkui.c:1196
+#: ../plugins/gtkui/gtkui.c:1187
 msgid ""
 "The player is currently running backgroud tasks. If you quit now, the tasks "
 "will be cancelled or interrupted. This may result in data loss."
 msgstr ""
+"O reprodutor está executando tarefas en segundo plano. Se sae agora, as "
+"tarefas cancelaranse ou interrumpiranse e é posíbel que se perdan datos."
 
-#: ../plugins/gtkui/gtkui.c:1198
+#: ../plugins/gtkui/gtkui.c:1189
 msgid "Do you still want to quit?"
-msgstr ""
+msgstr "Aínda desexa saír?"
 
-#: ../plugins/gtkui/gtkui.c:1199 ../plugins/gtkui/prefwin.c:349
+#: ../plugins/gtkui/gtkui.c:1190 ../plugins/gtkui/prefwin.c:349
 #: ../plugins/gtkui/trkproperties.c:171 ../plugins/converter/convgui.c:862
 #: ../plugins/converter/convgui.c:1317 ../plugins/gtkui/actionhandlers.c:491
 msgid "Warning"
@@ -292,10 +297,10 @@ msgstr "_Buscar"
 
 #: ../plugins/gtkui/interface.c:264 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Sort by"
-msgstr ""
+msgstr "Ordenar por"
 
 #: ../plugins/gtkui/interface.c:271 ../plugins/gtkui/interface.c:1463
-#: ../plugins/gtkui/mainplaylist.c:348 ../plugins/gtkui/prefwin.c:321
+#: ../plugins/gtkui/mainplaylist.c:353 ../plugins/gtkui/prefwin.c:321
 #: ../plugins/gtkui/search.c:424 ../plugins/gtkui/deadbeef.glade.h:20
 #: ../plugins/converter/convgui.c:893 ../plugins/converter/convgui.c:1392
 #: ../plugins/converter/interface.c:605
@@ -355,7 +360,7 @@ msgstr "Ecualizador"
 
 #: ../plugins/gtkui/interface.c:323 ../plugins/gtkui/deadbeef.glade.h:31
 msgid "Design mode"
-msgstr ""
+msgstr "Modo deseño"
 
 #: ../plugins/gtkui/interface.c:327 ../plugins/gtkui/deadbeef.glade.h:32
 msgid "_Playback"
@@ -384,15 +389,15 @@ msgstr "Repetir"
 
 #: ../plugins/gtkui/interface.c:372 ../plugins/gtkui/deadbeef.glade.h:38
 msgid "Loop all"
-msgstr ""
+msgstr "Repetir todas"
 
 #: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Loop single song"
-msgstr ""
+msgstr "Repetir canción"
 
 #: ../plugins/gtkui/interface.c:384 ../plugins/gtkui/deadbeef.glade.h:40
 msgid "Don't loop"
-msgstr ""
+msgstr "Non repetir"
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:41
 msgid "Scroll follows playback"
@@ -483,7 +488,7 @@ msgstr "Propiedades da pista"
 
 #: ../plugins/gtkui/interface.c:1173 ../plugins/gtkui/deadbeef.glade.h:62
 msgid "Location:"
-msgstr ""
+msgstr "Localización:"
 
 #: ../plugins/gtkui/interface.c:1214 ../plugins/gtkui/deadbeef.glade.h:63
 msgid "Settings"
@@ -510,7 +515,7 @@ msgstr "Propiedades"
 #: ../plugins/gtkui/interface.c:1433 ../plugins/gtkui/interface.c:3192
 #: ../plugins/gtkui/deadbeef.glade.h:70 ../plugins/converter/interface.c:378
 #: ../plugins/converter/converter.glade.h:22
-#: ../plugins/shellexecui/interface.c:158
+#: ../plugins/shellexecui/interface.c:159
 #: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/pltmenu.c:65
 msgid "Title:"
 msgstr "Título:"
@@ -528,7 +533,7 @@ msgid "Item Index"
 msgstr "Índice de elementos"
 
 #. create default set of columns
-#: ../plugins/gtkui/interface.c:1458 ../plugins/gtkui/mainplaylist.c:345
+#: ../plugins/gtkui/interface.c:1458 ../plugins/gtkui/mainplaylist.c:350
 msgid "Playing"
 msgstr "Reproducindo"
 
@@ -540,7 +545,7 @@ msgstr "Portada"
 msgid "Artist - Album"
 msgstr "Interprete - Álbum"
 
-#: ../plugins/gtkui/interface.c:1464 ../plugins/gtkui/mainplaylist.c:349
+#: ../plugins/gtkui/interface.c:1464 ../plugins/gtkui/mainplaylist.c:354
 #: ../plugins/gtkui/search.c:425
 msgid "Duration"
 msgstr "Duración"
@@ -596,7 +601,7 @@ msgstr "Converter sempre o son de 8 bits a 16 bits"
 
 #: ../plugins/gtkui/interface.c:1843 ../plugins/gtkui/deadbeef.glade.h:91
 msgid "Always convert 16 bit audio to 24 bit"
-msgstr ""
+msgstr "Converter sempre o son de 16 bits a 24 bits"
 
 #: ../plugins/gtkui/interface.c:1847 ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Sound"
@@ -638,7 +643,9 @@ msgstr "Preamplificación global:"
 
 #: ../plugins/gtkui/interface.c:1940 ../plugins/gtkui/deadbeef.glade.h:102
 msgid "Add files from command line (or file manager) to this playlist:"
-msgstr "Engadir ficheiros desde a liña de ordes (ou xestor de ficheiros) a esta lista de reprodución:"
+msgstr ""
+"Engadir ficheiros desde a liña de ordes (ou xestor de ficheiros) a esta "
+"lista de reprodución:"
 
 #: ../plugins/gtkui/interface.c:1949 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Resume previous session on startup"
@@ -650,7 +657,7 @@ msgstr "Non engadir desde ficheiros cando se engaden cartafoles"
 
 #: ../plugins/gtkui/interface.c:1957 ../plugins/gtkui/deadbeef.glade.h:105
 msgid "Auto-reset \"Stop after current\""
-msgstr ""
+msgstr "Restaurar automaticamente «Deter ao rematar a pista actual»"
 
 #: ../plugins/gtkui/interface.c:1961 ../plugins/gtkui/deadbeef.glade.h:106
 msgid "Playback"
@@ -684,11 +691,11 @@ msgstr "Agochar a icona da área de notificación"
 
 #: ../plugins/gtkui/interface.c:2055 ../plugins/gtkui/deadbeef.glade.h:113
 msgid "Enable Russian CP1251 detection and recoding"
-msgstr ""
+msgstr "Activar a detección e recodificación do Ruso CP1251"
 
 #: ../plugins/gtkui/interface.c:2059 ../plugins/gtkui/deadbeef.glade.h:114
 msgid "Enable Chinese CP936 detection and recoding"
-msgstr ""
+msgstr "Activar a detección e recodificación do Chinés CP936"
 
 #: ../plugins/gtkui/interface.c:2067 ../plugins/gtkui/deadbeef.glade.h:115
 msgid "Interface refresh rate (times per second):"
@@ -708,15 +715,15 @@ msgstr "Engadido de interface de usuario (require reiniciar):"
 
 #: ../plugins/gtkui/interface.c:2117 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Player"
-msgstr ""
+msgstr "Reprodutor"
 
 #: ../plugins/gtkui/interface.c:2126 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Close playlists with middle mouse button"
-msgstr ""
+msgstr "Pechar as listas de reprodución co botón central do rato"
 
 #: ../plugins/gtkui/interface.c:2130 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "Draw playing track using bold font"
-msgstr ""
+msgstr "Resaltar a pista en reprodución usando tipografía grosa."
 
 #: ../plugins/gtkui/interface.c:2134 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Hide \"Delete from disk\" context menu item"
@@ -724,15 +731,16 @@ msgstr "Agochar o elemento «Eliminar do disco» do menú contextual "
 
 #: ../plugins/gtkui/interface.c:2138 ../plugins/gtkui/deadbeef.glade.h:123
 msgid "Auto-name playlists when adding a single folder"
-msgstr "Nomear automaticamente as listas de reprodución ao engadir un só cartafol"
+msgstr ""
+"Nomear automaticamente as listas de reprodución ao engadir un só cartafol"
 
 #: ../plugins/gtkui/interface.c:2142 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "Auto-resize columns to fit the window"
-msgstr ""
+msgstr "Adaptar as columnas para que se axusten a xanela"
 
 #: ../plugins/gtkui/interface.c:2150 ../plugins/gtkui/deadbeef.glade.h:126
 msgid "GUI/Misc"
-msgstr ""
+msgstr "GUI/Misc"
 
 #: ../plugins/gtkui/interface.c:2165 ../plugins/gtkui/interface.c:2209
 #: ../plugins/gtkui/deadbeef.glade.h:127
@@ -834,12 +842,12 @@ msgstr "Contrasinal do proxy:"
 
 #: ../plugins/gtkui/interface.c:2478 ../plugins/gtkui/deadbeef.glade.h:151
 msgid "HTTP User Agent:"
-msgstr ""
+msgstr "Axente do usuario HTTP:"
 
 #: ../plugins/gtkui/interface.c:2491 ../plugins/gtkui/interface.c:4195
 #: ../plugins/gtkui/deadbeef.glade.h:152
 msgid "Edit Content-Type Mapping"
-msgstr ""
+msgstr "Editar a asignación do tipo de contido"
 
 #: ../plugins/gtkui/interface.c:2495 ../plugins/gtkui/deadbeef.glade.h:153
 msgid "Network"
@@ -847,25 +855,25 @@ msgstr "Rede"
 
 #: ../plugins/gtkui/interface.c:2508 ../plugins/gtkui/deadbeef.glade.h:154
 msgid "Assigned Hotkeys:"
-msgstr ""
+msgstr "Teclas rápidas asignadas:"
 
 #: ../plugins/gtkui/interface.c:2543 ../plugins/gtkui/interface.c:4356
 #: ../plugins/gtkui/deadbeef.glade.h:155
 msgid "Action:"
-msgstr ""
+msgstr "Acción:"
 
 #: ../plugins/gtkui/interface.c:2548 ../plugins/gtkui/interface.c:2561
 #: ../plugins/gtkui/interface.c:4360 ../plugins/gtkui/deadbeef.glade.h:156
 msgid "<Not set>"
-msgstr ""
+msgstr "<Sen estabelecer>"
 
 #: ../plugins/gtkui/interface.c:2556 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "Key combination:"
-msgstr ""
+msgstr "Combinación de teclas:"
 
 #: ../plugins/gtkui/interface.c:2565 ../plugins/gtkui/deadbeef.glade.h:158
 msgid "Global hotkey"
-msgstr ""
+msgstr "Tecla rápida global"
 
 #: ../plugins/gtkui/interface.c:2577 ../plugins/gtkui/deadbeef.glade.h:159
 msgid ""
@@ -874,14 +882,18 @@ msgid ""
 "The changes will NOT be saved\n"
 "if you don't press Apply."
 msgstr ""
+"Use o botón «Aplicar» para gardar os cambios\n"
+"ou o botón «Reverter» para desfacelos.\n"
+"Os cambios NON se gardarán se non\n"
+"preme «Aplicar»."
 
 #: ../plugins/gtkui/interface.c:2614 ../plugins/gtkui/deadbeef.glade.h:163
 msgid "_Defaults"
-msgstr ""
+msgstr "_Predeterminados"
 
 #: ../plugins/gtkui/interface.c:2618 ../plugins/gtkui/deadbeef.glade.h:164
 msgid "Hotkeys"
-msgstr ""
+msgstr "Teclas rápidas"
 
 #: ../plugins/gtkui/interface.c:2649 ../plugins/gtkui/deadbeef.glade.h:165
 msgid "Version: "
@@ -903,11 +915,11 @@ msgstr "URL:"
 
 #: ../plugins/gtkui/interface.c:3404 ../plugins/gtkui/deadbeef.glade.h:169
 msgid "Group By ..."
-msgstr ""
+msgstr "Agrupar por..."
 
 #: ../plugins/gtkui/interface.c:3528 ../plugins/gtkui/deadbeef.glade.h:170
 msgid "Sort by ..."
-msgstr ""
+msgstr "Ordenar por..."
 
 #: ../plugins/gtkui/interface.c:3544 ../plugins/gtkui/deadbeef.glade.h:171
 msgid "Format"
@@ -988,7 +1000,7 @@ msgstr "Escribir ID3v2.4"
 
 #: ../plugins/gtkui/interface.c:4045 ../plugins/gtkui/deadbeef.glade.h:188
 msgid "Content-Type Mapping"
-msgstr ""
+msgstr "Asignación do tipo de contido"
 
 #: ../plugins/gtkui/interface.c:4068 ../plugins/gtkui/deadbeef.glade.h:189
 msgid ""
@@ -997,48 +1009,52 @@ msgid ""
 "\"audio/x-mpeg\", and need to be decoded by DeaDBeeF's own \"stdmpg\" "
 "plugin, or \"ffmpeg\" plugin."
 msgstr ""
+"Esta táboa define as asignacións entre os tipos de contido de fluxos de rede "
+"e os engadidos decodificadores de DeaDBeeF. Por exemplo, os ficheiros mp3 "
+"poden ter un tipo de contido «audio/x-mpeg» e precisan decodificarse polos "
+"engadidos propios de DeaDBeeF stdmpg ou ffmpeg."
 
 #: ../plugins/gtkui/interface.c:4116 ../plugins/gtkui/deadbeef.glade.h:190
 msgid "Reset to defaults"
-msgstr ""
+msgstr "Restabelecer predeterminados"
 
 #: ../plugins/gtkui/interface.c:4211 ../plugins/gtkui/deadbeef.glade.h:191
 msgid "Content-Type:"
-msgstr ""
+msgstr "Tipo de contido:"
 
 #: ../plugins/gtkui/interface.c:4224 ../plugins/gtkui/deadbeef.glade.h:192
 msgid "Plugins:"
-msgstr ""
+msgstr "Engadidos:"
 
 #: ../plugins/gtkui/interface.c:4292 ../plugins/gtkui/deadbeef.glade.h:193
 msgid "Button properties"
-msgstr ""
+msgstr "Propiedades do boton"
 
 #: ../plugins/gtkui/interface.c:4307 ../plugins/gtkui/deadbeef.glade.h:194
 msgid "Color:"
-msgstr ""
+msgstr "Cor:"
 
 #: ../plugins/gtkui/interface.c:4319 ../plugins/gtkui/deadbeef.glade.h:195
 msgid "Text color:"
-msgstr ""
+msgstr "Cor do texto:"
 
 #: ../plugins/gtkui/interface.c:4331 ../plugins/gtkui/deadbeef.glade.h:196
 msgid "Icon:"
-msgstr ""
+msgstr "Icona:"
 
 #: ../plugins/gtkui/interface.c:4343 ../plugins/gtkui/deadbeef.glade.h:197
 msgid "Label:"
-msgstr ""
+msgstr "Etiqueta:"
 
 #: ../plugins/gtkui/interface.c:4424 ../plugins/gtkui/deadbeef.glade.h:198
 msgid "Select action"
-msgstr ""
+msgstr "Seleccionar acción"
 
-#: ../plugins/gtkui/mainplaylist.c:346 ../plugins/gtkui/search.c:422
+#: ../plugins/gtkui/mainplaylist.c:351 ../plugins/gtkui/search.c:422
 msgid "Artist / Album"
 msgstr "Interprete / Álbum"
 
-#: ../plugins/gtkui/mainplaylist.c:347 ../plugins/gtkui/search.c:423
+#: ../plugins/gtkui/mainplaylist.c:352 ../plugins/gtkui/search.c:423
 msgid "Track No"
 msgstr "Pista num."
 
@@ -1072,13 +1088,13 @@ msgstr "Retirar columna"
 
 #: ../plugins/gtkui/plcommon.c:1136
 msgid "Pin groups when scrolling"
-msgstr ""
+msgstr "Fixar os grupos ao desprazarse"
 
 #: ../plugins/gtkui/plcommon.c:1141
 msgid "Group by"
 msgstr "Agrupar por"
 
-#: ../plugins/gtkui/plcommon.c:1148 ../plugins/gtkui/widgets.c:3363
+#: ../plugins/gtkui/plcommon.c:1148 ../plugins/gtkui/widgets.c:3346
 msgid "None"
 msgstr "Ningún"
 
@@ -1101,11 +1117,11 @@ msgstr "Dispositivo de son predeterminado"
 
 #: ../plugins/gtkui/prefwin.c:346
 msgid "You modified the hotkeys settings, but didn't save your changes."
-msgstr ""
+msgstr "Modificou os axustes das teclas rápidas pero non gardou os cambios."
 
 #: ../plugins/gtkui/prefwin.c:348
 msgid "Are you sure you want to continue without saving?"
-msgstr ""
+msgstr "Desexa continuar sen gardar?"
 
 #: ../plugins/gtkui/progress.c:56
 msgid "Adding files..."
@@ -1129,18 +1145,18 @@ msgid "[Multiple values] "
 msgstr "[Valores múltiples] "
 
 #: ../plugins/gtkui/trkproperties.c:480 ../plugins/gtkui/trkproperties.c:492
-#: ../plugins/gtkui/widgets.c:2053
+#: ../plugins/gtkui/widgets.c:2025
 msgid "Key"
 msgstr "Tecla"
 
 #: ../plugins/gtkui/trkproperties.c:481 ../plugins/gtkui/trkproperties.c:493
-#: ../plugins/gtkui/widgets.c:2055
+#: ../plugins/gtkui/widgets.c:2027
 msgid "Value"
 msgstr "Valor"
 
 #: ../plugins/gtkui/trkproperties.c:512
 msgid "[Multiple values]"
-msgstr ""
+msgstr "[Varios valores]"
 
 #: ../plugins/gtkui/trkproperties.c:691
 msgid "Writing tags..."
@@ -1148,7 +1164,7 @@ msgstr "Escribindo etiquetas"
 
 #: ../plugins/gtkui/trkproperties.c:720
 msgid "Field name"
-msgstr ""
+msgstr "Nome do campo"
 
 #: ../plugins/gtkui/trkproperties.c:723
 msgid "Name:"
@@ -1178,6 +1194,8 @@ msgstr "Retirar campo"
 #, c-format
 msgid "Usage: deadbeef [options] [--] [file(s)]\n"
 msgstr ""
+"Uso: deadbeef [opcións] [--] [ficheiro(s)]\n"
+"\n"
 
 #: ../main.c:90
 #, c-format
@@ -1223,7 +1241,9 @@ msgstr "   --toggle-pause     Inverter a pausa\n"
 #, c-format
 msgid ""
 "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
-msgstr "   --play-pause       Iniciar a reprodución se se detén, ou pola contra inverter a pausa\n"
+msgstr ""
+"   --play-pause       Iniciar a reprodución se se detén, ou pola contra "
+"inverter a pausa\n"
 
 #: ../main.c:99
 #, c-format
@@ -1243,12 +1263,17 @@ msgstr "   --random           Canción ao chou da lista de reprodución\n"
 #: ../main.c:102
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
-msgstr "   --queue            Engadir ficheiro(s) á lista de reprodución existente\n"
+msgstr ""
+"   --queue            Engadir ficheiro(s) á lista de reprodución existente\n"
 
 #: ../main.c:103
 #, c-format
-msgid "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
+msgid ""
+"   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
 msgstr ""
+"   --gui PLUGIN  indica que engadido  de interface de usuario usar, o "
+"predeterminado é «GTK2»\n"
+"\n"
 
 #: ../main.c:104
 #, c-format
@@ -1261,31 +1286,38 @@ msgid ""
 "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
 "                      copy[r]ight, [e]lapsed\n"
-msgstr "                      FMT %%-sintaxe: a: Artista, t: Título, b: Álbum,\n                      l: Duración, n: Pista, y: Ano, c: Comentario,\n                      r: Copyright, e: Tempo restante\n"
+msgstr ""
+"                      FMT %%-sintaxe: a: Artista, t: Título, b: Álbum,\n"
+"                      l: Duración, n: Pista, y: Ano, c: Comentario,\n"
+"                      r: Copyright, e: Tempo restante\n"
 
 #: ../main.c:108
 #, c-format
 msgid ""
-"                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist"
-" - title\"\n"
-msgstr "                      e.g.: --nowplaying «%%a - %%t» amosaría: «interprete - título»\n"
+"                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
+"- title\"\n"
+msgstr ""
+"                      e.g.: --nowplaying «%%a - %%t» amosaría: «interprete - "
+"título»\n"
 
 #: ../main.c:109
 #, c-format
 msgid ""
-"                      for more info, see "
-"http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"
-msgstr "                      para obter máis información, vexa http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"
+"                      for more info, see http://sourceforge.net/apps/"
+"mediawiki/deadbeef/index.php?title=Title_Formatting\n"
+msgstr ""
+"                      para obter máis información, vexa http://sourceforge."
+"net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"
 
-#: ../playlist.c:482 ../playlist.c:2494
+#: ../playlist.c:482 ../playlist.c:2489
 msgid "Default"
 msgstr "Predeterminado"
 
-#: ../playlist.c:3882
+#: ../playlist.c:3877
 msgid "Yes"
 msgstr "Si"
 
-#: ../playlist.c:3882
+#: ../playlist.c:3877
 msgid "No"
 msgstr "Non"
 
@@ -1302,32 +1334,52 @@ msgid ""
 "Track Number\n"
 "Band / Album Artist\n"
 "Custom"
-msgstr "Índice de elementos\nReproducindo\nPortada do álbum\nInterprete - Álbum\nInterprete\nÁlbum\nTítulo\nDuración\nNúmero de pista\nBanda / Intreprete do álbum\nPersonalizado"
+msgstr ""
+"Índice de elementos\n"
+"Reproducindo\n"
+"Portada do álbum\n"
+"Interprete - Álbum\n"
+"Interprete\n"
+"Álbum\n"
+"Título\n"
+"Duración\n"
+"Número de pista\n"
+"Banda / Intreprete do álbum\n"
+"Personalizado"
 
 #: ../plugins/gtkui/deadbeef.glade.h:86
 msgid ""
 "Left\n"
 "Right"
-msgstr "Esquerda\nDereita"
+msgstr ""
+"Esquerda\n"
+"Dereita"
 
 #: ../plugins/gtkui/deadbeef.glade.h:94
 msgid ""
 "Disable\n"
 "Track\n"
 "Album"
-msgstr "Desactivar\nPista\nÁlbum"
+msgstr ""
+"Desactivar\n"
+"Pista\n"
+"Álbum"
 
 #: ../plugins/gtkui/deadbeef.glade.h:172
 msgid ""
 "Ascending\n"
 "Descending"
-msgstr "Ascendente\nDescendente"
+msgstr ""
+"Ascendente\n"
+"Descendente"
 
 #: ../plugins/gtkui/deadbeef.glade.h:184
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
-msgstr "2.3 (recomendado)\n2.4"
+msgstr ""
+"2.3 (recomendado)\n"
+"2.4"
 
 #: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
 #: ../plugins/converter/support.c:90 ../plugins/converter/support.c:114
@@ -1341,13 +1393,16 @@ msgstr "Non se atopou o ficheiro de imaxe: %s"
 msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings."
-msgstr "wildmidi: non se atopou o ficheiro de configuración de «freepats». Instale o paquete «timidity-freepats» ou especifique a ruta a «freepats.cfg» na configuración do engadido."
+msgstr ""
+"wildmidi: non se atopou o ficheiro de configuración de «freepats». Instale o "
+"paquete «timidity-freepats» ou especifique a ruta a «freepats.cfg» na "
+"configuración do engadido."
 
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
 msgid "Add audio CD"
-msgstr ""
+msgstr "Engadir CD de son"
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
@@ -1393,7 +1448,7 @@ msgstr "URL de «Compartir escoitas»"
 
 #: ../translation/extra.c:16
 msgid "Prefer Album Artist over Artist field"
-msgstr ""
+msgstr "Preferir Álbum Artista sobre o campo Artista"
 
 #. OSS output plugin
 #: ../translation/extra.c:18
@@ -1465,7 +1520,7 @@ msgstr "Calidade de sobremostraxe (0..2, maior é mellor)"
 
 #: ../translation/extra.c:37
 msgid "8-bit output (default is 16)"
-msgstr ""
+msgstr "Saída de 8-bit (a predeterminada é de 16)"
 
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:39
@@ -1474,11 +1529,11 @@ msgstr "Duración máxima da canción (en minutos)"
 
 #: ../translation/extra.c:40
 msgid "Fadeout length (seconds)"
-msgstr ""
+msgstr "Duración do esvaecemento (segundos)"
 
 #: ../translation/extra.c:41
 msgid "Play loops nr. of times (if available)"
-msgstr ""
+msgstr "Repetir nº de veces (se está dispoñíbel)"
 
 #. Standard GTK2 user interface plugin
 #: ../translation/extra.c:43
@@ -1499,7 +1554,8 @@ msgstr "Executar gtk_init com --sync (modo de depuración)"
 
 #: ../translation/extra.c:47
 msgid "Add separators between plugin context menu items"
-msgstr "Engadir separadores entre os engadidos nos elementos do menú contextual"
+msgstr ""
+"Engadir separadores entre os engadidos nos elementos do menú contextual"
 
 #. OSD Notify plugin
 #: ../translation/extra.c:49
@@ -1631,7 +1687,7 @@ msgstr "Destino da mostraxe"
 
 #: ../translation/extra.c:94
 msgid "Quality / Algorithm"
-msgstr ""
+msgstr "Calidade / Algoritmo"
 
 #: ../translation/extra.c:95
 msgid "Automatic Samplerate (overrides Target Samplerate)"
@@ -1640,21 +1696,21 @@ msgstr "Mostraxe automática (sobrescribe o destinos das mostraxes)"
 #. shellexecui
 #: ../translation/extra.c:97
 msgid "Configure custom shell commands"
-msgstr ""
+msgstr "Configurar ordes por terminal personalizadas"
 
 #. mpgmad
 #: ../translation/extra.c:99
 msgid "Disable gapless playback (faster scanning)"
-msgstr ""
+msgstr "Desactivar a reprodución sen pausas (escaneo máis rápido)"
 
 #. adplug
 #: ../translation/extra.c:101
 msgid "Prefer Ken emu over Satoh (surround won't work)"
-msgstr ""
+msgstr "Preferir Ken emu a Satoh (o son envolvente non funcionará)"
 
 #: ../translation/extra.c:102
 msgid "Enable surround"
-msgstr ""
+msgstr "Activar son envolvente"
 
 #: ../plugins/converter/convgui.c:117
 msgid "The file already exists. Overwrite?"
@@ -1688,7 +1744,9 @@ msgstr "Produciuse un fallo ao gardar os axustes do codificador"
 msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
-msgstr "Comprobe os permisos predeterminados do cartafol, tente escoller outro título, ou liberar algo de espazo no disco"
+msgstr ""
+"Comprobe os permisos predeterminados do cartafol, tente escoller outro "
+"título, ou liberar algo de espazo no disco"
 
 #: ../plugins/converter/convgui.c:742 ../plugins/converter/convgui.c:1216
 msgid "Preset with the same name already exists. Try to pick another title."
@@ -1748,12 +1806,12 @@ msgstr "Cartafol de saída:"
 #: ../plugins/converter/interface.c:109
 #: ../plugins/converter/converter.glade.h:2
 msgid "Write to source track folder"
-msgstr ""
+msgstr "Escribir no cartafol da pista de orixe"
 
 #: ../plugins/converter/interface.c:113
 #: ../plugins/converter/converter.glade.h:3
 msgid "Preserve folder structure"
-msgstr ""
+msgstr "Conservar a estrutura do cartafol"
 
 #: ../plugins/converter/interface.c:121
 #: ../plugins/converter/converter.glade.h:4
@@ -1766,7 +1824,9 @@ msgstr "Nome do ficheiro de saída:"
 msgid ""
 "Extension (e.g. .mp3) will be appended automatically.\n"
 "Leave the field empty for default (%a - %t)."
-msgstr "A extensión (p.ex. mp3) engadirase automaticamente.\nDeixar o campo baleiro de xeito predeterminado (%a -%t)."
+msgstr ""
+"A extensión (p.ex. mp3) engadirase automaticamente.\n"
+"Deixar o campo baleiro de xeito predeterminado (%a -%t)."
 
 #: ../plugins/converter/interface.c:145
 #: ../plugins/converter/converter.glade.h:8
@@ -1856,7 +1916,10 @@ msgstr "Liña de ordes:"
 msgid ""
 "Example: lame - %o\n"
 "%i for input file, %o for output file, - for stdin"
-msgstr "Exemplo: lame - %o\n%i para o ficheiro de entrada, %o para o ficheiro de saída, - para a entrada estándar"
+msgstr ""
+"Exemplo: lame - %o\n"
+"%i para o ficheiro de entrada, %o para o ficheiro de saída, - para a entrada "
+"estándar"
 
 #: ../plugins/converter/interface.c:429
 #: ../plugins/converter/converter.glade.h:31
@@ -1864,7 +1927,9 @@ msgstr "Exemplo: lame - %o\n%i para o ficheiro de entrada, %o para o ficheiro de
 msgid ""
 "<small>%o - output file name\n"
 "%i - temporary input file name</small>"
-msgstr "<small>%o - nome do ficheiro de saída\n%i - nome do ficheiro temporal de entrada</small>"
+msgstr ""
+"<small>%o - nome do ficheiro de saída\n"
+"%i - nome do ficheiro temporal de entrada</small>"
 
 #: ../plugins/converter/interface.c:438
 #: ../plugins/converter/converter.glade.h:33
@@ -1935,45 +2000,55 @@ msgid ""
 "32 bit signed int\n"
 "32 bit float"
 msgstr ""
+"Manter o formato de orixe\n"
+"enteiro con signo de 8 bits\n"
+"enteiro con signo de 16 bits\n"
+"enteiro con signo de 24 bits\n"
+"enteiro con signo de 32 bits\n"
+"flontante de 32 bits"
 
 #: ../plugins/converter/converter.glade.h:19
 msgid ""
 "Prompt\n"
 "Overwrite"
 msgstr ""
+"Aviso\n"
+"Sobrescribir"
 
 #: ../plugins/converter/converter.glade.h:34
 msgid ""
 "Pipe\n"
 "Temporary file"
 msgstr ""
+"Canalización\n"
+"Ficheiro temporal"
 
 #: ../plugins/shellexecui/interface.c:46
 #: ../plugins/shellexecui/shellexec.glade.h:1
 msgid "Custom Shell Commands"
-msgstr ""
+msgstr "Ordes por terminal personalizadas"
 
 #: ../plugins/shellexecui/interface.c:69
 #: ../plugins/shellexecui/shellexec.glade.h:5
 msgid "Edit"
-msgstr ""
+msgstr "Editar"
 
 #: ../plugins/shellexecui/interface.c:87
 #: ../plugins/shellexecui/shellexec.glade.h:2
 msgid "Close"
-msgstr ""
+msgstr "Pechar"
 
-#: ../plugins/shellexecui/interface.c:144
+#: ../plugins/shellexecui/interface.c:145
 #: ../plugins/shellexecui/shellexec.glade.h:6
 msgid "Edit Command"
-msgstr ""
+msgstr "Editar orde"
 
-#: ../plugins/shellexecui/interface.c:165
+#: ../plugins/shellexecui/interface.c:166
 #: ../plugins/shellexecui/shellexec.glade.h:8
 msgid "Command:"
-msgstr ""
+msgstr "Orde:"
 
-#: ../plugins/shellexecui/interface.c:177
+#: ../plugins/shellexecui/interface.c:178
 #: ../plugins/shellexecui/shellexec.glade.h:10
 #, no-c-format
 msgid ""
@@ -1981,279 +2056,306 @@ msgid ""
 "main application was started from. Title formatting can be used. Example: "
 "xdg-open %D"
 msgstr ""
+"Orde arbitraria de terminal. Executarase no contexto da terminal no que se "
+"iniciou o aplicativo principal. Pode usarse o formatado do título. Exemplo: "
+"xdg-open %D"
 
-#: ../plugins/shellexecui/interface.c:180
+#: ../plugins/shellexecui/interface.c:181
 #: ../plugins/shellexecui/shellexec.glade.h:11
 msgid "ID:"
-msgstr ""
+msgstr "ID:"
 
-#: ../plugins/shellexecui/interface.c:192
+#: ../plugins/shellexecui/interface.c:193
 #: ../plugins/shellexecui/shellexec.glade.h:12
 msgid "Free-form name, for example \"My Shell Command\""
-msgstr ""
+msgstr "Nome en forma libre, por exemplo «A miña orde por terminal»"
 
-#: ../plugins/shellexecui/interface.c:200
+#: ../plugins/shellexecui/interface.c:201
 #: ../plugins/shellexecui/shellexec.glade.h:13
 msgid ""
-"Command ID, normally it should be something short, for example "
-"\"youtube_open\". It must be unique."
+"Command ID, normally it should be something short, for example \"youtube_open"
+"\". It must be unique."
 msgstr ""
+"ID da orde, normalmente debe ser curto, por exempolo «abrir_youtube». Debe "
+"ser único."
 
-#: ../plugins/shellexecui/interface.c:203
+#: ../plugins/shellexecui/interface.c:204
 #: ../plugins/shellexecui/shellexec.glade.h:15
 msgid "Single Tracks"
-msgstr ""
+msgstr "Pistas únicas"
 
-#: ../plugins/shellexecui/interface.c:206
+#: ../plugins/shellexecui/interface.c:207
 #: ../plugins/shellexecui/shellexec.glade.h:14
 msgid "Works on single track."
-msgstr ""
+msgstr "Funciona cunha pista única."
 
-#: ../plugins/shellexecui/interface.c:208
+#: ../plugins/shellexecui/interface.c:209
 #: ../plugins/shellexecui/shellexec.glade.h:17
 msgid "Multiple Tracks"
-msgstr ""
+msgstr "Múltiples pistas"
 
-#: ../plugins/shellexecui/interface.c:211
+#: ../plugins/shellexecui/interface.c:212
 #: ../plugins/shellexecui/shellexec.glade.h:16
 msgid "Works on multiple tracks."
-msgstr ""
+msgstr "Funciona con múltiples pistas."
 
-#: ../plugins/shellexecui/interface.c:213
+#: ../plugins/shellexecui/interface.c:214
 #: ../plugins/shellexecui/shellexec.glade.h:19
 msgid "Local"
-msgstr ""
+msgstr "Local"
 
-#: ../plugins/shellexecui/interface.c:216
+#: ../plugins/shellexecui/interface.c:217
 #: ../plugins/shellexecui/shellexec.glade.h:18
 msgid "Works on local files."
-msgstr ""
+msgstr "Funciona con ficheiros locais."
 
-#: ../plugins/shellexecui/interface.c:218
+#: ../plugins/shellexecui/interface.c:219
 #: ../plugins/shellexecui/shellexec.glade.h:21
 msgid "Remote"
-msgstr ""
+msgstr "Remoto"
 
-#: ../plugins/shellexecui/interface.c:221
+#: ../plugins/shellexecui/interface.c:222
 #: ../plugins/shellexecui/shellexec.glade.h:20
 msgid "Works on remote files (e.g. http:// streams)"
-msgstr ""
+msgstr "Funciona con ficheiros remotos  (p.e. http:// streams)"
 
-#: ../plugins/shellexecui/interface.c:223
+#: ../plugins/shellexecui/interface.c:224
 #: ../plugins/shellexecui/shellexec.glade.h:23
-msgid "Common"
-msgstr ""
+msgid "Generic (Main Menu)"
+msgstr "Xenérico (menú principal)"
 
-#: ../plugins/shellexecui/interface.c:226
+#: ../plugins/shellexecui/interface.c:227
 #: ../plugins/shellexecui/shellexec.glade.h:22
 msgid "Item should appear in the main menu"
+msgstr "O elemento debería aparecer no menú principal"
+
+#: ../plugins/shellexecui/interface.c:229
+#: ../plugins/shellexecui/shellexec.glade.h:24
+msgid ""
+"<small>If you want to add the command to main menu, make sure that title "
+"contains the menu path like this: \"File/My Command\", where File is the "
+"menu name in the English version.</small>"
 msgstr ""
+"<small>se desexa engadir a orde ao menú principal, asegúrese que o título "
+"contén o camiño ao menú deste xeito: \"Ficheiro/A_miña_orde\", onde "
+"«Ficheiro» é o nome do menú na versión en inglés.</small>"
 
 #: ../plugins/shellexecui/shellexecui.c:94
 msgid "Add Command"
-msgstr ""
+msgstr "Engadir orde"
 
-#: ../plugins/shellexecui/shellexecui.c:137 ../plugins/gtkui/widgets.c:626
+#: ../plugins/shellexecui/shellexecui.c:137 ../plugins/gtkui/widgets.c:619
 msgid "Delete"
-msgstr ""
+msgstr "Eliminar"
 
 #: ../plugins/shellexecui/shellexecui.c:139
 msgid "This action will delete the selected shell command. Are you sure?"
 msgstr ""
+"Esta acción elimina a orde de terminal seleccionada. Está vostede seguro?"
 
 #: ../plugins/shellexecui/shellexecui.c:141
 msgid "Confirm Remove"
-msgstr ""
+msgstr "Confirmar a eliminación"
 
 #: ../plugins/shellexecui/shellexecui.c:227
 msgid "ID must be non-empty and unique.\n"
-msgstr ""
+msgstr "O ID non pode quedar baleiro e debe ser único.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:233
 msgid "Title must be non-empty.\n"
-msgstr ""
+msgstr "O título non pode quedar baleiro.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:239
 msgid "Shell Command must be non-empty.\n"
-msgstr ""
+msgstr "A orde por terminal non pode quedar baleira.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:246
 #: ../plugins/shellexecui/shellexecui.c:250
 msgid "Invalid Values"
-msgstr ""
+msgstr "Valores incorrectos"
 
 #: ../plugins/gtkui/actionhandlers.c:108
 msgid "Supported sound formats"
-msgstr ""
+msgstr "Formatos compatíbeis de son"
 
 #: ../plugins/gtkui/actionhandlers.c:119
 msgid "All files (*)"
-msgstr ""
+msgstr "Todos os ficheiros (*)"
 
 #: ../plugins/gtkui/actionhandlers.c:127
 msgid "Open file(s)..."
-msgstr ""
+msgstr "Abrir ficheiro(s)..."
 
 #: ../plugins/gtkui/actionhandlers.c:166
 msgid "Add file(s) to playlist..."
-msgstr ""
+msgstr "Engadir ficheiro(s) á lista..."
 
 #: ../plugins/gtkui/actionhandlers.c:212
 msgid "Add folder(s) to playlist..."
-msgstr ""
+msgstr "Engadir cartafol(es) á lista..."
 
 #: ../plugins/gtkui/actionhandlers.c:217
 msgid "Follow symlinks"
-msgstr ""
+msgstr "Seguir ligazóns simbólicas"
 
 #: ../plugins/gtkui/actionhandlers.c:429
 msgid "help.txt"
-msgstr ""
+msgstr "axuda.txt"
 
 #: ../plugins/gtkui/actionhandlers.c:489
 msgid "Delete files from disk"
-msgstr ""
+msgstr "Eliminar os ficheiros do disco"
 
 #: ../plugins/gtkui/actionhandlers.c:490
 msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
 msgstr ""
+"Perderanse os ficheiros. Continuar?\n"
+"(Este diálogo pode desactivarse nos axustes do engadido GTKUI)"
 
-#: ../plugins/gtkui/actionhandlers.c:660
+#: ../plugins/gtkui/actionhandlers.c:673
 msgid "Load Playlist"
-msgstr ""
+msgstr "Cargar lista de reprodución"
 
-#: ../plugins/gtkui/actionhandlers.c:675
+#: ../plugins/gtkui/actionhandlers.c:688
 msgid "Other files (*)"
-msgstr ""
+msgstr "Outros ficheiros (*)"
 
-#: ../plugins/gtkui/actionhandlers.c:709
+#: ../plugins/gtkui/actionhandlers.c:722
 msgid "Save Playlist As"
-msgstr ""
+msgstr "Gardar a lista como"
 
-#: ../plugins/gtkui/actionhandlers.c:720
+#: ../plugins/gtkui/actionhandlers.c:733
 msgid "DeaDBeeF playlist files (*.dbpl)"
-msgstr ""
+msgstr "Ficheiros de listas de reprodución e DeaDBeeF (*.dbpl)"
 
 #: ../plugins/gtkui/ctmapping.c:129
 msgid "Content-Type"
-msgstr ""
+msgstr "Tipo de contido"
 
 #: ../plugins/gtkui/ctmapping.c:199
 msgid "Invalid value(s)."
-msgstr ""
+msgstr "Valor(es) incorrectos."
 
 #: ../plugins/gtkui/ctmapping.c:200
 msgid ""
-"Content-type and Plugins fields must be non-empty, and comply with the rules.\n"
+"Content-type and Plugins fields must be non-empty, and comply with the "
+"rules.\n"
 "Example content-type: 'audio/mpeg'.\n"
 "Example plugin ids: 'stdmpg ffmpeg'.\n"
 "Spaces must be used as separators in plugin ids list.\n"
 "Content type should be only letters, numbers and '-' sign.\n"
 "Plugin id can contain only letters and numbers."
 msgstr ""
+"Os campos do tipo de contido e dos engadidos non poden quedar baleiros e "
+"deben cumprir as regras.\n"
+"Exemplo de tipo de contido: «audio/mpeg».\n"
+"Exemplo de tipo de contido: «stdmpg ffmpeg».\n"
+"Os espazos deben usarse como separadores na lista de ID dos engadidos.\n"
+"O tipo de contido só debe levar letras, números e o signo «-».\n"
+"O ID do engadido só debe levar letras e números."
 
 #: ../plugins/gtkui/ctmapping.c:228 ../plugins/gtkui/ctmapping.c:260
 msgid "Nothing is selected."
-msgstr ""
+msgstr "Non se seleccionou nada."
 
-#: ../plugins/gtkui/widgets.c:601
+#: ../plugins/gtkui/widgets.c:594
 msgid "Replace with..."
-msgstr ""
+msgstr "Substituír con..."
 
-#: ../plugins/gtkui/widgets.c:606
+#: ../plugins/gtkui/widgets.c:599
 msgid "Insert..."
-msgstr ""
+msgstr "Inserir..."
+
+#: ../plugins/gtkui/widgets.c:626
+msgid "Cut"
+msgstr "Cortar"
 
 #: ../plugins/gtkui/widgets.c:633
-msgid "Cut"
-msgstr ""
+msgid "Copy"
+msgstr "Copiar"
 
 #: ../plugins/gtkui/widgets.c:640
-msgid "Copy"
-msgstr ""
-
-#: ../plugins/gtkui/widgets.c:647
 msgid "Paste"
-msgstr ""
+msgstr "Pegar"
 
-#: ../plugins/gtkui/widgets.c:762
+#: ../plugins/gtkui/widgets.c:764
 msgid "Multiple widgets of this type are not supported"
-msgstr ""
+msgstr "Múltiples miniaplicativos deste tipo non son compatíbeis"
 
-#: ../plugins/gtkui/widgets.c:1066
+#: ../plugins/gtkui/widgets.c:1071
 msgid "Lock movement"
-msgstr ""
+msgstr "Movemento de bloqueo"
 
-#: ../plugins/gtkui/widgets.c:1351
+#: ../plugins/gtkui/widgets.c:1356
 msgid "Move tab left"
-msgstr ""
+msgstr "Mover lapela á esquerda"
 
-#: ../plugins/gtkui/widgets.c:1358
+#: ../plugins/gtkui/widgets.c:1363
 msgid "Move tab right"
-msgstr ""
+msgstr "Mover lapela á dereita"
 
-#: ../plugins/gtkui/widgets.c:1365
+#: ../plugins/gtkui/widgets.c:1370
 msgid "Remove tab"
-msgstr ""
+msgstr "Eliminar lapela"
 
-#: ../plugins/gtkui/widgets.c:1372
+#: ../plugins/gtkui/widgets.c:1377
 msgid "Rename tab"
-msgstr ""
+msgstr "Renomear lapela"
 
-#: ../plugins/gtkui/widgets.c:1433
+#: ../plugins/gtkui/widgets.c:1438
 msgid "Add new tab"
-msgstr ""
+msgstr "Engadir nova lapela"
 
-#: ../plugins/gtkui/widgets.c:1889
+#: ../plugins/gtkui/widgets.c:1861
 msgid "Show Column Headers"
-msgstr ""
+msgstr "Amosar as cabeceiras das columnas"
 
-#: ../plugins/gtkui/widgets.c:2986
+#: ../plugins/gtkui/widgets.c:2969
 msgid "Expand the box by 1 item"
-msgstr ""
+msgstr "Expandir a caixa 1 elemento"
 
-#: ../plugins/gtkui/widgets.c:2991
+#: ../plugins/gtkui/widgets.c:2974
 msgid "Shrink the box by 1 item"
-msgstr ""
+msgstr "Encoller a caixa 1 elemento"
 
-#: ../plugins/gtkui/widgets.c:2996
+#: ../plugins/gtkui/widgets.c:2979
 msgid "Homogeneous"
-msgstr ""
+msgstr "Homoxéneo"
 
-#: ../plugins/gtkui/widgets.c:3036
+#: ../plugins/gtkui/widgets.c:3019
 msgid "Expand"
-msgstr ""
+msgstr "Expandir"
 
-#: ../plugins/gtkui/widgets.c:3044
+#: ../plugins/gtkui/widgets.c:3027
 msgid "Fill"
-msgstr ""
+msgstr "Encher"
 
-#: ../plugins/gtkui/widgets.c:3445
+#: ../plugins/gtkui/widgets.c:3428
 msgid "Configure button"
-msgstr ""
+msgstr "Configurar botón"
 
 #: ../plugins/gtkui/pltmenu.c:62
 msgid "Edit playlist"
-msgstr ""
+msgstr "Editar a lista"
 
 #: ../plugins/gtkui/pltmenu.c:258
 msgid "Rename Playlist"
-msgstr ""
+msgstr "Renomear a lista"
 
 #: ../plugins/gtkui/pltmenu.c:265
 msgid "Remove Playlist"
-msgstr ""
+msgstr "Eliminar a lista"
 
 #: ../plugins/gtkui/pltmenu.c:272
 msgid "Add New Playlist"
-msgstr ""
+msgstr "Engadir un lista de reprodución"
 
 #: ../plugins/pltbrowser/pltbrowser.c:225
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 #: ../plugins/pltbrowser/pltbrowser.c:251
 msgid "Playlist browser"
-msgstr ""
+msgstr "Explorador de listas de reprodución"

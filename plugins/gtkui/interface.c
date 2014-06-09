@@ -96,6 +96,7 @@ create_mainwin (void)
   GtkWidget *scroll_follows_playback;
   GtkWidget *cursor_follows_playback;
   GtkWidget *stop_after_current;
+  GtkWidget *stop_after_album;
   GtkWidget *separator11;
   GtkWidget *jump_to_current_track1;
   GtkWidget *Help;
@@ -111,20 +112,6 @@ create_mainwin (void)
   GtkWidget *image654;
   GtkWidget *translators1;
   GtkWidget *image655;
-  GtkWidget *hbox2;
-  GtkWidget *hbox3;
-  GtkWidget *stopbtn;
-  GtkWidget *image128;
-  GtkWidget *playbtn;
-  GtkWidget *image2;
-  GtkWidget *pausebtn;
-  GtkWidget *image3;
-  GtkWidget *prevbtn;
-  GtkWidget *image4;
-  GtkWidget *nextbtn;
-  GtkWidget *image5;
-  GtkWidget *seekbar;
-  GtkWidget *volumebar;
   GtkWidget *plugins_bottom_vbox;
   GtkWidget *statusbar;
 
@@ -400,6 +387,10 @@ create_mainwin (void)
   gtk_widget_show (stop_after_current);
   gtk_container_add (GTK_CONTAINER (Playback_menu), stop_after_current);
 
+  stop_after_album = gtk_check_menu_item_new_with_mnemonic (_("Stop after current album"));
+  gtk_widget_show (stop_after_album);
+  gtk_container_add (GTK_CONTAINER (Playback_menu), stop_after_album);
+
   separator11 = gtk_separator_menu_item_new ();
   gtk_widget_show (separator11);
   gtk_container_add (GTK_CONTAINER (Playback_menu), separator11);
@@ -462,78 +453,6 @@ create_mainwin (void)
   gtk_widget_show (image655);
   gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (translators1), image655);
 
-  hbox2 = gtk_hbox_new (FALSE, 0);
-  gtk_widget_show (hbox2);
-  gtk_box_pack_start (GTK_BOX (vbox1), hbox2, FALSE, FALSE, 0);
-
-  hbox3 = gtk_hbox_new (FALSE, 0);
-  gtk_widget_show (hbox3);
-  gtk_box_pack_start (GTK_BOX (hbox2), hbox3, FALSE, TRUE, 0);
-
-  stopbtn = gtk_button_new ();
-  gtk_widget_show (stopbtn);
-  gtk_box_pack_start (GTK_BOX (hbox3), stopbtn, FALSE, FALSE, 0);
-  gtk_widget_set_can_focus(stopbtn, FALSE);
-  gtk_button_set_relief (GTK_BUTTON (stopbtn), GTK_RELIEF_NONE);
-
-  image128 = gtk_image_new_from_stock ("gtk-media-stop", GTK_ICON_SIZE_BUTTON);
-  gtk_widget_show (image128);
-  gtk_container_add (GTK_CONTAINER (stopbtn), image128);
-
-  playbtn = gtk_button_new ();
-  gtk_widget_show (playbtn);
-  gtk_box_pack_start (GTK_BOX (hbox3), playbtn, FALSE, FALSE, 0);
-  gtk_widget_set_can_focus(playbtn, FALSE);
-  gtk_button_set_relief (GTK_BUTTON (playbtn), GTK_RELIEF_NONE);
-
-  image2 = gtk_image_new_from_stock ("gtk-media-play", GTK_ICON_SIZE_BUTTON);
-  gtk_widget_show (image2);
-  gtk_container_add (GTK_CONTAINER (playbtn), image2);
-
-  pausebtn = gtk_button_new ();
-  gtk_widget_show (pausebtn);
-  gtk_box_pack_start (GTK_BOX (hbox3), pausebtn, FALSE, FALSE, 0);
-  gtk_widget_set_can_focus(pausebtn, FALSE);
-  gtk_button_set_relief (GTK_BUTTON (pausebtn), GTK_RELIEF_NONE);
-
-  image3 = gtk_image_new_from_stock ("gtk-media-pause", GTK_ICON_SIZE_BUTTON);
-  gtk_widget_show (image3);
-  gtk_container_add (GTK_CONTAINER (pausebtn), image3);
-
-  prevbtn = gtk_button_new ();
-  gtk_widget_show (prevbtn);
-  gtk_box_pack_start (GTK_BOX (hbox3), prevbtn, FALSE, FALSE, 0);
-  gtk_widget_set_can_focus(prevbtn, FALSE);
-  gtk_button_set_relief (GTK_BUTTON (prevbtn), GTK_RELIEF_NONE);
-
-  image4 = gtk_image_new_from_stock ("gtk-media-previous", GTK_ICON_SIZE_BUTTON);
-  gtk_widget_show (image4);
-  gtk_container_add (GTK_CONTAINER (prevbtn), image4);
-
-  nextbtn = gtk_button_new ();
-  gtk_widget_show (nextbtn);
-  gtk_box_pack_start (GTK_BOX (hbox3), nextbtn, FALSE, FALSE, 0);
-  gtk_widget_set_can_focus(nextbtn, FALSE);
-  gtk_button_set_relief (GTK_BUTTON (nextbtn), GTK_RELIEF_NONE);
-
-  image5 = gtk_image_new_from_stock ("gtk-media-next", GTK_ICON_SIZE_BUTTON);
-  gtk_widget_show (image5);
-  gtk_container_add (GTK_CONTAINER (nextbtn), image5);
-
-  seekbar = create_seekbar ("seekbar", "", "", 0, 0);
-  gtk_widget_show (seekbar);
-  gtk_box_pack_start (GTK_BOX (hbox2), seekbar, TRUE, TRUE, 2);
-  gtk_widget_set_size_request (seekbar, 20, -1);
-  gtk_widget_set_can_focus(seekbar, FALSE);
-  gtk_widget_set_can_default(seekbar, FALSE);
-
-  volumebar = create_volumebar_widget ("volumebar", "", "", 0, 0);
-  gtk_widget_show (volumebar);
-  gtk_box_pack_start (GTK_BOX (hbox2), volumebar, FALSE, TRUE, 2);
-  gtk_widget_set_size_request (volumebar, 70, -1);
-  gtk_widget_set_can_focus(volumebar, FALSE);
-  gtk_widget_set_can_default(volumebar, FALSE);
-
   plugins_bottom_vbox = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (plugins_bottom_vbox);
   gtk_box_pack_start (GTK_BOX (vbox1), plugins_bottom_vbox, TRUE, TRUE, 0);
@@ -559,15 +478,6 @@ create_mainwin (void)
                     NULL);
   g_signal_connect ((gpointer) mainwin, "button_press_event",
                     G_CALLBACK (on_mainwin_button_press_event),
-                    NULL);
-  g_signal_connect ((gpointer) mainwin, "button_release_event",
-                    G_CALLBACK (on_mainwin_button_release_event),
-                    NULL);
-  g_signal_connect ((gpointer) mainwin, "scroll_event",
-                    G_CALLBACK (on_mainwin_scroll_event),
-                    NULL);
-  g_signal_connect ((gpointer) mainwin, "motion_notify_event",
-                    G_CALLBACK (on_mainwin_motion_notify_event),
                     NULL);
   g_signal_connect ((gpointer) open, "activate",
                     G_CALLBACK (on_open_activate),
@@ -677,6 +587,9 @@ create_mainwin (void)
   g_signal_connect ((gpointer) stop_after_current, "activate",
                     G_CALLBACK (on_stop_after_current_activate),
                     NULL);
+  g_signal_connect ((gpointer) stop_after_album, "activate",
+                    G_CALLBACK (on_stop_after_album_activate),
+                    NULL);
   g_signal_connect ((gpointer) jump_to_current_track1, "activate",
                     G_CALLBACK (on_jump_to_current_track1_activate),
                     NULL);
@@ -697,21 +610,6 @@ create_mainwin (void)
                     NULL);
   g_signal_connect ((gpointer) translators1, "activate",
                     G_CALLBACK (on_translators1_activate),
-                    NULL);
-  g_signal_connect ((gpointer) stopbtn, "clicked",
-                    G_CALLBACK (on_stopbtn_clicked),
-                    NULL);
-  g_signal_connect ((gpointer) playbtn, "clicked",
-                    G_CALLBACK (on_playbtn_clicked),
-                    NULL);
-  g_signal_connect ((gpointer) pausebtn, "clicked",
-                    G_CALLBACK (on_pausebtn_clicked),
-                    NULL);
-  g_signal_connect ((gpointer) prevbtn, "clicked",
-                    G_CALLBACK (on_prevbtn_clicked),
-                    NULL);
-  g_signal_connect ((gpointer) nextbtn, "clicked",
-                    G_CALLBACK (on_nextbtn_clicked),
                     NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
@@ -780,6 +678,7 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, scroll_follows_playback, "scroll_follows_playback");
   GLADE_HOOKUP_OBJECT (mainwin, cursor_follows_playback, "cursor_follows_playback");
   GLADE_HOOKUP_OBJECT (mainwin, stop_after_current, "stop_after_current");
+  GLADE_HOOKUP_OBJECT (mainwin, stop_after_album, "stop_after_album");
   GLADE_HOOKUP_OBJECT (mainwin, separator11, "separator11");
   GLADE_HOOKUP_OBJECT (mainwin, jump_to_current_track1, "jump_to_current_track1");
   GLADE_HOOKUP_OBJECT (mainwin, Help, "Help");
@@ -795,20 +694,6 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, image654, "image654");
   GLADE_HOOKUP_OBJECT (mainwin, translators1, "translators1");
   GLADE_HOOKUP_OBJECT (mainwin, image655, "image655");
-  GLADE_HOOKUP_OBJECT (mainwin, hbox2, "hbox2");
-  GLADE_HOOKUP_OBJECT (mainwin, hbox3, "hbox3");
-  GLADE_HOOKUP_OBJECT (mainwin, stopbtn, "stopbtn");
-  GLADE_HOOKUP_OBJECT (mainwin, image128, "image128");
-  GLADE_HOOKUP_OBJECT (mainwin, playbtn, "playbtn");
-  GLADE_HOOKUP_OBJECT (mainwin, image2, "image2");
-  GLADE_HOOKUP_OBJECT (mainwin, pausebtn, "pausebtn");
-  GLADE_HOOKUP_OBJECT (mainwin, image3, "image3");
-  GLADE_HOOKUP_OBJECT (mainwin, prevbtn, "prevbtn");
-  GLADE_HOOKUP_OBJECT (mainwin, image4, "image4");
-  GLADE_HOOKUP_OBJECT (mainwin, nextbtn, "nextbtn");
-  GLADE_HOOKUP_OBJECT (mainwin, image5, "image5");
-  GLADE_HOOKUP_OBJECT (mainwin, seekbar, "seekbar");
-  GLADE_HOOKUP_OBJECT (mainwin, volumebar, "volumebar");
   GLADE_HOOKUP_OBJECT (mainwin, plugins_bottom_vbox, "plugins_bottom_vbox");
   GLADE_HOOKUP_OBJECT (mainwin, statusbar, "statusbar");
 
@@ -854,9 +739,9 @@ create_searchwin (void)
   g_signal_connect ((gpointer) searchwin, "window_state_event",
                     G_CALLBACK (on_searchwin_window_state_event),
                     NULL);
-  g_signal_connect_after ((gpointer) searchwin, "key_press_event",
-                          G_CALLBACK (on_searchwin_key_press_event),
-                          NULL);
+  g_signal_connect ((gpointer) searchwin, "key_press_event",
+                    G_CALLBACK (on_searchwin_key_press_event),
+                    NULL);
   g_signal_connect ((gpointer) searchentry, "changed",
                     G_CALLBACK (on_searchentry_changed),
                     NULL);
@@ -1415,6 +1300,7 @@ create_editcolumndlg (void)
 
   editcolumndlg = gtk_dialog_new ();
   gtk_window_set_title (GTK_WINDOW (editcolumndlg), "editcolumndlg");
+  gtk_window_set_position (GTK_WINDOW (editcolumndlg), GTK_WIN_POS_MOUSE);
   gtk_window_set_modal (GTK_WINDOW (editcolumndlg), TRUE);
   gtk_window_set_type_hint (GTK_WINDOW (editcolumndlg), GDK_WINDOW_TYPE_HINT_DIALOG);
 
@@ -1630,6 +1516,7 @@ create_prefwin (void)
   GtkWidget *resume_last_session;
   GtkWidget *ignore_archives;
   GtkWidget *reset_autostop;
+  GtkWidget *reset_autostopalbum;
   GtkWidget *label39;
   GtkWidget *vbox29;
   GtkWidget *hbox80;
@@ -1958,6 +1845,10 @@ create_prefwin (void)
   gtk_widget_show (reset_autostop);
   gtk_box_pack_start (GTK_BOX (vbox8), reset_autostop, FALSE, FALSE, 0);
 
+  reset_autostopalbum = gtk_check_button_new_with_mnemonic (_("Auto-reset \"Stop after current album\""));
+  gtk_widget_show (reset_autostopalbum);
+  gtk_box_pack_start (GTK_BOX (vbox8), reset_autostopalbum, FALSE, FALSE, 0);
+
   label39 = gtk_label_new (_("Playback"));
   gtk_widget_show (label39);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 1), label39);
@@ -2131,7 +2022,7 @@ create_prefwin (void)
   gtk_widget_show (embolden_current);
   gtk_box_pack_start (GTK_BOX (vbox44), embolden_current, FALSE, FALSE, 0);
 
-  hide_delete_from_disk = gtk_check_button_new_with_mnemonic (_("Hide \"Delete from disk\" context menu item"));
+  hide_delete_from_disk = gtk_check_button_new_with_mnemonic (_("Hide \"Remove From Disk\" context menu item"));
   gtk_widget_show (hide_delete_from_disk);
   gtk_box_pack_start (GTK_BOX (vbox44), hide_delete_from_disk, FALSE, FALSE, 0);
 
@@ -2776,6 +2667,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) reset_autostop, "toggled",
                     G_CALLBACK (on_reset_autostop_toggled),
                     NULL);
+  g_signal_connect ((gpointer) reset_autostopalbum, "toggled",
+                    G_CALLBACK (on_reset_autostopalbum_toggled),
+                    NULL);
   g_signal_connect ((gpointer) dsp_add, "clicked",
                     G_CALLBACK (on_dsp_add_clicked),
                     NULL);
@@ -2987,6 +2881,7 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, resume_last_session, "resume_last_session");
   GLADE_HOOKUP_OBJECT (prefwin, ignore_archives, "ignore_archives");
   GLADE_HOOKUP_OBJECT (prefwin, reset_autostop, "reset_autostop");
+  GLADE_HOOKUP_OBJECT (prefwin, reset_autostopalbum, "reset_autostopalbum");
   GLADE_HOOKUP_OBJECT (prefwin, label39, "label39");
   GLADE_HOOKUP_OBJECT (prefwin, vbox29, "vbox29");
   GLADE_HOOKUP_OBJECT (prefwin, hbox80, "hbox80");
@@ -3272,9 +3167,13 @@ create_addlocationdlg (void)
 {
   GtkWidget *addlocationdlg;
   GtkWidget *dialog_vbox4;
+  GtkWidget *vbox45;
   GtkWidget *hbox34;
   GtkWidget *label41;
   GtkWidget *addlocation_entry;
+  GtkWidget *hbox122;
+  GtkWidget *set_custom_title;
+  GtkWidget *custom_title;
   GtkWidget *addlocation_actionarea;
   GtkWidget *cancelbutton3;
   GtkWidget *alignment18;
@@ -3294,10 +3193,14 @@ create_addlocationdlg (void)
   dialog_vbox4 = gtk_dialog_get_content_area (GTK_DIALOG (addlocationdlg));
   gtk_widget_show (dialog_vbox4);
 
+  vbox45 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox45);
+  gtk_box_pack_start (GTK_BOX (dialog_vbox4), vbox45, TRUE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox45), 12);
+
   hbox34 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox34);
-  gtk_box_pack_start (GTK_BOX (dialog_vbox4), hbox34, TRUE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (hbox34), 12);
+  gtk_box_pack_start (GTK_BOX (vbox45), hbox34, TRUE, TRUE, 0);
 
   label41 = gtk_label_new (_("URL:"));
   gtk_widget_show (label41);
@@ -3309,6 +3212,19 @@ create_addlocationdlg (void)
   gtk_widget_set_size_request (addlocation_entry, 297, -1);
   gtk_entry_set_invisible_char (GTK_ENTRY (addlocation_entry), 8226);
   gtk_entry_set_activates_default (GTK_ENTRY (addlocation_entry), TRUE);
+
+  hbox122 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox122);
+  gtk_box_pack_start (GTK_BOX (vbox45), hbox122, TRUE, TRUE, 0);
+
+  set_custom_title = gtk_check_button_new_with_mnemonic (_("Set custom title"));
+  gtk_widget_show (set_custom_title);
+  gtk_box_pack_start (GTK_BOX (hbox122), set_custom_title, FALSE, FALSE, 0);
+
+  custom_title = gtk_entry_new ();
+  gtk_widget_show (custom_title);
+  gtk_box_pack_start (GTK_BOX (hbox122), custom_title, TRUE, TRUE, 0);
+  gtk_entry_set_invisible_char (GTK_ENTRY (custom_title), 8226);
 
   addlocation_actionarea = gtk_dialog_get_action_area (GTK_DIALOG (addlocationdlg));
   gtk_widget_show (addlocation_actionarea);
@@ -3359,9 +3275,13 @@ create_addlocationdlg (void)
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (addlocationdlg, addlocationdlg, "addlocationdlg");
   GLADE_HOOKUP_OBJECT_NO_REF (addlocationdlg, dialog_vbox4, "dialog_vbox4");
+  GLADE_HOOKUP_OBJECT (addlocationdlg, vbox45, "vbox45");
   GLADE_HOOKUP_OBJECT (addlocationdlg, hbox34, "hbox34");
   GLADE_HOOKUP_OBJECT (addlocationdlg, label41, "label41");
   GLADE_HOOKUP_OBJECT (addlocationdlg, addlocation_entry, "addlocation_entry");
+  GLADE_HOOKUP_OBJECT (addlocationdlg, hbox122, "hbox122");
+  GLADE_HOOKUP_OBJECT (addlocationdlg, set_custom_title, "set_custom_title");
+  GLADE_HOOKUP_OBJECT (addlocationdlg, custom_title, "custom_title");
   GLADE_HOOKUP_OBJECT_NO_REF (addlocationdlg, addlocation_actionarea, "addlocation_actionarea");
   GLADE_HOOKUP_OBJECT (addlocationdlg, cancelbutton3, "cancelbutton3");
   GLADE_HOOKUP_OBJECT (addlocationdlg, alignment18, "alignment18");

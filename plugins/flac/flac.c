@@ -2,34 +2,57 @@
     DeaDBeeF - ultimate music player for GNU/Linux systems with X11
     Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 2 of the License, or
-    (at your option) any later version.
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions
+    are met:
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    - Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    - Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+
+    - Neither the name of the DeaDBeeF Player nor the names of its
+    contributors may be used to endorse or promote products derived from
+    this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+    ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+    A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE FOUNDATION OR
+    CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+    EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+    PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+    LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include <math.h>
 #include <FLAC/stream_decoder.h>
 #include <FLAC/metadata.h>
-#include <math.h>
+#if HAVE_SYS_SYSLIMITS_H
+#include <sys/syslimits.h>
+#endif
 #include "../../deadbeef.h"
 #include "../artwork/artwork.h"
+#include "../liboggedit/oggedit.h"
 
-static DB_decoder_t plugin;
-static DB_functions_t *deadbeef;
+    static DB_decoder_t plugin;
+    static DB_functions_t *deadbeef;
 
-static DB_artwork_plugin_t *coverart_plugin = NULL;
+    static DB_artwork_plugin_t *coverart_plugin = NULL;
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+    //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
@@ -37,55 +60,55 @@ static DB_artwork_plugin_t *coverart_plugin = NULL;
 
 #define BUFFERSIZE 100000
 
-typedef struct {
-    DB_fileinfo_t info;
-    FLAC__StreamDecoder *decoder;
-    char *buffer; // this buffer always has float samples
-    int remaining; // bytes remaining in buffer from last read
-    int64_t startsample;
-    int64_t endsample;
-    int64_t currentsample;
-    int64_t totalsamples;
-    int flac_critical_error;
-    int init_stop_decoding;
-    int tagsize;
-    DB_FILE *file;
+    typedef struct {
+        DB_fileinfo_t info;
+        FLAC__StreamDecoder *decoder;
+        char *buffer; // this buffer always has float samples
+        int remaining; // bytes remaining in buffer from last read
+        int64_t startsample;
+        int64_t endsample;
+        int64_t currentsample;
+        int64_t totalsamples;
+        int flac_critical_error;
+        int init_stop_decoding;
+        int tagsize;
+        DB_FILE *file;
 
-    // used only on insert
-    ddb_playlist_t *plt;
-    DB_playItem_t *after;
-    DB_playItem_t *last;
-    DB_playItem_t *it;
-    const char *fname;
-    int bitrate;
-    FLAC__StreamMetadata *flac_cue_sheet;
-} flac_info_t;
+        // used only on insert
+        ddb_playlist_t *plt;
+        DB_playItem_t *after;
+        DB_playItem_t *last;
+        DB_playItem_t *it;
+        const char *fname;
+        int bitrate;
+        FLAC__StreamMetadata *flac_cue_sheet;
+    } flac_info_t;
 
-// callbacks
-FLAC__StreamDecoderReadStatus flac_read_cb (const FLAC__StreamDecoder *decoder, FLAC__byte buffer[], size_t *bytes, void *client_data) {
-    flac_info_t *info = (flac_info_t *)client_data;
-    size_t r = deadbeef->fread (buffer, 1, *bytes, info->file);
-    *bytes = r;
-    if (r == 0) {
-        return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
+    // callbacks
+    FLAC__StreamDecoderReadStatus flac_read_cb (const FLAC__StreamDecoder *decoder, FLAC__byte buffer[], size_t *bytes, void *client_data) {
+        flac_info_t *info = (flac_info_t *)client_data;
+        size_t r = deadbeef->fread (buffer, 1, *bytes, info->file);
+        *bytes = r;
+        if (r == 0) {
+            return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
+        }
+        return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
     }
-    return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
-}
 
 FLAC__StreamDecoderSeekStatus flac_seek_cb (const FLAC__StreamDecoder *decoder, FLAC__uint64 absolute_byte_offset, void *client_data) {
     flac_info_t *info = (flac_info_t *)client_data;
     int r = deadbeef->fseek (info->file, absolute_byte_offset, SEEK_SET);
     if (r) {
-        return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
+        return FLAC__STREAM_DECODER_SEEK_STATUS_ERROR;
     }
-    return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
+    return FLAC__STREAM_DECODER_SEEK_STATUS_OK;
 }
 
 FLAC__StreamDecoderTellStatus flac_tell_cb (const FLAC__StreamDecoder *decoder, FLAC__uint64 *absolute_byte_offset, void *client_data) {
     flac_info_t *info = (flac_info_t *)client_data;
     size_t r = deadbeef->ftell (info->file);
     *absolute_byte_offset = r;
-    return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
+    return FLAC__STREAM_DECODER_TELL_STATUS_OK;
 }
 
 FLAC__StreamDecoderLengthStatus flac_lenght_cb (const FLAC__StreamDecoder *decoder, FLAC__uint64 *stream_length, void *client_data) {
@@ -94,7 +117,7 @@ FLAC__StreamDecoderLengthStatus flac_lenght_cb (const FLAC__StreamDecoder *decod
     deadbeef->fseek (info->file, 0, SEEK_END);
     *stream_length = deadbeef->ftell (info->file);
     deadbeef->fseek (info->file, pos, SEEK_SET);
-    return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
+    return FLAC__STREAM_DECODER_LENGTH_STATUS_OK;
 }
 
 FLAC__bool flac_eof_cb (const FLAC__StreamDecoder *decoder, void *client_data) {
@@ -529,7 +552,7 @@ static const char *metainfo[] = {
 };
 
 static void
-cflac_add_metadata (DB_playItem_t *it, char *s, int length) {
+cflac_add_metadata (DB_playItem_t *it, const char *s, int length) {
     int m;
     for (m = 0; metainfo[m]; m += 2) {
         int l = strlen (metainfo[m]);
@@ -595,7 +618,7 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
         for (int i = 0; i < vc->num_comments; i++) {
             const FLAC__StreamMetadata_VorbisComment_Entry *c = &vc->comments[i];
             if (c->length > 0) {
-                char *s = c->entry;
+                const char *s = (const char *)c->entry;
                 cflac_add_metadata (it, s, c->length);
             }
         }
@@ -639,9 +662,9 @@ cflac_insert_with_embedded_cue (ddb_playlist_t *plt, DB_playItem_t *after, DB_pl
         deadbeef->pl_item_unref (it);
     }
     deadbeef->pl_item_ref (after);
-    
+
     DB_playItem_t *first = deadbeef->pl_get_next (ins, PL_MAIN);
-    
+
     if (!first) {
         first = deadbeef->plt_get_first (plt, PL_MAIN);
     }
@@ -809,7 +832,7 @@ cflac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     else {
         const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
         if (cuesheet) {
-            DB_playItem_t *last = deadbeef->plt_insert_cue_from_buffer (plt, after, it, cuesheet, strlen (cuesheet), info.totalsamples, info.info.fmt.samplerate);
+            DB_playItem_t *last = deadbeef->plt_insert_cue_from_buffer (plt, after, it, (const uint8_t *)cuesheet, strlen (cuesheet), info.totalsamples, info.info.fmt.samplerate);
             if (last) {
                 cflac_free_temp (_info);
                 deadbeef->pl_item_unref (it);
@@ -855,9 +878,12 @@ cflac_read_metadata (DB_playItem_t *it) {
     }
     deadbeef->pl_lock ();
     FLAC__bool res = FLAC__metadata_chain_read (chain, deadbeef->pl_find_meta (it, ":URI"));
+    if (!res && FLAC__metadata_chain_status(chain) == FLAC__METADATA_SIMPLE_ITERATOR_STATUS_NOT_A_FLAC_FILE) {
+        res = FLAC__metadata_chain_read_ogg (chain, deadbeef->pl_find_meta (it, ":URI"));
+    }
     deadbeef->pl_unlock ();
     if (!res) {
-        trace ("cflac_read_metadata: FLAC__metadata_chain_read failed\n");
+        trace ("cflac_read_metadata: FLAC__metadata_chain_read(_ogg) failed\n");
         goto error;
     }
     FLAC__metadata_chain_merge_padding (chain);
@@ -876,7 +902,7 @@ cflac_read_metadata (DB_playItem_t *it) {
             for (int i = 0; i < vc->num_comments; i++) {
                 const FLAC__StreamMetadata_VorbisComment_Entry *c = &vc->comments[i];
                 if (c->length > 0) {
-                    char *s = c->entry;
+                    const char *s = (const char *)c->entry;
                     cflac_add_metadata (it, s, c->length);
                 }
             }
@@ -908,7 +934,28 @@ error:
 
     return err;
 }
+#if USE_OGGEDIT
+int
+cflac_write_metadata_ogg (DB_playItem_t *it, FLAC__StreamMetadata_VorbisComment *vc)
+{
+    char fname[PATH_MAX];
+    deadbeef->pl_get_meta (it, ":URI", fname, sizeof (fname));
 
+    size_t num_tags = vc->num_comments;
+    char **tags = calloc(num_tags+1, sizeof(char **));
+    for (size_t i = 0; i < num_tags; i++)
+        tags[i] = (char *)vc->comments[i].entry;
+    const off_t file_size = oggedit_write_flac_metadata (deadbeef->fopen(fname), fname, 0, num_tags, tags);
+    if (file_size <= 0) {
+        trace ("cflac_write_metadata_ogg: oggedit_write_flac_metadata failed: code %d\n", file_size);
+        return -1;
+    }
+
+    free(tags);
+
+    return 0;
+}
+#endif
 int
 cflac_write_metadata (DB_playItem_t *it) {
     int err = -1;
@@ -922,9 +969,16 @@ cflac_write_metadata (DB_playItem_t *it) {
     }
     deadbeef->pl_lock ();
     FLAC__bool res = FLAC__metadata_chain_read (chain, deadbeef->pl_find_meta (it, ":URI"));
+    FLAC__bool isogg = false;
+#if USE_OGGEDIT
+    if (!res && FLAC__metadata_chain_status(chain) == FLAC__METADATA_SIMPLE_ITERATOR_STATUS_NOT_A_FLAC_FILE) {
+        isogg = true;
+        res = FLAC__metadata_chain_read_ogg (chain, deadbeef->pl_find_meta (it, ":URI"));
+    }
+#endif
     deadbeef->pl_unlock ();
     if (!res) {
-        trace ("cflac_write_metadata: FLAC__metadata_chain_read failed\n");
+        trace ("cflac_write_metadata: FLAC__metadata_chain_read(_ogg) failed - code %d\n", res);
         goto error;
     }
     FLAC__metadata_chain_merge_padding (chain);
@@ -946,12 +1000,25 @@ cflac_write_metadata (DB_playItem_t *it) {
     } while (FLAC__metadata_iterator_next (iter));
 
     if (data) {
-        // delete all comments
-        FLAC__metadata_object_vorbiscomment_resize_comments (data, 0);
+        FLAC__StreamMetadata_VorbisComment *vc = &data->data.vorbis_comment;
+        int vc_comments = vc->num_comments;
+        for (int i = 0; i < vc_comments; i++) {
+            const FLAC__StreamMetadata_VorbisComment_Entry *c = &vc->comments[i];
+            if (c->length > 0) {
+                if (strncasecmp ((const char *)c->entry, "replaygain_album_gain=", 22)
+                && strncasecmp ((const char *)c->entry, "replaygain_album_peak=", 22)
+                && strncasecmp ((const char *)c->entry, "replaygain_track_gain=", 22)
+                && strncasecmp ((const char *)c->entry, "replaygain_track_peak=", 22)) {
+                    FLAC__metadata_object_vorbiscomment_delete_comment (data, i);
+                    vc_comments--;
+                    i--;
+                }
+            }
+        }
     }
     else {
         // create new and add to chain
-		data = FLAC__metadata_object_new(FLAC__METADATA_TYPE_VORBIS_COMMENT);
+        data = FLAC__metadata_object_new(FLAC__METADATA_TYPE_VORBIS_COMMENT);
         if (!data) {
             fprintf (stderr, "flac: failed to allocate new vorbis comment block\n");
             goto error;
@@ -962,6 +1029,7 @@ cflac_write_metadata (DB_playItem_t *it) {
         }
     }
 
+    deadbeef->pl_lock ();
     DB_metaInfo_t *m = deadbeef->pl_get_metadata_head (it);
     while (m) {
         if (m->key[0] != ':') {
@@ -1000,6 +1068,8 @@ cflac_write_metadata (DB_playItem_t *it) {
         }
         m = m->next;
     }
+
+    deadbeef->pl_unlock ();
 
 #if 0 // fetching covers is broken, disabling for 0.5.2
     // check if we have embedded cover
@@ -1098,10 +1168,17 @@ error2:
     }
 #endif
 
-    if (!FLAC__metadata_chain_write (chain, 1, 0)) {
-        trace ("cflac_write_metadata: FLAC__metadata_chain_write failed\n");
+    if (!isogg)
+        res = FLAC__metadata_chain_write (chain, 1, 0);
+#if USE_OGGEDIT
+    else
+        res = cflac_write_metadata_ogg(it, &data->data.vorbis_comment);
+#endif
+    if (res) {
+        trace ("cflac_write_metadata: failed to write tags: code %d\n", res);
         goto error;
     }
+
     err = 0;
 error:
     FLAC__metadata_iterator_delete (iter);
@@ -1124,22 +1201,37 @@ static DB_decoder_t plugin = {
     .plugin.id = "stdflac",
     .plugin.name = "FLAC decoder",
     .plugin.descr = "FLAC decoder using libFLAC",
-    .plugin.copyright = 
-        "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+    .plugin.copyright =
+        "Copyright (C) 2009-2013 Alexey Yakovenko et al.\n"
+        "Uses libFLAC (C) Copyright (C) 2000,2001,2002,2003,2004,2005,2006,2007  Josh Coalson\n"
+        "Uses libogg Copyright (c) 2002, Xiph.org Foundation\n"
         "\n"
-        "This program is free software; you can redistribute it and/or\n"
-        "modify it under the terms of the GNU General Public License\n"
-        "as published by the Free Software Foundation; either version 2\n"
-        "of the License, or (at your option) any later version.\n"
+        "Redistribution and use in source and binary forms, with or without\n"
+        "modification, are permitted provided that the following conditions\n"
+        "are met:\n"
         "\n"
-        "This program is distributed in the hope that it will be useful,\n"
-        "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
-        "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
-        "GNU General Public License for more details.\n"
+        "- Redistributions of source code must retain the above copyright\n"
+        "notice, this list of conditions and the following disclaimer.\n"
         "\n"
-        "You should have received a copy of the GNU General Public License\n"
-        "along with this program; if not, write to the Free Software\n"
-        "Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.\n"
+        "- Redistributions in binary form must reproduce the above copyright\n"
+        "notice, this list of conditions and the following disclaimer in the\n"
+        "documentation and/or other materials provided with the distribution.\n"
+        "\n"
+        "- Neither the name of the DeaDBeeF Player nor the names of its\n"
+        "contributors may be used to endorse or promote products derived from\n"
+        "this software without specific prior written permission.\n"
+        "\n"
+        "THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS\n"
+        "``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT\n"
+        "LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR\n"
+        "A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE FOUNDATION OR\n"
+        "CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,\n"
+        "EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,\n"
+        "PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR\n"
+        "PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF\n"
+        "LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING\n"
+        "NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\n"
+        "SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n"
     ,
     .plugin.website = "http://deadbeef.sf.net",
     .open = cflac_open,

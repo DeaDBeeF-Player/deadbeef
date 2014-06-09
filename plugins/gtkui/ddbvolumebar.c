@@ -266,17 +266,6 @@ on_volumebar_button_release_event      (GtkWidget       *widget,
   return FALSE;
 }
 
-void
-volumebar_notify_changed (void) {
-    GtkWidget *widget = lookup_widget (mainwin, "volumebar");
-    gtk_widget_queue_draw (widget);
-    char s[100];
-    int db = deadbeef->volume_get_db ();
-    snprintf (s, sizeof (s), "%s%ddB", db < 0 ? "" : "+", db);
-    gtk_widget_set_tooltip_text (widget, s);
-    gtk_widget_trigger_tooltip_query (widget);
-}
-
 gboolean
 on_volumebar_scroll_event              (GtkWidget       *widget,
                                         GdkEventScroll        *event)
@@ -296,7 +285,7 @@ on_volumebar_scroll_event              (GtkWidget       *widget,
         vol = -range;
     }
     deadbeef->volume_set_db (vol);
-    GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
+    GtkWidget *volumebar = DDB_VOLUMEBAR (widget);
     gtk_widget_queue_draw (widget);
     char s[100];
     int db = deadbeef->volume_get_db ();
@@ -311,3 +300,51 @@ on_volumebar_configure_event (GtkWidget *widget, GdkEventConfigure *event) {
     gtkui_init_theme_colors ();
     return FALSE;
 }
+
+static gboolean
+on_evbox_button_press_event          (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data)
+{
+    return gtk_widget_event (GTK_WIDGET (user_data), (GdkEvent *)event);
+}
+
+static gboolean
+on_evbox_button_release_event        (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data)
+{
+    return gtk_widget_event (GTK_WIDGET (user_data), (GdkEvent *)event);
+}
+
+static gboolean
+on_evbox_motion_notify_event         (GtkWidget       *widget,
+                                        GdkEventMotion  *event,
+                                        gpointer         user_data)
+{
+    return gtk_widget_event (GTK_WIDGET (user_data), (GdkEvent *)event);
+}
+
+static gboolean
+on_evbox_scroll_event                (GtkWidget       *widget,
+                                        GdkEvent        *event,
+                                        gpointer         user_data) {
+    return gtk_widget_event (GTK_WIDGET (user_data), (GdkEvent *)event);
+}
+
+void
+ddb_volumebar_init_signals (DdbVolumeBar *vb, GtkWidget *evbox) {
+  g_signal_connect ((gpointer) evbox, "button_press_event",
+                    G_CALLBACK (on_evbox_button_press_event),
+                    vb);
+  g_signal_connect ((gpointer) evbox, "button_release_event",
+                    G_CALLBACK (on_evbox_button_release_event),
+                    vb);
+  g_signal_connect ((gpointer) evbox, "scroll_event",
+                    G_CALLBACK (on_evbox_scroll_event),
+                    vb);
+  g_signal_connect ((gpointer) evbox, "motion_notify_event",
+                    G_CALLBACK (on_evbox_motion_notify_event),
+                    vb);
+}
+

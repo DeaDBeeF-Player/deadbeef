@@ -52,7 +52,6 @@ static gboolean ddb_seekbar_real_button_press_event (GtkWidget* base, GdkEventBu
 static gboolean ddb_seekbar_real_button_release_event (GtkWidget* base, GdkEventButton* event);
 static gboolean ddb_seekbar_real_motion_notify_event (GtkWidget* base, GdkEventMotion* event);
 static gboolean ddb_seekbar_real_configure_event (GtkWidget* base, GdkEventConfigure* event);
-DdbSeekbar* ddb_seekbar_new (void);
 DdbSeekbar* ddb_seekbar_construct (GType object_type);
 static GObject * ddb_seekbar_constructor (GType type, guint n_construct_properties, GObjectConstructParam * construct_properties);
 
@@ -158,8 +157,8 @@ DdbSeekbar* ddb_seekbar_construct (GType object_type) {
 }
 
 
-DdbSeekbar* ddb_seekbar_new (void) {
-	return ddb_seekbar_construct (DDB_TYPE_SEEKBAR);
+GtkWidget* ddb_seekbar_new (void) {
+	return GTK_WIDGET (ddb_seekbar_construct (DDB_TYPE_SEEKBAR));
 }
 
 
@@ -331,7 +330,7 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
     cairo_fill (cr);
     cairo_reset_clip (cr);
 
-    if ((self->seekbar_moving || self->seekbar_moved > 0.0) && trk) {
+    if (!gtkui_disable_seekbar_overlay && (self->seekbar_moving || self->seekbar_moved > 0.0) && trk) {
         float time = 0;
         float dur = deadbeef->pl_get_item_duration (trk);
 
@@ -439,23 +438,65 @@ on_seekbar_button_release_event        (GtkWidget       *widget,
     self->seekbar_moved = 1.0;
     DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
     if (trk) {
-        GtkAllocation a;
-        gtk_widget_get_allocation (widget, &a);
-        float time = (event->x - a.x) * deadbeef->pl_get_item_duration (trk) / (a.width);
-        if (time < 0) {
-            time = 0;
+        if (deadbeef->pl_get_item_duration (trk) >= 0) {
+            GtkAllocation a;
+            gtk_widget_get_allocation (widget, &a);
+            float time = (event->x - a.x) * deadbeef->pl_get_item_duration (trk) / (a.width);
+            if (time < 0) {
+                time = 0;
+            }
+            deadbeef->sendmessage (DB_EV_SEEK, 0, time * 1000, 0);
         }
-        deadbeef->sendmessage (DB_EV_SEEK, 0, time * 1000, 0);
         deadbeef->pl_item_unref (trk);
     }
     gtk_widget_queue_draw (widget);
     return FALSE;
 }
 
-void
-seekbar_redraw (void) {
-    GtkWidget *widget = lookup_widget (mainwin, "seekbar");
-    gtk_widget_queue_draw (widget);
+static gboolean
+on_evbox_button_press_event          (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data)
+{
+    return gtk_widget_event (GTK_WIDGET (user_data), (GdkEvent *)event);
 }
 
+static gboolean
+on_evbox_button_release_event        (GtkWidget       *widget,
+                                        GdkEventButton  *event,
+                                        gpointer         user_data)
+{
+    return gtk_widget_event (GTK_WIDGET (user_data), (GdkEvent *)event);
+}
+
+static gboolean
+on_evbox_motion_notify_event         (GtkWidget       *widget,
+                                        GdkEventMotion  *event,
+                                        gpointer         user_data)
+{
+    return gtk_widget_event (GTK_WIDGET (user_data), (GdkEvent *)event);
+}
+
+static gboolean
+on_evbox_scroll_event                (GtkWidget       *widget,
+                                        GdkEvent        *event,
+                                        gpointer         user_data) {
+    return gtk_widget_event (GTK_WIDGET (user_data), (GdkEvent *)event);
+}
+
+void
+ddb_seekbar_init_signals (DdbSeekbar *sb, GtkWidget *evbox) {
+  g_signal_connect ((gpointer) evbox, "button_press_event",
+                    G_CALLBACK (on_evbox_button_press_event),
+                    sb);
+  g_signal_connect ((gpointer) evbox, "button_release_event",
+                    G_CALLBACK (on_evbox_button_release_event),
+                    sb);
+  g_signal_connect ((gpointer) evbox, "scroll_event",
+                    G_CALLBACK (on_evbox_scroll_event),
+                    sb);
+  g_signal_connect ((gpointer) evbox, "motion_notify_event",
+                    G_CALLBACK (on_evbox_motion_notify_event),
+                    sb);
+}
 

@@ -1,53 +1,61 @@
 /*
-    DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
+    GameMusicEmu plugin for DeaDBeeF
+    Copyright (C) 2009-2014 Alexey Yakovenko <waker@users.sourceforge.net>
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 2 of the License, or
-    (at your option) any later version.
+    This software is provided 'as-is', without any express or implied
+    warranty.  In no event will the authors be held liable for any damages
+    arising from the use of this software.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    Permission is granted to anyone to use this software for any purpose,
+    including commercial applications, and to alter it and redistribute it
+    freely, subject to the following restrictions:
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+
+    2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+
+    3. This notice may not be removed or altered from any source distribution.
 */
+
+#ifdef HAVE_CONFIG_H
+#  include "../../config.h"
+#endif
 #include <stdio.h>
+#include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 #include "gme/gme.h"
 #include <zlib.h>
 #include "../../deadbeef.h"
-
-int _Unwind_Resume_or_Rethrow;
-int _Unwind_RaiseException;
-int _Unwind_GetLanguageSpecificData;
-int _Unwind_Resume;
-int _Unwind_DeleteException;
-int _Unwind_GetTextRelBase;
-int _Unwind_SetIP;
-int _Unwind_GetDataRelBase;
-int _Unwind_GetRegionStart;
-int _Unwind_SetGR;
-int _Unwind_GetIPInfo;
+#if HAVE_SYS_CDEFS_H
+#include <sys/cdefs.h>
+#endif
+#if HAVE_SYS_SYSLIMITS_H
+#include <sys/syslimits.h>
+#endif
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
+
+// how big vgz can be?
+#define MAX_REMOTE_GZ_FILE 0x100000
 
 static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 static int conf_fadeout = 10;
 static int conf_loopcount = 2;
+static int chip_voices = 0xff;
+static int chip_voices_changed = 0;
 
 typedef struct {
     DB_fileinfo_t info;
     Music_Emu *emu;
     int reallength;
-    uint32_t cgme_voicemask;
     float duration; // of current song
 } gme_fileinfo_t;
 
@@ -60,14 +68,43 @@ cgme_open (uint32_t hint) {
 
 static int
 read_gzfile (const char *fname, char **buffer, int *size) {
-    FILE *fp = fopen (fname, "rb");
+    int fd = -1;
+    DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
-        trace ("failed to fopen %s\n", fname);
+        trace ("gme read_gzfile: failed to fopen %s\n", fname);
         return -1;
     }
-    fseek (fp, 0, SEEK_END);
-    size_t sz = ftell (fp);
-    fclose (fp);
+
+    int64_t sz = deadbeef->fgetlength (fp);
+    if (fp->vfs && fp->vfs->plugin.id && strcmp (fp->vfs->plugin.id, "vfs_stdio") && sz > 0 && sz <= MAX_REMOTE_GZ_FILE) {
+        trace ("gme read_gzfile: reading %s of size %lld and writing to temp file\n", fname, sz);
+        char buffer[sz];
+        if (sz == deadbeef->fread (buffer, 1, sz, fp)) {
+            const char *tmp = getenv ("TMPDIR");
+            if (!tmp) {
+                tmp = "/tmp";
+            }
+            char nm[PATH_MAX];
+#ifdef ANDROID
+            snprintf (nm, sizeof (nm), "%s/ddbgmeXXXXXX", tmp);
+            fd = mkstemp (nm);
+#else
+            snprintf (nm, sizeof (nm), "%s/ddbgmeXXXXXX.vgz", tmp);
+            fd = mkstemps (nm, 4);
+#endif
+            if (fd == -1 || sz != write (fd, buffer, sz)) {
+                trace ("gme read_gzfile: failed to write temp file\n");
+                if (fd != -1) {
+                    close (fd);
+                }
+            }
+            if (fd != -1) {
+                lseek (fd, 0, SEEK_SET);
+            }
+        }
+    }
+
+    deadbeef->fclose (fp);
 
     sz *= 2;
     int readsize = sz;
@@ -76,7 +113,7 @@ read_gzfile (const char *fname, char **buffer, int *size) {
         return -1;
     }
 
-    gzFile gz = gzopen (fname, "rb");
+    gzFile gz = fd == -1 ? gzopen (fname, "rb") : gzdopen (fd, "r");
     if (!gz) {
         trace ("failed to gzopen %s\n", fname);
         return -1;
@@ -89,6 +126,7 @@ read_gzfile (const char *fname, char **buffer, int *size) {
         if (nb < 0) {
             free (*buffer);
             trace ("failed to gzread from %s\n", fname);
+            gzclose (gz);
             return -1;
         }
         if (nb > 0) {
@@ -162,7 +200,8 @@ cgme_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         trace ("failed with error %d\n", res);
         return -1;
     }
-    gme_mute_voices (info->emu, info->cgme_voicemask);
+    chip_voices = deadbeef->conf_get_int ("chip.voices", 0xff);
+    gme_mute_voices (info->emu, chip_voices^0xff);
     gme_start_track (info->emu, deadbeef->pl_find_meta_int (it, ":TRACKNUM", 0));
 
 #ifdef GME_VERSION_055
@@ -206,6 +245,13 @@ cgme_read (DB_fileinfo_t *_info, char *bytes, int size) {
         // DON'T ajust size, buffer must always be po2
         //size = t * (float)info->samplerate * 4;
     }
+
+    if (chip_voices_changed) {
+        chip_voices = deadbeef->conf_get_int ("chip.voices", 0xff);
+        chip_voices_changed = 0;
+        gme_mute_voices (info->emu, chip_voices^0xff);
+    }
+
     if (gme_play (info->emu, size/2, (short*)bytes)) {
         return 0;
     }
@@ -393,6 +439,9 @@ cgme_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
                         }
                     }
                 }
+                if (cnt > 1) {
+                    deadbeef->pl_set_item_flags (it, deadbeef->pl_get_item_flags (it) | DDB_IS_SUBTRACK);
+                }
                 after = deadbeef->plt_insert_item (plt, after, it);
                 deadbeef->pl_item_unref (it);
             }
@@ -415,25 +464,6 @@ static const char * exts[]=
 	"ay","gbs","gym","hes","kss","nsf","nsfe","sap","spc","vgm","vgz",NULL
 };
 
-#if 0
-static int
-cgme_numvoices (void) {
-    if (!emu) {
-        return 0;
-    }
-    return gme_voice_count (emu);
-}
-
-static void
-cgme_mutevoice (int voice, int mute) {
-    cgme_voicemask &= ~ (1<<voice);
-    cgme_voicemask |= ((mute ? 1 : 0) << voice);
-    if (emu) {
-        gme_mute_voices (emu, cgme_voicemask);
-    }
-}
-#endif
-
 static int
 cgme_start (void) {
     conf_fadeout = deadbeef->conf_get_int ("gme.fadeout", 10);
@@ -452,6 +482,9 @@ cgme_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     case DB_EV_CONFIGCHANGED:
         conf_fadeout = deadbeef->conf_get_int ("gme.fadeout", 10);
         conf_loopcount = deadbeef->conf_get_int ("gme.loopcount", 2);
+        if (chip_voices != deadbeef->conf_get_int ("chip.voices", 0xff)) {
+            chip_voices_changed = 1;
+        }
         break;
     }
     return 0;

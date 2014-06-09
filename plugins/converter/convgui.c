@@ -41,6 +41,8 @@ DB_functions_t *deadbeef;
 ddb_converter_t *converter_plugin;
 ddb_gtkui_t *gtkui_plugin;
 
+static int converter_active;
+
 typedef struct {
     GtkWidget *converter;
     ddb_encoder_preset_t *current_encoder_preset;
@@ -335,7 +337,7 @@ on_write_to_source_folder_toggled      (GtkToggleButton *togglebutton,
 
 static gboolean
 converter_show_cb (void *data) {
-    int ctx = (int)data;
+    int ctx = (intptr_t)data;
     converter_ctx_t *conv = malloc (sizeof (converter_ctx_t));
     current_ctx = conv;
     memset (conv, 0, sizeof (converter_ctx_t));
@@ -474,11 +476,16 @@ converter_show_cb (void *data) {
         current_ctx = NULL;
         break;
     }
+    converter_active = 0;
     return FALSE;
 }
 
 static int
 converter_show (DB_plugin_action_t *act, int ctx) {
+    if (converter_active) {
+        return -1;
+    }
+    converter_active = 1;
     if (converter_plugin->misc.plugin.version_minor >= 1) {
         // reload all presets
         converter_plugin->free_encoder_presets ();
@@ -487,7 +494,7 @@ converter_show (DB_plugin_action_t *act, int ctx) {
         converter_plugin->load_dsp_presets ();
     }
     // this can be called from non-gtk thread
-    gdk_threads_add_idle (converter_show_cb, (void *)ctx);
+    gdk_threads_add_idle (converter_show_cb, (void *)(intptr_t)ctx);
     return 0;
 }
 

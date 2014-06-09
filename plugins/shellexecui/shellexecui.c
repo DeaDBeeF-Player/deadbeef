@@ -1,5 +1,7 @@
 /*
+    ShellExec GUI plugin for DeaDBeeF Player
     Copyright (C) 2012 Azeem Arshad <kr00r4n@gmail.com>
+    Copyright (C) 2013-2014 Alexey Yakovenko
     
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -362,7 +364,7 @@ shellexecui_action_callback(DB_plugin_action_t *action, int ctx) {
 }
 
 static DB_plugin_action_t shellexecui_action = {
-    .title = "Edit/Configure custom shell commands",
+    .title = "Edit/Configure Custom Shell Commands",
     .name = "shellexec_conf",
     .flags = DB_ACTION_COMMON | DB_ACTION_ADD_MENU,
     .callback2 = shellexecui_action_callback,
@@ -408,7 +410,9 @@ static DB_misc_t plugin = {
 #endif
     .plugin.descr = "A GTK UI for the Shellexec plugin",
     .plugin.copyright = 
+        "ShellExec GUI plugin for DeaDBeeF Player\n"
         "Copyright (C) 2012 Azeem Arshad <kr00r4n@gmail.com>\n"
+        "Copyright (C) 2013-2014 Alexey Yakovenko\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
         "modify it under the terms of the GNU General Public License\n"

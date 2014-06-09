@@ -880,26 +880,6 @@ void
 on_wv_strip_id3v1_toggled              (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
 
-gboolean
-on_mainwin_button_press_event          (GtkWidget       *widget,
-                                        GdkEventButton  *event,
-                                        gpointer         user_data);
-
-gboolean
-on_mainwin_button_release_event        (GtkWidget       *widget,
-                                        GdkEventButton  *event,
-                                        gpointer         user_data);
-
-gboolean
-on_mainwin_scroll_event                (GtkWidget       *widget,
-                                        GdkEvent        *event,
-                                        gpointer         user_data);
-
-gboolean
-on_mainwin_motion_notify_event         (GtkWidget       *widget,
-                                        GdkEventMotion  *event,
-                                        gpointer         user_data);
-
 GtkWidget*
 create_seekbar (gchar *widget_name, gchar *string1, gchar *string2,
                 gint int1, gint int2);
@@ -1307,4 +1287,17 @@ on_auto_size_columns_toggled           (GtkToggleButton *togglebutton,
 
 void
 on_searchentry_activate                (GtkEntry        *entry,
+                                        gpointer         user_data);
+
+void
+on_stop_after_album_activate           (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_reset_autostopalbum_toggled         (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+gboolean
+on_mainwin_button_press_event          (GtkWidget       *widget,
+                                        GdkEventButton  *event,
                                         gpointer         user_data);

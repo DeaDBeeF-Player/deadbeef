@@ -30,7 +30,7 @@
 #include <stdlib.h>
 #include "deadbeef.h"
 #include "premix.h"
-#include "optmath.h"
+#include "fastftoi.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)

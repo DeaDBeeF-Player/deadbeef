@@ -71,6 +71,7 @@ extern "C" {
 
 // api version history:
 // 9.9 -- devel
+// 1.6 -- deadbeef-0.6.1
 // 1.5 -- deadbeef-0.6
 // 1.4 -- deadbeef-0.5.5
 // 1.3 -- deadbeef-0.5.3
@@ -90,44 +91,69 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 1
-#define DB_API_VERSION_MINOR 5
+#define DB_API_VERSION_MINOR 6
+
+#define DDB_DEPRECATED(x)
+
+#ifdef __GNUC__
+// avoid including glibc headers, this is not very portable
+#if defined __GNUC__ && defined __GNUC_MINOR__
+# define __GNUC_PREREQ(maj, min) \
+	((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
+#else
+# define __GNUC_PREREQ(maj, min) 0
+#endif
+#undef DDB_DEPRECATED
+#if __GNUC_PREREQ(4,5)
+#define DDB_DEPRECATED(x) __attribute__ ((deprecated(x)))
+#else
+#define DDB_DEPRECATED(x) __attribute__ ((deprecated))
+#endif
+#endif
+
 
 #ifndef DDB_API_LEVEL
 #define DDB_API_LEVEL DB_API_VERSION_MINOR
 #endif
 
+#if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 6)
+#define DEPRECATED_16 DDB_DEPRECATED("since deadbeef API 1.6")
+#else
+#define DEPRECATED_16
+#endif
+
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 5)
-#define DEPRECATED_15 __attribute__ ((deprecated("since deadbeef API 1.5")))
+#define DEPRECATED_15 DDB_DEPRECATED("since deadbeef API 1.5")
 #else
 #define DEPRECATED_15
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 4)
-#define DEPRECATED_14 __attribute__ ((deprecated("since deadbeef API 1.4")))
+#define DEPRECATED_14 DDB_DEPRECATED("since deadbeef API 1.4")
 #else
 #define DEPRECATED_14
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 3)
-#define DEPRECATED_13 __attribute__ ((deprecated("since deadbeef API 1.3")))
+#define DEPRECATED_13 DDB_DEPRECATED("since deadbeef API 1.3")
 #else
 #define DEPRECATED_13
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 2)
-#define DEPRECATED_12 __attribute__ ((deprecated("since deadbeef API 1.2")))
+#define DEPRECATED_12 DDB_DEPRECATED("since deadbeef API 1.2")
 #else
 #define DEPRECATED_12
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 1)
-#define DEPRECATED_11 __attribute__ ((deprecated("since deadbeef API 1.1")))
+#define DEPRECATED_11 DDB_DEPRECATED("since deadbeef API 1.1")
 #else
 #define DEPRECATED_11
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 0)
-#define DEPRECATED __attribute__ ((deprecated))
+#define DEPRECATED DDB_DEPRECATED
 #else
 #define DEPRECATED
 #endif
@@ -526,7 +552,7 @@ typedef struct {
     void (*plt_move) (int from, int before);
 
     // playlist saving and loading
-    DB_playItem_t * (*plt_load) (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
+    DB_playItem_t * (*plt_load) (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data) DEPRECATED_15;
     int (*plt_save) (ddb_playlist_t *plt, DB_playItem_t *first, DB_playItem_t *last, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data);
 
     ddb_playlist_t *(*plt_get_for_idx) (int idx);
@@ -997,6 +1023,14 @@ typedef struct {
     // release the lock for adding files to playlist
     // end must be called when add files operation is finished
     void (*plt_add_files_end) (ddb_playlist_t *plt, int visibility);
+
+    // deselect all tracks in playlist
+    void (*plt_deselect_all) (ddb_playlist_t *plt);
+#endif
+    // since 1.6
+#if (DDB_API_LEVEL >= 6)
+    void (*plt_set_scroll) (ddb_playlist_t *plt, int scroll);
+    int (*plt_get_scroll) (ddb_playlist_t *plt);
 #endif
 } DB_functions_t;
 
@@ -1346,8 +1380,15 @@ typedef struct DB_vfs_s {
     // in icy protocol
     void (*set_track) (DB_FILE *f, DB_playItem_t *it);
 
-// folder access, follows dirent API, and uses dirent data structures
+    // folder access, follows dirent API, and uses dirent data structures
     int (*scandir) (const char *dir, struct dirent ***namelist, int (*selector) (const struct dirent *), int (*cmp) (const struct dirent **, const struct dirent **));
+
+#if (DDB_API_LEVEL >= 6)
+    // returns URI scheme for a given file name, e.g. "zip://"
+    // can be NULL
+    // can return NULL
+    const char *(*get_scheme_for_name) (const char *fname);
+#endif
 } DB_vfs_t;
 
 // gui plugin
@@ -1403,6 +1444,9 @@ typedef struct DB_playlist_s {
     DB_playItem_t * (*load2) (int visibility, ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort);
 #endif
 } DB_playlist_t;
+
+#undef DDB_DEPRECATED
+#undef DEPRECATED
 
 #ifdef __cplusplus
 }

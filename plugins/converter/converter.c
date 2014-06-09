@@ -802,6 +802,8 @@ check_dir (const char *dir, mode_t mode)
 
 int
 convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float, ddb_encoder_preset_t *encoder_preset, ddb_dsp_preset_t *dsp_preset, int *abort) {
+    char *buffer = NULL;
+    char *dspbuffer = NULL;
     if (deadbeef->pl_get_item_duration (it) <= 0) {
         deadbeef->pl_lock ();
         fprintf (stderr, "converter: stream %s doesn't have finite length, skipped\n", deadbeef->pl_find_meta (it, ":URI"));
@@ -945,9 +947,9 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
             int bs = 2000 * samplesize;
             // expected buffer size after worst-case dsp
             int dspsize = bs/samplesize*sizeof(float)*8*48;
-            char buffer[dspsize];
+            char *buffer = malloc (dspsize);
             // account for up to float32 7.1 resampled to 48x ratio
-            char dspbuffer[dspsize];
+            char *dspbuffer = malloc (dspsize);
             int eof = 0;
             for (;;) {
                 if (eof) {
@@ -973,7 +975,7 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
                     ddb_dsp_context_t *dsp = dsp_preset->chain;
                     int frames = sz / samplesize;
                     while (dsp) {
-                        frames = dsp->plugin->process (dsp, (float *)dspbuffer, frames, sizeof (dspbuffer) / (fmt.channels * 4), &fmt, NULL);
+                        frames = dsp->plugin->process (dsp, (float *)dspbuffer, frames, dspsize / (fmt.channels * 4), &fmt, NULL);
                         if (frames <= 0) {
                             break;
                         }
@@ -1073,6 +1075,14 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
     }
     err = 0;
 error:
+    if (buffer) {
+        free (buffer);
+        buffer = NULL;
+    }
+    if (dspbuffer) {
+        free (dspbuffer);
+        dspbuffer = NULL;
+    }
     if (temp_file != -1 && (!enc_pipe || temp_file != fileno (enc_pipe))) {
         close (temp_file);
         temp_file = -1;
@@ -1158,20 +1168,18 @@ error:
     if (encoder_preset->tag_oggvorbis) {
         // find flac decoder plugin
         DB_decoder_t **plugs = deadbeef->plug_get_decoder_list ();
-        DB_decoder_t *ogg = NULL;
+        int res = -1;
         for (int i = 0; plugs[i]; i++) {
-            if (!strcmp (plugs[i]->plugin.id, "stdogg")) {
-                ogg = plugs[i];
-                break;
+            if (!strcmp (plugs[i]->plugin.id, "stdogg")
+                    || !strcmp (plugs[i]->plugin.id, "stdopus")) {
+                res = plugs[i]->write_metadata (out_it);
+                if (!res) {
+                    break;
+                }
             }
         }
-        if (!ogg) {
-            fprintf (stderr, "converter: ogg plugin not found, cannot write ogg metadata\n");
-        }
-        else {
-            if (0 != ogg->write_metadata (out_it)) {
-                fprintf (stderr, "converter: failed to write ogg metadata, not an ogg file?\n");
-            }
+        if (res) {
+            fprintf (stderr, "converter: failed to write ogg metadata, not an ogg file?\n");
         }
     }
     if (out_it) {

@@ -1,8 +1,8 @@
 /*
     Shellexec plugin for DeaDBeeF
-    Copyright (C) 2010-2012 Deadbeef team
+    Copyright (C) 2010-2014 Deadbeef team
     Original developer Viktor Semykin <thesame.ml@gmail.com>
-    Maintainance, minor improvements Alexey Yakovenko <waker@users.sf.net>
+    Maintenance, minor improvements Alexey Yakovenko <waker@users.sf.net>
     GUI support and bugfixing Azeem Arshad <kr00r4n@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
@@ -88,8 +88,27 @@ static int shx_exec_track_cmd (Shx_action_t *action, DB_playItem_t *it) {
         return -1;
     }
     strcat (cmd, "&");
+
+    // replace \' with '"'"'
+    size_t l = strlen (cmd);
+    size_t remaining = _POSIX_ARG_MAX - l - 1;
+    for (int i = 0; cmd[i]; i++) {
+        if (cmd[i] == '\\' && cmd[i+1] == '\'' && remaining >= 3) {
+            memmove (&cmd[i+5], &cmd[i+2], l - i + 1 - 2);
+            memcpy (&cmd[i], "'\"'\"'", 5);
+            l += 3;
+            remaining -= 3;
+            i += 5;
+        }
+        else if (remaining < 3) {
+            fprintf (stderr, "shellexec: command is too long.\n");
+            return -1;
+        }
+    }
+
     trace ("%s\n", cmd);
     res = system (cmd);
+    return 0;
 }
 
 static int
@@ -442,9 +461,10 @@ static Shx_plugin_t plugin = {
     "this would show the name of selected track in notification popup"
     ,
     .misc.plugin.copyright = 
-        "Copyright (C) 2010-2012 Deadbeef team\n"
+        "Shellexec plugin for DeaDBeeF\n"
+        "Copyright (C) 2010-2014 Deadbeef team\n"
         "Original developer Viktor Semykin <thesame.ml@gmail.com>\n"
-        "Maintainance, minor improvements Alexey Yakovenko <waker@users.sf.net>\n"
+        "Maintenance, minor improvements Alexey Yakovenko <waker@users.sf.net>\n"
         "GUI support and bugfixing Azeem Arshad <kr00r4n@gmail.com>"
         "\n"
         "This program is free software; you can redistribute it and/or\n"

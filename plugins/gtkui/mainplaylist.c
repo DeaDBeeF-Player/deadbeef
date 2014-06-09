@@ -64,9 +64,6 @@ main_get_cursor (void) {
 
 static void
 main_set_cursor (int cursor) {
-    char conf[100];
-    snprintf (conf, sizeof (conf), "playlist.cursor.%d", deadbeef->plt_get_curr_idx ());
-    deadbeef->conf_set_int (conf, cursor);
     return deadbeef->pl_set_cursor (PL_MAIN, cursor);
 }
 
@@ -253,6 +250,10 @@ main_column_size_changed (DdbListview *listview, int col) {
         return;
     }
     if (inf->id == DB_COLUMN_ALBUM_ART) {
+        if (listview->scrollpos > 0) {
+            int pos = ddb_listview_get_row_pos (listview, listview->ref_point);
+            gtk_range_set_value (GTK_RANGE (listview->scrollbar), pos - listview->ref_point_offset);
+        }
         coverart_reset_queue ();
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
         if (plt) {
@@ -275,10 +276,11 @@ void main_col_free_user_data (void *data) {
 void
 main_vscroll_changed (int pos) {
     coverart_reset_queue ();
-    int curr = deadbeef->plt_get_curr_idx ();
-    char conf[100];
-    snprintf (conf, sizeof (conf), "playlist.scroll.%d", curr);
-    deadbeef->conf_set_int (conf, pos);
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_set_scroll (plt, pos);
+        deadbeef->plt_unref (plt);
+    }
 }
 
 void
@@ -347,7 +349,7 @@ main_playlist_init (GtkWidget *widget) {
     DB_conf_item_t *col = deadbeef->conf_find ("playlist.column.", NULL);
     if (!col) {
         // create default set of columns
-        add_column_helper (listview, _("Playing"), 50, DB_COLUMN_PLAYING, NULL, 0);
+        add_column_helper (listview, "♫", 50, DB_COLUMN_PLAYING, NULL, 0);
         add_column_helper (listview, _("Artist / Album"), 150, -1, "%a - %b", 0);
         add_column_helper (listview, _("Track No"), 50, -1, "%n", 1);
         add_column_helper (listview, _("Title"), 150, -1, "%t", 0);
@@ -375,6 +377,8 @@ main_playlist_init (GtkWidget *widget) {
     strncpy (group_by_str, deadbeef->conf_get_str_fast ("playlist.group_by", ""), sizeof (group_by_str));
     deadbeef->conf_unlock ();
     group_by_str[sizeof (group_by_str)-1] = 0;
+
+    gtkui_groups_pinned = deadbeef->conf_get_int ("playlist.pin.groups", 0);
 }
 
 void

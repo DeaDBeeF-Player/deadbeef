@@ -215,6 +215,9 @@ gtkui_run_preferences_dlg (void) {
     // reset autostop
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "reset_autostop")), deadbeef->conf_get_int ("playlist.stop_after_current_reset", 0));
 
+    // reset album autostop
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "reset_autostopalbum")), deadbeef->conf_get_int ("playlist.stop_after_album_reset", 0));
+
     // titlebar text
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "titlebar_format_playing")), deadbeef->conf_get_str_fast ("gtkui.titlebar_playing", "%a - %t - DeaDBeeF-%V"));
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "titlebar_format_stopped")), deadbeef->conf_get_str_fast ("gtkui.titlebar_stopped", "DeaDBeeF-%V"));
@@ -333,10 +336,6 @@ gtkui_run_preferences_dlg (void) {
     gtk_widget_set_sensitive (lookup_widget (prefwin, "configure_plugin"), FALSE);
 
     // hotkeys
-//    DB_plugin_t *hotkeys = deadbeef->plug_get_for_id ("hotkeys");
-//    if (hotkeys) {
-//        prefwin_add_hotkeys_tab (prefwin);
-//    }
     prefwin_init_hotkeys (prefwin);
 
     deadbeef->conf_unlock ();
@@ -777,8 +776,6 @@ on_override_bar_colors_toggled         (GtkToggleButton *togglebutton,
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtkui_init_theme_colors ();
     prefwin_init_theme_colors ();
-    seekbar_redraw ();
-    volumebar_redraw ();
     eq_redraw ();
 }
 
@@ -863,19 +860,6 @@ on_proxypassword_changed               (GtkEditable     *editable,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_str ("network.proxy.password", gtk_entry_get_text (GTK_ENTRY (editable)));
-}
-
-
-gboolean
-on_prefwin_key_press_event             (GtkWidget       *widget,
-                                        GdkEventKey     *event,
-                                        gpointer         user_data)
-{
-    if (event->keyval == GDK_Escape) {
-        gtk_widget_hide (widget);
-        gtk_widget_destroy (widget);
-    }
-    return FALSE;
 }
 
 
@@ -1056,7 +1040,7 @@ on_gui_fps_value_changed           (GtkRange        *range,
 {
     int val = gtk_range_get_value (range);
     deadbeef->conf_set_int ("gtkui.refresh_rate", val);
-    gtkui_setup_gui_refresh ();
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 void
@@ -1072,6 +1056,13 @@ on_reset_autostop_toggled              (GtkToggleButton *togglebutton,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("playlist.stop_after_current_reset", gtk_toggle_button_get_active (togglebutton));
+}
+
+void
+on_reset_autostopalbum_toggled         (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("playlist.stop_after_album_reset", gtk_toggle_button_get_active (togglebutton));
 }
 
 

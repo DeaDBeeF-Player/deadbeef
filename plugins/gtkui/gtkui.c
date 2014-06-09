@@ -79,6 +79,10 @@ GtkWidget *traymenu;
 GtkWidget *theme_treeview;
 GtkWidget *theme_button;
 
+static int gtkui_accept_messages = 0;
+
+static gint refresh_timeout = 0;
+
 int fileadded_listener_id;
 int fileadd_beginend_listener_id;
 // overriden API methods
@@ -97,6 +101,9 @@ int gtkui_groups_pinned;
 int gtkui_is_retina = 0;
 #endif
 
+int gtkui_unicode_playstate = 0;
+int gtkui_disable_seekbar_overlay = 0;
+
 #define TRAY_ICON "deadbeef_tray_icon"
 
 // that must be called before gtk_init
@@ -109,7 +116,7 @@ gtkpl_init (void) {
     gtk_box_pack_start (GTK_BOX (vbox1), theme_treeview, FALSE, FALSE, 0);
     gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (theme_treeview), TRUE);
 
-    theme_button = lookup_widget (mainwin, "stopbtn");
+    theme_button = mainwin;//lookup_widget (mainwin, "stopbtn");
 }
 
 void
@@ -129,8 +136,6 @@ struct fromto_t {
 
 static gboolean
 update_win_title_idle (gpointer data);
-static gboolean
-redraw_seekbar_cb (gpointer nothing);
 
 // update status bar and window title
 static int sb_context_id = -1;
@@ -147,7 +152,6 @@ update_songinfo (gpointer ctx) {
     }
     DB_output_t *output = deadbeef->get_output ();
     char sbtext_new[512] = "-";
-    float songpos = last_songpos;
 
     float pl_totaltime = deadbeef->pl_get_totaltime ();
     int daystotal = (int)pl_totaltime / (3600*24);
@@ -173,7 +177,6 @@ update_songinfo (gpointer ctx) {
 
     if (!output || (output->state () == OUTPUT_STATE_STOPPED || !track || !c)) {
         snprintf (sbtext_new, sizeof (sbtext_new), _("Stopped | %d tracks | %s total playtime"), deadbeef->pl_getcount (PL_MAIN), totaltime_str);
-        songpos = 0;
     }
     else {
         float playpos = deadbeef->streamer_get_playpos ();
@@ -193,7 +196,6 @@ update_songinfo (gpointer ctx) {
         }
         int samplerate = c->fmt.samplerate;
         int bitspersample = c->fmt.bps;
-        songpos = playpos;
         //        codec_unlock ();
 
         char t[100];
@@ -238,18 +240,6 @@ update_songinfo (gpointer ctx) {
         gtk_statusbar_push (sb, sb_context_id, sb_text);
     }
 
-    if (mainwin) {
-        GtkWidget *widget = lookup_widget (mainwin, "seekbar");
-        // translate volume to seekbar pixels
-        songpos /= duration;
-        GtkAllocation a;
-        gtk_widget_get_allocation (widget, &a);
-        songpos *= a.width;
-        if (fabs (songpos - last_songpos) > 0.01) {
-            gtk_widget_queue_draw (widget);
-            last_songpos = songpos;
-        }
-    }
     if (track) {
         deadbeef->pl_item_unref (track);
     }
@@ -287,17 +277,6 @@ on_trayicon_scroll_event               (GtkWidget       *widget,
         vol = deadbeef->volume_get_min_db ();
     }
     deadbeef->volume_set_db (vol);
-    volumebar_redraw ();
-
-    //Update volume bar tooltip
-    if (mainwin) {
-        GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
-        char s[100];
-        int db = vol;
-        snprintf (s, sizeof (s), "%s%ddB", db < 0 ? "" : "+", db);
-        gtk_widget_set_tooltip_text (volumebar, s);
-        gtk_widget_trigger_tooltip_query (volumebar);
-    }
 
 #if 0
     char str[100];
@@ -412,7 +391,6 @@ gtkpl_songchanged_wrapper (DB_playItem_t *from, DB_playItem_t *to) {
         deadbeef->pl_item_ref (to);
     }
     g_idle_add (update_win_title_idle, ft);
-    g_idle_add (redraw_seekbar_cb, NULL);
     if (searchwin && gtk_widget_get_window (searchwin)) {
         int iconified = gdk_window_get_state(gtk_widget_get_window (searchwin)) & GDK_WINDOW_STATE_ICONIFIED;
         if (gtk_widget_get_visible (searchwin) && !iconified) {
@@ -492,11 +470,6 @@ playlistchanged_cb (gpointer none) {
     return FALSE;
 }
 
-void
-gtkui_playlist_changed (void) {
-    g_idle_add (playlistchanged_cb, NULL);
-}
-
 static gboolean
 playlistswitch_cb (gpointer none) {
     search_refresh ();
@@ -508,13 +481,6 @@ gtkui_on_frameupdate (gpointer data) {
     update_songinfo (NULL);
 
     return TRUE;
-}
-
-static gboolean
-gtkui_volumechanged_cb (gpointer ctx) {
-    GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
-    gdk_window_invalidate_rect (gtk_widget_get_window (volumebar), NULL, FALSE);
-    return FALSE;
 }
 
 static gboolean
@@ -592,6 +558,19 @@ gtkui_get_curr_playlist_mod (void) {
     return res;
 }
 
+void
+gtkui_setup_gui_refresh (void) {
+    int tm = 1000/gtkui_get_gui_refresh_rate ();
+
+    if (refresh_timeout) {
+        g_source_remove (refresh_timeout);
+        refresh_timeout = 0;
+    }
+
+    refresh_timeout = g_timeout_add (tm, gtkui_on_frameupdate, NULL);
+}
+
+
 static gboolean
 gtkui_on_configchanged (void *data) {
     // order and looping
@@ -617,11 +596,27 @@ gtkui_on_configchanged (void *data) {
     int stop_after_current = deadbeef->conf_get_int ("playlist.stop_after_current", 0);
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "stop_after_current")), stop_after_current ? TRUE : FALSE);
 
+    // stop after current album
+    int stop_after_album = deadbeef->conf_get_int ("playlist.stop_after_album", 0);
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "stop_after_album")), stop_after_album ? TRUE : FALSE);
+
     // embolden current track
     gtkui_embolden_current_track = deadbeef->conf_get_int ("gtkui.embolden_current_track", 0);
 
+    // pin groups
+    gtkui_groups_pinned = deadbeef->conf_get_int ("playlist.pin.groups", 0);
+
+    // play state images
+    gtkui_unicode_playstate = deadbeef->conf_get_int ("gtkui.unicode_playstate", 0);
+
+    // seekbar overlay
+    gtkui_disable_seekbar_overlay = deadbeef->conf_get_int ("gtkui.disable_seekbar_overlay", 0);
+
     // tray icon
     gtkui_update_status_icon (NULL);
+
+    // statusbar refresh
+    gtkui_setup_gui_refresh ();
 
     return FALSE;
 }
@@ -690,16 +685,6 @@ update_win_title_idle (gpointer data) {
     return FALSE;
 }
 
-static gboolean
-redraw_seekbar_cb (gpointer nothing) {
-    int iconified = gdk_window_get_state(gtk_widget_get_window(mainwin)) & GDK_WINDOW_STATE_ICONIFIED;
-    if (!gtk_widget_get_visible (mainwin) || iconified) {
-        return FALSE;
-    }
-    seekbar_redraw ();
-    return FALSE;
-}
-
 int
 gtkui_add_new_playlist (void) {
     int cnt = deadbeef->plt_get_count ();
@@ -732,22 +717,8 @@ gtkui_add_new_playlist (void) {
     return -1;
 }
 
-void
-volumebar_redraw (void) {
-    GtkWidget *volumebar = lookup_widget (mainwin, "volumebar");
-    gdk_window_invalidate_rect (gtk_widget_get_window (volumebar), NULL, FALSE);
-}
-
-//void
-//tabstrip_redraw (void) {
-//    GtkWidget *ts = lookup_widget (mainwin, "tabstrip");
-//    ddb_tabstrip_refresh (DDB_TABSTRIP (ts));
-//}
-
-static gint refresh_timeout = 0;
-
-void
-gtkui_setup_gui_refresh (void) {
+int
+gtkui_get_gui_refresh_rate () {
     int fps = deadbeef->conf_get_int ("gtkui.refresh_rate", 10);
     if (fps < 1) {
         fps = 1;
@@ -755,15 +726,7 @@ gtkui_setup_gui_refresh (void) {
     else if (fps > 30) {
         fps = 30;
     }
-
-    int tm = 1000/fps;
-
-    if (refresh_timeout) {
-        g_source_remove (refresh_timeout);
-        refresh_timeout = 0;
-    }
-
-    refresh_timeout = g_timeout_add (tm, gtkui_on_frameupdate, NULL);
+    return fps;
 }
 
 static void
@@ -782,7 +745,7 @@ add_mainmenu_actions_cb (void *data) {
     return FALSE;
 }
 
-void
+int
 gtkui_thread (void *ctx);
 
 int
@@ -802,6 +765,9 @@ gtkui_plt_load (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, in
 
 int
 gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    if (!gtkui_accept_messages) {
+        return -1;
+    }
     ddb_gtkui_widget_t *rootwidget = w_get_rootwidget ();
     if (rootwidget) {
         send_messages_to_widgets (rootwidget, id, ctx, p1, p2);
@@ -829,14 +795,10 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 //        g_idle_add (paused_cb, NULL);
 //        break;
     case DB_EV_PLAYLISTCHANGED:
-        gtkui_playlist_changed ();
-        break;
-    case DB_EV_VOLUMECHANGED:
-        g_idle_add (gtkui_volumechanged_cb, NULL);
+        g_idle_add (playlistchanged_cb, NULL);
         break;
     case DB_EV_CONFIGCHANGED:
         g_idle_add (gtkui_on_configchanged, NULL);
-        gtkui_groups_pinned = deadbeef->conf_get_int ("playlist.pin.groups",0);
         break;
     case DB_EV_OUTPUTCHANGED:
         g_idle_add (outputchanged_cb, NULL);
@@ -854,6 +816,8 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     return 0;
 }
 
+static const char gtkui_def_layout[] = "vbox expand=\"0 1\" fill=\"1 1\" homogeneous=0 {hbox expand=\"0 1 0\" fill=\"1 1 1\" homogeneous=0 {playtb {} seekbar {} volumebar {} } tabbed_playlist hideheaders=0 {} } ";
+
 static void
 init_widget_layout (void) {
     w_init ();
@@ -862,8 +826,27 @@ init_widget_layout (void) {
     gtk_box_pack_start (GTK_BOX(lookup_widget(mainwin, "plugins_bottom_vbox")), rootwidget->widget, TRUE, TRUE, 0);
 
     // load layout
+    // config var name is defined in DDB_GTKUI_CONF_LAYOUT
+    // gtkui.layout: 0.6.0 and 0.6.1
+    // gtkui.layout.major.minor.point: later versions
+
     char layout[20000];
-    deadbeef->conf_get_str ("gtkui.layout", "tabbed_playlist \"\" { }", layout, sizeof (layout));
+    deadbeef->conf_get_str (DDB_GTKUI_CONF_LAYOUT, "-", layout, sizeof (layout));
+    if (!strcmp (layout, "-")) {
+        // upgrade from 0.6.0 to 0.6.2
+        char layout_060[20000];
+        deadbeef->conf_get_str ("gtkui.layout", "-", layout_060, sizeof (layout_060));
+        if (!strcmp (layout_060, "-")) {
+            // new setup
+            strcpy (layout, gtkui_def_layout);
+        }
+        else {
+            // upgrade with top bar
+            snprintf (layout, sizeof (layout), "vbox expand=\"0 1\" fill=\"1 1\" homogeneous=0 {hbox expand=\"0 1 0\" fill=\"1 1 1\" homogeneous=0 {playtb {} seekbar {} volumebar {} } %s }", layout_060);
+            deadbeef->conf_set_str (DDB_GTKUI_CONF_LAYOUT, layout);
+            deadbeef->conf_save ();
+        }
+    }
 
     ddb_gtkui_widget_t *w = NULL;
     w_create_from_string (layout, &w);
@@ -900,13 +883,12 @@ gtkui_connect_cb (void *none) {
     DB_plugin_t **plugins = deadbeef->plug_get_list ();
     for (int i = 0; plugins[i]; i++) {
         DB_plugin_t *p = plugins[i];
-        if (p->id && !strcmp (p->id, "artwork")) {
+        if (p->id && !strcmp (p->id, "artwork") && p->version_major == 1 && p->version_minor >= 2) {
             trace ("gtkui: found cover-art loader plugin\n");
             coverart_plugin = (DB_artwork_plugin_t *)p;
             break;
         }
     }
-    gtkui_playlist_changed ();
     add_mainmenu_actions ();
     ddb_event_t *e = deadbeef->event_alloc (DB_EV_TRACKINFOCHANGED);
     deadbeef->event_send(e, 0, 0);
@@ -941,18 +923,11 @@ gtkui_add_file_end_cb (ddb_fileadd_data_t *data, void *user_data) {
     }
 }
 
-void
+int
 gtkui_thread (void *ctx) {
 #ifdef __linux__
     prctl (PR_SET_NAME, "deadbeef-gtkui", 0, 0, 0, 0);
 #endif
-#ifndef __APPLE__
-    XInitThreads (); // gtkglext/xcb doesn't work without this
-#endif
-    // let's start some gtk
-    g_thread_init (NULL);
-    add_pixmap_directory (deadbeef->get_pixmap_dir ());
-    gdk_threads_init ();
 
     int argc = 2;
     const char **argv = alloca (sizeof (char *) * argc);
@@ -964,7 +939,16 @@ gtkui_thread (void *ctx) {
     }
 
     gtk_disable_setlocale ();
+    add_pixmap_directory (deadbeef->get_pixmap_dir ());
 
+    // let's start some gtk
+    g_thread_init (NULL);
+#ifndef __FreeBSD__
+    // this call makes gtk_main hang on freebsd for unknown reason
+    // however, if we don't have this call, deadbeef will crash randomly on
+    // gentoo linux
+    gdk_threads_init ();
+#endif
     gtk_init (&argc, (char ***)&argv);
 
     // register widget types
@@ -984,20 +968,12 @@ gtkui_thread (void *ctx) {
     w_reg_widget (_("HBox"), 0, w_hbox_create, "hbox", NULL);
     w_reg_widget (_("VBox"), 0, w_vbox_create, "vbox", NULL);
     w_reg_widget (_("Button"), 0, w_button_create, "button", NULL);
+    w_reg_widget (_("Seekbar"), 0, w_seekbar_create, "seekbar", NULL);
+    w_reg_widget (_("Playback controls"), 0, w_playtb_create, "playtb", NULL);
+    w_reg_widget (_("Volume bar"), 0, w_volumebar_create, "volumebar", NULL);
+    w_reg_widget (_("Chiptune voices"), 0, w_ctvoices_create, "ctvoices", NULL);
 
     mainwin = create_mainwin ();
-
-    // gtk adds default keybindings to GtkWindow, remove them
-    GtkBindingSet *binding_set = gtk_binding_set_by_class (GTK_WINDOW_GET_CLASS(mainwin));
-    gtk_binding_entry_remove (binding_set, GDK_space, 0);
-    gtk_binding_entry_remove (binding_set, GDK_KP_Space, 0);
-    gtk_binding_entry_remove (binding_set, GDK_Return, 0);
-    gtk_binding_entry_remove (binding_set, GDK_ISO_Enter, 0);
-    gtk_binding_entry_remove (binding_set, GDK_KP_Enter, 0);
-    gtk_binding_entry_remove (binding_set, GDK_Tab, GDK_CONTROL_MASK);
-    gtk_binding_entry_remove (binding_set, GDK_Tab, GDK_CONTROL_MASK|GDK_SHIFT_MASK);
-    gtk_binding_entry_remove (binding_set, GDK_KP_Tab, GDK_CONTROL_MASK);
-    gtk_binding_entry_remove (binding_set, GDK_KP_Tab, GDK_CONTROL_MASK|GDK_SHIFT_MASK);
 
     // initialize default hotkey mapping
     if (!deadbeef->conf_get_int ("hotkeys_created", 0)) {
@@ -1076,8 +1052,6 @@ gtkui_thread (void *ctx) {
 
     init_widget_layout ();
 
-    gtkui_setup_gui_refresh ();
-
     char fmt[500];
     char str[600];
     deadbeef->conf_get_str ("gtkui.titlebar_stopped", "DeaDBeeF-%V", fmt, sizeof (fmt));
@@ -1090,6 +1064,8 @@ gtkui_thread (void *ctx) {
     supereq_plugin = deadbeef->plug_get_for_id ("supereq");
 
     gtkui_connect_cb (NULL);
+
+    gtkui_accept_messages = 1;
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 
 #ifdef __APPLE__
@@ -1123,6 +1099,7 @@ gtkui_thread (void *ctx) {
         gtk_widget_destroy (searchwin);
         searchwin = NULL;
     }
+    return 0;
 }
 
 gboolean
@@ -1190,7 +1167,7 @@ gtkui_show_info_window (const char *fname, const char *title, GtkWidget **pwindo
 gboolean
 gtkui_quit_cb (void *ctx) {
     if (deadbeef->have_background_jobs ()) {
-        GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("The player is currently running backgroud tasks. If you quit now, the tasks will be cancelled or interrupted. This may result in data loss."));
+        GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("The player is currently running background tasks. If you quit now, the tasks will be cancelled or interrupted. This may result in data loss."));
         gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (mainwin));
         gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), _("Do you still want to quit?"));
         gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
@@ -1285,7 +1262,7 @@ static DB_plugin_action_t action_quit = {
 };
 
 static DB_plugin_action_t action_delete_from_disk = {
-    .title = "Delete From Disk",
+    .title = "Remove From Disk",
     .name = "delete_from_disk",
     .flags = DB_ACTION_MULTIPLE_TRACKS,
     .callback2 = action_delete_from_disk_handler,
@@ -1326,7 +1303,7 @@ static DB_plugin_action_t action_open_files = {
 
 
 static DB_plugin_action_t action_track_properties = {
-    .title = "Track properties",
+    .title = "Track Properties",
     .name = "track_properties",
     .flags = DB_ACTION_MULTIPLE_TRACKS,
     .callback2 = action_show_track_properties_handler,
@@ -1334,7 +1311,7 @@ static DB_plugin_action_t action_track_properties = {
 };
 
 static DB_plugin_action_t action_show_help = {
-    .title = "Help/Show help page",
+    .title = "Help/Show Help Page",
     .name = "help",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_show_help_handler,
@@ -1342,7 +1319,7 @@ static DB_plugin_action_t action_show_help = {
 };
 
 static DB_plugin_action_t action_playback_loop_cycle = {
-    .title = "Playback/Cycle playback looping mode",
+    .title = "Playback/Cycle Playback Looping Mode",
     .name = "loop_cycle",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_loop_cycle_handler,
@@ -1350,7 +1327,7 @@ static DB_plugin_action_t action_playback_loop_cycle = {
 };
 
 static DB_plugin_action_t action_playback_loop_off = {
-    .title = "Playback/Playback looping - Don't loop",
+    .title = "Playback/Playback Looping - Don't loop",
     .name = "loop_off",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_loop_off_handler,
@@ -1358,7 +1335,7 @@ static DB_plugin_action_t action_playback_loop_off = {
 };
 
 static DB_plugin_action_t action_playback_loop_single = {
-    .title = "Playback/Playback looping - Single track",
+    .title = "Playback/Playback Looping - Single track",
     .name = "loop_track",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_loop_single_handler,
@@ -1366,7 +1343,7 @@ static DB_plugin_action_t action_playback_loop_single = {
 };
 
 static DB_plugin_action_t action_playback_loop_all = {
-    .title = "Playback/Playback looping - All",
+    .title = "Playback/Playback Looping - All",
     .name = "loop_all",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_loop_all_handler,
@@ -1374,7 +1351,7 @@ static DB_plugin_action_t action_playback_loop_all = {
 };
 
 static DB_plugin_action_t action_playback_order_cycle = {
-    .title = "Playback/Cycle playback order",
+    .title = "Playback/Cycle Playback Order",
     .name = "order_cycle",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_order_cycle_handler,
@@ -1382,7 +1359,7 @@ static DB_plugin_action_t action_playback_order_cycle = {
 };
 
 static DB_plugin_action_t action_playback_order_random = {
-    .title = "Playback/Playback order - Random",
+    .title = "Playback/Playback Order - Random",
     .name = "order_random",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_order_random_handler,
@@ -1390,7 +1367,7 @@ static DB_plugin_action_t action_playback_order_random = {
 };
 
 static DB_plugin_action_t action_playback_order_shuffle_albums = {
-    .title = "Playback/Playback order - Shuffle albums",
+    .title = "Playback/Playback Order - Shuffle albums",
     .name = "order_shuffle_albums",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_order_shuffle_albums_handler,
@@ -1398,7 +1375,7 @@ static DB_plugin_action_t action_playback_order_shuffle_albums = {
 };
 
 static DB_plugin_action_t action_playback_order_shuffle = {
-    .title = "Playback/Playback order - Shuffle tracks",
+    .title = "Playback/Playback Order - Shuffle tracks",
     .name = "order_shuffle",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_order_shuffle_handler,
@@ -1406,7 +1383,7 @@ static DB_plugin_action_t action_playback_order_shuffle = {
 };
 
 static DB_plugin_action_t action_playback_order_linear = {
-    .title = "Playback/Playback order - Linear",
+    .title = "Playback/Playback Order - Linear",
     .name = "order_linear",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playback_order_linear_handler,
@@ -1415,7 +1392,7 @@ static DB_plugin_action_t action_playback_order_linear = {
 
 
 static DB_plugin_action_t action_cursor_follows_playback = {
-    .title = "Playback/Cursor follows playback toggle",
+    .title = "Playback/Toggle Cursor Follows Playback",
     .name = "toggle_cursor_follows_playback",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_cursor_follows_playback_handler,
@@ -1424,7 +1401,7 @@ static DB_plugin_action_t action_cursor_follows_playback = {
 
 
 static DB_plugin_action_t action_scroll_follows_playback = {
-    .title = "Playback/Scroll follows playback toggle",
+    .title = "Playback/Toggle Scroll Follows Playback",
     .name = "toggle_scroll_follows_playback",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_scroll_follows_playback_handler,
@@ -1448,7 +1425,7 @@ static DB_plugin_action_t action_toggle_statusbar = {
 };
 
 static DB_plugin_action_t action_toggle_designmode = {
-    .title = "Edit/Toggle design mode",
+    .title = "Edit/Toggle Design Mode",
     .name = "toggle_design_mode",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_toggle_designmode_handler,
@@ -1480,7 +1457,7 @@ static DB_plugin_action_t action_crop_selected = {
 };
 
 static DB_plugin_action_t action_remove_from_playlist = {
-    .title = "Edit/Remove from current playlist",
+    .title = "Edit/Remove Track(s) From Current Playlist",
     .name = "remove_from_playlist",
     .flags = DB_ACTION_MULTIPLE_TRACKS,
     .callback2 = action_remove_from_playlist_handler,
@@ -1488,7 +1465,7 @@ static DB_plugin_action_t action_remove_from_playlist = {
 };
 
 static DB_plugin_action_t action_save_playlist = {
-    .title = "File/Save playlist",
+    .title = "File/Save Playlist",
     .name = "save_playlist",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_save_playlist_handler,
@@ -1496,7 +1473,7 @@ static DB_plugin_action_t action_save_playlist = {
 };
 
 static DB_plugin_action_t action_load_playlist = {
-    .title = "File/Load playlist",
+    .title = "File/Load Playlist",
     .name = "load_playlist",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_load_playlist_handler,
@@ -1504,7 +1481,7 @@ static DB_plugin_action_t action_load_playlist = {
 };
 
 static DB_plugin_action_t action_remove_current_playlist = {
-    .title = "File/Remove current playlist",
+    .title = "File/Remove Current Playlist",
     .name = "remove_current_playlist",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_remove_current_playlist_handler,
@@ -1599,10 +1576,11 @@ ddb_gui_GTK3_load (DB_functions_t *api) {
 static const char settings_dlg[] =
     "property \"Ask confirmation to delete files from disk\" checkbox gtkui.delete_files_ask 1;\n"
     "property \"Status icon volume control sensitivity\" entry gtkui.tray_volume_sensitivity 1;\n"
-//    "property \"Show volume in dB (percentage otherwise)\" entry gtkui.show_gain_in_db 1\n"
     "property \"Custom status icon\" entry gtkui.custom_tray_icon \"" TRAY_ICON "\" ;\n"
     "property \"Run gtk_init with --sync (debug mode)\" checkbox gtkui.sync 0;\n"
     "property \"Add separators between plugin context menu items\" checkbox gtkui.action_separators 0;\n"
+    "property \"Use unicode chars instead of images for track state\" checkbox gtkui.unicode_playstate 0;\n"
+    "property \"Disable seekbar overlay text\" checkbox gtkui.disable_seekbar_overlay 0;\n"
 ;
 
 // define plugin interface

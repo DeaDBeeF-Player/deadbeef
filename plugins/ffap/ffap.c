@@ -274,6 +274,7 @@ typedef struct APEContext {
 
     int error;
     int skip_header;
+    int filterbuf_size[APE_FILTER_LEVELS];
 } APEContext;
 
 typedef struct {
@@ -398,7 +399,7 @@ ape_read_header(DB_FILE *fp, APEContext *ape)
         return -1;
     }
 
-    if (ape->fileversion < APE_MIN_VERSION || ape->fileversion > APE_MAX_VERSION) {
+    if (ape->fileversion < APE_MIN_VERSION) {
         fprintf (stderr, "ape: Unsupported file version - %d.%02d\n", ape->fileversion / 1000, (ape->fileversion % 1000) / 10);
         return -1;
     }
@@ -435,7 +436,9 @@ ape_read_header(DB_FILE *fp, APEContext *ape)
         /* Skip any unknown bytes at the end of the descriptor.
            This is for future compatibility */
         if (ape->descriptorlength > 52) {
-            deadbeef->fseek (fp, ape->descriptorlength - 52, SEEK_CUR);
+            if (deadbeef->fseek (fp, ape->descriptorlength - 52, SEEK_CUR)) {
+                return -1;
+            }
         }
 
         /* Read header data */
@@ -493,7 +496,9 @@ ape_read_header(DB_FILE *fp, APEContext *ape)
         }
 
         if (ape->formatflags & MAC_FORMAT_FLAG_HAS_PEAK_LEVEL) {
-            deadbeef->fseek(fp, 4, SEEK_CUR); /* Skip the peak level */
+            if (deadbeef->fseek(fp, 4, SEEK_CUR)) { /* Skip the peak level */
+                return -1;
+            }
             ape->headerlength += 4;
         }
 
@@ -522,7 +527,9 @@ ape_read_header(DB_FILE *fp, APEContext *ape)
 
         /* Skip any stored wav header */
         if (!(ape->formatflags & MAC_FORMAT_FLAG_CREATE_WAV_HEADER)) {
-            deadbeef->fseek (fp, ape->wavheaderlength, SEEK_CUR);
+            if (deadbeef->fseek (fp, ape->wavheaderlength, SEEK_CUR)) {
+                return -1;
+            }
         }
     }
 
@@ -607,7 +614,7 @@ static int ape_read_packet(DB_FILE *fp, APEContext *ape_ctx)
 
     if (ape->currentframe > ape->totalframes)
         return -1;
-    trace ("seeking to packet %d (%d + %d)\n", ape->currentframe, ape->frames[ape->currentframe].pos, ape_ctx->skip_header);
+    trace ("seeking to packet %d (%lld + %d)\n", ape->currentframe, ape->frames[ape->currentframe].pos, ape_ctx->skip_header);
     if (deadbeef->fseek (fp, ape->frames[ape->currentframe].pos + ape_ctx->skip_header, SEEK_SET) != 0) {
         return -1;
     }
@@ -665,6 +672,7 @@ ape_free_ctx (APEContext *ape_ctx) {
             ape_ctx->filterbuf[i] = NULL;
         }
     }
+    memset (ape_ctx, 0, sizeof (APEContext));
 }
 
 static void
@@ -699,10 +707,14 @@ ffap_init (DB_fileinfo_t *_info, DB_playItem_t *it)
     memset (&info->ape_ctx, 0, sizeof (info->ape_ctx));
     int skip = deadbeef->junk_get_leading_size (info->fp);
     if (skip > 0) {
-        deadbeef->fseek (info->fp, skip, SEEK_SET);
+        if (deadbeef->fseek (info->fp, skip, SEEK_SET)) {
+            return -1;
+        }
         info->ape_ctx.skip_header = skip;
     }
-    ape_read_header (info->fp, &info->ape_ctx);
+    if (ape_read_header (info->fp, &info->ape_ctx)) {
+        return -1;
+    }
     int i;
 
     if (info->ape_ctx.channels > 2) {
@@ -721,7 +733,8 @@ ffap_init (DB_fileinfo_t *_info, DB_playItem_t *it)
     for (i = 0; i < APE_FILTER_LEVELS; i++) {
         if (!ape_filter_orders[info->ape_ctx.fset][i])
             break;
-        int err = posix_memalign ((void **)&info->ape_ctx.filterbuf[i], 16, (ape_filter_orders[info->ape_ctx.fset][i] * 3 + HISTORY_SIZE) * 4);
+        info->ape_ctx.filterbuf_size[i] = (ape_filter_orders[info->ape_ctx.fset][i] * 3 + HISTORY_SIZE) * 4;
+        int err = posix_memalign ((void **)&info->ape_ctx.filterbuf[i], 16, info->ape_ctx.filterbuf_size[i]);
         if (err) {
             trace ("ffap: out of memory (posix_memalign)\n");
             return -1;
@@ -734,6 +747,13 @@ ffap_init (DB_fileinfo_t *_info, DB_playItem_t *it)
     _info->fmt.channels = info->ape_ctx.channels;
     _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
     _info->readpos = 0;
+
+    info->ape_ctx.packet_data = malloc (PACKET_BUFFER_SIZE);
+    if (!info->ape_ctx.packet_data) {
+        fprintf (stderr, "ape: failed to allocate memory for packet data\n");
+        return -1;
+    }
+
     if (it->endsample > 0) {
         info->startsample = it->startsample;
         info->endsample = it->endsample;
@@ -745,11 +765,6 @@ ffap_init (DB_fileinfo_t *_info, DB_playItem_t *it)
         info->endsample = info->ape_ctx.totalsamples-1;
     }
 
-    info->ape_ctx.packet_data = malloc (PACKET_BUFFER_SIZE);
-    if (!info->ape_ctx.packet_data) {
-        fprintf (stderr, "ape: failed to allocate memory for packet data\n");
-        return -1;
-    }
     return 0;
 }
 
@@ -965,6 +980,7 @@ static inline int ape_decode_value(APEContext * ctx, APERice *rice)
             range_dec_normalize(ctx);
             ctx->rc.help = ctx->rc.range / ((pivot >> lo_bits) + 1);
             if (unlikely (ctx->rc.help == 0)) {
+                trace ("rc.help=0\n");
                 ctx->error = 1;
                 return 0;
             }
@@ -1475,7 +1491,7 @@ ape_decode_frame(DB_fileinfo_t *_info, void *data, int *data_size)
 
     /* should not happen but who knows */
     if (BLOCKS_PER_LOOP * samplesize > *data_size) {
-        fprintf (stderr, "ape: Packet size is too big! (max is %d where you have %d)\n", *data_size, BLOCKS_PER_LOOP * samplesize);
+        fprintf (stderr, "ape: Packet size is too big! (max is %d while you have %d)\n", *data_size, BLOCKS_PER_LOOP * samplesize);
         return -1;
     }
 
@@ -1485,7 +1501,7 @@ ape_decode_frame(DB_fileinfo_t *_info, void *data, int *data_size)
                 return -1;
             }
             assert (!s->samples);
-//            fprintf (stderr, "start reading packet %d\n", ape_ctx.currentframe);
+            trace ("start reading packet %d\n", s->currentframe);
             assert (s->samples == 0); // all samples from prev packet must have been read
             // start new packet
             if (ape_read_packet (info->fp, s) < 0) {
@@ -1494,15 +1510,14 @@ ape_decode_frame(DB_fileinfo_t *_info, void *data, int *data_size)
             }
             bswap_buf((uint32_t*)(s->packet_data), (const uint32_t*)(s->packet_data), s->packet_remaining >> 2);
 
-//            fprintf (stderr, "packet_sizeleft=%d packet_remaining=%d\n", packet_sizeleft, packet_remaining);
             s->ptr = s->last_ptr = s->packet_data;
 
             nblocks = s->samples = bytestream_get_be32(&s->ptr);
 
-            //fprintf (stderr, "s->samples=%d (1)\n", s->samples);
+            trace ("s->samples=%d (1)\n", s->samples);
             n = bytestream_get_be32(&s->ptr);
             if(n < 0 || n > 3){
-                fprintf (stderr, "ape: Incorrect offset passed\n");
+                trace ("ape: Incorrect offset passed\n");
                 return -1;
             }
             s->ptr += n;
@@ -1520,6 +1535,7 @@ ape_decode_frame(DB_fileinfo_t *_info, void *data, int *data_size)
             memset(s->decoded1,  0, sizeof(s->decoded1));
 
             /* Initialize the frame decoder */
+            trace ("init_frame_decoder\n");
             init_frame_decoder(s);
         }
         else {
@@ -1563,7 +1579,7 @@ ape_decode_frame(DB_fileinfo_t *_info, void *data, int *data_size)
             fprintf (stderr, "ape: Error decoding frame, error=%d\n", s->error);
         }
         else {
-            fprintf (stderr, "ape: Error decoding frame, ptr > data_end\n");
+            fprintf (stderr, "ape: Error decoding frame, ptr >= data_end\n");
         }
         return -1;
     }
@@ -1651,19 +1667,17 @@ ffap_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     int skip = deadbeef->junk_get_leading_size (fp);
     if (skip > 0) {
-        deadbeef->fseek (fp, skip, SEEK_SET);
+        if (deadbeef->fseek (fp, skip, SEEK_SET)) {
+            goto error;
+        }
     }
     if (ape_read_header (fp, &ape_ctx) < 0) {
         fprintf (stderr, "ape: failed to read ape header\n");
-        deadbeef->fclose (fp);
-        ape_free_ctx (&ape_ctx);
-        return NULL;
+        goto error;
     }
-    if ((ape_ctx.fileversion < APE_MIN_VERSION) || (ape_ctx.fileversion > APE_MAX_VERSION)) {
+    if (ape_ctx.fileversion < APE_MIN_VERSION) {
         fprintf(stderr, "ape: unsupported file version - %.2f\n", ape_ctx.fileversion/1000.0);
-        deadbeef->fclose (fp);
-        ape_free_ctx (&ape_ctx);
-        return NULL;
+        goto error;
     }
 
     float duration = ape_ctx.totalsamples / (float)ape_ctx.samplerate;
@@ -1675,15 +1689,19 @@ ffap_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     /*int v2err = */deadbeef->junk_id3v2_read (it, fp);
     int v1err = deadbeef->junk_id3v1_read (it, fp);
     if (v1err >= 0) {
-        deadbeef->fseek (fp, -128, SEEK_END);
+        if (deadbeef->fseek (fp, -128, SEEK_END)) {
+            goto error;
+        }
     }
     else {
-        deadbeef->fseek (fp, 0, SEEK_END);
+        if (deadbeef->fseek (fp, 0, SEEK_END)) {
+            goto error;
+        }
     }
     /*int apeerr = */deadbeef->junk_apev2_read (it, fp);
 
     deadbeef->fclose (fp);
-    ape_free_ctx (&ape_ctx);
+    fp = NULL;
 
     // embedded cue
     deadbeef->pl_lock ();
@@ -1695,6 +1713,7 @@ ffap_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             deadbeef->pl_item_unref (it);
             deadbeef->pl_item_unref (cue);
             deadbeef->pl_unlock ();
+            ape_free_ctx (&ape_ctx);
             return cue;
         }
     }
@@ -1717,6 +1736,7 @@ ffap_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     if (cue) {
         deadbeef->pl_item_unref (it);
         deadbeef->pl_item_unref (cue);
+        ape_free_ctx (&ape_ctx);
         return cue;
     }
 
@@ -1725,7 +1745,18 @@ ffap_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     after = deadbeef->plt_insert_item (plt, after, it);
     deadbeef->pl_item_unref (it);
 
+    ape_free_ctx (&ape_ctx);
     return after;
+
+error:
+    if (fp) {
+        deadbeef->fclose (fp);
+    }
+    if (ape_ctx.packet_data) {
+        ape_free_ctx (&ape_ctx);
+    }
+    return NULL;
+
 }
 
 static int
@@ -1799,6 +1830,28 @@ ffap_seek_sample (DB_fileinfo_t *_info, int sample) {
     trace ("samples to skip: %d\n", info->ape_ctx.samplestoskip);
 
     // reset decoder
+    info->ape_ctx.CRC = 0;
+    info->ape_ctx.frameflags = 0;
+    info->ape_ctx.currentframeblocks = 0;
+    info->ape_ctx.blocksdecoded = 0;
+    memset (&info->ape_ctx.predictor, 0, sizeof (info->ape_ctx.predictor));
+    memset (info->ape_ctx.decoded0, 0, sizeof (info->ape_ctx.decoded0));
+    memset (info->ape_ctx.decoded1, 0, sizeof (info->ape_ctx.decoded1));
+    for (int i = 0; i < APE_FILTER_LEVELS; i++) {
+        memset (info->ape_ctx.filterbuf[i], 0, info->ape_ctx.filterbuf_size[i]);
+    }
+    memset (&info->ape_ctx.rc, 0, sizeof (info->ape_ctx.rc));
+    memset (&info->ape_ctx.riceX, 0, sizeof (info->ape_ctx.riceX));
+    memset (&info->ape_ctx.riceY, 0, sizeof (info->ape_ctx.riceY));
+    memset (info->ape_ctx.filters, 0, sizeof (info->ape_ctx.filters));
+    memset (info->ape_ctx.packet_data, 0, PACKET_BUFFER_SIZE);
+    info->ape_ctx.packet_sizeleft = 0;
+    info->ape_ctx.data_end = NULL;
+    info->ape_ctx.ptr = NULL;
+    info->ape_ctx.last_ptr = NULL;
+    info->ape_ctx.error = 0;
+    memset (info->ape_ctx.buffer, 0, sizeof (info->ape_ctx.buffer));
+
     info->ape_ctx.remaining = 0;
     info->ape_ctx.packet_remaining = 0;
     info->ape_ctx.samples = 0;

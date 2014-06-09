@@ -38,6 +38,7 @@
 #include "interface.h"
 #include "trkproperties.h"
 #include "callbacks.h"
+#include <sys/stat.h>
 
 extern GtkWidget *mainwin;
 extern DB_functions_t *deadbeef;
@@ -389,9 +390,38 @@ action_hide_mainwin_handler (struct DB_plugin_action_s *action, int ctx) {
     return 0;
 }
 
+static void
+on_toggle_set_custom_title (GtkToggleButton *togglebutton, gpointer user_data) {
+    gboolean active = gtk_toggle_button_get_active (togglebutton);
+    deadbeef->conf_set_int ("gtkui.location_set_custom_title", active);
+
+    GtkWidget *ct = lookup_widget (GTK_WIDGET (user_data), "custom_title");
+    gtk_widget_set_sensitive (ct, active);
+
+    deadbeef->conf_save ();
+}
+
+
 gboolean
 action_add_location_handler_cb (void *user_data) {
     GtkWidget *dlg = create_addlocationdlg ();
+
+    GtkWidget *sct = lookup_widget (dlg, "set_custom_title");
+    GtkWidget *ct = lookup_widget (dlg, "custom_title");
+
+    if (deadbeef->conf_get_int ("gtkui.location_set_custom_title", 0)) {
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (sct), TRUE);
+        gtk_widget_set_sensitive (ct, TRUE);
+    }
+    else {
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (sct), FALSE);
+        gtk_widget_set_sensitive (ct, FALSE);
+    }
+
+    g_signal_connect ((gpointer) sct, "toggled",
+            G_CALLBACK (on_toggle_set_custom_title),
+            dlg);
+
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
     int res = gtk_dialog_run (GTK_DIALOG (dlg));
     if (res == GTK_RESPONSE_OK) {
@@ -401,7 +431,14 @@ action_add_location_handler_cb (void *user_data) {
             if (text) {
                 ddb_playlist_t *plt = deadbeef->plt_get_curr ();
                 if (!deadbeef->plt_add_files_begin (plt, 0)) {
-                    deadbeef->plt_add_file2 (0, plt, text, NULL, NULL);
+                    DB_playItem_t *tail = deadbeef->plt_get_last (plt, PL_MAIN);
+                    DB_playItem_t *it = deadbeef->plt_insert_file2 (0, plt, tail, text, NULL, NULL, NULL);
+                    if (it && deadbeef->conf_get_int ("gtkui.location_set_custom_title", 0)) {
+                        deadbeef->pl_replace_meta (it, "DDB:CUSTOM_TITLE", gtk_entry_get_text (GTK_ENTRY (ct)));
+                    }
+                    if (tail) {
+                        deadbeef->pl_item_unref (tail);
+                    }
                     deadbeef->plt_add_files_end (plt, 0);
                     playlist_refresh ();
                 }
@@ -482,6 +519,19 @@ action_remove_from_playlist_handler (DB_plugin_action_t *act, int ctx) {
     return 0;
 }
 
+void
+delete_and_remove_track (const char *uri, ddb_playlist_t *plt, ddb_playItem_t *it) {
+    int res = unlink (uri);
+
+    // check if file exists
+    struct stat buf;
+    memset (&buf, 0, sizeof (buf));
+    int stat_res = stat (uri, &buf);
+    if (stat_res != 0) {
+        deadbeef->plt_remove_item (plt, it);
+    }
+}
+
 gboolean
 action_delete_from_disk_handler_cb (void *data) {
     int ctx = (intptr_t)data;
@@ -508,9 +558,7 @@ action_delete_from_disk_handler_cb (void *data) {
         while (it) {
             const char *uri = deadbeef->pl_find_meta (it, ":URI");
             if (deadbeef->pl_is_selected (it) && deadbeef->is_local_file (uri)) {
-                if (!unlink (uri)) {
-                    deadbeef->plt_remove_item (plt, it);
-                }
+                delete_and_remove_track (uri, plt, it);
             }
             DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
             deadbeef->pl_item_unref (it);
@@ -524,9 +572,7 @@ action_delete_from_disk_handler_cb (void *data) {
         while (it) {
             const char *uri = deadbeef->pl_find_meta (it, ":URI");
             if (deadbeef->is_local_file (uri)) {
-                if (!unlink (uri)) {
-                    deadbeef->plt_remove_item (plt, it);
-                }
+                delete_and_remove_track (uri, plt, it);
 // FIXME: this dialog should allow something like "cancel" and "ignore all", then
 // it will be usable
 //                else {
@@ -552,9 +598,7 @@ action_delete_from_disk_handler_cb (void *data) {
             if (deadbeef->is_local_file (uri)) {
                 int idx = deadbeef->plt_get_item_idx (plt, it, PL_MAIN);
                 if (idx != -1) {
-                    if (!unlink (uri)) {
-                        deadbeef->plt_remove_item (plt, it);
-                    }
+                    delete_and_remove_track (uri, plt, it);
                 }
             }
             deadbeef->pl_item_unref (it);
@@ -654,17 +698,17 @@ load_playlist_thread (void *data) {
     char *fname = data;
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {
-        deadbeef->plt_clear (plt);
-        int abort = 0;
-        DB_playItem_t *it = deadbeef->plt_load (plt, NULL, fname, &abort, NULL, NULL);
-        if (it) {
-            deadbeef->pl_item_unref (it);
+        if (!deadbeef->plt_add_files_begin (plt, 0)) {
+            deadbeef->plt_clear (plt);
+            int abort = 0;
+            DB_playItem_t *it = deadbeef->plt_load2 (0, plt, NULL, fname, &abort, NULL, NULL);
+            deadbeef->plt_save_config (plt);
+            deadbeef->plt_add_files_end (plt, 0);
         }
-        deadbeef->plt_save_config (plt);
         deadbeef->plt_unref (plt);
     }
     g_free (fname);
-    gtkui_playlist_changed ();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
 
@@ -948,6 +992,7 @@ action_hide_eq_handler(DB_plugin_action_t *act, int ctx) {
 gboolean
 action_playback_loop_off_handler_cb (void *data) {
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "loop_disable")), 1);
+    return FALSE;
 }
 
 int
@@ -959,6 +1004,7 @@ action_playback_loop_off_handler(DB_plugin_action_t *act, int ctx) {
 gboolean
 action_playback_loop_single_handler_cb (void *data) {
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "loop_single")), 1);
+    return FALSE;
 }
 
 int
@@ -970,6 +1016,7 @@ action_playback_loop_single_handler(DB_plugin_action_t *act, int ctx) {
 gboolean
 action_playback_loop_all_handler_cb (void *data) {
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "loop_all")), 1);
+    return FALSE;
 }
 
 int
@@ -981,6 +1028,7 @@ action_playback_loop_all_handler(DB_plugin_action_t *act, int ctx) {
 gboolean
 action_playback_order_random_handler_cb (void *data) {
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "order_random")), 1);
+    return FALSE;
 }
 
 int
@@ -992,6 +1040,7 @@ action_playback_order_random_handler(DB_plugin_action_t *act, int ctx) {
 gboolean
 action_playback_order_shuffle_albums_handler_cb (void *data) {
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "order_shuffle_albums")), 1);
+    return FALSE;
 }
 
 int
@@ -1003,6 +1052,7 @@ action_playback_order_shuffle_albums_handler(DB_plugin_action_t *act, int ctx) {
 gboolean
 action_playback_order_shuffle_handler_cb (void *data) {
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "order_shuffle")), 1);
+    return FALSE;
 }
 
 int
@@ -1014,6 +1064,7 @@ action_playback_order_shuffle_handler(DB_plugin_action_t *act, int ctx) {
 gboolean
 action_playback_order_linear_handler_cb (void *data) {
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "order_linear")), 1);
+    return FALSE;
 }
 
 int
@@ -1039,6 +1090,7 @@ action_playback_order_cycle_handler_cb (void *data) {
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "order_linear")), 1);
         break;
     }
+    return FALSE;
 }
 
 int
@@ -1061,6 +1113,7 @@ action_playback_loop_cycle_handler_cb (void *data) {
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "loop_all")), 1);
         break;
     }
+    return FALSE;
 }
 
 int

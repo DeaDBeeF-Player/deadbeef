@@ -36,6 +36,8 @@ extern GtkWidget *mainwin;
 extern GtkWidget *searchwin;
 extern int gtkui_embolden_current_track;
 extern int gtkui_is_retina;
+extern int gtkui_unicode_playstate;
+extern int gtkui_disable_seekbar_overlay;
 
 struct _GSList;
 
@@ -94,9 +96,6 @@ int
 gtkui_add_new_playlist (void);
 
 void
-seekbar_redraw (void);
-
-void
 seekbar_draw (GtkWidget *widget, cairo_t *cr);
 
 gboolean
@@ -112,15 +111,6 @@ on_seekbar_motion_notify_event         (GtkWidget       *widget,
                                         GdkEventMotion  *event);
 
 void
-volumebar_redraw (void);
-
-//void
-//tabstrip_redraw (void);
-
-void
-gtkui_playlist_changed (void);
-
-void
 gtkui_set_titlebar (DB_playItem_t *it);
 
 gboolean
@@ -134,9 +124,6 @@ gtkui_set_progress_text_idle (gpointer data);
 
 void
 gtkui_playlist_set_curr (int playlist);
-
-void
-gtkui_setup_gui_refresh ();
 
 int
 gtkui_get_curr_playlist_mod (void);
@@ -167,5 +154,8 @@ gtkui_quit (void);
 
 void
 gtkui_run_preferences_dlg (void);
+
+int
+gtkui_get_gui_refresh_rate ();
 
 #endif

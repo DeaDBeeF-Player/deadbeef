@@ -2,8 +2,12 @@
 use warnings;
 use strict;
 
-my $arch=`uname -m`;
-chomp $arch;
-`cp apsymbols.h.$arch apsymbols.h`;
+my $ARCH = $ENV{ARCH};
+if (!defined $ARCH) {
+    print "apinit: ARCH is not set\n";
+    exit -1;
+}
+
+`cp apsymbols.h.$ARCH apsymbols.h`;
 
 

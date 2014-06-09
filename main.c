@@ -86,6 +86,7 @@ char use_gui_plugin[100];
 
 static void
 print_help (void) {
+	bind_textdomain_codeset (PACKAGE, "");
     fprintf (stdout, _("Usage: deadbeef [options] [--] [file(s)]\n"));
     fprintf (stdout, _("Options:\n"));
     fprintf (stdout, _("   --help  or  -h     Print help (this message) and exit\n"));
@@ -107,6 +108,7 @@ print_help (void) {
                 "                      copy[r]ight, [e]lapsed\n"));
     fprintf (stdout, _("                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"));
     fprintf (stdout, _("                      for more info, see http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"));
+	bind_textdomain_codeset (PACKAGE, "UTF-8");
 }
 
 // Parse command line an return a single buffer with all
@@ -283,12 +285,6 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
         parg++;
     }
     if (parg < pend) {
-        playlist_t *curr_plt = plt_get_curr ();
-        if (plt_add_files_begin (curr_plt, 0) != 0) {
-            plt_unref (curr_plt);
-            snprintf (sendback, sbsize, "it's not allowed to add files to playlist right now, because another file adding operation is in progress. please try again later.");
-            return 0;
-        }
         if (conf_get_int ("cli_add_to_specific_playlist", 1)) {
             char str[200];
             conf_get_str ("cli_add_playlist_name", "Default", str, sizeof (str));
@@ -299,6 +295,12 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             if (idx >= 0) {
                 plt_set_curr_idx (idx);
             }
+        }
+        playlist_t *curr_plt = plt_get_curr ();
+        if (plt_add_files_begin (curr_plt, 0) != 0) {
+            plt_unref (curr_plt);
+            snprintf (sendback, sbsize, "it's not allowed to add files to playlist right now, because another file adding operation is in progress. please try again later.");
+            return 0;
         }
         // add files
         if (!queue) {
@@ -319,10 +321,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
                 if (deadbeef->plt_add_file2 (0, (ddb_playlist_t*)curr_plt, pname, NULL, NULL) < 0) {
                     int ab = 0;
                     playItem_t *it = plt_load2 (0, curr_plt, NULL, pname, &ab, NULL, NULL);
-                    if (it) {
-                        pl_item_unref (it);
-                    }
-                    else {
+                    if (!it) {
                         fprintf (stderr, "failed to add file or folder %s\n", pname);
                     }
                 }
@@ -600,8 +599,7 @@ player_mainloop (void) {
                     break;
                 case DB_EV_TOGGLE_PAUSE:
                     if (output->state () == OUTPUT_STATE_PAUSED) {
-                        output->unpause ();
-                        messagepump_push (DB_EV_PAUSED, 0, 0, 0);
+                        streamer_play_current_track ();
                     }
                     else {
                         output->pause ();
