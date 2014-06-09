@@ -37,12 +37,13 @@
 		4D1B51601837F59F003E6066 /* coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B515D1837F59F003E6066 /* coreaudio.c */; };
 		4D1B51681837F655003E6066 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B51671837F655003E6066 /* AudioUnit.framework */; };
 		4D1B51691837F669003E6066 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B51631837F60A003E6066 /* CoreAudio.framework */; };
-		4D1B51741837F813003E6066 /* ffap.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B516D1837F813003E6066 /* ffap.c */; };
 		4D2A6CA1183BC29400AC6BF5 /* btnnextTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D2A6C9D183BC29400AC6BF5 /* btnnextTemplate.pdf */; };
 		4D2A6CA2183BC29400AC6BF5 /* btnpauseTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D2A6C9E183BC29400AC6BF5 /* btnpauseTemplate.pdf */; };
 		4D2A6CA3183BC29400AC6BF5 /* btnprevTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D2A6C9F183BC29400AC6BF5 /* btnprevTemplate.pdf */; };
 		4D2A6CA4183BC29400AC6BF5 /* btnstopTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D2A6CA0183BC29400AC6BF5 /* btnstopTemplate.pdf */; };
 		4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */; };
+		4D96ECD91945CC7B00D739F6 /* cocoautil.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D96ECD81945CC7B00D739F6 /* cocoautil.m */; };
+		4D96ECDB1945CC8200D739F6 /* cocoautil.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D96ECDA1945CC8200D739F6 /* cocoautil.h */; };
 		4DA72BE71838EAAB00A98C62 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA72BDA1838EAAB00A98C62 /* AppDelegate.m */; };
 		4DA72BE81838EAAB00A98C62 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DA72BDC1838EAAB00A98C62 /* MainMenu.xib */; };
 		4DA72BE91838EAAB00A98C62 /* deadbeef-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4DA72BDE1838EAAB00A98C62 /* deadbeef-Info.plist */; };
@@ -68,20 +69,6 @@
 			containerPortal = 4DA7718B1945B4D900EB0AC1 /* ffap.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 4DA7717E1945B4B400EB0AC1;
-			remoteInfo = ffap;
-		};
-		4DA771981945B8BF00EB0AC1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4DA771641945B31000EB0AC1 /* mpgmad.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 4D7A8E571945AD0800B5D9A0;
-			remoteInfo = mpgmad;
-		};
-		4DA7719A1945B8C300EB0AC1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4DA7718B1945B4D900EB0AC1 /* ffap.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 4DA7717D1945B4B400EB0AC1;
 			remoteInfo = ffap;
 		};
 /* End PBXContainerItemProxy section */
@@ -116,7 +103,6 @@
 		4D1B3F8B1837EC44003E6066 /* metacache.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = metacache.c; sourceTree = "<group>"; };
 		4D1B3F8C1837EC44003E6066 /* metacache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = metacache.h; sourceTree = "<group>"; };
 		4D1B3F8E1837EC44003E6066 /* moduleconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = moduleconf.h; sourceTree = "<group>"; };
-		4D1B3F901837EC44003E6066 /* optmath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = optmath.h; sourceTree = "<group>"; };
 		4D1B3F9A1837EC44003E6066 /* playlist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = playlist.c; sourceTree = "<group>"; };
 		4D1B3F9B1837EC44003E6066 /* playlist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = playlist.h; sourceTree = "<group>"; };
 		4D1B3F9C1837EC44003E6066 /* plmeta.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = plmeta.c; sourceTree = "<group>"; };
@@ -151,12 +137,13 @@
 		4D1B51631837F60A003E6066 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		4D1B51651837F61F003E6066 /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
 		4D1B51671837F655003E6066 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
-		4D1B516D1837F813003E6066 /* ffap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ffap.c; sourceTree = "<group>"; };
 		4D2A6C9D183BC29400AC6BF5 /* btnnextTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnnextTemplate.pdf; path = images/btnnextTemplate.pdf; sourceTree = "<group>"; };
 		4D2A6C9E183BC29400AC6BF5 /* btnpauseTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnpauseTemplate.pdf; path = images/btnpauseTemplate.pdf; sourceTree = "<group>"; };
 		4D2A6C9F183BC29400AC6BF5 /* btnprevTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnprevTemplate.pdf; path = images/btnprevTemplate.pdf; sourceTree = "<group>"; };
 		4D2A6CA0183BC29400AC6BF5 /* btnstopTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnstopTemplate.pdf; path = images/btnstopTemplate.pdf; sourceTree = "<group>"; };
 		4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnplayTemplate.pdf; path = images/btnplayTemplate.pdf; sourceTree = "<group>"; };
+		4D96ECD81945CC7B00D739F6 /* cocoautil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cocoautil.m; sourceTree = "<group>"; };
+		4D96ECDA1945CC8200D739F6 /* cocoautil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocoautil.h; sourceTree = "<group>"; };
 		4DA72BD91838EAAB00A98C62 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		4DA72BDA1838EAAB00A98C62 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		4DA72BDD1838EAAB00A98C62 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = MainMenu.xib; sourceTree = "<group>"; };
@@ -262,7 +249,6 @@
 			isa = PBXGroup;
 			children = (
 				4DEE38461838E6450022D2B7 /* cocoaui */,
-				4D1B516A1837F813003E6066 /* ffap */,
 				4D1B515C1837F59F003E6066 /* coreaudio */,
 				4D1B51551837F4E9003E6066 /* nullout */,
 				4D1B514D1837EF9D003E6066 /* libparser */,
@@ -298,15 +284,6 @@
 			path = plugins/coreaudio;
 			sourceTree = "<group>";
 		};
-		4D1B516A1837F813003E6066 /* ffap */ = {
-			isa = PBXGroup;
-			children = (
-				4D1B516D1837F813003E6066 /* ffap.c */,
-			);
-			name = ffap;
-			path = plugins/ffap;
-			sourceTree = "<group>";
-		};
 		4D2362B218395D0300C9E818 /* images */ = {
 			isa = PBXGroup;
 			children = (
@@ -322,6 +299,8 @@
 		4D2E5081183926400054B964 /* main */ = {
 			isa = PBXGroup;
 			children = (
+				4D96ECD81945CC7B00D739F6 /* cocoautil.m */,
+				4D96ECDA1945CC8200D739F6 /* cocoautil.h */,
 				4D1B3ECD1837EC44003E6066 /* common.h */,
 				4D1B3ECE1837EC44003E6066 /* conf.c */,
 				4D1B3ECF1837EC44003E6066 /* conf.h */,
@@ -342,7 +321,6 @@
 				4D1B3F8B1837EC44003E6066 /* metacache.c */,
 				4D1B3F8C1837EC44003E6066 /* metacache.h */,
 				4D1B3F8E1837EC44003E6066 /* moduleconf.h */,
-				4D1B3F901837EC44003E6066 /* optmath.h */,
 				4D1B3F9A1837EC44003E6066 /* playlist.c */,
 				4D1B3F9B1837EC44003E6066 /* playlist.h */,
 				4D1B3F9C1837EC44003E6066 /* plmeta.c */,
@@ -431,6 +409,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4D96ECDB1945CC8200D739F6 /* cocoautil.h in Headers */,
 				4DA7719D1945B92100EB0AC1 /* deadbeef.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -450,8 +429,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				4DA7719B1945B8C300EB0AC1 /* PBXTargetDependency */,
-				4DA771991945B8BF00EB0AC1 /* PBXTargetDependency */,
 			);
 			name = deadbeef;
 			productName = deadbeef;
@@ -550,12 +527,12 @@
 				4D1B4F4D1837EC4A003E6066 /* ringbuf.c in Sources */,
 				4D1B4AA01837EC49003E6066 /* plmeta.c in Sources */,
 				4D1B4F601837EC4A003E6066 /* threading_pthread.c in Sources */,
+				4D96ECD91945CC7B00D739F6 /* cocoautil.m in Sources */,
 				4DA72BED1838EAAB00A98C62 /* main.m in Sources */,
 				4D1B4A8F1837EC49003E6066 /* main.c in Sources */,
 				4D1B4A941837EC49003E6066 /* metacache.c in Sources */,
 				4D1B4F3F1837EC4A003E6066 /* premix.c in Sources */,
 				4D1B4A071837EC49003E6066 /* conf.c in Sources */,
-				4D1B51741837F813003E6066 /* ffap.c in Sources */,
 				4D1B51471837EC4B003E6066 /* utf8.c in Sources */,
 				4D1B4A0F1837EC49003E6066 /* ConvertUTF.c in Sources */,
 				4DA72BE71838EAAB00A98C62 /* AppDelegate.m in Sources */,
@@ -573,19 +550,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		4DA771991945B8BF00EB0AC1 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = mpgmad;
-			targetProxy = 4DA771981945B8BF00EB0AC1 /* PBXContainerItemProxy */;
-		};
-		4DA7719B1945B8C300EB0AC1 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = ffap;
-			targetProxy = 4DA7719A1945B8C300EB0AC1 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		4DA72BDC1838EAAB00A98C62 /* MainMenu.xib */ = {
@@ -636,7 +600,6 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"FPM_DEFAULT=1",
 					"HAVE_COCOAUI=1",
 					"PORTABLE=1",
 					"STATICLINK=1",
@@ -645,7 +608,6 @@
 					"DOCDIR=\\\"donotuse\\\"",
 					"VERSION=\\\"devel\\\"",
 					"HAVE_LOG2=1",
-					"PATH_MAX=1024",
 					"DEBUG=1",
 					"$(inherited)",
 				);
@@ -729,6 +691,44 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"/Users/oleksiy/deadbeef-deps-osx/libmad-0.15.1b/.libs",
+					/Users/oleksiy/prj/deadbeef/plugins/aac/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/adplug/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/alac/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/ao/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/artwork/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/converter/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/coreaudio/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/dca/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/dsp_libsrc/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/dumb/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/ffap/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/flac/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/gme/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/gtkui/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/hotkeys/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/lastfm/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/libmp4ff,
+					/Users/oleksiy/prj/deadbeef/plugins/liboggedit,
+					/Users/oleksiy/prj/deadbeef/plugins/libparser,
+					/Users/oleksiy/prj/deadbeef/plugins/m3u/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/mms/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/mono2stereo/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/mpgmad/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/musepack/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/nullout/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/pltbrowser/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/shellexec/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/shellexecui/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/shn/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/sid/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/supereq/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/tta/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/vfs_curl/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/vorbis/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/vtx/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/wavpack/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/wildmidi/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/wma/.libs,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -749,6 +749,44 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"/Users/oleksiy/deadbeef-deps-osx/libmad-0.15.1b/.libs",
+					/Users/oleksiy/prj/deadbeef/plugins/aac/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/adplug/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/alac/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/ao/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/artwork/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/converter/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/coreaudio/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/dca/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/dsp_libsrc/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/dumb/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/ffap/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/flac/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/gme/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/gtkui/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/hotkeys/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/lastfm/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/libmp4ff,
+					/Users/oleksiy/prj/deadbeef/plugins/liboggedit,
+					/Users/oleksiy/prj/deadbeef/plugins/libparser,
+					/Users/oleksiy/prj/deadbeef/plugins/m3u/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/mms/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/mono2stereo/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/mpgmad/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/musepack/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/nullout/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/pltbrowser/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/shellexec/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/shellexecui/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/shn/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/sid/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/supereq/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/tta/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/vfs_curl/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/vorbis/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/vtx/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/wavpack/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/wildmidi/.libs,
+					/Users/oleksiy/prj/deadbeef/plugins/wma/.libs,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_NAME = "$(TARGET_NAME)";
