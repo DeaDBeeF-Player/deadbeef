@@ -86,7 +86,9 @@ char use_gui_plugin[100];
 
 static void
 print_help (void) {
+#ifdef ENABLE_NLS
 	bind_textdomain_codeset (PACKAGE, "");
+#endif
     fprintf (stdout, _("Usage: deadbeef [options] [--] [file(s)]\n"));
     fprintf (stdout, _("Options:\n"));
     fprintf (stdout, _("   --help  or  -h     Print help (this message) and exit\n"));
@@ -108,7 +110,9 @@ print_help (void) {
                 "                      copy[r]ight, [e]lapsed\n"));
     fprintf (stdout, _("                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"));
     fprintf (stdout, _("                      for more info, see %s\n"), "http://github.com/Alexey-Yakovenko/deadbeef/wiki/Title-formatting");
+#ifdef ENABLE_NLS
 	bind_textdomain_codeset (PACKAGE, "UTF-8");
+#endif
 }
 
 // Parse command line an return a single buffer with all
