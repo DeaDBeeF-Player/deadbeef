@@ -15,7 +15,7 @@ int cocoaui_start(void)
 {
 	char *argv[1];
 	argv[0] = "FIXME";
-	return NSApplicationMain(1, argv);
+	return NSApplicationMain(1, (const char **)argv);
 }
 
 DB_gui_t plugin = {
