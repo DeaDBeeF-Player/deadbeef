@@ -81,6 +81,7 @@
 				4D533FD31838E017009EBA01 /* Products */,
 			);
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		4D533FD31838E017009EBA01 /* Products */ = {
 			isa = PBXGroup;
