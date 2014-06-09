@@ -41,15 +41,15 @@ uint8_t *oggedit_vorbis_channel_map(const int channel_count)
         return NULL;
     switch(channel_count) {
         case 3:
-            return memcpy(map, &(uint8_t[]){0,2,1}, map_size);
+            return memcpy(map, &((uint8_t[]){0,2,1}), map_size);
         case 5:
-            return memcpy(map, &(uint8_t[]){0,2,1,3,4}, map_size);
+            return memcpy(map, &((uint8_t[]){0,2,1,3,4}), map_size);
         case 6:
-            return memcpy(map, &(uint8_t[]){0,2,1,4,5,3}, map_size);
+            return memcpy(map, &((uint8_t[]){0,2,1,4,5,3}), map_size);
         case 7:
-            return memcpy(map, &(uint8_t[]){0,2,1,4,5,6,3}, map_size);
+            return memcpy(map, &((uint8_t[]){0,2,1,4,5,6,3}), map_size);
         case 8:
-            return memcpy(map, &(uint8_t[]){0,2,1,6,7,4,5,3}, map_size);
+            return memcpy(map, &((uint8_t[]){0,2,1,6,7,4,5,3}), map_size);
         default:
             free(map);
             return NULL;

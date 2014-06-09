@@ -189,18 +189,14 @@ on_searchwin_key_press_event           (GtkWidget       *widget,
 {
     // that's for when user attempts to navigate list while entry has focus
     if (event->keyval == GDK_Escape) {
-        gtk_widget_hide (widget);
+        gtk_widget_hide (searchwin);
+        return TRUE;
     }
     else if (event->keyval == GDK_Return) {
         on_searchentry_activate (NULL, 0);
+        return TRUE;
     }
-    else if (event->keyval != GDK_Delete && event->keyval != GDK_Home && event->keyval != GDK_End){
-        GtkWidget *pl = lookup_widget (searchwin, "searchlist");
-        if (!ddb_listview_handle_keypress (DDB_LISTVIEW (pl), event->keyval, event->state)) {
-            return on_mainwin_key_press_event (widget, event, user_data);
-        }
-    }
-    return TRUE;
+    return FALSE;
 }
 
 gboolean
@@ -411,6 +407,7 @@ DdbListviewBinding search_binding = {
 void
 search_playlist_init (GtkWidget *widget) {
     DdbListview *listview = DDB_LISTVIEW(widget);
+    g_signal_connect ((gpointer)listview->list, "key_press_event", G_CALLBACK (on_searchwin_key_press_event), listview);
     search_binding.ref = (void (*) (DdbListviewIter))deadbeef->pl_item_ref;
     search_binding.unref = (void (*) (DdbListviewIter))deadbeef->pl_item_unref;
     search_binding.is_selected = (int (*) (DdbListviewIter))deadbeef->pl_is_selected;
