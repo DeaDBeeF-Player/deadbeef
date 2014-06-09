@@ -461,9 +461,9 @@ create_mainwin (void)
   gtk_widget_show (statusbar);
   gtk_box_pack_start (GTK_BOX (vbox1), statusbar, FALSE, FALSE, 0);
 
-  g_signal_connect ((gpointer) mainwin, "key_press_event",
-                    G_CALLBACK (on_mainwin_key_press_event),
-                    NULL);
+  g_signal_connect_after ((gpointer) mainwin, "key_press_event",
+                          G_CALLBACK (on_mainwin_key_press_event),
+                          NULL);
   g_signal_connect ((gpointer) mainwin, "delete_event",
                     G_CALLBACK (on_mainwin_delete_event),
                     NULL);
@@ -739,9 +739,9 @@ create_searchwin (void)
   g_signal_connect ((gpointer) searchwin, "window_state_event",
                     G_CALLBACK (on_searchwin_window_state_event),
                     NULL);
-  g_signal_connect_after ((gpointer) searchwin, "key_press_event",
-                          G_CALLBACK (on_searchwin_key_press_event),
-                          NULL);
+  g_signal_connect ((gpointer) searchwin, "key_press_event",
+                    G_CALLBACK (on_searchwin_key_press_event),
+                    NULL);
   g_signal_connect ((gpointer) searchentry, "changed",
                     G_CALLBACK (on_searchentry_changed),
                     NULL);
