@@ -1,0 +1,282 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4DA771721945B33B00EB0AC1 /* mpgmad.c in Sources */ = {isa = PBXBuildFile; fileRef = 4DA771711945B33B00EB0AC1 /* mpgmad.c */; };
+		4DA771741945B41F00EB0AC1 /* libmad.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DA771701945B31E00EB0AC1 /* libmad.a */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4DA7716F1945B31E00EB0AC1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4DA7716B1945B31E00EB0AC1 /* mad.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4D533FD21838E017009EBA01;
+			remoteInfo = mad;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		4D7A8E581945AD0800B5D9A0 /* mpgmad.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = mpgmad.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		4DA7716B1945B31E00EB0AC1 /* mad.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = mad.xcodeproj; sourceTree = "<group>"; };
+		4DA771711945B33B00EB0AC1 /* mpgmad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mpgmad.c; path = ../plugins/mpgmad/mpgmad.c; sourceTree = "<group>"; };
+		4DA771961945B87900EB0AC1 /* deadbeef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = deadbeef.h; path = ../deadbeef.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4D7A8E551945AD0800B5D9A0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4DA771741945B41F00EB0AC1 /* libmad.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4D7A8E4F1945AD0800B5D9A0 = {
+			isa = PBXGroup;
+			children = (
+				4DA771961945B87900EB0AC1 /* deadbeef.h */,
+				4DA771711945B33B00EB0AC1 /* mpgmad.c */,
+				4DA7716B1945B31E00EB0AC1 /* mad.xcodeproj */,
+				4D7A8E591945AD0800B5D9A0 /* Products */,
+			);
+			sourceTree = "<group>";
+			usesTabs = 0;
+		};
+		4D7A8E591945AD0800B5D9A0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4D7A8E581945AD0800B5D9A0 /* mpgmad.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4DA7716C1945B31E00EB0AC1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4DA771701945B31E00EB0AC1 /* libmad.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		4D7A8E561945AD0800B5D9A0 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		4D7A8E571945AD0800B5D9A0 /* mpgmad */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4D7A8E5C1945AD0800B5D9A0 /* Build configuration list for PBXNativeTarget "mpgmad" */;
+			buildPhases = (
+				4D7A8E541945AD0800B5D9A0 /* Sources */,
+				4D7A8E551945AD0800B5D9A0 /* Frameworks */,
+				4D7A8E561945AD0800B5D9A0 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = mpgmad;
+			productName = mpgmad;
+			productReference = 4D7A8E581945AD0800B5D9A0 /* mpgmad.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4D7A8E501945AD0800B5D9A0 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = "Alexey Yakovenko";
+			};
+			buildConfigurationList = 4D7A8E531945AD0800B5D9A0 /* Build configuration list for PBXProject "mpgmad" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 4D7A8E4F1945AD0800B5D9A0;
+			productRefGroup = 4D7A8E591945AD0800B5D9A0 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 4DA7716C1945B31E00EB0AC1 /* Products */;
+					ProjectRef = 4DA7716B1945B31E00EB0AC1 /* mad.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				4D7A8E571945AD0800B5D9A0 /* mpgmad */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		4DA771701945B31E00EB0AC1 /* libmad.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libmad.a;
+			remoteRef = 4DA7716F1945B31E00EB0AC1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4D7A8E541945AD0800B5D9A0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4DA771721945B33B00EB0AC1 /* mpgmad.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		4D7A8E5A1945AD0800B5D9A0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"/Users/oleksiy/deadbeef-deps-osx/libmad-0.15.1b",
+				);
+				LIBRARY_SEARCH_PATHS = "/Users/oleksiy/deadbeef-deps-osx/libmad-0.15.1b/.libs";
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		4D7A8E5B1945AD0800B5D9A0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"/Users/oleksiy/deadbeef-deps-osx/libmad-0.15.1b",
+				);
+				LIBRARY_SEARCH_PATHS = "/Users/oleksiy/deadbeef-deps-osx/libmad-0.15.1b/.libs";
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		4D7A8E5D1945AD0800B5D9A0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = "";
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		4D7A8E5E1945AD0800B5D9A0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = "";
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4D7A8E531945AD0800B5D9A0 /* Build configuration list for PBXProject "mpgmad" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4D7A8E5A1945AD0800B5D9A0 /* Debug */,
+				4D7A8E5B1945AD0800B5D9A0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4D7A8E5C1945AD0800B5D9A0 /* Build configuration list for PBXNativeTarget "mpgmad" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4D7A8E5D1945AD0800B5D9A0 /* Debug */,
+				4D7A8E5E1945AD0800B5D9A0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 4D7A8E501945AD0800B5D9A0 /* Project object */;
+}
