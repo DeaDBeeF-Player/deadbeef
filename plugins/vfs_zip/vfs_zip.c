@@ -1,20 +1,24 @@
 /*
-    DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
+    ZIP VFS plugin for DeaDBeeF Player
+    Copyright (C) 2009-2014 Alexey Yakovenko
 
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+    This software is provided 'as-is', without any express or implied
+    warranty.  In no event will the authors be held liable for any damages
+    arising from the use of this software.
+
+    Permission is granted to anyone to use this software for any purpose,
+    including commercial applications, and to alter it and redistribute it
+    freely, subject to the following restrictions:
+
+    1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+
+    2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+
+    3. This notice may not be removed or altered from any source distribution.
 */
 
 #include <string.h>
@@ -26,10 +30,16 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
+#define ENABLE_CACHE 1
+
 #define min(x,y) ((x)<(y)?(x):(y))
 
 static DB_functions_t *deadbeef;
 static DB_vfs_t plugin;
+
+#if ENABLE_CACHE
+#define ZIP_BUFFER_SIZE 8192
+#endif
 
 typedef struct {
     DB_FILE file;
@@ -38,6 +48,12 @@ typedef struct {
     int64_t offset;
     int index;
     int64_t size;
+
+#if ENABLE_CACHE
+    uint8_t buffer[ZIP_BUFFER_SIZE];
+    int buffer_remaining;
+    int buffer_pos;
+#endif
 } zip_file_t;
 
 static const char *scheme_names[] = { "zip://", NULL };
@@ -55,6 +71,7 @@ vfs_zip_is_streaming (void) {
 // fname must have form of zip://full_filepath.zip:full_filepath_in_zip
 DB_FILE*
 vfs_zip_open (const char *fname) {
+    trace ("vfs_zip: open %s\n", fname);
     if (strncasecmp (fname, "zip://", 6)) {
         return NULL;
     }
@@ -98,11 +115,13 @@ vfs_zip_open (const char *fname) {
     f->zf = zf;
     f->index = st.index;
     f->size = st.size;
+    trace ("vfs_zip: end open %s\n", fname);
     return (DB_FILE*)f;
 }
 
 void
 vfs_zip_close (DB_FILE *f) {
+    trace ("vfs_zip: close\n");
     zip_file_t *zf = (zip_file_t *)f;
     if (zf->zf) {
         zip_fclose (zf->zf);
@@ -116,14 +135,40 @@ vfs_zip_close (DB_FILE *f) {
 size_t
 vfs_zip_read (void *ptr, size_t size, size_t nmemb, DB_FILE *f) {
     zip_file_t *zf = (zip_file_t *)f;
-    ssize_t rb = zip_fread (zf->zf, ptr, size * nmemb);
+//    printf ("read: %d\n", size*nmemb);
+
+    size_t sz = size * nmemb;
+#if ENABLE_CACHE
+    while (sz) {
+        if (zf->buffer_remaining == 0) {
+            zf->buffer_pos = 0;
+            int rb = zip_fread (zf->zf, zf->buffer, ZIP_BUFFER_SIZE);
+            if (rb <= 0) {
+                break;
+            }
+            zf->buffer_remaining = rb;
+        }
+        int from_buf = min (sz, zf->buffer_remaining);
+        memcpy (ptr, zf->buffer+zf->buffer_pos, from_buf);
+        zf->buffer_remaining -= from_buf;
+        zf->buffer_pos += from_buf;
+        zf->offset += from_buf;
+        sz -= from_buf;
+        ptr += from_buf;
+    }
+#else
+    rb = zip_fread (zf->zf, ptr, sz);
+    sz -= rb;
     zf->offset += rb;
-    return rb / size;
+#endif
+
+    return (size * nmemb - sz) / size;
 }
 
 int
 vfs_zip_seek (DB_FILE *f, int64_t offset, int whence) {
     zip_file_t *zf = (zip_file_t *)f;
+//    printf ("seek: %lld (%d)\n", offset, whence);
 
     if (whence == SEEK_CUR) {
         offset = zf->offset + offset;
@@ -132,6 +177,38 @@ vfs_zip_seek (DB_FILE *f, int64_t offset, int whence) {
         offset = zf->size + offset;
     }
 
+#if ENABLE_CACHE
+    int64_t offs = offset - zf->offset;
+    if ((offs < 0 && -offs <= zf->buffer_pos) || (offs >= 0 && offs < zf->buffer_remaining)) {
+        if (offs != 0) {
+            //printf ("cache success\n");
+
+            //printf ("[before] absoffs: %lld, offs: %lld, rem: %d, pos: %d\n", offset, offs, zf->buffer_remaining, zf->buffer_pos);
+
+            // test cases:
+            // fail: offs = -3, pos = 0, rem = 100
+            // fail: offs = 10, pos = 95, rem = 5
+            // succ: offs = -3, pos = 3, rem = 97 ----> pos = 0, rem=100
+            // succ: offs = 10, pos = 0, rem = 100 ---> pos = 10, rem = 90
+
+            zf->buffer_pos += offs;
+            zf->buffer_remaining -= offs;
+            //printf ("[after] offs: %lld, rem: %d, pos: %d\n", offs, zf->buffer_remaining, zf->buffer_pos);
+            zf->offset = offset;
+            assert (zf->buffer_pos < ZIP_BUFFER_SIZE);
+            return 0;
+        }
+        else {
+//            printf ("cache double success\n");
+            return 0;
+        }
+    }
+//    else {
+//        printf ("cache miss: abs_offs: %lld, offs: %lld, rem: %d, pos: %d\n", offset, offs, zf->buffer_remaining, zf->buffer_pos);
+//    }
+
+    zf->offset += zf->buffer_remaining;
+#endif
     if (offset < zf->offset) {
         // reopen
         zip_fclose (zf->zf);
@@ -141,6 +218,10 @@ vfs_zip_seek (DB_FILE *f, int64_t offset, int whence) {
         }
         zf->offset = 0;
     }
+#if ENABLE_CACHE
+    zf->buffer_pos = 0;
+    zf->buffer_remaining = 0;
+#endif
     char buf[4096];
     int64_t n = offset - zf->offset;
     while (n > 0) {
@@ -172,6 +253,9 @@ vfs_zip_rewind (DB_FILE *f) {
     zf->zf = zip_fopen_index (zf->z, zf->index, 0);
     assert (zf->zf); // FIXME: better error handling?
     zf->offset = 0;
+#if ENABLE_CACHE
+    zf->buffer_remaining = 0;
+#endif
 }
 
 int64_t
@@ -196,10 +280,12 @@ vfs_zip_scandir (const char *dir, struct dirent ***namelist, int (*selector) (co
         (*namelist)[i] = malloc (sizeof (struct dirent));
         memset ((*namelist)[i], 0, sizeof (struct dirent));
         const char *nm = zip_get_name (z, i, 0);
-        snprintf ((*namelist)[i]->d_name, sizeof ((*namelist)[i]->d_name), "zip://%s:%s", dir, nm);
+        trace ("vfs_zip: %s\n", nm);
+        snprintf ((*namelist)[i]->d_name, sizeof ((*namelist)[i]->d_name), "%s", nm);
     }
 
     zip_close (z);
+    trace ("vfs_zip: scandir done\n");
     return n;
 }
 
@@ -211,10 +297,14 @@ vfs_zip_is_container (const char *fname) {
     }
     return 0;
 }
+const char *
+vfs_zip_get_scheme_for_name (const char *fname) {
+    return scheme_names[0];
+}
 
 static DB_vfs_t plugin = {
     .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
+    .plugin.api_vminor = 6,
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_VFS,
@@ -222,21 +312,26 @@ static DB_vfs_t plugin = {
     .plugin.name = "ZIP vfs",
     .plugin.descr = "play files directly from zip files",
     .plugin.copyright = 
-        "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "ZIP VFS plugin for DeaDBeeF Player\n"
+        "Copyright (C) 2009-2014 Alexey Yakovenko\n"
         "\n"
-        "This program is free software; you can redistribute it and/or\n"
-        "modify it under the terms of the GNU General Public License\n"
-        "as published by the Free Software Foundation; either version 2\n"
-        "of the License, or (at your option) any later version.\n"
+        "This software is provided 'as-is', without any express or implied\n"
+        "warranty.  In no event will the authors be held liable for any damages\n"
+        "arising from the use of this software.\n"
         "\n"
-        "This program is distributed in the hope that it will be useful,\n"
-        "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
-        "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
-        "GNU General Public License for more details.\n"
+        "Permission is granted to anyone to use this software for any purpose,\n"
+        "including commercial applications, and to alter it and redistribute it\n"
+        "freely, subject to the following restrictions:\n"
         "\n"
-        "You should have received a copy of the GNU General Public License\n"
-        "along with this program; if not, write to the Free Software\n"
-        "Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.\n"
+        "1. The origin of this software must not be misrepresented; you must not\n"
+        " claim that you wrote the original software. If you use this software\n"
+        " in a product, an acknowledgment in the product documentation would be\n"
+        " appreciated but is not required.\n"
+        "\n"
+        "2. Altered source versions must be plainly marked as such, and must not be\n"
+        " misrepresented as being the original software.\n"
+        "\n"
+        "3. This notice may not be removed or altered from any source distribution.\n"
     ,
     .plugin.website = "http://deadbeef.sf.net",
     .open = vfs_zip_open,
@@ -250,6 +345,7 @@ static DB_vfs_t plugin = {
     .is_streaming = vfs_zip_is_streaming,
     .is_container = vfs_zip_is_container,
     .scandir = vfs_zip_scandir,
+    .get_scheme_for_name = vfs_zip_get_scheme_for_name,
 };
 
 DB_plugin_t *

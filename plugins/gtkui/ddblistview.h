@@ -38,6 +38,11 @@ G_BEGIN_DECLS
 #define DDB_IS_LISTVIEW_CLASS(obj) (G_TYPE_CHECK_CLASS_TYPE ((obj), DDB_TYPE_LISTVIEW))
 #define DDB_LISTVIEW_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), DDB_TYPE_LISTVIEW, DdbListviewClass))
 
+typedef struct {
+    int id;
+    char *format;
+} col_info_t;
+
 typedef struct _DdbListview DdbListview;
 typedef struct _DdbListviewClass DdbListviewClass;
 
@@ -47,6 +52,7 @@ typedef void * DdbPlaylistHandle;
 struct _DdbListviewGroup {
     DdbListviewIter head;
     int32_t height;
+    int32_t min_height;
     int32_t num_items;
     int pinned;
     struct _DdbListviewGroup *next;
@@ -126,6 +132,9 @@ struct _DdbListview {
     int col_movepos;
 
     int drag_motion_y;
+
+    int ref_point; // idx of anchor when columns are resized
+    int ref_point_offset; // y pixel-coordinate of anchor relative to view
 
     // scrolling
     int scroll_mode; // 0=select, 1=dragndrop
@@ -288,6 +297,9 @@ ddb_listview_get_row_pos (DdbListview *listview, int row_idx);
 
 void
 ddb_listview_groupcheck (DdbListview *listview);
+
+int
+ddb_listview_is_album_art_column (DdbListview *listview, int x);
 
 G_END_DECLS
 

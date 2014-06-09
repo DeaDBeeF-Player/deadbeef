@@ -1,3 +1,41 @@
+version 0.6.1
+	fixed crash in AAC plugin when mp4 file reports 0 samples (e.g. radio rips)
+	fixed libsupc++ linking issues
+	fixed support for gcc<4.5
+	changed description of hotkeys plugin in configure
+	fixed 100% CPU load issues with certain hotkeys
+	fixed opening files from command line into default playlist
+	don't allow spawning multiple instances of converter
+	fixed EQ drawing past the bottom margin
+	fixed progress dialog while loading playlists
+	fixed M3UINF parser
+	reverted MP3 bugfixes which introduced incorrect duration calculation
+	fixed ungrabbing deleted global hotkeys
+	added config option to help debug buffering/streaming
+	ffmpeg plugin can now handle dynamic data format changes
+	fixed rare buffering problem which was causing stuttering for some users
+	fixed running without X and/or without GUI plugin
+	fixed mp3 duration rounding bug
+	fixed incorrect scroll/cursor after deleting playlists
+	added support for loading plugins from ~/.local/lib{32|64}/deadbeef, depending on running deadbeef build version
+	fixed bug imposing 256 byte limit on file pathes in archives
+	fixed column autoresize issues
+	removed libstdc++ hacks from C++ plugins
+	fixed "Remove from disk" menu item not being hidden by corresponding option
+	fixed applying "Pin group titles" config on startup (patch from Christian Boxdörfer)
+	improved charset detection in CUE files, not longer allowing invalid utf-8 to go through
+	paused network streams don't attempt to prebuffer until played
+	unpausing network streams always restarts them
+	prevent loading playlists from archives (treat them like folders)
+	hide the "Hotkeys" tab from preferences if hotkeys plugin is not available
+	don't build shellexecui if not building shellexec
+	fixed memleak when drag-dropping pls/m3u playlists from file managers
+	prevent passing non-utf8 filenames to progress dialog
+	fixed crash when opening invalid VTX files
+	fixed crash when opening invalid WMA files
+	don't delete replaygain info from FLACs when writing tags
+	fixed really old buffer overflow bug in dnd handler (kudos to Megabaks)
+
 version 0.6.0
 	gui layout designer, with a set of widgets to choose from (View -> Design mode, then use right click)
 	new API for creating GUI extension plugins

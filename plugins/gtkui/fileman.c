@@ -204,7 +204,7 @@ gtkpl_add_fm_dropped_files (DB_playItem_t *drop_before, char *ptr, int length) {
             pe++;
         }
         if (pe - p < 4096 && pe - p > 7) {
-            char fname[(int)(pe - p)];
+            char fname[(int)(pe - p)+1];
             strcopy_special (fname, p, pe-p);
             //strncpy (fname, p, pe - p);
             //fname[pe - p] = 0;

@@ -1,6 +1,6 @@
 /*
-    DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
+    SuperEQ DSP plugin for DeaDBeeF Player
+    Copyright (C) 2009-2014 Alexey Yakovenko <waker@users.sourceforge.net>
     Original SuperEQ code (C) Naoki Shibata <shibatch@users.sf.net>
 
     This program is free software; you can redistribute it and/or
@@ -23,18 +23,6 @@
 #include <assert.h>
 #include "paramlist.hpp"
 #include "Equ.h"
-
-int _Unwind_Resume_or_Rethrow;
-int _Unwind_RaiseException;
-int _Unwind_GetLanguageSpecificData;
-int _Unwind_Resume;
-int _Unwind_DeleteException;
-int _Unwind_GetTextRelBase;
-int _Unwind_SetIP;
-int _Unwind_GetDataRelBase;
-int _Unwind_GetRegionStart;
-int _Unwind_SetGR;
-int _Unwind_GetIPInfo;
 
 #ifdef USE_OOURA
 extern "C" void rdft(int, int, REAL *, int *, REAL *);

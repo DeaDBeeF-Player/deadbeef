@@ -169,16 +169,16 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
     if (cinf->id == DB_COLUMN_ALBUM_ART) {
         if (theming) {
 #if GTK_CHECK_VERSION(3,0,0)
-            cairo_rectangle (cr, x, y, width, height);
+            cairo_rectangle (cr, x, y, width, MAX (height,minheight));
             cairo_clip (cr);
-            gtk_paint_flat_box (gtk_widget_get_style (theme_treeview), cr, GTK_STATE_NORMAL, GTK_SHADOW_NONE, theme_treeview, "cell_even_ruled", x-1, y, width+2, height);
+            gtk_paint_flat_box (gtk_widget_get_style (theme_treeview), cr, GTK_STATE_NORMAL, GTK_SHADOW_NONE, theme_treeview, "cell_even_ruled", x-1, y, width+2, MAX (height,minheight));
             cairo_reset_clip (cr);
 #else
             GdkRectangle clip = {
                 .x = x,
                 .y = y,
                 .width = width,
-                .height = height,
+                .height = MAX (height,minheight),
             };
             gtk_paint_flat_box (gtk_widget_get_style (theme_treeview), gtk_widget_get_window (listview->list), GTK_STATE_NORMAL, GTK_SHADOW_NONE, &clip, theme_treeview, "cell_even_ruled", x-1, y, width+2, height);
 #endif
@@ -236,29 +236,22 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
                 art_width = gdk_pixbuf_get_width (pixbuf);
                 float art_scale = (float)real_art_width / art_width;
                 int pw = real_art_width;
-                int ph;
+                int ph = pw;
                 if (gdk_pixbuf_get_width (pixbuf) < gdk_pixbuf_get_height (pixbuf)) {
                     art_scale *= (float)gdk_pixbuf_get_width (pixbuf) / gdk_pixbuf_get_height (pixbuf);
                 }
 
-                if (group_pinned == 1 && gtkui_groups_pinned) {
-                    ph = group_height;
-                }
-                else {
-                    ph = pw;
-                }
-
-                if (sy < ph)
-                {
+                int draw_pinned = (y - listview->grouptitle_height < ph && group_pinned == 1 && gtkui_groups_pinned) ? 1 : 0;
+                if (art_y > -(ph + listview->grouptitle_height) || draw_pinned) {
                     cairo_save (cr);
-                    if (group_pinned == 1 && gtkui_groups_pinned) {
-                        int ph_real = gdk_pixbuf_get_height (pixbuf);
-                        if (grp_next_y <= ph_real * art_scale + listview->grouptitle_height) {
-                            cairo_rectangle (cr, x + ART_PADDING_HORZ, grp_next_y - ph_real * art_scale, pw, ph);
-                            cairo_translate (cr, (x + ART_PADDING_HORZ)-0, grp_next_y - ph_real * art_scale);
+                    if (draw_pinned) {
+                        int ph_real = gdk_pixbuf_get_height (pixbuf) * art_scale;
+                        if (grp_next_y <= ph_real + listview->grouptitle_height) {
+                            cairo_rectangle (cr, x + ART_PADDING_HORZ, grp_next_y - ph_real, pw, ph_real);
+                            cairo_translate (cr, (x + ART_PADDING_HORZ)-0, grp_next_y - ph_real);
                         }
                         else {
-                            cairo_rectangle (cr, x + ART_PADDING_HORZ, listview->grouptitle_height, pw, ph);
+                            cairo_rectangle (cr, x + ART_PADDING_HORZ, listview->grouptitle_height, pw, ph_real);
                             cairo_translate (cr, (x + ART_PADDING_HORZ)-0, listview->grouptitle_height);
                         }
                     }
@@ -278,7 +271,7 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
             }
         }
     }
-    else if (it && it == playing_track && cinf->id == DB_COLUMN_PLAYING) {
+    else if (!gtkui_unicode_playstate && it && it == playing_track && cinf->id == DB_COLUMN_PLAYING) {
         int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
         int buffering = !deadbeef->streamer_ok_to_read (-1);
         GdkPixbuf *pixbuf;
@@ -296,15 +289,30 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
         cairo_fill (cr);
     }
     else if (it) {
-        char text[1024];
-        deadbeef->pl_format_title (it, -1, text, sizeof (text), cinf->id, cinf->format);
-        char *lb = strchr (text, '\r');
-        if (lb) {
-            *lb = 0;
+        char text[1024] = "";
+        if (it == playing_track && cinf->id == DB_COLUMN_PLAYING) {
+            int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
+            int buffering = !deadbeef->streamer_ok_to_read (-1);
+            if (paused) {
+                strcpy (text, "||");
+            }
+            else if (!buffering) {
+                strcpy (text, "►");
+            }
+            else {
+                strcpy (text, "⋯⋯⋯");
+            }
         }
-        lb = strchr (text, '\n');
-        if (lb) {
-            *lb = 0;
+        else {
+            deadbeef->pl_format_title (it, -1, text, sizeof (text), cinf->id, cinf->format);
+            char *lb = strchr (text, '\r');
+            if (lb) {
+                *lb = 0;
+            }
+            lb = strchr (text, '\n');
+            if (lb) {
+                *lb = 0;
+            }
         }
         GdkColor *color = NULL;
         if (theming) {
@@ -332,7 +340,7 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
             draw_init_font_bold (&listview->listctx);
         }
         if (calign_right) {
-            draw_text (&listview->listctx, x+5, y + 3, cwidth-10, 1, text);
+            draw_text (&listview->listctx, x + 5, y + 3, cwidth-10, 1, text);
         }
         else {
             draw_text (&listview->listctx, x + 5, y + 3, cwidth-10, 0, text);
@@ -553,12 +561,12 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     GtkWidget *reload_metadata;
 
     playlist_menu = gtk_menu_new ();
-    add_to_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Add to playback queue"));
+    add_to_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Add To Playback Queue"));
     gtk_widget_show (add_to_playback_queue1);
     gtk_container_add (GTK_CONTAINER (playlist_menu), add_to_playback_queue1);
     g_object_set_data (G_OBJECT (add_to_playback_queue1), "ps", listview);
 
-    remove_from_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Remove from playback queue"));
+    remove_from_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Remove From Playback Queue"));
     if (inqueue == -1) {
         gtk_widget_set_sensitive (remove_from_playback_queue1, FALSE);
     }
@@ -566,7 +574,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     gtk_container_add (GTK_CONTAINER (playlist_menu), remove_from_playback_queue1);
     g_object_set_data (G_OBJECT (remove_from_playback_queue1), "ps", listview);
 
-    reload_metadata = gtk_menu_item_new_with_mnemonic (_("Reload metadata"));
+    reload_metadata = gtk_menu_item_new_with_mnemonic (_("Reload Metadata"));
     gtk_widget_show (reload_metadata);
     gtk_container_add (GTK_CONTAINER (playlist_menu), reload_metadata);
     g_object_set_data (G_OBJECT (reload_metadata), "ps", listview);
@@ -584,7 +592,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     int hide_remove_from_disk = deadbeef->conf_get_int ("gtkui.hide_remove_from_disk", 0);
 
     if (!hide_remove_from_disk) {
-        remove_from_disk = gtk_menu_item_new_with_mnemonic (_("Remove from disk"));
+        remove_from_disk = gtk_menu_item_new_with_mnemonic (_("Remove From Disk"));
         gtk_widget_show (remove_from_disk);
         gtk_container_add (GTK_CONTAINER (playlist_menu), remove_from_disk);
         g_object_set_data (G_OBJECT (remove_from_disk), "ps", listview);
@@ -722,7 +730,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     }
 
 
-    properties1 = gtk_menu_item_new_with_mnemonic (_("Properties"));
+    properties1 = gtk_menu_item_new_with_mnemonic (_("Track Properties"));
     gtk_widget_show (properties1);
     gtk_container_add (GTK_CONTAINER (playlist_menu), properties1);
     g_object_set_data (G_OBJECT (properties1), "ps", listview);
@@ -769,9 +777,8 @@ void
 on_pin_groups_active                   (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    gboolean act = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem));
     int old_val = deadbeef->conf_get_int ("playlist.pin.groups", 0);
-    deadbeef->conf_set_int ("playlist.pin.groups", 1-old_val);
+    deadbeef->conf_set_int ("playlist.pin.groups", old_val ? 0 : 1);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     gtk_check_menu_item_toggled(GTK_CHECK_MENU_ITEM(menuitem));
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
@@ -1031,8 +1038,6 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
         return;
     }
 
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "title")), title);
-    editcolumn_title_changed = 0;
     int idx = 10;
     if (inf->id == -1) {
         if (inf->format) {
@@ -1070,6 +1075,8 @@ on_edit_column_activate                (GtkMenuItem     *menuitem,
         gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "format")), inf->format);
     }
     gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")), align_right);
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "title")), title);
+    editcolumn_title_changed = 0;
     gint response = gtk_dialog_run (GTK_DIALOG (dlg));
     if (response == GTK_RESPONSE_OK) {
         const gchar *title = gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "title")));

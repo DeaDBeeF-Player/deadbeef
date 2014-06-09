@@ -15,7 +15,7 @@ mms_la_SOURCES = mmsplug.c\
 	libmms/mmsx.h\
 	libmms/uri.h
 
-mms_la_LDFLAGS = -module
+mms_la_LDFLAGS = -module -avoid-version
 
 mms_la_LIBADD = $(LDADD) $(LIBMMS_LIBS)
 AM_CFLAGS = $(CFLAGS) -std=c99

@@ -3,7 +3,7 @@ pkglib_LTLIBRARIES = dsp_libsrc.la
 
 dsp_libsrc_la_SOURCES = src.c src.h
 
-dsp_libsrc_la_LDFLAGS = -module
+dsp_libsrc_la_LDFLAGS = -module -avoid-version
 
 dsp_libsrc_la_LIBADD = $(LIBADD) $(LIBSAMPLERATE_DEPS_LIBS)
 

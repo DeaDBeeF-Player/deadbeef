@@ -52,7 +52,7 @@ pl_add_meta (playItem_t *it, const char *key, const char *value) {
             return;
         }
         // find end of normal metadata
-        if (!normaltail && (m->key[0] == ':' || m->key[0] == '_' || m->key[0] == '!')) {
+        if (!normaltail && (!m->next || m->key[0] == ':' || m->key[0] == '_' || m->key[0] == '!')) {
             normaltail = tail;
             propstart = m;
             if (key[0] != ':' && key[0] != '_' && key[0] != '!') {

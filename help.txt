@@ -32,6 +32,8 @@ help file for deadbeef player
     1. add new column, select Album Art type
     2. right click on the playlist column headers, and in context menu select "group by" submenu. click "Artist/Date/Album".
 
+    another option is to use the album art widget in design mode (View -> Design mode)
+
 * OSD NOTIFICATIONS
 
     you can enable/configure them in "OSD Notify" plugin options

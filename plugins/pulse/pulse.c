@@ -1,6 +1,8 @@
 /*
-    DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
+    PulseAudio output plugin for DeaDBeeF Player
+    Copyright (C) 2011 Jan D. Behrens <zykure@web.de>
+    Copyright (C) 2010-2012 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2010 Anton Novikov <tonn.post@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,9 +16,6 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-    PulseAudio output plugin
-    Copyright (C) 2010 Anton Novikov <tonn.post@gmail.com>
 */
 
 #ifdef HAVE_CONFIG_H
@@ -366,6 +365,7 @@ static DB_output_t plugin =
     .plugin.name = "PulseAudio output plugin",
     .plugin.descr = "At the moment of this writing, PulseAudio seems to be very unstable in many (or most) GNU/Linux distributions.\nIf you experience problems - please try switching to ALSA or OSS output.\nIf that doesn't help - please uninstall PulseAudio from your system, and try ALSA or OSS again.\nThanks for understanding",
     .plugin.copyright =
+        "PulseAudio output plugin for DeaDBeeF Player\n"
         "Copyright (C) 2011 Jan D. Behrens <zykure@web.de>\n"
         "Copyright (C) 2010-2012 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "Copyright (C) 2010 Anton Novikov <tonn.post@gmail.com>\n"

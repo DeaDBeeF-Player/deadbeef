@@ -1,21 +1,26 @@
 /*
-    DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
+    CURL VFS plugin for DeaDBeeF Player
+    Copyright (C) 2009-2014 Alexey Yakovenko
 
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+    This software is provided 'as-is', without any express or implied
+    warranty.  In no event will the authors be held liable for any damages
+    arising from the use of this software.
+
+    Permission is granted to anyone to use this software for any purpose,
+    including commercial applications, and to alter it and redistribute it
+    freely, subject to the following restrictions:
+
+    1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+
+    2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+
+    3. This notice may not be removed or altered from any source distribution.
 */
+
 #include <curl/curl.h>
 #include <string.h>
 #include <stdlib.h>
@@ -74,6 +79,9 @@ typedef struct {
     int metadata_have_size; // amount which is already in metadata buffer
 
     char http_err[CURL_ERROR_SIZE];
+
+    float prev_playtime;
+    time_t started_timestamp;
 
     // flags (bitfields to save some space)
     unsigned seektoend : 1; // indicates that next tell must return length
@@ -205,6 +213,14 @@ http_parse_shoutcast_meta (HTTP_FILE *fp, const char *meta, int size) {
                 int songstarted = 0;
                 char *tit = strstr (title, " - ");
                 deadbeef->pl_lock ();
+                int emulate_trackchange = deadbeef->conf_get_int ("vfs_curl.emulate_trackchange", 0);
+                // create dummy track with previous meta
+                DB_playItem_t *from = NULL;
+                if (emulate_trackchange) {
+                    from = deadbeef->pl_item_alloc ();
+                    deadbeef->pl_items_copy_junk (fp->track, from, from);
+                }
+
                 if (tit) {
                     *tit = 0;
                     tit += 3;
@@ -224,6 +240,7 @@ http_parse_shoutcast_meta (HTTP_FILE *fp, const char *meta, int size) {
                 else {
                     const char *orig_title = deadbeef->pl_find_meta (fp->track, "title");
                     if (!orig_title || strcasecmp (orig_title, title)) {
+                        deadbeef->pl_delete_meta (fp->track, "artist");
                         vfs_curl_set_meta (fp->track, "title", title);
                         songstarted = 1;
                     }
@@ -236,12 +253,34 @@ http_parse_shoutcast_meta (HTTP_FILE *fp, const char *meta, int size) {
                 }
                 deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
                 if (songstarted) {
+
+                    float playpos = deadbeef->streamer_get_playpos ();
+                    if (emulate_trackchange)
+                    {
+                        ddb_event_trackchange_t *ev = (ddb_event_trackchange_t *)deadbeef->event_alloc (DB_EV_SONGCHANGED);
+
+                        ev->from = from;
+                        ev->to = fp->track;
+                        ev->playtime = playpos - fp->prev_playtime;
+                        ev->started_timestamp = fp->started_timestamp;
+                        deadbeef->pl_item_ref (ev->from);
+                        deadbeef->pl_item_ref (ev->to);
+                        deadbeef->event_send ((ddb_event_t *)ev, 0, 0);
+                    }
+
                     ddb_event_track_t *ev = (ddb_event_track_t *)deadbeef->event_alloc (DB_EV_SONGSTARTED);
                     ev->track = fp->track;
+                    fp->started_timestamp = time(NULL);
+                    ev->started_timestamp = fp->started_timestamp;
                     if (ev->track) {
                         deadbeef->pl_item_ref (ev->track);
                     }
                     deadbeef->event_send ((ddb_event_t *)ev, 0, 0);
+                    fp->prev_playtime = playpos;
+                }
+                if (from) {
+                    deadbeef->pl_item_unref (from);
+                    from = NULL;
                 }
             }
             return 0;
@@ -1089,7 +1128,10 @@ http_is_streaming (void) {
     return 1;
 }
 
-// standard stdio vfs
+static const char settings_dlg[] =
+    "property \"Emulate track change events (for scrobbling)\" checkbox vfs_curl.emulate_trackchange 0;\n"
+;
+
 static DB_vfs_t plugin = {
     .plugin.api_vmajor = 1,
     .plugin.api_vminor = 0,
@@ -1100,25 +1142,31 @@ static DB_vfs_t plugin = {
     .plugin.name = "cURL vfs",
     .plugin.descr = "http and ftp streaming module using libcurl, with ICY protocol support",
     .plugin.copyright = 
-        "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "CURL VFS plugin for DeaDBeeF Player\n"
+        "Copyright (C) 2009-2014 Alexey Yakovenko\n"
         "\n"
-        "This program is free software; you can redistribute it and/or\n"
-        "modify it under the terms of the GNU General Public License\n"
-        "as published by the Free Software Foundation; either version 2\n"
-        "of the License, or (at your option) any later version.\n"
+        "This software is provided 'as-is', without any express or implied\n"
+        "warranty.  In no event will the authors be held liable for any damages\n"
+        "arising from the use of this software.\n"
         "\n"
-        "This program is distributed in the hope that it will be useful,\n"
-        "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
-        "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
-        "GNU General Public License for more details.\n"
+        "Permission is granted to anyone to use this software for any purpose,\n"
+        "including commercial applications, and to alter it and redistribute it\n"
+        "freely, subject to the following restrictions:\n"
         "\n"
-        "You should have received a copy of the GNU General Public License\n"
-        "along with this program; if not, write to the Free Software\n"
-        "Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.\n"
+        "1. The origin of this software must not be misrepresented; you must not\n"
+        " claim that you wrote the original software. If you use this software\n"
+        " in a product, an acknowledgment in the product documentation would be\n"
+        " appreciated but is not required.\n"
+        "\n"
+        "2. Altered source versions must be plainly marked as such, and must not be\n"
+        " misrepresented as being the original software.\n"
+        "\n"
+        "3. This notice may not be removed or altered from any source distribution.\n"
     ,
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.start = vfs_curl_start,
     .plugin.stop = vfs_curl_stop,
+    .plugin.configdialog = settings_dlg,
     .open = http_open,
     .set_track = http_set_track,
     .close = http_close,

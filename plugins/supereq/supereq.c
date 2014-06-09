@@ -1,6 +1,6 @@
 /*
-    DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
+    SuperEQ DSP plugin for DeaDBeeF Player
+    Copyright (C) 2009-2014 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -282,7 +282,8 @@ static DB_dsp_t plugin = {
     .plugin.name = "SuperEQ",
     .plugin.descr = "equalizer plugin using SuperEQ library",
     .plugin.copyright = 
-        "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "SuperEQ DSP plugin for DeaDBeeF Player\n"
+        "Copyright (C) 2009-2014 Alexey Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "Uses supereq library by Naoki Shibata, http://shibatch.sourceforge.net\n"
         "Uses FFT library by Takuya Ooura, http://www.kurims.kyoto-u.ac.jp/~ooura/\n"
@@ -300,6 +301,39 @@ static DB_dsp_t plugin = {
         "You should have received a copy of the GNU General Public License\n"
         "along with this program; if not, write to the Free Software\n"
         "Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.\n"
+        "\n"
+        "\n"
+        "\n"
+        "Based on:\n"
+        "Shibatch Super Equalizer ver 0.03 for winamp\n"
+        "written by Naoki Shibata  shibatch@users.sourceforge.net\n"
+        "\n"
+        "Shibatch Super Equalizer is a graphic and parametric equalizer plugin\n"
+        "for winamp. This plugin uses 16383th order FIR filter with FFT algorithm.\n"
+        "It's equalization is very precise. Equalization setting can be done\n"
+        "for each channel separately.\n"
+        "\n"
+        "Processes of internal equalizer in winamp are actually done by each\n"
+        "input plugin, so the results may differ for each input plugin.\n"
+        "With this plugin, this problem can be avoided.\n"
+        "\n"
+        "This plugin is optimized for processors which have cache equal to or\n"
+        "greater than 128k bytes(16383*2*sizeof(float) = 128k). This plugin\n"
+        "won't work efficiently with K6 series processors(buy Athlon!!!).\n"
+        "\n"
+        "Do not forget pressing \"preview\" button after changing setting.\n"
+        "\n"
+        "http://shibatch.sourceforge.net/\n"
+        "\n"
+        "***\n"
+        "\n"
+        "  This program(except FFT part) is distributed under LGPL. See LGPL.txt for\n"
+        "details.\n"
+        "\n"
+        "  FFT part is a routine made by Mr.Ooura. This routine is a freeware. Contact\n"
+        "Mr.Ooura for details of distributing licenses.\n"
+        "\n"
+        "http://www.kurims.kyoto-u.ac.jp/~ooura/fft.html\n"
     ,
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.start = supereq_plugin_start,

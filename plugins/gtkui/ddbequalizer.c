@@ -77,8 +77,7 @@ GType ddb_equalizer_get_type (void);
 enum  {
 	DDB_EQUALIZER_DUMMY_PROPERTY
 };
-#define DDB_EQUALIZER_bands 18
-#define DDB_EQUALIZER_spot_size 3
+#define DDB_EQUALIZER_BANDS 18
 static gboolean ddb_equalizer_real_configure_event (GtkWidget* base, GdkEventConfigure* event);
 static void ddb_equalizer_real_realize (GtkWidget* base);
 #if !GTK_CHECK_VERSION(3,0,0)
@@ -170,11 +169,10 @@ static gboolean ddb_equalizer_real_draw (GtkWidget *widget, cairo_t *cr) {
     gdk_cairo_set_source_color (cr, &fore_dark_color);
 
     //drawing grid:
-    double step = (double)(width - self->priv->eq_margin_left) / (double)(DDB_EQUALIZER_bands+1);
+    double step = (double)(width - self->priv->eq_margin_left) / (double)(DDB_EQUALIZER_BANDS+1);
     int i;
-    for (i = 0; i < DDB_EQUALIZER_bands; i++)
+    for (i = 0; i < DDB_EQUALIZER_BANDS; i++)
     {
-        //does anyone know why this method is static?
         cairo_move_to (cr, (int)((i+1)*step)+self->priv->eq_margin_left, 0);
         cairo_line_to (cr, (int)((i+1)*step)+self->priv->eq_margin_left, height - self->priv->eq_margin_bottom);
     }
@@ -182,8 +180,11 @@ static gboolean ddb_equalizer_real_draw (GtkWidget *widget, cairo_t *cr) {
     double vstep = (double)(height-self->priv->eq_margin_bottom);
     for (double di=0; di < 2; di += 0.25)
     {
-        cairo_move_to (cr, self->priv->eq_margin_left, (int)((di-self->priv->preamp)*vstep));
-        cairo_line_to (cr, width, (int)((di-self->priv->preamp)*vstep));
+        int y = (int)((di-self->priv->preamp)*vstep);
+        if (y < alloc.height-self->priv->eq_margin_bottom) {
+            cairo_move_to (cr, self->priv->eq_margin_left, y);
+            cairo_line_to (cr, width, y);
+        }
     }
     cairo_stroke (cr);
 
@@ -200,7 +201,7 @@ static gboolean ddb_equalizer_real_draw (GtkWidget *widget, cairo_t *cr) {
 
     pango_font_description_set_size (fd, (int)(pango_font_description_get_size (st->font_desc) * 0.7));
     pango_context_set_font_description (pctx, fd);
-    for (i = 0; i < DDB_EQUALIZER_bands; i++)
+    for (i = 0; i < DDB_EQUALIZER_BANDS; i++)
     {
         cairo_save (cr);
         pango_layout_set_text (l, freqs[i], strlen (freqs[i]));
@@ -287,7 +288,7 @@ static gboolean ddb_equalizer_real_draw (GtkWidget *widget, cairo_t *cr) {
         bar_w = (int)step-1;
 
 
-    for (i = 0; i < DDB_EQUALIZER_bands; i++)
+    for (i = 0; i < DDB_EQUALIZER_BANDS; i++)
     {
         cairo_reset_clip (cr);
         cairo_rectangle (cr, (int)((i+1)*step)+self->priv->eq_margin_left - bar_w/2, (int)(self->priv->values[i] * (height-self->priv->eq_margin_bottom)), 11, height);
@@ -407,7 +408,7 @@ static void ddb_equalizer_update_eq_drag (DdbEqualizer* self, gdouble x, gdouble
 	gtk_widget_get_allocation ((GtkWidget*) self, &_tmp0_);
 	_tmp1_ = _tmp0_.width;
 	_tmp2_ = self->priv->eq_margin_left;
-	band_width = ((gdouble) (_tmp1_ - _tmp2_)) / ((gdouble) (DDB_EQUALIZER_bands + 1));
+	band_width = ((gdouble) (_tmp1_ - _tmp2_)) / ((gdouble) (DDB_EQUALIZER_BANDS + 1));
 	_tmp3_ = x;
 	_tmp4_ = self->priv->eq_margin_left;
 	_tmp5_ = band_width;
@@ -418,7 +419,7 @@ static void ddb_equalizer_update_eq_drag (DdbEqualizer* self, gdouble x, gdouble
 		band = 0;
 	}
 	_tmp8_ = band;
-	if (_tmp8_ >= DDB_EQUALIZER_bands) {
+	if (_tmp8_ >= DDB_EQUALIZER_BANDS) {
 		gint _tmp9_;
 		_tmp9_ = band;
 		band = _tmp9_ - 1;
@@ -427,7 +428,7 @@ static void ddb_equalizer_update_eq_drag (DdbEqualizer* self, gdouble x, gdouble
 	if (_tmp11_ >= 0) {
 		gint _tmp12_;
 		_tmp12_ = band;
-		_tmp10_ = _tmp12_ < DDB_EQUALIZER_bands;
+		_tmp10_ = _tmp12_ < DDB_EQUALIZER_BANDS;
 	} else {
 		_tmp10_ = FALSE;
 	}
@@ -808,9 +809,9 @@ static void ddb_equalizer_instance_init (DdbEqualizer * self) {
 	gdouble* _tmp0_ = NULL;
 	GdkCursor* _tmp1_;
 	self->priv = DDB_EQUALIZER_GET_PRIVATE (self);
-	_tmp0_ = g_new0 (gdouble, DDB_EQUALIZER_bands);
+	_tmp0_ = g_new0 (gdouble, DDB_EQUALIZER_BANDS);
 	self->priv->values = _tmp0_;
-	self->priv->values_length1 = DDB_EQUALIZER_bands;
+	self->priv->values_length1 = DDB_EQUALIZER_BANDS;
 	self->priv->_values_size_ = self->priv->values_length1;
 	self->priv->preamp = 0.5;
 	self->priv->mouse_y = -1;

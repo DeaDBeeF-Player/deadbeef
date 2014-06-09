@@ -6,6 +6,11 @@ APBUILD_NOTE_METADATA("apbuild.version=" APBUILD_VERSION);
 #endif
 
 /* apbuild generated symbol exclusion list */
+__asm__(".symver __exp_finite,exp@GLIBC_2.0");
+__asm__(".symver __acosf_finite,acosf@GLIBC_2.0");
+__asm__(".symver __log_finite,log@GLIBC_2.0");
+__asm__(".symver __pow_finite,pow@GLIBC_2.0");
+__asm__(".symver memcpy,memcpy@GLIBC_2.0");
 __asm__(".symver _sys_errlist,_sys_errlist@GLIBC_2.0");
 __asm__(".symver _sys_nerr,_sys_nerr@GLIBC_2.0");
 __asm__(".symver _sys_siglist,_sys_siglist@GLIBC_2.0");

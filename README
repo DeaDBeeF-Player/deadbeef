@@ -1,7 +1,7 @@
 TABLE OF CONTENTS
 
 1. compiling, dependencies, etc
-2. information for distributors
+2. licensing
 
 ==========================================================
 
@@ -51,10 +51,7 @@ most of them are optional, which means deadbeef will build and run without them,
 
 actual package names for your Linux distribution may vary.
 
-==========================================================
 
-2. information for distributors
+2. licensing
 
-The Deadbeef player code is licensed under GPLv2, but this is not a requirement for plugins.
-Plugins don't link directly to deadbeef code, but are using special API header file which uses ZLib license.
-
+DeaDBeeF core uses ZLIB license. See COPYING in each subdirectory for details.

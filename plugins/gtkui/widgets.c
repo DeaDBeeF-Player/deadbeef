@@ -37,8 +37,14 @@
 #include "namedicons.h"
 #include "hotkeys.h" // for building action treeview
 #include "../../strdupa.h"
-#include "../../optmath.h"
+#include "../../fastftoi.h"
 #include "actions.h"
+#include "ddbseekbar.h"
+#include "ddbvolumebar.h"
+#include "callbacks.h"
+
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -190,6 +196,27 @@ typedef struct {
     unsigned use_textcolor : 1;
 } w_button_t;
 
+typedef struct {
+    ddb_gtkui_widget_t base;
+    GtkWidget *seekbar;
+    gint timer;
+    float last_songpos;
+} w_seekbar_t;
+
+typedef struct {
+    ddb_gtkui_widget_t base;
+} w_playtb_t;
+
+typedef struct {
+    ddb_gtkui_widget_t base;
+    GtkWidget *volumebar;
+} w_volumebar_t;
+
+typedef struct {
+    ddb_gtkui_widget_t base;
+    GtkWidget *voices[8];
+} w_ctvoices_t;
+
 static int design_mode;
 static ddb_gtkui_widget_t *rootwidget;
 
@@ -216,17 +243,10 @@ w_get_rootwidget (void) {
     return rootwidget;
 }
 
-static void
-set_design_mode (ddb_gtkui_widget_t *w) {
-    for (ddb_gtkui_widget_t *c = w->children; c; c = c->next) {
-        set_design_mode (c);
-    }
-}
-
 void
 w_set_design_mode (int active) {
     design_mode = active;
-    set_design_mode (rootwidget);
+    gtk_widget_queue_draw (mainwin);
 }
 
 int
@@ -319,6 +339,145 @@ w_replace (ddb_gtkui_widget_t *w, ddb_gtkui_widget_t *from, ddb_gtkui_widget_t *
     }
 }
 
+// unknown widget wrapper
+typedef struct {
+    ddb_gtkui_widget_t base;
+    GtkWidget *drawarea;
+    char *expected_type;
+    char *parms;
+    char *children;
+} w_unknown_t;
+
+const char *
+w_unknown_load (struct ddb_gtkui_widget_s *base, const char *type, const char *s) {
+    w_unknown_t *w = (w_unknown_t *)base;
+    char buffer_parms[4000];
+    char buffer_children[4000];
+
+    const char *p = s;
+    while (*p && *p != '{') {
+        p++;
+    }
+
+    if (!(*p)) {
+        fprintf (stderr, "reached EOL before expected { while trying to load unknown widget %s\n", w->expected_type);
+        return NULL;
+    }
+
+    if (p - s + 1 > sizeof (buffer_parms)) {
+        fprintf (stderr, "buffer to small to load unknown widget %s\n", w->expected_type);
+        return NULL;
+    }
+
+    memcpy (buffer_parms, s, p-s);
+    buffer_parms[p-s] = 0;
+
+    p++;
+    s = p;
+
+    int nb = 1;
+    while (*p) {
+        if (*p == '{') {
+            nb++;
+        }
+        if (*p == '}') {
+            nb--;
+            if (nb == 0) {
+                break;
+            }
+        }
+        p++;
+    }
+    if (!(*p)) {
+        fprintf (stderr, "reached EOL before expected } while trying to load unknown widget %s\n", w->expected_type);
+        return NULL;
+    }
+    if (p - s + 1 > sizeof (buffer_parms)) {
+        fprintf (stderr, "buffer to small to load unknown widget %s\n", w->expected_type);
+        return NULL;
+    }
+    memcpy (buffer_children, s, p-s);
+    buffer_children[p-s] = 0;
+
+    w->parms = strdup (buffer_parms);
+    w->children = strdup (buffer_children);
+
+    // caller expects 's' to point to '}'
+    return p;
+}
+
+static void
+w_unknown_save (struct ddb_gtkui_widget_s *base, char *s, int sz) {
+    w_unknown_t *w = (w_unknown_t *)base;
+    int l = strlen (s);
+    s += l;
+    sz -= l;
+    snprintf (s, sz, "%s%s {%s}", w->expected_type, w->parms, w->children);
+}
+
+void w_unknown_destroy (ddb_gtkui_widget_t *_w) {
+    w_unknown_t *w = (w_unknown_t *)_w;
+    if (w->expected_type) {
+        free (w->expected_type);
+        w->expected_type = NULL;
+    }
+    if (w->parms) {
+        free (w->parms);
+        w->parms = NULL;
+    }
+    if (w->children) {
+        free (w->children);
+        w->children = NULL;
+    }
+}
+
+static gboolean
+unknown_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
+    ddb_gtkui_widget_t *w = user_data;
+    cairo_set_source_rgb(cr, 0.1, 0.1, 0.1);
+
+    cairo_set_font_size(cr, 16);
+
+    cairo_move_to(cr, 20, 30);
+
+    char s[1000];
+    snprintf (s, sizeof (s), _("Widget \"%s\" is not available"), ((w_unknown_t *)w)->expected_type);
+
+    cairo_show_text(cr, s);
+    return TRUE;
+}
+
+static gboolean
+unknown_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
+    cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
+    gboolean res = unknown_draw (widget, cr, user_data);
+    cairo_destroy (cr);
+    return res;
+}
+
+ddb_gtkui_widget_t *
+w_unknown_create (const char *type) {
+    w_unknown_t *w = malloc (sizeof (w_unknown_t));
+    memset (w, 0, sizeof (w_unknown_t));
+    w->base.type = "unknown";
+    w->base.load = w_unknown_load;
+    w->base.save = w_unknown_save;
+    w->base.destroy = w_unknown_destroy;
+    w->expected_type = strdup (type);
+
+    w->base.widget = gtk_event_box_new ();
+    w->drawarea = gtk_drawing_area_new ();
+    gtk_widget_show (w->drawarea);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), w->drawarea);
+#if !GTK_CHECK_VERSION(3,0,0)
+    g_signal_connect_after ((gpointer) w->drawarea, "expose_event", G_CALLBACK (unknown_expose_event), w);
+#else
+    g_signal_connect_after ((gpointer) w->drawarea, "draw", G_CALLBACK (unknown_draw), w);
+#endif
+    w_override_signals (w->base.widget, w);
+    return w;
+}
+
 const char *
 w_create_from_string (const char *s, ddb_gtkui_widget_t **parent) {
     char t[MAX_TOKEN];
@@ -329,8 +488,7 @@ w_create_from_string (const char *s, ddb_gtkui_widget_t **parent) {
     char *type = strdupa (t);
     ddb_gtkui_widget_t *w = w_create (type);
     if (!w) {
-        fprintf (stderr, "failed to create widget for type %s\n", t);
-        return NULL;
+        w = w_unknown_create (type);
     }
     // nuke all default children
     while (w->children) {
@@ -444,10 +602,17 @@ static char paste_buffer[20000];
 
 void
 save_widget_to_string (char *str, int sz, ddb_gtkui_widget_t *w) {
+    // uknown is special case
+    if (!strcmp (w->type, "unknown")) {
+        w->save (w, str, sz);
+        return;
+    }
+
     strcat (str, w->type);
     if (w->save) {
         w->save (w, str, sz);
     }
+
     strcat (str, " {");
     for (ddb_gtkui_widget_t *c = w->children; c; c = c->next) {
         save_widget_to_string (str, sz, c);
@@ -459,7 +624,7 @@ void
 w_save (void) {
     char buf[20000] = "";
     save_widget_to_string (buf, sizeof (buf), rootwidget->children);
-    deadbeef->conf_set_str ("gtkui.layout", buf);
+    deadbeef->conf_set_str (DDB_GTKUI_CONF_LAYOUT, buf);
     deadbeef->conf_save ();
 }
 
@@ -566,12 +731,15 @@ show_widget (GtkWidget *widget, gpointer data) {
     gtk_widget_show (widget);
 }
 
+static GtkRequisition prev_req;
+
 void
 w_menu_deactivate (GtkMenuShell *menushell, gpointer user_data) {
     hidden = 0;
     ddb_gtkui_widget_t *w = user_data;
     if (GTK_IS_CONTAINER (w->widget)) {
         gtk_container_foreach (GTK_CONTAINER (w->widget), show_widget, NULL);
+        gtk_widget_set_size_request (w->widget, prev_req.width, prev_req.height);
     }
     gtk_widget_set_app_paintable (w->widget, FALSE);
     gtk_widget_queue_draw (w->widget);
@@ -586,9 +754,12 @@ w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_da
     current_widget = user_data;
     widget = current_widget->widget;
     hidden = 1;
+
     if (GTK_IS_CONTAINER (widget)) {
         // hide all children
+        gtk_widget_size_request (widget, &prev_req);
         gtk_container_foreach (GTK_CONTAINER (widget), hide_widget, NULL);
+        gtk_widget_set_size_request (widget, prev_req.width, prev_req.height);
     }
 
     gtk_widget_set_app_paintable (widget, TRUE);
@@ -724,7 +895,7 @@ w_unreg_widget (const char *type) {
         }
         prev = c;
     }
-    fprintf (stderr, "gtkui w_unreg_widget: widget type %s is not registered\n", type);
+    trace ("gtkui w_unreg_widget: widget type %s is not registered\n", type);
 }
 
 int
@@ -756,6 +927,15 @@ w_create (const char *type) {
         if (!strcmp (c->type, type)) {
             if (c->flags & DDB_WF_SINGLE_INSTANCE) {
                 int num = get_num_widgets (rootwidget, c->type);
+                // HACK: playlist and tabbed playlist are essentially the same
+                // widgets with single-instance limit
+
+                if (!strcmp (c->type, "tabbed_playlist")) {
+                    num += get_num_widgets (rootwidget, "playlist");
+                }
+                else if (!strcmp (c->type, "playlist")) {
+                    num += get_num_widgets (rootwidget, "tabbed_playlist");
+                }
                 if (num) {
                     // create dummy
                     w_dummy_t *w = (w_dummy_t *)w_create ("dummy");
@@ -803,6 +983,9 @@ w_container_remove (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
 ////// placeholder widget
 gboolean
 w_placeholder_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
+    if (!design_mode) {
+        return FALSE;
+    }
     cairo_set_source_rgb (cr, 255, 0, 0);
     cairo_surface_t *checker;
     cairo_t *cr2;
@@ -849,7 +1032,7 @@ w_placeholder_create (void) {
 
     w->base.widget = gtk_event_box_new ();
     w->drawarea  = gtk_drawing_area_new ();
-    gtk_widget_set_size_request (w->drawarea, 20, 20);
+    gtk_widget_set_size_request (w->base.widget, 20, 20);
     gtk_widget_show (w->drawarea);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->drawarea);
 
@@ -1595,26 +1778,25 @@ refresh_cb (gpointer data) {
 static gboolean
 playlistswitch_cb (gpointer p) {
     w_playlist_t *tp = (w_playlist_t *)p;
-    int curr = deadbeef->plt_get_curr_idx ();
-    char conf[100];
-    snprintf (conf, sizeof (conf), "playlist.scroll.%d", curr);
-    int scroll = deadbeef->conf_get_int (conf, 0);
-    snprintf (conf, sizeof (conf), "playlist.cursor.%d", curr);
-    int cursor = deadbeef->conf_get_int (conf, -1);
-    deadbeef->pl_set_cursor (PL_MAIN, cursor);
     if (!strcmp (tp->base.type, "tabbed_playlist")) {
         ddb_tabstrip_refresh (((w_tabbed_playlist_t *)tp)->tabstrip);
     }
-    if (cursor != -1) {
-        DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (cursor, PL_MAIN);
-        if (it) {
-            deadbeef->pl_set_selected (it, 1);
-            deadbeef->pl_item_unref (it);
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        int cursor = deadbeef->plt_get_cursor (plt, PL_MAIN);
+        int scroll = deadbeef->plt_get_scroll (plt);
+        if (cursor != -1) {
+            DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (cursor, PL_MAIN);
+            if (it) {
+                deadbeef->pl_set_selected (it, 1);
+                deadbeef->pl_item_unref (it);
+            }
         }
-    }
+        deadbeef->plt_unref (plt);
 
-    ddb_listview_refresh (tp->list, DDB_LIST_CHANGED | DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL);
-    ddb_listview_set_vscroll (tp->list, scroll);
+        ddb_listview_refresh (tp->list, DDB_LIST_CHANGED | DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL);
+        ddb_listview_set_vscroll (tp->list, scroll);
+    }
     return FALSE;
 }
 
@@ -1625,7 +1807,7 @@ struct fromto_t {
 };
 
 static gboolean
-tabbed_songchanged_cb (gpointer p) {
+songchanged_cb (gpointer p) {
     struct fromto_t *ft = p;
     DB_playItem_t *from = ft->from;
     DB_playItem_t *to = ft->to;
@@ -1636,8 +1818,18 @@ tabbed_songchanged_cb (gpointer p) {
         int scroll_follows_playback = deadbeef->conf_get_int ("playlist.scroll.followplayback", 1);
         int plt = deadbeef->streamer_get_current_playlist ();
         if (plt != -1) {
-            if (cursor_follows_playback && plt != deadbeef->plt_get_curr_idx ()) {
-                deadbeef->plt_set_curr_idx (plt);
+            if (plt != deadbeef->plt_get_curr_idx ()) {
+                ddb_playlist_t *p = deadbeef->plt_get_for_idx (plt);
+                if (p) {
+                    to_idx = deadbeef->plt_get_item_idx (p, to, PL_MAIN);
+                    if (cursor_follows_playback) {
+                        deadbeef->plt_deselect_all (p);
+                        deadbeef->pl_set_selected (to, 1);
+                        deadbeef->plt_set_cursor (p, PL_MAIN, to_idx);
+                    }
+                    deadbeef->plt_unref (p);
+                }
+                goto end;
             }
             to_idx = deadbeef->pl_get_idx_of (to);
             if (to_idx != -1) {
@@ -1650,7 +1842,7 @@ tabbed_songchanged_cb (gpointer p) {
             }
         }
     }
-
+end:
     if (from) {
         int idx = deadbeef->pl_get_idx_of (from);
         if (idx != -1) {
@@ -1659,52 +1851,6 @@ tabbed_songchanged_cb (gpointer p) {
     }
     if (to && to_idx != -1) {
         ddb_listview_draw_row (tp->list, to_idx, to);
-    }
-    if (ft->from) {
-        deadbeef->pl_item_unref (ft->from);
-    }
-    if (ft->to) {
-        deadbeef->pl_item_unref (ft->to);
-    }
-    free (ft);
-    return FALSE;
-}
-
-static gboolean
-songchanged_cb (gpointer data) {
-    struct fromto_t *ft = data;
-    DB_playItem_t *from = ft->from;
-    DB_playItem_t *to = ft->to;
-    w_playlist_t *p = (w_playlist_t *)ft->w;
-    int to_idx = -1;
-    if (!ddb_listview_is_scrolling (DDB_LISTVIEW (p->list)) && to) {
-        int cursor_follows_playback = deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1);
-        int scroll_follows_playback = deadbeef->conf_get_int ("playlist.scroll.followplayback", 1);
-        int plt = deadbeef->streamer_get_current_playlist ();
-        if (plt != -1) {
-            if (cursor_follows_playback && plt != deadbeef->plt_get_curr_idx ()) {
-                deadbeef->plt_set_curr_idx (plt);
-            }
-            to_idx = deadbeef->pl_get_idx_of (to);
-            if (to_idx != -1) {
-                if (cursor_follows_playback) {
-                    ddb_listview_set_cursor_noscroll (DDB_LISTVIEW (p->list), to_idx);
-                }
-                if (scroll_follows_playback && plt == deadbeef->plt_get_curr_idx ()) {
-                    ddb_listview_scroll_to (DDB_LISTVIEW (p->list), to_idx);
-                }
-            }
-        }
-    }
-
-    if (from) {
-        int idx = deadbeef->pl_get_idx_of (from);
-        if (idx != -1) {
-            ddb_listview_draw_row (DDB_LISTVIEW (p->list), idx, from);
-        }
-    }
-    if (to && to_idx != -1) {
-        ddb_listview_draw_row (DDB_LISTVIEW (p->list), to_idx, to);
     }
     if (ft->from) {
         deadbeef->pl_item_unref (ft->from);
@@ -1756,7 +1902,7 @@ w_tabbed_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, ui
             deadbeef->pl_item_ref (ft->to);
         }
         ft->w = w;
-        g_idle_add (tabbed_songchanged_cb, ft);
+        g_idle_add (songchanged_cb, ft);
         break;
     case DB_EV_TRACKINFOCHANGED:
         {
@@ -1874,6 +2020,7 @@ w_playlist_init (ddb_gtkui_widget_t *base) {
     ddb_listview_show_header (w->list, !w->hideheaders);
 
     g_idle_add (playlistswitch_cb, w);
+    g_idle_add (refresh_cb, w->list);
 }
 
 static void
@@ -1912,11 +2059,11 @@ w_tabbed_playlist_create (void) {
     w->tabstrip = DDB_TABSTRIP (tabstrip);
     gtk_widget_show (tabstrip);
     GtkWidget *list = ddb_listview_new ();
+    gtk_widget_set_size_request (vbox, 100, 100);
     w->plt.list = (DdbListview *)list;
     gtk_widget_show (list);
 
     gtk_box_pack_start (GTK_BOX (vbox), tabstrip, FALSE, TRUE, 0);
-    gtk_widget_set_size_request (tabstrip, -1, 24);
     gtk_widget_set_can_focus (tabstrip, FALSE);
     gtk_widget_set_can_default (tabstrip, FALSE);
 
@@ -1924,7 +2071,6 @@ w_tabbed_playlist_create (void) {
 
     main_playlist_init (list);
 
-//    gtk_container_forall (GTK_CONTAINER (w->base.widget), w_override_signals, w);
     w_override_signals (w->plt.base.widget, w);
 
     w->plt.base.message = w_tabbed_playlist_message;
@@ -1940,6 +2086,7 @@ w_playlist_create (void) {
 
     w->base.widget = gtk_event_box_new ();
     w->list = DDB_LISTVIEW (ddb_listview_new ());
+    gtk_widget_set_size_request (GTK_WIDGET (w->base.widget), 100, 100);
     w->base.save = w_playlist_save;
     w->base.load = w_playlist_load;
     w->base.init = w_playlist_init;
@@ -2948,8 +3095,6 @@ w_hvbox_replace (struct ddb_gtkui_widget_s *container, struct ddb_gtkui_widget_s
         return;
     }
 
-    w_remove (container, c);
-    w_destroy (c);
     if (prev) {
         prev->next = newchild;
     }
@@ -2958,6 +3103,8 @@ w_hvbox_replace (struct ddb_gtkui_widget_s *container, struct ddb_gtkui_widget_s
     }
     newchild->next = c->next;
     newchild->parent = container;
+    w_remove (container, c);
+    w_destroy (c);
 
     gtk_box_pack_start (GTK_BOX (b->box), newchild->widget, TRUE, TRUE, 0);
     gtk_widget_show (newchild->widget);
@@ -3472,4 +3619,264 @@ w_button_create (void) {
     w->base.initmenu = w_button_initmenu;
     w_override_signals (w->base.widget, w);
     return (ddb_gtkui_widget_t *)w;
+}
+
+// seekbar
+static gboolean
+redraw_seekbar_cb (gpointer data) {
+    w_seekbar_t *w = data;
+    int iconified = gdk_window_get_state(gtk_widget_get_window(mainwin)) & GDK_WINDOW_STATE_ICONIFIED;
+    if (!gtk_widget_get_visible (mainwin) || iconified) {
+        return FALSE;
+    }
+    gtk_widget_queue_draw (w->seekbar);
+    return FALSE;
+}
+
+static gboolean
+seekbar_frameupdate (gpointer data) {
+    w_seekbar_t *w = data;
+    DB_output_t *output = deadbeef->get_output ();
+    DB_playItem_t *track = deadbeef->streamer_get_playing_track ();
+    DB_fileinfo_t *c = deadbeef->streamer_get_current_fileinfo (); // FIXME: might crash streamer
+    float songpos = w->last_songpos;
+    float duration = track ? deadbeef->pl_get_item_duration (track) : -1;
+    if (!output || (output->state () == OUTPUT_STATE_STOPPED || !track || !c)) {
+        songpos = 0;
+    }
+    else {
+        songpos = deadbeef->streamer_get_playpos ();
+    }
+    // translate pos to seekbar pixels
+    songpos /= duration;
+    GtkAllocation a;
+    gtk_widget_get_allocation (w->seekbar, &a);
+    songpos *= a.width;
+    if (fabs (songpos - w->last_songpos) > 0.01) {
+        gtk_widget_queue_draw (w->seekbar);
+        w->last_songpos = songpos;
+    }
+    if (track) {
+        deadbeef->pl_item_unref (track);
+    }
+    return TRUE;
+}
+
+static void
+w_seekbar_init (ddb_gtkui_widget_t *base) {
+    w_seekbar_t *w = (w_seekbar_t *)base;
+    if (w->timer) {
+        g_source_remove (w->timer);
+        w->timer = 0;
+    }
+
+    w->timer = g_timeout_add (1000/gtkui_get_gui_refresh_rate (), seekbar_frameupdate, w);
+}
+
+static int
+w_seekbar_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    switch (id) {
+    case DB_EV_SONGCHANGED:
+        g_idle_add (redraw_seekbar_cb, w);
+        break;
+    case DB_EV_CONFIGCHANGED:
+        w_seekbar_init (w);
+        break;
+    }
+    return 0;
+}
+
+static void
+w_seekbar_destroy (ddb_gtkui_widget_t *wbase) {
+    w_seekbar_t *w = (w_seekbar_t *)wbase;
+    if (w->timer) {
+        g_source_remove (w->timer);
+        w->timer = 0;
+    }
+}
+
+ddb_gtkui_widget_t *
+w_seekbar_create (void) {
+    w_seekbar_t *w = malloc (sizeof (w_seekbar_t));
+    memset (w, 0, sizeof (w_seekbar_t));
+    w->base.widget = gtk_event_box_new ();
+    w->base.message = w_seekbar_message;
+    w->base.destroy = w_seekbar_destroy;
+    w->base.init = w_seekbar_init;
+    w->seekbar = ddb_seekbar_new ();
+    gtk_widget_set_size_request (w->base.widget, 20, 16);
+    w->last_songpos = -1;
+    ddb_seekbar_init_signals (DDB_SEEKBAR (w->seekbar), w->base.widget);
+    gtk_widget_show (w->seekbar);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), w->seekbar);
+    w_override_signals (w->base.widget, w);
+    return (ddb_gtkui_widget_t*)w;
+}
+
+// play toolbar
+ddb_gtkui_widget_t *
+w_playtb_create (void) {
+    w_playtb_t *w = malloc (sizeof (w_playtb_t));
+    memset (w, 0, sizeof (w_playtb_t));
+    w->base.widget = gtk_hbox_new (FALSE, 0);
+    w->base.flags = DDB_GTKUI_WIDGET_FLAG_NON_EXPANDABLE;
+    gtk_widget_show (w->base.widget);
+
+    GtkWidget *stopbtn;
+    GtkWidget *image128;
+    GtkWidget *playbtn;
+    GtkWidget *image2;
+    GtkWidget *pausebtn;
+    GtkWidget *image3;
+    GtkWidget *prevbtn;
+    GtkWidget *image4;
+    GtkWidget *nextbtn;
+    GtkWidget *image5;
+
+
+    stopbtn = gtk_button_new ();
+    gtk_widget_show (stopbtn);
+    gtk_box_pack_start (GTK_BOX (w->base.widget), stopbtn, FALSE, FALSE, 0);
+    gtk_widget_set_can_focus(stopbtn, FALSE);
+    gtk_button_set_relief (GTK_BUTTON (stopbtn), GTK_RELIEF_NONE);
+
+    image128 = gtk_image_new_from_stock ("gtk-media-stop", GTK_ICON_SIZE_BUTTON);
+    gtk_widget_show (image128);
+    gtk_container_add (GTK_CONTAINER (stopbtn), image128);
+
+    playbtn = gtk_button_new ();
+    gtk_widget_show (playbtn);
+    gtk_box_pack_start (GTK_BOX (w->base.widget), playbtn, FALSE, FALSE, 0);
+    gtk_widget_set_can_focus(playbtn, FALSE);
+    gtk_button_set_relief (GTK_BUTTON (playbtn), GTK_RELIEF_NONE);
+
+    image2 = gtk_image_new_from_stock ("gtk-media-play", GTK_ICON_SIZE_BUTTON);
+    gtk_widget_show (image2);
+    gtk_container_add (GTK_CONTAINER (playbtn), image2);
+
+    pausebtn = gtk_button_new ();
+    gtk_widget_show (pausebtn);
+    gtk_box_pack_start (GTK_BOX (w->base.widget), pausebtn, FALSE, FALSE, 0);
+    gtk_widget_set_can_focus(pausebtn, FALSE);
+    gtk_button_set_relief (GTK_BUTTON (pausebtn), GTK_RELIEF_NONE);
+
+    image3 = gtk_image_new_from_stock ("gtk-media-pause", GTK_ICON_SIZE_BUTTON);
+    gtk_widget_show (image3);
+    gtk_container_add (GTK_CONTAINER (pausebtn), image3);
+
+    prevbtn = gtk_button_new ();
+    gtk_widget_show (prevbtn);
+    gtk_box_pack_start (GTK_BOX (w->base.widget), prevbtn, FALSE, FALSE, 0);
+    gtk_widget_set_can_focus(prevbtn, FALSE);
+    gtk_button_set_relief (GTK_BUTTON (prevbtn), GTK_RELIEF_NONE);
+
+    image4 = gtk_image_new_from_stock ("gtk-media-previous", GTK_ICON_SIZE_BUTTON);
+    gtk_widget_show (image4);
+    gtk_container_add (GTK_CONTAINER (prevbtn), image4);
+
+    nextbtn = gtk_button_new ();
+    gtk_widget_show (nextbtn);
+    gtk_box_pack_start (GTK_BOX (w->base.widget), nextbtn, FALSE, FALSE, 0);
+    gtk_widget_set_can_focus(nextbtn, FALSE);
+    gtk_button_set_relief (GTK_BUTTON (nextbtn), GTK_RELIEF_NONE);
+
+    image5 = gtk_image_new_from_stock ("gtk-media-next", GTK_ICON_SIZE_BUTTON);
+    gtk_widget_show (image5);
+    gtk_container_add (GTK_CONTAINER (nextbtn), image5);
+    w_override_signals (w->base.widget, w);
+
+    g_signal_connect ((gpointer) stopbtn, "clicked",
+            G_CALLBACK (on_stopbtn_clicked),
+            NULL);
+    g_signal_connect ((gpointer) playbtn, "clicked",
+            G_CALLBACK (on_playbtn_clicked),
+            NULL);
+    g_signal_connect ((gpointer) pausebtn, "clicked",
+            G_CALLBACK (on_pausebtn_clicked),
+            NULL);
+    g_signal_connect ((gpointer) prevbtn, "clicked",
+            G_CALLBACK (on_prevbtn_clicked),
+            NULL);
+    g_signal_connect ((gpointer) nextbtn, "clicked",
+            G_CALLBACK (on_nextbtn_clicked),
+            NULL);
+    return (ddb_gtkui_widget_t*)w;
+}
+
+// volumebar
+static gboolean
+redraw_volumebar_cb (gpointer data) {
+    w_volumebar_t *w = data;
+    gtk_widget_queue_draw (w->volumebar);
+    char s[100];
+    int db = deadbeef->volume_get_db ();
+    snprintf (s, sizeof (s), "%s%ddB", db < 0 ? "" : "+", db);
+    gtk_widget_set_tooltip_text (w->volumebar, s);
+    gtk_widget_trigger_tooltip_query (w->volumebar);
+    return FALSE;
+}
+
+static int
+w_volumebar_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    switch (id) {
+    case DB_EV_CONFIGCHANGED:
+    case DB_EV_VOLUMECHANGED:
+        g_idle_add (redraw_volumebar_cb, w);
+        break;
+    }
+    return 0;
+}
+
+ddb_gtkui_widget_t *
+w_volumebar_create (void) {
+    w_volumebar_t *w = malloc (sizeof (w_volumebar_t));
+    memset (w, 0, sizeof (w_volumebar_t));
+    w->base.widget = gtk_event_box_new ();
+    w->base.message = w_volumebar_message;
+    w->volumebar = ddb_volumebar_new ();
+    ddb_volumebar_init_signals (DDB_VOLUMEBAR (w->volumebar), w->base.widget);
+    gtk_widget_show (w->volumebar);
+    gtk_widget_set_size_request (w->base.widget, 70, -1);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), w->volumebar);
+    w_override_signals (w->base.widget, w);
+    return (ddb_gtkui_widget_t*)w;
+}
+
+// chiptune voice ctl
+static void
+on_voice_toggled (GtkToggleButton *togglebutton, gpointer user_data) {
+    w_ctvoices_t *w = user_data;
+    int voices = 0;
+    for (int i = 0; i < 8; i++) {
+        int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w->voices[i]));
+        voices |= active << i;
+    }
+    deadbeef->conf_set_int ("chip.voices", voices);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+ddb_gtkui_widget_t *
+w_ctvoices_create (void) {
+    w_ctvoices_t *w = malloc (sizeof (w_ctvoices_t));
+    memset (w, 0, sizeof (w_ctvoices_t));
+    w->base.widget = gtk_event_box_new ();
+    GtkWidget *hbox = gtk_hbox_new (FALSE, 0);
+    gtk_widget_show (hbox);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), hbox);
+
+    GtkWidget *label = gtk_label_new_with_mnemonic (_("Voices:"));
+    gtk_widget_show (label);
+    gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+
+    int voices = deadbeef->conf_get_int ("chip.voices", 0xff);
+    for (int i = 0; i < 8; i++) {
+        w->voices[i] = gtk_check_button_new ();
+        gtk_widget_show (w->voices[i]);
+        gtk_box_pack_start (GTK_BOX (hbox), w->voices[i], FALSE, FALSE, 0);
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (w->voices[i]), voices & (1<<i));
+        g_signal_connect ((gpointer) w->voices[i], "toggled", G_CALLBACK (on_voice_toggled), w);
+    }
+
+    w_override_signals (w->base.widget, w);
+    return (ddb_gtkui_widget_t*)w;
 }

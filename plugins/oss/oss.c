@@ -1,6 +1,6 @@
 /*
-    DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
+    OSS output plugin for DeaDBeeF Player
+    Copyright (C) 2009-2014 Alexey Yakovenko and contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -133,11 +133,10 @@ oss_init (void) {
     mutex = 0;
 
     // prepare oss for playback
-    const char *name = oss_device;
-    fd = open (name, O_WRONLY);
+    fd = open (oss_device, O_WRONLY);
     if (fd == -1) {
-        fprintf (stderr, "oss: failed to open file %s\n", name);
-        perror (name);
+        fprintf (stderr, "oss: failed to open file %s\n", oss_device);
+        perror (oss_device);
         plugin.free ();
         return -1;
     }
@@ -188,7 +187,7 @@ static int
 oss_stop (void) {
     state = OUTPUT_STATE_STOPPED;
     deadbeef->streamer_reset (1);
-    return oss_free();
+    return 0;
 }
 
 static int
@@ -216,20 +215,22 @@ oss_setformat (ddb_waveformat_t *fmt) {
     int _state = state;
     int v4workaround = deadbeef->conf_get_int ("oss.v4workaround", 0);
 
+    deadbeef->mutex_lock (mutex);
+
     if (v4workaround) {
-        oss_stop ();
+        if (fd) {
+            close (fd);
+            fd = 0;
+        }
+        fd = open (oss_device, O_WRONLY);
         memcpy (&plugin.fmt, fmt, sizeof (ddb_waveformat_t));
     }
-    else {
-        deadbeef->mutex_lock (mutex);
-
-        if (0 != oss_set_hwparams (fmt)) {
-            deadbeef->mutex_unlock (mutex);
-            return -1;
-        }
-
+    if (0 != oss_set_hwparams (fmt)) {
         deadbeef->mutex_unlock (mutex);
+        return -1;
     }
+
+    deadbeef->mutex_unlock (mutex);
 
     switch (_state) {
     case OUTPUT_STATE_STOPPED:
@@ -382,7 +383,8 @@ static DB_output_t plugin = {
     .plugin.name = "OSS output plugin",
     .plugin.descr = "plays sound via OSS API",
     .plugin.copyright = 
-        "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "OSS output plugin for DeaDBeeF Player\n"
+        "Copyright (C) 2009-2014 Alexey Yakovenko and contributors\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
         "modify it under the terms of the GNU General Public License\n"

@@ -37,7 +37,7 @@ wma_la_SOURCES = wma_plugin.c\
 
 
 
-wma_la_LDFLAGS = -module
+wma_la_LDFLAGS = -module -avoid-version
 
 wma_la_LIBADD = $(LDADD)
 AM_CFLAGS = $(CFLAGS) -std=c99 -I$(wmapath)

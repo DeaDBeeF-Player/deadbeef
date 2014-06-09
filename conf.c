@@ -125,19 +125,26 @@ conf_load (void) {
 int
 conf_save (void) {
     extern char dbconfdir[1024]; // $HOME/.config/deadbeef
-
     char tempfile[PATH_MAX];
-    snprintf (tempfile, sizeof (tempfile), "%s/config.tmp", dbconfdir);
-
     char str[PATH_MAX];
+    FILE *fp;
+    int err;
+
+    if (!changed) {
+        return 0;
+    }
+
+    snprintf (tempfile, sizeof (tempfile), "%s/config.tmp", dbconfdir);
     snprintf (str, sizeof (str), "%s/config", dbconfdir);
 
-    FILE *fp = fopen (tempfile, "w+t");
+    conf_lock ();
+    changed = 0;
+    fp = fopen (tempfile, "w+t");
     if (!fp) {
         fprintf (stderr, "failed to open config file for writing\n");
+        conf_unlock ();
         return -1;
     }
-    conf_lock ();
     for (DB_conf_item_t *it = conf_items; it; it = it->next) {
         if (fprintf (fp, "%s %s\n", it->key, it->value) < 0) {
             fprintf (stderr, "failed to write to file %s (%s)\n", tempfile, strerror (errno));
@@ -147,11 +154,11 @@ conf_save (void) {
         }
     }
     fclose (fp);
-    conf_unlock ();
-    int err = rename (tempfile, str);
+    err = rename (tempfile, str);
     if (err != 0) {
         fprintf (stderr, "config rename %s -> %s failed: %s\n", tempfile, str, strerror (errno));
     }
+    conf_unlock ();
     return 0;
 }
 
@@ -234,14 +241,18 @@ conf_find (const char *group, DB_conf_item_t *prev) {
 void
 conf_set_str (const char *key, const char *val) {
     conf_lock ();
-    changed = 1;
     DB_conf_item_t *prev = NULL;
     for (DB_conf_item_t *it = conf_items; it; it = it->next) {
         int cmp = strcasecmp (key, it->key);
         if (!cmp) {
+            if (!strcmp (it->value, val)) {
+                conf_unlock ();
+                return;
+            }
             free (it->value);
             it->value = strdup (val);
             conf_unlock ();
+            changed = 1;
             return;
         }
         else if (cmp < 0) {
@@ -257,6 +268,7 @@ conf_set_str (const char *key, const char *val) {
     memset (it, 0, sizeof (DB_conf_item_t));
     it->key = strdup (key);
     it->value = strdup (val);
+    changed = 1;
     if (prev) {
         DB_conf_item_t *next = prev->next;
         prev->next = it;

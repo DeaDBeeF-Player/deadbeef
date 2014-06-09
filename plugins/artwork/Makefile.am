@@ -1,9 +1,15 @@
 if HAVE_ARTWORK
 artworkdir = $(libdir)/$(PACKAGE)
 pkglib_LTLIBRARIES = artwork.la
-artwork_la_SOURCES = artwork.c artwork.h albumartorg.c albumartorg.h lastfm.c lastfm.h wos.c wos.h escape.c escape.h
 
-artwork_la_LDFLAGS = -module
+if ARTWORK_USE_VFS_CURL
+artwork_net_cflags = -DUSE_VFS_CURL
+artwork_net_sources =  albumartorg.c albumartorg.h lastfm.c lastfm.h wos.c wos.h escape.c escape.h
+endif
+
+artwork_la_SOURCES = artwork.c artwork.h $(artwork_net_sources)
+
+artwork_la_LDFLAGS = -module -avoid-version
 
 if HAVE_IMLIB2
 ARTWORK_DEPS=$(IMLIB2_DEPS_LIBS)
@@ -15,9 +21,9 @@ endif
 
 if HAVE_FLAC
 FLAC_DEPS=$(FLAC_LIBS)
-FLAC_CFLAGS=-DUSE_METAFLAC
+flac_clags=-DUSE_METAFLAC $(FLAC_CFLAGS)
 endif
 
-AM_CFLAGS = $(CFLAGS) $(ARTWORK_CFLAGS) $(FLAC_CFLAGS) -std=c99
+AM_CFLAGS = $(CFLAGS) $(ARTWORK_CFLAGS) $(flac_cflags) $(artwork_net_cflags) -std=c99
 artwork_la_LIBADD = $(LDADD) $(ARTWORK_DEPS) $(FLAC_DEPS)
 endif

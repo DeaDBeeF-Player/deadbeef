@@ -75,3 +75,11 @@ messages.mo
 plugins/libmp4ff/libmp4ff.a
 plugins/libparser/libparser.a
 xcuserdata
+plugins/liboggedit/liboggedit.a
+testrun.sh
+tools/pluginfo/i686
+tools/pluginfo/x86_64
+portable_out
+static
+INSTALL
+/static-deps

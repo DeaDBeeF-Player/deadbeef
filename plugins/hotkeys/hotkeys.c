@@ -3,18 +3,23 @@
     Copyright (C) 2009-2011 Viktor Semykin <thesame.ml@gmail.com>
     Copyright (C) 2012-2013 Alexey Yakovenko <waker@users.sourceforge.net>
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 2 of the License, or
-    (at your option) any later version.
+    This software is provided 'as-is', without any express or implied
+    warranty.  In no event will the authors be held liable for any damages
+    arising from the use of this software.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    Permission is granted to anyone to use this software for any purpose,
+    including commercial applications, and to alter it and redistribute it
+    freely, subject to the following restrictions:
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+
+    2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+
+    3. This notice may not be removed or altered from any source distribution.
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -410,7 +415,10 @@ static void
 cleanup () {
     command_count = 0;
 #ifndef __APPLE__
-    XCloseDisplay (disp);
+    if (disp) {
+        XCloseDisplay (disp);
+        disp = NULL;
+    }
 #endif
 }
 
@@ -452,7 +460,7 @@ hotkeys_event_loop (void *unused) {
                     if (f & 8) {
                         flags |= Mod5Mask;
                     }
-                    XUngrabKey (disp, commands[i].keycode, commands[i].modifier | flags, DefaultRootWindow (disp));
+                    XUngrabKey (disp, commands[i].x11_keycode, commands[i].modifier | flags, DefaultRootWindow (disp));
                 }
             }
             memset (commands, 0, sizeof (commands));
@@ -579,6 +587,7 @@ hotkeys_reset (void) {
 
 int
 action_play_cb (struct DB_plugin_action_s *action, int ctx) {
+    // NOTE: this function is copied as on_playbtn_clicked in gtkui
     DB_output_t *output = deadbeef->get_output ();
     if (output->state () == OUTPUT_STATE_PAUSED) {
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
@@ -596,7 +605,7 @@ action_play_cb (struct DB_plugin_action_s *action, int ctx) {
                 deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, cur, 0);
             }
             else {
-                deadbeef->sendmessage (DB_EV_PLAY_CURRENT, 0, 0, 0);
+                deadbeef->sendmessage (DB_EV_PLAY_CURRENT, 0, 1, 0);
             }
         }
         else {
@@ -605,7 +614,13 @@ action_play_cb (struct DB_plugin_action_s *action, int ctx) {
         deadbeef->plt_unref (plt);
     }
     else {
-        deadbeef->sendmessage (DB_EV_PLAY_CURRENT, 0, 0, 0);
+        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+        int cur = -1;
+        if (plt) {
+            cur = deadbeef->plt_get_cursor (plt, PL_MAIN);
+            deadbeef->plt_unref (plt);
+        }
+        deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, cur, 0);
     }
     return 0;
 }
@@ -737,8 +752,17 @@ action_toggle_stop_after_current_cb (struct DB_plugin_action_s *action, int ctx)
     return 0;
 }
 
+int
+action_toggle_stop_after_album_cb (struct DB_plugin_action_s *action, int ctx) {
+    int var = deadbeef->conf_get_int ("playlist.stop_after_album", 0);
+    var = 1 - var;
+    deadbeef->conf_set_int ("playlist.stop_after_album", var);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    return 0;
+}
+
 static DB_plugin_action_t action_reload_metadata = {
-    .title = "Reload metadata",
+    .title = "Reload Metadata",
     .name = "reload_metadata",
     .flags = DB_ACTION_MULTIPLE_TRACKS,
     .callback2 = action_reload_metadata_handler,
@@ -746,7 +770,7 @@ static DB_plugin_action_t action_reload_metadata = {
 };
 
 static DB_plugin_action_t action_jump_to_current = {
-    .title = "Playback/Jump to currently playing track",
+    .title = "Playback/Jump To Currently Playing Track",
     .name = "jump_to_current_track",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_jump_to_current_handler,
@@ -754,7 +778,7 @@ static DB_plugin_action_t action_jump_to_current = {
 };
 
 static DB_plugin_action_t action_next_playlist = {
-    .title = "Next playlist",
+    .title = "Next Playlist",
     .name = "next_playlist",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_next_playlist_handler,
@@ -762,7 +786,7 @@ static DB_plugin_action_t action_next_playlist = {
 };
 
 static DB_plugin_action_t action_prev_playlist = {
-    .title = "Prev playlist",
+    .title = "Prev Playlist",
     .name = "prev_playlist",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_prev_playlist_handler,
@@ -770,7 +794,7 @@ static DB_plugin_action_t action_prev_playlist = {
 };
 
 static DB_plugin_action_t action_playlist10 = {
-    .title = "Switch to playlist 10",
+    .title = "Switch To Playlist 10",
     .name = "playlist10",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playlist10_handler,
@@ -778,7 +802,7 @@ static DB_plugin_action_t action_playlist10 = {
 };
 
 static DB_plugin_action_t action_playlist9 = {
-    .title = "Switch to playlist 9",
+    .title = "Switch To Playlist 9",
     .name = "playlist9",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playlist9_handler,
@@ -786,7 +810,7 @@ static DB_plugin_action_t action_playlist9 = {
 };
 
 static DB_plugin_action_t action_playlist8 = {
-    .title = "Switch to playlist 8",
+    .title = "Switch To Playlist 8",
     .name = "playlist8",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playlist8_handler,
@@ -794,7 +818,7 @@ static DB_plugin_action_t action_playlist8 = {
 };
 
 static DB_plugin_action_t action_playlist7 = {
-    .title = "Switch to playlist 7",
+    .title = "Switch To Playlist 7",
     .name = "playlist7",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playlist7_handler,
@@ -802,7 +826,7 @@ static DB_plugin_action_t action_playlist7 = {
 };
 
 static DB_plugin_action_t action_playlist6 = {
-    .title = "Switch to playlist 6",
+    .title = "Switch To Playlist 6",
     .name = "playlist6",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playlist6_handler,
@@ -810,7 +834,7 @@ static DB_plugin_action_t action_playlist6 = {
 };
 
 static DB_plugin_action_t action_playlist5 = {
-    .title = "Switch to playlist 5",
+    .title = "Switch To Playlist 5",
     .name = "playlist5",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playlist5_handler,
@@ -818,7 +842,7 @@ static DB_plugin_action_t action_playlist5 = {
 };
 
 static DB_plugin_action_t action_playlist4 = {
-    .title = "Switch to playlist 4",
+    .title = "Switch To Playlist 4",
     .name = "playlist4",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playlist4_handler,
@@ -826,7 +850,7 @@ static DB_plugin_action_t action_playlist4 = {
 };
 
 static DB_plugin_action_t action_playlist3 = {
-    .title = "Switch to playlist 3",
+    .title = "Switch To Playlist 3",
     .name = "playlist3",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playlist3_handler,
@@ -834,7 +858,7 @@ static DB_plugin_action_t action_playlist3 = {
 };
 
 static DB_plugin_action_t action_playlist2 = {
-    .title = "Switch to playlist 2",
+    .title = "Switch To Playlist 2",
     .name = "playlist2",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playlist2_handler,
@@ -842,7 +866,7 @@ static DB_plugin_action_t action_playlist2 = {
 };
 
 static DB_plugin_action_t action_playlist1 = {
-    .title = "Switch to playlist 1",
+    .title = "Switch To Playlist 1",
     .name = "playlist1",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_playlist1_handler,
@@ -858,7 +882,7 @@ static DB_plugin_action_t action_sort_randomize = {
 };
 
 static DB_plugin_action_t action_sort_by_date = {
-    .title = "Edit/Sort by date",
+    .title = "Edit/Sort By Date",
     .name = "sort_date",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_sort_by_date_handler,
@@ -866,7 +890,7 @@ static DB_plugin_action_t action_sort_by_date = {
 };
 
 static DB_plugin_action_t action_sort_by_artist = {
-    .title = "Edit/Sort by artist",
+    .title = "Edit/Sort By Artist",
     .name = "sort_artist",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_sort_by_artist_handler,
@@ -875,7 +899,7 @@ static DB_plugin_action_t action_sort_by_artist = {
 
 
 static DB_plugin_action_t action_sort_by_album = {
-    .title = "Edit/Sort by album",
+    .title = "Edit/Sort By Album",
     .name = "sort_album",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_sort_by_album_handler,
@@ -883,7 +907,7 @@ static DB_plugin_action_t action_sort_by_album = {
 };
 
 static DB_plugin_action_t action_sort_by_tracknr = {
-    .title = "Edit/Sort by track number",
+    .title = "Edit/Sort By Track Number",
     .name = "sort_tracknr",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_sort_by_tracknr_handler,
@@ -891,7 +915,7 @@ static DB_plugin_action_t action_sort_by_tracknr = {
 };
 
 static DB_plugin_action_t action_sort_by_title = {
-    .title = "Edit/Sort by title",
+    .title = "Edit/Sort By Title",
     .name = "sort_title",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_sort_by_title_handler,
@@ -907,7 +931,7 @@ static DB_plugin_action_t action_invert_selection = {
 };
 
 static DB_plugin_action_t action_clear_playlist = {
-    .title = "Edit/Clear playlist",
+    .title = "Edit/Clear Playlist",
     .name = "clear_playlist",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_clear_playlist_handler,
@@ -915,7 +939,7 @@ static DB_plugin_action_t action_clear_playlist = {
 };
 
 static DB_plugin_action_t action_remove_from_playqueue = {
-    .title = "Playback/Remove from playback queue",
+    .title = "Playback/Remove From Playback Queue",
     .name = "remove_from_playback_queue",
     .flags = DB_ACTION_MULTIPLE_TRACKS,
     .callback2 = action_remove_from_playqueue_handler,
@@ -923,7 +947,7 @@ static DB_plugin_action_t action_remove_from_playqueue = {
 };
 
 static DB_plugin_action_t action_add_to_playqueue = {
-    .title = "Playback/Add to playback queue",
+    .title = "Playback/Add To Playback Queue",
     .name = "add_to_playback_queue",
     .flags = DB_ACTION_MULTIPLE_TRACKS,
     .callback2 = action_add_to_playqueue_handler,
@@ -995,7 +1019,7 @@ static DB_plugin_action_t action_play_random = {
 };
 
 static DB_plugin_action_t action_seek_1p_forward = {
-    .title = "Playback/Seek 1% forward",
+    .title = "Playback/Seek 1% Forward",
     .name = "seek_1p_fwd",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_seek_1p_forward_cb,
@@ -1003,7 +1027,7 @@ static DB_plugin_action_t action_seek_1p_forward = {
 };
 
 static DB_plugin_action_t action_seek_1p_backward = {
-    .title = "Playback/Seek 1% backward",
+    .title = "Playback/Seek 1% Backward",
     .name = "seek_1p_back",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_seek_1p_backward_cb,
@@ -1011,7 +1035,7 @@ static DB_plugin_action_t action_seek_1p_backward = {
 };
 
 static DB_plugin_action_t action_seek_5p_forward = {
-    .title = "Playback/Seek 5% forward",
+    .title = "Playback/Seek 5% Forward",
     .name = "seek_5p_fwd",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_seek_5p_forward_cb,
@@ -1019,7 +1043,7 @@ static DB_plugin_action_t action_seek_5p_forward = {
 };
 
 static DB_plugin_action_t action_seek_5p_backward = {
-    .title = "Playback/Seek 5% backward",
+    .title = "Playback/Seek 5% Backward",
     .name = "seek_5p_back",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_seek_5p_backward_cb,
@@ -1050,10 +1074,18 @@ static DB_plugin_action_t action_toggle_stop_after_current = {
     .next = &action_volume_down
 };
 
+static DB_plugin_action_t action_toggle_stop_after_album = {
+    .title = "Playback/Toggle Stop After Current Album",
+    .name = "toggle_stop_after_album",
+    .flags = DB_ACTION_COMMON,
+    .callback2 = action_toggle_stop_after_album_cb,
+    .next = &action_toggle_stop_after_current
+};
+
 static DB_plugin_action_t *
 hotkeys_get_actions (DB_playItem_t *it)
 {
-    return &action_toggle_stop_after_current;
+    return &action_toggle_stop_after_album;
 }
 
 // define plugin interface

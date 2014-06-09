@@ -1,6 +1,6 @@
 /*
-    DeaDBeeF - ultimate music player for GNU/Linux systems with X11
-    Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
+    Last.fm scrobbler plugin for DeaDBeeF Player
+    Copyright (C) 2009-2014 Alexey Yakovenko 
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <curl/curl.h>
+#include <math.h>
 #include "../../deadbeef.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -68,6 +69,7 @@ static char lfm_nowplaying[2048]; // packet for nowplaying, or ""
 typedef struct {
     DB_playItem_t *it;
     time_t started_timestamp;
+    float playtime;
 } subm_item_t;
 
 static subm_item_t lfm_subm_queue[LFM_SUBMISSION_QUEUE_SIZE];
@@ -278,7 +280,7 @@ auth (void) {
             end++;
         }
         if (end - p > sizeof (lfm_nowplaying_url)-1) {
-            trace ("scrobbler nowplaying url is too long:\n", lfm_reply);
+            trace ("scrobbler nowplaying url is too long %d:\n", (int)(end-p));
             goto fail;
         }
         strncpy (lfm_nowplaying_url, p, end-p);
@@ -299,7 +301,7 @@ auth (void) {
             end++;
         }
         if (end - p > sizeof (lfm_submission_url)-1) {
-            trace ("scrobbler submission url is too long:\n", lfm_reply);
+            trace ("scrobbler submission url is too long: %d\n", (int)(end-p));
             goto fail;
         }
         strncpy (lfm_submission_url, p, end-p);
@@ -322,7 +324,7 @@ fail:
 }
 
 static int
-lfm_fetch_song_info (DB_playItem_t *song, char *a, char *t, char *b, float *l, char *n, char *m) {
+lfm_fetch_song_info (DB_playItem_t *song, float playtime, char *a, char *t, char *b, float *l, char *n, char *m) {
     if (deadbeef->conf_get_int ("lastfm.prefer_album_artist", 0)) {
         if (!deadbeef->pl_get_meta (song, "band", a, META_FIELD_SIZE)) {
             if (!deadbeef->pl_get_meta (song, "album artist", a, META_FIELD_SIZE)) {
@@ -352,10 +354,16 @@ lfm_fetch_song_info (DB_playItem_t *song, char *a, char *t, char *b, float *l, c
         *b = 0;
     }
     *l = deadbeef->pl_get_item_duration (song);
+    if (*l <= 0) {
+        *l = playtime;
+    }
+    if (*l < 30 && deadbeef->conf_get_int ("lastfm.submit_tiny_tracks", 0)) {
+        *l = 30;
+    }
     if (!deadbeef->pl_get_meta (song, "track", n, META_FIELD_SIZE)) {
         *n = 0;
     }
-    if (!deadbeef->pl_get_meta (song, "mbid", m, META_FIELD_SIZE)) {
+    if (!deadbeef->conf_get_int ("lastfm.mbid", 0) || !deadbeef->pl_get_meta (song, "musicbrainz_trackid", m, META_FIELD_SIZE)) {
         *m = 0;
     }
     return 0;
@@ -433,7 +441,7 @@ lfm_add_keyvalue_uri_encoded (char **out, int *outl, const char *key, const char
 // subm is submission idx, or -1 for nowplaying
 // returns number of bytes added, or -1
 static int
-lfm_format_uri (int subm, DB_playItem_t *song, char *out, int outl, time_t started_timestamp) {
+lfm_format_uri (int subm, DB_playItem_t *song, char *out, int outl, time_t started_timestamp, float playtime) {
     if (subm > 50) {
         trace ("lastfm: it's only allowed to send up to 50 submissions at once (got idx=%d)\n", subm);
         return -1;
@@ -462,7 +470,7 @@ lfm_format_uri (int subm, DB_playItem_t *song, char *out, int outl, time_t start
         strcpy (km+1, ka+1);
     }
 
-    if (lfm_fetch_song_info (song, a, t, b, &l, n, m) == 0) {
+    if (lfm_fetch_song_info (song, playtime, a, t, b, &l, n, m) == 0) {
 //        trace ("playtime: %f\nartist: %s\ntitle: %s\nalbum: %s\nduration: %f\ntracknum: %s\n---\n", song->playtime, a, t, b, l, n);
     }
     else {
@@ -518,7 +526,7 @@ lastfm_songstarted (ddb_event_track_t *ev, uintptr_t data) {
         return 0;
     }
     deadbeef->mutex_lock (lfm_mutex);
-    if (lfm_format_uri (-1, ev->track, lfm_nowplaying, sizeof (lfm_nowplaying), ev->started_timestamp) < 0) {
+    if (lfm_format_uri (-1, ev->track, lfm_nowplaying, sizeof (lfm_nowplaying), ev->started_timestamp, 120) < 0) {
         lfm_nowplaying[0] = 0;
     }
 //    trace ("%s\n", lfm_nowplaying);
@@ -542,13 +550,18 @@ lastfm_songchanged (ddb_event_trackchange_t *ev, uintptr_t data) {
     trace ("lfm songfinished %s\n", deadbeef->pl_find_meta (ev->from, ":URI"));
 #if !LFM_IGNORE_RULES
     // check submission rules
-    // duration must be >= 30 sec
-    if (deadbeef->pl_get_item_duration (ev->from) < 30) {
-        trace ("track duration is %f seconds. not eligible for submission\n", deadbeef->pl_get_item_duration (ev->from));
-        return 0;
+    // duration/playtime must be >= 30 sec
+    float dur = deadbeef->pl_get_item_duration (ev->from);
+    if (dur < 30 && ev->playtime < 30) {
+        // the lastfm.send_tiny_tracks option can override this rule
+        // only if the track played fully, and has determined duration
+        if (!(dur > 0 && fabs (ev->playtime - dur) < 1.f && deadbeef->conf_get_int ("lastfm.submit_tiny_tracks", 0))) {
+            trace ("track duration is %f sec, playtime if %f sec. not eligible for submission\n", dur, ev->playtime);
+            return 0;
+        }
     }
-    // must be played for >=240sec of half the total time
-    if (ev->playtime < 240 && ev->playtime < deadbeef->pl_get_item_duration (ev->from)/2) {
+    // must be played for >=240sec or half the total time
+    if (ev->playtime < 240 && ev->playtime < dur/2) {
         trace ("track playtime=%f seconds. not eligible for submission\n", ev->playtime);
         return 0;
     }
@@ -568,6 +581,7 @@ lastfm_songchanged (ddb_event_trackchange_t *ev, uintptr_t data) {
             trace ("lfm: song is now in queue for submission\n");
             lfm_subm_queue[i].it = ev->from;
             lfm_subm_queue[i].started_timestamp = ev->started_timestamp;
+            lfm_subm_queue[i].playtime = ev->playtime;
             deadbeef->pl_item_ref (ev->from);
             break;
         }
@@ -634,7 +648,7 @@ lfm_send_submissions (void) {
     deadbeef->mutex_lock (lfm_mutex);
     for (i = 0; i < LFM_SUBMISSION_QUEUE_SIZE; i++) {
         if (lfm_subm_queue[i].it) {
-            res = lfm_format_uri (idx, lfm_subm_queue[i].it, r, len, lfm_subm_queue[i].started_timestamp);
+            res = lfm_format_uri (idx, lfm_subm_queue[i].it, r, len, lfm_subm_queue[i].started_timestamp, lfm_subm_queue[i].playtime);
             if (res < 0) {
                 trace ("lfm: failed to format uri\n");
                 return;
@@ -934,27 +948,12 @@ out:
     return 0;
 }
 
-static int
-lfm_action_love (DB_plugin_action_t *act, int ctx)
-{
-    printf ("Love starts here\n");
-    return 0;
-}
-
-static DB_plugin_action_t love_action = {
-    .title = "Love at Last.fm",
-    .name = "lfm_love",
-    .flags = DB_ACTION_SINGLE_TRACK,
-    .callback2 = lfm_action_love,
-    .next = NULL
-};
-
 static DB_plugin_action_t lookup_action = {
-    .title = "Lookup on Last.fm",
+    .title = "Lookup On Last.fm",
     .name = "lfm_lookup",
     .flags = DB_ACTION_SINGLE_TRACK | DB_ACTION_ADD_MENU,
     .callback2 = lfm_action_lookup,
-    .next = NULL// &love_action
+    .next = NULL
 };
 
 static DB_plugin_action_t *
@@ -965,12 +964,10 @@ lfm_get_actions (DB_playItem_t *it)
         !deadbeef->pl_meta_exists (it, "artist") ||
         !deadbeef->pl_meta_exists (it, "title"))
     {
-        love_action.flags |= DB_ACTION_DISABLED;
         lookup_action.flags |= DB_ACTION_DISABLED;
     }
     else
     {
-        love_action.flags &= ~DB_ACTION_DISABLED;
         lookup_action.flags &= ~DB_ACTION_DISABLED;
     }
     deadbeef->pl_unlock ();
@@ -984,6 +981,8 @@ static const char settings_dlg[] =
     "property Password password lastfm.password \"\";"
     "property \"Scrobble URL\" entry lastfm.scrobbler_url \""SCROBBLER_URL_LFM"\";"
     "property \"Prefer Album Artist over Artist field\" checkbox lastfm.prefer_album_artist 0;"
+    "property \"Send MusicBrainz ID\" checkbox lastfm.mbid 0;"
+    "property \"Submit tracks shorter than 30 seconds (not recommended)\" checkbox lastfm.submit_tiny_tracks 0;"
 ;
 
 // define plugin interface
@@ -996,7 +995,8 @@ static DB_misc_t plugin = {
     .plugin.name = "last.fm scrobbler",
     .plugin.descr = "Sends played songs information to your last.fm account, or other service that use AudioScrobbler protocol",
     .plugin.copyright =
-        "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Last.fm scrobbler plugin for DeaDBeeF Player\n"
+        "Copyright (C) 2009-2014 Alexey Yakovenko\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
         "modify it under the terms of the GNU General Public License\n"
