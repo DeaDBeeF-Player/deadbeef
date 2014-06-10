@@ -86,8 +86,8 @@ cvorbis_ftell (void *datasource) {
     return deadbeef->ftell (datasource);
 }
 
-static const
-char *gain_tag_name(const int tag_enum)
+static const char
+*gain_tag_name(const int tag_enum)
 {
     switch(tag_enum) {
         case DDB_REPLAYGAIN_ALBUMGAIN:
