@@ -30,14 +30,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <stdbool.h>
-#include <ogg/ogg.h>
-#if HAVE_SYS_SYSLIMITS_H
-#include <sys/syslimits.h>
-#endif
-#include "../../deadbeef.h"
 #include "oggedit_internal.h"
-#include "oggedit.h"
 
 #define VCMAGIC "\3vorbis"
 #define CODEMAGIC "\5vorbis"
@@ -76,8 +69,12 @@ static ptrdiff_t check_vorbis_headers(DB_FILE *in, ogg_sync_state *oy, const off
     if (!*vendor)
         return OGGEDIT_CANNOT_PARSE_HEADERS;
 
+#ifdef HAVE_OGG_STREAM_FLUSH_FILL
     if ((vc.bytes + codebooks->bytes) < MAXPAYLOAD * (pages-1))
         return 4; // prevent in-place write if the packets are split over too many pages
+#else
+    return 4; // not safe to pad without ogg_stream_flush_fill
+#endif
 
     return vc.bytes;
 }
@@ -128,7 +125,7 @@ off_t oggedit_write_vorbis_metadata(DB_FILE *in, const char *fname, const off_t 
     const off_t file_size_k = in->vfs->getlength(in) / 1000;
     const size_t stream_size_k = stream_size ? stream_size / 1000 : file_size_k;
     if (file_size_k < 100 || padding < 0 || padding > file_size_k/10+stream_size_k+metadata_size) {
-        res = open_temp_file (fname, tempname, &out);
+        res = open_temp_file(fname, tempname, &out);
         if (res) {
             goto cleanup;
         }
