@@ -30,8 +30,8 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-#include <stdbool.h>
 #include <ctype.h>
+#include "oggedit_internal.h"
 
 uint8_t *oggedit_vorbis_channel_map(const int channel_count)
 {

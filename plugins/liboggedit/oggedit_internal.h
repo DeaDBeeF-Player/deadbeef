@@ -27,6 +27,14 @@
 #ifndef __OGGEDIT_INT_H
 #define __OGGEDIT_INT_H
 
+#include <stdbool.h>
+#include <ogg/ogg.h>
+#if HAVE_SYS_SYSLIMITS_H
+#include <sys/syslimits.h>
+#endif
+#include <deadbeef/deadbeef.h>
+#include "oggedit.h"
+
 #define OPUSNAME "Opus"
 #define VORBISNAME "Vorbis"
 #define FLACNAME "Flac"

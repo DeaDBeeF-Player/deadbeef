@@ -31,16 +31,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <stdbool.h>
 #include <libgen.h>
 #include <errno.h>
 #include <sys/stat.h>
-#include <ogg/ogg.h>
-#if HAVE_SYS_SYSLIMITS_H
-#include <sys/syslimits.h>
-#endif
-#include "../../deadbeef.h"
-#include "oggedit.h"
 #include "oggedit_internal.h"
 
 static char *cat_string(char *dest, const char *src, const char *sep)
@@ -279,9 +272,14 @@ int copy_up_to_header(DB_FILE *in, FILE *out, ogg_sync_state *oy, ogg_page *og, 
 long flush_stream(FILE *out, ogg_stream_state *os)
 {
     ogg_page og;
+#ifdef HAVE_OGG_STREAM_FLUSH_FILL
+    while (ogg_stream_flush_fill(os, &og, MAXPAYLOAD))
+#else
     while (ogg_stream_flush(os, &og))
+#endif
         if (!write_page(out, &og))
             return OGGEDIT_WRITE_ERROR;
+
     const long pageno = ogg_stream_check(os) ? OGGEDIT_FLUSH_FAILED : ogg_page_pageno(&og);
     ogg_stream_clear(os);
     return pageno;
@@ -428,8 +426,10 @@ ogg_packet *fill_vc_packet(const char *magic, const size_t magic_length, const c
         oggpack_write(&opb, 1, 1);
         oggpack_writealign(&opb);
     }
+#ifdef HAVE_OGG_STREAM_FLUSH_FILL
     for (size_t i = 0; i < padding; i++)
         oggpack_write(&opb, 0, 8); // use oggpack_writecopy when it is fixed
+#endif
     if (oggpack_writecheck(&opb))
         return NULL;
 
