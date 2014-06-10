@@ -158,7 +158,7 @@ off_t oggedit_write_flac_metadata(DB_FILE *in, const char *fname, const off_t of
     const off_t stream_size_k = in->vfs->getlength(in) / 1000; // use file size for now
     const size_t metadata_size = 4 + vc_size(vendor, num_tags, tags);
     ptrdiff_t padding = headers[0]->bytes - metadata_size;
-    if (stream_size_k < 1000 || padding < 0 || headers[1] && padding > 0 || padding > stream_size_k+metadata_size) {
+    if (stream_size_k < 1000 || padding < 0 || (headers[1] && padding > 0) || padding > stream_size_k+metadata_size) {
         res = open_temp_file(fname, tempname, &out);
         if (res) {
             goto cleanup;
