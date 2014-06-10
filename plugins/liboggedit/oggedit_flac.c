@@ -30,14 +30,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <stdbool.h>
-#include <ogg/ogg.h>
-#if HAVE_SYS_SYSLIMITS_H
-#include <sys/syslimits.h>
-#endif
-#include "../../deadbeef.h"
 #include "oggedit_internal.h"
-#include "oggedit.h"
 
 #define PADTYPE 0x01
 #define VCTYPE 0x04
@@ -99,11 +92,15 @@ static ogg_packet **metadata_block_packets(DB_FILE *in, ogg_sync_state *oy, cons
     }
 
     *vendor = parse_vendor(headers[0], 4);
+#ifdef HAVE_OGG_STREAM_FLUSH_FILL
     size_t bytes = 0;
     for (size_t i = 0; i < packets; i++)
         bytes += headers[i]->bytes;
     if (bytes < MAXPAYLOAD * (pages-1))
         headers[0]->bytes = 4;
+#else
+    headers[0]->bytes = 4; // not safe to pad without ogg_stream_flush_fill
+#endif
 
     *res = OGGEDIT_OK;
     return headers;

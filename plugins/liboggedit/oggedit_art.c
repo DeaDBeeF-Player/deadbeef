@@ -29,11 +29,7 @@
 #endif
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
-#include <ogg/ogg.h>
-#include "../../deadbeef.h"
 #include "oggedit_internal.h"
-#include "oggedit.h"
 
 const char *oggedit_album_art_type(const int type)
 {
@@ -154,9 +150,9 @@ char *oggedit_album_art_tag(DB_FILE *fp, int *res)
     oggpackB_write(&opb, 3, 32);
     _oggpackB_string(&opb, memcmp(data, "\x89PNG\x0D\x0A\x1A\x0A", 8) ? "image/jpeg" : "image/png");
     _oggpackB_string(&opb, "Album art added from DeaDBeeF");
-    oggpackB_write(&opb, 0, 32);
-    oggpackB_write(&opb, 0, 32);
-    oggpackB_write(&opb, 0, 32);
+    oggpackB_write(&opb, 1, 32); /* workaround for opusfile bug */
+    oggpackB_write(&opb, 1, 32);
+    oggpackB_write(&opb, 1, 32);
     oggpackB_write(&opb, 0, 32);
     oggpackB_write(&opb, data_length, 32);
     _oggpack_chars(&opb, data, data_length);

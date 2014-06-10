@@ -384,6 +384,7 @@ AS_IF([test "${enable_staticlink}" != "no"], [
     ])
 ])
 
+AC_CHECK_LIB([ogg], [ogg_stream_flush_fill], [HAVE_OGG_STREAM_FLUSH_FILL=yes])
 
 dnl flac plugin
 AS_IF([test "${enable_flac}" != "no"], [
@@ -752,6 +753,7 @@ PLUGINS_DIRS="plugins/liboggedit plugins/libmp4ff plugins/libparser plugins/last
 AM_CONDITIONAL(APE_USE_YASM, test "x$APE_USE_YASM" = "xyes")
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_OGG, test "x$HAVE_OGG" = "xyes")
+AM_CONDITIONAL(HAVE_OGG_STREAM_FLUSH_FILL, test "x$HAVE_OGG_STREAM_FLUSH_FILL" = "xyes")
 AM_CONDITIONAL(HAVE_FLAC, test "x$HAVE_FLACPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_WAVPACK, test "x$HAVE_WAVPACKPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_SNDFILE, test "x$HAVE_SNDFILEPLUGIN" = "xyes")
