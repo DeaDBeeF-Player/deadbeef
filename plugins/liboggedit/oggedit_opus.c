@@ -30,12 +30,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <stdbool.h>
 #include <limits.h>
-#include <ogg/ogg.h>
-#include "../../deadbeef.h"
 #include "oggedit_internal.h"
-#include "oggedit.h"
 
 #define TAGMAGIC "OpusTags"
 
@@ -93,8 +89,12 @@ static ptrdiff_t check_opus_header(DB_FILE *in, ogg_sync_state *oy, const off_t 
     if (!*vendor)
         return OGGEDIT_CANNOT_PARSE_HEADERS;
 
+#ifdef HAVE_OGG_STREAM_FLUSH_FILL
     if (op.bytes < MAXPAYLOAD * (pages-1))
         return 4; // prevent in-place write if the packet is weirdly split into too many pages
+#else
+    return 4; // not safe to pad without ogg_stream_flush_fill
+#endif
 
     return op.bytes;
 }
