@@ -32,7 +32,7 @@
 #if HAVE_SYS_SYSLIMITS_H
 #include <sys/syslimits.h>
 #endif
-#include <deadbeef/deadbeef.h>
+#include "../../deadbeef.h"
 #include "oggedit.h"
 
 #define OPUSNAME "Opus"
