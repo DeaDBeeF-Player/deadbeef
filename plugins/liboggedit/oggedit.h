@@ -61,7 +61,7 @@
 #define OGGEDIT_STAT_FAILED -13
 /* I/O error writing to file (disk full?) */
 #define OGGEDIT_WRITE_ERROR -14
-/* Failed to flush pages from a stream, fatal Ogg internal error (libogg < v1.2.0?)*/
+/* Failed to flush pages from a stream, fatal Ogg internal error */
 #define OGGEDIT_FLUSH_FAILED -15
 /* Renaming tewmporary file failed (usually sticky bit or directory permissions) */
 #define OGGEDIT_RENAME_FAILED -16
