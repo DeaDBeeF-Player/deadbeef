@@ -37,7 +37,7 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
-//#define trace(...) { fprintf (stderr, __VA_ARGS__); }
+// #define trace(...) { fprintf (stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
 #if WORDS_BIGENDIAN
@@ -101,26 +101,7 @@ static const char
         case RG_REFERENCE_LOUDNESS:
             return "REPLAYGAIN_REFERENCE_LOUDNESS";
         default:
-            return NULL;
-    }
-}
-
-static const char
-*gain_meta_key(const int tag_enum)
-{
-    switch(tag_enum) {
-        case DDB_REPLAYGAIN_ALBUMGAIN:
-            return ":REPLAYGAIN_ALBUMGAIN";
-        case DDB_REPLAYGAIN_ALBUMPEAK:
-            return ":REPLAYGAIN_ALBUMPEAK";
-        case DDB_REPLAYGAIN_TRACKGAIN:
-            return ":REPLAYGAIN_TRACKGAIN";
-        case DDB_REPLAYGAIN_TRACKPEAK:
-            return ":REPLAYGAIN_TRACKPEAK";
-        case RG_REFERENCE_LOUDNESS:
-            return ":REPLAYGAIN_REFERENCE_LOUDNESS";
-        default:
-            return NULL;
+            return "";
     }
 }
 
@@ -181,7 +162,7 @@ update_vorbis_comments (DB_playItem_t *it, OggVorbis_File *vorbis_file, const in
                 !replaygain_tag(it, DDB_REPLAYGAIN_TRACKGAIN, tag, value) &&
                 !replaygain_tag(it, DDB_REPLAYGAIN_TRACKPEAK, tag, value)) {
                 if (!strcasecmp(tag, gain_tag_name(RG_REFERENCE_LOUDNESS)))
-                    deadbeef->pl_replace_meta(it, gain_meta_key(RG_REFERENCE_LOUDNESS), value);
+                    deadbeef->pl_replace_meta(it, ":REPLAYGAIN_REFERENCE_LOUDNESS", value);
                 else
                     add_meta(it, oggedit_map_tag(tag, "tag2meta"), value);
                 }
@@ -222,6 +203,14 @@ cvorbis_seek_sample (DB_fileinfo_t *_info, int sample) {
     if (!info->info.file) {
         trace ("vorbis: file is NULL on seek\n");
         return -1;
+    }
+    if (sample == 0) {
+        deadbeef->pl_lock ();
+        const char *filetype = deadbeef->pl_find_meta_raw(info->it, ":FILETYPE");
+        if (filetype && strncmp(filetype, "Ogg Vorbis", 10)) {
+            sample = 1; // workaround libvorbis bug #1486 (ddb issue #1116)
+        }
+        deadbeef->pl_unlock ();
     }
     sample += info->it->startsample;
     trace ("vorbis: seek to sample %d\n", sample);
@@ -311,7 +300,7 @@ cvorbis_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         deadbeef->pl_set_meta_int(info->it, ":TRACKNUM", 0);
     }
     else {
-        cvorbis_seek_sample (_info, 1); // vorbisfile bug
+        cvorbis_seek_sample (_info, 0);
     }
 
     vorbis_info *vi = ov_info (&info->vorbis_file, -1);

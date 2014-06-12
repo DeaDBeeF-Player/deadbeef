@@ -223,7 +223,6 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         buffer->startoffset = initpos;
     }
 
-    int had_invalid_frames = 0;
     int lastframe_valid = 0;
     int64_t offs = -1;
 // }}}
@@ -241,11 +240,6 @@ cmp3_scan_stream (buffer_t *buffer, int sample) {
         uint32_t hdr;
         uint8_t sync;
 // {{{ parse frame header, sync stream
-        // mp3 files often have some garbage in the beginning
-        // try to skip it if this is the case
-        if (!lastframe_valid && valid_frames > 5) {
-            had_invalid_frames = 1;
-        }
         if (!lastframe_valid && offs >= 0) {
             deadbeef->fseek (buffer->file, offs+1, SEEK_SET);
         }
@@ -436,18 +430,16 @@ retry_sync:
                 return 0;
             }
             // don't get parameters from frames coming after any bad frame
-            if (!had_invalid_frames) {
-                buffer->version = ver;
-                buffer->layer = layer;
-                buffer->bitrate = bitrate;
-                buffer->samplerate = samplerate;
-                buffer->packetlength = packetlength;
-                if (nchannels > buffer->channels) {
-                    buffer->channels = nchannels;
-                }
-                buffer->bitspersample = 16;
-//                trace ("frame %d mpeg v%d layer %d bitrate %d samplerate %d packetlength %d channels %d\n", nframe, ver, layer, bitrate, samplerate, packetlength, nchannels);
+            buffer->version = ver;
+            buffer->layer = layer;
+            buffer->bitrate = bitrate;
+            buffer->samplerate = samplerate;
+            buffer->packetlength = packetlength;
+            if (nchannels > buffer->channels) {
+                buffer->channels = nchannels;
             }
+            buffer->bitspersample = 16;
+//            trace ("frame %d mpeg v%d layer %d bitrate %d samplerate %d packetlength %d channels %d\n", nframe, ver, layer, bitrate, samplerate, packetlength, nchannels);
         }
 // }}}
 
@@ -615,7 +607,6 @@ retry_sync:
                         return 0;
                     }
                     buffer->nframes = sz / packetlength;
-                    printf ("buffer->nframes: %d/%d=%d\n", sz, packetlength, buffer->nframes);
                     buffer->avg_packetlength = packetlength;
                     buffer->avg_samplerate = samplerate;
                     buffer->avg_samples_per_frame = samples_per_frame;
