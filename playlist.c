@@ -1921,6 +1921,7 @@ pl_crop_selected (void) {
 int
 plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data) {
     LOCK;
+    plt->last_save_modification_idx = plt->last_save_modification_idx;
     const char *ext = strrchr (fname, '.');
     if (ext) {
         DB_playlist_t **plug = deadbeef->plug_get_playlist_list ();
@@ -2186,6 +2187,9 @@ pl_save_all (void) {
             fprintf (stderr, "error: failed to make path string for playlist file\n");
             err = -1;
             break;
+        }
+        if (p->last_save_modification_idx == p->modification_idx) {
+            continue;
         }
         err = plt_save (p, NULL, NULL, path, NULL, NULL, NULL);
         if (err < 0) {
@@ -2542,6 +2546,7 @@ pl_load_all (void) {
             plt->current_row[PL_MAIN] = deadbeef->conf_get_int (conf, -1);
             snprintf (conf, sizeof (conf), "playlist.scroll.%d", i);
             plt->scroll = deadbeef->conf_get_int (conf, 0);
+            plt->last_save_modification_idx = plt->modification_idx = 0;
             plt_unref (plt);
 
             if (!it) {
