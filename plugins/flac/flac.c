@@ -573,7 +573,6 @@ cflac_add_metadata (DB_playItem_t *it, const char *s, int length) {
 static void
 cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMetadata *metadata, void *client_data) {
     flac_info_t *info = (flac_info_t *)client_data;
-//    info->tagsize += metadata->length;
     DB_fileinfo_t *_info = &info->info;
     if (info->init_stop_decoding) {
         trace ("error flag is set, ignoring init_metadata callback..\n");
