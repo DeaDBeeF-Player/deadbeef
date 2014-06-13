@@ -125,4 +125,7 @@ junk_configchanged (void);
 void
 junk_enable_cp936_detection (int enable);
 
+const char *
+junk_detect_charset_len (const char *s, int len);
+
 #endif // __JUNKLIB_H

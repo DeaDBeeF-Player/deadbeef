@@ -834,7 +834,12 @@ pl_cue_skipspaces (const uint8_t *p) {
 }
 
 static void
-pl_get_qvalue_from_cue (const uint8_t *p, int sz, char *out) {
+pl_get_qvalue_from_cue (const uint8_t *p, int sz, char *out, const char *charset) {
+    if (!charset) {
+        strcpy (out, "<UNRECOGNIZED CHARSET>");
+        return;
+    }
+
     char *str = out;
     if (*p == 0) {
         *out = 0;
@@ -867,10 +872,7 @@ pl_get_qvalue_from_cue (const uint8_t *p, int sz, char *out) {
         out++;
         *out = 0;
     }
-    const char *charset = junk_detect_charset (str);
-    if (!charset) {
-        return;
-    }
+
     // recode
     int l = strlen (str);
     char recbuf[l*10];
@@ -1033,11 +1035,14 @@ plt_process_cue_track (playlist_t *playlist, const char *fname, const int starts
 
 playItem_t *
 plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate) {
-    LOCK;
     if (buffersize >= 3 && buffer[0] == 0xef && buffer[1] == 0xbb && buffer[2] == 0xbf) {
         buffer += 3;
         buffersize -= 3;
     }
+
+    const char *charset = junk_detect_charset_len (buffer, buffersize);
+
+    LOCK;
     playItem_t *ins = after;
     trace ("plt_insert_cue_from_buffer numsamples=%d, samplerate=%d\n", numsamples, samplerate);
     char albumperformer[256] = "";
@@ -1086,25 +1091,25 @@ plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t 
 //        trace ("cue line: %s\n", p);
         if (!strncmp (p, "PERFORMER ", 10)) {
             if (!track[0]) {
-                pl_get_qvalue_from_cue (p + 10, sizeof (albumperformer), albumperformer);
+                pl_get_qvalue_from_cue (p + 10, sizeof (albumperformer), albumperformer, charset);
             }
             else {
-                pl_get_qvalue_from_cue (p + 10, sizeof (performer), performer);
+                pl_get_qvalue_from_cue (p + 10, sizeof (performer), performer, charset);
             }
             trace ("cue: got performer: %s\n", performer);
         }
         else if (!strncmp (p, "TITLE ", 6)) {
             if (str[0] > ' ' && !albumtitle[0]) {
-                pl_get_qvalue_from_cue (p + 6, sizeof (albumtitle), albumtitle);
+                pl_get_qvalue_from_cue (p + 6, sizeof (albumtitle), albumtitle, charset);
                 trace ("cue: got albumtitle: %s\n", albumtitle);
             }
             else {
-                pl_get_qvalue_from_cue (p + 6, sizeof (title), title);
+                pl_get_qvalue_from_cue (p + 6, sizeof (title), title, charset);
                 trace ("cue: got title: %s\n", title);
             }
         }
         else if (!strncmp (p, "REM GENRE ", 10)) {
-            pl_get_qvalue_from_cue (p + 10, sizeof (genre), genre);
+            pl_get_qvalue_from_cue (p + 10, sizeof (genre), genre, charset);
         }
         else if (!strncmp (p, "REM DATE ", 9)) {
             pl_get_value_from_cue (p + 9, sizeof (date), date);

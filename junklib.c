@@ -3639,15 +3639,13 @@ junk_id3v2_read (playItem_t *it, DB_FILE *fp) {
 }
 
 const char *
-junk_detect_charset (const char *s) {
-    size_t len = strlen (s);
-
+junk_detect_charset_len (const char *s, int len) {
     // check if that's already utf8
     if (u8_valid (s, len, NULL)) {
         return NULL; // means no recoding required
     }
     // try shift-jis
-    if (can_be_shift_jis (s, len)) {
+    if (len > 10 && can_be_shift_jis (s, len)) {
         return "shift-jis";
     }
     // hack to add cp936 support
@@ -3660,6 +3658,12 @@ junk_detect_charset (const char *s) {
     }
 
     return "cp1252";
+}
+
+const char *
+junk_detect_charset (const char *s) {
+    size_t len = strlen (s);
+    return junk_detect_charset_len (s, len);
 }
 
 int
