@@ -285,25 +285,21 @@ long flush_stream(FILE *out, ogg_stream_state *os)
     return pageno;
 }
 
-char *codec_names(DB_FILE *in, ogg_sync_state *oy, const off_t link_offset, int *res)
+char *codec_names(DB_FILE *in, ogg_sync_state *oy, const off_t link_offset)
 {
     ogg_page og;
-    *res = skip_to_bos(in, oy, &og, link_offset);
+    int serial = skip_to_bos(in, oy, &og, link_offset);
     char *codecs = strdup("Ogg");
-    while (codecs && *res > OGGEDIT_EOF && ogg_page_bos(&og)) {
+    while (codecs && serial > OGGEDIT_EOF && ogg_page_bos(&og)) {
         codecs = cat_string(codecs, codec_name(&og), strcmp(codecs, "Ogg") ? "/" : " ");
-        *res = get_page(in, oy, &og);
+        serial = get_page(in, oy, &og);
     }
-    if (!*codecs) {
-        *res = OGGEDIT_ALLOCATION_FAILURE;
-        return NULL;
-    }
-    if (*res <= OGGEDIT_EOF) {
+
+    if (serial <= OGGEDIT_EOF) {
         free(codecs);
         return NULL;
     }
 
-    *res = OGGEDIT_OK;
     return codecs;
 }
 
@@ -324,8 +320,9 @@ off_t codec_stream_size(DB_FILE *in, ogg_sync_state *oy, const off_t start_offse
 
     /* Skip to the first codec data page */
     while (serial > OGGEDIT_EOF && !(ogg_page_granulepos(&og) > 0 && serial == codec_serial))
-        if ((serial = get_page(in, oy,  &og)) <= OGGEDIT_EOF)
-            return serial;
+        serial = get_page(in, oy,  &og);
+    if (serial <= OGGEDIT_EOF)
+        return serial;
 
     off_t stream_size = 0;
     if (multiplex) {
@@ -465,6 +462,8 @@ int copy_remaining_pages(DB_FILE *in, FILE *out, ogg_sync_state *oy, const int c
     do
         serial = get_page(in, oy, &og);
     while (serial > OGGEDIT_EOF && serial == codec_serial && ogg_page_granulepos(&og) <= 0);
+    if (serial <= OGGEDIT_EOF)
+        return serial;
 
     /* Renumber the rest of this link */
     while (serial > OGGEDIT_EOF && !ogg_page_bos(&og)) {
@@ -481,8 +480,10 @@ int copy_remaining_pages(DB_FILE *in, FILE *out, ogg_sync_state *oy, const int c
     /* Blindly copy remaining links */
     while (serial > OGGEDIT_EOF)
         serial = write_page_and_get_next(in, out, oy,  &og);
+    if (serial < OGGEDIT_EOF)
+        return serial;
 
-    return serial;
+    return OGGEDIT_OK;
 }
 
 int write_all_streams(DB_FILE *in, FILE *out, ogg_sync_state *oy, const off_t offset)
@@ -497,8 +498,9 @@ int write_all_streams(DB_FILE *in, FILE *out, ogg_sync_state *oy, const off_t of
 
     /* Copy all pages until EOF or next link */
     while (serial > OGGEDIT_EOF && !ogg_page_bos(&og))
-        if ((serial = write_page_and_get_next(in, out, oy, &og)) < OGGEDIT_EOF)
-            return serial;
+        serial = write_page_and_get_next(in, out, oy, &og);
+    if (serial < OGGEDIT_EOF)
+        return serial;
 
     return OGGEDIT_OK;
 }
