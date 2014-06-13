@@ -824,7 +824,10 @@ convstr_id3v2 (int version, uint8_t encoding, const unsigned char* str, int sz) 
 }
 
 static const char *
-convstr_id3v1 (const char* str, int sz) {
+convstr_id3v1 (const char* str, int sz, const char *charset) {
+    if (!charset) {
+        return str;
+    }
     static char out[2048];
     int i;
     for (i = 0; i < sz; i++) {
@@ -837,22 +840,7 @@ convstr_id3v1 (const char* str, int sz) {
         return out;
     }
 
-    // check for valid utf8
-    int valid = u8_valid (str, sz, NULL);
-    if (valid) {
-        return str;
-    }
-    const char *enc = "iso8859-1";
-    if (can_be_chinese (str, sz)) {
-        // hack to add cp936 support
-        enc = "cp936";
-    }
-    else if (can_be_russian (str, sz)) {
-        // hack to add limited cp1251 recoding support
-        enc = "cp1251";
-    }
-
-    int len = junk_iconv (str, sz, out, sizeof (out), enc, UTF8_STR);
+    int len = junk_iconv (str, sz, out, sizeof (out), charset, UTF8_STR);
     if (len >= 0) {
         return out;
     }
@@ -869,24 +857,28 @@ str_trim_right (uint8_t *str, int len) {
     *p = 0;
 }
 
-// should read both id3v1 and id3v1.1
 int
-junk_id3v1_read (playItem_t *it, DB_FILE *fp) {
-    if (!it || !fp) {
-        trace ("bad call to junk_id3v1_read!\n");
+junk_id3v1_read_int (playItem_t *it, char *buffer, const char **charset) {
+    if (!buffer) {
         return -1;
     }
-    uint8_t buffer[128];
-    // try reading from end
-    if (deadbeef->fseek (fp, -128, SEEK_END) == -1) {
+
+    if (it) {
+        if (memcmp (buffer, "TAG", 3)) {
+            return -1; // no tag
+        }
+        const char *cs = NULL;
+        charset = &cs;
+        int res = junk_id3v1_read_int (NULL, buffer, charset);
+        if (res) {
+            return res;
+        }
+    }
+
+    if (!charset) {
         return -1;
     }
-    if (deadbeef->fread (buffer, 1, 128, fp) != 128) {
-        return -1;
-    }
-    if (memcmp (buffer, "TAG", 3)) {
-        return -1; // no tag
-    }
+
     char title[31];
     char artist[31];
     char album[31];
@@ -912,39 +904,57 @@ junk_id3v1_read (playItem_t *it, DB_FILE *fp) {
     str_trim_right (comment, 30);
     genreid = buffer[3+124];
     tracknum = 0;
-    if (comment[28] == 0 && comment[29] != 0) {
-        tracknum = comment[29];
-    }
-//    255 = "None",
-//    "CR" = "Cover" (id3v2)
-//    "RX" = "Remix" (id3v2)
+    if (it) {
+        if (comment[28] == 0 && comment[29] != 0) {
+            tracknum = comment[29];
+        }
 
-    if (genreid == 0xff) {
-        //genre = "None";
-    }
-    else if (genreid <= 147) {
-        genre = junk_genretbl[genreid];
+        // 255 = "None",
+        // "CR" = "Cover" (id3v2)
+        // "RX" = "Remix" (id3v2)
+        if (genreid == 0xff) {
+            //genre = "None";
+        }
+        else if (genreid <= 147) {
+            genre = junk_genretbl[genreid];
+        }
     }
 
     // add meta
 //    trace ("%s - %s - %s - %s - %s - %s\n", title, artist, album, year, comment, genre);
+    if (!it) {
+        char buf[129];
+        char *p = buf;
+        strcpy (p, title);
+        p += strlen (title);
+        strcpy (p, artist);
+        p += strlen (artist);
+        strcpy (p, album);
+        p += strlen (album);
+        strcpy (p, year);
+        p += strlen (year);
+        strcpy (p, comment);
+        *charset = junk_detect_charset (buf);
+        return 0;
+    }
+
     if (*title) {
-        pl_add_meta (it, "title", convstr_id3v1 (title, strlen (title)));
+        pl_add_meta (it, "title", convstr_id3v1 (title, strlen (title), *charset));
     }
     if (*artist) {
-        pl_add_meta (it, "artist", convstr_id3v1 (artist, strlen (artist)));
+        pl_add_meta (it, "artist", convstr_id3v1 (artist, strlen (artist), *charset));
     }
     if (*album) {
-        pl_add_meta (it, "album", convstr_id3v1 (album, strlen (album)));
+        pl_add_meta (it, "album", convstr_id3v1 (album, strlen (album), *charset));
     }
     if (*year) {
         pl_add_meta (it, "year", year);
     }
     if (*comment) {
-        pl_add_meta (it, "comment", convstr_id3v1 (comment, strlen (comment)));
+        pl_add_meta (it, "comment", convstr_id3v1 (comment, strlen (comment), *charset));
     }
     if (genre && *genre) {
-        pl_add_meta (it, "genre", convstr_id3v1 (genre, strlen (genre)));
+        pl_add_meta (it, "genre", convstr_id3v1 (genre, strlen (genre), *charset));
     }
     if (tracknum != 0) {
         char s[4];
@@ -957,6 +967,21 @@ junk_id3v1_read (playItem_t *it, DB_FILE *fp) {
     pl_set_item_flags (it, f);
 
     return 0;
+}
+
+// should read both id3v1 and id3v1.1
+int
+junk_id3v1_read (playItem_t *it, DB_FILE *fp) {
+    uint8_t id3[128];
+
+    if (deadbeef->fseek (fp, -128, SEEK_END) == -1) {
+        return -1;
+    }
+    if (deadbeef->fread (id3, 1, 128, fp) != 128) {
+        return -1;
+    }
+
+    return junk_id3v1_read_int (it, id3, NULL);
 }
 
 int
