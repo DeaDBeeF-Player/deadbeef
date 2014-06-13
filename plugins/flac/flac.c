@@ -791,9 +791,18 @@ cflac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     snprintf (s, sizeof (s), "%d", info.info.fmt.samplerate);
     deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
     if ( deadbeef->pl_get_item_duration (it) > 0) {
-        FLAC__uint64 position;
-        if (FLAC__stream_decoder_get_decode_position (decoder, &position))
-            fsize -= position;
+        if (!isogg) {
+            FLAC__uint64 position;
+            if (FLAC__stream_decoder_get_decode_position (decoder, &position))
+                fsize -= position;
+        }
+#if USE_OGGEDIT
+        else {
+            const off_t stream_size = oggedit_flac_stream_info(deadbeef->fopen(fname), 0, 0);
+            if (stream_size > 0)
+                fsize = stream_size;
+        }
+#endif
         deadbeef->pl_set_meta_int (it, ":BITRATE", (int)roundf(fsize / deadbeef->pl_get_item_duration (it) * 8 / 1000));
     }
     FLAC__stream_decoder_delete(decoder);
