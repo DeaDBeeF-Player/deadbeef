@@ -1539,6 +1539,7 @@ create_prefwin (void)
   GtkWidget *vbox9;
   GtkWidget *pref_close_send_to_tray;
   GtkWidget *hide_tray_icon;
+  GtkWidget *enable_shift_jis_recoding;
   GtkWidget *enable_cp1251_recoding;
   GtkWidget *enable_cp936_recoding;
   GtkWidget *hbox102;
@@ -1942,6 +1943,10 @@ create_prefwin (void)
   hide_tray_icon = gtk_check_button_new_with_mnemonic (_("Hide system tray icon"));
   gtk_widget_show (hide_tray_icon);
   gtk_box_pack_start (GTK_BOX (vbox9), hide_tray_icon, FALSE, FALSE, 0);
+
+  enable_shift_jis_recoding = gtk_check_button_new_with_mnemonic (_("Enable Japanese SHIFT-JIS detection and recoding"));
+  gtk_widget_show (enable_shift_jis_recoding);
+  gtk_box_pack_start (GTK_BOX (vbox9), enable_shift_jis_recoding, FALSE, FALSE, 0);
 
   enable_cp1251_recoding = gtk_check_button_new_with_mnemonic (_("Enable Russian CP1251 detection and recoding"));
   gtk_widget_show (enable_cp1251_recoding);
@@ -2700,6 +2705,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) hide_tray_icon, "toggled",
                     G_CALLBACK (on_hide_tray_icon_toggled),
                     NULL);
+  g_signal_connect ((gpointer) enable_shift_jis_recoding, "toggled",
+                    G_CALLBACK (on_enable_shift_jis_recoding_toggled),
+                    NULL);
   g_signal_connect ((gpointer) enable_cp1251_recoding, "toggled",
                     G_CALLBACK (on_enable_cp1251_recoding_toggled),
                     NULL);
@@ -2904,6 +2912,7 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, vbox9, "vbox9");
   GLADE_HOOKUP_OBJECT (prefwin, pref_close_send_to_tray, "pref_close_send_to_tray");
   GLADE_HOOKUP_OBJECT (prefwin, hide_tray_icon, "hide_tray_icon");
+  GLADE_HOOKUP_OBJECT (prefwin, enable_shift_jis_recoding, "enable_shift_jis_recoding");
   GLADE_HOOKUP_OBJECT (prefwin, enable_cp1251_recoding, "enable_cp1251_recoding");
   GLADE_HOOKUP_OBJECT (prefwin, enable_cp936_recoding, "enable_cp936_recoding");
   GLADE_HOOKUP_OBJECT (prefwin, hbox102, "hbox102");
