@@ -36,6 +36,15 @@
 #define VCTYPE 0x04
 #define LASTBLOCK 0x80
 
+off_t oggedit_flac_stream_info(DB_FILE *in, const off_t start_offset, const off_t end_offset)
+{
+    ogg_sync_state oy;
+    ogg_sync_init(&oy);
+    const off_t stream_size = codec_stream_size(in, &oy, start_offset, end_offset, FLACNAME);
+    cleanup(in, NULL, &oy, NULL);
+    return stream_size;
+}
+
 static void clear_header_list(ogg_packet **headers)
 {
     if (headers) {
@@ -196,7 +205,7 @@ off_t oggedit_write_flac_metadata(DB_FILE *in, const char *fname, const off_t of
 
     /* If we have tempfile, copy the remaining pages */
     if (*tempname) {
-        if ((res = copy_remaining_pages(in, out, &oy, flac_serial, pageno)) < OGGEDIT_EOF)
+        if ((res = copy_remaining_pages(in, out, &oy, flac_serial, pageno)) <= OGGEDIT_EOF)
             goto cleanup;
         if (rename(tempname, fname)) {
             res = OGGEDIT_RENAME_FAILED;
