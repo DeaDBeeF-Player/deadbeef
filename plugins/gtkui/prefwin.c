@@ -231,6 +231,9 @@ gtkui_run_preferences_dlg (void) {
     // resume last session
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "resume_last_session")), deadbeef->conf_get_int ("resume_last_session", 0));
 
+    // enable shift-jis recoding
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "enable_shift_jis_recoding")), deadbeef->conf_get_int ("junk.enable_shift_jis_detection", 0));
+
     // enable cp1251 recoding
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (w, "enable_cp1251_recoding")), deadbeef->conf_get_int ("junk.enable_cp1251_detection", 1));
 
@@ -921,6 +924,15 @@ on_resume_last_session_toggled         (GtkToggleButton *togglebutton,
 {
     int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
     deadbeef->conf_set_int ("resume_last_session", active);
+}
+
+void
+on_enable_shift_jis_recoding_toggled   (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
+    deadbeef->conf_set_int ("junk.enable_shift_jis_detection", active);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 void

@@ -57,6 +57,7 @@ uint16_t sj_to_unicode[] = {
 
 int enable_cp1251_detection = 1;
 int enable_cp936_detection = 0;
+int enable_shift_jis_detection = 0;
 
 #define MAX_TEXT_FRAME_SIZE 1024
 #define MAX_CUESHEET_FRAME_SIZE 10000
@@ -713,6 +714,9 @@ can_be_chinese (const uint8_t *str, int sz) {
 
 static int
 can_be_shift_jis (const unsigned char *str, int size) {
+    if (!enable_shift_jis_detection) {
+        return 0;
+    }
     unsigned char out[size*4];
 
     if (size < 2) {
@@ -4111,9 +4115,16 @@ junk_enable_cp936_detection (int enable) {
 }
 
 void
+junk_enable_shift_jis_detection (int enable) {
+    enable_shift_jis_detection = enable;
+}
+
+void
 junk_configchanged (void) {
     int cp1251 = conf_get_int ("junk.enable_cp1251_detection", 1);
     int cp936 = conf_get_int ("junk.enable_cp936_detection", 0);
+    int shift_jis = conf_get_int ("junk.enable_shift_jis_detection", 0);
     junk_enable_cp1251_detection (cp1251);
     junk_enable_cp936_detection (cp936);
+    junk_enable_shift_jis_detection (shift_jis);
 }
