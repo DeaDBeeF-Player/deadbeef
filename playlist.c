@@ -835,11 +835,6 @@ pl_cue_skipspaces (const uint8_t *p) {
 
 static void
 pl_get_qvalue_from_cue (const uint8_t *p, int sz, char *out, const char *charset) {
-    if (!charset) {
-        strcpy (out, "<UNRECOGNIZED CHARSET>");
-        return;
-    }
-
     char *str = out;
     if (*p == 0) {
         *out = 0;
@@ -871,6 +866,10 @@ pl_get_qvalue_from_cue (const uint8_t *p, int sz, char *out, const char *charset
         }
         out++;
         *out = 0;
+    }
+
+    if (!charset) {
+        return;
     }
 
     // recode
