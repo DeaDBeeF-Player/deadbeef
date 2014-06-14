@@ -28,10 +28,8 @@ most of them are optional, which means deadbeef will build and run without them,
 
     libsamplerate: for dsp_libsrc plugin (resampler)
     gtk+-2.0 >= 2.12 (+ gthread, + glib): GTK+ 2.0 user interface
-    libsm: optional dependency for gtkui session client support
-    libice: optional dependency for gtkui session client support
     alsa-lib: ALSA support
-    libvorbis and libogg: for ogg vorbis plugin
+    libvorbis and libogg: for ogg vorbis plugin, and for ogg container metadata in other formats, such as OggFlac
     libcurl >= 7.10: for last.fm, vfs_curl (shoutcast/icecast), artwork plugins
     imlib2: for artwork plugin; see libjpeg and libpng below
     libjpeg and libpng: for artwork plugin (when imlib2 is not installed, or --disable-artwork-imlib2 is used)
