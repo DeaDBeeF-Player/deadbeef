@@ -2906,7 +2906,7 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
             }
             else if (*fmt == 'a') {
                 meta = pl_find_meta_raw (it, "artist");
-                const char *custom = pl_find_meta_raw (it, "DDB:CUSTOM_TITLE");
+                const char *custom = pl_find_meta_raw (it, ":CUSTOM_TITLE");
                 if (!meta && !custom) {
                     meta = "Unknown artist";
                 }
@@ -2970,7 +2970,7 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                     }
                 }
 
-                const char *custom = pl_find_meta_raw (it, "DDB:CUSTOM_TITLE");
+                const char *custom = pl_find_meta_raw (it, ":CUSTOM_TITLE");
                 if (custom) {
                     if (!meta) {
                         meta = custom;

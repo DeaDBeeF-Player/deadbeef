@@ -434,7 +434,7 @@ action_add_location_handler_cb (void *user_data) {
                     DB_playItem_t *tail = deadbeef->plt_get_last (plt, PL_MAIN);
                     DB_playItem_t *it = deadbeef->plt_insert_file2 (0, plt, tail, text, NULL, NULL, NULL);
                     if (it && deadbeef->conf_get_int ("gtkui.location_set_custom_title", 0)) {
-                        deadbeef->pl_replace_meta (it, "DDB:CUSTOM_TITLE", gtk_entry_get_text (GTK_ENTRY (ct)));
+                        deadbeef->pl_replace_meta (it, ":CUSTOM_TITLE", gtk_entry_get_text (GTK_ENTRY (ct)));
                     }
                     if (tail) {
                         deadbeef->pl_item_unref (tail);
