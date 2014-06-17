@@ -475,7 +475,7 @@ w_unknown_create (const char *type) {
     g_signal_connect_after ((gpointer) w->drawarea, "draw", G_CALLBACK (unknown_draw), w);
 #endif
     w_override_signals (w->base.widget, w);
-    return w;
+    return (ddb_gtkui_widget_t *)w;
 }
 
 const char *

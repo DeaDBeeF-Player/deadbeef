@@ -4402,6 +4402,8 @@ create_setcustomtitledlg (void)
 {
   GtkWidget *setcustomtitledlg;
   GtkWidget *dialog_vbox16;
+  GtkWidget *vbox46;
+  GtkWidget *textview2;
   GtkWidget *hbox123;
   GtkWidget *set_custom_title;
   GtkWidget *custom_title;
@@ -4417,10 +4419,26 @@ create_setcustomtitledlg (void)
   dialog_vbox16 = gtk_dialog_get_content_area (GTK_DIALOG (setcustomtitledlg));
   gtk_widget_show (dialog_vbox16);
 
+  vbox46 = gtk_vbox_new (FALSE, 8);
+  gtk_widget_show (vbox46);
+  gtk_box_pack_start (GTK_BOX (dialog_vbox16), vbox46, TRUE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox46), 12);
+
+  textview2 = gtk_text_view_new ();
+  gtk_widget_show (textview2);
+  gtk_box_pack_start (GTK_BOX (vbox46), textview2, FALSE, TRUE, 0);
+  gtk_text_view_set_editable (GTK_TEXT_VIEW (textview2), FALSE);
+  gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (textview2), GTK_WRAP_WORD);
+  gtk_text_view_set_cursor_visible (GTK_TEXT_VIEW (textview2), FALSE);
+  gtk_text_view_set_pixels_above_lines (GTK_TEXT_VIEW (textview2), 8);
+  gtk_text_view_set_pixels_below_lines (GTK_TEXT_VIEW (textview2), 8);
+  gtk_text_view_set_left_margin (GTK_TEXT_VIEW (textview2), 8);
+  gtk_text_view_set_right_margin (GTK_TEXT_VIEW (textview2), 8);
+  gtk_text_buffer_set_text (gtk_text_view_get_buffer (GTK_TEXT_VIEW (textview2)), _("This dialog allows to set custom title for any track. This is most useful for radio stations. An option to set the custom title is also present in the \"Add Location\" dialog. The title itself is visible in columns displaying the \"Artist\" metadata field. It should look like \"[custom] artist\" if the Artist field is present, or just \"custom\" otherwise."), -1);
+
   hbox123 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox123);
-  gtk_box_pack_start (GTK_BOX (dialog_vbox16), hbox123, TRUE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (hbox123), 12);
+  gtk_box_pack_start (GTK_BOX (vbox46), hbox123, FALSE, TRUE, 0);
 
   set_custom_title = gtk_check_button_new_with_mnemonic (_("Set custom title"));
   gtk_widget_show (set_custom_title);
@@ -4448,6 +4466,8 @@ create_setcustomtitledlg (void)
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (setcustomtitledlg, setcustomtitledlg, "setcustomtitledlg");
   GLADE_HOOKUP_OBJECT_NO_REF (setcustomtitledlg, dialog_vbox16, "dialog_vbox16");
+  GLADE_HOOKUP_OBJECT (setcustomtitledlg, vbox46, "vbox46");
+  GLADE_HOOKUP_OBJECT (setcustomtitledlg, textview2, "textview2");
   GLADE_HOOKUP_OBJECT (setcustomtitledlg, hbox123, "hbox123");
   GLADE_HOOKUP_OBJECT (setcustomtitledlg, set_custom_title, "set_custom_title");
   GLADE_HOOKUP_OBJECT (setcustomtitledlg, custom_title, "custom_title");
