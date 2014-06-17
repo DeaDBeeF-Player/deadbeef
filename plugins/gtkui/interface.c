@@ -4397,3 +4397,64 @@ create_select_action (void)
   return select_action;
 }
 
+GtkWidget*
+create_setcustomtitledlg (void)
+{
+  GtkWidget *setcustomtitledlg;
+  GtkWidget *dialog_vbox16;
+  GtkWidget *hbox123;
+  GtkWidget *set_custom_title;
+  GtkWidget *custom_title;
+  GtkWidget *dialog_action_area15;
+  GtkWidget *cancelbutton11;
+  GtkWidget *okbutton11;
+
+  setcustomtitledlg = gtk_dialog_new ();
+  gtk_window_set_title (GTK_WINDOW (setcustomtitledlg), _("Set Custom Title"));
+  gtk_window_set_modal (GTK_WINDOW (setcustomtitledlg), TRUE);
+  gtk_window_set_type_hint (GTK_WINDOW (setcustomtitledlg), GDK_WINDOW_TYPE_HINT_DIALOG);
+
+  dialog_vbox16 = gtk_dialog_get_content_area (GTK_DIALOG (setcustomtitledlg));
+  gtk_widget_show (dialog_vbox16);
+
+  hbox123 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox123);
+  gtk_box_pack_start (GTK_BOX (dialog_vbox16), hbox123, TRUE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (hbox123), 12);
+
+  set_custom_title = gtk_check_button_new_with_mnemonic (_("Set custom title"));
+  gtk_widget_show (set_custom_title);
+  gtk_box_pack_start (GTK_BOX (hbox123), set_custom_title, FALSE, FALSE, 0);
+
+  custom_title = gtk_entry_new ();
+  gtk_widget_show (custom_title);
+  gtk_box_pack_start (GTK_BOX (hbox123), custom_title, TRUE, TRUE, 0);
+  gtk_entry_set_invisible_char (GTK_ENTRY (custom_title), 8226);
+
+  dialog_action_area15 = gtk_dialog_get_action_area (GTK_DIALOG (setcustomtitledlg));
+  gtk_widget_show (dialog_action_area15);
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area15), GTK_BUTTONBOX_END);
+
+  cancelbutton11 = gtk_button_new_from_stock ("gtk-cancel");
+  gtk_widget_show (cancelbutton11);
+  gtk_dialog_add_action_widget (GTK_DIALOG (setcustomtitledlg), cancelbutton11, GTK_RESPONSE_CANCEL);
+  gtk_widget_set_can_default(cancelbutton11, TRUE);
+
+  okbutton11 = gtk_button_new_from_stock ("gtk-ok");
+  gtk_widget_show (okbutton11);
+  gtk_dialog_add_action_widget (GTK_DIALOG (setcustomtitledlg), okbutton11, GTK_RESPONSE_OK);
+  gtk_widget_set_can_default(okbutton11, TRUE);
+
+  /* Store pointers to all widgets, for use by lookup_widget(). */
+  GLADE_HOOKUP_OBJECT_NO_REF (setcustomtitledlg, setcustomtitledlg, "setcustomtitledlg");
+  GLADE_HOOKUP_OBJECT_NO_REF (setcustomtitledlg, dialog_vbox16, "dialog_vbox16");
+  GLADE_HOOKUP_OBJECT (setcustomtitledlg, hbox123, "hbox123");
+  GLADE_HOOKUP_OBJECT (setcustomtitledlg, set_custom_title, "set_custom_title");
+  GLADE_HOOKUP_OBJECT (setcustomtitledlg, custom_title, "custom_title");
+  GLADE_HOOKUP_OBJECT_NO_REF (setcustomtitledlg, dialog_action_area15, "dialog_action_area15");
+  GLADE_HOOKUP_OBJECT (setcustomtitledlg, cancelbutton11, "cancelbutton11");
+  GLADE_HOOKUP_OBJECT (setcustomtitledlg, okbutton11, "okbutton11");
+
+  return setcustomtitledlg;
+}
+
