@@ -1,27 +1,3 @@
-/*
-    Album Art plugin for DeaDBeeF
-    Copyright (C) 2009-2011 Viktor Semykin <thesame.ml@gmail.com>
-    Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
-
-    This software is provided 'as-is', without any express or implied
-    warranty.  In no event will the authors be held liable for any damages
-    arising from the use of this software.
-
-    Permission is granted to anyone to use this software for any purpose,
-    including commercial applications, and to alter it and redistribute it
-    freely, subject to the following restrictions:
-
-    1. The origin of this software must not be misrepresented; you must not
-     claim that you wrote the original software. If you use this software
-     in a product, an acknowledgment in the product documentation would be
-     appreciated but is not required.
-
-    2. Altered source versions must be plainly marked as such, and must not be
-     misrepresented as being the original software.
-
-    3. This notice may not be removed or altered from any source distribution.
-*/
-
 #ifdef HAVE_CONFIG_H
 #  include "../../config.h"
 #endif
@@ -46,11 +22,9 @@
 #include <assert.h>
 #include "../../deadbeef.h"
 #include "artwork.h"
-#ifdef USE_VFS_CURL
 #include "lastfm.h"
 #include "albumartorg.h"
 #include "wos.h"
-#endif
 
 #ifdef USE_IMLIB2
 #include <Imlib2.h>
@@ -65,8 +39,6 @@ static uintptr_t imlib_mutex;
 #ifdef USE_METAFLAC
 #include <FLAC/metadata.h>
 #endif
-
-#include "../../strdupa.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
@@ -113,45 +85,21 @@ static intptr_t tid;
 
 static int artwork_enable_embedded;
 static int artwork_enable_local;
-#ifdef USE_VFS_CURL
 static int artwork_enable_lfm;
 static int artwork_enable_aao;
 static int artwork_enable_wos;
-#endif
 static time_t artwork_reset_time;
 static char artwork_filemask[200];
 
 static const char *get_default_cover (void) {
-return default_cover;
-}
-
-static int
-esc_char (char c) {
-    if (c < 1
-        || (c >= 'a' && c <= 'z')
-        || (c >= 'A' && c <= 'Z')
-        || (c >= '0' && c <= '9')
-        || c == ' '
-        || c == '_'
-        || c == '-') {
-        return c;
-    }
-    return '_';
+    return default_cover;
 }
 
 int
 make_cache_dir_path (char *path, int size, const char *artist, int img_size) {
-    char esc_artist[PATH_MAX];
-    int i;
-
-    for (i = 0; artist[i]; i++) {
-        esc_artist[i] = esc_char (artist[i]);
-    }
-    esc_artist[i] = 0;
-
     const char *cache = getenv ("XDG_CACHE_HOME");
     int sz;
-    
+
     if (img_size == -1) {
         sz = snprintf (path, size, cache ? "%s/deadbeef/covers/" : "%s/.cache/deadbeef/covers/", cache ? cache : getenv ("HOME"));
     }
@@ -160,7 +108,7 @@ make_cache_dir_path (char *path, int size, const char *artist, int img_size) {
     }
     path += sz;
 
-    sz += snprintf (path, size-sz, "%s", esc_artist);
+    sz += snprintf (path, size-sz, "%s", artist);
     for (char *p = path; *p; p++) {
         if (*p == '/') {
             *p = '_';
@@ -169,60 +117,18 @@ make_cache_dir_path (char *path, int size, const char *artist, int img_size) {
     return sz;
 }
 
-int
-make_cache_path2 (char *path, int size, const char *fname, const char *album, const char *artist, int img_size) {
-    if (!album) {
-        album = "";
-    }
-    if (!artist) {
-        artist = "";
-    }
-
-    if (*album && !(*artist)) {
-        artist = album;
-    }
-
-    if (!*artist || !*album)
-    {
-        if (fname) {
-            // album=escape(path), artist=uknown
-            artist = "Unknown artist";
-            album = fname;
-        }
-        else {
-            trace ("artist or album is empty, give up\n");
-            *path = 0;
-            return -1;
-        }
-    }
-
+void
+make_cache_path (char *path, int size, const char *album, const char *artist, int img_size) {
     char *p = path;
-    char esc_album[PATH_MAX];
-    const char *palbum = album;
-    size_t l = strlen (album);
-    if (l > 200) {
-        palbum = album + l - 200;
-    }
-    int i;
-    for (i = 0; palbum[i]; i++) {
-        esc_album[i] = esc_char (palbum[i]);
-    }
-    esc_album[i] = 0;
-
     int sz = make_cache_dir_path (path, size, artist, img_size);
     size -= sz;
     path += sz;
-    sz = snprintf (path, size, "/%s.jpg", esc_album);
+    sz = snprintf (path, size, "/%s.jpg", album);
     for (char *p = path+1; *p; p++) {
         if (*p == '/') {
             *p = '_';
         }
     }
-}
-
-void
-make_cache_path (char *path, int size, const char *album, const char *artist, int img_size) {
-    make_cache_path2 (path, size, NULL, album, artist, img_size);
 }
 
 void
@@ -399,7 +305,7 @@ jpeg_resize (const char *fname, const char *outname, int scaled_size) {
     jpeg_start_decompress (&cinfo);
 
     int i;
-    
+
     cinfo_out.err = cinfo.err;
 
     jpeg_create_compress(&cinfo_out);
@@ -642,7 +548,7 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
 
 
     int i;
-    
+
     cinfo_out.err = jpeg_std_error (&jerr.pub);
     jerr.pub.error_exit = my_error_exit;
     /* Establish the setjmp return context for my_error_exit to use. */
@@ -943,7 +849,7 @@ fetcher_thread (void *none)
 
             trace ("fetching cover for %s %s\n", param->album, param->artist);
             char cache_path[1024];
-            make_cache_path2 (cache_path, sizeof (cache_path), param->fname, param->album, param->artist, -1);
+            make_cache_path (cache_path, sizeof (cache_path), param->album, param->artist, -1);
             int got_pic = 0;
 
             if (deadbeef->is_local_file (param->fname)) {
@@ -978,7 +884,7 @@ fetcher_thread (void *none)
                                             trace ("artwork: corrupted id3v2 APIC frame\n");
                                             continue;
                                         }
-                                        if (strcasecmp (data, "image/jpeg") && strcasecmp (data, "image/png") && strcasecmp (data, "image/gif")) {
+                                        if (strcasecmp (data, "image/jpeg") && strcasecmp (data, "image/png")) {
                                             trace ("artwork: unsupported mime type: %s\n", data);
                                             continue;
                                         }
@@ -1067,7 +973,7 @@ fetcher_thread (void *none)
                                         trace ("found apev2 cover art of %d bytes (%s)\n", sz, ext);
                                         char tmp_path[1024];
                                         char cache_path[1024];
-                                        make_cache_path2 (cache_path, sizeof (cache_path), param->fname, param->album, param->artist, -1);
+                                        make_cache_path (cache_path, sizeof (cache_path), param->album, param->artist, -1);
                                         trace ("will write apev2 cover art into %s\n", cache_path);
                                         snprintf (tmp_path, sizeof (tmp_path), "%s.part", cache_path);
                                         FILE *out = fopen (tmp_path, "w+b");
@@ -1136,7 +1042,7 @@ fetcher_thread (void *none)
                         trace ("found flac cover art of %d bytes (%s)\n", pic->data_length, pic->description);
                         char tmp_path[1024];
                         char cache_path[1024];
-                        make_cache_path2 (cache_path, sizeof (cache_path), param->fname, param->album, param->artist, -1);
+                        make_cache_path (cache_path, sizeof (cache_path), param->album, param->artist, -1);
                         trace ("will write flac cover art into %s\n", cache_path);
                         snprintf (tmp_path, sizeof (tmp_path), "%s.part", cache_path);
                         FILE *out = fopen (tmp_path, "w+b");
@@ -1212,7 +1118,7 @@ fetcher_thread (void *none)
                             strcat (path, files[0]->d_name);
                             char cache_path[1024];
                             char tmp_path[1024];
-                            make_cache_path2 (cache_path, sizeof (cache_path), param->fname, param->album, param->artist, -1);
+                            make_cache_path (cache_path, sizeof (cache_path), param->album, param->artist, -1);
                             snprintf (tmp_path, sizeof (tmp_path), "%s.part", cache_path);
                             copy_file (path, tmp_path, -1);
                             int err = rename (tmp_path, cache_path);
@@ -1230,7 +1136,6 @@ fetcher_thread (void *none)
                 }
             }
 
-#ifdef USE_VFS_CURL
             if (!got_pic) {
                 if (artwork_enable_wos) {
 
@@ -1259,7 +1164,6 @@ fetcher_thread (void *none)
                     got_pic = 1;
                 }
             }
-#endif
 
             if (got_pic) {
                 trace ("downloaded art for %s %s\n", param->album, param->artist);
@@ -1272,7 +1176,7 @@ fetcher_thread (void *none)
                         continue;
                     }
                     char scaled_path[1024];
-                    make_cache_path2 (scaled_path, sizeof (scaled_path), param->fname, param->album, param->artist, param->size);
+                    make_cache_path (scaled_path, sizeof (scaled_path), param->album, param->artist, param->size);
                     copy_file (cache_path, scaled_path, param->size);
                 }
                 for (int i = 0; i < param->numcb; i++) {
@@ -1323,14 +1227,31 @@ get_album_art (const char *fname, const char *artist, const char *album, int siz
 {
     char path [1024];
 
-    if (!deadbeef->is_local_file (fname)) {
+    if (!album) {
+        album = "";
+    }
+    if (!artist) {
+        artist = "";
+    }
+
+    if (!*artist || !*album)
+    {
+        trace ("artist or album is empty, give up\n");
+        //give up
         if (callback) {
             callback (NULL, NULL, NULL, user_data);
         }
         return NULL;
     }
 
-    make_cache_path2 (path, sizeof (path), fname, album, artist, size);
+//    if (!deadbeef->is_local_file (fname)) {
+//        if (callback) {
+//            callback (NULL, NULL, NULL, user_data);
+//        }
+//        return NULL;
+//    }
+
+    make_cache_path (path, sizeof (path), album, artist, size);
     char *p = find_image (path);
     if (p) {
         if (callback) {
@@ -1342,7 +1263,7 @@ get_album_art (const char *fname, const char *artist, const char *album, int siz
     if (size != -1) {
         // check if we have unscaled image
         char unscaled_path[1024];
-        make_cache_path2 (unscaled_path, sizeof (unscaled_path), fname, album, artist, -1);
+        make_cache_path (unscaled_path, sizeof (unscaled_path), album, artist, -1);
         p = find_image (unscaled_path);
         if (p) {
             free (p);
@@ -1437,31 +1358,25 @@ static int
 artwork_configchanged (void) {
     int new_artwork_enable_embedded = deadbeef->conf_get_int ("artwork.enable_embedded", 1);
     int new_artwork_enable_local = deadbeef->conf_get_int ("artwork.enable_localfolder", 1);
-#ifdef USE_VFS_CURL
     int new_artwork_enable_lfm = deadbeef->conf_get_int ("artwork.enable_lastfm", 0);
     int new_artwork_enable_aao = deadbeef->conf_get_int ("artwork.enable_albumartorg", 0);
     int new_artwork_enable_wos = deadbeef->conf_get_int ("artwork.enable_wos", 0);
-#endif
 
     char new_artwork_filemask[200];
     deadbeef->conf_get_str ("artwork.filemask", DEFAULT_FILEMASK, new_artwork_filemask, sizeof (new_artwork_filemask));
 
     if (new_artwork_enable_embedded != artwork_enable_embedded
             || new_artwork_enable_local != artwork_enable_local
-#ifdef USE_VFS_CURL
             || new_artwork_enable_lfm != artwork_enable_lfm
             || new_artwork_enable_aao != artwork_enable_aao
             || new_artwork_enable_wos != artwork_enable_wos
-#endif
             || strcmp (new_artwork_filemask, artwork_filemask)) {
         trace ("artwork config changed, invalidating cache...\n");
         artwork_enable_embedded = new_artwork_enable_embedded;
         artwork_enable_local = new_artwork_enable_local;
-#ifdef USE_VFS_CURL
         artwork_enable_lfm = new_artwork_enable_lfm;
         artwork_enable_aao = new_artwork_enable_aao;
         artwork_enable_wos = new_artwork_enable_wos;
-#endif
         artwork_reset_time = time (NULL);
         strcpy (artwork_filemask, new_artwork_filemask);
         deadbeef->conf_set_int64 ("artwork.cache_reset_time", artwork_reset_time);
@@ -1498,11 +1413,8 @@ artwork_plugin_start (void)
 
     artwork_enable_embedded = deadbeef->conf_get_int ("artwork.enable_embedded", 1);
     artwork_enable_local = deadbeef->conf_get_int ("artwork.enable_localfolder", 1);
-#ifdef USE_VFS_CURL
     artwork_enable_lfm = deadbeef->conf_get_int ("artwork.enable_lastfm", 0);
     artwork_enable_aao = deadbeef->conf_get_int ("artwork.enable_albumartorg", 0);
-    artwork_enable_wos = deadbeef->conf_get_int ("artwork.enable_wos", 0);
-#endif
     artwork_reset_time = deadbeef->conf_get_int64 ("artwork.cache_reset_time", 0);
 
     deadbeef->conf_get_str ("artwork.filemask", DEFAULT_FILEMASK, artwork_filemask, sizeof (artwork_filemask));
@@ -1559,11 +1471,9 @@ static const char settings_dlg[] =
     "property \"Fetch from embedded tags\" checkbox artwork.enable_embedded 1;\n"
     "property \"Fetch from local folder\" checkbox artwork.enable_localfolder 1;\n"
     "property \"Local cover file mask\" entry artwork.filemask \"" DEFAULT_FILEMASK "\";\n"
-#ifdef USE_VFS_CURL
     "property \"Fetch from last.fm\" checkbox artwork.enable_lastfm 0;\n"
     "property \"Fetch from albumart.org\" checkbox artwork.enable_albumartorg 0;\n"
     "property \"Fetch from worldofspectrum.org (AY only)\" checkbox artwork.enable_wos 0;\n"
-#endif
     "property \"Scale artwork towards longer side\" checkbox artwork.scale_towards_longer 1;\n"
 ;
 
@@ -1572,33 +1482,28 @@ static DB_artwork_plugin_t plugin = {
     .plugin.plugin.api_vmajor = 1,
     .plugin.plugin.api_vminor = 0,
     .plugin.plugin.version_major = 1,
-    .plugin.plugin.version_minor = 2,
+    .plugin.plugin.version_minor = 1,
     .plugin.plugin.type = DB_PLUGIN_MISC,
     .plugin.plugin.id = "artwork",
     .plugin.plugin.name = "Album Artwork",
     .plugin.plugin.descr = "Loads album artwork either from local directories or from internet",
-    .plugin.plugin.copyright = 
-        "Album Art plugin for DeaDBeeF\n"
-        "Copyright (C) 2009-2011 Viktor Semykin <thesame.ml@gmail.com>\n"
+    .plugin.plugin.copyright =
         "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2009-2011 Viktor Semykin <thesame.ml@gmail.com>\n"
         "\n"
-        "This software is provided 'as-is', without any express or implied\n"
-        "warranty.  In no event will the authors be held liable for any damages\n"
-        "arising from the use of this software.\n"
+        "This program is free software; you can redistribute it and/or\n"
+        "modify it under the terms of the GNU General Public License\n"
+        "as published by the Free Software Foundation; either version 2\n"
+        "of the License, or (at your option) any later version.\n"
         "\n"
-        "Permission is granted to anyone to use this software for any purpose,\n"
-        "including commercial applications, and to alter it and redistribute it\n"
-        "freely, subject to the following restrictions:\n"
+        "This program is distributed in the hope that it will be useful,\n"
+        "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+        "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+        "GNU General Public License for more details.\n"
         "\n"
-        "1. The origin of this software must not be misrepresented; you must not\n"
-        " claim that you wrote the original software. If you use this software\n"
-        " in a product, an acknowledgment in the product documentation would be\n"
-        " appreciated but is not required.\n"
-        "\n"
-        "2. Altered source versions must be plainly marked as such, and must not be\n"
-        " misrepresented as being the original software.\n"
-        "\n"
-        "3. This notice may not be removed or altered from any source distribution.\n"
+        "You should have received a copy of the GNU General Public License\n"
+        "along with this program; if not, write to the Free Software\n"
+        "Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.\n"
     ,
     .plugin.plugin.website = "http://deadbeef.sf.net",
     .plugin.plugin.start = artwork_plugin_start,
@@ -1610,5 +1515,4 @@ static DB_artwork_plugin_t plugin = {
     .get_default_cover = get_default_cover,
     .get_album_art_sync = get_album_art_sync,
     .make_cache_path = make_cache_path,
-    .make_cache_path2 = make_cache_path2,
 };
