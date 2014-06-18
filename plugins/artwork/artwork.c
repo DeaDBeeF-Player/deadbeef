@@ -151,7 +151,7 @@ make_cache_dir_path (char *path, int size, const char *artist, int img_size) {
 
     const char *cache = getenv ("XDG_CACHE_HOME");
     int sz;
-    
+
     if (img_size == -1) {
         sz = snprintf (path, size, cache ? "%s/deadbeef/covers/" : "%s/.cache/deadbeef/covers/", cache ? cache : getenv ("HOME"));
     }
@@ -399,7 +399,7 @@ jpeg_resize (const char *fname, const char *outname, int scaled_size) {
     jpeg_start_decompress (&cinfo);
 
     int i;
-    
+
     cinfo_out.err = cinfo.err;
 
     jpeg_create_compress(&cinfo_out);
@@ -642,7 +642,7 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
 
 
     int i;
-    
+
     cinfo_out.err = jpeg_std_error (&jerr.pub);
     jerr.pub.error_exit = my_error_exit;
     /* Establish the setjmp return context for my_error_exit to use. */
@@ -1323,12 +1323,12 @@ get_album_art (const char *fname, const char *artist, const char *album, int siz
 {
     char path [1024];
 
-    if (!deadbeef->is_local_file (fname)) {
-        if (callback) {
-            callback (NULL, NULL, NULL, user_data);
-        }
-        return NULL;
-    }
+//    if (!deadbeef->is_local_file (fname)) {
+//        if (callback) {
+//            callback (NULL, NULL, NULL, user_data);
+//        }
+//        return NULL;
+//    }
 
     make_cache_path2 (path, sizeof (path), fname, album, artist, size);
     char *p = find_image (path);
@@ -1577,7 +1577,7 @@ static DB_artwork_plugin_t plugin = {
     .plugin.plugin.id = "artwork",
     .plugin.plugin.name = "Album Artwork",
     .plugin.plugin.descr = "Loads album artwork either from local directories or from internet",
-    .plugin.plugin.copyright = 
+    .plugin.plugin.copyright =
         "Album Art plugin for DeaDBeeF\n"
         "Copyright (C) 2009-2011 Viktor Semykin <thesame.ml@gmail.com>\n"
         "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
