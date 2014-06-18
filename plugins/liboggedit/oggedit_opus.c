@@ -60,10 +60,9 @@ int oggedit_write_opus_file(DB_FILE *in, const char *outname, const off_t offset
 
 off_t oggedit_opus_stream_info(DB_FILE *in, const off_t start_offset, const off_t end_offset, char **codecs)
 {
-    int res;
     ogg_sync_state oy;
     ogg_sync_init(&oy);
-    *codecs = codec_names(in, &oy, start_offset, &res);
+    *codecs = codec_names(in, &oy, start_offset);
     const off_t stream_size = codec_stream_size(in, &oy, start_offset, end_offset, OPUSNAME);
     cleanup(in, NULL, &oy, NULL);
     return stream_size;
@@ -174,7 +173,7 @@ off_t oggedit_write_opus_metadata(DB_FILE *in, const char *fname, const off_t of
 
     /* If we have tempfile, copy the remaining pages */
     if (*tempname) {
-        if ((res = copy_remaining_pages(in, out, &oy, opus_serial, pageno)) < OGGEDIT_EOF)
+        if ((res = copy_remaining_pages(in, out, &oy, opus_serial, pageno)) <= OGGEDIT_EOF)
             goto cleanup;
         if (rename(tempname, fname)) {
             res = OGGEDIT_RENAME_FAILED;
@@ -193,8 +192,8 @@ cleanup:
 /*
 struct timeval timeval;
 gettimeofday(&timeval, NULL);
-int usecs = timeval.tv_sec* 1000000 + timeval.tv_usec;
+int usecs = timeval.tv_sec*1000000 + timeval.tv_usec;
 gettimeofday(&timeval, NULL);
-usecs = timeval.tv_sec* 1000000 + timeval.tv_usec - usecs;
+usecs = timeval.tv_sec*1000000 + timeval.tv_usec - usecs;
 fprintf(stderr, "%d micro-seconds\n", usecs);
 */

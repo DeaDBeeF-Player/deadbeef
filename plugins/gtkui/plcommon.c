@@ -32,6 +32,7 @@
 #include "actions.h"
 #include "search.h"
 #include "actionhandlers.h"
+#include "../../strdupa.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -466,6 +467,70 @@ on_remove2_activate                    (GtkMenuItem     *menuitem,
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
+static void
+on_toggle_set_custom_title (GtkToggleButton *togglebutton, gpointer user_data) {
+    gboolean active = gtk_toggle_button_get_active (togglebutton);
+    deadbeef->conf_set_int ("gtkui.location_set_custom_title", active);
+
+    GtkWidget *ct = lookup_widget (GTK_WIDGET (user_data), "custom_title");
+    gtk_widget_set_sensitive (ct, active);
+
+    deadbeef->conf_save ();
+}
+
+void
+on_set_custom_title_activate (GtkMenuItem *menuitem, gpointer user_data)
+{
+    DdbListview *lv = user_data;
+    int idx = lv->binding->cursor ();
+    if (idx < 0) {
+        return;
+    }
+    DdbListviewIter it = lv->binding->get_for_idx (idx);
+    if (!it) {
+        return;
+    }
+
+    GtkWidget *dlg = create_setcustomtitledlg ();
+    GtkWidget *sct = lookup_widget (dlg, "set_custom_title");
+    GtkWidget *ct = lookup_widget (dlg, "custom_title");
+    if (deadbeef->conf_get_int ("gtkui.location_set_custom_title", 0)) {
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (sct), TRUE);
+        gtk_widget_set_sensitive (ct, TRUE);
+    }
+    else {
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (sct), FALSE);
+        gtk_widget_set_sensitive (ct, FALSE);
+    }
+    deadbeef->pl_lock ();
+    const char *custom_title = deadbeef->pl_find_meta ((DB_playItem_t *)it, ":CUSTOM_TITLE");
+    if (custom_title) {
+        custom_title = strdupa (custom_title);
+    }
+    else {
+        custom_title = "";
+    }
+    deadbeef->pl_unlock ();
+
+    g_signal_connect ((gpointer) sct, "toggled",
+            G_CALLBACK (on_toggle_set_custom_title),
+            dlg);
+    gtk_entry_set_text (GTK_ENTRY (ct), custom_title);
+
+    gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
+    gint response = gtk_dialog_run (GTK_DIALOG (dlg));
+    if (response == GTK_RESPONSE_OK) {
+        if (it && deadbeef->conf_get_int ("gtkui.location_set_custom_title", 0)) {
+            deadbeef->pl_replace_meta ((DB_playItem_t *)it, ":CUSTOM_TITLE", gtk_entry_get_text (GTK_ENTRY (ct)));
+        }
+        else {
+            deadbeef->pl_delete_meta ((DB_playItem_t *)it, ":CUSTOM_TITLE");
+        }
+    }
+    gtk_widget_destroy (dlg);
+    lv->binding->unref (it);
+}
+
 void
 on_remove_from_disk_activate                    (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
@@ -553,12 +618,13 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     GtkWidget *playlist_menu;
     GtkWidget *add_to_playback_queue1;
     GtkWidget *remove_from_playback_queue1;
-    GtkWidget *separator9;
+    GtkWidget *separator;
     GtkWidget *remove2;
     GtkWidget *remove_from_disk;
     GtkWidget *separator8;
     GtkWidget *properties1;
     GtkWidget *reload_metadata;
+    GtkWidget *set_custom_title;
 
     playlist_menu = gtk_menu_new ();
     add_to_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Add To Playback Queue"));
@@ -579,10 +645,10 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     gtk_container_add (GTK_CONTAINER (playlist_menu), reload_metadata);
     g_object_set_data (G_OBJECT (reload_metadata), "ps", listview);
 
-    separator9 = gtk_separator_menu_item_new ();
-    gtk_widget_show (separator9);
-    gtk_container_add (GTK_CONTAINER (playlist_menu), separator9);
-    gtk_widget_set_sensitive (separator9, FALSE);
+    separator = gtk_separator_menu_item_new ();
+    gtk_widget_show (separator);
+    gtk_container_add (GTK_CONTAINER (playlist_menu), separator);
+    gtk_widget_set_sensitive (separator, FALSE);
 
     remove2 = gtk_menu_item_new_with_mnemonic (_("Remove"));
     gtk_widget_show (remove2);
@@ -598,10 +664,10 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
         g_object_set_data (G_OBJECT (remove_from_disk), "ps", listview);
     }
 
-    separator8 = gtk_separator_menu_item_new ();
-    gtk_widget_show (separator8);
-    gtk_container_add (GTK_CONTAINER (playlist_menu), separator8);
-    gtk_widget_set_sensitive (separator8, FALSE);
+    separator = gtk_separator_menu_item_new ();
+    gtk_widget_show (separator);
+    gtk_container_add (GTK_CONTAINER (playlist_menu), separator);
+    gtk_widget_set_sensitive (separator, FALSE);
 
     int selected_count = 0;
     DB_playItem_t *pit = deadbeef->pl_get_first (PL_MAIN);
@@ -729,6 +795,17 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
         gtk_widget_set_sensitive (separator8, FALSE);
     }
 
+    set_custom_title = gtk_menu_item_new_with_mnemonic (_("Set Custom Title"));
+    gtk_widget_show (set_custom_title);
+    gtk_container_add (GTK_CONTAINER (playlist_menu), set_custom_title);
+    if (selected_count != 1) {
+        gtk_widget_set_sensitive (GTK_WIDGET (set_custom_title), FALSE);
+    }
+
+    separator = gtk_separator_menu_item_new ();
+    gtk_widget_show (separator);
+    gtk_container_add (GTK_CONTAINER (playlist_menu), separator);
+    gtk_widget_set_sensitive (separator, FALSE);
 
     properties1 = gtk_menu_item_new_with_mnemonic (_("Track Properties"));
     gtk_widget_show (properties1);
@@ -752,6 +829,9 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
                 G_CALLBACK (on_remove_from_disk_activate),
                 NULL);
     }
+    g_signal_connect ((gpointer) set_custom_title, "activate",
+            G_CALLBACK (on_set_custom_title_activate),
+            listview);
     g_signal_connect ((gpointer) properties1, "activate",
             G_CALLBACK (main_properties_activate),
             NULL);

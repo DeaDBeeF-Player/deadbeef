@@ -53,7 +53,7 @@ void cleanup(DB_FILE *in, FILE *out, ogg_sync_state *oy, void *buffer);
 int copy_up_to_codec(DB_FILE *in, FILE *out, ogg_sync_state *oy, ogg_page *og, const off_t start_offset, const off_t link_offset, const char *codec);
 int copy_up_to_header(DB_FILE *in, FILE *out, ogg_sync_state *oy, ogg_page *og, const int codec_serial);
 long flush_stream(FILE *out, ogg_stream_state *os);
-char *codec_names(DB_FILE *in, ogg_sync_state *oy, const off_t link_offset, int *res);
+char *codec_names(DB_FILE *in, ogg_sync_state *oy, const off_t link_offset);
 off_t codec_stream_size(DB_FILE *in, ogg_sync_state *oy, const off_t start_offset, const off_t end_offset, const char *codec);
 char *parse_vendor(const ogg_packet *op, const size_t magic_length);
 int init_read_stream(DB_FILE *in, ogg_sync_state *oy, ogg_stream_state *os, ogg_page *og, const off_t offset, const char *codec);

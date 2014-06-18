@@ -79,6 +79,7 @@ const char *oggedit_album_art_type(const int type);
 char *oggedit_album_art_tag(DB_FILE *fp, int *res);
 
 /* oggedit_flac.c */
+off_t oggedit_flac_stream_info(DB_FILE *in, const off_t start_offset, const off_t end_offset);
 off_t oggedit_write_flac_metadata(DB_FILE *in, const char *fname, const off_t offset, const int num_tags, char **tags);
 
 /* oggedit_vorbis.c */

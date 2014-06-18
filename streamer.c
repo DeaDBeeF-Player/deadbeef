@@ -190,6 +190,16 @@ streamer_abort_files (void) {
     DB_FILE *file = fileinfo_file;
     DB_FILE *newfile = new_fileinfo_file;
     DB_FILE *strfile = streamer_file;
+
+    // this situation occurs during decoder->init
+    // we still don't have the filehandle acquired from the streamer thread,
+    // but the file is open already
+    if (!newfile && !new_fileinfo_file && new_fileinfo) {
+        mutex_lock (decodemutex);
+        newfile = new_fileinfo->file;
+        mutex_unlock (decodemutex);
+    }
+
     if (file) {
         deadbeef->fabort (file);
     }
@@ -199,6 +209,7 @@ streamer_abort_files (void) {
     if (strfile) {
         deadbeef->fabort (strfile);
     }
+
 }
 
 
@@ -1202,6 +1213,7 @@ m3u_error:
         mutex_unlock (decodemutex);
         if (new_fileinfo && dec->init (new_fileinfo, DB_PLAYITEM (it)) != 0) {
             trace ("\033[0;31mfailed to init decoder\033[37;0m\n");
+            pl_delete_meta (it, "!DECODER");
             mutex_lock (decodemutex);
             dec->free (new_fileinfo);
             new_fileinfo = NULL;
