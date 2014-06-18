@@ -1301,3 +1301,7 @@ gboolean
 on_mainwin_button_press_event          (GtkWidget       *widget,
                                         GdkEventButton  *event,
                                         gpointer         user_data);
+
+void
+on_enable_shift_jis_recoding_toggled   (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);

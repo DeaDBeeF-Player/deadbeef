@@ -47,12 +47,12 @@
 #include "../artwork/artwork.h"
 #include "../liboggedit/oggedit.h"
 
-    static DB_decoder_t plugin;
-    static DB_functions_t *deadbeef;
+static DB_decoder_t plugin;
+static DB_functions_t *deadbeef;
 
-    static DB_artwork_plugin_t *coverart_plugin = NULL;
+static DB_artwork_plugin_t *coverart_plugin = NULL;
 
-    //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
 #define min(x,y) ((x)<(y)?(x):(y))
@@ -60,40 +60,39 @@
 
 #define BUFFERSIZE 100000
 
-    typedef struct {
-        DB_fileinfo_t info;
-        FLAC__StreamDecoder *decoder;
-        char *buffer; // this buffer always has float samples
-        int remaining; // bytes remaining in buffer from last read
-        int64_t startsample;
-        int64_t endsample;
-        int64_t currentsample;
-        int64_t totalsamples;
-        int flac_critical_error;
-        int init_stop_decoding;
-        int tagsize;
-        DB_FILE *file;
+typedef struct {
+    DB_fileinfo_t info;
+    FLAC__StreamDecoder *decoder;
+    char *buffer; // this buffer always has float samples
+    int remaining; // bytes remaining in buffer from last read
+    int64_t startsample;
+    int64_t endsample;
+    int64_t currentsample;
+    int64_t totalsamples;
+    int flac_critical_error;
+    int init_stop_decoding;
+    DB_FILE *file;
 
-        // used only on insert
-        ddb_playlist_t *plt;
-        DB_playItem_t *after;
-        DB_playItem_t *last;
-        DB_playItem_t *it;
-        const char *fname;
-        int bitrate;
-        FLAC__StreamMetadata *flac_cue_sheet;
-    } flac_info_t;
+    // used only on insert
+    ddb_playlist_t *plt;
+    DB_playItem_t *after;
+    DB_playItem_t *last;
+    DB_playItem_t *it;
+    const char *fname;
+    int bitrate;
+    FLAC__StreamMetadata *flac_cue_sheet;
+} flac_info_t;
 
-    // callbacks
-    FLAC__StreamDecoderReadStatus flac_read_cb (const FLAC__StreamDecoder *decoder, FLAC__byte buffer[], size_t *bytes, void *client_data) {
-        flac_info_t *info = (flac_info_t *)client_data;
-        size_t r = deadbeef->fread (buffer, 1, *bytes, info->file);
-        *bytes = r;
-        if (r == 0) {
-            return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
-        }
-        return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
+// callbacks
+FLAC__StreamDecoderReadStatus flac_read_cb (const FLAC__StreamDecoder *decoder, FLAC__byte buffer[], size_t *bytes, void *client_data) {
+    flac_info_t *info = (flac_info_t *)client_data;
+    size_t r = deadbeef->fread (buffer, 1, *bytes, info->file);
+    *bytes = r;
+    if (r == 0) {
+        return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
     }
+    return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
+}
 
 FLAC__StreamDecoderSeekStatus flac_seek_cb (const FLAC__StreamDecoder *decoder, FLAC__uint64 absolute_byte_offset, void *client_data) {
     flac_info_t *info = (flac_info_t *)client_data;
@@ -130,9 +129,6 @@ cflac_write_callback (const FLAC__StreamDecoder *decoder, const FLAC__Frame *fra
     DB_fileinfo_t *_info = &info->info;
     if (frame->header.blocksize == 0) {
         return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
-    }
-    if (info->bitrate > 0) {
-        deadbeef->streamer_set_bitrate (info->bitrate);
     }
     int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
     int bufsize = BUFFERSIZE - info->remaining;
@@ -314,26 +310,8 @@ cflac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         fprintf (stderr, "corrupted/invalid flac stream\n");
         return -1;
     }
+    info->bitrate = deadbeef->pl_find_meta_int(it, ":BITRATE", -1);
 
-    // bitrate
-    size_t fsize = deadbeef->fgetlength (info->file);
-    FLAC__uint64 position;
-    FLAC__bool res = FLAC__stream_decoder_get_decode_position (info->decoder, &position);
-    if (res) {
-        fsize -= position;
-    }
-    int64_t totalsamples = FLAC__stream_decoder_get_total_samples (info->decoder);
-    if (totalsamples <= 0) {
-        trace ("flac: totalsamples=%lld\n", totalsamples);
-//        return -1;
-    }
-    float sec = totalsamples / (float)_info->fmt.samplerate;
-    if (sec > 0) {
-        info->bitrate = fsize / sec * 8 / 1000;
-    }
-    else {
-        info->bitrate = -1;
-    }
     deadbeef->pl_lock ();
     {
         const char *channelmask = deadbeef->pl_find_meta (it, "WAVEFORMAT_EXTENSIBLE_CHANNELMASK");
@@ -395,6 +373,9 @@ cflac_free (DB_fileinfo_t *_info) {
 static int
 cflac_read (DB_fileinfo_t *_info, char *bytes, int size) {
     flac_info_t *info = (flac_info_t *)_info;
+    if (info->bitrate != deadbeef->streamer_get_apx_bitrate()) {
+        deadbeef->streamer_set_bitrate (info->bitrate);
+    }
     int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
     if (info->endsample >= 0) {
         if (size / samplesize + info->currentsample > info->endsample) {
@@ -592,7 +573,6 @@ cflac_add_metadata (DB_playItem_t *it, const char *s, int length) {
 static void
 cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMetadata *metadata, void *client_data) {
     flac_info_t *info = (flac_info_t *)client_data;
-    info->tagsize += metadata->length;
     DB_fileinfo_t *_info = &info->info;
     if (info->init_stop_decoding) {
         trace ("error flag is set, ignoring init_metadata callback..\n");
@@ -793,8 +773,6 @@ cflac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         trace ("flac: FLAC__stream_decoder_process_until_end_of_metadata [2] failed\n");
         goto cflac_insert_fail;
     }
-    FLAC__stream_decoder_delete(decoder);
-    decoder = NULL;
 
     if (info.info.fmt.samplerate <= 0) {
         goto cflac_insert_fail;
@@ -813,9 +791,22 @@ cflac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     snprintf (s, sizeof (s), "%d", info.info.fmt.samplerate);
     deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
     if ( deadbeef->pl_get_item_duration (it) > 0) {
-        snprintf (s, sizeof (s), "%d", (int)roundf((fsize-info.tagsize) / deadbeef->pl_get_item_duration (it) * 8 / 1000));
-        deadbeef->pl_add_meta (it, ":BITRATE", s);
+        if (!isogg) {
+            FLAC__uint64 position;
+            if (FLAC__stream_decoder_get_decode_position (decoder, &position))
+                fsize -= position;
+        }
+#if USE_OGGEDIT
+        else {
+            const off_t stream_size = oggedit_flac_stream_info(deadbeef->fopen(fname), 0, 0);
+            if (stream_size > 0)
+                fsize = stream_size;
+        }
+#endif
+        deadbeef->pl_set_meta_int (it, ":BITRATE", (int)roundf(fsize / deadbeef->pl_get_item_duration (it) * 8 / 1000));
     }
+    FLAC__stream_decoder_delete(decoder);
+    decoder = NULL;
 
     // try embedded cue
     deadbeef->pl_lock ();

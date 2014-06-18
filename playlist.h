@@ -62,6 +62,7 @@ typedef struct playlist_s {
     int count[2];
     float totaltime;
     int modification_idx;
+    int last_save_modification_idx;
     playItem_t *head[PL_MAX_ITERATORS]; // head of linked list
     playItem_t *tail[PL_MAX_ITERATORS]; // tail of linked list
     int current_row[PL_MAX_ITERATORS]; // current row (cursor)
