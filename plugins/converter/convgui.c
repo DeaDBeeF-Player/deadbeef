@@ -704,13 +704,12 @@ init_encoder_preset_from_dlg (GtkWidget *dlg, ddb_encoder_preset_t *p) {
 }
 
 int
-edit_encoder_preset (char *title, GtkWidget *toplevel, int overwrite) {
+edit_encoder_preset (char *title, GtkWidget *toplevel) {
     GtkWidget *dlg = create_convpreset_editor ();
     gtk_window_set_title (GTK_WINDOW (dlg), title);
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
 
     gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (toplevel));
-
     ddb_encoder_preset_t *p = current_ctx->current_encoder_preset;
 
     if (p->title) {
@@ -739,7 +738,19 @@ edit_encoder_preset (char *title, GtkWidget *toplevel, int overwrite) {
             ddb_encoder_preset_t *p = converter_plugin->encoder_preset_alloc ();
             if (p) {
                 init_encoder_preset_from_dlg (dlg, p);
-                int err = converter_plugin->encoder_preset_save (p, overwrite);
+                int err = 0;
+
+                ddb_encoder_preset_t *pp = converter_plugin->encoder_preset_get_list ();
+                for (; pp; pp = pp->next) {
+                    if (pp != old && !strcmp (pp->title, p->title)) {
+                        err = -2;
+                        break;
+                    }
+                }
+
+                if (!err) {
+                    err = converter_plugin->encoder_preset_save (p, 1);
+                }
                 if (!err) {
                     if (old->title && strcmp (p->title, old->title)) {
                         char path[1024];
@@ -812,7 +823,7 @@ on_encoder_preset_add                     (GtkButton       *button,
 
     current_ctx->current_encoder_preset = converter_plugin->encoder_preset_alloc ();
 
-    if (GTK_RESPONSE_OK == edit_encoder_preset (_("Add new encoder"), toplevel, 0)) {
+    if (GTK_RESPONSE_OK == edit_encoder_preset (_("Add new encoder"), toplevel)) {
         converter_plugin->encoder_preset_append (current_ctx->current_encoder_preset);
         GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (current_ctx->converter, "encoder"));
         GtkWidget *list = lookup_widget (toplevel, "presets");
@@ -842,7 +853,7 @@ on_encoder_preset_edit                     (GtkButton       *button,
     ddb_encoder_preset_t *p = converter_plugin->encoder_preset_get_for_idx (idx);
     current_ctx->current_encoder_preset = p;
 
-    int r = edit_encoder_preset (_("Edit encoder"), toplevel, 1);
+    int r = edit_encoder_preset (_("Edit encoder"), toplevel);
     if (r == GTK_RESPONSE_OK) {
         GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (current_ctx->converter, "encoder"));
         refresh_encoder_lists (combo, GTK_TREE_VIEW (list));
@@ -917,6 +928,41 @@ on_encoder_preset_cursor_changed (GtkTreeView     *treeview,
     gtk_widget_set_sensitive (edit, !p->readonly);
 }
 
+
+void
+on_encoder_preset_copy (GtkButton *button, gpointer user_data)
+{
+    GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (button));
+
+    GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (toplevel, "presets"));
+
+    GtkTreePath *path;
+    GtkTreeViewColumn *col;
+    gtk_tree_view_get_cursor (treeview, &path, &col);
+    if (!path || !col) {
+        return;
+    }
+    int *indices = gtk_tree_path_get_indices (path);
+    int idx = *indices;
+    g_free (indices);
+
+    ddb_encoder_preset_t *p = converter_plugin->encoder_preset_get_for_idx (idx);
+
+    current_ctx->current_encoder_preset = converter_plugin->encoder_preset_alloc ();
+    if (!current_ctx->current_encoder_preset) {
+        return;
+    }
+    converter_plugin->encoder_preset_copy (current_ctx->current_encoder_preset, p);
+
+    if (GTK_RESPONSE_OK == edit_encoder_preset (_("Add new encoder"), toplevel)) {
+        converter_plugin->encoder_preset_append (current_ctx->current_encoder_preset);
+        GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (current_ctx->converter, "encoder"));
+        refresh_encoder_lists (combo, treeview);
+    }
+
+    current_ctx->current_encoder_preset = NULL;
+}
+
 void
 on_edit_encoder_presets_clicked        (GtkButton       *button,
                                         gpointer         user_data)
@@ -927,6 +973,7 @@ on_edit_encoder_presets_clicked        (GtkButton       *button,
     g_signal_connect ((gpointer)lookup_widget (dlg, "add"), "clicked", G_CALLBACK (on_encoder_preset_add), NULL);
     g_signal_connect ((gpointer)lookup_widget (dlg, "remove"), "clicked", G_CALLBACK (on_encoder_preset_remove), NULL);
     g_signal_connect ((gpointer)lookup_widget (dlg, "edit"), "clicked", G_CALLBACK (on_encoder_preset_edit), NULL);
+    g_signal_connect ((gpointer)lookup_widget (dlg, "copy"), "clicked", G_CALLBACK (on_encoder_preset_copy), NULL);
 
     GtkWidget *list = lookup_widget (dlg, "presets");
     g_signal_connect ((gpointer)list, "cursor-changed", G_CALLBACK (on_encoder_preset_cursor_changed), NULL);
@@ -1215,7 +1262,7 @@ on_dsp_preset_plugin_down_clicked      (GtkButton       *button,
 
 
 int
-edit_dsp_preset (const char *title, GtkWidget *toplevel, int overwrite) {
+edit_dsp_preset (const char *title, GtkWidget *toplevel) {
     int r = GTK_RESPONSE_CANCEL;
 
     GtkWidget *dlg = create_dsppreset_editor ();
@@ -1251,7 +1298,7 @@ edit_dsp_preset (const char *title, GtkWidget *toplevel, int overwrite) {
                 free (current_ctx->current_dsp_preset->title);
             }
             current_ctx->current_dsp_preset->title = strdup (gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "title"))));
-            int err = converter_plugin->dsp_preset_save (current_ctx->current_dsp_preset, overwrite);
+            int err = converter_plugin->dsp_preset_save (current_ctx->current_dsp_preset, 1);
             if (err < 0) {
                 GtkWidget *warndlg = gtk_message_dialog_new (GTK_WINDOW (gtkui_plugin->get_mainwin ()), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Failed to save DSP preset"));
                 gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (warndlg), err == -1 ? _("Check preset folder permissions, try to pick different title, or free up some disk space") : _("Preset with the same name already exists. Try to pick another title."));
@@ -1317,7 +1364,7 @@ on_dsp_preset_add                     (GtkButton       *button,
     
     GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (button));
 
-    if (GTK_RESPONSE_OK == edit_dsp_preset (_("New DSP Preset"), toplevel, 0)) {
+    if (GTK_RESPONSE_OK == edit_dsp_preset (_("New DSP Preset"), toplevel)) {
         converter_plugin->dsp_preset_append (current_ctx->current_dsp_preset);
         GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (current_ctx->converter, "dsp_preset"));
         GtkWidget *list = lookup_widget (toplevel, "presets");
@@ -1402,7 +1449,7 @@ on_dsp_preset_edit                     (GtkButton       *button,
     current_ctx->current_dsp_preset = converter_plugin->dsp_preset_alloc ();
     converter_plugin->dsp_preset_copy (current_ctx->current_dsp_preset, p);
 
-    int r = edit_dsp_preset (_("Edit DSP Preset"), toplevel, 1);
+    int r = edit_dsp_preset (_("Edit DSP Preset"), toplevel);
     if (r == GTK_RESPONSE_OK) {
         // replace preset
         converter_plugin->dsp_preset_replace (p, current_ctx->current_dsp_preset);
