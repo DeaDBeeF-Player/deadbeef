@@ -792,6 +792,7 @@ create_preset_list (void)
   GtkWidget *vbox33;
   GtkWidget *hbox94;
   GtkWidget *add;
+  GtkWidget *copy;
   GtkWidget *remove;
   GtkWidget *edit;
   GtkWidget *scrolledwindow8;
@@ -820,6 +821,10 @@ create_preset_list (void)
   add = gtk_button_new_from_stock ("gtk-add");
   gtk_widget_show (add);
   gtk_box_pack_start (GTK_BOX (hbox94), add, FALSE, TRUE, 0);
+
+  copy = gtk_button_new_from_stock ("gtk-copy");
+  gtk_widget_show (copy);
+  gtk_box_pack_start (GTK_BOX (hbox94), copy, FALSE, TRUE, 0);
 
   remove = gtk_button_new_from_stock ("gtk-remove");
   gtk_widget_show (remove);
@@ -856,6 +861,7 @@ create_preset_list (void)
   GLADE_HOOKUP_OBJECT (preset_list, vbox33, "vbox33");
   GLADE_HOOKUP_OBJECT (preset_list, hbox94, "hbox94");
   GLADE_HOOKUP_OBJECT (preset_list, add, "add");
+  GLADE_HOOKUP_OBJECT (preset_list, copy, "copy");
   GLADE_HOOKUP_OBJECT (preset_list, remove, "remove");
   GLADE_HOOKUP_OBJECT (preset_list, edit, "edit");
   GLADE_HOOKUP_OBJECT (preset_list, scrolledwindow8, "scrolledwindow8");
