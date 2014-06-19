@@ -21,7 +21,7 @@ endif
 
 if HAVE_FLAC
 FLAC_DEPS=$(FLAC_LIBS)
-flac_clags=-DUSE_METAFLAC $(FLAC_CFLAGS)
+flac_cflags=-DUSE_METAFLAC $(FLAC_CFLAGS)
 endif
 
 AM_CFLAGS = $(CFLAGS) $(ARTWORK_CFLAGS) $(flac_cflags) $(artwork_net_cflags) -std=c99
