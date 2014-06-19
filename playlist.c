@@ -62,6 +62,9 @@
 #include "volume.h"
 #include "pltmeta.h"
 
+// disable custom title function, until we have new title formatting (0.7)
+#define DISABLE_CUSTOM_TITLE
+
 #define DISABLE_LOCKING 0
 #define DEBUG_LOCKING 0
 #define DETECT_PL_LOCK_RC 0
@@ -2906,11 +2909,18 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
             }
             else if (*fmt == 'a') {
                 meta = pl_find_meta_raw (it, "artist");
+#ifndef DISABLE_CUSTOM_TITLE
                 const char *custom = pl_find_meta_raw (it, ":CUSTOM_TITLE");
-                if (!meta && !custom) {
+#endif
+                if (!meta
+#ifndef DISABLE_CUSTOM_TITLE
+                && !custom
+#endif
+                ) {
                     meta = "Unknown artist";
                 }
 
+#ifndef DISABLE_CUSTOM_TITLE
                 if (custom) {
                     if (!meta) {
                         meta = custom;
@@ -2922,6 +2932,7 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                         meta = out;
                     }
                 }
+#endif
             }
             else if (*fmt == 't') {
                 meta = pl_find_meta_raw (it, "title");
@@ -2970,6 +2981,7 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                     }
                 }
 
+#ifndef DISABLE_CUSTOM_TITLE
                 const char *custom = pl_find_meta_raw (it, ":CUSTOM_TITLE");
                 if (custom) {
                     if (!meta) {
@@ -2982,6 +2994,7 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                         meta = out;
                     }
                 }
+#endif
             }
             else if (*fmt == 'C') {
                 meta = pl_find_meta_raw (it, "composer");
