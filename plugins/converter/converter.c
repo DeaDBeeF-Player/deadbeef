@@ -167,7 +167,7 @@ encoder_preset_save (ddb_encoder_preset_t *p, int overwrite) {
         return -1;
     }
     const char *confdir = deadbeef->get_config_dir ();
-    char path[1024];
+    char path[PATH_MAX];
     if (snprintf (path, sizeof (path), "%s/presets", confdir) < 0) {
         return -1;
     }
@@ -371,7 +371,7 @@ dsp_preset_save (ddb_dsp_preset_t *p, int overwrite) {
         return -1;
     }
     const char *confdir = deadbeef->get_config_dir ();
-    char path[1024];
+    char path[PATH_MAX];
     if (snprintf (path, sizeof (path), "%s/presets", confdir) < 0) {
         return -1;
     }
@@ -455,80 +455,121 @@ copy_file (const char *in, const char *out) {
     return 0;
 }
 
+static int
+encoder_preset_compare (ddb_encoder_preset_t *a, ddb_encoder_preset_t *b) {
+    if (!strcmp (a->title, b->title)) {
+        return 0;
+    }
+
+    if (!strcmp (a->ext, b->ext)) {
+        return 0;
+    }
+
+    if (!strcmp (a->encoder, b->encoder)) {
+        return 0;
+    }
+
+    if (a->method == b->method) {
+        return 0;
+    }
+
+    if (a->tag_id3v2 == b->tag_id3v2) {
+        return 0;
+    }
+
+    if (a->tag_id3v1 == b->tag_id3v1) {
+        return 0;
+    }
+
+    if (a->tag_apev2 == b->tag_apev2) {
+        return 0;
+    }
+
+    if (a->tag_flac == b->tag_flac) {
+        return 0;
+    }
+
+    if (a->tag_oggvorbis == b->tag_oggvorbis) {
+        return 0;
+    }
+
+    if (a->tag_mp3xing == b->tag_mp3xing) {
+        return 0;
+    }
+
+    if (a->id3v2_version == b->id3v2_version) {
+        return 0;
+    }
+
+    return 1;
+}
+
 int
 load_encoder_presets (void) {
     // check if we need to install presets
-    char ppath[1024];
-    char epath[1024];
-    char fpath[1024];
+    char ppath[PATH_MAX];
+    char epath[PATH_MAX];
     snprintf (ppath, sizeof (ppath), "%s/presets", deadbeef->get_config_dir ());
     snprintf (epath, sizeof (epath), "%s/encoders", ppath);
-    snprintf (fpath, sizeof (fpath), "%s/.installed", epath);
-    struct stat stat_buf;
-    if (0 != stat (fpath, &stat_buf)) {
-        // file not found, install all presets from plugin_dir/convpresets/
-        mkdir (ppath, 0755);
-        mkdir (epath, 0755);
-        char preset_src_dir[1024];
-        snprintf (preset_src_dir, sizeof (preset_src_dir), "%s/convpresets", deadbeef->get_plugin_dir ());
-        struct dirent **namelist = NULL;
-        int n = scandir (preset_src_dir, &namelist, NULL, dirent_alphasort);
-        for (int i = 0; i < n; i++) {
-            // replace _ with spaces
-            char new_name[1024];
-            char *o = new_name;
-            char *in = namelist[i]->d_name;
-            while (*in) {
-                if (*in == '_') {
-                    *o++ = ' ';
-                    in++;
-                }
-                else {
-                    *o++ = *in++;
-                }
-            }
-            *o = 0;
-            char in_name[1024];
-            char out_name[1024];
-            snprintf (in_name, sizeof (in_name), "%s/%s", preset_src_dir, namelist[i]->d_name);
-            snprintf (out_name, sizeof (out_name), "%s/%s", epath, new_name);
-            copy_file (in_name, out_name);
-            free (namelist[i]);
-        }
-        if (namelist) {
-            free (namelist);
-        }
-        FILE *fp = fopen (fpath, "w+b");
-        if (fp) {
-            fclose (fp);
-        }
-    }
 
-    ddb_encoder_preset_t *tail = NULL;
-    char path[1024];
+    char path[PATH_MAX];
     if (snprintf (path, sizeof (path), "%s/presets/encoders", deadbeef->get_config_dir ()) < 0) {
         return -1;
     }
-    struct dirent **namelist = NULL;
-    int n = scandir (path, &namelist, scandir_preset_filter, dirent_alphasort);
-    int i;
-    for (i = 0; i < n; i++) {
-        char s[1024];
-        if (snprintf (s, sizeof (s), "%s/%s", path, namelist[i]->d_name) > 0){
-            ddb_encoder_preset_t *p = encoder_preset_load (s);
-            if (p) {
-                if (tail) {
-                    tail->next = p;
-                    tail = p;
-                }
-                else {
-                    encoder_presets = tail = p;
+
+    char syspath[PATH_MAX];
+    if (snprintf (syspath, sizeof (syspath), "%s/convpresets", deadbeef->get_plugin_dir ()) < 0) {
+        return -1;
+    }
+
+    const char *preset_dirs[] = {
+        syspath, path, NULL
+    };
+
+    ddb_encoder_preset_t *tail = NULL;
+
+    for (int di = 0; preset_dirs[di]; di++) {
+        const char *path = preset_dirs[di];
+        struct dirent **namelist = NULL;
+        int n = scandir (path, &namelist, scandir_preset_filter, dirent_alphasort);
+        int i;
+        for (i = 0; i < n; i++) {
+            char s[PATH_MAX];
+            if (snprintf (s, sizeof (s), "%s/%s", path, namelist[i]->d_name) > 0){
+                ddb_encoder_preset_t *p = encoder_preset_load (s);
+                if (p) {
+                    if (path == syspath) {
+                        // don't allow editing stock presets
+                        p->readonly = 1;
+                    }
+                    else {
+                        // check if the same RO preset exists
+                        for (ddb_encoder_preset_t *pr = encoder_presets; pr; pr = pr->next) {
+                            if (pr->readonly && !encoder_preset_compare (pr, p)) {
+                                encoder_preset_free (p);
+                                p = NULL;
+                                break;
+                            }
+                        }
+                        if (!p) {
+                            // NOTE: we don't delete duplicate presets in $HOME
+                            // for compat with <=0.6.1
+                            continue;
+                        }
+                    }
+                    if (tail) {
+                        tail->next = p;
+                        tail = p;
+                    }
+                    else {
+                        encoder_presets = tail = p;
+                    }
                 }
             }
+            free (namelist[i]);
         }
-        free (namelist[i]);
+        free (namelist);
     }
-    free (namelist);
     return 0;
 }
 
@@ -555,7 +596,7 @@ free_encoder_presets (void) {
 int
 load_dsp_presets (void) {
     ddb_dsp_preset_t *tail = NULL;
-    char path[1024];
+    char path[PATH_MAX];
     if (snprintf (path, sizeof (path), "%s/presets/dsp", deadbeef->get_config_dir ()) < 0) {
         return -1;
     }
@@ -563,7 +604,7 @@ load_dsp_presets (void) {
     int n = scandir (path, &namelist, scandir_preset_filter, dirent_alphasort);
     int i;
     for (i = 0; i < n; i++) {
-        char s[1024];
+        char s[PATH_MAX];
         if (snprintf (s, sizeof (s), "%s/%s", path, namelist[i]->d_name) > 0){
             ddb_dsp_preset_t *p = dsp_preset_load (s);
             if (p) {
@@ -1220,7 +1261,7 @@ static ddb_converter_t plugin = {
     .misc.plugin.api_vmajor = 1,
     .misc.plugin.api_vminor = 0,
     .misc.plugin.version_major = 1,
-    .misc.plugin.version_minor = 2,
+    .misc.plugin.version_minor = 3,
     .misc.plugin.type = DB_PLUGIN_MISC,
     .misc.plugin.name = "Converter",
     .misc.plugin.id = "converter",
