@@ -1262,7 +1262,7 @@ on_dsp_preset_plugin_down_clicked      (GtkButton       *button,
 
 
 int
-edit_dsp_preset (const char *title, GtkWidget *toplevel) {
+edit_dsp_preset (const char *title, GtkWidget *toplevel, ddb_dsp_preset_t *orig) {
     int r = GTK_RESPONSE_CANCEL;
 
     GtkWidget *dlg = create_dsppreset_editor ();
@@ -1270,10 +1270,11 @@ edit_dsp_preset (const char *title, GtkWidget *toplevel) {
     gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (toplevel));
     gtk_window_set_title (GTK_WINDOW (dlg), title);
 
+    ddb_dsp_preset_t *p = current_ctx->current_dsp_preset;
 
     // title
-    if (current_ctx->current_dsp_preset->title) {
-        gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "title")), current_ctx->current_dsp_preset->title);
+    if (p->title) {
+        gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "title")), p->title);
     }
 
     {
@@ -1294,11 +1295,26 @@ edit_dsp_preset (const char *title, GtkWidget *toplevel) {
         r = gtk_dialog_run (GTK_DIALOG (dlg));
 
         if (r == GTK_RESPONSE_OK) {
-            if (current_ctx->current_dsp_preset->title) {
-                free (current_ctx->current_dsp_preset->title);
+            const char *title = gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "title")));
+            int err = 0;
+
+            // don't allow duplicate title with existing presets
+            ddb_dsp_preset_t *pp = converter_plugin->dsp_preset_get_list ();
+            for (; pp; pp = pp->next) {
+                if (pp != orig && !strcmp (pp->title, title)) {
+                    err = -2;
+                    break;
+                }
             }
-            current_ctx->current_dsp_preset->title = strdup (gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "title"))));
-            int err = converter_plugin->dsp_preset_save (current_ctx->current_dsp_preset, 1);
+
+            if (!err) {
+                if (current_ctx->current_dsp_preset->title) {
+                    free (current_ctx->current_dsp_preset->title);
+                }
+                current_ctx->current_dsp_preset->title = strdup (title);
+                err = converter_plugin->dsp_preset_save (current_ctx->current_dsp_preset, 1);
+            }
+
             if (err < 0) {
                 GtkWidget *warndlg = gtk_message_dialog_new (GTK_WINDOW (gtkui_plugin->get_mainwin ()), GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Failed to save DSP preset"));
                 gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (warndlg), err == -1 ? _("Check preset folder permissions, try to pick different title, or free up some disk space") : _("Preset with the same name already exists. Try to pick another title."));
@@ -1364,11 +1380,48 @@ on_dsp_preset_add                     (GtkButton       *button,
     
     GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (button));
 
-    if (GTK_RESPONSE_OK == edit_dsp_preset (_("New DSP Preset"), toplevel)) {
+    if (GTK_RESPONSE_OK == edit_dsp_preset (_("New DSP Preset"), toplevel, NULL)) {
         converter_plugin->dsp_preset_append (current_ctx->current_dsp_preset);
         GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (current_ctx->converter, "dsp_preset"));
         GtkWidget *list = lookup_widget (toplevel, "presets");
         refresh_dsp_lists (combo, GTK_TREE_VIEW (list));
+    }
+    else {
+        converter_plugin->dsp_preset_free (current_ctx->current_dsp_preset);
+    }
+
+    current_ctx->current_dsp_preset = NULL;
+}
+
+void
+on_dsp_preset_copy (GtkButton *button, gpointer user_data)
+{
+    GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (button));
+
+    GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (toplevel, "presets"));
+
+    GtkTreePath *path;
+    GtkTreeViewColumn *col;
+    gtk_tree_view_get_cursor (treeview, &path, &col);
+    if (!path || !col) {
+        return;
+    }
+    int *indices = gtk_tree_path_get_indices (path);
+    int idx = *indices;
+    g_free (indices);
+
+    ddb_dsp_preset_t *p = converter_plugin->dsp_preset_get_for_idx (idx);
+
+    current_ctx->current_dsp_preset = converter_plugin->dsp_preset_alloc ();
+    if (!current_ctx->current_dsp_preset) {
+        return;
+    }
+    converter_plugin->dsp_preset_copy (current_ctx->current_dsp_preset, p);
+
+    if (GTK_RESPONSE_OK == edit_dsp_preset (_("New DSP Preset"), toplevel, NULL)) {
+        converter_plugin->dsp_preset_append (current_ctx->current_dsp_preset);
+        GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (current_ctx->converter, "dsp_preset"));
+        refresh_dsp_lists (combo, treeview);
     }
     else {
         converter_plugin->dsp_preset_free (current_ctx->current_dsp_preset);
@@ -1449,7 +1502,7 @@ on_dsp_preset_edit                     (GtkButton       *button,
     current_ctx->current_dsp_preset = converter_plugin->dsp_preset_alloc ();
     converter_plugin->dsp_preset_copy (current_ctx->current_dsp_preset, p);
 
-    int r = edit_dsp_preset (_("Edit DSP Preset"), toplevel);
+    int r = edit_dsp_preset (_("Edit DSP Preset"), toplevel, p);
     if (r == GTK_RESPONSE_OK) {
         // replace preset
         converter_plugin->dsp_preset_replace (p, current_ctx->current_dsp_preset);
@@ -1474,6 +1527,7 @@ on_edit_dsp_presets_clicked            (GtkButton       *button,
     g_signal_connect ((gpointer)lookup_widget (dlg, "add"), "clicked", G_CALLBACK (on_dsp_preset_add), NULL);
     g_signal_connect ((gpointer)lookup_widget (dlg, "remove"), "clicked", G_CALLBACK (on_dsp_preset_remove), NULL);
     g_signal_connect ((gpointer)lookup_widget (dlg, "edit"), "clicked", G_CALLBACK (on_dsp_preset_edit), NULL);
+    g_signal_connect ((gpointer)lookup_widget (dlg, "copy"), "clicked", G_CALLBACK (on_dsp_preset_copy), NULL);
 
     GtkWidget *list = lookup_widget (dlg, "presets");
     GtkCellRenderer *title_cell = gtk_cell_renderer_text_new ();
