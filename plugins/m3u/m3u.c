@@ -21,9 +21,16 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#ifdef HAVE_CONFIG_H
+#  include "../../config.h"
+#endif
 #include <string.h>
 #include <stdlib.h>
 #include <math.h> // for ceil
+#if HAVE_SYS_SYSLIMITS_H
+#include <sys/syslimits.h>
+#endif
+
 #include "../../deadbeef.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
@@ -443,6 +450,12 @@ load_pls (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
 
 static DB_playItem_t *
 m3uplug_load (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data) {
+    char resolved_fname[PATH_MAX];
+    char *res = realpath (fname, resolved_fname);
+    if (res) {
+        fname = resolved_fname;
+    }
+
     const char *ext = strrchr (fname, '.');
     if (ext) {
         ext++;
