@@ -1042,6 +1042,25 @@ plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t 
         buffersize -= 3;
     }
 
+    // go through the file, and verify that it's not for multiple tracks
+    int fcount = 0;
+    uint8_t *p = (uint8_t *)buffer;
+    uint8_t *e = (uint8_t *)(buffer + buffersize);
+    while (*p) {
+        while (*p <= 0x20 && *p) {
+            p++;
+        }
+        if (e-p > 4 && !memcmp ((char *)p, "FILE", 4) && p[4] == 0x20) {
+            fcount++;
+            if (fcount > 1) {
+                return NULL;
+            }
+        }
+        while (*p >= 0x20 && *p) {
+            p++;
+        }
+    }
+
     const char *charset = junk_detect_charset_len (buffer, buffersize);
 
     LOCK;
