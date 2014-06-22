@@ -62,6 +62,7 @@
 #include "volume.h"
 #include "pltmeta.h"
 #include "escape.h"
+#include "strdupa.h"
 
 // disable custom title function, until we have new title formatting (0.7)
 #define DISABLE_CUSTOM_TITLE
