@@ -38,6 +38,9 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
+// disable custom title function, until we have new title formatting (0.7)
+#define DISABLE_CUSTOM_TITLE
+
 char group_by_str[MAX_GROUP_BY_STR];
 
 extern GtkWidget *theme_treeview;
@@ -478,6 +481,7 @@ on_toggle_set_custom_title (GtkToggleButton *togglebutton, gpointer user_data) {
     deadbeef->conf_save ();
 }
 
+#ifndef DISABLE_CUSTOM_TITLE
 void
 on_set_custom_title_activate (GtkMenuItem *menuitem, gpointer user_data)
 {
@@ -530,6 +534,7 @@ on_set_custom_title_activate (GtkMenuItem *menuitem, gpointer user_data)
     gtk_widget_destroy (dlg);
     lv->binding->unref (it);
 }
+#endif
 
 void
 on_remove_from_disk_activate                    (GtkMenuItem     *menuitem,
@@ -624,7 +629,9 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     GtkWidget *separator8;
     GtkWidget *properties1;
     GtkWidget *reload_metadata;
+#ifndef DISABLE_CUSTOM_TITLE
     GtkWidget *set_custom_title;
+#endif
 
     playlist_menu = gtk_menu_new ();
     add_to_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Add To Playback Queue"));
@@ -795,6 +802,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
         gtk_widget_set_sensitive (separator8, FALSE);
     }
 
+#ifndef DISABLE_CUSTOM_TITLE
     set_custom_title = gtk_menu_item_new_with_mnemonic (_("Set Custom Title"));
     gtk_widget_show (set_custom_title);
     gtk_container_add (GTK_CONTAINER (playlist_menu), set_custom_title);
@@ -806,6 +814,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
     gtk_widget_show (separator);
     gtk_container_add (GTK_CONTAINER (playlist_menu), separator);
     gtk_widget_set_sensitive (separator, FALSE);
+#endif
 
     properties1 = gtk_menu_item_new_with_mnemonic (_("Track Properties"));
     gtk_widget_show (properties1);
@@ -829,9 +838,11 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
                 G_CALLBACK (on_remove_from_disk_activate),
                 NULL);
     }
+#ifndef DISABLE_CUSTOM_TITLE
     g_signal_connect ((gpointer) set_custom_title, "activate",
             G_CALLBACK (on_set_custom_title_activate),
             listview);
+#endif
     g_signal_connect ((gpointer) properties1, "activate",
             G_CALLBACK (main_properties_activate),
             NULL);

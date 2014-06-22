@@ -53,6 +53,9 @@ typedef struct ddb_encoder_preset_s {
     int tag_oggvorbis;
     int tag_mp3xing;
     int id3v2_version;
+
+    // added in converter-1.3
+    int readonly; // this means the preset cannot be edited
 } ddb_encoder_preset_t;
 
 typedef struct ddb_dsp_preset_s {
