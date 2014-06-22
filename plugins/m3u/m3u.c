@@ -242,13 +242,18 @@ load_m3u (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
 static DB_playItem_t *
 pls_insert_file (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, const char *uri, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data, const char *title, const char *length) {
     trace ("pls_insert_file uri: %s\n", uri);
+    trace ("pls_insert_file fname: %s\n", fname);
     DB_playItem_t *it = NULL;
     const char *slash = NULL;
 
     if (strrchr (uri, '/')) {
         it = deadbeef->plt_insert_file2 (0, plt, after, uri, pabort, cb, user_data);
     }
-    else if (slash = strrchr (fname, '/')) {
+
+    if (!it) {
+        slash = strrchr (fname, '/');
+    }
+    if (slash) {
         int l = strlen (uri);
         char fullpath[slash - fname + l + 2];
         memcpy (fullpath, fname, slash - fname + 1);
@@ -269,6 +274,7 @@ pls_insert_file (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, c
 
 static DB_playItem_t *
 load_pls (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pabort, int (*cb)(DB_playItem_t *it, void *data), void *user_data) {
+    trace ("load_pls %s\n", fname);
     const char *slash = strrchr (fname, '/');
     DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
@@ -430,8 +436,7 @@ load_pls (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
             trace ("length%d=%s\n", idx, length);
         }
         else {
-            trace ("invalid entry in pls file: %s\n", p);
-            break;
+            trace ("pls: skipping unrecognized entry in pls file: %s\n", p);
         }
         while (e < end && *e < 0x20) {
             e++;
