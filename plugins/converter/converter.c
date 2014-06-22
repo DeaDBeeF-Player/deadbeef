@@ -455,55 +455,6 @@ copy_file (const char *in, const char *out) {
     return 0;
 }
 
-static int
-encoder_preset_compare (ddb_encoder_preset_t *a, ddb_encoder_preset_t *b) {
-    if (!strcmp (a->title, b->title)) {
-        return 0;
-    }
-
-    if (!strcmp (a->ext, b->ext)) {
-        return 0;
-    }
-
-    if (!strcmp (a->encoder, b->encoder)) {
-        return 0;
-    }
-
-    if (a->method == b->method) {
-        return 0;
-    }
-
-    if (a->tag_id3v2 == b->tag_id3v2) {
-        return 0;
-    }
-
-    if (a->tag_id3v1 == b->tag_id3v1) {
-        return 0;
-    }
-
-    if (a->tag_apev2 == b->tag_apev2) {
-        return 0;
-    }
-
-    if (a->tag_flac == b->tag_flac) {
-        return 0;
-    }
-
-    if (a->tag_oggvorbis == b->tag_oggvorbis) {
-        return 0;
-    }
-
-    if (a->tag_mp3xing == b->tag_mp3xing) {
-        return 0;
-    }
-
-    if (a->id3v2_version == b->id3v2_version) {
-        return 0;
-    }
-
-    return 1;
-}
-
 int
 load_encoder_presets (void) {
     // check if we need to install presets
@@ -545,7 +496,7 @@ load_encoder_presets (void) {
                     else {
                         // check if the same RO preset exists
                         for (ddb_encoder_preset_t *pr = encoder_presets; pr; pr = pr->next) {
-                            if (pr->readonly && !encoder_preset_compare (pr, p)) {
+                            if (pr->readonly && !strcmp (pr->title, p->title)) {
                                 encoder_preset_free (p);
                                 p = NULL;
                                 break;
