@@ -247,6 +247,7 @@ pls_insert_file (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, c
     const char *slash = NULL;
 
     if (strrchr (uri, '/')) {
+        trace ("pls: inserting from uri: %s\n", uri);
         it = deadbeef->plt_insert_file2 (0, plt, after, uri, pabort, cb, user_data);
     }
 
@@ -258,7 +259,7 @@ pls_insert_file (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, c
         char fullpath[slash - fname + l + 2];
         memcpy (fullpath, fname, slash - fname + 1);
         strcpy (fullpath + (slash - fname + 1), uri);
-        trace ("pls_insert_file: adding file %s\n", fullpath);
+        trace ("pls: inserting from calculated relative path: %s\n", fullpath);
         it = deadbeef->plt_insert_file2 (0, plt, after, fullpath, pabort, cb, user_data);
     }
     if (it) {
@@ -437,6 +438,10 @@ load_pls (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
         }
         else {
             trace ("pls: skipping unrecognized entry in pls file: %s\n", p);
+            e = p;
+            while (e < end && *e >= 0x20) {
+                e++;
+            }
         }
         while (e < end && *e < 0x20) {
             e++;

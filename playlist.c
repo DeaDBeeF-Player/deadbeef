@@ -61,6 +61,7 @@
 #include "metacache.h"
 #include "volume.h"
 #include "pltmeta.h"
+#include "escape.h"
 
 // disable custom title function, until we have new title formatting (0.7)
 #define DISABLE_CUSTOM_TITLE
@@ -87,8 +88,8 @@
 #error writing playlists in format <1.2 is not supported
 #endif
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 #define SKIP_BLANK_CUE_TRACKS 0
 #define MAX_CUE_TRACKS 99
@@ -1377,7 +1378,13 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
         }
     }
     else {
+        char *escaped = uri_unescape (fname, strlen (fname));
+        if (escaped) {
+            fname = strdupa (escaped);
+            free (escaped);
+        }
         fname += 7;
+        printf ("escaped filename: %s\n", fname);
     }
 
     // detect decoder
