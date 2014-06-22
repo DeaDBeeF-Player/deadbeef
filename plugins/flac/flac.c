@@ -988,6 +988,9 @@ cflac_write_metadata (DB_playItem_t *it) {
         if (data && data->type == FLAC__METADATA_TYPE_VORBIS_COMMENT) {
             break;
         }
+        else {
+            data = NULL;
+        }
     } while (FLAC__metadata_iterator_next (iter));
 
     if (data) {
@@ -1062,108 +1065,13 @@ cflac_write_metadata (DB_playItem_t *it) {
 
     deadbeef->pl_unlock ();
 
-#if 0 // fetching covers is broken, disabling for 0.5.2
-    // check if we have embedded cover
-    data = NULL;
-    while (FLAC__metadata_iterator_prev (iter));
-    do {
-        data = FLAC__metadata_iterator_get_block (iter);
-        if (data && data->type == FLAC__METADATA_TYPE_PICTURE) {
-            break;
-        }
-    } while (FLAC__metadata_iterator_next (iter));
-
-    if (!coverart_plugin) {
-        DB_plugin_t **plugins = deadbeef->plug_get_list ();
-        for (int i = 0; plugins[i]; i++) {
-            DB_plugin_t *p = plugins[i];
-            if (p->id && !strcmp (p->id, "artwork") && p->version_major == 1 && p->version_minor >= 1) {
-                coverart_plugin = (DB_artwork_plugin_t *)p;
-                break;
-            }
-        }
-    }
-
-    // add coverart if the file doesn't have it
-    // FIXME: should have an option to overwrite it
-    if ((!data || data->type != FLAC__METADATA_TYPE_PICTURE) && coverart_plugin) {
-        deadbeef->pl_lock ();
-        const char *alb = deadbeef->pl_find_meta (it, "album");
-        const char *art = deadbeef->pl_find_meta (it, "artist");
-        if (!alb || !*alb) {
-            alb = deadbeef->pl_find_meta (it, "title");
-        }
-        const char *fn = deadbeef->pl_find_meta (it, ":URI");
-
-        char *album = alb ? strdupa (alb) : NULL;
-        char *artist = art ? strdupa (art) : NULL;
-        char *fname = fn ? strdupa (fn) : NULL;
-        deadbeef->pl_unlock ();
-
-        char *image_fname = coverart_plugin->get_album_art_sync (fname, artist, album, -1);
-
-        if (image_fname && strcmp (image_fname, coverart_plugin->get_default_cover())) {
-            DB_FILE *fp = deadbeef->fopen (image_fname);
-            FLAC__byte *coverart_data = NULL;
-            FLAC__StreamMetadata *metadata = NULL;
-            if (!fp) {
-                fprintf (stderr, "flac: cannot open coverart %s\n", image_fname);
-                goto error2;
-            }
-
-            int64_t len = deadbeef->fgetlength (fp);
-            if (len < 4) {
-                fprintf (stderr, "flac: cover image file %s is too small\n", image_fname);
-                goto error2;
-            }
-            coverart_data = malloc (len);
-            if (!coverart_data) {
-                fprintf (stderr, "flac: cannot allocate memory\n");
-                goto error2;
-            }
-            if (!deadbeef->fread (coverart_data, len, 1, fp)) {
-                fprintf (stderr, "flac: cannot read from %s\n",image_fname);
-                goto error2;
-            }
-
-            metadata = FLAC__metadata_object_new (FLAC__METADATA_TYPE_PICTURE);
-            if (!metadata) {
-                fprintf (stderr, "flac: failed to allocate new picture block\n");
-                goto error2;
-            }
-
-            FLAC__metadata_object_picture_set_description (metadata, "Cover", true);
-            FLAC__metadata_object_picture_set_data (metadata, coverart_data,len, true);
-            metadata->data.picture.type = FLAC__STREAM_METADATA_PICTURE_TYPE_FRONT_COVER;
-
-            if (*(uint32_t *)coverart_data == 0x474e5089) {  // png header
-                metadata->data.picture.mime_type = strdup ("image/png");
-            } else {
-                metadata->data.picture.mime_type = strdup ("image/jpeg");
-            }
-
-            while (FLAC__metadata_iterator_next (iter));
-            if (!FLAC__metadata_iterator_insert_block_after (iter, metadata)) {
-                fprintf (stderr, "flac: failed to append picture block to chain\n");
-                goto error2;
-            }
-
-error2:
-            if (fp) {
-                deadbeef->fclose (fp);
-            }
-            if (coverart_data) {
-                free (coverart_data);
-            }
-        }
-    }
-#endif
-
-    if (!isogg)
+    if (!isogg) {
         res = FLAC__metadata_chain_write (chain, 1, 0);
+    }
 #if USE_OGGEDIT
-    else
+    else {
         res = cflac_write_metadata_ogg(it, &data->data.vorbis_comment);
+    }
 #endif
     if (res) {
         trace ("cflac_write_metadata: failed to write tags: code %d\n", res);
