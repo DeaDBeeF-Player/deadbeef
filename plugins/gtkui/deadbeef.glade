@@ -6342,7 +6342,6 @@ if you don't press Apply.</property>
 
 	  <child>
 	    <widget class="GtkHBox" id="hbox122">
-	      <property name="visible">True</property>
 	      <property name="homogeneous">False</property>
 	      <property name="spacing">8</property>
 

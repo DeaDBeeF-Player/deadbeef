@@ -40,6 +40,9 @@
 #include "callbacks.h"
 #include <sys/stat.h>
 
+// disable custom title function, until we have new title formatting (0.7)
+#define DISABLE_CUSTOM_TITLE
+
 extern GtkWidget *mainwin;
 extern DB_functions_t *deadbeef;
 
@@ -401,7 +404,6 @@ on_toggle_set_custom_title (GtkToggleButton *togglebutton, gpointer user_data) {
     deadbeef->conf_save ();
 }
 
-
 gboolean
 action_add_location_handler_cb (void *user_data) {
     GtkWidget *dlg = create_addlocationdlg ();
@@ -409,18 +411,23 @@ action_add_location_handler_cb (void *user_data) {
     GtkWidget *sct = lookup_widget (dlg, "set_custom_title");
     GtkWidget *ct = lookup_widget (dlg, "custom_title");
 
+#ifndef DISABLE_CUSTOM_TITLE
     if (deadbeef->conf_get_int ("gtkui.location_set_custom_title", 0)) {
         gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (sct), TRUE);
         gtk_widget_set_sensitive (ct, TRUE);
     }
-    else {
+    else
+#endif
+    {
         gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (sct), FALSE);
         gtk_widget_set_sensitive (ct, FALSE);
     }
 
+#ifndef DISABLE_CUSTOM_TITLE
     g_signal_connect ((gpointer) sct, "toggled",
             G_CALLBACK (on_toggle_set_custom_title),
             dlg);
+#endif
 
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
     int res = gtk_dialog_run (GTK_DIALOG (dlg));
@@ -433,9 +440,11 @@ action_add_location_handler_cb (void *user_data) {
                 if (!deadbeef->plt_add_files_begin (plt, 0)) {
                     DB_playItem_t *tail = deadbeef->plt_get_last (plt, PL_MAIN);
                     DB_playItem_t *it = deadbeef->plt_insert_file2 (0, plt, tail, text, NULL, NULL, NULL);
+#ifndef DISABLE_CUSTOM_TITLE
                     if (it && deadbeef->conf_get_int ("gtkui.location_set_custom_title", 0)) {
                         deadbeef->pl_replace_meta (it, ":CUSTOM_TITLE", gtk_entry_get_text (GTK_ENTRY (ct)));
                     }
+#endif
                     if (tail) {
                         deadbeef->pl_item_unref (tail);
                     }

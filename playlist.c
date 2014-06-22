@@ -61,6 +61,11 @@
 #include "metacache.h"
 #include "volume.h"
 #include "pltmeta.h"
+#include "escape.h"
+#include "strdupa.h"
+
+// disable custom title function, until we have new title formatting (0.7)
+#define DISABLE_CUSTOM_TITLE
 
 #define DISABLE_LOCKING 0
 #define DEBUG_LOCKING 0
@@ -1039,6 +1044,25 @@ plt_insert_cue_from_buffer (playlist_t *playlist, playItem_t *after, playItem_t 
         buffersize -= 3;
     }
 
+    // go through the file, and verify that it's not for multiple tracks
+    int fcount = 0;
+    uint8_t *p = (uint8_t *)buffer;
+    uint8_t *e = (uint8_t *)(buffer + buffersize);
+    while (*p) {
+        while (*p <= 0x20 && *p) {
+            p++;
+        }
+        if (e-p > 4 && !memcmp ((char *)p, "FILE", 4) && p[4] == 0x20) {
+            fcount++;
+            if (fcount > 1) {
+                return NULL;
+            }
+        }
+        while (*p >= 0x20 && *p) {
+            p++;
+        }
+    }
+
     const char *charset = junk_detect_charset_len (buffer, buffersize);
 
     LOCK;
@@ -1355,7 +1379,13 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
         }
     }
     else {
+        char *escaped = uri_unescape (fname, strlen (fname));
+        if (escaped) {
+            fname = strdupa (escaped);
+            free (escaped);
+        }
         fname += 7;
+        printf ("escaped filename: %s\n", fname);
     }
 
     // detect decoder
@@ -2906,11 +2936,18 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
             }
             else if (*fmt == 'a') {
                 meta = pl_find_meta_raw (it, "artist");
+#ifndef DISABLE_CUSTOM_TITLE
                 const char *custom = pl_find_meta_raw (it, ":CUSTOM_TITLE");
-                if (!meta && !custom) {
+#endif
+                if (!meta
+#ifndef DISABLE_CUSTOM_TITLE
+                && !custom
+#endif
+                ) {
                     meta = "Unknown artist";
                 }
 
+#ifndef DISABLE_CUSTOM_TITLE
                 if (custom) {
                     if (!meta) {
                         meta = custom;
@@ -2922,6 +2959,7 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                         meta = out;
                     }
                 }
+#endif
             }
             else if (*fmt == 't') {
                 meta = pl_find_meta_raw (it, "title");
@@ -2970,6 +3008,7 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                     }
                 }
 
+#ifndef DISABLE_CUSTOM_TITLE
                 const char *custom = pl_find_meta_raw (it, ":CUSTOM_TITLE");
                 if (custom) {
                     if (!meta) {
@@ -2982,6 +3021,7 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                         meta = out;
                     }
                 }
+#endif
             }
             else if (*fmt == 'C') {
                 meta = pl_find_meta_raw (it, "composer");

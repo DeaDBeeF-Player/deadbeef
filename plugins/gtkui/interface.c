@@ -3223,7 +3223,6 @@ create_addlocationdlg (void)
   gtk_entry_set_activates_default (GTK_ENTRY (addlocation_entry), TRUE);
 
   hbox122 = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox122);
   gtk_box_pack_start (GTK_BOX (vbox45), hbox122, TRUE, TRUE, 0);
 
   set_custom_title = gtk_check_button_new_with_mnemonic (_("Set custom title"));
