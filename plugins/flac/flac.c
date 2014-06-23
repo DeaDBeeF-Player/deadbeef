@@ -620,6 +620,15 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
 static DB_playItem_t *
 cflac_insert_with_embedded_cue (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *origin, const FLAC__StreamMetadata_CueSheet *cuesheet, int totalsamples, int samplerate) {
     DB_playItem_t *ins = after;
+
+    // first check if cuesheet is matching the data
+    for (int i = 0; i < cuesheet->num_tracks-1; i++) {
+        if (cuesheet->tracks[i].offset + cuesheet->tracks[i+1].offset-1 > totalsamples) {
+            fprintf (stderr, "The flac %s has invalid embedded cuesheet. You should remove it using metaflac.\n", deadbeef->pl_find_meta_raw (origin, ":URI"));
+            return NULL;
+        }
+    }
+
     for (int i = 0; i < cuesheet->num_tracks-1; i++) {
         const char *uri = deadbeef->pl_find_meta_raw (origin, ":URI");
         const char *dec = deadbeef->pl_find_meta_raw (origin, ":DECODER");
