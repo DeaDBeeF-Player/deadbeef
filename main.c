@@ -862,6 +862,10 @@ main (int argc, char *argv[]) {
             return 0;
         }
         else if (!strcmp (argv[i], "--gui")) {
+            if (i == argc-1) {
+                break;
+            }
+            i++;
             strncpy (use_gui_plugin, argv[i], sizeof(use_gui_plugin) - 1);
             use_gui_plugin[sizeof(use_gui_plugin) - 1] = 0;
         }
