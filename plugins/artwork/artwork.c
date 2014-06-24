@@ -906,6 +906,43 @@ id3v2_skip_str (int enc, uint8_t *ptr, uint8_t *end) {
     return NULL;
 }
 
+#ifdef USE_METAFLAC
+static size_t
+flac_io_read (void *ptr, size_t size, size_t nmemb, FLAC__IOHandle handle) {
+    return deadbeef->fread (ptr, size, nmemb, (DB_FILE *)handle);
+}
+
+static int
+flac_io_seek (FLAC__IOHandle handle, FLAC__int64 offset, int whence) {
+    return deadbeef->fseek ((DB_FILE *)handle, offset, whence);
+}
+
+static FLAC__int64
+flac_io_tell (FLAC__IOHandle handle) {
+    return deadbeef->ftell ((DB_FILE *)handle);
+}
+
+static int
+flac_io_eof (FLAC__IOHandle handle) {
+    int64_t pos = deadbeef->ftell ((DB_FILE *)handle);
+    return pos == deadbeef->fgetlength ((DB_FILE *)handle);
+}
+
+static int
+flac_io_close (FLAC__IOHandle handle) {
+    deadbeef->fclose ((DB_FILE *)handle);
+    return 0;
+}
+
+static FLAC__IOCallbacks iocb = {
+    .read = flac_io_read,
+    .write = NULL,
+    .seek = flac_io_seek,
+    .tell = flac_io_tell,
+    .eof = flac_io_eof,
+    .close = flac_io_close,
+};
+#endif
 
 static void
 fetcher_thread (void *none)
@@ -1112,11 +1149,18 @@ fetcher_thread (void *none)
                             is_ogg = 1;
                         }
 
-                        if(! (is_ogg? FLAC__metadata_chain_read_ogg(chain, filename) : FLAC__metadata_chain_read(chain, filename)) ) {
+                        DB_FILE *file = deadbeef->fopen (filename);
+                        if (!file) {
+                            break;
+                        }
+
+                        if(! (is_ogg? FLAC__metadata_chain_read_ogg_with_callbacks(chain, (FLAC__IOHandle)file, iocb) : FLAC__metadata_chain_read_with_callbacks(chain, (FLAC__IOHandle)file, iocb)) ) {
                             trace ("%s: ERROR: reading metadata", filename);
+                            deadbeef->fclose (file);
                             FLAC__metadata_chain_delete(chain);
                             break;
                         }
+                        deadbeef->fclose (file);
                         FLAC__StreamMetadata *picture = 0;
                         FLAC__Metadata_Iterator *iterator = FLAC__metadata_iterator_new();
                         FLAC__metadata_iterator_init(iterator, chain);
