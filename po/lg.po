@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-24 19:10+0100\n"
+"POT-Creation-Date: 2014-06-24 20:57+0200\n"
 "PO-Revision-Date: 2013-11-20 09:50+0000\n"
 "Last-Translator: waker <wakeroid@gmail.com>\n"
 "Language-Team: Ganda (http://www.transifex.com/projects/p/deadbeef-player/"
@@ -20,17 +20,17 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../plugins/gtkui/callbacks.c:338
+#: ../plugins/gtkui/callbacks.c:349
 #, c-format
 msgid "About DeaDBeeF %s"
 msgstr "Okwanjula DeaDBeef %s"
 
-#: ../plugins/gtkui/callbacks.c:351
+#: ../plugins/gtkui/callbacks.c:362
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
 msgstr "Olukalala lw'enyukakyuka eziri mu DeadBeeF %s"
 
-#: ../plugins/gtkui/callbacks.c:675
+#: ../plugins/gtkui/callbacks.c:622
 #, c-format
 msgid "DeaDBeeF Translators"
 msgstr "Abaavvuunula DeaDBeeF"
@@ -94,795 +94,826 @@ msgstr "Ekikangalazaddoboozi ekisooka kisse ku zero"
 msgid "Zero Bands"
 msgstr "Amaloboozi gonna gadde ku zero"
 
-#: ../plugins/gtkui/eq.c:392 ../plugins/converter/interface.c:803
+#: ../plugins/gtkui/eq.c:392 ../plugins/converter/interface.c:805
 #: ../plugins/converter/converter.glade.h:50
 msgid "Presets"
 msgstr "Koppi ez'ebiteekateekedwa ezaaterekebwa"
 
-#: ../plugins/gtkui/gtkui.c:163
+#: ../plugins/gtkui/gtkui.c:167
 #, c-format
 msgid "1 day %d:%02d:%02d"
 msgstr "Lunaku 1 %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:166
+#: ../plugins/gtkui/gtkui.c:170
 #, c-format
 msgid "%d days %d:%02d:%02d"
 msgstr "Nnaku %d %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:175
+#: ../plugins/gtkui/gtkui.c:179
 #, c-format
 msgid "Stopped | %d tracks | %s total playtime"
 msgstr "Eyimirizidwa | Ntambi %d | Awamu zimala %s"
 
-#: ../plugins/gtkui/gtkui.c:188 ../playlist.c:3108
+#: ../plugins/gtkui/gtkui.c:191 ../playlist.c:3201
 msgid "Mono"
 msgstr "Mono"
 
-#: ../plugins/gtkui/gtkui.c:188 ../playlist.c:3108
+#: ../plugins/gtkui/gtkui.c:191 ../playlist.c:3201
 msgid "Stereo"
 msgstr "Siteriyo"
 
-#: ../plugins/gtkui/gtkui.c:213
+#: ../plugins/gtkui/gtkui.c:215
 #, c-format
 msgid "| %4d kbps "
 msgstr "| kb %4d bs "
 
-#: ../plugins/gtkui/gtkui.c:219
+#: ../plugins/gtkui/gtkui.c:221
 msgid "Paused | "
 msgstr "Luyimirizidwamu | "
 
-#: ../plugins/gtkui/gtkui.c:224
+#: ../plugins/gtkui/gtkui.c:226
 #, c-format
 msgid ""
 "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
 msgstr ""
 "%s%s%s| Hz %d | bbiti %d | %s | %d:%02d /%s | ntambi %d | Awamu zimala %s"
 
-#: ../plugins/gtkui/gtkui.c:706 ../plugins/gtkui/fileman.c:41
+#: ../plugins/gtkui/gtkui.c:696 ../plugins/gtkui/fileman.c:41
 msgid "New Playlist"
 msgstr "Kolawo olukalalala olupya"
 
-#: ../plugins/gtkui/gtkui.c:709
+#: ../plugins/gtkui/gtkui.c:699
 #, c-format
 msgid "New Playlist (%d)"
 msgstr "Lukalalala olupya (%d)"
 
 #. register widget types
-#: ../plugins/gtkui/gtkui.c:965
+#: ../plugins/gtkui/gtkui.c:955
 msgid "Playlist with tabs"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:966 ../plugins/gtkui/interface.c:2146
-#: ../plugins/gtkui/deadbeef.glade.h:125
+#: ../plugins/gtkui/gtkui.c:956 ../plugins/gtkui/interface.c:2042
+#: ../plugins/gtkui/deadbeef.glade.h:128
 msgid "Playlist"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:969
+#: ../plugins/gtkui/gtkui.c:959
 msgid "Splitter (top and bottom)"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:970
+#: ../plugins/gtkui/gtkui.c:960
 msgid "Splitter (left and right)"
 msgstr ""
 
 #. w_reg_widget (_("Tabs"), 0, w_tabs_create, "tabs", NULL);
-#: ../plugins/gtkui/gtkui.c:973
+#: ../plugins/gtkui/gtkui.c:963
 msgid "Playlist tabs"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:974
+#: ../plugins/gtkui/gtkui.c:964
 msgid "Selection properties"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:975
+#: ../plugins/gtkui/gtkui.c:965
 msgid "Album art display"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:976
+#: ../plugins/gtkui/gtkui.c:966
 msgid "Scope"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:977
+#: ../plugins/gtkui/gtkui.c:967
 msgid "Spectrum"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:978
+#: ../plugins/gtkui/gtkui.c:968
 msgid "HBox"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:979
+#: ../plugins/gtkui/gtkui.c:969
 msgid "VBox"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:980 ../plugins/gtkui/widgets.c:3250
+#: ../plugins/gtkui/gtkui.c:970 ../plugins/gtkui/widgets.c:3425
 msgid "Button"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1166
+#: ../plugins/gtkui/gtkui.c:971
+msgid "Seekbar"
+msgstr ""
+
+#: ../plugins/gtkui/gtkui.c:972
+#, fuzzy
+msgid "Playback controls"
+msgstr "Eby'empuliriza"
+
+#: ../plugins/gtkui/gtkui.c:973
+msgid "Volume bar"
+msgstr ""
+
+#: ../plugins/gtkui/gtkui.c:974
+msgid "Chiptune voices"
+msgstr ""
+
+#: ../plugins/gtkui/gtkui.c:1149
 msgid "Failed while reading help file"
 msgstr "Wazewo kiremya mu kusoma fayiro ey'obuyambi"
 
-#: ../plugins/gtkui/gtkui.c:1176
+#: ../plugins/gtkui/gtkui.c:1159
 msgid "Failed to load help file"
 msgstr "Nnemedwa okubikkula fayiro ey'obuyambi"
 
-#: ../plugins/gtkui/gtkui.c:1187
+#: ../plugins/gtkui/gtkui.c:1170
 msgid ""
-"The player is currently running backgroud tasks. If you quit now, the tasks "
+"The player is currently running background tasks. If you quit now, the tasks "
 "will be cancelled or interrupted. This may result in data loss."
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1189
+#: ../plugins/gtkui/gtkui.c:1172
 msgid "Do you still want to quit?"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1190 ../plugins/gtkui/prefwin.c:349
-#: ../plugins/gtkui/trkproperties.c:171 ../plugins/converter/convgui.c:862
-#: ../plugins/converter/convgui.c:1317 ../plugins/gtkui/actionhandlers.c:491
+#: ../plugins/gtkui/gtkui.c:1173 ../plugins/gtkui/prefwin.c:351
+#: ../plugins/gtkui/trkproperties.c:171 ../plugins/converter/convgui.c:891
+#: ../plugins/converter/convgui.c:1458 ../plugins/gtkui/actionhandlers.c:550
 msgid "Warning"
 msgstr "Kulabula"
 
-#: ../plugins/gtkui/interface.c:144 ../plugins/gtkui/deadbeef.glade.h:1
+#: ../plugins/gtkui/interface.c:131 ../plugins/gtkui/deadbeef.glade.h:1
 msgid "_File"
 msgstr "_Fayiro"
 
-#: ../plugins/gtkui/interface.c:151 ../plugins/gtkui/deadbeef.glade.h:2
+#: ../plugins/gtkui/interface.c:138 ../plugins/gtkui/deadbeef.glade.h:2
 msgid "_Open file(s)"
 msgstr "_Bikkula fayiro"
 
-#: ../plugins/gtkui/interface.c:164 ../plugins/gtkui/deadbeef.glade.h:3
+#: ../plugins/gtkui/interface.c:151 ../plugins/gtkui/deadbeef.glade.h:3
 msgid "Add file(s)"
 msgstr "Teekako fayiro"
 
-#: ../plugins/gtkui/interface.c:172 ../plugins/gtkui/deadbeef.glade.h:4
+#: ../plugins/gtkui/interface.c:159 ../plugins/gtkui/deadbeef.glade.h:4
 msgid "Add folder(s)"
 msgstr "Teekako (ma)terekero"
 
-#: ../plugins/gtkui/interface.c:180 ../plugins/gtkui/interface.c:3291
+#: ../plugins/gtkui/interface.c:167 ../plugins/gtkui/interface.c:3199
 #: ../plugins/gtkui/deadbeef.glade.h:5
 msgid "Add location"
 msgstr "Teekako obusangiro"
 
-#: ../plugins/gtkui/interface.c:189 ../plugins/gtkui/deadbeef.glade.h:6
+#: ../plugins/gtkui/interface.c:176 ../plugins/gtkui/deadbeef.glade.h:6
 msgid "New playlist"
 msgstr "Kolwo olukalala olupya"
 
-#: ../plugins/gtkui/interface.c:193 ../plugins/gtkui/deadbeef.glade.h:7
+#: ../plugins/gtkui/interface.c:180 ../plugins/gtkui/deadbeef.glade.h:7
 msgid "Load playlist"
 msgstr "Soma olukalala lw'enyimba"
 
-#: ../plugins/gtkui/interface.c:197 ../plugins/gtkui/deadbeef.glade.h:8
+#: ../plugins/gtkui/interface.c:184 ../plugins/gtkui/deadbeef.glade.h:8
 msgid "Save playlist"
 msgstr "Kaza olukalala lw'enyimba"
 
-#: ../plugins/gtkui/interface.c:206 ../plugins/gtkui/deadbeef.glade.h:9
+#: ../plugins/gtkui/interface.c:193 ../plugins/gtkui/deadbeef.glade.h:9
 msgid "_Quit"
 msgstr "_Mala"
 
-#: ../plugins/gtkui/interface.c:214 ../plugins/gtkui/deadbeef.glade.h:10
+#: ../plugins/gtkui/interface.c:201 ../plugins/gtkui/deadbeef.glade.h:10
 msgid "_Edit"
 msgstr "_Kyusa"
 
-#: ../plugins/gtkui/interface.c:221 ../plugins/gtkui/deadbeef.glade.h:11
+#: ../plugins/gtkui/interface.c:208 ../plugins/gtkui/deadbeef.glade.h:11
 msgid "_Clear"
 msgstr "_Bisiimulewo"
 
-#: ../plugins/gtkui/interface.c:229 ../plugins/gtkui/deadbeef.glade.h:12
+#: ../plugins/gtkui/interface.c:216 ../plugins/gtkui/deadbeef.glade.h:12
 msgid "Select all"
 msgstr "Londa byonna"
 
-#: ../plugins/gtkui/interface.c:233 ../plugins/gtkui/deadbeef.glade.h:13
+#: ../plugins/gtkui/interface.c:220 ../plugins/gtkui/deadbeef.glade.h:13
 msgid "Deselect all"
 msgstr "Ta byonna"
 
-#: ../plugins/gtkui/interface.c:237 ../plugins/gtkui/deadbeef.glade.h:14
+#: ../plugins/gtkui/interface.c:224 ../plugins/gtkui/deadbeef.glade.h:14
 msgid "Invert selection"
 msgstr "Vuunika okulonda"
 
-#: ../plugins/gtkui/interface.c:241 ../plugins/gtkui/deadbeef.glade.h:15
+#: ../plugins/gtkui/interface.c:228 ../plugins/gtkui/deadbeef.glade.h:15
 msgid "Selection"
 msgstr "Ebirondedwa"
 
-#: ../plugins/gtkui/interface.c:248 ../plugins/gtkui/plcommon.c:579
-#: ../plugins/gtkui/deadbeef.glade.h:16 ../plugins/converter/interface.c:628
+#: ../plugins/gtkui/interface.c:235 ../plugins/gtkui/plcommon.c:660
+#: ../plugins/gtkui/deadbeef.glade.h:16 ../plugins/converter/interface.c:629
 #: ../plugins/converter/converter.glade.h:46
 #: ../plugins/shellexecui/interface.c:65
 #: ../plugins/shellexecui/shellexec.glade.h:4
 msgid "Remove"
 msgstr "Bigyewo"
 
-#: ../plugins/gtkui/interface.c:256 ../plugins/gtkui/deadbeef.glade.h:17
+#: ../plugins/gtkui/interface.c:243 ../plugins/gtkui/deadbeef.glade.h:17
 msgid "Crop"
 msgstr "Bisagalewo byokka"
 
-#: ../plugins/gtkui/interface.c:260 ../plugins/gtkui/deadbeef.glade.h:18
+#: ../plugins/gtkui/interface.c:247 ../plugins/gtkui/deadbeef.glade.h:18
 msgid "_Find"
 msgstr "_Zuula"
 
-#: ../plugins/gtkui/interface.c:264 ../plugins/gtkui/deadbeef.glade.h:19
+#: ../plugins/gtkui/interface.c:251 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Sort by"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:271 ../plugins/gtkui/interface.c:1463
-#: ../plugins/gtkui/mainplaylist.c:353 ../plugins/gtkui/prefwin.c:321
-#: ../plugins/gtkui/search.c:424 ../plugins/gtkui/deadbeef.glade.h:20
-#: ../plugins/converter/convgui.c:893 ../plugins/converter/convgui.c:1392
-#: ../plugins/converter/interface.c:605
+#: ../plugins/gtkui/interface.c:258 ../plugins/gtkui/interface.c:1349
+#: ../plugins/gtkui/mainplaylist.c:355 ../plugins/gtkui/prefwin.c:327
+#: ../plugins/gtkui/search.c:421 ../plugins/gtkui/deadbeef.glade.h:20
+#: ../plugins/converter/convgui.c:981 ../plugins/converter/convgui.c:1534
+#: ../plugins/converter/interface.c:606
 #: ../plugins/converter/converter.glade.h:43
-#: ../plugins/shellexecui/shellexecui.c:322
+#: ../plugins/shellexecui/shellexecui.c:324
 msgid "Title"
 msgstr "Erinnya"
 
-#: ../plugins/gtkui/interface.c:275 ../plugins/gtkui/deadbeef.glade.h:21
+#: ../plugins/gtkui/interface.c:262 ../plugins/gtkui/deadbeef.glade.h:21
 msgid "Track number"
 msgstr "Namba y'olutambi"
 
-#: ../plugins/gtkui/interface.c:279 ../plugins/gtkui/interface.c:1462
-#: ../plugins/gtkui/interface.c:1871 ../plugins/gtkui/deadbeef.glade.h:22
+#: ../plugins/gtkui/interface.c:266 ../plugins/gtkui/interface.c:1348
+#: ../plugins/gtkui/interface.c:1759 ../plugins/gtkui/deadbeef.glade.h:22
 #: ../translation/extra.c:73
 msgid "Album"
 msgstr "Alubamu"
 
 #. Track properties dialog
-#: ../plugins/gtkui/interface.c:283 ../plugins/gtkui/interface.c:1461
-#: ../plugins/gtkui/plcommon.c:1156 ../plugins/gtkui/deadbeef.glade.h:23
+#: ../plugins/gtkui/interface.c:270 ../plugins/gtkui/interface.c:1347
+#: ../plugins/gtkui/plcommon.c:1254 ../plugins/gtkui/deadbeef.glade.h:23
 #: ../translation/extra.c:69
 msgid "Artist"
 msgstr "Muluyimba"
 
-#: ../plugins/gtkui/interface.c:287 ../plugins/gtkui/deadbeef.glade.h:24
+#: ../plugins/gtkui/interface.c:274 ../plugins/gtkui/deadbeef.glade.h:24
 #: ../translation/extra.c:74
 msgid "Date"
 msgstr "Ennaku"
 
-#: ../plugins/gtkui/interface.c:291 ../plugins/gtkui/interface.c:359
+#: ../plugins/gtkui/interface.c:278 ../plugins/gtkui/interface.c:346
 #: ../plugins/gtkui/deadbeef.glade.h:25
 msgid "Random"
 msgstr "Muwawa"
 
-#: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/interface.c:1467
-#: ../plugins/gtkui/plcommon.c:1160 ../plugins/gtkui/deadbeef.glade.h:26
+#: ../plugins/gtkui/interface.c:282 ../plugins/gtkui/interface.c:1353
+#: ../plugins/gtkui/plcommon.c:1258 ../plugins/gtkui/deadbeef.glade.h:26
 msgid "Custom"
 msgstr "Bye weteekateekedde"
 
-#: ../plugins/gtkui/interface.c:304 ../plugins/gtkui/interface.c:1796
+#: ../plugins/gtkui/interface.c:291 ../plugins/gtkui/interface.c:1684
 #: ../plugins/gtkui/deadbeef.glade.h:27
 msgid "Preferences"
 msgstr "Enteekateeka"
 
-#: ../plugins/gtkui/interface.c:308 ../plugins/gtkui/deadbeef.glade.h:28
+#: ../plugins/gtkui/interface.c:295 ../plugins/gtkui/deadbeef.glade.h:28
 msgid "_View"
 msgstr "_Endabika"
 
-#: ../plugins/gtkui/interface.c:315 ../plugins/gtkui/deadbeef.glade.h:29
+#: ../plugins/gtkui/interface.c:302 ../plugins/gtkui/deadbeef.glade.h:29
 msgid "Status bar"
 msgstr "Olubaawo olulaga ebifa ku biwulirizibwa"
 
-#: ../plugins/gtkui/interface.c:319 ../plugins/gtkui/deadbeef.glade.h:30
+#: ../plugins/gtkui/interface.c:306 ../plugins/gtkui/deadbeef.glade.h:30
 msgid "Equalizer"
 msgstr "Ekiteekateeka entabula y'amaloboozi"
 
-#: ../plugins/gtkui/interface.c:323 ../plugins/gtkui/deadbeef.glade.h:31
+#: ../plugins/gtkui/interface.c:310 ../plugins/gtkui/deadbeef.glade.h:31
 msgid "Design mode"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:327 ../plugins/gtkui/deadbeef.glade.h:32
+#: ../plugins/gtkui/interface.c:314 ../plugins/gtkui/deadbeef.glade.h:32
 msgid "_Playback"
 msgstr "Eby'em_puliriza"
 
-#: ../plugins/gtkui/interface.c:334 ../plugins/gtkui/interface.c:3567
+#: ../plugins/gtkui/interface.c:321 ../plugins/gtkui/interface.c:3495
 #: ../plugins/gtkui/deadbeef.glade.h:33
 msgid "Order"
 msgstr "Ensengeka"
 
-#: ../plugins/gtkui/interface.c:341 ../plugins/gtkui/deadbeef.glade.h:34
+#: ../plugins/gtkui/interface.c:328 ../plugins/gtkui/deadbeef.glade.h:34
 msgid "Linear"
 msgstr "Ku ziva kumukumu"
 
-#: ../plugins/gtkui/interface.c:347 ../plugins/gtkui/deadbeef.glade.h:35
+#: ../plugins/gtkui/interface.c:334 ../plugins/gtkui/deadbeef.glade.h:35
 msgid "Shuffle tracks"
 msgstr "Vunga ntambi"
 
-#: ../plugins/gtkui/interface.c:353 ../plugins/gtkui/deadbeef.glade.h:36
+#: ../plugins/gtkui/interface.c:340 ../plugins/gtkui/deadbeef.glade.h:36
 msgid "Shuffle albums"
 msgstr "Vunga alubamu"
 
-#: ../plugins/gtkui/interface.c:365 ../plugins/gtkui/deadbeef.glade.h:37
+#: ../plugins/gtkui/interface.c:352 ../plugins/gtkui/deadbeef.glade.h:37
 msgid "Looping"
 msgstr "Eby'okuddiŋana"
 
-#: ../plugins/gtkui/interface.c:372 ../plugins/gtkui/deadbeef.glade.h:38
+#: ../plugins/gtkui/interface.c:359 ../plugins/gtkui/deadbeef.glade.h:38
 msgid "Loop all"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:378 ../plugins/gtkui/deadbeef.glade.h:39
+#: ../plugins/gtkui/interface.c:365 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Loop single song"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:384 ../plugins/gtkui/deadbeef.glade.h:40
+#: ../plugins/gtkui/interface.c:371 ../plugins/gtkui/deadbeef.glade.h:40
 msgid "Don't loop"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:41
+#: ../plugins/gtkui/interface.c:377 ../plugins/gtkui/deadbeef.glade.h:41
 msgid "Scroll follows playback"
 msgstr "Akaseesa kagoberere empuliriza y'enyimba"
 
-#: ../plugins/gtkui/interface.c:395 ../plugins/gtkui/deadbeef.glade.h:42
+#: ../plugins/gtkui/interface.c:382 ../plugins/gtkui/deadbeef.glade.h:42
 msgid "Cursor follows playback"
 msgstr "Akasonga kagoberere empuliriza y'enyimba"
 
-#: ../plugins/gtkui/interface.c:399 ../plugins/gtkui/deadbeef.glade.h:43
+#: ../plugins/gtkui/interface.c:386 ../plugins/gtkui/deadbeef.glade.h:43
 msgid "Stop after current"
 msgstr "Luno bwe luggwa yimirira"
 
-#: ../plugins/gtkui/interface.c:408 ../plugins/gtkui/deadbeef.glade.h:44
+#: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
+#, fuzzy
+msgid "Stop after current album"
+msgstr "Luno bwe luggwa yimirira"
+
+#: ../plugins/gtkui/interface.c:399 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "Jump to current track"
 msgstr "Genda ku lutambi olutangaazidwa"
 
-#: ../plugins/gtkui/interface.c:412 ../plugins/gtkui/interface.c:419
-#: ../plugins/gtkui/deadbeef.glade.h:45
+#: ../plugins/gtkui/interface.c:403 ../plugins/gtkui/interface.c:410
+#: ../plugins/gtkui/deadbeef.glade.h:46
 msgid "_Help"
 msgstr "_Nyamba"
 
-#: ../plugins/gtkui/interface.c:427 ../plugins/gtkui/deadbeef.glade.h:46
+#: ../plugins/gtkui/interface.c:418 ../plugins/gtkui/deadbeef.glade.h:47
 msgid "_ChangeLog"
 msgstr "_Enkyukakyuka"
 
-#: ../plugins/gtkui/interface.c:436 ../plugins/gtkui/deadbeef.glade.h:47
+#: ../plugins/gtkui/interface.c:427 ../plugins/gtkui/deadbeef.glade.h:48
 msgid "_GPLv2"
 msgstr "_GPLv2"
 
-#: ../plugins/gtkui/interface.c:440 ../plugins/gtkui/deadbeef.glade.h:48
+#: ../plugins/gtkui/interface.c:431 ../plugins/gtkui/deadbeef.glade.h:49
 msgid "_LGPLv2.1"
 msgstr "_LGPLv2.1"
 
-#: ../plugins/gtkui/interface.c:449 ../plugins/gtkui/deadbeef.glade.h:49
+#: ../plugins/gtkui/interface.c:440 ../plugins/gtkui/deadbeef.glade.h:50
 msgid "_About"
 msgstr "_Kwanjula"
 
-#: ../plugins/gtkui/interface.c:457 ../plugins/gtkui/deadbeef.glade.h:50
+#: ../plugins/gtkui/interface.c:448 ../plugins/gtkui/deadbeef.glade.h:51
 msgid "_Translators"
 msgstr "_Abaavvuunula"
 
-#: ../plugins/gtkui/interface.c:828 ../plugins/gtkui/deadbeef.glade.h:51
+#: ../plugins/gtkui/interface.c:713 ../plugins/gtkui/deadbeef.glade.h:52
 msgid "Search"
 msgstr "Noonya"
 
-#: ../plugins/gtkui/interface.c:900 ../plugins/gtkui/deadbeef.glade.h:52
+#: ../plugins/gtkui/interface.c:785 ../plugins/gtkui/deadbeef.glade.h:53
 msgid "Stop"
 msgstr "Yimirira"
 
-#: ../plugins/gtkui/interface.c:908 ../plugins/gtkui/deadbeef.glade.h:53
+#: ../plugins/gtkui/interface.c:793 ../plugins/gtkui/deadbeef.glade.h:54
 msgid "Play"
 msgstr "Wuliriza"
 
-#: ../plugins/gtkui/interface.c:916 ../plugins/gtkui/deadbeef.glade.h:54
+#: ../plugins/gtkui/interface.c:801 ../plugins/gtkui/deadbeef.glade.h:55
 msgid "Pause"
 msgstr "Yimirizamu"
 
-#: ../plugins/gtkui/interface.c:924 ../plugins/gtkui/deadbeef.glade.h:55
+#: ../plugins/gtkui/interface.c:809 ../plugins/gtkui/deadbeef.glade.h:56
 msgid "Previous"
 msgstr "Olukulembedde"
 
-#: ../plugins/gtkui/interface.c:932 ../plugins/gtkui/deadbeef.glade.h:56
+#: ../plugins/gtkui/interface.c:817 ../plugins/gtkui/deadbeef.glade.h:57
 msgid "Next"
 msgstr "Oluddako"
 
-#: ../plugins/gtkui/interface.c:940 ../plugins/gtkui/deadbeef.glade.h:57
+#: ../plugins/gtkui/interface.c:825 ../plugins/gtkui/deadbeef.glade.h:58
 msgid "Play Random"
 msgstr "Wuliriza muwawa"
 
-#: ../plugins/gtkui/interface.c:949 ../plugins/gtkui/deadbeef.glade.h:58
+#: ../plugins/gtkui/interface.c:834 ../plugins/gtkui/deadbeef.glade.h:59
 msgid "About"
 msgstr "Kwanjula"
 
-#: ../plugins/gtkui/interface.c:962 ../plugins/gtkui/deadbeef.glade.h:59
+#: ../plugins/gtkui/interface.c:847 ../plugins/gtkui/deadbeef.glade.h:60
 msgid "Quit"
 msgstr "Mala"
 
-#: ../plugins/gtkui/interface.c:1082 ../plugins/gtkui/deadbeef.glade.h:60
-#: ../plugins/converter/convgui.c:1421 ../plugins/converter/convgui.c:1429
-#: ../plugins/gtkui/actionhandlers.c:430
+#: ../plugins/gtkui/interface.c:967 ../plugins/gtkui/deadbeef.glade.h:61
+#: ../plugins/converter/convgui.c:1563 ../plugins/converter/convgui.c:1571
+#: ../plugins/gtkui/actionhandlers.c:476
 msgid "Help"
 msgstr "Nyamba"
 
-#: ../plugins/gtkui/interface.c:1155 ../plugins/gtkui/deadbeef.glade.h:61
+#: ../plugins/gtkui/interface.c:1040 ../plugins/gtkui/plcommon.c:819
+#: ../plugins/gtkui/deadbeef.glade.h:62
 msgid "Track Properties"
 msgstr "Ebikwata ku lutambi"
 
-#: ../plugins/gtkui/interface.c:1173 ../plugins/gtkui/deadbeef.glade.h:62
+#: ../plugins/gtkui/interface.c:1058 ../plugins/gtkui/deadbeef.glade.h:63
 msgid "Location:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1214 ../plugins/gtkui/deadbeef.glade.h:63
+#: ../plugins/gtkui/interface.c:1099 ../plugins/gtkui/deadbeef.glade.h:64
 msgid "Settings"
 msgstr "Enteekateeka"
 
-#: ../plugins/gtkui/interface.c:1240 ../plugins/gtkui/deadbeef.glade.h:64
+#: ../plugins/gtkui/interface.c:1125 ../plugins/gtkui/deadbeef.glade.h:65
 msgid "_Apply"
 msgstr "_Bikaze"
 
-#: ../plugins/gtkui/interface.c:1261 ../plugins/gtkui/interface.c:1307
-#: ../plugins/gtkui/deadbeef.glade.h:65
+#: ../plugins/gtkui/interface.c:1146 ../plugins/gtkui/interface.c:1192
+#: ../plugins/gtkui/deadbeef.glade.h:66
 msgid "_Close"
 msgstr "_Ggala"
 
-#: ../plugins/gtkui/interface.c:1265 ../plugins/gtkui/deadbeef.glade.h:66
+#: ../plugins/gtkui/interface.c:1150 ../plugins/gtkui/deadbeef.glade.h:67
 msgid "Metadata"
 msgstr "Ebinyonyola"
 
-#: ../plugins/gtkui/interface.c:1311 ../plugins/gtkui/plcommon.c:725
-#: ../plugins/gtkui/deadbeef.glade.h:67
+#: ../plugins/gtkui/interface.c:1196 ../plugins/gtkui/deadbeef.glade.h:68
 msgid "Properties"
 msgstr "Ebirufaako"
 
-#: ../plugins/gtkui/interface.c:1433 ../plugins/gtkui/interface.c:3192
-#: ../plugins/gtkui/deadbeef.glade.h:70 ../plugins/converter/interface.c:378
+#: ../plugins/gtkui/interface.c:1319 ../plugins/gtkui/interface.c:3096
+#: ../plugins/gtkui/deadbeef.glade.h:71 ../plugins/converter/interface.c:379
 #: ../plugins/converter/converter.glade.h:22
 #: ../plugins/shellexecui/interface.c:159
 #: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/pltmenu.c:65
 msgid "Title:"
 msgstr "Mutwe:"
 
-#: ../plugins/gtkui/interface.c:1441 ../plugins/gtkui/deadbeef.glade.h:71
+#: ../plugins/gtkui/interface.c:1327 ../plugins/gtkui/deadbeef.glade.h:72
 msgid "Enter new column title here"
 msgstr "Wandikawo omutwe g'olukumba"
 
-#: ../plugins/gtkui/interface.c:1449 ../plugins/gtkui/deadbeef.glade.h:72
+#: ../plugins/gtkui/interface.c:1335 ../plugins/gtkui/deadbeef.glade.h:73
 msgid "Type:"
 msgstr "Kika:"
 
-#: ../plugins/gtkui/interface.c:1457
+#: ../plugins/gtkui/interface.c:1343
 msgid "Item Index"
 msgstr "Lukalala lw'ebirimu"
 
-#. create default set of columns
-#: ../plugins/gtkui/interface.c:1458 ../plugins/gtkui/mainplaylist.c:350
+#: ../plugins/gtkui/interface.c:1344
 msgid "Playing"
 msgstr "Oluliko"
 
-#: ../plugins/gtkui/interface.c:1459
+#: ../plugins/gtkui/interface.c:1345
 msgid "Album Art"
 msgstr "Bifaananyi bya ku alubamu"
 
-#: ../plugins/gtkui/interface.c:1460
+#: ../plugins/gtkui/interface.c:1346
 msgid "Artist - Album"
 msgstr "Muluyimba - Alubamu"
 
-#: ../plugins/gtkui/interface.c:1464 ../plugins/gtkui/mainplaylist.c:354
-#: ../plugins/gtkui/search.c:425
+#: ../plugins/gtkui/interface.c:1350 ../plugins/gtkui/mainplaylist.c:356
+#: ../plugins/gtkui/search.c:422
 msgid "Duration"
 msgstr "Obwuwanvu bwa lwo"
 
-#: ../plugins/gtkui/interface.c:1465 ../translation/extra.c:75
+#: ../plugins/gtkui/interface.c:1351 ../translation/extra.c:75
 msgid "Track Number"
 msgstr "Namba y'olutambi"
 
-#: ../plugins/gtkui/interface.c:1466 ../translation/extra.c:72
+#: ../plugins/gtkui/interface.c:1352 ../translation/extra.c:72
 msgid "Band / Album Artist"
 msgstr "Kibiina / Muluyimba w'alubamu"
 
-#: ../plugins/gtkui/interface.c:1473 ../plugins/gtkui/interface.c:3419
-#: ../plugins/gtkui/deadbeef.glade.h:84
+#: ../plugins/gtkui/interface.c:1359 ../plugins/gtkui/interface.c:3347
+#: ../plugins/gtkui/deadbeef.glade.h:85
 msgid "Format:"
 msgstr "Empandika:"
 
-#: ../plugins/gtkui/interface.c:1498 ../plugins/gtkui/deadbeef.glade.h:85
+#: ../plugins/gtkui/interface.c:1384 ../plugins/gtkui/deadbeef.glade.h:86
 msgid "Alignment:"
 msgstr "Okwekubirira:"
 
-#: ../plugins/gtkui/interface.c:1506
+#: ../plugins/gtkui/interface.c:1392
 msgid "Left"
 msgstr "Ku kkono"
 
-#: ../plugins/gtkui/interface.c:1507
+#: ../plugins/gtkui/interface.c:1393
 msgid "Right"
 msgstr "Ku ddyo"
 
-#: ../plugins/gtkui/interface.c:1530 ../plugins/gtkui/interface.c:3223
-#: ../plugins/gtkui/interface.c:3334 ../plugins/gtkui/interface.c:3460
-#: ../plugins/gtkui/deadbeef.glade.h:68
+#: ../plugins/gtkui/interface.c:1416 ../plugins/gtkui/interface.c:3127
+#: ../plugins/gtkui/interface.c:3258 ../plugins/gtkui/interface.c:3388
+#: ../plugins/gtkui/deadbeef.glade.h:69
 msgid "_Cancel"
 msgstr "_Sazamu"
 
-#: ../plugins/gtkui/interface.c:1551 ../plugins/gtkui/interface.c:3244
-#: ../plugins/gtkui/interface.c:3355 ../plugins/gtkui/interface.c:3481
-#: ../plugins/gtkui/deadbeef.glade.h:69
+#: ../plugins/gtkui/interface.c:1437 ../plugins/gtkui/interface.c:3148
+#: ../plugins/gtkui/interface.c:3279 ../plugins/gtkui/interface.c:3409
+#: ../plugins/gtkui/deadbeef.glade.h:70
 msgid "_OK"
 msgstr "_Kale"
 
-#: ../plugins/gtkui/interface.c:1817 ../plugins/gtkui/deadbeef.glade.h:88
+#: ../plugins/gtkui/interface.c:1705 ../plugins/gtkui/deadbeef.glade.h:89
 msgid "Output plugin:"
 msgstr "Puloguramu efulumya ebiwulirizibwa:"
 
-#: ../plugins/gtkui/interface.c:1830 ../plugins/gtkui/deadbeef.glade.h:89
+#: ../plugins/gtkui/interface.c:1718 ../plugins/gtkui/deadbeef.glade.h:90
 msgid "Output device:"
 msgstr "Ebiwulirizibwa gye bifulumira:"
 
-#: ../plugins/gtkui/interface.c:1839 ../plugins/gtkui/deadbeef.glade.h:90
+#: ../plugins/gtkui/interface.c:1727 ../plugins/gtkui/deadbeef.glade.h:91
 msgid "Always convert 8 bit audio to 16 bit"
 msgstr "Ebiwulirizibwa ebya bbiti 8 bifuulibwenga bya bbiti 16"
 
-#: ../plugins/gtkui/interface.c:1843 ../plugins/gtkui/deadbeef.glade.h:91
+#: ../plugins/gtkui/interface.c:1731 ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Always convert 16 bit audio to 24 bit"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1847 ../plugins/gtkui/deadbeef.glade.h:92
+#: ../plugins/gtkui/interface.c:1735 ../plugins/gtkui/deadbeef.glade.h:93
 msgid "Sound"
 msgstr "Kwogeza"
 
-#: ../plugins/gtkui/interface.c:1860 ../plugins/gtkui/deadbeef.glade.h:93
+#: ../plugins/gtkui/interface.c:1748 ../plugins/gtkui/deadbeef.glade.h:94
 msgid "Replaygain mode:"
 msgstr "Maanyi g'eddoboozi ly'ebiwulirizibwa:"
 
-#: ../plugins/gtkui/interface.c:1869
+#: ../plugins/gtkui/interface.c:1757
 msgid "Disable"
 msgstr "Gyako"
 
-#: ../plugins/gtkui/interface.c:1870
+#: ../plugins/gtkui/interface.c:1758
 msgid "Track"
 msgstr "Lutambi"
 
-#: ../plugins/gtkui/interface.c:1873 ../plugins/gtkui/deadbeef.glade.h:97
+#: ../plugins/gtkui/interface.c:1761 ../plugins/gtkui/deadbeef.glade.h:98
 msgid "Replaygain peak scale"
 msgstr "Ekigero ky'amaanyi ge'ddoboozi ly'ebiwulirizibwa"
 
-#: ../plugins/gtkui/interface.c:1888 ../plugins/gtkui/interface.c:1922
-#: ../plugins/gtkui/deadbeef.glade.h:98
+#: ../plugins/gtkui/interface.c:1776 ../plugins/gtkui/interface.c:1810
+#: ../plugins/gtkui/deadbeef.glade.h:99
 msgid "-12 dB"
 msgstr "-12 dB"
 
-#: ../plugins/gtkui/interface.c:1898 ../plugins/gtkui/interface.c:1932
-#: ../plugins/gtkui/deadbeef.glade.h:99
+#: ../plugins/gtkui/interface.c:1786 ../plugins/gtkui/interface.c:1820
+#: ../plugins/gtkui/deadbeef.glade.h:100
 msgid "+12 dB"
 msgstr "+12 dB"
 
-#: ../plugins/gtkui/interface.c:1902 ../plugins/gtkui/deadbeef.glade.h:100
+#: ../plugins/gtkui/interface.c:1790 ../plugins/gtkui/deadbeef.glade.h:101
 msgid "Replaygain preamp:"
 msgstr "Maanyi g'eddoboozi ly'ebiwulirizibwa:"
 
-#: ../plugins/gtkui/interface.c:1909 ../plugins/gtkui/deadbeef.glade.h:101
+#: ../plugins/gtkui/interface.c:1797 ../plugins/gtkui/deadbeef.glade.h:102
 msgid "Global preamp:"
 msgstr "Genda ku lutambi olutangaazidwa:"
 
-#: ../plugins/gtkui/interface.c:1940 ../plugins/gtkui/deadbeef.glade.h:102
+#: ../plugins/gtkui/interface.c:1828 ../plugins/gtkui/deadbeef.glade.h:103
 msgid "Add files from command line (or file manager) to this playlist:"
 msgstr ""
 "Olukalala lw'ongereko fayiro nga weyambisa kiwandikiro (oba "
 "ekiteekateekafayiro):"
 
-#: ../plugins/gtkui/interface.c:1949 ../plugins/gtkui/deadbeef.glade.h:103
+#: ../plugins/gtkui/interface.c:1837 ../plugins/gtkui/deadbeef.glade.h:104
 msgid "Resume previous session on startup"
 msgstr ""
 "Puloguramu bw'etandikibwa etandikirenga gye yakoma ku mulundi ogwasemba"
 
-#: ../plugins/gtkui/interface.c:1953 ../plugins/gtkui/deadbeef.glade.h:104
+#: ../plugins/gtkui/interface.c:1841 ../plugins/gtkui/deadbeef.glade.h:105
 msgid "Don't add from archives when adding folders"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1957 ../plugins/gtkui/deadbeef.glade.h:105
+#: ../plugins/gtkui/interface.c:1845 ../plugins/gtkui/deadbeef.glade.h:106
 msgid "Auto-reset \"Stop after current\""
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:1961 ../plugins/gtkui/deadbeef.glade.h:106
+#: ../plugins/gtkui/interface.c:1849 ../plugins/gtkui/deadbeef.glade.h:107
+#, fuzzy
+msgid "Auto-reset \"Stop after current album\""
+msgstr "Luno bwe luggwa yimirira"
+
+#: ../plugins/gtkui/interface.c:1853 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Playback"
 msgstr "Eby'empuliriza"
 
-#: ../plugins/gtkui/interface.c:1982 ../plugins/gtkui/interface.c:2692
-#: ../plugins/gtkui/deadbeef.glade.h:107 ../plugins/converter/interface.c:632
+#: ../plugins/gtkui/interface.c:1874 ../plugins/gtkui/interface.c:2588
+#: ../plugins/gtkui/deadbeef.glade.h:109 ../plugins/converter/interface.c:633
 #: ../plugins/converter/converter.glade.h:47
 msgid "Configure"
 msgstr "Teekateeka"
 
-#: ../plugins/gtkui/interface.c:2017 ../plugins/gtkui/deadbeef.glade.h:108
+#: ../plugins/gtkui/interface.c:1909 ../plugins/gtkui/deadbeef.glade.h:110
 msgid "DSP Chain Preset"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2029 ../plugins/gtkui/deadbeef.glade.h:109
+#: ../plugins/gtkui/interface.c:1921 ../plugins/gtkui/deadbeef.glade.h:111
 msgid "_Load"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2033 ../plugins/gtkui/deadbeef.glade.h:110
+#: ../plugins/gtkui/interface.c:1925 ../plugins/gtkui/deadbeef.glade.h:112
 msgid "DSP"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2047 ../plugins/gtkui/deadbeef.glade.h:111
+#: ../plugins/gtkui/interface.c:1939 ../plugins/gtkui/deadbeef.glade.h:113
 msgid "Close minimizes to tray"
 msgstr ""
 "Ggala kireetera puloguramu okufuuka kafaananyi mu kakuŋaanyizo ka ku lubaawo"
 
-#: ../plugins/gtkui/interface.c:2051 ../plugins/gtkui/deadbeef.glade.h:112
+#: ../plugins/gtkui/interface.c:1943 ../plugins/gtkui/deadbeef.glade.h:114
 msgid "Hide system tray icon"
 msgstr "Kisa akafaananyi ak'omu kakuŋaanyizo ka ku lubaawo"
 
-#: ../plugins/gtkui/interface.c:2055 ../plugins/gtkui/deadbeef.glade.h:113
+#: ../plugins/gtkui/interface.c:1947 ../plugins/gtkui/deadbeef.glade.h:115
+msgid "Enable Japanese SHIFT-JIS detection and recoding"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:1951 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Enable Russian CP1251 detection and recoding"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2059 ../plugins/gtkui/deadbeef.glade.h:114
+#: ../plugins/gtkui/interface.c:1955 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Enable Chinese CP936 detection and recoding"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2067 ../plugins/gtkui/deadbeef.glade.h:115
+#: ../plugins/gtkui/interface.c:1963 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Interface refresh rate (times per second):"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2081 ../plugins/gtkui/deadbeef.glade.h:116
+#: ../plugins/gtkui/interface.c:1977 ../plugins/gtkui/deadbeef.glade.h:119
 msgid "Titlebar text while playing:"
 msgstr "Omutwe gw'eddirisa ng'oluyimba luwulirizibwa:"
 
-#: ../plugins/gtkui/interface.c:2095 ../plugins/gtkui/deadbeef.glade.h:117
+#: ../plugins/gtkui/interface.c:1991 ../plugins/gtkui/deadbeef.glade.h:120
 msgid "Titlebar text while stopped:"
 msgstr "Omutwe gw'eddirisa nga puloguramu eyimirizidwa:"
 
-#: ../plugins/gtkui/interface.c:2109 ../plugins/gtkui/deadbeef.glade.h:118
+#: ../plugins/gtkui/interface.c:2005 ../plugins/gtkui/deadbeef.glade.h:121
 msgid "GUI Plugin (changing requires restart):"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2117 ../plugins/gtkui/deadbeef.glade.h:119
+#: ../plugins/gtkui/interface.c:2013 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Player"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2126 ../plugins/gtkui/deadbeef.glade.h:120
+#: ../plugins/gtkui/interface.c:2022 ../plugins/gtkui/deadbeef.glade.h:123
 msgid "Close playlists with middle mouse button"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2130 ../plugins/gtkui/deadbeef.glade.h:121
+#: ../plugins/gtkui/interface.c:2026 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "Draw playing track using bold font"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2134 ../plugins/gtkui/deadbeef.glade.h:122
-msgid "Hide \"Delete from disk\" context menu item"
+#: ../plugins/gtkui/interface.c:2030 ../plugins/gtkui/deadbeef.glade.h:125
+#, fuzzy
+msgid "Hide \"Remove From Disk\" context menu item"
 msgstr "Ekya \"Siimula ku disiki\" kikise"
 
-#: ../plugins/gtkui/interface.c:2138 ../plugins/gtkui/deadbeef.glade.h:123
+#: ../plugins/gtkui/interface.c:2034 ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Auto-name playlists when adding a single folder"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2142 ../plugins/gtkui/deadbeef.glade.h:124
+#: ../plugins/gtkui/interface.c:2038 ../plugins/gtkui/deadbeef.glade.h:127
 msgid "Auto-resize columns to fit the window"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2150 ../plugins/gtkui/deadbeef.glade.h:126
+#: ../plugins/gtkui/interface.c:2046 ../plugins/gtkui/deadbeef.glade.h:129
 msgid "GUI/Misc"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2165 ../plugins/gtkui/interface.c:2209
-#: ../plugins/gtkui/deadbeef.glade.h:127
+#: ../plugins/gtkui/interface.c:2061 ../plugins/gtkui/interface.c:2105
+#: ../plugins/gtkui/deadbeef.glade.h:130
 msgid "Override"
 msgstr "Ssawo enteekateeka eyiyo"
 
-#: ../plugins/gtkui/interface.c:2174 ../plugins/gtkui/deadbeef.glade.h:128
+#: ../plugins/gtkui/interface.c:2070 ../plugins/gtkui/deadbeef.glade.h:131
 msgid "Foreground"
 msgstr "Bwanjo"
 
-#: ../plugins/gtkui/interface.c:2181 ../plugins/gtkui/deadbeef.glade.h:129
+#: ../plugins/gtkui/interface.c:2077 ../plugins/gtkui/deadbeef.glade.h:132
 msgid "Background"
 msgstr "Bwaliriro"
 
-#: ../plugins/gtkui/interface.c:2200 ../plugins/gtkui/deadbeef.glade.h:130
+#: ../plugins/gtkui/interface.c:2096 ../plugins/gtkui/deadbeef.glade.h:133
 msgid "Seekbar/Volumebar colors"
 msgstr "Langi eziraga oluyimba we lutuuse/bwangufu bw'eddoboozi"
 
-#: ../plugins/gtkui/interface.c:2218 ../plugins/gtkui/deadbeef.glade.h:131
+#: ../plugins/gtkui/interface.c:2114 ../plugins/gtkui/deadbeef.glade.h:134
 msgid "Middle"
 msgstr "Langi eyawakkatikati"
 
-#: ../plugins/gtkui/interface.c:2225 ../plugins/gtkui/deadbeef.glade.h:132
+#: ../plugins/gtkui/interface.c:2121 ../plugins/gtkui/deadbeef.glade.h:135
 msgid "Light"
 msgstr "Langi entangaavu"
 
-#: ../plugins/gtkui/interface.c:2232 ../plugins/gtkui/deadbeef.glade.h:133
+#: ../plugins/gtkui/interface.c:2128 ../plugins/gtkui/deadbeef.glade.h:136
 msgid "Dark"
 msgstr "Langi enzirugarivu"
 
-#: ../plugins/gtkui/interface.c:2263 ../plugins/gtkui/deadbeef.glade.h:134
+#: ../plugins/gtkui/interface.c:2159 ../plugins/gtkui/deadbeef.glade.h:137
 msgid "Base"
 msgstr "Langi ey'omulamwa"
 
-#: ../plugins/gtkui/interface.c:2270 ../plugins/gtkui/interface.c:2327
-#: ../plugins/gtkui/deadbeef.glade.h:135
+#: ../plugins/gtkui/interface.c:2166 ../plugins/gtkui/interface.c:2223
+#: ../plugins/gtkui/deadbeef.glade.h:138
 msgid "Text"
 msgstr "Bigambo"
 
-#: ../plugins/gtkui/interface.c:2283 ../plugins/gtkui/deadbeef.glade.h:136
+#: ../plugins/gtkui/interface.c:2179 ../plugins/gtkui/deadbeef.glade.h:139
 msgid "Tab strip colors"
 msgstr "Langi ez'oku bukonda"
 
-#: ../plugins/gtkui/interface.c:2292 ../plugins/gtkui/deadbeef.glade.h:137
+#: ../plugins/gtkui/interface.c:2188 ../plugins/gtkui/deadbeef.glade.h:140
 msgid "Override (looses GTK treeview theming, but speeds up rendering)"
 msgstr ""
 "Ssawo enteekateeka eyiyo (kiva ku lulyo lwa langi olwa sisitemu naye "
 "kyanguya puloguramu okulabika)"
 
-#: ../plugins/gtkui/interface.c:2301 ../plugins/gtkui/deadbeef.glade.h:138
+#: ../plugins/gtkui/interface.c:2197 ../plugins/gtkui/deadbeef.glade.h:141
 msgid "Even row"
 msgstr "Nnyiriri kagabanyizikamubbiri"
 
-#: ../plugins/gtkui/interface.c:2308 ../plugins/gtkui/deadbeef.glade.h:139
+#: ../plugins/gtkui/interface.c:2204 ../plugins/gtkui/deadbeef.glade.h:142
 msgid "Odd row"
 msgstr "Nnyiriri zinantagabanyizikamubbiri"
 
-#: ../plugins/gtkui/interface.c:2334 ../plugins/gtkui/deadbeef.glade.h:140
+#: ../plugins/gtkui/interface.c:2230 ../plugins/gtkui/deadbeef.glade.h:143
 msgid "Selected row"
 msgstr "Olunyiriri olulondedwa"
 
-#: ../plugins/gtkui/interface.c:2353 ../plugins/gtkui/deadbeef.glade.h:141
+#: ../plugins/gtkui/interface.c:2249 ../plugins/gtkui/deadbeef.glade.h:144
 msgid "Selected text"
 msgstr "Ebigambo ebirondedwa"
 
-#: ../plugins/gtkui/interface.c:2366 ../plugins/gtkui/deadbeef.glade.h:142
+#: ../plugins/gtkui/interface.c:2262 ../plugins/gtkui/deadbeef.glade.h:145
 msgid "Cursor"
 msgstr "Akasonga"
 
-#: ../plugins/gtkui/interface.c:2379 ../plugins/gtkui/deadbeef.glade.h:143
+#: ../plugins/gtkui/interface.c:2275 ../plugins/gtkui/deadbeef.glade.h:146
 msgid "Playlist colors"
 msgstr "Langi ez'oku lukalala lw'enyimba"
 
-#: ../plugins/gtkui/interface.c:2383 ../plugins/gtkui/deadbeef.glade.h:144
+#: ../plugins/gtkui/interface.c:2279 ../plugins/gtkui/deadbeef.glade.h:147
 msgid "Colors"
 msgstr "Langi"
 
-#: ../plugins/gtkui/interface.c:2392 ../plugins/gtkui/deadbeef.glade.h:145
+#: ../plugins/gtkui/interface.c:2288 ../plugins/gtkui/deadbeef.glade.h:148
 msgid "Enable Proxy Server"
 msgstr "Kozesa ekiwereza kimasanganzira"
 
-#: ../plugins/gtkui/interface.c:2400 ../plugins/gtkui/deadbeef.glade.h:146
+#: ../plugins/gtkui/interface.c:2296 ../plugins/gtkui/deadbeef.glade.h:149
 msgid "Proxy Server Address:"
 msgstr "Endagiriro y'ekiwereza kimasanganzira:"
 
-#: ../plugins/gtkui/interface.c:2414 ../plugins/gtkui/deadbeef.glade.h:147
+#: ../plugins/gtkui/interface.c:2310 ../plugins/gtkui/deadbeef.glade.h:150
 msgid "Proxy Server Port:"
 msgstr "Pooti y'ekiwereza kimasanganzira:"
 
-#: ../plugins/gtkui/interface.c:2428 ../plugins/gtkui/deadbeef.glade.h:148
+#: ../plugins/gtkui/interface.c:2324 ../plugins/gtkui/deadbeef.glade.h:151
 msgid "Proxy Type:"
 msgstr "Kika ky'ekiwereza:"
 
-#: ../plugins/gtkui/interface.c:2447 ../plugins/gtkui/deadbeef.glade.h:149
+#: ../plugins/gtkui/interface.c:2343 ../plugins/gtkui/deadbeef.glade.h:152
 msgid "Proxy Username:"
 msgstr "Erinnya ery'okukozesa ku kiwereza:"
 
-#: ../plugins/gtkui/interface.c:2460 ../plugins/gtkui/deadbeef.glade.h:150
+#: ../plugins/gtkui/interface.c:2356 ../plugins/gtkui/deadbeef.glade.h:153
 msgid "Proxy Password:"
 msgstr "Ekyama eky'oku kiwereza:"
 
-#: ../plugins/gtkui/interface.c:2478 ../plugins/gtkui/deadbeef.glade.h:151
+#: ../plugins/gtkui/interface.c:2374 ../plugins/gtkui/deadbeef.glade.h:154
 msgid "HTTP User Agent:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2491 ../plugins/gtkui/interface.c:4195
-#: ../plugins/gtkui/deadbeef.glade.h:152
+#: ../plugins/gtkui/interface.c:2387 ../plugins/gtkui/interface.c:4123
+#: ../plugins/gtkui/deadbeef.glade.h:155
 msgid "Edit Content-Type Mapping"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2495 ../plugins/gtkui/deadbeef.glade.h:153
+#: ../plugins/gtkui/interface.c:2391 ../plugins/gtkui/deadbeef.glade.h:156
 msgid "Network"
 msgstr "Kayungirizi"
 
-#: ../plugins/gtkui/interface.c:2508 ../plugins/gtkui/deadbeef.glade.h:154
+#: ../plugins/gtkui/interface.c:2404 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "Assigned Hotkeys:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2543 ../plugins/gtkui/interface.c:4356
-#: ../plugins/gtkui/deadbeef.glade.h:155
+#: ../plugins/gtkui/interface.c:2439 ../plugins/gtkui/interface.c:4284
+#: ../plugins/gtkui/deadbeef.glade.h:158
 msgid "Action:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2548 ../plugins/gtkui/interface.c:2561
-#: ../plugins/gtkui/interface.c:4360 ../plugins/gtkui/deadbeef.glade.h:156
+#: ../plugins/gtkui/interface.c:2444 ../plugins/gtkui/interface.c:2457
+#: ../plugins/gtkui/interface.c:4288 ../plugins/gtkui/deadbeef.glade.h:159
 msgid "<Not set>"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2556 ../plugins/gtkui/deadbeef.glade.h:157
+#: ../plugins/gtkui/interface.c:2452 ../plugins/gtkui/deadbeef.glade.h:160
 msgid "Key combination:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2565 ../plugins/gtkui/deadbeef.glade.h:158
+#: ../plugins/gtkui/interface.c:2461 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "Global hotkey"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2577 ../plugins/gtkui/deadbeef.glade.h:159
+#: ../plugins/gtkui/interface.c:2473 ../plugins/gtkui/deadbeef.glade.h:162
 msgid ""
 "Use the Apply button to save your changes,\n"
 "or the Revert button to undo your changes.\n"
@@ -890,122 +921,127 @@ msgid ""
 "if you don't press Apply."
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2614 ../plugins/gtkui/deadbeef.glade.h:163
+#: ../plugins/gtkui/interface.c:2510 ../plugins/gtkui/deadbeef.glade.h:166
 msgid "_Defaults"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2618 ../plugins/gtkui/deadbeef.glade.h:164
+#: ../plugins/gtkui/interface.c:2514 ../plugins/gtkui/deadbeef.glade.h:167
 msgid "Hotkeys"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2649 ../plugins/gtkui/deadbeef.glade.h:165
+#: ../plugins/gtkui/interface.c:2545 ../plugins/gtkui/deadbeef.glade.h:168
 msgid "Version: "
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2713 ../plugins/gtkui/deadbeef.glade.h:166
+#: ../plugins/gtkui/interface.c:2609 ../plugins/gtkui/deadbeef.glade.h:169
 #: ../translation/extra.c:82
 msgid "Copyright"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:2723 ../plugins/gtkui/deadbeef.glade.h:167
+#: ../plugins/gtkui/interface.c:2619 ../plugins/gtkui/deadbeef.glade.h:170
 #: ../plugins/gtkui/ctmapping.c:131
 msgid "Plugins"
 msgstr "Puloguramu enyambi"
 
-#: ../plugins/gtkui/interface.c:3302 ../plugins/gtkui/deadbeef.glade.h:168
+#: ../plugins/gtkui/interface.c:3214 ../plugins/gtkui/deadbeef.glade.h:171
 msgid "URL:"
 msgstr "URL:"
 
-#: ../plugins/gtkui/interface.c:3404 ../plugins/gtkui/deadbeef.glade.h:169
+#: ../plugins/gtkui/interface.c:3228 ../plugins/gtkui/interface.c:4442
+#: ../plugins/gtkui/deadbeef.glade.h:172
+msgid "Set custom title"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:3332 ../plugins/gtkui/deadbeef.glade.h:173
 msgid "Group By ..."
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:3528 ../plugins/gtkui/deadbeef.glade.h:170
+#: ../plugins/gtkui/interface.c:3456 ../plugins/gtkui/deadbeef.glade.h:174
 msgid "Sort by ..."
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:3544 ../plugins/gtkui/deadbeef.glade.h:171
+#: ../plugins/gtkui/interface.c:3472 ../plugins/gtkui/deadbeef.glade.h:175
 msgid "Format"
 msgstr "Empandika"
 
-#: ../plugins/gtkui/interface.c:3574
+#: ../plugins/gtkui/interface.c:3502
 msgid "Ascending"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:3575
+#: ../plugins/gtkui/interface.c:3503
 msgid "Descending"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:3628 ../plugins/gtkui/deadbeef.glade.h:174
-#: ../plugins/converter/interface.c:733
+#: ../plugins/gtkui/interface.c:3556 ../plugins/gtkui/deadbeef.glade.h:178
+#: ../plugins/converter/interface.c:734
 #: ../plugins/converter/converter.glade.h:48
 msgid "Select DSP Plugin"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:3644 ../plugins/gtkui/deadbeef.glade.h:175
-#: ../plugins/converter/convgui.c:1194 ../plugins/converter/interface.c:749
+#: ../plugins/gtkui/interface.c:3572 ../plugins/gtkui/deadbeef.glade.h:179
+#: ../plugins/converter/convgui.c:1283 ../plugins/converter/interface.c:750
 #: ../plugins/gtkui/dspconfig.c:139 ../plugins/converter/converter.glade.h:49
 msgid "Plugin"
 msgstr "Puloguramu enyambi"
 
-#: ../plugins/gtkui/interface.c:3729 ../plugins/gtkui/deadbeef.glade.h:176
+#: ../plugins/gtkui/interface.c:3657 ../plugins/gtkui/deadbeef.glade.h:180
 msgid "Tag Writer Settings"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:3760 ../plugins/gtkui/deadbeef.glade.h:177
+#: ../plugins/gtkui/interface.c:3688 ../plugins/gtkui/deadbeef.glade.h:181
 msgid "Write ID3v2"
 msgstr "Wandika ebya ID3v2"
 
-#: ../plugins/gtkui/interface.c:3764 ../plugins/gtkui/interface.c:3891
-#: ../plugins/gtkui/deadbeef.glade.h:178
+#: ../plugins/gtkui/interface.c:3692 ../plugins/gtkui/interface.c:3819
+#: ../plugins/gtkui/deadbeef.glade.h:182
 msgid "Write ID3v1"
 msgstr "Wandika ebya ID3v1"
 
-#: ../plugins/gtkui/interface.c:3768 ../plugins/gtkui/interface.c:3847
-#: ../plugins/gtkui/interface.c:3887 ../plugins/gtkui/deadbeef.glade.h:179
+#: ../plugins/gtkui/interface.c:3696 ../plugins/gtkui/interface.c:3775
+#: ../plugins/gtkui/interface.c:3815 ../plugins/gtkui/deadbeef.glade.h:183
 msgid "Write APEv2"
 msgstr "Wandika ebya APEv2"
 
-#: ../plugins/gtkui/interface.c:3776 ../plugins/gtkui/interface.c:3855
-#: ../plugins/gtkui/deadbeef.glade.h:180
+#: ../plugins/gtkui/interface.c:3704 ../plugins/gtkui/interface.c:3783
+#: ../plugins/gtkui/deadbeef.glade.h:184
 msgid "Strip ID3v2"
 msgstr "Gyamu ebya ID3v2"
 
-#: ../plugins/gtkui/interface.c:3780 ../plugins/gtkui/interface.c:3903
-#: ../plugins/gtkui/deadbeef.glade.h:181
+#: ../plugins/gtkui/interface.c:3708 ../plugins/gtkui/interface.c:3831
+#: ../plugins/gtkui/deadbeef.glade.h:185
 msgid "Strip ID3v1"
 msgstr "Gyamu ebya ID3v1"
 
-#: ../plugins/gtkui/interface.c:3784 ../plugins/gtkui/interface.c:3859
-#: ../plugins/gtkui/interface.c:3899 ../plugins/gtkui/deadbeef.glade.h:182
+#: ../plugins/gtkui/interface.c:3712 ../plugins/gtkui/interface.c:3787
+#: ../plugins/gtkui/interface.c:3827 ../plugins/gtkui/deadbeef.glade.h:186
 msgid "Strip APEv2"
 msgstr "Gyamu ebya APEv2"
 
-#: ../plugins/gtkui/interface.c:3792 ../plugins/gtkui/deadbeef.glade.h:183
+#: ../plugins/gtkui/interface.c:3720 ../plugins/gtkui/deadbeef.glade.h:187
 msgid "ID3v2 version"
 msgstr "Oluwandika lwa ID3v2"
 
-#: ../plugins/gtkui/interface.c:3799
+#: ../plugins/gtkui/interface.c:3727
 msgid "2.3 (Recommended)"
 msgstr "2.3 (Tukuwa magezi ga kukozesa luno)"
 
-#: ../plugins/gtkui/interface.c:3800
+#: ../plugins/gtkui/interface.c:3728
 msgid "2.4"
 msgstr "2.4"
 
-#: ../plugins/gtkui/interface.c:3806 ../plugins/gtkui/deadbeef.glade.h:186
+#: ../plugins/gtkui/interface.c:3734 ../plugins/gtkui/deadbeef.glade.h:190
 msgid "ID3v1 character encoding (default is iso8859-1)"
 msgstr "Enkongojja y'ebiwandike eby'omu ID3v1 (iso8859-1 y'eya bulijjo)"
 
-#: ../plugins/gtkui/interface.c:3843 ../plugins/gtkui/deadbeef.glade.h:187
+#: ../plugins/gtkui/interface.c:3771 ../plugins/gtkui/deadbeef.glade.h:191
 msgid "Write ID3v2.4"
 msgstr "Wandika ebya ID32.4"
 
-#: ../plugins/gtkui/interface.c:4045 ../plugins/gtkui/deadbeef.glade.h:188
+#: ../plugins/gtkui/interface.c:3973 ../plugins/gtkui/deadbeef.glade.h:192
 msgid "Content-Type Mapping"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:4068 ../plugins/gtkui/deadbeef.glade.h:189
+#: ../plugins/gtkui/interface.c:3996 ../plugins/gtkui/deadbeef.glade.h:193
 msgid ""
 "This table defines the binding between network stream content types and "
 "DeaDBeeF decoder plugins. For example, mp3 files can have content type "
@@ -1013,91 +1049,109 @@ msgid ""
 "plugin, or \"ffmpeg\" plugin."
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:4116 ../plugins/gtkui/deadbeef.glade.h:190
+#: ../plugins/gtkui/interface.c:4044 ../plugins/gtkui/deadbeef.glade.h:194
 msgid "Reset to defaults"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:4211 ../plugins/gtkui/deadbeef.glade.h:191
+#: ../plugins/gtkui/interface.c:4139 ../plugins/gtkui/deadbeef.glade.h:195
 msgid "Content-Type:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:4224 ../plugins/gtkui/deadbeef.glade.h:192
+#: ../plugins/gtkui/interface.c:4152 ../plugins/gtkui/deadbeef.glade.h:196
 msgid "Plugins:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:4292 ../plugins/gtkui/deadbeef.glade.h:193
+#: ../plugins/gtkui/interface.c:4220 ../plugins/gtkui/deadbeef.glade.h:197
 msgid "Button properties"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:4307 ../plugins/gtkui/deadbeef.glade.h:194
+#: ../plugins/gtkui/interface.c:4235 ../plugins/gtkui/deadbeef.glade.h:198
 msgid "Color:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:4319 ../plugins/gtkui/deadbeef.glade.h:195
+#: ../plugins/gtkui/interface.c:4247 ../plugins/gtkui/deadbeef.glade.h:199
 msgid "Text color:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:4331 ../plugins/gtkui/deadbeef.glade.h:196
+#: ../plugins/gtkui/interface.c:4259 ../plugins/gtkui/deadbeef.glade.h:200
 msgid "Icon:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:4343 ../plugins/gtkui/deadbeef.glade.h:197
+#: ../plugins/gtkui/interface.c:4271 ../plugins/gtkui/deadbeef.glade.h:201
 msgid "Label:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:4424 ../plugins/gtkui/deadbeef.glade.h:198
+#: ../plugins/gtkui/interface.c:4352 ../plugins/gtkui/deadbeef.glade.h:202
 msgid "Select action"
 msgstr ""
 
-#: ../plugins/gtkui/mainplaylist.c:351 ../plugins/gtkui/search.c:422
+#: ../plugins/gtkui/interface.c:4414 ../plugins/gtkui/plcommon.c:806
+#: ../plugins/gtkui/deadbeef.glade.h:203
+msgid "Set Custom Title"
+msgstr ""
+
+#: ../plugins/gtkui/interface.c:4436 ../plugins/gtkui/deadbeef.glade.h:204
+msgid ""
+"This dialog allows to set custom title for any track. This is most useful "
+"for radio stations. An option to set the custom title is also present in the "
+"\"Add Location\" dialog. The title itself is visible in columns displaying "
+"the \"Artist\" metadata field. It should look like \"[custom] artist\" if "
+"the Artist field is present, or just \"custom\" otherwise."
+msgstr ""
+
+#: ../plugins/gtkui/mainplaylist.c:353 ../plugins/gtkui/search.c:419
 msgid "Artist / Album"
 msgstr "Muluyimba / Alubamu"
 
-#: ../plugins/gtkui/mainplaylist.c:352 ../plugins/gtkui/search.c:423
+#: ../plugins/gtkui/mainplaylist.c:354 ../plugins/gtkui/search.c:420
 msgid "Track No"
 msgstr "Namba y'olutambi"
 
-#: ../plugins/gtkui/plcommon.c:556
-msgid "Add to playback queue"
+#: ../plugins/gtkui/plcommon.c:637
+#, fuzzy
+msgid "Add To Playback Queue"
 msgstr "Lwongere ku lukalala lw'ebinaawulirizibwa"
 
-#: ../plugins/gtkui/plcommon.c:561
-msgid "Remove from playback queue"
+#: ../plugins/gtkui/plcommon.c:642
+#, fuzzy
+msgid "Remove From Playback Queue"
 msgstr "Lugye mu lukalala lw'ebinaawulirizibwa"
 
-#: ../plugins/gtkui/plcommon.c:569
-msgid "Reload metadata"
+#: ../plugins/gtkui/plcommon.c:650
+#, fuzzy
+msgid "Reload Metadata"
 msgstr "Ddamu okusoma ebinnyonyola"
 
-#: ../plugins/gtkui/plcommon.c:587
-msgid "Remove from disk"
+#: ../plugins/gtkui/plcommon.c:668
+#, fuzzy
+msgid "Remove From Disk"
 msgstr "Luggire ddala ku sisitemu"
 
-#: ../plugins/gtkui/plcommon.c:991 ../plugins/gtkui/plcommon.c:1118
+#: ../plugins/gtkui/plcommon.c:1089 ../plugins/gtkui/plcommon.c:1216
 msgid "Add column"
 msgstr "Yongerako oukumbo"
 
-#: ../plugins/gtkui/plcommon.c:1021 ../plugins/gtkui/plcommon.c:1122
+#: ../plugins/gtkui/plcommon.c:1119 ../plugins/gtkui/plcommon.c:1220
 msgid "Edit column"
 msgstr "Kyusa mu lukumbo"
 
-#: ../plugins/gtkui/plcommon.c:1126
+#: ../plugins/gtkui/plcommon.c:1224
 msgid "Remove column"
 msgstr "Gyawo olukumbo"
 
-#: ../plugins/gtkui/plcommon.c:1136
+#: ../plugins/gtkui/plcommon.c:1234
 msgid "Pin groups when scrolling"
 msgstr ""
 
-#: ../plugins/gtkui/plcommon.c:1141
+#: ../plugins/gtkui/plcommon.c:1239
 msgid "Group by"
 msgstr "Sengekera ku"
 
-#: ../plugins/gtkui/plcommon.c:1148 ../plugins/gtkui/widgets.c:3346
+#: ../plugins/gtkui/plcommon.c:1246 ../plugins/gtkui/widgets.c:3521
 msgid "None"
 msgstr "Tosengeka"
 
-#: ../plugins/gtkui/plcommon.c:1152
+#: ../plugins/gtkui/plcommon.c:1250
 msgid "Artist/Date/Album"
 msgstr "Muyimbi/Amafuluma/Alubamu"
 
@@ -1114,11 +1168,11 @@ msgstr ""
 msgid "Default Audio Device"
 msgstr "Ekyuma ekikola ku biwulirizibwa bulijjo"
 
-#: ../plugins/gtkui/prefwin.c:346
+#: ../plugins/gtkui/prefwin.c:348
 msgid "You modified the hotkeys settings, but didn't save your changes."
 msgstr ""
 
-#: ../plugins/gtkui/prefwin.c:348
+#: ../plugins/gtkui/prefwin.c:350
 msgid "Are you sure you want to continue without saving?"
 msgstr ""
 
@@ -1126,7 +1180,7 @@ msgstr ""
 msgid "Adding files..."
 msgstr "Nyongerako fayiro..."
 
-#: ../plugins/gtkui/progress.c:86
+#: ../plugins/gtkui/progress.c:89
 msgid "Initializing..."
 msgstr "Nteekateeka..."
 
@@ -1139,153 +1193,153 @@ msgid "Really close the window?"
 msgstr "Eddirisa lino ddala liggalibwewo?"
 
 #. get value to edit
-#: ../plugins/gtkui/trkproperties.c:289
+#: ../plugins/gtkui/trkproperties.c:299
 msgid "[Multiple values] "
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:480 ../plugins/gtkui/trkproperties.c:492
-#: ../plugins/gtkui/widgets.c:2025
+#: ../plugins/gtkui/trkproperties.c:490 ../plugins/gtkui/trkproperties.c:502
+#: ../plugins/gtkui/widgets.c:2200
 msgid "Key"
 msgstr "Ppeesa"
 
-#: ../plugins/gtkui/trkproperties.c:481 ../plugins/gtkui/trkproperties.c:493
-#: ../plugins/gtkui/widgets.c:2027
+#: ../plugins/gtkui/trkproperties.c:491 ../plugins/gtkui/trkproperties.c:503
+#: ../plugins/gtkui/widgets.c:2202
 msgid "Value"
 msgstr "Ekikongojje"
 
-#: ../plugins/gtkui/trkproperties.c:512
+#: ../plugins/gtkui/trkproperties.c:522
 msgid "[Multiple values]"
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:691
+#: ../plugins/gtkui/trkproperties.c:701
 msgid "Writing tags..."
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:720
+#: ../plugins/gtkui/trkproperties.c:730
 msgid "Field name"
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:723
+#: ../plugins/gtkui/trkproperties.c:733
 msgid "Name:"
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:735
+#: ../plugins/gtkui/trkproperties.c:745
 msgid "Field names must not start with : or _"
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:736 ../plugins/gtkui/trkproperties.c:775
+#: ../plugins/gtkui/trkproperties.c:746 ../plugins/gtkui/trkproperties.c:785
 msgid "Cannot add field"
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:774
+#: ../plugins/gtkui/trkproperties.c:784
 msgid "Field with such name already exists, please try different name."
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:837
+#: ../plugins/gtkui/trkproperties.c:847
 msgid "Add field"
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:840
+#: ../plugins/gtkui/trkproperties.c:850
 msgid "Remove field"
-msgstr ""
-
-#: ../main.c:89
-#, c-format
-msgid "Usage: deadbeef [options] [--] [file(s)]\n"
 msgstr ""
 
 #: ../main.c:90
 #, c-format
+msgid "Usage: deadbeef [options] [--] [file(s)]\n"
+msgstr ""
+
+#: ../main.c:91
+#, c-format
 msgid "Options:\n"
 msgstr "Obuwayiro:\n"
 
-#: ../main.c:91
+#: ../main.c:92
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
 msgstr ""
 "   --help  oba  -h     Bw'ossawo kamu ku buno, okoma ku kufuna bino "
 "by'osoma\n"
 
-#: ../main.c:92
+#: ../main.c:93
 #, c-format
 msgid "   --quit             Quit player\n"
 msgstr "   --quit             Kano kaleetera puloguramu okumala\n"
 
-#: ../main.c:93
+#: ../main.c:94
 #, c-format
 msgid "   --version          Print version info and exit\n"
 msgstr ""
 "   --version          Kano kaleetera puloguramu okukoma ku kukulaga "
 "olwandika lwa yo\n"
 
-#: ../main.c:94
+#: ../main.c:95
 #, c-format
 msgid "   --play             Start playback\n"
 msgstr "   --play             Kano kaleetera pulguramu okutandika enyimba\n"
 
-#: ../main.c:95
+#: ../main.c:96
 #, c-format
 msgid "   --stop             Stop playback\n"
 msgstr "   --stop             Kano kaleetera pulguramu okukomya oluyimba\n"
 
-#: ../main.c:96
+#: ../main.c:97
 #, c-format
 msgid "   --pause            Pause playback\n"
 msgstr ""
 "   --pause            Kano kaleetera puloguramu okuyimirizamu oluyimba\n"
 
-#: ../main.c:97
+#: ../main.c:98
 #, c-format
 msgid "   --toggle-pause     Toggle pause\n"
 msgstr ""
 
-#: ../main.c:98
+#: ../main.c:99
 #, c-format
 msgid ""
 "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
 msgstr ""
 
-#: ../main.c:99
+#: ../main.c:100
 #, c-format
 msgid "   --next             Next song in playlist\n"
 msgstr ""
 "   --next             Kano kaleetera puloguramu okutandika oluyimba oluddako "
 "mu lukalala\n"
 
-#: ../main.c:100
+#: ../main.c:101
 #, c-format
 msgid "   --prev             Previous song in playlist\n"
 msgstr ""
 "   --prev             Kano kaleetera puloguramu okutandika olukulembera "
 "lw'ebadde ko mu lukalala\n"
 
-#: ../main.c:101
+#: ../main.c:102
 #, c-format
 msgid "   --random           Random song in playlist\n"
 msgstr ""
 "   --random           Kano kaleetera puloguramu okuyita mu nyimba muwawa\n"
 
-#: ../main.c:102
+#: ../main.c:103
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
 msgstr ""
 "   --queue            Kano kaleetera puloguramu okwongera nyimba ku "
 "lukalala\n"
 
-#: ../main.c:103
+#: ../main.c:104
 #, c-format
 msgid ""
 "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
 msgstr ""
 
-#: ../main.c:104
+#: ../main.c:105
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
 msgstr ""
 "   --nowplaying FMT  Kano kaleetera puloguramu okuwandikawo erinnya "
 "ly'olutambi\n"
 
-#: ../main.c:105
+#: ../main.c:106
 #, c-format
 msgid ""
 "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
@@ -1299,7 +1353,7 @@ msgstr ""
 "                      r: Ebikugizo by'obwa nannyini, e: Ekitundu ky'oluyimba "
 "ekiwulirizidwako\n"
 
-#: ../main.c:108
+#: ../main.c:109
 #, c-format
 msgid ""
 "                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist "
@@ -1308,26 +1362,26 @@ msgstr ""
 "                      okugeza.: --nowplaying \"%%a - %%t\" kisuubirwa "
 "okuvaamu \"muyibi - linnya lya luyimba\"\n"
 
-#: ../main.c:109
+#: ../main.c:110
 #, c-format
 msgid ""
 "                      for more info, see http://sourceforge.net/apps/"
 "mediawiki/deadbeef/index.php?title=Title_Formatting\n"
 msgstr ""
 
-#: ../playlist.c:482 ../playlist.c:2489
+#: ../playlist.c:481 ../playlist.c:2546
 msgid "Default"
 msgstr "Olukwatakifo"
 
-#: ../playlist.c:3877
+#: ../playlist.c:3970
 msgid "Yes"
 msgstr "Ye"
 
-#: ../playlist.c:3877
+#: ../playlist.c:3970
 msgid "No"
 msgstr "Nedda"
 
-#: ../plugins/gtkui/deadbeef.glade.h:73
+#: ../plugins/gtkui/deadbeef.glade.h:74
 msgid ""
 "Item Index\n"
 "Playing\n"
@@ -1342,7 +1396,7 @@ msgid ""
 "Custom"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:86
+#: ../plugins/gtkui/deadbeef.glade.h:87
 msgid ""
 "Left\n"
 "Right"
@@ -1350,7 +1404,7 @@ msgstr ""
 "Kkono\n"
 "Dyo"
 
-#: ../plugins/gtkui/deadbeef.glade.h:94
+#: ../plugins/gtkui/deadbeef.glade.h:95
 msgid ""
 "Disable\n"
 "Track\n"
@@ -1360,13 +1414,13 @@ msgstr ""
 "Lutambi\n"
 "Alubamu"
 
-#: ../plugins/gtkui/deadbeef.glade.h:172
+#: ../plugins/gtkui/deadbeef.glade.h:176
 msgid ""
 "Ascending\n"
 "Descending"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:184
+#: ../plugins/gtkui/deadbeef.glade.h:188
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
@@ -1374,14 +1428,7 @@ msgstr ""
 "2.3 (Tukuwa magezi kukozesa luno)\n"
 "2.4"
 
-#: ../plugins/gtkui/support.c:90 ../plugins/gtkui/support.c:114
-#: ../plugins/converter/support.c:90 ../plugins/converter/support.c:114
-#: ../plugins/shellexecui/support.c:90 ../plugins/shellexecui/support.c:114
-#, c-format
-msgid "Couldn't find pixmap file: %s"
-msgstr "Fayiro erimu ekifaananyi embuze: %s"
-
-#: ../plugins/wildmidi/wildmidiplug.c:164
+#: ../plugins/wildmidi/wildmidiplug.c:174
 #, c-format
 msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
@@ -1704,111 +1751,116 @@ msgstr ""
 msgid "Enable surround"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:117
+#: ../plugins/converter/convgui.c:84
+#, c-format
+msgid "[Built-in] %s"
+msgstr ""
+
+#: ../plugins/converter/convgui.c:130
 msgid "The file already exists. Overwrite?"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:119
+#: ../plugins/converter/convgui.c:132
 msgid "Converter warning"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:287
+#: ../plugins/converter/convgui.c:300
 msgid "Please select encoder"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:289
+#: ../plugins/converter/convgui.c:302
 msgid "Converter error"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:313
+#: ../plugins/converter/convgui.c:326
 msgid "Converting..."
 msgstr ""
 
-#: ../plugins/converter/convgui.c:518
+#: ../plugins/converter/convgui.c:536
 msgid "Select folder..."
 msgstr ""
 
-#: ../plugins/converter/convgui.c:740
+#: ../plugins/converter/convgui.c:769
 msgid "Failed to save encoder preset"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:742 ../plugins/converter/convgui.c:1216
+#: ../plugins/converter/convgui.c:771 ../plugins/converter/convgui.c:1320
 msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:742 ../plugins/converter/convgui.c:1216
+#: ../plugins/converter/convgui.c:771 ../plugins/converter/convgui.c:1320
 msgid "Preset with the same name already exists. Try to pick another title."
 msgstr ""
 
-#: ../plugins/converter/convgui.c:743 ../plugins/converter/convgui.c:1217
+#: ../plugins/converter/convgui.c:772 ../plugins/converter/convgui.c:1321
 #: ../plugins/gtkui/ctmapping.c:202 ../plugins/gtkui/ctmapping.c:230
 #: ../plugins/gtkui/ctmapping.c:262
 msgid "Error"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:797
+#: ../plugins/converter/convgui.c:826 ../plugins/converter/convgui.c:957
 msgid "Add new encoder"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:827
+#: ../plugins/converter/convgui.c:856
 msgid "Edit encoder"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:859 ../plugins/converter/convgui.c:1314
+#: ../plugins/converter/convgui.c:888 ../plugins/converter/convgui.c:1455
 msgid "Remove preset"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:861 ../plugins/converter/convgui.c:1316
+#: ../plugins/converter/convgui.c:890 ../plugins/converter/convgui.c:1457
 msgid "This action will delete the selected preset. Are you sure?"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:885
+#: ../plugins/converter/convgui.c:971
 msgid "Encoders"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:956 ../plugins/gtkui/dspconfig.c:186
+#: ../plugins/converter/convgui.c:1044 ../plugins/gtkui/dspconfig.c:186
 msgid "Add plugin to DSP chain"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:1215
+#: ../plugins/converter/convgui.c:1319
 msgid "Failed to save DSP preset"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:1279
+#: ../plugins/converter/convgui.c:1383 ../plugins/converter/convgui.c:1421
 msgid "New DSP Preset"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:1364
+#: ../plugins/converter/convgui.c:1505
 msgid "Edit DSP Preset"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:1384
+#: ../plugins/converter/convgui.c:1525
 msgid "DSP Presets"
 msgstr ""
 
-#: ../plugins/converter/interface.c:92
+#: ../plugins/converter/interface.c:93
 #: ../plugins/converter/converter.glade.h:1
 msgid "Output folder:"
 msgstr ""
 
-#: ../plugins/converter/interface.c:109
+#: ../plugins/converter/interface.c:110
 #: ../plugins/converter/converter.glade.h:2
 msgid "Write to source track folder"
 msgstr ""
 
-#: ../plugins/converter/interface.c:113
+#: ../plugins/converter/interface.c:114
 #: ../plugins/converter/converter.glade.h:3
 msgid "Preserve folder structure"
 msgstr ""
 
-#: ../plugins/converter/interface.c:121
+#: ../plugins/converter/interface.c:122
 #: ../plugins/converter/converter.glade.h:4
 msgid "Output file name:"
 msgstr ""
 
-#: ../plugins/converter/interface.c:132
+#: ../plugins/converter/interface.c:133
 #: ../plugins/converter/converter.glade.h:6
 #, no-c-format
 msgid ""
@@ -1816,89 +1868,89 @@ msgid ""
 "Leave the field empty for default (%a - %t)."
 msgstr ""
 
-#: ../plugins/converter/interface.c:145
+#: ../plugins/converter/interface.c:146
 #: ../plugins/converter/converter.glade.h:8
 msgid "Encoder:"
 msgstr ""
 
-#: ../plugins/converter/interface.c:169
+#: ../plugins/converter/interface.c:170
 #: ../plugins/converter/converter.glade.h:9
 msgid "DSP preset:"
 msgstr ""
 
-#: ../plugins/converter/interface.c:192
+#: ../plugins/converter/interface.c:193
 #: ../plugins/converter/converter.glade.h:10
 msgid "Number of threads:"
 msgstr ""
 
-#: ../plugins/converter/interface.c:205
+#: ../plugins/converter/interface.c:206
 #: ../plugins/converter/converter.glade.h:11
 msgid "Output sample format:"
 msgstr ""
 
-#: ../plugins/converter/interface.c:212
+#: ../plugins/converter/interface.c:213
 msgid "Keep source format"
 msgstr ""
 
-#: ../plugins/converter/interface.c:213
+#: ../plugins/converter/interface.c:214
 msgid "8 bit signed int"
 msgstr ""
 
-#: ../plugins/converter/interface.c:214
+#: ../plugins/converter/interface.c:215
 msgid "16 bit signed int"
 msgstr ""
 
-#: ../plugins/converter/interface.c:215
+#: ../plugins/converter/interface.c:216
 msgid "24 bit signed int"
 msgstr ""
 
-#: ../plugins/converter/interface.c:216
+#: ../plugins/converter/interface.c:217
 msgid "32 bit signed int"
 msgstr ""
 
-#: ../plugins/converter/interface.c:217
+#: ../plugins/converter/interface.c:218
 msgid "32 bit float"
 msgstr ""
 
-#: ../plugins/converter/interface.c:223
+#: ../plugins/converter/interface.c:224
 #: ../plugins/converter/converter.glade.h:18
 msgid "When file exists:"
 msgstr ""
 
-#: ../plugins/converter/interface.c:230
+#: ../plugins/converter/interface.c:231
 msgid "Prompt"
 msgstr ""
 
-#: ../plugins/converter/interface.c:231
+#: ../plugins/converter/interface.c:232
 msgid "Overwrite"
 msgstr ""
 
-#: ../plugins/converter/interface.c:362
+#: ../plugins/converter/interface.c:363
 #: ../plugins/converter/converter.glade.h:21
 msgid "Edit Encoder Preset"
 msgstr ""
 
-#: ../plugins/converter/interface.c:385
+#: ../plugins/converter/interface.c:386
 #: ../plugins/converter/converter.glade.h:23
 msgid "Untitled Encoder"
 msgstr ""
 
-#: ../plugins/converter/interface.c:393
+#: ../plugins/converter/interface.c:394
 #: ../plugins/converter/converter.glade.h:24
 msgid "Output file extension:"
 msgstr ""
 
-#: ../plugins/converter/interface.c:400
+#: ../plugins/converter/interface.c:401
 #: ../plugins/converter/converter.glade.h:25
 msgid "E.g. mp3"
 msgstr ""
 
-#: ../plugins/converter/interface.c:408
+#: ../plugins/converter/interface.c:409
 #: ../plugins/converter/converter.glade.h:26
 msgid "Command line:"
 msgstr ""
 
-#: ../plugins/converter/interface.c:419
+#: ../plugins/converter/interface.c:420
 #: ../plugins/converter/converter.glade.h:28
 #, no-c-format
 msgid ""
@@ -1906,7 +1958,7 @@ msgid ""
 "%i for input file, %o for output file, - for stdin"
 msgstr ""
 
-#: ../plugins/converter/interface.c:429
+#: ../plugins/converter/interface.c:430
 #: ../plugins/converter/converter.glade.h:31
 #, no-c-format
 msgid ""
@@ -1914,65 +1966,71 @@ msgid ""
 "%i - temporary input file name</small>"
 msgstr ""
 
-#: ../plugins/converter/interface.c:438
+#: ../plugins/converter/interface.c:439
 #: ../plugins/converter/converter.glade.h:33
 msgid "Method:"
 msgstr ""
 
-#: ../plugins/converter/interface.c:445
+#: ../plugins/converter/interface.c:446
 msgid "Pipe"
 msgstr ""
 
-#: ../plugins/converter/interface.c:446
+#: ../plugins/converter/interface.c:447
 msgid "Temporary file"
 msgstr ""
 
-#: ../plugins/converter/interface.c:463
+#: ../plugins/converter/interface.c:464
 #: ../plugins/converter/converter.glade.h:36
 msgid "APEv2"
 msgstr ""
 
-#: ../plugins/converter/interface.c:469
+#: ../plugins/converter/interface.c:470
 #: ../plugins/converter/converter.glade.h:37
 msgid "ID3v1"
 msgstr ""
 
-#: ../plugins/converter/interface.c:475
+#: ../plugins/converter/interface.c:476
 #: ../plugins/converter/converter.glade.h:38
 msgid "OggVorbis"
 msgstr ""
 
-#: ../plugins/converter/interface.c:481
+#: ../plugins/converter/interface.c:482
 #: ../plugins/converter/converter.glade.h:39
 msgid "FLAC"
 msgstr ""
 
-#: ../plugins/converter/interface.c:493
+#: ../plugins/converter/interface.c:494
 #: ../plugins/converter/converter.glade.h:40
 msgid "ID3v2"
 msgstr ""
 
-#: ../plugins/converter/interface.c:503
+#: ../plugins/converter/interface.c:504
 #: ../plugins/converter/converter.glade.h:41
 msgid "<b>Tag writer</b>"
 msgstr ""
 
-#: ../plugins/converter/interface.c:589
+#: ../plugins/converter/interface.c:590
 #: ../plugins/converter/converter.glade.h:42
 msgid "DSP Preset Editor"
 msgstr ""
 
-#: ../plugins/converter/interface.c:612
+#: ../plugins/converter/interface.c:613
 #: ../plugins/converter/converter.glade.h:44
 msgid "Untitled DSP Preset"
 msgstr ""
 
-#: ../plugins/converter/interface.c:624
+#: ../plugins/converter/interface.c:625
 #: ../plugins/converter/converter.glade.h:45
 #: ../plugins/shellexecui/interface.c:61
 #: ../plugins/shellexecui/shellexec.glade.h:3
 msgid "Add"
 msgstr "Kaza"
+
+#: ../plugins/converter/support.c:90 ../plugins/converter/support.c:114
+#: ../plugins/shellexecui/support.c:90 ../plugins/shellexecui/support.c:114
+#, c-format
+msgid "Couldn't find pixmap file: %s"
+msgstr "Fayiro erimu ekifaananyi embuze: %s"
 
 #: ../plugins/converter/converter.glade.h:12
 msgid ""
@@ -2105,90 +2163,90 @@ msgid ""
 "menu name in the English version.</small>"
 msgstr ""
 
-#: ../plugins/shellexecui/shellexecui.c:94
+#: ../plugins/shellexecui/shellexecui.c:96
 msgid "Add Command"
 msgstr ""
 
-#: ../plugins/shellexecui/shellexecui.c:137 ../plugins/gtkui/widgets.c:619
+#: ../plugins/shellexecui/shellexecui.c:139 ../plugins/gtkui/widgets.c:797
 msgid "Delete"
 msgstr ""
 
-#: ../plugins/shellexecui/shellexecui.c:139
+#: ../plugins/shellexecui/shellexecui.c:141
 msgid "This action will delete the selected shell command. Are you sure?"
 msgstr ""
 
-#: ../plugins/shellexecui/shellexecui.c:141
+#: ../plugins/shellexecui/shellexecui.c:143
 msgid "Confirm Remove"
 msgstr ""
 
-#: ../plugins/shellexecui/shellexecui.c:227
+#: ../plugins/shellexecui/shellexecui.c:229
 msgid "ID must be non-empty and unique.\n"
 msgstr ""
 
-#: ../plugins/shellexecui/shellexecui.c:233
+#: ../plugins/shellexecui/shellexecui.c:235
 msgid "Title must be non-empty.\n"
 msgstr ""
 
-#: ../plugins/shellexecui/shellexecui.c:239
+#: ../plugins/shellexecui/shellexecui.c:241
 msgid "Shell Command must be non-empty.\n"
 msgstr ""
 
-#: ../plugins/shellexecui/shellexecui.c:246
-#: ../plugins/shellexecui/shellexecui.c:250
+#: ../plugins/shellexecui/shellexecui.c:248
+#: ../plugins/shellexecui/shellexecui.c:252
 msgid "Invalid Values"
 msgstr ""
 
-#: ../plugins/gtkui/actionhandlers.c:108
+#: ../plugins/gtkui/actionhandlers.c:112
 msgid "Supported sound formats"
 msgstr ""
 
-#: ../plugins/gtkui/actionhandlers.c:119
+#: ../plugins/gtkui/actionhandlers.c:123
 msgid "All files (*)"
 msgstr ""
 
-#: ../plugins/gtkui/actionhandlers.c:127
+#: ../plugins/gtkui/actionhandlers.c:131
 msgid "Open file(s)..."
 msgstr ""
 
-#: ../plugins/gtkui/actionhandlers.c:166
+#: ../plugins/gtkui/actionhandlers.c:170
 msgid "Add file(s) to playlist..."
 msgstr ""
 
-#: ../plugins/gtkui/actionhandlers.c:212
+#: ../plugins/gtkui/actionhandlers.c:216
 msgid "Add folder(s) to playlist..."
 msgstr ""
 
-#: ../plugins/gtkui/actionhandlers.c:217
+#: ../plugins/gtkui/actionhandlers.c:221
 msgid "Follow symlinks"
 msgstr ""
 
-#: ../plugins/gtkui/actionhandlers.c:429
+#: ../plugins/gtkui/actionhandlers.c:475
 msgid "help.txt"
 msgstr ""
 
-#: ../plugins/gtkui/actionhandlers.c:489
+#: ../plugins/gtkui/actionhandlers.c:548
 msgid "Delete files from disk"
 msgstr ""
 
-#: ../plugins/gtkui/actionhandlers.c:490
+#: ../plugins/gtkui/actionhandlers.c:549
 msgid ""
 "Files will be lost. Proceed?\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
 msgstr ""
 
-#: ../plugins/gtkui/actionhandlers.c:673
+#: ../plugins/gtkui/actionhandlers.c:726
 msgid "Load Playlist"
 msgstr ""
 
-#: ../plugins/gtkui/actionhandlers.c:688
+#: ../plugins/gtkui/actionhandlers.c:741
 msgid "Other files (*)"
 msgstr ""
 
-#: ../plugins/gtkui/actionhandlers.c:722
+#: ../plugins/gtkui/actionhandlers.c:775
 msgid "Save Playlist As"
 msgstr ""
 
-#: ../plugins/gtkui/actionhandlers.c:733
+#: ../plugins/gtkui/actionhandlers.c:786
 msgid "DeaDBeeF playlist files (*.dbpl)"
 msgstr ""
 
@@ -2215,102 +2273,111 @@ msgstr ""
 msgid "Nothing is selected."
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:594
+#: ../plugins/gtkui/widgets.c:444
+#, c-format
+msgid "Widget \"%s\" is not available"
+msgstr ""
+
+#: ../plugins/gtkui/widgets.c:772
 msgid "Replace with..."
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:599
+#: ../plugins/gtkui/widgets.c:777
 msgid "Insert..."
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:626
+#: ../plugins/gtkui/widgets.c:804
 msgid "Cut"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:633
+#: ../plugins/gtkui/widgets.c:811
 msgid "Copy"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:640
+#: ../plugins/gtkui/widgets.c:818
 msgid "Paste"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:764
+#: ../plugins/gtkui/widgets.c:942
 msgid "Multiple widgets of this type are not supported"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1071
+#: ../plugins/gtkui/widgets.c:1249
 msgid "Lock movement"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1356
+#: ../plugins/gtkui/widgets.c:1534
 msgid "Move tab left"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1363
+#: ../plugins/gtkui/widgets.c:1541
 msgid "Move tab right"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1370
+#: ../plugins/gtkui/widgets.c:1548
 msgid "Remove tab"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1377
+#: ../plugins/gtkui/widgets.c:1555
 msgid "Rename tab"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1438
+#: ../plugins/gtkui/widgets.c:1616
 msgid "Add new tab"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1861
+#: ../plugins/gtkui/widgets.c:2036
 msgid "Show Column Headers"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2969
+#: ../plugins/gtkui/widgets.c:3144
 msgid "Expand the box by 1 item"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2974
+#: ../plugins/gtkui/widgets.c:3149
 msgid "Shrink the box by 1 item"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2979
+#: ../plugins/gtkui/widgets.c:3154
 msgid "Homogeneous"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3019
+#: ../plugins/gtkui/widgets.c:3194
 msgid "Expand"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3027
+#: ../plugins/gtkui/widgets.c:3202
 msgid "Fill"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3428
+#: ../plugins/gtkui/widgets.c:3603
 msgid "Configure button"
+msgstr ""
+
+#: ../plugins/gtkui/widgets.c:3867
+msgid "Voices:"
 msgstr ""
 
 #: ../plugins/gtkui/pltmenu.c:62
 msgid "Edit playlist"
 msgstr ""
 
-#: ../plugins/gtkui/pltmenu.c:258
+#: ../plugins/gtkui/pltmenu.c:265
 msgid "Rename Playlist"
 msgstr ""
 
-#: ../plugins/gtkui/pltmenu.c:265
+#: ../plugins/gtkui/pltmenu.c:272
 msgid "Remove Playlist"
 msgstr ""
 
-#: ../plugins/gtkui/pltmenu.c:272
+#: ../plugins/gtkui/pltmenu.c:279
 msgid "Add New Playlist"
 msgstr ""
 
-#: ../plugins/pltbrowser/pltbrowser.c:225
+#: ../plugins/pltbrowser/pltbrowser.c:213
 msgid "Name"
 msgstr ""
 
-#: ../plugins/pltbrowser/pltbrowser.c:251
+#: ../plugins/pltbrowser/pltbrowser.c:238
 msgid "Playlist browser"
 msgstr ""
