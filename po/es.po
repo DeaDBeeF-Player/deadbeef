@@ -4,6 +4,7 @@
 #
 # Translators:
 # Adolfo Jayme Barrientos <fitoschido@ubuntu.com>, 2013
+# Adolfo Jayme Barrientos <fitoschido@ubuntu.com>, 2013
 # Carlos, 2013-2014
 # Charlesles, 2013
 # depaz <depazzz@gmail.com>, 2010
@@ -15,7 +16,7 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-06-25 19:54+0200\n"
-"PO-Revision-Date: 2014-06-24 18:58+0000\n"
+"PO-Revision-Date: 2014-06-25 17:55+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/deadbeef-player/"
 "language/es/)\n"

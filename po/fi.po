@@ -4,12 +4,13 @@
 #
 # Translators:
 # elain1 <heikki.auvinen@gmail.com>, 2014
+# elain1 <heikki.auvinen@gmail.com>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-06-25 19:54+0200\n"
-"PO-Revision-Date: 2014-06-24 18:59+0000\n"
+"PO-Revision-Date: 2014-06-25 17:55+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Finnish (http://www.transifex.com/projects/p/deadbeef-player/"
 "language/fi/)\n"

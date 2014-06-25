@@ -3,16 +3,16 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# pcpepik <pcpepik0@gmail.com>, 2013
-# pcpepik <pcpepik0@gmail.com>, 2013
+# Joe Bliss <pcpepik0@gmail.com>, 2013
+# Joe Bliss <pcpepik0@gmail.com>, 2013
 # Vašek Kovářík <l3d9z6@seznam.cz>, 2011
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-06-25 19:54+0200\n"
-"PO-Revision-Date: 2013-11-20 09:49+0000\n"
-"Last-Translator: waker <wakeroid@gmail.com>\n"
+"PO-Revision-Date: 2014-06-25 17:55+0000\n"
+"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Czech (http://www.transifex.com/projects/p/deadbeef-player/"
 "language/cs/)\n"
 "Language: cs\n"
@@ -198,9 +198,8 @@ msgid "Seekbar"
 msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:972
-#, fuzzy
 msgid "Playback controls"
-msgstr "Přehrát"
+msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:973
 msgid "Volume bar"
@@ -219,13 +218,10 @@ msgid "Failed to load help file"
 msgstr "Selhalo načtení souboru nápovědy"
 
 #: ../plugins/gtkui/gtkui.c:1170
-#, fuzzy
 msgid ""
 "The player is currently running background tasks. If you quit now, the tasks "
 "will be cancelled or interrupted. This may result in data loss."
 msgstr ""
-"Přehrávač momentálně provádí úlohy na pozadí. Pokud jej nyní ukončíte, úlohy "
-"budou ukončeny či přerušeny. Toto může způsobit ztrátu dat."
 
 #: ../plugins/gtkui/gtkui.c:1172
 msgid "Do you still want to quit?"
@@ -431,9 +427,8 @@ msgid "Stop after current"
 msgstr "Zastavit po aktuální"
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
-#, fuzzy
 msgid "Stop after current album"
-msgstr "Zastavit po aktuální"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:399 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "Jump to current track"
@@ -683,9 +678,8 @@ msgid "Auto-reset \"Stop after current\""
 msgstr "Automaticky vynulovat \"Zastavit po aktuální\""
 
 #: ../plugins/gtkui/interface.c:1849 ../plugins/gtkui/deadbeef.glade.h:107
-#, fuzzy
 msgid "Auto-reset \"Stop after current album\""
-msgstr "Automaticky vynulovat \"Zastavit po aktuální\""
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1853 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Playback"
@@ -718,9 +712,8 @@ msgid "Hide system tray icon"
 msgstr "Skrýt ikonu v trayi"
 
 #: ../plugins/gtkui/interface.c:1947 ../plugins/gtkui/deadbeef.glade.h:115
-#, fuzzy
 msgid "Enable Japanese SHIFT-JIS detection and recoding"
-msgstr "Povolit detekci a záznam čínského CP936"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1951 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Enable Russian CP1251 detection and recoding"
@@ -759,9 +752,8 @@ msgid "Draw playing track using bold font"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:2030 ../plugins/gtkui/deadbeef.glade.h:125
-#, fuzzy
 msgid "Hide \"Remove From Disk\" context menu item"
-msgstr "Skrýt položku \"Smazat z disku\" z kontextového menu"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:2034 ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Auto-name playlists when adding a single folder"
@@ -1103,24 +1095,20 @@ msgid "Track No"
 msgstr "Skladba č."
 
 #: ../plugins/gtkui/plcommon.c:637
-#, fuzzy
 msgid "Add To Playback Queue"
-msgstr "Přidat do fronty přehrávání"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:642
-#, fuzzy
 msgid "Remove From Playback Queue"
-msgstr "Odstranit z fronty přehrávání"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:650
-#, fuzzy
 msgid "Reload Metadata"
-msgstr "Znovu načíst metadata"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:668
-#, fuzzy
 msgid "Remove From Disk"
-msgstr "Odstranit z disku"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:1089 ../plugins/gtkui/plcommon.c:1216
 msgid "Add column"
