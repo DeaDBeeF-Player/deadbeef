@@ -1019,27 +1019,21 @@ cflac_write_metadata (DB_playItem_t *it) {
 
     chain = FLAC__metadata_chain_new ();
     if (!chain) {
-        trace ("cflac_write_metadata: FLAC__metadata_chain_new failed\n");
+        fprintf (stderr, "cflac_write_metadata: FLAC__metadata_chain_new failed\n");
         return -1;
     }
     deadbeef->pl_lock ();
-    DB_FILE *file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
-    deadbeef->pl_unlock ();
-    if (!file) {
-        return -1;
-    }
-    FLAC__bool res = FLAC__metadata_chain_read_with_callbacks (chain, (FLAC__IOHandle)file, iocb);
+    FLAC__bool res = FLAC__metadata_chain_read (chain, deadbeef->pl_find_meta (it, ":URI"));
     FLAC__bool isogg = false;
 #if USE_OGGEDIT
     if (!res && FLAC__metadata_chain_status(chain) == FLAC__METADATA_SIMPLE_ITERATOR_STATUS_NOT_A_FLAC_FILE) {
         isogg = true;
-        res = FLAC__metadata_chain_read_ogg_with_callbacks (chain, (FLAC__IOHandle)file, iocb);
+        res = FLAC__metadata_chain_read_ogg (chain, deadbeef->pl_find_meta (it, ":URI"));
     }
 #endif
-    deadbeef->fclose (file);
-    file = NULL;
+    deadbeef->pl_unlock ();
     if (!res) {
-        trace ("cflac_write_metadata: FLAC__metadata_chain_read(_ogg) failed - code %d\n", res);
+        fprintf (stderr, "cflac_write_metadata: FLAC__metadata_chain_read(_ogg) failed - code %d\n", res);
         goto error;
     }
     FLAC__metadata_chain_merge_padding (chain);
@@ -1140,11 +1134,13 @@ cflac_write_metadata (DB_playItem_t *it) {
     }
 #if USE_OGGEDIT
     else {
-        res = cflac_write_metadata_ogg(it, &data->data.vorbis_comment);
+        if (cflac_write_metadata_ogg(it, &data->data.vorbis_comment)) {
+            res = 0;
+        }
     }
 #endif
-    if (res) {
-        trace ("cflac_write_metadata: failed to write tags: code %d\n", res);
+    if (!res) {
+        fprintf (stderr, "cflac_write_metadata: failed to write tags: code %d\n", res);
         goto error;
     }
 
