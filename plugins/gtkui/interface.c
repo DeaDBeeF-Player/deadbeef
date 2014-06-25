@@ -4439,7 +4439,7 @@ create_setcustomtitledlg (void)
   gtk_widget_show (hbox123);
   gtk_box_pack_start (GTK_BOX (vbox46), hbox123, FALSE, TRUE, 0);
 
-  set_custom_title = gtk_check_button_new_with_mnemonic (_("Set custom title"));
+  set_custom_title = gtk_check_button_new_with_mnemonic (_("Set Custom Title"));
   gtk_widget_show (set_custom_title);
   gtk_box_pack_start (GTK_BOX (hbox123), set_custom_title, FALSE, FALSE, 0);
 
