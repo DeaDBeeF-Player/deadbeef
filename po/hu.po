@@ -3,14 +3,13 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Translators:
 # Péter Polonkai <polesz@nedudu.hu>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-06-24 20:57+0200\n"
-"PO-Revision-Date: 2014-06-15 17:13+0000\n"
+"POT-Creation-Date: 2014-06-25 19:54+0200\n"
+"PO-Revision-Date: 2014-06-25 13:58+0000\n"
 "Last-Translator: Péter Polonkai <polesz@nedudu.hu>\n"
 "Language-Team: Hungarian (http://www.transifex.com/projects/p/deadbeef-"
 "player/language/hu/)\n"
@@ -90,7 +89,7 @@ msgstr "Sávok nulla"
 #: ../plugins/gtkui/eq.c:392 ../plugins/converter/interface.c:805
 #: ../plugins/converter/converter.glade.h:50
 msgid "Presets"
-msgstr ""
+msgstr "Hangszínek"
 
 #: ../plugins/gtkui/gtkui.c:167
 #, c-format
@@ -144,7 +143,7 @@ msgstr "Új lejátszólista (%d)"
 #. register widget types
 #: ../plugins/gtkui/gtkui.c:955
 msgid "Playlist with tabs"
-msgstr ""
+msgstr "Lejátszólista fülekkel"
 
 #: ../plugins/gtkui/gtkui.c:956 ../plugins/gtkui/interface.c:2042
 #: ../plugins/gtkui/deadbeef.glade.h:128
@@ -153,11 +152,11 @@ msgstr "Lejátszólista"
 
 #: ../plugins/gtkui/gtkui.c:959
 msgid "Splitter (top and bottom)"
-msgstr ""
+msgstr "Szétosztás (felső és alsó)"
 
 #: ../plugins/gtkui/gtkui.c:960
 msgid "Splitter (left and right)"
-msgstr ""
+msgstr "Szétosztás (bal és jobb)"
 
 #. w_reg_widget (_("Tabs"), 0, w_tabs_create, "tabs", NULL);
 #: ../plugins/gtkui/gtkui.c:963
@@ -194,16 +193,15 @@ msgstr "Gomb"
 
 #: ../plugins/gtkui/gtkui.c:971
 msgid "Seekbar"
-msgstr ""
+msgstr "Léptető sáv"
 
 #: ../plugins/gtkui/gtkui.c:972
-#, fuzzy
 msgid "Playback controls"
-msgstr "Lejátszás"
+msgstr "Lejátszó vezérlők"
 
 #: ../plugins/gtkui/gtkui.c:973
 msgid "Volume bar"
-msgstr ""
+msgstr "Hangerő sáv"
 
 #: ../plugins/gtkui/gtkui.c:974
 msgid "Chiptune voices"
@@ -427,9 +425,8 @@ msgid "Stop after current"
 msgstr "Az aktuális szám után megállít"
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
-#, fuzzy
 msgid "Stop after current album"
-msgstr "Az aktuális szám után megállít"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:399 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "Jump to current track"
@@ -620,7 +617,7 @@ msgstr "A 8 bites audiót mindig konvertálja át 16 bitessé"
 
 #: ../plugins/gtkui/interface.c:1731 ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Always convert 16 bit audio to 24 bit"
-msgstr ""
+msgstr "Mindig konvertálja a 16 bites audiót 24 bitre"
 
 #: ../plugins/gtkui/interface.c:1735 ../plugins/gtkui/deadbeef.glade.h:93
 msgid "Sound"
@@ -675,12 +672,11 @@ msgstr "Ne adja hozzá az archívumok tartalmát mappák hozzáadásakor"
 
 #: ../plugins/gtkui/interface.c:1845 ../plugins/gtkui/deadbeef.glade.h:106
 msgid "Auto-reset \"Stop after current\""
-msgstr ""
+msgstr "Automatikus törlés \"Állj a lejátszás után\""
 
 #: ../plugins/gtkui/interface.c:1849 ../plugins/gtkui/deadbeef.glade.h:107
-#, fuzzy
 msgid "Auto-reset \"Stop after current album\""
-msgstr "Az aktuális szám után megállít"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1853 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Playback"
@@ -718,11 +714,11 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1951 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Enable Russian CP1251 detection and recoding"
-msgstr ""
+msgstr "Orosz CP1251 karakterkészlet detektálás és újrakódolás engedélyezése"
 
 #: ../plugins/gtkui/interface.c:1955 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Enable Chinese CP936 detection and recoding"
-msgstr ""
+msgstr "Kínai CP936 karakterkészlet detektálás és újrakódolás engedélyezése"
 
 #: ../plugins/gtkui/interface.c:1963 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Interface refresh rate (times per second):"
@@ -746,16 +742,15 @@ msgstr "Lejátszó"
 
 #: ../plugins/gtkui/interface.c:2022 ../plugins/gtkui/deadbeef.glade.h:123
 msgid "Close playlists with middle mouse button"
-msgstr ""
+msgstr "Lejátszólista bezárása középső egér gombbal"
 
 #: ../plugins/gtkui/interface.c:2026 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "Draw playing track using bold font"
-msgstr ""
+msgstr "Az éppen játszott dal félkövér betűtípussal"
 
 #: ../plugins/gtkui/interface.c:2030 ../plugins/gtkui/deadbeef.glade.h:125
-#, fuzzy
 msgid "Hide \"Remove From Disk\" context menu item"
-msgstr "Elrejti a \"Törlés a lemezről\" menü elemet"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:2034 ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Auto-name playlists when adding a single folder"
@@ -763,7 +758,7 @@ msgstr "Lejátszási listák automatikus elnevezése egyetlen mappa hozzáadása
 
 #: ../plugins/gtkui/interface.c:2038 ../plugins/gtkui/deadbeef.glade.h:127
 msgid "Auto-resize columns to fit the window"
-msgstr ""
+msgstr "Oszlopok automatikus átméretezése az ablak kitöltéséhez"
 
 #: ../plugins/gtkui/interface.c:2046 ../plugins/gtkui/deadbeef.glade.h:129
 msgid "GUI/Misc"
@@ -870,7 +865,7 @@ msgstr "Proxy jelszó:"
 
 #: ../plugins/gtkui/interface.c:2374 ../plugins/gtkui/deadbeef.glade.h:154
 msgid "HTTP User Agent:"
-msgstr ""
+msgstr "HTTP Felhasználó azonosító:"
 
 #: ../plugins/gtkui/interface.c:2387 ../plugins/gtkui/interface.c:4123
 #: ../plugins/gtkui/deadbeef.glade.h:155
@@ -883,7 +878,7 @@ msgstr "Hálózat"
 
 #: ../plugins/gtkui/interface.c:2404 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "Assigned Hotkeys:"
-msgstr ""
+msgstr "Hozzárendelt gyorsbillentyűk:"
 
 #: ../plugins/gtkui/interface.c:2439 ../plugins/gtkui/interface.c:4284
 #: ../plugins/gtkui/deadbeef.glade.h:158
@@ -897,7 +892,7 @@ msgstr "<Nincs beállítva>"
 
 #: ../plugins/gtkui/interface.c:2452 ../plugins/gtkui/deadbeef.glade.h:160
 msgid "Key combination:"
-msgstr ""
+msgstr "Billentyű kombináció:"
 
 #: ../plugins/gtkui/interface.c:2461 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "Global hotkey"
@@ -910,6 +905,10 @@ msgid ""
 "The changes will NOT be saved\n"
 "if you don't press Apply."
 msgstr ""
+"Használd az Alkalmaz gombot a változások mentéséhez,\n"
+"vagy a Visszavonás gombot a változások elvetéséhez.\n"
+"A változások NEM lesznek mentve\n"
+"amíg nem nyomja meg az Alkalmaz gombot."
 
 #: ../plugins/gtkui/interface.c:2510 ../plugins/gtkui/deadbeef.glade.h:166
 msgid "_Defaults"
@@ -937,10 +936,11 @@ msgstr "Bővítmények"
 msgid "URL:"
 msgstr "URL:"
 
-#: ../plugins/gtkui/interface.c:3228 ../plugins/gtkui/interface.c:4442
+#: ../plugins/gtkui/interface.c:3228 ../plugins/gtkui/interface.c:4414
+#: ../plugins/gtkui/interface.c:4442 ../plugins/gtkui/plcommon.c:806
 #: ../plugins/gtkui/deadbeef.glade.h:172
-msgid "Set custom title"
-msgstr ""
+msgid "Set Custom Title"
+msgstr "Egyedi Cím megadása"
 
 #: ../plugins/gtkui/interface.c:3332 ../plugins/gtkui/deadbeef.glade.h:173
 msgid "Group By ..."
@@ -1041,7 +1041,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:4044 ../plugins/gtkui/deadbeef.glade.h:194
 msgid "Reset to defaults"
-msgstr ""
+msgstr "Alapértékekre állít"
 
 #: ../plugins/gtkui/interface.c:4139 ../plugins/gtkui/deadbeef.glade.h:195
 msgid "Content-Type:"
@@ -1053,7 +1053,7 @@ msgstr "Bővítmények:"
 
 #: ../plugins/gtkui/interface.c:4220 ../plugins/gtkui/deadbeef.glade.h:197
 msgid "Button properties"
-msgstr ""
+msgstr "Gombok beállítása"
 
 #: ../plugins/gtkui/interface.c:4235 ../plugins/gtkui/deadbeef.glade.h:198
 msgid "Color:"
@@ -1073,14 +1073,9 @@ msgstr "Címke:"
 
 #: ../plugins/gtkui/interface.c:4352 ../plugins/gtkui/deadbeef.glade.h:202
 msgid "Select action"
-msgstr ""
+msgstr "Válassz műveletet"
 
-#: ../plugins/gtkui/interface.c:4414 ../plugins/gtkui/plcommon.c:806
-#: ../plugins/gtkui/deadbeef.glade.h:203
-msgid "Set Custom Title"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:4436 ../plugins/gtkui/deadbeef.glade.h:204
+#: ../plugins/gtkui/interface.c:4436 ../plugins/gtkui/deadbeef.glade.h:203
 msgid ""
 "This dialog allows to set custom title for any track. This is most useful "
 "for radio stations. An option to set the custom title is also present in the "
@@ -1098,22 +1093,18 @@ msgid "Track No"
 msgstr "Sáv száma"
 
 #: ../plugins/gtkui/plcommon.c:637
-#, fuzzy
 msgid "Add To Playback Queue"
-msgstr "Hozzáadás a lejátszási sorhoz"
+msgstr "Lejátszólista várakozósorhoz adás"
 
 #: ../plugins/gtkui/plcommon.c:642
-#, fuzzy
 msgid "Remove From Playback Queue"
-msgstr "Törlés a lejátszási sorból"
+msgstr "Lejátszólista várakozósorból törlés"
 
 #: ../plugins/gtkui/plcommon.c:650
-#, fuzzy
 msgid "Reload Metadata"
-msgstr "Metaadat újratöltése"
+msgstr "Metaadatok újratöltése"
 
 #: ../plugins/gtkui/plcommon.c:668
-#, fuzzy
 msgid "Remove From Disk"
 msgstr "Törlés a lemezről"
 
@@ -1164,7 +1155,7 @@ msgstr ""
 
 #: ../plugins/gtkui/prefwin.c:350
 msgid "Are you sure you want to continue without saving?"
-msgstr ""
+msgstr "Valóban szeretné folytatni mentés nélkül?"
 
 #: ../plugins/gtkui/progress.c:56
 msgid "Adding files..."
@@ -1185,7 +1176,7 @@ msgstr "Valóban bezárja az ablakot?"
 #. get value to edit
 #: ../plugins/gtkui/trkproperties.c:299
 msgid "[Multiple values] "
-msgstr ""
+msgstr "[Többszörös értékek]"
 
 #: ../plugins/gtkui/trkproperties.c:490 ../plugins/gtkui/trkproperties.c:502
 #: ../plugins/gtkui/widgets.c:2200
@@ -1199,7 +1190,7 @@ msgstr "Érték"
 
 #: ../plugins/gtkui/trkproperties.c:522
 msgid "[Multiple values]"
-msgstr ""
+msgstr "[Többszörös értékek]"
 
 #: ../plugins/gtkui/trkproperties.c:701
 msgid "Writing tags..."
@@ -1550,7 +1541,7 @@ msgstr "Újramintavételezés minősége (0..2, a nagyobb a jobb)"
 
 #: ../translation/extra.c:37
 msgid "8-bit output (default is 16)"
-msgstr ""
+msgstr "8-bites kimenet (alapértelmezett 16)"
 
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:39
@@ -1559,7 +1550,7 @@ msgstr "Maximális szám hossz (percben)"
 
 #: ../translation/extra.c:40
 msgid "Fadeout length (seconds)"
-msgstr ""
+msgstr "Elhalkítás hossza (másodperc)"
 
 #: ../translation/extra.c:41
 msgid "Play loops nr. of times (if available)"
@@ -1716,7 +1707,7 @@ msgstr "Cél mintavételezési rátája"
 
 #: ../translation/extra.c:94
 msgid "Quality / Algorithm"
-msgstr ""
+msgstr "Minőség / Algoritmus"
 
 #: ../translation/extra.c:95
 msgid "Automatic Samplerate (overrides Target Samplerate)"
@@ -1725,12 +1716,12 @@ msgstr "Automatikus mintavételezi ráta (minden beállítást felülír)"
 #. shellexecui
 #: ../translation/extra.c:97
 msgid "Configure custom shell commands"
-msgstr ""
+msgstr "Egyedi héjparancsok konfigurálása"
 
 #. mpgmad
 #: ../translation/extra.c:99
 msgid "Disable gapless playback (faster scanning)"
-msgstr ""
+msgstr "Szünetmentes (gapless) lejátszás tiltása (gyorsabb keresés)"
 
 #. adplug
 #: ../translation/extra.c:101
@@ -1744,7 +1735,7 @@ msgstr "Surround engedélyezése"
 #: ../plugins/converter/convgui.c:84
 #, c-format
 msgid "[Built-in] %s"
-msgstr ""
+msgstr "[Beépített] %s"
 
 #: ../plugins/converter/convgui.c:130
 msgid "The file already exists. Overwrite?"
@@ -1838,12 +1829,12 @@ msgstr "Kimeneti könyvtár:"
 #: ../plugins/converter/interface.c:110
 #: ../plugins/converter/converter.glade.h:2
 msgid "Write to source track folder"
-msgstr ""
+msgstr "Írás a dal forrás könyvtárába"
 
 #: ../plugins/converter/interface.c:114
 #: ../plugins/converter/converter.glade.h:3
 msgid "Preserve folder structure"
-msgstr ""
+msgstr "Mappa struktúra megtartása"
 
 #: ../plugins/converter/interface.c:122
 #: ../plugins/converter/converter.glade.h:4
@@ -1857,6 +1848,8 @@ msgid ""
 "Extension (e.g. .mp3) will be appended automatically.\n"
 "Leave the field empty for default (%a - %t)."
 msgstr ""
+"A kiterjesztés (pl: .mp3) automatikusan hozzáadódi.\n"
+"Hagy üresen a mezőt az alapértelmezéshez (%a - %t)."
 
 #: ../plugins/converter/interface.c:146
 #: ../plugins/converter/converter.glade.h:8
@@ -1871,12 +1864,12 @@ msgstr ""
 #: ../plugins/converter/interface.c:193
 #: ../plugins/converter/converter.glade.h:10
 msgid "Number of threads:"
-msgstr ""
+msgstr "Szálak száma:"
 
 #: ../plugins/converter/interface.c:206
 #: ../plugins/converter/converter.glade.h:11
 msgid "Output sample format:"
-msgstr ""
+msgstr "Kimeneti minta formátuma:"
 
 #: ../plugins/converter/interface.c:213
 msgid "Keep source format"
@@ -1900,16 +1893,16 @@ msgstr ""
 
 #: ../plugins/converter/interface.c:218
 msgid "32 bit float"
-msgstr ""
+msgstr "32 bit lebegőpontos"
 
 #: ../plugins/converter/interface.c:224
 #: ../plugins/converter/converter.glade.h:18
 msgid "When file exists:"
-msgstr ""
+msgstr "Ha a fájl létezik:"
 
 #: ../plugins/converter/interface.c:231
 msgid "Prompt"
-msgstr ""
+msgstr "Kérdés"
 
 #: ../plugins/converter/interface.c:232
 msgid "Overwrite"
@@ -2041,6 +2034,8 @@ msgid ""
 "Prompt\n"
 "Overwrite"
 msgstr ""
+"Kérdés\n"
+"Felülírás"
 
 #: ../plugins/converter/converter.glade.h:34
 msgid ""
@@ -2109,17 +2104,17 @@ msgstr "Egyedi számok"
 #: ../plugins/shellexecui/interface.c:207
 #: ../plugins/shellexecui/shellexec.glade.h:14
 msgid "Works on single track."
-msgstr ""
+msgstr "Csak egy dalnál működik."
 
 #: ../plugins/shellexecui/interface.c:209
 #: ../plugins/shellexecui/shellexec.glade.h:17
 msgid "Multiple Tracks"
-msgstr ""
+msgstr "Többszörös Sávok"
 
 #: ../plugins/shellexecui/interface.c:212
 #: ../plugins/shellexecui/shellexec.glade.h:16
 msgid "Works on multiple tracks."
-msgstr ""
+msgstr "Működik többszörös sávokon is."
 
 #: ../plugins/shellexecui/interface.c:214
 #: ../plugins/shellexecui/shellexec.glade.h:19
@@ -2161,7 +2156,7 @@ msgstr ""
 
 #: ../plugins/shellexecui/shellexecui.c:96
 msgid "Add Command"
-msgstr ""
+msgstr "Parancs hozzáadása"
 
 #: ../plugins/shellexecui/shellexecui.c:139 ../plugins/gtkui/widgets.c:797
 msgid "Delete"
@@ -2177,15 +2172,15 @@ msgstr "Törlés jóváhagyva"
 
 #: ../plugins/shellexecui/shellexecui.c:229
 msgid "ID must be non-empty and unique.\n"
-msgstr ""
+msgstr "ID nem lehet üres vagy egyedi\n"
 
 #: ../plugins/shellexecui/shellexecui.c:235
 msgid "Title must be non-empty.\n"
-msgstr ""
+msgstr "Cím nem lehet üres.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:241
 msgid "Shell Command must be non-empty.\n"
-msgstr ""
+msgstr "Héjparancs nem lehet üres.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:248
 #: ../plugins/shellexecui/shellexecui.c:252
@@ -2254,7 +2249,7 @@ msgstr ""
 
 #: ../plugins/gtkui/ctmapping.c:199
 msgid "Invalid value(s)."
-msgstr ""
+msgstr "Érvénytelen érték(ek)."
 
 #: ../plugins/gtkui/ctmapping.c:200
 msgid ""
@@ -2302,7 +2297,7 @@ msgstr ""
 
 #: ../plugins/gtkui/widgets.c:1249
 msgid "Lock movement"
-msgstr ""
+msgstr "Mozgatás megakadályozása"
 
 #: ../plugins/gtkui/widgets.c:1534
 msgid "Move tab left"
@@ -2338,11 +2333,11 @@ msgstr ""
 
 #: ../plugins/gtkui/widgets.c:3154
 msgid "Homogeneous"
-msgstr ""
+msgstr "Homogén"
 
 #: ../plugins/gtkui/widgets.c:3194
 msgid "Expand"
-msgstr ""
+msgstr "Kiterjesztés"
 
 #: ../plugins/gtkui/widgets.c:3202
 msgid "Fill"
@@ -2350,11 +2345,11 @@ msgstr "Kitöltés"
 
 #: ../plugins/gtkui/widgets.c:3603
 msgid "Configure button"
-msgstr ""
+msgstr "Gombok beállítása"
 
 #: ../plugins/gtkui/widgets.c:3867
 msgid "Voices:"
-msgstr ""
+msgstr "Hangok:"
 
 #: ../plugins/gtkui/pltmenu.c:62
 msgid "Edit playlist"
@@ -2379,3 +2374,6 @@ msgstr "Név"
 #: ../plugins/pltbrowser/pltbrowser.c:238
 msgid "Playlist browser"
 msgstr "Lejátszólista böngésző"
+
+#~ msgid "Set custom title"
+#~ msgstr "Egyedi cím megadása"

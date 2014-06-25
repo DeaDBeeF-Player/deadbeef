@@ -3,19 +3,20 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Adolfo Jayme Barrientos <fitoschido@ubuntu.com>, 2013
+# Adolfo Jayme Barrientos <fitoschido@ubuntu.com>, 2013
+# Carlos, 2013-2014
 # Charlesles, 2013
 # depaz <depazzz@gmail.com>, 2010
 # Hugo Florentino <sysadmin@cips.cu>, 2010
-# legion1978 <legion1978@gmail.com>, 2013
-# legion1978 <legion1978@gmail.com>, 2013
+# Roony Alvarez <legion1978@gmail.com>, 2013
+# Roony Alvarez <legion1978@gmail.com>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-06-24 20:57+0200\n"
-"PO-Revision-Date: 2013-12-31 10:41+0000\n"
-"Last-Translator: Adolfo Jayme Barrientos <fitoschido@ubuntu.com>\n"
+"POT-Creation-Date: 2014-06-25 19:54+0200\n"
+"PO-Revision-Date: 2014-06-24 18:58+0000\n"
+"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/deadbeef-player/"
 "language/es/)\n"
 "Language: es\n"
@@ -200,9 +201,8 @@ msgid "Seekbar"
 msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:972
-#, fuzzy
 msgid "Playback controls"
-msgstr "Reproducción"
+msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:973
 msgid "Volume bar"
@@ -221,14 +221,10 @@ msgid "Failed to load help file"
 msgstr "Error al cargar el archivo de ayuda"
 
 #: ../plugins/gtkui/gtkui.c:1170
-#, fuzzy
 msgid ""
 "The player is currently running background tasks. If you quit now, the tasks "
 "will be cancelled or interrupted. This may result in data loss."
 msgstr ""
-"El reproductor está actualmente ejecutando tareas en trasfondo. Si sale "
-"ahora, las tareas serán canceladas o interrumpidas. Esto puede ocasionar "
-"pérdida de datos."
 
 #: ../plugins/gtkui/gtkui.c:1172
 msgid "Do you still want to quit?"
@@ -434,9 +430,8 @@ msgid "Stop after current"
 msgstr "Detener al terminar la pista actual"
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
-#, fuzzy
 msgid "Stop after current album"
-msgstr "Detener al terminar la pista actual"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:399 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "Jump to current track"
@@ -686,9 +681,8 @@ msgid "Auto-reset \"Stop after current\""
 msgstr "Auto-resetear \"Detener al terminar la pista actual\""
 
 #: ../plugins/gtkui/interface.c:1849 ../plugins/gtkui/deadbeef.glade.h:107
-#, fuzzy
 msgid "Auto-reset \"Stop after current album\""
-msgstr "Auto-resetear \"Detener al terminar la pista actual\""
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1853 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Playback"
@@ -721,9 +715,8 @@ msgid "Hide system tray icon"
 msgstr "Esconder icono de la bandeja del sistema"
 
 #: ../plugins/gtkui/interface.c:1947 ../plugins/gtkui/deadbeef.glade.h:115
-#, fuzzy
 msgid "Enable Japanese SHIFT-JIS detection and recoding"
-msgstr "Activar la detección y grabación de Chino CP936"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1951 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Enable Russian CP1251 detection and recoding"
@@ -762,9 +755,8 @@ msgid "Draw playing track using bold font"
 msgstr "Resaltar en negritas la pista en reproducción"
 
 #: ../plugins/gtkui/interface.c:2030 ../plugins/gtkui/deadbeef.glade.h:125
-#, fuzzy
 msgid "Hide \"Remove From Disk\" context menu item"
-msgstr "Esconder \"Borrar del disco\" del menú contextual"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:2034 ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Auto-name playlists when adding a single folder"
@@ -949,9 +941,10 @@ msgstr "Complementos"
 msgid "URL:"
 msgstr "URL:"
 
-#: ../plugins/gtkui/interface.c:3228 ../plugins/gtkui/interface.c:4442
+#: ../plugins/gtkui/interface.c:3228 ../plugins/gtkui/interface.c:4414
+#: ../plugins/gtkui/interface.c:4442 ../plugins/gtkui/plcommon.c:806
 #: ../plugins/gtkui/deadbeef.glade.h:172
-msgid "Set custom title"
+msgid "Set Custom Title"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:3332 ../plugins/gtkui/deadbeef.glade.h:173
@@ -1091,12 +1084,7 @@ msgstr "Etiqueta:"
 msgid "Select action"
 msgstr "Seleccione una acción"
 
-#: ../plugins/gtkui/interface.c:4414 ../plugins/gtkui/plcommon.c:806
-#: ../plugins/gtkui/deadbeef.glade.h:203
-msgid "Set Custom Title"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:4436 ../plugins/gtkui/deadbeef.glade.h:204
+#: ../plugins/gtkui/interface.c:4436 ../plugins/gtkui/deadbeef.glade.h:203
 msgid ""
 "This dialog allows to set custom title for any track. This is most useful "
 "for radio stations. An option to set the custom title is also present in the "
@@ -1114,24 +1102,20 @@ msgid "Track No"
 msgstr "Pista n.º"
 
 #: ../plugins/gtkui/plcommon.c:637
-#, fuzzy
 msgid "Add To Playback Queue"
-msgstr "Añadir a cola de reproducción"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:642
-#, fuzzy
 msgid "Remove From Playback Queue"
-msgstr "Quitar de cola de reproducción"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:650
-#, fuzzy
 msgid "Reload Metadata"
-msgstr "Recargar los metadatos"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:668
-#, fuzzy
 msgid "Remove From Disk"
-msgstr "Eliminar del disco"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:1089 ../plugins/gtkui/plcommon.c:1216
 msgid "Add column"
@@ -2195,6 +2179,9 @@ msgid ""
 "contains the menu path like this: \"File/My Command\", where File is the "
 "menu name in the English version.</small>"
 msgstr ""
+"<small>Si desea añadir la orden al menú principal, asegúrese que el título "
+"incluya la ruta al menú de la siguiente forma: \"File/Mi orden\", donde File "
+"es el nombre del menú en la versión inglesa.</small>"
 
 #: ../plugins/shellexecui/shellexecui.c:96
 msgid "Add Command"
