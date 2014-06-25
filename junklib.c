@@ -51,6 +51,9 @@ uint16_t sj_to_unicode[] = {
 #include <unistd.h>
 #include <assert.h>
 #include <fcntl.h>
+#ifndef __linux__
+#define O_LARGEFILE 0
+#endif
 #include <sys/stat.h>
 #include "playlist.h"
 #include "utf8.h"
