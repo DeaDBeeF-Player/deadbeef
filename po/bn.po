@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-06-25 19:54+0200\n"
-"PO-Revision-Date: 2013-11-20 09:49+0000\n"
-"Last-Translator: waker <wakeroid@gmail.com>\n"
+"PO-Revision-Date: 2014-06-25 17:55+0000\n"
+"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Bengali (http://www.transifex.com/projects/p/deadbeef-player/"
 "language/bn/)\n"
 "Language: bn\n"
@@ -197,9 +197,8 @@ msgid "Seekbar"
 msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:972
-#, fuzzy
 msgid "Playback controls"
-msgstr "প্লেব্যাক (_P)"
+msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:973
 msgid "Volume bar"
@@ -427,9 +426,8 @@ msgid "Stop after current"
 msgstr "বর্তমানটি হয়ে যাওয়ার পর থামুন"
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
-#, fuzzy
 msgid "Stop after current album"
-msgstr "বর্তমানটি হয়ে যাওয়ার পর থামুন"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:399 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "Jump to current track"
@@ -677,9 +675,8 @@ msgid "Auto-reset \"Stop after current\""
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:1849 ../plugins/gtkui/deadbeef.glade.h:107
-#, fuzzy
 msgid "Auto-reset \"Stop after current album\""
-msgstr "বর্তমানটি হয়ে যাওয়ার পর থামুন"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1853 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Playback"
@@ -1091,24 +1088,20 @@ msgid "Track No"
 msgstr "ট্র্যাক নং"
 
 #: ../plugins/gtkui/plcommon.c:637
-#, fuzzy
 msgid "Add To Playback Queue"
-msgstr "প্লেব্যাকের সারিতে যোগ করুন"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:642
-#, fuzzy
 msgid "Remove From Playback Queue"
-msgstr "প্লেব্যাক সারি থেকে অপসারণ করুন"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:650
-#, fuzzy
 msgid "Reload Metadata"
-msgstr "মেটাডাটা পুনরায় লোড করুন"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:668
-#, fuzzy
 msgid "Remove From Disk"
-msgstr "ডিস্ক থেকে অপসারণ করুন"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:1089 ../plugins/gtkui/plcommon.c:1216
 msgid "Add column"

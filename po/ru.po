@@ -5,6 +5,7 @@
 # Translators:
 # Alexey Yakovenko <wakeroid@gmail.com>, 2013-2014
 # Andrei Stepanov, 2014
+# Andrei Stepanov, 2014
 # Dmitriy Simbiriatin <slpiv@mail.ru>, 2010
 # Alexey Yakovenko <wakeroid@gmail.com>, 2013
 msgid ""
@@ -12,7 +13,7 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-06-25 19:54+0200\n"
-"PO-Revision-Date: 2014-06-25 17:49+0000\n"
+"PO-Revision-Date: 2014-06-25 17:59+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/deadbeef-player/"
 "language/ru/)\n"
@@ -961,7 +962,7 @@ msgstr "Присвоить собственное название"
 
 #: ../plugins/gtkui/interface.c:3332 ../plugins/gtkui/deadbeef.glade.h:173
 msgid "Group By ..."
-msgstr "Группировать По ..."
+msgstr "Группировать по ..."
 
 #: ../plugins/gtkui/interface.c:3456 ../plugins/gtkui/deadbeef.glade.h:174
 msgid "Sort by ..."
@@ -1129,23 +1130,23 @@ msgstr "Удалить из очереди воспроизведения"
 
 #: ../plugins/gtkui/plcommon.c:650
 msgid "Reload Metadata"
-msgstr "Обновить Метаданные"
+msgstr "Обновить метаданные"
 
 #: ../plugins/gtkui/plcommon.c:668
 msgid "Remove From Disk"
-msgstr "Удалить С Диска"
+msgstr "Удалить с диска"
 
 #: ../plugins/gtkui/plcommon.c:1089 ../plugins/gtkui/plcommon.c:1216
 msgid "Add column"
-msgstr "Добавить столбец"
+msgstr "Добавить колонку"
 
 #: ../plugins/gtkui/plcommon.c:1119 ../plugins/gtkui/plcommon.c:1220
 msgid "Edit column"
-msgstr "Редактировать столбец"
+msgstr "Редактировать колонку"
 
 #: ../plugins/gtkui/plcommon.c:1224
 msgid "Remove column"
-msgstr "Удалить столбец"
+msgstr "Удалить колонку"
 
 #: ../plugins/gtkui/plcommon.c:1234
 msgid "Pin groups when scrolling"
@@ -2433,6 +2434,3 @@ msgstr "Название"
 #: ../plugins/pltbrowser/pltbrowser.c:238
 msgid "Playlist browser"
 msgstr "Браузер плейлистов"
-
-#~ msgid "Set custom title"
-#~ msgstr "Присвоить собственное название"

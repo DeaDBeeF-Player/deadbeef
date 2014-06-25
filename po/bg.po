@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-06-25 19:54+0200\n"
-"PO-Revision-Date: 2013-11-20 09:49+0000\n"
-"Last-Translator: waker <wakeroid@gmail.com>\n"
+"PO-Revision-Date: 2014-06-25 17:55+0000\n"
+"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Bulgarian (http://www.transifex.com/projects/p/deadbeef-"
 "player/language/bg/)\n"
 "Language: bg\n"
@@ -193,9 +193,8 @@ msgid "Seekbar"
 msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:972
-#, fuzzy
 msgid "Playback controls"
-msgstr "Възпроизвеждане"
+msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:973
 msgid "Volume bar"
@@ -423,9 +422,8 @@ msgid "Stop after current"
 msgstr "Спри след текущото"
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
-#, fuzzy
 msgid "Stop after current album"
-msgstr "Спри след текущото"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:399 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "Jump to current track"
@@ -675,9 +673,8 @@ msgid "Auto-reset \"Stop after current\""
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:1849 ../plugins/gtkui/deadbeef.glade.h:107
-#, fuzzy
 msgid "Auto-reset \"Stop after current album\""
-msgstr "Спри след текущото"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1853 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Playback"
@@ -750,9 +747,8 @@ msgid "Draw playing track using bold font"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:2030 ../plugins/gtkui/deadbeef.glade.h:125
-#, fuzzy
 msgid "Hide \"Remove From Disk\" context menu item"
-msgstr "Скриване на елемент от менюто - \"Изтриване от Диска\""
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:2034 ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Auto-name playlists when adding a single folder"
@@ -1092,24 +1088,20 @@ msgid "Track No"
 msgstr "Номер на Песента"
 
 #: ../plugins/gtkui/plcommon.c:637
-#, fuzzy
 msgid "Add To Playback Queue"
-msgstr "Добави в опашката за изпълнение"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:642
-#, fuzzy
 msgid "Remove From Playback Queue"
-msgstr "Премахни от опашката за изпълнение"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:650
-#, fuzzy
 msgid "Reload Metadata"
-msgstr "Презареди метаданните"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:668
-#, fuzzy
 msgid "Remove From Disk"
-msgstr "Прехани от носителя"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:1089 ../plugins/gtkui/plcommon.c:1216
 msgid "Add column"

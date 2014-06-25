@@ -3,18 +3,18 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# ppanhh <vietnamesel10n@gmail.com>, 2013
-# Duy Hung Tran <nguyentieuhau@gmail.com>, 2010
-# ppanhh <vietnamesel10n@gmail.com>, 2013
-# ppanhh <vietnamesel10n@gmail.com>, 2013
-# Duy Hung Tran <nguyentieuhau@gmail.com>, 2010
+# Anh Phan <vietnamesel10n@gmail.com>, 2013
+# TRAN Duy Hung <nguyentieuhau@gmail.com>, 2010
+# Anh Phan <vietnamesel10n@gmail.com>, 2013
+# Anh Phan <vietnamesel10n@gmail.com>, 2013
+# TRAN Duy Hung <nguyentieuhau@gmail.com>, 2010
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-06-25 19:54+0200\n"
-"PO-Revision-Date: 2013-11-20 09:49+0000\n"
-"Last-Translator: waker <wakeroid@gmail.com>\n"
+"PO-Revision-Date: 2014-06-25 17:55+0000\n"
+"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Vietnamese (http://www.transifex.com/projects/p/deadbeef-"
 "player/language/vi/)\n"
 "Language: vi\n"
@@ -198,9 +198,8 @@ msgid "Seekbar"
 msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:972
-#, fuzzy
 msgid "Playback controls"
-msgstr "Phát lạ_i"
+msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:973
 msgid "Volume bar"
@@ -428,9 +427,8 @@ msgid "Stop after current"
 msgstr "Dừng sau khi kết thúc bài hiện tại"
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
-#, fuzzy
 msgid "Stop after current album"
-msgstr "Dừng sau khi kết thúc bài hiện tại"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:399 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "Jump to current track"
@@ -678,9 +676,8 @@ msgid "Auto-reset \"Stop after current\""
 msgstr "Tự động-cài đặt lại \"Dừng lại sau đối tượng hiện tại\""
 
 #: ../plugins/gtkui/interface.c:1849 ../plugins/gtkui/deadbeef.glade.h:107
-#, fuzzy
 msgid "Auto-reset \"Stop after current album\""
-msgstr "Tự động-cài đặt lại \"Dừng lại sau đối tượng hiện tại\""
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1853 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Playback"
@@ -753,9 +750,8 @@ msgid "Draw playing track using bold font"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:2030 ../plugins/gtkui/deadbeef.glade.h:125
-#, fuzzy
 msgid "Hide \"Remove From Disk\" context menu item"
-msgstr "Ẩn đối tượng \"Xóa khỏi ổ đĩa\" từ menu ngữ cảnh"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:2034 ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Auto-name playlists when adding a single folder"
@@ -1101,14 +1097,12 @@ msgid "Remove From Playback Queue"
 msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:650
-#, fuzzy
 msgid "Reload Metadata"
-msgstr "Metadata"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:668
-#, fuzzy
 msgid "Remove From Disk"
-msgstr "Xóa khỏi đĩa"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:1089 ../plugins/gtkui/plcommon.c:1216
 msgid "Add column"

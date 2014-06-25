@@ -3,8 +3,8 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# brli7848 <rainman59118@gmail.com>, 2013
-# brli7848 <rainman59118@gmail.com>, 2013
+# BrLi <rainman59118@gmail.com>, 2013
+# BrLi <rainman59118@gmail.com>, 2013
 # PCMan <pcman.tw@gmail.com>, 2010
 # PCMan <pcman.tw@gmail.com>, 2010
 msgid ""
@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-06-25 19:54+0200\n"
-"PO-Revision-Date: 2013-12-16 07:57+0000\n"
-"Last-Translator: brli7848 <rainman59118@gmail.com>\n"
+"PO-Revision-Date: 2014-06-25 17:55+0000\n"
+"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) (http://www.transifex.com/projects/p/"
 "deadbeef-player/language/zh_TW/)\n"
 "Language: zh_TW\n"
@@ -198,9 +198,8 @@ msgid "Seekbar"
 msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:972
-#, fuzzy
 msgid "Playback controls"
-msgstr "播放"
+msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:973
 msgid "Volume bar"
@@ -428,9 +427,8 @@ msgid "Stop after current"
 msgstr "播放當前歌曲後停止"
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
-#, fuzzy
 msgid "Stop after current album"
-msgstr "播放當前歌曲後停止"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:399 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "Jump to current track"
@@ -678,9 +676,8 @@ msgid "Auto-reset \"Stop after current\""
 msgstr "自動重設「播放當前歌曲後停止」"
 
 #: ../plugins/gtkui/interface.c:1849 ../plugins/gtkui/deadbeef.glade.h:107
-#, fuzzy
 msgid "Auto-reset \"Stop after current album\""
-msgstr "自動重設「播放當前歌曲後停止」"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1853 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Playback"
@@ -713,9 +710,8 @@ msgid "Hide system tray icon"
 msgstr "隱藏系統匣圖示"
 
 #: ../plugins/gtkui/interface.c:1947 ../plugins/gtkui/deadbeef.glade.h:115
-#, fuzzy
 msgid "Enable Japanese SHIFT-JIS detection and recoding"
-msgstr "啟用中文 CP936 偵測與重新編碼"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1951 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Enable Russian CP1251 detection and recoding"
@@ -754,9 +750,8 @@ msgid "Draw playing track using bold font"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:2030 ../plugins/gtkui/deadbeef.glade.h:125
-#, fuzzy
 msgid "Hide \"Remove From Disk\" context menu item"
-msgstr "隱藏「自磁碟刪除」境況選單項目"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:2034 ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Auto-name playlists when adding a single folder"
@@ -1094,24 +1089,20 @@ msgid "Track No"
 msgstr "歌曲編號"
 
 #: ../plugins/gtkui/plcommon.c:637
-#, fuzzy
 msgid "Add To Playback Queue"
-msgstr "加入至播放佇列"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:642
-#, fuzzy
 msgid "Remove From Playback Queue"
-msgstr "自播放佇列移除"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:650
-#, fuzzy
 msgid "Reload Metadata"
-msgstr "重讀元數據"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:668
-#, fuzzy
 msgid "Remove From Disk"
-msgstr "自磁碟移除"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:1089 ../plugins/gtkui/plcommon.c:1216
 msgid "Add column"
