@@ -3225,7 +3225,7 @@ create_addlocationdlg (void)
   hbox122 = gtk_hbox_new (FALSE, 8);
   gtk_box_pack_start (GTK_BOX (vbox45), hbox122, TRUE, TRUE, 0);
 
-  set_custom_title = gtk_check_button_new_with_mnemonic (_("Set custom title"));
+  set_custom_title = gtk_check_button_new_with_mnemonic (_("Set Custom Title"));
   gtk_widget_show (set_custom_title);
   gtk_box_pack_start (GTK_BOX (hbox122), set_custom_title, FALSE, FALSE, 0);
 
