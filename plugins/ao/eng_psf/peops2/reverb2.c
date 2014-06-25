@@ -134,7 +134,7 @@ INLINE void s_buffer1(spu2_state_t *spu, int iOff,int iVal,int core)      // set
 
 ////////////////////////////////////////////////////////////////////////
 
-INLINE int MixREVERBLeft(spu2_state_t *spu, int ns,int core)
+static INLINE int MixREVERBLeft(spu2_state_t *spu, int ns,int core)
 {
  if(spu->iUseReverb==1)
   {
