@@ -3,13 +3,13 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Sérgio Marques <smarquespt@gmail.com>, 2013
+# Sérgio Marques <smarquespt@gmail.com>, 2013-2014
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-06-24 20:57+0200\n"
-"PO-Revision-Date: 2013-11-20 09:50+0000\n"
+"POT-Creation-Date: 2014-06-25 19:54+0200\n"
+"PO-Revision-Date: 2014-06-24 22:55+0000\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/projects/p/deadbeef-"
 "player/language/pt/)\n"
@@ -192,16 +192,15 @@ msgstr "Botão"
 
 #: ../plugins/gtkui/gtkui.c:971
 msgid "Seekbar"
-msgstr ""
+msgstr "Barra de procura"
 
 #: ../plugins/gtkui/gtkui.c:972
-#, fuzzy
 msgid "Playback controls"
-msgstr "Reprodução"
+msgstr "Controlos de reprodução"
 
 #: ../plugins/gtkui/gtkui.c:973
 msgid "Volume bar"
-msgstr ""
+msgstr "Barra de volume"
 
 #: ../plugins/gtkui/gtkui.c:974
 msgid "Chiptune voices"
@@ -216,13 +215,12 @@ msgid "Failed to load help file"
 msgstr "Falha ao carregar a ajuda"
 
 #: ../plugins/gtkui/gtkui.c:1170
-#, fuzzy
 msgid ""
 "The player is currently running background tasks. If you quit now, the tasks "
 "will be cancelled or interrupted. This may result in data loss."
 msgstr ""
-"A aplicação está a ser executada em segundo plano. Se a fechar, as tarefas "
-"serão canceladas e interrompidas. Pode perder dados."
+"A aplicação está a executar ações em segundo plano. Se sair agora, as "
+"tarefas serão canceladas ou interrompidas. Poderá provocar a perda de dados."
 
 #: ../plugins/gtkui/gtkui.c:1172
 msgid "Do you still want to quit?"
@@ -428,9 +426,8 @@ msgid "Stop after current"
 msgstr "Parar após a faixa atual"
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
-#, fuzzy
 msgid "Stop after current album"
-msgstr "Parar após a faixa atual"
+msgstr "Parar após o álbum atual"
 
 #: ../plugins/gtkui/interface.c:399 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "Jump to current track"
@@ -680,9 +677,8 @@ msgid "Auto-reset \"Stop after current\""
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:1849 ../plugins/gtkui/deadbeef.glade.h:107
-#, fuzzy
 msgid "Auto-reset \"Stop after current album\""
-msgstr "Parar após a faixa atual"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1853 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Playback"
@@ -715,9 +711,8 @@ msgid "Hide system tray icon"
 msgstr "Ocultar ícone da área de notificação"
 
 #: ../plugins/gtkui/interface.c:1947 ../plugins/gtkui/deadbeef.glade.h:115
-#, fuzzy
 msgid "Enable Japanese SHIFT-JIS detection and recoding"
-msgstr "Ativar deteção e codificação de Mandarim CP936"
+msgstr "Ativar deteção e codificação de SHIFT-JIS japonês"
 
 #: ../plugins/gtkui/interface.c:1951 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Enable Russian CP1251 detection and recoding"
@@ -756,9 +751,8 @@ msgid "Draw playing track using bold font"
 msgstr "Utilizar letra a negrito para a faixa em reprodução"
 
 #: ../plugins/gtkui/interface.c:2030 ../plugins/gtkui/deadbeef.glade.h:125
-#, fuzzy
 msgid "Hide \"Remove From Disk\" context menu item"
-msgstr "Ocultar item de menu \"Eliminar do disco\""
+msgstr "Ocultar item de menu \"Remover do disco\""
 
 #: ../plugins/gtkui/interface.c:2034 ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Auto-name playlists when adding a single folder"
@@ -943,10 +937,11 @@ msgstr "Extras"
 msgid "URL:"
 msgstr "URL:"
 
-#: ../plugins/gtkui/interface.c:3228 ../plugins/gtkui/interface.c:4442
+#: ../plugins/gtkui/interface.c:3228 ../plugins/gtkui/interface.c:4414
+#: ../plugins/gtkui/interface.c:4442 ../plugins/gtkui/plcommon.c:806
 #: ../plugins/gtkui/deadbeef.glade.h:172
-msgid "Set custom title"
-msgstr ""
+msgid "Set Custom Title"
+msgstr "Definir título personalizado"
 
 #: ../plugins/gtkui/interface.c:3332 ../plugins/gtkui/deadbeef.glade.h:173
 msgid "Group By ..."
@@ -1085,12 +1080,7 @@ msgstr "Etiqueta:"
 msgid "Select action"
 msgstr "Escolha a ação"
 
-#: ../plugins/gtkui/interface.c:4414 ../plugins/gtkui/plcommon.c:806
-#: ../plugins/gtkui/deadbeef.glade.h:203
-msgid "Set Custom Title"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:4436 ../plugins/gtkui/deadbeef.glade.h:204
+#: ../plugins/gtkui/interface.c:4436 ../plugins/gtkui/deadbeef.glade.h:203
 msgid ""
 "This dialog allows to set custom title for any track. This is most useful "
 "for radio stations. An option to set the custom title is also present in the "
@@ -1098,6 +1088,12 @@ msgid ""
 "the \"Artist\" metadata field. It should look like \"[custom] artist\" if "
 "the Artist field is present, or just \"custom\" otherwise."
 msgstr ""
+"Este diálogo permite-lhe definir um título personalizado para qualquer "
+"faixa. Pode ser útil para estações de rádio. A opção para definir o título "
+"personalizado também está disponível no diálogo \"Adicionar localização\". O "
+"título estará visível na coluna \"Artista\". Deverá aparecer \"artista "
+"[personalizado]\" se o campo Artista estiver presente e se não estiver "
+"aparece \"personalizado\"."
 
 #: ../plugins/gtkui/mainplaylist.c:353 ../plugins/gtkui/search.c:419
 msgid "Artist / Album"
@@ -1108,22 +1104,18 @@ msgid "Track No"
 msgstr "Faixa n.º"
 
 #: ../plugins/gtkui/plcommon.c:637
-#, fuzzy
 msgid "Add To Playback Queue"
 msgstr "Adicionar à fila de reprodução"
 
 #: ../plugins/gtkui/plcommon.c:642
-#, fuzzy
 msgid "Remove From Playback Queue"
 msgstr "Remover da fila de reprodução"
 
 #: ../plugins/gtkui/plcommon.c:650
-#, fuzzy
 msgid "Reload Metadata"
-msgstr "Recarregar detalhes"
+msgstr "Recarregar meta-dados"
 
 #: ../plugins/gtkui/plcommon.c:668
-#, fuzzy
 msgid "Remove From Disk"
 msgstr "Remover do disco"
 
@@ -1759,7 +1751,7 @@ msgstr "Ativar \"surround\""
 #: ../plugins/converter/convgui.c:84
 #, c-format
 msgid "[Built-in] %s"
-msgstr ""
+msgstr "[Nativo] %s"
 
 #: ../plugins/converter/convgui.c:130
 msgid "The file already exists. Overwrite?"
@@ -2313,7 +2305,7 @@ msgstr "Nada selecionado."
 #: ../plugins/gtkui/widgets.c:444
 #, c-format
 msgid "Widget \"%s\" is not available"
-msgstr ""
+msgstr "O widget %s não está disponível"
 
 #: ../plugins/gtkui/widgets.c:772
 msgid "Replace with..."
@@ -2393,7 +2385,7 @@ msgstr "Configurar botão"
 
 #: ../plugins/gtkui/widgets.c:3867
 msgid "Voices:"
-msgstr ""
+msgstr "Vozes:"
 
 #: ../plugins/gtkui/pltmenu.c:62
 msgid "Edit playlist"
@@ -2418,3 +2410,6 @@ msgstr "Nome"
 #: ../plugins/pltbrowser/pltbrowser.c:238
 msgid "Playlist browser"
 msgstr "Explorador de listas de reprodução"
+
+#~ msgid "Set custom title"
+#~ msgstr "Definir título personalizado"

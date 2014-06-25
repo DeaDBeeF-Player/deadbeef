@@ -3,13 +3,13 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Wylmer Wang <wantinghard@gmail.com>, 2013
+# Wylmer Wang <wantinghard@gmail.com>, 2013-2014
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-06-24 20:57+0200\n"
-"PO-Revision-Date: 2013-11-28 12:54+0000\n"
+"POT-Creation-Date: 2014-06-25 19:54+0200\n"
+"PO-Revision-Date: 2014-06-25 10:41+0000\n"
 "Last-Translator: Wylmer Wang <wantinghard@gmail.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/projects/p/deadbeef-"
 "player/language/zh_CN/)\n"
@@ -191,20 +191,19 @@ msgstr "按钮"
 
 #: ../plugins/gtkui/gtkui.c:971
 msgid "Seekbar"
-msgstr ""
+msgstr "定位条"
 
 #: ../plugins/gtkui/gtkui.c:972
-#, fuzzy
 msgid "Playback controls"
-msgstr "回放"
+msgstr "播放控制"
 
 #: ../plugins/gtkui/gtkui.c:973
 msgid "Volume bar"
-msgstr ""
+msgstr "音量条"
 
 #: ../plugins/gtkui/gtkui.c:974
 msgid "Chiptune voices"
-msgstr ""
+msgstr "芯片合成语音"
 
 #: ../plugins/gtkui/gtkui.c:1149
 msgid "Failed while reading help file"
@@ -215,7 +214,6 @@ msgid "Failed to load help file"
 msgstr "加入帮助文件失败"
 
 #: ../plugins/gtkui/gtkui.c:1170
-#, fuzzy
 msgid ""
 "The player is currently running background tasks. If you quit now, the tasks "
 "will be cancelled or interrupted. This may result in data loss."
@@ -427,9 +425,8 @@ msgid "Stop after current"
 msgstr "当前曲目后停止"
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
-#, fuzzy
 msgid "Stop after current album"
-msgstr "当前曲目后停止"
+msgstr "当前专辑后停止"
 
 #: ../plugins/gtkui/interface.c:399 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "Jump to current track"
@@ -677,9 +674,8 @@ msgid "Auto-reset \"Stop after current\""
 msgstr "自动复位“当前曲目后停止”"
 
 #: ../plugins/gtkui/interface.c:1849 ../plugins/gtkui/deadbeef.glade.h:107
-#, fuzzy
 msgid "Auto-reset \"Stop after current album\""
-msgstr "自动复位“当前曲目后停止”"
+msgstr "自动复位“当前专辑后停止”"
 
 #: ../plugins/gtkui/interface.c:1853 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Playback"
@@ -712,9 +708,8 @@ msgid "Hide system tray icon"
 msgstr "隐藏系统托盘图标"
 
 #: ../plugins/gtkui/interface.c:1947 ../plugins/gtkui/deadbeef.glade.h:115
-#, fuzzy
 msgid "Enable Japanese SHIFT-JIS detection and recoding"
-msgstr "启用中文 Chinese CP936 编码检测和重新编码"
+msgstr "启用日文 SHIFT-JIS 编码检测和重新编码"
 
 #: ../plugins/gtkui/interface.c:1951 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Enable Russian CP1251 detection and recoding"
@@ -753,9 +748,8 @@ msgid "Draw playing track using bold font"
 msgstr "用粗体显示正在播放的音轨"
 
 #: ../plugins/gtkui/interface.c:2030 ../plugins/gtkui/deadbeef.glade.h:125
-#, fuzzy
 msgid "Hide \"Remove From Disk\" context menu item"
-msgstr "隐藏“从磁盘删除”右键菜单项"
+msgstr "隐藏“从磁盘移除”右键菜单项"
 
 #: ../plugins/gtkui/interface.c:2034 ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Auto-name playlists when adding a single folder"
@@ -939,10 +933,11 @@ msgstr "插件"
 msgid "URL:"
 msgstr "URL："
 
-#: ../plugins/gtkui/interface.c:3228 ../plugins/gtkui/interface.c:4442
+#: ../plugins/gtkui/interface.c:3228 ../plugins/gtkui/interface.c:4414
+#: ../plugins/gtkui/interface.c:4442 ../plugins/gtkui/plcommon.c:806
 #: ../plugins/gtkui/deadbeef.glade.h:172
-msgid "Set custom title"
-msgstr ""
+msgid "Set Custom Title"
+msgstr "自定义标题"
 
 #: ../plugins/gtkui/interface.c:3332 ../plugins/gtkui/deadbeef.glade.h:173
 msgid "Group By ..."
@@ -1080,12 +1075,7 @@ msgstr "标签："
 msgid "Select action"
 msgstr "选择操作"
 
-#: ../plugins/gtkui/interface.c:4414 ../plugins/gtkui/plcommon.c:806
-#: ../plugins/gtkui/deadbeef.glade.h:203
-msgid "Set Custom Title"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:4436 ../plugins/gtkui/deadbeef.glade.h:204
+#: ../plugins/gtkui/interface.c:4436 ../plugins/gtkui/deadbeef.glade.h:203
 msgid ""
 "This dialog allows to set custom title for any track. This is most useful "
 "for radio stations. An option to set the custom title is also present in the "
@@ -1093,6 +1083,9 @@ msgid ""
 "the \"Artist\" metadata field. It should look like \"[custom] artist\" if "
 "the Artist field is present, or just \"custom\" otherwise."
 msgstr ""
+"这一对话框可以自定义任何音轨的标题。这对电台最有用。“添加位置”对话框也有一个"
+"选项来设置自定义标题。标题将出现在显示“艺人”元数据的列中。它会显示为“[自定"
+"义] 艺人”(如果有“艺人”字段)，或“自定义”。"
 
 #: ../plugins/gtkui/mainplaylist.c:353 ../plugins/gtkui/search.c:419
 msgid "Artist / Album"
@@ -1103,24 +1096,20 @@ msgid "Track No"
 msgstr "音轨号"
 
 #: ../plugins/gtkui/plcommon.c:637
-#, fuzzy
 msgid "Add To Playback Queue"
-msgstr "添加到播放列表"
+msgstr "添加到播放队列"
 
 #: ../plugins/gtkui/plcommon.c:642
-#, fuzzy
 msgid "Remove From Playback Queue"
 msgstr "从播放队列中移除"
 
 #: ../plugins/gtkui/plcommon.c:650
-#, fuzzy
 msgid "Reload Metadata"
 msgstr "重新载入元数据"
 
 #: ../plugins/gtkui/plcommon.c:668
-#, fuzzy
 msgid "Remove From Disk"
-msgstr "从磁盘中删除"
+msgstr "从磁盘中移除"
 
 #: ../plugins/gtkui/plcommon.c:1089 ../plugins/gtkui/plcommon.c:1216
 msgid "Add column"
@@ -1745,7 +1734,7 @@ msgstr "启用环绕效果"
 #: ../plugins/converter/convgui.c:84
 #, c-format
 msgid "[Built-in] %s"
-msgstr ""
+msgstr "[内建] %s"
 
 #: ../plugins/converter/convgui.c:130
 msgid "The file already exists. Overwrite?"
@@ -2295,7 +2284,7 @@ msgstr "没有选择项目。"
 #: ../plugins/gtkui/widgets.c:444
 #, c-format
 msgid "Widget \"%s\" is not available"
-msgstr ""
+msgstr "“%s”部件不可用"
 
 #: ../plugins/gtkui/widgets.c:772
 msgid "Replace with..."
@@ -2375,7 +2364,7 @@ msgstr "配置按钮"
 
 #: ../plugins/gtkui/widgets.c:3867
 msgid "Voices:"
-msgstr ""
+msgstr "语音："
 
 #: ../plugins/gtkui/pltmenu.c:62
 msgid "Edit playlist"
@@ -2400,3 +2389,6 @@ msgstr "名称"
 #: ../plugins/pltbrowser/pltbrowser.c:238
 msgid "Playlist browser"
 msgstr "播放列表浏览器"
+
+#~ msgid "Set custom title"
+#~ msgstr "自定义标题"
