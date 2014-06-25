@@ -1,0 +1,3882 @@
+/*
+    DeaDBeeF - ultimate music player for GNU/Linux systems with X11
+    Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 2
+    of the License, or (at your option) any later version.
+    
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*/
+
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
+#include <math.h>
+#include "gtkui.h"
+#include "interface.h"
+#include "support.h"
+#include "widgets.h"
+#include "ddbtabstrip.h"
+#include "ddblistview.h"
+#include "mainplaylist.h"
+#include "../libparser/parser.h"
+#include "trkproperties.h"
+#include "coverart.h"
+#if USE_OPENGL
+#include "gtkuigl.h"
+#endif
+#include "namedicons.h"
+#include "hotkeys.h" // for building action treeview
+#include "../../strdupa.h"
+#include "../../fastftoi.h"
+#include "actions.h"
+#include "ddbseekbar.h"
+#include "ddbvolumebar.h"
+#include "callbacks.h"
+
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
+
+#define min(x,y) ((x)<(y)?(x):(y))
+#define max(x,y) ((x)>(y)?(x):(y))
+
+
+// utility code for parsing keyvalues
+#define get_keyvalue(s,key,val) {\
+    s = gettoken_ext (s, key, "={}();");\
+    if (!s) {\
+        return NULL;\
+    }\
+    if (s && !strcmp (key, "{")) {\
+        break;\
+    }\
+    s = gettoken_ext (s, val, "={}();");\
+    if (!s || strcmp (val, "=")) {\
+        return NULL;\
+    }\
+    s = gettoken_ext (s, val, "={}();");\
+    if (!s) {\
+        return NULL;\
+    }\
+}
+
+typedef struct w_creator_s {
+    const char *type;
+    const char *title; // set to NULL to avoid exposing this widget type to user
+    uint32_t flags;
+    int compat; // when this is set to 1 -- it's a backwards compatibility creator, and must be skipped in GUI
+    ddb_gtkui_widget_t *(*create_func) (void);
+    struct w_creator_s *next;
+} w_creator_t;
+
+static w_creator_t *w_creators;
+
+typedef struct {
+    ddb_gtkui_widget_t base;
+    GtkWidget *label;
+    char *text;
+} w_dummy_t;
+
+typedef struct {
+    ddb_gtkui_widget_t base;
+    GtkWidget *box;
+    int position;
+    int locked;
+} w_splitter_t;
+
+typedef struct {
+    ddb_gtkui_widget_t base;
+} w_box_t;
+
+typedef struct {
+    ddb_gtkui_widget_t base;
+    GtkWidget *tabstrip;
+} w_tabstrip_t;
+
+typedef struct {
+    ddb_gtkui_widget_t base;
+    DdbListview *list;
+    int hideheaders;
+} w_playlist_t;
+
+typedef struct {
+    w_playlist_t plt;
+    DdbTabStrip *tabstrip;
+} w_tabbed_playlist_t;
+
+typedef struct {
+    ddb_gtkui_widget_t base;
+    GtkWidget *drawarea;
+} w_placeholder_t;
+
+typedef struct {
+    ddb_gtkui_widget_t base;
+    int clicked_page;
+} w_tabs_t;
+
+typedef struct {
+    ddb_gtkui_widget_t base;
+    GtkWidget *tree;
+} w_selproperties_t;
+
+typedef struct {
+    ddb_gtkui_widget_t base;
+    GtkWidget *drawarea;
+    int cover_size;
+    int new_cover_size;
+    guint cover_refresh_timeout_id;
+} w_coverart_t;
+
+typedef struct {
+    ddb_gtkui_widget_t base;
+    GtkWidget *drawarea;
+    guint drawtimer;
+#if USE_OPENGL
+    GdkGLContext *glcontext;
+#endif
+    float *samples;
+    int nsamples;
+    int resized;
+    intptr_t mutex;
+    cairo_surface_t *surf;
+} w_scope_t;
+
+// spectrum analyzer based on cairo-spectrum from audacious
+// Copyright (c) 2011 William Pitcock <nenolod@dereferenced.org>
+#define MAX_BANDS DDB_FREQ_BANDS
+#define VIS_DELAY 1
+#define VIS_DELAY_PEAK 10
+#define VIS_FALLOFF 1
+#define VIS_FALLOFF_PEAK 1
+#define BAND_WIDTH 20
+typedef struct {
+    ddb_gtkui_widget_t base;
+    GtkWidget *drawarea;
+    guint drawtimer;
+#if USE_OPENGL
+    GdkGLContext *glcontext;
+#endif
+    float data[DDB_FREQ_BANDS * DDB_FREQ_MAX_CHANNELS];
+    float xscale[MAX_BANDS + 1];
+    int bars[MAX_BANDS + 1];
+    int delay[MAX_BANDS + 1];
+    int peaks[MAX_BANDS + 1];
+    int delay_peak[MAX_BANDS + 1];
+    cairo_surface_t *surf;
+} w_spectrum_t;
+
+typedef struct {
+    ddb_gtkui_widget_t base;
+    GtkWidget *box;
+    uint64_t expand;
+    uint64_t fill;
+    unsigned homogeneous : 1;
+} w_hvbox_t;
+
+typedef struct {
+    ddb_gtkui_widget_t base;
+    GtkWidget *button;
+    GtkWidget *alignment;
+    GdkColor color;
+    GdkColor textcolor;
+    char *icon;
+    char *label;
+    char *action;
+    int action_ctx;
+    unsigned use_color : 1;
+    unsigned use_textcolor : 1;
+} w_button_t;
+
+typedef struct {
+    ddb_gtkui_widget_t base;
+    GtkWidget *seekbar;
+    gint timer;
+    float last_songpos;
+} w_seekbar_t;
+
+typedef struct {
+    ddb_gtkui_widget_t base;
+} w_playtb_t;
+
+typedef struct {
+    ddb_gtkui_widget_t base;
+    GtkWidget *volumebar;
+} w_volumebar_t;
+
+typedef struct {
+    ddb_gtkui_widget_t base;
+    GtkWidget *voices[8];
+} w_ctvoices_t;
+
+static int design_mode;
+static ddb_gtkui_widget_t *rootwidget;
+
+//// common functions
+
+void
+w_init (void) {
+    rootwidget = w_create ("box");
+}
+
+void
+w_free (void) {
+    w_save ();
+    w_creator_t *next = NULL;
+    for (w_creator_t *cr = w_creators; cr; cr = next) {
+        next = cr->next;
+        free (cr);
+    }
+    w_creators = NULL;
+}
+
+ddb_gtkui_widget_t *
+w_get_rootwidget (void) {
+    return rootwidget;
+}
+
+void
+w_set_design_mode (int active) {
+    design_mode = active;
+    gtk_widget_queue_draw (mainwin);
+}
+
+int
+w_get_design_mode (void) {
+    return design_mode;
+}
+
+static gboolean
+w_init_cb (void *data) {
+    ddb_gtkui_widget_t *w = data;
+    if (w->init) {
+        w->init (w);
+    }
+    return FALSE;
+}
+
+void
+w_append (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
+    child->parent = cont;
+    if (!cont->children) {
+        cont->children = child;
+    }
+    else {
+        for (ddb_gtkui_widget_t *c = cont->children; c; c = c->next) {
+            if (!c->next) {
+                c->next = child;
+                break;
+            }
+        }
+    }
+
+    if (cont->append) {
+        cont->append (cont, child);
+    }
+    if (child->init) {
+        child->init (child);
+    }
+}
+
+void
+w_remove (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
+    // recurse
+    while (child->children) {
+        ddb_gtkui_widget_t *c = child->children;
+        w_remove (child, c);
+        w_destroy (c);
+    }
+
+    if (cont->remove) {
+        cont->remove (cont, child);
+    }
+    child->widget = NULL;
+    ddb_gtkui_widget_t *prev = NULL;
+    for (ddb_gtkui_widget_t *c = cont->children; c; c = c->next) {
+        if (c == child) {
+            if (prev) {
+                prev->next = c->next;
+            }
+            else {
+                cont->children = c->next;
+            }
+            break;
+        }
+        prev = c;
+    }
+    child->parent = NULL;
+}
+
+GtkWidget *
+w_get_container (ddb_gtkui_widget_t *w) {
+    if (w->get_container) {
+        return w->get_container (w);
+    }
+    return w->widget;
+}
+
+void
+w_replace (ddb_gtkui_widget_t *w, ddb_gtkui_widget_t *from, ddb_gtkui_widget_t *to) {
+    if (w->replace) {
+        w->replace (w, from, to);
+        if (to->init) {
+            g_idle_add (w_init_cb, to);
+        }
+    }
+    else {
+        w_remove (w, from);
+        w_destroy (from);
+        w_append (w, to);
+        // we don't call init here, because w_append does it automatically
+    }
+}
+
+// unknown widget wrapper
+typedef struct {
+    ddb_gtkui_widget_t base;
+    GtkWidget *drawarea;
+    char *expected_type;
+    char *parms;
+    char *children;
+} w_unknown_t;
+
+const char *
+w_unknown_load (struct ddb_gtkui_widget_s *base, const char *type, const char *s) {
+    w_unknown_t *w = (w_unknown_t *)base;
+    char buffer_parms[4000];
+    char buffer_children[4000];
+
+    const char *p = s;
+    while (*p && *p != '{') {
+        p++;
+    }
+
+    if (!(*p)) {
+        fprintf (stderr, "reached EOL before expected { while trying to load unknown widget %s\n", w->expected_type);
+        return NULL;
+    }
+
+    if (p - s + 1 > sizeof (buffer_parms)) {
+        fprintf (stderr, "buffer to small to load unknown widget %s\n", w->expected_type);
+        return NULL;
+    }
+
+    memcpy (buffer_parms, s, p-s);
+    buffer_parms[p-s] = 0;
+
+    p++;
+    s = p;
+
+    int nb = 1;
+    while (*p) {
+        if (*p == '{') {
+            nb++;
+        }
+        if (*p == '}') {
+            nb--;
+            if (nb == 0) {
+                break;
+            }
+        }
+        p++;
+    }
+    if (!(*p)) {
+        fprintf (stderr, "reached EOL before expected } while trying to load unknown widget %s\n", w->expected_type);
+        return NULL;
+    }
+    if (p - s + 1 > sizeof (buffer_parms)) {
+        fprintf (stderr, "buffer to small to load unknown widget %s\n", w->expected_type);
+        return NULL;
+    }
+    memcpy (buffer_children, s, p-s);
+    buffer_children[p-s] = 0;
+
+    w->parms = strdup (buffer_parms);
+    w->children = strdup (buffer_children);
+
+    // caller expects 's' to point to '}'
+    return p;
+}
+
+static void
+w_unknown_save (struct ddb_gtkui_widget_s *base, char *s, int sz) {
+    w_unknown_t *w = (w_unknown_t *)base;
+    int l = strlen (s);
+    s += l;
+    sz -= l;
+    snprintf (s, sz, "%s%s {%s}", w->expected_type, w->parms, w->children);
+}
+
+void w_unknown_destroy (ddb_gtkui_widget_t *_w) {
+    w_unknown_t *w = (w_unknown_t *)_w;
+    if (w->expected_type) {
+        free (w->expected_type);
+        w->expected_type = NULL;
+    }
+    if (w->parms) {
+        free (w->parms);
+        w->parms = NULL;
+    }
+    if (w->children) {
+        free (w->children);
+        w->children = NULL;
+    }
+}
+
+static gboolean
+unknown_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
+    ddb_gtkui_widget_t *w = user_data;
+    cairo_set_source_rgb(cr, 0.1, 0.1, 0.1);
+
+    cairo_set_font_size(cr, 16);
+
+    cairo_move_to(cr, 20, 30);
+
+    char s[1000];
+    snprintf (s, sizeof (s), _("Widget \"%s\" is not available"), ((w_unknown_t *)w)->expected_type);
+
+    cairo_show_text(cr, s);
+    return TRUE;
+}
+
+static gboolean
+unknown_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
+    cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
+    gboolean res = unknown_draw (widget, cr, user_data);
+    cairo_destroy (cr);
+    return res;
+}
+
+ddb_gtkui_widget_t *
+w_unknown_create (const char *type) {
+    w_unknown_t *w = malloc (sizeof (w_unknown_t));
+    memset (w, 0, sizeof (w_unknown_t));
+    w->base.type = "unknown";
+    w->base.load = w_unknown_load;
+    w->base.save = w_unknown_save;
+    w->base.destroy = w_unknown_destroy;
+    w->expected_type = strdup (type);
+
+    w->base.widget = gtk_event_box_new ();
+    w->drawarea = gtk_drawing_area_new ();
+    gtk_widget_show (w->drawarea);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), w->drawarea);
+#if !GTK_CHECK_VERSION(3,0,0)
+    g_signal_connect_after ((gpointer) w->drawarea, "expose_event", G_CALLBACK (unknown_expose_event), w);
+#else
+    g_signal_connect_after ((gpointer) w->drawarea, "draw", G_CALLBACK (unknown_draw), w);
+#endif
+    w_override_signals (w->base.widget, w);
+    return (ddb_gtkui_widget_t *)w;
+}
+
+const char *
+w_create_from_string (const char *s, ddb_gtkui_widget_t **parent) {
+    char t[MAX_TOKEN];
+    s = gettoken (s, t);
+    if (!s) {
+        return NULL;
+    }
+    char *type = strdupa (t);
+    ddb_gtkui_widget_t *w = w_create (type);
+    if (!w) {
+        w = w_unknown_create (type);
+    }
+    // nuke all default children
+    while (w->children) {
+        w_remove (w, w->children);
+    }
+
+    // load widget params
+    if (w->load) {
+        s = w->load (w, type, s);
+        if (!s) {
+            w_destroy (w);
+            return NULL;
+        }
+    }
+    else {
+        // skip all params (if any)
+        for (;;) {
+            s = gettoken_ext (s, t, "={}();");
+            if (!s) {
+                w_destroy (w);
+                return NULL;
+            }
+            if (!strcmp (t, "{")) {
+                break;
+            }
+            // match '='
+            char eq[MAX_TOKEN];
+            s = gettoken_ext (s, eq, "={}();");
+            if (!s || strcmp (eq, "=")) {
+                w_destroy (w);
+                return NULL;
+            }
+            s = gettoken_ext (s, eq, "={}();");
+            if (!s) {
+                w_destroy (w);
+                return NULL;
+            }
+        }
+    }
+
+    // we don't need to match '{' here, it's already done above
+    const char *back = s;
+    s = gettoken (s, t);
+    if (!s) {
+        w_destroy (w);
+        return NULL;
+    }
+    for (;;) {
+        if (!strcmp (t, "}")) {
+            break;
+        }
+
+        s = w_create_from_string (back, &w);
+        if (!s) {
+            w_destroy (w);
+            return NULL;
+        }
+
+        back = s;
+        s = gettoken (s, t);
+        if (!s) {
+            w_destroy (w);
+            return NULL;
+        }
+    }
+
+    if (*parent) {
+        w_append (*parent, w);
+    }
+    else {
+        *parent = w;
+    }
+    return s;
+}
+
+static ddb_gtkui_widget_t *current_widget;
+static int hidden = 0;
+
+static gboolean
+w_draw_event (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
+    if (hidden && user_data == current_widget) {
+        GtkAllocation allocation;
+        gtk_widget_get_allocation (widget, &allocation);
+        cairo_set_source_rgb (cr, 0.17f, 0, 0.83f);
+
+        if (!gtk_widget_get_has_window (widget)) {
+#if GTK_CHECK_VERSION(3,0,0)
+        cairo_translate (cr, -allocation.x, -allocation.y);
+#endif
+            cairo_reset_clip (cr);
+            cairo_rectangle (cr, allocation.x, allocation.y, allocation.width, allocation.height);
+        }
+        else {
+            cairo_reset_clip (cr);
+            cairo_rectangle (cr, 0, 0, allocation.width, allocation.height);
+        }
+        cairo_fill (cr);
+    }
+    return FALSE;
+}
+
+gboolean
+w_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
+    cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
+    gboolean res = w_draw_event (widget, cr, user_data);
+    cairo_destroy (cr);
+    return res;
+}
+
+static char paste_buffer[20000];
+
+void
+save_widget_to_string (char *str, int sz, ddb_gtkui_widget_t *w) {
+    // uknown is special case
+    if (!strcmp (w->type, "unknown")) {
+        w->save (w, str, sz);
+        return;
+    }
+
+    strcat (str, w->type);
+    if (w->save) {
+        w->save (w, str, sz);
+    }
+
+    strcat (str, " {");
+    for (ddb_gtkui_widget_t *c = w->children; c; c = c->next) {
+        save_widget_to_string (str, sz, c);
+    }
+    strcat (str, "} ");
+}
+
+void
+w_save (void) {
+    char buf[20000] = "";
+    save_widget_to_string (buf, sizeof (buf), rootwidget->children);
+    deadbeef->conf_set_str (DDB_GTKUI_CONF_LAYOUT, buf);
+    deadbeef->conf_save ();
+}
+
+static void
+on_replace_activate (GtkMenuItem *menuitem, gpointer user_data) {
+    for (w_creator_t *cr = w_creators; cr; cr = cr->next) {
+        if (cr->type == user_data) {
+            // hack for single-instance
+            // first replace with a placeholder, so that the original widget is destroyed
+            // then do the real replacement
+            ddb_gtkui_widget_t *w = w_create ("placeholder");
+            w_replace (current_widget->parent, current_widget, w);
+            current_widget = w;
+            w = w_create (user_data);
+            w_replace (current_widget->parent, current_widget, w);
+            current_widget = w;
+        }
+    }
+    w_save ();
+}
+
+static void
+on_delete_activate (GtkMenuItem *menuitem, gpointer user_data) {
+    ddb_gtkui_widget_t *parent = current_widget->parent;
+    if (!strcmp (current_widget->type, "placeholder")) {
+        return;
+    }
+    if (parent->replace) {
+        parent->replace (parent, current_widget, w_create ("placeholder"));
+    }
+    else {
+        w_remove (parent, current_widget);
+        w_destroy (current_widget);
+        current_widget = w_create ("placeholder");
+        w_append (parent, current_widget);
+    }
+    w_save ();
+}
+
+static void
+on_cut_activate (GtkMenuItem *menuitem, gpointer user_data) {
+    ddb_gtkui_widget_t *parent = current_widget->parent;
+    if (!strcmp (current_widget->type, "placeholder")) {
+        return;
+    }
+    // save hierarchy to string
+    // FIXME: use real clipboard
+    paste_buffer[0] = 0;
+    save_widget_to_string (paste_buffer, sizeof (paste_buffer), current_widget);
+
+    if (parent->replace) {
+        parent->replace (parent, current_widget, w_create ("placeholder"));
+    }
+    else {
+        w_remove (parent, current_widget);
+        w_destroy (current_widget);
+        current_widget = w_create ("placeholder");
+        w_append (parent, current_widget);
+    }
+    w_save ();
+}
+
+static void
+on_copy_activate (GtkMenuItem *menuitem, gpointer user_data) {
+    ddb_gtkui_widget_t *parent = current_widget->parent;
+    if (!strcmp (current_widget->type, "placeholder")) {
+        return;
+    }
+    // save hierarchy to string
+    // FIXME: use real clipboard
+    paste_buffer[0] = 0;
+    save_widget_to_string (paste_buffer, sizeof (paste_buffer), current_widget);
+}
+
+static void
+on_paste_activate (GtkMenuItem *menuitem, gpointer user_data) {
+    ddb_gtkui_widget_t *parent = current_widget->parent;
+    if (!paste_buffer[0]) {
+        return;
+    }
+
+    ddb_gtkui_widget_t *w = w_create ("placeholder");
+    w_replace (current_widget->parent, current_widget, w);
+    current_widget = w;
+
+    w = NULL;
+    w_create_from_string (paste_buffer, &w);
+    w_replace (parent, current_widget, w);
+    w_save ();
+    current_widget = w;
+}
+
+void
+hide_widget (GtkWidget *widget, gpointer data) {
+    if (data) {
+        GtkAllocation *a = data;
+        gtk_widget_get_allocation (widget, a);
+    }
+    gtk_widget_hide (widget);
+}
+
+void
+show_widget (GtkWidget *widget, gpointer data) {
+    gtk_widget_show (widget);
+}
+
+static GtkRequisition prev_req;
+
+void
+w_menu_deactivate (GtkMenuShell *menushell, gpointer user_data) {
+    hidden = 0;
+    ddb_gtkui_widget_t *w = user_data;
+    if (GTK_IS_CONTAINER (w->widget)) {
+        gtk_container_foreach (GTK_CONTAINER (w->widget), show_widget, NULL);
+        gtk_widget_set_size_request (w->widget, prev_req.width, prev_req.height);
+    }
+    gtk_widget_set_app_paintable (w->widget, FALSE);
+    gtk_widget_queue_draw (w->widget);
+}
+
+gboolean
+w_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_data) {
+    if (!design_mode || !TEST_RIGHT_CLICK(event)) {
+        return FALSE;
+    }
+
+    current_widget = user_data;
+    widget = current_widget->widget;
+    hidden = 1;
+
+    if (GTK_IS_CONTAINER (widget)) {
+        // hide all children
+        gtk_widget_size_request (widget, &prev_req);
+        gtk_container_foreach (GTK_CONTAINER (widget), hide_widget, NULL);
+        gtk_widget_set_size_request (widget, prev_req.width, prev_req.height);
+    }
+
+    gtk_widget_set_app_paintable (widget, TRUE);
+    gtk_widget_queue_draw (((ddb_gtkui_widget_t *)user_data)->widget);
+    GtkWidget *menu;
+    GtkWidget *submenu;
+    GtkWidget *item;
+    menu = gtk_menu_new ();
+    if (strcmp (current_widget->type, "placeholder")) {
+        item = gtk_menu_item_new_with_mnemonic (_("Replace with..."));
+        gtk_widget_show (item);
+        gtk_container_add (GTK_CONTAINER (menu), item);
+    }
+    else {
+        item = gtk_menu_item_new_with_mnemonic (_("Insert..."));
+        gtk_widget_show (item);
+        gtk_container_add (GTK_CONTAINER (menu), item);
+    }
+
+    submenu = gtk_menu_new ();
+    gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), submenu);
+
+    for (w_creator_t *cr = w_creators; cr; cr = cr->next) {
+        if (cr->title) {
+            item = gtk_menu_item_new_with_mnemonic (cr->title);
+            gtk_widget_show (item);
+            gtk_container_add (GTK_CONTAINER (submenu), item);
+            g_signal_connect ((gpointer) item, "activate",
+                    G_CALLBACK (on_replace_activate),
+                    (void *)cr->type);
+        }
+    }
+
+    if (strcmp (current_widget->type, "placeholder")) {
+        item = gtk_menu_item_new_with_mnemonic (_("Delete"));
+        gtk_widget_show (item);
+        gtk_container_add (GTK_CONTAINER (menu), item);
+        g_signal_connect ((gpointer) item, "activate",
+                G_CALLBACK (on_delete_activate),
+                NULL);
+
+        item = gtk_menu_item_new_with_mnemonic (_("Cut"));
+        gtk_widget_show (item);
+        gtk_container_add (GTK_CONTAINER (menu), item);
+        g_signal_connect ((gpointer) item, "activate",
+                G_CALLBACK (on_cut_activate),
+                NULL);
+
+        item = gtk_menu_item_new_with_mnemonic (_("Copy"));
+        gtk_widget_show (item);
+        gtk_container_add (GTK_CONTAINER (menu), item);
+        g_signal_connect ((gpointer) item, "activate",
+                G_CALLBACK (on_copy_activate),
+                NULL);
+    }
+    item = gtk_menu_item_new_with_mnemonic (_("Paste"));
+    gtk_widget_show (item);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "activate",
+            G_CALLBACK (on_paste_activate),
+            NULL);
+
+    if (current_widget->initmenu) {
+        current_widget->initmenu (current_widget, menu);
+    }
+    if (current_widget->parent && current_widget->parent->initchildmenu) {
+        current_widget->parent->initchildmenu (current_widget, menu);
+    }
+
+    g_signal_connect ((gpointer) menu, "deactivate", G_CALLBACK (w_menu_deactivate), user_data);
+    gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
+    return TRUE;
+}
+
+void
+w_override_signals (GtkWidget *widget, gpointer user_data) {
+    g_signal_connect ((gpointer) widget, "button_press_event", G_CALLBACK (w_button_press_event), user_data);
+#if !GTK_CHECK_VERSION(3,0,0)
+    g_signal_connect ((gpointer) widget, "expose_event", G_CALLBACK (w_expose_event), user_data);
+#else
+    g_signal_connect ((gpointer) widget, "draw", G_CALLBACK (w_draw_event), user_data);
+#endif
+    if (GTK_IS_CONTAINER (widget)) {
+        gtk_container_forall (GTK_CONTAINER (widget), w_override_signals, user_data);
+    }
+}
+
+void
+w_reg_widget (const char *title, uint32_t flags, ddb_gtkui_widget_t *(*create_func) (void), ...) {
+    int compat = 0;
+
+    va_list vl;
+    va_start (vl, create_func);
+    for (;;) {
+        const char *type = va_arg(vl, const char *);
+        if (!type) {
+            break;
+        }
+        w_creator_t *c;
+        for (c = w_creators; c; c = c->next) {
+            if (!strcmp (c->type, type)) {
+                fprintf (stderr, "gtkui w_reg_widget: widget type %s already registered\n", type);
+                return;
+            }
+        }
+        c = malloc (sizeof (w_creator_t));
+        memset (c, 0, sizeof (w_creator_t));
+        c->type = type;
+        c->title = title;
+        c->flags = flags;
+        c->compat = compat;
+        c->create_func = create_func;
+        c->next = w_creators;
+        w_creators = c;
+        compat = 1;
+    }
+    va_end(vl);
+}
+
+void
+w_unreg_widget (const char *type) {
+    w_creator_t *c, *prev = NULL;
+    for (c = w_creators; c; c = c->next) {
+        if (!strcmp (c->type, type)) {
+            if (prev) {
+                prev->next = c->next;
+            }
+            else {
+                w_creators = c->next;
+            }
+            free (c);
+            return;
+        }
+        prev = c;
+    }
+    trace ("gtkui w_unreg_widget: widget type %s is not registered\n", type);
+}
+
+int
+w_is_registered (const char *type) {
+    for (w_creator_t *c = w_creators; c; c = c->next) {
+        if (!strcmp (c->type, type)) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static int
+get_num_widgets (ddb_gtkui_widget_t *w, const char *type) {
+    int num = 0;
+    if (!strcmp (w->type, type)) {
+        num++;
+    }
+    for (w = w->children; w; w = w->next) {
+        num += get_num_widgets (w, type);
+    }
+    return num;
+}
+
+
+ddb_gtkui_widget_t *
+w_create (const char *type) {
+    for (w_creator_t *c = w_creators; c; c = c->next) {
+        if (!strcmp (c->type, type)) {
+            if (c->flags & DDB_WF_SINGLE_INSTANCE) {
+                int num = get_num_widgets (rootwidget, c->type);
+                // HACK: playlist and tabbed playlist are essentially the same
+                // widgets with single-instance limit
+
+                if (!strcmp (c->type, "tabbed_playlist")) {
+                    num += get_num_widgets (rootwidget, "playlist");
+                }
+                else if (!strcmp (c->type, "playlist")) {
+                    num += get_num_widgets (rootwidget, "tabbed_playlist");
+                }
+                if (num) {
+                    // create dummy
+                    w_dummy_t *w = (w_dummy_t *)w_create ("dummy");
+                    w->text = strdup (_("Multiple widgets of this type are not supported"));
+                    return (ddb_gtkui_widget_t *)w;
+
+                }
+            }
+            ddb_gtkui_widget_t *w = c->create_func ();
+            w->type = c->type;
+
+            return w;
+        }
+    }
+    return NULL;
+}
+
+void
+w_destroy (ddb_gtkui_widget_t *w) {
+    if (w->destroy) {
+        w->destroy (w);
+    }
+    if (w->widget) {
+        gtk_widget_destroy (w->widget);
+    }
+    free (w);
+}
+
+///// gtk_container convenience functions
+void
+w_container_add (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
+    GtkWidget *container = w_get_container (cont);
+    gtk_container_add (GTK_CONTAINER (container), child->widget);
+    gtk_widget_show (child->widget);
+}
+
+void
+w_container_remove (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
+    GtkWidget *container = NULL;
+    container = cont->widget;
+    gtk_container_remove (GTK_CONTAINER (container), child->widget);
+
+}
+
+////// placeholder widget
+gboolean
+w_placeholder_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
+    if (!design_mode) {
+        return FALSE;
+    }
+    cairo_set_source_rgb (cr, 255, 0, 0);
+    cairo_surface_t *checker;
+    cairo_t *cr2;
+
+    checker = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, 12, 12);
+    cr2 = cairo_create (checker);
+
+    cairo_set_source_rgb (cr2, 0.5, 0.5 ,0.5);
+    cairo_paint (cr2);
+    cairo_set_source_rgb (cr2, 0, 0, 0);
+    cairo_move_to (cr2, 0, 0);
+    cairo_line_to (cr2, 12, 12);
+    cairo_move_to (cr2, 1, 12);
+    cairo_line_to (cr2, 12, 1);
+    cairo_set_line_width (cr2, 1);
+    cairo_set_antialias (cr2, CAIRO_ANTIALIAS_NONE);
+    cairo_stroke (cr2);
+    cairo_fill (cr2);
+    cairo_destroy (cr2);
+
+    cairo_set_source_surface (cr, checker, 0, 0);
+    cairo_pattern_t *pt = cairo_get_source(cr);
+    cairo_pattern_set_extend (pt, CAIRO_EXTEND_REPEAT);
+    GtkAllocation a;
+    gtk_widget_get_allocation (widget, &a);
+    cairo_rectangle (cr, 0, 0, a.width, a.height);
+    cairo_paint (cr);
+    cairo_surface_destroy (checker);
+    return FALSE;
+}
+
+gboolean
+w_placeholder_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
+    cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
+    gboolean res = w_placeholder_draw (widget, cr, user_data);
+    cairo_destroy (cr);
+    return res;
+}
+
+ddb_gtkui_widget_t *
+w_placeholder_create (void) {
+    w_placeholder_t *w = malloc (sizeof (w_placeholder_t));
+    memset (w, 0, sizeof (w_placeholder_t));
+
+    w->base.widget = gtk_event_box_new ();
+    w->drawarea  = gtk_drawing_area_new ();
+    gtk_widget_set_size_request (w->base.widget, 20, 20);
+    gtk_widget_show (w->drawarea);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), w->drawarea);
+
+#if !GTK_CHECK_VERSION(3,0,0)
+    g_signal_connect_after ((gpointer) w->drawarea, "expose_event", G_CALLBACK (w_placeholder_expose_event), w);
+#else
+    g_signal_connect_after ((gpointer) w->drawarea, "draw", G_CALLBACK (w_placeholder_draw), w);
+#endif
+    w_override_signals (w->base.widget, w);
+    return (ddb_gtkui_widget_t*)w;
+}
+
+// dummy widget
+static const char *
+w_dummy_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) {
+    if (strcmp (type, "dummy")) {
+        return NULL;
+    }
+    w_dummy_t *b = (w_dummy_t *)w;
+    char key[MAX_TOKEN], val[MAX_TOKEN];
+    for (;;) {
+        get_keyvalue (s, key, val);
+        if (!strcmp (key, "text")) {
+            b->text = val[0] ? strdup (val) : NULL;
+        }
+    }
+
+    return s;
+}
+
+static void
+w_dummy_save (struct ddb_gtkui_widget_s *w, char *s, int sz) {
+    char save[1000] = "";
+    char *pp = save;
+    int ss = sizeof (save);
+    int n;
+
+    w_dummy_t *b = (w_dummy_t *)w;
+    if (b->text) {
+        n = snprintf (pp, ss, " text=\"%s\"", b->text);
+        ss -= n;
+        pp += n;
+    }
+
+    strncat (s, save, sz);
+}
+
+void
+w_dummy_init (ddb_gtkui_widget_t *wbase) {
+    w_dummy_t *w = (w_dummy_t *)wbase;
+    if (w->label) {
+        gtk_widget_destroy (w->label);
+        w->label = NULL;
+    }
+    if (w->text) {
+        w->label = gtk_label_new_with_mnemonic (w->text);
+        gtk_widget_show (w->label);
+        gtk_container_add (GTK_CONTAINER (w->base.widget), w->label);
+    }
+}
+
+static void
+w_dummy_destroy (ddb_gtkui_widget_t *wbase) {
+    w_dummy_t *w = (w_dummy_t *)wbase;
+    if (w->text) {
+        free (w->text);
+        w->text = NULL;
+    }
+}
+
+ddb_gtkui_widget_t *
+w_dummy_create (void) {
+    w_dummy_t *w = (w_dummy_t *)malloc (sizeof (w_dummy_t));
+    memset (w, 0, sizeof (w_dummy_t));
+    w->base.widget = gtk_event_box_new ();
+    w->base.init = w_dummy_init;
+    w->base.destroy = w_dummy_destroy;
+    w->base.load = w_dummy_load;
+    w->base.save = w_dummy_save;
+    w_override_signals (w->base.widget, w);
+    return (ddb_gtkui_widget_t *)w;
+}
+
+// common splitter funcs
+const char *
+w_splitter_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) {
+    if (strcmp (type, "vsplitter") && strcmp (type, "hsplitter")) {
+        return NULL;
+    }
+    char key[MAX_TOKEN], val[MAX_TOKEN];
+    for (;;) {
+        get_keyvalue (s,key,val);
+
+        if (!strcmp (key, "pos")) {
+            ((w_splitter_t *)w)->position = atoi (val);
+        }
+        else if (!strcmp (key, "locked")) {
+            ((w_splitter_t *)w)->locked = atoi (val);
+        }
+    }
+
+    return s;
+}
+
+void
+w_splitter_save (struct ddb_gtkui_widget_s *w, char *s, int sz) {
+    int pos = ((w_splitter_t *)w)->locked ? ((w_splitter_t *)w)->position : gtk_paned_get_position (GTK_PANED(((w_splitter_t *)w)->box));
+    char spos[100];
+    snprintf (spos, sizeof (spos), " pos=%d locked=%d", pos, ((w_splitter_t *)w)->locked);
+    strncat (s, spos, sz);
+}
+
+void
+w_splitter_add (ddb_gtkui_widget_t *w, ddb_gtkui_widget_t *child) {
+    w_container_add (w, child);
+    if (((w_splitter_t *)w)->locked) {
+        if (child == w->children) {
+            if (GTK_IS_VBOX (((w_splitter_t *)w)->box)) {
+                gtk_widget_set_size_request (child->widget, -1, ((w_splitter_t *)w)->position);
+            }
+            else {
+                gtk_widget_set_size_request (child->widget, ((w_splitter_t *)w)->position, -1);
+            }
+        }
+    }
+    else {
+        gtk_paned_set_position (GTK_PANED(((w_splitter_t *)w)->box), ((w_splitter_t *)w)->position);
+    }
+}
+
+GtkWidget *
+w_splitter_get_container (struct ddb_gtkui_widget_s *b) {
+    return ((w_splitter_t *)b)->box;
+}
+
+void
+w_splitter_lock (w_splitter_t *w) {
+    // we can't change GtkPaned behavior, so convert to vbox for now
+    if (w->locked) {
+        return;
+    }
+    w->locked = 1;
+
+    int vert = w->base.type == "vsplitter";
+
+    GtkAllocation a;
+    gtk_widget_get_allocation (w->base.widget, &a);
+
+    GtkWidget *box = vert ? gtk_vbox_new (FALSE, 3) : gtk_hbox_new (FALSE, 3);
+    gtk_widget_show (box);
+
+    w->position = gtk_paned_get_position (GTK_PANED (w->box));
+
+    GtkWidget *c1 = gtk_paned_get_child1 (GTK_PANED (w->box));
+    g_object_ref (c1);
+    GtkWidget *c2 = gtk_paned_get_child2 (GTK_PANED (w->box));
+    g_object_ref (c2);
+    gtk_container_remove (GTK_CONTAINER (w->box), c1);
+    gtk_container_remove (GTK_CONTAINER (w->box), c2);
+
+    gtk_box_pack_start (GTK_BOX (box), c1, FALSE, FALSE, 0);
+    gtk_widget_set_size_request (c1, vert ? -1 : w->position, vert ? w->position : -1);
+    gtk_box_pack_end (GTK_BOX (box), c2, TRUE, TRUE, 0);
+
+    gtk_container_remove (GTK_CONTAINER (w->base.widget), w->box);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), box);
+    w->box = box;
+}
+
+void
+w_splitter_unlock (w_splitter_t *w) {
+    if (!w->locked) {
+        return;
+    }
+    w->locked = 0;
+
+    int vert = w->base.type == "vsplitter";
+    // convert back to vpaned
+    GtkWidget *paned = vert ? gtk_vpaned_new () : gtk_hpaned_new ();
+    gtk_widget_set_can_focus (paned, FALSE);
+    gtk_widget_show (paned);
+
+    GList *lst = gtk_container_get_children (GTK_CONTAINER (w->box));
+
+    GtkWidget *c1 = lst->data;
+    g_object_ref (c1);
+    GtkWidget *c2 = lst->next->data;
+    g_object_ref (c2);
+    gtk_container_remove (GTK_CONTAINER (w->box), c1);
+    gtk_container_remove (GTK_CONTAINER (w->box), c2);
+
+    gtk_container_add (GTK_CONTAINER (paned), c1);
+    gtk_container_add (GTK_CONTAINER (paned), c2);
+    gtk_paned_set_position (GTK_PANED (paned), w->position);
+
+    gtk_container_remove (GTK_CONTAINER (w->base.widget), w->box);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), paned);
+    w->box = paned;
+}
+
+void
+on_splitter_lock_movement_toggled (GtkCheckMenuItem *checkmenuitem, gpointer          user_data) {
+    if (gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (checkmenuitem))) {
+        w_splitter_lock (user_data);
+    }
+    else {
+        w_splitter_unlock (user_data);
+    }
+}
+
+void
+w_splitter_initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
+    GtkWidget *item;
+    item = gtk_check_menu_item_new_with_mnemonic (_("Lock movement"));
+    gtk_widget_show (item);
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), ((w_splitter_t *)w)->locked);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "toggled",
+            G_CALLBACK (on_splitter_lock_movement_toggled),
+            w);
+}
+
+void
+w_splitter_replace (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child, ddb_gtkui_widget_t *newchild) {
+    int ntab = 0;
+    ddb_gtkui_widget_t *prev = NULL;
+    for (ddb_gtkui_widget_t *c = cont->children; c; c = c->next, ntab++) {
+        if (c == child) {
+            newchild->next = c->next;
+            if (prev) {
+                prev->next = newchild;
+            }
+            else {
+                cont->children = newchild;
+            }
+            newchild->parent = cont;
+            w_remove (cont, child);
+            w_destroy (child);
+            GtkWidget *container = ((w_splitter_t *)cont)->box;
+            gtk_widget_show (newchild->widget);
+            if (((w_splitter_t *)cont)->locked) {
+                if (ntab == 0) {
+                    gtk_box_pack_start (GTK_BOX (container), newchild->widget, TRUE, TRUE, 0);
+                }
+                else {
+                    gtk_box_pack_end (GTK_BOX (container), newchild->widget, TRUE, TRUE, 0);
+                }
+            }
+            else {
+                if (ntab == 0) {
+                    gtk_paned_add1 (GTK_PANED (container), newchild->widget);
+                }
+                else {
+                    gtk_paned_add2 (GTK_PANED (container), newchild->widget);
+                }
+            }
+            break;
+        }
+        prev = c;
+    }
+}
+
+void
+w_splitter_remove (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
+    GtkWidget *container = w_get_container (cont);
+    gtk_container_remove (GTK_CONTAINER (container), child->widget);
+}
+
+////// vsplitter widget
+void
+w_vsplitter_init (ddb_gtkui_widget_t *base) {
+    w_splitter_t *w = (w_splitter_t *)base;
+    int pos = ((w_splitter_t *)w)->position; // prevent lock/unlock from overwriting position
+    if (w->locked && !GTK_IS_BOX(w->box)) {
+        w->locked = 0;
+        w_splitter_lock (w);
+    }
+    if (!w->locked && GTK_IS_BOX(w->box)) {
+        w->locked = 1;
+        w_splitter_unlock (w);
+    }
+    if (pos == -1) {
+        GtkAllocation a;
+        gtk_widget_get_allocation (w->base.widget, &a);
+        pos = a.height/2;
+    }
+    w->position = pos;
+    if (!w->locked) {
+        gtk_widget_set_size_request (w->base.children->widget, -1, -1);
+        gtk_paned_set_position (GTK_PANED(w->box), pos);
+    }
+    else {
+        gtk_widget_set_size_request (w->base.children->widget, -1, w->position);
+    }
+}
+
+ddb_gtkui_widget_t *
+w_vsplitter_create (void) {
+    w_splitter_t *w = malloc (sizeof (w_splitter_t));
+    memset (w, 0, sizeof (w_splitter_t));
+    w->position = -1;
+    w->base.append = w_splitter_add;
+    w->base.remove = w_splitter_remove;
+    w->base.replace = w_splitter_replace;
+    w->base.get_container = w_splitter_get_container;
+    w->base.load = w_splitter_load;
+    w->base.save = w_splitter_save;
+    w->base.init = w_vsplitter_init;
+    w->base.initmenu = w_splitter_initmenu;
+
+    w->base.widget = gtk_event_box_new ();
+    w->box = gtk_vpaned_new ();
+    gtk_widget_show (w->box);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), w->box);
+    w_override_signals (w->base.widget, w);
+
+    ddb_gtkui_widget_t *ph1, *ph2;
+    ph1 = w_create ("placeholder");
+    ph2 = w_create ("placeholder");
+
+    w_append ((ddb_gtkui_widget_t*)w, ph1);
+    w_append ((ddb_gtkui_widget_t*)w, ph2);
+
+    return (ddb_gtkui_widget_t*)w;
+}
+
+////// hsplitter widget
+void
+w_hsplitter_init (ddb_gtkui_widget_t *base) {
+    w_splitter_t *w = (w_splitter_t *)base;
+    int pos = ((w_splitter_t *)w)->position; // prevent lock/unlock from overwriting position
+    if (w->locked && !GTK_IS_BOX(w->box)) {
+        w->locked = 0;
+        w_splitter_lock (w);
+    }
+    else if (!w->locked && GTK_IS_BOX(w->box)) {
+        w->locked = 1;
+        w_splitter_unlock (w);
+    }
+    if (pos == -1) {
+        GtkAllocation a;
+        gtk_widget_get_allocation (w->base.widget, &a);
+        pos = a.width/2;
+    }
+    w->position = pos;
+    if (!w->locked) {
+        gtk_widget_set_size_request (w->base.children->widget, -1, -1);
+        gtk_paned_set_position (GTK_PANED(w->box), pos);
+    }
+    else {
+        gtk_widget_set_size_request (w->base.children->widget, w->position, -1);
+    }
+}
+
+ddb_gtkui_widget_t *
+w_hsplitter_create (void) {
+    w_splitter_t *w = malloc (sizeof (w_splitter_t));
+    memset (w, 0, sizeof (w_splitter_t));
+    w->position = -1;
+    w->base.append = w_splitter_add;
+    w->base.remove = w_splitter_remove;
+    w->base.replace = w_splitter_replace;
+    w->base.get_container = w_splitter_get_container;
+    w->base.load = w_splitter_load;
+    w->base.save = w_splitter_save;
+    w->base.init = w_hsplitter_init;
+    w->base.initmenu = w_splitter_initmenu;
+
+    w->base.widget = gtk_event_box_new ();
+    w->box = gtk_hpaned_new ();
+    gtk_widget_show (w->box);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), w->box);
+    w_override_signals (w->base.widget, w);
+
+    ddb_gtkui_widget_t *ph1, *ph2;
+    ph1 = w_create ("placeholder");
+    ph2 = w_create ("placeholder");
+
+    w_append ((ddb_gtkui_widget_t*)w, ph1);
+    w_append ((ddb_gtkui_widget_t*)w, ph2);
+
+    return (ddb_gtkui_widget_t*)w;
+}
+
+///// tabs widget
+static gboolean
+tab_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_data);
+
+static void
+on_remove_tab_activate (GtkMenuItem *menuitem, gpointer user_data) {
+    w_tabs_t *w = user_data;
+
+    int i = 0;
+    for (ddb_gtkui_widget_t *c = w->base.children; c; c = c->next, i++) {
+        if (i == w->clicked_page) {
+            w_remove ((ddb_gtkui_widget_t *)w, c);
+            return;
+        }
+    }
+}
+
+static void
+on_add_tab_activate (GtkMenuItem *menuitem, gpointer user_data) {
+    w_tabs_t *w = user_data;
+
+    ddb_gtkui_widget_t *ph;
+    ph = w_create ("placeholder");
+    w_append ((ddb_gtkui_widget_t*)w, ph);
+
+    int i = 0;
+    for (ddb_gtkui_widget_t *c = w->base.children; c; c = c->next, i++);
+    w->clicked_page = i-1;
+    gtk_notebook_set_current_page (GTK_NOTEBOOK (w->base.widget), w->clicked_page);
+
+}
+
+static void
+on_move_tab_left_activate (GtkMenuItem *menuitem, gpointer user_data) {
+    w_tabs_t *w = user_data;
+    if (w->clicked_page <= 0) {
+        return;
+    }
+
+    // remove and save widget
+    int i = 0;
+    ddb_gtkui_widget_t *newchild = NULL;
+    ddb_gtkui_widget_t *prev = NULL;
+    for (ddb_gtkui_widget_t *c = w->base.children; c; c = c->next, i++) {
+        if (i == w->clicked_page) {
+            char buf[20000] = "";
+            save_widget_to_string (buf, sizeof (buf), c);
+            w_create_from_string (buf, &newchild);
+
+            w_remove ((ddb_gtkui_widget_t *)w, c);
+            break;
+        }
+    }
+    if (!newchild) {
+        return;
+    }
+
+    // add new child at new position
+    i = 0;
+    prev = NULL;
+    for (ddb_gtkui_widget_t *c = w->base.children; c; c = c->next, i++) {
+        if (i == w->clicked_page-1) {
+            if (prev) {
+                newchild->next = prev->next;
+                prev->next = newchild;
+            }
+            else {
+                newchild->next = w->base.children;
+                w->base.children = newchild;
+            }
+            GtkWidget *eventbox = gtk_event_box_new ();
+            GtkWidget *label = gtk_label_new (newchild->type);
+            gtk_widget_show (eventbox);
+            g_object_set_data (G_OBJECT (eventbox), "owner", w);
+            g_signal_connect ((gpointer) eventbox, "button_press_event", G_CALLBACK (tab_button_press_event), newchild->widget);
+            gtk_widget_show (label);
+            gtk_container_add (GTK_CONTAINER (eventbox), label);
+            gtk_widget_show (newchild->widget);
+
+            gtk_notebook_insert_page (GTK_NOTEBOOK (w->base.widget), newchild->widget, eventbox, w->clicked_page-1);
+            gtk_notebook_set_current_page (GTK_NOTEBOOK (w->base.widget), w->clicked_page-1);
+            w->clicked_page--;
+            break;
+        }
+        prev = c;
+    }
+}
+
+static void
+on_move_tab_right_activate (GtkMenuItem *menuitem, gpointer user_data) {
+    w_tabs_t *w = user_data;
+
+    int i = 0;
+    for (ddb_gtkui_widget_t *c = w->base.children; c; c = c->next, i++);
+    if (w->clicked_page >= i)
+        return;
+
+    gtk_notebook_set_current_page (GTK_NOTEBOOK (w->base.widget), ++w->clicked_page);
+    on_move_tab_left_activate (menuitem, user_data);
+    gtk_notebook_set_current_page (GTK_NOTEBOOK (w->base.widget), ++w->clicked_page);
+}
+
+static gboolean
+tab_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_data) {
+    if (event->button != 3) {
+        return FALSE;
+    }
+    // user_data is child widget
+    if (design_mode) {
+        w_tabs_t *w = (w_tabs_t *)g_object_get_data (G_OBJECT (widget), "owner");
+        GtkWidget *menu;
+        GtkWidget *item;
+        menu = gtk_menu_new ();
+
+        item = gtk_menu_item_new_with_mnemonic (_("Move tab left"));
+        gtk_widget_show (item);
+        gtk_container_add (GTK_CONTAINER (menu), item);
+        g_signal_connect ((gpointer) item, "activate",
+                G_CALLBACK (on_move_tab_left_activate),
+                w);
+
+        item = gtk_menu_item_new_with_mnemonic (_("Move tab right"));
+        gtk_widget_show (item);
+        gtk_container_add (GTK_CONTAINER (menu), item);
+        g_signal_connect ((gpointer) item, "activate",
+                G_CALLBACK (on_move_tab_right_activate),
+                w);
+
+        item = gtk_menu_item_new_with_mnemonic (_("Remove tab"));
+        gtk_widget_show (item);
+        gtk_container_add (GTK_CONTAINER (menu), item);
+        g_signal_connect ((gpointer) item, "activate",
+                G_CALLBACK (on_remove_tab_activate),
+                w);
+
+        item = gtk_menu_item_new_with_mnemonic (_("Rename tab"));
+        gtk_widget_show (item);
+        gtk_container_add (GTK_CONTAINER (menu), item);
+
+        w->clicked_page = gtk_notebook_page_num (GTK_NOTEBOOK (w->base.widget), user_data);
+        gtk_notebook_set_current_page (GTK_NOTEBOOK (w->base.widget), w->clicked_page);
+
+        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, widget, 0, gtk_get_current_event_time());
+        return TRUE;
+    }
+    return FALSE;
+}
+
+void
+w_tabs_add (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child) {
+    GtkWidget *eventbox = gtk_event_box_new ();
+    GtkWidget *label = gtk_label_new (child->type);
+    gtk_widget_show (eventbox);
+    g_object_set_data (G_OBJECT (eventbox), "owner", cont);
+    g_signal_connect ((gpointer) eventbox, "button_press_event", G_CALLBACK (tab_button_press_event), child->widget);
+    gtk_widget_show (label);
+    gtk_container_add (GTK_CONTAINER (eventbox), label);
+    gtk_widget_show (child->widget);
+    gtk_notebook_append_page (GTK_NOTEBOOK (cont->widget), child->widget, eventbox);
+}
+
+void
+w_tabs_replace (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child, ddb_gtkui_widget_t *newchild) {
+    int ntab = 0;
+    ddb_gtkui_widget_t *prev = NULL;
+    for (ddb_gtkui_widget_t *c = cont->children; c; prev = c, c = c->next, ntab++) {
+        if (c == child) {
+            newchild->next = c->next;
+            if (prev) {
+                prev->next = newchild;
+            }
+            else {
+                cont->children = newchild;
+            }
+            newchild->parent = cont;
+            gtk_notebook_remove_page (GTK_NOTEBOOK(cont->widget), ntab);
+            c->widget = NULL;
+            w_destroy (c);
+            GtkWidget *eventbox = gtk_event_box_new ();
+            GtkWidget *label = gtk_label_new (newchild->type);
+            gtk_widget_show (eventbox);
+            g_object_set_data (G_OBJECT (eventbox), "owner", cont);
+            g_signal_connect ((gpointer) eventbox, "button_press_event", G_CALLBACK (tab_button_press_event), newchild->widget);
+            gtk_widget_show (label);
+            gtk_container_add (GTK_CONTAINER (eventbox), label);
+            gtk_widget_show (newchild->widget);
+            int pos = gtk_notebook_insert_page (GTK_NOTEBOOK (cont->widget), newchild->widget, eventbox, ntab);
+            gtk_notebook_set_current_page (GTK_NOTEBOOK (cont->widget), pos);
+            break;
+        }
+    }
+}
+
+void
+w_tabs_initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
+    GtkWidget *item;
+    item = gtk_menu_item_new_with_mnemonic (_("Add new tab"));
+    gtk_widget_show (item);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "activate",
+            G_CALLBACK (on_add_tab_activate),
+            w);
+}
+
+ddb_gtkui_widget_t *
+w_tabs_create (void) {
+    w_tabs_t *w = malloc (sizeof (w_tabs_t));
+    memset (w, 0, sizeof (w_tabs_t));
+    w->base.widget = gtk_notebook_new ();
+    w->base.append = w_tabs_add;
+    w->base.remove = w_container_remove;
+    w->base.replace = w_tabs_replace;
+    w->base.initmenu = w_tabs_initmenu;
+
+    ddb_gtkui_widget_t *ph1, *ph2, *ph3;
+    ph1 = w_create ("placeholder");
+    ph2 = w_create ("placeholder");
+    ph3 = w_create ("placeholder");
+
+#if !GTK_CHECK_VERSION(3,0,0)
+    g_signal_connect ((gpointer) w->base.widget, "expose_event", G_CALLBACK (w_expose_event), w);
+#else
+    g_signal_connect ((gpointer) w->base.widget, "draw", G_CALLBACK (w_draw_event), w);
+#endif
+    g_signal_connect ((gpointer) w->base.widget, "button_press_event", G_CALLBACK (w_button_press_event), w);
+
+    w_append ((ddb_gtkui_widget_t*)w, ph1);
+    w_append ((ddb_gtkui_widget_t*)w, ph2);
+    w_append ((ddb_gtkui_widget_t*)w, ph3);
+
+    return (ddb_gtkui_widget_t*)w;
+}
+
+//// box widget
+//// this widget should not be exposed to user, it is used as a top level
+//// container (rootwidget)
+
+ddb_gtkui_widget_t *
+w_box_create (void) {
+    w_box_t *w = malloc (sizeof (w_box_t));
+    memset (w, 0, sizeof (w_box_t));
+    w->base.widget = gtk_vbox_new (FALSE, 0);
+    w->base.append = w_container_add;
+    w->base.remove = w_container_remove;
+
+    return (ddb_gtkui_widget_t*)w;
+}
+
+//// tabstrip widget
+static gboolean
+tabstrip_refresh_cb (void *ctx) {
+    w_tabstrip_t *w = ctx;
+    ddb_tabstrip_refresh (DDB_TABSTRIP (w->tabstrip));
+    return FALSE;
+}
+static int
+w_tabstrip_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    switch (id) {
+    case DB_EV_PLAYLISTSWITCHED:
+        g_idle_add (tabstrip_refresh_cb, w);
+        break;
+    }
+    return 0;
+}
+
+ddb_gtkui_widget_t *
+w_tabstrip_create (void) {
+    w_tabstrip_t *w = malloc (sizeof (w_tabstrip_t));
+    memset (w, 0, sizeof (w_tabstrip_t));
+    w->base.flags = DDB_GTKUI_WIDGET_FLAG_NON_EXPANDABLE;
+    w->base.widget = gtk_event_box_new ();
+    w->base.message = w_tabstrip_message;
+    GtkWidget *ts = ddb_tabstrip_new ();
+    gtk_widget_show (ts);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), ts);
+    w->tabstrip = ts;
+    w_override_signals (w->base.widget, w);
+    return (ddb_gtkui_widget_t*)w;
+}
+
+//// tabbed playlist widget
+
+typedef struct {
+    ddb_gtkui_widget_t *w;
+    DB_playItem_t *trk;
+} w_trackdata_t;
+
+static gboolean
+tabbed_trackinfochanged_cb (gpointer p) {
+    w_trackdata_t *d = p;
+    w_playlist_t *tp = (w_playlist_t *)d->w;
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        int idx = deadbeef->plt_get_item_idx (plt, (DB_playItem_t *)d->trk, PL_MAIN);
+        if (idx != -1) {
+            ddb_listview_draw_row (tp->list, idx, (DdbListviewIter)d->trk);
+        }
+        deadbeef->plt_unref (plt);
+    }
+    if (d->trk) {
+        deadbeef->pl_item_unref (d->trk);
+    }
+    free (d);
+    return FALSE;
+}
+
+static gboolean
+trackinfochanged_cb (gpointer data) {
+    w_trackdata_t *d = data;
+    w_playlist_t *p = (w_playlist_t *)d->w;
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        int idx = deadbeef->plt_get_item_idx (plt, (DB_playItem_t *)d->trk, PL_MAIN);
+        if (idx != -1) {
+            ddb_listview_draw_row (DDB_LISTVIEW (p->list), idx, (DdbListviewIter)d->trk);
+        }
+        deadbeef->plt_unref (plt);
+    }
+    if (d->trk) {
+        deadbeef->pl_item_unref (d->trk);
+    }
+    free (d);
+    return FALSE;
+}
+
+static gboolean
+tabbed_paused_cb (gpointer p) {
+    w_playlist_t *tp = (w_playlist_t *)p;
+    DB_playItem_t *curr = deadbeef->streamer_get_playing_track ();
+    if (curr) {
+        int idx = deadbeef->pl_get_idx_of (curr);
+        ddb_listview_draw_row (tp->list, idx, (DdbListviewIter)curr);
+        deadbeef->pl_item_unref (curr);
+    }
+    return FALSE;
+}
+
+static gboolean
+paused_cb (gpointer data) {
+    w_playlist_t *p = (w_playlist_t *)data;
+    DB_playItem_t *curr = deadbeef->streamer_get_playing_track ();
+    if (curr) {
+        int idx = deadbeef->pl_get_idx_of (curr);
+        ddb_listview_draw_row (p->list, idx, (DdbListviewIter)curr);
+        deadbeef->pl_item_unref (curr);
+    }
+    return FALSE;
+}
+
+static gboolean
+refresh_cb (gpointer data) {
+    DdbListview *p = DDB_LISTVIEW (data);
+    ddb_listview_lock_columns (p, 0);
+    ddb_listview_clear_sort (p);
+    ddb_listview_refresh (DDB_LISTVIEW (p), DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL);
+    return FALSE;
+}
+
+static gboolean
+playlistswitch_cb (gpointer p) {
+    w_playlist_t *tp = (w_playlist_t *)p;
+    if (!strcmp (tp->base.type, "tabbed_playlist")) {
+        ddb_tabstrip_refresh (((w_tabbed_playlist_t *)tp)->tabstrip);
+    }
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        int cursor = deadbeef->plt_get_cursor (plt, PL_MAIN);
+        int scroll = deadbeef->plt_get_scroll (plt);
+        if (cursor != -1) {
+            DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (cursor, PL_MAIN);
+            if (it) {
+                deadbeef->pl_set_selected (it, 1);
+                deadbeef->pl_item_unref (it);
+            }
+        }
+        deadbeef->plt_unref (plt);
+
+        ddb_listview_refresh (tp->list, DDB_LIST_CHANGED | DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL);
+        ddb_listview_set_vscroll (tp->list, scroll);
+    }
+    return FALSE;
+}
+
+struct fromto_t {
+    ddb_gtkui_widget_t *w;
+    DB_playItem_t *from;
+    DB_playItem_t *to;
+};
+
+static gboolean
+songchanged_cb (gpointer p) {
+    struct fromto_t *ft = p;
+    DB_playItem_t *from = ft->from;
+    DB_playItem_t *to = ft->to;
+    w_playlist_t *tp = (w_playlist_t *)ft->w;
+    int to_idx = -1;
+    if (!ddb_listview_is_scrolling (tp->list) && to) {
+        int cursor_follows_playback = deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1);
+        int scroll_follows_playback = deadbeef->conf_get_int ("playlist.scroll.followplayback", 1);
+        int plt = deadbeef->streamer_get_current_playlist ();
+        if (plt != -1) {
+            if (plt != deadbeef->plt_get_curr_idx ()) {
+                ddb_playlist_t *p = deadbeef->plt_get_for_idx (plt);
+                if (p) {
+                    to_idx = deadbeef->plt_get_item_idx (p, to, PL_MAIN);
+                    if (cursor_follows_playback) {
+                        deadbeef->plt_deselect_all (p);
+                        deadbeef->pl_set_selected (to, 1);
+                        deadbeef->plt_set_cursor (p, PL_MAIN, to_idx);
+                    }
+                    deadbeef->plt_unref (p);
+                }
+                goto end;
+            }
+            to_idx = deadbeef->pl_get_idx_of (to);
+            if (to_idx != -1) {
+                if (cursor_follows_playback) {
+                    ddb_listview_set_cursor_noscroll (tp->list, to_idx);
+                }
+                if (scroll_follows_playback && plt == deadbeef->plt_get_curr_idx ()) {
+                    ddb_listview_scroll_to (tp->list, to_idx);
+                }
+            }
+        }
+    }
+end:
+    if (from) {
+        int idx = deadbeef->pl_get_idx_of (from);
+        if (idx != -1) {
+            ddb_listview_draw_row (tp->list, idx, from);
+        }
+    }
+    if (to && to_idx != -1) {
+        ddb_listview_draw_row (tp->list, to_idx, to);
+    }
+    if (ft->from) {
+        deadbeef->pl_item_unref (ft->from);
+    }
+    if (ft->to) {
+        deadbeef->pl_item_unref (ft->to);
+    }
+    free (ft);
+    return FALSE;
+}
+
+static gboolean
+trackfocus_cb (gpointer p) {
+    w_playlist_t *tp = p;
+    deadbeef->pl_lock ();
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+    if (it) {
+        ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
+        if (plt) {
+            deadbeef->plt_set_curr (plt);
+            int idx = deadbeef->pl_get_idx_of (it);
+            if (idx != -1) {
+                ddb_listview_scroll_to (tp->list, idx);
+                ddb_listview_set_cursor (tp->list, idx);
+            }
+            deadbeef->plt_unref (plt);
+        }
+        deadbeef->pl_item_unref (it);
+    }
+    deadbeef->pl_unlock ();
+
+    return FALSE;
+}
+
+static int
+w_tabbed_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    w_playlist_t *tp = (w_playlist_t *)w;
+    switch (id) {
+    case DB_EV_SONGCHANGED:
+        g_idle_add (redraw_queued_tracks_cb, tp->list);
+        ddb_event_trackchange_t *ev = (ddb_event_trackchange_t *)ctx;
+        struct fromto_t *ft = malloc (sizeof (struct fromto_t));
+        ft->from = ev->from;
+        ft->to = ev->to;
+        if (ft->from) {
+            deadbeef->pl_item_ref (ft->from);
+        }
+        if (ft->to) {
+            deadbeef->pl_item_ref (ft->to);
+        }
+        ft->w = w;
+        g_idle_add (songchanged_cb, ft);
+        break;
+    case DB_EV_TRACKINFOCHANGED:
+        {
+            ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
+            if (ev->track) {
+                deadbeef->pl_item_ref (ev->track);
+            }
+            w_trackdata_t *d = malloc (sizeof (w_trackdata_t));
+            memset (d, 0, sizeof (w_trackdata_t));
+            d->w = w;
+            d->trk = ev->track;
+            g_idle_add (tabbed_trackinfochanged_cb, d);
+        }
+        break;
+    case DB_EV_PAUSED:
+        g_idle_add (tabbed_paused_cb, w);
+        break;
+    case DB_EV_PLAYLISTCHANGED:
+        g_idle_add (refresh_cb, tp->list);
+        break;
+    case DB_EV_PLAYLISTSWITCHED:
+        g_idle_add (playlistswitch_cb, w);
+        break;
+    case DB_EV_TRACKFOCUSCURRENT:
+        g_idle_add (trackfocus_cb, w);
+        break;
+    case DB_EV_SELCHANGED:
+        if (ctx != (uintptr_t)tp->list || p2 == PL_SEARCH) {
+            g_idle_add (refresh_cb, tp->list);
+        }
+        break;
+    }
+    return 0;
+}
+
+static int
+w_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    w_playlist_t *p = (w_playlist_t *)w;
+    switch (id) {
+    case DB_EV_SONGCHANGED:
+        g_idle_add (redraw_queued_tracks_cb, p->list);
+        ddb_event_trackchange_t *ev = (ddb_event_trackchange_t *)ctx;
+        struct fromto_t *ft = malloc (sizeof (struct fromto_t));
+        ft->from = ev->from;
+        ft->to = ev->to;
+        if (ft->from) {
+            deadbeef->pl_item_ref (ft->from);
+        }
+        if (ft->to) {
+            deadbeef->pl_item_ref (ft->to);
+        }
+        ft->w = w;
+        g_idle_add (songchanged_cb, ft);
+        break;
+    case DB_EV_TRACKINFOCHANGED:
+        {
+            ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
+            if (ev->track) {
+                deadbeef->pl_item_ref (ev->track);
+            }
+            w_trackdata_t *d = malloc (sizeof (w_trackdata_t));
+            memset (d, 0, sizeof (w_trackdata_t));
+            d->w = w;
+            d->trk = ev->track;
+            g_idle_add (trackinfochanged_cb, d);
+        }
+        break;
+    case DB_EV_PAUSED:
+        g_idle_add (paused_cb, w);
+        break;
+    case DB_EV_PLAYLISTCHANGED:
+        g_idle_add (refresh_cb, p->list);
+        break;
+    case DB_EV_PLAYLISTSWITCHED:
+        g_idle_add (playlistswitch_cb, w);
+        break;
+    case DB_EV_TRACKFOCUSCURRENT:
+        g_idle_add (trackfocus_cb, w);
+        break;
+    case DB_EV_SELCHANGED:
+        if (ctx != (uintptr_t)p->list || p2 == PL_SEARCH) {
+            g_idle_add (refresh_cb, p->list);
+        }
+        break;
+    }
+    return 0;
+}
+
+static const char *
+w_playlist_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) {
+    if (strcmp (type, "playlist") && strcmp (type, "tabbed_playlist")) {
+        return NULL;
+    }
+    char key[MAX_TOKEN], val[MAX_TOKEN];
+    for (;;) {
+        get_keyvalue (s, key, val);
+        if (!strcmp (key, "hideheaders")) {
+            ((w_playlist_t *)w)->hideheaders = atoi (val);
+        }
+    }
+
+    return s;
+}
+
+static void
+w_playlist_save (struct ddb_gtkui_widget_s *w, char *s, int sz) {
+    char save[100];
+    snprintf (save, sizeof (save), " hideheaders=%d", ((w_playlist_t *)w)->hideheaders);
+    strncat (s, save, sz);
+}
+
+static void
+w_playlist_init (ddb_gtkui_widget_t *base) {
+    w_playlist_t *w = (w_playlist_t *)base;
+    ddb_listview_show_header (w->list, !w->hideheaders);
+
+    g_idle_add (playlistswitch_cb, w);
+    g_idle_add (refresh_cb, w->list);
+}
+
+static void
+on_playlist_showheaders_toggled (GtkCheckMenuItem *checkmenuitem, gpointer          user_data) {
+    w_playlist_t *w = user_data;
+    w->hideheaders = !gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (checkmenuitem));
+    ddb_listview_show_header (DDB_LISTVIEW (w->list), !w->hideheaders);
+}
+
+static void
+w_playlist_initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
+    GtkWidget *item;
+    item = gtk_check_menu_item_new_with_mnemonic (_("Show Column Headers"));
+    gtk_widget_show (item);
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), !((w_playlist_t *)w)->hideheaders);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "toggled",
+            G_CALLBACK (on_playlist_showheaders_toggled),
+            w);
+}
+
+ddb_gtkui_widget_t *
+w_tabbed_playlist_create (void) {
+    w_tabbed_playlist_t *w = malloc (sizeof (w_tabbed_playlist_t));
+    memset (w, 0, sizeof (w_tabbed_playlist_t));
+
+    GtkWidget *vbox = gtk_vbox_new (FALSE, 0);
+    w->plt.base.widget = vbox;
+    w->plt.base.save = w_playlist_save;
+    w->plt.base.load = w_playlist_load;
+    w->plt.base.init = w_playlist_init;
+    w->plt.base.initmenu = w_playlist_initmenu;
+    gtk_widget_show (vbox);
+
+    GtkWidget *tabstrip = ddb_tabstrip_new ();
+    w->tabstrip = DDB_TABSTRIP (tabstrip);
+    gtk_widget_show (tabstrip);
+    GtkWidget *list = ddb_listview_new ();
+    gtk_widget_set_size_request (vbox, 100, 100);
+    w->plt.list = (DdbListview *)list;
+    gtk_widget_show (list);
+
+    gtk_box_pack_start (GTK_BOX (vbox), tabstrip, FALSE, TRUE, 0);
+    gtk_widget_set_can_focus (tabstrip, FALSE);
+    gtk_widget_set_can_default (tabstrip, FALSE);
+
+    gtk_box_pack_start (GTK_BOX (vbox), list, TRUE, TRUE, 0);
+
+    main_playlist_init (list);
+
+    w_override_signals (w->plt.base.widget, w);
+
+    w->plt.base.message = w_tabbed_playlist_message;
+    return (ddb_gtkui_widget_t*)w;
+}
+
+///// playlist widget
+
+ddb_gtkui_widget_t *
+w_playlist_create (void) {
+    w_playlist_t *w = malloc (sizeof (w_playlist_t));
+    memset (w, 0, sizeof (w_playlist_t));
+
+    w->base.widget = gtk_event_box_new ();
+    w->list = DDB_LISTVIEW (ddb_listview_new ());
+    gtk_widget_set_size_request (GTK_WIDGET (w->base.widget), 100, 100);
+    w->base.save = w_playlist_save;
+    w->base.load = w_playlist_load;
+    w->base.init = w_playlist_init;
+    w->base.initmenu = w_playlist_initmenu;
+    gtk_widget_show (GTK_WIDGET (w->list));
+    main_playlist_init (GTK_WIDGET (w->list));
+    if (deadbeef->conf_get_int ("gtkui.headers.visible", 1)) {
+        ddb_listview_show_header (DDB_LISTVIEW (w->list), 1);
+    }
+    else {
+        ddb_listview_show_header (DDB_LISTVIEW (w->list), 0);
+    }
+
+    gtk_container_add (GTK_CONTAINER (w->base.widget), GTK_WIDGET (w->list));
+    w_override_signals (w->base.widget, w);
+    w->base.message = w_playlist_message;
+    return (ddb_gtkui_widget_t*)w;
+}
+
+////// selection properties widget
+
+gboolean
+fill_selproperties_cb (gpointer data) {
+    w_selproperties_t *w = data;
+    DB_playItem_t **tracks = NULL;
+    int numtracks = 0;
+    deadbeef->pl_lock ();
+    int nsel = deadbeef->pl_getselcount ();
+    if (0 < nsel) {
+        tracks = malloc (sizeof (DB_playItem_t *) * nsel);
+        if (tracks) {
+            int n = 0;
+            DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+            while (it) {
+                if (deadbeef->pl_is_selected (it)) {
+                    assert (n < nsel);
+                    deadbeef->pl_item_ref (it);
+                    tracks[n++] = it;
+                }
+                DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+                deadbeef->pl_item_unref (it);
+                it = next;
+            }
+            numtracks = nsel;
+        }
+        else {
+            deadbeef->pl_unlock ();
+            return FALSE;
+        }
+    }
+    GtkListStore *store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (w->tree)));
+    trkproperties_fill_meta (store, tracks, numtracks);
+    if (tracks) {
+        for (int i = 0; i < numtracks; i++) {
+            deadbeef->pl_item_unref (tracks[i]);
+        }
+        free (tracks);
+        tracks = NULL;
+        numtracks = 0;
+    }
+    deadbeef->pl_unlock ();
+    return FALSE;
+}
+
+static int
+selproperties_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    switch (id) {
+    case DB_EV_PLAYLISTCHANGED:
+    case DB_EV_SELCHANGED:
+        {
+            g_idle_add (fill_selproperties_cb, w);
+        }
+        break;
+    }
+    return 0;
+}
+
+static void
+w_selproperties_init (struct ddb_gtkui_widget_s *w) {
+    fill_selproperties_cb (w);
+}
+
+ddb_gtkui_widget_t *
+w_selproperties_create (void) {
+    w_selproperties_t *w = malloc (sizeof (w_selproperties_t));
+    memset (w, 0, sizeof (w_selproperties_t));
+
+    w->base.widget = gtk_event_box_new ();
+    w->base.init = w_selproperties_init;
+    w->base.message = selproperties_message;
+
+    gtk_widget_set_can_focus (w->base.widget, FALSE);
+
+    GtkWidget *scroll = gtk_scrolled_window_new (NULL, NULL);
+    gtk_widget_set_can_focus (scroll, FALSE);
+    gtk_widget_show (scroll);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), scroll);
+
+    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scroll), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+    w->tree = gtk_tree_view_new ();
+    gtk_widget_show (w->tree);
+    gtk_tree_view_set_enable_search (GTK_TREE_VIEW (w->tree), FALSE);
+    gtk_container_add (GTK_CONTAINER (scroll), w->tree);
+
+    GtkListStore *store = gtk_list_store_new (4, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT);
+    gtk_tree_view_set_model (GTK_TREE_VIEW (w->tree), GTK_TREE_MODEL (store));
+    gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (w->tree), TRUE);
+
+    GtkCellRenderer *rend1 = gtk_cell_renderer_text_new ();
+    GtkCellRenderer *rend2 = gtk_cell_renderer_text_new ();
+    GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes (_("Key"), rend1, "text", 0, NULL);
+    gtk_tree_view_column_set_resizable (col1, TRUE);
+    GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes (_("Value"), rend2, "text", 1, NULL);
+    gtk_tree_view_column_set_resizable (col2, TRUE);
+    gtk_tree_view_append_column (GTK_TREE_VIEW (w->tree), col1);
+    gtk_tree_view_append_column (GTK_TREE_VIEW (w->tree), col2);
+    gtk_tree_view_set_headers_clickable (GTK_TREE_VIEW (w->tree), TRUE);
+    w_override_signals (w->base.widget, w);
+
+    return (ddb_gtkui_widget_t *)w;
+}
+
+///// cover art display
+static gboolean
+coverart_redraw_cb (void *user_data) {
+    w_coverart_t *w = user_data;
+    w->cover_size = w->new_cover_size;
+    gtk_widget_queue_draw (w->drawarea);
+    return FALSE;
+}
+
+void
+coverart_avail_callback (void *user_data) {
+    g_idle_add (coverart_redraw_cb, user_data);
+}
+
+static gboolean
+coverart_redraw_single_cb (void *user_data) {
+    w_coverart_t *w = user_data;
+    gtk_widget_queue_draw (w->drawarea);
+    return FALSE;
+}
+
+static void
+coverart_avail_callback_single (gpointer user_data) {
+    g_idle_add (coverart_redraw_single_cb, user_data);
+}
+
+static gboolean
+deferred_cover_load_cb (void *ctx) {
+    w_coverart_t *w = ctx;
+    w->cover_refresh_timeout_id = 0;
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+    if (!it) {
+        return FALSE;
+    }
+    GtkAllocation a;
+    gtk_widget_get_allocation (GTK_WIDGET (w->drawarea), &a);
+    deadbeef->pl_lock ();
+    const char *album = deadbeef->pl_find_meta (it, "album");
+    const char *artist = deadbeef->pl_find_meta (it, "artist");
+    if (!album || !*album) {
+        album = deadbeef->pl_find_meta (it, "title");
+    }
+    GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta (((DB_playItem_t *)it), ":URI"), artist, album, w->new_cover_size, NULL, NULL);
+    deadbeef->pl_unlock ();
+    deadbeef->pl_item_unref (it);
+    queue_cover_callback (coverart_avail_callback, w);
+    if (pixbuf) {
+        g_object_unref (pixbuf);
+    }
+
+    return FALSE;
+}
+
+static gboolean
+coverart_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+    GtkAllocation a;
+    gtk_widget_get_allocation (widget, &a);
+    int width = a.width;
+    int height = a.height;
+
+    w_coverart_t *w = user_data;
+    int real_size = min (width, height);
+
+    if (real_size > 0 && it) {
+        if (w->new_cover_size != real_size) {
+            w->new_cover_size = real_size;
+            if (w->cover_refresh_timeout_id) {
+                g_source_remove (w->cover_refresh_timeout_id);
+                w->cover_refresh_timeout_id = 0;
+            }
+            if (w->cover_size == -1) {
+                w->cover_size = real_size;
+                g_idle_add (deferred_cover_load_cb, w);
+            }
+            else {
+                if (!w->cover_refresh_timeout_id) {
+                    w->cover_refresh_timeout_id = g_timeout_add (1000, deferred_cover_load_cb, w);
+                }
+            }
+        }
+        int size = w->cover_size;
+
+        float scale = (float)real_size / size;
+
+        deadbeef->pl_lock ();
+        const char *album = deadbeef->pl_find_meta (it, "album");
+        const char *artist = deadbeef->pl_find_meta (it, "artist");
+        if (!album || !*album) {
+            album = deadbeef->pl_find_meta (it, "title");
+        }
+        GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta ((it), ":URI"), artist, album, real_size == size ? size : -1, coverart_avail_callback_single, user_data);
+        deadbeef->pl_unlock ();
+
+        int hq = 0;
+        if (!pixbuf) {
+            pixbuf = cover_get_default_pixbuf ();
+            hq = 1;
+        }
+
+        if (pixbuf) {
+            size = gdk_pixbuf_get_width (pixbuf);
+            float art_scale = (float)real_size / size;
+            int pw = real_size;
+            if (gdk_pixbuf_get_width (pixbuf) < gdk_pixbuf_get_height (pixbuf)) {
+                art_scale *= (float)gdk_pixbuf_get_width (pixbuf) / gdk_pixbuf_get_height (pixbuf);
+            }
+            int ph = pw;
+            int x = 0;
+            int y = 0;
+            if (gdk_pixbuf_get_width (pixbuf) > gdk_pixbuf_get_height (pixbuf)) {
+                y = (a.height - gdk_pixbuf_get_height (pixbuf)) / 2;
+            }
+            else if (gdk_pixbuf_get_width (pixbuf) < gdk_pixbuf_get_height (pixbuf)) {
+                x = (a.width - gdk_pixbuf_get_width (pixbuf)) / 2;
+            }
+            cairo_rectangle (cr, x, y, pw, ph);
+            cairo_scale (cr, art_scale, art_scale);
+            gdk_cairo_set_source_pixbuf (cr, pixbuf, x, y);
+            cairo_pattern_set_filter (cairo_get_source(cr), hq ? CAIRO_FILTER_GAUSSIAN : CAIRO_FILTER_FAST);
+            cairo_fill (cr);
+            g_object_unref (pixbuf);
+        }
+        deadbeef->pl_item_unref (it);
+    }
+    return TRUE;
+}
+
+static gboolean
+coverart_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
+    cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
+    gboolean res = coverart_draw (widget, cr, user_data);
+    cairo_destroy (cr);
+    return res;
+}
+
+static int
+coverart_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    w_coverart_t *ca = (w_coverart_t *)w;
+    switch (id) {
+    case DB_EV_SONGSTARTED:
+        g_idle_add (coverart_redraw_cb, w);
+        break;
+    case DB_EV_TRACKINFOCHANGED:
+        {
+            ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
+            DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+            if (it == ev->track) {
+                g_idle_add (coverart_redraw_cb, w);
+            }
+            if (it) {
+                deadbeef->pl_item_unref (it);
+            }
+        }
+        break;
+    }
+    return 0;
+}
+
+ddb_gtkui_widget_t *
+w_coverart_create (void) {
+    w_coverart_t *w = malloc (sizeof (w_coverart_t));
+    memset (w, 0, sizeof (w_coverart_t));
+
+    w->base.widget = gtk_event_box_new ();
+    w->base.message = coverart_message;
+    w->drawarea = gtk_drawing_area_new ();
+    w->cover_size = -1;
+    w->new_cover_size = -1;
+    gtk_widget_show (w->drawarea);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), w->drawarea);
+#if !GTK_CHECK_VERSION(3,0,0)
+    g_signal_connect_after ((gpointer) w->drawarea, "expose_event", G_CALLBACK (coverart_expose_event), w);
+#else
+    g_signal_connect_after ((gpointer) w->drawarea, "draw", G_CALLBACK (coverart_draw), w);
+#endif
+    w_override_signals (w->base.widget, w);
+    return (ddb_gtkui_widget_t *)w;
+}
+
+///// scope vis
+void
+w_scope_destroy (ddb_gtkui_widget_t *w) {
+    w_scope_t *s = (w_scope_t *)w;
+    deadbeef->vis_waveform_unlisten (w);
+    if (s->drawtimer) {
+        g_source_remove (s->drawtimer);
+        s->drawtimer = 0;
+    }
+#if USE_OPENGL
+    if (s->glcontext) {
+        gdk_gl_context_destroy (s->glcontext);
+        s->glcontext = NULL;
+    }
+#endif
+    if (s->surf) {
+        cairo_surface_destroy (s->surf);
+        s->surf = NULL;
+    }
+    if (s->samples) {
+        free (s->samples);
+        s->samples = NULL;
+    }
+    if (s->mutex) {
+        deadbeef->mutex_free (s->mutex);
+        s->mutex = 0;
+    }
+}
+
+gboolean
+w_scope_draw_cb (void *data) {
+    w_scope_t *s = data;
+    gtk_widget_queue_draw (s->drawarea);
+    return TRUE;
+}
+
+static void
+scope_wavedata_listener (void *ctx, ddb_audio_data_t *data) {
+    w_scope_t *w = ctx;
+    if (w->nsamples != w->resized) {
+        deadbeef->mutex_lock (w->mutex);
+        float *oldsamples = w->samples;
+        int oldnsamples = w->nsamples;
+        w->samples = NULL;
+        w->nsamples = w->resized;
+        if (w->nsamples > 0) {
+            w->samples = malloc (sizeof (float) * w->nsamples);
+            memset (w->samples, 0, sizeof (float) * w->nsamples);
+            if (oldsamples) {
+                int n = min (oldnsamples, w->nsamples);
+                memcpy (w->samples + w->nsamples - n, oldsamples + oldnsamples - n, n * sizeof (float));
+            }
+        }
+        if (oldnsamples) {
+            free (oldsamples);
+        }
+        deadbeef->mutex_unlock (w->mutex);
+    }
+
+    if (w->samples) {
+        // append
+        int nsamples = data->nframes / data->fmt->channels;
+        float ratio = data->fmt->samplerate / 44100.f;
+        int size = nsamples / ratio;
+
+        int sz = min (w->nsamples, size);
+        int n = w->nsamples-sz;
+
+        memmove (w->samples, w->samples + sz, n * sizeof (float));
+        float pos = 0;
+        for (int i = 0; i < sz && pos < nsamples; i++, pos += ratio) {
+            w->samples[n + i] = data->data[ftoi(pos * data->fmt->channels) * data->fmt->channels + 0];
+            for (int j = 1; j < data->fmt->channels; j++) {
+                w->samples[n + i] += data->data[ftoi(pos * data->fmt->channels) * data->fmt->channels + j];
+            }
+            w->samples[n+i] /= data->fmt->channels;
+        }
+    }
+}
+
+#if 0
+// Bresenham's line drawing from http://rosettacode.org
+static inline void
+_draw_line (uint8_t *data, int stride, int x0, int y0, int x1, int y1) {
+    int dx = abs(x1-x0), sx = x0<x1 ? 1 : -1;
+    int dy = abs(y1-y0), sy = y0<y1 ? 1 : -1;
+    int err = (dx>dy ? dx : -dy)/2, e2;
+
+    for(;;){
+        uint32_t *ptr = (uint32_t*)&data[y0*stride+x0*4];
+        *ptr = 0xffffffff;
+        if (x0==x1 && y0==y1) break;
+        e2 = err;
+        if (e2 >-dx) { err -= dy; x0 += sx; }
+        if (e2 < dy) { err += dx; y0 += sy; }
+    }
+}
+#endif
+
+static inline void
+_draw_vline (uint8_t *data, int stride, int x0, int y0, int y1) {
+    if (y0 > y1) {
+        int tmp = y0;
+        y0 = y1;
+        y1 = tmp;
+        y1--;
+    }
+    else if (y0 < y1) {
+        y0++;
+    }
+    while (y0 <= y1) {
+        uint32_t *ptr = (uint32_t*)&data[y0*stride+x0*4];
+        *ptr = 0xffffffff;
+        y0++;
+    }
+}
+
+static inline void
+_draw_bar (uint8_t *data, int stride, int x0, int y0, int w, int h, uint32_t color) {
+    int y1 = y0+h-1;
+    int x1 = x0+w-1;
+    uint32_t *ptr = (uint32_t*)&data[y0*stride+x0*4];
+    while (y0 <= y1) {
+        int x = x0;
+        while (x++ <= x1) {
+            *ptr++ = color;
+        }
+        y0++;
+        ptr += stride/4-w;
+    }
+}
+
+gboolean
+scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
+    GtkAllocation a;
+    gtk_widget_get_allocation (widget, &a);
+
+    w_scope_t *w = user_data;
+
+    if (!w->surf || cairo_image_surface_get_width (w->surf) != a.width || cairo_image_surface_get_height (w->surf) != a.height) {
+        if (w->surf) {
+            cairo_surface_destroy (w->surf);
+            w->surf = NULL;
+        }
+        w->surf = cairo_image_surface_create (CAIRO_FORMAT_RGB24, a.width, a.height);
+    }
+
+    int nsamples = a.width;
+    if (w->nsamples != nsamples) {
+        w->resized = nsamples;
+    }
+    cairo_surface_flush (w->surf);
+    unsigned char *data = cairo_image_surface_get_data (w->surf);
+    if (!data) {
+        return FALSE;
+    }
+    int stride = cairo_image_surface_get_stride (w->surf);
+    memset (data, 0, a.height * stride);
+    if (w->samples && a.height > 2) {
+        deadbeef->mutex_lock (w->mutex);
+        float incr = a.width / (float)w->nsamples;
+        float h = a.height;
+        if (h > 50) {
+            h -= 20;
+        }
+        if (h > 100) {
+            h -= 40;
+        }
+        h /= 2;
+        float hh = a.height/2.f;
+
+        int prev_y = w->samples[0] * h + hh;
+
+        int n = min (w->nsamples, a.width);
+        for (int i = 1; i < n; i++) {
+            int y = ftoi (w->samples[i] * h + hh);
+            if (y < 0) {
+                y = 0;
+            }
+            if (y >= a.height) {
+                y = a.height-1;
+            }
+            _draw_vline (data, stride, i, prev_y, y);
+            prev_y = y;
+        }
+        if (n < a.width) {
+            memset (data + a.height / 2 * stride + n * 4, 0xff, (a.width-n)*4);
+        }
+        deadbeef->mutex_unlock (w->mutex);
+    }
+    else if (a.height > 0) {
+        memset (data + a.height / 2 *stride, 0xff, stride);
+    }
+    cairo_surface_mark_dirty (w->surf);
+    cairo_save (cr);
+    cairo_set_source_surface (cr, w->surf, 0, 0);
+    cairo_rectangle (cr, 0, 0, a.width, a.height);
+    cairo_fill (cr);
+    cairo_restore (cr);
+
+    return FALSE;
+}
+
+gboolean
+scope_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
+#if USE_OPENGL
+    GtkAllocation a;
+    gtk_widget_get_allocation (widget, &a);
+    w_scope_t *w = user_data;
+    int nsamples = a.width;
+    if (w->nsamples != nsamples) {
+        w->resized = nsamples;
+        return FALSE;
+    }
+    float incr = a.width / (float)w->nsamples;
+    float h = a.height;
+    if (h > 50) {
+        h -= 20;
+    }
+    if (h > 100) {
+        h -= 40;
+    }
+    h /= 2;
+    float hh = a.height/2.f;
+
+    GdkGLDrawable *d = gtk_widget_get_gl_drawable (widget);
+    gdk_gl_drawable_gl_begin (d, w->glcontext);
+
+    glClear (GL_COLOR_BUFFER_BIT);
+    glMatrixMode (GL_PROJECTION);
+    glLoadIdentity ();
+    gluOrtho2D(0,a.width,a.height,0);
+    glMatrixMode (GL_MODELVIEW);
+    glViewport (0, 0, a.width, a.height);
+
+    glBegin (GL_LINE_STRIP);
+
+    for (int i = 0; i < w->nsamples; i++) {
+        float y = w->samples[i] * h + hh;
+        glVertex2f (i, y);
+    }
+
+    glEnd();
+    gdk_gl_drawable_swap_buffers (d);
+
+    gdk_gl_drawable_gl_end (d);
+
+#else
+    gboolean res = scope_draw_cairo (widget, cr, user_data);
+#endif
+    return FALSE;
+}
+
+gboolean
+scope_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
+    cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
+    gboolean res = scope_draw (widget, cr, user_data);
+    cairo_destroy (cr);
+    return res;
+}
+
+void
+w_scope_init (ddb_gtkui_widget_t *w) {
+    w_scope_t *s = (w_scope_t *)w;
+    if (s->drawtimer) {
+        g_source_remove (s->drawtimer);
+        s->drawtimer = 0;
+    }
+#if USE_OPENGL
+    if (!gtkui_gl_init ()) {
+        s->drawtimer = g_timeout_add (33, w_scope_draw_cb, w);
+    }
+#else
+    s->drawtimer = g_timeout_add (33, w_scope_draw_cb, w);
+#endif
+}
+
+void
+scope_realize (GtkWidget *widget, gpointer data) {
+    w_scope_t *w = data;
+#if USE_OPENGL
+    w->glcontext = gtk_widget_create_gl_context (w->drawarea, NULL, TRUE, GDK_GL_RGBA_TYPE);
+#endif
+}
+
+ddb_gtkui_widget_t *
+w_scope_create (void) {
+    w_scope_t *w = malloc (sizeof (w_scope_t));
+    memset (w, 0, sizeof (w_scope_t));
+
+    w->base.widget = gtk_event_box_new ();
+    w->base.init = w_scope_init;
+    w->base.destroy  = w_scope_destroy;
+    w->drawarea = gtk_drawing_area_new ();
+#if USE_OPENGL
+    int attrlist[] = {GDK_GL_ATTRIB_LIST_NONE};
+    GdkGLConfig *conf = gdk_gl_config_new_by_mode ((GdkGLConfigMode)(GDK_GL_MODE_RGB |
+                        GDK_GL_MODE_DOUBLE));
+    gboolean cap = gtk_widget_set_gl_capability (w->drawarea, conf, NULL, TRUE, GDK_GL_RGBA_TYPE);
+#endif
+
+    w->mutex = deadbeef->mutex_create ();
+    gtk_widget_show (w->drawarea);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), w->drawarea);
+#if !GTK_CHECK_VERSION(3,0,0)
+    g_signal_connect_after ((gpointer) w->drawarea, "expose_event", G_CALLBACK (scope_expose_event), w);
+#else
+    g_signal_connect_after ((gpointer) w->drawarea, "draw", G_CALLBACK (scope_draw), w);
+#endif
+    g_signal_connect_after (G_OBJECT (w->drawarea), "realize", G_CALLBACK (scope_realize), w);
+    w_override_signals (w->base.widget, w);
+    deadbeef->vis_waveform_listen(w, scope_wavedata_listener);
+    return (ddb_gtkui_widget_t *)w;
+}
+
+///// spectrum vis
+void
+w_spectrum_destroy (ddb_gtkui_widget_t *w) {
+    w_spectrum_t *s = (w_spectrum_t *)w;
+    deadbeef->vis_spectrum_unlisten (w);
+    if (s->drawtimer) {
+        g_source_remove (s->drawtimer);
+        s->drawtimer = 0;
+    }
+    if (s->surf) {
+        cairo_surface_destroy (s->surf);
+        s->surf = NULL;
+    }
+#if USE_OPENGL
+    if (s->glcontext) {
+        gdk_gl_context_destroy (s->glcontext);
+        s->glcontext = NULL;
+    }
+#endif
+}
+
+gboolean
+w_spectrum_draw_cb (void *data) {
+    w_spectrum_t *s = data;
+    gtk_widget_queue_draw (s->drawarea);
+    return TRUE;
+}
+
+
+static void calculate_bands(w_spectrum_t *w, int bands)
+{
+	int i;
+
+	for (i = 0; i <= bands; i++)
+		w->xscale[i] = powf((float)(MAX_BANDS+1), ((float) i / (float) bands)) - 1;
+}
+
+static void
+spectrum_audio_listener (void *ctx, ddb_audio_data_t *data) {
+    w_spectrum_t *w = ctx;
+    memcpy (w->data, data->data, DDB_FREQ_BANDS * sizeof (float));
+}
+
+static gboolean
+spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
+    w_spectrum_t *w = user_data;
+    float *freq = w->data;
+
+    GtkAllocation a;
+    gtk_widget_get_allocation (widget, &a);
+
+    int width, height, bands;
+    bands = a.width/BAND_WIDTH;
+    bands = CLAMP(bands, 4, MAX_BANDS);
+    width = a.width;
+    height = a.height;
+	calculate_bands(w, bands);
+
+	for (int i = 0; i <= bands; i ++)
+	{
+		int a = ceil (w->xscale[i]);
+		int b = floor (w->xscale[i + 1]);
+		float n = 0;
+
+		if (b < a)
+			n += freq[b] * (w->xscale[i + 1] - w->xscale[i]);
+		else
+		{
+			if (a > 0)
+				n += freq[a - 1] * (a - w->xscale[i]);
+			for (; a < b; a ++)
+				n += freq[a];
+			if (b < MAX_BANDS)
+				n += freq[b] * (w->xscale[i + 1] - b);
+		}
+
+		/* 40 dB range */
+		int x = 20 * log10 (n * 200);
+		x = CLAMP (x, 0, 40);
+
+		w->bars[i] -= MAX (0, VIS_FALLOFF - w->delay[i]);
+		w->peaks[i] -= MAX (0, VIS_FALLOFF_PEAK - w->delay_peak[i]);;
+
+		if (w->delay[i])
+			w->delay[i]--;
+		if (w->delay_peak[i])
+			w->delay_peak[i]--;
+
+		if (x > w->bars[i])
+		{
+			w->bars[i] = x;
+			w->delay[i] = VIS_DELAY;
+		}
+		if (x > w->peaks[i]) {
+            w->peaks[i] = x;
+            w->delay_peak[i] = VIS_DELAY_PEAK;
+        }
+        if (w->peaks[i] < w->bars[i]) {
+            w->peaks[i] = w->bars[i];
+        }
+	}
+
+#if USE_OPENGL
+    GdkGLDrawable *d = gtk_widget_get_gl_drawable (widget);
+    gdk_gl_drawable_gl_begin (d, w->glcontext);
+
+    glClear (GL_COLOR_BUFFER_BIT);
+    glMatrixMode (GL_PROJECTION);
+    glLoadIdentity ();
+    gluOrtho2D(0,a.width,a.height,0);
+    glMatrixMode (GL_MODELVIEW);
+    glViewport (0, 0, a.width, a.height);
+
+    glBegin (GL_QUADS);
+	float base_s = (height / 40.f);
+
+	for (gint i = 0; i <= bands; i++)
+	{
+		gint x = ((width / bands) * i) + 2;
+        int y = a.height - w->bars[i] * base_s;
+        glColor3f (0, 0.5, 1);
+		glVertex2f (x + 1, y);
+		glVertex2f (x + 1 + (width / bands) - 1, y);
+		glVertex2f (x + 1 + (width / bands) - 1, a.height);
+		glVertex2f (x + 1, a.height);
+
+        // peak
+        glColor3f (1, 1, 1);
+        y = a.height - w->peaks[i] * base_s;
+		glVertex2f (x + 1, y);
+		glVertex2f (x + 1 + (width / bands) - 1, y);
+		glVertex2f (x + 1 + (width / bands) - 1, y+1);
+		glVertex2f (x + 1, y+1);
+	}
+    glEnd();
+    gdk_gl_drawable_swap_buffers (d);
+
+    gdk_gl_drawable_gl_end (d);
+#else
+    if (!w->surf || cairo_image_surface_get_width (w->surf) != a.width || cairo_image_surface_get_height (w->surf) != a.height) {
+        if (w->surf) {
+            cairo_surface_destroy (w->surf);
+            w->surf = NULL;
+        }
+        w->surf = cairo_image_surface_create (CAIRO_FORMAT_RGB24, a.width, a.height);
+    }
+	float base_s = (height / 40.f);
+
+    cairo_surface_flush (w->surf);
+    unsigned char *data = cairo_image_surface_get_data (w->surf);
+    if (!data) {
+        return FALSE;
+    }
+    int stride = cairo_image_surface_get_stride (w->surf);
+    memset (data, 0, a.height * stride);
+
+    int barw = width / bands;
+	for (gint i = 0; i <= bands; i++)
+	{
+		int x = barw * i;
+        int y = a.height - w->bars[i] * base_s;
+        if (y < 0) {
+            y = 0;
+        }
+        int bw = barw-1;
+        if (x + bw >= a.width) {
+            bw = a.width-x-1;
+        }
+        _draw_bar (data, stride, x+1, y, bw, a.height-y, 0xff007fff);
+        y = a.height - w->peaks[i] * base_s;
+        if (y < a.height-1) {
+            _draw_bar (data, stride, x + 1, y, bw, 1, 0xffffffff);
+        }
+	}
+    cairo_surface_mark_dirty (w->surf);
+    cairo_save (cr);
+    cairo_set_source_surface (cr, w->surf, 0, 0);
+    cairo_rectangle (cr, 0, 0, a.width, a.height);
+    cairo_fill (cr);
+    cairo_restore (cr);
+
+#endif
+    return FALSE;
+}
+
+
+gboolean
+spectrum_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
+    cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
+    gboolean res = spectrum_draw (widget, cr, user_data);
+    cairo_destroy (cr);
+    return res;
+}
+void
+w_spectrum_init (ddb_gtkui_widget_t *w) {
+    w_spectrum_t *s = (w_spectrum_t *)w;
+    if (s->drawtimer) {
+        g_source_remove (s->drawtimer);
+        s->drawtimer = 0;
+    }
+#if USE_OPENGL
+    if (!gtkui_gl_init ()) {
+        s->drawtimer = g_timeout_add (33, w_spectrum_draw_cb, w);
+    }
+#else
+    s->drawtimer = g_timeout_add (33, w_spectrum_draw_cb, w);
+#endif
+}
+
+void
+spectrum_realize (GtkWidget *widget, gpointer data) {
+    w_spectrum_t *w = data;
+#if USE_OPENGL
+    w->glcontext = gtk_widget_create_gl_context (w->drawarea, NULL, TRUE, GDK_GL_RGBA_TYPE);
+#endif
+}
+
+ddb_gtkui_widget_t *
+w_spectrum_create (void) {
+    w_spectrum_t *w = malloc (sizeof (w_spectrum_t));
+    memset (w, 0, sizeof (w_spectrum_t));
+
+    w->base.widget = gtk_event_box_new ();
+    w->base.init = w_spectrum_init;
+    w->base.destroy  = w_spectrum_destroy;
+    w->drawarea = gtk_drawing_area_new ();
+#if USE_OPENGL
+    int attrlist[] = {GDK_GL_ATTRIB_LIST_NONE};
+    GdkGLConfig *conf = gdk_gl_config_new_by_mode ((GdkGLConfigMode)(GDK_GL_MODE_RGB |
+                        GDK_GL_MODE_DOUBLE));
+    gboolean cap = gtk_widget_set_gl_capability (w->drawarea, conf, NULL, TRUE, GDK_GL_RGBA_TYPE);
+#endif
+    gtk_widget_show (w->drawarea);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), w->drawarea);
+#if !GTK_CHECK_VERSION(3,0,0)
+    g_signal_connect_after ((gpointer) w->drawarea, "expose_event", G_CALLBACK (spectrum_expose_event), w);
+#else
+    g_signal_connect_after ((gpointer) w->drawarea, "draw", G_CALLBACK (spectrum_draw), w);
+#endif
+    g_signal_connect_after (G_OBJECT (w->drawarea), "realize", G_CALLBACK (spectrum_realize), w);
+    w_override_signals (w->base.widget, w);
+    deadbeef->vis_spectrum_listen (w, spectrum_audio_listener);
+    return (ddb_gtkui_widget_t *)w;
+}
+
+// hbox and vbox
+static const char *
+w_hvbox_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) {
+    if (strcmp (type, "hbox") && strcmp (type, "vbox")) {
+        return NULL;
+    }
+    w_hvbox_t *hvbox = (w_hvbox_t *)w;
+
+    char key[MAX_TOKEN], val[MAX_TOKEN];
+    for (;;) {
+        get_keyvalue (s,key,val);
+
+        if (!strcmp (key, "expand")) {
+            const char *s = val;
+            int n = 0;
+            hvbox->expand = 0;
+            char t[MAX_TOKEN];
+            while (n < 64) {
+                s = gettoken (s, t);
+                if (!s) {
+                    break;
+                }
+                if (atoi (t)) {
+                    hvbox->expand |= (1ULL << n);
+                }
+                n++;
+            }
+        }
+        else if (!strcmp (key, "fill")) {
+            const char *s = val;
+            int n = 0;
+            hvbox->fill = 0;
+            char t[MAX_TOKEN];
+            while (n < 64) {
+                s = gettoken (s, t);
+                if (!s) {
+                    break;
+                }
+                if (atoi (t)) {
+                    hvbox->fill |= (1ULL << n);
+                }
+                n++;
+            }
+        }
+        else if (!strcmp (key, "homogeneous")) {
+            hvbox->homogeneous = atoi (val) ? 1 : 0;
+        }
+    }
+
+    return s;
+}
+
+typedef struct {
+    GtkWidget *hvbox;
+    char expand[150];
+    char fill[150];
+} w_hvbox_save_info_t;
+
+static void
+save_hvbox_packing (GtkWidget *child, gpointer user_data) {
+    w_hvbox_save_info_t *info = user_data;
+    gboolean expand;
+    gboolean fill;
+    guint padding;
+    GtkPackType pack_type;
+    gtk_box_query_child_packing (GTK_BOX (info->hvbox), child, &expand, &fill, &padding, &pack_type);
+    char s[10];
+    snprintf (s, sizeof (s), info->expand[0] ? " %d" : "%d", expand);
+    strncat (info->expand, s, sizeof (info->expand) - strlen (info->expand));
+
+    snprintf (s, sizeof (s), info->fill[0] ? " %d" : "%d", fill);
+    strncat (info->fill, s, sizeof (info->fill) - strlen (info->fill));
+}
+
+static void
+w_hvbox_save (struct ddb_gtkui_widget_s *w, char *s, int sz) {
+    char save[300];
+
+    w_hvbox_save_info_t info;
+    memset (&info, 0, sizeof (info));
+    info.hvbox = ((w_hvbox_t *)w)->box;
+    gtk_container_foreach (GTK_CONTAINER (((w_hvbox_t *)w)->box), save_hvbox_packing, &info);
+    gboolean homogeneous = gtk_box_get_homogeneous (GTK_BOX (((w_hvbox_t *)w)->box));
+
+    snprintf (save, sizeof (save), " expand=\"%s\" fill=\"%s\" homogeneous=%d", info.expand, info.fill, homogeneous);
+    strncat (s, save, sz);
+}
+
+typedef struct {
+    w_hvbox_t *w;
+    int n;
+} hwbox_init_info_t;
+
+static void
+hvbox_init_child (GtkWidget *child, void *user_data) {
+    hwbox_init_info_t *info = user_data;
+    gboolean expand;
+    gboolean fill;
+    guint padding;
+    GtkPackType pack_type;
+    gtk_box_query_child_packing (GTK_BOX (info->w->box), child, &expand, &fill, &padding, &pack_type);
+    expand = (info->w->expand & (1<<info->n)) ? TRUE : FALSE;
+    fill = (info->w->fill & (1<<info->n)) ? TRUE : FALSE;
+    gtk_box_set_child_packing (GTK_BOX (info->w->box), child, expand, fill, padding, pack_type);
+    info->n++;
+}
+
+static void
+w_hvbox_init (struct ddb_gtkui_widget_s *w) {
+    w_hvbox_t *hvbox = (w_hvbox_t *)w;
+    hwbox_init_info_t info;
+    info.w = hvbox;
+    info.n = 0;
+    gtk_container_foreach (GTK_CONTAINER (hvbox->box), hvbox_init_child, &info);
+    gtk_box_set_homogeneous (GTK_BOX (hvbox->box), hvbox->homogeneous ? TRUE : FALSE);
+}
+
+static void
+w_hvbox_append (struct ddb_gtkui_widget_s *container, struct ddb_gtkui_widget_s *child) {
+    w_hvbox_t *b = (w_hvbox_t *)container;
+    gtk_box_pack_start (GTK_BOX (b->box), child->widget, (child->flags & DDB_GTKUI_WIDGET_FLAG_NON_EXPANDABLE) ? FALSE : TRUE, TRUE, 0);
+    gtk_widget_show (child->widget);
+}
+
+static void
+w_hvbox_remove (struct ddb_gtkui_widget_s *container, struct ddb_gtkui_widget_s *child) {
+    w_hvbox_t *b = (w_hvbox_t *)container;
+    gtk_container_remove (GTK_CONTAINER (b->box), child->widget);
+}
+
+static void
+w_hvbox_replace (struct ddb_gtkui_widget_s *container, struct ddb_gtkui_widget_s *child, struct ddb_gtkui_widget_s *newchild) {
+    w_hvbox_t *b = (w_hvbox_t *)container;
+    ddb_gtkui_widget_t *c;
+    ddb_gtkui_widget_t *prev = NULL;
+    int n = 0;
+    for (c = container->children; c; prev = c, c = c->next, n++) {
+        if (c == child) {
+            break;
+        }
+    }
+
+    if (!c) {
+        return;
+    }
+
+    if (prev) {
+        prev->next = newchild;
+    }
+    else {
+        container->children = newchild;
+    }
+    newchild->next = c->next;
+    newchild->parent = container;
+    w_remove (container, c);
+    w_destroy (c);
+
+    gtk_box_pack_start (GTK_BOX (b->box), newchild->widget, TRUE, TRUE, 0);
+    gtk_widget_show (newchild->widget);
+    gtk_box_reorder_child (GTK_BOX (b->box), newchild->widget, n);
+
+}
+
+static void
+on_hvbox_expand (GtkMenuItem *menuitem, gpointer user_data) {
+    w_append ((ddb_gtkui_widget_t*)user_data, w_create ("placeholder"));
+}
+
+static void
+on_hvbox_shrink (GtkMenuItem *menuitem, gpointer user_data) {
+    ddb_gtkui_widget_t *w = (ddb_gtkui_widget_t *)user_data;
+    ddb_gtkui_widget_t *c;
+    for (c = w->children; c && c->next; c = c->next);
+    if (c) {
+        w_remove (w, c);
+    }
+    if (!w->children) {
+        w_append (w, w_create ("placeholder"));
+    }
+}
+
+static void
+on_hvbox_toggle_homogeneous (GtkCheckMenuItem *checkmenuitem, gpointer user_data) {
+    w_hvbox_t *w = user_data;
+    gboolean hmg = gtk_box_get_homogeneous (GTK_BOX (((w_hvbox_t *)w)->box));
+    gtk_box_set_homogeneous (GTK_BOX (((w_hvbox_t *)w->box)), hmg ? FALSE : TRUE);
+}
+
+
+static void
+w_hvbox_initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
+    GtkWidget *item;
+    item = gtk_menu_item_new_with_mnemonic (_("Expand the box by 1 item"));
+    gtk_widget_show (item);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "activate", G_CALLBACK (on_hvbox_expand), w);
+
+    item = gtk_menu_item_new_with_mnemonic (_("Shrink the box by 1 item"));
+    gtk_widget_show (item);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "activate", G_CALLBACK (on_hvbox_shrink), w);
+
+    item = gtk_check_menu_item_new_with_mnemonic (_("Homogeneous"));
+    gtk_widget_show (item);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), gtk_box_get_homogeneous (GTK_BOX (((w_hvbox_t *)w)->box)));
+    g_signal_connect ((gpointer) item, "toggled", G_CALLBACK (on_hvbox_toggle_homogeneous), w);
+}
+
+static void
+on_hvbox_child_toggle_expand (GtkCheckMenuItem *checkmenuitem, gpointer user_data) {
+    ddb_gtkui_widget_t *w = user_data;
+    w_hvbox_t *box = (w_hvbox_t *)w->parent;
+    gboolean expand, fill;
+    guint padding;
+    GtkPackType packtype;
+    gtk_box_query_child_packing (GTK_BOX (box->box), w->widget, &expand, &fill, &padding, &packtype);
+    gtk_box_set_child_packing (GTK_BOX (box->box), w->widget, !expand, fill, padding, packtype);
+}
+
+static void
+on_hvbox_child_toggle_fill (GtkCheckMenuItem *checkmenuitem, gpointer user_data) {
+    ddb_gtkui_widget_t *w = user_data;
+    w_hvbox_t *box = (w_hvbox_t *)w->parent;
+    gboolean expand, fill;
+    guint padding;
+    GtkPackType packtype;
+    gtk_box_query_child_packing (GTK_BOX (box->box), w->widget, &expand, &fill, &padding, &packtype);
+    gtk_box_set_child_packing (GTK_BOX (box->box), w->widget, expand, !fill, padding, packtype);
+}
+
+static void
+w_hvbox_initchildmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
+    w_hvbox_t *box = (w_hvbox_t *)w->parent;
+
+    gboolean expand, fill;
+    guint padding;
+    GtkPackType packtype;
+    gtk_box_query_child_packing (GTK_BOX (box->box), w->widget, &expand, &fill, &padding, &packtype);
+
+    GtkWidget *item;
+
+    item = gtk_check_menu_item_new_with_mnemonic (_("Expand"));
+    gtk_widget_show (item);
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), expand);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "toggled",
+            G_CALLBACK (on_hvbox_child_toggle_expand),
+            w);
+
+    item = gtk_check_menu_item_new_with_mnemonic (_("Fill"));
+    gtk_widget_show (item);
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), fill);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "toggled",
+            G_CALLBACK (on_hvbox_child_toggle_fill),
+            w);
+}
+
+GtkWidget *
+w_hvbox_get_container (struct ddb_gtkui_widget_s *b) {
+    return ((w_hvbox_t *)b)->box;
+}
+
+ddb_gtkui_widget_t *
+w_hbox_create (void) {
+    w_hvbox_t *w = malloc (sizeof (w_hvbox_t));
+    memset (w, 0, sizeof (w_hvbox_t));
+    w->base.widget = gtk_event_box_new ();
+    w->base.append = w_hvbox_append;
+    w->base.remove = w_hvbox_remove;
+    w->base.replace = w_hvbox_replace;
+    w->base.initmenu = w_hvbox_initmenu;
+    w->base.initchildmenu = w_hvbox_initchildmenu;
+    w->base.load = w_hvbox_load;
+    w->base.save = w_hvbox_save;
+    w->base.init = w_hvbox_init;
+    w->base.get_container = w_hvbox_get_container;
+    w->box = gtk_hbox_new (TRUE, 3);
+    w->homogeneous = 1;
+    w->expand = -1;
+    w->fill = -1;
+    gtk_widget_show (w->box);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), w->box);
+
+    w_append ((ddb_gtkui_widget_t*)w, w_create ("placeholder"));
+    w_append ((ddb_gtkui_widget_t*)w, w_create ("placeholder"));
+    w_append ((ddb_gtkui_widget_t*)w, w_create ("placeholder"));
+
+    w_override_signals (w->base.widget, w);
+    return (ddb_gtkui_widget_t *)w;
+}
+
+ddb_gtkui_widget_t *
+w_vbox_create (void) {
+    w_hvbox_t *w = malloc (sizeof (w_hvbox_t));
+    memset (w, 0, sizeof (w_hvbox_t));
+    w->base.widget = gtk_event_box_new ();
+    w->base.append = w_hvbox_append;
+    w->base.remove = w_hvbox_remove;
+    w->base.replace = w_hvbox_replace;
+    w->base.get_container = w_hvbox_get_container;
+    w->base.initmenu = w_hvbox_initmenu;
+    w->base.initchildmenu = w_hvbox_initchildmenu;
+    w->base.load = w_hvbox_load;
+    w->base.save = w_hvbox_save;
+    w->base.init = w_hvbox_init;
+    w->box = gtk_vbox_new (TRUE, 3);
+    w->homogeneous = 1;
+    w->expand = -1;
+    w->fill = -1;
+    gtk_widget_show (w->box);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), w->box);
+
+    w_append ((ddb_gtkui_widget_t*)w, w_create ("placeholder"));
+    w_append ((ddb_gtkui_widget_t*)w, w_create ("placeholder"));
+    w_append ((ddb_gtkui_widget_t*)w, w_create ("placeholder"));
+
+    w_override_signals (w->base.widget, w);
+    return (ddb_gtkui_widget_t *)w;
+}
+
+// button widget
+static const char *
+w_button_load (struct ddb_gtkui_widget_s *w, const char *type, const char *s) {
+    if (strcmp (type, "button")) {
+        return NULL;
+    }
+    w_button_t *b = (w_button_t *)w;
+    char key[MAX_TOKEN], val[MAX_TOKEN];
+    for (;;) {
+        get_keyvalue (s, key, val);
+        if (!strcmp (key, "color")) {
+            int red, green, blue;
+            if (3 == sscanf (val, "#%02x%02x%02x", &red, &green, &blue)) {
+                b->color.red = red << 8;
+                b->color.green = green << 8;
+                b->color.blue = blue << 8;
+            }
+        }
+        else if (!strcmp (key, "textcolor")) {
+            int red, green, blue;
+            if (3 == sscanf (val, "#%02x%02x%02x", &red, &green, &blue)) {
+                b->textcolor.red = red << 8;
+                b->textcolor.green = green << 8;
+                b->textcolor.blue = blue << 8;
+            }
+        }
+        else if (!strcmp (key, "icon")) {
+            b->icon = val[0] ? strdup (val) : NULL;
+        }
+        else if (!strcmp (key, "label")) {
+            b->label = val[0] ? strdup (val) : NULL;
+        }
+        else if (!strcmp (key, "action")) {
+            b->action = val[0] ? strdup (val) : NULL;
+        }
+        else if (!strcmp (key, "action_ctx")) {
+            b->action_ctx = atoi (val);
+        }
+        else if (!strcmp (key, "use_color")) {
+            b->use_color = atoi (val);
+        }
+        else if (!strcmp (key, "use_textcolor")) {
+            b->use_textcolor = atoi (val);
+        }
+    }
+
+    return s;
+}
+
+static void
+w_button_save (struct ddb_gtkui_widget_s *w, char *s, int sz) {
+    char save[1000] = "";
+    char *pp = save;
+    int ss = sizeof (save);
+    int n;
+
+    w_button_t *b = (w_button_t *)w;
+    n = snprintf (pp, ss, " color=\"#%02x%02x%02x\"", b->color.red>>8, b->color.green>>8, b->color.blue>>8);
+    ss -= n;
+    pp += n;
+    n = snprintf (pp, ss, " textcolor=\"#%02x%02x%02x\"", b->textcolor.red>>8, b->textcolor.green>>8, b->textcolor.blue>>8);
+    ss -= n;
+    pp += n;
+    if (b->icon) {
+        n = snprintf (pp, ss, " icon=\"%s\"", b->icon);
+        ss -= n;
+        pp += n;
+    }
+    if (b->label) {
+        n = snprintf (pp, ss, " label=\"%s\"", b->label);
+        ss -= n;
+        pp += n;
+    }
+    if (b->action) {
+        n = snprintf (pp, ss, " action=\"%s\"", b->action);
+        ss -= n;
+        pp += n;
+    }
+    if (b->action_ctx) {
+        n = snprintf (pp, ss, " action_ctx=%d", (int)b->action_ctx);
+        ss -= n;
+        pp += n;
+    }
+
+    n = snprintf (pp, ss, " use_color=%d", (int)b->use_color);
+    ss -= n;
+    pp += n;
+
+    n = snprintf (pp, ss, " use_textcolor=%d", (int)b->use_textcolor);
+    ss -= n;
+    pp += n;
+
+    strncat (s, save, sz);
+}
+
+static void
+on_button_clicked               (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    w_button_t *w = user_data;
+    DB_plugin_t **plugins = deadbeef->plug_get_list();
+    int i;
+    int added_entries = 0;
+    for (i = 0; plugins[i]; i++) {
+        if (!plugins[i]->get_actions) {
+            continue;
+        }
+        DB_plugin_action_t *acts = plugins[i]->get_actions (NULL);
+        while (acts) {
+            if (!strcmp (acts->name, w->action)) {
+                if (acts->callback) {
+                    gtkui_exec_action_14 (acts, -1);
+                }
+                else if (acts->callback2) {
+                    acts->callback2 (acts, w->action_ctx);
+                }
+                return;
+            }
+            acts = acts->next;
+        }
+    }
+}
+
+static void
+w_button_init (ddb_gtkui_widget_t *ww) {
+    w_button_t *w = (w_button_t *)ww;
+
+    // clean before re-creating
+    if (w->button) {
+        gtk_widget_destroy (w->button);
+        w->button = NULL;
+    }
+
+    w->button = gtk_button_new ();
+    gtk_widget_show (w->button);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), w->button);
+
+    GtkWidget *alignment = gtk_alignment_new (0.5, 0.5, 0, 0);
+    gtk_widget_show (alignment);
+    gtk_container_add (GTK_CONTAINER (w->button), alignment);
+
+    GtkWidget *hbox = gtk_hbox_new (FALSE, 2);
+    gtk_widget_show (hbox);
+    gtk_container_add (GTK_CONTAINER (alignment), hbox);
+
+    if (w->icon) {
+        GtkWidget *image = gtk_image_new_from_stock (w->icon, GTK_ICON_SIZE_BUTTON);
+        gtk_widget_show (image);
+        gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
+    }
+
+    GtkWidget *label = gtk_label_new_with_mnemonic (w->label ? w->label : _("Button"));
+    gtk_widget_show (label);
+    gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+
+    if (w->use_color) {
+        gtk_widget_modify_bg (w->button, GTK_STATE_NORMAL, &w->color);
+    }
+
+    if (w->use_textcolor) {
+        gtk_widget_modify_fg (label, GTK_STATE_NORMAL, &w->textcolor);
+    }
+
+    if (w->action) {
+        g_signal_connect ((gpointer) w->button, "clicked",
+                G_CALLBACK (on_button_clicked),
+                w);
+    }
+
+    w_override_signals (w->button, w);
+}
+
+static void
+w_button_destroy (ddb_gtkui_widget_t *w) {
+    w_button_t *b = (w_button_t *)w;
+    if (b->icon) {
+        free (b->icon);
+    }
+    if (b->label) {
+        free (b->label);
+    }
+    if (b->action) {
+        free (b->action);
+    }
+}
+
+static void
+on_button_set_action_clicked           (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    w_button_t *b = user_data;
+    GtkWidget *dlg = create_select_action ();
+    GtkWidget *treeview = lookup_widget (dlg, "actions");
+    init_action_tree (treeview, b->action, b->action_ctx);
+    int response = gtk_dialog_run (GTK_DIALOG (dlg));
+    if (response == GTK_RESPONSE_OK) {
+        if (b->action) {
+            free (b->action);
+            b->action = NULL;
+        }
+        b->action_ctx = -1;
+        GtkTreePath *path;
+        gtk_tree_view_get_cursor (GTK_TREE_VIEW (treeview), &path, NULL);
+        GtkTreeModel *model = gtk_tree_view_get_model (GTK_TREE_VIEW (treeview));
+        GtkTreeIter iter;
+        if (path && gtk_tree_model_get_iter (model, &iter, path)) {
+            GValue val = {0,};
+            gtk_tree_model_get_value (model, &iter, 1, &val);
+            const gchar *name = g_value_get_string (&val);
+            GValue val_ctx = {0,};
+            gtk_tree_model_get_value (model, &iter, 2, &val_ctx);
+            int ctx = g_value_get_int (&val_ctx);
+            if (name && ctx >= 0) {
+                b->action = strdup (name);
+                b->action_ctx = ctx;
+            }
+        }
+        set_button_action_label (b->action, b->action_ctx, GTK_WIDGET (button));
+    }
+    gtk_widget_destroy (dlg);
+}
+
+static void
+on_button_config (GtkMenuItem *menuitem, gpointer user_data) {
+    w_button_t *b = user_data;
+    GtkWidget *dlg = create_button_properties ();
+    GtkWidget *color = lookup_widget (dlg, "color");
+    GtkWidget *use_color = lookup_widget (dlg, "use_color");
+    GtkWidget *textcolor = lookup_widget (dlg, "textcolor");
+    GtkWidget *use_textcolor = lookup_widget (dlg, "use_textcolor");
+    GtkWidget *label = lookup_widget (dlg, "label");
+    GtkWidget *action = lookup_widget (dlg, "action");
+    GtkWidget *icon = lookup_widget (dlg, "icon");
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (color), &b->color);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (use_color), b->use_color);
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (textcolor), &b->textcolor);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (use_textcolor), b->use_textcolor);
+    gtk_entry_set_text (GTK_ENTRY (label), b->label ? b->label : "");
+    set_button_action_label (b->action, b->action_ctx, action);
+    g_signal_connect ((gpointer) action, "clicked",
+            G_CALLBACK (on_button_set_action_clicked),
+            user_data);
+
+    GtkListStore *store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
+
+    GtkTreeIter iter;
+    gtk_list_store_append (store, &iter);
+    gtk_list_store_set (store, &iter, 0, NULL, 1, _("None"), -1);
+    int sel = 0;
+    for (int n = 0; GtkNamedIcons[n]; n++) {
+        gtk_list_store_append (store, &iter);
+
+        GtkStockItem it;
+        if (gtk_stock_lookup (GtkNamedIcons[n], &it)) {
+            char *s = strdupa (it.label);
+            for (char *c = s; *c; c++) {
+                if (*c == '_') {
+                    memmove (c, c+1, strlen (c));
+                    c--;
+                }
+            }
+            gtk_list_store_set (store, &iter, 0, GtkNamedIcons[n], 1, s, -1);
+        }
+        else {
+            gtk_list_store_set (store, &iter, 0, GtkNamedIcons[n], 1, GtkNamedIcons[n], -1);
+        }
+
+        if (b->icon && !strcmp (GtkNamedIcons[n], b->icon)) {
+            sel = n+1;
+        }
+    }
+
+    gtk_cell_layout_clear (GTK_CELL_LAYOUT (icon));
+    GtkCellRenderer *renderer;
+    renderer = gtk_cell_renderer_pixbuf_new ();
+    gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (icon), renderer, FALSE );
+    gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (icon), renderer, "stock-id", 0, NULL );
+
+    renderer = gtk_cell_renderer_text_new ();
+    gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (icon), renderer, FALSE );
+    gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (icon), renderer, "text", 1, NULL );
+
+
+    gtk_combo_box_set_model (GTK_COMBO_BOX (icon), GTK_TREE_MODEL (store));
+
+    gtk_combo_box_set_active (GTK_COMBO_BOX (icon), sel);
+
+    for (;;) {
+        int response = gtk_dialog_run (GTK_DIALOG (dlg));
+        if (response == GTK_RESPONSE_OK || response == GTK_RESPONSE_APPLY) {
+            gtk_color_button_get_color (GTK_COLOR_BUTTON (color), &b->color);
+            b->use_color = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (use_color));
+            gtk_color_button_get_color (GTK_COLOR_BUTTON (textcolor), &b->textcolor);
+            b->use_textcolor = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (use_textcolor));
+            const char *l = gtk_entry_get_text (GTK_ENTRY (label));
+            if (b->label) {
+                free (b->label);
+                b->label = NULL;
+            }
+            if (l[0]) {
+                b->label = strdup (l);
+            }
+
+            const char *ic = NULL;
+            int sel = gtk_combo_box_get_active (GTK_COMBO_BOX (icon));
+            if (sel >= 1) {
+                ic = GtkNamedIcons[sel-1];
+            }
+            if (b->icon) {
+                free (b->icon);
+                b->icon = NULL;
+            }
+            if (ic) {
+                b->icon = strdup (ic);
+            }
+
+            w_button_init (user_data);
+        }
+        if (response == GTK_RESPONSE_APPLY) {
+            continue;
+        }
+        break;
+    }
+    gtk_widget_destroy (dlg);
+}
+
+static void
+w_button_initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
+    GtkWidget *item;
+    item = gtk_menu_item_new_with_mnemonic (_("Configure button"));
+    gtk_widget_show (item);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "activate", G_CALLBACK (on_button_config), w);
+}
+
+
+ddb_gtkui_widget_t *
+w_button_create (void) {
+    w_button_t *w = malloc (sizeof (w_button_t));
+    memset (w, 0, sizeof (w_button_t));
+    w->base.widget = gtk_event_box_new ();
+    w->base.load = w_button_load;
+    w->base.save = w_button_save;
+    w->base.init = w_button_init;
+    w->base.destroy = w_button_destroy;
+    w->base.initmenu = w_button_initmenu;
+    w_override_signals (w->base.widget, w);
+    return (ddb_gtkui_widget_t *)w;
+}
+
+// seekbar
+static gboolean
+redraw_seekbar_cb (gpointer data) {
+    w_seekbar_t *w = data;
+    int iconified = gdk_window_get_state(gtk_widget_get_window(mainwin)) & GDK_WINDOW_STATE_ICONIFIED;
+    if (!gtk_widget_get_visible (mainwin) || iconified) {
+        return FALSE;
+    }
+    gtk_widget_queue_draw (w->seekbar);
+    return FALSE;
+}
+
+static gboolean
+seekbar_frameupdate (gpointer data) {
+    w_seekbar_t *w = data;
+    DB_output_t *output = deadbeef->get_output ();
+    DB_playItem_t *track = deadbeef->streamer_get_playing_track ();
+    DB_fileinfo_t *c = deadbeef->streamer_get_current_fileinfo (); // FIXME: might crash streamer
+    float songpos = w->last_songpos;
+    float duration = track ? deadbeef->pl_get_item_duration (track) : -1;
+    if (!output || (output->state () == OUTPUT_STATE_STOPPED || !track || !c)) {
+        songpos = 0;
+    }
+    else {
+        songpos = deadbeef->streamer_get_playpos ();
+    }
+    // translate pos to seekbar pixels
+    songpos /= duration;
+    GtkAllocation a;
+    gtk_widget_get_allocation (w->seekbar, &a);
+    songpos *= a.width;
+    if (fabs (songpos - w->last_songpos) > 0.01) {
+        gtk_widget_queue_draw (w->seekbar);
+        w->last_songpos = songpos;
+    }
+    if (track) {
+        deadbeef->pl_item_unref (track);
+    }
+    return TRUE;
+}
+
+static void
+w_seekbar_init (ddb_gtkui_widget_t *base) {
+    w_seekbar_t *w = (w_seekbar_t *)base;
+    if (w->timer) {
+        g_source_remove (w->timer);
+        w->timer = 0;
+    }
+
+    w->timer = g_timeout_add (1000/gtkui_get_gui_refresh_rate (), seekbar_frameupdate, w);
+}
+
+static int
+w_seekbar_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    switch (id) {
+    case DB_EV_SONGCHANGED:
+        g_idle_add (redraw_seekbar_cb, w);
+        break;
+    case DB_EV_CONFIGCHANGED:
+        w_seekbar_init (w);
+        break;
+    }
+    return 0;
+}
+
+static void
+w_seekbar_destroy (ddb_gtkui_widget_t *wbase) {
+    w_seekbar_t *w = (w_seekbar_t *)wbase;
+    if (w->timer) {
+        g_source_remove (w->timer);
+        w->timer = 0;
+    }
+}
+
+ddb_gtkui_widget_t *
+w_seekbar_create (void) {
+    w_seekbar_t *w = malloc (sizeof (w_seekbar_t));
+    memset (w, 0, sizeof (w_seekbar_t));
+    w->base.widget = gtk_event_box_new ();
+    w->base.message = w_seekbar_message;
+    w->base.destroy = w_seekbar_destroy;
+    w->base.init = w_seekbar_init;
+    w->seekbar = ddb_seekbar_new ();
+    gtk_widget_set_size_request (w->base.widget, 20, 16);
+    w->last_songpos = -1;
+    ddb_seekbar_init_signals (DDB_SEEKBAR (w->seekbar), w->base.widget);
+    gtk_widget_show (w->seekbar);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), w->seekbar);
+    w_override_signals (w->base.widget, w);
+    return (ddb_gtkui_widget_t*)w;
+}
+
+// play toolbar
+ddb_gtkui_widget_t *
+w_playtb_create (void) {
+    w_playtb_t *w = malloc (sizeof (w_playtb_t));
+    memset (w, 0, sizeof (w_playtb_t));
+    w->base.widget = gtk_hbox_new (FALSE, 0);
+    w->base.flags = DDB_GTKUI_WIDGET_FLAG_NON_EXPANDABLE;
+    gtk_widget_show (w->base.widget);
+
+    GtkWidget *stopbtn;
+    GtkWidget *image128;
+    GtkWidget *playbtn;
+    GtkWidget *image2;
+    GtkWidget *pausebtn;
+    GtkWidget *image3;
+    GtkWidget *prevbtn;
+    GtkWidget *image4;
+    GtkWidget *nextbtn;
+    GtkWidget *image5;
+
+
+    stopbtn = gtk_button_new ();
+    gtk_widget_show (stopbtn);
+    gtk_box_pack_start (GTK_BOX (w->base.widget), stopbtn, FALSE, FALSE, 0);
+    gtk_widget_set_can_focus(stopbtn, FALSE);
+    gtk_button_set_relief (GTK_BUTTON (stopbtn), GTK_RELIEF_NONE);
+
+    image128 = gtk_image_new_from_stock ("gtk-media-stop", GTK_ICON_SIZE_BUTTON);
+    gtk_widget_show (image128);
+    gtk_container_add (GTK_CONTAINER (stopbtn), image128);
+
+    playbtn = gtk_button_new ();
+    gtk_widget_show (playbtn);
+    gtk_box_pack_start (GTK_BOX (w->base.widget), playbtn, FALSE, FALSE, 0);
+    gtk_widget_set_can_focus(playbtn, FALSE);
+    gtk_button_set_relief (GTK_BUTTON (playbtn), GTK_RELIEF_NONE);
+
+    image2 = gtk_image_new_from_stock ("gtk-media-play", GTK_ICON_SIZE_BUTTON);
+    gtk_widget_show (image2);
+    gtk_container_add (GTK_CONTAINER (playbtn), image2);
+
+    pausebtn = gtk_button_new ();
+    gtk_widget_show (pausebtn);
+    gtk_box_pack_start (GTK_BOX (w->base.widget), pausebtn, FALSE, FALSE, 0);
+    gtk_widget_set_can_focus(pausebtn, FALSE);
+    gtk_button_set_relief (GTK_BUTTON (pausebtn), GTK_RELIEF_NONE);
+
+    image3 = gtk_image_new_from_stock ("gtk-media-pause", GTK_ICON_SIZE_BUTTON);
+    gtk_widget_show (image3);
+    gtk_container_add (GTK_CONTAINER (pausebtn), image3);
+
+    prevbtn = gtk_button_new ();
+    gtk_widget_show (prevbtn);
+    gtk_box_pack_start (GTK_BOX (w->base.widget), prevbtn, FALSE, FALSE, 0);
+    gtk_widget_set_can_focus(prevbtn, FALSE);
+    gtk_button_set_relief (GTK_BUTTON (prevbtn), GTK_RELIEF_NONE);
+
+    image4 = gtk_image_new_from_stock ("gtk-media-previous", GTK_ICON_SIZE_BUTTON);
+    gtk_widget_show (image4);
+    gtk_container_add (GTK_CONTAINER (prevbtn), image4);
+
+    nextbtn = gtk_button_new ();
+    gtk_widget_show (nextbtn);
+    gtk_box_pack_start (GTK_BOX (w->base.widget), nextbtn, FALSE, FALSE, 0);
+    gtk_widget_set_can_focus(nextbtn, FALSE);
+    gtk_button_set_relief (GTK_BUTTON (nextbtn), GTK_RELIEF_NONE);
+
+    image5 = gtk_image_new_from_stock ("gtk-media-next", GTK_ICON_SIZE_BUTTON);
+    gtk_widget_show (image5);
+    gtk_container_add (GTK_CONTAINER (nextbtn), image5);
+    w_override_signals (w->base.widget, w);
+
+    g_signal_connect ((gpointer) stopbtn, "clicked",
+            G_CALLBACK (on_stopbtn_clicked),
+            NULL);
+    g_signal_connect ((gpointer) playbtn, "clicked",
+            G_CALLBACK (on_playbtn_clicked),
+            NULL);
+    g_signal_connect ((gpointer) pausebtn, "clicked",
+            G_CALLBACK (on_pausebtn_clicked),
+            NULL);
+    g_signal_connect ((gpointer) prevbtn, "clicked",
+            G_CALLBACK (on_prevbtn_clicked),
+            NULL);
+    g_signal_connect ((gpointer) nextbtn, "clicked",
+            G_CALLBACK (on_nextbtn_clicked),
+            NULL);
+    return (ddb_gtkui_widget_t*)w;
+}
+
+// volumebar
+static gboolean
+redraw_volumebar_cb (gpointer data) {
+    w_volumebar_t *w = data;
+    gtk_widget_queue_draw (w->volumebar);
+    char s[100];
+    int db = deadbeef->volume_get_db ();
+    snprintf (s, sizeof (s), "%s%ddB", db < 0 ? "" : "+", db);
+    gtk_widget_set_tooltip_text (w->volumebar, s);
+    gtk_widget_trigger_tooltip_query (w->volumebar);
+    return FALSE;
+}
+
+static int
+w_volumebar_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    switch (id) {
+    case DB_EV_CONFIGCHANGED:
+    case DB_EV_VOLUMECHANGED:
+        g_idle_add (redraw_volumebar_cb, w);
+        break;
+    }
+    return 0;
+}
+
+ddb_gtkui_widget_t *
+w_volumebar_create (void) {
+    w_volumebar_t *w = malloc (sizeof (w_volumebar_t));
+    memset (w, 0, sizeof (w_volumebar_t));
+    w->base.widget = gtk_event_box_new ();
+    w->base.message = w_volumebar_message;
+    w->volumebar = ddb_volumebar_new ();
+    ddb_volumebar_init_signals (DDB_VOLUMEBAR (w->volumebar), w->base.widget);
+    gtk_widget_show (w->volumebar);
+    gtk_widget_set_size_request (w->base.widget, 70, -1);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), w->volumebar);
+    w_override_signals (w->base.widget, w);
+    return (ddb_gtkui_widget_t*)w;
+}
+
+// chiptune voice ctl
+static void
+on_voice_toggled (GtkToggleButton *togglebutton, gpointer user_data) {
+    w_ctvoices_t *w = user_data;
+    int voices = 0;
+    for (int i = 0; i < 8; i++) {
+        int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w->voices[i]));
+        voices |= active << i;
+    }
+    deadbeef->conf_set_int ("chip.voices", voices);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+ddb_gtkui_widget_t *
+w_ctvoices_create (void) {
+    w_ctvoices_t *w = malloc (sizeof (w_ctvoices_t));
+    memset (w, 0, sizeof (w_ctvoices_t));
+    w->base.widget = gtk_event_box_new ();
+    GtkWidget *hbox = gtk_hbox_new (FALSE, 0);
+    gtk_widget_show (hbox);
+    gtk_container_add (GTK_CONTAINER (w->base.widget), hbox);
+
+    GtkWidget *label = gtk_label_new_with_mnemonic (_("Voices:"));
+    gtk_widget_show (label);
+    gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+
+    int voices = deadbeef->conf_get_int ("chip.voices", 0xff);
+    for (int i = 0; i < 8; i++) {
+        w->voices[i] = gtk_check_button_new ();
+        gtk_widget_show (w->voices[i]);
+        gtk_box_pack_start (GTK_BOX (hbox), w->voices[i], FALSE, FALSE, 0);
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (w->voices[i]), voices & (1<<i));
+        g_signal_connect ((gpointer) w->voices[i], "toggled", G_CALLBACK (on_voice_toggled), w);
+    }
+
+    w_override_signals (w->base.widget, w);
+    return (ddb_gtkui_widget_t*)w;
+}

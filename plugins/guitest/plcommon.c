@@ -1,0 +1,1307 @@
+/*
+    DeaDBeeF - ultimate music player for GNU/Linux systems with X11
+    Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
+
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 2
+    of the License, or (at your option) any later version.
+    
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*/
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <gdk/gdkkeysyms.h>
+#include "gtkui.h"
+#include "plcommon.h"
+#include "coverart.h"
+#include "drawing.h"
+#include "trkproperties.h"
+#include "mainplaylist.h"
+#include "support.h"
+#include "interface.h"
+#include "../libparser/parser.h"
+#include "actions.h"
+#include "search.h"
+#include "actionhandlers.h"
+#include "../../strdupa.h"
+
+#define min(x,y) ((x)<(y)?(x):(y))
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
+
+// disable custom title function, until we have new title formatting (0.7)
+#define DISABLE_CUSTOM_TITLE
+
+char group_by_str[MAX_GROUP_BY_STR];
+
+extern GtkWidget *theme_treeview;
+extern GdkPixbuf *play16_pixbuf;
+extern GdkPixbuf *pause16_pixbuf;
+extern GdkPixbuf *buffering16_pixbuf;
+
+static int clicked_idx = -1;
+
+void
+write_column_config (const char *name, int idx, const char *title, int width, int align_right, int id, const char *format) {
+    char key[128];
+    char value[128];
+    snprintf (key, sizeof (key), "%s.column.%02d", name, idx);
+    snprintf (value, sizeof (value), "\"%s\" \"%s\" %d %d %d", title, format ? format : "", id, width, align_right);
+    deadbeef->conf_set_str (key, value);
+}
+
+void
+rewrite_column_config (DdbListview *listview, const char *name) {
+    char key[128];
+    snprintf (key, sizeof (key), "%s.column.", name);
+    deadbeef->conf_remove_items (key);
+
+    int cnt = ddb_listview_column_get_count (listview);
+    for (int i = 0; i < cnt; i++) {
+        const char *title;
+        int width;
+        int align_right;
+        col_info_t *info;
+        int minheight;
+        ddb_listview_column_get_info (listview, i, &title, &width, &align_right, &minheight, (void **)&info);
+        write_column_config (name, i, title, width, align_right, info->id, info->format);
+    }
+}
+
+static gboolean
+redraw_playlist_cb (gpointer user_data) {
+    DDB_LISTVIEW(user_data)->cover_size = DDB_LISTVIEW(user_data)->new_cover_size;
+    gtk_widget_queue_draw (GTK_WIDGET(user_data));
+    return FALSE;
+}
+
+static void
+redraw_playlist (void *user_data) {
+    g_idle_add (redraw_playlist_cb, user_data);
+}
+
+static gboolean
+redraw_playlist_single_cb (gpointer user_data) {
+    gtk_widget_queue_draw (GTK_WIDGET(user_data));
+    g_object_unref (GTK_WIDGET (user_data));
+    return FALSE;
+}
+
+static void
+redraw_playlist_single (void *user_data) {
+    g_object_ref (GTK_WIDGET (user_data));
+    g_idle_add (redraw_playlist_single_cb, user_data);
+}
+
+#define ART_PADDING_HORZ 8
+#define ART_PADDING_VERT 0
+
+static gboolean
+deferred_cover_load_cb (void *ctx) {
+    DdbListview *lv = ctx;
+    lv->cover_refresh_timeout_id = 0;
+    deadbeef->pl_lock ();
+    ddb_listview_groupcheck (lv);
+    // find 1st group
+    DdbListviewGroup *grp = lv->groups;
+    int idx = 0;
+    int abs_idx = 0;
+    int grp_y = 0;
+    while (grp && grp_y + grp->height < lv->scrollpos) {
+        grp_y += grp->height;
+        idx += grp->num_items + 1;
+        abs_idx += grp->num_items;
+        grp = grp->next;
+    }
+    GtkAllocation a;
+    gtk_widget_get_allocation (GTK_WIDGET (lv), &a);
+    while (grp && grp_y < a.height + lv->scrollpos) {
+        // render title
+        DdbListviewIter group_it = grp->head;
+        int grpheight = grp->height;
+        if (grp_y >= a.height + lv->scrollpos) {
+            break;
+        }
+        const char *album = deadbeef->pl_find_meta (group_it, "album");
+        const char *artist = deadbeef->pl_find_meta (group_it, "artist");
+        if (!album || !*album) {
+            album = deadbeef->pl_find_meta (group_it, "title");
+        }
+
+        grp_y += grpheight;
+        grp = grp->next;
+        int last = 0;
+        if (!grp || grp_y >= a.height + lv->scrollpos) {
+            last = 1;
+        }
+        GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, lv->new_cover_size, NULL, NULL);
+        if (last) {
+            queue_cover_callback (redraw_playlist, lv);
+        }
+        if (pixbuf) {
+            g_object_unref (pixbuf);
+        }
+    }
+    deadbeef->pl_unlock ();
+
+    return FALSE;
+}
+
+void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, DdbListviewIter group_it, int column, int group_y, int group_height, int group_pinned, int grp_next_y, int x, int y, int width, int height) {
+    const char *ctitle;
+    int cwidth;
+    int calign_right;
+    col_info_t *cinf;
+    int minheight;
+    int res = ddb_listview_column_get_info (listview, column, &ctitle, &cwidth, &calign_right, &minheight, (void **)&cinf);
+    if (res == -1) {
+        return;
+    }
+
+    DB_playItem_t *playing_track = deadbeef->streamer_get_playing_track ();
+	int theming = !gtkui_override_listview_colors ();
+
+    if (cinf->id == DB_COLUMN_ALBUM_ART) {
+        if (theming) {
+#if GTK_CHECK_VERSION(3,0,0)
+            cairo_rectangle (cr, x, y, width, MAX (height,minheight));
+            cairo_clip (cr);
+            gtk_paint_flat_box (gtk_widget_get_style (theme_treeview), cr, GTK_STATE_NORMAL, GTK_SHADOW_NONE, theme_treeview, "cell_even_ruled", x-1, y, width+2, MAX (height,minheight));
+            cairo_reset_clip (cr);
+#else
+            GdkRectangle clip = {
+                .x = x,
+                .y = y,
+                .width = width,
+                .height = MAX (height,minheight),
+            };
+            gtk_paint_flat_box (gtk_widget_get_style (theme_treeview), gtk_widget_get_window (listview->list), GTK_STATE_NORMAL, GTK_SHADOW_NONE, &clip, theme_treeview, "cell_even_ruled", x-1, y, width+2, height);
+#endif
+        }
+        else {
+            GdkColor clr;
+            gtkui_get_listview_even_row_color (&clr);
+            cairo_set_source_rgb (cr, clr.red/65535.f, clr.green/65535.f, clr.blue/65535.f);
+            cairo_rectangle (cr, x, y, width, height);
+            cairo_fill (cr);
+        }
+        int real_art_width = width - ART_PADDING_HORZ * 2;
+        if (real_art_width > 0 && group_it) {
+            const char *album = deadbeef->pl_find_meta (group_it, "album");
+            const char *artist = deadbeef->pl_find_meta (group_it, "artist");
+            if (!album || !*album) {
+                album = deadbeef->pl_find_meta (group_it, "title");
+            }
+            if (listview->new_cover_size != real_art_width) {
+                listview->new_cover_size = real_art_width;
+                if (listview->cover_refresh_timeout_id) {
+                    g_source_remove (listview->cover_refresh_timeout_id);
+                    listview->cover_refresh_timeout_id = 0;
+                }
+                if (listview->cover_size == -1) {
+                    listview->cover_size = real_art_width;
+                }
+                else {
+                    if (!listview->cover_refresh_timeout_id) {
+                        listview->cover_refresh_timeout_id = g_timeout_add (1000, deferred_cover_load_cb, listview);
+                    }
+                }
+            }
+            int art_width = listview->cover_size;
+            int art_y = y; // dest y
+            int art_h = height;
+            int sy; // source y
+            if (group_y < ART_PADDING_VERT) {
+                art_y = y - group_y + ART_PADDING_VERT;
+                art_h = height - (art_y - y);
+                sy = group_y;
+            }
+            else {
+                sy = group_y - ART_PADDING_VERT;
+            }
+            int h = cwidth - group_y;
+            h = min (height, art_h);
+
+            int hq = 0;
+            GdkPixbuf *pixbuf = get_cover_art_callb (deadbeef->pl_find_meta (((DB_playItem_t *)group_it), ":URI"), artist, album, real_art_width == art_width ? art_width : -1, redraw_playlist_single, listview);
+            if (!pixbuf) {
+                pixbuf = cover_get_default_pixbuf ();
+            }
+            if (pixbuf) {
+                art_width = gdk_pixbuf_get_width (pixbuf);
+                float art_scale = (float)real_art_width / art_width;
+                int pw = real_art_width;
+                int ph = pw;
+                if (gdk_pixbuf_get_width (pixbuf) < gdk_pixbuf_get_height (pixbuf)) {
+                    art_scale *= (float)gdk_pixbuf_get_width (pixbuf) / gdk_pixbuf_get_height (pixbuf);
+                }
+
+                int draw_pinned = (y - listview->grouptitle_height < ph && group_pinned == 1 && gtkui_groups_pinned) ? 1 : 0;
+                if (art_y > -(ph + listview->grouptitle_height) || draw_pinned) {
+                    cairo_save (cr);
+                    if (draw_pinned) {
+                        int ph_real = gdk_pixbuf_get_height (pixbuf) * art_scale;
+                        if (grp_next_y <= ph_real + listview->grouptitle_height) {
+                            cairo_rectangle (cr, x + ART_PADDING_HORZ, grp_next_y - ph_real, pw, ph_real);
+                            cairo_translate (cr, (x + ART_PADDING_HORZ)-0, grp_next_y - ph_real);
+                        }
+                        else {
+                            cairo_rectangle (cr, x + ART_PADDING_HORZ, listview->grouptitle_height, pw, ph_real);
+                            cairo_translate (cr, (x + ART_PADDING_HORZ)-0, listview->grouptitle_height);
+                        }
+                    }
+                    else {
+                        ph -= sy;
+                        ph = min (ph, h);
+                        cairo_rectangle (cr, x + ART_PADDING_HORZ, art_y, pw, ph);
+                        cairo_translate (cr, (x + ART_PADDING_HORZ)-0, art_y - sy);
+                    }
+                    cairo_scale (cr, art_scale, art_scale);
+                    gdk_cairo_set_source_pixbuf (cr, pixbuf, 0, 0);
+                    cairo_pattern_set_filter (cairo_get_source(cr), gtkui_is_default_pixbuf (pixbuf) ? CAIRO_FILTER_GAUSSIAN : CAIRO_FILTER_FAST);
+                    cairo_fill (cr);
+                    cairo_restore (cr);
+                }
+                g_object_unref (pixbuf);
+            }
+        }
+    }
+    else if (!gtkui_unicode_playstate && it && it == playing_track && cinf->id == DB_COLUMN_PLAYING) {
+        int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
+        int buffering = !deadbeef->streamer_ok_to_read (-1);
+        GdkPixbuf *pixbuf;
+        if (paused) {
+            pixbuf = pause16_pixbuf;
+        }
+        else if (!buffering) {
+            pixbuf = play16_pixbuf;
+        }
+        else {
+            pixbuf = buffering16_pixbuf;
+        }
+        gdk_cairo_set_source_pixbuf (cr, pixbuf, x + cwidth/2 - 8, y + height/2 - 8);
+        cairo_rectangle (cr, x + cwidth/2 - 8, y + height/2 - 8, 16, 16);
+        cairo_fill (cr);
+    }
+    else if (it) {
+        char text[1024] = "";
+        if (it == playing_track && cinf->id == DB_COLUMN_PLAYING) {
+            int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
+            int buffering = !deadbeef->streamer_ok_to_read (-1);
+            if (paused) {
+                strcpy (text, "||");
+            }
+            else if (!buffering) {
+                strcpy (text, "►");
+            }
+            else {
+                strcpy (text, "⋯⋯⋯");
+            }
+        }
+        else {
+            deadbeef->pl_format_title (it, -1, text, sizeof (text), cinf->id, cinf->format);
+            char *lb = strchr (text, '\r');
+            if (lb) {
+                *lb = 0;
+            }
+            lb = strchr (text, '\n');
+            if (lb) {
+                *lb = 0;
+            }
+        }
+        GdkColor *color = NULL;
+        if (theming) {
+            if (deadbeef->pl_is_selected (it)) {
+                color = &gtk_widget_get_style (theme_treeview)->text[GTK_STATE_SELECTED];
+            }
+            else {
+                color = &gtk_widget_get_style (theme_treeview)->text[GTK_STATE_NORMAL];
+            }
+        }
+        else {
+            GdkColor clr;
+            if (deadbeef->pl_is_selected (it)) {
+                color = (gtkui_get_listview_selected_text_color (&clr), &clr);
+            }
+            else {
+                color = (gtkui_get_listview_text_color (&clr), &clr);
+            }
+        }
+        float fg[3] = {(float)color->red/0xffff, (float)color->green/0xffff, (float)color->blue/0xffff};
+        draw_set_fg_color (&listview->listctx, fg);
+
+        draw_init_font (&listview->listctx, gtk_widget_get_style (GTK_WIDGET (listview)));
+        if (gtkui_embolden_current_track && it && it == playing_track) {
+            draw_init_font_bold (&listview->listctx);
+        }
+        if (calign_right) {
+            draw_text (&listview->listctx, x + 5, y + 3, cwidth-10, 1, text);
+        }
+        else {
+            draw_text (&listview->listctx, x + 5, y + 3, cwidth-10, 0, text);
+        }
+        if (gtkui_embolden_current_track && it && it == playing_track) {
+            draw_init_font_normal (&listview->listctx);
+        }
+    }
+    if (playing_track) {
+        deadbeef->pl_item_unref (playing_track);
+    }
+}
+
+void
+main_add_to_playback_queue_activate     (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+    while (it) {
+        if (deadbeef->pl_is_selected (it)) {
+            deadbeef->pl_playqueue_push (it);
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+    deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
+}
+
+void
+main_remove_from_playback_queue_activate
+                                        (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+    while (it) {
+        if (deadbeef->pl_is_selected (it)) {
+            deadbeef->pl_playqueue_remove (it);
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+    deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
+}
+
+void
+main_reload_metadata_activate
+                                        (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
+    while (it) {
+        deadbeef->pl_lock ();
+        char decoder_id[100];
+        const char *dec = deadbeef->pl_find_meta (it, ":DECODER");
+        if (dec) {
+            strncpy (decoder_id, dec, sizeof (decoder_id));
+        }
+        int match = deadbeef->pl_is_selected (it) && deadbeef->is_local_file (deadbeef->pl_find_meta (it, ":URI")) && dec;
+        deadbeef->pl_unlock ();
+
+        if (match) {
+            uint32_t f = deadbeef->pl_get_item_flags (it);
+            if (!(f & DDB_IS_SUBTRACK)) {
+                f &= ~DDB_TAG_MASK;
+                deadbeef->pl_set_item_flags (it, f);
+                DB_decoder_t **decoders = deadbeef->plug_get_decoder_list ();
+                for (int i = 0; decoders[i]; i++) {
+                    if (!strcmp (decoders[i]->plugin.id, decoder_id)) {
+                        if (decoders[i]->read_metadata) {
+                            decoders[i]->read_metadata (it);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+    deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
+}
+
+void
+main_properties_activate                (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    action_show_track_properties_handler_cb ((void *)(intptr_t)DDB_ACTION_CTX_SELECTION);
+}
+
+void
+on_clear1_activate                     (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    deadbeef->pl_clear ();
+    deadbeef->pl_save_current ();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+}
+
+void
+on_remove1_activate                    (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    action_remove_from_playlist_handler (NULL, DDB_ACTION_CTX_SELECTION);
+}
+
+
+void
+on_crop1_activate                      (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    action_crop_selected_handler (NULL, 0);
+}
+
+void
+on_remove2_activate                    (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    int cursor = deadbeef->pl_delete_selected ();
+    deadbeef->pl_save_current ();
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
+}
+
+static void
+on_toggle_set_custom_title (GtkToggleButton *togglebutton, gpointer user_data) {
+    gboolean active = gtk_toggle_button_get_active (togglebutton);
+    deadbeef->conf_set_int ("gtkui.location_set_custom_title", active);
+
+    GtkWidget *ct = lookup_widget (GTK_WIDGET (user_data), "custom_title");
+    gtk_widget_set_sensitive (ct, active);
+
+    deadbeef->conf_save ();
+}
+
+#ifndef DISABLE_CUSTOM_TITLE
+void
+on_set_custom_title_activate (GtkMenuItem *menuitem, gpointer user_data)
+{
+    DdbListview *lv = user_data;
+    int idx = lv->binding->cursor ();
+    if (idx < 0) {
+        return;
+    }
+    DdbListviewIter it = lv->binding->get_for_idx (idx);
+    if (!it) {
+        return;
+    }
+
+    GtkWidget *dlg = create_setcustomtitledlg ();
+    GtkWidget *sct = lookup_widget (dlg, "set_custom_title");
+    GtkWidget *ct = lookup_widget (dlg, "custom_title");
+    if (deadbeef->conf_get_int ("gtkui.location_set_custom_title", 0)) {
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (sct), TRUE);
+        gtk_widget_set_sensitive (ct, TRUE);
+    }
+    else {
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (sct), FALSE);
+        gtk_widget_set_sensitive (ct, FALSE);
+    }
+    deadbeef->pl_lock ();
+    const char *custom_title = deadbeef->pl_find_meta ((DB_playItem_t *)it, ":CUSTOM_TITLE");
+    if (custom_title) {
+        custom_title = strdupa (custom_title);
+    }
+    else {
+        custom_title = "";
+    }
+    deadbeef->pl_unlock ();
+
+    g_signal_connect ((gpointer) sct, "toggled",
+            G_CALLBACK (on_toggle_set_custom_title),
+            dlg);
+    gtk_entry_set_text (GTK_ENTRY (ct), custom_title);
+
+    gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
+    gint response = gtk_dialog_run (GTK_DIALOG (dlg));
+    if (response == GTK_RESPONSE_OK) {
+        if (it && deadbeef->conf_get_int ("gtkui.location_set_custom_title", 0)) {
+            deadbeef->pl_replace_meta ((DB_playItem_t *)it, ":CUSTOM_TITLE", gtk_entry_get_text (GTK_ENTRY (ct)));
+        }
+        else {
+            deadbeef->pl_delete_meta ((DB_playItem_t *)it, ":CUSTOM_TITLE");
+        }
+    }
+    gtk_widget_destroy (dlg);
+    lv->binding->unref (it);
+}
+#endif
+
+void
+on_remove_from_disk_activate                    (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    action_delete_from_disk_handler_cb ((void *)(intptr_t)DDB_ACTION_CTX_SELECTION);
+}
+
+void
+actionitem_activate (GtkMenuItem     *menuitem,
+                     DB_plugin_action_t *action)
+{
+    if (action->callback) {
+        gtkui_exec_action_14 (action, clicked_idx);
+    }
+    else {
+        action->callback2 (action, DDB_ACTION_CTX_SELECTION);
+    }
+}
+
+#define HOOKUP_OBJECT(component,widget,name) \
+  g_object_set_data_full (G_OBJECT (component), name, \
+    g_object_ref (widget), (GDestroyNotify) g_object_unref)
+
+
+static GtkWidget*
+find_popup                          (GtkWidget       *widget,
+                                        const gchar     *widget_name)
+{
+  GtkWidget *parent, *found_widget;
+
+  for (;;)
+    {
+      if (GTK_IS_MENU (widget))
+        parent = gtk_menu_get_attach_widget (GTK_MENU (widget));
+      else
+        parent = gtk_widget_get_parent (widget);
+      if (!parent)
+        parent = (GtkWidget*) g_object_get_data (G_OBJECT (widget), "GladeParentKey");
+      if (parent == NULL)
+        break;
+      widget = parent;
+    }
+
+  found_widget = (GtkWidget*) g_object_get_data (G_OBJECT (widget),
+                                                 widget_name);
+  return found_widget;
+}
+
+#if 0
+// experimental code to position the popup at the item
+static void
+popup_menu_position_func (GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gpointer user_data) {
+    // find 1st selected item
+    DdbListview *lv = user_data;
+    int winx, winy;
+    gdk_window_get_position (gtk_widget_get_window (GTK_WIDGET (lv->list)), &winx, &winy);
+    DdbListviewIter it = lv->binding->head ();
+    int idx = 0;
+    while (it) {
+        if (lv->binding->is_selected (it)) {
+            break;
+        }
+        DdbListviewIter next = lv->binding->next (it);
+        lv->binding->unref (it);
+        it = next;
+        idx++;
+    }
+    if (it) {
+        // get Y position
+        *y = ddb_listview_get_row_pos (lv, idx) + winy;
+        lv->binding->unref (it);
+    }
+    else {
+        *y = winy; // mouse_y
+    }
+    *x = winx; // mouse_x
+    *push_in = TRUE;
+}
+#endif
+
+void
+list_context_menu (DdbListview *listview, DdbListviewIter it, int idx) {
+    clicked_idx = deadbeef->pl_get_idx_of (it);
+    int inqueue = deadbeef->pl_playqueue_test (it);
+    GtkWidget *playlist_menu;
+    GtkWidget *add_to_playback_queue1;
+    GtkWidget *remove_from_playback_queue1;
+    GtkWidget *separator;
+    GtkWidget *remove2;
+    GtkWidget *remove_from_disk;
+    GtkWidget *separator8;
+    GtkWidget *properties1;
+    GtkWidget *reload_metadata;
+#ifndef DISABLE_CUSTOM_TITLE
+    GtkWidget *set_custom_title;
+#endif
+
+    playlist_menu = gtk_menu_new ();
+    add_to_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Add To Playback Queue"));
+    gtk_widget_show (add_to_playback_queue1);
+    gtk_container_add (GTK_CONTAINER (playlist_menu), add_to_playback_queue1);
+    g_object_set_data (G_OBJECT (add_to_playback_queue1), "ps", listview);
+
+    remove_from_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Remove From Playback Queue"));
+    if (inqueue == -1) {
+        gtk_widget_set_sensitive (remove_from_playback_queue1, FALSE);
+    }
+    gtk_widget_show (remove_from_playback_queue1);
+    gtk_container_add (GTK_CONTAINER (playlist_menu), remove_from_playback_queue1);
+    g_object_set_data (G_OBJECT (remove_from_playback_queue1), "ps", listview);
+
+    reload_metadata = gtk_menu_item_new_with_mnemonic (_("Reload Metadata"));
+    gtk_widget_show (reload_metadata);
+    gtk_container_add (GTK_CONTAINER (playlist_menu), reload_metadata);
+    g_object_set_data (G_OBJECT (reload_metadata), "ps", listview);
+
+    separator = gtk_separator_menu_item_new ();
+    gtk_widget_show (separator);
+    gtk_container_add (GTK_CONTAINER (playlist_menu), separator);
+    gtk_widget_set_sensitive (separator, FALSE);
+
+    remove2 = gtk_menu_item_new_with_mnemonic (_("Remove"));
+    gtk_widget_show (remove2);
+    gtk_container_add (GTK_CONTAINER (playlist_menu), remove2);
+    g_object_set_data (G_OBJECT (remove2), "ps", listview);
+
+    int hide_remove_from_disk = deadbeef->conf_get_int ("gtkui.hide_remove_from_disk", 0);
+
+    if (!hide_remove_from_disk) {
+        remove_from_disk = gtk_menu_item_new_with_mnemonic (_("Remove From Disk"));
+        gtk_widget_show (remove_from_disk);
+        gtk_container_add (GTK_CONTAINER (playlist_menu), remove_from_disk);
+        g_object_set_data (G_OBJECT (remove_from_disk), "ps", listview);
+    }
+
+    separator = gtk_separator_menu_item_new ();
+    gtk_widget_show (separator);
+    gtk_container_add (GTK_CONTAINER (playlist_menu), separator);
+    gtk_widget_set_sensitive (separator, FALSE);
+
+    int selected_count = 0;
+    DB_playItem_t *pit = deadbeef->pl_get_first (PL_MAIN);
+    DB_playItem_t *selected = NULL;
+    while (pit) {
+        if (deadbeef->pl_is_selected (pit))
+        {
+            if (!selected)
+                selected = pit;
+            selected_count++;
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (pit, PL_MAIN);
+        deadbeef->pl_item_unref (pit);
+        pit = next;
+    }
+
+    DB_plugin_t **plugins = deadbeef->plug_get_list();
+    int i;
+    int added_entries = 0;
+    for (i = 0; plugins[i]; i++)
+    {
+        if (!plugins[i]->get_actions)
+            continue;
+
+        DB_plugin_action_t *actions = plugins[i]->get_actions (selected);
+        DB_plugin_action_t *action;
+
+        int count = 0;
+        for (action = actions; action; action = action->next)
+        {
+            if ((action->flags & DB_ACTION_COMMON) || !((action->callback2 && (action->flags & DB_ACTION_ADD_MENU)) || action->callback) || !(action->flags & (DB_ACTION_MULTIPLE_TRACKS | DB_ACTION_SINGLE_TRACK)))
+                continue;
+
+            // create submenus (separated with '/')
+            const char *prev = action->title;
+            while (*prev && *prev == '/') {
+                prev++;
+            }
+
+            GtkWidget *popup = NULL;
+
+            for (;;) {
+                const char *slash = strchr (prev, '/');
+                if (slash && *(slash-1) != '\\') {
+                    char name[slash-prev+1];
+                    // replace \/ with /
+                    const char *p = prev;
+                    char *t = name;
+                    while (*p && p < slash) {
+                        if (*p == '\\' && *(p+1) == '/') {
+                            *t++ = '/';
+                            p += 2;
+                        }
+                        else {
+                            *t++ = *p++;
+                        }
+                    }
+                    *t = 0;
+
+                    // add popup
+                    GtkWidget *prev_menu = popup ? popup : playlist_menu;
+
+                    popup = find_popup (prev_menu, name);
+                    if (!popup) {
+                        GtkWidget *item = gtk_image_menu_item_new_with_mnemonic (_(name));
+                        gtk_widget_show (item);
+                        gtk_container_add (GTK_CONTAINER (prev_menu), item);
+                        popup = gtk_menu_new ();
+                        HOOKUP_OBJECT (prev_menu, popup, name);
+                        gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), popup);
+                    }
+                }
+                else {
+                    break;
+                }
+                prev = slash+1;
+            }
+
+
+            count++;
+            added_entries++;
+            GtkWidget *actionitem;
+
+            // replace \/ with /
+            const char *p = popup ? prev : action->title;
+            char title[strlen (p)+1];
+            char *t = title;
+            while (*p) {
+                if (*p == '\\' && *(p+1) == '/') {
+                    *t++ = '/';
+                    p += 2;
+                }
+                else {
+                    *t++ = *p++;
+                }
+            }
+            *t = 0;
+
+            actionitem = gtk_menu_item_new_with_mnemonic (_(title));
+            gtk_widget_show (actionitem);
+            gtk_container_add (popup ? GTK_CONTAINER (popup) : GTK_CONTAINER (playlist_menu), actionitem);
+            g_object_set_data (G_OBJECT (actionitem), "ps", listview);
+
+            g_signal_connect ((gpointer) actionitem, "activate",
+                    G_CALLBACK (actionitem_activate),
+                    action);
+            if ((selected_count > 1 && !(action->flags & DB_ACTION_MULTIPLE_TRACKS)) ||
+                (action->flags & DB_ACTION_DISABLED)) {
+                gtk_widget_set_sensitive (GTK_WIDGET (actionitem), FALSE);
+            }
+        }
+        if (count > 0 && deadbeef->conf_get_int ("gtkui.action_separators", 0))
+        {
+            separator8 = gtk_separator_menu_item_new ();
+            gtk_widget_show (separator8);
+            gtk_container_add (GTK_CONTAINER (playlist_menu), separator8);
+            gtk_widget_set_sensitive (separator8, FALSE);
+        }
+    }
+    if (added_entries > 0 && !deadbeef->conf_get_int ("gtkui.action_separators", 0))
+    {
+        separator8 = gtk_separator_menu_item_new ();
+        gtk_widget_show (separator8);
+        gtk_container_add (GTK_CONTAINER (playlist_menu), separator8);
+        gtk_widget_set_sensitive (separator8, FALSE);
+    }
+
+#ifndef DISABLE_CUSTOM_TITLE
+    set_custom_title = gtk_menu_item_new_with_mnemonic (_("Set Custom Title"));
+    gtk_widget_show (set_custom_title);
+    gtk_container_add (GTK_CONTAINER (playlist_menu), set_custom_title);
+    if (selected_count != 1) {
+        gtk_widget_set_sensitive (GTK_WIDGET (set_custom_title), FALSE);
+    }
+
+    separator = gtk_separator_menu_item_new ();
+    gtk_widget_show (separator);
+    gtk_container_add (GTK_CONTAINER (playlist_menu), separator);
+    gtk_widget_set_sensitive (separator, FALSE);
+#endif
+
+    properties1 = gtk_menu_item_new_with_mnemonic (_("Track Properties"));
+    gtk_widget_show (properties1);
+    gtk_container_add (GTK_CONTAINER (playlist_menu), properties1);
+    g_object_set_data (G_OBJECT (properties1), "ps", listview);
+
+    g_signal_connect ((gpointer) add_to_playback_queue1, "activate",
+            G_CALLBACK (main_add_to_playback_queue_activate),
+            NULL);
+    g_signal_connect ((gpointer) remove_from_playback_queue1, "activate",
+            G_CALLBACK (main_remove_from_playback_queue_activate),
+            NULL);
+    g_signal_connect ((gpointer) reload_metadata, "activate",
+            G_CALLBACK (main_reload_metadata_activate),
+            NULL);
+    g_signal_connect ((gpointer) remove2, "activate",
+            G_CALLBACK (on_remove2_activate),
+            NULL);
+    if (!hide_remove_from_disk) {
+        g_signal_connect ((gpointer) remove_from_disk, "activate",
+                G_CALLBACK (on_remove_from_disk_activate),
+                NULL);
+    }
+#ifndef DISABLE_CUSTOM_TITLE
+    g_signal_connect ((gpointer) set_custom_title, "activate",
+            G_CALLBACK (on_set_custom_title_activate),
+            listview);
+#endif
+    g_signal_connect ((gpointer) properties1, "activate",
+            G_CALLBACK (main_properties_activate),
+            NULL);
+    gtk_menu_popup (GTK_MENU (playlist_menu), NULL, NULL, NULL/*popup_menu_position_func*/, listview, 0, gtk_get_current_event_time());
+}
+
+void
+on_group_by_none_activate              (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    strcpy (group_by_str, "");
+    deadbeef->conf_set_str ("playlist.group_by", group_by_str);
+
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_modified (plt);
+        deadbeef->plt_unref (plt);
+    }
+    main_refresh ();
+}
+
+void
+on_pin_groups_active                   (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    int old_val = deadbeef->conf_get_int ("playlist.pin.groups", 0);
+    deadbeef->conf_set_int ("playlist.pin.groups", old_val ? 0 : 1);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    gtk_check_menu_item_toggled(GTK_CHECK_MENU_ITEM(menuitem));
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_modified (plt);
+        deadbeef->plt_unref(plt);
+    }
+    main_refresh ();
+}
+
+void
+on_group_by_artist_date_album_activate (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    strcpy (group_by_str, "%a - [%y] %b");
+    deadbeef->conf_set_str ("playlist.group_by", group_by_str);
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_modified (plt);
+        deadbeef->plt_unref (plt);
+    }
+    main_refresh ();
+}
+
+void
+on_group_by_artist_activate            (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    strcpy (group_by_str, "%a");
+    deadbeef->conf_set_str ("playlist.group_by", group_by_str);
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        deadbeef->plt_modified (plt);
+        deadbeef->plt_unref (plt);
+    }
+    main_refresh ();
+}
+
+void
+on_group_by_custom_activate            (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    GtkWidget *dlg = create_groupbydlg ();
+
+    gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
+    GtkWidget *entry = lookup_widget (dlg, "format");
+    gtk_entry_set_text (GTK_ENTRY (entry), group_by_str);
+//    gtk_window_set_title (GTK_WINDOW (dlg), "Group by");
+    gint response = gtk_dialog_run (GTK_DIALOG (dlg));
+
+    if (response == GTK_RESPONSE_OK) {
+        const gchar *text = gtk_entry_get_text (GTK_ENTRY (entry));
+        strncpy (group_by_str, text, sizeof (group_by_str));
+        group_by_str[sizeof (group_by_str)-1] = 0;
+        deadbeef->conf_set_str ("playlist.group_by", group_by_str);
+        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+        if (plt) {
+            deadbeef->plt_modified (plt);
+            deadbeef->plt_unref (plt);
+        }
+        main_refresh ();
+    }
+    gtk_widget_destroy (dlg);
+}
+
+static DdbListview *last_playlist;
+static int active_column;
+
+void
+set_last_playlist_cm (DdbListview *pl) {
+    last_playlist = pl;
+}
+
+void
+set_active_column_cm (int col) {
+    active_column = col;
+}
+
+void
+append_column_from_textdef (DdbListview *listview, const uint8_t *def) {
+    // syntax: "title" "format" id width alignright
+    char token[MAX_TOKEN];
+    const char *p = def;
+    char title[MAX_TOKEN];
+    int id;
+    char fmt[MAX_TOKEN];
+    int width;
+    int align;
+
+    parser_init ();
+
+    p = gettoken_warn_eof (p, token);
+    if (!p) {
+        return;
+    }
+    strcpy (title, token);
+
+    p = gettoken_warn_eof (p, token);
+    if (!p) {
+        return;
+    }
+    strcpy (fmt, token);
+
+    p = gettoken_warn_eof (p, token);
+    if (!p) {
+        return;
+    }
+    id = atoi (token);
+
+    p = gettoken_warn_eof (p, token);
+    if (!p) {
+        return;
+    }
+    width = atoi (token);
+
+    p = gettoken_warn_eof (p, token);
+    if (!p) {
+        return;
+    }
+    align = atoi (token);
+
+    col_info_t *inf = malloc (sizeof (col_info_t));
+    memset (inf, 0, sizeof (col_info_t));
+
+    enum {
+        DB_COLUMN_ARTIST_ALBUM = 2,
+        DB_COLUMN_ARTIST = 3,
+        DB_COLUMN_ALBUM = 4,
+        DB_COLUMN_TITLE = 5,
+        DB_COLUMN_DURATION = 6,
+        DB_COLUMN_TRACK = 7,
+    };
+
+    inf->id = -1;
+    // convert IDs from pre-0.4
+    switch (id) {
+    case DB_COLUMN_ARTIST_ALBUM:
+        inf->format = strdup ("%a - %b");
+        break;
+    case DB_COLUMN_ARTIST:
+        inf->format = strdup ("%a");
+        break;
+    case DB_COLUMN_ALBUM:
+        inf->format = strdup ("%b");
+        break;
+    case DB_COLUMN_TITLE:
+        inf->format = strdup ("%t");
+        break;
+    case DB_COLUMN_DURATION:
+        inf->format = strdup ("%l");
+        break;
+    case DB_COLUMN_TRACK:
+        inf->format = strdup ("%n");
+        break;
+    default:
+        inf->format = *fmt ? strdup (fmt) : NULL;
+        inf->id = id;
+        break;
+    }
+    ddb_listview_column_append (listview, title, width, align, id == DB_COLUMN_ALBUM_ART ? width : 0, inf);
+}
+
+static void
+init_column (col_info_t *inf, int id, const char *format) {
+    if (inf->format) {
+        free (inf->format);
+        inf->format = NULL;
+    }
+
+    inf->id = -1;
+
+    switch (id) {
+    case 0:
+        inf->id = DB_COLUMN_FILENUMBER;
+        break;
+    case 1:
+        inf->id = DB_COLUMN_PLAYING;
+        break;
+    case 2:
+        inf->id = DB_COLUMN_ALBUM_ART;
+        break;
+    case 3:
+        inf->format = strdup ("%a - %b");
+        break;
+    case 4:
+        inf->format = strdup ("%a");
+        break;
+    case 5:
+        inf->format = strdup ("%b");
+        break;
+    case 6:
+        inf->format = strdup ("%t");
+        break;
+    case 7:
+        inf->format = strdup ("%l");
+        break;
+    case 8:
+        inf->format = strdup ("%n");
+        break;
+    case 9:
+        inf->format = strdup ("%B");
+        break;
+    default:
+        inf->format = strdup (format);
+    }
+}
+
+int editcolumn_title_changed = 0;
+
+void
+on_add_column_activate                 (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    editcolumn_title_changed = 0;
+    GtkWidget *dlg = create_editcolumndlg ();
+    gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
+    gtk_window_set_title (GTK_WINDOW (dlg), _("Add column"));
+    gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")), 0);
+    gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")), 0);
+    gint response = gtk_dialog_run (GTK_DIALOG (dlg));
+    if (response == GTK_RESPONSE_OK) {
+        const gchar *title = gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "title")));
+        const gchar *format = gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "format")));
+        int sel = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")));
+
+        col_info_t *inf = malloc (sizeof (col_info_t));
+        memset (inf, 0, sizeof (col_info_t));
+
+        init_column (inf, sel, format);
+
+        int align = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")));
+        ddb_listview_column_insert (last_playlist, active_column, title, 100, align, inf->id == DB_COLUMN_ALBUM_ART ? 100 : 0, inf);
+        ddb_listview_refresh (last_playlist, DDB_LIST_CHANGED | DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST | DDB_REFRESH_HSCROLL);
+    }
+    gtk_widget_destroy (dlg);
+}
+
+
+void
+on_edit_column_activate                (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    if (active_column == -1)
+        return;
+    GtkWidget *dlg = create_editcolumndlg ();
+    gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
+    gtk_window_set_title (GTK_WINDOW (dlg), _("Edit column"));
+
+    const char *title;
+    int width;
+    int align_right;
+    col_info_t *inf;
+    int minheight;
+    int res = ddb_listview_column_get_info (last_playlist, active_column, &title, &width, &align_right, &minheight, (void **)&inf);
+    if (res == -1) {
+        trace ("attempted to edit non-existing column\n");
+        return;
+    }
+
+    int idx = 10;
+    if (inf->id == -1) {
+        if (inf->format) {
+            if (!strcmp (inf->format, "%a - %b")) {
+                idx = 3;
+            }
+            else if (!strcmp (inf->format, "%a")) {
+                idx = 4;
+            }
+            else if (!strcmp (inf->format, "%b")) {
+                idx = 5;
+            }
+            else if (!strcmp (inf->format, "%t")) {
+                idx = 6;
+            }
+            else if (!strcmp (inf->format, "%l")) {
+                idx = 7;
+            }
+            else if (!strcmp (inf->format, "%n")) {
+                idx = 8;
+            }
+            else if (!strcmp (inf->format, "%B")) {
+                idx = 9;
+            }
+        }
+    }
+    else if (inf->id <= DB_COLUMN_PLAYING) {
+        idx = inf->id;
+    }
+    else if (inf->id == DB_COLUMN_ALBUM_ART) {
+        idx = 2;
+    }
+    gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")), idx);
+    if (idx == 10) {
+        gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "format")), inf->format);
+    }
+    gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")), align_right);
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (dlg, "title")), title);
+    editcolumn_title_changed = 0;
+    gint response = gtk_dialog_run (GTK_DIALOG (dlg));
+    if (response == GTK_RESPONSE_OK) {
+        const gchar *title = gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "title")));
+        const gchar *format = gtk_entry_get_text (GTK_ENTRY (lookup_widget (dlg, "format")));
+        int id = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "id")));
+        int align = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")));
+
+        init_column (inf, id, format);
+        ddb_listview_column_set_info (last_playlist, active_column, title, width, align, inf->id == DB_COLUMN_ALBUM_ART ? width : 0, inf);
+
+        ddb_listview_refresh (last_playlist, DDB_LIST_CHANGED | DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST);
+    }
+    gtk_widget_destroy (dlg);
+}
+
+
+void
+on_remove_column_activate              (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    if (active_column == -1)
+        return;
+
+    ddb_listview_column_remove (last_playlist, active_column);
+    ddb_listview_refresh (last_playlist, DDB_LIST_CHANGED | DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST | DDB_REFRESH_HSCROLL);
+}
+
+GtkWidget*
+create_headermenu (int groupby)
+{
+  GtkWidget *headermenu;
+  GtkWidget *add_column;
+  GtkWidget *edit_column;
+  GtkWidget *remove_column;
+  GtkWidget *separator;
+  GtkWidget *group_by;
+  GtkWidget *pin_groups;
+  GtkWidget *group_by_menu;
+  GtkWidget *none;
+  GtkWidget *artist_date_album;
+  GtkWidget *artist;
+  GtkWidget *custom;
+
+  headermenu = gtk_menu_new ();
+
+  add_column = gtk_menu_item_new_with_mnemonic (_("Add column"));
+  gtk_widget_show (add_column);
+  gtk_container_add (GTK_CONTAINER (headermenu), add_column);
+
+  edit_column = gtk_menu_item_new_with_mnemonic (_("Edit column"));
+  gtk_widget_show (edit_column);
+  gtk_container_add (GTK_CONTAINER (headermenu), edit_column);
+
+  remove_column = gtk_menu_item_new_with_mnemonic (_("Remove column"));
+  gtk_widget_show (remove_column);
+  gtk_container_add (GTK_CONTAINER (headermenu), remove_column);
+
+  if (groupby) {
+      separator = gtk_separator_menu_item_new ();
+      gtk_widget_show (separator);
+      gtk_container_add (GTK_CONTAINER (headermenu), separator);
+      gtk_widget_set_sensitive (separator, FALSE);
+
+      pin_groups = gtk_check_menu_item_new_with_mnemonic(_("Pin groups when scrolling"));
+      gtk_widget_show (pin_groups);
+      gtk_container_add (GTK_CONTAINER (headermenu), pin_groups);
+      gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (pin_groups), (gboolean)deadbeef->conf_get_int("playlist.pin.groups",0));
+
+      group_by = gtk_menu_item_new_with_mnemonic (_("Group by"));
+      gtk_widget_show (group_by);
+      gtk_container_add (GTK_CONTAINER (headermenu), group_by);
+
+      group_by_menu = gtk_menu_new ();
+      gtk_menu_item_set_submenu (GTK_MENU_ITEM (group_by), group_by_menu);
+
+      none = gtk_menu_item_new_with_mnemonic (_("None"));
+      gtk_widget_show (none);
+      gtk_container_add (GTK_CONTAINER (group_by_menu), none);
+
+      artist_date_album = gtk_menu_item_new_with_mnemonic (_("Artist/Date/Album"));
+      gtk_widget_show (artist_date_album);
+      gtk_container_add (GTK_CONTAINER (group_by_menu), artist_date_album);
+
+      artist = gtk_menu_item_new_with_mnemonic (_("Artist"));
+      gtk_widget_show (artist);
+      gtk_container_add (GTK_CONTAINER (group_by_menu), artist);
+
+      custom = gtk_menu_item_new_with_mnemonic (_("Custom"));
+      gtk_widget_show (custom);
+      gtk_container_add (GTK_CONTAINER (group_by_menu), custom);
+
+      g_signal_connect ((gpointer) none, "activate",
+              G_CALLBACK (on_group_by_none_activate),
+              NULL);
+
+      g_signal_connect ((gpointer) pin_groups, "activate",
+              G_CALLBACK (on_pin_groups_active),
+              NULL);
+
+      g_signal_connect ((gpointer) artist_date_album, "activate",
+              G_CALLBACK (on_group_by_artist_date_album_activate),
+              NULL);
+
+      g_signal_connect ((gpointer) artist, "activate",
+              G_CALLBACK (on_group_by_artist_activate),
+              NULL);
+
+      g_signal_connect ((gpointer) custom, "activate",
+              G_CALLBACK (on_group_by_custom_activate),
+              NULL);
+  }
+
+  g_signal_connect ((gpointer) add_column, "activate",
+                    G_CALLBACK (on_add_column_activate),
+                    NULL);
+  g_signal_connect ((gpointer) edit_column, "activate",
+                    G_CALLBACK (on_edit_column_activate),
+                    NULL);
+  g_signal_connect ((gpointer) remove_column, "activate",
+                    G_CALLBACK (on_remove_column_activate),
+                    NULL);
+
+  return headermenu;
+}
+
+void
+add_column_helper (DdbListview *listview, const char *title, int width, int id, const char *format, int align_right) {
+    if (!format) {
+        format = "";
+    }
+    col_info_t *inf = malloc (sizeof (col_info_t));
+    memset (inf, 0, sizeof (col_info_t));
+    inf->id = id;
+    inf->format = strdup (format);
+    ddb_listview_column_append (listview, title, width, align_right, id == DB_COLUMN_ALBUM_ART ? width : 0, inf);
+}
+
