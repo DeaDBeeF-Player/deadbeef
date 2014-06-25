@@ -195,8 +195,6 @@ oss_pause (void) {
     if (state == OUTPUT_STATE_STOPPED) {
         return -1;
     }
-    // set pause state
-    oss_free();
     state = OUTPUT_STATE_PAUSED;
     return 0;
 }
