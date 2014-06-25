@@ -1002,10 +1002,6 @@ fetcher_thread (void *none)
                                             continue;
                                         }
                                         uint8_t *data = f->data;
-                                        if (tag.version[0] == 4) {
-                                            // skip size
-                                            data += 4;
-                                        }
                                         uint8_t *end = f->data + f->size;
                                         int enc = *data;
                                         data++; // enc
