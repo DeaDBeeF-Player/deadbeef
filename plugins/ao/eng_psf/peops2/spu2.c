@@ -170,7 +170,7 @@ const int f[5][2] = {   {    0,  0  },
 //     
 
 
-INLINE void InterpolateUp(spu2_state_t *spu, int ch)
+static INLINE void InterpolateUp(spu2_state_t *spu, int ch)
 {
  if(spu->s_chan[ch].SB[32]==1)                              // flag == 1? calc step and set flag... and don't change the value in this pass
   {
@@ -218,7 +218,7 @@ INLINE void InterpolateUp(spu2_state_t *spu, int ch)
 // even easier interpolation on downsampling, also no special filter, again just "Pete's common sense" tm
 //
 
-INLINE void InterpolateDown(spu2_state_t *spu, int ch)
+static INLINE void InterpolateDown(spu2_state_t *spu, int ch)
 {
  if(spu->s_chan[ch].sinc>=0x20000L)                                 // we would skip at least one val?
   {
@@ -244,7 +244,7 @@ INLINE void InterpolateDown(spu2_state_t *spu, int ch)
 // START SOUND... called by main thread to setup a new sound on a channel
 ////////////////////////////////////////////////////////////////////////
 
-INLINE void StartSound(spu2_state_t *spu, int ch)
+static INLINE void StartSound(spu2_state_t *spu, int ch)
 {
  spu->dwNewChannel2[ch/24]&=~(1<<(ch%24));                  // clear new channel bit
  spu->dwEndChannel2[ch/24]&=~(1<<(ch%24));                  // clear end channel bit

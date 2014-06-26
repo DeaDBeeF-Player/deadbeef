@@ -204,7 +204,7 @@ void GTELOG(const char *a,...)
 	logerror( "%08x: GTE: %08x %s\n", cpu->pc, INS_COFUN( cpu->op ), s_text );
 }
 #else
-INLINE void GTELOG(const char *a, ...) {}
+static INLINE void GTELOG(const char *a, ...) {}
 #endif
 
 static UINT32 getcp2dr( mips_cpu_context *cpu, int n_reg );
@@ -223,7 +223,7 @@ void mips_stop( void )
 #endif
 }
 
-INLINE void mips_set_cp0r(mips_cpu_context *cpu, int reg, UINT32 value )
+static INLINE void mips_set_cp0r(mips_cpu_context *cpu, int reg, UINT32 value )
 {
 	cpu->cp0r[ reg ] = value;
 	if( reg == CP0_SR || reg == CP0_CAUSE )
@@ -240,7 +240,7 @@ INLINE void mips_set_cp0r(mips_cpu_context *cpu, int reg, UINT32 value )
 	}
 }
 
-INLINE void mips_commit_delayed_load(mips_cpu_context *cpu)
+static INLINE void mips_commit_delayed_load(mips_cpu_context *cpu)
 {
 	if( cpu->delayr != 0 )
 	{
@@ -250,7 +250,7 @@ INLINE void mips_commit_delayed_load(mips_cpu_context *cpu)
 	}
 }
 
-INLINE void mips_delayed_branch(mips_cpu_context *cpu, UINT32 n_adr )
+static INLINE void mips_delayed_branch(mips_cpu_context *cpu, UINT32 n_adr )
 {
 	if( ( n_adr & ( ( ( cpu->cp0r[ CP0_SR ] & SR_KUC ) << 30 ) | 3 ) ) != 0 )
 	{
@@ -266,7 +266,7 @@ INLINE void mips_delayed_branch(mips_cpu_context *cpu, UINT32 n_adr )
 	}
 }
 
-INLINE void mips_set_pc(mips_cpu_context *cpu, unsigned val )
+static INLINE void mips_set_pc(mips_cpu_context *cpu, unsigned val )
 {
 	cpu->pc = val;
 	change_pc( val );
@@ -274,7 +274,7 @@ INLINE void mips_set_pc(mips_cpu_context *cpu, unsigned val )
 	cpu->delayv = 0;
 }
 
-INLINE void mips_advance_pc(mips_cpu_context *cpu)
+static INLINE void mips_advance_pc(mips_cpu_context *cpu)
 {
 	if( cpu->delayr == REGPC )
 	{
@@ -287,7 +287,7 @@ INLINE void mips_advance_pc(mips_cpu_context *cpu)
 	}
 }
 
-INLINE void mips_load(mips_cpu_context *cpu, UINT32 n_r, UINT32 n_v )
+static INLINE void mips_load(mips_cpu_context *cpu, UINT32 n_r, UINT32 n_v )
 {
 	mips_advance_pc(cpu);
 	if( n_r != 0 )
@@ -296,7 +296,7 @@ INLINE void mips_load(mips_cpu_context *cpu, UINT32 n_r, UINT32 n_v )
 	}
 }
 
-INLINE void mips_delayed_load( mips_cpu_context *cpu, UINT32 n_r, UINT32 n_v )
+static INLINE void mips_delayed_load( mips_cpu_context *cpu, UINT32 n_r, UINT32 n_v )
 {
 	if( cpu->delayr == REGPC )
 	{
@@ -1905,7 +1905,7 @@ static void setcp2cr(mips_cpu_context *cpu, int n_reg, UINT32 n_value )
 	cpu->cp2cr[ n_reg ].d = n_value;
 }
 
-INLINE INT32 LIM( mips_cpu_context *cpu, INT32 n_value, INT32 n_max, INT32 n_min, UINT32 n_flag )
+static INLINE INT32 LIM( mips_cpu_context *cpu, INT32 n_value, INT32 n_max, INT32 n_min, UINT32 n_flag )
 {
 	if( n_value > n_max )
 	{
@@ -1920,7 +1920,7 @@ INLINE INT32 LIM( mips_cpu_context *cpu, INT32 n_value, INT32 n_max, INT32 n_min
 	return n_value;
 }
 
-INLINE INT64 BOUNDS( mips_cpu_context *cpu, INT64 n_value, INT64 n_max, int n_maxflag, INT64 n_min, int n_minflag )
+static INLINE INT64 BOUNDS( mips_cpu_context *cpu, INT64 n_value, INT64 n_max, int n_maxflag, INT64 n_min, int n_minflag )
 {
 	if( n_value > n_max )
 	{
@@ -1944,7 +1944,7 @@ INLINE INT64 BOUNDS( mips_cpu_context *cpu, INT64 n_value, INT64 n_max, int n_ma
 #define Lm_C3( a ) LIM( cpu, ( a ), 0x00ff, 0x0000, ( 1 << 19 ) )
 #define Lm_D( a ) LIM( cpu, ( a ), 0xffff, 0x0000, ( 1 << 31 ) | ( 1 << 18 ) )
 
-INLINE UINT32 Lm_E( mips_cpu_context *cpu, UINT32 n_z )
+static INLINE UINT32 Lm_E( mips_cpu_context *cpu, UINT32 n_z )
 {
 	if( n_z <= H / 2 )
 	{
