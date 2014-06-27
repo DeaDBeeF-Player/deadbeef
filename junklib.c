@@ -2092,11 +2092,11 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
         flags[0] = f24->flags[0] << 1;
         
         // 2nd byte (format flags) is quite different
-        // 2.4 format is %0h00kmnp (grouping, compression, encryption, unsync)
-        // 2.3 format is %ijk00000 (compression, encryption, grouping)
+        // 2.4 format is %0h00kmnp (6:grouping, 3:compression, 2:encryption, 1:unsync, 0:datalen)
+        // 2.3 format is %ijk00000 (7:compression, 6:encryption, 5:grouping)
         flags[1] = 0;
         if (f24->flags[1] & (1 << 6)) {
-            flags[1] |= (1 << 4);
+            flags[1] |= (1 << 5);
         }
         if (f24->flags[1] & (1 << 3)) {
             flags[1] |= (1 << 7);
@@ -2105,19 +2105,26 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
             flags[1] |= (1 << 6);
         }
         if (f24->flags[1] & (1 << 1)) {
-            flags[1] |= (1 << 5);
-        }
-        if (f24->flags[1] & 1) {
             // 2.3 doesn't support per-frame unsyncronyzation
-            // let's ignore it
+        }
+        if (f24->flags[1] & (1 << 0)) {
+            // 2.3 doesn't support data length, but remember to skip 4 bytes of
+            // the frame
         }
 
         if (simplecopy) {
             f23 = malloc (sizeof (DB_id3v2_frame_t) + f24->size);
             memset (f23, 0, sizeof (DB_id3v2_frame_t) + f24->size);
             strcpy (f23->id, f24->id);
-            f23->size = f24->size;
-            memcpy (f23->data, f24->data, f24->size);
+            if (f24->flags[1] & (1<<0)) {
+                // skip 1st 4 frames
+                memcpy (f23->data, f24->data+4, f24->size-4);
+                f23->size = f24->size-4;
+            }
+            else {
+                f23->size = f24->size;
+                memcpy (f23->data, f24->data, f24->size);
+            }
             f23->flags[0] = flags[0];
             f23->flags[1] = flags[1];
         }
@@ -2277,12 +2284,9 @@ junk_id3v2_convert_23_to_24 (DB_id3v2_tag_t *tag23, DB_id3v2_tag_t *tag24) {
         flags[0] = f23->flags[0] >> 1;
         
         // 2nd byte (format flags) is quite different
-        // 2.4 format is %0h00kmnp (grouping, compression, encryption, unsync)
-        // 2.3 format is %ijk00000 (compression, encryption, grouping)
+        // 2.4 format is %0h00kmnp (6:grouping, 3:compression, 2:encryption, 1:unsync, 0:datalen)
+        // 2.3 format is %ijk00000 (7:compression, 6:encryption, 5:grouping)
         flags[1] = 0;
-        if (f23->flags[1] & (1 << 4)) {
-            flags[1] |= (1 << 6);
-        }
         if (f23->flags[1] & (1 << 7)) {
             flags[1] |= (1 << 3);
         }
@@ -2290,7 +2294,7 @@ junk_id3v2_convert_23_to_24 (DB_id3v2_tag_t *tag23, DB_id3v2_tag_t *tag24) {
             flags[1] |= (1 << 2);
         }
         if (f23->flags[1] & (1 << 5)) {
-            flags[1] |= (1 << 1);
+            flags[1] |= (1 << 6);
         }
 
         DB_id3v2_frame_t *f24 = NULL;
