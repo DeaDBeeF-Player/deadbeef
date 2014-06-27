@@ -6,8 +6,9 @@
 if [ -e syms ]; then rm syms; fi
 if [ -e allsym ]; then rm allsym; fi
 
-host=`gcc -v 2>&1 | grep 'Target:' | sed 's/Target: //'`
-for f in /lib/* /lib/$host/*; do
+#host=`gcc -v 2>&1 | grep 'Target:' | sed 's/Target: //'`
+host=i386-linux-gnu
+for f in /lib/$host/*; do
     if [ ! -f $f ]; then continue; fi
     readelf -s --wide $f >>syms
     objdump -T $f | grep "GLIBC_" | sed 's/\(.*\)GLIBC_//; s/)//' | grep -v PRIVATE | column -t >>allsym
@@ -35,7 +36,7 @@ cat output2 | column -t | awk '{ print "__asm__(\".symver " $2 "," $2 "@GLIBC_" 
 # now remove dl_iterate_phdr as it's weak anyway (we should probably do this for all weak syms)
 cat output | sed 's/__asm__("\.symver dl_iterate_phdr.*//' >output2
 
-cat <<EOF >apsymbols.h
+cat <<EOF >apsymbols.h.i686
 /* apbuild embedded metadata */
 #define APBUILD_NOTE_METADATA(s) \
   __asm__(".section .metadata, \"MS\", @note, 1\n\t.string \"" s "\"\n\t.previous\n\t")
@@ -46,5 +47,5 @@ APBUILD_NOTE_METADATA("apbuild.version=" APBUILD_VERSION);
 
 /* apbuild generated symbol exclusion list */
 EOF
-cat output2 >> apsymbols.h
+cat output2 >> apsymbols.h.i686
 rm output2
