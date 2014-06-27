@@ -3683,12 +3683,6 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
             if (unsync) {
                 synched_size = junklib_id3v2_sync_frame (readptr, sz);
                 trace ("size: %d/%d\n", synched_size, sz);
-
-#if 0 // that was a workaround for corrupted unsynced tag, do not use
-                if (synched_size != sz) {
-                    sz = sz + (sz-synched_size);
-                }
-#endif
             }
 
             if (tag_store) {
