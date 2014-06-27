@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 . .install
 rm -f $PREFIX/lib/deadbeef/*.so
 cp ./deadbeef $PREFIX/bin/
