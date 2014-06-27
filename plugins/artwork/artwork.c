@@ -70,8 +70,8 @@ static uintptr_t imlib_mutex;
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(...)
 
 static char default_cover[PATH_MAX];
 #define DEFAULT_FILEMASK "*cover*.jpg;*front*.jpg;*folder*.jpg;*cover*.png;*front*.png;*folder*.png"
