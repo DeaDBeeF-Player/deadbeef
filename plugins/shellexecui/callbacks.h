@@ -28,3 +28,7 @@ on_edit_cancel_button_clicked          (GtkButton       *button,
 void
 on_edit_ok_button_clicked              (GtkButton       *button,
                                         gpointer         user_data);
+
+void
+on_shellexec_conf_dialog_destroy       (GObject       *object,
+                                        gpointer         user_data);

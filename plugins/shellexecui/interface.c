@@ -44,6 +44,7 @@ create_shellexec_conf_dialog (void)
   shellexec_conf_dialog = gtk_dialog_new ();
   gtk_container_set_border_width (GTK_CONTAINER (shellexec_conf_dialog), 12);
   gtk_window_set_title (GTK_WINDOW (shellexec_conf_dialog), _("Custom Shell Commands"));
+  gtk_window_set_destroy_with_parent (GTK_WINDOW (shellexec_conf_dialog), TRUE);
   gtk_window_set_type_hint (GTK_WINDOW (shellexec_conf_dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
   gtk_dialog_set_has_separator (GTK_DIALOG (shellexec_conf_dialog), FALSE);
 
@@ -89,6 +90,9 @@ create_shellexec_conf_dialog (void)
   gtk_dialog_add_action_widget (GTK_DIALOG (shellexec_conf_dialog), save_button, 0);
   gtk_widget_set_can_default(save_button, TRUE);
 
+  g_signal_connect ((gpointer) shellexec_conf_dialog, "destroy",
+                    G_CALLBACK (on_shellexec_conf_dialog_destroy),
+                    NULL);
   g_signal_connect ((gpointer) add_button, "clicked",
                     G_CALLBACK (on_add_button_clicked),
                     NULL);
