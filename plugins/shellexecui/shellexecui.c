@@ -345,9 +345,20 @@ init_treeview() {
     g_object_unref(liststore);
 }
 
+void
+on_shellexec_conf_dialog_destroy       (GObject       *object,
+                                        gpointer         user_data)
+{
+    conf_dlg = NULL;
+}
+
+
 static gboolean
 shellexecui_action_gtk (void *data)
 {
+    if (conf_dlg) {
+        return FALSE;
+    }
     conf_dlg = create_shellexec_conf_dialog();
     gtk_widget_set_size_request (conf_dlg, 400, 400);
     gtk_window_set_transient_for(GTK_WINDOW(conf_dlg),
