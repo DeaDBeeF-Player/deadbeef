@@ -2117,7 +2117,7 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
             memset (f23, 0, sizeof (DB_id3v2_frame_t) + f24->size);
             strcpy (f23->id, f24->id);
             if (f24->flags[1] & (1<<0)) {
-                // skip 1st 4 frames
+                // skip 1st 4 bytes (2.4 data length indicator)
                 memcpy (f23->data, f24->data+4, f24->size-4);
                 f23->size = f24->size-4;
             }
