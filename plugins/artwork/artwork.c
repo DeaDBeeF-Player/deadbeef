@@ -70,8 +70,8 @@ static uintptr_t imlib_mutex;
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(...)
 
 static char default_cover[PATH_MAX];
 #define DEFAULT_FILEMASK "*cover*.jpg;*front*.jpg;*folder*.jpg;*cover*.png;*front*.png;*folder*.png"
@@ -1001,10 +1001,23 @@ fetcher_thread (void *none)
                                             trace ("artwork: id3v2 APIC frame is too small\n");
                                             continue;
                                         }
+
                                         uint8_t *data = f->data;
-                                        if (f->flags[1] == 3) {
+
+                                        if (tag.version[0] == 4 && (f->flags[1] & 1)) {
                                             data += 4;
                                         }
+#if 0
+                                        printf ("version: %d, flags: %d %d\n", (int)tag.version[0], (int)f->flags[0], (int)f->flags[1]);
+                                        for (int i = 0; i < 20; i++) {
+                                            printf ("%c", data[i] < 0x20 ? '?' : data[i]);
+                                        }
+                                        printf ("\n");
+                                        for (int i = 0; i < 20; i++) {
+                                            printf ("%02x ", data[i]);
+                                        }
+                                        printf ("\n");
+#endif
                                         uint8_t *end = f->data + f->size;
                                         int enc = *data;
                                         data++; // enc
