@@ -1166,7 +1166,18 @@ fetcher_thread (void *none)
                             break;
                         }
 
-                        if(! (is_ogg? FLAC__metadata_chain_read_ogg_with_callbacks(chain, (FLAC__IOHandle)file, iocb) : FLAC__metadata_chain_read_with_callbacks(chain, (FLAC__IOHandle)file, iocb)) ) {
+                        int res = 0;
+                        if (is_ogg) {
+#if USE_OGG
+                            res = FLAC__metadata_chain_read_ogg_with_callbacks(chain, (FLAC__IOHandle)file, iocb);
+#endif
+                        }
+                        else
+                        {
+                            res = FLAC__metadata_chain_read_with_callbacks(chain, (FLAC__IOHandle)file, iocb);
+                        }
+
+                        if(!res) {
                             trace ("artwork: failed to read metadata from flac: %s\n", filename);
                             deadbeef->fclose (file);
                             FLAC__metadata_chain_delete(chain);

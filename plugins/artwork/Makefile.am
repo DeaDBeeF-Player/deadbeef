@@ -2,6 +2,11 @@ if HAVE_ARTWORK
 artworkdir = $(libdir)/$(PACKAGE)
 pkglib_LTLIBRARIES = artwork.la
 
+if HAVE_OGG
+ogg_def = -DUSE_OGG=1
+ogg_libs = $(OGG_LIBS)
+endif
+
 if ARTWORK_USE_VFS_CURL
 artwork_net_cflags = -DUSE_VFS_CURL
 artwork_net_sources =  albumartorg.c albumartorg.h lastfm.c lastfm.h wos.c wos.h escape.c escape.h
@@ -24,6 +29,6 @@ FLAC_DEPS=$(FLAC_LIBS)
 flac_cflags=-DUSE_METAFLAC $(FLAC_CFLAGS)
 endif
 
-AM_CFLAGS = $(CFLAGS) $(ARTWORK_CFLAGS) $(flac_cflags) $(artwork_net_cflags) -std=c99
-artwork_la_LIBADD = $(LDADD) $(ARTWORK_DEPS) $(FLAC_DEPS)
+AM_CFLAGS = $(CFLAGS) $(ARTWORK_CFLAGS) $(flac_cflags) $(artwork_net_cflags) $(ogg_def) -std=c99
+artwork_la_LIBADD = $(LDADD) $(ARTWORK_DEPS) $(FLAC_DEPS) $(ogg_libs)
 endif
