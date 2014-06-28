@@ -479,6 +479,7 @@ playlistswitch_cb (gpointer none) {
 static gboolean
 gtkui_on_frameupdate (gpointer data) {
     //update_songinfo (NULL);
+    gtk_widget_queue_draw (mainwin);
 
     return TRUE;
 }
@@ -926,12 +927,32 @@ gtkui_add_file_end_cb (ddb_fileadd_data_t *data, void *user_data) {
 #define ASSETS_PATH "./assets/"
 
 cairo_surface_t *surf_main;
-cairo_surface_t *surf_buttons;
+cairo_surface_t *surf_titlebar;
+cairo_surface_t *surf_cbuttons;
+cairo_surface_t *surf_balance;
+cairo_surface_t *surf_monoster;
+cairo_surface_t *surf_nums_ex;
+cairo_surface_t *surf_playpaus;
+cairo_surface_t *surf_posbar;
+cairo_surface_t *surf_shufrep;
+cairo_surface_t *surf_text;
+cairo_surface_t *surf_titlebar;
+cairo_surface_t *surf_volume;
 
 static int
 load_assets (void) {
     surf_main = cairo_image_surface_create_from_png (ASSETS_PATH "main.png");
-    surf_buttons = cairo_image_surface_create_from_png (ASSETS_PATH "cbuttons.png");
+    surf_titlebar = cairo_image_surface_create_from_png (ASSETS_PATH "titlebar.png");
+    surf_cbuttons = cairo_image_surface_create_from_png (ASSETS_PATH "cbuttons.png");
+    surf_balance = cairo_image_surface_create_from_png (ASSETS_PATH "balance.png");
+    surf_monoster = cairo_image_surface_create_from_png (ASSETS_PATH "monoster.png");
+    surf_nums_ex = cairo_image_surface_create_from_png (ASSETS_PATH "nums_ex.png");
+    surf_playpaus = cairo_image_surface_create_from_png (ASSETS_PATH "playpaus.png");
+    surf_posbar = cairo_image_surface_create_from_png (ASSETS_PATH "posbar.png");
+    surf_shufrep = cairo_image_surface_create_from_png (ASSETS_PATH "shufrep.png");
+    surf_text = cairo_image_surface_create_from_png (ASSETS_PATH "text.png");
+    surf_titlebar = cairo_image_surface_create_from_png (ASSETS_PATH "titlebar.png");
+    surf_volume = cairo_image_surface_create_from_png (ASSETS_PATH "volume.png");
 }
 
 static void
@@ -946,24 +967,161 @@ static int m1on;
 
 static gboolean
 main_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
-    // back
+    // main
     cairo_set_source_surface (cr, surf_main, 0, 0);
     cairo_paint (cr);
 
-    // buttons
-    int xoffs = 16;
-    int yoffs = 88;
-    int btn_w = 22;
-    int btn_h = 18;
+    // titlebar
+    draw_sprite (cr, surf_titlebar, 0, 0, 275, 15, 27, 0);
+//    draw_sprite (cr, surf_titlebar, 0, 0, 275, 14, 27, 15);
+//    draw_sprite (cr, surf_titlebar, 0, 0, 275, 13, 27, 29);
+//    draw_sprite (cr, surf_titlebar, 0, 0, 275, 13, 27, 42);
+    // menu
+    draw_sprite (cr, surf_titlebar, 7, 4, 8, 8, 1, 1);
+    draw_sprite (cr, surf_titlebar, 7, 4, 8, 8, 1, 10);
+    // minimize
+    draw_sprite (cr, surf_titlebar, 244, 4, 8, 8, 9, 0);
+    draw_sprite (cr, surf_titlebar, 244, 4, 8, 8, 9, 10);
+    // close
+    draw_sprite (cr, surf_titlebar, 264, 4, 8, 8, 18, 0);
+    draw_sprite (cr, surf_titlebar, 264, 4, 8, 8, 18, 10);
+    // shade
+    draw_sprite (cr, surf_titlebar, 254, 4, 8, 8, 0, 19);
+    draw_sprite (cr, surf_titlebar, 254, 4, 8, 8, 9, 19);
+    draw_sprite (cr, surf_titlebar, 254, 4, 8, 8, 0, 28);
+    draw_sprite (cr, surf_titlebar, 254, 4, 8, 8, 9, 28);
 
-    for (int i = 0; i < 5; i++) {
-        int screen_x = i*btn_w+xoffs;
-        int sprite_y = 0;
-        if (m1on && mx >= screen_x && my >= yoffs && mx < screen_x + btn_w && my < yoffs + btn_h) {
-            sprite_y += btn_h;
-        }
-        draw_sprite (cr, surf_buttons, screen_x, yoffs, btn_w, btn_h, i*btn_w, sprite_y);
+    // small buttons
+    draw_sprite (cr, surf_titlebar, 10, 25, 8, 38, 304, 3);
+    draw_sprite (cr, surf_titlebar, 10, 25, 8, 38, 313, 3);
+    draw_sprite (cr, surf_titlebar, 10, 25, 8, 38, 304, 47);
+    draw_sprite (cr, surf_titlebar, 10, 25, 8, 38, 312, 47);
+    draw_sprite (cr, surf_titlebar, 10, 25, 8, 38, 320, 47);
+    draw_sprite (cr, surf_titlebar, 10, 25, 8, 38, 328, 47);
+    draw_sprite (cr, surf_titlebar, 10, 25, 8, 38, 336, 47);
+
+    // cbuttons
+    int xoffs = 0;
+    int yoffs = 88;
+    int btn_h = 18;
+    int sprite_y = 0;
+    draw_sprite (cr, surf_cbuttons, xoffs+16, yoffs, 22, btn_h, xoffs, sprite_y);
+    xoffs += 22;
+    draw_sprite (cr, surf_cbuttons, xoffs+16, yoffs, 23, btn_h, xoffs, sprite_y);
+    xoffs += 23;
+    draw_sprite (cr, surf_cbuttons, xoffs+16, yoffs, 23, btn_h, xoffs, sprite_y);
+    xoffs += 23;
+    draw_sprite (cr, surf_cbuttons, xoffs+16, yoffs, 23, btn_h, xoffs, sprite_y);
+    xoffs += 23;
+    draw_sprite (cr, surf_cbuttons, xoffs+16, yoffs, 22, btn_h, xoffs, sprite_y);
+
+//    for (int i = 0; i < 5; i++) {
+//        int screen_x = i*(btn_w-1)+xoffs;
+//        int sprite_y = 0;
+//        if (m1on && mx >= screen_x && my >= yoffs && mx < screen_x + btn_w && my < yoffs + btn_h) {
+//            sprite_y += btn_h;
+//        }
+//        draw_sprite (cr, surf_cbuttons, screen_x, yoffs, btn_w, btn_h, i*(btn_w-1), sprite_y);
+//    }
+
+    // balance
+    int b_st = 27;
+    draw_sprite (cr, surf_balance, 177, 57, 37, 13, 9, b_st * 15);
+
+    // volume
+    int v_st = 27;
+    draw_sprite (cr, surf_volume, 107, 57, 68, 13, 0, v_st * 15);
+
+    // posbar
+    draw_sprite (cr, surf_posbar, 15, 72, 248, 10, 0, 0);
+    DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
+    if (!trk || deadbeef->pl_get_item_duration (trk) < 0) {
     }
+    else {
+        float pos = 0;
+        if (deadbeef->pl_get_item_duration (trk) > 0) {
+            pos = deadbeef->streamer_get_playpos () / deadbeef->pl_get_item_duration (trk);
+        }
+        draw_sprite (cr, surf_posbar, 13 + pos * (248+14), 72, 29, 10, 248, 0);
+        //draw_sprite (cr, surf_posbar, 13, 72, 29, 10, 278, 0);
+    }
+    if (trk) {
+        deadbeef->pl_item_unref (trk);
+    }
+
+    // shuffle
+    draw_sprite (cr, surf_shufrep, 171, 89, 40, 15, 35, 0);
+    draw_sprite (cr, surf_shufrep, 171, 89, 40, 15, 35, 15);
+
+    // repeat
+    draw_sprite (cr, surf_shufrep, 211, 89, 35, 15, 0, 0);
+    draw_sprite (cr, surf_shufrep, 211, 89, 35, 15, 0, 15);
+
+    // EQ
+    // size: 25x12, 22x12
+    // eq: 0,61; 0,73; 47,61; 47,73
+    // pl: 25,61; 25,73; 71,61; 71,73
+    draw_sprite (cr, surf_shufrep, 220, 58, 25, 12, 47, 61);
+    draw_sprite (cr, surf_shufrep, 244, 58, 22, 12, 71, 61);
+
+    // monoster
+    draw_sprite (cr, surf_monoster, 214, 41, 25, 11, 31, 12);
+    draw_sprite (cr, surf_monoster, 239, 41, 29, 11, 0, 0);
+
+    // playpaus
+    draw_sprite (cr, surf_playpaus, 26, 28, 9, 9, 0, 0);
+    draw_sprite (cr, surf_playpaus, 26, 28, 9, 9, 9, 0);
+    draw_sprite (cr, surf_playpaus, 26, 28, 9, 9, 18, 0);
+    draw_sprite (cr, surf_playpaus, 26, 28, 9, 9, 26, 0);
+
+    // nums_ex
+    int min = 5;
+    int sec = 23;
+
+    if (min > 99) {
+        min = 99;
+    }
+    if (sec > 59) {
+        sec = 59;
+    }
+
+    int dig1 = min/10;
+    int dig2 = min%10;
+    int dig3 = sec/10;
+    int dig4 = sec%10;
+
+    // +
+    draw_sprite (cr, surf_nums_ex, 36, 26, 10, 13, 90, 0);
+    // -
+    draw_sprite (cr, surf_nums_ex, 36, 26, 10, 13, 100, 0);
+    // min
+    draw_sprite (cr, surf_nums_ex, 48, 26, 9, 13, dig1*9, 0);
+    draw_sprite (cr, surf_nums_ex, 60, 26, 9, 13, dig2*9, 0);
+    // sec
+    draw_sprite (cr, surf_nums_ex, 78, 26, 9, 13, dig3*9, 0);
+    draw_sprite (cr, surf_nums_ex, 90, 26, 9, 13, dig4*9, 0);
+
+    // test
+    cairo_set_source_rgb(cr, 0, 0, 0);
+    cairo_set_font_size (cr, 8);
+    cairo_move_to (cr, 109, 33);
+
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+    char fmt[500];
+    char str[600];
+    if (it) {
+        deadbeef->conf_get_str ("gtkui.titlebar_playing", "%a - %t - DeaDBeeF-%V", fmt, sizeof (fmt));
+    }
+    else {
+        deadbeef->conf_get_str ("gtkui.titlebar_stopped", "DeaDBeeF-%V", fmt, sizeof (fmt));
+    }
+    deadbeef->pl_format_title (it, -1, str, sizeof (str), -1, fmt);
+    if (it) {
+        deadbeef->pl_item_unref (it);
+    }
+
+    cairo_show_text (cr, str);
+
     return TRUE;
 }
 
