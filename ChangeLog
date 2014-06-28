@@ -1,50 +1,50 @@
 version 0.6.2
-	many improvements in the build system and the output build quality
-	many improvements in the album art column rendering (Christian Boxdörfer)
-	single/double clisk on album art column will select/play the album/group (Christian Boxdörfer)
-	updated licensing information in all plugins, to include information about all used libraries
-	fixed crash when loading playlist from command line
-	added configure option to build artwork plugin without network support
-	mp3: optimized scanner: less backward seeks during frame syncing
-	vfs_zip: huge speed improvements
-	gtkui: added support for design mode to more widgets (seekbak, volumebar, playback toolbar)
-	lastfm: better support for musicbrainz track id
-	added new widget for muting chiptune voices
-	artwork: many fixes and improvements, including support for non-tagged files
-	gme: added support for loading gzipped modules from supported archives (e.g. from zips)
-	ffmpeg: fixed bitrate calculation
-	gtkui: numerous fixes in widget layout code
-	added ALAC, OPUS, OggFlac encoder presets (Ian Nartowicz)
-	fixed "stop after current" bug, which required player restart on every change
-	better detection of config changes, to avoid unnecessary config writing
-	removed the playlist count limitation
-	fixed support for vorbis files with more than 6 channels
-	shellexec: fixed escaping of single quotes, prevent opening copies of shxui dialogs
-	aac: added workaround for 7 channel sound playback bug
-	dumb: added option to configure internal volume
-	fixed non-utf8 locale support in console
-	gtkui: added option to display playback state as unicode characters, instead of bitmaps (works better on HDPI screens)
-	gtkui: added option to disable seekbar overlay
-	added support for SHIFT-JIS charset detection/recoding (off by default)
-	lastfm: added support for scrobbling radio streams (off by default)
 	added "Stop playback after current album finished" (Aleksejs Popovs)
-	fixed GUI seeking accuracy bug
-	gtkui: fixed bug in gtk_drag_check_threshold handler
-	vorbis, oggflac: new tagging code (Ian Nartowicz)
-	lastfm: added support for scrobbling tracks shorter than 30 sec (off by default)
-	improved FreeBSD and OSX support
-	mms: fixed few buffer overflow bugs, improved responsiveness
-	ape: play files with format >= 4.11, improved error handling
-	preserve file permissions after editing ogg files
-	ffmpeg: fixed replaygain support
-	gtkui, pltbrowser: better accessibility
-	improved charset detection in CUE and ID3v1
-	several fixes in PLS playlist format support
-	flac: fixed/improved many things in tag reading and writing code
+	added ALAC, OPUS, OggFlac encoder presets (Ian Nartowicz)
+	added configure option to build artwork plugin without network support
+	added new widget for muting chiptune voices
+	added support for SHIFT-JIS charset detection/recoding (off by default)
+	fixed "stop after current" bug, which required player restart on every change
 	fixed --gui command line option
-	better support for reading APEv2 and ID3v1 tags from large files (>2Gb)
+	fixed GUI seeking accuracy bug
 	fixed bug in extended frame flags conversion between ID3v2.3 and ID3v2.4 tag formats
+	fixed crash when loading playlist from command line
 	fixed loading album art (APIC frame) from ID3v2.4 with data length indicator
+	fixed non-utf8 locale support in console
+	fixed support for vorbis files with more than 6 channels
+	fixed playlist count limit bug
+	fixed preserving file permissions after editing ogg files
+	fixed several bugs in PLS playlist format support
+	improved FreeBSD and OSX support
+	improved charset detection in CUE and ID3v1
+	improved album art column rendering/resizing (Christian Boxdörfer)
+	improved the build system and the output build quality
+	improved detection of config changes, to avoid unnecessary config writing
+	improved support for reading APEv2 and ID3v1 tags from large files (>2Gb)
+	updated licensing information in all plugins, to include information about all used libraries
+	aac: added workaround for 7 channel sound playback bug
+	ape: play files with format >= 4.11, improved error handling
+	artwork: many fixes and improvements, including support for non-tagged files
+	dumb: added option to configure internal volume
+	ffmpeg: fixed bitrate calculation
+	ffmpeg: fixed replaygain support
+	flac: fixed/improved many things in tag reading and writing code
+	gme: added support for loading gzipped modules from supported archives (e.g. from zips)
+	gtkui, pltbrowser: better accessibility
+	gtkui: added option to disable seekbar overlay
+	gtkui: added option to display playback state as unicode characters, instead of bitmaps (works better on HDPI screens)
+	gtkui: added support for design mode to more widgets (seekbak, volumebar, playback toolbar)
+	gtkui: fixed bug in gtk_drag_check_threshold handler
+	gtkui: numerous fixes in widget layout code
+	gtkui: single/double clicking on album art column will select/play the album/group (Christian Boxdörfer)
+	lastfm: added support for scrobbling radio streams (off by default)
+	lastfm: added support for scrobbling tracks shorter than 30 sec (off by default)
+	lastfm: improved support for musicbrainz track id
+	mms: fixed few buffer overflow bugs, improved responsiveness
+	mp3: optimized scanner: less backward seeks during frame syncing
+	shellexec: fixed escaping of single quotes, prevent opening copies of shxui dialogs
+	vfs_zip: huge speed improvements
+	vorbis, oggflac: new tagging code (Ian Nartowicz)
 
 version 0.6.1
 	fixed crash in AAC plugin when mp4 file reports 0 samples (e.g. radio rips)
