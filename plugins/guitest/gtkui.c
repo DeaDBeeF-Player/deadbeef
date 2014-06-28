@@ -71,6 +71,7 @@ DB_artwork_plugin_t *coverart_plugin = NULL;
 
 // main widgets
 GtkWidget *mainwin;
+GtkWidget *plwin;
 GtkWidget *searchwin;
 GtkStatusIcon *trayicon;
 GtkWidget *traymenu;
@@ -931,6 +932,7 @@ cairo_surface_t *surf_titlebar;
 cairo_surface_t *surf_cbuttons;
 cairo_surface_t *surf_balance;
 cairo_surface_t *surf_monoster;
+cairo_surface_t *surf_numbers;
 cairo_surface_t *surf_nums_ex;
 cairo_surface_t *surf_playpaus;
 cairo_surface_t *surf_posbar;
@@ -938,6 +940,7 @@ cairo_surface_t *surf_shufrep;
 cairo_surface_t *surf_text;
 cairo_surface_t *surf_titlebar;
 cairo_surface_t *surf_volume;
+cairo_surface_t *surf_pledit;
 
 static int
 load_assets (void) {
@@ -946,13 +949,15 @@ load_assets (void) {
     surf_cbuttons = cairo_image_surface_create_from_png (ASSETS_PATH "cbuttons.png");
     surf_balance = cairo_image_surface_create_from_png (ASSETS_PATH "balance.png");
     surf_monoster = cairo_image_surface_create_from_png (ASSETS_PATH "monoster.png");
-    surf_nums_ex = cairo_image_surface_create_from_png (ASSETS_PATH "nums_ex.png");
+    surf_numbers = cairo_image_surface_create_from_png (ASSETS_PATH "numbers.png");
+//    surf_nums_ex = cairo_image_surface_create_from_png (ASSETS_PATH "nums_ex.png");
     surf_playpaus = cairo_image_surface_create_from_png (ASSETS_PATH "playpaus.png");
     surf_posbar = cairo_image_surface_create_from_png (ASSETS_PATH "posbar.png");
     surf_shufrep = cairo_image_surface_create_from_png (ASSETS_PATH "shufrep.png");
     surf_text = cairo_image_surface_create_from_png (ASSETS_PATH "text.png");
     surf_titlebar = cairo_image_surface_create_from_png (ASSETS_PATH "titlebar.png");
     surf_volume = cairo_image_surface_create_from_png (ASSETS_PATH "volume.png");
+    surf_pledit = cairo_image_surface_create_from_png (ASSETS_PATH "pledit.png");
 }
 
 static void
@@ -977,19 +982,19 @@ main_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 //    draw_sprite (cr, surf_titlebar, 0, 0, 275, 13, 27, 29);
 //    draw_sprite (cr, surf_titlebar, 0, 0, 275, 13, 27, 42);
     // menu
-    draw_sprite (cr, surf_titlebar, 7, 4, 8, 8, 1, 1);
-    draw_sprite (cr, surf_titlebar, 7, 4, 8, 8, 1, 10);
+    draw_sprite (cr, surf_titlebar, 7, 4, 9, 9, 0, 0);
+    draw_sprite (cr, surf_titlebar, 7, 4, 9, 9, 0, 9);
     // minimize
-    draw_sprite (cr, surf_titlebar, 244, 4, 8, 8, 9, 0);
-    draw_sprite (cr, surf_titlebar, 244, 4, 8, 8, 9, 10);
+    draw_sprite (cr, surf_titlebar, 244, 4, 9, 9, 9, 0);
+    draw_sprite (cr, surf_titlebar, 244, 4, 9, 9, 9, 9);
     // close
-    draw_sprite (cr, surf_titlebar, 264, 4, 8, 8, 18, 0);
-    draw_sprite (cr, surf_titlebar, 264, 4, 8, 8, 18, 10);
+    draw_sprite (cr, surf_titlebar, 264, 4, 9, 9, 18, 0);
+    draw_sprite (cr, surf_titlebar, 264, 4, 9, 9, 18, 9);
     // shade
-    draw_sprite (cr, surf_titlebar, 254, 4, 8, 8, 0, 19);
-    draw_sprite (cr, surf_titlebar, 254, 4, 8, 8, 9, 19);
-    draw_sprite (cr, surf_titlebar, 254, 4, 8, 8, 0, 28);
-    draw_sprite (cr, surf_titlebar, 254, 4, 8, 8, 9, 28);
+    draw_sprite (cr, surf_titlebar, 254, 4, 9, 9, 0, 18);
+    draw_sprite (cr, surf_titlebar, 254, 4, 9, 9, 9, 18);
+    draw_sprite (cr, surf_titlebar, 254, 4, 9, 9, 0, 27);
+    draw_sprite (cr, surf_titlebar, 254, 4, 9, 9, 9, 27);
 
     // small buttons
     draw_sprite (cr, surf_titlebar, 10, 25, 8, 38, 304, 3);
@@ -1027,10 +1032,17 @@ main_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     // balance
     int b_st = 27;
     draw_sprite (cr, surf_balance, 177, 57, 37, 13, 9, b_st * 15);
+    // balance grip
+    draw_sprite (cr, surf_volume, 189, 58, 14, 11, 0, 422);
+    draw_sprite (cr, surf_volume, 189, 58, 14, 11, 15, 422);
 
     // volume
     int v_st = 27;
     draw_sprite (cr, surf_volume, 107, 57, 68, 13, 0, v_st * 15);
+    // volume grip
+    draw_sprite (cr, surf_volume, 148, 58, 14, 11, 0, 422);
+    draw_sprite (cr, surf_volume, 148, 58, 14, 11, 15, 422);
+
 
     // posbar
     draw_sprite (cr, surf_posbar, 15, 72, 248, 10, 0, 0);
@@ -1049,20 +1061,31 @@ main_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
         deadbeef->pl_item_unref (trk);
     }
 
-    // shuffle
-    draw_sprite (cr, surf_shufrep, 171, 89, 40, 15, 35, 0);
-    draw_sprite (cr, surf_shufrep, 171, 89, 40, 15, 35, 15);
-
     // repeat
-    draw_sprite (cr, surf_shufrep, 211, 89, 35, 15, 0, 0);
-    draw_sprite (cr, surf_shufrep, 211, 89, 35, 15, 0, 15);
+    draw_sprite (cr, surf_shufrep, 210, 89, 29, 15, 0, 0);
+    draw_sprite (cr, surf_shufrep, 210, 89, 29, 15, 0, 15);
+    draw_sprite (cr, surf_shufrep, 210, 89, 29, 15, 0, 30);
+    draw_sprite (cr, surf_shufrep, 210, 89, 29, 15, 0, 45);
+
+    // shuffle
+    draw_sprite (cr, surf_shufrep, 165, 89, 46, 15, 29, 0);
+    draw_sprite (cr, surf_shufrep, 165, 89, 46, 15, 29, 15);
+    draw_sprite (cr, surf_shufrep, 165, 89, 46, 15, 29, 30);
+    draw_sprite (cr, surf_shufrep, 165, 89, 46, 15, 29, 45);
 
     // EQ
     // size: 25x12, 22x12
     // eq: 0,61; 0,73; 47,61; 47,73
     // pl: 25,61; 25,73; 71,61; 71,73
+    draw_sprite (cr, surf_shufrep, 220, 58, 25, 12, 0, 61);
     draw_sprite (cr, surf_shufrep, 220, 58, 25, 12, 47, 61);
-    draw_sprite (cr, surf_shufrep, 244, 58, 22, 12, 71, 61);
+    draw_sprite (cr, surf_shufrep, 220, 58, 25, 12, 0, 73);
+    draw_sprite (cr, surf_shufrep, 220, 58, 25, 12, 47, 73);
+
+    draw_sprite (cr, surf_shufrep, 244, 58, 22, 12, 25, 61);
+    draw_sprite (cr, surf_shufrep, 244, 58, 22, 12, 71, 73);
+    draw_sprite (cr, surf_shufrep, 244, 58, 22, 12, 25, 61);
+    draw_sprite (cr, surf_shufrep, 244, 58, 22, 12, 71, 73);
 
     // monoster
     draw_sprite (cr, surf_monoster, 214, 41, 25, 11, 31, 12);
@@ -1090,19 +1113,24 @@ main_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     int dig3 = sec/10;
     int dig4 = sec%10;
 
-    // +
-    draw_sprite (cr, surf_nums_ex, 36, 26, 10, 13, 90, 0);
-    // -
-    draw_sprite (cr, surf_nums_ex, 36, 26, 10, 13, 100, 0);
+    if (surf_nums_ex) {
+        // +
+        draw_sprite (cr, surf_nums_ex, 36, 26, 10, 13, 90, 0);
+        // -
+        draw_sprite (cr, surf_nums_ex, 36, 26, 10, 13, 100, 0);
+    }
     // min
-    draw_sprite (cr, surf_nums_ex, 48, 26, 9, 13, dig1*9, 0);
-    draw_sprite (cr, surf_nums_ex, 60, 26, 9, 13, dig2*9, 0);
+    draw_sprite (cr, surf_numbers, 48, 26, 9, 13, dig1*9, 0);
+    draw_sprite (cr, surf_numbers, 60, 26, 9, 13, dig2*9, 0);
     // sec
-    draw_sprite (cr, surf_nums_ex, 78, 26, 9, 13, dig3*9, 0);
-    draw_sprite (cr, surf_nums_ex, 90, 26, 9, 13, dig4*9, 0);
+    draw_sprite (cr, surf_numbers, 78, 26, 9, 13, dig3*9, 0);
+    draw_sprite (cr, surf_numbers, 90, 26, 9, 13, dig4*9, 0);
 
-    // test
-    cairo_set_source_rgb(cr, 0, 0, 0);
+    // text
+    cairo_save (cr);
+    cairo_rectangle (cr, 109, 24, 157, 12);
+    cairo_clip (cr);
+    cairo_set_source_rgb(cr, 0x06/255.f, 0xbd/255.f, 0x01/255.f);
     cairo_set_font_size (cr, 8);
     cairo_move_to (cr, 109, 33);
 
@@ -1121,6 +1149,7 @@ main_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     }
 
     cairo_show_text (cr, str);
+    cairo_restore (cr);
 
     return TRUE;
 }
@@ -1129,6 +1158,124 @@ static gboolean
 main_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
     cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
     gboolean res = main_draw (widget, cr, user_data);
+    cairo_destroy (cr);
+    return res;
+}
+
+static gboolean
+pl_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
+    GtkAllocation a;
+    gtk_widget_get_allocation (widget, &a);
+
+    // titlebar
+    draw_sprite (cr, surf_pledit, 0, 0, 25, 20, 0, 0);
+    draw_sprite (cr, surf_pledit, 25, 0, 100, 20, 26, 0);
+    int x = 125;
+    while (x < a.width-25) {
+        draw_sprite (cr, surf_pledit, x, 0, 25, 20, 127, 0);
+        x += 25;
+    }
+    draw_sprite (cr, surf_pledit, a.width-25, 0, 25, 20, 153, 0);
+
+    // playlist frame
+    int y = 20;
+    while (y < a.height - 38) {
+        draw_sprite (cr, surf_pledit, 0, y, 25, 29, 0, 42);
+        draw_sprite (cr, surf_pledit, a.width-25, y, 25, 29, 26, 42);
+        y += 29;
+    }
+
+    // playlist bg
+    cairo_set_source_rgb (cr, 0, 0, 0);
+    cairo_rectangle (cr, 25, 20, a.width-50, a.height-20-38);
+    cairo_fill (cr);
+
+    // playlist bottom
+    draw_sprite (cr, surf_pledit, 0, a.height-38, 125, 38, 0, 72);
+    x = 125;
+    while (x < a.width - 150) {
+        draw_sprite (cr, surf_pledit, x, a.height-38, 25, 38, 179, 0);
+        x += 25;
+    }
+    draw_sprite (cr, surf_pledit, a.width-150, a.height-38, 150, 38, 126, 72);
+
+    // scrollbar
+    draw_sprite (cr, surf_pledit, a.width-15, 20, 8, 18, 52, 53);
+    draw_sprite (cr, surf_pledit, a.width-15, 20, 8, 18, 61, 53);
+
+    // menus
+
+    // +
+    draw_sprite (cr, surf_pledit, 14, a.height - 30, 22, 18, 0, 149);
+    //draw_sprite (cr, surf_pledit, 14, a.height - 30, 22, 18, 23, 149);
+
+    draw_sprite (cr, surf_pledit, 14, a.height - 48, 22, 18, 0, 130);
+    //draw_sprite (cr, surf_pledit, 14, a.height - 48, 22, 18, 23, 130);
+
+    draw_sprite (cr, surf_pledit, 14, a.height - 65, 22, 18, 0, 111);
+    //draw_sprite (cr, surf_pledit, 14, a.height - 65, 22, 18, 23, 111);
+
+    draw_sprite (cr, surf_pledit, 11, a.height - 65, 3, 53, 48, 111);
+
+
+    // -
+    draw_sprite (cr, surf_pledit, 43, a.height - 30, 22, 18, 54, 168);
+    //draw_sprite (cr, surf_pledit, 43, a.height - 30, 22, 18, 77, 168);
+
+    draw_sprite (cr, surf_pledit, 43, a.height - 48, 22, 18, 54, 149);
+    //draw_sprite (cr, surf_pledit, 43, a.height - 48, 22, 18, 77, 149);
+
+    draw_sprite (cr, surf_pledit, 43, a.height - 65, 22, 18, 54, 130);
+    //draw_sprite (cr, surf_pledit, 43, a.height - 65, 22, 18, 77, 130);
+
+    draw_sprite (cr, surf_pledit, 43, a.height - 83, 22, 18, 54, 111);
+    //draw_sprite (cr, surf_pledit, 43, a.height - 83, 22, 18, 77, 111);
+
+    draw_sprite (cr, surf_pledit, 40, a.height - 84, 3, 72, 100, 111);
+
+    // A
+    draw_sprite (cr, surf_pledit, 72, a.height - 30, 22, 18, 104, 149);
+    //draw_sprite (cr, surf_pledit, 72, a.height - 30, 22, 18, 127, 149);
+
+    draw_sprite (cr, surf_pledit, 72, a.height - 48, 22, 18, 104, 130);
+    //draw_sprite (cr, surf_pledit, 72, a.height - 48, 22, 18, 127, 130);
+
+    draw_sprite (cr, surf_pledit, 72, a.height - 65, 22, 18, 104, 111);
+    //draw_sprite (cr, surf_pledit, 72, a.height - 65, 22, 18, 127, 111);
+
+    draw_sprite (cr, surf_pledit, 69, a.height - 65, 3, 53, 150, 111);
+
+    // M
+    draw_sprite (cr, surf_pledit, 101, a.height - 30, 22, 18, 154, 149);
+    //draw_sprite (cr, surf_pledit, 101, a.height - 30, 22, 18, 177, 149);
+
+    draw_sprite (cr, surf_pledit, 101, a.height - 48, 22, 18, 154, 130);
+    //draw_sprite (cr, surf_pledit, 101, a.height - 48, 22, 18, 177, 130);
+
+    draw_sprite (cr, surf_pledit, 101, a.height - 65, 22, 18, 154, 111);
+    //draw_sprite (cr, surf_pledit, 101, a.height - 65, 22, 18, 177, 111);
+
+    draw_sprite (cr, surf_pledit, 98, a.height - 65, 3, 53, 200, 112);
+
+    // LIST
+    draw_sprite (cr, surf_pledit, a.width-44, a.height - 30, 22, 18, 204, 149);
+    //draw_sprite (cr, surf_pledit, a.width-44, a.height - 30, 22, 18, 227, 149);
+
+    draw_sprite (cr, surf_pledit, a.width-44, a.height - 48, 22, 18, 204, 130);
+    //draw_sprite (cr, surf_pledit, a.width-44, a.height - 48, 22, 18, 227, 130);
+
+    draw_sprite (cr, surf_pledit, a.width-44, a.height - 65, 22, 18, 204, 111);
+    //draw_sprite (cr, surf_pledit, a.width-44, a.height - 65, 22, 18, 227, 111);
+
+    draw_sprite (cr, surf_pledit, a.width-47, a.height - 65, 3, 53, 250, 112);
+
+    return TRUE;
+}
+
+static gboolean
+pl_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
+    cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
+    gboolean res = pl_draw (widget, cr, user_data);
     cairo_destroy (cr);
     return res;
 }
@@ -1199,6 +1346,7 @@ gtkui_thread (void *ctx) {
     gtk_window_set_title (GTK_WINDOW (mainwin), "DeaDBeeF");
     //gtk_window_set_resizable (GTK_WINDOW (mainwin), FALSE);
     gtk_window_set_default_size (GTK_WINDOW (mainwin), 275, 116);
+    gtk_window_move (GTK_WINDOW (mainwin), 100, 200);
     gtk_window_set_decorated (GTK_WINDOW (mainwin), FALSE);
 
     g_signal_connect_after ((gpointer) mainwin, "key_press_event",
@@ -1280,6 +1428,22 @@ gtkui_thread (void *ctx) {
 #endif
 
     gtk_widget_show (mainwin);
+
+    // playlist window
+    plwin = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+    gtk_widget_set_events (plwin, GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
+    gtk_window_set_title (GTK_WINDOW (plwin), "DeaDBeeF Playlist");
+    //gtk_window_set_resizable (GTK_WINDOW (plwin), FALSE);
+    gtk_window_set_default_size (GTK_WINDOW (plwin), 275, 232);
+    gtk_window_move (GTK_WINDOW (plwin), 275+100, 200);
+    gtk_window_set_decorated (GTK_WINDOW (plwin), FALSE);
+    da = gtk_drawing_area_new ();
+    gtk_widget_show (da);
+    gtk_container_add (GTK_CONTAINER (plwin), da);
+
+    g_signal_connect ((gpointer) da, "expose_event", G_CALLBACK (pl_expose_event), NULL);
+
+    gtk_widget_show (plwin);
 
     char fmt[500];
     char str[600];
