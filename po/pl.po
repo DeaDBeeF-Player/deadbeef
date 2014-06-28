@@ -5,18 +5,19 @@
 # Translators:
 # Grzegorz Gibas <amigib@gmail.com>, 2010
 # Łukasz Jasiński <alvarus@alvarus.org>, 2010
-# mati75 <mati75@linuxmint.pl>, 2013-2014
-# mati75 <mati75@linuxmint.pl>, 2013
+# Mateusz Łukasik <mati75@linuxmint.pl>, 2013-2014
+# Mateusz Łukasik <mati75@linuxmint.pl>, 2013
 # Piotr Sokół <psokol@jabster.pl>, 2010
-# RyD0pR3c <prendter@gmail.com>, 2013
-# RyD0pR3c <prendter@gmail.com>, 2013
+# Tazik_85 <inactive+Tazik_85@transifex.com>, 2014
+# Zetok <prendter@gmail.com>, 2013
+# Zetok <prendter@gmail.com>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-06-24 20:57+0200\n"
-"PO-Revision-Date: 2014-01-04 22:34+0000\n"
-"Last-Translator: mati75 <mati75@linuxmint.pl>\n"
+"POT-Creation-Date: 2014-06-25 19:54+0200\n"
+"PO-Revision-Date: 2014-06-25 17:55+0000\n"
+"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Polish (http://www.transifex.com/projects/p/deadbeef-player/"
 "language/pl/)\n"
 "Language: pl\n"
@@ -205,9 +206,8 @@ msgid "Seekbar"
 msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:972
-#, fuzzy
 msgid "Playback controls"
-msgstr "Odtwarzanie"
+msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:973
 msgid "Volume bar"
@@ -226,13 +226,10 @@ msgid "Failed to load help file"
 msgstr "Wystąpił błąd przy wczytywaniu pliku pomocy"
 
 #: ../plugins/gtkui/gtkui.c:1170
-#, fuzzy
 msgid ""
 "The player is currently running background tasks. If you quit now, the tasks "
 "will be cancelled or interrupted. This may result in data loss."
 msgstr ""
-"Odtwarzacz obecnie wykonuje zadania w tle. Jeśli wyjdziesz teraz, zadania "
-"zostaną anulowane lub przerwane. Może to skutkować utratą danych."
 
 #: ../plugins/gtkui/gtkui.c:1172
 msgid "Do you still want to quit?"
@@ -438,9 +435,8 @@ msgid "Stop after current"
 msgstr "Zatrzymaj po bieżącym utworze"
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
-#, fuzzy
 msgid "Stop after current album"
-msgstr "Zatrzymaj po bieżącym utworze"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:399 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "Jump to current track"
@@ -688,9 +684,8 @@ msgid "Auto-reset \"Stop after current\""
 msgstr "Automatycznie resetuj \"Zatrzymaj po bieżącym utworze\""
 
 #: ../plugins/gtkui/interface.c:1849 ../plugins/gtkui/deadbeef.glade.h:107
-#, fuzzy
 msgid "Auto-reset \"Stop after current album\""
-msgstr "Automatycznie resetuj \"Zatrzymaj po bieżącym utworze\""
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1853 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Playback"
@@ -723,9 +718,8 @@ msgid "Hide system tray icon"
 msgstr "Ukrycie ikony obszaru powiadamiania"
 
 #: ../plugins/gtkui/interface.c:1947 ../plugins/gtkui/deadbeef.glade.h:115
-#, fuzzy
 msgid "Enable Japanese SHIFT-JIS detection and recoding"
-msgstr "Detekcja i zapisywanie Chińskiego CP936"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1951 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Enable Russian CP1251 detection and recoding"
@@ -758,16 +752,15 @@ msgstr "Odtwarzacz"
 
 #: ../plugins/gtkui/interface.c:2022 ../plugins/gtkui/deadbeef.glade.h:123
 msgid "Close playlists with middle mouse button"
-msgstr ""
+msgstr "Zamknij listy odtwarzania środkowym klawiszem myszy"
 
 #: ../plugins/gtkui/interface.c:2026 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "Draw playing track using bold font"
-msgstr ""
+msgstr "Wyświetlaj aktualnie odtwarzany utwór pogrubioną czcionką"
 
 #: ../plugins/gtkui/interface.c:2030 ../plugins/gtkui/deadbeef.glade.h:125
-#, fuzzy
 msgid "Hide \"Remove From Disk\" context menu item"
-msgstr "Ukrycie polecenia „Usuń pliki z dysku” w menu podręcznym"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:2034 ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Auto-name playlists when adding a single folder"
@@ -775,7 +768,7 @@ msgstr "Automatycznie nazywaj playlisty podczas dodawania pojedynczego folderu"
 
 #: ../plugins/gtkui/interface.c:2038 ../plugins/gtkui/deadbeef.glade.h:127
 msgid "Auto-resize columns to fit the window"
-msgstr ""
+msgstr "Automatycznie dopasuj szerokość kolumn do rozmiaru okna"
 
 #: ../plugins/gtkui/interface.c:2046 ../plugins/gtkui/deadbeef.glade.h:129
 msgid "GUI/Misc"
@@ -948,9 +941,10 @@ msgstr "Wtyczki"
 msgid "URL:"
 msgstr "URL:"
 
-#: ../plugins/gtkui/interface.c:3228 ../plugins/gtkui/interface.c:4442
+#: ../plugins/gtkui/interface.c:3228 ../plugins/gtkui/interface.c:4414
+#: ../plugins/gtkui/interface.c:4442 ../plugins/gtkui/plcommon.c:806
 #: ../plugins/gtkui/deadbeef.glade.h:172
-msgid "Set custom title"
+msgid "Set Custom Title"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:3332 ../plugins/gtkui/deadbeef.glade.h:173
@@ -1086,12 +1080,7 @@ msgstr "Etykieta:"
 msgid "Select action"
 msgstr "Wybierz działanie"
 
-#: ../plugins/gtkui/interface.c:4414 ../plugins/gtkui/plcommon.c:806
-#: ../plugins/gtkui/deadbeef.glade.h:203
-msgid "Set Custom Title"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:4436 ../plugins/gtkui/deadbeef.glade.h:204
+#: ../plugins/gtkui/interface.c:4436 ../plugins/gtkui/deadbeef.glade.h:203
 msgid ""
 "This dialog allows to set custom title for any track. This is most useful "
 "for radio stations. An option to set the custom title is also present in the "
@@ -1109,24 +1098,20 @@ msgid "Track No"
 msgstr "Numer ścieżki"
 
 #: ../plugins/gtkui/plcommon.c:637
-#, fuzzy
 msgid "Add To Playback Queue"
-msgstr "Dodaj do kolejki"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:642
-#, fuzzy
 msgid "Remove From Playback Queue"
-msgstr "Usuń z kolejki"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:650
-#, fuzzy
 msgid "Reload Metadata"
-msgstr "Wczytaj ponownie metadane"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:668
-#, fuzzy
 msgid "Remove From Disk"
-msgstr "Usuń z dysku"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:1089 ../plugins/gtkui/plcommon.c:1216
 msgid "Add column"
@@ -1171,11 +1156,11 @@ msgstr "Domyślne urządzenie dźwiękowe"
 
 #: ../plugins/gtkui/prefwin.c:348
 msgid "You modified the hotkeys settings, but didn't save your changes."
-msgstr ""
+msgstr "Zmodyfikowałeś skróty klawiszowe, ale nie zapisałeś zmian."
 
 #: ../plugins/gtkui/prefwin.c:350
 msgid "Are you sure you want to continue without saving?"
-msgstr ""
+msgstr "Kontynuować bez zapisywania zmian?"
 
 #: ../plugins/gtkui/progress.c:56
 msgid "Adding files..."
@@ -2026,7 +2011,7 @@ msgstr ""
 #: ../plugins/converter/interface.c:590
 #: ../plugins/converter/converter.glade.h:42
 msgid "DSP Preset Editor"
-msgstr ""
+msgstr "Edytor ustawień DSP"
 
 #: ../plugins/converter/interface.c:613
 #: ../plugins/converter/converter.glade.h:44
@@ -2239,7 +2224,7 @@ msgstr "Dodaj katalog(i) do playlisty..."
 
 #: ../plugins/gtkui/actionhandlers.c:221
 msgid "Follow symlinks"
-msgstr ""
+msgstr "Podążaj za dowiązaniami symbolicznymi"
 
 #: ../plugins/gtkui/actionhandlers.c:475
 msgid "help.txt"
@@ -2307,7 +2292,7 @@ msgstr "Zastąp..."
 
 #: ../plugins/gtkui/widgets.c:777
 msgid "Insert..."
-msgstr ""
+msgstr "Wstaw..."
 
 #: ../plugins/gtkui/widgets.c:804
 msgid "Cut"

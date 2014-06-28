@@ -73,7 +73,7 @@ oss_set_hwparams (ddb_waveformat_t *fmt) {
         break;
     }
     if (ioctl (fd, SNDCTL_DSP_SETFMT, &samplefmt) == -1) {
-        fprintf (stderr, "oss: failed to set format\n");
+        fprintf (stderr, "oss: failed to set format (return: %d)\n", samplefmt);
         perror ("SNDCTL_DSP_SETFMT");
         return -1;
     }
@@ -195,8 +195,6 @@ oss_pause (void) {
     if (state == OUTPUT_STATE_STOPPED) {
         return -1;
     }
-    // set pause state
-    oss_free();
     state = OUTPUT_STATE_PAUSED;
     return 0;
 }
@@ -213,18 +211,15 @@ oss_setformat (ddb_waveformat_t *fmt) {
     }
 
     int _state = state;
-    int v4workaround = deadbeef->conf_get_int ("oss.v4workaround", 0);
 
     deadbeef->mutex_lock (mutex);
 
-    if (v4workaround) {
-        if (fd) {
-            close (fd);
-            fd = 0;
-        }
-        fd = open (oss_device, O_WRONLY);
-        memcpy (&plugin.fmt, fmt, sizeof (ddb_waveformat_t));
+    if (fd) {
+        close (fd);
+        fd = 0;
     }
+    fd = open (oss_device, O_WRONLY);
+    memcpy (&plugin.fmt, fmt, sizeof (ddb_waveformat_t));
     if (0 != oss_set_hwparams (fmt)) {
         deadbeef->mutex_unlock (mutex);
         return -1;
@@ -369,8 +364,7 @@ oss_load (DB_functions_t *api) {
 }
 
 static const char settings_dlg[] =
-    "property \"Device file\" entry oss.device /dev/dsp;\n"
-    "property \"OSS4 samplerate bug workaround\" checkbox oss.v4workaround 0;\n";
+    "property \"Device file\" entry oss.device /dev/dsp;\n";
 
 // define plugin interface
 static DB_output_t plugin = {

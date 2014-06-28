@@ -3,16 +3,18 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# waker <wakeroid@gmail.com>, 2013
+# Alexey Yakovenko <wakeroid@gmail.com>, 2013-2014
+# Andrei Stepanov, 2014
+# Andrei Stepanov, 2014
 # Dmitriy Simbiriatin <slpiv@mail.ru>, 2010
-# waker <wakeroid@gmail.com>, 2013
+# Alexey Yakovenko <wakeroid@gmail.com>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-06-24 20:57+0200\n"
-"PO-Revision-Date: 2013-11-25 21:17+0000\n"
-"Last-Translator: waker <wakeroid@gmail.com>\n"
+"POT-Creation-Date: 2014-06-25 19:54+0200\n"
+"PO-Revision-Date: 2014-06-25 17:59+0000\n"
+"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/deadbeef-player/"
 "language/ru/)\n"
 "Language: ru\n"
@@ -195,20 +197,19 @@ msgstr "Кнопка"
 
 #: ../plugins/gtkui/gtkui.c:971
 msgid "Seekbar"
-msgstr ""
+msgstr "Полоса перемотки"
 
 #: ../plugins/gtkui/gtkui.c:972
-#, fuzzy
 msgid "Playback controls"
-msgstr "Воспроизведение"
+msgstr "Элементы управления проигрыванием"
 
 #: ../plugins/gtkui/gtkui.c:973
 msgid "Volume bar"
-msgstr ""
+msgstr "Регулятор громкости"
 
 #: ../plugins/gtkui/gtkui.c:974
 msgid "Chiptune voices"
-msgstr ""
+msgstr "Управление каналами chiptunes"
 
 #: ../plugins/gtkui/gtkui.c:1149
 msgid "Failed while reading help file"
@@ -219,14 +220,13 @@ msgid "Failed to load help file"
 msgstr "Не удалось загрузить файл справки"
 
 #: ../plugins/gtkui/gtkui.c:1170
-#, fuzzy
 msgid ""
 "The player is currently running background tasks. If you quit now, the tasks "
 "will be cancelled or interrupted. This may result in data loss."
 msgstr ""
-"В данный момент, плеер выполняет фоновые задачи. Если вы завершите его "
-"сейчас, задачи будут отменены или прерваны. Это может привести к потере "
-"данных."
+"В данный момент, проигрыватель выполняет фоновые задачи. Если вы завершите "
+"его сейчас, задачи могут быть отменены или прерваны. Это может привести к "
+"потере данных."
 
 #: ../plugins/gtkui/gtkui.c:1172
 msgid "Do you still want to quit?"
@@ -432,9 +432,8 @@ msgid "Stop after current"
 msgstr "Останавливать после текущей"
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
-#, fuzzy
 msgid "Stop after current album"
-msgstr "Останавливать после текущей"
+msgstr "Остановить после текущего альбома"
 
 #: ../plugins/gtkui/interface.c:399 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "Jump to current track"
@@ -684,7 +683,6 @@ msgid "Auto-reset \"Stop after current\""
 msgstr "Авто-сбрасывать \"Остановку после текущей песни\""
 
 #: ../plugins/gtkui/interface.c:1849 ../plugins/gtkui/deadbeef.glade.h:107
-#, fuzzy
 msgid "Auto-reset \"Stop after current album\""
 msgstr "Авто-сбрасывать \"Остановку после текущей песни\""
 
@@ -719,9 +717,9 @@ msgid "Hide system tray icon"
 msgstr "Не показывать значок в трее"
 
 #: ../plugins/gtkui/interface.c:1947 ../plugins/gtkui/deadbeef.glade.h:115
-#, fuzzy
 msgid "Enable Japanese SHIFT-JIS detection and recoding"
-msgstr "Включить определение и перекодирование китайской CP936"
+msgstr ""
+"Включить авто-определение и перекодирование японской кодировки SHIFT-JIS"
 
 #: ../plugins/gtkui/interface.c:1951 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Enable Russian CP1251 detection and recoding"
@@ -760,9 +758,8 @@ msgid "Draw playing track using bold font"
 msgstr "Рисовать текущий трек жирным шрифтом"
 
 #: ../plugins/gtkui/interface.c:2030 ../plugins/gtkui/deadbeef.glade.h:125
-#, fuzzy
 msgid "Hide \"Remove From Disk\" context menu item"
-msgstr "Убрать пункт \"Удалить с диска\" из контекстного меню"
+msgstr "Скрыть опцию контекстного меню \"Удалить с диска\""
 
 #: ../plugins/gtkui/interface.c:2034 ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Auto-name playlists when adding a single folder"
@@ -957,14 +954,15 @@ msgstr "Расширения"
 msgid "URL:"
 msgstr "Адрес:"
 
-#: ../plugins/gtkui/interface.c:3228 ../plugins/gtkui/interface.c:4442
+#: ../plugins/gtkui/interface.c:3228 ../plugins/gtkui/interface.c:4414
+#: ../plugins/gtkui/interface.c:4442 ../plugins/gtkui/plcommon.c:806
 #: ../plugins/gtkui/deadbeef.glade.h:172
-msgid "Set custom title"
-msgstr ""
+msgid "Set Custom Title"
+msgstr "Присвоить собственное название"
 
 #: ../plugins/gtkui/interface.c:3332 ../plugins/gtkui/deadbeef.glade.h:173
 msgid "Group By ..."
-msgstr "Группировать По ..."
+msgstr "Группировать по ..."
 
 #: ../plugins/gtkui/interface.c:3456 ../plugins/gtkui/deadbeef.glade.h:174
 msgid "Sort by ..."
@@ -1099,12 +1097,7 @@ msgstr "Надпись:"
 msgid "Select action"
 msgstr "Выбор действия"
 
-#: ../plugins/gtkui/interface.c:4414 ../plugins/gtkui/plcommon.c:806
-#: ../plugins/gtkui/deadbeef.glade.h:203
-msgid "Set Custom Title"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:4436 ../plugins/gtkui/deadbeef.glade.h:204
+#: ../plugins/gtkui/interface.c:4436 ../plugins/gtkui/deadbeef.glade.h:203
 msgid ""
 "This dialog allows to set custom title for any track. This is most useful "
 "for radio stations. An option to set the custom title is also present in the "
@@ -1112,6 +1105,12 @@ msgid ""
 "the \"Artist\" metadata field. It should look like \"[custom] artist\" if "
 "the Artist field is present, or just \"custom\" otherwise."
 msgstr ""
+"Этот диалог позволяет установить собственное название для любого трека. Это "
+"наиболее полезно для радиостанций. Такая же опция присутствует в диалоге "
+"\"Добавить расположение\". Переопределенное название появится в колонках, "
+"отображающих поле \"Artist\" (Исполнитель), и будет выглядеть как "
+"\"[переопределенное название] исполнитель\", если присутствует поле Artist, "
+"либо просто \"переопределенное название\", если его нет."
 
 #: ../plugins/gtkui/mainplaylist.c:353 ../plugins/gtkui/search.c:419
 msgid "Artist / Album"
@@ -1122,36 +1121,32 @@ msgid "Track No"
 msgstr "№"
 
 #: ../plugins/gtkui/plcommon.c:637
-#, fuzzy
 msgid "Add To Playback Queue"
-msgstr "Добавить в очередь"
+msgstr "Добавить в очередь воспроизведения"
 
 #: ../plugins/gtkui/plcommon.c:642
-#, fuzzy
 msgid "Remove From Playback Queue"
-msgstr "Удалить из очереди"
+msgstr "Удалить из очереди воспроизведения"
 
 #: ../plugins/gtkui/plcommon.c:650
-#, fuzzy
 msgid "Reload Metadata"
 msgstr "Обновить метаданные"
 
 #: ../plugins/gtkui/plcommon.c:668
-#, fuzzy
 msgid "Remove From Disk"
-msgstr "Удалить с жёсткого диска"
+msgstr "Удалить с диска"
 
 #: ../plugins/gtkui/plcommon.c:1089 ../plugins/gtkui/plcommon.c:1216
 msgid "Add column"
-msgstr "Добавить столбец"
+msgstr "Добавить колонку"
 
 #: ../plugins/gtkui/plcommon.c:1119 ../plugins/gtkui/plcommon.c:1220
 msgid "Edit column"
-msgstr "Редактировать столбец"
+msgstr "Редактировать колонку"
 
 #: ../plugins/gtkui/plcommon.c:1224
 msgid "Remove column"
-msgstr "Удалить столбец"
+msgstr "Удалить колонку"
 
 #: ../plugins/gtkui/plcommon.c:1234
 msgid "Pin groups when scrolling"
@@ -1776,7 +1771,7 @@ msgstr "Включить surround"
 #: ../plugins/converter/convgui.c:84
 #, c-format
 msgid "[Built-in] %s"
-msgstr ""
+msgstr "[Встроенный] %s"
 
 #: ../plugins/converter/convgui.c:130
 msgid "The file already exists. Overwrite?"
@@ -2333,7 +2328,7 @@ msgstr "Ничего не выбрано."
 #: ../plugins/gtkui/widgets.c:444
 #, c-format
 msgid "Widget \"%s\" is not available"
-msgstr ""
+msgstr "Виджет \"%s\" недоступен"
 
 #: ../plugins/gtkui/widgets.c:772
 msgid "Replace with..."
@@ -2414,7 +2409,7 @@ msgstr "Настроить кнопку"
 
 #: ../plugins/gtkui/widgets.c:3867
 msgid "Voices:"
-msgstr ""
+msgstr "Голоса:"
 
 #: ../plugins/gtkui/pltmenu.c:62
 msgid "Edit playlist"

@@ -85,7 +85,7 @@ read_gzfile (const char *fname, char **buffer, int *size) {
                 tmp = "/tmp";
             }
             char nm[PATH_MAX];
-#ifdef ANDROID
+#if defined(ANDROID) || defined(STATICLINK)
             snprintf (nm, sizeof (nm), "%s/ddbgmeXXXXXX", tmp);
             fd = mkstemp (nm);
 #else

@@ -3,13 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# vctrflc <chatgren@gmail.com>, 2014
+# vctrflc <chatgren@gmail.com>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-06-24 20:57+0200\n"
-"PO-Revision-Date: 2013-11-20 09:49+0000\n"
-"Last-Translator: waker <wakeroid@gmail.com>\n"
+"POT-Creation-Date: 2014-06-25 19:54+0200\n"
+"PO-Revision-Date: 2014-06-25 17:55+0000\n"
+"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Catalan (http://www.transifex.com/projects/p/deadbeef-player/"
 "language/ca/)\n"
 "Language: ca\n"
@@ -21,25 +23,25 @@ msgstr ""
 #: ../plugins/gtkui/callbacks.c:349
 #, c-format
 msgid "About DeaDBeeF %s"
-msgstr ""
+msgstr "Sobre DeaDBeeF %s"
 
 #: ../plugins/gtkui/callbacks.c:362
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
-msgstr ""
+msgstr "Registre de canvis de DeaDBeeF %s"
 
 #: ../plugins/gtkui/callbacks.c:622
 #, c-format
 msgid "DeaDBeeF Translators"
-msgstr ""
+msgstr "Traductors de DeaDBeeF"
 
 #: ../plugins/gtkui/eq.c:141
 msgid "Save DeaDBeeF EQ Preset"
-msgstr ""
+msgstr "Desar la config. de l'EQ"
 
 #: ../plugins/gtkui/eq.c:148
 msgid "DeaDBeeF EQ preset files (*.ddbeq)"
-msgstr ""
+msgstr "Fitxers de config. de l'EQ (*.ddbeq)"
 
 #: ../plugins/gtkui/eq.c:187
 msgid "Load DeaDBeeF EQ Preset..."
@@ -75,7 +77,7 @@ msgstr "Activa"
 
 #: ../plugins/gtkui/eq.c:371
 msgid "Zero All"
-msgstr ""
+msgstr "Tots nuls"
 
 #: ../plugins/gtkui/eq.c:378
 msgid "Zero Preamp"
@@ -88,22 +90,22 @@ msgstr ""
 #: ../plugins/gtkui/eq.c:392 ../plugins/converter/interface.c:805
 #: ../plugins/converter/converter.glade.h:50
 msgid "Presets"
-msgstr ""
+msgstr "Configs."
 
 #: ../plugins/gtkui/gtkui.c:167
 #, c-format
 msgid "1 day %d:%02d:%02d"
-msgstr ""
+msgstr "1 dia %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:170
 #, c-format
 msgid "%d days %d:%02d:%02d"
-msgstr ""
+msgstr "%d dies %d:%02d:%02d"
 
 #: ../plugins/gtkui/gtkui.c:179
 #, c-format
 msgid "Stopped | %d tracks | %s total playtime"
-msgstr ""
+msgstr "Aturat | %d pistes | %s temps total"
 
 #: ../plugins/gtkui/gtkui.c:191 ../playlist.c:3201
 msgid "Mono"
@@ -111,12 +113,12 @@ msgstr "Mono"
 
 #: ../plugins/gtkui/gtkui.c:191 ../playlist.c:3201
 msgid "Stereo"
-msgstr ""
+msgstr "Estèreo"
 
 #: ../plugins/gtkui/gtkui.c:215
 #, c-format
 msgid "| %4d kbps "
-msgstr ""
+msgstr "| %4d kbps "
 
 #: ../plugins/gtkui/gtkui.c:221
 msgid "Paused | "
@@ -127,6 +129,7 @@ msgstr "En pausa |"
 msgid ""
 "%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d tracks | %s total playtime"
 msgstr ""
+"%s%s %s| %dHz | %d bit | %s | %d:%02d / %s | %d pistes | %s temps total"
 
 #: ../plugins/gtkui/gtkui.c:696 ../plugins/gtkui/fileman.c:41
 msgid "New Playlist"
@@ -140,7 +143,7 @@ msgstr "Llista de Reproducció Nova (%d)"
 #. register widget types
 #: ../plugins/gtkui/gtkui.c:955
 msgid "Playlist with tabs"
-msgstr ""
+msgstr "Playlist amb pestanyes"
 
 #: ../plugins/gtkui/gtkui.c:956 ../plugins/gtkui/interface.c:2042
 #: ../plugins/gtkui/deadbeef.glade.h:128
@@ -193,9 +196,8 @@ msgid "Seekbar"
 msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:972
-#, fuzzy
 msgid "Playback controls"
-msgstr "_Reproducció"
+msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:973
 msgid "Volume bar"
@@ -423,9 +425,8 @@ msgid "Stop after current"
 msgstr "Atura't en acabar l'actual"
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
-#, fuzzy
 msgid "Stop after current album"
-msgstr "Atura't en acabar l'actual"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:399 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "Jump to current track"
@@ -673,9 +674,8 @@ msgid "Auto-reset \"Stop after current\""
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:1849 ../plugins/gtkui/deadbeef.glade.h:107
-#, fuzzy
 msgid "Auto-reset \"Stop after current album\""
-msgstr "Atura't en acabar l'actual"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1853 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Playback"
@@ -930,9 +930,10 @@ msgstr ""
 msgid "URL:"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:3228 ../plugins/gtkui/interface.c:4442
+#: ../plugins/gtkui/interface.c:3228 ../plugins/gtkui/interface.c:4414
+#: ../plugins/gtkui/interface.c:4442 ../plugins/gtkui/plcommon.c:806
 #: ../plugins/gtkui/deadbeef.glade.h:172
-msgid "Set custom title"
+msgid "Set Custom Title"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:3332 ../plugins/gtkui/deadbeef.glade.h:173
@@ -1068,12 +1069,7 @@ msgstr ""
 msgid "Select action"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:4414 ../plugins/gtkui/plcommon.c:806
-#: ../plugins/gtkui/deadbeef.glade.h:203
-msgid "Set Custom Title"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:4436 ../plugins/gtkui/deadbeef.glade.h:204
+#: ../plugins/gtkui/interface.c:4436 ../plugins/gtkui/deadbeef.glade.h:203
 msgid ""
 "This dialog allows to set custom title for any track. This is most useful "
 "for radio stations. An option to set the custom title is also present in the "
@@ -1099,9 +1095,8 @@ msgid "Remove From Playback Queue"
 msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:650
-#, fuzzy
 msgid "Reload Metadata"
-msgstr "Metadada"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:668
 msgid "Remove From Disk"

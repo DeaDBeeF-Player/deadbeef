@@ -858,7 +858,7 @@ void SCSP_TimersAddTicks(struct _SCSP *SCSP, int ticks)
 	}
 }
 
-INLINE INT32 SCSP_UpdateSlot(struct _SCSP *SCSP, struct _SLOT *slot)
+static INLINE INT32 SCSP_UpdateSlot(struct _SCSP *SCSP, struct _SLOT *slot)
 {
 	INT32 sample;
 	int step=slot->step;

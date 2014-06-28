@@ -277,70 +277,70 @@ static void take_interrupt(z80_state_t *z80);
 typedef void (*funcptr)(z80_state_t *z80);
 
 #define PROTOTYPES(tablename,prefix) \
-	INLINE void prefix##_00(z80_state_t *z80); INLINE void prefix##_01(z80_state_t *z80); INLINE void prefix##_02(z80_state_t *z80); INLINE void prefix##_03(z80_state_t *z80); \
-	INLINE void prefix##_04(z80_state_t *z80); INLINE void prefix##_05(z80_state_t *z80); INLINE void prefix##_06(z80_state_t *z80); INLINE void prefix##_07(z80_state_t *z80); \
-	INLINE void prefix##_08(z80_state_t *z80); INLINE void prefix##_09(z80_state_t *z80); INLINE void prefix##_0a(z80_state_t *z80); INLINE void prefix##_0b(z80_state_t *z80); \
-	INLINE void prefix##_0c(z80_state_t *z80); INLINE void prefix##_0d(z80_state_t *z80); INLINE void prefix##_0e(z80_state_t *z80); INLINE void prefix##_0f(z80_state_t *z80); \
-	INLINE void prefix##_10(z80_state_t *z80); INLINE void prefix##_11(z80_state_t *z80); INLINE void prefix##_12(z80_state_t *z80); INLINE void prefix##_13(z80_state_t *z80); \
-	INLINE void prefix##_14(z80_state_t *z80); INLINE void prefix##_15(z80_state_t *z80); INLINE void prefix##_16(z80_state_t *z80); INLINE void prefix##_17(z80_state_t *z80); \
-	INLINE void prefix##_18(z80_state_t *z80); INLINE void prefix##_19(z80_state_t *z80); INLINE void prefix##_1a(z80_state_t *z80); INLINE void prefix##_1b(z80_state_t *z80); \
-	INLINE void prefix##_1c(z80_state_t *z80); INLINE void prefix##_1d(z80_state_t *z80); INLINE void prefix##_1e(z80_state_t *z80); INLINE void prefix##_1f(z80_state_t *z80); \
-	INLINE void prefix##_20(z80_state_t *z80); INLINE void prefix##_21(z80_state_t *z80); INLINE void prefix##_22(z80_state_t *z80); INLINE void prefix##_23(z80_state_t *z80); \
-	INLINE void prefix##_24(z80_state_t *z80); INLINE void prefix##_25(z80_state_t *z80); INLINE void prefix##_26(z80_state_t *z80); INLINE void prefix##_27(z80_state_t *z80); \
-	INLINE void prefix##_28(z80_state_t *z80); INLINE void prefix##_29(z80_state_t *z80); INLINE void prefix##_2a(z80_state_t *z80); INLINE void prefix##_2b(z80_state_t *z80); \
-	INLINE void prefix##_2c(z80_state_t *z80); INLINE void prefix##_2d(z80_state_t *z80); INLINE void prefix##_2e(z80_state_t *z80); INLINE void prefix##_2f(z80_state_t *z80); \
-	INLINE void prefix##_30(z80_state_t *z80); INLINE void prefix##_31(z80_state_t *z80); INLINE void prefix##_32(z80_state_t *z80); INLINE void prefix##_33(z80_state_t *z80); \
-	INLINE void prefix##_34(z80_state_t *z80); INLINE void prefix##_35(z80_state_t *z80); INLINE void prefix##_36(z80_state_t *z80); INLINE void prefix##_37(z80_state_t *z80); \
-	INLINE void prefix##_38(z80_state_t *z80); INLINE void prefix##_39(z80_state_t *z80); INLINE void prefix##_3a(z80_state_t *z80); INLINE void prefix##_3b(z80_state_t *z80); \
-	INLINE void prefix##_3c(z80_state_t *z80); INLINE void prefix##_3d(z80_state_t *z80); INLINE void prefix##_3e(z80_state_t *z80); INLINE void prefix##_3f(z80_state_t *z80); \
-	INLINE void prefix##_40(z80_state_t *z80); INLINE void prefix##_41(z80_state_t *z80); INLINE void prefix##_42(z80_state_t *z80); INLINE void prefix##_43(z80_state_t *z80); \
-	INLINE void prefix##_44(z80_state_t *z80); INLINE void prefix##_45(z80_state_t *z80); INLINE void prefix##_46(z80_state_t *z80); INLINE void prefix##_47(z80_state_t *z80); \
-	INLINE void prefix##_48(z80_state_t *z80); INLINE void prefix##_49(z80_state_t *z80); INLINE void prefix##_4a(z80_state_t *z80); INLINE void prefix##_4b(z80_state_t *z80); \
-	INLINE void prefix##_4c(z80_state_t *z80); INLINE void prefix##_4d(z80_state_t *z80); INLINE void prefix##_4e(z80_state_t *z80); INLINE void prefix##_4f(z80_state_t *z80); \
-	INLINE void prefix##_50(z80_state_t *z80); INLINE void prefix##_51(z80_state_t *z80); INLINE void prefix##_52(z80_state_t *z80); INLINE void prefix##_53(z80_state_t *z80); \
-	INLINE void prefix##_54(z80_state_t *z80); INLINE void prefix##_55(z80_state_t *z80); INLINE void prefix##_56(z80_state_t *z80); INLINE void prefix##_57(z80_state_t *z80); \
-	INLINE void prefix##_58(z80_state_t *z80); INLINE void prefix##_59(z80_state_t *z80); INLINE void prefix##_5a(z80_state_t *z80); INLINE void prefix##_5b(z80_state_t *z80); \
-	INLINE void prefix##_5c(z80_state_t *z80); INLINE void prefix##_5d(z80_state_t *z80); INLINE void prefix##_5e(z80_state_t *z80); INLINE void prefix##_5f(z80_state_t *z80); \
-	INLINE void prefix##_60(z80_state_t *z80); INLINE void prefix##_61(z80_state_t *z80); INLINE void prefix##_62(z80_state_t *z80); INLINE void prefix##_63(z80_state_t *z80); \
-	INLINE void prefix##_64(z80_state_t *z80); INLINE void prefix##_65(z80_state_t *z80); INLINE void prefix##_66(z80_state_t *z80); INLINE void prefix##_67(z80_state_t *z80); \
-	INLINE void prefix##_68(z80_state_t *z80); INLINE void prefix##_69(z80_state_t *z80); INLINE void prefix##_6a(z80_state_t *z80); INLINE void prefix##_6b(z80_state_t *z80); \
-	INLINE void prefix##_6c(z80_state_t *z80); INLINE void prefix##_6d(z80_state_t *z80); INLINE void prefix##_6e(z80_state_t *z80); INLINE void prefix##_6f(z80_state_t *z80); \
-	INLINE void prefix##_70(z80_state_t *z80); INLINE void prefix##_71(z80_state_t *z80); INLINE void prefix##_72(z80_state_t *z80); INLINE void prefix##_73(z80_state_t *z80); \
-	INLINE void prefix##_74(z80_state_t *z80); INLINE void prefix##_75(z80_state_t *z80); INLINE void prefix##_76(z80_state_t *z80); INLINE void prefix##_77(z80_state_t *z80); \
-	INLINE void prefix##_78(z80_state_t *z80); INLINE void prefix##_79(z80_state_t *z80); INLINE void prefix##_7a(z80_state_t *z80); INLINE void prefix##_7b(z80_state_t *z80); \
-	INLINE void prefix##_7c(z80_state_t *z80); INLINE void prefix##_7d(z80_state_t *z80); INLINE void prefix##_7e(z80_state_t *z80); INLINE void prefix##_7f(z80_state_t *z80); \
-	INLINE void prefix##_80(z80_state_t *z80); INLINE void prefix##_81(z80_state_t *z80); INLINE void prefix##_82(z80_state_t *z80); INLINE void prefix##_83(z80_state_t *z80); \
-	INLINE void prefix##_84(z80_state_t *z80); INLINE void prefix##_85(z80_state_t *z80); INLINE void prefix##_86(z80_state_t *z80); INLINE void prefix##_87(z80_state_t *z80); \
-	INLINE void prefix##_88(z80_state_t *z80); INLINE void prefix##_89(z80_state_t *z80); INLINE void prefix##_8a(z80_state_t *z80); INLINE void prefix##_8b(z80_state_t *z80); \
-	INLINE void prefix##_8c(z80_state_t *z80); INLINE void prefix##_8d(z80_state_t *z80); INLINE void prefix##_8e(z80_state_t *z80); INLINE void prefix##_8f(z80_state_t *z80); \
-	INLINE void prefix##_90(z80_state_t *z80); INLINE void prefix##_91(z80_state_t *z80); INLINE void prefix##_92(z80_state_t *z80); INLINE void prefix##_93(z80_state_t *z80); \
-	INLINE void prefix##_94(z80_state_t *z80); INLINE void prefix##_95(z80_state_t *z80); INLINE void prefix##_96(z80_state_t *z80); INLINE void prefix##_97(z80_state_t *z80); \
-	INLINE void prefix##_98(z80_state_t *z80); INLINE void prefix##_99(z80_state_t *z80); INLINE void prefix##_9a(z80_state_t *z80); INLINE void prefix##_9b(z80_state_t *z80); \
-	INLINE void prefix##_9c(z80_state_t *z80); INLINE void prefix##_9d(z80_state_t *z80); INLINE void prefix##_9e(z80_state_t *z80); INLINE void prefix##_9f(z80_state_t *z80); \
-	INLINE void prefix##_a0(z80_state_t *z80); INLINE void prefix##_a1(z80_state_t *z80); INLINE void prefix##_a2(z80_state_t *z80); INLINE void prefix##_a3(z80_state_t *z80); \
-	INLINE void prefix##_a4(z80_state_t *z80); INLINE void prefix##_a5(z80_state_t *z80); INLINE void prefix##_a6(z80_state_t *z80); INLINE void prefix##_a7(z80_state_t *z80); \
-	INLINE void prefix##_a8(z80_state_t *z80); INLINE void prefix##_a9(z80_state_t *z80); INLINE void prefix##_aa(z80_state_t *z80); INLINE void prefix##_ab(z80_state_t *z80); \
-	INLINE void prefix##_ac(z80_state_t *z80); INLINE void prefix##_ad(z80_state_t *z80); INLINE void prefix##_ae(z80_state_t *z80); INLINE void prefix##_af(z80_state_t *z80); \
-	INLINE void prefix##_b0(z80_state_t *z80); INLINE void prefix##_b1(z80_state_t *z80); INLINE void prefix##_b2(z80_state_t *z80); INLINE void prefix##_b3(z80_state_t *z80); \
-	INLINE void prefix##_b4(z80_state_t *z80); INLINE void prefix##_b5(z80_state_t *z80); INLINE void prefix##_b6(z80_state_t *z80); INLINE void prefix##_b7(z80_state_t *z80); \
-	INLINE void prefix##_b8(z80_state_t *z80); INLINE void prefix##_b9(z80_state_t *z80); INLINE void prefix##_ba(z80_state_t *z80); INLINE void prefix##_bb(z80_state_t *z80); \
-	INLINE void prefix##_bc(z80_state_t *z80); INLINE void prefix##_bd(z80_state_t *z80); INLINE void prefix##_be(z80_state_t *z80); INLINE void prefix##_bf(z80_state_t *z80); \
-	INLINE void prefix##_c0(z80_state_t *z80); INLINE void prefix##_c1(z80_state_t *z80); INLINE void prefix##_c2(z80_state_t *z80); INLINE void prefix##_c3(z80_state_t *z80); \
-	INLINE void prefix##_c4(z80_state_t *z80); INLINE void prefix##_c5(z80_state_t *z80); INLINE void prefix##_c6(z80_state_t *z80); INLINE void prefix##_c7(z80_state_t *z80); \
-	INLINE void prefix##_c8(z80_state_t *z80); INLINE void prefix##_c9(z80_state_t *z80); INLINE void prefix##_ca(z80_state_t *z80); INLINE void prefix##_cb(z80_state_t *z80); \
-	INLINE void prefix##_cc(z80_state_t *z80); INLINE void prefix##_cd(z80_state_t *z80); INLINE void prefix##_ce(z80_state_t *z80); INLINE void prefix##_cf(z80_state_t *z80); \
-	INLINE void prefix##_d0(z80_state_t *z80); INLINE void prefix##_d1(z80_state_t *z80); INLINE void prefix##_d2(z80_state_t *z80); INLINE void prefix##_d3(z80_state_t *z80); \
-	INLINE void prefix##_d4(z80_state_t *z80); INLINE void prefix##_d5(z80_state_t *z80); INLINE void prefix##_d6(z80_state_t *z80); INLINE void prefix##_d7(z80_state_t *z80); \
-	INLINE void prefix##_d8(z80_state_t *z80); INLINE void prefix##_d9(z80_state_t *z80); INLINE void prefix##_da(z80_state_t *z80); INLINE void prefix##_db(z80_state_t *z80); \
-	INLINE void prefix##_dc(z80_state_t *z80); INLINE void prefix##_dd(z80_state_t *z80); INLINE void prefix##_de(z80_state_t *z80); INLINE void prefix##_df(z80_state_t *z80); \
-	INLINE void prefix##_e0(z80_state_t *z80); INLINE void prefix##_e1(z80_state_t *z80); INLINE void prefix##_e2(z80_state_t *z80); INLINE void prefix##_e3(z80_state_t *z80); \
-	INLINE void prefix##_e4(z80_state_t *z80); INLINE void prefix##_e5(z80_state_t *z80); INLINE void prefix##_e6(z80_state_t *z80); INLINE void prefix##_e7(z80_state_t *z80); \
-	INLINE void prefix##_e8(z80_state_t *z80); INLINE void prefix##_e9(z80_state_t *z80); INLINE void prefix##_ea(z80_state_t *z80); INLINE void prefix##_eb(z80_state_t *z80); \
-	INLINE void prefix##_ec(z80_state_t *z80); INLINE void prefix##_ed(z80_state_t *z80); INLINE void prefix##_ee(z80_state_t *z80); INLINE void prefix##_ef(z80_state_t *z80); \
-	INLINE void prefix##_f0(z80_state_t *z80); INLINE void prefix##_f1(z80_state_t *z80); INLINE void prefix##_f2(z80_state_t *z80); INLINE void prefix##_f3(z80_state_t *z80); \
-	INLINE void prefix##_f4(z80_state_t *z80); INLINE void prefix##_f5(z80_state_t *z80); INLINE void prefix##_f6(z80_state_t *z80); INLINE void prefix##_f7(z80_state_t *z80); \
-	INLINE void prefix##_f8(z80_state_t *z80); INLINE void prefix##_f9(z80_state_t *z80); INLINE void prefix##_fa(z80_state_t *z80); INLINE void prefix##_fb(z80_state_t *z80); \
-	INLINE void prefix##_fc(z80_state_t *z80); INLINE void prefix##_fd(z80_state_t *z80); INLINE void prefix##_fe(z80_state_t *z80); INLINE void prefix##_ff(z80_state_t *z80); \
+	static INLINE void prefix##_00(z80_state_t *z80); static INLINE void prefix##_01(z80_state_t *z80); static INLINE void prefix##_02(z80_state_t *z80); static INLINE void prefix##_03(z80_state_t *z80); \
+	static INLINE void prefix##_04(z80_state_t *z80); static INLINE void prefix##_05(z80_state_t *z80); static INLINE void prefix##_06(z80_state_t *z80); static INLINE void prefix##_07(z80_state_t *z80); \
+	static INLINE void prefix##_08(z80_state_t *z80); static INLINE void prefix##_09(z80_state_t *z80); static INLINE void prefix##_0a(z80_state_t *z80); static INLINE void prefix##_0b(z80_state_t *z80); \
+	static INLINE void prefix##_0c(z80_state_t *z80); static INLINE void prefix##_0d(z80_state_t *z80); static INLINE void prefix##_0e(z80_state_t *z80); static INLINE void prefix##_0f(z80_state_t *z80); \
+	static INLINE void prefix##_10(z80_state_t *z80); static INLINE void prefix##_11(z80_state_t *z80); static INLINE void prefix##_12(z80_state_t *z80); static INLINE void prefix##_13(z80_state_t *z80); \
+	static INLINE void prefix##_14(z80_state_t *z80); static INLINE void prefix##_15(z80_state_t *z80); static INLINE void prefix##_16(z80_state_t *z80); static INLINE void prefix##_17(z80_state_t *z80); \
+	static INLINE void prefix##_18(z80_state_t *z80); static INLINE void prefix##_19(z80_state_t *z80); static INLINE void prefix##_1a(z80_state_t *z80); static INLINE void prefix##_1b(z80_state_t *z80); \
+	static INLINE void prefix##_1c(z80_state_t *z80); static INLINE void prefix##_1d(z80_state_t *z80); static INLINE void prefix##_1e(z80_state_t *z80); static INLINE void prefix##_1f(z80_state_t *z80); \
+	static INLINE void prefix##_20(z80_state_t *z80); static INLINE void prefix##_21(z80_state_t *z80); static INLINE void prefix##_22(z80_state_t *z80); static INLINE void prefix##_23(z80_state_t *z80); \
+	static INLINE void prefix##_24(z80_state_t *z80); static INLINE void prefix##_25(z80_state_t *z80); static INLINE void prefix##_26(z80_state_t *z80); static INLINE void prefix##_27(z80_state_t *z80); \
+	static INLINE void prefix##_28(z80_state_t *z80); static INLINE void prefix##_29(z80_state_t *z80); static INLINE void prefix##_2a(z80_state_t *z80); static INLINE void prefix##_2b(z80_state_t *z80); \
+	static INLINE void prefix##_2c(z80_state_t *z80); static INLINE void prefix##_2d(z80_state_t *z80); static INLINE void prefix##_2e(z80_state_t *z80); static INLINE void prefix##_2f(z80_state_t *z80); \
+	static INLINE void prefix##_30(z80_state_t *z80); static INLINE void prefix##_31(z80_state_t *z80); static INLINE void prefix##_32(z80_state_t *z80); static INLINE void prefix##_33(z80_state_t *z80); \
+	static INLINE void prefix##_34(z80_state_t *z80); static INLINE void prefix##_35(z80_state_t *z80); static INLINE void prefix##_36(z80_state_t *z80); static INLINE void prefix##_37(z80_state_t *z80); \
+	static INLINE void prefix##_38(z80_state_t *z80); static INLINE void prefix##_39(z80_state_t *z80); static INLINE void prefix##_3a(z80_state_t *z80); static INLINE void prefix##_3b(z80_state_t *z80); \
+	static INLINE void prefix##_3c(z80_state_t *z80); static INLINE void prefix##_3d(z80_state_t *z80); static INLINE void prefix##_3e(z80_state_t *z80); static INLINE void prefix##_3f(z80_state_t *z80); \
+	static INLINE void prefix##_40(z80_state_t *z80); static INLINE void prefix##_41(z80_state_t *z80); static INLINE void prefix##_42(z80_state_t *z80); static INLINE void prefix##_43(z80_state_t *z80); \
+	static INLINE void prefix##_44(z80_state_t *z80); static INLINE void prefix##_45(z80_state_t *z80); static INLINE void prefix##_46(z80_state_t *z80); static INLINE void prefix##_47(z80_state_t *z80); \
+	static INLINE void prefix##_48(z80_state_t *z80); static INLINE void prefix##_49(z80_state_t *z80); static INLINE void prefix##_4a(z80_state_t *z80); static INLINE void prefix##_4b(z80_state_t *z80); \
+	static INLINE void prefix##_4c(z80_state_t *z80); static INLINE void prefix##_4d(z80_state_t *z80); static INLINE void prefix##_4e(z80_state_t *z80); static INLINE void prefix##_4f(z80_state_t *z80); \
+	static INLINE void prefix##_50(z80_state_t *z80); static INLINE void prefix##_51(z80_state_t *z80); static INLINE void prefix##_52(z80_state_t *z80); static INLINE void prefix##_53(z80_state_t *z80); \
+	static INLINE void prefix##_54(z80_state_t *z80); static INLINE void prefix##_55(z80_state_t *z80); static INLINE void prefix##_56(z80_state_t *z80); static INLINE void prefix##_57(z80_state_t *z80); \
+	static INLINE void prefix##_58(z80_state_t *z80); static INLINE void prefix##_59(z80_state_t *z80); static INLINE void prefix##_5a(z80_state_t *z80); static INLINE void prefix##_5b(z80_state_t *z80); \
+	static INLINE void prefix##_5c(z80_state_t *z80); static INLINE void prefix##_5d(z80_state_t *z80); static INLINE void prefix##_5e(z80_state_t *z80); static INLINE void prefix##_5f(z80_state_t *z80); \
+	static INLINE void prefix##_60(z80_state_t *z80); static INLINE void prefix##_61(z80_state_t *z80); static INLINE void prefix##_62(z80_state_t *z80); static INLINE void prefix##_63(z80_state_t *z80); \
+	static INLINE void prefix##_64(z80_state_t *z80); static INLINE void prefix##_65(z80_state_t *z80); static INLINE void prefix##_66(z80_state_t *z80); static INLINE void prefix##_67(z80_state_t *z80); \
+	static INLINE void prefix##_68(z80_state_t *z80); static INLINE void prefix##_69(z80_state_t *z80); static INLINE void prefix##_6a(z80_state_t *z80); static INLINE void prefix##_6b(z80_state_t *z80); \
+	static INLINE void prefix##_6c(z80_state_t *z80); static INLINE void prefix##_6d(z80_state_t *z80); static INLINE void prefix##_6e(z80_state_t *z80); static INLINE void prefix##_6f(z80_state_t *z80); \
+	static INLINE void prefix##_70(z80_state_t *z80); static INLINE void prefix##_71(z80_state_t *z80); static INLINE void prefix##_72(z80_state_t *z80); static INLINE void prefix##_73(z80_state_t *z80); \
+	static INLINE void prefix##_74(z80_state_t *z80); static INLINE void prefix##_75(z80_state_t *z80); static INLINE void prefix##_76(z80_state_t *z80); static INLINE void prefix##_77(z80_state_t *z80); \
+	static INLINE void prefix##_78(z80_state_t *z80); static INLINE void prefix##_79(z80_state_t *z80); static INLINE void prefix##_7a(z80_state_t *z80); static INLINE void prefix##_7b(z80_state_t *z80); \
+	static INLINE void prefix##_7c(z80_state_t *z80); static INLINE void prefix##_7d(z80_state_t *z80); static INLINE void prefix##_7e(z80_state_t *z80); static INLINE void prefix##_7f(z80_state_t *z80); \
+	static INLINE void prefix##_80(z80_state_t *z80); static INLINE void prefix##_81(z80_state_t *z80); static INLINE void prefix##_82(z80_state_t *z80); static INLINE void prefix##_83(z80_state_t *z80); \
+	static INLINE void prefix##_84(z80_state_t *z80); static INLINE void prefix##_85(z80_state_t *z80); static INLINE void prefix##_86(z80_state_t *z80); static INLINE void prefix##_87(z80_state_t *z80); \
+	static INLINE void prefix##_88(z80_state_t *z80); static INLINE void prefix##_89(z80_state_t *z80); static INLINE void prefix##_8a(z80_state_t *z80); static INLINE void prefix##_8b(z80_state_t *z80); \
+	static INLINE void prefix##_8c(z80_state_t *z80); static INLINE void prefix##_8d(z80_state_t *z80); static INLINE void prefix##_8e(z80_state_t *z80); static INLINE void prefix##_8f(z80_state_t *z80); \
+	static INLINE void prefix##_90(z80_state_t *z80); static INLINE void prefix##_91(z80_state_t *z80); static INLINE void prefix##_92(z80_state_t *z80); static INLINE void prefix##_93(z80_state_t *z80); \
+	static INLINE void prefix##_94(z80_state_t *z80); static INLINE void prefix##_95(z80_state_t *z80); static INLINE void prefix##_96(z80_state_t *z80); static INLINE void prefix##_97(z80_state_t *z80); \
+	static INLINE void prefix##_98(z80_state_t *z80); static INLINE void prefix##_99(z80_state_t *z80); static INLINE void prefix##_9a(z80_state_t *z80); static INLINE void prefix##_9b(z80_state_t *z80); \
+	static INLINE void prefix##_9c(z80_state_t *z80); static INLINE void prefix##_9d(z80_state_t *z80); static INLINE void prefix##_9e(z80_state_t *z80); static INLINE void prefix##_9f(z80_state_t *z80); \
+	static INLINE void prefix##_a0(z80_state_t *z80); static INLINE void prefix##_a1(z80_state_t *z80); static INLINE void prefix##_a2(z80_state_t *z80); static INLINE void prefix##_a3(z80_state_t *z80); \
+	static INLINE void prefix##_a4(z80_state_t *z80); static INLINE void prefix##_a5(z80_state_t *z80); static INLINE void prefix##_a6(z80_state_t *z80); static INLINE void prefix##_a7(z80_state_t *z80); \
+	static INLINE void prefix##_a8(z80_state_t *z80); static INLINE void prefix##_a9(z80_state_t *z80); static INLINE void prefix##_aa(z80_state_t *z80); static INLINE void prefix##_ab(z80_state_t *z80); \
+	static INLINE void prefix##_ac(z80_state_t *z80); static INLINE void prefix##_ad(z80_state_t *z80); static INLINE void prefix##_ae(z80_state_t *z80); static INLINE void prefix##_af(z80_state_t *z80); \
+	static INLINE void prefix##_b0(z80_state_t *z80); static INLINE void prefix##_b1(z80_state_t *z80); static INLINE void prefix##_b2(z80_state_t *z80); static INLINE void prefix##_b3(z80_state_t *z80); \
+	static INLINE void prefix##_b4(z80_state_t *z80); static INLINE void prefix##_b5(z80_state_t *z80); static INLINE void prefix##_b6(z80_state_t *z80); static INLINE void prefix##_b7(z80_state_t *z80); \
+	static INLINE void prefix##_b8(z80_state_t *z80); static INLINE void prefix##_b9(z80_state_t *z80); static INLINE void prefix##_ba(z80_state_t *z80); static INLINE void prefix##_bb(z80_state_t *z80); \
+	static INLINE void prefix##_bc(z80_state_t *z80); static INLINE void prefix##_bd(z80_state_t *z80); static INLINE void prefix##_be(z80_state_t *z80); static INLINE void prefix##_bf(z80_state_t *z80); \
+	static INLINE void prefix##_c0(z80_state_t *z80); static INLINE void prefix##_c1(z80_state_t *z80); static INLINE void prefix##_c2(z80_state_t *z80); static INLINE void prefix##_c3(z80_state_t *z80); \
+	static INLINE void prefix##_c4(z80_state_t *z80); static INLINE void prefix##_c5(z80_state_t *z80); static INLINE void prefix##_c6(z80_state_t *z80); static INLINE void prefix##_c7(z80_state_t *z80); \
+	static INLINE void prefix##_c8(z80_state_t *z80); static INLINE void prefix##_c9(z80_state_t *z80); static INLINE void prefix##_ca(z80_state_t *z80); static INLINE void prefix##_cb(z80_state_t *z80); \
+	static INLINE void prefix##_cc(z80_state_t *z80); static INLINE void prefix##_cd(z80_state_t *z80); static INLINE void prefix##_ce(z80_state_t *z80); static INLINE void prefix##_cf(z80_state_t *z80); \
+	static INLINE void prefix##_d0(z80_state_t *z80); static INLINE void prefix##_d1(z80_state_t *z80); static INLINE void prefix##_d2(z80_state_t *z80); static INLINE void prefix##_d3(z80_state_t *z80); \
+	static INLINE void prefix##_d4(z80_state_t *z80); static INLINE void prefix##_d5(z80_state_t *z80); static INLINE void prefix##_d6(z80_state_t *z80); static INLINE void prefix##_d7(z80_state_t *z80); \
+	static INLINE void prefix##_d8(z80_state_t *z80); static INLINE void prefix##_d9(z80_state_t *z80); static INLINE void prefix##_da(z80_state_t *z80); static INLINE void prefix##_db(z80_state_t *z80); \
+	static INLINE void prefix##_dc(z80_state_t *z80); static INLINE void prefix##_dd(z80_state_t *z80); static INLINE void prefix##_de(z80_state_t *z80); static INLINE void prefix##_df(z80_state_t *z80); \
+	static INLINE void prefix##_e0(z80_state_t *z80); static INLINE void prefix##_e1(z80_state_t *z80); static INLINE void prefix##_e2(z80_state_t *z80); static INLINE void prefix##_e3(z80_state_t *z80); \
+	static INLINE void prefix##_e4(z80_state_t *z80); static INLINE void prefix##_e5(z80_state_t *z80); static INLINE void prefix##_e6(z80_state_t *z80); static INLINE void prefix##_e7(z80_state_t *z80); \
+	static INLINE void prefix##_e8(z80_state_t *z80); static INLINE void prefix##_e9(z80_state_t *z80); static INLINE void prefix##_ea(z80_state_t *z80); static INLINE void prefix##_eb(z80_state_t *z80); \
+	static INLINE void prefix##_ec(z80_state_t *z80); static INLINE void prefix##_ed(z80_state_t *z80); static INLINE void prefix##_ee(z80_state_t *z80); static INLINE void prefix##_ef(z80_state_t *z80); \
+	static INLINE void prefix##_f0(z80_state_t *z80); static INLINE void prefix##_f1(z80_state_t *z80); static INLINE void prefix##_f2(z80_state_t *z80); static INLINE void prefix##_f3(z80_state_t *z80); \
+	static INLINE void prefix##_f4(z80_state_t *z80); static INLINE void prefix##_f5(z80_state_t *z80); static INLINE void prefix##_f6(z80_state_t *z80); static INLINE void prefix##_f7(z80_state_t *z80); \
+	static INLINE void prefix##_f8(z80_state_t *z80); static INLINE void prefix##_f9(z80_state_t *z80); static INLINE void prefix##_fa(z80_state_t *z80); static INLINE void prefix##_fb(z80_state_t *z80); \
+	static INLINE void prefix##_fc(z80_state_t *z80); static INLINE void prefix##_fd(z80_state_t *z80); static INLINE void prefix##_fe(z80_state_t *z80); static INLINE void prefix##_ff(z80_state_t *z80); \
 static const funcptr tablename[0x100] = {	\
 	prefix##_00,prefix##_01,prefix##_02,prefix##_03,prefix##_04,prefix##_05,prefix##_06,prefix##_07, \
 	prefix##_08,prefix##_09,prefix##_0a,prefix##_0b,prefix##_0c,prefix##_0d,prefix##_0e,prefix##_0f, \
@@ -387,7 +387,7 @@ PROTOTYPES(Z80xycb,xycb);
 /* Burn an odd amount of cycles, that is instructions taking something		*/
 /* different from 4 T-states per opcode (and R increment)					*/
 /****************************************************************************/
-INLINE void BURNODD(z80_state_t *z80, int cycles, int opcodes, int cyclesum)
+static INLINE void BURNODD(z80_state_t *z80, int cycles, int opcodes, int cyclesum)
 {
 	if( cycles > 0 )
 	{
@@ -399,7 +399,7 @@ INLINE void BURNODD(z80_state_t *z80, int cycles, int opcodes, int cyclesum)
 /***************************************************************
  * define an opcode function
  ***************************************************************/
-#define OP(prefix,opcode)  INLINE void prefix##_##opcode(z80_state_t *z80)
+#define OP(prefix,opcode)  static INLINE void prefix##_##opcode(z80_state_t *z80)
 
 /***************************************************************
  * adjust cycle count by n T-states
@@ -533,7 +533,7 @@ INLINE void BURNODD(z80_state_t *z80, int cycles, int opcodes, int cyclesum)
 /***************************************************************
  * Read a word from given memory location
  ***************************************************************/
-INLINE void RM16( z80_state_t *z80, UINT32 addr, PAIR *r )
+static INLINE void RM16( z80_state_t *z80, UINT32 addr, PAIR *r )
 {
 	r->b.l = RM(addr);
 	r->b.h = RM((addr+1)&0xffff);
@@ -547,7 +547,7 @@ INLINE void RM16( z80_state_t *z80, UINT32 addr, PAIR *r )
 /***************************************************************
  * Write a word to given memory location
  ***************************************************************/
-INLINE void WM16( z80_state_t *z80, UINT32 addr, PAIR *r )
+static INLINE void WM16( z80_state_t *z80, UINT32 addr, PAIR *r )
 {
 	WM(addr,r->b.l);
 	WM((addr+1)&0xffff,r->b.h);
@@ -558,7 +558,7 @@ INLINE void WM16( z80_state_t *z80, UINT32 addr, PAIR *r )
  * reading opcodes. In case of system with memory mapped I/O,
  * this function can be used to greatly speed up emulation
  ***************************************************************/
-INLINE UINT8 ROP(z80_state_t *z80)
+static INLINE UINT8 ROP(z80_state_t *z80)
 {
 	unsigned pc = _PCD;
 	_PC++;
@@ -571,14 +571,14 @@ INLINE UINT8 ROP(z80_state_t *z80)
  * support systems that use different encoding mechanisms for
  * opcodes and opcode arguments
  ***************************************************************/
-INLINE UINT8 ARG(z80_state_t *z80)
+static INLINE UINT8 ARG(z80_state_t *z80)
 {
 	unsigned pc = _PCD;
 	_PC++;
 	return cpu_readop_arg(z80->userdata, pc);
 }
 
-INLINE UINT32 ARG16(z80_state_t *z80)
+static INLINE UINT32 ARG16(z80_state_t *z80)
 {
 	unsigned pc = _PCD;
 	_PC += 2;
@@ -825,7 +825,7 @@ INLINE UINT32 ARG16(z80_state_t *z80)
 /***************************************************************
  * INC	r8
  ***************************************************************/
-INLINE UINT8 INC(z80_state_t *z80, UINT8 value)
+static INLINE UINT8 INC(z80_state_t *z80, UINT8 value)
 {
 	UINT8 res = value + 1;
 	_F = (_F & CF) | z80->SZHV_inc[res];
@@ -835,7 +835,7 @@ INLINE UINT8 INC(z80_state_t *z80, UINT8 value)
 /***************************************************************
  * DEC	r8
  ***************************************************************/
-INLINE UINT8 DEC(z80_state_t *z80, UINT8 value)
+static INLINE UINT8 DEC(z80_state_t *z80, UINT8 value)
 {
 	UINT8 res = value - 1;
 	_F = (_F & CF) | z80->SZHV_dec[res];
@@ -1493,7 +1493,7 @@ asm (															\
 /***************************************************************
  * RLC	r8
  ***************************************************************/
-INLINE UINT8 RLC(z80_state_t *z80, UINT8 value)
+static INLINE UINT8 RLC(z80_state_t *z80, UINT8 value)
 {
 	unsigned res = value;
 	unsigned c = (res & 0x80) ? CF : 0;
@@ -1505,7 +1505,7 @@ INLINE UINT8 RLC(z80_state_t *z80, UINT8 value)
 /***************************************************************
  * RRC	r8
  ***************************************************************/
-INLINE UINT8 RRC(z80_state_t *z80, UINT8 value)
+static INLINE UINT8 RRC(z80_state_t *z80, UINT8 value)
 {
 	unsigned res = value;
 	unsigned c = (res & 0x01) ? CF : 0;
@@ -1517,7 +1517,7 @@ INLINE UINT8 RRC(z80_state_t *z80, UINT8 value)
 /***************************************************************
  * RL	r8
  ***************************************************************/
-INLINE UINT8 RL(z80_state_t *z80, UINT8 value)
+static INLINE UINT8 RL(z80_state_t *z80, UINT8 value)
 {
 	unsigned res = value;
 	unsigned c = (res & 0x80) ? CF : 0;
@@ -1529,7 +1529,7 @@ INLINE UINT8 RL(z80_state_t *z80, UINT8 value)
 /***************************************************************
  * RR	r8
  ***************************************************************/
-INLINE UINT8 RR(z80_state_t *z80, UINT8 value)
+static INLINE UINT8 RR(z80_state_t *z80, UINT8 value)
 {
 	unsigned res = value;
 	unsigned c = (res & 0x01) ? CF : 0;
@@ -1541,7 +1541,7 @@ INLINE UINT8 RR(z80_state_t *z80, UINT8 value)
 /***************************************************************
  * SLA	r8
  ***************************************************************/
-INLINE UINT8 SLA(z80_state_t *z80, UINT8 value)
+static INLINE UINT8 SLA(z80_state_t *z80, UINT8 value)
 {
 	unsigned res = value;
 	unsigned c = (res & 0x80) ? CF : 0;
@@ -1553,7 +1553,7 @@ INLINE UINT8 SLA(z80_state_t *z80, UINT8 value)
 /***************************************************************
  * SRA	r8
  ***************************************************************/
-INLINE UINT8 SRA(z80_state_t *z80, UINT8 value)
+static INLINE UINT8 SRA(z80_state_t *z80, UINT8 value)
 {
 	unsigned res = value;
 	unsigned c = (res & 0x01) ? CF : 0;
@@ -1565,7 +1565,7 @@ INLINE UINT8 SRA(z80_state_t *z80, UINT8 value)
 /***************************************************************
  * SLL	r8
  ***************************************************************/
-INLINE UINT8 SLL(z80_state_t *z80, UINT8 value)
+static INLINE UINT8 SLL(z80_state_t *z80, UINT8 value)
 {
 	unsigned res = value;
 	unsigned c = (res & 0x80) ? CF : 0;
@@ -1577,7 +1577,7 @@ INLINE UINT8 SLL(z80_state_t *z80, UINT8 value)
 /***************************************************************
  * SRL	r8
  ***************************************************************/
-INLINE UINT8 SRL(z80_state_t *z80, UINT8 value)
+static INLINE UINT8 SRL(z80_state_t *z80, UINT8 value)
 {
 	unsigned res = value;
 	unsigned c = (res & 0x01) ? CF : 0;
@@ -1606,7 +1606,7 @@ INLINE UINT8 SRL(z80_state_t *z80, UINT8 value)
 /***************************************************************
  * RES	bit,r8
  ***************************************************************/
-INLINE UINT8 RES(z80_state_t *z80, UINT8 bit, UINT8 value)
+static INLINE UINT8 RES(z80_state_t *z80, UINT8 bit, UINT8 value)
 {
 	return value & ~(1<<bit);
 }
@@ -1614,7 +1614,7 @@ INLINE UINT8 RES(z80_state_t *z80, UINT8 bit, UINT8 value)
 /***************************************************************
  * SET	bit,r8
  ***************************************************************/
-INLINE UINT8 SET(z80_state_t *z80, UINT8 bit, UINT8 value)
+static INLINE UINT8 SET(z80_state_t *z80, UINT8 bit, UINT8 value)
 {
 	return value | (1<<bit);
 }

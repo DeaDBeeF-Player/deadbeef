@@ -3,14 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# Maks Lyashuk <m_lyashuk@ukr.net>, 2014
 # Yarema aka Knedlyk <yupadmin@gmail.com>, 2010
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-06-24 20:57+0200\n"
-"PO-Revision-Date: 2013-11-20 09:50+0000\n"
-"Last-Translator: waker <wakeroid@gmail.com>\n"
+"POT-Creation-Date: 2014-06-25 19:54+0200\n"
+"PO-Revision-Date: 2014-06-25 17:55+0000\n"
+"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Ukrainian (http://www.transifex.com/projects/p/deadbeef-"
 "player/language/uk/)\n"
 "Language: uk\n"
@@ -149,7 +150,7 @@ msgstr ""
 #: ../plugins/gtkui/gtkui.c:956 ../plugins/gtkui/interface.c:2042
 #: ../plugins/gtkui/deadbeef.glade.h:128
 msgid "Playlist"
-msgstr ""
+msgstr "Список програвання"
 
 #: ../plugins/gtkui/gtkui.c:959
 msgid "Splitter (top and bottom)"
@@ -170,7 +171,7 @@ msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:965
 msgid "Album art display"
-msgstr ""
+msgstr "Показ обкладинки альбому"
 
 #: ../plugins/gtkui/gtkui.c:966
 msgid "Scope"
@@ -178,7 +179,7 @@ msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:967
 msgid "Spectrum"
-msgstr ""
+msgstr "Спектр"
 
 #: ../plugins/gtkui/gtkui.c:968
 msgid "HBox"
@@ -197,9 +198,8 @@ msgid "Seekbar"
 msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:972
-#, fuzzy
 msgid "Playback controls"
-msgstr "Програвання"
+msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:973
 msgid "Volume bar"
@@ -225,7 +225,7 @@ msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:1172
 msgid "Do you still want to quit?"
-msgstr ""
+msgstr "Ви досі хочете вийти?"
 
 #: ../plugins/gtkui/gtkui.c:1173 ../plugins/gtkui/prefwin.c:351
 #: ../plugins/gtkui/trkproperties.c:171 ../plugins/converter/convgui.c:891
@@ -312,7 +312,7 @@ msgstr "_Знайти"
 
 #: ../plugins/gtkui/interface.c:251 ../plugins/gtkui/deadbeef.glade.h:19
 msgid "Sort by"
-msgstr ""
+msgstr "Сортувати за"
 
 #: ../plugins/gtkui/interface.c:258 ../plugins/gtkui/interface.c:1349
 #: ../plugins/gtkui/mainplaylist.c:355 ../plugins/gtkui/prefwin.c:327
@@ -404,15 +404,15 @@ msgstr "Повторювати"
 
 #: ../plugins/gtkui/interface.c:359 ../plugins/gtkui/deadbeef.glade.h:38
 msgid "Loop all"
-msgstr ""
+msgstr "Повторювати все"
 
 #: ../plugins/gtkui/interface.c:365 ../plugins/gtkui/deadbeef.glade.h:39
 msgid "Loop single song"
-msgstr ""
+msgstr "Повторювати одну пісню"
 
 #: ../plugins/gtkui/interface.c:371 ../plugins/gtkui/deadbeef.glade.h:40
 msgid "Don't loop"
-msgstr ""
+msgstr "Не повторювати"
 
 #: ../plugins/gtkui/interface.c:377 ../plugins/gtkui/deadbeef.glade.h:41
 msgid "Scroll follows playback"
@@ -427,9 +427,8 @@ msgid "Stop after current"
 msgstr "Зупинити піcля поточного"
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
-#, fuzzy
 msgid "Stop after current album"
-msgstr "Зупинити піcля поточного"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:399 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "Jump to current track"
@@ -620,7 +619,7 @@ msgstr "Завжди конвертувати 8 біт аудіо до 16 біт
 
 #: ../plugins/gtkui/interface.c:1731 ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Always convert 16 bit audio to 24 bit"
-msgstr ""
+msgstr "Завжди конвертувати 16-бітне аудіо до 24-бітного"
 
 #: ../plugins/gtkui/interface.c:1735 ../plugins/gtkui/deadbeef.glade.h:93
 msgid "Sound"
@@ -679,9 +678,8 @@ msgid "Auto-reset \"Stop after current\""
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:1849 ../plugins/gtkui/deadbeef.glade.h:107
-#, fuzzy
 msgid "Auto-reset \"Stop after current album\""
-msgstr "Зупинити піcля поточного"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1853 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Playback"
@@ -719,11 +717,11 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:1951 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Enable Russian CP1251 detection and recoding"
-msgstr ""
+msgstr "Увімкнути виявлення та декодування кирилиці CP1251"
 
 #: ../plugins/gtkui/interface.c:1955 ../plugins/gtkui/deadbeef.glade.h:117
 msgid "Enable Chinese CP936 detection and recoding"
-msgstr ""
+msgstr "Увімкнути виявлення та декодування китайської CP936"
 
 #: ../plugins/gtkui/interface.c:1963 ../plugins/gtkui/deadbeef.glade.h:118
 msgid "Interface refresh rate (times per second):"
@@ -743,20 +741,19 @@ msgstr "Додаток GUI (для змін потрібно перезаван�
 
 #: ../plugins/gtkui/interface.c:2013 ../plugins/gtkui/deadbeef.glade.h:122
 msgid "Player"
-msgstr ""
+msgstr "Програвач"
 
 #: ../plugins/gtkui/interface.c:2022 ../plugins/gtkui/deadbeef.glade.h:123
 msgid "Close playlists with middle mouse button"
-msgstr ""
+msgstr "Закривати список програвання середньою клавішею миші"
 
 #: ../plugins/gtkui/interface.c:2026 ../plugins/gtkui/deadbeef.glade.h:124
 msgid "Draw playing track using bold font"
-msgstr ""
+msgstr "Використовувати жирний шрифт для треку, що програється"
 
 #: ../plugins/gtkui/interface.c:2030 ../plugins/gtkui/deadbeef.glade.h:125
-#, fuzzy
 msgid "Hide \"Remove From Disk\" context menu item"
-msgstr "Ховати пункт контекстного меню \"Вилучити з диску\""
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:2034 ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Auto-name playlists when adding a single folder"
@@ -765,10 +762,11 @@ msgstr "Автоматично назвати список програванн�
 #: ../plugins/gtkui/interface.c:2038 ../plugins/gtkui/deadbeef.glade.h:127
 msgid "Auto-resize columns to fit the window"
 msgstr ""
+"Автоматично підлаштовувати розміри колонок в залежності від розміру вікна"
 
 #: ../plugins/gtkui/interface.c:2046 ../plugins/gtkui/deadbeef.glade.h:129
 msgid "GUI/Misc"
-msgstr ""
+msgstr "GUI / Різне"
 
 #: ../plugins/gtkui/interface.c:2061 ../plugins/gtkui/interface.c:2105
 #: ../plugins/gtkui/deadbeef.glade.h:130
@@ -884,25 +882,25 @@ msgstr "Мережа"
 
 #: ../plugins/gtkui/interface.c:2404 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "Assigned Hotkeys:"
-msgstr ""
+msgstr "Задані комбінації клавіш:"
 
 #: ../plugins/gtkui/interface.c:2439 ../plugins/gtkui/interface.c:4284
 #: ../plugins/gtkui/deadbeef.glade.h:158
 msgid "Action:"
-msgstr ""
+msgstr "Дія:"
 
 #: ../plugins/gtkui/interface.c:2444 ../plugins/gtkui/interface.c:2457
 #: ../plugins/gtkui/interface.c:4288 ../plugins/gtkui/deadbeef.glade.h:159
 msgid "<Not set>"
-msgstr ""
+msgstr "<Не встановлено>"
 
 #: ../plugins/gtkui/interface.c:2452 ../plugins/gtkui/deadbeef.glade.h:160
 msgid "Key combination:"
-msgstr ""
+msgstr "Комбінація клавіш:"
 
 #: ../plugins/gtkui/interface.c:2461 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "Global hotkey"
-msgstr ""
+msgstr "Глобальні гарячі клавіші"
 
 #: ../plugins/gtkui/interface.c:2473 ../plugins/gtkui/deadbeef.glade.h:162
 msgid ""
@@ -918,7 +916,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2514 ../plugins/gtkui/deadbeef.glade.h:167
 msgid "Hotkeys"
-msgstr ""
+msgstr "Гарячі клавіші"
 
 #: ../plugins/gtkui/interface.c:2545 ../plugins/gtkui/deadbeef.glade.h:168
 msgid "Version: "
@@ -938,18 +936,19 @@ msgstr "Додатки"
 msgid "URL:"
 msgstr "URL:"
 
-#: ../plugins/gtkui/interface.c:3228 ../plugins/gtkui/interface.c:4442
+#: ../plugins/gtkui/interface.c:3228 ../plugins/gtkui/interface.c:4414
+#: ../plugins/gtkui/interface.c:4442 ../plugins/gtkui/plcommon.c:806
 #: ../plugins/gtkui/deadbeef.glade.h:172
-msgid "Set custom title"
+msgid "Set Custom Title"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:3332 ../plugins/gtkui/deadbeef.glade.h:173
 msgid "Group By ..."
-msgstr ""
+msgstr "Групувати за ..."
 
 #: ../plugins/gtkui/interface.c:3456 ../plugins/gtkui/deadbeef.glade.h:174
 msgid "Sort by ..."
-msgstr ""
+msgstr "Сортувати за..."
 
 #: ../plugins/gtkui/interface.c:3472 ../plugins/gtkui/deadbeef.glade.h:175
 msgid "Format"
@@ -1042,7 +1041,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:4044 ../plugins/gtkui/deadbeef.glade.h:194
 msgid "Reset to defaults"
-msgstr ""
+msgstr "Скинути до типових"
 
 #: ../plugins/gtkui/interface.c:4139 ../plugins/gtkui/deadbeef.glade.h:195
 msgid "Content-Type:"
@@ -1050,23 +1049,23 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:4152 ../plugins/gtkui/deadbeef.glade.h:196
 msgid "Plugins:"
-msgstr ""
+msgstr "Додатки:"
 
 #: ../plugins/gtkui/interface.c:4220 ../plugins/gtkui/deadbeef.glade.h:197
 msgid "Button properties"
-msgstr ""
+msgstr "Параметри кнопки"
 
 #: ../plugins/gtkui/interface.c:4235 ../plugins/gtkui/deadbeef.glade.h:198
 msgid "Color:"
-msgstr ""
+msgstr "Колір:"
 
 #: ../plugins/gtkui/interface.c:4247 ../plugins/gtkui/deadbeef.glade.h:199
 msgid "Text color:"
-msgstr ""
+msgstr "Колір тексту:"
 
 #: ../plugins/gtkui/interface.c:4259 ../plugins/gtkui/deadbeef.glade.h:200
 msgid "Icon:"
-msgstr ""
+msgstr "Піктограма:"
 
 #: ../plugins/gtkui/interface.c:4271 ../plugins/gtkui/deadbeef.glade.h:201
 msgid "Label:"
@@ -1074,14 +1073,9 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:4352 ../plugins/gtkui/deadbeef.glade.h:202
 msgid "Select action"
-msgstr ""
+msgstr "Оберіть дію"
 
-#: ../plugins/gtkui/interface.c:4414 ../plugins/gtkui/plcommon.c:806
-#: ../plugins/gtkui/deadbeef.glade.h:203
-msgid "Set Custom Title"
-msgstr ""
-
-#: ../plugins/gtkui/interface.c:4436 ../plugins/gtkui/deadbeef.glade.h:204
+#: ../plugins/gtkui/interface.c:4436 ../plugins/gtkui/deadbeef.glade.h:203
 msgid ""
 "This dialog allows to set custom title for any track. This is most useful "
 "for radio stations. An option to set the custom title is also present in the "
@@ -1099,24 +1093,20 @@ msgid "Track No"
 msgstr "Номер треку"
 
 #: ../plugins/gtkui/plcommon.c:637
-#, fuzzy
 msgid "Add To Playback Queue"
-msgstr "Додати до черги програвання"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:642
-#, fuzzy
 msgid "Remove From Playback Queue"
-msgstr "Вилучити з черги програвання"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:650
-#, fuzzy
 msgid "Reload Metadata"
-msgstr "Перезавантажити метадані"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:668
-#, fuzzy
 msgid "Remove From Disk"
-msgstr "Вилучити з диску"
+msgstr ""
 
 #: ../plugins/gtkui/plcommon.c:1089 ../plugins/gtkui/plcommon.c:1216
 msgid "Add column"
@@ -1161,11 +1151,11 @@ msgstr "Типовий пристрій Аудіо"
 
 #: ../plugins/gtkui/prefwin.c:348
 msgid "You modified the hotkeys settings, but didn't save your changes."
-msgstr ""
+msgstr "Ви змінили комбінації клавіш, проте не зберегли внесені зміни."
 
 #: ../plugins/gtkui/prefwin.c:350
 msgid "Are you sure you want to continue without saving?"
-msgstr ""
+msgstr "Ви дійсно впевнені що хочете продовжити без збереження?"
 
 #: ../plugins/gtkui/progress.c:56
 msgid "Adding files..."
@@ -1237,7 +1227,7 @@ msgstr "Вилучити поле"
 #: ../main.c:90
 #, c-format
 msgid "Usage: deadbeef [options] [--] [file(s)]\n"
-msgstr ""
+msgstr "Використання: deadbeef [опції] [--] [файл(и)]\n"
 
 #: ../main.c:91
 #, c-format
@@ -1313,6 +1303,8 @@ msgstr "   --queue            Додати файл(и) до існуючого 
 msgid ""
 "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
 msgstr ""
+"   --gui PLUGIN       Вказує яке доповнення інтерфейсу використовувати, "
+"типовим є \"GTK2\"\n"
 
 #: ../main.c:105
 #, c-format
@@ -1434,7 +1426,7 @@ msgstr ""
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
 msgid "Add audio CD"
-msgstr ""
+msgstr "Додати Аудіо CD"
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
@@ -1718,7 +1710,7 @@ msgstr "Частота дискретизація цілі"
 
 #: ../translation/extra.c:94
 msgid "Quality / Algorithm"
-msgstr ""
+msgstr "Якість / Алгоритм"
 
 #: ../translation/extra.c:95
 msgid "Automatic Samplerate (overrides Target Samplerate)"
@@ -1728,7 +1720,7 @@ msgstr ""
 #. shellexecui
 #: ../translation/extra.c:97
 msgid "Configure custom shell commands"
-msgstr ""
+msgstr "Налаштувати власні команди оболонки"
 
 #. mpgmad
 #: ../translation/extra.c:99
@@ -1742,7 +1734,7 @@ msgstr ""
 
 #: ../translation/extra.c:102
 msgid "Enable surround"
-msgstr ""
+msgstr "Увімкнути оточення"
 
 #: ../plugins/converter/convgui.c:84
 #, c-format
@@ -2060,27 +2052,27 @@ msgstr ""
 #: ../plugins/shellexecui/interface.c:46
 #: ../plugins/shellexecui/shellexec.glade.h:1
 msgid "Custom Shell Commands"
-msgstr ""
+msgstr "Власні команди оболонки"
 
 #: ../plugins/shellexecui/interface.c:69
 #: ../plugins/shellexecui/shellexec.glade.h:5
 msgid "Edit"
-msgstr ""
+msgstr "Редагувати"
 
 #: ../plugins/shellexecui/interface.c:87
 #: ../plugins/shellexecui/shellexec.glade.h:2
 msgid "Close"
-msgstr ""
+msgstr "Закрит"
 
 #: ../plugins/shellexecui/interface.c:145
 #: ../plugins/shellexecui/shellexec.glade.h:6
 msgid "Edit Command"
-msgstr ""
+msgstr "Редагувати команду"
 
 #: ../plugins/shellexecui/interface.c:166
 #: ../plugins/shellexecui/shellexec.glade.h:8
 msgid "Command:"
-msgstr ""
+msgstr "Команда:"
 
 #: ../plugins/shellexecui/interface.c:178
 #: ../plugins/shellexecui/shellexec.glade.h:10
@@ -2094,7 +2086,7 @@ msgstr ""
 #: ../plugins/shellexecui/interface.c:181
 #: ../plugins/shellexecui/shellexec.glade.h:11
 msgid "ID:"
-msgstr ""
+msgstr "ID:"
 
 #: ../plugins/shellexecui/interface.c:193
 #: ../plugins/shellexecui/shellexec.glade.h:12
@@ -2151,7 +2143,7 @@ msgstr ""
 #: ../plugins/shellexecui/interface.c:224
 #: ../plugins/shellexecui/shellexec.glade.h:23
 msgid "Generic (Main Menu)"
-msgstr ""
+msgstr "Загальні (Головне меню)"
 
 #: ../plugins/shellexecui/interface.c:227
 #: ../plugins/shellexecui/shellexec.glade.h:22
@@ -2168,23 +2160,23 @@ msgstr ""
 
 #: ../plugins/shellexecui/shellexecui.c:96
 msgid "Add Command"
-msgstr ""
+msgstr "Додати команду"
 
 #: ../plugins/shellexecui/shellexecui.c:139 ../plugins/gtkui/widgets.c:797
 msgid "Delete"
-msgstr ""
+msgstr "Вилучити"
 
 #: ../plugins/shellexecui/shellexecui.c:141
 msgid "This action will delete the selected shell command. Are you sure?"
-msgstr ""
+msgstr "Ця дія спричинить вилучення вибраної команди оболонки. Ви впевнені?"
 
 #: ../plugins/shellexecui/shellexecui.c:143
 msgid "Confirm Remove"
-msgstr ""
+msgstr "Підтвердження вилучення"
 
 #: ../plugins/shellexecui/shellexecui.c:229
 msgid "ID must be non-empty and unique.\n"
-msgstr ""
+msgstr "ID має бути унікальним та не пустим.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:235
 msgid "Title must be non-empty.\n"
@@ -2192,32 +2184,32 @@ msgstr ""
 
 #: ../plugins/shellexecui/shellexecui.c:241
 msgid "Shell Command must be non-empty.\n"
-msgstr ""
+msgstr "Команда оболонки має бути не порожньою.\n"
 
 #: ../plugins/shellexecui/shellexecui.c:248
 #: ../plugins/shellexecui/shellexecui.c:252
 msgid "Invalid Values"
-msgstr ""
+msgstr "Невірні значення"
 
 #: ../plugins/gtkui/actionhandlers.c:112
 msgid "Supported sound formats"
-msgstr ""
+msgstr "Підтримувані аудіо-формати"
 
 #: ../plugins/gtkui/actionhandlers.c:123
 msgid "All files (*)"
-msgstr ""
+msgstr "Всі файли (*)"
 
 #: ../plugins/gtkui/actionhandlers.c:131
 msgid "Open file(s)..."
-msgstr ""
+msgstr "Відкрити файл(и)..."
 
 #: ../plugins/gtkui/actionhandlers.c:170
 msgid "Add file(s) to playlist..."
-msgstr ""
+msgstr "Додати файл(и) до списку програвання..."
 
 #: ../plugins/gtkui/actionhandlers.c:216
 msgid "Add folder(s) to playlist..."
-msgstr ""
+msgstr "Додати теку(-ки) до списку програвання..."
 
 #: ../plugins/gtkui/actionhandlers.c:221
 msgid "Follow symlinks"
@@ -2225,11 +2217,11 @@ msgstr ""
 
 #: ../plugins/gtkui/actionhandlers.c:475
 msgid "help.txt"
-msgstr ""
+msgstr "help.txt"
 
 #: ../plugins/gtkui/actionhandlers.c:548
 msgid "Delete files from disk"
-msgstr ""
+msgstr "Видалити файли з диска"
 
 #: ../plugins/gtkui/actionhandlers.c:549
 msgid ""
@@ -2239,19 +2231,19 @@ msgstr ""
 
 #: ../plugins/gtkui/actionhandlers.c:726
 msgid "Load Playlist"
-msgstr ""
+msgstr "Завантажити список"
 
 #: ../plugins/gtkui/actionhandlers.c:741
 msgid "Other files (*)"
-msgstr ""
+msgstr "Інші файли (*)"
 
 #: ../plugins/gtkui/actionhandlers.c:775
 msgid "Save Playlist As"
-msgstr ""
+msgstr "Зберегти список як"
 
 #: ../plugins/gtkui/actionhandlers.c:786
 msgid "DeaDBeeF playlist files (*.dbpl)"
-msgstr ""
+msgstr "Файли списків DeaDBeeF (*.dbpl)"
 
 #: ../plugins/gtkui/ctmapping.c:129
 msgid "Content-Type"
@@ -2274,7 +2266,7 @@ msgstr ""
 
 #: ../plugins/gtkui/ctmapping.c:228 ../plugins/gtkui/ctmapping.c:260
 msgid "Nothing is selected."
-msgstr ""
+msgstr "Нічого не обрано."
 
 #: ../plugins/gtkui/widgets.c:444
 #, c-format
@@ -2283,23 +2275,23 @@ msgstr ""
 
 #: ../plugins/gtkui/widgets.c:772
 msgid "Replace with..."
-msgstr ""
+msgstr "Замінити на..."
 
 #: ../plugins/gtkui/widgets.c:777
 msgid "Insert..."
-msgstr ""
+msgstr "Вставити..."
 
 #: ../plugins/gtkui/widgets.c:804
 msgid "Cut"
-msgstr ""
+msgstr "Вирізати"
 
 #: ../plugins/gtkui/widgets.c:811
 msgid "Copy"
-msgstr ""
+msgstr "Копіювати"
 
 #: ../plugins/gtkui/widgets.c:818
 msgid "Paste"
-msgstr ""
+msgstr "Вставити"
 
 #: ../plugins/gtkui/widgets.c:942
 msgid "Multiple widgets of this type are not supported"
@@ -2307,31 +2299,31 @@ msgstr ""
 
 #: ../plugins/gtkui/widgets.c:1249
 msgid "Lock movement"
-msgstr ""
+msgstr "Заблокувати переміщення"
 
 #: ../plugins/gtkui/widgets.c:1534
 msgid "Move tab left"
-msgstr ""
+msgstr "Перемістити вкладку ліворуч"
 
 #: ../plugins/gtkui/widgets.c:1541
 msgid "Move tab right"
-msgstr ""
+msgstr "Перемістити вкладку праворуч"
 
 #: ../plugins/gtkui/widgets.c:1548
 msgid "Remove tab"
-msgstr ""
+msgstr "Вилучити вкладку"
 
 #: ../plugins/gtkui/widgets.c:1555
 msgid "Rename tab"
-msgstr ""
+msgstr "Перейменувати вкладку"
 
 #: ../plugins/gtkui/widgets.c:1616
 msgid "Add new tab"
-msgstr ""
+msgstr "Додати нову вкладку"
 
 #: ../plugins/gtkui/widgets.c:2036
 msgid "Show Column Headers"
-msgstr ""
+msgstr "Показати заголовки колонок"
 
 #: ../plugins/gtkui/widgets.c:3144
 msgid "Expand the box by 1 item"
@@ -2347,15 +2339,15 @@ msgstr ""
 
 #: ../plugins/gtkui/widgets.c:3194
 msgid "Expand"
-msgstr ""
+msgstr "Розгорнути"
 
 #: ../plugins/gtkui/widgets.c:3202
 msgid "Fill"
-msgstr ""
+msgstr "Заповнити"
 
 #: ../plugins/gtkui/widgets.c:3603
 msgid "Configure button"
-msgstr ""
+msgstr "Налаштувати кнопку"
 
 #: ../plugins/gtkui/widgets.c:3867
 msgid "Voices:"
@@ -2363,23 +2355,23 @@ msgstr ""
 
 #: ../plugins/gtkui/pltmenu.c:62
 msgid "Edit playlist"
-msgstr ""
+msgstr "Редагувати список"
 
 #: ../plugins/gtkui/pltmenu.c:265
 msgid "Rename Playlist"
-msgstr ""
+msgstr "Перейменувати список"
 
 #: ../plugins/gtkui/pltmenu.c:272
 msgid "Remove Playlist"
-msgstr ""
+msgstr "Вилучити список"
 
 #: ../plugins/gtkui/pltmenu.c:279
 msgid "Add New Playlist"
-msgstr ""
+msgstr "Додати новий список"
 
 #: ../plugins/pltbrowser/pltbrowser.c:213
 msgid "Name"
-msgstr ""
+msgstr "Назва"
 
 #: ../plugins/pltbrowser/pltbrowser.c:238
 msgid "Playlist browser"

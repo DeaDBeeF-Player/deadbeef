@@ -1001,11 +1001,23 @@ fetcher_thread (void *none)
                                             trace ("artwork: id3v2 APIC frame is too small\n");
                                             continue;
                                         }
+
                                         uint8_t *data = f->data;
-                                        if (tag.version[0] == 4) {
-                                            // skip size
+
+                                        if (tag.version[0] == 4 && (f->flags[1] & 1)) {
                                             data += 4;
                                         }
+#if 0
+                                        printf ("version: %d, flags: %d %d\n", (int)tag.version[0], (int)f->flags[0], (int)f->flags[1]);
+                                        for (int i = 0; i < 20; i++) {
+                                            printf ("%c", data[i] < 0x20 ? '?' : data[i]);
+                                        }
+                                        printf ("\n");
+                                        for (int i = 0; i < 20; i++) {
+                                            printf ("%02x ", data[i]);
+                                        }
+                                        printf ("\n");
+#endif
                                         uint8_t *end = f->data + f->size;
                                         int enc = *data;
                                         data++; // enc
@@ -1154,8 +1166,19 @@ fetcher_thread (void *none)
                             break;
                         }
 
-                        if(! (is_ogg? FLAC__metadata_chain_read_ogg_with_callbacks(chain, (FLAC__IOHandle)file, iocb) : FLAC__metadata_chain_read_with_callbacks(chain, (FLAC__IOHandle)file, iocb)) ) {
-                            trace ("%s: ERROR: reading metadata", filename);
+                        int res = 0;
+                        if (is_ogg) {
+#if USE_OGG
+                            res = FLAC__metadata_chain_read_ogg_with_callbacks(chain, (FLAC__IOHandle)file, iocb);
+#endif
+                        }
+                        else
+                        {
+                            res = FLAC__metadata_chain_read_with_callbacks(chain, (FLAC__IOHandle)file, iocb);
+                        }
+
+                        if(!res) {
+                            trace ("artwork: failed to read metadata from flac: %s\n", filename);
                             deadbeef->fclose (file);
                             FLAC__metadata_chain_delete(chain);
                             break;
@@ -1251,17 +1274,24 @@ fetcher_thread (void *none)
 
                     if (files_count > 0) {
                         trace ("found cover for %s - %s in local folder\n", param->artist, param->album);
-                        if (check_dir (path, 0755)) {
-                            strcat (path, "/");
-                            strcat (path, files[0]->d_name);
-                            char cache_path[1024];
-                            char tmp_path[1024];
-                            make_cache_path2 (cache_path, sizeof (cache_path), param->fname, param->album, param->artist, -1);
+                        strcat (path, "/");
+                        strcat (path, files[0]->d_name);
+                        char cache_path[PATH_MAX];
+                        char tmp_path[PATH_MAX];
+                        char cache_path_dir[PATH_MAX];
+                        make_cache_path2 (cache_path, sizeof (cache_path), param->fname, param->album, param->artist, -1);
+                        strcpy (cache_path_dir, cache_path);
+                        char *slash = strrchr (cache_path_dir, '/');
+                        if (slash) {
+                            *slash = 0;
+                        }
+                        trace ("check_dir: %s\n", cache_path_dir);
+                        if (check_dir (cache_path_dir, 0755)) {
                             snprintf (tmp_path, sizeof (tmp_path), "%s.part", cache_path);
                             copy_file (path, tmp_path, -1);
                             int err = rename (tmp_path, cache_path);
                             if (err != 0) {
-                                trace ("Failed to move %s to %s: %s\n", tmp_path, cache_path, strerror (err));
+                                trace ("artwork: rename error %d: failed to move %s to %s: %s\n", err, tmp_path, cache_path, strerror (err));
                                 unlink (tmp_path);
                             }
                             int i;
