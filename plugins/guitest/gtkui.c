@@ -1229,16 +1229,16 @@ load_assets (void) {
     spr_init (SPR_SHUFFLE_ACTIVE_PRESSED, SURF_SHUFREP, 165, 89, 46, 15, 29, 45);
 
     // EQ
-    spr_init (SPR_EQ, SURF_SHUFREP, 220, 58, 25, 12, 0, 61);
-    spr_init (SPR_EQ_PRESSED, SURF_SHUFREP, 220, 58, 25, 12, 47, 61);
-    spr_init (SPR_EQ_ACTIVE, SURF_SHUFREP, 220, 58, 25, 12, 0, 73);
-    spr_init (SPR_EQ_ACTIVE_PRESSED, SURF_SHUFREP, 220, 58, 25, 12, 47, 73);
+    spr_init (SPR_EQ, SURF_SHUFREP, 220, 58, 23, 12, 0, 61);
+    spr_init (SPR_EQ_PRESSED, SURF_SHUFREP, 220, 58, 23, 12, 46, 61);
+    spr_init (SPR_EQ_ACTIVE, SURF_SHUFREP, 220, 58, 23, 12, 0, 73);
+    spr_init (SPR_EQ_ACTIVE_PRESSED, SURF_SHUFREP, 220, 58, 23, 12, 46, 73);
 
     // PLAYLIST
-    spr_init (SPR_PLAYLIST, SURF_SHUFREP, 244, 58, 22, 12, 25, 61);
-    spr_init (SPR_PLAYLIST_PRESSED, SURF_SHUFREP, 244, 58, 22, 12, 71, 73);
-    spr_init (SPR_PLAYLIST_ACTIVE, SURF_SHUFREP, 244, 58, 22, 12, 25, 61);
-    spr_init (SPR_PLAYLIST_ACTIVE_PRESSED, SURF_SHUFREP, 244, 58, 22, 12, 71, 73);
+    spr_init (SPR_PLAYLIST, SURF_SHUFREP, 244, 58, 23, 12, 23, 61);
+    spr_init (SPR_PLAYLIST_PRESSED, SURF_SHUFREP, 244, 58, 23, 12, 69, 61);
+    spr_init (SPR_PLAYLIST_ACTIVE, SURF_SHUFREP, 244, 58, 23, 12, 23, 73);
+    spr_init (SPR_PLAYLIST_ACTIVE_PRESSED, SURF_SHUFREP, 244, 58, 23, 12, 69, 73);
 
     // monoster
     spr_init (SPR_STEREO_ACTIVE, SURF_MONOSTER, 239, 41, 29, 11, 0, 0);
@@ -1348,7 +1348,55 @@ main_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
         }
     }
 
+    // shuffle
+    int order = deadbeef->conf_get_int ("playback.order", PLAYBACK_ORDER_LINEAR);
+    sprites[SPR_SHUFFLE].hidden = (order != PLAYBACK_ORDER_LINEAR) || (skin_button == SPR_SHUFFLE);
+    sprites[SPR_SHUFFLE_PRESSED].hidden = (order != PLAYBACK_ORDER_LINEAR) || (skin_button != SPR_SHUFFLE);
+    sprites[SPR_SHUFFLE_ACTIVE].hidden = (order == PLAYBACK_ORDER_LINEAR) || (skin_button == SPR_SHUFFLE);
+    sprites[SPR_SHUFFLE_ACTIVE_PRESSED].hidden = (order == PLAYBACK_ORDER_LINEAR) || (skin_button != SPR_SHUFFLE);
+
+    // repeat
+    int loop = deadbeef->conf_get_int ("playback.loop", 0);
+    sprites[SPR_REPEAT].hidden = (loop != PLAYBACK_MODE_NOLOOP) || (skin_button == SPR_REPEAT);
+    sprites[SPR_REPEAT_PRESSED].hidden = (loop != PLAYBACK_MODE_NOLOOP) || (skin_button != SPR_REPEAT);
+    sprites[SPR_REPEAT_ACTIVE].hidden = (loop == PLAYBACK_MODE_NOLOOP) || (skin_button == SPR_REPEAT);
+    sprites[SPR_REPEAT_ACTIVE_PRESSED].hidden = (loop == PLAYBACK_MODE_NOLOOP) || (skin_button != SPR_REPEAT);
+
     // main
+    sprites[SPR_TITLEBAR_INACTIVE].hidden = 1;
+    sprites[SPR_TITLEBAR_SHADED].hidden = 1;
+    sprites[SPR_TITLEBAR_SHADED_INACTIVE].hidden = 1;
+
+    // titlebar buttons
+    sprites[SPR_TITLEBAR_MENU].hidden = (skin_button == SPR_TITLEBAR_MENU);
+    sprites[SPR_TITLEBAR_MENU_PRESSED].hidden = (skin_button != SPR_TITLEBAR_MENU);
+    // minimize
+    sprites[SPR_TITLEBAR_MIN].hidden = (skin_button == SPR_TITLEBAR_MIN);
+    sprites[SPR_TITLEBAR_MIN_PRESSED].hidden = (skin_button != SPR_TITLEBAR_MIN);
+    // close
+    sprites[SPR_TITLEBAR_CLOSE].hidden = (skin_button == SPR_TITLEBAR_CLOSE);
+    sprites[SPR_TITLEBAR_CLOSE_PRESSED].hidden = (skin_button != SPR_TITLEBAR_CLOSE);
+    // shade
+    sprites[SPR_TITLEBAR_SHADE].hidden = (skin_button == SPR_TITLEBAR_SHADE);
+    sprites[SPR_TITLEBAR_SHADE_PRESSED].hidden = (skin_button != SPR_TITLEBAR_SHADE);
+    // unshade
+    sprites[SPR_TITLEBAR_UNSHADE].hidden = 1;
+    sprites[SPR_TITLEBAR_UNSHADE_PRESSED].hidden = 1;
+
+    // eq
+    sprites[SPR_EQ].hidden = (skin_button == SPR_EQ);
+    sprites[SPR_EQ_PRESSED].hidden = (skin_button != SPR_EQ);
+    sprites[SPR_EQ_ACTIVE].hidden = 1;
+    sprites[SPR_EQ_ACTIVE_PRESSED].hidden = 1;
+
+    // pl
+    sprites[SPR_PLAYLIST].hidden = (skin_button == SPR_PLAYLIST);
+    sprites[SPR_PLAYLIST_PRESSED].hidden = (skin_button != SPR_PLAYLIST);
+    sprites[SPR_PLAYLIST_ACTIVE].hidden = 1;
+    sprites[SPR_PLAYLIST_ACTIVE_PRESSED].hidden = 1;
+
+
+    // draw all
     for (int i = 0; i < SPR_MAX; i++) {
         draw_sprite (cr, i);
     }
@@ -1580,7 +1628,30 @@ skin_buttons_update (int x, int y) {
     for (int i = SPR_CBUTTON_PREV; i <= SPR_CBUTTON_OPEN; i+= 2) {
         if (skin_test_coord (i, x, y)) {
             skin_button = i;
-            break;
+            return;
+        }
+    }
+    if (skin_test_coord (SPR_SHUFFLE, x, y)) {
+        skin_button = SPR_SHUFFLE;
+        return;
+    }
+    if (skin_test_coord (SPR_REPEAT, x, y)) {
+        skin_button = SPR_REPEAT;
+        return;
+    }
+    if (skin_test_coord (SPR_EQ, x, y)) {
+        skin_button = SPR_EQ;
+        return;
+    }
+    if (skin_test_coord (SPR_PLAYLIST, x, y)) {
+        skin_button = SPR_PLAYLIST;
+        return;
+    }
+
+    for (int i = SPR_TITLEBAR_MENU; i <= SPR_TITLEBAR_SHADE; i += 2) {
+        if (skin_test_coord (i, x, y)) {
+            skin_button = i;
+            return;
         }
     }
 }
@@ -1655,6 +1726,37 @@ main_button_release (GtkWidget       *widget,
                 break;
             case SPR_CBUTTON_OPEN:
                 on_open_activate (NULL, NULL);
+                break;
+            case SPR_SHUFFLE:
+                {
+                    int ord = deadbeef->conf_get_int ("playback.order", PLAYBACK_ORDER_LINEAR);
+                    switch (ord) {
+                    case PLAYBACK_ORDER_LINEAR:
+                        deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_SHUFFLE_TRACKS);
+                        break;
+                    default:
+                        deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_LINEAR);
+                        break;
+                    }
+                    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+                }
+                break;
+            case SPR_REPEAT:
+                {
+                    int loop = deadbeef->conf_get_int ("playback.loop", PLAYBACK_MODE_LOOP_ALL);
+                    switch (loop) {
+                    case PLAYBACK_MODE_NOLOOP:
+                        deadbeef->conf_set_int ("playback.loop", PLAYBACK_MODE_LOOP_ALL);
+                        break;
+                    default:
+                        deadbeef->conf_set_int ("playback.loop", PLAYBACK_MODE_NOLOOP);
+                        break;
+                    }
+                    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+                }
+                break;
+            case SPR_TITLEBAR_CLOSE:
+                gtkui_quit ();
                 break;
             }
         }
