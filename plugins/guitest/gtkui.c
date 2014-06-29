@@ -927,175 +927,431 @@ gtkui_add_file_end_cb (ddb_fileadd_data_t *data, void *user_data) {
 
 #define ASSETS_PATH "./assets/"
 
-cairo_surface_t *surf_main;
-cairo_surface_t *surf_titlebar;
-cairo_surface_t *surf_cbuttons;
-cairo_surface_t *surf_balance;
-cairo_surface_t *surf_monoster;
-cairo_surface_t *surf_numbers;
-cairo_surface_t *surf_nums_ex;
-cairo_surface_t *surf_playpaus;
-cairo_surface_t *surf_posbar;
-cairo_surface_t *surf_shufrep;
-cairo_surface_t *surf_text;
-cairo_surface_t *surf_titlebar;
-cairo_surface_t *surf_volume;
-cairo_surface_t *surf_pledit;
+enum {
+    SURF_MAIN,
+    SURF_TITLEBAR,
+    SURF_CBUTTONS,
+    SURF_BALANCE,
+    SURF_MONOSTER,
+    SURF_NUMBERS,
+    SURF_NUMS_EX,
+    SURF_PLAYPAUS,
+    SURF_POSBAR,
+    SURF_SHUFREP,
+    SURF_TEXT,
+    SURF_VOLUME,
+    SURF_PLEDIT,
+    SURF_MAX
+};
 
-static int
-load_assets (void) {
-    surf_main = cairo_image_surface_create_from_png (ASSETS_PATH "main.png");
-    surf_titlebar = cairo_image_surface_create_from_png (ASSETS_PATH "titlebar.png");
-    surf_cbuttons = cairo_image_surface_create_from_png (ASSETS_PATH "cbuttons.png");
-    surf_balance = cairo_image_surface_create_from_png (ASSETS_PATH "balance.png");
-    surf_monoster = cairo_image_surface_create_from_png (ASSETS_PATH "monoster.png");
-    surf_numbers = cairo_image_surface_create_from_png (ASSETS_PATH "numbers.png");
-//    surf_nums_ex = cairo_image_surface_create_from_png (ASSETS_PATH "nums_ex.png");
-    surf_playpaus = cairo_image_surface_create_from_png (ASSETS_PATH "playpaus.png");
-    surf_posbar = cairo_image_surface_create_from_png (ASSETS_PATH "posbar.png");
-    surf_shufrep = cairo_image_surface_create_from_png (ASSETS_PATH "shufrep.png");
-    surf_text = cairo_image_surface_create_from_png (ASSETS_PATH "text.png");
-    surf_titlebar = cairo_image_surface_create_from_png (ASSETS_PATH "titlebar.png");
-    surf_volume = cairo_image_surface_create_from_png (ASSETS_PATH "volume.png");
-    surf_pledit = cairo_image_surface_create_from_png (ASSETS_PATH "pledit.png");
-}
-
-static void
-draw_sprite (cairo_t *cr, cairo_surface_t *src, int x, int y, int w, int h, int sx, int sy) {
-    cairo_set_source_surface (cr, src, -sx+x, -sy+y);
-    cairo_rectangle (cr, x, y, w, h);
-    cairo_fill (cr);
-}
+cairo_surface_t *skin_surfs[SURF_MAX];
 
 static int mx, my;
 static int m1on;
+static int mlock;
 
-static gboolean
-main_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
+typedef struct {
+    int surf;
+    int x, y, w, h, sx, sy;
+    int hidden;
+} sprite_t;
+
+#define MAX_STATE_SPRITES 4
+typedef struct {
+    int sprites[MAX_STATE_SPRITES];
+    int nsprites;
+} elemstate_t;
+
+#define MAX_ELEM_STATES 30
+typedef struct {
+    int states[MAX_ELEM_STATES];
+    int nstates;
+} elem_t;
+
+#define MAX_STATES 800
+elemstate_t elemsstates[MAX_STATES];
+
+#define MAX_ELEMS 200
+elem_t elems[MAX_ELEMS];
+
+#define spr_init(idx, _surf, _x, _y, _w, _h, _sx, _sy) { sprites[idx].surf = _surf;\
+    sprites[idx].x = _x;\
+    sprites[idx].y = _y;\
+    sprites[idx].w = _w;\
+    sprites[idx].h = _h;\
+    sprites[idx].sx = _sx;\
+    sprites[idx].sy = _sy;\
+}
+
+enum {
+    SPR_MAIN,
+    SPR_TITLEBAR,
+    SPR_TITLEBAR_INACTIVE,
+    SPR_TITLEBAR_SHADED,
+    SPR_TITLEBAR_SHADED_INACTIVE,
+    SPR_TITLEBAR_MENU,
+    SPR_TITLEBAR_MENU_PRESSED,
+    SPR_TITLEBAR_MIN,
+    SPR_TITLEBAR_MIN_PRESSED,
+    SPR_TITLEBAR_CLOSE,
+    SPR_TITLEBAR_CLOSE_PRESSED,
+    SPR_TITLEBAR_SHADE,
+    SPR_TITLEBAR_SHADE_PRESSED,
+    SPR_TITLEBAR_UNSHADE,
+    SPR_TITLEBAR_UNSHADE_PRESSED,
+    SPR_SMBTN_1,
+    SPR_SMBTN_2,
+    SPR_SMBTN_3,
+    SPR_SMBTN_4,
+    SPR_SMBTN_5,
+    SPR_SMBTN_6,
+    SPR_SMBTN_7,
+    SPR_CBUTTON_PREV,
+    SPR_CBUTTON_PREV_PRESSED,
+    SPR_CBUTTON_PLAY,
+    SPR_CBUTTON_PLAY_PRESSED,
+    SPR_CBUTTON_PAUSE,
+    SPR_CBUTTON_PAUSE_PRESSED,
+    SPR_CBUTTON_STOP,
+    SPR_CBUTTON_STOP_PRESSED,
+    SPR_CBUTTON_NEXT,
+    SPR_CBUTTON_NEXT_PRESSED,
+    SPR_CBUTTON_OPEN,
+    SPR_CBUTTON_OPEN_PRESSED,
+    SPR_BALANCE_1,
+    SPR_BALANCE_2,
+    SPR_BALANCE_3,
+    SPR_BALANCE_4,
+    SPR_BALANCE_5,
+    SPR_BALANCE_6,
+    SPR_BALANCE_7,
+    SPR_BALANCE_8,
+    SPR_BALANCE_9,
+    SPR_BALANCE_10,
+    SPR_BALANCE_11,
+    SPR_BALANCE_12,
+    SPR_BALANCE_13,
+    SPR_BALANCE_14,
+    SPR_BALANCE_15,
+    SPR_BALANCE_16,
+    SPR_BALANCE_17,
+    SPR_BALANCE_18,
+    SPR_BALANCE_19,
+    SPR_BALANCE_20,
+    SPR_BALANCE_21,
+    SPR_BALANCE_22,
+    SPR_BALANCE_23,
+    SPR_BALANCE_24,
+    SPR_BALANCE_25,
+    SPR_BALANCE_26,
+    SPR_BALANCE_27,
+    SPR_BALANCE_28,
+    SPR_BALANCE_GRIP,
+    SPR_BALANCE_GRIP_PRESSED,
+    SPR_VOLUME_1,
+    SPR_VOLUME_2,
+    SPR_VOLUME_3,
+    SPR_VOLUME_4,
+    SPR_VOLUME_5,
+    SPR_VOLUME_6,
+    SPR_VOLUME_7,
+    SPR_VOLUME_8,
+    SPR_VOLUME_9,
+    SPR_VOLUME_10,
+    SPR_VOLUME_11,
+    SPR_VOLUME_12,
+    SPR_VOLUME_13,
+    SPR_VOLUME_14,
+    SPR_VOLUME_15,
+    SPR_VOLUME_16,
+    SPR_VOLUME_17,
+    SPR_VOLUME_18,
+    SPR_VOLUME_19,
+    SPR_VOLUME_20,
+    SPR_VOLUME_21,
+    SPR_VOLUME_22,
+    SPR_VOLUME_23,
+    SPR_VOLUME_24,
+    SPR_VOLUME_25,
+    SPR_VOLUME_26,
+    SPR_VOLUME_27,
+    SPR_VOLUME_28,
+    SPR_VOLUME_GRIP,
+    SPR_VOLUME_GRIP_PRESSED,
+    SPR_POSBAR,
+    SPR_POSBAR_GRIP,
+    SPR_POSBAR_GRIP_PRESSED,
+    SPR_REPEAT,
+    SPR_REPEAT_PRESSED,
+    SPR_REPEAT_ACTIVE,
+    SPR_REPEAT_ACTIVE_PRESSED,
+    SPR_SHUFFLE,
+    SPR_SHUFFLE_PRESSED,
+    SPR_SHUFFLE_ACTIVE,
+    SPR_SHUFFLE_ACTIVE_PRESSED,
+    SPR_EQ,
+    SPR_EQ_PRESSED,
+    SPR_EQ_ACTIVE,
+    SPR_EQ_ACTIVE_PRESSED,
+    SPR_PLAYLIST,
+    SPR_PLAYLIST_PRESSED,
+    SPR_PLAYLIST_ACTIVE,
+    SPR_PLAYLIST_ACTIVE_PRESSED,
+    SPR_STEREO,
+    SPR_STEREO_ACTIVE,
+    SPR_MONO,
+    SPR_MONO_ACTIVE,
+    SPR_INDICATOR_PLAY,
+    SPR_INDICATOR_PAUSE,
+    SPR_INDICATOR_STOP,
+    SPR_INDICATOR_EMPTY,
+    SPR_INDICATOR_WEIRD1,
+    SPR_INDICATOR_WEIRD2,
+    SPR_MINUS,
+    SPR_PLUS,
+    SPR_NUM_0,
+    SPR_NUM_1,
+    SPR_NUM_2,
+    SPR_NUM_3,
+    SPR_NUM_4,
+    SPR_NUM_5,
+    SPR_NUM_6,
+    SPR_NUM_7,
+    SPR_NUM_8,
+    SPR_NUM_9,
+    SPR_MAX,
+};
+
+sprite_t sprites[SPR_MAX];
+
+
+static int
+load_assets (void) {
+    skin_surfs[SURF_MAIN]= cairo_image_surface_create_from_png (ASSETS_PATH "main.png");
+    skin_surfs[SURF_TITLEBAR] = cairo_image_surface_create_from_png (ASSETS_PATH "titlebar.png");
+    skin_surfs[SURF_CBUTTONS] = cairo_image_surface_create_from_png (ASSETS_PATH "cbuttons.png");
+    skin_surfs[SURF_BALANCE] = cairo_image_surface_create_from_png (ASSETS_PATH "balance.png");
+    skin_surfs[SURF_MONOSTER] = cairo_image_surface_create_from_png (ASSETS_PATH "monoster.png");
+    skin_surfs[SURF_NUMBERS] = cairo_image_surface_create_from_png (ASSETS_PATH "numbers.png");
+    //skin_surfs[SURF_NUMS_EX] = cairo_image_surface_create_from_png (ASSETS_PATH "nums_ex.png");
+    skin_surfs[SURF_PLAYPAUS] = cairo_image_surface_create_from_png (ASSETS_PATH "playpaus.png");
+    skin_surfs[SURF_POSBAR] = cairo_image_surface_create_from_png (ASSETS_PATH "posbar.png");
+    skin_surfs[SURF_SHUFREP] = cairo_image_surface_create_from_png (ASSETS_PATH "shufrep.png");
+    skin_surfs[SURF_TEXT] = cairo_image_surface_create_from_png (ASSETS_PATH "text.png");
+    skin_surfs[SURF_TITLEBAR] = cairo_image_surface_create_from_png (ASSETS_PATH "titlebar.png");
+    skin_surfs[SURF_VOLUME] = cairo_image_surface_create_from_png (ASSETS_PATH "volume.png");
+    skin_surfs[SURF_PLEDIT] = cairo_image_surface_create_from_png (ASSETS_PATH "pledit.png");
+
     // main
-    cairo_set_source_surface (cr, surf_main, 0, 0);
-    cairo_paint (cr);
+    spr_init (SPR_MAIN, SURF_MAIN, 0, 0, 275, 116, 0, 0);
 
     // titlebar
-    draw_sprite (cr, surf_titlebar, 0, 0, 275, 15, 27, 0);
-//    draw_sprite (cr, surf_titlebar, 0, 0, 275, 14, 27, 15);
-//    draw_sprite (cr, surf_titlebar, 0, 0, 275, 13, 27, 29);
-//    draw_sprite (cr, surf_titlebar, 0, 0, 275, 13, 27, 42);
+    spr_init (SPR_TITLEBAR, SURF_TITLEBAR, 0, 0, 275, 15, 27, 0);
+    spr_init (SPR_TITLEBAR_INACTIVE, SURF_TITLEBAR, 0, 0, 275, 14, 27, 15);
+    spr_init (SPR_TITLEBAR_SHADED, SURF_TITLEBAR, 0, 0, 275, 13, 27, 29);
+    spr_init (SPR_TITLEBAR_SHADED_INACTIVE, SURF_TITLEBAR, 0, 0, 275, 13, 27, 42);
+
+    // titlebar buttons
     // menu
-    draw_sprite (cr, surf_titlebar, 7, 4, 9, 9, 0, 0);
-    draw_sprite (cr, surf_titlebar, 7, 4, 9, 9, 0, 9);
+    spr_init (SPR_TITLEBAR_MENU, SURF_TITLEBAR, 6, 3, 9, 9, 0, 0);
+    spr_init (SPR_TITLEBAR_MENU_PRESSED, SURF_TITLEBAR, 6, 3, 9, 9, 0, 9);
     // minimize
-    draw_sprite (cr, surf_titlebar, 244, 4, 9, 9, 9, 0);
-    draw_sprite (cr, surf_titlebar, 244, 4, 9, 9, 9, 9);
+    spr_init (SPR_TITLEBAR_MIN, SURF_TITLEBAR, 244, 4, 9, 9, 9, 0);
+    spr_init (SPR_TITLEBAR_MIN_PRESSED, SURF_TITLEBAR, 244, 4, 9, 9, 9, 9);
     // close
-    draw_sprite (cr, surf_titlebar, 264, 4, 9, 9, 18, 0);
-    draw_sprite (cr, surf_titlebar, 264, 4, 9, 9, 18, 9);
+    spr_init (SPR_TITLEBAR_CLOSE, SURF_TITLEBAR, 264, 4, 9, 9, 18, 0);
+    spr_init (SPR_TITLEBAR_CLOSE_PRESSED, SURF_TITLEBAR, 264, 4, 9, 9, 18, 9);
     // shade
-    draw_sprite (cr, surf_titlebar, 254, 4, 9, 9, 0, 18);
-    draw_sprite (cr, surf_titlebar, 254, 4, 9, 9, 9, 18);
-    draw_sprite (cr, surf_titlebar, 254, 4, 9, 9, 0, 27);
-    draw_sprite (cr, surf_titlebar, 254, 4, 9, 9, 9, 27);
+    spr_init (SPR_TITLEBAR_SHADE, SURF_TITLEBAR, 254, 4, 9, 9, 0, 18);
+    spr_init (SPR_TITLEBAR_SHADE_PRESSED, SURF_TITLEBAR, 254, 4, 9, 9, 9, 18);
+    // unshade
+    spr_init (SPR_TITLEBAR_UNSHADE, SURF_TITLEBAR, 254, 4, 9, 9, 0, 27);
+    spr_init (SPR_TITLEBAR_UNSHADE_PRESSED, SURF_TITLEBAR, 254, 4, 9, 9, 9, 27);
 
     // small buttons
-    draw_sprite (cr, surf_titlebar, 10, 25, 8, 38, 304, 3);
-    draw_sprite (cr, surf_titlebar, 10, 25, 8, 38, 313, 3);
-    draw_sprite (cr, surf_titlebar, 10, 25, 8, 38, 304, 47);
-    draw_sprite (cr, surf_titlebar, 10, 25, 8, 38, 312, 47);
-    draw_sprite (cr, surf_titlebar, 10, 25, 8, 38, 320, 47);
-    draw_sprite (cr, surf_titlebar, 10, 25, 8, 38, 328, 47);
-    draw_sprite (cr, surf_titlebar, 10, 25, 8, 38, 336, 47);
+    spr_init (SPR_SMBTN_1, SURF_TITLEBAR, 10, 22, 8, 43, 304, 0);
+    spr_init (SPR_SMBTN_2, SURF_TITLEBAR, 10, 22, 8, 43, 312, 0);
+    spr_init (SPR_SMBTN_3, SURF_TITLEBAR, 10, 22, 8, 43, 304, 44);
+    spr_init (SPR_SMBTN_4, SURF_TITLEBAR, 10, 22, 8, 43, 312, 44);
+    spr_init (SPR_SMBTN_5, SURF_TITLEBAR, 10, 22, 8, 43, 320, 44);
+    spr_init (SPR_SMBTN_6, SURF_TITLEBAR, 10, 22, 8, 43, 328, 44);
+    spr_init (SPR_SMBTN_7, SURF_TITLEBAR, 10, 22, 8, 43, 336, 44);
 
     // cbuttons
     int xoffs = 0;
     int yoffs = 88;
-    int btn_h = 18;
-    int sprite_y = 0;
-    draw_sprite (cr, surf_cbuttons, xoffs+16, yoffs, 22, btn_h, xoffs, sprite_y);
+    spr_init (SPR_CBUTTON_PREV, SURF_CBUTTONS, xoffs+16, yoffs, 22, 18, xoffs, 0);
+    spr_init (SPR_CBUTTON_PREV_PRESSED, SURF_CBUTTONS, xoffs+16, yoffs, 22, 18, xoffs, 18);
     xoffs += 22;
-    draw_sprite (cr, surf_cbuttons, xoffs+16, yoffs, 23, btn_h, xoffs, sprite_y);
+    spr_init (SPR_CBUTTON_PLAY, SURF_CBUTTONS, xoffs+16, yoffs, 23, 18, xoffs, 0);
+    spr_init (SPR_CBUTTON_PLAY_PRESSED, SURF_CBUTTONS, xoffs+16, yoffs, 23, 18, xoffs, 18);
     xoffs += 23;
-    draw_sprite (cr, surf_cbuttons, xoffs+16, yoffs, 23, btn_h, xoffs, sprite_y);
+    spr_init (SPR_CBUTTON_PAUSE, SURF_CBUTTONS, xoffs+16, yoffs, 23, 18, xoffs, 0);
+    spr_init (SPR_CBUTTON_PAUSE_PRESSED, SURF_CBUTTONS, xoffs+16, yoffs, 23, 18, xoffs, 18);
     xoffs += 23;
-    draw_sprite (cr, surf_cbuttons, xoffs+16, yoffs, 23, btn_h, xoffs, sprite_y);
+    spr_init (SPR_CBUTTON_STOP, SURF_CBUTTONS, xoffs+16, yoffs, 23, 18, xoffs, 0);
+    spr_init (SPR_CBUTTON_STOP_PRESSED, SURF_CBUTTONS, xoffs+16, yoffs, 23, 18, xoffs, 18);
     xoffs += 23;
-    draw_sprite (cr, surf_cbuttons, xoffs+16, yoffs, 22, btn_h, xoffs, sprite_y);
+    spr_init (SPR_CBUTTON_NEXT, SURF_CBUTTONS, xoffs+16, yoffs, 22, 18, xoffs, 0);
+    spr_init (SPR_CBUTTON_NEXT_PRESSED, SURF_CBUTTONS, xoffs+16, yoffs, 22, 18, xoffs, 18);
 
-//    for (int i = 0; i < 5; i++) {
-//        int screen_x = i*(btn_w-1)+xoffs;
-//        int sprite_y = 0;
-//        if (m1on && mx >= screen_x && my >= yoffs && mx < screen_x + btn_w && my < yoffs + btn_h) {
-//            sprite_y += btn_h;
-//        }
-//        draw_sprite (cr, surf_cbuttons, screen_x, yoffs, btn_w, btn_h, i*(btn_w-1), sprite_y);
-//    }
+    spr_init (SPR_CBUTTON_OPEN, SURF_CBUTTONS, 136, 89, 22, 16, 114, 0);
+    spr_init (SPR_CBUTTON_OPEN_PRESSED, SURF_CBUTTONS, 136, 89, 22, 16, 114, 16);
 
-    // balance
-    int b_st = 27;
-    draw_sprite (cr, surf_balance, 177, 57, 37, 13, 9, b_st * 15);
-    // balance grip
-    draw_sprite (cr, surf_volume, 189, 58, 14, 11, 0, 422);
-    draw_sprite (cr, surf_volume, 189, 58, 14, 11, 15, 422);
-
-    // volume
-    int v_st = 27;
-    draw_sprite (cr, surf_volume, 107, 57, 68, 13, 0, v_st * 15);
+    // balance/volume
+    for (int i = 0; i < 28; i++) {
+        spr_init (SPR_BALANCE_1 + i, SURF_BALANCE, 177, 57, 37, 13, 9, i*15);
+        spr_init (SPR_VOLUME_1 + i, SURF_VOLUME, 107, 57, 68, 13, 0, i*15);
+    }
     // volume grip
-    draw_sprite (cr, surf_volume, 148, 58, 14, 11, 0, 422);
-    draw_sprite (cr, surf_volume, 148, 58, 14, 11, 15, 422);
+    spr_init (SPR_VOLUME_GRIP, SURF_VOLUME, 148, 58, 14, 11, 15, 422);
+    spr_init (SPR_VOLUME_GRIP_PRESSED, SURF_VOLUME, 148, 58, 14, 11, 0, 422);
 
+    // balance grip
+    spr_init (SPR_BALANCE_GRIP, SURF_BALANCE, 189, 58, 14, 11, 15, 422);
+    spr_init (SPR_BALANCE_GRIP_PRESSED, SURF_BALANCE, 189, 58, 14, 11, 0, 422);
 
     // posbar
-    draw_sprite (cr, surf_posbar, 15, 72, 248, 10, 0, 0);
+    spr_init (SPR_POSBAR, SURF_POSBAR, 15, 72, 248, 10, 0, 0);
+    spr_init (SPR_POSBAR_GRIP, SURF_POSBAR, 13, 72, 29, 10, 248, 0);
+    spr_init (SPR_POSBAR_GRIP_PRESSED, SURF_POSBAR, 13, 72, 29, 10, 248+29, 0);
+
+    // repeat
+    spr_init (SPR_REPEAT, SURF_SHUFREP, 210, 89, 29, 15, 0, 0);
+    spr_init (SPR_REPEAT_PRESSED, SURF_SHUFREP, 210, 89, 29, 15, 0, 15);
+    spr_init (SPR_REPEAT_ACTIVE, SURF_SHUFREP, 210, 89, 29, 15, 0, 30);
+    spr_init (SPR_REPEAT_ACTIVE_PRESSED, SURF_SHUFREP, 210, 89, 29, 15, 0, 45);
+
+    // shuffle
+    spr_init (SPR_SHUFFLE, SURF_SHUFREP, 165, 89, 46, 15, 29, 0);
+    spr_init (SPR_SHUFFLE_PRESSED, SURF_SHUFREP, 165, 89, 46, 15, 29, 15);
+    spr_init (SPR_SHUFFLE_ACTIVE, SURF_SHUFREP, 165, 89, 46, 15, 29, 30);
+    spr_init (SPR_SHUFFLE_ACTIVE_PRESSED, SURF_SHUFREP, 165, 89, 46, 15, 29, 45);
+
+    // EQ
+    spr_init (SPR_EQ, SURF_SHUFREP, 220, 58, 25, 12, 0, 61);
+    spr_init (SPR_EQ_PRESSED, SURF_SHUFREP, 220, 58, 25, 12, 47, 61);
+    spr_init (SPR_EQ_ACTIVE, SURF_SHUFREP, 220, 58, 25, 12, 0, 73);
+    spr_init (SPR_EQ_ACTIVE_PRESSED, SURF_SHUFREP, 220, 58, 25, 12, 47, 73);
+
+    // PLAYLIST
+    spr_init (SPR_PLAYLIST, SURF_SHUFREP, 244, 58, 22, 12, 25, 61);
+    spr_init (SPR_PLAYLIST_PRESSED, SURF_SHUFREP, 244, 58, 22, 12, 71, 73);
+    spr_init (SPR_PLAYLIST_ACTIVE, SURF_SHUFREP, 244, 58, 22, 12, 25, 61);
+    spr_init (SPR_PLAYLIST_ACTIVE_PRESSED, SURF_SHUFREP, 244, 58, 22, 12, 71, 73);
+
+    // monoster
+    spr_init (SPR_STEREO_ACTIVE, SURF_MONOSTER, 239, 41, 29, 11, 0, 0);
+    spr_init (SPR_STEREO, SURF_MONOSTER, 239, 41, 29, 11, 0, 12);
+    spr_init (SPR_MONO_ACTIVE, SURF_MONOSTER, 214, 41, 25, 11, 31, 0);
+    spr_init (SPR_MONO, SURF_MONOSTER, 214, 41, 25, 11, 31, 12);
+
+    // playpaus
+    spr_init (SPR_INDICATOR_PLAY, SURF_PLAYPAUS, 26, 28, 9, 9, 0, 0);
+    spr_init (SPR_INDICATOR_PAUSE, SURF_PLAYPAUS, 26, 28, 9, 9, 9, 0);
+    spr_init (SPR_INDICATOR_STOP, SURF_PLAYPAUS, 26, 28, 9, 9, 18, 0);
+    spr_init (SPR_INDICATOR_EMPTY, SURF_PLAYPAUS, 26, 28, 9, 9, 27, 0);
+    spr_init (SPR_INDICATOR_WEIRD1, SURF_PLAYPAUS, 24, 28, 3, 9, 36, 0);
+    spr_init (SPR_INDICATOR_WEIRD2, SURF_PLAYPAUS, 24, 28, 3, 9, 39, 0);
+
+    // nums_ex
+    spr_init (SPR_PLUS, SURF_NUMS_EX, 36, 26, 10, 13, 90, 0);
+    spr_init (SPR_MINUS, SURF_NUMS_EX, 36, 26, 10, 13, 100, 0);
+
+    // numbers
+    // used in coords:
+    // 48,26; 60,26; 78,26; 90,26
+    for (int i = 0; i <= 9; i++) {
+        spr_init (SPR_NUM_0+i, SURF_NUMBERS, 48, 26, 9, 13, 9*i, 0);
+    }
+}
+
+static void
+draw_sprite (cairo_t *cr, int s) {
+    sprite_t *spr = &sprites[s];
+    if (!skin_surfs[spr->surf] || spr->hidden) {
+        return;
+
+    }
+    cairo_set_source_surface (cr, skin_surfs[spr->surf], -spr->sx+spr->x, -spr->sy+spr->y);
+    cairo_rectangle (cr, spr->x, spr->y, spr->w, spr->h);
+    cairo_fill (cr);
+}
+
+static float skin_balance = 0.5f;
+static int skin_button = -1;
+
+static gboolean
+main_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
     if (!trk || deadbeef->pl_get_item_duration (trk) < 0) {
+        sprites[SPR_POSBAR_GRIP].hidden = 1;
+        sprites[SPR_POSBAR_GRIP_PRESSED].hidden = 1;
     }
     else {
+        sprites[SPR_POSBAR_GRIP].hidden = 0;
+        sprites[SPR_POSBAR_GRIP_PRESSED].hidden = 1;
         float pos = 0;
         if (deadbeef->pl_get_item_duration (trk) > 0) {
             pos = deadbeef->streamer_get_playpos () / deadbeef->pl_get_item_duration (trk);
         }
-        draw_sprite (cr, surf_posbar, 13 + pos * (248+14), 72, 29, 10, 248, 0);
-        //draw_sprite (cr, surf_posbar, 13, 72, 29, 10, 278, 0);
+        sprites[SPR_POSBAR_GRIP].x = 13 + pos * (248+14);
     }
     if (trk) {
         deadbeef->pl_item_unref (trk);
     }
 
-    // repeat
-    draw_sprite (cr, surf_shufrep, 210, 89, 29, 15, 0, 0);
-    draw_sprite (cr, surf_shufrep, 210, 89, 29, 15, 0, 15);
-    draw_sprite (cr, surf_shufrep, 210, 89, 29, 15, 0, 30);
-    draw_sprite (cr, surf_shufrep, 210, 89, 29, 15, 0, 45);
+    // adjust volume
+    int state = 0;
+    float vol = deadbeef->volume_get_db ();
+    vol = (1.f - (vol / -50));
+    int w = sprites[SPR_VOLUME_1].w - sprites[SPR_VOLUME_GRIP].w;
+    sprites[SPR_VOLUME_GRIP].x = sprites[SPR_VOLUME_GRIP_PRESSED].x = sprites[SPR_VOLUME_1].x + vol * w;
+    state = SPR_VOLUME_1 + vol * 27;
+    if (state < SPR_VOLUME_1) {
+        state = SPR_VOLUME_1;
+    }
+    if (state > SPR_VOLUME_28) {
+        state = SPR_VOLUME_28;
+    }
+    for (int i = SPR_VOLUME_1; i <= SPR_VOLUME_28; i++) {
+        sprites[i].hidden = (i != state);
+    }
+    sprites[SPR_VOLUME_GRIP].hidden = (mlock == SPR_VOLUME_1);
+    sprites[SPR_VOLUME_GRIP_PRESSED].hidden = (mlock != SPR_VOLUME_1);
 
-    // shuffle
-    draw_sprite (cr, surf_shufrep, 165, 89, 46, 15, 29, 0);
-    draw_sprite (cr, surf_shufrep, 165, 89, 46, 15, 29, 15);
-    draw_sprite (cr, surf_shufrep, 165, 89, 46, 15, 29, 30);
-    draw_sprite (cr, surf_shufrep, 165, 89, 46, 15, 29, 45);
+    // adjust balance
+    w =  sprites[SPR_BALANCE_1].w - sprites[SPR_BALANCE_GRIP].w;
+    sprites[SPR_BALANCE_GRIP].x = sprites[SPR_BALANCE_GRIP_PRESSED].x = sprites[SPR_BALANCE_1].x + skin_balance * w;
+    state = SPR_BALANCE_1 + skin_balance * 27;
+    if (state < SPR_BALANCE_1) {
+        state = SPR_BALANCE_1;
+    }
+    if (state > SPR_BALANCE_28) {
+        state = SPR_BALANCE_28;
+    }
+    for (int i = SPR_BALANCE_1; i <= SPR_BALANCE_28; i++) {
+        sprites[i].hidden = (i != state);
+    }
+    sprites[SPR_BALANCE_GRIP].hidden = (mlock == SPR_BALANCE_1);
+    sprites[SPR_BALANCE_GRIP_PRESSED].hidden = (mlock != SPR_BALANCE_1);
 
-    // EQ
-    // size: 25x12, 22x12
-    // eq: 0,61; 0,73; 47,61; 47,73
-    // pl: 25,61; 25,73; 71,61; 71,73
-    draw_sprite (cr, surf_shufrep, 220, 58, 25, 12, 0, 61);
-    draw_sprite (cr, surf_shufrep, 220, 58, 25, 12, 47, 61);
-    draw_sprite (cr, surf_shufrep, 220, 58, 25, 12, 0, 73);
-    draw_sprite (cr, surf_shufrep, 220, 58, 25, 12, 47, 73);
+    // buttons
+    for (int i = SPR_CBUTTON_PREV; i <= SPR_CBUTTON_OPEN; i+= 2) {
+        if (skin_button != i) {
+            sprites[i].hidden = 0;
+            sprites[i+1].hidden = 1;
+        }
+        else {
+            sprites[i].hidden = 1;
+            sprites[i+1].hidden = 0;
+        }
+    }
 
-    draw_sprite (cr, surf_shufrep, 244, 58, 22, 12, 25, 61);
-    draw_sprite (cr, surf_shufrep, 244, 58, 22, 12, 71, 73);
-    draw_sprite (cr, surf_shufrep, 244, 58, 22, 12, 25, 61);
-    draw_sprite (cr, surf_shufrep, 244, 58, 22, 12, 71, 73);
-
-    // monoster
-    draw_sprite (cr, surf_monoster, 214, 41, 25, 11, 31, 12);
-    draw_sprite (cr, surf_monoster, 239, 41, 29, 11, 0, 0);
-
-    // playpaus
-    draw_sprite (cr, surf_playpaus, 26, 28, 9, 9, 0, 0);
-    draw_sprite (cr, surf_playpaus, 26, 28, 9, 9, 9, 0);
-    draw_sprite (cr, surf_playpaus, 26, 28, 9, 9, 18, 0);
-    draw_sprite (cr, surf_playpaus, 26, 28, 9, 9, 26, 0);
+    // main
+    for (int i = 0; i < SPR_MAX; i++) {
+        draw_sprite (cr, i);
+    }
 
     // nums_ex
     int min = 5;
@@ -1113,18 +1369,20 @@ main_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     int dig3 = sec/10;
     int dig4 = sec%10;
 
-    if (surf_nums_ex) {
-        // +
-        draw_sprite (cr, surf_nums_ex, 36, 26, 10, 13, 90, 0);
-        // -
-        draw_sprite (cr, surf_nums_ex, 36, 26, 10, 13, 100, 0);
-    }
+    // +
+    draw_sprite(cr, SPR_PLUS);
+    // -
+    draw_sprite(cr, SPR_MINUS);
     // min
-    draw_sprite (cr, surf_numbers, 48, 26, 9, 13, dig1*9, 0);
-    draw_sprite (cr, surf_numbers, 60, 26, 9, 13, dig2*9, 0);
+    sprites[SPR_NUM_0+dig1].x = 48;
+    draw_sprite (cr, SPR_NUM_0+dig1);
+    sprites[SPR_NUM_0+dig2].x = 60;
+    draw_sprite (cr, SPR_NUM_0+dig1);
     // sec
-    draw_sprite (cr, surf_numbers, 78, 26, 9, 13, dig3*9, 0);
-    draw_sprite (cr, surf_numbers, 90, 26, 9, 13, dig4*9, 0);
+    sprites[SPR_NUM_0+dig3].x = 78;
+    draw_sprite (cr, SPR_NUM_0+dig1);
+    sprites[SPR_NUM_0+dig4].x = 90;
+    draw_sprite (cr, SPR_NUM_0+dig1);
 
     // text
     cairo_save (cr);
@@ -1150,7 +1408,6 @@ main_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 
     cairo_show_text (cr, str);
     cairo_restore (cr);
-
     return TRUE;
 }
 
@@ -1164,6 +1421,7 @@ main_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
 
 static gboolean
 pl_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
+#if 0
     GtkAllocation a;
     gtk_widget_get_allocation (widget, &a);
 
@@ -1201,7 +1459,7 @@ pl_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 
     // scrollbar
     draw_sprite (cr, surf_pledit, a.width-15, 20, 8, 18, 52, 53);
-    draw_sprite (cr, surf_pledit, a.width-15, 20, 8, 18, 61, 53);
+    //draw_sprite (cr, surf_pledit, a.width-15, 20, 8, 18, 61, 53);
 
     // menus
 
@@ -1268,7 +1526,7 @@ pl_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     //draw_sprite (cr, surf_pledit, a.width-44, a.height - 65, 22, 18, 227, 111);
 
     draw_sprite (cr, surf_pledit, a.width-47, a.height - 65, 3, 53, 250, 112);
-
+#endif
     return TRUE;
 }
 
@@ -1281,9 +1539,67 @@ pl_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
 }
 
 static void
+skin_volume_update (int x, int y) {
+    int w = sprites[SPR_VOLUME_1].w - sprites[SPR_VOLUME_GRIP_PRESSED].w;
+    x = x - (sprites[SPR_VOLUME_1].x + sprites[SPR_VOLUME_GRIP_PRESSED].w/2);
+    float vol = x / (float)w;
+    // convert do db
+    vol = (1.f-vol) * -50.f;
+    if (vol < -50) {
+        vol = -50;
+    }
+    if (vol > 0) {
+        vol = 0;
+    }
+    deadbeef->volume_set_db (vol);
+}
+
+static void
+skin_balance_update (int x, int y) {
+    int w = sprites[SPR_BALANCE_1].w - sprites[SPR_BALANCE_GRIP_PRESSED].w;
+    skin_balance = (x - (sprites[SPR_BALANCE_1].x + sprites[SPR_BALANCE_GRIP_PRESSED].w/2)) / (float)w;
+    if (skin_balance < 0) {
+        skin_balance = 0;
+    }
+    if (skin_balance > 1) {
+        skin_balance = 1;
+    }
+}
+
+static int
+skin_test_coord (int s, int x, int y) {
+    sprite_t *spr = &sprites[s];
+
+    return (x >= spr->x && x < spr->x + spr->w
+            && y >= spr->y && y < spr->y + spr->h);
+}
+
+static void
+skin_buttons_update (int x, int y) {
+    skin_button = -1;
+    for (int i = SPR_CBUTTON_PREV; i <= SPR_CBUTTON_OPEN; i+= 2) {
+        if (skin_test_coord (i, x, y)) {
+            skin_button = i;
+            break;
+        }
+    }
+}
+
+static void
 main_motion_notify (GtkWidget *widget, GdkEventMotion *event, gpointer user_data) {
     mx = event->x;
     my = event->y;
+
+    if (mlock == SPR_VOLUME_1) {
+        skin_volume_update (event->x, event->y);
+    }
+    else if (mlock == SPR_BALANCE_1) {
+        skin_balance_update (event->x, event->y);
+    }
+    else if (m1on) {
+        skin_buttons_update (event->x, event->y);
+    }
+
     gtk_widget_queue_draw (widget);
 }
 
@@ -1293,6 +1609,19 @@ main_button_press (GtkWidget       *widget,
         gpointer         user_data) {
     if (TEST_LEFT_CLICK (event)) {
         m1on = 1;
+        mlock = -1;
+
+        if (skin_test_coord (SPR_VOLUME_1, event->x, event->y)) {
+            mlock = SPR_VOLUME_1;
+            skin_volume_update (event->x, event->y);
+        }
+        else if (skin_test_coord (SPR_BALANCE_1, event->x, event->y)) {
+            mlock = SPR_BALANCE_1;
+            skin_balance_update (event->x, event->y);
+        }
+        else {
+            skin_buttons_update (event->x, event->y);
+        }
         gtk_widget_queue_draw (widget);
         return TRUE;
     }
@@ -1305,6 +1634,32 @@ main_button_release (GtkWidget       *widget,
         gpointer         user_data) {
     if (TEST_LEFT_CLICK (event)) {
         m1on = 0;
+        mlock = -1;
+
+        if (skin_button != -1) {
+            switch (skin_button) {
+            case SPR_CBUTTON_PREV:
+                deadbeef->sendmessage (DB_EV_PREV, 0, 0, 0);
+                break;
+            case SPR_CBUTTON_PLAY:
+                on_playbtn_clicked (NULL, NULL);
+                break;
+            case SPR_CBUTTON_PAUSE:
+                deadbeef->sendmessage (DB_EV_TOGGLE_PAUSE, 0, 0, 0);
+                break;
+            case SPR_CBUTTON_STOP:
+                deadbeef->sendmessage (DB_EV_STOP, 0, 0, 0);
+                break;
+            case SPR_CBUTTON_NEXT:
+                deadbeef->sendmessage (DB_EV_NEXT, 0, 0, 0);
+                break;
+            case SPR_CBUTTON_OPEN:
+                on_open_activate (NULL, NULL);
+                break;
+            }
+        }
+
+        skin_button = -1;
         gtk_widget_queue_draw (widget);
         return TRUE;
     }
