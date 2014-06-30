@@ -507,9 +507,11 @@ plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle) {
     // check if same plugin with the same or bigger version is loaded already
     plugin_t *prev = NULL;
     for (plugin_t *p = plugins; p; prev = p, p = p->next) {
-        if (p->plugin->id && plugin_api->id && !strcmp (p->plugin->id, plugin_api->id)) {
+        int same_id = p->plugin->id && plugin_api->id && !strcmp (p->plugin->id, plugin_api->id);
+        int same_name = p->plugin->name && plugin_api->name && !strcmp (p->plugin->name, plugin_api->name);
+        if (same_id || same_name) {
             if (plugin_api->version_major > p->plugin->version_major || (plugin_api->version_major == p->plugin->version_major && plugin_api->version_minor > p->plugin->version_minor)) {
-                trace ("found newer version of plugin \"%s\", replacing\n", plugin_api->id);
+                trace ("found newer version of plugin \"%s\" (%s), replacing\n", plugin_api->id, plugin_api->name);
                 // unload older plugin before replacing
                 dlclose (p->handle);
                 if (prev) {
@@ -524,7 +526,7 @@ plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle) {
                 free (p);
             }
             else {
-                trace ("found copy of plugin \"%s\", but newer version is already loaded\n", plugin_api->id)
+                trace ("found copy of plugin \"%s\" (%s), but newer version is already loaded\n", plugin_api->id, plugin_api->name)
                 return -1;
             }
         }
