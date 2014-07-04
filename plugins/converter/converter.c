@@ -1019,7 +1019,7 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
                     }
 
                     uint64_t chunksize;
-                    chunksize = size + 36;
+                    chunksize = size + 40;
 
                     // for float, add 36 more
                     if (output_is_float) {
