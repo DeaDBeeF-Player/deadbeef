@@ -122,7 +122,7 @@ static time_t artwork_reset_time;
 static char artwork_filemask[200];
 
 static const char *get_default_cover (void) {
-return default_cover;
+    return default_cover;
 }
 
 static int
@@ -1387,7 +1387,7 @@ find_image (const char *path) {
         // invalidate cache every 2 days
         if ((cache_period > 0 && (tm - stat_buf.st_mtime > cache_period * 60 * 60))
                 || artwork_reset_time > stat_buf.st_mtime) {
-            trace ("reloading cached file %s\n", path);
+            trace ("deleting cached file %s\n", path);
             unlink (path);
             return NULL;
         }
