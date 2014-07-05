@@ -144,10 +144,15 @@ make_cache_dir_path (char *path, int size, const char *artist, int img_size) {
     char esc_artist[PATH_MAX];
     int i;
 
-    for (i = 0; artist[i]; i++) {
-        esc_artist[i] = esc_char (artist[i]);
+    if (artist) {
+        for (i = 0; artist[i]; i++) {
+            esc_artist[i] = esc_char (artist[i]);
+        }
+        esc_artist[i] = 0;
     }
-    esc_artist[i] = 0;
+    else {
+        strcpy (esc_artist, "Unknown artist");
+    }
 
     const char *cache = getenv ("XDG_CACHE_HOME");
     int sz;
