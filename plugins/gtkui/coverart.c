@@ -43,6 +43,7 @@ GdkPixbuf *pixbuf_default;
 
 typedef struct {
     struct timeval tm;
+    time_t file_time;
     char *fname;
     int width;
     GdkPixbuf *pixbuf;
@@ -70,6 +71,8 @@ static uintptr_t cond;
 static uintptr_t tid;
 load_query_t *queue;
 load_query_t *tail;
+
+static int64_t artwork_reset_time;
 
 static void
 queue_add (const char *fname, int width, void (*callback) (void *user_data), void *user_data) {
@@ -175,11 +178,14 @@ loading_thread (void *none) {
             }
             GdkPixbuf *pixbuf = NULL;
             GError *error = NULL;
-            pixbuf = gdk_pixbuf_new_from_file_at_scale (queue->fname, queue->width, queue->width, TRUE, &error);
-            if (error) {
-                //fprintf (stderr, "gdk_pixbuf_new_from_file_at_scale %s %d failed, error: %s\n", queue->fname, queue->width, error ? error->message : "n/a");
-                g_error_free (error);
-                error = NULL;
+            struct stat stat_buf;
+            if (!stat (queue->fname, &stat_buf)) {
+                pixbuf = gdk_pixbuf_new_from_file_at_scale (queue->fname, queue->width, queue->width, TRUE, &error);
+                if (error) {
+                    //fprintf (stderr, "gdk_pixbuf_new_from_file_at_scale %s %d failed, error: %s\n", queue->fname, queue->width, error ? error->message : "n/a");
+                    g_error_free (error);
+                    error = NULL;
+                }
             }
             if (!pixbuf) {
                 pixbuf = pixbuf_default;
@@ -189,6 +195,7 @@ loading_thread (void *none) {
                 deadbeef->mutex_lock (mutex);
                 cache[cache_min].pixbuf = pixbuf;
                 cache[cache_min].fname = strdup (queue->fname);
+                cache[cache_min].file_time  = stat_buf.st_mtime;
                 gettimeofday (&cache[cache_min].tm, NULL);
                 cache[cache_min].width = queue->width;
                 deadbeef->mutex_unlock (mutex);
@@ -405,4 +412,27 @@ cover_get_default_pixbuf (void) {
 int
 gtkui_is_default_pixbuf (GdkPixbuf *pb) {
     return pb == pixbuf_default;
+}
+
+int
+gtkui_cover_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    switch (id) {
+    case DB_EV_PLAYLIST_REFRESH:
+        {
+            int64_t reset_time = deadbeef->conf_get_int64 ("artwork.cache_reset_time", 0);;
+            if (reset_time != artwork_reset_time) {
+                artwork_reset_time = reset_time;
+                deadbeef->mutex_lock (mutex);
+                for (int i = 0; i < CACHE_SIZE; i++) {
+                    if (cache[i].pixbuf) {
+                        g_object_unref (cache[i].pixbuf);
+                    }
+                }
+                memset (cache, 0, sizeof (cache));
+                deadbeef->mutex_unlock (mutex);
+            }
+        }
+        break;
+    }
+    return 0;
 }

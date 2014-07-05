@@ -2349,6 +2349,9 @@ static int
 coverart_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     w_coverart_t *ca = (w_coverart_t *)w;
     switch (id) {
+    case DB_EV_PLAYLIST_REFRESH:
+        g_idle_add (coverart_redraw_cb, w);
+        break;
     case DB_EV_SONGSTARTED:
         g_idle_add (coverart_redraw_cb, w);
         break;
