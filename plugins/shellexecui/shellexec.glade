@@ -11,7 +11,7 @@
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
   <property name="resizable">True</property>
-  <property name="destroy_with_parent">False</property>
+  <property name="destroy_with_parent">True</property>
   <property name="decorated">True</property>
   <property name="skip_taskbar_hint">False</property>
   <property name="skip_pager_hint">False</property>
@@ -20,6 +20,7 @@
   <property name="focus_on_map">True</property>
   <property name="urgency_hint">False</property>
   <property name="has_separator">False</property>
+  <signal name="destroy" handler="on_shellexec_conf_dialog_destroy" last_modification_time="Fri, 27 Jun 2014 18:45:21 GMT"/>
 
   <child internal-child="vbox">
     <widget class="GtkVBox" id="dialog-vbox">

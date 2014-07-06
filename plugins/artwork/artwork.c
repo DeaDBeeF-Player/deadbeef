@@ -122,7 +122,7 @@ static time_t artwork_reset_time;
 static char artwork_filemask[200];
 
 static const char *get_default_cover (void) {
-return default_cover;
+    return default_cover;
 }
 
 static int
@@ -144,10 +144,15 @@ make_cache_dir_path (char *path, int size, const char *artist, int img_size) {
     char esc_artist[PATH_MAX];
     int i;
 
-    for (i = 0; artist[i]; i++) {
-        esc_artist[i] = esc_char (artist[i]);
+    if (artist) {
+        for (i = 0; artist[i]; i++) {
+            esc_artist[i] = esc_char (artist[i]);
+        }
+        esc_artist[i] = 0;
     }
-    esc_artist[i] = 0;
+    else {
+        strcpy (esc_artist, "Unknown artist");
+    }
 
     const char *cache = getenv ("XDG_CACHE_HOME");
     int sz;
@@ -906,6 +911,43 @@ id3v2_skip_str (int enc, uint8_t *ptr, uint8_t *end) {
     return NULL;
 }
 
+#ifdef USE_METAFLAC
+static size_t
+flac_io_read (void *ptr, size_t size, size_t nmemb, FLAC__IOHandle handle) {
+    return deadbeef->fread (ptr, size, nmemb, (DB_FILE *)handle);
+}
+
+static int
+flac_io_seek (FLAC__IOHandle handle, FLAC__int64 offset, int whence) {
+    return deadbeef->fseek ((DB_FILE *)handle, offset, whence);
+}
+
+static FLAC__int64
+flac_io_tell (FLAC__IOHandle handle) {
+    return deadbeef->ftell ((DB_FILE *)handle);
+}
+
+static int
+flac_io_eof (FLAC__IOHandle handle) {
+    int64_t pos = deadbeef->ftell ((DB_FILE *)handle);
+    return pos == deadbeef->fgetlength ((DB_FILE *)handle);
+}
+
+static int
+flac_io_close (FLAC__IOHandle handle) {
+    deadbeef->fclose ((DB_FILE *)handle);
+    return 0;
+}
+
+static FLAC__IOCallbacks iocb = {
+    .read = flac_io_read,
+    .write = NULL,
+    .seek = flac_io_seek,
+    .tell = flac_io_tell,
+    .eof = flac_io_eof,
+    .close = flac_io_close,
+};
+#endif
 
 static void
 fetcher_thread (void *none)
@@ -964,11 +1006,23 @@ fetcher_thread (void *none)
                                             trace ("artwork: id3v2 APIC frame is too small\n");
                                             continue;
                                         }
+
                                         uint8_t *data = f->data;
-                                        if (tag.version[0] == 4) {
-                                            // skip size
+
+                                        if (tag.version[0] == 4 && (f->flags[1] & 1)) {
                                             data += 4;
                                         }
+#if 0
+                                        printf ("version: %d, flags: %d %d\n", (int)tag.version[0], (int)f->flags[0], (int)f->flags[1]);
+                                        for (int i = 0; i < 20; i++) {
+                                            printf ("%c", data[i] < 0x20 ? '?' : data[i]);
+                                        }
+                                        printf ("\n");
+                                        for (int i = 0; i < 20; i++) {
+                                            printf ("%02x ", data[i]);
+                                        }
+                                        printf ("\n");
+#endif
                                         uint8_t *end = f->data + f->size;
                                         int enc = *data;
                                         data++; // enc
@@ -1112,11 +1166,29 @@ fetcher_thread (void *none)
                             is_ogg = 1;
                         }
 
-                        if(! (is_ogg? FLAC__metadata_chain_read_ogg(chain, filename) : FLAC__metadata_chain_read(chain, filename)) ) {
-                            trace ("%s: ERROR: reading metadata", filename);
+                        DB_FILE *file = deadbeef->fopen (filename);
+                        if (!file) {
+                            break;
+                        }
+
+                        int res = 0;
+                        if (is_ogg) {
+#if USE_OGG
+                            res = FLAC__metadata_chain_read_ogg_with_callbacks(chain, (FLAC__IOHandle)file, iocb);
+#endif
+                        }
+                        else
+                        {
+                            res = FLAC__metadata_chain_read_with_callbacks(chain, (FLAC__IOHandle)file, iocb);
+                        }
+
+                        if(!res) {
+                            trace ("artwork: failed to read metadata from flac: %s\n", filename);
+                            deadbeef->fclose (file);
                             FLAC__metadata_chain_delete(chain);
                             break;
                         }
+                        deadbeef->fclose (file);
                         FLAC__StreamMetadata *picture = 0;
                         FLAC__Metadata_Iterator *iterator = FLAC__metadata_iterator_new();
                         FLAC__metadata_iterator_init(iterator, chain);
@@ -1207,17 +1279,24 @@ fetcher_thread (void *none)
 
                     if (files_count > 0) {
                         trace ("found cover for %s - %s in local folder\n", param->artist, param->album);
-                        if (check_dir (path, 0755)) {
-                            strcat (path, "/");
-                            strcat (path, files[0]->d_name);
-                            char cache_path[1024];
-                            char tmp_path[1024];
-                            make_cache_path2 (cache_path, sizeof (cache_path), param->fname, param->album, param->artist, -1);
+                        strcat (path, "/");
+                        strcat (path, files[0]->d_name);
+                        char cache_path[PATH_MAX];
+                        char tmp_path[PATH_MAX];
+                        char cache_path_dir[PATH_MAX];
+                        make_cache_path2 (cache_path, sizeof (cache_path), param->fname, param->album, param->artist, -1);
+                        strcpy (cache_path_dir, cache_path);
+                        char *slash = strrchr (cache_path_dir, '/');
+                        if (slash) {
+                            *slash = 0;
+                        }
+                        trace ("check_dir: %s\n", cache_path_dir);
+                        if (check_dir (cache_path_dir, 0755)) {
                             snprintf (tmp_path, sizeof (tmp_path), "%s.part", cache_path);
                             copy_file (path, tmp_path, -1);
                             int err = rename (tmp_path, cache_path);
                             if (err != 0) {
-                                trace ("Failed to move %s to %s: %s\n", tmp_path, cache_path, strerror (err));
+                                trace ("artwork: rename error %d: failed to move %s to %s: %s\n", err, tmp_path, cache_path, strerror (err));
                                 unlink (tmp_path);
                             }
                             int i;
@@ -1308,7 +1387,7 @@ find_image (const char *path) {
         // invalidate cache every 2 days
         if ((cache_period > 0 && (tm - stat_buf.st_mtime > cache_period * 60 * 60))
                 || artwork_reset_time > stat_buf.st_mtime) {
-            trace ("reloading cached file %s\n", path);
+            trace ("deleting cached file %s\n", path);
             unlink (path);
             return NULL;
         }

@@ -82,8 +82,8 @@ __asm__(".symver __ctype_tolower,__ctype_tolower@GLIBC_2.2.5");
 __asm__(".symver __ctype_toupper,__ctype_toupper@GLIBC_2.2.5");
 #else
 __asm__(".symver __ctype_b,__ctype_b@GLIBC_2.0");
-__asm__(".symver __ctype_tolower,__ctype_tolower@GLIBC_2.2.5");
-__asm__(".symver __ctype_toupper,__ctype_toupper@GLIBC_2.2.5");
+__asm__(".symver __ctype_tolower,__ctype_tolower@GLIBC_2.0");
+__asm__(".symver __ctype_toupper,__ctype_toupper@GLIBC_2.0");
 #endif
 
 #define	__isctype(c, type) \

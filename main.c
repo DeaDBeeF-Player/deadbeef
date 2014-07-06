@@ -278,6 +278,19 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             }
             continue;
         }
+        else if (!strcmp (parg, "--gui")) {
+            parg += strlen (parg);
+            parg++;
+            if (parg >= pend) {
+                fprintf (stderr, "--gui parameter needs an argument. E.g. GTK2 or GTK3.\n");
+                break;
+            }
+            strncpy (use_gui_plugin, parg, sizeof(use_gui_plugin) - 1);
+            use_gui_plugin[sizeof(use_gui_plugin) - 1] = 0;
+            parg += strlen (parg);
+            parg++;
+            continue;
+        }
         else if (parg[0] != '-') {
             break; // unknown option is filename
         }
@@ -858,12 +871,8 @@ main (int argc, char *argv[]) {
             return 0;
         }
         else if (!strcmp (argv[i], "--version")) {
-            fprintf (stdout, "DeaDBeeF " VERSION " Copyright © 2009-2013 Alexey Yakovenko\n");
+            fprintf (stderr, "DeaDBeeF " VERSION " Copyright © 2009-2013 Alexey Yakovenko\n");
             return 0;
-        }
-        else if (!strcmp (argv[i], "--gui")) {
-            strncpy (use_gui_plugin, argv[i], sizeof(use_gui_plugin) - 1);
-            use_gui_plugin[sizeof(use_gui_plugin) - 1] = 0;
         }
     }
 

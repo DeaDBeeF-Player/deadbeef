@@ -66,7 +66,7 @@ void InitADSR(void)                                    // INIT ADSR
 
 ////////////////////////////////////////////////////////////////////////
 
-INLINE void StartADSR(spu2_state_t *spu, int ch)                          // MIX ADSR
+static INLINE void StartADSR(spu2_state_t *spu, int ch)                          // MIX ADSR
 {
  spu->s_chan[ch].ADSRX.lVolume=1;                           // and init some adsr vars
  spu->s_chan[ch].ADSRX.State=0;
@@ -75,7 +75,7 @@ INLINE void StartADSR(spu2_state_t *spu, int ch)                          // MIX
 
 ////////////////////////////////////////////////////////////////////////
 
-INLINE int MixADSR(spu2_state_t *spu, int ch)                             // MIX ADSR
+static INLINE int MixADSR(spu2_state_t *spu, int ch)                             // MIX ADSR
 {    
  if(spu->s_chan[ch].bStop)                                  // should be stopped:
   {                                                    // do release

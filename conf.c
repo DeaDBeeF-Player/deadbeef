@@ -291,7 +291,7 @@ conf_set_int (const char *key, int val) {
 void
 conf_set_int64 (const char *key, int64_t val) {
     char s[20];
-    snprintf (s, sizeof (s), PRId64, val);
+    snprintf (s, sizeof (s), "%"PRId64, val);
     conf_set_str (key, s);
 }
 

@@ -50,6 +50,11 @@ uint16_t sj_to_unicode[] = {
 #include <ctype.h>
 #include <unistd.h>
 #include <assert.h>
+#include <fcntl.h>
+#ifndef __linux__
+#define O_LARGEFILE 0
+#endif
+#include <sys/stat.h>
 #include "playlist.h"
 #include "utf8.h"
 #include "plugins.h"
@@ -986,6 +991,106 @@ junk_id3v1_read (playItem_t *it, DB_FILE *fp) {
 }
 
 int
+junk_id3v1_write2 (int fd, playItem_t *it, const char *enc) {
+    char title[30] = "";
+    char artist[30] = "";
+    char album[30] = "";
+    char year[4] = "";
+    char comment[28] = "";
+    uint8_t genreid = 0xff;
+    uint8_t tracknum = 0;
+
+    const char *meta;
+
+    pl_lock ();
+
+#define conv(name, store) {\
+    memset (store, 0x20, sizeof (store));\
+    meta = pl_find_meta (it, name);\
+    if (meta) {\
+        char temp[1000];\
+        int l = junk_iconv (meta, strlen (meta), temp, sizeof (temp), UTF8_STR, enc);\
+        if (l == -1) {\
+            memset (store, 0, sizeof (store));\
+        }\
+        else {\
+            strncpy (store, temp, sizeof (store));\
+        }\
+        char *cr = strchr (store, '\n');\
+        if (cr) {\
+            *cr = 0;\
+        }\
+    }\
+}
+
+    conv ("title", title);
+    conv ("artist", artist);
+    conv ("album", album);
+    conv ("year", year);
+    conv ("comment", comment);
+
+#undef conv
+
+    // tracknum
+    meta = pl_find_meta (it, "track");
+    if (meta) {
+        tracknum = atoi (meta);
+    }
+
+    // find genre
+    meta = pl_find_meta (it, "genre");
+    if (meta) {
+        for (int i = 0; junk_genretbl[i]; i++) {
+            if (!strcasecmp (meta, junk_genretbl[i])) {
+                genreid = i;
+                break;
+            }
+        }
+    }
+
+    pl_unlock ();
+
+    if (write (fd, "TAG", 3) != 3) {
+        trace ("junk_id3v1_write: failed to write signature\n");
+        return -1;
+    }
+    if (write (fd, title, sizeof (title)) != sizeof (title)) {
+        trace ("junk_id3v1_write: failed to write title\n");
+        return -1;
+    }
+    if (write (fd, artist, sizeof (artist)) != sizeof (artist)) {
+        trace ("junk_id3v1_write: failed to write artist\n");
+        return -1;
+    }
+    if (write (fd, album, sizeof (album)) != sizeof (album)) {
+        trace ("junk_id3v1_write: failed to write album\n");
+        return -1;
+    }
+    if (write (fd, year, sizeof (year)) != sizeof (year)) {
+        trace ("junk_id3v1_write: failed to write year\n");
+        return -1;
+    }
+    if (write (fd, comment, sizeof (comment)) != sizeof (comment)) {
+        trace ("junk_id3v1_write: failed to write comment\n");
+        return -1;
+    }
+    uint8_t zero = 0;
+    if (write (fd, &zero, 1) != 1) {
+        trace ("junk_id3v1_write: failed to write id3v1.1 marker\n");
+        return -1;
+    }
+    if (write (fd, &tracknum, 1) != 1) {
+        trace ("junk_id3v1_write: failed to write track\n");
+        return -1;
+    }
+    if (write (fd, &genreid, 1) != 1) {
+        trace ("junk_id3v1_write: failed to write genre\n");
+        return -1;
+    }
+    return 0;
+}
+
+int
 junk_id3v1_write (FILE *fp, playItem_t *it, const char *enc) {
     char title[30] = "";
     char artist[30] = "";
@@ -1085,8 +1190,8 @@ junk_id3v1_write (FILE *fp, playItem_t *it, const char *enc) {
     return 0;
 }
 
-int
-junk_id3v1_find (DB_FILE *fp) {
+int64_t
+junk_id3v1_find2 (DB_FILE *fp) {
     uint8_t buffer[3];
     if (deadbeef->fseek (fp, -128, SEEK_END) == -1) {
         return -1;
@@ -1101,7 +1206,17 @@ junk_id3v1_find (DB_FILE *fp) {
 }
 
 int
-junk_apev2_find (DB_FILE *fp, int32_t *psize, uint32_t *pflags, uint32_t *pnumitems) {
+junk_id3v1_find (DB_FILE *fp) {
+    int64_t pos = junk_id3v1_find2 (fp);
+    // 32 bit overflow protection
+    if (pos > 0x7fffffff) {
+        return -1;
+    }
+    return pos;
+}
+
+int64_t
+junk_apev2_find2 (DB_FILE *fp, int32_t *psize, uint32_t *pflags, uint32_t *pnumitems) {
     uint8_t header[32];
     if (deadbeef->fseek (fp, -32, SEEK_END) == -1) {
         return -1; // something bad happened
@@ -1144,6 +1259,16 @@ junk_apev2_find (DB_FILE *fp, int32_t *psize, uint32_t *pflags, uint32_t *pnumit
     *pflags = flags;
     *pnumitems = numitems;
     return deadbeef->ftell (fp);
+}
+
+int
+junk_apev2_find (DB_FILE *fp, int32_t *psize, uint32_t *pflags, uint32_t *pnumitems) {
+    int64_t pos = junk_apev2_find2 (fp, psize, pflags, pnumitems);
+    // 32 bit overflow protection
+    if (pos > 0x7fffffff) {
+        return -1;
+    }
+    return pos;
 }
 
 int
@@ -1967,11 +2092,11 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
         flags[0] = f24->flags[0] << 1;
         
         // 2nd byte (format flags) is quite different
-        // 2.4 format is %0h00kmnp (grouping, compression, encryption, unsync)
-        // 2.3 format is %ijk00000 (compression, encryption, grouping)
+        // 2.4 format is %0h00kmnp (6:grouping, 3:compression, 2:encryption, 1:unsync, 0:datalen)
+        // 2.3 format is %ijk00000 (7:compression, 6:encryption, 5:grouping)
         flags[1] = 0;
         if (f24->flags[1] & (1 << 6)) {
-            flags[1] |= (1 << 4);
+            flags[1] |= (1 << 5);
         }
         if (f24->flags[1] & (1 << 3)) {
             flags[1] |= (1 << 7);
@@ -1980,19 +2105,26 @@ junk_id3v2_convert_24_to_23 (DB_id3v2_tag_t *tag24, DB_id3v2_tag_t *tag23) {
             flags[1] |= (1 << 6);
         }
         if (f24->flags[1] & (1 << 1)) {
-            flags[1] |= (1 << 5);
-        }
-        if (f24->flags[1] & 1) {
             // 2.3 doesn't support per-frame unsyncronyzation
-            // let's ignore it
+        }
+        if (f24->flags[1] & (1 << 0)) {
+            // 2.3 doesn't support data length, but remember to skip 4 bytes of
+            // the frame
         }
 
         if (simplecopy) {
             f23 = malloc (sizeof (DB_id3v2_frame_t) + f24->size);
             memset (f23, 0, sizeof (DB_id3v2_frame_t) + f24->size);
             strcpy (f23->id, f24->id);
-            f23->size = f24->size;
-            memcpy (f23->data, f24->data, f24->size);
+            if (f24->flags[1] & (1<<0)) {
+                // skip 1st 4 bytes (2.4 data length indicator)
+                memcpy (f23->data, f24->data+4, f24->size-4);
+                f23->size = f24->size-4;
+            }
+            else {
+                f23->size = f24->size;
+                memcpy (f23->data, f24->data, f24->size);
+            }
             f23->flags[0] = flags[0];
             f23->flags[1] = flags[1];
         }
@@ -2152,12 +2284,9 @@ junk_id3v2_convert_23_to_24 (DB_id3v2_tag_t *tag23, DB_id3v2_tag_t *tag24) {
         flags[0] = f23->flags[0] >> 1;
         
         // 2nd byte (format flags) is quite different
-        // 2.4 format is %0h00kmnp (grouping, compression, encryption, unsync)
-        // 2.3 format is %ijk00000 (compression, encryption, grouping)
+        // 2.4 format is %0h00kmnp (6:grouping, 3:compression, 2:encryption, 1:unsync, 0:datalen)
+        // 2.3 format is %ijk00000 (7:compression, 6:encryption, 5:grouping)
         flags[1] = 0;
-        if (f23->flags[1] & (1 << 4)) {
-            flags[1] |= (1 << 6);
-        }
         if (f23->flags[1] & (1 << 7)) {
             flags[1] |= (1 << 3);
         }
@@ -2165,7 +2294,7 @@ junk_id3v2_convert_23_to_24 (DB_id3v2_tag_t *tag23, DB_id3v2_tag_t *tag24) {
             flags[1] |= (1 << 2);
         }
         if (f23->flags[1] & (1 << 5)) {
-            flags[1] |= (1 << 1);
+            flags[1] |= (1 << 6);
         }
 
         DB_id3v2_frame_t *f24 = NULL;
@@ -2659,6 +2788,20 @@ junk_id3v2_convert_apev2_to_24 (DB_apev2_tag_t *ape, DB_id3v2_tag_t *tag24) {
 }
 
 int
+junk_apev2_write_i32_le2 (int fd, uint32_t data) {
+    int shift = 0;
+    for (int i = 0; i < 4; i++) {
+        uint8_t d = (data >> shift) & 0xff;
+        if (write (fd, &d, 1) != 1) {
+            return -1;
+        }
+        shift += 8;
+    }
+
+    return 0;
+}
+
+int
 junk_apev2_write_i32_le (FILE *fp, uint32_t data) {
     int shift = 0;
     for (int i = 0; i < 4; i++) {
@@ -2671,6 +2814,108 @@ junk_apev2_write_i32_le (FILE *fp, uint32_t data) {
 
     return 0;
 }
+
+int
+junk_apev2_write2 (int fd, DB_apev2_tag_t *tag, int write_header, int write_footer) {
+    // calc size and numitems
+    uint32_t numframes = 0;
+    uint32_t size = 0;
+    DB_apev2_frame_t *f = tag->frames;
+    while (f) {
+        size += 8 + strlen (f->key) + 1 + f->size;
+        numframes++;
+        f = f->next;
+    }
+    size += 32;
+
+    trace ("junk_apev2_write2: writing apev2 tag, size=%d, numframes=%d\n", size, numframes);
+
+
+    if (write_header) {
+        if (write (fd, "APETAGEX", 8) != 8) {
+            trace ("junk_apev2_write2: failed to write apev2 header signature\n");
+            goto error;
+        }
+        uint32_t flags = (1 << 31) | (1 << 29); // contains header, this is header
+        if (!write_footer) {
+            flags |= 1 << 30; // contains no footer
+        }
+        uint32_t header[4] = {
+            2000, // version
+            size,
+            numframes,
+            flags
+        };
+        for (int i = 0; i < 4; i++) {
+            if (junk_apev2_write_i32_le2 (fd, header[i]) != 0) {
+                trace ("junk_apev2_write_i32_le2: failed to write apev2 header\n");
+                goto error;
+            }
+        }
+        // write 8 bytes of padding
+        header[0] = header[1] = 0;
+        if (write (fd, header, 8) != 8) {
+            trace ("junk_apev2_write2: failed to write apev2 header padding\n");
+            goto error;
+        }
+    }
+
+    // write items
+    f = tag->frames;
+    while (f) {
+        if (junk_apev2_write_i32_le2 (fd, f->size) != 0) {
+            trace ("junk_apev2_write_i32_le2: failed to write apev2 item size\n");
+            goto error;
+        }
+        if (junk_apev2_write_i32_le2 (fd, f->flags) != 0) {
+            trace ("junk_apev2_write_i32_le2: failed to write apev2 item flags\n");
+            goto error;
+        }
+        int l = strlen (f->key) + 1;
+        if (write (fd, f->key, l) != l) {
+            trace ("junk_apev2_write2: failed to write apev2 item key\n");
+            goto error;
+        }
+        if (write (fd, f->data, f->size) != f->size) {
+            trace ("junk_apev2_write2: failed to write apev2 item value\n");
+            goto error;
+        }
+        f = f->next;
+    }
+
+    if (write_footer) {
+        if (write (fd, "APETAGEX", 8) != 8) {
+            trace ("junk_apev2_write: failed to write apev2 footer signature\n");
+            goto error;
+        }
+        uint32_t flags = 0;
+        if (write_header) {
+            flags |= 1 << 31;
+        }
+        uint32_t header[4] = {
+            2000, // version
+            size,
+            numframes,
+            flags
+        };
+        for (int i = 0; i < 4; i++) {
+            if (junk_apev2_write_i32_le2 (fd, header[i]) != 0) {
+                trace ("junk_apev2_write_i32_le2: failed to write apev2 footer\n");
+                goto error;
+            }
+        }
+        // write 8 bytes of padding
+        header[0] = header[1] = 0;
+        if (write (fd, header, 8) != 8) {
+            trace ("junk_apev2_write2: failed to write apev2 footer padding\n");
+            goto error;
+        }
+    }
+    return 0;
+error:
+    return -1;
+}
+
 
 int
 junk_apev2_write (FILE *fp, DB_apev2_tag_t *tag, int write_header, int write_footer) {
@@ -2771,6 +3016,108 @@ junk_apev2_write (FILE *fp, DB_apev2_tag_t *tag, int write_header, int write_foo
     return 0;
 error:
     return -1;
+}
+
+int
+junk_id3v2_write2 (int out, DB_id3v2_tag_t *tag) {
+    if (tag->version[0] < 3) {
+        fprintf (stderr, "junk_write_id3v2: writing id3v2.2 is not supported\n");
+        return -1;
+    }
+
+    FILE *fp = NULL;
+    char *buffer = NULL;
+    int err = -1;
+
+    // write tag header
+    if (write (out, "ID3", 3) != 3) {
+        fprintf (stderr, "junk_write_id3v2: failed to write ID3 signature\n");
+        goto error;
+    }
+
+    if (write (out, tag->version, 2) != 2) {
+        fprintf (stderr, "junk_write_id3v2: failed to write tag version\n");
+        goto error;
+    }
+    uint8_t flags = tag->flags;
+    flags &= ~(1<<6); // we don't (yet?) write ext header
+    flags &= ~(1<<4); // we don't write footer
+
+    if (write (out, &flags, 1) != 1) {
+        fprintf (stderr, "junk_write_id3v2: failed to write tag flags\n");
+        goto error;
+    }
+    // run through list of frames, and calculate size
+    uint32_t sz = 0;
+    for (DB_id3v2_frame_t *f = tag->frames; f; f = f->next) {
+        // each tag has 10 bytes header
+        if (tag->version[0] > 2) {
+            sz += 10;
+        }
+        else {
+            sz += 6;
+        }
+        sz += f->size;
+    }
+
+    trace ("calculated tag size: %d bytes\n", sz);
+    uint8_t tagsize[4];
+    tagsize[0] = (sz >> 21) & 0x7f;
+    tagsize[1] = (sz >> 14) & 0x7f;
+    tagsize[2] = (sz >> 7) & 0x7f;
+    tagsize[3] = sz & 0x7f;
+    if (write (out, tagsize, 4) != 4) {
+        fprintf (stderr, "junk_write_id3v2: failed to write tag size\n");
+        goto error;
+    }
+
+    trace ("writing frames\n");
+    // write frames
+    for (DB_id3v2_frame_t *f = tag->frames; f; f = f->next) {
+        trace ("writing frame %s size %d\n", f->id, f->size);
+        int id_size = 3;
+        uint8_t frame_size[4];
+        if (tag->version[0] > 2) {
+            id_size = 4;
+        }
+        if (tag->version[0] == 3) {
+            frame_size[0] = (f->size >> 24) & 0xff;
+            frame_size[1] = (f->size >> 16) & 0xff;
+            frame_size[2] = (f->size >> 8) & 0xff;
+            frame_size[3] = f->size & 0xff;
+        }
+        else if (tag->version[0] == 4) {
+            frame_size[0] = (f->size >> 21) & 0x7f;
+            frame_size[1] = (f->size >> 14) & 0x7f;
+            frame_size[2] = (f->size >> 7) & 0x7f;
+            frame_size[3] = f->size & 0x7f;
+        }
+        if (write (out, f->id, 4) != 4) {
+            fprintf (stderr, "junk_write_id3v2: failed to write frame id %s\n", f->id);
+            goto error;
+        }
+        if (write (out, frame_size, 4) != 4) {
+            fprintf (stderr, "junk_write_id3v2: failed to write frame size, id %s, size %d\n", f->id, f->size);
+            goto error;
+        }
+        if (write (out, f->flags, 2) != 2) {
+            fprintf (stderr, "junk_write_id3v2: failed to write frame header flags, id %s, size %d\n", f->id, f->size);
+            goto error;
+        }
+        if (write (out, f->data, f->size) != f->size) {
+            fprintf (stderr, "junk_write_id3v2: failed to write frame data, id %s, size %d\n", f->id, f->size);
+            goto error;
+        }
+        sz += f->size;
+    }
+
+    return 0;
+
+error:
+    if (buffer) {
+        free (buffer);
+    }
+    return err;
 }
 
 int
@@ -3340,12 +3687,6 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
             if (unsync) {
                 synched_size = junklib_id3v2_sync_frame (readptr, sz);
                 trace ("size: %d/%d\n", synched_size, sz);
-
-#if 0 // that was a workaround for corrupted unsynced tag, do not use
-                if (synched_size != sz) {
-                    sz = sz + (sz-synched_size);
-                }
-#endif
             }
 
             if (tag_store) {
@@ -3709,7 +4050,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
     int err = -1;
     char *buffer = NULL;
     DB_FILE *fp = NULL;
-    FILE *out = NULL;
+    int out = -1;
 
     uint32_t item_flags = pl_get_item_flags (it);
 
@@ -3732,7 +4073,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
         return -1;
     }
 
-    int fsize = deadbeef->fgetlength (fp);
+    int64_t fsize = deadbeef->fgetlength (fp);
     int id3v2_size = 0;
     int id3v2_start = deadbeef->junk_id3v2_find (fp, &id3v2_size);
     if (id3v2_start == -1) {
@@ -3741,7 +4082,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
 
     int32_t apev2_size;
     uint32_t flags, numitems;
-    int apev2_start = deadbeef->junk_apev2_find (fp, &apev2_size, &flags, &numitems);
+    int64_t apev2_start = junk_apev2_find2 (fp, &apev2_size, &flags, &numitems);
     if (apev2_start == -1) {
         apev2_start = 0;
     }
@@ -3750,17 +4091,17 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
         apev2_start = 0;
     }
 
-    int id3v1_start = deadbeef->junk_id3v1_find (fp);
+    int64_t id3v1_start = junk_id3v1_find2 (fp);
     if (id3v1_start == -1) {
         id3v1_start = 0;
     }
 
-    int header = 0;
+    int64_t header = 0;
     if (id3v2_size > 0) {
         header = id3v2_start + id3v2_size;
     }
 
-    int footer = fsize;
+    int64_t footer = fsize;
 
     if (id3v1_start > 0) {
         footer = id3v1_start;
@@ -3769,17 +4110,19 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
         footer = min (footer, apev2_start);
     }
 
-    trace ("header size: %d, footer size: %d\n", header, fsize-footer);
+    trace ("header size: %lld, footer size: %lld\n", header, fsize-footer);
 
     // "TRCK" -- special case
     // "TYER"/"TDRC" -- special case
 
     // open output file
-    out = NULL;
-
-    out = fopen (tmppath, "w+b");
+    struct stat stat_struct;
+    if (stat(fname, &stat_struct) != 0) {
+        stat_struct.st_mode = 00640;
+    }
+    out = open (tmppath, O_CREAT | O_LARGEFILE | O_WRONLY, stat_struct.st_mode);
     trace ("will write tags into %s\n", tmppath);
-    if (!out) {
+    if (out < 0) {
         fprintf (stderr, "cmp3_write_metadata: failed to open temp file %s\n", tmppath);
         goto error;
     }
@@ -3805,7 +4148,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             free (buf);
             goto error;
         }
-        if (fwrite (buf, 1, id3v2_size, out) != id3v2_size) {
+        if (write (out, buf, id3v2_size) != id3v2_size) {
             trace ("cmp3_write_metadata: failed to copy original id3v2 tag from %s to temp file\n", pl_find_meta (it, ":URI"));
             free (buf);
             goto error;
@@ -3925,7 +4268,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
         pl_unlock ();
 
         // write tag
-        if (junk_id3v2_write (out, &id3v2) != 0) {
+        if (junk_id3v2_write2 (out, &id3v2) != 0) {
             trace ("cmp3_write_metadata: failed to write id3v2 tag to %s\n", pl_find_meta (it, ":URI"))
             goto error;
         }
@@ -3934,7 +4277,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
     // now write audio data
     buffer = malloc (8192);
     deadbeef->fseek (fp, header, SEEK_SET);
-    int writesize = fsize;
+    int64_t writesize = fsize;
     if (footer > 0) {
         writesize -= (fsize - footer);
     }
@@ -3948,7 +4291,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             fprintf (stderr, "junk_write_id3v2: error reading input data\n");
             goto error;
         }
-        if (fwrite (buffer, 1, rb, out) != rb) {
+        if (write (out, buffer, rb) != rb) {
             fprintf (stderr, "junk_write_id3v2: error writing output file\n");
             goto error;
         }
@@ -3974,7 +4317,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             free (buf);
             goto error;
         }
-        if (fwrite (buf, 1, apev2_size, out) != apev2_size) {
+        if (write (out, buf, apev2_size) != apev2_size) {
             trace ("cmp3_write_metadata: failed to copy original apev2 tag from %s to temp file\n", pl_find_meta (it, ":URI"));
             free (buf);
             goto error;
@@ -4033,7 +4376,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
         pl_unlock ();
 
         // write tag
-        if (deadbeef->junk_apev2_write (out, &apev2, 0, 1) != 0) {
+        if (junk_apev2_write2 (out, &apev2, 0, 1) != 0) {
             trace ("cmp3_write_metadata: failed to write apev2 tag to %s\n", pl_find_meta (it, ":URI"))
             goto error;
         }
@@ -4050,14 +4393,14 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             trace ("cmp3_write_metadata: failed to read original id3v1 tag from %s\n", pl_find_meta (it, ":URI"));
             goto error;
         }
-        if (fwrite (buf, 1, 128, out) != 128) {
+        if (write (out, buf, 128) != 128) {
             trace ("cmp3_write_metadata: failed to copy id3v1 tag from %s to temp file\n", pl_find_meta (it, ":URI"));
             goto error;
         }
     }
     else if (write_id3v1) {
         trace ("writing new id3v1 tag\n");
-        if (junk_id3v1_write (out, it, id3v1_encoding) != 0) {
+        if (junk_id3v1_write2 (out, it, id3v1_encoding) != 0) {
             trace ("cmp3_write_metadata: failed to write id3v1 tag to %s\n", pl_find_meta (it, ":URI"))
             goto error;
         }
@@ -4091,7 +4434,8 @@ error:
         deadbeef->fclose (fp);
     }
     if (out) {
-        fclose (out);
+        close (out);
+        out = -1;
     }
     if (buffer) {
         free (buffer);
