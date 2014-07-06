@@ -911,6 +911,7 @@ on_encoder_preset_cursor_changed (GtkTreeView     *treeview,
                                         gpointer         user_data) {
     GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (treeview));
     GtkWidget *edit = lookup_widget (toplevel, "edit");
+    GtkWidget *remove = lookup_widget (toplevel, "remove");
 
     GtkTreePath *path;
     GtkTreeViewColumn *col;
@@ -918,6 +919,7 @@ on_encoder_preset_cursor_changed (GtkTreeView     *treeview,
     if (!path || !col) {
         // nothing selected
         gtk_widget_set_sensitive (edit, FALSE);
+        gtk_widget_set_sensitive (remove, FALSE);
         return;
     }
     int *indices = gtk_tree_path_get_indices (path);
@@ -926,6 +928,7 @@ on_encoder_preset_cursor_changed (GtkTreeView     *treeview,
 
     ddb_encoder_preset_t *p = converter_plugin->encoder_preset_get_for_idx (idx);
     gtk_widget_set_sensitive (edit, !p->readonly);
+    gtk_widget_set_sensitive (remove, !p->readonly);
 }
 
 
