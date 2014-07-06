@@ -103,7 +103,7 @@ void AICALFO_Init(void)
 	}
 }
 
-signed int INLINE AICAPLFO_Step(struct _LFO *LFO)
+static signed int INLINE AICAPLFO_Step(struct _LFO *LFO)
 {
 	int p;
 
@@ -116,7 +116,7 @@ signed int INLINE AICAPLFO_Step(struct _LFO *LFO)
 	return p<<(SHIFT-LFO_SHIFT);
 }
 
-signed int INLINE AICAALFO_Step(struct _LFO *LFO)
+static signed int INLINE AICAALFO_Step(struct _LFO *LFO)
 {
 	int p;
     LFO->phase+=LFO->phase_step;    

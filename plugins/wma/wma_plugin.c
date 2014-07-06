@@ -63,6 +63,7 @@ typedef struct {
     int skipsamples;
     char buffer[200000]; // can't predict its size, so set to max
     int remaining;
+    int open2_was_used;
 } wmaplug_info_t;
 
 // allocate codec control structure
@@ -71,6 +72,23 @@ wmaplug_open (uint32_t hints) {
     DB_fileinfo_t *_info = malloc (sizeof (wmaplug_info_t));
     wmaplug_info_t *info = (wmaplug_info_t *)_info;
     memset (info, 0, sizeof (wmaplug_info_t));
+
+    return _info;
+}
+
+static DB_fileinfo_t *
+wmaplug_open2 (uint32_t hints, DB_playItem_t *it) {
+    DB_FILE *file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    if (!file) {
+        return NULL;
+    }
+
+    DB_fileinfo_t *_info = malloc (sizeof (wmaplug_info_t));
+    wmaplug_info_t *info = (wmaplug_info_t *)_info;
+    memset (info, 0, sizeof (wmaplug_info_t));
+    info->open2_was_used = 1;
+    info->info.file = file;
+
     return _info;
 }
 
@@ -80,7 +98,10 @@ static int
 wmaplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     wmaplug_info_t *info = (wmaplug_info_t *)_info;
 
-    info->info.file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    if (!info->open2_was_used) {
+        info->info.file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
+    }
+
     if (!info->info.file) {
         return -1;
     }
@@ -457,7 +478,7 @@ static const char * exts[] = { "wma", NULL };
 // define plugin interface
 static DB_decoder_t plugin = {
     .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
+    .plugin.api_vminor = 7,
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_DECODER,
@@ -489,6 +510,7 @@ static DB_decoder_t plugin = {
     ,
     .plugin.website = "http://deadbeef.sf.net",
     .open = wmaplug_open,
+    .open2 = wmaplug_open2,
     .init = wmaplug_init,
     .free = wmaplug_free,
     .read = wmaplug_read,

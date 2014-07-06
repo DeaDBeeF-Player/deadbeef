@@ -1385,7 +1385,6 @@ plt_insert_file_int (int visibility, playlist_t *playlist, playItem_t *after, co
             free (escaped);
         }
         fname += 7;
-        printf ("escaped filename: %s\n", fname);
     }
 
     // detect decoder

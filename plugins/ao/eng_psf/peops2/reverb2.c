@@ -51,7 +51,7 @@
 // START REVERB
 ////////////////////////////////////////////////////////////////////////
 
-INLINE void StartREVERB(spu2_state_t *spu, int ch)
+static INLINE void StartREVERB(spu2_state_t *spu, int ch)
 {
  int core=ch/24;
  
@@ -66,7 +66,7 @@ INLINE void StartREVERB(spu2_state_t *spu, int ch)
 // HELPER FOR NEILL'S REVERB: re-inits our reverb mixing buf
 ////////////////////////////////////////////////////////////////////////
 
-INLINE void InitREVERB(spu2_state_t *spu)
+static INLINE void InitREVERB(spu2_state_t *spu)
 {
  if(spu->iUseReverb==1)
   {
@@ -79,7 +79,7 @@ INLINE void InitREVERB(spu2_state_t *spu)
 // STORE REVERB
 ////////////////////////////////////////////////////////////////////////
 
-INLINE void StoreREVERB(spu2_state_t *spu, int ch,int ns)
+static INLINE void StoreREVERB(spu2_state_t *spu, int ch,int ns)
 {
  int core=ch/24;
  
@@ -99,7 +99,7 @@ INLINE void StoreREVERB(spu2_state_t *spu, int ch,int ns)
 
 ////////////////////////////////////////////////////////////////////////
 
-INLINE int g_buffer(spu2_state_t *spu, int iOff,int core)                   // get_buffer content helper: takes care about wraps
+static INLINE int g_buffer(spu2_state_t *spu, int iOff,int core)                   // get_buffer content helper: takes care about wraps
 {
  short * p=(short *)spu->spuMem;
  iOff=(iOff)+spu->rvb[core].CurrAddr;
@@ -110,7 +110,7 @@ INLINE int g_buffer(spu2_state_t *spu, int iOff,int core)                   // g
 
 ////////////////////////////////////////////////////////////////////////
 
-INLINE void s_buffer(spu2_state_t *spu, int iOff,int iVal,int core)        // set_buffer content helper: takes care about wraps and clipping
+static INLINE void s_buffer(spu2_state_t *spu, int iOff,int iVal,int core)        // set_buffer content helper: takes care about wraps and clipping
 {
  short * p=(short *)spu->spuMem;
  iOff=(iOff)+spu->rvb[core].CurrAddr;
@@ -122,7 +122,7 @@ INLINE void s_buffer(spu2_state_t *spu, int iOff,int iVal,int core)        // se
 
 ////////////////////////////////////////////////////////////////////////
 
-INLINE void s_buffer1(spu2_state_t *spu, int iOff,int iVal,int core)      // set_buffer (+1 sample) content helper: takes care about wraps and clipping
+static INLINE void s_buffer1(spu2_state_t *spu, int iOff,int iVal,int core)      // set_buffer (+1 sample) content helper: takes care about wraps and clipping
 {
  short * p=(short *)spu->spuMem;
  iOff=(iOff)+spu->rvb[core].CurrAddr+1;
@@ -134,7 +134,7 @@ INLINE void s_buffer1(spu2_state_t *spu, int iOff,int iVal,int core)      // set
 
 ////////////////////////////////////////////////////////////////////////
 
-INLINE int MixREVERBLeft(spu2_state_t *spu, int ns,int core)
+static INLINE int MixREVERBLeft(spu2_state_t *spu, int ns,int core)
 {
  if(spu->iUseReverb==1)
   {
@@ -221,7 +221,7 @@ INLINE int MixREVERBLeft(spu2_state_t *spu, int ns,int core)
 
 ////////////////////////////////////////////////////////////////////////
 
-INLINE int MixREVERBRight(spu2_state_t *spu, int core)
+static INLINE int MixREVERBRight(spu2_state_t *spu, int core)
 {
  if(spu->iUseReverb==1)                                     // Neill's reverb:
   {

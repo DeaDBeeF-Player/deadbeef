@@ -142,8 +142,9 @@ int open_temp_file(const char *fname, char *tempname, FILE **out)
         return OGGEDIT_CANNOT_OPEN_TEMPORARY_FILE;
 
     struct stat stat_struct;
-    if (!stat(fname, &stat_struct))
+    if (!stat(fname, &stat_struct)) {
         chmod(tempname, stat_struct.st_mode);
+    }
 
     return 0;
 }

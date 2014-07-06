@@ -402,7 +402,7 @@ void InitADPCM(int *PrevSignal, int *PrevQuant)
 	*PrevQuant=0x7f;
 }
 
-INLINE signed short DecodeADPCM(int *PrevSignal, unsigned char Delta, int *PrevQuant)
+static INLINE signed short DecodeADPCM(int *PrevSignal, unsigned char Delta, int *PrevQuant)
 {
 	int x = *PrevQuant * quant_mul [Delta & 15];
         x = *PrevSignal + ((int)(x + ((UINT32)x >> 29)) >> 3);
@@ -957,7 +957,7 @@ void AICA_TimersAddTicks(struct _AICA *AICA, int ticks)
 	}
 }
 
-INLINE INT32 AICA_UpdateSlot(struct _AICA *AICA, struct _SLOT *slot)
+static INLINE INT32 AICA_UpdateSlot(struct _AICA *AICA, struct _SLOT *slot)
 {
 	INT32 sample, fpart;
 	int cur_sample;       //current sample

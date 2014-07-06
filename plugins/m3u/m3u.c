@@ -322,16 +322,9 @@ load_pls (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
         }
         const uint8_t *e;
         int n;
-        if (!strncasecmp (p, "numberofentries=", 16) || !strncasecmp (p, "version=", 8)) {
-            while (p < end && *p >= 0x20) {
-                p++;
-            }
-            continue;
-        }
-        else if (!strncasecmp (p, "file", 4)) {
+        if (!strncasecmp (p, "file", 4)) {
             int idx = atoi (p + 4);
             if (uri[0] && idx != lastidx && lastidx != -1) {
-                trace ("uri%d\n", idx);
                 DB_playItem_t *it = pls_insert_file (plt, after, fname, uri, pabort, cb, user_data, title, length);
                 if (it) {
                     after = it;
@@ -350,6 +343,9 @@ load_pls (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
                 p++;
             }
             p++;
+            while (p < end && *p <= 0x20) {
+                p++;
+            }
             if (p >= end) {
                 break;
             }
@@ -387,6 +383,9 @@ load_pls (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname, int *pab
                 p++;
             }
             p++;
+            while (p < end && *p <= 0x20) {
+                p++;
+            }
             if (p >= end) {
                 break;
             }

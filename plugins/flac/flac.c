@@ -81,6 +81,8 @@ typedef struct {
     const char *fname;
     int bitrate;
     FLAC__StreamMetadata *flac_cue_sheet;
+
+    int got_vorbis_comments;
 } flac_info_t;
 
 // callbacks
@@ -609,6 +611,7 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
             f |= DDB_TAG_VORBISCOMMENTS;
             deadbeef->pl_set_item_flags (it, f);
         }
+        info->got_vorbis_comments = 1;
     }
     else if (metadata->type == FLAC__METADATA_TYPE_CUESHEET) {
         if (!info->flac_cue_sheet) {
@@ -620,6 +623,15 @@ cflac_init_metadata_callback(const FLAC__StreamDecoder *decoder, const FLAC__Str
 static DB_playItem_t *
 cflac_insert_with_embedded_cue (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *origin, const FLAC__StreamMetadata_CueSheet *cuesheet, int totalsamples, int samplerate) {
     DB_playItem_t *ins = after;
+
+    // first check if cuesheet is matching the data
+    for (int i = 0; i < cuesheet->num_tracks; i++) {
+        if (cuesheet->tracks[i].offset >= totalsamples) {
+            fprintf (stderr, "The flac %s has invalid embedded cuesheet. You should remove it using metaflac.\n", deadbeef->pl_find_meta_raw (origin, ":URI"));
+            return NULL;
+        }
+    }
+
     for (int i = 0; i < cuesheet->num_tracks-1; i++) {
         const char *uri = deadbeef->pl_find_meta_raw (origin, ":URI");
         const char *dec = deadbeef->pl_find_meta_raw (origin, ":DECODER");
@@ -682,6 +694,8 @@ cflac_free_temp (DB_fileinfo_t *_info) {
     }
 }
 
+static int
+cflac_read_metadata (DB_playItem_t *it);
 
 static DB_playItem_t *
 cflac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
@@ -777,11 +791,12 @@ cflac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     if (info.info.fmt.samplerate <= 0) {
         goto cflac_insert_fail;
     }
+    int64_t fsize = deadbeef->fgetlength (info.file);
+    int is_streaming = info.file->vfs->is_streaming ();
 
     deadbeef->pl_add_meta (it, ":FILETYPE", isogg ? "OggFLAC" : "FLAC");
 
     char s[100];
-    int64_t fsize = deadbeef->fgetlength (info.file);
     snprintf (s, sizeof (s), "%lld", fsize);
     deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
     snprintf (s, sizeof (s), "%d", info.info.fmt.channels);
@@ -807,6 +822,13 @@ cflac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     }
     FLAC__stream_decoder_delete(decoder);
     decoder = NULL;
+
+    deadbeef->fclose (info.file);
+    info.file = NULL;
+
+    if (!info.got_vorbis_comments && !is_streaming) {
+        cflac_read_metadata (it);
+    }
 
     // try embedded cue
     deadbeef->pl_lock ();
@@ -856,7 +878,43 @@ cflac_insert_fail:
     return NULL;
 }
 
-int
+static size_t
+flac_io_read (void *ptr, size_t size, size_t nmemb, FLAC__IOHandle handle) {
+    return deadbeef->fread (ptr, size, nmemb, (DB_FILE *)handle);
+}
+
+static int
+flac_io_seek (FLAC__IOHandle handle, FLAC__int64 offset, int whence) {
+    return deadbeef->fseek ((DB_FILE *)handle, offset, whence);
+}
+
+static FLAC__int64
+flac_io_tell (FLAC__IOHandle handle) {
+    return deadbeef->ftell ((DB_FILE *)handle);
+}
+
+static int
+flac_io_eof (FLAC__IOHandle handle) {
+    int64_t pos = deadbeef->ftell ((DB_FILE *)handle);
+    return pos == deadbeef->fgetlength ((DB_FILE *)handle);
+}
+
+static int
+flac_io_close (FLAC__IOHandle handle) {
+    deadbeef->fclose ((DB_FILE *)handle);
+    return 0;
+}
+
+static FLAC__IOCallbacks iocb = {
+    .read = flac_io_read,
+    .write = NULL,
+    .seek = flac_io_seek,
+    .tell = flac_io_tell,
+    .eof = flac_io_eof,
+    .close = flac_io_close,
+};
+
+static int
 cflac_read_metadata (DB_playItem_t *it) {
     int err = -1;
     FLAC__Metadata_Chain *chain = NULL;
@@ -868,11 +926,17 @@ cflac_read_metadata (DB_playItem_t *it) {
         return -1;
     }
     deadbeef->pl_lock ();
-    FLAC__bool res = FLAC__metadata_chain_read (chain, deadbeef->pl_find_meta (it, ":URI"));
-    if (!res && FLAC__metadata_chain_status(chain) == FLAC__METADATA_SIMPLE_ITERATOR_STATUS_NOT_A_FLAC_FILE) {
-        res = FLAC__metadata_chain_read_ogg (chain, deadbeef->pl_find_meta (it, ":URI"));
-    }
+    DB_FILE *file = deadbeef->fopen (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
+    if (!file) {
+        return -1;
+    }
+    FLAC__bool res = FLAC__metadata_chain_read_with_callbacks (chain, (FLAC__IOHandle)file, iocb);
+    if (!res && FLAC__metadata_chain_status(chain) == FLAC__METADATA_SIMPLE_ITERATOR_STATUS_NOT_A_FLAC_FILE) {
+        res = FLAC__metadata_chain_read_ogg_with_callbacks (chain, (FLAC__IOHandle)file, iocb);
+    }
+    deadbeef->fclose (file);
+    file = NULL;
     if (!res) {
         trace ("cflac_read_metadata: FLAC__metadata_chain_read(_ogg) failed\n");
         goto error;
@@ -955,7 +1019,7 @@ cflac_write_metadata (DB_playItem_t *it) {
 
     chain = FLAC__metadata_chain_new ();
     if (!chain) {
-        trace ("cflac_write_metadata: FLAC__metadata_chain_new failed\n");
+        fprintf (stderr, "cflac_write_metadata: FLAC__metadata_chain_new failed\n");
         return -1;
     }
     deadbeef->pl_lock ();
@@ -969,7 +1033,7 @@ cflac_write_metadata (DB_playItem_t *it) {
 #endif
     deadbeef->pl_unlock ();
     if (!res) {
-        trace ("cflac_write_metadata: FLAC__metadata_chain_read(_ogg) failed - code %d\n", res);
+        fprintf (stderr, "cflac_write_metadata: FLAC__metadata_chain_read(_ogg) failed - code %d\n", res);
         goto error;
     }
     FLAC__metadata_chain_merge_padding (chain);
@@ -1070,11 +1134,13 @@ cflac_write_metadata (DB_playItem_t *it) {
     }
 #if USE_OGGEDIT
     else {
-        res = cflac_write_metadata_ogg(it, &data->data.vorbis_comment);
+        if (cflac_write_metadata_ogg(it, &data->data.vorbis_comment)) {
+            res = 0;
+        }
     }
 #endif
-    if (res) {
-        trace ("cflac_write_metadata: failed to write tags: code %d\n", res);
+    if (!res) {
+        fprintf (stderr, "cflac_write_metadata: failed to write tags: code %d\n", res);
         goto error;
     }
 

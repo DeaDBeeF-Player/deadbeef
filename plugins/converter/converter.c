@@ -32,6 +32,7 @@
 #include <dirent.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <inttypes.h>
 #include "converter.h"
 #include "../../deadbeef.h"
 #include "../../strdupa.h"
@@ -1019,7 +1020,7 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
                     }
 
                     uint64_t chunksize;
-                    chunksize = size + 36;
+                    chunksize = size + 40;
 
                     // for float, add 36 more
                     if (output_is_float) {
@@ -1058,7 +1059,7 @@ convert (DB_playItem_t *it, const char *out, int output_bps, int output_is_float
 
                 int64_t res = write (temp_file, buffer, sz);
                 if (sz != res) {
-                    fprintf (stderr, "converter: write error (%lld bytes written out of %d)\n", res, sz);
+                    fprintf (stderr, "converter: write error (%"PRId64" bytes written out of %d)\n", res, sz);
                     goto error;
                 }
             }
@@ -1133,8 +1134,11 @@ error:
             *o++ = *p++;
         }
         *o = 0;
+        // FIXME: need to delete all colon-fields, except the URI
         deadbeef->pl_replace_meta (out_it, ":URI", unesc_path);
+        deadbeef->pl_delete_meta (out_it, ":TRACKNUM");
         deadbeef->pl_delete_meta (out_it, "cuesheet");
+        deadbeef->pl_set_item_flags (out_it, 0);
     }
 
     uint32_t tagflags = 0;

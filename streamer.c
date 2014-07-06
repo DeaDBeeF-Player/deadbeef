@@ -186,19 +186,11 @@ streamer_unlock (void) {
 
 static void
 streamer_abort_files (void) {
-    trace ("\033[0;33mstreamer_abort_files\033[37;0m\n");
     DB_FILE *file = fileinfo_file;
     DB_FILE *newfile = new_fileinfo_file;
     DB_FILE *strfile = streamer_file;
-
-    // this situation occurs during decoder->init
-    // we still don't have the filehandle acquired from the streamer thread,
-    // but the file is open already
-    if (!newfile && !new_fileinfo_file && new_fileinfo) {
-        mutex_lock (decodemutex);
-        newfile = new_fileinfo->file;
-        mutex_unlock (decodemutex);
-    }
+    trace ("\033[0;33mstreamer_abort_files\033[37;0m\n");
+    trace ("%p %p %p\n", file, newfile, strfile);
 
     if (file) {
         deadbeef->fabort (file);
@@ -907,6 +899,14 @@ is_remote_stream (playItem_t *it) {
     return remote;
 }
 
+static DB_fileinfo_t *dec_open (DB_decoder_t *dec, uint32_t hints, playItem_t *it) {
+    if (dec->plugin.api_vminor >= 7 && dec->open2) {
+        DB_fileinfo_t *fi = dec->open2 (hints, DB_PLAYITEM (it));
+        return fi;
+    }
+    return dec->open (hints);
+}
+
 // that must be called after last sample from str_playing_song was done reading
 static int
 streamer_set_current (playItem_t *it) {
@@ -1209,7 +1209,10 @@ m3u_error:
 
         trace ("\033[0;33minit decoder for %s (%s)\033[37;0m\n", pl_find_meta (it, ":URI"), dec->plugin.id);
         mutex_lock (decodemutex);
-        new_fileinfo = dec->open (0);
+        new_fileinfo = dec_open (dec, 0, it);
+        if (new_fileinfo->file) {
+            new_fileinfo_file = new_fileinfo->file;
+        }
         mutex_unlock (decodemutex);
         if (new_fileinfo && dec->init (new_fileinfo, DB_PLAYITEM (it)) != 0) {
             trace ("\033[0;31mfailed to init decoder\033[37;0m\n");
@@ -1568,7 +1571,7 @@ streamer_thread (void *ctx) {
         seekpos = -1;
         if (seek >= 0 && pl_get_item_duration (playing_track) > 0) {
             playpos = seek;
-            trace ("seeking to %d\n", seek);
+            trace ("seeking to %f\n", seek);
             float pos = seek;
 
             if (playing_track != streaming_track) {
@@ -1606,7 +1609,7 @@ streamer_thread (void *ctx) {
                 }
                 pl_unlock ();
                 if (dec) {
-                    fileinfo = dec->open (0);
+                    fileinfo = dec_open (dec, 0, streaming_track);
                     mutex_unlock (decodemutex);
                     if (fileinfo && dec->init (fileinfo, DB_PLAYITEM (streaming_track)) != 0) {
                         mutex_lock (decodemutex);

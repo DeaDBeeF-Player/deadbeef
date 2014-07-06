@@ -71,6 +71,7 @@ extern "C" {
 
 // api version history:
 // 9.9 -- devel
+// 1.7 -- deadbeef-0.6.2
 // 1.6 -- deadbeef-0.6.1
 // 1.5 -- deadbeef-0.6
 // 1.4 -- deadbeef-0.5.5
@@ -91,7 +92,7 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 1
-#define DB_API_VERSION_MINOR 6
+#define DB_API_VERSION_MINOR 7
 
 #define DDB_DEPRECATED(x)
 
@@ -1252,6 +1253,15 @@ typedef struct DB_decoder_s {
     // NULL terminated array of all supported prefixes (UADE support needs that)
     // e.g. "mod.song_title"
     const char **prefixes;
+
+#if (DDB_API_LEVEL >= 7)
+    // This function's purpose is to open the file, so that the file handle is
+    // immediately accessible via DB_fileinfo_t, and can be used with fabort.
+    // If a plugin is using open2, it should not reopen the file from init.
+    // Plugins _must_ implement open even if open2 is present,
+    // because existing code may rely on it.
+    DB_fileinfo_t *(*open2) (uint32_t hints, DB_playItem_t *it);
+#endif
 } DB_decoder_t;
 
 // output plugin
