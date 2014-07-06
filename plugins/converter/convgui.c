@@ -994,6 +994,7 @@ on_edit_encoder_presets_clicked        (GtkButton       *button,
             gtk_tree_path_free (path);
         }
     }
+    on_encoder_preset_cursor_changed (GTK_TREE_VIEW (list), NULL);
     gtk_dialog_run (GTK_DIALOG (dlg));
     gtk_widget_destroy (dlg);
 }
