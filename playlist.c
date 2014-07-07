@@ -4196,6 +4196,7 @@ plt_add_files_begin (playlist_t *plt, int visibility) {
     for (ddb_fileadd_beginend_listener_t *l = file_add_beginend_listeners; l; l = l->next) {
         l->callback_begin (&d, l->user_data);
     }
+    background_job_increment ();
     return 0;
 }
 
@@ -4216,6 +4217,7 @@ plt_add_files_end (playlist_t *plt, int visibility) {
     for (ddb_fileadd_beginend_listener_t *l = file_add_beginend_listeners; l; l = l->next) {
         l->callback_end (&d, l->user_data);
     }
+    background_job_decrement ();
 }
 
 void
