@@ -1143,7 +1143,7 @@ typedef struct DB_plugin_s {
     // can be NULL
     // NOTE for GUI plugin developers: don't initialize your widgets/windows in
     // the connect method. look for up-to-date information on wiki:
-    // http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Porting_GUI_plugins_to_0.6
+    // http://github.com/Alexey-Yakovenko/deadbeef/wiki/Porting-GUI-plugins-to-deadbeef-from-0.5.x-to-0.6.0
     int (*connect) (void);
 
     // opposite of connect, will be called before stop, while all plugins are still
@@ -1407,7 +1407,7 @@ typedef struct DB_vfs_s {
 
 // this structure represents a gui dialog with callbacks to set/get params
 // documentation should be available here:
-// https://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Development:Gui_Script
+// http://github.com/Alexey-Yakovenko/deadbeef/wiki/GUI-Script-Syntax
 typedef struct {
     const char *title;
     const char *layout;
