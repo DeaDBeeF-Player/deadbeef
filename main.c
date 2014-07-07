@@ -107,7 +107,7 @@ print_help (void) {
                 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
                 "                      copy[r]ight, [e]lapsed\n"));
     fprintf (stdout, _("                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"));
-    fprintf (stdout, _("                      for more info, see http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"));
+    fprintf (stdout, _("                      for more info, see http://github.com/Alexey-Yakovenko/deadbeef/wiki/Title-formatting\n"));
 	bind_textdomain_codeset (PACKAGE, "UTF-8");
 }
 

@@ -3,8 +3,8 @@ arquivo de ajuda para o tocador DeaDBeeF
 * LINKS
 
     website: http://deadbeef.sf.net
-    wiki: http://sf.net/apps/mediawiki/deadbeef
-    website de desenvolvimento: http://sf.net/projects/deadbeef
+    wiki: http://github.com/Alexey-Yakovenko/deadbeef/wiki
+    website de desenvolvimento: http://github.com/Alexey-Yakovenko/deadbeef
     info para contribuintes: http://contributing.appspot.com/deadbeef
 
 * ATALHOS DE TECLADO ÚTEIS
