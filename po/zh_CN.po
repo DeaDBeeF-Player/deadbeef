@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-06-25 19:54+0200\n"
+"POT-Creation-Date: 2014-07-07 21:14+0200\n"
 "PO-Revision-Date: 2014-06-25 17:55+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/projects/p/deadbeef-"
@@ -139,81 +139,81 @@ msgid "New Playlist (%d)"
 msgstr "新播放列表(%d)"
 
 #. register widget types
-#: ../plugins/gtkui/gtkui.c:955
+#: ../plugins/gtkui/gtkui.c:956
 msgid "Playlist with tabs"
 msgstr "标签页式播放列表"
 
-#: ../plugins/gtkui/gtkui.c:956 ../plugins/gtkui/interface.c:2042
+#: ../plugins/gtkui/gtkui.c:957 ../plugins/gtkui/interface.c:2042
 #: ../plugins/gtkui/deadbeef.glade.h:128
 msgid "Playlist"
 msgstr "播放列表"
 
-#: ../plugins/gtkui/gtkui.c:959
+#: ../plugins/gtkui/gtkui.c:960
 msgid "Splitter (top and bottom)"
 msgstr "分割线(顶部和底部)"
 
-#: ../plugins/gtkui/gtkui.c:960
+#: ../plugins/gtkui/gtkui.c:961
 msgid "Splitter (left and right)"
 msgstr "分割线(左侧和右侧)"
 
 #. w_reg_widget (_("Tabs"), 0, w_tabs_create, "tabs", NULL);
-#: ../plugins/gtkui/gtkui.c:963
+#: ../plugins/gtkui/gtkui.c:964
 msgid "Playlist tabs"
 msgstr "播放列表标签页"
 
-#: ../plugins/gtkui/gtkui.c:964
+#: ../plugins/gtkui/gtkui.c:965
 msgid "Selection properties"
 msgstr "所选项目属性"
 
-#: ../plugins/gtkui/gtkui.c:965
+#: ../plugins/gtkui/gtkui.c:966
 msgid "Album art display"
 msgstr "专辑封面显示"
 
-#: ../plugins/gtkui/gtkui.c:966
+#: ../plugins/gtkui/gtkui.c:967
 msgid "Scope"
 msgstr "范围"
 
-#: ../plugins/gtkui/gtkui.c:967
+#: ../plugins/gtkui/gtkui.c:968
 msgid "Spectrum"
 msgstr "频谱"
 
-#: ../plugins/gtkui/gtkui.c:968
+#: ../plugins/gtkui/gtkui.c:969
 msgid "HBox"
 msgstr "水平框"
 
-#: ../plugins/gtkui/gtkui.c:969
+#: ../plugins/gtkui/gtkui.c:970
 msgid "VBox"
 msgstr "垂直框"
 
-#: ../plugins/gtkui/gtkui.c:970 ../plugins/gtkui/widgets.c:3425
+#: ../plugins/gtkui/gtkui.c:971 ../plugins/gtkui/widgets.c:3428
 msgid "Button"
 msgstr "按钮"
 
-#: ../plugins/gtkui/gtkui.c:971
+#: ../plugins/gtkui/gtkui.c:972
 msgid "Seekbar"
 msgstr "定位条"
 
-#: ../plugins/gtkui/gtkui.c:972
+#: ../plugins/gtkui/gtkui.c:973
 msgid "Playback controls"
 msgstr "播放控制"
 
-#: ../plugins/gtkui/gtkui.c:973
+#: ../plugins/gtkui/gtkui.c:974
 msgid "Volume bar"
 msgstr "音量条"
 
-#: ../plugins/gtkui/gtkui.c:974
+#: ../plugins/gtkui/gtkui.c:975
 msgid "Chiptune voices"
 msgstr "芯片合成语音"
 
-#: ../plugins/gtkui/gtkui.c:1149
+#: ../plugins/gtkui/gtkui.c:1150
 msgid "Failed while reading help file"
 msgstr "读取帮助文件时出错"
 
-#: ../plugins/gtkui/gtkui.c:1159
+#: ../plugins/gtkui/gtkui.c:1160
 msgid "Failed to load help file"
 msgstr "加入帮助文件失败"
 
-#: ../plugins/gtkui/gtkui.c:1170
+#: ../plugins/gtkui/gtkui.c:1171
 msgid ""
 "The player is currently running background tasks. If you quit now, the tasks "
 "will be cancelled or interrupted. This may result in data loss."
@@ -221,13 +221,13 @@ msgstr ""
 "播放器正在执行后台任务。如果您现在退出，任务会取消或中断；这可能造成数据损"
 "失。"
 
-#: ../plugins/gtkui/gtkui.c:1172
+#: ../plugins/gtkui/gtkui.c:1173
 msgid "Do you still want to quit?"
 msgstr "您依然要退出吗？"
 
-#: ../plugins/gtkui/gtkui.c:1173 ../plugins/gtkui/prefwin.c:351
+#: ../plugins/gtkui/gtkui.c:1174 ../plugins/gtkui/prefwin.c:351
 #: ../plugins/gtkui/trkproperties.c:171 ../plugins/converter/convgui.c:891
-#: ../plugins/converter/convgui.c:1458 ../plugins/gtkui/actionhandlers.c:550
+#: ../plugins/converter/convgui.c:1462 ../plugins/gtkui/actionhandlers.c:550
 msgid "Warning"
 msgstr "警告"
 
@@ -295,7 +295,7 @@ msgstr "选择"
 #: ../plugins/gtkui/interface.c:235 ../plugins/gtkui/plcommon.c:660
 #: ../plugins/gtkui/deadbeef.glade.h:16 ../plugins/converter/interface.c:629
 #: ../plugins/converter/converter.glade.h:46
-#: ../plugins/shellexecui/interface.c:65
+#: ../plugins/shellexecui/interface.c:66
 #: ../plugins/shellexecui/shellexec.glade.h:4
 msgid "Remove"
 msgstr "移除"
@@ -315,7 +315,7 @@ msgstr "排序依据"
 #: ../plugins/gtkui/interface.c:258 ../plugins/gtkui/interface.c:1349
 #: ../plugins/gtkui/mainplaylist.c:355 ../plugins/gtkui/prefwin.c:327
 #: ../plugins/gtkui/search.c:421 ../plugins/gtkui/deadbeef.glade.h:20
-#: ../plugins/converter/convgui.c:981 ../plugins/converter/convgui.c:1534
+#: ../plugins/converter/convgui.c:984 ../plugins/converter/convgui.c:1538
 #: ../plugins/converter/interface.c:606
 #: ../plugins/converter/converter.glade.h:43
 #: ../plugins/shellexecui/shellexecui.c:324
@@ -494,7 +494,7 @@ msgid "Quit"
 msgstr "退出"
 
 #: ../plugins/gtkui/interface.c:967 ../plugins/gtkui/deadbeef.glade.h:61
-#: ../plugins/converter/convgui.c:1563 ../plugins/converter/convgui.c:1571
+#: ../plugins/converter/convgui.c:1567 ../plugins/converter/convgui.c:1575
 #: ../plugins/gtkui/actionhandlers.c:476
 msgid "Help"
 msgstr "帮助"
@@ -532,7 +532,7 @@ msgstr "属性"
 #: ../plugins/gtkui/interface.c:1319 ../plugins/gtkui/interface.c:3096
 #: ../plugins/gtkui/deadbeef.glade.h:71 ../plugins/converter/interface.c:379
 #: ../plugins/converter/converter.glade.h:22
-#: ../plugins/shellexecui/interface.c:159
+#: ../plugins/shellexecui/interface.c:163
 #: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/pltmenu.c:65
 msgid "Title:"
 msgstr "标题："
@@ -966,7 +966,7 @@ msgid "Select DSP Plugin"
 msgstr "选择 DSP 插件"
 
 #: ../plugins/gtkui/interface.c:3572 ../plugins/gtkui/deadbeef.glade.h:179
-#: ../plugins/converter/convgui.c:1283 ../plugins/converter/interface.c:750
+#: ../plugins/converter/convgui.c:1287 ../plugins/converter/interface.c:750
 #: ../plugins/gtkui/dspconfig.c:139 ../plugins/converter/converter.glade.h:49
 msgid "Plugin"
 msgstr "插件"
@@ -1131,7 +1131,7 @@ msgstr "滚动时固顶组"
 msgid "Group by"
 msgstr "分组依据"
 
-#: ../plugins/gtkui/plcommon.c:1246 ../plugins/gtkui/widgets.c:3521
+#: ../plugins/gtkui/plcommon.c:1246 ../plugins/gtkui/widgets.c:3524
 msgid "None"
 msgstr "无"
 
@@ -1329,10 +1329,10 @@ msgstr ""
 "                      例：--nowplaying \"%%a - %%t\" 将打印“艺人 - 标题”\n"
 
 #: ../main.c:110
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"                      for more info, see http://sourceforge.net/apps/"
-"mediawiki/deadbeef/index.php?title=Title_Formatting\n"
+"                      for more info, see http://github.com/Alexey-Yakovenko/"
+"deadbeef/wiki/Title-formatting\n"
 msgstr ""
 "                      更多信息请参阅 http://sourceforge.net/apps/mediawiki/"
 "deadbeef/index.php?title=Title_Formatting\n"
@@ -1764,23 +1764,23 @@ msgstr "选择文件夹..."
 msgid "Failed to save encoder preset"
 msgstr "保存编码器预设置失败"
 
-#: ../plugins/converter/convgui.c:771 ../plugins/converter/convgui.c:1320
+#: ../plugins/converter/convgui.c:771 ../plugins/converter/convgui.c:1324
 msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
 msgstr "请检查预设置文件夹权限，选择其他标题或清理出一些磁盘空间"
 
-#: ../plugins/converter/convgui.c:771 ../plugins/converter/convgui.c:1320
+#: ../plugins/converter/convgui.c:771 ../plugins/converter/convgui.c:1324
 msgid "Preset with the same name already exists. Try to pick another title."
 msgstr "同名的预设置已经存在。请另选一个标题。"
 
-#: ../plugins/converter/convgui.c:772 ../plugins/converter/convgui.c:1321
+#: ../plugins/converter/convgui.c:772 ../plugins/converter/convgui.c:1325
 #: ../plugins/gtkui/ctmapping.c:202 ../plugins/gtkui/ctmapping.c:230
 #: ../plugins/gtkui/ctmapping.c:262
 msgid "Error"
 msgstr "错误"
 
-#: ../plugins/converter/convgui.c:826 ../plugins/converter/convgui.c:957
+#: ../plugins/converter/convgui.c:826 ../plugins/converter/convgui.c:960
 msgid "Add new encoder"
 msgstr "添加新编码器"
 
@@ -1788,35 +1788,35 @@ msgstr "添加新编码器"
 msgid "Edit encoder"
 msgstr "编辑编码器"
 
-#: ../plugins/converter/convgui.c:888 ../plugins/converter/convgui.c:1455
+#: ../plugins/converter/convgui.c:888 ../plugins/converter/convgui.c:1459
 msgid "Remove preset"
 msgstr "移除预设置"
 
-#: ../plugins/converter/convgui.c:890 ../plugins/converter/convgui.c:1457
+#: ../plugins/converter/convgui.c:890 ../plugins/converter/convgui.c:1461
 msgid "This action will delete the selected preset. Are you sure?"
 msgstr "此操作将删除所选的预设置。您确定吗？"
 
-#: ../plugins/converter/convgui.c:971
+#: ../plugins/converter/convgui.c:974
 msgid "Encoders"
 msgstr "编码器"
 
-#: ../plugins/converter/convgui.c:1044 ../plugins/gtkui/dspconfig.c:186
+#: ../plugins/converter/convgui.c:1048 ../plugins/gtkui/dspconfig.c:186
 msgid "Add plugin to DSP chain"
 msgstr "向 DSP 链上添加插件"
 
-#: ../plugins/converter/convgui.c:1319
+#: ../plugins/converter/convgui.c:1323
 msgid "Failed to save DSP preset"
 msgstr "保存 DSP 预设置失败"
 
-#: ../plugins/converter/convgui.c:1383 ../plugins/converter/convgui.c:1421
+#: ../plugins/converter/convgui.c:1387 ../plugins/converter/convgui.c:1425
 msgid "New DSP Preset"
 msgstr "新建 DSP 预设置"
 
-#: ../plugins/converter/convgui.c:1505
+#: ../plugins/converter/convgui.c:1509
 msgid "Edit DSP Preset"
 msgstr "编辑 DSP 预设置"
 
-#: ../plugins/converter/convgui.c:1525
+#: ../plugins/converter/convgui.c:1529
 msgid "DSP Presets"
 msgstr "DSP 预设置"
 
@@ -2007,7 +2007,7 @@ msgstr "无标题的 DSP 预设置"
 
 #: ../plugins/converter/interface.c:625
 #: ../plugins/converter/converter.glade.h:45
-#: ../plugins/shellexecui/interface.c:61
+#: ../plugins/shellexecui/interface.c:62
 #: ../plugins/shellexecui/shellexec.glade.h:3
 msgid "Add"
 msgstr "添加"
@@ -2055,27 +2055,27 @@ msgstr ""
 msgid "Custom Shell Commands"
 msgstr "自定义 shell 命令"
 
-#: ../plugins/shellexecui/interface.c:69
+#: ../plugins/shellexecui/interface.c:70
 #: ../plugins/shellexecui/shellexec.glade.h:5
 msgid "Edit"
 msgstr "编辑"
 
-#: ../plugins/shellexecui/interface.c:87
+#: ../plugins/shellexecui/interface.c:88
 #: ../plugins/shellexecui/shellexec.glade.h:2
 msgid "Close"
 msgstr "关闭"
 
-#: ../plugins/shellexecui/interface.c:145
+#: ../plugins/shellexecui/interface.c:149
 #: ../plugins/shellexecui/shellexec.glade.h:6
 msgid "Edit Command"
 msgstr "编辑命令"
 
-#: ../plugins/shellexecui/interface.c:166
+#: ../plugins/shellexecui/interface.c:170
 #: ../plugins/shellexecui/shellexec.glade.h:8
 msgid "Command:"
 msgstr "命令："
 
-#: ../plugins/shellexecui/interface.c:178
+#: ../plugins/shellexecui/interface.c:182
 #: ../plugins/shellexecui/shellexec.glade.h:10
 #, no-c-format
 msgid ""
@@ -2086,74 +2086,74 @@ msgstr ""
 "任意 shell 命令。命令将在主应用程序启动的 shell 环境中执行。可以使用标题格式"
 "化代码。例如：xdg-open %D"
 
-#: ../plugins/shellexecui/interface.c:181
+#: ../plugins/shellexecui/interface.c:185
 #: ../plugins/shellexecui/shellexec.glade.h:11
 msgid "ID:"
 msgstr "标识："
 
-#: ../plugins/shellexecui/interface.c:193
+#: ../plugins/shellexecui/interface.c:197
 #: ../plugins/shellexecui/shellexec.glade.h:12
 msgid "Free-form name, for example \"My Shell Command\""
 msgstr "一个名字，形式不限，如“我的 shell 命令”"
 
-#: ../plugins/shellexecui/interface.c:201
+#: ../plugins/shellexecui/interface.c:205
 #: ../plugins/shellexecui/shellexec.glade.h:13
 msgid ""
 "Command ID, normally it should be something short, for example \"youtube_open"
 "\". It must be unique."
 msgstr "命令标识，通常应简短，如“youtube_open”。此标识应唯一。"
 
-#: ../plugins/shellexecui/interface.c:204
+#: ../plugins/shellexecui/interface.c:208
 #: ../plugins/shellexecui/shellexec.glade.h:15
 msgid "Single Tracks"
 msgstr "单条音轨"
 
-#: ../plugins/shellexecui/interface.c:207
+#: ../plugins/shellexecui/interface.c:211
 #: ../plugins/shellexecui/shellexec.glade.h:14
 msgid "Works on single track."
 msgstr "作用于单条音轨。"
 
-#: ../plugins/shellexecui/interface.c:209
+#: ../plugins/shellexecui/interface.c:213
 #: ../plugins/shellexecui/shellexec.glade.h:17
 msgid "Multiple Tracks"
 msgstr "多条音轨。"
 
-#: ../plugins/shellexecui/interface.c:212
+#: ../plugins/shellexecui/interface.c:216
 #: ../plugins/shellexecui/shellexec.glade.h:16
 msgid "Works on multiple tracks."
 msgstr "作用于多条音轨。"
 
-#: ../plugins/shellexecui/interface.c:214
+#: ../plugins/shellexecui/interface.c:218
 #: ../plugins/shellexecui/shellexec.glade.h:19
 msgid "Local"
 msgstr "本地"
 
-#: ../plugins/shellexecui/interface.c:217
+#: ../plugins/shellexecui/interface.c:221
 #: ../plugins/shellexecui/shellexec.glade.h:18
 msgid "Works on local files."
 msgstr "作用于本地文件。"
 
-#: ../plugins/shellexecui/interface.c:219
+#: ../plugins/shellexecui/interface.c:223
 #: ../plugins/shellexecui/shellexec.glade.h:21
 msgid "Remote"
 msgstr "远程"
 
-#: ../plugins/shellexecui/interface.c:222
+#: ../plugins/shellexecui/interface.c:226
 #: ../plugins/shellexecui/shellexec.glade.h:20
 msgid "Works on remote files (e.g. http:// streams)"
 msgstr "作用于远程文件(如 http:// 流)"
 
-#: ../plugins/shellexecui/interface.c:224
+#: ../plugins/shellexecui/interface.c:228
 #: ../plugins/shellexecui/shellexec.glade.h:23
 msgid "Generic (Main Menu)"
 msgstr "常规(主菜单)"
 
-#: ../plugins/shellexecui/interface.c:227
+#: ../plugins/shellexecui/interface.c:231
 #: ../plugins/shellexecui/shellexec.glade.h:22
 msgid "Item should appear in the main menu"
 msgstr "项目应显示在主菜单中"
 
-#: ../plugins/shellexecui/interface.c:229
+#: ../plugins/shellexecui/interface.c:233
 #: ../plugins/shellexecui/shellexec.glade.h:24
 msgid ""
 "<small>If you want to add the command to main menu, make sure that title "
@@ -2338,31 +2338,31 @@ msgstr "添加新标签"
 msgid "Show Column Headers"
 msgstr "显示列标题"
 
-#: ../plugins/gtkui/widgets.c:3144
+#: ../plugins/gtkui/widgets.c:3147
 msgid "Expand the box by 1 item"
 msgstr "向框中增加 1 项"
 
-#: ../plugins/gtkui/widgets.c:3149
+#: ../plugins/gtkui/widgets.c:3152
 msgid "Shrink the box by 1 item"
 msgstr "从框中减少 1 项"
 
-#: ../plugins/gtkui/widgets.c:3154
+#: ../plugins/gtkui/widgets.c:3157
 msgid "Homogeneous"
 msgstr "平均"
 
-#: ../plugins/gtkui/widgets.c:3194
+#: ../plugins/gtkui/widgets.c:3197
 msgid "Expand"
 msgstr "扩展"
 
-#: ../plugins/gtkui/widgets.c:3202
+#: ../plugins/gtkui/widgets.c:3205
 msgid "Fill"
 msgstr "填充"
 
-#: ../plugins/gtkui/widgets.c:3603
+#: ../plugins/gtkui/widgets.c:3606
 msgid "Configure button"
 msgstr "配置按钮"
 
-#: ../plugins/gtkui/widgets.c:3867
+#: ../plugins/gtkui/widgets.c:3870
 msgid "Voices:"
 msgstr "语音："
 

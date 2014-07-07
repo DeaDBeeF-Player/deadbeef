@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-06-25 19:54+0200\n"
+"POT-Creation-Date: 2014-07-07 21:14+0200\n"
 "PO-Revision-Date: 2014-06-25 17:55+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Finnish (http://www.transifex.com/projects/p/deadbeef-player/"
@@ -141,93 +141,93 @@ msgid "New Playlist (%d)"
 msgstr "Uusi soittolista (%d)"
 
 #. register widget types
-#: ../plugins/gtkui/gtkui.c:955
+#: ../plugins/gtkui/gtkui.c:956
 msgid "Playlist with tabs"
 msgstr "Soittolista välilehdillä"
 
-#: ../plugins/gtkui/gtkui.c:956 ../plugins/gtkui/interface.c:2042
+#: ../plugins/gtkui/gtkui.c:957 ../plugins/gtkui/interface.c:2042
 #: ../plugins/gtkui/deadbeef.glade.h:128
 msgid "Playlist"
 msgstr "Soittolista"
 
-#: ../plugins/gtkui/gtkui.c:959
+#: ../plugins/gtkui/gtkui.c:960
 msgid "Splitter (top and bottom)"
 msgstr "Jakaja (ylä- ja alapuoli)"
 
-#: ../plugins/gtkui/gtkui.c:960
+#: ../plugins/gtkui/gtkui.c:961
 msgid "Splitter (left and right)"
 msgstr "Jakaja (vasen ja oikea)"
 
 #. w_reg_widget (_("Tabs"), 0, w_tabs_create, "tabs", NULL);
-#: ../plugins/gtkui/gtkui.c:963
+#: ../plugins/gtkui/gtkui.c:964
 msgid "Playlist tabs"
 msgstr "Soittolista välilehdet"
 
-#: ../plugins/gtkui/gtkui.c:964
+#: ../plugins/gtkui/gtkui.c:965
 msgid "Selection properties"
 msgstr "Valinnan ominaisuudet"
 
-#: ../plugins/gtkui/gtkui.c:965
+#: ../plugins/gtkui/gtkui.c:966
 msgid "Album art display"
 msgstr "Albumin kuvituksen näyttö"
 
-#: ../plugins/gtkui/gtkui.c:966
+#: ../plugins/gtkui/gtkui.c:967
 msgid "Scope"
 msgstr "Oskilloskooppi"
 
-#: ../plugins/gtkui/gtkui.c:967
+#: ../plugins/gtkui/gtkui.c:968
 msgid "Spectrum"
 msgstr "Spektri"
 
-#: ../plugins/gtkui/gtkui.c:968
+#: ../plugins/gtkui/gtkui.c:969
 msgid "HBox"
 msgstr "HBox"
 
-#: ../plugins/gtkui/gtkui.c:969
+#: ../plugins/gtkui/gtkui.c:970
 msgid "VBox"
 msgstr "VBox"
 
-#: ../plugins/gtkui/gtkui.c:970 ../plugins/gtkui/widgets.c:3425
+#: ../plugins/gtkui/gtkui.c:971 ../plugins/gtkui/widgets.c:3428
 msgid "Button"
 msgstr "Painike"
 
-#: ../plugins/gtkui/gtkui.c:971
+#: ../plugins/gtkui/gtkui.c:972
 msgid "Seekbar"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:972
+#: ../plugins/gtkui/gtkui.c:973
 msgid "Playback controls"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:973
+#: ../plugins/gtkui/gtkui.c:974
 msgid "Volume bar"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:974
+#: ../plugins/gtkui/gtkui.c:975
 msgid "Chiptune voices"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1149
+#: ../plugins/gtkui/gtkui.c:1150
 msgid "Failed while reading help file"
 msgstr "Virhe ohjetiedostoa avattaessa"
 
-#: ../plugins/gtkui/gtkui.c:1159
+#: ../plugins/gtkui/gtkui.c:1160
 msgid "Failed to load help file"
 msgstr "Ohjetiedoston avaaminen epäonnistui"
 
-#: ../plugins/gtkui/gtkui.c:1170
+#: ../plugins/gtkui/gtkui.c:1171
 msgid ""
 "The player is currently running background tasks. If you quit now, the tasks "
 "will be cancelled or interrupted. This may result in data loss."
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1172
+#: ../plugins/gtkui/gtkui.c:1173
 msgid "Do you still want to quit?"
 msgstr "Haluatko silti poistua?"
 
-#: ../plugins/gtkui/gtkui.c:1173 ../plugins/gtkui/prefwin.c:351
+#: ../plugins/gtkui/gtkui.c:1174 ../plugins/gtkui/prefwin.c:351
 #: ../plugins/gtkui/trkproperties.c:171 ../plugins/converter/convgui.c:891
-#: ../plugins/converter/convgui.c:1458 ../plugins/gtkui/actionhandlers.c:550
+#: ../plugins/converter/convgui.c:1462 ../plugins/gtkui/actionhandlers.c:550
 msgid "Warning"
 msgstr "Varoitus"
 
@@ -295,7 +295,7 @@ msgstr "Valinta"
 #: ../plugins/gtkui/interface.c:235 ../plugins/gtkui/plcommon.c:660
 #: ../plugins/gtkui/deadbeef.glade.h:16 ../plugins/converter/interface.c:629
 #: ../plugins/converter/converter.glade.h:46
-#: ../plugins/shellexecui/interface.c:65
+#: ../plugins/shellexecui/interface.c:66
 #: ../plugins/shellexecui/shellexec.glade.h:4
 msgid "Remove"
 msgstr "Poista"
@@ -315,7 +315,7 @@ msgstr "Järjestä"
 #: ../plugins/gtkui/interface.c:258 ../plugins/gtkui/interface.c:1349
 #: ../plugins/gtkui/mainplaylist.c:355 ../plugins/gtkui/prefwin.c:327
 #: ../plugins/gtkui/search.c:421 ../plugins/gtkui/deadbeef.glade.h:20
-#: ../plugins/converter/convgui.c:981 ../plugins/converter/convgui.c:1534
+#: ../plugins/converter/convgui.c:984 ../plugins/converter/convgui.c:1538
 #: ../plugins/converter/interface.c:606
 #: ../plugins/converter/converter.glade.h:43
 #: ../plugins/shellexecui/shellexecui.c:324
@@ -494,7 +494,7 @@ msgid "Quit"
 msgstr "Lopeta"
 
 #: ../plugins/gtkui/interface.c:967 ../plugins/gtkui/deadbeef.glade.h:61
-#: ../plugins/converter/convgui.c:1563 ../plugins/converter/convgui.c:1571
+#: ../plugins/converter/convgui.c:1567 ../plugins/converter/convgui.c:1575
 #: ../plugins/gtkui/actionhandlers.c:476
 msgid "Help"
 msgstr "Ohje"
@@ -532,7 +532,7 @@ msgstr "Ominaisuudet"
 #: ../plugins/gtkui/interface.c:1319 ../plugins/gtkui/interface.c:3096
 #: ../plugins/gtkui/deadbeef.glade.h:71 ../plugins/converter/interface.c:379
 #: ../plugins/converter/converter.glade.h:22
-#: ../plugins/shellexecui/interface.c:159
+#: ../plugins/shellexecui/interface.c:163
 #: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/pltmenu.c:65
 msgid "Title:"
 msgstr "Nimi:"
@@ -974,7 +974,7 @@ msgid "Select DSP Plugin"
 msgstr "Valitse DSP-liitännäinen"
 
 #: ../plugins/gtkui/interface.c:3572 ../plugins/gtkui/deadbeef.glade.h:179
-#: ../plugins/converter/convgui.c:1283 ../plugins/converter/interface.c:750
+#: ../plugins/converter/convgui.c:1287 ../plugins/converter/interface.c:750
 #: ../plugins/gtkui/dspconfig.c:139 ../plugins/converter/converter.glade.h:49
 msgid "Plugin"
 msgstr "Liitännäinen"
@@ -1137,7 +1137,7 @@ msgstr "Kiinnitä ryhmät vierittäessä"
 msgid "Group by"
 msgstr "Ryhmittele"
 
-#: ../plugins/gtkui/plcommon.c:1246 ../plugins/gtkui/widgets.c:3521
+#: ../plugins/gtkui/plcommon.c:1246 ../plugins/gtkui/widgets.c:3524
 msgid "None"
 msgstr "Ei mitään"
 
@@ -1341,10 +1341,10 @@ msgstr ""
 "otsikko\"\n"
 
 #: ../main.c:110
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"                      for more info, see http://sourceforge.net/apps/"
-"mediawiki/deadbeef/index.php?title=Title_Formatting\n"
+"                      for more info, see http://github.com/Alexey-Yakovenko/"
+"deadbeef/wiki/Title-formatting\n"
 msgstr ""
 "                      lisätietoja osoitteessa http://sourceforge.net/apps/"
 "mediawiki/deadbeef/index.php?title=Title_Formatting\n"
@@ -1778,7 +1778,7 @@ msgstr "Valitse kansio..."
 msgid "Failed to save encoder preset"
 msgstr "Enkooderin esiasetuksen tallentaminen epäonnistui."
 
-#: ../plugins/converter/convgui.c:771 ../plugins/converter/convgui.c:1320
+#: ../plugins/converter/convgui.c:771 ../plugins/converter/convgui.c:1324
 msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
@@ -1786,17 +1786,17 @@ msgstr ""
 "Tarkista esiasetuskansion käyttöoikeudet, yritä keksiä toinen nimi tai "
 "vapauta levytilaa."
 
-#: ../plugins/converter/convgui.c:771 ../plugins/converter/convgui.c:1320
+#: ../plugins/converter/convgui.c:771 ../plugins/converter/convgui.c:1324
 msgid "Preset with the same name already exists. Try to pick another title."
 msgstr "Esiasetus samalla nimellä on jo olemassa. Yritä keksiä toinen nimi."
 
-#: ../plugins/converter/convgui.c:772 ../plugins/converter/convgui.c:1321
+#: ../plugins/converter/convgui.c:772 ../plugins/converter/convgui.c:1325
 #: ../plugins/gtkui/ctmapping.c:202 ../plugins/gtkui/ctmapping.c:230
 #: ../plugins/gtkui/ctmapping.c:262
 msgid "Error"
 msgstr "Virhe"
 
-#: ../plugins/converter/convgui.c:826 ../plugins/converter/convgui.c:957
+#: ../plugins/converter/convgui.c:826 ../plugins/converter/convgui.c:960
 msgid "Add new encoder"
 msgstr "Lisää uusi enkooderi"
 
@@ -1804,35 +1804,35 @@ msgstr "Lisää uusi enkooderi"
 msgid "Edit encoder"
 msgstr "Muokkaa enkooderia"
 
-#: ../plugins/converter/convgui.c:888 ../plugins/converter/convgui.c:1455
+#: ../plugins/converter/convgui.c:888 ../plugins/converter/convgui.c:1459
 msgid "Remove preset"
 msgstr "Poista esiasetus"
 
-#: ../plugins/converter/convgui.c:890 ../plugins/converter/convgui.c:1457
+#: ../plugins/converter/convgui.c:890 ../plugins/converter/convgui.c:1461
 msgid "This action will delete the selected preset. Are you sure?"
 msgstr "Tämä toiminto poistaa valikoidun esiasetuksen. Oletko varma?"
 
-#: ../plugins/converter/convgui.c:971
+#: ../plugins/converter/convgui.c:974
 msgid "Encoders"
 msgstr "Enkooderit"
 
-#: ../plugins/converter/convgui.c:1044 ../plugins/gtkui/dspconfig.c:186
+#: ../plugins/converter/convgui.c:1048 ../plugins/gtkui/dspconfig.c:186
 msgid "Add plugin to DSP chain"
 msgstr "Lisää liitännäinen DSP-ketjuun"
 
-#: ../plugins/converter/convgui.c:1319
+#: ../plugins/converter/convgui.c:1323
 msgid "Failed to save DSP preset"
 msgstr "DSP-esiasetuksen tallennus epäonnistui"
 
-#: ../plugins/converter/convgui.c:1383 ../plugins/converter/convgui.c:1421
+#: ../plugins/converter/convgui.c:1387 ../plugins/converter/convgui.c:1425
 msgid "New DSP Preset"
 msgstr "Uusi DSP-esiasetus"
 
-#: ../plugins/converter/convgui.c:1505
+#: ../plugins/converter/convgui.c:1509
 msgid "Edit DSP Preset"
 msgstr "Muokkaa DSP-esiasetusta"
 
-#: ../plugins/converter/convgui.c:1525
+#: ../plugins/converter/convgui.c:1529
 msgid "DSP Presets"
 msgstr "DSP-esiasetukset"
 
@@ -2023,7 +2023,7 @@ msgstr "Nimeämätön DSP-esiasetus"
 
 #: ../plugins/converter/interface.c:625
 #: ../plugins/converter/converter.glade.h:45
-#: ../plugins/shellexecui/interface.c:61
+#: ../plugins/shellexecui/interface.c:62
 #: ../plugins/shellexecui/shellexec.glade.h:3
 msgid "Add"
 msgstr "Lisää"
@@ -2071,27 +2071,27 @@ msgstr ""
 msgid "Custom Shell Commands"
 msgstr "Mukautetut komentotulkkikomennot"
 
-#: ../plugins/shellexecui/interface.c:69
+#: ../plugins/shellexecui/interface.c:70
 #: ../plugins/shellexecui/shellexec.glade.h:5
 msgid "Edit"
 msgstr "Muokkaa"
 
-#: ../plugins/shellexecui/interface.c:87
+#: ../plugins/shellexecui/interface.c:88
 #: ../plugins/shellexecui/shellexec.glade.h:2
 msgid "Close"
 msgstr "Sulje"
 
-#: ../plugins/shellexecui/interface.c:145
+#: ../plugins/shellexecui/interface.c:149
 #: ../plugins/shellexecui/shellexec.glade.h:6
 msgid "Edit Command"
 msgstr "Muokkaa komentoa"
 
-#: ../plugins/shellexecui/interface.c:166
+#: ../plugins/shellexecui/interface.c:170
 #: ../plugins/shellexecui/shellexec.glade.h:8
 msgid "Command:"
 msgstr "Komento:"
 
-#: ../plugins/shellexecui/interface.c:178
+#: ../plugins/shellexecui/interface.c:182
 #: ../plugins/shellexecui/shellexec.glade.h:10
 #, no-c-format
 msgid ""
@@ -2103,17 +2103,17 @@ msgstr ""
 "kontekstissa jossa sovellus käynnistettiin. Otsikkomuotoilua voidaan "
 "käyttää. Esimerkiksi: xdg-open %D"
 
-#: ../plugins/shellexecui/interface.c:181
+#: ../plugins/shellexecui/interface.c:185
 #: ../plugins/shellexecui/shellexec.glade.h:11
 msgid "ID:"
 msgstr "Tunniste:"
 
-#: ../plugins/shellexecui/interface.c:193
+#: ../plugins/shellexecui/interface.c:197
 #: ../plugins/shellexecui/shellexec.glade.h:12
 msgid "Free-form name, for example \"My Shell Command\""
 msgstr "Vapaamuotoinen nimi, esim. \"Minun komentotulkkikomentoni\""
 
-#: ../plugins/shellexecui/interface.c:201
+#: ../plugins/shellexecui/interface.c:205
 #: ../plugins/shellexecui/shellexec.glade.h:13
 msgid ""
 "Command ID, normally it should be something short, for example \"youtube_open"
@@ -2122,57 +2122,57 @@ msgstr ""
 "Komennon tunnisteen tulisi normaalisti olla jotain lyhyttä, esim. "
 "\"youtube_open\" ja sen täytyy olla uniikki."
 
-#: ../plugins/shellexecui/interface.c:204
+#: ../plugins/shellexecui/interface.c:208
 #: ../plugins/shellexecui/shellexec.glade.h:15
 msgid "Single Tracks"
 msgstr "Yksittäiset raidat"
 
-#: ../plugins/shellexecui/interface.c:207
+#: ../plugins/shellexecui/interface.c:211
 #: ../plugins/shellexecui/shellexec.glade.h:14
 msgid "Works on single track."
 msgstr "Toimii yksittäisillä raidoilla"
 
-#: ../plugins/shellexecui/interface.c:209
+#: ../plugins/shellexecui/interface.c:213
 #: ../plugins/shellexecui/shellexec.glade.h:17
 msgid "Multiple Tracks"
 msgstr "Useat raidat"
 
-#: ../plugins/shellexecui/interface.c:212
+#: ../plugins/shellexecui/interface.c:216
 #: ../plugins/shellexecui/shellexec.glade.h:16
 msgid "Works on multiple tracks."
 msgstr "Toimii useilla raidoilla"
 
-#: ../plugins/shellexecui/interface.c:214
+#: ../plugins/shellexecui/interface.c:218
 #: ../plugins/shellexecui/shellexec.glade.h:19
 msgid "Local"
 msgstr "Paikallinen"
 
-#: ../plugins/shellexecui/interface.c:217
+#: ../plugins/shellexecui/interface.c:221
 #: ../plugins/shellexecui/shellexec.glade.h:18
 msgid "Works on local files."
 msgstr "Toimii paikallisilla tiedostoilla."
 
-#: ../plugins/shellexecui/interface.c:219
+#: ../plugins/shellexecui/interface.c:223
 #: ../plugins/shellexecui/shellexec.glade.h:21
 msgid "Remote"
 msgstr "Etä"
 
-#: ../plugins/shellexecui/interface.c:222
+#: ../plugins/shellexecui/interface.c:226
 #: ../plugins/shellexecui/shellexec.glade.h:20
 msgid "Works on remote files (e.g. http:// streams)"
 msgstr "Toimii etätiedostoilla (esim. http:// suoratoistot)"
 
-#: ../plugins/shellexecui/interface.c:224
+#: ../plugins/shellexecui/interface.c:228
 #: ../plugins/shellexecui/shellexec.glade.h:23
 msgid "Generic (Main Menu)"
 msgstr "Yleinen (Päävalikko)"
 
-#: ../plugins/shellexecui/interface.c:227
+#: ../plugins/shellexecui/interface.c:231
 #: ../plugins/shellexecui/shellexec.glade.h:22
 msgid "Item should appear in the main menu"
 msgstr "Kohteen pitäisi näkyä päävalikossa"
 
-#: ../plugins/shellexecui/interface.c:229
+#: ../plugins/shellexecui/interface.c:233
 #: ../plugins/shellexecui/shellexec.glade.h:24
 msgid ""
 "<small>If you want to add the command to main menu, make sure that title "
@@ -2360,31 +2360,31 @@ msgstr "Lisää uusi välilehti"
 msgid "Show Column Headers"
 msgstr "Näytä sarakkeiden otsakkeet"
 
-#: ../plugins/gtkui/widgets.c:3144
+#: ../plugins/gtkui/widgets.c:3147
 msgid "Expand the box by 1 item"
 msgstr "Laajenna laatikkoa 1:llä elementillä"
 
-#: ../plugins/gtkui/widgets.c:3149
+#: ../plugins/gtkui/widgets.c:3152
 msgid "Shrink the box by 1 item"
 msgstr "Pienennä laatikkoa 1:llä elementillä"
 
-#: ../plugins/gtkui/widgets.c:3154
+#: ../plugins/gtkui/widgets.c:3157
 msgid "Homogeneous"
 msgstr "Yhtenäinen"
 
-#: ../plugins/gtkui/widgets.c:3194
+#: ../plugins/gtkui/widgets.c:3197
 msgid "Expand"
 msgstr "Laajenna"
 
-#: ../plugins/gtkui/widgets.c:3202
+#: ../plugins/gtkui/widgets.c:3205
 msgid "Fill"
 msgstr "Täytä"
 
-#: ../plugins/gtkui/widgets.c:3603
+#: ../plugins/gtkui/widgets.c:3606
 msgid "Configure button"
 msgstr "Tee painikkeen asetukset"
 
-#: ../plugins/gtkui/widgets.c:3867
+#: ../plugins/gtkui/widgets.c:3870
 msgid "Voices:"
 msgstr ""
 
