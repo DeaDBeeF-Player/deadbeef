@@ -508,7 +508,7 @@ plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle) {
     plugin_t *prev = NULL;
     for (plugin_t *p = plugins; p; prev = p, p = p->next) {
         int same_id = p->plugin->id && plugin_api->id && !strcmp (p->plugin->id, plugin_api->id);
-        int same_name = p->plugin->name && plugin_api->name && !strcmp (p->plugin->name, plugin_api->name);
+        int same_name = (!p->plugin->id || !plugin_api->id) && p->plugin->name && plugin_api->name && !strcmp (p->plugin->name, plugin_api->name);
         if (same_id || same_name) {
             if (plugin_api->version_major > p->plugin->version_major || (plugin_api->version_major == p->plugin->version_major && plugin_api->version_minor > p->plugin->version_minor)) {
                 trace ("found newer version of plugin \"%s\" (%s), replacing\n", plugin_api->id, plugin_api->name);
