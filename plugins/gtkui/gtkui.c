@@ -1178,9 +1178,14 @@ gtkui_quit_cb (void *ctx) {
         if (response != GTK_RESPONSE_YES) {
             return FALSE;
         }
+        else {
+            exit (0);
+        }
     }
-    progress_abort ();
-    deadbeef->sendmessage (DB_EV_TERMINATE, 0, 0, 0);
+    else {
+        progress_abort ();
+        deadbeef->sendmessage (DB_EV_TERMINATE, 0, 0, 0);
+    }
     return FALSE;
 }
 
