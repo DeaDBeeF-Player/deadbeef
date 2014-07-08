@@ -344,7 +344,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
         plt_add_files_end (curr_plt, 0);
         plt_unref (curr_plt);
         if (!queue) {
-            messagepump_push (DB_EV_PLAY_CURRENT, 0, 1, 0);
+            messagepump_push (DB_EV_PLAY_NUM, 0, 0, 0);
             return 2; // don't reload playlist at startup
         }
     }
@@ -571,14 +571,7 @@ player_mainloop (void) {
                     }
                     break;
                 case DB_EV_PLAY_CURRENT:
-                    if (p1) {
-                        output->stop ();
-                        pl_playqueue_clear ();
-                        streamer_set_nextsong (0, 1);
-                    }
-                    else {
-                        streamer_play_current_track ();
-                    }
+                    streamer_play_current_track ();
                     break;
                 case DB_EV_PLAY_NUM:
                     output->stop ();

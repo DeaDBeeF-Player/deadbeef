@@ -605,7 +605,7 @@ action_play_cb (struct DB_plugin_action_s *action, int ctx) {
                 deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, cur, 0);
             }
             else {
-                deadbeef->sendmessage (DB_EV_PLAY_CURRENT, 0, 1, 0);
+                deadbeef->sendmessage (DB_EV_PLAY_CURRENT, 0, 0, 0);
             }
         }
         else {
