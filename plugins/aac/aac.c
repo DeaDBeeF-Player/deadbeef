@@ -492,7 +492,10 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         _info->fmt.channelmask |= 1 << i;
     }
     info->noremap = 0;
-    info->remap[0] = -1;
+    for (int i = 0; i < sizeof (info->remap) / sizeof (int); i++) {
+        info->remap[i] = -1;
+    }
+
     trace ("init success\n");
 
     return 0;
@@ -559,8 +562,6 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
                 int i, j;
                 if (info->remap[0] == -1) {
                     // build remap mtx
-                    memset (info->remap, -1, sizeof (info->remap));
-
                     // FIXME: should build channelmask 1st; then remap based on channelmask
                     for (i = 0; i < _info->fmt.channels; i++) {
                         switch (info->frame_info.channel_position[i]) {
