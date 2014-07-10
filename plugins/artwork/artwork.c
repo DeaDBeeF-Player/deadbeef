@@ -629,6 +629,8 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
     for (row = 0; row < height; row++)
         row_pointers[row] = NULL;
 
+    png_read_update_info(png_ptr, info_ptr);
+
     for (row = 0; row < height; row++)
         row_pointers[row] = png_malloc(png_ptr, png_get_rowbytes(png_ptr,
                     info_ptr));
