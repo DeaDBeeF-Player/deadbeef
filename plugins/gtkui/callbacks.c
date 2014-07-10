@@ -153,6 +153,9 @@ on_playbtn_clicked                     (GtkButton       *button,
             cur = deadbeef->plt_get_cursor (plt, PL_MAIN);
             deadbeef->plt_unref (plt);
         }
+        if (cur == -1) {
+            cur = 0;
+        }
         deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, cur, 0);
     }
 }
