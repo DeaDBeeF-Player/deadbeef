@@ -139,7 +139,7 @@ esc_char (char c) {
     return '_';
 }
 
-int
+static int
 make_cache_dir_path (char *path, int size, const char *artist, int img_size) {
     char esc_artist[PATH_MAX];
     int i;
@@ -174,24 +174,23 @@ make_cache_dir_path (char *path, int size, const char *artist, int img_size) {
     return sz;
 }
 
-int
+static int
 make_cache_path2 (char *path, int size, const char *fname, const char *album, const char *artist, int img_size) {
-    if (!album) {
-        album = "";
+    int unk = 0;
+
+    if (!album || !(*album)) {
+        album = "Unknown album";
+        unk = 1;
     }
-    if (!artist) {
-        artist = "";
+    if (!artist || !(*artist)) {
+        artist = "Unknown artist";
+        unk = 1;
     }
 
-    if (*album && !(*artist)) {
-        artist = album;
-    }
-
-    if (!*artist || !*album)
+    if (unk)
     {
         if (fname) {
-            // album=escape(path), artist=uknown
-            artist = "Unknown artist";
+            // album=escape(path)
             album = fname;
         }
         else {
@@ -225,12 +224,12 @@ make_cache_path2 (char *path, int size, const char *fname, const char *album, co
     }
 }
 
-void
+static void
 make_cache_path (char *path, int size, const char *album, const char *artist, int img_size) {
     make_cache_path2 (path, size, NULL, album, artist, img_size);
 }
 
-void
+static void
 queue_add (const char *fname, const char *artist, const char *album, int img_size, artwork_callback callback, void *user_data) {
     if (!artist) {
         artist = "";
@@ -274,7 +273,7 @@ queue_add (const char *fname, const char *artist, const char *album, int img_siz
     deadbeef->cond_signal (cond);
 }
 
-void
+static void
 queue_pop (void) {
     deadbeef->mutex_lock (mutex);
     cover_query_t *next = queue ? queue->next : NULL;
@@ -481,7 +480,7 @@ jpeg_resize (const char *fname, const char *outname, int scaled_size) {
     return 0;
 }
 
-int
+static int
 png_resize (const char *fname, const char *outname, int scaled_size) {
     png_structp png_ptr = NULL;
     png_infop info_ptr = NULL;
@@ -861,6 +860,7 @@ copy_file (const char *in, const char *out, int img_size) {
 }
 
 static const char *filter_custom_mask = NULL;
+
 static int
 filter_custom (const struct dirent *f)
 {
@@ -1399,7 +1399,7 @@ find_image (const char *path) {
     return NULL;
 }
 
-char*
+static char*
 get_album_art (const char *fname, const char *artist, const char *album, int size, artwork_callback callback, void *user_data)
 {
     char path [1024];
@@ -1473,13 +1473,7 @@ get_album_art_sync (const char *fname, const char *artist, const char *album, in
     return image_fname;
 }
 
-DB_plugin_t *
-artwork_load (DB_functions_t *api) {
-    deadbeef = api;
-    return DB_PLUGIN (&plugin);
-}
-
-void
+static void
 artwork_reset (int fast) {
     if (fast) {
 //        if (current_file) {
@@ -1693,3 +1687,10 @@ static DB_artwork_plugin_t plugin = {
     .make_cache_path = make_cache_path,
     .make_cache_path2 = make_cache_path2,
 };
+
+DB_plugin_t *
+artwork_load (DB_functions_t *api) {
+    deadbeef = api;
+    return DB_PLUGIN (&plugin);
+}
+
