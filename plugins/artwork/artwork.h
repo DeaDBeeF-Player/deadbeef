@@ -46,6 +46,7 @@ typedef struct {
     char* (*get_album_art_sync) (const char *fname, const char *artist, const char *album, int size);
 
     // creates full path string for cache storage
+    // NOTE: this function is deprecated, please use make_cache_path2
     void (*make_cache_path) (char *path, int size, const char *album, const char *artist, int img_size);
 
     // creates full path string for cache storage
