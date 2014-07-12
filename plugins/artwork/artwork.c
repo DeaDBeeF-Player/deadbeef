@@ -1408,13 +1408,6 @@ get_album_art (const char *fname, const char *artist, const char *album, int siz
 {
     char path [1024];
 
-//    if (!deadbeef->is_local_file (fname)) {
-//        if (callback) {
-//            callback (NULL, NULL, NULL, user_data);
-//        }
-//        return NULL;
-//    }
-
     make_cache_path2 (path, sizeof (path), fname, album, artist, size);
     char *p = find_image (path);
     if (p) {
