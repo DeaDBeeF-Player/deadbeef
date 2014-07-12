@@ -176,7 +176,10 @@ make_cache_dir_path (char *path, int size, const char *artist, int img_size) {
 
 static int
 make_cache_path2 (char *path, int size, const char *fname, const char *album, const char *artist, int img_size) {
+    *path = 0;
+
     int unk = 0;
+    int unk_artist = 0;
 
     if (!album || !(*album)) {
         album = "Unknown album";
@@ -184,18 +187,19 @@ make_cache_path2 (char *path, int size, const char *fname, const char *album, co
     }
     if (!artist || !(*artist)) {
         artist = "Unknown artist";
-        unk = 1;
+        unk_artist = 1;
     }
 
     if (unk)
     {
         if (fname) {
-            // album=escape(path)
             album = fname;
         }
+        else if (!unk_artist) {
+            album = artist;
+        }
         else {
-            trace ("artist or album is empty, give up\n");
-            *path = 0;
+            trace ("not possible to get any unique album name\n");
             return -1;
         }
     }
