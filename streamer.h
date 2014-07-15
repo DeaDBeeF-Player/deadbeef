@@ -66,6 +66,7 @@ streamer_unlock (void);
 // 1 switch to current (gui) playlist, play if not playing
 // 2 pause
 // 3 play if not playing, don't switch playlist
+// 4 same as 1, but stops playback before proceeding
 void
 streamer_set_nextsong (int song, int pstate);
 

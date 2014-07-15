@@ -1326,6 +1326,10 @@ streamer_set_nextsong (int song, int pstate) {
 static void
 streamer_set_nextsong_real (int song, int pstate) {
     DB_output_t *output = plug_get_output ();
+    if (pstate == 4) {
+        pstate = 1;
+        output->stop ();
+    }
     trace ("streamer_set_nextsong %d %d\n", song, pstate);
     streamer_abort_files ();
     streamer_lock ();
