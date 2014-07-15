@@ -30,6 +30,12 @@
 #include "playlist.h"
 #include "deadbeef.h"
 
+// events to pass to streamer thread
+enum {
+    STR_EV_PLAY_TRACK_IDX, // p1 = idx, p2 = pstate; see streamer_set_nextsong semantics
+    STR_EV_PLAY_CURR, // will play the current streamer track (playing_track), see more details in streamer_play_current_track
+};
+
 int
 streamer_init (void);
 
@@ -82,6 +88,9 @@ streamer_get_playing_track (void);
 void
 streamer_configchanged (void);
 
+// if paused -- resume
+// else, if have cursor track -- stop current, play cursor
+// else, play next
 void
 streamer_play_current_track (void);
 
