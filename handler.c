@@ -86,6 +86,9 @@ handler_free (handler_t *h) {
 
 int
 handler_push (handler_t *h, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    if (!h) {
+        return -1;
+    }
     if (!h->mfree) {
         return -1;
     }

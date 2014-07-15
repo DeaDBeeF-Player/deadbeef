@@ -111,6 +111,7 @@ static int bytes_until_next_song = 0;
 static uintptr_t mutex;
 static uintptr_t decodemutex;
 static uintptr_t wdl_mutex; // wavedata listener
+
 static int nextsong = -1;
 static int nextsong_pstate = -1;
 static int badsong = -1;
@@ -204,8 +205,7 @@ streamer_abort_files (void) {
 
 }
 
-
-void
+static void
 streamer_set_replaygain (playItem_t *it) {
     // setup replaygain
     pl_lock ();
@@ -257,7 +257,7 @@ send_trackchanged (playItem_t *from, playItem_t *to) {
     messagepump_push_event ((ddb_event_t *)event, 0, 0);
 }
 
-void
+static void
 streamer_start_playback (playItem_t *from, playItem_t *it) {
     if (from) {
         pl_item_ref (from);
@@ -360,7 +360,8 @@ send_trackinfochanged (playItem_t *track) {
     messagepump_push_event ((ddb_event_t*)ev, 0, 0);
 }
 
-int stop_after_album_check (playItem_t *cur, playItem_t *next) {
+static int
+stop_after_album_check (playItem_t *cur, playItem_t *next) {
     if (!stop_after_album) {
         return 0;
     }
@@ -416,8 +417,8 @@ int stop_after_album_check (playItem_t *cur, playItem_t *next) {
     return 1;
 }
 
-int
-streamer_move_to_nextsong (int reason) {
+static int
+streamer_move_to_nextsong_real (int reason) {
     trace ("streamer_move_to_nextsong (%d)\n", reason);
     pl_lock ();
     if (!streamer_playlist) {
@@ -635,8 +636,8 @@ streamer_move_to_nextsong (int reason) {
     return -1;
 }
 
-int
-streamer_move_to_prevsong (void) {
+static int
+streamer_move_to_prevsong_real (void) {
     pl_lock ();
     if (streamer_playlist) {
         plt_unref (streamer_playlist);
@@ -748,8 +749,8 @@ streamer_move_to_prevsong (void) {
     return -1;
 }
 
-int
-streamer_move_to_randomsong (void) {
+static int
+streamer_move_to_randomsong_real (void) {
     if (!streamer_playlist) {
         streamer_playlist = plt_get_curr ();
     }
@@ -774,6 +775,21 @@ streamer_move_to_randomsong (void) {
 
     streamer_set_nextsong (r, 1);
     return 0;
+}
+
+int
+streamer_move_to_nextsong (int reason) {
+    handler_push (handler, STR_EV_NEXT, 0, reason, 0);
+}
+
+int
+streamer_move_to_prevsong (void) {
+    handler_push (handler, STR_EV_PREV, 0, 0, 0);
+}
+
+int
+streamer_move_to_randomsong (void) {
+    handler_push (handler, STR_EV_RAND, 0, 0, 0);
 }
 
 // playlist must call that whenever item was removed
@@ -1304,7 +1320,32 @@ streamer_set_nextsong (int song, int pstate) {
     handler_push (handler, STR_EV_PLAY_TRACK_IDX, 0, song, pstate);
 }
 
-void
+static void
+streamer_set_nextsong_real (int song, int pstate) {
+    DB_output_t *output = plug_get_output ();
+    trace ("streamer_set_nextsong %d %d\n", song, pstate);
+    streamer_abort_files ();
+    streamer_lock ();
+    nextsong = song;
+    nextsong_pstate = pstate;
+    if (output->state () == OUTPUT_STATE_STOPPED) {
+        if (pstate == 1) { // means user initiated this
+            pl_lock ();
+            if (streamer_playlist) {
+                plt_unref (streamer_playlist);
+            }
+            streamer_playlist = plt_get_curr ();
+            pl_unlock ();
+        }
+        // no sense to wait until end of previous song, reset buffer
+        bytes_until_next_song = 0;
+        playpos = 0;
+        seekpos = -1;
+    }
+    streamer_unlock ();
+}
+
+static void
 streamer_set_generic_output_format (void) {
     output_format.bps = 16;
     output_format.is_float = 0;
@@ -1316,7 +1357,7 @@ streamer_set_generic_output_format (void) {
 
 void
 streamer_set_seek (float pos) {
-    seekpos = pos;
+    handler_push (handler, STR_EV_SEEK, 0, *((uint32_t *)&pos), 0);
 }
 
 static void
@@ -1428,7 +1469,7 @@ streamer_start_new_song (void) {
     }
 }
 
-void
+static void
 streamer_next (int bytesread) {
     streamer_lock ();
     bytes_until_next_song = streamer_ringbuf.remaining + bytesread;
@@ -1447,6 +1488,21 @@ streamer_next (int bytesread) {
     }
 }
 
+static int
+streamer_move_to_nextsong_real (int reason);
+
+static int
+streamer_move_to_prevsong_real (void);
+
+static int
+streamer_move_to_randomsong_real (void);
+
+static void
+streamer_play_current_track_real (void);
+
+static void
+streamer_set_current_playlist_real (int plt);
+
 void
 streamer_thread (void *ctx) {
 #ifdef __linux__
@@ -1462,78 +1518,28 @@ streamer_thread (void *ctx) {
         uintptr_t ctx;
         uint32_t p1, p2;
         if (!handler_pop (handler, &id, &ctx, &p1, &p2)) {
-            if (id == STR_EV_PLAY_TRACK_IDX) {
-                DB_output_t *output = plug_get_output ();
-                trace ("streamer_set_nextsong %d %d\n", song, pstate);
-                streamer_abort_files ();
-                streamer_lock ();
-                nextsong = p1;
-                nextsong_pstate = p2;
-                if (output->state () == OUTPUT_STATE_STOPPED) {
-                    if (p2 == 1) { // means user initiated this
-                        pl_lock ();
-                        if (streamer_playlist) {
-                            plt_unref (streamer_playlist);
-                        }
-                        streamer_playlist = plt_get_curr ();
-                        pl_unlock ();
-                    }
-                    // no sense to wait until end of previous song, reset buffer
-                    bytes_until_next_song = 0;
-                    playpos = 0;
-                    seekpos = -1;
-                }
-                streamer_unlock ();
-            }
-            else if (id == STR_EV_PLAY_CURR) {
-                playlist_t *plt = plt_get_curr ();
-                DB_output_t *output = plug_get_output ();
-                if (output->state () == OUTPUT_STATE_PAUSED && playing_track) {
-                    if (is_remote_stream (playing_track)) {
-                        streamer_reset (1);
-                        streamer_set_current (NULL);
-                        streamer_set_current (playing_track);
-                        if (fileinfo && memcmp (&orig_output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t))) {
-                            memcpy (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
-                            memcpy (&orig_output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
-                            streamer_set_output_format ();
-                        }
-                    }
-                    // unpause currently paused track
-                    output->unpause ();
-                    messagepump_push (DB_EV_PAUSED, 0, 0, 0);
-                }
-                else if (plt->current_row[PL_MAIN] != -1) {
-                    // play currently selected track in current playlist
-                    output->stop ();
-                    // get next song in queue
-                    int idx = -1;
-                    playItem_t *next = pl_playqueue_getnext ();
-                    if (next) {
-                        idx = str_get_idx_of (next);
-                        pl_playqueue_pop ();
-                        pl_item_unref (next);
-                    }
-                    else {
-                        idx = plt->current_row[PL_MAIN];
-                    }
-
-                    streamer_set_nextsong (idx, 1);
-                    pl_lock ();
-                    if (streamer_playlist) {
-                        plt_unref (streamer_playlist);
-                    }
-                    streamer_playlist = plt;
-                    pl_unlock ();
-                    return;
-                }
-                else {
-                    output->stop ();
-                    streamer_move_to_nextsong (1);
-                }
-                if (plt) {
-                    plt_unref (plt);
-                }
+            switch (id) {
+            case STR_EV_PLAY_TRACK_IDX:
+                streamer_set_nextsong_real (p1, p2);
+                break;
+            case STR_EV_PLAY_CURR:
+                streamer_play_current_track_real ();
+                break;
+            case STR_EV_NEXT:
+                streamer_move_to_nextsong_real (p1);
+                break;
+            case STR_EV_PREV:
+                streamer_move_to_prevsong_real ();
+                break;
+            case STR_EV_RAND:
+                streamer_move_to_randomsong_real ();
+                break;
+            case STR_EV_SEEK:
+                seekpos = *((float *)&p1);
+                break;
+            case STR_EV_SET_CURR_PLT:
+                streamer_set_current_playlist_real (p1);
+                break;
             }
         }
 
@@ -1978,7 +1984,7 @@ streamer_dsp_chain_save (void) {
     return streamer_dsp_chain_save_internal (fname, dsp_chain);
 }
 
-void
+static void
 streamer_dsp_postinit (void) {
     // note about EQ hack:
     // we 1st check if there's an EQ in dsp chain, and just use it
@@ -2037,7 +2043,7 @@ streamer_dsp_refresh (void) {
     mutex_unlock (decodemutex);
 }
 
-void
+static void
 streamer_dsp_init (void) {
     // load dsp chain from file
     char fname[PATH_MAX];
@@ -2602,7 +2608,7 @@ streamer_read (char *bytes, int size) {
     return sz;
 }
 
-int
+static int
 streamer_get_fill (void) {
     return streamer_ringbuf.remaining;
 }
@@ -2655,6 +2661,58 @@ streamer_configchanged (void) {
     }
 }
 
+static void
+streamer_play_current_track_real (void) {
+    playlist_t *plt = plt_get_curr ();
+    DB_output_t *output = plug_get_output ();
+    if (output->state () == OUTPUT_STATE_PAUSED && playing_track) {
+        if (is_remote_stream (playing_track)) {
+            streamer_reset (1);
+            streamer_set_current (NULL);
+            streamer_set_current (playing_track);
+            if (fileinfo && memcmp (&orig_output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t))) {
+                memcpy (&output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
+                memcpy (&orig_output_format, &fileinfo->fmt, sizeof (ddb_waveformat_t));
+                streamer_set_output_format ();
+            }
+        }
+        // unpause currently paused track
+        output->unpause ();
+        messagepump_push (DB_EV_PAUSED, 0, 0, 0);
+    }
+    else if (plt->current_row[PL_MAIN] != -1) {
+        // play currently selected track in current playlist
+        output->stop ();
+        // get next song in queue
+        int idx = -1;
+        playItem_t *next = pl_playqueue_getnext ();
+        if (next) {
+            idx = str_get_idx_of (next);
+            pl_playqueue_pop ();
+            pl_item_unref (next);
+        }
+        else {
+            idx = plt->current_row[PL_MAIN];
+        }
+
+        streamer_set_nextsong (idx, 1);
+        pl_lock ();
+        if (streamer_playlist) {
+            plt_unref (streamer_playlist);
+        }
+        streamer_playlist = plt;
+        pl_unlock ();
+        return;
+    }
+    else {
+        output->stop ();
+        streamer_move_to_nextsong (1);
+    }
+    if (plt) {
+        plt_unref (plt);
+    }
+}
+
 void
 streamer_play_current_track (void) {
     handler_push (handler, STR_EV_PLAY_CURR, 0, 0, 0);
@@ -2665,14 +2723,19 @@ streamer_get_current_fileinfo (void) {
     return fileinfo;
 }
 
-void
-streamer_set_current_playlist (int plt) {
+static void
+streamer_set_current_playlist_real (int plt) {
     pl_lock ();
     if (streamer_playlist) {
         plt_unref (streamer_playlist);
     }
     streamer_playlist = plt_get_for_idx (plt);
     pl_unlock ();
+}
+
+void
+streamer_set_current_playlist (int plt) {
+    handler_push (handler, STR_EV_SET_CURR_PLT, 0, plt, 0);
 }
 
 int
