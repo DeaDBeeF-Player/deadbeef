@@ -34,6 +34,11 @@
 enum {
     STR_EV_PLAY_TRACK_IDX, // p1 = idx, p2 = pstate; see streamer_set_nextsong semantics
     STR_EV_PLAY_CURR, // will play the current streamer track (playing_track), see more details in streamer_play_current_track
+    STR_EV_NEXT, // streamer_move_to_nextsong
+    STR_EV_PREV, // streamer_move_to_prevsong
+    STR_EV_RAND, // streamer_move_to_randomsong
+    STR_EV_SEEK, // streamer_set_seek; p1: float pos
+    STR_EV_SET_CURR_PLT, // streamer_set_current_playlist
 };
 
 int
@@ -66,9 +71,6 @@ streamer_set_nextsong (int song, int pstate);
 
 void
 streamer_set_seek (float pos);
-
-int
-streamer_get_fill (void);
 
 int
 streamer_ok_to_read (int len);
@@ -138,9 +140,6 @@ streamer_dsp_refresh (void);
 
 void
 streamer_get_output_format (ddb_waveformat_t *fmt);
-
-void
-streamer_dsp_postinit (void);
 
 int
 streamer_dsp_chain_save (void);
