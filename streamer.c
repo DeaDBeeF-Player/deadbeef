@@ -1129,6 +1129,7 @@ streamer_set_current (playItem_t *it) {
                 if (to) {
                     pl_item_unref (to);
                 }
+                unlink (tempfile);
                 return res;
             }
 
