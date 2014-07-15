@@ -1021,6 +1021,7 @@ streamer_set_current (playItem_t *it) {
             char *buf = NULL;
             int fd = -1;
             FILE *out = NULL;
+            char tempfile[1000] = "";
 
             int size = vfs_fgetlength (fp);
             if (size <= 0) {
@@ -1037,7 +1038,6 @@ streamer_set_current (playItem_t *it) {
                 trace ("failed to download %d bytes (got %d bytes)\n", size, rd);
                 goto m3u_error;
             }
-            char tempfile[1000];
             const char *tmpdir = getenv ("TMPDIR");
             if (!tmpdir) {
                 tmpdir = "/tmp";
@@ -1115,9 +1115,9 @@ streamer_set_current (playItem_t *it) {
                 }
                 return res;
             }
-            unlink (tempfile);
 
 m3u_error:
+            unlink (tempfile);
             err = -1;
             if (buf) {
                 free (buf);
