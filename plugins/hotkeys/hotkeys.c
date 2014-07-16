@@ -1070,7 +1070,7 @@ static DB_plugin_action_t action_volume_down = {
 };
 
 static DB_plugin_action_t action_toggle_stop_after_current = {
-    .title = "Playback/Toggle Stop After Current",
+    .title = "Playback/Toggle Stop After Current Track",
     .name = "toggle_stop_after_current",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_toggle_stop_after_current_cb,
