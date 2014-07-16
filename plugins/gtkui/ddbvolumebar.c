@@ -285,7 +285,6 @@ on_volumebar_scroll_event              (GtkWidget       *widget,
         vol = -range;
     }
     deadbeef->volume_set_db (vol);
-    GtkWidget *volumebar = DDB_VOLUMEBAR (widget);
     gtk_widget_queue_draw (widget);
     char s[100];
     int db = deadbeef->volume_get_db ();
