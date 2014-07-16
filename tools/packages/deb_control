@@ -5,8 +5,8 @@ Recommends: libpulse0, libdbus-1-3
 Section: sound
 Priority: optional
 Homepage: http://deadbeef.sourceforge.net/
-Description: ultimate music player for GNU/Linux systems
- DeaDBeeF (as in 0xDEADBEEF) is an audio player for GNU/Linux systems with X11.
+Description: The Ultimate Music Player
+ DeaDBeeF (as in 0xDEADBEEF) is a cross-platform audio player
  .
  Features:
  .
