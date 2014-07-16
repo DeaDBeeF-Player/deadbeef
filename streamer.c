@@ -419,6 +419,9 @@ stop_after_album_check (playItem_t *cur, playItem_t *next) {
 
 static int
 streamer_move_to_nextsong_real (int reason) {
+    if (reason) {
+        plug_get_output ()->stop ();
+    }
     trace ("streamer_move_to_nextsong (%d)\n", reason);
     pl_lock ();
     if (!streamer_playlist) {
@@ -638,6 +641,7 @@ streamer_move_to_nextsong_real (int reason) {
 
 static int
 streamer_move_to_prevsong_real (void) {
+    plug_get_output ()->stop ();
     pl_lock ();
     if (streamer_playlist) {
         plt_unref (streamer_playlist);
@@ -751,6 +755,7 @@ streamer_move_to_prevsong_real (void) {
 
 static int
 streamer_move_to_randomsong_real (void) {
+    plug_get_output ()->stop ();
     if (!streamer_playlist) {
         streamer_playlist = plt_get_curr ();
     }
