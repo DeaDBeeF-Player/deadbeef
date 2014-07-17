@@ -53,6 +53,8 @@ version 0.6.2
 	improved tag writing in converter
 	fixed issues with "background jobs are running" warning
 	changed all wiki links to point to the new wiki on github
+	improved streamer event handling, to make the GUI more responsive and stable
+	fixed cleaning up downloaded temporary playlist files
 
 version 0.6.1
 	fixed crash in AAC plugin when mp4 file reports 0 samples (e.g. radio rips)
