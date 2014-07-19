@@ -334,6 +334,14 @@ check_dir (const char *dir, mode_t mode)
 }
 
 #ifndef USE_IMLIB2
+static int blerp_pixel(const png_byte *row, const png_byte *next_row, const int_fast16_t x_index, const int_fast16_t next_x_index, const int_fast8_t component, const int_fast32_t weight, const int_fast32_t weightx, const int_fast32_t weighty, const int_fast32_t weightxy)
+{
+    return row[x_index+component] * weight +
+           row[next_x_index+component] * weightx +
+           next_row[x_index+component] * weighty +
+           next_row[next_x_index+component] * weightxy;
+}
+
 struct my_error_mgr {
   struct jpeg_error_mgr pub;	/* "public" fields */
 
@@ -366,18 +374,14 @@ jpeg_resize (const char *fname, const char *outname, int scaled_size) {
 
     struct my_error_mgr jerr;
 
-    uint8_t *c;
     FILE *fp = NULL, *out = NULL;
 
-
     cinfo.err = jpeg_std_error (&jerr.pub);
-
+    cinfo_out.err = cinfo.err;
     jerr.pub.error_exit = my_error_exit;
     /* Establish the setjmp return context for my_error_exit to use. */
     if (setjmp(jerr.setjmp_buffer)) {
-        /* If we get here, the JPEG code has signaled an error.
-         * We need to clean up the JPEG object, close the input file, and return.
-         */
+        trace("failed to scale %s as jpeg\n", outname);
         jpeg_destroy_decompress(&cinfo);
         jpeg_destroy_compress(&cinfo_out);
         if (fp) {
@@ -389,8 +393,6 @@ jpeg_resize (const char *fname, const char *outname, int scaled_size) {
         return -1;
     }
 
-    jpeg_create_decompress (&cinfo);
-
     fp = fopen (fname, "rb");
     if (!fp) {
         return -1;
@@ -401,79 +403,85 @@ jpeg_resize (const char *fname, const char *outname, int scaled_size) {
         return -1;
     }
 
+    jpeg_create_decompress (&cinfo);
     jpeg_stdio_src (&cinfo, fp);
-
     jpeg_read_header (&cinfo, TRUE);
     jpeg_start_decompress (&cinfo);
 
-    int i;
-
-    cinfo_out.err = cinfo.err;
-
     jpeg_create_compress(&cinfo_out);
-
     jpeg_stdio_dest(&cinfo_out, out);
 
-    int sw, sh;
-    if (deadbeef->conf_get_int ("artwork.scale_towards_longer", 1)) {
-        if (cinfo.image_width > cinfo.image_height) {
-            sh = scaled_size;
-            sw = scaled_size * cinfo.image_width / cinfo.image_height;
-        }
-        else {
-            sw = scaled_size;
-            sh = scaled_size * cinfo.image_height / cinfo.image_width;
-        }
+    int scaled_width, scaled_height;
+    if (deadbeef->conf_get_int ("artwork.scale_towards_longer", 1) == cinfo.image_width > cinfo.image_height) {
+        scaled_height = scaled_size;
+        scaled_width = scaled_size * cinfo.image_width / cinfo.image_height;
     }
     else {
-        if (cinfo.image_width < cinfo.image_height) {
-            sh = scaled_size;
-            sw = scaled_size * cinfo.image_width / cinfo.image_height;
-        }
-        else {
-            sw = scaled_size;
-            sh = scaled_size * cinfo.image_height / cinfo.image_width;
-        }
+        scaled_width = scaled_size;
+        scaled_height = scaled_size * cinfo.image_height / cinfo.image_width;
     }
-
-
-    cinfo_out.image_width      = sw;
-    cinfo_out.image_height     = sh;
+    cinfo_out.image_width      = scaled_width;
+    cinfo_out.image_height     = scaled_height;
     cinfo_out.input_components = cinfo.output_components;
     cinfo_out.in_color_space   = cinfo.out_color_space;
-
     jpeg_set_defaults(&cinfo_out);
-
-    jpeg_set_quality(&cinfo_out, 100, TRUE);
+    jpeg_set_quality(&cinfo_out, 95, TRUE);
     jpeg_start_compress(&cinfo_out, TRUE);
 
-    float sy = 0;
-    float dy = (float)cinfo.output_height / (float)sh;
+    const int_fast16_t line_size = cinfo.output_width * cinfo.output_components;
+    JSAMPLE scanline[line_size];
+    JSAMPLE next_scanline[line_size];
+    JSAMPLE out_line[scaled_width * cinfo.output_components];
+    JSAMPROW row = scanline;
+    JSAMPROW next_row = next_scanline;
+    JSAMPROW out_row = out_line;
 
-    while (cinfo.output_scanline < cinfo.output_height)
-    {
-        uint8_t buf[cinfo.output_width * cinfo.output_components];
-        uint8_t *ptr = buf;
-        jpeg_read_scanlines (&cinfo, &ptr, 1);
+    /* Bilinear interpolation to improve the scaled image quality a little */
+    const float x_ratio = (float)(cinfo.output_width - 1) / scaled_width;
+    const float y_ratio = (float)(cinfo.output_height - 1) / scaled_height;
+    int_fast32_t scaled_alpha = 255 << 16;
+    for (int_fast16_t scaled_y = 0; scaled_y < scaled_height; scaled_y++) {
+        const int_fast16_t y = y_ratio * scaled_y;
+        const int_fast16_t y_diff = (y_ratio * scaled_y - y) * 256;
+        const int_fast16_t y_remn = 256 - y_diff;
 
-        // scale row
-        uint8_t out_buf[sw * cinfo.output_components];
-        float sx = 0;
-        float dx = (float)cinfo.output_width/(float)sw;
-        for (int i = 0; i < sw; i++) {
-            memcpy (&out_buf[i * cinfo.output_components], &buf[(int)sx * cinfo.output_components], cinfo.output_components);
-            sx += dx;
+        if (cinfo.output_scanline < y+2) {
+            while (cinfo.output_scanline < y+1) {
+                jpeg_read_scanlines(&cinfo, &next_row, 1);
+            }
+            memcpy(row, next_row, line_size);
+            if (y+2 < cinfo.output_height) {
+                jpeg_read_scanlines(&cinfo, &next_row, 1);
+            }
         }
 
-        while ((int)sy == cinfo.output_scanline-1) {
-            uint8_t *ptr = out_buf;
-            jpeg_write_scanlines(&cinfo_out, &ptr, 1);
-            sy += dy;
+        for (int_fast16_t scaled_x = 0; scaled_x < scaled_width; scaled_x++) {
+            const int_fast16_t x = x_ratio * scaled_x;
+            const int_fast16_t x_diff = (x_ratio * scaled_x - x) * 256;
+            const int_fast16_t x_remn = 256 - x_diff;
+
+            const int_fast16_t scaled_x_index = scaled_x * cinfo.output_components;
+            const int_fast16_t x_index = x * cinfo.output_components;
+            const int_fast16_t next_x_index = x+1 < cinfo.output_width ? x_index+cinfo.output_components : x_index;
+
+            const int_fast32_t weight = x_remn * y_remn;
+            const int_fast32_t weightx = x_diff * y_remn;
+            const int_fast32_t weighty = x_remn * y_diff;
+            const int_fast32_t weightxy = x_diff * y_diff;
+
+            for (int_fast8_t component=0; component<cinfo.output_components; component++) {
+                out_line[scaled_x_index + component] = blerp_pixel(row, next_row, x_index, next_x_index, component, weight, weightx, weighty, weightxy) >> 16;
+            }
         }
+
+        jpeg_write_scanlines(&cinfo_out, &out_row, 1);
+    }
+    while (cinfo.output_scanline < cinfo.output_height) {
+        jpeg_read_scanlines(&cinfo, &next_row, 1);
     }
 
-    jpeg_finish_compress(&cinfo_out); //Always finish
-    jpeg_destroy_compress(&cinfo_out); //Free resources
+    jpeg_finish_compress(&cinfo_out);
+    jpeg_destroy_compress(&cinfo_out);
 
     jpeg_finish_decompress (&cinfo);
     jpeg_destroy_decompress (&cinfo);
@@ -486,14 +494,11 @@ jpeg_resize (const char *fname, const char *outname, int scaled_size) {
 
 static int
 png_resize (const char *fname, const char *outname, int scaled_size) {
-    png_structp png_ptr = NULL;
-    png_infop info_ptr = NULL;
-    unsigned int sig_read = 0;
-    png_uint_32 width, height;
-    int bit_depth, color_type, interlace_type;
-    int number_passes;
-    png_uint_32 row;
-    int bpp;
+    png_structp png_ptr = NULL, new_png_ptr = NULL;
+    png_infop info_ptr = NULL, new_info_ptr = NULL;
+    png_byte *out_row = NULL;
+    png_uint_32 height, width;
+    int bit_depth, color_type, num_components;
     int err = -1;
     FILE *fp = NULL;
     FILE *out = NULL;
@@ -512,223 +517,134 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
 
     if (setjmp(png_jmpbuf((png_ptr))))
     {
-        fprintf (stderr, "failed to read png: %s\n", fname);
+        trace("failed to read %s as png\n", fname);
         goto error;
     }
+
     png_init_io(png_ptr, fp);
 
     info_ptr = png_create_info_struct (png_ptr);
     if (!info_ptr) {
         goto error;
     }
-    //    if (setjmp (png_ptr->jmpbuf)) {
-    //        goto err;
-    //    }
 
-    png_set_sig_bytes (png_ptr, sig_read);
+    png_read_png(png_ptr, info_ptr, PNG_TRANSFORM_STRIP_16|PNG_TRANSFORM_PACKING|PNG_TRANSFORM_EXPAND, NULL);
+    png_bytep *row_pointers = png_get_rows(png_ptr, info_ptr);
+    png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, NULL, NULL, NULL);
 
-    png_read_info(png_ptr, info_ptr);
-
-    png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type,
-            &interlace_type, NULL, NULL);
-
-    /* Tell libpng to strip 16 bit/color files down to 8 bits/color */
-    png_set_strip_16(png_ptr);
-
-    /* Strip alpha bytes from the input data without combining with the
-     * background (not recommended).
-     */
-    png_set_strip_alpha(png_ptr);
-
-    /* Extract multiple pixels with bit depths of 1, 2, and 4 from a single
-     * byte into separate bytes (useful for paletted and grayscale images).
-     */
-    png_set_packing(png_ptr);
-
-    /* Expand paletted colors into true RGB triplets */
-    if (color_type == PNG_COLOR_TYPE_PALETTE)
-        png_set_palette_to_rgb(png_ptr);
-
-    /* Expand grayscale images to the full 8 bits from 1, 2, or 4 bits/pixel */
-    if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
-        png_set_expand_gray_1_2_4_to_8(png_ptr);
-
-    //    /* Expand paletted or RGB images with transparency to full alpha channels
-    //     * so the data will be available as RGBA quartets.
-    //     */
-    //    if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
-    //        png_set_tRNS_to_alpha(png_ptr);
-
-    //    /* Set the background color to draw transparent and alpha images over.
-    //     * It is possible to set the red, green, and blue components directly
-    //     * for paletted images instead of supplying a palette index.  Note that
-    //     * even if the PNG file supplies a background, you are not required to
-    //     * use it - you should use the (solid) application background if it has one.
-    //     */
-    //
-    //    png_color_16 my_background, *image_background;
-    //
-    //    if (png_get_bKGD(png_ptr, info_ptr, &image_background))
-    //        png_set_background(png_ptr, image_background,
-    //                PNG_BACKGROUND_GAMMA_FILE, 1, 1.0);
-    //    else
-    //        png_set_background(png_ptr, &my_background,
-    //                PNG_BACKGROUND_GAMMA_SCREEN, 0, 1.0);
-
-    //    screen_gamma = 2.2;  /* A good guess for a PC monitor in a dimly
-    //                            lit room */
-
-    /* Tell libpng to handle the gamma conversion for you.  The final call
-     * is a good guess for PC generated images, but it should be configurable
-     * by the user at run time by the user.  It is strongly suggested that
-     * your application support gamma correction.
-     */
-
-    //    int intent;
-    //
-    //    if (png_get_sRGB(png_ptr, info_ptr, &intent))
-    //        png_set_gamma(png_ptr, screen_gamma, 0.45455);
-    //    else
-    //    {
-    //        double image_gamma;
-    //        if (png_get_gAMA(png_ptr, info_ptr, &image_gamma))
-    //            png_set_gamma(png_ptr, screen_gamma, image_gamma);
-    //        else
-    //            png_set_gamma(png_ptr, screen_gamma, 0.45455);
-    //    }
-
-    //    /* Flip the RGB pixels to BGR (or RGBA to BGRA) */
-    //    if (color_type & PNG_COLOR_MASK_COLOR)
-    //        png_set_bgr(png_ptr);
-    //
-    //    /* Swap the RGBA or GA data to ARGB or AG (or BGRA to ABGR) */
-    //    png_set_swap_alpha(png_ptr);
-    //
-    //    /* Swap bytes of 16 bit files to least significant byte first */
-    //    png_set_swap(png_ptr);
-    //
-    //    /* Add filler (or alpha) byte (before/after each RGB triplet) */
-    //    png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
-
-    /* Turn on interlace handling.  REQUIRED if you are not using
-     * png_read_image().  To see how to handle interlacing passes,
-     * see the png_read_row() method below:
-     */
-    number_passes = png_set_interlace_handling(png_ptr);
-
-    //    /* Optional call to gamma correct and add the background to the palette
-    //     * and update info structure.  REQUIRED if you are expecting libpng to
-    //     * update the palette for you (ie you selected such a transform above).
-    //     */
-    //    png_read_update_info(png_ptr, info_ptr);
-
-    /* Allocate the memory to hold the image using the fields of info_ptr. */
-
-    /* The easiest way to read the image: */
-
-    png_bytep *row_pointers = png_malloc(png_ptr, height*sizeof (png_bytep));
-
-    /* Clear the pointer array */
-    for (row = 0; row < height; row++)
-        row_pointers[row] = NULL;
-
-    png_read_update_info(png_ptr, info_ptr);
-
-    for (row = 0; row < height; row++)
-        row_pointers[row] = png_malloc(png_ptr, png_get_rowbytes(png_ptr,
-                    info_ptr));
-
-    /* Now it's time to read the image.  One of these methods is REQUIRED */
-    /* The other way to read images - deal with interlacing: */
-
-    png_read_image(png_ptr, row_pointers);
-
+    int scaled_width, scaled_height;
+    if (deadbeef->conf_get_int ("artwork.scale_towards_longer", 1) == width > height) {
+        scaled_height = scaled_size;
+        scaled_width = scaled_size * width / height;
+    }
+    else {
+        scaled_width = scaled_size;
+        scaled_height = scaled_size * height / width;
+    }
 
     out = fopen (outname, "w+b");
     if (!out) {
         fclose (fp);
-        return -1;
+        goto error;
     }
 
-
-    int i;
-
-    cinfo_out.err = jpeg_std_error (&jerr.pub);
-    jerr.pub.error_exit = my_error_exit;
-    /* Establish the setjmp return context for my_error_exit to use. */
-    if (setjmp(jerr.setjmp_buffer)) {
-        /* If we get here, the JPEG code has signaled an error.
-         * We need to clean up the JPEG object, close the input file, and return.
-         */
-         goto error;
+    new_png_ptr = png_create_write_struct (PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    if (!new_png_ptr) {
+        fprintf (stderr, "failed to create png write struct\n");
+        goto error;
     }
 
-    jpeg_create_compress(&cinfo_out);
+    if (setjmp(png_jmpbuf((new_png_ptr))))
+    {
+        trace("failed to write %s as png\n", outname);
+        goto error;
+    }
 
-    jpeg_stdio_dest(&cinfo_out, out);
+    png_init_io(new_png_ptr, out);
 
-    int sw, sh;
-    if (deadbeef->conf_get_int ("artwork.scale_towards_longer", 1)) {
-        if (width > height) {
-            sh = scaled_size;
-            sw = scaled_size * width / height;
-        }
-        else {
-            sw = scaled_size;
-            sh = scaled_size * height / width;
-        }
+    new_info_ptr = png_create_info_struct (new_png_ptr);
+    if (!new_info_ptr) {
+        fprintf (stderr, "failed to create png info struct for writing\n");
+        goto error;
+    }
+
+    if (color_type & PNG_COLOR_MASK_ALPHA) {
+        color_type = PNG_COLOR_TYPE_RGB_ALPHA;
+        num_components = 4;
     }
     else {
-        if (width < height) {
-            sh = scaled_size;
-            sw = scaled_size * width / height;
-        }
-        else {
-            sw = scaled_size;
-            sh = scaled_size * height / width;
-        }
+        color_type = PNG_COLOR_TYPE_RGB;
+        num_components = 3;
+    }
+    png_set_IHDR(new_png_ptr, new_info_ptr, scaled_width, scaled_height, bit_depth, color_type, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+    png_write_info(new_png_ptr, new_info_ptr);
+    png_set_packing(new_png_ptr);
+
+    out_row = malloc(scaled_width * num_components);
+    if (!out_row) {
+        goto error;
     }
 
-    cinfo_out.image_width      = sw;
-    cinfo_out.image_height     = sh;
-    cinfo_out.input_components = 3;
-    cinfo_out.in_color_space   = JCS_RGB;
+    /* Bilinear interpolation to improve the scaled image quality a little */
+    const float x_ratio = (float)(width - 1) / scaled_width;
+    const float y_ratio = (float)(height - 1) / scaled_height;
+    int_fast32_t scaled_alpha = 255 << 16;
+    for (int_fast16_t scaled_y = 0; scaled_y < scaled_height; scaled_y++) {
+        const int_fast16_t y = y_ratio * scaled_y;
+        const int_fast16_t y_diff = (y_ratio * scaled_y - y) * 256;
+        const int_fast16_t y_remn = 256 - y_diff;
+        const png_byte *row = row_pointers[y];
+        const png_byte *next_row = y+1 < height ? row_pointers[y+1] : row;
 
-    jpeg_set_defaults(&cinfo_out);
+        for (int_fast16_t scaled_x = 0; scaled_x < scaled_width; scaled_x++) {
+            const int_fast16_t x = x_ratio * scaled_x;
+            const int_fast16_t x_diff = (x_ratio * scaled_x - x) * 256;
+            const int_fast16_t x_remn = 256 - x_diff;
 
-    jpeg_set_quality(&cinfo_out, 100, TRUE);
-    jpeg_start_compress(&cinfo_out, TRUE);
+            const int_fast16_t scaled_x_index = scaled_x*num_components;
+            const int_fast16_t x_index = x*num_components;
+            const int_fast16_t next_x_index = x+1 < width ? x_index+num_components : x_index;
 
-    float sy = 0;
-    float dy = (float)height / (float)sh;
+            const int_fast32_t weight = x_remn * y_remn;
+            const int_fast32_t weightx = x_diff * y_remn;
+            const int_fast32_t weighty = x_remn * y_diff;
+            const int_fast32_t weightxy = x_diff * y_diff;
+            int_fast32_t alpha, alphax, alphay, alphaxy;
 
-    int input_y = 1;
-    while (input_y <= height)
-    {
-        uint8_t *buf = row_pointers[input_y-1];
+            if (num_components == 4) {
+                /* Interpolate alpha channel */
+                alpha = row[x_index + 3] * weight;
+                alphax = row[next_x_index + 3] * weightx;
+                alphay = next_row[x_index + 3] * weighty;
+                alphaxy = next_row[next_x_index + 3] * weightxy;
+                scaled_alpha = alpha + alphax + alphay + alphaxy;
+                out_row[scaled_x_index + 3] = scaled_alpha >> 16;
+            }
 
-        // scale row
-        uint8_t out_buf[sw * cinfo_out.input_components];
-        float sx = 0;
-        float dx = (float)width/(float)sw;
-        for (int i = 0; i < sw; i++) {
-            memcpy (&out_buf[i * cinfo_out.input_components], &buf[(int)sx * cinfo_out.input_components], cinfo_out.input_components);
-            sx += dx;
+            if (scaled_alpha == 255 << 16) {
+                /* Simplified calculation for fully opaque pixels */
+                for (int_fast8_t component=0; component<3; component++) {
+                    out_row[scaled_x_index + component] = blerp_pixel(row, next_row, x_index, next_x_index, component, weight, weightx, weighty, weightxy) >> 16;
+                }
+            }
+            else if (scaled_alpha == 0) {
+                /* For speed, don't preserve the values of fully transparent pixels */
+                for (int_fast8_t component=0; component<3; component++) {
+                    out_row[scaled_x_index + component] = 0;
+                }
+            }
+            else {
+                /* Alpha-weight partially transparent pixels to avoid background colour bleeding */
+                for (int_fast8_t component=0; component<3; component++) {
+                    out_row[scaled_x_index + component] = blerp_pixel(row, next_row, x_index, next_x_index, component, alpha, alphax, alphay, alphaxy) / scaled_alpha;
+                }
+            }
         }
 
-        while ((int)sy == input_y-1) {
-            uint8_t *ptr = out_buf;
-            jpeg_write_scanlines(&cinfo_out, &ptr, 1);
-            sy += dy;
-        }
-        input_y++;
+        png_write_row(new_png_ptr, out_row);
     }
 
-    jpeg_finish_compress(&cinfo_out); //Always finish
-    jpeg_destroy_compress(&cinfo_out); //Free resources
-
-    /* Read rest of file, and get additional chunks in info_ptr - REQUIRED */
-    png_read_end(png_ptr, info_ptr);
+    png_write_end(new_png_ptr, new_info_ptr);
 
     err = 0;
 error:
@@ -740,6 +656,12 @@ error:
     }
     if (png_ptr) {
         png_destroy_read_struct (&png_ptr, info_ptr ? &info_ptr : NULL, (png_infopp)NULL);
+    }
+    if (new_png_ptr) {
+        png_destroy_write_struct(&new_png_ptr, new_info_ptr ? &new_info_ptr : NULL);
+    }
+    if (out_row) {
+        free(out_row);
     }
 
     return err;
@@ -787,11 +709,14 @@ copy_file (const char *in, const char *out, int img_size) {
                 sh = img_size * h / w;
             }
         }
+        int is_jpeg = imlib_image_format() && imlib_image_format()[0] == 'j';
         Imlib_Image scaled = imlib_create_image (sw, sh);
         imlib_context_set_image (scaled);
         imlib_blend_image_onto_image (img, 1, 0, 0, w, h, 0, 0, sw, sh);
         Imlib_Load_Error err = 0;
-        imlib_image_set_format ("jpg");
+        imlib_image_set_format (is_jpeg ? "jpg" : "png");
+        if (is_jpeg)
+            imlib_image_attach_data_value ("quality", NULL, 95, NULL);
         imlib_save_image_with_error_return (out, &err);
         if (err != 0) {
             trace ("imlib save %s returned %d\n", out, err);
@@ -1393,7 +1318,7 @@ find_image (const char *path) {
         // invalidate cache every 2 days
         if ((cache_period > 0 && (tm - stat_buf.st_mtime > cache_period * 60 * 60))
                 || artwork_reset_time > stat_buf.st_mtime) {
-            trace ("deleting cached file %s\n", path);
+            fprintf(stderr,"deleting cached file %s\n", path);
             unlink (path);
             return NULL;
         }
