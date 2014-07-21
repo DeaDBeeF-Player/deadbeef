@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-07 21:14+0200\n"
+"POT-Creation-Date: 2014-07-21 21:52+0200\n"
 "PO-Revision-Date: 2014-06-25 17:55+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/deadbeef-player/"
@@ -22,17 +22,17 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../plugins/gtkui/callbacks.c:349
+#: ../plugins/gtkui/callbacks.c:353
 #, c-format
 msgid "About DeaDBeeF %s"
 msgstr "Über DeaDBeeF %s"
 
-#: ../plugins/gtkui/callbacks.c:362
+#: ../plugins/gtkui/callbacks.c:366
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
 msgstr "DeaDBeeF %s ChangeLog"
 
-#: ../plugins/gtkui/callbacks.c:622
+#: ../plugins/gtkui/callbacks.c:626
 #, c-format
 msgid "DeaDBeeF Translators"
 msgstr "DeaDBeeF Übersetzer"
@@ -423,7 +423,8 @@ msgid "Cursor follows playback"
 msgstr "Mauszeiger folgt Wiedergabe"
 
 #: ../plugins/gtkui/interface.c:386 ../plugins/gtkui/deadbeef.glade.h:43
-msgid "Stop after current"
+#, fuzzy
+msgid "Stop after current track"
 msgstr "Nach aktuellem Titel anhalten"
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
@@ -675,11 +676,11 @@ msgstr ""
 "Dateien innerhalb von Archiven beim Hinzufügen von Verzeichnissen auslassen"
 
 #: ../plugins/gtkui/interface.c:1845 ../plugins/gtkui/deadbeef.glade.h:106
-msgid "Auto-reset \"Stop after current\""
-msgstr "\"Nach aktuellem Titel anhalten\" automatisch zurücksetzen"
+msgid "\"Stop after current track\" option will switch off after triggering"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1849 ../plugins/gtkui/deadbeef.glade.h:107
-msgid "Auto-reset \"Stop after current album\""
+msgid "\"Stop after current album\" option will switch off after triggering"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:1853 ../plugins/gtkui/deadbeef.glade.h:108
@@ -2413,3 +2414,6 @@ msgstr "Name"
 #: ../plugins/pltbrowser/pltbrowser.c:238
 msgid "Playlist browser"
 msgstr "Wiedergabelisten-Browser"
+
+#~ msgid "Auto-reset \"Stop after current\""
+#~ msgstr "\"Nach aktuellem Titel anhalten\" automatisch zurücksetzen"
