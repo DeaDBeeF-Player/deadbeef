@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-21 21:52+0200\n"
-"PO-Revision-Date: 2014-06-25 17:59+0000\n"
+"POT-Creation-Date: 2014-07-21 22:10+0200\n"
+"PO-Revision-Date: 2014-07-21 20:14+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/deadbeef-player/"
 "language/ru/)\n"
@@ -428,9 +428,8 @@ msgid "Cursor follows playback"
 msgstr "Выделять текущую дорожку"
 
 #: ../plugins/gtkui/interface.c:386 ../plugins/gtkui/deadbeef.glade.h:43
-#, fuzzy
 msgid "Stop after current track"
-msgstr "Останавливать после текущей"
+msgstr "Останавливать после текущей дорожки"
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
 msgid "Stop after current album"
@@ -682,10 +681,14 @@ msgstr "Не добавлять из архивов при добавлении 
 #: ../plugins/gtkui/interface.c:1845 ../plugins/gtkui/deadbeef.glade.h:106
 msgid "\"Stop after current track\" option will switch off after triggering"
 msgstr ""
+"Опция \"Останавливать после текущей дорожки\" будет отключаться после "
+"срабатывания"
 
 #: ../plugins/gtkui/interface.c:1849 ../plugins/gtkui/deadbeef.glade.h:107
 msgid "\"Stop after current album\" option will switch off after triggering"
 msgstr ""
+"Опция \"Останавливать после текущего альбома\" будет отключаться после "
+"срабатывания"
 
 #: ../plugins/gtkui/interface.c:1853 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Playback"
@@ -1365,13 +1368,9 @@ msgstr ""
 "на экран \"artist - title\"\n"
 
 #: ../main.c:110
-#, fuzzy, c-format
-msgid ""
-"                      for more info, see http://github.com/Alexey-Yakovenko/"
-"deadbeef/wiki/Title-formatting\n"
-msgstr ""
-"                      для дополнительной информации, смотрите http://"
-"sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"
+#, c-format
+msgid "                      for more info, see %s\n"
+msgstr "                      для дополнительной информации, см. %s\n"
 
 #: ../playlist.c:481 ../playlist.c:2546
 msgid "Default"
@@ -2435,9 +2434,3 @@ msgstr "Название"
 #: ../plugins/pltbrowser/pltbrowser.c:238
 msgid "Playlist browser"
 msgstr "Браузер плейлистов"
-
-#~ msgid "Auto-reset \"Stop after current\""
-#~ msgstr "Авто-сбрасывать \"Остановку после текущей песни\""
-
-#~ msgid "Auto-reset \"Stop after current album\""
-#~ msgstr "Авто-сбрасывать \"Остановку после текущей песни\""
