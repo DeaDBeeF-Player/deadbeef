@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-21 21:52+0200\n"
+"POT-Creation-Date: 2014-07-21 22:10+0200\n"
 "PO-Revision-Date: 2014-06-25 17:55+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Turkish (http://www.transifex.com/projects/p/deadbeef-player/"
@@ -1327,13 +1327,9 @@ msgstr ""
 "- başlık\"\n"
 
 #: ../main.c:110
-#, fuzzy, c-format
-msgid ""
-"                      for more info, see http://github.com/Alexey-Yakovenko/"
-"deadbeef/wiki/Title-formatting\n"
+#, c-format
+msgid "                      for more info, see %s\n"
 msgstr ""
-"daha fazla bilgi için http://sourceforge.net/apps/mediawiki/deadbeef/index."
-"php?title=Title_Formatting adresine bakabilirsiniz\n"
 
 #: ../playlist.c:481 ../playlist.c:2546
 msgid "Default"
@@ -2369,3 +2365,11 @@ msgstr ""
 #: ../plugins/pltbrowser/pltbrowser.c:238
 msgid "Playlist browser"
 msgstr ""
+
+#, fuzzy
+#~ msgid ""
+#~ "                      for more info, see http://github.com/Alexey-"
+#~ "Yakovenko/deadbeef/wiki/Title-formatting\n"
+#~ msgstr ""
+#~ "daha fazla bilgi için http://sourceforge.net/apps/mediawiki/deadbeef/"
+#~ "index.php?title=Title_Formatting adresine bakabilirsiniz\n"

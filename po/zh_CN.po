@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-21 21:52+0200\n"
+"POT-Creation-Date: 2014-07-21 22:10+0200\n"
 "PO-Revision-Date: 2014-06-25 17:55+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/projects/p/deadbeef-"
@@ -1330,13 +1330,9 @@ msgstr ""
 "                      例：--nowplaying \"%%a - %%t\" 将打印“艺人 - 标题”\n"
 
 #: ../main.c:110
-#, fuzzy, c-format
-msgid ""
-"                      for more info, see http://github.com/Alexey-Yakovenko/"
-"deadbeef/wiki/Title-formatting\n"
+#, c-format
+msgid "                      for more info, see %s\n"
 msgstr ""
-"                      更多信息请参阅 http://sourceforge.net/apps/mediawiki/"
-"deadbeef/index.php?title=Title_Formatting\n"
 
 #: ../playlist.c:481 ../playlist.c:2546
 msgid "Default"
@@ -2390,6 +2386,14 @@ msgstr "名称"
 #: ../plugins/pltbrowser/pltbrowser.c:238
 msgid "Playlist browser"
 msgstr "播放列表浏览器"
+
+#, fuzzy
+#~ msgid ""
+#~ "                      for more info, see http://github.com/Alexey-"
+#~ "Yakovenko/deadbeef/wiki/Title-formatting\n"
+#~ msgstr ""
+#~ "                      更多信息请参阅 http://sourceforge.net/apps/"
+#~ "mediawiki/deadbeef/index.php?title=Title_Formatting\n"
 
 #~ msgid "Auto-reset \"Stop after current\""
 #~ msgstr "自动复位“当前曲目后停止”"

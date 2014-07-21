@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-21 21:52+0200\n"
+"POT-Creation-Date: 2014-07-21 22:10+0200\n"
 "PO-Revision-Date: 2014-06-25 17:55+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Kazakh (http://www.transifex.com/projects/p/deadbeef-player/"
@@ -1334,13 +1334,9 @@ msgstr ""
 "title\" шығаруы тиіс\n"
 
 #: ../main.c:110
-#, fuzzy, c-format
-msgid ""
-"                      for more info, see http://github.com/Alexey-Yakovenko/"
-"deadbeef/wiki/Title-formatting\n"
+#, c-format
+msgid "                      for more info, see %s\n"
 msgstr ""
-"                      көбірек білу үшін,  http://sourceforge.net/apps/"
-"mediawiki/deadbeef/index.php?title=Title_Formatting қараңыз\n"
 
 #: ../playlist.c:481 ../playlist.c:2546
 msgid "Default"
@@ -2402,6 +2398,14 @@ msgstr "Аты"
 #: ../plugins/pltbrowser/pltbrowser.c:238
 msgid "Playlist browser"
 msgstr "Ойнату тізімдерді шолу"
+
+#, fuzzy
+#~ msgid ""
+#~ "                      for more info, see http://github.com/Alexey-"
+#~ "Yakovenko/deadbeef/wiki/Title-formatting\n"
+#~ msgstr ""
+#~ "                      көбірек білу үшін,  http://sourceforge.net/apps/"
+#~ "mediawiki/deadbeef/index.php?title=Title_Formatting қараңыз\n"
 
 #~ msgid "Auto-reset \"Stop after current\""
 #~ msgstr "\"Ағымдағысынан кейін тоқтатуды\" автотастау"
