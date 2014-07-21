@@ -1840,8 +1840,11 @@ streamer_thread (void *ctx) {
         // add 1ms here to compensate the rounding error
         // and another 1ms to buffer slightly faster then playing
         alloc_time -= ms+2;
-        if ((bytes_until_next_song > 0 && stop_after_current) || (streamer_ringbuf.remaining > STREAM_BUFFER_SIZE / 2 && !streamer_buffering && alloc_time > 0)) {
+        if (streamer_ringbuf.remaining > STREAM_BUFFER_SIZE / 2 && !streamer_buffering && alloc_time > 0) {
             usleep (alloc_time * 1000);
+        }
+        else if (bytes_until_next_song > 0) {
+            usleep (20000);
         }
     }
 
