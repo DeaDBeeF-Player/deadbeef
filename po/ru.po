@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-07 21:14+0200\n"
+"POT-Creation-Date: 2014-07-21 21:52+0200\n"
 "PO-Revision-Date: 2014-06-25 17:59+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/deadbeef-player/"
@@ -24,17 +24,17 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: ../plugins/gtkui/callbacks.c:349
+#: ../plugins/gtkui/callbacks.c:353
 #, c-format
 msgid "About DeaDBeeF %s"
 msgstr "О программе DeaDBeeF %s"
 
-#: ../plugins/gtkui/callbacks.c:362
+#: ../plugins/gtkui/callbacks.c:366
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
 msgstr "Изменения в DeaDBeeF %s"
 
-#: ../plugins/gtkui/callbacks.c:622
+#: ../plugins/gtkui/callbacks.c:626
 #, c-format
 msgid "DeaDBeeF Translators"
 msgstr "Переводчики DeaDBeeF "
@@ -428,7 +428,8 @@ msgid "Cursor follows playback"
 msgstr "Выделять текущую дорожку"
 
 #: ../plugins/gtkui/interface.c:386 ../plugins/gtkui/deadbeef.glade.h:43
-msgid "Stop after current"
+#, fuzzy
+msgid "Stop after current track"
 msgstr "Останавливать после текущей"
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
@@ -679,12 +680,12 @@ msgid "Don't add from archives when adding folders"
 msgstr "Не добавлять из архивов при добавлении каталогов"
 
 #: ../plugins/gtkui/interface.c:1845 ../plugins/gtkui/deadbeef.glade.h:106
-msgid "Auto-reset \"Stop after current\""
-msgstr "Авто-сбрасывать \"Остановку после текущей песни\""
+msgid "\"Stop after current track\" option will switch off after triggering"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1849 ../plugins/gtkui/deadbeef.glade.h:107
-msgid "Auto-reset \"Stop after current album\""
-msgstr "Авто-сбрасывать \"Остановку после текущей песни\""
+msgid "\"Stop after current album\" option will switch off after triggering"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1853 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Playback"
@@ -2434,3 +2435,9 @@ msgstr "Название"
 #: ../plugins/pltbrowser/pltbrowser.c:238
 msgid "Playlist browser"
 msgstr "Браузер плейлистов"
+
+#~ msgid "Auto-reset \"Stop after current\""
+#~ msgstr "Авто-сбрасывать \"Остановку после текущей песни\""
+
+#~ msgid "Auto-reset \"Stop after current album\""
+#~ msgstr "Авто-сбрасывать \"Остановку после текущей песни\""

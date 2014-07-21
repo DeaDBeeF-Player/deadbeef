@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-07 21:14+0200\n"
+"POT-Creation-Date: 2014-07-21 21:52+0200\n"
 "PO-Revision-Date: 2014-06-25 17:55+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Slovenian (http://www.transifex.com/projects/p/deadbeef-"
@@ -19,17 +19,17 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n"
 "%100==4 ? 2 : 3);\n"
 
-#: ../plugins/gtkui/callbacks.c:349
+#: ../plugins/gtkui/callbacks.c:353
 #, c-format
 msgid "About DeaDBeeF %s"
 msgstr "O programu DeaDBeeF %s"
 
-#: ../plugins/gtkui/callbacks.c:362
+#: ../plugins/gtkui/callbacks.c:366
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
 msgstr "Dnevnik sprememb programa DeaDBeeF %s"
 
-#: ../plugins/gtkui/callbacks.c:622
+#: ../plugins/gtkui/callbacks.c:626
 #, c-format
 msgid "DeaDBeeF Translators"
 msgstr "Prevajalci programa DeaDBeeF"
@@ -421,7 +421,8 @@ msgid "Cursor follows playback"
 msgstr "Kazalnik sledi predvajanju"
 
 #: ../plugins/gtkui/interface.c:386 ../plugins/gtkui/deadbeef.glade.h:43
-msgid "Stop after current"
+#, fuzzy
+msgid "Stop after current track"
 msgstr "Zaustavi po trenutni skladbi"
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
@@ -670,11 +671,11 @@ msgid "Don't add from archives when adding folders"
 msgstr "Med dodajanjem map ne dodaj datotek iz arhivov"
 
 #: ../plugins/gtkui/interface.c:1845 ../plugins/gtkui/deadbeef.glade.h:106
-msgid "Auto-reset \"Stop after current\""
+msgid "\"Stop after current track\" option will switch off after triggering"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:1849 ../plugins/gtkui/deadbeef.glade.h:107
-msgid "Auto-reset \"Stop after current album\""
+msgid "\"Stop after current album\" option will switch off after triggering"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:1853 ../plugins/gtkui/deadbeef.glade.h:108
