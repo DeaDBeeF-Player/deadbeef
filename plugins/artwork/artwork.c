@@ -459,10 +459,11 @@ jpeg_resize (const char *fname, const char *outname, int scaled_size) {
 
     /* Bilinear interpolation to improve the scaled image quality a little */
     const float scaling_ratio = (float)cinfo.output_width / scaled_width;
-    const float downscale_offset = scaling_ratio > 100 ? 0.5 : 0;
+    const float downscale_offset = scaling_ratio > 1 ? 0.5 : 0;
     for (int_fast16_t scaled_y = 0; scaled_y < scaled_height; scaled_y++) {
-        const uint_fast16_t y = scaling_ratio * scaled_y + downscale_offset;
-        const uint_fast16_t y_diff = (scaling_ratio * scaled_y + downscale_offset - y) * 256;
+        const float y_interp = scaling_ratio * scaled_y + downscale_offset;
+        const uint_fast16_t y = y_interp;
+        const uint_fast16_t y_diff = (y_interp - (int)y_interp) * 256;
         const uint_fast16_t y_remn = 256 - y_diff;
 
         if (cinfo.output_scanline < y+2) {
@@ -476,8 +477,9 @@ jpeg_resize (const char *fname, const char *outname, int scaled_size) {
         }
 
         for (int_fast16_t scaled_x = 0; scaled_x < scaled_width; scaled_x++) {
-            const uint_fast16_t x = scaling_ratio * scaled_x + downscale_offset;
-            const uint_fast16_t x_diff = (scaling_ratio * scaled_x + downscale_offset - x) * 256;
+            const float x_interp = scaling_ratio * scaled_x + downscale_offset;
+            const uint_fast16_t x = x_interp;
+            const uint_fast16_t x_diff = (x_interp - (int)x_interp) * 256;
             const uint_fast16_t x_remn = 256 - x_diff;
 
             const uint_fast32_t scaled_x_index = scaled_x * cinfo.output_components;
@@ -518,7 +520,8 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
     png_infop info_ptr = NULL, new_info_ptr = NULL;
     png_byte *out_row = NULL;
     png_uint_32 height, width;
-    int bit_depth, color_type, num_components;
+    int bit_depth, color_type;
+    uint8_t num_components;
     int err = -1;
     FILE *fp = NULL;
     FILE *out = NULL;
@@ -608,18 +611,20 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
 #ifndef USE_BICUBIC
     /* Bilinear interpolation to improve the scaled image quality a little */
     const float scaling_ratio = (float)width / scaled_width;
-    const float downscale_offset = scaling_ratio > 100 ? 0.5 : 0;
+    const float downscale_offset = scaling_ratio > 1 ? 0.5 : 0;
     uint_fast32_t scaled_alpha = 255 << 16;
     for (int_fast16_t scaled_y = 0; scaled_y < scaled_height; scaled_y++) {
-        const uint_fast16_t y = scaling_ratio * scaled_y + downscale_offset;
-        const uint_fast16_t y_diff = (scaling_ratio * scaled_y + downscale_offset - y) * 256;
+        const float y_interp = scaling_ratio * scaled_y + downscale_offset;
+        const uint_fast16_t y = y_interp;
+        const uint_fast16_t y_diff = (y_interp - (int)y_interp) * 256;
         const uint_fast16_t y_remn = 256 - y_diff;
         const png_byte *row = row_pointers[y];
         const png_byte *next_row = y+1 < height ? row_pointers[y+1] : row;
 
         for (int_fast16_t scaled_x = 0; scaled_x < scaled_width; scaled_x++) {
-            const uint_fast16_t x = scaling_ratio * scaled_x + downscale_offset;
-            const uint_fast16_t x_diff = (scaling_ratio * scaled_x + downscale_offset - x) * 256;
+            const float x_interp = scaling_ratio * scaled_x + downscale_offset;
+            const uint_fast16_t x = x_interp;
+            const uint_fast16_t x_diff = (x_interp - (int)x_interp) * 256;
             const uint_fast16_t x_remn = 256 - x_diff;
 
             const uint_fast32_t scaled_x_index = scaled_x*num_components;
@@ -670,9 +675,9 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
             png_byte *row = row_pointers[y];
             for (uint_fast16_t x = 0; x < width; x++) {
                 const uint_fast32_t x_index = x << 2;
-                const float alpha = (float)row[x_index + 3] / 255;
+                const png_byte alpha = row[x_index + 3];
                 for (uint_fast8_t component=0; component<3; component++) {
-                    row[x_index + component] *= alpha;
+                    row[x_index + component] = (row[x_index + component] * alpha) >> 8;
                 }
             }
         }
@@ -680,12 +685,13 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
 
     /* Bicubic interpolation to improve the scaled image quality */
     const float scaling_ratio = (float)width / scaled_width;
-    uint_fast16_t scaled_alpha = 255;
+    png_byte scaled_alpha = 255;
     for (int_fast16_t scaled_y = 0; scaled_y < scaled_height; scaled_y++) {
-        const uint_fast16_t y = scaling_ratio * scaled_y;
-        const float dy = scaling_ratio * scaled_y - y;
+        const float y_interp = scaling_ratio * scaled_y;
+        const float dy = y_interp - (int)y_interp;
         const float dy2 = dy * dy;
         const float dy3 = dy2 * dy;
+        const uint_fast16_t y = y_interp;
 
         const png_byte *row1 = row_pointers[y];
         const png_byte *row0 = y > 0 ? row_pointers[y-1] : row1;
@@ -693,12 +699,13 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
         const png_byte *row3 = y+2 < height ? row_pointers[y+2] : row2;
 
         for (int_fast16_t scaled_x = 0; scaled_x < scaled_width; scaled_x++) {
-            const uint_fast16_t x = scaling_ratio * scaled_x;
-            const float dx = scaling_ratio * scaled_x - x;
+            const float x_interp = scaling_ratio * scaled_x;
+            const float dx = x_interp - (int)x_interp;
             const float dx2 = dx * dx;
             const float dx3 = dx2 * dx;
+            const uint_fast16_t x = x_interp;
 
-            const uint_fast32_t scaled_x_index = scaled_x*num_components;
+            const uint_fast32_t scaled_x_index = scaled_x * num_components;
             const uint_fast32_t x1 = x * num_components;
             const uint_fast32_t x0 = x > 0 ? x1-num_components : x1;
             const uint_fast32_t x2 = x+1 < width ? x1+num_components : x1;
@@ -726,7 +733,7 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
             }
         }
 
-        png_write_row(new_png_ptr, out_row);
+//        png_write_row(new_png_ptr, out_row);
     }
 #endif
 
