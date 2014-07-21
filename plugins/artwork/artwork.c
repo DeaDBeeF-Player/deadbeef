@@ -682,8 +682,8 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
     const float scaling_ratio = (float)width / scaled_width;
     uint_fast16_t scaled_alpha = 255;
     for (int_fast16_t scaled_y = 0; scaled_y < scaled_height; scaled_y++) {
-        const uint_fast16_t y = scaling_ratio * scaled_y + 0.5;
-        const float dy = scaling_ratio * scaled_y + 0.5 - y;
+        const uint_fast16_t y = scaling_ratio * scaled_y;
+        const float dy = scaling_ratio * scaled_y - y;
         const float dy2 = dy * dy;
         const float dy3 = dy2 * dy;
 
@@ -693,8 +693,8 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
         const png_byte *row3 = y+2 < height ? row_pointers[y+2] : row2;
 
         for (int_fast16_t scaled_x = 0; scaled_x < scaled_width; scaled_x++) {
-            const uint_fast16_t x = scaling_ratio * scaled_x + 0.5;
-            const float dx = scaling_ratio * scaled_x + 0.5 - x;
+            const uint_fast16_t x = scaling_ratio * scaled_x;
+            const float dx = scaling_ratio * scaled_x - x;
             const float dx2 = dx * dx;
             const float dx3 = dx2 * dx;
 
