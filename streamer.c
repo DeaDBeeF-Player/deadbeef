@@ -116,7 +116,7 @@ static int nextsong = -1;
 static int nextsong_pstate = -1;
 static int badsong = -1;
 
-static float seekpos = -1;
+static float last_seekpos = -1;
 
 static float playpos = 0; // play position of current song
 static int avg_bitrate = -1; // avg bitrate of current song
@@ -1307,7 +1307,7 @@ error:
 
 float
 streamer_get_playpos (void) {
-    float seek = seekpos;
+    float seek = last_seekpos;
     if (seek >= 0) {
         return seek;
     }
@@ -1355,7 +1355,7 @@ streamer_set_nextsong_real (int song, int pstate) {
         // no sense to wait until end of previous song, reset buffer
         bytes_until_next_song = 0;
         playpos = 0;
-        seekpos = -1;
+        last_seekpos = -1;
     }
     streamer_unlock ();
 }
@@ -1372,6 +1372,7 @@ streamer_set_generic_output_format (void) {
 
 void
 streamer_set_seek (float pos) {
+    last_seekpos = pos;
     handler_push (handler, STR_EV_SEEK, 0, *((uint32_t *)&pos), 0);
 }
 
@@ -1525,6 +1526,8 @@ streamer_thread (void *ctx) {
 #endif
 
     while (!streaming_terminate) {
+        float seekpos = -1;
+
         struct timeval tm1;
         DB_output_t *output = plug_get_output ();
         gettimeofday (&tm1, NULL);
@@ -1634,6 +1637,7 @@ streamer_thread (void *ctx) {
             avg_bitrate = -1;
             playlist_track = playing_track;
             playpos = 0;
+            last_seekpos = -1;
             seekpos = -1;
 
             // don't switch if unchanged
@@ -1648,7 +1652,6 @@ streamer_thread (void *ctx) {
         }
 
         float seek = seekpos;
-        seekpos = -1;
         if (seek >= 0 && pl_get_item_duration (playing_track) > 0) {
             playpos = seek;
             trace ("seeking to %f\n", seek);
@@ -1747,6 +1750,7 @@ streamer_thread (void *ctx) {
             ev->playpos = playpos;
             messagepump_push_event ((ddb_event_t*)ev, 0, 0);
         }
+        last_seekpos = -1;
 
         // read ahead at 2x speed of output samplerate, in 4k blocks
         int rate = output->fmt.samplerate;
