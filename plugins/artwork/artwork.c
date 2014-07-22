@@ -733,7 +733,7 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
             }
         }
 
-//        png_write_row(new_png_ptr, out_row);
+        png_write_row(new_png_ptr, out_row);
     }
 #endif
 
