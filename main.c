@@ -576,12 +576,6 @@ player_mainloop (void) {
                 case DB_EV_PLAY_NUM:
                     pl_playqueue_clear ();
                     streamer_set_nextsong (p1, 4);
-                    if (pl_get_order () == PLAYBACK_ORDER_SHUFFLE_ALBUMS) {
-                        int pl = streamer_get_current_playlist ();
-                        playlist_t *plt = plt_get_for_idx (pl);
-                        plt_init_shuffle_albums (plt, p1);
-                        plt_unref (plt);
-                    }
                     break;
                 case DB_EV_STOP:
                     streamer_set_nextsong (-2, 0);
@@ -680,13 +674,6 @@ restore_resume_state (void) {
             streamer_lock (); // need to hold streamer thread to make the resume operation atomic
             streamer_set_current_playlist (plt);
             streamer_set_nextsong (track, paused ? 2 : 3);
-            if (pl_get_order () == PLAYBACK_ORDER_SHUFFLE_ALBUMS) {
-                playlist_t *p = plt_get_for_idx (plt);
-                if (p) {
-                    plt_init_shuffle_albums (p, track);
-                    plt_unref (p);
-                }
-            }
             streamer_set_seek (pos);
             streamer_unlock ();
         }
