@@ -774,10 +774,6 @@ streamer_move_to_randomsong_real (void) {
         }
     }
 
-    if (pl_get_order () == PLAYBACK_ORDER_SHUFFLE_ALBUMS) {
-        plt_init_shuffle_albums (plt, r);
-    }
-
     streamer_set_nextsong (r, 1);
     return 0;
 }
@@ -1356,6 +1352,9 @@ streamer_set_nextsong_real (int song, int pstate) {
         bytes_until_next_song = 0;
         playpos = 0;
         last_seekpos = -1;
+    }
+    if (pl_get_order () == PLAYBACK_ORDER_SHUFFLE_ALBUMS) {
+        plt_init_shuffle_albums (streamer_playlist, song);
     }
     streamer_unlock ();
 }
