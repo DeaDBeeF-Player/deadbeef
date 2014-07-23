@@ -1375,6 +1375,9 @@ streamer_set_nextsong_real (int song, int pstate) {
         output->stop ();
     }
     streamer_lock ();
+    if (pstate == 1) {
+        badsong = -1;
+    }
     nextsong = song;
     nextsong_pstate = pstate;
     if (output->state () == OUTPUT_STATE_STOPPED) {
