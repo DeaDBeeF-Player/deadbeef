@@ -685,7 +685,7 @@ streamer_move_to_prevsong_real (int r) {
     if (pl_order == PLAYBACK_ORDER_SHUFFLE_TRACKS || pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS) { // shuffle
         if (!playlist_track) {
             pl_unlock ();
-            return streamer_move_to_nextsong_real (1);
+            return streamer_move_to_nextsong (1);
         }
         else {
             playlist_track->played = 0;
@@ -1462,7 +1462,7 @@ streamer_start_new_song (void) {
         // try jump to next song
         if (nextsong == -1) {
             trace ("streamer_move_to_nextsong after skip\n");
-            streamer_move_to_nextsong_real (1);
+            streamer_move_to_nextsong (1);
             usleep (50000);
         }
         else {
@@ -1538,7 +1538,7 @@ streamer_next (int bytesread) {
     }
     else {
         trace ("streamer_move_to_nextsong (0) called from streamer_next\n");
-        streamer_move_to_nextsong_real (0);
+        streamer_move_to_nextsong (0);
     }
 }
 
@@ -1550,8 +1550,6 @@ streamer_thread (void *ctx) {
 
     while (!streaming_terminate) {
         float seekpos = -1;
-        nextsong = -1;
-        nextsong_pstate = -1;
 
         struct timeval tm1;
         DB_output_t *output = plug_get_output ();
@@ -1740,7 +1738,7 @@ streamer_thread (void *ctx) {
                     }
                     trace ("failed to restart prev track on seek, trying to jump to next track\n");
                     trace ("streamer_move_to_nextsong from seek\n");
-                    streamer_move_to_nextsong_real (0);
+                    streamer_move_to_nextsong (0);
                     usleep (50000);
                     continue;
                 }
@@ -1755,7 +1753,7 @@ streamer_thread (void *ctx) {
             if (fileinfo && playing_track && dur > 0) {
                 if (pos >= dur) {
                     output->stop ();
-                    streamer_move_to_nextsong_real (1);
+                    streamer_move_to_nextsong (1);
                     continue;
                 }
                 streamer_lock ();
@@ -2753,7 +2751,7 @@ streamer_play_current_track_real (void) {
     }
     else {
         output->stop ();
-        streamer_move_to_nextsong_real (1);
+        streamer_move_to_nextsong (1);
     }
     if (plt) {
         plt_unref (plt);
