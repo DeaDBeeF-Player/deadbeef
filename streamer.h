@@ -104,15 +104,15 @@ int
 streamer_get_apx_bitrate (void);
 
 // returns -1 if theres no next song, or playlist finished
-// reason 0 means "song finished", 1 means "user clicked next"
+// reason 0 means "prev song finished", 1 means "interrupt"
 int
-streamer_move_to_nextsong (int reason);
+streamer_move_to_nextsong (int r);
 
 int
-streamer_move_to_prevsong (void);
+streamer_move_to_prevsong (int r);
 
 int
-streamer_move_to_randomsong (void);
+streamer_move_to_randomsong (int r);
 
 struct DB_fileinfo_s *
 streamer_get_current_fileinfo (void);

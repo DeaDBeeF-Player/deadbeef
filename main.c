@@ -584,7 +584,7 @@ player_mainloop (void) {
                     streamer_move_to_nextsong (1);
                     break;
                 case DB_EV_PREV:
-                    streamer_move_to_prevsong ();
+                    streamer_move_to_prevsong (1);
                     break;
                 case DB_EV_PAUSE:
                     if (output->state () != OUTPUT_STATE_PAUSED) {
@@ -602,7 +602,7 @@ player_mainloop (void) {
                     }
                     break;
                 case DB_EV_PLAY_RANDOM:
-                    streamer_move_to_randomsong ();
+                    streamer_move_to_randomsong (1);
                     break;
                 case DB_EV_PLAYLIST_REFRESH:
                     pl_save_current ();
