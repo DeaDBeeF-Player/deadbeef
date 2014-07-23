@@ -1462,7 +1462,7 @@ streamer_start_new_song (void) {
         // try jump to next song
         if (nextsong == -1) {
             trace ("streamer_move_to_nextsong after skip\n");
-            streamer_move_to_nextsong (1);
+            streamer_move_to_nextsong_real (1);
             usleep (50000);
         }
         else {
