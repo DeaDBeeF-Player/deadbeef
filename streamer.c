@@ -189,13 +189,13 @@ static void
 streamer_set_nextsong_real (int song, int pstate);
 
 static int
-streamer_move_to_nextsong_real (int reason);
+streamer_move_to_nextsong_real (int r);
 
 static int
-streamer_move_to_prevsong_real (void);
+streamer_move_to_prevsong_real (int r);
 
 static int
-streamer_move_to_randomsong_real (void);
+streamer_move_to_randomsong_real (int r);
 
 static void
 streamer_play_current_track_real (void);
@@ -646,7 +646,7 @@ streamer_move_to_nextsong_real (int reason) {
     }
     else if (pl_order == PLAYBACK_ORDER_RANDOM) { // random
         pl_unlock ();
-        int res = streamer_move_to_randomsong ();
+        int res = streamer_move_to_randomsong (1);
         if (res == -1) {
             trace ("streamer_move_to_randomsong error\n");
             streamer_set_nextsong_real (-2, 1);
@@ -659,8 +659,10 @@ streamer_move_to_nextsong_real (int reason) {
 }
 
 static int
-streamer_move_to_prevsong_real (void) {
-    plug_get_output ()->stop ();
+streamer_move_to_prevsong_real (int r) {
+    if (r) {
+        plug_get_output ()->stop ();
+    }
     pl_lock ();
     if (streamer_playlist) {
         plt_unref (streamer_playlist);
@@ -760,7 +762,7 @@ streamer_move_to_prevsong_real (void) {
     }
     else if (pl_order == PLAYBACK_ORDER_RANDOM) { // random
         pl_unlock ();
-        int res = streamer_move_to_randomsong ();
+        int res = streamer_move_to_randomsong (1);
         if (res == -1) {
             streamer_set_nextsong_real (-2, 1);
             trace ("streamer_move_to_randomsong error\n");
@@ -773,8 +775,10 @@ streamer_move_to_prevsong_real (void) {
 }
 
 static int
-streamer_move_to_randomsong_real (void) {
-    plug_get_output ()->stop ();
+streamer_move_to_randomsong_real (int reason) {
+    if (reason) {
+        plug_get_output ()->stop ();
+    }
     if (!streamer_playlist) {
         streamer_playlist = plt_get_curr ();
     }
@@ -798,18 +802,27 @@ streamer_move_to_randomsong_real (void) {
 }
 
 int
-streamer_move_to_nextsong (int reason) {
-    handler_push (handler, STR_EV_NEXT, 0, reason, 0);
+streamer_move_to_nextsong (int r) {
+    if (r) {
+        streamer_abort_files ();
+    }
+    handler_push (handler, STR_EV_NEXT, 0, r, 0);
 }
 
 int
-streamer_move_to_prevsong (void) {
-    handler_push (handler, STR_EV_PREV, 0, 0, 0);
+streamer_move_to_prevsong (int r) {
+    if (r) {
+        streamer_abort_files ();
+    }
+    handler_push (handler, STR_EV_PREV, 0, r, 0);
 }
 
 int
-streamer_move_to_randomsong (void) {
-    handler_push (handler, STR_EV_RAND, 0, 0, 0);
+streamer_move_to_randomsong (int r) {
+    if (r) {
+        streamer_abort_files ();
+    }
+    handler_push (handler, STR_EV_RAND, 0, r, 0);
 }
 
 // playlist must call that whenever item was removed
@@ -961,6 +974,7 @@ streamer_set_current (playItem_t *it) {
         pl_item_ref (to);
     }
     trace ("\033[0;35mstreamer_set_current from %p to %p\033[37;0m\n", from, it);
+    trace ("\033[0;35moutput state: %d\033[37;0m\n", output->state ());
     if (!playing_track || output->state () == OUTPUT_STATE_STOPPED) {
         streamer_buffering = 1;
         trace ("\033[0;35mstreamer_start_playback[1] from %p to %p\033[37;0m\n", from, it);
@@ -968,9 +982,6 @@ streamer_set_current (playItem_t *it) {
         streamer_start_playback (from, it);
         bytes_until_next_song = -1;
     }
-//    else if (output->state () == OUTPUT_STATE_PLAYING) {
-//        assert (0);
-//    }
 
     trace ("streamer_set_current %p, buns=%d\n", it, bytes_until_next_song);
     mutex_lock (decodemutex);
@@ -1450,8 +1461,8 @@ streamer_start_new_song (void) {
         trace ("\033[0;34mbadsong=%d\033[37;0m\n", badsong);
         // try jump to next song
         if (nextsong == -1) {
-            streamer_move_to_nextsong (0);
-            trace ("streamer_move_to_nextsong switched to track %d\n", nextsong);
+            trace ("streamer_move_to_nextsong after skip\n");
+            streamer_move_to_nextsong (1);
             usleep (50000);
         }
         else {
@@ -1526,6 +1537,7 @@ streamer_next (int bytesread) {
         }
     }
     else {
+        trace ("streamer_move_to_nextsong (0) called from streamer_next\n");
         streamer_move_to_nextsong (0);
     }
 }
@@ -1558,10 +1570,10 @@ streamer_thread (void *ctx) {
                 streamer_move_to_nextsong_real (p1);
                 break;
             case STR_EV_PREV:
-                streamer_move_to_prevsong_real ();
+                streamer_move_to_prevsong_real (p1);
                 break;
             case STR_EV_RAND:
-                streamer_move_to_randomsong_real ();
+                streamer_move_to_randomsong_real (p1);
                 break;
             case STR_EV_SEEK:
                 seekpos = *((float *)&p1);
@@ -1725,8 +1737,8 @@ streamer_thread (void *ctx) {
                         send_trackinfochanged (streaming_track);
                     }
                     trace ("failed to restart prev track on seek, trying to jump to next track\n");
+                    trace ("streamer_move_to_nextsong from seek\n");
                     streamer_move_to_nextsong (0);
-                    trace ("streamer_move_to_nextsong switched to track %d\n", nextsong);
                     usleep (50000);
                     continue;
                 }
