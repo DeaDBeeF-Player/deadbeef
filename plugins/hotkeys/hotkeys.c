@@ -694,7 +694,12 @@ action_seek_5p_backward_cb (struct DB_plugin_action_s *action, int ctx) {
         float dur = deadbeef->pl_get_item_duration (it);
         if (dur > 0) {
             float pos = deadbeef->streamer_get_playpos ();
-            deadbeef->sendmessage (DB_EV_SEEK, 0, (pos - dur * 0.05f) * 1000, 0);
+            pos = (pos - dur * 0.05f) * 1000;
+            if (pos < 0) {
+                pos = 0;
+            }
+
+            deadbeef->sendmessage (DB_EV_SEEK, 0, pos, 0);
         }
         deadbeef->pl_item_unref (it);
     }
@@ -726,7 +731,11 @@ action_seek_1p_backward_cb (struct DB_plugin_action_s *action, int ctx) {
         float dur = deadbeef->pl_get_item_duration (it);
         if (dur > 0) {
             float pos = deadbeef->streamer_get_playpos ();
-            deadbeef->sendmessage (DB_EV_SEEK, 0, (pos - dur * 0.01f) * 1000, 0);
+            pos = (pos - dur * 0.01f) * 1000;
+            if (pos < 0) {
+                pos = 0;
+            }
+            deadbeef->sendmessage (DB_EV_SEEK, 0, pos, 0);
         }
         deadbeef->pl_item_unref (it);
     }
