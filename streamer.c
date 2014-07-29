@@ -1784,7 +1784,7 @@ streamer_thread (void *ctx) {
         }
         int channels = output->fmt.channels;
         int bytes_in_one_second = rate * (output->fmt.bps>>3) * channels;
-        int blocksize = bytes_in_one_second / 40;
+        int blocksize = bytes_in_one_second / 120;
 
         if (blocksize < MIN_BLOCK_SIZE) {
             blocksize = MIN_BLOCK_SIZE;
@@ -1876,6 +1876,7 @@ streamer_thread (void *ctx) {
         if (streamer_buffering || streamer_ringbuf.remaining < STREAM_BUFFER_SIZE / 2) {
             alloc_time >>= 1;
         }
+
         if (alloc_time > 0) {
             usleep (alloc_time * 1000);
         }
