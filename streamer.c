@@ -1784,7 +1784,20 @@ streamer_thread (void *ctx) {
         }
         int channels = output->fmt.channels;
         int bytes_in_one_second = rate * (output->fmt.bps>>3) * channels;
-        const int blocksize = MIN_BLOCK_SIZE;
+        int blocksize = bytes_in_one_second / 40;
+
+        int samplesize = output->fmt.channels * (output->fmt.bps>>3);
+        if (blocksize % samplesize) {
+            blocksize -= (blocksize % samplesize);
+        }
+
+        if (blocksize < MIN_BLOCK_SIZE) {
+            blocksize = MIN_BLOCK_SIZE;
+        }
+        else if (blocksize > MAX_BLOCK_SIZE) {
+            blocksize = MAX_BLOCK_SIZE;
+        }
+
         int alloc_time = 1000 / (bytes_in_one_second / blocksize);
 
         int skip = 0;
@@ -1863,7 +1876,10 @@ streamer_thread (void *ctx) {
         // add 1ms here to compensate the rounding error
         // and another 1ms to buffer slightly faster then playing
         alloc_time -= ms+2;
-        if (streamer_ringbuf.remaining > STREAM_BUFFER_SIZE / 2 && !streamer_buffering && alloc_time > 0) {
+        if (streamer_buffering || streamer_ringbuf.remaining > STREAM_BUFFER_SIZE / 2) {
+            alloc_time >>= 1;
+        }
+        if (alloc_time > 0) {
             usleep (alloc_time * 1000);
         }
         else if (bytes_until_next_song > 0) {
