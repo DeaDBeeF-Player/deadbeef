@@ -1874,7 +1874,7 @@ streamer_thread (void *ctx) {
         // and another 1ms to buffer slightly faster then playing
         alloc_time -= ms+2;
         if (streamer_buffering || streamer_ringbuf.remaining < STREAM_BUFFER_SIZE / 2) {
-            alloc_time >>= 1;
+            alloc_time = 0;
         }
 
         if (alloc_time > 0) {
