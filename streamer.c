@@ -1873,9 +1873,14 @@ streamer_thread (void *ctx) {
         // add 1ms here to compensate the rounding error
         // and another 1ms to buffer slightly faster then playing
         alloc_time -= ms+2;
-        if (streamer_buffering || streamer_ringbuf.remaining < STREAM_BUFFER_SIZE / 2) {
+        if (streamer_buffering) {
             alloc_time = 0;
         }
+        else if (streamer_ringbuf.remaining < STREAM_BUFFER_SIZE / 2) {
+            alloc_time >>= 2; // speed-up loading a little
+        }
+
+        //printf ("sleep: %d, buffering: %d, buffer_starving: %d (%d/%d)\n", alloc_time, streamer_buffering, streamer_ringbuf.remaining < STREAM_BUFFER_SIZE / 2, streamer_ringbuf.remaining, STREAM_BUFFER_SIZE / 2);
 
         if (alloc_time > 0) {
             usleep (alloc_time * 1000);
