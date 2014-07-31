@@ -431,24 +431,20 @@ palsa_setformat (ddb_waveformat_t *fmt) {
         trace ("palsa_setformat ignored\n");
         return 0;
     }
-#if 0
     else {
         trace ("switching format:\n"
         "bps %d -> %d\n"
         "is_float %d -> %d\n"
-        "is_multichannel %d -> %d\n"
         "channels %d -> %d\n"
         "samplerate %d -> %d\n"
         "channelmask %d -> %d\n"
         , fmt->bps, plugin.fmt.bps
         , fmt->is_float, plugin.fmt.is_float
-        , fmt->is_multichannel, plugin.fmt.is_multichannel
         , fmt->channels, plugin.fmt.channels
         , fmt->samplerate, plugin.fmt.samplerate
         , fmt->channelmask, plugin.fmt.channelmask
         );
     }
-#endif
     LOCK;
     int s = state;
     state = OUTPUT_STATE_STOPPED;
