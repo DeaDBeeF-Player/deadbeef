@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-07-31 20:08+0200\n"
-"PO-Revision-Date: 2014-07-21 20:14+0000\n"
+"PO-Revision-Date: 2014-07-31 18:30+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/deadbeef-player/"
 "language/ru/)\n"
@@ -1457,7 +1457,6 @@ msgstr ""
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
-#, fuzzy
 msgid "Add Audio CD"
 msgstr "Добавить аудио CD"
 
@@ -1752,9 +1751,8 @@ msgstr ""
 
 #. shellexecui
 #: ../translation/extra.c:97
-#, fuzzy
 msgid "Configure Custom Shell Commands"
-msgstr "Настройка собственных shell-команд"
+msgstr "Настройка собственных шелл-команд"
 
 #. mpgmad
 #: ../translation/extra.c:99
