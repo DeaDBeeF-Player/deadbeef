@@ -52,8 +52,8 @@
 #include "plugins/libparser/parser.h"
 #include "strdupa.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(fmt,...)
 
 //#define WRITE_DUMP 1
 //#define DETECT_PL_LOCK_RC 1
@@ -646,7 +646,7 @@ streamer_move_to_nextsong_real (int reason) {
     }
     else if (pl_order == PLAYBACK_ORDER_RANDOM) { // random
         pl_unlock ();
-        int res = streamer_move_to_randomsong_real (1);
+        int res = streamer_move_to_randomsong_real (0);
         if (res == -1) {
             trace ("streamer_move_to_randomsong error\n");
             streamer_set_nextsong_real (-2, 1);
@@ -685,7 +685,7 @@ streamer_move_to_prevsong_real (int r) {
     if (pl_order == PLAYBACK_ORDER_SHUFFLE_TRACKS || pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS) { // shuffle
         if (!playlist_track) {
             pl_unlock ();
-            return streamer_move_to_nextsong_real (1);
+            return streamer_move_to_nextsong_real (0);
         }
         else {
             playlist_track->played = 0;
@@ -762,7 +762,7 @@ streamer_move_to_prevsong_real (int r) {
     }
     else if (pl_order == PLAYBACK_ORDER_RANDOM) { // random
         pl_unlock ();
-        int res = streamer_move_to_randomsong_real (1);
+        int res = streamer_move_to_randomsong_real (0);
         if (res == -1) {
             streamer_set_nextsong_real (-2, 1);
             trace ("streamer_move_to_randomsong error\n");
@@ -2490,8 +2490,14 @@ streamer_read_async (char *bytes, int size) {
         // that means EOF
         // trace ("streamer: EOF! buns: %d, bytesread: %d, buffering: %d, bufferfill: %d\n", bytes_until_next_song, bytesread, streamer_buffering, streamer_ringbuf.remaining);
 
-        // in case of decoder error, or EOF while buffering - switch to next song instantly
-        if (bytesread < 0 || (bytes_until_next_song >= 0 && streamer_buffering && bytesread == 0) || bytes_until_next_song < 0) {
+        // EOF or error while buffering -- stop buffering
+        if (bytesread <= 0 && bytes_until_next_song >= 0 && streamer_buffering) {
+            streamer_buffering = 0;
+            return bytesread;
+        }
+
+        // if track finished playing -- go to next
+        if (bytes_until_next_song < 0) {
             streamer_next (bytesread);
         }
     }
