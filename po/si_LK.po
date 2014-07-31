@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-31 19:40+0200\n"
+"POT-Creation-Date: 2014-07-31 20:08+0200\n"
 "PO-Revision-Date: 2014-06-25 17:55+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Sinhala (Sri Lanka) (http://www.transifex.com/projects/p/"
@@ -107,11 +107,11 @@ msgstr "දින %d %d:%02d:%02d"
 msgid "Stopped | %d tracks | %s total playtime"
 msgstr "Stopped | %d tracks | %s මුළු ධාවන කාලය"
 
-#: ../plugins/gtkui/gtkui.c:191 ../playlist.c:3201
+#: ../plugins/gtkui/gtkui.c:191 ../playlist.c:3212
 msgid "Mono"
 msgstr "එකම ශබ්දය දෙපසින්ම ඇසීම"
 
-#: ../plugins/gtkui/gtkui.c:191 ../playlist.c:3201
+#: ../plugins/gtkui/gtkui.c:191 ../playlist.c:3212
 msgid "Stereo"
 msgstr "ශබ්ද දෙකක් දෙපසින් ඇසීම"
 
@@ -1332,15 +1332,15 @@ msgstr ""
 msgid "                      for more info, see %s\n"
 msgstr ""
 
-#: ../playlist.c:481 ../playlist.c:2546
+#: ../playlist.c:481 ../playlist.c:2557
 msgid "Default"
 msgstr "සාමාන්‍ය භාවිතය"
 
-#: ../playlist.c:3970
+#: ../playlist.c:3981
 msgid "Yes"
 msgstr "ඔව්"
 
-#: ../playlist.c:3970
+#: ../playlist.c:3981
 msgid "No"
 msgstr "නැහැ"
 
