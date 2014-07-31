@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-21 22:10+0200\n"
+"POT-Creation-Date: 2014-07-31 19:40+0200\n"
 "PO-Revision-Date: 2014-06-25 17:55+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Sinhala (Sri Lanka) (http://www.transifex.com/projects/p/"
@@ -1431,7 +1431,8 @@ msgstr ""
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
-msgid "Add audio CD"
+#, fuzzy
+msgid "Add Audio CD"
 msgstr "ගීත අඩංගු සංයුක්ත තැටිය ඇතුළත් කරන්න"
 
 #: ../translation/extra.c:4
@@ -1724,7 +1725,8 @@ msgstr "ස්වයංක්‍රීය Samplerate (ඉලක්ක Samplerate
 
 #. shellexecui
 #: ../translation/extra.c:97
-msgid "Configure custom shell commands"
+#, fuzzy
+msgid "Configure Custom Shell Commands"
 msgstr "රිසි ආකාරයට shell විධාන සකස් කරන්න"
 
 #. mpgmad

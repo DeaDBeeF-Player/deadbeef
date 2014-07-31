@@ -1,6 +1,6 @@
 // this file should list extra translatable strings that are not referenced
 // directly in source code, e.g. scripted plugin configuration strings
-_("Add audio CD")
+_("Add Audio CD")
 _("Lookup on Last.fm")
 // ALSA output plugin
 _("Use ALSA resampling")
@@ -94,7 +94,7 @@ _("Target Samplerate")
 _("Quality / Algorithm")
 _("Automatic Samplerate (overrides Target Samplerate)")
 // shellexecui
-_("Configure custom shell commands")
+_("Configure Custom Shell Commands")
 // mpgmad
 _("Disable gapless playback (faster scanning)")
 // adplug

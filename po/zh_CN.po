@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-21 22:10+0200\n"
+"POT-Creation-Date: 2014-07-31 19:40+0200\n"
 "PO-Revision-Date: 2014-06-25 17:55+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/projects/p/deadbeef-"
@@ -1418,7 +1418,8 @@ msgstr ""
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
-msgid "Add audio CD"
+#, fuzzy
+msgid "Add Audio CD"
 msgstr "添加音频 CD"
 
 #: ../translation/extra.c:4
@@ -1711,7 +1712,8 @@ msgstr "自动采样率(替代目标采样率)"
 
 #. shellexecui
 #: ../translation/extra.c:97
-msgid "Configure custom shell commands"
+#, fuzzy
+msgid "Configure Custom Shell Commands"
 msgstr "配置自定义的 shell 命令"
 
 #. mpgmad
