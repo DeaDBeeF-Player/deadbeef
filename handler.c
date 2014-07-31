@@ -50,7 +50,7 @@ typedef struct handler_s {
     message_t pool[1];
 } handler_t;
 
-static void
+void
 handler_reset (handler_t *h) {
     h->mqueue = NULL;
     h->mfree = NULL;

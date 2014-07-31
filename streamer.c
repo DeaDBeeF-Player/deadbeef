@@ -1359,6 +1359,10 @@ void
 streamer_set_nextsong (int song, int pstate) {
 //    pthread_t tid = pthread_self ();
 //    assert (tid != streamer_tid);
+    if (pstate == 0) {
+        // this is a stop query -- clear the queue
+        handler_reset (handler);
+    }
     streamer_abort_files ();
     handler_push (handler, STR_EV_PLAY_TRACK_IDX, 0, song, pstate);
 }
