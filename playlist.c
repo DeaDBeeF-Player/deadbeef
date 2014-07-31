@@ -1250,15 +1250,26 @@ plt_insert_cue (playlist_t *plt, playItem_t *after, playItem_t *origin, int nums
     strcpy (cuename+len, ".cue");
     DB_FILE *fp = vfs_fopen (cuename);
     if (!fp) {
+        strcpy (cuename+len, ".CUE");
+        fp = vfs_fopen (cuename);
+    }
+    if (!fp) {
         char *ptr = cuename + len-1;
         while (ptr >= cuename && *ptr != '.') {
             ptr--;
         }
+        if (ptr < cuename) {
+            return NULL;
+        }
         strcpy (ptr+1, "cue");
         fp = vfs_fopen (cuename);
         if (!fp) {
-            return NULL;
+            strcpy (ptr+1, "CUE");
+            fp = vfs_fopen (cuename);
         }
+    }
+    if (!fp) {
+        return NULL;
     }
     size_t sz = vfs_fgetlength (fp);
     if (sz == 0) {
