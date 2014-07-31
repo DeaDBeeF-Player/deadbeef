@@ -52,8 +52,8 @@
 #include "plugins/libparser/parser.h"
 #include "strdupa.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(fmt,...)
 
 //#define WRITE_DUMP 1
 //#define DETECT_PL_LOCK_RC 1
@@ -646,7 +646,7 @@ streamer_move_to_nextsong_real (int reason) {
     }
     else if (pl_order == PLAYBACK_ORDER_RANDOM) { // random
         pl_unlock ();
-        int res = streamer_move_to_randomsong (1);
+        int res = streamer_move_to_randomsong_real (1);
         if (res == -1) {
             trace ("streamer_move_to_randomsong error\n");
             streamer_set_nextsong_real (-2, 1);
@@ -685,7 +685,7 @@ streamer_move_to_prevsong_real (int r) {
     if (pl_order == PLAYBACK_ORDER_SHUFFLE_TRACKS || pl_order == PLAYBACK_ORDER_SHUFFLE_ALBUMS) { // shuffle
         if (!playlist_track) {
             pl_unlock ();
-            return streamer_move_to_nextsong (1);
+            return streamer_move_to_nextsong_real (1);
         }
         else {
             playlist_track->played = 0;
@@ -762,7 +762,7 @@ streamer_move_to_prevsong_real (int r) {
     }
     else if (pl_order == PLAYBACK_ORDER_RANDOM) { // random
         pl_unlock ();
-        int res = streamer_move_to_randomsong (1);
+        int res = streamer_move_to_randomsong_real (1);
         if (res == -1) {
             streamer_set_nextsong_real (-2, 1);
             trace ("streamer_move_to_randomsong error\n");
@@ -1542,7 +1542,7 @@ streamer_next (int bytesread) {
     }
     else {
         trace ("streamer_move_to_nextsong (0) called from streamer_next\n");
-        streamer_move_to_nextsong (0);
+        streamer_move_to_nextsong_real (0);
     }
 }
 
