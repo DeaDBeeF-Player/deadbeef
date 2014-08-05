@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-31 20:08+0200\n"
-"PO-Revision-Date: 2014-06-25 17:55+0000\n"
+"POT-Creation-Date: 2014-08-05 19:54+0200\n"
+"PO-Revision-Date: 2014-07-31 18:10+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/deadbeef-player/"
 "language/es/)\n"
@@ -427,9 +427,8 @@ msgid "Cursor follows playback"
 msgstr "Seleccionar al cambiar de pista"
 
 #: ../plugins/gtkui/interface.c:386 ../plugins/gtkui/deadbeef.glade.h:43
-#, fuzzy
 msgid "Stop after current track"
-msgstr "Detener al terminar la pista actual"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
 msgid "Stop after current album"
@@ -1432,9 +1431,8 @@ msgstr ""
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
-#, fuzzy
 msgid "Add Audio CD"
-msgstr "Añadir un CD de sonido"
+msgstr ""
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
@@ -1728,9 +1726,8 @@ msgstr "Muestreo automático (anula la tasa de muestreo de destino)"
 
 #. shellexecui
 #: ../translation/extra.c:97
-#, fuzzy
 msgid "Configure Custom Shell Commands"
-msgstr "Configurar órdenes del usuario"
+msgstr ""
 
 #. mpgmad
 #: ../translation/extra.c:99
@@ -2410,14 +2407,3 @@ msgstr "Nombre"
 #: ../plugins/pltbrowser/pltbrowser.c:238
 msgid "Playlist browser"
 msgstr "Navegador de listas de reproducción"
-
-#, fuzzy
-#~ msgid ""
-#~ "                      for more info, see http://github.com/Alexey-"
-#~ "Yakovenko/deadbeef/wiki/Title-formatting\n"
-#~ msgstr ""
-#~ "                      para más información, vea http://sourceforge.net/"
-#~ "apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"
-
-#~ msgid "Auto-reset \"Stop after current\""
-#~ msgstr "Auto-resetear \"Detener al terminar la pista actual\""

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-31 20:08+0200\n"
-"PO-Revision-Date: 2014-06-25 17:55+0000\n"
+"POT-Creation-Date: 2014-08-05 19:54+0200\n"
+"PO-Revision-Date: 2014-07-31 18:10+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Indonesian (http://www.transifex.com/projects/p/deadbeef-"
 "player/language/id/)\n"
@@ -420,9 +420,8 @@ msgid "Cursor follows playback"
 msgstr "Kursor berikut pemutaran"
 
 #: ../plugins/gtkui/interface.c:386 ../plugins/gtkui/deadbeef.glade.h:43
-#, fuzzy
 msgid "Stop after current track"
-msgstr "Berhenti setelah ini"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
 msgid "Stop after current album"
@@ -1396,9 +1395,8 @@ msgstr ""
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
-#, fuzzy
 msgid "Add Audio CD"
-msgstr "Tambahkan CD audio"
+msgstr ""
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
@@ -1690,9 +1688,8 @@ msgstr "Laju Cuplik Otomatis (menimpa Laju Cuplik Target)"
 
 #. shellexecui
 #: ../translation/extra.c:97
-#, fuzzy
 msgid "Configure Custom Shell Commands"
-msgstr "Tata perintah shell gubahan"
+msgstr ""
 
 #. mpgmad
 #: ../translation/extra.c:99

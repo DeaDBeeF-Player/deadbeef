@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-31 20:08+0200\n"
-"PO-Revision-Date: 2014-06-25 17:55+0000\n"
+"POT-Creation-Date: 2014-08-05 19:54+0200\n"
+"PO-Revision-Date: 2014-07-31 18:10+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Ukrainian (http://www.transifex.com/projects/p/deadbeef-"
 "player/language/uk/)\n"
@@ -203,7 +203,7 @@ msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:974
 msgid "Volume bar"
-msgstr ""
+msgstr "Панель гучності"
 
 #: ../plugins/gtkui/gtkui.c:975
 msgid "Chiptune voices"
@@ -423,13 +423,12 @@ msgid "Cursor follows playback"
 msgstr "Виділяти поточну пісню"
 
 #: ../plugins/gtkui/interface.c:386 ../plugins/gtkui/deadbeef.glade.h:43
-#, fuzzy
 msgid "Stop after current track"
-msgstr "Зупинити піcля поточного"
+msgstr "Зупинити після поточного треку"
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
 msgid "Stop after current album"
-msgstr ""
+msgstr "Зупинити після поточного альбому"
 
 #: ../plugins/gtkui/interface.c:399 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "Jump to current track"
@@ -509,7 +508,7 @@ msgstr "Властивості треків"
 
 #: ../plugins/gtkui/interface.c:1058 ../plugins/gtkui/deadbeef.glade.h:63
 msgid "Location:"
-msgstr ""
+msgstr "Розташування:"
 
 #: ../plugins/gtkui/interface.c:1099 ../plugins/gtkui/deadbeef.glade.h:64
 msgid "Settings"
@@ -1070,7 +1069,7 @@ msgstr "Піктограма:"
 
 #: ../plugins/gtkui/interface.c:4271 ../plugins/gtkui/deadbeef.glade.h:201
 msgid "Label:"
-msgstr ""
+msgstr "Мітка:"
 
 #: ../plugins/gtkui/interface.c:4352 ../plugins/gtkui/deadbeef.glade.h:202
 msgid "Select action"
@@ -1199,7 +1198,7 @@ msgstr "Записую мітки..."
 
 #: ../plugins/gtkui/trkproperties.c:730
 msgid "Field name"
-msgstr ""
+msgstr "Назва файлу"
 
 #: ../plugins/gtkui/trkproperties.c:733
 msgid "Name:"
@@ -1422,9 +1421,8 @@ msgstr ""
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
-#, fuzzy
 msgid "Add Audio CD"
-msgstr "Додати Аудіо CD"
+msgstr ""
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
@@ -1542,7 +1540,7 @@ msgstr "Якість передискретизації (0..2, більше-кр
 
 #: ../translation/extra.c:37
 msgid "8-bit output (default is 16)"
-msgstr ""
+msgstr "8-бітний вихід (типовим є 16)"
 
 #. Game_Music_Emu decoder plugin
 #: ../translation/extra.c:39
@@ -1717,9 +1715,8 @@ msgstr ""
 
 #. shellexecui
 #: ../translation/extra.c:97
-#, fuzzy
 msgid "Configure Custom Shell Commands"
-msgstr "Налаштувати власні команди оболонки"
+msgstr ""
 
 #. mpgmad
 #: ../translation/extra.c:99
@@ -2375,11 +2372,3 @@ msgstr "Назва"
 #: ../plugins/pltbrowser/pltbrowser.c:238
 msgid "Playlist browser"
 msgstr ""
-
-#, fuzzy
-#~ msgid ""
-#~ "                      for more info, see http://github.com/Alexey-"
-#~ "Yakovenko/deadbeef/wiki/Title-formatting\n"
-#~ msgstr ""
-#~ "                      для більшої інформації дивитися http://sourceforge."
-#~ "net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"

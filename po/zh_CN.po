@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-31 20:08+0200\n"
-"PO-Revision-Date: 2014-06-25 17:55+0000\n"
+"POT-Creation-Date: 2014-08-05 19:54+0200\n"
+"PO-Revision-Date: 2014-07-31 18:10+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/projects/p/deadbeef-"
 "player/language/zh_CN/)\n"
@@ -421,9 +421,8 @@ msgid "Cursor follows playback"
 msgstr "光标定位在播放的曲目"
 
 #: ../plugins/gtkui/interface.c:386 ../plugins/gtkui/deadbeef.glade.h:43
-#, fuzzy
 msgid "Stop after current track"
-msgstr "当前曲目后停止"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
 msgid "Stop after current album"
@@ -1418,9 +1417,8 @@ msgstr ""
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
-#, fuzzy
 msgid "Add Audio CD"
-msgstr "添加音频 CD"
+msgstr ""
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
@@ -1712,9 +1710,8 @@ msgstr "自动采样率(替代目标采样率)"
 
 #. shellexecui
 #: ../translation/extra.c:97
-#, fuzzy
 msgid "Configure Custom Shell Commands"
-msgstr "配置自定义的 shell 命令"
+msgstr ""
 
 #. mpgmad
 #: ../translation/extra.c:99
@@ -2388,17 +2385,3 @@ msgstr "名称"
 #: ../plugins/pltbrowser/pltbrowser.c:238
 msgid "Playlist browser"
 msgstr "播放列表浏览器"
-
-#, fuzzy
-#~ msgid ""
-#~ "                      for more info, see http://github.com/Alexey-"
-#~ "Yakovenko/deadbeef/wiki/Title-formatting\n"
-#~ msgstr ""
-#~ "                      更多信息请参阅 http://sourceforge.net/apps/"
-#~ "mediawiki/deadbeef/index.php?title=Title_Formatting\n"
-
-#~ msgid "Auto-reset \"Stop after current\""
-#~ msgstr "自动复位“当前曲目后停止”"
-
-#~ msgid "Auto-reset \"Stop after current album\""
-#~ msgstr "自动复位“当前专辑后停止”"

@@ -4,16 +4,18 @@
 #
 # Translators:
 # Anh Phan <vietnamesel10n@gmail.com>, 2013
+# Anh Phan <vietnamesel10n@gmail.com>, 2013-2014
 # TRAN Duy Hung <nguyentieuhau@gmail.com>, 2010
 # Anh Phan <vietnamesel10n@gmail.com>, 2013
 # Anh Phan <vietnamesel10n@gmail.com>, 2013
+# TRAN Duy Hung <nguyentieuhau@gmail.com>, 2010
 # TRAN Duy Hung <nguyentieuhau@gmail.com>, 2010
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-31 20:08+0200\n"
-"PO-Revision-Date: 2014-06-25 17:55+0000\n"
+"POT-Creation-Date: 2014-08-05 19:54+0200\n"
+"PO-Revision-Date: 2014-07-31 18:10+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Vietnamese (http://www.transifex.com/projects/p/deadbeef-"
 "player/language/vi/)\n"
@@ -195,19 +197,19 @@ msgstr "Nút"
 
 #: ../plugins/gtkui/gtkui.c:972
 msgid "Seekbar"
-msgstr ""
+msgstr "Thanh trượt"
 
 #: ../plugins/gtkui/gtkui.c:973
 msgid "Playback controls"
-msgstr ""
+msgstr "Điều khiển phát lại"
 
 #: ../plugins/gtkui/gtkui.c:974
 msgid "Volume bar"
-msgstr ""
+msgstr "Thanh âm lượng"
 
 #: ../plugins/gtkui/gtkui.c:975
 msgid "Chiptune voices"
-msgstr ""
+msgstr "Giọng điện tử"
 
 #: ../plugins/gtkui/gtkui.c:1150
 msgid "Failed while reading help file"
@@ -222,6 +224,9 @@ msgid ""
 "The player is currently running background tasks. If you quit now, the tasks "
 "will be cancelled or interrupted. This may result in data loss."
 msgstr ""
+"Chương trình hiện đang chạy ở chế độ nền. Nếu bạn thoát bây giờ, thì tác vụ "
+"này sẽ bị hủy bỏ hoặc gián đoạn. Điều này có thể dẫn tới việc mất mát dữ "
+"liệu."
 
 #: ../plugins/gtkui/gtkui.c:1173
 msgid "Do you still want to quit?"
@@ -423,13 +428,12 @@ msgid "Cursor follows playback"
 msgstr "Con trỏ đi theo quá trình phát lại"
 
 #: ../plugins/gtkui/interface.c:386 ../plugins/gtkui/deadbeef.glade.h:43
-#, fuzzy
 msgid "Stop after current track"
-msgstr "Dừng sau khi kết thúc bài hiện tại"
+msgstr "Dừng lại sau bài này"
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
 msgid "Stop after current album"
-msgstr ""
+msgstr "Dừng lại sau album này"
 
 #: ../plugins/gtkui/interface.c:399 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "Jump to current track"
@@ -620,7 +624,7 @@ msgstr "Luôn luôn chuyển đổi âm thanh 8 bit sang 16 bit"
 
 #: ../plugins/gtkui/interface.c:1731 ../plugins/gtkui/deadbeef.glade.h:92
 msgid "Always convert 16 bit audio to 24 bit"
-msgstr ""
+msgstr "Luôn chuyển đổi audio dạng 16 bit sang 24 bit"
 
 #: ../plugins/gtkui/interface.c:1735 ../plugins/gtkui/deadbeef.glade.h:93
 msgid "Sound"
@@ -1390,9 +1394,8 @@ msgstr ""
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
-#, fuzzy
 msgid "Add Audio CD"
-msgstr "Add audio CD"
+msgstr ""
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
@@ -1684,9 +1687,8 @@ msgstr ""
 
 #. shellexecui
 #: ../translation/extra.c:97
-#, fuzzy
 msgid "Configure Custom Shell Commands"
-msgstr "Configure custom shell commands"
+msgstr ""
 
 #. mpgmad
 #: ../translation/extra.c:99
@@ -2332,6 +2334,3 @@ msgstr ""
 #: ../plugins/pltbrowser/pltbrowser.c:238
 msgid "Playlist browser"
 msgstr ""
-
-#~ msgid "Auto-reset \"Stop after current\""
-#~ msgstr "Tự động-cài đặt lại \"Dừng lại sau đối tượng hiện tại\""

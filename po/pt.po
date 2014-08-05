@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-31 20:08+0200\n"
-"PO-Revision-Date: 2014-06-25 17:55+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"POT-Creation-Date: 2014-08-05 19:54+0200\n"
+"PO-Revision-Date: 2014-07-31 21:02+0000\n"
+"Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/projects/p/deadbeef-"
 "player/language/pt/)\n"
 "Language: pt\n"
@@ -422,7 +422,6 @@ msgid "Cursor follows playback"
 msgstr "Cursor segue a reprodução"
 
 #: ../plugins/gtkui/interface.c:386 ../plugins/gtkui/deadbeef.glade.h:43
-#, fuzzy
 msgid "Stop after current track"
 msgstr "Parar após a faixa atual"
 
@@ -675,11 +674,11 @@ msgstr "Ao adicionar pastas não adicionar arquivos"
 
 #: ../plugins/gtkui/interface.c:1845 ../plugins/gtkui/deadbeef.glade.h:106
 msgid "\"Stop after current track\" option will switch off after triggering"
-msgstr ""
+msgstr "A opção \"Parar após a faixa atual\" será desligada após a ativação"
 
 #: ../plugins/gtkui/interface.c:1849 ../plugins/gtkui/deadbeef.glade.h:107
 msgid "\"Stop after current album\" option will switch off after triggering"
-msgstr ""
+msgstr "A opção \"Parar após o álbum atual\" será desligada após a ativação"
 
 #: ../plugins/gtkui/interface.c:1853 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Playback"
@@ -1348,7 +1347,7 @@ msgstr ""
 #: ../main.c:110
 #, c-format
 msgid "                      for more info, see %s\n"
-msgstr ""
+msgstr "para mais informações, consulte %s\n"
 
 #: ../playlist.c:481 ../playlist.c:2557
 msgid "Default"
@@ -1435,9 +1434,8 @@ msgstr ""
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
-#, fuzzy
 msgid "Add Audio CD"
-msgstr "Adicionar CD"
+msgstr "Adicionar CD áudio"
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
@@ -1729,9 +1727,8 @@ msgstr "Frequência automática (substitui frequência final)"
 
 #. shellexecui
 #: ../translation/extra.c:97
-#, fuzzy
 msgid "Configure Custom Shell Commands"
-msgstr "Configurar comandos de consola"
+msgstr "Configurar comando de consola personalizados"
 
 #. mpgmad
 #: ../translation/extra.c:99
@@ -2409,11 +2406,3 @@ msgstr "Nome"
 #: ../plugins/pltbrowser/pltbrowser.c:238
 msgid "Playlist browser"
 msgstr "Explorador de listas de reprodução"
-
-#, fuzzy
-#~ msgid ""
-#~ "                      for more info, see http://github.com/Alexey-"
-#~ "Yakovenko/deadbeef/wiki/Title-formatting\n"
-#~ msgstr ""
-#~ "                      para mais informações, consulte http://sourceforge."
-#~ "net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"

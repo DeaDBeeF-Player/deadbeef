@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-31 20:08+0200\n"
-"PO-Revision-Date: 2014-06-25 17:55+0000\n"
+"POT-Creation-Date: 2014-08-05 19:54+0200\n"
+"PO-Revision-Date: 2014-07-31 18:10+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Sinhala (Sri Lanka) (http://www.transifex.com/projects/p/"
 "deadbeef-player/language/si_LK/)\n"
@@ -420,9 +420,8 @@ msgid "Cursor follows playback"
 msgstr "කර්සරය මගින් ධාවන පිළිවෙළ පෙන්වන්න"
 
 #: ../plugins/gtkui/interface.c:386 ../plugins/gtkui/deadbeef.glade.h:43
-#, fuzzy
 msgid "Stop after current track"
-msgstr "මෙම ගීතයට පසු නවත්වන්න"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
 msgid "Stop after current album"
@@ -1431,9 +1430,8 @@ msgstr ""
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
-#, fuzzy
 msgid "Add Audio CD"
-msgstr "ගීත අඩංගු සංයුක්ත තැටිය ඇතුළත් කරන්න"
+msgstr ""
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
@@ -1725,9 +1723,8 @@ msgstr "ස්වයංක්‍රීය Samplerate (ඉලක්ක Samplerate
 
 #. shellexecui
 #: ../translation/extra.c:97
-#, fuzzy
 msgid "Configure Custom Shell Commands"
-msgstr "රිසි ආකාරයට shell විධාන සකස් කරන්න"
+msgstr ""
 
 #. mpgmad
 #: ../translation/extra.c:99
@@ -2419,14 +2416,3 @@ msgstr ""
 #: ../plugins/pltbrowser/pltbrowser.c:238
 msgid "Playlist browser"
 msgstr ""
-
-#, fuzzy
-#~ msgid ""
-#~ "                      for more info, see http://github.com/Alexey-"
-#~ "Yakovenko/deadbeef/wiki/Title-formatting\n"
-#~ msgstr ""
-#~ "වැඩි විස්තර සඳහා, http://sourceforge.net/apps/mediawiki/deadbeef/index.php?"
-#~ "title=Title_Formatting\n"
-
-#~ msgid "Auto-reset \"Stop after current\""
-#~ msgstr "\"මෙම ගීතයට පසු නැවතීම\", ස්වයංක්‍රීයව නැවත සකසන්න"

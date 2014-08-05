@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-31 20:08+0200\n"
-"PO-Revision-Date: 2014-06-25 17:55+0000\n"
+"POT-Creation-Date: 2014-08-05 19:54+0200\n"
+"PO-Revision-Date: 2014-07-31 18:10+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/deadbeef-player/"
 "language/fr/)\n"
@@ -197,7 +197,7 @@ msgstr "Bouton"
 
 #: ../plugins/gtkui/gtkui.c:972
 msgid "Seekbar"
-msgstr ""
+msgstr "Barre de lecture"
 
 #: ../plugins/gtkui/gtkui.c:973
 msgid "Playback controls"
@@ -205,7 +205,7 @@ msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:974
 msgid "Volume bar"
-msgstr ""
+msgstr "Barre de volume"
 
 #: ../plugins/gtkui/gtkui.c:975
 msgid "Chiptune voices"
@@ -224,6 +224,9 @@ msgid ""
 "The player is currently running background tasks. If you quit now, the tasks "
 "will be cancelled or interrupted. This may result in data loss."
 msgstr ""
+"Le lecteur est actuellement actif en tâche de fond. Si vous quittez "
+"maintenant, les tâches seront ignorées ou interrompues. Cela peut provoquer "
+"des pertes de données."
 
 #: ../plugins/gtkui/gtkui.c:1173
 msgid "Do you still want to quit?"
@@ -425,13 +428,12 @@ msgid "Cursor follows playback"
 msgstr "La sélection suit la lecture"
 
 #: ../plugins/gtkui/interface.c:386 ../plugins/gtkui/deadbeef.glade.h:43
-#, fuzzy
 msgid "Stop after current track"
-msgstr "Arrêter après la piste actuelle"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
 msgid "Stop after current album"
-msgstr ""
+msgstr "Arrêter après l'album actuel"
 
 #: ../plugins/gtkui/interface.c:399 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "Jump to current track"
@@ -756,7 +758,7 @@ msgstr "Afficher la piste courante en utilisant des caractères gras"
 
 #: ../plugins/gtkui/interface.c:2030 ../plugins/gtkui/deadbeef.glade.h:125
 msgid "Hide \"Remove From Disk\" context menu item"
-msgstr ""
+msgstr "Masquer l'entrée \"Supprimer du disque\" du menu contextuel"
 
 #: ../plugins/gtkui/interface.c:2034 ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Auto-name playlists when adding a single folder"
@@ -1104,19 +1106,19 @@ msgstr "N° piste"
 
 #: ../plugins/gtkui/plcommon.c:637
 msgid "Add To Playback Queue"
-msgstr ""
+msgstr "Ajouter à la file d'attente de lecture"
 
 #: ../plugins/gtkui/plcommon.c:642
 msgid "Remove From Playback Queue"
-msgstr ""
+msgstr "Enlever de la file d'attente de lecture"
 
 #: ../plugins/gtkui/plcommon.c:650
 msgid "Reload Metadata"
-msgstr ""
+msgstr "Recharger les métadonnées"
 
 #: ../plugins/gtkui/plcommon.c:668
 msgid "Remove From Disk"
-msgstr ""
+msgstr "Supprimer du disque"
 
 #: ../plugins/gtkui/plcommon.c:1089 ../plugins/gtkui/plcommon.c:1216
 msgid "Add column"
@@ -1431,9 +1433,8 @@ msgstr ""
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
-#, fuzzy
 msgid "Add Audio CD"
-msgstr "Ajouter un CD audi"
+msgstr ""
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
@@ -1730,9 +1731,8 @@ msgstr ""
 
 #. shellexecui
 #: ../translation/extra.c:97
-#, fuzzy
 msgid "Configure Custom Shell Commands"
-msgstr "Configurer les commandes personnalisées de l'interface"
+msgstr ""
 
 #. mpgmad
 #: ../translation/extra.c:99
@@ -2311,7 +2311,7 @@ msgstr "Rien n'a été sélectionné"
 #: ../plugins/gtkui/widgets.c:444
 #, c-format
 msgid "Widget \"%s\" is not available"
-msgstr ""
+msgstr "Le gadget \"%s\" n'est pas disponible"
 
 #: ../plugins/gtkui/widgets.c:772
 msgid "Replace with..."
@@ -2391,7 +2391,7 @@ msgstr "Configurer le bouton"
 
 #: ../plugins/gtkui/widgets.c:3870
 msgid "Voices:"
-msgstr ""
+msgstr "Voix :"
 
 #: ../plugins/gtkui/pltmenu.c:62
 msgid "Edit playlist"
@@ -2416,14 +2416,3 @@ msgstr "Nom"
 #: ../plugins/pltbrowser/pltbrowser.c:238
 msgid "Playlist browser"
 msgstr "Navigateur de liste de lecture"
-
-#, fuzzy
-#~ msgid ""
-#~ "                      for more info, see http://github.com/Alexey-"
-#~ "Yakovenko/deadbeef/wiki/Title-formatting\n"
-#~ msgstr ""
-#~ "pour plus d'informations, voir http://sourceforge.net/apps/mediawiki/"
-#~ "deadbeef/index.php?title=Title_Formatting\n"
-
-#~ msgid "Auto-reset \"Stop after current\""
-#~ msgstr "Automatiquement remettre \"Arrêter après la piste actuelle\""

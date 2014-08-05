@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-31 20:08+0200\n"
-"PO-Revision-Date: 2014-06-25 17:55+0000\n"
+"POT-Creation-Date: 2014-08-05 19:54+0200\n"
+"PO-Revision-Date: 2014-07-31 18:10+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Kazakh (http://www.transifex.com/projects/p/deadbeef-player/"
 "language/kk/)\n"
@@ -419,9 +419,8 @@ msgid "Cursor follows playback"
 msgstr "Ағымдағы тректі ерекшелеу"
 
 #: ../plugins/gtkui/interface.c:386 ../plugins/gtkui/deadbeef.glade.h:43
-#, fuzzy
 msgid "Stop after current track"
-msgstr "Ағымдағысынан кейін тоқтату"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
 msgid "Stop after current album"
@@ -1423,9 +1422,8 @@ msgstr ""
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
-#, fuzzy
 msgid "Add Audio CD"
-msgstr "Аудио CD қосу"
+msgstr ""
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
@@ -1717,9 +1715,8 @@ msgstr "Дискреттеудің автожиілігі (дискреттеу 
 
 #. shellexecui
 #: ../translation/extra.c:97
-#, fuzzy
 msgid "Configure Custom Shell Commands"
-msgstr "Таңдауыңызша қоршам командаларын баптау"
+msgstr ""
 
 #. mpgmad
 #: ../translation/extra.c:99
@@ -2400,14 +2397,3 @@ msgstr "Аты"
 #: ../plugins/pltbrowser/pltbrowser.c:238
 msgid "Playlist browser"
 msgstr "Ойнату тізімдерді шолу"
-
-#, fuzzy
-#~ msgid ""
-#~ "                      for more info, see http://github.com/Alexey-"
-#~ "Yakovenko/deadbeef/wiki/Title-formatting\n"
-#~ msgstr ""
-#~ "                      көбірек білу үшін,  http://sourceforge.net/apps/"
-#~ "mediawiki/deadbeef/index.php?title=Title_Formatting қараңыз\n"
-
-#~ msgid "Auto-reset \"Stop after current\""
-#~ msgstr "\"Ағымдағысынан кейін тоқтатуды\" автотастау"

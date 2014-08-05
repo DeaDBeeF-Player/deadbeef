@@ -10,9 +10,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-31 20:08+0200\n"
-"PO-Revision-Date: 2014-06-25 17:55+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"POT-Creation-Date: 2014-08-05 19:54+0200\n"
+"PO-Revision-Date: 2014-07-31 18:16+0000\n"
+"Last-Translator: antiparvos <marcoslansgarza@gmail.com>\n"
 "Language-Team: Galician (http://www.transifex.com/projects/p/deadbeef-player/"
 "language/gl/)\n"
 "Language: gl\n"
@@ -424,9 +424,8 @@ msgid "Cursor follows playback"
 msgstr "Punteiro na seguinte reprodución"
 
 #: ../plugins/gtkui/interface.c:386 ../plugins/gtkui/deadbeef.glade.h:43
-#, fuzzy
 msgid "Stop after current track"
-msgstr "Deter ao rematar a pista actual"
+msgstr "Parar despois da pista actual"
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
 msgid "Stop after current album"
@@ -678,10 +677,12 @@ msgstr "Non engadir desde ficheiros cando se engaden cartafoles"
 #: ../plugins/gtkui/interface.c:1845 ../plugins/gtkui/deadbeef.glade.h:106
 msgid "\"Stop after current track\" option will switch off after triggering"
 msgstr ""
+"A opción «Parar despois da pista actual» desactivarase despois da acción"
 
 #: ../plugins/gtkui/interface.c:1849 ../plugins/gtkui/deadbeef.glade.h:107
 msgid "\"Stop after current album\" option will switch off after triggering"
 msgstr ""
+"A opción «Parar despois do álbum actual» desactivarase despois da acción"
 
 #: ../plugins/gtkui/interface.c:1853 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Playback"
@@ -1351,7 +1352,7 @@ msgstr ""
 #: ../main.c:110
 #, c-format
 msgid "                      for more info, see %s\n"
-msgstr ""
+msgstr "para obter máis información, vexa %s\n"
 
 #: ../playlist.c:481 ../playlist.c:2557
 msgid "Default"
@@ -1438,7 +1439,6 @@ msgstr ""
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
-#, fuzzy
 msgid "Add Audio CD"
 msgstr "Engadir CD de son"
 
@@ -1733,7 +1733,6 @@ msgstr "Mostraxe automática (sobrescribe o destinos das mostraxes)"
 
 #. shellexecui
 #: ../translation/extra.c:97
-#, fuzzy
 msgid "Configure Custom Shell Commands"
 msgstr "Configurar ordes por terminal personalizadas"
 
@@ -2418,17 +2417,3 @@ msgstr "Nome"
 #: ../plugins/pltbrowser/pltbrowser.c:238
 msgid "Playlist browser"
 msgstr "Explorador de listas de reprodución"
-
-#, fuzzy
-#~ msgid ""
-#~ "                      for more info, see http://github.com/Alexey-"
-#~ "Yakovenko/deadbeef/wiki/Title-formatting\n"
-#~ msgstr ""
-#~ "                      para obter máis información, vexa http://"
-#~ "sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"
-
-#~ msgid "Auto-reset \"Stop after current\""
-#~ msgstr "Restaurar automaticamente «Deter ao rematar a pista actual»"
-
-#~ msgid "Auto-reset \"Stop after current album\""
-#~ msgstr "Restaurar automaticamente «Deter ao rematar o állbum actual»"
