@@ -55,6 +55,10 @@ version 0.6.2
 	changed all wiki links to point to the new wiki on github
 	improved streamer event handling, to make the GUI more responsive and stable
 	fixed cleaning up downloaded temporary playlist files
+	Fixed skipping bad FLAC__METADATA_TYPE_CUESHEET blocks in FLAC
+	added support for uppercase .CUE extension
+	added "mpga" extension support (mp3)
+	fixed seeking backwards using hotkeys when in the beginning of a track
 
 version 0.6.1
 	fixed crash in AAC plugin when mp4 file reports 0 samples (e.g. radio rips)
