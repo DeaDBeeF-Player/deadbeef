@@ -5,15 +5,16 @@
 # Translators:
 # Arthur Țițeică <arthur@psw.ro>, 2013
 # Arthur Țițeică <arthur.titeica@gmail.com>, 2013
+# Mișu Moldovan <dumol@l10n.ro>, 2014
 # Mișu Moldovan <dumol@xfce.org>, 2012
 # Arthur Țițeică <arthur.titeica@gmail.com>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-31 20:08+0200\n"
-"PO-Revision-Date: 2014-06-25 17:55+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"POT-Creation-Date: 2014-08-05 19:54+0200\n"
+"PO-Revision-Date: 2014-08-02 12:24+0000\n"
+"Last-Translator: Mișu Moldovan <dumol@l10n.ro>\n"
 "Language-Team: Romanian (http://www.transifex.com/projects/p/deadbeef-player/"
 "language/ro/)\n"
 "Language: ro\n"
@@ -196,19 +197,19 @@ msgstr "Buton"
 
 #: ../plugins/gtkui/gtkui.c:972
 msgid "Seekbar"
-msgstr ""
+msgstr "Bară de căutare"
 
 #: ../plugins/gtkui/gtkui.c:973
 msgid "Playback controls"
-msgstr ""
+msgstr "Controale de redare"
 
 #: ../plugins/gtkui/gtkui.c:974
 msgid "Volume bar"
-msgstr ""
+msgstr "Bară de volum"
 
 #: ../plugins/gtkui/gtkui.c:975
 msgid "Chiptune voices"
-msgstr ""
+msgstr "Voci sintetizate"
 
 #: ../plugins/gtkui/gtkui.c:1150
 msgid "Failed while reading help file"
@@ -223,6 +224,9 @@ msgid ""
 "The player is currently running background tasks. If you quit now, the tasks "
 "will be cancelled or interrupted. This may result in data loss."
 msgstr ""
+"Playerul are în lucru unele sarcini în fundal. Dacă îl închideți acum, "
+"aceste sarcini vor fi întrerupte sau se vor pierde. E posibil să pierdeți "
+"anumite date."
 
 #: ../plugins/gtkui/gtkui.c:1173
 msgid "Do you still want to quit?"
@@ -424,13 +428,12 @@ msgid "Cursor follows playback"
 msgstr "Selecția urmează redarea"
 
 #: ../plugins/gtkui/interface.c:386 ../plugins/gtkui/deadbeef.glade.h:43
-#, fuzzy
 msgid "Stop after current track"
 msgstr "Oprire după piesa curentă"
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
 msgid "Stop after current album"
-msgstr ""
+msgstr "Oprire după albumul curent"
 
 #: ../plugins/gtkui/interface.c:399 ../plugins/gtkui/deadbeef.glade.h:45
 msgid "Jump to current track"
@@ -675,11 +678,11 @@ msgstr "La adăugarea de directoare nu se adaugă fișiere  din arhive"
 
 #: ../plugins/gtkui/interface.c:1845 ../plugins/gtkui/deadbeef.glade.h:106
 msgid "\"Stop after current track\" option will switch off after triggering"
-msgstr ""
+msgstr "Opțiunea de oprire după piesa curentă nu persistă"
 
 #: ../plugins/gtkui/interface.c:1849 ../plugins/gtkui/deadbeef.glade.h:107
 msgid "\"Stop after current album\" option will switch off after triggering"
-msgstr ""
+msgstr "Opțiunea de oprire după albumul curent nu persistă"
 
 #: ../plugins/gtkui/interface.c:1853 ../plugins/gtkui/deadbeef.glade.h:108
 msgid "Playback"
@@ -713,7 +716,7 @@ msgstr "Fără iconiță în zona de notificare"
 
 #: ../plugins/gtkui/interface.c:1947 ../plugins/gtkui/deadbeef.glade.h:115
 msgid "Enable Japanese SHIFT-JIS detection and recoding"
-msgstr ""
+msgstr "Detecție automată pentru codarea japoneză SHIFT-JIS"
 
 #: ../plugins/gtkui/interface.c:1951 ../plugins/gtkui/deadbeef.glade.h:116
 msgid "Enable Russian CP1251 detection and recoding"
@@ -753,7 +756,7 @@ msgstr "Desenează piesa care rulează folosind un font îngroșat"
 
 #: ../plugins/gtkui/interface.c:2030 ../plugins/gtkui/deadbeef.glade.h:125
 msgid "Hide \"Remove From Disk\" context menu item"
-msgstr ""
+msgstr "Fără „Ștergere de pe disc” în meniul contextual"
 
 #: ../plugins/gtkui/interface.c:2034 ../plugins/gtkui/deadbeef.glade.h:126
 msgid "Auto-name playlists when adding a single folder"
@@ -943,7 +946,7 @@ msgstr "URL:"
 #: ../plugins/gtkui/interface.c:4442 ../plugins/gtkui/plcommon.c:806
 #: ../plugins/gtkui/deadbeef.glade.h:172
 msgid "Set Custom Title"
-msgstr ""
+msgstr "Titlu personalizat"
 
 #: ../plugins/gtkui/interface.c:3332 ../plugins/gtkui/deadbeef.glade.h:173
 msgid "Group By ..."
@@ -1090,6 +1093,12 @@ msgid ""
 "the \"Artist\" metadata field. It should look like \"[custom] artist\" if "
 "the Artist field is present, or just \"custom\" otherwise."
 msgstr ""
+"Acest dialog vă permite să alegeți un nume personalizat pentru orice pistă, "
+"ceea ce poate fi folositor la redarea stațiilor radio. O opțiune pentru a "
+"alege un titlu personalizat este prezentă și în dialogul „Adăugați un link”. "
+"Titlul va fi vizibil în coloanele ce afișează câmpul „Artist” în formatul "
+"„[personalizat] artist” dacă este prezent câmpul „Artist” sau doar "
+"„personalizat”, dacă nu e prezent."
 
 #: ../plugins/gtkui/mainplaylist.c:353 ../plugins/gtkui/search.c:419
 msgid "Artist / Album"
@@ -1101,19 +1110,19 @@ msgstr "Nr. piesă"
 
 #: ../plugins/gtkui/plcommon.c:637
 msgid "Add To Playback Queue"
-msgstr ""
+msgstr "Adăugare în coada de redare"
 
 #: ../plugins/gtkui/plcommon.c:642
 msgid "Remove From Playback Queue"
-msgstr ""
+msgstr "Ștergere din coada de redare"
 
 #: ../plugins/gtkui/plcommon.c:650
 msgid "Reload Metadata"
-msgstr ""
+msgstr "Reîncarcare metadate"
 
 #: ../plugins/gtkui/plcommon.c:668
 msgid "Remove From Disk"
-msgstr ""
+msgstr "Ștergere de pe disc"
 
 #: ../plugins/gtkui/plcommon.c:1089 ../plugins/gtkui/plcommon.c:1216
 msgid "Add column"
@@ -1129,7 +1138,7 @@ msgstr "Ștergere coloană"
 
 #: ../plugins/gtkui/plcommon.c:1234
 msgid "Pin groups when scrolling"
-msgstr ""
+msgstr "Fixează grupurile la defilare"
 
 #: ../plugins/gtkui/plcommon.c:1239
 msgid "Group by"
@@ -1344,7 +1353,7 @@ msgstr ""
 #: ../main.c:110
 #, c-format
 msgid "                      for more info, see %s\n"
-msgstr ""
+msgstr "                      pentru mai multe detalii, consultați %s\n"
 
 #: ../playlist.c:481 ../playlist.c:2557
 msgid "Default"
@@ -1431,9 +1440,8 @@ msgstr ""
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
-#, fuzzy
 msgid "Add Audio CD"
-msgstr "Adăugare CD audio"
+msgstr "Adăugați un CD audio"
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
@@ -1725,9 +1733,8 @@ msgstr "Rată de eșantionare automată (suprascrie rata țintă)"
 
 #. shellexecui
 #: ../translation/extra.c:97
-#, fuzzy
 msgid "Configure Custom Shell Commands"
-msgstr "Configurare comenzi shell personalizate"
+msgstr "Comenzi shell personalizate…"
 
 #. mpgmad
 #: ../translation/extra.c:99
@@ -1746,7 +1753,7 @@ msgstr "Activare surround"
 #: ../plugins/converter/convgui.c:84
 #, c-format
 msgid "[Built-in] %s"
-msgstr ""
+msgstr "[Inclus] %s"
 
 #: ../plugins/converter/convgui.c:130
 msgid "The file already exists. Overwrite?"
@@ -2163,7 +2170,7 @@ msgstr "Funcționează pentru linkuri la distanță (de ex. fluxuri HTTP)"
 #: ../plugins/shellexecui/interface.c:228
 #: ../plugins/shellexecui/shellexec.glade.h:23
 msgid "Generic (Main Menu)"
-msgstr ""
+msgstr "Generic (în meniul principal)"
 
 #: ../plugins/shellexecui/interface.c:231
 #: ../plugins/shellexecui/shellexec.glade.h:22
@@ -2177,6 +2184,9 @@ msgid ""
 "contains the menu path like this: \"File/My Command\", where File is the "
 "menu name in the English version.</small>"
 msgstr ""
+"<small>Dacă doriți să adăugați comanda în meniul principal, asigurați-vă că "
+"titlul conține calea din meniu, de exemplu „File/Comanda Mea”, unde «File» "
+"este numele în engleză al elementului din meniu.</small>"
 
 #: ../plugins/shellexecui/shellexecui.c:96
 msgid "Add Command"
@@ -2300,7 +2310,7 @@ msgstr "Nu s-a selectat nimic."
 #: ../plugins/gtkui/widgets.c:444
 #, c-format
 msgid "Widget \"%s\" is not available"
-msgstr ""
+msgstr "Widgetul „%s” nu este disponibil"
 
 #: ../plugins/gtkui/widgets.c:772
 msgid "Replace with..."
@@ -2324,7 +2334,7 @@ msgstr "Lipește"
 
 #: ../plugins/gtkui/widgets.c:942
 msgid "Multiple widgets of this type are not supported"
-msgstr ""
+msgstr "Nu există suport pentru mai multe widgeturi de acest tip"
 
 #: ../plugins/gtkui/widgets.c:1249
 msgid "Lock movement"
@@ -2380,7 +2390,7 @@ msgstr "Configurează buton"
 
 #: ../plugins/gtkui/widgets.c:3870
 msgid "Voices:"
-msgstr ""
+msgstr "Voci:"
 
 #: ../plugins/gtkui/pltmenu.c:62
 msgid "Edit playlist"
@@ -2405,14 +2415,3 @@ msgstr "Nume"
 #: ../plugins/pltbrowser/pltbrowser.c:238
 msgid "Playlist browser"
 msgstr "Navigator liste de redare"
-
-#, fuzzy
-#~ msgid ""
-#~ "                      for more info, see http://github.com/Alexey-"
-#~ "Yakovenko/deadbeef/wiki/Title-formatting\n"
-#~ msgstr ""
-#~ "                      pentru mai multe detalii vedeți http://sourceforge."
-#~ "net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"
-
-#~ msgid "Auto-reset \"Stop after current\""
-#~ msgstr "Resetare automată pentru „Oprire după piesa curentă”"

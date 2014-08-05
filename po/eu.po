@@ -4,14 +4,15 @@
 #
 # Translators:
 # aboutafteragain <aboutafteragain@gmail.com>, 2013
+# aboutafteragain <aboutafteragain@gmail.com>, 2013-2014
 # aboutafteragain <aboutafteragain@gmail.com>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-31 20:08+0200\n"
-"PO-Revision-Date: 2014-06-25 17:55+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"POT-Creation-Date: 2014-08-05 19:54+0200\n"
+"PO-Revision-Date: 2014-07-31 21:13+0000\n"
+"Last-Translator: aboutafteragain <aboutafteragain@gmail.com>\n"
 "Language-Team: Basque (http://www.transifex.com/projects/p/deadbeef-player/"
 "language/eu/)\n"
 "Language: eu\n"
@@ -194,19 +195,19 @@ msgstr "Botoia"
 
 #: ../plugins/gtkui/gtkui.c:972
 msgid "Seekbar"
-msgstr ""
+msgstr "Bilaketa-barra"
 
 #: ../plugins/gtkui/gtkui.c:973
 msgid "Playback controls"
-msgstr ""
+msgstr "Erreprodukzio kontrolak"
 
 #: ../plugins/gtkui/gtkui.c:974
 msgid "Volume bar"
-msgstr ""
+msgstr "Ozentasun barra"
 
 #: ../plugins/gtkui/gtkui.c:975
 msgid "Chiptune voices"
-msgstr ""
+msgstr "Txiptune ahotsak"
 
 #: ../plugins/gtkui/gtkui.c:1150
 msgid "Failed while reading help file"
@@ -221,6 +222,8 @@ msgid ""
 "The player is currently running background tasks. If you quit now, the tasks "
 "will be cancelled or interrupted. This may result in data loss."
 msgstr ""
+"Erreproduzitzailea atzeko planoan lan egiten ari da. Orain ateratzen bazara, "
+"zeregin hauek bertan behera utziko ditu. Honek datuak galtzea eragin dezake."
 
 #: ../plugins/gtkui/gtkui.c:1173
 msgid "Do you still want to quit?"
@@ -422,9 +425,8 @@ msgid "Cursor follows playback"
 msgstr "Kurtsoreak erreprodukzioa jarraitzen du"
 
 #: ../plugins/gtkui/interface.c:386 ../plugins/gtkui/deadbeef.glade.h:43
-#, fuzzy
 msgid "Stop after current track"
-msgstr "Gelditu unekoaren ondoren"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
 msgid "Stop after current album"
@@ -1426,9 +1428,8 @@ msgstr ""
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
-#, fuzzy
 msgid "Add Audio CD"
-msgstr "Audio CDa gehitu"
+msgstr ""
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
@@ -1724,9 +1725,8 @@ msgstr ""
 
 #. shellexecui
 #: ../translation/extra.c:97
-#, fuzzy
 msgid "Configure Custom Shell Commands"
-msgstr "Shell komando pertsonalizatuak konfiguratu"
+msgstr ""
 
 #. mpgmad
 #: ../translation/extra.c:99
@@ -2400,14 +2400,3 @@ msgstr ""
 #: ../plugins/pltbrowser/pltbrowser.c:238
 msgid "Playlist browser"
 msgstr ""
-
-#, fuzzy
-#~ msgid ""
-#~ "                      for more info, see http://github.com/Alexey-"
-#~ "Yakovenko/deadbeef/wiki/Title-formatting\n"
-#~ msgstr ""
-#~ "                      Informazio gehiagorako, begiratu http://sourceforge."
-#~ "net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"
-
-#~ msgid "Auto-reset \"Stop after current\""
-#~ msgstr "\"Gelditu unekoaren ondoren\" Auto-berrezarri"

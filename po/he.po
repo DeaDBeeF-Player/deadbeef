@@ -3,15 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Yaron Shahrabani <sh.yaron@gmail.com>, 2010,2013
+# Yaron Shahrabani <sh.yaron@gmail.com>, 2010,2013-2014
 # Yaron Shahrabani <sh.yaron@gmail.com>, 2010
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-31 20:08+0200\n"
-"PO-Revision-Date: 2014-06-25 17:55+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"POT-Creation-Date: 2014-08-05 19:54+0200\n"
+"PO-Revision-Date: 2014-08-02 09:39+0000\n"
+"Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language-Team: Hebrew (http://www.transifex.com/projects/p/deadbeef-player/"
 "language/he/)\n"
 "Language: he\n"
@@ -198,11 +198,11 @@ msgstr ""
 
 #: ../plugins/gtkui/gtkui.c:973
 msgid "Playback controls"
-msgstr ""
+msgstr "פקדי נגינה"
 
 #: ../plugins/gtkui/gtkui.c:974
 msgid "Volume bar"
-msgstr ""
+msgstr "פס עצמת השמע"
 
 #: ../plugins/gtkui/gtkui.c:975
 msgid "Chiptune voices"
@@ -422,9 +422,8 @@ msgid "Cursor follows playback"
 msgstr "הסמן עוקב אחר ההשמעה"
 
 #: ../plugins/gtkui/interface.c:386 ../plugins/gtkui/deadbeef.glade.h:43
-#, fuzzy
 msgid "Stop after current track"
-msgstr "עצירה לאחר הנוכחי"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
 msgid "Stop after current album"
@@ -763,7 +762,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2046 ../plugins/gtkui/deadbeef.glade.h:129
 msgid "GUI/Misc"
-msgstr ""
+msgstr "מנשק/שונות"
 
 #: ../plugins/gtkui/interface.c:2061 ../plugins/gtkui/interface.c:2105
 #: ../plugins/gtkui/deadbeef.glade.h:130
@@ -878,12 +877,12 @@ msgstr "רשת"
 
 #: ../plugins/gtkui/interface.c:2404 ../plugins/gtkui/deadbeef.glade.h:157
 msgid "Assigned Hotkeys:"
-msgstr ""
+msgstr "מקשי קיצור מוקצים:"
 
 #: ../plugins/gtkui/interface.c:2439 ../plugins/gtkui/interface.c:4284
 #: ../plugins/gtkui/deadbeef.glade.h:158
 msgid "Action:"
-msgstr ""
+msgstr "פעולה:"
 
 #: ../plugins/gtkui/interface.c:2444 ../plugins/gtkui/interface.c:2457
 #: ../plugins/gtkui/interface.c:4288 ../plugins/gtkui/deadbeef.glade.h:159
@@ -892,7 +891,7 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2452 ../plugins/gtkui/deadbeef.glade.h:160
 msgid "Key combination:"
-msgstr ""
+msgstr "צירוף מקשים:"
 
 #: ../plugins/gtkui/interface.c:2461 ../plugins/gtkui/deadbeef.glade.h:161
 msgid "Global hotkey"
@@ -908,11 +907,11 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:2510 ../plugins/gtkui/deadbeef.glade.h:166
 msgid "_Defaults"
-msgstr ""
+msgstr "_בררות מחדל"
 
 #: ../plugins/gtkui/interface.c:2514 ../plugins/gtkui/deadbeef.glade.h:167
 msgid "Hotkeys"
-msgstr ""
+msgstr "מקשי קיצור"
 
 #: ../plugins/gtkui/interface.c:2545 ../plugins/gtkui/deadbeef.glade.h:168
 msgid "Version: "
@@ -1053,23 +1052,23 @@ msgstr ""
 
 #: ../plugins/gtkui/interface.c:4235 ../plugins/gtkui/deadbeef.glade.h:198
 msgid "Color:"
-msgstr ""
+msgstr "צבע:"
 
 #: ../plugins/gtkui/interface.c:4247 ../plugins/gtkui/deadbeef.glade.h:199
 msgid "Text color:"
-msgstr ""
+msgstr "צבע הטקסט:"
 
 #: ../plugins/gtkui/interface.c:4259 ../plugins/gtkui/deadbeef.glade.h:200
 msgid "Icon:"
-msgstr ""
+msgstr "סמל:"
 
 #: ../plugins/gtkui/interface.c:4271 ../plugins/gtkui/deadbeef.glade.h:201
 msgid "Label:"
-msgstr ""
+msgstr "תווית:"
 
 #: ../plugins/gtkui/interface.c:4352 ../plugins/gtkui/deadbeef.glade.h:202
 msgid "Select action"
-msgstr ""
+msgstr "בחירת פעולה"
 
 #: ../plugins/gtkui/interface.c:4436 ../plugins/gtkui/deadbeef.glade.h:203
 msgid ""
@@ -1413,9 +1412,8 @@ msgstr ""
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
-#, fuzzy
 msgid "Add Audio CD"
-msgstr "הוספת תקליטור שמע"
+msgstr ""
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
@@ -1707,9 +1705,8 @@ msgstr "קצב דגימה אוטומטי (דורס את קצב דגימת היע
 
 #. shellexecui
 #: ../translation/extra.c:97
-#, fuzzy
 msgid "Configure Custom Shell Commands"
-msgstr "Configure custom shell commands"
+msgstr ""
 
 #. mpgmad
 #: ../translation/extra.c:99
@@ -2169,7 +2166,7 @@ msgstr ""
 
 #: ../plugins/shellexecui/shellexecui.c:143
 msgid "Confirm Remove"
-msgstr ""
+msgstr "אישור הסרה"
 
 #: ../plugins/shellexecui/shellexecui.c:229
 msgid "ID must be non-empty and unique.\n"
@@ -2236,7 +2233,7 @@ msgstr "קבצים אחרים (*)"
 
 #: ../plugins/gtkui/actionhandlers.c:775
 msgid "Save Playlist As"
-msgstr ""
+msgstr "שמירת רשימת ההשמעה בשם"
 
 #: ../plugins/gtkui/actionhandlers.c:786
 msgid "DeaDBeeF playlist files (*.dbpl)"
@@ -2272,23 +2269,23 @@ msgstr ""
 
 #: ../plugins/gtkui/widgets.c:772
 msgid "Replace with..."
-msgstr ""
+msgstr "החלפה ב…"
 
 #: ../plugins/gtkui/widgets.c:777
 msgid "Insert..."
-msgstr ""
+msgstr "הוספה…"
 
 #: ../plugins/gtkui/widgets.c:804
 msgid "Cut"
-msgstr ""
+msgstr "גזירה"
 
 #: ../plugins/gtkui/widgets.c:811
 msgid "Copy"
-msgstr ""
+msgstr "העתקה"
 
 #: ../plugins/gtkui/widgets.c:818
 msgid "Paste"
-msgstr ""
+msgstr "הדבקה"
 
 #: ../plugins/gtkui/widgets.c:942
 msgid "Multiple widgets of this type are not supported"
@@ -2296,31 +2293,31 @@ msgstr ""
 
 #: ../plugins/gtkui/widgets.c:1249
 msgid "Lock movement"
-msgstr ""
+msgstr "נעילת תנועה"
 
 #: ../plugins/gtkui/widgets.c:1534
 msgid "Move tab left"
-msgstr ""
+msgstr "העברת הלשונית שמאלה"
 
 #: ../plugins/gtkui/widgets.c:1541
 msgid "Move tab right"
-msgstr ""
+msgstr "העברת הלשונית ימינה"
 
 #: ../plugins/gtkui/widgets.c:1548
 msgid "Remove tab"
-msgstr ""
+msgstr "הסרת לשונית"
 
 #: ../plugins/gtkui/widgets.c:1555
 msgid "Rename tab"
-msgstr ""
+msgstr "שינוי שם הלשונית"
 
 #: ../plugins/gtkui/widgets.c:1616
 msgid "Add new tab"
-msgstr ""
+msgstr "הוספת לשונית חדשה"
 
 #: ../plugins/gtkui/widgets.c:2036
 msgid "Show Column Headers"
-msgstr ""
+msgstr "הצגת כותרות העמודות"
 
 #: ../plugins/gtkui/widgets.c:3147
 msgid "Expand the box by 1 item"
@@ -2336,48 +2333,40 @@ msgstr ""
 
 #: ../plugins/gtkui/widgets.c:3197
 msgid "Expand"
-msgstr ""
+msgstr "הרחבה"
 
 #: ../plugins/gtkui/widgets.c:3205
 msgid "Fill"
-msgstr ""
+msgstr "מילוי"
 
 #: ../plugins/gtkui/widgets.c:3606
 msgid "Configure button"
-msgstr ""
+msgstr "הגדרת לחצן"
 
 #: ../plugins/gtkui/widgets.c:3870
 msgid "Voices:"
-msgstr ""
+msgstr "קולות:"
 
 #: ../plugins/gtkui/pltmenu.c:62
 msgid "Edit playlist"
-msgstr ""
+msgstr "עריכת רשימת השמעה"
 
 #: ../plugins/gtkui/pltmenu.c:265
 msgid "Rename Playlist"
-msgstr ""
+msgstr "שינוי שם רשימת ההשמעה"
 
 #: ../plugins/gtkui/pltmenu.c:272
 msgid "Remove Playlist"
-msgstr ""
+msgstr "הסרת רשימת השמעה"
 
 #: ../plugins/gtkui/pltmenu.c:279
 msgid "Add New Playlist"
-msgstr ""
+msgstr "הוספת רשימת השמעה חדשה"
 
 #: ../plugins/pltbrowser/pltbrowser.c:213
 msgid "Name"
-msgstr ""
+msgstr "שם"
 
 #: ../plugins/pltbrowser/pltbrowser.c:238
 msgid "Playlist browser"
-msgstr ""
-
-#, fuzzy
-#~ msgid ""
-#~ "                      for more info, see http://github.com/Alexey-"
-#~ "Yakovenko/deadbeef/wiki/Title-formatting\n"
-#~ msgstr ""
-#~ "                      for more info, see http://sourceforge.net/apps/"
-#~ "mediawiki/deadbeef/index.php?title=Title_Formatting\n"
+msgstr "סייר רשימות השמעה"
