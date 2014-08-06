@@ -337,6 +337,17 @@ int ddb_iconv (const char *cs_out, const char *cs_in, char *out, int outlen, con
     if (inlen==0) {
         return 0;
     }
+
+
+    if (!strcmp (cs_in, "UTF-16")) {
+        if (in[0] == 0xfe && in[1] == 0xff) {
+            cs_in = "UTF-16BE";
+        }
+        else {
+            cs_in = "UTF-16LE";
+        }
+    }
+
     // to utf8 branch
     if (!strcasecmp (cs_out, UTF8_STR)) {
         if (!strcasecmp (cs_in, UTF8_STR)) {
@@ -1760,11 +1771,11 @@ junk_id3v2_add_text_frame (DB_id3v2_tag_t *tag, const char *frame_id, const char
             out[0] = 0xff;
             out[1] = 0xfe;
             outlen += 2;
-            trace ("successfully converted to ucs-2le (size=%d, bom: %x %x)\n", outlen, out[0], out[1]);
+            trace ("successfully converted to ucs-2le (size=%d, bom: %x %x)\n", (int)outlen, out[0], out[1]);
             encoding = 1;
         }
         else {
-            trace ("successfully converted to iso8859-1 (size=%d)\n", outlen);
+            trace ("successfully converted to iso8859-1 (size=%d)\n", (int)outlen);
         }
     }
 
