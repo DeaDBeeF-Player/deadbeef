@@ -541,6 +541,7 @@ jpeg_resize (const char *fname, const char *outname, int scaled_size) {
         free(quick_dividers);
     }
     else {
+#ifndef USE_BICUBIC
         /* Bilinear interpolation for upscales and modest downscales */
         JSAMPLE scanline[row_components];
         JSAMPLE next_scanline[row_components];
@@ -583,6 +584,64 @@ jpeg_resize (const char *fname, const char *outname, int scaled_size) {
 
             jpeg_write_scanlines(&cinfo_out, &out_row, 1);
         }
+#else
+        /* Bicubic interpolation to improve the scaled image quality */
+        JSAMPLE scanline0[row_components];
+        JSAMPLE scanline1[row_components];
+        JSAMPLE scanline2[row_components];
+        JSAMPLE scanline3[row_components];
+        JSAMPROW row0 = scanline0;
+        JSAMPROW row1 = scanline1;
+        JSAMPROW row2 = scanline2;
+        JSAMPROW row3 = scanline3;
+        const float downscale_offset = scaling_ratio < 1 ? 0 : (scaling_ratio - 1) / 2;
+        float y_interp = downscale_offset;
+        for (uint_fast16_t scaled_y = 0; scaled_y < scaled_height; scaled_y++, y_interp+=scaling_ratio) {
+            const uint_fast32_t y = y_interp;
+
+            if (cinfo.output_scanline < y+3) {
+                while (cinfo.output_scanline < y) {
+                    jpeg_read_scanlines(&cinfo, &row1, 1);
+                }
+                memcpy(row0, row1, row_components*sizeof(JSAMPLE));
+                while (y+1 < height && cinfo.output_scanline < y+1) {
+                    jpeg_read_scanlines(&cinfo, &row2, 1);
+                }
+                memcpy(row1, row2, row_components*sizeof(JSAMPLE));
+                while (y+2 < height && cinfo.output_scanline < y+2) {
+                    jpeg_read_scanlines(&cinfo, &row3, 1);
+                }
+                memcpy(row2, row3, row_components*sizeof(JSAMPLE));
+                if (y+3 < height) {
+                    jpeg_read_scanlines(&cinfo, &row3, 1);
+                }
+            }
+
+            const float dy = y_interp - (long)y_interp;
+            const float dy2 = dy * dy;
+            const float dy3 = dy2 * dy;
+
+            float x_interp = downscale_offset;
+            for (uint_fast32_t scaled_x = 0; scaled_x < scaled_row_components; scaled_x+=num_components, x_interp+=scaling_ratio) {
+                const uint_fast32_t x = x_interp;
+                const uint_fast32_t x1 = x * num_components;
+                const uint_fast32_t x0 = x > 0 ? x1-num_components : x1;
+                const uint_fast32_t x2 = x+1 < width ? x1+num_components : x1;
+                const uint_fast32_t x3 = x+2 < width ? x2+num_components : x2;
+
+                const float dx = x_interp - (long)x_interp;
+                const float dx2 = dx * dx;
+                const float dx3 = dx2 * dx;
+
+                for (uint_fast8_t component=0; component<num_components; component++) {
+                    const int_fast16_t pixel = bcerp(row0, row1, row2, row3, x0, x1, x2, x3, component, dx, dx2, dx3, dy, dy2, dy3);
+                    out_row[scaled_x + component] = pixel < 0 ? 0 : pixel > 255 ? 255 : pixel;
+                }
+            }
+
+            jpeg_write_scanlines(&cinfo_out, &out_row, 1);
+        }
+#endif
     }
 
     jpeg_finish_compress(&cinfo_out);
@@ -880,7 +939,7 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
             const float dy3 = dy2 * dy;
 
             float x_interp = downscale_offset;
-            for (uint_fast32_t scaled_x = 0; scaled_x < scaled_row_components; scaled_x+=num_values, x_interp+=scaling_ratio) {
+            for (uint_fast32_t scaled_x = 0; scaled_x < scaled_row_components; scaled_x+=num_components, x_interp+=scaling_ratio) {
                 const uint_fast32_t x = x_interp;
                 const uint_fast32_t x1 = x * num_components;
                 const uint_fast32_t x0 = x > 0 ? x1-num_components : x1;
