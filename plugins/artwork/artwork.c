@@ -551,7 +551,7 @@ jpeg_resize (const char *fname, const char *outname, int scaled_size) {
         float y_interp = downscale_offset;
         for (uint_fast16_t scaled_y = 0; scaled_y < scaled_height; scaled_y++, y_interp+=scaling_ratio) {
             const uint_fast32_t y = y_interp;
-            const uint_fast16_t y_diff = (uint_fast16_t)(y_interp*256) - (y<<8);
+            const uint_fast16_t y_diff = (uint_fast32_t)(y_interp*256) - (y<<8);
             const uint_fast16_t y_remn = 256 - y_diff;
 
             if (cinfo.output_scanline < y+2) {
@@ -570,7 +570,7 @@ jpeg_resize (const char *fname, const char *outname, int scaled_size) {
                 const uint_fast32_t x_index = x * num_components;
                 const uint_fast32_t next_x_index = x+1 < width ? x_index+num_components : x_index;
 
-                const uint_fast16_t x_diff = (uint_fast16_t)(x_interp*256) - (x<<8);
+                const uint_fast16_t x_diff = (uint_fast32_t)(x_interp*256) - (x<<8);
                 const uint_fast16_t x_remn = 256 - x_diff;
                 const uint_fast32_t weight = x_remn * y_remn;
                 const uint_fast32_t weightx = x_diff * y_remn;
@@ -594,21 +594,27 @@ jpeg_resize (const char *fname, const char *outname, int scaled_size) {
         JSAMPROW row1 = scanline1;
         JSAMPROW row2 = scanline2;
         JSAMPROW row3 = scanline3;
+        jpeg_read_scanlines(&cinfo, &row1, 1);
+        memcpy(row2, row1, row_components*sizeof(JSAMPLE));
+
         const float downscale_offset = scaling_ratio < 1 ? 0 : (scaling_ratio - 1) / 2;
         float y_interp = downscale_offset;
         for (uint_fast16_t scaled_y = 0; scaled_y < scaled_height; scaled_y++, y_interp+=scaling_ratio) {
             const uint_fast32_t y = y_interp;
+            const float dy = y_interp - (int_fast32_t)y_interp;
+            const float dy2 = dy * dy;
+            const float dy3 = dy2 * dy;
 
             if (cinfo.output_scanline < y+3) {
                 while (cinfo.output_scanline < y) {
                     jpeg_read_scanlines(&cinfo, &row1, 1);
                 }
                 memcpy(row0, row1, row_components*sizeof(JSAMPLE));
-                while (y+1 < height && cinfo.output_scanline < y+1) {
+                if (cinfo.output_scanline < y+1) {
                     jpeg_read_scanlines(&cinfo, &row2, 1);
                 }
                 memcpy(row1, row2, row_components*sizeof(JSAMPLE));
-                while (y+2 < height && cinfo.output_scanline < y+2) {
+                if (y+2 < height && cinfo.output_scanline < y+2) {
                     jpeg_read_scanlines(&cinfo, &row3, 1);
                 }
                 memcpy(row2, row3, row_components*sizeof(JSAMPLE));
@@ -616,10 +622,6 @@ jpeg_resize (const char *fname, const char *outname, int scaled_size) {
                     jpeg_read_scanlines(&cinfo, &row3, 1);
                 }
             }
-
-            const float dy = y_interp - (long)y_interp;
-            const float dy2 = dy * dy;
-            const float dy3 = dy2 * dy;
 
             float x_interp = downscale_offset;
             for (uint_fast32_t scaled_x = 0; scaled_x < scaled_row_components; scaled_x+=num_components, x_interp+=scaling_ratio) {
@@ -629,7 +631,7 @@ jpeg_resize (const char *fname, const char *outname, int scaled_size) {
                 const uint_fast32_t x2 = x+1 < width ? x1+num_components : x1;
                 const uint_fast32_t x3 = x+2 < width ? x2+num_components : x2;
 
-                const float dx = x_interp - (long)x_interp;
+                const float dx = x_interp - (int_fast32_t)x_interp;
                 const float dx2 = dx * dx;
                 const float dx3 = dx2 * dx;
 
@@ -934,7 +936,7 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
             const png_byte *row2 = y+1 < height ? row_pointers[y+1] : row1;
             const png_byte *row3 = y+2 < height ? row_pointers[y+2] : row2;
 
-            const float dy = y_interp - (long)y_interp;
+            const float dy = y_interp - (int_fast32_t)y_interp;
             const float dy2 = dy * dy;
             const float dy3 = dy2 * dy;
 
@@ -946,7 +948,7 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
                 const uint_fast32_t x2 = x+1 < width ? x1+num_components : x1;
                 const uint_fast32_t x3 = x+2 < width ? x2+num_components : x2;
 
-                const float dx = x_interp - (long)x_interp;
+                const float dx = x_interp - (int_fast32_t)x_interp;
                 const float dx2 = dx * dx;
                 const float dx3 = dx2 * dx;
 
