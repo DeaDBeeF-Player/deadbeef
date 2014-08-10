@@ -351,7 +351,7 @@ scale_dimensions(const int scaled_size, const int width, const int height, unsig
 }
 
 #ifndef USE_IMLIB2
-#ifndef USE_BICUBIC
+#ifdef USE_BICUBIC
 static float cerp(const float p0, const float p1, const float p2, const float p3, const float d, const float d2, const float d3)
 {
     /* Cubic Hermite spline (a = -0.5, Catmull-Rom) */
@@ -385,9 +385,9 @@ calculate_quick_dividers(const float scaling_ratio)
     const uint16_t max_sample_size = scaling_ratio + 1;
     uint_fast32_t *dividers = malloc((max_sample_size * max_sample_size + 1) * sizeof(uint_fast32_t));
     if (dividers) {
-        for (uint16_t y = 1; y <= max_sample_size; y++) {
-            for (uint16_t x = y; x <= max_sample_size; x++) {
-                const uint32_t num_pixels = x*y;
+        for (uint16_t y = max_sample_size; y; y--) {
+            for (uint16_t x = y; x; x--) {
+                const uint32_t num_pixels = x * y;
                 /* Accurate to 1/256 for up to 256 pixels and always for powers of 2 */
                 dividers[num_pixels] = num_pixels <= 256 || !(num_pixels & (num_pixels - 1)) ? 256*256/num_pixels : 0;
             }
@@ -396,19 +396,16 @@ calculate_quick_dividers(const float scaling_ratio)
     return dividers;
 }
 
-struct my_error_mgr {
-  struct jpeg_error_mgr pub;	/* "public" fields */
-
-  jmp_buf setjmp_buffer;	/* for return to caller */
-};
-
-typedef struct my_error_mgr * my_error_ptr;
+typedef struct {
+    struct jpeg_error_mgr pub;	/* "public" fields */
+    jmp_buf setjmp_buffer;	/* for return to caller */
+} my_error_mgr_t;
 
 METHODDEF(void)
 my_error_exit (j_common_ptr cinfo)
 {
   /* cinfo->err really points to a my_error_mgr struct, so coerce pointer */
-  my_error_ptr myerr = (my_error_ptr) cinfo->err;
+  my_error_mgr_t *myerr = (my_error_mgr_t *) cinfo->err;
 
 //  (*cinfo->err->output_message) (cinfo);
 
@@ -420,28 +417,22 @@ my_error_exit (j_common_ptr cinfo)
 static int
 jpeg_resize (const char *fname, const char *outname, int scaled_size) {
     trace ("resizing %s into %s\n", fname, outname);
+    FILE *fp = NULL, *out = NULL;
     struct jpeg_decompress_struct cinfo;
     struct jpeg_compress_struct cinfo_out;
-    void *row_buffer = NULL;
+    void *sample_rows_buffer = NULL;
     uint_fast32_t *quick_dividers = NULL;
+    my_error_mgr_t jerr;
 
-    memset (&cinfo, 0, sizeof (cinfo));
-    memset (&cinfo_out, 0, sizeof (cinfo_out));
-
-    struct my_error_mgr jerr;
-
-    FILE *fp = NULL, *out = NULL;
-
-    cinfo.err = jpeg_std_error (&jerr.pub);
-    cinfo_out.err = cinfo.err;
+    cinfo.mem = cinfo_out.mem = NULL;
+    cinfo_out.err = cinfo.err = jpeg_std_error(&jerr.pub);
     jerr.pub.error_exit = my_error_exit;
-    /* Establish the setjmp return context for my_error_exit to use. */
     if (setjmp(jerr.setjmp_buffer)) {
         trace("failed to scale %s as jpeg\n", outname);
         jpeg_destroy_decompress(&cinfo);
         jpeg_destroy_compress(&cinfo_out);
-        if (row_buffer) {
-            free(row_buffer);
+        if (sample_rows_buffer) {
+            free(sample_rows_buffer);
         }
         if (quick_dividers) {
             free(quick_dividers);
@@ -466,7 +457,11 @@ jpeg_resize (const char *fname, const char *outname, int scaled_size) {
     }
 
     jpeg_create_decompress (&cinfo);
+    jpeg_create_compress(&cinfo_out);
+
     jpeg_stdio_src (&cinfo, fp);
+    jpeg_stdio_dest(&cinfo_out, out);
+
     jpeg_read_header (&cinfo, TRUE);
     jpeg_start_decompress (&cinfo);
 
@@ -475,13 +470,10 @@ jpeg_resize (const char *fname, const char *outname, int scaled_size) {
     const unsigned int height = cinfo.image_height;
     unsigned int scaled_width, scaled_height;
     const float scaling_ratio = scale_dimensions(scaled_size, width, height, &scaled_width, &scaled_height);
-    if (scaling_ratio >= 65535) {
-        trace("scaling ratio %g is too large\n", scaling_ratio);
+    if (scaling_ratio >= 65535 || scaled_width < 1 || scaled_width > 32767 || scaled_height < 1 || scaled_width > 32767) {
+        trace("scaling ratio (%g) or scaled image dimensions (%ux%u) are invalid\n", scaling_ratio, scaled_width, scaled_height);
         my_error_exit((j_common_ptr)&cinfo);
     }
-
-    jpeg_create_compress(&cinfo_out);
-    jpeg_stdio_dest(&cinfo_out, out);
 
     cinfo_out.image_width      = scaled_width;
     cinfo_out.image_height     = scaled_height;
@@ -498,26 +490,22 @@ jpeg_resize (const char *fname, const char *outname, int scaled_size) {
 
     if (scaling_ratio > 2) {
         /* Simple (unweighted) area sampling for large downscales */
+        quick_dividers = calculate_quick_dividers(scaling_ratio);
         const uint16_t max_sample_height = scaling_ratio + 1;
-        row_buffer = malloc(max_sample_height * row_components * sizeof(JSAMPLE));
-        if (!row_buffer) {
+        sample_rows_buffer = malloc(max_sample_height * row_components * sizeof(JSAMPLE));
+        if (!sample_rows_buffer || !quick_dividers) {
             my_error_exit((j_common_ptr)&cinfo);
         }
         JSAMPROW rows[max_sample_height];
         for (uint16_t row_index = 0; row_index < max_sample_height; row_index++) {
-            rows[row_index] = row_buffer + row_index*row_components;
-        }
-
-        quick_dividers = calculate_quick_dividers(scaling_ratio);
-        if (!quick_dividers) {
-            my_error_exit((j_common_ptr)&cinfo);
+            rows[row_index] = sample_rows_buffer + row_index*row_components;
         }
 
         /* Loop through all (down-)scaled pixels */
         float y_interp = 0.5;
         for (uint_fast16_t scaled_y = 0; scaled_y < scaled_height; scaled_y++) {
-            const uint_fast16_t y = y_interp;
-            const uint_fast16_t y_limit = y_interp += scaling_ratio;
+            const uint_fast32_t y = y_interp;
+            const uint_fast32_t y_limit = y_interp += scaling_ratio;
             const uint_fast16_t num_y_pixels = (y_limit < height ? y_limit : height) - y;
 
             for (uint_fast16_t row_index = 0; row_index < num_y_pixels; row_index++) {
@@ -526,55 +514,44 @@ jpeg_resize (const char *fname, const char *outname, int scaled_size) {
 
             float x_interp = 0.5;
             for (uint_fast32_t scaled_x = 0; scaled_x < scaled_row_components; scaled_x+=num_components) {
-                const uint_fast16_t x = x_interp;
+                const uint_fast32_t x = x_interp;
                 x_interp += scaling_ratio;
-                const uint_fast16_t x_limit = x_interp < width ? x_interp : width;
+                const uint_fast32_t x_limit = x_interp < width ? x_interp : width;
                 const uint_fast32_t x_index = x * num_components;
                 const uint_fast32_t x_limit_index = x_limit * num_components;
 
                 /* Sum all values where the scaled pixel overlaps at least half a pixel in each direction */
-                uint_fast32_t red_value = 0;
-                uint_fast32_t green_value = 0;
-                uint_fast32_t blue_value = 0;
-                for (uint_fast16_t row_index = 0; row_index < num_y_pixels; row_index++) {
-                    const JSAMPLE *start = rows[row_index] + x_index;
-                    JSAMPLE *ptr = rows[row_index] + x_limit_index;
-                    while (ptr > start) {
-                        blue_value += *--ptr;
-                        green_value += *--ptr;
-                        red_value += *--ptr;
-                    }
-                }
-
                 const uint_fast32_t num_pixels = num_y_pixels * (x_limit - x);
-                if (quick_dividers[num_pixels] > 0) {
-                    out_row[scaled_x] = red_value * quick_dividers[num_pixels] >> 16;
-                    out_row[scaled_x+1] = green_value * quick_dividers[num_pixels] >> 16;
-                    out_row[scaled_x+2] = blue_value * quick_dividers[num_pixels] >> 16;
-                }
-                else {
-                    out_row[scaled_x] = red_value / num_pixels;
-                    out_row[scaled_x+1] = green_value / num_pixels;
-                    out_row[scaled_x+2] = blue_value / num_pixels;
+                const uint_fast32_t quick_divider = quick_dividers[num_pixels];
+                for (uint_fast8_t component=0; component<num_components; component++) {
+                    uint_fast32_t value = 0;
+                    for (uint_fast32_t pixel_index = x_index+component; pixel_index < x_limit_index; pixel_index+=num_components) {
+                        for (uint_fast16_t row_index = 0; row_index < num_y_pixels; row_index++) {
+                            value += rows[row_index][pixel_index];
+                        }
+                    }
+                    out_row[scaled_x+component] = quick_divider ? value * quick_divider >> 16 : value / num_pixels;
                 }
             }
 
             jpeg_write_scanlines(&cinfo_out, &out_row, 1);
         }
-        free(row_buffer);
+
+        free(sample_rows_buffer);
         free(quick_dividers);
     }
     else {
+#ifndef USE_BICUBIC
         /* Bilinear interpolation for upscales and modest downscales */
         JSAMPLE scanline[row_components];
         JSAMPLE next_scanline[row_components];
         JSAMPROW row = scanline;
         JSAMPROW next_row = next_scanline;
-        const float downscale_offset = scaling_ratio > 1.5 ? 0.5 : 0;
+        const float downscale_offset = scaling_ratio < 1 ? 0 : (scaling_ratio - 1) / 2;
         float y_interp = downscale_offset;
         for (uint_fast16_t scaled_y = 0; scaled_y < scaled_height; scaled_y++, y_interp+=scaling_ratio) {
-            const uint_fast16_t y = y_interp;
-            const uint_fast16_t y_diff = (uint_fast16_t)(y_interp*256) - (y<<8);
+            const uint_fast32_t y = y_interp;
+            const uint_fast16_t y_diff = (uint_fast32_t)(y_interp*256) - (y<<8);
             const uint_fast16_t y_remn = 256 - y_diff;
 
             if (cinfo.output_scanline < y+2) {
@@ -589,11 +566,11 @@ jpeg_resize (const char *fname, const char *outname, int scaled_size) {
 
             float x_interp = downscale_offset;
             for (uint_fast32_t scaled_x = 0; scaled_x < scaled_row_components; scaled_x+=num_components, x_interp+=scaling_ratio) {
-                const uint_fast16_t x = x_interp;
+                const uint_fast32_t x = x_interp;
                 const uint_fast32_t x_index = x * num_components;
                 const uint_fast32_t next_x_index = x+1 < width ? x_index+num_components : x_index;
 
-                const uint_fast16_t x_diff = (uint_fast16_t)(x_interp*256) - (x<<8);
+                const uint_fast16_t x_diff = (uint_fast32_t)(x_interp*256) - (x<<8);
                 const uint_fast16_t x_remn = 256 - x_diff;
                 const uint_fast32_t weight = x_remn * y_remn;
                 const uint_fast32_t weightx = x_diff * y_remn;
@@ -607,19 +584,72 @@ jpeg_resize (const char *fname, const char *outname, int scaled_size) {
 
             jpeg_write_scanlines(&cinfo_out, &out_row, 1);
         }
-    }
+#else
+        /* Bicubic interpolation to improve the scaled image quality */
+        JSAMPLE scanline0[row_components];
+        JSAMPLE scanline1[row_components];
+        JSAMPLE scanline2[row_components];
+        JSAMPLE scanline3[row_components];
+        JSAMPROW row0 = scanline0;
+        JSAMPROW row1 = scanline1;
+        JSAMPROW row2 = scanline2;
+        JSAMPROW row3 = scanline3;
+        jpeg_read_scanlines(&cinfo, &row1, 1);
+        memcpy(row2, row1, row_components*sizeof(JSAMPLE));
 
-    while (cinfo.output_scanline < cinfo.output_height) {
-        JSAMPLE scanline[row_components];
-        JSAMPROW row = scanline;
-        jpeg_read_scanlines(&cinfo, &row, 1);
+        const float downscale_offset = scaling_ratio < 1 ? 0 : (scaling_ratio - 1) / 2;
+        float y_interp = downscale_offset;
+        for (uint_fast16_t scaled_y = 0; scaled_y < scaled_height; scaled_y++, y_interp+=scaling_ratio) {
+            const uint_fast32_t y = y_interp;
+            const float dy = y_interp - (int_fast32_t)y_interp;
+            const float dy2 = dy * dy;
+            const float dy3 = dy2 * dy;
+
+            if (cinfo.output_scanline < y+3) {
+                while (cinfo.output_scanline < y) {
+                    jpeg_read_scanlines(&cinfo, &row1, 1);
+                }
+                memcpy(row0, row1, row_components*sizeof(JSAMPLE));
+                if (cinfo.output_scanline < y+1) {
+                    jpeg_read_scanlines(&cinfo, &row2, 1);
+                }
+                memcpy(row1, row2, row_components*sizeof(JSAMPLE));
+                if (y+2 < height && cinfo.output_scanline < y+2) {
+                    jpeg_read_scanlines(&cinfo, &row3, 1);
+                }
+                memcpy(row2, row3, row_components*sizeof(JSAMPLE));
+                if (y+3 < height) {
+                    jpeg_read_scanlines(&cinfo, &row3, 1);
+                }
+            }
+
+            float x_interp = downscale_offset;
+            for (uint_fast32_t scaled_x = 0; scaled_x < scaled_row_components; scaled_x+=num_components, x_interp+=scaling_ratio) {
+                const uint_fast32_t x = x_interp;
+                const uint_fast32_t x1 = x * num_components;
+                const uint_fast32_t x0 = x > 0 ? x1-num_components : x1;
+                const uint_fast32_t x2 = x+1 < width ? x1+num_components : x1;
+                const uint_fast32_t x3 = x+2 < width ? x2+num_components : x2;
+
+                const float dx = x_interp - (int_fast32_t)x_interp;
+                const float dx2 = dx * dx;
+                const float dx3 = dx2 * dx;
+
+                for (uint_fast8_t component=0; component<num_components; component++) {
+                    const int_fast16_t pixel = bcerp(row0, row1, row2, row3, x0, x1, x2, x3, component, dx, dx2, dx3, dy, dy2, dy3);
+                    out_row[scaled_x + component] = pixel < 0 ? 0 : pixel > 255 ? 255 : pixel;
+                }
+            }
+
+            jpeg_write_scanlines(&cinfo_out, &out_row, 1);
+        }
+#endif
     }
 
     jpeg_finish_compress(&cinfo_out);
-    jpeg_destroy_compress(&cinfo_out);
 
-    jpeg_finish_decompress (&cinfo);
-    jpeg_destroy_decompress (&cinfo);
+    jpeg_destroy_compress(&cinfo_out);
+    jpeg_destroy_decompress(&cinfo);
 
     fclose(fp);
     fclose(out);
@@ -633,7 +663,6 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
     png_infop info_ptr = NULL, new_info_ptr = NULL;
     png_uint_32 height, width;
     int bit_depth, color_type;
-    uint8_t num_components;
     int err = -1;
     FILE *fp = NULL;
     FILE *out = NULL;
@@ -642,6 +671,7 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
 
     fp = fopen(fname, "rb");
     if (!fp) {
+        trace("failed to open %s for reading\n", fname);
         goto error;
     }
 
@@ -671,14 +701,14 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
 
     unsigned int scaled_width, scaled_height;
     const float scaling_ratio = scale_dimensions(scaled_size, width, height, &scaled_width, &scaled_height);
-    if (scaling_ratio >= 65535) {
-        trace("scaling ratio %g is too large\n", scaling_ratio);
+    if (scaling_ratio >= 65535 || scaled_width < 1 || scaled_width > 32767 || scaled_height < 1 || scaled_width > 32767) {
+        trace("scaling ratio (%g) or scaled image dimensions (%ux%u) are invalid\n", scaling_ratio, scaled_width, scaled_height);
         goto error;
     }
 
     out = fopen (outname, "w+b");
     if (!out) {
-        trace("failed to open %s\n", outname);
+        trace("failed to open %s for writing\n", outname);
         goto error;
     }
 
@@ -702,18 +732,13 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
         goto error;
     }
 
-    if (color_type & PNG_COLOR_MASK_ALPHA) {
-        color_type = PNG_COLOR_TYPE_RGB_ALPHA;
-        num_components = 4;
-    }
-    else {
-        color_type = PNG_COLOR_TYPE_RGB;
-        num_components = 3;
-    }
     png_set_IHDR(new_png_ptr, new_info_ptr, scaled_width, scaled_height, bit_depth, color_type, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
     png_write_info(new_png_ptr, new_info_ptr);
     png_set_packing(new_png_ptr);
 
+    const uint8_t has_alpha = color_type & PNG_COLOR_MASK_ALPHA;
+    const uint8_t num_values = color_type == PNG_COLOR_TYPE_GRAY || color_type == PNG_COLOR_TYPE_GRAY_ALPHA ? 1 : 3;
+    const uint8_t num_components = num_values + (has_alpha ? 1 : 0);
     const uint_fast32_t scaled_row_components = scaled_width * num_components;
     out_row = malloc(scaled_row_components * sizeof(png_byte));
     if (!out_row) {
@@ -730,8 +755,8 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
         /* Loop through all (down-)scaled pixels */
         float y_interp = 0.5;
         for (uint_fast16_t scaled_y = 0; scaled_y < scaled_height; scaled_y++) {
-            const uint_fast16_t y = y_interp;
-            const uint_fast16_t y_limit = y_interp += scaling_ratio;
+            const uint_fast32_t y = y_interp;
+            const uint_fast32_t y_limit = y_interp += scaling_ratio;
             const uint_fast16_t num_y_pixels = (y_limit < height ? y_limit : height) - y;
             png_byte *rows[num_y_pixels];
             for (uint_fast16_t row_index = 0; row_index < num_y_pixels; row_index++) {
@@ -740,19 +765,20 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
 
             float x_interp = 0.5;
             for (uint_fast32_t scaled_x = 0; scaled_x < scaled_row_components; scaled_x+=num_components) {
-                const uint_fast16_t x = x_interp;
+                const uint_fast32_t x = x_interp;
                 x_interp += scaling_ratio;
-                const uint_fast16_t x_limit = x_interp < width ? x_interp : width;
+                const uint_fast32_t x_limit = x_interp < width ? x_interp : width;
                 const uint_fast32_t x_index = x * num_components;
                 const uint_fast32_t x_limit_index = x_limit * num_components;
                 const uint_fast32_t num_pixels = num_y_pixels * (x_limit - x);
 
                 /* Sum all values where the scaled pixel overlaps at least half an original pixel in each direction */
-                uint_fast32_t red_value = 0;
-                uint_fast32_t green_value = 0;
-                uint_fast32_t blue_value = 0;
-                if (num_components == 4) {
+                const uint_fast32_t quick_divider = quick_dividers[num_pixels];
+                if (has_alpha) {
                     /* Alpha weight possible transparent pixels */
+                    uint_fast32_t greyred_value = 0;
+                    uint_fast32_t green_value = 0;
+                    uint_fast32_t blue_value = 0;
                     uint_fast32_t alpha_value = 0;
                     for (uint_fast16_t row_index = 0; row_index < num_y_pixels; row_index++) {
                         const png_byte *start = rows[row_index] + x_index;
@@ -760,25 +786,41 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
                         do {
                             const png_byte alpha = *--ptr;
                             alpha_value += alpha;
-                            blue_value += *--ptr * alpha;
-                            green_value += *--ptr * alpha;
-                            red_value += *--ptr * alpha;
+                            if (num_values == 3) {
+                                blue_value += *--ptr * alpha;
+                                green_value += *--ptr * alpha;
+                            }
+                            greyred_value += *--ptr * alpha;
                         } while (ptr > start);
                     }
                     if (alpha_value < num_pixels) {
-                        for (uint_fast8_t component = 0; component < 4; component++) {
+                        for (uint_fast8_t component = 0; component < num_components; component++) {
                             out_row[scaled_x+component] = 0;
                         }
                     }
                     else {
-                        out_row[scaled_x] = red_value / alpha_value;
-                        out_row[scaled_x+1] = green_value / alpha_value;
-                        out_row[scaled_x+2] = blue_value / alpha_value;
-                        out_row[scaled_x+3] = alpha_value > 254*num_pixels ? 255 : alpha_value / num_pixels;
+                        out_row[scaled_x+num_values] = alpha_value > 254*num_pixels ? 255 : quick_divider ? alpha_value*quick_divider>>16 : alpha_value/num_pixels;
+                        if (quick_divider && out_row[scaled_x+num_values] == 255) {
+                            out_row[scaled_x] = greyred_value * quick_divider >> 24;
+                            if (num_values == 3) {
+                                out_row[scaled_x+1] = green_value * quick_divider >> 24;
+                                out_row[scaled_x+2] = blue_value * quick_divider >> 24;
+                            }
+                        }
+                        else {
+                            out_row[scaled_x] = greyred_value / alpha_value;
+                            if (num_values == 3) {
+                                out_row[scaled_x+1] = green_value / alpha_value;
+                                out_row[scaled_x+2] = blue_value / alpha_value;
+                            }
+                        }
                     }
                 }
-                else {
-                    /* For opaque pixels, use a simple average */
+                else if (num_values == 3) {
+                    /* For opaque RGB pixels, use a simple average on each colour component */
+                    uint_fast32_t red_value = 0;
+                    uint_fast32_t green_value = 0;
+                    uint_fast32_t blue_value = 0;
                     for (uint_fast16_t row_index = 0; row_index < num_y_pixels; row_index++) {
                         const png_byte *start = rows[row_index] + x_index;
                         png_byte *ptr = rows[row_index] + x_limit_index;
@@ -789,16 +831,19 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
                         } while (ptr > start);
 
                     }
-                    if (quick_dividers[num_pixels] > 0) {
-                        out_row[scaled_x] = red_value * quick_dividers[num_pixels] >> 16;
-                        out_row[scaled_x+1] = green_value * quick_dividers[num_pixels] >> 16;
-                        out_row[scaled_x+2] = blue_value * quick_dividers[num_pixels] >> 16;
+                    out_row[scaled_x] = quick_divider ? red_value * quick_divider >> 16 : red_value / num_pixels;
+                    out_row[scaled_x+1] = quick_divider ? green_value * quick_divider >> 16 : green_value / num_pixels;
+                    out_row[scaled_x+2] = quick_divider ? blue_value * quick_divider >> 16 : blue_value / num_pixels;
+                }
+                else {
+                    /* For opaque grey pixels, use a simple average of the values */
+                    uint_fast32_t grey_value = 0;
+                    for (uint_fast16_t row_index = 0; row_index < num_y_pixels; row_index++) {
+                        for (uint_fast32_t pixel_index = x_index; pixel_index < x_limit_index; pixel_index++) {
+                            grey_value += rows[row_index][pixel_index];
+                        }
                     }
-                    else {
-                        out_row[scaled_x] = red_value / num_pixels;
-                        out_row[scaled_x+1] = green_value / num_pixels;
-                        out_row[scaled_x+2] = blue_value / num_pixels;
-                    }
+                    out_row[scaled_x] = quick_divider ? grey_value * quick_divider >> 16 : grey_value / num_pixels;
                 }
             }
 
@@ -808,11 +853,11 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
     else {
 #ifndef USE_BICUBIC
         /* Bilinear interpolation for upscales and modest downscales */
-        const float downscale_offset = scaling_ratio > 1.5 ? 0.5 : 0;
+        const float downscale_offset = scaling_ratio < 1 ? 0 : (scaling_ratio - 1) / 2;
         uint_fast32_t scaled_alpha = 255 << 16;
         float y_interp = downscale_offset;
         for (uint_fast16_t scaled_y = 0; scaled_y < scaled_height; scaled_y++, y_interp+=scaling_ratio) {
-            const uint_fast16_t y = y_interp;
+            const uint_fast32_t y = y_interp;
             const png_byte *row = row_pointers[y];
             const png_byte *next_row = y+1 < height ? row_pointers[y+1] : row;
 
@@ -821,7 +866,7 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
 
             float x_interp = downscale_offset;
             for (uint_fast32_t scaled_x = 0; scaled_x < scaled_row_components; scaled_x+=num_components, x_interp+=scaling_ratio) {
-                const uint_fast16_t x = x_interp;
+                const uint_fast32_t x = x_interp;
                 const uint_fast32_t x_index = x * num_components;
                 const uint_fast32_t next_x_index = x < width ? x_index+num_components : x_index;
 
@@ -833,40 +878,41 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
                 const uint_fast32_t weightxy = x_diff * y_diff;
 
                 uint_fast32_t alpha, alphax, alphay, alphaxy;
-                if (num_components == 4) {
+                if (has_alpha) {
                     /* Interpolate alpha channel and weight pixels by their alpha */
-                    alpha = weight * row[x_index + 3];
-                    alphax = weightx * row[next_x_index + 3];
-                    alphay = weighty * next_row[x_index + 3];
-                    alphaxy = weightxy * next_row[next_x_index + 3];
+                    alpha = weight * row[x_index + num_values];
+                    alphax = weightx * row[next_x_index + num_values];
+                    alphay = weighty * next_row[x_index + num_values];
+                    alphaxy = weightxy * next_row[next_x_index + num_values];
                     scaled_alpha = alpha + alphax + alphay + alphaxy;
-                    out_row[scaled_x + 3] = scaled_alpha >> 16;
+                    out_row[scaled_x + num_values] = scaled_alpha >> 16;
                 }
 
                 if (scaled_alpha == 255 << 16) {
                     /* Simplified calculation for fully opaque pixels */
-                    for (uint_fast8_t component=0; component<3; component++) {
+                    for (uint_fast8_t component=0; component<num_values; component++) {
                         out_row[scaled_x + component] = blerp_pixel(row, next_row, x_index+component, next_x_index+component, weight, weightx, weighty, weightxy) >> 16;
                     }
                 }
                 else if (scaled_alpha == 0) {
                     /* For speed, don't preserve the values of fully transparent pixels */
-                    for (uint_fast8_t component=0; component<3; component++) {
+                    for (uint_fast8_t component=0; component<num_values; component++) {
                         out_row[scaled_x + component] = 0;
                     }
                 }
                 else {
                     /* Alpha-weight partially transparent pixels to avoid background colour bleeding */
-                    for (uint_fast8_t component=0; component<3; component++) {
+                    for (uint_fast8_t component=0; component<num_values; component++) {
                         out_row[scaled_x + component] = blerp_pixel(row, next_row, x_index+component, next_x_index+component, alpha, alphax, alphay, alphaxy) / scaled_alpha;
                     }
                 }
             }
+
             png_write_row(new_png_ptr, out_row);
         }
 #else
         /* Bicubic interpolation to improve the scaled image quality */
-        if (num_components == 4) {
+        if (has_alpha) {
             for (uint_fast16_t y = 0; y < height; y++) {
                 png_byte *row = row_pointers[y];
                 for (uint_fast16_t x_index = 0; x_index < width*4; x_index+=4) {
@@ -880,32 +926,33 @@ png_resize (const char *fname, const char *outname, int scaled_size) {
             }
         }
 
+        const float downscale_offset = scaling_ratio < 1 ? 0 : (scaling_ratio - 1) / 2;
         int_fast16_t scaled_alpha = 255;
-        float y_interp = 0;
+        float y_interp = downscale_offset;
         for (uint_fast16_t scaled_y = 0; scaled_y < scaled_height; scaled_y++, y_interp+=scaling_ratio) {
-            const uint_fast16_t y = y_interp;
+            const uint_fast32_t y = y_interp;
             const png_byte *row1 = row_pointers[y];
             const png_byte *row0 = y > 0 ? row_pointers[y-1] : row1;
             const png_byte *row2 = y+1 < height ? row_pointers[y+1] : row1;
             const png_byte *row3 = y+2 < height ? row_pointers[y+2] : row2;
 
-            const float dy = y_interp - (long)y_interp;
+            const float dy = y_interp - (int_fast32_t)y_interp;
             const float dy2 = dy * dy;
             const float dy3 = dy2 * dy;
 
-            float x_interp = 0;
+            float x_interp = downscale_offset;
             for (uint_fast32_t scaled_x = 0; scaled_x < scaled_row_components; scaled_x+=num_components, x_interp+=scaling_ratio) {
-                const uint_fast16_t x = x_interp;
+                const uint_fast32_t x = x_interp;
                 const uint_fast32_t x1 = x * num_components;
                 const uint_fast32_t x0 = x > 0 ? x1-num_components : x1;
                 const uint_fast32_t x2 = x+1 < width ? x1+num_components : x1;
                 const uint_fast32_t x3 = x+2 < width ? x2+num_components : x2;
 
-                const float dx = x_interp - (long)x_interp;
+                const float dx = x_interp - (int_fast32_t)x_interp;
                 const float dx2 = dx * dx;
                 const float dx3 = dx2 * dx;
 
-                if (num_components == 4) {
+                if (has_alpha) {
                     scaled_alpha = bcerp(row0, row1, row2, row3, x0, x1, x2, x3, 3, dx, dx2, dx3, dy, dy2, dy3);
                     out_row[scaled_x + 3] = scaled_alpha < 0 ? 0 : scaled_alpha > 255 ? 255 : scaled_alpha;
                 }
@@ -945,10 +992,10 @@ error:
         fclose (fp);
     }
     if (png_ptr) {
-        png_destroy_read_struct (&png_ptr, info_ptr ? &info_ptr : NULL, (png_infopp)NULL);
+        png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
     }
     if (new_png_ptr) {
-        png_destroy_write_struct(&new_png_ptr, new_info_ptr ? &new_info_ptr : NULL);
+        png_destroy_write_struct(&new_png_ptr, &new_info_ptr);
     }
     if (out_row) {
         free(out_row);
@@ -960,6 +1007,55 @@ error:
     return err;
 }
 
+#endif
+
+#ifdef USE_IMLIB2
+static int
+imlib_resize(const char *in, const char *out, int img_size)
+{
+    Imlib_Image img = imlib_load_image_immediately (in);
+    if (!img) {
+        trace ("file %s not found, or imlib2 can't load it\n", in);
+        return -1;
+    }
+    imlib_context_set_image(img);
+
+    int w = imlib_image_get_width ();
+    int h = imlib_image_get_height ();
+    int sw, sh;
+    scale_dimensions(img_size, w, h, &sw, &sh);
+    if (sw < 1 || sw > 32767 || sh < 1 || sh > 32767) {
+        trace ("%d/%d scaled image is too large\n", sw, sh);
+        imlib_free_image ();
+        return -1;
+    }
+
+    int is_jpeg = imlib_image_format() && imlib_image_format()[0] == 'j';
+    Imlib_Image scaled = imlib_create_cropped_scaled_image(0, 0, w, h, sw, sh);
+    if (!scaled) {
+        trace ("imlib2 can't create scaled image\n", in);
+        imlib_free_image ();
+        return -1;
+    }
+    imlib_context_set_image(scaled);
+
+    imlib_image_set_format(is_jpeg ? "jpg" : "png");
+    if (is_jpeg)
+        imlib_image_attach_data_value("quality", NULL, 95, NULL);
+    Imlib_Load_Error err = 0;
+    imlib_save_image_with_error_return(out, &err);
+    if (err != 0) {
+        trace ("imlib save %s returned %d\n", out, err);
+        imlib_free_image ();
+        imlib_context_set_image(img);
+        imlib_free_image ();
+        return -1;
+    }
+
+    imlib_free_image ();
+    imlib_context_set_image(img);
+    imlib_free_image ();
+}
 #endif
 
 #define BUFFER_SIZE 4096
@@ -976,43 +1072,9 @@ copy_file (const char *in, const char *out, int img_size) {
 
 #ifdef USE_IMLIB2
         deadbeef->mutex_lock (imlib_mutex);
-        // need to scale, use imlib2
-        Imlib_Image img = imlib_load_image_immediately (in);
-        if (!img) {
-            trace ("file %s not found, or imlib2 can't load it\n", in);
-            deadbeef->mutex_unlock (imlib_mutex);
-            return -1;
-        }
-        imlib_context_set_image(img);
-        int w = imlib_image_get_width ();
-        int h = imlib_image_get_height ();
-        int sw, sh;
-        scale_dimensions(img_size, w, h, &sw, &sh);
-        int is_jpeg = imlib_image_format() && imlib_image_format()[0] == 'j';
-        Imlib_Image scaled = imlib_create_cropped_scaled_image(0, 0, w, h, sw, sh);
-        if (!scaled) {
-            trace ("imlib2 can't create scaled image\n", in);
-            deadbeef->mutex_unlock (imlib_mutex);
-            return -1;
-        }
-        imlib_context_set_image(scaled);
-        imlib_image_set_format(is_jpeg ? "jpg" : "png");
-        if (is_jpeg)
-            imlib_image_attach_data_value("quality", NULL, 95, NULL);
-        Imlib_Load_Error err = 0;
-        imlib_save_image_with_error_return(out, &err);
-        if (err != 0) {
-            trace ("imlib save %s returned %d\n", out, err);
-            imlib_free_image ();
-            imlib_context_set_image(img);
-            imlib_free_image ();
-            deadbeef->mutex_unlock (imlib_mutex);
-            return -1;
-        }
-        imlib_free_image ();
-        imlib_context_set_image(img);
-        imlib_free_image ();
+        const int imlib_err = imlib_resize(in, out, img_size);
         deadbeef->mutex_unlock (imlib_mutex);
+        return imlib_err;
 #else
         int res = jpeg_resize (in, out, img_size);
         if (res != 0) {
@@ -1020,11 +1082,10 @@ copy_file (const char *in, const char *out, int img_size) {
             res = png_resize (in, out, img_size);
             if (res != 0) {
                 unlink (out);
-                return -1;
             }
         }
+        return res;
 #endif
-        return 0;
     }
 
     FILE *fin = fopen (in, "rb");
