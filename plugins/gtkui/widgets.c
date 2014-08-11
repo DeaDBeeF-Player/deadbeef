@@ -2199,9 +2199,9 @@ w_selproperties_create (void) {
     GtkCellRenderer *rend1 = gtk_cell_renderer_text_new ();
     GtkCellRenderer *rend2 = gtk_cell_renderer_text_new ();
     GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes (_("Key"), rend1, "text", 0, NULL);
-    gtk_tree_view_column_set_resizable (col1, TRUE);
+    gtk_tree_view_column_set_sizing (col1, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
     GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes (_("Value"), rend2, "text", 1, NULL);
-    gtk_tree_view_column_set_resizable (col2, TRUE);
+    gtk_tree_view_column_set_sizing (col2, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
     gtk_tree_view_append_column (GTK_TREE_VIEW (w->tree), col1);
     gtk_tree_view_append_column (GTK_TREE_VIEW (w->tree), col2);
     gtk_tree_view_set_headers_clickable (GTK_TREE_VIEW (w->tree), TRUE);
