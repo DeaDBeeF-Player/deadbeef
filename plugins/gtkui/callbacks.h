@@ -935,6 +935,38 @@ on_jump_to_current_track1_activate     (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
 
 void
+on_skip_to_next_album_activate         (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_skip_to_next_genre_activate         (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_skip_to_next_composer_activate         (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_skip_to_prev_album_activate         (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_skip_to_prev_genre_activate         (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_skip_to_prev_composer_activate         (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_skip_to_next_artist_activate        (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_skip_to_prev_artist_activate        (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
 on_translators1_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
 

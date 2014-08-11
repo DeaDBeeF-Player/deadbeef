@@ -99,6 +99,17 @@ create_mainwin (void)
   GtkWidget *stop_after_album;
   GtkWidget *separator11;
   GtkWidget *jump_to_current_track1;
+  GtkWidget *Skip_to;
+  GtkWidget *Skip_to_menu;
+  GtkWidget *skip_to_next_album;
+  GtkWidget *skip_to_next_artist;
+  GtkWidget *skip_to_next_composer;
+  GtkWidget *skip_to_next_genre;
+  GtkWidget *separator12;
+  GtkWidget *skip_to_prev_album;
+  GtkWidget *skip_to_prev_artist;
+  GtkWidget *skip_to_prev_composer;
+  GtkWidget *skip_to_prev_genre;
   GtkWidget *Help;
   GtkWidget *Help_menu;
   GtkWidget *help1;
@@ -396,6 +407,50 @@ create_mainwin (void)
   gtk_container_add (GTK_CONTAINER (Playback_menu), separator11);
   gtk_widget_set_sensitive (separator11, FALSE);
 
+  Skip_to = gtk_menu_item_new_with_mnemonic (_("Skip to"));
+  gtk_widget_show (Skip_to);
+  gtk_container_add (GTK_CONTAINER (Playback_menu), Skip_to);
+
+  Skip_to_menu = gtk_menu_new ();
+  gtk_menu_item_set_submenu (GTK_MENU_ITEM (Skip_to), Skip_to_menu);
+
+  skip_to_next_album = gtk_menu_item_new_with_mnemonic (_("Next album"));
+  gtk_widget_show (skip_to_next_album);
+  gtk_container_add (GTK_CONTAINER (Skip_to_menu), skip_to_next_album);
+
+  skip_to_next_artist = gtk_menu_item_new_with_mnemonic (_("Next artist"));
+  gtk_widget_show (skip_to_next_artist);
+  gtk_container_add (GTK_CONTAINER (Skip_to_menu), skip_to_next_artist);
+
+  skip_to_next_composer = gtk_menu_item_new_with_mnemonic (_("Next composer"));
+  gtk_widget_show (skip_to_next_composer);
+  gtk_container_add (GTK_CONTAINER (Skip_to_menu), skip_to_next_composer);
+
+  skip_to_next_genre = gtk_menu_item_new_with_mnemonic (_("Next genre"));
+  gtk_widget_show (skip_to_next_genre);
+  gtk_container_add (GTK_CONTAINER (Skip_to_menu), skip_to_next_genre);
+
+  separator12 = gtk_separator_menu_item_new ();
+  gtk_widget_show (separator12);
+  gtk_container_add (GTK_CONTAINER (Skip_to_menu), separator12);
+  gtk_widget_set_sensitive (separator12, FALSE);
+
+  skip_to_prev_album = gtk_menu_item_new_with_mnemonic (_("Previous album"));
+  gtk_widget_show (skip_to_prev_album);
+  gtk_container_add (GTK_CONTAINER (Skip_to_menu), skip_to_prev_album);
+
+  skip_to_prev_artist = gtk_menu_item_new_with_mnemonic (_("Previous artist"));
+  gtk_widget_show (skip_to_prev_artist);
+  gtk_container_add (GTK_CONTAINER (Skip_to_menu), skip_to_prev_artist);
+
+  skip_to_prev_composer = gtk_menu_item_new_with_mnemonic (_("Previous composer "));
+  gtk_widget_show (skip_to_prev_composer);
+  gtk_container_add (GTK_CONTAINER (Skip_to_menu), skip_to_prev_composer);
+
+  skip_to_prev_genre = gtk_menu_item_new_with_mnemonic (_("Previous genre"));
+  gtk_widget_show (skip_to_prev_genre);
+  gtk_container_add (GTK_CONTAINER (Skip_to_menu), skip_to_prev_genre);
+
   jump_to_current_track1 = gtk_menu_item_new_with_mnemonic (_("Jump to current track"));
   gtk_widget_show (jump_to_current_track1);
   gtk_container_add (GTK_CONTAINER (Playback_menu), jump_to_current_track1);
@@ -593,6 +648,30 @@ create_mainwin (void)
   g_signal_connect ((gpointer) jump_to_current_track1, "activate",
                     G_CALLBACK (on_jump_to_current_track1_activate),
                     NULL);
+  g_signal_connect ((gpointer) skip_to_next_album, "activate",
+                    G_CALLBACK (on_skip_to_next_album_activate),
+                    NULL);
+  g_signal_connect ((gpointer) skip_to_next_artist, "activate",
+                    G_CALLBACK (on_skip_to_next_artist_activate),
+                    NULL);
+  g_signal_connect ((gpointer) skip_to_next_composer, "activate",
+                    G_CALLBACK (on_skip_to_next_composer_activate),
+                    NULL);
+  g_signal_connect ((gpointer) skip_to_next_genre, "activate",
+                    G_CALLBACK (on_skip_to_next_genre_activate),
+                    NULL);
+  g_signal_connect ((gpointer) skip_to_prev_album, "activate",
+                    G_CALLBACK (on_skip_to_prev_album_activate),
+                    NULL);
+  g_signal_connect ((gpointer) skip_to_prev_artist, "activate",
+                    G_CALLBACK (on_skip_to_prev_artist_activate),
+                    NULL);
+  g_signal_connect ((gpointer) skip_to_prev_composer, "activate",
+                    G_CALLBACK (on_skip_to_prev_composer_activate),
+                    NULL);
+  g_signal_connect ((gpointer) skip_to_prev_genre, "activate",
+                    G_CALLBACK (on_skip_to_prev_genre_activate),
+                    NULL);
   g_signal_connect ((gpointer) help1, "activate",
                     G_CALLBACK (on_help1_activate),
                     NULL);
@@ -681,6 +760,17 @@ create_mainwin (void)
   GLADE_HOOKUP_OBJECT (mainwin, stop_after_album, "stop_after_album");
   GLADE_HOOKUP_OBJECT (mainwin, separator11, "separator11");
   GLADE_HOOKUP_OBJECT (mainwin, jump_to_current_track1, "jump_to_current_track1");
+  GLADE_HOOKUP_OBJECT (mainwin, Skip_to, "Skip_to");
+  GLADE_HOOKUP_OBJECT (mainwin, Skip_to_menu, "Skip_to_menu");
+  GLADE_HOOKUP_OBJECT (mainwin, skip_to_next_album, "skip_to_next_album");
+  GLADE_HOOKUP_OBJECT (mainwin, skip_to_next_artist, "skip_to_next_artist");
+  GLADE_HOOKUP_OBJECT (mainwin, skip_to_next_composer, "skip_to_next_composer");
+  GLADE_HOOKUP_OBJECT (mainwin, skip_to_next_genre, "skip_to_next_genre");
+  GLADE_HOOKUP_OBJECT (mainwin, separator12, "separator12");
+  GLADE_HOOKUP_OBJECT (mainwin, skip_to_prev_album, "skip_to_prev_album");
+  GLADE_HOOKUP_OBJECT (mainwin, skip_to_prev_artist, "skip_to_prev_artist");
+  GLADE_HOOKUP_OBJECT (mainwin, skip_to_prev_composer, "skip_to_prev_composer");
+  GLADE_HOOKUP_OBJECT (mainwin, skip_to_prev_genre, "skip_to_prev_genre");
   GLADE_HOOKUP_OBJECT (mainwin, Help, "Help");
   GLADE_HOOKUP_OBJECT (mainwin, Help_menu, "Help_menu");
   GLADE_HOOKUP_OBJECT (mainwin, help1, "help1");

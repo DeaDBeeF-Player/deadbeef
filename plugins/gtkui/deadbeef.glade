@@ -596,6 +596,84 @@
 		  </child>
 
 		  <child>
+		    <widget class="GtkMenuItem" id="Skip_to">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Skip to</property>
+		      <property name="use_underline">True</property>
+
+                      <child> <widget class="GtkMenuItem" id="skip_to_next_album">
+                              <property name="visible">True</property>
+                              <property name="label" translatable="yes">Next album</property>
+                              <property name="use_underline">True</property>
+                              <signal name="activate" handler="on_skip_to_next_album_activate" last_modification_time="Mon, 11 Aug 2014 13:00:00 GMT"/>
+                          </widget>
+                      </child>
+
+                      <child> <widget class="GtkMenuItem" id="skip_to_next_artist">
+                              <property name="visible">True</property>
+                              <property name="label" translatable="yes">Next artist</property>
+                              <property name="use_underline">True</property>
+                              <signal name="activate" handler="on_skip_to_next_artist_activate" last_modification_time="Mon, 11 Aug 2014 13:00:00 GMT"/>
+                          </widget>
+                      </child>
+
+                      <child> <widget class="GtkMenuItem" id="skip_to_next_composer">
+                              <property name="visible">True</property>
+                              <property name="label" translatable="yes">Next composer</property>
+                              <property name="use_underline">True</property>
+                              <signal name="activate" handler="on_skip_to_next_composer_activate" last_modification_time="Mon, 11 Aug 2014 13:00:00 GMT"/>
+                          </widget>
+                      </child>
+
+                      <child> <widget class="GtkMenuItem" id="skip_to_next_genre">
+                              <property name="visible">True</property>
+                              <property name="label" translatable="yes">Next genre</property>
+                              <property name="use_underline">True</property>
+                              <signal name="activate" handler="on_skip_to_next_genre_activate" last_modification_time="Mon, 11 Aug 2014 13:00:00 GMT"/>
+                          </widget>
+                      </child>
+
+                      <child>
+                          <widget class="GtkSeparatorMenuItem" id="separator12">
+                              <property name="visible">True</property>
+                          </widget>
+                      </child>
+
+                      <child> <widget class="GtkMenuItem" id="skip_to_prev_album">
+                              <property name="visible">True</property>
+                              <property name="label" translatable="yes">Previous album</property>
+                              <property name="use_underline">True</property>
+                              <signal name="activate" handler="on_skip_to_prev_album_activate" last_modification_time="Mon, 11 Aug 2014 13:00:00 GMT"/>
+                          </widget>
+                      </child>
+
+                      <child> <widget class="GtkMenuItem" id="skip_to_prev_artist">
+                              <property name="visible">True</property>
+                              <property name="label" translatable="yes">Previous artist</property>
+                              <property name="use_underline">True</property>
+                              <signal name="activate" handler="on_skip_to_prev_artist_activate" last_modification_time="Mon, 11 Aug 2014 13:00:00 GMT"/>
+                          </widget>
+                      </child>
+
+                      <child> <widget class="GtkMenuItem" id="skip_to_prev_composer">
+                              <property name="visible">True</property>
+                              <property name="label" translatable="yes">Previous composer</property>
+                              <property name="use_underline">True</property>
+                              <signal name="activate" handler="on_skip_to_prev_composer_activate" last_modification_time="Mon, 11 Aug 2014 13:00:00 GMT"/>
+                          </widget>
+                      </child>
+
+                      <child> <widget class="GtkMenuItem" id="skip_to_prev_genre">
+                              <property name="visible">True</property>
+                              <property name="label" translatable="yes">Previous genre</property>
+                              <property name="use_underline">True</property>
+                              <signal name="activate" handler="on_skip_to_prev_genre_activate" last_modification_time="Mon, 11 Aug 2014 13:00:00 GMT"/>
+                          </widget>
+                      </child>
+		    </widget>
+		  </child>
+
+		  <child>
 		    <widget class="GtkMenuItem" id="jump_to_current_track1">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Jump to current track</property>
