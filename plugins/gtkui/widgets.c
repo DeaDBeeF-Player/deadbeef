@@ -2186,6 +2186,7 @@ w_selproperties_create (void) {
     gtk_container_add (GTK_CONTAINER (w->base.widget), scroll);
 
     gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scroll), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+    gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scroll), GTK_SHADOW_ETCHED_IN);
     w->tree = gtk_tree_view_new ();
     gtk_widget_show (w->tree);
     gtk_tree_view_set_enable_search (GTK_TREE_VIEW (w->tree), FALSE);
