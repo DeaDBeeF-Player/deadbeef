@@ -222,6 +222,7 @@ w_pltbrowser_create (void) {
     gtk_tree_view_append_column (GTK_TREE_VIEW (w->tree), col1);
     gtk_tree_view_append_column (GTK_TREE_VIEW (w->tree), col2);
 
+    gtk_tree_view_set_headers_clickable (GTK_TREE_VIEW (w->tree), TRUE);
     gtk_cell_renderer_set_alignment (GTK_CELL_RENDERER (rend2), 1.0, 0.0);
 
     w->cc_id = g_signal_connect ((gpointer) w->tree, "cursor_changed",
