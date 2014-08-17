@@ -396,7 +396,7 @@ msgstr "Перемішати треки"
 
 #: ../plugins/gtkui/interface.c:340 ../plugins/gtkui/deadbeef.glade.h:36
 msgid "Shuffle albums"
-msgstr "Перемішати треки"
+msgstr "Перемішати альбоми"
 
 #: ../plugins/gtkui/interface.c:352 ../plugins/gtkui/deadbeef.glade.h:37
 msgid "Looping"
