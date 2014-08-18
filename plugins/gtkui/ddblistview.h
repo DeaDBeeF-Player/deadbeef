@@ -180,6 +180,7 @@ struct _DdbListview {
 
     // drawing contexts
     drawctx_t listctx;
+    drawctx_t grpctx;
     drawctx_t hdrctx;
 
     // cover art size
@@ -300,6 +301,12 @@ ddb_listview_groupcheck (DdbListview *listview);
 
 int
 ddb_listview_is_album_art_column (DdbListview *listview, int x);
+
+void
+ddb_listview_update_fonts (DdbListview *ps);
+
+void
+ddb_listview_header_update_fonts (DdbListview *ps);
 
 G_END_DECLS
 

@@ -95,6 +95,17 @@ void (*gtkui_original_pl_add_files_end) (void);
 
 // cached config variables
 int gtkui_embolden_current_track;
+int gtkui_embolden_tracks;
+int gtkui_embolden_selected_tracks;
+int gtkui_italic_selected_tracks;
+int gtkui_italic_tracks;
+int gtkui_italic_current_track;
+
+int gtkui_tabstrip_embolden_playing;
+int gtkui_tabstrip_italic_playing;
+int gtkui_tabstrip_embolden_selected;
+int gtkui_tabstrip_italic_selected;
+
 int gtkui_groups_pinned;
 
 #ifdef __APPLE__
@@ -600,8 +611,16 @@ gtkui_on_configchanged (void *data) {
     int stop_after_album = deadbeef->conf_get_int ("playlist.stop_after_album", 0);
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "stop_after_album")), stop_after_album ? TRUE : FALSE);
 
-    // embolden current track
     gtkui_embolden_current_track = deadbeef->conf_get_int ("gtkui.embolden_current_track", 0);
+    gtkui_embolden_tracks = deadbeef->conf_get_int ("gtkui.embolden_tracks", 0);
+    gtkui_embolden_selected_tracks = deadbeef->conf_get_int ("gtkui.embolden_selected_tracks", 0);
+    gtkui_italic_current_track = deadbeef->conf_get_int ("gtkui.italic_current_track", 0);
+    gtkui_italic_tracks = deadbeef->conf_get_int ("gtkui.italic_tracks", 0);
+    gtkui_italic_selected_tracks = deadbeef->conf_get_int ("gtkui.italic_selected_tracks", 0);
+    gtkui_tabstrip_embolden_playing = deadbeef->conf_get_int ("gtkui.tabstrip_embolden_playing", 0);
+    gtkui_tabstrip_italic_playing = deadbeef->conf_get_int ("gtkui.tabstrip_italic_playing", 0);
+    gtkui_tabstrip_embolden_selected = deadbeef->conf_get_int ("gtkui.tabstrip_embolden_selected", 0);
+    gtkui_tabstrip_italic_selected = deadbeef->conf_get_int ("gtkui.tabstrip_italic_selected", 0);
 
     // pin groups
     gtkui_groups_pinned = deadbeef->conf_get_int ("playlist.pin.groups", 0);

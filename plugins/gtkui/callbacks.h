@@ -898,10 +898,6 @@ on_hide_tray_icon_toggled              (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
 
 void
-on_embolden_current_toggled            (GtkToggleButton *togglebutton,
-                                        gpointer         user_data);
-
-void
 on_hide_delete_from_disk_toggled       (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
 
@@ -1304,4 +1300,74 @@ on_mainwin_button_press_event          (GtkWidget       *widget,
 
 void
 on_enable_shift_jis_recoding_toggled   (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_listview_playing_text_color_set     (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);
+
+void
+on_listview_group_text_color_set       (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);
+
+void
+on_listview_group_text_font_set        (GtkFontButton   *fontbutton,
+                                        gpointer         user_data);
+
+void
+on_listview_text_font_set              (GtkFontButton   *fontbutton,
+                                        gpointer         user_data);
+
+void
+on_listview_playing_text_bold_toggled  (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_listview_playing_text_italic_toggled
+                                        (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_listview_selected_text_bold_toggled (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_listview_selected_text_italic_toggled
+                                        (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_tabstrip_selected_text_color_set    (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);
+
+void
+on_tabstrip_playing_bold_toggled       (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_tabstrip_playing_italic_toggled     (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_tabstrip_selected_bold_toggled      (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_tabstrip_selected_italic_toggled    (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_tabstrip_text_font_set              (GtkFontButton   *fontbutton,
+                                        gpointer         user_data);
+
+void
+on_tabstrip_playing_text_color_set     (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);
+
+void
+on_listview_column_text_color_set      (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);
+
+void
+on_listview_column_text_font_set       (GtkFontButton   *fontbutton,
                                         gpointer         user_data);
