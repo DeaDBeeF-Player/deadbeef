@@ -970,7 +970,7 @@ fetcher_thread (void *none)
             cover_query_t *param = queue;
             char path [PATH_MAX];
             struct dirent **files;
-            int files_count;
+            int files_count = 0;
 
             make_cache_dir_path (path, sizeof (path), param->artist, -1);
             trace ("cache folder: %s\n", path);
