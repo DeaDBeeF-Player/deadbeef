@@ -34,10 +34,22 @@
 extern DB_functions_t *deadbeef;
 extern GtkWidget *mainwin;
 extern GtkWidget *searchwin;
+
+extern int gtkui_embolden_selected_tracks;
+extern int gtkui_embolden_tracks;
 extern int gtkui_embolden_current_track;
+extern int gtkui_italic_selected_tracks;
+extern int gtkui_italic_tracks;
+extern int gtkui_italic_current_track;
+
 extern int gtkui_is_retina;
 extern int gtkui_unicode_playstate;
 extern int gtkui_disable_seekbar_overlay;
+
+extern int gtkui_tabstrip_embolden_selected;
+extern int gtkui_tabstrip_embolden_playing;
+extern int gtkui_tabstrip_italic_selected;
+extern int gtkui_tabstrip_italic_playing;
 
 struct _GSList;
 

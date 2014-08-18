@@ -292,6 +292,7 @@ ddb_listview_init(DdbListview *listview)
 {
     // init instance - create all subwidgets, and insert into table
     drawctx_init (&listview->listctx);
+    drawctx_init (&listview->grpctx);
     drawctx_init (&listview->hdrctx);
     listview->rowheight = -1;
 
@@ -524,6 +525,7 @@ ddb_listview_destroy(GObject *object)
       listview->cursor_drag = NULL;
   }
   draw_free (&listview->listctx);
+  draw_free (&listview->grpctx);
   draw_free (&listview->hdrctx);
 }
 
@@ -585,24 +587,9 @@ ddb_listview_list_configure_event            (GtkWidget       *widget,
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
 
-    draw_init_font (&ps->listctx, gtk_widget_get_style (widget));
-    int height = draw_get_listview_rowheight (&ps->listctx);
-    if (height != ps->rowheight) {
-        ps->rowheight = height;
-        ps->calculated_grouptitle_height = height * 1.2;
-        ddb_listview_build_groups (ps);
-    }
-
-    GtkAllocation a;
-    gtk_widget_get_allocation (ps->list, &a);
-    int w = a.width;
-    int size = 0;
-    DdbListviewColumn *c;
-    for (c = ps->columns; c; c = c->next) {
-        size += c->width;
-    }
-    ddb_listview_list_update_total_width (ps, size);
-    g_idle_add (ddb_listview_reconf_scrolling, ps);
+    draw_init_font (&ps->listctx, DDB_LIST_FONT, 1);
+    draw_init_font (&ps->grpctx, DDB_GROUP_FONT, 1);
+    ddb_listview_update_fonts (ps);
 
     return FALSE;
 }
@@ -752,6 +739,7 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
     }
 
     draw_begin (&listview->listctx, cr);
+    draw_begin (&listview->grpctx, cr);
 
     if (grp && !pinned_grp && grp_y < listview->scrollpos) {
         grp->pinned = 1;
@@ -882,6 +870,7 @@ ddb_listview_list_render (DdbListview *listview, cairo_t *cr, int x, int y, int 
     }
     deadbeef->pl_unlock ();
     draw_end (&listview->listctx);
+    draw_end (&listview->grpctx);
 }
 
 static void
@@ -906,6 +895,31 @@ ddb_listview_draw_dnd_marker (DdbListview *ps, cairo_t *cr) {
 
 }
 
+void
+ddb_listview_update_fonts (DdbListview *ps)
+{
+    draw_init_font (&ps->listctx, DDB_LIST_FONT, 1);
+    draw_init_font (&ps->grpctx, DDB_GROUP_FONT, 1);
+    int row_height = draw_get_listview_rowheight (&ps->listctx);
+    int grptitle_height = draw_get_listview_rowheight (&ps->grpctx);
+    if (row_height != ps->rowheight || grptitle_height != ps->calculated_grouptitle_height) {
+        ps->rowheight = row_height;
+        ps->calculated_grouptitle_height = grptitle_height;
+        ddb_listview_build_groups (ps);
+    }
+
+    GtkAllocation a;
+    gtk_widget_get_allocation (ps->list, &a);
+    int w = a.width;
+    int size = 0;
+    DdbListviewColumn *c;
+    for (c = ps->columns; c; c = c->next) {
+        size += c->width;
+    }
+    ddb_listview_list_update_total_width (ps, size);
+    g_idle_add (ddb_listview_reconf_scrolling, ps);
+}
+
 #if GTK_CHECK_VERSION(3,0,0)
 gboolean
 ddb_listview_list_draw               (GtkWidget       *widget,
@@ -914,6 +928,7 @@ ddb_listview_list_draw               (GtkWidget       *widget,
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     widget = ps->list;
+
     // FIXME: clip region
     ddb_listview_list_render (ps, cr, 0, 0, gtk_widget_get_allocated_width (widget), gtk_widget_get_allocated_height (widget));
     if (ps->drag_motion_y >= 0/* && ps->drag_motion_y-ps->scrollpos-3 < event->area.y+event->area.height && ps->drag_motion_y-ps->scrollpos+3 >= event->area.y*/) {
@@ -929,6 +944,7 @@ ddb_listview_list_expose_event               (GtkWidget       *widget,
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
     widget = ps->list;
+
     cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
     ddb_listview_list_render (ps, cr, event->area.x, event->area.y, event->area.width, event->area.height);
     if (ps->drag_motion_y >= 0 && ps->drag_motion_y-ps->scrollpos-3 < event->area.y+event->area.height && ps->drag_motion_y-ps->scrollpos+3 >= event->area.y) {
@@ -1332,11 +1348,11 @@ ddb_listview_draw_row (DdbListview *listview, int row, DdbListviewIter it) {
 // coords passed are window-relative
 void
 ddb_listview_list_render_row_background (DdbListview *ps, cairo_t *cr, DdbListviewIter it, int even, int cursor, int x, int y, int w, int h) {
-	// draw background
-	GtkWidget *treeview = theme_treeview;
-	int theming = !gtkui_override_listview_colors ();
+    // draw background
+    GtkWidget *treeview = theme_treeview;
+    int theming = !gtkui_override_listview_colors ();
 
-	if (theming) {
+    if (theming) {
 #if !GTK_CHECK_VERSION(3,0,0)
         if (gtk_widget_get_style (treeview)->depth == -1) {
             return; // drawing was called too early
@@ -1344,6 +1360,7 @@ ddb_listview_list_render_row_background (DdbListview *ps, cairo_t *cr, DdbListvi
 #endif
     }
     int sel = it && ps->binding->is_selected (it);
+
     if (theming || !sel) {
         if (theming) {
             // draw background for selection -- workaround for New Wave theme (translucency)
@@ -1368,9 +1385,9 @@ ddb_listview_list_render_row_background (DdbListview *ps, cairo_t *cr, DdbListvi
             gtk_paint_flat_box (gtk_widget_get_style (treeview), cr, GTK_STATE_SELECTED, GTK_SHADOW_NONE, treeview, even ? "cell_even_ruled" : "cell_odd_ruled", x-1, y-1, w+1, h+1);
 #else
             gtk_paint_flat_box (gtk_widget_get_style (treeview), ps->list->window, GTK_STATE_SELECTED, GTK_SHADOW_NONE, NULL, treeview, even ? "cell_even_ruled" : "cell_odd_ruled", x, y, w, h);
-//            if (gtk_widget_has_focus (ps->list)) {
-//                gtk_paint_focus (gtk_widget_get_style (treeview), ps->list->window, GTK_STATE_SELECTED, NULL, treeview, "treeview", x, y, w, h);
-//            }
+            //            if (gtk_widget_has_focus (ps->list)) {
+            //                gtk_paint_focus (gtk_widget_get_style (treeview), ps->list->window, GTK_STATE_SELECTED, NULL, treeview, "treeview", x, y, w, h);
+            //            }
 #endif
         }
         else {
@@ -1389,7 +1406,7 @@ ddb_listview_list_render_row_background (DdbListview *ps, cairo_t *cr, DdbListvi
 #endif
         }
     }
-	if (cursor && gtk_widget_has_focus (ps->list)) {
+    if (cursor && gtk_widget_has_focus (ps->list)) {
         // not all gtk engines/themes render focus rectangle in treeviews
         // but we want it anyway
         //treeview->style->fg_gc[GTK_STATE_NORMAL]
@@ -2350,7 +2367,13 @@ ddb_listview_header_render (DdbListview *ps, cairo_t *cr) {
                 gtk_paint_vline (widget->style, ps->header->window, GTK_STATE_NORMAL, NULL, widget, NULL, 2, h-4, xx+w - 3);
 #endif
 #endif
-                GdkColor *gdkfg = &gtk_widget_get_style (theme_button)->fg[0];
+                GdkColor *gdkfg;
+                if (!gtkui_override_listview_colors ()) {
+                    gdkfg = &gtk_widget_get_style (theme_button)->fg[0];
+                }
+                else {
+                    gdkfg = (gtkui_get_listview_column_text_color (&clr), &clr);
+                }
                 float fg[3] = {(float)gdkfg->red/0xffff, (float)gdkfg->green/0xffff, (float)gdkfg->blue/0xffff};
                 draw_set_fg_color (&ps->hdrctx, fg);
                 int ww = w-10;
@@ -2360,7 +2383,7 @@ ddb_listview_header_render (DdbListview *ps, cairo_t *cr) {
                         ww = 0;
                     }
                 }
-                draw_text (&ps->hdrctx, xx + 5, 3, ww, 0, c->title);
+                draw_text_custom (&ps->hdrctx, xx + 5, 3, ww, 0, DDB_COLUMN_FONT, 0, 0, c->title);
             }
             if (sort) {
                 int dir = sort == 1 ? GTK_ARROW_DOWN : GTK_ARROW_UP;
@@ -2413,7 +2436,7 @@ ddb_listview_header_render (DdbListview *ps, cairo_t *cr) {
                     GdkColor *gdkfg = &gtk_widget_get_style (theme_button)->fg[GTK_STATE_SELECTED];
                     float fg[3] = {(float)gdkfg->red/0xffff, (float)gdkfg->green/0xffff, (float)gdkfg->blue/0xffff};
                     draw_set_fg_color (&ps->hdrctx, fg);
-                    draw_text (&ps->hdrctx, x + 5, 3, c->width-10, 0, c->title);
+                    draw_text_custom (&ps->hdrctx, x + 5, 3, c->width-10, 0, DDB_COLUMN_FONT, 0, 0, c->title);
                 }
                 break;
             }
@@ -2452,6 +2475,17 @@ ddb_listview_header_expose_event                 (GtkWidget       *widget,
 }
 #endif
 
+void
+ddb_listview_header_update_fonts (DdbListview *ps)
+{
+    draw_init_font (&ps->hdrctx, DDB_COLUMN_FONT, 1);
+    int height = draw_get_listview_rowheight (&ps->hdrctx);
+    GtkAllocation a;
+    gtk_widget_get_allocation (ps->header, &a);
+    if (height != a.height) {
+        gtk_widget_set_size_request (ps->header, -1, height);
+    }
+}
 
 gboolean
 ddb_listview_header_configure_event              (GtkWidget       *widget,
@@ -2459,13 +2493,7 @@ ddb_listview_header_configure_event              (GtkWidget       *widget,
                                         gpointer         user_data)
 {
     DdbListview *ps = DDB_LISTVIEW (g_object_get_data (G_OBJECT (widget), "owner"));
-    draw_init_font (&ps->hdrctx, gtk_widget_get_style (widget));
-    int height = draw_get_listview_rowheight (&ps->hdrctx);
-    GtkAllocation a;
-    gtk_widget_get_allocation (widget, &a);
-    if (height != a.height) {
-        gtk_widget_set_size_request (widget, -1, height);
-    }
+    ddb_listview_header_update_fonts (ps);
     GtkAllocation lva;
     gtk_widget_get_allocation (GTK_WIDGET (ps), &lva);
     int totalwidth = lva.width;
@@ -2490,7 +2518,7 @@ ddb_listview_header_configure_event              (GtkWidget       *widget,
                         c->width = newwidth;
                         changed = 1;
                         ps->binding->column_size_changed (ps, i);
-                    }               
+                    }
                 }
                 if (changed) {
                     ps->binding->columns_changed (ps);

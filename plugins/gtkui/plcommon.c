@@ -168,7 +168,7 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
     }
 
     DB_playItem_t *playing_track = deadbeef->streamer_get_playing_track ();
-	int theming = !gtkui_override_listview_colors ();
+    int theming = !gtkui_override_listview_colors ();
 
     if (cinf->id == DB_COLUMN_ALBUM_ART) {
         if (theming) {
@@ -332,6 +332,9 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
             if (deadbeef->pl_is_selected (it)) {
                 color = (gtkui_get_listview_selected_text_color (&clr), &clr);
             }
+            else if (it && it == playing_track) {
+                color = (gtkui_get_listview_playing_text_color (&clr), &clr);
+            }
             else {
                 color = (gtkui_get_listview_text_color (&clr), &clr);
             }
@@ -339,18 +342,24 @@ void draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, D
         float fg[3] = {(float)color->red/0xffff, (float)color->green/0xffff, (float)color->blue/0xffff};
         draw_set_fg_color (&listview->listctx, fg);
 
-        draw_init_font (&listview->listctx, gtk_widget_get_style (GTK_WIDGET (listview)));
-        if (gtkui_embolden_current_track && it && it == playing_track) {
-            draw_init_font_bold (&listview->listctx);
+        draw_init_font (&listview->listctx, DDB_LIST_FONT, 0);
+        int bold = 0;
+        int italic = 0;
+        if (!theming) {
+            if (deadbeef->pl_is_selected (it)) {
+                bold = gtkui_embolden_selected_tracks;
+                italic = gtkui_italic_selected_tracks;
+            }
+            if (it == playing_track) {
+                bold = gtkui_embolden_current_track;
+                italic = gtkui_italic_current_track;
+            }
         }
         if (calign_right) {
-            draw_text (&listview->listctx, x + 5, y + 3, cwidth-10, 1, text);
+            draw_text_custom (&listview->listctx, x + 5, y + 3, cwidth-10, 1, DDB_LIST_FONT, bold, italic, text);
         }
         else {
-            draw_text (&listview->listctx, x + 5, y + 3, cwidth-10, 0, text);
-        }
-        if (gtkui_embolden_current_track && it && it == playing_track) {
-            draw_init_font_normal (&listview->listctx);
+            draw_text_custom (&listview->listctx, x + 5, y + 3, cwidth-10, 0, DDB_LIST_FONT, bold, italic, text);
         }
     }
     if (playing_track) {
