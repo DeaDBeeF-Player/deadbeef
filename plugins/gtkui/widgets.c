@@ -1,5 +1,5 @@
 /*
-    DeaDBeeF - ultimate music player for GNU/Linux systems with X11
+    DeaDBeeF - The Ultimate Music Player
     Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software; you can redistribute it and/or
@@ -2186,6 +2186,7 @@ w_selproperties_create (void) {
     gtk_container_add (GTK_CONTAINER (w->base.widget), scroll);
 
     gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scroll), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+    gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scroll), GTK_SHADOW_ETCHED_IN);
     w->tree = gtk_tree_view_new ();
     gtk_widget_show (w->tree);
     gtk_tree_view_set_enable_search (GTK_TREE_VIEW (w->tree), FALSE);
@@ -2198,9 +2199,9 @@ w_selproperties_create (void) {
     GtkCellRenderer *rend1 = gtk_cell_renderer_text_new ();
     GtkCellRenderer *rend2 = gtk_cell_renderer_text_new ();
     GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes (_("Key"), rend1, "text", 0, NULL);
-    gtk_tree_view_column_set_resizable (col1, TRUE);
+    gtk_tree_view_column_set_sizing (col1, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
     GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes (_("Value"), rend2, "text", 1, NULL);
-    gtk_tree_view_column_set_resizable (col2, TRUE);
+    gtk_tree_view_column_set_sizing (col2, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
     gtk_tree_view_append_column (GTK_TREE_VIEW (w->tree), col1);
     gtk_tree_view_append_column (GTK_TREE_VIEW (w->tree), col2);
     gtk_tree_view_set_headers_clickable (GTK_TREE_VIEW (w->tree), TRUE);

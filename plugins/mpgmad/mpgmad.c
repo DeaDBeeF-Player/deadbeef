@@ -1441,7 +1441,7 @@ cmp3_write_metadata (DB_playItem_t *it) {
 }
 
 static const char *exts[] = {
-	"mp1", "mp2", "mp3", NULL
+	"mp1", "mp2", "mp3", "mpga", NULL
 };
 
 static const char settings_dlg[] =

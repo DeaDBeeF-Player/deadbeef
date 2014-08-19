@@ -15,6 +15,7 @@ Icon=deadbeef
 X-PulseAudio-Properties=media.role=music
 
 X-Ayatana-Desktop-Shortcuts=Play;Pause;Stop;Next;Prev
+
 [Play Shortcut Group]
 Name=Play
 Exec=deadbeef --play
@@ -39,3 +40,23 @@ TargetEnvironment=Unity
 Name=Prev
 Exec=deadbeef --prev
 TargetEnvironment=Unity
+
+[Desktop Action Play]
+Name=Play
+Exec=deadbeef --play
+
+[Desktop Action Pause]
+Name=Pause
+Exec=deadbeef --pause
+
+[Desktop Action Stop]
+Name=Stop
+Exec=deadbeef --stop
+
+[Desktop Action Next]
+Name=Next
+Exec=deadbeef --next
+
+[Desktop Action Previous]
+Name=Prev
+Exec=deadbeef --prev

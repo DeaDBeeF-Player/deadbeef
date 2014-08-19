@@ -1,5 +1,5 @@
 /*
-    DeaDBeeF - ultimate music player for GNU/Linux systems with X11
+    DeaDBeeF - The Ultimate Music Player
     Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software: you can redistribute it and/or modify
@@ -127,6 +127,7 @@ on_playbtn_clicked                     (GtkButton       *button,
         if (cur != -1) {
             ddb_playItem_t *it = deadbeef->plt_get_item_for_idx (plt, cur, PL_MAIN);
             ddb_playItem_t *it_playing = deadbeef->streamer_get_playing_track ();
+
             if (it) {
                 deadbeef->pl_item_unref (it);
             }
@@ -137,7 +138,7 @@ on_playbtn_clicked                     (GtkButton       *button,
                 deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, cur, 0);
             }
             else {
-                deadbeef->sendmessage (DB_EV_PLAY_CURRENT, 0, 1, 0);
+                deadbeef->sendmessage (DB_EV_PLAY_CURRENT, 0, 0, 0);
             }
         }
         else {
@@ -151,6 +152,9 @@ on_playbtn_clicked                     (GtkButton       *button,
         if (plt) {
             cur = deadbeef->plt_get_cursor (plt, PL_MAIN);
             deadbeef->plt_unref (plt);
+        }
+        if (cur == -1) {
+            cur = 0;
         }
         deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, cur, 0);
     }
@@ -630,7 +634,7 @@ GtkWidget*
 title_formatting_help_link_create (gchar *widget_name, gchar *string1, gchar *string2,
                 gint int1, gint int2)
 {
-    GtkWidget *link = gtk_link_button_new_with_label ("http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting", "Help");
+    GtkWidget *link = gtk_link_button_new_with_label ("http://github.com/Alexey-Yakovenko/deadbeef/wiki/Title-formatting", "Help");
     return link;
 }
 

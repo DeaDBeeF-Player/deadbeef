@@ -33,6 +33,9 @@ struct handler_s *
 handler_alloc (int queue_size);
 
 void
+handler_reset (struct handler_s *h);
+
+void
 handler_free (struct handler_s *h);
 
 int

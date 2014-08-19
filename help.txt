@@ -3,8 +3,8 @@ help file for deadbeef player
 * LINKS
 
     main website: http://deadbeef.sf.net
-    wiki: http://sf.net/apps/mediawiki/deadbeef
-    development website: http://sf.net/projects/deadbeef
+    wiki: http://github.com/Alexey-Yakovenko/deadbeef/wiki
+    development website: http://github.com/Alexey-Yakovenko/deadbeef
     info for contributors: http://contributing.appspot.com/deadbeef
 
 * USEFUL HOTKEYS

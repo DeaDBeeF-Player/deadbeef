@@ -45,6 +45,20 @@ version 0.6.2
 	shellexec: fixed escaping of single quotes, prevent opening copies of shxui dialogs
 	vfs_zip: huge speed improvements
 	vorbis, oggflac: new tagging code (Ian Nartowicz)
+	improved plugin duplicate checking
+	fixed RIFF WAVE header writing in converter
+	fixed 8bit png crash in album art plugin (Ian Nartowicz)
+	static builds now use -O3 -D_FORTIFY_SOURCE=0 compiler flags
+	fixed few issues with implementation of the Play button
+	improved tag writing in converter
+	fixed issues with "background jobs are running" warning
+	changed all wiki links to point to the new wiki on github
+	improved streamer event handling, to make the GUI more responsive and stable
+	fixed cleaning up downloaded temporary playlist files
+	Fixed skipping bad FLAC__METADATA_TYPE_CUESHEET blocks in FLAC
+	added support for uppercase .CUE extension
+	added "mpga" extension support (mp3)
+	fixed seeking backwards using hotkeys when in the beginning of a track
 
 version 0.6.1
 	fixed crash in AAC plugin when mp4 file reports 0 samples (e.g. radio rips)

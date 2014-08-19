@@ -1,5 +1,5 @@
 /*
-    DeaDBeeF - ultimate music player for GNU/Linux systems with X11
+    DeaDBeeF - The Ultimate Music Player
     Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
 
     Redistribution and use in source and binary forms, with or without
@@ -627,7 +627,7 @@ cflac_insert_with_embedded_cue (ddb_playlist_t *plt, DB_playItem_t *after, DB_pl
     // first check if cuesheet is matching the data
     for (int i = 0; i < cuesheet->num_tracks; i++) {
         if (cuesheet->tracks[i].offset >= totalsamples) {
-            fprintf (stderr, "The flac %s has invalid embedded cuesheet. You should remove it using metaflac.\n", deadbeef->pl_find_meta_raw (origin, ":URI"));
+            fprintf (stderr, "The flac %s has invalid FLAC__METADATA_TYPE_CUESHEET block, which will get ignored. You should remove it using metaflac.\n", deadbeef->pl_find_meta_raw (origin, ":URI"));
             return NULL;
         }
     }
@@ -842,17 +842,15 @@ cflac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             return cue;
         }
     }
-    else {
-        const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
-        if (cuesheet) {
-            DB_playItem_t *last = deadbeef->plt_insert_cue_from_buffer (plt, after, it, (const uint8_t *)cuesheet, strlen (cuesheet), info.totalsamples, info.info.fmt.samplerate);
-            if (last) {
-                cflac_free_temp (_info);
-                deadbeef->pl_item_unref (it);
-                deadbeef->pl_item_unref (last);
-                deadbeef->pl_unlock ();
-                return last;
-            }
+    const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
+    if (cuesheet) {
+        DB_playItem_t *last = deadbeef->plt_insert_cue_from_buffer (plt, after, it, (const uint8_t *)cuesheet, strlen (cuesheet), info.totalsamples, info.info.fmt.samplerate);
+        if (last) {
+            cflac_free_temp (_info);
+            deadbeef->pl_item_unref (it);
+            deadbeef->pl_item_unref (last);
+            deadbeef->pl_unlock ();
+            return last;
         }
     }
     deadbeef->pl_unlock ();

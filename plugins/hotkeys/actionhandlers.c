@@ -31,8 +31,298 @@
 extern DB_functions_t *deadbeef;
 
 int
-action_jump_to_current_handler (DB_plugin_action_t *act, int ctx) {
+action_jump_to_current_handler (DB_plugin_action_t *act, int ctx)
+{
     deadbeef->sendmessage (DB_EV_TRACKFOCUSCURRENT, 0, 0, 0);
+    return 0;
+}
+
+static DB_playItem_t*
+skip_to_get_track_helper ()
+{
+    DB_playItem_t *current = deadbeef->streamer_get_playing_track ();
+    if (!current) {
+        return NULL;
+    }
+
+    ddb_playlist_t *plt_curr = deadbeef->plt_get_curr ();
+    ddb_playlist_t *plt = deadbeef->pl_get_playlist (current);
+
+    DB_playItem_t *it = NULL;
+    if (plt && plt_curr && plt != plt_curr) {
+        deadbeef->pl_item_unref (current);
+        it = deadbeef->plt_get_first (plt_curr, PL_MAIN);
+        while (it) {
+            if (deadbeef->pl_is_selected (it)) {
+                break;
+            }
+            DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+            deadbeef->pl_item_unref (it);
+            it = next;
+        }
+    }
+    else {
+        it = current;
+    }
+
+    if (plt) {
+        deadbeef->plt_unref (plt);
+    }
+    if (plt_curr) {
+        deadbeef->plt_unref (plt_curr);
+    }
+    return it;
+}
+
+static void
+skip_to_prev_helper (const char *meta)
+{
+    if (!meta) {
+        return;
+    }
+    deadbeef->pl_lock ();
+    DB_output_t *output = deadbeef->get_output ();
+    if (output->state () == OUTPUT_STATE_STOPPED) {
+        deadbeef->pl_unlock ();
+        return;
+    }
+
+    DB_playItem_t *it = skip_to_get_track_helper ();
+    if (!it) {
+        deadbeef->pl_unlock ();
+        return;
+    }
+
+    const char *cur_meta = deadbeef->pl_find_meta_raw (it, meta);
+    int c = 0;
+    while (it) {
+        DB_playItem_t *prev = deadbeef->pl_get_prev (it, PL_MAIN);
+        if (!prev) {
+            if (c == 1) {
+                deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, deadbeef->pl_get_idx_of (it), 0);
+            }
+            deadbeef->pl_item_unref (it);
+            break;
+        }
+        const char *prev_meta = deadbeef->pl_find_meta_raw (prev, meta);
+        if (cur_meta != prev_meta) {
+            if (c == 0) {
+                cur_meta = prev_meta;
+                c = 1;
+            }
+            else {
+                deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, deadbeef->pl_get_idx_of (it), 0);
+                deadbeef->pl_item_unref (it);
+                deadbeef->pl_item_unref (prev);
+                break;
+            }
+        }
+        deadbeef->pl_item_unref (it);
+        it = prev;
+    }
+    deadbeef->pl_unlock ();
+}
+
+static void
+skip_to_next_helper (const char *meta)
+{
+    if (!meta) {
+        return;
+    }
+    deadbeef->pl_lock ();
+    DB_output_t *output = deadbeef->get_output ();
+    if (output->state () == OUTPUT_STATE_STOPPED) {
+        deadbeef->pl_unlock ();
+        return;
+    }
+
+    DB_playItem_t *it = skip_to_get_track_helper ();
+    if (!it) {
+        deadbeef->pl_unlock ();
+        return;
+    }
+
+    const char *cur_meta = deadbeef->pl_find_meta_raw (it, meta);
+    while (it) {
+        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        if (!next) {
+            deadbeef->pl_item_unref (it);
+            break;
+        }
+        const char *next_meta = deadbeef->pl_find_meta_raw (next, meta);
+        if (cur_meta != next_meta) {
+            deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, deadbeef->pl_get_idx_of (next), 0);
+            deadbeef->pl_item_unref (it);
+            deadbeef->pl_item_unref (next);
+            break;
+        }
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+    deadbeef->pl_unlock ();
+}
+
+int
+action_skip_to_next_album_handler (DB_plugin_action_t *act, int ctx)
+{
+    skip_to_next_helper ("album");
+    return 0;
+}
+
+int
+action_skip_to_next_genre_handler (DB_plugin_action_t *act, int ctx)
+{
+    skip_to_next_helper ("genre");
+    return 0;
+}
+
+int
+action_skip_to_next_composer_handler (DB_plugin_action_t *act, int ctx)
+{
+    skip_to_next_helper ("composer");
+    return 0;
+}
+
+int
+action_skip_to_prev_album_handler (DB_plugin_action_t *act, int ctx)
+{
+    skip_to_prev_helper ("album");
+    return 0;
+}
+
+int
+action_skip_to_prev_genre_handler (DB_plugin_action_t *act, int ctx)
+{
+    skip_to_prev_helper ("genre");
+    return 0;
+}
+
+int
+action_skip_to_prev_composer_handler (DB_plugin_action_t *act, int ctx)
+{
+    skip_to_prev_helper ("composer");
+    return 0;
+}
+
+int
+action_skip_to_next_artist_handler (DB_plugin_action_t *act, int ctx)
+{
+    deadbeef->pl_lock ();
+    DB_output_t *output = deadbeef->get_output ();
+    if (output->state () == OUTPUT_STATE_STOPPED) {
+        deadbeef->pl_unlock ();
+        return 0;
+    }
+
+    DB_playItem_t *it = skip_to_get_track_helper ();
+    if (!it) {
+        deadbeef->pl_unlock ();
+        return 0;
+    }
+
+    const char *cur_artist = deadbeef->pl_find_meta_raw (it, "band");
+    if (!cur_artist) {
+        cur_artist = deadbeef->pl_find_meta_raw (it, "album artist");
+    }
+    if (!cur_artist) {
+        cur_artist = deadbeef->pl_find_meta_raw (it, "albumartist");
+    }
+    if (!cur_artist) {
+        cur_artist = deadbeef->pl_find_meta_raw (it, "artist");
+    }
+    while (it) {
+        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        if (!next) {
+            deadbeef->pl_item_unref (it);
+            break;
+        }
+        const char *next_artist = deadbeef->pl_find_meta_raw (next, "band");
+        if (!next_artist) {
+            next_artist = deadbeef->pl_find_meta_raw (next, "album artist");
+        }
+        if (!next_artist) {
+            next_artist = deadbeef->pl_find_meta_raw (next, "albumartist");
+        }
+        if (!next_artist) {
+            next_artist = deadbeef->pl_find_meta_raw (next, "artist");
+        }
+
+        if (cur_artist != next_artist) {
+            deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, deadbeef->pl_get_idx_of (next), 0);
+            deadbeef->pl_item_unref (it);
+            deadbeef->pl_item_unref (next);
+            break;
+        }
+        deadbeef->pl_item_unref (it);
+        it = next;
+    }
+    deadbeef->pl_unlock ();
+    return 0;
+}
+
+int
+action_skip_to_prev_artist_handler (DB_plugin_action_t *act, int ctx)
+{
+    deadbeef->pl_lock ();
+    DB_output_t *output = deadbeef->get_output ();
+    if (output->state () == OUTPUT_STATE_STOPPED) {
+        deadbeef->pl_unlock ();
+        return 0;
+    }
+
+    DB_playItem_t *it = skip_to_get_track_helper ();
+    if (!it) {
+        deadbeef->pl_unlock ();
+        return 0;
+    }
+
+    const char *cur_artist = deadbeef->pl_find_meta_raw (it, "band");
+    if (!cur_artist) {
+        cur_artist = deadbeef->pl_find_meta_raw (it, "album artist");
+    }
+    if (!cur_artist) {
+        cur_artist = deadbeef->pl_find_meta_raw (it, "albumartist");
+    }
+    if (!cur_artist) {
+        cur_artist = deadbeef->pl_find_meta_raw (it, "artist");
+    }
+    int c = 0;
+    while (it) {
+        DB_playItem_t *prev = deadbeef->pl_get_prev (it, PL_MAIN);
+        if (!prev) {
+            if (c == 1) {
+                deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, deadbeef->pl_get_idx_of (it), 0);
+            }
+            deadbeef->pl_item_unref (it);
+            break;
+        }
+        const char *prev_artist = deadbeef->pl_find_meta_raw (prev, "band");
+        if (!prev_artist) {
+            prev_artist = deadbeef->pl_find_meta_raw (prev, "album artist");
+        }
+        if (!prev_artist) {
+            prev_artist = deadbeef->pl_find_meta_raw (prev, "albumartist");
+        }
+        if (!prev_artist) {
+            prev_artist = deadbeef->pl_find_meta_raw (prev, "artist");
+        }
+
+        if (cur_artist != prev_artist) {
+            if (c == 0) {
+                cur_artist = prev_artist;
+                c = 1;
+            }
+            else {
+                deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, deadbeef->pl_get_idx_of (it), 0);
+                deadbeef->pl_item_unref (it);
+                deadbeef->pl_item_unref (prev);
+                break;
+            }
+        }
+        deadbeef->pl_item_unref (it);
+        it = prev;
+    }
+    deadbeef->pl_unlock ();
     return 0;
 }
 

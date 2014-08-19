@@ -1,5 +1,5 @@
 /*
-    DeaDBeeF - ultimate music player for GNU/Linux systems with X11
+    DeaDBeeF - The Ultimate Music Player
     Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software; you can redistribute it and/or
@@ -1134,11 +1134,16 @@ error:
             *o++ = *p++;
         }
         *o = 0;
-        // FIXME: need to delete all colon-fields, except the URI
-        deadbeef->pl_replace_meta (out_it, ":URI", unesc_path);
-        deadbeef->pl_delete_meta (out_it, ":TRACKNUM");
-        deadbeef->pl_delete_meta (out_it, "cuesheet");
         deadbeef->pl_set_item_flags (out_it, 0);
+        DB_metaInfo_t *m = deadbeef->pl_get_metadata_head (out_it);
+        while (m) {
+            DB_metaInfo_t *next = m->next;
+            if (m->key[0] == ':' || m->key[0] == '!' || !strcasecmp (m->key, "cuesheet")) {
+                deadbeef->pl_delete_metadata (out_it, m);
+            }
+            m = next;
+        }
+        deadbeef->pl_replace_meta (out_it, ":URI", unesc_path);
     }
 
     uint32_t tagflags = 0;

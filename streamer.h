@@ -30,6 +30,17 @@
 #include "playlist.h"
 #include "deadbeef.h"
 
+// events to pass to streamer thread
+enum {
+    STR_EV_PLAY_TRACK_IDX, // p1 = idx, p2 = pstate; see streamer_set_nextsong semantics
+    STR_EV_PLAY_CURR, // will play the current streamer track (playing_track), see more details in streamer_play_current_track
+    STR_EV_NEXT, // streamer_move_to_nextsong
+    STR_EV_PREV, // streamer_move_to_prevsong
+    STR_EV_RAND, // streamer_move_to_randomsong
+    STR_EV_SEEK, // streamer_set_seek; p1: float pos
+    STR_EV_SET_CURR_PLT, // streamer_set_current_playlist
+};
+
 int
 streamer_init (void);
 
@@ -55,14 +66,12 @@ streamer_unlock (void);
 // 1 switch to current (gui) playlist, play if not playing
 // 2 pause
 // 3 play if not playing, don't switch playlist
+// 4 same as 1, but stops playback before proceeding
 void
 streamer_set_nextsong (int song, int pstate);
 
 void
 streamer_set_seek (float pos);
-
-int
-streamer_get_fill (void);
 
 int
 streamer_ok_to_read (int len);
@@ -82,6 +91,9 @@ streamer_get_playing_track (void);
 void
 streamer_configchanged (void);
 
+// if paused -- resume
+// else, if have cursor track -- stop current, play cursor
+// else, play next
 void
 streamer_play_current_track (void);
 
@@ -92,15 +104,15 @@ int
 streamer_get_apx_bitrate (void);
 
 // returns -1 if theres no next song, or playlist finished
-// reason 0 means "song finished", 1 means "user clicked next"
+// reason 0 means "prev song finished", 1 means "interrupt"
 int
-streamer_move_to_nextsong (int reason);
+streamer_move_to_nextsong (int r);
 
 int
-streamer_move_to_prevsong (void);
+streamer_move_to_prevsong (int r);
 
 int
-streamer_move_to_randomsong (void);
+streamer_move_to_randomsong (int r);
 
 struct DB_fileinfo_s *
 streamer_get_current_fileinfo (void);
@@ -129,9 +141,6 @@ streamer_dsp_refresh (void);
 
 void
 streamer_get_output_format (ddb_waveformat_t *fmt);
-
-void
-streamer_dsp_postinit (void);
 
 int
 streamer_dsp_chain_save (void);

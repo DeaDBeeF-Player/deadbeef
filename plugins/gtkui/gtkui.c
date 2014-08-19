@@ -1,5 +1,5 @@
 /*
-    DeaDBeeF - ultimate music player for GNU/Linux systems with X11
+    DeaDBeeF - The Ultimate Music Player
     Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software; you can redistribute it and/or
@@ -592,7 +592,7 @@ gtkui_on_configchanged (void *data) {
     // cursor follows playback
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "cursor_follows_playback")), deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1) ? TRUE : FALSE);
 
-    // stop after current
+    // stop after current track
     int stop_after_current = deadbeef->conf_get_int ("playlist.stop_after_current", 0);
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "stop_after_current")), stop_after_current ? TRUE : FALSE);
 
@@ -1178,9 +1178,14 @@ gtkui_quit_cb (void *ctx) {
         if (response != GTK_RESPONSE_YES) {
             return FALSE;
         }
+        else {
+            exit (0);
+        }
     }
-    progress_abort ();
-    deadbeef->sendmessage (DB_EV_TERMINATE, 0, 0, 0);
+    else {
+        progress_abort ();
+        deadbeef->sendmessage (DB_EV_TERMINATE, 0, 0, 0);
+    }
     return FALSE;
 }
 
