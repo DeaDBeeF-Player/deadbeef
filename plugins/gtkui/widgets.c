@@ -2174,7 +2174,7 @@ on_selproperties_showheaders_toggled (GtkCheckMenuItem *checkmenuitem, gpointer 
     w_selproperties_t *w = user_data;
     int showheaders = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (checkmenuitem));
     deadbeef->conf_set_int ("gtkui.selection_properties.show_headers", showheaders);
-    gtk_tree_view_set_headers_visible (w->tree, showheaders);
+    gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (w->tree), showheaders);
 }
 
 static void
@@ -2229,7 +2229,7 @@ w_selproperties_create (void) {
     gtk_tree_view_set_headers_clickable (GTK_TREE_VIEW (w->tree), TRUE);
 
     int showheaders = deadbeef->conf_get_int ("gtkui.selection_properties.show_headers", 1);
-    gtk_tree_view_set_headers_visible (w->tree, showheaders);
+    gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (w->tree), showheaders);
 
     w_override_signals (w->base.widget, w);
 
