@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-06-25 19:54+0200\n"
-"PO-Revision-Date: 2014-06-25 17:55+0000\n"
+"POT-Creation-Date: 2014-08-05 19:54+0200\n"
+"PO-Revision-Date: 2014-07-31 18:10+0000\n"
 "Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
 "Language-Team: Japanese (http://www.transifex.com/projects/p/deadbeef-player/"
 "language/ja/)\n"
@@ -21,17 +21,17 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: ../plugins/gtkui/callbacks.c:349
+#: ../plugins/gtkui/callbacks.c:353
 #, c-format
 msgid "About DeaDBeeF %s"
 msgstr "DeaDBeeF %s について"
 
-#: ../plugins/gtkui/callbacks.c:362
+#: ../plugins/gtkui/callbacks.c:366
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
 msgstr "DeaDBeeF %s の更新履歴"
 
-#: ../plugins/gtkui/callbacks.c:622
+#: ../plugins/gtkui/callbacks.c:626
 #, c-format
 msgid "DeaDBeeF Translators"
 msgstr "DeaDBeeF の翻訳者"
@@ -108,11 +108,11 @@ msgstr "%d 日 %d:%02d:%02d"
 msgid "Stopped | %d tracks | %s total playtime"
 msgstr "停止 | %d トラック | %s 合計演奏時間"
 
-#: ../plugins/gtkui/gtkui.c:191 ../playlist.c:3201
+#: ../plugins/gtkui/gtkui.c:191 ../playlist.c:3212
 msgid "Mono"
 msgstr "Mono"
 
-#: ../plugins/gtkui/gtkui.c:191 ../playlist.c:3201
+#: ../plugins/gtkui/gtkui.c:191 ../playlist.c:3212
 msgid "Stereo"
 msgstr "Stereo"
 
@@ -142,93 +142,93 @@ msgid "New Playlist (%d)"
 msgstr "新規プレイリスト (%d)"
 
 #. register widget types
-#: ../plugins/gtkui/gtkui.c:955
+#: ../plugins/gtkui/gtkui.c:956
 msgid "Playlist with tabs"
 msgstr "タブのついたプレイリスト"
 
-#: ../plugins/gtkui/gtkui.c:956 ../plugins/gtkui/interface.c:2042
+#: ../plugins/gtkui/gtkui.c:957 ../plugins/gtkui/interface.c:2042
 #: ../plugins/gtkui/deadbeef.glade.h:128
 msgid "Playlist"
 msgstr "プレイリスト"
 
-#: ../plugins/gtkui/gtkui.c:959
+#: ../plugins/gtkui/gtkui.c:960
 msgid "Splitter (top and bottom)"
 msgstr "上下分割"
 
-#: ../plugins/gtkui/gtkui.c:960
+#: ../plugins/gtkui/gtkui.c:961
 msgid "Splitter (left and right)"
 msgstr "左右分割"
 
 #. w_reg_widget (_("Tabs"), 0, w_tabs_create, "tabs", NULL);
-#: ../plugins/gtkui/gtkui.c:963
+#: ../plugins/gtkui/gtkui.c:964
 msgid "Playlist tabs"
 msgstr "プレイリストのタブ"
 
-#: ../plugins/gtkui/gtkui.c:964
+#: ../plugins/gtkui/gtkui.c:965
 msgid "Selection properties"
 msgstr "選択のプロパティ"
 
-#: ../plugins/gtkui/gtkui.c:965
+#: ../plugins/gtkui/gtkui.c:966
 msgid "Album art display"
 msgstr "アルバムアートの表示"
 
-#: ../plugins/gtkui/gtkui.c:966
+#: ../plugins/gtkui/gtkui.c:967
 msgid "Scope"
 msgstr "スコープ"
 
-#: ../plugins/gtkui/gtkui.c:967
+#: ../plugins/gtkui/gtkui.c:968
 msgid "Spectrum"
 msgstr "スペクトラム"
 
-#: ../plugins/gtkui/gtkui.c:968
+#: ../plugins/gtkui/gtkui.c:969
 msgid "HBox"
 msgstr "HBox"
 
-#: ../plugins/gtkui/gtkui.c:969
+#: ../plugins/gtkui/gtkui.c:970
 msgid "VBox"
 msgstr "VBox"
 
-#: ../plugins/gtkui/gtkui.c:970 ../plugins/gtkui/widgets.c:3425
+#: ../plugins/gtkui/gtkui.c:971 ../plugins/gtkui/widgets.c:3428
 msgid "Button"
 msgstr "ボタン"
 
-#: ../plugins/gtkui/gtkui.c:971
+#: ../plugins/gtkui/gtkui.c:972
 msgid "Seekbar"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:972
+#: ../plugins/gtkui/gtkui.c:973
 msgid "Playback controls"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:973
+#: ../plugins/gtkui/gtkui.c:974
 msgid "Volume bar"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:974
+#: ../plugins/gtkui/gtkui.c:975
 msgid "Chiptune voices"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1149
+#: ../plugins/gtkui/gtkui.c:1150
 msgid "Failed while reading help file"
 msgstr "ヘルプファイルの読み込み中に失敗しました"
 
-#: ../plugins/gtkui/gtkui.c:1159
+#: ../plugins/gtkui/gtkui.c:1160
 msgid "Failed to load help file"
 msgstr "ヘルプファイルの読み込みに失敗しました"
 
-#: ../plugins/gtkui/gtkui.c:1170
+#: ../plugins/gtkui/gtkui.c:1171
 msgid ""
 "The player is currently running background tasks. If you quit now, the tasks "
 "will be cancelled or interrupted. This may result in data loss."
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1172
+#: ../plugins/gtkui/gtkui.c:1173
 msgid "Do you still want to quit?"
 msgstr "それでも終了しますか？"
 
-#: ../plugins/gtkui/gtkui.c:1173 ../plugins/gtkui/prefwin.c:351
+#: ../plugins/gtkui/gtkui.c:1174 ../plugins/gtkui/prefwin.c:351
 #: ../plugins/gtkui/trkproperties.c:171 ../plugins/converter/convgui.c:891
-#: ../plugins/converter/convgui.c:1458 ../plugins/gtkui/actionhandlers.c:550
+#: ../plugins/converter/convgui.c:1462 ../plugins/gtkui/actionhandlers.c:550
 msgid "Warning"
 msgstr "警告"
 
@@ -296,7 +296,7 @@ msgstr "選択"
 #: ../plugins/gtkui/interface.c:235 ../plugins/gtkui/plcommon.c:660
 #: ../plugins/gtkui/deadbeef.glade.h:16 ../plugins/converter/interface.c:629
 #: ../plugins/converter/converter.glade.h:46
-#: ../plugins/shellexecui/interface.c:65
+#: ../plugins/shellexecui/interface.c:66
 #: ../plugins/shellexecui/shellexec.glade.h:4
 msgid "Remove"
 msgstr "取り除く"
@@ -316,7 +316,7 @@ msgstr "...で並び替え"
 #: ../plugins/gtkui/interface.c:258 ../plugins/gtkui/interface.c:1349
 #: ../plugins/gtkui/mainplaylist.c:355 ../plugins/gtkui/prefwin.c:327
 #: ../plugins/gtkui/search.c:421 ../plugins/gtkui/deadbeef.glade.h:20
-#: ../plugins/converter/convgui.c:981 ../plugins/converter/convgui.c:1534
+#: ../plugins/converter/convgui.c:984 ../plugins/converter/convgui.c:1538
 #: ../plugins/converter/interface.c:606
 #: ../plugins/converter/converter.glade.h:43
 #: ../plugins/shellexecui/shellexecui.c:324
@@ -422,8 +422,8 @@ msgid "Cursor follows playback"
 msgstr "再生に従ってカーソルを移動"
 
 #: ../plugins/gtkui/interface.c:386 ../plugins/gtkui/deadbeef.glade.h:43
-msgid "Stop after current"
-msgstr "現在の再生の終了後に停止"
+msgid "Stop after current track"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:390 ../plugins/gtkui/deadbeef.glade.h:44
 msgid "Stop after current album"
@@ -495,7 +495,7 @@ msgid "Quit"
 msgstr "終了"
 
 #: ../plugins/gtkui/interface.c:967 ../plugins/gtkui/deadbeef.glade.h:61
-#: ../plugins/converter/convgui.c:1563 ../plugins/converter/convgui.c:1571
+#: ../plugins/converter/convgui.c:1567 ../plugins/converter/convgui.c:1575
 #: ../plugins/gtkui/actionhandlers.c:476
 msgid "Help"
 msgstr "ヘルプ"
@@ -533,7 +533,7 @@ msgstr "プロパティ"
 #: ../plugins/gtkui/interface.c:1319 ../plugins/gtkui/interface.c:3096
 #: ../plugins/gtkui/deadbeef.glade.h:71 ../plugins/converter/interface.c:379
 #: ../plugins/converter/converter.glade.h:22
-#: ../plugins/shellexecui/interface.c:159
+#: ../plugins/shellexecui/interface.c:163
 #: ../plugins/shellexecui/shellexec.glade.h:7 ../plugins/gtkui/pltmenu.c:65
 msgid "Title:"
 msgstr "タイトル:"
@@ -673,11 +673,11 @@ msgid "Don't add from archives when adding folders"
 msgstr "フォルダを追加するときアーカイブを含まない"
 
 #: ../plugins/gtkui/interface.c:1845 ../plugins/gtkui/deadbeef.glade.h:106
-msgid "Auto-reset \"Stop after current\""
-msgstr "“現在の曲の後に終了”を自動リセット"
+msgid "\"Stop after current track\" option will switch off after triggering"
+msgstr ""
 
 #: ../plugins/gtkui/interface.c:1849 ../plugins/gtkui/deadbeef.glade.h:107
-msgid "Auto-reset \"Stop after current album\""
+msgid "\"Stop after current album\" option will switch off after triggering"
 msgstr ""
 
 #: ../plugins/gtkui/interface.c:1853 ../plugins/gtkui/deadbeef.glade.h:108
@@ -970,7 +970,7 @@ msgid "Select DSP Plugin"
 msgstr "DSP プラグインの選択"
 
 #: ../plugins/gtkui/interface.c:3572 ../plugins/gtkui/deadbeef.glade.h:179
-#: ../plugins/converter/convgui.c:1283 ../plugins/converter/interface.c:750
+#: ../plugins/converter/convgui.c:1287 ../plugins/converter/interface.c:750
 #: ../plugins/gtkui/dspconfig.c:139 ../plugins/converter/converter.glade.h:49
 msgid "Plugin"
 msgstr "プラグイン"
@@ -1133,7 +1133,7 @@ msgstr "スクロール中にグループをピン止め"
 msgid "Group by"
 msgstr "グループ化"
 
-#: ../plugins/gtkui/plcommon.c:1246 ../plugins/gtkui/widgets.c:3521
+#: ../plugins/gtkui/plcommon.c:1246 ../plugins/gtkui/widgets.c:3524
 msgid "None"
 msgstr "なし"
 
@@ -1336,22 +1336,18 @@ msgstr ""
 
 #: ../main.c:110
 #, c-format
-msgid ""
-"                      for more info, see http://sourceforge.net/apps/"
-"mediawiki/deadbeef/index.php?title=Title_Formatting\n"
+msgid "                      for more info, see %s\n"
 msgstr ""
-"                      詳しくはこちら: http://sourceforge.net/apps/mediawiki/"
-"deadbeef/index.php?title=Title_Formatting\n"
 
-#: ../playlist.c:481 ../playlist.c:2546
+#: ../playlist.c:481 ../playlist.c:2557
 msgid "Default"
 msgstr "デフォルト"
 
-#: ../playlist.c:3970
+#: ../playlist.c:3981
 msgid "Yes"
 msgstr "はい"
 
-#: ../playlist.c:3970
+#: ../playlist.c:3981
 msgid "No"
 msgstr "いいえ"
 
@@ -1428,8 +1424,8 @@ msgstr ""
 #. this file should list extra translatable strings that are not referenced
 #. directly in source code, e.g. scripted plugin configuration strings
 #: ../translation/extra.c:3
-msgid "Add audio CD"
-msgstr "オーディオCDの追加"
+msgid "Add Audio CD"
+msgstr ""
 
 #: ../translation/extra.c:4
 msgid "Lookup on Last.fm"
@@ -1721,8 +1717,8 @@ msgstr "サンプルレートの自動設定 (指定したサンプルレート�
 
 #. shellexecui
 #: ../translation/extra.c:97
-msgid "Configure custom shell commands"
-msgstr "シェルコマンドの設定"
+msgid "Configure Custom Shell Commands"
+msgstr ""
 
 #. mpgmad
 #: ../translation/extra.c:99
@@ -1771,24 +1767,24 @@ msgstr "フォルダの選択..."
 msgid "Failed to save encoder preset"
 msgstr "エンコーダのプリセットの保存に失敗しました"
 
-#: ../plugins/converter/convgui.c:771 ../plugins/converter/convgui.c:1320
+#: ../plugins/converter/convgui.c:771 ../plugins/converter/convgui.c:1324
 msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
 msgstr ""
 "フォルダのパーミッション、名前の重複、ディスクの空き容量を確認してください"
 
-#: ../plugins/converter/convgui.c:771 ../plugins/converter/convgui.c:1320
+#: ../plugins/converter/convgui.c:771 ../plugins/converter/convgui.c:1324
 msgid "Preset with the same name already exists. Try to pick another title."
 msgstr "同じ名前のプリセットが既にあります。別の名前で試してください。"
 
-#: ../plugins/converter/convgui.c:772 ../plugins/converter/convgui.c:1321
+#: ../plugins/converter/convgui.c:772 ../plugins/converter/convgui.c:1325
 #: ../plugins/gtkui/ctmapping.c:202 ../plugins/gtkui/ctmapping.c:230
 #: ../plugins/gtkui/ctmapping.c:262
 msgid "Error"
 msgstr "エラー"
 
-#: ../plugins/converter/convgui.c:826 ../plugins/converter/convgui.c:957
+#: ../plugins/converter/convgui.c:826 ../plugins/converter/convgui.c:960
 msgid "Add new encoder"
 msgstr "新規エンコーダの追加"
 
@@ -1796,35 +1792,35 @@ msgstr "新規エンコーダの追加"
 msgid "Edit encoder"
 msgstr "エンコーダの編集"
 
-#: ../plugins/converter/convgui.c:888 ../plugins/converter/convgui.c:1455
+#: ../plugins/converter/convgui.c:888 ../plugins/converter/convgui.c:1459
 msgid "Remove preset"
 msgstr "プリセットの削除"
 
-#: ../plugins/converter/convgui.c:890 ../plugins/converter/convgui.c:1457
+#: ../plugins/converter/convgui.c:890 ../plugins/converter/convgui.c:1461
 msgid "This action will delete the selected preset. Are you sure?"
 msgstr "選択中のプリセットを削除します。続けますか？"
 
-#: ../plugins/converter/convgui.c:971
+#: ../plugins/converter/convgui.c:974
 msgid "Encoders"
 msgstr "エンコーダ"
 
-#: ../plugins/converter/convgui.c:1044 ../plugins/gtkui/dspconfig.c:186
+#: ../plugins/converter/convgui.c:1048 ../plugins/gtkui/dspconfig.c:186
 msgid "Add plugin to DSP chain"
 msgstr "プラグインを DSP チェインに追加"
 
-#: ../plugins/converter/convgui.c:1319
+#: ../plugins/converter/convgui.c:1323
 msgid "Failed to save DSP preset"
 msgstr "DSP プリセットの保存に失敗しました"
 
-#: ../plugins/converter/convgui.c:1383 ../plugins/converter/convgui.c:1421
+#: ../plugins/converter/convgui.c:1387 ../plugins/converter/convgui.c:1425
 msgid "New DSP Preset"
 msgstr "新規の DSP プリセット"
 
-#: ../plugins/converter/convgui.c:1505
+#: ../plugins/converter/convgui.c:1509
 msgid "Edit DSP Preset"
 msgstr "DSP プリセットの編集"
 
-#: ../plugins/converter/convgui.c:1525
+#: ../plugins/converter/convgui.c:1529
 msgid "DSP Presets"
 msgstr "DSP プリセット"
 
@@ -2015,7 +2011,7 @@ msgstr "無題の DSP プリセット"
 
 #: ../plugins/converter/interface.c:625
 #: ../plugins/converter/converter.glade.h:45
-#: ../plugins/shellexecui/interface.c:61
+#: ../plugins/shellexecui/interface.c:62
 #: ../plugins/shellexecui/shellexec.glade.h:3
 msgid "Add"
 msgstr "追加"
@@ -2063,27 +2059,27 @@ msgstr ""
 msgid "Custom Shell Commands"
 msgstr "シェルコマンドの設定"
 
-#: ../plugins/shellexecui/interface.c:69
+#: ../plugins/shellexecui/interface.c:70
 #: ../plugins/shellexecui/shellexec.glade.h:5
 msgid "Edit"
 msgstr "編集"
 
-#: ../plugins/shellexecui/interface.c:87
+#: ../plugins/shellexecui/interface.c:88
 #: ../plugins/shellexecui/shellexec.glade.h:2
 msgid "Close"
 msgstr "閉じる"
 
-#: ../plugins/shellexecui/interface.c:145
+#: ../plugins/shellexecui/interface.c:149
 #: ../plugins/shellexecui/shellexec.glade.h:6
 msgid "Edit Command"
 msgstr "コマンドの編集"
 
-#: ../plugins/shellexecui/interface.c:166
+#: ../plugins/shellexecui/interface.c:170
 #: ../plugins/shellexecui/shellexec.glade.h:8
 msgid "Command:"
 msgstr "コマンド:"
 
-#: ../plugins/shellexecui/interface.c:178
+#: ../plugins/shellexecui/interface.c:182
 #: ../plugins/shellexecui/shellexec.glade.h:10
 #, no-c-format
 msgid ""
@@ -2094,17 +2090,17 @@ msgstr ""
 "任意のシェルのコマンド。アプリケーションを立ち上げたシェルのコンテキストから"
 "実行されます。xdg-open %D のような書式が使えます"
 
-#: ../plugins/shellexecui/interface.c:181
+#: ../plugins/shellexecui/interface.c:185
 #: ../plugins/shellexecui/shellexec.glade.h:11
 msgid "ID:"
 msgstr "ID:"
 
-#: ../plugins/shellexecui/interface.c:193
+#: ../plugins/shellexecui/interface.c:197
 #: ../plugins/shellexecui/shellexec.glade.h:12
 msgid "Free-form name, for example \"My Shell Command\""
 msgstr "\"My Shell Command\" のような自由な形式の名前"
 
-#: ../plugins/shellexecui/interface.c:201
+#: ../plugins/shellexecui/interface.c:205
 #: ../plugins/shellexecui/shellexec.glade.h:13
 msgid ""
 "Command ID, normally it should be something short, for example \"youtube_open"
@@ -2112,57 +2108,57 @@ msgid ""
 msgstr ""
 "コマンド ID (\"youtube_open\" のような短い識別子)。一意である必要があります"
 
-#: ../plugins/shellexecui/interface.c:204
+#: ../plugins/shellexecui/interface.c:208
 #: ../plugins/shellexecui/shellexec.glade.h:15
 msgid "Single Tracks"
 msgstr "単一トラック"
 
-#: ../plugins/shellexecui/interface.c:207
+#: ../plugins/shellexecui/interface.c:211
 #: ../plugins/shellexecui/shellexec.glade.h:14
 msgid "Works on single track."
 msgstr "単一のトラックに対して動作します"
 
-#: ../plugins/shellexecui/interface.c:209
+#: ../plugins/shellexecui/interface.c:213
 #: ../plugins/shellexecui/shellexec.glade.h:17
 msgid "Multiple Tracks"
 msgstr "複数トラック"
 
-#: ../plugins/shellexecui/interface.c:212
+#: ../plugins/shellexecui/interface.c:216
 #: ../plugins/shellexecui/shellexec.glade.h:16
 msgid "Works on multiple tracks."
 msgstr "複数のトラックに対して動作します"
 
-#: ../plugins/shellexecui/interface.c:214
+#: ../plugins/shellexecui/interface.c:218
 #: ../plugins/shellexecui/shellexec.glade.h:19
 msgid "Local"
 msgstr "ローカル"
 
-#: ../plugins/shellexecui/interface.c:217
+#: ../plugins/shellexecui/interface.c:221
 #: ../plugins/shellexecui/shellexec.glade.h:18
 msgid "Works on local files."
 msgstr "ローカルのファイルに対して動作します"
 
-#: ../plugins/shellexecui/interface.c:219
+#: ../plugins/shellexecui/interface.c:223
 #: ../plugins/shellexecui/shellexec.glade.h:21
 msgid "Remote"
 msgstr "リモート"
 
-#: ../plugins/shellexecui/interface.c:222
+#: ../plugins/shellexecui/interface.c:226
 #: ../plugins/shellexecui/shellexec.glade.h:20
 msgid "Works on remote files (e.g. http:// streams)"
 msgstr "リモートのファイル (http:// ストリームなど) に対して動作します"
 
-#: ../plugins/shellexecui/interface.c:224
+#: ../plugins/shellexecui/interface.c:228
 #: ../plugins/shellexecui/shellexec.glade.h:23
 msgid "Generic (Main Menu)"
 msgstr "一般 (メインメニュー)"
 
-#: ../plugins/shellexecui/interface.c:227
+#: ../plugins/shellexecui/interface.c:231
 #: ../plugins/shellexecui/shellexec.glade.h:22
 msgid "Item should appear in the main menu"
 msgstr "アイテムはメインメニューに現れます"
 
-#: ../plugins/shellexecui/interface.c:229
+#: ../plugins/shellexecui/interface.c:233
 #: ../plugins/shellexecui/shellexec.glade.h:24
 msgid ""
 "<small>If you want to add the command to main menu, make sure that title "
@@ -2349,31 +2345,31 @@ msgstr "新規タブの追加"
 msgid "Show Column Headers"
 msgstr "カラムヘッダの表示"
 
-#: ../plugins/gtkui/widgets.c:3144
+#: ../plugins/gtkui/widgets.c:3147
 msgid "Expand the box by 1 item"
 msgstr "ボックスを 1 アイテム分広げる"
 
-#: ../plugins/gtkui/widgets.c:3149
+#: ../plugins/gtkui/widgets.c:3152
 msgid "Shrink the box by 1 item"
 msgstr "ボックスを 1 アイテム分縮める"
 
-#: ../plugins/gtkui/widgets.c:3154
+#: ../plugins/gtkui/widgets.c:3157
 msgid "Homogeneous"
 msgstr "大きさを揃える"
 
-#: ../plugins/gtkui/widgets.c:3194
+#: ../plugins/gtkui/widgets.c:3197
 msgid "Expand"
 msgstr "広げる"
 
-#: ../plugins/gtkui/widgets.c:3202
+#: ../plugins/gtkui/widgets.c:3205
 msgid "Fill"
 msgstr "余白を埋める"
 
-#: ../plugins/gtkui/widgets.c:3603
+#: ../plugins/gtkui/widgets.c:3606
 msgid "Configure button"
 msgstr "設定ボタン"
 
-#: ../plugins/gtkui/widgets.c:3867
+#: ../plugins/gtkui/widgets.c:3870
 msgid "Voices:"
 msgstr ""
 

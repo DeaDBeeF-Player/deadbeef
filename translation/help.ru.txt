@@ -3,8 +3,8 @@
 * ССЫЛКИ
 
     официальный сайт: http://deadbeef.sf.net
-    справка: http://sf.net/apps/mediawiki/deadbeef
-    ресурсы для разработчиков: http://sf.net/projects/deadbeef
+    wiki: http://github.com/Alexey-Yakovenko/deadbeef/wiki
+    ресурсы для разработчиков: http://github.com/Alexey-Yakovenko/deadbeef
     информация для спонсоров: http://contributing.appspot.com/deadbeef
 
 * ПОЛЕЗНЫЕ СОЧЕТАНИЯ КЛАВИШ

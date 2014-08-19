@@ -42,15 +42,15 @@ typedef struct message_s {
 
 typedef struct handler_s {
     int queue_size;
-    message_t pool[1];
     message_t *mfree;
     message_t *mqueue;
     message_t *mqtail;
     uintptr_t mutex;
     uintptr_t cond;
+    message_t pool[1];
 } handler_t;
 
-static void
+void
 handler_reset (handler_t *h) {
     h->mqueue = NULL;
     h->mfree = NULL;
@@ -67,8 +67,10 @@ handler_alloc (int queue_size) {
     int sz = sizeof (handler_t) + (queue_size-1) * sizeof (message_t);
     handler_t *h = malloc (sz);
     memset (h, 0, sz);
+    h->queue_size = queue_size;
     h->mutex = mutex_create ();
     h->cond = cond_create ();
+    handler_reset (h);
     return h;
 }
 
@@ -84,6 +86,9 @@ handler_free (handler_t *h) {
 
 int
 handler_push (handler_t *h, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    if (!h) {
+        return -1;
+    }
     if (!h->mfree) {
         return -1;
     }

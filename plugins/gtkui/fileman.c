@@ -113,7 +113,7 @@ open_files_worker (void *data) {
     deadbeef->pl_set_cursor (PL_MAIN, 0);
     deadbeef->conf_save ();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, 0, 0);
-    deadbeef->sendmessage (DB_EV_PLAY_CURRENT, 0, 1, 0);
+    deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, 0, 0);
 }
 
 void

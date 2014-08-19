@@ -1,5 +1,5 @@
 /*
-    DeaDBeeF - ultimate music player for GNU/Linux systems with X11
+    DeaDBeeF - The Ultimate Music Player
     Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software; you can redistribute it and/or
@@ -285,7 +285,6 @@ on_volumebar_scroll_event              (GtkWidget       *widget,
         vol = -range;
     }
     deadbeef->volume_set_db (vol);
-    GtkWidget *volumebar = DDB_VOLUMEBAR (widget);
     gtk_widget_queue_draw (widget);
     char s[100];
     int db = deadbeef->volume_get_db ();

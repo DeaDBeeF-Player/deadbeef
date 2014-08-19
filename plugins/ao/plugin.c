@@ -1,5 +1,5 @@
 /*
-    DeaDBeeF - ultimate music player for GNU/Linux systems with X11
+    DeaDBeeF - The Ultimate Music Player
     Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software; you can redistribute it and/or
@@ -214,7 +214,7 @@ static DB_playItem_t *
 aoplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     DB_FILE *fp = deadbeef->fopen (fname);
     if (!fp) {
-        trace ("psf: failed to fopen %s\n", fname);
+        fprintf (stderr, "psf: failed to fopen %s\n", fname);
         return NULL;
     }
 
@@ -237,6 +237,7 @@ aoplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     int type = ao_identify (buffer);
     if (type < 0) {
+        fprintf (stderr, "aosdk can't identify the contents of the file %s\n", fname);
         free (buffer);
         return NULL;
     }

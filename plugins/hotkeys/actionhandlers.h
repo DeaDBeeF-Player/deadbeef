@@ -28,6 +28,30 @@ int
 action_jump_to_current_handler (DB_plugin_action_t *act, int ctx);
 
 int
+action_skip_to_next_album_handler (DB_plugin_action_t *act, int ctx);
+
+int
+action_skip_to_next_artist_handler (DB_plugin_action_t *act, int ctx);
+
+int
+action_skip_to_next_composer_handler (DB_plugin_action_t *act, int ctx);
+
+int
+action_skip_to_next_genre_handler (DB_plugin_action_t *act, int ctx);
+
+int
+action_skip_to_prev_album_handler (DB_plugin_action_t *act, int ctx);
+
+int
+action_skip_to_prev_artist_handler (DB_plugin_action_t *act, int ctx);
+
+int
+action_skip_to_prev_composer_handler (DB_plugin_action_t *act, int ctx);
+
+int
+action_skip_to_prev_genre_handler (DB_plugin_action_t *act, int ctx);
+
+int
 action_reload_metadata_handler (DB_plugin_action_t *act, int ctx);
 
 int

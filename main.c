@@ -107,7 +107,7 @@ print_help (void) {
                 "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
                 "                      copy[r]ight, [e]lapsed\n"));
     fprintf (stdout, _("                      e.g.: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"));
-    fprintf (stdout, _("                      for more info, see http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting\n"));
+    fprintf (stdout, _("                      for more info, see %s\n"), "http://github.com/Alexey-Yakovenko/deadbeef/wiki/Title-formatting");
 	bind_textdomain_codeset (PACKAGE, "UTF-8");
 }
 
@@ -279,14 +279,12 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             continue;
         }
         else if (!strcmp (parg, "--gui")) {
+            // need to skip --gui here, it is handled in the client cmdline
             parg += strlen (parg);
             parg++;
             if (parg >= pend) {
-                fprintf (stderr, "--gui parameter needs an argument. E.g. GTK2 or GTK3.\n");
                 break;
             }
-            strncpy (use_gui_plugin, parg, sizeof(use_gui_plugin) - 1);
-            use_gui_plugin[sizeof(use_gui_plugin) - 1] = 0;
             parg += strlen (parg);
             parg++;
             continue;
@@ -346,7 +344,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
         plt_add_files_end (curr_plt, 0);
         plt_unref (curr_plt);
         if (!queue) {
-            messagepump_push (DB_EV_PLAY_CURRENT, 0, 1, 0);
+            messagepump_push (DB_EV_PLAY_NUM, 0, 0, 0);
             return 2; // don't reload playlist at startup
         }
     }
@@ -573,36 +571,20 @@ player_mainloop (void) {
                     }
                     break;
                 case DB_EV_PLAY_CURRENT:
-                    if (p1) {
-                        output->stop ();
-                        pl_playqueue_clear ();
-                        streamer_set_nextsong (0, 1);
-                    }
-                    else {
-                        streamer_play_current_track ();
-                    }
+                    streamer_play_current_track ();
                     break;
                 case DB_EV_PLAY_NUM:
-                    output->stop ();
                     pl_playqueue_clear ();
-                    streamer_set_nextsong (p1, 1);
-                    if (pl_get_order () == PLAYBACK_ORDER_SHUFFLE_ALBUMS) {
-                        int pl = streamer_get_current_playlist ();
-                        playlist_t *plt = plt_get_for_idx (pl);
-                        plt_init_shuffle_albums (plt, p1);
-                        plt_unref (plt);
-                    }
+                    streamer_set_nextsong (p1, 4);
                     break;
                 case DB_EV_STOP:
                     streamer_set_nextsong (-2, 0);
                     break;
                 case DB_EV_NEXT:
-                    output->stop ();
                     streamer_move_to_nextsong (1);
                     break;
                 case DB_EV_PREV:
-                    output->stop ();
-                    streamer_move_to_prevsong ();
+                    streamer_move_to_prevsong (1);
                     break;
                 case DB_EV_PAUSE:
                     if (output->state () != OUTPUT_STATE_PAUSED) {
@@ -620,8 +602,7 @@ player_mainloop (void) {
                     }
                     break;
                 case DB_EV_PLAY_RANDOM:
-                    output->stop ();
-                    streamer_move_to_randomsong ();
+                    streamer_move_to_randomsong (1);
                     break;
                 case DB_EV_PLAYLIST_REFRESH:
                     pl_save_current ();
@@ -693,13 +674,6 @@ restore_resume_state (void) {
             streamer_lock (); // need to hold streamer thread to make the resume operation atomic
             streamer_set_current_playlist (plt);
             streamer_set_nextsong (track, paused ? 2 : 3);
-            if (pl_get_order () == PLAYBACK_ORDER_SHUFFLE_ALBUMS) {
-                playlist_t *p = plt_get_for_idx (plt);
-                if (p) {
-                    plt_init_shuffle_albums (p, track);
-                    plt_unref (p);
-                }
-            }
             streamer_set_seek (pos);
             streamer_unlock ();
         }
@@ -873,6 +847,14 @@ main (int argc, char *argv[]) {
         else if (!strcmp (argv[i], "--version")) {
             fprintf (stderr, "DeaDBeeF " VERSION " Copyright © 2009-2013 Alexey Yakovenko\n");
             return 0;
+        }
+        else if (!strcmp (argv[i], "--gui")) {
+            if (i == argc-1) {
+                break;
+            }
+            i++;
+            strncpy (use_gui_plugin, argv[i], sizeof(use_gui_plugin) - 1);
+            use_gui_plugin[sizeof(use_gui_plugin) - 1] = 0;
         }
     }
 

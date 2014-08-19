@@ -1,5 +1,5 @@
 /*
-    DeaDBeeF - ultimate music player for GNU/Linux systems with X11
+    DeaDBeeF - The Ultimate Music Player
     Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
 
     This program is free software; you can redistribute it and/or
@@ -994,6 +994,7 @@ on_edit_encoder_presets_clicked        (GtkButton       *button,
             gtk_tree_path_free (path);
         }
     }
+    on_encoder_preset_cursor_changed (GTK_TREE_VIEW (list), NULL);
     gtk_dialog_run (GTK_DIALOG (dlg));
     gtk_widget_destroy (dlg);
 }
@@ -1563,7 +1564,7 @@ GtkWidget*
 title_formatting_help_link_create (gchar *widget_name, gchar *string1, gchar *string2,
                 gint int1, gint int2)
 {
-    GtkWidget *link = gtk_link_button_new_with_label ("http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Title_Formatting", _("Help"));
+    GtkWidget *link = gtk_link_button_new_with_label ("http://github.com/Alexey-Yakovenko/deadbeef/wiki/Title-formatting", _("Help"));
     return link;
 }
 
@@ -1571,7 +1572,7 @@ GtkWidget*
 encoder_cmdline_help_link_create (gchar *widget_name, gchar *string1, gchar *string2,
                 gint int1, gint int2)
 {
-    GtkWidget *link = gtk_link_button_new_with_label ("http://sourceforge.net/apps/mediawiki/deadbeef/index.php?title=Encoder_Command_Line", _("Help"));
+    GtkWidget *link = gtk_link_button_new_with_label ("http://github.com/Alexey-Yakovenko/deadbeef/wiki/Encoder-Command-Line", _("Help"));
     return link;
 }
 

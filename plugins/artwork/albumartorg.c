@@ -43,7 +43,7 @@ fetch_from_albumart_org (const char *artist, const char *album, const char *dest
     char url [1024];
     char *artist_url = uri_escape (artist, 0);
     char *album_url = uri_escape (album, 0);
-    snprintf (url, sizeof (url), "http://www.albumart.org/index.php?srchkey=%s+%s&itempage=1&newsearch=1&searchindex=Music", artist_url, album_url);
+    snprintf (url, sizeof (url), "http://www.albumart.org/index.php?searchkey=%s+%s&itempage=1&newsearch=1&searchindex=Music", artist_url, album_url);
     free (artist_url);
     free (album_url);
 

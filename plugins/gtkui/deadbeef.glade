@@ -58,7 +58,7 @@
 		      <signal name="activate" handler="on_open_activate" last_modification_time="Sat, 04 Jul 2009 12:57:58 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image647">
+			<widget class="GtkImage" id="image663">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-open</property>
 			  <property name="icon_size">1</property>
@@ -85,7 +85,7 @@
 		      <signal name="activate" handler="on_add_files_activate" last_modification_time="Sat, 04 Jul 2009 13:04:01 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image648">
+			<widget class="GtkImage" id="image664">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-add</property>
 			  <property name="icon_size">1</property>
@@ -106,7 +106,7 @@
 		      <signal name="activate" handler="on_add_folders_activate" last_modification_time="Sun, 06 Sep 2009 17:51:40 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image649">
+			<widget class="GtkImage" id="image665">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-add</property>
 			  <property name="icon_size">1</property>
@@ -175,7 +175,7 @@
 		      <signal name="activate" handler="on_quit_activate" last_modification_time="Sat, 04 Jul 2009 12:57:58 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image650">
+			<widget class="GtkImage" id="image666">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-quit</property>
 			  <property name="icon_size">1</property>
@@ -209,7 +209,7 @@
 		      <signal name="activate" handler="on_clear1_activate" last_modification_time="Sun, 06 Sep 2009 18:30:03 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image651">
+			<widget class="GtkImage" id="image667">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-clear</property>
 			  <property name="icon_size">1</property>
@@ -266,7 +266,7 @@
 			      <signal name="activate" handler="on_remove1_activate" last_modification_time="Sun, 06 Sep 2009 18:30:03 GMT"/>
 
 			      <child internal-child="image">
-				<widget class="GtkImage" id="image652">
+				<widget class="GtkImage" id="image668">
 				  <property name="visible">True</property>
 				  <property name="stock">gtk-remove</property>
 				  <property name="icon_size">1</property>
@@ -572,7 +572,7 @@
 		  <child>
 		    <widget class="GtkCheckMenuItem" id="stop_after_current">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Stop after current</property>
+		      <property name="label" translatable="yes">Stop after current track</property>
 		      <property name="use_underline">True</property>
 		      <property name="active">False</property>
 		      <signal name="activate" handler="on_stop_after_current_activate" last_modification_time="Sun, 20 Dec 2009 13:32:19 GMT"/>
@@ -625,7 +625,7 @@
 		      <signal name="activate" handler="on_help1_activate" last_modification_time="Tue, 08 Sep 2009 17:32:06 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image653">
+			<widget class="GtkImage" id="image669">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-help</property>
 			  <property name="icon_size">1</property>
@@ -685,7 +685,7 @@
 		      <signal name="activate" handler="on_about1_activate" last_modification_time="Sat, 04 Jul 2009 12:57:58 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image654">
+			<widget class="GtkImage" id="image670">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-about</property>
 			  <property name="icon_size">1</property>
@@ -706,7 +706,7 @@
 		      <signal name="activate" handler="on_translators1_activate" last_modification_time="Sun, 19 Sep 2010 13:38:07 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image655">
+			<widget class="GtkImage" id="image671">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-about</property>
 			  <property name="icon_size">1</property>
@@ -2841,7 +2841,7 @@ Album</property>
 		<widget class="GtkCheckButton" id="reset_autostop">
 		  <property name="visible">True</property>
 		  <property name="can_focus">True</property>
-		  <property name="label" translatable="yes">Auto-reset &quot;Stop after current&quot;</property>
+		  <property name="label" translatable="yes">&quot;Stop after current track&quot; option will switch off after triggering</property>
 		  <property name="use_underline">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
 		  <property name="focus_on_click">True</property>
@@ -2861,7 +2861,7 @@ Album</property>
 		<widget class="GtkCheckButton" id="reset_autostopalbum">
 		  <property name="visible">True</property>
 		  <property name="can_focus">True</property>
-		  <property name="label" translatable="yes">Auto-reset &quot;Stop after current album&quot;</property>
+		  <property name="label" translatable="yes">&quot;Stop after current album&quot; option will switch off after triggering</property>
 		  <property name="use_underline">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
 		  <property name="focus_on_click">True</property>
