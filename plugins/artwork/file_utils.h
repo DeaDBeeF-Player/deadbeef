@@ -1,7 +1,6 @@
 /*
-    Album Art plugin for DeaDBeeF
-    Copyright (C) 2009-2011 Viktor Semykin <thesame.ml@gmail.com>
-    Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
+    DeaDBeeF -- the music player
+    Copyright (C) 2009-2014 Alexey Yakovenko and other contributors
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -21,11 +20,14 @@
 
     3. This notice may not be removed or altered from any source distribution.
 */
+#ifndef __FILE_UTILS_H
+#define __FILE_UTILS_H
 
-#ifndef __ALBUMARTORG_H
-#define __ALBUMARTORG_H
+DB_functions_t *deadbeef;
 
-int
-fetch_from_albumart_org (const char *artist, const char *album, const char *dest);
+int ensure_dir (const char *dir);
+int scale_file (const char *in, const char *out, int img_size);
+int copy_file (const char *in, const char *out);
+int write_file(const char *cache_path, const char *data, const size_t data_length);
 
 #endif
