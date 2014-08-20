@@ -2169,6 +2169,27 @@ w_selproperties_init (struct ddb_gtkui_widget_s *w) {
     fill_selproperties_cb (w);
 }
 
+static void
+on_selproperties_showheaders_toggled (GtkCheckMenuItem *checkmenuitem, gpointer          user_data) {
+    w_selproperties_t *w = user_data;
+    int showheaders = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (checkmenuitem));
+    deadbeef->conf_set_int ("gtkui.selection_properties.show_headers", showheaders);
+    gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (w->tree), showheaders);
+}
+
+static void
+w_selproperties_initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
+    GtkWidget *item;
+    item = gtk_check_menu_item_new_with_mnemonic (_("Show Column Headers"));
+    gtk_widget_show (item);
+    int showheaders = deadbeef->conf_get_int ("gtkui.selection_properties.show_headers", 1);
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), showheaders);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "toggled",
+            G_CALLBACK (on_selproperties_showheaders_toggled),
+            w);
+}
+
 ddb_gtkui_widget_t *
 w_selproperties_create (void) {
     w_selproperties_t *w = malloc (sizeof (w_selproperties_t));
@@ -2177,6 +2198,7 @@ w_selproperties_create (void) {
     w->base.widget = gtk_event_box_new ();
     w->base.init = w_selproperties_init;
     w->base.message = selproperties_message;
+    w->base.initmenu = w_selproperties_initmenu;
 
     gtk_widget_set_can_focus (w->base.widget, FALSE);
 
@@ -2205,6 +2227,10 @@ w_selproperties_create (void) {
     gtk_tree_view_append_column (GTK_TREE_VIEW (w->tree), col1);
     gtk_tree_view_append_column (GTK_TREE_VIEW (w->tree), col2);
     gtk_tree_view_set_headers_clickable (GTK_TREE_VIEW (w->tree), TRUE);
+
+    int showheaders = deadbeef->conf_get_int ("gtkui.selection_properties.show_headers", 1);
+    gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (w->tree), showheaders);
+
     w_override_signals (w->base.widget, w);
 
     return (ddb_gtkui_widget_t *)w;
