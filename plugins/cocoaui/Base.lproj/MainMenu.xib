@@ -246,22 +246,22 @@
         <window title="deadbeef" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="371">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="335" y="390" width="507" height="214"/>
+            <rect key="contentRect" x="335" y="390" width="507" height="203"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
             <value key="minSize" type="size" width="500" height="200"/>
             <view key="contentView" id="372">
-                <rect key="frame" x="0.0" y="0.0" width="507" height="214"/>
+                <rect key="frame" x="0.0" y="0.0" width="507" height="203"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="qvm-yi-IaA">
-                        <rect key="frame" x="-1" y="-147" width="509" height="362"/>
+                        <rect key="frame" x="-1" y="-1" width="509" height="205"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <clipView key="contentView" id="Zbw-2Z-q7N">
-                            <rect key="frame" x="1" y="17" width="507" height="344"/>
+                            <rect key="frame" x="1" y="17" width="507" height="187"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" autosaveColumns="NO" headerView="Pxp-xE-pFF" id="0tA-Oo-Ry1">
-                                    <rect key="frame" x="0.0" y="0.0" width="507" height="344"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="507" height="187"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
