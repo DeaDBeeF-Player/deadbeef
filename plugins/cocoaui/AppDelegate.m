@@ -9,12 +9,25 @@ extern DB_functions_t *deadbeef;
 
 DB_playItem_t *prev = NULL;
 int prevIdx = -1;
+NSImage *playImg;
+NSImage *pauseImg;
+AppDelegate *g_appDelegate;
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-//    [playlist setDelegate:(id<NSTableViewDelegate>)self];
+    playImg = [NSImage imageNamed:@"btnplayTemplate.pdf"];
+    pauseImg = [NSImage imageNamed:@"btnpauseTemplate.pdf"];
     [playlist setDataSource:(id<NSTableViewDataSource>)self];
+    [playlist setDoubleAction:@selector(playlistDoubleAction)];
+    g_appDelegate = self;
 }
+
+- (void)playlistDoubleAction
+{
+    int row = [playlist clickedRow];
+    deadbeef->sendmessage(DB_EV_PLAY_NUM, 0, row, 0);
+}
+
 
 - (IBAction)tbClicked:(id)sender {
     NSInteger selectedSegment = [sender selectedSegment];
@@ -46,10 +59,6 @@ int prevIdx = -1;
 
 - (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(int)rowIndex
 {
-    if ([[aTableColumn identifier] isEqualToString:@"playing"]) {
-        return NULL;
-    }
-
     DB_playItem_t *it = NULL;
     
     if (prevIdx != -1) {
@@ -58,10 +67,10 @@ int prevIdx = -1;
             deadbeef->pl_item_ref (it);
         }
         else if (prevIdx == rowIndex - 1) {
-            it = deadbeef->pl_get_prev (prev, PL_MAIN);
+            it = deadbeef->pl_get_next (prev, PL_MAIN);
         }
         else if (prevIdx == rowIndex + 1) {
-            it = deadbeef->pl_get_next (prev, PL_MAIN);
+            it = deadbeef->pl_get_prev (prev, PL_MAIN);
         }
     
     }
@@ -75,22 +84,43 @@ int prevIdx = -1;
     prev = it;
     prevIdx = rowIndex;
 
-    if ([[aTableColumn identifier] isEqualToString:@"albumartist"]) {
+    if ([[aTableColumn identifier] isEqualToString:@"playing"]) {
+        DB_playItem_t *playing_track = deadbeef->streamer_get_playing_track ();
+        NSImage *img = NULL;
+        if (it == playing_track) {
+            int paused = deadbeef->get_output ()->state () == OUTPUT_STATE_PAUSED;
+            int buffering = !deadbeef->streamer_ok_to_read (-1);
+            if (paused) {
+                img = pauseImg;
+            }
+            else if (!buffering) {
+                img = playImg;
+            }
+            else {
+                //img = bufferingImg;
+            }
+        }
+        if (playing_track) {
+            deadbeef->pl_item_unref (playing_track);
+        }
+        return img;
+    }
+    else if ([[aTableColumn identifier] isEqualToString:@"albumartist"]) {
         char buf[1024];
         deadbeef->pl_format_title (it, rowIndex, buf, sizeof (buf), -1, "%a - %b");
         return [NSString stringWithUTF8String:buf];
     }
-    if ([[aTableColumn identifier] isEqualToString:@"trknum"]) {
+    else if ([[aTableColumn identifier] isEqualToString:@"trknum"]) {
         char buf[1024];
         deadbeef->pl_format_title (it, rowIndex, buf, sizeof (buf), -1, "%n");
         return [NSString stringWithUTF8String:buf];
     }
-    if ([[aTableColumn identifier] isEqualToString:@"title"]) {
+    else if ([[aTableColumn identifier] isEqualToString:@"title"]) {
         char buf[1024];
         deadbeef->pl_format_title (it, rowIndex, buf, sizeof (buf), -1, "%t");
         return [NSString stringWithUTF8String:buf];
     }
-    if ([[aTableColumn identifier] isEqualToString:@"duration"]) {
+    else if ([[aTableColumn identifier] isEqualToString:@"duration"]) {
         char buf[1024];
         deadbeef->pl_format_title (it, rowIndex, buf, sizeof (buf), -1, "%l");
         return [NSString stringWithUTF8String:buf];
@@ -101,23 +131,12 @@ int prevIdx = -1;
 
 - (IBAction)openFilesAction:(id)sender {
     NSOpenPanel* openDlg = [NSOpenPanel openPanel];
-    
-    // Enable the selection of files in the dialog.
     [openDlg setCanChooseFiles:YES];
     [openDlg setAllowsMultipleSelection:YES];
-    
-    // Enable the selection of directories in the dialog.
     [openDlg setCanChooseDirectories:NO];
-    
-    // Display the dialog.  If the OK button was pressed,
-    // process the files.
     if ( [openDlg runModalForDirectory:nil file:nil] == NSOKButton )
     {
-        // Get an array containing the full filenames of all
-        // files and directories selected.
         NSArray* files = [openDlg filenames];
-        
-        // Loop through all the files and process them.
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
         deadbeef->plt_clear(plt);
         if (plt) {
@@ -145,4 +164,18 @@ int prevIdx = -1;
 
 - (IBAction)clearAction:(id)sender {
 }
+
+- (void)reloadPlaylistData {
+    [playlist reloadData];
+}
+
++ (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2
+{
+
+    if (_id == DB_EV_TOGGLE_PAUSE || _id == DB_EV_PLAYLIST_REFRESH || _id == DB_EV_PLAYLISTCHANGED || _id == DB_EV_PLAYLISTSWITCHED || _id == DB_EV_TRACKINFOCHANGED) {
+        [g_appDelegate performSelectorOnMainThread:@selector(reloadPlaylistData) withObject:nil waitUntilDone:NO];
+    }
+    return 0;
+}
+
 @end
