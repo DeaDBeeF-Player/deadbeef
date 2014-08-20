@@ -96,13 +96,17 @@ fill_pltbrowser_cb (gpointer data) {
     gtk_list_store_clear (store);
     int n = deadbeef->plt_get_count ();
     int curr = deadbeef->plt_get_curr_idx ();
+
     for (int i = 0; i < n; i++) {
         ddb_playlist_t *plt = deadbeef->plt_get_for_idx (i);
         GtkTreeIter iter;
         gtk_list_store_append (store, &iter);
         char buf[1000];
+        char buf2[100];
         deadbeef->plt_get_title (plt, buf, sizeof (buf));
-        gtk_list_store_set (store, &iter, 0, buf, -1);
+        int num_items = deadbeef->plt_get_item_count (plt, PL_MAIN);
+        snprintf (buf2, sizeof (buf2), "%d", num_items);
+        gtk_list_store_set (store, &iter, 0, buf, 1, buf2, -1);
     }
     if (curr != -1) {
         GtkTreePath *path = gtk_tree_path_new_from_indices (curr, -1);
@@ -120,6 +124,7 @@ static int
 pltbrowser_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     switch (id) {
     case DB_EV_PLAYLISTSWITCHED:
+    case DB_EV_PLAYLISTCHANGED:
         g_idle_add (fill_pltbrowser_cb, w);
         break;
     }
@@ -175,6 +180,27 @@ on_pltbrowser_row_activated (GtkTreeView *tree_view, GtkTreePath *path, GtkTreeV
     deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, 0, 0);
 }
 
+static void
+on_pltbrowser_showheaders_toggled (GtkCheckMenuItem *checkmenuitem, gpointer          user_data) {
+    w_pltbrowser_t *w = user_data;
+    int showheaders = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (checkmenuitem));
+    deadbeef->conf_set_int ("gtkui.pltbrowser.show_headers", showheaders);
+    gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (w->tree), showheaders);
+}
+
+static void
+w_pltbrowser_initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
+    GtkWidget *item;
+    item = gtk_check_menu_item_new_with_mnemonic (_("Show Column Headers"));
+    gtk_widget_show (item);
+    int showheaders = deadbeef->conf_get_int ("gtkui.pltbrowser.show_headers", 1);
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), showheaders);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "toggled",
+            G_CALLBACK (on_pltbrowser_showheaders_toggled),
+            w);
+}
+
 static ddb_gtkui_widget_t *
 w_pltbrowser_create (void) {
     w_pltbrowser_t *w = malloc (sizeof (w_pltbrowser_t));
@@ -183,6 +209,7 @@ w_pltbrowser_create (void) {
     w->base.widget = gtk_event_box_new ();
     w->base.init = w_pltbrowser_init;
     w->base.message = pltbrowser_message;
+    w->base.initmenu = w_pltbrowser_initmenu;
 
     gtk_widget_set_can_focus (w->base.widget, FALSE);
 
@@ -192,9 +219,9 @@ w_pltbrowser_create (void) {
     gtk_container_add (GTK_CONTAINER (w->base.widget), scroll);
 
     gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scroll), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+    gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scroll), GTK_SHADOW_ETCHED_IN);
     w->tree = gtk_tree_view_new ();
     gtk_tree_view_set_reorderable (GTK_TREE_VIEW (w->tree), TRUE);
-    gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (w->tree), FALSE);
     gtk_tree_view_set_enable_search (GTK_TREE_VIEW (w->tree), TRUE);
     GtkTreeSelection *sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (w->tree));
     gtk_tree_selection_set_mode (sel, GTK_SELECTION_BROWSE);
@@ -202,7 +229,7 @@ w_pltbrowser_create (void) {
 
     gtk_container_add (GTK_CONTAINER (scroll), w->tree);
 
-    GtkListStore *store = gtk_list_store_new (1, G_TYPE_STRING);
+    GtkListStore *store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
     gtk_tree_view_set_model (GTK_TREE_VIEW (w->tree), GTK_TREE_MODEL (store));
 
     w->ri_id = g_signal_connect ((gpointer) store, "row_inserted", G_CALLBACK (on_pltbrowser_row_inserted), w);
@@ -210,9 +237,19 @@ w_pltbrowser_create (void) {
     gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (w->tree), TRUE);
 
     GtkCellRenderer *rend1 = gtk_cell_renderer_text_new ();
-    GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes (_("Name"), rend1, "text", 0, NULL);
-    gtk_tree_view_append_column (GTK_TREE_VIEW (w->tree), col1);
+    GtkCellRenderer *rend2 = gtk_cell_renderer_text_new ();
 
+    GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes (_("Name"), rend1, "text", 0, NULL);
+    GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes (_("Items"), rend2, "text", 1, NULL);
+    gtk_tree_view_append_column (GTK_TREE_VIEW (w->tree), col1);
+    gtk_tree_view_append_column (GTK_TREE_VIEW (w->tree), col2);
+
+    gtk_tree_view_set_headers_clickable (GTK_TREE_VIEW (w->tree), TRUE);
+
+    int showheaders = deadbeef->conf_get_int ("gtkui.pltbrowser.show_headers", 1);
+    gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (w->tree), showheaders);
+
+    gtk_cell_renderer_set_alignment (GTK_CELL_RENDERER (rend2), 1.0, 0.0);
 
     w->cc_id = g_signal_connect ((gpointer) w->tree, "cursor_changed",
             G_CALLBACK (on_pltbrowser_cursor_changed),

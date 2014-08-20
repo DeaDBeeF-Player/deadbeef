@@ -789,12 +789,76 @@ static DB_plugin_action_t action_jump_to_current = {
     .next = &action_reload_metadata
 };
 
+static DB_plugin_action_t action_skip_to_prev_genre = {
+    .title = "Playback/Skip to/Previous genre",
+    .name = "skip_to_prev_genre",
+    .flags = DB_ACTION_COMMON | DB_ACTION_ADD_MENU,
+    .callback2 = action_skip_to_prev_genre_handler,
+    .next = &action_jump_to_current
+};
+
+static DB_plugin_action_t action_skip_to_prev_composer = {
+    .title = "Playback/Skip to/Previous composer",
+    .name = "skip_to_prev_composer",
+    .flags = DB_ACTION_COMMON | DB_ACTION_ADD_MENU,
+    .callback2 = action_skip_to_prev_composer_handler,
+    .next = &action_skip_to_prev_genre
+};
+
+static DB_plugin_action_t action_skip_to_prev_artist = {
+    .title = "Playback/Skip to/Previous artist",
+    .name = "skip_to_prev_artist",
+    .flags = DB_ACTION_COMMON | DB_ACTION_ADD_MENU,
+    .callback2 = action_skip_to_prev_artist_handler,
+    .next = &action_skip_to_prev_composer
+};
+
+static DB_plugin_action_t action_skip_to_prev_album = {
+    .title = "Playback/Skip to/Previous album",
+    .name = "skip_to_prev_album",
+    .flags = DB_ACTION_COMMON | DB_ACTION_ADD_MENU,
+    .callback2 = action_skip_to_prev_album_handler,
+    .next = &action_skip_to_prev_artist
+};
+
+static DB_plugin_action_t action_skip_to_next_genre = {
+    .title = "Playback/Skip to/Next genre",
+    .name = "skip_to_next_genre",
+    .flags = DB_ACTION_COMMON | DB_ACTION_ADD_MENU,
+    .callback2 = action_skip_to_next_genre_handler,
+    .next = &action_skip_to_prev_album
+};
+
+static DB_plugin_action_t action_skip_to_next_composer = {
+    .title = "Playback/Skip to/Next composer",
+    .name = "skip_to_next_composer",
+    .flags = DB_ACTION_COMMON | DB_ACTION_ADD_MENU,
+    .callback2 = action_skip_to_next_composer_handler,
+    .next = &action_skip_to_next_genre
+};
+
+static DB_plugin_action_t action_skip_to_next_artist = {
+    .title = "Playback/Skip to/Next artist",
+    .name = "skip_to_next_artist",
+    .flags = DB_ACTION_COMMON | DB_ACTION_ADD_MENU,
+    .callback2 = action_skip_to_next_artist_handler,
+    .next = &action_skip_to_next_composer
+};
+
+static DB_plugin_action_t action_skip_to_next_album = {
+    .title = "Playback/Skip to/Next album",
+    .name = "skip_to_next_album",
+    .flags = DB_ACTION_COMMON | DB_ACTION_ADD_MENU,
+    .callback2 = action_skip_to_next_album_handler,
+    .next = &action_skip_to_next_artist
+};
+
 static DB_plugin_action_t action_next_playlist = {
     .title = "Next Playlist",
     .name = "next_playlist",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_next_playlist_handler,
-    .next = &action_jump_to_current
+    .next = &action_skip_to_next_album
 };
 
 static DB_plugin_action_t action_prev_playlist = {

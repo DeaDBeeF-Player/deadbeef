@@ -236,6 +236,7 @@ action_tree_append (const char *title, GtkTreeStore *store, GtkTreeIter *root_it
     char *t = strdupa (title);
     char *p = t;
     GtkTreeIter i;
+    GtkTreeIter newroot;
     int got_iter = 0;
     for (;;) {
         char *s = strchr (p, '/');
@@ -257,7 +258,8 @@ action_tree_append (const char *title, GtkTreeStore *store, GtkTreeIter *root_it
         if (!res) {
             gtk_tree_store_append (store, &i, root_iter);
             gtk_tree_store_set (store, &i, 0, p, 1, NULL, 2, -1, -1);
-            root_iter = &i;
+            memcpy (&newroot, &i, sizeof (GtkTreeIter));
+            root_iter = &newroot;
         }
         else {
             int found = 0;
@@ -266,7 +268,8 @@ action_tree_append (const char *title, GtkTreeStore *store, GtkTreeIter *root_it
                 gtk_tree_model_get_value (GTK_TREE_MODEL (store), &i, 0, &val);
                 const char *n = g_value_get_string (&val);
                 if (n && !strcmp (n, p)) {
-                    root_iter = &i;
+                    memcpy (&newroot, &i, sizeof (GtkTreeIter));
+                    root_iter = &newroot;
                     found = 1;
                     break;
                 }
@@ -318,6 +321,7 @@ init_action_tree (GtkWidget *actions, const char *act, int ctx) {
     GtkTreeIter action_main_iter;
     gtk_tree_store_append (actions_store, &action_main_iter, NULL);
     gtk_tree_store_set (actions_store, &action_main_iter, 0, _("Main"), -1);
+
     GtkTreeIter action_selection_iter;
     gtk_tree_store_append (actions_store, &action_selection_iter, NULL);
     gtk_tree_store_set (actions_store, &action_selection_iter, 0, _("Selected track(s)"), -1);
