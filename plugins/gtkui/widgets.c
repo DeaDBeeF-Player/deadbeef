@@ -2169,6 +2169,27 @@ w_selproperties_init (struct ddb_gtkui_widget_s *w) {
     fill_selproperties_cb (w);
 }
 
+static void
+on_selproperties_showheaders_toggled (GtkCheckMenuItem *checkmenuitem, gpointer          user_data) {
+    w_selproperties_t *w = user_data;
+    int showheaders = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (checkmenuitem));
+    deadbeef->conf_set_int ("gtkui.selection_properties.show_headers", showheaders);
+    gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (w->tree), showheaders);
+}
+
+static void
+w_selproperties_initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
+    GtkWidget *item;
+    item = gtk_check_menu_item_new_with_mnemonic (_("Show Column Headers"));
+    gtk_widget_show (item);
+    int showheaders = deadbeef->conf_get_int ("gtkui.selection_properties.show_headers", 1);
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), showheaders);
+    gtk_container_add (GTK_CONTAINER (menu), item);
+    g_signal_connect ((gpointer) item, "toggled",
+            G_CALLBACK (on_selproperties_showheaders_toggled),
+            w);
+}
+
 ddb_gtkui_widget_t *
 w_selproperties_create (void) {
     w_selproperties_t *w = malloc (sizeof (w_selproperties_t));
@@ -2177,6 +2198,7 @@ w_selproperties_create (void) {
     w->base.widget = gtk_event_box_new ();
     w->base.init = w_selproperties_init;
     w->base.message = selproperties_message;
+    w->base.initmenu = w_selproperties_initmenu;
 
     gtk_widget_set_can_focus (w->base.widget, FALSE);
 
@@ -2186,6 +2208,7 @@ w_selproperties_create (void) {
     gtk_container_add (GTK_CONTAINER (w->base.widget), scroll);
 
     gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scroll), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+    gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scroll), GTK_SHADOW_ETCHED_IN);
     w->tree = gtk_tree_view_new ();
     gtk_widget_show (w->tree);
     gtk_tree_view_set_enable_search (GTK_TREE_VIEW (w->tree), FALSE);
@@ -2198,12 +2221,16 @@ w_selproperties_create (void) {
     GtkCellRenderer *rend1 = gtk_cell_renderer_text_new ();
     GtkCellRenderer *rend2 = gtk_cell_renderer_text_new ();
     GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes (_("Key"), rend1, "text", 0, NULL);
-    gtk_tree_view_column_set_resizable (col1, TRUE);
+    gtk_tree_view_column_set_sizing (col1, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
     GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes (_("Value"), rend2, "text", 1, NULL);
-    gtk_tree_view_column_set_resizable (col2, TRUE);
+    gtk_tree_view_column_set_sizing (col2, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
     gtk_tree_view_append_column (GTK_TREE_VIEW (w->tree), col1);
     gtk_tree_view_append_column (GTK_TREE_VIEW (w->tree), col2);
     gtk_tree_view_set_headers_clickable (GTK_TREE_VIEW (w->tree), TRUE);
+
+    int showheaders = deadbeef->conf_get_int ("gtkui.selection_properties.show_headers", 1);
+    gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (w->tree), showheaders);
+
     w_override_signals (w->base.widget, w);
 
     return (ddb_gtkui_widget_t *)w;
