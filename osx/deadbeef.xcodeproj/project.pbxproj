@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2DA6F89C19A5332D002151EB /* escape.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA6F89B19A5332D002151EB /* escape.c */; };
+		2DA6F8A019A53334002151EB /* escape.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA6F89F19A53334002151EB /* escape.h */; };
 		2DD9EF0619A5089F00189344 /* cocoautil.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD9EF0419A5089F00189344 /* cocoautil.h */; };
 		2DD9EF0719A5089F00189344 /* cocoautil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD9EF0519A5089F00189344 /* cocoautil.m */; };
 		4D1B3E7E18379829003E6066 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B3E7D18379829003E6066 /* Cocoa.framework */; };
@@ -74,6 +76,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2DA6F89B19A5332D002151EB /* escape.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = escape.c; sourceTree = "<group>"; };
+		2DA6F89F19A53334002151EB /* escape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = escape.h; sourceTree = "<group>"; };
 		2DD9EF0419A5089F00189344 /* cocoautil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cocoautil.h; path = projects/../cocoautil.h; sourceTree = "<group>"; };
 		2DD9EF0519A5089F00189344 /* cocoautil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = cocoautil.m; path = projects/../cocoautil.m; sourceTree = "<group>"; };
 		4D1B3E7A18379829003E6066 /* deadbeef.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = deadbeef.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -299,6 +303,8 @@
 		4D2E5081183926400054B964 /* main */ = {
 			isa = PBXGroup;
 			children = (
+				2DA6F89F19A53334002151EB /* escape.h */,
+				2DA6F89B19A5332D002151EB /* escape.c */,
 				2DD9EF0419A5089F00189344 /* cocoautil.h */,
 				2DD9EF0519A5089F00189344 /* cocoautil.m */,
 				4D1B3ECD1837EC44003E6066 /* common.h */,
@@ -411,6 +417,7 @@
 			files = (
 				2DD9EF0619A5089F00189344 /* cocoautil.h in Headers */,
 				4DA7719D1945B92100EB0AC1 /* deadbeef.h in Headers */,
+				2DA6F8A019A53334002151EB /* escape.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -527,6 +534,7 @@
 				2DD9EF0719A5089F00189344 /* cocoautil.m in Sources */,
 				4D1B4F4D1837EC4A003E6066 /* ringbuf.c in Sources */,
 				4D1B4AA01837EC49003E6066 /* plmeta.c in Sources */,
+				2DA6F89C19A5332D002151EB /* escape.c in Sources */,
 				4D1B4F601837EC4A003E6066 /* threading_pthread.c in Sources */,
 				4DA72BED1838EAAB00A98C62 /* main.m in Sources */,
 				4D1B4A8F1837EC49003E6066 /* main.c in Sources */,
