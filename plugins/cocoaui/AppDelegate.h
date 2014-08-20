@@ -10,14 +10,12 @@
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
-- (int)numberOfRowsInTableView:(NSTableView *)aTableView;
-
-- (id)tableView:(NSTableView *)aTableView
-objectValueForTableColumn:(NSTableColumn *)aTableColumn
-            row:(int)rowIndex;
-
 @property (assign) IBOutlet NSWindow *window;
-@property (assign) IBOutlet NSTableView *playlists;
-@property (assign) IBOutlet NSArrayController *arrayController;
+@property (unsafe_unretained) IBOutlet NSTableView *playlist;
+- (IBAction)openFilesAction:(id)sender;
+- (IBAction)addFilesAction:(id)sender;
+- (IBAction)addFoldersAction:(id)sender;
+- (IBAction)clearAction:(id)sender;
+
 
 @end
