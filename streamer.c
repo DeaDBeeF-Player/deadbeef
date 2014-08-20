@@ -807,6 +807,7 @@ streamer_move_to_nextsong (int r) {
         streamer_abort_files ();
     }
     handler_push (handler, STR_EV_NEXT, 0, r, 0);
+    return 0;
 }
 
 int
@@ -815,6 +816,7 @@ streamer_move_to_prevsong (int r) {
         streamer_abort_files ();
     }
     handler_push (handler, STR_EV_PREV, 0, r, 0);
+    return 0;
 }
 
 int
@@ -823,6 +825,7 @@ streamer_move_to_randomsong (int r) {
         streamer_abort_files ();
     }
     handler_push (handler, STR_EV_RAND, 0, r, 0);
+    return 0;
 }
 
 // playlist must call that whenever item was removed
