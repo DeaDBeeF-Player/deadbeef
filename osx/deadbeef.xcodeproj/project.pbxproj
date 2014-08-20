@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2DD9EF0619A5089F00189344 /* cocoautil.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD9EF0419A5089F00189344 /* cocoautil.h */; };
+		2DD9EF0719A5089F00189344 /* cocoautil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD9EF0519A5089F00189344 /* cocoautil.m */; };
 		4D1B3E7E18379829003E6066 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B3E7D18379829003E6066 /* Cocoa.framework */; };
 		4D1B4A071837EC49003E6066 /* conf.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3ECE1837EC44003E6066 /* conf.c */; };
 		4D1B4A0F1837EC49003E6066 /* ConvertUTF.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3ED81837EC44003E6066 /* ConvertUTF.c */; };
@@ -42,8 +44,6 @@
 		4D2A6CA3183BC29400AC6BF5 /* btnprevTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D2A6C9F183BC29400AC6BF5 /* btnprevTemplate.pdf */; };
 		4D2A6CA4183BC29400AC6BF5 /* btnstopTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D2A6CA0183BC29400AC6BF5 /* btnstopTemplate.pdf */; };
 		4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */; };
-		4D96ECD91945CC7B00D739F6 /* cocoautil.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D96ECD81945CC7B00D739F6 /* cocoautil.m */; };
-		4D96ECDB1945CC8200D739F6 /* cocoautil.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D96ECDA1945CC8200D739F6 /* cocoautil.h */; };
 		4DA72BE71838EAAB00A98C62 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA72BDA1838EAAB00A98C62 /* AppDelegate.m */; };
 		4DA72BE81838EAAB00A98C62 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DA72BDC1838EAAB00A98C62 /* MainMenu.xib */; };
 		4DA72BE91838EAAB00A98C62 /* deadbeef-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4DA72BDE1838EAAB00A98C62 /* deadbeef-Info.plist */; };
@@ -74,6 +74,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2DD9EF0419A5089F00189344 /* cocoautil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cocoautil.h; path = projects/../cocoautil.h; sourceTree = "<group>"; };
+		2DD9EF0519A5089F00189344 /* cocoautil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = cocoautil.m; path = projects/../cocoautil.m; sourceTree = "<group>"; };
 		4D1B3E7A18379829003E6066 /* deadbeef.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = deadbeef.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D1B3E7D18379829003E6066 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		4D1B3E8018379829003E6066 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -142,8 +144,6 @@
 		4D2A6C9F183BC29400AC6BF5 /* btnprevTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnprevTemplate.pdf; path = images/btnprevTemplate.pdf; sourceTree = "<group>"; };
 		4D2A6CA0183BC29400AC6BF5 /* btnstopTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnstopTemplate.pdf; path = images/btnstopTemplate.pdf; sourceTree = "<group>"; };
 		4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = btnplayTemplate.pdf; path = images/btnplayTemplate.pdf; sourceTree = "<group>"; };
-		4D96ECD81945CC7B00D739F6 /* cocoautil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cocoautil.m; sourceTree = "<group>"; };
-		4D96ECDA1945CC8200D739F6 /* cocoautil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocoautil.h; sourceTree = "<group>"; };
 		4DA72BD91838EAAB00A98C62 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		4DA72BDA1838EAAB00A98C62 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		4DA72BDD1838EAAB00A98C62 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = MainMenu.xib; sourceTree = "<group>"; };
@@ -299,8 +299,8 @@
 		4D2E5081183926400054B964 /* main */ = {
 			isa = PBXGroup;
 			children = (
-				4D96ECD81945CC7B00D739F6 /* cocoautil.m */,
-				4D96ECDA1945CC8200D739F6 /* cocoautil.h */,
+				2DD9EF0419A5089F00189344 /* cocoautil.h */,
+				2DD9EF0519A5089F00189344 /* cocoautil.m */,
 				4D1B3ECD1837EC44003E6066 /* common.h */,
 				4D1B3ECE1837EC44003E6066 /* conf.c */,
 				4D1B3ECF1837EC44003E6066 /* conf.h */,
@@ -409,7 +409,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4D96ECDB1945CC8200D739F6 /* cocoautil.h in Headers */,
+				2DD9EF0619A5089F00189344 /* cocoautil.h in Headers */,
 				4DA7719D1945B92100EB0AC1 /* deadbeef.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -524,10 +524,10 @@
 				4D1B4A9F1837EC49003E6066 /* playlist.c in Sources */,
 				4D1B4A931837EC49003E6066 /* messagepump.c in Sources */,
 				4D1B4A921837EC49003E6066 /* md5.c in Sources */,
+				2DD9EF0719A5089F00189344 /* cocoautil.m in Sources */,
 				4D1B4F4D1837EC4A003E6066 /* ringbuf.c in Sources */,
 				4D1B4AA01837EC49003E6066 /* plmeta.c in Sources */,
 				4D1B4F601837EC4A003E6066 /* threading_pthread.c in Sources */,
-				4D96ECD91945CC7B00D739F6 /* cocoautil.m in Sources */,
 				4DA72BED1838EAAB00A98C62 /* main.m in Sources */,
 				4D1B4A8F1837EC49003E6066 /* main.c in Sources */,
 				4D1B4A941837EC49003E6066 /* metacache.c in Sources */,
@@ -690,7 +690,7 @@
 				INFOPLIST_FILE = "../plugins/cocoaui/deadbeef-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/oleksiy/deadbeef-deps-osx/libmad-0.15.1b/.libs",
+					"/Users/oleksiy/prj/deadbeef-deps-osx/libmad-0.15.1b/.libs",
 					/Users/oleksiy/prj/deadbeef/plugins/aac/.libs,
 					/Users/oleksiy/prj/deadbeef/plugins/adplug/.libs,
 					/Users/oleksiy/prj/deadbeef/plugins/alac/.libs,
@@ -748,7 +748,7 @@
 				INFOPLIST_FILE = "../plugins/cocoaui/deadbeef-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/oleksiy/deadbeef-deps-osx/libmad-0.15.1b/.libs",
+					"/Users/oleksiy/prj/deadbeef-deps-osx/libmad-0.15.1b/.libs",
 					/Users/oleksiy/prj/deadbeef/plugins/aac/.libs,
 					/Users/oleksiy/prj/deadbeef/plugins/adplug/.libs,
 					/Users/oleksiy/prj/deadbeef/plugins/alac/.libs,

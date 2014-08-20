@@ -36,31 +36,31 @@
 
 /* Begin PBXFileReference section */
 		4D533FD21838E017009EBA01 /* libmad.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libmad.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		4D5340041838E110009EBA01 /* bit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bit.c; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/bit.c"; sourceTree = SOURCE_ROOT; };
-		4D5340051838E110009EBA01 /* bit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bit.h; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/bit.h"; sourceTree = SOURCE_ROOT; };
-		4D53400A1838E110009EBA01 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/config.h"; sourceTree = SOURCE_ROOT; };
-		4D5340151838E110009EBA01 /* decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = decoder.c; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/decoder.c"; sourceTree = SOURCE_ROOT; };
-		4D5340161838E110009EBA01 /* decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = decoder.h; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/decoder.h"; sourceTree = SOURCE_ROOT; };
-		4D53401A1838E110009EBA01 /* fixed.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fixed.c; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/fixed.c"; sourceTree = SOURCE_ROOT; };
-		4D53401B1838E110009EBA01 /* fixed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fixed.h; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/fixed.h"; sourceTree = SOURCE_ROOT; };
-		4D53401E1838E110009EBA01 /* frame.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = frame.c; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/frame.c"; sourceTree = SOURCE_ROOT; };
-		4D53401F1838E110009EBA01 /* frame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = frame.h; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/frame.h"; sourceTree = SOURCE_ROOT; };
-		4D5340221838E110009EBA01 /* global.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = global.h; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/global.h"; sourceTree = SOURCE_ROOT; };
-		4D5340231838E110009EBA01 /* huffman.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = huffman.c; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/huffman.c"; sourceTree = SOURCE_ROOT; };
-		4D5340241838E110009EBA01 /* huffman.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = huffman.h; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/huffman.h"; sourceTree = SOURCE_ROOT; };
-		4D53402B1838E110009EBA01 /* layer12.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = layer12.c; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/layer12.c"; sourceTree = SOURCE_ROOT; };
-		4D53402C1838E110009EBA01 /* layer12.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = layer12.h; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/layer12.h"; sourceTree = SOURCE_ROOT; };
-		4D53402F1838E110009EBA01 /* layer3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = layer3.c; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/layer3.c"; sourceTree = SOURCE_ROOT; };
-		4D5340301838E110009EBA01 /* layer3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = layer3.h; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/layer3.h"; sourceTree = SOURCE_ROOT; };
-		4D5340391838E110009EBA01 /* mad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mad.h; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/mad.h"; sourceTree = SOURCE_ROOT; };
-		4D53404D1838E110009EBA01 /* stream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stream.c; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/stream.c"; sourceTree = SOURCE_ROOT; };
-		4D53404E1838E110009EBA01 /* stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stream.h; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/stream.h"; sourceTree = SOURCE_ROOT; };
-		4D5340511838E110009EBA01 /* synth.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = synth.c; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/synth.c"; sourceTree = SOURCE_ROOT; };
-		4D5340521838E110009EBA01 /* synth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = synth.h; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/synth.h"; sourceTree = SOURCE_ROOT; };
-		4D5340551838E110009EBA01 /* timer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = timer.c; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/timer.c"; sourceTree = SOURCE_ROOT; };
-		4D5340561838E110009EBA01 /* timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = timer.h; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/timer.h"; sourceTree = SOURCE_ROOT; };
-		4D53405B1838E110009EBA01 /* version.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = version.c; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/version.c"; sourceTree = SOURCE_ROOT; };
-		4D53405C1838E110009EBA01 /* version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = version.h; path = "../../../deadbeef-deps-osx/libmad-0.15.1b/version.h"; sourceTree = SOURCE_ROOT; };
+		4D5340041838E110009EBA01 /* bit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bit.c; path = "deps/libmad-0.15.1b/bit.c"; sourceTree = SOURCE_ROOT; };
+		4D5340051838E110009EBA01 /* bit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bit.h; path = "deps/libmad-0.15.1b/bit.h"; sourceTree = SOURCE_ROOT; };
+		4D53400A1838E110009EBA01 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = "deps/libmad-0.15.1b/config.h"; sourceTree = SOURCE_ROOT; };
+		4D5340151838E110009EBA01 /* decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = decoder.c; path = "deps/libmad-0.15.1b/decoder.c"; sourceTree = SOURCE_ROOT; };
+		4D5340161838E110009EBA01 /* decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = decoder.h; path = "deps/libmad-0.15.1b/decoder.h"; sourceTree = SOURCE_ROOT; };
+		4D53401A1838E110009EBA01 /* fixed.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fixed.c; path = "deps/libmad-0.15.1b/fixed.c"; sourceTree = SOURCE_ROOT; };
+		4D53401B1838E110009EBA01 /* fixed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fixed.h; path = "deps/libmad-0.15.1b/fixed.h"; sourceTree = SOURCE_ROOT; };
+		4D53401E1838E110009EBA01 /* frame.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = frame.c; path = "deps/libmad-0.15.1b/frame.c"; sourceTree = SOURCE_ROOT; };
+		4D53401F1838E110009EBA01 /* frame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = frame.h; path = "deps/libmad-0.15.1b/frame.h"; sourceTree = SOURCE_ROOT; };
+		4D5340221838E110009EBA01 /* global.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = global.h; path = "deps/libmad-0.15.1b/global.h"; sourceTree = SOURCE_ROOT; };
+		4D5340231838E110009EBA01 /* huffman.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = huffman.c; path = "deps/libmad-0.15.1b/huffman.c"; sourceTree = SOURCE_ROOT; };
+		4D5340241838E110009EBA01 /* huffman.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = huffman.h; path = "deps/libmad-0.15.1b/huffman.h"; sourceTree = SOURCE_ROOT; };
+		4D53402B1838E110009EBA01 /* layer12.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = layer12.c; path = "deps/libmad-0.15.1b/layer12.c"; sourceTree = SOURCE_ROOT; };
+		4D53402C1838E110009EBA01 /* layer12.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = layer12.h; path = "deps/libmad-0.15.1b/layer12.h"; sourceTree = SOURCE_ROOT; };
+		4D53402F1838E110009EBA01 /* layer3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = layer3.c; path = "deps/libmad-0.15.1b/layer3.c"; sourceTree = SOURCE_ROOT; };
+		4D5340301838E110009EBA01 /* layer3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = layer3.h; path = "deps/libmad-0.15.1b/layer3.h"; sourceTree = SOURCE_ROOT; };
+		4D5340391838E110009EBA01 /* mad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mad.h; path = "deps/libmad-0.15.1b/mad.h"; sourceTree = SOURCE_ROOT; };
+		4D53404D1838E110009EBA01 /* stream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stream.c; path = "deps/libmad-0.15.1b/stream.c"; sourceTree = SOURCE_ROOT; };
+		4D53404E1838E110009EBA01 /* stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stream.h; path = "deps/libmad-0.15.1b/stream.h"; sourceTree = SOURCE_ROOT; };
+		4D5340511838E110009EBA01 /* synth.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = synth.c; path = "deps/libmad-0.15.1b/synth.c"; sourceTree = SOURCE_ROOT; };
+		4D5340521838E110009EBA01 /* synth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = synth.h; path = "deps/libmad-0.15.1b/synth.h"; sourceTree = SOURCE_ROOT; };
+		4D5340551838E110009EBA01 /* timer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = timer.c; path = "deps/libmad-0.15.1b/timer.c"; sourceTree = SOURCE_ROOT; };
+		4D5340561838E110009EBA01 /* timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = timer.h; path = "deps/libmad-0.15.1b/timer.h"; sourceTree = SOURCE_ROOT; };
+		4D53405B1838E110009EBA01 /* version.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = version.c; path = "deps/libmad-0.15.1b/version.c"; sourceTree = SOURCE_ROOT; };
+		4D53405C1838E110009EBA01 /* version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = version.h; path = "deps/libmad-0.15.1b/version.h"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,7 +121,7 @@
 				4D53405C1838E110009EBA01 /* version.h */,
 			);
 			name = "libmad-0.15.1b";
-			path = "../../../../deadbeef-deps-osx/libmad-0.15.1b";
+			path = "deps/libmad-0.15.1b";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -296,11 +296,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				EXECUTABLE_PREFIX = lib;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"/Users/oleksiy/deadbeef-deps-osx/libmad-0.15.1b/.libs",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/deps/libmad-0.15.1b\"";
 			};
 			name = Debug;
 		};
@@ -308,11 +306,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				EXECUTABLE_PREFIX = lib;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"/Users/oleksiy/deadbeef-deps-osx/libmad-0.15.1b/.libs",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/deps/libmad-0.15.1b\"";
 			};
 			name = Release;
 		};
