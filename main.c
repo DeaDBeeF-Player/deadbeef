@@ -187,7 +187,13 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
     const uint8_t *pend = cmdline + len;
     int queue = 0;
     while (parg < pend) {
-        if (!strcmp (parg, "--nowplaying")) {
+        char *parg_c = parg;
+        if (strlen (parg) >= 2 && parg[0] == '-' && parg[1] != '-') {
+            parg += strlen (parg);
+            parg++;
+            return 0; // running under osx debugger?
+        }
+        else if (!strcmp (parg, "--nowplaying")) {
             parg += strlen (parg);
             parg++;
             if (parg >= pend) {
