@@ -160,9 +160,34 @@ AppDelegate *g_appDelegate;
 }
 
 - (IBAction)addFoldersAction:(id)sender {
+    NSOpenPanel* openDlg = [NSOpenPanel openPanel];
+    [openDlg setCanChooseFiles:NO];
+    [openDlg setAllowsMultipleSelection:YES];
+    [openDlg setCanChooseDirectories:YES];
+    if ( [openDlg runModalForDirectory:nil file:nil] == NSOKButton )
+    {
+        NSArray* files = [openDlg filenames];
+        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+        deadbeef->plt_clear(plt);
+        if (plt) {
+            if (!deadbeef->plt_add_files_begin (plt, 0)) {
+                for( int i = 0; i < [files count]; i++ )
+                {
+                    NSString* fileName = [files objectAtIndex:i];
+                    deadbeef->plt_add_dir2 (0, plt, [fileName UTF8String], NULL, NULL);
+                }
+                deadbeef->plt_add_files_end (plt, 0);
+                deadbeef->plt_unref (plt);
+            }
+        }
+    }
+    [playlist reloadData];
+    deadbeef->pl_save_current();
+    deadbeef->conf_save();
 }
 
 - (IBAction)clearAction:(id)sender {
+    deadbeef->pl_clear();
 }
 
 - (void)reloadPlaylistData {
