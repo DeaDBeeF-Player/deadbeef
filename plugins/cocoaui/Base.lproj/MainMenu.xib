@@ -131,8 +131,11 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Selection" id="280-Ls-hsK">
                                     <items>
-                                        <menuItem title="Remove" id="PdR-km-xfI">
+                                        <menuItem title="Remove" keyEquivalent="" id="PdR-km-xfI">
                                             <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="removeSelectionAction:" target="494" id="nFU-mK-oTt"/>
+                                            </connections>
                                         </menuItem>
                                         <menuItem title="Crop" id="mCa-GB-jaj">
                                             <modifierMask key="keyEquivalentModifierMask"/>
