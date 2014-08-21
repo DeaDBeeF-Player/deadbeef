@@ -164,6 +164,13 @@
 			remoteGlobalIDString = 4D32F9A619A63094000FFDE0;
 			remoteInfo = FLAC;
 		};
+		4DB9654519A64D930076F4F3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4D32FA6119A646C0000FFDE0;
+			remoteInfo = flac;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -745,6 +752,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				4DB9654619A64D930076F4F3 /* PBXTargetDependency */,
 				4D32FA5C19A64676000FFDE0 /* PBXTargetDependency */,
 				4D32F9FC19A63628000FFDE0 /* PBXTargetDependency */,
 			);
@@ -1035,6 +1043,11 @@
 			target = 4D32F9A619A63094000FFDE0 /* flaclib */;
 			targetProxy = 4D32FA6719A64768000FFDE0 /* PBXContainerItemProxy */;
 		};
+		4DB9654619A64D930076F4F3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4D32FA6119A646C0000FFDE0 /* flac */;
+			targetProxy = 4DB9654519A64D930076F4F3 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -1235,6 +1248,18 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "../plugins/cocoaui/deadbeef-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"HAVE_COCOAUI=1",
+					"PORTABLE=1",
+					"STATICLINK=1",
+					"PREFIX=\\\"donotuse\\\"",
+					"LIBDIR=\\\"donotuse\\\"",
+					"DOCDIR=\\\"donotuse\\\"",
+					"VERSION=\\\"devel\\\"",
+					"HAVE_LOG2=1",
+					"PATH_MAX=1024",
+					"$(inherited)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
@@ -1283,6 +1308,7 @@
 					/Users/oleksiy/prj/deadbeef/plugins/wma/.libs,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/Headers/deadbeef";
 				WRAPPER_EXTENSION = app;
@@ -1335,6 +1361,7 @@
 					"/Users/oleksiy/prj/deadbeef/osx/deps/libogg-1.3.1/include",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRIP_INSTALLED_PRODUCT = YES;
 			};
@@ -1367,6 +1394,7 @@
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -1407,6 +1435,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -1441,6 +1470,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -1477,6 +1507,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -1509,6 +1540,7 @@
 				4D32F9AA19A63094000FFDE0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		4D32F9EB19A63441000FFDE0 /* Build configuration list for PBXNativeTarget "ffap" */ = {
 			isa = XCConfigurationList;
@@ -1517,6 +1549,7 @@
 				4D32F9ED19A63441000FFDE0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		4D32FA1619A6448A000FFDE0 /* Build configuration list for PBXNativeTarget "mad" */ = {
 			isa = XCConfigurationList;
@@ -1525,6 +1558,7 @@
 				4D32FA1819A6448A000FFDE0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		4D32FA5119A64577000FFDE0 /* Build configuration list for PBXNativeTarget "mpgmad" */ = {
 			isa = XCConfigurationList;
@@ -1533,6 +1567,7 @@
 				4D32FA5319A64577000FFDE0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		4D32FA6319A646C0000FFDE0 /* Build configuration list for PBXNativeTarget "flac" */ = {
 			isa = XCConfigurationList;
@@ -1541,6 +1576,7 @@
 				4D32FA6519A646C0000FFDE0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
