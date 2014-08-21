@@ -103,29 +103,13 @@ coreaudio_callback(void *inRefCon, AudioUnitRenderActionFlags *ioActionFlags, co
 	
 	if(ioData == NULL && ioData->mNumberBuffers < 1)
 	{ trace ("no buffers\n"); return -1; /* not an OSStatus but it is not that important... */ }
-
-	int sample_size = plugin.fmt.channels * (plugin.fmt.bps / 8);
-	int block_size = ioData->mBuffers[0].mDataByteSize;
-	int mod = block_size % sample_size;
-	if ( mod > 0)
-		block_size -= mod; // should not happen but just in case...
-		
-	char * buffer = NULL;
-	buffer = (char*) malloc( block_size );
-	memset(buffer, 0, block_size);
-	
-	deadbeef->streamer_read( buffer, block_size); // fetching the data from stream
 		
 	for (int i = 0; i < ioData->mNumberBuffers; ++i) {
 		
 		AudioBuffer audio_buffer = ioData->mBuffers[i];
 		void * frame_buffer = audio_buffer.mData;
-		void * stream_buffer = buffer;
-		
-		memcpy(frame_buffer, stream_buffer, audio_buffer.mDataByteSize);
+        deadbeef->streamer_read( frame_buffer, audio_buffer.mDataByteSize); // fetching the data from stream
 	}
-
-	free(buffer);
 	
 	return noErr;
 }
@@ -166,6 +150,7 @@ coreaudio_init (void) {
 							   sizeof(input_cb));
 	if (err)
 		{ trace ("AudioUnitSetProperty-CB= %s\n", GetMacOSStatusErrorString(err)); return -1; }
+
 	
 	// Initialize unit
 	err = AudioUnitInitialize(output_unit);
