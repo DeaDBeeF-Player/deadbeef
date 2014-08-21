@@ -34,6 +34,7 @@ DB_playItem_t *prev = NULL;
 int prevIdx = -1;
 NSImage *playImg;
 NSImage *pauseImg;
+NSImage *bufferingImg;
 AppDelegate *g_appDelegate;
 NSInteger firstSelected = -1;
 
@@ -41,6 +42,8 @@ NSInteger firstSelected = -1;
 {
     playImg = [NSImage imageNamed:@"btnplayTemplate.pdf"];
     pauseImg = [NSImage imageNamed:@"btnpauseTemplate.pdf"];
+    bufferingImg = [NSImage imageNamed:@"bufferingTemplate.pdf"];
+
     [playlist setDelegate:(id<NSTableViewDelegate>)self];
     [playlist setDataSource:(id<NSTableViewDataSource>)self];
     [playlist setDoubleAction:@selector(playlistDoubleAction)];
@@ -165,7 +168,7 @@ NSInteger firstSelected = -1;
                 img = playImg;
             }
             else {
-                //img = bufferingImg;
+                img = bufferingImg;
             }
         }
         if (playing_track) {
