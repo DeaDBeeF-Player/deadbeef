@@ -2637,47 +2637,59 @@ streamer_read (char *bytes, int size) {
         if (output->fmt.bps == 16) {
             mult *= 1000;
             int16_t ivolume = volume_get_amp () * mult;
-            for (int i = 0; i < bytesread/2; i++) {
-                int16_t sample = *((int16_t*)stream);
-                *((int16_t*)stream) = (int16_t)(((int32_t)sample) * ivolume / 1000);
-                stream += 2;
+            if (ivolume != 1000) {
+                int half = bytesread/2;
+                for (int i = 0; i < half; i++) {
+                    int16_t sample = *((int16_t*)stream);
+                    *((int16_t*)stream) = (int16_t)(((int32_t)sample) * ivolume / 1000);
+                    stream += 2;
+                }
             }
         }
         else if (output->fmt.bps == 8) {
             mult *= 255;
             int16_t ivolume = volume_get_amp () * mult;
-            for (int i = 0; i < bytesread; i++) {
-                *stream = (int8_t)(((int32_t)(*stream)) * ivolume / 1000);
-                stream++;
+            if (ivolume != 255) {
+                for (int i = 0; i < bytesread; i++) {
+                    *stream = (int8_t)(((int32_t)(*stream)) * ivolume / 1000);
+                    stream++;
+                }
             }
         }
         else if (output->fmt.bps == 24) {
             mult *= 1000;
             int16_t ivolume = volume_get_amp () * mult;
-            for (int i = 0; i < bytesread/3; i++) {
-                int32_t sample = ((unsigned char)stream[0]) | ((unsigned char)stream[1]<<8) | (stream[2]<<16);
-                int32_t newsample = (int64_t)sample * ivolume / 1000;
-                stream[0] = (newsample&0x0000ff);
-                stream[1] = (newsample&0x00ff00)>>8;
-                stream[2] = (newsample&0xff0000)>>16;
-                stream += 3;
+            if (ivolume != 1000) {
+                int third = bytesread/3;
+                for (int i = 0; i < third; i++) {
+                    int32_t sample = ((unsigned char)stream[0]) | ((unsigned char)stream[1]<<8) | (stream[2]<<16);
+                    int32_t newsample = (int64_t)sample * ivolume / 1000;
+                    stream[0] = (newsample&0x0000ff);
+                    stream[1] = (newsample&0x00ff00)>>8;
+                    stream[2] = (newsample&0xff0000)>>16;
+                    stream += 3;
+                }
             }
         }
         else if (output->fmt.bps == 32 && !output->fmt.is_float) {
             mult *= 1000;
             int16_t ivolume = volume_get_amp () * mult;
-            for (int i = 0; i < bytesread/4; i++) {
-                int32_t sample = *((int32_t*)stream);
-                int32_t newsample = (int64_t)sample * ivolume / 1000;
-                *((int32_t*)stream) = newsample;
-                stream += 4;
+            if (ivolume != 1000) {
+                for (int i = 0; i < bytesread/4; i++) {
+                    int32_t sample = *((int32_t*)stream);
+                    int32_t newsample = (int64_t)sample * ivolume / 1000;
+                    *((int32_t*)stream) = newsample;
+                    stream += 4;
+                }
             }
         }
         else if (output->fmt.bps == 32 && output->fmt.is_float) {
             float fvolume = volume_get_amp () * (1-audio_is_mute ());
-            for (int i = 0; i < bytesread/4; i++) {
-                *((float*)stream) = (*((float*)stream)) * fvolume;
-                stream += 4;
+            if (fvolume != 1.f) {
+                for (int i = 0; i < bytesread/4; i++) {
+                    *((float*)stream) = (*((float*)stream)) * fvolume;
+                    stream += 4;
+                }
             }
         }
     }
