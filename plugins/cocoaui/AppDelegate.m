@@ -168,7 +168,6 @@ AppDelegate *g_appDelegate;
     {
         NSArray* files = [openDlg filenames];
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-        deadbeef->plt_clear(plt);
         if (plt) {
             if (!deadbeef->plt_add_files_begin (plt, 0)) {
                 for( int i = 0; i < [files count]; i++ )
@@ -188,6 +187,7 @@ AppDelegate *g_appDelegate;
 
 - (IBAction)clearAction:(id)sender {
     deadbeef->pl_clear();
+    [playlist reloadData];
 }
 
 - (void)reloadPlaylistData {
