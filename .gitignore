@@ -29,7 +29,6 @@ shots
 .deps
 install-sh
 missing
-images
 libtool
 ltmain.sh
 m4
