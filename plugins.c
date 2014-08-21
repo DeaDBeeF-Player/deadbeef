@@ -739,7 +739,7 @@ load_plugin_dir (const char *plugdir, int gui_scan) {
             while (namelist[i]->d_name[0] != '.'
 #if !defined(ANDROID) && !defined(HAVE_COCOAUI)
                     && !strstr (namelist[i]->d_name, ".fallback.")
-#elsif !defined(ANDROID)
+#elif !defined(ANDROID)
                     && !strstr (namelist[i]->d_name, "libdeadbeef")
 #endif
                   )
