@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>C0E34313-77DC-4E1B-BAF7-8F7C932C8164</string>
+	<key>IDESourceControlProjectName</key>
+	<string>deadbeef</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>62BB6914-FA18-4E31-9BF6-365E917BB5A0</key>
+		<string>ssh://github.com/Alexey-Yakovenko/deadbeef.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>projects/deadbeef.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>62BB6914-FA18-4E31-9BF6-365E917BB5A0</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>ssh://github.com/Alexey-Yakovenko/deadbeef.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>62BB6914-FA18-4E31-9BF6-365E917BB5A0</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>62BB6914-FA18-4E31-9BF6-365E917BB5A0</string>
+			<key>IDESourceControlWCCName</key>
+			<string>deadbeef</string>
+		</dict>
+	</array>
+</dict>
+</plist>

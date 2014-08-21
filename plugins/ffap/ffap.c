@@ -1976,6 +1976,9 @@ int32_t ff_scalarproduct_and_madd_int16_sse2(int16_t *v1, const int16_t *v2, con
 #define FF_MM_IWMMXT   0x0100 ///< XScale IWMMXT
 #define FF_MM_ALTIVEC  0x0001 ///< standard AltiVec
 
+#ifdef __APPLE__
+#define mm_support() FF_MM_SSE2
+#else
 /* ebx saving is necessary for PIC. gcc seems unable to see it alone */
 #define cpuid(index,eax,ebx,ecx,edx)\
     __asm__ volatile\
@@ -2062,6 +2065,7 @@ int mm_support(void)
 
     return rval;
 }
+#endif
 #endif
 
 #if ARCH_ARM
