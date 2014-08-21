@@ -107,8 +107,20 @@ coreaudio_callback(void *inRefCon, AudioUnitRenderActionFlags *ioActionFlags, co
 	for (int i = 0; i < ioData->mNumberBuffers; ++i) {
 		
 		AudioBuffer audio_buffer = ioData->mBuffers[i];
-		void * frame_buffer = audio_buffer.mData;
-        deadbeef->streamer_read( frame_buffer, audio_buffer.mDataByteSize); // fetching the data from stream
+		char *frame_buffer = audio_buffer.mData;
+        if (state != OUTPUT_STATE_PLAYING || !deadbeef->streamer_ok_to_read (-1)) {
+            memset (frame_buffer, 0, audio_buffer.mDataByteSize);
+            continue;
+        }
+        
+        int br = deadbeef->streamer_read( frame_buffer, audio_buffer.mDataByteSize); // fetching the data from stream
+        if (br <= 0) {
+            memset (frame_buffer, 0, audio_buffer.mDataByteSize);
+            continue;
+        }
+        if (br != audio_buffer.mDataByteSize) {
+            memset (frame_buffer + br, 0, audio_buffer.mDataByteSize - br);
+        }
 	}
 	
 	return noErr;
