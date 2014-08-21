@@ -7,10 +7,25 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4D40CC4819A609E300E9CC38 /* dsputil_yasm.asm in Sources */ = {isa = PBXBuildFile; fileRef = 4D40CC4619A609E300E9CC38 /* dsputil_yasm.asm */; };
 		4DA771921945B4FF00EB0AC1 /* ffap.c in Sources */ = {isa = PBXBuildFile; fileRef = 4DA771911945B4FF00EB0AC1 /* ffap.c */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXBuildRule section */
+		4D40CC4A19A60A5B00E9CC38 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			fileType = sourcecode.asm;
+			isEditable = 1;
+			outputFiles = (
+				"${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.o",
+			);
+			script = "/usr/local/bin/yasm -f macho64 -D ARCH_X86_64 -m amd64 -DPIC -DPREFIX -o ${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.o ${INPUT_FILE_PATH}";
+		};
+/* End PBXBuildRule section */
+
 /* Begin PBXFileReference section */
+		4D40CC4619A609E300E9CC38 /* dsputil_yasm.asm */ = {isa = PBXFileReference; explicitFileType = sourcecode.asm; name = dsputil_yasm.asm; path = ../plugins/ffap/dsputil_yasm.asm; sourceTree = "<group>"; usesTabs = 0; };
 		4DA7717E1945B4B400EB0AC1 /* ffap.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ffap.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4DA771911945B4FF00EB0AC1 /* ffap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ffap.c; path = ../plugins/ffap/ffap.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -29,6 +44,7 @@
 		4DA771751945B4B400EB0AC1 = {
 			isa = PBXGroup;
 			children = (
+				4D40CC4619A609E300E9CC38 /* dsputil_yasm.asm */,
 				4DA771911945B4FF00EB0AC1 /* ffap.c */,
 				4DA7717F1945B4B400EB0AC1 /* Products */,
 			);
@@ -64,6 +80,7 @@
 				4DA7717C1945B4B400EB0AC1 /* Headers */,
 			);
 			buildRules = (
+				4D40CC4A19A60A5B00E9CC38 /* PBXBuildRule */,
 			);
 			dependencies = (
 			);
@@ -103,6 +120,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4D40CC4819A609E300E9CC38 /* dsputil_yasm.asm in Sources */,
 				4DA771921945B4FF00EB0AC1 /* ffap.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -188,6 +206,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				EXECUTABLE_PREFIX = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"HAVE_SSE2=1",
+					"ARCH=ARCH_X86_32",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -197,6 +219,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				EXECUTABLE_PREFIX = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"HAVE_SSE2=1",
+					"ARCH=ARCH_X86_32",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
