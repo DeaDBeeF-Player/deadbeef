@@ -25,6 +25,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <errno.h>
 #include <assert.h>
 #include <curl/curlver.h>
 #include <time.h>
@@ -808,13 +809,15 @@ http_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
     HTTP_FILE *fp = (HTTP_FILE *)stream;
 //    trace ("http_read %d (status=%d)\n", size*nmemb, fp->status);
     fp->seektoend = 0;
-    int sz = size * nmemb;
     if (fp->status == STATUS_ABORTED || (fp->status == STATUS_FINISHED && fp->remaining == 0)) {
-        return -1;
+        errno = ECONNABORTED;
+        return 0;
     }
     if (!fp->tid) {
         http_start_streamer (fp);
     }
+
+    size_t sz = size * nmemb;
     while ((fp->remaining > 0 || fp->status != STATUS_FINISHED) && sz > 0)
     {
         // wait until data is available
@@ -835,6 +838,7 @@ http_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
                         deadbeef->streamer_reset (1);
                         continue;
                     }
+                    errno = ETIMEDOUT;
                     return 0;
                 }
             }
@@ -874,7 +878,7 @@ http_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
 //    if (size * nmemb == 1) {
 //        trace ("%02x\n", (unsigned int)*((uint8_t*)ptr));
 //    }
-    return size * nmemb - sz;
+    return (size * nmemb - sz) / size;
 }
 
 static int
