@@ -31,6 +31,7 @@
 - (IBAction)addFilesAction:(id)sender;
 - (IBAction)addFoldersAction:(id)sender;
 - (IBAction)clearAction:(id)sender;
+- (IBAction)removeSelectionAction:(id)sender;
 
 + (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2;
 

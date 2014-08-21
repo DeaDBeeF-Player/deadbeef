@@ -35,11 +35,13 @@ int prevIdx = -1;
 NSImage *playImg;
 NSImage *pauseImg;
 AppDelegate *g_appDelegate;
+NSInteger firstSelected = -1;
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     playImg = [NSImage imageNamed:@"btnplayTemplate.pdf"];
     pauseImg = [NSImage imageNamed:@"btnpauseTemplate.pdf"];
+    [playlist setDelegate:(id<NSTableViewDelegate>)self];
     [playlist setDataSource:(id<NSTableViewDataSource>)self];
     [playlist setDoubleAction:@selector(playlistDoubleAction)];
     g_appDelegate = self;
@@ -74,6 +76,49 @@ AppDelegate *g_appDelegate;
     }
 }
 
+
+// playlist delegate
+- (NSIndexSet *)tableView:(NSTableView *)tableView selectionIndexesForProposedSelection:(NSIndexSet *)proposedSelectionIndexes
+{
+    firstSelected = -1;
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (plt) {
+        //deadbeef->plt_deselect_all (plt);
+        int __block i = 0;
+        DB_playItem_t __block *it = deadbeef->plt_get_first(plt, PL_MAIN);
+        [proposedSelectionIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+            if (firstSelected == -1) {
+                firstSelected = idx;
+            }
+            while (i < idx && it) {
+                deadbeef->pl_set_selected (it, 0);
+                DB_playItem_t *prev = it;
+                it = deadbeef->pl_get_next(prev, PL_MAIN);
+                deadbeef->pl_item_unref(prev);
+                i++;
+            }
+            if (!it) {
+                return;
+            }
+            deadbeef->pl_set_selected (it, 1);
+            DB_playItem_t *prev = it;
+            it = deadbeef->pl_get_next(prev, PL_MAIN);
+            deadbeef->pl_item_unref(prev);
+            i++;
+        }];
+        while (it) {
+            deadbeef->pl_set_selected (it, 0);
+            DB_playItem_t *prev = it;
+            it = deadbeef->pl_get_next(prev, PL_MAIN);
+            deadbeef->pl_item_unref(prev);
+            i++;
+        }
+        deadbeef->plt_unref (plt);
+    }
+    return proposedSelectionIndexes;
+}
+
+// playlist datasource
 - (int)numberOfRowsInTableView:(NSTableView *)aTableView
 {
     int cnt = deadbeef->pl_getcount(PL_MAIN);
@@ -205,12 +250,23 @@ AppDelegate *g_appDelegate;
     }
     [playlist reloadData];
     deadbeef->pl_save_current();
-    deadbeef->conf_save();
 }
 
 - (IBAction)clearAction:(id)sender {
     deadbeef->pl_clear();
+    deadbeef->pl_save_current();
     [playlist reloadData];
+}
+
+- (IBAction)removeSelectionAction:(id)sender {
+    deadbeef->pl_delete_selected ();
+    deadbeef->pl_save_current();
+    [playlist reloadData];
+    [playlist deselectAll:self];
+    if (firstSelected != -1) {
+        [playlist selectRowIndexes:[[NSIndexSet alloc] initWithIndex:firstSelected] byExtendingSelection:NO];
+    }
+    [self tableView:playlist selectionIndexesForProposedSelection: firstSelected==-1?[NSIndexSet alloc]:[[NSIndexSet alloc] initWithIndex:firstSelected]];
 }
 
 - (void)reloadPlaylistData {
