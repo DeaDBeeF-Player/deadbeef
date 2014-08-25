@@ -1,5 +1,5 @@
 /*
-    CoreAudio output plugin
+    DeaDBeeF CoreAudio output plugin
     Copyright (C) 2009-2014 Alexey Yakovenko and other contributors
 
     This software is provided 'as-is', without any express or implied
@@ -28,7 +28,6 @@ static DB_functions_t *deadbeef;
 static DB_output_t plugin;
 
 static AudioDeviceID device_id;
-static AudioStreamBasicDescription device_format;
 static AudioStreamBasicDescription streamDesc;
 static int state = OUTPUT_STATE_STOPPED;
 
@@ -39,6 +38,7 @@ static int
 ca_init (void) {
     UInt32 sz;
     char device_name[128];
+    AudioStreamBasicDescription device_format;
 
     sz = sizeof(device_id);
     if (AudioHardwareGetProperty (kAudioHardwarePropertyDefaultOutputDevice, &sz, &device_id)) {
@@ -48,11 +48,6 @@ ca_init (void) {
     sz = sizeof (device_name);
     if (AudioDeviceGetProperty (device_id, 1, 0, kAudioDevicePropertyDeviceName, &sz, device_name)) {
            return -1;
-    }
-
-    sz = sizeof (device_format);
-    if (AudioDeviceGetProperty (device_id, 0, 0, kAudioDevicePropertyStreamFormat, &sz, &device_format)) {
-        return -1;
     }
 
     sz = sizeof (device_format);
@@ -95,9 +90,15 @@ static int
 ca_setformat (ddb_waveformat_t *fmt) {
     // FIXME: WIP
 /*
+    AudioStreamBasicDescription device_format;
+
     Float64 sr = fmt->samplerate;
     UInt32 sz = sizeof (sr);
     if (AudioDeviceSetProperty(device_id, NULL, 0, 0, kAudioDevicePropertyNominalSampleRate, &sz, &sr)) {
+        return -1;
+    }
+    sz = sizeof (device_format);
+    if (AudioDeviceGetProperty (device_id, 0, 0, kAudioDevicePropertyStreamFormat, &sz, &device_format)) {
         return -1;
     }
  */
@@ -188,7 +189,7 @@ static DB_output_t plugin = {
     .plugin.name = "CoreAudio",
     .plugin.descr = "CoreAudio output plugin",
     .plugin.copyright =
-        "DeaDBeeF -- the music player\n"
+        "DeaDBeeF CoreAudio output plugin\n"
         "Copyright (C) 2009-2014 Alexey Yakovenko and other contributors\n"
         "\n"
         "This software is provided 'as-is', without any express or implied\n"
