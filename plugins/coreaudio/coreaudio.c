@@ -151,8 +151,8 @@ coreaudio_init (void) {
 	
 	// callback
 	AURenderCallbackStruct input_cb;
+    memset (&input_cb, 0, sizeof (input_cb));
 	input_cb.inputProc = coreaudio_callback;
-	input_cb.inputProcRefCon = NULL;
 	
 	err = AudioUnitSetProperty(output_unit,
 							   kAudioUnitProperty_SetRenderCallback,
