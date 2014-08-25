@@ -37,15 +37,19 @@ ca_buffer_callback(AudioDeviceID inDevice, const AudioTimeStamp * inNow, const A
 
 static int
 ca_apply_format (void) {
+//    fprintf (stderr, "setformat request: %d %d %d\n", (int)req_format.mSampleRate, (int)req_format.mChannelsPerFrame, (int)req_format.mBitsPerChannel);
     UInt32 sz;
     if (req_format.mSampleRate > 0) {
         sz = sizeof (req_format);
-        if (AudioDeviceSetProperty(device_id, NULL, 0, 0, kAudioDevicePropertyNominalSampleRate, sz, &req_format)) {
-            if (AudioDeviceSetProperty(device_id, NULL, 0, 0, kAudioDevicePropertyNominalSampleRate, sz, &default_format)) {
+        if (AudioDeviceSetProperty(device_id, NULL, 0, 0, kAudioDevicePropertyStreamFormat, sz, &req_format)) {
+            if (AudioDeviceSetProperty(device_id, NULL, 0, 0, kAudioDevicePropertyStreamFormat, sz, &default_format)) {
                 return -1;
             }
         }
     }
+    
+    // FIXME: super-hack to wait until changes take effect (will fix as soon as I find out how)
+    usleep(10000);
     
     AudioStreamBasicDescription device_format;
     sz = sizeof (device_format);
@@ -56,6 +60,7 @@ ca_apply_format (void) {
     if (device_format.mFormatID != kAudioFormatLinearPCM) {
         return -1;
     }
+//    fprintf (stderr, "setformat response: %d %d %d\n", (int)device_format.mSampleRate, (int)device_format.mChannelsPerFrame, (int)device_format.mBitsPerChannel);
     
     plugin.fmt.bps = device_format.mBitsPerChannel;
     plugin.fmt.channels = device_format.mChannelsPerFrame;
@@ -126,6 +131,7 @@ ca_setformat (ddb_waveformat_t *fmt) {
     if (device_id) {
         ca_apply_format ();
     }
+    
     return 0;
 }
 
