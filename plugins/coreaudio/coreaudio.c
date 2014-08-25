@@ -28,17 +28,51 @@ static DB_functions_t *deadbeef;
 static DB_output_t plugin;
 
 static AudioDeviceID device_id;
-static AudioStreamBasicDescription streamDesc;
+static AudioStreamBasicDescription default_format;
+static AudioStreamBasicDescription req_format;
 static int state = OUTPUT_STATE_STOPPED;
 
 static OSStatus
 ca_buffer_callback(AudioDeviceID inDevice, const AudioTimeStamp * inNow, const AudioBufferList * inInputData, const AudioTimeStamp * inInputTime, AudioBufferList * outOutputData, const AudioTimeStamp * inOutputTime, void * inClientData);
 
 static int
+ca_apply_format (void) {
+    UInt32 sz;
+    if (req_format.mSampleRate > 0) {
+        sz = sizeof (req_format);
+        if (AudioDeviceSetProperty(device_id, NULL, 0, 0, kAudioDevicePropertyNominalSampleRate, sz, &req_format)) {
+            if (AudioDeviceSetProperty(device_id, NULL, 0, 0, kAudioDevicePropertyNominalSampleRate, sz, &default_format)) {
+                return -1;
+            }
+        }
+    }
+    
+    AudioStreamBasicDescription device_format;
+    sz = sizeof (device_format);
+    if (AudioDeviceGetProperty (device_id, 0, 0, kAudioDevicePropertyStreamFormat, &sz, &device_format)) {
+        return -1;
+    }
+    
+    if (device_format.mFormatID != kAudioFormatLinearPCM) {
+        return -1;
+    }
+    
+    plugin.fmt.bps = device_format.mBitsPerChannel;
+    plugin.fmt.channels = device_format.mChannelsPerFrame;
+    plugin.fmt.is_float = 1;
+    plugin.fmt.samplerate = device_format.mSampleRate;
+    plugin.fmt.channelmask = 0;
+    for (int i = 0; i < plugin.fmt.channels; i++) {
+        plugin.fmt.channelmask |= (1<<i);
+    }
+
+    return 0;
+}
+
+static int
 ca_init (void) {
     UInt32 sz;
     char device_name[128];
-    AudioStreamBasicDescription device_format;
 
     sz = sizeof(device_id);
     if (AudioHardwareGetProperty (kAudioHardwarePropertyDefaultOutputDevice, &sz, &device_id)) {
@@ -49,22 +83,13 @@ ca_init (void) {
     if (AudioDeviceGetProperty (device_id, 1, 0, kAudioDevicePropertyDeviceName, &sz, device_name)) {
            return -1;
     }
-
-    sz = sizeof (device_format);
-    if (AudioDeviceGetProperty (device_id, 0, 0, kAudioDevicePropertyStreamFormat, &sz, &device_format)) {
+    
+    sz = sizeof (default_format);
+    if (AudioDeviceGetProperty (device_id, 0, 0, kAudioDevicePropertyStreamFormat, &sz, &default_format)) {
         return -1;
     }
 
-    plugin.fmt.bps = device_format.mBitsPerChannel;
-    plugin.fmt.channels = device_format.mChannelsPerFrame;
-    plugin.fmt.is_float = 1;
-    plugin.fmt.samplerate = device_format.mSampleRate;
-    plugin.fmt.channelmask = 0;
-    for (int i = 0; i < plugin.fmt.channels; i++) {
-        plugin.fmt.channelmask |= (1<<i);
-    }
-
-    if (device_format.mFormatID != kAudioFormatLinearPCM) {
+    if (ca_apply_format ()) {
         return -1;
     }
 
@@ -88,21 +113,19 @@ ca_free (void) {
 
 static int
 ca_setformat (ddb_waveformat_t *fmt) {
-    // FIXME: WIP
-/*
-    AudioStreamBasicDescription device_format;
-
-    Float64 sr = fmt->samplerate;
-    UInt32 sz = sizeof (sr);
-    if (AudioDeviceSetProperty(device_id, NULL, 0, 0, kAudioDevicePropertyNominalSampleRate, &sz, &sr)) {
-        return -1;
-    }
-    sz = sizeof (device_format);
-    if (AudioDeviceGetProperty (device_id, 0, 0, kAudioDevicePropertyStreamFormat, &sz, &device_format)) {
-        return -1;
-    }
- */
+    memset (&req_format, 0, sizeof (req_format));
+    req_format.mSampleRate = fmt->samplerate;
+    req_format.mFormatID = kAudioFormatLinearPCM;
+    req_format.mFormatFlags = (fmt->is_float ? kLinearPCMFormatFlagIsFloat : 0) | (fmt->is_bigendian ? kLinearPCMFormatFlagIsBigEndian : 0) | kLinearPCMFormatFlagIsSignedInteger | kLinearPCMFormatFlagIsPacked;
+    req_format.mBytesPerPacket = 8;
+    req_format.mFramesPerPacket = 1;
+    req_format.mBytesPerFrame = (fmt->bps >> 3) * fmt->channels;
+    req_format.mChannelsPerFrame = fmt->channels;
+    req_format.mBitsPerChannel = fmt->bps;
     
+    if (device_id) {
+        ca_apply_format ();
+    }
     return 0;
 }
 
