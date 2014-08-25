@@ -24,6 +24,7 @@
 		2DCD78E119A665CA00EA50FA /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78D319A665CA00EA50FA /* deadbeef.png */; };
 		2DD9EF0719A5089F00189344 /* cocoautil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD9EF0519A5089F00189344 /* cocoautil.m */; };
 		2DE7A7B119A689E600F8C0B8 /* bufferingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */; };
+		4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D011FFC19AB9589005499B4 /* coreaudio.c */; };
 		4D1B3E7E18379829003E6066 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B3E7D18379829003E6066 /* Cocoa.framework */; };
 		4D1B4A071837EC49003E6066 /* conf.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3ECE1837EC44003E6066 /* conf.c */; };
 		4D1B4A0F1837EC49003E6066 /* ConvertUTF.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3ED81837EC44003E6066 /* ConvertUTF.c */; };
@@ -51,7 +52,6 @@
 		4D1B514A1837EC4B003E6066 /* volume.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B49ED1837EC49003E6066 /* volume.c */; };
 		4D1B51541837EF9D003E6066 /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51501837EF9D003E6066 /* parser.c */; };
 		4D1B515B1837F4E9003E6066 /* nullout.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51581837F4E9003E6066 /* nullout.c */; };
-		4D1B51601837F59F003E6066 /* coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B515D1837F59F003E6066 /* coreaudio.c */; };
 		4D1B51681837F655003E6066 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B51671837F655003E6066 /* AudioUnit.framework */; };
 		4D1B51691837F669003E6066 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B51631837F60A003E6066 /* CoreAudio.framework */; };
 		4D2A6CA1183BC29400AC6BF5 /* btnnextTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4D2A6C9D183BC29400AC6BF5 /* btnnextTemplate.pdf */; };
@@ -207,6 +207,7 @@
 		2DD9EF0419A5089F00189344 /* cocoautil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocoautil.h; sourceTree = "<group>"; };
 		2DD9EF0519A5089F00189344 /* cocoautil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cocoautil.m; sourceTree = "<group>"; };
 		2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = bufferingTemplate.pdf; path = images/bufferingTemplate.pdf; sourceTree = "<group>"; };
+		4D011FFC19AB9589005499B4 /* coreaudio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = coreaudio.c; sourceTree = "<group>"; };
 		4D1B3E7A18379829003E6066 /* deadbeef.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = deadbeef.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D1B3E7D18379829003E6066 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		4D1B3E8018379829003E6066 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -266,7 +267,6 @@
 		4D1B51501837EF9D003E6066 /* parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = parser.c; sourceTree = "<group>"; };
 		4D1B51511837EF9D003E6066 /* parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parser.h; sourceTree = "<group>"; };
 		4D1B51581837F4E9003E6066 /* nullout.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nullout.c; sourceTree = "<group>"; };
-		4D1B515D1837F59F003E6066 /* coreaudio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = coreaudio.c; sourceTree = "<group>"; };
 		4D1B51631837F60A003E6066 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		4D1B51651837F61F003E6066 /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
 		4D1B51671837F655003E6066 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
@@ -710,7 +710,7 @@
 		4D1B515C1837F59F003E6066 /* coreaudio */ = {
 			isa = PBXGroup;
 			children = (
-				4D1B515D1837F59F003E6066 /* coreaudio.c */,
+				4D011FFC19AB9589005499B4 /* coreaudio.c */,
 			);
 			name = coreaudio;
 			path = plugins/coreaudio;
@@ -1104,7 +1104,6 @@
 				4D1B51541837EF9D003E6066 /* parser.c in Sources */,
 				4D1B4A681837EC49003E6066 /* junklib.c in Sources */,
 				4D1B4F021837EC4A003E6066 /* plugins.c in Sources */,
-				4D1B51601837F59F003E6066 /* coreaudio.c in Sources */,
 				4D1B4A9F1837EC49003E6066 /* playlist.c in Sources */,
 				4D1B4A931837EC49003E6066 /* messagepump.c in Sources */,
 				4D1B4A921837EC49003E6066 /* md5.c in Sources */,
@@ -1123,6 +1122,7 @@
 				4DA72BE71838EAAB00A98C62 /* AppDelegate.m in Sources */,
 				4D1B4F5F1837EC4A003E6066 /* streamer.c in Sources */,
 				4D1B4F4C1837EC4A003E6066 /* replaygain.c in Sources */,
+				4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */,
 				4D1B515B1837F4E9003E6066 /* nullout.c in Sources */,
 				4D1B4AA11837EC49003E6066 /* pltmeta.c in Sources */,
 				4D1B4A171837EC49003E6066 /* dsppreset.c in Sources */,
