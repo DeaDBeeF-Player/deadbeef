@@ -2390,7 +2390,7 @@ streamer_read_async (char *bytes, int size) {
                 outfmt.samplerate = dspfmt.samplerate;
                 outfmt.channelmask = dspfmt.channelmask;
                 outfmt.is_bigendian = fileinfo->fmt.is_bigendian;
-                if (memcmp (&output_format, &outfmt, sizeof (ddb_waveformat_t)) && bytes_until_next_song <= 0) {
+                if (bytes_until_next_song <= 0 && memcmp (&output_format, &outfmt, sizeof (ddb_waveformat_t))) {
                     memcpy (&output_format, &outfmt, sizeof (ddb_waveformat_t));
                     streamer_set_output_format ();
                 }
