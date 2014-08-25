@@ -33,6 +33,24 @@
 - (IBAction)clearAction:(id)sender;
 - (IBAction)removeSelectionAction:(id)sender;
 
+@property (unsafe_unretained) IBOutlet NSMenuItem *orderLinear;
+@property (unsafe_unretained) IBOutlet NSMenuItem *orderRandom;
+@property (unsafe_unretained) IBOutlet NSMenuItem *orderShuffle;
+@property (unsafe_unretained) IBOutlet NSMenuItem *orderShuffleAlbums;
+- (IBAction)orderLinearAction:(id)sender;
+- (IBAction)orderRandomAction:(id)sender;
+- (IBAction)orderShuffleAction:(id)sender;
+- (IBAction)orderShuffleAlbumsAction:(id)sender;
+
+@property (unsafe_unretained) IBOutlet NSMenuItem *loopNone;
+@property (unsafe_unretained) IBOutlet NSMenuItem *loopAll;
+@property (unsafe_unretained) IBOutlet NSMenuItem *loopSingle;
+- (IBAction)loopNoneAction:(id)sender;
+- (IBAction)loopAllAction:(id)sender;
+- (IBAction)loopSingleAction:(id)sender;
+
+- (IBAction)jumpToCurrentAction:(id)sender;
+
 + (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2;
 
 @end

@@ -184,11 +184,6 @@
                                     <action selector="toggleToolbarShown:" target="-1" id="366"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Show Tabs" id="298">
-                                <connections>
-                                    <action selector="runToolbarCustomizationPalette:" target="-1" id="365"/>
-                                </connections>
-                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>
@@ -200,8 +195,29 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Order" id="G3x-ph-nNM">
                                     <items>
-                                        <menuItem title="Item" id="utp-dm-oO6">
+                                        <menuItem title="Linear" id="utp-dm-oO6">
                                             <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="orderLinearAction:" target="494" id="Crk-dE-m2G"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Random" id="1U2-JB-RUf">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="orderRandomAction:" target="494" id="K2k-Xb-dOg"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Shuffle" id="15S-fQ-PaL">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="orderShuffleAction:" target="494" id="R9c-1f-Ijt"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Shuffle Albums" id="bea-Bv-Vnd">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="orderShuffleAlbumsAction:" target="494" id="81W-qf-E8B"/>
+                                            </connections>
                                         </menuItem>
                                     </items>
                                 </menu>
@@ -210,8 +226,23 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Looping" id="ueK-AN-0Ma">
                                     <items>
-                                        <menuItem title="Item" id="pGf-UH-jjg">
+                                        <menuItem title="Don't Loop" id="pGf-UH-jjg">
                                             <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="loopNoneAction:" target="494" id="JJp-mM-SPl"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Loop All" id="bp3-Nw-TaR">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="loopAllAction:" target="494" id="BLS-Cg-hXv"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Loop Single" id="V06-6E-L7R">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="loopSingleAction:" target="494" id="xig-B5-rBb"/>
+                                            </connections>
                                         </menuItem>
                                     </items>
                                 </menu>
@@ -226,8 +257,10 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="fXQ-0I-HoR"/>
-                            <menuItem title="Jump To Current Track" id="CpW-j0-9ez">
-                                <modifierMask key="keyEquivalentModifierMask"/>
+                            <menuItem title="Jump To Current Track" keyEquivalent="j" id="CpW-j0-9ez">
+                                <connections>
+                                    <action selector="jumpToCurrentAction:" target="494" id="BYF-7g-HF1"/>
+                                </connections>
                             </menuItem>
                         </items>
                     </menu>
@@ -417,6 +450,13 @@
         </window>
         <customObject id="494" customClass="AppDelegate">
             <connections>
+                <outlet property="loopAll" destination="bp3-Nw-TaR" id="t92-xv-gTj"/>
+                <outlet property="loopNone" destination="pGf-UH-jjg" id="fd0-Uw-O2Y"/>
+                <outlet property="loopSingle" destination="V06-6E-L7R" id="hQ5-IG-2Gh"/>
+                <outlet property="orderLinear" destination="utp-dm-oO6" id="xEe-Sa-V93"/>
+                <outlet property="orderRandom" destination="1U2-JB-RUf" id="KxR-mg-sUu"/>
+                <outlet property="orderShuffle" destination="15S-fQ-PaL" id="wGt-mg-WMg"/>
+                <outlet property="orderShuffleAlbums" destination="bea-Bv-Vnd" id="1sx-zb-fcn"/>
                 <outlet property="playlist" destination="0tA-Oo-Ry1" id="I7i-ZF-zI5"/>
                 <outlet property="window" destination="371" id="532"/>
             </connections>

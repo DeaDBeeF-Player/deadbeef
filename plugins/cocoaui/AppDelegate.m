@@ -38,6 +38,23 @@ NSImage *bufferingImg;
 AppDelegate *g_appDelegate;
 NSInteger firstSelected = -1;
 
+- (void)configChanged
+{
+    id order_items[] = {
+        self.orderLinear,
+        self.orderShuffle,
+        self.orderRandom,
+        self.orderShuffleAlbums,
+        nil
+    };
+    
+    int order = deadbeef->conf_get_int ("playback.order", PLAYBACK_ORDER_LINEAR);
+    for (int i = 0; order_items[i]; i++) {
+        [order_items[i] setState:i==order?NSOnState:NSOffState];
+    }
+    //    int looping = deadbeef->conf_get_int ("playback.loop", PLAYBACK_MODE_LOOP_ALL);
+}
+
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     playImg = [NSImage imageNamed:@"btnplayTemplate.pdf"];
@@ -47,6 +64,10 @@ NSInteger firstSelected = -1;
     [playlist setDelegate:(id<NSTableViewDelegate>)self];
     [playlist setDataSource:(id<NSTableViewDataSource>)self];
     [playlist setDoubleAction:@selector(playlistDoubleAction)];
+    
+    // initialize gui from settings
+    [self configChanged];
+    
     g_appDelegate = self;
 }
 
@@ -276,11 +297,65 @@ NSInteger firstSelected = -1;
     [playlist reloadData];
 }
 
+- (IBAction)orderLinearAction:(id)sender {
+    deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_LINEAR);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+- (IBAction)orderRandomAction:(id)sender {
+    deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_RANDOM);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+- (IBAction)orderShuffleAction:(id)sender {
+    deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_SHUFFLE_TRACKS);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+- (IBAction)orderShuffleAlbumsAction:(id)sender {
+    deadbeef->conf_set_int ("playback.order", PLAYBACK_ORDER_SHUFFLE_ALBUMS);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+- (IBAction)loopAllAction:(id)sender {
+    deadbeef->conf_set_int ("playback.loop", 0);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+- (IBAction)loopNoneAction:(id)sender {
+    deadbeef->conf_set_int ("playback.loop", 1);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+- (IBAction)loopSingleAction:(id)sender {
+    deadbeef->conf_set_int ("playback.loop", 2);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+- (IBAction)jumpToCurrentAction:(id)sender {
+    deadbeef->sendmessage (DB_EV_TRACKFOCUSCURRENT, 0, 0, 0);
+}
+
+- (void)focusCurrent
+{
+    
+}
+
 + (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2
 {
 
     if (_id == DB_EV_TOGGLE_PAUSE || _id == DB_EV_PLAYLIST_REFRESH || _id == DB_EV_PLAYLISTCHANGED || _id == DB_EV_PLAYLISTSWITCHED || _id == DB_EV_TRACKINFOCHANGED) {
         [g_appDelegate performSelectorOnMainThread:@selector(reloadPlaylistData) withObject:nil waitUntilDone:NO];
+    }
+    
+    if (_id == DB_EV_CONFIGCHANGED) {
+        [g_appDelegate performSelectorOnMainThread:@selector(configChanged) withObject:nil waitUntilDone:NO];
+
+    }
+    
+    if (_id == DB_EV_TRACKFOCUSCURRENT) {
+        [g_appDelegate performSelectorOnMainThread:@selector(focusCurrent) withObject:nil waitUntilDone:NO];
+
     }
     return 0;
 }
