@@ -123,9 +123,15 @@
                             </menuItem>
                             <menuItem title="Deselect All" id="iHT-b1-Dsi">
                                 <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="deselectAllAction:" target="494" id="wRQ-8T-0Na"/>
+                                </connections>
                             </menuItem>
                             <menuItem title="Invert Selection" id="tqs-ZB-dsG">
                                 <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="invertSelectionAction:" target="494" id="U8r-Rd-eyu"/>
+                                </connections>
                             </menuItem>
                             <menuItem title="Selection" id="ywR-gu-Eg4">
                                 <modifierMask key="keyEquivalentModifierMask"/>
@@ -139,6 +145,9 @@
                                         </menuItem>
                                         <menuItem title="Crop" id="mCa-GB-jaj">
                                             <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="selectionCropAction:" target="494" id="WW8-2V-hnw"/>
+                                            </connections>
                                         </menuItem>
                                     </items>
                                 </menu>
@@ -249,12 +258,27 @@
                             </menuItem>
                             <menuItem title="Cursor Follows Playback" id="Ra2-1K-rwd">
                                 <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="cursorFollowsPlaybackAction:" target="494" id="Htm-TI-BXY"/>
+                                </connections>
                             </menuItem>
                             <menuItem title="Scroll Follows Playback" id="xnA-bz-jxF">
                                 <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="scrollFollowsPlaybackAction:" target="494" id="uVm-Lh-feS"/>
+                                </connections>
                             </menuItem>
                             <menuItem title="Stop After Current" id="edx-c0-VoM">
                                 <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="stopAfterCurrentAction:" target="494" id="0E9-6y-qkj"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Stop After Current Album" id="6AV-SN-Cm9">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="stopAfterCurrentAlbumAction:" target="494" id="fSM-ZT-Ds9"/>
+                                </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="fXQ-0I-HoR"/>
                             <menuItem title="Jump To Current Track" keyEquivalent="j" id="CpW-j0-9ez">
@@ -453,6 +477,8 @@
         </window>
         <customObject id="494" customClass="AppDelegate">
             <connections>
+                <outlet property="cursorFollowsPlayback" destination="Ra2-1K-rwd" id="i3v-jO-k4t"/>
+                <outlet property="invertSelectionAction" destination="tqs-ZB-dsG" id="w3N-0T-3BL"/>
                 <outlet property="loopAll" destination="bp3-Nw-TaR" id="t92-xv-gTj"/>
                 <outlet property="loopNone" destination="pGf-UH-jjg" id="fd0-Uw-O2Y"/>
                 <outlet property="loopSingle" destination="V06-6E-L7R" id="hQ5-IG-2Gh"/>
@@ -461,7 +487,10 @@
                 <outlet property="orderShuffle" destination="15S-fQ-PaL" id="wGt-mg-WMg"/>
                 <outlet property="orderShuffleAlbums" destination="bea-Bv-Vnd" id="1sx-zb-fcn"/>
                 <outlet property="playlist" destination="0tA-Oo-Ry1" id="I7i-ZF-zI5"/>
+                <outlet property="scrollFollowsPlayback" destination="xnA-bz-jxF" id="GX4-WF-zFx"/>
                 <outlet property="seekBar" destination="lhQ-zG-gJo" id="iDM-Mk-EzP"/>
+                <outlet property="stopAfterCurrent" destination="edx-c0-VoM" id="Rig-DR-mKE"/>
+                <outlet property="stopAfterCurrentAlbum" destination="6AV-SN-Cm9" id="wVK-jy-HK2"/>
                 <outlet property="window" destination="371" id="532"/>
             </connections>
         </customObject>
