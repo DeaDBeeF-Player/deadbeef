@@ -443,27 +443,27 @@
                 <allowedToolbarItems>
                     <toolbarItem implicitItemIdentifier="53382C75-3C42-4C09-9641-E92D41EAA2BF" label="Custom View" paletteLabel="Custom View" id="3xP-pQ-d4L">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="89" height="25"/>
-                        <size key="maxSize" width="609" height="28"/>
+                        <size key="minSize" width="130" height="25"/>
+                        <size key="maxSize" width="130" height="28"/>
                         <segmentedControl key="view" verticalHuggingPriority="750" id="nHJ-0o-IqP">
-                            <rect key="frame" x="0.0" y="14" width="175" height="25"/>
+                            <rect key="frame" x="0.0" y="14" width="130" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <segmentedCell key="cell" alignment="left" style="texturedRounded" trackingMode="momentary" id="Txw-f5-br1">
                                 <font key="font" metaFont="system"/>
                                 <segments>
-                                    <segment image="btnprevTemplate" width="30">
+                                    <segment image="btnprevTemplate" width="24">
                                         <nil key="label"/>
                                     </segment>
-                                    <segment image="btnplayTemplate" width="30" tag="1">
+                                    <segment image="btnplayTemplate" width="24" tag="1">
                                         <nil key="label"/>
                                     </segment>
-                                    <segment image="btnpauseTemplate" width="29">
+                                    <segment image="btnpauseTemplate" width="24">
                                         <nil key="label"/>
                                     </segment>
-                                    <segment image="btnstopTemplate">
+                                    <segment image="btnstopTemplate" width="24">
                                         <nil key="label"/>
                                     </segment>
-                                    <segment image="btnnextTemplate">
+                                    <segment image="btnnextTemplate" width="24">
                                         <nil key="label"/>
                                     </segment>
                                 </segments>
@@ -478,7 +478,7 @@
                         <size key="minSize" width="100" height="21"/>
                         <size key="maxSize" width="100000000" height="26"/>
                         <slider key="view" verticalHuggingPriority="750" horizontalCompressionResistancePriority="641" id="lhQ-zG-gJo">
-                            <rect key="frame" x="0.0" y="14" width="307" height="21"/>
+                            <rect key="frame" x="0.0" y="14" width="308" height="21"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                             <sliderCell key="cell" alignment="left" maxValue="100" tickMarkPosition="above" sliderType="linear" id="rDd-Sa-3Uw"/>
                             <connections>
