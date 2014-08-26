@@ -52,7 +52,24 @@ NSInteger firstSelected = -1;
     for (int i = 0; order_items[i]; i++) {
         [order_items[i] setState:i==order?NSOnState:NSOffState];
     }
-    //    int looping = deadbeef->conf_get_int ("playback.loop", PLAYBACK_MODE_LOOP_ALL);
+    
+    id loop_items[] = {
+        self.loopAll,
+        self.loopNone,
+        self.loopSingle,
+        nil
+    };
+    
+    int loop = deadbeef->conf_get_int ("playback.loop", PLAYBACK_MODE_LOOP_ALL);
+    for (int i = 0; loop_items[i]; i++) {
+        [loop_items[i] setState:i==loop?NSOnState:NSOffState];
+    }
+    
+    [self.scrollFollowsPlayback setState:deadbeef->conf_get_int ("playlist.scroll.followplayback", 1)?NSOnState:NSOffState];
+    [self.cursorFollowsPlayback setState:deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1)?NSOnState:NSOffState];
+    
+    [self.stopAfterCurrent setState:deadbeef->conf_get_int ("playlist.stop_after_current", 0)?NSOnState:NSOffState];
+    [self.stopAfterCurrentAlbum setState:deadbeef->conf_get_int ("playlist.stop_after_current_album", 0)?NSOnState:NSOffState];
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
@@ -362,7 +379,21 @@ NSInteger firstSelected = -1;
 
 - (void)focusCurrent
 {
-    
+    deadbeef->pl_lock ();
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+    if (it) {
+        ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
+        if (plt) {
+            deadbeef->plt_set_curr (plt);
+            int idx = deadbeef->pl_get_idx_of (it);
+            if (idx != -1) {
+                [playlist scrollRowToVisible:idx];
+            }
+            deadbeef->plt_unref (plt);
+        }
+        deadbeef->pl_item_unref (it);
+    }
+    deadbeef->pl_unlock ();
 }
 
 - (IBAction)seekBarAction:(id)sender {
@@ -378,20 +409,77 @@ NSInteger firstSelected = -1;
     }
 }
 
+- (IBAction)cursorFollowsPlaybackAction:(id)sender {
+}
+
+- (IBAction)scrollFollowsPlaybackAction:(id)sender {
+}
+
+- (IBAction)stopAfterCurrentAction:(id)sender {
+}
+
+- (IBAction)stopAfterCurrentAlbumAction:(id)sender {
+}
+
+- (IBAction)deselectAllAction:(id)sender {
+}
+
+- (IBAction)invertSelectionAction:(id)sender {
+}
+
+- (IBAction)selectionCropAction:(id)sender {
+}
+
+- (void)handleSimpleMessage:(NSNumber *)_id {
+    int idx = -1;
+    DB_playItem_t *it = NULL;
+    switch ([_id intValue]) {
+        case DB_EV_PLAYLISTCHANGED:
+        case DB_EV_PLAYLISTSWITCHED:
+            [self reloadPlaylistData];
+            break;
+        case DB_EV_TRACKFOCUSCURRENT:
+            [self focusCurrent];
+            break;
+        case DB_EV_TOGGLE_PAUSE:
+            break;
+        case DB_EV_SONGCHANGED:
+            it = deadbeef->streamer_get_playing_track ();
+            if (it) {
+                idx = deadbeef->pl_get_idx_of (it);
+                deadbeef->pl_item_unref (it);
+            }
+            if (idx != -1) {
+                if (deadbeef->conf_get_int ("playlist.scroll.followplayback", 1)) {
+                    [playlist scrollRowToVisible:idx];
+                }
+                if (deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1)) {
+                    [playlist selectRowIndexes:[NSIndexSet indexSetWithIndex:idx] byExtendingSelection:NO];
+                }
+            }
+            break;
+    }
+}
+
+- (void)trackInfoChanged:(NSNumber *)trk {
+        [playlist reloadDataForRowIndexes:[NSIndexSet indexSetWithIndex:[trk intValue]]
+                         columnIndexes:[NSIndexSet indexSetWithIndex:0]];
+}
+
 + (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2
 {
-
-    if (_id == DB_EV_TOGGLE_PAUSE || _id == DB_EV_PLAYLIST_REFRESH || _id == DB_EV_PLAYLISTCHANGED || _id == DB_EV_PLAYLISTSWITCHED || _id == DB_EV_TRACKINFOCHANGED) {
-        [g_appDelegate performSelectorOnMainThread:@selector(reloadPlaylistData) withObject:nil waitUntilDone:NO];
+    if (_id == DB_EV_TOGGLE_PAUSE || _id == DB_EV_PLAYLIST_REFRESH || _id == DB_EV_PLAYLISTCHANGED || _id == DB_EV_PLAYLISTSWITCHED || _id == DB_EV_TRACKFOCUSCURRENT || _id == DB_EV_SONGCHANGED) {
+        [g_appDelegate performSelectorOnMainThread:@selector(handleSimpleMessage:) withObject:[[NSNumber alloc] initWithInt:_id] waitUntilDone:NO];
     }
-    
-    if (_id == DB_EV_CONFIGCHANGED) {
+    else if (_id == DB_EV_TRACKINFOCHANGED) {
+        ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
+        int idx = deadbeef->pl_get_idx_of_iter (ev->track, PL_MAIN);
+        if (idx != -1) {
+            [g_appDelegate performSelectorOnMainThread:@selector(trackInfoChanged:) withObject:[[NSNumber alloc] initWithInt:idx] waitUntilDone:NO];
+        }
+    }
+    else if (_id == DB_EV_CONFIGCHANGED) {
         [g_appDelegate performSelectorOnMainThread:@selector(configChanged) withObject:nil waitUntilDone:NO];
-
-    }
-    
-    if (_id == DB_EV_TRACKFOCUSCURRENT) {
-        [g_appDelegate performSelectorOnMainThread:@selector(focusCurrent) withObject:nil waitUntilDone:NO];
 
     }
     return 0;

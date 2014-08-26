@@ -49,11 +49,25 @@
 - (IBAction)loopAllAction:(id)sender;
 - (IBAction)loopSingleAction:(id)sender;
 
-- (IBAction)jumpToCurrentAction:(id)sender;
-
 @property (unsafe_unretained) IBOutlet NSSlider *seekBar;
 - (IBAction)seekBarAction:(id)sender;
 
+@property (unsafe_unretained) IBOutlet NSMenuItem *cursorFollowsPlayback;
+- (IBAction)cursorFollowsPlaybackAction:(id)sender;
+
+@property (unsafe_unretained) IBOutlet NSMenuItem *scrollFollowsPlayback;
+- (IBAction)scrollFollowsPlaybackAction:(id)sender;
+
+@property (unsafe_unretained) IBOutlet NSMenuItem *stopAfterCurrent;
+- (IBAction)stopAfterCurrentAction:(id)sender;
+
+@property (unsafe_unretained) IBOutlet NSMenuItem *stopAfterCurrentAlbum;
+- (IBAction)stopAfterCurrentAlbumAction:(id)sender;
+
+- (IBAction)deselectAllAction:(id)sender;
+- (IBAction)invertSelectionAction:(id)sender;
+- (IBAction)selectionCropAction:(id)sender;
+- (IBAction)jumpToCurrentAction:(id)sender;
 
 + (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2;
 
