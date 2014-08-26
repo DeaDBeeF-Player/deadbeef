@@ -25,48 +25,53 @@
 #ifdef HAVE_CONFIG_H
     #include "../../config.h"
 #endif
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <libgen.h>
-#include <sys/stat.h>
-#ifdef __linux__
-    #include <sys/prctl.h>
-#endif
+#include <glob.h>
 #include <errno.h>
 #include <dirent.h>
 #include <unistd.h>
 #include <fnmatch.h>
-#include <inttypes.h>
+#include <sys/stat.h>
+#ifdef __linux__
+    #include <sys/prctl.h>
+#endif
 #if HAVE_SYS_CDEFS_H
     #include <sys/cdefs.h>
 #endif
 #if HAVE_SYS_SYSLIMITS_H
     #include <sys/syslimits.h>
 #endif
-#include "../../deadbeef.h"
-#include "artwork.h"
-#include "file_utils.h"
-#include "escape.h"
 #ifdef USE_METAFLAC
     #include <FLAC/metadata.h>
 #endif
+#ifdef USE_IMLIB2
+    #include <Imlib2.h>
+#else
+    #include <jpeglib.h>
+    #include <png.h>
+#endif
+#include "../../deadbeef.h"
+#include "artwork.h"
+#include "escape.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(...)
 
+static DB_functions_t *deadbeef;
 static DB_artwork_plugin_t plugin;
+static DB_FILE *current_file;
+static char default_cover[PATH_MAX];
 
-DB_FILE *current_file;
-
-#define MAX_CALLBACKS 200
-
+typedef struct cover_callback_s cover_callback_t;
 typedef struct cover_callback_s {
     artwork_callback cb;
     void *ud;
+    cover_callback_t *next;
 } cover_callback_t;
 
 typedef struct cover_query_s {
@@ -74,8 +79,7 @@ typedef struct cover_query_s {
     char *artist;
     char *album;
     int size;
-    cover_callback_t callbacks[MAX_CALLBACKS];
-    int numcb;
+    cover_callback_t callback;
     struct cover_query_s *next;
 } cover_query_t;
 
@@ -86,12 +90,15 @@ typedef struct mutex_cond_s {
 
 static cover_query_t *queue;
 static cover_query_t *queue_tail;
-static uintptr_t mutex;
-static uintptr_t cond;
 static volatile int terminate;
 static volatile int clear_queue;
 static intptr_t tid;
-static uintptr_t culler_mutex;
+static uintptr_t queue_mutex;
+static uintptr_t cond;
+static uintptr_t files_mutex;
+#ifdef USE_IMLIB2
+    static uintptr_t imlib_mutex;
+#endif
 
 static int artwork_enable_embedded;
 static int artwork_enable_local;
@@ -105,23 +112,19 @@ static time_t artwork_reset_time;
 static time_t artwork_scaled_reset_time;
 
 #define DEFAULT_FILEMASK "*cover*.jpg;*front*.jpg;*folder*.jpg;*cover*.png;*front*.png;*folder*.png"
-#define FALLBACK_FILEMASK ";*.jpg;*.jpeg"
-#define MAX_FILEMASK_CONFIG_LENGTH 200
-#define MAX_FILEMASK_LENGTH 215
+#define MAX_FILEMASK_LENGTH 200
 static char artwork_filemask[MAX_FILEMASK_LENGTH];
-
-static char default_cover[PATH_MAX];
-
-static const char *get_default_cover (void) {
-    return default_cover;
-}
 
 static int
 make_cache_root_path(char *path, const size_t size)
 {
     const char *xdg_cache = getenv("XDG_CACHE_HOME");
     const char *cache_root = xdg_cache ? xdg_cache : getenv("HOME");
-    return snprintf(path, size, xdg_cache ? "%s/deadbeef/" : "%s/.cache/deadbeef/", cache_root);
+    if (snprintf(path, size, xdg_cache ? "%s/deadbeef/" : "%s/.cache/deadbeef/", cache_root) >= size) {
+        trace("Cache root path truncated at %d bytes\n", (int)size);
+        return -1;
+    }
+    return 0;
 }
 
 static int
@@ -131,80 +134,965 @@ filter_scaled_dirs (const struct dirent *f)
 }
 
 static void
-culler_thread (void *none)
+remove_cache_item(const char *entry_path, const char *subdir_path, const char *subdir_name, const char *entry_name)
 {
-#ifdef __linux__
-    prctl (PR_SET_NAME, "deadbeef-artwork-gc", 0, 0, 0, 0);
-#endif
+    /* Unlink the expired file, and the artist directory if it is empty */
+    deadbeef->mutex_lock(files_mutex);
+    unlink(entry_path);
+    rmdir(subdir_path);
 
-    sleep(5);
-
-    /* Find where it all happens */
+    /* Remove any scaled copies of this file, plus parent directories that are now empty */
     char cache_root_path[PATH_MAX];
     make_cache_root_path(cache_root_path, PATH_MAX-7);
+    struct dirent **scaled_dirs = NULL;
+    const int scaled_dirs_count = scandir(cache_root_path, &scaled_dirs, filter_scaled_dirs, NULL);
+    for (size_t i = 0; i < scaled_dirs_count; i++) {
+        char scaled_entry_path[PATH_MAX];
+        snprintf(scaled_entry_path, PATH_MAX, "%s%s/%s/%s", cache_root_path, scaled_dirs[i]->d_name, subdir_name, entry_name);
+        unlink(scaled_entry_path);
+        char *scaled_entry_dir = dirname(scaled_entry_path);
+        rmdir(scaled_entry_dir);
+        rmdir(dirname(scaled_entry_dir));
+        free(scaled_dirs[i]);
+    }
+    free(scaled_dirs);
+    deadbeef->mutex_unlock(files_mutex);
+}
+
+static void
+cache_cleaner_thread(void *none)
+{
+#ifdef __linux__
+    prctl (PR_SET_NAME, "deadbeef-artwork-cc", 0, 0, 0, 0);
+#endif
+
+    /* Find where it all happens */
+    sleep(5);
     char covers_path[PATH_MAX];
-    strcpy(covers_path, cache_root_path);
+    make_cache_root_path(covers_path, PATH_MAX-7);
     strcat(covers_path, "covers/");
 
     while (true) {
-        /* Loop through all the artist directories */
+        /* Loop through the artist directories */
         DIR *covers_dir = opendir(covers_path);
-        struct dirent covers_subdir;
-        struct dirent *covers_result;
-        while (covers_dir && !readdir_r(covers_dir, &covers_subdir, &covers_result) && covers_result) {
+        struct dirent *covers_subdir;
+        while (covers_dir && (covers_subdir = readdir(covers_dir))) {
             const int32_t cache_secs = deadbeef->conf_get_int("artwork.cache.period", 48) * 60 * 60;
-            if (cache_secs > 0 && strcmp(covers_subdir.d_name, ".") && strcmp(covers_subdir.d_name, "..")) {
+            if (cache_secs > 0 && strcmp(covers_subdir->d_name, ".") && strcmp(covers_subdir->d_name, "..")) {
                 const time_t cache_expiry = time(NULL) - cache_secs;
 
-                /* Loop through all the image files in this artist directory */
+                /* Loop through the image files in this artist directory */
                 char subdir_path[PATH_MAX];
-                snprintf(subdir_path, PATH_MAX, "%s%s", covers_path, covers_subdir.d_name);
+                snprintf(subdir_path, PATH_MAX, "%s%s", covers_path, covers_subdir->d_name);
                 DIR *subdir = opendir(subdir_path);
-                struct dirent entry;
-                struct dirent *entry_result;
-                while (subdir && !readdir_r(subdir, &entry, &entry_result) && entry_result) {
-                    if (strcmp(entry.d_name, ".") && strcmp(entry.d_name, "..")) {
+                struct dirent *entry;
+                while (subdir && (entry = readdir(subdir))) {
+                    if (strcmp(entry->d_name, ".") && strcmp(entry->d_name, "..")) {
                         char entry_path[PATH_MAX];
-                        snprintf(entry_path, PATH_MAX, "%s/%s", subdir_path, entry.d_name);
+                        snprintf(entry_path, PATH_MAX, "%s/%s", subdir_path, entry->d_name);
 
-                        /* Test against the time the cache expired (cache invalidation resets are not handled here) */
+                        /* Test against the cache expiry time (cache invalidation resets are not handled here) */
                         struct stat stat_buf;
                         if (!stat(entry_path, &stat_buf) && stat_buf.st_mtime < cache_expiry) {
-                            deadbeef->mutex_lock(culler_mutex);
-
-                            /* Unlink the expired file, and the artist directory if it is empty */
-                            unlink(entry_path);
-                            rmdir(subdir_path);
-                            fprintf(stderr, "%s expired from cache\n", entry_path);
-
-                            /* Remove any scaled copies of this file, plus directories that are now empty */
-                            struct dirent **scaled_dirs = NULL;
-                            const int scaled_dirs_count = scandir(cache_root_path, &scaled_dirs, filter_scaled_dirs, NULL);
-                            for (size_t i = 0; i < scaled_dirs_count; i++) {
-                                char scaled_entry_path[PATH_MAX];
-                                snprintf(scaled_entry_path, PATH_MAX, "%s%s/%s/%s", cache_root_path, scaled_dirs[i]->d_name, covers_subdir.d_name, entry.d_name);
-                                unlink(scaled_entry_path);
-                                rmdir(dirname(scaled_entry_path));
-                                rmdir(dirname(scaled_entry_path));
-                                free(scaled_dirs[i]);
-                            }
-                            free(scaled_dirs);
-
-                            deadbeef->mutex_unlock(culler_mutex);
+                            trace("%s expired from cache\n", entry_path);
+                            remove_cache_item(entry_path, subdir_path, covers_subdir->d_name, entry->d_name);
                         }
                     }
                 }
-
                 closedir(subdir);
             }
 
             sleep(1);
         }
-
         closedir(covers_dir);
+
         sleep(60);
-        covers_dir = opendir(covers_path);
     }
+}
+
+static float
+scale_dimensions(const int scaled_size, const int width, const int height, unsigned int *scaled_width, unsigned int *scaled_height)
+{
+    /* Calculate the dimensions of the scaled image */
+    float scaling_ratio;
+    if (deadbeef->conf_get_int ("artwork.scale_towards_longer", 1) == width > height) {
+        *scaled_height = scaled_size;
+        scaling_ratio = (float)height / *scaled_height;
+        *scaled_width = width / scaling_ratio + 0.5;
+    }
+    else {
+        *scaled_width = scaled_size;
+        scaling_ratio = (float)width / *scaled_width;
+        *scaled_height = height / scaling_ratio + 0.5;
+    }
+    return scaling_ratio;
+}
+
+#ifndef USE_IMLIB2
+#ifdef USE_BICUBIC
+static float cerp(const float p0, const float p1, const float p2, const float p3, const float d, const float d2, const float d3)
+{
+    /* Cubic Hermite spline (a = -0.5, Catmull-Rom) */
+    return p1 - (p0*d3 - 3*p1*d3 + 3*p2*d3 - p3*d3 - 2*p0*d2 + 5*p1*d2 - 4*p2*d2 + p3*d2 + p0*d - p2*d)/2;
+}
+
+static int_fast16_t bcerp(const png_byte *row0, const png_byte *row1, const png_byte *row2, const png_byte *row3,
+                      const uint_fast32_t x0, const uint_fast32_t x1, const uint_fast32_t x2, const uint_fast32_t x3, const uint_fast8_t component,
+                      const float dx, const float dx2, const float dx3, const float dy, const float dy2, const float dy3) {
+    const uint_fast32_t index0 = x0 + component;
+    const uint_fast32_t index1 = x1 + component;
+    const uint_fast32_t index2 = x2 + component;
+    const uint_fast32_t index3 = x3 + component;
+    const float p0 = cerp(row0[index0], row1[index0], row2[index0], row3[index0], dy, dy2, dy3);
+    const float p1 = cerp(row0[index1], row1[index1], row2[index1], row3[index1], dy, dy2, dy3);
+    const float p2 = cerp(row0[index2], row1[index2], row2[index2], row3[index2], dy, dy2, dy3);
+    const float p3 = cerp(row0[index3], row1[index3], row2[index3], row3[index3], dy, dy2, dy3);
+    return cerp(p0, p1, p2, p3, dx, dx2, dx3) + 0.5;
+}
+#endif
+static uint_fast32_t blerp_pixel(const png_byte *row, const png_byte *next_row, const uint_fast32_t x_index, const uint_fast32_t next_x_index,
+                                 const uint_fast32_t weight, const uint_fast32_t weightx, const uint_fast32_t weighty, const uint_fast32_t weightxy)
+{
+    return row[x_index]*weight + row[next_x_index]*weightx + next_row[x_index]*weighty + next_row[next_x_index]*weightxy;
+}
+
+static uint_fast32_t *
+calculate_quick_dividers(const float scaling_ratio)
+{
+    /* Replace slow divisions by expected numbers with faster multiply/shift combo */
+    const uint16_t max_sample_size = scaling_ratio + 1;
+    uint_fast32_t *dividers = malloc((max_sample_size * max_sample_size + 1) * sizeof(uint_fast32_t));
+    if (dividers) {
+        for (uint16_t y = max_sample_size; y; y--) {
+            for (uint16_t x = y; x; x--) {
+                const uint32_t num_pixels = x * y;
+                /* Accurate to 1/256 for up to 256 pixels and always for powers of 2 */
+                dividers[num_pixels] = num_pixels <= 256 || !(num_pixels & (num_pixels - 1)) ? 256*256/num_pixels : 0;
+            }
+        }
+    }
+    return dividers;
+}
+
+typedef struct {
+    struct jpeg_error_mgr pub;	/* "public" fields */
+    jmp_buf setjmp_buffer;	/* for return to caller */
+} my_error_mgr_t;
+
+METHODDEF(void)
+my_error_exit (j_common_ptr cinfo)
+{
+  /* cinfo->err really points to a my_error_mgr struct, so coerce pointer */
+  my_error_mgr_t *myerr = (my_error_mgr_t *) cinfo->err;
+
+//  (*cinfo->err->output_message) (cinfo);
+
+  /* Return control to the setjmp point */
+  longjmp(myerr->setjmp_buffer, 1);
+}
+
+
+static int
+jpeg_resize (const char *fname, const char *outname, int scaled_size) {
+    trace ("resizing %s into %s\n", fname, outname);
+    FILE *fp = NULL, *out = NULL;
+    struct jpeg_decompress_struct cinfo;
+    struct jpeg_compress_struct cinfo_out;
+    void *sample_rows_buffer = NULL;
+    uint_fast32_t *quick_dividers = NULL;
+    my_error_mgr_t jerr;
+
+    cinfo.mem = cinfo_out.mem = NULL;
+    cinfo_out.err = cinfo.err = jpeg_std_error(&jerr.pub);
+    jerr.pub.error_exit = my_error_exit;
+    if (setjmp(jerr.setjmp_buffer)) {
+        trace("failed to scale %s as jpeg\n", outname);
+        jpeg_destroy_decompress(&cinfo);
+        jpeg_destroy_compress(&cinfo_out);
+        if (sample_rows_buffer) {
+            free(sample_rows_buffer);
+        }
+        if (quick_dividers) {
+            free(quick_dividers);
+        }
+        if (fp) {
+            fclose(fp);
+        }
+        if (out) {
+            fclose (out);
+        }
+        return -1;
+    }
+
+    fp = fopen (fname, "rb");
+    if (!fp) {
+        return -1;
+    }
+    out = fopen (outname, "w+b");
+    if (!out) {
+        fclose (fp);
+        return -1;
+    }
+
+    jpeg_create_decompress (&cinfo);
+    jpeg_create_compress(&cinfo_out);
+
+    jpeg_stdio_src (&cinfo, fp);
+    jpeg_stdio_dest(&cinfo_out, out);
+
+    jpeg_read_header (&cinfo, TRUE);
+    jpeg_start_decompress (&cinfo);
+
+    const unsigned int num_components = cinfo.output_components;
+    const unsigned int width = cinfo.image_width;
+    const unsigned int height = cinfo.image_height;
+    unsigned int scaled_width, scaled_height;
+    const float scaling_ratio = scale_dimensions(scaled_size, width, height, &scaled_width, &scaled_height);
+    if (scaling_ratio >= 65535 || scaled_width < 1 || scaled_width > 32767 || scaled_height < 1 || scaled_width > 32767) {
+        trace("scaling ratio (%g) or scaled image dimensions (%ux%u) are invalid\n", scaling_ratio, scaled_width, scaled_height);
+        my_error_exit((j_common_ptr)&cinfo);
+    }
+
+    cinfo_out.image_width      = scaled_width;
+    cinfo_out.image_height     = scaled_height;
+    cinfo_out.input_components = num_components;
+    cinfo_out.in_color_space   = cinfo.out_color_space;
+    jpeg_set_defaults(&cinfo_out);
+    jpeg_set_quality(&cinfo_out, 95, TRUE);
+    jpeg_start_compress(&cinfo_out, TRUE);
+
+    const uint_fast32_t row_components = width * num_components;
+    const uint_fast32_t scaled_row_components = scaled_width * num_components;
+    JSAMPLE out_line[scaled_row_components];
+    JSAMPROW out_row = out_line;
+
+    if (scaling_ratio > 2) {
+        /* Simple (unweighted) area sampling for large downscales */
+        quick_dividers = calculate_quick_dividers(scaling_ratio);
+        const uint16_t max_sample_height = scaling_ratio + 1;
+        sample_rows_buffer = malloc(max_sample_height * row_components * sizeof(JSAMPLE));
+        if (!sample_rows_buffer || !quick_dividers) {
+            my_error_exit((j_common_ptr)&cinfo);
+        }
+        JSAMPROW rows[max_sample_height];
+        for (uint16_t row_index = 0; row_index < max_sample_height; row_index++) {
+            rows[row_index] = sample_rows_buffer + row_index*row_components;
+        }
+
+        /* Loop through all (down-)scaled pixels */
+        float y_interp = 0.5;
+        for (uint_fast16_t scaled_y = 0; scaled_y < scaled_height; scaled_y++) {
+            const uint_fast32_t y = y_interp;
+            const uint_fast32_t y_limit = y_interp += scaling_ratio;
+            const uint_fast16_t num_y_pixels = (y_limit < height ? y_limit : height) - y;
+
+            for (uint_fast16_t row_index = 0; row_index < num_y_pixels; row_index++) {
+                jpeg_read_scanlines(&cinfo, &rows[row_index], 1);
+            }
+
+            float x_interp = 0.5;
+            for (uint_fast32_t scaled_x = 0; scaled_x < scaled_row_components; scaled_x+=num_components) {
+                const uint_fast32_t x = x_interp;
+                x_interp += scaling_ratio;
+                const uint_fast32_t x_limit = x_interp < width ? x_interp : width;
+                const uint_fast32_t x_index = x * num_components;
+                const uint_fast32_t x_limit_index = x_limit * num_components;
+
+                /* Sum all values where the scaled pixel overlaps at least half a pixel in each direction */
+                const uint_fast32_t num_pixels = num_y_pixels * (x_limit - x);
+                const uint_fast32_t quick_divider = quick_dividers[num_pixels];
+                for (uint_fast8_t component=0; component<num_components; component++) {
+                    uint_fast32_t value = 0;
+                    for (uint_fast32_t pixel_index = x_index+component; pixel_index < x_limit_index; pixel_index+=num_components) {
+                        for (uint_fast16_t row_index = 0; row_index < num_y_pixels; row_index++) {
+                            value += rows[row_index][pixel_index];
+                        }
+                    }
+                    out_row[scaled_x+component] = quick_divider ? value * quick_divider >> 16 : value / num_pixels;
+                }
+            }
+
+            jpeg_write_scanlines(&cinfo_out, &out_row, 1);
+        }
+
+        free(sample_rows_buffer);
+        free(quick_dividers);
+    }
+    else {
+#ifndef USE_BICUBIC
+        /* Bilinear interpolation for upscales and modest downscales */
+        JSAMPLE scanline[row_components];
+        JSAMPLE next_scanline[row_components];
+        JSAMPROW row = scanline;
+        JSAMPROW next_row = next_scanline;
+        const float downscale_offset = scaling_ratio < 1 ? 0 : (scaling_ratio - 1) / 2;
+        float y_interp = downscale_offset;
+        for (uint_fast16_t scaled_y = 0; scaled_y < scaled_height; scaled_y++, y_interp+=scaling_ratio) {
+            const uint_fast32_t y = y_interp;
+            const uint_fast16_t y_diff = (uint_fast32_t)(y_interp*256) - (y<<8);
+            const uint_fast16_t y_remn = 256 - y_diff;
+
+            if (cinfo.output_scanline < y+2) {
+                while (cinfo.output_scanline < y+1) {
+                    jpeg_read_scanlines(&cinfo, &next_row, 1);
+                }
+                memcpy(row, next_row, row_components*sizeof(JSAMPLE));
+                if (y+2 < height) {
+                    jpeg_read_scanlines(&cinfo, &next_row, 1);
+                }
+            }
+
+            float x_interp = downscale_offset;
+            for (uint_fast32_t scaled_x = 0; scaled_x < scaled_row_components; scaled_x+=num_components, x_interp+=scaling_ratio) {
+                const uint_fast32_t x = x_interp;
+                const uint_fast32_t x_index = x * num_components;
+                const uint_fast32_t next_x_index = x+1 < width ? x_index+num_components : x_index;
+
+                const uint_fast16_t x_diff = (uint_fast32_t)(x_interp*256) - (x<<8);
+                const uint_fast16_t x_remn = 256 - x_diff;
+                const uint_fast32_t weight = x_remn * y_remn;
+                const uint_fast32_t weightx = x_diff * y_remn;
+                const uint_fast32_t weighty = x_remn * y_diff;
+                const uint_fast32_t weightxy = x_diff * y_diff;
+
+                for (uint_fast8_t component=0; component<num_components; component++) {
+                    out_line[scaled_x + component] = blerp_pixel(row, next_row, x_index+component, next_x_index+component, weight, weightx, weighty, weightxy) >> 16;
+                }
+            }
+
+            jpeg_write_scanlines(&cinfo_out, &out_row, 1);
+        }
+#else
+        /* Bicubic interpolation to improve the scaled image quality */
+        JSAMPLE scanline0[row_components];
+        JSAMPLE scanline1[row_components];
+        JSAMPLE scanline2[row_components];
+        JSAMPLE scanline3[row_components];
+        JSAMPROW row0 = scanline0;
+        JSAMPROW row1 = scanline1;
+        JSAMPROW row2 = scanline2;
+        JSAMPROW row3 = scanline3;
+        jpeg_read_scanlines(&cinfo, &row1, 1);
+        memcpy(row2, row1, row_components*sizeof(JSAMPLE));
+
+        const float downscale_offset = scaling_ratio < 1 ? 0 : (scaling_ratio - 1) / 2;
+        float y_interp = downscale_offset;
+        for (uint_fast16_t scaled_y = 0; scaled_y < scaled_height; scaled_y++, y_interp+=scaling_ratio) {
+            const uint_fast32_t y = y_interp;
+            const float dy = y_interp - (int_fast32_t)y_interp;
+            const float dy2 = dy * dy;
+            const float dy3 = dy2 * dy;
+
+            if (cinfo.output_scanline < y+3) {
+                while (cinfo.output_scanline < y) {
+                    jpeg_read_scanlines(&cinfo, &row1, 1);
+                }
+                memcpy(row0, row1, row_components*sizeof(JSAMPLE));
+                if (cinfo.output_scanline < y+1) {
+                    jpeg_read_scanlines(&cinfo, &row2, 1);
+                }
+                memcpy(row1, row2, row_components*sizeof(JSAMPLE));
+                if (y+2 < height && cinfo.output_scanline < y+2) {
+                    jpeg_read_scanlines(&cinfo, &row3, 1);
+                }
+                memcpy(row2, row3, row_components*sizeof(JSAMPLE));
+                if (y+3 < height) {
+                    jpeg_read_scanlines(&cinfo, &row3, 1);
+                }
+            }
+
+            float x_interp = downscale_offset;
+            for (uint_fast32_t scaled_x = 0; scaled_x < scaled_row_components; scaled_x+=num_components, x_interp+=scaling_ratio) {
+                const uint_fast32_t x = x_interp;
+                const uint_fast32_t x1 = x * num_components;
+                const uint_fast32_t x0 = x > 0 ? x1-num_components : x1;
+                const uint_fast32_t x2 = x+1 < width ? x1+num_components : x1;
+                const uint_fast32_t x3 = x+2 < width ? x2+num_components : x2;
+
+                const float dx = x_interp - (int_fast32_t)x_interp;
+                const float dx2 = dx * dx;
+                const float dx3 = dx2 * dx;
+
+                for (uint_fast8_t component=0; component<num_components; component++) {
+                    const int_fast16_t pixel = bcerp(row0, row1, row2, row3, x0, x1, x2, x3, component, dx, dx2, dx3, dy, dy2, dy3);
+                    out_row[scaled_x + component] = pixel < 0 ? 0 : pixel > 255 ? 255 : pixel;
+                }
+            }
+
+            jpeg_write_scanlines(&cinfo_out, &out_row, 1);
+        }
+#endif
+    }
+
+    jpeg_finish_compress(&cinfo_out);
+
+    jpeg_destroy_compress(&cinfo_out);
+    jpeg_destroy_decompress(&cinfo);
+
+    fclose(fp);
+    fclose(out);
+
+    return 0;
+}
+
+static int
+png_resize (const char *fname, const char *outname, int scaled_size) {
+    png_structp png_ptr = NULL, new_png_ptr = NULL;
+    png_infop info_ptr = NULL, new_info_ptr = NULL;
+    png_uint_32 height, width;
+    int bit_depth, color_type;
+    int err = -1;
+    FILE *fp = NULL;
+    FILE *out = NULL;
+    png_byte *out_row = NULL;
+    uint_fast32_t *quick_dividers = NULL;
+
+    fp = fopen(fname, "rb");
+    if (!fp) {
+        trace("failed to open %s for reading\n", fname);
+        goto error;
+    }
+
+    png_ptr = png_create_read_struct (PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    if (!png_ptr) {
+        trace("failed to create PNG read struct\n");
+        goto error;
+    }
+
+    if (setjmp(png_jmpbuf((png_ptr))))
+    {
+        trace("failed to read %s as png\n", fname);
+        goto error;
+    }
+
+    png_init_io(png_ptr, fp);
+
+    info_ptr = png_create_info_struct (png_ptr);
+    if (!info_ptr) {
+        trace("failed to create PNG info struct\n");
+        goto error;
+    }
+
+    png_read_png(png_ptr, info_ptr, PNG_TRANSFORM_STRIP_16|PNG_TRANSFORM_PACKING|PNG_TRANSFORM_EXPAND, NULL);
+    png_bytep *row_pointers = png_get_rows(png_ptr, info_ptr);
+    png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, NULL, NULL, NULL);
+
+    unsigned int scaled_width, scaled_height;
+    const float scaling_ratio = scale_dimensions(scaled_size, width, height, &scaled_width, &scaled_height);
+    if (scaling_ratio >= 65535 || scaled_width < 1 || scaled_width > 32767 || scaled_height < 1 || scaled_width > 32767) {
+        trace("scaling ratio (%g) or scaled image dimensions (%ux%u) are invalid\n", scaling_ratio, scaled_width, scaled_height);
+        goto error;
+    }
+
+    out = fopen (outname, "w+b");
+    if (!out) {
+        trace("failed to open %s for writing\n", outname);
+        goto error;
+    }
+
+    new_png_ptr = png_create_write_struct (PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    if (!new_png_ptr) {
+        trace("failed to create png write struct\n");
+        goto error;
+    }
+
+    if (setjmp(png_jmpbuf((new_png_ptr))))
+    {
+        trace("failed to write %s as png\n", outname);
+        goto error;
+    }
+
+    png_init_io(new_png_ptr, out);
+
+    new_info_ptr = png_create_info_struct (new_png_ptr);
+    if (!new_info_ptr) {
+        trace("failed to create png info struct for writing\n");
+        goto error;
+    }
+
+    png_set_IHDR(new_png_ptr, new_info_ptr, scaled_width, scaled_height, bit_depth, color_type, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+    png_write_info(new_png_ptr, new_info_ptr);
+    png_set_packing(new_png_ptr);
+
+    const uint8_t has_alpha = color_type & PNG_COLOR_MASK_ALPHA;
+    const uint8_t num_values = color_type == PNG_COLOR_TYPE_GRAY || color_type == PNG_COLOR_TYPE_GRAY_ALPHA ? 1 : 3;
+    const uint8_t num_components = num_values + (has_alpha ? 1 : 0);
+    const uint_fast32_t scaled_row_components = scaled_width * num_components;
+    out_row = malloc(scaled_row_components * sizeof(png_byte));
+    if (!out_row) {
+        goto error;
+    }
+
+    if (scaling_ratio > 2) {
+        /* Simple (unweighted) area sampling for large downscales */
+        quick_dividers = calculate_quick_dividers(scaling_ratio);
+        if (!quick_dividers) {
+            goto error;
+        }
+
+        /* Loop through all (down-)scaled pixels */
+        float y_interp = 0.5;
+        for (uint_fast16_t scaled_y = 0; scaled_y < scaled_height; scaled_y++) {
+            const uint_fast32_t y = y_interp;
+            const uint_fast32_t y_limit = y_interp += scaling_ratio;
+            const uint_fast16_t num_y_pixels = (y_limit < height ? y_limit : height) - y;
+            png_byte *rows[num_y_pixels];
+            for (uint_fast16_t row_index = 0; row_index < num_y_pixels; row_index++) {
+                rows[row_index] = row_pointers[y+row_index];
+            }
+
+            float x_interp = 0.5;
+            for (uint_fast32_t scaled_x = 0; scaled_x < scaled_row_components; scaled_x+=num_components) {
+                const uint_fast32_t x = x_interp;
+                x_interp += scaling_ratio;
+                const uint_fast32_t x_limit = x_interp < width ? x_interp : width;
+                const uint_fast32_t x_index = x * num_components;
+                const uint_fast32_t x_limit_index = x_limit * num_components;
+                const uint_fast32_t num_pixels = num_y_pixels * (x_limit - x);
+
+                /* Sum all values where the scaled pixel overlaps at least half an original pixel in each direction */
+                const uint_fast32_t quick_divider = quick_dividers[num_pixels];
+                if (has_alpha) {
+                    /* Alpha weight possible transparent pixels */
+                    uint_fast32_t greyred_value = 0;
+                    uint_fast32_t green_value = 0;
+                    uint_fast32_t blue_value = 0;
+                    uint_fast32_t alpha_value = 0;
+                    for (uint_fast16_t row_index = 0; row_index < num_y_pixels; row_index++) {
+                        const png_byte *start = rows[row_index] + x_index;
+                        png_byte *ptr = rows[row_index] + x_limit_index;
+                        do {
+                            const png_byte alpha = *--ptr;
+                            alpha_value += alpha;
+                            if (num_values == 3) {
+                                blue_value += *--ptr * alpha;
+                                green_value += *--ptr * alpha;
+                            }
+                            greyred_value += *--ptr * alpha;
+                        } while (ptr > start);
+                    }
+                    if (alpha_value < num_pixels) {
+                        for (uint_fast8_t component = 0; component < num_components; component++) {
+                            out_row[scaled_x+component] = 0;
+                        }
+                    }
+                    else {
+                        out_row[scaled_x+num_values] = alpha_value > 254*num_pixels ? 255 : quick_divider ? alpha_value*quick_divider>>16 : alpha_value/num_pixels;
+                        if (quick_divider && out_row[scaled_x+num_values] == 255) {
+                            out_row[scaled_x] = greyred_value * quick_divider >> 24;
+                            if (num_values == 3) {
+                                out_row[scaled_x+1] = green_value * quick_divider >> 24;
+                                out_row[scaled_x+2] = blue_value * quick_divider >> 24;
+                            }
+                        }
+                        else {
+                            out_row[scaled_x] = greyred_value / alpha_value;
+                            if (num_values == 3) {
+                                out_row[scaled_x+1] = green_value / alpha_value;
+                                out_row[scaled_x+2] = blue_value / alpha_value;
+                            }
+                        }
+                    }
+                }
+                else if (num_values == 3) {
+                    /* For opaque RGB pixels, use a simple average on each colour component */
+                    uint_fast32_t red_value = 0;
+                    uint_fast32_t green_value = 0;
+                    uint_fast32_t blue_value = 0;
+                    for (uint_fast16_t row_index = 0; row_index < num_y_pixels; row_index++) {
+                        const png_byte *start = rows[row_index] + x_index;
+                        png_byte *ptr = rows[row_index] + x_limit_index;
+                        do {
+                            blue_value += *--ptr;
+                            green_value += *--ptr;
+                            red_value += *--ptr;
+                        } while (ptr > start);
+
+                    }
+                    out_row[scaled_x] = quick_divider ? red_value * quick_divider >> 16 : red_value / num_pixels;
+                    out_row[scaled_x+1] = quick_divider ? green_value * quick_divider >> 16 : green_value / num_pixels;
+                    out_row[scaled_x+2] = quick_divider ? blue_value * quick_divider >> 16 : blue_value / num_pixels;
+                }
+                else {
+                    /* For opaque grey pixels, use a simple average of the values */
+                    uint_fast32_t grey_value = 0;
+                    for (uint_fast16_t row_index = 0; row_index < num_y_pixels; row_index++) {
+                        for (uint_fast32_t pixel_index = x_index; pixel_index < x_limit_index; pixel_index++) {
+                            grey_value += rows[row_index][pixel_index];
+                        }
+                    }
+                    out_row[scaled_x] = quick_divider ? grey_value * quick_divider >> 16 : grey_value / num_pixels;
+                }
+            }
+
+            png_write_row(new_png_ptr, out_row);
+        }
+    }
+    else {
+#ifndef USE_BICUBIC
+        /* Bilinear interpolation for upscales and modest downscales */
+        const float downscale_offset = scaling_ratio < 1 ? 0 : (scaling_ratio - 1) / 2;
+        uint_fast32_t scaled_alpha = 255 << 16;
+        float y_interp = downscale_offset;
+        for (uint_fast16_t scaled_y = 0; scaled_y < scaled_height; scaled_y++, y_interp+=scaling_ratio) {
+            const uint_fast32_t y = y_interp;
+            const png_byte *row = row_pointers[y];
+            const png_byte *next_row = y+1 < height ? row_pointers[y+1] : row;
+
+            const uint_fast16_t y_diff = (uint_fast32_t)(y_interp*256) - (y<<8);
+            const uint_fast16_t y_remn = 256 - y_diff;
+
+            float x_interp = downscale_offset;
+            for (uint_fast32_t scaled_x = 0; scaled_x < scaled_row_components; scaled_x+=num_components, x_interp+=scaling_ratio) {
+                const uint_fast32_t x = x_interp;
+                const uint_fast32_t x_index = x * num_components;
+                const uint_fast32_t next_x_index = x < width ? x_index+num_components : x_index;
+
+                const uint_fast16_t x_diff = (uint_fast32_t)(x_interp*256) - (x<<8);
+                const uint_fast16_t x_remn = 256 - x_diff;
+                const uint_fast32_t weight = x_remn * y_remn;
+                const uint_fast32_t weightx = x_diff * y_remn;
+                const uint_fast32_t weighty = x_remn * y_diff;
+                const uint_fast32_t weightxy = x_diff * y_diff;
+
+                uint_fast32_t alpha, alphax, alphay, alphaxy;
+                if (has_alpha) {
+                    /* Interpolate alpha channel and weight pixels by their alpha */
+                    alpha = weight * row[x_index + num_values];
+                    alphax = weightx * row[next_x_index + num_values];
+                    alphay = weighty * next_row[x_index + num_values];
+                    alphaxy = weightxy * next_row[next_x_index + num_values];
+                    scaled_alpha = alpha + alphax + alphay + alphaxy;
+                    out_row[scaled_x + num_values] = scaled_alpha >> 16;
+                }
+
+                if (scaled_alpha == 255 << 16) {
+                    /* Simplified calculation for fully opaque pixels */
+                    for (uint_fast8_t component=0; component<num_values; component++) {
+                        out_row[scaled_x + component] = blerp_pixel(row, next_row, x_index+component, next_x_index+component, weight, weightx, weighty, weightxy) >> 16;
+                    }
+                }
+                else if (scaled_alpha == 0) {
+                    /* For speed, don't preserve the values of fully transparent pixels */
+                    for (uint_fast8_t component=0; component<num_values; component++) {
+                        out_row[scaled_x + component] = 0;
+                    }
+                }
+                else {
+                    /* Alpha-weight partially transparent pixels to avoid background colour bleeding */
+                    for (uint_fast8_t component=0; component<num_values; component++) {
+                        out_row[scaled_x + component] = blerp_pixel(row, next_row, x_index+component, next_x_index+component, alpha, alphax, alphay, alphaxy) / scaled_alpha;
+                    }
+                }
+            }
+
+            png_write_row(new_png_ptr, out_row);
+        }
+#else
+        /* Bicubic interpolation to improve the scaled image quality */
+        if (has_alpha) {
+            for (uint_fast16_t y = 0; y < height; y++) {
+                png_byte *row = row_pointers[y];
+                for (uint_fast16_t x_index = 0; x_index < width*4; x_index+=4) {
+                    const png_byte alpha = row[x_index + 3];
+                    if (alpha < 255) {
+                        for (uint_fast8_t component=0; component<3; component++) {
+                            row[x_index + component] = row[x_index + component]*alpha >> 8;
+                        }
+                    }
+                }
+            }
+        }
+
+        const float downscale_offset = scaling_ratio < 1 ? 0 : (scaling_ratio - 1) / 2;
+        int_fast16_t scaled_alpha = 255;
+        float y_interp = downscale_offset;
+        for (uint_fast16_t scaled_y = 0; scaled_y < scaled_height; scaled_y++, y_interp+=scaling_ratio) {
+            const uint_fast32_t y = y_interp;
+            const png_byte *row1 = row_pointers[y];
+            const png_byte *row0 = y > 0 ? row_pointers[y-1] : row1;
+            const png_byte *row2 = y+1 < height ? row_pointers[y+1] : row1;
+            const png_byte *row3 = y+2 < height ? row_pointers[y+2] : row2;
+
+            const float dy = y_interp - (int_fast32_t)y_interp;
+            const float dy2 = dy * dy;
+            const float dy3 = dy2 * dy;
+
+            float x_interp = downscale_offset;
+            for (uint_fast32_t scaled_x = 0; scaled_x < scaled_row_components; scaled_x+=num_components, x_interp+=scaling_ratio) {
+                const uint_fast32_t x = x_interp;
+                const uint_fast32_t x1 = x * num_components;
+                const uint_fast32_t x0 = x > 0 ? x1-num_components : x1;
+                const uint_fast32_t x2 = x+1 < width ? x1+num_components : x1;
+                const uint_fast32_t x3 = x+2 < width ? x2+num_components : x2;
+
+                const float dx = x_interp - (int_fast32_t)x_interp;
+                const float dx2 = dx * dx;
+                const float dx3 = dx2 * dx;
+
+                if (has_alpha) {
+                    scaled_alpha = bcerp(row0, row1, row2, row3, x0, x1, x2, x3, 3, dx, dx2, dx3, dy, dy2, dy3);
+                    out_row[scaled_x + 3] = scaled_alpha < 0 ? 0 : scaled_alpha > 255 ? 255 : scaled_alpha;
+                }
+
+                if (scaled_alpha == 255) {
+                    for (uint_fast8_t component=0; component<3; component++) {
+                        const int_fast16_t pixel = bcerp(row0, row1, row2, row3, x0, x1, x2, x3, component, dx, dx2, dx3, dy, dy2, dy3);
+                        out_row[scaled_x + component] = pixel < 0 ? 0 : pixel > 255 ? 255 : pixel;
+                    }
+                }
+                else if (scaled_alpha == 0) {
+                    for (uint_fast8_t component=0; component<3; component++) {
+                        out_row[scaled_x + component] = 0;
+                    }
+                }
+                else {
+                    for (uint_fast8_t component=0; component<3; component++) {
+                        const int_fast16_t pixel = (bcerp(row0, row1, row2, row3, x0, x1, x2, x3, component, dx, dx2, dx3, dy, dy2, dy3)<<8) / scaled_alpha;
+                        out_row[scaled_x + component] = pixel < 0 ? 0 : pixel > 255 ? 255 : pixel;
+                    }
+                }
+            }
+
+            png_write_row(new_png_ptr, out_row);
+        }
+#endif
+    }
+
+    png_write_end(new_png_ptr, new_info_ptr);
+
+    err = 0;
+error:
+    if (out) {
+        fclose (out);
+    }
+    if (fp) {
+        fclose (fp);
+    }
+    if (png_ptr) {
+        png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
+    }
+    if (new_png_ptr) {
+        png_destroy_write_struct(&new_png_ptr, &new_info_ptr);
+    }
+    if (out_row) {
+        free(out_row);
+    }
+    if (quick_dividers) {
+        free(quick_dividers);
+    }
+
+    return err;
+}
+
+#endif
+
+#ifdef USE_IMLIB2
+static int
+imlib_resize(const char *in, const char *out, int img_size)
+{
+    Imlib_Image img = imlib_load_image_immediately (in);
+    if (!img) {
+        trace ("file %s not found, or imlib2 can't load it\n", in);
+        return -1;
+    }
+    imlib_context_set_image(img);
+    imlib_image_set_changes_on_disk();
+
+    int w = imlib_image_get_width ();
+    int h = imlib_image_get_height ();
+    int sw, sh;
+    scale_dimensions(img_size, w, h, &sw, &sh);
+    if (sw < 1 || sw > 32767 || sh < 1 || sh > 32767) {
+        trace ("%d/%d scaled image is too large\n", sw, sh);
+        imlib_free_image ();
+        return -1;
+    }
+
+    int is_jpeg = imlib_image_format() && imlib_image_format()[0] == 'j';
+    Imlib_Image scaled = imlib_create_cropped_scaled_image(0, 0, w, h, sw, sh);
+    if (!scaled) {
+        trace ("imlib2 can't create scaled image\n", in);
+        imlib_free_image ();
+        return -1;
+    }
+    imlib_context_set_image(scaled);
+
+    imlib_image_set_format(is_jpeg ? "jpg" : "png");
+    if (is_jpeg)
+        imlib_image_attach_data_value("quality", NULL, 95, NULL);
+    Imlib_Load_Error err = 0;
+    imlib_save_image_with_error_return(out, &err);
+    if (err != 0) {
+        trace ("imlib save %s returned %d\n", out, err);
+        imlib_free_image ();
+        imlib_context_set_image(img);
+        imlib_free_image ();
+        return -1;
+    }
+
+    imlib_free_image ();
+    imlib_context_set_image(img);
+    imlib_free_image ();
+    return 0;
+}
+#endif
+
+static int
+check_dir(const char *path)
+{
+    struct stat stat_struct;
+    if (!stat(path, &stat_struct)) {
+        return S_ISDIR(stat_struct.st_mode);
+    }
+    if (errno != ENOENT) {
+        return false;
+    }
+
+    char* dir = strdup(path);
+    if (!dir) {
+        return false;
+    }
+
+    const int good_dir = check_dir(dirname(dir));
+    free(dir);
+    return good_dir && !mkdir(path, 0755);
+}
+
+static int
+ensure_dir(const char *path)
+{
+    char dir[PATH_MAX];
+    strcpy(dir, path);
+    dirname(dir);
+    trace("artwork: ensure folder %s exists\n", dir);
+    return check_dir(dir);
+}
+
+static int
+scale_file (const char *in, const char *out, int img_size)
+{
+    trace("artwork: scaling %s to %s\n", in, out);
+
+    if (img_size < 1 || img_size > 32767) {
+        trace ("%d is not a valid scaled image size\n", img_size);
+        return -1;
+    }
+
+    if (!ensure_dir(out)) {
+        return -1;
+    }
+
+    deadbeef->mutex_lock(files_mutex);
+#ifdef USE_IMLIB2
+    deadbeef->mutex_lock(imlib_mutex);
+    const int imlib_err = imlib_resize(in, out, img_size);
+    deadbeef->mutex_unlock(imlib_mutex);
+    deadbeef->mutex_unlock(files_mutex);
+    return imlib_err;
+#else
+    int err = jpeg_resize(in, out, img_size);
+    if (err != 0) {
+        unlink(out);
+        err = png_resize(in, out, img_size);
+        if (err != 0) {
+            unlink (out);
+        }
+    }
+    deadbeef->mutex_unlock(files_mutex);
+    return err;
+#endif
+}
+
+#define BUFFER_SIZE 4096
+static int
+copy_file (const char *in, const char *out)
+{
+    trace ("copying %s to %s\n", in, out);
+
+    if (!ensure_dir(out)) {
+        return -1;
+    }
+
+    char tmp_out[PATH_MAX];
+    snprintf(tmp_out, PATH_MAX, "%s.part", out);
+    FILE *fout = fopen(tmp_out, "w+b");
+    if (!fout) {
+        trace("artwork: failed to open file %s for writing\n", tmp_out);
+        return -1;
+    }
+
+    DB_FILE *fin = deadbeef->fopen(in);
+    if (!fin) {
+        fclose(fout);
+        trace("artwork: failed to open file %s for reading\n", in);
+        return -1;
+    }
+    current_file = fin;
+
+    errno = 0;
+    int err = 0;
+    int bytes_read;
+    do {
+        char buffer[BUFFER_SIZE];
+        bytes_read = deadbeef->fread(buffer, 1, BUFFER_SIZE, fin);
+        if (bytes_read < 0 || errno) {
+            trace("artwork: failed to read file %s: %s\n", tmp_out, strerror(errno));
+            err = -1;
+        }
+        else if (bytes_read > 0 && fwrite(buffer, bytes_read, 1, fout) != 1) {
+            trace("artwork: failed to write file %s: %s\n", tmp_out, strerror(errno));
+            err = -1;
+        }
+    } while (!err && bytes_read == BUFFER_SIZE);
+
+    current_file = NULL;
+    deadbeef->fclose(fin);
+    fclose(fout);
+
+    if (!err) {
+        err = rename(tmp_out, out);
+        if (err) {
+            trace("artwork: failed to move %s to %s: %s\n", tmp_out, out, strerror(errno));
+        }
+    }
+
+    unlink(tmp_out);
+    return err;
+}
+
+static int
+write_file(const char *out, const char *data, const size_t data_length)
+{
+    if (!ensure_dir(out)) {
+        return -1;
+    }
+
+    char tmp_path[PATH_MAX];
+    snprintf(tmp_path, sizeof(tmp_path), "%s.part", out);
+    FILE *fp = fopen(tmp_path, "w+b");
+    if (!fp) {
+        trace ("artwork: failed to open %s for writing\n", tmp_path);
+        return -1;
+    }
+
+    int err = 0;
+    if (fwrite(data, 1, data_length, fp) != data_length) {
+        trace ("artwork: failed to write picture into %s\n", tmp_path);
+        err = -1;
+    }
+
+    fclose(fp);
+
+    if (!err) {
+        err = rename(tmp_path, out);
+        if (err) {
+            trace ("Failed to move %s to %s: %s\n", tmp_path, out, strerror(errno));
+        }
+    }
+
+    unlink(tmp_path);
+    return err;
 }
 
 static char
@@ -222,84 +1110,72 @@ esc_char (char c) {
 }
 
 static int
-make_cache_dir_path (char *path, int size, const char *artist, int img_size) {
-    char esc_artist[PATH_MAX];
-    int i;
-
+make_cache_dir_path (char *path, const int size, const char *artist, const int img_size) {
+    char esc_artist[NAME_MAX+1];
     if (artist) {
-        for (i = 0; artist[i] && i < PATH_MAX-1; i++) {
-            esc_artist[i] = esc_char (artist[i]);
+        size_t i = 0;
+        while (artist[i] && i < NAME_MAX) {
+            esc_artist[i] = esc_char(artist[i]);
+            i++;
         }
         esc_artist[i] = '\0';
     }
     else {
-        strcpy (esc_artist, "Unknown artist");
+        strcpy(esc_artist, "Unknown artist");
     }
 
-    int sz = make_cache_root_path(path, size);
-    path += sz;
-    sz += snprintf (path, size-sz, img_size == -1 ? "covers/%2$s" : "covers-%1$d/%2$s", img_size, esc_artist);
-
-    for (char *p = path+sz-strlen(esc_artist); *p; p++) {
-        if (*p == '/') {
-            *p = '_';
-        }
+    if (make_cache_root_path(path, size) < 0) {
+        return -1;
     }
-    return sz;
+
+    const size_t size_left = size - strlen(path);
+    if (snprintf(path+strlen(path), size_left, img_size == -1 ? "covers/%2$s/" : "covers-%1$d/%2$s/", img_size, esc_artist) >= size_left) {
+        trace("Cache path truncated at %d bytes\n", size);
+        return -1;
+    }
+
+    return 0;
 }
 
 static int
-make_cache_path2 (char *path, int size, const char *fname, const char *album, const char *artist, int img_size) {
-    *path = 0;
+make_cache_path2 (char *path, const int size, const char *fname, const char *album, const char *artist, const int img_size) {
+    path[0] = '\0';
 
-    int unk = 0;
-    int unk_artist = 0;
-
-    if (!album || !(*album)) {
-        album = "Unknown album";
-        unk = 1;
-    }
-    if (!artist || !(*artist)) {
-        artist = "Unknown artist";
-        unk_artist = 1;
-    }
-
-    if (unk)
-    {
+    if (!album || !*album) {
         if (fname) {
             album = fname;
         }
-        else if (!unk_artist) {
+        else if (artist && *artist) {
             album = artist;
         }
         else {
-            trace ("not possible to get any unique album name\n");
+            trace("not possible to get any unique album name\n");
             return -1;
         }
     }
+    if (!artist || !*artist) {
+        artist = "Unknown artist";
+    }
 
-    char *p = path;
-    char esc_album[PATH_MAX];
-    const char *palbum = album;
-    size_t l = strlen (album);
-    if (l > 200) {
-        palbum = album + l - 200;
+    if (make_cache_dir_path(path, size-NAME_MAX, artist, img_size)) {
+        return -1;
     }
-    int i;
-    for (i = 0; palbum[i]; i++) {
-        esc_album[i] = esc_char (palbum[i]);
-    }
-    esc_album[i] = 0;
 
-    int sz = make_cache_dir_path (path, size, artist, img_size);
-    size -= sz;
-    path += sz;
-    sz = snprintf (path, size, "/%s.jpg", esc_album);
-    for (char *p = path+1; *p; p++) {
-        if (*p == '/') {
-            *p = '_';
-        }
+    const int max_album_chars = min(NAME_MAX, size - strlen(path)) - sizeof("1.jpg.part");
+    if (max_album_chars <= 0) {
+        trace("Path buffer not long enough for %s and filename\n", path);
+        return -1;
     }
+
+    char esc_album[max_album_chars+1];
+    const char *palbum = strlen(album) > max_album_chars ? album+strlen(album)-max_album_chars : album;
+    size_t i = 0;
+    do {
+        esc_album[i] = esc_char(palbum[i]);
+    } while (palbum[i++]);
+
+    sprintf(path+strlen(path), "%s%s", esc_album, ".jpg");
+    return 0;
 }
 
 static void
@@ -307,80 +1183,119 @@ make_cache_path (char *path, int size, const char *album, const char *artist, in
     make_cache_path2 (path, size, NULL, album, artist, img_size);
 }
 
+static const char *
+get_default_cover (void) {
+    return default_cover;
+}
+
 static void
-queue_add (const char *fname, const char *artist, const char *album, int img_size, artwork_callback callback, void *user_data) {
-    if (!artist) {
-        artist = "";
+query_clear(cover_query_t *query)
+{
+    if (query->fname) {
+        free(query->fname);
     }
-    if (!album) {
-        album = "";
+    if (query->artist) {
+        free(query->artist);
     }
-    deadbeef->mutex_lock (mutex);
+    if (query->album) {
+        free(query->album);
+    }
+    free(query);
+}
+
+static void
+query_complete(const char *fname, const char *artist, const char *album)
+{
+    deadbeef->mutex_lock(queue_mutex);
+
+    cover_query_t *query = queue;
+    cover_callback_t *callback = &query->callback;
+    do {
+        if (callback->cb) {
+            trace("artwork: making callback with data %s %s %s %p\n", fname, artist, album, callback->ud);
+            callback->cb(fname, artist, album, callback->ud);
+        }
+        callback = callback->next;
+    } while (callback);
+
+    queue = query->next;
+    if (!queue) {
+        queue_tail = NULL;
+    }
+
+    query_clear(query);
+
+    deadbeef->mutex_unlock(queue_mutex);
+}
+
+static int
+params_match(const char *s1, const char *s2)
+{
+    return s1 == s2 || s1 && s2 && !strcasecmp(s1, s2);
+}
+
+static void
+query_add(const char *fname, const char *artist, const char *album, const int img_size, const artwork_callback callback, void *user_data)
+{
+    deadbeef->mutex_lock(queue_mutex);
 
     for (cover_query_t *q = queue; q; q = q->next) {
-        if (!strcasecmp (artist, q->artist) && !strcasecmp (album, q->album) && (q->size == -1 || img_size == -1)) {
-            if (q->size == -1 && img_size != -1) {
-                trace("Already in queue - set size to %d\n", img_size);
-                q->size = img_size;
+        if (params_match(artist, q->artist) && params_match(album, q->album) && q->size == img_size) {
+            trace("artwork queue: already in queue - add to callbacks\n");
+            if (callback) {
+                cover_callback_t *extra_callback = malloc(sizeof(cover_callback_t));
+                if (extra_callback) {
+                    extra_callback->cb = callback;
+                    extra_callback->ud = user_data;
+                    extra_callback->next = NULL;
+                    cover_callback_t *last_callback = &q->callback;
+                    while (last_callback->next) {
+                        last_callback = last_callback->next;
+                    }
+                    last_callback->next = extra_callback;
+                }
+                else {
+                    callback(NULL, NULL, NULL, user_data);
+                }
             }
-            if (q->numcb < MAX_CALLBACKS && callback) {
-                trace("Already in queue - add to callbacks\n");
-                q->callbacks[q->numcb].cb = callback;
-                q->callbacks[q->numcb].ud = user_data;
-                q->numcb++;
-            }
-            deadbeef->mutex_unlock (mutex);
+            deadbeef->mutex_unlock (queue_mutex);
             return;
         }
     }
 
-    trace("artwork:queue_add %s %s %s %d\n", fname, artist, album, img_size);
-    cover_query_t *q = malloc (sizeof (cover_query_t));
-    memset (q, 0, sizeof (cover_query_t));
-    q->fname = strdup (fname);
-    q->artist = strdup (artist);
-    q->album = strdup (album);
-    q->size = img_size;
-    q->callbacks[q->numcb].cb = callback;
-    q->callbacks[q->numcb].ud = user_data;
-    q->numcb++;
-    if (queue_tail) {
+    trace("artwork:query_add %s %s %s %d\n", fname, artist, album, img_size);
+    cover_query_t *q = malloc(sizeof(cover_query_t));
+    if (q) {
+        q->fname = fname && *fname ? strdup(fname) : NULL;
+        q->artist = artist ? strdup(artist) : NULL;
+        q->album = album ? strdup(album) : NULL;
+        q->size = img_size;
+        q->next = NULL;
+        q->callback.cb = callback;
+        q->callback.ud = user_data;
+        q->callback.next = NULL;
+
+        if (!q->fname || artist && !q->artist || album && !q->album) {
+            query_clear(q);
+            q = NULL;
+        }
+    }
+
+    if (!q) {
+        if (callback) {
+            callback(NULL, NULL, NULL, user_data);
+        }
+    }
+    else if (queue_tail) {
         queue_tail->next = q;
         queue_tail = q;
     }
     else {
         queue = queue_tail = q;
     }
-    deadbeef->mutex_unlock (mutex);
-    deadbeef->cond_signal (cond);
-}
 
-static void
-queue_pop (void) {
-    deadbeef->mutex_lock (mutex);
-    cover_query_t *next = queue ? queue->next : NULL;
-    if (queue) {
-        if (queue->fname) {
-            free (queue->fname);
-        }
-        if (queue->artist) {
-            free (queue->artist);
-        }
-        if (queue->album) {
-            free (queue->album);
-        }
-        for (int i = 0; i < queue->numcb; i++) {
-            if (queue->callbacks[i].cb) {
-                queue->callbacks[i].cb (NULL, NULL, NULL, queue->callbacks[i].ud);
-            }
-        }
-        free (queue);
-    }
-    queue = next;
-    if (!queue) {
-        queue_tail = NULL;
-    }
-    deadbeef->mutex_unlock (mutex);
+    deadbeef->mutex_unlock(queue_mutex);
+    deadbeef->cond_signal(cond);
 }
 
 static char *filter_custom_mask = NULL;
@@ -393,60 +1308,60 @@ filter_custom (const struct dirent *f)
 #ifndef FNM_CASEFOLD
 #define FNM_CASEFOLD FNM_IGNORECASE
 #endif
-    if (!fnmatch (filter_custom_mask, f->d_name, FNM_CASEFOLD)) {
-        return 1;
-    }
-    return 0;
+    return !fnmatch(filter_custom_mask, f->d_name, FNM_CASEFOLD);
 }
 
-static char *local_image_file(const char *filename)
+static char *test_mask(char *mask, const char *filename_dir)
 {
-    char filename_dir[PATH_MAX];
-    strncpy(filename_dir, filename, sizeof(filename_dir));
-    filename_dir[PATH_MAX-1] = '\0';
-    dirname(filename_dir);
-    trace("scanning %s for artwork\n", filename_dir);
-
+    char *artwork_path = NULL;
+    filter_custom_mask = mask;
     struct dirent **files;
-    int files_count = 0;
-    char *p = artwork_filemask;
-    while (files_count == 0 && p) {
-        char mask[MAX_FILEMASK_LENGTH] = "";
-        char *e = strchr(p, ';');
-        if (e) {
-            strncpy(mask, p, e-p);
-            mask[e-p] = '\0';
-            e++;
+    const int files_count = scandir(filename_dir, &files, filter_custom, NULL);
+    if (files_count >= 0) {
+        for (size_t i = 0; i < files_count; i++) {
+            trace("found cover %s in local folder\n", files[0]->d_name);
+            if (!artwork_path) {
+                artwork_path = malloc(strlen(filename_dir) + 1 + strlen(files[i]->d_name) + 1);
+                if (artwork_path) {
+                    sprintf(artwork_path, "%s/%s", filename_dir, files[i]->d_name);
+                    struct stat stat_struct;
+                    if (stat(artwork_path, &stat_struct) || !S_ISREG(stat_struct.st_mode)) {
+                        free(artwork_path);
+                        artwork_path = NULL;
+                    }
+                }
+            }
+            free(files[i]);
         }
-        else {
-            strcpy(mask, p);
-        }
-        if (mask[0]) {
-            filter_custom_mask = mask;
-            files_count = scandir(filename_dir, &files, filter_custom, NULL);
-        }
-        p = e;
+        free(files);
     }
-
-    if (files_count == 0) {
-        trace("No cover art files in local folder\n");
-        return NULL;
-    }
-
-    char *artwork_path = malloc(strlen(filename_dir) + 1 + strlen(files[0]->d_name) + 1);
-    if (artwork_path) {
-        trace("found cover %s in local folder\n", files[0]->d_name);
-        strcpy(artwork_path, filename_dir);
-        strcat(artwork_path, "/");
-        strcat(artwork_path, files[0]->d_name);
-    }
-
-    for (int i = 0; i < files_count; i++) {
-        free(files[i]);
-    }
-    free(files);
 
     return artwork_path;
+}
+
+static char *local_image_file(const char *directory, int (* scandir)(const char *dir, struct dirent ***namelist, int (*selector)(const struct dirent *), int (*cmp)(const struct dirent **, const struct dirent **)))
+{
+    trace("scanning %s for artwork\n", directory);
+    char filemask[MAX_FILEMASK_LENGTH];
+    strcpy(filemask, artwork_filemask);
+    const char *filemask_end = filemask + strlen(filemask);
+    char *p;
+    while (p = strrchr(filemask, ';')) {
+        *p = '\0';
+    }
+
+    char *artwork_path;
+    for (char *mask = filemask; mask < filemask_end; mask += strlen(mask)+1) {
+        if (mask[0] && (artwork_path = test_mask(mask, directory))) {
+            return artwork_path;
+        }
+    }
+    if ((artwork_path = test_mask("*.jpg", directory)) || (artwork_path = test_mask("*.jpeg", directory))) {
+        return artwork_path;
+    }
+
+    trace("No cover art files in local folder\n");
+    return NULL;
 }
 
 static const uint8_t *
@@ -456,25 +1371,19 @@ id3v2_skip_str (const int enc, const uint8_t *ptr, const uint8_t *end) {
             ptr++;
         }
         ptr++;
-        if (ptr >= end) {
-            return NULL;
-        }
-        return ptr;
+        return ptr < end ? ptr : NULL;
     }
     else {
         while (ptr < end-1 && (ptr[0] || ptr[1])) {
             ptr += 2;
         }
         ptr += 2;
-        if (ptr >= end) {
-            return NULL;
-        }
-        return ptr;
+        return ptr < end ? ptr : NULL;
     }
-    return NULL;
 }
 
-static const uint8_t *id3v2_artwork(const DB_id3v2_frame_t *f, const int minor_version)
+static const uint8_t *
+id3v2_artwork(const DB_id3v2_frame_t *f, const int minor_version)
 {
     if (strcmp (f->id, "APIC")) {
         return NULL;
@@ -492,11 +1401,11 @@ static const uint8_t *id3v2_artwork(const DB_id3v2_frame_t *f, const int minor_v
     }
 #if 0
     printf ("version: %d, flags: %d %d\n", minor_version, (int)f->flags[0], (int)f->flags[1]);
-    for (int i = 0; i < 20; i++) {
+    for (size_t i = 0; i < 20; i++) {
         printf ("%c", data[i] < 0x20 ? '?' : data[i]);
     }
     printf ("\n");
-    for (int i = 0; i < 20; i++) {
+    for (size_t i = 0; i < 20; i++) {
         printf ("%02x ", data[i]);
     }
     printf ("\n");
@@ -510,15 +1419,15 @@ static const uint8_t *id3v2_artwork(const DB_id3v2_frame_t *f, const int minor_v
         trace ("artwork: corrupted id3v2 APIC frame\n");
         return NULL;
     }
-    if (strcasecmp(data, "image/jpeg") &&
+//    if (strcasecmp(data, "image/jpeg") &&
 #ifdef USE_IMLIB2
-        strcasecmp(data, "image/gif") &&
-        strcasecmp(data, "image/tiff") &&
+//        strcasecmp(data, "image/gif") &&
+//        strcasecmp(data, "image/tiff") &&
 #endif
-        strcasecmp(data, "image/png")) {
-        trace ("artwork: unsupported mime type: %s\n", data);
-        return NULL;
-    }
+//        strcasecmp(data, "image/png")) {
+//        trace ("artwork: unsupported mime type: %s\n", data);
+//        return NULL;
+//    }
     if (*mime_end != 3) {
         trace ("artwork: picture type=%d\n", *mime_end);
         return NULL;
@@ -535,7 +1444,8 @@ static const uint8_t *id3v2_artwork(const DB_id3v2_frame_t *f, const int minor_v
     return data;
 }
 
-static const uint8_t *apev2_artwork(const DB_apev2_frame_t *f)
+static const uint8_t *
+apev2_artwork(const DB_apev2_frame_t *f)
 {
     if (strcasecmp (f->key, "cover art (front)")) {
         return NULL;
@@ -556,23 +1466,23 @@ static const uint8_t *apev2_artwork(const DB_apev2_frame_t *f)
         return NULL;
     }
 
-    uint8_t *ext = strrchr (f->data, '.');
-    if (!ext || !*++ext) {
-        trace ("artwork: apev2 cover art name has no extension\n");
-        return NULL;
-    }
+//    uint8_t *ext = strrchr (f->data, '.');
+//    if (!ext || !*++ext) {
+//        trace ("artwork: apev2 cover art name has no extension\n");
+//        return NULL;
+//    }
 
-    if (strcasecmp(ext, "jpeg") &&
-        strcasecmp(ext, "jpg") &&
+//    if (strcasecmp(ext, "jpeg") &&
+//        strcasecmp(ext, "jpg") &&
 #ifdef USE_IMLIB2
-        strcasecmp(ext, "gif") &&
-        strcasecmp(ext, "tif") &&
-        strcasecmp(ext, "tiff") &&
+//        strcasecmp(ext, "gif") &&
+//        strcasecmp(ext, "tif") &&
+//        strcasecmp(ext, "tiff") &&
 #endif
-        strcasecmp(ext, "png")) {
-        trace ("artwork: unsupported file type: %s\n", ext);
-        return NULL;
-    }
+//        strcasecmp(ext, "png")) {
+//        trace ("artwork: unsupported file type: %s\n", ext);
+//        return NULL;
+//    }
 
     return data;
 }
@@ -605,7 +1515,8 @@ flac_io_close (FLAC__IOHandle handle) {
     return 0;
 }
 
-static FLAC__StreamMetadata_Picture *flac_extract_art(FLAC__Metadata_Chain *chain, const char *filename)
+static FLAC__StreamMetadata_Picture *
+flac_extract_art(FLAC__Metadata_Chain *chain, const char *filename)
 {
     DB_FILE *file = deadbeef->fopen (filename);
     if (!file) {
@@ -629,7 +1540,7 @@ static FLAC__StreamMetadata_Picture *flac_extract_art(FLAC__Metadata_Chain *chai
 #endif
     deadbeef->fclose (file);
     if (!res) {
-        trace ("artwork: failed to read metadata from flac (not flac file?): %s\n", filename);
+        trace ("artwork: failed to read metadata from flac: %s\n", filename);
         return NULL;
     }
 
@@ -656,100 +1567,119 @@ static FLAC__StreamMetadata_Picture *flac_extract_art(FLAC__Metadata_Chain *chai
 #endif
 
 #ifdef USE_VFS_CURL
-#define BASE_URL "http://ws.audioscrobbler.com/2.0/"
+#define LFM_URL "http://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=%s&artist=%s&album=%s"
 #define API_KEY "6b33c8ae4d598a9aff8fe63e334e6e86"
+#define MEGA_IMAGE_TAG "<image size=\"mega\">"
+#define XL_IMAGE_TAG "<image size=\"extralarge\">"
+#define IMAGE_END_TAG "</image>"
 static int
 fetch_from_lastfm (const char *artist, const char *album, const char *dest)
 {
-    char url [1024];
-    char *artist_url = uri_escape(artist, 0);
-    char *album_url = uri_escape(album, 0);
-    snprintf (url, sizeof (url), BASE_URL "?method=album.getinfo&api_key=" API_KEY "&artist=%s&album=%s", artist_url, album_url);
-    free (artist_url);
-    free (album_url);
+    char *artist_url = uri_escape(artist ? artist : "", 0);
+    char *album_url = uri_escape(album ? album : "", 0);
+    char *url = malloc(strlen(artist_url) + strlen(album_url) + sizeof(LFM_URL API_KEY) + 1);
+    if (url) {
+        sprintf(url, LFM_URL, API_KEY, artist_url, album_url);
+    }
+    free(artist_url);
+    free(album_url);
+    if (!url) {
+        return -1;
+    }
 
-    DB_FILE *fp = deadbeef->fopen (url);
+    trace("fetch_from_lastfm: query: %s\n", url);
+    DB_FILE *fp = deadbeef->fopen(url);
+    free(url);
     if (!fp) {
-        trace ("fetch_from_lastfm: failed to open %s\n", url);
+        trace("fetch_from_lastfm: failed to open %s\n", url);
         return -1;
     }
     current_file = fp;
 
-    const char searchstr[] = "<image size=\"extralarge\">";
-    char buffer[1000];
-    memset (buffer, 0, sizeof (buffer));
-    char *img = NULL;
-    int size = deadbeef->fread (buffer, 1, sizeof (buffer)-1, fp);
-    if (size > 0) {
-        img = strstr (buffer, searchstr);
-    }
+    char buffer[1000] = "";
+    const int size = deadbeef->fread(buffer, 1, sizeof(buffer)-1, fp);
     current_file = NULL;
-    deadbeef->fclose (fp);
+    deadbeef->fclose(fp);
+
+    char *img = NULL;
+    if (size > 0) {
+        buffer[size] = '\0';
+        img = strstr(buffer, MEGA_IMAGE_TAG);
+        if (img) {
+            img += sizeof(MEGA_IMAGE_TAG)-1;
+        }
+        else {
+            img = strstr(buffer, XL_IMAGE_TAG);
+            if (img) {
+                img += sizeof(XL_IMAGE_TAG)-1;
+            }
+        }
+    }
+//    trace("fetch_from_lastfm: scrobbler response:\n%s\n", buffer);
 
     if (!img) {
-        trace ("fetch_from_lastfm: image url not found in response from %s\n", url);
+        trace("fetch_from_lastfm: image tag not found in response (album not found?)\n");
         return -1;
     }
 
-    img += sizeof (searchstr)-1;
-
-    char *end = strstr (img, "</image>");
-    if (!end || end == img) {
-        char *fixed_alb = strdup(album);
-        char *openp = strchr (fixed_alb, '(');
-        if (openp && openp != fixed_alb) {
-            *openp = '\0';
-            return fetch_from_lastfm (artist, fixed_alb, dest);
-        }
-
-        if (artist != album) {
-            return fetch_from_lastfm (album, album, dest);
-        }
-
-        trace ("fetch_from_lastfm: bad xml (or image not found) from %s\n", url);
+    char *end = strstr(img, IMAGE_END_TAG);
+    if (!end) {
+        trace("fetch_from_lastfm: XML not well formed, image end tag missing\n");
         return -1;
     }
 
+    if (end == img) {
+        trace("fetch_from_lastfm: no image found\n");
+        return -1;
+    }
 
-    *end = 0;
+    *end = '\0';
     return copy_file(img, dest);
 }
 
+#define AAO_URL "http://www.albumart.org/index.php?searchkey=%s+%s&itempage=1&newsearch=1&searchindex=Music"
 static int
 fetch_from_albumart_org (const char *artist, const char *album, const char *dest)
 {
-    char url [1024];
-    char *artist_url = uri_escape (artist, 0);
-    char *album_url = uri_escape (album, 0);
-    snprintf (url, sizeof (url), "http://www.albumart.org/index.php?searchkey=%s+%s&itempage=1&newsearch=1&searchindex=Music", artist_url, album_url);
+    char *artist_url = uri_escape (artist ? artist : "", 0);
+    char *album_url = uri_escape (artist ? album : "", 0);
+    char *url = malloc(sizeof(AAO_URL) + strlen(artist_url) + strlen(album_url) + 1);
+    if (url) {
+        sprintf (url, AAO_URL, artist_url, album_url);
+    }
     free (artist_url);
     free (album_url);
+    if (!url) {
+        return -1;
+    }
 
+    trace("fetch_from_albumart_org: %s\n", url);
     DB_FILE *fp = deadbeef->fopen (url);
+    free(url);
     if (!fp) {
         trace ("fetch_from_albumart_org: failed to open %s\n", url);
         return -1;
     }
     current_file = fp;
     char buffer[10000];
-    memset (buffer, 0, sizeof (buffer));
+    const int size = deadbeef->fread(buffer, 1, sizeof (buffer), fp);
     char *img = NULL;
-    int size = deadbeef->fread (buffer, 1, sizeof (buffer), fp);
     if (size > 0) {
+        buffer[size] = '\0';
         img = strstr (buffer, "http://ecx.images-amazon.com/images/I/");
     }
     current_file = NULL;
     deadbeef->fclose (fp);
 
     if (!img) {
-        trace ("fetch_from_albumart_org: image url not found in response from %s (%d bytes)\n", url, size);
+        trace ("fetch_from_albumart_org: image url not found in response from (%d bytes)\n", size);
         return -1;
     }
 
-    char *end = strstr (img, "._SL160_");
+    char *end = strstr (img, "._SL160_.jpg");
     if (!end || end == img)
     {
-        trace ("fetch_from_albumart_org: bad xml from %s\n", url);
+        trace ("fetch_from_albumart_org: bad xml\n");
         return -1;
     }
 
@@ -758,7 +1688,7 @@ fetch_from_albumart_org (const char *artist, const char *album, const char *dest
 }
 
 static void
-strcopy_escape (char *dst, int d_len, const char *src, int n) {
+strcopy_escape (char *dst, size_t d_len, const char *src, size_t n) {
     char *e = dst + d_len - 1;
     const char *se = src + n;
     while (dst < e && *src && src < se) {
@@ -770,6 +1700,7 @@ strcopy_escape (char *dst, int d_len, const char *src, int n) {
     *dst = 0;
 }
 
+#define WOS_URL "http://www.worldofspectrum.org/showscreen.cgi?screen=screens/load/%c/gif/%s.gif"
 static int
 fetch_from_wos (const char *title, const char *dest)
 {
@@ -782,18 +1713,222 @@ fetch_from_wos (const char *title, const char *dest)
     else {
         strcopy_escape(t, sizeof (t), title, dash-title);
     }
-    char *sp;
-    while (sp = strchr(t, ' ')) {
-        *sp = '_';
-    }
-    char *title_url = uri_escape (t, 0);
-    char url [1024];
-    snprintf (url, sizeof (url), "http://www.worldofspectrum.org/showscreen.cgi?screen=screens/load" "/%c/gif/%s.gif", tolower (title_url[0]), title_url);
-    free (title_url);
-    trace ("WOS request: %s\n", url);
+
+    char *title_url = uri_escape(t, 0);
+    char url[sizeof(WOS_URL) + strlen(title_url)];
+    sprintf(url, WOS_URL, tolower(title_url[0]), title_url);
+    free(title_url);
+    trace("WOS request: %s\n", url);
     return copy_file(url, dest);
 }
 #endif
+
+static int
+process_scaled_query(const cover_query_t *query)
+{
+    char cache_path[PATH_MAX];
+    make_cache_path2(cache_path, sizeof(cache_path), query->fname, query->album, query->artist, -1);
+
+    struct stat stat_buf;
+    if (!stat(cache_path, &stat_buf) && S_ISREG(stat_buf.st_mode) && stat_buf.st_size > 0) {
+        char scaled_path[PATH_MAX];
+        make_cache_path2(scaled_path, sizeof(scaled_path), query->fname, query->album, query->artist, query->size);
+        trace("artwork: scaling %s into %s (%d pixels)\n", cache_path, scaled_path, query->size);
+        if (*scaled_path && !scale_file(cache_path, scaled_path, query->size)) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+static int
+process_query(const cover_query_t *query)
+{
+    char cache_path[PATH_MAX];
+    make_cache_path2(cache_path, sizeof(cache_path), query->fname, query->album, query->artist, -1);
+    trace("artwork: query cover for %s %s to %s\n", query->album, query->artist, cache_path);
+
+    struct stat placeholder_stat;
+    int flood_control = !stat(cache_path, &placeholder_stat) && placeholder_stat.st_size == 0 && placeholder_stat.st_mtime + 60*10 > time(NULL);
+    int looked_for_pic = 0;
+
+    if (deadbeef->is_local_file(query->fname) && artwork_enable_embedded) {
+        if (flood_control) {
+            /* Override flood control if the track file has changed */
+            struct stat fname_stat;
+            if (!stat(query->fname, &fname_stat) && fname_stat.st_mtime > placeholder_stat.st_mtime) {
+                flood_control = 0;
+            }
+        }
+
+        if (!flood_control) {
+            looked_for_pic = 1;
+
+            // try to load embedded from id3v2
+            trace("trying to load artwork from id3v2 tag for %s\n", query->fname);
+            DB_id3v2_tag_t id3v2_tag;
+            memset(&id3v2_tag, 0, sizeof(id3v2_tag));
+            DB_FILE *id3v2_fp = deadbeef->fopen(query->fname);
+            if (id3v2_fp && !deadbeef->junk_id3v2_read_full(NULL, &id3v2_tag, id3v2_fp)) {
+                const int minor_version = id3v2_tag.version[0];
+                for (DB_id3v2_frame_t *f = id3v2_tag.frames; f; f = f->next) {
+                    const uint8_t *image_data = id3v2_artwork(f, minor_version);
+                    if (image_data) {
+                        const size_t sz = f->size - (image_data - f->data);
+                        trace("will write id3v2 APIC (%d bytes) into %s\n", sz, cache_path);
+                        if (!write_file(cache_path, image_data, sz)) {
+                            return 1;
+                        }
+                    }
+                }
+
+                deadbeef->junk_id3v2_free(&id3v2_tag);
+                deadbeef->fclose(id3v2_fp);
+            }
+
+            // try to load embedded from apev2
+            trace("trying to load artwork from apev2 tag for %s\n", query->fname);
+            DB_apev2_tag_t apev2_tag;
+            memset(&apev2_tag, 0, sizeof(apev2_tag));
+            DB_FILE *apev2_fp = deadbeef->fopen(query->fname);
+            if (apev2_fp && !deadbeef->junk_apev2_read_full(NULL, &apev2_tag, apev2_fp)) {
+                for (DB_apev2_frame_t *f = apev2_tag.frames; f; f = f->next) {
+                    const uint8_t *image_data = apev2_artwork(f);
+                    if (image_data) {
+                        const size_t sz = f->size - (image_data - f->data);
+                        trace("will write apev2 cover art (%d bytes) into %s\n", sz, cache_path);
+                        if (!write_file(cache_path, image_data, sz)) {
+                            return 1;
+                        }
+                        break;
+                    }
+                }
+
+                deadbeef->junk_apev2_free(&apev2_tag);
+                deadbeef->fclose(apev2_fp);
+            }
+
+#ifdef USE_METAFLAC
+            // try to load embedded from flac metadata
+            trace("trying to load artwork from Flac tag for %s\n", query->fname);
+            FLAC__Metadata_Chain *chain = FLAC__metadata_chain_new();
+            if (chain) {
+                FLAC__StreamMetadata_Picture *pic = flac_extract_art(chain, query->fname);
+                if (pic) {
+                    trace("found flac cover art of %d bytes (%s)\n", pic->data_length, pic->description);
+                    trace("will write flac cover art into %s\n", cache_path);
+                    if (!write_file(cache_path, pic->data, pic->data_length)) {
+                        return 1;
+                    }
+                }
+                FLAC__metadata_chain_delete(chain);
+            }
+#endif
+        }
+    }
+
+    if (artwork_enable_local) {
+        char *fname_copy = strdup(query->fname);
+        if (fname_copy) {
+            /* Extract the directory from whatever sort of URL is provided */
+            char *filename_dir = strstr(fname_copy, "://");
+            if (filename_dir) {
+//            if (strrchr(fname_copy, ':')) {
+//                *strrchr(fname_copy, ':') = '\0';
+//            }
+//            DB_vfs_t **vfsplugs = deadbeef->plug_get_vfs_list();
+//            for (size_t i = 0; vfsplugs[i]; i++) {
+//                if (vfsplugs[i]->is_container && vfsplugs[i]->is_container(fname_copy)) {
+//                    fprintf(stderr, "%s is container\n", query->fname);
+//                }
+//            }
+                filename_dir += 3;
+                char *q = strrchr(filename_dir, ':');
+                if (q) {
+                    *q = '\0';
+                }
+                dirname(filename_dir);
+            }
+            else {
+                filename_dir = dirname(fname_copy);
+            }
+
+            if (flood_control) {
+                /* Override flood control if the directory contents have changed */
+                struct stat dir_stat;
+                if (!stat(filename_dir, &dir_stat) && dir_stat.st_mtime > placeholder_stat.st_mtime) {
+                    flood_control = 0;
+                }
+            }
+
+            if (!flood_control) {
+                /* Searching in track directory */
+                looked_for_pic = 1;
+                char *artwork = local_image_file(filename_dir, scandir);
+                if (artwork) {
+                    copy_file(artwork, cache_path);
+                    free(artwork);
+                    free(fname_copy);
+                    return 1;
+                }
+            }
+
+            free(fname_copy);
+        }
+    }
+
+#ifdef USE_VFS_CURL
+    if (!flood_control) {
+        /* Web lookups */
+        if (artwork_enable_wos && strlen(query->fname) > 3 && !strcasecmp(query->fname+strlen(query->fname)-3, ".ay")) {
+            looked_for_pic = 1;
+            if (!fetch_from_wos(query->album, cache_path)) {
+                return 1;
+            }
+        }
+
+        if (artwork_enable_lfm) {
+            looked_for_pic = 1;
+            if (!fetch_from_lastfm(query->artist, query->album, cache_path)) {
+                return 1;
+            }
+        }
+
+        if (artwork_enable_aao) {
+            looked_for_pic = 1;
+            if (!fetch_from_albumart_org(query->artist, query->album, cache_path)) {
+                return 1;
+            }
+        }
+
+        if ((artwork_enable_lfm || artwork_enable_aao) && query->album) {
+            /* Try stripping parenthesis off the end of the album name */
+            const size_t plain_album_length = strcspn(query->album, "(");
+            if (plain_album_length > 0 && plain_album_length < strlen(query->album)) {
+                char *plain_album = strdup(query->album);
+                if (plain_album) {
+                    plain_album[plain_album_length] = '\0';
+                    if (artwork_enable_lfm && !fetch_from_lastfm(query->artist, plain_album, cache_path)) {
+                        return 1;
+                    }
+                    if (artwork_enable_aao && !fetch_from_albumart_org(query->artist, plain_album, cache_path)) {
+                        return 1;
+                    }
+                    free(plain_album);
+                }
+            }
+        }
+    }
+#endif
+
+    if (looked_for_pic) {
+        /* Touch placeholder */
+        write_file(cache_path, NULL, 0);
+    }
+
+    return 0;
+}
 
 static void
 fetcher_thread (void *none)
@@ -801,219 +1936,85 @@ fetcher_thread (void *none)
 #ifdef __linux__
     prctl (PR_SET_NAME, "deadbeef-artwork", 0, 0, 0, 0);
 #endif
+
+    /* Loop until external terminate command */
     while (!terminate) {
-        trace ("artwork: waiting for signal\n");
-        deadbeef->cond_wait (cond, mutex);
-        trace ("artwork: cond signalled\n");
-        deadbeef->mutex_unlock (mutex);
+        trace("artwork fetcher: waiting for signal ...\n");
+        deadbeef->cond_wait(cond, queue_mutex);
+        trace("artwork fetcher: cond signalled\n");
+        deadbeef->mutex_unlock(queue_mutex);
+
+        /* Loop until queue is empty or external command received */
         while (!terminate && queue && !clear_queue) {
-            cover_query_t *param = queue;
-
-            char cache_path[1024];
-            make_cache_path2 (cache_path, sizeof (cache_path), param->fname, param->album, param->artist, -1);
-            trace ("fetching cover for %s %s to %s\n", param->album, param->artist, cache_path);
-struct timeval timeval;
-gettimeofday(&timeval, NULL);
-int usecs = timeval.tv_sec*1000000 + timeval.tv_usec;
-
-            int got_pic = 0;
-            struct stat placeholder_stat;
-            const int placeholder_exists = !stat(cache_path, &placeholder_stat);
-
-            if (deadbeef->is_local_file(param->fname) && !(placeholder_exists && placeholder_stat.st_mtime + 10 > time(NULL))) {
-                if (artwork_enable_embedded) {
-                    // try to load embedded from id3v2
-                    trace("trying to load artwork from id3v2 tag for %s\n", param->fname);
-                    DB_id3v2_tag_t tag;
-                    memset (&tag, 0, sizeof (tag));
-                    DB_FILE *fp = deadbeef->fopen (param->fname);
-                    if (fp && !deadbeef->junk_id3v2_read_full (NULL, &tag, fp)) {
-                        const int minor_version = tag.version[0];
-                        for (DB_id3v2_frame_t *f = tag.frames; f && !got_pic; f = f->next) {
-                            const uint8_t *image_data = id3v2_artwork(f, minor_version);
-                            if (image_data) {
-                                const size_t sz = f->size - (image_data - f->data);
-                                trace("found id3v2 cover art of %d bytes (%s)\n", sz);
-                                trace("will write id3v2 APIC into %s\n", cache_path);
-                                if (!write_file(cache_path, image_data, sz) == 0) {
-                                    got_pic = 1;
-                                }
-                            }
-                        }
-
-                        deadbeef->junk_id3v2_free (&tag);
-                        deadbeef->fclose (fp);
-                    }
-
-                    if (!got_pic) {
-                        // try to load embedded from apev2
-                        trace("trying to load artwork from apev2 tag for %s\n", param->fname);
-                        DB_apev2_tag_t tag;
-                        memset (&tag, 0, sizeof (tag));
-                        DB_FILE *fp = deadbeef->fopen (param->fname);
-                        if (fp && !deadbeef->junk_apev2_read_full (NULL, &tag, fp)) {
-                            for (DB_apev2_frame_t *f = tag.frames; f; f = f->next) {
-                                const uint8_t *image_data = apev2_artwork(f);
-                                if (image_data) {
-                                    const size_t sz = f->size - (image_data - f->data);
-                                    trace("found apev2 cover art of %d bytes (%s)\n", sz);
-                                    trace("will write apev2 cover art into %s\n", cache_path);
-                                    if (!write_file(cache_path, image_data, sz) == 0) {
-                                        got_pic = 1;
-                                    }
-                                    break;
-                                }
-                            }
-
-                            deadbeef->junk_apev2_free (&tag);
-                            deadbeef->fclose (fp);
-                        }
-                    }
-
-#ifdef USE_METAFLAC
-                    if (!got_pic) {
-                        // try to load embedded from flac metadata
-                        trace("trying to load artwork from Flac tag for %s\n", param->fname);
-                        FLAC__Metadata_Chain *chain = FLAC__metadata_chain_new();
-                        if (chain) {
-                            FLAC__StreamMetadata_Picture *pic = flac_extract_art(chain, param->fname);
-                            if (pic) {
-                                trace("found flac cover art of %d bytes (%s)\n", pic->data_length, pic->description);
-                                trace("will write flac cover art into %s\n", cache_path);
-                                if (!write_file(cache_path, pic->data, pic->data_length)) {
-                                    got_pic = 1;
-                                }
-                            }
-                            FLAC__metadata_chain_delete(chain);
-                        }
-                    }
-#endif
-                }
-
-                if (!got_pic && artwork_enable_local) {
-                    /* Searching in track directory */
-                    char *artwork = local_image_file(param->fname);
-                    if (artwork) {
-                        copy_file(artwork, cache_path);
-                        free(artwork);
-                        got_pic = 1;
-                    }
-                }
-
-                if (!got_pic) {
-                    write_file(cache_path, NULL, 0);
-                }
+            if (queue->size == -1 ? process_query(queue) : process_scaled_query(queue)) {
+                trace("artwork fetcher: cover art file cached\n");
+                query_complete(queue->fname, queue->artist, queue->album);
             }
-
-#ifdef USE_VFS_CURL
-            if (!got_pic && !(placeholder_exists && placeholder_stat.st_mtime + 3600 > time(NULL))) {
-                if (artwork_enable_wos) {
-                    char *dot = strrchr (param->fname, '.');
-                    if (dot && !strcasecmp (dot, ".ay") && !fetch_from_wos (param->album, cache_path)) {
-                        got_pic = 1;
-                    }
-                }
-
-                if (!got_pic && artwork_enable_lfm && !fetch_from_lastfm (param->artist, param->album, cache_path)) {
-                    got_pic = 1;
-                }
-
-                if (!got_pic && artwork_enable_aao && !fetch_from_albumart_org (param->artist, param->album, cache_path)) {
-                    got_pic = 1;
-                }
-
-                if (!got_pic) {
-                    write_file(cache_path, NULL, 0);
-                }
+            else {
+                trace("artwork fetcher: no cover art found\n");
+                query_complete(NULL, NULL, NULL);
             }
-#endif
-            if (got_pic) {
-                trace("Cached art for %s %s\n", param->album, param->artist);
-                if (param->size != -1) {
-                    got_pic = 0;
-                    char scaled_path[1024];
-                    make_cache_path2(scaled_path, sizeof(scaled_path), param->fname, param->album, param->artist, param->size);
-                    trace ("scaled cache: %s\n", scaled_path);
-                    if (ensure_dir(scaled_path) && !scale_file(cache_path, scaled_path, param->size)) {
-                        got_pic = 1;
-                    }
-                }
-            }
-
-            if (got_pic) {
-                for (int i = 0; i < param->numcb; i++) {
-                    if (param->callbacks[i].cb) {
-                        param->callbacks[i].cb (param->fname, param->artist, param->album, param->callbacks[i].ud);
-                        param->callbacks[i].cb = NULL;
-                    }
-                }
-            }
-
-            queue_pop ();
-gettimeofday(&timeval, NULL);
-usecs = timeval.tv_sec*1000000 + timeval.tv_usec - usecs;
-fprintf(stderr, "%d micro-seconds\n", usecs);
         }
 
+        /* External reset */
         if (clear_queue) {
-            trace ("artwork: received queue clear request\n");
+            trace("artwork fetcher: received queue clear request\n");
             while (queue) {
-                queue_pop ();
+                query_complete(NULL, NULL, NULL);
             }
             clear_queue = 0;
-            trace ("artwork: queue clear done\n");
+            trace("artwork fetcher: queue clear done\n");
         }
     }
+}
+
+static const char *
+find_image (const char *path, const int scaled) {
+    struct stat stat_buf;
+    if (stat(path, &stat_buf) || !S_ISREG(stat_buf.st_mode)) {
+        return NULL;
+    }
+
+    const time_t reset_time = scaled ? artwork_scaled_reset_time : artwork_reset_time;
+    if (stat_buf.st_mtime < reset_time) {
+        trace("artwork: deleting cached file %s after reset\n", path);
+        unlink(path);
+        return NULL;
+    }
+
+    if (stat_buf.st_size == 0) {
+        return NULL;
+    }
+
+    return path;
 }
 
 static char *
-find_image (const char *path, const int scaled) {
-    struct stat stat_buf;
-    if (!stat(path, &stat_buf)) {
-        const time_t reset_time = scaled ? artwork_scaled_reset_time : artwork_reset_time;
-        if (stat_buf.st_mtime < reset_time) {
-            trace("deleting cached file %s\n", path);
-            unlink(path);
-            return NULL;
-        }
-
-        return stat_buf.st_size == 0 ? NULL : strdup(path);
-    }
-
-    return NULL;
-}
-
-static char*
 get_album_art (const char *fname, const char *artist, const char *album, int size, artwork_callback callback, void *user_data)
 {
-    char path [1024];
-
-    make_cache_path2 (path, sizeof (path), fname, album, artist, size);
-    char *p = find_image (path, size == -1 ? 0 : 1);
-    if (p && *p) {
+    /* Check if the image is already cached */
+    char cache_path[PATH_MAX];
+    make_cache_path2(cache_path, sizeof(cache_path), fname, album, artist, size);
+    const char *p = find_image(cache_path, size == -1 ? 0 : 1);
+    if (p) {
         if (callback) {
-            callback (NULL, NULL, NULL, user_data);
+            callback(NULL, NULL, NULL, user_data);
         }
-        return p;
+        trace("Found cached image %s\n", cache_path);
+        return strdup(p);
     }
 
+    /* See if we need to make an unscaled image before we make a scaled one */
     if (size != -1) {
-        // check if we have unscaled image
-        char unscaled_path[1024];
-        make_cache_path2 (unscaled_path, sizeof (unscaled_path), fname, album, artist, -1);
-        p = find_image (unscaled_path, 0);
-        if (p && *p) {
-            free (p);
-            if (ensure_dir (unscaled_path) && !scale_file (unscaled_path, path, size)) {
-                if (callback) {
-                    callback (NULL, NULL, NULL, user_data);
-                }
-                return strdup (path);
-            }
+        char unscaled_path[PATH_MAX];
+        make_cache_path2(unscaled_path, sizeof(unscaled_path), fname, album, artist, -1);
+        if (!find_image(unscaled_path, 0)) {
+            query_add(fname, artist, album, -1, NULL, NULL);
         }
     }
 
-    queue_add (fname, artist, album, size, callback, user_data);
+    /* Request to fetch the image */
+    query_add(fname, artist, album, size, callback, user_data);
     return NULL;
 }
 
@@ -1025,7 +2026,7 @@ sync_callback (const char *fname, const char *artist, const char *album, void *u
     deadbeef->mutex_unlock (mc->mutex);
 }
 
-static char*
+static char *
 get_album_art_sync (const char *fname, const char *artist, const char *album, int size) {
     mutex_cond_t mc;
     mc.mutex = deadbeef->mutex_create ();
@@ -1045,32 +2046,26 @@ get_album_art_sync (const char *fname, const char *artist, const char *album, in
 static void
 artwork_reset (int fast) {
     if (fast) {
-//        if (current_file) {
-//            deadbeef->fabort (current_file);
-//        }
-        deadbeef->mutex_lock (mutex);
+        /* Assume the fetcher already has the first query, nuke the rest */
+        deadbeef->mutex_lock (queue_mutex);
         while (queue && queue->next) {
-            cover_query_t *next = queue->next->next;
-            free (queue->next->fname);
-            free (queue->next->artist);
-            free (queue->next->album);
-            for (int i = 0; i < queue->next->numcb; i++) {
-                if (queue->next->callbacks[i].cb == sync_callback) {
-                    sync_callback (NULL, NULL, NULL, queue->next->callbacks[i].ud);
-                }
-            }
-            queue->next = next;
-            if (next == NULL) {
-                queue_tail = queue;
-            }
+            cover_query_t *query = queue->next;
+            queue->next = queue->next->next;
+            query_clear(query);
+//            for (size_t i = 0; i < queue->next->numcb; i++) {
+//                if (queue->next->callbacks[i].cb == sync_callback) {
+//                    sync_callback (NULL, NULL, NULL, queue->next->callbacks[i].ud);
+//                }
+//            }
         }
-        deadbeef->mutex_unlock (mutex);
+        queue_tail = queue;
+        deadbeef->mutex_unlock (queue_mutex);
     }
     else {
         trace ("artwork: reset\n");
         clear_queue = 1;
         deadbeef->cond_signal (cond);
-        trace ("artwork: waiting for clear to complete\n");
+        trace ("artwork: waiting for clear to complete ...\n");
         while (clear_queue) {
             usleep (100000);
         }
@@ -1088,8 +2083,11 @@ artwork_configchanged (void) {
 #endif
 
     char new_artwork_filemask[MAX_FILEMASK_LENGTH];
-    deadbeef->conf_get_str ("artwork.filemask", DEFAULT_FILEMASK, new_artwork_filemask, MAX_FILEMASK_CONFIG_LENGTH);
-    strcat(new_artwork_filemask, FALLBACK_FILEMASK);
+    deadbeef->conf_get_str ("artwork.filemask", DEFAULT_FILEMASK, new_artwork_filemask, MAX_FILEMASK_LENGTH);
+    if (!*new_artwork_filemask) {
+        strcpy(new_artwork_filemask, DEFAULT_FILEMASK);
+        deadbeef->conf_set_str("artwork.filemask", DEFAULT_FILEMASK);
+    }
 
     if (new_artwork_enable_embedded != artwork_enable_embedded
             || new_artwork_enable_local != artwork_enable_local
@@ -1098,7 +2096,8 @@ artwork_configchanged (void) {
             || new_artwork_enable_aao != artwork_enable_aao
             || new_artwork_enable_wos != artwork_enable_wos
 #endif
-            || strcmp (new_artwork_filemask, artwork_filemask)) {
+            || strcmp (new_artwork_filemask, artwork_filemask)
+            || deadbeef->conf_get_int ("artwork.refresh_now", 0)) {
         trace ("artwork config changed, invalidating cache...\n");
         artwork_enable_embedded = new_artwork_enable_embedded;
         artwork_enable_local = new_artwork_enable_local;
@@ -1107,13 +2106,13 @@ artwork_configchanged (void) {
         artwork_enable_aao = new_artwork_enable_aao;
         artwork_enable_wos = new_artwork_enable_wos;
 #endif
-        artwork_reset_time = time (NULL);
+        artwork_reset_time = artwork_scaled_reset_time = time (NULL);
         deadbeef->conf_set_int64 ("artwork.cache_reset_time", artwork_reset_time);
-        artwork_scaled_reset_time = time (NULL);
         deadbeef->conf_set_int64 ("artwork.scaled.cache_reset_time", artwork_scaled_reset_time);
         strcpy (artwork_filemask, new_artwork_filemask);
         artwork_reset (0);
         deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
+        deadbeef->conf_set_int("artwork.refresh_now", 0);
     }
 
     int new_scale_towards_longer = deadbeef->conf_get_int ("artwork.scale_towards_longer", 1);
@@ -1135,19 +2134,68 @@ artwork_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 }
 
 static int
+invalidate_playitem_cache(DB_plugin_action_t *action, const int ctx)
+{
+    ddb_playlist_t *plt = deadbeef->plt_get_curr();
+    if (!plt)
+        return -1;
+
+    DB_playItem_t *it = deadbeef->plt_get_first(plt, PL_MAIN);
+    while (it) {
+        if (deadbeef->pl_is_selected(it)) {
+            deadbeef->pl_lock();
+            const char *url = deadbeef->pl_find_meta(it, ":URI");
+            const char *artist = deadbeef->pl_find_meta(it, "artist");
+            const char *album = deadbeef->pl_find_meta(it, "album");
+            const char *title = album ? album : deadbeef->pl_find_meta(it, "title");
+            char cache_path[PATH_MAX];
+            if (!make_cache_path2(cache_path, PATH_MAX, url, title, artist, -1)) {
+                char subdir_path[PATH_MAX];
+                make_cache_dir_path(subdir_path, PATH_MAX, artist, -1);
+                const char *subdir_name = basename(subdir_path);
+                const char *entry_name = basename(cache_path);
+                trace("Expire %s from cache\n", cache_path);
+                remove_cache_item(cache_path, subdir_path, subdir_name, entry_name);
+            }
+            deadbeef->pl_unlock();
+        }
+        deadbeef->pl_item_unref(it);
+        it = deadbeef->pl_get_next(it, PL_MAIN);
+    }
+
+    deadbeef->plt_unref(plt);
+    deadbeef->sendmessage (DB_EV_PLAYLIST_REFRESH, 0, 0, 0);
+    return 0;
+}
+
+static DB_plugin_action_t *
+artwork_get_actions(DB_playItem_t *it)
+{
+    if (!it) // Only currently show for the playitem context menu
+        return NULL;
+
+    trace("artwork_get_actions: checking context menu\n");
+    static DB_plugin_action_t context_action = {
+        .title = "Refresh cover art",
+        .name = "invalidate_playitem_cache",
+        .callback2 = invalidate_playitem_cache,
+        .flags = DB_ACTION_ADD_MENU | DB_ACTION_SINGLE_TRACK | DB_ACTION_MULTIPLE_TRACKS,
+        .next = NULL
+    };
+
+    return &context_action;
+}
+
+static int
 artwork_plugin_start (void)
 {
-    deadbeef->conf_lock ();
-
-    const char *def_art = deadbeef->conf_get_str_fast ("gtkui.nocover_pixmap", NULL);
-    if (!def_art) {
-        snprintf (default_cover, sizeof (default_cover), "%s/noartwork.png", deadbeef->get_pixmap_dir ());
-    }
-    else {
-        strcpy (default_cover, def_art);
-    }
     terminate = 0;
 
+    deadbeef->conf_get_str ("gtkui.nocover_pixmap", "", default_cover, sizeof(default_cover));
+    if (!default_cover[0]) {
+        snprintf (default_cover, sizeof (default_cover), "%s/noartwork.png", deadbeef->get_pixmap_dir ());
+    }
+    deadbeef->conf_get_str ("artwork.filemask", DEFAULT_FILEMASK, artwork_filemask, MAX_FILEMASK_LENGTH);
     artwork_enable_embedded = deadbeef->conf_get_int ("artwork.enable_embedded", 1);
     artwork_enable_local = deadbeef->conf_get_int ("artwork.enable_localfolder", 1);
 #ifdef USE_VFS_CURL
@@ -1158,21 +2206,14 @@ artwork_plugin_start (void)
     artwork_reset_time = deadbeef->conf_get_int64 ("artwork.cache_reset_time", 0);
     artwork_scaled_reset_time = deadbeef->conf_get_int64 ("artwork.scaled.cache_reset_time", 0);
 
-    deadbeef->conf_get_str ("artwork.filemask", DEFAULT_FILEMASK, artwork_filemask, MAX_FILEMASK_CONFIG_LENGTH);
-    strcat(artwork_filemask, FALLBACK_FILEMASK);
-
-    deadbeef->conf_unlock ();
-
-    artwork_filemask[MAX_FILEMASK_LENGTH-1] = 0;
-
-    mutex = deadbeef->mutex_create_nonrecursive ();
-    culler_mutex = deadbeef->mutex_create_nonrecursive ();
+    queue_mutex = deadbeef->mutex_create_nonrecursive ();
+    files_mutex = deadbeef->mutex_create_nonrecursive ();
 #ifdef USE_IMLIB2
     imlib_mutex = deadbeef->mutex_create_nonrecursive ();
 #endif
     cond = deadbeef->cond_create ();
     tid = deadbeef->thread_start_low_priority (fetcher_thread, NULL);
-    deadbeef->thread_start_low_priority (culler_thread, NULL);
+    deadbeef->thread_start_low_priority (cache_cleaner_thread, NULL);
 
     return 0;
 }
@@ -1180,25 +2221,23 @@ artwork_plugin_start (void)
 static int
 artwork_plugin_stop (void)
 {
-    if (current_file) {
-        deadbeef->fabort (current_file);
-    }
     if (tid) {
+        clear_queue = 1;
         terminate = 1;
         deadbeef->cond_signal (cond);
+        if (current_file) {
+            deadbeef->fabort (current_file);
+        }
         deadbeef->thread_join (tid);
         tid = 0;
     }
-    while (queue) {
-        queue_pop ();
+    if (queue_mutex) {
+        deadbeef->mutex_free (queue_mutex);
+        queue_mutex = 0;
     }
-    if (mutex) {
-        deadbeef->mutex_free (mutex);
-        mutex = 0;
-    }
-    if (culler_mutex) {
-        deadbeef->mutex_free (culler_mutex);
-        culler_mutex = 0;
+    if (files_mutex) {
+        deadbeef->mutex_free (files_mutex);
+        files_mutex = 0;
     }
 #ifdef USE_IMLIB2
     if (imlib_mutex) {
@@ -1225,6 +2264,7 @@ static const char settings_dlg[] =
     "property \"Fetch from worldofspectrum.org (AY only)\" checkbox artwork.enable_wos 0;\n"
 #endif
     "property \"Scale artwork towards longer side\" checkbox artwork.scale_towards_longer 1;\n"
+    "property \"Refresh cached artwork\" checkbox artwork.refresh_now 0;\n"
 ;
 
 // define plugin interface
@@ -1265,10 +2305,11 @@ static DB_artwork_plugin_t plugin = {
     .plugin.plugin.stop = artwork_plugin_stop,
     .plugin.plugin.configdialog = settings_dlg,
     .plugin.plugin.message = artwork_message,
+    .plugin.plugin.get_actions = artwork_get_actions,
     .get_album_art = get_album_art,
     .reset = artwork_reset,
     .get_default_cover = get_default_cover,
-    .get_album_art_sync = get_album_art_sync,
+    .get_album_art_sync = NULL,
     .make_cache_path = make_cache_path,
     .make_cache_path2 = make_cache_path2,
 };
