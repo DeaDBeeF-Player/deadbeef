@@ -25,13 +25,26 @@
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
++ (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2;
+
 @property (assign) IBOutlet NSWindow *window;
 @property (unsafe_unretained) IBOutlet NSTableView *playlist;
+
+// file menu
 - (IBAction)openFilesAction:(id)sender;
 - (IBAction)addFilesAction:(id)sender;
 - (IBAction)addFoldersAction:(id)sender;
+
+// edit menu
 - (IBAction)clearAction:(id)sender;
 - (IBAction)removeSelectionAction:(id)sender;
+
+// playback menu
+- (IBAction)previousAction:(id)sender;
+- (IBAction)playAction:(id)sender;
+- (IBAction)pauseAction:(id)sender;
+- (IBAction)stopAction:(id)sender;
+- (IBAction)nextAction:(id)sender;
 
 @property (unsafe_unretained) IBOutlet NSMenuItem *orderLinear;
 @property (unsafe_unretained) IBOutlet NSMenuItem *orderRandom;
@@ -68,7 +81,5 @@
 - (IBAction)invertSelectionAction:(id)sender;
 - (IBAction)selectionCropAction:(id)sender;
 - (IBAction)jumpToCurrentAction:(id)sender;
-
-+ (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2;
 
 @end

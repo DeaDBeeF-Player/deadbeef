@@ -200,6 +200,37 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="Playback" id="YAz-yR-8od">
                         <items>
+                            <menuItem title="Previous" keyEquivalent="z" id="zrg-hV-cti">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="previousAction:" target="494" id="L4E-Vj-4TG"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Play" keyEquivalent="x" id="gS1-dR-hWd">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="playAction:" target="494" id="6hf-6y-N2J"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Pause" keyEquivalent="c" id="SHq-Fk-YNu">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="pauseAction:" target="494" id="WiO-gi-0Vz"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Stop" keyEquivalent="v" id="7jd-E4-fDA">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="stopAction:" target="494" id="Osz-Y9-Zhm"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Next" keyEquivalent="b" id="kPQ-iT-aPC">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="nextAction:" target="494" id="aTa-SJ-o0A"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="tq9-BM-QKT"/>
                             <menuItem title="Order" id="Wn7-u2-yeB">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Order" id="G3x-ph-nNM">
@@ -320,7 +351,7 @@
                             <rect key="frame" x="1" y="17" width="507" height="187"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" autosaveColumns="NO" headerView="Pxp-xE-pFF" id="0tA-Oo-Ry1">
+                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" autosaveColumns="NO" typeSelect="NO" headerView="Pxp-xE-pFF" id="0tA-Oo-Ry1">
                                     <rect key="frame" x="0.0" y="0.0" width="507" height="187"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
@@ -342,7 +373,7 @@
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" white="0.33333298560000002" alpha="1" colorSpace="calibratedWhite"/>
                                             </tableHeaderCell>
-                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="WyR-eM-K7I">
+                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" refusesFirstResponder="YES" alignment="left" title="Text Cell" id="WyR-eM-K7I">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -355,7 +386,7 @@
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                             </tableHeaderCell>
-                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="AWQ-x1-jwc">
+                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" refusesFirstResponder="YES" alignment="left" title="Text Cell" id="AWQ-x1-jwc">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -368,7 +399,7 @@
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                             </tableHeaderCell>
-                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="cgE-Um-XQp">
+                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" refusesFirstResponder="YES" alignment="left" title="Text Cell" id="cgE-Um-XQp">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -381,7 +412,7 @@
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                             </tableHeaderCell>
-                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="6Bw-HF-AqO">
+                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" refusesFirstResponder="YES" alignment="left" title="Text Cell" id="6Bw-HF-AqO">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -412,15 +443,15 @@
                 <allowedToolbarItems>
                     <toolbarItem implicitItemIdentifier="53382C75-3C42-4C09-9641-E92D41EAA2BF" label="Custom View" paletteLabel="Custom View" id="3xP-pQ-d4L">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="104" height="25"/>
-                        <size key="maxSize" width="207" height="28"/>
+                        <size key="minSize" width="89" height="25"/>
+                        <size key="maxSize" width="609" height="28"/>
                         <segmentedControl key="view" verticalHuggingPriority="750" id="nHJ-0o-IqP">
                             <rect key="frame" x="0.0" y="14" width="175" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <segmentedCell key="cell" alignment="left" style="texturedRounded" trackingMode="momentary" id="Txw-f5-br1">
                                 <font key="font" metaFont="system"/>
                                 <segments>
-                                    <segment image="btnstopTemplate" width="30">
+                                    <segment image="btnprevTemplate" width="30">
                                         <nil key="label"/>
                                     </segment>
                                     <segment image="btnplayTemplate" width="30" tag="1">
@@ -429,7 +460,7 @@
                                     <segment image="btnpauseTemplate" width="29">
                                         <nil key="label"/>
                                     </segment>
-                                    <segment image="btnprevTemplate">
+                                    <segment image="btnstopTemplate">
                                         <nil key="label"/>
                                     </segment>
                                     <segment image="btnnextTemplate">
@@ -465,12 +496,10 @@
                             <sliderCell key="cell" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="7FG-IR-3tw"/>
                         </slider>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="NSToolbarSeparatorItem" id="O93-4y-veW"/>
                 </allowedToolbarItems>
                 <defaultToolbarItems>
                     <toolbarItem reference="3xP-pQ-d4L"/>
                     <toolbarItem reference="Jzq-HR-oPq"/>
-                    <toolbarItem reference="O93-4y-veW"/>
                     <toolbarItem reference="SfM-4z-XQP"/>
                 </defaultToolbarItems>
             </toolbar>
@@ -482,10 +511,12 @@
                 <outlet property="loopAll" destination="bp3-Nw-TaR" id="t92-xv-gTj"/>
                 <outlet property="loopNone" destination="pGf-UH-jjg" id="fd0-Uw-O2Y"/>
                 <outlet property="loopSingle" destination="V06-6E-L7R" id="hQ5-IG-2Gh"/>
+                <outlet property="nextAction" destination="kPQ-iT-aPC" id="8zu-Ip-zdC"/>
                 <outlet property="orderLinear" destination="utp-dm-oO6" id="xEe-Sa-V93"/>
                 <outlet property="orderRandom" destination="1U2-JB-RUf" id="KxR-mg-sUu"/>
                 <outlet property="orderShuffle" destination="15S-fQ-PaL" id="wGt-mg-WMg"/>
                 <outlet property="orderShuffleAlbums" destination="bea-Bv-Vnd" id="1sx-zb-fcn"/>
+                <outlet property="playAction" destination="gS1-dR-hWd" id="eWA-1e-KVs"/>
                 <outlet property="playlist" destination="0tA-Oo-Ry1" id="I7i-ZF-zI5"/>
                 <outlet property="scrollFollowsPlayback" destination="xnA-bz-jxF" id="GX4-WF-zFx"/>
                 <outlet property="seekBar" destination="lhQ-zG-gJo" id="iDM-Mk-EzP"/>
