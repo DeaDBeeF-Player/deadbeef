@@ -37,6 +37,7 @@ ca_buffer_callback(AudioDeviceID inDevice, const AudioTimeStamp * inNow, const A
 
 static int
 ca_apply_format (void) {
+#if 0
 //    fprintf (stderr, "setformat request: %d %d %d\n", (int)req_format.mSampleRate, (int)req_format.mChannelsPerFrame, (int)req_format.mBitsPerChannel);
     UInt32 sz;
     if (req_format.mSampleRate > 0) {
@@ -47,7 +48,7 @@ ca_apply_format (void) {
             }
         }
     }
-    
+
     // FIXME: super-hack to wait until changes take effect (will fix as soon as I find out how)
     usleep(10000);
     
@@ -70,6 +71,7 @@ ca_apply_format (void) {
     for (int i = 0; i < plugin.fmt.channels; i++) {
         plugin.fmt.channelmask |= (1<<i);
     }
+#endif
 
     return 0;
 }
@@ -188,8 +190,22 @@ ca_state (void) {
 
 OSStatus
 ca_buffer_callback(AudioDeviceID inDevice, const AudioTimeStamp * inNow, const AudioBufferList * inInputData, const AudioTimeStamp * inInputTime, AudioBufferList * outOutputData, const AudioTimeStamp * inOutputTime, void * inClientData) {
+    
+    AudioStreamBasicDescription device_format;
+    UInt32 sz = sizeof (device_format);
+    if (!AudioDeviceGetProperty (device_id, 0, 0, kAudioDevicePropertyStreamFormat, &sz, &device_format)) {
+        plugin.fmt.bps = device_format.mBitsPerChannel;
+        plugin.fmt.channels = device_format.mChannelsPerFrame;
+        plugin.fmt.is_float = 1;
+        plugin.fmt.samplerate = device_format.mSampleRate;
+        plugin.fmt.channelmask = 0;
+        for (int i = 0; i < plugin.fmt.channels; i++) {
+            plugin.fmt.channelmask |= (1<<i);
+        }
+    }
+    
     char *buffer = outOutputData->mBuffers[0].mData;
-    int sz = outOutputData->mBuffers[0].mDataByteSize;
+    sz = outOutputData->mBuffers[0].mDataByteSize;
 
     if (state == OUTPUT_STATE_PLAYING && deadbeef->streamer_ok_to_read (-1)) {
         int br = deadbeef->streamer_read (buffer, sz);
