@@ -124,7 +124,7 @@ NSInteger firstSelected = -1;
     
     switch (selectedSegment) {
         case 0:
-            deadbeef->sendmessage(DB_EV_STOP, 0, 0, 0);
+            deadbeef->sendmessage(DB_EV_PREV, 0, 0, 0);
             break;
         case 1:
             deadbeef->sendmessage(DB_EV_PLAY_CURRENT, 0, 0, 0);
@@ -133,7 +133,7 @@ NSInteger firstSelected = -1;
             deadbeef->sendmessage(DB_EV_TOGGLE_PAUSE, 0, 0, 0);
             break;
         case 3:
-            deadbeef->sendmessage(DB_EV_PREV, 0, 0, 0);
+            deadbeef->sendmessage(DB_EV_STOP, 0, 0, 0);
             break;
         case 4:
             deadbeef->sendmessage(DB_EV_NEXT, 0, 0, 0);
@@ -409,6 +409,26 @@ NSInteger firstSelected = -1;
     }
 }
 
+- (IBAction)previousAction:(id)sender {
+    deadbeef->sendmessage(DB_EV_PREV, 0, 0, 0);
+}
+
+- (IBAction)playAction:(id)sender {
+    deadbeef->sendmessage(DB_EV_PLAY_CURRENT, 0, 0, 0);
+}
+
+- (IBAction)pauseAction:(id)sender {
+    deadbeef->sendmessage(DB_EV_TOGGLE_PAUSE, 0, 0, 0);
+}
+
+- (IBAction)stopAction:(id)sender {
+    deadbeef->sendmessage(DB_EV_STOP, 0, 0, 0);
+}
+
+- (IBAction)nextAction:(id)sender {
+    deadbeef->sendmessage(DB_EV_NEXT, 0, 0, 0);
+}
+
 - (IBAction)cursorFollowsPlaybackAction:(id)sender {
 }
 
@@ -441,7 +461,16 @@ NSInteger firstSelected = -1;
         case DB_EV_TRACKFOCUSCURRENT:
             [self focusCurrent];
             break;
-        case DB_EV_TOGGLE_PAUSE:
+        case DB_EV_PAUSED:
+            it = deadbeef->streamer_get_playing_track ();
+            if (it) {
+                idx = deadbeef->pl_get_idx_of (it);
+                deadbeef->pl_item_unref (it);
+            }
+            if (idx) {
+                [playlist reloadDataForRowIndexes:[NSIndexSet indexSetWithIndex:idx]
+                                    columnIndexes:[NSIndexSet indexSetWithIndex:0]];
+            }
             break;
         case DB_EV_SONGCHANGED:
             it = deadbeef->streamer_get_playing_track ();
@@ -468,7 +497,7 @@ NSInteger firstSelected = -1;
 
 + (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2
 {
-    if (_id == DB_EV_TOGGLE_PAUSE || _id == DB_EV_PLAYLIST_REFRESH || _id == DB_EV_PLAYLISTCHANGED || _id == DB_EV_PLAYLISTSWITCHED || _id == DB_EV_TRACKFOCUSCURRENT || _id == DB_EV_SONGCHANGED) {
+    if (_id == DB_EV_PAUSED || _id == DB_EV_PLAYLIST_REFRESH || _id == DB_EV_PLAYLISTCHANGED || _id == DB_EV_PLAYLISTSWITCHED || _id == DB_EV_TRACKFOCUSCURRENT || _id == DB_EV_SONGCHANGED) {
         [g_appDelegate performSelectorOnMainThread:@selector(handleSimpleMessage:) withObject:[[NSNumber alloc] initWithInt:_id] waitUntilDone:NO];
     }
     else if (_id == DB_EV_TRACKINFOCHANGED) {
