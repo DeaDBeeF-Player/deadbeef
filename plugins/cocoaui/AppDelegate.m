@@ -68,7 +68,31 @@ NSInteger firstSelected = -1;
     // initialize gui from settings
     [self configChanged];
     
+    NSTimer *updateTimer = [NSTimer timerWithTimeInterval:1.0f/15.0f target:self selector:@selector(frameUpdate:) userInfo:nil repeats:YES];
+    [[NSRunLoop currentRunLoop] addTimer:updateTimer forMode:NSDefaultRunLoopMode];
+
+    
     g_appDelegate = self;
+}
+
+- (void)frameUpdate:(id)userData
+{
+    DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
+    if (trk) {
+        float dur = deadbeef->pl_get_item_duration (trk);
+        if (dur >= 0) {
+            float perc = deadbeef->streamer_get_playpos () / dur * 100.f;
+            if (perc < 0) {
+                perc = 0;
+            }
+            else if (perc > 100) {
+                perc = 100;
+            }
+            [self.seekBar setFloatValue:perc];
+        }
+        deadbeef->pl_item_unref (trk);
+    }
+
 }
 
 - (void)playlistDoubleAction
@@ -339,6 +363,19 @@ NSInteger firstSelected = -1;
 - (void)focusCurrent
 {
     
+}
+
+- (IBAction)seekBarAction:(id)sender {
+    DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
+    if (trk) {
+        float dur = deadbeef->pl_get_item_duration (trk);
+        if (dur >= 0) {
+            float time = [(NSSlider*)sender floatValue] / 100.f;
+            time *= dur;
+            deadbeef->sendmessage (DB_EV_SEEK, 0, time * 1000, 0);
+        }
+        deadbeef->pl_item_unref (trk);
+    }
 }
 
 + (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2

@@ -421,11 +421,14 @@
                     <toolbarItem implicitItemIdentifier="3389B344-B503-47D8-9CF5-2D39F44EFD79" label="Custom View" paletteLabel="Custom View" id="Jzq-HR-oPq">
                         <nil key="toolTip"/>
                         <size key="minSize" width="100" height="21"/>
-                        <size key="maxSize" width="100000000" height="25"/>
+                        <size key="maxSize" width="100000000" height="26"/>
                         <slider key="view" verticalHuggingPriority="750" horizontalCompressionResistancePriority="641" id="lhQ-zG-gJo">
-                            <rect key="frame" x="0.0" y="14" width="307" height="25"/>
+                            <rect key="frame" x="0.0" y="14" width="307" height="21"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                            <sliderCell key="cell" alignment="left" maxValue="100" doubleValue="69.0625" tickMarkPosition="above" sliderType="linear" id="rDd-Sa-3Uw"/>
+                            <sliderCell key="cell" alignment="left" maxValue="100" tickMarkPosition="above" sliderType="linear" id="rDd-Sa-3Uw"/>
+                            <connections>
+                                <action selector="seekBarAction:" target="494" id="vQQ-Pl-agd"/>
+                            </connections>
                         </slider>
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="835C1534-A2E3-4D5F-990B-E628FC683343" label="Custom View" paletteLabel="Custom View" id="SfM-4z-XQP">
@@ -458,6 +461,7 @@
                 <outlet property="orderShuffle" destination="15S-fQ-PaL" id="wGt-mg-WMg"/>
                 <outlet property="orderShuffleAlbums" destination="bea-Bv-Vnd" id="1sx-zb-fcn"/>
                 <outlet property="playlist" destination="0tA-Oo-Ry1" id="I7i-ZF-zI5"/>
+                <outlet property="seekBar" destination="lhQ-zG-gJo" id="iDM-Mk-EzP"/>
                 <outlet property="window" destination="371" id="532"/>
             </connections>
         </customObject>
