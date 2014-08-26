@@ -11,7 +11,7 @@ if ARTWORK_USE_VFS_CURL
 artwork_net_cflags = -DUSE_VFS_CURL
 endif
 
-artwork_la_SOURCES = artwork.c artwork.h file_utils.c file_utils.h escape.c escape.h
+artwork_la_SOURCES = artwork.c artwork.h escape.c escape.h
 
 artwork_la_LDFLAGS = -module -avoid-version
 
