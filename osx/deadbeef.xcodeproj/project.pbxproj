@@ -37,6 +37,9 @@
 		2DCD78DF19A665CA00EA50FA /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78CF19A665CA00EA50FA /* deadbeef.png */; };
 		2DCD78E019A665CA00EA50FA /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78D119A665CA00EA50FA /* deadbeef.png */; };
 		2DCD78E119A665CA00EA50FA /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78D319A665CA00EA50FA /* deadbeef.png */; };
+		2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD6D0A319AE609F009308A5 /* DdbSeekBar.h */; };
+		2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD6D0A419AE609F009308A5 /* DdbSeekBar.m */; };
+		2DD6D0A819AE6288009308A5 /* knobTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DD6D0A719AE6288009308A5 /* knobTemplate.pdf */; };
 		2DD9EF0719A5089F00189344 /* cocoautil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD9EF0519A5089F00189344 /* cocoautil.m */; };
 		2DE7A7B119A689E600F8C0B8 /* bufferingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */; };
 		4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D011FFC19AB9589005499B4 /* coreaudio.c */; };
@@ -248,6 +251,9 @@
 		2DCD78CF19A665CA00EA50FA /* deadbeef.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = deadbeef.png; sourceTree = "<group>"; };
 		2DCD78D119A665CA00EA50FA /* deadbeef.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = deadbeef.png; sourceTree = "<group>"; };
 		2DCD78D319A665CA00EA50FA /* deadbeef.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = deadbeef.png; sourceTree = "<group>"; };
+		2DD6D0A319AE609F009308A5 /* DdbSeekBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbSeekBar.h; sourceTree = "<group>"; };
+		2DD6D0A419AE609F009308A5 /* DdbSeekBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbSeekBar.m; sourceTree = "<group>"; };
+		2DD6D0A719AE6288009308A5 /* knobTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = knobTemplate.pdf; path = images/knobTemplate.pdf; sourceTree = "<group>"; };
 		2DD9EF0419A5089F00189344 /* cocoautil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocoautil.h; sourceTree = "<group>"; };
 		2DD9EF0519A5089F00189344 /* cocoautil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cocoautil.m; sourceTree = "<group>"; };
 		2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = bufferingTemplate.pdf; path = images/bufferingTemplate.pdf; sourceTree = "<group>"; };
@@ -809,6 +815,7 @@
 		4D2362B218395D0300C9E818 /* images */ = {
 			isa = PBXGroup;
 			children = (
+				2DD6D0A719AE6288009308A5 /* knobTemplate.pdf */,
 				4D2A6C9D183BC29400AC6BF5 /* btnnextTemplate.pdf */,
 				4D2A6C9E183BC29400AC6BF5 /* btnpauseTemplate.pdf */,
 				4D2A6C9F183BC29400AC6BF5 /* btnprevTemplate.pdf */,
@@ -933,6 +940,8 @@
 				4D2362B218395D0300C9E818 /* images */,
 				4DA72BD91838EAAB00A98C62 /* AppDelegate.h */,
 				4DA72BDA1838EAAB00A98C62 /* AppDelegate.m */,
+				2DD6D0A319AE609F009308A5 /* DdbSeekBar.h */,
+				2DD6D0A419AE609F009308A5 /* DdbSeekBar.m */,
 				4DA72BDB1838EAAB00A98C62 /* Base.lproj */,
 				4DA72BDE1838EAAB00A98C62 /* deadbeef-Info.plist */,
 				4DA72BDF1838EAAB00A98C62 /* deadbeef-Prefix.pch */,
@@ -1022,6 +1031,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1225,6 +1235,7 @@
 				2DCD78D819A665CA00EA50FA /* deadbeef.png in Resources */,
 				4D2A6CA3183BC29400AC6BF5 /* btnprevTemplate.pdf in Resources */,
 				2DCD78D419A665CA00EA50FA /* deadbeef.png in Resources */,
+				2DD6D0A819AE6288009308A5 /* knobTemplate.pdf in Resources */,
 				4D2A6CA2183BC29400AC6BF5 /* btnpauseTemplate.pdf in Resources */,
 				2DCD78DC19A665CA00EA50FA /* deadbeef.png in Resources */,
 				4D2A6CA4183BC29400AC6BF5 /* btnstopTemplate.pdf in Resources */,
@@ -1273,6 +1284,7 @@
 			files = (
 				4D1B51541837EF9D003E6066 /* parser.c in Sources */,
 				4D1B4A681837EC49003E6066 /* junklib.c in Sources */,
+				2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */,
 				4D1B4F021837EC4A003E6066 /* plugins.c in Sources */,
 				4D1B4A9F1837EC49003E6066 /* playlist.c in Sources */,
 				4D1B4A931837EC49003E6066 /* messagepump.c in Sources */,
@@ -1869,6 +1881,7 @@
 				2DB96A8319ABB47C00E318A8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2DB96A8B19ABB4C600E318A8 /* Build configuration list for PBXNativeTarget "samplerate" */ = {
 			isa = XCConfigurationList;
@@ -1877,6 +1890,7 @@
 				2DB96A8D19ABB4C600E318A8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		4D1B3E7518379829003E6066 /* Build configuration list for PBXProject "deadbeef" */ = {
 			isa = XCConfigurationList;

@@ -137,7 +137,10 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Selection" id="280-Ls-hsK">
                                     <items>
-                                        <menuItem title="Remove" keyEquivalent="" id="PdR-km-xfI">
+                                        <menuItem title="Remove" id="PdR-km-xfI">
+                                            <string key="keyEquivalent" base64-UTF8="YES">
+CA
+</string>
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="removeSelectionAction:" target="494" id="nFU-mK-oTt"/>
@@ -480,7 +483,7 @@
                         <slider key="view" verticalHuggingPriority="750" horizontalCompressionResistancePriority="641" id="lhQ-zG-gJo">
                             <rect key="frame" x="0.0" y="14" width="308" height="21"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                            <sliderCell key="cell" alignment="left" maxValue="100" tickMarkPosition="above" sliderType="linear" id="rDd-Sa-3Uw"/>
+                            <sliderCell key="cell" alignment="left" maxValue="100" tickMarkPosition="above" sliderType="linear" id="rDd-Sa-3Uw" customClass="DdbSeekBar"/>
                             <connections>
                                 <action selector="seekBarAction:" target="494" id="vQQ-Pl-agd"/>
                             </connections>
