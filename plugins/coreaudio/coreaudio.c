@@ -96,6 +96,12 @@ ca_init (void) {
         return -1;
     }
 
+    UInt32 bufsize = 4096;
+    sz = sizeof (bufsize);
+    if (AudioDeviceSetProperty(device_id, NULL, 0, 0, kAudioDevicePropertyBufferFrameSize, sz, &bufsize)) {
+        fprintf (stderr, "Failed to set buffer size\n");
+    }
+
     if (ca_apply_format ()) {
         return -1;
     }
@@ -203,6 +209,10 @@ ca_buffer_callback(AudioDeviceID inDevice, const AudioTimeStamp * inNow, const A
             plugin.fmt.channelmask |= (1<<i);
         }
     }
+
+    UInt32 bufsize = 0;
+    sz = sizeof (bufsize);
+    AudioDeviceGetProperty(device_id, 0, 0, kAudioDevicePropertyBufferFrameSize, &sz, &bufsize);
     
     char *buffer = outOutputData->mBuffers[0].mData;
     sz = outOutputData->mBuffers[0].mDataByteSize;
