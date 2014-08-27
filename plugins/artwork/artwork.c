@@ -897,7 +897,6 @@ imlib_resize(const char *in, const char *out, int img_size)
         return -1;
     }
     imlib_context_set_image(img);
-    imlib_image_set_changes_on_disk();
 
     int w = imlib_image_get_width ();
     int h = imlib_image_get_height ();
@@ -1642,7 +1641,7 @@ static int
 fetch_from_albumart_org (const char *artist, const char *album, const char *dest)
 {
     char *artist_url = uri_escape (artist ? artist : "", 0);
-    char *album_url = uri_escape (artist ? album : "", 0);
+    char *album_url = uri_escape (album ? album : "", 0);
     char *url = malloc(sizeof(AAO_URL) + strlen(artist_url) + strlen(album_url) + 1);
     if (url) {
         sprintf (url, AAO_URL, artist_url, album_url);
@@ -1831,24 +1830,27 @@ process_query(const cover_query_t *query)
     if (artwork_enable_local) {
         char *fname_copy = strdup(query->fname);
         if (fname_copy) {
-            /* Extract the directory from whatever sort of URL is provided */
-            char *filename_dir = strstr(fname_copy, "://");
-            if (filename_dir) {
-//            if (strrchr(fname_copy, ':')) {
-//                *strrchr(fname_copy, ':') = '\0';
-//            }
+            /* Find the directory for whatever sort of URL is provided */
+            char *filename_dir = NULL;
+            if (fname_copy[0] != '/' && strstr(fname_copy, "file://") != fname_copy) {
+                char *p = strstr(fname_copy, "://");
+                if (p) {
+                    p += 3;
+                    char *q = strrchr(p, ':');
+                    if (q) {
+                        *q = '\0';
+                    }
+                    filename_dir = dirname(p);
 //            DB_vfs_t **vfsplugs = deadbeef->plug_get_vfs_list();
 //            for (size_t i = 0; vfsplugs[i]; i++) {
 //                if (vfsplugs[i]->is_container && vfsplugs[i]->is_container(fname_copy)) {
 //                    fprintf(stderr, "%s is container\n", query->fname);
 //                }
 //            }
-                filename_dir += 3;
-                char *q = strrchr(filename_dir, ':');
-                if (q) {
-                    *q = '\0';
                 }
-                dirname(filename_dir);
+                else {
+                    filename_dir = dirname(fname_copy);
+                }
             }
             else {
                 filename_dir = dirname(fname_copy);
@@ -2210,6 +2212,7 @@ artwork_plugin_start (void)
     files_mutex = deadbeef->mutex_create_nonrecursive ();
 #ifdef USE_IMLIB2
     imlib_mutex = deadbeef->mutex_create_nonrecursive ();
+    imlib_set_cache_size(0);
 #endif
     cond = deadbeef->cond_create ();
     tid = deadbeef->thread_start_low_priority (fetcher_thread, NULL);
