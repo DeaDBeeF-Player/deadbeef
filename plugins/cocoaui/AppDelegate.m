@@ -94,9 +94,10 @@ NSInteger firstSelected = -1;
 
 - (void)frameUpdate:(id)userData
 {
+    float dur = -1;
     DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
     if (trk) {
-        float dur = deadbeef->pl_get_item_duration (trk);
+        dur = deadbeef->pl_get_item_duration (trk);
         if (dur >= 0) {
             float perc = deadbeef->streamer_get_playpos () / dur * 100.f;
             if (perc < 0) {
@@ -109,7 +110,17 @@ NSInteger firstSelected = -1;
         }
         deadbeef->pl_item_unref (trk);
     }
-
+    
+    BOOL st = YES;
+    if (!trk || dur < 0) {
+        st = NO;
+    }
+    if ([self.seekBar isEnabled] != st) {
+        [self.seekBar setEnabled:st];
+        if (!st) {
+            [self.seekBar setImage:nil];
+        }
+    }
 }
 
 - (void)playlistDoubleAction
@@ -436,9 +447,17 @@ NSInteger firstSelected = -1;
 }
 
 - (IBAction)stopAfterCurrentAction:(id)sender {
+    int state = deadbeef->conf_get_int ("playlist.stop_after_current", 0);
+    state = 1 - state;
+    deadbeef->conf_set_int ("playlist.stop_after_current", state);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 - (IBAction)stopAfterCurrentAlbumAction:(id)sender {
+    int state = deadbeef->conf_get_int ("playlist.stop_after_current_album", 0);
+    state = 1 - state;
+    deadbeef->conf_set_int ("playlist.stop_after_current_album", state);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 - (IBAction)deselectAllAction:(id)sender {
