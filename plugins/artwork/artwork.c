@@ -29,7 +29,6 @@
 #include <string.h>
 #include <ctype.h>
 #include <libgen.h>
-#include <glob.h>
 #include <errno.h>
 #include <dirent.h>
 #include <unistd.h>
@@ -54,17 +53,21 @@
     #include <png.h>
 #endif
 #include "../../deadbeef.h"
-#include "artwork.h"
+#include "artwork_internal.h"
+#include "lastfm.h"
+#include "albumartorg.h"
+#include "wos.h"
 #include "escape.h"
-
-#define min(x,y) ((x)<(y)?(x):(y))
+#include "cache.h"
+#include "artwork.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(...)
 
-static DB_functions_t *deadbeef;
+DB_functions_t *deadbeef;
+DB_FILE *current_file;
+
 static DB_artwork_plugin_t plugin;
-static DB_FILE *current_file;
 static char default_cover[PATH_MAX];
 
 typedef struct cover_callback_s cover_callback_t;
@@ -83,11 +86,6 @@ typedef struct cover_query_s {
     struct cover_query_s *next;
 } cover_query_t;
 
-typedef struct mutex_cond_s {
-    uintptr_t mutex;
-    uintptr_t cond;
-} mutex_cond_t;
-
 static cover_query_t *queue;
 static cover_query_t *queue_tail;
 static volatile int terminate;
@@ -95,7 +93,6 @@ static volatile int clear_queue;
 static intptr_t tid;
 static uintptr_t queue_mutex;
 static uintptr_t cond;
-static uintptr_t files_mutex;
 #ifdef USE_IMLIB2
     static uintptr_t imlib_mutex;
 #endif
@@ -114,101 +111,6 @@ static time_t artwork_scaled_reset_time;
 #define DEFAULT_FILEMASK "*cover*.jpg;*front*.jpg;*folder*.jpg;*cover*.png;*front*.png;*folder*.png"
 #define MAX_FILEMASK_LENGTH 200
 static char artwork_filemask[MAX_FILEMASK_LENGTH];
-
-static int
-make_cache_root_path(char *path, const size_t size)
-{
-    const char *xdg_cache = getenv("XDG_CACHE_HOME");
-    const char *cache_root = xdg_cache ? xdg_cache : getenv("HOME");
-    if (snprintf(path, size, xdg_cache ? "%s/deadbeef/" : "%s/.cache/deadbeef/", cache_root) >= size) {
-        trace("Cache root path truncated at %d bytes\n", (int)size);
-        return -1;
-    }
-    return 0;
-}
-
-static int
-filter_scaled_dirs (const struct dirent *f)
-{
-    return !strncasecmp(f->d_name, "covers-", 7);
-}
-
-static void
-remove_cache_item(const char *entry_path, const char *subdir_path, const char *subdir_name, const char *entry_name)
-{
-    /* Unlink the expired file, and the artist directory if it is empty */
-    deadbeef->mutex_lock(files_mutex);
-    unlink(entry_path);
-    rmdir(subdir_path);
-
-    /* Remove any scaled copies of this file, plus parent directories that are now empty */
-    char cache_root_path[PATH_MAX];
-    make_cache_root_path(cache_root_path, PATH_MAX-7);
-    struct dirent **scaled_dirs = NULL;
-    const int scaled_dirs_count = scandir(cache_root_path, &scaled_dirs, filter_scaled_dirs, NULL);
-    for (size_t i = 0; i < scaled_dirs_count; i++) {
-        char scaled_entry_path[PATH_MAX];
-        snprintf(scaled_entry_path, PATH_MAX, "%s%s/%s/%s", cache_root_path, scaled_dirs[i]->d_name, subdir_name, entry_name);
-        unlink(scaled_entry_path);
-        char *scaled_entry_dir = dirname(scaled_entry_path);
-        rmdir(scaled_entry_dir);
-        rmdir(dirname(scaled_entry_dir));
-        free(scaled_dirs[i]);
-    }
-    free(scaled_dirs);
-    deadbeef->mutex_unlock(files_mutex);
-}
-
-static void
-cache_cleaner_thread(void *none)
-{
-#ifdef __linux__
-    prctl (PR_SET_NAME, "deadbeef-artwork-cc", 0, 0, 0, 0);
-#endif
-
-    /* Find where it all happens */
-    sleep(5);
-    char covers_path[PATH_MAX];
-    make_cache_root_path(covers_path, PATH_MAX-7);
-    strcat(covers_path, "covers/");
-
-    while (true) {
-        /* Loop through the artist directories */
-        DIR *covers_dir = opendir(covers_path);
-        struct dirent *covers_subdir;
-        while (covers_dir && (covers_subdir = readdir(covers_dir))) {
-            const int32_t cache_secs = deadbeef->conf_get_int("artwork.cache.period", 48) * 60 * 60;
-            if (cache_secs > 0 && strcmp(covers_subdir->d_name, ".") && strcmp(covers_subdir->d_name, "..")) {
-                const time_t cache_expiry = time(NULL) - cache_secs;
-
-                /* Loop through the image files in this artist directory */
-                char subdir_path[PATH_MAX];
-                snprintf(subdir_path, PATH_MAX, "%s%s", covers_path, covers_subdir->d_name);
-                DIR *subdir = opendir(subdir_path);
-                struct dirent *entry;
-                while (subdir && (entry = readdir(subdir))) {
-                    if (strcmp(entry->d_name, ".") && strcmp(entry->d_name, "..")) {
-                        char entry_path[PATH_MAX];
-                        snprintf(entry_path, PATH_MAX, "%s/%s", subdir_path, entry->d_name);
-
-                        /* Test against the cache expiry time (cache invalidation resets are not handled here) */
-                        struct stat stat_buf;
-                        if (!stat(entry_path, &stat_buf) && stat_buf.st_mtime < cache_expiry) {
-                            trace("%s expired from cache\n", entry_path);
-                            remove_cache_item(entry_path, subdir_path, covers_subdir->d_name, entry->d_name);
-                        }
-                    }
-                }
-                closedir(subdir);
-            }
-
-            sleep(1);
-        }
-        closedir(covers_dir);
-
-        sleep(60);
-    }
-}
 
 static float
 scale_dimensions(const int scaled_size, const int width, const int height, unsigned int *scaled_width, unsigned int *scaled_height)
@@ -938,37 +840,6 @@ imlib_resize(const char *in, const char *out, int img_size)
 #endif
 
 static int
-check_dir(const char *path)
-{
-    struct stat stat_struct;
-    if (!stat(path, &stat_struct)) {
-        return S_ISDIR(stat_struct.st_mode);
-    }
-    if (errno != ENOENT) {
-        return false;
-    }
-
-    char* dir = strdup(path);
-    if (!dir) {
-        return false;
-    }
-
-    const int good_dir = check_dir(dirname(dir));
-    free(dir);
-    return good_dir && !mkdir(path, 0755);
-}
-
-static int
-ensure_dir(const char *path)
-{
-    char dir[PATH_MAX];
-    strcpy(dir, path);
-    dirname(dir);
-    trace("artwork: ensure folder %s exists\n", dir);
-    return check_dir(dir);
-}
-
-static int
 scale_file (const char *in, const char *out, int img_size)
 {
     trace("artwork: scaling %s to %s\n", in, out);
@@ -1001,97 +872,6 @@ scale_file (const char *in, const char *out, int img_size)
     deadbeef->mutex_unlock(files_mutex);
     return err;
 #endif
-}
-
-#define BUFFER_SIZE 4096
-static int
-copy_file (const char *in, const char *out)
-{
-    trace ("copying %s to %s\n", in, out);
-
-    if (!ensure_dir(out)) {
-        return -1;
-    }
-
-    char tmp_out[PATH_MAX];
-    snprintf(tmp_out, PATH_MAX, "%s.part", out);
-    FILE *fout = fopen(tmp_out, "w+b");
-    if (!fout) {
-        trace("artwork: failed to open file %s for writing\n", tmp_out);
-        return -1;
-    }
-
-    DB_FILE *fin = deadbeef->fopen(in);
-    if (!fin) {
-        fclose(fout);
-        trace("artwork: failed to open file %s for reading\n", in);
-        return -1;
-    }
-    current_file = fin;
-
-    errno = 0;
-    int err = 0;
-    int bytes_read;
-    do {
-        char buffer[BUFFER_SIZE];
-        bytes_read = deadbeef->fread(buffer, 1, BUFFER_SIZE, fin);
-        if (bytes_read < 0 || errno) {
-            trace("artwork: failed to read file %s: %s\n", tmp_out, strerror(errno));
-            err = -1;
-        }
-        else if (bytes_read > 0 && fwrite(buffer, bytes_read, 1, fout) != 1) {
-            trace("artwork: failed to write file %s: %s\n", tmp_out, strerror(errno));
-            err = -1;
-        }
-    } while (!err && bytes_read == BUFFER_SIZE);
-
-    current_file = NULL;
-    deadbeef->fclose(fin);
-    fclose(fout);
-
-    if (!err) {
-        err = rename(tmp_out, out);
-        if (err) {
-            trace("artwork: failed to move %s to %s: %s\n", tmp_out, out, strerror(errno));
-        }
-    }
-
-    unlink(tmp_out);
-    return err;
-}
-
-static int
-write_file(const char *out, const char *data, const size_t data_length)
-{
-    if (!ensure_dir(out)) {
-        return -1;
-    }
-
-    char tmp_path[PATH_MAX];
-    snprintf(tmp_path, sizeof(tmp_path), "%s.part", out);
-    FILE *fp = fopen(tmp_path, "w+b");
-    if (!fp) {
-        trace ("artwork: failed to open %s for writing\n", tmp_path);
-        return -1;
-    }
-
-    int err = 0;
-    if (fwrite(data, 1, data_length, fp) != data_length) {
-        trace ("artwork: failed to write picture into %s\n", tmp_path);
-        err = -1;
-    }
-
-    fclose(fp);
-
-    if (!err) {
-        err = rename(tmp_path, out);
-        if (err) {
-            trace ("Failed to move %s to %s: %s\n", tmp_path, out, strerror(errno));
-        }
-    }
-
-    unlink(tmp_path);
-    return err;
 }
 
 static char
@@ -1565,163 +1345,6 @@ flac_extract_art(FLAC__Metadata_Chain *chain, const char *filename)
 }
 #endif
 
-#ifdef USE_VFS_CURL
-#define LFM_URL "http://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=%s&artist=%s&album=%s"
-#define API_KEY "6b33c8ae4d598a9aff8fe63e334e6e86"
-#define MEGA_IMAGE_TAG "<image size=\"mega\">"
-#define XL_IMAGE_TAG "<image size=\"extralarge\">"
-#define IMAGE_END_TAG "</image>"
-static int
-fetch_from_lastfm (const char *artist, const char *album, const char *dest)
-{
-    char *artist_url = uri_escape(artist ? artist : "", 0);
-    char *album_url = uri_escape(album ? album : "", 0);
-    char *url = malloc(strlen(artist_url) + strlen(album_url) + sizeof(LFM_URL API_KEY) + 1);
-    if (url) {
-        sprintf(url, LFM_URL, API_KEY, artist_url, album_url);
-    }
-    free(artist_url);
-    free(album_url);
-    if (!url) {
-        return -1;
-    }
-
-    trace("fetch_from_lastfm: query: %s\n", url);
-    DB_FILE *fp = deadbeef->fopen(url);
-    free(url);
-    if (!fp) {
-        trace("fetch_from_lastfm: failed to open %s\n", url);
-        return -1;
-    }
-    current_file = fp;
-
-    char buffer[1000] = "";
-    const int size = deadbeef->fread(buffer, 1, sizeof(buffer)-1, fp);
-    current_file = NULL;
-    deadbeef->fclose(fp);
-
-    char *img = NULL;
-    if (size > 0) {
-        buffer[size] = '\0';
-        img = strstr(buffer, MEGA_IMAGE_TAG);
-        if (img) {
-            img += sizeof(MEGA_IMAGE_TAG)-1;
-        }
-        else {
-            img = strstr(buffer, XL_IMAGE_TAG);
-            if (img) {
-                img += sizeof(XL_IMAGE_TAG)-1;
-            }
-        }
-    }
-//    trace("fetch_from_lastfm: scrobbler response:\n%s\n", buffer);
-
-    if (!img) {
-        trace("fetch_from_lastfm: image tag not found in response (album not found?)\n");
-        return -1;
-    }
-
-    char *end = strstr(img, IMAGE_END_TAG);
-    if (!end) {
-        trace("fetch_from_lastfm: XML not well formed, image end tag missing\n");
-        return -1;
-    }
-
-    if (end == img) {
-        trace("fetch_from_lastfm: no image found\n");
-        return -1;
-    }
-
-    *end = '\0';
-    return copy_file(img, dest);
-}
-
-#define AAO_URL "http://www.albumart.org/index.php?searchkey=%s+%s&itempage=1&newsearch=1&searchindex=Music"
-static int
-fetch_from_albumart_org (const char *artist, const char *album, const char *dest)
-{
-    char *artist_url = uri_escape (artist ? artist : "", 0);
-    char *album_url = uri_escape (album ? album : "", 0);
-    char *url = malloc(sizeof(AAO_URL) + strlen(artist_url) + strlen(album_url) + 1);
-    if (url) {
-        sprintf (url, AAO_URL, artist_url, album_url);
-    }
-    free (artist_url);
-    free (album_url);
-    if (!url) {
-        return -1;
-    }
-
-    trace("fetch_from_albumart_org: %s\n", url);
-    DB_FILE *fp = deadbeef->fopen (url);
-    free(url);
-    if (!fp) {
-        trace ("fetch_from_albumart_org: failed to open %s\n", url);
-        return -1;
-    }
-    current_file = fp;
-    char buffer[10000];
-    const int size = deadbeef->fread(buffer, 1, sizeof (buffer), fp);
-    char *img = NULL;
-    if (size > 0) {
-        buffer[size] = '\0';
-        img = strstr (buffer, "http://ecx.images-amazon.com/images/I/");
-    }
-    current_file = NULL;
-    deadbeef->fclose (fp);
-
-    if (!img) {
-        trace ("fetch_from_albumart_org: image url not found in response from (%d bytes)\n", size);
-        return -1;
-    }
-
-    char *end = strstr (img, "._SL160_.jpg");
-    if (!end || end == img)
-    {
-        trace ("fetch_from_albumart_org: bad xml\n");
-        return -1;
-    }
-
-    strcpy (end, ".jpg");
-    return copy_file(img, dest);
-}
-
-static void
-strcopy_escape (char *dst, size_t d_len, const char *src, size_t n) {
-    char *e = dst + d_len - 1;
-    const char *se = src + n;
-    while (dst < e && *src && src < se) {
-        if (*src != ' ' && *src != '!') {
-            *dst++ = *src;
-        }
-        src++;
-    }
-    *dst = 0;
-}
-
-#define WOS_URL "http://www.worldofspectrum.org/showscreen.cgi?screen=screens/load/%c/gif/%s.gif"
-static int
-fetch_from_wos (const char *title, const char *dest)
-{
-    // extract game title from title
-    char t[100];
-    char *dash = strstr (title, " -");
-    if (!dash) {
-        strcopy_escape (t, sizeof (t), title, strlen (title));
-    }
-    else {
-        strcopy_escape(t, sizeof (t), title, dash-title);
-    }
-
-    char *title_url = uri_escape(t, 0);
-    char url[sizeof(WOS_URL) + strlen(title_url)];
-    sprintf(url, WOS_URL, tolower(title_url[0]), title_url);
-    free(title_url);
-    trace("WOS request: %s\n", url);
-    return copy_file(url, dest);
-}
-#endif
-
 static int
 process_scaled_query(const cover_query_t *query)
 {
@@ -2019,7 +1642,7 @@ get_album_art (const char *fname, const char *artist, const char *album, int siz
     query_add(fname, artist, album, size, callback, user_data);
     return NULL;
 }
-
+#if 0
 static void
 sync_callback (const char *fname, const char *artist, const char *album, void *user_data) {
     mutex_cond_t *mc = (mutex_cond_t *)user_data;
@@ -2044,7 +1667,7 @@ get_album_art_sync (const char *fname, const char *artist, const char *album, in
     deadbeef->cond_free (mc.cond);
     return image_fname;
 }
-
+#endif
 static void
 artwork_reset (int fast) {
     if (fast) {
