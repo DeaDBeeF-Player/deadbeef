@@ -25,6 +25,7 @@
 #ifdef HAVE_CONFIG_H
     #include "../../config.h"
 #endif
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -33,6 +34,7 @@
 #include <dirent.h>
 #include <unistd.h>
 #include <fnmatch.h>
+#include <pthread.h>
 #include <sys/stat.h>
 #ifdef __linux__
     #include <sys/prctl.h>
@@ -88,8 +90,8 @@ typedef struct cover_query_s {
 
 static cover_query_t *queue;
 static cover_query_t *queue_tail;
-static volatile int terminate;
-static volatile int clear_queue;
+static int terminate;
+static int clear_queue;
 static intptr_t tid;
 static uintptr_t queue_mutex;
 static uintptr_t cond;
@@ -908,7 +910,14 @@ make_cache_dir_path (char *path, const int size, const char *artist, const int i
     }
 
     const size_t size_left = size - strlen(path);
-    if (snprintf(path+strlen(path), size_left, img_size == -1 ? "covers/%2$s/" : "covers-%1$d/%2$s/", img_size, esc_artist) >= size_left) {
+    int path_length;
+    if (img_size == -1) {
+        path_length = snprintf(path+strlen(path), size_left, "covers/%s/", esc_artist);
+    }
+    else {
+        path_length = snprintf(path+strlen(path), size_left, "covers-%d/%s/", img_size, esc_artist);
+    }
+    if (path_length >= size_left) {
         trace("Cache path truncated at %d bytes\n", size);
         return -1;
     }
@@ -982,31 +991,6 @@ query_clear(cover_query_t *query)
     free(query);
 }
 
-static void
-query_complete(const char *fname, const char *artist, const char *album)
-{
-    deadbeef->mutex_lock(queue_mutex);
-
-    cover_query_t *query = queue;
-    cover_callback_t *callback = &query->callback;
-    do {
-        if (callback->cb) {
-            trace("artwork: making callback with data %s %s %s %p\n", fname, artist, album, callback->ud);
-            callback->cb(fname, artist, album, callback->ud);
-        }
-        callback = callback->next;
-    } while (callback);
-
-    queue = query->next;
-    if (!queue) {
-        queue_tail = NULL;
-    }
-
-    query_clear(query);
-
-    deadbeef->mutex_unlock(queue_mutex);
-}
-
 static int
 params_match(const char *s1, const char *s2)
 {
@@ -1073,8 +1057,8 @@ query_add(const char *fname, const char *artist, const char *album, const int im
         queue = queue_tail = q;
     }
 
-    deadbeef->mutex_unlock(queue_mutex);
     deadbeef->cond_signal(cond);
+    deadbeef->mutex_unlock(queue_mutex);
 }
 
 static char *filter_custom_mask = NULL;
@@ -1556,6 +1540,35 @@ process_query(const cover_query_t *query)
 }
 
 static void
+query_complete(const char *fname, const char *artist, const char *album)
+{
+    cover_query_t *query = queue;
+    cover_callback_t *callback = &query->callback;
+    do {
+        if (callback->cb) {
+            trace("artwork: making callback with data %s %s %s %p\n", fname, artist, album, callback->ud);
+            callback->cb(fname, artist, album, callback->ud);
+        }
+        callback = callback->next;
+    } while (callback);
+
+    queue = query->next;
+    if (!queue) {
+        queue_tail = NULL;
+    }
+
+    query_clear(query);
+}
+
+static int
+wait_for_signal(void)
+{
+    trace("artwork fetcher: waiting for signal ...\n");
+    deadbeef->cond_wait(cond, queue_mutex);
+    return !terminate;
+}
+
+static void
 fetcher_thread (void *none)
 {
 #ifdef __linux__
@@ -1563,15 +1576,19 @@ fetcher_thread (void *none)
 #endif
 
     /* Loop until external terminate command */
+    deadbeef->mutex_lock(queue_mutex);
     while (!terminate) {
         trace("artwork fetcher: waiting for signal ...\n");
-        deadbeef->cond_wait(cond, queue_mutex);
+        pthread_cond_wait((pthread_cond_t *)cond, (pthread_mutex_t *)queue_mutex);
         trace("artwork fetcher: cond signalled\n");
-        deadbeef->mutex_unlock(queue_mutex);
 
         /* Loop until queue is empty or external command received */
-        while (!terminate && queue && !clear_queue) {
-            if (queue->size == -1 ? process_query(queue) : process_scaled_query(queue)) {
+        while (!terminate && !clear_queue && queue) {
+            /* Drop the mutex while we do the artwork lookups */
+            deadbeef->mutex_unlock(queue_mutex);
+            const int cached_art = queue->size == -1 ? process_query(queue) : process_scaled_query(queue);
+            deadbeef->mutex_lock(queue_mutex);
+            if (cached_art) {
                 trace("artwork fetcher: cover art file cached\n");
                 query_complete(queue->fname, queue->artist, queue->album);
             }
@@ -1591,6 +1608,7 @@ fetcher_thread (void *none)
             trace("artwork fetcher: queue clear done\n");
         }
     }
+    deadbeef->mutex_unlock(queue_mutex);
 }
 
 static const char *
@@ -1848,9 +1866,11 @@ static int
 artwork_plugin_stop (void)
 {
     if (tid) {
+        deadbeef->mutex_lock (queue_mutex);
         clear_queue = 1;
         terminate = 1;
         deadbeef->cond_signal (cond);
+        deadbeef->mutex_unlock(queue_mutex);
         if (current_file) {
             deadbeef->fabort (current_file);
         }
