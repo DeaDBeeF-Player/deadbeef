@@ -27,6 +27,34 @@
 #include "support.h"
 #include "gtkui.h"
 
+static char gtkui_listview_text_font[1000];
+static char gtkui_listview_group_text_font[1000];
+static char gtkui_listview_column_text_font[1000];
+static char gtkui_tabstrip_text_font[1000];
+
+static PangoFontDescription *
+get_new_font_description_from_type (int type)
+{
+    PangoFontDescription *desc;
+    switch (type) {
+        case DDB_LIST_FONT:
+            desc = pango_font_description_from_string (gtkui_listview_text_font);
+            break;
+        case DDB_GROUP_FONT:
+            desc = pango_font_description_from_string (gtkui_listview_group_text_font);
+            break;
+        case DDB_TABSTRIP_FONT:
+            desc = pango_font_description_from_string (gtkui_tabstrip_text_font);
+            break;
+        case DDB_COLUMN_FONT:
+            desc = pango_font_description_from_string (gtkui_listview_column_text_font);
+            break;
+        default:
+            desc = NULL;
+    }
+    return desc;
+}
+
 void
 draw_begin (drawctx_t *ctx, cairo_t *cr) {
     ctx->drawable = cr;
@@ -66,11 +94,15 @@ draw_free (drawctx_t *ctx) {
         g_object_unref (ctx->pangolayout);
         ctx->pangolayout = NULL;
     }
+    if (ctx->font_style) {
+        g_object_unref (ctx->font_style);
+        ctx->font_style = NULL;
+    }
 }
 
 void
-draw_init_font (drawctx_t *ctx, GtkStyle *new_font_style) {
-    if (!ctx->pango_ready || (new_font_style && ctx->font_style != new_font_style)) {
+draw_init_font (drawctx_t *ctx, int type, int reset) {
+    if (reset || !ctx->pango_ready) {
         if (ctx->pangoctx) {
             g_object_unref (ctx->pangoctx);
             ctx->pangoctx = NULL;
@@ -79,8 +111,16 @@ draw_init_font (drawctx_t *ctx, GtkStyle *new_font_style) {
             g_object_unref (ctx->pangolayout);
             ctx->pangolayout = NULL;
         }
+        if (ctx->font_style) {
+            g_object_unref (ctx->font_style);
+            ctx->font_style = NULL;
+        }
 
-        ctx->font_style = new_font_style ? new_font_style : gtk_widget_get_default_style ();
+        ctx->font_style = gtk_style_new ();
+        if (ctx->font_style->font_desc) {
+            pango_font_description_free (ctx->font_style->font_desc);
+            ctx->font_style->font_desc = get_new_font_description_from_type (type);
+        }
 
         ctx->pangoctx = gdk_pango_context_get ();
         ctx->pangolayout = pango_layout_new (ctx->pangoctx);
@@ -90,18 +130,27 @@ draw_init_font (drawctx_t *ctx, GtkStyle *new_font_style) {
         pango_layout_set_font_description (ctx->pangolayout, desc);
         ctx->pango_ready = 1;
     }
-    else if (new_font_style) {
+    else if (ctx->pango_ready) {
         PangoFontDescription *desc = ctx->font_style->font_desc;
         pango_layout_set_font_description (ctx->pangolayout, desc);
     }
 }
 
 void
-draw_init_font_bold (drawctx_t *ctx) {
-    PangoFontDescription *desc = pango_font_description_copy (ctx->font_style->font_desc);
-    pango_font_description_set_weight (desc, PANGO_WEIGHT_BOLD);
+draw_init_font_style (drawctx_t *ctx, int bold, int italic, int type) {
+    PangoFontDescription *desc_default = ctx->font_style->font_desc;
+    if (desc_default != NULL) {
+        pango_layout_set_font_description (ctx->pangolayout, desc_default);
+    }
+    PangoFontDescription *desc = pango_font_description_copy (pango_layout_get_font_description (ctx->pangolayout));
+    if (bold) {
+        pango_font_description_set_weight (desc, PANGO_WEIGHT_BOLD);
+    }
+    if (italic) {
+        pango_font_description_set_style (desc, PANGO_STYLE_ITALIC);
+    }
     pango_layout_set_font_description (ctx->pangolayout, desc);
-    pango_font_description_free(desc);
+    pango_font_description_free (desc);
 }
 
 void
@@ -110,10 +159,9 @@ draw_init_font_normal (drawctx_t *ctx) {
     pango_layout_set_font_description (ctx->pangolayout, ctx->font_style->font_desc);
 }
 
-
 float
 draw_get_font_size (drawctx_t *ctx) {
-    draw_init_font (ctx, NULL);
+    draw_init_font (ctx, 0, 0);
     GdkScreen *screen = gdk_screen_get_default ();
     float dpi = gdk_screen_get_resolution (screen);
     PangoFontDescription *desc = ctx->font_style->font_desc;
@@ -122,7 +170,20 @@ draw_get_font_size (drawctx_t *ctx) {
 
 void
 draw_text (drawctx_t *ctx, float x, float y, int width, int align, const char *text) {
-    draw_init_font (ctx, NULL);
+    draw_init_font (ctx, 0, 0);
+    pango_layout_set_width (ctx->pangolayout, width*PANGO_SCALE);
+    pango_layout_set_alignment (ctx->pangolayout, align ? PANGO_ALIGN_RIGHT : PANGO_ALIGN_LEFT);
+    pango_layout_set_text (ctx->pangolayout, text, -1);
+    cairo_move_to (ctx->drawable, x, y);
+    pango_cairo_show_layout (ctx->drawable, ctx->pangolayout);
+}
+
+void
+draw_text_custom (drawctx_t *ctx, float x, float y, int width, int align, int type, int bold, int italic, const char *text) {
+    draw_init_font (ctx, type, 0);
+    if (bold || italic) {
+        draw_init_font_style (ctx, bold, italic, type);
+    }
     pango_layout_set_width (ctx->pangolayout, width*PANGO_SCALE);
     pango_layout_set_alignment (ctx->pangolayout, align ? PANGO_ALIGN_RIGHT : PANGO_ALIGN_LEFT);
     pango_layout_set_text (ctx->pangolayout, text, -1);
@@ -132,19 +193,18 @@ draw_text (drawctx_t *ctx, float x, float y, int width, int align, const char *t
 
 void
 draw_text_with_colors (drawctx_t *ctx, float x, float y, int width, int align, const char *text) {
-    draw_init_font (ctx, NULL);
+    draw_init_font (ctx, 0, 0);
     pango_layout_set_width (ctx->pangolayout, width*PANGO_SCALE);
     pango_layout_set_alignment (ctx->pangolayout, align ? PANGO_ALIGN_RIGHT : PANGO_ALIGN_LEFT);
     pango_layout_set_text (ctx->pangolayout, text, -1);
 //    gdk_draw_layout_with_colors (ctx->drawable, gc, x, y, ctx->pangolayout, &clrfg, &clrbg);
     cairo_move_to (ctx->drawable, x, y);
     pango_cairo_show_layout (ctx->drawable, ctx->pangolayout);
-    
 }
 
 void
 draw_get_text_extents (drawctx_t *ctx, const char *text, int len, int *w, int *h) {
-    draw_init_font (ctx, NULL);
+    draw_init_font (ctx, 0, 0);
     pango_layout_set_width (ctx->pangolayout, 1000 * PANGO_SCALE);
     pango_layout_set_alignment (ctx->pangolayout, PANGO_ALIGN_LEFT);
     pango_layout_set_text (ctx->pangolayout, text, len);
@@ -157,13 +217,14 @@ draw_get_text_extents (drawctx_t *ctx, const char *text, int len, int *w, int *h
 
 int
 draw_get_listview_rowheight (drawctx_t *ctx) {
-    PangoFontDescription *font_desc = ctx->font_style->font_desc;
+    PangoFontDescription *font_desc = pango_font_description_copy (pango_layout_get_font_description (ctx->pangolayout));
     PangoFontMetrics *metrics = pango_context_get_metrics (ctx->pangoctx,
             font_desc,
             pango_context_get_language (ctx->pangoctx));
     int row_height = (pango_font_metrics_get_ascent (metrics) +
             pango_font_metrics_get_descent (metrics));
     pango_font_metrics_unref (metrics);
+    pango_font_description_free (font_desc);
     return PANGO_PIXELS(row_height)+6;
 }
 
@@ -181,12 +242,17 @@ static GdkColor gtkui_tabstrip_mid_color;
 static GdkColor gtkui_tabstrip_light_color;
 static GdkColor gtkui_tabstrip_base_color;
 static GdkColor gtkui_tabstrip_text_color;
+static GdkColor gtkui_tabstrip_playing_text_color;
+static GdkColor gtkui_tabstrip_selected_text_color;
 
 static GdkColor gtkui_listview_even_row_color;
 static GdkColor gtkui_listview_odd_row_color;
 static GdkColor gtkui_listview_selection_color;
 static GdkColor gtkui_listview_text_color;
 static GdkColor gtkui_listview_selected_text_color;
+static GdkColor gtkui_listview_playing_text_color;
+static GdkColor gtkui_listview_group_text_color;
+static GdkColor gtkui_listview_column_text_color;
 static GdkColor gtkui_listview_cursor_color;
 
 static int override_listview_colors = 0;
@@ -219,6 +285,7 @@ gtkui_init_theme_colors (void) {
     GtkStyle *style = gtk_widget_get_style (mainwin);
     char color_text[100];
     const char *clr;
+    const char *font_name = pango_font_description_to_string (style->font_desc);
 
     if (!override_bar_colors) {
         memcpy (&gtkui_bar_foreground_color, &style->base[GTK_STATE_SELECTED], sizeof (GdkColor));
@@ -241,6 +308,9 @@ gtkui_init_theme_colors (void) {
         memcpy (&gtkui_tabstrip_light_color, &style->light[GTK_STATE_NORMAL], sizeof (GdkColor));
         memcpy (&gtkui_tabstrip_base_color, &style->bg[GTK_STATE_NORMAL], sizeof (GdkColor));
         memcpy (&gtkui_tabstrip_text_color, &style->text[GTK_STATE_NORMAL], sizeof (GdkColor));
+        memcpy (&gtkui_tabstrip_playing_text_color, &style->text[GTK_STATE_NORMAL], sizeof (GdkColor));
+        memcpy (&gtkui_tabstrip_selected_text_color, &style->text[GTK_STATE_NORMAL], sizeof (GdkColor));
+        strncpy (gtkui_tabstrip_text_font, font_name, sizeof (gtkui_tabstrip_text_font));
     }
     else {
         snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->dark[GTK_STATE_NORMAL].red, style->dark[GTK_STATE_NORMAL].green, style->dark[GTK_STATE_NORMAL].blue);
@@ -262,6 +332,16 @@ gtkui_init_theme_colors (void) {
         snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->text[GTK_STATE_NORMAL].red, style->text[GTK_STATE_NORMAL].green, style->text[GTK_STATE_NORMAL].blue);
         clr = deadbeef->conf_get_str_fast ("gtkui.color.tabstrip_text", color_text);
         sscanf (clr, "%hd %hd %hd", &gtkui_tabstrip_text_color.red, &gtkui_tabstrip_text_color.green, &gtkui_tabstrip_text_color.blue);
+
+        snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->text[GTK_STATE_NORMAL].red, style->text[GTK_STATE_NORMAL].green, style->text[GTK_STATE_NORMAL].blue);
+        clr = deadbeef->conf_get_str_fast ("gtkui.color.tabstrip_playing_text", color_text);
+        sscanf (clr, "%hd %hd %hd", &gtkui_tabstrip_playing_text_color.red, &gtkui_tabstrip_playing_text_color.green, &gtkui_tabstrip_playing_text_color.blue);
+
+        snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->text[GTK_STATE_NORMAL].red, style->text[GTK_STATE_NORMAL].green, style->text[GTK_STATE_NORMAL].blue);
+        clr = deadbeef->conf_get_str_fast ("gtkui.color.tabstrip_selected_text", color_text);
+        sscanf (clr, "%hd %hd %hd", &gtkui_tabstrip_selected_text_color.red, &gtkui_tabstrip_selected_text_color.green, &gtkui_tabstrip_selected_text_color.blue);
+
+        strncpy (gtkui_tabstrip_text_font, deadbeef->conf_get_str_fast ("gtkui.font.tabstrip_text", font_name), sizeof (gtkui_tabstrip_text_font));
     }
 
     if (!override_listview_colors) {
@@ -270,7 +350,13 @@ gtkui_init_theme_colors (void) {
         memcpy (&gtkui_listview_selection_color, &style->bg[GTK_STATE_SELECTED], sizeof (GdkColor));
         memcpy (&gtkui_listview_text_color, &style->fg[GTK_STATE_NORMAL], sizeof (GdkColor));
         memcpy (&gtkui_listview_selected_text_color, &style->fg[GTK_STATE_SELECTED], sizeof (GdkColor));
+        memcpy (&gtkui_listview_playing_text_color, &style->fg[GTK_STATE_NORMAL], sizeof (GdkColor));
+        memcpy (&gtkui_listview_group_text_color, &style->fg[GTK_STATE_NORMAL], sizeof (GdkColor));
+        memcpy (&gtkui_listview_column_text_color, &style->fg[GTK_STATE_NORMAL], sizeof (GdkColor));
         memcpy (&gtkui_listview_cursor_color, &style->fg[GTK_STATE_NORMAL], sizeof (GdkColor));
+        strncpy (gtkui_listview_text_font, font_name, sizeof (gtkui_listview_text_font));
+        strncpy (gtkui_listview_group_text_font, font_name, sizeof (gtkui_listview_group_text_font));
+        strncpy (gtkui_listview_column_text_font, font_name, sizeof (gtkui_listview_column_text_font));
     }
     else {
         snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->light[GTK_STATE_NORMAL].red, style->light[GTK_STATE_NORMAL].green, style->light[GTK_STATE_NORMAL].blue);
@@ -281,7 +367,7 @@ gtkui_init_theme_colors (void) {
         clr = deadbeef->conf_get_str_fast ("gtkui.color.listview_odd_row", color_text);
         sscanf (clr, "%hd %hd %hd", &gtkui_listview_odd_row_color.red, &gtkui_listview_odd_row_color.green, &gtkui_listview_odd_row_color.blue);
 
-        snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->mid[GTK_STATE_NORMAL].red, style->mid[GTK_STATE_NORMAL].green, style->mid[GTK_STATE_NORMAL].blue);
+        snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->bg[GTK_STATE_SELECTED].red, style->bg[GTK_STATE_SELECTED].green, style->bg[GTK_STATE_SELECTED].blue);
         clr = deadbeef->conf_get_str_fast ("gtkui.color.listview_selection", color_text);
         sscanf (clr, "%hd %hd %hd", &gtkui_listview_selection_color.red, &gtkui_listview_selection_color.green, &gtkui_listview_selection_color.blue);
 
@@ -293,9 +379,25 @@ gtkui_init_theme_colors (void) {
         clr = deadbeef->conf_get_str_fast ("gtkui.color.listview_selected_text", color_text);
         sscanf (clr, "%hd %hd %hd", &gtkui_listview_selected_text_color.red, &gtkui_listview_selected_text_color.green, &gtkui_listview_selected_text_color.blue);
 
+        snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->fg[GTK_STATE_NORMAL].red, style->fg[GTK_STATE_NORMAL].green, style->fg[GTK_STATE_NORMAL].blue);
+        clr = deadbeef->conf_get_str_fast ("gtkui.color.listview_playing_text", color_text);
+        sscanf (clr, "%hd %hd %hd", &gtkui_listview_playing_text_color.red, &gtkui_listview_playing_text_color.green, &gtkui_listview_playing_text_color.blue);
+
+        snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->fg[GTK_STATE_NORMAL].red, style->fg[GTK_STATE_NORMAL].green, style->fg[GTK_STATE_NORMAL].blue);
+        clr = deadbeef->conf_get_str_fast ("gtkui.color.listview_group_text", color_text);
+        sscanf (clr, "%hd %hd %hd", &gtkui_listview_group_text_color.red, &gtkui_listview_group_text_color.green, &gtkui_listview_group_text_color.blue);
+
+        snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->fg[GTK_STATE_NORMAL].red, style->fg[GTK_STATE_NORMAL].green, style->fg[GTK_STATE_NORMAL].blue);
+        clr = deadbeef->conf_get_str_fast ("gtkui.color.listview_column_text", color_text);
+        sscanf (clr, "%hd %hd %hd", &gtkui_listview_column_text_color.red, &gtkui_listview_column_text_color.green, &gtkui_listview_column_text_color.blue);
+
         snprintf (color_text, sizeof (color_text), "%hd %hd %hd", style->fg[GTK_STATE_SELECTED].red, style->fg[GTK_STATE_SELECTED].green, style->fg[GTK_STATE_SELECTED].blue);
         clr = deadbeef->conf_get_str_fast ("gtkui.color.listview_cursor", color_text);
         sscanf (clr, "%hd %hd %hd", &gtkui_listview_cursor_color.red, &gtkui_listview_cursor_color.green, &gtkui_listview_cursor_color.blue);
+
+        strncpy (gtkui_listview_text_font, deadbeef->conf_get_str_fast ("gtkui.font.listview_text", font_name), sizeof (gtkui_listview_text_font));
+        strncpy (gtkui_listview_group_text_font, deadbeef->conf_get_str_fast ("gtkui.font.listview_group_text", font_name), sizeof (gtkui_listview_group_text_font));
+        strncpy (gtkui_listview_column_text_font, deadbeef->conf_get_str_fast ("gtkui.font.listview_column_text", font_name), sizeof (gtkui_listview_column_text_font));
     }
     deadbeef->conf_unlock ();
 }
@@ -336,6 +438,16 @@ gtkui_get_tabstrip_text_color (GdkColor *clr) {
 }
 
 void
+gtkui_get_tabstrip_playing_text_color (GdkColor *clr) {
+    memcpy (clr, &gtkui_tabstrip_playing_text_color, sizeof (GdkColor));
+}
+
+void
+gtkui_get_tabstrip_selected_text_color (GdkColor *clr) {
+    memcpy (clr, &gtkui_tabstrip_selected_text_color, sizeof (GdkColor));
+}
+
+void
 gtkui_get_listview_even_row_color (GdkColor *clr) {
     memcpy (clr, &gtkui_listview_even_row_color, sizeof (GdkColor));
 }
@@ -361,7 +473,41 @@ gtkui_get_listview_selected_text_color (GdkColor *clr) {
 }
 
 void
+gtkui_get_listview_playing_text_color (GdkColor *clr) {
+    memcpy (clr, &gtkui_listview_playing_text_color, sizeof (GdkColor));
+}
+
+void
+gtkui_get_listview_group_text_color (GdkColor *clr) {
+    memcpy (clr, &gtkui_listview_group_text_color, sizeof (GdkColor));
+}
+
+void
+gtkui_get_listview_column_text_color (GdkColor *clr) {
+    memcpy (clr, &gtkui_listview_column_text_color, sizeof (GdkColor));
+}
+
+void
 gtkui_get_listview_cursor_color (GdkColor *clr) {
     memcpy (clr, &gtkui_listview_cursor_color, sizeof (GdkColor));
 }
 
+const char *
+gtkui_get_listview_text_font () {
+    return gtkui_listview_text_font;
+}
+
+const char *
+gtkui_get_listview_group_text_font () {
+    return gtkui_listview_group_text_font;
+}
+
+const char *
+gtkui_get_listview_column_text_font () {
+    return gtkui_listview_column_text_font;
+}
+
+const char *
+gtkui_get_tabstrip_text_font () {
+    return gtkui_tabstrip_text_font;
+}

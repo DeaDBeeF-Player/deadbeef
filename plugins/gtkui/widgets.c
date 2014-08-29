@@ -1676,6 +1676,7 @@ static int
 w_tabstrip_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     switch (id) {
     case DB_EV_PLAYLISTSWITCHED:
+    case DB_EV_TRACKINFOCHANGED:
         g_idle_add (tabstrip_refresh_cb, w);
         break;
     }
@@ -1708,6 +1709,9 @@ static gboolean
 tabbed_trackinfochanged_cb (gpointer p) {
     w_trackdata_t *d = p;
     w_playlist_t *tp = (w_playlist_t *)d->w;
+    if (!strcmp (tp->base.type, "tabbed_playlist")) {
+        ddb_tabstrip_refresh (((w_tabbed_playlist_t *)tp)->tabstrip);
+    }
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {
         int idx = deadbeef->plt_get_item_idx (plt, (DB_playItem_t *)d->trk, PL_MAIN);
@@ -1763,6 +1767,17 @@ paused_cb (gpointer data) {
         ddb_listview_draw_row (p->list, idx, (DdbListviewIter)curr);
         deadbeef->pl_item_unref (curr);
     }
+    return FALSE;
+}
+
+static gboolean
+config_changed_cb (gpointer data) {
+    DdbListview *p = DDB_LISTVIEW (data);
+    ddb_listview_update_fonts (p);
+    ddb_listview_header_update_fonts (p);
+    ddb_listview_lock_columns (p, 0);
+    ddb_listview_clear_sort (p);
+    ddb_listview_refresh (DDB_LISTVIEW (p), DDB_REFRESH_LIST | DDB_REFRESH_VSCROLL);
     return FALSE;
 }
 
@@ -1929,6 +1944,9 @@ w_tabbed_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, ui
     case DB_EV_TRACKFOCUSCURRENT:
         g_idle_add (trackfocus_cb, w);
         break;
+    case DB_EV_CONFIGCHANGED:
+        g_idle_add (config_changed_cb, tp->list);
+        break;
     case DB_EV_SELCHANGED:
         if (ctx != (uintptr_t)tp->list || p2 == PL_SEARCH) {
             g_idle_add (refresh_cb, tp->list);
@@ -1981,6 +1999,9 @@ w_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t 
         break;
     case DB_EV_TRACKFOCUSCURRENT:
         g_idle_add (trackfocus_cb, w);
+        break;
+    case DB_EV_CONFIGCHANGED:
+        g_idle_add (config_changed_cb, p->list);
         break;
     case DB_EV_SELCHANGED:
         if (ctx != (uintptr_t)p->list || p2 == PL_SEARCH) {
