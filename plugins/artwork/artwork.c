@@ -63,8 +63,8 @@
 #include "cache.h"
 #include "artwork.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(...)
+#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+//#define trace(...)
 
 DB_functions_t *deadbeef;
 DB_FILE *current_file;
@@ -855,12 +855,12 @@ scale_file (const char *in, const char *out, int img_size)
         return -1;
     }
 
-    deadbeef->mutex_lock(files_mutex);
+    cache_lock();
 #ifdef USE_IMLIB2
     deadbeef->mutex_lock(imlib_mutex);
     const int imlib_err = imlib_resize(in, out, img_size);
     deadbeef->mutex_unlock(imlib_mutex);
-    deadbeef->mutex_unlock(files_mutex);
+    cache_unlock();
     return imlib_err;
 #else
     int err = jpeg_resize(in, out, img_size);
@@ -871,7 +871,7 @@ scale_file (const char *in, const char *out, int img_size)
             unlink (out);
         }
     }
-    deadbeef->mutex_unlock(files_mutex);
+    cache_unlock();
     return err;
 #endif
 }
@@ -1016,12 +1016,16 @@ query_add(const char *fname, const char *artist, const char *album, const int im
                         last_callback = last_callback->next;
                     }
                     last_callback->next = extra_callback;
+                    deadbeef->mutex_unlock(queue_mutex);
                 }
                 else {
+                    deadbeef->mutex_unlock(queue_mutex);
                     callback(NULL, NULL, NULL, user_data);
                 }
             }
-            deadbeef->mutex_unlock (queue_mutex);
+            else {
+                deadbeef->mutex_unlock(queue_mutex);
+            }
             return;
         }
     }
@@ -1045,11 +1049,14 @@ query_add(const char *fname, const char *artist, const char *album, const int im
     }
 
     if (!q) {
+        deadbeef->mutex_unlock(queue_mutex);
         if (callback) {
             callback(NULL, NULL, NULL, user_data);
         }
+        return;
     }
-    else if (queue_tail) {
+
+    if (queue_tail) {
         queue_tail->next = q;
         queue_tail = q;
     }
@@ -1547,7 +1554,9 @@ query_complete(const char *fname, const char *artist, const char *album)
     do {
         if (callback->cb) {
             trace("artwork: making callback with data %s %s %s %p\n", fname, artist, album, callback->ud);
+            deadbeef->mutex_unlock(queue_mutex);
             callback->cb(fname, artist, album, callback->ud);
+            deadbeef->mutex_lock(queue_mutex);
         }
         callback = callback->next;
     } while (callback);
@@ -1558,14 +1567,6 @@ query_complete(const char *fname, const char *artist, const char *album)
     }
 
     query_clear(query);
-}
-
-static int
-wait_for_signal(void)
-{
-    trace("artwork fetcher: waiting for signal ...\n");
-    deadbeef->cond_wait(cond, queue_mutex);
-    return !terminate;
 }
 
 static void
@@ -1688,9 +1689,9 @@ get_album_art_sync (const char *fname, const char *artist, const char *album, in
 #endif
 static void
 artwork_reset (int fast) {
+    deadbeef->mutex_lock (queue_mutex);
     if (fast) {
         /* Assume the fetcher already has the first query, nuke the rest */
-        deadbeef->mutex_lock (queue_mutex);
         while (queue && queue->next) {
             cover_query_t *query = queue->next;
             queue->next = queue->next->next;
@@ -1710,13 +1711,17 @@ artwork_reset (int fast) {
         deadbeef->cond_signal (cond);
         trace ("artwork: waiting for clear to complete ...\n");
         while (clear_queue) {
+            deadbeef->mutex_unlock (queue_mutex);
             usleep (100000);
+            deadbeef->mutex_lock (queue_mutex);
         }
     }
+    deadbeef->mutex_unlock (queue_mutex);
 }
 
 static void
 artwork_configchanged (void) {
+    cache_configchanged();
     int new_artwork_enable_embedded = deadbeef->conf_get_int ("artwork.enable_embedded", 1);
     int new_artwork_enable_local = deadbeef->conf_get_int ("artwork.enable_localfolder", 1);
 #ifdef USE_VFS_CURL
@@ -1850,14 +1855,13 @@ artwork_plugin_start (void)
     artwork_scaled_reset_time = deadbeef->conf_get_int64 ("artwork.scaled.cache_reset_time", 0);
 
     queue_mutex = deadbeef->mutex_create_nonrecursive ();
-    files_mutex = deadbeef->mutex_create_nonrecursive ();
 #ifdef USE_IMLIB2
     imlib_mutex = deadbeef->mutex_create_nonrecursive ();
     imlib_set_cache_size(0);
 #endif
     cond = deadbeef->cond_create ();
     tid = deadbeef->thread_start_low_priority (fetcher_thread, NULL);
-    deadbeef->thread_start_low_priority (cache_cleaner_thread, NULL);
+    start_cache_cleaner();
 
     return 0;
 }
@@ -1877,13 +1881,10 @@ artwork_plugin_stop (void)
         deadbeef->thread_join (tid);
         tid = 0;
     }
+    stop_cache_cleaner();
     if (queue_mutex) {
         deadbeef->mutex_free (queue_mutex);
         queue_mutex = 0;
-    }
-    if (files_mutex) {
-        deadbeef->mutex_free (files_mutex);
-        files_mutex = 0;
     }
 #ifdef USE_IMLIB2
     if (imlib_mutex) {
