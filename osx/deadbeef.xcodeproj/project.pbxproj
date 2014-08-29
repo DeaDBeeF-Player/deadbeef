@@ -41,6 +41,12 @@
 		2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD6D0A419AE609F009308A5 /* DdbSeekBar.m */; };
 		2DD6D0A819AE6288009308A5 /* knobTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DD6D0A719AE6288009308A5 /* knobTemplate.pdf */; };
 		2DD9EF0719A5089F00189344 /* cocoautil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD9EF0519A5089F00189344 /* cocoautil.m */; };
+		2DE1D3DD19B11283009B5BC6 /* DdbWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE1D3DB19B11283009B5BC6 /* DdbWidget.h */; };
+		2DE1D3DE19B11283009B5BC6 /* DdbWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE1D3DC19B11283009B5BC6 /* DdbWidget.m */; };
+		2DE1D3E219B114CD009B5BC6 /* DdbWidgetManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE1D3E019B114CD009B5BC6 /* DdbWidgetManager.h */; };
+		2DE1D3E319B114CD009B5BC6 /* DdbWidgetManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE1D3E119B114CD009B5BC6 /* DdbWidgetManager.m */; };
+		2DE1D3E619B11539009B5BC6 /* DdbPlaceholderWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE1D3E419B11539009B5BC6 /* DdbPlaceholderWidget.h */; };
+		2DE1D3E719B11539009B5BC6 /* DdbPlaceholderWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE1D3E519B11539009B5BC6 /* DdbPlaceholderWidget.m */; };
 		2DE7A7B119A689E600F8C0B8 /* bufferingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */; };
 		4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D011FFC19AB9589005499B4 /* coreaudio.c */; };
 		4D1B3E7E18379829003E6066 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B3E7D18379829003E6066 /* Cocoa.framework */; };
@@ -256,6 +262,12 @@
 		2DD6D0A719AE6288009308A5 /* knobTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = knobTemplate.pdf; path = images/knobTemplate.pdf; sourceTree = "<group>"; };
 		2DD9EF0419A5089F00189344 /* cocoautil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocoautil.h; sourceTree = "<group>"; };
 		2DD9EF0519A5089F00189344 /* cocoautil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cocoautil.m; sourceTree = "<group>"; };
+		2DE1D3DB19B11283009B5BC6 /* DdbWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DdbWidget.h; path = widgets/DdbWidget.h; sourceTree = "<group>"; };
+		2DE1D3DC19B11283009B5BC6 /* DdbWidget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DdbWidget.m; path = widgets/DdbWidget.m; sourceTree = "<group>"; };
+		2DE1D3E019B114CD009B5BC6 /* DdbWidgetManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DdbWidgetManager.h; path = widgets/DdbWidgetManager.h; sourceTree = "<group>"; };
+		2DE1D3E119B114CD009B5BC6 /* DdbWidgetManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DdbWidgetManager.m; path = widgets/DdbWidgetManager.m; sourceTree = "<group>"; };
+		2DE1D3E419B11539009B5BC6 /* DdbPlaceholderWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DdbPlaceholderWidget.h; path = widgets/DdbPlaceholderWidget.h; sourceTree = "<group>"; };
+		2DE1D3E519B11539009B5BC6 /* DdbPlaceholderWidget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DdbPlaceholderWidget.m; path = widgets/DdbPlaceholderWidget.m; sourceTree = "<group>"; };
 		2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = bufferingTemplate.pdf; path = images/bufferingTemplate.pdf; sourceTree = "<group>"; };
 		4D011FFC19AB9589005499B4 /* coreaudio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = coreaudio.c; sourceTree = "<group>"; };
 		4D1B3E7A18379829003E6066 /* deadbeef.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = deadbeef.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -635,6 +647,19 @@
 			path = ../icons/1024x1024;
 			sourceTree = "<group>";
 		};
+		2DE1D3DF19B11286009B5BC6 /* widgets */ = {
+			isa = PBXGroup;
+			children = (
+				2DE1D3DB19B11283009B5BC6 /* DdbWidget.h */,
+				2DE1D3DC19B11283009B5BC6 /* DdbWidget.m */,
+				2DE1D3E019B114CD009B5BC6 /* DdbWidgetManager.h */,
+				2DE1D3E119B114CD009B5BC6 /* DdbWidgetManager.m */,
+				2DE1D3E419B11539009B5BC6 /* DdbPlaceholderWidget.h */,
+				2DE1D3E519B11539009B5BC6 /* DdbPlaceholderWidget.m */,
+			);
+			name = widgets;
+			sourceTree = "<group>";
+		};
 		4D1B3E7118379829003E6066 = {
 			isa = PBXGroup;
 			children = (
@@ -918,14 +943,6 @@
 			name = mpgmad;
 			sourceTree = "<group>";
 		};
-		4DA72BDB1838EAAB00A98C62 /* Base.lproj */ = {
-			isa = PBXGroup;
-			children = (
-				4DA72BDC1838EAAB00A98C62 /* MainMenu.xib */,
-			);
-			path = Base.lproj;
-			sourceTree = "<group>";
-		};
 		4DA72BE01838EAAB00A98C62 /* en.lproj */ = {
 			isa = PBXGroup;
 			children = (
@@ -937,12 +954,13 @@
 		4DEE38461838E6450022D2B7 /* cocoaui */ = {
 			isa = PBXGroup;
 			children = (
+				2DE1D3DF19B11286009B5BC6 /* widgets */,
 				4D2362B218395D0300C9E818 /* images */,
 				4DA72BD91838EAAB00A98C62 /* AppDelegate.h */,
 				4DA72BDA1838EAAB00A98C62 /* AppDelegate.m */,
 				2DD6D0A319AE609F009308A5 /* DdbSeekBar.h */,
 				2DD6D0A419AE609F009308A5 /* DdbSeekBar.m */,
-				4DA72BDB1838EAAB00A98C62 /* Base.lproj */,
+				4DA72BDC1838EAAB00A98C62 /* MainMenu.xib */,
 				4DA72BDE1838EAAB00A98C62 /* deadbeef-Info.plist */,
 				4DA72BDF1838EAAB00A98C62 /* deadbeef-Prefix.pch */,
 				4DA72BE01838EAAB00A98C62 /* en.lproj */,
@@ -1031,7 +1049,10 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DE1D3E219B114CD009B5BC6 /* DdbWidgetManager.h in Headers */,
+				2DE1D3E619B11539009B5BC6 /* DdbPlaceholderWidget.h in Headers */,
 				2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */,
+				2DE1D3DD19B11283009B5BC6 /* DdbWidget.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1300,8 +1321,11 @@
 				4D1B4F3F1837EC4A003E6066 /* premix.c in Sources */,
 				4D1B4A071837EC49003E6066 /* conf.c in Sources */,
 				4D1B51471837EC4B003E6066 /* utf8.c in Sources */,
+				2DE1D3E719B11539009B5BC6 /* DdbPlaceholderWidget.m in Sources */,
 				4D1B4A0F1837EC49003E6066 /* ConvertUTF.c in Sources */,
+				2DE1D3E319B114CD009B5BC6 /* DdbWidgetManager.m in Sources */,
 				4DA72BE71838EAAB00A98C62 /* AppDelegate.m in Sources */,
+				2DE1D3DE19B11283009B5BC6 /* DdbWidget.m in Sources */,
 				4D1B4F5F1837EC4A003E6066 /* streamer.c in Sources */,
 				4D1B4F4C1837EC4A003E6066 /* replaygain.c in Sources */,
 				4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */,
@@ -1439,6 +1463,7 @@
 				4DA72BDD1838EAAB00A98C62 /* Base */,
 			);
 			name = MainMenu.xib;
+			path = Base.lproj;
 			sourceTree = "<group>";
 		};
 		4DA72BE31838EAAB00A98C62 /* InfoPlist.strings */ = {
