@@ -63,8 +63,8 @@
 #include "cache.h"
 #include "artwork.h"
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(...)
+//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(...)
 
 DB_functions_t *deadbeef;
 DB_FILE *current_file;
@@ -72,11 +72,10 @@ DB_FILE *current_file;
 static DB_artwork_plugin_t plugin;
 static char default_cover[PATH_MAX];
 
-typedef struct cover_callback_s cover_callback_t;
 typedef struct cover_callback_s {
     artwork_callback cb;
     void *ud;
-    cover_callback_t *next;
+    struct cover_callback_s *next;
 } cover_callback_t;
 
 typedef struct cover_query_s {
@@ -1058,11 +1057,11 @@ query_add(const char *fname, const char *artist, const char *album, const int im
 
     if (queue_tail) {
         queue_tail->next = q;
-        queue_tail = q;
     }
     else {
-        queue = queue_tail = q;
+        queue = q;
     }
+    queue_tail = q;
 
     deadbeef->cond_signal(cond);
     deadbeef->mutex_unlock(queue_mutex);
@@ -1881,21 +1880,23 @@ artwork_plugin_stop (void)
         deadbeef->thread_join (tid);
         tid = 0;
     }
-    stop_cache_cleaner();
     if (queue_mutex) {
         deadbeef->mutex_free (queue_mutex);
         queue_mutex = 0;
     }
+    if (cond) {
+        deadbeef->cond_free (cond);
+        cond = 0;
+    }
+
+    stop_cache_cleaner();
+
 #ifdef USE_IMLIB2
     if (imlib_mutex) {
         deadbeef->mutex_free (imlib_mutex);
         imlib_mutex = 0;
     }
 #endif
-    if (cond) {
-        deadbeef->cond_free (cond);
-        cond = 0;
-    }
 
     return 0;
 }
