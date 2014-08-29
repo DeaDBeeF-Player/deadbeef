@@ -1,7 +1,6 @@
 /*
-    Album Art plugin for DeaDBeeF
-    Copyright (C) 2009-2011 Viktor Semykin <thesame.ml@gmail.com>
-    Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
+    Album Art plugin Cache Cleaner for DeaDBeeF
+    Copyright (C) 2014 Ian Nartowicz <deadbeef@nartowicz.co.uk>
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -45,9 +44,9 @@
 
 static uintptr_t files_mutex;
 static uintptr_t files_cond;
-static int32_t cache_expiry_seconds;
-static int terminate;
 static intptr_t tid;
+static int terminate;
+static int32_t cache_expiry_seconds;
 
 void cache_lock(void)
 {
@@ -167,7 +166,9 @@ cache_cleaner_thread(void *none)
             fprintf(stderr, "Sleeping for %d seconds (oldest file modified %d seconds ago)\n", oldest_mtime - time(NULL) + cache_expiry_seconds, time(NULL) - oldest_mtime);
             pthread_cond_timedwait((pthread_cond_t *)files_cond, (pthread_mutex_t *)files_mutex, &wake_time);
         }
-        else {
+
+        /* Just go back to sleep if cache expiry is disabled */
+        while (cache_expiry_seconds <= 0) {
             fprintf(stderr, "Sleeping forever\n");
             pthread_cond_wait((pthread_cond_t *)files_cond, (pthread_mutex_t *)files_mutex);
         }
